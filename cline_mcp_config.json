@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "web-search": {
+      "command": "python",
+      "args": ["c:\\Users\\liuyu\\super_intelligence_2035\\mcp_web_search.py"],
+      "description": "网页搜索 - 基于bocha.cn API获取最新网络资讯",
+      "env": {
+        "BOCHA_API_KEY": "sk-8770b49c06864f178072ea845cfb95f9"
+      }
+    }
+  }
+}
