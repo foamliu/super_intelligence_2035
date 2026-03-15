@@ -253,7 +253,7 @@
 | 书籍正文 | `chapters_new/` 目录 |
 | 营销策略 | `MARKET.md` |
 | 作者背景 | `SOUL.md` |
-| 人物设定 | `character_design.md` |
+| 人物设定 | `CHARACTER.md` |
 
 ---
 
