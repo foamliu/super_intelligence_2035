@@ -38,7 +38,7 @@
 | 第43章 | 43-datong-ideal-rewritten.md | 大同理想——双核智慧的终极目标 |
 | 第44章 | 44-moment-of-choice-rewritten.md | 选择的时刻——2035年的历史节点 |
 | 第45章 | 45-wisdom-of-blankness-rewritten.md | 留白的智慧——未完成的思考 |
-| 第46章 | 46-epilogue-rewritten.md | 尾声：双核智慧的未来——致2045年的读者 |
+| 第46章 | 46-epilogue-rewritten.md | 尾声：双核智慧的未来——致2035年的读者 |
 
 ### 新增/修改章节（8个）
 | 章节 | 文件名 | 核心主题 |
