@@ -64,7 +64,8 @@
 | 24 | `24-digital-nomads.md` | 《游牧》 | 游牧 |
 | 25 | `25-global-south-forgotten.md` | 《遗忘》 | 遗忘 |
 | 26 | `26-historical-inflection-points.md` | 《拐点》 | 拐点 |
-| 27-28 | `27-28-tianxia-heery.md` | 《天下》 | 天下 |
+| 27 | `27-tianxia-heery.md` | 《天下》 | 天下 |
+| 28 | `28-cognition-consciousness-free-will.md` | 《意识》 | 意识 |
 | 29 | `29-ritual-music-law-governance.md` | 《礼乐》 | 礼乐 |
 | 30 | `30-industrial-commons.md` | 《公地》 | 公地 |
 | 31 | `31-government-architect.md` | 《建筑》 | 建筑 |
@@ -131,7 +132,7 @@
 ### 主题阅读路径
 - **AI伦理与技术哲学**：第1、2、9、36、39章
 - **历史反思与文明比较**：第12、15、17、26章
-- **全球治理与中国智慧**：第23、25、27-28、38章
+- **全球治理与中国智慧**：第23、25、27、28、38章
 - **社会制度与治理创新**：第32、33、34、35、41章
 - **理想社会与未来展望**：第40、42、43、44、45、46章
 
