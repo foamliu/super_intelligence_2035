@@ -376,8 +376,8 @@ def main():
             content = f.read()
         
         # 添加分页符（除了第一章）
-        if i > 1:
-            doc.add_page_break()
+        # if i > 1:
+        doc.add_page_break()
         
         # 处理内容
         process_markdown_content(doc, content, file_path.name)
