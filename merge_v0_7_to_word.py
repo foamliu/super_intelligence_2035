@@ -393,6 +393,17 @@ def main():
         # 处理内容
         process_markdown_content(doc, content, file_path.name)
     
+    # 添加附录（放在最后）
+    print("添加附录...")
+    appendix_path = Path("chapters_v0_7/appendix-practical-handbook.md")
+    if appendix_path.exists():
+        doc.add_page_break()
+        with open(appendix_path, 'r', encoding='utf-8') as f:
+            appendix_content = f.read()
+        process_markdown_content(doc, appendix_content, "appendix-practical-handbook.md")
+    else:
+        print("警告：未找到附录文件 appendix-practical-handbook.md")
+    
     # 添加页码
     print("添加页码...")
     add_page_numbers(doc)
