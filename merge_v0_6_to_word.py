@@ -27,12 +27,12 @@ def set_chinese_font(run, font_name='SimSun', font_size=10.5, bold=False, italic
 
 
 def get_chapter_files():
-    """获取01-46章节文件，排除README等其他文件"""
+    """获取01-47章节文件，排除README等其他文件"""
     chapters_dir = Path("chapters_v0_6")
-    # 只匹配 01- 到 46- 开头的md文件
+    # 只匹配 01- 到 47- 开头的md文件
     files = [f for f in chapters_dir.glob("*.md") if re.match(r'^\d{2}-', f.name)]
     
-    # 按文件名排序（01-, 02-, ... 46-）
+    # 按文件名排序（01-, 02-, ... 47-）
     def sort_key(f):
         match = re.match(r'(\d+)-', f.name)
         if match:
