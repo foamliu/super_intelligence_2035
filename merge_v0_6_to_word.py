@@ -360,6 +360,17 @@ def main():
     
     doc.add_page_break()
     
+    # 添加前言
+    print("添加前言...")
+    foreword_path = Path("chapters_v0_6/foreword.md")
+    if foreword_path.exists():
+        with open(foreword_path, 'r', encoding='utf-8') as f:
+            foreword_content = f.read()
+        process_markdown_content(doc, foreword_content, "foreword.md")
+        doc.add_page_break()
+    else:
+        print("警告：未找到前言文件 foreword.md")
+    
     # 创建目录页
     create_toc_page(doc)
     
