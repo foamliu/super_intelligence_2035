@@ -70,6 +70,52 @@ def add_heading(doc, text, level=1):
     return paragraph
 
 
+def add_image_to_doc(doc, image_path, caption=None):
+    """添加图片到文档"""
+    try:
+        # 检查图片是否存在
+        if not os.path.exists(image_path):
+            print(f"  警告：图片不存在: {image_path}")
+            return False
+        
+        # 添加图片
+        paragraph = doc.add_paragraph()
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = paragraph.add_run()
+        
+        # 插入图片，设置宽度为3.5英寸（适应A5纸张，可用宽度约11.2cm）
+        inline_shape = run.add_picture(image_path, width=Inches(3.5))
+        
+        # 如果有说明文字，添加在图片下方
+        if caption:
+            caption_para = doc.add_paragraph()
+            caption_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            run = caption_para.add_run(caption)
+            set_chinese_font(run, 'SimSun', 10, italic=True)
+        
+        # 添加空行
+        doc.add_paragraph()
+        return True
+    
+    except Exception as e:
+        print(f"  错误：无法添加图片 {image_path}: {e}")
+        return False
+
+
+def parse_image_markdown(line):
+    """解析markdown图片语法 ![alt](path)"""
+    # 匹配 ![alt text](../images/filename.png) 或 ![alt](path)
+    pattern = r'!\[([^\]]*)\]\(([^)]+)\)'
+    match = re.match(pattern, line.strip())
+    
+    if match:
+        alt_text = match.group(1)
+        image_path = match.group(2)
+        return alt_text, image_path
+    
+    return None, None
+
+
 def process_inline_formatting(paragraph, text):
     """处理行内格式（粗体、斜体、代码）"""
     # 模式：粗体 **text** 或 __text__
@@ -133,6 +179,11 @@ def process_inline_formatting(paragraph, text):
 def parse_markdown_line(line):
     """解析markdown行，返回文本和级别"""
     line = line.rstrip()
+    
+    # 图片
+    alt_text, image_path = parse_image_markdown(line)
+    if image_path:
+        return alt_text, image_path, 0, 'image'
     
     # 标题
     if line.startswith('# '):
@@ -205,7 +256,20 @@ def process_markdown_content(doc, content, file_name):
         # 解析行
         text, image_path, level, line_type = parse_markdown_line(line)
         
-        if line_type == 'heading':
+        if line_type == 'image':
+            # 转换图片路径
+            # 从 ../images/xxx.png 转换为 images/xxx.png
+            if image_path.startswith('../'):
+                actual_path = image_path[3:]  # 移除 ../
+            elif image_path.startswith('./'):
+                actual_path = image_path[2:]  # 移除 ./
+            else:
+                actual_path = image_path
+            
+            # 添加图片
+            add_image_to_doc(doc, actual_path, text if text else None)
+        
+        elif line_type == 'heading':
             add_heading(doc, text, level)
         
         elif line_type == 'list':
