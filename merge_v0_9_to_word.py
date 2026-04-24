@@ -295,6 +295,8 @@ def process_markdown_content(doc, content, file_name):
         
         elif line_type == 'paragraph':
             p = doc.add_paragraph()
+            # 添加两个全角空格作为首行缩进
+            p.paragraph_format.first_line_indent = Pt(21)  # 两个全角空格约21pt
             process_inline_formatting(p, text)
         
         # 空行不处理（Word自动处理段落间距）
@@ -387,12 +389,12 @@ def setup_document_styles(doc):
 def setup_page_margins(section):
     """设置页边距，使每行26-28字"""
     # A5纸张：148mm x 210mm
-    # 左右边距设置约18mm，使正文宽度约112mm
-    # 10.5pt字体，每行约26-28个中文字符
-    section.left_margin = Cm(1.8)
-    section.right_margin = Cm(1.8)
-    section.top_margin = Cm(2.0)
-    section.bottom_margin = Cm(2.0)
+    # 缩小边距：左右边距约12mm，使正文宽度约124mm
+    # 10.5pt字体，每行约28-30个中文字符
+    section.left_margin = Cm(1.2)
+    section.right_margin = Cm(1.2)
+    section.top_margin = Cm(1.5)
+    section.bottom_margin = Cm(1.5)
 
 
 def main():
