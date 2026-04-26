@@ -462,16 +462,27 @@ def main():
         # 处理内容
         process_markdown_content(doc, content, file_path.name)
     
-    # 添加附录（放在最后）
-    # print("添加附录...")
-    # appendix_path = Path("chapters_v0_9/appendix-practical-handbook.md")
-    # if appendix_path.exists():
-    #     doc.add_page_break()
-    #     with open(appendix_path, 'r', encoding='utf-8') as f:
-    #         appendix_content = f.read()
-    #     process_markdown_content(doc, appendix_content, "appendix-practical-handbook.md")
-    # else:
-    #     print("警告：未找到附录文件 appendix-practical-handbook.md")
+    # 添加人物小传附录（放在全书最后）
+    print("添加人物小传附录...")
+    profiles_path = Path("chapters_v0_9/profiles.md")
+    if profiles_path.exists():
+        doc.add_page_break()
+        
+        # 添加附录标题
+        appendix_title = doc.add_paragraph()
+        appendix_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = appendix_title.add_run('附  录')
+        set_chinese_font(run, 'SimHei', 18, bold=True)
+        
+        doc.add_paragraph()  # 空行
+        
+        # 读取并处理人物小传内容
+        with open(profiles_path, 'r', encoding='utf-8') as f:
+            profiles_content = f.read()
+        process_markdown_content(doc, profiles_content, "profiles.md")
+        print(f"已添加人物小传附录: {profiles_path}")
+    else:
+        print(f"警告：未找到人物小传文件 {profiles_path}")
     
     # 添加页码
     print("添加页码...")
