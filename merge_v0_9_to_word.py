@@ -55,7 +55,7 @@ def add_heading(doc, text, level=1):
     
     # 设置样式字体
     style.font.name = 'SimHei'  # 黑体用于标题
-    style.font.size = Pt([18, 16, 14, 12][min(level-1, 3)])
+    style.font.size = Pt([16, 14, 12, 11][min(level-1, 3)])
     style.font.bold = True
     
     # 关键：设置中文字体
@@ -65,7 +65,7 @@ def add_heading(doc, text, level=1):
     
     # 为每个run设置中文字体
     for run in paragraph.runs:
-        set_chinese_font(run, 'SimHei', [18, 16, 14, 12][min(level-1, 3)], bold=True)
+        set_chinese_font(run, 'SimHei', [16, 14, 12, 11][min(level-1, 3)], bold=True)
     
     return paragraph
 
@@ -389,12 +389,12 @@ def setup_document_styles(doc):
 def setup_page_margins(section):
     """设置页边距，使每行26-28字"""
     # A5纸张：148mm x 210mm
-    # 缩小边距：左右边距约12mm，使正文宽度约124mm
-    # 10.5pt字体，每行约28-30个中文字符
-    section.left_margin = Cm(1.2)
-    section.right_margin = Cm(1.2)
-    section.top_margin = Cm(1.5)
-    section.bottom_margin = Cm(1.5)
+    # 缩小边距：左右边距约10mm，使正文宽度约128mm
+    # 10.5pt字体，每行约29-31个中文字符
+    section.left_margin = Cm(1.0)
+    section.right_margin = Cm(1.0)
+    section.top_margin = Cm(1.2)
+    section.bottom_margin = Cm(1.2)
 
 
 def main():
@@ -407,6 +407,9 @@ def main():
     section = doc.sections[0]
     section.page_width = Cm(14.8)
     section.page_height = Cm(21.0)
+    
+    # 设置页边距
+    setup_page_margins(section)
     
     # 设置文档样式
     setup_document_styles(doc)
