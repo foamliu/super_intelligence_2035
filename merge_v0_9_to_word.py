@@ -26,6 +26,37 @@ def set_chinese_font(run, font_name='SimSun', font_size=10.5, bold=False, italic
     run._element.rPr.rFonts.set(qn('w:eastAsia'), font_name)
 
 
+def fix_quotes(text: str) -> str:
+    """
+    将文本中的英文直引号替换为中文弯引号。
+    - 英文双引号 " -> 中文左右双引号 " "
+    - 英文单引号 ' -> 中文左右单引号 ' '
+    """
+    result = []
+    double_quote_open = False  # 双引号是否处于"开"状态
+    single_quote_open = False   # 单引号是否处于"开"状态
+
+    for ch in text:
+        if ch == '"':
+            if not double_quote_open:
+                result.append('“')
+                double_quote_open = True
+            else:
+                result.append('”')
+                double_quote_open = False
+        elif ch == "'":
+            if not single_quote_open:
+                result.append('‘')
+                single_quote_open = True
+            else:
+                result.append('’')
+                single_quote_open = False
+        else:
+            result.append(ch)
+
+    return ''.join(result)
+
+
 def get_chapter_files():
     """获取01-47章节文件，排除README等其他文件"""
     chapters_dir = Path("chapters_v0_9")
@@ -454,6 +485,9 @@ def main():
         # 读取markdown内容
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
+        
+        # 修复中文引号
+        content = fix_quotes(content)
         
         # 添加分页符（除了第一章）
         # if i > 1:
