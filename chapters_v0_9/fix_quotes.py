@@ -9,7 +9,7 @@
 功能:
     - 将英文双引号 " 替换为中文左右双引号 " "
     - 将英文单引号 ' 替换为中文左右单引号 ' '
-    - 自动创建 .bak 备份文件
+    - 直接修改原文件，不创建备份
 """
 
 import os
@@ -48,13 +48,12 @@ def fix_quotes(text: str) -> str:
     return ''.join(result)
 
 
-def process_file(file_path: Path, create_backup: bool = True) -> bool:
+def process_file(file_path: Path) -> bool:
     """
     处理单个文件，修复引号。
     
     Args:
         file_path: 文件路径
-        create_backup: 是否创建备份
     
     Returns:
         是否进行了修改
@@ -71,13 +70,6 @@ def process_file(file_path: Path, create_backup: bool = True) -> bool:
         if fixed_content == original_content:
             print(f"  [跳过] 无需修改: {file_path.name}")
             return False
-        
-        # 创建备份
-        if create_backup:
-            backup_path = file_path.with_suffix('.md.bak')
-            with open(backup_path, 'w', encoding='utf-8') as f:
-                f.write(original_content)
-            print(f"  [备份] 已创建: {backup_path.name}")
         
         # 写回修复后的内容
         with open(file_path, 'w', encoding='utf-8') as f:
@@ -117,7 +109,7 @@ def main():
     modified = 0
     
     for file_path in md_files:
-        if process_file(file_path, create_backup=True):
+        if process_file(file_path):
             modified += 1
         processed += 1
     
@@ -126,9 +118,8 @@ def main():
     print(f"处理完成: {processed} 个文件, 修改了 {modified} 个文件")
     print()
     print("说明:")
-    print("  - 原文件已修复")
-    print("  - .bak 备份文件已创建")
-    print("  - 如需恢复，将 .bak 文件重命名为 .md 即可")
+    print("  - 原文件已直接修改")
+    print("  - 无备份文件创建")
 
 
 if __name__ == '__main__':
