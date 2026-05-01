@@ -61,12 +61,12 @@ def get_chapter_files():
     """获取01-47章节文件，包括.5小数章节，排除README等其他文件"""
     chapters_dir = Path("chapters_v1_0")
     # 匹配 01-, 02-, ..., 24.5-, 31.5-, 34.5-, 35.5-, 45.5-, 47- 等格式的md文件
-    files = [f for f in chapters_dir.glob("*.md") if re.match(r'^\d{2}(\.\d+)?-', f.name)]
+    files = [f for f in chapters_dir.glob("*.md") if re.match(r'^\d{2}([._]\d+)?-', f.name)]
     
-    # 按文件名排序（01-, 02-, ... 24-, 24.5-, 25-, ... 47-）
+    # 按文件名排序（01-, 02-, ... 24-, 24_5-, 24.5-, 25-, ... 47-）
     def sort_key(f):
-        # 匹配主版本号和可选的小数版本号
-        match = re.match(r'(\d+)(?:\.(\d+))?-', f.name)
+        # 匹配主版本号和可选的小数版本号（支持 . 和 _ 分隔符）
+        match = re.match(r'(\d+)(?:[._](\d+))?-', f.name)
         if match:
             major = int(match.group(1))
             minor = int(match.group(2)) if match.group(2) else 0
