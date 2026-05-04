@@ -481,7 +481,8 @@ def main():
     chapter_files = get_chapter_files()
     print(f"找到 {len(chapter_files)} 个章节文件")
     
-    # 处理每个章节
+    # 处理每个章节，在第44章之后插入术语表
+    glossary_inserted = False
     for i, file_path in enumerate(chapter_files, 1):
         print(f"处理第 {i}/{len(chapter_files)} 个文件: {file_path.name}")
         
@@ -492,12 +493,26 @@ def main():
         # 修复中文引号
         content = fix_quotes(content)
         
-        # 添加分页符（除了第一章）
-        # if i > 1:
+        # 添加分页符
         doc.add_page_break()
         
         # 处理内容
         process_markdown_content(doc, content, file_path.name)
+        
+        # 在第44章之后插入术语表
+        if not glossary_inserted and re.match(r'^44[._]?-', file_path.name):
+            glossary_path = Path("chapters_v1_0/glossary.md")
+            if glossary_path.exists():
+                print("在第44章之后插入术语表...")
+                doc.add_page_break()
+                with open(glossary_path, 'r', encoding='utf-8') as f:
+                    glossary_content = f.read()
+                glossary_content = fix_quotes(glossary_content)
+                process_markdown_content(doc, glossary_content, "glossary.md")
+                print(f"已插入术语表: {glossary_path}")
+            else:
+                print(f"警告：未找到术语表文件 {glossary_path}")
+            glossary_inserted = True
     
     # 添加人物小传附录（放在全书最后）
     print("添加人物小传附录...")
