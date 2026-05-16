@@ -222,6 +222,91 @@ def process_inline_formatting(paragraph, text):
         i += 1
 
 
+def is_table_line(line):
+    """判断是否为markdown表格行（以|开头或以|结尾的行）"""
+    stripped = line.strip()
+    return stripped.startswith('|') and '|' in stripped[1:]
+
+
+def parse_table_row(line):
+    """解析表格行，返回单元格内容列表"""
+    stripped = line.strip()
+    # 移除首尾的 |
+    if stripped.startswith('|'):
+        stripped = stripped[1:]
+    if stripped.endswith('|'):
+        stripped = stripped[:-1]
+    # 按 | 分割单元格
+    cells = [cell.strip() for cell in stripped.split('|')]
+    return cells
+
+
+def parse_alignment(cell):
+    """解析对齐格式行中的单个单元格，返回 Word 对齐常量"""
+    cell = cell.strip()
+    left = cell.startswith(':')
+    right = cell.endswith(':')
+    if left and right:
+        return WD_ALIGN_PARAGRAPH.CENTER
+    elif right:
+        return WD_ALIGN_PARAGRAPH.RIGHT
+    else:
+        return WD_ALIGN_PARAGRAPH.LEFT
+
+
+def add_table_to_doc(doc, headers, alignments, rows):
+    """向文档中添加 Word 表格"""
+    if not headers:
+        return
+
+    num_cols = len(headers)
+    # 对齐行不生成行，但可能包含额外列信息
+    if alignments:
+        num_cols = max(num_cols, len(alignments))
+
+    # 数据行数 + 1（表头）
+    num_rows = 1 + len(rows)
+
+    table = doc.add_table(rows=num_rows, cols=num_cols, style='Table Grid')
+
+    # 填充表头
+    for j, header in enumerate(headers):
+        if j >= num_cols:
+            break
+        cell = table.cell(0, j)
+        cell.text = ''
+        p = cell.paragraphs[0]
+        run = p.add_run(header)
+        set_chinese_font(run, 'SimHei', 10.5, bold=True)
+        # 设置表头单元格底色为浅灰
+        from docx.oxml import OxmlElement
+        shading_elm = OxmlElement('w:shd')
+        shading_elm.set(qn('w:fill'), 'D9D9D9')
+        shading_elm.set(qn('w:val'), 'clear')
+        cell._tc.get_or_add_tcPr().append(shading_elm)
+
+    # 填充数据行
+    for i, row_data in enumerate(rows):
+        for j, cell_text in enumerate(row_data):
+            if j >= num_cols:
+                break
+            cell = table.cell(i + 1, j)
+            cell.text = ''
+            p = cell.paragraphs[0]
+            # 设置对齐方式
+            if alignments and j < len(alignments):
+                p.alignment = alignments[j]
+            # 处理单元格内的行内格式（粗体、斜体等）
+            process_inline_formatting(p, cell_text)
+            # 如果没有产生 runs（纯文本），手动添加
+            if not p.runs:
+                run = p.add_run(cell_text)
+                set_chinese_font(run, 'SimSun', 10.5)
+
+    # 表格后添加空行
+    doc.add_paragraph()
+
+
 def parse_markdown_line(line):
     """解析markdown行，返回文本和级别"""
     line = line.rstrip()
@@ -240,6 +325,10 @@ def parse_markdown_line(line):
         return line[4:].strip(), None, 3, 'heading'
     elif line.startswith('#### '):
         return line[5:].strip(), None, 4, 'heading'
+
+    # 表格行
+    elif is_table_line(line):
+        return line.strip(), None, 0, 'table_row'
 
     # 列表项
     elif line.startswith('- ') or line.startswith('* '):
@@ -276,11 +365,47 @@ def process_markdown_content(doc, content, file_name):
     in_code_block = False
     code_content = []
 
+    # 表格状态
+    table_rows = []      # 收集表格行（原始文本）
+    in_table = False
+
+    def flush_table():
+        """将收集到的表格行转换为 Word 表格并插入文档"""
+        nonlocal table_rows, in_table
+        if not table_rows:
+            return
+        # 第一行是表头
+        headers = parse_table_row(table_rows[0])
+        alignments = []
+        rows = []
+        start_idx = 1
+        # 第二行如果是对齐行（:---: 等），解析对齐
+        if len(table_rows) > 1:
+            second_cells = parse_table_row(table_rows[1])
+            # 判断是否为对齐行：所有单元格都匹配 --- 模式
+            is_align_row = all(
+                re.match(r'^:?-{3,}:?$', cell) for cell in second_cells
+            )
+            if is_align_row:
+                alignments = [parse_alignment(cell) for cell in second_cells]
+                start_idx = 2
+            else:
+                # 不是对齐行，作为数据行
+                rows.append(second_cells)
+                start_idx = 2
+        # 其余是数据行
+        for row_line in table_rows[start_idx:]:
+            rows.append(parse_table_row(row_line))
+        add_table_to_doc(doc, headers, alignments, rows)
+        table_rows = []
+        in_table = False
+
     while i < len(lines):
         line = lines[i]
 
         # 代码块处理
         if line.startswith('```'):
+            flush_table()
             if in_code_block:
                 # 代码块结束，添加代码内容
                 if code_content:
@@ -302,52 +427,65 @@ def process_markdown_content(doc, content, file_name):
         # 解析行
         text, image_path, level, line_type = parse_markdown_line(line)
 
-        if line_type == 'image':
-            # 转换图片路径
-            # 从 ../images/xxx.png 转换为 images/xxx.png
-            if image_path.startswith('../'):
-                actual_path = image_path[3:]  # 移除 ../
-            elif image_path.startswith('./'):
-                actual_path = image_path[2:]  # 移除 ./
-            else:
-                actual_path = image_path
+        if line_type == 'table_row':
+            # 收集表格行
+            if not in_table:
+                in_table = True
+                table_rows = []
+            table_rows.append(text)
+        else:
+            # 非表格行，先刷新之前的表格
+            flush_table()
 
-            # 添加图片
-            add_image_to_doc(doc, actual_path, text if text else None)
+            if line_type == 'image':
+                # 转换图片路径
+                # 从 ../images/xxx.png 转换为 images/xxx.png
+                if image_path.startswith('../'):
+                    actual_path = image_path[3:]  # 移除 ../
+                elif image_path.startswith('./'):
+                    actual_path = image_path[2:]  # 移除 ./
+                else:
+                    actual_path = image_path
 
-        elif line_type == 'heading':
-            add_heading(doc, text, level)
+                # 添加图片
+                add_image_to_doc(doc, actual_path, text if text else None)
 
-        elif line_type == 'list':
-            p = doc.add_paragraph(style='List Bullet')
-            process_inline_formatting(p, text)
-            if not p.runs:
-                run = p.add_run(text)
-                set_chinese_font(run, 'SimSun', 12)
+            elif line_type == 'heading':
+                add_heading(doc, text, level)
 
-        elif line_type == 'list_numbered':
-            p = doc.add_paragraph(style='List Number')
-            process_inline_formatting(p, text)
-            if not p.runs:
-                run = p.add_run(text)
-                set_chinese_font(run, 'SimSun', 12)
+            elif line_type == 'list':
+                p = doc.add_paragraph(style='List Bullet')
+                process_inline_formatting(p, text)
+                if not p.runs:
+                    run = p.add_run(text)
+                    set_chinese_font(run, 'SimSun', 12)
 
-        elif line_type == 'quote':
-            p = doc.add_paragraph(style='Quote')
-            process_inline_formatting(p, text)
-            if not p.runs:
-                run = p.add_run(text)
-                set_chinese_font(run, 'SimSun', 12)
+            elif line_type == 'list_numbered':
+                p = doc.add_paragraph(style='List Number')
+                process_inline_formatting(p, text)
+                if not p.runs:
+                    run = p.add_run(text)
+                    set_chinese_font(run, 'SimSun', 12)
 
-        elif line_type == 'paragraph':
-            p = doc.add_paragraph()
-            # 添加两个全角空格作为首行缩进
-            p.paragraph_format.first_line_indent = Pt(21)  # 两个全角空格约21pt
-            process_inline_formatting(p, text)
+            elif line_type == 'quote':
+                p = doc.add_paragraph(style='Quote')
+                process_inline_formatting(p, text)
+                if not p.runs:
+                    run = p.add_run(text)
+                    set_chinese_font(run, 'SimSun', 12)
 
-        # 空行不处理（Word自动处理段落间距）
+            elif line_type == 'paragraph':
+                p = doc.add_paragraph()
+                # 添加两个全角空格作为首行缩进
+                p.paragraph_format.first_line_indent = Pt(21)  # 两个全角空格约21pt
+                process_inline_formatting(p, text)
+
+            # 空行不处理（Word自动处理段落间距）
 
         i += 1
+
+    # 处理文件末尾可能残留的表格
+    flush_table()
 
 
 def create_toc_page(doc):
