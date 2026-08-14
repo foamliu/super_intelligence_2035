@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDA FastMCP 检索 API 技术报告</title>
+<style>
+/* ── Light Theme Variables ── */
+:root {
+  --bg: #f8f9fb; --bg-alt: #eef1f6; --card: #ffffff; --card-hover: #fafbff;
+  --border: #dfe3ec; --border-light: #e8ecf4;
+  --text: #1e293b; --text-secondary: #475569; --dim: #94a3b8;
+  --blue: #3b82f6; --blue-light: #eff6ff; --blue-bg: rgba(59,130,246,0.08);
+  --green: #16a34a; --green-light: #f0fdf4; --green-bg: rgba(22,163,74,0.08);
+  --orange: #ea580c; --orange-light: #fff7ed; --orange-bg: rgba(234,88,12,0.08);
+  --red: #dc2626; --red-light: #fef2f2; --red-bg: rgba(220,38,38,0.06);
+  --purple: #7c3aed; --purple-light: #f5f3ff; --purple-bg: rgba(124,58,237,0.08);
+  --cyan: #0891b2; --cyan-light: #ecfeff; --cyan-bg: rgba(8,145,178,0.08);
+  --pink: #db2777; --pink-light: #fdf2f8; --pink-bg: rgba(219,39,119,0.08);
+  --teal: #0d9488;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+  --radius: 12px; --radius-sm: 8px;
+}
+
+/* ── Base ── */
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body {
+  font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  background: var(--bg); color: var(--text); line-height:1.75; -webkit-font-smoothing:antialiased;
+}
+
+/* ── Navigation ── */
+.topnav {
+  position:sticky; top:0; z-index:100;
+  background: rgba(255,255,255,0.85); backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid var(--border-light);
+  padding: 12px 24px; display:flex; align-items:center; justify-content:space-between;
+}
+.topnav-brand { font-weight:700; color:var(--blue); font-size:1.05em; display:flex; align-items:center; gap:8px; }
+.topnav-brand svg { flex-shrink:0; }
+.topnav-links { display:flex; gap:4px; flex-wrap:wrap; }
+.topnav-links a {
+  font-size:0.82em; padding:5px 10px; border-radius:6px;
+  color:var(--text-secondary); text-decoration:none; transition:all 0.15s;
+}
+.topnav-links a:hover, .topnav-links a.active { background:var(--blue-light); color:var(--blue); }
+
+/* ── Container ── */
+.container { max-width:1120px; margin:0 auto; padding:32px 24px 80px; }
+
+/* ── Hero ── */
+.hero {
+  text-align:center; padding:48px 0 40px; position:relative;
+}
+.hero h1 {
+  font-size:2.2em; font-weight:800; color:var(--text);
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text; margin-bottom:8px;
+}
+.hero-subtitle {
+  color:var(--text-secondary); font-size:1.05em; margin-bottom:24px;
+}
+.hero-badges { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+.hero-badge {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:6px 14px; border-radius:20px; font-size:0.85em; font-weight:600;
+  border:1px solid;
+}
+.hero-badge.blue { background:var(--blue-light); color:var(--blue); border-color:rgba(59,130,246,0.2); }
+.hero-badge.green { background:var(--green-light); color:var(--green); border-color:rgba(22,163,74,0.2); }
+.hero-badge.orange { background:var(--orange-light); color:var(--orange); border-color:rgba(234,88,12,0.2); }
+
+/* ── Section headings ── */
+h2 {
+  font-size:1.55em; font-weight:700; color:var(--text); margin:48px 0 20px;
+  padding-bottom:10px; border-bottom:2px solid var(--border);
+  display:flex; align-items:center; gap:10px;
+}
+h2 .section-num {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:36px; height:36px; border-radius:10px;
+  background:linear-gradient(135deg, var(--blue), var(--purple));
+  color:#fff; font-size:0.85em; font-weight:700; flex-shrink:0;
+}
+h3 { font-size:1.2em; font-weight:600; color:var(--text); margin:28px 0 14px; }
+h4 { font-size:1.05em; font-weight:600; color:var(--text-secondary); margin:20px 0 10px; }
+
+/* ── Cards ── */
+.card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:24px; margin:16px 0;
+  box-shadow:var(--shadow-sm); transition:box-shadow 0.2s;
+}
+.card:hover { box-shadow:var(--shadow-md); }
+.card-title { font-weight:700; color:var(--text); margin-bottom:10px; font-size:1.05em; display:flex; align-items:center; gap:8px; }
+
+/* ── Callout boxes ── */
+.highlight, .warning, .insight {
+  padding:16px 20px; margin:16px 0; border-radius:var(--radius-sm);
+  font-size:0.95em; position:relative;
+}
+.highlight { background:var(--blue-light); border-left:4px solid var(--blue); }
+.warning { background:var(--red-light); border-left:4px solid var(--red); }
+.insight { background:var(--green-light); border-left:4px solid var(--green); }
+.highlight b, .insight b { color:var(--text); }
+.warning b { color:var(--red); }
+.highlight::before, .warning::before, .insight::before {
+  font-size:1.1em; margin-right:6px; vertical-align:middle;
+}
+.highlight::before { content:"💡"; }
+.warning::before { content:"⚠️"; }
+.insight::before { content:"✨"; }
+
+/* ── Tables ── */
+.table-wrap { overflow-x:auto; margin:16px 0; border-radius:var(--radius); border:1px solid var(--border); }
+table { width:100%; border-collapse:collapse; font-size:0.92em; }
+th {
+  background:var(--bg-alt); color:var(--text); padding:12px 16px;
+  text-align:left; font-weight:600; font-size:0.9em;
+  border-bottom:2px solid var(--border); white-space:nowrap;
+}
+td { padding:10px 16px; border-bottom:1px solid var(--border-light); vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:var(--card-hover); }
+
+/* ── Code ── */
+code {
+  background:var(--blue-bg); color:var(--blue); padding:2px 7px;
+  border-radius:5px; font-size:0.88em;
+  font-family:'JetBrains Mono','Fira Code',Consolas,monospace;
+}
+pre {
+  background:#1e293b; border:1px solid #334155; border-radius:var(--radius-sm);
+  padding:18px 20px; overflow-x:auto; margin:12px 0; font-size:0.87em; line-height:1.6;
+  box-shadow:var(--shadow-sm);
+}
+pre code { background:none; padding:0; color:#e2e8f0; }
+
+/* ── Badges ── */
+.badge {
+  display:inline-flex; align-items:center; padding:3px 10px;
+  border-radius:12px; font-size:0.78em; font-weight:600; letter-spacing:0.01em;
+}
+.badge-blue { background:var(--blue-bg); color:var(--blue); }
+.badge-green { background:var(--green-bg); color:var(--green); }
+.badge-orange { background:var(--orange-bg); color:var(--orange); }
+.badge-red { background:var(--red-bg); color:var(--red); }
+.badge-purple { background:var(--purple-bg); color:var(--purple); }
+.badge-cyan { background:var(--cyan-bg); color:var(--cyan); }
+.badge-pink { background:var(--pink-bg); color:var(--pink); }
+
+/* ── Two-column layout ── */
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+@media(max-width:768px) { .two-col { grid-template-columns:1fr; } }
+
+/* ── Tag row ── */
+.tag-row { display:flex; gap:6px; flex-wrap:wrap; margin:6px 0; }
+
+/* ── Links ── */
+a { color:var(--blue); text-decoration:none; transition:color 0.15s; }
+a:hover { color:var(--purple); }
+
+/* ── TOC ── */
+.toc {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:24px 32px; margin:24px 0;
+  box-shadow:var(--shadow-sm);
+}
+.toc-title { font-weight:700; color:var(--text); margin-bottom:12px; font-size:1.05em; }
+.toc ul { list-style:none; padding:0; }
+.toc > ul > li { margin:8px 0; }
+.toc a { color:var(--text-secondary); font-size:0.95em; padding:4px 0; display:inline-block; }
+.toc a:hover { color:var(--blue); }
+.toc-h3 { padding-left:24px; }
+
+/* ── SVG Diagram container ── */
+.diagram-container {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:28px; margin:20px 0;
+  overflow-x:auto; box-shadow:var(--shadow-sm);
+}
+.diagram-container svg { width:100%; height:auto; }
+.diagram-label { font-size:0.82em; color:var(--dim); margin-top:8px; text-align:center; }
+
+/* ── Flow steps ── */
+.flow-steps { display:flex; flex-direction:column; gap:0; margin:16px 0; }
+.flow-step {
+  display:flex; align-items:stretch; gap:16px; position:relative;
+}
+.flow-step-marker {
+  display:flex; flex-direction:column; align-items:center; flex-shrink:0; width:40px;
+}
+.flow-step-dot {
+  width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:0.8em; font-weight:700; color:#fff; flex-shrink:0;
+}
+.flow-step-line { flex:1; width:2px; min-height:12px; }
+.flow-step-content {
+  flex:1; background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:14px 18px;
+  box-shadow:var(--shadow-sm);
+}
+.flow-step-content p { margin:4px 0; }
+
+/* ── Collapsible sections ── */
+details { margin:12px 0; }
+details > summary {
+  cursor:pointer; font-weight:600; color:var(--blue);
+  padding:8px 0; user-select:none; list-style:none;
+  display:flex; align-items:center; gap:6px;
+}
+details > summary::before { content:"▸"; transition:transform 0.2s; display:inline-block; }
+details[open] > summary::before { transform:rotate(90deg); }
+details > summary:hover { color:var(--purple); }
+
+/* ── Back to top ── */
+.back-top {
+  position:fixed; bottom:28px; right:28px; z-index:99;
+  width:44px; height:44px; border-radius:50%; border:none;
+  background:var(--blue); color:#fff; cursor:pointer;
+  box-shadow:var(--shadow-md); display:none; align-items:center; justify-content:center;
+  transition:transform 0.2s, opacity 0.2s; opacity:0;
+}
+.back-top.visible { display:flex; opacity:1; }
+.back-top:hover { transform:scale(1.1); background:var(--purple); }
+
+/* ── Footer ── */
+.footer {
+  border-top:2px solid var(--border); margin-top:60px; padding:32px 0;
+  text-align:center; color:var(--dim); font-size:0.9em;
+}
+
+/* ── Utility ── */
+.mt-sm { margin-top:8px; }
+.mb-sm { margin-bottom:8px; }
+.text-sm { font-size:0.9em; }
+.text-dim { color:var(--dim); }
+.font-mono { font-family:'JetBrains Mono','Fira Code',Consolas,monospace; }
+</style>
+</head>
+<body>
+
+<!-- ── Sticky Navigation ── -->
+<nav class="topnav">
+  <div class="topnav-brand">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    EDA FastMCP 技术报告
+  </div>
+  <div class="topnav-links" id="navLinks">
+    <a href="#overview">总览</a>
+    <a href="#search-apis">search_apis</a>
+    <a href="#search-apis-by-keyword">keyword</a>
+    <a href="#get-api-details">details</a>
+    <a href="#abbreviation">缩写</a>
+    <a href="#scoring">评分</a>
+    <a href="#edge-cases">边界</a>
+    <a href="#source-field">source</a>
+    <a href="#examples">示例</a>
+    <a href="#config">配置</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ── Hero Section ── -->
+<div class="hero">
+  <h1>🔍 EDA FastMCP 检索 API 技术报告</h1>
+  <p class="hero-subtitle">当前版本 V3.1 · 生成日期 2026-07-13</p>
+  <div class="hero-badges">
+    <span class="hero-badge blue">🔵 语义向量</span>
+    <span class="hero-badge green">🟢 关键词匹配</span>
+    <span class="hero-badge orange">🟠 精确查询</span>
+  </div>
+</div>
+
+<!-- ===== 阅读前：这个系统在干什么 ===== -->
+<div class="card" style="border-left:4px solid var(--blue);">
+  <div class="card-title">📖 阅读前：这个系统在干什么</div>
+  <p>读懂下文前，先建立几个基本概念：</p>
+  <ul style="margin:8px 0 8px 22px;">
+    <li><b>EDA</b>：电子设计自动化（Electronic Design Automation），用于做电路版图/芯片设计。</li>
+    <li><b>API</b>：这里指 EDA 软件 <b>pyAether</b>（华大九天 Empyrean 平台）暴露的 Python 编程接口。这些 API 数量庞大（8000+），分<b>三套等价命名前缀</b>：<b>过程式 <code>db*</code></b>（database 前缀，如 <code>dbCrtInst</code>）、<b>面向对象 <code>emy*</code></b>（Empyrean 前缀，如 <code>emyDesign.create</code>）、<b>底层 <code>ae*</code></b>（aether 前缀），三套常指同一个操作、可互相替换。另有 <b><code>goa*</code></b>（GOA = Geometric Operation Analysis，几何运算族）一族互相关联。详见 §3.5。</li>
+    <li><b>谁在用</b>：AI 编程 agent（如 Cline/Claude）。agent 拿到自然语言需求后，要写出调用这些 API 的代码——但它不可能记住 8000 个 API，所以需要<b>检索</b>：按自然语言描述找到正确的 API。</li>
+    <li><b>MCP</b>：Model Context Protocol（模型上下文协议）。MCP Server 是挂载在 agent 旁的工具服务端，agent 通过它调用检索工具。本报告讲的"检索 API"就是 MCP Server 暴露给 agent 的工具。</li>
+    <li><b>向量库（ChromaDB）</b>：一个向量数据库，把每个 API 名字转成向量嵌入存起来，检索时按语义相似度找。本系统的一个<b>关键约束</b>：向量库只嵌入了 <b>API 名称</b>（不含描述全文），这决定了后续为何要补 BM25、要做缩写展开。</li>
+    <li><b>BM25</b>：经典文本检索算法，按词频打分。本系统用它补充向量检索（BM25 索引了 API 描述全文，能命中向量漏掉的）。</li>
+  </ul>
+  <p style="margin-top:10px;"><b>一句话概括</b>：agent 用自然语言搜 EDA API，本系统提供三个检索工具（语义向量 / 关键词 / 精确）协同找到正确 API，并用缩写映射、BM25 补充、零结果警告等机制弥补向量检索的盲区。</p>
+</div>
+
+<!-- ── Table of Contents ── -->
+<div class="toc">
+  <div class="toc-title">📑 目录</div>
+  <ul>
+    <li><a href="#overview">1. 系统总览：三工具协作架构</a></li>
+    <li><a href="#search-apis">2. search_apis：语义向量 + BM25 始终补充</a></li>
+    <li><a href="#search-apis-by-keyword">3. search_apis_by_keyword：关键词补路</a></li>
+    <li><a href="#get-api-details">4. get_api_details：精确查询 + 模糊容错</a></li>
+    <li><a href="#abbreviation">5. 缩写系统：双向映射 + 驼峰拆分</a></li>
+    <li><a href="#scoring">6. 评分与排序：F2 + 三层分层 + 异构不混排</a></li>
+    <li><a href="#edge-cases">7. 边界处理与安全网</a></li>
+    <li><a href="#source-field">8. source 字段全景</a></li>
+    <li><a href="#examples">9. 典型查询全程追踪</a></li>
+    <li><a href="#config">10. 配置参数一览</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="overview"><span class="section-num">1</span>系统总览：三工具协作架构</h2>
+
+<p>EDA FastMCP 提供三个检索工具，覆盖 <span class="badge badge-blue">语义</span> <span class="badge badge-green">关键词</span> <span class="badge badge-orange">精确</span> 三种搜索模式：</p>
+
+<div class="two-col">
+<div class="card">
+  <div class="card-title"><span class="badge badge-blue">主路</span> search_apis</div>
+  <p><b>检索模式</b>：向量语义 + BM25 始终补充</p>
+  <p><b>适用场景</b>：自然语言描述（如 "get current design"）</p>
+  <p><b>返回格式</b>：<code>{api_name, description, similarity, source?}</code></p>
+  <p><b>核心特性</b>：查询双向缩写展开 → 向量检索 → BM25 补充最多 3 条 → 零结果警告</p>
+</div>
+<div class="card">
+  <div class="card-title"><span class="badge badge-green">补路</span> search_apis_by_keyword</div>
+  <p><b>检索模式</b>：名称 Token Overlap + BM25 描述匹配</p>
+  <p><b>适用场景</b>：缩写查找（CV/DM）、API 名片段（dbCrtInst）</p>
+  <p><b>返回格式</b>：<code>{api_name, description, similarity, source, note}</code></p>
+  <p><b>核心特性</b>：query 分类路由 → keyword search → 软重定向/精确匹配 → 零结果警告</p>
+</div>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="badge badge-orange">精确</span> get_api_details</div>
+  <p><b>检索模式</b>：精确匹配 + 多级模糊容错</p>
+  <p><b>适用场景</b>：已知 API 名（来自搜索结果或任务描述），获取完整文档</p>
+  <p><b>返回格式</b>：<code>{api_name, api_type, description, properties, inheritance_relations}</code></p>
+  <p><b>核心特性</b>：精确匹配 → 唯一前缀匹配 → 大小写不敏感 → 候选提示</p>
+</div>
+
+<!-- ── Architecture SVG Diagram ── -->
+<div class="diagram-container">
+<svg viewBox="0 0 900 470" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+    </marker>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="116%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08"/>
+    </filter>
+    <linearGradient id="gradBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+    <linearGradient id="gradGreen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#16a34a"/><stop offset="100%" stop-color="#0891b2"/>
+    </linearGradient>
+    <linearGradient id="gradOrange" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ea580c"/><stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Agent Box -->
+  <rect x="330" y="10" width="240" height="48" rx="12" fill="url(#gradBlue)" filter="url(#shadow)"/>
+  <text x="450" y="40" text-anchor="middle" fill="white" font-weight="700" font-size="15">🤖 AI Agent 发起搜索</text>
+
+  <!-- Arrows from Agent -->
+  <line x1="370" y1="58" x2="120" y2="108" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+  <line x1="450" y1="58" x2="450" y2="108" stroke="#16a34a" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="530" y1="58" x2="780" y2="108" stroke="#ea580c" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Three Tool Boxes -->
+  <rect x="20" y="110" width="220" height="50" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="130" y="131" text-anchor="middle" fill="#3b82f6" font-weight="700" font-size="13">search_apis</text>
+  <text x="130" y="149" text-anchor="middle" fill="#475569" font-size="11">向量 + BM25补充</text>
+
+  <rect x="330" y="110" width="240" height="50" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="450" y="131" text-anchor="middle" fill="#16a34a" font-weight="700" font-size="13">search_apis_by_keyword</text>
+  <text x="450" y="149" text-anchor="middle" fill="#475569" font-size="11">Token Overlap + BM25</text>
+
+  <rect x="660" y="110" width="220" height="50" rx="10" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="770" y="131" text-anchor="middle" fill="#ea580c" font-weight="700" font-size="13">get_api_details</text>
+  <text x="770" y="149" text-anchor="middle" fill="#475569" font-size="11">精确 + 模糊容错</text>
+
+  <!-- search_apis detail box -->
+  <rect x="20" y="195" width="260" height="100" rx="8" fill="white" stroke="#dfe3ec" stroke-width="1" filter="url(#shadow)"/>
+  <text x="36" y="216" fill="#3b82f6" font-weight="600" font-size="11">search_apis 内部流程</text>
+  <circle cx="40" cy="234" r="4" fill="#3b82f6"/><text x="52" y="238" fill="#475569" font-size="10.5">1. 双向缩写展开</text>
+  <circle cx="40" cy="254" r="4" fill="#3b82f6"/><text x="52" y="258" fill="#475569" font-size="10.5">2. ChromaDB 向量检索</text>
+  <circle cx="40" cy="274" r="4" fill="#3b82f6"/><text x="52" y="278" fill="#475569" font-size="10.5">3. BM25 始终补充（≤3条）</text>
+  <line x1="130" y1="160" x2="130" y2="195" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+  <!-- keyword detail box -->
+  <rect x="310" y="195" width="280" height="120" rx="8" fill="white" stroke="#dfe3ec" stroke-width="1" filter="url(#shadow)"/>
+  <text x="326" y="216" fill="#16a34a" font-weight="600" font-size="11">search_apis_by_keyword 内部流程</text>
+  <circle cx="330" cy="234" r="4" fill="#16a34a"/><text x="342" y="238" fill="#475569" font-size="10.5">1. classify_query() 路由</text>
+  <circle cx="330" cy="254" r="4" fill="#16a34a"/><text x="342" y="258" fill="#475569" font-size="10.5">2. keyword_search() 三层排序</text>
+  <circle cx="330" cy="274" r="4" fill="#16a34a"/><text x="342" y="278" fill="#475569" font-size="10.5">3. Synonym redirect 跨族等价</text>
+  <circle cx="330" cy="294" r="4" fill="#16a34a"/><text x="342" y="298" fill="#475569" font-size="10.5">4. Soft redirect / Exact match</text>
+  <line x1="450" y1="160" x2="450" y2="195" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+  <!-- get_api_details detail box -->
+  <rect x="620" y="195" width="260" height="115" rx="8" fill="white" stroke="#dfe3ec" stroke-width="1" filter="url(#shadow)"/>
+  <line x1="770" y1="160" x2="770" y2="195" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="636" y="216" fill="#ea580c" font-weight="600" font-size="11">get_api_details 容错级别</text>
+  <circle cx="640" cy="236" r="4" fill="#ea580c"/><text x="652" y="240" fill="#475569" font-size="10.5">1. 精确匹配</text>
+  <circle cx="640" cy="256" r="4" fill="#ea580c"/><text x="652" y="260" fill="#475569" font-size="10.5">2. 唯一前缀匹配</text>
+  <circle cx="640" cy="276" r="4" fill="#ea580c"/><text x="652" y="280" fill="#475569" font-size="10.5">3. 大小写不敏感</text>
+  <circle cx="640" cy="296" r="4" fill="#ea580c"/><text x="652" y="300" fill="#475569" font-size="10.5">4. 候选提示</text>
+
+  <!-- Shared bottom: zero result warning -->
+  <rect x="220" y="400" width="460" height="48" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="450" y="421" text-anchor="middle" fill="#dc2626" font-weight="600" font-size="12">⚠️ 零结果 → 双向 fallback</text>
+  <text x="450" y="438" text-anchor="middle" fill="#94a3b8" font-size="9.5">（两个搜索工具搜不到时互相提示换对方，见 §7.1）</text>
+
+  <line x1="130" y1="295" x2="310" y2="400" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+  <line x1="450" y1="315" x2="450" y2="400" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+</svg>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="search-apis"><span class="section-num">2</span>search_apis：语义向量 + BM25 始终补充</h2>
+
+<h3>2.1 执行流程</h3>
+
+<div class="flow-steps">
+  <div class="flow-step">
+    <div class="flow-step-marker">
+      <div class="flow-step-dot" style="background:linear-gradient(135deg,#3b82f6,#6366f1)">1</div>
+      <div class="flow-step-line" style="background:linear-gradient(to bottom,#3b82f6,#16a34a)"></div>
+    </div>
+    <div class="flow-step-content">
+      <p><b>双向缩写展开</b>：对 query 同时做缩写→全称（<code>expand_query</code>）和全称→缩写（<code>expand_query_reverse</code>），合并去重后生成 enriched_query</p>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-step-marker">
+      <div class="flow-step-dot" style="background:linear-gradient(135deg,#16a34a,#0891b2)">2</div>
+      <div class="flow-step-line" style="background:linear-gradient(to bottom,#16a34a,#ea580c)"></div>
+    </div>
+    <div class="flow-step-content">
+      <p><b>向量检索</b>：HTTP POST 到远程 ChromaDB 服务，用 enriched_query 做 cosine similarity 搜索</p>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-step-marker">
+      <div class="flow-step-dot" style="background:linear-gradient(135deg,#ea580c,#dc2626)">3</div>
+      <div class="flow-step-line" style="background:linear-gradient(to bottom,#ea580c,#7c3aed)"></div>
+    </div>
+    <div class="flow-step-content">
+      <p><b>BM25 始终补充</b>：无条件执行，从 keyword_search 获取结果，去重后追加在向量结果后面</p>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-step-marker">
+      <div class="flow-step-dot" style="background:linear-gradient(135deg,#7c3aed,#db2777)">4</div>
+    </div>
+    <div class="flow-step-content">
+      <p><b>零结果警告</b>：向量+BM25 都无结果时，返回 NO_RESULTS + search_warning</p>
+    </div>
+  </div>
+</div>
+
+<h3>2.2 双向缩写展开</h3>
+
+<div class="highlight">
+<b>设计动机</b>：向量库只嵌入 API 名称（不含描述），"create instance" 的 embedding 无法关联到 <code>dbCrtInst</code>（Crt=Create）。需要两个方向同时展开：
+</div>
+
+<div class="two-col">
+<div class="card">
+  <div class="card-title"><span class="badge badge-orange">方向 1</span> 缩写 → 全称</div>
+  <p><code>"DM file object"</code><br>→ <code>"DM Design Manager file object"</code></p>
+  <p>让向量 embedding 能关联到全称语义</p>
+  <p class="mt-sm"><span class="badge badge-orange">实际触发率仅 4%</span> Agent 几乎从不输入缩写</p>
+</div>
+<div class="card">
+  <div class="card-title"><span class="badge badge-green">方向 2</span> 全称 → 缩写</div>
+  <p><code>"create instance"</code><br>→ <code>"create instance crt inst"</code></p>
+  <p>让向量 embedding 能关联到 API 名中的缩写 token</p>
+  <p class="mt-sm"><span class="badge badge-green">核心方向</span> 这才是解决命名鸿沟的关键</p>
+</div>
+</div>
+
+<!-- ── Abbreviation Expansion SVG ── -->
+<div class="diagram-container">
+<svg viewBox="0 0 850 200" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,sans-serif">
+  <defs>
+    <filter id="s" x="-4%" y="-8%" width="108%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+  <!-- Input -->
+  <rect x="10" y="70" width="180" height="50" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" filter="url(#s)"/>
+  <text x="100" y="93" text-anchor="middle" fill="#3b82f6" font-weight="700" font-size="13">Query</text>
+  <text x="100" y="110" text-anchor="middle" fill="#475569" font-size="11">"create instance"</text>
+
+  <!-- Arrow split -->
+  <line x1="190" y1="80" x2="280" y2="50" stroke="#ea580c" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="190" y1="110" x2="280" y2="140" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Direction 1 -->
+  <rect x="280" y="20" width="250" height="55" rx="10" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5" filter="url(#s)"/>
+  <text x="295" y="42" fill="#ea580c" font-weight="600" font-size="11">方向 1: 缩写→全称</text>
+  <text x="295" y="60" fill="#475569" font-size="10">expand_query → 不变 (无缩写)</text>
+
+  <!-- Direction 2 -->
+  <rect x="280" y="110" width="250" height="55" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5" filter="url(#s)"/>
+  <text x="295" y="132" fill="#16a34a" font-weight="600" font-size="11">方向 2: 全称→缩写 ⭐</text>
+  <text x="295" y="150" fill="#475569" font-size="8.5">+"crt inst" (全称→缩写)</text>
+
+  <!-- Merge -->
+  <line x1="530" y1="50" x2="590" y2="85" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="530" y1="140" x2="590" y2="100" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="590" y="65" width="240" height="55" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5" filter="url(#s)"/>
+  <text x="605" y="87" fill="#7c3aed" font-weight="700" font-size="12">enriched_query</text>
+  <text x="605" y="107" fill="#475569" font-size="10.5">"create instance crt inst"</text>
+</svg>
+</div>
+
+<h3>2.3 BM25 始终补充</h3>
+
+<div class="highlight">
+<b>设计动机</b>：向量库仅嵌入 API 名，自然语言 query "polygon boolean operation" 搜不到 <code>emyPointArrayAnd</code>（名字里没有 "polygon"）。BM25 索引了描述全文，能命中向量遗漏的 API。
+</div>
+
+<div class="table-wrap">
+<table>
+<tr><th>参数</th><th>值</th><th>说明</th></tr>
+<tr><td><code>BM25_SUPPLEMENT_K</code></td><td>3</td><td>最多追加 3 条 BM25 结果</td></tr>
+<tr><td>补充策略</td><td>去重追加</td><td>BM25 结果去重后追加在向量结果后面，不截断向量结果</td></tr>
+<tr><td>source 标注</td><td><code>bm25_fallback</code></td><td>通过 source 字段区分向量结果和 BM25 补充</td></tr>
+<tr><td>分数字段统一</td><td><code>score → similarity</code></td><td>字段名统一，但两者分数不可比（0-1 vs 0-30+）</td></tr>
+</table>
+</div>
+
+<div class="warning">
+<b>分数不可比</b>：向量 similarity 范围 0-1，BM25 score 范围 0-30+。统一到 <code>similarity</code> 字段仅是为了输出格式一致，<b>不代表分数可比</b>。必须用 <code>source</code> 字段区分来源。
+</div>
+
+<h3>2.4 查询示例</h3>
+
+<div class="card">
+  <div class="card-title">query = "polygon boolean operation"</div>
+  <pre><code># Step 1: 双向展开
+expand_query:       "polygon boolean operation" → 无缩写可展开 → 不变
+expand_query_reverse: "polygon boolean operation" → 无全称→缩写命中 → 不变
+
+# Step 2: 向量检索
+→ emyPointArrayAnd (sim=0.43)    # 名字含 "PointArray" 不含 "polygon"，向量弱命中
+→ emyPointArrayOr  (sim=0.41)
+→ dbSingleLayerGOA (sim=0.38)
+
+# Step 3: BM25 补充（描述含 "polygon boolean"）
+→ dbLayerOr        (sim=12.5, source=bm25_fallback)  ← 描述含 "polygon boolean"
+→ dbPointArrayOr   (sim=9.8,  source=bm25_fallback)  ← 描述含 "point array or"
+→ goaLayerOr       (sim=8.2,  source=bm25_fallback)  ← 描述含 "geometric or"  (goa* 见 §3.5，几何运算族)</code></pre>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="search-apis-by-keyword"><span class="section-num">3</span>search_apis_by_keyword：关键词补路</h2>
+
+<h3>3.1 Query 分类路由</h3>
+
+<div class="highlight">
+<b>设计动机</b>：Agent 的 query 模式多样——纯缩写（CV）、API 名片段（dbCrtInst）、自然语言（create net）。不同模式需要不同的检索策略，不能一刀切。
+</div>
+
+<!-- ── Query Classification SVG ── -->
+<div class="diagram-container">
+<svg viewBox="0 0 820 240" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,sans-serif">
+  <!-- Input query -->
+  <rect x="10" y="95" width="180" height="50" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" filter="url(#s)"/>
+  <text x="100" y="118" text-anchor="middle" fill="#3b82f6" font-weight="700" font-size="12">classify_query()</text>
+  <text x="100" y="135" text-anchor="middle" fill="#475569" font-size="10">query → 分类路由</text>
+
+  <!-- Router diamond -->
+  <rect x="310" y="90" width="120" height="55" rx="8" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5" filter="url(#s)"/>
+  <text x="370" y="122" text-anchor="middle" fill="#7c3aed" font-weight="600" font-size="12">路由分发</text>
+
+  <line x1="170" y1="120" x2="310" y2="117" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+  <!-- Branches -->
+  <line x1="370" y1="90" x2="370" y2="50" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="430" y1="117" x2="530" y2="117" stroke="#0891b2" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="370" y1="145" x2="370" y2="180" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Abbreviation -->
+  <rect x="240" y="10" width="260" height="42" rx="8" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.2" filter="url(#s)"/>
+  <text x="260" y="28" fill="#7c3aed" font-weight="700" font-size="11">abbreviation</text>
+  <text x="250" y="44" fill="#475569" font-size="8.5">≤4字符全大写: CV/DM/GOA → 仅 keyword</text>
+
+  <!-- API name fragment -->
+  <rect x="530" y="94" width="270" height="42" rx="8" fill="#ecfeff" stroke="#0891b2" stroke-width="1.2" filter="url(#s)"/>
+  <text x="548" y="112" fill="#0891b2" font-weight="700" font-size="11">api_name_fragment</text>
+  <text x="540" y="128" fill="#475569" font-size="8.5">驼峰名: dbCrtInst → keyword + exact</text>
+
+  <!-- Natural language -->
+  <rect x="240" y="180" width="260" height="42" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.2" filter="url(#s)"/>
+  <text x="260" y="198" fill="#16a34a" font-weight="700" font-size="11">natural_language</text>
+  <text x="250" y="214" fill="#475569" font-size="8.5">≥2词: "create net" → keyword + soft</text>
+</svg>
+</div>
+
+<h3>3.2 Soft Redirect（自然语言软重定向）</h3>
+
+<div class="card">
+  <div class="card-title">设计动机</div>
+  <p>Agent 误用 keyword 工具搜自然语言（V2.0 中 23% 的 keyword query 是自然语言）。不是拒绝，而是<b>自动补充</b>语义搜索结果，让 agent 既看到关键词匹配也看到语义匹配。</p>
+  <pre><code># query = "create symbol" (natural_language)
+# 1. keyword search → 找到 dbCrtSymbolRect (source=name_overlap)
+# 2. soft redirect → api_recall("create symbol", threshold=0.3)  # api_recall 即向量检索函数
+# 3. 补充语义结果，标注 source="vector_redirect"</code></pre>
+</div>
+
+<h3>3.3 Exact Match（精确匹配检测）</h3>
+
+<div class="card">
+  <div class="card-title">设计动机</div>
+  <p>V2.0 中 52% 的 keyword 调用是"工具选择偏移"——agent 用 keyword 做 API 名验证，该用 <code>get_api_details</code>。精确匹配检测直接告诉 agent："这就是你要的 API，别搜了，去查详情"。</p>
+  <pre><code># query = "dbCrtInst" (api_name_fragment)
+# 1. keyword search → 找到 dbCrtInst (source=name_overlap, score≈0.8)
+# 2. exact_match: "dbCrtInst" in data → True!  (data 即内存 API 全量字典，见 §4)
+# 3. 移除已有的同名结果，插入:
+#    {api_name: "dbCrtInst", similarity: 1.0,
+#     source: "exact_match",
+#     note: "exact API name match — use get_api_details instead"}</code></pre>
+</div>
+
+<h3>3.4 keyword_search 内部：Token Overlap + BM25 三层排序</h3>
+
+<div class="highlight"><b>读图提示</b>：左半图是<b>两个并行处理分支</b>（A 名称重叠 / B BM25）各自产候选；右半图是<b>排序层 1/2/3</b>——把所有候选按"名称重叠度 NO"高低分到三层再排序。左边的"分支 A/B"和右边的"排序层 1/2/3"是两套不同分类，不是一一对应：分支 A 的高分结果进排序层 1、低分进排序层 2；分支 B（BM25）的结果若同时有名称重叠则进排序层 2 并升权，纯 BM25（无名称重叠）才进排序层 3。</div>
+
+<!-- ── Three-Layer Sorting SVG ── -->
+<div class="diagram-container">
+<svg viewBox="0 0 840 340" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,sans-serif">
+  <!-- Input -->
+  <rect x="10" y="115" width="190" height="48" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" filter="url(#s)"/>
+  <text x="105" y="138" text-anchor="middle" fill="#3b82f6" font-weight="700" font-size="12">keyword_search</text>
+  <text x="105" y="154" text-anchor="middle" fill="#475569" font-size="9">(query, top_k)</text>
+
+  <!-- Two branches -->
+  <line x1="170" y1="130" x2="260" y2="70" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="170" y1="150" x2="260" y2="210" stroke="#ea580c" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Token Overlap -->
+  <rect x="260" y="30" width="230" height="80" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.2" filter="url(#s)"/>
+  <text x="275" y="52" fill="#16a34a" font-weight="700" font-size="11">处理分支 A：名称重叠</text>
+  <text x="275" y="68" fill="#475569" font-size="9.5">split_camel → expand_tokens</text>
+  <text x="275" y="83" fill="#475569" font-size="9.5">→ tokenize_query</text>
+  <text x="275" y="98" fill="#475569" font-size="9.5">对每个 API 名算 NO 分（F2）</text>
+  <text x="275" y="108" fill="#94a3b8" font-size="8">（NO=名称重叠度，F2=偏召回评分）</text>
+
+  <!-- BM25 -->
+  <rect x="260" y="170" width="220" height="80" rx="8" fill="#fff7ed" stroke="#ea580c" stroke-width="1.2" filter="url(#s)"/>
+  <text x="280" y="192" fill="#ea580c" font-weight="700" font-size="12">处理分支 B：BM25</text>
+  <text x="280" y="210" fill="#475569" font-size="10">tokenize_query → BM25 索引查询</text>
+  <text x="280" y="226" fill="#475569" font-size="10">BM25_MIN_SCORE=1.0</text>
+  <text x="280" y="242" fill="#94a3b8" font-size="9.5">（按 API 描述全文匹配打分）</text>
+
+  <!-- Merge -->
+  <line x1="480" y1="70" x2="560" y2="110" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="480" y1="210" x2="560" y2="160" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="560" y="85" width="120" height="90" rx="8" fill="white" stroke="#dfe3ec" stroke-width="1" filter="url(#s)"/>
+  <text x="620" y="108" text-anchor="middle" fill="#475569" font-weight="600" font-size="11">合并去重</text>
+  <text x="620" y="126" text-anchor="middle" fill="#475569" font-size="10">+</text>
+  <text x="620" y="144" text-anchor="middle" fill="#475569" font-size="10">三层分层</text>
+  <text x="620" y="162" text-anchor="middle" fill="#475569" font-size="10">排序</text>
+
+  <!-- Three output layers -->
+  <line x1="680" y1="105" x2="720" y2="40" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="680" y1="130" x2="720" y2="130" stroke="#ea580c" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="680" y1="155" x2="720" y2="220" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="720" y="15" width="110" height="48" rx="7" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.2" filter="url(#s)"/>
+  <text x="730" y="33" fill="#16a34a" font-weight="700" font-size="10">排序层 1</text>
+  <text x="730" y="48" fill="#475569" font-size="9.5">NO ≥ 0.5 精确</text>
+
+  <rect x="720" y="105" width="110" height="48" rx="7" fill="#fff7ed" stroke="#ea580c" stroke-width="1.2" filter="url(#s)"/>
+  <text x="730" y="123" fill="#ea580c" font-weight="700" font-size="10">排序层 2</text>
+  <text x="730" y="138" fill="#475569" font-size="9.5">NO 0.2~0.5 弱匹配</text>
+
+  <rect x="720" y="195" width="110" height="48" rx="7" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.2" filter="url(#s)"/>
+  <text x="730" y="213" fill="#7c3aed" font-weight="700" font-size="10">排序层 3</text>
+  <text x="730" y="228" fill="#475569" font-size="9.5">纯 BM25 兜底</text>
+
+  <!-- Synonym note -->
+  <rect x="560" y="260" width="270" height="30" rx="6" fill="#ecfeff" stroke="#0891b2" stroke-width="1" stroke-dasharray="4,2" filter="url(#s)"/>
+  <text x="570" y="280" fill="#0891b2" font-size="8.5">Synonym redirect：跨族等价追加（不占top_k）</text>
+  <line x1="775" y1="243" x2="775" y2="260" stroke="#0891b2" stroke-width="1" stroke-dasharray="3,2"/>
+</svg>
+</div>
+
+<h3>3.5 Synonym Redirect（跨命令族等价提示）</h3>
+
+<div class="card">
+  <div class="card-title">设计动机</div>
+  <p>EDA API 存在<b>三套等价接口</b>：过程式 <code>db*</code>（database 前缀）、面向对象 <code>emy*.create</code>（Empyrean 前缀）、底层 <code>ae*</code>（aether 前缀），三套常指同一个操作。另有 <code>goa*</code>（GOA = Geometric Operation Analysis，几何运算族）一族互相关联。Agent 搜到 <code>dbCrtRect</code> 后，可能不知道还有 <code>emyRect.create</code> / <code>aeCreateRect</code>。Synonym redirect 自动追加等价 API，扩展 agent 的选择空间。</p>
+</div>
+
+<div class="table-wrap">
+<table>
+<tr><th>映射方向</th><th>示例</th></tr>
+<tr><td>db* → emy*.create</td><td><code>dbCrtRect</code> → <code>emyRect.create</code></td></tr>
+<tr><td>GOA 族互关联</td><td><code>dbLayerAnd</code> → <code>goaLayerAnd</code>、<code>dbSingleLayerGOA</code>（同族几何运算）</td></tr>
+<tr><td>ae* → db*/emy*</td><td><code>aeCreateRect</code> → <code>dbCrtRect</code>、<code>emyRect.create</code></td></tr>
+</table>
+</div>
+
+<div class="insight">
+<b>不占 top_k 名额</b>：Synonym 追加在 top_k 核心结果之后。即使 top_k=5 已返回 5 条核心结果，synonym 仍会追加。Score = 原结果 × 0.8，体现"推荐"而非"精确命中"。
+</div>
+
+<!-- ============================================================ -->
+<h2 id="get-api-details"><span class="section-num">4</span>get_api_details：精确查询 + 模糊容错</h2>
+
+<div class="flow-steps">
+  <div class="flow-step">
+    <div class="flow-step-marker">
+      <div class="flow-step-dot" style="background:linear-gradient(135deg,#16a34a,#0891b2)">1</div>
+      <div class="flow-step-line" style="background:linear-gradient(to bottom,#16a34a,#3b82f6)"></div>
+    </div>
+    <div class="flow-step-content">
+      <p><b>精确匹配</b>：<code>api_name in data</code>（<code>data</code> 是加载到内存的 API 全量字典，键为 API 名）— 直接命中返回完整文档</p>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-step-marker">
+      <div class="flow-step-dot" style="background:linear-gradient(135deg,#3b82f6,#6366f1)">2</div>
+      <div class="flow-step-line" style="background:linear-gradient(to bottom,#3b82f6,#ea580c)"></div>
+    </div>
+    <div class="flow-step-content">
+      <p><b>唯一前缀匹配</b>：若输入恰是某个 API 名的唯一前缀（即只有这一个 API 以它开头），直接返回该 API。例如输入 <code>"dbCrtSymbol"</code> 若只有 <code>dbCrtSymbolRect</code> 一个 API 以它开头，则直接返回 <code>dbCrtSymbolRect</code>。</p>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-step-marker">
+      <div class="flow-step-dot" style="background:linear-gradient(135deg,#ea580c,#dc2626)">3</div>
+      <div class="flow-step-line" style="background:linear-gradient(to bottom,#ea580c,#7c3aed)"></div>
+    </div>
+    <div class="flow-step-content">
+      <p><b>大小写不敏感</b>：<code>"dbcrtinst"</code> 匹配 <code>"dbCrtInst"</code>（仅当唯一匹配时）</p>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-step-marker">
+      <div class="flow-step-dot" style="background:linear-gradient(135deg,#7c3aed,#db2777)">4</div>
+    </div>
+    <div class="flow-step-content">
+      <p><b>候选提示</b>：前缀有多个匹配时，返回相似候选列表</p>
+    </div>
+  </div>
+</div>
+
+<div class="highlight">
+<b>设计动机</b>：Agent 拼写 API 名可能有小错（大小写、前缀截断）。四级 fallback 确保大多数拼写偏差都能被容错，而不是直接返回空。
+</div>
+
+<!-- ============================================================ -->
+<h2 id="abbreviation"><span class="section-num">5</span>缩写系统：双向映射 + 驼峰拆分</h2>
+
+<h3>5.1 缩写映射表设计</h3>
+
+<div class="card">
+  <div class="card-title">大小写区分语义</div>
+  <p>同一缩写的不同大小写形式映射到不同全称：</p>
+  <div class="table-wrap">
+  <table>
+  <tr><th>缩写</th><th>全称</th><th>出现位置</th></tr>
+  <tr><td><code>CP</code></td><td>Compress</td><td><code>emyPointArrayIsRectangleNoCP</code> 中独立全大写 token</td></tr>
+  <tr><td><code>Cp</code></td><td>Checkpoint</td><td><code>getCpID</code> 中驼峰内嵌 token</td></tr>
+  </table>
+  </div>
+  <p>精确匹配优先：query 中的 <code>Cp</code> 一定展开为 Checkpoint，<code>CP</code> 一定展开为 Compress。大小写不敏感的兜底匹配仅在大小写信息已丢失时使用。</p>
+</div>
+
+<h3>5.2 Token 索引构建管线</h3>
+
+<!-- ── Token Index Pipeline SVG ── -->
+<div class="diagram-container">
+<svg viewBox="0 0 840 200" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,sans-serif">
+  <!-- Input API name -->
+  <rect x="10" y="72" width="160" height="48" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" filter="url(#s)"/>
+  <text x="90" y="100" text-anchor="middle" fill="#3b82f6" font-weight="700" font-size="13">dbOpenCVByType</text>
+
+  <line x1="170" y1="96" x2="230" y2="96" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+  <!-- split_camel -->
+  <rect x="230" y="52" width="150" height="88" rx="8" fill="white" stroke="#dfe3ec" stroke-width="1" filter="url(#s)"/>
+  <text x="305" y="72" text-anchor="middle" fill="#7c3aed" font-weight="600" font-size="11">split_camel()</text>
+  <text x="244" y="90" fill="#475569" font-size="9.5">剥离 "db" 前缀</text>
+  <text x="244" y="106" fill="#475569" font-size="9.5">驼峰拆分</text>
+  <text x="244" y="122" fill="#475569" font-size="9.5">过滤 len>1</text>
+  <text x="244" y="132" fill="#94a3b8" font-size="8">→[Open,CV,By,Type]</text>
+
+  <line x1="380" y1="96" x2="420" y2="96" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- expand_tokens -->
+  <rect x="420" y="40" width="160" height="112" rx="8" fill="white" stroke="#dfe3ec" stroke-width="1" filter="url(#s)"/>
+  <text x="500" y="60" text-anchor="middle" fill="#16a34a" font-weight="600" font-size="11">expand_tokens()</text>
+  <text x="434" y="78" fill="#475569" font-size="9.5">"Open" → 保留</text>
+  <text x="434" y="94" fill="#16a34a" font-weight="600" font-size="9.5">"CV" → CellView</text>
+  <text x="434" y="108" fill="#94a3b8" font-size="8.5">  _split_expansion</text>
+  <text x="434" y="120" fill="#94a3b8" font-size="8.5">  → ["Cell","View"]</text>
+  <text x="434" y="136" fill="#475569" font-size="9.5">"By" → 保留</text>
+  <text x="434" y="148" fill="#475569" font-size="9.5">"Type" → 保留</text>
+
+  <line x1="580" y1="96" x2="630" y2="96" stroke="#ea580c" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Final index -->
+  <rect x="630" y="40" width="200" height="110" rx="8" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.2" filter="url(#s)"/>
+  <text x="730" y="60" text-anchor="middle" fill="#7c3aed" font-weight="700" font-size="11">.lower() + set()</text>
+  <text x="730" y="80" text-anchor="middle" fill="#475569" font-size="10">name_index =</text>
+  <text x="730" y="98" text-anchor="middle" fill="#475569" font-size="9" font-family="monospace">{"open","cv","cell",</text>
+  <text x="730" y="114" text-anchor="middle" fill="#475569" font-size="9" font-family="monospace">"view","by","type"}</text>
+</svg>
+</div>
+
+<h3>5.3 _split_expansion：为什么 "CellView" 要拆成 ["Cell", "View"]</h3>
+
+<div class="highlight">
+<b>索引-查询对称性</b>：如果索引中 "CellView" 作为单个 token <code>"cellview"</code> 存储，那么 query "cell view"（拆成两个 token）永远匹配不到。拆分后索引存 <code>{"cell", "view"}</code>，query 也有 <code>{"cell", "view"}</code>，匹配成功。
+</div>
+
+<h3>5.4 tokenize_query：完整查询 token 变换管线</h3>
+
+<div class="flow-steps">
+  <div class="flow-step">
+    <div class="flow-step-marker">
+      <div class="flow-step-dot" style="background:linear-gradient(135deg,#3b82f6,#6366f1)">1</div>
+      <div class="flow-step-line" style="background:linear-gradient(to bottom,#3b82f6,#16a34a)"></div>
+    </div>
+    <div class="flow-step-content">
+      <p><b>双重分词</b>：本管线对查询和 API 名同样适用。以 API 名 <code>dbOpenCellView</code> 为例——先驼峰拆分（split_camel）把 <code>dbOpenCellView</code> 剥离 <code>db</code> 前缀、拆成 <code>["Open","Cell","View"]</code> 再转小写；同时整串小写化为 <code>dbopencellview</code>（这是 tokenize_text，只做整串小写）。两路 token 合并去重，得到该 API 名的完整 token 集（tokenize_query 是对用户查询做同样拆词的完整管线）。</p>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-step-marker">
+      <div class="flow-step-dot" style="background:linear-gradient(135deg,#16a34a,#0891b2)">2</div>
+      <div class="flow-step-line" style="background:linear-gradient(to bottom,#16a34a,#ea580c)"></div>
+    </div>
+    <div class="flow-step-content">
+      <p><b>首字母缩写反查</b>：把多词短语的首字母组合反查缩写，如 "design manager" → "dm"（这样查 "design manager" 也能匹配到名字含 <code>dm</code> 的 API）。</p>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-step-marker">
+      <div class="flow-step-dot" style="background:linear-gradient(135deg,#ea580c,#dc2626)">3</div>
+      <div class="flow-step-line" style="background:linear-gradient(to bottom,#ea580c,#7c3aed)"></div>
+    </div>
+    <div class="flow-step-content">
+      <p><b>⭐ 相邻 token compact 合并</b>："cell" + "view" = "cellview" → 反查 <code>_compact_reverse["cellview"]</code> = "cv"</p>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-step-marker">
+      <div class="flow-step-dot" style="background:linear-gradient(135deg,#7c3aed,#db2777)">4</div>
+      <div class="flow-step-line" style="background:linear-gradient(to bottom,#7c3aed,#db2777)"></div>
+    </div>
+    <div class="flow-step-content">
+      <p><b>逐词处理</b>：每个 token 检查缩写映射，命中则追加展开词</p>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-step-marker">
+      <div class="flow-step-dot" style="background:linear-gradient(135deg,#db2777,#f43f5e)">5</div>
+    </div>
+    <div class="flow-step-content">
+      <p><b>去重</b>：最终 tokens = ["open", "cell", "view", "cv", "dbopencellview"]（最后一个是整串小写 token，用于精确匹配；驼峰拆词和缩写展开是另两路）。前述各示例为简洁有时省略整串 token，实际它在集合里。</p>
+    </div>
+  </div>
+</div>
+
+<div class="insight">
+<b>相邻 token compact 合并</b>解决了 camelCase 拆分把全称拆散的问题：<code>dbOpenCellView</code> → <code>["Open", "Cell", "View"]</code>，"Cell"+"View" 重新合并为 "cellview" → 反查到缩写 "cv"，使 query 能匹配 API 名中的 "CV" token。
+</div>
+
+<h3>5.5 is_short_lower 过滤器</h3>
+
+<div class="table-wrap">
+<table>
+<tr><th>Token</th><th>is_short_lower?</th><th>命中缩写?</th><th>结果</th></tr>
+<tr><td><code>get</code></td><td>✅ (小写, len=3)</td><td>❌</td><td><span class="badge badge-red">过滤</span> 高频动词，索引噪音</td></tr>
+<tr><td><code>set</code></td><td>✅</td><td>❌</td><td><span class="badge badge-red">过滤</span></td></tr>
+<tr><td><code>is</code></td><td>✅ (len=2)</td><td>❌</td><td><span class="badge badge-red">过滤</span></td></tr>
+<tr><td><code>dm</code></td><td>✅ (小写, len=2)</td><td>✅ DM→Design Manager</td><td><span class="badge badge-green">保留</span> 域缩写 + 展开词</td></tr>
+<tr><td><code>emy</code></td><td>✅ (小写, len=3)</td><td>✅ EMY→Empyrean</td><td><span class="badge badge-green">保留</span> 域缩写 + 展开词</td></tr>
+<tr><td><code>goa</code></td><td>✅ (小写, len=3)</td><td>✅ GOA→Geometric Operation Analysis</td><td><span class="badge badge-green">保留</span> 域缩写 + 展开词</td></tr>
+<tr><td><code>Create</code></td><td>❌ (非小写)</td><td>—</td><td><span class="badge badge-blue">保留</span> 非短小写始终保留</td></tr>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="scoring"><span class="section-num">6</span>评分与排序：F2 + 三层分层 + 异构不混排</h2>
+
+<h3>6.1 F2 评分（替代 F1）</h3>
+
+<div class="card">
+  <div class="card-title">为什么选 F2 而不是 F1？</div>
+  <p>F1 对 precision 和 recall 等权。F2 让 recall 权重 = 4× precision。在 EDA API 检索场景中，<b>query 中的噪音词不应压过名字 token 的匹配</b>——F2 偏重 recall，让"名字命中占 name tokens 多数"的好匹配不被 query 里的噪音词拉低。</p>
+  <pre><code>F2 = 5 × P × R / (4P + R)    # beta=2, recall 权重 4x
+
+# 示例：query="emyDesign open view polygon" vs API=emyDesign
+# query tokens（查询拆词）: {emydesign, open, view, polygon}  ← 3 个噪音词
+# name tokens（API 名拆词，见 §5 tokenize 管线）: {emy, emydesign, design}
+# intersection（交集）: {emydesign}
+# P = 1/4 = 0.25（命中1个 / query 共4个 token，被噪音词拉低）
+# R = 1/3 = 0.333（命中1个 / name 共3个 token）
+# F1 = 2×0.25×0.333 / (0.25+0.333) = 0.286 ← P 低拖累整体
+# F2 = 5×0.25×0.333 / (4×0.25+0.333) = 0.312 ← 偏重 R，比 F1 高 ✅
+
+# 关键：R &gt; P 时 F2 &gt; F1（噪音多但名字命中占 name 多数时，F2 给更高分）；
+# MIN_SCORE 从 0.3 降到 0.2，配合 F2 让更多合理匹配进入候选</code></pre>
+</div>
+
+<!-- ── F1 vs F2 Comparison SVG ── -->
+<div class="diagram-container">
+<svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,sans-serif">
+  <!-- F1 -->
+  <rect x="20" y="20" width="300" height="140" rx="12" fill="white" stroke="#dfe3ec" stroke-width="1" filter="url(#s)"/>
+  <text x="170" y="46" text-anchor="middle" fill="#94a3b8" font-weight="700" font-size="13">F1 (等权)</text>
+  <rect x="40" y="60" width="260" height="30" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1"/>
+  <text x="170" y="80" text-anchor="middle" fill="#3b82f6" font-size="11" font-weight="600">Precision × 1</text>
+  <rect x="40" y="96" width="260" height="30" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1"/>
+  <text x="170" y="116" text-anchor="middle" fill="#3b82f6" font-size="11" font-weight="600">Recall × 1</text>
+  <text x="170" y="148" text-anchor="middle" fill="#94a3b8" font-size="10">噪音词对等影响 P 和 R</text>
+
+  <!-- F2 -->
+  <rect x="380" y="20" width="300" height="140" rx="12" fill="white" stroke="#16a34a" stroke-width="2" filter="url(#s)"/>
+  <text x="530" y="46" text-anchor="middle" fill="#16a34a" font-weight="700" font-size="13">F2 (recall 4x) ✅</text>
+  <rect x="400" y="60" width="260" height="30" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1"/>
+  <text x="530" y="80" text-anchor="middle" fill="#3b82f6" font-size="11" font-weight="600">Precision × 1</text>
+  <rect x="400" y="96" width="260" height="30" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="530" y="116" text-anchor="middle" fill="#16a34a" font-size="11" font-weight="700">Recall × 4 ⭐</text>
+  <text x="530" y="148" text-anchor="middle" fill="#16a34a" font-size="10">名字 token 命中更受重视</text>
+</svg>
+</div>
+
+<h3>6.2 三层分层排序（替代归一化混排）</h3>
+
+<div class="warning">
+<b>为什么不用归一化混排？</b> Token Overlap 分数范围 0-1，BM25 分数范围 0-30+。两者量级不可比，归一化后固定权重混排本质是 overfit——不同 query 下分数分布不同，一套权重不可能普适。
+</div>
+
+<div class="table-wrap">
+<table>
+<tr><th>层级</th><th>条件</th><th>排序键</th><th>含义</th></tr>
+<tr>
+  <td><span class="badge badge-green">排序层 1</span></td>
+  <td>name_overlap ≥ 0.5</td>
+  <td>NO score 降序</td>
+  <td>高置信名称匹配，BM25 不参与</td>
+</tr>
+<tr>
+  <td><span class="badge badge-orange">排序层 2</span></td>
+  <td>name_overlap 0.2~0.5</td>
+  <td>(has_bm25_dual_hit, no_score) 降序</td>
+  <td>弱名称匹配；BM25 双命中时升权（名字+描述都相关）</td>
+</tr>
+<tr>
+  <td><span class="badge badge-purple">排序层 3</span></td>
+  <td>纯 BM25（无 name overlap）</td>
+  <td>BM25 score 降序</td>
+  <td>描述匹配兜底，排在所有名称匹配之后</td>
+</tr>
+</table>
+</div>
+
+<div class="insight">
+<b>排序层 2 中 BM25 仅作"升权信号"</b>：不是把 BM25 分数混入排序，而是用布尔值 <code>has_bm25_dual_hit</code> 决定排序层 2 内部的排序。一条 API 如果 name_overlap 和 BM25 都命中，说明名字和描述都相关，应排在纯 NO 结果前面。
+</div>
+
+<h3>6.3 BM25 质量过滤</h3>
+
+<div class="table-wrap">
+<table>
+<tr><th>参数</th><th>值</th><th>设计动机</th></tr>
+<tr><td><code>BM25_MIN_SCORE</code></td><td>1.0</td><td>低于 1.0 的 BM25 分数通常是单词弱匹配，统计噪音</td></tr>
+<tr><td><code>BM25_MIN_DESC_LEN</code></td><td>10</td><td>描述为 "Hint"（4字符）等无信息短描述的 API 即使匹配也无助 agent 决策</td></tr>
+<tr><td>Name 权重</td><td>x1（原 x2）</td><td>名称 token x2 导致同族 API（如 <code>dbCrt*</code> 一批）分数虚高，压跨族相关结果</td></tr>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="edge-cases"><span class="section-num">7</span>边界处理与安全网</h2>
+
+<div class="highlight"><b>关于"规则（Rules）"</b>：本节会提到"常驻规则 Rules"。Rules 不是检索系统的功能，而是<b>挂在 agent 侧的常驻硬约束</b>（Markdown 文件，agent 每次启动都加载）——例如"搜索满 5 次还找不到就停止搜索、直接写保底代码"。检索系统只负责返回结果，"何时该放弃搜索"这类纪律由 Rules 管，二者配合构成安全网。</div>
+
+<h3>7.1 零结果警告</h3>
+
+<div class="card">
+  <div class="card-title">双向 fallback</div>
+  <p>两个搜索工具的零结果警告互相指向对方，形成双向 fallback：</p>
+  <ul>
+    <li><code>search_apis</code> 零结果 → 返回提示"请换用 search_apis_by_keyword"</li>
+    <li><code>search_apis_by_keyword</code> 零结果 → 返回提示"请换用 search_apis"</li>
+  </ul>
+  <p><b>仅"零结果"时触发</b>：注意区分两种情况——① <b>向量无结果</b>（一条都没召回）才触发 fallback 提示；② <b>向量有结果但结果不相关</b>（agent 拿到的 API 不是它要的）则<b>不触发</b>，因为服务端无法判断结果"对不对"，这种情况靠另一层的<b>常驻规则（Rules）</b>约束 agent："搜索满 5 次还找不到就停止搜索、直接写保底代码"，这是规则层的纪律而非检索层的机制。</p>
+</div>
+
+<h3>7.2 向量 0 结果 + BM25 有结果</h3>
+
+<div class="card">
+  <p>BM25 补充结果正常追加。零结果警告<b>不触发</b>（因为 formatted 非空）。这是 BM25 始终补充的设计目标——向量搜不到时 BM25 补上。</p>
+  <pre><code># query = "SDL bind individual instance"
+# 向量: 0 条（名字和描述都不含 "SDL"）
+# BM25: aeCphSetInstPhysicalBinding (source=bm25_fallback)
+# 结果: 仅 BM25 补充，无零结果警告</code></pre>
+</div>
+
+<details>
+<summary>7.3 vector_redirect 排除</summary>
+<div class="card">
+  <p><code>search_apis()</code> 做 BM25 补充时，跳过 <code>source="vector_redirect"</code> 的结果。这是防止循环标注：keyword 工具的 soft redirect 产生的语义结果，不应被 search_apis 重新标记为 bm25_fallback。</p>
+</div>
+</details>
+
+<details>
+<summary>7.4 Synonym 截断恢复</summary>
+<div class="card">
+  <p>top_k 截断可能丢弃 BM25 命中的 synonym API。这些 API 在 <code>seen</code> 集中但不在最终结果中。synonym 逻辑会检查被截断的 API 是否是核心结果的 synonym，如果是则从 <code>seen</code> 中移除，以便 synonym redirect 重新拾起并标记为 <code>synonym_redirect</code>。</p>
+</div>
+</details>
+
+<details>
+<summary>7.5 Prefix Stripping</summary>
+<div class="card">
+  <div class="card-title">为什么剥离 db/ae/pyAether. 前缀？</div>
+  <p><code>db</code>/<code>ae</code> 是命令族前缀（database / aether），<code>pyAether.</code> 是模块名前缀（API 以 <code>pyAether.xxx</code> 形式引用时）——三者都是命名空间标记、不是语义内容。如果 <code>dbOpenCV</code> 拆分保留 <code>["db", "Open", "CV"]</code>，"db" 会匹配所有 db* API（数百个），产生巨大噪音。剥离后 <code>["Open", "CV"]</code> 才是语义有意义的 token。（<code>emy*</code> 前缀不在此列，因为它经驼峰拆分后本身就是有效语义 token，如 <code>emyDesign</code> → <code>["emy","design"]</code>，无需剥离。）</p>
+  <p><b>保护条件</b>：<code>name[len(prefix)].isupper()</code> 确保只在真正的前缀边界处剥离。<code>aeAndesPMFloorplan</code> 剥离为 <code>AndesPMFloorplan</code>，但假想的 <code>aether</code> 不会剥离。</p>
+</div>
+</details>
+
+<!-- ============================================================ -->
+<h2 id="source-field"><span class="section-num">8</span>source 字段全景</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>source 值</th><th>来源</th><th>similarity 范围</th><th>含义</th><th>Agent 应对</th></tr>
+<tr>
+  <td><span class="badge badge-blue">(absent)</span></td>
+  <td>search_apis 向量检索</td>
+  <td>0.3-1.0</td>
+  <td>语义相似度匹配</td>
+  <td>主路结果，优先使用</td>
+</tr>
+<tr>
+  <td><span class="badge badge-purple">bm25_fallback</span></td>
+  <td>search_apis BM25 补充</td>
+  <td>1.0-30+</td>
+  <td>描述文本匹配补充</td>
+  <td>向量未命中的补充发现，验证参数类型</td>
+</tr>
+<tr>
+  <td><span class="badge badge-green">name_overlap</span></td>
+  <td>keyword search Token Overlap</td>
+  <td>0.2-1.0</td>
+  <td>API 名 token 精确匹配</td>
+  <td>高可信，但仍需 get_api_details 验证</td>
+</tr>
+<tr>
+  <td><span class="badge badge-orange">bm25</span></td>
+  <td>keyword search BM25</td>
+  <td>1.0-30+</td>
+  <td>描述文本匹配</td>
+  <td>低可信，必须验证参数类型</td>
+</tr>
+<tr>
+  <td><span class="badge badge-cyan">exact_match</span></td>
+  <td>query = 完整 API 名</td>
+  <td>1.0</td>
+  <td>精确命中</td>
+  <td>直接用 get_api_details，别再搜了</td>
+</tr>
+<tr>
+  <td><span class="badge badge-pink">vector_redirect</span></td>
+  <td>自然语言 query 软重定向</td>
+  <td>0.3-1.0</td>
+  <td>语义搜索补充结果</td>
+  <td>keyword 工具为自然语言 query 补充的视角</td>
+</tr>
+<tr>
+  <td><span class="badge badge-purple">synonym_redirect</span></td>
+  <td>跨命令族等价映射</td>
+  <td>原分×0.8</td>
+  <td>功能等价但接口风格不同</td>
+  <td>用 get_api_details 对比选择</td>
+</tr>
+<tr>
+  <td><span class="badge badge-blue">keyword</span></td>
+  <td>fallback 标注</td>
+  <td>各异</td>
+  <td>未分类的 keyword 结果</td>
+  <td>验证参数类型</td>
+</tr>
+</table>
+</div>
+
+<!-- ── Source Field Decision SVG ── -->
+<div class="diagram-container">
+<svg viewBox="0 0 800 190" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,sans-serif">
+  <text x="400" y="20" text-anchor="middle" fill="#475569" font-weight="600" font-size="12">source 字段决策树：如何理解搜索结果来源</text>
+
+  <!-- Search result -->
+  <rect x="10" y="65" width="120" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.2" filter="url(#s)"/>
+  <text x="70" y="90" text-anchor="middle" fill="#3b82f6" font-weight="600" font-size="11">搜索结果</text>
+
+  <!-- Has source? -->
+  <rect x="200" y="65" width="120" height="40" rx="8" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.2"/>
+  <text x="260" y="89" text-anchor="middle" fill="#7c3aed" font-size="10" font-weight="600">有 source?</text>
+
+  <line x1="130" y1="85" x2="200" y2="85" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- No source = vector -->
+  <line x1="260" y1="65" x2="260" y2="38" stroke="#3b82f6" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="195" y="28" width="130" height="22" rx="4" fill="#eff6ff" stroke="#3b82f6" stroke-width="1"/>
+  <text x="260" y="43" text-anchor="middle" fill="#3b82f6" font-size="9.5" font-weight="600">向量主路 · 优先用</text>
+  <text x="240" y="60" fill="#94a3b8" font-size="8">无</text>
+
+  <!-- Has source branches -->
+  <line x1="320" y1="72" x2="400" y2="48" stroke="#16a34a" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="320" y1="85" x2="400" y2="85" stroke="#ea580c" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="320" y1="98" x2="400" y2="122" stroke="#7c3aed" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="350" y="70" fill="#94a3b8" font-size="8">有</text>
+
+  <!-- name_overlap / exact_match -->
+  <rect x="400" y="33" width="190" height="28" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1" filter="url(#s)"/>
+  <text x="405" y="52" fill="#16a34a" font-size="8.5" font-weight="600">name_overlap/exact · 高可信</text>
+
+  <!-- bm25 / bm25_fallback -->
+  <rect x="400" y="70" width="190" height="28" rx="6" fill="#fff7ed" stroke="#ea580c" stroke-width="1" filter="url(#s)"/>
+  <text x="410" y="89" fill="#ea580c" font-size="9" font-weight="600">bm25 / bm25_fallback · 需验证</text>
+
+  <!-- vector_redirect / synonym -->
+  <rect x="400" y="110" width="190" height="28" rx="6" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1" filter="url(#s)"/>
+  <text x="405" y="129" fill="#7c3aed" font-size="8.5" font-weight="600">redirect/synonym · 补充</text>
+
+  <!-- Actions -->
+  <line x1="590" y1="47" x2="640" y2="47" stroke="#16a34a" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="590" y1="84" x2="640" y2="84" stroke="#ea580c" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="590" y1="124" x2="640" y2="124" stroke="#7c3aed" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <text x="650" y="52" fill="#475569" font-size="9">→ get_api_details 验证</text>
+  <text x="650" y="87" fill="#475569" font-size="9">→ 必须验证参数类型</text>
+  <text x="650" y="129" fill="#475569" font-size="9">→ 对比选择</text>
+</svg>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="examples"><span class="section-num">9</span>典型查询全程追踪</h2>
+
+<details>
+<summary>Example 1: query = "CV"（纯缩写）</summary>
+<div class="card">
+  <pre><code>=== search_apis("CV") ===
+  Step 1: expand_query("CV") → "CV CellView"  (CV→CellView 方向)
+          expand_query_reverse("CV") → "CV"    (CellView不在query中，无需反向)
+          enriched = "CV CellView"
+  Step 2: api_recall("CV CellView") → 向量检索
+  Step 3: BM25补充 → dbOpenCV等（描述含"CellView"）
+
+=== search_apis_by_keyword("CV") ===
+  classify_query("CV") → "abbreviation" (≤4字符+全大写)
+  keyword_search("CV"):
+    tokenize_query("CV") → ["cv", "cell", "view"]
+    name_overlap: dbOpenCV→F2=0.83, emyCellView→F2=0.75 → 排序层 1
+    BM25: dbOpenCVByType等 → 排序层 3
+    synonym: 无
+  → 返回 name_overlap + bm25 结果</code></pre>
+</div>
+</details>
+
+<details>
+<summary>Example 2: query = "dbCrtInst"（API 名片段）</summary>
+<div class="card">
+  <pre><code>=== search_apis("dbCrtInst") ===
+  Step 1: expand_query → 补 "Create" "instance"（Crt→Create、Inst→Instance 展开）
+          expand_query_reverse → 补 "crt inst"（create→crt、instance→inst）
+          enriched = "dbCrtInst Create instance crt inst"（原词 + 两向展开词）
+  Step 2: 向量检索（enriched query）
+  Step 3: BM25补充
+
+=== search_apis_by_keyword("dbCrtInst") ===
+  classify_query("dbCrtInst") → "api_name_fragment" (CamelCase)
+  keyword_search → name_overlap: dbCrtInst→F2≈0.8
+  exact_match: "dbCrtInst" in data → ✅!  (data 即内存 API 全量字典)
+  → 插入 {similarity:1.0, source:"exact_match",
+           note:"use get_api_details for complete documentation"}</code></pre>
+</div>
+</details>
+
+<details>
+<summary>Example 3: query = "create net"（自然语言）</summary>
+<div class="card">
+  <pre><code>=== search_apis("create net") ===
+  Step 1: expand_query → "create net" (无缩写可展开)
+          expand_query_reverse → "create net crt" (create→crt)
+          enriched = "create net crt"
+  Step 2: 向量检索（enriched query）
+  Step 3: BM25补充 → dbCrtNet等
+
+=== search_apis_by_keyword("create net") ===
+  classify_query("create net") → "natural_language" (≥2词)
+  keyword_search("create net"):
+    tokenize_query → ["create", "net", "crt"]
+    name_overlap: dbCrtNet→F2≈0.7 → 排序层 1
+  soft redirect: api_recall("create net", threshold=0.3)
+    → 补充语义结果，标注 source="vector_redirect"</code></pre>
+</div>
+</details>
+
+<details>
+<summary>Example 4: query = "compress"（全称反查缩写）</summary>
+<div class="card">
+  <pre><code>=== tokenize_query("compress") ===
+  raw_tokens = ["compress"]
+  Direction 2: _compact_reverse["compress"] → "cp" (CP→Compress)
+  最终: ["compress", "cp"]
+
+=== 匹配效果 ===
+  emyPointArrayIsRectangleNoCP 的 name_index = {"point", "array", "rectangle", "no", "cp", "compress"}
+  （"compress" 是建索引时把名里的 CP 展开为 Compress 后加入的，见 §5 tokenize 管线）
+  query {"compress", "cp"} vs name_index → 交集 {"cp", "compress"}
+  P=2/2=1.0, R=2/6=0.333, F2=5×1.0×0.333/(4×1.0+0.333)=0.385 → 排序层 2 ✅</code></pre>
+</div>
+</details>
+
+<!-- ============================================================ -->
+<h2 id="config"><span class="section-num">10</span>配置参数一览</h2>
+
+<details>
+<summary>10.1 search_apis 参数</summary>
+<div class="table-wrap">
+<table>
+<tr><th>参数</th><th>默认值</th><th>环境变量</th><th>说明</th></tr>
+<tr><td>top_k</td><td>5</td><td>RAG_DEFAULT_TOP_K</td><td>向量检索返回数</td></tr>
+<tr><td>similarity_threshold</td><td>0.6（经 MCP 工具调用）/ 0.1（直接调召回 HTTP 接口）</td><td>—</td><td>最低相似度阈值：agent 经 MCP 工具调用时阈值高（0.6，只要高质量结果）；外部直接调召回服务时阈值低（0.1，尽量多召回）</td></tr>
+<tr><td>BM25_SUPPLEMENT_K</td><td>3</td><td>— (硬编码)</td><td>BM25 最大补充条数</td></tr>
+<tr><td>RAG_RECALL_URL</td><td>http://10.252.32.15:9001/recall</td><td>RAG_RECALL_URL</td><td>ChromaDB 向量服务地址（向量化检索的后端）</td></tr>
+</table>
+</div>
+</details>
+
+<details>
+<summary>10.2 keyword_search 参数</summary>
+<div class="table-wrap">
+<table>
+<tr><th>参数</th><th>值</th><th>说明</th></tr>
+<tr><td>NAME_OVERLAP_MIN_SCORE</td><td>0.2</td><td>F2 最低阈值（配合 F2 降低门槛）</td></tr>
+<tr><td>NAME_OVERLAP_HIGH_THRESHOLD</td><td>0.5</td><td>排序层 1/2 分界线</td></tr>
+<tr><td>BM25_K1 / BM25_B</td><td>1.5 / 0.75</td><td>BM25Okapi（BM25 经典实现）参数：K1 控制词频饱和度、B 控制文档长度归一化</td></tr>
+<tr><td>BM25_TOP_K</td><td>20</td><td>BM25 候选返回数</td></tr>
+<tr><td>BM25_MIN_SCORE</td><td>1.0</td><td>BM25 最低分阈值</td></tr>
+<tr><td>BM25_MIN_DESC_LEN</td><td>10</td><td>描述最短长度过滤</td></tr>
+<tr><td>KEYWORD_TOP_K</td><td>10</td><td>keyword 总返回上限</td></tr>
+</table>
+</div>
+</details>
+
+<details>
+<summary>10.3 abbreviation_map 参数</summary>
+<div class="table-wrap">
+<table>
+<tr><th>参数</th><th>值</th><th>说明</th></tr>
+<tr><td>映射条目数</td><td>86+</td><td>覆盖全大写缩写 + 驼峰内嵌缩写</td></tr>
+<tr><td>映射文件路径</td><td>docs/abbreviation_map.yaml</td><td>ABBREVIATION_MAP_PATH 可覆盖</td></tr>
+<tr><td>置信度级别</td><td>confirmed/high/medium/low</td><td>标注来源可信度</td></tr>
+<tr><td>策略标注</td><td>phrase_init/camel_init/domain_knowledge/substr_match</td><td>标注映射发现方式</td></tr>
+</table>
+</div>
+</details>
+
+<details>
+<summary>10.4 get_api_details 容错</summary>
+<div class="table-wrap">
+<table>
+<tr><th>Fallback 级别</th><th>条件</th><th>行为</th></tr>
+<tr><td>1. 精确匹配</td><td><code>api_name in data</code></td><td>直接返回</td></tr>
+<tr><td>2. 唯一前缀</td><td>前缀匹配仅 1 个结果</td><td>直接返回该结果</td></tr>
+<tr><td>3. 大小写不敏感</td><td>lower 匹配仅 1 个结果</td><td>直接返回</td></tr>
+<tr><td>4. 候选提示</td><td>前缀有多个匹配</td><td>返回前 5 个候选名</td></tr>
+</table>
+</div>
+</details>
+
+<!-- ── Footer ── -->
+<div class="footer">
+  <p>EDA FastMCP 检索 API 技术报告 · V3.1 · 2026-07-13</p>
+  <p class="mt-sm">核心设计原则：架构拆分 > 归一化混排 · 异构信号不混排分数 · 三层分层排序 · BM25 仅作升权信号</p>
+</div>
+
+</div><!-- .container -->
+
+<!-- ── Back to Top Button ── -->
+<button class="back-top" id="backTop" title="回到顶部" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+</button>
+
+<script>
+// ── Back to Top visibility ──
+const btn = document.getElementById('backTop');
+window.addEventListener('scroll', () => {
+  btn.classList.toggle('visible', window.scrollY > 400);
+});
+
+// ── Active nav link tracking ──
+const sections = document.querySelectorAll('h2[id]');
+const navLinks = document.querySelectorAll('.topnav-links a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'));
+      const link = document.querySelector(`.topnav-links a[href="#${entry.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-80px 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

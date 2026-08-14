@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDA FastMCP 自进化系统设计报告</title>
+<style>
+/* ── Light Theme Variables (沿用 search_api_report.html) ── */
+:root {
+  --bg: #f8f9fb; --bg-alt: #eef1f6; --card: #ffffff; --card-hover: #fafbff;
+  --border: #dfe3ec; --border-light: #e8ecf4;
+  --text: #1e293b; --text-secondary: #475569; --dim: #94a3b8;
+  --blue: #3b82f6; --blue-light: #eff6ff; --blue-bg: rgba(59,130,246,0.08);
+  --green: #16a34a; --green-light: #f0fdf4; --green-bg: rgba(22,163,74,0.08);
+  --orange: #ea580c; --orange-light: #fff7ed; --orange-bg: rgba(234,88,12,0.08);
+  --red: #dc2626; --red-light: #fef2f2; --red-bg: rgba(220,38,38,0.06);
+  --purple: #7c3aed; --purple-light: #f5f3ff; --purple-bg: rgba(124,58,237,0.08);
+  --cyan: #0891b2; --cyan-light: #ecfeff; --cyan-bg: rgba(8,145,178,0.08);
+  --pink: #db2777; --pink-light: #fdf2f8; --pink-bg: rgba(219,39,119,0.08);
+  --teal: #0d9488;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+  --radius: 12px; --radius-sm: 8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body { font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); line-height:1.75; -webkit-font-smoothing: antialiased; }
+.topnav { position:sticky; top:0; z-index:100; background: rgba(255,255,255,0.85); backdrop-filter: blur(16px) saturate(180%); border-bottom:1px solid var(--border-light); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; }
+.topnav-brand { font-weight:700; color:var(--blue); font-size:1.05em; display:flex; align-items:center; gap:8px; }
+.topnav-links { display:flex; gap:4px; flex-wrap:wrap; }
+.topnav-links a { font-size:0.78em; padding:5px 9px; border-radius:6px; color:var(--text-secondary); text-decoration:none; transition:all 0.15s; }
+.topnav-links a:hover { background:var(--blue-light); color:var(--blue); }
+.container { max-width:1120px; margin:0 auto; padding:32px 24px 80px; }
+.hero { text-align:center; padding:48px 0 40px; }
+.hero h1 { font-size:2.2em; font-weight:800; background:linear-gradient(135deg, var(--blue), var(--purple)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:12px; }
+.hero-subtitle { font-size:1.15em; color:var(--text-secondary); max-width:720px; margin:0 auto 20px; }
+.hero-badges { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+.badge { display:inline-flex; align-items:center; gap:4px; padding:4px 12px; border-radius:999px; font-size:0.8em; font-weight:600; }
+.badge-blue { background:var(--blue-bg); color:var(--blue); }
+.badge-green { background:var(--green-bg); color:var(--green); }
+.badge-orange { background:var(--orange-bg); color:var(--orange); }
+.badge-purple { background:var(--purple-bg); color:var(--purple); }
+.badge-cyan { background:var(--cyan-bg); color:var(--cyan); }
+.badge-red { background:var(--red-bg); color:var(--red); }
+.badge-gray { background:var(--bg-alt); color:var(--text-secondary); }
+h2 { font-size:1.7em; font-weight:700; margin:48px 0 8px; padding-top:24px; border-top:2px solid var(--border-light); display:flex; align-items:center; gap:10px; }
+h2 .section-num { background:linear-gradient(135deg,var(--blue),var(--purple)); color:#fff; width:34px; height:34px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; font-size:0.7em; flex-shrink:0; }
+h3 { font-size:1.25em; font-weight:700; margin:28px 0 8px; color:var(--text); }
+h4 { font-size:1.05em; font-weight:700; margin:18px 0 6px; color:var(--text-secondary); }
+p { margin:8px 0; color:var(--text-secondary); }
+p b, li b { color:var(--text); }
+code { font-family:'JetBrains Mono','Fira Code',Consolas,monospace; font-size:0.88em; background:var(--bg-alt); padding:2px 6px; border-radius:4px; color:var(--purple); }
+pre { background:#1e293b; color:#e2e8f0; padding:18px 20px; border-radius:var(--radius-sm); overflow-x:auto; margin:14px 0; font-size:0.85em; line-height:1.6; box-shadow:var(--shadow-md); }
+pre code { background:none; color:inherit; padding:0; font-size:inherit; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin:16px 0; box-shadow:var(--shadow-sm); }
+.card-title { font-weight:700; font-size:1.1em; margin-bottom:10px; color:var(--text); display:flex; align-items:center; gap:8px; }
+.highlight { background:var(--blue-light); border-left:4px solid var(--blue); padding:14px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:14px 0; }
+.warning { background:var(--orange-light); border-left:4px solid var(--orange); padding:14px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:14px 0; }
+.insight { background:var(--green-light); border-left:4px solid var(--green); padding:14px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:14px 0; }
+.paper { background:var(--purple-light); border-left:4px solid var(--purple); padding:12px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:12px 0; font-size:0.92em; }
+.paper b { color:var(--purple); }
+.why { background:var(--cyan-light); border-left:4px solid var(--cyan); padding:12px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:12px 0; font-size:0.92em; }
+.why b { color:var(--cyan); }
+.highlight b, .insight b { color:var(--text); }
+table { width:100%; border-collapse:collapse; margin:14px 0; font-size:0.9em; background:var(--card); border-radius:var(--radius-sm); overflow:hidden; box-shadow:var(--shadow-sm); }
+th { background:var(--bg-alt); text-align:left; padding:10px 14px; font-weight:700; color:var(--text); border-bottom:2px solid var(--border); }
+td { padding:10px 14px; border-bottom:1px solid var(--border-light); color:var(--text-secondary); vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:var(--card-hover); }
+.td-mono { font-family:'JetBrains Mono',Consolas,monospace; font-size:0.85em; }
+ul, ol { margin:8px 0 8px 22px; color:var(--text-secondary); }
+li { margin:4px 0; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.diagram-container { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin:18px 0; box-shadow:var(--shadow-sm); overflow-x:auto; }
+.diagram-label { text-align:center; font-size:0.85em; color:var(--dim); margin-top:8px; }
+.flow-steps { display:flex; flex-direction:column; gap:0; margin:16px 0; }
+.flow-step { display:flex; align-items:stretch; gap:16px; position:relative; }
+.flow-step-marker { display:flex; flex-direction:column; align-items:center; flex-shrink:0; width:40px; }
+.flow-step-dot { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--cyan)); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85em; flex-shrink:0; box-shadow:var(--shadow-sm); z-index:1; }
+.flow-step-dot.green { background:linear-gradient(135deg,var(--green),var(--teal)); }
+.flow-step-dot.purple { background:linear-gradient(135deg,var(--purple),var(--pink)); }
+.flow-step-dot.orange { background:linear-gradient(135deg,var(--orange),var(--red)); }
+.flow-step-line { width:2px; background:var(--border); flex:1; min-height:20px; }
+.flow-step-content { padding:4px 0 20px; flex:1; }
+.flow-step-content b { color:var(--text); }
+.toc { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px 28px; margin:20px 0; box-shadow:var(--shadow-sm); }
+.toc-title { font-weight:700; margin-bottom:10px; color:var(--text); }
+.toc ol { margin:0 0 0 20px; columns:2; column-gap:32px; }
+.toc li { margin:5px 0; }
+.toc a { color:var(--text-secondary); text-decoration:none; }
+.toc a:hover { color:var(--blue); }
+.footer { text-align:center; color:var(--dim); font-size:0.85em; padding:40px 0 0; border-top:1px solid var(--border-light); margin-top:40px; }
+.kvs { display:grid; grid-template-columns:auto 1fr; gap:4px 14px; font-size:0.92em; margin:10px 0; }
+.kvs dt { font-weight:600; color:var(--text); }
+.kvs dd { color:var(--text-secondary); }
+@media (max-width:760px){ .two-col{grid-template-columns:1fr;} .toc ol{columns:1;} }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-brand">🧬 自进化系统设计</div>
+  <div class="topnav-links">
+    <a href="#overview">总览</a>
+    <a href="#arch">架构</a>
+    <a href="#l0">L0</a>
+    <a href="#root">根因</a>
+    <a href="#reflect">反思</a>
+    <a href="#l1">L1三态</a>
+    <a href="#vector">向量</a>
+    <a href="#distill">蒸馏</a>
+    <a href="#gate">质量门</a>
+    <a href="#per-skill">per-skill</a>
+    <a href="#read">读侧</a>
+    <a href="#inject">注入</a>
+    <a href="#lifecycle">生命周期</a>
+    <a href="#status">现状</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ════════════════════ HERO ════════════════════ -->
+<div class="hero">
+  <h1>🧬 EDA FastMCP 自进化系统设计报告</h1>
+  <div class="hero-subtitle">从任务轨迹中沉淀、蒸馏、检索可复用经验，让 Agent 在后续任务中"见过即会"。三层记忆 · 读写分离 · 论文驱动的每个设计决策。</div>
+  <div class="hero-badges">
+    <span class="badge badge-blue">三层记忆 L0/L1/L2</span>
+    <span class="badge badge-green">自进化复现人类手工进化（3 轮迭代 + held-out gate）</span>
+    <span class="badge badge-purple">论文驱动设计（7 核心 + 扩展）</span>
+    <span class="badge badge-cyan">challenge split · train98/val20/test40 · 多端口并行可信</span>
+  </div>
+</div>
+
+<!-- ===== 读者背景：开始前你需要知道的 ===== -->
+<div class="card" style="border-left:4px solid var(--blue);">
+  <div class="card-title">📖 阅读前：这个系统在干什么</div>
+  <p>在读懂下文前，先建立几个基本概念：</p>
+  <dl class="kvs">
+    <dt>EDA</dt><dd>电子设计自动化（Electronic Design Automation）。本系统的"API"指某 EDA 软件（pyAether）暴露的 Python 接口，用于做电路版图/设计操作。</dd>
+    <dt>任务（task）</dt><dd>一次 benchmark 的最小单元：给 AI agent 一个自然语言需求（如"统计某总线有多少位"），让它<b>写一段调用 pyAether API 的 Python 代码</b>，在远程沙箱执行，用隐藏测试用例判定通过/失败。一整轮 benchmark 有 158 个任务。</dd>
+    <dt>Cline / zhulong</dt><dd>两个 AI 编程 agent 的 CLI（类似 Claude Code）。agent 读任务描述、调用工具、生成代码。本系统为其提供工具与记忆。</dd>
+    <dt>MCP</dt><dd>Model Context Protocol（模型上下文协议）。MCP Server 是挂载在 agent 旁的工具服务端——agent 通过它调用 search_apis、查询记忆库等工具。本系统主体就是一个 MCP Server。</dd>
+    <dt>轨迹（trace）</dt><dd>agent 跑一个任务时的完整对话历史（搜了什么、调了什么工具、报了什么错）。自进化的"原料"就是轨迹。</dd>
+    <dt>沙箱跑通 ≠ 测试通过（重要）</dt><dd>代码在沙箱执行有两层结果：<b>① 代码跑通</b>（没抛异常、agent 自评"成功了"）和 <b>② 隐藏测试断言通过</b>（ground-truth 判定的真正成功）。两者经常不一致——代码能跑完不代表结果对。<b>ground-truth</b> 特指 ②，是唯一可靠的成败信号（区别于 agent 自评的 ①）。</dd>
+    <dt>Skill / Rule</dt><dd>蒸馏产物：Skill 是按需加载的详细决策树（Markdown），Rule 是常驻生效的极简硬约束。两者都是给 agent 读的操作指南。</dd>
+  </dl>
+  <p style="margin-top:10px;"><b>一句话概括自进化</b>：把每轮 158 个任务跑完后留下的轨迹，<b>沉淀</b>成可复用的经验知识（L1 模式 / Skill），让后续任务的 agent 能<b>检索到</b>这些经验，从而提升通过率。沉淀是<b>写侧</b>（<code>-e</code> 开启），检索是<b>读侧</b>（L1 有内容时自动生效）——两者独立。</p>
+</div>
+
+<div class="card" style="border-left:4px solid var(--cyan);">
+  <div class="card-title">📦 数据集（系统依赖的静态资源）</div>
+  <table>
+    <tr><th>数据集</th><th>内容</th><th>用途</th><th>演进</th></tr>
+    <tr><td><b>benchmark v20260311</b></td><td>158 个 task（自然语言需求 + 函数签名 + docstring，HumanEval 风格）</td><td>每轮 pass@1 评测的目标</td><td>从 v20260123 迭代；防泄露白名单过滤 <code>canonical_solution</code>/<code>test</code>/<code>apis_used</code>，只留 task_id+prompt+安全 metadata</td></tr>
+    <tr><td><b>API 主源 V3</b>（<code>docs/API_INFO_MERGED_V3.json</code>，8463 条）</td><td>pyAether 全量 API 文档：api_name/api_type/api_descriptions（完整签名+参数+示例+说明）</td><td><code>get_api_details</code> 查详情（"学会怎么用"层）</td><td>V3 合并独立函数 4051 + OOP 方法 4359（class.method）= 8410 基础条目，V5 补齐 53 缺失 method 至 8463，覆盖 emy/Mde/Sle/dm 全前缀族</td></tr>
+    <tr><td><b>向量库 V5</b>（<code>kb/chroma_db_v3_full</code>，<b>8984 条</b>）</td><td>嵌入 <code>name:simple_desc</code>（首句摘要），Octen-Embedding-4B（项目使用的文本嵌入模型，2560 维）2560dim cosine</td><td><code>search_apis</code> 语义召回 API <b>名</b>（"搜不搜得到"层）</td><td>8463 master + <b>521 patch</b>（<code>docs/api_patch.json</code>：emyInitDb 缺失 + 518 漏拆类方法 + CStringList/CString，治 052/074 检索缺失）。V4 name:description → V5 对齐 SKILL 抽首句 simple_desc。<b>召回与详情职责分离不重复</b></td></tr>
+    <tr><td><b>缩写映射</b>（<code>docs/abbreviation_map.yaml</code>，83 条）</td><td>Crt=Create/CV=CellView/DM=Design Manager 等</td><td><code>search_apis_by_keyword</code> 缩写反转</td><td>双向展开，解决缩写鸿沟（dbCreateInst↔dbCrtInst）</td></tr>
+    <tr><td><b>challenge split</b>（<code>docs/dataset_split_challenge.json</code>）</td><td>train 98 / val 20 / test 40，instance-disjoint（任务级不重叠），test 优先选区分性任务</td><td>自进化 held-out gate 的切分依据（train 沉淀 / val 门控 / test 终评）</td><td>2026-07-31 新增。去天花板：train→val/test 防答案泄露，test 优先选难任务放大信号（旧 158 全集天花板遮蔽自进化收益）</td></tr>
+    <tr><td><b>人类基线冻结</b>（<code>docs/human_baseline_assets/</code>）</td><td>4 手写 Skill + 1 手写 Rule + <code>validator_rules_human.json</code> 实体备份</td><td>自进化复现的<b>目标</b>（人类手工进化的产物，非起点）</td><td>2026-07-28 新增。仓库 <code>skills/</code> 是软链接（git 只存指针）+ Rule 不在 git = 单点故障；冻结实体备份防丢失。<code>reset_validator_rules.py --backup-human-baseline</code> 一次性备份</td></tr>
+  </table>
+  <div class="insight"><b>两层职责分离（关键设计）</b>：向量库嵌入 <code>simple_desc</code>（首句摘要，召回 API 名用）vs <code>get_api_details</code> 返回完整 <code>api_descriptions</code>（签名+参数+示例，学会怎么用）。<b>不嵌完整文档</b>——长文本后段是噪音（中文 SWIG 类型琐碎），会把目标 API 拉向"TypeError"/"emyObject"噪音。<b>根因</b>：pyAether 主源缺 <code>api_simple_description</code> 字段（SKILL 有），V5 用 <code>extract_simple_desc</code> 即时抽取对齐。</div>
+  <div class="warning"><b>⚠️ 防泄露约束</b>：自进化 see_also/verified_code 等只能从 agent 实际行为 + API 语义关系构建，<b>不能从 benchmark 答案构建</b>。新增数据消费者必须检查不读取 <code>canonical_solution</code>/<code>test</code>/<code>apis_used</code>。L1 内容来自 trace 解析（agent 生成过程），不含标准答案。</div>
+</div>
+
+<div class="toc">
+  <div class="toc-title">📑 目录</div>
+  <ol>
+    <li><a href="#overview">总览：宏观架构与设计哲学</a></li>
+    <li><a href="#arch">宏观架构：三层记忆 + 读写分离</a></li>
+    <li><a href="#l0">写侧 · L0 抽取与 ground-truth 富集</a></li>
+    <li><a href="#root">写侧 · 失败根因六分类</a></li>
+    <li><a href="#reflect">写侧 · 反思层（四类反思）</a></li>
+    <li><a href="#l1">写侧 · L1 聚合与三态条目</a></li>
+    <li><a href="#vector">写侧 · L1→向量库同步</a></li>
+    <li><a href="#distill">蒸馏 · L1→Skill / Rules</a></li>
+    <li><a href="#gate">蒸馏 · 四维质量门 + block-and-refine</a></li>
+    <li><a href="#per-skill">蒸馏 · per-skill 运行时记忆</a></li>
+    <li><a href="#read">读侧 · 运行时检索（query_memory_bank）</a></li>
+    <li><a href="#inject">读侧 · L1 注入任务 prompt</a></li>
+    <li><a href="#lifecycle">生命周期与冷启动</a></li>
+    <li><a href="#status">现状与效果（诚实）</a></li>
+  </ol>
+</div>
+
+<!-- ════════════════════ 1. OVERVIEW ════════════════════ -->
+<h2 id="overview"><span class="section-num">1</span>总览：宏观架构与设计哲学</h2>
+
+<p>自进化系统的目标：<b>把一次 benchmark 中每个任务的"搜了什么、用了什么 API、为什么失败"沉淀成结构化知识，让后续任务（乃至下一轮 benchmark）的 Agent 能检索到这些经验</b>，从而 pass@1 更高。它围绕 <b>三层记忆</b>（L0/L1/L2）和 <b>读写分离</b> 两条主线展开。</p>
+
+<div class="diagram-container">
+<svg viewBox="0 0 980 510" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,sans-serif">
+  <defs>
+    <marker id="arrW" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ea580c"/></marker>
+    <marker id="arrR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/></marker>
+    <filter id="sh" x="-4%" y="-4%" width="108%" height="116%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08"/></filter>
+    <linearGradient id="gB" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#6366f1"/></linearGradient>
+  </defs>
+
+  <!-- ===== 顶部：Agent ←读→ MCP ===== -->
+  <rect x="380" y="14" width="220" height="50" rx="12" fill="url(#gB)" filter="url(#sh)"/>
+  <text x="490" y="44" fill="#fff" font-size="15" font-weight="700" text-anchor="middle">Cline / zhulong Agent</text>
+
+  <rect x="380" y="110" width="220" height="50" rx="12" fill="#fff" stroke="#3b82f6" stroke-width="2" filter="url(#sh)"/>
+  <text x="490" y="135" fill="#1e293b" font-size="14" font-weight="700" text-anchor="middle">MCP Server (main.py)</text>
+  <text x="490" y="151" fill="#475569" font-size="10.5" text-anchor="middle">query_memory_bank / search_apis …</text>
+
+  <!-- 读侧：Agent ↔ MCP（双向检索） -->
+  <path d="M 470 110 L 470 64" fill="none" stroke="#3b82f6" stroke-width="2.2" marker-end="url(#arrR)"/>
+  <path d="M 510 64 L 510 110" fill="none" stroke="#3b82f6" stroke-width="2.2" marker-end="url(#arrR)"/>
+  <text x="540" y="92" fill="#3b82f6" font-size="10.5" font-weight="600">工具调用↔结果</text>
+
+  <!-- ===== 左：Memory Bank ===== -->
+  <rect x="40" y="210" width="300" height="200" rx="14" fill="#fff" stroke="#16a34a" stroke-width="2" filter="url(#sh)"/>
+  <text x="190" y="236" fill="#16a34a" font-size="14" font-weight="700" text-anchor="middle">Memory Bank（文件系统）</text>
+  <rect x="58" y="250" width="264" height="34" rx="8" fill="#f0fdf4" stroke="#86efac"/>
+  <text x="190" y="272" fill="#166534" font-size="12" text-anchor="middle">L0_raw — 每任务轨迹记录（情景记忆）</text>
+  <rect x="58" y="290" width="264" height="34" rx="8" fill="#eff6ff" stroke="#93c5fd"/>
+  <text x="190" y="312" fill="#1e40af" font-size="12" text-anchor="middle">L1_patterns — 聚合模式条目（语义记忆）</text>
+  <rect x="58" y="330" width="264" height="34" rx="8" fill="#f5f3ff" stroke="#c4b5fd"/>
+  <text x="190" y="352" fill="#6d28d9" font-size="12" text-anchor="middle">L2_evolution — Skill 版本归档</text>
+  <text x="190" y="392" fill="#94a3b8" font-size="10.5" text-anchor="middle">~/Cline/Memory/</text>
+
+  <!-- ===== 中下：Eval（循环外） ===== -->
+  <rect x="370" y="430" width="240" height="44" rx="12" fill="#fff" stroke="#ea580c" stroke-width="2" stroke-dasharray="5 3" filter="url(#sh)"/>
+  <text x="490" y="451" fill="#ea580c" font-size="12.5" font-weight="700" text-anchor="middle">EDA-Eval-Framework</text>
+  <text x="490" y="466" fill="#9a3412" font-size="10" text-anchor="middle">沙箱 ground-truth（在进化循环外）</text>
+
+  <!-- ===== 右上：向量库 ===== -->
+  <rect x="640" y="210" width="300" height="130" rx="14" fill="#fff" stroke="#0891b2" stroke-width="2" filter="url(#sh)"/>
+  <text x="790" y="238" fill="#0891b2" font-size="14" font-weight="700" text-anchor="middle">向量检索服务 :9003</text>
+  <text x="790" y="262" fill="#475569" font-size="11.5" text-anchor="middle">ChromaDB + Octen-Embedding-4B</text>
+  <text x="790" y="282" fill="#475569" font-size="11.5" text-anchor="middle">L1 条目向量化 · 语义召回</text>
+  <text x="790" y="318" fill="#94a3b8" font-size="10.5" text-anchor="middle">kb/chroma_db_memory/</text>
+
+  <!-- ===== 右下：Skills / Rules ===== -->
+  <rect x="640" y="360" width="300" height="60" rx="14" fill="#fff" stroke="#7c3aed" stroke-width="2" filter="url(#sh)"/>
+  <text x="790" y="384" fill="#7c3aed" font-size="13" font-weight="700" text-anchor="middle">~/.cline/skills + ~/Cline/Rules</text>
+  <text x="790" y="404" fill="#475569" font-size="11" text-anchor="middle">蒸馏产物（规程记忆 procedural）</text>
+
+  <!-- ===== 写侧（橙） ===== -->
+  <!-- MCP → Memory Bank：-e 沉淀 -->
+  <path d="M 400 160 C 400 185, 190 185, 190 208" fill="none" stroke="#ea580c" stroke-width="2.2" marker-end="url(#arrW)"/>
+  <text x="280" y="178" fill="#ea580c" font-size="10.5" font-weight="600">写侧 -e（沉淀轨迹）</text>
+  <!-- Eval → Memory Bank：ground-truth 富集 -->
+  <path d="M 410 430 C 360 415, 280 415, 250 408" fill="none" stroke="#ea580c" stroke-width="2.2" stroke-dasharray="4 3" marker-end="url(#arrW)"/>
+  <text x="300" y="424" fill="#ea580c" font-size="10" font-weight="600">ground-truth 富集</text>
+  <!-- Memory Bank → 向量库：同步 -->
+  <path d="M 340 290 C 470 290, 560 270, 638 270" fill="none" stroke="#ea580c" stroke-width="2.2" marker-end="url(#arrW)"/>
+  <text x="455" y="282" fill="#ea580c" font-size="10.5" font-weight="600">同步</text>
+  <!-- Memory Bank → Skills/Rules：蒸馏 -->
+  <path d="M 340 350 C 470 350, 560 380, 638 388" fill="none" stroke="#ea580c" stroke-width="2.2" marker-end="url(#arrW)"/>
+  <text x="450" y="345" fill="#ea580c" font-size="10.5" font-weight="600">蒸馏</text>
+
+  <!-- ===== 读侧（蓝） ===== -->
+  <!-- 向量库 → MCP：检索结果 -->
+  <path d="M 640 245 C 560 245, 490 200, 510 162" fill="none" stroke="#3b82f6" stroke-width="2.2" marker-end="url(#arrR)"/>
+  <text x="560" y="208" fill="#3b82f6" font-size="10.5" font-weight="600">读侧（L1 有内容时）</text>
+  <!-- Skills/Rules → Agent：agent 直接读（不经 MCP） -->
+  <path d="M 790 360 C 790 250, 640 90, 602 50" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-dasharray="4 3" marker-end="url(#arrR)"/>
+  <text x="745" y="180" fill="#3b82f6" font-size="10" font-weight="600">agent 直接读 Skill</text>
+
+  <text x="490" y="497" fill="#94a3b8" font-size="11" text-anchor="middle">🟧 橙线 = 写侧（-e 开启时沉淀）　🟦 蓝线 = 读侧（L1 有内容时检索/注入）</text>
+</svg>
+  <div class="diagram-label">图 1 · 自进化系统宏观架构（图中 Cline/zhulong 是 AI 编程 agent，MCP Server 是挂载在 agent 旁的工具服务端，详见上方"阅读前"）。读侧与写侧解耦：写侧由 <code>-e</code> 控制，读侧由"L1 有无内容"控制。</div>
+</div>
+
+<div class="card">
+  <div class="card-title">🎯 设计哲学（一句话）</div>
+  <p><b>评估器在循环之外，记忆分层且只沉淀有信号的知识；规则引擎做确定性脚手架、LLM 做语义判断；三态把"成功经验 / 方向对但未通过 / 失败教训"显式区分。</b></p>
+</div>
+
+<div class="card" style="border-left:4px solid var(--orange);">
+  <div class="card-title">⚠️ 两条硬教训（2026-07-19/20，贯穿全文）</div>
+  <p><b>① 归因必须隔离评估</b>：沙箱是有状态共享资源，<b>单沙箱并发评估（workers=4）踩 lib.defs/TECHLIB 状态致 pass 率抖 ±4~16pp</b>（011 同代码串行 5/5 pass、并发掉到 38%）。历史单沙箱并发 pass 率全部废弃，曾据此得出"L1 注入有益"等结论被串行重评推翻。2026-07-21 起 <b>4 端口隔离</b>（<code>SANDBOX_ENDPOINTS=8664/8665/8667/8669</code>，每端口独立 workdir）让并发请求落不同端口 → 无污染 → <b>并发评估可信</b>（取代旧 <code>EVAL_SANDBOX_WORKERS=1</code> 串行）。</p>
+  <p><b>② 自进化的信任锚是知识精准度，不是知识量</b>：L1 注入曾净负（093 铁证 = 任务 093 的参数名误判案例，<code>[已验证]</code> 含 agent 自测误判的错误参数名 isReplaceMismatched，误导 agent 把对的位置参数改成 kwarg→fail，详见 §5.5）。治本（reflection 不沉淀 agent 推断 + 无 ground-truth 不标 <code>[已验证]</code>）后转净 +17 题。<b>不精准的知识比无知识更糟（系统性误导）</b>——这是全文反复出现的主线。</p>
+</div>
+
+<div class="paper"><b>📄 论文脉络</b>：本系统对照多篇文献落地——<b>CoALA</b>（认知架构：三层记忆 episodic/semantic/procedural，并把 agent 动作分四类：内部动作检索/推理/学习 + 外部动作接地，接地指把模型决策连到外部工具/环境执行）、<b>Reflexion</b>（反思必须锚定评估器给出的奖励信号，否则反思会做有害编辑）、<b>MemOrb</b>（用向量检索跨会话记忆）、<b>SkillOS</b>（Skill 质量四维评审：抽象/复用/可操作/忠实）、<b>MUSE-Autoskill</b>（per-skill 运行时记忆 + 失败重写循环）、<b>ACE</b>（Agentic Context Engineering，上下文是"演进手册"而非不断膨胀的 prompt）、<b>Lilian Weng《Harness Engineering》</b>（可编辑边界 / 评估器在循环外 / 文件系统即记忆）；扩展引用 <b>Voyager</b>（self-verification）、<b>Generative Agents</b>（记忆检索三分量）、<b>Self-Harness</b>（弱点挖掘→提案→验证）。下文每个设计点都标注出处与原因。</div>
+
+<div class="highlight"><b>📖 代号说明（全文统一）</b>：下文用三套编号指代改进项——<code>P2-N</code> 是自进化 roadmap 待办编号（P2 系列是"较大改动"档，如 P2-1 读侧分层注入、P2-3 突触修剪、P2-7 语义合并、P2-5a REM 反事实），<code>E-N</code> 是参数填写/自测纪律编号（E1 SWIG 类型构造、E3 None 判空、E5 自测强度、E6 创建类生效验证，详见 §12.5），<code>A-N</code> 是 prompt/Rules 侧改动编号（A1 Rules 沙箱通过≠任务完成纪律、A2 验证失败回退搜索 footer）。<b>093 铁证</b>指任务 093 的参数名误判案例（§5.5）。<b>顽固题/可及题/间歇题</b>定义见 §14 开头。这些代号全文含义统一以此为准。</div>
+
+<!-- ════════════════════ 2. ARCH ════════════════════ -->
+<h2 id="arch"><span class="section-num">2</span>宏观架构：三层记忆 + 读写分离</h2>
+
+<h3>2.1 三层记忆 ↔ CoALA 的记忆三分</h3>
+<p>文件系统上是 <b>L0/L1/L2 三层</b>；下表第 4 行的 Skills/Rules 是 L1 蒸馏出的<b>独立产物</b>，映射到 CoALA 的 procedural 记忆，故单列。</p>
+<table>
+  <tr><th>层</th><th>路径</th><th>内容</th><th>CoALA 对应</th><th>读写风险</th></tr>
+  <tr><td><b>L0_raw</b>（原始轨迹层）</td><td class="td-mono">~/Cline/Memory/L0_raw/task_artifacts/</td><td>每任务的轨迹记录（搜索了什么、用了什么 API、报什么错、成败）</td><td>情景记忆 episodic（事件经历，可回溯）</td><td>低（只追加）</td></tr>
+  <tr><td><b>L1_patterns</b>（聚合模式层）</td><td class="td-mono">~/Cline/Memory/L1_patterns/{edaPatterns,apiDecisionLog}.md</td><td>聚合后的条目，每条形如 <code>(标识符, [状态] 描述)</code>，可注入 prompt</td><td>语义记忆 semantic（世界知识，可写）</td><td>低（可写）</td></tr>
+  <tr><td><b>L2_evolution</b>（版本归档层）</td><td class="td-mono">~/Cline/Memory/L2_evolution/</td><td>Skill 版本历史归档</td><td>规程记忆 procedural 的历史</td><td>—</td></tr>
+  <tr><td><b>Skills / Rules</b>（技能与规则层）</td><td class="td-mono">~/.cline/skills · ~/Cline/Rules</td><td>蒸馏产物：详细决策树（Skill）/ 常驻硬约束（Rule）</td><td>规程记忆 procedural（agent 的操作技能/规程）</td><td><b>高</b>（改操作规程）</td></tr>
+</table>
+<div class="paper"><b>📄 CoALA</b>（Sumers et al.）：把长期记忆分三类——<b>episodic</b>（情景：具体事件经历）、<b>semantic</b>（语义：抽象世界知识）、<b>procedural</b>（规程：怎么做的技能/代码/prompt）。三者严格区分，且<b>写 procedural（改操作规程）属高风险</b>——"easily introduce bugs or subvert designers' intentions"。本系统的 L0/L1/Skills 正好对应，且 Skills 蒸馏带来源标记保护（见 §8）正是对 procedural 高风险的回应。</div>
+<div class="why"><b>🎯 原因</b>：分层让"原始轨迹"与"聚合知识"分离——L0 忠实记录每次尝试（可回溯），L1 只保留去重后的可复用模式（可注入）。若混在一层，要么 prompt 被原始日志撑爆，要么丢失回溯细节。</div>
+
+<h3>2.2 读写分离：写侧开关 ≠ 读侧开关</h3>
+<p>这是最易被误解、也是最关键的设计之一。<b>写入端</b>（把轨迹沉淀进记忆）与<b>读取端</b>（让 agent 看到已有知识）由两个独立开关控制：</p>
+<table>
+  <tr><th></th><th>写侧开关</th><th>读侧开关</th></tr>
+  <tr><td><b>变量</b></td><td class="td-mono">-e / EDA_EVOLVE_ENABLED</td><td class="td-mono">l1_has_content（L1 条目数 &gt; 0）</td></tr>
+  <tr><td><b>默认</b></td><td><span class="badge badge-orange">关（需显式开启）</span></td><td><span class="badge badge-green">由 L1 内容决定</span></td></tr>
+  <tr><td><b>控制什么</b></td><td>本轮轨迹是否喂给自进化（Step 8 更新 / 8.5 蒸馏）</td><td>是否注册"查询记忆库"工具 + 是否把 L1 注入 prompt</td></tr>
+  <tr><td><b>判定位置</b></td><td class="td-mono">run_cline_script.sh</td><td class="td-mono">main.py · format_eval_task.py</td></tr>
+</table>
+<div class="insight"><b>关键推论</b>：一个 <code>-e</code> 关闭的运行，<b>仍然会读到</b>上一轮 <code>-e</code> 开启时沉淀的 L1。因为读侧只看"L1 有没有内容"，不看"本轮是否写入"。冷启动时 L1 文件有条目数 0（空骨架，非空文件）→ 读侧判定无内容 → 不注册工具、不注入。</div>
+<div class="why"><b>🎯 原因</b>：若读写共用一个开关，"想验证零知识基线"时要么连读侧也关（看不到已有知识，无法测真实效果），要么连写侧也开（污染基线）。分离后可独立控制：跑基线时 <code>-e</code> 关但 L1 已重置 → 真·零知识；跑自进化时 <code>-e</code> 开 → 沉淀。读侧始终反映"L1 实际有没有东西"。</div>
+<div class="paper"><b>📄 CoALA</b>：把"从记忆检索"与"更新记忆"列为不同动作；读写分离正是这一原则的工程化。</div>
+
+<h3>2.3 级联自进化（按轮次粒度）</h3>
+<p>当前自进化是<b>按轮次</b>（一轮 158 个任务跑完后统一更新），不是按单次尝试。写侧主管模块 <code>update.py</code> 的主流程按顺序执行：L0 抽取 → 富集 → 根因分类 → L1 抽取合并 → Skill 自动晋升 → 用量统计 → 向量同步。下图是其中数据加工的核心 5 步（完整生命周期见 §13）：</p>
+<div class="flow-steps">
+  <div class="flow-step"><div class="flow-step-marker"><div class="flow-step-dot">1</div><div class="flow-step-line"></div></div><div class="flow-step-content"><b>L0 抽取</b> — 逐个轨迹解析成结构化记录，写入 <code>L0_raw/task_artifacts/{任务ID}.md</code></div></div>
+  <div class="flow-step"><div class="flow-step-marker"><div class="flow-step-dot orange">2</div><div class="flow-step-line"></div></div><div class="flow-step-content"><b>富集</b> — 用沙箱真实通过/失败覆盖轨迹里的启发式成败判断；补全生成失败的任务；回填验证过的真实代码</div></div>
+  <div class="flow-step"><div class="flow-step-marker"><div class="flow-step-dot green">3</div><div class="flow-step-line"></div></div><div class="flow-step-content"><b>根因分类</b> — 失败任务判定根因，环境/生成类故障跳过沉淀</div></div>
+  <div class="flow-step"><div class="flow-step-marker"><div class="flow-step-dot purple">4</div><div class="flow-step-line"></div></div><div class="flow-step-content"><b>L1 抽取合并</b> — 4 类反思产出条目，合并函数做去重/合并/状态升级，写回 L1 文件</div></div>
+  <div class="flow-step"><div class="flow-step-marker"><div class="flow-step-dot">5</div><div class="flow-step-line"></div></div><div class="flow-step-content"><b>后处理</b> — 模式自动晋升为 Skill、Skill 用量统计、L1 同步到 9003 向量库</div></div>
+</div>
+<div class="paper"><b>📄 Lilian Weng《Harness Engineering》</b>：评估器与权限控制必须在进化循环之外。本系统更新阶段读的是<b>上一轮 benchmark 的沙箱执行结果</b>（ground-truth），写侧不自评——评估器独立于写循环。</div>
+
+<!-- ════════════════════ 3. L0 ════════════════════ -->
+<h2 id="l0"><span class="section-num">3</span>写侧 · L0 抽取与 ground-truth 富集</h2>
+
+<h3>3.1 把轨迹解析成结构化记录</h3>
+<p>写侧第一步是解析每个任务的对话轨迹（trace），提取出结构化字段。轨迹有两种格式：<b>zhulong</b>（扁平消息列表，工具调用以 XML 块内嵌）和 <b>cline 3.0</b>（外层信封字典包一层 <code>{sessionId, messages:[...]}</code>，工具调用是 JSON 结构），由格式探测函数自动识别并统一解析。</p>
+<table>
+  <tr><th>字段</th><th>来源</th><th>说明</th></tr>
+  <tr><td>搜索记录</td><td>search_apis / 关键词检索 / 查询记忆库 调用</td><td>每次搜索的 {工具, 查询词, top_k, 语言}</td></tr>
+  <tr><td>取过的 API</td><td>查 API 详情调用</td><td>去重后的 API 名列表（<b>查询顺序，非使用事实</b>）</td></tr>
+  <tr><td><b>真实调用 API（used_apis）</b></td><td>从生成代码静态提取</td><td>grep <code>(pyScript|pa|ae)\.xxx(</code> 提取代码实际调用的 API，跳过 import/注释。<b>V5 起 [已验证] 的来源</b>（替代旧 apis[0]，见 §14）</td></tr>
+  <tr><td>代码执行次数</td><td>沙箱执行代码的调用次数</td><td>计数（非代码内容）</td></tr>
+  <tr><td>错误</td><td>工具结果中带错误的</td><td>{错误码, 错误日志前500字}</td></tr>
+  <tr><td>执行成功?</td><td><b>轨迹启发式推断</b></td><td>结果含 "successful" 字样则判成功（<b>不可靠</b>）</td></tr>
+  <tr><td>工具序列 / skill 引用 / token 统计</td><td>工具调用列表 / skill 类型调用 / 模型 metrics</td><td>按序工具名、skill 引用、token 消耗</td></tr>
+</table>
+
+<h3>3.2 ground-truth 富集：覆盖不可靠的轨迹推断</h3>
+<div class="warning"><b>⚠️ 核心问题</b>：上表的"执行成功?"由轨迹推断（结果含 "successful" 字样），<b>严重高估</b>。实测：轨迹推断成功 150/158，而沙箱 ground-truth 真实通过仅 114/158——轨迹把约 36 个失败 task 误判为成功（含 4 个真成功也被轨迹漏判后修正回成功，净假阳性约 40）。若不富集，这些"看起来成功实则失败"的任务会被当成<b>已验证</b>的正面经验沉淀进 L1，污染知识库。</div>
+<p>富集步骤从 EDA-Eval-Framework 的执行结果文件取沙箱真实通过/失败（ground-truth），<b>直接覆盖</b>轨迹推断的成败字段。定位执行结果用三级 fallback：精确匹配（读评估报告的生成文件名）→ 直接路径 → 递归搜索兜底。</p>
+<pre><code># 富集核心：ground-truth 覆盖轨迹推断
+if 任务已有记录:
+    artifact["execution_success"] = passed   # 沙箱结果是真相
+    if 旧值 != passed:
+        enriched += 1                         # 仅在值翻转时计数</code></pre>
+<div class="paper"><b>📄 Reflexion</b>（Shinn et al.）：反思必须锚定在评估器奖励信号 r 上——"可靠 Evaluator 信号是反思有效的前提"。论文 Table 3：无测试+有反思 = 52%（比 60% 基线还差，反思做"有害编辑"）。本系统的 ground-truth 富集正是把"可靠的 r"喂给下游反思——这些假阳性若混入，等于在脏奖励上做反思。</div>
+<div class="why"><b>🎯 原因</b>：用<b>覆盖</b>而非"合并"——沙箱测试是黑盒 ground-truth，轨迹推断是噪声启发式，真相只有一个。覆盖保证下游反思/沉淀拿到正确 reward 标签。</div>
+<div class="warning"><b>已知脆弱点</b>：当一个 batch 被多次评估时，精确匹配策略取最早的一个 eval，可能静默选错。需评估目录指向正确 eval。</div>
+<div class="insight"><b>★治本守卫（2026-07-19）</b>：无 ground-truth 时（未设 <code>EVAL_FW_DIR</code> / 空结果 / 读取失败），<code>_enrich_from_execution_results</code> 三条跳过路径都把未富集的 <code>execution_success</code> <b>强制设为 False</b>——防止轨迹推断的假阳性让失败 task 被标 <code>[已验证]</code>。代价是无 ground-truth 时漏沉淀真成功 task（宁缺毋滥原则）。正常带 <code>EVAL_FW_DIR</code> 沉淀不受影响。配合 §5.5（reflection 不沉淀推断），这是 L1 注入治本转正的两刀。</div>
+
+<!-- ════════════════════ 4. ROOT ════════════════════ -->
+<h2 id="root"><span class="section-num">4</span>写侧 · 失败根因六分类</h2>
+
+<p>失败有两层标注：<b>错误码</b>（what——发生了什么，15 类，如 TypeError/AttributeError/TimeoutError 等具体的异常类型）和 <b>失败根因</b>（why——为什么会失败，6 类）。根因分类函数在所有富集完成后统一计算（保证生成状态、代码数、错误都齐备）。</p>
+<div class="highlight"><b>两层关系</b>：错误码是细粒度的"表象"（15 类），失败根因是粗粒度的"根因"（6 类），<b>多对一收敛</b>——多个错误码归入一个根因。例如 TypeError、AttributeError、ImportError 三个错误码都归入"③ API 误用"根因；各种 Timeout 归入"① 环境故障"。根因是下游决定"要不要沉淀、沉淀成什么"的依据。</div>
+
+<div class="diagram-container">
+<svg viewBox="0 0 880 270" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,sans-serif">
+  <defs><filter id="sh2"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/></filter>
+    <marker id="a2g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#64748b"/></marker></defs>
+
+  <!-- 决策节点 -->
+  <rect x="320" y="14" width="240" height="44" rx="10" fill="#1e293b" filter="url(#sh2)"/>
+  <text x="440" y="41" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">execution_success?</text>
+
+  <!-- 是 → SUCCESS（右下） -->
+  <path d="M 540 36 C 620 36, 690 50, 720 70" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#a2g)"/>
+  <text x="600" y="30" fill="#16a34a" font-size="11.5" font-weight="600">是</text>
+  <rect x="660" y="70" width="200" height="36" rx="8" fill="#f0fdf4" stroke="#16a34a" filter="url(#sh2)"/>
+  <text x="760" y="92" fill="#166534" font-size="12" font-weight="600" text-anchor="middle">✅ SUCCESS（沉淀正面经验）</text>
+
+  <!-- 否 → 向左下进入逐级判定 -->
+  <path d="M 340 36 C 260 36, 200 50, 160 70" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#a2g)"/>
+  <text x="250" y="30" fill="#dc2626" font-size="11.5" font-weight="600">否</text>
+  <text x="120" y="92" fill="#dc2626" font-size="11.5" font-weight="600" text-anchor="middle">逐级判定</text>
+  <text x="120" y="108" fill="#94a3b8" font-size="10" text-anchor="middle">（优先级→）</text>
+  <!-- 汇总线：从"逐级判定"横向连到 6 个 box 顶部 -->
+  <line x1="160" y1="118" x2="160" y2="130" stroke="#dc2626" stroke-width="2"/>
+  <line x1="85" y1="130" x2="785" y2="130" stroke="#94a3b8" stroke-width="1.5"/>
+  <!-- 每个 box 从母线 drop 下来 -->
+  <line x1="85" y1="130" x2="85" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a2g)"/>
+  <line x1="225" y1="130" x2="225" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a2g)"/>
+  <line x1="365" y1="130" x2="365" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a2g)"/>
+  <line x1="505" y1="130" x2="505" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a2g)"/>
+  <line x1="645" y1="130" x2="645" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a2g)"/>
+  <line x1="785" y1="130" x2="785" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a2g)"/>
+
+  <!-- 6 类（优先级从左到右递减） -->
+  <g font-size="11" font-weight="600">
+    <rect x="20" y="140" width="130" height="40" rx="8" fill="#fef2f2" stroke="#dc2626" filter="url(#sh2)"/>
+    <text x="85" y="158" fill="#991b1b" text-anchor="middle">① ENV_FAILURE</text>
+    <text x="85" y="172" fill="#94a3b8" font-size="9.5" font-weight="500" text-anchor="middle">跳过沉淀</text>
+
+    <rect x="160" y="140" width="130" height="40" rx="8" fill="#fff7ed" stroke="#ea580c" filter="url(#sh2)"/>
+    <text x="225" y="158" fill="#9a3412" text-anchor="middle">② GEN_FAILURE</text>
+    <text x="225" y="172" fill="#94a3b8" font-size="9.5" font-weight="500" text-anchor="middle">跳过沉淀</text>
+
+    <rect x="300" y="140" width="130" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" filter="url(#sh2)"/>
+    <text x="365" y="158" fill="#1e40af" text-anchor="middle">③ API_MISUSE</text>
+    <text x="365" y="172" fill="#94a3b8" font-size="9.5" font-weight="500" text-anchor="middle">沉淀</text>
+
+    <rect x="440" y="140" width="130" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" filter="url(#sh2)"/>
+    <text x="505" y="158" fill="#1e40af" text-anchor="middle">④ SEARCH_MISS</text>
+    <text x="505" y="172" fill="#94a3b8" font-size="9.5" font-weight="500" text-anchor="middle">沉淀</text>
+
+    <rect x="580" y="140" width="130" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" filter="url(#sh2)"/>
+    <text x="645" y="158" fill="#1e40af" text-anchor="middle">⑤ LOGIC_ERROR</text>
+    <text x="645" y="172" fill="#94a3b8" font-size="9.5" font-weight="500" text-anchor="middle">沉淀</text>
+
+    <rect x="720" y="140" width="130" height="40" rx="8" fill="#f1f5f9" stroke="#94a3b8" filter="url(#sh2)"/>
+    <text x="785" y="158" fill="#475569" text-anchor="middle">⑥ UNKNOWN</text>
+    <text x="785" y="172" fill="#94a3b8" font-size="9.5" font-weight="500" text-anchor="middle">兜底</text>
+  </g>
+
+  <!-- 优先级递减指示 -->
+  <text x="440" y="208" fill="#94a3b8" font-size="10.5" text-anchor="middle">⟵ 优先级递减 ⟶</text>
+  <text x="440" y="232" fill="#475569" font-size="11" text-anchor="middle">环境/生成故障不含 API 信号 → 跳过沉淀；③④⑤⑥ 进入反思沉淀</text>
+  <text x="440" y="252" fill="#ea580c" font-size="10.5" text-anchor="middle">⚠️ ③ API_MISUSE 在 ④ SEARCH_MISS 之前判定（避免把"搜得多但用错"误判为检索问题）</text>
+</svg>
+  <div class="diagram-label">图 2 · 失败根因六分类优先级决策树</div>
+</div>
+
+<div class="insight"><b>关键设计</b>：<b>③ API 误用先于 ④ 检索缺失判定</b>。一个任务可能搜了很多 API（看起来像检索缺失），但若最终报参数类型错/属性错，根因是"用错了"而非"没搜到"。先判 API 误用避免误归类。</div>
+<p>六类含义：<b>ENV_FAILURE</b>（环境故障：沙箱超时、session 初始化失败）、<b>GEN_FAILURE</b>（生成失败：没产出代码）、<b>API_MISUSE</b>（API 误用：参数类型/属性/导入错）、<b>SEARCH_MISS</b>（检索缺失：没搜到/搜太少）、<b>LOGIC_ERROR</b>（逻辑错：代码能跑但断言不过）、<b>UNKNOWN</b>（兜底）。</p>
+<p><b>沉淀门</b>：环境故障和生成故障<b>不含 API 使用信号</b>，沉淀进来只会用环境噪声冒充 API 教训，故跳过 API 反思；其余 4 类进入反思。环境故障类仍允许"决策反思"（若存在重复搜索等退化行为）。</p>
+<div class="paper"><b>📄 Reflexion</b>：失败信号的<b>可靠性分层</b>，对应到六类：<b>属性错/类型错（③ API 误用）信号最强</b>（明确指向用错 API 或参数）；<b>断言错（⑤ 逻辑错）信号半可靠</b>（代码能跑但结果不对，不知是 API 选错还是逻辑写错）；<b>未知（⑥）是猜测</b>。这个分层直接驱动了 §5 的低信号保守判断（对断言错/未知这类低信号失败，要求 LLM 保守、宁可不下结论）。<b>📄 SkillOS</b>：根因分类策略本系统采用人工规则（SkillOS 论文方向是用强化学习从下游反馈学出该策略，本系统取其分类思想、简化为规则）。</div>
+<div class="why"><b>🎯 原因</b>：分类用规则而非 LLM——确定性、便宜、可调试。CoALA "code sparingly"：分类是确定性脚手架，语义判断留给下游反思 LLM。</div>
+<div class="warning"><b>真实盲点</b>：V5+evo（串行 85.4%，详见 §14）23 个失败中，<b>逻辑错占 61%</b>——agent 最后一次执行代码<b>跑通无报错</b>（agent 自评"成功了"），但 ground-truth 隐藏测试断言<b>未通过</b>——即"代码能跑"≠"结果对"（见阅读前的两层区分）。这类"自验证层"问题横跨 ③ API 误用与 ⑤ 逻辑错（说不清是 API 用错还是逻辑错），6 类规则抓不到，靠 prompt/Rules/Skill + validate_code 缓解（详见 §12.5 三件套、§12.6 拦截器；失败分布见 §14.2）。<b>治本前</b>看 trace 实际错误是参数构造 83%（SWIG 类型传原生值），E1/validator 落地后压下参数构造，瓶颈转向逻辑错（创建类 API 跑通但没生效，治法见 E6/§12.5）。治本后顽固题已收敛到 2 道（143/146，跨 14 批可信评估），E6 对"创建没生效"类有效但未完全破零。</div>
+
+<!-- ════════════════════ 5. REFLECT ════════════════════ -->
+<h2 id="reflect"><span class="section-num">5</span>写侧 · 反思层（四类反思）</h2>
+
+<p>反思层把 L0 结构化记录转成 L1 条目。有 4 类反思函数，按任务成败分派，每类产出不同性质的条目：</p>
+
+<table>
+  <tr><th>反思类型</th><th>语义</th><th>产出条目状态</th><th>调用时机</th></tr>
+  <tr><td><b>场景反思</b>（reflect_on_scenario）</td><td>"在 X 场景用 Y API" 的使用经验</td><td><b>已验证</b>（成功时）或 <b>待验证</b>（失败但 LLM 判方向对）</td><td>成功产正面；失败由 LLM 判 API 方向</td></tr>
+  <tr><td><b>坑点反思</b>（reflect_on_pitfall）</td><td>"X API 有个坑" 的负向警示</td><td>状态留空（坑点，见 §6.1）</td><td>仅失败</td></tr>
+  <tr><td><b>错→修反思</b>（reflect_on_error_to_fix）</td><td>"错 X → 修 Y" 的修复映射</td><td>状态留空（坑点）</td><td>仅失败</td></tr>
+  <tr><td><b>决策反思</b>（reflect_on_decision）</td><td>搜索/工具决策的得失</td><td>状态留空（坑点）</td><td>有重复搜索等退化行为时</td></tr>
+</table>
+
+<div class="insight"><b>四类反思都带成功信号并锚定奖励</b>：成功任务（success=True）时，坑点/错→修反思直接短路返回 None——"通过的任务的错误不是失败信号"。只有失败任务才产出坑点/错→修条目。这正是 Reflexion"反思锚定奖励 r"的落地。</div>
+
+<h3>5.1 规则引擎 vs LLM 双路径</h3>
+<div class="two-col">
+<div>
+<p><b>LLM 路径（主）</b>：批量反思函数用线程池（默认 5 并发）跑 4 类反思。受 <code>REFLECTION_ENABLED</code> 开关控制，可用 <code>--no-reflection</code> 关闭用于消融实验。</p>
+</div>
+<div>
+<p><b>规则引擎路径（fallback）</b>：纯规则提取器（基于搜索记录/API 名/错误的确定性规则），仅在 LLM 反思关闭时启用。</p>
+</div>
+</div>
+<div class="insight"><b>规则引擎不越权（核心设计）</b>：规则版的场景提取是<b>两态</b>——成功产<b>已验证</b>，失败返回 None（不产条目）。<b>不产"待验证"</b>。因为向量检索出的 API"看起来总是相关的"（词重叠近乎必然命中），规则无法区分"似是而非"——只有 LLM 能做"API 方向对但参数错"这种语义判断。故"待验证"是 LLM 专属。</div>
+<div class="paper"><b>📄 CoALA "code sparingly"</b>：确定性逻辑用代码做脚手架（成功→已验证），创造性/语义判断交 LLM（失败→判断方向）。<b>📄 Reflexion</b>：反思是对奖励信号（任务成功/失败）的语义放大，必须锚定这个信号——通过的任务不产失败教训，失败的任务才产。</div>
+
+<h3>5.2 状态前缀由系统强制，不信 LLM</h3>
+<pre><code># 系统强制状态前缀
+description = strip_status(description)               # 剥掉 LLM 自己加的前缀
+authoritative_status = "verified" if success else "unverified"
+description = f"[{authoritative_status}] {description}"  # 用真实成败重写</code></pre>
+<p>无论 LLM 输出什么前缀，系统都剥掉再用 ground-truth 成败重写。保证成功→<b>已验证</b>、失败→<b>待验证</b> 绝对可靠。此外场景反思用独立的系统提示词（与共享提示词分开），因为共享提示词的"哪里出错了"措辞与场景语义冲突。</p>
+<div class="why"><b>🎯 原因</b>：状态标签下游直接决定检索优先级与渲染（§6/§11），必须 100% 可信。LLM 偶尔不遵循格式，系统强制补前缀消除这个不确定性。</div>
+
+<h3>5.3 低信号失败的保守判断</h3>
+<p>有些<b>错误码</b>不指向明确根因——<b>断言错</b>（AssertFail）、<b>未知错</b>（Unknown）、<b>执行错</b>（沙箱执行层报的笼统错误）这三类（属 §4 的 15 类错误码中的低信号子集）只说"结果不符"，说不清是 API 选错、参数错还是逻辑错。对这类低信号失败，场景反思注入不确定性提示与保守指引，要求 LLM <b>保守</b>：只有 API 明确相关才产条目，有疑虑返回"无"（→ 不写<b>待验证</b>条目，回退到坑点）。</p>
+<div class="paper"><b>📄 Reflexion</b>：低质量奖励信号会产生"harmful edits"（Table 3：无测试+反思=52% 比基线差）。保守判断 = 不在噪声上放大，宁可不沉淀也不沉淀错的。</div>
+
+<h3>5.4 LLM 基础设施</h3>
+<p>多模型 fallback 链（逐级降级兜底）：DeepSeek → 通义千问 → 豆包（Doubao），按环境变量配置；所有模型配置在<b>调用时</b>读取（而非导入时读取，这样即使 .env 配置文件在模块导入之后才加载，配置也能读到），兼容 .env 后加载；限流时自动重试（解析"请等待35秒"类消息）。</p>
+<div class="paper"><b>📄 MemOrb</b>：反思输入应是完整轨迹 + 显式 reward 分项。本系统反思输入是<b>预提取摘要</b>（搜索记录/API/错误），非原始轨迹——这是与 MemOrb 的设计差异。</div>
+
+<h3>5.5 治本：不沉淀 agent 推断（2026-07-19，★L1 注入转正的关键）</h3>
+<div class="warning"><b>⚠️ 093 铁证</b>：V5+evo（治本前）L1 含一条标 <code>[已验证]</code> 的"测试发现"——声称参数名 <code>isReplaceMismatched</code>（一个 s）是错的、正确的是 <code>isReplaceMissmatched</code>（两个 s）。agent 采信后把 V5 对的位置参数改成 kwarg → <code>TypeError: unexpected keyword argument</code> → fail。实际 API 根本不接受任何 isReplace* kwarg，只接受第 5 个位置参数。这条"测试发现"是 agent 自测时的误判（瞬态成功误归因到"两个 s"），被标 [已验证] 后系统性误导下游。</div>
+<div class="insight"><b>★治法（reflection.py）</b>：rule 4 改为"Only state APIs the agent's code ACTUALLY called (used_apis fact). Do NOT infer 'correct wrapper pattern'/'correct parameter name'/'use property X vs setter Y' — these are agent guesses that may be wrong"。L1 只沉淀 <code>used_apis</code> 事实（代码真调用的 API）+ ground-truth 验证的用法，<b>不沉淀 agent 的"测试发现/参数名修正/属性写法"类推断</b>。治 093（参数名推断）/075/134/132（属性 vs 方法推断），不削 gained 题（它们靠 used_apis 事实）。</div>
+<div class="why"><b>🎯 原因</b>：免责声明"⚠️ 非答案，必须验证"对 <code>[已验证]</code> 条目<b>失效</b>——agent 信任 [已验证] 标签不会去验证它。故 [已验证] 必须绝对可靠（基于 ground-truth），要么不用这个标签。治本后（不沉淀推断 + [已验证] 严格化）L1 注入从净负转净 +17 题（详见 §14 现状数据）。</div>
+
+<!-- ════════════════════ 6. L1 ════════════════════ -->
+<h2 id="l1"><span class="section-num">6</span>写侧 · L1 聚合与三态条目</h2>
+
+<h3>6.1 三态：已验证 / 待验证 / 坑点</h3>
+<div class="highlight"><b>📖</b> L1 主文件用三态；P2-5a 的 <code>hypotheses.md</code> 用第 4 态 <code>[假设·待验证]</code>，独立隔离不参与主流程（见 §6.4）。</div>
+<p>每个 L1 条目带<b>状态</b>维度，显式区分知识来源的可靠程度。这是区别于"成败混在一起"的关键。</p>
+<table>
+  <tr><th>状态</th><th>含义</th><th>来源</th><th>检索可信度</th></tr>
+  <tr><td><span class="badge badge-green">已验证</span></td><td>来自<b>通过</b>任务，API 方向经 ground-truth 确认</td><td>场景反思（成功时）或规则版</td><td>高（正面推荐）</td></tr>
+  <tr><td><span class="badge badge-orange">待验证</span></td><td>来自<b>失败</b>任务，但 LLM 判 API 方向对（参数/逻辑错）</td><td>仅场景反思（失败时，LLM 判方向）</td><td>中（半成品，需验证）</td></tr>
+  <tr><td><span class="badge badge-gray">坑点</span></td><td>失败教训 / 错误→修复（无状态标签）</td><td>坑点反思 / 错→修反思</td><td>负向警示</td></tr>
+</table>
+<div class="why"><b>🎯 原因</b>：向量检索出的 API"看起来总相关"（词重叠近乎必然），规则无法判"似是而非"。三态让"成功经验 / 方向对但未通过 / 失败教训"显式分离，检索时可分别渲染与排序（§11）。坑点不是一个字面标签，而是<b>状态缺失</b>，解析时据此识别。</div>
+<div class="paper"><b>📄 Reflexion</b>：正面例（放大正奖励→已验证）与负例（放大负奖励→坑点）分离。<b>📄 MUSE</b>：从失败轨迹延伸记忆是其 §4.3/Appendix L 允许的（待验证不违反 MUSE）。<b>📄 CoALA</b>：L1=semantic memory（可写、低风险），三态保持正负语义知识可区分。</div>
+
+<h3>6.2 条目合并：聚合 / 去重 / 状态升级</h3>
+<p>合并函数把新条目合并进已有 L1。核心是<b>状态感知</b>的合并策略。下图中的 <b>source_count（佐证次数）</b>= 该条目被多少个任务贡献过，是重要性信号（详见 §7.1 检索时如何用它加权）。</p>
+<div class="diagram-container">
+<svg viewBox="0 0 880 220" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,sans-serif">
+  <defs><filter id="sh3"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/></filter>
+    <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#64748b"/></marker>
+    <marker id="a3g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#16a34a"/></marker>
+  </defs>
+
+  <!-- 入口：新条目到来 -->
+  <rect x="20" y="88" width="150" height="44" rx="10" fill="#fff" stroke="#dfe3ec" filter="url(#sh3)"/>
+  <text x="95" y="108" fill="#1e293b" font-size="12" font-weight="600" text-anchor="middle">新条目到来</text>
+  <text x="95" y="123" fill="#94a3b8" font-size="9.5" text-anchor="middle">(标识符, [状态] 描述)</text>
+
+  <!-- 决策菱形：identifier 相同？ -->
+  <path d="M 270 110 L 320 80 L 370 110 L 320 140 Z" fill="#fffbeb" stroke="#d97706" stroke-width="1.5" filter="url(#sh3)"/>
+  <text x="320" y="107" fill="#92400e" font-size="11" font-weight="600" text-anchor="middle">identifier</text>
+  <text x="320" y="121" fill="#92400e" font-size="11" font-weight="600" text-anchor="middle">相同?</text>
+  <line x1="170" y1="110" x2="270" y2="110" stroke="#64748b" stroke-width="1.8" marker-end="url(#a3)"/>
+
+  <!-- 不同 → 新增插入（上方，绿） -->
+  <path d="M 370 110 C 405 110, 420 60, 438 50" fill="none" stroke="#16a34a" stroke-width="1.8" marker-end="url(#a3g)"/>
+  <text x="388" y="76" fill="#16a34a" font-size="10.5" font-weight="600">不同</text>
+  <rect x="440" y="30" width="170" height="40" rx="8" fill="#dcfce7" stroke="#16a34a" filter="url(#sh3)"/>
+  <text x="525" y="48" fill="#166534" font-size="11" font-weight="600" text-anchor="middle">新增条目</text>
+  <text x="525" y="62" fill="#166534" font-size="10.5" text-anchor="middle">插入，佐证次数 = 1</text>
+
+  <!-- 相同 → 已存在合并（中，蓝）：从菱形底点出发 -->
+  <path d="M 320 140 C 360 150, 410 132, 438 112" fill="none" stroke="#3b82f6" stroke-width="1.8" marker-end="url(#a3)"/>
+  <text x="362" y="148" fill="#3b82f6" font-size="10.5" font-weight="600">相同</text>
+  <rect x="440" y="90" width="170" height="44" rx="8" fill="#eff6ff" stroke="#3b82f6" filter="url(#sh3)"/>
+  <text x="525" y="110" fill="#1e40af" font-size="11" font-weight="600" text-anchor="middle">已存在</text>
+  <text x="525" y="124" fill="#1e40af" font-size="10.5" text-anchor="middle">佐证次数+1 · 按状态分派→</text>
+
+  <!-- 三种合并子情况（右侧） -->
+  <line x1="610" y1="112" x2="660" y2="112" stroke="#64748b" stroke-width="1.5" marker-end="url(#a3)"/>
+  <line x1="660" y1="50" x2="660" y2="180" stroke="#64748b" stroke-width="1.5"/>
+  <line x1="660" y1="50" x2="675" y2="50" stroke="#64748b" stroke-width="1.5" marker-end="url(#a3)"/>
+  <line x1="660" y1="112" x2="675" y2="112" stroke="#64748b" stroke-width="1.5" marker-end="url(#a3)"/>
+  <line x1="660" y1="180" x2="675" y2="180" stroke="#64748b" stroke-width="1.5" marker-end="url(#a3)"/>
+
+  <rect x="675" y="30" width="190" height="40" rx="8" fill="#dcfce7" stroke="#16a34a" filter="url(#sh3)"/>
+  <text x="770" y="48" fill="#166534" font-size="10.5" text-anchor="middle"><tspan font-weight="600">升级 unverified→verified</tspan></text>
+  <text x="770" y="62" fill="#94a3b8" font-size="9.5" text-anchor="middle">覆盖 desc，设 verified</text>
+
+  <rect x="675" y="92" width="190" height="40" rx="8" fill="#fef9c3" stroke="#ca8a04" filter="url(#sh3)"/>
+  <text x="770" y="110" fill="#854d0e" font-size="10.5" text-anchor="middle"><tspan font-weight="600">降级守卫</tspan>：已验证不被降为待验证</text>
+  <text x="770" y="124" fill="#94a3b8" font-size="9.5" text-anchor="middle">保持 verified（防噪声降级）</text>
+
+  <rect x="675" y="160" width="190" height="40" rx="8" fill="#e0f2fe" stroke="#0ea5e9" filter="url(#sh3)"/>
+  <text x="770" y="178" fill="#075985" font-size="10.5" text-anchor="middle"><tspan font-weight="600">同状态</tspan>：刷新溯源批次（P2-3）</text>
+  <text x="770" y="192" fill="#94a3b8" font-size="9.5" text-anchor="middle">last_confirmed=本轮（老化信号）</text>
+</svg>
+  <div class="diagram-label">图 3 · 条目合并的状态感知策略（同 identifier 由 merge_bullets 处理）</div>
+</div>
+<div class="insight"><b>降级守卫</b>：一个已<b>验证</b>（被多次成功佐证）的条目，即使后来一个失败任务命中它，也<b>不降级</b>为待验证——只让佐证次数继续涨。这防止"一个失败噪声"污染已被多次成功确认的经验。</div>
+<div class="warning"><b>⚠️ P2-7 语义合并（2026-07-17 重构）</b>：上图只画<b>同 identifier</b> 合并（merge_bullets，count++/状态演化/溯源刷新）。<b>跨 identifier</b> 的同类条目合并（identifier 由 LLM 生成、本质随机，精确去重 95% 命不中）已交给 <b>P2-7 语义合并</b>（embedding 聚类 + LLM 判合同知识，step 8.9 尾置）——复活 source_count 信号（某次 dry-run 实测 440 条合并为 324 条，source_count≥3 的条目从 3 涨到 29）。详见 §6.3。</div>
+<div class="why"><b>🎯 原因</b>：状态存进 L1 文件但<b>不写在描述里</b>——渲染时从单一来源（状态表）重加前缀。描述与状态解耦，避免"改了描述忘了改前缀"的不一致。</div>
+<div class="paper"><b>📄 Reflexion</b>：降级守卫 = 防负奖励噪声污染正记忆。正负例强制分离：场景反思仅成功产<b>已验证</b>，坑点/错→修仅失败产，避免正反例混在一起。</div>
+
+<h3>6.3 P2-7 跨 identifier 语义合并（三阶段）</h3>
+<p>merge_bullets 只处理<b>同 identifier</b>（§6.2）。但 identifier 由 LLM 生成、本质随机（同知识跨 task 拿不同 id，如 <code>create-bit-array-and-set-bits</code> vs <code>create-bit-array-set-bits</code>），精确去重 95% 命不中 → source_count 信号失效、知识库冗余。P2-7 用 embedding 绕开 identifier，<b>三阶段架构（embedding proposes, LLM disposes）</b>：</p>
+<table>
+  <tr><th>阶段</th><th>机制</th><th>关键设计</th></tr>
+  <tr><td><b>Stage 1 · embedding 聚类</b></td><td><code>memory_bank/l1/l1_merging.py</code> 用 9003 的 <code>/neighbors</code> 批量端点（一次 batch-encode + 一次 ChromaDB query 全量近邻），每个 entry 用自身 "id: desc" 取 top-K 近邻，阈值边 + connected components 聚类</td><td><b>阈值 0.85 是甜点</b>：&lt;0.85 传递链巨型簇（模板措辞让不相关条目 embedding 相似）吃掉整个语料（th=0.60→485/558 一簇）；0.85 巨型簇瓦解，88 个良构簇覆盖 61%</td></tr>
+  <tr><td><b>Stage 2 · LLM 合并决策</b></td><td>每簇让 LLM 判哪些是 SAME 知识（合并：粗 identifier + 融合 desc + 累加 count + 最高 status）vs 同类不同知识（keep separate），输出 JSON merge_groups</td><td>复用 <code>reflection._invoke_reflection</code>。<b>new-anchored 守卫</b>：只让本轮 <code>last_confirmed==current_batch</code> 的条目（anchor）发 /neighbors 查询，粗-粗不直接合并，防过度合并（实测 822 条：anchor guard 101 簇/30s vs 全量 110 簇/55s）</td></tr>
+  <tr><td><b>Stage 3 · apply</b></td><td><code>apply_merges_to_file</code> 复用 <code>update.reconstruct_file</code>（保 section/frontmatter/P2-3 provenance），跨文件合并组跳过（patterns↔decisions 混淆防范）</td><td>CLI <code>scripts/merge_l1_entries.py</code> 默认 dry-run，<code>--apply</code> 才写 L1 + resync 9003。JSON parse 失败→保守 0 合并（不误合）</td></tr>
+</table>
+<div class="warning"><b>⚠️ 硬约束（merge_bullets 不能砍）</b>：<code>load_all_l1_entries</code> 按 identifier 做 key 加载 → 同 identifier 在 P2-7 加载时<b>坍缩成一条</b>，P2-7 结构性看不到"同 id 不同 status"对。故同 id 逻辑（count++/状态演化/provenance 刷新）必须留 merge_bullets，只有跨 id 语义合并交 P2-7。两者互补不冗余。</div>
+<div class="warning"><b>⚠️ step 8.9 尾置</b>：P2-7 在 distill 之后跑——distill 要求 <code>group≥2</code> 阈值依赖条目数，合并后跌破阈值会停生成 pitfall skill。尾置让 distill 看未合并 L1，合并只影响下轮注入。<b>手动补跑必带 <code>--apply --current-batch=&lt;eval_dir&gt;</code></b>（只 dry-run 不改 L1，曾因此误判）。</div>
+<div class="insight"><b>parse bug 修复</b>：4/88 簇 parse 失败根因不是"LLM JSON 格式错"，而是 <code>_invoke_reflection</code> 硬编码 <code>max_tokens=512</code> 截断长簇 JSON。修：加 max_tokens 参数 + 按簇大小算预算 + <code>_salvage_merge_groups</code> 截断 JSON 用大括号深度计数逐个提取完整 merge_group（半截组丢弃不猜）。</div>
+<div class="paper"><b>📄 ACE</b>（"refined and deduplicated periodically"）+ <b>SkillOS</b>（RL 学合并时机）+ <b>MUSE</b>（merge overlapping + forget）：三篇凡用结构化条目的都强调"合并同类"是必须的，本系统用 embedding+LLM 落地。</div>
+
+<h3>6.4 L1 文件结构</h3>
+<p><code>edaPatterns.md</code> 含 5 个分区：<b>API 场景映射</b>（正面经验）、<b>API 坑点</b>（坑）、<b>错误→修复映射</b>（错→修）、<b>诊断模式</b>（Diagnostic Patterns，按 failure_root 分类，2026-07-16 复活——之前被过滤丢弃）、<b>有效查询模式</b>（成功 query，仅成功任务）。<code>apiDecisionLog.md</code> 含 <b>决策记录</b>。<code>hypotheses.md</code>（P2-5a 离线工具产物，独立隔离，标 [假设·待验证]，<b>不注入 agent、永不 status-upgrade</b>，详见 §14.1）。每条形如 <code>- (标识符, [状态] 描述) [×N]</code>，N&gt;1 才显示被佐证次数。</p>
+
+<!-- ════════════════════ 7. VECTOR ════════════════════ -->
+<h2 id="vector"><span class="section-num">7</span>写侧 · L1→向量库同步</h2>
+
+<p>向量同步步骤把 L1 条目批量灌进 9003 向量检索服务，供运行时语义召回。</p>
+<pre><code># 每条 L1 条目如何向量化
+document   = f"{标识符}: {描述}"           # 合并，语义更丰富
+metadata   = {"标识符":..., "分区":..., "来源文件":...,
+              "佐证次数":..., "状态":...}   # 状态透传
+id         = f"l1-{来源}-{分区}-{标识符}"    # 稳定 ID，幂等去重</code></pre>
+<p>每批 100 条灌入；向量化在 9003 服务端用 Octen-Embedding-4B（一个开源文本嵌入模型，2560 维, cosine 相似度）计算。跳过条目数为 0 的冷启动文件。</p>
+
+<h3>7.1 佐证次数参与检索排序</h3>
+<p>检索时按<b>佐证次数</b>（source_count）做温和对数加权重排：</p>
+<pre><code>for r in vector_results:
+    sc = r.get("source_count", 1) or 1
+    boost = 1.0 + 0.1 * _math.log(max(sc, 1))   # 对数缩放，温和
+    r["score"] = r["vector_score"] * boost       # 向量相似度仍主导
+vector_results.sort(key=lambda r: r.get("score", 0.0), reverse=True)</code></pre>
+<div class="insight"><b>温和是设计</b>（0.1×log）：佐证次数高 = 被多个任务验证 = 更可信，给小幅加权。但对数缩放保证<b>向量相似度仍主导</b>，只在平局时偏向高频条目——不让"流行但不太相关"压过"小众但精准"。</div>
+<div class="paper"><b>📄 CoALA 引 Generative Agents</b>（Park et al.）：记忆检索三分量 = 相关性 + 重要性 + 时效性。本系统实现 相关性=向量分、重要性=佐证次数加权（时效性暂不纳入）。</div>
+<div class="why"><b>🎯 原因</b>：纯向量相似度会在"语义相近但实际没人验证过"与"被多次成功佐证"之间无差别。佐证次数把"验证次数"作为重要性信号注入排序，让经得起考验的经验更靠前——但温和到不破坏语义检索本质。</div>
+<div class="paper"><b>📄 MemOrb + CoALA</b>：向量语义检索替代纯词重叠。<code>文档="标识符:描述"</code> 合并是 MemOrb 完整轨迹嵌入的务实替代。稳定 ID 实现幂等重灌（去重）。</div>
+
+<!-- ════════════════════ 8. DISTILL ════════════════════ -->
+<h2 id="distill"><span class="section-num">8</span>蒸馏 · L1→Skill / Rules</h2>
+
+<p>L1 模式进一步蒸馏成 <b>Skill</b>（按需加载的详细决策树）和 <b>Rule</b>（常驻的极简约束）。两者都写 procedural memory（操作规程），属高风险写入，因此带 <b>可编辑边界保护</b>。</p>
+
+<h3>8.1 两条 L1→Skill 路径</h3>
+<p>代码里存在<b>两条</b>把 L1 变成 Skill 的路径：</p>
+<table>
+  <tr><th>路径</th><th>触发方式</th><th>带"已知问题"指针?</th><th>带受影响 API 列表?</th></tr>
+  <tr><td><b>A · 独立蒸馏脚本</b>（distill.py，Step 8.5）</td><td>需手动调用脚本</td><td>❌ 不带</td><td>❌ 不带</td></tr>
+  <tr><td><b>B · L1 更新后自动晋升</b>（update.py，Step 8b）</td><td>L1 更新同流程内自动触发</td><td>✅ 带</td><td>✅ 单条路径带</td></tr>
+</table>
+<div class="insight"><b>磁盘实证</b>：当前 <code>~/.cline/skills/</code> 有 <b>4 个手写 Skill</b>（<code>eda-api-search-strategy</code>/<code>eda-command-family-selection</code>/<code>eda-context-degradation-guard</code>/<code>eda-swig-type-construction</code>，无 <code>origin: auto_distilled</code>）。自动蒸馏 Skill 随 reset 清空（L1 空态时无蒸馏产物），<code>-e</code> 跑完沉淀链后会重新生成。说明两条路径都是真实可用代码：路径 B（自动晋升）是 <code>-e</code> 时的默认产线，路径 A（独立蒸馏脚本）可手动重跑。</div>
+<div class="why"><b>🎯 原因</b>：自动晋升路径在 L1 更新同流程内自动触发，无需额外脚本调用，且自带 per-skill 记忆指针（§10），是默认产线。独立蒸馏脚本作为工具保留，可手动重跑。</div>
+
+<h3>8.2 可编辑边界：手写 Skill 永不覆盖</h3>
+<p>每个蒸馏 Skill 的文件头带 <code>origin: auto_distilled</code>（自动蒸馏来源标记）。系统据此判定——<b>手写 Skill（无此标记）永不被覆盖</b>：</p>
+<pre><code># 手写保护
+if 不是新条目 and 不是自动蒸馏的(目标目录):
+    print(f"  跳过：手写 Skill 已存在")
+    continue   # 手写 Skill 存在则跳过，绝不覆盖</code></pre>
+<div class="paper"><b>📄 Lilian Weng《Harness Engineering》</b>："可编辑边界需妥善设计，权限控制要在进化循环外"。<code>origin: auto_distilled</code> 标记就是<b>机器可读的可编辑边界</b>——自进化只能改自动蒸馏的，绝不碰手写。</div>
+<div class="why"><b>🎯 原因</b>：手写 Skill（如 API 搜索策略、命令族选择）是人工精心设计的核心资产，自进化若覆盖它们会"subvert designers' intentions"（CoALA：写 procedural 属高风险）。来源标记让保护机制确定且可审计。</div>
+
+<h3>8.3 Rules 蒸馏（更高阈值 + 路径门控）</h3>
+<p>规则蒸馏步骤（Step 8.6）把 L1 蒸馏成常驻 Rule。与 Skill 的区别：<b>Rule 极简</b>（&lt;500 token）、<b>路径门控</b>（<code>paths: ["**/*.py"]</code>，非 Python 任务不加载）、<b>阈值更高</b>（坑点阈值 3 vs Skill 的 2）。产出按错误类型分的坑点规则和合并的决策规则，写 <code>~/Cline/Rules/</code>，同样带来源标记保护。</p>
+<div class="paper"><b>📄 CoALA</b>：procedural memory 是最高风险写入面，所以 Rule 保持在最小、路径门控、高阈值——只把反复出现的硬约束固化为常驻指令，丰富上下文指导留给按需 Skill。"code sparingly"。</div>
+<div class="insight"><b>现状</b>：<code>~/Cline/Rules/</code> 当前只有 1 个手写文件，<b>0 个自动蒸馏 Rule</b>。蒸馏脚本是真实可用代码，但 L1 坑点尚未达到每类≥3 的阈值，未产出 Rule。</div>
+
+<!-- ════════════════════ 9. GATE ════════════════════ -->
+<h2 id="gate"><span class="section-num">9</span>蒸馏 · 四维质量门 + 重写循环</h2>
+
+<p>蒸馏出的 Skill 必须过质量门才上线。质量评估实现 <b>两层评估</b> + <b>四维 LLM 评审</b> + <b>重写循环</b>。</p>
+
+<h3>9.1 四维评审（对齐 SkillOS Fig.12）</h3>
+<table>
+  <tr><th>维度</th><th>考察</th><th>对 EDA 的价值</th></tr>
+  <tr><td><b>抽象度 ABSTRACTION</b></td><td>是否泛化到具体任务之外？不应含硬编码任务 ID / 设计名 / 具体数字</td><td>蒸馏 Skill 常带具体任务名，此维精准识别过拟合</td></tr>
+  <tr><td><b>可复用 REUSABILITY</b></td><td>能否用于其它相似任务？</td><td>防止只对单一场景有用</td></tr>
+  <tr><td><b>可操作 ACTIONABILITY</b></td><td>修复建议是否具体到可直接执行？</td><td>避免"请注意参数"这类空话</td></tr>
+  <tr><td><b>忠实度 FAITHFULNESS</b></td><td>所有断言是否有证据支撑（API 签名 / 观察到的错误）？无捏造</td><td>防 LLM 编造不存在的 API</td></tr>
+</table>
+<p>四维统一"高分=好"。</p>
+<div class="paper"><b>📄 SkillOS</b>（Fig.12）：4 维评审产出连续奖励喂 RL。<b>设计差异（非 bug）</b>：SkillOS 用 RL 训练评审器、把分数作为<b>连续的形成性反馈</b>（过程性、可微调的信号）；本系统简化为<b>二元终结性门禁</b>（一次定性、过/不过的硬门槛，阈值 0.4）。</div>
+<div class="insight"><b>抽象度实测威力</b>：造的过拟合 Skill（"Task 042...design_42...layer M1"）抽象度=0.10 精准识别，理由明确指出"过拟合到带硬编码名的单一任务"——旧维度抓不到。</div>
+
+<h3>9.2 两层评估：规则层（快）+ LLM 评审层（准）</h3>
+<p>第一层 4 项规则检查的含义：<b>内容有效</b>（Skill 文件结构完整、非空壳）、<b>API 已验证</b>（Skill 里提到的 API 名能在 API 数据库里找到、命中率≥0.5）、<b>用量分</b>（该 Skill 被实际任务用过且成功率，见 §10）、<b>重叠率</b>（与其它 Skill 的受影响 API 重叠程度，见 §9.3，越低越好）。</p>
+<table>
+  <tr><th></th><th>第一层（规则层）</th><th>第二层（LLM 评审层）</th></tr>
+  <tr><td>方法</td><td>4 项规则检查（无 LLM，快）</td><td>LLM 评审四维（temp 0.1，慢）</td></tr>
+  <tr><td>权重</td><td>内容有效 0.3 / API 已验证 0.3 / 用量分 0.25 / 重叠率 0.15</td><td>四维综合分</td></tr>
+  <tr><td>判定</td><td>自动蒸馏 Skill 需 分≥0.5 且 内容有效 且 API 已验证</td><td>综合分 ≥ 0.4 通过</td></tr>
+</table>
+<p><b>组合</b>：综合分 = 0.6×第一层 + 0.4×第二层，通过需两层都通过。<b>API 已验证</b>检查把 Skill 里的 API 名对 API 数据库校验，命中率≥0.5——防忠实度维度漏过的捏造 API。</p>
+
+<h3>9.3 多样性检测（Jaccard 相似度）</h3>
+<p>读各 Skill 的"受影响 API"列表，算两两 <b>Jaccard 相似度</b>，报告 &gt;0.3 的重叠对，作为第一层的重叠率惩罚项。</p>
+<div class="paper"><b>📄 Lilian Weng《Harness Engineering》</b>：进化系统易<b>多样性坍缩</b>（收敛到同类方案），需显式机制——如 ShinkaEvolve（一种程序进化方法）的"拒绝采样"（与已有个体太相似的新解直接丢弃）。本系统的 Jaccard 重叠检测是其轻量实现，对高重叠 Skill 施加惩罚分。</div>
+
+<h3>9.4 重写循环：失败先重写再淘汰</h3>
+<p>失败的 Skill 不直接丢弃，先用 LLM <b>重写</b>（基于低分维度的评审理由），再重跑质量门，最多 2 轮。重写成功则上线；仍失败才软弃用。</p>
+<pre><code># 创建→评估→重写→重评→注册
+for round in range(2):                       # 默认 2 轮
+    重写(skill, 评审报告)                      # 按低分维度重写 Skill 文件
+    报告 = 重跑质量门()                        # 重跑两层评估
+    if 报告["通过"]:
+        取消软弃用标记(); break               # 救活上线
+# 仍失败 → 标记软弃用（最后手段）</code></pre>
+<div class="paper"><b>📄 MUSE-Autoskill</b>："失败是重写循环的入口（创建→评估→重写→重评→注册），不是丢弃信号"。本系统直接对齐此生命周期。</div>
+<div class="insight"><b>历史实证（机制验证）</b>：曾有一个类型错误的坑点 Skill 版本号 0.0.3、自动注入关闭，符合"经过重写（版本涨）后仍被软弃用（注入关闭）"的痕迹。一次实测：5 个原被淘汰 Skill 重跑 → 3 个重写通过（0.57→0.85/0.74/0.77），2 个 2 轮后软弃用。（当前 reset 后 L1 空态，蒸馏 Skill 随 <code>-e</code> 重新生成。）</div>
+
+<!-- ════════════════════ 10. PER-SKILL ════════════════════ -->
+<h2 id="per-skill"><span class="section-num">10</span>蒸馏 · per-skill 运行时记忆</h2>
+
+<p>每个 Skill 目录下有<b>两个</b>记忆文件，分别承担结构化追踪与自由格式经验。</p>
+<table>
+  <tr><th>文件</th><th>内容</th><th>写入</th><th>消费</th></tr>
+  <tr><td><code>.memory.json</code>（结构化）</td><td>使用次数 / 成功次数 / 失败次数 / 关联任务ID / 受影响API / 质量分 / 是否弃用</td><td>蒸馏时初始化、质量门更新、用量统计累加</td><td>质量门读用量/重叠、加载器据此排除已弃用</td></tr>
+  <tr><td><code>.memory.md</code>（自由格式）</td><td>失败笔记（只追加，上限 50 条，<code>- [日期] 笔记</code>）</td><td>失败任务匹配到该 Skill 时追加</td><td><b>按需</b>：agent 实际用该 Skill 时才读</td></tr>
+</table>
+
+<h3>10.1 用量统计推断</h3>
+<p>从任务记录推断哪些 Skill 被用到：匹配<b>显式 skill 引用</b>（轨迹里调了 skill）<b>或</b> <b>取过的 API ∩ 该 Skill 受影响的 API</b> 非空（用了该 Skill 关心的 API）。每个匹配按成败累加使用/成功计数，失败时追加失败笔记。</p>
+<div class="why"><b>🎯 原因</b>：显式 skill 引用（轨迹里 agent 明确调了某个 skill）是直接信号但稀缺（agent 不总显式调 skill），用 API 交集补足——只要任务用了某 Skill 关心的 API，就认为"该 Skill 本可能起作用"，统计其成败。这给质量门的用量分提供数据。</div>
+
+<h3>10.2 渐进式披露：失败笔记不预注入</h3>
+<div class="insight"><b>核心设计</b>：Skill 目录加载器<b>不</b>把每个 Skill 的失败笔记预注进目录清单。否则每个任务的清单都带上所有 Skill 的已知问题 = 违反渐进式披露。替代：每个 Skill 文件末尾有"已知问题"指针，agent <b>实际用该 Skill 时</b>才按需读笔记。</div>
+<div class="paper"><b>📄 MUSE-Autoskill</b>：per-skill 记忆笔记在 Skill 加载时呈现，自由格式经验怪癖（如"大 PDF 超时"），刻意不放发布包。本系统的按需消费正是 MUSE 模式。</div>
+<div class="warning"><b>路径差异（接 §8.1）</b>："已知问题"指针<b>只有自动晋升路径（B）产</b>，独立蒸馏脚本（A）模板不带。纯路径 A 产的 Skill 会被写失败笔记但 Skill 文件不告诉 agent 去读它——按需消费契约对纯路径 A Skill 失效。<code>-e</code> 跑完沉淀链后，自动蒸馏 Skill 多数带指针（来自路径 B）。</div>
+
+<!-- ════════════════════ 11. READ ════════════════════ -->
+<h2 id="read"><span class="section-num">11</span>读侧 · 运行时检索（查询记忆库工具）</h2>
+
+<p>Agent 运行时可通过"查询记忆库"工具（query_memory_bank）主动检索 L1 经验。它是一个<b>三步流水线</b>：</p>
+<div class="flow-steps">
+  <div class="flow-step"><div class="flow-step-marker"><div class="flow-step-dot">0</div><div class="flow-step-line"></div></div><div class="flow-step-content"><b>查询重写</b> — <b>规则重写总开</b>（双向缩写展开，零延迟）；<b>LLM 重写默认关</b>（+0.5s/检索，非确定性）</div></div>
+  <div class="flow-step"><div class="flow-step-marker"><div class="flow-step-dot green">1</div><div class="flow-step-line"></div></div><div class="flow-step-content"><b>向量语义检索（主）</b> — 经 9003 召回，top_k×2 后过滤 + 按佐证次数重排（§7.1）</div></div>
+  <div class="flow-step"><div class="flow-step-marker"><div class="flow-step-dot orange">2</div><div class="flow-step-line"></div></div><div class="flow-step-content"><b>词重叠兜底</b> — 向量不可用/空时，按 标识符 0.5 / 描述 0.3 / 分区 0.2 权重匹配 + 优先级提升（坑点&gt;错→修&gt;场景）</div></div>
+</div>
+
+<h3>11.1 三态渲染：只在 prompt 注入路径</h3>
+<div class="insight"><b>重要区分</b>："查询记忆库"工具返回的是<b>原始状态字段</b>（"verified"/"unverified"/空），<b>不渲染</b>中文标签。中文渲染 <code>[已验证]</code> / <code>[待验证·源自失败任务]</code> / 裸描述<b>只在 prompt 注入路径</b>。即：agent 调工具拿到结构化状态字符串；agent 读注入 prompt 看到本地化标签。这是有意的不对称——工具输出给程序用，prompt 给模型读。</div>
+
+<h3>11.2 查询重写：规则总开、LLM 默认关</h3>
+<p>规则重写总开，处理最高频的 EDA 失败（缩写鸿沟："CV"↔"CellView"）。LLM 重写需显式开启，因 +0.5s 延迟 + 非确定性，默认关用于消融。</p>
+<div class="paper"><b>📄 MemOrb</b>：查询重写提升记忆检索命中率。<b>📄 CoALA</b>：检索动作含查询变换。</div>
+
+<!-- ════════════════════ 12. INJECT ════════════════════ -->
+<h2 id="inject"><span class="section-num">12</span>读侧 · L1 注入任务 prompt</h2>
+
+<p>除了 agent 主动调工具，L1 还会<b>被动注入</b>每个任务的系统提示词。这是读侧的"自动投喂"，由"L1 有无内容"控制。</p>
+
+<h3>12.1 两种注入模式</h3>
+<table>
+  <tr><th>模式</th><th>触发</th><th>方式</th><th>上限</th></tr>
+  <tr><td><b>向量模式（主）</b></td><td>向量服务可用 + L1 有内容</td><td>逐任务语义召回，top-3</td><td>1200 字符</td></tr>
+  <tr><td><b>截断模式（兜底）</b></td><td>向量禁用时</td><td>读 L1 文件，模式/决策各取头部</td><td>2000 / 1000 字符</td></tr>
+</table>
+<p>向量模式逐任务召回（每个任务只拿语义相关的 L1 条目），截断在条目边界处截断（避免半条条目困惑 agent）。注入位置：参考知识段在 prompt 末尾、用户问题之前。</p>
+
+<h3>12.2 三态渲染 + 必须验证免责声明</h3>
+<pre><code># 三态渲染
+if status == "verified":
+    bullet = f"- ({标识符}, [已验证] {描述})"          # 强
+elif status == "unverified":
+    bullet = f"- ({标识符}, [待验证·源自失败任务] {描述})"  # 弱
+# else: 裸描述（坑点 = 负向教训，无标签）</code></pre>
+<p>佐证次数 ≥3 的条目追加"✅ 高频经验"（只标高频，避免冷启动时全为 1 的噪声）。段头注明 <b>"⚠️ 非答案，必须验证"</b>——因<b>待验证</b>条目来自失败任务可能误导，agent 必须用查 API 详情工具复核 API 签名。</p>
+
+<h3>12.3 P2-1 分层注入（V5）+ 验证失败回退搜索纪律</h3>
+<div class="insight"><b>P2-1 读侧分层</b>：注入时按 status 分桶排序 <code>verified(0) &gt; unverified(1) &gt; 无标签(2)</code>，tier 内保持向量相似度序。<b>verified 高相似度优先填满 1200 字符预算</b>，不被低相似度 unverified 截断。<b>边界安全（不灌半条）</b>：预算装不下任何整条 bullet → 返回空；巨大 verified bullet 装不下 → 跳过它继续试同 tier 较小的（不让小 unverified 顶替大 verified）。source_count 不用于分层（95% 条目 count=1，区分度近零，靠 query.py 的 similarity×source_count re-rank 已吃掉）。</div>
+<div class="warning"><b>A2 验证失败回退搜索（V5）</b>：注入 footer 从"必须验证"强化为"<b>如果参考知识推荐的 API 验证失败（查不到/TypeError/返回 None），立即用 search_apis 搜索替代 API，不要反复试同一个 API</b>"。配合 Rules（A1）的 always-on 纪律——防 agent 信了 L1 的 [已验证] 高频 API 就不搜替代方案。<b>治本后</b>（[已验证] 严格化，不含 agent 推断）L1 注入净 +17 题，A2 是"引导但不锁死"的护栏。</div>
+<div class="why"><b>🎯 原因</b>：V5 前注入按向量返回顺序塞到 max_chars，verified 可能被低相关 unverified 顶掉；且 agent 信了 [verified] 就不探索替代。P2-1 保证 verified 优先，A2 保证验证失败能回退——两者协同让 L1 知识"引导但不锁死"。</div>
+
+<h3>12.4 工具清单占位符</h3>
+<p>prompt 模板里的工具清单占位符在"L1 有内容"时填入"查询记忆库"工具说明（位于工具清单、搜索策略之前）；否则置空。即 <b>工具清单（能力披露）</b>与<b>参考知识（实际内容）</b>分两处：前者在工具列表，后者在 prompt 后段。</p>
+<div class="paper"><b>📄 ACE</b>（Agentic Context Engineering，Weng《Harness Engineering》所引）：核心观点是"上下文是演进手册而非不断增长的 prompt"——<b>策展人（curator）模式</b>指上下文由增量条目组成、用确定性逻辑合并去重，而非每次重写整段大 prompt（合并逻辑见 §6.2）。<b>📄 CoALA</b>：结构化上下文注入。</div>
+<div class="why"><b>🎯 原因</b>：逐任务向量召回（vs 一刀切截断）让每个任务只拿相关 L1，降噪声；1200 字符上限防 prompt 膨胀；三态标签让 agent 知道哪条可信、哪条要复核。</div>
+
+<h3>12.5 生成纪律三件套（prompt / Rules / Skill）</h3>
+<p>除了 L1 注入的<b>动态知识</b>，系统还有一套<b>静态纪律三件套</b>常驻影响 agent，针对 V5+evo 失败分析定位的瓶颈（治本前参数构造 83%、治本后逻辑错 61%）。三层<b>职责不重叠</b>，一条规则只出现在一个地方：</p>
+<table>
+  <tr><th>层</th><th>路径</th><th>加载</th><th>放什么</th></tr>
+  <tr><td><b>Prompt</b></td><td><code>prompts/eval_sys_prompt_template.md</code>（+ <code>_no_sandbox</code> 成对同步）</td><td>每任务</td><td>工具清单、角色、核心流程、L1 注入、沙箱自测纪律（摘要+指针）、内部模拟</td></tr>
+  <tr><td><b>Rules</b></td><td><code>~/Cline/Rules/eda-code-generation.md</code></td><td>always-on</td><td>验证/搜索/生成纪律的<b>完整规则</b>（唯一源）</td></tr>
+  <tr><td><b>Skills</b></td><td><code>~/.cline/skills/eda-*.md</code></td><td>on-demand</td><td>详细决策树、误判判断框架（按需读）</td></tr>
+</table>
+<div class="insight"><b>分层原则：prompt 薄、Rules 全、Skill 厚</b>。prompt 每任务强制注入（占 token）只放摘要+指针；Rules 是 always-on 唯一源放完整规则；Skill 按需读放详细决策树。三层通过指针互引（prompt 摘要→Rules 完整→Skill 决策树），避免三处维护漂移。当前 4 个手写 Skill：<code>eda-api-search-strategy</code> / <code>eda-command-family-selection</code> / <code>eda-context-degradation-guard</code> / <code>eda-swig-type-construction</code> + 1 手写 Rule。</div>
+
+<div class="card">
+  <div class="card-title">纪律条目（按解决什么瓶颈）</div>
+  <table>
+    <tr><th>纪律</th><th>解决瓶颈</th><th>三层落点</th></tr>
+    <tr><td><b>E1 SWIG 类型构造</b></td><td>治本前顽固题失败 83% 是参数类，其中 72% 是类型参数（emyPointF/emyBoxF/emyString 传原生值→TypeError）</td><td>Rules 完整 + prompt 内部模拟第3步摘要+指针 → Skill <code>eda-swig-type-construction</code>（140行全清单：必构造9类/可传原生9类/句柄/Maps to 警告/判断流程）</td></tr>
+    <tr><td><b>E3 None 判空</b></td><td>返 None 的 API（dbOpenCV/dbOpenLib）解引用前不判空→AttributeError</td><td>Skill 句柄类 + Rules "assert obj is not None"</td></tr>
+    <tr><td><b>E5 自测强度</b></td><td>77% 失败 case 最后一次 run "successful+无None" 但 GT 不过（弱 assert）</td><td>prompt 沙箱自测纪律5步 + Rules 边界 assert + 代码层 print_log None 检测 WARNING</td></tr>
+    <tr><td><b>E6 创建类 API 生效验证</b></td><td>治本后 35% 失败：创建类 API 跑通但没生效（"Failed to create X"）</td><td>prompt 沙箱自测第5步 + Rules 创建类反向验证 + Skill <code>eda-context-degradation-guard</code> 误判2</td></tr>
+    <tr><td><b>禁吞 TypeError</b></td><td>agent try/except 吞 TypeError 后报 AssertionError，看 FAIL 行误判为逻辑错</td><td>prompt 代码规范 + Rules 生成纪律</td></tr>
+    <tr><td><b>沙箱通过≠任务完成</b></td><td>沙箱缺资源返 None 时 agent 偷换替代 API（沙箱妥协陷阱）</td><td>prompt 工具说明 + Skill <code>eda-context-degradation-guard</code> 误判1节</td></tr>
+  </table>
+</div>
+<div class="why"><b>🎯 E6 的核心治法</b>：调用创建类 API（<code>dbCrtInst</code>/<code>dbCrtNet</code>/<code>dbCrtPin</code>/<code>aeCreate*</code>）后，<b>禁止只 <code>assert result is not None</code></b>——沙箱常返回非 None 但实际没真创建。必须用对应 get/query API（<code>dbGetInsts</code>/<code>dbGetNets</code>）反向查回数量/属性确认变了，<code>assert len(instances)==N</code> 数量级断言。这是治本后逻辑错主战场的治法，2026-07-20 三层落地，<b>2026-07-21 V5.1 验证有效</b>：V5.1 baseline 裸跑 84.8% 追平带 L1 的 V5+evo，gained 含 原顽固题 058 破零。但对纯业务逻辑错（如 task-052 view_list 校验）不适用，剩余顽固题（143/146）需更深层突破。</div>
+<div class="paper"><b>📄 Reflexion</b>（self-written unit tests）+ <b>Self-Harness</b>（弱点挖掘→提案→验证）+ <b>Voyager</b>（self-verification）：三件套的纪律源出这三篇——自生成边界测试、逆向思考弱点、提交前内部模拟推演。</div>
+
+<h3>12.6 validate_code 静态拦截器（运行时守门 + 自进化闭环）</h3>
+<p>三件套是"教 agent 怎么做"的<b>软纪律</b>，validate_code 是"代码提交前静态拦确定性 bug"的<b>硬守门</b>——<code>scripts/validate_code.py</code> 在 agent 自测报成功（error_log 空）时跑，捕获 agent 自测没走到的分支里的确定性 API 误用。<b>硬约束：0 误判</b>（绝不能拦通过的题）。13 批串行累计：拦住 99 个失败题里的确定性 bug（分母 446 = 13 批累计失败题数，含并发假 fail 修正后），0 误拦通过题（分母 1457 = 13 批累计通过题数）。</p>
+<table>
+  <tr><th>检查类</th><th>级别</th><th>拦什么</th></tr>
+  <tr><td><b>E001 API 存在性</b></td><td>error</td><td>编造不存在的 API（<code>ae.XXX()</code> 不在 API_INFO_MERGED_V3.json）</td></tr>
+  <tr><td><b>E002 kwargs 名</b></td><td>error</td><td>关键字参数名与签名不符（如 <code>point</code> vs <code>points</code>）</td></tr>
+  <tr><td><b>E003 SWIG 类型构造</b></td><td>error（emyString/emyPoint 软语气）</td><td>必构造类型（emyBoxF/emyPointF）传原生字面值</td></tr>
+  <tr><td><b>E004 位置参数类型</b></td><td>error</td><td>位置参数传原生字面值给必构造类型（针对 <code>*args/**kwargs</code> 签名 API，kwargs 检查失明的真空地带）</td></tr>
+  <tr><td>弱 assert / 吞异常</td><td>warning</td><td>只 assert callable/isinstance、try/except 静默吞错</td></tr>
+</table>
+<div class="insight"><b>规则外置 + 自进化闭环</b>：7 张规则表从 .py 抽到 <code>docs/validator_rules.json</code>（每条带 <code>measured_fp/tp</code> + <code>provenance</code>），加 corner case 从改代码降为改 JSON。<code>scripts/mine_validator_gaps.py</code> 是独立离线挖掘闭环：MINE（扫"benchmark 失败+自测通过+validator 没拦"的 TARGET）→ CLASSIFY（筛静态确定性：wrong_kwarg/swig_type/fabricated_api）→ PROPOSE → <b>VERIFY 确定性 0-FP 闸门</b>（跨所有历史批重测，FP&gt;0 拒/转白名单，FP=0+TP&gt;0 受）→ REPORT 不自动写。<b>判据是确定性 GT 计数，非 LLM PASS/FAIL</b>（旧 LLM judge 太松）。</div>
+<div class="warning"><b>⚠️ 运行时接入的分流（task-143 教训）</b>：硬错（E001/E002/E004 + 非 soft 的 E003）追加进 <code>print_log</code> 末尾 + response——因 prompt 训练 agent 读 print_log 不读 response（86% response 提醒被无视）。软语气（emyString/emyPoint，实测通过题传原生）只进 response 不进 print_log，不淹没 agent 真正的 print 输出。error_log 始终不碰（不改成败判定）。<code>EDA_VALIDATOR_EVOLVE</code> 单 env 控制运行时提醒 + 挖掘写规则两步。<b>task-143 教训</b>：该题 validator 在 response 正确提醒 getBBox(figs=list) 是失败根因，但 agent 没读 response → 没改 → 失败，故硬错改进 print_log。<b>2026-07-21 V5.1 验证</b>：提醒改 print_log 后收硬错提醒题 pass 率 14%→76.9%（task-143 类问题解决），但对比无 validator 的 V5 baseline <b>净救回仅 +4 题</b>（26 题里 14 题本就 pass）——提醒位置修复确实有效，效果幅度小于"76.9%"。<b>配套改 agent 实际读的手写指引</b>（仓库外，不只改 MCP 工具层，还教 agent 看 print_log 末尾）：`~/Cline/Rules/eda-code-generation.md` L26 沙箱自测纪律加 STATIC_VALIDATOR 指引 + `~/.cline/skills/eda-context-degradation-guard/SKILL.md` 加"误判3：忽略 print_log 里的 [STATIC_VALIDATOR]"（4 手写 skill 之一，唯一讲沙箱验证流程）。agent 读 `~/.cline/skills/`+`~/Cline/Rules/`（非仓库 `skills/`），手写基线 reset 不动。</div>
+<div class="why"><b>🎯 0-FP 测量 ≠ 真安全</b>：测得"failed 上有 TP、passed 上 0 FP"还不够，必须验证 flag 的是<b>真 API 违规</b>非偶然共现。两次踩坑：① <code>.create(block=)</code> 测 17 TP/0 FP 但 block 是合法 kwarg（0-FP 因 passing code 没用此模式）；② api_existence 缺库 API 测 0 FP 但那是 agent 发现的真 API（库导出不全）。判据：flag 的缺陷必须 SWIG 必拒/必构造类型传原生，且 passing 代码从不犯——才算合法拦截。</div>
+<div class="paper"><b>📄 Self-Harness</b>（Weng）：弱点挖掘→提案→held-in/held-out 验证。validator 的挖掘闭环是其确定性变体（0-FP 闸门替代 held-out 行为评估，因静态检查器无需跑任务）。<b>📄 CoALA</b>：确定性脚手架用代码（静态检查），语义判断交 LLM/沙箱。</div>
+
+
+
+<!-- ════════════════════ 13. LIFECYCLE ════════════════════ -->
+<h2 id="lifecycle"><span class="section-num">13</span>生命周期与冷启动</h2>
+
+<h3>13.1 流水线</h3>
+<p>主管脚本编排一轮 benchmark 的完整生命周期，写侧步骤由 <code>-e</code> 控制；读侧步骤（1.5 预热、2 格式化注入）由 L1 内容状态控制。沉淀链全在 <code>-e</code> 门控下自动跑完（每个 <code>|| true</code> 容错）。</p>
+<div class="flow-steps">
+  <div class="flow-step"><div class="flow-step-marker"><div class="flow-step-dot">0/1</div><div class="flow-step-line"></div></div><div class="flow-step-content"><b>Step 0-1 · 读配置 + 检查数据集</b></div></div>
+  <div class="flow-step"><div class="flow-step-marker"><div class="flow-step-dot green">1.5</div><div class="flow-step-line"></div></div><div class="flow-step-content"><b>Step 1.5 · 预热 Memory Bank</b>（读侧）— L0 存在但 L1 空时，从已有 L0 预热 L1，让本轮 agent 能读到自进化知识</div></div>
+  <div class="flow-step"><div class="flow-step-marker"><div class="flow-step-dot green">2</div><div class="flow-step-line"></div></div><div class="flow-step-content"><b>Step 2 · 格式化任务</b>（读侧）— 注入参考知识（P2-1 分层 verified&gt;unverified&gt;无标签 三层）+ 注册查询记忆库工具。<b>注：P2-5a 假设不注入</b>（注入方向已否决，见 §14.1）</div></div>
+  <div class="flow-step"><div class="flow-step-marker"><div class="flow-step-dot">3-7</div><div class="flow-step-line"></div></div><div class="flow-step-content"><b>Step 3-7 · 跑 CLI + 抽代码 + 收轨迹</b> — 生成 + 评估</div></div>
+  <div class="flow-step"><div class="flow-step-marker"><div class="flow-step-dot orange">8</div><div class="flow-step-line"></div></div><div class="flow-step-content"><b>Step 8 · 更新 Memory Bank</b>（写侧 · -e）— L0 抽取 + 富集 + 根因 + L1 合并（含 P2-3 突触修剪溯源）+ 向量同步（§3-7）；8b 自动晋升模式为 Skill</div></div>
+  <div class="flow-step"><div class="flow-step-marker"><div class="flow-step-dot orange">8.5-8.7</div><div class="flow-step-line"></div></div><div class="flow-step-content"><b>Step 8.5-8.7 · 蒸馏 + 质量门 + 剪枝</b>（写侧 · -e）— 8.5 蒸馏 Skill（含路径 A 手动脚本 + 路径 B 自动晋升 8b，见 §8.1）、8.55 四维质量门 + block-and-refine（即重写循环，见 §9.4）、8.6 蒸馏 Rule、8.7 软弃用</div></div>
+  <div class="flow-step"><div class="flow-step-marker"><div class="flow-step-dot purple">~~8.8~~</div><div class="flow-step-line"></div></div><div class="flow-step-content"><b>Step 8.8 · P2-5a REM（已从沉淀链移除）</b> — <b>注入方向已否决</b>（认知噪音致探索效率下降、5 题回退），P2-5a 定位为<b>离线后台探索工具</b>（<code>memory_bank/rem/</code>），不进链、不注入 agent prompt、verified 不自动进 L1。需要分析顽固题时手动跑 <code>python -m memory_bank.rem.daemon</code>，产出待审报告</div></div>
+  <div class="flow-step"><div class="flow-step-marker"><div class="flow-step-dot purple">8.9</div><div class="flow-step-line"></div></div><div class="flow-step-content"><b>Step 8.9 · P2-7 L1 语义合并</b>（写侧 · -e，新，尾置）— embedding 聚类 + LLM 判合，跨 identifier 合并同类条目，复活 source_count 信号。<b>尾置</b>：让 distill 看未合并 L1（group≥2 阈值依赖条目数）</div></div>
+  <div class="flow-step"><div class="flow-step-marker"><div class="flow-step-dot orange">8.95</div><div class="flow-step-line"></div></div><div class="flow-step-content"><b>Step 8.95 · validator 规则自进化挖掘</b>（写侧 · -e，2026-07-31 重启用）— <code>mine_validator_gaps.py --apply</code> 从 GT runtime TypeError 学 SWIG must-construct 类型 + per-API 豁免对（0-FP 门），写入 <code>docs/validator_rules.json</code>。<b>从空白学</b>：must_construct_verified 空白起点，人类满表备份在 <code>docs/human_baseline_assets/</code>。只学 E003/E004（规则表驱动），E001/E002 非规则表不学</div></div>
+</div>
+<div class="warning"><b>⚠️ 时序约束</b>：本轮注入用的是<b>上轮</b>沉淀的 L1（step 2 格式化在沉淀链 step 8+ 之前）；本轮沉淀的 L1/Skills → <b>下轮</b> step 2 才读到。P2-7 尾置：让 distill 看未合并 L1（group≥2 阈值依赖条目数），合并只影响下轮注入。<b>手动补跑沉淀必带 <code>--apply --current-batch=&lt;eval_dir&gt;</code></b>（只 dry-run 不改 L1，曾因此误判）。</div>
+
+<h3>13.2 预热的冷启动防护</h3>
+<div class="insight"><b>只在 L0 存在但 L1 空时跑</b>。若 L1 已有内容则跳过——重复跑预热会触发不必要的 LLM 再反思，每次结果不同（LLM 非确定性），污染已有知识库。这是防非确定性腐蚀已有 L1 的护栏。</div>
+
+<h3>13.3 重置：服务状态感知的向量库清理</h3>
+<div class="warning"><b>⚠️ 关键约束</b>：向量库（ChromaDB）服务运行时打开 sqlite 并把集合常驻内存，<b>运行中删文件会破坏内存中的客户端</b>（"no such table" → 服务 500，进程还在但功能全坏，比崩溃更难发现）。故重置必须按服务状态分流。</div>
+<p>重置逻辑按<b>服务状态分流</b>：</p>
+<pre><code>service_up = 检查向量服务健康()
+清除结果 = 调 API 清空集合()
+if service_up:
+    # 服务在跑 → 仅走 API 清空，绝不碰磁盘（会杀服务）
+elif 清除失败:
+    # 服务健康但清空失败 → 不回退删磁盘（会杀死运行中的服务）
+允许清磁盘 = not service_up          # 仅服务停止时才清磁盘孤儿</code></pre>
+<div class="why"><b>🎯 原因</b>：有状态持久化服务的文件句柄是隐式的，运行中删文件静默腐蚀内存状态。服务在跑走 API（集合级删除+重建），服务没跑才动磁盘（清孤儿 sqlite + 段目录，保留目录本身）。<b>API 清空与磁盘清理永不同时</b>。</div>
+<div class="paper"><b>📄 Lilian Weng《Harness Engineering》</b>："评估器与权限控制要在进化循环外，文件系统即通用接口"。重置的服务状态感知是对"有状态共享资源"的工程谨慎。</div>
+
+<h3>13.4 冷启动 L1 模板（条目数为 0 ≠ 空文件）</h3>
+<p>重置后 L1 文件不是消失，而是恢复成<b>带文件头 + 分区标题但零条目的骨架</b>，条目数为 0。语义是"还没有条目"而非"文件缺失"。这让读侧判定可靠返回"无内容"，且文件结构跨重置稳定（下游解析器、向量同步、判定都依赖文件头存在）。</p>
+<div class="paper"><b>📄 ACE</b>：冷启动骨架（结构在、内容空）正是"演进手册"从空开始增量生长的起点。</div>
+
+<!-- ════════════════════ 14. STATUS ════════════════════ -->
+<h2 id="status"><span class="section-num">14</span>现状与效果（诚实）</h2>
+
+<div class="highlight"><b>📖 本节口径定义</b>（效果论述依赖这些概念）：
+<b>叙事方向（2026-07-28 起切换）</b>：自进化的目标是<b>复现人类手工进化</b>——人类专家手写 1 Rule + 4 Skill + validator 规则表（V5.4 baseline，DeepSeek-v4-pro 全 158 = 92.4% 为历史最高 V5.3 记录；V5.4 实测 full 91.1%），自进化从<b>裸状态（0 经验）</b>出发，靠沉淀 + held-out gate 逼近人类手写的 rule/skill。<b>唯一对比对象是人类 V5.4 baseline</b>，不再追求在人类经验上叠加。
+<b>顽固题</b> = 跨 14 批可信评估（多端口隔离后）核实、<b>≥4 批全 fail 从未答对</b>的 <b>2 道</b>任务（143/146，能力边界外，均为 mock 题）；
+<b>可及题</b> = 158 − 2 顽固 = <b>156 道</b>（052/074 已破零，向量库补丁治检索缺失）；
+<b>challenge split</b> = train 98 / val 20 / test 40，instance-disjoint。test 优先选区分性任务（去天花板：旧 158 全集天花板遮蔽自进化收益，test 切分后信号浮现）。</div>
+
+<div class="warning"><b>⚠️ 评估可信度口径（2026-07-21 起多端口隔离）</b>：2026-07-21 起 <b>4 端口隔离</b>（<code>SANDBOX_ENDPOINTS=8664/8665/8667/8669</code>，每个端口独立 workdir → 并发请求落不同端口 → 无 lib.defs/TECHLIB 污染），<b>并发评估可信</b>，分母统一全集 158（challenge split 时按切分子集）。历史单沙箱并发评估（workers=4，±4~16pp 抖动）<b>全部废弃</b>。不再是 <code>EVAL_SANDBOX_WORKERS=1</code> 串行——而是 4 端口真并行。</div>
+
+<div class="card">
+  <div class="card-title">📊 自进化各轮 val(20) held-out gate 结果（challenge split，2026-07-31）</div>
+  <p>held-out gate 流程：每轮在 train(98) 上沉淀 → 在 val(20) 上 4 次平均评估 → 与上一轮 val 均值比，退化超容差则<b>回退</b>（restore snapshot），否则接受。val 是<b>门控信号</b>，test 是<b>终评</b>（不参与门控决策）。</p>
+  <table>
+    <tr><th>轮次</th><th>L1 entries</th><th>val 均值 ± SD</th><th>gate 决策</th></tr>
+    <tr><td><b>裸 baseline</b>（0 经验）</td><td>0</td><td>78.3% ± 5.77%</td><td>baseline（起点）</td></tr>
+    <tr><td><b>round 1</b></td><td>256</td><td>81.7% ± 10.41%</td><td>✅ 接受（val 涨）</td></tr>
+    <tr><td><b>round 2</b></td><td>334</td><td><b>88.3% ± 2.89%</b></td><td>✅ 接受（<b>峰值</b>，方差最小）</td></tr>
+    <tr><td><b>round 3</b></td><td>386</td><td>80.0% ± 0.00%</td><td>❌ 拒绝（val 退化，疑似过拟合）</td></tr>
+  </table>
+  <div class="insight"><b>★gate 关键发现</b>：round 3 在 val 上退化（88.3%→80.0%）被 gate 拒绝并回退——<b>gate 有效防止 val 退化</b>。但 round 3 在 test 上<b>不退化</b>（见下表 79.2% vs round 2 的 80.8%，仅 −1.6pp）→ <b>gate 偏保守</b>（val/test 不完全同步，val 抖动可能误拒）。L1 entries 从 R1 256 涨到 R3 386，但 val 并非单调涨——知识量≠效果，印证 §5.5"信任锚是精准度非量"。</div>
+</div>
+
+<div class="card">
+  <div class="card-title">📊 test(40) 五版本对比（前 3 轮，n=3 平均，终评不参与门控）</div>
+  <table>
+    <tr><th>版本</th><th>test 均值 ± SD</th><th>说明</th></tr>
+    <tr><td><b>裸 baseline</b>（0 经验）</td><td>65.0% ± 10.00%</td><td>自进化起点：删 skill/rule + 裸 prompt + 关 validator</td></tr>
+    <tr><td><b>人类 V5.4</b>（1 Rule + 4 Skill + validator，手工进化产物）</td><td><b>80.8% ± 3.82%</b></td><td>自进化复现的<b>目标</b>。challenge test 40 上的 3 次均值（另：旧 split 6 次均值 88.3%±2.04%，口径不同不可直接比）</td></tr>
+    <tr><td><b>自进化 R1</b>（256 entries）</td><td><b>80.8% ± 9.46%</b></td><td>★追平人类 V5.4（80.8% = 80.8%），但方差大（±9.46%）</td></tr>
+    <tr><td><b>自进化 R2</b>（334 entries）</td><td><b>80.8% ± 3.82%</b></td><td>★追平人类 V5.4 且方差收敛到与人类一致（±3.82%）</td></tr>
+    <tr><td><b>自进化 R3</b>（386 entries，被 val gate 拒绝）</td><td>79.2% ± 6.29%</td><td>被 gate 拒绝但 test 仅 −1.6pp（不退化）→ gate 偏保守</td></tr>
+  </table>
+  <div class="insight"><b>★核心结论：自进化 R1/R2 在 test 上追平人类 V5.4</b>（80.8% = 80.8%）。即<b>从裸状态自进化 1-2 轮即复现人类手工进化的 rule/skill 效果</b>。R2 进一步把方差收敛到与人类一致（±3.82%），稳定性也追平。R3 被 val gate 拒绝但 test 不退化，说明 gate 是<b>保守的安全网</b>而非最优选择器。</div>
+</div>
+
+<div class="card">
+  <div class="card-title">📊 V5.4 多模型测试（全 158 × 1 次，2026-07-31，验证人类 baseline 跨模型稳健性）</div>
+  <table>
+    <tr><th>模型</th><th>pass</th><th>说明</th></tr>
+    <tr><td>DeepSeek pro（历史 V5.3 最高）</td><td><b>146/158 = 92.4%</b></td><td>历史最高（V5.3 人类 baseline 单次切出，V5.4 实测 full 91.1%）</td></tr>
+    <tr><td>GLM</td><td>144/158 = 91.1%</td><td>当前主模型，接近历史最高</td></tr>
+    <tr><td>Kimi</td><td>141/158 = 89.2%</td><td>—</td></tr>
+    <tr><td>DeepSeek flash</td><td>135/158 = 85.4%</td><td>—</td></tr>
+    <tr><td>Doubao</td><td>113/158 = 71.5%</td><td>弱模型，验证 baseline 跨模型仍可用</td></tr>
+  </table>
+  <div class="why"><b>🎯 多模型验证的意义</b>：人类 V5.4 baseline 在 5 个模型上 pass 率从 71.5% 到 92.4%，<b>均显著高于裸 baseline</b>（裸 85.0% 全集 / 65.0% challenge test）——证明 rule/skill/validator 是跨模型可迁移的经验，不是某一模型的过拟合。自进化复现人类这套经验的结论因此可跨模型成立。</div>
+</div>
+
+<div class="card" style="border-left:4px solid var(--green);">
+  <div class="card-title">✅ 治本结论回顾（历史链路，仍有效）</div>
+  <p><b>L1 注入本身有效，前提是知识精准</b>。治本前净负（093 错误参数名误导），治本后净 +17 题。关键：<code>[已验证]</code> 必须基于 ground-truth 而非 agent 自测推断——<code>reflection.py</code> 不沉淀 agent 的"测试发现/参数名修正"类推断，<code>update.py</code> 无 ground-truth 时强制不标 <code>[已验证]</code>。这条治本逻辑是上述 challenge split 实验的前提（否则 L1 含推断噪声，gate 会在脏信号上决策）。</p>
+  <p><b>"L1 注入有益"被推翻又转正的完整链路</b>：①并发评估曾显示 +1~2pp 噪声内正向 → ②串行重评推翻为净负（093 铁证，[已验证] 含 agent 推断错误）→ ③治本（不沉淀推断 + [已验证] 严格化）→ ④治本后串行净 +17 题转正 → ⑤challenge split 去天花板后信号浮现，自进化 R1/R2 追平人类 V5.4。教训：自进化的信任锚是知识精准度，不是知识量。</p>
+</div>
+
+<h3>14.1 关键机制（截至 2026-07-31）</h3>
+<table>
+  <tr><th>机制</th><th>解决什么</th><th>状态</th></tr>
+  <tr><td><b>used_apis 精准标注</b></td><td>[已验证] 标代码真实调用 API（非 apis[0] 查询顺序）+ 11 处同类 bug 全修</td><td>✅ 已落地</td></tr>
+  <tr><td><b>★L1 治本</b></td><td>reflection.py 不沉淀 agent 推断（参数名/属性/wrapper pattern）+ update.py 无 ground-truth 不标 [已验证]</td><td>✅ 2026-07-19 落地，V5+evo 治本后净 +17 题转正</td></tr>
+  <tr><td><b>P2-1 读侧分层注入</b></td><td>注入按 status（verified>unverified>无标签）分层，verified 优先填预算</td><td>✅ 已落地</td></tr>
+  <tr><td><b>P2-7 L1 语义合并</b></td><td>embedding 聚类 + LLM 判合，替换 merge_bullets 精确去重（identifier 由 LLM 生成不可靠）</td><td>✅ step 8.9 接入</td></tr>
+  <tr><td><b>P2-3 突触修剪溯源</b></td><td>last_confirmed 批次标签，sweep 降级连续未确认条目（破 append-only）</td><td>✅ V5 激活（main 传 current_batch）</td></tr>
+  <tr><td><b>★L1 跨划分去泄露（2026-07-31）</b></td><td>防 train→val/test <b>答案泄露</b>：①solution 层预注入从完整序列降为 <b>API 名</b>（<code>compress_for_skill</code>，只留用过的 API 名不留解法步骤）；②docstring 经共享 regex stripper 泛化（<code>generalize_docstring_line</code>，剥掉题面特有细节留通用模式）；③distill workflow skill 同步抽象。三处协同让 L1 知识"指向用哪类 API"而非"给出答案步骤"</td><td>✅ 2026-07-31 落地，challenge split gate 指向 <code>dataset_split_challenge.json</code></td></tr>
+  <tr><td><b>★validator 从空白学（2026-07-31）</b></td><td><code>must_construct_verified</code> <b>空白起点</b>（人类全表备份到 <code>docs/human_baseline_assets/validator_rules_human.json</code>）；miner 从 GT runtime <code>TypeError: argument N of type 'X'</code> 学 SWIG 必构造类型 + per-API native-ok 豁免对（<b>0-FP 门</b>，跨所有历史批验证）。<b>只学 E003/E004</b>（规则表驱动，可从 TypeError 信号学）；<b>E001/E002 非规则表驱动不学</b>（E001 编造 API 是 APICallVisitor 别名捕获 gap，E002 wrong_kwarg 是 DB 驱动，都非 learnable rule table）</td><td>✅ <code>EDA_VALIDATOR_EVOLVE=true</code>，step 8.95 接入 <code>-e</code> 链。smoke 验证：从空白学到 4 类型（emyBoxF/emyPointF/emyString/emyUInt4，含 1 个超人类的新类型）+ per-API 豁免对（类型 + 豁免对一起学，0-FP 门），0 FALSE BLOCK / 93 passing tasks</td></tr>
+  <tr><td><b>-e 链 enrichment fallback 修复</b></td><td>step 7.5 <code>eval_for_enrichment</code> 在沉淀前评估当前 batch 产 GT，防止 fallback 到旧 eval 目录致<b>假阳性 verified</b>（trace 推断成功被旧 eval 误确认为真成功）</td><td>✅ 已落地，富集真值锚定正确</td></tr>
+  <tr><td><b>★held-out gate（snapshot/restore）</b></td><td>每轮沉淀后在 val(20) 上 4 次平均评估，val 退化超容差 → <b>restore snapshot 回退</b>。snapshot/restore 含 <b>L1 + auto-skills + auto-rules + validator_rules + 9003 向量库</b>（<code>memory_bank/lifecycle/snapshot.py</code>）</td><td>✅ 2026-07-31 落地，<code>scripts/held_out_gate.py</code>。R3 被拒并成功回退</td></tr>
+  <tr><td><b>validator 纳入 lifecycle</b></td><td>snapshot 含 <code>docs/validator_rules.json</code>，restore 回退时 validator 规则<b>一起回退</b>（否则被拒轮学到的规则会累积污染下轮）</td><td>✅ 已落地</td></tr>
+  <tr><td><b>challenge split</b></td><td>train 98 / val 20 / test 40，instance-disjoint，test 优先选区分性任务。去天花板：旧 158 全集天花板遮蔽自进化收益，切分后 test 信号浮现（自进化 vs 人类 +11.9pp vs 旧 test +3.3pp，放大 3.6 倍）</td><td>✅ <code>docs/dataset_split_challenge.json</code></td></tr>
+  <tr><td><b>P2-5a REM 反事实假设</b></td><td>对失败 task 查真实 API 文档生成"或试 API X"低置信假设 + 两级自验证（失败现场闭环）。产出 <code>hypotheses.md</code>（标 [假设·待验证]，独立隔离，永不 status-upgrade，见 §6.4）</td><td>⚠️ <b>注入方向已否决</b>（认知噪音致探索效率下降）→ 定位<b>离线后台探索工具</b>，不进 prompt、verified 不自动进 L1</td></tr>
+  <tr><td><b>E1/E3 类型参数 + None 判空纪律</b></td><td>SWIG 类型必须 ae.X() 构造（emyPointF/emyBoxF/emyString 等）+ 返 None API 先判空</td><td>✅ Rules + prompt + Skill <code>eda-swig-type-construction</code> 三层落地</td></tr>
+  <tr><td><b>E5 自测强度 + validate_code 拦截器</b></td><td>5 妙招（即 §12.5 prompt 沙箱自测纪律 5 步：边界/逆向/print_log None 检测/禁吞 TypeError/参数名对照）+ 静态拦截器接入主 pipeline</td><td>✅ <code>EDA_VALIDATOR_EVOLVE=true</code>，13 批串行 99/446=22.2% 拦截 0/1457 FP</td></tr>
+  <tr><td><b>E6 创建类 API 生效验证</b></td><td>创建类 API 后用 get/query 反向查回数量/属性（非 assert 非 None 弱断言）</td><td>✅ 2026-07-20 三层落地，<b>2026-07-21 验证有效</b>：V5.1 baseline 裸跑 84.8% 追平带 L1 的 V5+evo，gained 含 原顽固题 058 破零 + 105/111/112 timeout 题</td></tr>
+  <tr><td><b>★validator 提醒位置修复</b></td><td>硬错（E001/E002/E004 + emyBoxF/emyPointF）提醒从 response 改到 print_log 末尾（agent 被训练看 print_log 不看 response），emyString/emyPoint 软语气留 response。error_log 不碰（不改成败判定）</td><td>✅ 2026-07-20 落地，收提醒 pass 率 14%→76.9%（<b>净救回 +4 题</b>，非 76.9%——见 §14 口径修正）</td></tr>
+  <tr><td><b>★多端口隔离（2026-07-21）</b></td><td><code>SANDBOX_ENDPOINTS=8664/8665/8667/8669</code> 4 端口，每端口独立 workdir → 并发请求落不同端口 → 无 lib.defs/TECHLIB 污染。<b>并发评估可信</b>（取代旧 <code>EVAL_SANDBOX_WORKERS=1</code> 串行）。单端口 fallback <code>SANDBOX_PORT_HTTP=8667</code></td><td>✅ 2026-07-21 落地，评估可信（历史单沙箱并发废弃）</td></tr>
+  <tr><td><b>SDK 客户端超时放大</b></td><td>MCP <code>-32001 Request timed out</code> 全来自 run_pyAether_code_tool（精确 60s）。根因：Semaphore 排队 + 沙箱 60s > 客户端 SDK 默认 60s。改 <code>DEFAULT_REQUEST_TIMEOUT_MSEC</code> 60000→300000（业务代码运行时从 node_modules 加载，非内联进 ELF）</td><td>✅ 2026-07-21 落地（4 处精准改）。0718 无锁 84.8%→0720 有锁 74.7% 单变量 -10.1pp 铁证：Semaphore 治抖动有 timeout 副作用，放大客户端超时解开死结（保留锁治抖动）</td></tr>
+  <tr><td><b>Diagnostic Patterns 复活</b></td><td>之前被 PATTERN_SECTIONS 过滤丢弃，现进 L1（按 failure_root 分类的诊断）</td><td>✅ 已落地</td></tr>
+  <tr><td><b>A1 Rules 沙箱通过≠任务完成</b></td><td>沙箱缺资源返 None 时禁止偷换替代 API（沙箱妥协陷阱），仍按任务要求 API 实现</td><td>✅ Rules + prompt + Skill <code>eda-context-degradation-guard</code> 误判1节</td></tr>
+  <tr><td><b>A2 验证失败回退搜索</b></td><td>L1 注入 footer：参考知识推荐的 API 验证失败（查不到/TypeError/None）立即 search_apis 搜替代，不反复试同一 API</td><td>✅ 注入 footer + Rules always-on</td></tr>
+</table>
+<div class="warning"><b>⚠️ P2-5a 注入否决的教训</b>：反事实假设和 L1 正面知识是<b>方向相反的信息</b>，混注入 = 认知冲突。Round2（第二次全量评估，含 P2-5a 假设注入测试）实测假设注入致 agent 探索更激进、耗时翻倍、5 题回退。REM 理论里梦境做反事实是系统内部重组模型的输入，<b>不是直接送回执行系统的行动指令</b>——同理反事实假设应离线整合，不进 agent prompt。</div>
+
+<div class="card">
+  <div class="card-title">🧪 离线分析工具箱（不进主流程，手动跑产出待审报告）</div>
+  <p>三个离线工具服务于"分析顽固题 / 挖失败模式 / 备 held-out 数据"。<b>held-out gate 已上线</b>（<code>scripts/held_out_gate.py</code> + <code>memory_bank/lifecycle/snapshot.py</code>，2026-07-31），自动写 L1/skill 的污染风险已由 gate 的 snapshot/restore 兜底——被 gate 拒绝的轮会回退，污染不累积。这些工具现作为 gate 之外的补充分析手段。</p>
+  <table>
+    <tr><th>工具</th><th>入口</th><th>做什么</th><th>关键设计</th></tr>
+    <tr><td><b>P2-5a REM 反事实</b></td><td><code>python -m memory_bank.rem.daemon</code> / <code>.cli</code></td><td>对失败 task 查真实 API 文档生成"或试 API X"低置信假设 → 两级自验证 → 待审报告</td><td>①<b>三路径检索接地</b>（search_apis 向量+BM25 / keyword 缩写 / query_API_details_v2 已用 API 文档），API 名一定来自检索结果非 LLM 猜；②<b>失败现场闭环 L2-X/L2-Y</b>：拿 agent 真实失败代码改→跑自构测试→确定性 stdout 对比（弃 LLM judge），天花板校准（原代码须复现失败否则测试太弱）；③<b>报错驱动修正循环</b>：沙箱报错含 SWIG 签名时回灌 LLM 修参数，报错变=进步继续、不变=停；④<b>_SWIG_TYPE_CHEATSHEET</b> 事前预防参数构造卡点</td></tr>
+    <tr><td><b>pattern_mining 失败模式聚类</b></td><td><code>scripts/mine_failure_patterns.py</code></td><td>按 <code>(failure_root, api_family)</code> 聚类失败 task，挖跨 task 同根因+同 API 族的 pattern</td><td>MINING+REPORT ONLY，不自动写 L1/Skill。<b>held-out gate 已上线</b>（2026-07-31），沉淀污染风险由 gate 兜底。ground-truth enrichment 重新接地成功（覆盖 trace 推断虚高）+ 重算 failure_root。实测 baseline 91 个 ≥2 task 聚类</td></tr>
+    <tr><td><b>build_skill_provenance 溯源</b></td><td><code>scripts/build_skill_provenance.py</code></td><td>建 Skill→source-task 映射，为 held-out 切分备 D_in 数据</td><td><code>affected_apis</code>（Skill 声明影响的 API）∩ 任务 <code>apis_fetched</code> = 源任务。<b>related_task_ids 是"用了 Skill API 的 task"（D_in 近似）非"产出 Skill 的 task"</b>。held-out gate 已用 challenge split 落地（instance-disjoint train/val/test）</td></tr>
+  </table>
+  <div class="insight"><b>REM 能力边界（诚实）</b>：顽固题瓶颈<b>不是 API 选错</b>（REM 证明候选 API 都对且 agent 也能找到），而是 <b>SWIG 类型参数构造能力不足 + 建环境不稳定</b>（治本前 83% 顽固题是参数构造错，见 §12.5 E1）。REM 把"换 API"路走通了，卡在"构造类型参数"。verified=0 真因不是机制缺陷，是<b>假设本身不对题</b>（顽固题失败多是"同 API 参数/顺序/None"，假设走"换 API"）。B 类纯逻辑题（如 task-052 view_list 校验）REM 不适用。</div>
+  <div class="paper"><b>📄 情绪/梦境预测框架</b>：NREM（回放真实经验→提取统计规律=pattern_mining/P2-7）已建，REM（改写变量做反事实=P2-5a）从"注入"改为"离线整合"。<b>📄 Self-Harness</b>：held-out 评估器是其他自进化改进防 reward hacking 的前提（build_skill_provenance 备其数据）。</div>
+</div>
+
+
+<h3>14.2 失败根因结构（历史样本：V5+evo 85.4% / 23 失败，治本后逻辑错为主战场）</h3>
+<div class="highlight"><b>📖 两个口径勿混</b>：<b>治本前</b>看 agent trace 实际错误（try/except 吞 TypeError 后的根因）= 参数构造 83%（SWIG 类型传原生值）；<b>治本后</b>看 GT 测试 final FAIL 信号分类 = 逻辑错为主。E1/validator/E6 落地后参数构造类被压下，瓶颈已转移到逻辑错/语义正确性。下表为治本后 V5+evo（85.4%，23 失败）的根因结构（历史诊断快照，方法学仍有效——<b>归因看 trace 实际错误非最终 FAIL 行</b>）。当前顽固题已收敛到 2 道（143/146），052/074 破零（向量库补丁），不再是 12 道。</div>
+<table>
+  <tr><th>根因类（GT final FAIL 信号）</th><th>数量</th><th>占比</th><th>典型</th></tr>
+  <tr><td><b>逻辑错（语义/断言）</b></td><td>14</td><td><b>61%</b></td><td>"Failed to create X"（创建跑通但没生效）、业务规则没设、Expected N got M</td></tr>
+  <tr><td>API 误用（TypeError）</td><td>5</td><td>22%</td><td>104/118/119/143/146（SWIG 类型/缺参/None 解包/参数名错）</td></tr>
+  <tr><td>环境/资源缺失</td><td>2</td><td>9%</td><td>063/139（沙箱缺 cell/text）</td></tr>
+  <tr><td>超时</td><td>1</td><td>4%</td><td>149（sandbox timeout 150s）</td></tr>
+  <tr><td>未归类（无明确 FAIL 信号）</td><td>1</td><td>4%</td><td>106（GT stdout 空，疑似生成/执行边界 case）</td></tr>
+</table>
+<div class="why"><b>🎯 突破点进展：E6 创建类 API 生效验证（2026-07-21 已验证有效）</b>。逻辑错里"创建类 API 跑通但没生效"模式（沙箱返回非 None 但 GT 测 count=0/属性没设）是重灾区。E6 治法：创建类 API 后用对应 get/query API（dbGetInsts/dbGetNets）反向查回数量确认变了，<code>assert len()==N</code> 非存在级弱断言。<b>V5.1 验证结果</b>：validator+E6 使 V5.1 baseline 裸跑 84.8%（追平带 L1 的 V5+evo），gained 含 原顽固题 058 破零 + 105/111/112 timeout 重灾区题。E6 对"创建没生效"类有效，对纯业务逻辑错（如 task-052 view_list 校验）不适用。</div>
+<div class="warning"><b>⚠️ 治本前归因已被推翻</b>：旧版基于 V5 32 失败（并发评估）把"沙箱妥协型 AssertionError"当主因（20 题），深挖顽固题 trace 实际错误后推翻——多数是类型参数 TypeError 被 try/except 吞后报 AssertionError。治本前真实根因是参数构造 83%，治本后（E1/validator）压下参数构造，瓶颈转向逻辑错。教训：<b>归因看 trace 实际错误非最终 FAIL 行</b>，且<b>必须多端口隔离评估</b>（旧并发抖动制造假信号）。</div>
+
+<h3>14.3 论文映射总表</h3>
+<table>
+  <tr><th>实现</th><th>论文</th><th>设计原因</th></tr>
+  <tr><td>三层记忆 L0/L1/Skills</td><td>CoALA</td><td>情景/语义/规程分离，规程高风险需保护</td></tr>
+  <tr><td>ground-truth 富集覆盖轨迹推断</td><td>Reflexion</td><td>反思必须锚定可靠评估器奖励，否则有害编辑</td></tr>
+  <tr><td>失败根因 6 分类 + 沉淀门</td><td>Reflexion + SkillOS</td><td>可靠性分层避免噪声放大</td></tr>
+  <tr><td>四类反思都锚定成功信号</td><td>Reflexion</td><td>反思是对奖励的语义放大，必须带成功/失败</td></tr>
+  <tr><td>规则引擎不越权（只产已验证）</td><td>CoALA</td><td>确定性脚手架用代码，语义判断交 LLM</td></tr>
+  <tr><td>三态 已验证/待验证/坑点</td><td>Reflexion + MUSE + CoALA</td><td>正负例分离，防噪声降级</td></tr>
+  <tr><td>向量语义检索 + 佐证次数加权</td><td>MemOrb + Generative Agents</td><td>相关性 + 重要性两分量，温和加权</td></tr>
+  <tr><td>来源标记的可编辑边界</td><td>Weng Harness</td><td>机器可读的"可改/不可改"边界，手写永不覆盖</td></tr>
+  <tr><td>四维质量门（抽象/复用/可操作/忠实）</td><td>SkillOS Fig.12</td><td>过拟合识别（抽象度）+ 防捏造（忠实度）</td></tr>
+  <tr><td>失败重写循环</td><td>MUSE-Autoskill</td><td>失败是重写入口，每个 Skill 珍贵</td></tr>
+  <tr><td>per-skill 记忆按需消费</td><td>MUSE-Autoskill</td><td>渐进式披露，不预注入目录清单</td></tr>
+  <tr><td>L1 注入条目 + 必须验证免责</td><td>ACE</td><td>上下文是演进手册，增量条目不重写整段</td></tr>
+  <tr><td>评估器在循环外 + 重置服务状态感知</td><td>Weng Harness</td><td>评估器独立于写循环；有状态资源需谨慎</td></tr>
+  <tr><td><b>held-out gate（snapshot/restore 回退）</b></td><td>SkillOpt（held-out gate）+ Trace2Skill</td><td>每轮在 val 上验证再接受，val 退化则回退——防过拟合沉淀污染下游轮。LCB=mean−1.96σ/√R 保守下界判据</td></tr>
+  <tr><td><b>challenge split + L1 跨划分去泄露</b></td><td>EvoAgentBench（ability-supported yet instance-disjoint）+ ARC/BBH/MMLU-Pro（challenge-style eval）</td><td>train→val/test instance-disjoint 防答案泄露；test 优先区分性任务去天花板，让自进化收益信号浮现（旧全集天花板遮蔽）</td></tr>
+  <tr><td><b>validator 从空白学（must_construct from TypeError）</b></td><td>Self-Harness（弱点挖掘→提案→held-in/held-out 验证）</td><td>从 GT runtime TypeError 学 SWIG 必构造类型，0-FP 闸门替代 held-out 行为评估（静态检查器无需跑任务）</td></tr>
+</table>
+
+<div class="footer">
+  EDA FastMCP 自进化系统设计报告 · 2026-07-31 更新（自进化复现人类手工进化，3 轮迭代 + held-out gate，challenge split 自进化 R1/R2 追平人类 V5.4） · 仅记录已实现设计
+</div>
+
+</div>
+</body>
+</html>
+

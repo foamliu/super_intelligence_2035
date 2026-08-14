@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文经验 → 自进化系统 落地映射</title>
+<style>
+/* ── Light Theme Variables (沿用 self_evolution_report.html 设计系统) ── */
+:root {
+  --bg: #f8f9fb; --bg-alt: #eef1f6; --card: #ffffff; --card-hover: #fafbff;
+  --border: #dfe3ec; --border-light: #e8ecf4;
+  --text: #1e293b; --text-secondary: #475569; --dim: #94a3b8;
+  --blue: #3b82f6; --blue-light: #eff6ff; --blue-bg: rgba(59,130,246,0.08);
+  --green: #16a34a; --green-light: #f0fdf4; --green-bg: rgba(22,163,74,0.08);
+  --orange: #ea580c; --orange-light: #fff7ed; --orange-bg: rgba(234,88,12,0.08);
+  --red: #dc2626; --red-light: #fef2f2; --red-bg: rgba(220,38,38,0.06);
+  --purple: #7c3aed; --purple-light: #f5f3ff; --purple-bg: rgba(124,58,237,0.08);
+  --cyan: #0891b2; --cyan-light: #ecfeff; --cyan-bg: rgba(8,145,178,0.08);
+  --pink: #db2777; --pink-light: #fdf2f8; --pink-bg: rgba(219,39,119,0.08);
+  --teal: #0d9488;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+  --radius: 12px; --radius-sm: 8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body { font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); line-height:1.75; -webkit-font-smoothing: antialiased; }
+.topnav { position:sticky; top:0; z-index:100; background: rgba(255,255,255,0.85); backdrop-filter: blur(16px) saturate(180%); border-bottom:1px solid var(--border-light); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; }
+.topnav-brand { font-weight:700; color:var(--blue); font-size:1.05em; display:flex; align-items:center; gap:8px; }
+.topnav-links { display:flex; gap:4px; flex-wrap:wrap; }
+.topnav-links a { font-size:0.78em; padding:5px 9px; border-radius:6px; color:var(--text-secondary); text-decoration:none; transition:all 0.15s; }
+.topnav-links a:hover { background:var(--blue-light); color:var(--blue); }
+.container { max-width:1120px; margin:0 auto; padding:32px 24px 80px; }
+.hero { text-align:center; padding:48px 0 40px; }
+.hero h1 { font-size:2.2em; font-weight:800; background:linear-gradient(135deg, var(--blue), var(--purple)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:12px; }
+.hero-subtitle { font-size:1.1em; color:var(--text-secondary); max-width:760px; margin:0 auto 20px; }
+.hero-badges { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+.badge { display:inline-flex; align-items:center; gap:4px; padding:4px 12px; border-radius:999px; font-size:0.8em; font-weight:600; }
+.badge-blue { background:var(--blue-bg); color:var(--blue); }
+.badge-green { background:var(--green-bg); color:var(--green); }
+.badge-orange { background:var(--orange-bg); color:var(--orange); }
+.badge-purple { background:var(--purple-bg); color:var(--purple); }
+.badge-cyan { background:var(--cyan-bg); color:var(--cyan); }
+.badge-red { background:var(--red-bg); color:var(--red); }
+.badge-gray { background:var(--bg-alt); color:var(--text-secondary); }
+.badge-pink { background:var(--pink-bg); color:var(--pink); }
+h2 { font-size:1.7em; font-weight:700; margin:48px 0 8px; padding-top:24px; border-top:2px solid var(--border-light); display:flex; align-items:center; gap:10px; }
+h2 .section-num { background:linear-gradient(135deg,var(--blue),var(--purple)); color:#fff; width:34px; height:34px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; font-size:0.7em; flex-shrink:0; }
+h3 { font-size:1.3em; font-weight:700; margin:28px 0 8px; color:var(--text); scroll-margin-top:84px; }
+h4 { font-size:1.05em; font-weight:700; margin:18px 0 6px; color:var(--text-secondary); }
+p { margin:8px 0; color:var(--text-secondary); }
+p b, li b, td b { color:var(--text); }
+code { font-family:'JetBrains Mono','Fira Code',Consolas,monospace; font-size:0.88em; background:var(--bg-alt); padding:2px 6px; border-radius:4px; color:var(--purple); }
+pre { background:#1e293b; color:#e2e8f0; padding:18px 20px; border-radius:var(--radius-sm); overflow-x:auto; margin:14px 0; font-size:0.85em; line-height:1.6; box-shadow:var(--shadow-md); }
+pre code { background:none; color:inherit; padding:0; font-size:inherit; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin:16px 0; box-shadow:var(--shadow-sm); }
+.card-title { font-weight:700; font-size:1.1em; margin-bottom:10px; color:var(--text); display:flex; align-items:center; gap:8px; }
+.highlight { background:var(--blue-light); border-left:4px solid var(--blue); padding:14px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:14px 0; }
+.warning { background:var(--orange-light); border-left:4px solid var(--orange); padding:14px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:14px 0; }
+.insight { background:var(--green-light); border-left:4px solid var(--green); padding:14px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:14px 0; }
+.paper { background:var(--purple-light); border-left:4px solid var(--purple); padding:12px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:12px 0; font-size:0.92em; }
+.paper b { color:var(--purple); }
+.why { background:var(--cyan-light); border-left:4px solid var(--cyan); padding:12px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:12px 0; font-size:0.92em; }
+.why b { color:var(--cyan); }
+.highlight b, .insight b { color:var(--text); }
+table { width:100%; border-collapse:collapse; margin:14px 0; font-size:0.9em; background:var(--card); border-radius:var(--radius-sm); overflow:hidden; box-shadow:var(--shadow-sm); }
+th { background:var(--bg-alt); text-align:left; padding:10px 12px; font-weight:700; color:var(--text); border-bottom:2px solid var(--border); }
+td { padding:9px 12px; border-bottom:1px solid var(--border-light); color:var(--text-secondary); vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:var(--card-hover); }
+.td-mono { font-family:'JetBrains Mono',Consolas,monospace; font-size:0.85em; }
+ul, ol { margin:8px 0 8px 22px; color:var(--text-secondary); }
+li { margin:4px 0; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media (max-width:760px){ .two-col{ grid-template-columns:1fr; } }
+.diagram-container { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin:18px 0; box-shadow:var(--shadow-sm); overflow-x:auto; text-align:center; }
+.diagram-container img { max-width:100%; height:auto; border-radius:var(--radius-sm); box-shadow:var(--shadow-md); }
+.diagram-label { font-size:0.82em; color:var(--dim); margin-top:10px; text-align:center; }
+.diagram-label b { color:var(--text-secondary); }
+.toc { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px 28px; margin:20px 0; box-shadow:var(--shadow-sm); }
+.toc-title { font-weight:700; margin-bottom:10px; color:var(--text); }
+.toc ul { list-style:none; margin:0; columns:2; column-gap:32px; }
+.toc li { margin:5px 0; break-inside:avoid; }
+.toc a { color:var(--text-secondary); text-decoration:none; }
+.toc a:hover { color:var(--blue); }
+.footer { text-align:center; color:var(--dim); font-size:0.85em; padding:40px 0 0; border-top:1px solid var(--border-light); margin-top:40px; }
+.kvs { display:grid; grid-template-columns:auto 1fr; gap:4px 14px; font-size:0.92em; margin:10px 0; }
+.kvs dt { font-weight:600; color:var(--text); }
+.kvs dd { color:var(--text-secondary); }
+/* paper-card header band */
+.paper-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:4px; }
+.paper-head h3 { margin:0; }
+.paper-meta { font-size:0.82em; color:var(--dim); margin:2px 0 14px; }
+.paper-meta b { color:var(--text-secondary); font-weight:600; }
+.landing-tag { display:inline-block; font-size:0.72em; font-weight:700; padding:3px 9px; border-radius:6px; margin:2px 4px 2px 0; }
+.tag-apply { background:var(--green-bg); color:var(--green); }
+.tag-contrast { background:var(--red-bg); color:var(--red); }
+.tag-context { background:var(--bg-alt); color:var(--text-secondary); }
+.quote { border-left:3px solid var(--purple); background:var(--purple-bg); padding:10px 14px; margin:10px 0; font-size:0.9em; color:var(--text-secondary); border-radius:0 var(--radius-sm) var(--radius-sm) 0; }
+.quote::before { content:"“"; color:var(--purple); font-weight:700; font-size:1.2em; margin-right:2px; }
+.quote::after { content:"”"; color:var(--purple); font-weight:700; font-size:1.2em; }
+.quote b { color:var(--text); }
+.datatable { font-size:0.86em; }
+.datatable td.num { font-family:'JetBrains Mono',Consolas,monospace; text-align:right; }
+.coderef { font-family:'JetBrains Mono',Consolas,monospace; font-size:0.8em; color:var(--cyan); background:var(--cyan-bg); padding:1px 6px; border-radius:4px; }
+.legend-row { display:flex; gap:10px; flex-wrap:wrap; font-size:0.82em; color:var(--dim); margin:10px 0; }
+.legend-row span b { color:var(--text-secondary); }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-brand">📚 论文 → 自进化落地</div>
+  <div class="topnav-links">
+    <a href="#overview">总览</a>
+    <a href="#map">映射地图</a>
+    <a href="#reflexion">Reflexion</a>
+    <a href="#expel">ExpeL</a>
+    <a href="#trace2skill">Trace2Skill</a>
+    <a href="#skillopt">SkillOpt</a>
+    <a href="#skillos">SkillOS</a>
+    <a href="#muse">MUSE</a>
+    <a href="#context">定位/对比</a>
+    <a href="#diff">本质不同</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ════════════════════ HERO ════════════════════ -->
+<div class="hero">
+  <h1>📚 论文经验 → EDA 自进化系统 落地映射</h1>
+  <div class="hero-subtitle">逐篇还原：每篇论文的核心机制、原文/数据支撑、我们吸取了什么、用在了自进化系统的哪个组件——每条落地都锚定到当前代码。</div>
+  <div class="hero-badges">
+    <span class="badge badge-blue">6 篇核心论文精读</span>
+    <span class="badge badge-purple">原文 + 图表 + 数据</span>
+    <span class="badge badge-green">逐条对照代码落地</span>
+    <span class="badge badge-cyan">PDF 存于 logs/papers/</span>
+  </div>
+</div>
+
+<!-- ===== 阅读说明 ===== -->
+<div class="card" style="border-left:4px solid var(--blue);">
+  <div class="card-title">📖 这份报告在讲什么</div>
+  <p>我们的 EDA 自进化系统（<code>memory_bank/</code> 三层记忆 + 沉淀链）的构建，<b>参考了大量论文的方法与指导思想</b>。本报告逐篇回答三个问题：</p>
+  <ol>
+    <li><b>论文的核心机制是什么</b>——带<b>原文引用</b>与<b>从 PDF 扣出的图表/数据</b>（图表存于 <code>logs/papers/figures/</code>，原文存于 <code>logs/papers/</code>）。</li>
+    <li><b>我们吸取了哪些经验</b>——哪些机制直接借鉴、哪些做了改造、哪些只是"借鉴术语外壳但错失机制精华"后被纠正。</li>
+    <li><b>用在了自进化系统的哪个部分</b>——锚定到<b>当前代码</b>的具体文件/函数（已逐一核对，非历史记忆）。</li>
+  </ol>
+  <div class="legend-row">
+    <span><span class="landing-tag tag-apply">直接借鉴</span> 机制已落地到代码</span>
+    <span><span class="landing-tag tag-contrast">对比/不借鉴</span> 设定冲突或方向相反，作 related-work 对比</span>
+    <span><span class="landing-tag tag-context">定位背景</span> 撑大图景，非机制借鉴</span>
+  </div>
+  <p style="margin-top:10px;"><b>重点范围</b>：聚焦我们真正用起来的 <b>6 篇核心论文</b>（Reflexion / ExpeL / Trace2Skill-NVIDIA / SkillOpt / SkillOS / MUSE）；另有 <b>5 篇定位/对比论文</b>（iScript / FluxEDA / Agentic EDA Survey / OpenROAD-Agent / ReVeal）与 <b>3 篇方法论论文</b>（AHE / Externalization / VeriHarness）收于末尾，简述定位不展开机制。其余几篇（CoALA / MemOrb / Ni 版 Trace2Skill / 情绪-梦境）对设计有间接影响，未列入。</p>
+</div>
+
+<!-- ════════════════════ 总览映射地图 ════════════════════ -->
+<h2 id="map"><span class="section-num">1</span>总览：论文 → 系统组件 映射地图</h2>
+<p>下表是一张"速查表"：每篇核心论文的核心机制，对应到我们自进化系统的哪个组件，以及落地状态。<b>状态以当前代码为准</b>（2026-07-30 核对）。</p>
+
+<table class="datatable">
+  <thead>
+    <tr><th>论文</th><th>核心机制（一句话）</th><th>我们吸取了什么</th><th>落到系统哪部分</th><th>状态</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><b>Reflexion</b><br><span class="coderef">2303.11366</span></td>
+      <td>反思是对评估器信号的<b>语义放大</b>，必须锚定奖励信号；可靠反馈是反思有效的前提</td>
+      <td>反思函数锚定 <code>success</code> 信号；可靠信号前置（GT enrichment）</td>
+      <td><code>memory_bank/sediment/reflection.py</code><br>四个 <code>reflect_on_*</code></td>
+      <td><span class="landing-tag tag-apply">直接借鉴</span></td>
+    </tr>
+    <tr>
+      <td><b>ExpeL</b><br><span class="coderef">2308.10144</span></td>
+      <td>跨任务抽 insight 注入；<b>未治理的经验会反向伤害</b>（加反思反而降分）</td>
+      <td>反例比正例信息量大 → <code>disconfirm</code> 排序；治理必要性铁证</td>
+      <td><code>trace_parser.py</code> <code>_count_disconfirmations</code><br><code>retrieve/query.py</code> 排序</td>
+      <td><span class="landing-tag tag-apply">直接借鉴</span></td>
+    </tr>
+    <tr>
+      <td><b>Trace2Skill</b> (NVIDIA)<br><span class="coderef">2605.21810</span></td>
+      <td>verifier-guided skill 进化；<b>pass-dominant SelectQ</b> + <b>LCB</b> 惩罚单次好运；sanitized 反馈防泄露</td>
+      <td>LCB 进评估统计；anti-leakage 判据；SelectQ pass-dominant 排序原则</td>
+      <td><code>scripts/eval_stats.py</code> <code>lcb()</code><br>沉淀链 anti-leakage 白名单</td>
+      <td><span class="landing-tag tag-apply">直接借鉴</span></td>
+    </tr>
+    <tr>
+      <td><b>SkillOpt</b><br><span class="coderef">2605.23904</span></td>
+      <td>train/val/test 三分 + <b>held-out gate</b>（只接受严格提升 val 的 edit）+ rejected-edit buffer 负反馈</td>
+      <td>held-out gate 是 P2-6 直接参照；"plausible diagnoses can hurt" 印证 V5.3</td>
+      <td><code>memory_bank/lifecycle/snapshot.py</code><br><code>docs/dataset_split.json</code> 98/20/40</td>
+      <td><span class="landing-tag tag-apply">借鉴·建设中</span></td>
+    </tr>
+    <tr>
+      <td><b>SkillOS</b><br><span class="coderef">2605.06614</span></td>
+      <td>RL 学可学习 Curator；<b>4 维 judge</b>（ABSTRACTION/REUSABILITY/ACTIONABILITY/FAITHFULNESS）连续 reward</td>
+      <td>4 维技能质量门（对齐 Fig.12），抓过拟合 skill</td>
+      <td><code>memory_bank/sediment/skill_quality.py</code><br>四维评分 L530-538</td>
+      <td><span class="landing-tag tag-apply">直接借鉴</span></td>
+    </tr>
+    <tr>
+      <td><b>MUSE-Autoskill</b><br><span class="coderef">2605.27366</span></td>
+      <td>Skill 生命周期 create→evaluate→<b>refine</b>→re-evaluate；<b>失败是精炼入口不是终点</b></td>
+      <td>质量门失败触发 refine（非 discard）；Progressive Disclosure（lazy catalog）</td>
+      <td><code>skill_quality.py</code> <code>refine_skill_with_llm</code><br><code>skill_memory.py</code> lazy 注入</td>
+      <td><span class="landing-tag tag-apply">直接借鉴</span></td>
+    </tr>
+  </tbody>
+</table>
+<div class="legend-row">
+  <span><b>沉淀链</b>（写侧，<code>-e</code> 开启）：<code>update_memory_bank</code> → <code>distill_skills</code> → <code>skill_quality_gate</code> → <code>distill_rules</code> → <code>prune_skills</code> → <code>merge_l1</code> → <code>mine_validator_rules</code></span>
+</div>
+
+<!-- ════════════════════ 2. Reflexion ════════════════════ -->
+<h2 id="reflexion"><span class="section-num">2</span>Reflexion —— 反思是奖励信号的"语义放大"</h2>
+
+<div class="paper-head">
+  <h3>Reflexion: Language Agents with Verbal Reinforcement Learning</h3>
+  <span class="badge badge-gray">NeurIPS 2023</span>
+</div>
+<div class="paper-meta"><b>作者</b> Shinn et al. · <b>arXiv</b> 2303.11366v4 · <b>19 页</b> · <span class="coderef">logs/papers/2303.11366v4_Reflexion_Shinn2023_NeurIPS.pdf</span></div>
+
+<h4>① 核心机制（原文）</h4>
+<p>Reflexion 的 Self-Reflection 模型 <code>Msr</code> 输入是 <code>{轨迹 τ, 奖励 r}</code>，反思是对奖励 <code>r</code> 的<b>语义放大（amplify）</b>——<b>不是凭空生成文本，必须锚定在评估器信号上</b>。</p>
+<div class="quote">to amplify r0 to a feedback form that can be used for improvement by an LLM, the Self-Reflection model analyzes the set of <b>{τ0, r0}</b> … for trial t. <span class="coderef">[§2, p.4]</span></div>
+
+<div class="paper"><b>协同结论（Table 3）—— 可靠评估信号是反思有效的前提：</b>在 HumanEval Rust 50 道最难题上（GPT-4）：
+<ul>
+<li>无测试 + 无反思（baseline）= <b>0.60</b></li>
+<li>有测试 + <b>无</b>反思 = <b>0.52</b>（更差——agent 无法判断对错，<b>“performing harmful edits”</b> 做有害编辑）</li>
+<li>无测试 + 有反思 = <b>0.60</b>（不提升）</li>
+<li>有测试 + 有反思（完整 Reflexion）= <b>0.68</b></li>
+</ul>
+<b>教训</b>：没有可靠反馈信号时，反思非但无效还<b>诱导有害编辑</b>。这直接规定了我们反思函数的设计前提。</div>
+
+<div class="diagram-container">
+  <img src="papers/figures/reflexion_table3.png" alt="Reflexion Table 3">
+  <div class="diagram-label"><b>Table 3（从 PDF p.8 扣出）</b>：Pass@1 on HumanEval Rust 50 hardest —— “Test generation omission”（无测试自评）降到 0.52，证明<b>无可靠信号时反思有害</b>。</div>
+</div>
+
+<h4>② 我们吸取了什么</h4>
+<div class="insight"><b>机制借鉴：反思必须锚定奖励信号。</b>我们的四个 <code>reflect_on_*</code> 反思函数<b>现均已带 <code>success</code> 参数并锚定 ground-truth 信号</b>——<code>success=True</code> 时短路返回 None（docstring：<i>“a passed task's errors are not failure signals”</i>）。早期版本“无 success 参数”的记录已过时纠正。</div>
+
+<div class="warning"><b>已废弃：retry 闭环。</b>Reflexion 的“重试拿真实反馈”闭环在 pass@1 场景下=作弊（重试暴露真实测试反馈），<b>已废弃</b>（详见 <code>reflexion-deprecated</code>）。但论文的<b>反思 + 记忆 + Evaluator 机制在离线 L1 沉淀场景仍适用</b>——这正是我们保留的部分。</div>
+
+<h4>③ 用在系统哪部分</h4>
+<table class="datatable">
+  <thead><tr><th>论文机制</th><th>我们的落地</th><th>代码位置（已核对）</th></tr></thead>
+  <tbody>
+    <tr><td>反思锚定 <code>{τ, r}</code> 奖励信号</td><td>四个反思函数带 <code>success</code>，成功任务不抽 pitfall/error</td><td><span class="coderef">memory_bank/sediment/reflection.py:743</span> <code>reflect_on_pitfall</code><br><span class="coderef">reflection.py:901,910</span> <code>reflect_on_error_to_fix</code>（“a passed task's errors … are not failure signals”）</td></tr>
+    <tr><td>可靠信号前置（Table 3 教训）</td><td>trace 的 <code>execution_success</code> 不可信（~40 假阳性），沉淀前用 GT enrichment 回填</td><td><span class="coderef">memory_bank/sediment/update.py:273</span> <code>_enrich_from_execution_results</code></td></tr>
+    <tr><td>持久记忆 mem</td><td>反思产物沉淀为 L1 bullet（非 retry 内存）</td><td><span class="coderef">memory_bank/l1/</span></td></tr>
+  </tbody>
+</table>
+
+<!-- ════════════════════ 3. ExpeL ════════════════════ -->
+<h2 id="expel"><span class="section-num">3</span>ExpeL —— 未治理的经验知识会反向伤害</h2>
+
+<div class="paper-head">
+  <h3>ExpeL: LLM Agents Are Learners Through Self-Experiences</h3>
+  <span class="badge badge-gray">AAAI 2024</span>
+</div>
+<div class="paper-meta"><b>作者</b> Zhao et al. (Tsinghua) · <b>arXiv</b> 2308.10144v3 · <b>38 页</b> · <span class="coderef">logs/papers/2308.10144v3_ExpeL_Zhao2024_AAAI.pdf</span></div>
+
+<h4>① 核心机制（原文）</h4>
+<p>ExpeL 在 HotpotQA/ALFWorld/FEVER 上用 Reflexion 收集经验→抽抽象 insight→注入下游 unseen task。与我们 L1 机制<b>最同构</b>（跨任务经验→抽象→注入）。train 反馈是 success/fail 二元无标答，与我们 pass/fail + error_log 同构。</p>
+
+<div class="paper"><b>★关键实证（Table 3）——“未治理的经验反向伤害”铁证：</b>在 HotpotQA 上，insight 提取阶段<b>加入 reflections 反而降分</b>：
+<ul>
+<li>ReAct baseline = <b>28.0 ± 1.4</b></li>
+<li>hand-crafted insights = <b>32.0 ± 1.1</b></li>
+<li><b>insights + reflections = 29.0 ± 0.4（低于 hand-crafted，reflections 反而伤害）</b></li>
+<li>ExpeL（无 reflections）= <b>39.0 ± 1.7</b></li>
+</ul>
+原文：<i>“adding reflections to the insight-generating process <b>hurt performance</b>”</i>，原因是 <i>“reflections sometimes outputting <b>hallucinations</b>, therefore misleading the insight extraction stage”</i>。</div>
+
+<div class="diagram-container">
+  <img src="papers/figures/expel_fig6.png" alt="ExpeL Figure 6">
+  <div class="diagram-label"><b>Figure 6（从 PDF p.9 扣出）</b>：Effects of Experience on Performance —— <b>success/failure 多样性对比 > 单纯多成功轨迹</b>。<i>“diversity of success/failure data gathered using Reflexion was superior to using ReAct only”</i>。</div>
+</div>
+
+<p><b>insight 治理很弱：</b>仅 ADD/EDIT/UPVOTE/DOWNVOTE + importance count（UPVOTE+1 / DOWNVOTE−1，归零删除），<b>无 GT 校验、无分级、无 disconfirm 门控</b>。原文承认 <i>“successful trajectories can be suboptimal and <b>mislead</b> the generated insights”</i> 但只用投票应对。</p>
+
+<h4>② 我们吸取了什么</h4>
+<div class="insight"><b>机制借鉴 1（Fig 6）：反例比正例信息量大。</b>ExpeL 证明 success/failure 多样性 > 纯成功数量。这<b>支撑我们用 <code>disconfirm</code>（反例计数）而非纯 <code>source_count</code>（成功计数）做 L1 排序</b>——反例比正例更能识别误导知识。</div>
+
+<div class="highlight"><b>机制借鉴 2（Table 3）：治理而非积累。</b>ExpeL 加 reflections 反而降分，是“未治理经验反向伤害”的论文级铁证。这印证了我们 093 治本前净负、V5.3 净-4 题的根因——<b>我们的 GT 校验 + 分级 + disconfirm 门控是对 ExpeL 治理弱点的直接改进</b>，且有实证支撑治理必要性。</div>
+
+<div class="warning"><b>设定差异（非借鉴）：with-retention vs without-retention。</b>ExpeL 选“复用具体成功解”（train/test 分开，复用相似轨迹=真迁移）；我们选 <b>without-retention 只复用抽象 L1 不复用解</b>（复用具体解=查表，污染自进化叙事）。<b>我们比 ExpeL 严</b>——这是固定题集自进化设定驱动的设计差异，不是缺陷。</div>
+
+<h4>③ 用在系统哪部分</h4>
+<table class="datatable">
+  <thead><tr><th>论文机制</th><th>我们的落地</th><th>代码位置（已核对）</th></tr></thead>
+  <tbody>
+    <tr><td>Fig 6：反例信息量 &gt; 正例</td><td><code>disconfirm</code> 计数（反例）排序 L1，≥2 标注软提示</td><td><span class="coderef">memory_bank/trace_parser.py:98</span> <code>_count_disconfirmations</code><br><span class="coderef">memory_bank/sediment/distill.py:512</span> disconfirm≥2 标注</td></tr>
+    <tr><td>source_count（importance 信号）</td><td>检索时 source_count 做 log-boost（被多任务印证的条目加权）</td><td><span class="coderef">memory_bank/retrieve/query.py:244-251</span></td></tr>
+    <tr><td>Table 3：治理必要性</td><td>GT 校验 + 三态分级（verified/decision/易误导）+ disconfirm 门控</td><td><span class="coderef">memory_bank/sediment/update.py</span> enrichment + 三态</td></tr>
+  </tbody>
+</table>
+
+<!-- ════════════════════ 4. Trace2Skill (NVIDIA) ════════════════════ -->
+<h2 id="trace2skill"><span class="section-num">4</span>Trace2Skill (NVIDIA) —— 与我们方向最同构的一篇</h2>
+
+<div class="paper-head">
+  <h3>Trace2Skill: Verifier-Guided Skill Evolution for Long-Context EDA Agents</h3>
+  <span class="badge badge-gray">arXiv 2026 (NVIDIA)</span>
+</div>
+<div class="paper-meta"><b>作者</b> Du &amp; Pinckney (NVIDIA) · <b>arXiv</b> 2605.21810v1 · <b>17 页</b> · <span class="coderef">logs/papers/2605.21810v1_Trace2Skill_Du2026_NVIDIA.pdf</span></div>
+
+<p>这是与我们<b>最同构</b>的一篇——同样“黑盒 verifier 二元判定 + agent 看不到答案 + 把 skill 当进化对象”，但三个关键机制方向<b>相反</b>（见 §9）。</p>
+
+<h4>① 核心机制（原文）</h4>
+<div class="paper"><b>三关键设计：</b>
+<ul>
+<li><b>无 train/test，task-wise</b>（§4.2）：<i>“not a train/test generalization experiment … shared skills transfer unreliably”</i>，每题独立进化。动机：<i>“hard CVDP tasks are heterogeneous … motivating <b>task-wise</b> evolution”</i>。</li>
+<li><b>隐藏 verifier 二元 pass/fail，但对硬失败太 sparse</b>（§2.1）：<code>p_r ∈ {0,1}</code>。判定对单次提交确定，对 rollout 随机（temp 0.2），故用 repeats + <b>LCB</b> 治 agent 侧方差。</li>
+<li><b>agent 看不到答案，sanitized 黑盒反馈</b>（§2.1/A4）：<code>verify_feedback</code> 返回 sanitized pass/fail + partial test count + failure phase + next-focus hint，<i>“enough to guide the next RTL edit, not enough to reveal the answer”</i>。</li>
+</ul></div>
+
+<div class="diagram-container">
+  <img src="papers/figures/trace2skill_nvidia_fig1.png" alt="Trace2Skill Figure 1 flow">
+  <div class="diagram-label"><b>Figure 1（从 PDF p.2 扣出）</b>：Trace2Skill end-to-end flow —— oracle–mutator–selector 循环，从 rollout trace 蒸馏 skill。</div>
+</div>
+
+<div class="paper"><b>核心结果（Table 1）：C1→C4 消融</b>，8 道零基线硬题：
+<ul>
+<li><b>C1</b>（seed skill，sparse verifier）= <b>0/8</b></li>
+<li><b>C2</b>（+ dense feedback）= <b>2/8 (12.5%)</b> —— dense 反馈<b>单独</b>效果有限</li>
+<li><b>C3</b>（+ EA sparse）= <b>3/8</b></li>
+<li><b>C4</b>（+ EA + dense）= <b>6/8 (33.6%)</b> —— <b>dense 反馈耦合 skill 进化才放大</b></li>
+</ul>
+机制叫 <b>skill-agent coadaptation</b>：dense 反馈塑形 rollout 行为 → 产生的 trace 给 oracle/mutator 更清晰教训 → 下一代 skill 更好。每 EA 配置 <b>640 rollout</b>（8×5×4×4）。</div>
+
+<div class="paper"><b>度量三件套（最有借鉴价值）：</b>
+<ul>
+<li><b>AgentProgressQ</b>（rollout 执行质量）+ <b>LCB</b>（式 6）：<code>F_LCB = max(0, F̄_progress − 1.96σ/√R)</code>，<i>“reduces the chance that a single lucky rollout dominates selection”</i>。</li>
+<li><b>SkillQ</b>（skill 文本质量，带 <code>M_keep</code> 保留门防丢关键 lesson）。</li>
+<li><b>SelectQ = pass@1 + ε·U</b>（ε=0.49/max(R,N)）→ <b>pass-dominant</b>：<i>“one additional hidden-verifier pass always outweighs dense tie-breakers”</i>，无效/语义退化→−1。</li>
+</ul>
+<b>校准</b>（§3.2）：96 baseline rollout 上 AgentQ vs 稀疏 pass/fail 点二列相关 <b>r=0.90</b>、<b>AUC=0.982</b>。</div>
+
+<div class="diagram-container">
+  <img src="papers/figures/trace2skill_nvidia_fig2.png" alt="Trace2Skill Figure 2 calibration" style="max-width:380px;">
+  <div class="diagram-label"><b>Figure 2（从 PDF p.4 扣出）</b>：AgentQ proxy on 96 baseline rollouts —— verifier fail 组 mean=0.410，verifier pass 组 mean=0.915，<b>r=0.90</b>。代理指标与真实 pass/fail 高度相关，可作 EA tie-breaker。</div>
+</div>
+
+<h4>② 我们吸取了什么</h4>
+<div class="insight"><b>借鉴 1：LCB 进评估统计。</b>我们固定题集 without-retention 自进化，每题 k 次 rollout 取均值时用 LCB <code>mean − 1.96σ/√R</code>，<b>惩罚单次好运</b>（“靠一次满分拉高的序列 LCB 被压低”），避免单次好运主导轮次判断。</div>
+
+<div class="highlight"><b>借鉴 2：anti-leakage 判据可复用。</b>论文只返回功能观测（pass/失败阶段/partial 数），不返回参考解/harness/源码。我们对照检查 validator 是否越界——目前 validator 只报 API 误用类型 + 修复建议，<b>未泄答案，合规</b>。</div>
+
+<div class="highlight"><b>借鉴 3：SelectQ pass-dominant 排序原则。</b>质量分只作同 pass 率下 tie-breaker，<b>一次真 pass 永远优先</b>，避免“干净但行为停滞”的 skill 留存。指导我们的 skill quality gate（MUSE refine / SkillOS 四维）的排序原则。</div>
+
+<h4>③ 用在系统哪部分</h4>
+<table class="datatable">
+  <thead><tr><th>论文机制</th><th>我们的落地</th><th>代码位置（已核对）</th></tr></thead>
+  <tbody>
+    <tr><td>LCB（式 6）惩罚单次好运</td><td>评估统计 <code>lcb = max(0, mean − 1.96·std/√R)</code></td><td><span class="coderef">scripts/eval_stats.py:8,238</span> <code>lcb()</code>（注释明引“Trace2Skill arXiv:2605.21810 §2.2.3 式6”）</td></tr>
+    <tr><td>anti-leakage（sanitized 反馈）</td><td>沉淀只白名单 <code>prompt</code> 字段，绝不读 test/canonical_solution</td><td><span class="coderef">memory_bank/sediment/update.py:213</span>（“never test/canonical_solution (leakage)”）</td></tr>
+    <tr><td>pass-dominant 排序</td><td>skill 质量门 + pass@1 为先</td><td><span class="coderef">memory_bank/sediment/skill_quality.py</span></td></tr>
+  </tbody>
+</table>
+
+<!-- ════════════════════ 5. SkillOpt ════════════════════ -->
+<h2 id="skillopt"><span class="section-num">5</span>SkillOpt —— held-out gate 是 P2-6 的成熟参照</h2>
+
+<div class="paper-head">
+  <h3>SkillOpt: Text-Space Skill Optimization for Frozen Agents</h3>
+  <span class="badge badge-gray">arXiv 2026</span>
+</div>
+<div class="paper-meta"><b>作者</b> Yang et al. (Microsoft + SJTU + Tongji + Fudan) · <b>arXiv</b> 2605.23904v2 · <b>27 页</b> · <span class="coderef">logs/papers/2605.23904v2_SkillOpt_Yang2026_MS-SJTU.pdf</span></div>
+<div class="warning" style="margin-top:8px;"><b>⚠️ 别和 SkillOS 混</b>：SkillOpt（2605.<b>23904</b>，MS+SJTU）= 独立 optimizer 编辑单一 skill 文档 + held-out gate；SkillOS（2605.<b>06614</b>，UIUC+Google）= RL 学 curator + 4 维 judge。arXiv 号差一位极易混。</div>
+
+<h4>① 核心机制（原文）</h4>
+<div class="paper"><b>skill = frozen agent 的外部状态，文本空间优化</b>（p1-2）：target model 冻结，独立 optimizer model 从 rollout 证据提 add/delete/replace 编辑 skill 文档。部署产物 <code>best_skill.md</code>（300-2000 token）。</div>
+
+<div class="paper"><b>train/val/test 三分 + held-out gate</b>（p4 Fig.2, p6 §3.5）：原文 <i>“an edit is accepted only when it strictly improves a <b>held-out validation score</b>”</i>。<b>rejected-edit buffer = 负反馈</b>（§3.5）：rejected edit 不丢，记进 epoch-local buffer（失败模式 + 导致的分数下降），后续 reflection 能看到避免重复。<b>epoch-wise slow/meta update = 动量</b>（§3.6），显式追踪 regressions。</div>
+
+<div class="diagram-container">
+  <img src="papers/figures/skillopt_fig2.png" alt="SkillOpt Figure 2 pipeline">
+  <div class="diagram-label"><b>Figure 2（从 PDF p.4 扣出）</b>：SkillOpt pipeline —— frozen target model 跑 rollout → optimizer 提 bounded edit → held-out selection split 上 gate → accept/reject（rejected 进 buffer 作负反馈）。</div>
+</div>
+
+<div class="paper"><b>关键实证</b>：52 个 (model, benchmark, harness) cell 全胜或并列第一（p3）。把 <b>Ni 版 Trace2Skill（2603.25158）当 baseline 之一且全赢</b>（p7，p17 ref[9]），平均超 per-cell 最强 baseline +5.4pp。GPT-5.5 平均提升 no-skill +23.5pp。⚠️baseline 的是 <b>Ni 版不是 NVIDIA 版</b>（与我们最同构的 NVIDIA 版与 SkillOpt 无直接对比）。</div>
+
+<h4>② 我们吸取了什么</h4>
+<div class="insight"><b>借鉴 1（承重）：P2-6 held-out gate 有了成熟参照。</b>SkillOpt 的三分 + “只接受严格提升 val 的 edit”就是我们要做的 P2-6。<b>它取代 SelectQ 代理</b>——held-out 是真实行为指标，比质量分代理更硬。</div>
+
+<div class="highlight"><b>借鉴 2：V5.3 净-4 题解法被 SkillOpt 验证。</b>§3.5 原话 <i>“<b>plausible textual diagnoses can still hurt the actual target model</b>”</i> = V5.3 的 3 误导 case（看似合理 L1 实际伤害 agent）。SkillOpt 解法 = held-out gate <b>事后拒绝</b>伤害性 edit；我们 Scope Boundary = <b>事前加适用边界</b>。<b>两种解法同源（防“合理但有害”知识），方向不同，可结合</b>。</div>
+
+<div class="why"><b>借鉴 3：负反馈利用。</b>SkillOpt 的 rejected-edit buffer（edit 级）与我们 <code>disconfirm</code>（API 级反例计数）同向但更系统——它启发我们用反例而非纯正例做淘汰信号。</div>
+
+<h4>③ 用在系统哪部分</h4>
+<table class="datatable">
+  <thead><tr><th>论文机制</th><th>我们的落地</th><th>代码位置（已核对）</th></tr></thead>
+  <tbody>
+    <tr><td>held-out 三分（train/val/test）</td><td>已物理完成 split：train 98 / val 20 / test 40（分层抽样 seed=42）</td><td><span class="coderef">docs/dataset_split.json</span>（metadata: stratified by (category, gt_len), seed=42）</td></tr>
+    <tr><td>held-out gate（snapshot + rollback）</td><td>L1 + auto-skills + validator 状态快照，gate 失败回滚</td><td><span class="coderef">memory_bank/lifecycle/snapshot.py</span><br><span class="coderef">scripts/build_skill_provenance.py</span></td></tr>
+    <tr><td>rejected-edit buffer 负反馈</td><td>disconfirm 反例计数（API 级）淘汰误导条目</td><td><span class="coderef">memory_bank/trace_parser.py:98</span></td></tr>
+  </tbody>
+</table>
+<div class="warning"><b>设定差异（必须强调）</b>：SkillOpt = train/val/test 三分的 skill 优化范式；我们 = 固定题集自进化，验证“自进化能否复现人类手工进化”。两者<b>互补非竞争</b>——我们借鉴 held-out gate 思想，<b>不和它比 pass 率</b>（任务不同，无可比性）。</div>
+
+<!-- ════════════════════ 6. SkillOS ════════════════════ -->
+<h2 id="skillos"><span class="section-num">6</span>SkillOS —— 4 维技能质量门（对齐 Fig.12）</h2>
+
+<div class="paper-head">
+  <h3>SkillOS: A Skill-Centric Operating System for LLM Agents</h3>
+  <span class="badge badge-gray">arXiv 2026</span>
+</div>
+<div class="paper-meta"><b>作者</b> Ouyang et al. (UIUC + Google Cloud AI Research) · <b>arXiv</b> 2605.06614v1 · <b>33 页</b> · <span class="coderef">logs/papers/2605.06614v1_SkillOS_Ouyang2026_UIUC-Google.pdf</span></div>
+
+<h4>① 核心机制（原文）</h4>
+<div class="paper"><b>curation 是学出来的，非预设规则。</b>SkillOS 用 GRPO 训练可学习 Curator（冻结 Executor），<i>“a trainable skill curator updates and manages this collection through [insert/update/delete] operations”</i>。<b>grouping</b>（消融第一重要）：相关任务组内早期技能由后续任务成功率评估，把延迟反馈变可用。复合奖励 <code>r_task + r_fc + r_cnt + r_comp</code>。<b>8B RL Curator &gt; Gemini-2.5-Pro 直接 curation</b>——Curator-Executor 对齐靠 RL 不靠堆模型。</div>
+
+<div class="diagram-container">
+  <img src="papers/figures/skillos_fig1.png" alt="SkillOS Figure 1">
+  <div class="diagram-label"><b>Figure 1（从 PDF p.2 扣出）</b>：SkillOS pairs a frozen Agent Executor with a trainable Skill Curator —— executor 检索 SkillRepo 执行，curator 按 insert/update/delete 编辑 repo。</div>
+</div>
+
+<div class="paper"><b>4 维 judge（Figure 12）——我们质量门的直接来源：</b>ABSTRACTION / REUSABILITY / ACTIONABILITY / FAITHFULNESS，产出连续 reward 喂 RL。<b>insert→update 相位转移</b>（训练涌现，非硬编码），技能内容从“泛泛 tips”演化到“failure-handling + conditional branches”。</div>
+
+<div class="diagram-container">
+  <img src="papers/figures/skillos_fig12.png" alt="SkillOS Figure 12 judge prompt">
+  <div class="diagram-label"><b>Figure 12（从 PDF p.21 扣出）</b>：external judge 给 skill 内容打分 <code>r_cnt</code> 的 prompt 模板——4 维评分的工程实现。</div>
+</div>
+
+<h4>② 我们吸取了什么</h4>
+<div class="insight"><b>机制借鉴：4 维技能质量门（对齐 Fig.12）。</b>我们的质量门<b>已对齐论文 Fig.12 的 ABSTRACTION/REUSABILITY/ACTIONABILITY/FAITHFULNESS</b>，取代早期错配的 CORRECTNESS/COMPLETENESS/...（只 ACTIONABILITY 重合）。实测过拟合 skill（带具体 task 名 / design_42）<b>ABSTRACTION=0.10 精准识别</b>，旧维度抓不到。</div>
+
+<div class="warning"><b>设计差异（非 bug）：连续 reward vs 二元 gate。</b>论文用 4 维产出<b>连续</b> reward 喂 RL（formative）；我们用 4 维做<b>二元 gate</b>（threshold 0.4，summative）。我们不训 RL Curator，故取 summative gate——这是设定差异，不掩盖 formative vs summative 本质不同。</div>
+
+<h4>③ 用在系统哪部分</h4>
+<table class="datatable">
+  <thead><tr><th>论文机制</th><th>我们的落地</th><th>代码位置（已核对）</th></tr></thead>
+  <tbody>
+    <tr><td>4 维 judge（Fig.12）</td><td>4 维评分 prompt，ABSTRACTION 抓过拟合</td><td><span class="coderef">memory_bank/sediment/skill_quality.py:11</span>（注释“SkillOS Fig.12 aligned”）<br><span class="coderef">skill_quality.py:530-538</span> 四维定义</td></tr>
+    <tr><td>grouping（延迟反馈变可用）</td><td>source_count 跨任务印证 + provenance 追溯</td><td><span class="coderef">memory_bank/retrieve/query.py:244</span><br><span class="coderef">memory_bank/sediment/skill_promote.py:376</span></td></tr>
+    <tr><td>insert/update/delete 管控</td><td><code>origin: auto_distilled</code> 边界 + 手写不可覆盖</td><td><span class="coderef">memory_bank/sediment/distill.py</span></td></tr>
+  </tbody>
+</table>
+
+<!-- ════════════════════ 7. MUSE ════════════════════ -->
+<h2 id="muse"><span class="section-num">7</span>MUSE-Autoskill —— 失败是精炼入口，不是终点</h2>
+
+<div class="paper-head">
+  <h3>MUSE-Autoskill: Skill-Centric Agent with Skill Evolution</h3>
+  <span class="badge badge-gray">arXiv 2026 (ByteDance)</span>
+</div>
+<div class="paper-meta"><b>作者</b> Lin et al. (ByteDance) · <b>arXiv</b> 2605.27366v2 · <b>30 页</b> · <span class="coderef">logs/papers/2605.27366v2_MUSE-Autoskill_Lin2026_ByteDance.pdf</span></div>
+
+<h4>① 核心机制（原文）</h4>
+<div class="paper"><b>Skill 生命周期：create → evaluate → (fail) → update_skill 精炼 → 重检 → register。</b>原文 <i>“MUSE creates skills on demand, stores them across tasks, retrieves them through a skill catalog, and accumulates <b>per-skill experience</b> for later reuse and adaptation”</i>。<b>失败是精炼循环入口，不是终点</b>：<i>“a useful skill is created on demand … and <b>continuously refined as new evidence accumulates</b>”</i>，<i>“automatically triggering refinement when tests fail”</i>。</div>
+
+<div class="diagram-container">
+  <img src="papers/figures/muse_fig2.png" alt="MUSE Figure 2 architecture">
+  <div class="diagram-label"><b>Figure 2（从 PDF p.3 扣出）</b>：MUSE-Autoskill Agent architecture —— skill 统一生命周期（creation / memory / management / evaluation / refinement）。</div>
+</div>
+
+<div class="paper"><b>per-skill memory + Progressive Disclosure：</b><code>.memory.md</code> 在<b> Skill 被加载执行时</b>才呈现给 agent（lazy），自由格式经验怪癖。<b>覆盖率是瓶颈</b>：47/75 covered，uncovered 计 0；covered-task accuracy 85% &gt; human 81%（<b>on same covered subset</b>，非全面碾压）。<b>单轨迹过拟合</b>：hvac-control 80%→20% 回归。</div>
+
+<h4>② 我们吸取了什么</h4>
+<div class="insight"><b>机制借鉴 1：质量门失败触发 refine，而非 discard。</b>我们曾把 <code>--block</code> 误解为“block-and-discard”，<b>已纠正为 block-and-refine</b>（max_rounds=2），Layer1 也走 refine。<b>这是 MUSE 最核心的借鉴</b>——评估失败是进入精炼循环的信号。</div>
+
+<div class="insight"><b>机制借鉴 2：Progressive Disclosure（lazy catalog）。</b>我们曾 eager 注入 catalog + 模板化文本，违背 Progressive Disclosure；<b>已修</b>（P2-4）：eager→lazy（Skill 不再注入 system prompt catalog，按需加载）+ 模板→自由经验。</div>
+
+<div class="highlight"><b>澄清（不违背）：从失败 task 产生 scenario。</b>曾担心“[unverified] 从失败 task 产生 scenario 违背 MUSE”——<b>不违背</b>，论文 §4.3/Appendix L 明确建议向失败轨迹扩展。但 [unverified] 条目未经运行时验证就注入，缺 MUSE 的弱信号校验（我们用三态 + disconfirm 补）。</div>
+
+<h4>③ 用在系统哪部分</h4>
+<table class="datatable">
+  <thead><tr><th>论文机制</th><th>我们的落地</th><th>代码位置（已核对）</th></tr></thead>
+  <tbody>
+    <tr><td>失败 → refine 循环（非 discard）</td><td><code>refine_skill_with_llm</code>：质量门失败触发 LLM 精炼，锚定质量报告</td><td><span class="coderef">memory_bank/sediment/skill_quality.py:753,770,776</span>（“MUSE principle: evaluation failure is the entry to a refinement loop … NOT a discard signal”）</td></tr>
+    <tr><td>Progressive Disclosure（lazy）</td><td>Skill 不再 eager 注入 system prompt，按需加载</td><td><span class="coderef">memory_bank/skill_memory.py:239</span>（“no longer injected into the system prompt catalog”）</td></tr>
+    <tr><td>per-skill memory（自由经验）</td><td>.memory.md 指引 + 自由格式经验</td><td><span class="coderef">memory_bank/sediment/distill.py</span>（P2-4）</td></tr>
+  </tbody>
+</table>
+
+<!-- ════════════════════ 8. 定位/对比论文 ════════════════════ -->
+<h2 id="context"><span class="section-num">8</span>定位 / 对比论文（简述，不展开机制）</h2>
+<p>以下论文不是机制借鉴，而是 related-work 的<b>定位坐标</b>或<b>对比对象</b>。撑大图景、确认我们的 delta，但未把它们的机制搬进系统。</p>
+
+<div class="two-col">
+  <div class="card" style="margin-top:0;">
+    <div class="card-title"><span class="landing-tag tag-context">定位背景</span> iScript</div>
+    <div class="paper-meta">Xu et al. 2026 · <span class="coderef">2603.04476</span> · Cadence Innovus Tcl 脚本生成</div>
+    <p>同赛道最近邻（过程式 EDA 脚本生成），但<b>无自进化 / 无记忆 / 无迭代反馈</b>——纯 single-turn CPT+SFT。function pass@1 仅 18.97%，<b>语法对但逻辑错是主瓶颈</b>（与我们 61.7% 逻辑错同构）。<b>我们 vs iScript 的 delta = 自进化记忆治理 + API 正确性保障 + anti-leakage 蒸馏</b>，iScript 完全没有这三条线。</p>
+  </div>
+  <div class="card" style="margin-top:0;">
+    <div class="card-title"><span class="landing-tag tag-context">定位背景</span> OpenROAD-Agent</div>
+    <div class="paper-meta">Wu et al. 2025 (ASU+NYU) · ICLAD · <span class="coderef">OpenROAD-Agent_Wu2025</span></div>
+    <p>比 iScript 更近的邻居——NL→Python API 脚本生成→执行→报错→自纠错→迭代，<b>与 pyAether 场景几乎同构</b>。三阶段训练（SFT generation/correction + hybrid RL），94% accuracy。但<b>无跨任务沉淀 / 无记忆 / 无 validator / 无读写分离 / 评估非隐藏测试</b>。related work 里最该正面对比的 EDA baseline。</p>
+  </div>
+  <div class="card" style="margin-top:0;">
+    <div class="card-title"><span class="landing-tag tag-context">定位背景</span> FluxEDA</div>
+    <div class="paper-meta">Chen et al. 2026 (Zhejiang U) · <span class="coderef">2603.25243</span></div>
+    <p>5 层 agentic EDA 执行基础设施（gateway Socket-RPC + MCP Server + 持久后端 + 静态 Skills 层）。<b>我们 = 决策 + 进化层，FluxEDA = 执行基础设施层，互补</b>。都用 MCP 做标准化工具接口；它的“Skills”是静态工作流模板（非自进化蒸馏）。</p>
+  </div>
+  <div class="card" style="margin-top:0;">
+    <div class="card-title"><span class="landing-tag tag-context">定位背景</span> Agentic EDA Survey</div>
+    <div class="paper-meta">Zang et al. 2026 · <span class="coderef">2512.23189</span></div>
+    <p>L0→L4 自治度分层，我们位于 <b>L3“Agentic EDA: agent 自主分解、生成脚本、与 EDA 工具交互闭环”</b>。提“Code-Reality Gap”（语义盲/数据私有/现实差距）挑战——我们的 158 题 + 黑盒 verifier 是对此的具体回应。撑 intro 定位。</p>
+  </div>
+  <div class="card" style="margin-top:0;">
+    <div class="card-title"><span class="landing-tag tag-contrast">对比/不借鉴</span> ReVeal</div>
+    <div class="paper-meta">Jin et al. 2025 (MSRA) · <span class="coderef">2506.11442</span></div>
+    <p>标题实为“Self-Evolving Code Agents via Iterative Generation-Verification”。核心：agent 每轮交替 generation（代码）+ verification（<b>自生成测试用例</b>），调解释器拿 expected/actual + pass/fail。<b>与 anti-leakage 直接冲突</b>——verification 阶段 agent 自写测试 + 拿 expected output，等价于暴露隐藏 GT。<b>是对比不是借鉴</b>。我们走蒸馏（非 RL）在稀疏 pass/fail 下进化，是对 RLVR 线的补充。</p>
+  </div>
+  <div class="card" style="margin-top:0;">
+    <div class="card-title"><span class="landing-tag tag-apply">方法论</span> AHE + Externalization</div>
+    <div class="paper-meta">Lin (Fudan) <span class="coderef">2604.25850</span> · Zhou (SJTU+OPPO) <span class="coderef">2604.08224</span></div>
+    <p><b>AHE</b>：三大可观测性（component/experience/decision），10 次迭代 Terminal-Bench 2 pass@1 <b>69.7%→77.0%</b>（超 Codex 71.9%）；核心发现——改进承载于 tool + middleware + long-term memory 而非 system prompt。<b>Externalization</b>：四大外部化（memory/skills/protocols/harness），“agent 进步越来越取决于外部认知基础设施”。两者是我们 multi-port 隔离→reproducibility + 文件制记忆的理论包装。</p>
+  </div>
+</div>
+
+<div class="card" style="margin-top:16px;">
+  <div class="card-title"><span class="landing-tag tag-apply">方法论</span> VeriHarness —— 结构化反馈是 T1 依据</div>
+  <div class="paper-meta">Ray &amp; Goyal 2026 · <span class="coderef">2607.14167</span> · 4 页 short paper</div>
+  <p>核心实证：结构化反馈（失败位置 + 观察值 + <b>合法替代</b>）比原始诊断 +<b>44pp</b>（GPT-4.1）/ +<b>42pp</b>（Llama-3.1-8B），在 50 paired TextWorld games、四 call cap 下。<b>消融：增益主要来自“合法替代”（admissible alternatives）</b>，只给位置+观察值不够。prose vs JSON keyed 效果相近——<b>信息内容有效，格式无关</b>。<b>启示</b>：validator 命中应补充合法替代（如 TypeError 报错后附 <code>ae.emyPointF(x,y)</code> 构造示例），且回流 L1 时做结构化沉淀——这是我们 roadmap T1 的依据。</p>
+</div>
+
+<!-- ════════════════════ 9. 本质不同 ════════════════════ -->
+<h2 id="diff"><span class="section-num">9</span>与论文的三处本质不同（防"借鉴外壳"误判）</h2>
+<p>精读后我们发现，当前实现<b>多处"借用论文术语外壳但错失机制精华"</b>，且历史记忆有选择性引用/概念混淆。以下三处是与最同构的 Trace2Skill 的<b>本质方向差异</b>——引用时必须强调，否则 reviewer 会质疑"你和论文一样"。</p>
+
+<div class="card">
+  <h4>不同 1：防泄露机制 —— 方向相反</h4>
+  <p>论文靠<b>物理隔离</b>（agent 拿不到 <code>check()</code>）；我们靠 <b>prompt 纪律 + 事后 strip</b>。但我们 agent <b>技术上有能力自造强信号</b>——<code>run_pyAether_code_tool</code> 让 agent 在沙箱自测，而沙箱≈GT 环境，agent 可自写 <code>assert candidate(x)==期望值</code>。<b>真实状态</b>：77% 失败 case 自测“successful+无 None”但 GT 不过——agent 只 assert <code>callable</code>/<code>is not None</code> 弱断言，不测实际效果。<b>即“提升 agent 自测强度”在我们体系的天花板可能比论文加 verify_feedback 还高</b>（不用造新工具，只让 agent 把已有沙箱能力用对）。</p>
+</div>
+
+<div class="card">
+  <h4>不同 2：进化时机 —— online vs offline</h4>
+  <p>论文 <b>online</b>（rollout 后立即 verify→oracle→mutate，单批次内 5 代×640 rollout 快速收敛）；我们 <b>offline</b>（trace 的 <code>execution_success</code> 不可信 ~40 假阳性，必须一批评估后从 <code>execution_results.jsonl</code> 回填 GT，无 GT 守卫强制 False 防假阳性）。<b>后果</b>：论文一题能试 640 次快速收敛，我们一题 1 shot 靠<b>多轮沉淀累积</b>。<b>我们 4 端口隔离治“评估稳定性”，论文 LCB 治“选择稳定性”</b>，是不同层级手段。</p>
+</div>
+
+<div class="card">
+  <h4>不同 3：技能载体 —— task-wise vs cross-task</h4>
+  <p>论文 <b>task-wise</b>（单题独立 skill，不跨题，因 RTL 语义异质迁移不可靠）；我们 <b>cross-task</b>（L1 跨题聚合 <code>(identifier, description)</code> bullet，向量检索 top-K 注入）。<b>两者都能 work，因任务异质性不同</b>：CVDP RTL 语义各异迁移不可靠，我们 pyAether API 调用模式有共性（SWIG 构造 / 命令族 / 创建类反向验证）可迁移。<b>警示</b>：跨题 L1 净+17 主要来自“API 用法/参数构造”<b>可迁移</b>知识；一旦知识偏向“某题特有逻辑”跨题注入变噪音——正是 P2-6 held-out 担忧的“逻辑错类退化”，论文 task-wise 结论是该担忧的论文级佐证。</p>
+</div>
+
+<div class="warning"><b>已纠正的"借鉴外壳"误判（精读后修复）：</b>
+<ul>
+<li><b>SkillOS 4 维门</b>：早期用 CORRECTNESS/COMPLETENESS/ACTIONABILITY/REDUNDANCY 只 ACTIONABILITY 重合 → <b>已对齐 Fig.12 的 ABSTRACTION/REUSABILITY/ACTIONABILITY/FAITHFULNESS</b>。</li>
+<li><b>MUSE --block</b>：曾当“block-and-discard” → <b>已改 block-and-refine</b>（失败是精炼入口非丢弃）。</li>
+<li><b>MUSE per-skill memory</b>：曾 eager 注入 + 模板化 → <b>已改 lazy catalog + 自由经验</b>（Progressive Disclosure）。</li>
+<li><b>MemOrb 查询重写</b>：曾记“已启用” → 实际 <code>QUERY_REWRITE_LLM_ENABLED</code> 默认 <b>false</b>，只有 rule-based 重写在跑（LLM 重写关闭）。</li>
+<li><b>Reflexion 反思</b>：曾记“无 success 参数” → 四个 <code>reflect_on_*</code> <b>现均带 success 锚定</b>。</li>
+</ul></div>
+
+<!-- ════════════════════ 10. 落地状态总览 ════════════════════ -->
+<h2 id="status"><span class="section-num">10</span>落地状态总览</h2>
+<p>把 6 篇核心论文的借鉴项按 roadmap 进度汇总。<b>状态以当前代码为准</b>。</p>
+<table class="datatable">
+  <thead><tr><th>借鉴项</th><th>来源论文</th><th>落地状态</th><th>代码</th></tr></thead>
+  <tbody>
+    <tr><td>反思锚定 success 信号</td><td>Reflexion</td><td><span class="landing-tag tag-apply">✅ 已落地</span></td><td><span class="coderef">reflection.py:743,901</span></td></tr>
+    <tr><td>GT enrichment（可靠信号前置）</td><td>Reflexion Table 3</td><td><span class="landing-tag tag-apply">✅ 已落地</span></td><td><span class="coderef">sediment/update.py:273</span></td></tr>
+    <tr><td>disconfirm 反例计数排序</td><td>ExpeL Fig 6</td><td><span class="landing-tag tag-apply">✅ 已落地</span></td><td><span class="coderef">trace_parser.py:98</span></td></tr>
+    <tr><td>三态分级 + GT 校验</td><td>ExpeL Table 3（治理必要性）</td><td><span class="landing-tag tag-apply">✅ 已落地</span></td><td><span class="coderef">sediment/update.py</span></td></tr>
+    <tr><td>LCB 评估统计</td><td>Trace2Skill 式 6</td><td><span class="landing-tag tag-apply">✅ 已落地</span></td><td><span class="coderef">eval_stats.py:238</span></td></tr>
+    <tr><td>anti-leakage 白名单</td><td>Trace2Skill sanitized</td><td><span class="landing-tag tag-apply">✅ 已落地</span></td><td><span class="coderef">sediment/update.py:213</span></td></tr>
+    <tr><td>4 维技能质量门</td><td>SkillOS Fig.12</td><td><span class="landing-tag tag-apply">✅ 已落地</span></td><td><span class="coderef">skill_quality.py:530</span></td></tr>
+    <tr><td>block-and-refine 循环</td><td>MUSE</td><td><span class="landing-tag tag-apply">✅ 已落地</span></td><td><span class="coderef">skill_quality.py:770</span></td></tr>
+    <tr><td>Progressive Disclosure (lazy)</td><td>MUSE</td><td><span class="landing-tag tag-apply">✅ 已落地</span></td><td><span class="coderef">skill_memory.py:239</span></td></tr>
+    <tr><td>held-out gate (P2-6)</td><td>SkillOpt</td><td><span class="landing-tag tag-apply">⏳ 建设中</span></td><td><span class="coderef">lifecycle/snapshot.py</span> + <span class="coderef">dataset_split.json</span></td></tr>
+    <tr><td>bounded edit budget</td><td>SkillOpt 文本学习率</td><td><span class="landing-tag tag-context">⚪ 未开始</span></td><td>—</td></tr>
+    <tr><td>validator 命中结构化回流 L1 (T1)</td><td>VeriHarness</td><td><span class="landing-tag tag-context">⚪ 未开始</span></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">
+  EDA FastMCP 自进化系统 · 论文经验落地映射报告<br>
+  原文 PDF：<code>logs/papers/</code> · 扣出图表：<code>logs/papers/figures/</code> · 提取全文：<code>logs/papers/_text/</code><br>
+  生成于 2026-07-30 · 所有代码引用已逐条核对当前仓库状态
+</div>
+
+</div><!-- /container -->
+</body>
+</html>
