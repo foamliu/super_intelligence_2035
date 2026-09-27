@@ -1,0 +1,35 @@
+%%
+%% The abstract is a short summary of the work to be presented in the
+%% article.
+\begin{abstract}
+    EDA scripting with tool-specific, often undocumented APIs remains a long-tail 
+    bottleneck that existing LLMs fail to address. This paper presents 
+    \textbf{ZhuLong}, an execution-grounded LLM coding agent for PyAether and 
+    SKILL that combines API retrieval, documentation inspection, and sandbox 
+    execution via unified MCP tools, augmented by an offline \textbf{API 
+    self-exploration mechanism} that infers undocumented API behaviors through 
+    counterfactual experimentation.
+    % 使用工具特定且常无文档的EDA API进行脚本编写，仍是现有LLM无法解决的
+    % 长尾瓶颈。本文提出\textbf{ZhuLong}，一个面向PyAether和SKILL的执行驱动
+    % LLM代码智能体，通过统一的MCP工具组合API检索、文档查阅和沙盒执行，
+    % 并辅以离线\textbf{API自探索机制}，通过反事实实验推断未文档化的API行为。
+    
+    We evaluate ZhuLong on \textbf{EDA-Eval-PyAether}, a benchmark of 158
+    real-world tasks with assertion-based execution, where the complete system
+    achieves \textbf{78.5\%} Pass@1 in the commercial Empyrean Aether
+    environment, substantially outperforming a pure LLM baseline (\textbf{23.6\%}). Ablation studies identify sandbox execution as the dominant
+    performance driver (41.2 pp drop when removed), with the self-exploration
+    mechanism contributing an additional 3.2 pp accuracy gain and a 22.1\%
+    reduction in per-task tool calls. On 20 interactive tasks involving unsaved
+    layouts and schematics, ZhuLong achieves 60.0\% Pass@1 for PyAether and
+    50.0\% for SKILL. 
+    % 我们在\textbf{EDA-Eval-PyAether}上评估ZhuLong，该基准包含158个真实任务，
+    % 采用基于断言的执行验证，完整系统在商业Empyrean Aether环境中达到
+    % \textbf{78.5\%}的Pass@1，显著优于纯LLM基线（\textbf{23.6\%}）。消融实验表明，沙盒执行是性能提升的主导因素
+    % （移除后下降41.2个百分点），自探索机制在贡献额外3.2个百分点准确率提升的
+    % 同时，将每任务工具调用次数减少22.1\%。在20个涉及未保存版图和原理图的
+    % 交互任务中，ZhuLong在PyAether上达到60.0\% Pass@1，在SKILL上达到
+    % 50.0\% Pass@1。
+\end{abstract}
+
+\keywords{LLM Agents for EDA, EDA Scripting, Code Generation, Sandbox Execution, API Self-Exploration}

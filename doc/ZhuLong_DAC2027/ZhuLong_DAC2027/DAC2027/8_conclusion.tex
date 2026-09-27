@@ -1,0 +1,19 @@
+\section{Conclusion and Future Work}
+\label{sec:conclusion}
+
+This paper presented \textbf{ZhuLong}, an execution-grounded LLM coding agent for PyAether, SKILL, and Tcl that closes the loop from generation to execution to iterative refinement via sandbox execution feedback. We further provided a \textbf{theoretical grounding}: EDA correctness is a situated (L4) property, and a Bayesian analysis shows the resulting grounding gap is bounded by observation fidelity—not model scale—explaining why runtime observation is necessary. Evaluated on \textbf{EDA-Eval-PyAether}—the first benchmark for PyAether scripting, comprising 158 real-world tasks—the complete system achieves 78.5\% Pass@1, substantially outperforming static RAG (32.3\%). Ablation studies show that execution feedback and API retrieval are jointly necessary, with offline API self-exploration providing complementary gains in both accuracy (+3.2 pp) and efficiency (22.1\% fewer tool calls per trace). These results demonstrate that, for domain-specific scripting with long-tail, under-documented APIs, execution grounding is not merely beneficial but essential.
+% 本文提出\textbf{ZhuLong}，一个面向PyAether和SKILL的执行驱动LLM代码智能体，通过沙盒执行反馈实现"生成→执行→修正"闭环。在\textbf{EDA-Eval-PyAether}——首个PyAether脚本评测集，包含158个真实任务——上评估，完整系统达到78.5\%的Pass@1，显著优于静态RAG（32.3\%）。消融实验表明执行反馈是性能提升的主导因素（+43个百分点），离线API自探索在准确率（+3.2个百分点）和效率（每条trace工具调用减少22.1\%）两方面提供了互补增益。这些结果说明，对于长尾、文档不完善的领域特定脚本任务，执行驱动不仅是锦上添花，而是关键所在。
+
+Beyond the specific results, this work establishes three foundations for future research: (1) a \textbf{theoretical characterization}—the grounding gap—that diagnoses why situated (L4) correctness demands runtime observation and bounds the gap by observation fidelity; (2) a \textbf{methodological paradigm}—execution-grounded agents with offline API exploration—that can generalize to other domains with similar characteristics (long-tail APIs, incomplete documentation, available execution sandboxes); and (3) an \textbf{evaluation infrastructure}—\textbf{EDA-Scripting-Bench} (PyAether + SKILL + Tcl), whose currently completed PyAether slice is EDA-Eval-PyAether—that enables systematic cross-language comparison and progress tracking for LLM-based EDA scripting. The harness, task schema and evaluation protocol will be released; the task cases themselves derive from vendor documentation and customer designs and cannot be redistributed.
+
+% 除了具体结果之外，本工作为未来研究奠定了三个基础：（1）一个\textbf{理论刻画}——落地鸿沟——
+% 说明情境化（L4）正确性为何需要运行时观测，且该鸿沟受观测保真度约束；
+% （2）一个\textbf{方法论范式}——执行驱动智能体配合离线API探索——可推广到其他具有相似特征的领域
+% （长尾API、文档不完整、有可用执行沙盒）；（3）一个\textbf{评估基础设施}——EDA-Scripting-Bench
+% （PyAether + SKILL + Tcl），其当前已完成的PyAether切片即EDA-Eval-PyAether——
+% 支持LLM-driven EDA脚本的跨语言系统对比和进展追踪。
+% 将发布的是 harness、任务模式与评测协议；任务用例本身源自厂商文档与客户设计，不可再分发。
+
+Future work proceeds along three directions. First, completing and validating the unified EDA-Scripting-Bench (PyAether + SKILL + Tcl) and re-running all experiments on the enlarged benchmark, together with extending the benchmark to systematically cover GUI-bridged tasks on open design sessions with self-exploration enabled. Second, evolving the agent through self-improvement—learning from both successful and failed execution traces to refine its retrieval, code generation, and exploration strategies. Third, adapting the architecture to additional EDA platforms, including Synopsys tools with Tcl scripting, to broaden the scope of execution-grounded EDA agents.
+
+% 未来工作沿三个方向展开。第一，完善并验证统一的EDA-Scripting-Bench（PyAether + SKILL + Tcl），在扩充后的评测集上重新运行全部实验，同时扩展交互式评测集以系统覆盖多样化GUI操作和易变环境状态，并在交互式场景中启用自探索。第二，通过自我进化——从成功和失败执行轨迹中学习——使智能体持续改进其检索、代码生成和探索策略。第三，将架构适配到更多EDA平台，包括Synopsys工具的Tcl脚本，以拓展执行驱动EDA智能体的适用范围。

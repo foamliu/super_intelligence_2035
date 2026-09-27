@@ -1,0 +1,57 @@
+\section{Grounding: Bridging Knowledge and Action}
+
+We define \emph{grounding} as the process by which offline knowledge (L1--L3) is brought into contact with situated states (L4), enabling an agent to act effectively in the here and now. Grounding is temporal (real-time), causal (terminates in action, not representation), and iterative (action results feed back into observation). It is not inference, simulation, retrieval, or translation---all of which remain within the offline or symbolic domain.
+% 我们将"落地"定义为将离线知识（L1-L3）与情境状态（L4）相接触的过程，使智能体能够在此时此地有效地行动。落地是时间性的（实时）、因果性的（终止于行动而非表征）和迭代性的（行动结果反馈到观测）。它不是推理、模拟、检索或翻译——这些都停留在离线或符号领域。
+
+\subsection{The Grounding Gap}
+
+The grounding gap is the distance between what a model knows from offline learning (L1--L3) and what an agent must observe to act in the present (L4). This gap is structural---any architecture that freezes knowledge before deployment suffers it. Offline data and scaling improve only the prior, not the observation of L4. Prediction from the prior cannot replace observation of what the state \emph{is}; they are epistemically distinct operations.
+% 落地鸿沟是模型从离线学习中所知（L1-L3）与智能体为在当下行动所必须观测（L4）之间的距离。这一鸿沟是结构性的——任何在部署前冻结知识的架构都受其影响。离线数据和规模扩展只改善先验，而非L4的观测。从先验预测无法替代对状态"实际"是什么的观测；二者在认识论上是不同的操作。
+
+\subsection{A Bayesian Formalization of Grounding}
+
+The Bayesian formulation that follows is \emph{diagnostic, not algorithmic}. It is not a blueprint for tractable inference---which is intractable in high-dimensional \(\mathcal{S}\)---but a normative standard that makes precise \emph{what} is missing: the observation likelihood \(\Omega\) and the recursive update \(\Phi\). This mirrors the role of POMDPs in robotics: few systems solve them exactly, yet the formalism clarifies where information is lost.
+% 以下贝叶斯形式化是"诊断性"的，而非"算法性"的。它不是高维\(\mathcal{S}\)中可处理推理的蓝图——那本身是不可处理的——而是一个规范性标准，精确指明"什么"是缺失的：观测似然\(\Omega\)和递归更新\(\Phi\)。这镜像了POMDP在机器人学中的角色：很少有系统精确求解它们，但形式化框架阐明了信息在何处丢失。
+
+Let \(\Theta\) be the space of L4 states, \(o_t\) the observation, \(a_t\) the action, and \(\mathcal{K}\) offline knowledge. The agent's belief about the current L4 state is:
+% 令\(\Theta\)为L4状态空间，\(o_t\)为观测，\(a_t\)为行动，\(\mathcal{K}\)为离线知识。智能体对当前L4状态的信念为：
+
+\begin{equation}
+b_t(\theta) \triangleq p(\theta_t \mid o_{1:t}, a_{1:t-1}, \mathcal{K})
+\end{equation}
+
+updated via Bayes' rule:
+% 通过贝叶斯法则更新：
+
+\begin{equation}
+b_t(\theta) \propto p(o_t \mid \theta_t, \mathcal{K}) \int p(\theta_t \mid \theta_{t-1}, a_{t-1}, \mathcal{K}) \, b_{t-1}(\theta_{t-1}) \, d\theta_{t-1}
+\end{equation}
+
+where \(p(o_t \mid \theta_t, \mathcal{K})\) is the observation likelihood and \(p(\theta_t \mid \theta_{t-1}, a_{t-1}, \mathcal{K})\) is the transition model. Actions are selected by minimizing expected cost:
+% 其中\(p(o_t \mid \theta_t, \mathcal{K})\)是观测似然，\(p(\theta_t \mid \theta_{t-1}, a_{t-1}, \mathcal{K})\)是转移模型。行动通过最小化期望代价选择：
+
+\begin{equation}
+a_t^* = \arg\min_{a \in \mathcal{A}} \; \mathbb{E}_{\theta_t \sim b_t}\left[ \mathcal{C}(\theta_t, a, G) + \gamma \, V(b_{t+1}) \right]
+\end{equation}
+
+The grounding gap is the divergence between the posterior with runtime observations and the posterior from the offline prior alone:
+% 落地鸿沟是融合运行时观测的后验与仅依赖离线先验的后验之间的散度：
+
+\begin{equation}
+D_{\text{grounding}}(t) \triangleq D_{\text{KL}}\left(p(\cdot \mid o_{1:t}, \mathcal{K}, \text{env}) \;\middle\|\; p_{\mathcal{K}}(\cdot \mid o_{1:t})\right)
+\end{equation}
+
+This formulation is \emph{conceptual}, not implementable. It makes precise why L4 requires runtime observation---\(\Omega\) is irreducible to \(\mathcal{K}\)---and reveals the bottleneck: observation fidelity, not model scale. If \(I(\Theta_t; O_t \mid \mathcal{K}) = 0\), no prior improvement can recover the current state. The observation channel is the binding constraint.
+% 这一形式化是"概念性"的，而非可实现的。它精确说明了为什么L4需要运行时观测——\(\Omega\)不可还原为\(\mathcal{K}\)——并揭示了瓶颈：观测保真度，而非模型规模。如果\(I(\Theta_t; O_t \mid \mathcal{K}) = 0\)，再多的先验改进也无法恢复当前状态。观测通道是约束性瓶颈。
+
+\subsection{The Source of the Gap Is Causal, Not Statistical}
+
+The grounding gap is causal, not merely statistical. Parameters are fixed before deployment; facts that come into existence after the training cutoff---or states that depend on unrepeatable circumstances---cannot be present in the parameters by definition. The environment at time \(t\) is not a function of the training corpus. Offline data and scaling affect only the prior, not the availability of runtime observation.
+% 落地鸿沟的来源是因果性的，而不仅仅是统计性的。参数在部署前固定；训练截止后产生的事实——或依赖于不可重复情境的状态——在定义上不可能存在于参数中。\(t\)时刻的环境不是训练语料的函数。离线数据和规模扩展只影响先验，不影响运行时观测的可得性。
+
+\subsection{Grounding vs. Meta-Learning}
+
+Meta-learning is a capability acquired during \emph{training}: the model learns to learn over L1--L3 distributions, improving the \emph{prior}. Grounding occurs during \emph{deployment}: it requires the \emph{likelihood} and posterior update from observing \(o_t\). A better prior does not eliminate the need for observation. They are complementary---one offline, one online; one about knowledge, one about belief. Scaling improves the prior; grounding improves the likelihood.
+
+In-context learning (ICL) offers a nuanced intermediate case: it updates the model's behavior in response to recent observations without modifying parameters, operating in activation space rather than structured state space. ICL can serve as a fast, approximate surrogate for \(\Phi\) in low-uncertainty regimes, but it maintains no explicit posterior \(b_t(\theta)\), no uncertainty quantification, and no principled mechanism for filtering stale context. The two mechanisms are complementary, not competing: ICL provides rapid contextual adaptation; \(\Phi\) provides principled state estimation. Future harness designs may productively integrate both.
+% 上下文学习（ICL）提供了一个微妙的中间情况：它在不修改参数的情况下，根据最近的观测更新模型行为，运作在激活空间而非结构化状态空间中。ICL可以作为低不确定性情境下\(\Phi\)的快速近似替代，但它不维护显式的后验\(b_t(\theta)\)，没有不确定性量化，也没有过滤过时上下文的原理性机制。这两种机制是互补而非竞争的：ICL提供快速上下文适应；\(\Phi\)提供原理性的状态估计。未来的框架设计可以有效地整合两者。

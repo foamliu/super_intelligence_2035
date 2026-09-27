@@ -1,0 +1,83 @@
+% \documentclass[sigconf]{acmart}
+\documentclass[anonymous, sigconf]{acmart}
+\settopmatter{printacmref=true}
+
+\AtBeginDocument{%
+  \providecommand\BibTeX{{%
+    Bib\TeX}}}
+
+% 清除所有会议/版权信息
+\setcopyright{none}
+\copyrightyear{}
+\acmDOI{}
+\acmConference[]{}{}{}
+\acmISBN{}
+
+% 移除页脚横线（关键！）
+\renewcommand{\footnoterule}{}
+
+\usepackage{doi}
+
+\begin{document}
+
+\title{ZhuLong: An Execution-Grounded LLM Agent for EDA Scripting}
+
+\author{Yang Liu}
+\email{paul.liu@cxmt.com}
+\author{Shiwei Hou}
+\email{shiwei.hou@cxmt.com}
+\author{Xiyuan Chen}
+\email{chenxiyuan@mail.ustc.edu.cn}
+\author{Yu Wang}
+\author{Sen Yuan}
+\author{Qirui Gan}
+\author{Shao You}
+\author{Feifan Chen}
+\author{Wencheng Li}
+\author{Shuyang Hu}
+\author{Yongzhou Liu}
+\author{Emma Xia}
+\author{Xiaojing Lu}
+\author{Hao Wang}
+\author{Fan Xu}
+\author{Yanfeng Li}
+\affiliation{%
+  \institution{Changxin Memory Technologies, Inc.}
+  \country{China}
+}
+
+
+\renewcommand{\shortauthors}{Liu et al.}
+
+\input{DAC2027/0_abstract}
+
+\begin{CCSXML}
+<ccs2012>
+   <concept>
+       <concept_id>10010583.10010682.10010712.10010715</concept_id>
+       <concept_desc>Hardware~Software tools for EDA</concept_desc>
+       <concept_significance>500</concept_significance>
+   </concept>
+ </ccs2012>
+\end{CCSXML}
+\ccsdesc[500]{Hardware~Software tools for EDA}
+
+\maketitle
+
+\input{DAC2027/1_intro}
+\input{DAC2027/2_background}
+\input{DAC2027/3_design}
+% Theory precedes the benchmark and the measurements: every prediction in
+% Section~\ref{sec:prediction} and every research question in Section~\ref{sec:exp-setup}
+% is derived from the framework in Section~\ref{sec:grounding-theory}, rather than the
+% framework being offered as an explanation after the results are known.
+\input{DAC2027/4_grounding}
+\input{DAC2027/5_bench}
+\input{DAC2027/6_exp}
+\input{DAC2027/7_discussion}
+\input{DAC2027/8_conclusion}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{reference}
+
+\end{document}

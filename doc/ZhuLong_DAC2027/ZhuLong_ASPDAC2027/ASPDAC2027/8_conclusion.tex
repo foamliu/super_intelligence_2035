@@ -1,0 +1,13 @@
+\section{Conclusion and Future Work}
+\label{sec:conclusion}
+
+This paper presented \textbf{ZhuLong}, an execution-grounded LLM coding agent for PyAether and SKILL that closes the loop from generation to execution to iterative refinement via sandbox execution feedback. Evaluated on \textbf{EDA-Eval-PyAether}—the first benchmark for PyAether scripting, comprising 158 real-world tasks—the complete system achieves 78.5\% Pass@1, substantially outperforming static RAG (32.3\%). Ablation studies identify execution feedback as the dominant performance driver (+43 pp), with offline API self-exploration providing complementary gains in both accuracy (+3.2 pp) and efficiency (22.1\% fewer tool calls per trace). These results demonstrate that, for domain-specific scripting with long-tail, under-documented APIs, execution grounding is not merely beneficial but essential.
+% 本文提出\textbf{ZhuLong}，一个面向PyAether和SKILL的执行驱动LLM代码智能体，通过沙盒执行反馈实现"生成→执行→修正"闭环。在\textbf{EDA-Eval-PyAether}——首个PyAether脚本评测集，包含158个真实任务——上评估，完整系统达到78.5\%的Pass@1，显著优于静态RAG（32.3\%）。消融实验表明执行反馈是性能提升的主导因素（+43个百分点），离线API自探索在准确率（+3.2个百分点）和效率（每条trace工具调用减少22.1\%）两方面提供了互补增益。这些结果说明，对于长尾、文档不完善的领域特定脚本任务，执行驱动不仅是锦上添花，而是关键所在。
+
+Beyond the specific results, this work establishes two foundations for future research: (1) a \textbf{methodological paradigm}—execution-grounded agents with offline API exploration—that can generalize to other domains with similar characteristics (long-tail APIs, incomplete documentation, available execution sandboxes); and (2) an \textbf{evaluation infrastructure}—EDA-Eval-PyAether—that enables systematic comparison and progress tracking for LLM-based EDA scripting. We will release both code and benchmark upon acceptance.
+
+% 除了具体结果之外，本工作为未来研究奠定了两个基础：（1）一个\textbf{方法论范式}——执行驱动智能体配合离线API探索——可推广到其他具有相似特征的领域（长尾API、文档不完整、有可用执行沙盒）；（2）一个\textbf{评估基础设施}——EDA-Eval-PyAether——支持LLM-driven EDA脚本的系统对比和进展追踪。代码和评测集将在录用后开源。
+
+Future work proceeds along three directions. First, extending the interactive benchmark to systematically cover diverse GUI operations and volatile environment states, and enabling self-exploration in interactive settings. Second, evolving the agent through self-improvement—learning from both successful and failed execution traces to refine its retrieval, code generation, and exploration strategies. Third, adapting the architecture to additional EDA platforms, including Synopsys tools with Tcl scripting, to broaden the scope of execution-grounded EDA agents.
+
+% 未来工作沿三个方向展开。第一，扩展交互式评测集以系统覆盖多样化GUI操作和易变环境状态，并在交互式场景中启用自探索。第二，通过自我进化——从成功和失败执行轨迹中学习——使智能体持续改进其检索、代码生成和探索策略。第三，将架构适配到更多EDA平台，包括Synopsys工具的Tcl脚本，以拓展执行驱动EDA智能体的适用范围。

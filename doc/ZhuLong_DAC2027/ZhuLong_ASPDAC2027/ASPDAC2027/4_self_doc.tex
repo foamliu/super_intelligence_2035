@@ -1,0 +1,18 @@
+\section{Offline API Self-Exploration Mechanism}
+\label{sec:selfdoc}
+
+API documentation in EDA tools is often incomplete, omitting parameter constraints, return structures, and error conditions. Prior work addresses documentation gaps through retrieval-based augmentation \cite{pu2024rag} or static knowledge graphs \cite{liu2025layoutcopilot}—both of which rely on what is already documented. When documentation is absent, these approaches provide no remedy.
+
+% EDA工具的API文档往往不完整，省略了参数约束、返回值结构和错误条件。已有工作通过检索增强或静态知识图谱来弥补文档不足——但两者都依赖于已有文档的内容。当文档完全缺失时，这些方法无法提供任何补救。
+
+ZhuLong takes a different approach: instead of waiting for documentation to exist, it \textbf{proactively discovers} API behaviors through offline counterfactual experimentation in the sandbox. For each target API, the self-exploration agent reads whatever documentation is available, identifies gaps—e.g., unspecified parameter ranges, undocumented return fields, or ambiguous error semantics—and generates targeted test scripts to probe them. It executes these scripts via \texttt{run\_code}, observes outcomes, and iteratively refines its hypotheses about what the API accepts and returns. The exploration agent autonomously decides what to test next and when to stop, based on its current confidence.
+
+% ZhuLong采取不同的策略：不等文档存在，而是通过沙盒中的离线反事实实验\textbf{主动发现} API行为。对于每个目标API，自探索智能体阅读现有文档，识别其中的空白——如未指定的参数范围、未文档化的返回字段或模糊的错误语义——并生成针对性的测试脚本进行探测。它通过\texttt{run\_code}执行这些脚本，观察结果，并迭代修正关于API接受什么参数、返回什么数据的假设。探索智能体根据当前置信度自主决定下一步测试什么以及何时停止。
+
+Concretely, the exploration agent constructs counterfactual hypotheses—e.g., whether a parameter accepts an empty list, whether a numeric argument allows negative values, or whether a return value contains a specific field—and designs minimal test cases to validate each. Execution outcomes (success, error, exception, or unexpected return structure) reveal actual constraints. Over multiple rounds, the agent builds a behavioral model of each API, capturing parameter constraints, return structures, error conditions, and side effects.
+
+% 具体而言，探索智能体构造反事实假设——例如参数是否接受空列表、数值参数是否允许负值、返回值是否包含特定字段——并设计最小测试用例验证每个假设。执行结果（成功、错误、异常或意外的返回结构）揭示实际约束。经过多轮迭代，智能体构建了每个API的行为模型，捕获参数约束、返回值结构、错误条件和副作用。
+
+This offline process runs once per API; the enriched documentation is stored in the API knowledge base and served at runtime via \texttt{get\_api\_details}, incurring no runtime overhead. The resulting documentation is more complete than what is available in official sources, and directly reflects the API's actual behavior rather than its intended or assumed behavior.
+
+% 该离线过程每个API运行一次；增强后的文档存储在API知识库中，运行时通过\texttt{get\_api\_details}提供，不产生运行时开销。生成的文档比官方来源更完整，直接反映API的实际行为而非预期或假定的行为。

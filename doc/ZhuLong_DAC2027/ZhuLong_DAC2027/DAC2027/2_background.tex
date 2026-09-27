@@ -1,0 +1,17 @@
+\section{Background and Motivation}
+\label{sec:background}
+
+We target two widely-used EDA scripting interfaces: PyAether for Empyrean Aether \cite{empyrean_pyaether} and SKILL for Cadence Virtuoso \cite{cadence2024virtuoso}. Despite their prevalence, scripting for both environments poses challenges beyond what generic LLM code generators can address, and the community lacks basic infrastructure to measure progress.
+% 我们关注两个广泛使用的EDA脚本接口：面向Empyrean Aether的PyAether和面向Cadence Virtuoso的SKILL。尽管它们被广泛使用，但这两个环境的脚本编写面临着通用LLM代码生成器无法解决的挑战，而且整个社区甚至缺乏衡量进展的基本基础设施。
+
+\textbf{EDA scripting is fundamentally different.} Prior work on LLM code generation has succeeded in domains where correctness is verified by unit tests \cite{chen2021evaluating, austin2021program}. EDA scripting presents three distinct challenges: (i) APIs are long-tailed, tool-specific, and poorly documented; (ii) correctness depends on side effects in a live, stateful database, not return values; and (iii) no benchmark exists to evaluate whether generated scripts actually work.
+% \textbf{EDA脚本根本不同。} 此前LLM代码生成的工作在可通过单元测试验证的领域取得了成功。EDA脚本编写面临三个不同挑战：(i) API长尾、工具特定、文档不完整；(ii) 正确性取决于实时有状态数据库的副作用，而非返回值；(iii) 不存在评测集来验证生成的脚本是否真正有效。
+
+\textbf{Prior work stops short of execution.} Recent efforts like LayoutCopilot \cite{liu2025layoutcopilot}, ChaTCL \cite{rui2025chatcl}, and RAG-EDA \cite{pu2024rag} combine LLMs with static knowledge bases. Yet they all share a critical limitation: they do not execute generated code. Correctness is assessed by human judgment \cite{liu2025layoutcopilot, rui2025chatcl} or retrieval quality \cite{pu2024rag}, not by whether the script actually modifies a layout. Consequently, errors go undiagnosed, and the gap between "looks plausible" and "actually works" remains unbridged.
+% \textbf{已有工作止步于执行。} LayoutCopilot、ChaTCL和RAG-EDA将LLM与静态知识库结合，但都存在关键局限：不执行生成的代码。正确性通过人工判断或检索质量评估，而非观察脚本是否真正修改了版图。因此错误无法诊断，"看起来对"与"真正能用"之间的鸿沟始终未能弥合。
+
+\textbf{The root problem: no benchmark, no progress.} Without a standardized benchmark, the community cannot systematically compare approaches or measure progress—each prior work uses ad-hoc tasks with different protocols. Recent concurrent benchmarks for Tcl/Innovus flows \cite{xu2026iscript, li2026pdagent} confirm the growing recognition of this gap, yet target different toolchains. A dedicated PyAether/SKILL benchmark remains absent.
+% \textbf{根本问题：没有评测集，就没有进展。} 没有标准化的评测集，社区无法系统比较不同方法或衡量进展——每个已有工作使用不同的任务和协议。近期针对Tcl/Innovus流程的同期评测集表明这一空白正被广泛认识，但它们针对的是不同工具链。PyAether/SKILL领域仍然缺乏专用评测基准。
+
+\textbf{Our approach.} ZhuLong addresses the technical challenges through sandbox execution feedback—closing the loop from generation to execution to refinement—together with a \textbf{theoretical grounding} (Section~\ref{sec:grounding-theory}) that explains \emph{why} execution is necessary. An offline \textbf{API self-exploration mechanism} enriches the prior as a complementary efficiency measure. Crucially, we introduce \textbf{EDA-Eval-PyAether}, the first standardized benchmark for PyAether scripting. Together, these establish the methodology, the theory, and the measurement infrastructure for advancing LLM-based EDA scripting.
+% \textbf{我们的方法。} ZhuLong通过沙盒执行反馈应对技术挑战——闭环从生成到执行到修正——辅以离线API自探索机制。更重要的是，我们引入EDA-Eval-PyAether，首个面向PyAether脚本的标准化评测集。三者共同构成了推进LLM-driven EDA脚本编写的方法论和测量基础设施。

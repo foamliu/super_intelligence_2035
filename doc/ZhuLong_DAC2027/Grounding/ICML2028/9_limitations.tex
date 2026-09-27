@@ -1,0 +1,24 @@
+\section{Limitations}
+
+Our framework rests on several assumptions that bound its scope.
+% 我们的框架依赖于若干限制其适用范围的假设。
+
+\subsection{Knowledge--Belief Separation}
+
+The separation between $\mathcal{K}$ and $b_t$ is analytically useful but not metaphysically necessary. End-to-end architectures that adapt online may blur this boundary. Our framework is a pragmatic carving for text-trained models deployed in dynamic environments, not a claim about all possible intelligent systems. For future architectures that learn primarily through interaction---embodied foundation models trained online---this boundary may shift or disappear.
+% $\mathcal{K}$与$b_t$的分离在分析上有用，但并非形而上学上的必然。在线适应的端到端架构可能模糊这一边界。我们的框架是针对在动态环境中部署的文本训练模型的实用划分，而非对所有可能智能系统的论断。对于主要通过交互学习的未来架构——在线训练的具身基础模型——这一边界可能移动或消失。
+
+\subsection{Transition Kernel Imperfections}
+
+The framework assumes a well-defined transition kernel $\mathcal{T}$ supplied by the LLM. In practice, $\mathcal{T}$ is implicit and may hallucinate; $\Omega$ can correct this only as reliably as observation permits. When the LLM's physical or causal reasoning is flawed, $b_t$ inherits that error. The Harness can mitigate this through frequent observation resets and conservative planning, but cannot eliminate errors that the prior systematically encodes. Our bounds on the grounding gap assume $\mathcal{T}$ is fixed and correct in its support---relaxing this assumption is future work.
+% 该框架假设LLM提供了良好定义的转移核$\mathcal{T}$。实践中$\mathcal{T}$是隐式的且可能产生幻觉；$\Omega$的纠正仅取决于观测的可靠性。当LLM的物理或因果推理存在缺陷时，$b_t$继承该误差。框架可通过频繁观测重置和保守规划缓解，但无法消除先验系统性编码的误差。我们对落地鸿沟的界假设$\mathcal{T}$在其支撑集上固定且正确——放松这一假设是未来工作。
+
+\subsection{Approximate Belief Updating}
+
+Exact Bayesian inference via $\Phi$ is intractable in high-dimensional $\mathcal{S}$; every implementation must approximate it, and the framework does not bound this approximation error. Approximate implementations of $\Phi$---such as the filtering methods noted in Section~6.3---introduce approximation error, and its interaction with the LLM's prior is not fully understood. The framework provides a conceptual formalization for diagnosis and architecture design, not a directly implementable algorithm with provable performance guarantees.
+% 高维$\mathcal{S}$中通过$\Phi$的精确贝叶斯推断是棘手的；每个实现都必须近似，框架未界定近似误差。$\Phi$的近似实现（如第6.3节提及的滤波方法）会引入近似误差，其与LLM先验的相互作用尚未被充分理解。该框架提供了用于诊断和架构设计的概念性形式化，而非带有可证明性能保证的直接可实现算法。
+
+\subsection{Practical Scope}
+
+The framework is not a complete agent implementation. It abstracts away plan generation, cost specification, and domain-specific state distinctions---not as oversights, but as intentional scope delimiters. The four-level distinction and Bayesian engine operate above these details; they are scaffolding for diagnosis and architecture design, not a turnkey system. Applying the framework to a particular domain requires instantiating $\mathcal{A}$, $\mathcal{C}$, and the relevant L4 state space, all of which are domain-dependent and deliberately left unspecified.
+% 该框架并非一个完整的智能体实现。它抽象掉了计划生成、成本函数具体化以及领域特定的状态区分——这些不是疏忽，而是有意的范围界定。四层区分和贝叶斯引擎在这些细节之上运作；它们是用作诊断和架构设计的脚手架，而非拿来即用的系统。将框架应用于特定领域需要实例化$\mathcal{A}$、$\mathcal{C}$以及相关的L4状态空间，这些均是领域依赖的，且有意识地未做具体规定。

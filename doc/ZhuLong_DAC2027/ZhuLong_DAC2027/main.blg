@@ -1,0 +1,82 @@
+This is BibTeX, Version 0.99e
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+Reallocating 'name_of_file' (item size: 1) to 21 items.
+The style file: ACM-Reference-Format.bst
+Reallocating 'name_of_file' (item size: 1) to 10 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'wiz_functions' (item size: 4) to 6000 items.
+Database file #1: reference.bib
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'wiz_functions' (item size: 4) to 9000 items.
+Reallocating 'glb_str_end' (item size: 4) to 20 items.
+Reallocating 'glb_str_ptr' (item size: 4) to 20 items.
+Reallocating 'global_strs' (item size: 1) to 4000000 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Warning--no number and no volume in austin2021program
+Warning--page numbers missing in both pages and numpages fields in austin2021program
+Warning--no number and no volume in blocklove2024eda
+Warning--page numbers missing in both pages and numpages fields in blocklove2024eda
+Warning--no number and no volume in chen2024dawning
+Warning--page numbers missing in both pages and numpages fields in chen2024dawning
+Warning--no number and no volume in chen2021evaluating
+Warning--page numbers missing in both pages and numpages fields in chen2021evaluating
+Warning--no journal in douze2024faiss
+Warning--no number and no volume in douze2024faiss
+Warning--page numbers missing in both pages and numpages fields in douze2024faiss
+Warning--no number and no volume in jiang2024seed
+Warning--page numbers missing in both pages and numpages fields in jiang2024seed
+Warning--no number and no volume in kumar2026agentforge
+Warning--page numbers missing in both pages and numpages fields in kumar2026agentforge
+Warning--no number and no volume in li2026pdagent
+Warning--page numbers missing in both pages and numpages fields in li2026pdagent
+Warning--page numbers missing in both pages and numpages fields in liu2023rtlcoder
+Warning--no number and no volume in lee2025autoeda
+Warning--page numbers missing in both pages and numpages fields in lee2025autoeda
+Warning--page numbers missing in both pages and numpages fields in pu2024rag
+Warning--empty address in thrun2005probabilistic
+Warning--no number and no volume in xu2026iscript
+Warning--page numbers missing in both pages and numpages fields in xu2026iscript
+You've used 25 entries,
+            6273 wiz_defined-function locations,
+            1805 strings with 26216 characters,
+and the built_in function-call counts, 29409 in all, are:
+= -- 3670
+> -- 1552
+< -- 1
++ -- 545
+- -- 543
+* -- 2516
+:= -- 3237
+add.period$ -- 127
+call.type$ -- 25
+change.case$ -- 269
+chr.to.int$ -- 24
+cite$ -- 49
+duplicate$ -- 2131
+empty$ -- 1534
+format.name$ -- 614
+if$ -- 6944
+int.to.chr$ -- 3
+int.to.str$ -- 1
+missing$ -- 73
+newline$ -- 272
+num.names$ -- 174
+pop$ -- 964
+preamble$ -- 1
+purify$ -- 463
+quote$ -- 0
+skip$ -- 730
+stack$ -- 0
+substring$ -- 1587
+swap$ -- 153
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 533
+warning$ -- 24
+while$ -- 118
+width$ -- 0
+write$ -- 531
+(There were 24 warnings)

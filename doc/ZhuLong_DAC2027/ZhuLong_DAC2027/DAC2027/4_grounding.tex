@@ -1,0 +1,158 @@
+\section{Theoretical Grounding: The Grounding Gap}
+\label{sec:grounding-theory}
+
+Our empirical results show that the execution loop is decisive---adding sandbox execution to retrieval yields +43.0~pp, while removing either execution ($-41.2$~pp) or retrieval ($-44.3$~pp) collapses accuracy---whereas offline self-exploration yields only a modest complementary gain (+3.2~pp). This section explains \emph{why} this is not an accident of our implementation but a structural property of EDA scripting. We condense the \emph{grounding gap} framework: EDA scripting correctness is a \emph{situated} property that cannot be guaranteed from offline knowledge, and execution is the only channel that observes the current design state. The gap is bounded by observation fidelity, not model scale.
+
+% 我们的实证结果表明执行闭环是决定性的（在检索之上加入沙盒执行带来+43.0个百分点，而移除执行或检索都会使准确率坍塌），
+% 而离线自探索只带来有限的互补增益（+3.2个百分点）。本节解释为什么这不是实现的偶然，而是EDA脚本编写的结构性属性。
+% 我们浓缩"落地鸿沟"框架：EDA脚本正确性是一个情境化属性，无法从离线知识保证，执行是观测当前设计状态的唯一通道。
+% 该鸿沟受观测保真度约束，而非模型规模。
+
+\subsection{A Four-Level Hierarchy of Information}
+\label{sec:four-levels}
+
+To make precise what can be learned offline versus what must be observed online, we distinguish four levels of information (Table~\ref{tab:four-levels}). The distinction applies to any agent whose knowledge is fixed by offline learning before deployment:
+\begin{itemize}
+\item \textbf{L1--Syntactic Correctness}: well-formedness of symbols according to formal rules. Captured by formal grammars and the syntactic capacities of modern LLMs.
+\item \textbf{L2--Physical Plausibility}: what is physically plausible or generally expected---objects do not pass through walls, water flows downhill. L2 captures robust statistical patterns of the world, not logical certainties; these regularities are general and acquirable offline, constituting the agent's \emph{prior} over how the world typically behaves.
+\item \textbf{L3--Historical Factuality}: what has actually occurred or is documented as fact. L3 concerns actual rather than merely possible states of affairs. Like L1 and L2 it can be acquired offline, but it is \emph{past-oriented}: it describes what was true as of the training cutoff, with no connection to what is true \emph{now}.
+\item \textbf{L4--Situated Truthfulness}: what is true \emph{right now}, in this specific environment. Three characteristics define it: \emph{indexicality}---truth depends on context and changes over time; \emph{non-guaranteeability from offline data}---no offline dataset can \emph{guarantee} the current state, though it may induce strong priors; and \emph{real-time commitment}---L4 must be acquired continuously and acted upon promptly.
+\end{itemize}
+
+% 为了精确区分什么可以离线学习、什么必须在线观测，我们区分四个信息层次（表~\ref{tab:four-levels}）：
+% L1语法正确性、L2物理合理性、L3历史事实性、L4情境真实性。前三层可离线获取，构成智能体关于世界通常如何运作的先验；
+% L4由三个特征定义：指示性（真值依赖语境并随时间变化）、无法由离线数据保证（但可诱导强先验）、实时承诺（须持续获取并迅速行动）。
+
+Two clarifications matter. First, L4 is not a semantic category of propositions; it is a \emph{grounding requirement} imposed by indexical reference---the same proposition may be L3 at one moment and L4 at another, depending on whether it refers to a past fact or a current state. Second, the four levels are not a taxonomy of all knowledge: they separate what can be \emph{known in advance} from what must be \emph{observed now}. L4 is whatever must be \emph{read} from the environment rather than \emph{recalled} from memory.
+
+% 两点澄清：第一，L4不是命题的语义类别，而是指示性所指强加的\emph{落地要求}——同一命题在不同时刻可能属于L3或L4。
+% 第二，四层区分不是知识的分类法，它区分"可预先知道"与"必须此刻观测"；L4是必须从环境中\emph{读取}而非从记忆中\emph{回忆}的东西。
+
+\begin{table*}[htbp]
+\centering
+\caption{The four levels of information}
+\label{tab:four-levels}
+\begin{tabular}{clp{5.2cm}c}
+\toprule
+\textbf{Level} & \textbf{Name} & \textbf{Core Question} & \textbf{Learnable Offline?} \\
+\midrule
+L1 & Syntactic Correctness & Is this string well-formed? & Yes \\
+L2 & Physical Plausibility & Could this event happen? & Yes \\
+L3 & Historical Factuality & Did this event happen? & Yes \\
+L4 & Situated Truthfulness & Is this true \emph{right now}? & \textbf{No} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+% 表：四个信息层次。"能否离线学习"一列是操作性的判据：L1–L3 可以，L4 不可以。
+
+For EDA scripting, the situated state is the live design database: which cell and view are selected, and what the layout or schematic contains at this moment. Situated states are not limited to the physical world---they include digital and informational states generally, and the user's current intent---so a clarification obtained from the user is an L4 observation as well.
+
+% 对EDA脚本编写而言，情境状态就是实时的设计数据库：当前选中哪个cell和view、此刻版图或原理图中有什么。
+% 情境状态不限于物理世界——它包括数字与信息状态，也包括用户的当前意图——因此从用户处获得的澄清同样是一次L4观测。
+
+The correctness criterion we adopt---that generated code executes without error and all assertions over the mutated design pass---is an L4 property. A script that is well-formed (L1), plausible (L2), and invokes documented functions (L3) can nonetheless violate an undocumented binding contract, depend on an internal selection state, or target the wrong cell, and thus fail the test oracle. No amount of offline knowledge can resolve such failures; they must be \emph{observed} by acting on the live design and reading back the result. Four architectural consequences follow from L4's defining characteristics: a system trained offline and deployed frozen has no observation modules, no persistent situated state, no execution interface, and no real-time feedback loop. Every failure we analyze in Section~\ref{sec:error-analysis} traces to one or more of these.
+
+% 我们采用的正确性判据——生成代码无错误执行且针对被修改设计的所有断言通过——是一个L4属性。
+% 一个语法正确（L1）、合理（L2）、调用已文档化函数（L3）的脚本，仍可能违反未文档化的绑定契约、
+% 依赖内部选中状态或定位到错误单元而失败。离线知识无法解决这类失败；它们只能通过作用于实时设计并读回结果来观测。
+% 由L4的定义性特征推出四个架构性后果：离线训练并冻结部署的系统没有观测模块、没有持久情境状态、
+% 没有执行接口、没有实时反馈环路。第~\ref{sec:error-analysis}节分析的每个失败都可追溯到其中之一。
+
+\subsection{A Bayesian Formalization of the Grounding Gap}
+\label{sec:bayesian}
+
+We cast grounding as decision-making under partial observability, mirroring POMDPs and Bayesian filtering \cite{kaelbling1998planning, thrun2005probabilistic}; the formulation below is diagnostic rather than algorithmic---it is not a blueprint for tractable inference in high-dimensional state spaces, but a normative standard that makes precise \emph{what} is missing: the observation likelihood $\Omega$ and the recursive update $\Phi$.
+
+% 我们把落地建模为部分可观测下的决策，类比POMDP与贝叶斯滤波；以下形式化是诊断性而非算法性的——
+% 它不是高维状态空间中可处理推理的蓝图，而是一个规范性标准，精确指出\emph{什么}是缺失的：观测似然Ω与递归更新Φ。
+
+Let $\Theta$ denote the space of L4 states (the live EDA design database), $o_t$ a runtime observation, $a_t$ a generated code action, and $\mathcal{K}$ the offline knowledge encoded in the LLM's frozen parameters (L1--L3). The agent maintains a belief over the current L4 state:
+\begin{equation}
+b_t(\theta) \triangleq p(\theta_t \mid o_{1:t},\, a_{1:t-1},\, \mathcal{K}),
+\end{equation}
+updated recursively by Bayes' rule:
+\begin{equation}
+b_t(\theta) \propto p(o_t \mid \theta_t)\, \int_{\Theta} p(\theta_t \mid \theta_{t-1}, a_{t-1})\, b_{t-1}(\theta_{t-1})\, d\theta_{t-1},
+\end{equation}
+where $p(o_t \mid \theta_t)$ is the \emph{observation likelihood} $\Omega$, implemented by the Harness's observation modules (Section~\ref{sec:zhuLong-harness}), and $p(\theta_t \mid \theta_{t-1}, a_{t-1})$ is the \emph{transition model} $\mathcal{T}$ supplied by the LLM's prior over how EDA operations transform the design. Actions are chosen by minimizing expected cost:
+\begin{equation}
+a_t^* = \arg\min_{a \in \mathcal{A}}\; \mathbb{E}_{\theta_t \sim b_t}\!\big[\mathcal{C}(\theta_t, a, G) + \gamma\, V(b_{t+1})\big],
+\end{equation}
+where $\mathcal{C}$ encodes the task assertions and $\gamma$ a discount factor.
+
+% 令$\Theta$为L4状态空间（在线EDA设计数据库），$o_t$为运行时观测，$a_t$为生成的代码动作，
+% $\mathcal{K}$为编码在LLM冻结参数中的离线知识（L1–L3）。智能体维护关于当前L4状态的信念$b_t(\theta)$，
+% 通过贝叶斯法则递归更新。其中观测似然$\Omega$由框架的观测模块实现（第~\ref{sec:zhuLong-harness}节），
+% $\mathcal{T}$为LLM先验提供的转移模型。行动通过最小化期望代价选择。
+
+The \emph{grounding gap} is the divergence between the posterior achievable with runtime observations and the posterior from the offline prior alone:
+\begin{equation}
+D_{\text{grounding}}(t) \triangleq D_{\mathrm{KL}}\!\left(p(\cdot \mid o_{1:t},\, \mathcal{K},\, \text{env}) \;\middle\|\; p_{\mathcal{K}}(\cdot \mid o_{1:t})\right).
+\end{equation}
+This divergence is bounded by the fidelity of the observation channel, not by the capacity of the model. If $I(\Theta_t; O_t \mid \mathcal{K}) = 0$---that is, the observation channel is silent about the state---no improvement in the prior can recover the current state. Scaling $\mathcal{K}$ improves L1--L3, but it cannot reduce the gap below the floor imposed by $\Omega$.
+
+% 落地鸿沟是有运行时观测的后验与仅靠离线先验的后验之间的散度，受观测通道保真度约束而非模型容量约束。
+% 若I(Θ;O|K)=0（观测通道对状态沉默），任何先验改进都无法恢复当前状态。
+% 扩大K只改善L1–L3，无法突破Ω施加的下界。
+
+The source of the gap is causal, not statistical. Parameters are fixed before deployment; facts that come into existence after the training cutoff, or states that depend on unrepeatable circumstances, cannot be present in them by definition. The environment at time $t$ is not a function of the training corpus, and offline data and scaling affect only the prior, never the availability of runtime observation.
+
+% 鸿沟的来源是因果性的，而非统计性的：参数在部署前固定，训练截止后产生的事实、
+% 或依赖不可重复情境的状态，按定义不可能存在于参数中。t时刻的环境不是训练语料的函数；
+% 离线数据与规模扩展只影响先验，不影响运行时观测的可得性。
+
+This separates grounding from learning-based adaptation. Fine-tuning and meta-learning are capabilities acquired during \emph{training}: they improve the \emph{prior} over L1--L3 distributions. Grounding occurs during \emph{deployment} and requires the likelihood and a posterior update from observing $o_t$. A better prior does not eliminate the need for observation; the two are complementary---one offline, one online; one about knowledge, one about belief.
+
+% 这把落地与基于学习的适应区分开：微调与元学习是\emph{训练}期获得的能力，改善的是关于L1–L3分布的先验；
+% 落地发生在\emph{部署}期，需要似然与基于观测$o_t$的后验更新。更好的先验并不能消除对观测的需要；
+% 两者互补——一个离线、一个在线；一个关乎知识、一个关乎信念。
+
+\subsection{ZhuLong as an Instance of the Agent Harness}
+\label{sec:zhuLong-harness}
+
+The formulation maps onto ZhuLong's architecture. The frozen LLM supplies the prior $\mathcal{K}$ (L1--L3), the transition model $\mathcal{T}$, and an approximation to the policy $\Pi$. The Harness supplies what the LLM lacks---observation, belief update, and execution---and ZhuLong's three MCP tools instantiate it: \texttt{search\_apis} and \texttt{get\_api\_details} are the \emph{observation modules} $\Omega$, reading documented API facts out of the environment; \texttt{run\_code} is the \emph{effector} that acts on the live design database, whose resulting state is transduced into textual observations (stdout, errors, assertion outcomes). The re-planning loop (Section~\ref{sec:agent-workflow}) implements the belief update $\Phi$: each observation $o_t$ revises the agent's belief about which API contracts and compositions actually hold. The closed loop $b_t \to a_t \to o_{t+1} \to b_{t+1}$ is what turns one-shot generation into grounded search; grounding is a property of the coupled system, not of the model alone.
+
+% 该形式化直接映射到ZhuLong架构。冻结的LLM提供先验$\mathcal{K}$（L1–L3）、转移模型$\mathcal{T}$以及策略$\Pi$的近似。
+% 框架提供LLM所缺乏的观测、信念更新与执行，ZhuLong的三个MCP工具将其实例化：
+% \texttt{search\_apis}与\texttt{get\_api\_details}是\emph{观测模块}$\Omega$，从环境中读取已文档化的API事实；
+% \texttt{run\_code}是\emph{执行器}，作用于实时设计数据库，其结果状态被转换为文本观测（stdout、错误、断言结果）。
+% 重规划循环（第~\ref{sec:agent-workflow}节）实现信念更新$\Phi$：每次观测$o_t$修正智能体关于哪些API契约与组合确实成立的信念。
+% 闭环 $b_t \to a_t \to o_{t+1} \to b_{t+1}$ 把一次性生成变为接地搜索；落地是耦合系统的属性，而非模型单独的属性。
+
+\subsection{Design Principles}
+\label{sec:prediction}
+
+The formalization yields three architectural principles: \emph{freeze} $\mathcal{K}$, \emph{maximize} the fidelity of $\Omega$, and \emph{run} $\Phi$ \emph{continuously}.
+
+\textbf{Decouple knowledge from belief.} Knowledge $\mathcal{K}$ is the static L1--L3 prior encoded in the LLM's parameters---general and context-free; belief $b_t(\theta)$ is the dynamic posterior maintained by the Harness---specific and context-dependent. Updating $\mathcal{K}$ with the limited observations available during deployment is inefficient and risks catastrophic forgetting, and even a prior enriched offline cannot substitute for observation; freezing $\mathcal{K}$ and absorbing adaptation in $b_t$ yields stability and flexibility at once.
+
+\textbf{Optimize observation over the prior.} The gap is bounded by the fidelity of the likelihood $\Omega$, not by the expressiveness of the prior: $D_{\text{grounding}}(t)$ is bounded by $\|\tilde{p} - p_{\text{real}}\|$, a bound independent of model scale. Investment in observation---retrieval and documentation quality, execution read-back, state estimation---therefore has a direct and bounded effect, whereas investment in model scale has diminishing returns once the prior is sufficiently rich, because it cannot push the gap below the floor imposed by observation.
+
+\textbf{Design for continuous belief updating.} $\Phi$ operates online: every observation yields a recursive update $b_t \mapsto b_{t+1}$. Two implications follow. First, $\Phi$'s update rate must exceed the timescale of L4 dynamics, otherwise $b_t$ goes stale. Second, $b_t$ must be a structured representation that captures uncertainty and history, so that the agent can recover from unexpected changes. In the ICL-type autonomous agent of Section~\ref{sec:system}, $\Phi$ has no explicit posterior: it is approximated by in-context learning, since each returned observation is appended and conditions the next decision, while the agent decides for itself when the result is good enough to submit. Because such an agent is autonomous, the quantity to bound is not a count of ``rounds''---it has none---but how much evidence its belief state may ever accumulate: a graded budget on the executions it may observe, or a read-back that lags the action it reports.
+
+% 形式化给出三条架构原则：冻结$\mathcal{K}$、最大化$\Omega$保真度、持续运行$\Phi$。
+% （一）解耦知识与信念：$\mathcal{K}$是LLM参数中编码的静态L1–L3先验，$b_t$是框架维护的动态后验；
+% 用部署期有限的观测去更新$\mathcal{K}$既低效又有灾难性遗忘风险，且离线增强的先验也无法替代观测。
+% （二）优先优化观测而非先验：鸿沟受似然$\Omega$保真度约束（上界$\|\tilde{p}-p_{\text{real}}\|$与模型规模无关）；
+% 观测投入有直接有界的效果，模型规模投入在先验足够丰富后收益递减。
+% （三）为持续信念更新而设计：$\Phi$的更新率必须超过L4动态的时间尺度，且$b_t$须是捕获不确定性与历史的结构化表征。
+
+These principles \emph{account for} our ablation findings rather than merely restating them. Removing the observation channel (``ZhuLong w/o Sandbox'') leaves $b_t$ uninformative: with no $\Omega$, L4 violations such as hidden type contracts and internal selection state (Section~\ref{sec:error-analysis}) are unobservable by construction, and Pass@1 drops by 41.2~pp. A retrieval-only system (RAG, 32.3\%) improves the L1--L3 prior but still cannot observe L4, so its ceiling is bounded by what offline knowledge can guarantee. The offline API self-exploration mechanism (Section~\ref{sec:selfdoc}) likewise improves only the L1--L3 facts the harness can supply---it enriches documentation with discovered constraints---and is therefore \emph{complementary and bounded}: it reduces uncertainty about contracts but cannot replace observation of the current state, which is why its contribution (+3.2~pp) is dwarfed by that of the observation channel.
+
+% 这些原则\emph{解释}而非仅仅复述了消融结果：移除观测通道使$b_t$失去信息，L4违规在构造上不可观测，
+% Pass@1下降41.2个百分点；仅检索系统（RAG）改善L1–L3先验但无法观测L4，其上界受离线知识所能保证的范围约束；
+% 离线API自探索改善的同样是\emph{先验}，因而是互补且有界的。
+
+Three diagnostic questions follow for any candidate system: (1)~does it implement $\Omega$ with sufficient fidelity to track L4 dynamics? (2)~does it maintain $b_t$ as a structured state, updated through $\Phi$ after each observation? (3)~does it approximate $\Pi$ from offline knowledge and execute $a_t$ through a causal interface? Section~\ref{sec:experiments} answers them for ZhuLong, on the benchmark constructed in Section~\ref{sec:benchmark}.
+
+% 由此得到三个诊断性问题：(1) 是否以足够保真度实现$\Omega$以追踪L4动态；
+% (2) 是否将$b_t$维护为经$\Phi$更新的结构化状态；(3) 是否用离线知识近似$\Pi$并通过因果接口执行$a_t$。
+% 下一节针对ZhuLong回答这三点。
+
+These principles and questions organize the evaluation into three research questions (Section~\ref{sec:exp-setup}): whether the ceiling is set by observation or by the prior (RQ1), which components are necessary and whether they are interchangeable (RQ2), and whether the structure follows from the domain class rather than from one toolchain (RQ3).
+% 这些原则与诊断问题把评估组织为三个研究问题（第~\ref{sec:exp-setup}节）：
+% 天花板由观测还是先验设定（RQ1）；哪些组件是必要的以及它们可否互换（RQ2）；
+% 以及该结构是否源于领域类而非某个工具链（RQ3）。
+
+
+

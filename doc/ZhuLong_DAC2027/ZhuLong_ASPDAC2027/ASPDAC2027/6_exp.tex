@@ -1,0 +1,337 @@
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Experimental Setup}
+\label{sec:exp-setup}
+
+\subsubsection{Research Questions}
+
+This evaluation aims to answer four research questions: (RQ1) whether sandbox execution improves code generation accuracy over static generation; (RQ2) whether the self-exploration mechanism provides measurable benefits beyond sandbox execution alone, in terms of both accuracy and efficiency; (RQ3) whether vector-based retrieval outperforms grep-based keyword search for API discovery; and (RQ4) how different index construction strategies affect retrieval effectiveness.
+% 本评估旨在回答四个研究问题：(RQ1) 沙盒执行相比静态生成是否提升了代码生成准确率；(RQ2) 自探索机制在沙盒执行之外是否带来了可测量的准确率和效率增益；(RQ3) 向量检索在API发现上是否优于grep关键词搜索；(RQ4) 不同的索引构建策略如何影响检索效果。
+
+\subsubsection{Benchmark and Evaluation Protocol}
+
+We evaluate ZhuLong on \textbf{EDA-Eval-PyAether}, a benchmark of 158 real-world PyAether scripting tasks. Following the evaluation protocol defined in Section~\ref{sec:benchmark}, we adopt \textbf{Pass@1} (execution success rate) as the primary metric. During evaluation, the agent is allowed up to \textbf{2 re-planning rounds} per task (i.e., up to three complete runs), following the self-correction loop described in Section~\ref{sec:agent-workflow}; timeout is set to 2500 seconds per execution.
+% 评测集与评估协议。我们在\textbf{EDA-Eval-PyAether}上评估ZhuLong，该评测集包含158个真实PyAether脚本任务。遵循第\ref{sec:benchmark}节定义的评估协议，我们采用\textbf{Pass@1}（执行成功率）作为主要指标。评估过程中，智能体在每个任务上允许最多\textbf{2轮重新规划}（即最多进行3次完整运行），遵循第\ref{sec:agent-workflow}节描述的自校正循环；每次执行超时时间设为2500秒。
+
+\subsubsection{Baselines and ZhuLong Variants}
+
+To isolate the contribution of each component, we establish two baselines and three ZhuLong variants, as shown in Table~\ref{tab:configurations}. ZhuLong variants default to vector retrieval using a name+description index.
+% 基线与ZhuLong变体。为了隔离每个组件的贡献，我们建立了两个基线和三个ZhuLong变体，如表~\ref{tab:configurations}所示。ZhuLong变体默认使用名称+描述索引进行向量检索。
+
+\begin{table}[htbp]
+\centering
+\caption{Configurations and their components}
+\label{tab:configurations}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Configuration} & \textbf{Retrieval} & \textbf{Sandbox} & \textbf{Self-Expl.} \\
+\midrule
+Baseline 1 (Pure LLM) & \ding{55} & \ding{55} & \ding{55} \\
+Baseline 2 (RAG) & \ding{51} & \ding{55} & \ding{55} \\
+ZhuLong w/o Self-Expl. & \ding{51} & \ding{51} & \ding{55} \\
+ZhuLong w/o Sandbox & \ding{51} & \ding{55} & \ding{51} \\
+ZhuLong w/o Retrieval & \ding{55} & \ding{51} & \ding{51} \\
+\textbf{ZhuLong} (Full) & \ding{51} & \ding{51} & \ding{51} \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 表：配置及其组件。ZhuLong（完整）为完整系统，其余为消融变体。
+% Self-Expl. = Self-Exploration mechanism.
+
+\subsubsection{LLM Backbones}
+
+All main experiments use DeepSeek-V4-Flash as the primary backbone. To understand the impact of different LLMs, we additionally evaluate DeepSeek-V3.2, GLM-5.1, DeepSeek-V4-Pro, Kimi-K2.6, and Doubao-Seed-2.0-Pro.
+% LLM主干。所有主要实验使用DeepSeek-V4-flash作为主要主干。为了解不同LLM的影响，我们还评估了DeepSeek-V3.2、GLM-5.1、DeepSeek-V4-Pro、Kimi-K2.6和Doubao-Seed-2.0-Pro。
+
+\subsection{Main Results and Ablation}
+\label{sec:exp-results}
+
+We further ablate the number of re-planning rounds $n \in \{0, 1, 2\}$.
+% 我们进一步消融重新规划轮数$n \in \{0, 1, 2\}$。
+
+Table~\ref{tab:main-ablation} presents the progressive build-up (top), the
+iteration budget ablation (middle), and the component ablation (bottom).
+The top and bottom blocks use the same re-planning budget of 2 rounds but
+present the results from complementary perspectives: the top block shows
+the sequential gains from incrementally adding components, with each row
+compared against the previous one, whereas the bottom block shows the
+performance degradation caused by removing individual components from the
+full system. The middle block isolates the effect of the re-planning budget
+by comparing 0, 1, and 2 rounds within the full system.
+% 表~\ref{tab:main-ablation}呈现了渐进构建（上）、迭代预算消融（中）
+% 和组件消融（下）。上、下两部分均采用2轮重新规划预算，但从互补的
+% 角度呈现结果：上部分展示逐步添加组件所带来的连续增益，其中每一行
+% 均与前一行比较；下部分则展示从完整系统中分别移除各组件后造成的性能
+% 下降。中间部分通过在完整系统中比较0、1、2轮重新规划，单独分析重新
+% 规划预算的影响。
+
+\begin{table}[htbp]
+\centering
+\caption{Ablation study results}
+\label{tab:main-ablation}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Configuration} & \textbf{Pass@1 (\%)} & \textbf{$\Delta$} \\
+\midrule
+\multicolumn{3}{l}{\textit{Progressive build-up (vs. previous row)}} \\
+Baseline 1: Pure LLM & 23.6 & — \\
+Baseline 2: RAG & 32.3 & +8.7 pp \\
+ZhuLong w/o Self-Expl. & 75.3 & +43.0 pp \\
+\textbf{ZhuLong} (Full) & \textbf{78.5} & \textbf{+3.2 pp} \\
+\midrule
+\multicolumn{3}{l}{\textit{Iteration budget ablation (vs. ZhuLong Full)}} \\
+0 re-planning rounds (single attempt) & 62.7 & -15.8 pp \\
+1 re-planning round & 76.0 & -2.5 pp \\
+\midrule
+\multicolumn{3}{l}{\textit{Component ablation (vs. ZhuLong Full)}} \\
+ZhuLong w/o Self-Expl. & 75.3 & -3.2 pp \\
+ZhuLong w/o Sandbox & 37.3 & -41.2 pp \\
+ZhuLong w/o Retrieval & 34.2 & -44.3 pp \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 表：性能构建、迭代预算消融与组件消融研究。上块为渐进构建，"Gain"表示
+% 相对于前一行的增量（均为2轮重新规划）；中块为迭代预算消融，下块为组件消融，
+% 中块和下块中的"Drop"均表示相对于ZhuLong完整系统（加粗行）的减量。
+
+\subsubsection{Effect of Iteration Budget}
+\label{sec:iteration-budget-effect}
+%迭代预算的效果
+
+The middle block of Table~\ref{tab:main-ablation} isolates the iteration budget.
+% 表~\ref{tab:main-ablation}的中间块分离了迭代预算的影响。
+With 0 re-planning rounds, ZhuLong achieves 62.7\% Pass@1, already far above 
+the 32.3\% RAG baseline.
+% 0轮重新规划时，ZhuLong达到62.7\%的Pass@1，已远高于32.3\%的RAG基线。
+One re-planning round raises accuracy to 76.0\% (+13.3 pp, 84.2\% of the total 
+achievable gain within two iterations), while the second round adds only 
+2.5 pp (final 78.5\%).
+% 一轮重新规划将准确率提升至76.0\%（+13.3个百分点，占两轮内可实现总增益的
+% 84.2\%），而第二轮仅增加2.5个百分点（最终78.5\%）。
+This diminishing return indicates that most recoverable errors are corrected 
+within one round; we retain two rounds as the default to capture the remaining 
+marginal improvement without excessive overhead.
+% 这种边际收益递减表明大多数可恢复错误在一轮内即可修正；我们保留两轮作为默认设置，
+% 以在不过度增加开销的前提下捕获剩余的边际增益。
+
+\subsubsection{Effect of Sandbox Execution (RQ1)}
+
+Sandbox execution is the dominant performance driver. Adding it to the RAG baseline raises Pass@1 from 32.3\% to 75.3\%---a gain of \textbf{43.0 percentage points} that accounts for \textbf{78.3\%} of the total improvement from Pure LLM (23.6\%) to ZhuLong (78.5\%). Conversely, removing sandbox execution from ZhuLong drops Pass@1 to 37.3\%, a decline of \textbf{41.2 percentage points}. These results confirm that execution feedback is indispensable: without it, the agent cannot verify correctness, observe API behavior, or iteratively refine its output.
+% 沙盒执行的效果（RQ1）。沙盒执行是性能提升的主导因素。将其加入RAG基线后，Pass@1从32.3\%提升至75.3\%——增益\textbf{43.0个百分点}，占从Pure LLM（23.6\%）到ZhuLong（78.5\%）总提升的\textbf{78.3\%}。相反，从ZhuLong中移除沙盒执行后，Pass@1降至37.3\%，下降了\textbf{41.2个百分点}。这些结果确认了执行反馈不可或缺：没有它，智能体无法验证正确性、观察API行为或迭代优化其输出。
+
+We attribute this to two mechanisms. First, execution provides concrete error messages that guide corrections, transforming one-shot generation into iterative search. Second, the agent can experiment with parameter combinations in the sandbox, compensating for gaps in documentation \cite{kumar2026agentforge, jiang2024seed}.
+% 我们将此归因于两种机制。第一，执行提供具体的错误信息引导修正，将一次性生成转化为迭代搜索。第二，智能体可以在沙盒中尝试不同的参数组合，弥补文档中的不足。
+
+\subsubsection{Effect of Self-Exploration (RQ2)}
+
+Removing the self-exploration mechanism (while keeping sandbox execution and retrieval) reduces Pass@1 from ZhuLong's 78.5\% to 75.3\%, a drop of 3.2 percentage points. This confirms that the self-exploration mechanism contributes a measurable accuracy gain beyond sandbox execution.
+% API自探索的效果（RQ2）。移除自探索机制（同时保留沙盒执行和检索）使Pass@1从ZhuLong的78.5\%降至75.3\%，下降3.2个百分点。这确认了API自探索机制在沙盒执行之外贡献了可测量的准确率提升。
+
+Beyond accuracy, the self-exploration mechanism also improves efficiency. Table~\ref{tab:selfdoc-efficiency} compares tool usage with and without self-exploration. With self-exploration enabled (i.e., ZhuLong), the agent produces more traces (243 vs. 220) because it persists longer with better documentation, yet total tool calls drop by 13.9\% and average calls per trace decrease by 22.1\%.
+% 除了准确率，API自探索还提升了效率。表~\ref{tab:selfdoc-efficiency}比较了启用和未启用API自探索时的工具使用情况。启用API自探索后（即ZhuLong），智能体产生了更多的轨迹（243对220），因为更好的文档使其更持久地尝试，但总工具调用次数下降了13.9\%，每次轨迹的平均调用次数下降了22.1\%。
+
+\begin{table}[htbp]
+\centering
+\caption{Overall tool usage: with vs. without self-exploration}
+\label{tab:selfdoc-efficiency}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Metric} & \textbf{w/o Self-Expl.} & \textbf{ZhuLong (Full)} \\
+\midrule
+Traces & 220 & 243 (+10.5\%) \\
+\#Calls & 6,791 & 5,845 (-13.9\%) \\
+Avg/Trace & 30.9 & 24.1 (-22.1\%) \\
+\midrule
+Change & — & \textbf{-946 (-13.9\%)} \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 表：整体工具使用情况：启用与未启用API自探索的对比。
+
+The reduction is most pronounced in \texttt{run\_code} (27.0\%, see Table~\ref{tab:tool-breakdown}), indicating that enriched documentation reduces trial-and-error executions. Calls to \texttt{search\_apis} decrease by 12.2\%, while \texttt{get\_api\_details} increase by 9.0\%---a behavioral shift toward more thorough reading before coding.
+% \texttt{run\_code}的降幅最为显著（27.0\%），表明增强后的文档减少了试错执行。\texttt{search\_apis}调用下降12.2\%，而\texttt{get\_api\_details}增加9.0\%——这是一种行为转变，即在编码前更充分地阅读文档。
+
+\begin{table}[htbp]
+\centering
+\caption{Tool-wise call count breakdown}
+\label{tab:tool-breakdown}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Tool} & \textbf{w/o Self-Expl.} & \textbf{ZhuLong (Full)} \\
+\midrule
+\texttt{search\_apis} & 3,203 & 2,812 (-12.2\%) \\
+\texttt{get\_api\_details} & 1,151 & 1,255 (+9.0\%) \\
+\texttt{run\_code} & 2,437 & 1,778 (-27.0\%) \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 表：各工具调用次数明细。
+
+In the absence of sandbox execution, the self-exploration mechanism alone improves Pass@1 from 32.3\% (RAG) to 37.3\% (ZhuLong w/o Sandbox), a gain of 5.0 percentage points. This confirms that enhanced documentation improves generation accuracy even without iterative refinement. The larger gain in the no-sandbox setting (5.0 pp vs. 3.2 pp in ZhuLong) suggests that sandbox execution partially substitutes for pre-explored documentation.
+% 在没有沙盒执行的情况下，仅靠API自探索将Pass@1从32.3\%（RAG）提升至37.3\%（ZhuLong w/o Sandbox），增益5.0个百分点。这确认了增强后的文档即使在没有迭代优化的情况下也能提升生成准确率。无沙盒设置下的更大增益（5.0 pp对比ZhuLong中的3.2 pp）表明沙盒执行在一定程度上替代了预探索文档的需求。
+
+\subsubsection{Retrieval Strategy (RQ3) and Index Construction (RQ4)}
+
+Vector-based semantic retrieval outperforms grep-based keyword search by 12.7 percentage points (78.5\% vs. 65.8\%), confirming that natural language queries for EDA tasks rarely match exact API names. For index construction, the name+description index achieves the best result (78.5\%), outperforming description-only (76.0\%) and name-only (75.3\%), indicating that names enable exact matching while descriptions support semantic generalization. Prompt language (English vs. Chinese) shows no material difference, both achieving 78.5\% Pass@1.
+% 检索策略（RQ3）与索引构建（RQ4）。基于向量的语义检索比基于grep的关键词搜索高出12.7个百分点（78.5\%对比65.8\%），确认了EDA任务的自然语言查询很少能精确匹配API名称。在索引构建方面，名称+描述联合索引取得了最佳结果（78.5\%），优于仅描述索引（76.0\%）和仅名称索引（75.3\%），表明名称支持精确匹配，而描述支持语义泛化。提示语言（英文 vs. 中文）没有实质性差异，两者均达到78.5\%的Pass@1。
+
+\subsubsection{Impact of LLM Backbone}
+
+Table~\ref{tab:llm-comparison} presents the Pass@1 results for six LLM backbones integrated into the full ZhuLong system. We adopt DeepSeek‑V4‑Flash as the primary backbone across all experiments in this paper, based on a practical trade‑off between model capability and inference cost: its performance is sufficiently strong to support the key findings from both our main experiments and ablation studies, while its cost remains manageable for running the complete set of configurations reported in this work. Kimi‑K2.6 achieves the highest accuracy (83.5\%), outperforming DeepSeek‑V4‑Flash (78.5\%) by 5.0 percentage points. DeepSeek‑V4‑Pro also surpasses this baseline, reaching 81.0\% (+2.5 pp), while GLM‑5.1 ties with DeepSeek‑V4‑Flash at 78.5\%. In contrast, DeepSeek‑V3.2 and Doubao‑Seed‑2.0‑Pro lag notably behind, yielding 67.1\% and 55.7\%, respectively. The spread of 27.8 percentage points between the best and worst performers indicates that the underlying model remains a decisive factor, even with retrieval, sandbox, and self‑exploration in place. Notably, the ranking on this benchmark does not strictly follow the general coding proficiency reported in public leaderboards. This discrepancy suggests that EDA scripting—with its long‑tail APIs and state‑sensitive logic—imposes a distinct set of demands that generic code benchmarks do not adequately capture.
+%表~\ref{tab:llm-comparison} 给出了六个LLM主干在完整ZhuLong系统上的Pass@1结果。我们选择DeepSeek‑V4‑flash作为本文所有实验的主干模型，主要基于模型能力与推理成本之间的实际均衡考量：其性能足以支撑主实验和消融实验的核心结论，同时计算开销也在可控范围内，便于完整运行本文报告的全部实验配置。Kimi‑K2.6表现最佳（83.5%），较DeepSeek‑V4‑flash（78.5%）高出5.0个百分点。DeepSeek‑V4‑pro同样超过该基线，达到81.0%（+2.5 pp），而GLM‑5.1与DeepSeek‑V4‑flash持平，同为78.5%。相比之下，DeepSeek‑V3.2和Doubao‑Seed‑2.0‑Pro明显落后，分别为67.1%和55.7%。最好与最差模型之间相差27.8个百分点，说明即便配备了检索、沙盒和自探索机制，基座模型的选择依然是决定性能的关键因素。值得注意的是，这些模型在此评测上的排序与通用代码生成榜单并不完全一致，这一偏差表明EDA脚本任务因其长尾API和状态敏感逻辑，对LLM提出了通用基准测试难以覆盖的独特要求。
+
+\begin{table}[htbp]
+\centering
+\caption{Impact of LLM backbone (ZhuLong)}
+\label{tab:llm-comparison}
+\begin{tabular}{lcc}
+\toprule
+\textbf{LLM Backbone} & \textbf{Pass@1 (\%)} & \textbf{$\Delta$} \\
+\midrule
+DeepSeek-V4-Flash & 78.5 & — \\
+GLM-5.1 & 78.5 & — \\
+DeepSeek-V3.2 & 67.1 & -11.4 pp \\
+DeepSeek-V4-Pro & 81.0 & +2.5 pp \\
+Kimi-K2.6 & 83.5 & +5.0 pp \\
+Doubao-Seed-2.0-Pro & 55.7 & -22.8 pp \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 表：LLM主干的影响（ZhuLong）。
+
+\subsection{Error Analysis}
+\label{sec:error-analysis}
+% 错误分析
+
+ZhuLong produces correct code for 124 of 158 tasks (78.5\% Pass@1). The 
+remaining 34 failures comprise 13 generation-stage failures and 21 
+execution-stage failures. The generation failures fall into two categories: 
+the majority are timeouts on lengthy, multi-step tasks, reflecting 
+computational budget constraints rather than capability limits, as traces 
+show ongoing reasoning at termination; in a few cases, the agent exhausted 
+its message budget cycling through \texttt{search\_apis} calls, unable to 
+locate the correct API from natural-language queries. 
+We manually inspected 
+all 21 execution-stage failure traces and identify two root cause categories 
+(Table~\ref{tab:error-categories}).
+% ZhuLong 在 158 个任务中正确完成了 124 个（78.5% Pass@1）。其余 34 个失败
+% 包含 13 个生成阶段失败和 21 个执行阶段失败。生成失败分为两类：大多数为冗长
+% 多步任务的超时，反映的是计算预算约束而非能力限制，因为终止时轨迹显示推理仍在
+% 进行；在个别案例中，智能体将消息预算耗尽在反复调用 \texttt{search\_apis} 上，
+% 无法从自然语言查询中找到正确的 API。我们也人工检查了全部 21 条执行阶段失败轨迹，
+% 归纳出两类根本原因（表~\ref{tab:error-categories}）。
+
+\begin{table}[t]
+\centering
+\caption{Root cause categories for execution-stage failures}
+\label{tab:error-categories}
+\begin{tabular}{lcc}
+\toprule
+Category & Count & Example Tasks \\
+\midrule
+API misuse & 12 & 068, 074, 092, 098, 063, \\ 
+& & 117, 133, 134, 121, 115, \\
+& & 114, 118 \\
+\midrule
+API composition and  & 9 & 051, 058, 099, 111, 146, \\
+workflow errors & & 149, 150, 158, 052 \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 表：执行阶段失败的根本原因类别
+
+\subsubsection{API misuse.}
+
+The agent selects the correct API family but violates undocumented API contracts—such as hidden type expectations, internal state dependencies, or context preconditions—that the C++-generated bindings enforce but the documentation does not reveal.
+% 智能体选择了正确的 API 族，但违反了未文档化的 API 契约——例如隐藏的类型期望、内部状态依赖或上下文前置条件——这些由 C++ 生成的绑定强制执行，但文档并未揭示。
+
+\textit{Case study: Task 098 (delete\_design\_figures).} The agent located \texttt{aeSelectFigs} and \texttt{aeDeleteObj} by searching for ``delete figure objects,'' then passed a plain Python list to \texttt{aeSelectFigs}. The call succeeded, but the subsequent \texttt{aeDeleteObj} failed because the internal C++ selection state—which the API relies on—was never properly populated by the plain Python list. Across five subsequent \texttt{run\_code} calls within the same trace,
+the agent modified only its self-generated test harness rather than
+correcting the underlying type mismatch, as the runtime diagnostic
+(``Error: Failed to delete the selected figures.'') provided no
+actionable signal.
+% 案例研究：任务 098（delete_design_figures）。智能体通过搜索“delete figure objects”定位到 \texttt{aeSelectFigs} 和 \texttt{aeDeleteObj}，然后将普通 Python 列表传入 \texttt{aeSelectFigs}。调用成功，但随后的 \texttt{aeDeleteObj} 失败，因为该 API 所依赖的内部 C++ 选中状态未能被普通 Python 列表正确填充。在同一条轨迹内后续的五次 \texttt{run_code} 调用中，智能体仅修改了其自行生成的测试脚手架，而没有纠正底层的类型不匹配问题，因为运行时诊断（“Error: Failed to delete the selected figures.”）没有提供任何可操作的提示。
+
+Other instances share similar type-invisibility patterns: Task~074 passed 
+a Python list where \texttt{CStringList} was expected; Task~063 called a 
+function that returned an internal type name such as \texttt{"maskLayout"}, 
+while the test harness used a different getter that produced 
+\texttt{"cellFileType"}; and Task~114 selected \texttt{aeCreateRect}, which 
+requires an active AE GUI context, instead of \texttt{dbCrtRect(cv, ...)} 
+that operates directly on a design handle. The remaining cases in this 
+category follow analogous API selection or type mismatches.
+% 其他实例展现了类似的类型不可见模式：任务~074 将 Python 列表传给了期望
+% CStringList 的 API；任务~063 调用的函数返回了如 "maskLayout" 的内部类型名，
+% 而测试夹具使用不同的 getter 产生了 "cellFileType"；任务~114 选择了需要活跃
+% AE GUI 上下文的 aeCreateRect，而非直接操作设计句柄的 dbCrtRect(cv, ...)。
+% 此类别中的其余案例遵循类似的 API 选择或类型不匹配模式。
+
+\subsubsection{API composition and workflow errors.}
+
+The agent selects individually valid APIs, and the generated code executes without runtime errors, but the composition logic---parameter propagation, post-processing, or control flow---fails the test oracle. These failures are harder to detect because each call appears correct in isolation.
+% 智能体选择了各自有效的 API，生成的代码无运行时错误地执行，但组合逻辑——参数传递、后处理或控制流——未能通过测试预言。此类失败更难检测，因为每个调用单独看都是正确的。
+
+\textit{Case study: Task 052 (check\_view\_list).} The specification required invoking \texttt{EmyNtlUtil.checkViewList} for netlist view validation. Instead, the agent implemented a custom validator using pure Python logic. The code printed ``All assertions passed'' in its own embedded tests, but the harness applied standard validation on a different configuration, where the heuristic returned an error message rather than \texttt{"VALID"}. The agent replaced the mandated library call with an approximation, violating the test assertion.
+% 案例研究：任务 052（check_view_list）。规范要求调用 \texttt{EmyNtlUtil.checkViewList} 进行网表视图校验。智能体却实现了纯 Python 的自定义校验器。代码在自嵌入测试中打印“All assertions passed”，但测试夹具在另一配置上应用标准校验，此时自定义启发式规则返回了错误消息而非 \texttt{"VALID"}。智能体用近似逻辑替换了强制库调用，违反了测试断言。
+
+Other instances include: Task~058, where the agent used substring matching (\texttt{"high" in queue\_name}) instead of the equality check (\texttt{queue\_name == "priority"}) required by the specification, producing wrong \texttt{misc} parameter values; Task~051, where \texttt{str(result).strip()} caused an assertion-level type mismatch against the test's \texttt{QString} expectation; and Task~099, where the agent used \texttt{emyPointArrayShrinkGrow} to 
+expand a polygon, but the correct API was \texttt{dbExpandPoints} (bounding-box 
+expansion). The remaining cases exhibit similar errors, where the agent either 
+composed valid APIs incorrectly or substituted a mandated library call with 
+a custom approximation.
+
+% 其他实例包括：任务~058，智能体使用子串匹配（\texttt{"high" in queue\_name}）而非规范要求的相等性检查（\texttt{queue\_name == "priority"}），导致 \texttt{misc} 参数值错误；任务~051，\texttt{str(result).strip()} 引发与测试 \texttt{QString} 期望的断言级类型不匹配；
+% 以及任务~099，智能体使用 \texttt{emyPointArrayShrinkGrow} 来扩展多边形，
+% 而正确的 API 是 \texttt{dbExpandPoints}（包围盒扩展）。其余案例展现了类似的
+% 错误：智能体要么错误地组合了有效的 API，要么用自定义的近似逻辑替代了强制库调用。
+
+\subsubsection{Implications.}
+% 子子节：启示
+
+The analysis points to two recurring causes of execution-stage failures.
+First, undocumented API contracts and binding-level constraints are
+unavailable during code generation, forcing the agent to guess argument
+formats, while subsequent sandbox feedback often fails to expose the
+underlying constraints. Second, missing usage-level knowledge---such as
+correct API combinations, parameter conventions, and common pitfalls---
+forces the agent to rediscover solutions through trial and error. These
+findings motivate type-aware API documentation and case-level knowledge
+distillation, where resolved failures are stored as reusable experiences,
+forming the basis of agent self-evolution.
+
+% 分析指出了执行阶段失败的两个常见原因。第一，未文档化的API 契约和绑定级
+% 约束在代码生成阶段不可见，迫使智能体猜测参数格式，而后续沙盒反馈通常也
+% 无法揭示其底层约束。第二，用法级知识的缺失——如正确的 API 组合、参数约定
+% 和常见陷阱——迫使智能体通过试错重新发现解决方案。这些发现推动了类型感知
+% API 文档和案例级知识蒸馏：将已解决的失败存储为可复用经验，从而为智能体
+% 自进化奠定基础。
+
+\subsection{Interactive Scenario Evaluation}
+\label{sec:exp-interactive}
+
+Beyond standalone execution tasks, real-world EDA scripting often involves direct manipulation of unsaved layouts and schematics. To assess ZhuLong in such GUI-bridged scenarios, we collected 20 tasks requiring operation on volatile in-memory states, window focus handling, and GUI-level interactions. All tasks were executed via the interactive mode of \texttt{run\_code} with a single attempt (no retry), as the iterative recovery loop is not supported in the bridge-based environment. These evaluations were conducted with self-exploration disabled; results thus reflect ZhuLong w/o Self-Exploration in interactive settings.
+% 除了沙盒中的独立执行任务外，真实世界的EDA脚本编写通常还涉及对未保存版图和原理图的直接操作。为了评估ZhuLong在此类GUI桥接场景中的能力，我们收集了20个要求操作易变内存状态、处理窗口焦点和GUI级交互的任务。所有任务均通过\texttt{run\_code}的交互模式执行，单次尝试（无重试），因为桥接环境不支持迭代恢复循环。这些评估在禁用自探索的情况下进行，结果反映的是ZhuLong w/o Self-Exploration在交互场景中的表现。
+
+Table~\ref{tab:interactive-results} shows the results across the same 20 tasks for both PyAether and SKILL. The overall Pass@1 is \textbf{60.0\%} for PyAether and \textbf{50.0\%} for SKILL—notably lower than the 78.5\% achieved on the main benchmark. This gap is attributed to two factors: (1) no iterative recovery loop, limiting each task to a single attempt; and (2) self-exploration disabled. Performance varies by task category: PyAether excels in focus-dependent and modification tasks (75.0\% or higher), while SKILL shows an advantage in design content manipulation and hierarchical inspection. Focus-dependent operations are the most challenging for SKILL (25.0\%), while design content manipulation is the most difficult for PyAether (37.5\%). The 10~pp overall gap reflects Python's more favorable syntax for LLM-based synthesis compared to SKILL's Lisp-based prefix notation.
+% 表~\ref{tab:interactive-results}展示了PyAether和SKILL在相同20个任务上的结果。PyAether的整体Pass@1为60.0\%，SKILL为50.0\%——明显低于主评测集的78.5\%。这一差距可归因于两个因素：（1）无迭代恢复循环，每个任务仅限单次尝试；（2）自探索未启用。不同任务类别的表现差异显著：PyAether在焦点依赖和修改类任务中表现优异（75.0\%以上），SKILL在设计内容操作和层次化检查方面相对占优。焦点依赖操作对SKILL最具挑战性（25.0\%），而对PyAether而言设计内容操作难度最大（37.5\%）。10个百分点的整体差距反映了Python语法对LLM合成更为友好。
+
+\begin{table}[htbp]
+\centering
+\caption{Interactive scenario results: same 20 tasks for PyAether and SKILL}
+\label{tab:interactive-results}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Category} & \textbf{Tasks} & \textbf{PyAether} & \textbf{SKILL} \\
+\midrule
+Design content manipulation & 8 & 37.5\% & 50.0\% \\
+Focus-dependent operations & 4 & 75.0\% & 25.0\% \\
+Hierarchical inspection & 4 & 50.0\% & 75.0\% \\
+Design modification & 2 & 100.0\% & 50.0\% \\
+GUI interaction & 2 & 100.0\% & 50.0\% \\
+\midrule
+Overall & 20 & 60.0\% & 50.0\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 表：交互场景任务分布与结果。

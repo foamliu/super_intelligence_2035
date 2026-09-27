@@ -1,0 +1,400 @@
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Experimental Setup}
+\label{sec:exp-setup}
+
+\subsubsection{Research Questions}
+
+The framework of Section~\ref{sec:grounding-theory} makes three testable claims: that the grounding gap is bounded by observation fidelity rather than by the prior; that bridging it requires a runtime architecture supplying observation, belief update and execution; and that this follows from the domain's structure rather than from one toolchain. We ask one research question per claim.
+% 第~\ref{sec:grounding-theory}节的框架给出三条可检验主张：落地鸿沟受观测保真度而非先验约束；
+% 弥合它需要一个同时提供观测、信念更新与执行的运行时架构；这一点源于领域结构而非某个工具链。
+% 我们针对每条主张提出一个研究问题。
+
+\begin{itemize}
+\item \textbf{RQ1 (Ceiling: observation or prior?).} Is the achievable accuracy bounded by the fidelity of the observation channel $\Omega$, or by the strength of the frozen prior $\mathcal{K}$? We answer from both sides: the observation-fidelity ladders (S1) vary $\Omega$ with the LLM fixed, and the prior-axis contrast (S3) varies $\mathcal{K}$ with the harness fixed.
+\item \textbf{RQ2 (Which components are necessary, and are they interchangeable?).} Does bridging the gap require observation, execution through a causal interface, and continuous belief update---and can one of the three substitute for another? S2 varies the effector's presence and the belief-update budget.
+\item \textbf{RQ3 (Domain class or toolchain?).} Does the same structure reproduce on a structurally different toolchain? The protocol of S1--S2 is re-run on the SKILL and Tcl slices of \textbf{EDA-Scripting-Bench}, so the comparison is made \emph{within} one benchmark rather than across separate artifacts.
+\end{itemize}
+% RQ1（天花板：观测还是先验？）可达准确率受观测通道$\Omega$的保真度约束，还是受冻结先验$\mathcal{K}$的强度约束？
+% 我们从两侧回答：保真度阶梯（S1）固定LLM改变$\Omega$；先验轴对照（S3）固定框架改变$\mathcal{K}$。
+% RQ2（哪些组件是必要的？它们可互换吗？）弥合鸿沟是否同时需要观测、经由因果接口的执行、以及持续的信念更新？
+% 三者能否相互替代？S2改变执行器是否在场与信念更新预算。
+% RQ3（领域类还是工具链？）同一结构能否在结构不同的工具链上复现？
+% S1–S2的协议在EDA-Scripting-Bench的SKILL与Tcl切片上重跑，因此比较发生在同一评测集内部，而非跨不同工件。
+
+RQ1 and RQ2 test the framework's structural claims; RQ3 tests whether they follow from the domain's structure rather than from one toolchain. Because RQ1's two arms sit in different studies, we read them against each other rather than in isolation.
+% RQ1与RQ2检验框架的结构性主张；RQ3检验这些主张是否源于领域结构而非某个工具链。
+% 由于RQ1的两个臂分布在不同研究中，我们将其相互对照而非单独解读。
+
+\subsubsection{Benchmark and Evaluation Protocol}
+
+We evaluate ZhuLong on \textbf{EDA-Eval-PyAether}, a benchmark of 158 real-world PyAether scripting tasks. Following the evaluation protocol defined in Section~\ref{sec:benchmark}, we adopt \textbf{Pass@1} (execution success rate) as the primary metric. Each task is evaluated in a single trace: the agent may iterate \emph{within} that trace through the belief update $\Phi$ (Section~\ref{sec:agent-workflow}), but a task is never restarted across traces; the timeout is set to 2500 seconds per execution. Every tool call is additionally mediated by a harness-level \texttt{PreToolUse} hook that enforces a tool whitelist and confines all file access to a fresh, empty working directory, so neither a task's own assertions nor any project copy of a solution is reachable from the workspace. The hook is identical in every configuration reported here and is thus part of the fixed protocol rather than a variable; it is also what makes the baselines interpretable. Traces terminated by the hook are identified separately so that they are not read as capability failures. To assess statistical reliability given the modest benchmark size (158 tasks), each configuration is evaluated over five independent runs with reshuffled task orderings and fresh agent contexts, and accuracy is reported as mean $\pm$ standard deviation over those runs. Quantities aggregated over traces rather than over runs---read-back counts, activation ratios and tool-call totals---are given as single aggregates over the pooled traces, without run-level dispersion; effect sizes ($\Delta$) are computed from the mean values in the same table. The dominant sandbox-execution effect ($+43.0$ pp) exceeds the spread by an order of magnitude, whereas the smaller self-exploration effect ($+3.2$ pp) is treated as a complementary gain rather than a headline result, consistent with the theoretical account in Section~\ref{sec:grounding-theory}. All figures in this section are provisional, obtained on the PyAether-only slice, and will be regenerated on the full EDA-Scripting-Bench (Section~\ref{sec:benchmark}).
+% 评测集与评估协议。我们在\textbf{EDA-Eval-PyAether}上评估ZhuLong，该评测集包含158个真实PyAether脚本任务。
+% 遵循第\ref{sec:benchmark}节定义的评估协议，我们采用\textbf{Pass@1}（执行成功率）作为主要指标。
+% 每个任务只在单条trace上评测：智能体可在该trace内通过信念更新$\Phi$（第\ref{sec:agent-workflow}节）反复迭代，
+% 但任务绝不跨trace重启；单次执行超时设为2500秒。此外，每次工具调用都经由框架层\texttt{PreToolUse} hook 中介：
+% 它执行工具白名单，并把文件读写限制在一个新建的空工作目录内，使任务的断言文件与任何项目内的参考解都不可达。
+% 该 hook 在所有配置中完全一致，属于固定协议而非变量，也是基线可解释的前提。
+% 因它终止的trace单独标识，以免被误读为能力不足。鉴于评测集规模有限（158题），
+% 每个配置在5次独立运行上评测，每次重排任务顺序并使用全新智能体上下文；准确率以5次运行的均值$\pm$标准差报告。
+% 跨trace（而非跨运行）汇总的量——回读次数、激活比例、工具调用总量——按合并后的trace给出单一汇总值，
+% 不附运行间散布；效应量（$\Delta$）由同表的均值算出。
+
+\subsubsection{Baselines and ZhuLong Variants}
+
+To isolate the contribution of each component, we establish two baselines and three ZhuLong variants, as shown in Table~\ref{tab:configurations}. Read against the framework of Section~\ref{sec:grounding-theory}, the table's columns name the components a harness supplies: retrieval and documentation are the observation channel $\Omega$, the sandbox is the effector through which an action reaches the live design, and self-exploration is offline enrichment of the documentation that $\Omega$ can return. ZhuLong variants default to vector retrieval using a name+description index; S1 varies the fidelity of that index explicitly, and S2 adds a bound on the belief update $\Phi$, which this table does not vary.
+% 基线与ZhuLong变体。按第~\ref{sec:grounding-theory}节的框架解读，表中三列就是框架所提供的三个组件：
+% 检索与文档是观测通道$\Omega$，沙盒是使动作抵达实时设计的执行器，自探索则是对$\Omega$可返回文档的离线增强。
+% ZhuLong变体默认使用名称+描述索引进行向量检索；S1显式改变该索引的保真度，S2则对信念更新$\Phi$加界——这是本表未涉及的组件。
+
+\begin{table}[htbp]
+\centering
+\caption{Configurations and their components}
+\label{tab:configurations}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Configuration} & \textbf{Retrieval} & \textbf{Sandbox} & \textbf{Self-Expl.} \\
+\midrule
+Baseline 1 (Pure LLM) & \ding{55} & \ding{55} & \ding{55} \\
+Baseline 2 (RAG) & \ding{51} & \ding{55} & \ding{55} \\
+ZhuLong w/o Self-Expl. & \ding{51} & \ding{51} & \ding{55} \\
+ZhuLong w/o Sandbox & \ding{51} & \ding{55} & \ding{51} \\
+ZhuLong w/o Retrieval & \ding{55} & \ding{51} & \ding{51} \\
+\textbf{ZhuLong} (Full) & \ding{51} & \ding{51} & \ding{51} \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 表：配置及其组件。ZhuLong（完整）为完整系统，其余为消融变体。
+% Self-Expl. = Self-Exploration mechanism.
+
+\subsubsection{LLM Backbones}
+
+All main experiments use DeepSeek-V4-Pro as the primary backbone. To understand the impact of different LLMs, we additionally evaluate GLM-5.2, DeepSeek-V4-Flash, Kimi-K2.6, and Doubao-Seed-2.0-Pro.
+% LLM主干。所有主要实验使用DeepSeek-V4-Pro作为主要主干。为了解不同LLM的影响，我们还评估了GLM-5.2、DeepSeek-V4-Flash、Kimi-K2.6和Doubao-Seed-2.0-Pro。
+
+\subsection{Results and Ablations}
+\label{sec:exp-results}
+
+The framework of Section~\ref{sec:grounding-theory} fixes what each study must vary. Table~\ref{tab:main-ablation} gives the progressive build-up and the component ablation as an overview; the studies below then change one component at a time, with the LLM frozen unless stated otherwise.
+% 结果与消融。第~\ref{sec:grounding-theory}节的框架规定了每项研究必须改变什么。
+% 表~\ref{tab:main-ablation}给出渐进构建与组件消融作为总览；以下研究每次只改变一个组件，除特别说明外固定LLM。
+
+\begin{table}[htbp]
+\centering
+\caption{Ablation study results}
+\label{tab:main-ablation}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Configuration} & \textbf{Pass@1 (\%)} & \textbf{$\Delta$} \\
+\midrule
+\multicolumn{3}{l}{\textit{Progressive build-up (vs. previous row)}} \\
+Baseline 1: Pure LLM & 23.6 $\pm$ [TBD] & — \\
+Baseline 2: RAG & 32.3 $\pm$ [TBD] & +8.7 pp \\
+ZhuLong w/o Self-Expl. & 75.3 $\pm$ [TBD] & +43.0 pp \\
+\textbf{ZhuLong} (Full) & \textbf{78.5 $\pm$ [TBD]} & \textbf{+3.2 pp} \\
+\midrule
+\multicolumn{3}{l}{\textit{Component ablation (vs. ZhuLong Full)}} \\
+ZhuLong w/o Self-Expl. & 75.3 $\pm$ [TBD] & -3.2 pp \\
+ZhuLong w/o Sandbox & 37.3 $\pm$ [TBD] & -41.2 pp \\
+ZhuLong w/o Retrieval & 34.2 $\pm$ [TBD] & -44.3 pp \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 表：渐进构建与组件消融研究。上块为渐进构建，"Gain"表示
+% 相对于前一行的增量；下块为组件消融，"Drop"均表示相对于
+% ZhuLong完整系统（加粗行）的减量。
+
+\subsubsection{S1: Observation fidelity (RQ1)}
+\label{sec:omega-fidelity}
+
+Principle 2 predicts that with the model fixed, accuracy is bounded by the fidelity of the observation channel $\Omega$. We vary $\Omega$ along the two axes through which it receives information, holding the LLM fixed in both.
+
+\textbf{Documentation axis.} Table~\ref{tab:omega} holds the agent loop, the effector and the LLM fixed, and changes only how faithfully the environment's API facts are exposed: no observation at all; a low-fidelity index built from API names alone; a high-fidelity index that adds descriptions, BM25 term matching, abbreviation expansion and synonym redirect; and the high-fidelity index further enriched by offline self-exploration (Section~\ref{sec:selfdoc}).
+% 文档轴。表~\ref{tab:omega}固定智能体循环、执行器与LLM，只改变环境的API事实被暴露的保真度：
+% 无观测；仅由API名称构建的低保真索引；加入描述、BM25词项匹配、缩写展开与同义词重定向的高保真索引；
+% 以及在高保真索引上再经离线自探索增强（第~\ref{sec:selfdoc}节）。
+
+\begin{table}[htbp]
+\centering
+\caption{Observation fidelity along the documentation axis (LLM, effector and loop fixed)}
+\label{tab:omega}
+\footnotesize
+\begin{tabular}{@{}llc@{}}
+\toprule
+\textbf{Rung} & \textbf{Configuration} & \textbf{Pass@1 (\%)} \\
+\midrule
+(N) No observation & Baseline 1 (Pure LLM) & 23.6 $\pm$ [TBD] \\
+(L) Low fidelity & name-only index & [TBD] $\pm$ [TBD] \\
+(H) High fidelity & \shortstack[l]{+ description, BM25,\\ abbreviations, synonyms} & [TBD] $\pm$ [TBD] \\
+\shortstack[l]{(H+E) High fidelity,\\ self-explored} & \textbf{ZhuLong} (Full) & 78.5 $\pm$ [TBD] \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 表：Ω保真度阶梯（文档轴）。固定LLM、执行器与循环，仅改变API事实暴露的保真度。
+% 注：ICML 稿中同一阶梯报告为 (N)=0.0%、(L)=59.5%、(H)=87.3%——与本表的 (N)/(H+E) 口径不同，
+% 需先统一配置定义与评测协议，再决定引用哪一组数值。
+
+\textbf{Read-back axis.} The second axis is how much of the live state execution returns. Section~\ref{sec:bayesian} predicts that accuracy tracks this fidelity with the LLM held fixed; we therefore compare three closed-loop variants that differ only here: (N) \emph{no observation}---the agent predicts from the prior alone; (B) \emph{binary feedback}---\texttt{run\_code} reports only pass/fail; and (F) \emph{full observation}---stdout, exception traces, per-assertion outcomes, and queried state are returned (the default). We expect a monotone gain N $<$ B $<$ F, with the N-to-F gap interpreting the grounding gap in practice.
+% 回读轴。第二条轴是执行返回多少实时状态信息。第~\ref{sec:bayesian}节预测固定LLM时准确率随该保真度变化，
+% 因此我们比较仅在此处不同的三个闭环变体：(N) 无观测、(B) 二值反馈、(F) 全观测。预期 N < B < F 单调增益，
+% 其中 N→F 的差距即落地鸿沟的实操化。
+
+Table~\ref{tab:ablation-harness} reports Pass@1 and the mean number of execution read-backs per variant.
+% 表~\ref{tab:ablation-harness}报告各变体的 Pass@1 与平均信念更新轮数。
+
+\begin{table}[htbp]
+\centering
+\caption{Observation-fidelity ablation along the read-back axis (RQ: Principle 2)}
+\label{tab:ablation-harness}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Observation channel ($\Omega$)} & \textbf{Pass@1 (\%)} & \textbf{Mean read-backs} \\
+\midrule
+(N) None (prior only) & [TBD] $\pm$ [TBD] & [TBD] \\
+(B) Binary pass/fail & [TBD] $\pm$ [TBD] & [TBD] \\
+(F) Full observation & [TBD] $\pm$ [TBD] & [TBD] \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 表：回读轴上的观测保真度消融（原则2）。
+
+\textbf{The self-exploration rung.} The top rung of Table~\ref{tab:omega} adds constraints discovered offline by counterfactual experimentation (Section~\ref{sec:selfdoc}). Per the framework this enriches only the L1--L3 facts the observation channel can return, so it should move the result less than the channel's own fidelity does. Removing it while keeping retrieval and the effector reduces Pass@1 from 78.5\% to 75.3\%, a drop of 3.2 percentage points. In the absence of the effector the same mechanism improves Pass@1 from 32.3\% (RAG) to 37.3\%, a gain of 5.0 percentage points---so the same prior-side enrichment is worth more when the observation channel is weaker, consistent with its being bounded by observation rather than substituting for it.
+% 自探索档。表~\ref{tab:omega}的最高档加入经离线反事实实验发现的约束（第~\ref{sec:selfdoc}节）。
+% 按框架，它只丰富观测通道可返回的L1–L3事实，因此其效应应小于通道自身保真度带来的效应。
+% 保留检索与执行器而移除它，Pass@1从78.5\%降至75.3\%（-3.2pp）。
+% 无执行器时同一机制把Pass@1从32.3\%（RAG）提升至37.3\%（+5.0pp）——
+% 同一先验侧增强在观测通道更弱时价值更大，与"它被观测所界定而非替代观测"一致。
+
+Beyond accuracy, this rung also changes efficiency. Table~\ref{tab:selfdoc-efficiency} compares tool usage with and without self-exploration. With self-exploration enabled the agent produces more traces (243 vs. 220) because it persists longer with better documentation, yet total tool calls drop by 13.9\% and average calls per trace decrease by 22.1\%.
+
+\begin{table}[htbp]
+\centering
+\caption{Overall tool usage: with vs. without self-exploration}
+\label{tab:selfdoc-efficiency}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Metric} & \textbf{w/o Self-Expl.} & \textbf{ZhuLong (Full)} \\
+\midrule
+Traces & 220 & 243 (+10.5\%) \\
+\#Calls & 6,791 & 5,845 (-13.9\%) \\
+Avg/Trace & 30.9 & 24.1 (-22.1\%) \\
+\midrule
+Change & — & \textbf{-946 (-13.9\%)} \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 表：整体工具使用情况：启用与未启用API自探索的对比。
+
+The reduction is most pronounced in \texttt{run\_code} (27.0\%, see Table~\ref{tab:tool-breakdown}), indicating that enriched documentation reduces trial-and-error executions. Calls to \texttt{search\_apis} decrease by 12.2\%, while \texttt{get\_api\_details} increase by 9.0\%---a behavioral shift toward more thorough reading before coding.
+
+\begin{table}[htbp]
+\centering
+\caption{Tool-wise call count breakdown}
+\label{tab:tool-breakdown}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Tool} & \textbf{w/o Self-Expl.} & \textbf{ZhuLong (Full)} \\
+\midrule
+\texttt{search\_apis} & 3,203 & 2,812 (-12.2\%) \\
+\texttt{get\_api\_details} & 1,151 & 1,255 (+9.0\%) \\
+\texttt{run\_code} & 2,437 & 1,778 (-27.0\%) \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 表：各工具调用次数明细。
+
+\subsubsection{S2: The closed loop (RQ2)}
+\label{sec:closed-loop}
+
+Principle 3 requires two things: that actions reach the design through a causal interface, and that the belief update $\Phi$ run continuously.
+
+\textbf{Effector: does the action reach the live design?} Removing the sandbox from the full system drops Pass@1 from 78.5\% to 37.3\% ($-41.2$~pp); adding it to the RAG baseline raises it from 32.3\% to 75.3\% ($+43.0$~pp). Without an effector no $a_t$ is executed against the design, so $b_t$ receives no evidence about the live state at all and the agent is reduced to a prior-only predictor. We attribute the gain to two mechanisms: execution returns concrete error messages that guide corrections, transforming one-shot generation into iterative search, and it lets the agent probe parameter combinations that documentation omits~\cite{kumar2026agentforge, jiang2024seed}.
+% 执行器：动作是否抵达实时设计？从完整系统移除沙盒使Pass@1从78.5\%降至37.3\%（-41.2pp）；
+% 把沙盒加入RAG基线使其从32.3\%升至75.3\%（+43.0pp）。没有执行器，$a_t$未被作用于设计，
+% $b_t$得不到任何关于实时状态的证据，智能体退化为仅凭先验的预测器。
+
+\textbf{Belief update: how much evidence may $\Phi$ accumulate?} ZhuLong is an ICL-type autonomous agent: once the task is issued it plans, queries the API knowledge base, and executes and debugs code on its own, and it is the agent---not the harness---that decides when the result is good enough to submit. We therefore do not shorten the loop or force an early submission; we bound how often the loop \emph{may execute}, which is what determines how much state evidence $b_t$ ever receives. Operationally the bound is the number of \texttt{run\_code} calls a trace is allowed: once the budget is spent, the call is denied at the tool boundary and returns an explanatory error, and the agent keeps running under its own control until it chooses to submit. Because termination stays with the agent, we report the harness's own finish reason next to accuracy---\emph{completed} (the agent decided it was done) versus \emph{max iterations} or budget-denied---so that a tight budget cannot be mistaken for early convergence. In an agent with no explicit posterior, $\Phi$ is realized by what remains in the model's context, so Table~\ref{tab:phi-bound} additionally includes a lagged channel whose read-back returns the state produced by the previous execution, leaving the agent permanently one action behind the design; the first read-back carries no state, and every other setting is unchanged. Both axes leave the LLM, the observation content and the effector untouched. Principle 3 predicts that accuracy rises with the execution budget but saturates once updates are fast enough for the design's own dynamics, since evidence obtained before the previous action is partly obsolete by the time the next action is chosen.
+% 信念更新：$\Phi$可累积多少证据？ZhuLong是自主智能体：任务下达后自行规划、查询API知识库、
+% 执行并调试代码，并由智能体（而非框架）决定结果何时足够好可以提交。
+% 因此我们不缩短循环、也不强制提前提交，而是给"循环可执行的次数"加界——
+% 这决定了$b_t$究竟能收到多少状态证据。操作上该界就是单条trace允许的\texttt{run\_code}调用次数：
+% 预算耗尽后，调用在工具边界被拒绝并返回说明性错误，智能体仍在自主控制下继续运行，直到自行提交。
+% 由于终止权仍归智能体，我们在准确率旁报告框架自身的结束原因——
+% \emph{completed}（智能体自认完成）对比\emph{max iterations}或预算被拒——
+% 以便紧预算不会被误读为提前收敛。对于没有显式后验的智能体，$\Phi$由上下文留存的内容实现，
+% 因此表~\ref{tab:phi-bound}另含一条"滞后"通道：其回读返回的是"上一次执行"产生的状态，
+% 使智能体永远落后于设计一步；首次回读不含状态，其余设置全部不变。
+% 两条轴都不动LLM、观测内容与执行器。原则3预测准确率随执行预算上升，
+% 但当更新足够快于设计自身动态后即饱和——因为上一次动作之前取得的证据在下一次决策时已部分失效。
+
+\begin{table}[htbp]
+\centering
+\caption{Effect of bounding the evidence available to $\Phi$ (LLM, $\Omega$ and effector fixed). $k$ is the number of \texttt{run\_code} calls a trace may make---a budget on executions, not a count of design ``rounds''---and ``lagged'' denotes a read-back that returns the state produced by the \emph{previous} execution (the first carries none), so the agent never observes the outcome of its most recent action before acting again. Once the budget is spent the call is denied, yet the agent still terminates on its own; ``Converged'' is the share of traces whose finish reason is \emph{completed}.}
+\label{tab:phi-bound}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Update budget} & \textbf{Pass@1 (\%)} & \textbf{Converged (\%)} \\
+\midrule
+$\Phi$ $k{=}1$ & [TBD] $\pm$ [TBD] & [TBD] \\
+$\Phi$ $k{=}3$ & [TBD] $\pm$ [TBD] & [TBD] \\
+$\Phi$ $k{=}10$ & [TBD] $\pm$ [TBD] & [TBD] \\
+$\Phi$ lagged & [TBD] $\pm$ [TBD] & [TBD] \\
+$\Phi$ unbounded (default) & 78.5 $\pm$ [TBD] & [TBD] \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 表：给$\Phi$可用证据加界的影响（固定LLM、$\Omega$与执行器）。
+% $k$为单条trace允许的\texttt{run\_code}调用次数（执行预算，而非"设计轮数"）；
+% lagged 为回读返回"上一次执行"产生的状态（首次回读不含状态），使智能体永远落后设计一步。
+% 预算耗尽后调用被拒绝，智能体仍自行终止。
+% "Converged"为结束原因为\emph{completed}的trace占比（原生 finish reason，见Cline agent runtime）。
+% 前四档在工具边界实现，无需改动智能体源码，也不强制提交时机；unbounded 即 ZhuLong（Full）。
+
+\subsubsection{S3: The prior axis, the contrast arm of RQ1}
+\label{sec:k-axis}
+
+Principle 1 separates knowledge from belief: the frozen prior should bound what a harness can achieve, without substituting for observation. Table~\ref{tab:llm-comparison} changes only $\mathcal{K}$---the LLM itself---with the harness held fixed. We adopt DeepSeek-V4-Pro as the primary backbone across all experiments in this paper, based on a practical trade-off between model capability and inference cost: its performance is sufficiently strong to support the key findings from both our main experiments and ablation studies, while its cost remains manageable for running the complete set of configurations reported in this work. The quantitative results in Table~\ref{tab:llm-comparison} are provisional and will be re-measured on the full EDA-Scripting-Bench; the qualitative finding that the underlying model remains a decisive factor---even with retrieval, sandbox, and self-exploration in place---is consistent across backbones.
+% S3：$\mathcal{K}$轴（原则1）。原则1把知识与信念解耦：冻结先验应当界定框架能达到的上限，而不替代观测。
+% 表~\ref{tab:llm-comparison}仅改变$\mathcal{K}$（即LLM本身），框架保持不变。
+
+\begin{table}[htbp]
+\centering
+\caption{Impact of LLM backbone (ZhuLong)}
+\label{tab:llm-comparison}
+\begin{tabular}{lcc}
+\toprule
+\textbf{LLM Backbone} & \textbf{Pass@1 (\%)} & \textbf{$\Delta$} \\
+\midrule
+DeepSeek-V4-Pro & [TBD] $\pm$ [TBD] & — \\
+GLM-5.2 & [TBD] $\pm$ [TBD] & [TBD] \\
+DeepSeek-V4-Flash & [TBD] $\pm$ [TBD] & [TBD] \\
+Kimi-K2.6 & [TBD] $\pm$ [TBD] & [TBD] \\
+Doubao-Seed-2.0-Pro & [TBD] $\pm$ [TBD] & [TBD] \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 表：LLM主干的影响（ZhuLong）。
+
+Read against Principle 2, this spread is what the $\mathcal{K}$ axis can move, and it is the axis that domain adaptation would target. Principle 2 predicts that it does not substitute for the observation channel---which is why S1's fidelity ladder and S2's effector ablation move the result by more than any change of prior.
+% 对照原则2，该跨度就是$\mathcal{K}$轴能够移动的量，也是领域适配所针对的轴。
+% 原则2预测它不能替代观测通道——这正是S1的保真度阶梯与S2的执行器消融的效应大于任何先验变化的原因。
+
+\subsubsection{RQ3: re-measuring the structure per toolchain}
+\label{sec:cross-language}
+
+The three slices of \textbf{EDA-Scripting-Bench} share one task schema, one assertion criterion and one harness (Section~\ref{sec:benchmark}), so the protocol of S1--S2 can be re-run slice by slice with nothing changed but the toolchain. We report the slices separately rather than pooled, and what the comparison is about is whether the \emph{ordering} of the configurations and the size of the gaps survive, not whether the absolute rates agree---different tools have different API surfaces and different baseline difficulty. These measurements are pending on the SKILL and Tcl slices.
+% RQ3：按工具链分别重测该结构。EDA-Scripting-Bench的三个切片共享同一任务模式、同一断言判据与同一框架，
+% 因此S1–S2的协议可以逐切片重跑，除工具链外不改动任何东西。
+% 我们分切片报告而非合并；关注的是各配置的排序与差距量级是否保持，而非绝对准确率是否一致——
+% 不同工具的API面与基线难度本就不同。SKILL与Tcl切片的测量待补。
+
+
+
+\subsection{Error Analysis}
+\label{sec:error-analysis}
+% 错误分析
+
+ZhuLong produces correct code for 124 of 158 tasks (78.5\% Pass@1). The 
+remaining 34 failures comprise 13 generation-stage failures and 21 
+execution-stage failures. The generation failures fall into two categories: 
+the majority are timeouts on lengthy, multi-step tasks, reflecting 
+computational budget constraints rather than capability limits, as traces 
+show ongoing reasoning at termination; in a few cases, the agent exhausted 
+its message budget cycling through \texttt{search\_apis} calls, unable to 
+locate the correct API from natural-language queries. 
+We manually inspected 
+all 21 execution-stage failure traces and identify two root cause categories 
+(Table~\ref{tab:error-categories}).
+% ZhuLong 在 158 个任务中正确完成了 124 个（78.5% Pass@1）。其余 34 个失败
+% 包含 13 个生成阶段失败和 21 个执行阶段失败。生成失败分为两类：大多数为冗长
+% 多步任务的超时，反映的是计算预算约束而非能力限制，因为终止时轨迹显示推理仍在
+% 进行；在个别案例中，智能体将消息预算耗尽在反复调用 \texttt{search\_apis} 上，
+% 无法从自然语言查询中找到正确的 API。我们也人工检查了全部 21 条执行阶段失败轨迹，
+% 归纳出两类根本原因（表~\ref{tab:error-categories}）。
+
+\begin{table}[t]
+\centering
+\caption{Root cause categories for execution-stage failures}
+\label{tab:error-categories}
+\begin{tabular}{lcc}
+\toprule
+Category & Count & Example Tasks \\
+\midrule
+API misuse & 12 & 068, 074, 092, 098, 063, \\ 
+& & 117, 133, 134, 121, 115, \\
+& & 114, 118 \\
+\midrule
+API composition and  & 9 & 051, 058, 099, 111, 146, \\
+workflow errors & & 149, 150, 158, 052 \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 表：执行阶段失败的根本原因类别
+
+\subsubsection{API misuse.}
+
+The agent selects the correct API family but violates undocumented API contracts—such as hidden type expectations, internal state dependencies, or context preconditions—that the C++-generated bindings enforce but the documentation does not reveal.
+% 智能体选择了正确的 API 族，但违反了未文档化的 API 契约——例如隐藏的类型期望、内部状态依赖或上下文前置条件——这些由 C++ 生成的绑定强制执行，但文档并未揭示。
+
+\textit{Case study: Task 098 (delete\_design\_figures).} The agent located \texttt{aeSelectFigs} and \texttt{aeDeleteObj} by searching for ``delete figure objects,'' then passed a plain Python list to \texttt{aeSelectFigs}. The call succeeded, but the subsequent \texttt{aeDeleteObj} failed because the internal C++ selection state—which the API relies on—was never properly populated by the plain Python list. Across five subsequent \texttt{run\_code} calls within the same trace,
+the agent modified only its self-generated test harness rather than
+correcting the underlying type mismatch, as the runtime diagnostic
+(``Error: Failed to delete the selected figures.'') provided no
+actionable signal.
+% 案例研究：任务 098（delete_design_figures）。智能体通过搜索“delete figure objects”定位到 \texttt{aeSelectFigs} 和 \texttt{aeDeleteObj}，然后将普通 Python 列表传入 \texttt{aeSelectFigs}。调用成功，但随后的 \texttt{aeDeleteObj} 失败，因为该 API 所依赖的内部 C++ 选中状态未能被普通 Python 列表正确填充。在同一条轨迹内后续的五次 \texttt{run_code} 调用中，智能体仅修改了其自行生成的测试脚手架，而没有纠正底层的类型不匹配问题，因为运行时诊断（“Error: Failed to delete the selected figures.”）没有提供任何可操作的提示。
+
+Other instances share similar type-invisibility patterns: Task~074 passed 
+a Python list where \texttt{CStringList} was expected; Task~063 called a 
+function that returned an internal type name such as \texttt{"maskLayout"}, 
+while the test harness used a different getter that produced 
+\texttt{"cellFileType"}; and Task~114 selected \texttt{aeCreateRect}, which 
+requires an active AE GUI context, instead of \texttt{dbCrtRect(cv, ...)} 
+that operates directly on a design handle. The remaining cases in this 
+category follow analogous API selection or type mismatches.
+% 其他实例展现了类似的类型不可见模式：任务~074 将 Python 列表传给了期望
+% CStringList 的 API；任务~063 调用的函数返回了如 "maskLayout" 的内部类型名，
+% 而测试夹具使用不同的 getter 产生了 "cellFileType"；任务~114 选择了需要活跃
+% AE GUI 上下文的 aeCreateRect，而非直接操作设计句柄的 dbCrtRect(cv, ...)。
+% 此类别中的其余案例遵循类似的 API 选择或类型不匹配模式。
+
+\subsubsection{API composition and workflow errors.}
+
+The agent selects individually valid APIs, and the generated code executes without runtime errors, but the composition logic---parameter propagation, post-processing, or control flow---fails the test oracle. These failures are harder to detect because each call appears correct in isolation.
+% 智能体选择了各自有效的 API，生成的代码无运行时错误地执行，但组合逻辑——参数传递、后处理或控制流——未能通过测试预言。此类失败更难检测，因为每个调用单独看都是正确的。
+
+\textit{Case study: Task 052 (check\_view\_list).} The specification required invoking \texttt{EmyNtlUtil.checkViewList} for netlist view validation. Instead, the agent implemented a custom validator using pure Python logic. The code printed ``All assertions passed'' in its own embedded tests, but the harness applied standard validation on a different configuration, where the heuristic returned an error message rather than \texttt{"VALID"}. The agent replaced the mandated library call with an approximation, violating the test assertion.
+% 案例研究：任务 052（check_view_list）。规范要求调用 \texttt{EmyNtlUtil.checkViewList} 进行网表视图校验。智能体却实现了纯 Python 的自定义校验器。代码在自嵌入测试中打印“All assertions passed”，但测试夹具在另一配置上应用标准校验，此时自定义启发式规则返回了错误消息而非 \texttt{"VALID"}。智能体用近似逻辑替换了强制库调用，违反了测试断言。
+
+Other instances include: Task~058, where the agent used substring matching (\texttt{"high" in queue\_name}) instead of the equality check (\texttt{queue\_name == "priority"}) required by the specification, producing wrong \texttt{misc} parameter values; Task~051, where \texttt{str(result).strip()} caused an assertion-level type mismatch against the test's \texttt{QString} expectation; and Task~099, where the agent used \texttt{emyPointArrayShrinkGrow} to 
+expand a polygon, but the correct API was \texttt{dbExpandPoints} (bounding-box 
+expansion). The remaining cases exhibit similar errors, where the agent either 
+composed valid APIs incorrectly or substituted a mandated library call with 
+a custom approximation.
+
+% 其他实例包括：任务~058，智能体使用子串匹配（\texttt{"high" in queue\_name}）而非规范要求的相等性检查（\texttt{queue\_name == "priority"}），导致 \texttt{misc} 参数值错误；任务~051，\texttt{str(result).strip()} 引发与测试 \texttt{QString} 期望的断言级类型不匹配；
+% 以及任务~099，智能体使用 \texttt{emyPointArrayShrinkGrow} 来扩展多边形，
+% 而正确的 API 是 \texttt{dbExpandPoints}（包围盒扩展）。其余案例展现了类似的
+% 错误：智能体要么错误地组合了有效的 API，要么用自定义的近似逻辑替代了强制库调用。
+
+\subsubsection{Implications.}
+% 子子节：启示
+
+The analysis points to two recurring causes of execution-stage failures.
+First, undocumented API contracts and binding-level constraints are
+unavailable during code generation, forcing the agent to guess argument
+formats, while subsequent sandbox feedback often fails to expose the
+underlying constraints. Second, missing usage-level knowledge---such as
+correct API combinations, parameter conventions, and common pitfalls---
+forces the agent to rediscover solutions through trial and error. These
+findings motivate type-aware API documentation and case-level knowledge
+distillation, where resolved failures are stored as reusable experiences,
+forming the basis of agent self-evolution.
+
+% 分析指出了执行阶段失败的两个常见原因。第一，未文档化的API 契约和绑定级
+% 约束在代码生成阶段不可见，迫使智能体猜测参数格式，而后续沙盒反馈通常也
+% 无法揭示其底层约束。第二，用法级知识的缺失——如正确的 API 组合、参数约定
+% 和常见陷阱——迫使智能体通过试错重新发现解决方案。这些发现推动了类型感知
+% API 文档和案例级知识蒸馏：将已解决的失败存储为可复用经验，从而为智能体
+% 自进化奠定基础。

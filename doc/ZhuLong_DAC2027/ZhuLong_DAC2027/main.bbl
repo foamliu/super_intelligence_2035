@@ -1,0 +1,397 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{25}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{} and \showURL{}.  The latter two
+%%% do not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showURL}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showURL #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       {\relax}        \fi
+% The following commands are used for tagged output and should be
+% invisible to TeX
+\providecommand\bibfield[2]{#2}
+\providecommand\bibinfo[2]{#2}
+\providecommand\natexlab[1]{#1}
+\providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[Anthropic(2024)]%
+        {mcp2024protocol}
+\bibfield{author}{\bibinfo{person}{Anthropic}.}
+  \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{Model Context Protocol (MCP)}.
+\newblock \bibinfo{howpublished}{\url{https://modelcontextprotocol.io/}}.
+\newblock
+
+
+\bibitem[Austin et~al\mbox{.}(2021)]%
+        {austin2021program}
+\bibfield{author}{\bibinfo{person}{Jacob Austin}, \bibinfo{person}{Augustus
+  Odena}, \bibinfo{person}{Maxwell Nye}, \bibinfo{person}{Maarten Bosma},
+  \bibinfo{person}{Henryk Michalewski}, \bibinfo{person}{David Dohan},
+  \bibinfo{person}{Ellen Jiang}, \bibinfo{person}{Carrie Cai},
+  \bibinfo{person}{Michael Terry}, \bibinfo{person}{Quoc Le}, {et~al\mbox{.}}}
+  \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Program Synthesis with Large Language Models}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2108.07732}}
+  (\bibinfo{year}{2021}).
+\newblock
+
+
+\bibitem[Blocklove et~al\mbox{.}(2024)]%
+        {blocklove2024eda}
+\bibfield{author}{\bibinfo{person}{Jason Blocklove}, \bibinfo{person}{Siddharth
+  Garg}, \bibinfo{person}{Ramesh Karri}, {and} \bibinfo{person}{Hammond
+  Pearce}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Can EDA Tool Feedback Improve Verilog Generation by
+  LLMs?}
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2411.11856}}
+  (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Chen et~al\mbox{.}(2024b)]%
+        {bge2024}
+\bibfield{author}{\bibinfo{person}{Jianlv Chen}, \bibinfo{person}{Shitao Xiao},
+  \bibinfo{person}{Peitian Zhang}, \bibinfo{person}{Kun Luo},
+  \bibinfo{person}{Defu Lian}, {and} \bibinfo{person}{Zheng Liu}.}
+  \bibinfo{year}{2024}\natexlab{b}.
+\newblock \bibinfo{title}{M3-Embedding: Multi-Linguality, Multi-Functionality,
+  Multi-Granularity Text Embeddings Through Self-Knowledge Distillation}.
+\newblock
+\showeprint[arxiv]{2402.03216}~[cs.CL]
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2402.03216}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Chen et~al\mbox{.}(2024a)]%
+        {chen2024dawning}
+\bibfield{author}{\bibinfo{person}{Lei Chen}, \bibinfo{person}{Yiqi Chen},
+  \bibinfo{person}{Zhufei Chu}, \bibinfo{person}{Wenji Fang},
+  \bibinfo{person}{Tsung-Yi Ho}, \bibinfo{person}{Yu Huang},
+  \bibinfo{person}{Sadaf Khan}, \bibinfo{person}{Min Li},
+  \bibinfo{person}{Xingquan Li}, \bibinfo{person}{Yun Liang},
+  \bibinfo{person}{Yibo Lin}, \bibinfo{person}{Jinwei Liu}, \bibinfo{person}{Yi
+  Liu}, \bibinfo{person}{Guojie Luo}, \bibinfo{person}{Zhengyuan Shi},
+  \bibinfo{person}{Guangyu Sun}, \bibinfo{person}{Dimitrios Tsaras},
+  \bibinfo{person}{Runsheng Wang}, \bibinfo{person}{Ziyi Wang},
+  \bibinfo{person}{Xinming Wei}, \bibinfo{person}{Zhiyao Xie},
+  \bibinfo{person}{Qiang Xu}, \bibinfo{person}{Chenhao Xue},
+  \bibinfo{person}{Evangeline F~Y Young}, \bibinfo{person}{Bei Yu},
+  \bibinfo{person}{Minjie Yuan}, \bibinfo{person}{Haoyi Zhang},
+  \bibinfo{person}{Zuodong Zhang}, \bibinfo{person}{Yuxiang Zhao},
+  \bibinfo{person}{Hui-Ling Zhen}, \bibinfo{person}{Ziyang Zheng},
+  \bibinfo{person}{Binwu Zhu}, \bibinfo{person}{Keren Zhu}, {and}
+  \bibinfo{person}{Sunan Zou}.} \bibinfo{year}{2024}\natexlab{a}.
+\newblock \showarticletitle{The Dawn of AI-Native EDA: Promises and Challenges
+  of Large Circuit Models}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2403.07257}}
+  (\bibinfo{year}{2024}).
+\newblock
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2403.07257}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Chen et~al\mbox{.}(2021)]%
+        {chen2021evaluating}
+\bibfield{author}{\bibinfo{person}{Mark Chen}, \bibinfo{person}{Jerry Tworek},
+  \bibinfo{person}{Heewoo Jun}, \bibinfo{person}{Qiming Yuan},
+  \bibinfo{person}{Henrique Ponde de~Oliveira Pinto}, \bibinfo{person}{Jared
+  Kaplan}, \bibinfo{person}{Harri Edwards}, \bibinfo{person}{Yuri Burda},
+  \bibinfo{person}{Nicholas Joseph}, \bibinfo{person}{Greg Brockman},
+  {et~al\mbox{.}}} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Evaluating Large Language Models Trained on Code}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2107.03374}}
+  (\bibinfo{year}{2021}).
+\newblock
+
+
+\bibitem[Contributors(2024)]%
+        {cline2024cline}
+\bibfield{author}{\bibinfo{person}{Cline Contributors}.}
+  \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{Cline: Autonomous AI Coding Assistant}.
+\newblock \bibinfo{howpublished}{\url{https://github.com/cline/cline}}.
+\newblock
+
+
+\bibitem[Douze et~al\mbox{.}(2024)]%
+        {douze2024faiss}
+\bibfield{author}{\bibinfo{person}{Matthijs Douze}, \bibinfo{person}{Alexandr
+  Guzhva}, \bibinfo{person}{Chengqi Deng}, \bibinfo{person}{Jeff Johnson},
+  \bibinfo{person}{Gergely Szilvasy}, \bibinfo{person}{Pierre-Emmanuel
+  Mazaré}, \bibinfo{person}{Maria Lomeli}, \bibinfo{person}{Lucas Hosseini},
+  {and} \bibinfo{person}{Hervé Jégou}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{The Faiss library}.
+\newblock  (\bibinfo{year}{2024}).
+\newblock
+\showeprint[arxiv]{2401.08281}~[cs.LG]
+
+
+\bibitem[{Empyrean Technology}(2026)]%
+        {empyrean_pyaether}
+\bibfield{author}{\bibinfo{person}{{Empyrean Technology}}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \bibinfo{title}{Empyrean PyAether: Full Custom Design Platform
+  Ecosystem}.
+\newblock
+  \bibinfo{howpublished}{\url{https://empyrean.com.cn/solutions/index-128.html}}.
+\newblock
+\shownote{Accessed: 2026-06-28}.
+\newblock
+
+
+\bibitem[Jiang et~al\mbox{.}(2024)]%
+        {jiang2024seed}
+\bibfield{author}{\bibinfo{person}{Xue Jiang}, \bibinfo{person}{Yihong Dong},
+  \bibinfo{person}{Zhi Jin}, {and} \bibinfo{person}{Ge Li}.}
+  \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{SEED: Customize Large Language Models with
+  Sample-Efficient Adaptation for Code Generation}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2403.00046}}
+  (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Kaelbling et~al\mbox{.}(1998)]%
+        {kaelbling1998planning}
+\bibfield{author}{\bibinfo{person}{Leslie~Pack Kaelbling},
+  \bibinfo{person}{Michael~L. Littman}, {and} \bibinfo{person}{Anthony~R.
+  Cassandra}.} \bibinfo{year}{1998}\natexlab{}.
+\newblock \showarticletitle{Planning and acting in partially observable
+  stochastic domains}.
+\newblock \bibinfo{journal}{\emph{Artificial Intelligence}}
+  \bibinfo{volume}{101}, \bibinfo{number}{1-2} (\bibinfo{year}{1998}),
+  \bibinfo{pages}{99--134}.
+\newblock
+
+
+\bibitem[Kumar et~al\mbox{.}(2026)]%
+        {kumar2026agentforge}
+\bibfield{author}{\bibinfo{person}{Rajesh Kumar} {et~al\mbox{.}}}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{AgentForge: Execution-Grounded Multi-Agent LLM
+  Framework for Autonomous Software Engineering}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2604.13120}}
+  (\bibinfo{year}{2026}).
+\newblock
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2604.13120}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Li et~al\mbox{.}(2026)]%
+        {li2026pdagent}
+\bibfield{author}{\bibinfo{person}{Qiufeng Li}, \bibinfo{person}{Rongqian
+  Chen}, \bibinfo{person}{Quan Cheng}, \bibinfo{person}{Chengxuan Wang},
+  \bibinfo{person}{Sizhe Tang}, \bibinfo{person}{Wuxi Li}, \bibinfo{person}{Duo
+  Ding}, \bibinfo{person}{Chia-Tung Ho}, \bibinfo{person}{Haoxing Ren},
+  \bibinfo{person}{David~Z. Pan}, \bibinfo{person}{Tian Lan}, {and}
+  \bibinfo{person}{Weidong Cao}.} \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{PDAGENT-BENCH: Characterizing, Grounding, and
+  Architecting LLM Agents for VLSI Physical Design}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2606.17253}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\bibitem[Liu et~al\mbox{.}(2025)]%
+        {liu2025layoutcopilot}
+\bibfield{author}{\bibinfo{person}{Bingyang Liu}, \bibinfo{person}{Haoyi
+  Zhang}, \bibinfo{person}{Xiaohan Gao}, \bibinfo{person}{Zichen Kong},
+  \bibinfo{person}{Xiyuan Tang}, \bibinfo{person}{Yibo Lin},
+  \bibinfo{person}{Runsheng Wang}, {and} \bibinfo{person}{Ru Huang}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{LayoutCopilot: An {LLM}-Powered Multiagent
+  Collaborative Framework for Interactive Analog Layout Design}.
+\newblock \bibinfo{journal}{\emph{IEEE Transactions on Computer-Aided Design of
+  Integrated Circuits and Systems (TCAD)}} \bibinfo{volume}{44},
+  \bibinfo{number}{8} (\bibinfo{year}{2025}), \bibinfo{pages}{3126--3139}.
+\newblock
+\href{https://doi.org/10.1109/TCAD.2025.3529805}{doi:\nolinkurl{10.1109/TCAD.2025.3529805}}
+
+
+\bibitem[Liu et~al\mbox{.}(2024)]%
+        {liu2023rtlcoder}
+\bibfield{author}{\bibinfo{person}{Shang Liu}, \bibinfo{person}{Wenji Fang},
+  \bibinfo{person}{Yao Lu}, \bibinfo{person}{Qijun Zhang},
+  \bibinfo{person}{Hongce Zhang}, {and} \bibinfo{person}{Zhiyao Xie}.}
+  \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{RTLCoder: Outperforming GPT-3.5 in Design RTL
+  Generation with Our Open-Source Dataset and Lightweight Solution}. In
+  \bibinfo{booktitle}{\emph{2024 IEEE/ACM International Conference on Computer
+  Aided Design (ICCAD)}}. \bibinfo{publisher}{IEEE}, \bibinfo{address}{New
+  York, NY, USA}.
+\newblock
+\shownote{Also available at arXiv:2312.08617}.
+\newblock
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2312.08617}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Lu et~al\mbox{.}(2025)]%
+        {lee2025autoeda}
+\bibfield{author}{\bibinfo{person}{Yiyi Lu}, \bibinfo{person}{Hoi~Ian Au},
+  \bibinfo{person}{Junyao Zhang}, \bibinfo{person}{Jingyu Pan},
+  \bibinfo{person}{Yiting Wang}, \bibinfo{person}{Ang Li},
+  \bibinfo{person}{Jianyi Zhang}, {and} \bibinfo{person}{Yiran Chen}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{AutoEDA: Enabling EDA Flow Automation through
+  Microservice-Based LLM Agents}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2508.01012}}
+  (\bibinfo{year}{2025}).
+\newblock
+\shownote{Uses MCP protocol for EDA automation}.
+\newblock
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2508.01012}
+\showURL{%
+\tempurl}
+
+
+\bibitem[OpenAI(2023)]%
+        {openai2023gpt4}
+\bibfield{author}{\bibinfo{person}{OpenAI}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{GPT-4 Technical Report}}.
+\newblock \bibinfo{type}{{T}echnical {R}eport} arXiv:2303.08774.
+  \bibinfo{institution}{OpenAI}.
+\newblock
+
+
+\bibitem[Pu et~al\mbox{.}(2024)]%
+        {pu2024rag}
+\bibfield{author}{\bibinfo{person}{Yuan Pu}, \bibinfo{person}{Zhuolun He},
+  \bibinfo{person}{Tairu Qiu}, \bibinfo{person}{Haoyuan Wu}, {and}
+  \bibinfo{person}{Bei Yu}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Customized Retrieval Augmented Generation and
+  Benchmarking for {EDA} Tool Documentation {QA}}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the IEEE/ACM International
+  Conference on Computer-Aided Design (ICCAD)}}. \bibinfo{publisher}{IEEE},
+  \bibinfo{address}{New York, NY, USA}.
+\newblock
+\showeprint[arxiv]{2407.15353}~[cs.CL]
+
+
+\bibitem[Rui et~al\mbox{.}(2025)]%
+        {rui2025chatcl}
+\bibfield{author}{\bibinfo{person}{Yibo Rui}, \bibinfo{person}{Yuanhang Li},
+  \bibinfo{person}{Rui Wang}, \bibinfo{person}{Ruiqi Chen},
+  \bibinfo{person}{Yanxiang Zhu}, \bibinfo{person}{Zhixiong Di},
+  \bibinfo{person}{Xi Wang}, {and} \bibinfo{person}{Ming Ling}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{{ChaTCL}: {LLM}-Based Multi-Agent {RAG} Framework
+  for {TCL} Script Generation}. In \bibinfo{booktitle}{\emph{Proceedings of the
+  International Symposium of Electronics Design Automation (ISEDA)}}.
+  \bibinfo{publisher}{IEEE}, \bibinfo{address}{New York, NY, USA},
+  \bibinfo{pages}{736--742}.
+\newblock
+
+
+\bibitem[Systems(2024)]%
+        {cadence2024virtuoso}
+\bibfield{author}{\bibinfo{person}{Cadence~Design Systems}.}
+  \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{Virtuoso Studio SKILL Language Reference}}.
+\newblock
+\urldef\tempurl%
+\url{https://www.cadence.com}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Thakur et~al\mbox{.}(2023)]%
+        {thakur2023verigen}
+\bibfield{author}{\bibinfo{person}{Shailja Thakur}, \bibinfo{person}{Baleegh
+  Ahmad}, \bibinfo{person}{Hammond~A Pearce}, \bibinfo{person}{Benjamin Tan},
+  \bibinfo{person}{Brendan Dolan-Gavitt}, \bibinfo{person}{Ramesh Karri}, {and}
+  \bibinfo{person}{Siddharth Garg}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{VeriGen: A Large Language Model for Verilog Code
+  Generation}.
+\newblock \bibinfo{journal}{\emph{ACM Transactions on Design Automation of
+  Electronic Systems}} \bibinfo{volume}{29}, \bibinfo{number}{3}
+  (\bibinfo{year}{2023}), \bibinfo{pages}{1--31}.
+\newblock
+
+
+\bibitem[Thrun et~al\mbox{.}(2005)]%
+        {thrun2005probabilistic}
+\bibfield{author}{\bibinfo{person}{Sebastian Thrun}, \bibinfo{person}{Wolfram
+  Burgard}, {and} \bibinfo{person}{Dieter Fox}.}
+  \bibinfo{year}{2005}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{Probabilistic Robotics}}.
+\newblock \bibinfo{publisher}{MIT Press}.
+\newblock
+
+
+\bibitem[Vaswani et~al\mbox{.}(2017)]%
+        {vaswani2017attention}
+\bibfield{author}{\bibinfo{person}{Ashish Vaswani}, \bibinfo{person}{Noam
+  Shazeer}, \bibinfo{person}{Niki Parmar}, \bibinfo{person}{Jakob Uszkoreit},
+  \bibinfo{person}{Llion Jones}, \bibinfo{person}{Aidan~N Gomez},
+  \bibinfo{person}{Lukasz Kaiser}, {and} \bibinfo{person}{Illia Polosukhin}.}
+  \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{Attention is All You Need}.
+\newblock \bibinfo{journal}{\emph{Advances in Neural Information Processing
+  Systems}}  \bibinfo{volume}{30} (\bibinfo{year}{2017}),
+  \bibinfo{pages}{5998--6008}.
+\newblock
+
+
+\bibitem[Xu et~al\mbox{.}(2026)]%
+        {xu2026iscript}
+\bibfield{author}{\bibinfo{person}{Ning Xu}, \bibinfo{person}{Zhaoyang Zhang},
+  \bibinfo{person}{Senlin Shu}, \bibinfo{person}{Qi Lei},
+  \bibinfo{person}{Jiaqi Lv}, \bibinfo{person}{Wensuo Wang},
+  \bibinfo{person}{Tianhao Zhao}, \bibinfo{person}{Chao Zhang},
+  \bibinfo{person}{Zhaoliang Yang}, \bibinfo{person}{Xiangyu Li},
+  \bibinfo{person}{Zhaorui Su}, \bibinfo{person}{Jingshan Li}, {and}
+  \bibinfo{person}{Xin Geng}.} \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{iScript: A Domain-Adapted Large Language Model and
+  Benchmark for Physical Design Tcl Script Generation}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2603.04476}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\bibitem[Yang et~al\mbox{.}(2025)]%
+        {yang2025qwen3}
+\bibfield{author}{\bibinfo{person}{An Yang} {et~al\mbox{.}}}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \bibinfo{title}{Qwen3 Technical Report}.
+\newblock
+\showeprint[arxiv]{2505.09388}~[cs.CL]
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2505.09388}
+\showURL{%
+\tempurl}
+
+
+\end{thebibliography}
