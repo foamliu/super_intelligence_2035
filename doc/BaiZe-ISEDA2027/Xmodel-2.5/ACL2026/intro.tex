@@ -1,0 +1,23 @@
+\section{Introduction}
+
+Large language models (LLMs) have demonstrated remarkable reasoning, planning, and tool-use capabilities, yet their deployment as autonomous agents remains prohibitive for resource-constrained environments.
+State-of-the-art agent backbones typically exceed 7--13\,B parameters, demanding high-end accelerators and large memory footprints incompatible with edge or cost-sensitive scenarios.
+
+Recent small language models (SLMs, $<$\,2\,B) match LLMs on single-turn benchmarks such as GSM8K or MMLU, but still fall short in \emph{complex multi-step reasoning}—the core skill required for tool invocation, long-horizon planning, and robust error recovery.
+Boosting this capability within the 1--2\,B regime is the central goal of our work.
+
+\paragraph{Xmodel-2.5}
+We present Xmodel-2.5, a 1.3\,B-parameter decoder-only model that retains Xmodel-2's two-stage pre-training recipe and maximal-update parameterization ($\mu$P), while introducing four targeted upgrades:
+
+\begin{enumerate}
+  \item We extended \textbf{Megatron-LM} with complete $\mu$P support, modifying its parameterization, attention scaling, and residual connections. The implementation was validated to preserve $\mu$P dynamics, enabling reliable hyperparameter transfer.
+
+  \item \textbf{Tokenizer.} Adopted the 129\,k-token DeepSeek-v3 tokenizer (vs.\ Xmodel-2's 65\,k-token Unigram), improving compression and decoding speed.
+
+  \item \textbf{Numeric precision.} Switched from BF16 to FP8-mixed precision, raising training throughput by $\approx 30\%$ with no observable degradation in pilot experiments.
+
+  \item \textbf{Optimizer schedule.} Switched from AdamW to \textbf{Muon} during the decay phase, improving the 13-task reasoning average by 4.58\% while keeping all other hyper-parameters fixed.
+
+\end{enumerate}
+
+We hope Xmodel-2.5 serves as a \emph{minimal yet strong} baseline for lightweight agents with enhanced complex-reasoning capabilities.

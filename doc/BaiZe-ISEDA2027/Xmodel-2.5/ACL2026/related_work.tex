@@ -1,0 +1,15 @@
+\section{Background \& Related Work}
+
+\subsection{Small Language Models for Reasoning}
+Parameter-efficient SLMs ($<2$\,B) have recently closed the gap with larger counterparts on mathematical and commonsense reasoning.
+MiniCPM~\citep{minicpm4} and DCLM-1B~\citep{dclm2024} adopt code-enriched corpora and cosine or WSD schedules to surpass 35\% on GSM8K.
+\citet{phi35} further emphasises textbook-style synthetic data.
+These works, however, primarily target single-turn question answering; systematic evaluation of multi-step \emph{agentic} behaviours remains under-explored.
+
+\subsection{Hyper-Parameter Transfer with Maximal-Update Parameterisation}
+$\mu$P~\citep{yang2022tensor,yang2023tensor} preserves training dynamics across widths, enabling hyper-parameter transfer from ``toy'' to full-scale models.
+Original derivations assume SGD; recent work integrates Adam~\citep{adam2017} but reports instability below 2\,B parameters.
+
+\subsection{Efficient Training of Lightweight Models}
+FP8 mixed-precision~\citep{fp8nvidia2022} and fused attention kernels reduce memory and energy, yet have not been jointly studied with $\mu$P optimisers.
+WSD learning-rate schedules~\citep{minicpm2024} improve late-stage performance by decoupling the annealing phase from token count; we extend WSD with domain-weighted data mixing during decay, an ablation absent in prior literature.
