@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S2 Φ 轴消融（k 预算 + lagged 滞后）1-shot 探路报告</title>
+<style>
+  :root { --fg:#1a1a1a; --muted:#5a6270; --line:#e3e6eb; --accent:#0b57d0; --soft:#f6f8fa; --warn:#b23b07; --ok:#1a7f37; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",Roboto,sans-serif; color:var(--fg); line-height:1.65; }
+  .wrap { max-width: 980px; margin:0 auto; padding:40px 28px 80px; }
+  h1 { font-size:1.6rem; line-height:1.35; margin:0 0 6px; }
+  .meta { color:var(--muted); font-size:.86rem; margin-bottom:28px; }
+  h2 { font-size:1.18rem; margin:34px 0 12px; padding-bottom:6px; border-bottom:2px solid var(--line); }
+  h3 { font-size:1.0rem; margin:22px 0 8px; }
+  p, li { font-size:.95rem; }
+  code { font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace; font-size:.86rem; background:var(--soft); padding:1px 5px; border-radius:4px; }
+  pre { background:#0f1419; color:#d8dee6; padding:14px 16px; border-radius:8px; overflow-x:auto; font-size:.84rem; line-height:1.5; }
+  pre code { background:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:.9rem; }
+  th, td { border:1px solid var(--line); padding:7px 10px; text-align:left; vertical-align:top; }
+  th { background:var(--soft); font-weight:600; }
+  .tag { display:inline-block; font-size:.72rem; font-weight:600; padding:1px 8px; border-radius:999px; margin-right:6px; }
+  .tag.ok { background:#e7f5ec; color:var(--ok); }
+  .tag.accent { background:#e8f0fe; color:var(--accent); }
+  .callout { border-left:4px solid var(--accent); background:var(--soft); padding:10px 14px; border-radius:0 6px 6px 0; margin:14px 0; }
+  .callout.warn { border-left-color:var(--warn); background:#fdf3ee; }
+  .k { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>S2 Φ 轴消融（k 预算 + lagged 滞后）— 1-shot 探路任务书 / HTML 报告</h1>
+<div class="meta">
+  生成时间: 2026-09-28 &nbsp;|&nbsp; 论文权威树: <code>/nasdata/app.e0031982/code/ZhuLong_DAC2027</code> &nbsp;|&nbsp; harness: <code>/nasdata/app.e0031982/code/eda_fastmcp</code><br>
+  对应文件: <code>run/ablation_run_task_s2_1shot.md</code>（任务书）、<code>run/ablation_run_loop_s2_1shot.sh</code>（loop 脚本）
+</div>
+
+<h2>0. 一句话目标</h2>
+<p>
+S2 只动 <strong>Φ（信念更新）</strong> 一个轴，固定观测 Ω 与先验 K：一条锚点（unbounded ≡ full）＋ 三条 <strong>k 预算</strong>＋ 一条 <strong>lagged 滞后</strong>。
+本轮为 <span class="tag accent">1-shot 探路</span>，跳过锚点，只跑 4 个新臂（k10 → k3 → k1 → lagged），各 1 轮，用于验证预算 hook 计数正确、lagged 滞后量精确为 1、并产出 <code>tab:phi-bound</code> 的 provisional 首值。
+</p>
+
+<h2>1. 启动方式</h2>
+
+<h3>1.1 外层推进 loop（脱离进程组启动）</h3>
+<pre><code>setsid bash /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/ablation_run_loop_s2_1shot.sh \
+  &gt; /tmp/ablation_loop_s2_1shot.log 2&gt;&amp;1 &lt; /dev/null &amp;</code></pre>
+<table>
+  <tr><th>参数</th><th>值</th><th>含义</th></tr>
+  <tr><td><code>MODEL</code></td><td><code>deepseek-v4-pro-fp4</code></td><td>基座（勿动 cline auth / models.json / providers.json）</td></tr>
+  <tr><td><code>INTERVAL</code></td><td><code class="k">1800</code> s</td><td>loop 每 30 分钟醒来一次，读任务书 → 推进一步 → 退出</td></tr>
+  <tr><td><code>CLINE_TIMEOUT</code></td><td><code class="k">5400</code> s</td><td>单次 cline 调用上限 90 分钟（含打分）</td></tr>
+  <tr><td><code>TASK_MD</code></td><td><code>run/ablation_run_task_s2_1shot.md</code></td><td>只读任务书（agent 禁止修改）</td></tr>
+  <tr><td><code>MEMORY_MD</code></td><td><code>run/MEMORY_s2_1shot.md</code></td><td>运行时状态（agent 维护，写 <code>PHASE=done_all</code> 即退出 loop）</td></tr>
+</table>
+<p>结束条件：<code>MEMORY_s2_1shot.md</code> 内出现 <code>PHASE=done_all</code>，loop 自动退出。</p>
+<h3>1.2 切换 S2 臂（agent 每臂切一次）</h3>
+<pre><code>cd $BASE_DIR                    # = /nasdata/app.e0031982/code/eda_fastmcp
+$BASE_DIR/venv/bin/python scripts/set_s2_phi.py &lt;ARM&gt;   # ARM ∈ {phi_k10, phi_k3, phi_k1, phi_lagged}
+bash scripts/stop.sh
+bash scripts/start.sh
+sleep 3
+tail -20 $BASE_DIR/logs/app.log</code></pre>
+
+<h3>1.3 启动一轮评测（8 并发、禁 Memory Bank）</h3>
+<pre><code>cd $BASE_DIR
+setsid bash scripts/run_cline_script.sh -p 8 -n &gt; /tmp/ABL_&lt;ARM&gt;_r1.log 2&gt;&amp;1 &lt; /dev/null &amp;</code></pre>
+<p>注：工具侧可能显示超时/无输出，但进程已脱离，<strong>不要当成失败</strong>，也不要重复启动同一轮。</p>
+
+<h3>1.4 检查结束 / 打分</h3>
+<pre><code>cd $BASE_DIR
+pgrep -f '^bash scripts/run_cline_script'   # 有输出=还在跑；无输出=本轮结束
+grep -E 'pass \(|评估结果汇总|PASS_RATE' /tmp/ABL_&lt;ARM&gt;_r1.log | tail -5</code></pre>
+<p>以 log 内 <code>pass (xx.x%)</code> 为 Pass@1 口径（不用 <code>run_eval.py --latest 1</code>，它会完整重评并超时）。</p>
+
+<h2>2. 探测路径实验组成（4 臂 + 1 跳过锚点）</h2>
+<table>
+  <tr><th>臂</th><th>改什么</th><th>README 表</th><th>状态</th></tr>
+  <tr><td><code>Φ unbounded</code></td><td>无预算上限（≡ full 基线）</td><td><code>tab:phi-bound</code> unbounded</td><td><span class="tag ok">跳过</span> ✅ 84.8%（=full）</td></tr>
+  <tr><td><code>Φ k=10</code></td><td>hook 限 run_code ≤ 10 次</td><td><code>tab:phi-bound</code> k=10</td><td><span class="tag accent">本轮</span></td></tr>
+  <tr><td><code>Φ k=3</code></td><td>hook 限 run_code ≤ 3 次</td><td><code>tab:phi-bound</code> k=3</td><td><span class="tag accent">本轮</span></td></tr>
+  <tr><td><code>Φ k=1</code></td><td>hook 限 run_code ≤ 1 次</td><td><code>tab:phi-bound</code> k=1</td><td><span class="tag accent">本轮</span></td></tr>
+  <tr><td><code>Φ lagged</code></td><td>handler 返回上一拍状态（L=1）</td><td><code>tab:phi-bound</code> lagged</td><td><span class="tag accent">本轮</span></td></tr>
+</table>
+<p><strong>执行顺序</strong>：<code>k=10</code> → <code>k=3</code> → <code>k=1</code> → <code>lagged</code>，各 1 轮。
+理由：先 k=10（预算宽松，验证 hook 计数正确、不误杀）再逐档收紧到 k=1，最后跑机制独立的 lagged。</p>
+
+<h2>3. 语义约束（最易做错，逐字遵守）</h2>
+<ul>
+  <li>① 预算约束的是「agent 能<strong>执行/观测</strong>多少次」，<strong>绝</strong>不是「agent 何时必须提交」。</li>
+  <li>② 实现 = <strong>工具边界拒绝调用</strong>（agent 收到 error 继续自主运行）；严禁中断 trace / 改写任务 / 逼 agent 提前提交——一旦改变终止行为，测到的就是「人为干预」而非 Φ。</li>
+  <li>③ 必须同时报告 <code>Converged (%)</code>（=<code>finish_reason == completed</code> 的 trace 占比），且紧挨 Pass@1；否则紧预算造成的提前停止会被误读为「收敛」。</li>
+  <li>④ lagged = <strong>滞后 1 次执行</strong>：第 n 次 run_code 返回第 n−1 次状态，第 1 次返回「尚无先前状态」占位；用<strong>单槽缓冲</strong>（非队列），元数据记 <code>reported_call_index</code> 以便审计滞后量恰好 = 1。</li>
+  <li>⑤ 预算 hook 错误信息必须带唯一前缀 <code>[PHI-BUDGET-EXHAUSTED]</code>——Cline 多 hook 引擎对 cancel 做 OR 合并、对原因做换行拼接，无前缀就无法区分是反作弊 hook 还是预算 hook 拒的。</li>
+  <li>⑥ 若 L=1 测不出效应再上 L=2，并在正文如实报告「L=1 无效应」；本轮探路先用 L=1。</li>
+</ul>
+<h2>4. 代码前置依赖 / 阻塞项</h2>
+<div class="callout warn">
+  <strong>阻塞项：</strong>以下 4 项是「切配置后生效」的前提。经核对当前 harness（<code>eda_fastmcp</code>），<strong>尚未实现</strong>——仅 <code>scripts/set_ablation.py</code> 与 <code>scripts/cline_hooks/PreToolUse</code>（反作弊）存在；<code>set_s2_phi.py</code>、预算 hook、lagged 缓冲均缺。跑之前必须补齐。
+</div>
+<table>
+  <tr><th>#</th><th>依赖</th><th>要求</th></tr>
+  <tr><td>1</td><td><code>scripts/cline_hooks/PreToolUse</code></td><td>在<strong>现有反作弊 hook 之外追加</strong> Φ 预算计数（两者共存，不得破坏反作弊）：同 trace 内对 <code>run_code</code> 计数（按 session/trace id 归零），超 k 返回 <code>{"cancel": true, "errorMessage": "[PHI-BUDGET-EXHAUSTED] k=&lt;N&gt;"}</code>；拒绝落到 trace 元数据 <code>denied_by_hook</code> / <code>deny_reason</code>。</td></tr>
+  <tr><td>2</td><td><code>tools/run_code.py</code></td><td>支持 <code>EDA_PHI_LAGGED=1</code>：单槽缓冲返回上一拍状态（第 1 次回「尚无先前状态」占位），记 <code>reported_call_index</code>；缺省 0（关闭）。</td></tr>
+  <tr><td>3</td><td><code>scripts/set_s2_phi.py &lt;ARM&gt;</code></td><td>ARM ∈ {phi_unbounded, phi_k10, phi_k3, phi_k1, phi_lagged}：写 <code>.env</code>（<code>EDA_PHI_BUDGET=&lt;N&gt;</code> / <code>EDA_PHI_LAGGED=0|1</code>）并启用/停用预算 hook；缺省 unbounded。</td></tr>
+  <tr><td>4</td><td>trace 元数据</td><td>采集 <code>finish_reason</code>、<code>run_code_calls</code>、<code>denied_by_hook</code>、<code>deny_reason</code>、<code>reported_call_index</code>（README §4）。否则 <code>Converged (%)</code> 与滞后量无法核对。</td></tr>
+</table>
+
+<h2>5. 开跑前 canary（每批一次；不通过 → 立即停，本批作废）</h2>
+<ul>
+  <li>故意触发一次<strong>应被拒绝</strong>的调用（<code>run_commands</code> 或读写工作区外路径），确认真被拒；若未拒 → 停止退出。</li>
+  <li>k=10 开跑前：故意让 <code>run_code</code> 超预算一次，核对 <code>deny_reason</code> 含 <code>[PHI-BUDGET-EXHAUSTED]</code> 且不与反作弊拒绝混淆。</li>
+</ul>
+
+<h2>6. 打分与 S2 专属核对（缺一不可）</h2>
+<ul>
+  <li><code>Converged (%)</code>：<code>finish_reason == completed</code> 占比（紧挨 Pass@1 记录）。</li>
+  <li>k 臂（k10/k3/k1）：统计 <code>deny_reason</code> 含 <code>[PHI-BUDGET-EXHAUSTED]</code> 的 trace 数 &gt; 0（证明预算 hook 确实拒过），记 <code>run_code_calls</code> 均值（<code>Mean read-backs</code>）。</li>
+  <li>lagged 臂：核对 <code>reported_call_index</code> 与真实调用序号差 == 1（滞后量恰好为 1），否则该臂作废。</li>
+</ul>
+
+<h2>7. 预计耗时（估算，待首臂实测后校准）</h2>
+<table>
+  <tr><th>阶段</th><th>估算</th><th>依据 / 假设</th></tr>
+  <tr><td>单臂一轮</td><td class="k">30–90 分钟</td><td>158 任务 / 8 并发 / 单 trace / 无重试；full 约 24 工具调用·trace⁻¹，run_code 沙盒执行为主延迟项；k=1 最快、k=10 接近无界。</td></tr>
+  <tr><td>4 臂串行 + loop 轮询/打分</td><td class="k">2–6 小时</td><td>loop 每 30 分钟醒来一次（INTERVAL=1800），单次 cline ≤ 90 分钟（CLINE_TIMEOUT=5400）。</td></tr>
+</table>
+<p>注：k 预算只限制 <code>run_code</code> 次数，不影响单次执行墙钟上限（2500 s/次）；方差主要来自任务难度与 LLM 推理时延。</p>
+
+<h2>8. 红线</h2>
+<ul>
+  <li>反作弊 <code>PreToolUse</code> hook <strong>全程启用、各臂完全一致</strong>——它是冻结变量，不是消融对象。</li>
+  <li><code>cimi_search</code> / <code>cimi_fetch</code> / <code>vqa</code> 永远关闭，不要碰。</li>
+  <li>各 hook 的 <code>errorMessage</code> 必须用唯一前缀区分，否则归因错标。</li>
+  <li>不填臆造值：未测保持 <code>[TBD]</code> 或显式 provisional；<code>±</code> 只加在 Pass@1 上。</li>
+</ul>
+
+</div>
+</body>
+</html>

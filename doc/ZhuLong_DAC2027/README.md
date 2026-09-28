@@ -13,8 +13,9 @@
 | **理论权威** | `Grounding/ICML2028/` | L1–L4 层级、grounding gap、$\Phi$ 的正式定义。**任何理论表述冲突以它为准** |
 | 非权威 | `ZhuLong_ASPDAC2027/` | 旧稿，只读参考，**不要改动** |
 | 非权威 | 任何 `*.orig` / 顶层散落副本 | 备份残留，**不要改动、不要引用** |
+| **实验执行编排** | `run/` | 消融跑量：task book / loop 脚本 / MEMORY / daily-memories / bench 跑量手册 / eval 参考。只影响运行流程，不影响论文内容 |
 
-**仓库性质**：这是**纯 LaTeX 仓库，不含 harness 代码**。harness（提供 `search_apis` /
+**仓库性质**：以**论文 LaTeX 树**（`ZhuLong_DAC2027/`、`Grounding/`）为主，另含 `run/` 子目录存放**实验执行编排**（task book、loop 脚本、MEMORY、daily-memories、bench 跑量手册、eval 参考）。harness（提供 `search_apis` /
 `get_api_details` / `run_code` 三个 MCP 工具的 agent 运行时）在别处，本文档只描述如何配置它。
 
 ### 0.1 术语表（必须逐字沿用，不得自造同义词）
@@ -73,7 +74,7 @@
 | 关执行器（`ZhuLong w/o Sandbox`、RAG baseline） | **不注册** `run_code`，或注册后直接返回"工具不可用" |
 | 关检索（`ZhuLong w/o Retrieval`） | 不注册 `search_apis` / `get_api_details` |
 | 回读保真度 (N)/(B)/(F) | 改 `run_code` 的**返回负载**：(N) 无返回/仅"已执行"；(B) 仅 pass/fail；(F) stdout + 异常栈 + 逐断言结果 + 状态查询（默认） |
-| $\Omega$ 保真度阶梯 (L)/(H)/(H+E) | 改 `search_apis` 的**索引与排序质量**：仅 API 名 → 加描述/BM25/缩写展开/同义词重定向 → 再加离线自探索结论 |
+| $\Omega$ 保真度阶梯 (L)/(H)/(H+E) | 改 `search_apis` / `search_apis_by_keyword` 的**返回内容与索引质量**：仅 API 名+相似度 (L) → 加描述/BM25/缩写展开/同义词重定向 (H) → 再加离线自探索结论 (H+E)；`get_api_details` 恒返回完整文档、不参与该阶梯 |
 | **$\Phi$ 的 $k$ 预算** | 可在此计数，但**推荐改用 §3.2 的 hook 实现**（理由见下） |
 | $\Phi$ lagged | 见 **§3.6**：第 $n$ 次回读返回第 $n{-}1$ 次执行产生的状态（定义须逐字实现） |
 
@@ -252,10 +253,10 @@
    **不含** benchmark 任务本体（已在 5 处统一，见 `1_intro.tex`）。
 4. **不得在未测的情况下填写数字**；未测保持 `[TBD]` 或显式写 provisional。
 5. **`tab:omega` 存在跨稿口径冲突，选值前必须先统一配置定义**：
-   - 本文：`(N)`=23.6、`(L)`=[TBD]、`(H)`=[TBD]、`(H+E)`=78.5
+   - 本文：`(N)`=纯 LLM baseline、`(L)`=[TBD]、`(H)`=[TBD]、`(H+E)`=[TBD]
    - ICML 稿：同一阶梯报为 `(N)`=0.0、`(L)`=59.5、`(H)`=87.3
-   两套的 `(N)` 基线口径不同（23.6 = Pure LLM baseline；0.0 = 完全无观测），
-   **必须先确定"无观测"的实测定义，再决定引用哪一组，不得混用。**
+   **已定口径（2026-09-28）**：`(N)` = Pure LLM baseline（核心 4 工具全关，反作弊 hook 下），
+   1-shot 实测 11.4%；不采用 ICML 的 `(N)`=0.0（"完全无观测"）。5 轮 mean ± std 待重测。
 6. **反作弊 hook 不得成为变量。** 它必须在所有臂中保持一致，且**必须在论文 §6 实验设置中披露**；
    因它被拒而失败的 trace 必须单独归类（见 §3.5、§4）。
 7. **不得把 hook 拒绝原因混在一起。** 各 hook 的 `errorMessage` 必须用唯一前缀区分，
@@ -286,6 +287,11 @@
 关注点是**各配置的排序与差距量级是否保持**，不是绝对准确率一致。
 
 ### 6.1 临时数字清单（非 `[TBD]`，但论文自称 provisional，需一并重测）
+
+> **本次实测（2026-09-28，反作弊 hook 生效 + deepseek-v4-pro-fp4 + 1-shot `-p 8 -n`）已作为新 provisional 基线，
+> 以覆盖下方旧占位值（5 轮 mean ± std 待 9/30–10/7 重测）：**
+> `pure_llm`=11.4% · `rag`=70.3% · `wo_retrieval`=81.6% · `full`=84.8%。
+> 下方表的 78.5/32.3/23.6/37.3/34.2 为旧协议占位值，**以本次重测为准覆盖**。
 
 这些数字**已写入正文/表格**，一旦重测结果不同必须全部同步替换（含中文注释）：
 
