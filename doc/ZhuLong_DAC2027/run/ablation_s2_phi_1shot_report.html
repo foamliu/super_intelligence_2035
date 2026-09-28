@@ -43,11 +43,29 @@ S2 只动 <strong>Φ（信念更新）</strong> 一个轴，固定观测 Ω 与�
 本轮为 <span class="tag accent">1-shot 探路</span>，跳过锚点，只跑 4 个新臂（k10 → k3 → k1 → lagged），各 1 轮，用于验证预算 hook 计数正确、lagged 滞后量精确为 1、并产出 <code>tab:phi-bound</code> 的 provisional 首值。
 </p>
 
-<h2>1. 启动方式</h2>
-
-<h3>1.1 外层推进 loop（脱离进程组启动）</h3>
+<h2>1. 如何启动探路试验</h2>
+<div class="callout">
+  <strong>启动整个探路试验只需下面这一条命令</strong>——丢进后台即可，之后 4 臂会自动跑完，无需人工逐臂操作。loop 每 30 分钟醒来一次，每次只推进一步。
+</div>
 <pre><code>setsid bash /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/ablation_run_loop_s2_1shot.sh \
   &gt; /tmp/ablation_loop_s2_1shot.log 2&gt;&amp;1 &lt; /dev/null &amp;</code></pre>
+
+<p><strong>启动后 loop 会自动推演，完整序列：</strong></p>
+<ol>
+  <li>首次唤醒 agent 进入 <code>PHASE=init</code>：agent <strong>自己实现</strong>预算 hook / lagged / <code>set_s2_phi.py</code>（见 §4），并做 py_compile + .env + 反作弊/预算 canary 自测。</li>
+  <li>自测通过 → 切 <code>phi_k10</code> → 启动第 1 轮 → 打分 → <code>phi_k3</code> → <code>phi_k1</code> → <code>phi_lagged</code>，各 1 轮。</li>
+  <li>4 臂跑完 → agent 在 <code>MEMORY_s2_1shot.md</code> 写 <code>PHASE=done_all</code> → loop 检测到后自动退出。</li>
+</ol>
+
+<h3>监控 / 停止</h3>
+<pre><code>tail -f /tmp/ablation_loop_s2_1shot.log                                    # 看 loop 走到哪一步
+tail -20 /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/MEMORY_s2_1shot.md   # 看当前 PHASE / 看板 / 成绩
+pgrep -af 'ablation_run_loop_s2_1shot.sh|run_cline_script'                    # 确认 loop / 评测进程在跑
+
+# 中途停止（先杀评测，再杀 loop）
+pkill -f '^bash scripts/run_cline_script'; pkill -f 'ablation_run_loop_s2_1shot.sh'</code></pre>
+
+<h3>1.1 loop 参数表（核对用，勿改）</h3>
 <table>
   <tr><th>参数</th><th>值</th><th>含义</th></tr>
   <tr><td><code>MODEL</code></td><td><code>deepseek-v4-pro-fp4</code></td><td>基座（勿动 cline auth / models.json / providers.json）</td></tr>
@@ -57,7 +75,7 @@ S2 只动 <strong>Φ（信念更新）</strong> 一个轴，固定观测 Ω 与�
   <tr><td><code>MEMORY_MD</code></td><td><code>run/MEMORY_s2_1shot.md</code></td><td>运行时状态（agent 维护，写 <code>PHASE=done_all</code> 即退出 loop）</td></tr>
 </table>
 <p>结束条件：<code>MEMORY_s2_1shot.md</code> 内出现 <code>PHASE=done_all</code>，loop 自动退出。</p>
-<h3>1.2 切换 S2 臂（agent 每臂切一次）</h3>
+<h3>1.2 切换 S2 臂（agent 每臂切一次；<code>set_s2_phi.py</code> 由 agent 在 PHASE=init 自建）</h3>
 <pre><code>cd $BASE_DIR                    # = /nasdata/app.e0031982/code/eda_fastmcp
 $BASE_DIR/venv/bin/python scripts/set_s2_phi.py &lt;ARM&gt;   # ARM ∈ {phi_k10, phi_k3, phi_k1, phi_lagged}
 bash scripts/stop.sh
@@ -97,9 +115,9 @@ grep -E 'pass \(|评估结果汇总|PASS_RATE' /tmp/ABL_&lt;ARM&gt;_r1.log | tai
   <li>⑤ 预算 hook 错误信息必须带唯一前缀 <code>[PHI-BUDGET-EXHAUSTED]</code>——Cline 多 hook 引擎对 cancel 做 OR 合并、对原因做换行拼接，无前缀就无法区分是反作弊 hook 还是预算 hook 拒的。</li>
   <li>⑥ 若 L=1 测不出效应再上 L=2，并在正文如实报告「L=1 无效应」；本轮探路先用 L=1。</li>
 </ul>
-<h2>4. 代码前置依赖 / 阻塞项</h2>
+<h2>4. 代码前置依赖（由 agent 在 PHASE=init 自行实现）</h2>
 <div class="callout warn">
-  <strong>阻塞项：</strong>以下 4 项是「切配置后生效」的前提。经核对当前 harness（<code>eda_fastmcp</code>），<strong>尚未实现</strong>——仅 <code>scripts/set_ablation.py</code> 与 <code>scripts/cline_hooks/PreToolUse</code>（反作弊）存在；<code>set_s2_phi.py</code>、预算 hook、lagged 缓冲均缺。跑之前必须补齐。
+  <strong>注意：</strong>以下 4 项当前<strong>尚不存在</strong>——<code>eda_fastmcp</code> 里只有 <code>scripts/set_ablation.py</code> 与反作弊 <code>scripts/cline_hooks/PreToolUse</code>；<code>set_s2_phi.py</code>、预算 hook、lagged 缓冲均缺。任务书已要求 agent 在<strong>首个唤醒周期（PHASE=init）自己实现</strong>这 4 项，自测（py_compile + .env 写入 + 反作弊/预算 hook canary）通过后才开始跑分；否则切配置会静默失效。
 </div>
 <table>
   <tr><th>#</th><th>依赖</th><th>要求</th></tr>

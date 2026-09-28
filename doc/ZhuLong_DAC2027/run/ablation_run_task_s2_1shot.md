@@ -80,29 +80,38 @@ S2 = 一条锚点 + 三条 k 预算 + 一条 lagged。本轮 1-shot 探路，跳
 6. 若 L=1 测不出效应，再上 L=2，并在正文如实报告「L=1 无效应」；本轮探路先用 L=1。
 ---
 
-## 代码前置依赖（⚠️ 跑之前必须已实现，否则切配置会静默失效）
+## 你需要实现的脚本（首个唤醒周期完成；这些文件当前尚不存在，由你实现）
 
-1. `scripts/cline_hooks/PreToolUse`：在**现有反作弊 hook 之外追加** Φ 预算计数逻辑（两者共存，不得破坏反作弊 hook）。
+> 现状：`scripts/set_ablation.py` 与反作弊 `scripts/cline_hooks/PreToolUse` **已存在**；
+> `scripts/set_s2_phi.py`、预算 hook 逻辑、`tools/run_code.py` 的 lagged 逻辑 **尚不存在**。
+> 因此本轮第一个唤醒周期（PHASE=init）必须由你**自己实现**以下脚本，自测通过后才开始跑分；否则切配置会静默失效。
+> 实现方式用 shell heredoc（`cat > file <<'EOF' ... EOF`）写文件、或你自己的文件编辑工具皆可；**但不要调用任何 EDA MCP 工具**（search_apis / get_api_details / run_code）。
+
+1. `scripts/cline_hooks/PreToolUse`（已存在，**在反作弊逻辑之外追加** Φ 预算计数，不得破坏反作弊）：
    同一 trace 内对 `run_code` 调用计数（按 session/trace id 归零），超 k 时返回
    `{"cancel": true, "errorMessage": "[PHI-BUDGET-EXHAUSTED] k=<N>"}`；拒绝需落到 trace 元数据的
    `denied_by_hook` / `deny_reason`。
-2. `tools/run_code.py`：支持 `EDA_PHI_LAGGED=1`——单槽缓冲返回上一拍状态（第 1 次回「尚无先前状态」占位），
-   并记录 `reported_call_index`；`EDA_PHI_LAGGED` 缺省为 0（关闭）。
-3. `scripts/set_s2_phi.py <ARM>`：ARM ∈ {phi_unbounded, phi_k10, phi_k3, phi_k1, phi_lagged}。
+2. `tools/run_code.py`（已存在，追加 lagged 逻辑，缺省关闭）：支持 `EDA_PHI_LAGGED=1`——
+   单槽缓冲返回上一拍状态（第 1 次回「尚无先前状态」占位），并记录 `reported_call_index`；
+   `EDA_PHI_LAGGED` 缺省为 0（关闭）。
+3. `scripts/set_s2_phi.py`（不存在，**新写**，模仿 `scripts/set_ablation.py` 风格）：ARM ∈ {phi_unbounded, phi_k10, phi_k3, phi_k1, phi_lagged}。
    写 `.env`（`EDA_PHI_BUDGET=<N>` / `EDA_PHI_LAGGED=0|1`），并启用/停用预算 hook；缺省 unbounded（不设限）。
 4. trace 元数据须采集：`finish_reason`、`run_code_calls`、`denied_by_hook`、`deny_reason`、`reported_call_index`
-   （README §4）。否则 `Converged (%)` 与滞后量无法核对。
+   （README §4）。否则 `Converged (%)` 与滞后量无法核对；若 harness 现有采集点不足，在本次实现时一并补齐。
 
 ---
 
-## 开跑前 canary（README §8 强制，每批做一次）
+## 脚本自测 + canary（在 PHASE=init 内完成；不通过 → 修复后重试，上限 3 次）
 
-首次唤醒且 PHASE=init 时，验证反作弊 hook 生效 + 两条 hook 归因可区分：
-1. 故意触发一次应被拒绝的调用（`run_commands`，或读工作区外路径），确认它**真的被拒**。
+实现完脚本后、启动任一评测前，先自测 + canary：
+0. 脚本语法自测：`python -m py_compile scripts/set_s2_phi.py scripts/cline_hooks/PreToolUse tools/run_code.py`；
+   跑一次 `$BASE_DIR/venv/bin/python scripts/set_s2_phi.py phi_k10`，再 `grep -E 'EDA_PHI_BUDGET|EDA_PHI_LAGGED' $BASE_DIR/.env` 确认写入，并 `bash scripts/stop.sh && bash scripts/start.sh` 重启生效。
+1. 故意触发一次应被拒绝的调用（`run_commands`，或读工作区外路径），确认反作弊 hook **真的被拒**。
    **若未被拒 → 立即停止，本批数据作废，退出。**
-2. 在 k=10 臂开跑前，额外确认「预算 hook 与反作弊 hook 能并存且拒绝原因可区分」：
-   故意让 `run_code` 超预算一次，核对 `deny_reason` 含 `[PHI-BUDGET-EXHAUSTED]`、且不与反作弊拒绝混淆（§3.4）。
-通过后 PHASE→running，启动第一臂 `k=10`。
+2. 额外确认「预算 hook 与反作弊 hook 能并存且拒绝原因可区分」：故意让 `run_code` 超预算一次，
+   核对 `deny_reason` 含 `[PHI-BUDGET-EXHAUSTED]`、且不与反作弊拒绝混淆（§3.4）。
+3. 全部通过 → PHASE→running，启动第一臂 `k=10`；任一失败 → 修复 → 重试（上限 3 次），
+   超过 3 次仍失败 → 流水记 `❌ BLOCKED` → 退出等待人工介入。
 
 ---
 
@@ -158,6 +167,13 @@ S2 专属核对（记入成绩记录，缺一不可）：
 无论何种 PHASE，先做：
 1. 读 `MEMORY_s2_1shot.md` 中「记忆流水」最后 3 条，检查是否有 `❌ EVAL_FAILED` 或 `⚠️` 异常尚未处理
 2. 若有未处理的异常 → 优先执行重试逻辑（重新打分或重启本轮），写入流水中，再按正常流程推进
+
+### 步骤 0（PHASE=init 首次唤醒；若 MEMORY_s2_1shot.md 不存在或 PHASE 为空，也按 init 处理）
+
+1. 按「你需要实现的脚本」一节，**自己实现** 4 项（新写 `set_s2_phi.py`、追加预算 hook、追加 lagged、补齐元数据采集）。
+2. 按「脚本自测 + canary」一节的 0/1/2 逐项自测。
+3. 通过 → 用「固定命令」切到 `phi_k10` 并启动第一轮，PHASE→running，更新看板/流水 → 退出。
+4. 任一自测失败 → 修复后重试（上限 3 次）；超上限 → 流水记 `❌ BLOCKED` → 退出等待人工介入。
 
 ### 步骤 A（PHASE=running）
 
