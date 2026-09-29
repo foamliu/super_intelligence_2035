@@ -50,9 +50,9 @@
 - **统一口径（决策 3）**：seq=4096 / mb=1 / TP=1（DP=6）/ GBS=128（128 seq × 4096 = 512K tok/步）/ AdamW lr=3e-4 warmup=100 decay→1000 / wd=0.1 / bf16 / train_iters=1000 / 同 seed=1234 / 同数据（DeepSeek .bin/.idx 共用）。
 - **卡数对齐**：两架构均 6 卡、TP=1 DP=6（同卡数保证训练 tok/s 可比）。
 - 数据 `.bin/.idx` 前缀（训练时 `--data-path` = 该前缀，去掉 .bin/.idx）：`BASE_DIR/data/ultrafineweb_l3_qa_text_document`
-- **launcher 需补传 data_paths**：当前 `pretrain_launcher.py` 的 `build_config` 未传 `data_paths`（仅 mock），训练前需加 `--data-paths` 参数并传给 recipe 的 `train_data_path`。
+- **launcher 已支持 `--train-data-path`**（`build_config` 已把 `train_data_path=args.train_data_path` 传给 recipe，两 recipe 均有 `train_data_path` 参数；单一 `.bin/.idx` 前缀直接传即可）。
 - 启动命令模板（以 MiniCPM5-2B 为例，6 卡）：
-  `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 torchrun --nnodes=1 --nproc_per_node=6 pretrain_launcher.py --arch minicpm5 --name train_1000 --data-paths <prefix> --tensor-parallel 1 --global-batch-size 128 --micro-batch-size 1 --train-iters 1000 --lr-warmup-iters 100 --lr-decay-iters 1000 --tokenizer-path <tokenizer_eod>`
+  `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 torchrun --nnodes=1 --nproc_per_node=6 pretrain_launcher.py --arch minicpm5 --name train_1000 --train-data-path <prefix> --tensor-parallel 1 --global-batch-size 128 --micro-batch-size 1 --train-iters 1000 --lr-warmup-iters 100 --lr-decay-iters 1000 --tokenizer-path <tokenizer_eod>`
 - ⚠️ 启动 1000 步前：① 确认 `pgrep -f preprocess_data` 已结束；② 记录 GBS=128 的选择到 EXPERIMENTS_2B.md；③ Mamba2 初始 loss 8.80 需在训练头几步复核（若仍异常，排查 provider init）。
 
 ## git 提交（每 4~6 小时 push）
