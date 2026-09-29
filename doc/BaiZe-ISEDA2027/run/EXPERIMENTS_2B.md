@@ -25,7 +25,18 @@
 - **GBS=6 理由（关键）**：Mamba2 SSM ~11.6s/步，GBS>6 会让 Mamba2 训练远超 20 GPU·h 预算（GBS=128≈408 GPU·h）。故定 GBS=6（Mamba2 ≈3.2h×6卡≈19.3 GPU·h）。属「早期收敛」对比（约 24.6M tokens/架构）。
 
 ## 实验记录
-| ID | 架构 | 参数量 | 状态 | 最终loss | 训练tok/s | 耗时 | 备注 |
+| ID | 架构 | 参数量 | 状态 | 最终loss | 训练tok/s | 耗时/iter | 备注 |
 |:---|:---|:---|:---|:---|:---|:---|:---|
-| A1-01 | MiniCPM5-2B(42层 Llama) | 2.51B | running | - | ~91K（270ms/iter） | - | 从零，2.29 GPU0~5 |
-| A2-01 | Mamba2-hybrid(56层) | 3.00B | running | - | ~2.1K（~11.6s/iter 预估） | - | 从零，2.12 GPU0~5，非等参(+19.5%) |
+| A1-01 | MiniCPM5-2B(42层 Llama) | 2.51B | ✅ done | **4.8065**（11.62→4.81） | **~89K** | ~275ms | 从零，2.29 GPU0~5 |
+| A2-01 | Mamba2-hybrid(56层) | 3.00B | ✅ done | **4.6846**（10.80→4.68） | **~72K** | ~340ms | 从零，2.12 GPU0~5，非等参(+19.5%) |
+
+## S2 训练结果（1000 步，已完成 2026-09-29）
+- **loss 曲线**：MiniCPM5 11.62→4.8065（Δ6.81）；Mamba2 10.80→4.6846（Δ6.12）。Mamba2 终值更低（-0.122），但多 ~19.5% 参数（非等参，需注明）。
+- **训练吞吐**：MiniCPM5 ~275ms/iter（≈89K tok/s）；Mamba2 ~340ms/iter（≈72K tok/s）。**MiniCPM5 快 ~24%**。
+  - ⚠️ Mamba2 首步 ~12.3s 是 SSM 编译/CUDA-graph 捕获的一次性开销，稳态 ~340ms。此前「11.6s/iter」为冒烟首步假象。
+- **Mamba2「初始 loss 8.80」已澄清**：真值首步 loss=10.80（≈ln(129408)=11.77，正常），此前 8.80 是 mock 数据冒烟测得多步后的值，非异常。
+- **checkpoint**：MiniCPM5 `nemo_experiments/minicpm5_2b_1000step/checkpoints/iter_0001000`（12 distcp，~4.9GB）；Mamba2 `nemo_experiments/mamba2_2b_1000step/checkpoints/iter_0001000`（~4.3GB）。
+- Δloss-per-parameter 观感：Mamba2 容量更大收敛略快但吐字慢；等参下优劣需 S3 推理性价 + 报告权衡。
+
+## S3 推理基准（下一步）
+- 待办：① NeMo ckpt→HF 权重转换（MiniCPM5=Llama 体系较简单；Mamba2-hybrid 自定义结构需手写转换）；② SGLang 起服测生成 tok/s（本环境 vLLM import 崩 `undefined symbol _ZN3c104cuda9SetDeviceEa`，用 SGLang 替代，沿用 1B 任务路径）；③ 记录 prompt 处理 + 生成 tok/s 对比。

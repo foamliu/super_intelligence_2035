@@ -1,15 +1,16 @@
 # MEMORY_2B.md — BaiZe 2B 架构搜索（从零训练）运行时状态（随 git 提交，重启用）
 
 ## 当前状态
-- STAGE: S2 1000 步从零训练（两架构各 6 卡并行 running）
-- PHASE: experiment_wait（等训练结束 → 提取 loss/tok/s → infer_bench）
-- WAITING: 1  ← 两架构 1000 步训练 running。判断结束：`pgrep -f pretrain_launcher`（本机=minicpm5，`ssh 10.239.2.12 pgrep -f pretrain_launcher`=mamba2）；或日志尾部 "saving checkpoint at iteration 1000"
+- STAGE: S2 完成（两架构各 6 卡 1000 步已跑完并保存 ckpt）→ S3 推理基准
+- PHASE: infer_bench（NeMo ckpt→HF → SGLang 测生成 tok/s）
+- WAITING: 0（S2 训练已结束，进入 S3 主动工作）
 - ERROR_COUNT: 0
-- BUDGET_USED（GPU·小时）: ~0.3（冒烟）+ 训练进行中
-- 当前运行实验:
-  - A1-01 MiniCPM5-2B：2.29 GPU0~5，日志 `/tmp/BAIZE2B_minicpm5_train.log`，~270ms/iter，几分钟跑完
-  - A2-01 Mamba2-hybrid：2.12 GPU0~5，日志 `/tmp/BAIZE2B_mamba2_train.log`，SSM 慢，预计 ~3 小时
-- 下一步: ① 提取 MiniCPM5 最终 loss/训练 tok/s；② Mamba2 跑完（~3h）后提取；③ 两架构齐 → infer_bench（ckpt→HF → SGLang）
+- BUDGET_USED（GPU·小时）: ~0.3（冒烟 ~0.1 + 两训练：MiniCPM5 6卡×~4.5min≈0.45、Mamba2 6卡×~5.5min≈0.55，合计 ~1.1）
+- S2 结果（已完成）:
+  - A1 MiniCPM5-2B（2.51B）：loss 11.62→**4.8065**，~275ms/iter ≈ **~89K tok/s**
+  - A2 Mamba2-hybrid（3.00B）：loss 10.80→**4.6846**，~340ms/iter ≈ **~72K tok/s**（首步 12.3s 为编译开销，稳态 340ms）
+  - 结论：MiniCPM5 训练快 ~24%；Mamba2 终值更低（但多 19.5% 参数，非等参）。详见 EXPERIMENTS_2B.md
+- 下一步（S3）：① 两 architecture NeMo ckpt→HF 权重转换；② SGLang 起服（vLLM import 崩，弃用）测 prompt 处理 + 生成 tok/s；③ 汇总三张对比表 + 生成 `BAIZE_2B_ARCH_RESULT.html`
 
 ## ⚠️ 本次会话关键变更（2026-09-29 晚，覆盖上一 agent 的「GBS=128 / 切 5.2M docs」计划）
 - **GBS 定版为 6**（TP=1/DP=6/mb=1，无梯度累积，24.5K tok/步）：任务数据段「~4M tok/步」是数据规模估计，非硬约束（决策 3「相同 GBS，标注即可」才是硬约束）。**根因**：Mamba2 SSM 每步 ~11.6s，GBS=128（grad_accum≈21）会让 Mamba2 达 ~68h/站≈408 GPU·h，远超 20 GPU·h 预算；GBS=6 时 Mamba2 ≈3.2h×6卡≈19.3 GPU·h，刚好压线。故用 GBS=6（已记录于 EXPERIMENTS_2B.md）。
