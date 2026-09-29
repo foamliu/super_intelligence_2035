@@ -3,7 +3,7 @@
 ## 当前状态
 - STAGE: ✅ **任务完成**（S1→S2→S3→S4 全链路打通，四阶段全部落地）
 - PHASE: converged（S4 报告已产出：三张对比表 + 胜出架构 + 可复现命令 + HTML 报告，均已 git commit + push）
-- WAITING: 0（无任何异步任务，停止新实验）
+- WAITING: 1（**收敛空闲态**，非「有异步任务 running」：任务已最终完成且确定不再有新实验，置 1 让 loop.sh 拉长睡眠省 token，避免十一假期每 60s 空转产生重复「唤醒复核」噪音。后续唤醒读此即知：直接确认 converged 并快速退出，**不要**再追加重复日记/commit，**不要**启动 LR 扫描等新实验）
 - ERROR_COUNT: 0
 - BUDGET_USED（GPU·小时）: ~0.3（冒烟 ~0.1 + 两训练：MiniCPM5 6卡×~4.5min≈0.45、Mamba2 6卡×~5.5min≈0.55，合计 ~1.1）
 - S2 结果（已完成）:
