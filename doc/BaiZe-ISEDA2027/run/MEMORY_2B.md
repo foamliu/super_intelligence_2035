@@ -9,13 +9,14 @@
 - S2 结果（已完成）:
   - A1 MiniCPM5-2B（2.512B）：loss 11.62→**4.8065**，~275ms/iter ≈ **~89K tok/s**
   - A2 Mamba2-hybrid（2.220B ⚠️ 修正）：loss 10.80→**4.6846**，~340ms/iter ≈ **~72K tok/s**（首步 12.3s 为编译开销）
-- S3 结果（已完成，mcore 直驱 / TP1 / 1×H100 / bf16 / seq2048+256gen / batch=1）:
-  - A1 MiniCPM5-2B：prefill **20,780 tok/s**（98.6ms）、decode **2.18 tok/s**（459ms/token ⚠️）
-  - A2 Mamba2-hybrid：prefill **23,029 tok/s**（88.9ms）、decode **19.08 tok/s**（52ms/token）
-  - 日志 `/tmp/BAIZE2B_infer_{minicpm5,mamba2}.log`（含 RESULT_JSON）。
+- S3 结果（已完成并最终复核，mcore 直驱 / TP1 / 1×H100 / bf16 / seq2048+256gen / batch=1 / prefill-iters=12）:
+  - A1 MiniCPM5-2B：prefill **21,436 tok/s**（95.5ms）、decode **2.21 tok/s**（452ms/token ⚠️）
+  - A2 Mamba2-hybrid：prefill **23,692 tok/s**（86.4ms）、decode **22.77 tok/s**（44ms/token）
+  - 日志 `/tmp/BAIZE2B_{minicpm5,mamba2}_final.log`（含 RESULT_JSON）。诊断脚本 `infer_diag.py`/`infer_prof.py`。
+  - ✅ **decode 根因已定位（torch.profiler）**：MiniCPM5 decode 偏慢 = mcore 直驱下 TE fused-attention 逐层 CPU launch 开销（单步 Self CPU≈620ms：FusedAttnFunc 42层×13.8ms≈579ms，Self CUDA 仅 4ms → CPU-bound），**非「KV-cache 未命中」**。Mamba2 仅 4 attention + SSM/MLP，decode 快 ~10×。
 - ⚠️ **S3 关键修正：Mamba2 真实参数量 2.220B（非 3.00B）**。S1/S2 的「3.00B」来自 mcore `.transformer layers 2.47 + emb 0.53` 打印（对 Mamba 误把 56 层全按 full attention+MLP 计）；两处独立 `sum(numel())=2,220,268,032` 一致。故两架构**基本等参**（MiniCPM5 仅 +13%），Mamba2「更低 loss+更少参数」结论更强。
 - ✅ 任务终点已达成：① 三张对比表（EXPERIMENTS_2B.md）；② `doc/BaiZe-ISEDA2027/BAIZE_2B_ARCH_RESULT.html`（自包含已生成）；③ 可复现命令（EXPERIMENTS_2B.md 顶部 + HTML §6）；④ git commit+push（已同步 origin/main）。**停止新实验**。
-- ⚠️ S3 环境备注：sglang/vLLM 均不可用（vLLM `_C.abi3.so` 崩、sglang 未装），故改用 mcore `infer_benchmark.py` 直驱 checkpoint（TP1）做 prefill/decode 计时，无需转 HF。MiniCPM5 decode 459ms/token 属 TE flash-attn KV-cache 未命中下界，如需精确 decode 数后续 SGLang 起服复核。
+- ⚠️ S3 环境备注：sglang/vLLM 均不可用（vLLM `_C.abi3.so` 崩、sglang 未装），故改用 mcore `infer_benchmark.py` 直驱 checkpoint（TP1）做 prefill/decode 计时，无需转 HF。MiniCPM5 decode 452ms/token 已定位为 **mcore 直驱下 TE fused-attention 逐层 CPU launch 开销（CPU-bound，非 KV-cache 未命中）**，如需生产级 decode 数应走 SGLang/CUDA-graph。
 
 ## ⚠️ 本次会话关键变更（2026-09-29 晚，覆盖上一 agent 的「GBS=128 / 切 5.2M docs」计划）
 - **GBS 定版为 6**（TP=1/DP=6/mb=1，无梯度累积，24.5K tok/步）：任务数据段「~4M tok/步」是数据规模估计，非硬约束（决策 3「相同 GBS，标注即可」才是硬约束）。**根因**：Mamba2 SSM 每步 ~11.6s，GBS=128（grad_accum≈21）会让 Mamba2 达 ~68h/站≈408 GPU·h，远超 20 GPU·h 预算；GBS=6 时 Mamba2 ≈3.2h×6卡≈19.3 GPU·h，刚好压线。故用 GBS=6（已记录于 EXPERIMENTS_2B.md）。
@@ -77,5 +78,6 @@
 | 2026-09-29 | arch_prepare | ✅ launcher + MiniCPM5 provider/recipe 落地；✅ 修 2 个 mcore0.16.1 兼容（get_megatron_optimizer shim + save_optim=False 绕 flattened_range）；✅ 两架构 10 步冒烟均跑通并保存 ckpt。⚠️ 参数量 2.51B vs 3.00B 不对齐；⚠️ Mamba 冒烟 loss 8.80 异常。PHASE→experiment_run |
 | 2026-09-29 | experiment_run | ✅ 切 200k docs/165M tokens（kill 上一 agent 的 5.2M 切词，改用 200k）；✅ 补 load_optim=False + eval_iters=0 + omegaconf 上 NFS；✅ 真实数据冒烟两架构跑通；✅ **GBS 定版 6**；✅ 启动两架构各 6 卡 1000 步（MiniCPM5 ~270ms/iter、Mamba2 ~3h）。WAITING=1 |
 | 2026-09-29 | s2_result | ✅ 两架构 1000 步完成：MiniCPM5 4.8065 / ~89K tok/s；Mamba2 4.6846 / ~72K tok/s。loss 已从 tensorboard 日志读取；吞吐从 iter 日志读取。PHASE→infer_bench |
-| 2026-09-29 | s3_infer | ✅ mcore `infer_benchmark.py` 直驱两 ckpt 测 prefill/decode（TP1/1×H100/bf16/seq2048+256gen/batch1）。MiniCPM5 prefill 20,780 & decode 2.18（⚠️459ms/token 异常，TE KV-cache 未命中）；Mamba2 prefill 23,029 & decode 19.08。✅ **修正 Mamba2 参数量 3.00B→2.220B**（mcore 打印对 Mamba 计数 bug，实测 numel 一致）。PHASE→report |
+| 2026-09-29 | s3_infer | ✅ mcore `infer_benchmark.py` 直驱两 ckpt 测 prefill/decode（TP1/1×H100/bf16/seq2048+256gen/batch1）。final 复核（prefill-iters=12）：MiniCPM5 prefill 21,436 & decode 2.21（⚠️452ms/token）；Mamba2 prefill 23,692 & decode 22.77。✅ **修正 Mamba2 参数量 3.00B→2.220B**（mcore 打印对 Mamba 计数 bug，实测 numel 一致）。PHASE→report |
 | 2026-09-29 | report(done) | ✅ S4 报告完成：三张对比表（loss/训练速度/推理速度）+ 胜出架构 **Mamba2-hybrid** + 可复现命令 + `BAIZE_2B_ARCH_RESULT.html`（自包含）。已 git commit + push，同步 origin/main。**任务完成（converged），停止新实验**。 |
+| 2026-09-29 | s3_final_recheck | ✅ 复核 S3 推理基准并修正 `infer_benchmark.py`（`seq_length=4096` 与训练一致、`train_iters`>warmup 使 scheduler 通过）；两架构 clean 重跑：MiniCPM5 prefill 21,436 & decode 2.21；Mamba2 prefill 23,692 & decode **22.77**（decode 快 10.3×）。✅ **用 torch.profiler 定位 MiniCPM5 decode 偏慢根因**：mcore 直驱下 TE fused-attention 逐层 CPU launch 开销（FusedAttnFunc 42层×13.8ms≈579ms，Self CPU≈620ms vs Self CUDA≈4ms → CPU-bound，非 KV-cache 未命中）。已更新 HTML/EXPERIMENTS_2B 的 decode caveat 为定论。 |

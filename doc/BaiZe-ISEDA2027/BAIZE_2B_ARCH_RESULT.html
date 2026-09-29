@@ -49,7 +49,7 @@
 
 <div class="verdict">
   <h3 style="margin-top:0;">🏆 胜出架构：<span style="color:var(--accent);">Mamba2-hybrid（56 层，Nemotron-H 式顺序混合）</span></h3>
-  <p>以 <b>更少参数（2.220B vs 2.512B，-11.6%）</b> 达成 <b>更低的最终 loss（4.6846 vs 4.8065，-0.122）</b> 与 <b>更优的推理速度（prefill +10.8%、decode +8.8×）</b>。</p>
+  <p>以 <b>更少参数（2.220B vs 2.512B，-11.6%）</b> 达成 <b>更低的最终 loss（4.6846 vs 4.8065，-0.122）</b> 与 <b>更优的推理速度（prefill +10.5%、decode +10.3×）</b>。</p>
   <p><span class="badge b-ok">loss 收敛：Mamba2 胜</span> <span class="badge b-ok">推理速度：Mamba2 胜</span> <span class="badge b-no">训练速度：MiniCPM5 胜（快 24%）</span></p>
   <p style="color:var(--muted);font-size:13px;">权衡：Mamba2 的 SSM 前向/反向计算更密集，训练吞吐落后 ~24%；若以「训练吞吐」为第一优先级选 MiniCPM5，否则选 Mamba2。</p>
 </div>
@@ -98,14 +98,14 @@
 </table>
 <p style="color:var(--muted);font-size:13px;">注：Mamba2 首步 ~12.3s 为 SSM 编译/CUDA-graph 捕获一次性开销，不计入稳态吞吐。</p>
 
-<h3>表 3 · 推理速度（mcore 直驱 / TP1 / 1×H100 / bf16 / seq2048 prompt + 256 gen / batch=1）</h3>
+<h3>表 3 · 推理速度（mcore 直驱 / TP1 / 1×H100 / bf16 / seq2048 prompt + 256 gen / batch=1 / prefill-iters=12）</h3>
 <table>
   <tr><th>架构</th><th>prefill tok/s</th><th>prefill 延迟</th><th>decode tok/s</th><th>decode 延迟/token</th><th>判定</th></tr>
-  <tr><td>MiniCPM5-2B</td><td>20,780</td><td>98.6 ms</td><td>2.18 ⚠️</td><td>~459 ms</td><td>—</td></tr>
-  <tr><td>Mamba2-hybrid</td><td><b>23,029</b></td><td>88.9 ms</td><td><b>19.08</b></td><td>~52 ms</td><td class="win">✅ Mamba2 勝（prefill +10.8%、decode +8.8×）</td></tr>
+  <tr><td>MiniCPM5-2B</td><td>21,436</td><td>95.5 ms</td><td>2.21 ⚠️</td><td>~452 ms</td><td>—</td></tr>
+  <tr><td>Mamba2-hybrid</td><td><b>23,692</b></td><td>86.4 ms</td><td><b>22.77</b></td><td>~44 ms</td><td class="win">✅ Mamba2 勝（prefill +10.5%、decode +10.3×）</td></tr>
 </table>
 <div class="card" style="border-left:5px solid var(--warn);">
-  <b>⚠️ decode 基准 caveat</b>：MiniCPM5 的 decode 2.18 tok/s（459ms/token）<b>异常偏低</b>，疑似 mcore 路径下 TE flash-attention 的 KV-cache 未充分命中（重算/慢路径），属<b>下界非典型值</b>；Mamba2 的 SSM 层以 O(1) 循环状态逐 token 解码、仅 4 个 attention 层需 KV-cache，decode 快且数值可信。故「decode 方向性结论（SSM 解码占优）」可信，但 MiniCPM5 绝对 decode 数如需精确，后续以 SGLang 起服复核。
+  <b>⚠️ decode 基准 caveat（已用 torch.profiler 定位根因）</b>：MiniCPM5 的 decode 偏低（2.21 tok/s ≈ 452ms/token）<b>并非「KV-cache 未命中」</b>，而是 <b>mcore 直驱（无 CUDA-graph / flashinfer）下 TE fused-attention 的逐层 CPU launch 开销</b>。profiler 证据：单步 <code>Self CPU ≈ 620ms</code>（其中 <code>FusedAttnFunc</code> 42 层 × ~13.8ms = 579ms，占 93.4%），而 <code>Self CUDA 仅 4.05ms</code> —— 即 <b>CPU-bound、非 GPU-bound</b>（纯 GPU 计算上界 ≈ 250 tok/s）。Mamba2 仅 4 个 attention 层 + 其余为 SSM/MLP（SSM 以 O(1) 循环状态逐 token 解码、CPU 开销极低），故 decode 仍比 MiniCPM5 快 ~10×。<b>两架构用同一代码路径测量，相对结论可信</b>；MiniCPM5 绝对 decode 数如需生产级数值，应改用 SGLang / CUDA-graph，本报告为 mcore 直驱的下界参考。
 </div>
 
 <h2 class="sec"><span class="no">5</span>综合结论</h2>

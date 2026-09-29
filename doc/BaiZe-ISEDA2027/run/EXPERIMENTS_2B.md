@@ -27,13 +27,13 @@
 
 > 训练吞吐：**MiniCPM5 胜**（快 ~24%）。Mamba2 的 SSM 前向/反向计算更密集。
 
-### 表 3：推理速度对比（mcore 直驱 / TP1 / 1×H100 / bf16 / seq 2048 prompt + 256 gen / batch=1）
+### 表 3：推理速度对比（mcore 直驱 / TP1 / 1×H100 / bf16 / seq 2048 prompt + 256 gen / batch=1 / prefill-iters=12）
 | 架构 | prefill tok/s | decode tok/s | decode 延迟/token |
 |:---|:---|:---|:---|
-| MiniCPM5-2B | 20,780 | 2.18 ⚠️ | ~459ms |
-| Mamba2-hybrid | **23,029** | **19.08** | ~52ms |
+| MiniCPM5-2B | 21,436 | 2.21 ⚠️ | ~452ms |
+| Mamba2-hybrid | **23,692** | **22.77** | ~44ms |
 
-> 推理：**Mamba2 胜**（prefill +10.8%、decode +8.8×）。⚠️ MiniCPM5 的 decode（459ms/token）异常偏低，疑似 mcore 路径下 TE flash-attention 的 KV-cache 未充分命中（重算/慢路径），属**下界**非典型值；Mamba2 的 SSM 层以 O(1) 循环状态逐 token 解码，仅 4 个 attention 层需 KV-cache，decode 快且数值可信。故 decode 的「方向性」结论（SSM 解码占优）成立，但 MiniCPM5 的绝对值需在 SGLang 栈复核。
+> 推理：**Mamba2 胜**（prefill +10.5%、decode +10.3×）。⚠️ MiniCPM5 的 decode（452ms/token）现象已用 torch.profiler **定位根因**：非「KV-cache 未命中」，而是 **mcore 直驱（无 CUDA-graph/flashinfer）下 TE fused-attention 的逐层 CPU launch 开销**——单步 `Self CPU≈620ms`（其中 `FusedAttnFunc` 42 层×~13.8ms=579ms 占 93.4%），`Self CUDA 仅 4.05ms`，即 **CPU-bound、非 GPU-bound**（纯 GPU 计算上界 ≈250 tok/s）。Mamba2 仅 4 个 attention 层 + SSM/MLP（SSM 以 O(1) 循环状态解码、CPU 开销极低），故 decode 快 ~10×。**两架构同一代码路径测量，相对结论可信**；MiniCPM5 绝对 decode 数如需生产级值应走 SGLang/CUDA-graph（本报告为 mcore 直驱下界）。
 
 ## S1 冒烟结果（arch_prepare，2026-09-29）
 - 两架构均已「从零随机初始化」跑通 10 步前向+反向 + 保存 checkpoint（torch_dist）。
@@ -70,7 +70,8 @@
 - 观感：Mamba2（2.22B）以**更少参数**达成更低 loss，容量已占优且非容量换收敛；其劣势集中在训练吞吐（-24%）与 SSM 计算密度。
 
 ## S3 推理基准（mcore 直驱，已完成 2026-09-29）
-- **方式**：不转 HF/SGLang（vLLM 本环境 import 崩），直接 mcore `infer_benchmark.py` 加载 `iter_0001000` checkpoint 做 prefill/decode 计时（TP=1 / 1×H100 / bf16 / seq2048 prompt + 256 gen / batch=1，torchrun nproc_per_node=1）。
-- **结果**：MiniCPM5 prefill=20,780 tok/s（98.6ms）、decode=2.18 tok/s（459ms/token ⚠️）；Mamba2 prefill=23,029 tok/s（88.9ms）、decode=19.08 tok/s（52ms/token）。
-- **trusted 结论**：prefill Mamba2 快 ~10.8%；decode「方向性」Mamba2 占优（SSM 逐 token O(1) 循环解码）成立。⚠️ MiniCPM5 decode 459ms/token 属异常低（TE flash-attn KV-cache 未充分命中），为下界非典型值，如需精确 decode 数，后续用 SGLang 起服复核。
-- 日志：`/tmp/BAIZE2B_infer_minicpm5.log`、`/tmp/BAIZE2B_infer_mamba2.log`（均含 `RESULT_JSON`）。
+- **方式**：不转 HF/SGLang（vLLM 本环境 import 崩），直接 mcore `infer_benchmark.py` 加载 `iter_0001000` checkpoint 做 prefill/decode 计时（TP=1 / 1×H100 / bf16 / seq2048 prompt + 256 gen / batch=1 / prefill-iters=12，torchrun nproc_per_node=1）。已修 `infer_benchmark.py`：`seq_length=4096`（与训练一致，避免 model.seq_length 与 dataset.sequence_length 失配断言）、`train_iters` 保持 > warmup 使 scheduler 通过（skip_train=True 不真训练）。
+- **结果（最终复核，2026-09-29 晚）**：MiniCPM5 prefill=21,436 tok/s（95.5ms）、decode=2.21 tok/s（452ms/token ⚠️）；Mamba2 prefill=23,692 tok/s（86.4ms）、decode=22.77 tok/s（44ms/token）。
+- **trusted 结论**：prefill Mamba2 快 ~10.5%；decode Mamba2 快 ~10.3×（SSM 逐 token O(1) 循环解码）。
+- **✅ decode 根因已用 torch.profiler 定位（新增，覆盖旧「KV-cache 未命中」猜测）**：MiniCPM5 decode 偏慢是 **mcore 直驱（无 CUDA-graph/flashinfer）下 TE fused-attention 逐层 CPU launch 开销**——单步 `Self CPU≈620ms`（`FusedAttnFunc` 42 层×~13.8ms=579ms 占 93.4%）vs `Self CUDA 仅 4.05ms`，即 **CPU-bound 非 GPU-bound**（纯 GPU 上界 ≈250 tok/s）。非「KV-cache 未命中」，也非重算。Mamba2 仅 4 attention 层 + SSM/MLP，SSM 层 CPU 开销极低，故 decode 快 ~10×。**两架构同一代码路径测量，相对结论可信**；MiniCPM5 绝对 decode 如需生产级值应走 SGLang/CUDA-graph。
+- 日志：`/tmp/BAIZE2B_minicpm5_final.log`、`/tmp/BAIZE2B_mamba2_final.log`（均含 `RESULT_JSON`）；诊断脚本 `infer_diag.py` / `infer_prof.py`（可复现 profiler 结论）。
