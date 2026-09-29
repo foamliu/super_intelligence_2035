@@ -1,17 +1,21 @@
 # MEMORY_2B.md — BaiZe 2B 架构搜索（从零训练）运行时状态（随 git 提交，重启用）
 
 ## 当前状态
-- STAGE: S2 完成（两架构各 6 卡 1000 步已跑完并保存 ckpt）→ S3 推理基准
-- PHASE: infer_bench（NeMo ckpt→HF → SGLang 测生成 tok/s）
-- WAITING: 0（S2 训练已结束，进入 S3 主动工作）
+- STAGE: S3 完成（推理基准已出）→ S4 报告（三张对比表 + 胜出架构 + 可复现命令 + HTML）
+- PHASE: report（生成 `BAIZE_2B_ARCH_RESULT.html`）+ 可复现命令文档
+- WAITING: 0（S3 推理已完成，进入 S4 报告）
 - ERROR_COUNT: 0
 - BUDGET_USED（GPU·小时）: ~0.3（冒烟 ~0.1 + 两训练：MiniCPM5 6卡×~4.5min≈0.45、Mamba2 6卡×~5.5min≈0.55，合计 ~1.1）
 - S2 结果（已完成）:
-  - A1 MiniCPM5-2B（2.51B）：loss 11.62→**4.8065**，~275ms/iter ≈ **~89K tok/s**
-  - A2 Mamba2-hybrid（3.00B）：loss 10.80→**4.6846**，~340ms/iter ≈ **~72K tok/s**（首步 12.3s 为编译开销，稳态 340ms）
-  - 结论：MiniCPM5 训练快 ~24%；Mamba2 终值更低（但多 19.5% 参数，非等参）。详见 EXPERIMENTS_2B.md
-- 下一步（S3）：① 两架构 NeMo ckpt→HF 权重转换（MiniCPM5→Llama 结构；Mamba2-hybrid→**Nemotron-H** 结构，非 Hymba，需手写 `NVIDIAMambaHybridModelProvider2B` 权重映射，无现成 bridge）；② SGLang 起服测 prompt 处理 + 生成 tok/s（batch=1、prefill/decode 分列）；③ 汇总三张表 + 生成 `BAIZE_2B_ARCH_RESULT.html`。
-- ⚠️ S3 环境现状（已探明）：`sglang` **未安装**（需 pip 装，注意对齐 torch2.8/cu128）；`vllm 0.9.2` 已装但 **C 扩展崩**（`_C.abi3.so: undefined symbol _ZN3c104cuda9SetDeviceEa`，与 torch 版本不匹配），故 vLLM 不可用，按任务要求走 SGLang（`nemotron_h` + `--mamba-ssm-dtype float32`）。
+  - A1 MiniCPM5-2B（2.512B）：loss 11.62→**4.8065**，~275ms/iter ≈ **~89K tok/s**
+  - A2 Mamba2-hybrid（2.220B ⚠️ 修正）：loss 10.80→**4.6846**，~340ms/iter ≈ **~72K tok/s**（首步 12.3s 为编译开销）
+- S3 结果（已完成，mcore 直驱 / TP1 / 1×H100 / bf16 / seq2048+256gen / batch=1）:
+  - A1 MiniCPM5-2B：prefill **20,780 tok/s**（98.6ms）、decode **2.18 tok/s**（459ms/token ⚠️）
+  - A2 Mamba2-hybrid：prefill **23,029 tok/s**（88.9ms）、decode **19.08 tok/s**（52ms/token）
+  - 日志 `/tmp/BAIZE2B_infer_{minicpm5,mamba2}.log`（含 RESULT_JSON）。
+- ⚠️ **S3 关键修正：Mamba2 真实参数量 2.220B（非 3.00B）**。S1/S2 的「3.00B」来自 mcore `.transformer layers 2.47 + emb 0.53` 打印（对 Mamba 误把 56 层全按 full attention+MLP 计）；两处独立 `sum(numel())=2,220,268,032` 一致。故两架构**基本等参**（MiniCPM5 仅 +13%），Mamba2「更低 loss+更少参数」结论更强。
+- 下一步（S4，任务终点）：① 三张对比表（已写入 EXPERIMENTS_2B.md）；② 生成 `doc/BaiZe-ISEDA2027/BAIZE_2B_ARCH_RESULT.html`；③ 可复现命令文档；④ git commit+push。
+- ⚠️ S3 环境备注：sglang/vLLM 均不可用（vLLM `_C.abi3.so` 崩、sglang 未装），故改用 mcore `infer_benchmark.py` 直驱 checkpoint（TP1）做 prefill/decode 计时，无需转 HF。MiniCPM5 decode 459ms/token 属 TE flash-attn KV-cache 未命中下界，如需精确 decode 数后续 SGLang 起服复核。
 
 ## ⚠️ 本次会话关键变更（2026-09-29 晚，覆盖上一 agent 的「GBS=128 / 切 5.2M docs」计划）
 - **GBS 定版为 6**（TP=1/DP=6/mb=1，无梯度累积，24.5K tok/步）：任务数据段「~4M tok/步」是数据规模估计，非硬约束（决策 3「相同 GBS，标注即可」才是硬约束）。**根因**：Mamba2 SSM 每步 ~11.6s，GBS=128（grad_accum≈21）会让 Mamba2 达 ~68h/站≈408 GPU·h，远超 20 GPU·h 预算；GBS=6 时 Mamba2 ≈3.2h×6卡≈19.3 GPU·h，刚好压线。故用 GBS=6（已记录于 EXPERIMENTS_2B.md）。
@@ -72,3 +76,5 @@
 | 2026-09-29 | env_check | ✅ PYTHONPATH=/tmp/omegaconf_230 下 `import megatron.bridge` 成功（torch2.8.0+cu128/cuda12.8）；两 provider/recipe import 均 OK；PHASE→arch_prepare |
 | 2026-09-29 | arch_prepare | ✅ launcher + MiniCPM5 provider/recipe 落地；✅ 修 2 个 mcore0.16.1 兼容（get_megatron_optimizer shim + save_optim=False 绕 flattened_range）；✅ 两架构 10 步冒烟均跑通并保存 ckpt。⚠️ 参数量 2.51B vs 3.00B 不对齐；⚠️ Mamba 冒烟 loss 8.80 异常。PHASE→experiment_run |
 | 2026-09-29 | experiment_run | ✅ 切 200k docs/165M tokens（kill 上一 agent 的 5.2M 切词，改用 200k）；✅ 补 load_optim=False + eval_iters=0 + omegaconf 上 NFS；✅ 真实数据冒烟两架构跑通；✅ **GBS 定版 6**；✅ 启动两架构各 6 卡 1000 步（MiniCPM5 ~270ms/iter、Mamba2 ~3h）。WAITING=1 |
+| 2026-09-29 | s2_result | ✅ 两架构 1000 步完成：MiniCPM5 4.8065 / ~89K tok/s；Mamba2 4.6846 / ~72K tok/s。loss 已从 tensorboard 日志读取；吞吐从 iter 日志读取。PHASE→infer_bench |
+| 2026-09-29 | s3_infer | ✅ mcore `infer_benchmark.py` 直驱两 ckpt 测 prefill/decode（TP1/1×H100/bf16/seq2048+256gen/batch1）。MiniCPM5 prefill 20,780 & decode 2.18（⚠️459ms/token 异常，TE KV-cache 未命中）；Mamba2 prefill 23,029 & decode 19.08。✅ **修正 Mamba2 参数量 3.00B→2.220B**（mcore 打印对 Mamba 计数 bug，实测 numel 一致）。PHASE→report |

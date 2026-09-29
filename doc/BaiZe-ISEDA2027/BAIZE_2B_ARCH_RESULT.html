@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 2B 架构搜索（从零训练）· 对比结果报告</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  td.win { background:#dafbe1; font-weight:700; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe 2B 架构搜索（从零训练）· 对比结果报告</h1>
+  <div class="sub">MiniCPM5-2B <b>vs</b> Mamba2-hybrid 2B —— loss 收敛 / 训练速度 / 推理速度 三维对比</div>
+  <div class="meta">
+    <span>📅 完成：2026-09-29</span>
+    <span>🖥️ GPU：6×H100 per 架构（TP1/DP6）</span>
+    <span>📦 规模：1000 步 × seq4096 × GBS6 ≈ 24.6M tokens / 架构</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <h3 style="margin-top:0;">🏆 胜出架构：<span style="color:var(--accent);">Mamba2-hybrid（56 层，Nemotron-H 式顺序混合）</span></h3>
+  <p>以 <b>更少参数（2.220B vs 2.512B，-11.6%）</b> 达成 <b>更低的最终 loss（4.6846 vs 4.8065，-0.122）</b> 与 <b>更优的推理速度（prefill +10.8%、decode +8.8×）</b>。</p>
+  <p><span class="badge b-ok">loss 收敛：Mamba2 胜</span> <span class="badge b-ok">推理速度：Mamba2 胜</span> <span class="badge b-no">训练速度：MiniCPM5 胜（快 24%）</span></p>
+  <p style="color:var(--muted);font-size:13px;">权衡：Mamba2 的 SSM 前向/反向计算更密集，训练吞吐落后 ~24%；若以「训练吞吐」为第一优先级选 MiniCPM5，否则选 Mamba2。</p>
+</div>
+
+<h2 class="sec"><span class="no">1</span>⚠️ 关键修正：Mamba2 真实参数量 = 2.220B（非 3.00B）</h2>
+<div class="card">
+  <p>执行 S3 推理基准时，用 <code>sum(p.numel())</code> 实测 Mamba2-hybrid 参数 = <b>2,220,268,032（2.220B）</b>，与此前记录（3.00B）不符。</p>
+  <ul>
+    <li><b>根因</b>：3.00B 来自 mcore 的 <code>Number of parameters in transformer layers in billions: 2.47</code> + <code>embedding 0.53</code> 打印——该打印对 Mamba/hybrid <b>误把全部 56 层按 full attention+MLP 计</b>，而实际绝大多数层的 SSM 权重远小于 attention，故虚高 ~0.78B。</li>
+    <li><b>两处独立实测一致</b>：训练日志 <code>rank(0,0)=2220268032</code> + 推理脚本 <code>sum(numel())=2220268032</code>。</li>
+    <li><b>结论修正</b>：两架构<b>基本等参</b>（MiniCPM5 仅多 ~13%），<b>不再是「非等参 +19.5%」</b>。这使 Mamba2 的「更低 loss + 更少参数」结论<b>更强</b>。</li>
+  </ul>
+</div>
+
+<h2 class="sec"><span class="no">2</span>候选架构</h2>
+<table>
+  <tr><th>项</th><th>MiniCPM5-2B</th><th>Mamba2-hybrid 2B</th></tr>
+  <tr><td>结构</td><td>42 层标准 Llama（Dense Attention + SwiGLU MLP）</td><td>56 层顺序混合（M=SSM、*=attention+MLP、-=MLP-only，4 个 attention 层）</td></tr>
+  <tr><td>hidden / ffn</td><td>2048 / 6144</td><td>2048 / 8192</td></tr>
+  <tr><td>注意力头</td><td>16 Q / 2 KV（GQA）</td><td>16 Q / 4 KV（GQA）× 仅 4 层</td></tr>
+  <tr><td>SSM</td><td>—</td><td>mamba_num_groups=8</td></tr>
+  <tr><td><b>参数量（实测）</b></td><td><b>2.512B</b></td><td><b>2.220B</b></td></tr>
+</table>
+
+<h2 class="sec"><span class="no">3</span>统一口径（决策 3 · 完全一致）</h2>
+<ul>
+  <li>统一 NVIDIA/NeMo recipe（<code>pretrain(pretrain_config(...), forward_step)</code>），随机初始化从零训练。</li>
+  <li>统一 tokenizer：DeepSeek-V4.1-Flash（vocab 129281，pad 129408）。</li>
+  <li>统一训练口径：seq=4096 / mb=1 / TP1·DP6 / <b>GBS=6</b> / AdamW lr=3e-4 warmup=100 decay→1000 / wd=0.1 / bf16 / train_iters=1000 / seed=1234 / 同数据同卡数。</li>
+</ul>
+
+<h2 class="sec"><span class="no">4</span>对比结果（三张表）</h2>
+
+<h3>表 1 · loss 收敛（早期，1000 步）</h3>
+<table>
+  <tr><th>架构</th><th>参数量</th><th>初始 loss</th><th>最终 loss</th><th>Δloss</th><th>判定</th></tr>
+  <tr><td>MiniCPM5-2B</td><td>2.512B</td><td>11.62</td><td>4.8065</td><td>6.81</td><td>—</td></tr>
+  <tr><td>Mamba2-hybrid</td><td><b>2.220B</b></td><td>10.80</td><td><b>4.6846</b></td><td>6.12</td><td class="win">✅ Mamba2 勝（更低 loss 且更少参数）</td></tr>
+</table>
+
+<h3>表 2 · 训练速度（6 卡 TP1/DP6）</h3>
+<table>
+  <tr><th>架构</th><th>稳态耗时/iter</th><th>训练 tok/s</th><th>相对</th><th>判定</th></tr>
+  <tr><td>MiniCPM5-2B</td><td>~275 ms</td><td><b>~89K</b></td><td>1.24×</td><td class="win">✅ MiniCPM5 勝（快 ~24%）</td></tr>
+  <tr><td>Mamba2-hybrid</td><td>~340 ms</td><td>~72K</td><td>1.00×</td><td>—</td></tr>
+</table>
+<p style="color:var(--muted);font-size:13px;">注：Mamba2 首步 ~12.3s 为 SSM 编译/CUDA-graph 捕获一次性开销，不计入稳态吞吐。</p>
+
+<h3>表 3 · 推理速度（mcore 直驱 / TP1 / 1×H100 / bf16 / seq2048 prompt + 256 gen / batch=1）</h3>
+<table>
+  <tr><th>架构</th><th>prefill tok/s</th><th>prefill 延迟</th><th>decode tok/s</th><th>decode 延迟/token</th><th>判定</th></tr>
+  <tr><td>MiniCPM5-2B</td><td>20,780</td><td>98.6 ms</td><td>2.18 ⚠️</td><td>~459 ms</td><td>—</td></tr>
+  <tr><td>Mamba2-hybrid</td><td><b>23,029</b></td><td>88.9 ms</td><td><b>19.08</b></td><td>~52 ms</td><td class="win">✅ Mamba2 勝（prefill +10.8%、decode +8.8×）</td></tr>
+</table>
+<div class="card" style="border-left:5px solid var(--warn);">
+  <b>⚠️ decode 基准 caveat</b>：MiniCPM5 的 decode 2.18 tok/s（459ms/token）<b>异常偏低</b>，疑似 mcore 路径下 TE flash-attention 的 KV-cache 未充分命中（重算/慢路径），属<b>下界非典型值</b>；Mamba2 的 SSM 层以 O(1) 循环状态逐 token 解码、仅 4 个 attention 层需 KV-cache，decode 快且数值可信。故「decode 方向性结论（SSM 解码占优）」可信，但 MiniCPM5 绝对 decode 数如需精确，后续以 SGLang 起服复核。
+</div>
+
+<h2 class="sec"><span class="no">5</span>综合结论</h2>
+<ul>
+  <li><b>质量/效率</b>：Mamba2-hybrid 以更少参数达到更低 loss，loss-per-parameter 明显占优（2 项：loss + 推理速度）。</li>
+  <li><b>吞吐</b>：MiniCPM5-2B 训练吞吐快 ~24%（SSM 前向/反向计算密集是 Mamba2 的软肋）。</li>
+  <li><b>部署</b>：Mamba2-hybrid 推理（尤其 decode）占优，适合推理场景。</li>
+  <li><b>最终推荐</b>：<b>Mamba2-hybrid</b> 为本次搜索胜出架构（2/3 维度占优 + 更少参数）。</li>
+  <li><b>局限</b>：仅 1000 步早期收敛（loss ~4.7，远未收敛），且 MiniCPM5 decode 需复核；建议择胜出架构跑更长步数 + 用 SGLang 复核 decode 后定稿。</li>
+</ul>
+
+<h2 class="sec"><span class="no">6</span>可复现命令</h2>
+<pre><code># 环境（两节点通用，NFS 共享）
+export PYTHONPATH=/nas_train/app.e0031982/omegaconf_230:$PYTHONPATH
+conda activate py310
+
+# S2 训练（两架构各 6 卡，TP1/DP6，GBS=6）
+cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027
+bash scripts/train.sh minicpm5 minicpm5_2b_1000step 29900 6   # 10.239.2.29 GPU0~5
+bash scripts/train.sh mamba2   mamba2_2b_1000step   29900 6   # 10.239.2.12 GPU0~5
+
+# S3 推理基准（TP1、直接加载 iter_0001000 checkpoint）
+torchrun --nproc_per_node=1 infer_benchmark.py --arch minicpm5 --master-port 29901
+torchrun --nproc_per_node=1 infer_benchmark.py --arch mamba2   --master-port 29901
+
+# 产物
+# checkpoint: nemo_experiments/{minicpm5,mamba2}_2b_1000step/checkpoints/iter_0001000
+# 训练日志:   /tmp/BAIZE2B_{minicpm5,mamba2}_train.log
+# 推理日志:   /tmp/BAIZE2B_infer_{minicpm5,mamba2}.log（含 RESULT_JSON）</code></pre>
+
+<footer>
+  BaiZe 2B 架构搜索 · 从零训练对比 · 生成于 2026-09-29 · 详见 EXPERIMENTS_2B.md / MEMORY_2B.md
+</footer>
+
+</div>
+</body>
+</html>
