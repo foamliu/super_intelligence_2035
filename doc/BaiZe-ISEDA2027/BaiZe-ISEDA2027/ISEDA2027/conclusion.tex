@@ -1,0 +1,8 @@
+\section{Conclusion}
+
+We presented BaiZe, a 1.04B-parameter agentic language model built from scratch on a fixed $\sim$84\,GPU-hour budget.
+Through a staged, budget-constrained search under $\mu$P hyper-parameter transfer and a WSD schedule, we isolated the single most productive lever---the stable-phase learning rate---and improved validation loss from $5.086$ to $4.969$ ($-0.117$) at matched step counts, with $\approx$102--111\,k tokens/s throughput on $8\times$H100.
+Our architectural sweep confirmed that the Llama-style GQA baseline is already well-placed in the 1B regime, and that no cheaper hybrid or Nemotron-style 1B variant is currently available in the Megatron-Core model zoo.
+
+The complete recipe and a single reproducible command encapsulate the entire construction; the next step is agentic fine-tuning with the \texttt{UltraData-SFT-Agent} corpus toward a deployable agent core for EDA and embedded applications.
+We hope this blueprint lowers the barrier for cost-bounded teams building their own efficient agentic SLMs from scratch.

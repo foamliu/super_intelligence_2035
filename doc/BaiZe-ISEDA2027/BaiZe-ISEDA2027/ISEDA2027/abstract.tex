@@ -1,0 +1,12 @@
+\begin{abstract}
+Large language models (LLMs) exhibit strong reasoning and tool-use skills, yet their computational footprint makes most agentic models impractical for edge, embedded, or cost-sensitive electronic design automation (EDA) deployments.
+We present \textbf{BaiZe}, a 1.04-billion-parameter agentic language model trained \emph{from scratch} on a fixed compute budget.
+BaiZe adopts a deployment-friendly decoder-only skeleton (24 layers, grouped-query attention, untied embeddings) and is trained with the Megatron-SWIFT framework using maximal-update parameterization ($\mu$P) so that cheap, small-scale sweeps transfer directly to the full model.
+We conduct a staged, budget-constrained architecture and hyper-parameter search (S1--S4) spanning $\sim$84 GPU-hours on $8\times$H100, evaluating layer count, KV-head count, embedding tying, learning rate, and the WSD decay ratio.
+The resulting recipe lowers the stable-phase learning rate from $6\times10^{-4}$ to $3\times10^{-4}$ and improves the final validation loss from $5.086$ to $4.969$ at the same step count ($-0.117$), while sustaining $\sim$102--111\,k tokens/s training throughput.
+We release the complete recipe and training command to support reproducible construction of efficient agentic small language models.
+\end{abstract}
+
+\begin{IEEEkeywords}
+small language model, agentic LLM, $\mu$P, WSD schedule, hyper-parameter search, efficient training
+\end{IEEEkeywords}

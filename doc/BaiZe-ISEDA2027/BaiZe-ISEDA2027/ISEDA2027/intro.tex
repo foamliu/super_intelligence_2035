@@ -1,0 +1,22 @@
+\section{Introduction}
+
+Large language models have recently demonstrated agentic capabilities---planning, tool invocation, and long-horizon reasoning---that make them attractive cores for intelligent assistants spanning chip design, verification, and other domains of electronic design automation.
+However, state-of-the-art agent backbones are routinely 7\,B parameters or larger, demanding high-end accelerators and memory footprints that are incompatible with edge, embedded, and cost-sensitive deployments where inference latency and energy are first-class constraints.
+
+Recent small language models (SLMs, $<\,$2\,B) have closed much of the gap with larger counterparts on single-turn benchmarks, but building such a model \emph{from scratch} remains an under-documented engineering problem.
+Every choice---architecture, optimizer, learning-rate schedule, data mixture---interacts with every other, and a naive grid search is prohibitively expensive.
+Our goal is therefore twofold: (i) to construct a 1B-scale agentic LLM from scratch on a strictly limited compute budget, and (ii) to expose the concrete, reproducible decisions that lead to it.
+
+\paragraph{BaiZe.}
+We present BaiZe, a 1.04B-parameter decoder-only model built from scratch on $\sim$84\,GPU-hours.
+Three design pillars organise our work:
+
+\begin{itemize}
+\item \textbf{Architecture.} A deep-and-thin Llama-style skeleton (24 layers, 16 attention heads, grouped-query attention with 2 KV heads, untied embeddings) inherited from the MiniCPM5-1B configuration, chosen after verifying that no comparable 1B variant exists for hybrid (attention+SSM) or Nemotron-style alternatives in the Megatron-Core model zoo.
+
+\item \textbf{Hyper-parameter transfer.} We train under maximal-update parameterization ($\mu$P)~\cite{yang2022tensor}, so that hyper-parameters discovered in short, cheap sweeps transfer to the full model without re-tuning at scale.
+
+\item \textbf{Budget-constrained search.} A staged search protocol (S1--S4) explores architecture and hyper-parameter variables one at a time under a hard GPU-hour budget, yielding a winning configuration whose only deviation from the baseline is a lower stable-phase learning rate ($6\times10^{-4}\rightarrow3\times10^{-4}$).
+\end{itemize}
+
+We hope BaiZe serves as a minimal, reproducible blueprint for building efficient agentic SLMs from scratch, and that our search methodology is of practical value to cost-bounded training efforts in the EDA and embedded-AI communities.

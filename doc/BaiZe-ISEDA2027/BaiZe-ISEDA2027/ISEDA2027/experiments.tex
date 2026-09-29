@@ -1,0 +1,20 @@
+\section{Experimental Settings}
+
+\subsection{Hardware and Software}
+All experiments run on $8\times$NVIDIA H100 GPUs within the Megatron-SWIFT v4.5.3 framework (CUDA 12.8, PyTorch 2.8.0, Python 3.10).
+We use fused attention, selective activation recomputation, and cross-entropy loss fusion; no tensor/pipeline parallelism is enabled.
+Under these settings the baseline sustains $\approx$102--111\,k tokens/s steady-state throughput.
+
+\subsection{Data}
+Pre-training uses the \texttt{Ultra-FineWeb-L3} English subset ($\approx$1.8\,T tokens), streamed and packed to a sequence length of $4096$.
+Complementary corpora---code (\texttt{UltraData-Code}, 1.2\,T), mathematics (\texttt{UltraData-Math}, 515\,G), and an agentic instruction-tuning set (\texttt{UltraData-SFT-Agent}, 51\,G)---are available for domain-weighted decay-phase mixing and downstream agentic fine-tuning.
+This work focuses on the from-scratch pre-training stage; agentic fine-tuning with \texttt{UltraData-SFT-Agent} is the immediate next step toward the target agent.
+
+\subsection{Search Budget and Protocol}
+The entire search is bound by a $\approx$84\,GPU-hour budget (aggregated across all experiments and retries).
+Short-horizon sweeps (S2, S3) run $80$ steps ($\approx$0.9\,GPU-hours each); the baseline (S1) runs $300$ steps and the verification run (S4) runs $160$ steps.
+Validation loss is reported at matched step counts so that comparisons across configurations remain apples-to-apples.
+
+\subsection{Configurations Swept}
+Table~\ref{tab:configs} summarises the searched configurations.
+Each row changes exactly one variable relative to the running best configuration.

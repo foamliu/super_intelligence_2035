@@ -1,0 +1,60 @@
+\section{Methodology}\label{sec:method}
+
+BaiZe is a decoder-only (Llama-style) model built and trained from scratch with the Megatron-SWIFT framework (v4.5.3) on top of Megatron-Core.
+This section details (i) the architecture, (ii) the training framework and $\mu$P transfer, (iii) the WSD schedule, and (iv) the budget-constrained search protocol.
+
+\subsection{Model Architecture}\label{sec:arch}
+BaiZe follows the MiniCPM5-1B configuration: a deep-and-thin decoder-only transformer with Pre-RMSNorm and SwiGLU activations.
+Grouped-query attention (GQA) shares $2$ KV heads across $16$ query heads, and word embeddings are \emph{untied} from the output head.
+The full configuration is listed in Table~\ref{tab:config}; the model totals $\approx$1.04B parameters.
+
+\begin{table}[htbp]
+\centering
+\caption{BaiZe model configuration.}
+\label{tab:config}
+\begin{tabular}{lc}
+\toprule
+\textbf{Hyper-parameter} & \textbf{Value} \\
+\midrule
+Hidden size & 1536 \\
+Intermediate size & 4608 \\
+Transformer layers & 24 \\
+Attention heads (Q) & 16 \\
+KV heads (GQA) & 2 \\
+Head dimension & 96 \\
+Vocabulary size & 130\,560 \\
+Max position embeddings & 131\,072 \\
+RoPE base ($\theta$) & 5\,000\,000 \\
+RMSNorm $\varepsilon$ & $1\times10^{-6}$ \\
+Tie word embeddings & false \\
+Activation & SwiGLU \\
+Precision & BF16 \\
+Parameters & $\approx$1.04B \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Training Framework and $\mu$P Transfer}\label{sec:framework}
+We train with the Megatron-SWIFT pre-training entry point (\texttt{megatron pt}) using the \texttt{llama}/\texttt{minicpm5} model bridge.
+Training is run under maximal-update parameterization ($\mu$P)~\cite{yang2022tensor}, which scales weight initialisation and learning rates according to hidden width so that hyper-parameters tuned in short, cheap runs transfer to the full configuration.
+We exploit this by running all architecture and hyper-parameter sweeps at a reduced iteration count (80--160 steps) and treating the resulting ranking as predictive of the full-model optimum.
+Fused attention (\texttt{attention\_backend fused}), selective activation recomputation, and cross-entropy loss fusion are enabled to raise throughput; no tensor or pipeline parallelism is required ($\texttt{tensor\_model\_parallel\_size}=1$), keeping the configuration simple and portable.
+
+\subsection{Warmup--Stable--Decay Schedule}\label{sec:wsd}
+BaiZe uses a WSD learning-rate schedule with three phases: a short linear \emph{warmup} ($10$ iterations), a long constant-rate \emph{stable} phase, and an exponential \emph{decay} to a minimum rate of $0.1\times$ the stable rate.
+The decay window $\delta$ (the \emph{WSD ratio}) is itself a swept hyper-parameter.
+Throughout, the global batch size is $1024$ with sequence length $4096$ and packing enabled, yielding $\approx$4\,M tokens per step.
+Initially the stable learning rate is $6\times10^{-4}$ with $\delta=10\%$; the search in Section~\ref{sec:search} perturbs these two quantities together with architectural variables.
+
+\subsection{Budget-Constrained Search Protocol}\label{sec:search}
+Because a full grid is infeasible under a fixed GPU budget, we adopt a staged, single-variable-at-a-time protocol:
+
+\begin{itemize}
+\item \textbf{S1 (baseline).} Reproduce the reference MiniCPM5-1B configuration to establish a loss/throughput baseline.
+\item \textbf{S2 (architecture sweep).} Perturb one architectural variable at a time---layer count ($24\rightarrow28$), KV-head count ($2\rightarrow4$), and embedding tying (untied$\rightarrow$tied)---at short horizon (80 steps).
+\item \textbf{S3 (schedule sweep).} Perturb the stable learning rate ($6\times10^{-4}$ vs.\ $3\times10^{-4}$ vs.\ $1\times10^{-3}$) and the WSD ratio ($10\%$ vs.\ $20\%$).
+\item \textbf{S4 (verification).} Retrain the winning configuration from scratch over a longer horizon (160 steps) to confirm convergence and reproducibility.
+\end{itemize}
+
+At every stage only a single variable changes relative to the running best, isolating each factor's contribution while keeping total GPU-hours within budget.
+We also validated the architectural search space up front: hybrid attention+SSM (Hymba-style) and Nemotron alternatives were found to have no released 1B-scale variants in Megatron-Core, so the Llama-style GQA baseline remains the only executable 1B architecture.
