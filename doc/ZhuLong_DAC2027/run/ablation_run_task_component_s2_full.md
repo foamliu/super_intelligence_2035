@@ -69,7 +69,7 @@
 | `Φ k=10` | hook 限 run_code ≤10 次 | 预算宽松作基线 | 5 |
 | `Φ k=3` | hook 限 run_code ≤3 次 | 中间档 | 5 |
 | `Φ k=1` | hook 限 run_code ≤1 次 | 极紧预算 | 5 |
-| `Φ lagged` | 单槽缓冲回上一拍（L=1，trace_key 修复版） | ⚠️ 需要修复 trace_key 缺陷 | 5 |
+| `Φ lagged` | 单槽缓冲回上一拍（L=1，trace_key 已修复） | 已修复+canary 通过 | 5 |
 
 > `Φ unbounded` 跳过（≡ full 基线，已有探路数据）。
 
@@ -86,9 +86,7 @@
 4. `lagged` 定义 = **滞后 1 次执行**：第 n 次 `run_code` 返回第 n−1 次的状态，第 1 次返回
    「尚无先前状态」占位。用**单槽缓冲**（不是队列），在元数据记录 `reported_call_index`。
 5. **预算 hook 的错误信息必须带唯一前缀 `[PHI-BUDGET-EXHAUSTED]`**。
-6. ❗ **lagged trace_key 修复**：探路发现 `_trace_key_from_ctx()` 按 MCP client_id/id(session) 隔离，
-   同 worker 顺序处理多题致槽位泄漏（42/158 滞后量≠1）。修复：trace_key 改为 per-task，
-   使用 `cline session_id`（158/158 唯一）作为 key。实现后 canary 验证 reported_call_index 差==1。
+6. lagged trace_key 已在探路阶段修复（`MEMORY_s2_1shot.md` ✅ 关键缺陷已修复 #2）：`_trace_key_from_ctx()` 改用 SSE session 对象身份作 dict 键，实现 per-task 隔离。Phase 2 开始前核对该修复是否存在（`grep 'ctx.session' main.py`），若被回退则重新实施。
 
 ---
 
