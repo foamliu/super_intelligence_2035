@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 2B 架构搜索（从零训练）· 假期执行计划报告</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr;} }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .flow { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; align-items:center; }
+  .flow .step { background:#fff; border:1px solid var(--border); border-radius:8px; padding:8px 14px; font-size:13px; font-weight:600; }
+  .flow .arrow { color:var(--muted); font-weight:700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe 2B 架构搜索（从零训练）· 假期执行计划报告</h1>
+  <div class="sub">MiniCPM5-2B <b>vs</b> Mamba2-hybrid 2B —— 统一 NVIDIA/NeMo recipe，随机初始化对比 loss / 训练速度 / 推理速度</div>
+  <div class="meta">
+    <span>📅 执行窗口：2026-09-30 ~ 10-08（十一假期）</span>
+    <span>🖥️ GPU：10.239.2.29（8 卡）+ 10.239.2.12（前 6 卡）</span>
+    <span>📦 规模：~2B × 2 架构</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <p>本报告是与任务书 <code>run/BAIZE_2B_ARCH_SEARCH_TASK.md</code> 配套的<b>计划说明</b>，供人在假期前/期间快速掌握任务全貌。
+  核心结论：两个 ~2B 架构在<b>「唯一变量 = 架构本身」</b>的前提下各从零训练 ~1000 步，产出三组可比的量化指标，最终以一份 HTML 报告交付胜出架构。</p>
+</div>
+
+<div class="toc">
+  <strong>目录</strong>
+  <ol>
+    <li><a href="#s1">任务目标与三项评估指标</a></li>
+    <li><a href="#s2">两套候选架构</a></li>
+    <li><a href="#s3">三个必须遵守的关键决策</a></li>
+    <li><a href="#s4">时间与 GPU 资源（双节点）</a></li>
+    <li><a href="#s5">执行状态机与阶段划分</a></li>
+    <li><a href="#s6">公平对比口径</a></li>
+    <li><a href="#s7">git 提交与成果保存</a></li>
+    <li><a href="#s8">风险清单与待确认项</a></li>
+    <li><a href="#s9">附录 · 启动命令与文件清单</a></li>
+  </ol>
+</div>
+
+<h2 class="sec" id="s1"><span class="no">1</span>任务目标与三项评估指标</h2>
+<p>对两个 <b>~2B</b> 候选架构做<b>从零预训练</b>（随机初始化，不加载任何官方权重）的公平对比，产出三组结论：</p>
+<div class="kpi-row">
+  <div class="kpi"><div class="v">loss 曲线</div><div class="l">早期收敛速度（~1000 步）</div></div>
+  <div class="kpi"><div class="v">训练速度</div><div class="l">tokens/sec</div></div>
+  <div class="kpi"><div class="v">推理速度</div><div class="l">tokens/sec（prefill / decode 分开）</div></div>
+</div>
+<p>最终交付：<b>1 份胜出架构 + 可复现训练命令 + 对比报告</b>（<code>EXPERIMENTS_2B.md</code>），并生成自包含 HTML 报告 <code>BAIZE_2B_ARCH_RESULT.html</code>。</p>
+
+<h2 class="sec" id="s2"><span class="no">2</span>两套候选架构</h2>
+<table>
+  <thead><tr><th>架构</th><th>参考文件</th><th>结构</th><th>训练入口</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><b>MiniCPM5-2B</b><br><span class="badge b-info">Llama 式</span></td>
+      <td><code>MiniCPM5-2B.config.json</code></td>
+      <td>42 层 / hidden 2048 / intermediate 6144 / 16 attn heads / 2 KV heads / SiLU / RoPE θ=5e6</td>
+      <td>NeMo recipe（需新建 GPTModelProvider）</td>
+    </tr>
+    <tr>
+      <td><b>Mamba2-hybrid 2B</b><br><span class="badge b-info">Attention + SSM 混合</span></td>
+      <td><code>MAMBA2_HYBRID_2B_FEASIBILITY_REPORT.html</code> + <code>mamba2_hybrid_2b/</code></td>
+      <td>56 层 hybrid（<code>M</code>=SSM / <code>*</code>=attention / <code>-</code>=MLP），宽度减半自 8B pattern</td>
+      <td>NeMo recipe（provider/recipe 已有，缺 launcher）</td>
+    </tr>
+  </tbody>
+</table>
+<div class="card">
+  <h3>固定资源</h3>
+  <ul>
+    <li><b>Tokenizer</b>：<code>/nas_train/app.e0031982/models/DeepSeek-V4.1-Flash/</code>（vocab <b>129281</b>，模型侧 pad 到 <b>129408</b>）</li>
+    <li><b>训练数据</b>：<code>/nas_inference/app.e0031982/datasets/openbmb/</code>（切一段子集，够 ~1000 步）</li>
+    <li><b>从零</b>：两架构均随机初始化，不加载官方权重</li>
+    <li><b>少量训练</b>：目标 ~1000 步（seq 4096），同一份数据子集</li>
+  </ul>
+</div>
+
+<h2 class="sec" id="s3"><span class="no">3</span>三个必须遵守的关键决策</h2>
+<p>防止 agent 走弯路、保证三组指标可比的三条铁律（已确认）：</p>
+
+<div class="card">
+  <h3>决策 1 · 统一到 NVIDIA/NeMo recipe（<span class="badge b-ok">已确认</span>）</h3>
+  <p>两个架构训练入口不对等，必须统一，否则指标不可比：</p>
+  <table>
+    <thead><tr><th>架构</th><th>问题</th><th>结论</th></tr></thead>
+    <tbody>
+      <tr><td>Mamba2-hybrid 2B</td><td>只能走 NeMo recipe <code>pretrain(pretrain_config(...), forward_step_func)</code></td><td rowspan="2">都走 NeMo recipe，各写一个 2B provider + recipe</td></tr>
+      <tr><td>MiniCPM5-2B</td><td>swift <code>--finetune</code> 无纯随机初始化入口；vocab 130560 与 DeepSeek 129281 冲突</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h3>决策 2 · tokenizer / 词表统一为 DeepSeek</h3>
+  <p>两架构嵌入层词表都按 DeepSeek <b>vocab=129281 → pad 129408</b>，不用 MiniCPM5-2B config 的 130560。
+  数据用<b>同一份 DeepSeek 切词的 <code>.bin/.idx</code></b>（复用 <code>preprocess_data.py</code>），两架构共用，避免 tokenizer 影响对比。</p>
+</div>
+
+<div class="card">
+  <h3>决策 3 · 训练口径对齐（<b>唯一变量 = 架构本身</b>）</h3>
+  <ul>
+    <li>seq_length=4096、micro_batch_size=1（共享 GPU 下 mb2 易 OOM）、bf16</li>
+    <li>相同 global_batch_size、AdamW、LR=3e-4、warmup/decay、weight_decay、train_iters(~1000)、数据子集、seed</li>
+    <li><b>两架构同卡数</b>（建议各 6 卡）</li>
+  </ul>
+</div>
+
+<h2 class="sec" id="s4"><span class="no">4</span>时间与 GPU 资源（双节点）</h2>
+<table>
+  <thead><tr><th>节点</th><th>可用 GPU</th><th>建议用途</th></tr></thead>
+  <tbody>
+    <tr><td><b>10.239.2.29</b></td><td>8×H100 80GB（GPU 0~7）</td><td>MiniCPM5-2B 训练（GPU0~5）+ 冒烟/推理（GPU6~7）</td></tr>
+    <tr><td><b>10.239.2.12</b></td><td>前 6×H100 80GB（GPU 0~5）</td><td>Mamba2-hybrid 训练（GPU0~5）</td></tr>
+  </tbody>
+</table>
+<ul>
+  <li>两节点 ssh 免密已通，可用 torchrun 多节点，或各自独立分配实验（上面建议的是各 6 卡<b>并行</b>，省假期时间且卡数一致）。</li>
+  <li>资源预算：无硬上限，建议单架构总 GPU·h ≤ 20。</li>
+  <li>时间线（9 天）：D1 数据/环境校验 → D2~D4 arch_prepare（落地 launcher + provider + 冒烟）→ D4~D8 1000 步训练与推理 bench → D9 收敛报告 + HTML。</li>
+</ul>
+
+<h2 class="sec" id="s5"><span class="no">5</span>执行状态机与阶段划分</h2>
+<p>agent 每次被唤醒<b>只走一步</b>（读记忆 → 判断 → 执行 → 回写记忆 → 退出）。</p>
+<div class="flow">
+  <span class="step">data_check</span><span class="arrow">→</span>
+  <span class="step">env_check</span><span class="arrow">→</span>
+  <span class="step">arch_prepare</span><span class="arrow">→</span>
+  <span class="step">experiment_run</span><span class="arrow">→</span>
+  <span class="step">experiment_wait</span><span class="arrow">→</span>
+  <span class="step">infer_bench</span><span class="arrow">→</span>
+  <span class="step">converged</span>
+</div>
+<table>
+  <thead><tr><th>PHASE</th><th>目标</th><th>关键产出</th></tr></thead>
+  <tbody>
+    <tr><td><code>data_check</code></td><td>确认可用数据子集够 ~1000 步</td><td>选定数据集路径、切词产物</td></tr>
+    <tr><td><code>env_check</code></td><td>验证环境 + omegaconf 规避 + <code>import megatron.bridge</code></td><td>确认阻塞已规避</td></tr>
+    <tr><td><code>arch_prepare</code></td><td>落地 NeMo launcher（torchrun + forward_step）+ MiniCPM5-2B 新建 GPT/Llama provider，各跑 10 步冒烟</td><td>「从零可跑性」+ 实测参数量 + 冒烟 loss/吞吐</td></tr>
+    <tr><td><code>experiment_run</code></td><td>启动一个「已打通的」架构跑 1000 步</td><td>训练日志</td></tr>
+    <tr><td><code>experiment_wait</code></td><td>轮询结束，提取 loss 曲线 + tok/s</td><td>写入 EXPERIMENTS_2B.md</td></tr>
+    <tr><td><code>infer_bench</code></td><td>测推理 tok/s（prefill/decode 分开）</td><td>写入 EXPERIMENTS_2B.md</td></tr>
+    <tr><td><code>converged</code></td><td>汇总三张对比表 + 胜出架构 + 生成 HTML</td><td>BAIZE_2B_ARCH_RESULT.html</td></tr>
+  </tbody>
+</table>
+<div class="card">
+  <h3>阶段划分（S1~S4）</h3>
+  <ul>
+    <li><b>S1 打通从零冒烟</b>：两架构随机初始化、跑 10 步前向+反向、输出 loss；任一架构 3 次冒烟失败 → 标记 <code>❌ NOT_RUNNABLE</code> 并跳过。</li>
+    <li><b>S2 1000 步训练</b>：两架构各跑 ~1000 步，输出 loss 曲线 + 训练 tok/s（相同数据/超参）。</li>
+    <li><b>S3 推理 benchmark</b>：统一口径（batch=1、固定 seq、prefill/decode 分列），注明实现栈（HF vs mcore forward）。</li>
+    <li><b>S4 收敛报告</b>：汇总三张表 + 胜出架构 + 可复现命令 + HTML。</li>
+  </ul>
+</div>
+
+<h2 class="sec" id="s6"><span class="no">6</span>公平对比口径</h2>
+<p>三组指标各自的口径约定，确保「只差在架构」：</p>
+<table>
+  <thead><tr><th>指标</th><th>口径约定</th><th>易踩坑</th></tr></thead>
+  <tbody>
+    <tr><td>loss 曲线</td><td>同一数据子集、同一 seed、同一 LR 计划</td><td>初始几步 loss 波动大，对齐到相同步数采样</td></tr>
+    <tr><td>训练速度</td><td>同卡数/同 DP、同 seq、同 mb</td><td>卡数不同则 tok/s 不可比</td></tr>
+    <tr><td>推理速度</td><td>batch=1、固定 seq，prefill/decode 分列</td><td>两架构实现栈不同（HF vs mcore），报告须注明</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec" id="s7"><span class="no">7</span>git 提交与成果保存</h2>
+<ul>
+  <li><b>高频率保存</b>：agent 每步操作后 <code>git add -A && git commit</code>；关键里程碑（arch_prepare 打通 / 1000 步完成 / HTML 生成）主动 <code>git push</code>。</li>
+  <li><b>自动兜底</b>：loop.sh 每约 5 小时自动 commit + push（无人值守不丢成果）。</li>
+  <li><b>认证</b>：PAT 已写入 <code>~/.git-credentials</code>（credential.helper=store），push 免交互，token 不落入任何被提交文件。</li>
+  <li><b>范围</b>：git 根目录 <code>/nas_train/app.e0031982/code/super_intelligence_2035</code>，只提交 <code>doc/</code> 文本；训练产物（checkpoint/`.bin`/`.idx`）在 git 外不入库。</li>
+</ul>
+
+<h2 class="sec" id="s8"><span class="no">8</span>风险清单与待确认项</h2>
+<table>
+  <thead><tr><th>#</th><th>风险 / 待确认</th><th>应对</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>MiniCPM5-2B 随机初始化的 GPT provider 用 mcore 哪套 recipe 复用</td><td>arch_prepare 阶段查 <code>megatron.bridge.recipes.gpt</code></td></tr>
+    <tr><td>2</td><td>NeMo launcher 最小可用形态（<code>nemo_run</code> 未装）</td><td>torchrun + <code>nvidia_resiliency_ext.CallWrapper</code> 直驱（可行性已确认 bypass）</td></tr>
+    <tr><td>3</td><td>参数量对齐（两端差 &gt;10% 则「非等参对比」）</td><td>arch_prepare 实测 <code>numel()</code> 并在报告注明</td></tr>
+    <tr><td>4</td><td>推理 benchmark 实现栈不同（Mamba2-hybrid 无 HF 推理）</td><td>mcore 上写前向/generate；报告注明栈 + 统一测速口径</td></tr>
+    <tr><td>5</td><td>omegaconf 环境阻塞</td><td>已规避：<code>PYTHONPATH=/tmp/omegaconf_230</code>，不动 site-packages</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec" id="s9"><span class="no">9</span>附录 · 启动命令与文件清单</h2>
+<h3>启动自动循环（假期挂机）</h3>
+<pre><code>setsid bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_2b_search_loop.sh \
+  &gt; /tmp/baize_2b_loop.log 2&gt;&amp;1 &lt; /dev/null &amp;</code></pre>
+<h3>文件清单</h3>
+<table>
+  <thead><tr><th>文件</th><th>作用</th></tr></thead>
+  <tbody>
+    <tr><td><code>run/BAIZE_2B_ARCH_SEARCH_TASK.md</code></td><td>只读任务书（目标 + 三决策 + 状态机）</td></tr>
+    <tr><td><code>run/baize_2b_search_loop.sh</code></td><td>循环脚本（30min 唤醒 + 5h 自动 push）</td></tr>
+    <tr><td><code>run/MEMORY_2B.md</code></td><td>运行时状态（STAGE/PHASE/ERROR_COUNT/BUDGET）</td></tr>
+    <tr><td><code>run/EXPERIMENTS_2B.md</code></td><td>实验记录表（核心产出）</td></tr>
+    <tr><td><code>run/daily-memories-2b/</code></td><td>每日操作日志</td></tr>
+    <tr><td><code>BAIZE_2B_ARCH_RESULT.html</code></td><td>最终 HTML 结果报告（S4 产出）</td></tr>
+  </tbody>
+</table>
+
+<footer>
+  BaiZe 2B 架构搜索 · 假期执行计划报告 · 生成于 2026-09-29 · 配套任务书 <code>run/BAIZE_2B_ARCH_SEARCH_TASK.md</code>
+</footer>
+
+</div>
+</body>
+</html>
