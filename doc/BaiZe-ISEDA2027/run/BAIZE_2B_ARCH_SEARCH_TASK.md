@@ -72,7 +72,7 @@
 
 ## 记忆管理
 
-- `MEMORY_2B.md` — 本任务运行时状态（STAGE/PHASE/WAITING/ERROR_COUNT/BUDGET_USED、实验看板、操作流水）。不提交 git。其中 `WAITING` 控制唤醒节奏：`0`=无阻塞（loop.sh 约 1 分钟续跑，连续推进）；`1`=有异步任务 running（loop.sh 约 30 分钟轮询，省 token）。
+- `MEMORY_2B.md` — 本任务运行时状态（STAGE/PHASE/WAITING/ERROR_COUNT/BUDGET_USED、实验看板、操作流水），随 git 提交（loop.sh 每 4~6 小时兜底 commit 会带上）。其中 `WAITING` 控制唤醒节奏：`0`=无阻塞（loop.sh 约 1 分钟续跑，连续推进）；`1`=有异步任务 running（loop.sh 约 30 分钟轮询，省 token）。
 - `EXPERIMENTS_2B.md` — 本任务实验记录表（两架构的配置/结果/吞吐/耗时）。核心产出。
 - `daily-memories-2b/$(date +%F).md` — 每日操作日志，每步追加一条带时间戳记录。
 

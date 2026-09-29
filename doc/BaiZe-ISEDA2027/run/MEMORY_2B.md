@@ -1,4 +1,4 @@
-# MEMORY_2B.md — BaiZe 2B 架构搜索（从零训练）运行时状态（不提交 git，重启用）
+# MEMORY_2B.md — BaiZe 2B 架构搜索（从零训练）运行时状态（随 git 提交，重启用）
 
 ## 当前状态
 - STAGE: S1 打通从零冒烟
