@@ -17,8 +17,15 @@
 | MiniCPM5-2B (42层 Llama) | 2.51B | 11.62 | ~1462 ms | ✅ |
 | Mamba2-hybrid (56层) | 3.00B | 8.80 ⚠️ | ~11619 ms | ✅ |
 
+## S2 1000 步训练口径（决策 3，两架构完全一致，2026-09-29 晚启动）
+- 两架构均 6 卡（A1→10.239.2.29 GPU0~5；A2→10.239.2.12 GPU0~5），TP=1 / DP=6
+- seq_length=4096、micro_batch_size=1、**global_batch_size=6**（24.5K tok/步，无梯度累积）
+- optimizer=distributed AdamW（β1=0.9 β2=0.95 eps=1e-5 wd=0.1）、lr=3e-4（cosine→min_lr=3e-5，warmup=100）
+- train_iters=1000、random_seed=1234、bf16、eval 关闭（eval_iters=0）、数据=同一份 DeepSeek .bin/.idx（200k docs/164.75M tokens）
+- **GBS=6 理由（关键）**：Mamba2 SSM ~11.6s/步，GBS>6 会让 Mamba2 训练远超 20 GPU·h 预算（GBS=128≈408 GPU·h）。故定 GBS=6（Mamba2 ≈3.2h×6卡≈19.3 GPU·h）。属「早期收敛」对比（约 24.6M tokens/架构）。
+
 ## 实验记录
 | ID | 架构 | 参数量 | 状态 | 最终loss | 训练tok/s | 耗时 | 备注 |
 |:---|:---|:---|:---|:---|:---|:---|:---|
-| A1-01 | MiniCPM5-2B(42层 Llama) | 2.51B | smoke✅ | 11.62(init) | - | - | 从零 |
-| A2-01 | Mamba2-hybrid(56层) | 3.00B | smoke✅ | 8.80(init)⚠️ | - | - | 从零，非等参(+19.5%) |
+| A1-01 | MiniCPM5-2B(42层 Llama) | 2.51B | running | - | ~91K（270ms/iter） | - | 从零，2.29 GPU0~5 |
+| A2-01 | Mamba2-hybrid(56层) | 3.00B | running | - | ~2.1K（~11.6s/iter 预估） | - | 从零，2.12 GPU0~5，非等参(+19.5%) |
