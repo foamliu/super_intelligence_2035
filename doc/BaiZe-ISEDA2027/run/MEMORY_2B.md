@@ -10,7 +10,8 @@
   - A1 MiniCPM5-2B（2.51B）：loss 11.62→**4.8065**，~275ms/iter ≈ **~89K tok/s**
   - A2 Mamba2-hybrid（3.00B）：loss 10.80→**4.6846**，~340ms/iter ≈ **~72K tok/s**（首步 12.3s 为编译开销，稳态 340ms）
   - 结论：MiniCPM5 训练快 ~24%；Mamba2 终值更低（但多 19.5% 参数，非等参）。详见 EXPERIMENTS_2B.md
-- 下一步（S3）：① 两 architecture NeMo ckpt→HF 权重转换；② SGLang 起服（vLLM import 崩，弃用）测 prompt 处理 + 生成 tok/s；③ 汇总三张对比表 + 生成 `BAIZE_2B_ARCH_RESULT.html`
+- 下一步（S3）：① 两架构 NeMo ckpt→HF 权重转换（MiniCPM5→Llama 结构；Mamba2-hybrid→**Nemotron-H** 结构，非 Hymba，需手写 `NVIDIAMambaHybridModelProvider2B` 权重映射，无现成 bridge）；② SGLang 起服测 prompt 处理 + 生成 tok/s（batch=1、prefill/decode 分列）；③ 汇总三张表 + 生成 `BAIZE_2B_ARCH_RESULT.html`。
+- ⚠️ S3 环境现状（已探明）：`sglang` **未安装**（需 pip 装，注意对齐 torch2.8/cu128）；`vllm 0.9.2` 已装但 **C 扩展崩**（`_C.abi3.so: undefined symbol _ZN3c104cuda9SetDeviceEa`，与 torch 版本不匹配），故 vLLM 不可用，按任务要求走 SGLang（`nemotron_h` + `--mamba-ssm-dtype float32`）。
 
 ## ⚠️ 本次会话关键变更（2026-09-29 晚，覆盖上一 agent 的「GBS=128 / 切 5.2M docs」计划）
 - **GBS 定版为 6**（TP=1/DP=6/mb=1，无梯度累积，24.5K tok/步）：任务数据段「~4M tok/步」是数据规模估计，非硬约束（决策 3「相同 GBS，标注即可」才是硬约束）。**根因**：Mamba2 SSM 每步 ~11.6s，GBS=128（grad_accum≈21）会让 Mamba2 达 ~68h/站≈408 GPU·h，远超 20 GPU·h 预算；GBS=6 时 Mamba2 ≈3.2h×6卡≈19.3 GPU·h，刚好压线。故用 GBS=6（已记录于 EXPERIMENTS_2B.md）。
