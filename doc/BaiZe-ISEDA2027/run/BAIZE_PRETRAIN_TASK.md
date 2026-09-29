@@ -17,7 +17,7 @@
 2. 一份**实验记录表**（`EXPERIMENTS.md`），包含所有试过的配置及其结果与耗时
 3. 一条**可复现的训练命令**，能从头训练该胜出配置
 
-搜索维度包括但不限于：层数、GQA 头数、MLA/标准注意力、嵌入共享、优化器、学习率、WSD 衰减比例、batch size、seq-len、μP 基座宽度。
+搜索维度包括但不限于：层数、GQA 头数、MLA/标准注意力、嵌入共享、优化器、学习率、WSD 衰减比例、batch size、seq-len、μP 基座宽度、**架构类型（MiniCPM5-1B / Nemotron / Hymba）**。
 
 ---
 
@@ -66,7 +66,7 @@
 - 序列长度: **4096**
 - 全局 Batch Size: **1024**（单步 ~4M tokens）
 - **权重衰减率: 0.1**
-- **搜索预算: 84 小时**（GPU 总时长上限，所有实验累计）
+- **搜索预算: 20 小时**（GPU 总时长上限，所有实验累计）
 - 环境（锁定，不可变更）:
   - CUDA **12.8**
   - PyTorch **2.8.0**
@@ -81,8 +81,12 @@
 
 ### 硬件
 
-- 当前服务器有 **8 张 H100**
-- 可能存在其他进程占用 GPU
+| 节点 | 可用 GPU | 说明 |
+|:---|:---|:---|
+| **10.239.2.29** | **8 张 H100** | 主训练节点 |
+| **10.239.2.12** | **前 6 张 H100**（GPU 0~5） | 辅助训练节点 |
+- 可能存在其他进程占用 GPU，启动实验前需检查目标节点的 GPU 空闲情况
+- 节点间通过分布式通信（如 torchrun 多节点）或独立分配实验，由 agent 根据队列和资源决定
 
 ### 权限与规则
 
@@ -92,28 +96,33 @@
   3. **不要杀其他用户的进程**：除非确认无其他可用 GPU，且已通过 `nvidia-smi` 确认占用进程属于本项目或当前用户
   4. **杀进程前必须记录**：把被杀的 PID、进程名、占用显存写入 `MEMORY.md` 流水，便于追溯
 
-### 检查 GPU 占用
+### 检查 GPU 占用（需指定目标节点）
 
 ```bash
-nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv
+# 主节点
+ssh 10.239.2.29 nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv
+
+# 辅助节点
+ssh 10.239.2.12 nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv
 ```
 
 ### 按项目关键字识别可杀进程
 
 ```bash
-# 查看占用 GPU 的进程详情
-nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv,noheader
+# 查看占用 GPU 的进程详情（替换 <NODE_IP> 为目标节点 IP）
+ssh <NODE_IP> nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv,noheader
 
 # 查看进程完整命令行，确认是否属于本项目
-for pid in $(nvidia-smi --query-compute-apps=pid --format=csv,noheader); do
-  echo "PID $pid: $(ps -p $pid -o args= 2>/dev/null)"
+for pid in $(ssh <NODE_IP> nvidia-smi --query-compute-apps=pid --format=csv,noheader); do
+  echo "PID $pid: $(ssh <NODE_IP> ps -p $pid -o args= 2>/dev/null)"
 done
 ```
 
 ### 杀进程（确认属于本项目后）
 
 ```bash
-kill -9 <PID>
+# 替换 <NODE_IP> 和目标 <PID>
+ssh <NODE_IP> kill -9 <PID>
 ```
 
 > **原则**：能用就先用，资源不够才清理；清理优先清自己的残留，最后才考虑其他。每次清理都要留痕。
@@ -202,17 +211,18 @@ cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027
 
 ### 搜索维度与候选值
 
-| 维度 | 候选值 | 优先级 |
-|:---|:---|:---|
-| 层数 | 24 / 28 / 32 | 高 |
-| GQA KV 头数 | 2 / 4 / 8 | 高 |
-| 注意力类型 | 标准 GQA / MLA | 中 |
-| 嵌入共享 | on / off | 高 |
-| 优化器 | AdamW / Muon（衰减阶段） | 中 |
-| Stable LR | 3e-4 / 6e-4 / 1e-3 | 高 |
-| WSD 衰减比例 | 10% / 20% | 中 |
-| Batch Size | 512 / 1024 / 2048 | 中 |
-| Seq Len | 2048 / 4096 / 8192 | 低 |
+| 维度 | 候选值 | 优先级 | 说明 |
+|:---|:---|:---|:---|
+| **架构类型** | **MiniCPM5-1B / Nemotron / Hymba** | **高** | **S2 先验证框架兼容性，只跑可用的** |
+| 层数 | 24 / 28 / 32 | 高 | |
+| GQA KV 头数 | 2 / 4 / 8 | 高 | |
+| 注意力类型 | 标准 GQA / MLA | 中 | |
+| 嵌入共享 | on / off | 高 | |
+| 优化器 | AdamW / Muon（衰减阶段） | 中 | |
+| Stable LR | 3e-4 / 6e-4 / 1e-3 | 高 | |
+| WSD 衰减比例 | 10% / 20% | 中 | |
+| Batch Size | 512 / 1024 / 2048 | 中 | |
+| Seq Len | 2048 / 4096 / 8192 | 低 | |
 
 ### 实验预算控制
 
@@ -220,18 +230,18 @@ cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027
 - 短程胜出者才进入更长步数的验证
 - 所有实验共用同一份数据子集，保证可比性
 
-### 预算约束（84 小时硬上限）
+### 预算约束（20 小时硬上限）
 
-- **总预算**：84 小时 GPU 时长，所有实验累计
-- **单次短程试验**：建议 2~4 小时（对应 200~500 steps）
+- **总预算**：20 小时 GPU 时长，所有实验累计
+- **单次短程试验**：建议 1~2 小时（对应 100~200 steps），架构验证可用更低步数
 - **预算分配建议**：
-  - S1 基线：1 组 × 3h = 3h
-  - S2 单变量扫描：6~8 组 × 3h = 18~24h
-  - S3 组合优化：3~5 组 × 4h = 12~20h
-  - S4 择优验证：1 组 × 12~24h
-  - 预留缓冲：15~20h（应对失败重跑、数据预处理、环境调试）
+  - S1 基线：1 组 × 2h = 2h
+  - S2 单变量扫描（含架构对比）：3~4 组 × 2h = 6~8h
+  - S3 组合优化：2 组 × 3h = 6h
+  - S4 择优验证：1 组 × 2~3h = 2~3h
+  - 预留缓冲：1~2h（应对失败重跑）
 - **预算追踪**：每次实验结束后，在 `EXPERIMENTS.md` 记录本次实际耗时，累计消耗写入 `MEMORY.md`
-- **预算耗尽处理**：当累计消耗 ≥ 84 小时，立即停止新实验，`PHASE=converged`，用当前最佳配置收敛
+- **预算耗尽处理**：当累计消耗 ≥ 20 小时，立即停止新实验，`PHASE=converged`，用当前最佳配置收敛
 
 ---
 
@@ -262,7 +272,24 @@ python -c "import megatron; print(megatron.__version__)"
 nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv
 ```
 
-### 查本地 ms-swift 源码
+### 查底层 megatron-core 模型支持（先于 swift 注册表检查）
+```bash
+# megatron-core 安装路径
+MCORE=$(python -c "import megatron; print(megatron.__path__[0])" 2>/dev/null)
+echo "megatron path: $MCORE"
+
+# 查 megatron-core models 注册表
+python -c "
+from megatron.core import models
+avail = [m for m in dir(models) if not m.startswith('_')]
+print('mcore models:', avail)
+"
+
+# 找 Hymba/Nemotron 模型定义文件
+find $MCORE -name "*hymba*" -o -name "*nemotron*" -o -name "*mamba*" 2>/dev/null
+```
+
+### 查本地 ms-swift 源码（若底层 megatron-core 支持，再查 swift 如何桥接）
 ```bash
 ls /nas_train/app.e0031982/code/ms-swift
 cd /nas_train/app.e0031982/code/ms-swift
@@ -323,7 +350,7 @@ tail -50 /tmp/BAIZE_<CONFIG_ID>.log
 
 ### 步骤 D（PHASE=experiment_plan）
 
-- **先检查累计 GPU 时长**：若 ≥ 84 小时 → `PHASE=converged`，追加流水 → 退出
+- **先检查累计 GPU 时长**：若 ≥ 20 小时 → `PHASE=converged`，追加流水 → 退出
 - 读取 `EXPERIMENTS.md`，判断当前处于哪个搜索阶段（S1~S4）
 - 若实验表中无任何记录 → 规划 S1 基线实验，写入 `EXPERIMENTS.md` 待跑队列，`PHASE=experiment_run`，追加流水 → 退出
 - 若 S2 扫描未完成 → 从候选维度中选下一个未跑的配置，加入待跑队列，`PHASE=experiment_run`，追加流水 → 退出
@@ -363,6 +390,8 @@ tail -50 /tmp/BAIZE_<CONFIG_ID>.log
 - **实验记录必须完整**：每个配置的架构参数、超参、结果、耗时都要写入 `EXPERIMENTS.md`，否则搜索无法收敛
 - **预算优先**：任何规划前先确认剩余预算，避免规划超出预算的实验
 - **搜索工具使用**：优先查本地 ms-swift 源码，找不到再用 `cimi-search` / `cimi-fetch`，不要滥用
+- **架构类型处理**：在 S2 阶段优先安排架构类型扫描（MiniCPM5-1B / Nemotron / Hymba 各跑一组验证框架兼容性），然后才深入调参。框架不支持的架构标记为 `❌ NOT_SUPPORTED`，跳过。
+- **检查顺序修正**：判断架构是否支持时，**先查底层 megatron-core 模型库**（`megatron.core.models`），再查 swift 层的 model_type/template 注册表。megatron-core 有模型定义但 swift 未暴露的，记录为 `⚠️ NOT_EXPOSED`（标记可手动桥接），而非直接 NOT_SUPPORTED。
 
 ---
 
@@ -379,11 +408,13 @@ tail -50 /tmp/BAIZE_<CONFIG_ID>.log
 
 ## 实验记录
 
-| ID | 阶段 | 层数 | KV头 | 注意力 | 嵌入共享 | 优化器 | LR | Batch | SeqLen | 状态 | 最终Loss | 吞吐(tok/s) | 耗时(h) | 备注 |
-|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|
-| S1-01 | S1 | 24 | 2 | GQA | on | AdamW | 6e-4 | 1024 | 4096 | pending | - | - | - | 基线 |
-| S2-01 | S2 | 28 | 2 | GQA | on | AdamW | 6e-4 | 1024 | 4096 | pending | - | - | - | 层数↑ |
-| ... | | | | | | | | | | | | | | |
+| ID | 阶段 | 架构 | 层数 | KV头 | 注意力 | 嵌入共享 | 优化器 | LR | Batch | SeqLen | 状态 | 最终Loss | 吞吐(tok/s) | 耗时(h) | 备注 |
+|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|
+| S1-01 | S1 | MiniCPM5-1B | 24 | 2 | GQA | on | AdamW | 6e-4 | 1024 | 4096 | pending | - | - | - | - | 基线 |
+| S2-01 | S2 | MiniCPM5-1B | 28 | 2 | GQA | on | AdamW | 6e-4 | 1024 | 4096 | pending | - | - | - | - | 层数↑ |
+| S2-02 | S2 | Nemotron | 24 | 2 | GQA | on | AdamW | 6e-4 | 1024 | 4096 | pending | - | - | - | - | 架构对比 |
+| S2-03 | S2 | Hymba | 24 | 2 | hybrid | on | AdamW | 6e-4 | 1024 | 4096 | pending | - | - | - | - | 架构对比 |
+| ... | | | | | | | | | | | | | | | | |
 ```
 
 ---
@@ -393,5 +424,5 @@ tail -50 /tmp/BAIZE_<CONFIG_ID>.log
 1. **数据预处理脚本**：agent 优先查本地 `/nas_train/app.e0031982/code/ms-swift`（v4.5.3），找不到再用 `cimi-search` / `cimi-fetch`
 2. **短程试验步数**：建议 200~500 steps
 3. **UltraData-Code / UltraData-Math 层级**：使用 L2 还是 L3？
-4. **单次实验时长上限**：短程试验建议不超过 4 小时，确保 84 小时内能跑够组数
-5. **84 小时预算口径**：按 8 卡 × 实际运行小时（GPU·小时）计算，还是按墙上时钟计算？建议按 GPU·小时。
+4. **单次实验时长上限**：短程试验建议不超过 2 小时，架构验证可低至 0.5 小时
+5. **20 小时预算口径**：按 8 卡 × 实际运行小时（GPU·小时）计算，还是按墙上时钟计算？建议按 GPU·小时。

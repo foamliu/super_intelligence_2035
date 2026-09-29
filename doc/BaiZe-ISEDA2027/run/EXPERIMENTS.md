@@ -1,5 +1,49 @@
 # BaiZe 1B 架构与超参搜索记录
 
+## ✅ 最终收敛状态（2026-09-29 converged，架构类型维度扫描完成）
+
+任务收官：**胜出配置 = MiniCPM5-1B（24层 / GQA KV2 / 嵌入 off(untied) / AdamW / Stable LR 3e-4 / WSD 10% / Batch 1024 / SeqLen 4096 / micro_batch 1 / μP）**，验证 loss **4.9690@160**（优于基线 LR 6e-4 的 5.0861，**−0.117**）。可复现训练命令：`cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027 && bash train_s4_01.sh`（详见下方「胜出配置」）。
+
+架构类型维度（MiniCPM5-1B / Nemotron / Hymba）扫描完成：megatron-core 虽原生含 Mamba/SSM-hybrid（`mamba_hybrid_layer_allocation`）与 Nemotron 支持，但均无 1B 变体（最小 hybrid 8B、最小 Nemotron/NemotronH 4B、最接近纯 Mamba2 1.3B 无 attention），swift 层亦未暴露可训练 1B 配置 → **无可运行的 1B 替代架构，MiniCPM5-1B 保持唯一胜出**。本轮（架构兼容性验证轮）BUDGET_USED=0/20 GPU·h，无新实验。
+
+## S2.5 架构扩展结论（2026-09-28 22:03 experiment_plan 收官）
+
+**目标**：验证非 Llama 架构（Nemotron / Hymba）在 Megatron-SWIFT v4.5.3 上的兼容性，作为 1B 架构备选。**结论：两者均不可用，MiniCPM5-1B（LlamaForCausalLM 标准 GQA）保持唯一架构胜出**，S1~S4 胜出配置不变。
+
+| 架构 | 框架注册情况 | 判定 | 依据 |
+|:---|:---|:---|:---|
+| MiniCPM5-1B | ✅ swift `llama` + mcore_bridge `gpt` | ✅ 可用（胜出） | S1~S4 已完整验证 |
+| NemotronH | ⚠️ swift `nemotron_h`(nvidia.py) + mcore_bridge `gpts/nemotron_h.py` 均已注册 | ❌ NOT_SUPPORTED | 仅注册 30B-A3B MoE（`NVIDIA-Nemotron-3.5-Lightning-30B-A3B`），无 1B 稠密变体；`requires=['transformers>=5.0', ...]`，实际 4.56.1 不满足；`model_arch=None` |
+| Nemotron(70B) | ⚠️ swift llama.py 注册 `Llama-3.1-Nemotron-70B-Instruct-HF` | ❌ NOT_SUPPORTED(1B) | 仅 70B，且是 Llama 架构微调（非新架构） |
+| Hymba | ❌ swift / mcore_bridge 全库 0 处注册 | ❌ NOT_SUPPORTED | 无 model type / template / loader 任何引用 |
+
+> MLA（multi-latent attention）维度：megatron core 有 `MLASelfAttention`，但 swift 未对 Llama/MiniCPM5 暴露 `--attention_backend mla`（仅 flash/fused/unfused/local/auto），需自建 MLA 模型变体，实现风险高（与上一轮「暂不测 MLA」一致），不纳入本轮。
+
+**结论**：架构类型维度（MiniCPM5-1B / Nemotron / Hymba）扫描完成，仅 MiniCPM5-1B 框架可用。无新实验、无预算消耗（本轮 BUDGET_USED 保持 0/20 GPU·h）。胜出配置及可复现命令保持不变（见下方「胜出配置」）。
+
+## S2.5 架构判定修正（2026-09-29 data_preprocess 收官，先查 megatron-core）
+
+> ⚠️ **更正 2026-09-28 的「NOT_SUPPORTED」结论**：上一轮判定顺序有误（只查 swift 注册表就下结论）。本轮按正确顺序（先 megatron-core 模型库 → 再 swift 注册表）重查，修正结论：megatron-core **原生支持** Mamba/SSM-hybrid 与 Nemotron，但**均无 1B 变体**，故仍无可运行的 1B 替代架构，MiniCPM5-1B 保持唯一胜出。
+
+### megatron-core 原生模型库（mcore 层）
+- `bridge/models/mamba/mamba_provider.py`：`MambaModelProvider` 支持 `hybrid_attention_ratio` / `hybrid_mlp_ratio` / `hybrid_override_pattern`（即 Hymba 式 attention+SSM hybrid 能力）。现有 provider 规模：130M / 370M / 780M / **1.3B（`MambaModelProvider1P3B`，48 层 hidden 2048，override `"M"*48` = 纯 Mamba2、无 attention）** / 2.7B / 8B / **hybrid_8B**。→ **无 ~1B 的 attention+SSM hybrid，唯一 hybrid 是 8B**。
+- `bridge/models/nemotron/nemotron_provider.py`：`Nemotron3ModelProvider4B`(32 层/hidden 3072) / 8B / 22B，`Nemotron4` 15B/340B。最小 **4B**。
+- `bridge/models/nemotronh/nemotron_h_provider.py`：`NemotronHModelProvider`（继承 MambaModelProvider = mamba+attention hybrid）4B / 8B / 47B / 56B / nano 9B/12B。最小 **4B**。
+- `core/ssm/mamba_hybrid_layer_allocation.py`：`allocate_layers`（`Symbols`: M=SSM / *=attention / -=MLP / E=MoE）= hybrid 层分配实现。
+
+### swift 层（bridge 注册）
+- `swift/model/models/mamba.py`：仅注册 classic Mamba1 HF（`state-spaces/mamba-*` 130m~2.8b），`architectures=['MambaForCausalLM']`、`model_arch=None`（无 mcore bridge 转换路径，非 mcore Mamba2/hybrid）。
+- `swift/model/models/nvidia.py`：仅注册 `NemotronHForCausalLM` **30B-A3B MoE**，`requires=['transformers>=5.0','mamba-ssm','causal-conv1d>=1.2.0']`、`model_arch=None`。
+- `grep -rni hymba swift/` = **空**（swift 0 处注册 Hymba，与上轮一致；但「0 处注册」≠「mcore 不支持」）。
+
+### 修正后判定
+| 架构 | mcore 层 | swift 层 | 修正判定 |
+|:---|:---|:---|:---|
+| Hymba (~1B) | ✅ 有 hybrid 能力（`hybrid_attention_ratio`），但最小 hybrid recipe = `mamba2_hybrid_8b`(8B)，无 1B hybrid | ❌ 0 处注册 | ⚠️ **NOT_EXPOSED / 无 1B 变体**（非「不存在」；需手动搭 1B hybrid 层规格 + 桥接，风险高） |
+| Nemotron/NemotronH (~1B) | ✅ `nemotron` 最小 Nemotron3-4B、`nemotronh` 最小 4B | ⚠️ 仅 30B-A3B MoE / `transformers>=5.0` | ⚠️ **NOT_EXPOSED / 无 1B 变体**（最小 4B，无 1B 稠密） |
+
+> **修正结论**：架构类型维度确认完成——megatron-core 虽原生支持 Mamba/SSM-hybrid、Nemotron，但均无 1B 规模 recipe/provider（最小 hybrid 8B、最小 Nemotron/NemotronH 4B，最接近 1B 的纯 Mamba2 为 1.3B 且无 attention）。swift 层未暴露任何 mcore hybrid/nemotron 为可训练 1B 配置。**无可运行的 1B 替代架构，MiniCPM5-1B 保持唯一胜出**，无新实验、无预算消耗（BUDGET_USED 0/20 GPU·h）。
+
 ## 胜出配置（✅ S4 收敛验证完成，2026-09-25 18:36）
 
 **架构**（MiniCPM5-1B / LlamaForCausalLM 标准架构，~1.038B 参数，μP 最大更新参数化）
