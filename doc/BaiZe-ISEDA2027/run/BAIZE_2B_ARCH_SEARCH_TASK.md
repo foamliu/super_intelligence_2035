@@ -2,8 +2,11 @@
 
 > ⚠️ 本文件为只读指令文件，agent **禁止修改**本文件。所有运行时状态写入本任务专属的 `MEMORY_2B.md`、`EXPERIMENTS_2B.md` 和 `daily-memories-2b/`（**不要**写入 1B 任务的 `MEMORY.md` / `EXPERIMENTS.md`）。
 
-你是推进 **BaiZe 2B 架构搜索** 的 research agent，在 **2026-09-30 ~ 2026-10-08（十一假期）** 期间持续推进。每次被唤醒，**只走一步**：
-读 `MEMORY_2B.md` 恢复状态 → 读 `EXPERIMENTS_2B.md` 看进展 → 读 `daily-memories-2b/$(date +%F).md` 恢复当日上下文 → 判断下一步 → 执行 → 更新记忆文件 → 退出。
+你是推进 **BaiZe 2B 架构搜索** 的 research agent，在 **2026-09-30 ~ 2026-10-08（十一假期）** 期间持续推进。每次被唤醒后：读 `MEMORY_2B.md` 恢复状态 → 读 `EXPERIMENTS_2B.md` 看进展 → 读 `daily-memories-2b/$(date +%F).md` 恢复当日上下文 → 判断下一步 → **连续执行** → 更新记忆文件 → 退出。
+
+**持续推进原则（关键，避免「做一小步就睡、半天做不完」）**：
+- **无阻塞任务时**：把能立即做完的步骤**一口气连续做完**（可连续跨越多个 PHASE / 子步骤，如写 provider → 跑 10 步冒烟 → 修报错 → 再冒烟），直到遇到必须等待的异步任务或单次预算将尽（约 25 分钟），**不要做一小步就退出**。
+- **有异步阻塞任务时**（训练 / 切词等后台任务 running 中）：回写记忆并把 `MEMORY_2B.md` 的 `WAITING` 置为 `1`，记录「等待什么、如何判断结束」，然后退出（loop.sh 据此拉长睡眠、节省 token）。下次唤醒先检查该任务是否结束，结束后把 `WAITING` 置回 `0` 再继续推进。
 
 ---
 
@@ -69,7 +72,7 @@
 
 ## 记忆管理
 
-- `MEMORY_2B.md` — 本任务运行时状态（STAGE/PHASE/ERROR_COUNT/BUDGET_USED、实验看板、操作流水）。不提交 git。
+- `MEMORY_2B.md` — 本任务运行时状态（STAGE/PHASE/WAITING/ERROR_COUNT/BUDGET_USED、实验看板、操作流水）。不提交 git。其中 `WAITING` 控制唤醒节奏：`0`=无阻塞（loop.sh 约 1 分钟续跑，连续推进）；`1`=有异步任务 running（loop.sh 约 30 分钟轮询，省 token）。
 - `EXPERIMENTS_2B.md` — 本任务实验记录表（两架构的配置/结果/吞吐/耗时）。核心产出。
 - `daily-memories-2b/$(date +%F).md` — 每日操作日志，每步追加一条带时间戳记录。
 
@@ -163,10 +166,16 @@ setsid bash scripts/<脚本> > /tmp/BAIZE2B_<ARCH>.log 2>&1 < /dev/null &
 
 ---
 
-## 推进逻辑（每次只走一步）
+## 推进逻辑（连续推进 + 异步等待）
 
 ### 前置校验（所有 PHASE 先做）
 读 MEMORY_2B.md 流水末 3 条，有未处理的 `❌`/`⚠️` 先处理，再正常推进。
+
+### 异步等待约定（`WAITING` 标志，决定 loop.sh 睡眠长短）
+- 任何需要**等待较长时间**的异步任务（1000 步训练 running、数据切词 running、ckpt→HF 转换等），启动后立即在 `MEMORY_2B.md` 把 `WAITING` 置为 `1`，并记录「等待的任务 + 判断结束的方法」（如 `pgrep -f torchrun`、日志尾部、产物文件是否生成）。
+- 置 `WAITING=1` 后即可退出，把时间让给下次唤醒；**不要**在等待期间反复空转。
+- 每次唤醒先检查等待中的任务：若还在 running，保持 `WAITING=1` 退出；一旦结束，把 `WAITING` 置回 `0`，提取结果并**连续推进**后续步骤。
+- 尚未完成、又没有异步任务要等的推进工作，`WAITING` 必须保持 `0`，并当场连续做完。
 
 ### 状态机
 - **PHASE=data_check**：确认至少一个可用数据子集 → 记录 → `PHASE=env_check`。
@@ -177,7 +186,7 @@ setsid bash scripts/<脚本> > /tmp/BAIZE2B_<ARCH>.log 2>&1 < /dev/null &
   3. 记录每架构「从零可跑性」「参数量(实测 numel())」「冒烟 loss/吞吐」→ `PHASE=experiment_run`。
   - 某架构连续 3 次失败 → 标记 `❌ NOT_RUNNABLE`，跳过该架构，另一架构继续。
 - **PHASE=experiment_run**：挑一个「已打通未跑完 1000 步」的架构，启动 1000 步训练 → `PHASE=experiment_wait`。
-- **PHASE=experiment_wait**：`pgrep` 检查结束与否；结束后提取 loss 曲线 + tok/s，写 EXPERIMENTS_2B.md，更新累计耗时 → 回 `experiment_run`（换下一架构）或进 `infer_bench`。
+- **PHASE=experiment_wait**：训练 running 中保持 `WAITING=1` 并退出；下次唤醒 `pgrep` 检查是否结束，结束后 `WAITING=0`，提取 loss 曲线 + tok/s，写 EXPERIMENTS_2B.md，更新累计耗时 → 回 `experiment_run`（换下一架构）或进 `infer_bench`。
 - **PHASE=infer_bench**：先把 megatron-core 分布式 ckpt 转 HF（MiniCPM5→Llama/MiniCPM 结构、Mamba2-hybrid→Nemotron-H 结构 + DeepSeek tokenizer），再用 SGLang 统一测推理 tok/s（Llama / `nemotron_h`，batch=1、固定 seq、prefill/decode 分列），写入 EXPERIMENTS_2B.md → `PHASE=converged`。
 - **PHASE=converged**：汇总三张对比表 + 胜出架构 + 可复现命令到 EXPERIMENTS_2B.md 顶部，输出结论，停止新实验。
 

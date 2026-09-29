@@ -178,7 +178,7 @@
 </div>
 
 <h2 class="sec" id="s5"><span class="no">5</span>执行状态机与阶段划分</h2>
-<p>agent 每次被唤醒<b>只走一步</b>（读记忆 → 判断 → 执行 → 回写记忆 → 退出）。</p>
+<p>agent 被唤醒后<b>连续推进</b>：无阻塞任务时一口气做完能立即执行的步骤（跨多个 PHASE），仅在遇到异步阻塞（训练/切词 running）或单次预算将尽时才退出。<code>MEMORY_2B.md</code> 的 <code>WAITING</code> 标志驱动 loop.sh 自适应唤醒：<b>0</b>=无阻塞约 1 分钟续跑，<b>1</b>=有阻塞约 30 分钟轮询省 token。</p>
 <div class="flow">
   <span class="step">data_check</span><span class="arrow">→</span>
   <span class="step">env_check</span><span class="arrow">→</span>
@@ -250,7 +250,7 @@
   <thead><tr><th>文件</th><th>作用</th></tr></thead>
   <tbody>
     <tr><td><code>run/BAIZE_2B_ARCH_SEARCH_TASK.md</code></td><td>只读任务书（目标 + 三决策 + 状态机）</td></tr>
-    <tr><td><code>run/baize_2b_search_loop.sh</code></td><td>循环脚本（30min 唤醒 + 5h 自动 push）</td></tr>
+    <tr><td><code>run/baize_2b_search_loop.sh</code></td><td>循环脚本（自适应唤醒：无阻塞 1min 续跑 / 有阻塞 30min 轮询 + 5h 自动 push）</td></tr>
     <tr><td><code>run/MEMORY_2B.md</code></td><td>运行时状态（STAGE/PHASE/ERROR_COUNT/BUDGET）</td></tr>
     <tr><td><code>run/EXPERIMENTS_2B.md</code></td><td>实验记录表（核心产出）</td></tr>
     <tr><td><code>run/daily-memories-2b/</code></td><td>每日操作日志</td></tr>

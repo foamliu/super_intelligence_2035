@@ -1,6 +1,7 @@
 #!/bin/bash
-# BaiZe 2B 架构搜索（从零训练）自动推进循环：每隔 INTERVAL 秒让 cline 读任务书执行一步，
+# BaiZe 2B 架构搜索（从零训练）自动推进循环：让 cline 读任务书连续推进，
 # 并每约 PUSH_INTERVAL 秒兜底做一次 git commit + push（假期无人值守时保证成果不丢）。
+# 唤醒间隔自适应：读 MEMORY_2B.md 的 WAITING 标志——无阻塞(0)约 1 分钟续跑，有异步阻塞(1)约 30 分钟轮询省 token。
 # 十一假期 2026-09-30 ~ 10-08 由本脚本驱动 research agent 逐步推进。
 # 启动方式（脱离进程组，防工具超时误杀）:
 #   setsid bash /path/to/baize_2b_search_loop.sh > /tmp/baize_2b_loop.log 2>&1 < /dev/null &
@@ -14,9 +15,11 @@ CWD="$SCRIPT_DIR"
 GIT_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo '/nas_train/app.e0031982/code/super_intelligence_2035')"
 
 MODEL="deepseek-v4-pro-fp4"      # 换成你用于工程任务的模型
-INTERVAL=1800                   # 30 分钟醒来一次
 CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟
 PUSH_INTERVAL=18000             # 每 5 小时 git push 一次（4~6 小时间隔内）
+SLEEP_BUSY=60                   # 无阻塞任务时的唤醒间隔：约 1 分钟（连续推进，不空耗假期）
+SLEEP_WAIT=1800                 # 有异步阻塞任务(训练/切词 running)时的唤醒间隔：30 分钟（省 token）
+MEMORY="$SCRIPT_DIR/MEMORY_2B.md"
 LAST_PUSH="/tmp/baize_2b_last_push"
 
 git_push_if_needed() {
@@ -53,5 +56,14 @@ while true; do
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"
     fi
     git_push_if_needed
-    sleep "$INTERVAL"
+    # 自适应睡眠：WAITING=1（有训练/切词等异步任务 running）→ 长睡 30 分钟省 token；
+    # WAITING=0（无阻塞、应连续推进）→ 短睡 1 分钟，让 cline 尽快续跑下一轮。
+    SLEEP="$SLEEP_BUSY"
+    if grep -qE '^[- ]*WAITING: *1' "$MEMORY" 2>/dev/null; then
+        SLEEP="$SLEEP_WAIT"
+        echo "[loop] $(date '+%F %T') WAITING=1（异步任务 running）→ sleep ${SLEEP}s"
+    else
+        echo "[loop] $(date '+%F %T') WAITING=0（无阻塞）→ sleep ${SLEEP}s"
+    fi
+    sleep "$SLEEP"
 done

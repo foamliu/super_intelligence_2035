@@ -3,6 +3,7 @@
 ## 当前状态
 - STAGE: S1 打通从零冒烟
 - PHASE: env_check
+- WAITING: 0
 - ERROR_COUNT: 0
 - BUDGET_USED（GPU·小时）: 0
 - 当前运行实验: 无
