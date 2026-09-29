@@ -2,9 +2,10 @@
 
 ## 当前状态
 - CONFIG: phi_lagged
-- ROUND: 1
-- PHASE: done_all
+- ROUND: 1（r1 作废 → r2 重跑）
+- PHASE: running
 - ERROR_COUNT: 0
+- batch: 2026_0929_110309（lagged r2 重跑，log /tmp/ABL_lagged_r2.log）
 
 ## 执行看板
 
@@ -14,7 +15,7 @@
 | `Φ k=10` | hook 限 run_code ≤10 次 | 1 | ✅ 75.3%（Converged 91.1%） |
 | `Φ k=3` | hook 限 run_code ≤3 次 | 1 | ✅ 69.0%（Converged 79.1%） |
 | `Φ k=1` | hook 限 run_code ≤1 次 | 1 | ✅ 60.8%（Converged 71.5%） |
-| `Φ lagged` | handler 返回上一拍状态（L=1） | 1 | ❌ 作废（lag==1 核对失败 42/158：trace_key 隔离缺陷） |
+| `Φ lagged` | handler 返回上一拍状态（L=1） | 1（r1 作废）→ r2 重跑中 | 🔄 r2 重跑（r1 作废：lag==1 核对失败 42/158；trace_key 已修为 SSE session 对象身份实现 per-task 隔离） |
 
 执行顺序：k10 → k3 → k1 → lagged，各 1 轮。
 
@@ -68,6 +69,7 @@
 - [2026-09-29 · 时刻不可得（date 被禁）] [running] ⚠️ 检查受阻（lagged 阶段沙箱阻断第 3 个唤醒周期，连续第 3 个）：复测确认沙箱仍未恢复——`run_commands` 全量被拦（实测 `echo SANDBOX_TEST_$(date +%s)`、`date +%F`、`pgrep -f '^bash scripts/run_cline_script'` 均返回固定 `ACCESS RESTRICTED` 回显，命令被工具内部替换为受限回显）；`read_files` 读 `/tmp/ABL_lagged_r1.log` 与 BASE_DIR `.env` 均被改写为 `/dev/null`（返回 "Path is not a file: /dev/null"，工作区 `/nasdata/app.e0031982/code/ZhuLong_DAC2027/run` 之外被拒）；工作区内 MEMORY/daily 文件读写正常。故无法执行「检查本轮是否结束」（`pgrep`）与「打分」，lagged r1（batch 2026_0929_061645）是否结束不可判定。未做实际推进、未改动成绩/看板；PHASE=running、CONFIG=phi_lagged、ROUND=1、ERROR_COUNT=0 保持。🚨 连续 3 周期阻断（对齐 k10/k3 阶段「阻断 3 周期后复通」先例），若下一唤醒仍无 shell 能力，须人工介入恢复沙箱后再继续打分。退出等待下轮唤醒。
 - [2026-09-29 09:03] [running→done_all] 步骤 A：lagged r1（batch 2026_0929_061645）已结束（pgrep 无 `^bash scripts/run_cline_script` 进程），沙箱本周期复通。打分：Pass@1=80.4%（127/158）、Converged=98.7%（156/158 completed / 2 cancelled）、Mean read-backs=15.15、反作弊 ACCESS RESTRICTED=158、deny_reason[PHI-BUDGET-EXHAUSTED]=0（本臂无预算，正常）。❌ **lagged 专属核对失败 → 该臂作废**：`reported_call_index` 与真实调用序号差==1 仅 116/158 成立、42 条失败（29 index-mismatch=槽位跨 trace 泄漏，reported[0]>0 且连续偏移；13 count-mismatch=部分结果缺 reported_call_index）。根因：run_code.py 单槽缓冲按 `_trace_key_from_ctx()`（ctx.client_id / id(ctx.session)）隔离，该 key 是 MCP 客户端/worker 连接级、**非 per-task**（trace 元数据里 cline session_id 158/158 唯一但未用作 trace_key）；同一 worker 顺序处理多题 → 槽位残留泄漏到下一题；部分调用 ctx 间歇 None → 结果缺 reported 字段。违反约束#4（单槽按 trace 独立）与打分规则「差≠1 则作废」。PHASE→done_all（4 臂均已尝试）。建议人工：将 trace_key 修正为 per-task（用 cline session_id，158/158 唯一）后重跑 lagged；或正文如实报告「L=1 机制未正确落地（42/158 滞后量≠1）」。
 - [2026-09-29 · 时刻不可得（date 被禁）] [running] ⚠️ 检查受阻（lagged 阶段沙箱阻断第 4 个唤醒周期，连续第 4 个，已超「3 周期」阈值）：本周期复测 `run_commands` 仍全量被拦（`pwd`/`ls -la`、`whoami`/`echo SANDBOX_PROBE_20260929`/`hostname` 均返回固定 `ACCESS RESTRICTED` 回显，命令被工具内部替换为受限回显）；`read_files` 工作区内 MEMORY_s2_1shot.md 与 daily-memories/2026-09-29.md 读写正常，读 BASE_DIR（/nasdata/app.e0031982/code/eda_fastmcp）路径与 /tmp/ABL_lagged_r1.log 仍改写为 /dev/null（工作区 /nasdata/app.e0031982/code/ZhuLong_DAC2027/run 之外被拒）。故无法执行「检查本轮是否结束」（pgrep）与「打分」，lagged r1（batch 2026_0929_061645）是否结束不可判定。未推进、未改成绩/看板；PHASE=running、CONFIG=phi_lagged、ROUND=1、ERROR_COUNT=0 保持。🚨 连续 4 周期阻断（超出 k10/k3/k1 阶段「阻断 3 周期后复通」先例上限），正式建议人工介入恢复沙箱后再继续 lagged 打分（Pass@1 + Converged + lagged 专属核对：reported_call_index 与真实调用序号差==1）。退出等待人工介入。
+- [2026-09-29 · 时刻不可得（date 被禁）] [running] ⚠️ 检查受阻（lagged r2 阶段沙箱阻断第 1 个唤醒周期）：复测 `run_commands` 全量被拦（`echo SANDBOX_PROBE_$(date +%F)_$(date +%H%M%S) && pwd`、`pwd` 均返回固定 `ACCESS RESTRICTED` 回显，命令被工具内部替换为受限回显）；`read_files` 读 BASE_DIR（/nasdata/app.e0031982/code/eda_fastmcp/.env）与 /tmp/ABL_lagged_r2.log 均改写为 /dev/null（返回 "Path is not a file: /dev/null"，工作区 /nasdata/app.e0031982/code/ZhuLong_DAC2027/run 之外被拒）；`search_codebase` 仅覆盖工作区 21 文件、无 /tmp 日志/结果。无法 `pgrep` 检查 lagged r2（batch 2026_0929_110309）是否结束、无法打分（Pass@1 + Converged + lagged 专属核对：reported_call_index 与真实调用序号差==1）。未推进、未改成绩/看板；PHASE=running、CONFIG=phi_lagged、ROUND=1、ERROR_COUNT=0 保持。退出等待下轮唤醒。
 
 ## ✅ 关键缺陷已修复（2026-09-28 22:03 封存，供后人查阅）
 - 缺陷：`scripts/cline_hooks/PreToolUse` 的 Φ 预算分支用 `emit(cancel=True, reason="[PHI-BUDGET-EXHAUSTED] k=N")`。
@@ -78,3 +80,23 @@
 ## ⚠️ 环境关键备忘（后续切臂启动必读）
 - 启动命令必须带环境变量，否则 format_eval_task.py 因缺 pydantic 静默失败：PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python、EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework。
 - 完整启动模板见 daily 或上一条流水；切臂用 `venv/bin/python scripts/set_s2_phi.py phi_<ARM>` 再 stop/start 重启 MCP。
+
+## ✅ 关键缺陷已修复 #2（trace_key per-task 隔离，2026-09-29）
+
+- 缺陷：`main.py::_trace_key_from_ctx()` 旧实现优先 `ctx.client_id`（本 SDK `RequestParams.Meta`
+  仅含 `progressToken`、无 `client_id` 字段，恒为 None）→ 退化为 `"sess:" + str(id(ctx.session))`。
+  `id(session)` 是 Python 内存地址：旧 SSE ServerSession 被 GC 后，新任务新 session 对象可能复用
+  同一地址 → 槽位跨任务泄漏（滞后量≠1，reported[0]>0 且连续偏移）。且间歇性 `ctx.session` 为
+  None → trace_key=None → 该次调用不滞后、结果缺 `reported_call_index`（count-mismatch）。
+- 修复：`_trace_key_from_ctx()` 直接返回 `ctx.session`（SSE ServerSession 对象本身），用对象身份作
+  dict 键，不再用 `id()`、不再取 `client_id`。每条 SSE 连接 = 一个 cline 任务进程 = 一个 session
+  对象 → 天然 per-task 隔离；对象身份键不受 GC 地址复用影响。`trace_key` 类型由 `str` 改为 `object`
+  （`main.py::_run_code_with_endpoint`、`tools/run_code.py::run_code/_phi_lagged_apply`）。
+- 验证（2026-09-29 10:53~11:01）：
+  - py_compile main.py + tools/run_code.py 通过；`_phi_lagged_apply` 对象键单测通过（含 id 复用场景）。
+  - MCP 直连 canary：两条 SSE 连接各驱动 run_code，session A reported=['0','1','2']、session B=['0','1']，
+    各自 lag==1、无跨连接泄漏。
+  - 全链路 canary（batch 2026_0929_105609，-t 001,002 -p 1）：真跑 cline，task 001 子会话
+    reported=['0','1','2','3','4','5']、task 002=['0','1','2','3']，均从 0 起 = lag==1 且无跨任务泄漏。
+- 重跑：lagged r2（batch 2026_0929_110309，-p 8 -n，log /tmp/ABL_lagged_r2.log）已启动，等结束打分 +
+  lagged 审计（reported_call_index 与真实序号差==1）后回填。
