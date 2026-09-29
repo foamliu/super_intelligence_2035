@@ -2,11 +2,19 @@
 
 ## 当前状态
 - STAGE: S1 打通从零冒烟
-- PHASE: data_check（首次唤醒从此开始）
+- PHASE: env_check
 - ERROR_COUNT: 0
 - BUDGET_USED（GPU·小时）: 0
 - 当前运行实验: 无
-- 下一步: 检查可用数据 → env_check → arch_prepare（落地 NeMo launcher + MiniCPM5-2B GPT provider，跑 10 步冒烟）
+- 下一步: env_check（验证 conda py310 + PYTHONPATH=/tmp/omegaconf_230 规避 + `import megatron.bridge` 成功）→ arch_prepare
+
+## 数据检查结论（data_check 完成）
+- 选用子集：`openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa/`（618G，part-00000~...，每个 1.1G，约 519,627 行/part）。
+- parquet 列：`uid` / `content`(正文) / `style`；切词取 `content`。
+- 备选：`multi_style/`（554G）同样可用，暂不切。
+- 磁盘估算：~1000 步 × ~4M tok/步 ≈ 4B tokens；每 part 文本约 ~275M tokens（DeepSeek 切词粗估），切 ~15~18 个 part 足够（数据 .bin/.idx 预计 ~16~20GB，两架构共用）。
+- tokenizer 已确认：`/nas_train/app.e0031982/models/DeepSeek-V4.1-Flash/`（tokenizer.json + tokenizer_config.json）。
+- MiniCPM5-2B config 已确认：42 层 / hidden 2048 / intermediate 6144 / 16 heads / 2 KV heads / head_dim 128 / silu / rope_theta 5e6 / vocab(原始) 130560（本任务改用 DeepSeek 129281→pad 129408）。
 
 ## 候选架构（固定）
 - MiniCPM5-2B（42 层 Llama）：config 见 doc/BaiZe-ISEDA2027/MiniCPM5-2B.config.json
@@ -31,3 +39,4 @@
 | 时间 | 步骤 | 记录 |
 |------|------|------|
 | 2026-09-29 | init | ✅ 任务书 + loop.sh + 记忆文件初始化；PHASE=data_check |
+| 2026-09-29 | data_check | ✅ 确认 qa 子集(618G, parquet 列 uid/content/style, 519627行/part)；tokenizer=MiniCPM5 config=Mamba2 dir 均就绪；PHASE→env_check |
