@@ -98,7 +98,7 @@
 |:---|:---|:---|
 | **S1 打通从零冒烟** | 两架构都能随机初始化、跑 10 步前向+反向、输出 loss | 关键：落地 NeMo launcher（torchrun + forward_step）；MiniCPM5-2B 新建 GPT/Llama provider。任一架构 3 次冒烟失败→记录 `❌ NOT_RUNNABLE` 并跳过 |
 | **S2 1000 步训练** | 两架构各跑 ~1000 步，输出 loss 曲线 + 训练 tok/s | 相同数据/超参，只换架构 |
-| **S3 推理 benchmark** | 两架构测推理 tok/s（prefill/decode 分开） | 统一口径：batch=1、固定 seq（如 4096→2048 生成），注明实现栈（HF vs mcore forward）|
+| **S3 推理 benchmark** | 两架构测推理 tok/s（prefill/decode 分开） | 统一 SGLang 栈（MiniCPM5→Llama、Mamba2-hybrid→`nemotron_h`），前置 ckpt→HF 转换；batch=1、固定 seq（4096→2048），prefill/decode 分列 |
 | **S4 收敛报告** | 汇总三张对比表 + 胜出架构 + 可复现命令 + 生成 HTML 报告 | 写入 EXPERIMENTS_2B.md 顶部，并生成 `BAIZE_2B_ARCH_RESULT.html` |
 
 搜索维度即「架构类型」两种；如时间富余，可在胜出架构上微调 LR（3e-4 vs 6e-4）各补一组，但不强求。
@@ -178,7 +178,7 @@ setsid bash scripts/<脚本> > /tmp/BAIZE2B_<ARCH>.log 2>&1 < /dev/null &
   - 某架构连续 3 次失败 → 标记 `❌ NOT_RUNNABLE`，跳过该架构，另一架构继续。
 - **PHASE=experiment_run**：挑一个「已打通未跑完 1000 步」的架构，启动 1000 步训练 → `PHASE=experiment_wait`。
 - **PHASE=experiment_wait**：`pgrep` 检查结束与否；结束后提取 loss 曲线 + tok/s，写 EXPERIMENTS_2B.md，更新累计耗时 → 回 `experiment_run`（换下一架构）或进 `infer_bench`。
-- **PHASE=infer_bench**：为每个已训出 ckpt 的架构测推理 tok/s（统一口径），写入 EXPERIMENTS_2B.md → `PHASE=converged`。
+- **PHASE=infer_bench**：先把 megatron-core 分布式 ckpt 转 HF（MiniCPM5→Llama/MiniCPM 结构、Mamba2-hybrid→Nemotron-H 结构 + DeepSeek tokenizer），再用 SGLang 统一测推理 tok/s（Llama / `nemotron_h`，batch=1、固定 seq、prefill/decode 分列），写入 EXPERIMENTS_2B.md → `PHASE=converged`。
 - **PHASE=converged**：汇总三张对比表 + 胜出架构 + 可复现命令到 EXPERIMENTS_2B.md 顶部，输出结论，停止新实验。
 
 ---
@@ -206,6 +206,6 @@ setsid bash scripts/<脚本> > /tmp/BAIZE2B_<ARCH>.log 2>&1 < /dev/null &
 1. **MiniCPM5-2B 随机初始化的 GPT provider**：mcore 哪套 recipe 可复用来构造 42 层 Llama（`GPTModelProvider` + Llama layer spec）？需查 `megatron.bridge.recipes.gpt`。
 2. **NeMo launcher 的最小可用形态**：`nemo_run` 未装，需 torchrun + `nvidia_resiliency_ext.CallWrapper` 直驱（FEASIBILITY.md 已确认 bypass 可行）。
 3. **参数量对齐**：如两端参数量差 >10%，需在报告注明「非等参对比」并说明影响。
-4. **推理 benchmark 的实现栈**：Mamba2-hybrid 无 HF 推理，需在 mcore 上写前向/generate；MiniCPM5-2B 可用 HF generate。两者栈不同，报告必须注明，且统一测速口径（batch=1、固定 seq、prefill/decode 分列）。
+4. **推理 benchmark 的实现栈**：统一 SGLang。关键澄清——Mamba2-hybrid **不是 Hymba**（Hymba 是并行 hybrid-head + Mamba v1），而是 **Nemotron-H**（顺序混合：Mamba2 + GQA + MLP，由 `hybrid_override_pattern` 决定），SGLang 原生支持 `nemotron_h`（`--mamba-ssm-dtype float32` / `--mamba-full-memory-ratio`）；MiniCPM5-2B 走 Llama。真正的坑从「无 HF 推理要手写 mcore」变为 **megatron-core 分布式 ckpt → HF 格式转换**（无现成 bridge，需自行把 `NVIDIAMambaHybridModelProvider2B` 权重映射到 Nemotron-H/Llama HF 结构 + DeepSeek tokenizer）；fallback 才是 mcore 手写前向/generate。
 
 > **搜索工具**：优先查本地 ms-swift / megatron-core 源码，其次用 `cimi-search` / `cimi-fetch`，不滥用。

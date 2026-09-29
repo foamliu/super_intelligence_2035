@@ -186,7 +186,7 @@
   <ul>
     <li><b>S1 打通从零冒烟</b>：两架构随机初始化、跑 10 步前向+反向、输出 loss；任一架构 3 次冒烟失败 → 标记 <code>❌ NOT_RUNNABLE</code> 并跳过。</li>
     <li><b>S2 1000 步训练</b>：两架构各跑 ~1000 步，输出 loss 曲线 + 训练 tok/s（相同数据/超参）。</li>
-    <li><b>S3 推理 benchmark</b>：统一口径（batch=1、固定 seq、prefill/decode 分列），注明实现栈（HF vs mcore forward）。</li>
+    <li><b>S3 推理 benchmark</b>：统一 SGLang 栈（MiniCPM5→Llama、Mamba2-hybrid→<code>nemotron_h</code>），前置 ckpt→HF 转换；batch=1、固定 seq、prefill/decode 分列。</li>
     <li><b>S4 收敛报告</b>：汇总三张表 + 胜出架构 + 可复现命令 + HTML。</li>
   </ul>
 </div>
@@ -198,7 +198,7 @@
   <tbody>
     <tr><td>loss 曲线</td><td>同一数据子集、同一 seed、同一 LR 计划</td><td>初始几步 loss 波动大，对齐到相同步数采样</td></tr>
     <tr><td>训练速度</td><td>同卡数/同 DP、同 seq、同 mb</td><td>卡数不同则 tok/s 不可比</td></tr>
-    <tr><td>推理速度</td><td>batch=1、固定 seq，prefill/decode 分列</td><td>两架构实现栈不同（HF vs mcore），报告须注明</td></tr>
+    <tr><td>推理速度</td><td>batch=1、固定 seq，prefill/decode 分列</td><td>统一 SGLang 栈（Llama / nemotron_h），前置 ckpt→HF 转换</td></tr>
   </tbody>
 </table>
 
@@ -217,7 +217,7 @@
     <tr><td>1</td><td>MiniCPM5-2B 随机初始化的 GPT provider 用 mcore 哪套 recipe 复用</td><td>arch_prepare 阶段查 <code>megatron.bridge.recipes.gpt</code></td></tr>
     <tr><td>2</td><td>NeMo launcher 最小可用形态（<code>nemo_run</code> 未装）</td><td>torchrun + <code>nvidia_resiliency_ext.CallWrapper</code> 直驱（可行性已确认 bypass）</td></tr>
     <tr><td>3</td><td>参数量对齐（两端差 &gt;10% 则「非等参对比」）</td><td>arch_prepare 实测 <code>numel()</code> 并在报告注明</td></tr>
-    <tr><td>4</td><td>推理 benchmark 实现栈不同（Mamba2-hybrid 无 HF 推理）</td><td>mcore 上写前向/generate；报告注明栈 + 统一测速口径</td></tr>
+    <tr><td>4</td><td>推理 benchmark 栈（Mamba2-hybrid=Nemotron-H 而非 Hymba）</td><td>统一 SGLang（Llama / nemotron_h），主要工作=ckpt→HF 转换；fallback mcore 手写</td></tr>
     <tr><td>5</td><td>omegaconf 环境阻塞</td><td>已规避：<code>PYTHONPATH=/tmp/omegaconf_230</code>，不动 site-packages</td></tr>
   </tbody>
 </table>
