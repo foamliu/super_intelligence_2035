@@ -1,13 +1,16 @@
 # MEMORY_2B.md — BaiZe 2B 架构搜索（从零训练）运行时状态（随 git 提交，重启用）
 
 ## 当前状态
-- STAGE: S1 打通从零冒烟（两架构均已打通 ✅）
-- PHASE: arch_prepare（10 步 GPU 冒烟已完成 → 待进入 experiment_run 数据切词）
-- WAITING: 0
+- STAGE: S1 打通从零冒烟（两架构均已打通 ✅）→ S2 数据准备中
+- PHASE: experiment_run（数据切词进行中）
+- WAITING: 1（数据切词后台任务 running 中）
 - ERROR_COUNT: 0
 - BUDGET_USED（GPU·小时）: ~0.1（仅 10 步冒烟）
-- 当前运行实验: 无
-- 下一步: ① 切 Ultra-FineWeb-L3 数据（~15 part ≈ 4B tokens，DeepSeek 切词，两架构共用）；② 启动两架构 1000 步训练（各 6 卡并行）
+- 当前运行实验: 数据切词（CPU，非 GPU）
+- 等待任务: `preprocess_data.py --max-docs 5200000`（切 ~10 part ≈ 2.7B tokens，DeepSeek 切词 → `BASE_DIR/data/ultrafineweb_l3_qa_text_document.bin/.idx`）
+  - 判断结束: `pgrep -f preprocess_data` 为空 + `/tmp/BAIZE2B_PREPROCESS.log` 末尾出现 `[done] ... 文档 / tokens`
+  - 预计耗时: ~2 小时（387K tok/s）
+- 下一步: 切词结束后 WAITING→0，写 `.json` 元信息核验 → 启动两架构 1000 步训练（各 6 卡并行）
 
 ## 数据检查结论（data_check 完成）
 - 选用子集：`openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa/`（618G，part-00000~...，每个 1.1G，约 519,627 行/part）。
@@ -40,8 +43,17 @@
 - MiniCPM5-2B provider：`BASE_DIR/minicpm5_2b/provider.py` 继承 `Llama3ModelProvider`，对齐 config（42层/hidden2048/ffn6144/16头/2kv头/rope5e6/eps1e-6/init0.02/tie=False），vocab 走 DeepSeek 129281→pad129408。✅ 可复用，**已从零可跑**。
 
 ## GPU 资源（双节点）
-- 10.239.2.29（8×H100，GPU0~7）；10.239.2.12（前 6×H100，GPU0~5）。两节点 ssh 免密已通。
+- 10.239.2.29（8×H100，GPU0~7，本机 hostname=whag0pgpuap29）；10.239.2.12（8×H100，GPU6~7 被他人占 72G，仅 GPU0~5 可用）。两节点 ssh 免密已通。
 - 建议：MiniCPM5-2B 用 2.29（GPU0~5）、Mamba2-hybrid 用 2.12（GPU0~5），剩余 2.29 的 GPU6~7 留冒烟/推理。
+
+## S2 1000 步训练计划（待数据切词完成后执行）
+- **统一口径（决策 3）**：seq=4096 / mb=1 / TP=1（DP=6）/ GBS=128（128 seq × 4096 = 512K tok/步）/ AdamW lr=3e-4 warmup=100 decay→1000 / wd=0.1 / bf16 / train_iters=1000 / 同 seed=1234 / 同数据（DeepSeek .bin/.idx 共用）。
+- **卡数对齐**：两架构均 6 卡、TP=1 DP=6（同卡数保证训练 tok/s 可比）。
+- 数据 `.bin/.idx` 前缀（训练时 `--data-path` = 该前缀，去掉 .bin/.idx）：`BASE_DIR/data/ultrafineweb_l3_qa_text_document`
+- **launcher 需补传 data_paths**：当前 `pretrain_launcher.py` 的 `build_config` 未传 `data_paths`（仅 mock），训练前需加 `--data-paths` 参数并传给 recipe 的 `train_data_path`。
+- 启动命令模板（以 MiniCPM5-2B 为例，6 卡）：
+  `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 torchrun --nnodes=1 --nproc_per_node=6 pretrain_launcher.py --arch minicpm5 --name train_1000 --data-paths <prefix> --tensor-parallel 1 --global-batch-size 128 --micro-batch-size 1 --train-iters 1000 --lr-warmup-iters 100 --lr-decay-iters 1000 --tokenizer-path <tokenizer_eod>`
+- ⚠️ 启动 1000 步前：① 确认 `pgrep -f preprocess_data` 已结束；② 记录 GBS=128 的选择到 EXPERIMENTS_2B.md；③ Mamba2 初始 loss 8.80 需在训练头几步复核（若仍异常，排查 provider init）。
 
 ## git 提交（每 4~6 小时 push）
 - 根目录 `/nas_train/app.e0031982/code/super_intelligence_2035`；remote foamliu/super_intelligence_2035（main）。
