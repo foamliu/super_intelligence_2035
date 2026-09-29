@@ -21,19 +21,19 @@
 
     We evaluate ZhuLong on \textbf{EDA-Eval-PyAether}, a benchmark of 158 real-world 
     tasks with assertion-based execution, where the complete system achieves 
-    \textbf{78.5\%} Pass@1 in the commercial Empyrean Aether environment, substantially 
-    outperforming a pure LLM baseline (\textbf{23.6\%}). Ablation studies show the 
-    execution loop is decisive: adding sandbox execution to retrieval yields +43.0 pp, 
-    while removing either execution ($-41.2$ pp) or retrieval ($-44.3$ pp) collapses 
+    \textbf{84.8\%} Pass@1 in the commercial Empyrean Aether environment, substantially 
+    outperforming a pure LLM baseline (\textbf{11.4\%}). Ablation studies show the 
+    execution loop is decisive: adding sandbox execution to retrieval yields +[TBD] pp, 
+    while removing either execution ($-[TBD]$ pp) or retrieval ($-3.2$ pp) reduces 
     accuracy---consistent with the theoretical prediction. A complementary offline 
-    \textbf{API self-exploration} mechanism contributes a further +3.2 pp accuracy and 
+    \textbf{API self-exploration} mechanism contributes a further +[TBD] pp accuracy and 
     reduces per-task tool calls by 22.1\%; we report its scale, cost, and stopping 
     criteria in full.
     % 我们在EDA-Eval-PyAether（158个真实任务、断言式执行验证）上评估ZhuLong，完整系统在
-    % 商业Empyrean Aether环境中达到78.5\%的Pass@1，显著优于纯LLM基线（23.6\%）。消融表明
-    % 执行闭环是决定性的：在检索之上加入沙盒执行带来+43.0个百分点，而移除执行（-41.2pp）
-    % 或检索（-44.3pp）都会使准确率坍塌——与理论预测一致。互补的离线API自探索机制进一步
-    % 带来+3.2个百分点准确率与22.1\%的工具调用削减；我们完整报告其规模、成本与停止准则。
+    % 商业Empyrean Aether环境中达到84.8\%的Pass@1，显著优于纯LLM基线（11.4\%）。消融表明
+    % 执行闭环是决定性的：在检索之上加入沙盒执行带来+[TBD]个百分点，而移除执行（-[TBD]pp）
+    % 或检索（-3.2pp）都会使准确率坍塌——与理论预测一致。互补的离线API自探索机制进一步
+    % 带来+[TBD]个百分点准确率与22.1\%的工具调用削减；我们完整报告其规模、成本与停止准则。
 All quantitative results in this draft are provisional, obtained on the PyAether-only 
     slice; final numbers will be reported on the unified \textbf{EDA-Scripting-Bench} 
     (PyAether + SKILL + Tcl).

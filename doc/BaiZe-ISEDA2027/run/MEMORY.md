@@ -1,0 +1,130 @@
+# MEMORY.md — BaiZe 1B 架构与超参搜索 运行时状态（不提交 git）
+
+## 当前状态
+- STAGE: S4 择优收敛（✅ 已收官，全部 4 阶段完成）
+- PHASE: converged（✅ 最终胜出配置 + 可复现命令已写入 EXPERIMENTS.md 顶部）
+- ERROR_COUNT: 0
+- BUDGET_USED（GPU·小时）: ~82.4（预算 84，剩余 ~1.6；未超限，任务正常收敛）
+- 当前运行实验: 无（S4-01 已于 18:36:18 SUCCESS 结束，无 BaiZe/Megatron 残留进程）
+- 下一步: converged → 无动作，任务收官（胜出配置 = 基线唯一改动 Stable LR 6e-4→3e-4）
+
+## 可用数据清单（data_check @ 2026-09-24 17:03）
+| 数据集 | 状态 | 大小 |
+|--------|------|------|
+| UltraData-Code | AVAILABLE | 971G |
+| UltraData-Math | AVAILABLE | 515G |
+| UltraData-SFT-2605 | AVAILABLE | 128K |
+| UltraData-SFT-Agent-2609 | AVAILABLE | 51G |
+| Ultra-FineWeb-L3 | AVAILABLE | 1.8T |
+
+## 实验看板
+
+### 待跑队列
+| 优先级 | ID | 架构 / 超参 | 目的 |
+|--------|----|-------------|------|
+| ✅ | S1-01 | 24层 / GQA(KV=2) / 嵌入共享=**off(untied)** / 头维96 / AdamW / LR 6e-4 / Batch 1024 / SeqLen 4096 | ✅ 已完成：loss 3.587 / ~105K tok/s / 3.33h(26.6 GPU·h) |
+| ✅ | S2-01 | 同基线，仅 **LR 6e-4→1e-3** | ✅ 已完成：loss 6.019@80 vs 基线 5.962@80 → LR 1e-3 无优势，**保留 6e-4**（0.877h / 7.0 GPU·h） |
+| ✅ | S2-02 | **28层**(hidden1536→~1.144B)，其余同基线（`--model_type llama --template minicpm5`） | ✅ 已完成：loss 6.119@80 vs 基线 5.962@80 → 28层无优势，**保留 24层**（0.918h / 7.35 GPU·h） |
+| ✅ | S2-03 | **KV头 2→4**，其余同基线 | ✅ 已完成：loss 5.979@80 vs 基线 5.962@80 → 基本持平无优势，**保留 KV2**（0.87h / 6.9 GPU·h） |
+| ✅ | S2-04 | **嵌入共享 on(tied)**（~0.84B），其余同基线 | ✅ 已完成：loss 6.030@80 vs 基线 5.962@80 → tied 略差(+0.068)，省 200M 参数但无 loss 收益，**保留 off(untied)**（0.862h / 6.9 GPU·h） |
+| ✅ | S3-01 | **LR 6e-4→3e-4**（min_lr 6e-5→3e-5），其余同基线 | ✅ 已完成：loss 5.908@80 vs 基线 5.962@80 → **LR 3e-4 胜出**（0.87h / ~7.0 GPU·h）。LR 维度 3e-4 < 6e-4 < 1e-3 |
+| ✅ | S3-02 | **WSD 衰减比例 10%→20%**（lr_wsd_decay_iters 8→16），**带胜出 LR 3e-4**（min_lr 3e-5），其余同基线 | ✅ 已完成：loss 5.917@80 vs S3-01(WSD10%) 5.908@80 → 持平(略差+0.009)，**保留 WSD 10%**（0.87h / ~7.0 GPU·h） |
+| 🚫 3 | S3-03 | ~~Muon/Batch512~~ **已取消**（省预算给 S4） | ~~组合微调或低优维度补测~~ |
+| ✅ | S4-01 | **胜出配置长步验证**：24层/GQA KV2/untied/AdamW/**LR 3e-4**/WSD10%(decay16)/mb1，train_iters=160 | ✅ 已完成：final loss 4.9690@160 vs 基线(LR 6e-4) 5.0861@160 → **−0.117 胜出验证通过**（1.71h / 13.7 GPU·h），ckpt `output/S4-01/v0-20260925-165341/checkpoint-160` |
+
+> S2 每组 80 steps（~7~8 GPU·h）。**micro_batch 固定用 1**：S2-01 已确认共享 GPU（LLaVA 占 8 卡）下 mb2 首步 OOM，28 层更吃显存更不可能 mb2。
+
+### 👉 S2 单变量扫描结论（2026-09-25 09:05 收官）
+- **4 个高优维度单变量全部跑完，均显示基线（24层 / GQA KV2 / 嵌入 off(untied) / AdamW / LR 6e-4 / Batch 1024 / SeqLen 4096）最优或持平**：
+  - S2-01 LR 1e-3 → 6.019@80（差）→ 保留 **LR 6e-4**；⚠️ **S3-01 补测下界发现 LR 3e-4 → 5.908@80 更优**，LR 维度最终胜出值 = **3e-4**
+  - S2-02 层数 28 → 6.119@80（差，参数更多收敛更慢）→ 保留 **24 层**
+  - S2-03 KV头 4 → 5.979@80（持平 +0.017，参数 +14M）→ 保留 **KV2**
+  - S2-04 嵌入 tied → 6.030@80（差 +0.068，省 200M 无 loss 收益）→ 保留 **untied**
+- **S2 结论**：基线即 S2 局部最优，架构/主超参不宜轻易偏离。剩余 ~29.3 GPU·h 供 S3（低优维度补测或小组合）+ S4 收敛验证。
+
+### 👉 S3 组合优化结论（2026-09-25 14:48 收官）
+- **S3-01 Stable LR 下界 3e-4 → loss 5.908@80，优于基线 6e-4 的 5.962@80 与 1e-3 的 6.019@80 → Stable LR 胜出值 = 3e-4**
+- **S3-02 WSD 衰减比例 20% → loss 5.917@80，vs S3-01(WSD 10%) 5.908@80 持平（略差 +0.009，噪声内）→ WSD 比例不敏感，保留 10%**
+- **S3-03（Muon/Batch512）取消**（省预算给 S4）
+- **S3 胜出配置（进入 S4）**：**24层 / GQA KV2 / 嵌入 off(untied) / AdamW / Stable LR 3e-4 / WSD 10% / Batch 1024 / SeqLen 4096 / micro_batch 1 / μP**（基线唯一改动 = Stable LR 6e-4 → 3e-4）
+
+### 👉 S4 收敛验证结论（2026-09-25 18:36 收官）
+- **S4-01（胜出配置 = 24层/GQA KV2/untied/AdamW/Stable LR 3e-4/WSD10%/Batch1024/SeqLen4096/mb1/μP）从零训 160 step：final loss 4.9690@160，grad_norm 0.151，lr 3e-5（WSD 收尾），吞吐 ~37.8s/it≈~111K tok/s，显存 17.51GiB/卡**
+- **关键对照**：S4-01(LR 3e-4) 4.9690@160 **<** 基线 S1-01(LR 6e-4) 5.0861@160 → **−0.117，胜出验证通过**（80 步 −0.054 的趋势在 160 步继续扩大）
+- **复现性**：S4-01 @80 loss 5.8995 ≈ S3-01 final 5.908@80（从零重跑，随机波动内）
+- **搜索收官**：胜出配置 = 基线唯一改动 Stable LR 6e-4 → 3e-4；架构/主超参（24层/KV2/untied/AdamW/WSD10%/Batch1024/SeqLen4096）全部基线胜出。ckpt `output/S4-01/v0-20260925-165341/checkpoint-160`。
+
+### 搜索阶段规划
+- **S1 基线复现**（当前）：S1-01 = MiniCPM5-1B 基线（LlamaForCausalLM 标准架构，24 层，GQA KV=2，嵌入共享 on，AdamW，Stable LR 6e-4，batch 1024，seq 4096）。跑 200~500 steps 短程，记录 loss 曲线与吞吐作为后续对照基准。
+- **S2 单变量扫描**（待 S1 完成，5~8 组）：每次只改一个维度 → 层数(24/28/32)、KV头(2/4/8)、嵌入共享(on/off)、Stable LR(3e-4/6e-4/1e-3)、注意力(GQA/MLA)、优化器(AdamW/Muon)、Batch(512/1024/2048) 等。
+- **S3 组合优化**（3~5 组）：在 S2 胜出值附近组合微调。
+- **S4 择优收敛**（1 组）：确认胜出配置，跑较长步数验证。
+
+### 备注
+- 预算：~82.4 / 84 GPU·小时（S1-01 26.6 + S2-01 7.0 + S2-02 7.35 + S2-03 6.9 + S2-04 6.9 + S3-01 7.0 + S3-02 7.0 + S4-01 13.7，剩余 ~1.6）。**S4 收官，全部 4 阶段完成**。
+- S3 计划（2026-09-25 10:02）：S3-01(LR3e-4)~7 + S3-02(WSD20%)~7 + S3-03(条件)~7 ≈ ~21；S4 剩余 ~8~15 GPU·h（~100~180 step，S1-01 已 300 step 基线 3.587）。
+- 实验共用 Ultra-FineWeb-L3（通用网页，1.8T）子集（`--dataset .../Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa`），`--streaming true` + `--packing true` + `--packing_length 4096`。
+- 数据列名已实测可用（S1-01 成功用 `qa` 子目录训练，无需额外映射）。
+- GPU 现状（23:17）：LLaVA-OV-1.5-4b **新实例**（PID 2580517~2580532，~45-53GiB/卡）占用 8 卡，剩 ~28-31GiB/卡可共享 → 吞吐仍 ~105K tok/s（~40s/it），micro_batch=1。S2 执行时尝试 micro_batch=2 提速。
+- 架构变体实现方法：复制 `models/MiniCPM5-1B/config.json`，改对应字段（num_hidden_layers / num_key_value_heads / tie_word_embeddings），用 transformers `from_config→save_pretrained` 重新生成随机初始化 model.safetensors，存到 `models/<variant>/`，`--model` 指向新目录。（已封装为 `gen_model_variant.py`，支持 `--num_hidden_layers`/`--num_key_value_heads`/`--tie_word_embeddings` 等覆写）
+- ⚠️ **变体脚本必带 `--model_type llama --template minicpm5`**：自定义模型目录名 swift 无法自动匹配——`--model` 只靠 config 的 `architectures` 反推 model_type 会歧义（`LlamaForCausalLM` 匹配到 4 个 model_type、template 匹配到 15 个），必须显式指定。基线实际生效值（见 S1-01 log args）= model_type=llama / template=minicpm5。后续 S2-03/S2-04/S3/S4 所有变体脚本都要带这两个 flag。
+
+## 数据预处理结论（data_preprocess @ 2026-09-24 17:32）
+- **结论：无需单独的 `.bin`/`.idx` 二进制预处理脚本**。ms-swift Megatron-SWIFT 与普通 swift 共用同一套 dataset/template 处理模块，tokenize + packing 由训练管线内部完成。
+- 数据喂给方式：`megatron pt --dataset <本地路径或HF数据集>` 直接支持本地目录 / jsonl / parquet / txt / csv（见 `swift/dataset/loader.py` `_load_dataset_path` 与 `_load_repo_dataset`：`os.path.isdir` 走本地目录分支，否则按扩展名 → hf `load_dataset`）。
+- 关键参数：`--streaming true`（流式边读边 tokenize）、`--packing true` + `--packing_length`（padding_free 打包）、`--dataset_num_proc`（多进程预处理）、`--max_length`（序列长度）。`lazy_tokenize` 对 LLM 默认 False（训练前全量 tokenize）。
+- 框架内置 `.bin`/`.idx` 是 `IndexedDataset`（`swift/dataset/indexed_dataset.py`），用于 `--cached_dataset`/`--cached_val_dataset` 缓存已 tokenize 数据（可选，非必需）。
+- **代表性脚本**：本地源码 `/nas_train/app.e0031982/code/ms-swift`（注意：该源码 checkout 为 4.6.0.dev0 / commit 30470cb4e，高于安装版 4.5.3）；`examples/megatron/pretrain.sh`（Qwen2.5-7B 4卡 streaming+packing 预训练范例）、`examples/megatron/muon.sh`（Muon 优化器 + `--optimizer dist_muon`）；文档 `docs/source/Megatron-SWIFT/Quick-start.md`。
+- 预训练数据格式：`megatron pt` 用生成式 template（无 chat template），样本列默认需 `text`/`response`/`content` 之一（或标准 preprocess 映射）。
+- 后续 experiment_plan 阶段再据实际数据层级（Code/Math 用 L2 还是 L3）与列名确认 `--dataset` 传参。
+
+## 操作流水
+| 时间 | 步骤 | 记录 |
+|------|------|------|
+| 2026-09-24 17:03 | data_check | ✅ 全部 5 个数据集可用，PHASE: data_check → env_check |
+| 2026-09-24 17:15 | env_check | ✅ 环境验证通过：py310 / Python 3.10 / PyTorch 2.8.0+cu128 / CUDA 12.8 / ms-swift 4.5.3（安装版）/ megatron-bridge 0.2.0rc6 + megatron-core + megatron-energon / transformer_engine 2.12.0 / apex 0.1。PHASE: env_check → data_preprocess |
+| 2026-09-24 17:32 | data_preprocess | ✅ 查本地 ms-swift 源码确认：无需单独二进制预处理，`megatron pt --dataset <本地路径>` 直接消费原始 parquet/jsonl，tokenize/packing 由框架内部完成。原始格式可直接使用 → 跳过预处理。PHASE: data_preprocess → experiment_plan |
+| 2026-09-24 17:48 | experiment_plan | ✅ 累计预算 0.0/84 GPU·h，未超限。阶段判定 S1（基线复现），EXPERIMENTS.md 已有 S1-01 待跑。填充实验看板与 S1~S4 规划。PHASE: experiment_plan → experiment_run（下一步启动 S1-01 基线） |
+| 2026-09-24 19:29 | experiment_wait | ✅ S1-01 仍在跑（step 35/300，loss 12.08→7.28 稳定下降，grad_norm 正常，显存 17.5GiB/卡）。稳态吞吐 ~41s/it≈~102K tok/s（初值 77.6s/it 系 step1 warmup，非真实吞吐）。修正 ETA：300 步 ≈ 3.4h wall ≈ 27 GPU·h（原估 52 偏高）。与 LLaVA 共享 GPU 无冲突。PHASE: experiment_run → experiment_wait |
+| 2026-09-24 20:10 | experiment_wait | ✅ S1-01 仍在跑（step ~94/300，elapsed ~1h5m，剩余 ~2h19m），loss 12.08→**5.886**@90 持续正常下降，grad_norm ~0.5~1.7，显存 17.51GiB/卡，稳态吞吐 ~41s/it≈~102K tok/s 稳定。已用预算 ~8.7 GPU·h（65min×8卡）。进程正常，PHASE 维持 experiment_wait，无动作退出。 |
+| 2026-09-24 20:33 | experiment_wait | ✅ S1-01 仍在跑（step ~128/300，elapsed ~1h30m，剩余 ~2h），loss 12.08→**5.459**@125 持续正常下降，grad_norm ~0.4~1.0，显存 17.51GiB/卡，稳态吞吐 ~41s/it≈~102K tok/s 稳定。已用预算 ~12 GPU·h（90min×8卡）。进程正常，PHASE 维持 experiment_wait，无动作退出。 |
+| 2026-09-24 20:56 | experiment_wait | ✅ S1-01 仍在跑（step ~162/300，elapsed ~1h50m，剩余 ~1h34m，ETA ~22:30），loss 12.08→**5.086**@160 持续正常下降，grad_norm ~0.43~0.81，显存 17.51GiB/卡，稳态吞吐 ~41s/it≈~102K tok/s 稳定。已用预算 ~14.7 GPU·h（110min×8卡）。进程正常（主进程 4051076 + 8 卡 worker），PHASE 维持 experiment_wait，无动作退出。 |
+| 2026-09-24 19:05 | experiment_run | ✅ **S1-01 启动成功**。① 安装 mcore-bridge 1.6.4 补齐 `megatron pt` 缺失的 mcore_bridge/megatron.core.pipeline_parallel。② 下载 MiniCPM5-1B config+tokenizer，实测 24层/头维96(16头)/KV2/中间4608/vocab130560/**嵌入未共享 tie=false**/rope5M，参数 1038M≈1.04B。③ 关键：`megatron pt` 恒从 `--model` 加载权重，`--finetune` 只控断点续训——故用 transformers 生成随机初始化 model.safetensors (2GB) 实现 from-scratch。④ 修复 4 崩溃：端口 EADDRINUSE(29500 被 LLaVA 占)→动态端口+重试；flash_attn_3 对 head_dim96 崩(vector::reserve)→强制FA2需 patch swift v4 guard + TE max_version 2.8.3→2.8.4 + LD_LIBRARY_PATH torch/lib；FA2 2.8.4 自身损坏(varlen_fwd TypeError egg 混装)→改 `--attention_backend fused` 成功。⑤ 结果：loss=12.08@step1，吞吐 77.6s/it(~54K tok/s)，显存 17.49GiB/卡（use_distributed_optimizer 分摊），300步≈6.5h≈52GPU·h（偏慢：共享GPU+fused+grad_accum128） |
+| 2026-09-24 21:18 | experiment_wait | ✅ S1-01 仍在跑（step ~195/300，elapsed ~2h13m，剩余 ~1h12m，ETA ~22:30），loss 12.08→**4.753**@195 持续正常下降，grad_norm ~0.32~0.67，稳态吞吐 ~41s/it≈~102K tok/s 稳定。已用预算 ~17.8 GPU·h（133min×8卡）。进程正常（主进程 4051076 + 8 卡 worker 4051077~4051083 + megatron pt worker），PHASE 维持 experiment_wait，无动作退出。 |
+| 2026-09-24 21:46 | experiment_wait | ✅ S1-01 仍在跑（step ~239/300，elapsed ~2h41m，剩余 ~38m，ETA ~22:27），loss 12.08→**4.388**@235 持续正常下降，grad_norm ~0.30~0.46，显存 17.53GiB/卡，稳态吞吐 ~40s/it≈~102K tok/s 稳定。已用预算 ~21.5 GPU·h（161min×8卡）。进程正常（主进程 4051076 + 8 卡 worker），PHASE 维持 experiment_wait，无动作退出。 |
+| 2026-09-24 22:13 | experiment_wait | ✅ S1-01 仍在跑（step ~283/300，elapsed ~3h08m，剩余 ~10min，ETA ~22:28），loss 12.08→**3.784**@280 持续正常下降，WSD 衰减已启动（lr 0.0003772@280，lr_wsd_decay_iters=30 生效），稳态吞吐 ~37-40s/it≈~102K tok/s 稳定。已用预算 ~25 GPU·h（188min×8卡）。进程正常（8 卡 worker 4185899~4185952），PHASE 维持 experiment_wait，无动作退出。 |
+| 2026-09-24 22:43 | experiment_wait | ✅ **S1-01 完成**：最终 loss **3.587**@step300（12.08→3.587 全程正常下降），grad_norm 0.072，lr 6e-5（WSD 衰减收尾），吞吐 39.9s/it≈**~105K tok/s**，显存 17.53GiB/卡。耗时 3h19m32s ≈ 3.33h × 8 卡 = **~26.6 GPU·h**。checkpoint 已存 `output/S1-01/v5-20260924-190325/checkpoint-300`（Megatron + safetensors 双格式）。PHASE: experiment_wait → experiment_plan。 |
+| 2026-09-24 23:17 | experiment_plan | ✅ 累计预算 26.6/84 GPU·h（剩余 ~57.4 ≈ ~645 step），未超限。S1 完成、S2 未开始 → 规划 S2 单变量扫描 4 组高优先级（S2-01 LR 1e-3 / S2-02 层数28 / S2-03 KV头4 / S2-04 嵌入共享on），每组 80 steps。写入 EXPERIMENTS.md 待跑队列。GPU 现状：LLaVA-OV-1.5-4b 新实例(PID 2580517~2580532) 仍占 8 卡 ~45-53GiB，可共享 ~28-31GiB/卡。PHASE: experiment_plan → experiment_run（下一步启动 S2-01）。 |
+| 2026-09-24 23:52 | experiment_run | ✅ S2-01 启动成功（经 mb2→mb1 自动回退）：① 新建 `train_s2_01.sh`（同 S1-01，仅 `--lr 1e-3`/`--min_lr 1e-4`/`--train_iters 80`/`--lr_wsd_decay_iters 8`/`--output_dir output/S2-01`）。② mb2 首步 **OOM**（GPU4/6 仅剩 ~26.6/27.6GiB，`train_step` 分配 3.98GiB 失败，ChildFailedError rank4/6）→ 脚本自动回退 mb1。③ mb1 进程 4191798 已拉起（23:52:20），日志 `/tmp/BAIZE_S2-01.mb1.attempt1.log`。**结论：共享 GPU（LLaVA 占 8 卡）下 mb2 不可用，后续 S2 直接用 mb1**。PHASE: experiment_run → experiment_wait。 |
+| 2026-09-25 00:22 | experiment_wait | ✅ S2-01 仍在跑（step ~44/80，elapsed ~28min，剩余 ~22min，ETA ~00:45），loss 12.08→**6.96**@40 持续正常下降，grad_norm ~0.8~1.6，显存 17.51GiB/卡，稳态吞吐 ~37.6s/it≈~111K tok/s 稳定。进程正常（主进程 4191798 + 8 卡 worker）。80 steps 跑完后再与 S1-01(LR6e-4) 对照。PHASE 维持 experiment_wait，无动作退出。 |
+| 2026-09-25 00:52 | experiment_wait | ✅ **S2-01 完成**：最终 loss **6.019**@step80（12.08→6.019），grad_norm 0.499，lr 1e-4（WSD 衰减收尾），吞吐 38.0s/it≈**~110K tok/s**，显存 17.51GiB/卡。耗时 52m37s ≈ 0.877h × 8 卡 = **~7.0 GPU·h**。**关键对照**：S2-01(LR 1e-3) loss 6.019@80 vs S1-01(LR 6e-4) 5.962@80 → **LR 1e-3 略差于 6e-4（无优势）**，Stable LR 维持 **6e-4**。ckpt `output/S2-01/v1-20260924-235239/checkpoint-80`。PHASE: experiment_wait → experiment_plan。 |
+| 2026-09-25 01:28 | experiment_plan | ✅ 累计预算 33.6/84 GPU·h（剩余 ~50.4），未超限。S2 扫描未完成（S2-02/03/04 待跑）→ 选定**下一组 S2-02（层数 24→28，hidden 1536 不变 ≈ 1.2B）**。规划：新建 `models/MiniCPM5-1B-L28/`（config 仅改 num_hidden_layers=28，随机初始化 weight）+ `train_s2_02.sh`（同基线，`--model models/MiniCPM5-1B-L28` / `--lr 6e-4` / `--min_lr 6e-5` / `--train_iters 80` / `--lr_wsd_decay_iters 8` / `--output_dir output/S2-02` / micro_batch=1）。GPU 现状：LLaVA（PID 2580517~2580532）仍占 8 卡 ~45-54GiB，可共享 ~26-35GiB/卡。PHASE: experiment_plan → experiment_run（下一步启动 S2-02）。 |
+| 2026-09-25 02:09 | experiment_run | ✅ **S2-02 启动成功**（经 2 次配置修复）：① 用 `gen_model_variant.py` 生成 `models/MiniCPM5-1B-L28/`（config 仅改 num_hidden_layers=28，随机初始化 weight，实测 **1.144B** 参数 / safetensors 2.29GB）。② **关键坑**：自定义目录名 swift 自动匹配失败 → 先 `model_type` 歧义（`LlamaForCausalLM` 匹配 4 个）→ 加 `--model_type llama`；再 `template` 歧义（匹配 15 个）→ 加 `--template minicpm5`（对照 S1-01 log 确认基线生效值）。③ 新建 `train_s2_02.sh`（`--model models/MiniCPM5-1B-L28` + 两 flag + `--lr 6e-4`/`--min_lr 6e-5`/`--train_iters 80`/`--lr_wsd_decay_iters 8`/`--output_dir output/S2-02`/mb=1）。④ 进程 1546757 已拉起，output_dir `output/S2-02/v0-20260925-020928`，model 加载成功、无 OOM。PHASE: experiment_run → experiment_wait。 |
+| 2026-09-25 03:31 | experiment_wait | ✅ **S2-02 完成**：最终 loss **6.119**@step80（12.07→6.119），grad_norm 0.199，lr 6e-5（WSD 收尾），吞吐 40.0s/it≈**~105K tok/s**，显存 19.02GiB/卡。耗时 55m6s ≈ 0.918h × 8 卡 = **~7.35 GPU·h**。**关键对照**：S2-02(28层) loss 6.119@80 vs S1-01(24层) 5.962@80 → **28 层短程无优势（参数更多、同 LR 收敛更慢）**，层数**保留 24**。ckpt `output/S2-02/v0-20260925-020928/checkpoint-80`。累计预算 33.6→40.9 GPU·h。PHASE: experiment_wait → experiment_plan。 |
+| 2026-09-25 04:14 | experiment_plan | ✅ 累计预算 40.9/84 GPU·h（剩余 ~43.1），未超限。S2 扫描未完成（S2-03/04 待跑）→ 选定**下一组 S2-03（KV头 2→4）**。规划：新建 `models/MiniCPM5-1B-KV4/`（`gen_model_variant.py --num_key_value_heads 4`，随机初始化 ~1.05B）+ `train_s2_03.sh`（复制 train_s2_02.sh，`--model models/MiniCPM5-1B-KV4` + `--model_type llama --template minicpm5` / `--lr 6e-4` / `--min_lr 6e-5` / `--train_iters 80` / `--lr_wsd_decay_iters 8` / `--output_dir output/S2-03` / mb=1）。预期 ~7.1 GPU·h。GPU 现状：LLaVA（PID 2580517~2580532）仍占 8 卡 ~47-55GiB，可共享 ~26-35GiB/卡。PHASE: experiment_plan → experiment_run（下一步启动 S2-03）。 |
+| 2026-09-25 04:58 | experiment_run | ✅ **S2-03 启动成功**：① `gen_model_variant.py --num_key_value_heads 4` 生成 `models/MiniCPM5-1B-KV4/`（config 仅改 num_key_value_heads=4，实测 **1.052B** 参数 / safetensors 2.10GB；hidden 1536 / heads 16 / head_dim 96 / tie_word_embeddings false 均不变）。② 新建 `train_s2_03.sh`（`--model models/MiniCPM5-1B-KV4` + `--model_type llama --template minicpm5` + `--lr 6e-4`/`--min_lr 6e-5`/`--train_iters 80`/`--lr_wsd_decay_iters 8`/`--output_dir output/S2-03`/mb=1）。③ 进程已拉起（master_port 43513），output_dir `output/S2-03/v0-20260925-045918`，dataset 加载成功（num_shards 616）、model 加载中、无 OOM、无报错。预期 ~40s/it × 80 ≈ 53min ≈ ~7.1 GPU·h。PHASE: experiment_run → experiment_wait。 |
+| 2026-09-25 06:34 | experiment_wait | ✅ **S2-03 完成**：最终 loss **5.979**@step80（12.08→5.979），grad_norm 0.270，lr 6e-5（WSD 收尾），吞吐 37.6s/it≈**~111K tok/s**，显存 17.72GiB/卡。耗时 52m5s ≈ 0.868h × 8 卡 = **~6.9 GPU·h**。**关键对照**：S2-03(KV4) loss 5.979@80 vs S1-01(KV2) 5.962@80 → **KV头 2→4 基本持平(+0.017)无优势，参数 +~14M(1.052B vs 1.038B)**，故 **保留 KV2**。ckpt `output/S2-03/v0-20260925-045918/checkpoint-80`。累计预算 40.9→47.8 GPU·h。PHASE: experiment_wait → experiment_plan。 |
+| 2026-09-25 09:06 | experiment_wait | ✅ **S2-04 完成**：最终 loss **6.030**@step80（12.08→6.030），grad_norm 0.333，lr 6e-5（WSD 收尾），吞吐 37.34s/it≈**~112K tok/s**，显存 16.63GiB/卡，参数 0.838B。耗时 51m44s ≈ 0.862h × 8 卡 = **~6.9 GPU·h**。**关键对照**：S2-04(tied) loss 6.030@80 vs S1-01(untied) 5.962@80 → **嵌入共享 tied 略差(+0.068)，虽省 ~200M 独立输出嵌入但无 loss 收益，故 嵌入共享保留 off(untied)**。ckpt `output/S2-04/v0-20260925-081356/checkpoint-80`。累计预算 47.8→54.7 GPU·h。**S2 单变量扫描 4 维度收官，基线（24层/KV2/untied/LR6e-4）全部胜出**。PHASE: experiment_wait → experiment_plan。 |
+| 2026-09-25 07:23 | experiment_plan | ✅ 累计预算 47.8/84 GPU·h（剩余 ~36.2），未超限。S2 单变量扫描仅剩 S2-04（嵌入共享）待跑 → 选定**下一组 S2-04（嵌入共享 off→on(tied)）**（24层 / GQA KV2 / 头维96 / AdamW / LR 6e-4 / Batch 1024 / SeqLen 4096 / mb=1 / 80 steps）。规划：`gen_model_variant.py --src models/MiniCPM5-1B --dst models/MiniCPM5-1B-TIED --tie_word_embeddings true` 生成 tied 变体（输入嵌入 + 输出 lm_head 共享，参数 1.038B→~0.84B，省 ~200M 独立输出嵌入）+ 新建 `train_s2_04.sh`（复制 train_s2_03.sh，`--model models/MiniCPM5-1B-TIED` + `--model_type llama --template minicpm5` + `--lr 6e-4`/`--min_lr 6e-5`/`--train_iters 80`/`--lr_wsd_decay_iters 8`/`--output_dir output/S2-04`/mb=1）。预期 ~7.0 GPU·h，S2 后累计 ~54.8 / 剩余 ~29.2。PHASE: experiment_plan → experiment_run（下一步启动 S2-04，本唤醒只走一步不启动）。 |
+| 2026-09-25 08:14 | experiment_run | ✅ **S2-04 启动成功**：① `gen_model_variant.py --src models/MiniCPM5-1B --dst models/MiniCPM5-1B-TIED --tie_word_embeddings true` 生成 tied 变体（config 仅改 tie_word_embeddings=true，实测 **0.838B** 参数 / safetensors 1.675GB；hidden 1536 / 24层 / heads 16 / KV2 / head_dim 96 均不变，tokenizer 三件套 + generation_config 已复制）。② 新建 `train_s2_04.sh`（`--model models/MiniCPM5-1B-TIED` + `--model_type llama --template minicpm5` + `--lr 6e-4`/`--min_lr 6e-5`/`--train_iters 80`/`--lr_wsd_decay_iters 8`/`--output_dir output/S2-04`/mb=1）。③ 进程已拉起（master 2854157 + 8 卡 worker 2854343~2854350，master_port 51263），output_dir `output/S2-04/v0-20260925-081356`，dataset 加载成功（num_shards 616）、model 加载中、无 OOM 无报错。预期 ~40s/it × 80 ≈ 53min ≈ ~7.0 GPU·h，ETA ~09:06。PHASE: experiment_run → experiment_wait。 |
+| 2026-09-25 10:02 | experiment_plan | ✅ 累计预算 54.7/84 GPU·h（剩余 ~29.3）未超限。S2 单变量扫描 4 维度（LR/层数/KV头/嵌入共享）收官且**基线全部胜出** → 进入 S3 组合优化。**规划 S3 3 组补测低优维度**（每组 80 steps ≈ ~7 GPU·h）：① **S3-01 Stable LR 下界 3e-4**（`--lr 3e-4`/`--min_lr 3e-5`，其余同基线）；② **S3-02 WSD 衰减比例 10%→20%**（`--lr_wsd_decay_iters 8→16`，其余同基线）；③ **S3-03 条件组**（视 S3-01/02：任一胜出→组合胜出值；否则测 Muon `--optimizer dist_muon` 或 Batch 512）。S3 预计 ~14~21 GPU·h，剩余 ~8~15 供 S4（~100~180 step 验证）。PHASE: experiment_plan → experiment_run（下一步启动 S3-01，本唤醒只走一步不启动）。 |
+| 2026-09-25 10:56 | experiment_run | ✅ **S3-01 启动成功**（Stable LR 下界 3e-4 补测）：新建 `train_s3_01.sh`（复制 train_s2_04.sh，改 `--model models/MiniCPM5-1B`（untied 基线）+ `--model_type llama --template minicpm5` + `--lr 3e-4`/`--min_lr 3e-5` + `--train_iters 80`/`--lr_wsd_decay_iters 8` + `--output_dir output/S3-01`/mb=1，纯超参无模型改动）。GPU 现状：LLaVA 仍占 8 卡 ~47-57GiB（PID 2580517~2580532，非本项目勿动），可共享 mb=1。进程已拉起（master bash 2109764 + megatron pt 2109781 + torchrun 2110226 + 8 卡 worker，master_port 54579），output_dir `output/S3-01/v0-20260925-105659`，args 已确认（lr 3e-4 / min_lr 3e-5 / model_type llama / template minicpm5 / optimizer adam / WSD decay 8），dataset 加载成功（num_shards 616）、模型加载中、无 OOM 无报错。预期 ~40s/it × 80 ≈ 53min ≈ ~7.0 GPU·h，ETA ~11:50。PHASE: experiment_run → experiment_wait。 |
+| 2026-09-25 11:51 | experiment_wait | ✅ **S3-01 完成（LR 下界 3e-4 胜出！）**：End 11:48:45，最终 loss **5.908**@step80（12.08→5.908），grad_norm 0.218，lr 3e-5（WSD 收尾），吞吐 37.63s/it≈**~111K tok/s**，显存 17.51GiB/卡。耗时 52m11s ≈ 0.87h × 8 卡 = **~7.0 GPU·h**。**关键结论**：S3-01(LR 3e-4) loss **5.908**@80 < S1-01(LR 6e-4) 5.962@80 < S2-01(LR 1e-3) 6.019@80 —— **Stable LR 下界 3e-4 最优**（短程低 LR 更稳更优），LR 维度胜出值 6e-4→**3e-4**。ckpt `output/S3-01/v0-20260925-105659/checkpoint-80`。已更新 EXPERIMENTS.md（S3-01→done，预算 54.7→61.7 GPU·h）与 MEMORY.md（BUDGET_USED、PHASE→experiment_plan）。下一步：experiment_plan 规划 S3-02（WSD 衰减比例，建议带胜出 LR 3e-4）/S4。 |
+| 2026-09-25 12:00 | experiment_plan | ✅ 累计预算 61.7/84 GPU·h（剩余 ~22.3）未超限。S3 未完（S3-02 待跑）→ **规划 S3-02 = WSD 衰减比例 10%→20% @ 胜出 LR 3e-4**：`--lr 3e-4`/`--min_lr 3e-5`/`--lr_wsd_decay_iters 16`（其余同基线：24层/GQA KV2/untied/AdamW/batch1024/seq4096/mb=1/80 steps，`--model models/MiniCPM5-1B` + `--model_type llama --template minicpm5`）。与 S3-01（LR 3e-4 + WSD10%）对照，一次实验给出胜出 LR 下最佳 WSD 比例。**S3-03（Muon/Batch512）取消**：预算紧张且低信号/有实现风险，剩余 ~15 GPU·h 全部留给 S4 收敛验证（胜出配置 ~170~200 step）。已更新 EXPERIMENTS.md（S3-02 行改为 LR 3e-4 / S3-03→cancelled）与 MEMORY.md（PHASE→experiment_run、待跑队列）。下一步 experiment_run 启动 S3-02（本唤醒只规划不启动）。 |
+| 2026-09-25 13:49 | experiment_run | ✅ **S3-02 启动成功**（WSD 衰减比例 10%→20% @ 胜出 LR 3e-4）：新建 `train_s3_02.sh`（复制 train_s3_01.sh，仅改 `--lr_wsd_decay_iters 8→16` + `--output_dir output/S3-02` + tmp log 名 S3-02，其余同 S3-01：`--model models/MiniCPM5-1B`(untied 基线) + `--model_type llama --template minicpm5` + `--lr 3e-4`/`--min_lr 3e-5` + `--train_iters 80`/mb=1，纯超参无模型改动）。GPU 现状：LLaVA 仍占 8 卡 ~47-57GiB（PID 2580517~2580532，非本项目勿动），每卡剩 ~23-34GiB，可共享 mb=1，无需清理进程。进程已拉起（master bash 2062025 + megatron pt 2062156 + 8 卡 worker 2068335~2068352，master_port 56429），args 已确认（lr 3e-4 / min_lr 3e-5 / model_type llama / template minicpm5 / optimizer adam / WSD decay 16 / output_dir output/S3-02），dataset 加载中、无 OOM 无报错。预期 ~53min ≈ ~7.0 GPU·h，ETA ~14:42。PHASE: experiment_run → experiment_wait。 |
+| 2026-09-25 14:48 | experiment_wait | ✅ **S3-02 完成（WSD 衰减比例 20% 无优势）**：End 14:41:54，最终 loss **5.917**@step80（12.08→5.917），grad_norm 0.164，lr 3e-5（WSD 收尾），吞吐 37.95s/it≈**~108K tok/s**，显存 17.51GiB/卡，参数 1038M。耗时 52m6s ≈ 0.87h × 8 卡 = **~7.0 GPU·h**。**关键对照结论**：S3-02(WSD20%) loss 5.917@80 vs S3-01(WSD10%) 5.908@80 —— 持平（略差 +0.009，噪声内），**WSD 衰减比例不敏感，保留 10%**（lr_wsd_decay_iters 8）。ckpt `output/S3-02/v0-20260925-134941/checkpoint-80`。预算 61.7→68.7 GPU·h。**S3 收官，胜出配置 = 24层/KV2/untied/AdamW/LR 3e-4/WSD10%**（基线唯一改动 Stable LR 6e-4→3e-4）。PHASE: experiment_wait → experiment_plan（下一步规划 S4 长步收敛验证）。 |
+| 2026-09-25 15:52 | experiment_plan | ✅ 累计预算 68.7/84 GPU·h（剩余 ~15.3）未超限。S3 已完成 → 阶段进入 S4 择优收敛。**确认胜出配置 = 24层/GQA KV2/嵌入 off(untied)/AdamW/Stable LR 3e-4/WSD 10%/Batch 1024/SeqLen 4096/micro_batch 1/μP**（基线唯一改动 = Stable LR 6e-4→3e-4）。**规划 S4-01**：从零训练 160 step（train_iters 160 / lr_wsd_decay_iters 16=10% / lr 3e-4 / min_lr 3e-5 / lr_warmup_iters 10，模型 models/MiniCPM5-1B(untied 基线，无架构改动)，output_dir output/S4-01），预期 ~160×37.6s≈1.67h×8≈~13.4 GPU·h，跑完 ~82.1/84（留 ~1.9 缓冲）。GPU 现状：LLaVA 仍占 8 卡 ~46-57GiB（PID 2580517~2580532，非本项目勿动），每卡剩 ~23-34GiB 可共享 mb=1。PHASE: experiment_plan → experiment_run（下一步启动 S4-01，本唤醒只规划不启动）。 |
+| 2026-09-25 16:53 | experiment_run | ✅ **S4-01 启动成功**（胜出配置长步收敛验证）：新建 `train_s4_01.sh`（复制 train_s3_01.sh，改 `--train_iters 80→160` + `--lr_wsd_decay_iters 8→16` + `--output_dir output/S4-01` + log 名 S4-01，lr 3e-4/min_lr 3e-5/AdamW/WSD 不变，用基线模型 models/MiniCPM5-1B(untied)，纯超参无模型改动）。GPU 现状：LLaVA 仍占 8 卡 ~47-57GiB（PID 2580517~2580532，非本项目勿动），每卡剩 ~23-34GiB 可共享 mb=1，无需清理进程。进程已拉起（master bash 2841047 + megatron pt 2841050 + torchrun 2841142 + 8 卡 worker，master_port 60187），args 已确认（lr 3e-4 / min_lr 3e-5 / model_type llama / template minicpm5 / optimizer adam / WSD decay 16 / train_iters 160 / output_dir output/S4-01），dataset 加载中、无 OOM 无报错。预期 ~160×37.6s≈1.67h×8≈~13.4 GPU·h，跑完 ~82.1/84。PHASE: experiment_run → experiment_wait。 |
+| 2026-09-25 18:55 | experiment_wait | ✅ **S4-01 完成（胜出配置长步验证通过）**：End 18:36:13（SUCCESS 18:36:18），train 160/160，final loss **4.9690**@160（12.08→4.969），grad_norm 0.151，lr 3e-5（WSD 收尾），吞吐 37.82s/it≈**~111K tok/s**，显存 17.51GiB/卡。ckpt `output/S4-01/v0-20260925-165341/checkpoint-160`。**关键对照**：S4-01(LR 3e-4) 4.9690@160 **<** 基线 S1-01(LR 6e-4) 5.0861@160 → **−0.117，胜出验证通过**（较 80 步 −0.054 扩大）。耗时 1h42m37s≈1.71h×8卡=**~13.7 GPU·h**，预算 68.7→**82.4/84** GPU·h（剩 ~1.6）。**S4 收官，全部 4 阶段完成**。PHASE: experiment_wait → experiment_plan（下一步判定 S4 完成 → converged，输出最终胜出配置 + 可复现命令）。 |
+| 2026-09-25 17:55 | experiment_wait | ✅ **S4-01 仍在跑（step 95/160）**：elapsed 59m43s，remaining ~40m52s（ETA ~18:36）。loss 12.08→**5.707**@95 持续正常下降，grad_norm 0.39~1.13，lr 3e-4（stable 段，WSD 自 144 步始衰减），吞吐 ~37.7s/it≈**~109K tok/s**，显存 17.51GiB/卡。**复现性确认**：本 run @80 loss 5.8995 与 S3-01 最终 5.908@80 高度一致（从零重跑，随机波动内）→ 胜出配置复现良好。PHASE 维持 experiment_wait，无动作退出（不推进步骤）。 |
+| 2026-09-25 20:10 | experiment_plan | ✅ **S4 完成 → converged（任务收官）**：按推进逻辑步骤 D 判定 S4 收敛验证已完成 → PHASE=converged。确认无 BaiZe 残留训练进程（pgrep 仅命中自身 cline 853110 与 LLaVA torchrun 2569643，均非本项目；nvidia-smi 仅 LLaVA 占卡 2580517~2580532，无本项目进程）。累计预算 ~82.4/84 GPU·h（剩 ~1.6）未超限。**最终胜出配置已在 EXPERIMENTS.md 顶部**：24层/GQA KV2/嵌入 off(untied)/AdamW/Stable LR 3e-4/WSD 10%/Batch 1024/SeqLen 4096/mb1/μP（基线唯一改动 LR 6e-4→3e-4），S4-01 从零训 160 step final loss 4.9690 < 基线(LR 6e-4) 5.0861 → −0.117，可复现命令 = `bash train_s4_01.sh`。PHASE: experiment_plan → converged（任务完成，后续唤醒无动作）。 |
+
+## 环境备注
+- ✅ 环境已验证（2026-09-24 17:15）：CUDA 12.8 / PyTorch 2.8.0+cu128 / Python 3.10 / conda py310
+- 框架：ms-swift **4.5.3**（`/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/swift`，`import swift; swift.__version__` 实测为 4.5.3，与任务书一致；早前 3.12.3 系误读）。`swift` / `megatron` 二进制均在 py310 环境 PATH 中（`/nas_train/app.e0031982/miniforge3/envs/py310/bin/`）
+- Megatron：`import megatron` 为 **namespace package**（无 `__version__`，属正常），由 `megatron-bridge 0.2.0rc6`（含 `megatron.bridge`/`megatron.core`/`megatron.energon` 子包）+ `megatron-core` + `megatron-energon 5.0.0` 提供；`transformer_engine 2.12.0`、`apex 0.1` 已装
+- 训练入口已确认：`megatron pt`（预训练）/ `megatron sft`（指令微调），映射到 `swift.cli._megatron.pt` / `swift.cli._megatron.sft`。权重转换用 `swift export --mcore_model ... --to_hf true`
+- GPU 现状（2026-09-24 17:03）：8 张 H100 均被 py310 python 进程占用（PID 545895~545902，每进程约 49~53 GiB），命令行为归属待 experiment_run 阶段核实后才判断是否清理
+- **GPU 归属已核实（2026-09-24 19:00）**：PID 545895~545902 是 **LLaVA-OneVision-1.5 作业**（`/nas_train/app.e0031982/code/LLaVA-OneVision-1.5/aiak_training_llm/train.py`，非本项目，勿动）。PID 544812 为其 torchrun 主进程（占端口 29500）。我的 S1-01 与 LLaVA **共享 GPU**（每卡 LLaVA ~50GiB + 我 17.49GiB，仅剩 ~4-8GiB），因此吞吐受限且 micro_batch 只能 1。
+- **本机修改（需在环境重建后重新应用）**：① `swift/megatron/arguments/megatron_args.py` `_init_attention_backend` 加 `getattr(fa_utils,'v4_is_installed',False)` guard（TE 2.12 无 FA4 属性）；② `transformer_engine/.../dot_product_attention/utils.py` `max_version` 2.8.3→2.8.4；③ 训练脚本需 `export LD_LIBRARY_PATH=...torch/lib:$LD_LIBRARY_PATH`（flash_attn_2_cuda 缺 libc10.so）。
+- **flash 注意力结论**：FA3(3.0.0) 对 head_dim=96 崩溃；FA2(2.8.4) 安装损坏(varlen_fwd 签名不匹配)。**当前可用：`--attention_backend fused`**（TE 融合注意力，无 flash 依赖，head_dim96 OK）。后续若要提速可尝试重装 flash-attn（2.8.3 或修复 egg 混装）。
