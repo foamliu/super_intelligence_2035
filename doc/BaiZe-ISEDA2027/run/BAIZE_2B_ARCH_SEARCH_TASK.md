@@ -208,4 +208,12 @@ setsid bash scripts/<脚本> > /tmp/BAIZE2B_<ARCH>.log 2>&1 < /dev/null &
 3. **参数量对齐**：如两端参数量差 >10%，需在报告注明「非等参对比」并说明影响。
 4. **推理 benchmark 的实现栈**：统一 SGLang。关键澄清——Mamba2-hybrid **不是 Hymba**（Hymba 是并行 hybrid-head + Mamba v1），而是 **Nemotron-H**（顺序混合：Mamba2 + GQA + MLP，由 `hybrid_override_pattern` 决定），SGLang 原生支持 `nemotron_h`（`--mamba-ssm-dtype float32` / `--mamba-full-memory-ratio`）；MiniCPM5-2B 走 Llama。真正的坑从「无 HF 推理要手写 mcore」变为 **megatron-core 分布式 ckpt → HF 格式转换**（无现成 bridge，需自行把 `NVIDIAMambaHybridModelProvider2B` 权重映射到 Nemotron-H/Llama HF 结构 + DeepSeek tokenizer）；fallback 才是 mcore 手写前向/generate。
 
-> **搜索工具**：优先查本地 ms-swift / megatron-core 源码，其次用 `cimi-search` / `cimi-fetch`，不滥用。
+## 可用工具（MCP，按需使用，已实测可用）
+
+agent 具备三类辅助工具，遇到本地源码查不到的问题时可调用：
+
+1. **`cimi-search`（web 搜索）**：查外部文档、报错信息、API 用法、上游 issue。例：SGLang 支持的模型、`nemotron_h` 推理参数、mcore recipe 用法。
+2. **`cimi-fetch`（网页抓取）**：抓取指定 URL 的完整正文（配合 `cimi-search` 拿到的链接用）。例：抓 SGLang supported_models 页面确认 `nemotron_h` 是否在列。
+3. **`vqa`（多模态读图）**：对本地图片提问（需传本地图片路径，支持 PNG/JPG/WebP/GIF ≤20MiB）。例：读 loss 曲线截图判收敛、读架构图确认层结构、读 `nvidia-smi` 占卡截图。
+
+> **使用原则**：优先查本地 `ms-swift` / `megatron-core` 源码；本地查不到再用上述工具；每条结论回写时注明来源（工具名 + URL/文件路径）。不滥用、不盲信，关键结论需二次核验。

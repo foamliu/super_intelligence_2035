@@ -258,6 +258,18 @@
   </tbody>
 </table>
 
+<h3>agent 可用辅助工具（MCP，已实测可用）</h3>
+<p>假期无人值守时，agent 遇到本地源码查不到的问题，可按需调用以下三类工具（不滥用、结论注明来源）：</p>
+<table>
+  <thead><tr><th>工具</th><th>能力</th><th>典型用途</th></tr></thead>
+  <tbody>
+    <tr><td><code>cimi-search</code></td><td>web 搜索</td><td>查外部文档 / 报错 / API 用法 / 上游 issue（如 SGLang 支持模型、<code>nemotron_h</code> 参数）</td></tr>
+    <tr><td><code>cimi-fetch</code></td><td>抓取 URL 全文</td><td>抓 <code>cimi-search</code> 命中的具体页面（如 SGLang supported_models）确认细节</td></tr>
+    <tr><td><code>vqa</code></td><td>多模态读本地图</td><td>读 loss 曲线 / 架构图 / <code>nvidia-smi</code> / 波形截图（传本地 PNG/JPG/WebP ≤20MiB）</td></tr>
+  </tbody>
+</table>
+<p>原则：优先本地 <code>ms-swift</code> / <code>megatron-core</code> 源码 → 本地查不到再用工具 → 关键结论二次核验。</p>
+
 <footer>
   BaiZe 2B 架构搜索 · 假期执行计划报告 · 生成于 2026-09-29 · 配套任务书 <code>run/BAIZE_2B_ARCH_SEARCH_TASK.md</code>
 </footer>
