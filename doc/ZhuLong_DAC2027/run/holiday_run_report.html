@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZhuLong (DAC 2027) · 十一假期完整试验 启动与监测手册</title>
+<style>
+  :root{--bg:#f4f6fa;--card:#fff;--ink:#1a2233;--muted:#5b6779;--line:#e3e8f0;--accent:#2456e6;--accent-soft:#eef3ff;
+    --done-bg:#e7f6ec;--done-fg:#157a3c;--todo-bg:#fff4e0;--todo-fg:#a05a00;--wait-bg:#fdeceb;--wait-fg:#b3271e;
+    --defer-bg:#eef0f4;--defer-fg:#54607a;--info-bg:#e9f3fb;--info-fg:#1a5f9c}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;font-size:15px}
+  .wrap{max-width:1060px;margin:0 auto;padding:32px 20px 72px}
+  header.hero{background:linear-gradient(135deg,#14213d 0%,#2456e6 100%);color:#fff;border-radius:14px;padding:30px 32px;margin-bottom:26px}
+  header.hero h1{margin:0 0 8px;font-size:25px;letter-spacing:.3px}
+  header.hero p{margin:2px 0;opacity:.92;font-size:14px}
+  header.hero .tag{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);padding:2px 10px;border-radius:20px;font-size:12px;margin-top:10px}
+  h2{font-size:19px;margin:38px 0 6px;padding-left:11px;border-left:4px solid var(--accent)}
+  h2 .sec-no{color:var(--accent);margin-right:6px;font-weight:700}
+  h3{font-size:16px;margin:24px 0 8px;color:#22304d}
+  p{margin:8px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .card.soft{background:var(--accent-soft);border-color:#d6e1ff}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin:14px 0}
+  .kv{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .kv b{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:4px}
+  .kv span{font-size:14px}
+  code{font-family:"SFMono-Regular",Consolas,Menlo,monospace;background:#f0f2f7;border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:13px;color:#8a2be2}
+  pre.cmd{background:#0f172a;color:#e2e8f0;padding:14px 16px;border-radius:8px;font-size:13px;line-height:1.75;overflow-x:auto;margin:10px 0}
+  pre.cmd code{background:none;border:none;color:inherit;padding:0;font-size:13px}
+  pre.cmd .cm{color:#7d8ca3}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px;background:#fff}
+  th,td{border:1px solid var(--line);padding:8px 9px;text-align:left;vertical-align:top}
+  th{background:#f7f9fc;font-weight:600;color:#22304d;white-space:nowrap}
+  tr:nth-child(even) td{background:#fbfcfe}
+  .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .badge{display:inline-block;border-radius:20px;padding:1px 9px;font-size:12px;font-weight:600;white-space:nowrap}
+  .b-done{background:var(--done-bg);color:var(--done-fg)}
+  .b-todo{background:var(--todo-bg);color:var(--todo-fg)}
+  .b-wait{background:var(--wait-bg);color:var(--wait-fg)}
+  .b-defer{background:var(--defer-bg);color:var(--defer-fg)}
+  .b-info{background:var(--info-bg);color:var(--info-fg)}
+  .callout{border-left:4px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0}
+  .callout.warn{border-left-color:#e0a306;background:#fff8e6}
+  .callout.danger{border-left-color:#d1342c;background:#fdeceb}
+  .callout.ok{border-left-color:#2f9e5a;background:var(--done-bg)}
+  ul.tight{margin:6px 0;padding-left:20px}
+  ul.tight li{margin:4px 0}
+  .muted{color:var(--muted)}
+  .small{font-size:13px}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+  .flow .step{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:13px}
+  .flow .arr{color:#9aa4b5;font-weight:700}
+  footer{margin-top:44px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>ZhuLong (DAC 2027) · 十一假期完整试验 启动与监测手册</h1>
+  <p>一次串行跑完 <b>15 配置 × 5 轮 = 75 轮</b>，回填论文 6 张表的 <code>mean ± std</code>（56 个 <code>[TBD]</code>），不臆造任何数字。</p>
+  <p style="color:#dde4f0">生成日期 2026-09-29 · 依据 <code>holiday_plan_930_1007.md</code> + <code>ablation_run_conductor_serial.sh</code> + 3 份 full task book（依赖已全部就绪）</p>
+  <span class="tag">S1 = Ω 观测保真度 · S2 = Φ 信念更新 · S3 = K 先验/backbone · 反作弊 hook 全臂冻结</span>
+</header>
+
+<h2><span class="sec-no">0</span>一句话总览</h2>
+<div class="card soft">
+  <p style="margin:0">在机器 <b>10.251.36.15</b> 上，一条 <code>setsid</code> 命令启动总控脚本，它将<b>串行</b>推进 4 个阶段；每阶段由一个 loop 脚本<b>自驱 8 并发</b>。每臂跑 5 轮、报 <code>mean ± std</code>，跑完一阶段自动衔接下一阶段，全程无需人工盯守——只需偶尔 <code>tail -f</code> 确认还活着。</p>
+</div>
+
+<h2><span class="sec-no">1</span>执行流水（4 阶段 / 15 配置 / 75 轮）</h2>
+<div class="flow">
+  <span class="step">阶段1 · S1 保真度</span><span class="arr">→</span>
+  <span class="step">阶段2 · 组件消融(含 full 锚点)</span><span class="arr">→</span>
+  <span class="step">阶段3 · S2 Φ 轴</span><span class="arr">→</span>
+  <span class="step">阶段4 · 模型消融</span>
+</div>
+
+<table>
+  <tr><th>阶段</th><th>流</th><th>内容</th><th class="num">配置</th><th class="num">轮数</th><th class="num">~耗时</th><th>状态</th></tr>
+  <tr><td>1</td><td>A</td><td>S1 保真度：<code>omega_low</code> → <code>readback_binary</code> → <code>readback_none</code></td><td class="num">3</td><td class="num">15</td><td class="num">~53h</td><td><span class="badge b-todo">待跑</span></td></tr>
+  <tr><td>2</td><td>C·P1</td><td>组件消融：<code>pure_llm</code> → <code>rag</code> → <code>wo_retrieval</code> → <code>full 锚点</code></td><td class="num">4</td><td class="num">20</td><td class="num">~70h</td><td><span class="badge b-todo">待跑</span></td></tr>
+  <tr><td>3</td><td>C·P2</td><td>S2 Φ 轴：<code>k10</code> → <code>k3</code> → <code>k1</code> → <code>lagged(已修复)</code></td><td class="num">4</td><td class="num">20</td><td class="num">~70h</td><td><span class="badge b-todo">待跑</span></td></tr>
+  <tr><td>4</td><td>B</td><td>模型消融：<code>glm-5.2</code> → <code>ds-v4-flash</code> → <code>kimi</code> → <code>doubao</code></td><td class="num">4</td><td class="num">20</td><td class="num">~70h</td><td><span class="badge b-todo">待跑</span></td></tr>
+  <tr><td colspan="3" style="text-align:right"><b>合计</b></td><td class="num"><b>15</b></td><td class="num"><b>75</b></td><td class="num"><b>~262h（~10-11 天）</b></td><td><span class="badge b-info">含 30min 轮询粒度</span></td></tr>
+</table>
+
+<div class="callout warn">
+  <b>时间预警：</b>75 轮 × ~3.5h/轮 ≈ <b>10-11 天</b>，<b>超过 9/30–10/7 的 8 天假期</b>。模型消融（阶段 4）成本最高、相互无依赖，若中途落后，<b>将阶段 4 节后续跑即可</b>，不影响阶段 1–3 的完稿数字。
+</div>
+
+<h3>探路成绩（1-shot 基线，已确认）</h3>
+<table>
+  <tr><th>轴</th><th>成绩</th></tr>
+  <tr><td>组件消融</td><td>pure_llm <b>11.4%</b> · rag <b>70.3%</b> · wo_retrieval <b>81.6%</b> · full <b>84.8%</b></td></tr>
+  <tr><td>S2 Φ 轴</td><td>k10 <b>75.3%</b> · k3 <b>69.0%</b> · k1 <b>60.8%</b> · lagged <b>84.2%</b>（修复后 r2）/ 98.1% Converged · unbounded <b>84.8%</b></td></tr>
+</table>
+<p class="small muted">上述为 1-shot provisional，正式值以本轮 5-run <code>mean ± std</code> 回填为准。</p>
+
+<h2><span class="sec-no">2</span>一键启动</h2>
+
+<div class="callout ok">
+  <b>依赖已就绪：</b>3 个 loop、3 份 full task book、<code>set_s1_fidelity.py</code>、以及 S1 臂读取代码（<code>EDA_OMEGA_FIDELITY</code> / <code>EDA_RUNCODE_READBACK</code>）均已落地。总控脚本启动时会再预检一遍，缺任一文件会<b>报错停止（不空跑）</b>。
+</div>
+
+<h3>2.1 启动（登入 10.251.36.15 后执行）</h3>
+<pre class="cmd"><code><span class="cm"># 一键串行启动（脱离进程组，防工具超时误杀）</span>
+cd /nasdata/app.e0031982/code/ZhuLong_DAC2027/run
+setsid bash ablation_run_conductor_serial.sh &gt; /tmp/ablation_conductor.log 2&gt;&amp;1 &lt; /dev/null &amp;</code></pre>
+
+<h3>2.2 启动后 3 秒确认</h3>
+<pre class="cmd"><code><span class="cm"># 应看到「预检通过：所有 loop / task book 就绪」，否则看报错</span>
+sleep 3 &amp;&amp; head -30 /tmp/ablation_conductor.log</code></pre>
+
+<h3>2.3 停止 / 重启（全程幂等，随时可停）</h3>
+<pre class="cmd"><code><span class="cm"># 停止总控与 loop（eval 由 setsid 脱离，需单独停）</span>
+pkill -f 'ablation_run_conductor_serial.sh' || true
+pkill -f 'ablation_run_loop_' || true
+<span class="cm"># 如要连正在跑的评测一起停</span>
+pkill -f '^bash scripts/run_cline_script' || true
+
+<span class="cm"># 重启 = 续跑：loop 读 MEMORY 恢复 PHASE，不重跑已完成的臂/轮</span>
+<span class="cm"># 重新执行 2.1 的启动命令即可</span></code></pre>
+
+<h2><span class="sec-no">3</span>监测指令</h2>
+
+<h3>3.1 实时看进度</h3>
+<pre class="cmd"><code><span class="cm"># 总控总进度（阶段切换、完成信号）</span>
+tail -f /tmp/ablation_conductor.log
+
+<span class="cm"># 当前阶段 loop 日志（按阶段选一条）</span>
+tail -f /tmp/ablation_loop_s1_full.log            <span class="cm"># 阶段1 S1</span>
+tail -f /tmp/ablation_loop_component_s2_full.log  <span class="cm"># 阶段2+3</span>
+tail -f /tmp/ablation_loop_model_full.log         <span class="cm"># 阶段4</span></code></pre>
+
+<h3>3.2 看某阶段具体跑到哪（MEMORY 状态）</h3>
+<pre class="cmd"><code><span class="cm"># 例：组件+S2 阶段（PHASE/CONFIG/STAGE/ROUND/ERROR_COUNT）</span>
+grep -nE 'PHASE|CONFIG|STAGE|ROUND|ERROR_COUNT' \
+  /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/MEMORY_component_full.md | tail -20
+
+<span class="cm"># 另两份：MEMORY_s1_full.md / MEMORY_model_full.md 同理</span></code></pre>
+
+<h3>3.3 看每日操作流水</h3>
+<pre class="cmd"><code>cat /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/daily-memories/$(date +%F).md</code></pre>
+
+<h3>3.4 看进程是否活着</h3>
+<pre class="cmd"><code><span class="cm"># 总控 + loop 是否在跑（有输出 = 活着）</span>
+pgrep -af 'ablation_run_conductor_serial|ablation_run_loop_'
+
+<span class="cm"># 当前这一轮 eval 是否在跑（有输出 = 正在评测，属正常）</span>
+pgrep -af '^bash scripts/run_cline_script'</code></pre>
+
+<h3>3.5 健康 vs 卡住 判定表</h3>
+<table>
+  <tr><th>现象</th><th>含义</th><th>处置</th></tr>
+  <tr><td>loop 日志每 ~30min 出现 <code>wake up</code></td><td>loop 正常轮询</td><td>无需处理</td></tr>
+  <tr><td><code>pgrep run_cline_script</code> 有输出，同时 <code>run_commands</code> 回 <code>ACCESS RESTRICTED</code></td><td>eval 进行中，反作弊 hook 正常拦截</td><td><b>这是预期行为，不是故障</b></td></tr>
+  <tr><td>daily-memories 追加新时间戳记录</td><td>agent 正常推进</td><td>无需处理</td></tr>
+  <tr><td>conductor 日志出现 <code>缺失依赖文件</code></td><td>预检失败，已停止</td><td>补齐缺失文件后重启</td></tr>
+  <tr><td>loop 日志出现 <code>TASK_MD missing</code></td><td>task book 丢失/路径错</td><td>恢复文件后重启</td></tr>
+  <tr><td>MEMORY 连续 3 条 <code>❌ EVAL_FAILED</code> 或 <code>ERROR_COUNT&gt;=3</code></td><td>该臂打分反复失败，已强制推进</td><td>人工查 /tmp/ABL_*.log</td></tr>
+  <tr><td>MEMORY 出现 <code>PHASE=done_all</code> 或 conductor 打印 <code>阶段 x/4 完成</code></td><td>该阶段完成</td><td>继续看下一阶段</td></tr>
+</table>
+
+<h2><span class="sec-no">4</span>交付物 → 论文表 映射</h2>
+<table>
+  <tr><th>论文表</th><th class="num">[TBD]</th><th>本轮是否/如何填</th></tr>
+  <tr><td><code>tab:main-ablation</code></td><td class="num">7</td><td>pure_llm / rag / wo_retrieval / <b>full ×5</b>；<code>wo_sandbox</code>、<code>wo_selfexpl</code> 暂不做（保留 provisional）</td></tr>
+  <tr><td><code>tab:omega</code></td><td class="num">6</td><td>(L)=omega_low 本轮；(N)=pure_llm 流C 已有；(H)=full 锚点；(H+E) 不做</td></tr>
+  <tr><td><code>tab:ablation-harness</code></td><td class="num">9</td><td>(N)/(B) 本轮；(F)=full 锚点</td></tr>
+  <tr><td><code>tab:phi-bound</code></td><td class="num">14</td><td>k10/k3/k1/lagged ×5；unbounded ≡ full 锚点</td></tr>
+  <tr><td><code>tab:llm-comparison</code></td><td class="num">14</td><td>4 backbone ×5；主基座 DeepSeek-V4-Pro ≡ full 锚点</td></tr>
+  <tr><td><code>tab:selfdoc-cost</code></td><td class="num">6</td><td>离线一次性，独立补测，不计入本条流水</td></tr>
+</table>
+<p class="small muted"><b>full 锚点一次 5-run 喂饱 5 张表</b>（main-ablation·full / omega·H / harness·F / phi-bound·unbounded / llm·主基座），放流 C Phase 1 末尾，跑一次、多处引用。</p>
+
+<h2><span class="sec-no">5</span>红线与风险应对</h2>
+<div class="grid">
+  <div class="kv"><b>红线 1</b><span>反作弊 hook 全程启用、所有臂完全一致（冻结变量，非消融对象）；被拒 trace 单独归类。</span></div>
+  <div class="kv"><b>红线 2</b><span>未测不得填数；未测保持 <code>[TBD]</code> 或显式 provisional。</span></div>
+  <div class="kv"><b>红线 3</b><span>只 Pass@1 写 <code>mean ± std</code>；<code>Converged/Mean read-backs/Δ</code> 不加 ±。</span></div>
+  <div class="kv"><b>风险 · 沙箱阻断</b><span>eval 期间 run_commands 被拦是<b>预期</b>，eval 结束自动恢复，勿人工干预。</span></div>
+  <div class="kv"><b>风险 · 假期中断</b><span>loop 读 MEMORY 按 PHASE 续跑，断电/重启不丢状态。</span></div>
+  <div class="kv"><b>风险 · 模型 quota</b><span>每模型 5 轮 ≈ 790 trace，先确认各 key 限额。</span></div>
+</div>
+
+<footer>
+  依据文件：<code>run/holiday_plan_930_1007.md</code>（执行计划）、<code>run/ablation_run_conductor_serial.sh</code>（总控）、
+  <code>run/ablation_run_task_{s1,component_s2,model}_full.md</code>（task book）、<code>run/ablation_run_loop_{s1,component_s2,model}_full.sh</code>（loop）、
+  <code>README.md</code>（§8 顺序 / §4.1 口径 / §9 填写规则）。<br>
+  6 表 [TBD]：selfdoc-cost 6 + main-ablation 7 + omega 6 + harness 9 + phi 14 + llm 14 = <b>56</b>。本轮流水覆盖其中 5 表（selfdoc-cost 离线独立补测）。
+</footer>
+</div>
+</body>
+</html>

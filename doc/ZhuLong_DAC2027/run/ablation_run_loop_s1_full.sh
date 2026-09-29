@@ -1,5 +1,5 @@
 #!/bin/bash
-# S1 保真度消融自动推进循环（完整 5-run 版）：omega_low → readback_binary → readback_none，各 5 轮。
+# S1 保真度消融评测自动推进循环（5-run 完整版）：依次跑 omega_low / readback_binary / readback_none，各 5 轮。
 # 启动方式（脱离进程组，防工具超时误杀）:
 #   setsid bash /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/ablation_run_loop_s1_full.sh > /tmp/ablation_loop_s1_full.log 2>&1 < /dev/null &
 set -u
@@ -11,10 +11,8 @@ MODEL="deepseek-v4-pro-fp4"
 INTERVAL=1800          # 30 分钟醒来一次
 CLINE_TIMEOUT=5400     # 单次 cline 最多 90 分钟（含打分）
 
-echo "[loop] $(date '+%F %T') === S1 FULL LOOP STARTED ==="
-
 while true; do
-    # 检查是否已完成
+    # 检查是否已完成（agent 会在 MEMORY_s1_full.md 中写 PHASE=done_all）
     if [[ -f "$MEMORY_MD" ]] && grep -q 'PHASE=done_all' "$MEMORY_MD" 2>/dev/null; then
         echo "[loop] $(date '+%F %T') PHASE=done_all detected, loop exiting."
         break
@@ -30,5 +28,3 @@ while true; do
     fi
     sleep "$INTERVAL"
 done
-
-echo "[loop] $(date '+%F %T') === S1 FULL LOOP EXITED ==="

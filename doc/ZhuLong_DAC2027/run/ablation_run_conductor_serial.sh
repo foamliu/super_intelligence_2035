@@ -12,7 +12,7 @@
 #
 # 启动方式（脱离进程组）:
 #   setsid bash /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/ablation_run_conductor_serial.sh > /tmp/ablation_conductor.log 2>&1 < /dev/null &
-set -u
+set -euo pipefail
 
 BASE="/nasdata/app.e0031982/code/ZhuLong_DAC2027/run"
 CONDUCTOR_LOG="/tmp/ablation_conductor.log"
@@ -21,9 +21,24 @@ log() {
     echo "[conductor] $(date '+%F %T') $*"
 }
 
+require() {
+    local f="$1"
+    if [[ ! -f "$BASE/$f" ]]; then
+        log "❌ 缺失依赖文件: $BASE/$f —— 已停止(不空跑)。"
+        exit 1
+    fi
+}
+
 log "========== 十一假期串行执行开始 =========="
 log "机器: 10.251.36.15"
-log "预计总耗时: ~7-8 天（假期 9/30-10/7 全覆盖）"
+log "预计总耗时: ~10-11 天（75 轮 × ~3.5h/轮，含 30min 轮询粒度；模型阶段可节后续跑）"
+log ""
+
+# 启动前预检：所有 loop / task book 必须就绪，缺失即停（不空跑）。
+require "ablation_run_loop_s1_full.sh";           require "ablation_run_task_s1_full.md"
+require "ablation_run_loop_component_s2_full.sh"; require "ablation_run_task_component_s2_full.md"
+require "ablation_run_loop_model_full.sh";        require "ablation_run_task_model_full.md"
+log "预检通过：所有 loop / task book 就绪。"
 log ""
 
 # ────────────────────────────────────────────
@@ -39,12 +54,12 @@ log "=== 阶段 1/4 完成 ==="
 log ""
 
 # ────────────────────────────────────────────
-# 阶段 2: 组件消融（流 C Phase 1）
-#   pure_llm ×5 → rag ×5 → wo_retrieval ×5 = 15 轮
+# 阶段 2: 组件消融（流 C Phase 1，含 full 锚点）
+#   pure_llm ×5 → rag ×5 → wo_retrieval ×5 → full ×5 = 20 轮
 #   MEMORY: MEMORY_component_full.md
-#   ~2 天
+#   ~2.5 天（full 是锚点，喂 5 张表的锚点行）
 # ────────────────────────────────────────────
-log "=== 阶段 2/4: 组件消融（pure_llm → rag → wo_retrieval）==="
+log "=== 阶段 2/4: 组件消融（pure_llm → rag → wo_retrieval → full 锚点）==="
 log "启动 loop: $BASE/ablation_run_loop_component_s2_full.sh"
 log "（此 loop 含 Phase 1 组件 + Phase 2 S2 Φ，自动切换）"
 bash "$BASE/ablation_run_loop_component_s2_full.sh"
@@ -64,7 +79,7 @@ log ""
 # 阶段 4: 模型消融（流 B）
 #   glm-5.2 ×5 → ds-v4-flash ×5 → kimi ×5 → doubao ×5 = 20 轮
 #   MEMORY: MEMORY_model_full.md
-#   ~3 天
+#   ~2.5 天
 # ────────────────────────────────────────────
 log "=== 阶段 4/4: 模型消融（glm → flash → kimi → doubao）==="
 log "启动 loop: $BASE/ablation_run_loop_model_full.sh"

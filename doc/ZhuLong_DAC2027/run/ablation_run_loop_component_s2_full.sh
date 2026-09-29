@@ -1,7 +1,6 @@
 #!/bin/bash
-# 组件消融 + S2 Φ 轴完整 5-run 自动推进循环
-# Phase 1: pure_llm → rag → wo_retrieval (各 5 轮)
-# Phase 2: phi_k10 → phi_k3 → phi_k1 → phi_lagged (各 5 轮)
+# 组件消融(Phase 1: pure_llm/rag/wo_retrieval/full) + S2 Φ 轴(Phase 2: k10/k3/k1/lagged) 5-run 完整版循环。
+# 同一 MEMORY_component_full.md 自驱 Phase 1→Phase 2 过渡（见 ablation_run_task_component_s2_full.md）。
 # 启动方式（脱离进程组，防工具超时误杀）:
 #   setsid bash /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/ablation_run_loop_component_s2_full.sh > /tmp/ablation_loop_component_s2_full.log 2>&1 < /dev/null &
 set -u
@@ -13,10 +12,8 @@ MODEL="deepseek-v4-pro-fp4"
 INTERVAL=1800          # 30 分钟醒来一次
 CLINE_TIMEOUT=5400     # 单次 cline 最多 90 分钟（含打分）
 
-echo "[loop] $(date '+%F %T') === COMPONENT+S2 FULL LOOP STARTED ==="
-
 while true; do
-    # 检查是否已完成
+    # 检查是否已完成（agent 会在 MEMORY_component_full.md 中写 PHASE=done_all）
     if [[ -f "$MEMORY_MD" ]] && grep -q 'PHASE=done_all' "$MEMORY_MD" 2>/dev/null; then
         echo "[loop] $(date '+%F %T') PHASE=done_all detected, loop exiting."
         break
@@ -32,5 +29,3 @@ while true; do
     fi
     sleep "$INTERVAL"
 done
-
-echo "[loop] $(date '+%F %T') === COMPONENT+S2 FULL LOOP EXITED ==="

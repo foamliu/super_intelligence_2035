@@ -2,8 +2,8 @@
 
 > 本计划基于已完成探路制定。**探路成绩（1-shot）：**  
 > ✅ 组件消融（pure_llm 11.4% / rag 70.3% / wo_retrieval 81.6%）  
-> ✅ S2 Φ 轴（k10 75.3% / k3 69.0% / k1 60.8%）  
-> ✅ S2 lagged trace_key 已修复，r2 正在跑（等打分）  
+> ✅ S2 Φ 轴（k10 75.3% / k3 69.0% / k1 60.8% / lagged 84.2%）  
+> ✅ S2 lagged trace_key 已修复，r2 已出分（84.2% / 98.1%）  
 > **假期 = 全部×5 轮完整版，单机串行。**
 
 
@@ -16,7 +16,7 @@
 ```
 Phase 1: 流 A — S1 保真度消融（omega_low ×5 → readback_binary ×5 → readback_none ×5）
     ↓  loop 退出自动衔接
-Phase 2: 流 C Phase1 — 组件消融（pure_llm ×5 → rag ×5 → wo_retrieval ×5）
+Phase 2: 流 C Phase1 — 组件消融（pure_llm ×5 → rag ×5 → wo_retrieval ×5 → full ×5）
     ↓  loop 内自动过渡
 Phase 3: 流 C Phase2 — S2 Φ 轴（phi_k10 ×5 → phi_k3 ×5 → phi_k1 ×5 → phi_lagged(fixed) ×5）
     ↓  loop 退出自动衔接
@@ -74,7 +74,7 @@ S1 代码依赖（`query_knowledge.py` 的 `EDA_OMEGA_FIDELITY=low`、`run_code.
 
 ### Phase 2: 组件消融
 ```
-pure_llm × 5 轮  →  rag × 5 轮  →  wo_retrieval × 5 轮
+pure_llm × 5 轮  →  rag × 5 轮  →  wo_retrieval × 5 轮  →  full × 5 轮
 ```
 
 ### Phase 3: S2 Φ 轴（trace_key 已修复）
@@ -82,7 +82,7 @@ pure_llm × 5 轮  →  rag × 5 轮  →  wo_retrieval × 5 轮
 phi_k10 × 5 轮  →  phi_k3 × 5 轮  →  phi_k1 × 5 轮  →  phi_lagged × 5 轮
 ```
 
-> S2 探路已完成：k10/k3/k1 均 ✅，lagged 探路 r1 因 trace_key 缺陷作废 → r2 已修复重跑中。  
+> S2 探路已完成：k10/k3/k1 均 ✅，lagged 探路 r1 因 trace_key 缺陷作废 → r2 已修复重跑出分（84.2% / 98.1%）。  
 > 流 C 的 S2 完整版在探路基础上铺开 5 轮。lagged trace_key 已在 `main.py` 完成修复（SSE session 对象身份作 dict 键），详见 `MEMORY_s2_1shot.md` ✅ 关键缺陷已修复 #2。
 
 ---
@@ -136,10 +136,10 @@ cat /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/daily-memories/$(date +%F).md
 | 阶段 | 内容 | 轮数 | 单轮 ~时间 | 总 ~时间 |
 |:---|---:|---:|---:|---:|
 | Phase 1 | S1 保真度 | 15 | 3h | ~45h（2 天） |
-| Phase 2 | 组件消融 | 15 | 3h | ~45h（2 天） |
+| Phase 2 | 组件消融(含 full 锚点) | 20 | 3h | ~60h（2 天） |
 | Phase 3 | S2 Φ 轴 | 20 | 3h | ~60h（2.5 天） |
 | Phase 4 | 模型消融 | 20 | 3h | ~60h（2.5 天） |
-| **合计** | **14 配置** | **70** | 3h | **~210h（~8.75 天）** |
+| **合计** | **15 配置** | **75** | 3h | **~262h（~10-11 天，含 30min 轮询粒度）** |
 
 > 假期 9/30–10/7 = 8 天，时间刚好覆盖。若任一阶段超预期，模型消融（Phase 4）可以节后补跑。
 

@@ -50,7 +50,7 @@
   <tr><td><code>Φ k=10</code>（hook 限 run_code ≤10）</td><td class="k">75.3%（119/158）</td><td class="k">91.1%（144/158）</td><td><span class="tag ok">✅ 有效</span></td></tr>
   <tr><td><code>Φ k=3</code>（hook 限 run_code ≤3）</td><td class="k">69.0%（109/158）</td><td class="k">79.1%（125/158）</td><td><span class="tag ok">✅ 有效</span></td></tr>
   <tr><td><code>Φ k=1</code>（hook 限 run_code ≤1）</td><td class="k">60.8%（96/158）</td><td class="k">71.5%（113/158）</td><td><span class="tag ok">✅ 有效</span></td></tr>
-  <tr><td><code>Φ lagged</code>（handler 返回上一拍状态，L=1）</td><td class="k">[TBD]</td><td class="k">[TBD]</td><td><span class="tag run">🔄 代码生成 158/158 完成，run_eval 评估中</span></td></tr>
+  <tr><td><code>Φ lagged</code>（handler 返回上一拍状态，L=1）</td><td class="k">84.2%（133/158）</td><td class="k">98.1%（155/158）</td><td><span class="tag ok">✅ 有效（trace_key per-task 修复后 r2）</span></td></tr>
 </table>
 
 <h2>2. 各臂明细（打分 + S2 专属核对项）</h2>
@@ -59,13 +59,14 @@
   <tr><td><code>k=10</code></td><td class="k">2026_0928_220542</td><td class="k">75.3%（119/158）</td><td class="k">91.1%（144/158）</td><td class="k">59</td><td class="k">9.58</td><td class="k">—（未单列）</td><td class="k">14</td></tr>
   <tr><td><code>k=3</code></td><td class="k">2026_0929_005419</td><td class="k">69.0%（109/158）</td><td class="k">79.1%（125/158）</td><td class="k">105</td><td class="k">8.18</td><td class="k">53</td><td class="k">33</td></tr>
   <tr><td><code>k=1</code></td><td class="k">2026_0929_033533</td><td class="k">60.8%（96/158）</td><td class="k">71.5%（113/158）</td><td class="k">152</td><td class="k">8.66</td><td class="k">6</td><td class="k">45</td></tr>
-  <tr><td><code>lagged</code></td><td class="k">2026_0929_061645</td><td class="k">[TBD]</td><td class="k">[TBD]</td><td class="k">—</td><td class="k">—</td><td class="k">—</td><td class="k">—</td></tr>
+  <tr><td><code>lagged</code></td><td class="k">2026_0929_110309</td><td class="k">84.2%（133/158）</td><td class="k">98.1%（155/158）</td><td class="k">0（无预算）</td><td class="k">16.01</td><td class="k">158</td><td class="k">3</td></tr>
 </table>
 <p class="k">注：<code>deny[PHI-BUDGET-EXHAUSTED]</code> 为「至少命中一次预算拒绝」的 trace 数（均 &gt;0 ✓，证明预算 hook 确实拒过）；<code>Mean read-backs</code> = 每 trace 平均 <code>run_code</code> 调用数（含预算耗尽后的 no-op 超额重试，故普遍 &gt;k）。</p>
 
 <h2>3. 关键发现</h2>
 <ul>
   <li><strong>Pass@1 随预算单调上升</strong>：<span class="k">60.8 → 69.0 → 75.3 → 84.8</span>。相邻增量 +8.2 / +6.3 / +9.5pp，<strong>暂未观测到「饱和」</strong>——k=10 仍显著低于无界（−9.5pp），需 5 轮重测确认，或需更高 k 档。</li>
+  <li><strong>lagged（L=1 观测滞后）几乎无损伤</strong>：修复 trace_key per-task 隔离后 r2 出分 <span class="k">84.2%</span>（Converged 98.1%），仅比 unbounded（84.8%）低 <span class="k">0.6pp</span>——「落后一拍」对迭代式代码调试几乎无害，与「执行预算 k」的 24pp 量级形成鲜明对比。滞后量审计：<span class="k">0 index-mismatch</span>（跨任务串槽已修）、133/158 trace 的 <code>reported_call_index</code> 精确满足差==1；其余 25 trace 的缺报均为 MCP 超时/入参校验/幻觉工具名（非滞后机制缺陷）。</li>
   <li><strong>Converged 单调上升</strong>：<span class="k">71.5 → 79.1 → 91.1</span>（unbounded 待补齐）。预算越紧，agent 在预算耗尽后持续 no-op 超额重试、最终自行终止的比例越高（cancelled <span class="k">14→33→45</span>），这正是「紧预算 ≠ 提前收敛」的实证。</li>
   <li><strong>语义约束守住</strong>：终止权始终在 agent 手里（overrideInput「改写不中断」），cancelled 均为 agent 自身终止、而非 hook 中断；<code>deny_reason</code> 带唯一前缀 <code>[PHI-BUDGET-EXHAUSTED]</code>，与反作弊拒绝可区分。</li>
 </ul>
@@ -83,7 +84,10 @@
   <tr><td class="k">09-29 03:36 / 05:44</td><td><strong>k1</strong>（batch 2026_0929_033533）启动 → 出分 <strong>60.8%</strong> ✅。</td></tr>
   <tr><td class="k">09-29 06:17</td><td>启动 <strong>lagged</strong>（batch 2026_0929_061645，L=1）。</td></tr>
   <tr><td class="k">09-29 08:16</td><td>lagged 代码生成 158/158 完成（145 成 / 13 败 / 0 超时）。</td></tr>
-  <tr><td class="k">09-29 08:32</td><td>lagged 进入 <code>run_eval</code> 执行断言（进行中，未出分）。期间其打分被反作弊沙箱反复拦截 4 个唤醒周期。</td></tr>
+  <tr><td class="k">09-29 08:32</td><td>lagged r1 进入 <code>run_eval</code>；期间其打分被反作弊沙箱反复拦截 4 个唤醒周期。</td></tr>
+  <tr><td class="k">09-29 09:03</td><td>lagged r1 出分 80.4% 但 <strong>作废</strong>（lag==1 审计 42/158 失败：单槽缓冲 trace_key 跨任务串槽）。</td></tr>
+  <tr><td class="k">09-29 11:03</td><td>人工修复 trace_key（<code>client_id/id(session)</code> → SSE session 对象身份 per-task），canary 验证 lag==1 后重跑 <strong>lagged r2</strong>（batch 2026_0929_110309）。</td></tr>
+  <tr><td class="k">09-29 14:06</td><td>lagged r2 出分 <strong>84.2%</strong>（Converged 98.1%）；lag==1 审计 133/158 精确通过、0 index-mismatch（25 部分=超时/校验，非 lag 违规）✅。</td></tr>
 </table>
 
 <h2>5. 已知问题 / 注意事项</h2>
@@ -92,12 +96,12 @@
   <li><strong>cancelled ≠ 能力失败</strong>：14/33/45 条 cancelled 均为 agent 超额重试后自行终止，非 hook 中断；这些 trace 不应被读作「执行失败」。</li>
   <li><strong>n=1，std 未测</strong>：论文协议要求每配置 5 轮并报 mean±std；本探路每臂只跑了 1 轮，<code>±std</code> 尚未可测。</li>
   <li><strong>锚点口径不一致</strong>：本探路沿用 S1/S2 试验口径 full=84.8%；论文正文 S2 执行器段落仍写 full=78.5%（旧 provisional），需人工统一。</li>
-  <li><strong>lagged 专属核对未做</strong>：需核对 <code>reported_call_index</code> 与真实调用序号差 ==1（滞后量恰好为 1），对不上则该臂作废。</li>
+  <li><strong>lagged 专属核对已通过（r2）</strong>：<code>reported_call_index</code> 与真实调用序号差==1 在 133/158 trace 精确成立、0 index-mismatch；其余 25 trace 的部分缺报由 MCP 60s 超时 / 缺 <code>lang</code> 校验错误 / 幻觉工具名引起（非滞后机制缺陷）。</li>
 </ul>
 
 <h2>6. 待办（[TBD] 项）</h2>
 <ul>
-  <li>lagged <code>run_eval</code> 出分 → Pass@1 + Converged + 滞后量==1 核对。</li>
+  <li><del>lagged <code>run_eval</code> 出分 → Pass@1 + Converged + 滞后量==1 核对</del> ✅ 已完成（84.2% / 98.1%）。</li>
   <li>补齐 unbounded 的 Converged（籍上一阶段 full 批次的 trace 统计）。</li>
   <li>5 轮重测补 std，回填论文 <code>tab:phi-bound</code> 的 <code>±[TBD]</code>。</li>
   <li>统一 full 锚点口径（84.8% vs 78.5%）。</li>

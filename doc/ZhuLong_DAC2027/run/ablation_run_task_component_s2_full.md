@@ -49,18 +49,21 @@
 
 ## 消融计划总览
 
-### Phase 1: 组件消融（3 配置，各 5 轮）
+### Phase 1: 组件消融（4 配置，各 5 轮）
 
 | 序号 | 配置 | 说明 | 轮数 |
 |:---:|:---|---:|---:|
 | 1 | `pure_llm` | 核心 4 工具全关（裸 LLM） | 5 |
 | 2 | `rag` | 检索 3 件套开、run_code 关 | 5 |
 | 3 | `wo_retrieval` | 检索 3 件套关、run_code 开 | 5 |
+| 4 | `full` | 检索开 + sandbox 开（主系统默认，锚点） | 5 |
 
-> `full` 主系统已有 1-shot 数据（~84.8%），但 5-run 完整版需重跑——本轮暂不跑 full，
-> 纯用 1-shot 值标注 provisional。
+> `full` 是本轮**锚点配置**：一次 5-run 同时喂饱 5 张表的锚点行——
+> `tab:main-ablation`(full)、`tab:omega`(H)、`tab:ablation-harness`(F)、
+> `tab:phi-bound`(unbounded ≡ full)、`tab:llm-comparison`(DeepSeek-V4-Pro 主基座)。
+> 它与 Phase 2 的 `phi_unbounded` 同义，跑一次、多处引用，不重复跑。
 
-**执行顺序**：`pure_llm` → `rag` → `wo_retrieval`，各 5 轮。
+**执行顺序**：`pure_llm` → `rag` → `wo_retrieval` → `full`，各 5 轮。
 
 ### Phase 2: S2 Φ 轴（4 臂，各 5 轮，自动衔接 Phase 1）
 
@@ -71,7 +74,7 @@
 | `Φ k=1` | hook 限 run_code ≤1 次 | 极紧预算 | 5 |
 | `Φ lagged` | 单槽缓冲回上一拍（L=1，trace_key 已修复） | 已修复+canary 通过 | 5 |
 
-> `Φ unbounded` 跳过（≡ full 基线，已有探路数据）。
+> `Φ unbounded` 跳过（≡ Phase 1 的 `full` ×5 锚点，不重复跑）。
 
 **执行顺序**：`k=10` → `k=3` → `k=1` → `lagged(fixed)`。
 
@@ -95,7 +98,7 @@
 
 > 所有 `cd` 用 `BASE_DIR` 展开。
 
-### 切换组件消融配置（pure_llm→rag→wo_retrieval）
+### 切换组件消融配置（pure_llm→rag→wo_retrieval→full）
 ```bash
 cd $BASE_DIR
 $BASE_DIR/venv/bin/python scripts/set_ablation.py <CONFIG>
@@ -108,6 +111,7 @@ tail -20 $BASE_DIR/logs/app.log
 - `pure_llm`：核心 4 全关
 - `rag`：检索 3 件套=ON、run_code=OFF
 - `wo_retrieval`：检索 3 件套=OFF、run_code=ON
+- `full`：检索 3 件套=ON、run_code=ON（主系统默认）
 
 ### 切换 S2 臂
 ```bash
@@ -126,6 +130,26 @@ cd $BASE_DIR
 setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_<TAG>_r<N>.log 2>&1 < /dev/null &
 ```
 注：工具可能显示超时/无输出，但进程已脱离，不要当成失败。
+
+### 检查本轮是否结束
+```bash
+cd $BASE_DIR
+pgrep -f '^bash scripts/run_cline_script'
+```
+- 有输出 → 评测进程还在跑（本轮未结束），什么都不做，退出
+- 无输出 → 评测进程已退出（本轮已结束，可打分）
+
+### 打分（Pass@1；S2 臂须附加专属核对）
+```bash
+cd $BASE_DIR
+grep -E 'pass \(|评估结果汇总|PASS_RATE' /tmp/ABL_<TAG>_r<N>.log | tail -5
+```
+以 log 内 `pass (xx.x%)` 为 Pass@1 口径。`run_eval.py --latest 1` 是完整重评、会超时，不用它做口径。
+
+S2 专属核对（Phase 2 各臂记入成绩记录，缺一不可）：
+- `Converged (%)`：trace 中 `finish_reason == completed` 占比（紧挨 Pass@1 记录）。
+- k 臂（k10/k3/k1）：统计 deny_reason 含 `[PHI-BUDGET-EXHAUSTED]` 的 trace 数 > 0，并记录 `Mean read-backs`。
+- lagged 臂：核对 `reported_call_index` 与真实调用序号差 == 1（否则该臂作废）。
 
 
 ---
@@ -157,8 +181,8 @@ setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_<TAG>_r<N>.log 2>&1 <
 
 ```
 STAGE=component 且 ROUND>5:
-  CONFIG != wo_retrieval → 切到下一组件配置，ROUND=1，PHASE=running
-  CONFIG == wo_retrieval → 「Phase 1 完成」，STAGE→phi，CONFIG→phi_k10，
+  CONFIG != full → 切到下一组件配置，ROUND=1，PHASE=running
+  CONFIG == full → 「Phase 1 完成」，STAGE→phi，CONFIG→phi_k10，
      ROUND=1，PHASE=running，启动 phi_k10 r1
 
 STAGE=phi 且 ROUND>5:
@@ -166,7 +190,7 @@ STAGE=phi 且 ROUND>5:
   CONFIG == phi_lagged → 「全部完成」，PHASE→done_all
 ```
 
-轮转：组件 → pure_llm/rag/wo_retrieval；S2 → phi_k10/phi_k3/phi_k1/phi_lagged。
+轮转：组件 → pure_llm/rag/wo_retrieval/full；S2 → phi_k10/phi_k3/phi_k1/phi_lagged。
 
 ### 步骤 C（PHASE=done_all）
 
@@ -183,6 +207,7 @@ STAGE=phi 且 ROUND>5:
 | pure_llm | xx.x ± x.x% | [r1, r2, r3, r4, r5] |
 | rag | xx.x ± x.x% | [r1, r2, r3, r4, r5] |
 | wo_retrieval | xx.x ± x.x% | [r1, r2, r3, r4, r5] |
+| full | xx.x ± x.x% | [r1, r2, r3, r4, r5] |
 ```
 
 ### Phase 2 S2 Φ 轴
@@ -207,6 +232,7 @@ std 公式：`sqrt(Σ(xᵢ - μ)² / (n-1))`，n=5。保留 1 位小数。
 | pure_llm | 1-5/5 | ⬜ |
 | rag | 1-5/5 | ⬜ |
 | wo_retrieval | 1-5/5 | ⬜ |
+| full | 1-5/5 | ⬜ |
 
 ### Phase 2 S2 Φ
 | 臂 | 轮次 | 状态 |
