@@ -68,7 +68,7 @@
     <li><a href="#s1">任务目标与三项评估指标</a></li>
     <li><a href="#s2">两套候选架构</a></li>
     <li><a href="#s3">三个必须遵守的关键决策</a></li>
-    <li><a href="#s4">时间与 GPU 资源（双节点）</a></li>
+    <li><a href="#s4">时间、试验清单与 GPU 资源（双节点）</a></li>
     <li><a href="#s5">执行状态机与阶段划分</a></li>
     <li><a href="#s6">公平对比口径</a></li>
     <li><a href="#s7">git 提交与成果保存</a></li>
@@ -144,7 +144,7 @@
   </ul>
 </div>
 
-<h2 class="sec" id="s4"><span class="no">4</span>时间与 GPU 资源（双节点）</h2>
+<h2 class="sec" id="s4"><span class="no">4</span>时间、试验清单与 GPU 资源（双节点）</h2>
 <table>
   <thead><tr><th>节点</th><th>可用 GPU</th><th>建议用途</th></tr></thead>
   <tbody>
@@ -157,6 +157,25 @@
   <li>资源预算：无硬上限，建议单架构总 GPU·h ≤ 20。</li>
   <li>时间线（9 天）：D1 数据/环境校验 → D2~D4 arch_prepare（落地 launcher + provider + 冒烟）→ D4~D8 1000 步训练与推理 bench → D9 收敛报告 + HTML。</li>
 </ul>
+
+<h3>试验清单与时间估计（9 天窗口）</h3>
+<p>下表按依赖顺序列出全部试验、所需资源与预计耗时；瓶颈在 <b>arch_prepare 的工程打通</b>（而非训练本身——2B × seq4096 训 1000 步在 6×H100 上仅数小时）。</p>
+<table>
+  <thead><tr><th>#</th><th>试验</th><th>内容</th><th>卡数</th><th>预计耗时</th><th>关键产出</th></tr></thead>
+  <tbody>
+    <tr><td>E1</td><td>数据切词（data_check）</td><td>选子集 + DeepSeek 切词生成<b>共享</b> <code>.bin/.idx</code>（够 ~1000 步，两架构复用）</td><td>CPU / 1 卡</td><td>0.5~1 天</td><td>共享数据集</td></tr>
+    <tr><td>E2</td><td>Mamba2-hybrid 打通 + 冒烟（arch_prepare）</td><td>落 torchrun launcher + forward_step，跑 10 步 GPU 冒烟 + 实测 <code>numel()</code></td><td>1~2 卡</td><td>0.5~1 天</td><td>「从零可跑」+ 参数量</td></tr>
+    <tr><td>E3</td><td>MiniCPM5-2B provider 新建 + 冒烟（arch_prepare）</td><td>新建 42 层 Llama-style <code>GPTModelProvider</code> + recipe（vocab/heads/layers 取 MiniCPM5 config），10 步冒烟</td><td>1~2 卡</td><td>1~2 天</td><td>「从零可跑」+ 参数量</td></tr>
+    <tr><td>E4</td><td>1000 步训练（×2 架构）</td><td>各 ~1000 步从零训练，同口径（seq4096 / mb1 / 各 6 卡 / LR 3e-4），两架构<b>并行</b>跑</td><td>各 6 卡</td><td>各 ~0.5 天</td><td>loss 曲线 + 训练 tok/s</td></tr>
+    <tr><td>E5</td><td>ckpt→HF 转换（infer_bench 前置）</td><td>megatron-core 分布式 ckpt 映射到 Nemotron-H / Llama HF 结构 + DeepSeek tokenizer</td><td>CPU / 1 卡</td><td>0.5~1 天</td><td>HF 权重</td></tr>
+    <tr><td>E6</td><td>推理 benchmark（infer_bench）</td><td>SGLang 统一测速（<code>nemotron_h</code> / Llama），batch=1、固定 seq、prefill/decode 分列</td><td>1 卡</td><td>0.5 天</td><td>推理 tok/s</td></tr>
+    <tr><td>E7</td><td>收敛汇总（converged）</td><td>三张对比表 + 胜出架构 + 可复现命令 + 生成 HTML</td><td>—</td><td>0.5~1 天</td><td>BAIZE_2B_ARCH_RESULT.html</td></tr>
+  </tbody>
+</table>
+<div class="card">
+  <p><b>关键路径（串行下界）</b>：E1(0.5~1) + max(E2,E3)(1~2) + E4(0.5) + E5(0.5~1) + E6(0.5) + E7(0.5~1) ≈ <b>3.5~6.5 天</b>；
+  9 天窗口内留有 <b>2.5~5.5 天冗余</b>，用于环境阻塞、OOM 调试与重跑。E2 与 E3 两架构打通、E4 两架构训练均可<b>并行</b>，进一步压缩时间。</p>
+</div>
 
 <h2 class="sec" id="s5"><span class="no">5</span>执行状态机与阶段划分</h2>
 <p>agent 每次被唤醒<b>只走一步</b>（读记忆 → 判断 → 执行 → 回写记忆 → 退出）。</p>
