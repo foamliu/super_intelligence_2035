@@ -1,9 +1,9 @@
 # MEMORY_2B.md — BaiZe 2B 架构搜索（从零训练）运行时状态（随 git 提交，重启用）
 
 ## 当前状态
-- STAGE: S3 完成（推理基准已出）→ S4 报告（三张对比表 + 胜出架构 + 可复现命令 + HTML）
-- PHASE: report（生成 `BAIZE_2B_ARCH_RESULT.html`）+ 可复现命令文档
-- WAITING: 0（S3 推理已完成，进入 S4 报告）
+- STAGE: ✅ **任务完成**（S1→S2→S3→S4 全链路打通，四阶段全部落地）
+- PHASE: converged（S4 报告已产出：三张对比表 + 胜出架构 + 可复现命令 + HTML 报告，均已 git commit + push）
+- WAITING: 0（无任何异步任务，停止新实验）
 - ERROR_COUNT: 0
 - BUDGET_USED（GPU·小时）: ~0.3（冒烟 ~0.1 + 两训练：MiniCPM5 6卡×~4.5min≈0.45、Mamba2 6卡×~5.5min≈0.55，合计 ~1.1）
 - S2 结果（已完成）:
@@ -14,7 +14,7 @@
   - A2 Mamba2-hybrid：prefill **23,029 tok/s**（88.9ms）、decode **19.08 tok/s**（52ms/token）
   - 日志 `/tmp/BAIZE2B_infer_{minicpm5,mamba2}.log`（含 RESULT_JSON）。
 - ⚠️ **S3 关键修正：Mamba2 真实参数量 2.220B（非 3.00B）**。S1/S2 的「3.00B」来自 mcore `.transformer layers 2.47 + emb 0.53` 打印（对 Mamba 误把 56 层全按 full attention+MLP 计）；两处独立 `sum(numel())=2,220,268,032` 一致。故两架构**基本等参**（MiniCPM5 仅 +13%），Mamba2「更低 loss+更少参数」结论更强。
-- 下一步（S4，任务终点）：① 三张对比表（已写入 EXPERIMENTS_2B.md）；② 生成 `doc/BaiZe-ISEDA2027/BAIZE_2B_ARCH_RESULT.html`；③ 可复现命令文档；④ git commit+push。
+- ✅ 任务终点已达成：① 三张对比表（EXPERIMENTS_2B.md）；② `doc/BaiZe-ISEDA2027/BAIZE_2B_ARCH_RESULT.html`（自包含已生成）；③ 可复现命令（EXPERIMENTS_2B.md 顶部 + HTML §6）；④ git commit+push（已同步 origin/main）。**停止新实验**。
 - ⚠️ S3 环境备注：sglang/vLLM 均不可用（vLLM `_C.abi3.so` 崩、sglang 未装），故改用 mcore `infer_benchmark.py` 直驱 checkpoint（TP1）做 prefill/decode 计时，无需转 HF。MiniCPM5 decode 459ms/token 属 TE flash-attn KV-cache 未命中下界，如需精确 decode 数后续 SGLang 起服复核。
 
 ## ⚠️ 本次会话关键变更（2026-09-29 晚，覆盖上一 agent 的「GBS=128 / 切 5.2M docs」计划）
@@ -78,3 +78,4 @@
 | 2026-09-29 | experiment_run | ✅ 切 200k docs/165M tokens（kill 上一 agent 的 5.2M 切词，改用 200k）；✅ 补 load_optim=False + eval_iters=0 + omegaconf 上 NFS；✅ 真实数据冒烟两架构跑通；✅ **GBS 定版 6**；✅ 启动两架构各 6 卡 1000 步（MiniCPM5 ~270ms/iter、Mamba2 ~3h）。WAITING=1 |
 | 2026-09-29 | s2_result | ✅ 两架构 1000 步完成：MiniCPM5 4.8065 / ~89K tok/s；Mamba2 4.6846 / ~72K tok/s。loss 已从 tensorboard 日志读取；吞吐从 iter 日志读取。PHASE→infer_bench |
 | 2026-09-29 | s3_infer | ✅ mcore `infer_benchmark.py` 直驱两 ckpt 测 prefill/decode（TP1/1×H100/bf16/seq2048+256gen/batch1）。MiniCPM5 prefill 20,780 & decode 2.18（⚠️459ms/token 异常，TE KV-cache 未命中）；Mamba2 prefill 23,029 & decode 19.08。✅ **修正 Mamba2 参数量 3.00B→2.220B**（mcore 打印对 Mamba 计数 bug，实测 numel 一致）。PHASE→report |
+| 2026-09-29 | report(done) | ✅ S4 报告完成：三张对比表（loss/训练速度/推理速度）+ 胜出架构 **Mamba2-hybrid** + 可复现命令 + `BAIZE_2B_ARCH_RESULT.html`（自包含）。已 git commit + push，同步 origin/main。**任务完成（converged），停止新实验**。 |
