@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mamba2-hybrid ~2B 在 Megatron-SWIFT 上的可行性评估报告 · BaiZe</title>
+<style>
+  :root {
+    --primary: #0b3d6e; --accent: #1f6feb;
+    --ok: #1a7f37; --warn: #9a6700; --bad: #cf222e;
+    --bg: #f6f8fa; --card: #ffffff; --border: #d0d7de;
+    --text: #1f2328; --muted: #59636e;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; color: var(--text); background: var(--bg); line-height: 1.65; font-size: 15px; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 32px 24px 80px; }
+  header.hero { background: linear-gradient(135deg, #0b3d6e 0%, #1f6feb 100%); color: #fff; border-radius: 14px; padding: 34px 36px; margin-bottom: 26px; box-shadow: 0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin: 0 0 8px; font-size: 26px; letter-spacing: .3px; }
+  header.hero .sub { font-size: 15px; opacity: .92; }
+  header.hero .meta { margin-top: 14px; font-size: 13px; opacity: .8; display: flex; flex-wrap: wrap; gap: 18px; }
+  .verdict { background: #fff; border: 1px solid var(--border); border-left: 5px solid var(--accent); border-radius: 10px; padding: 18px 22px; margin-bottom: 26px; }
+  h2.sec { font-size: 20px; margin: 34px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+  h2.sec .no { color: var(--accent); margin-right: 8px; }
+  h3 { font-size: 16px; margin: 20px 0 8px; }
+  p { margin: 8px 0; }
+  code { background: #eef1f4; border: 1px solid #e1e4e8; border-radius: 5px; padding: 1px 6px; font-family: Consolas, Menlo, monospace; font-size: 13px; color: #0b3d6e; }
+  pre { background: #0d1117; color: #e6edf3; border-radius: 8px; padding: 14px 16px; overflow-x: auto; font-size: 12.5px; line-height: 1.5; }
+  pre code { background: none; border: none; color: inherit; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 13.5px; background: var(--card); }
+  th, td { border: 1px solid var(--border); padding: 8px 11px; text-align: left; vertical-align: top; }
+  th { background: #eef3f8; color: var(--primary); font-weight: 600; white-space: nowrap; }
+  tr:nth-child(even) td { background: #fafbfc; }
+  .badge { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .b-ok { background: #dafbe1; color: var(--ok); }
+  .b-no { background: #ffebe9; color: var(--bad); }
+  .b-warn { background: #fff8c5; color: var(--warn); }
+  .b-info { background: #ddf4ff; color: var(--accent); }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin: 14px 0; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } }
+  ul { margin: 6px 0; padding-left: 22px; }
+  li { margin: 3px 0; }
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin: 16px 0; }
+  .kpi { background: #f0f6ff; border: 1px solid #cfe0f5; border-radius: 10px; padding: 14px 16px; text-align: center; }
+  .kpi .v { font-size: 22px; font-weight: 700; color: var(--primary); }
+  .kpi .l { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+  footer { margin-top: 46px; padding-top: 18px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12.5px; }
+  .toc { background: #f6f8fa; border: 1px solid var(--border); border-radius: 10px; padding: 14px 22px; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc ol { margin: 6px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>Mamba2-hybrid ~2B 在 Megatron-SWIFT 上的可行性评估报告</h1>
+  <div class="sub">BaiZe 预训练 · 架构扩展评估 —— attention + SSM 混合架构能否经 Megatron-SWIFT / NVIDIA-NeMo recipe 落地 2B 预训练</div>
+  <div class="meta">
+    <span>📅 2026-09-29</span>
+    <span>🎯 目标规模：~2B</span>
+    <span>⚙️ 框架：Megatron-SWIFT v4.5.3 · megatron-core</span>
+    <span>📦 产物：mamba2_hybrid_2b/</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <h2>✅ 结论先行</h2>
+  <p><code>--model_arch</code> <b>无法</b>直接接进 swift <code>megatron pt</code>（两种 bridge 后端均缺 Mamba 转换桥），
+     但底层 <b>megatron-core 原生支持 attention+SSM hybrid</b>，真正可运行的是 <b>NVIDIA/NeMo 的 recipe 路径</b>（绕过 swift）。
+     截至本报告，步骤 1（provider+recipe）、步骤 2（bridge 调研）、步骤 3（DeepSeek tokenizer + 数据预处理）已全部落地并实测通过；
+     仅剩步骤 4（torchrun launcher + forward_step + GPU 前向冒烟）未做。</p>
+</div>
+
+<div class="toc">
+  <strong>目录</strong>
+  <ol>
+    <li><a href="#s1">目标与背景</a></li>
+    <li><a href="#s2">判定速览</a></li>
+    <li><a href="#s3">步骤 1 · 架构与 provider / recipe</a></li>
+    <li><a href="#s4">步骤 2 · swift bridge 两后端调研</a></li>
+    <li><a href="#s5">步骤 3 · 数据预处理 + 真实 tokenizer</a></li>
+    <li><a href="#s6">环境阻塞点与规避</a></li>
+    <li><a href="#s7">可行路径与剩余步骤（步骤 4）</a></li>
+    <li><a href="#s8">附录 · 文件清单与关键数值</a></li>
+  </ol>
+</div>
+
+<h2 class="sec" id="s1"><span class="no">1</span>目标与背景</h2>
+<p>BaiZe 前序任务（1B 架构与超参搜索）已收官，胜出配置为 MiniCPM5-1B（S4-01 loss <code>4.9690@160</code>）。
+在架构类型维度扫描中，早前结论为「Nemotron / Hymba 无 1B 变体」，但后续修正发现：
+底层 <b>megatron-core 原生包含 Mamba/SSM hybrid 能力</b>（<code>mamba_hybrid_layer_allocation</code> 即 attention+SSM 混合层分配），
+只是官方没有现成的 ~1B hybrid recipe（最小 hybrid 为 8B）。</p>
+<p>本评估的目标是：<b>验证一个 ~2B 的 Mamba2-hybrid（attention + SSM 混合）模型能否通过 Megatron-SWIFT 生态真正跑起来做预训练</b>，
+并在不修改 site-packages 的前提下把 provider + recipe + 数据 + 环境全部打通到「可启动训练」的临门一脚。</p>
+
+<div class="card">
+  <h3>评估的三个问题</h3>
+  <ul>
+    <li><b>Q1（架构）</b>：能否造出 ~2B 的 Mamba2-hybrid 模型定义？→ <span class="badge b-ok">可</span>，复用 8B hybrid 的 56 层 pattern，宽度减半。</li>
+    <li><b>Q2（框架接驳）</b>：能否经 swift <code>megatron pt</code> 直接启动？→ <span class="badge b-no">不可</span>，需走 NVIDIA/NeMo recipe 路径。</li>
+    <li><b>Q3（数据/tokenizer）</b>：能否用真实 tokenizer 把 1.8T 数据预处理到位？→ <span class="badge b-ok">可</span>，DeepSeek-V4.1-Flash 已接入并冒烟通过。</li>
+  </ul>
+</div>
+
+<h2 class="sec" id="s2"><span class="no">2</span>判定速览</h2>
+<table>
+  <thead>
+    <tr><th>问题</th><th>结论</th><th>判定</th><th>关键依据</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>能否造出 ~2B Mamba2-hybrid</td>
+      <td>复用 megatron-core 8B hybrid 的 56 层 pattern，宽度减半</td>
+      <td><span class="badge b-ok">可</span></td>
+      <td><code>MambaModelProvider</code> 原生支持 <code>hybrid_override_pattern</code></td>
+    </tr>
+    <tr>
+      <td>能否接 swift <code>megatron pt --model_arch</code></td>
+      <td>两条 bridge 后端（mcore-bridge / megatron-bridge）均无 Mamba 转换桥</td>
+      <td><span class="badge b-no">不可</span></td>
+      <td>MODEL_MAPPING 无 standalone Mamba；conversion model_bridge 无 Mamba 桥</td>
+    </tr>
+    <tr>
+      <td>真正可运行路径</td>
+      <td>NVIDIA/NeMo recipe：<code>pretrain(pretrain_config(), forward_step_func)</code></td>
+      <td><span class="badge b-info">路径 A</span></td>
+      <td>绕过 swift，<code>nemo_run</code> 仅编排用、可 torchrun 直接驱动</td>
+    </tr>
+    <tr>
+      <td>数据预预处理 + 真实 tokenizer</td>
+      <td>DeepSeek-V4.1-Flash 接入 recipe，snappy.parquet → .bin/.idx + EOD</td>
+      <td><span class="badge b-ok">已落地</span></td>
+      <td>冒烟 3000 文档 → 2.48M tokens，IndexedDataset 回读通过</td>
+    </tr>
+    <tr>
+      <td>环境阻塞（omegaconf）</td>
+      <td><code>omegaconf==2.4.0.dev14</code> 缺 <code>_utils.py</code></td>
+      <td><span class="badge b-warn">已规避</span></td>
+      <td><code>/tmp/omegaconf_230</code>（OmegaConf 2.3.0）+ PYTHONPATH，不动 site-packages</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 class="sec" id="s3"><span class="no">3</span>步骤 1 · 架构与 provider / recipe</h2>
+<p>项目目录 <code>mamba2_hybrid_2b/</code> 已落好 4 个文件（<b>不修改 site-packages</b>），镜像 megatron-core 自带
+<code>mamba2_hybrid_8b</code> recipe，唯一差异是模型宽度减半：</p>
+
+<div class="kpi-row">
+  <div class="kpi"><div class="v">56</div><div class="l">层数（复用 8B hybrid pattern）</div></div>
+  <div class="kpi"><div class="v">2048</div><div class="l">hidden_size（8B: 4096）</div></div>
+  <div class="kpi"><div class="v">8192</div><div class="l">ffn_hidden_size（8B: 16384）</div></div>
+  <div class="kpi"><div class="v">16 / 4</div><div class="l">attention_heads / query_groups</div></div>
+  <div class="kpi"><div class="v">~2B</div><div class="l">粗略参数量</div></div>
+</div>
+
+<h3>3.1 provider.py</h3>
+<p><code>NVIDIAMambaHybridModelProvider2B</code> 继承 <code>megatron.bridge.models.mamba.MambaModelProvider</code>，
+复用 8B hybrid 的 56 层 <code>hybrid_override_pattern</code>（<code>M</code>=SSM / <code>*</code>=attention / <code>-</code>=MLP）：</p>
+<pre><code>_HYBRID_OVERRIDE_PATTERN = "M-M-M--M-M*-M-M-M-M--M*-M-M-M-M-M*--M-M-M-M-M*-M--M-M-M-"
+
+@dataclass
+class NVIDIAMambaHybridModelProvider2B(MambaModelProvider):
+    hybrid_override_pattern: str = _HYBRID_OVERRIDE_PATTERN
+    num_layers: int = 56
+    seq_length: int = 4096
+    hidden_size: int = 2048          # 4096 -> 2048
+    ffn_hidden_size: int = 8192      # 16384 -> 8192
+    num_attention_heads: int = 16    # 32 -> 16
+    num_query_groups: int = 4        # 8 -> 4
+    mamba_num_groups: int = 8        # SSM 分组，保持与 8B 一致
+    make_vocab_size_divisible_by: int = 128</code></pre>
+<p>hybrid 层分配由 <code>megatron/core/ssm/mamba_hybrid_layer_allocation.py</code> 的 <code>allocate_layers()</code> 决定，
+<b>与模型规模无关</b>，因此 2B 直接复用 8B 的 56 层 pattern，无需改动层分配逻辑。</p>
+
+<h3>3.2 recipe.py</h3>
+<p><code>model_config()</code> + <code>pretrain_config()</code> 完全镜像 <code>mamba2_hybrid_8b.py</code>，
+仅 <code>model_config()</code> 返回 <code>NVIDIAMambaHybridModelProvider2B</code>。
+<code>pretrain_config()</code> 返回 <code>ConfigContainer</code>，可喂给 <code>megatron.bridge.training.pretrain.pretrain()</code>。
+默认 <code>tensor_parallelism=8 / pipeline=1 / seq_length=4096 / micro_batch=1 / global_batch=8</code>，
+优化器 <code>distributed_fused_adam_with_cosine_annealing(lr=3e-4, min_lr=3e-5, weight_decay=0.1)</code>。</p>
+
+<h2 class="sec" id="s4"><span class="no">4</span>步骤 2 · swift bridge 两后端调研</h2>
+<p>swift 的 <code>megatron pt</code> 有 <b>两条</b> bridge 后端（<code>swift/megatron/model/utils.py</code>），
+据此判定能否通过 <code>--model_arch / --model_type</code> 把自定义模型接进去。</p>
+
+<div class="grid2">
+  <div class="card">
+    <h3>(a) 默认 mcore-bridge</h3>
+    <p><span class="badge b-warn">第三方 mcore_bridge v1.6.4</span></p>
+    <p>入口 <code>get_model_meta(get_mcore_model_type(model_type))</code>。
+      <code>MODEL_MAPPING</code> 里 <b>无 standalone Mamba</b>；唯一涉 Mamba 的 <code>nemotron_h.py</code> 是 Nemotron-H（30B MoE）。</p>
+    <p>后果：给 <code>mamba2_hybrid_2b</code> model_type → <code>get_model_meta()</code> 返回 <code>None</code> →
+      <code>ValueError("Model ... is not supported")</code>。</p>
+  </div>
+  <div class="card">
+    <h3>(b) megatron-bridge</h3>
+    <p><span class="badge b-info">NVIDIA megatron.bridge.AutoBridge</span></p>
+    <p>入口 <code>AutoBridge.from_hf_config(hf_config)</code> → <code>get_model_bridge._exact_types</code>（HF 架构名 → MegatronModelBridge）。</p>
+    <p><code>conversion/model_bridge.py</code> 里 <b>grep mamba 为空</b>：Mamba 只有 provider/recipe，
+      <b>没注册任何 HF↔Mcore 转换桥</b>。</p>
+    <p>后果：即便伪造 <code>Mamba2ForCausalLM</code> HF config，<code>supports()</code> 也
+      <code>raise ValueError("architecture ... not yet supported")</code>。</p>
+  </div>
+</div>
+
+<div class="card">
+  <h3>判定</h3>
+  <p>把 <code>mamba2_hybrid_2b</code> 接进 <code>megatron pt --model_arch</code> <b>不是改一个注册表条目就能解决</b>，
+  需同时补「swift model_type / template + 合成 HF Mamba2 config + 一个继承 <code>MegatronModelBridge</code> 的 Mamba 转换桥
+  （HF↔MambaModelProvider 权重映射与 selective-scan 语义）」。自建 Mamba bridge 风险高、收益低 → <b>路径 B 不建议</b>。</p>
+</div>
+
+<h2 class="sec" id="s5"><span class="no">5</span>步骤 3 · 数据预处理 + 真实 tokenizer</h2>
+<p>按指令使用 <b>DeepSeek-V4.1-Flash</b> tokenizer（<code>/nas_train/app.e0031982/models/DeepSeek-V4.1-Flash</code>）
+处理 Ultra-FineWeb-L3 数据，并把真实 tokenizer 接入 recipe。</p>
+
+<table>
+  <thead>
+    <tr><th>产物</th><th>内容</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>preprocess_data.py</code></td>
+      <td>Ultra-FineWeb-L3 <code>snappy.parquet</code>（<code>content</code> 列）→ DeepSeek 切词 → megatron <code>.bin/.idx</code>（<code>IndexedDatasetBuilder</code>, int32）+ <code>.json</code> 元信息</td>
+    </tr>
+    <tr>
+      <td><code>recipe.py</code>（已改）</td>
+      <td><code>pretrain_config(..., tokenizer_path=...)</code>：非空时用 <code>TokenizerConfig(tokenizer_type="HuggingFaceTokenizer", tokenizer_model=path)</code> 替代 NullTokenizer</td>
+    </tr>
+    <tr>
+      <td><code>tokenizer_eod/</code></td>
+      <td>追加 <code>&lt;|endoftext|&gt;</code> EOD 后的 DeepSeek tokenizer 副本（<code>save_pretrained</code>），供训练与解码一致用</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="kpi-row">
+  <div class="kpi"><div class="v">129280</div><div class="l">DeepSeek 源词表大小</div></div>
+  <div class="kpi"><div class="v">129281</div><div class="l">追加 EOD 后 vocab</div></div>
+  <div class="kpi"><div class="v">129408</div><div class="l">模型侧 pad 后（÷128）</div></div>
+  <div class="kpi"><div class="v">2,480,398</div><div class="l">冒烟 3000 文档 tokens</div></div>
+  <div class="kpi"><div class="v">~827</div><div class="l">tokens/doc</div></div>
+</div>
+
+<h3>5.1 关键数值（已实测）</h3>
+<ul>
+  <li>源词表 <b>129280</b> → 追加 EOD 后 <b>vocab=129281</b>，<code>eos_id=129280</code>（即 <code>HuggingFaceTokenizer.eod</code>）。</li>
+  <li>模型侧 <code>make_vocab_size_divisible_by=128</code> → embedding 自动 pad 到 <b>129408</b>（TP 正交分配时再乘 TP）。</li>
+  <li>冒烟 <code>--max-docs 3000</code> 取首个 part 文件 3000 条 → <b>2,480,398 tokens</b>（6.4s）；
+      <code>IndexedDataset</code> 回读通过，每文档末尾 = EOD 129280，token id 范围 <code>[0, 129280]</code>。</li>
+  <li>环境链验证：<code>PYTHONPATH=/tmp/omegaconf_230</code> 下 <code>import megatron.bridge</code> 成功；
+      <code>NVIDIAMambaHybridModelProvider2B</code> 实例化成功；
+      <code>pretrain_config(tokenizer_path=...)</code> → <code>build_tokenizer</code> 产出 <code>_HuggingFaceTokenizer(vocab=129281, eod=129280)</code>。</li>
+</ul>
+<p class="" style="color:var(--muted)">说明：训练时数据已是预切词 <code>.bin/.idx</code>，tokenizer 仅在运行时提供 <code>vocab/eod/pad</code>，不再切词。</p>
+
+<h2 class="sec" id="s6"><span class="no">6</span>环境阻塞点与规避</h2>
+<p><code>import megatron.bridge</code> 在本环境直接失败：</p>
+<pre><code>ModuleNotFoundError: No module named 'omegaconf._utils'</code></pre>
+<p>根因：<code>omegaconf==2.4.0.dev14</code>（dev 预发布）里 <code>base.py</code> 仍 <code>from ._utils import ...</code>，
+但包内已无 <code>_utils.py</code>（仅剩 <code>_impl.py</code>），属残缺安装。</p>
+
+<table>
+  <thead>
+    <tr><th>方面</th><th>影响</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>影响面</td><td><code>megatron.bridge.*</code> 全链（含 <code>AutoBridge</code>、<code>mamba_provider</code>、本项目 <code>provider.py</code> 的 import）都触发</td></tr>
+    <tr><td>不影响</td><td>默认 <code>mcore-bridge</code> 路径（S1~S4 的 MiniCPM5 训练）不 import omegaconf，照常可用</td></tr>
+    <tr><td>修复（已非破坏性落地并验证）</td><td><code>pip install --target /tmp/omegaconf_230 --no-deps 'OmegaConf==2.3.0'</code> + <code>PYTHONPATH=/tmp/omegaconf_230</code> 前缀，main 环境 <code>antlr4-runtime</code> 已备；不动 site-packages，也不影响 swift / mcore-bridge 现有训练</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec" id="s7"><span class="no">7</span>可行路径与剩余步骤（步骤 4）</h2>
+
+<div class="grid2">
+  <div class="card">
+    <h3>路径 A（推荐）· NVIDIA/NeMo recipe</h3>
+    <p>绕过 swift，直接：</p>
+    <pre><code>pretrain(
+    pretrain_config(tokenizer_path=..., data_paths=[...]),
+    forward_step_func=forward_step,
+)</code></pre>
+    <p><code>pretrain_config</code> 返回 <code>ConfigContainer</code>（本仓库 <code>recipe.py</code> 已就绪）。
+      启动由 NeMo Run 驱动（<code>nemo_run.Partial</code>），但 <code>nemo_run</code> 仅编排用，可直接 torchrun 驱动。</p>
+    <p><span class="badge b-ok">已打通</span>：provider / recipe / tokenizer / 数据；<span class="badge b-warn">待做</span>：launcher + forward_step + 冒烟。</p>
+  </div>
+  <div class="card">
+    <h3>路径 B（重）· swift 自建 bridge</h3>
+    <p>为使 <code>megatron pt --model_type mamba2_hybrid_2b</code> 可用，需新增：</p>
+    <ul>
+      <li>swift <code>model_type</code> + <code>template</code></li>
+      <li>合成 HF <code>Mamba2ForCausalLM</code> config</li>
+      <li>继承 <code>MegatronModelBridge</code> 的 Mamba 转换桥（注册进 <code>model_bridge</code> 或 <code>mcore_bridge.MODEL_MAPPING</code>）</li>
+    </ul>
+    <p>工作量大、权重映射 / SSM 正确性风险高。</p>
+    <p><span class="badge b-no">不建议</span></p>
+  </div>
+</div>
+
+<h3>剩余步骤（步骤 4，未做，仍阻塞）</h3>
+<ol>
+  <li><b>launcher</b>：落地一个 <code>torchrun</code> 启动脚本，串起
+      <code>pretrain_config(tokenizer_path=..., data_paths=[.../.bin 前缀], forward_step=...)</code> +
+      <code>pretrain(cfg, forward_step_func)</code>。<code>nemo_run</code> 仅编排用，可 bypass（<code>pretrain()</code> 自带
+      <code>nvidia_resiliency_ext.CallWrapper</code>，已确认可用）。</li>
+  <li><b>forward_step_func</b>：走 megatron-core <code>megatron.bridge.training.gpt_step.forward_step</code>
+      （Mamba 层前向与 gpt 一致，hyper-grid 也复用）。</li>
+  <li><b>资源</b>：完整 1.8T 数据切词约 <code>1.9e9 tokens</code>，<code>.bin</code> 约 7.6GB（int32），需大磁盘节点 + 足够时间；
+      GPU 训练侧 Mamba2 2B 参数需按 20 GPU·h 预算谨慎规划（共享 LLaVA 8 卡场景下 <code>mb=1</code>）。</li>
+</ol>
+
+<h2 class="sec" id="s8"><span class="no">8</span>附录 · 文件清单与关键数值</h2>
+<table>
+  <thead>
+    <tr><th>文件</th><th>说明</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>mamba2_hybrid_2b/__init__.py</code></td><td>导出 <code>NVIDIAMambaHybridModelProvider2B</code> / <code>model_config</code> / <code>pretrain_config</code></td></tr>
+    <tr><td><code>mamba2_hybrid_2b/provider.py</code></td><td>~2B Mamba2-hybrid provider（宽度减半，56 层 hybrid pattern）</td></tr>
+    <tr><td><code>mamba2_hybrid_2b/recipe.py</code></td><td>镜像 8B recipe，支持 <code>tokenizer_path=</code></td></tr>
+    <tr><td><code>mamba2_hybrid_2b/preprocess_data.py</code></td><td>snappy.parquet → .bin/.idx + EOD（DeepSeek tokenizer）</td></tr>
+    <tr><td><code>mamba2_hybrid_2b/FEASIBILITY.md</code></td><td>步骤 1+2+3 可运行性评估记录</td></tr>
+    <tr><td><code>mamba2_hybrid_2b/tokenizer_eod/</code></td><td>DeepSeek-V4.1-Flash EOD 增强副本（vocab 129281）</td></tr>
+    <tr><td><code>run/MEMORY.md</code></td><td>运行时状态（已更新至步骤 3 收官）</td></tr>
+  </tbody>
+</table>
+
+<footer>
+  <p>BaiZe · Mamba2-hybrid ~2B 可行性评估报告 · 2026-09-29 ·
+     <b>结论</b>：架构可造、数据/tokenizer 已打通、swift 直接接驳不可行，唯一可行路径为 NVIDIA/NeMo recipe（路径 A），剩余仅 launcher + forward_step + GPU 前向冒烟（步骤 4）。</p>
+</footer>
+
+</div>
+</body>
+</html>
+
+

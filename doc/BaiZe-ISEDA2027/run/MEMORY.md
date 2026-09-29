@@ -1,46 +1,47 @@
-# MEMORY.md — BaiZe 1B 架构与超参搜索 运行时状态（不提交 git，重启用）
+# MEMORY.md — BaiZe ~2B Mamba2-hybrid 可行性评估 运行时状态（不提交 git，重启用）
 
-> 🔄 **任务重启说明**：此轮专攻 **Hymba / Jet-Nemotron 架构兼容性验证**。
-> ⚠️ **前一轮检查路径有误**：agent 只查了 swift 注册表就判定 NOT_SUPPORTED，但 **Hymba 是 NVIDIA 自研架构**，底层的 megatron-core（NVIDIA 官方维护）很可能有原生模型定义。此轮修正检查顺序：**先查 megatron-core 模型库 → 再查 swift bridge 层**。
+> 🔄 **任务说明**：继「BaiZe 1B 架构与超参搜索」收官（胜出 MiniCPM5-1B，S4-01 loss 4.9690@160）之后，本轮评估 **~2B Mamba2-hybrid（attention+SSM 混合）架构能否经 Megatron-SWIFT / NVIDIA-NeMo recipe 路径落地预训练**。步骤 1（provider+recipe）、步骤 2（swift bridge 调研）、步骤 3（DeepSeek tokenizer + 数据预处理）已完成，步骤 4（launcher + forward_step）待做。
 
 ## 当前状态
-- STAGE: **S0.5 架构兼容性验证** ✅ 收官（Hymba / Nemotron 均无 1B 变体，MiniCPM5-1B 唯一胜出）
-- PHASE: **converged**（任务收官，步骤 G：无动作退出）
+- STAGE: **S0.6 = Mamba2-hybrid ~2B 可行性评估**
+- PHASE: **step3_done**（步骤 1/2/3 收官，待步骤 4 launcher）
 - ERROR_COUNT: 0
-- BUDGET_USED（GPU·小时）: 0（上限 20）
+- BUDGET_USED（GPU·小时）: 0（数据预处理为 CPU 冒烟，未占 20h 训练预算）
 - 当前运行实验: 无
-- 下一步: converged — 步骤 G：胜出配置（MiniCPM5-1B）+ 可复现命令（bash train_s4_01.sh）已在 EXPERIMENTS.md 顶部就位，无动作退出
+- 下一步: 步骤 4 — 落地 torchrun launcher（`pretrain_config(tokenizer_path=..., data_paths=[.../.bin 前缀])` + `pretrain(cfg, forward_step_func)`）做 GPU 前向冒烟，判定后续是否值得投入 20 GPU·h
 
-## 可用数据清单
+## 可用数据清单（继承自上一任务，本轮已用其一冒烟）
+- Ultra-FineWeb-L3: **AVAILABLE (1.8T)** ✅ 主预训练数据（步骤 3 已用 DeepSeek tokenizer 冒烟切词 3000 文档验证）
 - UltraData-Code: AVAILABLE (1.2T)
 - UltraData-Math: AVAILABLE (515G)
-- UltraData-SFT-2605: AVAILABLE (152K ⚠️ 极小，疑似未完整下载，主预训练用 FineWeb-L3 不受影响)
 - UltraData-SFT-Agent-2609: AVAILABLE (51G)
-- Ultra-FineWeb-L3: AVAILABLE (1.8T) ✅ 主预训练数据（历次实验已用）
+- UltraData-SFT-2605: AVAILABLE (152K ⚠️ 极小，主预训练用 FineWeb-L3 不受影响)
+
+## 结论摘要（Mamba2-hybrid 2B 评估，详见 HTML 报告）
+- **步骤 1 ✅**：落地 `mamba2_hybrid_2b` 包（`provider.py` / `recipe.py` / `__init__.py` / `FEASIBILITY.md`），镜像 megatron-core `mamba2_hybrid_8b`，宽度减半 → ~2B。56 层 hybrid pattern 复用（`M`=SSM / `*`=attention / `-`=MLP），层分配与模型规模无关。
+- **步骤 2 ✅**：swift 两条 bridge 后端均无 Mamba 转换桥 → `megatron pt --model_arch` 直接接上不可行（`mcore-bridge` MODEL_MAPPING 无 standalone Mamba；`megatron-bridge` conversion model_bridge 无 Mamba 桥）。可行路径 = **NVIDIA/NeMo recipe（路径 A）**，绕过 swift。
+- **步骤 3 ✅**：按指令用 **DeepSeek-V4.1-Flash** tokenizer 处理数据。新增 `preprocess_data.py`（snappy.parquet `content` → `.bin/.idx` + EOD），`recipe.py` 支持 `tokenizer_path=`（HuggingFaceTokenizer）。关键数值：源词表 **129280** → 追加 `<|endoftext|>` 后 **vocab=129281 / eod=129280**，模型侧 pad 到 **129408**。冒烟 3000 文档 → **2,480,398 tokens** 经 `IndexedDataset` 回读验证通过。
+- **环境阻塞已规避**：`omegaconf==2.4.0.dev14` 缺 `_utils.py` → 非破坏性规避（`pip install --target /tmp/omegaconf_230 --no-deps 'OmegaConf==2.3.0'` + `PYTHONPATH=/tmp/omegaconf_230`），`import megatron.bridge` 已验证通过；`nemo_run` 仅编排用，可直接 bypass。
 
 ## 实验看板
-（架构类型维度扫描已完成，无新实验；胜出配置保持 MiniCPM5-1B，S4-01 loss 4.9690@160）
+（本任务为可行性评估，步骤 1~3 均为 CPU/配置级验证，无 GPU 训练实验。胜出架构方向 = 2B Mamba2-hybrid `hybrid_override_pattern`，待步骤 4 launcher 做 GPU 前向冒烟后判定 run 可行性）
 
 ## 操作流水
 | 时间 | 步骤 | 记录 |
 |------|------|------|
-| 2026-09-29 09:24 | data_check | ✅ 数据可用：5 数据集全部 AVAILABLE（Ultra-FineWeb-L3 1.8T / UltraData-Code 1.2T / UltraData-Math 515G / UltraData-SFT-Agent 51G / UltraData-SFT-2605 152K）。至少一个可用 → PHASE=env_check |
-| 2026-09-29 10:34 | env_check | ✅ 环境验证通过（Python 3.10.18 / torch 2.8.0+cu128 CUDA 12.8 / megatron 可导入）。🔑 关键发现：底层 megatron-core 原生含 Mamba/SSM hybrid（core.models.mamba / core.ssm.mamba_hybrid_layer_allocation）及 bridge 层 nemotron/nemotronh/mamba 模型定义，需在 experiment_plan 修正前一轮「Hymba/Nemotron NOT_SUPPORTED」的判定依据（前一轮只查 swift 注册表遗漏了 megatron-core 层）。PHASE→data_preprocess |
-| 2026-09-29 11:44 | data_preprocess | ✅ ①数据预处理：无需独立 .bin/.idx 脚本——Ultra-FineWeb-L3 `qa` 为 snappy.parquet，历次 S1~S4 已用 `--dataset .../ultrafineweb_en_l3/qa --streaming true --packing true --packing_length 4096` 直接流式 tokenize（Quick-start.md 确认复用 dataset/template 模块），原始格式直接可用 → 跳过预处理。②架构判定修正（先查 megatron-core）：mcore 原生含 `bridge/models/mamba/mamba_provider.py`（MambaModelProvider 支持 hybrid_attention_ratio/hybrid_mlp_ratio/hybrid_override_pattern，即 Hymba 式 hybrid，但仅 mamba2_hybrid_8b=8B 与纯 Mamba2 1.3B，无 ~1B hybrid）+ `bridge/models/nemotron`(Nemotron3 最小 4B) + `nemotronh`(最小 4B) + `core/ssm/mamba_hybrid_layer_allocation.py`。swift 层仅 `mamba`(classic Mamba1/model_arch=None) + `nemotron_h`(30B-A3B MoE/transformers>=5.0)，`grep hymba`=空。→ Hymba/Nemotron = ⚠️ **NOT_EXPOSED / 无 1B 变体**（非「0 处注册 NOT_SUPPORTED」），无可运行 1B 替代架构，MiniCPM5-1B 保持唯一胜出。PHASE→experiment_plan |
-| 2026-09-29 12:53 | experiment_plan | ✅ S4 及架构类型维度扫描均已收官：实验表 S1-01~S4-01 全部 done（胜出配置 MiniCPM5-1B，S4-01 loss 4.9690@160，基线唯一改动 = Stable LR 6e-4→3e-4）；架构类型（MiniCPM5-1B/Nemotron/Hymba）扫描完成、megatron-core 虽原生含 Mamba/SSM-hybrid 与 Nemotron 但均无 1B 变体 → 无可运行 1B 替代架构。复核：nvidia-smi 计算进程空、pgrep 无 megatron/swift 残留、checkpoint-160 与 train_s4_01.sh 均就位。→ 无新实验，PHASE=converged |
+| 2026-09-29 15:4x | step1_2_done | ✅ 步骤 1+2 已收官（provider+recipe 落地；swift 两种 bridge 后端 Mamba 桥缺失判定）。阻塞点记录：omegaconf 2.4.0.dev14 残缺、nemo_run 未装 |
+| 2026-09-29 15:56 | step3_tokenizer | ✅ 按指令使用 DeepSeek-V4.1-Flash tokenizer：验证 transformers `AutoTokenizer` 可加载（PreTrainedTokenizerFast，源词表 129280），追加 `<\|endoftext\|>` EOD → vocab 129281 / eos_id 129280 / pad 129408，`save_pretrained` 到 `mamba2_hybrid_2b/tokenizer_eod/` |
+| 2026-09-29 16:11 | step3_preprocess | ✅ 新增 `mamba2_hybrid_2b/preprocess_data.py`：Ultra-FineWeb-L3 qa snappy.parquet（content 列）→ DeepSeek 切词 → `IndexedDatasetBuilder` 产出 `.bin/.idx` + `.json` 元信息。冒烟 `--max-docs 3000` → 2,480,398 tokens（~6.4s），`IndexedDataset` 回读通过（文档末尾=EOD 129280，token id 范围 [0,129280]） |
+| 2026-09-29 16:13 | step3_env_fix | ✅ omegaconf 阻塞非破坏性规避：`pip install --target /tmp/omegaconf_230 --no-deps 'OmegaConf==2.3.0'` + `PYTHONPATH=/tmp/omegaconf_230` → `import megatron.bridge` 成功；`NVIDIAMambaHybridModelProvider2B` 实例化成功；`pretrain_config(tokenizer_path=...)` → `build_tokenizer` 产出 `_HuggingFaceTokenizer(vocab=129281, eod=129280)` |
+| 2026-09-29 16:19 | step3_recipe | ✅ `recipe.py` 支持 `tokenizer_path` 参数（HuggingFaceTokenizer），`FEASIBILITY.md` 更新至「步骤 1+2+3」；`py_compile` 四个文件全部通过。PHASE→step4_launcher（待做） |
 
 ## 环境备注
-- ✅ 环境验证通过（2026-09-29 10:34 env_check）：Python 3.10.18（conda py310）、PyTorch **2.8.0+cu128** / CUDA **12.8**、megatron 可导入（namespace 包，无 __version__；site-packages: `/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/megatron`）
-- 🔑 **重大发现（修正前一轮「Hymba/Nemotron NOT_SUPPORTED」的判定依据）**：底层 megatron-core **原生含 Mamba/SSM hybrid 与 nemotron 支持**，前一轮只查 swift 注册表遗漏了 megatron-core 层：
-  - `megatron.core.models.mamba`（mamba_model.py / mamba_layer_specs.py）
-  - `megatron.core.ssm`（mamba_block / mamba_layer / mamba_mixer / **mamba_hybrid_layer_allocation** / mamba_context_parallel）
-  - `megatron.bridge.models.mamba`（mamba_provider）+ `megatron.bridge.recipes.mamba`（mamba2_130m/370m/780m/1.3b/2.7b/8b 及 **mamba2_hybrid_8b**）
-  - `megatron.bridge.models.nemotron`（nemotron_provider/bridge）+ `megatron.bridge.models.nemotronh`（nemotron_h_provider/bridge）+ `megatron.bridge.recipes.nemotronh`（nemotronh_4b/8b/47b/56b/nemotron_nano_9b_v2/12b_v2）
-  - → Hymba（attention+SSM hybrid）的底层 SSM-hybrid 能力在 megatron-core 已存在；NemotronH 亦有 bridge 模型。能否经 swift 桥接为「1B 可训练配置」留待 experiment_plan 详查（注意 Hymba 属 NVIDIA 自研 hybrid，megatron-core 的 `mamba_hybrid_layer_allocation` 很可能就是其底层实现）。
+- ✅ 环境验证：Python 3.10.18 / torch 2.8.0+cu128 / CUDA 12.8 / megatron 可导入（namespace 包，site-packages: `/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/megatron`）
+- 🔑 megatron-core 原生含 Mamba/SSM-hybrid：`core.models.mamba` / `core.ssm.mamba_hybrid_layer_allocation` / `bridge.models.mamba(mamba_provider)` / `bridge.recipes.mamba`（mamba2_130m...8b/hybrid_8b）
+- ⚠️ 阻塞：`omegaconf==2.4.0.dev14` 缺 `_utils.py` → 已用 `/tmp/omegaconf_230`(OmegaConf==2.3.0) + PYTHONPATH 规避；`nemo_run` 未装（仅编排用，可 bypass）；`nvidia_resiliency_ext` 可用
+- 数据：DeepSeek-V4.1-Flash tokenizer 位于 `/nas_train/app.e0031982/models/DeepSeek-V4.1-Flash`；EOD 增强副本在 `mamba2_hybrid_2b/tokenizer_eod/`
 
-## 架构判定修正（2026-09-29 data_preprocess 收官）
-- 正确检查顺序（先 megatron-core → 再 swift）复核结论：megatron-core **原生支持** Mamba/SSM-hybrid 与 Nemotron，但**均无 1B 变体**。
-- mcore `bridge/models/mamba`：`MambaModelProvider` 支持 hybrid（`hybrid_attention_ratio` / `hybrid_mlp_ratio` / `hybrid_override_pattern`，Hymba 式），现有规模 130M / 370M / 780M / **1.3B(纯 Mamba2，override "M"*48，无 attention)** / 2.7B / 8B / **hybrid_8B** → **无 ~1B hybrid recipe**。
-- mcore `bridge/models/nemotron`（Nemotron3 4B/8B/22B，最小 4B）+ `bridge/models/nemotronh`（4B/8B/47B/56B/nano，最小 4B）。
-- swift 层：`mamba`（classic Mamba1 HF，`model_arch=None` 无 mcore bridge 路径）+ `nemotron_h`（30B-A3B MoE / `transformers>=5.0`），`grep hymba`=空。
-- **判定**：Hymba = ⚠️ **NOT_EXPOSED / 无 1B 变体**；Nemotron/NemotronH = ⚠️ **NOT_EXPOSED / 无 1B 变体**（非「0 处注册 NOT_SUPPORTED」）。→ 无可运行 1B 替代架构，MiniCPM5-1B 保持唯一胜出，无新实验、无预算消耗。
+## 下一步（步骤 4，未做，仍阻塞）
+1. 落地 torchrun launcher 脚本（如 `baize_mamba2_2b_train.sh`），串起 `pretrain_config(tokenizer_path=mamba2_hybrid_2b/tokenizer_eod, data_paths=[.../.bin 前缀], train_iters=微型)` + `megatron.bridge.training.pretrain.pretrain(cfg, forward_step_func=megatron.bridge.training.gpt_step.forward_step)`
+2. GPU 前向冒烟：验证 2B provider 实例化 + 数据加载 + 单步前向/反向，确认显存/吞吐，判定后续是否值得投入 20 GPU·h
+3. 资源规划：完整 1.8T 数据切词约 1.9e9 tokens / `.bin` ~7.6GB(int32)；GPU 侧 Mamba2 2B 参数需在共享 LLaVA 8 卡场景下 mb=1 谨慎规划
