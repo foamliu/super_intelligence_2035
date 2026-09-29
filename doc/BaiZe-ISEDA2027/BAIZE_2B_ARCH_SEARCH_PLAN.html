@@ -245,6 +245,30 @@
 <h3>启动自动循环（假期挂机）</h3>
 <pre><code>setsid bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_2b_search_loop.sh \
   &gt; /tmp/baize_2b_loop.log 2&gt;&amp;1 &lt; /dev/null &amp;</code></pre>
+<h3>监测进程与显存（假期巡检用）</h3>
+<pre><code># 本机 GPU 占用（pid / 进程名 / 显存）
+nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv
+# 双节点占用（ssh 免密已通）
+ssh 10.239.2.29 nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv
+ssh 10.239.2.12 nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv
+# 训练 / 切词进程是否在跑
+pgrep -af 'megatron|swift|torchrun|preprocess_data'
+# 实时日志
+tail -f /tmp/BAIZE2B_&lt;ARCH&gt;.log
+tail -f /tmp/baize_2b_loop.log</code></pre>
+
+<h3>杀掉本项目残留进程（先记录、只杀自己的、不杀他人）</h3>
+<pre><code># 1) 先看清要杀的是不是本项目的：把 PID / 进程名 / 显存记到 MEMORY_2B.md
+pgrep -af 'megatron|swift|torchrun|preprocess_data'
+nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv
+# 2) 按 PID 精确杀（最安全，勿误杀他人进程）
+kill -9 &lt;PID&gt;
+# 3) 停掉自动循环（如需整体停止假期任务）
+pkill -f 'baize_2b_search_loop.sh'
+# 4) 确认杀净后重启循环
+setsid bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_2b_search_loop.sh \
+  &gt; /tmp/baize_2b_loop.log 2&gt;&amp;1 &lt; /dev/null &amp;</code></pre>
+
 <h3>文件清单</h3>
 <table>
   <thead><tr><th>文件</th><th>作用</th></tr></thead>
