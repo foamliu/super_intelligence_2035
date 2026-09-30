@@ -105,20 +105,38 @@ class MoEBlock(nn.Module):
         h = self.norm2(x)
         B, N, C = h.shape
         h_flat = h.reshape(B * N, C)
+        S = h_flat.shape[0]
         logits = self.router(h_flat)                       # (S, E)
         topk_vals, topk_idx = logits.topk(self.top_k, dim=-1)  # (S, top_k)
         probs = F.softmax(topk_vals, dim=-1)               # (S, top_k)
+
+        # Flatten the (token, slot) dispatch and sort by expert so each expert's
+        # tokens form a contiguous run (fewer scattered gathers than per-expert
+        # nonzero scans; single argsort per block).
+        flat_expert = topk_idx.reshape(-1)                 # (S*K,)
+        flat_token = torch.arange(S, device=h.device, dtype=torch.long).repeat_interleave(self.top_k)
+        flat_weight = probs.reshape(-1)                    # (S*K,)
+        order = torch.argsort(flat_expert, stable=True)
+        s_expert = flat_expert[order]
+        s_token = flat_token[order]
+        s_weight = flat_weight[order]
+
+        counts = torch.bincount(s_expert, minlength=self.n_experts)
+        offsets = torch.cumsum(counts, dim=0).tolist()      # one sync per block
+
         out = torch.zeros_like(h_flat)
+        prev = 0
         for e in range(self.n_experts):
-            mask = topk_idx == e                            # (S, top_k) bool
-            s_idx, k_idx = mask.nonzero(as_tuple=True)      # (T,), (T,)
-            if s_idx.numel() == 0:
+            end = offsets[e]
+            if end == prev:
                 continue
-            w = probs[s_idx, k_idx]                         # (T,)
-            h_e = h_flat[s_idx]                             # (T, C)
-            a = F.silu(h_e @ self.gate[e]) * (h_e @ self.up[e])   # (T, ff)
-            o = a @ self.down[e]                            # (T, C)
-            out.index_add_(0, s_idx, o * w.unsqueeze(1))
+            t = s_token[prev:end]                          # (T_e,)
+            w = s_weight[prev:end]                         # (T_e,)
+            h_e = h_flat[t]                                # (T_e, C)
+            a = F.silu(h_e @ self.gate[e]) * (h_e @ self.up[e])   # (T_e, ff)
+            o = a @ self.down[e]                           # (T_e, C)
+            out.index_add_(0, t, o * w.unsqueeze(1))
+            prev = end
         x = x + out.reshape(B, N, C)
         return x
 
