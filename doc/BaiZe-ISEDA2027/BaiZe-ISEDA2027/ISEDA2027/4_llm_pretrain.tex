@@ -21,10 +21,11 @@ The remaining schedule and batch-size settings (global batch size, sequence leng
 \subsection{Budget-Constrained Search Protocol}\label{sec:search}
 Because a full grid is infeasible under a fixed GPU budget, we adopt a staged, single-variable-at-a-time protocol:
 \begin{itemize}
-\item \textbf{S1 (baseline).} Reproduce the Mamba2-hybrid reference configuration to establish a loss/throughput baseline.
-\item \textbf{S2 (hyper-parameter sweep).} Perturb one training variable at a time---stable learning rate, warmup length, and decay ratio---at a short horizon.
-\item \textbf{S3 (schedule sweep).} Compare learning-rate schedules (WSD-style vs.\ cosine) and batch sizing at a short horizon.
-\item \textbf{S4 (verification).} Retrain the winning configuration from scratch over a longer horizon to confirm convergence and reproducibility.
+\item \textbf{S1 (baseline).} Reproduce the Mamba2-hybrid reference configuration (stable LR $3\times10^{-4}$, WSD) to establish a loss/throughput baseline.
+\item \textbf{S2 (learning-rate sweep).} Sweep the stable learning rate over seven points from $2\times10^{-4}$ to $1\times10^{-3}$ with WSD held fixed.
+\item \textbf{S3 (schedule axes).} On the winning learning rate, perturb one variable at a time---schedule family (WSD vs.\ cosine), decay ratio, warmup length, and $min\_lr$.
+\item \textbf{S4 (annealing data mix).} Ablate the annealing data blend (pure Ultra-FineWeb-L3 vs.\ adding code and math) under the winning configuration.
+\item \textbf{S5 (long run + seeds).} Retrain the winning configuration from scratch over a $20000$-step horizon, plus a three-seed short-horizon reproducibility check.
 \end{itemize}
 
 At every stage only a single variable changes relative to the running best, isolating each factor's contribution while keeping total GPU-hours within budget.
@@ -35,28 +36,34 @@ Pre-training uses the \texttt{Ultra-FineWeb-L3} English subset ($\approx$1.8\,T 
 Complementary corpora---code (\texttt{UltraData-Code}, $1.2$\,T), mathematics (\texttt{UltraData-Math}, $515$\,G), and an agentic instruction-tuning set (\texttt{UltraData-SFT-Agent}, $51$\,G)---are reserved for post-training (Section~\ref{sec:llm-posttrain}).
 
 \subsection{Search Budget}\label{sec:llm-budget}
-The pre-training search is bound by a $\approx$84\,GPU-hour budget (aggregated across all experiments and retries).
-Short-horizon sweeps (S2, S3) run $80$ steps ($\approx$0.9\,GPU-hours each); the baseline (S1) runs $300$ steps and the verification run (S4) runs $160$ steps.
+The pre-training search is bound by a $\approx$92\,GPU-hour plan on eight H100 GPUs ($\approx$192\,GPU-hours wall-clock available); $\approx$85\,GPU-hours were consumed.
+All short-horizon sweeps (S1--S4) run $5000$ steps at a global batch size of $8\times4094\approx32.7$K tokens/step ($\approx$164M tokens, $\approx$4.0\,GPU-hours each); the verification long run (S5) runs $20000$ steps ($\approx$655M tokens, $\approx$13.9\,GPU-hours).
 Validation loss is reported at matched step counts so that comparisons across configurations remain apples-to-apples.
 
 \subsection{Results}\label{sec:llm-results}
-Following the architecture change to the hybrid backbone, all training and inference measurements are being re-executed on the final Mamba2-hybrid model; quantitative figures are reported as \textbf{[TBD]} and will be back-filled once re-measurement completes.
+The winning configuration is a stable learning rate of $1\times10^{-3}$ under a warmup--stable--decay (WSD) schedule (warmup $250$ steps, decay $500$ steps, $min\_lr{=}1\times10^{-5}$), with an $86{:}10{:}4$ blend of Ultra-FineWeb-L3, code, and math data in the annealing tail.
+Over the $5000$-step horizon the validation loss reaches $\mathbf{2.7647}$; the learning-rate sweep improves monotonically from $2.9037$ ($2\times10^{-4}$) to $2.7627$ ($1\times10^{-3}$).
+Each short-horizon ablation confirms a single-variable choice: WSD beats cosine ($2.7679$ vs.\ $2.8155$), a $10\%$ decay ratio beats $5\%$ ($2.7679$ vs.\ $2.7900$), a $250$-step ($5\%$) warmup beats a fixed $2000$-step warmup ($2.7679$ vs.\ $2.7957$), and $min\_lr{=}1\times10^{-5}$ narrowly beats $3\times10^{-5}$ ($2.7647$ vs.\ $2.7679$).
+Adding code and math to the annealing mix lowers the final loss monotonically ($2.7621$ pure L3 $\to$ $2.6793$ L3+code $\to$ $2.6298$ L3+code+math).
+
+The $20000$-step verification run reaches a final training loss of $\mathbf{2.2054}$, with the decay tail (steps $19500$--$20000$) annealing the loss from $\sim2.34$ to $2.2054$ (annealing gain $\sim0.14$; Figure~\ref{fig:pretrain-curve}).
+Across three seeds the $5000$-step loss is $2.6739\pm0.0469$ (mean $\pm$ sample standard deviation, $n{=}3$; per-seed $2.6402$, $2.6539$, $2.7275$).
 
 Table~\ref{tab:archcomp} contrasts the hybrid backbone against a dense transformer at the $\approx$2B scale, trained from scratch under matched data, seed, and GPU footprint; the hybrid offers fewer parameters and faster decoding at a modest training-throughput cost.
 
 \begin{table}[htbp]
 \centering
-\caption{Architecture-level comparison motivating the hybrid choice (\textbf{[TBD]}: re-measured on the final backbone).}
+\caption{Architecture-level comparison motivating the hybrid choice (measured from scratch under matched data, seed, and GPU footprint).}
 \label{tab:archcomp}
 \begin{tabular}{lccc}
 \toprule
 \textbf{Metric} & \textbf{Dense (MiniCPM5-2B)} & \textbf{Hybrid (BaiZe)} & \textbf{Edge} \\
 \midrule
 Parameters & 2.51B & \textbf{2.22B} & hybrid ($-11.6\%$) \\
-Final loss & [TBD] & [TBD] & [TBD] \\
-Training tok/s & [TBD] & [TBD] & [TBD] \\
-Prefill tok/s & [TBD] & [TBD] & [TBD] \\
-Decode tok/s & [TBD] & [TBD] & [TBD] \\
+Final loss (1000 steps) & 4.81 & \textbf{4.68} & hybrid ($-0.12$) \\
+Training tok/s & \textbf{89K} & 72K & dense ($+24\%$) \\
+Prefill tok/s & 21.4K & \textbf{23.7K} & hybrid ($+10.5\%$) \\
+Decode tok/s & 2.2 & \textbf{22.8} & hybrid ($+10.3\times$) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -65,19 +72,26 @@ Table~\ref{tab:configs} reports the hyper-parameter search outcomes at a matched
 
 \begin{table}[htbp]
 \centering
-\caption{Search outcomes (\textbf{[TBD]}: re-measured on the final hybrid backbone).}
+\caption{Hyper-parameter and data-mix search outcomes at a matched $5000$-step (S5: $20000$-step) horizon.}
 \label{tab:configs}
 \begin{tabular}{llcc}
 \toprule
 \textbf{ID} & \textbf{Change vs.\ best} & \textbf{Val.\ loss} & \textbf{Outcome} \\
 \midrule
-S1-01 & baseline (hybrid) & [TBD] & baseline \\
-S2-01 & learning-rate variant & [TBD] & [TBD] \\
-S2-02 & warmup variant & [TBD] & [TBD] \\
-S3-01 & schedule family & [TBD] & [TBD] \\
-S4-01 & winner, long horizon & [TBD] & \textbf{winner} \\
+S1-01 & baseline ($lr{=}3{\times}10^{-4}$, WSD) & 2.849 & baseline \\
+S2-07 & stable LR $=1\times10^{-3}$ & \textbf{2.7627} & best LR \\
+S3-02 & schedule family: cosine & 2.8155 & WSD retains \\
+S3-03 & decay ratio $5\%$ & 2.7900 & $10\%$ retains \\
+S3-04 & warmup $2000$ steps & 2.7957 & $250$ retains \\
+S4-03 & anneal L3+code+math $86{:}10{:}4$ & \textbf{2.6298} & best mix \\
+S5-01 & winner, $20000$ steps & \textbf{2.2054} & \textbf{winner} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Training-loss curves and the short-horizon ablation visualisation are regenerated on the hybrid backbone and will be included as figures once re-measurement completes (\textbf{[TBD]}).
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\columnwidth]{../s5_01_loss_curve.png}
+\caption{Training-loss curve of the winning Mamba2-hybrid configuration over the $20000$-step verification run (seed $1234$); the decay tail (steps $19500$--$20000$) anneals the loss from $\sim2.34$ to $2.2054$.}
+\label{fig:pretrain-curve}
+\end{figure}
