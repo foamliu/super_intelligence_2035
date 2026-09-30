@@ -50,18 +50,18 @@
 
 <header class="hero">
   <h1>BaiZe LLM 预训练（Stage i）· 执行计划</h1>
-  <div class="sub">Mamba2-hybrid（2.22B）从零预训练 + 预算约束超参搜索（S1–S4）</div>
+  <div class="sub">Mamba2-hybrid（2.22B）从零预训练 + 24h 预算高置信度超参搜索（S0–S5）</div>
   <div class="meta">
     <span>📅 2026-09-29</span>
     <span>🎯 目标规模 ~2.2B</span>
     <span>⚙️ 框架 NeMo + Megatron-Core</span>
     <span>🖥️ GPU 10.239.2.29 · 8×H100</span>
-    <span>⏱️ 预算 ~84 GPU·hour</span>
+    <span>⏱️ 预算 24h 墙钟 · ≈192 GPU·h</span>
   </div>
 </header>
 
 <div class="verdict">
-  <strong>结论先行</strong>：架构已通过 2B 从零对比搜索选定为 <strong>Mamba2-hybrid（56 层，2.220B）</strong>——以更少参数（-11.6%）取得更低早期 loss（4.6846 vs 4.8065），推理 decode 快 ~10.3×，训练吞吐落后 ~24% 但可接受。本计划在 <strong>已定架构</strong> 上执行预算约束下的 <strong>短地平线超参搜索（S1–S4）</strong> 与最终骨架的重新测量，对应论文 <code>§LLM Pretraining</code>（<code>sec:llm-pretrain</code>）。
+  <strong>结论先行</strong>：架构已通过 2B 从零对比搜索选定为 <strong>Mamba2-hybrid（56 层，2.220B）</strong>——以更少参数（-11.6%）取得更低早期 loss（4.6846 vs 4.8065），推理 decode 快 ~10.3×，训练吞吐落后 ~24% 但可接受。本计划在 <strong>已定架构</strong> 上执行 24h 墙钟预算下的 <strong>高置信度超参搜索（S0–S5，含 20000 步长跑与多 seed）</strong> 与最终骨架的重新测量，对应论文 <code>§LLM Pretraining</code>（<code>sec:llm-pretrain</code>）。
 </div>
 
 <nav class="toc">
@@ -69,21 +69,21 @@
   <a href="#s1">1 任务目标与范围</a> ·
   <a href="#s2">2 已定前提（架构 / 框架 / 数据 / 环境）</a> ·
   <a href="#s3">3 架构选择结论（已完成，作为 rationale）</a> ·
-  <a href="#s4">4 超参搜索协议 S1–S4</a> ·
+  <a href="#s4">4 超参搜索协议 S0–S5</a> ·
   <a href="#s5">5 预算分配</a> ·
   <a href="#s6">6 执行步骤表</a> ·
   <a href="#s7">7 附录 · 命令 / 监测 / 文件清单</a>
 </nav>
 
 <h2 class="sec" id="s1"><span class="no">1</span>任务目标与范围</h2>
-<p>在已选定的 <strong>Mamba2-hybrid（2.220B）</strong> 语言骨架上完成 Stage~(i) 从零预训练：在固定 GPU 预算下，通过 <strong>短地平线（reduced-horizon）超参搜索</strong> 确定 WSD 调度的 <code>stable LR</code>（唯一自由轴）与调度族（WSD vs. cosine），并对最终骨架做 <strong>长期验证（S4）</strong> 与全套量测的重新测量，回填论文 <code>Table: archcomp / configs</code> 与损失曲线。</p>
+<p>在已选定的 <strong>Mamba2-hybrid（2.220B）</strong> 语言骨架上完成 Stage~(i) 从零预训练：在 <strong>24 小时墙钟（≈192 GPU·h @ 8 卡）</strong> 预算下，通过 <strong>短地平线（5000 步）超参搜索</strong> 确定 WSD 调度的 <code>stable LR</code>（加密 7 点）、调度族与关键轴（decay/warmup/min_lr），做 <strong>退火数据混合消融</strong>，并对胜出配置做 <strong>20000 步长跑收敛曲线</strong> 与 <strong>多 seed 复现</strong>，回填论文 <code>Table: archcomp / configs</code> 与损失曲线。</p>
 <div class="kpi-row">
   <div class="kpi"><div class="v">2.220B</div><div class="l">骨干参数（56 层 hybrid）</div></div>
-  <div class="kpi"><div class="v">84 GPU·h</div><div class="l">搜索预算（含重试）</div></div>
-  <div class="kpi"><div class="v">1000</div><div class="l">每组步数（S1–S4 统一）</div></div>
-  <div class="kpi"><div class="v">~0.8 GPU·h</div><div class="l">单次短地平线实验（8 卡）</div></div>
+  <div class="kpi"><div class="v">24h ≈ 192 GPU·h</div><div class="l">总预算（8 卡满载）</div></div>
+  <div class="kpi"><div class="v">5000 / 20000</div><div class="l">短地平线 / 长跑步数</div></div>
+  <div class="kpi"><div class="v">~92 GPU·h</div><div class="l">计划用量（余 ~100 重试）</div></div>
 </div>
-<p><strong>范围界定</strong>：本计划不含 <em>数据下载</em> 与 <em>架构选型</em>（两者均已就绪/已完成）；不含下游 post-training（对应论文 <code>sec:llm-posttrain</code>）。仅覆盖：① 最终骨架上的超参搜索（S1–S4）；② 结果回填。完整 1.8T-token 长程预训练为后续上线动作，本期受 GPU 预算约束只做短地平线验证，<em>短地平线排名按惯例视为全量最优的预测</em>（μP 小尺度代理思想，见 <code>yang2022tensor</code>）。</p>
+<p><strong>范围界定</strong>：本计划不含 <em>数据下载</em> 与 <em>架构选型</em>（两者均已就绪/已完成）；不含下游 post-training（对应论文 <code>sec:llm-posttrain</code>）。仅覆盖：① 最终骨架上的超参搜索（S0–S5，含 20000 步长跑与 3 seed 复现）；② 结果回填。完整 1.8T-token 长程预训练为后续上线动作，本期在 24h 墙钟预算下做短地平线（5000 步）高置信度搜索 + 长地平线（20000 步）收敛验证，<em>短地平线排名按惯例视为全量最优的预测</em>（μP 小尺度代理思想，见 <code>yang2022tensor</code>）。</p>
 
 <h2 class="sec" id="s2"><span class="no">2</span>已定前提（架构 / 框架 / 数据 / 环境）</h2>
 <div class="grid2">
@@ -148,100 +148,123 @@
 <p class="note">⚠️ MiniCPM5 的 decode 慢已用 <code>torch.profiler</code> 定位：非 KV-cache 未命中，而是 mcore 直驱（无 CUDA-graph/flashinfer）下 TE fused-attention 逐层 CPU launch 开销（<code>FusedAttnFunc</code> 42 层占单步 Self CPU 的 93.4%），属 CPU-bound 非 GPU-bound。Mamba2 仅 ~4 个 attention 层 + SSM/MLP，故 decode 快 ~10×。两架构同一代码路径测量，相对结论可信。</p>
 <p>注：论文 <code>tab:archcomp</code> 的最终油耗（loss / 吞吐）将在 <strong>最终 hybrid 骨架</strong> 上重新测量回填（当前标 <code>[TBD]</code>）。</p>
 
-<h2 class="sec" id="s4"><span class="no">4</span>超参搜索协议 S1–S4</h2>
-<p>完整网格不可行，采用 <strong>分阶段、单变量一次只动一个</strong> 的协议（对应论文 <code>sec:search</code>）。每个阶段相对「当前最优」只改一个变量，隔离贡献、压住 GPU·时。所有短地平线实验 validation loss 在<strong>匹配步数</strong>上报，保证跨配置可比。</p>
+<h2 class="sec" id="s4"><span class="no">4</span>超参搜索协议 S0–S5</h2>
+<p>24h 墙钟预算（≈192 GPU·h @ 8 卡）下，完整网格不可行，采用 <strong>分阶段、单变量一次只动一个</strong> 的协议（对应论文 <code>sec:search</code>）。短地平线统一 <strong>5000 步</strong>（原 1000 步的 5×，LR 排名在更接近收敛处区分），胜出配置再拉 <strong>20000 步</strong> 长跑。所有短地平线 validation loss 在<strong>匹配步数</strong>上报，保证跨配置可比。</p>
 <div class="flow">
+  <span class="step">S0 适配</span><span class="arrow">→</span>
   <span class="step">S1 baseline</span><span class="arrow">→</span>
-  <span class="step">S2 单变量超参</span><span class="arrow">→</span>
-  <span class="step">S3 调度 · batch</span><span class="arrow">→</span>
-  <span class="step">S4 胜出验证</span>
+  <span class="step">S2 LR×7</span><span class="arrow">→</span>
+  <span class="step">S3 关键轴</span><span class="arrow">→</span>
+  <span class="step">S4 退火消融</span><span class="arrow">→</span>
+  <span class="step">S5 长跑+seed</span>
 </div>
 <table>
-  <thead><tr><th>阶段</th><th>变量 / 内容</th><th>步数</th><th>GPU·h/次</th><th>产出</th></tr></thead>
+  <thead><tr><th>阶段</th><th>变量 / 内容</th><th>组数</th><th>步数</th><th>GPU·h/次</th></tr></thead>
   <tbody>
-    <tr><td><strong>S1</strong></td><td>复现 Mamba2-hybrid 参考配置，建 loss/吞吐基线</td><td>1000</td><td>~0.8</td><td>baseline（S1-01）</td></tr>
-    <tr><td><strong>S2</strong></td><td>stable LR 扫描：<code>2e-4 / 3e-4 / 6e-4 / 1e-3</code></td><td>1000</td><td>~0.8</td><td>S2-01…S2-04</td></tr>
-    <tr><td><strong>S3</strong></td><td>调度族对比：WSD vs. cosine</td><td>1000</td><td>~0.8</td><td>S3-01 / S3-02</td></tr>
-    <tr><td><strong>S4</strong></td><td>胜出配置从零重训，确认收敛/可复现</td><td>1000</td><td>~0.8</td><td>S4-01（winner）</td></tr>
+    <tr><td><strong>S0</strong></td><td>launcher 适配 + 8 卡冒烟（实测 step time）</td><td>1</td><td>10</td><td>~0.1</td></tr>
+    <tr><td><strong>S1</strong></td><td>baseline：复现参考配置（lr 3e-4 / WSD）</td><td>1</td><td>5000</td><td>~4.0</td></tr>
+    <tr><td><strong>S2</strong></td><td>stable LR 加密扫描（7 点）</td><td>7</td><td>5000</td><td>~4.0</td></tr>
+    <tr><td><strong>S3</strong></td><td>关键轴微调（调度族 / decay / warmup / min_lr）</td><td>5</td><td>5000</td><td>~4.0</td></tr>
+    <tr><td><strong>S4</strong></td><td>退火数据混合消融（L3 / +代码 / +代码+数学）</td><td>3</td><td>5000</td><td>~4.0</td></tr>
+    <tr><td><strong>S5</strong></td><td>长跑收敛（20000 步）+ 3 seed 复现</td><td>4</td><td>20000 / 5000</td><td>15.6 / 4.0</td></tr>
   </tbody>
 </table>
-<h3>轴处理方式（唯一自由轴 + 调度族对比）</h3>
+<h3>轴处理方式（唯一自由轴 + 关键轴 + 退火）</h3>
 <table>
   <thead><tr><th>轴</th><th>处理方式</th><th>取值 / 说明</th></tr></thead>
   <tbody>
-    <tr><td>stable learning rate</td><td><span class="badge b-info">S2 扫描</span></td><td><code>2e-4 / 3e-4 / 6e-4 / 1e-3</code></td></tr>
-    <tr><td>warmup</td><td><span class="badge b-no">不扫</span></td><td>固定占比 ~5%；全量复用 LLaMA <code>warmup=2000</code> 步</td></tr>
-    <tr><td>decay ratio</td><td><span class="badge b-no">不扫</span></td><td>恒定 10%（退火用代码/数学/SFT）</td></tr>
-    <tr><td>schedule family</td><td><span class="badge b-info">S3 对比</span></td><td>WSD vs. cosine</td></tr>
-    <tr><td>batch size</td><td><span class="badge b-no">不扫</span></td><td>固定 GBS=1024，seqlen=4094，每步 ~4M token</td></tr>
+    <tr><td>stable learning rate</td><td><span class="badge b-info">S2 加密扫描</span></td><td><code>2e-4 / 3e-4 / 4e-4 / 5e-4 / 6e-4 / 8e-4 / 1e-3</code></td></tr>
+    <tr><td>schedule family</td><td><span class="badge b-info">S3 对比</span></td><td>WSD vs. cosine（胜出 LR）</td></tr>
+    <tr><td>decay ratio</td><td><span class="badge b-info">S3 微调</span></td><td>10%（默认）vs 5% / 15%（增量）</td></tr>
+    <tr><td>warmup</td><td><span class="badge b-info">S3 微调</span></td><td>占比 5% vs 固定 2000 步</td></tr>
+    <tr><td>min_lr</td><td><span class="badge b-info">S3 微调</span></td><td>3e-5 vs 1e-5</td></tr>
+    <tr><td>退火数据混合</td><td><span class="badge b-info">S4 消融</span></td><td>纯 L3 / +代码 / +代码+数学</td></tr>
+    <tr><td>batch size</td><td><span class="badge b-no">不扫</span></td><td>固定 GBS=1024（全量）；短地平线代理 GBS=8</td></tr>
   </tbody>
 </table>
 
 <h3>WSD 阶段设计（占比 + 数据构成）</h3>
-<p>WSD（warmup–stable–decay）调度下按 token 占比切为三段（<code>sec:wsd</code>）。warmup <strong>不扫</strong>：全量训练直接复用 LLaMA 的 <code>warmup_steps=2000</code>；试验期（每个 sweep 共 1000 步）用固定占比 ~5% 即可。</p>
+<p>WSD（warmup–stable–decay）调度按 token 占比切三段（<code>sec:wsd</code>）。warmup <strong>默认不扫</strong>（全量复用 LLaMA <code>warmup_steps=2000</code>，试验期占比 5%）；decay ratio 与 min_lr 在 S3 微调。</p>
 <table>
-  <thead><tr><th>阶段</th><th>占比</th><th>试验期步数（共 1000）</th><th>LR</th><th>数据构成</th></tr></thead>
+  <thead><tr><th>阶段</th><th>占比</th><th>5000 步口径</th><th>LR</th><th>数据构成</th></tr></thead>
   <tbody>
-    <tr><td><strong>warmup</strong></td><td>~5%</td><td>≈50</td><td>0 → stable LR（线性）</td><td>Ultra-FineWeb-L3 英文（常规混合）</td></tr>
-    <tr><td><strong>stable</strong></td><td>~85%</td><td>≈850</td><td>恒定 stable LR</td><td>Ultra-FineWeb-L3 英文（常规混合，主训练）</td></tr>
-    <tr><td><strong>decay</strong></td><td>~10%</td><td>≈100</td><td>stable LR → mini LR</td><td>退火：混入代码 / 数学 / SFT 语料</td></tr>
+    <tr><td><strong>warmup</strong></td><td>~5%</td><td>≈250</td><td>0 → stable LR（线性）</td><td>Ultra-FineWeb-L3 英文</td></tr>
+    <tr><td><strong>stable</strong></td><td>~85%</td><td>≈4250</td><td>恒定 stable LR</td><td>Ultra-FineWeb-L3 英文（主训练）</td></tr>
+    <tr><td><strong>decay</strong></td><td>~10%</td><td>≈500</td><td>stable LR → min LR</td><td>退火：S4 扫纯 L3 / +代码 / +代码+数学</td></tr>
   </tbody>
 </table>
-<p class="note"><strong>decay 数据</strong>：退火阶段可直接使用代码（<code>UltraData-Code</code>）、数学（<code>UltraData-Math</code>）、SFT 语料，<strong>无需为 post-training 预留</strong>——预训练退火与 post-train 监督微调属不同阶段、互不冲突。全量训练的 warmup 固定复用 LLaMA <code>warmup_steps=2000</code>，不参与扫描。</p>
+<p class="note"><strong>decay 数据</strong>：退火阶段可直接使用代码（<code>UltraData-Code</code>）、数学（<code>UltraData-Math</code>）、SFT 语料，<strong>无需为 post-training 预留</strong>——预训练退火与 post-train 监督微调属不同阶段、互不冲突。S4 用 3 组消融量化「退火质量增益」，为论文提供实证。</p>
 
 <h2 class="sec" id="s5"><span class="no">5</span>预算分配</h2>
-<p>预训练搜索受 <strong>~84 GPU·hour</strong> 总预算约束（跨所有实验与重试累计）。每组 1000 步（Mamba2-hybrid，<code>10.239.2.29</code> 8 卡 ≈ 0.8 GPU·h），8 组实验约 <strong>~6.4 GPU·h</strong>，预算充裕。</p>
+<p>预训练搜索受 <strong>24 h 墙钟（≈192 GPU·h @ 8 卡）</strong> 总预算约束。计划用量 <strong>~92 GPU·h</strong>（21 组实验），余 <strong>~100 GPU·h</strong> 供重试与抖动，预算充裕。</p>
 <div class="kpi-row">
-  <div class="kpi"><div class="v">~84</div><div class="l">总 GPU·h 预算</div></div>
-  <div class="kpi"><div class="v">~0.8</div><div class="l">每组 1000 步</div></div>
-  <div class="kpi"><div class="v">8</div><div class="l">实验组数</div></div>
-  <div class="kpi"><div class="v">~6.4</div><div class="l">预计总 GPU·h</div></div>
+  <div class="kpi"><div class="v">≈192</div><div class="l">总预算 GPU·h（24h×8卡）</div></div>
+  <div class="kpi"><div class="v">~4.0</div><div class="l">每组 5000 步</div></div>
+  <div class="kpi"><div class="v">21</div><div class="l">实验组数</div></div>
+  <div class="kpi"><div class="v">~92</div><div class="l">计划总 GPU·h</div></div>
 </div>
 <table>
   <thead><tr><th>阶段</th><th>实验数</th><th>单次 GPU·h</th><th>小计 GPU·h</th><th>累计</th></tr></thead>
   <tbody>
-    <tr><td>S1（baseline）</td><td>1</td><td>0.8</td><td>0.8</td><td>0.8</td></tr>
-    <tr><td>S2（stable LR ×4）</td><td>4</td><td>0.8</td><td>3.2</td><td>4.0</td></tr>
-    <tr><td>S3（family ×2）</td><td>2</td><td>0.8</td><td>1.6</td><td>5.6</td></tr>
-    <tr><td>S4（winner）</td><td>1</td><td>0.8</td><td>0.8</td><td>6.4</td></tr>
-    <tr><td>重试 / 抖动余量</td><td>—</td><td>—</td><td>~77.6</td><td><strong>~84</strong></td></tr>
+    <tr><td>S0（冒烟）</td><td>1</td><td>0.1</td><td>0.1</td><td>0.1</td></tr>
+    <tr><td>S1（baseline）</td><td>1</td><td>4.0</td><td>4.0</td><td>4.1</td></tr>
+    <tr><td>S2（LR ×7）</td><td>7</td><td>4.0</td><td>28</td><td>32.1</td></tr>
+    <tr><td>S3（关键轴 ×5）</td><td>5</td><td>4.0</td><td>20</td><td>52.1</td></tr>
+    <tr><td>S4（退火 ×3）</td><td>3</td><td>4.0</td><td>12</td><td>64.1</td></tr>
+    <tr><td>S5（长跑 20000）</td><td>1</td><td>15.6</td><td>15.6</td><td>79.7</td></tr>
+    <tr><td>S5（3 seed ×5000）</td><td>3</td><td>4.0</td><td>12</td><td>91.7</td></tr>
+    <tr><td>重试 / 抖动余量</td><td>—</td><td>—</td><td>~100</td><td><strong>~192</strong></td></tr>
   </tbody>
 </table>
-<p class="note">注：预算为上限而非目标；每点实验启动前先核对剩余预算，避免超支。若扫描点数使累计逼近 84，则按「先单变量、后组合」的优先级裁剪。</p>
+<p class="note">注：预算为上限而非目标；每点实验启动前先核对剩余预算，避免超支。若某阶段结果明显，可提前跳过后续微调、把预算让给长跑与更多 seed。</p>
 <h3>⏱️ 时间估计（8 卡，不闲置）</h3>
-<p>单步 ~350ms/iter（8 卡 TP1/DP8；SSM 串行是 bottleneck，6 卡基准 ~340ms 外推，S0 冒烟实测校准）。每组含一次性启动开销（SSM 编译 ~12s + CUDA-graph 捕获 ~5s）+ 1000 步 ≈ <strong>~6.1 min</strong>。8 组（S1:1 + S2:4 + S3:2 + S4:1）在 <code>10.239.2.29</code> 单节点 8 卡串行 ≈ <strong>~49 min</strong> 墙钟 / <strong>~6.5 GPU·h</strong>；端到端（含 S0 launcher 扩展 ~30–45 min 编码 + 10 步冒烟）≈ <strong>~1.5 h</strong>。</p>
+<p>单步 ~350ms/iter（8 卡 TP1/DP8；SSM 串行是 bottleneck，6 卡基准 ~340ms 外推，S0 冒烟实测校准）。5000 步/组 ≈ <strong>~30 min</strong>（≈4.0 GPU·h），20000 步 ≈ <strong>~2 h</strong>（≈15.6 GPU·h）。21 组全部串行（<code>10.239.2.29</code> 8 卡）≈ <strong>~11 h</strong> 墙钟 / <strong>~92 GPU·h</strong>；端到端（含 S0 launcher 扩展 + S5 补切数据）≈ <strong>~14 h</strong>，仍在 24h 预算内。</p>
 
 <h2 class="sec" id="s6"><span class="no">6</span>执行步骤表</h2>
 <table>
   <thead><tr><th>#</th><th>步骤</th><th>动作</th><th>产出</th></tr></thead>
   <tbody>
-    <tr><td>1</td><td>准备基线</td><td>复用 <code>mamba2_hybrid_2b/</code> provider+recipe，确认 <code>nemo_run</code> 未装时走 torchrun 直驱（NVIDIA/NeMo <code>pretrain(pretrain_config(...), forward_step)</code>）</td><td>可启动的 S1 脚本</td></tr>
-    <tr><td>2</td><td>S1 基线</td><td>1000 步复现参考配置，记录 baseline loss / tok/s</td><td>S1-01</td></tr>
-    <tr><td>3</td><td>S2 超参</td><td>stable LR 扫描 <code>2e-4 / 3e-4 / 6e-4 / 1e-3</code>，各 1000 步，val loss@匹配步数</td><td>S2-01…S2-04</td></tr>
-    <tr><td>4</td><td>S3 调度族</td><td>WSD vs. cosine 各 1000 步</td><td>S3-01 / S3-02</td></tr>
-    <tr><td>5</td><td>S4 验证</td><td>胜出配置从零 1000 步，确认收敛+可复现</td><td>S4-01（winner）</td></tr>
-    <tr><td>6</td><td>回填</td><td>把最终骨架的 val loss / 吞吐写入 <code>tab:configs</code>、<code>tab:archcomp</code>，重画 loss 曲线 / 短地平线消融图</td><td>论文图表</td></tr>
+    <tr><td>1</td><td>准备基线</td><td>扩展 launcher（见 S0），复用 <code>mamba2_hybrid_2b/</code> provider+recipe，torchrun 直驱（NVIDIA/NeMo <code>pretrain(pretrain_config(...), forward_step)</code>）</td><td>可启动的 S1 脚本</td></tr>
+    <tr><td>2</td><td>S1 基线</td><td>5000 步复现参考配置（lr 3e-4/WSD），记录 baseline loss / tok/s</td><td>S1-01</td></tr>
+    <tr><td>3</td><td>S2 超参</td><td>stable LR 加密扫描 7 点 <code>2e-4…1e-3</code>，各 5000 步，val loss@匹配步数</td><td>S2-01…S2-07</td></tr>
+    <tr><td>4</td><td>S3 关键轴</td><td>调度族 WSD/cosine + decay/warmup/min_lr 单变量微调，各 5000 步</td><td>S3-01…S3-05</td></tr>
+    <tr><td>5</td><td>S4 退火</td><td>退火数据混合消融 3 组（纯 L3 / +代码 / +代码+数学）</td><td>S4-01…S4-03</td></tr>
+    <tr><td>6</td><td>S5 长跑+seed</td><td>先补切数据 ≥700M；winner 20000 步 + 3 seed 复现</td><td>S5-01…S5-04</td></tr>
+    <tr><td>7</td><td>回填</td><td>把最终骨架的 val loss / 吞吐写入 <code>tab:configs</code>、<code>tab:archcomp</code>，重画 20000 步 loss 曲线 / 消融图</td><td>论文图表</td></tr>
   </tbody>
 </table>
 
 <h2 class="sec" id="s7"><span class="no">7</span>附录 · 命令 / 监测 / 文件清单</h2>
 <h3>启动指令（S0 适配后，逐阶段执行；train.sh 接口）</h3>
-<p>当前 <code>scripts/train.sh &lt;arch&gt; &lt;name&gt; &lt;master_port&gt; [nproc]</code> 是架构对比的固定口径（lr 3e-4 / warmup 100 / decay 1000 / seq 4096）。超参搜索需先做 <strong>S0</strong>：扩展 <code>pretrain_launcher.py</code> 支持 <code>--lr</code> / <code>--lr-warmup-iters</code> / <code>--lr-decay-iters</code> / <code>--lr-decay-style</code>（WSD|cosine）/ <code>--seq-length=4094</code>，并做 10 步冒烟。</p>
+<p>当前 <code>scripts/train.sh &lt;arch&gt; &lt;name&gt; &lt;master_port&gt; [nproc]</code> 是架构对比的固定口径（lr 3e-4 / warmup 100 / decay 1000 / seq 4096 / 1000 步）。超参搜索需先做 <strong>S0</strong>：扩展 <code>pretrain_launcher.py</code> 支持 <code>--lr</code> / <code>--lr-warmup-iters</code> / <code>--lr-decay-iters</code> / <code>--lr-decay-style</code>（WSD|cosine）/ <code>--min-lr</code> / <code>--seq-length=4094</code> / <code>--train-iters</code>，并做 10 步冒烟实测 step time。</p>
 <pre><code># 无人值守自动推进（可选）：setsid bash run/baize_pretrain_loop.sh &gt; /tmp/baize_pretrain_loop.log 2&gt;&amp;1 &lt; /dev/null &amp;
 
-# 每组 1000 步 / 8 卡 TP1/DP8（10.239.2.29）/ mb1 / bf16 / warmup 5%(50) / decay 10%(100) / seq 4094
+# 短地平线每组 5000 步 / 8 卡 TP1/DP8（10.239.2.29）/ mb1 / bf16 / warmup 5%(250) / decay 10%(500) / seq 4094
 # S1 基线（lr 3e-4 / WSD）
-bash scripts/train.sh mamba2 s1_01 29600 8
-# S2 stable LR 扫描（WSD 固定，逐值改 --lr）
+bash scripts/train.sh mamba2 s1_01 29600 8   # --train-iters 5000 --lr 3e-4 --lr-decay-style WSD
+# S2 stable LR 加密扫描（WSD 固定，逐值改 --lr）
 bash scripts/train.sh mamba2 s2_01 29600 8   # --lr 2e-4
 bash scripts/train.sh mamba2 s2_02 29600 8   # --lr 3e-4
-bash scripts/train.sh mamba2 s2_03 29600 8   # --lr 6e-4
-bash scripts/train.sh mamba2 s2_04 29600 8   # --lr 1e-3
-# S3 调度族（用 S2 胜出 LR）
+bash scripts/train.sh mamba2 s2_03 29600 8   # --lr 4e-4
+bash scripts/train.sh mamba2 s2_04 29600 8   # --lr 5e-4
+bash scripts/train.sh mamba2 s2_05 29600 8   # --lr 6e-4
+bash scripts/train.sh mamba2 s2_06 29600 8   # --lr 8e-4
+bash scripts/train.sh mamba2 s2_07 29600 8   # --lr 1e-3
+# S3 关键轴（用 S2 胜出 LR，单变量）
 bash scripts/train.sh mamba2 s3_01 29600 8   # --lr-decay-style WSD
 bash scripts/train.sh mamba2 s3_02 29600 8   # --lr-decay-style cosine
-# S4 胜出配置从零复跑（S2 + S3 胜出组合）
-bash scripts/train.sh mamba2 s4_01 29600 8</code></pre>
+bash scripts/train.sh mamba2 s3_03 29600 8   # --lr-decay-iters 250（decay 5%）
+bash scripts/train.sh mamba2 s3_04 29600 8   # --lr-warmup-iters 2000（全量口径）
+bash scripts/train.sh mamba2 s3_05 29600 8   # --min-lr 1e-5
+# S4 退火数据混合（s4_02 混代码 / s4_03 混代码+数学）
+bash scripts/train.sh mamba2 s4_01 29600 8
+bash scripts/train.sh mamba2 s4_02 29600 8
+bash scripts/train.sh mamba2 s4_03 29600 8
+# S5 长跑（先补切数据 ≥700M）+ 3 seed 复现
+bash scripts/train.sh mamba2 s5_01 29600 8   # --train-iters 20000
+bash scripts/train.sh mamba2 s5_02 29600 8   # --seed 1234
+bash scripts/train.sh mamba2 s5_03 29600 8   # --seed 2345
+bash scripts/train.sh mamba2 s5_04 29600 8   # --seed 3456</code></pre>
 <h3>监测 GPU / 进程</h3>
 <pre><code>nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv
 ssh 10.239.2.29 nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv
@@ -263,13 +286,13 @@ tail -f /tmp/BAIZE_pretrain_&lt;ID&gt;.log</code></pre>
     <tr><td><code>run/BAIZE_PRETRAIN_2B_TASK.md</code></td><td>本计划的任务书（只读指令）</td></tr>
     <tr><td><code>run/baize_pretrain_loop.sh</code></td><td>无人值守自动推进循环</td></tr>
     <tr><td><code>run/EXPERIMENTS_PRETRAIN_2B.md</code> / <code>MEMORY_PRETRAIN_2B.md</code></td><td>超参搜索实验记录 / 运行时状态</td></tr>
-    <tr><td><code>scripts/train.sh</code>（+ <code>pretrain_launcher.py</code>）</td><td>Mamba2-hybrid 1000 步训练启动器</td></tr>
+    <tr><td><code>scripts/train.sh</code>（+ <code>pretrain_launcher.py</code>）</td><td>Mamba2-hybrid 训练启动器（超参/步数扩展后）</td></tr>
     <tr><td><code>BAIZE_LLM_PRETRAIN_PLAN.html</code></td><td>本执行计划（自包含）</td></tr>
   </tbody>
 </table>
 
 <footer>
-  BaiZe LLM 预训练（Stage i）· 执行计划 · 生成于 2026-09-29 · 架构已定 Mamba2-hybrid（2.220B）· 超参搜索 S1–S4 待执行 · 对应论文 <code>sec:llm-pretrain</code> / <code>4_llm_pretrain.tex</code>
+  BaiZe LLM 预训练（Stage i）· 执行计划 · 生成于 2026-09-30 · 架构已定 Mamba2-hybrid（2.220B）· 24h 预算高置信度搜索 S0–S5 待执行 · 对应论文 <code>sec:llm-pretrain</code> / <code>4_llm_pretrain.tex</code>
 </footer>
 
 </div>
