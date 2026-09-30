@@ -14,7 +14,7 @@ Three design pillars organise our work:
 \begin{itemize}
 \item \textbf{Architecture.} A Nemotron-H-style sequential hybrid language backbone---56 layers interleaving Mamba-2 state-space layers, four grouped-query-attention layers, and MLP layers---giving linear-time decoding for inference-heavy agents, paired with a from-scratch vision encoder.
 
-\item \textbf{Reduced-horizon proxy search.} We exploit short, cheap proxy runs---in the spirit of maximal-update parameterization ($\mu$P) transfer~\cite{yang2022tensor}---so that the relative ranking of candidate hyper-parameters discovered at small scale carries over to the full model without re-tuning at scale.
+\item \textbf{Reduced-horizon proxy search.} We exploit short, cheap proxy runs to rank candidate hyper-parameters, so that the ranking discovered at small scale carries over to the full model without re-tuning at scale.
 
 \item \textbf{Budget-constrained stage-wise pipeline.} Each of the five stages is trained under a hard GPU-hour budget, with a staged search protocol (S1--S4) for the language backbone (numeric results reported as \textbf{[TBD]} pending re-measurement).
 \end{itemize}

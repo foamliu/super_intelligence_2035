@@ -83,7 +83,7 @@
   <div class="kpi"><div class="v">5000 / 20000</div><div class="l">短地平线 / 长跑步数</div></div>
   <div class="kpi"><div class="v">~92 GPU·h</div><div class="l">计划用量（余 ~100 重试）</div></div>
 </div>
-<p><strong>范围界定</strong>：本计划不含 <em>数据下载</em> 与 <em>架构选型</em>（两者均已就绪/已完成）；不含下游 post-training（对应论文 <code>sec:llm-posttrain</code>）。仅覆盖：① 最终骨架上的超参搜索（S0–S5，含 20000 步长跑与 3 seed 复现）；② 结果回填。完整 1.8T-token 长程预训练为后续上线动作，本期在 24h 墙钟预算下做短地平线（5000 步）高置信度搜索 + 长地平线（20000 步）收敛验证，<em>短地平线排名按惯例视为全量最优的预测</em>（μP 小尺度代理思想，见 <code>yang2022tensor</code>）。</p>
+<p><strong>范围界定</strong>：本计划不含 <em>数据下载</em> 与 <em>架构选型</em>（两者均已就绪/已完成）；不含下游 post-training（对应论文 <code>sec:llm-posttrain</code>）。仅覆盖：① 最终骨架上的超参搜索（S0–S5，含 20000 步长跑与 3 seed 复现）；② 结果回填。完整 1.8T-token 长程预训练为后续上线动作，本期在 24h 墙钟预算下做短地平线（5000 步）高置信度搜索 + 长地平线（20000 步）收敛验证，<em>短地平线排名按惯例视为全量最优的预测</em>。</p>
 
 <h2 class="sec" id="s2"><span class="no">2</span>已定前提（架构 / 框架 / 数据 / 环境）</h2>
 <div class="grid2">
