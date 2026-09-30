@@ -25,18 +25,19 @@ export PYTHONPATH=/nas_train/app.e0031982/omegaconf_230
 L3_700="$BASE/data/ultrafineweb_l3_qa_700m"   # 742M token，长跑主体
 L3_165="$BASE/data/ultrafineweb_l3_qa"        # 164.75M，多 seed 短地平线主体
 CODE="$BASE/data/anneal_code"                  # 90.34M
-MATH="$BASE/data/anneal_math"                  # 8.51M
+MATH="$BASE/data/anneal_math"                  # 8.51M（种子 5000 步 4%×164M=6.55M 够用）
+MATH2="$BASE/data/anneal_math2"                # 补切 OpenMathInstruct-2（≥26M，长跑 4%×655M=26.2M 用）
 
-# ⚠️ TODO：S3/S4 全回收后回填（当前 = S4 脚本同一套占位，勿视为定论）。
-WINNER_LR="1e-3"          # S2 已定；S3 后若增量扫 1.2e-3/1.5e-3 反超则更新
-WINNER_DECAY_STYLE="WSD"  # S3-01(WSD) vs S3-02(cosine) 胜出
-WINNER_WARMUP="250"       # S3-04（250 vs 2000）胜出
-WINNER_DECAY="500"        # S3-03（10%=500 vs 5%=250）胜出
-WINNER_MIN_LR="1e-5"      # ✅ S3-05（3e-5 vs 1e-5）：1e-5 胜出（2.764702 vs 2.767915）
-# 退火数据混合（S4-01 纯L3 / S4-02 L3+code / S4-03 L3+code+math 胜出后回填；默认纯 L3）。
-# BLEND_MAIN / BLEND_SEEDS：`--train-data-path` 平铺参数（[w p w p …]，单前缀只传 p）。
-BLEND_MAIN="${L3_700}"
-BLEND_SEEDS="${L3_165}"
+# ✅ 已定（S2 stable LR=1e-3；S3 关键轴 WSD/warmup250/decay500/min1e-5；S4 退火混合 L3+code+math 86:10:4）。
+WINNER_LR="1e-3"          # S2 胜出
+WINNER_DECAY_STYLE="WSD"  # S3 胜出（WSD 2.767915 < cosine 2.815509）
+WINNER_WARMUP="250"       # S3 胜出（250 2.767915 < 2000 2.795710）
+WINNER_DECAY="500"        # S3 胜出（10%=500 2.767915 < 5%=250 2.789989）
+WINNER_MIN_LR="1e-5"      # S3 胜出（1e-5 2.764702 < 3e-5 2.767915）
+# 退火数据混合（S4 胜出 = L3+code+math 86:10:4，final 2.629822）。
+# BLEND_MAIN / BLEND_SEEDS：`--train-data-path` 平铺参数（[w p w p …]）。
+BLEND_MAIN="86 ${L3_700} 10 ${CODE} 4 ${MATH2}"   # 长跑 20000 步：L3 86% + code 10% + math2 4%
+BLEND_SEEDS="86 ${L3_165} 10 ${CODE} 4 ${MATH}"   # 种子 5000 步：L3 86% + code 10% + math 4%
 
 # 多 seed 复现三个种子（可复现；S5-01 用默认 seed=1234 与全期对标）
 SEEDS=(44 777 2024)
@@ -73,12 +74,12 @@ run() {  # $1=NAME $2=PORT $3=ITERS $4=SEED  其余为 blend 平铺参数
     echo "  ${NAME} DONE @ $(date '+%F %T')" >> "$SUM"
 }
 
-# S5-01：胜出配置 20000 步长跑（seed=1234 与 S1/S2/S3/S4 对标）
-run s5_01 29691 20000 1234 $BLEND_MAIN
-
-# S5-02…04：胜出配置 3 seed × 5000 步（可复现，报 loss 均值±σ）
+# S5-02…04：胜出配置 3 seed × 5000 步（先跑，给 math2 补切留出时间；可复现报 loss 均值±σ）
 run s5_02 29692 5000 "${SEEDS[0]}" $BLEND_SEEDS
 run s5_03 29693 5000 "${SEEDS[1]}" $BLEND_SEEDS
 run s5_04 29694 5000 "${SEEDS[2]}" $BLEND_SEEDS
+
+# S5-01：胜出配置 20000 步长跑（seed=1234 与 S1/S2/S3/S4 对标；最后跑，math2 已就绪）
+run s5_01 29691 20000 1234 $BLEND_MAIN
 
 echo "===== S5 long-run + multi-seed ALL DONE @ $(date '+%F %T') =====" >> "$SUM"

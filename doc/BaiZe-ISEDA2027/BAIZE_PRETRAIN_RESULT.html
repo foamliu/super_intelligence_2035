@@ -45,7 +45,7 @@
     <span>📅 更新：2026-09-30</span>
     <span>🖥️ GPU：8×H100（10.239.2.29，TP1/DP8）</span>
     <span>📦 seq4094 / GBS8 / bf16 / AdamW</span>
-    <span>⏱️ 预算：24h 墙钟 ≈ 192 GPU·h（已用 ~45.6）</span>
+    <span>⏱️ 预算：24h 墙钟 ≈ 192 GPU·h（已用 ~49.5，S4 进行中）</span>
   </div>
 </header>
 
@@ -120,9 +120,9 @@
 <h2 class="sec"><span class="no">6</span>S4 退火数据混合消融（胜出配置上，进行中）</h2>
 <table>
   <tr><th>ID</th><th>退火混合</th><th>blend</th><th>final loss@5000</th><th>备注</th></tr>
-  <tr><td>S4-01</td><td>纯 L3 高质量子集</td><td>L3 100%</td><td class="pend">⏳ 待 S3</td><td>基线，退火数据不加码</td></tr>
-  <tr><td>S4-02</td><td>L3 + 代码（UltraData-Code）</td><td>L3:code = 90:10</td><td class="pend">⏳ 待 S3</td><td>code 90.34M ≥ 10%×163.76M ✓</td></tr>
-  <tr><td>S4-03</td><td>L3 + 代码 + 数学（UltraData-Math）</td><td>L3:code:math = 86:10:4</td><td class="pend">⏳ 待 S3</td><td>math 8.51M ≥ 4%×163.76M ✓</td></tr>
+  <tr><td>S4-01</td><td>纯 L3 高质量子集</td><td>L3 100%</td><td><b>2.762086</b></td><td class="win">✅ done（基线，退火数据不加码；17:50:26→18:17:25 ~27min）</td></tr>
+  <tr><td>S4-02</td><td>L3 + 代码（UltraData-Code）</td><td>L3:code = 90:10</td><td class="pend">🟡 running（iter ~3530/5000 71%，loss ~2.96-3.01 健康，无 NaN/skip）</td><td>code 90.34M ≥ 10%×163.76M ✓；18:17:25 启动</td></tr>
+  <tr><td>S4-03</td><td>L3 + 代码 + 数学（UltraData-Math）</td><td>L3:code:math = 86:10:4</td><td class="pend">⏳ 排队（serial 续跑）</td><td>math 8.51M ≥ 4%×163.76M ✓</td></tr>
 </table>
 <p style="font-size:13px;color:var(--muted);">实现口径：短地平线消融用「全段静态 blend」近似「decay 尾段混入」（recipe GPTDatasetConfig 仅支持单静态 blend），可量化退火加码对 final loss 的增益；真正的两步退火切数据留待 S5 长跑。</p>
 
