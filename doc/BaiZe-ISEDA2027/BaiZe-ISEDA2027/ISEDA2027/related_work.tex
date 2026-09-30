@@ -6,10 +6,9 @@ MiniCPM~\cite{minicpm2024} and its successors popularised the WSD learning-rate 
 Most of these efforts, however, treat the final trained model as the deliverable and report comparatively little about the \emph{search} that produced it.
 Complementarily, agentic instruction-tuning datasets (e.g., tool-use and multi-step reasoning corpora)~\cite{liu2024agentbench} have been shown to elicit planning and tool-invocation behaviour, yet are rarely paired with a from-scratch pre-training recipe for the 1B regime.
 
-\subsection{Maximal-Update Parameterization}
-$\mu$P~\cite{yang2022tensor,yang2023tensor} preserves training dynamics across model widths, enabling optimal hyper-parameters to be discovered on small ``proxy'' models and transferred to the full-sized network.
-This is especially valuable for budget-bounded builders, because it converts expensive full-scale sweeps into cheap small-scale ones.
-Practical $\mu$P integration with modern transformer training stacks---particularly Megatron-style implementations---remains an active engineering concern that we address directly.
+\subsection{Proxy Search and Hyper-Parameter Transfer}
+Maximal-update parameterization ($\mu$P)~\cite{yang2022tensor,yang2023tensor} preserves training dynamics across model widths, enabling optimal hyper-parameters to be discovered on small ``proxy'' models and transferred to the full-sized network; reduced-horizon ranking strategies in the same spirit~\cite{minicpm2024} trade a small number of expensive full runs for many cheap short runs that reliably order candidate hyper-parameters.
+Both are especially valuable for budget-bounded builders, because they convert expensive full-scale sweeps into cheap small-scale ones; we adopt this short-horizon proxy ranking on the final hybrid backbone, transferring hyper-parameters tuned in short runs to the full configuration.
 
 \subsection{Hybrid and State-Space Architectures}
 State-space models (SSMs) such as Mamba~\cite{gu2023mamba} and Mamba-2~\cite{dao2024transformers} replace full attention with a recurrent scan update, offering linear-time decoding that suits inference-bound deployments.

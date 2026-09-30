@@ -1,9 +1,9 @@
 \section{Experimental Settings}
 
 \subsection{Hardware and Software}
-All experiments run on $8\times$NVIDIA H100 GPUs within the Megatron-SWIFT v4.5.3 framework (CUDA 12.8, PyTorch 2.8.0, Python 3.10).
-We use fused attention, selective activation recomputation, and cross-entropy loss fusion; no tensor/pipeline parallelism is enabled.
-Under these settings the baseline sustains $\approx$102--111\,k tokens/s steady-state throughput.
+All experiments run on $8\times$NVIDIA H100 GPUs within the NVIDIA NeMo pre-training recipe on Megatron-Core (CUDA 12.8, PyTorch 2.8.0, Python 3.10).
+We use fused kernels, selective activation recomputation, and cross-entropy loss fusion; no tensor/pipeline parallelism is enabled ($\texttt{tensor\_model\_parallel\_size}=1$).
+Under these settings the steady-state throughput of the hybrid baseline is re-measured on the final backbone and reported as \textbf{[TBD]}.
 
 \subsection{Data}
 Pre-training uses the \texttt{Ultra-FineWeb-L3} English subset ($\approx$1.8\,T tokens), streamed and packed to a sequence length of $4096$.

@@ -1,66 +1,62 @@
 \section{Methodology}\label{sec:method}
 
-BaiZe is a decoder-only (Llama-style) model built and trained from scratch with the Megatron-SWIFT framework (v4.5.3) on top of Megatron-Core.
-This section details (i) the architecture and its selection rationale, (ii) the training framework and $\mu$P transfer, (iii) the WSD schedule, and (iv) the budget-constrained search protocol.
+BaiZe is a hybrid (state-space + attention) decoder-only model built and trained from scratch with the NVIDIA NeMo pre-training recipe on Megatron-Core.
+This section details (i) the architecture and its selection rationale, (ii) the training framework and reduced-horizon proxy search, (iii) the learning-rate schedule, and (iv) the budget-constrained search protocol.
 
 \subsection{Model Architecture}\label{sec:arch}
-BaiZe follows the MiniCPM5-1B configuration: a deep-and-thin decoder-only transformer with Pre-RMSNorm and SwiGLU activations.
-Grouped-query attention (GQA) shares $2$ KV heads across $16$ query heads, and word embeddings are \emph{untied} from the output head.
-The full configuration is listed in Table~\ref{tab:config}; the model totals $\approx$1.04B parameters.
+BaiZe is a Nemotron-H-style sequential hybrid model~\cite{dao2024transformers,nvidia2025nemotronh}: 56 transformer layers interleave Mamba-2 state-space layers, four grouped-query-attention (GQA) layers, and MLP layers.
+Each Mamba-2 layer uses 8 state-space groups; the four attention layers use 16 query heads and 4 query groups (GQA) with untied word embeddings.
+The full configuration is listed in Table~\ref{tab:config}; the model totals $\approx$2.22B parameters.
 
 \begin{table}[htbp]
 \centering
-\caption{BaiZe model configuration.}
+\caption{BaiZe model configuration (Mamba2-hybrid).}
 \label{tab:config}
 \begin{tabular}{lc}
 \toprule
 \textbf{Hyper-parameter} & \textbf{Value} \\
 \midrule
-Hidden size & 1536 \\
-Intermediate size & 4608 \\
-Transformer layers & 24 \\
+Transformer layers & 56 \\
+Architecture & hybrid (Mamba-2 + GQA + MLP) \\
+Attention layers & 4 (interleaved) \\
+Hidden size & 2048 \\
+FFN hidden size & 8192 \\
 Attention heads (Q) & 16 \\
-KV heads (GQA) & 2 \\
-Head dimension & 96 \\
-Vocabulary size & 130\,560 \\
-Max position embeddings & 131\,072 \\
-RoPE base ($\theta$) & 5\,000\,000 \\
-RMSNorm $\varepsilon$ & $1\times10^{-6}$ \\
-Tie word embeddings & false \\
-Activation & SwiGLU \\
+Query groups (GQA) & 4 \\
+Mamba-2 state-space groups & 8 \\
+Vocabulary size & 129{,}281 \\
+Sequence length & 4096 \\
+Activation & SiLU / SwiGLU \\
+Normalisation & RMSNorm \\
 Precision & BF16 \\
-Parameters & $\approx$1.04B \\
+Parameters & $\approx$2.22B \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Architecture Selection Rationale}\label{sec:arch-rationale}
-The architecture is chosen on three grounds.
-\textbf{(i) A proven 1B skeleton.} At the 1B scale, the deep-and-thin GQA design is a mature, throughput-optimised configuration with stable training dynamics (Sections~\ref{sec:search}--\ref{sec:arch2b}); Megatron-Core ships no released 1B hybrid (attention+SSM) or Nemotron-style variant, making it the only instantly executable 1B architecture under our framework.
-\textbf{(ii) Controlled 2B evidence.} Rather than rely on availability alone, we ran a matched from-scratch comparison at 2B between MiniCPM5-2B (dense) and a Nemotron-H-style hybrid, Mamba2-hybrid (56 layers interleaving 4 attention layers with SSM/MLP)~\cite{dao2024transformers,nvidia2025nemotronh}. Both models were trained for 1000 steps at sequence length 4096 with identical data, seed, and a 6-GPU (TP1/DP6) footprint. The hybrid reaches a \emph{lower} final loss (4.6846 vs.\ 4.8065) with \emph{fewer} parameters (2.220B vs.\ 2.512B, $-11.6\%$) and faster inference (prefill $+10.5\%$, decode $\times10.3$), at a $\sim$24\% training-throughput cost (Table~\ref{tab:arch2b}).
-\textbf{(iii) A selection map.} Together these results define the architecture roadmap: the dense GQA design remains the right backbone for the budget-constrained 1B agent built here, because it maximises training throughput and has no 1B hybrid counterpart; Mamba2-hybrid is the preferred candidate when scaling the family to 2B, where inference---especially decode---efficiency dominates total cost.
+We adopt the hybrid backbone on three grounds.
+\textbf{(i) Inference efficiency.} State-space layers decode with constant-time recurrence per token, while the sparse attention layers retain long-range context; this directly targets the inference-heavy, cost-sensitive deployments that motivate BaiZe.
+\textbf{(ii) Controlled comparison.} A matched from-scratch comparison at the $\approx$2B scale between a dense transformer (MiniCPM5-2B) and Mamba2-hybrid---trained under identical data, seed, and GPU footprint---favours the hybrid, which converges to a lower loss with fewer parameters ($\approx$2.22B vs.\ 2.51B, $-11.6\%$) and decodes substantially faster, at a $\sim$24\% training-throughput cost (Table~\ref{tab:archcomp}).
+\textbf{(iii) Feasibility.} Megatron-Core ships a Mamba-hybrid provider whose 56-layer interleaving pattern is halved in width to reach the $\approx$2B scale, making the backbone directly executable under the NeMo recipe without custom kernels.
 
-\subsection{Training Framework and $\mu$P Transfer}\label{sec:framework}
-We train with the Megatron-SWIFT pre-training entry point (\texttt{megatron pt}) using the \texttt{llama}/\texttt{minicpm5} model bridge.
-Training is run under maximal-update parameterization ($\mu$P)~\cite{yang2022tensor}, which scales weight initialisation and learning rates according to hidden width so that hyper-parameters tuned in short, cheap runs transfer to the full configuration.
-We exploit this by running all architecture and hyper-parameter sweeps at a reduced iteration count (80--160 steps) and treating the resulting ranking as predictive of the full-model optimum.
-Fused attention (\texttt{attention\_backend fused}), selective activation recomputation, and cross-entropy loss fusion are enabled to raise throughput; no tensor or pipeline parallelism is required ($\texttt{tensor\_model\_parallel\_size}=1$), keeping the configuration simple and portable.
+\subsection{Training Framework and Reduced-Horizon Search}\label{sec:framework}
+We train with the NVIDIA NeMo pre-training entry point, driving the Megatron-Core \texttt{NVIDIAMambaHybridModelProvider2B} provider directly with $\texttt{tensor\_model\_parallel\_size}=1$.
+To keep the entire sweep within budget, we run all hyper-parameter searches at a reduced iteration count and treat the resulting short-horizon ranking as predictive of the full-model optimum---a small-scale proxy strategy in the spirit of maximal-update parameterization~\cite{yang2022tensor}.
+Fused kernels, selective activation recomputation, and cross-entropy loss fusion are enabled to raise throughput.
 
-\subsection{Warmup--Stable--Decay Schedule}\label{sec:wsd}
-BaiZe uses a WSD learning-rate schedule with three phases: a short linear \emph{warmup} ($10$ iterations), a long constant-rate \emph{stable} phase, and an exponential \emph{decay} to a minimum rate of $0.1\times$ the stable rate.
-The decay window $\delta$ (the \emph{WSD ratio}) is itself a swept hyper-parameter.
-Throughout, the global batch size is $1024$ with sequence length $4096$ and packing enabled, yielding $\approx$4\,M tokens per step.
-Initially the stable learning rate is $6\times10^{-4}$ with $\delta=10\%$; the search in Section~\ref{sec:search} perturbs these two quantities together with architectural variables.
+\subsection{Learning-Rate Schedule}\label{sec:wsd}
+BaiZe trains under a warmup--stable--decay-style learning-rate schedule whose hyper-parameters---warmup length, stable learning rate, and the decay ratio---are themselves swept in Section~\ref{sec:search} (cosine decay is kept as an alternative).
+The remaining schedule and batch-size settings (global batch size, sequence length, packing) are held fixed across configurations and re-measured on the final backbone, with figures reported where applicable.
 
 \subsection{Budget-Constrained Search Protocol}\label{sec:search}
 Because a full grid is infeasible under a fixed GPU budget, we adopt a staged, single-variable-at-a-time protocol:
-
 \begin{itemize}
-\item \textbf{S1 (baseline).} Reproduce the reference MiniCPM5-1B configuration to establish a loss/throughput baseline.
-\item \textbf{S2 (architecture sweep).} Perturb one architectural variable at a time---layer count ($24\rightarrow28$), KV-head count ($2\rightarrow4$), and embedding tying (untied$\rightarrow$tied)---at short horizon (80 steps).
-\item \textbf{S3 (schedule sweep).} Perturb the stable learning rate ($6\times10^{-4}$ vs.\ $3\times10^{-4}$ vs.\ $1\times10^{-3}$) and the WSD ratio ($10\%$ vs.\ $20\%$).
-\item \textbf{S4 (verification).} Retrain the winning configuration from scratch over a longer horizon (160 steps) to confirm convergence and reproducibility.
+\item \textbf{S1 (baseline).} Reproduce the Mamba2-hybrid reference configuration to establish a loss/throughput baseline.
+\item \textbf{S2 (hyper-parameter sweep).} Perturb one training variable at a time---stable learning rate, warmup length, and decay ratio---at a short horizon.
+\item \textbf{S3 (schedule sweep).} Compare learning-rate schedules (WSD-style vs.\ cosine) and batch sizing at a short horizon.
+\item \textbf{S4 (verification).} Retrain the winning configuration from scratch over a longer horizon to confirm convergence and reproducibility.
 \end{itemize}
 
 At every stage only a single variable changes relative to the running best, isolating each factor's contribution while keeping total GPU-hours within budget.
-We also validated the architectural search space up front: hybrid attention+SSM (Hymba-style) and Nemotron alternatives were found to have no released 1B-scale variants in Megatron-Core, so the Llama-style GQA baseline remains the only executable 1B architecture.
+The architectural search space is validated up front: the hybrid (Mamba2-hybrid) and dense (MiniCPM5-2B) candidates are compared head-to-head from scratch (Section~\ref{sec:arch-rationale}), which selects the hybrid backbone before the hyper-parameter search begins.

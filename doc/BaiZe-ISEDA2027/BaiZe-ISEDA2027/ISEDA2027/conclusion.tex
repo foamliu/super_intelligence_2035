@@ -1,8 +1,8 @@
 \section{Conclusion}
 
-We presented BaiZe, a 1.04B-parameter agentic language model built from scratch on a fixed $\sim$84\,GPU-hour budget.
-Through a staged, budget-constrained search under $\mu$P hyper-parameter transfer and a WSD schedule, we isolated the single most productive lever---the stable-phase learning rate---and improved validation loss from $5.086$ to $4.969$ ($-0.117$) at matched step counts, with $\approx$102--111\,k tokens/s throughput on $8\times$H100.
-Our architecture analysis confirmed that the Llama-style GQA baseline is well-placed in the 1B regime, where Megatron-Core offers no hybrid or Nemotron-style variant; a complementary matched 2B-scale comparison further showed that a Mamba2-hybrid backbone attains lower loss and faster inference with fewer parameters, charting the family's evolution path toward 2B while the dense design stays optimal for the budget-constrained 1B agent built here.
+We presented BaiZe, a $\approx$2.2B-parameter hybrid (state-space + attention) agentic language model built from scratch on a fixed $\sim$84\,GPU-hour budget.
+Through a controlled from-scratch comparison, we selected a Nemotron-H-style Mamba2-hybrid backbone over a dense transformer for its lower loss-per-parameter and substantially faster inference, then applied a staged, budget-constrained hyper-parameter search (S1--S4) on the final backbone.
+Training and inference measurements are being re-executed on the final model and are reported as \textbf{[TBD]}; the complete recipe and a single reproducible command encapsulate the entire construction under the NVIDIA NeMo recipe.
 
-The complete recipe and a single reproducible command encapsulate the entire construction; the next step is agentic fine-tuning with the \texttt{UltraData-SFT-Agent} corpus toward a deployable agent core for EDA and embedded applications.
+The immediate next step is agentic fine-tuning with the \texttt{UltraData-SFT-Agent} corpus toward a deployable agent core for EDA and embedded applications.
 We hope this blueprint lowers the barrier for cost-bounded teams building their own efficient agentic SLMs from scratch.

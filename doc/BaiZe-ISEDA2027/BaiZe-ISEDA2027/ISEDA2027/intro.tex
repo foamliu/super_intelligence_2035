@@ -5,18 +5,18 @@ However, state-of-the-art agent backbones are routinely 7\,B parameters or large
 
 Recent small language models (SLMs, $<\,$2\,B) have closed much of the gap with larger counterparts on single-turn benchmarks, but building such a model \emph{from scratch} remains an under-documented engineering problem.
 Every choice---architecture, optimizer, learning-rate schedule, data mixture---interacts with every other, and a naive grid search is prohibitively expensive.
-Our goal is therefore twofold: (i) to construct a 1B-scale agentic LLM from scratch on a strictly limited compute budget, and (ii) to expose the concrete, reproducible decisions that lead to it.
+Our goal is therefore twofold: (i) to construct a $\approx$2B-scale hybrid agentic LLM from scratch on a strictly limited compute budget, and (ii) to expose the concrete, reproducible decisions that lead to it.
 
 \paragraph{BaiZe.}
-We present BaiZe, a 1.04B-parameter decoder-only model built from scratch on $\sim$84\,GPU-hours.
+We present BaiZe, a $\approx$2.2B-parameter hybrid (state-space + attention) model built from scratch on $\sim$84\,GPU-hours.
 Three design pillars organise our work:
 
 \begin{itemize}
-\item \textbf{Architecture.} A deep-and-thin Llama-style skeleton (24 layers, 16 attention heads, grouped-query attention with 2 KV heads, untied embeddings) inherited from the MiniCPM5-1B configuration. We justify this choice empirically rather than by availability alone: a matched 2B-scale from-scratch comparison shows that a Mamba2-hybrid (attention+SSM) backbone wins on loss and inference speed but trails on training throughput, confirming the dense GQA design as the right budget-constrained 1B agentic backbone today while charting the family's evolution toward hybrid architectures at 2B.
+\item \textbf{Architecture.} A Nemotron-H-style sequential hybrid backbone: 56 layers interleaving Mamba-2 state-space layers, four grouped-query-attention layers, and MLP layers, giving linear-time decoding for inference-heavy agents. We justify this choice empirically: a matched from-scratch comparison shows the hybrid attains lower loss and faster inference with fewer parameters than a dense counterpart, at a modest training-throughput cost.
 
-\item \textbf{Hyper-parameter transfer.} We train under maximal-update parameterization ($\mu$P)~\cite{yang2022tensor}, so that hyper-parameters discovered in short, cheap sweeps transfer to the full model without re-tuning at scale.
+\item \textbf{Reduced-horizon proxy search.} We exploit short, cheap proxy runs---in the spirit of maximal-update parameterization ($\mu$P) transfer~\cite{yang2022tensor}---so that the relative ranking of candidate hyper-parameters discovered at small scale carries over to the full model without re-tuning at scale.
 
-\item \textbf{Budget-constrained search.} A staged search protocol (S1--S4) explores architecture and hyper-parameter variables one at a time under a hard GPU-hour budget, yielding a winning configuration whose only deviation from the baseline is a lower stable-phase learning rate ($6\times10^{-4}\rightarrow3\times10^{-4}$).
+\item \textbf{Budget-constrained search.} A staged search protocol (S1--S4) perturbs one variable at a time under a hard GPU-hour budget, yielding a winning recipe for the final hybrid backbone (numeric results reported as \textbf{[TBD]} pending full re-measurement).
 \end{itemize}
 
 We hope BaiZe serves as a minimal, reproducible blueprint for building efficient agentic SLMs from scratch, and that our search methodology is of practical value to cost-bounded training efforts in the EDA and embedded-AI communities.
