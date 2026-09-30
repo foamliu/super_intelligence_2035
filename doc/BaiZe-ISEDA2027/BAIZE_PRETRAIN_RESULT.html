@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B）· 超参搜索结果报告</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1060px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.85; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  td.win { background:#dafbe1; font-weight:700; }
+  td.pend { color:var(--muted); }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe Stage(i) LLM 预训练 · 超参搜索结果报告</h1>
+  <div class="sub">Mamba2-hybrid（56 层，Nemotron-H 式顺序混合，<b>2.220B</b>）从零预训练 —— 24h 预算约束下 S0–S5 高置信度超参搜索</div>
+  <div class="meta">
+    <span>📅 更新：2026-09-30</span>
+    <span>🖥️ GPU：8×H100（10.239.2.29，TP1/DP8）</span>
+    <span>📦 seq4094 / GBS8 / bf16 / AdamW</span>
+    <span>⏱️ 预算：24h 墙钟 ≈ 192 GPU·h（已用 ~40.3）</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <h3 style="margin-top:0;">🏆 胜出配置（S2 已定 stable LR；S3 关键轴 / S4 退火 / S5 长跑进行中）</h3>
+  <p><span class="badge b-ok">stable LR = 1e-3（S2 7 点最低，final 2.7627）</span>
+     <span class="badge b-ok">调度族 = WSD（S3-01 2.767915 vs S3-02 cosine 2.815509，WSD 胜）</span>
+     <span class="badge b-info">warmup/decay/min_lr = 待 S3-03/04/05</span>
+     <span class="badge b-info">退火数据混合 = 待 S4</span></p>
+  <p style="font-size:13.5px;color:var(--muted);">本报告为「活文档」：S0/S1/S2 已收敛并回填；S3/S4/S5 随各阶段 final@匹配步数回收后逐步补齐，最终给出 20000 步收敛曲线 + 3 seed 均值±σ 与可复现命令。</p>
+</div>
+
+<h2 class="sec"><span class="no">1</span>骨架与固定超参（跨配置一致）</h2>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>架构</td><td>Mamba2-hybrid（56 层，Nemotron-H 式顺序混合，2.220B）</td></tr>
+  <tr><td>框架</td><td>NVIDIA/NeMo recipe + Megatron-Core（<code>NVIDIAMambaHybridModelProvider2B</code>），torchrun 直驱</td></tr>
+  <tr><td>tokenizer</td><td>DeepSeek-V4.1-Flash（vocab 129281 / pad 129408）</td></tr>
+  <tr><td>并行 / 卡</td><td>8 卡（10.239.2.29，TP1/DP8）、GBS=8、mb=1、seq=4094、bf16</td></tr>
+  <tr><td>optimizer</td><td>distributed AdamW（β1=0.9 β2=0.95 eps=1e-5 wd=0.1）、seed=1234</td></tr>
+  <tr><td>WSD</td><td>warmup 5%=250、decay 10%=500、stable 85%=4250（5000 步口径）</td></tr>
+  <tr><td>eval</td><td><code>--eval-interval 250 --eval-iters 0</code>（关闭，避免除零）</td></tr>
+  <tr><td>数据（stable 主体）</td><td>Ultra-FineWeb-L3 英文（200k docs / 164.75M token）；长跑 S5-01 用 900k docs / 741.7M token 补切集</td></tr>
+</table>
+
+<h2 class="sec"><span class="no">2</span>搜索矩阵（S0–S5，24h 预算 ≈ 192 GPU·h）</h2>
+<table>
+  <tr><th>阶段</th><th>内容</th><th>组数</th><th>步数</th><th>状态</th></tr>
+  <tr><td>S0</td><td>launcher 适配 + 8 卡冒烟（校准 step time）</td><td>1</td><td>~30</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>S1</td><td>baseline（lr 3e-4 / WSD）</td><td>1</td><td>5000</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>S2</td><td>stable LR 加密扫描（2e-4…1e-3，7 点，WSD 固定）</td><td>7</td><td>5000</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>S3</td><td>关键轴微调（调度族 WSD/cosine、decay5%、warmup2000、min_lr1e-5）</td><td>5</td><td>5000</td><td><span class="badge b-info">running</span></td></tr>
+  <tr><td>S4</td><td>退火数据混合消融（纯L3 / L3+code / L3+code+math）</td><td>3</td><td>5000</td><td><span class="badge b-warn">脚本就绪，待 S3</span></td></tr>
+  <tr><td>S5</td><td>长跑 20000 步 + 3 seed × 5000 步复现</td><td>4</td><td>20000/5000</td><td><span class="badge b-warn">脚本就绪，待 S3/S4</span></td></tr>
+</table>
+
+<h2 class="sec"><span class="no">3</span>S0 冒烟 + S1 基线（已收敛）</h2>
+<table>
+  <tr><th>ID</th><th>stable LR</th><th>调度</th><th>final loss@匹配步数</th><th>训练 tok/s</th><th>耗时</th><th>GPU·h</th><th>备注</th></tr>
+  <tr><td>S0-01</td><td>—</td><td>WSD</td><td>7.90@30</td><td>~99K</td><td>~2.2min</td><td>~0.3</td><td>8 卡冒烟 30 步，稳态 ~330ms/iter，WSD 调度验证通过</td></tr>
+  <tr><td>S1-01</td><td>3e-4</td><td>WSD</td><td>2.849@5000</td><td>~99K</td><td>~41min</td><td>~5.5</td><td>baseline；loss 7.90@30→2.849@5000（⚠️ 前段被 vision 抢占，step 330→850ms）</td></tr>
+</table>
+
+<h2 class="sec"><span class="no">4</span>S2 stable LR 扫描（WSD 固定，7 点 × 5000 步）</h2>
+<p><b>胜出 stable LR = <code style="font-size:15px;">1e-3</code></b>（final loss 2.7627，7 点最低）：loss 随 LR <b>单调递减</b>止于网格上限 1e-3，1e-3 退火尾段 2.92@4440 → 2.76@5000 骤降反超 8e-4。</p>
+<table>
+  <tr><th>ID</th><th>stable LR</th><th>final loss@5000</th><th>grad norm</th><th>skip/nan</th><th>耗时</th><th>GPU·h</th><th>判定</th></tr>
+  <tr><td>S2-01</td><td>2e-4</td><td>2.9037</td><td>0.543</td><td>0/0</td><td>~28.8min</td><td>~3.8</td><td>—</td></tr>
+  <tr><td>S2-02</td><td>3e-4</td><td>2.8462</td><td>0.455</td><td>0/0</td><td>~27.1min</td><td>~3.6</td><td>—</td></tr>
+  <tr><td>S2-03</td><td>4e-4</td><td>2.8167</td><td>0.414</td><td>0/0</td><td>~26.8min</td><td>~3.6</td><td>—</td></tr>
+  <tr><td>S2-04</td><td>5e-4</td><td>2.7981</td><td>0.372</td><td>0/0</td><td>~27min</td><td>~3.6</td><td>—</td></tr>
+  <tr><td>S2-05</td><td>6e-4</td><td>2.7783</td><td>0.331</td><td>0/0</td><td>~27min</td><td>~3.6</td><td>—</td></tr>
+  <tr><td>S2-06</td><td>8e-4</td><td>2.7700</td><td>0.279</td><td>0/0</td><td>~26.7min</td><td>~3.6</td><td>—</td></tr>
+  <tr><td>S2-07</td><td>1e-3</td><td><b>2.7627</b></td><td>0.241</td><td>0/0</td><td>~27min</td><td>~3.6</td><td class="win">✅ 7 点最低</td></tr>
+</table>
+<div class="card" style="border-left:5px solid var(--warn);">
+  <b>⚠️ 边界提示</b>：7 点 loss 随 LR 单调递减且止于网格上限 1e-3，最优 LR 可能 ≥1e-3；S3 后可增量扫 1.2e-3 / 1.5e-3（余预算 ~100 GPU·h 允许）。
+</div>
+
+<h2 class="sec"><span class="no">5</span>S3 关键轴微调（1e-3 上单变量，5 组 × 5000 步，进行中）</h2>
+<table>
+  <tr><th>ID</th><th>变动</th><th>调度族</th><th>decay/warmup/min_lr</th><th>final loss@5000</th><th>判定</th></tr>
+  <tr><td>S3-01</td><td>WSD 参考</td><td>WSD</td><td>500/250/3e-5</td><td><b>2.767915</b></td><td class="win">✅ done（复现 S2-07 2.7627，run-to-run 噪声 ~0.005 内一致，S3 组内基线）</td></tr>
+  <tr><td>S3-02</td><td>调度族对比</td><td>cosine</td><td>—/250/3e-5</td><td><b>2.815509</b></td><td>✅ done（劣于 WSD 参考 2.767915，差 ~0.048，<b>WSD 胜 cosine</b>）</td></tr>
+  <tr><td>S3-03</td><td>decay ratio 5%</td><td>WSD</td><td>250/250/3e-5</td><td class="pend">🟡 running（@16:40 ~2500/5000，50%）</td><td>—</td></tr>
+  <tr><td>S3-04</td><td>warmup 固定 2000 步</td><td>WSD</td><td>500/2000/3e-5</td><td class="pend">⏳ 待启动</td><td>—</td></tr>
+  <tr><td>S3-05</td><td>min_lr 1e-5</td><td>WSD</td><td>500/250/1e-5</td><td class="pend">⏳ 待启动</td><td>—</td></tr>
+</table>
+
+<h2 class="sec"><span class="no">6</span>S4 退火数据混合消融（脚本已就绪，待 S3）</h2>
+<table>
+  <tr><th>ID</th><th>退火混合</th><th>blend</th><th>final loss@5000</th><th>备注</th></tr>
+  <tr><td>S4-01</td><td>纯 L3 高质量子集</td><td>L3 100%</td><td class="pend">⏳ 待 S3</td><td>基线，退火数据不加码</td></tr>
+  <tr><td>S4-02</td><td>L3 + 代码（UltraData-Code）</td><td>L3:code = 90:10</td><td class="pend">⏳ 待 S3</td><td>code 90.34M ≥ 10%×163.76M ✓</td></tr>
+  <tr><td>S4-03</td><td>L3 + 代码 + 数学（UltraData-Math）</td><td>L3:code:math = 86:10:4</td><td class="pend">⏳ 待 S3</td><td>math 8.51M ≥ 4%×163.76M ✓</td></tr>
+</table>
+<p style="font-size:13px;color:var(--muted);">实现口径：短地平线消融用「全段静态 blend」近似「decay 尾段混入」（recipe GPTDatasetConfig 仅支持单静态 blend），可量化退火加码对 final loss 的增益；真正的两步退火切数据留待 S5 长跑。</p>
+
+<h2 class="sec"><span class="no">7</span>S5 长跑 + 多 seed 复现（脚本已就绪，待 S3/S4）</h2>
+<table>
+  <tr><th>ID</th><th>内容</th><th>步数</th><th>数据</th><th>seed</th><th>产出</th></tr>
+  <tr><td>S5-01</td><td>胜出配置从零长跑</td><td>20000</td><td>700m（741.7M token）</td><td>1234</td><td>论文 loss 收敛曲线</td></tr>
+  <tr><td>S5-02…04</td><td>胜出配置 3 seed 复现</td><td>5000 × 3</td><td>165M 主体</td><td>44 / 777 / 2024</td><td>loss 均值 ± σ</td></tr>
+</table>
+
+<h2 class="sec"><span class="no">8</span>可复现训练命令（胜出配置，S3/S4 后回填最终值）</h2>
+<pre><code># 环境
+export PYTHONPATH=/nas_train/app.e0031982/omegaconf_230:$PYTHONPATH
+conda activate py310
+cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027
+
+# 短地平线（5000 步，稳定 LR=1e-3 / WSD / warmup250 / decay500 / min_lr3e-5）—— S2 胜出
+TRAIN_ITERS=5000 LR=1e-3 DECAY_STYLE=WSD WARMUP_ITERS=250 DECAY_ITERS=500 MIN_LR=3e-5 \
+  bash scripts/train.sh mamba2 &lt;name&gt; 29671 8
+
+# 长跑（20000 步）+ 多 seed，S5 脚本（胜出配置回填后）：
+#   setsid bash baize_s5_sweep.sh &amp;   （PPID=1 真后台，setsid 保活，勿用 nohup/裸 &amp;）</code></pre>
+<div class="card" style="border-left:5px solid var(--warn);">
+  <b>⚠️ 多 seed / 长跑数据核算</b>：math 退火源仅 8.51M token，若 S4 胜出含 math（4% 混合），20000 步长跑需 26M math 会耗尽 —— S5 启动前须按 S4 胜出比例核算或补切。code 90.34M ≥ 10%×655.36M ✓。
+</div>
+
+<footer>
+  BaiZe Stage(i) LLM 预训练 · Mamba2-hybrid 2B 超参搜索 · 活文档（S0/S1/S2 已回填，S3/S4/S5 随回收更新）· 对应 ISEDA2027/4_llm_pretrain.tex · 详见 EXPERIMENTS_PRETRAIN_2B.md / MEMORY_PRETRAIN_2B.md
+</footer>
+
+</div>
+</body>
+</html>

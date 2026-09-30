@@ -10,8 +10,8 @@ set -uo pipefail
 BASE=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
 LOGDIR=/tmp
 
-# ⚠️ 待 S2 全 7 点回收后，由 agent 回填胜出 stable LR（当前 leader 3e-4）。启动前必须确认。
-WINNER_LR="3e-4"   # TODO: 回填 S2 胜出 LR（2e-4/3e-4/4e-4/5e-4/6e-4/8e-4/1e-3 之一）
+# ✅ S2 胜出 stable LR = 1e-3（final loss 2.7627 为 7 点最低，单调递减：2e-4 2.9037 → 3e-4 2.8462 → 4e-4 2.8167 → 5e-4 2.7981 → 6e-4 2.7783 → 8e-4 2.7700 → 1e-3 2.7627；1e-3 退火尾段 2.92@4440 → 2.76@5000 骤降反超 8e-4）。
+WINNER_LR="1e-3"
 
 declare -a NAMES=(s3_01 s3_02 s3_03 s3_04 s3_05)
 declare -a PORTS=(29671 29672 29673 29674 29675)

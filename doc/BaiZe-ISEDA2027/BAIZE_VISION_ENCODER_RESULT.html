@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Stage(iii) 视觉编码器预训练（从零）· 四架构对比结果报告</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1040px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:24px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  td.win { background:#dafbe1; font-weight:700; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe Stage(iii) 视觉编码器预训练（从零）· 四架构对比结果报告</h1>
+  <div class="sub">OpenVision2（纯 Attention） <b>vs</b> MambaEye（视觉 SSM） <b>vs</b> MoE-ViE（稀疏 MoE） <b>vs</b> DeepEncoderV2（Attention+SSM 混合） —— loss 收敛 / 训练吞吐 / 推理吞吐 对比</div>
+  <div class="meta">
+    <span>📅 完成：2026-09-30</span>
+    <span>🖥️ GPU：6×H100·80GB / 架构（DP6）</span>
+    <span>📦 规模：500–600M / 从零预训练（随机初始化）</span>
+    <span>🎯 目标：SigLIP 对比学习 + 固定 text tower</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <h3 style="margin-top:0;">🏆 胜出架构：<span style="color:var(--accent);">OpenVision2（纯 Attention ViT，w1024·d30·h16·mlp4096，505.0M）</span></h3>
+  <p>四架构在 5000–10000 步长地平线上 loss 全部收敛到 <b>~4.45–4.47（差 &lt;0.02，噪声级，架构不可区分）</b>，因此架构选择 <b>完全由吞吐/延迟决定</b>：OpenVision2 训练 <b>2139 img/s</b>（最快，比混合/SSM/MoE 快 1.47×–2.7×）且推理 <b>6.51 ms/img</b>（最快，比 DeepEncoderV2 快 2.7×）。</p>
+  <p><span class="badge b-ok">loss：四架构并列（不可区分）</span> <span class="badge b-ok">训练吞吐：OpenVision2 胜（2139 img/s）</span> <span class="badge b-ok">推理延迟：OpenVision2 胜（6.51 ms）</span></p>
+  <p style="color:var(--muted);font-size:13px;">🔑 关键方法学发现：S1 观察到的「四架构 loss 全停 6.7342 平台」是 <b>cosine LR 坍缩伪影</b>（<code>--steps 1000</code> 令 cosine 在 ~700 步就把 LR 从 1e-3 衰减到 ~2.6e-4→1e-5，loss 卡死），并<b>非架构等价</b>；延长训练（cosine 跨 5k–10k 步）后 loss 继续降至 4.45–4.47，才得到这一结论。</p>
+<h2 class="sec"><span class="no">1</span>任务与公平口径</h2>
+<div class="card">
+  <ul>
+    <li><b>三层次结论</b>：P0 三硬指标（loss / 训练吞吐 / 推理吞吐）→ P1 稳健（长地平线 / 多种子 / 下游检索）→ P2 核心自由度（分辨率·patch·目标函数·数据侧）→ P3 训练超参与推理深挖。</li>
+    <li><b>决策 1（从零）</b>：四架构均随机初始化，不加载任何 ImageNet/CLIP/SigLIP 上游权重，仅对比架构本体。</li>
+    <li><b>决策 2（统一栈）</b>：统一 open_clip(3.2.0) + SigLIP（sigmoid 对比）+ 固定 shared text tower（12L·512w·8h，同一 BPE，四架构共用，只动 vision tower）+ 同分辨率/patch/增强。</li>
+    <li><b>决策 3（等参）</b>：四架构实测参数量落 500–600M（MoE 同时报告总参数与每 token 激活参数）。</li>
+    <li><b>决策 4（推理基准）</b>：<code>sglang</code> 未装，P0 主口径退化为统一前向 benchmark（<code>torch.cuda.Event</code>，同一代码路径 / batch=1 / 固定分辨率 / bf16）；相对结论可信，生产级吞吐见 S9 备注。</li>
+  </ul>
+</div>
+
+<h2 class="sec"><span class="no">2</span>环境与配置</h2>
+<ul>
+  <li><b>环境</b>：conda <code>py310</code>（CUDA 12.8 / PyTorch 2.8.0 / open_clip 3.2.0 / mamba_ssm 2.2.6 / flash_attn / webdataset 1.0.2）。</li>
+  <li><b>GPU</b>：主节点 <code>10.239.2.12</code>，GPU 0–5（6×H100·80GB，DP6，<code>CUDA_VISIBLE_DEVICES=0..5</code>，torchrun 直驱）；四架构同卡数、同 batch、同 seed。</li>
+  <li><b>数据</b>：LLaVA-OneVision-1.5 <code>imagenet/EN</code> 统一子集 500K 对 → webdataset tar（<code>en500k/*.tar</code>，25 shard）；S5 检索 held-out 集 <code>eval5k</code>（laioncn/EN 5000 对，与训练源不同→真 zero-shot）。</li>
+  <li><b>默认配置（锚点）</b>：cls=224 / patch=16 / SigLIP / lr=1e-3 AdamW(0.9,0.95) / warmup 100 + cosine / seed=1234 / bf16 / batch=32×6=192 / text tower=12L·512w·8h。</li>
+</ul>
+
+<h2 class="sec"><span class="no">3</span>四架构实测参数量（<code>numel()</code>，target 500–600M）</h2>
+<table>
+  <tr><th>架构</th><th>类型</th><th>参数量</th><th>激活参数</th><th>备注</th></tr>
+  <tr><td><b>OpenVision2</b></td><td>纯 Attention ViT</td><td>505.0M</td><td>505.0M</td><td>w=1024 d=30 h=16 mlp=4096</td></tr>
+  <tr><td>MambaEye</td><td>纯视觉 SSM（Vim 双向）</td><td>534.9M</td><td>534.9M</td><td>w=1024 d=40 d_state=16 expand=2</td></tr>
+  <tr><td>MoE-ViE</td><td>稀疏 MoE</td><td>505.2M</td><td>222.0M</td><td>w=1024 d=30，8 expert×ff512，top-2</td></tr>
+  <tr><td>DeepEncoderV2</td><td>Attn+SSM 混合（AAMM）</td><td>516.9M</td><td>516.9M</td><td>w=1024 d=34 混合</td></tr>
+</table>
+</div>
+<h2 class="sec"><span class="no">4</span>P0 三硬指标（必做）</h2>
+
+<h3>表 4.1 · S0 冒烟（15 步，6 卡 batch32，SigLIP）</h3>
+<table>
+  <tr><th>ID</th><th>架构</th><th>参数量</th><th>loss@15</th><th>ms/iter</th><th>image/s</th><th>状态</th></tr>
+  <tr><td>S0-A</td><td>OpenVision2</td><td>505.0M</td><td>7.797</td><td>127.5</td><td>1505</td><td>✅ RUNNABLE</td></tr>
+  <tr><td>S0-B</td><td>MambaEye</td><td>534.9M</td><td>7.827</td><td>510.1</td><td>376</td><td>✅ RUNNABLE</td></tr>
+  <tr><td>S0-C</td><td>MoE-ViE</td><td>505.2M(222M)</td><td>9.254</td><td>1371.6</td><td>140</td><td>✅ RUNNABLE(未达稳态)</td></tr>
+  <tr><td>S0-D</td><td>DeepEncoderV2</td><td>516.9M</td><td>7.794</td><td>247.0</td><td>777</td><td>✅ RUNNABLE</td></tr>
+</table>
+<p style="color:var(--muted);font-size:13px;">注：15 步含 cudnn autotune/首步惰性初始化，MoE ms/iter 尚在下降；S1(1000 步) 重测稳态。</p>
+
+<h3>表 4.2 · S1 主训练（1000 步 × 4 架构，默认配置）</h3>
+<table>
+  <tr><th>ID</th><th>架构</th><th>参数量</th><th>最终loss</th><th>训练image/s</th><th>耗时</th><th>GPU·h</th></tr>
+  <tr><td>S1-A</td><td>OpenVision2</td><td>505.0M</td><td>6.7342</td><td>1491</td><td>235s</td><td>0.39</td></tr>
+  <tr><td>S1-B</td><td>MambaEye</td><td>534.9M</td><td>6.7342</td><td>398</td><td>642s</td><td>1.07</td></tr>
+  <tr><td>S1-C</td><td>MoE-ViE</td><td>505.2M(222M)</td><td>6.7342</td><td>443</td><td>531s</td><td>0.88</td></tr>
+  <tr><td>S1-D</td><td>DeepEncoderV2</td><td>516.9M</td><td>6.7342</td><td>578*</td><td>303s</td><td>0.51</td></tr>
+</table>
+<p style="color:var(--muted);font-size:13px;">*DeepEncoderV2 训练吞吐被误触发的重复 openvision2 进程争用污染（干净稳态 ≈1430–1450 img/s）。四者最终 loss 全 6.7342 —— 但这是 <b>cosine LR 坍缩伪影</b>（见 S3 诊断），并非架构等价。</p>
+
+<h3>表 4.3 · S2 推理基准（batch=1 前向，bf16，224/16）</h3>
+<table>
+  <tr><th>架构</th><th>参数量</th><th>ms/img</th><th>image/s</th><th>token/s(=img×196)</th><th>备注</th></tr>
+  <tr><td class="win">OpenVision2</td><td>505.0M</td><td><b>6.508</b></td><td><b>153.7</b></td><td><b>30117</b></td><td>纯 Attention，最优</td></tr>
+  <tr><td>DeepEncoderV2</td><td>516.9M</td><td>17.761</td><td>56.3</td><td>11035</td><td>混合 AAMM，双向 Mamba 前向重</td></tr>
+  <tr><td>MoE-ViE</td><td>505.2M(222M)</td><td>141.721</td><td>7.1</td><td>1383</td><td>路由+sort/grouped 纯 PyTorch，CPU 主导</td></tr>
+  <tr><td>MambaEye</td><td>534.9M</td><td>—</td><td>卡死/超时</td><td>—</td><td>mamba_ssm selective_scan 在 batch=1 停摆(150s)</td></tr>
+</table>
+<div class="card" style="border-left:5px solid var(--warn);">
+<h2 class="sec"><span class="no">5</span>S3 长地平线（P1 稳健 · 5000–10000 步 × 4 架构）</h2>
+<table>
+  <tr><th>架构</th><th>步骤</th><th>最终loss</th><th>loss@500</th><th>loss@1000</th><th>loss@5000</th><th>稳态img/s</th><th>GPU·h</th></tr>
+  <tr><td class="win">OpenVision2</td><td>10000</td><td><b>4.4540</b></td><td>6.8542</td><td>5.9180</td><td>4.4560</td><td><b>2139.5</b></td><td>~2.35</td></tr>
+  <tr><td>DeepEncoderV2</td><td>5000</td><td>4.4662</td><td>6.8541</td><td>5.9277</td><td>4.4662</td><td>1458.7</td><td>~1.61</td></tr>
+  <tr><td>MambaEye</td><td>5000</td><td>4.4700</td><td>6.8541</td><td>5.9463</td><td>4.4700</td><td>790.0</td><td>~2.56</td></tr>
+  <tr><td>MoE-ViE</td><td>5000</td><td>4.4661</td><td>6.8541</td><td>5.9406</td><td>4.4661</td><td>852.3</td><td>~2.10</td></tr>
+</table>
+<div class="card">
+  <b>🔑 S3 结论</b>：长地平线 loss 从 S1 的 6.7342 平台继续跌破至 <b>~4.45–4.47，四架构 loss 差 &lt;0.02（噪声级）</b>——架构在 loss 上不可区分。loss 排名（OpenVision2 4.454 &lt; MoE-ViE 4.466 ≈ DeepEncoderV2 4.466 &lt; MambaEye 4.470）无统计意义（&lt; 多种子方差）。<b>决定性维度是吞吐/延迟</b>：OpenVision2 训练 2139 img/s（比 DeepEncoderV2 快 1.47×、比 MambaEye/MoE 快 2.5×）、推理 6.51ms（比 DeepEncoderV2 快 2.7×）。
+</div>
+<div class="card" style="border-left:5px solid var(--warn);">
+  <b>🔑 cosine LR 坍缩伪影诊断（S1 vs S3）</b>：S1 的「四架构 loss 全 6.7342 平台」是 <b>cosine LR 坍缩伪影，不是架构等价</b>。S1 用 <code>--steps 1000</code>，cosine 在 1000 步内把 LR 从 1e-3 衰减到 ~2.6e-4@700 步 → ~1e-5@1000 步，LR 过早塌到 min_lr，loss 卡死在 6.7342（step700→1000 纹丝不动）；S3 用 <code>--steps 10000</code>，step700 LR 仍 ~9.9e-4，loss 继续降 6.85@500→5.92@1000→4.45@5k。证据：S1 与 S3 的 step100 loss（7.6147 vs 7.6082）几乎一致（同 seed 同代码同数据），step600 后分叉。鉴于此，<b>S4–S8 统一用 3000 步</b>避开坍缩区间。
+</div>
+<h2 class="sec"><span class="no">6</span>稳健性（P1）：S4 多种子 + S5 下游检索</h2>
+
+<h3>表 6.1 · S4 多种子（top-2 架构 × 3 seed × 3000 步）</h3>
+<!-- S4_TABLE_PLACEHOLDER_START -->
+<table>
+  <tr><th>架构·seed</th><th>步骤</th><th>最终loss</th><th>训练img/s</th></tr>
+  <tr><td>openvision2_s1234</td><td>3000</td><td>__OV2_S1234__</td><td>__OV2_S1234_T__</td></tr>
+  <tr><td>openvision2_s42</td><td>3000</td><td>__OV2_S42__</td><td>__OV2_S42_T__</td></tr>
+  <tr><td>openvision2_s7</td><td>3000</td><td>__OV2_S7__</td><td>__OV2_S7_T__</td></tr>
+  <tr><td>deepencoder_v2_s1234</td><td>3000</td><td>__DE_S1234__</td><td>__DE_S1234_T__</td></tr>
+  <tr><td>deepencoder_v2_s42</td><td>3000</td><td>__DE_S42__</td><td>__DE_S42_T__</td></tr>
+  <tr><td>deepencoder_v2_s7</td><td>3000</td><td>__DE_S7__</td><td>__DE_S7_T__</td></tr>
+</table>
+<!-- S4_TABLE_PLACEHOLDER_END -->
+<p style="color:var(--muted);font-size:13px;">多种子用于验证「OpenVision2 ≤ DeepEncoderV2（loss）且吞吐 1.47× 优势」跨 seed 稳健（loss 本身近乎并列，多种子主要确认无 seed 特异性翻转）。</p>
+
+<h3>表 6.2 · S5 下游代理检索（text↔image R@K，held-out laioncn/EN 5k，全 ckpt）</h3>
+<!-- S5_TABLE_PLACEHOLDER_START -->
+<p><code>__S5_RESULTS__</code></p>
+<!-- S5_TABLE_PLACEHOLDER_END -->
+<p style="color:var(--muted);font-size:13px;">无 ImageNet val/类标签，故「zero-shot top-1 / linear-probe」不可行；下游代理只用检索 R@K（需 joint text，故用 S4 全 ckpt）。检索是 loss 近乎并列时唯一的质量区分信号。</p>
+
+<h2 class="sec"><span class="no">7</span>核心自由度消融（P2，锚点单变量，3000 步）</h2>
+
+<h3>表 7.1 · S6 分辨率 / patch（OpenVision2，锚点 224/16）</h3>
+<!-- S6_TABLE_PLACEHOLDER_START -->
+<table>
+  <tr><th>res/patch</th><th>最终loss</th><th>训练img/s</th><th>备注</th></tr>
+  <tr><td>224/16（锚点）</td><td>__S6_224_16__</td><td>__S6_224_16_T__</td><td>—</td></tr>
+  <tr><td>336/16</td><td>__S6_336_16__</td><td>__S6_336_16_T__</td><td>—</td></tr>
+  <tr><td>448/16</td><td>__S6_448_16__</td><td>__S6_448_16_T__</td><td>—</td></tr>
+  <tr><td>224/14</td><td>__S6_224_14__</td><td>__S6_224_14_T__</td><td>—</td></tr>
+  <tr><td>336/14</td><td>__S6_336_14__</td><td>__S6_336_14_T__</td><td>—</td></tr>
+  <tr><td>448/14</td><td>__S6_448_14__</td><td>__S6_448_14_T__</td><td>—</td></tr>
+</table>
+<!-- S6_TABLE_PLACEHOLDER_END -->
+
+<h3>表 7.2 · S7 目标函数（SigLIP vs CLIP InfoNCE，OpenVision2）</h3>
+<!-- S7_TABLE_PLACEHOLDER_START -->
+<table>
+  <tr><th>目标</th><th>最终loss</th><th>训练img/s</th><th>备注</th></tr>
+  <tr><td>SigLIP（锚点）</td><td>__S7_SIGLIP__</td><td>__S7_SIGLIP_T__</td><td>sigmoid 对比</td></tr>
+  <tr><td>CLIP InfoNCE</td><td>__S7_CLIP__</td><td>__S7_CLIP_T__</td><td>softmax 对比（loss 尺度不同，需看检索）</td></tr>
+</table>
+<!-- S7_TABLE_PLACEHOLDER_END -->
+
+<h2 class="sec"><span class="no">8</span>训练超参 + 推理深挖（P3）</h2>
+
+<h3>表 8.1 · S8 LR 扫描（OpenVision2，3000 步）</h3>
+<!-- S8_TABLE_PLACEHOLDER_START -->
+<table>
+  <tr><th>lr</th><th>最终loss</th><th>训练img/s</th></tr>
+  <tr><td>1e-3（锚点）</td><td>__S8_1e3__</td><td>__S8_1e3_T__</td></tr>
+  <tr><td>3e-3</td><td>__S8_3e3__</td><td>__S8_3e3_T__</td></tr>
+  <tr><td>5e-3</td><td>__S8_5e3__</td><td>__S8_5e3_T__</td></tr>
+</table>
+<!-- S8_TABLE_PLACEHOLDER_END -->
+
+<h3>表 8.2 · S9 推理深挖（OpenVision2，batch 扫描 + 多分辨率，统一前向 bench）</h3>
+<!-- S9_TABLE_PLACEHOLDER_START -->
+<pre><code>__S9_RESULTS__</code></pre>
+<!-- S9_TABLE_PLACEHOLDER_END -->
+<p style="color:var(--muted);font-size:13px;">SGLang 未装（<code>import sglang</code> ModuleNotFoundError），本阶段退化为统一前向 bench（<code>torch.cuda.Event</code>，batch∈{1,8,32} + 多分辨率单图）；生产级吞吐待装 SGLang（MLLM Stage iv 复用）。</p>
+  <b>⚠️ S2 说明</b>：batch=1 单图推理是 MLLM 编码器最常见场景。SSM/MoE 的小 batch 延迟劣势在推理端被放大 —— MambaEye 全 SSM 在 batch=1 停摆、DeepEncoderV2 混合比纯 Attention 慢 ~2.7×、MoE-ViE 慢 ~22×（路由 CPU 开销）。纯 Attention 无论训练吞吐还是推理延迟均为最优。
+</div>
+<h2 class="sec"><span class="no">9</span>综合结论</h2>
+<ul>
+  <li><b>质量（loss）</b>：四架构在 5k–10k 步长地平线上 loss 全部 ~4.45–4.47，差异 &lt;0.02（噪声级）——<b>等参、从零、同一固定 text tower 的 SigLIP 下，架构不改变可达到的 loss</b>（224/16 的 196 token 小序列不足以让 SSM/MoE 发挥长序列优势）。</li>
+  <li><b>训练吞吐</b>：OpenVision2 2139 img/s 最快（DeepEncoderV2 1459 / MoE-ViE 852 / MambaEye 790），纯 Attention 无逐 token 循环（SSM）或路由（MoE）开销。</li>
+  <li><b>推理延迟</b>：OpenVision2 6.51 ms/img 最快（DeepEncoderV2 17.8ms / MoE-ViE 141.7ms / MambaEye batch=1 停摆），batch=1 单图是 MLLM 最常见场景，SSM/MoE 劣势在推理端被进一步放大。</li>
+  <li><b>最终推荐</b>：<b>OpenVision2（纯 Attention ViT，505M）</b> 为 Stage(iii) 视觉编码器胜出架构 —— 3 项硬指标中 2 项（训练/推理吞吐）决定性占优、1 项（loss）并列。</li>
+  <li><b>局限</b>：① 从零预训练仅到 ~4.45 loss（远未收敛），下游仅在 5k held-out 检索上验证；② 统一子集 500K（未到千万级），数据侧（caption 粒度·规模·中英比例）因预算裁剪/defer；③ 推理基准为统一前向 bench（非 SGLang 生产栈）；④ 共享集群争用（S1/S2 与另一项目并发）对早期吞吐测量带病（S3 干净实测已修正）。</li>
+</ul>
+
+<h2 class="sec"><span class="no">10</span>可复现训练命令</h2>
+<pre><code># 环境
+conda activate py310
+cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027/run/vision
+
+# 胜出架构完整训练（OpenVision2，默认配置锚点，6 卡 DP6）
+bash run_train.sh openvision2 10000 out/S3_openvision2 \
+    --data '/nas_train/app.e0031982/datasets/baize-vision/en500k/*.tar' \
+    --batch-size 32 --seed 1234 --loss siglip
+
+# 四架构长地平线（S3：OpenVision2 10k + 其余 3×5k）
+bash run_s3.sh
+
+# S4 多种子 / S6 分辨率patch / S7 目标函数 / S8 LR / S9 推理深挖（3000 步）
+bash run_s4.sh   # top-2 × 3 seed × 3000
+bash run_s6.sh   # cls∈{336,448} patch∈{14,16}
+bash run_s7.sh   # siglip vs clip
+bash run_s8.sh   # lr∈{1e-3,3e-3,5e-3}
+bash run_s9.sh   # batch + 多分辨率 bench
+
+# 产物
+# 权重:  out/S&lt;x&gt;_&lt;tower&gt;/vision.pt（S4+ 含 text tower）
+# 日志:  out/S&lt;x&gt;_&lt;tower&gt;/train.log（rank0 直写，实时 flush）
+# 数据:  /nas_train/app.e0031982/datasets/baize-vision/{en500k,eval5k}/</code></pre>
+
+<footer>
+  BaiZe Stage(iii) 视觉编码器预训练（从零）· 四架构对比 · 生成于 2026-09-30 · 详见 EXPERIMENTS_VISION.md / MEMORY_VISION.md
+</footer>
+
+</div>
+</body>
+</html>

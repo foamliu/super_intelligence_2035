@@ -10,8 +10,8 @@ OUTROOT=/nas_train/app.e0031982/datasets/baize-vision/out
 for loss in siglip clip; do
     OUT="$OUTROOT/S7_ov2_${loss}"
     echo "===== S7 openvision2 loss=$loss ====="
-    bash run_train.sh openvision2 1000 "$OUT" --data "$DATA" --batch-size 32 \
-        --log-every 25 --loss "$loss" \
+    bash run_train.sh openvision2 3000 "$OUT" --data "$DATA" --batch-size 32 \
+        --log-every 50 --loss "$loss" \
         2>&1 | grep -vE 'warning|Warning|import pynvml|OMP_NUM_THREADS|\*\*\*\*|FutureWarning|warnings\.warn'
     echo "===== S7 ov2 loss=$loss done (exit ${PIPESTATUS[0]}) ====="
 done

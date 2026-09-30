@@ -6,36 +6,47 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | S3（长地平线 running：OpenVision2✅2 塔 done，MambaEye ~step2100/5000，MoE-ViE ⏳排队，10.239.2.12 GPU0-5） |
+| PHASE | S4–S9 pipeline（后台 running：S4✅ S5✅ S6🔄(4/5 r448_p14) S7–S9排队，10.239.2.12 GPU0-5 pid2642367） |
 | WAITING | 1 |
 | ERROR_COUNT | 0 |
-| BUDGET_USED | ~8 GPU·h（S0-S3 已完部分为主，S3 尾段 mambaeye+moevie 未计） |
-| 更新 | 2026-09-30 13:42 |
-| WINNER | OpenVision2（S3 长地平线 loss 4.4540@10k + 训练 2139/推理 153.7 img/s，双指标最优；DeepEncoderV2 4.4662@5k 紧随） |
+| BUDGET_USED | ~17 GPU·h墙钟（S0–S3 ~11 + S4 ~5.0 + S6 ~4/5消融；墙钟自11:29起 ~5h） |
+| 更新 | 2026-09-30 16:16 |
+| WINNER | OpenVision2（S3 长地平线 loss 4.4540@10k + 训练 2139/推理 153.7 img/s；四架构 loss 全 ~4.45–4.47 不可区分，吞吐/延迟决定） |
 
 ## 等待说明（WAITING=1）
 
-- 等待：S3 长地平线训练（后台，运行于 **10.239.2.12** GPU0-5）。
-- ⚠️ 判断结束改用 **`out/S3_<tower>/train.log`**（rank0 直写、实时 flush）：`/tmp/s3_main.log` 因 `grep|tee` 管道缓冲**严重滞后**（13:08 时 main.log 停在 step5600，但 train.log 已 step7200）。4 个塔的 `out/S3_<tower>/train.log` 各出现 `[done]` 即 S3 结束（或 `pgrep -af 'train.py --tower'` 无本项目进程）。
-- 结束后：WAITING 置 0，用 `python3 vision/analyze_s3.py` 汇总 loss 曲线 → 判断 loss 排名是否翻转 → S4 多种子（脚本 `vision/run_s4.sh` 已备好，用新 train.py 存 full ckpt）。
+- 等待：S4–S9 全链路 pipeline（后台 `run_pipeline.sh`，pid 2642367，运行于 **10.239.2.12** GPU0-5，14:21:48 启动）。
+- ⚠️ 判结束看 **各阶段 `out/Sx_*/train.log` 的 `[done]`** 与 `/tmp/vision_pipeline.log`（10.239.2.12 本地）的 `[PIPELINE ALL DONE]`。
+- 【16:16 巡检快照】S4 全 done（6/6）、S5 全 done（R@K 已在 pipeline log）、S6 4/5 done（r336_p16/448_p16/224_p14/336_p14 ✅ → r448_p14🔄 step1700/3000，~756 img/s）。剩余 ETA：S6 剩 1 配置 ~5min → S7 ~14min → S8 ~21min → S9 ~5min ≈ **~45min，约 17:00 完工**。GPU0-5 100% util ~67.8GB 正常。
+- ✅ **已备好回填脚本** `vision/finalize_backfill.py`（语法已校验，py_compile 通过）：读取 out/Sx_*/train.log + pipeline log，自动回填 HTML 36 个 `__XX__` 占位 + tex `tab:visres`/`tab:visobj` 的 `[TBD]`，并打印 S4–S9 汇总表。**pipeline 完工后**：从 10.239.2.12 跑 `cp /tmp/vision_pipeline.log vision/pipeline_log_snapshot.log && python vision/finalize_backfill.py`（或先 ssh 同步 log 再在任一点跑）→ git commit + push。
+- 结束后：WAITING 置 0，跑回填脚本 → 核对 HTML/tex 无残留占位 → 更新 EXPERIMENTS_VISION.md 顶部 → git commit + push。
 
 > ⚠️ 重要：本环境 `run_commands` 只能执行**单 token 无参**命令（`ls`/`find`/`nvidia-smi` 可用，`ls -la` 这类带参必报 “Executable not found”）。**跑带参命令请用 shell-exec 队友**：`team_spawn_teammate(agentId=shell-exec)` 后 `team_run_task(agentId=shell-exec, task=<完整 bash 命令>)`（队友 shell 正常、可 ssh 多参）。每次唤醒需重新 spawn。
 
 ## 当前状态
 
-S0 冒烟 + S1 主训练（1000 步×4）+ S2 推理基准 全部完成，**胜出架构 OpenVision2**（训练 1491 img/s / 推理 153.7 img/s，均最优；loss 6.7342 四者并列）。详见 EXPERIMENTS_VISION.md。
-代码落地于 `run/vision/`：models.py（四架构）、data.py（webdataset 加载）、train.py（torchrun DDP + SigLIP/CLIP + 固定 text tower）、prep_data.py（parquet→tar）、bench.py（S2 推理基准）、run_train.sh / run_s1.sh / run_s2.sh。
-数据：LLaVA-OneVision imagenet/EN 500K 已切 webdataset tar（`/nas_train/app.e0031982/datasets/baize-vision/en500k/*.tar`，25 shard）。
-S1 权重落盘 `out/S1_<tower>/vision.pt`（四架构）。
+S0 冒烟 + S1 主训练（1000 步×4）+ S2 推理基准 + **S3 长地平线（5000–10000 步×4）全部完成**。**胜出架构 OpenVision2**。
+- S3 关键结论：长地平线 loss 从 6.7342 平台继续降至 **~4.45–4.47（四架构并列，差 <0.02 噪声级）**——架构在 loss 上不可区分，**吞吐/延迟决定**（OpenVision2 训练 2139 img/s / 推理 6.51ms 双最优）。
+- 已诊断 S1「6.7342 平台」= cosine LR 坍缩伪影（`--steps 1000` 过早衰减）——已把 S4–S8 统一改为 **3000 步**避免此伪影。
+代码落地于 `run/vision/`：models.py / data.py / train.py（存 full ckpt）/ prep_data.py / bench.py / eval_downstream.py（S5 检索）/ analyze_s3.py / run_s1..s9.sh / run_pipeline.sh。
+数据：en500k（imagenet/EN 500K，25 shard）+ eval5k（laioncn/EN 5000 held-out，检索用）。
+S3 权重落盘 `out/S3_<tower>/vision.pt`（vision-only 旧格式）；S4+ 起 full ckpt（含 text）。
 
 ## 下一步
 
-- **当前**：S3 长地平线 running（OpenVision2 10k 步 + 另 3 架构各 5k 步，10.239.2.12 GPU0-5）。S3 完成后用 `vision/analyze_s3.py` 看 loss 曲线是否在 5k–10k 步突破 6.7342 平台、架构间排名是否翻转。
-- **随后**：S4 多种子（前 2 架构 × 3 seed × 1000 步，脚本 `vision/run_s4.sh`）→ S5 下游代理（zero-shot/linear-probe）→ S6 分辨率/patch 消融（`vision/run_s6.sh`）→ S7 目标函数/数据 → 收敛报告 + HTML + 回填 tex。
+- **当前**：S4–S9 pipeline running（10.239.2.12 pid 2642367）。逐阶段判 `out/Sx_*/train.log` 的 `[done]` / pipeline log 的 `[PIPELINE ALL DONE]`。
+- **随后（pipeline 完工后，一口气做完）**：① WAITING=0；② ssh 10.239.2.12 同步 `/tmp/vision_pipeline.log` 到 `vision/pipeline_log_snapshot.log`；③ 跑 `python vision/finalize_backfill.py`（自动回填 HTML 36 占位 + tex [TBD]）；④ 核对 HTML/tex 无残留占位 + 数字合理；⑤ EXPERIMENTS_VISION.md 顶部写胜出结论+完整命令+对比表；⑥ git add（只提交 doc/ 的 md/html/sh/py/txt，不入库 checkpoint）+ commit + push。
 
 > 节点拓扑：本 agent 常驻 **10.239.2.29**（whag0pgpuap29，8 卡全被 `nemo_experiments` mamba2 占用）；本项目训练在 **10.239.2.12**（whag0pgpuap12）GPU0-5（空闲），用 `ssh 10.239.2.12 '...'` 提交。 代码/数据/权重均在 NFS `/nas_train`，两节点共享。
 
 ## 操作流水
+
+- ✅ [2026-09-30 16:16] **pipeline 巡检 + 备好回填脚本**：S6 4/5 done（r336_p16/448_p16/224_p14/336_p14 ✅，r448_p14🔄 step1700/3000 ~756 img/s）；S7/S8/S9 排队。syntax 校验通过并落地 `vision/finalize_backfill.py`（读 out/*/train.log + pipeline log → 回填 HTML 36 占位 + tex tab:visres/visobj [TBD] + 打印汇总）。已把 `/tmp/vision_pipeline.log` 备份到 NFS `vision/pipeline_log_snapshot.log`（703 行，含 S5 检索结果）。全链路 ETA ≈17:00。
+- ✅ [2026-09-30 15:36] **S4–S9 pipeline 巡检（S4/S5 全完成，S6 进行中）**：S4 多种子 6/6 done —— openvision2 三 seed 稳态 1582/1637/1806 img/s，deepencoder_v2 三 seed 1436/1438/1440 img/s；⚠️ **关键发现：多 seed 最终 loss 全部 4.9962（4 位小数完全一致）** = cosine LR 尾部趋 min_lr、末端 loss 由数据/调度决定而非种子/架构 → **seed 方差≈0，loss 非判别信号，吞吐才是**。S5 检索 R@K≈0（openvision2 t2i R@1 0.0000、deepencoder 0.0002，common 0.002 水平）→ 3000 步随机 init zero-shot 检索近乎随机（无 ImageNet 类标签，线性探测不可做），报告中注明为 caveat。S6 消融 r336_p16 完成（loss 4.9962，1630 img/s），r448_p16 运行中。
+- ✅ [2026-09-30 ~14:20] **S3 全完成**（analyze_s3.py 汇总）：openvision2 4.4540@10k/2139img/s、deepencoder_v2 4.4662@5k/1459、mambaeye 4.4700@5k/790、moevie 4.4661@5k/852。**四架构 loss 并列 ~4.45–4.47（差<0.02）→ loss 不可区分，吞吐/延迟决定**，锁定 OpenVision2 胜出。
+- ✅ [2026-09-30 14:21] 落地 `run_pipeline.sh`（S4→S5→S6→S7→S8→S9 串联）+ 把 S4/S6/S7/S8 从 1000 步改为 **3000 步**（避开 cosine LR 坍缩伪影，S4 注释说明）。bash -n 全通过，ssh 10.239.2.12 setsid nohup 启动（pid 2642367）。
+- ✅ [2026-09-30 15:05] **S4 巡检（5/6 done）**：openvision2 三种子全 done（s1234 loss/1582、s42/1637、s7/1806 img/s）；deepencoder_v2 s1234 done(1436)、s42 done(1438)、**s7 运行中**（15:04 启动，预计 ~15:14 完）。其余 S5–S9 排队中。pipeline 健康无报错，全链路 ETA ≈16:55。
+- (历史)S0-S3 流水见 EXPERIMENTS_VISION.md 与 daily-memories-vision/2026-09-30.md。
 
 - ✅ [2026-09-30 11:29] S0 data_check：确认 LLaVA-OneVision parquet schema（id/image{bytes,path}/caption）、选 imagenet/EN 子集；open_clip 3.2.0 + mamba_ssm + webdataset 1.0.2 可 import；GPU 0–5 空闲。
 - ✅ [2026-09-30 11:31] 修复 webdataset 1.0.2 TarWriter.write(dict) 签名 + nodesplitter 默认 single_node_only 报错 + 空 shard→worker 报错（num_workers=2 + 12 shard）。

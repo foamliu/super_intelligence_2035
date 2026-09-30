@@ -9,8 +9,8 @@ OUTROOT=/nas_train/app.e0031982/datasets/baize-vision/out
 for lr in 1e-3 3e-3 5e-3; do
     OUT="$OUTROOT/S8_ov2_lr${lr}"
     echo "===== S8 openvision2 lr=$lr ====="
-    bash run_train.sh openvision2 1000 "$OUT" --data "$DATA" --batch-size 32 \
-        --log-every 25 --lr "$lr" \
+    bash run_train.sh openvision2 3000 "$OUT" --data "$DATA" --batch-size 32 \
+        --log-every 50 --lr "$lr" \
         2>&1 | grep -vE 'warning|Warning|import pynvml|OMP_NUM_THREADS|\*\*\*\*|FutureWarning|warnings\.warn'
     echo "===== S8 ov2 lr=$lr done (exit ${PIPESTATUS[0]}) ====="
 done
