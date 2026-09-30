@@ -192,6 +192,10 @@ def main():
     if is_main:
         ckpt = os.path.join(args.output_dir, 'vision.pt')
         torch.save({'vision': model.module.visual.state_dict(),
+                    'text': model.module.text.state_dict(),
+                    'logit_scale': model.module.logit_scale.detach().cpu(),
+                    'logit_bias': (model.module.logit_bias.detach().cpu()
+                                   if model.module.logit_bias is not None else None),
                     'config': {'tower': args.tower, 'resolution': args.resolution,
                                'patch': args.patch, 'steps': args.steps, 'loss': args.loss}},
                    ckpt)
