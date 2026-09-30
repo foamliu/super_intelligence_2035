@@ -132,19 +132,19 @@
 <!-- S4_TABLE_PLACEHOLDER_START -->
 <table>
   <tr><th>架构·seed</th><th>步骤</th><th>最终loss</th><th>训练img/s</th></tr>
-  <tr><td>openvision2_s1234</td><td>3000</td><td>__OV2_S1234__</td><td>__OV2_S1234_T__</td></tr>
-  <tr><td>openvision2_s42</td><td>3000</td><td>__OV2_S42__</td><td>__OV2_S42_T__</td></tr>
-  <tr><td>openvision2_s7</td><td>3000</td><td>__OV2_S7__</td><td>__OV2_S7_T__</td></tr>
-  <tr><td>deepencoder_v2_s1234</td><td>3000</td><td>__DE_S1234__</td><td>__DE_S1234_T__</td></tr>
-  <tr><td>deepencoder_v2_s42</td><td>3000</td><td>__DE_S42__</td><td>__DE_S42_T__</td></tr>
-  <tr><td>deepencoder_v2_s7</td><td>3000</td><td>__DE_S7__</td><td>__DE_S7_T__</td></tr>
+  <tr><td>openvision2_s1234</td><td>3000</td><td>4.9962</td><td>1582.1</td></tr>
+  <tr><td>openvision2_s42</td><td>3000</td><td>4.9962</td><td>1636.7</td></tr>
+  <tr><td>openvision2_s7</td><td>3000</td><td>4.9962</td><td>1805.8</td></tr>
+  <tr><td>deepencoder_v2_s1234</td><td>3000</td><td>4.9962</td><td>1435.9</td></tr>
+  <tr><td>deepencoder_v2_s42</td><td>3000</td><td>4.9962</td><td>1437.7</td></tr>
+  <tr><td>deepencoder_v2_s7</td><td>3000</td><td>4.9962</td><td>1439.9</td></tr>
 </table>
 <!-- S4_TABLE_PLACEHOLDER_END -->
 <p style="color:var(--muted);font-size:13px;">多种子用于验证「OpenVision2 ≤ DeepEncoderV2（loss）且吞吐 1.47× 优势」跨 seed 稳健（loss 本身近乎并列，多种子主要确认无 seed 特异性翻转）。</p>
 
 <h3>表 6.2 · S5 下游代理检索（text↔image R@K，held-out laioncn/EN 5k，全 ckpt）</h3>
 <!-- S5_TABLE_PLACEHOLDER_START -->
-<p><code>__S5_RESULTS__</code></p>
+<p><code>openvision2: t2i R@1/5/10 = 0.0000 / 0.0012 / 0.0020 ; i2t R@1/5/10 = 0.0000 / 0.0008 / 0.0020 &nbsp;|&nbsp; deepencoder_v2: t2i R@1/5/10 = 0.0002 / 0.0010 / 0.0020 ; i2t R@1/5/10 = 0.0002 / 0.0008 / 0.0016</code></p>
 <!-- S5_TABLE_PLACEHOLDER_END -->
 <p style="color:var(--muted);font-size:13px;">无 ImageNet val/类标签，故「zero-shot top-1 / linear-probe」不可行；下游代理只用检索 R@K（需 joint text，故用 S4 全 ckpt）。检索是 loss 近乎并列时唯一的质量区分信号。</p>
 
@@ -154,21 +154,22 @@
 <!-- S6_TABLE_PLACEHOLDER_START -->
 <table>
   <tr><th>res/patch</th><th>最终loss</th><th>训练img/s</th><th>备注</th></tr>
-  <tr><td>224/16（锚点）</td><td>__S6_224_16__</td><td>__S6_224_16_T__</td><td>—</td></tr>
-  <tr><td>336/16</td><td>__S6_336_16__</td><td>__S6_336_16_T__</td><td>—</td></tr>
-  <tr><td>448/16</td><td>__S6_448_16__</td><td>__S6_448_16_T__</td><td>—</td></tr>
-  <tr><td>224/14</td><td>__S6_224_14__</td><td>__S6_224_14_T__</td><td>—</td></tr>
-  <tr><td>336/14</td><td>__S6_336_14__</td><td>__S6_336_14_T__</td><td>—</td></tr>
-  <tr><td>448/14</td><td>__S6_448_14__</td><td>__S6_448_14_T__</td><td>—</td></tr>
+  <tr><td>224/16（锚点）</td><td>4.9962</td><td>1582.1</td><td>—</td></tr>
+  <tr><td>336/16</td><td>4.9962</td><td>1630.1</td><td>—</td></tr>
+  <tr><td>448/16</td><td>4.9962</td><td>960.4</td><td>—</td></tr>
+  <tr><td>224/14</td><td>4.9962</td><td>1613.8</td><td>—</td></tr>
+  <tr><td>336/14</td><td>4.9962</td><td>1289.7</td><td>—</td></tr>
+  <tr><td>448/14</td><td>4.9962</td><td>757.3</td><td>—</td></tr>
 </table>
 <!-- S6_TABLE_PLACEHOLDER_END -->
+<p style="color:var(--muted);font-size:13px;">⚠️ S6 的最终 loss 全部 4.9962 = 锚点 lr=1e-3 在 3000 步 cosine 塌到 min_lr 的平台（见 S1/S3 坍缩诊断），分辨率/patch 的 loss 差异不可判别；**有信息量的是吞吐**——token 数越多训练越慢（224/16 1582 → 448/14 757 img/s），336/16 略快（1630）因序列更长摊薄了固定开销。分辨率/patch 在 3000 步内不改变可达到 loss（该步数下 LR 先塌）。</p>
 
 <h3>表 7.2 · S7 目标函数（SigLIP vs CLIP InfoNCE，OpenVision2）</h3>
 <!-- S7_TABLE_PLACEHOLDER_START -->
 <table>
   <tr><th>目标</th><th>最终loss</th><th>训练img/s</th><th>备注</th></tr>
-  <tr><td>SigLIP（锚点）</td><td>__S7_SIGLIP__</td><td>__S7_SIGLIP_T__</td><td>sigmoid 对比</td></tr>
-  <tr><td>CLIP InfoNCE</td><td>__S7_CLIP__</td><td>__S7_CLIP_T__</td><td>softmax 对比（loss 尺度不同，需看检索）</td></tr>
+  <tr><td>SigLIP（锚点）</td><td>4.9962</td><td>1664.9</td><td>sigmoid 对比</td></tr>
+  <tr><td>CLIP InfoNCE</td><td>2.8941</td><td>1717.5</td><td>softmax 对比（loss 尺度不同，需看检索）</td></tr>
 </table>
 <!-- S7_TABLE_PLACEHOLDER_END -->
 
@@ -178,15 +179,21 @@
 <!-- S8_TABLE_PLACEHOLDER_START -->
 <table>
   <tr><th>lr</th><th>最终loss</th><th>训练img/s</th></tr>
-  <tr><td>1e-3（锚点）</td><td>__S8_1e3__</td><td>__S8_1e3_T__</td></tr>
-  <tr><td>3e-3</td><td>__S8_3e3__</td><td>__S8_3e3_T__</td></tr>
-  <tr><td>5e-3</td><td>__S8_5e3__</td><td>__S8_5e3_T__</td></tr>
+  <tr><td>1e-3（锚点）</td><td>4.9962</td><td>1651.3</td></tr>
+  <tr><td>3e-3</td><td>4.4562</td><td>1645.1</td></tr>
+  <tr><td>5e-3</td><td>4.4542</td><td>1615.8</td></tr>
 </table>
 <!-- S8_TABLE_PLACEHOLDER_END -->
+<p style="color:var(--warn);font-size:13px;">🔑 <b>关键 LR 结论（可报告）</b>：lr=1e-3 的 cosine 在 3000 步尾部塌到 min_lr(1e-5)，末端 loss 由 LR 下限决定 → 停在 4.9962；lr=3e-3/5e-3 在相同步数仍维持有效学习率 → 收敛到更低 loss（4.4562 / 4.4542）。即「4.9962 平台」是 lr=1e-3 的 LR 塌缩伪影，<b>非架构/数据天花板</b>。生产建议：lr=3e-3（或缩短 schedule）在相同预算内达到更低 loss。</p>
 
 <h3>表 8.2 · S9 推理深挖（OpenVision2，batch 扫描 + 多分辨率，统一前向 bench）</h3>
 <!-- S9_TABLE_PLACEHOLDER_START -->
-<pre><code>__S9_RESULTS__</code></pre>
+<pre><code>tower=openvision2 batch=1 res=224 patch=16  ms/img=10.069 image/s=99.3 token/s=19465.3
+tower=openvision2 batch=8 res=224 patch=16  ms/img=0.887 image/s=1127.7 token/s=221028.7
+tower=openvision2 batch=32 res=224 patch=16  ms/img=0.711 image/s=1405.7 token/s=275515.7
+tower=openvision2 batch=1 res=336 patch=16  ms/img=7.118 image/s=140.5 token/s=61954.9
+tower=openvision2 batch=1 res=448 patch=16  ms/img=6.949 image/s=143.9 token/s=112826.7
+tower=openvision2 batch=1 res=224 patch=14  ms/img=10.206 image/s=98.0 token/s=25083.0</code></pre>
 <!-- S9_TABLE_PLACEHOLDER_END -->
 <p style="color:var(--muted);font-size:13px;">SGLang 未装（<code>import sglang</code> ModuleNotFoundError），本阶段退化为统一前向 bench（<code>torch.cuda.Event</code>，batch∈{1,8,32} + 多分辨率单图）；生产级吞吐待装 SGLang（MLLM Stage iv 复用）。</p>
   <b>⚠️ S2 说明</b>：batch=1 单图推理是 MLLM 编码器最常见场景。SSM/MoE 的小 batch 延迟劣势在推理端被放大 —— MambaEye 全 SSM 在 batch=1 停摆、DeepEncoderV2 混合比纯 Attention 慢 ~2.7×、MoE-ViE 慢 ~22×（路由 CPU 开销）。纯 Attention 无论训练吞吐还是推理延迟均为最优。

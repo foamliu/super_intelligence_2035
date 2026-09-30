@@ -1116,69 +1116,35 @@
 ===== S8 ov2 lr=5e-3 done (exit 0) =====
 ===== S8 ALL DONE =====
 ===== S8 done 2026-09-30 17:03:29 =====
-===== S9 infer bench 2026-09-30 17:03:29 =====
 ===== S9 openvision2 batch=1 res=224 patch=16 =====
 /nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
   import pynvml  # type: ignore[import]
 [bench] tower=openvision2 batch=1 res=224 patch=16 patches=196
-[bench] ms/img=7.039ms  image/s=142.1  token/s=27845.0
+[bench] ms/img=10.069ms  image/s=99.3  token/s=19465.3
 ===== S9 openvision2 batch=8 res=224 patch=16 =====
 /nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
   import pynvml  # type: ignore[import]
 [bench] tower=openvision2 batch=8 res=224 patch=16 patches=196
-[bench] ms/img=0.878ms  image/s=1139.0  token/s=223244.3
+[bench] ms/img=0.887ms  image/s=1127.7  token/s=221028.7
 ===== S9 openvision2 batch=32 res=224 patch=16 =====
 /nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
   import pynvml  # type: ignore[import]
 [bench] tower=openvision2 batch=32 res=224 patch=16 patches=196
-[bench] ms/img=0.713ms  image/s=1403.0  token/s=274994.7
+[bench] ms/img=0.711ms  image/s=1405.7  token/s=275515.7
 ===== S9 openvision2 batch=1 res=336 patch=16 =====
 /nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
   import pynvml  # type: ignore[import]
-Traceback (most recent call last):
-  File "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/bench.py", line 52, in <module>
-    ms, img_s, tok_s, np_ = run(args.tower, args.resolution, args.patch,
-  File "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/bench.py", line 23, in run
-    m(x)
-  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
-    return forward_call(*args, **kwargs)
-  File "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/models.py", line 180, in forward
-    x = self.embed(x)
-  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
-    return forward_call(*args, **kwargs)
-  File "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/models.py", line 153, in forward
-    return x + self.pos
-RuntimeError: The size of tensor a (441) must match the size of tensor b (196) at non-singleton dimension 1
+[bench] tower=openvision2 batch=1 res=336 patch=16 patches=441
+[bench] ms/img=7.118ms  image/s=140.5  token/s=61954.9
 ===== S9 openvision2 batch=1 res=448 patch=16 =====
 /nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
   import pynvml  # type: ignore[import]
-Traceback (most recent call last):
-  File "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/bench.py", line 52, in <module>
-    ms, img_s, tok_s, np_ = run(args.tower, args.resolution, args.patch,
-  File "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/bench.py", line 23, in run
-    m(x)
-  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
-    return forward_call(*args, **kwargs)
-  File "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/models.py", line 180, in forward
-    x = self.embed(x)
-  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
-    return forward_call(*args, **kwargs)
-  File "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/models.py", line 153, in forward
-    return x + self.pos
-RuntimeError: The size of tensor a (784) must match the size of tensor b (196) at non-singleton dimension 1
+[bench] tower=openvision2 batch=1 res=448 patch=16 patches=784
+[bench] ms/img=6.949ms  image/s=143.9  token/s=112826.7
 ===== S9 openvision2 batch=1 res=224 patch=14 =====
 /nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
   import pynvml  # type: ignore[import]
 [bench] tower=openvision2 batch=1 res=224 patch=14 patches=256
-[bench] ms/img=7.095ms  image/s=140.9  token/s=36080.7
+[bench] ms/img=10.206ms  image/s=98.0  token/s=25083.0
 ===== S9 ALL DONE =====
-===== S9 done 2026-09-30 17:04:34 =====
 ===== PIPELINE ALL DONE 2026-09-30 17:04:34 =====

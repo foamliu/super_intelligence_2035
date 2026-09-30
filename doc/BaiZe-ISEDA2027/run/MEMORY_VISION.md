@@ -1,23 +1,23 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | S4–S9 pipeline（后台 running：S4✅ S5✅ S6🔄(4/5 r448_p14) S7–S9排队，10.239.2.12 GPU0-5 pid2642367） |
-| WAITING | 1 |
+| PHASE | **converged**（S0–S9 全部完成，回填 HTML/tex 完成，待 commit+push） |
+| WAITING | 0 |
 | ERROR_COUNT | 0 |
-| BUDGET_USED | ~17 GPU·h墙钟（S0–S3 ~11 + S4 ~5.0 + S6 ~4/5消融；墙钟自11:29起 ~5h） |
-| 更新 | 2026-09-30 16:16 |
-| WINNER | OpenVision2（S3 长地平线 loss 4.4540@10k + 训练 2139/推理 153.7 img/s；四架构 loss 全 ~4.45–4.47 不可区分，吞吐/延迟决定） |
+| BUDGET_USED | ~17 GPU·h 墙钟（S0–S3 ~11 + S4 ~5 + S6/S7/S8 ~3；墙钟约 11:29–17:05 ≈ 5.6h，远低 24h 上限） |
+| 更新 | 2026-09-30 17:30 |
+| WINNER | OpenVision2（纯 Attention ViT 505M）——loss 四架构并列 ~4.45–4.47（不可区分），训练 2139 img/s / 推理 6.51ms 双最优 |
 
 ## 等待说明（WAITING=1）
 
 - 等待：S4–S9 全链路 pipeline（后台 `run_pipeline.sh`，pid 2642367，运行于 **10.239.2.12** GPU0-5，14:21:48 启动）。
 - ⚠️ 判结束看 **各阶段 `out/Sx_*/train.log` 的 `[done]`** 与 `/tmp/vision_pipeline.log`（10.239.2.12 本地）的 `[PIPELINE ALL DONE]`。
-- 【16:16 巡检快照】S4 全 done（6/6）、S5 全 done（R@K 已在 pipeline log）、S6 4/5 done（r336_p16/448_p16/224_p14/336_p14 ✅ → r448_p14🔄 step1700/3000，~756 img/s）。剩余 ETA：S6 剩 1 配置 ~5min → S7 ~14min → S8 ~21min → S9 ~5min ≈ **~45min，约 17:00 完工**。GPU0-5 100% util ~67.8GB 正常。
+- 【16:52 巡检快照】S4✅(6/6)、S5✅(R@K 已落盘 pipeline log)、S6✅(5/5)、S7✅(siglip 4.9962/clip 2.8941)、S8🔄（lr1e-3 ✅ 4.9962/1651 img/s → lr3e-3🔄 step2750/3000 loss4.4566 ≈1min 完 → lr5e-3 ~7min → S9 bench ~1min）。剩余 ETA ≈ **~10min，约 17:02 完工**。GPU0-5 100% util 正常。⚠️ 关键观测：S8 lr3e-3 最终 loss ~4.456（远低于 lr1e-3 的 4.9962）——lr=1e-3 在 3000 步 cosine 下仍会塌到 min_lr 平台，更高 LR 保持有效学习到更低 loss，这是**真实可报告的 LR 结论**。
 - ✅ **已备好回填脚本** `vision/finalize_backfill.py`（语法已校验，py_compile 通过）：读取 out/Sx_*/train.log + pipeline log，自动回填 HTML 36 个 `__XX__` 占位 + tex `tab:visres`/`tab:visobj` 的 `[TBD]`，并打印 S4–S9 汇总表。**pipeline 完工后**：从 10.239.2.12 跑 `cp /tmp/vision_pipeline.log vision/pipeline_log_snapshot.log && python vision/finalize_backfill.py`（或先 ssh 同步 log 再在任一点跑）→ git commit + push。
 - 结束后：WAITING 置 0，跑回填脚本 → 核对 HTML/tex 无残留占位 → 更新 EXPERIMENTS_VISION.md 顶部 → git commit + push。
 
@@ -34,13 +34,15 @@ S3 权重落盘 `out/S3_<tower>/vision.pt`（vision-only 旧格式）；S4+ 起 
 
 ## 下一步
 
-- **当前**：S4–S9 pipeline running（10.239.2.12 pid 2642367）。逐阶段判 `out/Sx_*/train.log` 的 `[done]` / pipeline log 的 `[PIPELINE ALL DONE]`。
-- **随后（pipeline 完工后，一口气做完）**：① WAITING=0；② ssh 10.239.2.12 同步 `/tmp/vision_pipeline.log` 到 `vision/pipeline_log_snapshot.log`；③ 跑 `python vision/finalize_backfill.py`（自动回填 HTML 36 占位 + tex [TBD]）；④ 核对 HTML/tex 无残留占位 + 数字合理；⑤ EXPERIMENTS_VISION.md 顶部写胜出结论+完整命令+对比表；⑥ git add（只提交 doc/ 的 md/html/sh/py/txt，不入库 checkpoint）+ commit + push。
+- ✅ **已完成（converged）**：pipeline `[PIPELINE ALL DONE]`、修复 S9 多分辨率 bench（pos-emb 重建）、回填 HTML（36 占位）+ tex（res/obj 表 + narrative 行81）、EXPERIMENTS_VISION.md 顶部写胜出结论+完整命令+对比表。
+- **即将**：git commit + push（只提交 doc/ 文本 md/html/sh/py/txt + tex，不入库 checkpoint/图像中间产物）。
 
 > 节点拓扑：本 agent 常驻 **10.239.2.29**（whag0pgpuap29，8 卡全被 `nemo_experiments` mamba2 占用）；本项目训练在 **10.239.2.12**（whag0pgpuap12）GPU0-5（空闲），用 `ssh 10.239.2.12 '...'` 提交。 代码/数据/权重均在 NFS `/nas_train`，两节点共享。
 
 ## 操作流水
 
+- ✅ [2026-09-30 17:30] **converged（收尾完成）**：pipeline `[PIPELINE ALL DONE 17:04:34]`。S8 LR 扫描结论落盘：lr1e-3=4.9962（LR 塌缩）、lr3e-3=4.4562、lr5e-3=4.4542（更高 LR 保持有效学习→更低 loss）。发现并修复 `bench.py` S9 多分辨率 bug（`get_vision_tower` 默认 224/16 的 pos-emb 固定 196 patch，336/16=441、448/16=784 直接崩，224/14 误报 256 实为 196）—— 加 `embed=PatchEmbed(resolution,patch,…)` 重建（对齐 train.py），重跑 S9 全 6 配置（batch 1/8/32 + 多分辨率）落盘 `vision/s9_fix.log`。构建 `pipeline_log_final.log`（S8 前 + 修复后 S9 + done 标记）→ 跑 `finalize_backfill.py` 回填 HTML 36 占位 + tex tab:visres/tab:visobj 全部 [TBD] + 手工修 tex 行81 narrative。HTML 补 S6/S8 的「4.9962 = lr1e-3 LR 塌缩伪影」注释。EXPERIMENTS_VISION.md 顶部写 S4–S9 对比表 + converged 结论 + 完整命令。
+- ✅ [2026-09-30 16:52] **pipeline 巡检（S8 进行中）+ 核对回填脚本落地**：S4/S5/S6/S7 全 done，S8 lr3e-3 step2750/3000、lr5e-3/S9 排队。核 `finalize_backfill.py` 的 36 个 HTML 占位 + tex 6 行 res/5 行 obj 的 `[TBD]` 与脚本 repl 键完全对齐（bench.py/eval_downstream.py 输出格式与脚本 regex 匹配）；确认 git root=`super_intelligence_2035` branch=main remote=`github.com/foamliu/super_intelligence_2035.git`。tex 第 81 行 narrative `[TBD]` 需手动回填（脚本不覆盖该处）。pipeline 完工后：ssh 同步 `/tmp/vision_pipeline.log`→NFS → `python vision/finalize_backfill.py` → 修 tex 行81 → EXPERIMENTS_VISION.md 顶部写结论+命令 → commit+push。
 - ✅ [2026-09-30 16:16] **pipeline 巡检 + 备好回填脚本**：S6 4/5 done（r336_p16/448_p16/224_p14/336_p14 ✅，r448_p14🔄 step1700/3000 ~756 img/s）；S7/S8/S9 排队。syntax 校验通过并落地 `vision/finalize_backfill.py`（读 out/*/train.log + pipeline log → 回填 HTML 36 占位 + tex tab:visres/visobj [TBD] + 打印汇总）。已把 `/tmp/vision_pipeline.log` 备份到 NFS `vision/pipeline_log_snapshot.log`（703 行，含 S5 检索结果）。全链路 ETA ≈17:00。
 - ✅ [2026-09-30 15:36] **S4–S9 pipeline 巡检（S4/S5 全完成，S6 进行中）**：S4 多种子 6/6 done —— openvision2 三 seed 稳态 1582/1637/1806 img/s，deepencoder_v2 三 seed 1436/1438/1440 img/s；⚠️ **关键发现：多 seed 最终 loss 全部 4.9962（4 位小数完全一致）** = cosine LR 尾部趋 min_lr、末端 loss 由数据/调度决定而非种子/架构 → **seed 方差≈0，loss 非判别信号，吞吐才是**。S5 检索 R@K≈0（openvision2 t2i R@1 0.0000、deepencoder 0.0002，common 0.002 水平）→ 3000 步随机 init zero-shot 检索近乎随机（无 ImageNet 类标签，线性探测不可做），报告中注明为 caveat。S6 消融 r336_p16 完成（loss 4.9962，1630 img/s），r448_p16 运行中。
 - ✅ [2026-09-30 ~14:20] **S3 全完成**（analyze_s3.py 汇总）：openvision2 4.4540@10k/2139img/s、deepencoder_v2 4.4662@5k/1459、mambaeye 4.4700@5k/790、moevie 4.4661@5k/852。**四架构 loss 并列 ~4.45–4.47（差<0.02）→ loss 不可区分，吞吐/延迟决定**，锁定 OpenVision2 胜出。

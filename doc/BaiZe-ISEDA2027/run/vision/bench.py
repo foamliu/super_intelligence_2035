@@ -12,6 +12,12 @@ import models
 def run(tower, resolution, patch, batch, iters, warmup):
     m = models.get_vision_tower(tower)
     m.image_size = resolution
+    m.patch_size = patch
+    # Rebuild the patch embed for the requested resolution/patch (mirrors train.py),
+    # otherwise the learned positional embedding (sized for 224/16 = 196 patches)
+    # mismatches the patch grid and crashes for multi-resolution inference.
+    if resolution != 224 or patch != 16:
+        m.embed = models.PatchEmbed(resolution, patch, m.embed.conv.out_channels)
     gridside = resolution // patch
     n_patches = gridside * gridside
     m = m.cuda().eval()

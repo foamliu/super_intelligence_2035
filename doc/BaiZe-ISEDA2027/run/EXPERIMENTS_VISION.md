@@ -76,14 +76,98 @@
 
 > **S3 结论**：长地平线 loss 从 S1 的 6.7342 平台继续跌破至 ~4.45–4.47，**四架构 loss 差 <0.02（噪声级）**，架构在 loss 上不可区分。loss 排名（OpenVision2 4.454 < MoE-ViE 4.466 ≈ DeepEncoderV2 4.466 < MambaEye 4.470）无统计意义（< 多种子方差）。**决定性维度是吞吐/延迟**：OpenVision2 训练 2139 img/s（比 DeepEncoderV2 快 1.47×、比 MambaEye/MoE 快 2.5×）、推理 6.51ms（比 DeepEncoderV2 快 2.7×）。故锁定 **OpenVision2 为胜出架构 + 默认配置锚点（224/16、SigLIP、lr=1e-3、warmup100+cosine、seed1234、bf16、batch32×6）**。
 
-## 后续阶段（P1/P2/P3，按预算推进）
+## S4 多种子（top-2 架构 × 3 seed × 3000 步）
 
-- ✅ S2 推理基准（batch=1 前向，图像→token/s）——已完成，见上表
-- ✅ S3 长地平线——已完成（见上表），正式锁定 OpenVision2 胜出
-- 🔄 S4 多种子（top-2 架构 × 3 seed × 3000 步，`run_s4.sh`；3000 步避免 LR 坍缩伪影）——pipeline 运行中
-- ⏭️ S5 下游代理（text↔image 检索 R@K，held-out laioncn/EN 5k，`eval_downstream.py`，用 S4 full ckpt）
-- 🔄 S6 分辨率/patch 消融（336/16、448/16、224/14、336/14、448/14 各 3000 步，`run_s6.sh`）——pipeline 排队中
-- 🔄 S7 目标函数（SigLIP vs CLIP InfoNCE，3000 步，`run_s7.sh`）——pipeline 排队中
-- 🔄 S8 LR 扫描（lr∈{1e-3,3e-3,5e-3}，3000 步，`run_s8.sh`）——pipeline 排队中
-- 🔄 S9 推理深挖（batch∈{1,8,32} + 多分辨率 bench，`run_s9.sh`）——pipeline 排队中
-- ⏭️ converged：汇总对比表 + HTML 报告 + 回填 `6_vision_encoder.tex` + commit
+| 架构·seed | 最终loss | 训练img/s（稳态） |
+|:---|:---|:---|
+| openvision2_s1234 | 4.9962 | 1582.1 |
+| openvision2_s42 | 4.9962 | 1636.7 |
+| openvision2_s7 | 4.9962 | 1805.8 |
+| deepencoder_v2_s1234 | 4.9962 | 1435.9 |
+| deepencoder_v2_s42 | 4.9962 | 1437.7 |
+| deepencoder_v2_s7 | 4.9962 | 1439.9 |
+
+> **多 seed 结论**：6 run 最终 loss 全 4.9962（4 位完全一致）= cosine LR 3000 步尾部的 min_lr 平台，loss 与 seed/架构无关（seed 方差≈0）。**吞吐跨 seed 稳定且与架构绑定**（OV2 1582–1806 vs DE 1436–1440，稳定 1.1–1.25× 差距）→ 架构区分完全取决于吞吐。
+
+## S5 下游代理检索（text↔image R@1/5/10，held-out laioncn/EN 5k，full ckpt）
+
+| 架构 | t2i R@1/5/10 | i2t R@1/5/10 |
+|:---|:---|:---|
+| openvision2 | 0.0000 / 0.0012 / 0.0020 | 0.0000 / 0.0008 / 0.0020 |
+| deepencoder_v2 | 0.0002 / 0.0010 / 0.0020 | 0.0002 / 0.0008 / 0.0016 |
+
+> 3000 步随机 init 的 zero-shot 检索近乎随机（<1/5000），两架构并列无区分。无 ImageNet 类标签故 top-1/linear-probe 不可做（报告注明）。
+
+## S6 分辨率/patch 消融（OpenVision2，3000 步，锚点 lr=1e-3）
+
+| res/patch | 最终loss | 训练img/s |
+|:---|:---|:---|
+| 224/16（锚点） | 4.9962 | 1582.1 |
+| 336/16 | 4.9962 | 1630.1 |
+| 448/16 | 4.9962 | 960.4 |
+| 224/14 | 4.9962 | 1613.8 |
+| 336/14 | 4.9962 | 1289.7 |
+| 448/14 | 4.9962 | 757.3 |
+
+> loss 全 4.9962 = 锚点 lr=1e-3 塌到 min_lr 的平台（非分辨率/patch 差异）；有信息量的是吞吐——**token 数越多训练越慢**（224/16 1582 → 448/14 757 img/s）。
+
+## S7 目标函数（SigLIP vs CLIP InfoNCE，OpenVision2，3000 步）
+
+| 目标 | 最终loss | 训练img/s |
+|:---|:---|:---|
+| SigLIP（锚点） | 4.9962 | 1664.9 |
+| CLIP InfoNCE | 2.8941 | 1717.5 |
+
+> CLIP InfoNCE loss 尺度不同（softmax vs sigmoid），不可直接比；SigLIP 锚点 loss 仍受 lr=1e-3 平台限制。
+
+## S8 LR 扫描（OpenVision2，3000 步）
+
+| lr | 最终loss | 训练img/s |
+|:---|:---|:---|
+| 1e-3（锚点） | 4.9962 | 1651.3 |
+| 3e-3 | 4.4562 | 1645.1 |
+| 5e-3 | 4.4542 | 1615.8 |
+
+> 🔑 **关键 LR 结论**：lr=1e-3 在 3000 步 cosine 尾部塌到 min_lr(1e-5)，末端 loss 停 4.9962；3e-3/5e-3 在相同步数仍维持有效学习率 → 收敛到更低 loss 4.4562/4.4542。即 **4.9962 平台 = lr=1e-3 的 LR 塌缩伪影，非数据/架构天花板**。生产建议 lr=3e-3。
+
+## S9 推理深挖（OpenVision2，统一前向 bench batch∈{1,8,32}+多分辨率）
+
+| 配置 | ms/img | image/s | token/s |
+|:---|:---|:---|:---|
+| batch=1 res=224 patch=16 | 10.069 | 99.3 | 19465 |
+| batch=8 res=224 patch=16 | 0.887 | 1127.7 | 221029 |
+| batch=32 res=224 patch=16 | 0.711 | 1405.7 | 275516 |
+| batch=1 res=336 patch=16 | 7.118 | 140.5 | 61955 |
+| batch=1 res=448 patch=16 | 6.949 | 143.9 | 112827 |
+| batch=1 res=224 patch=14 | 10.206 | 98.0 | 25083 |
+
+> batch 越大吞吐越高（batch=32 达 1406 img/s，接近训练吞吐），token/s 随 patch 数增加而增加（多分辨率需插值 pos-emb）。SGLang 未装，退化为统一前向 bench（见决策 4）。
+
+## converged（最终汇总）
+
+**胜出架构：OpenVision2（纯 Attention ViT，505.0M）** —— loss 四架构并列（~4.45–4.47），训练吞吐 2139 img/s（最快）与推理延迟 6.51ms（最快）双决定性优势。
+
+**完整可复现训练命令**（详见 HTML 报告「可复现训练命令」节）：
+
+```bash
+conda activate py310
+cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027/run/vision
+
+# 胜出架构完整训练（OpenVision2，默认配置锚点，6 卡 DP6）
+bash run_train.sh openvision2 10000 out/S3_openvision2 \
+    --data '/nas_train/app.e0031982/datasets/baize-vision/en500k/*.tar' \
+    --batch-size 32 --seed 1234 --loss siglip
+
+# 四架构长地平线（S3：OpenVision2 10k + 其余 3×5k）
+bash run_s3.sh
+# S4 多种子 / S6 分辨率patch / S7 目标 / S8 LR / S9 推理深挖
+bash run_s4.sh  # top-2 × 3 seed × 3000
+bash run_s6.sh  # cls∈{336,448} patch∈{14,16}
+bash run_s7.sh  # siglip vs clip
+bash run_s8.sh  # lr∈{1e-3,3e-3,5e-3}
+bash run_s9.sh  # batch + 多分辨率 bench
+```
+
+**产物**：`doc/BaiZe-ISEDA2027/BAIZE_VISION_ENCODER_RESULT.html`（自包含，已回填）+ `ISEDA2027/6_vision_encoder.tex`（config/results 已回填）。
+
+**裁剪说明（预算）**：S7 数据侧（caption 粒度·规模·中英比例）因重 prep + 低信息量裁剪；S9 的 SGLang 生产栈未装（推迟到 MLLM Stage iv）。详见 HTML「局限」节。

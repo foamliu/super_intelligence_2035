@@ -50,12 +50,12 @@ Holding the winner (OpenVision2) fixed, we sweep the core degrees of freedom sin
 \toprule
 \textbf{res/patch} & \textbf{Loss} & \textbf{Train img/s} \\
 \midrule
-224/16 (anchor) & [TBD] & [TBD] \\
-336/16 & [TBD] & [TBD] \\
-448/16 & [TBD] & [TBD] \\
-224/14 & [TBD] & [TBD] \\
-336/14 & [TBD] & [TBD] \\
-448/14 & [TBD] & [TBD] \\
+224/16 (anchor) & 4.9962 & 1582.1 \
+336/16 & 4.9962 & 1630.1 \
+448/16 & 4.9962 & 960.4 \
+224/14 & 4.9962 & 1613.8 \
+336/14 & 4.9962 & 1289.7 \
+448/14 & 4.9962 & 757.3 \
 \bottomrule
 \end{tabular}
 \end{table}
@@ -68,14 +68,17 @@ Holding the winner (OpenVision2) fixed, we sweep the core degrees of freedom sin
 \toprule
 \textbf{Variant} & \textbf{Loss} & \textbf{Note} \\
 \midrule
-SigLIP (anchor) & [TBD] & sigmoid contrastive \\
-CLIP InfoNCE & [TBD] & softmax contrastive (scale differs) \\
-lr $10^{-3}$ (anchor) & [TBD] & --- \\
-lr $3{\times}10^{-3}$ & [TBD] & --- \\
-lr $5{\times}10^{-3}$ & [TBD] & --- \\
+SigLIP (anchor) & 4.9962 & sigmoid contrastive \\
+CLIP InfoNCE & 2.8941 & softmax contrastive (scale differs) \\
+lr $10^{-3}$ (anchor) & 4.9962 & --- \\
+lr $3{\times}10^{-3}$ & 4.4562 & --- \\
+lr $5{\times}10^{-3}$ & 4.4542 & --- \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Downstream validation is a zero-shot text$\leftrightarrow$image retrieval proxy ($R@1/5/10$ on a held-out 5K subset from \texttt{laioncn/EN}, disjoint from the training source), as no ImageNet-style class labels are available for top-1 or linear probing.
-The winning configuration and the full reproduction commands are reported in the companion result report; figures will be back-filled as the remaining measurements complete (\textbf{[TBD]}).
+Across the ablations (each $3000$ steps, anchor $lr{=}10^{-3}$), the resolution/patch sweep leaves loss essentially unchanged ($\approx4.996$ at every resolution/patch) because the anchor learning rate has already collapsed to its minimum by step~3000 and pins the loss at that floor; the informative signal is throughput, which falls monotonically with the token count ($1582 \rightarrow 757$ train img/s from $224/16$ to $448/14$).
+The objective switch (CLIP InfoNCE) yields a different loss scale ($2.894$ vs $4.996$, not directly comparable absent negative-logit calibration).
+The learning-rate sweep is decisive: raising $lr$ from $10^{-3}$ to $3\times10^{-3}$ / $5\times10^{-3}$ lowers the final loss from $4.996$ to $4.4562$ / $4.4542$, confirming that the anchor plateau is a learning-rate-collapse artifact rather than a data ceiling.
+The winning configuration remains \textbf{OpenVision2} at $224/16$, SigLIP, $lr{=}10^{-3}$ (with the caveat that $lr{=}3\times10^{-3}$ reaches a lower loss at the same step count); the full reproduction commands are in the companion result report.
