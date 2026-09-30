@@ -12,7 +12,7 @@ We present BaiZe, a 1.04B-parameter decoder-only model built from scratch on $\s
 Three design pillars organise our work:
 
 \begin{itemize}
-\item \textbf{Architecture.} A deep-and-thin Llama-style skeleton (24 layers, 16 attention heads, grouped-query attention with 2 KV heads, untied embeddings) inherited from the MiniCPM5-1B configuration, chosen after verifying that no comparable 1B variant exists for hybrid (attention+SSM) or Nemotron-style alternatives in the Megatron-Core model zoo.
+\item \textbf{Architecture.} A deep-and-thin Llama-style skeleton (24 layers, 16 attention heads, grouped-query attention with 2 KV heads, untied embeddings) inherited from the MiniCPM5-1B configuration. We justify this choice empirically rather than by availability alone: a matched 2B-scale from-scratch comparison shows that a Mamba2-hybrid (attention+SSM) backbone wins on loss and inference speed but trails on training throughput, confirming the dense GQA design as the right budget-constrained 1B agentic backbone today while charting the family's evolution toward hybrid architectures at 2B.
 
 \item \textbf{Hyper-parameter transfer.} We train under maximal-update parameterization ($\mu$P)~\cite{yang2022tensor}, so that hyper-parameters discovered in short, cheap sweeps transfer to the full model without re-tuning at scale.
 

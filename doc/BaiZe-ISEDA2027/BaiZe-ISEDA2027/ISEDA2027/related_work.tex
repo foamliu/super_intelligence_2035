@@ -11,6 +11,11 @@ $\mu$P~\cite{yang2022tensor,yang2023tensor} preserves training dynamics across m
 This is especially valuable for budget-bounded builders, because it converts expensive full-scale sweeps into cheap small-scale ones.
 Practical $\mu$P integration with modern transformer training stacks---particularly Megatron-style implementations---remains an active engineering concern that we address directly.
 
+\subsection{Hybrid and State-Space Architectures}
+State-space models (SSMs) such as Mamba~\cite{gu2023mamba} and Mamba-2~\cite{dao2024transformers} replace full attention with a recurrent scan update, offering linear-time decoding that suits inference-bound deployments.
+Hybrid designs interleave a small number of attention layers among SSM/MLP layers---notably Nemotron-H~\cite{nvidia2025nemotronh} and Hymba~\cite{dong2024hymba}---to recover long-range context while retaining fast decode.
+Released Megatron-Core variants of these families are scarce below 2B, leaving their small-scale trade-offs under-documented; our controlled 2B comparison (Section~\ref{sec:arch-rationale}) addresses precisely this gap.
+
 \subsection{Efficient Training and WSD Schedules}
 Warmup--Stable--Decay (WSD) schedules~\cite{minicpm2024} decouple long, constant-rate stable training from a short annealing phase, offering a predictable knob for late-stage adaptation.
 Recent work combines WSD with domain-weighted decay-time data mixing and, in some systems, optimizer switching during decay~\cite{jordan2024muon}.

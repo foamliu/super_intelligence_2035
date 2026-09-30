@@ -1,7 +1,7 @@
 \section{Methodology}\label{sec:method}
 
 BaiZe is a decoder-only (Llama-style) model built and trained from scratch with the Megatron-SWIFT framework (v4.5.3) on top of Megatron-Core.
-This section details (i) the architecture, (ii) the training framework and $\mu$P transfer, (iii) the WSD schedule, and (iv) the budget-constrained search protocol.
+This section details (i) the architecture and its selection rationale, (ii) the training framework and $\mu$P transfer, (iii) the WSD schedule, and (iv) the budget-constrained search protocol.
 
 \subsection{Model Architecture}\label{sec:arch}
 BaiZe follows the MiniCPM5-1B configuration: a deep-and-thin decoder-only transformer with Pre-RMSNorm and SwiGLU activations.
@@ -33,6 +33,12 @@ Parameters & $\approx$1.04B \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{Architecture Selection Rationale}\label{sec:arch-rationale}
+The architecture is chosen on three grounds.
+\textbf{(i) A proven 1B skeleton.} At the 1B scale, the deep-and-thin GQA design is a mature, throughput-optimised configuration with stable training dynamics (Sections~\ref{sec:search}--\ref{sec:arch2b}); Megatron-Core ships no released 1B hybrid (attention+SSM) or Nemotron-style variant, making it the only instantly executable 1B architecture under our framework.
+\textbf{(ii) Controlled 2B evidence.} Rather than rely on availability alone, we ran a matched from-scratch comparison at 2B between MiniCPM5-2B (dense) and a Nemotron-H-style hybrid, Mamba2-hybrid (56 layers interleaving 4 attention layers with SSM/MLP)~\cite{dao2024transformers,nvidia2025nemotronh}. Both models were trained for 1000 steps at sequence length 4096 with identical data, seed, and a 6-GPU (TP1/DP6) footprint. The hybrid reaches a \emph{lower} final loss (4.6846 vs.\ 4.8065) with \emph{fewer} parameters (2.220B vs.\ 2.512B, $-11.6\%$) and faster inference (prefill $+10.5\%$, decode $\times10.3$), at a $\sim$24\% training-throughput cost (Table~\ref{tab:arch2b}).
+\textbf{(iii) A selection map.} Together these results define the architecture roadmap: the dense GQA design remains the right backbone for the budget-constrained 1B agent built here, because it maximises training throughput and has no 1B hybrid counterpart; Mamba2-hybrid is the preferred candidate when scaling the family to 2B, where inference---especially decode---efficiency dominates total cost.
 
 \subsection{Training Framework and $\mu$P Transfer}\label{sec:framework}
 We train with the Megatron-SWIFT pre-training entry point (\texttt{megatron pt}) using the \texttt{llama}/\texttt{minicpm5} model bridge.
