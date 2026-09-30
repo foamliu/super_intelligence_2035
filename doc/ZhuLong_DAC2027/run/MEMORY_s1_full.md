@@ -15,7 +15,7 @@
 
 | 臂 | 轮次 | 状态 |
 |:---|---:|:---:|
-| omega_low | 3-5/5 | 🔄 r3 运行中 (batch 2026_0930_012235)，r1=81.6% + r2=82.3% ✅ |
+| omega_low | 2/5 ✅ + r3 进行中 | 🔁 r3 重跑中（新 batch 2026_0930_090126，PID 3363610），r1=81.6% + r2=82.3% ✅ |
 | readback_binary | 1-5/5 | ⬜ |
 | readback_none | 1-5/5 | ⬜ |
 
@@ -95,14 +95,12 @@
 
 - [2026-09-30 07:39] [running] ✅ omega_low r3 仍在跑（步骤 A 不推进）：`date +%F_%T`=2026-09-30_07:39:13；`pgrep -f '^bash scripts/run_cline_script'` → PID 1399896（Ss，ELAPSED 06:16:44）存活（编排进程）；子进程 run_eval.py 2120799（PPid=1399896，ELAPSED 03:31:05，阶段3 外部执行，run_on_sandbox shard_0/1/3 各 1 worker 存活，shard_2 已完）。execution_results 进度：shard_0=26、shard_1=26、shard_2=37、shard_3=26（合计 115/148 条结果，较上轮 +12）。log=/tmp/ABL_omega_low_r3.log（222149 行，04:08 后未更新，正常：输出已转 EDA-Eval-Framework/output_evaluation/tmp）。本轮未结束，不推进/不打分/不重复启动。CONFIG=omega_low、ROUND=3、PHASE=running、ERROR_COUNT=2 保持。退出等待下轮唤醒。
 - [2026-09-30 08:10] [running] ✅ omega_low r3 仍在跑（步骤 A 不推进）：`date +%F_%T`=2026-09-30_08:10:44；`pgrep -f '^bash scripts/run_cline_script'` → PID 1399896（Ss，ELAPSED 06:48:18）存活（编排进程）；子进程 run_eval.py 2120799（PPid=1399896，ELAPSED 04:02:39，阶段3 外部执行）。execution_results 进度：shard_0=30、shard_1=30、shard_2=37、shard_3=30（合计 127/148 条结果，较上轮 +12）。tmp 下 shard_0/1/3 最新写入 08:03（仍在推进），shard_2 04:16 已完。log=/tmp/ABL_omega_low_r3.log（24MB，04:08 后未更新，正常：输出已转 EDA-Eval-Framework/output_evaluation/tmp）。本轮未结束，不推进/不打分/不重复启动。CONFIG=omega_low、ROUND=3、PHASE=running、ERROR_COUNT=2 保持。退出等待下轮唤醒。
+- [2026-09-30 08:25] [人工介入] 🚫 omega_low r3（batch 2026_0930_012235）已人工终止并作废：因 /home 磁盘 100% 满导致 sandbox 大面积 150s 超时、单轮拖至 6.8 小时仅执行 127/148。已停止全部评测进程（conductor/loop/run_cline_script/run_eval/run_on_sandbox），并删除 r3 半成品产物（batch 目录 243M、code_generation/completed_code_generation_2026_0930_012235.jsonl、/tmp/ABL_omega_low_r3.log、EVAL_FW 下 generated_solutions*/output_evaluation/tmp 中间产物）。本轮未出分、成绩不记录（作废不计入 ERROR_COUNT，非打分失败）。r1=81.6%、r2=82.3% 保持不变。CONFIG=omega_low、ROUND=3、PHASE=running、ERROR_COUNT=2 保持。重启后从 r3 重新跑。
+
+- [2026-09-30 09:01] [running] 🔁 重新启动 omega_low r3（全新 batch `2026_0930_090126`）：`pgrep -f '^bash scripts/run_cline_script'` 无残留（作废 batch 已彻底清干净）。磁盘 `/home` 已从 4.3G 恢复至 11G 可用（98%，人工介入清理生效，容量风险缓解）。.env 复核通过：`EDA_OMEGA_FIDELITY=low`(L263) / `EDA_RUNCODE_READBACK=full`(L264) / `EDA_PHI_BUDGET=0`(L259) / `EDA_PHI_LAGGED=0`(L260) / `EDA_MCP_TOOLS_DISABLED`(L226) 均正确；MCP 主进程 PID 3277223 存活、app.log 正常响应（09:00 ListToolsRequest）。启动命令（绝对 PYTHON + 显式 EVAL_FW_DIR）执行成功，新编排进程 bash PID 3363610（run_cline_script.sh -p 8 -n）在跑；log=/tmp/ABL_omega_low_r3.log 已进入 Step 2 格式化（全量 158 题 / 8 worker）。CONFIG=omega_low、ROUND=3、PHASE=running、ERROR_COUNT=2 保持。启动后 `pgrep` 确认在跑，本轮一步完成，退出等待下轮唤醒。
+
 ## 下一唤醒动作
 
-🔎 omega_low r3 运行中（batch 2026_0930_012235，log=/tmp/ABL_omega_low_r3.log）。下一唤醒直接执行步骤 A：
-1. `pgrep -f '^bash scripts/run_cline_script'` 有输出 → 本轮仍在跑，**什么都不做退出**（切勿重复启动）。
-2. 无输出 → 本轮结束：`grep -E 'pass \([0-9]|评估结果汇总|PASS_RATE' /tmp/ABL_omega_low_r3.log | tail -5` 打分。
-   - 有 `pass (xx.x%)` → 记录 omega_low r3 成绩 → ROUND 3→4 → 启动 r4（绝对 PYTHON + EVAL_FW_DIR，命令同上，仅换 log 名 `ABL_omega_low_r4.log`）。
-   - 无 → 先复用产物用绝对 PYTHON 独立重评一次（参照 r1/r2 修复路径）；仍无 → ❌ EVAL_FAILED，ERROR_COUNT 2→3（≥3 强制推进）。
-
-> ✅ 沙箱已复通（2026-09-30 04:15 起），r3 正在阶段3 sandbox 执行，按上述步骤 A 正常推进即可。若再遇短暂阻断 → 记流水并退出等待自动复通，**切勿重复启动 r3**。
-
-> ⚠️ 磁盘风险：/home 卷约 99% 满（共享多用户）。红线：agent 不擅自删数据，若再因磁盘失败须人工介入。
+✅ 按步骤 A 正常检查 omega_low r3（新 batch `2026_0930_090126`）：
+- `pgrep -f '^bash scripts/run_cline_script'` 有输出 → 仍在跑，什么都不做，退出。
+- 无输出 → 打分：`grep -E 'pass \(|评估结果汇总|PASS_RATE' /tmp/ABL_omega_low_r3.log | tail -5`，以 `pass (xx.x%)` 记 Pass@1 → ROUND 3→4，启动 r4（分数失败按 ERROR_COUNT 逻辑处理）。

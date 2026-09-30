@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eda_fastmcp 提交准备报告（S1 保真度 + S2 Φ 轴消融）</title>
+<style>
+  :root { --fg:#1a1a1a; --muted:#5a6270; --line:#e3e6eb; --accent:#0b57d0; --soft:#f6f8fa; --warn:#b23b07; --ok:#1a7f37; --danger:#d1242f; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",Roboto,sans-serif; color:var(--fg); line-height:1.62; }
+  .wrap { max-width: 1040px; margin:0 auto; padding:40px 28px 80px; }
+  h1 { font-size:1.45rem; line-height:1.35; margin:0 0 6px; }
+  .meta { color:var(--muted); font-size:.85rem; margin-bottom:26px; }
+  h2 { font-size:1.14rem; margin:32px 0 12px; padding-bottom:6px; border-bottom:2px solid var(--line); }
+  h3 { font-size:.98rem; margin:18px 0 8px; }
+  p, li { font-size:.92rem; }
+  code { font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace; font-size:.82rem; background:var(--soft); padding:1px 5px; border-radius:4px; }
+  pre { background:#0f172a;color:#e2e8f0;padding:12px 14px;border-radius:8px;font-size:.82rem;line-height:1.7;overflow-x:auto; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:.86rem; }
+  th, td { border:1px solid var(--line); padding:7px 9px; text-align:left; vertical-align:top; }
+  th { background:var(--soft); font-weight:600; white-space:nowrap; }
+  .num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .tag { display:inline-block; font-size:.7rem; font-weight:600; padding:1px 8px; border-radius:999px; margin-right:4px; white-space:nowrap; }
+  .tag.ok { background:#e7f5ec; color:var(--ok); }
+  .tag.warn { background:#fdeceb; color:var(--warn); }
+  .tag.danger { background:#fde3e5; color:var(--danger); }
+  .tag.accent { background:#e8f0fe; color:var(--accent); }
+  .tag.pend { background:#eef0f3; color:#5a6270; }
+  .callout { border-left:4px solid var(--accent); background:var(--soft); padding:10px 14px; border-radius:0 6px 6px 0; margin:14px 0; }
+  .callout.warn { border-left-color:var(--warn); background:#fdf3ee; }
+  .callout.danger { border-left-color:var(--danger); background:#fdf0f1; }
+  .callout.ok { border-left-color:var(--ok); background:#eef7f1; }
+  .mod { background:var(--soft); border:1px solid var(--line); border-radius:8px; padding:12px 16px; margin:12px 0; }
+  .mod h3 { margin-top:0; }
+  .mod code.file { color:var(--accent); font-weight:600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>eda_fastmcp 提交准备报告</h1>
+<div class="meta">
+  仓库: <code>eda_fastmcp</code>&nbsp;|&nbsp; 分支: <code>master</code>（与 <code>origin/master</code> 同步）&nbsp;|&nbsp; 报告时刻: 2026-09-30<br>
+  工作区改动: <b>6 个已跟踪文件</b>（<span class="num">+396 / −9</span>）+ <b>13 个未跟踪条目</b>（含 3 个新脚本）<br>
+  最近基线: <code>5bdf4e87</code> &nbsp;refactor: 防泄题 hook 升级为白名单 + workspace 沙箱
+</div>
+
+<div class="callout">
+  <strong>一句话：</strong>本次改动是假期消融实验（S1 保真度轴 + S2 Φ 轴）的核心实现——
+  通过 <code>.env</code> 开关在<b>工具边界</b>降低「检索文档保真度」「run_code 回读保真度」「run_code 预算上限」「回读滞后」，
+  并配套臂切换脚本、Φ 轴 trace 元数据采集与「预算耗尽」钩子，全程<b>不改动 agent 主体行为、不中断 trace</b>。
+</div>
+
+<h2>⚠️ 提交前必读（高危项，务必先处理）</h2>
+<table>
+  <tr><th style="width:200px">项</th><th>风险</th><th>处置</th></tr>
+  <tr>
+    <td><span class="tag danger">🔴 venv/ 未被 ignore</span></td>
+    <td><code>.gitignore</code> 只有 <code>.venv</code>，<b>没有 <code>venv/</code></b>。<code>git add .</code> 会把整个 Python 虚拟环境（数千文件、数百 MB）误提交进仓库。</td>
+    <td><span class="tag ok">✅ 已加入 .gitignore</span>（<code>venv/</code> 已 ignore，提交不再误伤）。</td>
+  </tr>
+  <tr>
+    <td><span class="tag danger">🔴 run_monday.sh 硬编码密钥</span></td>
+    <td><code>run_monday.sh</code> 内含 <code>cline auth -k 02_088EE9051AAE4BF0…</code> 明文 OpenAI 兼容网关密钥。</td>
+    <td><span class="tag ok">✅ 已加入 .gitignore</span>，不会被提交；密钥建议转入 secret 管理。</td>
+  </tr>
+  <tr>
+    <td><span class="tag danger">🔴 .env 处于试验态（Ω=low）</span></td>
+    <td>当前 <code>EDA_OMEGA_FIDELITY=low</code>（omega_low 试验态，评测正在跑 r3）；若直接提交会把「试验态」固化为仓库默认、污染主系统。其余 3 个开关为中性：<code>EDA_RUNCODE_READBACK=full</code>、<code>EDA_PHI_BUDGET=0</code>、<code>EDA_PHI_LAGGED=0</code>。</td>
+    <td>提交前把 <code>EDA_OMEGA_FIDELITY</code> 改回 <code>high</code>（等价 <code>set_s1_fidelity.py full_default</code>）。<b>评测进行中先别改</b>，等 r3 打分后再恢复。</td>
+  </tr>
+  <tr>
+    <td><span class="tag warn">🟠 .env 含敏感配置（且 tracked）</span></td>
+    <td><code>.env</code> 已被 git 跟踪（历史即如此），本次改动 +8 行，可能夹带 API key/网关地址。</td>
+    <td>提交前人工核对 diff，确认无新增密钥；如仓库允许则维持现状。</td>
+  </tr>
+  <tr>
+    <td><span class="tag warn">🟠 cleanup_tmp_gt.sh 需 root</span></td>
+    <td>清理 /tmp 下他人名下 GT 泄漏副本，涉及跨用户删除，语义敏感。</td>
+    <td>建议注释清楚用途后单独提交，或仅本地保留不入库。</td>
+  </tr>
+  <tr>
+    <td><span class="tag pend">⚪ 运行产物</span></td>
+    <td><code>monday_eval.log</code>、<code>MEMORY.md</code>、<code>daily-memories/</code> 为运行日志/agent 状态，非源码。</td>
+    <td><span class="tag ok">✅ 已加入 .gitignore</span>（<code>monday_eval.log</code> / <code>MEMORY.md</code> / <code>daily-memories/</code> 均已忽略）。</td>
+  </tr>
+</table>
+
+<h2>1. 改动总览</h2>
+<table>
+  <tr><th>文件</th><th class="num">+/-</th><th>模块</th><th>作用</th></tr>
+  <tr><td><code>scripts/cline_hooks/PreToolUse</code></td><td class="num">+133</td><td>反作弊 hook</td><td>追加 <b>Φ budget 钩子</b>：超预算改写 run_code 为 no-op（不 cancel）</td></tr>
+  <tr><td><code>memory_bank/trace_parser.py</code></td><td class="num">+98</td><td>trace 解析</td><td>新增 Φ 轴元数据提取（hook 拒绝归因 / 滞后审计 / 调用计数）</td></tr>
+  <tr><td><code>tools/run_code.py</code></td><td class="num">+88</td><td>run_code 工具</td><td>readback 保真度（full/binary/none）+ Φ lagged 单槽缓冲</td></tr>
+  <tr><td><code>main.py</code></td><td class="num">+39</td><td>MCP 入口</td><td>run_code 注入 <code>ctx</code>，SSE Session 对象作 per-task 键修复 lagged 串槽</td></tr>
+  <tr><td><code>server/rag_server/query_knowledge.py</code></td><td class="num">+39</td><td>RAG 检索</td><td>Ω 文档轴保真度：low 时剥离 description / 跳过 BM25 / 跳过重定向</td></tr>
+  <tr><td><code>.env</code></td><td class="num">+8</td><td>配置</td><td>新增 4 个开关：<code>EDA_PHI_BUDGET/LAGGED</code>、<code>EDA_OMEGA_FIDELITY/RUNCODE_READBACK</code></td></tr>
+</table>
+<p>未跟踪新文件（源码类，建议提交）：<code>scripts/set_s1_fidelity.py</code>、<code>scripts/set_s2_phi.py</code>、<code>scripts/trace_phi_meta.py</code>。</p>
+<h2>2. 改动明细（按模块）</h2>
+
+<div class="mod">
+<h3>2.1 S1 保真度消融 —— Ω 文档轴（检索降保真）</h3>
+<p><code class="file">server/rag_server/query_knowledge.py</code>（+39）新增 <code>OMEGA_FIDELITY</code>（读 <code>EDA_OMEGA_FIDELITY</code>，缺省 high）。当 <code>low</code> 时：</p>
+<ul>
+  <li><code>search_apis</code>：跳过双向缩写展开，直接用原始 query 召回；跳过 BM25 描述补充；结果经 <code>_omega_strip()</code> 剥离到只留 <code>api_name + similarity</code>（丢弃 description）。</li>
+  <li><code>search_apis_by_keyword</code>：跳过自然语言语义重定向；结果只保留名称类命中（<code>name_overlap / exact_match</code>）并剥离为 name+similarity。</li>
+</ul>
+<p class="mut">语义：在「工具全开」前提下只降文档保真度，agent 只能看到 API 名字 + 相似度，看不到描述性文档——这是 Ω 轴要测的效应。</p>
+</div>
+
+<div class="mod">
+<h3>2.2 S1 保真度消融 —— readback 回读轴（执行结果降保真）</h3>
+<p><code class="file">tools/run_code.py</code> 新增 <code>_apply_readback()</code>，按 <code>EDA_RUNCODE_READBACK ∈ {full, binary, none}</code> 压缩回给 agent 的观测：</p>
+<ul>
+  <li><code>full</code>：完整结果（缺省，上游行为）。</li>
+  <li><code>binary</code>：只回 <code>PASS / FAIL</code>（据 error_log 是否为空判定），不回 error_log/print_log/result。</li>
+  <li><code>none</code>：只回 <code>"executed"</code>。</li>
+</ul>
+<p class="mut">代码照常执行、error_log 照常在 sandbox 侧产生，只有「回给 agent 的观测」被降保真。</p>
+</div>
+
+<div class="mod">
+<h3>2.3 S2 Φ 轴消融 —— 预算 k 上限（hook 侧拦截）</h3>
+<p><code class="file">scripts/cline_hooks/PreToolUse</code>（+133）在反作弊 hook 之后<b>追加 Φ budget 钩子</b>（与反作弊共存）：</p>
+<ul>
+  <li>读 <code>EDA_PHI_BUDGET=k</code>（≤0 或未设 = 无限）。对 <code>run_code</code> 按 <code>taskId/sessionContext.rootSessionId → workspace → cwd</code> 归零计数，计数文件在 <code>/tmp/cline_phi_budget_&lt;uid&gt;</code>（<code>fcntl.flock</code> 防并发）。</li>
+  <li>超预算（count &gt; k）时用 <code>overrideInput</code> 把 run_code 的 <code>code</code> 改写为 <code>print('[PHI-BUDGET-EXHAUSTED] k=N')</code> 的 no-op——<b>绝不 cancel、绝不中断 trace</b>；marker 落入结果 print_log，供 trace 元数据核对。</li>
+</ul>
+<p class="mut">预算约束的是「agent 能观测/执行多少次 run_code」，而非「何时提交」，故不改写任务、不打断 trace。</p>
+</div>
+
+<div class="mod">
+<h3>2.4 S2 Φ 轴消融 —— 滞后回读（handler 侧，L=1）</h3>
+<p><code class="file">tools/run_code.py</code> + <code class="file">main.py</code>：</p>
+<ul>
+  <li><code>run_code.py</code> 拆为 <code>_run_code_inner()</code>（真实执行）+ <code>run_code()</code>（入口）。<code>EDA_PHI_LAGGED=1</code> 时 <code>_phi_lagged_apply()</code> 返回<b>上一拍</b>执行状态（单槽 L=1，非队列），第 1 次返回占位 <code>[PHI-LAGGED] no prior state</code>；结果带 <code>reported_call_index</code> 用于审计滞后量恰好 =1。</li>
+  <li><code>main.py</code> 给 <code>run_code</code> 注入 <code>ctx: Context</code>，新增 <code>_trace_key_from_ctx()</code>：用 <b>SSE ServerSession 对象本身作 dict 键</b>（按对象身份哈希）而非 <code>id(session)</code>。<b>修复根因</b>：旧 <code>id()</code> 是内存地址，旧 session 被 GC 后新 session 可能复用同一地址 → lagged 槽位跨任务串槽、滞后作废。</li>
+</ul>
+</div>
+
+<div class="mod">
+<h3>2.5 trace 元数据（S2 Φ 轴审计）</h3>
+<p><code class="file">memory_bank/trace_parser.py</code>（+98）新增：</p>
+<ul>
+  <li><code>_trace_to_text()</code>：整条 trace 打平为可检索文本（捕获 hook 拒绝标记的任意嵌套位置）。</li>
+  <li><code>extract_hook_denial()</code>：归因被哪个 hook 拒绝（<code>phi_budget</code> / <code>anti_cheat</code>）及拒绝原因片段。</li>
+  <li><code>extract_phi_metadata()</code>：汇总 <code>finish_reason / timed_out / run_code_calls / search_apis_calls / get_api_details_calls / denied_by_hook / reported_call_index[]</code>。</li>
+  <li><code>_parse_cline_tool_result()</code> 增加 <code>tool</code> 与 <code>reported_call_index</code> 字段（解析 lagged 回读来源序号）。</li>
+</ul>
+</div>
+
+<h2>3. 新文件清单</h2>
+<table>
+  <tr><th>文件</th><th>用途</th><th>建议</th></tr>
+  <tr><td><code>scripts/set_s1_fidelity.py</code></td><td>S1 臂切换：<code>full_default / omega_low / readback_binary / readback_none</code>（先 core4 全开再降保真度）</td><td><span class="tag ok">提交</span></td></tr>
+  <tr><td><code>scripts/set_s2_phi.py</code></td><td>S2 臂切换：<code>phi_unbounded / phi_k10 / phi_k3 / phi_k1 / phi_lagged</code>（含清预算计数缓存）</td><td><span class="tag ok">提交</span></td></tr>
+  <tr><td><code>scripts/trace_phi_meta.py</code></td><td>批量采集 Φ 轴元数据：Converged%、k-arm 检查、lagged 审计</td><td><span class="tag ok">提交</span></td></tr>
+  <tr><td><code>cleanup_tmp_gt.sh</code></td><td>清理 /tmp 下 GT 泄露副本（需 root）</td><td><span class="tag warn">单独提交 / 本地保留</span></td></tr>
+  <tr><td><code>run_monday.sh</code></td><td><b>含硬编码 API key</b> 的启动脚本</td><td><span class="tag danger">不提交</span></td></tr>
+  <tr><td><code>run_monday_eval.sh</code></td><td>run_eval.py 批处理</td><td><span class="tag pend">自定</span></td></tr>
+  <tr><td><code>MEMORY.md</code> / <code>daily-memories/</code></td><td>agent 运行状态 / 每日记忆</td><td><span class="tag pend">不提交</span></td></tr>
+  <tr><td><code>monday_eval.log</code> / <code>venv/</code></td><td>日志 / 虚拟环境</td><td><span class="tag danger">不提交</span></td></tr>
+</table>
+
+<h2>4. 建议提交方案</h2>
+<p><code>.gitignore</code> 已更新（<code>venv/</code>、<code>run_monday.sh</code>、<code>monday_eval.log</code>、<code>MEMORY.md</code>、<code>daily-memories/</code> 均已 ignore）；剩下的关键是提交前把 <code>.env</code> 恢复为默认态，再按主题拆 commit：</p>
+<pre># ① .gitignore 已完成（venv/、run_monday.sh、monday_eval.log、MEMORY.md、daily-memories/ 均已 ignore）
+
+# ② 提交前恢复 .env 为默认态（当前是 omega_low 试验态；等 r3 打分后再做）
+sed -i 's/^EDA_OMEGA_FIDELITY=low$/EDA_OMEGA_FIDELITY=high/' .env
+#   等价执行：python scripts/set_s1_fidelity.py full_default
+
+# ③ 方案 A（单 commit，推荐：一次实验一个主题）
+git add .gitignore .env main.py tools/run_code.py \
+        server/rag_server/query_knowledge.py memory_bank/trace_parser.py \
+        scripts/cline_hooks/PreToolUse \
+        scripts/set_s1_fidelity.py scripts/set_s2_phi.py scripts/trace_phi_meta.py
+git commit -m "feat(ablation): S1 保真度轴 + S2 Φ 轴消融（hook/handler/检索降保真 + 元数据）"
+
+# ④ 方案 B（拆 2 个 commit）：S1 轴 / S2 轴
+#   B1(S1) = .gitignore + .env + query_knowledge.py + run_code.py(readback) + set_s1_fidelity.py
+#   B2(S2) = main.py + run_code.py(lagged) + PreToolUse + trace_parser.py + set_s2_phi.py + trace_phi_meta.py</pre>
+<div class="callout ok">
+  <strong>结论：</strong>核心改动是自洽、可独立验证的实验装置（开关 + 钩子 + 元数据），不触碰 agent 主体逻辑。<b>已就绪：</b><code>venv/</code>、含密钥的 <code>run_monday.sh</code> 及运行产物均已加入 <code>.gitignore</code>。<b>唯一待办：</b>提交前把 <code>.env</code> 的 <code>EDA_OMEGA_FIDELITY</code> 由试验态 <code>low</code> 恢复为默认 <code>high</code>，避免把 omega_low 试验态固化进仓库（评测 r3 结束后再做）。
+</div>
+
+</div>
+</body>
+</html>

@@ -49,15 +49,16 @@
 
 <h1>十一假期试验 · 实时进展报告</h1>
 <div class="meta">
-  当前阶段: S1 保真度消融 5-run（Phase 1/4）&nbsp;|&nbsp; 更新时刻: 2026-09-30 07:40<br>
+  当前阶段: S1 保真度消融 5-run（Phase 1/4）&nbsp;|&nbsp; 更新时刻: 2026-09-30 09:05<br>
   总控: <code>ablation_run_conductor_serial.sh</code>（单机串行）&nbsp;|&nbsp; 状态源: <code>run/MEMORY_s1_full.md</code> + <code>daily-memories/2026-09-30.md</code><br>
   基座: <code>deepseek-v4-pro-fp4</code>（未动）&nbsp;|&nbsp; 协议: Pass@1 @ <code>mean ± std</code>（5 轮）、<code>-p 8 -n</code>、反作弊 PreToolUse hook 全程冻结
 </div>
 
 <div class="callout">
   <strong>一句话结论：</strong>假期任务已于 09-29 17:24 启动，当前推进到 Phase 1（S1 保真度消融，共 15 轮）的<b>第 3/15 轮</b>——
-  <code>omega_low</code> 已出 2 轮（<span class="k">81.6%</span> / <span class="k">82.3%</span>），r3 运行中；<code>readback_binary</code> / <code>readback_none</code> 尚未开始。
-  期间遭遇 3 次事故（<code>.env</code> 竞态截断、/home 磁盘 100% 满、相对路径打分 bug）均已恢复，另有反复的沙箱阻断（反作弊 hook 预期行为）。
+  <code>omega_low</code> 已出 2 轮（<span class="k">81.6%</span> / <span class="k">82.3%</span>），r3 经「磁盘满作废 → 迁移 /home → 重跑」后正在进行（新 batch <code>2026_0930_090126</code>）；
+  <code>readback_binary</code> / <code>readback_none</code> 尚未开始。
+  期间遭遇 3 次事故（<code>.env</code> 竞态截断、/home 磁盘 100% 满、相对路径打分 bug）均已恢复，其中磁盘问题已通过「6 目录迁至 <code>/nasdata</code> + 符号链接回指」根治。
 </div>
 
 <h2>1. 假期任务总览（conductor 串行，4 Phase）</h2>
@@ -76,12 +77,13 @@
   <div class="kv"><b>ROUND（当前轮次）</b><span><code>3</code> / 5</span></div>
   <div class="kv"><b>PHASE</b><span><code>running</code></span></div>
   <div class="kv"><b>ERROR_COUNT</b><span><code>2</code>（阈值 ≥3 强制推进）</span></div>
+  <div class="kv"><b>磁盘（/home）</b><span><code>11G</code> 可用 · 6 目录已迁 nasdata</span></div>
 </div>
 
 <h2>3. S1 成绩总表（N=5，mean±std，Pass@1）</h2>
 <table>
   <tr><th>臂</th><th>轴语义（改什么）</th><th class="num">已出轮次</th><th>各轮原始值</th><th class="num">mean（至今）</th><th>状态</th></tr>
-  <tr><td><code>omega_low</code> (Ω L)</td><td>Ω 文档轴：<code>search</code> 只回名字 + 相似度</td><td class="num">2/5</td><td class="k">[81.6, 82.3]</td><td class="num">≈82.0%</td><td><span class="tag run">🔄 r3 运行中</span></td></tr>
+  <tr><td><code>omega_low</code> (Ω L)</td><td>Ω 文档轴：<code>search</code> 只回名字 + 相似度</td><td class="num">2/5</td><td class="k">[81.6, 82.3]</td><td class="num">≈82.0%</td><td><span class="tag run">🔁 r3 重跑中（batch 090126）</span></td></tr>
   <tr><td><code>readback_binary</code> (B)</td><td>readback 轴：<code>run_code</code> 只回「过 / 不过」</td><td class="num">0/5</td><td class="k">[]</td><td class="num">—</td><td><span class="tag pend">⬜ 未开始</span></td></tr>
   <tr><td><code>readback_none</code> (N)</td><td>readback 轴：<code>run_code</code> 只回「已执行」</td><td class="num">0/5</td><td class="k">[]</td><td class="num">—</td><td><span class="tag pend">⬜ 未开始</span></td></tr>
 </table>
@@ -90,9 +92,9 @@
 <h3>3.1 omega_low 各轮 Pass@1（含锚点对照）</h3>
 <div class="bar-row"><div class="bar-label">omega_low r1</div><div class="bar-track"><div class="bar-fill" style="width:81.6%">81.6%</div></div><div class="bar-val">129/158</div></div>
 <div class="bar-row"><div class="bar-label">omega_low r2</div><div class="bar-track"><div class="bar-fill" style="width:82.3%">82.3%</div></div><div class="bar-val">130/158</div></div>
-<div class="bar-row"><div class="bar-label">omega_low r3</div><div class="bar-track"><div class="bar-fill" style="width:77.7%;opacity:.55">执行 115/148*</div></div><div class="bar-val">进行中</div></div>
+<div class="bar-row"><div class="bar-label">omega_low r3</div><div class="bar-track"><div class="bar-fill" style="width:5%;opacity:.55">重跑中</div></div><div class="bar-val">新 batch</div></div>
 <div class="bar-row"><div class="bar-label">full 锚点（流C 已得）</div><div class="bar-track"><div class="bar-fill anchor" style="width:84.8%">84.8%</div></div><div class="bar-val">参考</div></div>
-<p class="legend">* r3 尚未出最终 Pass@1；当前 sandbox 执行进度 <code>execution_results 115/148</code>（148 脚本组装自 158 题，部分超时）。full 锚点 = 检索+执行全开（Ω=high / readback=full），为流 C 上一阶段所得、本轮不重跑。</p>
+<p class="legend">* r3 首 attempt（batch 012235）因 /home 磁盘 100% 满 → sandbox 150s 大面积超时，08:25 作废；磁盘迁移后于 09:01 全新重跑（batch 090126，全量 158 题），当前处于 format/generate 早期，尚未出分。full 锚点 = 检索+执行全开（Ω=high / readback=full），为流 C 上一阶段所得、本轮不重跑。</p>
 
 <h2>4. 进度时间线（关键里程碑）</h2>
 <table>
@@ -110,12 +112,15 @@
   <tr><td class="k">09-30 01:23</td><td><span class="tag ok">✅</span> <b>omega_low r2 = 82.3%</b>（130/158，generated 146 ok / 9 fail / 0 exec_err）。<code>ROUND 2→3</code>，启动 <b>r3</b>（batch 2026_0930_012235）。</td></tr>
   <tr><td class="k">09-30 04:15</td><td>沙箱复通（此前连续 4 周期阻断），确认 r3 进入阶段 3 sandbox 外部执行。</td></tr>
   <tr><td class="k">09-30 07:39</td><td>r3 仍在跑：<code>execution_results 115/148</code>（shard_0=26/1=26/2=37/3=26），接近尾声、尚未出分。</td></tr>
+  <tr><td class="k">09-30 08:25</td><td><span class="tag warn">🚫 作废</span> r3（batch 012235）因 /home 满 → sandbox 150s 大面积超时（6.8h 仅 127/148），人工终止并删除半成品（batch 目录 243M + 2 jsonl + r3 log）。成绩不记录、不占 ERROR_COUNT。</td></tr>
+  <tr><td class="k">09-30 08:47–08:53</td><td><span class="tag ok">💾 磁盘迁移</span> 6 目录（<code>.cache/.cline/eda_code_eval/.local/.vscode-server/.npm</code>）迁至 <code>/nasdata/app.e0031982</code> 并以符号链接回指，<code>/home</code> 可用 4.3G → <b>11G</b>（评测 / cline 产物此后走 408G 的 nasdata）。</td></tr>
+  <tr><td class="k">09-30 09:01</td><td><span class="tag ok">🔁 重启</span> 重启 conductor/loop，agent 按 MEMORY 跳过打分、直接重跑 <b>omega_low r3</b>（新 batch <code>2026_0930_090126</code>，全量 158 题，绝对 PYTHON + EVAL_FW_DIR）。</td></tr>
 </table>
 
 <h2>5. 三次事故与已固化教训</h2>
 <ul>
   <li><strong>事故① <code>.env</code> 竞态截断（已恢复）</strong>：并行调用 <code>set_s2_phi.py</code> 与 <code>set_s1_fidelity.py</code> 写同一 <code>.env</code>，文件被截断为 3 行。恢复 <code>git checkout -- .env</code>。<b>教训：凡改写 .env 的脚本必须串行（单条 <code>&amp;&amp;</code> 链）。</b></li>
-  <li><strong>事故② /home 磁盘 100% 满（风险持续）</strong>：r1 attempt1 因 <code>No space left on device</code> 导致 batch 目录被删、无评分产物（假 0）。磁盘回升后重试成功。<b>红线：agent 不擅自删数据，再遇磁盘失败须人工介入。</b></li>
+  <li><strong>事故② /home 磁盘 100% 满（已根治）</strong>：r1 attempt1 因 <code>No space left on device</code> 导致 batch 目录被删、无评分产物（假 0）；r3 首 attempt 亦因此 sandbox 大面积 150s 超时被作废。已于 09-30 将 6 目录（<code>.cache/.cline/eda_code_eval/.local/.vscode-server/.npm</code>）迁至 nasdata 并以符号链接回指，/home 释放至 11G、评测产物此后落 408G 的 nasdata。<b>红线：agent 不擅自删数据，迁移/清理须人工介入。</b></li>
   <li><strong>事故③ 相对路径打分 bug（已修复，永久教训）</strong>：r1 attempt2 用 <code>PYTHON=venv/bin/python</code>（相对路径），<code>run_eval.py</code> 在 <code>EVAL_FW</code> cwd 无法解析 → crash。改用<b>绝对 <code>PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python</code></b> 后打分成功。<b>后续所有 launch 一律绝对 PYTHON + 显式 <code>EVAL_FW_DIR</code>。</b></li>
   <li><strong>附带隐患：S2 lagged 残留污染（已复位）</strong>：上一任务残留 <code>EDA_PHI_LAGGED=1</code>，已用 <code>set_s2_phi.py phi_unbounded</code> 复位 <code>EDA_PHI_BUDGET=0 / EDA_PHI_LAGGED=0</code>，避免污染 Ω 轴与 readback 轴。</li>
 </ul>
@@ -130,13 +135,13 @@
 <table>
   <tr><th>项</th><th>详情 / 应对</th></tr>
   <tr><td class="k">ERROR_COUNT=2</td><td>距 ≥3 强制推进阈值仅一步。若 r3 打分再失败须复用产物独立重评（参照 r1 修复路径），仍失败则记录 ❌ 并触发强制推进。</td></tr>
-  <tr><td class="k">磁盘风险</td><td>/home 卷约 99–100% 满（共享多用户），已导致 r3 多题 sandbox <code>timeout(150s)</code>、执行明显变慢——可能压低 r3 的 Pass@1。待打分后评估。</td></tr>
+  <tr><td class="k">磁盘风险</td><td>已根治：/home 卷曾 100% 满致 r3 首 attempt 大面积 150s 超时；09-30 已迁 6 目录至 nasdata（符号链接回指），/home 可用 11G、评测与 cline 产物走 408G 的 nasdata。r3 已重跑。</td></tr>
   <tr><td class="k">进度</td><td>S1 为 Phase 1/4（15/75 轮），当前 2/15 出分 + 1 轮运行中。后面还有组件消融(20)+S2 Φ(20)+模型消融(20)。</td></tr>
   <tr><td class="k">std 待补</td><td>各臂需满 5 轮后回填 <code>mean ± std</code>；当前 omega_low 仅 2 轮，<code>±std</code> 尚未可测。</td></tr>
 </table>
 
 <h2>8. 下一唤醒动作（摘自 MEMORY_s1_full.md）</h2>
-<pre style="background:#0f172a;color:#e2e8f0;padding:14px 16px;border-radius:8px;font-size:.85rem;line-height:1.75;overflow-x:auto;">1. pgrep -f '^bash scripts/run_cline_script' 有输出 → omega_low r3 仍在跑，什么都不做退出。
+<pre style="background:#0f172a;color:#e2e8f0;padding:14px 16px;border-radius:8px;font-size:.85rem;line-height:1.75;overflow-x:auto;">1. pgrep -f '^bash scripts/run_cline_script' 有输出 → omega_low r3（batch 090126 重跑）仍在跑，什么都不做退出。
 2. 无输出 → grep 打分 /tmp/ABL_omega_low_r3.log；得 pass (xx.x%) 记成绩，ROUND 3→4 启动 r4（绝对 PYTHON + EVAL_FW_DIR，仅换 log 名）。
    无成绩 → 复用产物用绝对 PYTHON 独立重评；仍无 → ❌ EVAL_FAILED，ERROR_COUNT 2→3（≥3 强制推进）。</pre>
 

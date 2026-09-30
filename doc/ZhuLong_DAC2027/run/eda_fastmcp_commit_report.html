@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eda_fastmcp 提交报告 · cb5c402c</title>
+<style>
+  :root { --ink:#1a2233; --mut:#5a6270; --line:#e3e7ef; --soft:#f6f8fb; --accent:#2b6cb0; --ok:#1e8e4b; --warn:#c0572f; --danger:#c2283b; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif; color:var(--ink); background:#eef1f6; line-height:1.6; }
+  .wrap { max-width:980px; margin:0 auto; padding:32px 24px 64px; }
+  h1 { font-size:1.6rem; border-bottom:3px solid var(--accent); padding-bottom:8px; }
+  h2 { margin-top:28px; font-size:1.25rem; color:var(--accent); }
+  h3 { font-size:1.05rem; margin-bottom:6px; }
+  .meta { background:var(--soft); border:1px solid var(--line); border-radius:8px; padding:12px 16px; font-size:.85rem; color:var(--mut); }
+  .meta b { color:var(--ink); }
+  table { width:100%; border-collapse:collapse; margin:10px 0; font-size:.85rem; }
+  th,td { border:1px solid var(--line); padding:7px 10px; text-align:left; vertical-align:top; }
+  th { background:var(--soft); font-weight:600; }
+  .num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .tag { display:inline-block; font-size:.7rem; font-weight:600; padding:1px 8px; border-radius:999px; margin-right:4px; white-space:nowrap; }
+  .tag.ok { background:#e7f5ec; color:var(--ok); }
+  .tag.warn { background:#fdeceb; color:var(--warn); }
+  .tag.danger { background:#fde3e5; color:var(--danger); }
+  .tag.accent { background:#e8f0fe; color:var(--accent); }
+  .tag.pend { background:#eef0f3; color:#5a6270; }
+  .callout { border-left:4px solid var(--accent); background:var(--soft); padding:10px 14px; border-radius:0 6px 6px 0; margin:14px 0; }
+  .callout.ok { border-left-color:var(--ok); background:#eef7f1; }
+  .callout.warn { border-left-color:var(--warn); background:#fdf3ee; }
+  .mod { background:var(--soft); border:1px solid var(--line); border-radius:8px; padding:12px 16px; margin:12px 0; }
+  .mod h3 { margin-top:0; }
+  .mod code.file { color:var(--accent); font-weight:600; }
+  code { background:#eef1f6; padding:1px 5px; border-radius:4px; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.82em; }
+  pre { background:#141a26; color:#e6edf3; padding:14px 16px; border-radius:8px; overflow-x:auto; font-size:.8rem; line-height:1.5; }
+  pre code { background:none; color:inherit; padding:0; }
+  .hash { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; color:var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>eda_fastmcp 提交报告</h1>
+<div class="meta">
+  提交: <span class="hash">cb5c402c</span>（完整 <span class="hash">cb5c402c49b984366ff7970377a894d83be2f06c</span>）<br>
+  作者: <b>Yang Liu</b> &lt;paul.liu@cxmt.com&gt;&nbsp;|&nbsp; 时间: 2026-09-30 09:30:28 +0800<br>
+  基线: <code>5bdf4e87</code> → 本提交 &nbsp;|&nbsp; 分支: <code>master</code>（当前相对 <code>origin/master</code> <b>ahead 1，尚未 push</b>）
+</div>
+
+<div class="callout ok">
+  <strong>提交信息：</strong><code>feat(ablation): S1 保真度轴 + S2 Φ 轴消融（hook/handler/检索降保真 + 元数据）</code><br><br>
+  <strong>一句话：</strong>本次提交落地了假期消融实验「S1 保真度轴 + S2 Φ 轴」的完整装置——通过 <code>.env</code> 开关在<b>工具边界</b>降保真度 / 限预算 / 加滞后，
+  配套臂切换脚本、Φ 轴 trace 元数据采集与「预算耗尽」钩子，全程<b>不改动 agent 主体行为、不中断 trace</b>。<br><br>
+  共 <b>10 个文件</b>，<span class="num" style="color:var(--ok)">+827</span> / <span class="num" style="color:var(--danger)">−9</span>。
+</div>
+
+<h2>1. 文件清单</h2>
+<table>
+  <tr><th style="width:240px">文件</th><th class="num">+</th><th class="num">−</th><th>类型</th><th>作用</th></tr>
+  <tr><td><code>scripts/set_s1_fidelity.py</code></td><td class="num">131</td><td class="num">0</td><td><span class="tag accent">新增</span></td><td>S1 臂切换：<code>full_default / omega_low / readback_binary / readback_none</code></td></tr>
+  <tr><td><code>scripts/set_s2_phi.py</code></td><td class="num">126</td><td class="num">0</td><td><span class="tag accent">新增</span></td><td>S2 臂切换：<code>phi_unbounded / phi_k10 / phi_k3 / phi_k1 / phi_lagged</code>（含清预算缓存）</td></tr>
+  <tr><td><code>scripts/trace_phi_meta.py</code></td><td class="num">167</td><td class="num">0</td><td><span class="tag accent">新增</span></td><td>批量采集 Φ 轴元数据：Converged%、k-arm 检查、lagged 审计</td></tr>
+  <tr><td><code>scripts/cline_hooks/PreToolUse</code></td><td class="num">133</td><td class="num">0</td><td><span class="tag warn">修改</span></td><td>反作弊 hook 之后追加 <b>Φ budget 钩子</b>（超预算改写 run_code 为 no-op）</td></tr>
+  <tr><td><code>memory_bank/trace_parser.py</code></td><td class="num">98</td><td class="num">0</td><td><span class="tag warn">修改</span></td><td>新增 Φ 轴元数据提取（hook 拒绝归因 / 滞后审计 / 调用计数）</td></tr>
+  <tr><td><code>tools/run_code.py</code></td><td class="num">87</td><td class="num">1</td><td><span class="tag warn">修改</span></td><td>readback 保真度（full/binary/none）+ Φ lagged 单槽缓冲</td></tr>
+  <tr><td><code>server/rag_server/query_knowledge.py</code></td><td class="num">36</td><td class="num">3</td><td><span class="tag warn">修改</span></td><td>Ω 文档轴：low 时检索只回 name+similarity、跳 BM25/重定向</td></tr>
+  <tr><td><code>main.py</code></td><td class="num">34</td><td class="num">5</td><td><span class="tag warn">修改</span></td><td>run_code 注入 <code>ctx</code>，SSE Session 对象作 per-task 键修复 lagged 串槽</td></tr>
+  <tr><td><code>.env</code></td><td class="num">8</td><td class="num">0</td><td><span class="tag warn">修改</span></td><td>新增 4 个开关（<b>提交态为默认值</b>，见 §3）</td></tr>
+  <tr><td><code>.gitignore</code></td><td class="num">7</td><td class="num">0</td><td><span class="tag warn">修改</span></td><td>追加 <code>venv/</code>、<code>run_monday.sh</code>、日志、记忆文件</td></tr>
+</table>
+
+<h2>2. 改动摘要（按模块）</h2>
+
+<div class="mod">
+<h3>2.1 S1 保真度轴 —— Ω 文档轴（检索降保真）</h3>
+<p><code class="file">server/rag_server/query_knowledge.py</code> 新增 <code>OMEGA_FIDELITY</code>（读 <code>EDA_OMEGA_FIDELITY</code>，缺省 high）。当 <code>low</code> 时：<code>search_apis</code> 跳过双向缩写展开与 BM25 描述补充、结果经 <code>_omega_strip()</code> 只留 <code>api_name + similarity</code>；<code>search_apis_by_keyword</code> 跳过语义重定向、只保留名称类命中。</p>
+</div>
+
+<div class="mod">
+<h3>2.2 S1 保真度轴 —— readback 回读轴（执行结果降保真）</h3>
+<p><code class="file">tools/run_code.py</code> 新增 <code>_apply_readback()</code>，按 <code>EDA_RUNCODE_READBACK ∈ {full, binary, none}</code> 压缩回给 agent 的观测：<code>full</code> 完整、<code>binary</code> 只回 PASS/FAIL、<code>none</code> 只回 <code>"executed"</code>。代码照常执行，仅「回传观测」被降保真。</p>
+</div>
+
+<div class="mod">
+<h3>2.3 S2 Φ 轴 —— 预算 k 上限（hook 侧拦截）</h3>
+<p><code class="file">scripts/cline_hooks/PreToolUse</code> 在反作弊 hook 之后追加 Φ budget 钩子：读 <code>EDA_PHI_BUDGET=k</code>（≤0 = 无限），对 <code>run_code</code> 按 task/session 归零计数（<code>/tmp/cline_phi_budget_&lt;uid&gt;</code> + <code>fcntl.flock</code>）；超预算用 <code>overrideInput</code> 把 run_code 改写为 <code>print('[PHI-BUDGET-EXHAUSTED] k=N')</code> no-op——<b>不 cancel、不断 trace</b>。</p>
+</div>
+
+<div class="mod">
+<h3>2.4 S2 Φ 轴 —— 滞后回读（handler 侧，L=1）</h3>
+<p><code class="file">tools/run_code.py</code> 拆为 <code>_run_code_inner()</code> + 入口，<code>EDA_PHI_LAGGED=1</code> 时 <code>_phi_lagged_apply()</code> 返回上一拍状态（单槽 L=1），并带 <code>reported_call_index</code> 审计滞后量 =1。<code class="file">main.py</code> 注入 <code>ctx</code>，用 <b>SSE ServerSession 对象本身作 dict 键</b>（替换旧 <code>id(session)</code>）修复「旧 session GC 后地址复用的跨任务串槽」根因。</p>
+</div>
+
+<div class="mod">
+<h3>2.5 trace 元数据（S2 Φ 轴审计）</h3>
+<p><code class="file">memory_bank/trace_parser.py</code> 新增 <code>_trace_to_text()</code>（整 trace 打平检索）、<code>extract_hook_denial()</code>（拒绝归因 phi_budget/anti_cheat）、<code>extract_phi_metadata()</code>（finish_reason / timed_out / 各类调用计数 / reported_call_index[]），并给 <code>_parse_cline_tool_result()</code> 增加 <code>tool</code> 与 <code>reported_call_index</code>。</p>
+</div>
+
+<h2>3. .env 试验态处理结果</h2>
+<p>提交时 <code>.env</code> 只写入<b>默认态</b>，提交完成后工作区已改回 <b>试验态</b> 继续跑评测（Ω=low 的 r3），未把试验态固化进仓库：</p>
+<table>
+  <tr><th>开关</th><th>HEAD（已提交）</th><th>工作区（当前）</th><th>说明</th></tr>
+  <tr><td><code>EDA_OMEGA_FIDELITY</code></td><td><span class="tag ok">high</span></td><td><span class="tag warn">low</span></td><td>Ω 文档轴，默认 high；试验态 low 仅供 r3</td></tr>
+  <tr><td><code>EDA_RUNCODE_READBACK</code></td><td>full</td><td>full</td><td>中性，无需改</td></tr>
+  <tr><td><code>EDA_PHI_BUDGET</code></td><td>0</td><td>0</td><td>0 = 无预算上限</td></tr>
+  <tr><td><code>EDA_PHI_LAGGED</code></td><td>0</td><td>0</td><td>0 = 不滞后</td></tr>
+</table>
+<p class="note" style="color:var(--mut);font-size:.82rem">注：改 <code>.env</code> 只在 MCP 服务启动时读取，进行中的 r3 用的是进程内已加载的 low 配置，不受影响；工作区的 low 是预期保留、<b>不应再提交</b>。</p>
+
+<h2>4. 安全项与剩余工作区</h2>
+<table>
+  <tr><th>项</th><th>状态</th><th>说明</th></tr>
+  <tr><td><code>venv/</code></td><td><span class="tag ok">已忽略</span></td><td>已加入 <code>.gitignore</code>，本次提交不含任何虚拟环境文件</td></tr>
+  <tr><td><code>run_monday.sh</code>（含明文密钥）</td><td><span class="tag ok">已忽略</span></td><td>已加入 <code>.gitignore</code>，密钥未入库</td></tr>
+  <tr><td><code>monday_eval.log</code> / <code>MEMORY.md</code> / <code>daily-memories/</code></td><td><span class="tag ok">已忽略</span></td><td>运行日志 / agent 状态，非源码</td></tr>
+  <tr><td><code>.env</code>（试验态低）</td><td><span class="tag pend">工作区保留</span></td><td>HEAD 为 high，工作区为 low（评测用），勿提交</td></tr>
+  <tr><td><code>cleanup_tmp_gt.sh</code></td><td><span class="tag pend">未提交</span></td><td>需 root、跨用户删除，语义敏感，建议单独处理</td></tr>
+  <tr><td><code>run_monday_eval.sh</code></td><td><span class="tag pend">未提交</span></td><td>批处理脚本，去留待定</td></tr>
+</table>
+
+<h2>5. 结论与后续动作</h2>
+<div class="callout ok">
+  <strong>提交已完成且干净：</strong>仓库内是自洽、可独立验证的实验装置（开关 + 钩子 + 元数据），不含任何密钥或虚拟环境；<code>.env</code> 默认态为 high。
+</div>
+<div class="callout warn">
+  <strong>后续建议：</strong>
+  <ul style="margin:6px 0 6px 18px;padding:0">
+    <li>本提交当前 <b>尚未 push</b>（<code>master</code> ahead origin 1），确认无误后可 <code>git push</code>。</li>
+    <li>等工作区 <code>.env</code>（Ω=low 试验态）对应的评测 r3 打分完成后，如需切换臂，用 <code>scripts/set_s1_fidelity.py</code> / <code>scripts/set_s2_phi.py</code> 统一操作，避免手改漏改。</li>
+    <li><code>cleanup_tmp_gt.sh</code> 与 <code>run_monday_eval.sh</code> 去向请单独决定。</li>
+  </ul>
+</div>
+
+</div>
+</body>
+</html>
