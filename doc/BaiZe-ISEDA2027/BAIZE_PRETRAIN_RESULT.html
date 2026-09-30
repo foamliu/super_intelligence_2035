@@ -45,19 +45,19 @@
     <span>📅 更新：2026-09-30</span>
     <span>🖥️ GPU：8×H100（10.239.2.29，TP1/DP8）</span>
     <span>📦 seq4094 / GBS8 / bf16 / AdamW</span>
-    <span>⏱️ 预算：24h 墙钟 ≈ 192 GPU·h（已用 ~72，S5-01 长跑进行中）</span>
+    <span>⏱️ 预算：24h 墙钟 ≈ 192 GPU·h（已用 ~85，S5 全部完成）</span>
   </div>
 </header>
 
 <div class="verdict">
-  <h3 style="margin-top:0;">🏆 胜出配置（S2/S3/S4 全定；S5 长跑 + 多 seed 进行中）</h3>
+  <h3 style="margin-top:0;">🏆 胜出配置（S2/S3/S4/S5 全定 · converged）</h3>
   <p><span class="badge b-ok">stable LR = 1e-3（S2 7 点最低，final 2.7627）</span>
      <span class="badge b-ok">调度族 = WSD（S3-01 2.767915 vs S3-02 cosine 2.815509，WSD 胜）</span>
      <span class="badge b-ok">decay = 10%（S3-01 2.767915 vs S3-03 5% 2.789989，10% 胜）</span>
      <span class="badge b-ok">warmup = 250（S3-01 2.767915 vs S3-04 warmup2000 2.795710，250 胜）</span>
      <span class="badge b-ok">min_lr = 1e-5（S3-05 2.764702 vs S3-01 3e-5 2.767915，1e-5 胜）</span>
      <span class="badge b-ok">退火数据混合 = L3+code+math 86:10:4（S4 胜出，final 2.629822）</span></p>
-  <p style="font-size:13.5px;color:var(--muted);">本报告为「活文档」：S0–S4 已收敛并回填；S5 已回收 3 seed（均值 2.673868 ± 0.0469），s5_01 20000 步长跑（seed1234）运行中，回收后补齐论文收敛曲线并定稿。</p>
+  <p style="font-size:13.5px;color:var(--muted);">S0–S5 全部收敛定稿：S2 定 stable LR=1e-3；S3 定 WSD / warmup250 / decay500 / min1e-5；S4 定退火混合 L3+code+math 86:10:4；S5 长跑 20000 步 <b>final 2.205413</b> + 3 seed 均值 <b>2.673868 ± 0.0469</b>。</p>
 </div>
 
 <h2 class="sec"><span class="no">1</span>骨架与固定超参（跨配置一致）</h2>
@@ -81,7 +81,7 @@
   <tr><td>S2</td><td>stable LR 加密扫描（2e-4…1e-3，7 点，WSD 固定）</td><td>7</td><td>5000</td><td><span class="badge b-ok">done</span></td></tr>
   <tr><td>S3</td><td>关键轴微调（调度族 WSD/cosine、decay5%、warmup2000、min_lr1e-5）</td><td>5</td><td>5000</td><td><span class="badge b-ok">done</span></td></tr>
   <tr><td>S4</td><td>退火数据混合消融（纯L3 / L3+code / L3+code+math）</td><td>3</td><td>5000</td><td><span class="badge b-ok">done</span></td></tr>
-  <tr><td>S5</td><td>长跑 20000 步 + 3 seed × 5000 步复现</td><td>4</td><td>20000/5000</td><td><span class="badge b-info">running（3 seed ✅，s5_01 长跑中）</span></td></tr>
+  <tr><td>S5</td><td>长跑 20000 步 + 3 seed × 5000 步复现</td><td>4</td><td>20000/5000</td><td><span class="badge b-ok">done（final 2.205413@20000）</span></td></tr>
 </table>
 
 <h2 class="sec"><span class="no">3</span>S0 冒烟 + S1 基线（已收敛）</h2>
@@ -126,15 +126,18 @@
 </table>
 <p style="font-size:13px;color:var(--muted);">实现口径：短地平线消融用「全段静态 blend」近似「decay 尾段混入」（recipe GPTDatasetConfig 仅支持单静态 blend），可量化退火加码对 final loss 的增益；真正的两步退火切数据留待 S5 长跑。</p>
 
-<h2 class="sec"><span class="no">7</span>S5 长跑 + 多 seed 复现（胜出配置，3 seed ✅ 已回收，s5_01 长跑中）</h2>
+<h2 class="sec"><span class="no">7</span>S5 长跑 + 多 seed 复现（胜出配置，✅ 4/4 全部完成）</h2>
 <table>
   <tr><th>ID</th><th>内容</th><th>步数</th><th>数据</th><th>seed</th><th>final loss@5000</th><th>状态</th></tr>
-  <tr><td>S5-01</td><td>胜出配置从零长跑</td><td>20000</td><td>700m（741.7M token）</td><td>1234</td><td>—</td><td>🟡 running（20:36:12 起，论文 loss 收敛曲线；~2h，ETA ~22:26）</td></tr>
+  <tr><td>S5-01</td><td>胜出配置从零长跑</td><td>20000</td><td>700m（741.7M token）</td><td>1234</td><td class="win"><b>2.205413</b></td><td>✅ done（20:36:12→22:20:19；decay 尾段 19500→20000 由 ~2.34 退火降至 2.205，退火增益 ~0.14）</td></tr>
   <tr><td>S5-02</td><td>胜出配置 3 seed 复现</td><td>5000</td><td>165M 主体</td><td>44</td><td><b>2.640200</b></td><td class="win">✅ done（19:14:49→19:42:01，与 S4-03 2.629822 seed44 vs 1234 噪声 ~0.010 内一致）</td></tr>
   <tr><td>S5-03</td><td>胜出配置 3 seed 复现</td><td>5000</td><td>165M 主体</td><td>777</td><td><b>2.653915</b></td><td>✅ done（19:42:01→20:09:26；较 s5_02 高 ~0.014，seed 间噪声）</td></tr>
   <tr><td>S5-04</td><td>胜出配置 3 seed 复现</td><td>5000</td><td>165M 主体</td><td>2024</td><td><b>2.727488</b></td><td>✅ done（20:09:26→20:36:12；较 s5_02 高 ~0.087，seed 间噪声偏大）</td></tr>
 </table>
-<p style="font-size:13.5px;color:var(--muted);"><b>多 seed 均值±σ（3/3）</b>：s5_02(2.640200)/s5_03(2.653915)/s5_04(2.727488)，<b>均值 2.673868、样本 σ≈0.0469、极差 0.087</b>。⚠️ seed2024 明显偏高（较 seed44 +0.087），使 σ 从早前 2-seed 估计 ~0.007 放大到 ~0.047，复现误差须如实报告。s5_01 长跑（20000 步 seed1234）为论文主收敛曲线，用 <code>anneal_math2</code>（430.7M）补足 4% math 份额。</p>
+<p style="font-size:13.5px;color:var(--muted);"><b>多 seed 均值±σ（3/3）</b>：s5_02(2.640200)/s5_03(2.653915)/s5_04(2.727488)，<b>均值 2.673868、样本 σ≈0.0469、极差 0.087</b>。⚠️ seed2024 明显偏高（较 seed44 +0.087），使 σ 从早前 2-seed 估计 ~0.007 放大到 ~0.047，复现误差须如实报告。</p>
+  <div class="card" style="border-left:5px solid var(--ok);">
+    <b>🏁 S5-01 长跑收敛曲线（论文主图）</b>：胜出配置从零 20000 步（seed1234），<b>final loss 2.205413</b>；decay 尾段（19500→20000）由 stable ~2.34 退火降至 2.205（<b>退火增益 ~0.14</b>），grad norm 0.194、无 NaN、skip=0。<code>anneal_math2</code>（430.7M）补足 4% math 份额，全程 8 卡 TP1/DP8 ~99K tok/s。收敛曲线（2000 采样点，log-x）见 <code>s5_01_loss_curve.png</code>。
+  </div>
 
 <h2 class="sec"><span class="no">8</span>可复现训练命令（胜出配置，S2/S3/S4 已回填最终值）</h2>
 <pre><code># 环境
@@ -168,7 +171,7 @@ torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=296
 </div>
 
 <footer>
-  BaiZe Stage(i) LLM 预训练 · Mamba2-hybrid 2B 超参搜索 · 活文档（S0–S4 已回填，S5 3 seed 已回收 / s5_01 长跑中）· 对应 ISEDA2027/4_llm_pretrain.tex · 详见 EXPERIMENTS_PRETRAIN_2B.md / MEMORY_PRETRAIN_2B.md
+  BaiZe Stage(i) LLM 预训练 · Mamba2-hybrid 2B 超参搜索 · ✅ converged（S0–S5 全部完成）· 对应 ISEDA2027/4_llm_pretrain.tex · 详见 EXPERIMENTS_PRETRAIN_2B.md / MEMORY_PRETRAIN_2B.md
 </footer>
 
 </div>
