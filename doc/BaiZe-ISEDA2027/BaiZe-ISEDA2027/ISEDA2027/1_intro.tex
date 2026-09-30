@@ -12,7 +12,7 @@ We present BaiZe, an end-to-end multimodal agentic system assembled from scratch
 Three design pillars organise our work:
 
 \begin{itemize}
-\item \textbf{Architecture.} A Nemotron-H-style sequential hybrid language backbone---56 layers interleaving Mamba-2 state-space layers, four grouped-query-attention layers, and MLP layers---giving linear-time decoding for inference-heavy agents, paired with a from-scratch vision encoder.
+\item \textbf{Architecture.} A sequential hybrid language backbone---56 layers interleaving Mamba-2 state-space layers, four grouped-query-attention layers, and MLP layers---giving linear-time decoding for inference-heavy agents, paired with a from-scratch vision encoder.
 
 \item \textbf{Reduced-horizon proxy search.} We exploit short, cheap proxy runs to rank candidate hyper-parameters, so that the ranking discovered at small scale carries over to the full model without re-tuning at scale.
 
