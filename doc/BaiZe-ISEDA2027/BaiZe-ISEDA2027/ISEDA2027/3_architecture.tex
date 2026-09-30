@@ -45,15 +45,15 @@ All stages run on $8\times$NVIDIA H100 GPUs (CUDA 12.8, PyTorch 2.8.0, Python 3.
 \centering
 \caption{BaiZe five-stage pipeline overview.}
 \label{tab:pipeline}
-\begin{tabular}{lll}
+\begin{tabular}{llll}
 \toprule
-\textbf{Stage} & \textbf{Task} & \textbf{Detailed in} \\
+\textbf{Stage} & \textbf{Task} & \textbf{Budget} & \textbf{Detailed in} \\
 \midrule
-(i) & LLM pre-training & Section~\ref{sec:llm-pretrain} \\
-(ii) & LLM post-training (SFT + agentic RL) & Section~\ref{sec:llm-posttrain} \\
-(iii) & Vision encoder pre-training & Section~\ref{sec:vision} \\
-(iv) & MLLM alignment & Section~\ref{sec:mllm} \\
-(v) & Semiconductor domain adaptation (RL) & Section~\ref{sec:domain} \\
+(i) & LLM pre-training & $\approx$84 GPU-hours & Section~\ref{sec:llm-pretrain} \\
+(ii) & LLM post-training (SFT + agentic RL) & [TBD] & Section~\ref{sec:llm-posttrain} \\
+(iii) & Vision encoder pre-training & [TBD] & Section~\ref{sec:vision} \\
+(iv) & MLLM alignment & [TBD] & Section~\ref{sec:mllm} \\
+(v) & Semiconductor domain adaptation (RL) & [TBD] & Section~\ref{sec:domain} \\
 \bottomrule
 \end{tabular}
 \end{table}

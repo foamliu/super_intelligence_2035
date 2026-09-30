@@ -10,7 +10,7 @@ We adopt the hybrid backbone on three grounds.
 \textbf{(iii) Feasibility.} Megatron-Core ships a Mamba-hybrid provider whose 56-layer interleaving pattern is halved in width to reach the $\approx$2B scale, making the backbone directly executable under the NeMo recipe without custom kernels.
 
 \subsection{Training Framework and Reduced-Horizon Search}\label{sec:framework}
-We train with the NVIDIA NeMo pre-training entry point, driving the Megatron-Core \texttt{NVIDIAMambaHybridModelProvider2B} provider directly with $\texttt{tensor\_model\_parallel\_size}=1$.
+We train with the NVIDIA NeMo pre-training entry point, driving the Megatron-Core~\cite{nvidia-megatron} \texttt{NVIDIAMambaHybridModelProvider2B} provider directly with $\texttt{tensor\_model\_parallel\_size}=1$.
 To keep the entire sweep within budget, we run all hyper-parameter searches at a reduced iteration count and treat the resulting short-horizon ranking as predictive of the full-model optimum---a small-scale proxy strategy in the spirit of maximal-update parameterization~\cite{yang2022tensor}.
 Fused kernels, selective activation recomputation, and cross-entropy loss fusion are enabled to raise throughput.
 

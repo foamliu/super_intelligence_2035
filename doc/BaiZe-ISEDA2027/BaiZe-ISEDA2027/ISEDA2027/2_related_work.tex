@@ -2,24 +2,21 @@
 
 \subsection{Small Language Models and Agentic Reasoning}
 Parameter-efficient SLMs ($<\,$2\,B) have recently narrowed the gap with larger models on mathematical and commonsense reasoning.
-MiniCPM~\cite{minicpm2024} and its successors popularised the WSD learning-rate schedule and domain-weighted data mixing; Qwen~\cite{yang2025qwen3} and Gemma~\cite{gemmateam2025gemma3} demonstrate that strong code- and math-enriched corpora can lift small models substantially.
+MiniCPM~\cite{minicpm2024} introduced scalable training strategies and domain-weighted data mixing for small models; Qwen~\cite{yang2025qwen3} and Gemma~\cite{gemmateam2025gemma3} demonstrate that strong code- and math-enriched corpora can lift small models substantially.
 Most of these efforts, however, treat the final trained model as the deliverable and report comparatively little about the \emph{search} that produced it.
 Complementarily, agentic instruction-tuning datasets (e.g., tool-use and multi-step reasoning corpora)~\cite{liu2024agentbench} have been shown to elicit planning and tool-invocation behaviour, yet are rarely paired with a from-scratch pre-training recipe for the 1B regime.
-
-\subsection{Proxy Search and Hyper-Parameter Transfer}
-Maximal-update parameterization ($\mu$P)~\cite{yang2022tensor,yang2023tensor} preserves training dynamics across model widths, enabling optimal hyper-parameters to be discovered on small ``proxy'' models and transferred to the full-sized network; reduced-horizon ranking strategies in the same spirit~\cite{minicpm2024} trade a small number of expensive full runs for many cheap short runs that reliably order candidate hyper-parameters.
-Both are especially valuable for budget-bounded builders, because they convert expensive full-scale sweeps into cheap small-scale ones; we adopt this short-horizon proxy ranking on the final hybrid backbone, transferring hyper-parameters tuned in short runs to the full configuration.
 
 \subsection{Hybrid and State-Space Architectures}
 State-space models (SSMs) such as Mamba~\cite{gu2023mamba} and Mamba-2~\cite{dao2024transformers} replace full attention with a recurrent scan update, offering linear-time decoding that suits inference-bound deployments.
 Hybrid designs interleave a small number of attention layers among SSM/MLP layers---notably Nemotron-H~\cite{nvidia2025nemotronh} and Hymba~\cite{dong2024hymba}---to recover long-range context while retaining fast decode.
 Released Megatron-Core variants of these families are scarce below 2B, leaving their small-scale trade-offs under-documented; our controlled 2B comparison (Section~\ref{sec:arch-rationale}) addresses precisely this gap.
 
-\subsection{Efficient Training and WSD Schedules}
-Warmup--Stable--Decay (WSD) schedules~\cite{minicpm2024} decouple long, constant-rate stable training from a short annealing phase, offering a predictable knob for late-stage adaptation.
-Recent work combines WSD with domain-weighted decay-time data mixing and, in some systems, optimizer switching during decay~\cite{jordan2024muon}.
-Megatron-Core and its downstream wrappers (e.g., Megatron-SWIFT) provide fused kernels and FP8/selective-recompute primitives~\cite{nvidia-megatron} that make 1B-scale from-scratch training practical on a small GPU pool---the setting we target.
+\subsection{Multimodal Vision-Language Models}
+Vision-language models connect a vision encoder to a language model through a lightweight projector, enabling end-to-end visual understanding and instruction following.
+LLaVA~\cite{liu2023llava} established visual instruction tuning---aligning a vision encoder to a frozen LLM via a linear projection followed by instruction fine-tuning---as a scalable recipe for open multimodal assistants.
+LLaVA-OneVision~\cite{li2024llavaonevision} consolidates this line into a single open model spanning single-image, multi-image, and video tasks through a staged curriculum: stage-1 projector pre-training, stage-1.5 mid-training, and stage-2 instruction tuning.
+BaiZe follows this curriculum in stage~(iv) (Section~\ref{sec:mllm}), substituting a from-scratch vision encoder (stage~iii) for the frozen off-the-shelf encoder.
 
 \subsection{LLMs for Electronic Design Automation}
 A growing line of work applies LLM agents to chip design tasks such as register-transfer-level generation, verification, and bug triage~\cite{liu2023chipnemo,blocklove2024chip}.
-These applications motivate a cheap, always-on, agentic language core that can run per-team or per-engineer; our work supplies the efficient backbone such systems require.
+These applications motivate a cheap, always-on, agentic multimodal core that can run per-team or per-engineer; our work supplies the efficient multimodal backbone such systems require.
