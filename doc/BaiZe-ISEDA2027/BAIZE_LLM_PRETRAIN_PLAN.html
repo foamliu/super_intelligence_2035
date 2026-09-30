@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe LLM 预训练（Stage i）· 执行计划</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr;} }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .flow { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; align-items:center; }
+  .flow .step { background:#fff; border:1px solid var(--border); border-radius:8px; padding:8px 14px; font-size:13px; font-weight:600; }
+  .flow .arrow { color:var(--muted); font-weight:700; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6a4a00; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe LLM 预训练（Stage i）· 执行计划</h1>
+  <div class="sub">Mamba2-hybrid（2.22B）从零预训练 + 预算约束超参搜索（S1–S4）</div>
+  <div class="meta">
+    <span>📅 2026-09-29</span>
+    <span>🎯 目标规模 ~2.2B</span>
+    <span>⚙️ 框架 NeMo + Megatron-Core</span>
+    <span>⏱️ 预算 ~84 GPU·hour</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <strong>结论先行</strong>：架构已通过 2B 从零对比搜索选定为 <strong>Mamba2-hybrid（56 层，2.220B）</strong>——以更少参数（-11.6%）取得更低早期 loss（4.6846 vs 4.8065），推理 decode 快 ~10.3×，训练吞吐落后 ~24% 但可接受。本计划在 <strong>已定架构</strong> 上执行预算约束下的 <strong>短地平线超参搜索（S1–S4）</strong> 与最终骨架的重新测量，对应论文 <code>§LLM Pretraining</code>（<code>sec:llm-pretrain</code>）。
+</div>
+
+<nav class="toc">
+  <strong>目录</strong><br>
+  <a href="#s1">1 任务目标与范围</a> ·
+  <a href="#s2">2 已定前提（架构 / 框架 / 数据 / 环境）</a> ·
+  <a href="#s3">3 架构选择结论（已完成，作为 rationale）</a> ·
+  <a href="#s4">4 超参搜索协议 S1–S4</a> ·
+  <a href="#s5">5 预算分配</a> ·
+  <a href="#s6">6 执行步骤表</a> ·
+  <a href="#s7">7 附录 · 命令 / 监测 / 文件清单</a>
+</nav>
+
+<h2 class="sec" id="s1"><span class="no">1</span>任务目标与范围</h2>
+<p>在已选定的 <strong>Mamba2-hybrid（2.220B）</strong> 语言骨架上完成 Stage~(i) 从零预训练：在固定 GPU 预算下，通过 <strong>短地平线（reduced-horizon）超参搜索</strong> 确定 WSD 调度的 <code>warmup / stable LR / decay ratio</code> 与调度族（WSD vs. cosine），并对最终骨架做 <strong>长期验证（S4）</strong> 与全套量测的重新测量，回填论文 <code>Table: archcomp / configs</code> 与损失曲线。</p>
+<div class="kpi-row">
+  <div class="kpi"><div class="v">2.220B</div><div class="l">骨干参数（56 层 hybrid）</div></div>
+  <div class="kpi"><div class="v">84 GPU·h</div><div class="l">搜索预算（含重试）</div></div>
+  <div class="kpi"><div class="v">80 / 300 / 160</div><div class="l">S2·S3 / S1 / S4 步数</div></div>
+  <div class="kpi"><div class="v">~0.9 GPU·h</div><div class="l">单次短地平线实验</div></div>
+</div>
+<p><strong>范围界定</strong>：本计划不含 <em>数据下载</em> 与 <em>架构选型</em>（两者均已就绪/已完成）；不含下游 post-training（对应论文 <code>sec:llm-posttrain</code>）。仅覆盖：① 最终骨架上的超参搜索（S1–S4）；② 结果回填。完整 1.8T-token 长程预训练为后续上线动作，本期受 GPU 预算约束只做短地平线验证，<em>短地平线排名按惯例视为全量最优的预测</em>（μP 小尺度代理思想，见 <code>yang2022tensor</code>）。</p>
+
+<h2 class="sec" id="s2"><span class="no">2</span>已定前提（架构 / 框架 / 数据 / 环境）</h2>
+<div class="grid2">
+  <div class="card">
+    <h3>架构（已定，不再变）</h3>
+    <ul>
+      <li><strong>Mamba2-hybrid</strong>（56 层，Nemotron-H 式顺序混合）</li>
+      <li>参数量 <code>2,220,268,032</code>（<code>numel()</code> 实测）</li>
+      <li>多数层为 SSM（Mamba2）+ 3~4 个稀疏注意力层</li>
+      <li>provider：<code>NVIDIAMambaHybridModelProvider2B</code>（宽度减半至 ~2B）</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>框架 / 环境（锁定）</h3>
+    <ul>
+      <li><strong>NeMo</strong> pre-training 入口 + <strong>Megatron-Core</strong> 0.16.1</li>
+      <li><code>tensor_model_parallel_size=1</code>（TP=1 / DP 分片）</li>
+      <li>CUDA 12.8 · PyTorch 2.8.0 · Python 3.10</li>
+      <li>硬件：<code>10.239.2.29</code>（8×H100）、<code>10.239.2.12</code>（GPU0~5）</li>
+    </ul>
+  </div>
+</div>
+<div class="grid2">
+  <div class="card">
+    <h3>数据（就绪）</h3>
+    <ul>
+      <li><strong>Ultra-FineWeb-L3</strong> 英文子集（~1.8T tokens）</li>
+      <li>流式打包至 <code>seq_length=4096</code></li>
+      <li>tokenizer：DeepSeek-V4.1-Flash（vocab <code>129,281</code>，pad <code>129,408</code>）</li>
+      <li>短地平线用已切子集（200k docs / 165M tokens，<code>.bin/.idx</code>）</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>固定超参（跨配置一致）</h3>
+    <ul>
+      <li>optimizer：distributed AdamW（β<sub>1</sub>=0.9 β<sub>2</sub>=0.95 eps=1e-5 wd=0.1）</li>
+      <li>bf16、seed=1234、序列 4096</li>
+      <li>全局 batch / 序列 / packing 跨配置固定，S3 单独扫 batch sizing</li>
+      <li>融合 kernel + 选择性激活重计算 + CE-loss 融合（提吞吐）</li>
+    </ul>
+  </div>
+</div>
+
+<h2 class="sec" id="s3"><span class="no">3</span>架构选择结论（已完成，作为 rationale）</h2>
+<p>在启动超参搜索前，已通过 <strong>从零、匹配数据/seed/GPU 足迹</strong> 的 head-to-head 对比，在 ~2B 尺度选定 hybrid 骨架（对应 <code>EXPERIMENTS_2B.md</code> 与论文 <code>tab:archcomp</code>）。三条采用依据：</p>
+<ol>
+  <li><strong>推理效率</strong>：SSM 层逐 token O(1) 循环解码，decode 快一个量级，直接命中推理密集型、成本敏感部署。</li>
+  <li><strong>受控对比</strong>：等参数口径下 hybrid 以更少参数（2.22B vs 2.51B，-11.6%）收敛到更低 loss。</li>
+  <li><strong>可行性</strong>：Megatron-Core 自带 Mamba-hybrid provider，56 层交叠模式降宽至 ~2B，NeMo recipe 下无需自研 kernel 即可执行。</li>
+</ol>
+<h3>对比表（早期收敛，1000 步 / seq4096 / GBS6 / 同数据同 seed，已完成）</h3>
+<table>
+  <thead><tr><th>指标</th><th>MiniCPM5-2B（2.512B）</th><th>Mamba2-hybrid（2.220B）</th><th>Edge</th></tr></thead>
+  <tbody>
+    <tr><td>参数量</td><td>2.512B</td><td><strong>2.220B</strong></td><td class="badge-holder">hybrid <span class="badge b-ok">-11.6%</span></td></tr>
+    <tr><td>最终 loss</td><td>4.8065</td><td><strong>4.6846</strong></td><td>hybrid <span class="badge b-ok">-0.122</span></td></tr>
+    <tr><td>训练 tok/s</td><td><strong>~89K</strong></td><td>~72K</td><td>dense <span class="badge b-warn">+24%</span></td></tr>
+    <tr><td>prefill tok/s</td><td>21,436</td><td><strong>23,692</strong></td><td>hybrid <span class="badge b-ok">+10.5%</span></td></tr>
+    <tr><td>decode tok/s</td><td>2.21 ⚠️</td><td><strong>22.77</strong></td><td>hybrid <span class="badge b-ok">+10.3×</span></td></tr>
+  </tbody>
+</table>
+<p class="note">⚠️ MiniCPM5 的 decode 慢已用 <code>torch.profiler</code> 定位：非 KV-cache 未命中，而是 mcore 直驱（无 CUDA-graph/flashinfer）下 TE fused-attention 逐层 CPU launch 开销（<code>FusedAttnFunc</code> 42 层占单步 Self CPU 的 93.4%），属 CPU-bound 非 GPU-bound。Mamba2 仅 ~4 个 attention 层 + SSM/MLP，故 decode 快 ~10×。两架构同一代码路径测量，相对结论可信。</p>
+<p>注：论文 <code>tab:archcomp</code> 的最终油耗（loss / 吞吐）将在 <strong>最终 hybrid 骨架</strong> 上重新测量回填（当前标 <code>[TBD]</code>）。</p>
+
+<h2 class="sec" id="s4"><span class="no">4</span>超参搜索协议 S1–S4</h2>
+<p>完整网格不可行，采用 <strong>分阶段、单变量一次只动一个</strong> 的协议（对应论文 <code>sec:search</code>）。每个阶段相对「当前最优」只改一个变量，隔离贡献、压住 GPU·时。所有短地平线实验 validation loss 在<strong>匹配步数</strong>上报，保证跨配置可比。</p>
+<div class="flow">
+  <span class="step">S1 baseline</span><span class="arrow">→</span>
+  <span class="step">S2 单变量超参</span><span class="arrow">→</span>
+  <span class="step">S3 调度 · batch</span><span class="arrow">→</span>
+  <span class="step">S4 胜出验证</span>
+</div>
+<table>
+  <thead><tr><th>阶段</th><th>变量 / 内容</th><th>步数</th><th>GPU·h/次</th><th>产出</th></tr></thead>
+  <tbody>
+    <tr><td><strong>S1</strong></td><td>复现 Mamba2-hybrid 参考配置，建 loss/吞吐基线</td><td>300</td><td>~3.4</td><td>baseline（S1-01）</td></tr>
+    <tr><td><strong>S2</strong></td><td>单变量扰动：stable LR → warmup length → decay ratio</td><td>80</td><td>~0.9</td><td>S2-01 / S2-02（各轴）</td></tr>
+    <tr><td><strong>S3</strong></td><td>调度族（WSD vs. cosine）+ batch sizing</td><td>80</td><td>~0.9</td><td>S3-01（族）/ batch 组</td></tr>
+    <tr><td><strong>S4</strong></td><td>胜出配置从零重训，长地平线确认收敛/可复现</td><td>160</td><td>~1.8</td><td>S4-01（winner）</td></tr>
+  </tbody>
+</table>
+<h3>需扫的超参轴（WSD 调度，<code>sec:wsd</code>）</h3>
+<table>
+  <thead><tr><th>轴</th><th>基准</th><th>候选扫描</th><th>阶段</th></tr></thead>
+  <tbody>
+    <tr><td>stable learning rate</td><td>3e-4</td><td>2e-4 / 3e-4 / 4e-4 / 6e-4</td><td>S2</td></tr>
+    <tr><td>warmup length（步）</td><td>100</td><td>50 / 100 / 200</td><td>S2</td></tr>
+    <tr><td>decay ratio（WSD 尾段）</td><td>10%</td><td>5% / 10% / 20%</td><td>S2</td></tr>
+    <tr><td>schedule family</td><td>WSD</td><td>WSD vs. cosine</td><td>S3</td></tr>
+    <tr><td>global batch size</td><td>6（TP1/DP6/mb1）</td><td>6 / 12 / 24（grad-accum）</td><td>S3</td></tr>
+  </tbody>
+</table>
+<p class="note">注：其余 schedule / batch 设定（全局 batch、序列长度、packing）跨配置固定，并在最终骨架上重测。<code>cosine</code> 作为 WSD 的备选族保留。</p>
+
+<h2 class="sec" id="s5"><span class="no">5</span>预算分配</h2>
+<p>预训练搜索受 <strong>~84 GPU·hour</strong> 总预算约束（跨所有实验与重试累计）。短地平线（S2/S3）单次 ~0.9 GPU·h，S1 基线 ~3.4 GPU·h，S4 验证 ~1.8 GPU·h。</p>
+<div class="kpi-row">
+  <div class="kpi"><div class="v">~84</div><div class="l">总 GPU·h 预算</div></div>
+  <div class="kpi"><div class="v">~3.4</div><div class="l">S1 基线</div></div>
+  <div class="kpi"><div class="v">~0.9×N</div><div class="l">S2/S3 每点</div></div>
+  <div class="kpi"><div class="v">~1.8</div><div class="l">S4 验证</div></div>
+</div>
+<table>
+  <thead><tr><th>阶段</th><th>实验数</th><th>单次 GPU·h</th><th>小计 GPU·h</th><th>累计</th></tr></thead>
+  <tbody>
+    <tr><td>S1（baseline）</td><td>1</td><td>3.4</td><td>3.4</td><td>3.4</td></tr>
+    <tr><td>S2（LR×3 + warmup×2 + decay×2 ≈ 7）</td><td>7</td><td>0.9</td><td>6.3</td><td>9.7</td></tr>
+    <tr><td>S3（族×2 + batch×2 ≈ 4）</td><td>4</td><td>0.9</td><td>3.6</td><td>13.3</td></tr>
+    <tr><td>S4（winner，长地平线）</td><td>1</td><td>1.8</td><td>1.8</td><td>15.1</td></tr>
+    <tr><td>重试 / 抖动余量</td><td>—</td><td>—</td><td>~68.9</td><td><strong>~84</strong></td></tr>
+  </tbody>
+</table>
+<p class="note">注：预算为上限而非目标；每点实验启动前先核对剩余预算，避免超支。若扫描点数使累计逼近 84，则按「先单变量、后组合」的优先级裁剪。</p>
+
+<h2 class="sec" id="s6"><span class="no">6</span>执行步骤表</h2>
+<table>
+  <thead><tr><th>#</th><th>步骤</th><th>动作</th><th>产出</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>准备基线</td><td>复用 <code>mamba2_hybrid_2b/</code> provider+recipe，确认 <code>nemo_run</code> 未装时走 torchrun 直驱（NVIDIA/NeMo <code>pretrain(pretrain_config(...), forward_step)</code>）</td><td>可启动的 S1 脚本</td></tr>
+    <tr><td>2</td><td>S1 基线</td><td>300 步复现参考配置，记录 baseline loss / tok/s</td><td>S1-01</td></tr>
+    <tr><td>3</td><td>S2 超参</td><td>逐轴（LR→warmup→decay）各 80 步，一次只改一轴，val loss@匹配步数</td><td>S2-01…</td></tr>
+    <tr><td>4</td><td>S3 调度/batch</td><td>WSD vs cosine、GBS 6/12/24 各 80 步</td><td>S3-01…</td></tr>
+    <tr><td>5</td><td>S4 验证</td><td>胜出配置从零 160 步长地平线，确认收敛+可复现</td><td>S4-01（winner）</td></tr>
+    <tr><td>6</td><td>回填</td><td>把最终骨架的 val loss / 吞吐写入 <code>tab:configs</code>、<code>tab:archcomp</code>，重画 loss 曲线 / 短地平线消融图</td><td>论文图表</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec" id="s7"><span class="no">7</span>附录 · 命令 / 监测 / 文件清单</h2>
+<h3>启动模板（torchrun 直驱，TP1/DP6）</h3>
+<pre><code># 主节点 6 卡（TP=1 / DP=6），seq4096 / mb1 / GBS6 / bf16 / seed1234
+PYTHONPATH=/nas_train/app.e0031982/omegaconf_230 \
+torchrun --nproc_per_node=6 --master_addr=&lt;NODE_IP&gt; --master_port=&lt;PORT&gt; \
+  scripts/train.sh hybrid s2_01 &lt;PORT&gt; 6 \
+  &gt; /tmp/BAIZE_pretrain_s2_01.log 2&gt;&amp;1 &amp;</code></pre>
+<h3>监测 GPU / 进程</h3>
+<pre><code>nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv
+ssh 10.239.2.12 nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv
+pgrep -af 'megatron|torchrun|pretrain'
+tail -f /tmp/BAIZE_pretrain_&lt;ID&gt;.log</code></pre>
+<h3>结果提取口径</h3>
+<ul>
+  <li>loss：从 tensorboard 日志读取；吞吐：从 iter 日志（耗时/iter → tok/s）读取。</li>
+  <li>val loss 必须在 <strong>匹配步数</strong> 下比较，保证 apples-to-apples。</li>
+  <li>每次实验后更新 <code>EXPERIMENTS.md</code>（配置 ID / 超参 / 结果 / GPU·h），累计写 <code>MEMORY.md</code>。</li>
+</ul>
+<h3>文件清单</h3>
+<table>
+  <thead><tr><th>文件</th><th>作用</th></tr></thead>
+  <tbody>
+    <tr><td><code>ISEDA2027/4_llm_pretrain.tex</code></td><td>论文 Stage~(i) 章节（本计划的书面定义）</td></tr>
+    <tr><td><code>run/EXPERIMENTS_2B.md</code></td><td>架构选型对比表（S1–S3 架构层面，已完成）</td></tr>
+    <tr><td><code>run/EXPERIMENTS.md</code> / <code>MEMORY.md</code></td><td>超参搜索实验记录 / 运行时状态（本次待更新）</td></tr>
+    <tr><td><code>run/train_s1_01.sh…train_s4_01.sh</code></td><td>各阶段启动脚本（复用/适配 hybrid 骨架）</td></tr>
+    <tr><td><code>BAIZE_LLM_PRETRAIN_PLAN.html</code></td><td>本执行计划（自包含）</td></tr>
+  </tbody>
+</table>
+
+<footer>
+  BaiZe LLM 预训练（Stage i）· 执行计划 · 生成于 2026-09-29 · 架构已定 Mamba2-hybrid（2.220B）· 超参搜索 S1–S4 待执行 · 对应论文 <code>sec:llm-pretrain</code> / <code>4_llm_pretrain.tex</code>
+</footer>
+
+</div>
+</body>
+</html>
