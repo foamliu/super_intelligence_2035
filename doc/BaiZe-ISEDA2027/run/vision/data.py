@@ -1,0 +1,59 @@
+"""Data loading: WebDataset shards -> (image, tokenized-caption) batches for SigLIP/CLIP training."""
+import io
+import os
+import random
+
+import torch
+import torchvision.transforms as T
+import webdataset as wds
+
+MEAN = (0.48145466, 0.4578275, 0.40821073)
+STD = (0.26862954, 0.26130258, 0.27577711)
+
+
+def get_train_transform(size: int = 224):
+    return T.Compose([
+        T.RandomResizedCrop(size, scale=(0.5, 1.0)),
+        T.RandomHorizontalFlip(),
+        T.ToTensor(),
+        T.Normalize(MEAN, STD),
+    ])
+
+
+def get_val_transform(size: int = 224):
+    return T.Compose([
+        T.Resize(int(size * 1.15)),
+        T.CenterCrop(size),
+        T.ToTensor(),
+        T.Normalize(MEAN, STD),
+    ])
+
+
+def _no_split(src, group=None):
+    """Identity nodesplitter: shard partitioning is done by the caller (rank-sliced list)."""
+    yield from src
+
+
+def build_loader(shard_list, batch_size: int, tokenizer, size: int = 224,
+                 num_workers: int = 6, shuffle: bool = True, train: bool = True,
+                 drop_last: bool = True):
+    """`shard_list` is an explicit list of tar paths (already rank-sliced)."""
+    tf = get_train_transform(size) if train else get_val_transform(size)
+    dataset = (
+        wds.WebDataset(shard_list, nodesplitter=_no_split,
+                       shardshuffle=(200 if shuffle else 0))
+        .shuffle(2000 if shuffle else 0)
+        .decode('pil')
+        .to_tuple('png;jpg;img', 'txt')
+        .map(lambda s: (tf(s[0]), s[1]))
+    )
+
+    def collate(batch):
+        imgs = torch.stack([b[0] for b in batch])
+        caps = [b[1] for b in batch]
+        texts = tokenizer(caps)
+        return imgs, texts
+
+    loader = wds.WebLoader(dataset, batch_size=batch_size, num_workers=num_workers,
+                           collate_fn=collate, drop_last=drop_last)
+    return loader

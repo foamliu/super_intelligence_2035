@@ -1,0 +1,282 @@
+"""BaiZe Stage(iii) vision encoders (from-scratch). See get_vision_tower()."""
+from __future__ import annotations
+
+import math
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+try:
+    from mamba_ssm import Mamba as _MambaSSM
+    HAS_MAMBA = True
+except Exception:
+    HAS_MAMBA = False
+
+EMBED_DIM = 512
+
+
+class LayerNorm(nn.LayerNorm):
+    def forward(self, x):
+        return F.layer_norm(x, self.normalized_shape, self.weight, self.bias, self.eps)
+
+
+class SwiGLU(nn.Module):
+    def __init__(self, dim: int, hidden: int):
+        super().__init__()
+        self.gate = nn.Linear(dim, hidden, bias=False)
+        self.up = nn.Linear(dim, hidden, bias=False)
+        self.down = nn.Linear(hidden, dim, bias=False)
+
+    def forward(self, x):
+        return self.down(F.silu(self.gate(x)) * self.up(x))
+
+
+class Attention(nn.Module):
+    def __init__(self, dim: int, heads: int, qkv_bias: bool = False):
+        super().__init__()
+        assert dim % heads == 0
+        self.heads = heads
+        self.head_dim = dim // heads
+        self.qkv = nn.Linear(dim, dim * 3, bias=qkv_bias)
+        self.proj = nn.Linear(dim, dim, bias=False)
+
+    def forward(self, x):
+        B, N, C = x.shape
+        qkv = self.qkv(x).reshape(B, N, 3, self.heads, self.head_dim).permute(2, 0, 3, 1, 4)
+        q, k, v = qkv[0], qkv[1], qkv[2]
+        out = F.scaled_dot_product_attention(q, k, v)
+        out = out.transpose(1, 2).reshape(B, N, C)
+        return self.proj(out)
+
+
+class AttentionBlock(nn.Module):
+    def __init__(self, dim: int, heads: int, mlp_dim: int):
+        super().__init__()
+        self.norm1 = LayerNorm(dim)
+        self.attn = Attention(dim, heads)
+        self.norm2 = LayerNorm(dim)
+        self.mlp = SwiGLU(dim, mlp_dim)
+
+    def forward(self, x):
+        x = x + self.attn(self.norm1(x))
+        x = x + self.mlp(self.norm2(x))
+        return x
+
+
+class MambaBidirBlock(nn.Module):
+    def __init__(self, dim: int, d_state: int = 16, d_conv: int = 4, expand: int = 2):
+        super().__init__()
+        self.norm = LayerNorm(dim)
+        assert HAS_MAMBA, "mamba_ssm not available"
+        self.mamba_fwd = _MambaSSM(d_model=dim, d_state=d_state, d_conv=d_conv, expand=expand)
+        self.mamba_bwd = _MambaSSM(d_model=dim, d_state=d_state, d_conv=d_conv, expand=expand)
+
+    def forward(self, x):
+        x = self.norm(x)
+        fwd = self.mamba_fwd(x)
+        bwd = self.mamba_bwd(torch.flip(x, dims=[1]))
+        bwd = torch.flip(bwd, dims=[1])
+        return x + 0.5 * (fwd + bwd)
+
+
+class MoEBlock(nn.Module):
+    """Sparse MoE FFN on top of standard attention. Each expert is a dense
+    SwiGLU FFN of width `expert_ff`; top-k experts are routed per token and
+    their outputs weight-summed. Expert-loop implementation keeps memory low
+    (shared per-expert weights, no per-token gather).
+    """
+    def __init__(self, dim: int, heads: int, expert_ff: int, n_experts: int = 8, top_k: int = 2):
+        super().__init__()
+        self.norm1 = LayerNorm(dim)
+        self.attn = Attention(dim, heads)
+        self.norm2 = LayerNorm(dim)
+        self.n_experts = n_experts
+        self.top_k = top_k
+        self.router = nn.Linear(dim, n_experts, bias=False)
+        self.gate = nn.Parameter(torch.empty(n_experts, dim, expert_ff))
+        self.up = nn.Parameter(torch.empty(n_experts, dim, expert_ff))
+        self.down = nn.Parameter(torch.empty(n_experts, expert_ff, dim))
+        for p in (self.gate, self.up, self.down):
+            nn.init.kaiming_uniform_(p, a=math.sqrt(5))
+
+    def forward(self, x):
+        x = x + self.attn(self.norm1(x))
+        h = self.norm2(x)
+        B, N, C = h.shape
+        h_flat = h.reshape(B * N, C)
+        logits = self.router(h_flat)                       # (S, E)
+        topk_vals, topk_idx = logits.topk(self.top_k, dim=-1)  # (S, top_k)
+        probs = F.softmax(topk_vals, dim=-1)               # (S, top_k)
+        out = torch.zeros_like(h_flat)
+        for e in range(self.n_experts):
+            mask = topk_idx == e                            # (S, top_k) bool
+            s_idx, k_idx = mask.nonzero(as_tuple=True)      # (T,), (T,)
+            if s_idx.numel() == 0:
+                continue
+            w = probs[s_idx, k_idx]                         # (T,)
+            h_e = h_flat[s_idx]                             # (T, C)
+            a = F.silu(h_e @ self.gate[e]) * (h_e @ self.up[e])   # (T, ff)
+            o = a @ self.down[e]                            # (T, C)
+            out.index_add_(0, s_idx, o * w.unsqueeze(1))
+        x = x + out.reshape(B, N, C)
+        return x
+
+
+class PatchEmbed(nn.Module):
+    def __init__(self, image_size: int, patch_size: int, width: int):
+        super().__init__()
+        self.grid = image_size // patch_size
+        self.conv = nn.Conv2d(3, width, patch_size, patch_size, bias=False)
+        self.pos = nn.Parameter(torch.randn(self.grid * self.grid, width) * (width ** -0.5))
+
+    def forward(self, x):
+        x = self.conv(x).flatten(2).transpose(1, 2)
+        return x + self.pos
+
+
+class ReadoutHead(nn.Module):
+    def __init__(self, width: int, embed_dim: int = EMBED_DIM):
+        super().__init__()
+        self.norm = LayerNorm(width)
+        self.proj = nn.Linear(width, embed_dim, bias=False)
+
+    def forward(self, x):
+        x = x.mean(dim=1)
+        return self.proj(self.norm(x))
+# --------------------------------------------------------------------------- #
+# Architecture 1: OpenVision2 (pure attention ViT)
+# --------------------------------------------------------------------------- #
+class OpenVision2(nn.Module):
+    def __init__(self, image_size: int = 224, patch_size: int = 16,
+                 width: int = 1024, depth: int = 30, heads: int = 16, mlp_dim: int = 4096):
+        super().__init__()
+        self.image_size = image_size
+        self.patch_size = patch_size
+        self.embed = PatchEmbed(image_size, patch_size, width)
+        self.blocks = nn.ModuleList([AttentionBlock(width, heads, mlp_dim) for _ in range(depth)])
+        self.norm = LayerNorm(width)
+        self.head = ReadoutHead(width)
+
+    def forward(self, x):
+        x = self.embed(x)
+        for b in self.blocks:
+            x = b(x)
+        return self.head(self.norm(x))
+
+
+# --------------------------------------------------------------------------- #
+# Architecture 2: MambaEye (pure visual SSM, Vim-style bidirectional)
+# --------------------------------------------------------------------------- #
+class MambaEye(nn.Module):
+    def __init__(self, image_size: int = 224, patch_size: int = 16,
+                 width: int = 1024, depth: int = 40, d_state: int = 16,
+                 d_conv: int = 4, expand: int = 2):
+        super().__init__()
+        self.image_size = image_size
+        self.patch_size = patch_size
+        self.embed = PatchEmbed(image_size, patch_size, width)
+        self.blocks = nn.ModuleList(
+            [MambaBidirBlock(width, d_state, d_conv, expand) for _ in range(depth)])
+        self.norm = LayerNorm(width)
+        self.head = ReadoutHead(width)
+
+    def forward(self, x):
+        x = self.embed(x)
+        for b in self.blocks:
+            x = b(x)
+        return self.head(self.norm(x))
+
+
+# --------------------------------------------------------------------------- #
+# Architecture 3: MoEViE (sparse MoE ViT)
+# --------------------------------------------------------------------------- #
+class MoEViE(nn.Module):
+    def __init__(self, image_size: int = 224, patch_size: int = 16,
+                 width: int = 1024, depth: int = 30, heads: int = 16,
+                 expert_ff: int = 512, n_experts: int = 8, top_k: int = 2):
+        super().__init__()
+        self.image_size = image_size
+        self.patch_size = patch_size
+        self.embed = PatchEmbed(image_size, patch_size, width)
+        self.blocks = nn.ModuleList(
+            [MoEBlock(width, heads, expert_ff, n_experts, top_k) for _ in range(depth)])
+        self.norm = LayerNorm(width)
+        self.head = ReadoutHead(width)
+
+    def forward(self, x):
+        x = self.embed(x)
+        for b in self.blocks:
+            x = b(x)
+        return self.head(self.norm(x))
+
+
+# --------------------------------------------------------------------------- #
+# Architecture 4: DeepEncoderV2 (Attention + SSM hybrid, ordered pattern)
+# --------------------------------------------------------------------------- #
+class DeepEncoderV2(nn.Module):
+    """Nemotron-H style ordered hybrid. `pattern` like 'AAMM' (A=attention, M=Mamba),
+    repeated cyclically to `n_blocks` total blocks."""
+    def __init__(self, image_size: int = 224, patch_size: int = 16,
+                 width: int = 1024, heads: int = 16, mlp_dim: int = 4096,
+                 d_state: int = 16, d_conv: int = 4, expand: int = 2,
+                 pattern: str = 'AAMM', n_blocks: int = 34):
+        super().__init__()
+        self.image_size = image_size
+        self.patch_size = patch_size
+        self.embed = PatchEmbed(image_size, patch_size, width)
+        blocks = []
+        i = 0
+        while len(blocks) < n_blocks:
+            ch = pattern[i % len(pattern)]
+            if ch == 'A':
+                blocks.append(AttentionBlock(width, heads, mlp_dim))
+            elif ch == 'M':
+                blocks.append(MambaBidirBlock(width, d_state, d_conv, expand))
+            else:
+                raise ValueError(f"bad pattern char {ch!r}")
+            i += 1
+        self.blocks = nn.ModuleList(blocks)
+        self.norm = LayerNorm(width)
+        self.head = ReadoutHead(width)
+
+    def forward(self, x):
+        x = self.embed(x)
+        for b in self.blocks:
+            x = b(x)
+        return self.head(self.norm(x))
+
+
+def get_vision_tower(name: str) -> nn.Module:
+    towers = {
+        'openvision2': OpenVision2,
+        'mambaeye': MambaEye,
+        'moevie': MoEViE,
+        'deepencoder_v2': DeepEncoderV2,
+    }
+    if name not in towers:
+        raise ValueError(f"Unknown tower '{name}'. Options: {list(towers)}")
+    return towers[name]()
+
+
+def param_count(model: nn.Module) -> int:
+    return sum(p.numel() for p in model.parameters())
+
+
+def active_param_count(model: nn.Module) -> int:
+    """Approx active params for a single forward (MoE top-k expert subset)."""
+    moe_ids = set()
+    n = 0
+    for m in model.modules():
+        if isinstance(m, MoEBlock):
+            for p in m.parameters():
+                moe_ids.add(id(p))
+            # attention + router + top_k fraction of experts
+            n += sum(p.numel() for p in m.attn.parameters())
+            n += m.router.weight.numel()
+            nl = m.gate.numel() + m.up.numel() + m.down.numel()
+            n += int(m.top_k / m.n_experts * nl)
+    for p in model.parameters():
+        if id(p) not in moe_ids:
+            n += p.numel()
+    return n
