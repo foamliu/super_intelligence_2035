@@ -58,7 +58,7 @@ while true; do
     # 自适应睡眠：WAITING=1（有训练等异步任务 running）→ 长睡 30 分钟省 token；
     # WAITING=0（无阻塞、应连续推进）→ 短睡 1 分钟，让 cline 尽快续跑下一轮。
     SLEEP="$SLEEP_BUSY"
-    if grep -qE '^[- ]*WAITING: *1' "$MEMORY" 2>/dev/null; then
+    if grep -qE 'WAITING:[* ]*1' "$MEMORY" 2>/dev/null; then
         SLEEP="$SLEEP_WAIT"
         echo "[loop] $(date '+%F %T') WAITING=1（异步任务 running）→ sleep ${SLEEP}s"
     else
