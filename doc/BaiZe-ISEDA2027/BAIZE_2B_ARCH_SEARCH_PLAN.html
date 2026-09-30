@@ -51,15 +51,30 @@
   <h1>BaiZe 2B 架构搜索（从零训练）· 假期执行计划报告</h1>
   <div class="sub">MiniCPM5-2B <b>vs</b> Mamba2-hybrid 2B —— 统一 NVIDIA/NeMo recipe，随机初始化对比 loss / 训练速度 / 推理速度</div>
   <div class="meta">
-    <span>📅 执行窗口：2026-09-30 ~ 10-08（十一假期）</span>
+    <span>📅 原计划窗口 2026-09-30 ~ 10-08 · ✅ 已提前完成（2026-09-29）</span>
     <span>🖥️ GPU：10.239.2.29（8 卡）+ 10.239.2.12（前 6 卡）</span>
     <span>📦 规模：~2B × 2 架构</span>
   </div>
 </header>
 
 <div class="verdict">
-  <p>本报告是与任务书 <code>run/BAIZE_2B_ARCH_SEARCH_TASK.md</code> 配套的<b>计划说明</b>，供人在假期前/期间快速掌握任务全貌。
-  核心结论：两个 ~2B 架构在<b>「唯一变量 = 架构本身」</b>的前提下各从零训练 ~1000 步，产出三组可比的量化指标，最终以一份 HTML 报告交付胜出架构。</p>
+  <p>本报告是与任务书 <code>run/BAIZE_2B_ARCH_SEARCH_TASK.md</code> 配套的计划说明。<b>该计划已于 2026-09-29 执行完毕并得出胜出架构</b>（见下方「最新进展」）；原始计划（目标 / 决策 / 试验清单 / 状态机 / 方法口径）作为过程记录保留。</p>
+</div>
+
+<div class="card" style="border-left:5px solid var(--ok); background:#f0fdf4;" id="latest">
+  <h3 style="margin-top:0;">🏆 最新进展 · 试验已完成（2026-09-29）——胜出架构：<b>Mamba2-hybrid（56 层，Nemotron-H 式顺序混合）</b></h3>
+  <p>四阶段（S1 冒烟 → S2 1000 步训练 → S3 推理基准 → S4 报告）全部打通。Mamba2-hybrid 以<b>更少参数（2.220B vs 2.512B，-11.6%）</b>达成<b>更低的最终 loss（4.6846 vs 4.8065）</b>与<b>更快的推理（prefill +10.5%、decode +10.3×）</b>；训练吞吐落后 ~24%（MiniCPM5 胜）。<b>三项指标两项占优 → 胜出</b>。</p>
+  <table>
+    <thead><tr><th>维度</th><th>MiniCPM5-2B（42 层）</th><th>Mamba2-hybrid（56 层）</th><th>胜者</th></tr></thead>
+    <tbody>
+      <tr><td>参数量</td><td>2.512B</td><td><b>2.220B</b></td><td>Mamba2（-11.6%）</td></tr>
+      <tr><td>最终 loss（1000 步）</td><td>4.8065</td><td><b>4.6846</b></td><td>Mamba2</td></tr>
+      <tr><td>训练 tok/s（6 卡 TP1/DP6）</td><td><b>~89K</b></td><td>~72K</td><td>MiniCPM5（+24%）</td></tr>
+      <tr><td>推理 prefill tok/s</td><td>21,436</td><td><b>23,692</b></td><td>Mamba2（+10.5%）</td></tr>
+      <tr><td>推理 decode tok/s</td><td>2.21 ⚠️</td><td><b>22.77</b></td><td>Mamba2（+10.3×）</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:var(--muted);">⚠️ MiniCPM5 decode 偏慢（452ms/token）<b>非 KV-cache 未命中</b>，而是 mcore 直驱（无 CUDA-graph/flashinfer）下 TE fused-attention 逐层 CPU launch 开销（CPU-bound）；两架构同一代码路径测量，相对结论可信。完整对比、局限（仅 1000 步早期收敛）、可复现命令见 <code>BAIZE_2B_ARCH_RESULT.html</code> 与 <code>run/EXPERIMENTS_2B.md</code>。</p>
 </div>
 
 <div class="toc">
@@ -295,7 +310,7 @@ setsid bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA
 <p>原则：优先本地 <code>ms-swift</code> / <code>megatron-core</code> 源码 → 本地查不到再用工具 → 关键结论二次核验。</p>
 
 <footer>
-  BaiZe 2B 架构搜索 · 假期执行计划报告 · 生成于 2026-09-29 · 配套任务书 <code>run/BAIZE_2B_ARCH_SEARCH_TASK.md</code>
+  BaiZe 2B 架构搜索 · 假期执行计划报告 · 生成于 2026-09-29 · 已更新含试验结论 · 配套任务书 <code>run/BAIZE_2B_ARCH_SEARCH_TASK.md</code>
 </footer>
 
 </div>
