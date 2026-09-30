@@ -33,7 +33,7 @@ WINNER_LR="1e-3"          # TODO: S3 后若增量扫 1.2e-3/1.5e-3 反超则更�
 WINNER_DECAY_STYLE="WSD"  # TODO: S3-01(WSD) vs S3-02(cosine) 胜出
 WINNER_WARMUP="250"       # TODO: S3-04（250 vs 2000）胜出
 WINNER_DECAY="500"        # TODO: S3-03（10%=500 vs 5%=250）胜出
-WINNER_MIN_LR="3e-5"      # TODO: S3-05（3e-5 vs 1e-5）胜出
+WINNER_MIN_LR="1e-5"      # ✅ S3-05（3e-5 vs 1e-5）：1e-5 胜出（2.764702 vs 2.767915，Δ~0.003 略优于 3e-5，点估计更低）
 
 declare -a NAMES=(s4_01 s4_02 s4_03)
 declare -a PORTS=(29681 29682 29683)

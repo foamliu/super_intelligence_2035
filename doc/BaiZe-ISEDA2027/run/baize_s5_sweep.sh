@@ -32,7 +32,7 @@ WINNER_LR="1e-3"          # S2 已定；S3 后若增量扫 1.2e-3/1.5e-3 反超�
 WINNER_DECAY_STYLE="WSD"  # S3-01(WSD) vs S3-02(cosine) 胜出
 WINNER_WARMUP="250"       # S3-04（250 vs 2000）胜出
 WINNER_DECAY="500"        # S3-03（10%=500 vs 5%=250）胜出
-WINNER_MIN_LR="3e-5"      # S3-05（3e-5 vs 1e-5）胜出
+WINNER_MIN_LR="1e-5"      # ✅ S3-05（3e-5 vs 1e-5）：1e-5 胜出（2.764702 vs 2.767915）
 # 退火数据混合（S4-01 纯L3 / S4-02 L3+code / S4-03 L3+code+math 胜出后回填；默认纯 L3）。
 # BLEND_MAIN / BLEND_SEEDS：`--train-data-path` 平铺参数（[w p w p …]，单前缀只传 p）。
 BLEND_MAIN="${L3_700}"

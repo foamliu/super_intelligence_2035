@@ -50,14 +50,14 @@
 </header>
 
 <div class="verdict">
-  <h3 style="margin-top:0;">🏆 胜出配置（S2 已定 stable LR；S3 关键轴 / S4 退火 / S5 长跑进行中）</h3>
+  <h3 style="margin-top:0;">🏆 胜出配置（S2/S3 已定；S4 退火 / S5 长跑进行中）</h3>
   <p><span class="badge b-ok">stable LR = 1e-3（S2 7 点最低，final 2.7627）</span>
      <span class="badge b-ok">调度族 = WSD（S3-01 2.767915 vs S3-02 cosine 2.815509，WSD 胜）</span>
      <span class="badge b-ok">decay = 10%（S3-01 2.767915 vs S3-03 5% 2.789989，10% 胜）</span>
      <span class="badge b-ok">warmup = 250（S3-01 2.767915 vs S3-04 warmup2000 2.795710，250 胜）</span>
-     <span class="badge b-info">min_lr = 待 S3-05</span>
+     <span class="badge b-ok">min_lr = 1e-5（S3-05 2.764702 vs S3-01 3e-5 2.767915，1e-5 胜）</span>
      <span class="badge b-info">退火数据混合 = 待 S4</span></p>
-  <p style="font-size:13.5px;color:var(--muted);">本报告为「活文档」：S0/S1/S2 已收敛并回填；S3/S4/S5 随各阶段 final@匹配步数回收后逐步补齐，最终给出 20000 步收敛曲线 + 3 seed 均值±σ 与可复现命令。</p>
+  <p style="font-size:13.5px;color:var(--muted);">本报告为「活文档」：S0/S1/S2/S3 已收敛并回填；S4/S5 随各阶段 final@匹配步数回收后逐步补齐，最终给出 20000 步收敛曲线 + 3 seed 均值±σ 与可复现命令。</p>
 </div>
 
 <h2 class="sec"><span class="no">1</span>骨架与固定超参（跨配置一致）</h2>
@@ -79,9 +79,9 @@
   <tr><td>S0</td><td>launcher 适配 + 8 卡冒烟（校准 step time）</td><td>1</td><td>~30</td><td><span class="badge b-ok">done</span></td></tr>
   <tr><td>S1</td><td>baseline（lr 3e-4 / WSD）</td><td>1</td><td>5000</td><td><span class="badge b-ok">done</span></td></tr>
   <tr><td>S2</td><td>stable LR 加密扫描（2e-4…1e-3，7 点，WSD 固定）</td><td>7</td><td>5000</td><td><span class="badge b-ok">done</span></td></tr>
-  <tr><td>S3</td><td>关键轴微调（调度族 WSD/cosine、decay5%、warmup2000、min_lr1e-5）</td><td>5</td><td>5000</td><td><span class="badge b-info">running</span></td></tr>
-  <tr><td>S4</td><td>退火数据混合消融（纯L3 / L3+code / L3+code+math）</td><td>3</td><td>5000</td><td><span class="badge b-warn">脚本就绪，待 S3</span></td></tr>
-  <tr><td>S5</td><td>长跑 20000 步 + 3 seed × 5000 步复现</td><td>4</td><td>20000/5000</td><td><span class="badge b-warn">脚本就绪，待 S3/S4</span></td></tr>
+  <tr><td>S3</td><td>关键轴微调（调度族 WSD/cosine、decay5%、warmup2000、min_lr1e-5）</td><td>5</td><td>5000</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>S4</td><td>退火数据混合消融（纯L3 / L3+code / L3+code+math）</td><td>3</td><td>5000</td><td><span class="badge b-info">running</span></td></tr>
+  <tr><td>S5</td><td>长跑 20000 步 + 3 seed × 5000 步复现</td><td>4</td><td>20000/5000</td><td><span class="badge b-warn">脚本就绪，待 S4</span></td></tr>
 </table>
 
 <h2 class="sec"><span class="no">3</span>S0 冒烟 + S1 基线（已收敛）</h2>
@@ -107,17 +107,17 @@
   <b>⚠️ 边界提示</b>：7 点 loss 随 LR 单调递减且止于网格上限 1e-3，最优 LR 可能 ≥1e-3；S3 后可增量扫 1.2e-3 / 1.5e-3（余预算 ~100 GPU·h 允许）。
 </div>
 
-<h2 class="sec"><span class="no">5</span>S3 关键轴微调（1e-3 上单变量，5 组 × 5000 步，进行中）</h2>
+<h2 class="sec"><span class="no">5</span>S3 关键轴微调（1e-3 上单变量，5 组 × 5000 步，✅ 全定）</h2>
 <table>
   <tr><th>ID</th><th>变动</th><th>调度族</th><th>decay/warmup/min_lr</th><th>final loss@5000</th><th>判定</th></tr>
   <tr><td>S3-01</td><td>WSD 参考</td><td>WSD</td><td>500/250/3e-5</td><td><b>2.767915</b></td><td class="win">✅ done（复现 S2-07 2.7627，run-to-run 噪声 ~0.005 内一致，S3 组内基线）</td></tr>
   <tr><td>S3-02</td><td>调度族对比</td><td>cosine</td><td>—/250/3e-5</td><td><b>2.815509</b></td><td>✅ done（劣于 WSD 参考 2.767915，差 ~0.048，<b>WSD 胜 cosine</b>）</td></tr>
   <tr><td>S3-03</td><td>decay ratio 5%</td><td>WSD</td><td>250/250/3e-5</td><td><b>2.789989</b></td><td>✅ done（劣于 WSD 参考 2.767915，差 ~0.022，<b>decay 10% 胜 5%</b>）</td></tr>
   <tr><td>S3-04</td><td>warmup 固定 2000 步</td><td>WSD</td><td>500/2000/3e-5</td><td><b>2.795710</b></td><td>✅ done（劣于 WSD 参考 2.767915，差 ~0.028，<b>warmup 5%=250 胜固定 2000</b>）</td></tr>
-  <tr><td>S3-05</td><td>min_lr 1e-5</td><td>WSD</td><td>500/250/1e-5</td><td class="pend">🟡 running（17:20:38 启动）</td><td>—</td></tr>
+  <tr><td>S3-05</td><td>min_lr 1e-5</td><td>WSD</td><td>500/250/1e-5</td><td><b>2.764702</b></td><td class="win">✅ done（<b>1e-5 胜 3e-5</b>：2.764702 vs 2.767915，Δ~0.003 略优，处 run-to-run 噪声 ~0.005 内，取更低点估计）</td></tr>
 </table>
 
-<h2 class="sec"><span class="no">6</span>S4 退火数据混合消融（脚本已就绪，待 S3）</h2>
+<h2 class="sec"><span class="no">6</span>S4 退火数据混合消融（胜出配置上，进行中）</h2>
 <table>
   <tr><th>ID</th><th>退火混合</th><th>blend</th><th>final loss@5000</th><th>备注</th></tr>
   <tr><td>S4-01</td><td>纯 L3 高质量子集</td><td>L3 100%</td><td class="pend">⏳ 待 S3</td><td>基线，退火数据不加码</td></tr>
@@ -139,8 +139,8 @@ export PYTHONPATH=/nas_train/app.e0031982/omegaconf_230:$PYTHONPATH
 conda activate py310
 cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027
 
-# 短地平线（5000 步，稳定 LR=1e-3 / WSD / warmup250 / decay500 / min_lr3e-5）—— S2 胜出
-TRAIN_ITERS=5000 LR=1e-3 DECAY_STYLE=WSD WARMUP_ITERS=250 DECAY_ITERS=500 MIN_LR=3e-5 \
+# 短地平线（5000 步，稳定 LR=1e-3 / WSD / warmup250 / decay500 / min_lr1e-5）—— S2/S3 胜出
+TRAIN_ITERS=5000 LR=1e-3 DECAY_STYLE=WSD WARMUP_ITERS=250 DECAY_ITERS=500 MIN_LR=1e-5 \
   bash scripts/train.sh mamba2 &lt;name&gt; 29671 8
 
 # 长跑（20000 步）+ 多 seed，S5 脚本（胜出配置回填后）：
