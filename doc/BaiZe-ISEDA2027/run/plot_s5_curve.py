@@ -9,7 +9,7 @@
   python3 plot_s5_curve.py [log] [--out-csv csv] [--out-png png] [--log-y]
 默认 log=/tmp/baize_s5_01.log，
      out-csv=<doc>/data/s5_01_loss_curve.csv，
-     out-png=<doc>/s5_01_loss_curve.png
+     out-png=<doc>/BaiZe-ISEDA2027/figures/s5_01_loss_curve.png
 """
 import csv
 import os
@@ -48,7 +48,7 @@ def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     log = args[0] if args else "/tmp/baize_s5_01.log"
     out_csv = os.path.join(DOC, "data", "s5_01_loss_curve.csv")
-    out_png = os.path.join(DOC, "s5_01_loss_curve.png")
+    out_png = os.path.join(DOC, "BaiZe-ISEDA2027", "figures", "s5_01_loss_curve.png")
     log_y = "--log-y" in sys.argv
 
     rows = parse(log)
