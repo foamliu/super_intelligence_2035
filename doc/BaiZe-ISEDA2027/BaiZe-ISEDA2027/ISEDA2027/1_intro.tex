@@ -5,18 +5,18 @@ However, state-of-the-art agent backbones are routinely 7\,B parameters or large
 
 Recent small language models (SLMs, $<\,$2\,B) have closed much of the gap with larger counterparts on single-turn benchmarks, but building such a model \emph{from scratch} remains an under-documented engineering problem.
 Every choice---architecture, optimizer, learning-rate schedule, data mixture---interacts with every other, and a naive grid search is prohibitively expensive.
-Our goal is therefore twofold: (i) to construct a $\approx$2B-scale hybrid agentic LLM from scratch on a strictly limited compute budget, and (ii) to expose the concrete, reproducible decisions that lead to it.
+Our goal is therefore twofold: (i) to construct, from scratch and on a strictly limited compute budget, an end-to-end multimodal agentic system---an efficient hybrid language core paired with a custom vision encoder, aligned into a semiconductor-domain agent---and (ii) to expose the concrete, reproducible decisions that lead to it.
 
 \paragraph{BaiZe.}
-We present BaiZe, a $\approx$2.2B-parameter hybrid (state-space + attention) model built from scratch on $\sim$84\,GPU-hours.
+We present BaiZe, an end-to-end multimodal agentic system assembled from scratch across five stages: (i) pre-training a $\approx$2.2B-parameter hybrid (state-space + attention) LLM, (ii) post-training it for agentic capability, (iii) pre-training a custom vision encoder, (iv) aligning the two into a multimodal model, and (v) adapting the result to the semiconductor domain.
 Three design pillars organise our work:
 
 \begin{itemize}
-\item \textbf{Architecture.} A Nemotron-H-style sequential hybrid backbone: 56 layers interleaving Mamba-2 state-space layers, four grouped-query-attention layers, and MLP layers, giving linear-time decoding for inference-heavy agents. We justify this choice empirically: a matched from-scratch comparison shows the hybrid attains lower loss and faster inference with fewer parameters than a dense counterpart, at a modest training-throughput cost.
+\item \textbf{Architecture.} A Nemotron-H-style sequential hybrid language backbone---56 layers interleaving Mamba-2 state-space layers, four grouped-query-attention layers, and MLP layers---giving linear-time decoding for inference-heavy agents, paired with a from-scratch vision encoder.
 
 \item \textbf{Reduced-horizon proxy search.} We exploit short, cheap proxy runs---in the spirit of maximal-update parameterization ($\mu$P) transfer~\cite{yang2022tensor}---so that the relative ranking of candidate hyper-parameters discovered at small scale carries over to the full model without re-tuning at scale.
 
-\item \textbf{Budget-constrained search.} A staged search protocol (S1--S4) perturbs one variable at a time under a hard GPU-hour budget, yielding a winning recipe for the final hybrid backbone (numeric results reported as \textbf{[TBD]} pending full re-measurement).
+\item \textbf{Budget-constrained stage-wise pipeline.} Each of the five stages is trained under a hard GPU-hour budget, with a staged search protocol (S1--S4) for the language backbone (numeric results reported as \textbf{[TBD]} pending re-measurement).
 \end{itemize}
 
 We hope BaiZe serves as a minimal, reproducible blueprint for building efficient agentic SLMs from scratch, and that our search methodology is of practical value to cost-bounded training efforts in the EDA and embedded-AI communities.

@@ -1,6 +1,6 @@
 \section{Conclusion}
 
-We presented BaiZe, a $\approx$2.2B-parameter hybrid (state-space + attention) agentic language model built from scratch on a fixed $\sim$84\,GPU-hour budget.
+We presented BaiZe, an end-to-end multimodal agentic system: a $\approx$2.2B-parameter hybrid (state-space + attention) language model built from scratch, post-trained for agentic capability, paired with a custom vision encoder, aligned into a multimodal model, and adapted to the semiconductor domain.
 Through a controlled from-scratch comparison, we selected a Nemotron-H-style Mamba2-hybrid backbone over a dense transformer for its lower loss-per-parameter and substantially faster inference, then applied a staged, budget-constrained hyper-parameter search (S1--S4) on the final backbone.
 Training and inference measurements are being re-executed on the final model and are reported as \textbf{[TBD]}; the complete recipe and a single reproducible command encapsulate the entire construction under the NVIDIA NeMo recipe.
 

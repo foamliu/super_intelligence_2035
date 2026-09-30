@@ -1,0 +1,59 @@
+\section{Architecture and Pipeline Overview}\label{sec:overview}
+
+BaiZe is an end-to-end multimodal agentic system assembled in five stages: (i) from-scratch pre-training of a hybrid language backbone, (ii) post-training of that backbone (instruction tuning and reinforcement learning to strengthen agentic capability), (iii) pre-training of a custom vision encoder, (iv) alignment of the two into a multimodal large language model, and (v) semiconductor-domain adaptation via reinforcement learning.
+This section fixes the shared scaffolding---the two backbones, the overall pipeline, and the global training environment---before each stage is detailed in its own section.
+
+\subsection{Language Backbone}\label{sec:arch}
+The language backbone is a Nemotron-H-style sequential hybrid model~\cite{dao2024transformers,nvidia2025nemotronh}: 56 transformer layers interleave Mamba-2 state-space layers, four grouped-query-attention (GQA) layers, and MLP layers.
+Each Mamba-2 layer uses 8 state-space groups; the four attention layers use 16 query heads and 4 query groups (GQA) with untied word embeddings.
+The full configuration is listed in Table~\ref{tab:config}; the model totals $\approx$2.22B parameters.
+
+\begin{table}[htbp]
+\centering
+\caption{BaiZe language-backbone configuration (Mamba2-hybrid).}
+\label{tab:config}
+\begin{tabular}{lc}
+\toprule
+\textbf{Hyper-parameter} & \textbf{Value} \\
+\midrule
+Transformer layers & 56 \\
+Architecture & hybrid (Mamba-2 + GQA + MLP) \\
+Attention layers & 4 (interleaved) \\
+Hidden size & 2048 \\
+FFN hidden size & 8192 \\
+Attention heads (Q) & 16 \\
+Query groups (GQA) & 4 \\
+Mamba-2 state-space groups & 8 \\
+Vocabulary size & 129{,}281 \\
+Sequence length & 4096 \\
+Activation & SiLU / SwiGLU \\
+Normalisation & RMSNorm \\
+Precision & BF16 \\
+Parameters & $\approx$2.22B \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Vision Encoder}\label{sec:backbone-enc}
+The vision encoder is trained from scratch in stage~(iii); its architecture and configuration are reported in Section~\ref{sec:vision} (\textbf{[TBD]}).
+
+\subsection{Pipeline and Global Environment}\label{sec:pipeline}
+Table~\ref{tab:pipeline} summarises the five-stage pipeline.
+All stages run on $8\times$NVIDIA H100 GPUs (CUDA 12.8, PyTorch 2.8.0, Python 3.10); fused kernels, selective activation recomputation, and cross-entropy loss fusion are enabled where applicable, with $\texttt{tensor\_model\_parallel\_size}=1$ and BF16 precision throughout.
+
+\begin{table}[htbp]
+\centering
+\caption{BaiZe five-stage pipeline overview.}
+\label{tab:pipeline}
+\begin{tabular}{lll}
+\toprule
+\textbf{Stage} & \textbf{Task} & \textbf{Detailed in} \\
+\midrule
+(i) & LLM pre-training & Section~\ref{sec:llm-pretrain} \\
+(ii) & LLM post-training (SFT + agentic RL) & Section~\ref{sec:llm-posttrain} \\
+(iii) & Vision encoder pre-training & Section~\ref{sec:vision} \\
+(iv) & MLLM alignment & Section~\ref{sec:mllm} \\
+(v) & Semiconductor domain adaptation (RL) & Section~\ref{sec:domain} \\
+\bottomrule
+\end{tabular}
+\end{table}

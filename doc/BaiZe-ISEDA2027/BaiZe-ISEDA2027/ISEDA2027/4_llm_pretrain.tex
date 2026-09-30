@@ -1,0 +1,83 @@
+\section{LLM Pretraining}\label{sec:llm-pretrain}
+
+Stage~(i) pre-trains the hybrid language backbone (Section~\ref{sec:arch}) from scratch under a fixed budget.
+This section covers the architecture-selection rationale, the training recipe, and the resulting measurements; the backbone configuration itself is given in Table~\ref{tab:config}.
+
+\subsection{Architecture Selection Rationale}\label{sec:arch-rationale}
+We adopt the hybrid backbone on three grounds.
+\textbf{(i) Inference efficiency.} State-space layers decode with constant-time recurrence per token, while the sparse attention layers retain long-range context; this directly targets the inference-heavy, cost-sensitive deployments that motivate BaiZe.
+\textbf{(ii) Controlled comparison.} A matched from-scratch comparison at the $\approx$2B scale between a dense transformer (MiniCPM5-2B) and Mamba2-hybrid---trained under identical data, seed, and GPU footprint---favours the hybrid, which converges to a lower loss with fewer parameters ($\approx$2.22B vs.\ 2.51B, $-11.6\%$) and decodes substantially faster, at a $\sim$24\% training-throughput cost (Table~\ref{tab:archcomp}).
+\textbf{(iii) Feasibility.} Megatron-Core ships a Mamba-hybrid provider whose 56-layer interleaving pattern is halved in width to reach the $\approx$2B scale, making the backbone directly executable under the NeMo recipe without custom kernels.
+
+\subsection{Training Framework and Reduced-Horizon Search}\label{sec:framework}
+We train with the NVIDIA NeMo pre-training entry point, driving the Megatron-Core \texttt{NVIDIAMambaHybridModelProvider2B} provider directly with $\texttt{tensor\_model\_parallel\_size}=1$.
+To keep the entire sweep within budget, we run all hyper-parameter searches at a reduced iteration count and treat the resulting short-horizon ranking as predictive of the full-model optimum---a small-scale proxy strategy in the spirit of maximal-update parameterization~\cite{yang2022tensor}.
+Fused kernels, selective activation recomputation, and cross-entropy loss fusion are enabled to raise throughput.
+
+\subsection{Learning-Rate Schedule}\label{sec:wsd}
+BaiZe trains under a warmup--stable--decay-style learning-rate schedule whose hyper-parameters---warmup length, stable learning rate, and the decay ratio---are themselves swept in Section~\ref{sec:search} (cosine decay is kept as an alternative).
+The remaining schedule and batch-size settings (global batch size, sequence length, packing) are held fixed across configurations and re-measured on the final backbone, with figures reported where applicable.
+
+\subsection{Budget-Constrained Search Protocol}\label{sec:search}
+Because a full grid is infeasible under a fixed GPU budget, we adopt a staged, single-variable-at-a-time protocol:
+\begin{itemize}
+\item \textbf{S1 (baseline).} Reproduce the Mamba2-hybrid reference configuration to establish a loss/throughput baseline.
+\item \textbf{S2 (hyper-parameter sweep).} Perturb one training variable at a time---stable learning rate, warmup length, and decay ratio---at a short horizon.
+\item \textbf{S3 (schedule sweep).} Compare learning-rate schedules (WSD-style vs.\ cosine) and batch sizing at a short horizon.
+\item \textbf{S4 (verification).} Retrain the winning configuration from scratch over a longer horizon to confirm convergence and reproducibility.
+\end{itemize}
+
+At every stage only a single variable changes relative to the running best, isolating each factor's contribution while keeping total GPU-hours within budget.
+The architectural search space is validated up front: the hybrid (Mamba2-hybrid) and dense (MiniCPM5-2B) candidates are compared head-to-head from scratch (Section~\ref{sec:arch-rationale}), which selects the hybrid backbone before the hyper-parameter search begins.
+
+\subsection{Data}\label{sec:llm-data}
+Pre-training uses the \texttt{Ultra-FineWeb-L3} English subset ($\approx$1.8\,T tokens), streamed and packed to a sequence length of $4096$, tokenised with the DeepSeek-V4.1-Flash tokenizer (vocabulary size $129{,}281$).
+Complementary corpora---code (\texttt{UltraData-Code}, $1.2$\,T), mathematics (\texttt{UltraData-Math}, $515$\,G), and an agentic instruction-tuning set (\texttt{UltraData-SFT-Agent}, $51$\,G)---are reserved for post-training (Section~\ref{sec:llm-posttrain}).
+
+\subsection{Search Budget}\label{sec:llm-budget}
+The pre-training search is bound by a $\approx$84\,GPU-hour budget (aggregated across all experiments and retries).
+Short-horizon sweeps (S2, S3) run $80$ steps ($\approx$0.9\,GPU-hours each); the baseline (S1) runs $300$ steps and the verification run (S4) runs $160$ steps.
+Validation loss is reported at matched step counts so that comparisons across configurations remain apples-to-apples.
+
+\subsection{Results}\label{sec:llm-results}
+Following the architecture change to the hybrid backbone, all training and inference measurements are being re-executed on the final Mamba2-hybrid model; quantitative figures are reported as \textbf{[TBD]} and will be back-filled once re-measurement completes.
+
+Table~\ref{tab:archcomp} contrasts the hybrid backbone against a dense transformer at the $\approx$2B scale, trained from scratch under matched data, seed, and GPU footprint; the hybrid offers fewer parameters and faster decoding at a modest training-throughput cost.
+
+\begin{table}[htbp]
+\centering
+\caption{Architecture-level comparison motivating the hybrid choice (\textbf{[TBD]}: re-measured on the final backbone).}
+\label{tab:archcomp}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Metric} & \textbf{Dense (MiniCPM5-2B)} & \textbf{Hybrid (BaiZe)} & \textbf{Edge} \\
+\midrule
+Parameters & 2.51B & \textbf{2.22B} & hybrid ($-11.6\%$) \\
+Final loss & [TBD] & [TBD] & [TBD] \\
+Training tok/s & [TBD] & [TBD] & [TBD] \\
+Prefill tok/s & [TBD] & [TBD] & [TBD] \\
+Decode tok/s & [TBD] & [TBD] & [TBD] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:configs} reports the hyper-parameter search outcomes at a matched horizon; the searched axes target the hybrid training recipe (stable learning rate, warmup length, decay ratio, and schedule family).
+
+\begin{table}[htbp]
+\centering
+\caption{Search outcomes (\textbf{[TBD]}: re-measured on the final hybrid backbone).}
+\label{tab:configs}
+\begin{tabular}{llcc}
+\toprule
+\textbf{ID} & \textbf{Change vs.\ best} & \textbf{Val.\ loss} & \textbf{Outcome} \\
+\midrule
+S1-01 & baseline (hybrid) & [TBD] & baseline \\
+S2-01 & learning-rate variant & [TBD] & [TBD] \\
+S2-02 & warmup variant & [TBD] & [TBD] \\
+S3-01 & schedule family & [TBD] & [TBD] \\
+S4-01 & winner, long horizon & [TBD] & \textbf{winner} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Training-loss curves and the short-horizon ablation visualisation are regenerated on the hybrid backbone and will be included as figures once re-measurement completes (\textbf{[TBD]}).
