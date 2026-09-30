@@ -1,6 +1,6 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 ## 状态头
 
@@ -12,6 +12,10 @@ WAITING: 0
 | BUDGET_USED | ~17 GPU·h 墙钟（S0–S3 ~11 + S4 ~5 + S6/S7/S8 ~3；墙钟约 11:29–17:05 ≈ 5.6h，远低 24h 上限） |
 | 更新 | 2026-09-30 17:38 |
 | WINNER | OpenVision2（纯 Attention ViT 505M）——loss 四架构并列 ~4.45–4.47（不可区分），训练 2139 img/s / 推理 6.51ms 双最优 |
+
+## 等待说明（WAITING=1）
+
+> ⚠️ 本任务已 **converged 终态**（S0–S9 全完成，四件验收交付物已提交 + push）。此处 `WAITING=1` 非「异步训练阻塞」，而是**收敛后降频**：让 loop.sh 从 60s 唤醒拉长到 1800s，避免假期空耗 token。**无新实验、无新待办**，运维可安全 `kill` 掉 `baize_vision_loop.sh` 进程终结本循环。
 
 ## 等待说明（WAITING=1）
 
