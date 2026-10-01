@@ -28,11 +28,11 @@
 
 ## 3. 已知的脚本级缺陷（**重启 loop 时顺手修**）
 
-| 脚本 | 缺陷 | 影响 | 修法 |
+| 脚本 | 缺陷 | 影响 | 状态 / 修法 |
 |:---|:---|:---|:---|
-| `baize_vision_loop.sh` | ① `git_push_if_needed` 只 push 不 pull ② WAITING 正则 `^[- ]*WAITING: *1` 偏宽 | 远端前进后 push 永久失败 | 照抄 `baize_data_loop.sh` 的 `git_sync_and_push`（fetch + `pull --rebase --autostash`） |
-| `baize_pretrain_loop.sh` | ① 同上 ② WAITING 正则 `WAITING:[* ]*1` **会误匹配正文散文**（`MEMORY_PRETRAIN_2B.md` 第 8 行就有一句 `WAITING: **1**` 被命中） | 睡眠时长由散文决定，不是状态驱动 | 同上；并把正则收紧为 `^WAITING:[[:space:]]*1` |
-| `baize_search_loop.sh` / `baize_2b_search_loop.sh` | 固定间隔、无 git 同步、无 WAITING | 已收敛，无实际影响 | 建议直接停掉 |
+| `baize_pretrain_loop.sh` | ① `git_push_if_needed` 只 push 不 pull ② WAITING 正则 `WAITING:[* ]*1` **会误匹配正文散文**（`MEMORY_PRETRAIN_2B.md` 里就有一句 `WAITING: **1**` 被命中） | 远端前进后 push 永久失败；睡眠时长由散文决定 | ✅ **已在仓库修好**（2026-10-01）：改为 `fetch + pull --rebase --autostash`、正则收紧为 `^WAITING:[[:space:]]*1`、兜底提交只 add 本任务文件。`git pull` 后直接启动即可 |
+| `baize_vision_loop.sh` | ① 同上 ② WAITING 正则 `^[- ]*WAITING: *1` 偏宽 | 远端前进后 push 永久失败 | 🚫 **暂不修**：它**正在运行**，bash 增量读取脚本，改运行中的脚本有风险。**待停止时再照抄 `baize_pretrain_loop.sh` 的新版** |
+| `baize_search_loop.sh` / `baize_2b_search_loop.sh` | 固定间隔、无 git 同步、无 WAITING | 已收敛，无实际影响 | 建议直接停掉（进程疑似已被清理） |
 
 > `baize_data_loop.sh` 是**新建的**，上面三处坑已从设计上避开，可直接作为模板。
 

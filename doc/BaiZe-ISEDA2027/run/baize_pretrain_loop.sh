@@ -12,6 +12,7 @@ TASK_MD="$SCRIPT_DIR/BAIZE_PRETRAIN_2B_TASK.md"
 CWD="$SCRIPT_DIR"
 # git 仓库根目录（run/ 的上级 super_intelligence_2035）
 GIT_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo '/nas_train/app.e0031982/code/super_intelligence_2035')"
+REL="doc/BaiZe-ISEDA2027/run"   # 本任务在仓库中的相对目录（只提交这里的文件）
 
 MODEL="deepseek-v4-pro-fp4"      # 换成你用于工程任务的模型
 CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟
@@ -29,14 +30,37 @@ git_push_if_needed() {
     if [ $((now - last)) -lt "$PUSH_INTERVAL" ]; then
         return
     fi
-    echo "[push] $(date '+%F %T') push interval reached, committing + pushing ..."
+    echo "[push] $(date '+%F %T') push interval reached, syncing ..."
     cd "$GIT_ROOT" || return
-    git add -A
-    if git commit -m "auto-commit $(date '+%F %T')" >/dev/null 2>&1; then
-        echo "[push] committed."
-    else
-        echo "[push] nothing to commit."
+
+    # 1) 先 fetch + rebase（旧版只 push 不 pull：远端一旦前进就永久卡死）
+    if ! timeout 120 git fetch origin >/dev/null 2>&1; then
+        echo "[push] fetch FAILED (network?) - skip this cycle."
+        return
     fi
+    local counts behind
+    counts="$(git rev-list --left-right --count origin/main...HEAD 2>/dev/null || echo '0 0')"
+    behind="$(echo "$counts" | awk '{print $1}')"
+    if [ "${behind:-0}" -gt 0 ]; then
+        if git pull --rebase --autostash origin main >/dev/null 2>&1; then
+            echo "[push] pull --rebase OK."
+        else
+            echo "[push] pull --rebase FAILED - aborting rebase, skip this cycle."
+            git rebase --abort >/dev/null 2>&1 || true
+            return
+        fi
+    fi
+
+    # 2) 只提交本任务自己的文件（共享工作副本：git add -A 会卷入其他任务的在途文件）
+    git add -- "$REL/MEMORY_PRETRAIN_2B.md" "$REL/EXPERIMENTS_PRETRAIN_2B.md" \
+               "$REL/EXPERIMENTS_PRETRAIN_2B_ROUND2.md" "$REL/daily-memories" 2>/dev/null
+    if git diff --cached --quiet; then
+        echo "[push] nothing of ours to commit."
+    else
+        git commit -m "pretrain auto-commit $(date '+%F %T')" >/dev/null 2>&1 && echo "[push] committed."
+    fi
+
+    # 3) 推送
     if git push origin main 2>&1; then
         echo "[push] push OK."
     else
@@ -58,7 +82,9 @@ while true; do
     # 自适应睡眠：WAITING=1（有训练等异步任务 running）→ 长睡 30 分钟省 token；
     # WAITING=0（无阻塞、应连续推进）→ 短睡 1 分钟，让 cline 尽快续跑下一轮。
     SLEEP="$SLEEP_BUSY"
-    if grep -qE 'WAITING:[* ]*1' "$MEMORY" 2>/dev/null; then
+    # ⚠️ 只认**行首**的 WAITING 字段。旧正则 'WAITING:[* ]*1' 会误匹配正文散文
+    #（MEMORY_PRETRAIN_2B.md 里就有一句 `WAITING: **1**` 被命中，导致睡眠时长由散文决定）。
+    if grep -qE '^WAITING:[[:space:]]*1' "$MEMORY" 2>/dev/null; then
         SLEEP="$SLEEP_WAIT"
         echo "[loop] $(date '+%F %T') WAITING=1（异步任务 running）→ sleep ${SLEEP}s"
     else
