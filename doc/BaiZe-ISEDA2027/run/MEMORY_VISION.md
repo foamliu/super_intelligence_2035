@@ -1,17 +1,33 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R7_active**（第七轮：**数据臂对比**。R5/R6 已收敛——胜出架构 OpenVision2 + 锚点 224/16 + 冻结 CLIP-768 text tower(77 硬约束)；R7 用 R5 P0 同口径×3000 步只换数据，对比 en500k(臂A,复用) / GPIC-short(臂B) / CC12M(臂C′)，训练已 `setsid` 后台启动，待回收 loss+C1/C2/C4+两套交叉评测） |
-| WAITING | 1（R7 训练臂 B/C′ 已后台启动，约 2×~16min；待回收 loss+C1/C2/C4 后做两套交叉评测；下次唤醒 WAITING=1） |
+| PHASE | **R7_complete → 交接 R8**（第七轮数据臂对比已收敛：**正式训练数据裁定 = Stanford GPIC `short`**；胜出架构 OpenVision2 + 锚点 224/16 + 冻结 CLIP-768 text(77 硬约束) 不变；下一轮 R8 = 扩到 6 架构 + ImageNet-1k 指标） |
+| WAITING | 0（R7 两臂训练 + 两套交叉评测已全部完成，报告已回填；下一轮 R8 待启动） |
 | ERROR_COUNT | 0 |
-| BUDGET_USED | ~19 GPU·h 墙钟（R2/R3/R4 累计）；R5 另计（P0 墙钟 1h12m + P1 墙钟 ~28m 已完成） |
-| 更新 | 2026-10-02（**R7 启动**：臂 C′=CC12M / 臂 B=GPIC-short 训练已 `setsid` 后台启动，日志 `/tmp/r7.log`；详见 `EXPERIMENTS_VISION_ROUND7.md`） |
-| WINNER | **OpenVision2**（P0 全放量验证：loss 4.549 最低 / 训练 2419.8 img/s 最快 / C2_gap +0.082 最强 / 不坍缩；P1 分辨率锚点 224/16 最优：loss 3.0977 / 1361.7 img/s；SSM 类架构 step300 坍缩） |
+| BUDGET_USED | ~19 GPU·h 墙钟（R2/R3/R4 累计）+ R5（P0 1h12m + P1 ~28m）+ R7（两臂训练 30min + 交叉评测 ~7min） |
+| 更新 | 2026-10-02（**R7 完成**：三臂 cross-eval 结果见 `EXPERIMENTS_VISION_ROUND7.md` §0；**裁定正式训练=GPIC short**；提交 commit/push） |
+| WINNER | **OpenVision2**（P0：loss 4.549 最低 / 2419.8 img/s 最快 / C2_gap +0.082；P1 锚点 224/16 最优；SSM 类架构 step300 坍缩） |
+
+## 🏁 R7 完成（第七轮：数据臂对比，2026-10-02 01:30 训练完 / 01:45 交叉评测完）
+
+> 交付物：`EXPERIMENTS_VISION_ROUND7.md`（§0 裁定 + §3.2 轨迹 + §3.3 交叉评测原文）。**正式训练数据 = Stanford GPIC `short`**。
+
+- **两臂训练完成**（`/tmp/r7.log`，OpenVision2 × 3000 步 @224/16 bs64=512 负样本，同 R5 P0 口径只换数据；C1–C4 全过无一坍缩）：
+  - C′=CC12M（~11M 对）：final_loss 5.3999 / C1 0.2960 / C2_gap +0.0772 / 2547.4 img/s；
+  - B=GPIC-short（~2.77M 对）：final_loss 4.8618 / C1 0.2428 / C2_gap +0.0883 / 3562.9 img/s；
+  - A=en500k（R5 P0 复用）：final_loss 4.5490 / C1 0.3008 / C2_gap +0.0818 / 2419.8 img/s。
+- **交叉评测**（`/tmp/r7_eval.log`，3 臂 × eval5k(LLaVA) / GPIC-test(short)，R@1 t2i/i2t）：
+  - A：0.0172/0.0106（eval5k）｜0.0086/0.0078（GPIC-test）
+  - B：0.0112/0.0122（eval5k）｜0.0160/0.0122（GPIC-test）
+  - C′：0.0090/0.0058（eval5k）｜0.0052/0.0036（GPIC-test）
+  - 🔑 所有 R@1 ≫ 1/5000 chance → 修复配方下检索真实有效；领域内优势对称（A 赢 eval5k、B 赢 GPIC-test）；**B 跨域最稳健（i2t 两榜双高）**；CC12M 处处最弱（淘汰）。
+- **裁定：正式训练 = GPIC `short`**（0% 截断适配冻结 CLIP-77、跨域稳健、IN-1k 干净 out-of-domain）；en500k 留作 R5 对照臂；CC12M 淘汰。
+- **下一步（下次唤醒，WAITING=0）**：启动 R8 = 扩到 6 架构（原 4 + AIMv2 + FastViTHD，均等参 500–600M）+ 换 IN-1k 指标；先查 IN-1k 污染（en500k 是否含 val 图）与 IN-1k val 盘上可用性；沿用 R7 裁定数据 = GPIC short。
 
 ## 🚀 R7 启动（第七轮：数据臂对比，2026-10-02）
 
