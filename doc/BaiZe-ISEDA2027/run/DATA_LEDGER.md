@@ -14,7 +14,7 @@
 | 通用文本·退火/decay | Ultra-FineWeb-L3 | **1764 parquet / 1.9 TB**，≈**690B token** | ✅ 已下全 | 退火/decay 档（合成 Q&A，README 明为 base 派生） |
 | 通用文本·退火 | UltraData-Code | **1121 parquet / 1.22 TB**，≈**411B token**（L2 355B + L3 56B） | ✅ 已下载 | 退火 code |
 | 通用文本·退火 | UltraData-Math | **1823 parquet / 552 GB**，≈**303B token**（L1 184B + L2p 32B + L3 87B） | ✅ 已下载 | 退火 math |
-| 通用文本·SFT | UltraData-SFT-2605 / -Agent-2609 | **2605 下载中（603/1504 jsonl，25.38G/318.99GB）**；Agent-2609=jsonl 50shard/51GiB | 🟠 部分就绪 | Stage(ii) SFT |
+| 通用文本·SFT | UltraData-SFT-2605 / -Agent-2609 | **2605 下载中（653/1504 jsonl，30.6G/318.99GB）**；Agent-2609=jsonl 50shard/51GiB | 🟠 部分就绪 | Stage(ii) SFT |
 | 通用多模态 | LLaVA-OneVision-1.5 Mid-85M | EN **5601** + CN **1948** parquet（7549，下载中，sa1b/zero250m 未下） | 🟠 下载中 | 视觉编码器 + MLLM 对齐 |
 | 通用多模态·已派生 | baize-vision/en500k | 25 tar / **68.59 GiB** | ✅ 已就绪 | Stage(iii) 四架构对比（完成） |
 | 通用多模态·已派生 | baize-vision/eval5k | 1 tar / **1.27 GiB**（laioncn/EN） | ✅ 已就绪 | 检索代理评估（held-out） |
@@ -35,7 +35,7 @@
 | Ultra-FineWeb（base） | `/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb/` | **R2 下载中**（≤2.99 TB / 64,624 parquet，en 2048 + zh ~62,576；列 `content/score/source`） | **P-8 主预训练主体（R2 改判）** |
 | UltraX-Preview | `/nas_inference/app.e0031982/datasets/openbmb/UltraX-Preview/`（未下） | HF 113,789,578 行 / 487 GB / 479 parquet，5 config，~100B token | 备选（与 base 重叠，≤200B 不下载） |
 | UltraData-RL-2609 | `/nas_inference/app.e0031982/datasets/openbmb/UltraData-RL-2609/`（未下） | HF 20 jsonl / 187.63 GB，4 config（Math default/Knowledge/Long-Context/Code） | Stage(v) RL 用，P-8 不需要 |
-| UltraData-SFT-2605 | /nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605/data/ | **下载中**：603/1504 jsonl（25.38G / **318.99GB**）；HF 官方=**1504 jsonl**（`no_think` 855 + `think` 649，其中 `think/Code` 279=177.5GB 为主体体积） | 🟠 下载中（gated=auto，token 有效），下完核验一致性 |
+| UltraData-SFT-2605 | /nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605/data/ | **下载中**：653/1504 jsonl（30.6G / **318.99GB**）；HF 官方=**1504 jsonl**（`no_think` 855 + `think` 649，其中 `think/Code` 279=177.5GB 为主体体积） | 🟠 下载中（gated=auto，token 有效），下完核验一致性 |
 | UltraData-SFT-Agent-2609 | `/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-Agent-2609/data/` | **jsonl，50 shard / 51 GiB**；`Code_Agent`(7)/`General_Agent`/`Search_Agent`/`Tool_Use`，2GB/shard | ✅ 已就绪（jsonl，check_contamination.py 直接可扫） |
 
 ### 1.2 通用多模态（产出来源 `/nas_train`）
