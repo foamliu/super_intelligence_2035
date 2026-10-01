@@ -1,17 +1,50 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R3_complete**（R3 第三轮已完成：判定 `eval5k R@K=精确随机` = **模型训练坍缩**；交付物 `EXPERIMENTS_VISION_ROUND3.md` + ROUND3 HTML 已就位，见下方 R3 小节） |
-| WAITING | 1（R3 已完成，终局 idle；步骤 A 判定「训练坍缩」、B/C 裁减、修复探针三配置跑完，详见 R3 小节） |
+| PHASE | **R4_complete**（第四轮完成：**核心阻塞=训练坍缩已解决**。根因=「随机 text 塔 + SigLIP 目标」双坍缩源；修复=「冻结预训练 CLIP 文本塔 + CLIP InfoNCE」，C1–C4 全过。详见 `EXPERIMENTS_VISION_ROUND4.md`） |
+| WAITING | 1（R4 收官；放大到全量 4 架构作为 R5 输入） |
 | ERROR_COUNT | 0 |
-| BUDGET_USED | ~18 GPU·h 墙钟（R2 累计；R3 步骤 A 为轻量核验/诊断，无重训练，未新增实质性 GPU·h） |
-| 更新 | 2026-10-01（R3 完成：R3.0 状态切换 → R3.2 步骤 A 判定「训练坍缩」→ 修复探针三配置 → 写 `EXPERIMENTS_VISION_ROUND3.md` + ROUND3 HTML + 回填建议） |
-| WINNER | 仍为 OpenVision2（吞吐/延迟双最优这一**计算侧结论不受坍缩影响**仍成立）；但「loss 四架构不可区分（4.45）」经 R3 鉴定为**坍缩均衡 loss**，非有效学习结论（见 R3 判定） |
+| BUDGET_USED | ~19 GPU·h 墙钟（R2/R3 ~18 + R4 修复实验 ~5×单卡短训 + C3 2000 步 ≈1 GPU·h） |
+| 更新 | 2026-10-01（R4 完成：步骤 A 六条怀疑 S1–S6 逐条定论 / 步骤 B LLaVA vs GPIC / 步骤 C 修复实验 C1–C4 全过） |
+| WINNER | OpenVision2（计算侧吞吐/延迟双最优结论不变）；**修复 recipe=冻结 CLIP 文本塔 + InfoNCE +（推荐）GPIC-short** |
+
+## 🔬 R4 启动（状态切换 + 目标，2026-10-01）
+
+- **R4.0 已完成**：`PHASE` R3_complete → **R4_active**、`WAITING` 1 → 0；流水追加本条「R4 启动」。R1/R2/R3 结论全保留（尤其 R3 坍缩判定作为 R4 起点）。
+- **R4 定位**：不是"再加固结论"，是"解决阻塞"——从零训视觉编码器训不起来（表征坍缩），先解决它 Stage(iii)/(iv) 才能前进。
+- **R4.1 可判定标准 C1–C4**（四条全过才算"解决"）：① C1 不坍缩：双塔 same-tower off-diagonal 余弦 < 0.9（当前 ≈1.0000 ❌）；② C2 有区分度：cross `diag−offdiag` 明确正间隙（当前 ≈0 ❌）；③ C3 下游有效：eval5k R@1 显著高于 1/5000（当前 =1/5000 精确 chance ❌）；④ C4 loss 真在降（当前钉在 4.45 ❌）。
+- **R4.7 预算**：≤6h；优先级 **A（6 条怀疑）> B（数据集对比）> C（修复实验）> D（裁定）**；只上 `10.239.2.12`，不杀他人进程。
+## ✅ R4 完成：坍缩根因定位 + 修复（C1–C4 全过，2026-10-01）
+
+> 交付物：`EXPERIMENTS_VISION_ROUND4.md`（全量证据）+ 脚本 `vision/r4_{s1_s2,s1_dec,gpic,semantic,fix_probe,c3}.py`。
+
+**R4.2 步骤 A（六条怀疑逐条定论，全 CPU 级）**：
+- **S1 截断**：LLaVA en500k caption mean **219 BPE**、**100% 截断**（只留 34%）、`the image` 开头占 30.3%（通篇公式化）。决定性实验（head vs tail）：丢弃的尾部 off-diag 0.372 反比保留的头部 0.295 **更集中** → **截断属实但非坍缩主因**。
+- **S2 空/短 caption**：empty 0.000%、<3 词 0.010% → **排除**。
+- **S3 ImageNet 类内负样本**：batch64 同类负样本 ≈6% → **次要**。
+- **S4 text 塔未冻结**：证实（`train.py` text 进 optimizer），但 R3 已证单独冻结不够。
+- **S5 随机 text 塔无语义** ⭐：随机 text off-diag=**0.726** vs 语义 CLIP 0.24–0.31 → **#1 主因，证实**。
+- **S6 规模**：500K/bs64 **足以不坍缩**（条件：语义 text + InfoNCE）；400M 是精度需求不是坍缩需求。
+
+**R4.3 步骤 B（LLaVA vs GPIC）**：GPIC 全量 8000 tar（盘上 395）；`short`（20 token/0% 截断）off-diag **0.245 最分散**、`long` 100% 截断与 LLaVA 同病；许可全 permissive。**推荐 GPIC-short**（换数据是锦上添花，非解药）。
+
+**R4.4 步骤 C（修复实验，单卡 300 步，单变量）**：
+
+| 配置 | C1 | C2 gap | 判定 |
+|:--|:--|:--|:--|
+| A 现状（随机 text+SigLIP+bias） | 1.0000 | +0.0000 | 精确坍缩（复现） |
+| B 只换语义 text（保留 SigLIP） | 0.8982 | +0.0345 | 仍近坍缩 |
+| C B+bias=0 | 1.0000 | −0.436 反平均 | 反平均坍缩 |
+| **D 语义 text + InfoNCE** | **0.1909** | **+0.0850** | ✅ 通过 |
+
+**根因（双坍缩源）**：① 随机 text 塔让文本侧正负不可分；② SigLIP 的可学习 bias + 逐对 sigmoid 提供「常数坍缩 / 反平均坍缩」两个吸引子。**InfoNCE 的 softmax 批量归一化强制正样本打败所有负样本，消除坍缩解。**
+
+**R4.5 步骤 D（C3 验证 + 裁定）**：sem_clip 2000 步后 C1=0.2819、cross gap=+0.082、loss 4.25→3.01↓；**eval5k R@1 = 0.0064 = 32× chance**（C3 过）→ **C1–C4 全过**。裁定：固定 recipe=**冻结 CLIP 文本塔 + InfoNCE +（推荐）GPIC-short**，放大到 4 架构 × 3000–10000 步作为 R5 输入（预算 ~6–12 GPU·h）。
 
 ## 🔬 R3 启动 + 决定性结论（评测自查「步骤 A」判定：**训练坍缩**，2026-10-01）
 
