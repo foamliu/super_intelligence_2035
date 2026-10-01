@@ -10,7 +10,7 @@ WAITING: 1
 | WAITING | 1 |
 | ERROR_COUNT | 0 |
 | BUDGET_USED | ~17 GPU·h 墙钟（S0–S3 ~11 + S4 ~5 + S6/S7/S8 ~3；墙钟约 11:29–17:05 ≈ 5.6h，远低 24h 上限） |
-| 更新 | 2026-10-01 11:40 |
+| 更新 | 2026-10-01 12:05 |
 | WINNER | OpenVision2（纯 Attention ViT 505M）——loss 四架构并列 ~4.45–4.47（不可区分），训练 2139 img/s / 推理 6.51ms 双最优 |
 
 ## R2 等待说明（WAITING=1，异步 pipeline running）
@@ -18,7 +18,7 @@ WAITING: 1
 - 等待：**R2 主 pipeline `run_r2.sh`**（后台，10.239.2.12 GPU0-5，11:00:37 重启版，日志 `/tmp/vision_r2.log`）。
 - 串行顺序：R2-1（res/patch @ lr3e-3）→ R2-4（干净吞吐）→ R2-2（目标函数）→ R2-3（架构×分辨率）→ R2-5（MambaEye 诊断）。
 - 判结束：`ssh 10.239.2.12 'grep -c "R2 PIPELINE ALL DONE" /tmp/vision_r2.log'` == 1；各分段完成看 `mark()` 行（`===== R2-x ... done ...`）。
-- 【11:40 巡检快照】R2-1 训练进度：✅ 336/16（loss 4.4565 / 1662.6 img/s）、✅ 448/16（4.4556 / 971.7）、🔄 224/14（step1600 往 4.455 走，~2150 img/s）；待 336/14、448/14 及 7 组 eval + 6 组 bench。GPU0-5 全 90–97% 满载（6×python 各 ~28GB），GPU6-7 仅他人 sglang（未动）。**关键观测：lr=3e-3 下各组 loss 仍 ~4.456 平台（<0.001 差），「loss 分辨率无关」结论在正确 LR 下依然成立，但 4.9962→4.456 证明 Round 1 数值确为 LR 伪影**。已回填 R2-1 已完成的 3 格到 `EXPERIMENTS_VISION_ROUND2.md`。剩余 ETA 粗估 ~3–4h（R2-3 的 12 组×3000 步是大头）。
+- 【12:05 巡检快照】**R2-1 训练全部完成**（7 组 loss/img-s 已回填）：224/16=4.4562、336/16=4.4565、448/16=4.4556、224/14=4.4566、336/14=4.4560、**448/14(bs16)=3.7461**；坍缩对照 224/16@1e-3=4.9962。**当前在 R2-1 eval 阶段（448/16 这组进行中，还剩 224/14、336/14、448/14 三组 eval + 6 组 bench）**。两条关键发现：① **448/14 的 3.7461 被 batch 缩减(32→16)混淆**（SigLIP loss 对负样本数敏感），不可当「高分辨率降 loss」写进表，需标注；② **eval5k 检索 R@1/5/10 全 = 0.0002 随机水平**（=1/5000），R2-2 的「可通约 R@K 主指标」设想不可行，需在报告换口径。剩余 ETA 粗估 ~3h（R2-3 的 12 组×3000 步是大头）。
 - 下次唤醒动作：先 tail `/tmp/vision_r2.log` 看进度；若未 ALL DONE，把已完成分段的实测值（loss / train img/s / 推理 ms/img / eval5k 检索）回填 `EXPERIMENTS_VISION_ROUND2.md` 对应表，维持 WAITING=1 继续睡；已 ALL DONE 则回填全部表格 + 「论文回填建议」+ 生成 `BAIZE_VISION_ENCODER_RESULT_ROUND2.html` → 更新 MEMORY/EXPERIMENTS → git commit+push，WAITING 置 0。
 
 ## 历史：Round 1 S4–S9 pipeline 等待说明（已收敛，供回溯）
