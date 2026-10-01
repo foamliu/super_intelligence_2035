@@ -153,6 +153,8 @@ PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python
 CUDA_VISIBLE_DEVICES=0 $PY -u r4_fix_probe.py --config all --steps 300   # 四配置 C1/C2/C4
 CUDA_VISIBLE_DEVICES=0 $PY -u r4_s1_s2.py --n 10000                      # S1/S2 token 统计
 CUDA_VISIBLE_DEVICES=0 $PY -u r4_s1_dec.py --n 2500                      # S1 决定性（head vs tail）
+```
+
 ## 5. C3 下游验证（胜出配置 sem_clip，2000 步）
 
 - 训练：冻结 CLIP 文本塔 + InfoNCE + OpenVision2 from-scratch，单卡，2000 步（脚本 `vision/r4_c3.py`）。
@@ -212,11 +214,4 @@ bash run_train.sh openvision2 10000 OUT --data /nas_inference/.../gpic/train \
 4. **修复 recipe 写进方法**：`冻结预训练 CLIP 文本塔 + InfoNCE + （可选）GPIC-short caption`，作为后续 Stage(iii)/(iv) 的可复现配置。
 5. **数据段**：注明原始 LLaVA recaption 100% 截断、通篇公式化（"the image" 占 30%），GPIC-short 是更适合对比学习的 caption 档位。
 
----
-$PY -u r4_gpic.py                                                        # GPIC caption 统计 + 许可
-CUDA_VISIBLE_DEVICES=0 $PY -u r4_semantic.py --n 1500                    # 语义 off-diag 对比
-CUDA_VISIBLE_DEVICES=0 $PY -u r4_c3.py --steps 2000                      # 胜出配置 C3（eval5k R@1）
-```
-
----
 ---
