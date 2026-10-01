@@ -57,9 +57,16 @@
   </div>
 </header>
 
+<div class="danger">
+  <strong>🚨 当前核心阻塞（最高优先级）</strong>：<strong>从零训练视觉编码器训不起来 —— 表征坍缩</strong>。
+  R3 已定位根因（两塔退化为常量、四架构塌到同一均衡点、loss 4.45 是坍缩均衡的算术值）；
+  <strong>已下发 R4 单线程解决</strong>：6 条代码级怀疑（含 77-token 截断、空 caption、负样本质量）+ LLaVA vs GPIC 数据集对比
+  + 修复实验 + 路线裁定。<strong>此问题不解决，Stage (iii)/(iv) 无法前进。</strong>
+</div>
+
 <div class="verdict">
-  <strong>一句话进展</strong>：<strong>四个 loop 全部在跑且都在产出</strong>。
-  vision <strong>R2 全部完成</strong>（并已下发 R3-1 查"检索指标退化"）；pretrain <strong>P-1 + P-2 均已定稿</strong>
+  <strong>一句话进展</strong>：<strong>四个 loop 全部在跑</strong>。
+  vision <strong>R2 完成 → R3 定位坍缩根因 → R4 解决阻塞</strong>；pretrain <strong>P-1 + P-2 均已定稿</strong>
   （U 形谷底 + Δ 落在噪声内），并新增 <strong>P-4 FP8 可行性评估</strong>；
   data agent 已<strong>转为「R 阶段：数据调研」</strong>（用 cimi-search 为 5 个阶段调研数据源）；
   ops relay 已执行 RUN_ID 1/2，<strong>RUN_ID 3（磁盘）已排队</strong>。
@@ -219,10 +226,36 @@
     <td>同上</td>
   </tr>
   <tr>
-    <td><b>R2-2 / R2-3 / R2-4 / R2-5</b></td>
-    <td><span class="badge b-warn">待运行</span></td><td>—</td>
+    <td><b>R2-2</b> 目标函数</td>
+    <td>SigLIP vs CLIP：<b>两者都坍缩</b>，loss 量纲与含义均无意义（见下方 R3）</td><td>同上</td>
+  </tr>
+  <tr>
+    <td><b>R2-3</b> 架构 × 分辨率</td>
+    <td>256/576/1024 token 下 loss 并列 —— <b>同样是坍缩均衡，不能作为"架构不可区分"的证据</b>（见下方 R3）</td><td>同上</td>
   </tr>
 </table>
+
+<div class="danger">
+  <h3 style="margin-top:0">🚨 R3 结论：不是"训练不足"，是<b>表征坍缩（representation collapse）</b></h3>
+  <p>
+    <b>两个塔都退化成常量输出</b>（same-tower 余弦 ≈ <b>1.0000</b>），与输入无关 → 检索排序全随机
+    → 表现为"精确等于 1/5000 的 chance"。<b>四个完全不同的架构坍缩到同一个均衡点</b>
+    （学到的 <code>scale≈5.6~5.7 / bias≈−9.0~−9.1</code> 几乎同值）→ 问题在<b>共享的 recipe</b>，不在架构。
+  </p>
+  <p><b>两条最硬的证据</b>：</p>
+  <ul>
+    <li><b>控制实验</b>：全新随机初始化喂同一批输入 → 特征<b>发散</b>（offdiag 0.1725）→ 证明<b>输入与评测无 bug，坍缩是训练造成的</b></li>
+    <li><b>损失恒等式（算术证明）</b>：SigLIP loss <code>= -logsigmoid(label·(sim·scale+bias))</code>，
+        代入坍缩态 <code>sim≈0.9956 / scale=5.6827 / bias=−9.0937</code> → <code>loss = 4.459</code>，
+        与实测 <b>4.456 分毫不差</b>。<b>即 loss≈4.45 是坍缩均衡的算术值，不是学习结果。</b></li>
+  </ul>
+  <p>
+    <b>影响</b>：<code>tab:visarch</code> / <code>tab:visres</code> / <code>tab:visobj</code> 的 <b>loss 类结论全部作废</b>；
+    <b>仅吞吐/延迟排序仍成立</b>（结构属性，不受坍缩影响）。<br>
+    <b>并已下 R4</b>：以"训练不收敛"为<b>核心阻塞</b>单线程解决 —— 含 6 条代码级怀疑、LLaVA vs Stanford GPIC
+    数据集对比、修复实验与路线裁定。
+  </p>
+</div>
 
 <div class="note">
   🔧 <b>已据此修正 R2-3 的任务书</b>（同一 bug 会重现，因为 R2-3 是我设计的）：① 12 组<b>必须匹配 batch</b>
