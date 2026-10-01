@@ -25,6 +25,7 @@ WAITING: 1
 - **R6 结论已落地**：R7 定 GPIC short、R8 六架构 + IN-1k，最终胜出 **OpenVision2**（loss 4.8646 / C1 0.2875 / IN-1k zs 0.95% / lp 1.14%，四指标第一；SSM 两架构坍缩）。
 - **本次动作**：任务已收敛、无新实验可做 → 把 `WAITING` 0→1，使 `baize_vision_loop.sh` 从 60s 短睡转 30min 长睡，**避免空转烧 token**；待运维处置 loop（或派发新轮次时重置 WAITING=0）。
 - 未改 `*.tex`；未碰 pretrain/data/ops 文件。
+
 ## 🏁 R8 完成（2026-10-02 04:23 训练+评测全结束；最后回收）
 
 > `r8_run.sh` 全部跑完：`/tmp/r8.log` → `R8 ALL DONE 2026-10-02 04:23:25`。6 架构训练 + 末了 IN-1k 评测（zero-shot / linear-probe，frozen trunk）全收齐。
