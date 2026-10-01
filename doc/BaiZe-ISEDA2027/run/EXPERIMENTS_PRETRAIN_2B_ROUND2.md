@@ -17,6 +17,8 @@
 | 时间 | 10.239.2.29（本任务） | vision（10.239.2.12）当时在做什么 |
 |:--|:--|:--|
 | 启动 P-1 前 | 8×H100 全空闲（0 MiB / 0%） | run_r2_resume.sh 跑 R2-3 尾 3 组 + R2-5（GPU0-5 满载 ~39GB）；其 R2-4 干净吞吐**已先期完成** → 无需等待 |
+| P-3 dense 收尾 @18:55 | GPU0-5（6 卡）满载 dense（各 ~39GB）；GPU6-7 空闲 4 MiB | vision 已收敛终局（R3_complete，未跑训练）→ 无 I/O 争用 |
+| P-3 hybrid 运行 @19:08 | GPU0-5（6 卡）满载 hybrid（各 ~39GB，util 63–97%，6 worker master_port=29732）；GPU6-7 空闲 | 同上（vision 终局 idle） |
 
 ---
 
@@ -63,13 +65,41 @@
 ## P-3　架构对比延长 5000 步（dense vs hybrid，6 卡 / GBS=6 口径）
 
 - 对象：dense（MiniCPM5-2B）vs hybrid（Mamba2-hybrid），与 Round 1 架构对比同源。
-- ⚠️ 口径：**6 卡 / TP1/DP6 / GBS=6 / seed=1234**（沿用 Round 1，否则与 1000 步数据不可比）。
+- ⚠️ 口径：**6 卡 / TP1/DP6 / GBS=6 / seed=1234**（沿用 Round 1，否则与 1000 步数据不可比）。**统一 cosine**（lr=3e-4 / min_lr=3e-5 / warmup=100 / decay=1000 / seq=4096 / bf16）保证公平。
 - 5000 步，在 500/1000/2000/3000/5000 步各记 loss → 两条曲线。
-- 复核参数量 dense 2.512B / hybrid 2.220B 与 train tok/s、prefill/decode（mcore 直驱口径），对照论文 `tab:archcomp`。
-- 状态：**待跑**。
+- 状态：**dense ✅ done / hybrid 🔄 运行中（@2180/5000）**。
+
+### P-3 结果表（dense 5 点已回收；hybrid 待收）
+
+| ID | 架构 | 参数量（rank numel） | 500 | 1000 | 2000 | 3000 | 5000 | train tok/s | 耗时 | 状态 |
+|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+| p3_dense | MiniCPM5-2B (dense) | **2,512,037,888 = 2.512B** ✅ | 5.4683 | 4.8351 | 4.2269 | 3.8127 | **3.3575** | ~89.7K（274ms/iter） | 18:31:32→18:55:21（~24min） | ✅ done（grad 1.7，0 NaN/skip） |
+| p3_hybrid | Mamba2-hybrid | **2,220,268,032 = 2.220B** ✅ | TBD | TBD | TBD | TBD | TBD | ~85.6K（287ms/iter） | 18:55:33→… | 🔄 running @2180（loss~3.68 warmup 期，grad 0.68，0 NaN） |
+
+- ✅ **参数量复核**：dense `2,512,037,888`（2.512B）、hybrid `2,220,268,032`（2.220B），均与 Round 1 `sum(numel())` 及论文 `tab:archcomp` 一致。（注：hybrid provider 打印的 "transformer layers 2.47 + embedding 0.53 = 3.00B" 是含 vocab 嵌入的粗糙计数，**权威口径取 rank 上的 2.220B**。）
+- ✅ **训练吞吐口径**（GBS=6 × seq4096 = 24576 tok/step）：dense ~274ms/iter ≈ **89.7K tok/s**，hybrid ~287ms/iter ≈ **85.6K tok/s** —— dense 训练吞吐略高于 hybrid（SSM 串行为 hybrid bottleneck 的量化印证），与论文 `tab:archcomp` 吞吐方向一致。
+- ⚠️ 待 hybrid 收 5 点后给出「架构对比延长到 5000 步」的最终结论（dense vs hybrid 的 loss 曲线关系 + 是否仍支持 "hybrid 更优" 的 claim）。
 
 ---
 
+## P-4　FP8 可行性评估（先 profile，再决定）
+
+> 背景：Xmodel-2.5 从 BF16→FP8 混合精度吞吐 +≈30%，但那是**稠密 Transformer**（几乎全 GEMM）。
+> BaiZe 只有 4/56 层 attention，其余 Mamba-2 SSM + MLP；TE FP8 只加速 GEMM / LayerNorm / GeLU，**不含 SSM selective-scan**。
+> → 不能假设 +30% 平移过来，必须先量 GEMM 占比 `g`（Amdahl：FP8 上限 = 1/(1-g)）。
+
+### 环境核验（✅ 已完成，2026-10-01 19:09）
+
+- ✅ `transformer_engine` **已安装，版本 2.12.0**（`2.12.0+5671fd36`）；与 `torch 2.8.0+cu128` / CUDA 12.8 匹配。
+- ✅ 配方已从 `Xmodel-2.5/ACL2026/method.tex` §FP8 摘取：forward **E4M3**（activations）、backward **E5M2**（gradients）、**master-weights bf16**；TE delayed-scaling `amax-history-len=128` / `amax-compute-algo=max`；经 `--transformer-impl transformer_engine` 启用（内核自动选择，无需改源码）。
+- ⚠️ 当前 `pretrain_launcher.py` **尚无** `--transformer-impl` / FP8 相关参数（仅有 `--precision`，默认 `bf16_mixed`）。第 2 步接 FP8 前需扩展 launcher（照抄 Xmodel-2.5 的 `--transformer-impl transformer_engine` + 传 fp8 recipe）。
+
+### 第 1 步（待 p3_hybrid 结束、GPU 空闲后执行）：profile 量 GEMM 占比
+
+- 计划：用 BF16 配置跑 ~100 步，`torch.profiler` 拆时间 → 归类 `GEMM（linear/attn/MLP）` / `SSM selective-scan` / `norm+act` / `通信（NCCL）` / `数据加载`，得 GEMM 占比 `g`。
+- ⚠️ 任务书自述「SSM 串行为 bottleneck」——若 scan 占大头，`g` 小，则 FP8 收益有限，**到此结论、不接 FP8**（第 2/3 步裁减）。
+
+### 状态：**待跑**（环境已备，仅差 GPU 空闲；profile 脚本落地 + 运行放在下一唤醒）
 ## 可复现命令
 
 ```bash
@@ -89,6 +119,6 @@ TRAIN_ITERS=5000 LR=1.5e-3 bash scripts/train.sh mamba2 p1_1p5e3 29711 8
 
 ## 论文回填建议（待填，P-1/P-2/P-3 完成后给出精确数值与文字建议）
 
-1. **「最优点是否在边界」怎么写**：TBD
+1. **「最优点是否在边界」怎么写**（P-1 ✅ 已定稿）：**最优不在网格边界，1e-3 是扩展网格内部的全局极小值**。10 点 LR 曲线（2e-4…3e-3）明确 U 形、极小值齐整落在 `1e-3`（左翼 2e-4→1e-3 单调降，右翼 1.5e-3→3e-3 单调升），且 3e-3 无 NaN 未发散（仅 loss 退化至 ~3e-4 档水平）。建议把论文 "loss improves monotonically" 那句改为交代完整网格 + 极小值位置：*"loss is U-shaped over LR ∈ [2e-4, 3e-3], attaining its minimum at LR=1e-3 (2.763); LR remains stable up to 3e-3 (no divergence, only degraded loss), so the optimum is an interior point of the grid, not a truncated boundary."*
 2. **「min_lr Δ 是否在噪声内」怎么写**：**Δ 在噪声内**。`1e-5` vs `3e-5` 的 Δ≈0.003213 仅 **~0.09σ**（n=5 复现 σ≈0.0349，mean 2.673386），远小于 run-to-run 噪声，两者**统计上不可区分**。建议把论文 "min_lr=1e-5 narrowly beats 3e-5" 改为 "min_lr 1e-5 and 3e-5 are statistically indistinguishable (Δ≈0.003 within run-to-run noise, σ≈0.035 across n=5 seeds); we adopt min_lr=1e-5 as default without claiming superiority"。
-3. **「架构对比延长到 5000 步后的结论」怎么写**：TBD
+3. **「架构对比延长到 5000 步后的结论」怎么写**：TBD（待 hybrid 5 点回收后给最终文字；当前 dense 5 点已回收 5.468→4.835→4.227→3.813→**3.357**@5000）
