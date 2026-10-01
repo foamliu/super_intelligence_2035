@@ -51,51 +51,53 @@
   <h1>BaiZe 实验进展 · 总看板</h1>
   <div class="sub">Stage (i) LLM 预训练 · Stage (iii) 视觉编码器 · Round 2 进展 · 阻塞项</div>
   <div class="meta">
-    <span>📅 更新 2026-10-01 23:22</span>
+    <span>📅 更新 2026-10-02 07:12</span>
     <span>🎯 ISEDA 2027 投稿截止 ≈ 2027-02-01</span>
     <span>📄 论文 7 页 / 0 编译错误</span>
   </div>
 </header>
 
 <div class="ok-box">
-  <strong>✅ 核心阻塞已解除</strong>：从零训练视觉编码器的 <b>表征坍缩</b> 已由 <b>vision R4</b> 定位并修复 ——
-  根因是 <b>「随机初始化的 text 塔」+「SigLIP 的可坍缩均衡」两个独立来源叠加</b>（单变量四档实验归因）；
-  修复 = <b>冻结的预训练 CLIP 文本塔 + CLIP InfoNCE</b>，<b>C1–C4 四项判据全部通过</b>：
-  C1 <code>1.0000 → 0.1909</code>；C2 间隙 <code>0 → +0.0850</code>；
-  C3 <code>eval5k R@1 1/5000 → 0.0064</code>（<b>32× chance</b>）；C4 loss 由钉在 4.45 转为持续下降。<br>
-  <small>另：R4 用决定性实验<b>证伪了「77-token 截断是主因」</b>——被丢弃的尾部（off-diag 0.372）比保留的头部（0.295）<b>更相似</b>，说明问题在于 recaption 通篇公式化，而非截断丢信息。</small>
+  <strong>🎉 Stage (iii) 视觉编码器路线已跑通 —— R2–R8 全部完成</strong><br>
+  <b>R4</b> 定位并修复<b>表征坍缩</b>（根因 =「随机初始化 text 塔」+「SigLIP 可坍缩均衡」两源叠加）；
+  <b>R5</b> 重跑架构/分辨率 · <b>R6</b> 裁定 77 与数据 · <b>R7</b> 裁定数据 = <b>GPIC <code>short</code></b> ·
+  <b>R8</b> 扩到 <b>6 架构 + IN-1k</b>。<br>
+  🏆 <b>最终胜出：OpenVision2（纯 Attention ViT，505.2M）—— 四指标全第一</b>：
+  <code>loss 4.8646</code> · <code>C1 0.2875</code> · <code>IN-1k zs 0.95%</code> · <code>IN-1k lp 1.14%</code>。<br>
+  <small>⚠️ 同时<b>作废了旧结论</b>：<b>「loss 与架构无关」是坍缩伪影</b> —— 修复 recipe 下六架构<b>可分</b>（loss 4.8646 ~ 6.2507）；
+  且发现<b>坍缩是 SSM 特异</b>（含 SSM 子结构的两架构 @300 坍缩，纯 Attention 四架构全健康）。</small>
 </div>
 
 <div class="danger">
-  <strong>🚨 当前紧要事项</strong>　<small>（第 1、3 条已闭环；第 2、4 条待办）</small>
+  <strong>🚨 当前紧要事项</strong>
   <ol>
-    <li><b>vision 已派 R6 + R5</b>（<code>BAIZE_VISION_TASK.md</code> 顶部）—— 次序为 <b>R6（纯 CPU 裁定）→ R5（GPU 重跑）</b>。
-        R6 要回答三件事：<b>是否切 GPIC</b> · <b>77 截断的根因</b> · <b>正式训练能否/该不该放开 77</b>。
-        由于 R1/R2 的架构 loss 结论已因坍缩全部作废，R5 仍是 Stage (iii) 恢复有效产出的<b>唯一路径</b>。</li>
-    <li><b>P-5b 一旦启动将独占 8 卡 ≈2.5 天</b> → <b>P-4 / P-6 / P-7 应排在它之前清掉</b>（合计 ≈5–9 小时）。</li>
-    <li><b>人工项已清零</b>：① ✅ <code>UltraData-SFT-2605</code> 的 HF 条款<b>已点同意</b> → data agent 已被派<b>重下</b>；
-        ② 🚫 <b>EDA 语料线已由运维正式取消</b>（评测 prompt 由 docstring 生成、与语料同源，"把测试集放进训练集"没有意义）。</li>
-    <li>🏁 <b>新增 P-8 = Stage (i) 完整训练（<u>本体</u>）</b> —— 已定次序
-        <b>P-4 → P-7 → P-6 → P-5b → P-8</b>；P-8 目标 <b>≥100B token（≈12.5 天）</b>，下限 44B（≈5.5 天）。
-        详见 <a href="#s2">§2</a> 与 <a href="#s9">§9</a>。</li>
+    <li>🏁 <b>Stage (i) 本体 = P-8 完整训练</b> —— 次序 <b>P-5b → P-6 第2步 → P-8</b>。
+        <b>P-4 / P-7 / P-6 第1步 已全部定稿</b>，下一步是 <b>P-5b</b>（其 loss-vs-token 曲线决定 P-8 的 token 预算）。</li>
+    <li>⚠️ <b>vision loop 已收敛（<code>WAITING=1</code>）等运维处置</b> —— R2–R8 交付物齐备、无剩余工作。
+        <b>需决定：关掉 loop，还是派新任务</b>（如正式训练视觉编码器 / 用 GPIC 全量重训）。</li>
+    <li>🟠 <b>P-7 结论已在手上、论文 <code>tab:archcomp</code> 待改</b>：
+        那个 "+24%" 被查明是<b>跨节点 artifact</b>（hybrid 在 .12 测、dense 在 .29 测）；
+        同节点同配置真值 = <b>hybrid 训练吞吐代价 ~8%</b>（dense ~89K vs hybrid ~82–83K）。</li>
+    <li>🟠 <b>论文回填欠账</b>：<code>tab:visarch</code> / <code>tab:visres</code> / <code>tab:visobj</code> 需按 R8 结果重填；
+        <b><code>tab:visarch_res</code> 必须回滚</b>；§4 的「≈1.8T tokens」需改成 <b>≈690B</b>。
+        详见 <a href="#s6">§6</a> #8 / #13 / #15。</li>
   </ol>
   详见 <a href="#s9">§9 当前排期与预计完成时间</a>。
 </div>
 
 <div class="verdict">
-  <strong>一句话进展</strong>：<strong>四个 loop 全部在跑</strong>。
-  vision <strong>R2 完成 → R3 定位坍缩根因 → R4 解决阻塞（C1–C4 全过）→ R5 重跑中</strong>
-  （R6/R7/R8 已排队）；pretrain <strong>P-1 / P-2 / P-3 / P-5a 均已定稿</strong>
-  （U 形谷底 + Δ 落在噪声内 · P-5a 9/9：<b>最优 LR 不随 GBS 右移</b>），<b>GPU 已空闲 → 下一步 P-4</b>；
-  data agent 的 <strong>R 阶段两问已收敛</strong>（<code>DATA_RESEARCH.md</code> v1.1：真实 token ≈690B、vision 用 GPIC <code>short</code>），现已被派 <strong>重下 SFT-2605 + R2 调研</strong>；
-  ops relay 已执行 <strong>RUN_ID 1/2/3</strong>（环境 / 数据根目录 / 磁盘），<strong>现空闲待命</strong>。
+  <strong>一句话进展</strong>：<strong>vision 线已收工</strong>（R2–R8 全完成 · 胜出 OpenVision2 · 数据定 <b>GPIC <code>short</code></b>）；
+  <strong>pretrain 线 P-4 / P-7 / P-6第1步 定稿 → 下一步 P-5b</strong>；
+  <strong>data 线 §0.3 + §0.4 两轮调研均已交付</strong>（8 源事实表满填 · <b>base vs L3 重叠 0%</b> ·
+  13 个 HF 候选里 <b>7 个 URL-only 被淘汰</b>），SFT-2605 重下中（no_think <b>855/855 已下满</b>）；
+  ops relay 空闲待命。
 </div>
 
 <div class="kpi-row">
-  <div class="kpi"><div class="v">4 / 4</div><div class="l">loop 全部运行中</div></div>
-  <div class="kpi"><div class="v">P-5a ✅ 9/9</div><div class="l">GBS×LR 定稿：谷底恒 1e-3、<b>无右移</b></div></div>
-  <div class="kpi"><div class="v">R4 ✅</div><div class="l">vision 核心阻塞已解除 → R5/R7/R8 接力</div></div>
-  <div class="kpi"><div class="v">690B</div><div class="l">实测真实 token（论文写 1.8T，高估 2.6–3.9×）</div></div>
+  <div class="kpi"><div class="v">R2–R8 ✅</div><div class="l">vision 线收工（胜出 <b>OpenVision2</b>）</div></div>
+  <div class="kpi"><div class="v">P-4/P-7/P-6① ✅</div><div class="l">pretrain 三项定稿 · 下一步 <b>P-5b</b></div></div>
+  <div class="kpi"><div class="v">GPIC short</div><div class="l">vision 最终训练数据（20 tok / <b>0% 截断</b>）</div></div>
+  <div class="kpi"><div class="v">0%</div><div class="l">Ultra-FineWeb base 与 L3 的<b>重叠率</b></div></div>
 </div>
 
 
@@ -132,13 +134,13 @@
     <td><b>(i)</b></td><td>LLM 预训练（from scratch）<br><small><b>scope 不变</b>；本体 = <b>P-8</b></small></td>
     <td><span class="badge b-info">🟡 前置选型实验完成</span><br>
         <span class="badge b-no">🚨 <b>本体 = P-8 未开始</b></span></td>
-    <td><b>已完成 = 前置选型实验</b>（S0–S5 + R2 的 P-1…P-7）：<br>
+    <td><b>已完成 = 前置选型实验</b>（S0–S5 + R2 的 <b>P-1…P-7</b>）：<br>
         2.22B / 56 层（4 attention）· 单点 5000 步 ≈ <b>164M token</b> ·
         「长跑」20000 步 ≈ <b>655M token</b> · 合计 <b>~85 GPU·h</b><br>
         val loss <b>2.2054</b>@20k 步 · 3-seed <b>2.6739±0.0469</b><br>
         🏁 <b>P-8 目标：推荐 100B token（≈12.5 天）· 下限 44B（≈5.5 天）</b></td>
-    <td><b>P-1 ✅ / P-2 ✅ / P-3 ✅</b> · <b>P-5a 运行中</b><br>
-        🚦 次序：<b>P-4 → P-7 → P-6 → P-5b → P-8</b></td>
+    <td><b>P-1 ✅ P-2 ✅ P-3 ✅ P-4 ✅ P-5a ✅ P-6① ✅ P-7 ✅</b><br>
+        🚦 剩余次序：<b>P-5b → P-6 第2步 → P-8</b></td>
   </tr>
   <tr>
     <td><b>(ii)</b></td><td>LLM 后训练（领域退火 + SFT + RLVR）</td>
@@ -146,16 +148,19 @@
     <td>—</td><td>2026-12</td>
   </tr>
   <tr>
-    <td><b>(iii)</b></td><td>视觉编码器预训练（四架构对比）</td>
-    <td><span class="badge b-ok">✅ 阻塞已解除</span><br>（R4 修复，<b>C1–C4 全过</b>）<br>
-        <span class="badge b-warn">🔄 R5 重跑 · R7 数据 · R8 扩架构</span></td>
-    <td>⚠️ <b>R1/R2 的 loss / Recall 类结论已作废</b>（坍缩读数）；<br>
-        ✅ <b>仅吞吐 / 延迟排序仍成立</b>（OpenVision2 双最优）</td>
-    <td><b>R5</b>（重跑）→ <b>R7</b>（数据臂）→ <b>R8</b>（6 架构 + IN-1k）</td>
+    <td><b>(iii)</b></td><td>视觉编码器预训练（<b>六架构对比</b>）</td>
+    <td><span class="badge b-ok">✅ <b>R2–R8 全部完成</b></span><br>
+        <span class="badge b-info">loop 已收敛待处置</span></td>
+    <td>🏆 胜出 <b>OpenVision2</b>（纯 Attention ViT, 505.2M）—— <b>四指标全第一</b>：<br>
+        <code>loss 4.8646</code> · <code>C1 0.2875</code> ·
+        <code>IN-1k zs 0.95%</code> · <code>IN-1k lp 1.14%</code><br>
+        <b>最终数据 = GPIC <code>short</code></b>（20 tok / 0% 截断）<br>
+        ⚠️ 作废旧结论「loss 与架构无关」；<b>坍缩是 SSM 特异</b>（2 个含 SSM 架构 @300 坍缩）</td>
+    <td>✅ 已完成 → 下一步可做<b>正式训练</b>（用 GPIC 全量）</td>
   </tr>
   <tr>
     <td><b>(iv)</b></td><td>MLLM 对齐</td><td><span class="badge b-warn">⬜ 待做</span></td>
-    <td>—</td><td>2026-12（<b>需先等 (iii) 解阻塞</b>）</td>
+    <td>—</td><td>2026-12（<b>(iii) 已跑通，前置已解除</b>）</td>
   </tr>
   <tr>
     <td><b>(v)</b></td><td>半导体领域适配（偏好 RL）</td><td><span class="badge b-warn">⬜ 待做</span></td>
@@ -261,6 +266,50 @@
 </div>
 
 <h2 class="sec" id="s3"><span class="no">3</span>Stage (iii) 视觉编码器 + Round 2 实证结果</h2>
+<div class="ok-box">
+  <h3 style="margin-top:0">🏆 3.0 最终结果（R4–R8 修复 recipe，2026-10-02 · <b>权威</b>）</h3>
+  <p>
+    <b>胜出架构：OpenVision2（纯 Attention ViT，505.2M）—— R8 六架构重比，四指标全第一。</b><br>
+    下方 <b>3.1 / 3.2</b> 的 R1/R2 旧读数<b>已因表征坍缩与 lr=1e-3 cosine 伪影作废</b>，仅作历史留档。
+  </p>
+  <table style="margin:8px 0">
+    <tr><th>架构</th><th>loss@3k</th><th>C1（同塔 off-diag）</th><th>IN-1k zs top-1</th><th>IN-1k lp top-1</th><th>训练 img/s</th><th>判定</th></tr>
+    <tr class="ok-box"><td class="ok-box" style="padding:6px 10px"><b>OpenVision2</b></td>
+        <td class="ok-box" style="padding:6px 10px"><b>4.8646</b></td>
+        <td class="ok-box" style="padding:6px 10px"><b>0.2875</b></td>
+        <td class="ok-box" style="padding:6px 10px"><b>0.95%</b></td>
+        <td class="ok-box" style="padding:6px 10px"><b>1.14%</b></td>
+        <td class="ok-box" style="padding:6px 10px">3051.8</td>
+        <td class="ok-box" style="padding:6px 10px">✅ <b>胜出</b></td></tr>
+    <tr><td>MoE-ViE（moevie）</td><td>5.5580</td><td>0.4109</td><td>0.35%</td><td>0.28%</td><td>1225.7</td><td>✅ 健康（激活 222M）</td></tr>
+    <tr><td>AIMv2（等参改编）</td><td>5.6370</td><td>0.3931</td><td>0.38%</td><td>0.25%</td><td><b>3392.5</b></td><td>✅ 健康（吞吐最快）</td></tr>
+    <tr><td>FastViTHD（等参改编）</td><td>5.6683</td><td>0.4494</td><td>0.39%</td><td>0.27%</td><td>2097.4</td><td>✅ 健康（conv-hybrid 无优势）</td></tr>
+    <tr><td>MambaEye（纯 SSM）</td><td>6.2507*</td><td>1.0000</td><td>0.10%</td><td>0.10%</td><td>949.5</td><td>❌ <b>@300 坍缩</b></td></tr>
+    <tr><td>DeepEncoderV2（Attn+SSM）</td><td>6.2513*</td><td>1.0000</td><td>0.10%</td><td>0.10%</td><td>1864.5</td><td>❌ <b>@300 坍缩</b></td></tr>
+  </table>
+  <p style="margin-bottom:4px"><b>三条最终结论</b></p>
+  <ol style="margin:4px 0">
+    <li><b>修复 recipe 下架构有真实差异</b>（loss 4.8646~5.6683、IN-1k 0.95%~0.39% 可分）
+        → <b>作废旧结论「loss 与架构无关」</b>（那是坍缩伪影）。</li>
+    <li><b>坍缩是 SSM 特异</b>：含 SSM 子结构的两个架构（MambaEye / DeepEncoderV2）<b>@300 步即坍缩</b>（C1=1.0000，loss=6.25≈ln 512）；
+        纯 Attention 的四个架构<b>全健康</b>。这是一个<b>有普适价值的负结果</b>。</li>
+    <li><b>IN-1k（frozen trunk zs/lp）成功替换了退化的 R@1</b>（旧 <code>R@1=1/5000</code> 是 chance、零区分度）。</li>
+  </ol>
+  <p style="margin-bottom:0">
+    <b>最终 recipe</b>：<b>Stanford GPIC <code>short</code></b>（20 tok / <b>0% 截断</b>）+
+    <b>InfoNCE</b> + 冻结 <code>clip-vit-large-patch14-336</code> 文本塔（768 维，context 77）+
+    lr 3e-3 / warmup 20 / seed 1234 / bf16 / bs64×8 卡 = <b>512 负样本</b>。
+    <small>（R7 数据臂交叉评测裁定；CC12M 规模最大但处处最弱、已淘汰）</small>
+  </p>
+</div>
+
+<div class="note">
+  🔎 <b>3.0.x 补充：分辨率（R5 P1）</b> —— 胜出架构 OpenVision2，
+  <b>224/16 最好（loss 3.0977 / 1361.7 img/s）</b> &gt; 336/14（3.1909）&gt; 448/14（3.2711）。
+  <br>⚠️ <b>R5 的 loss 基线（3.10）与 R8（4.86）不可直接比</b> —— 两者用了不同数据臂（R5=en500k，R8=GPIC short）。
+</div>
+
+
 
 <h3>3.1 Round 1（已完成）</h3>
 <p>四个 500–600M 候选从零预训练（统一 <code>open_clip</code> + SigLIP + 冻结文本塔，en500k 子集）：</p>
@@ -662,9 +711,9 @@
 
 <table>
   <tr><th>角色</th><th>脚本 / 文件</th><th>状态</th></tr>
-  <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-ok">✅ 已派活</span>（.12 · R2 ✅ → R3 定位<b>表征坍缩</b> → <b>R4 ✅ C1–C4 全过</b> → <b>R6 🔵 已下发（CPU 裁定）→ R5（GPU 重跑）</b>）</td></tr>
-  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ P-2 ✅ P-3 ✅ P-5a ✅ 9/9</b>（谷底恒 <b>1e-3</b>、<b>无右移</b> → GBS=1024 推荐 LR=1e-3）· <b>GPU 已全空闲</b> → 下一步 <b>P-4</b>；<b>P-6 / P-7 已下发</b>）</td></tr>
-  <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · phase0/5 ✅ · R 阶段 ✅ 收敛（两问已答完，<code>DATA_RESEARCH.md</code> v1.1）→ 已派 <b>① SFT-2605 重下</b> + <b>② 🔴 R2 调研（§0.3 LLM 侧 + §0.4 视觉侧找图文对）</b>；<b>🚫 phase3_domain 已取消</b>；phase1/2/4 等下载）</td></tr>
+  <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-info">⏹ 已收敛待处置</span>（.12 · <b>R2–R8 全部完成</b> · 胜出 <b>OpenVision2</b> · 数据定 <b>GPIC short</b> · <code>WAITING=1</code> 待运维决定关循环还是派新任务）</td></tr>
+  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1…P-4 ✅ · P-5a ✅ 9/9 · P-6 第1步 ✅ · P-7 ✅</b> · 下一步 <b>P-5b</b>）</td></tr>
+  <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · <b>§0.3 ✅ 8 源事实表满填 · base vs L3 重叠 0%</b> · <b>§0.4 ✅ 13 HF 候选 / 7 个 URL-only 淘汰</b> · SFT-2605 重下中 no_think <b>855/855 ✅</b> · 四路下载健康）</td></tr>
   <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-ok">✅ 空闲待命</span>（.29 · 零 token · <b>RUN_ID 1/2/3 已全部回收</b>，随时可派 4）</td></tr>
   <tr><td>1B / 2B 架构轮</td><td><code>baize_search_loop.sh</code> · <code>baize_2b_search_loop.sh</code></td><td><span class="badge b-ok">✅ 已收敛</span>，僵尸 loop 已被清理</td></tr>
 </table>
@@ -750,147 +799,105 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
 
 <h2 class="sec" id="s9"><span class="no">9</span>当前排期与预计完成时间</h2>
 
-<p style="color:var(--muted)">基准时刻：<b>2026-10-01 23:22</b>。下表"预计耗时"是该条工作<b>剩余</b>的工作量估计。</p>
+<p style="color:var(--muted)">基准时刻：<b>2026-10-02 07:12</b>。下表"预计耗时"是该条工作<b>剩余</b>的工作量估计。</p>
 
 <table>
   <tr><th>线</th><th>当前安排的工作</th><th>状态</th><th>预计耗时</th><th>预计完成</th></tr>
 
   <tr>
-    <td rowspan="6"><b>pretrain</b><br>(<code>10.239.2.29</code>)<br><br>
-        <small>🚦 次序<br><b>P-4→P-7→P-6<br>→P-5b→P-8</b></small></td>
-    <td><b>P-5a</b> GBS×LR 扫描 <span style="color:var(--ok)"><b>✅ 已完成 9/9</b></span>（2026-10-01 22:54）<br>
-        <small>结论：<b>最优 LR 不随 GBS 右移</b> —— 四横切面（GBS 8/64/256/1024）谷底<b>恒为 1e-3</b>；
-        <b>GBS=1024 生产口径推荐 <code>LR=1e-3</code></b>（无需 batch scaling）</small></td>
-    <td><span class="badge b-ok">✅ 已完成</span><br><small>12 点稳健（4e-3 明确更差 +0.66，1e-3 从未输）</small></td>
-    <td>—</td>
-    <td>已结束</td>
+    <td rowspan="4"><b>pretrain</b><br>(<code>10.239.2.29</code>)<br><br>
+        <small>🚦 剩余次序<br><b>P-5b → P-6②<br>→ P-8</b></small></td>
+    <td><b>本轮 R2 已完成 7 项</b><br>
+        <small><b>P-1</b> LR 网格（U 形，谷底 1e-3）· <b>P-2</b> 补 seed 到 n=5 · <b>P-3</b> 架构对比 5000 步 ·
+        <b>P-4</b> FP8 profile · <b>P-5a</b> GBS×LR 9/9 · <b>P-6 第1步</b> lm_eval 8 集 · <b>P-7</b> 吞吐幅度核查</small></td>
+    <td><span class="badge b-ok">✅ 7 项已完成</span></td>
+    <td>—</td><td>已结束</td>
+  </tr>
+  <tr class="ok-box">
+    <td class="ok-box" style="padding:6px 10px"><b>P-5b</b> 训练量 scaling 曲线 —— <u>当前唯一在跑的前置</u><br>
+        <small>已 <b>tokenize ~25B L3 切片</b>（8 路并行）；跑到 20B token，必要时延到 40–60B。<br>
+        <b>它的 loss-vs-token 曲线直接决定 P-8 的 token 预算</b></small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">🔄 进行中</span></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≈ 2.5 天</b><br><small>20B @ ~83K tok/s<br>延 60B 则 ≈7.5 天</small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≈ 10/04</b><br><small>（延 60B → ≈10/09）</small></td>
   </tr>
   <tr>
-    <td><b>P-4</b> FP8 profile（判 GEMM 占比 → 决定 P-8 用不用 FP8）</td>
-    <td><span class="badge b-warn">⬜ 待启动</span><br><small><b>次序 1</b>（<b>GPU 已全空闲，可立即起</b>）</small></td>
-    <td>≈ 2 小时</td>
-    <td><b>可立即起</b></td>
-  </tr>
-  <tr>
-    <td><b>P-7</b> 训练吞吐幅度核查（+24% vs +4.8%）</td>
-    <td><span class="badge b-info">⬜ 已下发</span><br><small><b>次序 2</b></small></td>
-    <td>≤ 1 小时</td>
-    <td><b>≈ 10/02 凌晨</b></td>
-  </tr>
-  <tr>
-    <td><b>P-6</b> lm_eval 8 集零样本（HF→SGLang→local-completions）<br>
-        <small><b>第 1 步</b>=评测现有 20000 步 ckpt；<br>第 2 步（能力 vs token 曲线）<b>须等 P-5b 的 6 个 ckpt</b></small></td>
-    <td><span class="badge b-info">⬜ 已下发</span><br><small><b>次序 3</b></small></td>
-    <td>第 1 步 ≈ 2–6 小时<br><small>含转换 + 起服</small></td>
-    <td><b>≈ 10/02 上午</b><br><small>需 GPU 起 SGLang</small></td>
-  </tr>
-  <tr>
-    <td><b>P-5b</b> 训练量 scaling 曲线（跑到 20B token，必要时延到 40–60B）<br>
-        <small><b>它的曲线直接决定 P-8 的 token 预算</b></small></td>
-    <td><span class="badge b-no">⬜ 待 P-4/P-7/P-6 清完</span><br><small><b>次序 4</b></small></td>
-    <td><b>≈ 2.5 天</b><br><small>20B token @ ~93K tok/s<br>延到 60B 则 ≈7.5 天</small></td>
-    <td><b>≈ 10/05</b><br><small>（若延到 60B → ≈10/09）</small></td>
+    <td><b>P-6 第 2 步</b>「能力 vs token」曲线<br>
+        <small>在 P-5b 的 6 个 ckpt 上各跑一次 8 集评测，得「8 集均分 vs token」曲线</small></td>
+    <td><span class="badge b-no">⬜ 待 P-5b 的 ckpt</span></td>
+    <td>≈ 2–4 小时</td>
+    <td><b>≈ 10/04</b></td>
   </tr>
   <tr class="ok-box">
     <td class="ok-box" style="padding:6px 10px"><b>🏁 P-8 Stage (i) 完整训练（正式预训练 · <u>本体</u>）</b><br>
         <small>用 P-5a/P-5b 定下的 GBS·LR·调度，在<b>真实全量语料</b>上从零训到
-        <b>P-5b 曲线决定的预算</b>（推荐 <b>100B token</b>，下限 44B）</small></td>
+        <b>P-5b 曲线决定的预算</b>（推荐 <b>100B token</b>，下限 44B）。<br>
+        ✅ 已决议 <b>不接 FP8</b>（P-4 实测 GEMM 占比 28.6%含 comm / 49.2%纯计算 → 上限 &lt;2×，不值得）</small></td>
     <td class="ok-box" style="padding:6px 10px"><span class="badge b-no">🚨 未开始</span><br>
-        <small><b>次序 5（最后）</b></small></td>
+        <small>最后一项</small></td>
     <td class="ok-box" style="padding:6px 10px"><b>≥ 5.5 天</b><br>
-        <small>44B ≈ 5.5 天<br><b>100B ≈ 12.5 天</b><br>200B ≈ 25 天</small></td>
-    <td class="ok-box" style="padding:6px 10px"><b>≈ 10/17</b><br>
-        <small>（按推荐档 100B）</small></td>
+        <small>44B ≈ 5.5 天<br><b>100B ≈ 12.5 天</b></small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≈ 10/16</b><br>
+        <small>（按 100B 档）</small></td>
   </tr>
 
   <tr>
-    <td rowspan="5"><b>vision</b><br>(<code>10.239.2.12</code>)<br><br>
-        <small>🚦 次序<br><b>R6 → R5 → R7 → R8</b></small></td>
-    <td><b>R4</b> 坍缩根因定位与修复</td>
-    <td><span class="badge b-ok">✅ 已完成</span><br><small>C1–C4 全过</small></td>
-    <td>—</td><td>已结束</td>
-  </tr>
-  <tr>
-    <td><b>R5</b> 🔄 <b>P0 已启动</b>：<code>sem_clip</code> recipe 重跑 4 架构 × 3000 步 @224/16<br>
-        <small>数据 = 已打包 <code>en500k</code>（LLaVA）——<b>非 GPIC</b>，理由见 R6 行</small></td>
-    <td><span class="badge b-warn">🔄 运行中</span><br>
-        <small>首探针 OpenVision2 <b>C1=0.14 / gap +0.155 / C4 OK</b>（8 卡 512 负样本）</small></td>
-    <td><b>≈ 2–3 小时</b></td>
-    <td><b>≈ 10/02</b></td>
+    <td rowspan="2"><b>vision</b><br>(<code>10.239.2.12</code>)<br><br>
+        <small>✅ <b>R2–R8 全部完成</b></small></td>
+    <td><b>R4–R8 全链完成</b> —— 修坍缩 → 重跑架构/分辨率 → 77 裁定 → 数据裁定 → 6 架构 + IN-1k<br>
+        <small>🏆 胜出 <b>OpenVision2</b>（四指标全第一：loss 4.8646 / C1 0.2875 / IN-1k zs 0.95% / lp 1.14%）·
+        数据 = <b>GPIC <code>short</code></b>（R7 交叉评测裁定，CC12M 淘汰）<br>
+        关键发现：<b>坍缩是 SSM 特异</b>（含 SSM 的两个架构 @300 坍缩，纯 Attention 四架构全健康）·
+        <b>IN-1k 替换了退化的 R@1</b> · 分辨率 <b>224/16 最优</b></small></td>
+    <td><span class="badge b-ok">✅ 全部完成</span></td>
+    <td>—</td><td>2026-10-02</td>
   </tr>
   <tr class="ok-box">
-    <td class="ok-box" style="padding:6px 10px"><b>R6</b> 🔵 <b>文本塔上下文（77）与数据切换的裁定</b><br>
-        <small>✅ <b>Q2 已由运维用官方 config 裁定</b>：77 = 官方 OpenVision2
-        <code>text_cfg.context_length</code>（本项目 <code>train.py:50-52</code> 逐字段照搬）<br>
-        待核实：① 数据是否<b>切 GPIC</b> · ② 官方 <code>open_clip_pytorch_model.bin</code>
-        <b>是否含训练过的 text tower 权重</b>（若有 → 比换 CLIP-L 更贴合）· ③ 正式训练<b>能否/该不该</b>放开 77<br>
-        ⚠️ 已知约束：GPIC 仅 <b>445/8000 tar</b> 落盘，打包需读 ≈712 GB @NFS 60 MB/s ≈ <b>&gt;3h</b>
-        → 超 R5 预算且与 pretrain 争 NFS，故 R5 先用 en500k</small></td>
-    <td class="ok-box" style="padding:6px 10px"><span class="badge b-info">⏸ 已下发·排队</span><br>
-        <small><b>纯 CPU</b> · 可与 R5 并行，不占卡</small></td>
-    <td class="ok-box" style="padding:6px 10px"><b>≤ 1.5 小时</b></td>
-    <td class="ok-box" style="padding:6px 10px"><b>R5 跑完后立即</b></td>
-  </tr>
-  <tr class="ok-box">
-    <td class="ok-box" style="padding:6px 10px"><b>R7</b> 🔵 <b>数据臂对比：en500k vs GPIC vs C′</b>（<u>R5 之后</u>）<br>
-        <small>既然 <b>77 不能动</b>，就必须让<b>数据适配 77</b>；而 R5 用的 LLaVA 长 recaption <b>99.7–100% 被截断</b> ——
-        恰恰最不适配。<br>
-        <b>A</b> en500k（复用 R5）· <b>B</b> GPIC <code>short</code>（20 token / 0% 截断）·
-        <s><b>C</b> <code>Recap-DataComp-1B</code></s> 🚫 <b>已作废</b> →
-        <b>C′</b> 由 §0.4 调研从「<b>带 image bytes</b>」的候选里选<br>
-        ⚠️ <b>必须交叉评测</b>（<code>eval5k</code> × GPIC <code>test</code> 128 tar），
-        否则分不清"数据更好"与"eval 更简单"</small></td>
-    <td class="ok-box" style="padding:6px 10px"><span class="badge b-info">⏸ 已下发·排队</span><br>
-        <small>在 <b>R5 完全结束之后</b></small></td>
-    <td class="ok-box" style="padding:6px 10px"><b>≤ 3 小时</b><br>
-        <small>+ 视打包 I/O</small></td>
-    <td class="ok-box" style="padding:6px 10px"><b>≈ 10/02–10/03</b></td>
-  </tr>
-  <tr class="ok-box">
-    <td class="ok-box" style="padding:6px 10px"><b>R8</b> 🔵 <b>扩到 6 架构 + 加 IN-1k 指标</b>（<u>R7 之后</u>）<br>
-        <small><b>新增两架构</b>：<b>AIMv2</b>（Apple, arXiv:2411.14402 —— <b>自回归多模态预训练</b>，
-        非对比学习）· <b>FastViTHD</b>（Apple 高分辨率 hybrid 塔）<br>
-        <b>新指标</b>：<b>IN-1k Accuracy</b>（<code>imagenet-1k</code> 本机已有）——
-        <b>zero-shot</b>（用冻结 CLIP 文本塔）+ <b>linear probe</b>，<b>frozen trunk</b> 协议，
-        用来<b>替换退化的 R@1 检索代理</b><br>
-        ⚠️ <b>两个坑已写明</b>：① <b>等参问题</b>（AIMv2-L≈300M、FastViT-MA36≈43M，官方无 500–600M 档）
-        → 等参版与官方预训练版<b>必须分两张表，不许混排名</b>；
-        ② 🚨 <b>污染</b>：本机 <code>en500k</code> <b>就是 LLaVA 的 <code>imagenet/EN</code> 子集</b>
-        → 必须核查它是否含 IN-1k <b>val</b> 图，否则那个臂的 IN-1k 不可比</small></td>
-    <td class="ok-box" style="padding:6px 10px"><span class="badge b-info">⏸ 已下发·排队</span><br>
-        <small>在 <b>R7 之后</b></small></td>
-    <td class="ok-box" style="padding:6px 10px"><b>≤ 4 小时</b></td>
-    <td class="ok-box" style="padding:6px 10px"><b>≈ 10/03</b></td>
+    <td class="ok-box" style="padding:6px 10px">⚠️ <b>loop 已收敛 <code>WAITING=1</code>，待运维处置</b><br>
+        <small>R2–R8 交付物齐备、<b>无剩余工作</b>。
+        <b>需决定：① 关掉 loop；② 还是派新任务</b>
+        —— 例如<b>正式训练视觉编码器</b>（用 <b>GPIC 全量</b>）、或继续扩架构。</small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-info">⏹ 待决策</span></td>
+    <td class="ok-box" style="padding:6px 10px">—</td>
+    <td class="ok-box" style="padding:6px 10px"><b>等你定</b></td>
   </tr>
 
   <tr>
-    <td rowspan="4"><b>data</b></td>
+    <td rowspan="5"><b>data</b></td>
     <td><b>R 阶段</b>（两问：LLM/Vision 数据够不够 + 配比）</td>
     <td><span class="badge b-ok">✅ 收敛</span></td>
     <td>—</td><td>已结束</td>
   </tr>
   <tr class="ok-box">
-    <td class="ok-box" style="padding:6px 10px"><b>🔴 R2 阶段</b>（<u>当前主攻</u>）<br>
-        <small><b>§0.3 LLM 侧</b>：8 源事实表（含 <code>Ultra-FineWeb</code>(base) / <code>UltraX-Preview</code> / <code>RL-2609</code>）·
-        base vs L3 <b>重叠率</b> · P-8 三档投料+下载清单<br>
-        <b>§0.4 视觉侧</b>：本地多模态源逐条实测 · <b>≥10 个 HF 通用图文对候选</b>（含<b>实测短 caption 率</b>）· 前 3 推荐+下载命令</small></td>
-    <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">🔄 已派</span><br>
-        <small>与 SFT-2605 重下可并行</small></td>
-    <td class="ok-box" style="padding:6px 10px"><b>数小时</b><br>
-        <small>+ 视下载量</small></td>
-    <td class="ok-box" style="padding:6px 10px"><b>≈ 10/02</b></td>
+    <td class="ok-box" style="padding:6px 10px"><b>🔴 R2 阶段（两轮调研）✅ 已交付</b><br>
+        <small><b>§0.3 LLM 侧</b>：8 源事实表<b>满填</b> · <code>Ultra-FineWeb</code> base vs L3 重叠率 <b>0%</b> ·
+        P-8 三档（44/100/200B，86:10:4）投料+下载清单<br>
+        <b>§0.4 视觉侧</b>：本地 12 源<b>图像形态</b>实测 · <b>13 个 HF 候选（7 个 URL-only 淘汰 / 6 个 bytes）</b> ·
+        前 3 推荐<b>全为本地 bytes 源</b></small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-ok">✅ 已交付</span></td>
+    <td class="ok-box" style="padding:6px 10px">—</td>
+    <td class="ok-box" style="padding:6px 10px">已完成</td>
+  </tr>
+  <tr>
+    <td><b>正在重下 / 下载中</b><br>
+        <small><code>UltraData-SFT-2605</code>：<b>no_think 855/855 已下满</b>，think 开下（903/1504）；
+        <code>Ultra-FineWeb</code> base 同步下载中</small></td>
+    <td><span class="badge b-warn">🔄 下载中</span><br><small>四路 HF 下载健康</small></td>
+    <td>视带宽</td>
+    <td><b>≈ 10/02–10/03</b></td>
   </tr>
   <tr>
     <td><b>phase1/2/4</b>：全量校验 → 分词 → webdataset 打包</td>
-    <td><span class="badge b-warn">⏸ 等下载</span><br><small>LLaVA 7549/12126、gpic 430/8000 tar</small></td>
+    <td><span class="badge b-warn">⏸ 等下载</span><br><small>gpic 684/8000 tar · LLaVA 7617 parquet</small></td>
     <td>10+ 小时（重 I/O）</td>
     <td>待下载完成后才能起</td>
   </tr>
   <tr>
-    <td><b>原「两个需人工的前置」已清零</b>：① ✅ <code>UltraData-SFT-2605</code> 条款已点同意 → <b>重下中</b>；② 🚫 EDA 语料线<b>已取消</b>（同源，无意义）</td>
+    <td><b>人工前置已清零</b>：① ✅ <code>UltraData-SFT-2605</code> 条款已点同意 → <b>重下中</b>；
+        ② 🚫 EDA 语料线<b>已取消</b>（同源，无意义）</td>
     <td><span class="badge b-ok">✅ 已解决</span></td>
-    <td>重下视带宽</td>
-    <td>随 phase1 一起</td>
+    <td>—</td>
+    <td>—</td>
   </tr>
 
   <tr>
@@ -916,21 +923,35 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
 </div>
 
 <div class="note">
-  <b>关键路径</b>：<b>P-5b（≈2.5 天）→ P-8（≥5.5 天，推荐档 ≈12.5 天）</b> 是当前最长的一条链；
-  其余（vision R5、P-4/P-6/P-7、data phase1/2/4）都在<b>小时级</b>。
-  因此<b>真正决定能否交出 Stage (i) 成品的，是 P-4→P-7→P-6→P-5b→P-8 这条链</b>；其余各线可并行，不构成瓶颈。</div>
+  <b>关键路径</b>：<b>P-5b（≈2.5 天）→ P-6 第2步 → P-8（≥5.5 天，推荐档 ≈12.5 天）</b> 是当前最长的一条链；
+  <b>vision 线已收工</b>，其余（data phase1/2/4）也都在等下载、不占卡。
+  因此<b>真正决定能否交出 Stage (i) 成品的，就是 P-5b → P-8 这条链</b>。
+</div>
+
+<div class="ok-box">
+  <b>✅ 本轮已闭环的两件大事</b>
+  <ul style="margin:6px 0">
+    <li><b>vision（Stage iii）跑通</b>：R2–R8 全完成 —— 修坍缩 → 重跑架构/分辨率 → 77 裁定 →
+        数据裁定（<b>GPIC <code>short</code></b>）→ <b>6 架构 + IN-1k</b>。
+        胜出 <b>OpenVision2</b>（四指标全第一）。<b>loop 已收敛待你处置。</b></li>
+    <li><b>P-7 吞吐疑云已破</b>：论文 <code>tab:archcomp</code> 的 "+24%" 是<b>跨节点 artifact</b>
+        （hybrid 在 .12 测、dense 在 .29 测）；同节点真值 = <b>hybrid 训练吞吐代价 ~8%</b>。
+        → <b>论文该列需按此改</b>。</li>
+  </ul>
+</div>
 
 <div class="danger">
-  <b>🏁 已补上这个洞：Stage (i) 的<b>本体 = P-8 完整训练</b>，现已写入任务书并排期（见上表最后一行）</b><br>
+  <b>🏁 Stage (i) 的<b>本体 = P-8 完整训练</b>（见上表最后一行）</b><br>
   <b>scope 不变</b>：Stage (i) 就是 LLM 预训练；P-1…P-7 是<b>前置选型实验</b>。
   本体的训练量将从 <b>655M</b> 跳到 <b>≥44B（推荐 100B）</b>，即 <b>≥67×</b>。<br>
-  <b>算力现实</b>（8×H100 实测 ~92.6K tok/s）：
+  <b>算力现实</b>（8×H100 实测 ~92.6K tok/s；P-7 后修正为 hybrid 侧 ~83K）：
   <ul style="margin:6px 0">
     <li>44B（Chinchilla 最优 = 2.22B × 20）→ <b>≈ 5.5 天</b> · <b>下限，低于此不足以称"训练好的模型"</b></li>
     <li><b>100B（推荐档）→ ≈ 12.5 天</b> ← 超 Chinchilla ≈2.3×，<b>契合论文「推理效率」卖点</b>（推理最优需过训练）</li>
     <li>200B → ≈ 25 天</li>
     <li>⚠️ 690B（真实全语料）→ <b>≈ 86 天</b>，2027-02-01 前<b>不可能</b>，<b>不要定这个档</b></li>
   </ul>
+  ✅ <b>已决议不接 FP8</b>（P-4 实测 GEMM 占比 28.6% 含 comm / 49.2% 纯计算 → 加速上限 &lt;2×，不值得）。<br>
   ⚠️ <b>磁盘</b>：<code>/nas_train</code> 只剩 <b>32T</b>；2.22B 含 AdamW 状态的单 ckpt ≈ <b>30 GB</b> →
   <b>先定好 ckpt 留存策略与清理时机</b>再开长跑。<br>
   ⚠️ <b>P-5b 的曲线决定 P-8 的最终预算</b>；预算定下后必须在 <code>MEMORY_PRETRAIN_2B.md</code> <b>写明并上报</b>。
