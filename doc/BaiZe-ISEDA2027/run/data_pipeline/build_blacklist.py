@@ -32,6 +32,7 @@ import hashlib
 import json
 import re
 import sys
+import unicodedata
 from pathlib import Path
 
 MASK64 = (1 << 64) - 1
@@ -52,10 +53,18 @@ def fnv1a_64(data: bytes, seed: int = FNV_OFFSET) -> int:
 
 
 def normalize(text: str) -> str:
-    """小写 + 把连续非 [a-z0-9_] 字符映射为单个空格。"""
+    """NFKC 兼容归一化 + 小写 + 把非 Unicode 单词字符折叠为单个空格。
+
+    关键修正（2026-10-01）：旧实现 `[^a-z0-9_]` 会把**所有非 ASCII 字符**
+    （含 CJK 汉字）当空格丢弃，导致中文评测 prompt 完全丧失指纹（cuhk 80 任务
+    因此有 59 条被误判为"过短跳过"）。现先做 NFKC，把 Kangxi 部首兼容字符
+    （如 ⼀ U+2F00 → 一 U+4E00）映射回标准 CJK，再用 Unicode `\\w` 保留全部
+    文字/数字/下划线。对纯 ASCII 英文文本行为与旧版一致（无回归）。
+    """
     if not text:
         return ""
-    return re.sub(r"[^a-z0-9_]+", " ", text.lower()).strip()
+    t = unicodedata.normalize("NFKC", text).lower()
+    return " ".join(re.sub(r"[^\w]+", " ", t, flags=re.UNICODE).split())
 
 
 def shingles(text: str, n: int = 13):
@@ -64,6 +73,21 @@ def shingles(text: str, n: int = 13):
     if len(s) < n:
         return set()
     return {s[i:i + n] for i in range(len(s) - n + 1)}
+
+
+def short_shingles(text: str, n: int = 8):
+    """短字符串兜底指纹：当主 n-gram 无法切分（文本过短）时，用更短的 n 切分。
+
+    返回 (shingle 集合, 实际使用的 n)。若规范化文本仍不足 n，则返回整个
+    归一化字符串作为单 token（整串精确匹配，实际 n = 字符串长度）。
+    注意建黑名单侧与扫描侧各自调用本函数，两侧逻辑对称，才能正确匹配。
+    """
+    s = normalize(text).replace(" ", "")
+    if not s:
+        return set(), 0
+    if len(s) < n:
+        return {s}, len(s)
+    return {s[i:i + n] for i in range(len(s) - n + 1)}, n
 
 
 def minhash(shingle_set, k: int = 128):
@@ -95,6 +119,7 @@ def main() -> int:
     ap.add_argument("--eval-jsonl", nargs="+", required=True, help="评测集 jsonl（只读，可多文件求并集黑名单）")
     ap.add_argument("--out-dir", required=True, help="黑名单输出目录（落盘指纹，不含原始内容）")
     ap.add_argument("--ngram", type=int, default=13)
+    ap.add_argument("--short-ngram", type=int, default=8, help="短文本兜底 n-gram（默认 8）")
     ap.add_argument("--minhash-k", type=int, default=128)
     args = ap.parse_args()
 
@@ -109,6 +134,7 @@ def main() -> int:
 
     tasks = []
     global_shingles = {}  # shingle -> fnv hash，全局去重（取并集）
+    global_short_shingles = {}  # 短文本兜底 shingle -> fnv hash（仅主 n-gram 无法切分的任务）
     n_lines = 0
     for src in srcs:
         stem = src.stem
@@ -127,6 +153,12 @@ def main() -> int:
                 combined = "\n".join(parts)
                 sh = shingles(combined, args.ngram)
                 sig = minhash(sh, args.minhash_k)
+                # 短文本兜底：仅当主 n-gram 无法指纹（文本过短）时生成短 shingle
+                sh_short = sh_short_sig = None
+                short_ngram_used = 0
+                if not sh:
+                    sh_short, short_ngram_used = short_shingles(combined, args.short_ngram)
+                    sh_short_sig = minhash(sh_short, args.minhash_k) if sh_short else []
                 ep = str(obj.get("entry_point", ""))
                 tasks.append({
                     "task_id": tid,
@@ -134,10 +166,17 @@ def main() -> int:
                     "fields": fields_present,
                     "n_shingles": len(sh),
                     "minhash": sig,
+                    "short": not bool(sh),
+                    "n_short_shingles": len(sh_short) if sh_short is not None else 0,
+                    "short_ngram": short_ngram_used,
+                    "minhash_short": sh_short_sig or [],
                     "entry_point_sha256": hashlib.sha256(ep.encode("utf-8")).hexdigest(),
                 })
                 for s in sh:
                     global_shingles.setdefault(s, fnv1a_64(s.encode("utf-8", "ignore")))
+                if sh_short is not None:
+                    for s in sh_short:
+                        global_short_shingles.setdefault(s, fnv1a_64(s.encode("utf-8", "ignore")))
 
     # 写 ngram_hashes.txt（排序去重后只存 64-bit hex）
     hashes = sorted(set(global_shingles.values()))
@@ -146,24 +185,36 @@ def main() -> int:
         for h in hashes:
             f.write(f"{h:016x}\n")
 
+    # 写 short_ngram_hashes.txt（短文本兜底指纹，排序去重后 64-bit hex）
+    short_hashes = sorted(set(global_short_shingles.values()))
+    short_hash_path = out / "short_ngram_hashes.txt"
+    with open(short_hash_path, "w", encoding="utf-8") as f:
+        for h in short_hashes:
+            f.write(f"{h:016x}\n")
+
     # 写 entry_points.sha256（函数名指纹，二次校验）
     ep_path = out / "entry_points.sha256"
     with open(ep_path, "w", encoding="utf-8") as f:
         for t in tasks:
             f.write(f"{t['task_id']}\t{t['entry_point_sha256']}\n")
 
+    n_short_tasks = sum(1 for t in tasks if t["short"])
+
     # 写 meta.json
     meta = {
         "eval_jsonl": str(srcs[0]),
         "eval_jsonls": [str(s) for s in srcs],
         "ngram": args.ngram,
+        "short_ngram": args.short_ngram,
         "minhash_k": args.minhash_k,
-        "normalization": "lowercase -> collapse non [a-z0-9_] to space -> strip spaces -> char n-gram",
+        "normalization": "NFKC -> lowercase -> collapse non Unicode \\w to space -> strip spaces -> char n-gram",
         "forbidden_fields": FORBIDDEN_FIELDS,
         "note": "metadata.source 属 API 参考文档侧（允许入训练集），未纳入黑名单",
         "num_tasks": len(tasks),
         "num_lines": n_lines,
         "total_distinct_ngrams": len(hashes),
+        "total_distinct_short_ngrams": len(short_hashes),
+        "num_short_tasks": n_short_tasks,
         "tasks": tasks,
     }
     meta_path = out / "meta.json"
@@ -171,9 +222,11 @@ def main() -> int:
         json.dump(meta, f, ensure_ascii=False, indent=2)
 
     print(f"[done] {len(tasks)} 任务 / {len(global_shingles)} 去重前 shingle / "
-          f"{len(hashes)} 去重后 13-gram 哈希")
+          f"{len(hashes)} 去重后 {args.ngram}-gram 哈希；"
+          f"短文本兜底 {n_short_tasks} 任务 / {len(short_hashes)} 去重后 {args.short_ngram}-gram 哈希")
     print(f"      产物: {meta_path}")
     print(f"      产物: {hash_path} ({len(hashes)} 行)")
+    print(f"      产物: {short_hash_path} ({len(short_hashes)} 行)")
     print(f"      产物: {ep_path}")
     return 0
 

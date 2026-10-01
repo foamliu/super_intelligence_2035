@@ -27,19 +27,26 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from build_blacklist import fnv1a_64, shingles, minhash, jaccard_minhash  # noqa: E402
+from build_blacklist import fnv1a_64, shingles, short_shingles, minhash, jaccard_minhash  # noqa: E402
+
+
+def _read_hash_set(path: Path) -> set:
+    hashes = set()
+    if path.exists():
+        with open(path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    hashes.add(int(line, 16))
+    return hashes
 
 
 def load_blacklist(blacklist_dir: str):
     bd = Path(blacklist_dir)
     meta = json.loads((bd / "meta.json").read_text(encoding="utf-8"))
-    hashes = set()
-    with open(bd / "ngram_hashes.txt", "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if line:
-                hashes.add(int(line, 16))
-    return meta, hashes
+    hashes = _read_hash_set(bd / "ngram_hashes.txt")
+    short_hashes = _read_hash_set(bd / "short_ngram_hashes.txt")
+    return meta, hashes, short_hashes
 
 
 def _flatten(v) -> str:
@@ -134,10 +141,11 @@ def main() -> int:
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
-    meta, global_hashes = load_blacklist(args.blacklist_dir)
+    meta, global_hashes, short_hashes = load_blacklist(args.blacklist_dir)
     tasks = meta["tasks"]
     n_tasks = meta["num_tasks"]
     ngram = args.ngram or meta["ngram"]
+    short_ngram = meta.get("short_ngram", 8)
 
     scanned = 0
     short = 0
@@ -148,26 +156,46 @@ def main() -> int:
             continue
         scanned += 1
         sh = shingles(text, ngram)
-        if not sh:
-            short += 1
-            continue
-        doc_hashes = {fnv1a_64(s.encode("utf-8", "ignore")) for s in sh}
-        denominator = len(doc_hashes)
-        overlap = len(doc_hashes & global_hashes)
-        ratio = overlap / denominator
-        if ratio >= args.threshold:
+        doc_flags = False
+        main_overlap = total = ratio = short_overlap = 0
+        doc_sig = None
+        doc_short_sig = None
+
+        if sh:
+            doc_hashes = {fnv1a_64(s.encode("utf-8", "ignore")) for s in sh}
+            total = len(doc_hashes)
+            main_overlap = len(doc_hashes & global_hashes)
+            ratio = main_overlap / total
+            if ratio >= args.threshold:
+                doc_flags = True
+                doc_sig = minhash(sh, meta["minhash_k"])
+        else:
+            short += 1  # 主 n-gram 无法覆盖（文本过短），走短文本兜底
+
+        # 短文本兜底：不管主 tier 是否命中都扫（用于捕捉嵌在长文档中的中文短 prompt）
+        doc_short, _ = short_shingles(text, short_ngram)
+        if doc_short:
+            doc_short_hashes = {fnv1a_64(s.encode("utf-8", "ignore")) for s in doc_short}
+            short_overlap = len(doc_short_hashes & short_hashes)
+            if short_overlap >= 1:
+                doc_flags = True
+                doc_short_sig = minhash(doc_short, meta["minhash_k"])
+
+        if doc_flags:
             flagged += 1
-            doc_sig = minhash(sh, meta["minhash_k"])
             best_tid, best_j = None, 0.0
             for t in tasks:
-                j = jaccard_minhash(doc_sig, t["minhash"])
+                j = jaccard_minhash(doc_sig, t["minhash"]) if doc_sig is not None and t["minhash"] else 0.0
+                if doc_short_sig is not None and t.get("minhash_short"):
+                    j = max(j, jaccard_minhash(doc_short_sig, t["minhash_short"]))
                 if j > best_j:
                     best_j, best_tid = j, t["task_id"]
             hits.append({
                 "doc_idx": idx,
-                "overlap": overlap,
-                "total": denominator,
+                "overlap": main_overlap,
+                "total": total,
                 "ratio": round(ratio, 4),
+                "short_overlap": short_overlap,
                 "best_task": best_tid,
                 "jaccard_est": round(best_j, 4),
             })
@@ -180,17 +208,18 @@ def main() -> int:
         f"  - {s}" for s in (meta.get("eval_jsonls") or [meta["eval_jsonl"]])
     ] + [
         f"- 输入：{args.input}",
-        f"- 阈值：n-gram={ngram}，重合率 ≥ {args.threshold} 判定命中",
-        f"- 扫描文档数：{scanned}（其中过短跳过 {short}）",
+        f"- 主阈值：n-gram={ngram}，重合率 ≥ {args.threshold} 判定命中",
+        f"- 短文本兜底：n-gram={short_ngram}，重合数 ≥ 1 判定命中（覆盖中文短 prompt 及嵌在长文档中的短串）",
+        f"- 扫描文档数：{scanned}（其中主 n-gram 无法覆盖、走兜底的有 {short}）",
         f"- **命中（污染）文档数：{flagged}**",
     ]
     if hits:
         lines.append("")
         lines.append("## 命中明细")
-        lines.append("| doc_idx | overlap | total | ratio | best_task | jaccard_est |")
-        lines.append("|---:|---:|---:|---:|---|---:|")
+        lines.append("| doc_idx | overlap | total | ratio | short_overlap | best_task | jaccard_est |")
+        lines.append("|---:|---:|---:|---:|---:|---|---:|")
         for h in hits:
-            lines.append(f"| {h['doc_idx']} | {h['overlap']} | {h['total']} | {h['ratio']} | {h['best_task']} | {h['jaccard_est']} |")
+            lines.append(f"| {h['doc_idx']} | {h['overlap']} | {h['total']} | {h['ratio']} | {h['short_overlap']} | {h['best_task']} | {h['jaccard_est']} |")
         lines.append("")
         lines.append("> ⚠️ 命中文档必须**剔除**并记录，改写也不洗白。")
     text = "\n".join(lines) + "\n"

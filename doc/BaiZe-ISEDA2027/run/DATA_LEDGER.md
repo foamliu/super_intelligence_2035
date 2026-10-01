@@ -97,7 +97,7 @@
 
 | 产物 | 目标路径 | 状态 |
 |:---|:---|:---|
-| 黑名单指纹 + 校验脚本 | `run/data_pipeline/`（已建 ✅） | ✅ v0 |
+| 黑名单指纹 + 校验脚本 | `run/data_pipeline/`（已建 ✅；v0.2：NFKC/Unicode 归一化 + 8-gram 兜底） | ✅ v0.2 |
 | 通用文本 stable 主体 `.bin/.idx` | `/nas_train/app.e0031982/datasets/baize-data/text/`（规划） | ⬜ phase2 |
 | 退火源 `.bin/.idx`（code/math/EDA） | 同上 | ⬜ phase2/3 |
 | 多模态训练 webdataset | `/nas_train/app.e0031982/datasets/baize-data/mm/`（规划） | ⬜ phase4 |
