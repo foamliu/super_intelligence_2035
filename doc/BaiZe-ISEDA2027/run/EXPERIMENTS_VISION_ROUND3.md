@@ -203,6 +203,6 @@ $PY r3_fix_probe.py --config all --steps 300
 
 ## 9. 状态
 
-- 判定结论已回填 `MEMORY_VISION.md`（状态头 PHASE=R3_active、新 R3 小节）+ `daily-memories-vision/2026-10-01.md`。
+- 判定结论已回填 `MEMORY_VISION.md`（状态头 **PHASE=R3_complete**、WAITING=1 终局 idle、新 R3 小节）+ `daily-memories-vision/2026-10-01.md`。已 git commit + push。
 - HTML 交付：`BAIZE_VISION_ENCODER_RESULT_ROUND3.html`（自包含，0 外部引用）。
 - 未改动任何 `.tex`（R3.5 约束「只回填建议，不改 tex」）。
