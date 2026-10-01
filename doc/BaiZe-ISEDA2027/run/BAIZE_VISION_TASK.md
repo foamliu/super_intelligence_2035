@@ -1,4 +1,84 @@
 # BAIZE_VISION_TASK.md
+# ══════════════ ROUND 2 · 第二轮任务（2026-10-01 生效，**优先于下方 Round 1**）══════════════
+
+## R2.0 状态切换（**先做**）
+
+**MODE 已从 Round 1 切换为 Round 2。**
+- `MEMORY_VISION.md` 中的 `PHASE=converged` / `WAITING=1` / "任务终结" 是 **Round 1 的终态，现已作废**。
+- 本唤醒请：把 `MEMORY_VISION.md` 的 `PHASE` 改为 `R2_active`、第 3 行 `WAITING: 1` 改为 `WAITING: 0`，并在流水追加一条"R2 启动"。
+- **Round 1 的结论仍然有效，作为 R2 的对照基线，不要重跑 S0–S9。**
+
+## R2.1 为什么要做第二轮（三个硬伤）
+
+Round 1 的 S0–S9 结果里有三处**让论文 §6 站不住**的问题，全部可以用**现有数据/代码/checkpoint**重跑修复：
+
+1. **`tab:visres`（分辨率/patch）六个格子的 loss 完全相同（全是 4.9962）** —— 这是 `lr=1e-3` 在 3000 步 cosine 下把 LR 衰减到 min、把 loss 钉在地板造成的**伪影**。该表**零信息量**，论文正文也自认如此。
+2. **`tab:visobj`（SigLIP vs CLIP）的 loss 不可跨目标比较**（4.9962 vs 2.8941 量纲不同），论文自认 "not directly comparable"。这是审稿人的现成靶子。
+3. **"loss 与架构无关"这个结论是在 196 token 下得到的** —— 而那恰恰是论文自己论证"SSM/MoE 无法摊薄开销"的区间，**结论自证**。换个 token 预算重测，无论结果如何都更有说服力。
+
+## R2.2 实验清单（按优先级，全部基于现有数据 `en500k` / `eval5k` 与现有代码）
+
+> **统一锚点改动（R2 全局）**：把 learning rate 从 Round 1 的 `1e-3` 改为 **`3e-3`**。
+> 依据：Round 1 的 S8 已实测 `3e-3 → loss 4.4562`，显著优于 `1e-3 → 4.9962`，即 1e-3 在 3000 步下是**退化配置**。
+> 其余锚点不变：SigLIP / AdamW(0.9,0.95) / warmup 100 + cosine / seed 1234 / bf16 / batch 32×6 / en500k / steps 3000。
+
+| ID | 内容 | 目的 | 估时 |
+|:--|:--|:--|:--|
+| **R2-0** | **数字核对（零成本，最先做）** | 见下 | 0.2h |
+| **R2-1** | **分辨率/patch 消融重跑**：OpenVision2 × 6 组 `{224,336,448}×{14,16}` @ **lr=3e-3** × 3000 步 | **替换 `tab:visres`** | 1.5h |
+| **R2-2** | **目标函数消融改用可通约指标**：SigLIP vs CLIP InfoNCE @ lr=3e-3 × 3000 步，**主指标 = eval5k 检索 R@1/5/10** | **替换 `tab:visobj`** | 0.7h |
+| **R2-3** | **架构 × 分辨率矩阵**：4 架构 × 3 分辨率（用 **patch=14**：224/14=256 tok、336/14=576、448/14=1024）× 3000 步 @ lr=3e-3 | **新增，最高科学价值** | 2.5h |
+| **R2-4** | **干净吞吐复测**：4 架构 × 锚点配置，跑 ≥300 步取稳态 img/s + 推理 ms/img | **消除"共享集群争用"caveat** | 0.7h |
+| **R2-5** | **MambaEye batch=1 停摆诊断**（**时间盒 40 分钟**，超时即停） | 替换表格里的 `hang@bs1` | 0.7h |
+
+**R2-0 数字核对（必做，零成本）**
+- 核对论文 `tab:visarch` 的 `Loss@5k = 4.456` 到底对应哪个步数：`EXPERIMENTS_VISION.md` 写的是 S3 长跑 **4.4540**（10k 步 @ lr=1e-3），而 S8 的 lr=3e-3 @3000 步是 **4.4562** → **给出四架构的「步数 → loss」映射表**，判定论文标注是否写错。
+- 核对 `tab:visarch` 其余数值（2139 / 6.51 / 505.0M / 1459 / 790 / 852 / 141.7）与最新记录是否一致。
+
+**R2-1 细节**
+- 6 组：`(224,16) (336,16) (448,16) (224,14) (336,14) (448,14)`，各 3000 步 @ **lr=3e-3**。
+- **额外补 1 组 `(224,16) @ lr=1e-3`** 作为「坍缩对照」，用于在报告里**显式证明** Round 1 那张全同表是 LR 伪影。
+- 每组记录：**loss@3000、train img/s（稳态）、推理 ms/img（batch=1）、tokens/img、eval5k 检索 R@1/5/10**。
+- 注：S8 已有 `(224,16)@lr=3e-3` 的 loss=4.4562，可直接复用做一致性校验，不必重跑该点。
+
+**R2-2 细节**
+- 2 臂（SigLIP / CLIP InfoNCE），OpenVision2，lr=3e-3，3000 步，其余同锚点。
+- **主指标改用 eval5k 的检索 R@1/5/10**（跨目标函数可通约）；loss 并列展示但**必须标注「不可跨目标比较」**。
+- 用 `vision/eval_downstream.py`（需 full ckpt；Round 1 的 S4+ train.py 已保存 full ckpt）。
+
+**R2-3 细节**
+- 12 组 = 4 架构 × 3 分辨率；patch 固定 14（token 数 256 / 576 / 1024）。
+- 每组记录：loss、train img/s、**推理 ms/img（batch=1 与 batch=8 都测**，因 MambaEye batch=1 停摆）、tokens/img、R@1。
+- **判读**：若在 256→1024 token 区间四架构仍不可区分 → 「架构在 loss 上不可区分」的结论**强度大增**（跨 token 预算稳健）；若出现分化 → **找到了一个真实的架构结论**（这才是论文想要的）。两种结果都可发表。
+- ⚠️ 高 token 数会显著变慢（448/14 是 224/16 的 5.2 倍 token），**先跑低 token 再跑高 token**，超预算就只报已完成的格子。
+
+**R2-4 细节**
+- **先做 GPU 独占核验**：`ssh 10.239.2.12 'nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv'`，确认 GPU 0–5 无其他项目进程；**把核验结果原文记入报告**（这是这次测量的可信度凭证）。
+- 4 架构各跑 ≥300 步取稳态 img/s；推理 ms/img 同测。
+- 若发现有人在用 GPU 0–5，**报告注明并等待下一轮**，不要与他人争抢。
+
+**R2-5 细节**
+- 二分 `batch ∈ {1,2,4,8}` 找停摆阈值；查 `mamba_ssm` 版本 / selective_scan kernel；判断是 kernel 卡死还是代码路径问题。
+- **时间盒 40 分钟**，到点即停，报告已查明部分。
+
+## R2.3 交付物
+
+1. **`run/EXPERIMENTS_VISION_ROUND2.md`**（新文件）：R2-0~R2-5 全部结果表 + 每条可复现命令 + 与 Round 1 的差异说明 + **「论文表格回填建议」段落**（给出 `tab:visres` / `tab:visobj` / `tab:visarch` 的建议替换内容，含精确数值）。
+2. 更新 `doc/BaiZe-ISEDA2027/BAIZE_VISION_ENCODER_RESULT.html` 或新建 `BAIZE_VISION_ENCODER_RESULT_ROUND2.html`（自包含）。
+3. 🚫 **不要修改** `doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/ISEDA2027/*.tex` 与 `main.tex`——论文已由外部统一重构并推送，回填由外部完成。你只需在报告里给出「回填建议」。
+4. 正常更新 `MEMORY_VISION.md` 与 `daily-memories-vision/`。
+5. git commit + push（沿用原规则：只提交 `doc/` 文本与脚本；checkpoint / 图像中间产物不入库）。
+
+## R2.4 约束
+
+- **总预算**：R2 墙钟 **≤ 6 小时**（下次运维介入前）。超时按 **R2-0 > R2-1 > R2-4 > R2-2 > R2-3 > R2-5** 逆序裁剪，并在报告记录裁剪决策。
+- **GPU**：只用 `10.239.2.12` 的 **GPU 0–5**；**绝不杀他人进程**；GPU 6–7 是他人的，不碰。
+- **每次测量都必须记录当时的 GPU 占用核验结果**（这是 R2-4 要解决的核心问题，不能重蹈覆辙）。
+- 串行优先，卡数/并发对齐，保证可比。
+
+---
+
+
 
 > ⚠️ 本文件为只读指令文件，agent **禁止修改**本文件。所有运行时状态写入本任务专属的 `MEMORY_VISION.md`、`EXPERIMENTS_VISION.md` 和 `daily-memories-vision/`（**不要**写入 1B 的 `MEMORY.md`/`EXPERIMENTS.md` 或 2B 的 `MEMORY_2B.md`/`EXPERIMENTS_2B.md`）。
 
