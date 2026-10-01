@@ -1,17 +1,28 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R7_complete → 交接 R8**（第七轮数据臂对比已收敛：**正式训练数据裁定 = Stanford GPIC `short`**；胜出架构 OpenVision2 + 锚点 224/16 + 冻结 CLIP-768 text(77 硬约束) 不变；下一轮 R8 = 扩到 6 架构 + ImageNet-1k 指标） |
-| WAITING | 0（R7 两臂训练 + 两套交叉评测已全部完成，报告已回填；下一轮 R8 待启动） |
+| PHASE | **R8_active**（6 架构 × 3000 步 @224/16 bs64 = GPIC `short`，训练中；末了自动跑 ImageNet-1k zero-shot / linear-probe） |
+| WAITING | 1（R8 训练 running：`setsid bash r8_run.sh 3000`，日志 `/tmp/r8.log`，先 openvision2 后 5 架构串行） |
 | ERROR_COUNT | 0 |
-| BUDGET_USED | ~19 GPU·h 墙钟（R2/R3/R4 累计）+ R5（P0 1h12m + P1 ~28m）+ R7（两臂训练 30min + 交叉评测 ~7min） |
-| 更新 | 2026-10-02（**R7 完成**：三臂 cross-eval 结果见 `EXPERIMENTS_VISION_ROUND7.md` §0；**裁定正式训练=GPIC short**；提交 commit/push） |
-| WINNER | **OpenVision2**（P0：loss 4.549 最低 / 2419.8 img/s 最快 / C2_gap +0.082；P1 锚点 224/16 最优；SSM 类架构 step300 坍缩） |
+| BUDGET_USED | R2/R3/R4 累计 ~19 GPU·h + R5（P0 1h12m + P1 ~28m）+ R7（~37min）+ R8（6 架构训练 ~1.5–2h，进行中） |
+| 更新 | 2026-10-02（**R8 启动**：6 架构 + IN-1k 指标；污染核查已完成；FastViTHD OOM 修复为分层下采样） |
+| WINNER | **OpenVision2**（R5/R7 判胜；R8 六架构重比，看 AIMv2/FastViTHD 是否翻盘） |
+
+## 🚀 R8 启动（第八轮：6 架构 + ImageNet-1k 指标，2026-10-02）
+
+> 交付物：`EXPERIMENTS_VISION_ROUND8.md`（协议 + 污染核查 + 参数量 + 结果表待回填）+ `vision/models.py`（AIMv2/FastViTHD）+ `vision/r8_run.sh` + `vision/r8_eval_in1k.py`。
+
+- **背景**：R7 裁定正式训练=GPIC short；R8 把架构对比扩到 6 个（原 4 + AIMv2 + FastViTHD，均等参 500–600M），并把退化的 R@1 检索代理换成 **ImageNet-1k zero-shot / linear-probe**（frozen trunk）。
+- **R8.2 污染核查（已做，实测结论见报告 §1）**：盘上 IN-1k **无官方 50k val**（只有 train 1.28M 标记 + test 100k 无标签）→ 自切 val=每类前 50（50k）+ probe-train=接下去 50（50k）。en500k = LLaVA `imagenet/EN` 且**已被 LLaVA 重缩放（min-dim=256）+ 文件名丢失** → 字节/文件名匹配不可行，但**同域/大概率同图** → en500k 臂的 IN-1k 标「in-domain 污染，不可比」；GPIC 训练出的 6 架构测 IN-1k 是干净 out-of-domain。
+- **代码**：`models.py` 新增 `AIMv2`（ViT-GELU，depth 40，505M）与 `FastViTHD`（conv-stem + 分层 conv/attention，508M）；`r8_run.sh`（6 架构串行 + 末了 IN-1k 评测）；`r8_eval_in1k.py`（zero-shot 80 模板 + 单线性层 linear-probe）。
+- **冒烟**：6 架构 forward+backward 全过（0 死参）；`fastvithd` 8 卡 DDP 3 步 exit 0；`r8_eval_in1k.py` 端到端跑通（R7_B_gpic zs top1=1.0%）。
+- **训练已启动**：`setsid bash r8_run.sh 3000`，日志 `/tmp/r8.log`，6 架构串行（~1.5–2h）+ 末了自动 IN-1k 评测。ckpt `/nas_train/.../out/R8_{tower}/vision.pt`（或 vision_fused.pt）。
+- **下一步（下次唤醒，WAITING=1）**：回收 6 架构 loss + C1/C2/C4 + 吞吐 + IN-1k zs/lp → 回填报告 §4 表 + MEMORY + git commit/push。
 
 ## 🏁 R7 完成（第七轮：数据臂对比，2026-10-02 01:30 训练完 / 01:45 交叉评测完）
 

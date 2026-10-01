@@ -265,12 +265,145 @@ class DeepEncoderV2(nn.Module):
         return self.head(self.norm(x))
 
 
+# --------------------------------------------------------------------------- #
+# Architecture 5: AIMv2 (Apple, arXiv:2411.14402) — vision trunk = pre-norm ViT
+# --------------------------------------------------------------------------- #
+class VitGeluBlock(nn.Module):
+    """Standard pre-norm ViT block with 4x GELU MLP (AIMv2 trunk uses the
+    standard ViT encoder, unlike OpenVision2's SwiGLU variant)."""
+
+    def __init__(self, dim: int, heads: int, mlp_dim: int):
+        super().__init__()
+        self.norm1 = LayerNorm(dim)
+        self.attn = Attention(dim, heads)
+        self.norm2 = LayerNorm(dim)
+        self.mlp = nn.Sequential(
+            nn.Linear(dim, mlp_dim), nn.GELU(), nn.Linear(mlp_dim, dim))
+
+    def forward(self, x):
+        x = x + self.attn(self.norm1(x))
+        x = x + self.mlp(self.norm2(x))
+        return x
+
+
+class AIMv2(nn.Module):
+    """AIMv2's *vision encoder* is a standard pre-norm ViT (the paper pre-trains it
+    autoregressively on patch+text tokens, but the trunk itself is plain ViT).
+    Scaled from AIMv2-L (w=1024, d=24, ~304M) to ~505M by deepening 24 -> 40 with
+    the official GELU 4x MLP (NOT SwiGLU), keeping width/heads at AIMv2-L values."""
+
+    def __init__(self, image_size: int = 224, patch_size: int = 16,
+                 width: int = 1024, depth: int = 40, heads: int = 16, mlp_dim: int = 4096):
+        super().__init__()
+        self.image_size = image_size
+        self.patch_size = patch_size
+        self.embed = PatchEmbed(image_size, patch_size, width)
+        self.blocks = nn.ModuleList([VitGeluBlock(width, heads, mlp_dim) for _ in range(depth)])
+        self.norm = LayerNorm(width)
+        self.head = ReadoutHead(width)
+
+    def forward(self, x):
+        x = self.embed(x)
+        for b in self.blocks:
+            x = b(x)
+        return self.head(self.norm(x))
+
+
+# --------------------------------------------------------------------------- #
+# Architecture 6: FastViTHD (Apple FastVLM vision tower) — conv stem + attention
+# --------------------------------------------------------------------------- #
+class ConvFFN(nn.Module):
+    """FastViT 'RepMixer' conv FFN (2D): depthwise 3x3 + 1x1 expand + GELU + 1x1 shrink."""
+
+    def __init__(self, ch: int, expand: int = 4):
+        super().__init__()
+        self.dw = nn.Conv2d(ch, ch, 3, 1, 1, groups=ch, bias=False)
+        self.pw1 = nn.Conv2d(ch, ch * expand, 1, bias=False)
+        self.pw2 = nn.Conv2d(ch * expand, ch, 1, bias=False)
+        self.act = nn.GELU()
+
+    def forward(self, x):
+        return self.pw2(self.act(self.pw1(self.dw(x))))
+
+
+class RepMixer(nn.Module):
+    """Conv-only mixing block (early FastViT stages; no attention)."""
+
+    def __init__(self, ch: int, expand: int = 4):
+        super().__init__()
+        self.norm = nn.GroupNorm(1, ch)
+        self.ffn = ConvFFN(ch, expand)
+
+    def forward(self, x):
+        return x + self.ffn(self.norm(x))
+
+
+class HybridAttnBlock(nn.Module):
+    """Late-stage FastViT block: token-mixer attention (2D->seq->2D) + conv FFN."""
+
+    def __init__(self, ch: int, heads: int, expand: int = 4):
+        super().__init__()
+        self.norm1 = nn.GroupNorm(1, ch)
+        self.attn = Attention(ch, heads)
+        self.norm2 = nn.GroupNorm(1, ch)
+        self.ffn = ConvFFN(ch, expand)
+
+    def forward(self, x):
+        B, C, H, W = x.shape
+        r = self.norm1(x).reshape(B, C, H * W).transpose(1, 2)  # (B, N, C)
+        r = self.attn(r).transpose(1, 2).reshape(B, C, H, W)
+        x = x + r
+        return x + self.ffn(self.norm2(x))
+
+
+class FastViTHD(nn.Module):
+    """Conv stem + hierarchical conv/attention hybrid, faithful to FastViT-HD's macro
+    (conv stem / depthwise RepMixer conv-FFN / token-mixer attention), scaled to ~500M.
+    224 -> 28x28 conv stem (8x down) -> 4 RepMixer conv blocks -> downsample 28->14 ->
+    37 hybrid attention blocks at 14x14 (ViT-token cost) -> global pool -> ReadoutHead."""
+
+    def __init__(self, image_size: int = 224, patch_size: int = 16, width: int = 1024,
+                 conv_depths: int = 4, attn_depths: int = 37, heads: int = 16, expand: int = 4):
+        super().__init__()
+        self.image_size = image_size
+        self.patch_size = patch_size
+        self.stem = nn.Sequential(
+            nn.Conv2d(3, width // 2, 4, 4, bias=False),        # 224 -> 56
+            nn.GroupNorm(1, width // 2), nn.GELU(),
+            nn.Conv2d(width // 2, width, 2, 2, bias=False),    # 56 -> 28
+        )
+        self.pos = nn.Parameter(torch.zeros(1, width, image_size // 8, image_size // 8))
+        self.conv_blocks = nn.ModuleList([RepMixer(width, expand) for _ in range(conv_depths)])
+        # FastViT is hierarchical: late attention stages run at lower resolution.
+        self.down = nn.Sequential(
+            nn.Conv2d(width, width, 2, 2, bias=False),         # 28 -> 14
+            nn.GroupNorm(1, width), nn.GELU(),
+        )
+        self.attn_pos = nn.Parameter(torch.zeros(1, width, image_size // 16, image_size // 16))
+        self.attn_blocks = nn.ModuleList([HybridAttnBlock(width, heads, expand)
+                                          for _ in range(attn_depths)])
+        self.head = ReadoutHead(width)  # ReadoutHead applies the final LayerNorm over width
+
+    def forward(self, x):
+        x = self.stem(x)
+        x = x + self.pos
+        for b in self.conv_blocks:
+            x = b(x)
+        x = self.down(x) + self.attn_pos
+        for b in self.attn_blocks:
+            x = b(x)
+        x = x.mean(dim=[2, 3]).unsqueeze(1)  # (B,1,width) -> ReadoutHead mean(dim=1)
+        return self.head(x)
+
+
 def get_vision_tower(name: str) -> nn.Module:
     towers = {
         'openvision2': OpenVision2,
         'mambaeye': MambaEye,
         'moevie': MoEViE,
         'deepencoder_v2': DeepEncoderV2,
+        'aimv2': AIMv2,
+        'fastvithd': FastViTHD,
     }
     if name not in towers:
         raise ValueError(f"Unknown tower '{name}'. Options: {list(towers)}")
