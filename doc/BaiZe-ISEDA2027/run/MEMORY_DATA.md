@@ -31,7 +31,7 @@ ERROR_COUNT:  0
 | PHASE | **phase5_isolation**（phase0 已完成；黑名单/脚本/报告 v0 已就位） |
 | WAITING | 1（异步阻塞：多模态下载未完成，重 I/O 阶段推迟） |
 | ERROR_COUNT | 0 |
-| 节点 | `10.239.2.29`（NFS：`/nas_inference` 只读源，`/nas_train` 产出） |
+| 节点 | `10.239.2.12`（主机 `whag0pgpuap12`；NFS：`/nas_inference` 只读源，`/nas_train` 产出） |
 | 更新 | 2026-10-01 |
 
 ## 看板（按推荐执行顺序）

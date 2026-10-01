@@ -56,6 +56,46 @@ ERROR_COUNT:  <n>
 > **注意本任务的定位**：瓶颈是**算力窗口**不是数据量（方案 §2.1）。
 > 所以**不要**把精力花在"下载/切分更多数据"上，而要花在**质量、配比、格式可用性、隔离**上。
 
+## 1.1 数据落盘地图（实测背景 · 2026-10-01 勘定）
+
+> 本节由**实地探查**得出，用于纠正本任务书成稿时对数据位置的误记。
+> 每轮唤醒 / phase 复核时以此节为索引，`DATA_LEDGER.md` 为实测明细，二者互相印证；**最终一律以实测为准**。
+
+**三块挂载 + 三条 HF 组织名线索**（HuggingFace 数据集按 `org/repo` 落盘）：
+
+| 挂载 | 定位 | 关键内容 |
+|:---|:---|:---|
+| `/nas_train/app.e0031982/datasets/` | **多模态主库**（生产 + 派生） | `mvp-lab/`（LLaVA-OneVision-1.5 全家桶）、`baize-vision/`、coco/gqa/imagenet/laion2B/FineVision/LLaVA-Pretrain/MMMU… |
+| `/nas_inference/app.e0031982/datasets/` | **只读源 / 下载中转**（**纯文本主力在此**） | `openbmb/`（Ultra-FineWeb-L3、UltraData-Code/Math/SFT-2605/SFT-Agent-2609）、`stanford-vision-lab/gpic` |
+| `/nas_user/app.e0031982/datasets/` | 少量多模态 / 领域语料 | `mvp-lab/`（OV1.5 webdataset、OV2）、`BLIP3o/`、`UCSC-VLAA/`、`Amshaker/`、`ayoubkirouane/`、`cxmt/` |
+
+**① 多模态主库 —— `/nas_train/app.e0031982/datasets/`**
+- `mvp-lab/`（⚠️ 是连字符 **`mvp-lab`**，不是 `mvp_lab`）— LLaVA-OneVision-1.5 系列：
+  - `LLaVA-OneVision-1.5-Instruct-Data`（183 个任务子集，SFT / 对齐主体）
+  - `LLaVA-OneVision-1.5-Mid-Training-85M`（子集 coyo/datacomp1b/imagenet/laioncn/mint/obelics —— 即 phase0 已盘点项）
+  - webdataset 派生：`-packed-webdataset` / `-webdataset` / `-webdataset-16384` / `Quick-Start-3M` / `MultiMixQA-opt46|47`
+  - `LLaVA-OneVision-1.5-RL-Data`、`LLaVA-558K-Webdataset`、`LLaVA-NeXT-780k*`
+- `openbmb/Ultra-FineWeb`（纯文本，**仅** Ultra-FineWeb 基础版，非完整 Ultra-* 套件）
+- `baize-vision/`（en500k / eval5k —— vision agent 派生产出）
+- 其他多模态（可选补充源）：`coco`、`gqa`、`imagenet-1k`、`laion2B-en-aesthetic`、`FineVision`(188 子集)、`LLaVA-Pretrain`(664 子集)、`MMMU`、`ocr_vqa`、`textvqa`、`vg`、`conceptual-captions-12m-webdataset`、`LLaVA-CC3M-Pretrain-595K`、`LLaVA-Instruct-150K`
+- 非数据（勿混）：`stanford-corenlp-full-2016-10-31`（NLP 工具，非斯坦福视觉数据）
+
+**② 纯文本主力 —— `/nas_inference/app.e0031982/datasets/openbmb/`**
+- `Ultra-FineWeb-L3`（Stage(i) 主体）、`UltraData-Code` / `UltraData-Math`（退火源）、`UltraData-SFT-2605` / `UltraData-SFT-Agent-2609`（Stage(ii) SFT）
+- ⚠️ 成稿时误写为 `/nas_train/.../code/super_intelligence_2035/openbmb`，实际在 **`/nas_inference`** 挂载。
+
+**③ 斯坦福视觉数据 —— `/nas_inference/app.e0031982/datasets/stanford-vision-lab/gpic`**
+- ⚠️ 成稿时误写为 `/nas_train/.../code/super_intelligence_2035/stanford-vision-lab`，实际在 **`/nas_inference`**。`gpic`（含 train / test / reference_stats）。
+
+**④ 少量多模态 / 领域 —— `/nas_user/app.e0031982/datasets/`**
+- `mvp-lab/`：`LLaVA-OneVision-1.5-Mid-Training-85M-webdataset`、`LLaVA-OneVision-2-Data`、`ov2_quickstart`
+- `BLIP3o/BLIP3o-Pretrain-Long-Caption`、`UCSC-VLAA/Recap-DataComp-1B`、`Recap-DataComp-1B`
+- `Amshaker/Mobile-O-Pre-Train`、`ayoubkirouane/CircuitVQA`
+- `cxmt/`（EDA / 电路相关标注与 benchmark —— phase3 领域排查时可查）
+
+> 对数据 agent 的影响：phase0 已盘点的主路径（`/nas_inference/openbmb`、`/nas_train/datasets/mvp-lab`）正确；
+> 但 phase0 尚未覆盖 `②` 里的 Ultra-FineWeb 基础版（`/nas_train/.../openbmb`）、`③ stanford-vision-lab/gpic`、`④ /nas_user` 整块 —— 后续 phase 复核时把这些补齐进 DATA_LEDGER。
+
 ---
 
 ## 2. 阶段与推荐执行顺序
@@ -81,7 +121,7 @@ ERROR_COUNT:  <n>
 
 ## 3. 红线：污染隔离（**违反则全部下游结论作废**）
 
-🚨 **`EDA-Eval-PyAether` 的 158 个任务内容（`prompt` / `entry_point` / `canonical_solution` / `test` 断言）
+🚨 **`EDA-Eval-PyAether` 的 158 个任务内容（`prompt` / `entry_point` / `test` 断言；注：v20260311 版无 `canonical_solution` 字段，见 DATA_LEDGER §1.3）
 绝对不能进入任何训练集。** 改写/paraphrase 也不洗白。
 
 - ✅ **允许**入训练集：PyAether / SKILL 的 **API 参考文档**（它是任务的"来源材料"）
@@ -130,9 +170,12 @@ ERROR_COUNT:  <n>
 
 ## 5. 资源与约束
 
-- **节点**：本 agent 常驻 `10.239.2.29`；数据在 NFS（`/nas_inference` 只读源、`/nas_train` 产出）。
+- **节点**：本 agent 常驻 `10.239.2.12`（主机 `whag0pgpuap12`）；数据在 NFS（`/nas_inference` 只读源、`/nas_train` 产出）。
 - ⚠️ **与 GPU 任务共享 NFS 与带宽**：
-  - 多模态**下载仍在进行（>50%）** → **下载期间不要做重 I/O / 全量扫描**，会互相拖慢
+  - **本节点 `.12` 有 2 个 HF 下载任务在跑**（`hf download`，2026-10-01 实测，各已运行约 1 小时+）：
+    1. `mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M` → 写入 `/nas_train/app.e0031982/datasets/`（多模态下载进行中）
+    2. `stanford-vision-lab/gpic` → 写入 `/nas_inference/app.e0031982/datasets/`（带 HF token；⚠️ token 已暴露在进程参数里，建议轮换，勿写进文档/日志）
+    **下载期间不要做重 I/O / 全量扫描**，会互相拖慢
   - vision 任务需要一次"**无争用的干净吞吐测量**（R2-4）" → 启动重 I/O 前先读 `run/MEMORY_VISION.md` 看它进度，**优先避让**
   - pretrain 任务在 `10.239.2.29` 跑训练（另有协调规则）
 - **不占用 GPU**（本任务不是 GPU 任务）；也**绝不杀他人进程**。
