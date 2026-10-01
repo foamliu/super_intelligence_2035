@@ -51,7 +51,7 @@
   <h1>BaiZe 实验进展 · 总看板</h1>
   <div class="sub">Stage (i) LLM 预训练 · Stage (iii) 视觉编码器 · Round 2 进展 · 阻塞项</div>
   <div class="meta">
-    <span>📅 更新 2026-10-01 22:05</span>
+    <span>📅 更新 2026-10-01 22:26</span>
     <span>🎯 ISEDA 2027 投稿截止 ≈ 2027-02-01</span>
     <span>📄 论文 7 页 / 0 编译错误</span>
   </div>
@@ -75,8 +75,9 @@
     <li><b>P-5b 一旦启动将独占 8 卡 ≈2.5 天</b> → <b>P-4 / P-6 / P-7 应排在它之前清掉</b>（合计 ≈5–9 小时）。</li>
     <li><b>人工项已清零</b>：① ✅ <code>UltraData-SFT-2605</code> 的 HF 条款<b>已点同意</b> → data agent 已被派<b>重下</b>；
         ② 🚫 <b>EDA 语料线已由运维正式取消</b>（评测 prompt 由 docstring 生成、与语料同源，"把测试集放进训练集"没有意义）。</li>
-    <li>🚨 <b>Stage (i) 的正式预训练从未开始、也不在任何排期里</b> —— 已完成的只是<b>选型实验</b>（164M–655M token）。
-        详见 <a href="#s2">§2 措辞更正</a> 与 <a href="#s9">§9</a>：需要决定"只交付选型研究"还是"补一次 Chinchilla 量级真预训练"。</li>
+    <li>🏁 <b>新增 P-8 = Stage (i) 完整训练（<u>本体</u>）</b> —— 已定次序
+        <b>P-4 → P-7 → P-6 → P-5b → P-8</b>；P-8 目标 <b>≥100B token（≈12.5 天）</b>，下限 44B（≈5.5 天）。
+        详见 <a href="#s2">§2</a> 与 <a href="#s9">§9</a>。</li>
   </ol>
   详见 <a href="#s9">§9 当前排期与预计完成时间</a>。
 </div>
@@ -127,15 +128,16 @@
 <table>
   <tr><th>Stage</th><th>内容</th><th>状态</th><th>关键指标</th><th>计划</th></tr>
   <tr>
-    <td><b>(i)</b></td><td>LLM 预训练（from scratch）</td>
-    <td><span class="badge b-info">🟡 配方/架构选型完成</span><br>
-        <span class="badge b-no">🚨 正式预训练<b>未开始</b></span></td>
-    <td><b>⚠️ 已完成的只是「超参 + 架构选型实验」</b>（S0–S5 + R2 加固）：<br>
+    <td><b>(i)</b></td><td>LLM 预训练（from scratch）<br><small><b>scope 不变</b>；本体 = <b>P-8</b></small></td>
+    <td><span class="badge b-info">🟡 前置选型实验完成</span><br>
+        <span class="badge b-no">🚨 <b>本体 = P-8 未开始</b></span></td>
+    <td><b>已完成 = 前置选型实验</b>（S0–S5 + R2 的 P-1…P-7）：<br>
         2.22B / 56 层（4 attention）· 单点 5000 步 ≈ <b>164M token</b> ·
-        「长跑」20000 步 ≈ <b>655M token</b> · 总消耗 <b>~85 GPU·h</b><br>
-        val loss <b>2.2054</b>@20k 步 · 3-seed <b>2.6739±0.0469</b></td>
-    <td><b>P-1 ✅ / P-2 ✅ / P-3 ✅</b> · P-4 待跑 · <b>P-5a 运行中</b> · P-6 / P-7 已下发<br>
-        <b>🚨 正式预训练：尚未排期</b></td>
+        「长跑」20000 步 ≈ <b>655M token</b> · 合计 <b>~85 GPU·h</b><br>
+        val loss <b>2.2054</b>@20k 步 · 3-seed <b>2.6739±0.0469</b><br>
+        🏁 <b>P-8 目标：推荐 100B token（≈12.5 天）· 下限 44B（≈5.5 天）</b></td>
+    <td><b>P-1 ✅ / P-2 ✅ / P-3 ✅</b> · <b>P-5a 运行中</b><br>
+        🚦 次序：<b>P-4 → P-7 → P-6 → P-5b → P-8</b></td>
   </tr>
   <tr>
     <td><b>(ii)</b></td><td>LLM 后训练（领域退火 + SFT + RLVR）</td>
@@ -180,10 +182,16 @@
     <tr><td>参照：真实可用语料</td><td><b>≈690 B token</b></td>
         <td>实际用量 ≈ 语料的 <b>0.095%</b>（论文 §4 误写 1.8T）</td></tr>
   </table>
-  <p style="margin-bottom:0">
+  <p>
     <b>结论</b>：现有产物是<b>「选型实验」而非「训练好的模型」</b>。
+    🚫 <b>但 Stage (i) 的 scope 不变</b> —— <b>Stage (i) 的本体就是 LLM 预训练</b>，
+    只是本体（= <b>P-8 完整训练</b>）<b>尚未开始</b>。已据此调整次序：
+    <b>P-4 → P-7 → P-6 → P-5b → P-8</b>（详见 <a href="#s9">§9</a>）。
+  </p>
+  <p style="margin-bottom:0">
     论文 §4 的措辞本身是诚实的（明写 <i>reduced-horizon search</i> / <i>budget-constrained</i> / 92 GPU·h），
-    但有<b>两处会让审稿人误读</b> —— 见 <a href="#s6">§6</a> 新增风险项 #13。
+    但有两处会让审稿人误读 —— 见 <a href="#s6">§6</a> 风险项 #13。
+    <b>P-8 跑完后</b>即可用真实数字（实际 token / GPU·h / 最终 loss）替换掉那些含糊表述。
   </p>
 </div>
 
@@ -198,15 +206,18 @@
     </ul>
   </div>
   <div class="card">
-    <h3 style="margin-top:0">R2（P-1 ✅ / P-2 ✅ / P-3 ✅ / P-4 待跑 / <b>P-5a 运行中</b> / P-6）</h3>
+    <h3 style="margin-top:0">R2（P-1 ✅ / P-2 ✅ / P-3 ✅ / <b>P-5a 运行中</b> / P-4 · P-7 · P-6 · P-5b · <b>P-8</b>）</h3>
     <ul>
       <li><b>P-1</b> LR 网格向上扩展 <span class="badge b-ok">✅ 定稿</span>（10 点 U 形，谷底 <code>1e-3</code>）</li>
       <li><b>P-2</b> 补 seed 到 n=5 <span class="badge b-ok">✅ 定稿</span>（<b>2.673386 ± 0.0349</b>，Δ≈0.09σ 在噪声内）</li>
       <li><b>P-3</b> 架构对比 1000→5000 步 <span class="badge b-ok">✅ 定稿</span>（hybrid 五点全胜）</li>
-      <li><b>P-4</b> ⭐ FP8 可行性 <span class="badge b-info">环境已备（TE 2.12.0），待 GPU</span></li>
-      <li><b>P-5a</b> ⭐⭐ GBS×LR 扫描 <span class="badge b-warn">🔄 已启动运行中</span></li>
-      <li><b>P-5b</b> 训练量 scaling 曲线 <span class="badge b-no">待 P-5a 定 LR</span></li>
-      <li><b>P-6</b> ⭐ lm_eval 8 集零样本 <span class="badge b-info">已下发</span></li>
+      <li><b>P-4</b> ⭐ FP8 可行性 <span class="badge b-info">待 GPU（次序 1）</span></li>
+      <li><b>P-5a</b> ⭐⭐ GBS×LR 扫描 <span class="badge b-warn">🔄 运行中（7/9 点）</span></li>
+      <li><b>P-7</b> ⭐ 训练吞吐幅度核查 <span class="badge b-info">已下发（次序 2）</span></li>
+      <li><b>P-6</b> ⭐ lm_eval 8 集零样本 <span class="badge b-info">已下发（次序 3）</span></li>
+      <li><b>P-5b</b> 训练量 scaling 曲线 <span class="badge b-no">次序 4（其曲线定 P-8 预算）</span></li>
+      <li><b>P-8</b> 🏁 <b>Stage (i) 完整训练（本体）</b> <span class="badge b-no">次序 5 · 未开始</span>
+          <br><small>从零 · 真实全量语料 · 推荐 <b>100B token（≈12.5 天）</b>，下限 44B（≈5.5 天）</small></li>
     </ul>
     <div class="ok-box" style="margin-top:10px">
       🎯 <b>P-1 定稿</b>：LR 曲线是明确 <b>U 形</b>，谷底就在 <code>1e-3</code><br>
@@ -551,10 +562,12 @@
     <td>两处：<br>
         ① <code>4_llm_pretrain.tex</code> 写
         <i>"Pre-training uses the Ultra-FineWeb-L3 English subset (≈1.8 T tokens)"</i>
-        —— 读起来像"训练了 1.8T token"，实际仅消耗 <b>655M token</b>（且 1.8T 本身是<b>字节误记</b>，真实 ≈690B）；<br>
-        ② 全文<b>没有一句</b>说明"这是预算受限的<b>选型研究</b>、不是训练充分的 LLM"。
-        <b>建议</b>：明确写出 <b>consumed tokens / GPU·h</b>，并加一句 limitation
-        （如 "we do not claim a fully-trained LLM"）—— 否则 stage (i) 的定位会被系统性误读</td>
+        —— 读起来像"训练了 1.8T token"，实际此前仅消耗 <b>655M</b>（且 1.8T 本身是<b>字节误记</b>，真实 ≈690B）；<br>
+        ② 全文<b>没有一句</b>说明 stage (i) 的真实规模。<br>
+        ✅ <b>解法已定：P-8 跑完后用真实数字回填</b> —— 明确写出
+        <b>consumed tokens / GPU·h / 最终 loss</b>，并把
+        <i>"1.8 T tokens"</i> 改为<b>数据可用量</b>的正确表述。
+        ⚠️ 在此之前，<b>不要把 §4 当作已完成</b></td>
   </tr>
 
 </table>
@@ -651,41 +664,55 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
 
 <h2 class="sec" id="s9"><span class="no">9</span>当前排期与预计完成时间</h2>
 
-<p style="color:var(--muted)">基准时刻：<b>2026-10-01 22:05</b>。下表"预计耗时"是该条工作<b>剩余</b>的工作量估计。</p>
+<p style="color:var(--muted)">基准时刻：<b>2026-10-01 22:26</b>。下表"预计耗时"是该条工作<b>剩余</b>的工作量估计。</p>
 
 <table>
   <tr><th>线</th><th>当前安排的工作</th><th>状态</th><th>预计耗时</th><th>预计完成</th></tr>
 
   <tr>
-    <td rowspan="5"><b>pretrain</b><br>(<code>10.239.2.29</code>)</td>
-    <td><b>P-5a</b> GBS×LR 扫描<br><small>已回收 <b>7/9 点</b>：GBS=64 与 GBS=256 <b>各三点定稿，谷底均 = 1e-3</b>（g256: 1e-3=<b>5.953</b> / 2e-3=6.470 / 4e-3=6.683）；GBS=1024 的 lr1e-3 运行中（~31 s/iter）</small></td>
+    <td rowspan="6"><b>pretrain</b><br>(<code>10.239.2.29</code>)<br><br>
+        <small>🚦 次序<br><b>P-4→P-7→P-6<br>→P-5b→P-8</b></small></td>
+    <td><b>P-5a</b> GBS×LR 扫描（<b>先跑完</b>，它是后续的前置）<br><small>已回收 <b>7/9 点</b>：GBS=64 与 GBS=256 <b>各三点定稿，谷底均 = 1e-3</b>（g256: 1e-3=<b>5.953</b> / 2e-3=6.470 / 4e-3=6.683）；GBS=1024 的 lr1e-3 运行中（~31 s/iter）</small></td>
     <td><span class="badge b-warn">🔄 运行中</span><br><small>7/9 点；GBS=1024 为 <b>~31 s/iter</b>，比 GBS=64 慢得多</small></td>
     <td><b>≈ 1–2 小时</b><br><small><b>但可能顺延</b>（见右）</small></td>
     <td><b>今晚 ≈ 23:50</b><br><small>⚠️ GBS=1024 只有 <b>39 步 / 3 个满 log 点</b>（10/20/30）——<br>若噪声压过信号，按任务书防呆条款需<b>加大 token 预算</b>（如 ×128 步 = 537M token），则顺延数小时</small></td>
   </tr>
   <tr>
-    <td><b>P-5b</b> 训练量 scaling 曲线（跑到 20B token，必要时延到 40–60B）</td>
-    <td><span class="badge b-no">⬜ 待 P-5a 定 LR</span></td>
-    <td><b>≈ 2.5 天</b><br><small>20B token @ ~93K tok/s</small></td>
-    <td><b>≈ 10/04</b></td>
-  </tr>
-  <tr>
-    <td><b>P-4</b> FP8 profile（判 GEMM 占比）</td>
-    <td><span class="badge b-info">⬜ 等 GPU 空闲</span></td>
+    <td><b>P-4</b> FP8 profile（判 GEMM 占比 → 决定 P-8 用不用 FP8）</td>
+    <td><span class="badge b-info">⬜ 待 GPU 空闲</span><br><small><b>次序 1</b>（P-5a 之后立即插）</small></td>
     <td>≈ 2 小时</td>
-    <td>⚠️ 见下方排期建议</td>
+    <td><b>≈ 10/02 凌晨</b></td>
   </tr>
   <tr>
     <td><b>P-7</b> 训练吞吐幅度核查（+24% vs +4.8%）</td>
-    <td><span class="badge b-info">⬜ 已下发</span></td>
+    <td><span class="badge b-info">⬜ 已下发</span><br><small><b>次序 2</b></small></td>
     <td>≤ 1 小时</td>
-    <td>可穿插在 P-5a 之后</td>
+    <td><b>≈ 10/02 凌晨</b></td>
   </tr>
   <tr>
-    <td><b>P-6</b> lm_eval 8 集零样本（HF→SGLang→local-completions）</td>
-    <td><span class="badge b-info">⬜ 已下发</span></td>
-    <td>≈ 2–6 小时<br><small>含转换 + 起服</small></td>
-    <td>需 GPU 起 SGLang</td>
+    <td><b>P-6</b> lm_eval 8 集零样本（HF→SGLang→local-completions）<br>
+        <small><b>第 1 步</b>=评测现有 20000 步 ckpt；<br>第 2 步（能力 vs token 曲线）<b>须等 P-5b 的 6 个 ckpt</b></small></td>
+    <td><span class="badge b-info">⬜ 已下发</span><br><small><b>次序 3</b></small></td>
+    <td>第 1 步 ≈ 2–6 小时<br><small>含转换 + 起服</small></td>
+    <td><b>≈ 10/02 上午</b><br><small>需 GPU 起 SGLang</small></td>
+  </tr>
+  <tr>
+    <td><b>P-5b</b> 训练量 scaling 曲线（跑到 20B token，必要时延到 40–60B）<br>
+        <small><b>它的曲线直接决定 P-8 的 token 预算</b></small></td>
+    <td><span class="badge b-no">⬜ 待 P-4/P-7/P-6 清完</span><br><small><b>次序 4</b></small></td>
+    <td><b>≈ 2.5 天</b><br><small>20B token @ ~93K tok/s<br>延到 60B 则 ≈7.5 天</small></td>
+    <td><b>≈ 10/05</b><br><small>（若延到 60B → ≈10/09）</small></td>
+  </tr>
+  <tr class="ok-box">
+    <td class="ok-box" style="padding:6px 10px"><b>🏁 P-8 Stage (i) 完整训练（正式预训练 · <u>本体</u>）</b><br>
+        <small>用 P-5a/P-5b 定下的 GBS·LR·调度，在<b>真实全量语料</b>上从零训到
+        <b>P-5b 曲线决定的预算</b>（推荐 <b>100B token</b>，下限 44B）</small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-no">🚨 未开始</span><br>
+        <small><b>次序 5（最后）</b></small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≥ 5.5 天</b><br>
+        <small>44B ≈ 5.5 天<br><b>100B ≈ 12.5 天</b><br>200B ≈ 25 天</small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≈ 10/17</b><br>
+        <small>（按推荐档 100B）</small></td>
   </tr>
 
   <tr>
@@ -744,19 +771,24 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
 </div>
 
 <div class="note">
-  <b>关键路径</b>：<b>pretrain P-5b ≈ 2.5 天</b>是当前最长的一项；其余（vision R5、P-4/P-6/P-7、data phase1/2/4）都在<b>小时级</b>。
-  因此<b>真正决定 11 月能否开训的，是 P-5a → P-5b 这条链</b>；其余各线可以并行推进、不构成瓶颈。</div>
+  <b>关键路径</b>：<b>P-5b（≈2.5 天）→ P-8（≥5.5 天，推荐档 ≈12.5 天）</b> 是当前最长的一条链；
+  其余（vision R5、P-4/P-6/P-7、data phase1/2/4）都在<b>小时级</b>。
+  因此<b>真正决定能否交出 Stage (i) 成品的，是 P-4→P-7→P-6→P-5b→P-8 这条链</b>；其余各线可并行，不构成瓶颈。</div>
 
 <div class="danger">
-  <b>🚨 最大的一个「没写进排期的洞」：Stage (i) 的正式预训练从未开始，也不在任何排期里</b>（见 <a href="#s2">§2</a> 的措辞更正）。<br>
-  当前所有 pretrain 工作（P-1 … P-7）都是<b>选型实验</b>，token 量级 164M–655M，合计 ~85 GPU·h。<br>
-  <b>算力现实</b>（按 8×H100 实测 ~89K tok/s）：
+  <b>🏁 已补上这个洞：Stage (i) 的<b>本体 = P-8 完整训练</b>，现已写入任务书并排期（见上表最后一行）</b><br>
+  <b>scope 不变</b>：Stage (i) 就是 LLM 预训练；P-1…P-7 是<b>前置选型实验</b>。
+  本体的训练量将从 <b>655M</b> 跳到 <b>≥44B（推荐 100B）</b>，即 <b>≥67×</b>。<br>
+  <b>算力现实</b>（8×H100 实测 ~92.6K tok/s）：
   <ul style="margin:6px 0">
-    <li>跑 <b>Chinchilla 最优量</b>（2.22B × 20 = <b>~44B token</b>）→ <b>≈ 5.7 天</b>（可做，但会与 P-5b 争卡）</li>
-    <li>跑满<b>真实语料</b>（<b>≈690B token</b>，论文误写 1.8T）→ <b>≈ 90 天</b> · <b>在 2027-02-01 截止前不可能</b></li>
+    <li>44B（Chinchilla 最优 = 2.22B × 20）→ <b>≈ 5.5 天</b> · <b>下限，低于此不足以称"训练好的模型"</b></li>
+    <li><b>100B（推荐档）→ ≈ 12.5 天</b> ← 超 Chinchilla ≈2.3×，<b>契合论文「推理效率」卖点</b>（推理最优需过训练）</li>
+    <li>200B → ≈ 25 天</li>
+    <li>⚠️ 690B（真实全语料）→ <b>≈ 86 天</b>，2027-02-01 前<b>不可能</b>，<b>不要定这个档</b></li>
   </ul>
-  → <b>需要决策：Stage (i) 到底交付什么</b> ①只交付「预算受限的选型研究」（则必须改论文措辞，见 <a href="#s6">§6</a> #13）；
-  ②还是补一次 Chinchilla 量级的真预训练（≈6 天）。
+  ⚠️ <b>磁盘</b>：<code>/nas_train</code> 只剩 <b>32T</b>；2.22B 含 AdamW 状态的单 ckpt ≈ <b>30 GB</b> →
+  <b>先定好 ckpt 留存策略与清理时机</b>再开长跑。<br>
+  ⚠️ <b>P-5b 的曲线决定 P-8 的最终预算</b>；预算定下后必须在 <code>MEMORY_PRETRAIN_2B.md</code> <b>写明并上报</b>。
 </div>
 
 
