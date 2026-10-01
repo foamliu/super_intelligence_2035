@@ -1,18 +1,30 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R8_complete**（6 架构 × 3000 步 + IN-1k zs/lp 全结束；胜出=OpenVision2；含 SSM 两架构坍缩） |
-| WAITING | 0（R8 全收尾：HTML 已生成、胜出命令已回填、**可选「官方权重参考表」已用文献锚点补齐**；任务收敛） |
+| WAITING | 1（R2–R8 交付物全齐、任务收敛；置 1 使 loop 由 60s 短睡改 30min 长睡，避免空转烧 token，待运维处置 loop） |
 | ERROR_COUNT | 0 |
 | BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（6 架构训练 ~69min 串行 ≈ 9.2 GPU·h + IN-1k 评测 ~23min） |
-| 更新 | 2026-10-02 05:14（R8 参考表补完 + 勘误「AIMv2-1B 权重已在盘上」；R2–R8 交付物齐，主体收敛） |
+| 更新 | 2026-10-02 05:24（最终唤醒：R2–R8 全收敛、无剩余工作，置 WAITING=1 待运维处置 loop） |
 | WINNER | **OpenVision2**（R8 六架构重比确认：loss/C1/IN-1k zs/IN-1k lp 全第一） |
 
+## 🛑 任务收敛（2026-10-02 05:24）：R2–R8 交付物齐备，WAITING 0→1 待运维处置 loop
+
+> 纯 CPU、未占卡。本次唤醒**无剩余可做的工作**——本任务书头部轮次 **R6 已于 2026-10-01 完成**，
+> R7/R8 紧随完成，`EXPERIMENTS_VISION_ROUND{2..8}.md` + 各轮 HTML + 胜出命令 + 三表回填建议全齐并已 push。
+
+- **R6 复核确认**（对应本任务书「第六轮」，三问已取证裁定、逐字贴证，见 `EXPERIMENTS_VISION_ROUND6.md`）：
+  - ① 数据 = **分阶段切**（R5 用 en500k 作对照臂；正式训练切 GPIC `short`：462 tar ≈5.8M 对 / 20 token / 0% 截断 / off-diag 0.245）。
+  - ② 77 根因 = **官方 `open_clip_config.json → text_cfg.context_length=77`**（非 open_clip 默认值）；官方另有不受 77 限制的 caption decoder；`open_clip_pytorch_model.bin` **无** text tower 权重（294 key = 纯 vision 304.55M）。
+  - ③ 正式训练 77 = **保持 77**（冻结 CLIP 塔 `max_position_embeddings=77`，>77 抛 ValueError；R4 已证截断非坍缩主因）。
+- **R6 结论已落地**：R7 定 GPIC short、R8 六架构 + IN-1k，最终胜出 **OpenVision2**（loss 4.8646 / C1 0.2875 / IN-1k zs 0.95% / lp 1.14%，四指标第一；SSM 两架构坍缩）。
+- **本次动作**：任务已收敛、无新实验可做 → 把 `WAITING` 0→1，使 `baize_vision_loop.sh` 从 60s 短睡转 30min 长睡，**避免空转烧 token**；待运维处置 loop（或派发新轮次时重置 WAITING=0）。
+- 未改 `*.tex`；未碰 pretrain/data/ops 文件。
 ## 🏁 R8 完成（2026-10-02 04:23 训练+评测全结束；最后回收）
 
 > `r8_run.sh` 全部跑完：`/tmp/r8.log` → `R8 ALL DONE 2026-10-02 04:23:25`。6 架构训练 + 末了 IN-1k 评测（zero-shot / linear-probe，frozen trunk）全收齐。
