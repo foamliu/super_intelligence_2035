@@ -171,23 +171,34 @@ Round 1 的 S0–S5 已经收敛，但有三处**在论文里会被审稿人直�
 - 产出 **「8 集平均分 vs 训练 token」曲线** —— 这比 loss 曲线**更能回答"训到多少才够"**，
   也**正面回应"训练量太小"的质疑**。
 
-**⚠️ 已知技术障碍（先说清，别踩坑）**
+**执行路径（⚠️ 以你们**自己已查证过的结论**为准，不要另起炉灶）**
 
-| 障碍 | 现有认知 |
-|:---|:---|
-| lm_eval 需要可加载的模型 | BaiZe 是 **mcore 的 Mamba-hybrid checkpoint** |
-| mcore → HF 转换 | 你们自己的记录：**"无现成 bridge，需自行把 `NVIDIAMambaHybridModelProvider2B` 权重映射到 Nemotron-H / Llama HF 结构"** |
-| vLLM | **本环境 `import` 崩** |
+> 你们在 **2026-09-29** 已经查清过这条路
+> （`run/daily-memories/2026-09-29.md:201,207,223` 与 `run/BAIZE_2B_ARCH_SEARCH_TASK.md:218`）：
+> - **既定路径就是「ckpt → HF → SGLang 起服」**；当时的阻碍只是 **vLLM（`_C.abi3.so` 崩）与 `sglang`（未装）**，
+>   于是退到 mcore 直驱，并明确注明那是**下界测量**（"如需精确 decode 数后续 SGLang 起服复核"）。
+> - 那次也写明：**真正的坑是「mcore 分布式 ckpt → HF 格式转换」**（无现成 bridge，需把
+>   `NVIDIAMambaHybridModelProvider2B` 权重映射到 **Nemotron-H / Llama HF 结构** + DeepSeek tokenizer）；
+>   **mcore 手写前向只是 fallback**。
+> - **SGLang 原生支持 `nemotron_h`**（`--mamba-ssm-dtype float32` / `--mamba-full-memory-ratio`）——
+>   这正是当初选 SGLang 的原因。
 
-**推荐路径（风险最低）**：**写一个 lm_eval 的自定义 model 类**，直接包住**你们已验证可用的 mcore 推理路径**
-（`infer_benchmark.py` 已跑通 mcore 直驱推理）。只需实现 lm_eval 要求的最小接口：
-- `loglikelihood`（多选打分用）
-- `loglikelihood_rolling`
-- `generate_until`
+**推荐路径（标准做法；不需要写自定义 lm_eval model 类）**
 
-→ **不必做完整 HF 转换**，可绕开上面两个障碍。
-（若该路径卡住，备选：① 转 HF 到 Nemotron-H 结构；② 起 OpenAI 兼容服务后用 lm_eval 的 `local-completions`。
-**时间盒**：在加载路径上不要超过 2 小时，卡住就记录并转备选。）
+1. **转 HF**：mcore 分布式 ckpt → **Nemotron-H HF 结构**（含 DeepSeek-V4.1-Flash tokenizer）。
+2. **SGLang 起服**（若 `sglang` 未装，先 `pip install sglang`）：
+   `python -m sglang.launch_server --model-path <hf> --port 30000 --mamba-ssm-dtype float32 --mamba-full-memory-ratio <按需>`
+3. **lm_eval 用内置模型类型直连，无需改接口**：
+   `lm_eval --model local-completions --model_args base_url=http://localhost:30000/v1,model=<name>,tokenizer=<hf> --tasks arc_challenge,arc_easy,boolq,hellaswag,openbookqa,piqa,sciq,winogrande --num_fewshot 0`
+   （`local-completions` / `local-chat-completions` 可接**任何 OpenAI 兼容服务**——这是标准用法。）
+
+**⚠️ 先验证一件事（成败所系，第一步就做）**
+这 8 个任务里 **7 个是 multiple-choice**，lm_eval 的 `local-completions` 靠 **`loglikelihood`** 打分，
+即需要服务端在 `/v1/completions` 上支持 **`echo=True` 且返回 prompt 的 `logprobs`**。
+→ **先用一个最小请求验证这一点**；若不支持，再考虑 `local-chat-completions`，
+**最后**才回退到自定义 model 类包 mcore 前向。
+
+**时间盒**：转换 + 起服 **≤ 2 小时**；超时就记录卡点并转 fallback，不要无限调试。
 
 **产出**：`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 追加一节；
 并给出**论文回填建议**（§4 是否加一张"通用能力零样本"表）。
