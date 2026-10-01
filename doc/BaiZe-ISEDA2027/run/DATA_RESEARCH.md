@@ -1,6 +1,7 @@
 # DATA_RESEARCH.md — R 阶段数据调研报告（只回答两个问题）
 
-> 版本 v1 · 2026-10-01 · 由 **R 阶段**产出（运维指令 §0，2026-10-01 修订：**原「10 主题 / 8 主题」清单已作废**）。
+> 版本 v1.1 · 2026-10-01 · 由 **R 阶段**产出（运维指令 §0，2026-10-01 修订：**原「10 主题 / 8 主题」清单已作废**）。
+> v1.1 修订：本轮用 `fetch_web_content` 直连 HF 数据集卡 / 模型卡 / Paper 页**逐条复核** URL 事实（Ultra-FineWeb-L3 官方 config 命名与 1.9TB 字节、GPIC gated 状态、MiniCPM5 数据配方归属、arxiv 2602.09003 的真实身份），共修正 3 处表述，见各节标注「v1.1 修订」。
 > 本文件**只回答 §0 的两个问题**：① LLM pretrain 的数据够不够 + 配比；② Vision encoder 的数据够不够 + 配比。
 > 铁律：① 每条关键结论给出可点击 URL；② 查不到就写「未找到」，不编造；③ 许可「不明」显式标红；④ 只调研不下载（本地实测读取仅涉已落盘文件）。
 
@@ -44,6 +45,7 @@ Base/mid 训练 = `Ultra-FineWeb` + `Ultra-FineWeb-L3` + `UltraX-Preview` + `Ult
 - MiniCPM5 官方还用了 `Ultra-FineWeb`（base）、`UltraX-Preview`、`UltraData-RL-2609` 三个本地**没有**的数据集，但**这三者均不在 BaiZe 计划的落地范围内**（BaiZe 用 L3 而非 base，RL 阶段数据自产），故不算必须补齐的缺口。
 
 > 注：DATA_LEDGER §0 此前只记了 L3 的「616 / 617.6 GiB」（仅 en_qa 一支），漏记了 multi_style 与 zh 共 1148 支；实际 L3 全部 4 支 = **1764 parquet / ≈1.9 TiB** 已就位。已实测核对无误。
+> **v1.1 修订（官方 config 命名核对）**：HF 官方 4 个 config（https://huggingface.co/datasets/openbmb/Ultra-FineWeb-L3）为 `Ultra-FineWeb-L3-en-QA-Synthetic`(320M 行) / `-en-Multi-Style-Synthetic`(378M) / `-zh-QA-Synthetic`(157M) / `-zh-Multi-Style-Synthetic`(204M)，对应本地目录 `ultrafineweb_en_l3/qa`(616)、`en_l3/multi_style`(552)、`zh_l3/qa`(310)、`zh_l3/multi_style`(286)。HF 官方 `Number of rows: 1,058,535,126`、`Total file size: 1.9 TB`（= 1898 GB ≈ 1.8 TiB），与本地逐 parquet 数 + 字节和完全吻合 ✅。
 
 
 ## Q1(2) 数据够不够？—— token 实测 + 「1.8T」判定
@@ -59,6 +61,8 @@ Base/mid 训练 = `Ultra-FineWeb` + `Ultra-FineWeb-L3` + `UltraX-Preview` + `Ult
 | **合计** | 1,058,535,126 行 | — | **≈690B**（en ≈467B / zh ≈223B） |
 
 与官方自述互核：README 明写「**400B+ English tokens 和 200B+ Chinese tokens**」（≈600B+）；我的抽样外推 ≈690B，略高但在同一量级（抽样偏向长文 en_qa 所致），结论一致。
+
+> **v1.1 修订（抽样口径透明化）**：任务书 §0.1(2) 建议「抽样 20–50 个 parquet 外推」，本次实际为**每 config 抽 1 个 parquet 的首 row-group 8000 文档**（4 个 parquet 共 32000 文档）分词再乘官方 rows 数外推。未按 20–50 抽的考量：① README 已自给 token 量级（600B+），与抽 1 个 parquet 的外推（≈690B）互为印证、同一量级；② 本问「1.8T=字节而非 token」的**主证是字节对账**（1898 GB ≈ 1.9 TB ≈ 1.8 TiB，见 Q1(1)），不依赖抽样的精确度。真实 token 数以 phase2 分词后的 `.bin` 为准（尾注已说明）。
 
 **对照需求（2.2B 模型 · 4 个月算力窗口）**：
 - 任务书给定 `~93K tok/s → 30 天 ≈ 242B token`，则 **4 个月 ≈ 968B token**。
@@ -78,7 +82,8 @@ Base/mid 训练 = `Ultra-FineWeb` + `Ultra-FineWeb-L3` + `UltraX-Preview` + `Ult
 ## Q1(3) 配比怎么定？—— 建议走路线 A，理由如下
 
 **路线 A（直接复用 MiniCPM5 配比好的数据）**
-- MiniCPM5 **未在模型卡公开逐源百分比**（模型卡只给 8 个数据集的三阶段归属，⚠️摘要层；精确逐源占比在技术报告 arxiv:2602.09003，本机不可达、未核实到数字）。
+- MiniCPM5 **未在模型卡公开逐源百分比**（模型卡只以 tag 列出 8 个数据集的归属：Ultra-FineWeb / UltraX-Preview / Ultra-FineWeb-L3 / UltraData-Math / UltraData-Code / UltraData-SFT-2605 / UltraData-SFT-Agent-2609 / UltraData-RL-2609，无任何占比数字，✅实测）。
+- **v1.1 修订（arxiv 2602.09003 的真实身份）**：该 arxiv 号 = **《Data Science and Technology Towards AGI Part I: Tiered Data Management》**，是 **UltraData 数据平台的立场/框架论文** —— HF Paper 页原文宣称「**2.4T open tokens**」= **整个 Ultra* 平台全部语料的总 token 量**（⚠️摘要层，来自 https://huggingface.co/papers/2602.09003 原文），**并非** MiniCPM5 模型的技术报告；其摘要与模型卡**均未发布 MiniCPM5 的逐源配比百分比**。→ 结论不变：**MiniCPM5「逐源配比」在可及公开渠道「未找到」**（不编造）。
 - 但数据源本身（Ultra-FineWeb-L3 + Code + Math）**本地已全具备**——「复用配比」的最小改动 ≈ **零下载**：直接用已在盘上的 L3/Code/Math，按 BaiZe 自己已经消融出的退火比投料即可。
 - **BaiZe 已实证了一个配比**：S4 三点消融得出纯 L3(2.7621) → L3+code(2.6793) → L3+code+math(**2.6298**) 单调下降，最终退火比 **L3:code:math = 86:10:4**（`4_llm_pretrain.tex` 的 S4-03）。这个比例**就是可交付的配比结论**，无需再搜。
 
@@ -109,9 +114,10 @@ Base/mid 训练 = `Ultra-FineWeb` + `Ultra-FineWeb-L3` + `UltraX-Preview` + `Ult
 | 数据集 | URL | 许可 | 结构 | 规模（HF 官方）✅实测 | 本地实测 |
 |:---|:---|:---|:---|:---|:---|
 | LLaVA-OneVision-1.5-Mid-Training-85M | https://huggingface.co/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M | apache-2.0 ✅实测 | 8 子集 × EN/CN，parquet 列 `[id, image, caption]`，~8000 行/文件 | **12126 parquet**：EN 9544 + CN 2580（imagenet 50/32、laioncn 430/132、datacomp1b 439/136、zero250m 925/385、coyo 1504/436、sa1b 900/247、mint 553/152、obelics 4743/1060） | **7519 parquet**（EN 5571 + CN 1948），**下载中**；**缺 sa1b + zero250m 两整子集**，obelics/EN 仅 2594/4743 |
-| Stanford GPIC | https://huggingface.co/datasets/stanford-vision-lab/gpic | **mit** ✅实测 | tar 内 `{key}.json`+`{key}.jpg|png`；json 含 `caption_type∈{tag,short,medium,long}` + `caption` | **28T 像素**；100M train + 200K val + 1M test；**8000 train tar + 32 val + 128 test** | train **406/8000**（仍有进程在下载，++ 中）、test **128/128 全齐**、reference_stats 5 npz |
+| Stanford GPIC | https://huggingface.co/datasets/stanford-vision-lab/gpic | **mit** ✅实测（⚠️ **gated** 访问，见下） | tar 内 `{key}.json`+`{key}.jpg|png`；json 含 `caption_type∈{tag,short,medium,long}` + `caption` | **28T 像素**；100M train + 200K val + 1M test；**8000 train tar + 32 val + 128 test** | train **406/8000**（仍有进程在下载，++ 中）、test **128/128 全齐**、reference_stats 5 npz |
 
 > 本地 LLaVA 85M 是 6/8 子集、GPIC train 是 406/8000 tar——两份**都还在下载**。但本问题要用的数据是「vision encoder 实际训练子集 = `imagenet/EN` 500K」（论文 6_vision 明写用了 500K imagenet/EN），该小支**已齐**（50 parquet），故 caption 分析不受影响。
+> **v1.1 修订（GPIC 可得性）**：GPIC 许可确为 **MIT**（可商用，✅实测），但 HF 页面明确「**You need to agree to share your contact information to access this dataset**」——即访问**需先同意 gated 条件（共享联系信息）**，并非「无需注册的公开直接下载」。可得性应记为 **`需接受 gated 条件`**（与任务书 §5 提到的「下载带 HF token」一致；对已开始下载的本机无影响，但对外人/评审需先同意条件）。
 
 ## Q2(2) ⭐ caption 长度分布 —— 77-token 截断的量化
 
@@ -178,6 +184,6 @@ Base/mid 训练 = `Ultra-FineWeb` + `Ultra-FineWeb-L3` + `UltraX-Preview` + `Ult
 ## 尾注（诚实声明）
 
 - 所有 `✅实测` 数字来自 2026-10-01：HF REST API 实时取数 + 本地 `open_clip 3.2.0` / `tokenizer_eod` 实测抽样（已贴具体抽样量与命令口径）。
-- `⚠️摘要` 指 HF 模型卡/README 原文（本机连不上 arxiv/github/bocha，未抓论文全文）。MiniCPM5「逐源配比百分比」官方未在模型卡公开，属「未找到」而非编造。
+- `⚠️摘要` 指 HF 模型卡/README/Paper 页原文（本机连不上 arxiv 全文/github/bocha；但 HF 模型卡、数据集卡、Paper 页本轮已可抓取复核）。MiniCPM5「逐源配比百分比」官方未在模型卡公开，属「未找到」而非编造。
 - 「1.8T tokens 写错」第一步（1.8T = 磁盘字节）为**铁证级**（`MEMORY.md` 的 `du` 记录 + HF `num_bytes` 同量纲吻合）；第二步 token 外推（821/539/811/470 tok/doc）为**抽样估计**，phase2 分词后可用真实 `.bin` token 数替换，结论方向不变。
 
