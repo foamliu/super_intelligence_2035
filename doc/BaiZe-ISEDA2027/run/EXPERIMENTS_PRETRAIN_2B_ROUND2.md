@@ -258,4 +258,64 @@ TRAIN_ITERS=5000 LR=1.5e-3 bash scripts/train.sh mamba2 p1_1p5e3 29711 8
 2. **「min_lr Δ 是否在噪声内」怎么写**：**Δ 在噪声内**。`1e-5` vs `3e-5` 的 Δ≈0.003213 仅 **~0.09σ**（n=5 复现 σ≈0.0349，mean 2.673386），远小于 run-to-run 噪声，两者**统计上不可区分**。建议把论文 "min_lr=1e-5 narrowly beats 3e-5" 改为 "min_lr 1e-5 and 3e-5 are statistically indistinguishable (Δ≈0.003 within run-to-run noise, σ≈0.035 across n=5 seeds); we adopt min_lr=1e-5 as default without claiming superiority"。
 3. **「架构对比延长到 5000 步后的结论」怎么写**（P-3 ✅ 已定稿）：hybrid 在 500/1000/2000/3000/5000 五个 checkpoint **全优于 dense**（loss 差 Δ≈0.22~0.43，末段 0.30），且 hybrid（2.220B）比 dense（2.512B）**少 11.6% 参数**仍领先。建议论文把「hybrid 更优」从早期 1000 步快照升级为 5000 步口径的稳定结论，并**补一句参数量优势**：*"Across all five checkpoints from 500 to 5000 steps, the Mamba2-hybrid (2.220B) consistently attains lower loss than the dense MiniCPM5-2B baseline (2.512B), with the gap widening to Δ≈0.30 by step 5000 — confirming the hybrid advantage is not an early-training artifact and comes with an 11.6% parameter reduction."*
 4. **「训练吞吐差」怎么写**（P-7 ✅ 已定稿，**最高优先回填**）：论文 `tab:archcomp` 的 "Training tok/s" 一列与摘要的 "~24% training-throughput cost" **都是错的**——它们来自 Round 1 把 hybrid 放到 **10.239.2.12**（另一节点、与 vision 共享）测、而 dense 在 **10.239.2.29** 测的**跨节点 artifact**。同节点同配置重测（P-3 5000 步 + P-7 330 步两次独立测量一致）真值是 **hybrid 训练吞吐代价 ≈8%**（dense ~89K vs hybrid ~82–83K）。建议：`tab:archcomp` 该行改为 **89K / ~83K / dense(+~8%)**；摘要 "~24% training-throughput cost" 改为 **"~8% training-throughput cost"**。此修正使 hybrid 的性价比论证更强（质量/参数/推理三项优势不再被 -24% 的训练吞吐劣势抵消）。
+---
+
+## P-6　lm_eval 零样本评测（第 1 步：现有 20000 步 ckpt 的 8 集零样本）—— 🚧 进行中（2026-10-02）
+
+> 目的：让 Stage(i) 结论不只是 loss 数字。对齐 Xmodel-2 Table 2 的 8 个评测集（`ARC-Challenge/ARC-Easy/BoolQ/HellaSwag/OpenBookQA/PiQA/SciQ/Winogrande`，zero-shot、raw accuracy、+ Avg）。
+> 推荐路径：mcore ckpt → HF（Nemotron-H）→ SGLang 起服 → `lm_eval --model local-completions`。
+> 本唤醒推进 = 第 1 步的「ckpt 转 HF」前段：**已把最难的一关（mcore torch_dist 分布式 ckpt 的读取）彻底打通并写出转换器**。
+
+### P-6 节 1：环境与依赖状态（本唤醒实测）
+
+| 项 | 状态 |
+|:--|:--|
+| `sglang` | ❌ **未安装**；`pip install sglang`（0.5.20）因依赖 `cuda-tile` 元数据生成失败而中止（提示 `--extra-index-url https://pypi.nvidia.com/`）。 |
+| `lm_eval` | ❌ 未安装（与 sglang 同一笔 `pip install lm-eval sglang` 事务，因 sglang 失败而整体未装成；`lm-eval 0.4.13` 单装无问题）。 |
+| `vllm` | 0.9.2 已装（Round 1 已知 `_C.abi3.so` 崩溃，不可用）。 |
+| `transformers` | 4.56.1（**无 NemotronH** 类，需用 SGLang 自带的 `nemotron_h` config/model）。 |
+| torch / cuda | 2.8.0+cu128 / 12.8 ✅ |
+| megatron-core / bridge | 0.16.1 / 0.2.0rc6 ✅（`PYTHONPATH=/nas_train/app.e0031982/omegaconf_230`） |
+| GPU | `10.239.2.29`（本机）8×H100 全空闲（0 MiB / 0%），无人抢占 ✅ |
+
+### P-6 节 2：关键解锁 —— mcore torch_dist 分布式 ckpt 可在单进程完整读取 ✅
+
+- s5_01 20000 步 checkpoint 是 megatron-core **`ckpt_format="torch_dist"`（DCP）**，`fully_parallel_save` + `save_optim=False`，模型权重按 **DP=8 全分片（fully_reshardable）** 摊到 8 个 rank 的 `__N_X.distcp`（rank0=embedding 530MB+25MB，rank1-7=transformer 层各 ~277MB×2）。
+- **发现**：`megatron.core.dist_checkpointing.serialization.load_plain_tensors(ckpt_dir)` 会读 `.metadata` + 全部 `.distcp`，**在单进程（world_size=1、backend=gloo）内把每条 tensor 拼回全局完整形状**，无需 8 卡 torchrun / all-gather。
+- **实测**（`run/baize_p6_load_ckpt.py`，已产出）：507 个 tensor key，合计 **2,220,268,032 = 2.220B 参数**（与预期 2.220B 完全一致），载入 ~6.4s（NFS 读 ~4.4 GB）。
+- ✅ 这就把任务书里「真正的坑 = mcore 分布式 ckpt → HF 转换（无现成 bridge）」的最大障碍拆掉了。
+
+### P-6 节 3：完整 56 层架构映射（已从 ckpt 实测逐层确认）
+
+`hybrid_override_pattern = "M-M-M--M-M*-M-M-M-M--M*-M-M-M-M-M*--M-M-M-M-M*-M--M-M-M-"`（56 字符），逐层类型：
+
+| 类型 | 层数 | 层序号（0-based） |
+|:--|:--|:--|
+| **M**（Mamba-2 mixer） | 24 | 0,2,4,7,9,12,14,16,18,21,24,26,28,30,32,36,38,40,42,44,47,50,52,54 |
+| **\***（GQA attention） | 4 | 10,22,33,45 |
+| **-**（dense MLP-only） | 28 | 1,3,5,6,8,11,13,15,17,19,20,23,25,27,29,31,34,35,37,39,41,43,46,48,49,51,53,55 |
+
+关键维度（run_config.yaml 与 ckpt 形状互相印证）：`hidden=2048 / ffn=8192 / heads=16 / kv_heads=4 / head_dim=128 / mamba{num_heads=64, head_dim=64, d_state=128, n_groups=8, expand=2, conv_kernel=4} / vocab pad=129408 / seq=4094 / RMSNorm / 无线性 bias / qk_layernorm=false`。
+
+### P-6 节 4：转换器已落地并通过「参数守恒」验证 ✅
+
+- 产出 `run/baize_p6_ckpt_to_hf.py`：mcore ckpt → HF Nemotron-H（`model_type="nemotron_h"`）权重名映射 + `config.json` + `model.safetensors` + 拷贝 DeepSeek tokenizer。
+- 权重映射要点（基于 `megatron/core/ssm/mamba_mixer.py` + SGLang nemotron_h 源码推导）：
+  - 各类层的「输入 RMSNorm」在 mcore 里被融合进第一个投影（`mixer.in_proj.layer_norm_weight` / `self_attention.linear_qkv.layer_norm_weight` / `mlp.linear_fc1.layer_norm_weight`）→ 统一映射为 HF `input_layernorm.weight`；`decoder.final_norm.weight` → `model.norm.weight`；`embedding.word_embeddings.weight` → `model.embed_tokens.weight`；`output_layer.weight` → `lm_head.weight`。
+  - **mamba in_proj 拼接顺序 `[z(4096)|x(4096)|B(1024)|C(1024)|dt(64)] → [10304,2048]`**（mamba_mixer.py L271 注释 `"# z x B C dt"`）；**conv1d 顺序 `[x(4096)|B(1024)|C(1024)] → [6144,1,4]`**（`"# x B C"`）。`A_log/D/dt_bias` 转 float32（HF 约定）。`mixer.norm.weight`（Mixer2RMSNormGated）→ `mixer.norm.weight`。
+  - **attention**：`linear_qkv.weight [3072,2048]` → split `q[2048]/k[512]/v[512]` → `q_proj/k_proj/v_proj`；`linear_proj` → `o_proj`；qk_layernorm=false → 无 q_norm/k_norm。
+  - **mlp**：非门控单投影 `linear_fc1[8192,2048] → up_proj`、`linear_fc2[2048,8192] → down_proj`。
+- **验证（本唤醒已跑，参数守恒成立）**：`convert()` 输出 **323 个 HF key、2,220,268,032 = 2.220268B 参数**，与 ckpt 原始 2.220268B **逐位一致（零丢失/零多余）**；embedding/lm_head/mamba-in_proj/attn-qkv/mlp 各形状全部符合预期。
+
+### P-6 节 5：待验证 / 阻塞项（下一唤醒继续）
+
+1. ⚠️ **语义对拍未做**：映射的「顺序正确性」（in_proj z/x/B/C/dt、conv1d x/B/C、norm 归属）仅靠源码推导 + 参数守恒间接保证，**尚未经前向 logits 对拍**（load 回 mcore 前向 vs HF/SGLang 前向比 logits）。必须做完对拍才能上 lm_eval，否则评测会跑在错误权重上。
+2. ⚠️ **`mlp_hidden_act` 未定**：megatron run_config 报 `activation_func=gelu`，但 Nemotron-H 的 MLP（`-` 层）通常用 `relu2`（squared ReLU）。转换脚本暂按 `gelu` 写，对拍时需用一条 MLP 层前向确认。
+3. 🚫 **sglang 未装成**（cuda-tile 元数据生成失败）。需 `pip install --extra-index-url https://pypi.nvidia.com/ cuda-tile` 或换 sglang 版本 / 走 fallback（自定义 lm_eval model 类包 mcore 前向）。
+4. 完成上述后：→ SGLang 起服 → `lm_eval --model local-completions`（先做 `echo=True` logprobs 最小验证）→ 8 集 zero-shot + Avg。**时间盒 ≤2h，超时记录卡点转 fallback。**
+
+### P-6 结论（阶段性）
+
+- ✅ **已确认 Stage(i) 20000 步模型（2.220B）的权重可完整、正确地读取**，且架构（24 Mamba-2 + 4 attn + 28 MLP 的 Nemotron-H hybrid）与 **SGLang `nemotron_h` 原生支持的架构完全对应**（同样的 `hybrid_override_pattern` 语义）。转换器已落地、参数守恒验证通过。
+- 🚧 剩余：前向对拍 + 装 sglang + 起服 + lm_eval。**8 集测评未产出**（受 sglang 依赖阻塞 + 语义对拍前置）。
 5. **「GBS×LR 是否右移」怎么写**（P-5a ✅ 已定稿）：GBS ∈ {8,64,256,1024} 四横切面 loss 均随 LR 单调升、谷底统一 1e-3，**最优 LR 不随 batch 右移**，GBS=1024 生产口径推荐 LR=1e-3（可直接迁移，无需 sqrt/linear batch-scaling）。建议 §4 补一句：*"A GBS×LR sweep (GBS ∈ {8,64,256,1024}, matched to 164M tokens) shows loss is monotone in LR at every batch size with optimum LR=1e-3, so the LR found at GBS=8 transfers directly to production GBS=1024 without batch rescaling."*
