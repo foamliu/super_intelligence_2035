@@ -48,6 +48,7 @@ Round 1 的 S0–S5 已经收敛，但有三处**在论文里会被审稿人直�
 | **P-3** | **架构对比延长到 5000 步**（dense vs hybrid，**保持 Round 1 的 6 卡/GBS=6 口径**） | **让架构选型不再只靠 1000 步快照** | 1.5–2h |
 | **P-4** | ⭐ **FP8 可行性评估**（**先 profile，再决定**） | 判定 FP8 对 **Mamba-hybrid** 是否真的加速 | ≤2h |
 | **P-5** | ⭐⭐ **LR@目标 GBS 验证 + 训练量 scaling 曲线**（**最高优先**） | 决定**正式训练会不会白跑** | a:4–5h<br>b:~2.5 天 |
+| **P-6** | ⭐ **lm_eval 零样本评测**（对齐 Xmodel-2 Table 2 的 **8 个评测集**） | **摸底训练效果**（Stage (i) 是通用模型，**不做 EDA-Eval**） | ~2–6h |
 
 **P-1 细节**
 - 三点：`1.5e-3 / 2e-3 / 3e-3`，其余超参与 S2/S3 完全一致，各 5000 步。
@@ -150,6 +151,47 @@ Round 1 的 S0–S5 已经收敛，但有三处**在论文里会被审稿人直�
 2. **loss vs tokens 曲线** + "曲线何时变平"的判断 + **正式训练的 token 预算建议**
 3. 论文回填建议：§4 该怎么写（是否要把"655M token 只是 1.5% Chinchilla"如实写进 Limitations）
 
+**P-6 细节 —— lm_eval 零样本评测（对齐 Xmodel-2 Table 2 的 8 个评测集）**
+
+> **目的**：Stage (i) 的定位是**通用模型**，**本任务不做 EDA-Eval**。
+> 唯一目标是**摸底训练效果**——让 Stage (i) 的结论**不只是 loss 数字**。
+>
+> **口径严格对齐 Xmodel-2 论文**（`doc/BaiZe-ISEDA2027/Xmodel-2/xmodel-2.tex:198,207`）：
+> - Harness：**EleutherAI Language Model Evaluation Harness（lm-eval）**
+> - **zero-shot**、**raw accuracy**
+> - **8 个评测集**（与 Table 2 的 8 列一致），另报 **Avg**：
+>   `ARC-Challenge` · `ARC-Easy` · `BoolQ` · `HellaSwag` · `OpenBookQA` · `PiQA` · `SciQ` · `Winogrande`
+> - ⚠️ 论文正文还提到 **TriviaQA**，但 **Table 2 里没有这一列** → **以表为准，只跑这 8 个**，并在报告里注明此差异。
+
+**第 1 步（最便宜，先做）：评测现有的 20000 步 checkpoint**
+- 它就是 Stage (i) 的最终产物；**先拿到它的 8 集分数**，立刻就有"摸底"数据。
+
+**第 2 步（最有价值）：与 P-5b 结合 → 「能力 vs token」曲线**
+- 在 P-5b 的 **6 个 checkpoint**（655M / 1.3B / 2.6B / 5.2B / 10.5B / 20B token）上**各跑一次**同样的 8 集评测。
+- 产出 **「8 集平均分 vs 训练 token」曲线** —— 这比 loss 曲线**更能回答"训到多少才够"**，
+  也**正面回应"训练量太小"的质疑**。
+
+**⚠️ 已知技术障碍（先说清，别踩坑）**
+
+| 障碍 | 现有认知 |
+|:---|:---|
+| lm_eval 需要可加载的模型 | BaiZe 是 **mcore 的 Mamba-hybrid checkpoint** |
+| mcore → HF 转换 | 你们自己的记录：**"无现成 bridge，需自行把 `NVIDIAMambaHybridModelProvider2B` 权重映射到 Nemotron-H / Llama HF 结构"** |
+| vLLM | **本环境 `import` 崩** |
+
+**推荐路径（风险最低）**：**写一个 lm_eval 的自定义 model 类**，直接包住**你们已验证可用的 mcore 推理路径**
+（`infer_benchmark.py` 已跑通 mcore 直驱推理）。只需实现 lm_eval 要求的最小接口：
+- `loglikelihood`（多选打分用）
+- `loglikelihood_rolling`
+- `generate_until`
+
+→ **不必做完整 HF 转换**，可绕开上面两个障碍。
+（若该路径卡住，备选：① 转 HF 到 Nemotron-H 结构；② 起 OpenAI 兼容服务后用 lm_eval 的 `local-completions`。
+**时间盒**：在加载路径上不要超过 2 小时，卡住就记录并转备选。）
+
+**产出**：`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 追加一节；
+并给出**论文回填建议**（§4 是否加一张"通用能力零样本"表）。
+
 ## R2.3 交付物
 
 1. **`run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md`**（新文件）：P-1/P-2/P-3 全部结果表 +
@@ -163,10 +205,10 @@ Round 1 的 S0–S5 已经收敛，但有三处**在论文里会被审稿人直�
 
 ## R2.4 约束
 
-- **总预算**（分两档）：
-  - **P-1 / P-2 / P-3 / P-4**：短程实验，≤ 5 小时墙钟。
+- **总预算**（分三档）：
+  - **P-1 / P-2 / P-3 / P-4 / P-6**：短程实验，≤ 5 小时墙钟（P-6 视加载路径难度可到 6 h）。
   - ⭐ **P-5 是独立长任务，≤ 8 天墙钟**（P-5a 4–5 h + P-5b 20B token ≈ 2.5 天；预算允许可延到 60B ≈ 7.5 天）。
-  - 超时按 **P-5a > P-1/P-2 > P-4 > P-5b** 逆序裁剪，并在报告记录裁剪决策。
+  - 超时按 **P-5a > P-6 第 1 步（现有 ckpt 的 8 集）> P-1/P-2 > P-4 > P-5b > P-6 第 2 步** 逆序裁剪，并在报告记录裁剪决策。
 - **GPU**：只用 `10.239.2.29` 的 **GPU 0–7**（8 卡）。**绝不杀他人进程**。
   ⚠️ 另有 vision 任务在 **`10.239.2.12`**（另一台机器）跑——**与你无关，不要去动那台**。
 - **每次启动训练前后都要记录 GPU 占用核验结果**（`nvidia-smi --query-compute-apps=...`）。
