@@ -34,6 +34,17 @@ def load_model(tower, ckpt_path, device):
     vision = get_vision_tower(tower)
     ckpt = torch.load(ckpt_path, map_location='cpu')
     cfg = ckpt.get('config', {})
+    # Multi-resolution checkpoints (R2) have a grid-size-dependent positional
+    # embedding. Rebuild the PatchEmbed at the checkpoint's own resolution/patch
+    # (mirrors train.py / bench.py) so load_state_dict stays strictly valid.
+    # The conv weight is resolution-agnostic; only `pos` changes shape.
+    resolution = int(cfg.get('resolution', 224))
+    patch = int(cfg.get('patch', 16))
+    if resolution != 224 or patch != 16:
+        vision.image_size = resolution
+        vision.patch_size = patch
+        vision.embed = models.PatchEmbed(resolution, patch,
+                                         vision.embed.conv.out_channels)
     vision.load_state_dict(ckpt['vision'])
     vision = vision.to(device).eval()
 
@@ -102,10 +113,11 @@ def main():
     torch.backends.cudnn.benchmark = True
     vision, text, has_text, cfg = load_model(args.tower, args.ckpt, device)
     tok = SimpleTokenizer()
+    eval_res = int(cfg.get('resolution', args.resolution))
 
     print(f'[S5] tower={args.tower} ckpt={args.ckpt} has_text={has_text} '
           f'cfg={cfg}', flush=True)
-    pairs = load_eval_set(args.eval_tar, args.resolution, args.n)
+    pairs = load_eval_set(args.eval_tar, eval_res, args.n)
     print(f'[S5] eval pairs = {len(pairs)}', flush=True)
 
     I, T = encode(vision, text, tok, pairs, device, args.batch)
