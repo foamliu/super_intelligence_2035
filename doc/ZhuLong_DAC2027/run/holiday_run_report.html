@@ -40,6 +40,7 @@
   .b-wait{background:var(--wait-bg);color:var(--wait-fg)}
   .b-defer{background:var(--defer-bg);color:var(--defer-fg)}
   .b-info{background:var(--info-bg);color:var(--info-fg)}
+  .b-run{background:#e8f1ff;color:#1d4ed8;border:1px solid #93b8f5}
   .callout{border-left:4px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0}
   .callout.warn{border-left-color:#e0a306;background:#fff8e6}
   .callout.danger{border-left-color:#d1342c;background:#fdeceb}
@@ -60,7 +61,7 @@
 <header class="hero">
   <h1>ZhuLong (DAC 2027) · 十一假期完整试验 启动与监测手册</h1>
   <p>一次串行跑完 <b>15 配置 × 5 轮 = 75 轮</b>，回填论文 6 张表的 <code>mean ± std</code>（56 个 <code>[TBD]</code>），不臆造任何数字。</p>
-  <p style="color:#dde4f0">生成日期 2026-09-29 · 依据 <code>holiday_plan_930_1007.md</code> + <code>ablation_run_conductor_serial.sh</code> + 3 份 full task book（依赖已全部就绪）</p>
+  <p style="color:#dde4f0">生成日期 2026-09-29 · <b style="color:#ffd479">更新 2026-10-01</b> · 依据 <code>holiday_plan_930_1007.md</code> + <code>ablation_run_conductor_serial.sh</code> + 3 份 full task book（依赖已全部就绪）</p>
   <span class="tag">S1 = Ω 观测保真度 · S2 = Φ 信念更新 · S3 = K 先验/backbone · 反作弊 hook 全臂冻结</span>
 </header>
 
@@ -68,6 +69,37 @@
 <div class="card soft">
   <p style="margin:0">在机器 <b>10.251.36.15</b> 上，一条 <code>setsid</code> 命令启动总控脚本，它将<b>串行</b>推进 4 个阶段；每阶段由一个 loop 脚本<b>自驱 8 并发</b>。每臂跑 5 轮、报 <code>mean ± std</code>，跑完一阶段自动衔接下一阶段，全程无需人工盯守——只需偶尔 <code>tail -f</code> 确认还活着。</p>
 </div>
+
+<h2><span class="sec-no">0.5</span>当前进展快照（2026-10-01 更新）</h2>
+
+<div class="callout warn">
+  <b>整体状态：</b>阶段 1（S1 保真度）<b>运行中</b>，<code>omega_low</code> 已出 2/5 轮；阶段 2/3/4 待跑。总进度 <b>2 / 75 轮</b>。总控+loop 已于 10-01 重启，MCP 即将由人工拉起（<code>bash scripts/start.sh</code>）。
+</div>
+
+<h3>阶段 1 成绩看板（Pass@1 %，N=5 mean±std 收集中）</h3>
+<table>
+  <tr><th>臂</th><th class="num">轮次</th><th>各轮原始值</th><th>状态</th></tr>
+  <tr><td><code>omega_low</code> (Ω L)</td><td class="num">2 / 5</td><td>[81.6, 82.3]</td><td><span class="badge b-run">r3 待恢复</span></td></tr>
+  <tr><td><code>readback_binary</code> (B)</td><td class="num">0 / 5</td><td>[]</td><td><span class="badge b-todo">待跑</span></td></tr>
+  <tr><td><code>readback_none</code> (N)</td><td class="num">0 / 5</td><td>[]</td><td><span class="badge b-todo">待跑</span></td></tr>
+</table>
+
+<h3>omega_low r3 两次作废（infra 故障，非实验本身）</h3>
+<ul class="tight">
+  <li><b>第 1 次</b>（batch <code>2026_0930_012235</code>）：<code>/home</code> 磁盘 100% 满 → sandbox 大面积 150s 超时，09-30 08:25 作废。</li>
+  <li><b>第 2 次</b>（batch <code>2026_0930_090126</code>）：EDA license 耗尽 + 端口 8669 宕机，158 题仅 32 条真正执行（19.6% 无效），09-30 12:24 作废。</li>
+  <li class="small muted">两次均未记入 <code>ERROR_COUNT</code>（与「磁盘满作废」同口径：infra 作废 ≠ 打分协议失败）。</li>
+</ul>
+
+<h3>沙箱端口重配（2026-10-01 完成）</h3>
+<table>
+  <tr><th>端口</th><th>实测</th><th>处置</th></tr>
+  <tr><td>8650 / 8651 / 8652 / 8654</td><td>pyAether + skill 均 ✅</td><td><span class="badge b-done">✅ 采用（t0002997 池）</span></td></tr>
+  <tr><td>8653 / 8660 / 8655 / 8659 / 8668</td><td>pyAether ✅</td><td><span class="badge b-info">可用</span></td></tr>
+  <tr><td>8664 / 8665</td><td>连接拒绝</td><td><span class="badge b-wait">❌ 宕机（shard0/1）</span></td></tr>
+  <tr><td>8669</td><td><code>body.host 必填</code></td><td><span class="badge b-wait">⚠️ 协议已变，弃用</span></td></tr>
+</table>
+<p class="small muted"><code>.env</code> 的 <code>SANDBOX_ENDPOINTS</code> / <code>PROXY_PORTS</code> 已由 8664/8665/8653/8669 切至 8650-8654。重启顺序：先 <code>bash scripts/start.sh</code>（MCP 读新端口）→ 再 <code>setsid bash ablation_run_conductor_serial.sh …</code>（总控续跑 r3）。</p>
 
 <h2><span class="sec-no">1</span>执行流水（4 阶段 / 15 配置 / 75 轮）</h2>
 <div class="flow">
@@ -79,7 +111,7 @@
 
 <table>
   <tr><th>阶段</th><th>流</th><th>内容</th><th class="num">配置</th><th class="num">轮数</th><th class="num">~耗时</th><th>状态</th></tr>
-  <tr><td>1</td><td>A</td><td>S1 保真度：<code>omega_low</code> → <code>readback_binary</code> → <code>readback_none</code></td><td class="num">3</td><td class="num">15</td><td class="num">~53h</td><td><span class="badge b-todo">待跑</span></td></tr>
+  <tr><td>1</td><td>A</td><td>S1 保真度：<code>omega_low</code> → <code>readback_binary</code> → <code>readback_none</code></td><td class="num">3</td><td class="num">15</td><td class="num">~53h</td><td><span class="badge b-run">运行中 · 2/5</span></td></tr>
   <tr><td>2</td><td>C·P1</td><td>组件消融：<code>pure_llm</code> → <code>rag</code> → <code>wo_retrieval</code> → <code>full 锚点</code></td><td class="num">4</td><td class="num">20</td><td class="num">~70h</td><td><span class="badge b-todo">待跑</span></td></tr>
   <tr><td>3</td><td>C·P2</td><td>S2 Φ 轴：<code>k10</code> → <code>k3</code> → <code>k1</code> → <code>lagged(已修复)</code></td><td class="num">4</td><td class="num">20</td><td class="num">~70h</td><td><span class="badge b-todo">待跑</span></td></tr>
   <tr><td>4</td><td>B</td><td>模型消融：<code>glm-5.2</code> → <code>ds-v4-flash</code> → <code>kimi</code> → <code>doubao</code></td><td class="num">4</td><td class="num">20</td><td class="num">~70h</td><td><span class="badge b-todo">待跑</span></td></tr>
