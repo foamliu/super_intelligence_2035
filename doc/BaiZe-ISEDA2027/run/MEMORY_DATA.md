@@ -14,7 +14,7 @@ PHASE:        R research ✅ + R2 LLM 侧 ✅ + R2 视觉侧 ✅（§0.4）+ pha
 已完成:       §0.3 8 源事实表满填·base vs L3 重叠 0%·P-8 三档 44/100/200B；§0.4 本地多模态 12 源逐条实测（图像形态+≤77 率）·13 HF 候选（7 URL-only 淘汰 / 6 bytes）·前 3 推荐；SFT-2605 重下已启动；⚠️ 校正 SFT-2605 总量=318.99GB/1504 jsonl（旧记 97.6GB 有误）
 当前动作:     轻 I/O 维护：实测四路 HF 下载进度并回写记忆/流水、git 提交推送
 下一步:       base(2.99TB) 与 SFT-2605(318.99GB/1504 jsonl) 下载完成后 → check_contamination.py 过闸 → phase2 分词（base-en 86:10:4）；SFT-2605 下满 1504/1504 后报实际字节/文件数与 HF 官方清单一致性
-阻塞:         无硬阻塞；四路下载争带宽——SFT-2605 315/1504 jsonl（8.6G/318.99GB）·base 23/64624 parquet（30G/2.99TB）·gpic 492/8000 tar（916G）·LLaVA 7582 parquet；重 I/O 继续避让
+阻塞:         无硬阻塞；四路下载争带宽——SFT-2605 461/1504 jsonl（12G/318.99GB）·base 36/64624 parquet（44G/2.99TB）·gpic 625 tar（862G）·LLaVA 7587 parquet（26T）；重 I/O 继续避让
 ERROR_COUNT:  0
 ```
 
@@ -29,7 +29,7 @@ ERROR_COUNT:  0
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R research ✅ + R2 LLM 侧 ✅（8 源满填 / base vs L3 重叠 0% / P-8 86:10:4）+ R2 视觉侧 ✅（§0.4：本地 bytes 图文对实测 / 13 HF 候选 / 前 3 推荐）+ phase5 isolation v0.3 + phase1/2 脚本就绪** |
-| WAITING | 1（base 2.99TB + gpic + LLaVA + SFT-2605 四路下载中：SFT-2605 315/1504 · base 23/64624 · gpic 492/8000 · LLaVA 7582，重 I/O 阶段继续推迟） |
+| WAITING | 1（base 2.99TB + gpic + LLaVA + SFT-2605 四路下载中：SFT-2605 461/1504 · base 36/64624 · gpic 625 · LLaVA 7587，重 I/O 阶段继续推迟） |
 | ERROR_COUNT | 0 |
 | 节点 | `10.239.2.12`（主机 `whag0pgpuap12`；NFS：`/nas_inference` 只读源，`/nas_train` 产出） |
 | 更新 | 2026-10-02 |
@@ -81,3 +81,4 @@ ERROR_COUNT:  0
 - 2026-10-01 —— 唤醒 11（🎯 §0.4 R2 视觉侧 + ① SFT-2605 重下，两项均落地）：**① SFT-2605**：token `hf_lqLxH…` 实测 `whoami-v2`＝用户 **foamliu**（有效，非之前误判 401），gated resolve 通过、单文件试下成功 → **全量 97.6GB / 984 文件（978 jsonl）后台下载已启动**（进程存活，待下完核验一致性）。**② §0.4 视觉侧全完成**：本地 12 源逐条实测**图像形态 + ≤77 率**（`tar -tf`/`pyarrow` schema/`first-rows` 取证）：CC12M webdataset **bytes** 1100 tar/1.2T/≈11M 对 98%≤77 ✅；Amshaker Mobile-O **bytes** 2250 tar/3.7T/≈6M 对 100%≤77 ✅；BLIP3o **bytes** 但 0%≤77（长描述）⚠️；laion2B-en-aesthetic **URL-only**（schema=URL/TEXT/embedding）🚫；Recap-DataComp-1B URL-only 🚫。**13 个 HF 候选** first-rows 实测：7 URL-only 淘汰（DataComp/COYO/PixelProse/Recap/OBELICS/LAION-COCO/LAION2B）+ 6 bytes。**结论：可用对 50 万 → ≈1800 万（×35），前 3 推荐（CC12M + Amshaker + LLaVA）全本地、无需新下载**。`cimi-search`（api.bocha.cn）仍 SSL 阻断 → 用 HF 搜索 API + datasets-server 等价完成并列出请求。写 DATA_RESEARCH R2-视觉侧 + LEDGER §6 + 本文件；WAITING 保持 1（base/gpic/LLaVA/SFT-2605 四路下载中）。
 - 2026-10-02 —— 唤醒 12（🎯 R2 已全部交付，轻 I/O 维护）：复核 BAIZE_DATA_TASK 运维指令**未变**（仍是「三次修订」① SFT-2605 重下 ② §0.3/§0.4 R2 ③ phase3_domain 取消）、无状态索取、无 STOP。R2 两项（§0.3 LLM / §0.4 视觉）已在唤醒 10/11 完成并推远端（data 最后一次 commit `12553d7`=wake 11）。本唤醒仅实测四路下载进度并回写记忆：**SFT-2605 179/978 jsonl（4.3G/97.6GB，~18%）· base 21/64624 parquet（26G/2.99TB，~0.9%）· gpic 1866 文件（843G）· LLaVA 7575 parquet**，4 个 `hf download` 进程存活（gpic / base / LLaVA / SFT-2605）。磁盘 `/nas_train` 剩 32T、`/nas_inference` 剩 21T、`/nas_user` 剩 29T，均够。phase1/2/4 重 I/O 继续避让，WAITING 保持 1。下一步 = 各下载完成后（尤其 SFT-2605 下完需报实际字节/文件数与 HF 官方清单一致性、base 落地后过污染闸）→ 污染扫描 → phase2 分词。
 - 2026-10-02 —— 唤醒 13（轻 I/O 维护 + ⚠️ 校正 SFT-2605 总量）：复核运维指令未变（三次修订三件套）、无状态索取、无 STOP。**关键校正**（回应运维 ① 的「一致性」要求）：用 HF REST `/api/datasets`（siblings=1510）+ `/tree/main/<13 子目录>` 逐目录求和，权威总量 = **1504 jsonl / 318,990,252,711 B ≈318.99GB**（`no_think` 855 文件≈49GB：Chinese-general 50 / Code 300 / IF 20 / Knowledge 80 / Math 300 / Multi-lang-Knowledge 50 / Multi-lang-Math 55；`think` 649 文件≈270GB：Chinese-general 50 / **Code 279=177.5GB(体积主因)** / IF 20 / Knowledge 50 / Math 250=74GB）——旧记「97.6GB/978/984」系树 API 递归截断所致，**有误，已全部改正**（MEMORY/DATA_RESEARCH/DATA_LEDGER）。下载进度：SFT-2605 **315/1504 jsonl（8.57G/318.99GB）**·base **23/64624 parquet（30G/2.99TB，en part-0024/2048）**·gpic train **492/8000 tar（916G）**·LLaVA **7582 parquet**；4 个 `hf download` 进程均存活（gpic/SFT-2605/base/LLaVA）。磁盘 `/nas_inference` 剩 21T，319GB 无压力。phase1/2/4 重 I/O 继续避让，WAITING 保持 1。下一步 = SFT-2605 下满 1504/1504 后报「实际字节+文件数 vs HF 官方清单」一致性 → base 落地过 `check_contamination.py` → phase2 分词（base-en 86:10:4）。
+- 2026-10-02 —— 唤醒 14（轻 I/O 维护，四路下载进度实测+回写）：复核运维指令未变（三次修订三件套）、无状态索取、无 STOP。实测四路均**存活且在推进**（mtimes 秒级更新）：SFT-2605 **461/1504 jsonl（12G/318.99GB，~30.7% 文件 / ~3.7% 字节）**，`no_think` 已下全 Chinese-general/Code/IF/Knowledge、正在下 Math（part-012/300），`think/`（尤其 Code 279=177.5GB 主体积）尚未开始——故字节进度远低于文件进度；base **36/64624 parquet（44G/2.99TB）**，en part-0037/2048（每片≈1.3GB，实测≈138s/片≈9.4MB/s）；gpic **625 tar（862G）**；LLaVA **7587 parquet（26T）**。磁盘 /nas_inference 剩 21T、/nas_train 剩 32T、/nas_user 剩 29T 均够。phase1/2/4 重 I/O 继续避让，WAITING 保持 1。下一步 = SFT-2605 下满 1504/1504 后报「实际字节+文件数 vs HF 官方清单」一致性 → base 落地过 `check_contamination.py` → phase2 分词（base-en 86:10:4）。
