@@ -1,4 +1,21 @@
 \section{MLLM Alignment}\label{sec:mllm}
 
-Stage~(iv) aligns the vision encoder with the language backbone into a multimodal model, following a LLaVA-OneVision-style curriculum: stage-1 projector pre-training, stage-1.5 mid-training, and stage-2 instruction tuning (\textbf{[TBD]}).
-This section will detail each sub-stage's data, objectives, and results.
+Stage~(iv) connects the vision encoder of Section~\ref{sec:vision} to the language backbone through a lightweight projector, following the staged curriculum established for open multimodal assistants: projector pre-training, mid-training, and instruction tuning.
+The design is motivated by the observation that the dominant EDA artifacts are visual---layout and schematic views account for $70.2\%$ of the tasks in the evaluation benchmark~\cite{liu2026zhulong}---so a multimodal core can be scored on the same execution-based protocol as the text-only one.
+
+\paragraph{Task construction.}
+We build three task families, each chosen because it admits an objective ground truth.
+(i) \emph{image$\to$script}: given a rendered layout or schematic view, produce the PyAether or SKILL script that recreates it; supervision is available because executing a script yields its own reference rendering.
+(ii) \emph{script$\to$image}: predict the geometry that a given script produces, again self-labelled by execution.
+(iii) \emph{layout VQA}: answer attribute questions---layer identity, device type, spacing and rule violations---labelled by domain experts.
+The first family is the strongest of the three: its output is a script, so it is scored by the same assertion sandbox used in stage~(ii), which gives the multimodal and text-only stages a common metric instead of two incommensurable ones.
+
+\paragraph{Curriculum and ablations.}
+We run stage-1 projector pre-training on caption-style pairs, stage-1.5 mid-training on the three families above, and stage-2 instruction tuning on the full mixture.
+The ablations vary the projector (MLP versus query-based), whether the vision tower is frozen or updated, and the number of visual tokens per image.
+The last is of particular interest.
+The architecture study of Section~\ref{sec:vision} found image resolution immaterial at $224/16$, where an image becomes only $196$ tokens---a regime in which the training objective is dominated by coarse semantics and the encoder differences we measured were within noise.
+Layout and schematic views are the opposite: they are detail-dense line drawings whose meaning lives in fine geometry.
+We therefore treat resolution and visual-token count as first-order variables here rather than inheriting the earlier null result, which we read as a property of the proxy task and not of the encoder.
+
+Results are reported as \textbf{[TBD]}.

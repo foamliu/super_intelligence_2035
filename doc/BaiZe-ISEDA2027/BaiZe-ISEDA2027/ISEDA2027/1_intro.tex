@@ -16,7 +16,7 @@ Three design pillars organise our work:
 
 \item \textbf{Reduced-horizon proxy search.} We exploit short, cheap proxy runs to rank candidate hyper-parameters, so that the ranking discovered at small scale carries over to the full model without re-tuning at scale.
 
-\item \textbf{Budget-constrained stage-wise pipeline.} Each of the five stages is trained under a hard GPU-hour budget, with a staged search protocol (S1--S4) for the language backbone (numeric results reported as \textbf{[TBD]} pending re-measurement).
+\item \textbf{Budget-constrained stage-wise pipeline.} Each of the five stages is trained under a hard GPU-hour budget, with a staged search protocol (S1--S5) for the language backbone and a single frozen evaluation protocol shared by the later stages.
 \end{itemize}
 
 We hope BaiZe serves as a minimal, reproducible blueprint for building efficient agentic SLMs from scratch, and that our search methodology is of practical value to cost-bounded training efforts in the EDA and embedded-AI communities.

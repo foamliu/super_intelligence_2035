@@ -1,4 +1,47 @@
 \section{LLM Post-Training}\label{sec:llm-posttrain}
 
-Stage~(ii) strengthens the agentic capability of the pre-trained backbone through supervised instruction fine-tuning and reinforcement learning (\textbf{[TBD]}).
-This section will describe the fine-tuning corpus, the agentic reward design, and the post-training budget and results.
+Stage~(ii) adapts the pre-trained backbone to EDA scripting, and it is the stage that carries BaiZe's domain claim: the pre-training corpus of Section~\ref{sec:llm-data} is general web, code, and mathematics text and contains no EDA artifacts, so the domain prior must be introduced here.
+We organise the stage as three steps---\emph{domain annealing}, \emph{supervised fine-tuning}, and \emph{reinforcement learning}---all evaluated under a single frozen protocol (Section~\ref{sec:posttrain-eval}).
+
+\subsection{Domain Annealing}\label{sec:posttrain-anneal}
+The cheapest lever on the domain prior is to continue pre-training on EDA text before any behavioural tuning.
+We reuse the warmup--stable--decay machinery of Stage~(i) and anneal on a corpus assembled from PyAether and SKILL API references, EDA tool documentation, and open HDL sources, blended with the general mixture at a controlled ratio.
+Because the step changes only the data distribution, we contrast it against an SFT-only control to isolate its contribution from the behavioural tuning that follows.
+
+\subsection{Supervised Fine-Tuning}\label{sec:posttrain-sft}
+SFT teaches the generate--execute--refine loop that the deployment target requires.
+The corpus combines the agentic instruction set (\texttt{UltraData-SFT-Agent}, $51$\,G) with PyAether-specific material synthesised from API documentation.
+We ablate the data mixture (agentic / code / mathematics / PyAether), the presence of interleaved tool-call traces, full fine-tuning versus LoRA, and the sequence length: agentic traces---code, tool returns, and successive refinements---routinely exceed the $4096$-token window of Table~\ref{tab:config}, so window extension is treated as a first-class variable rather than a fixed setting.
+
+\subsection{Reinforcement Learning with Verifiable Rewards}\label{sec:posttrain-rl}
+An execution sandbox turns correctness into a verifiable signal, so we optimise with group-relative policy optimisation and no value network.
+Table~\ref{tab:reward} separates the reward variants we study.
+A binary signal is the simplest baseline; partial credit over executable attempts addresses the sparsity of pass/fail; a tool-call penalty aligns the policy with the harness cost model; and an API-legality term penalises hallucinated symbols.
+Because the reward is computed from assertions a policy could in principle target directly, we keep the harness anti-cheat hook enabled in every run and report a cheat rate beside every accuracy figure.
+
+\begin{table}[htbp]
+\centering
+\caption{Reward variants studied in stage~(ii).}
+\label{tab:reward}
+\begin{tabular}{ll}
+\toprule
+\textbf{ID} & \textbf{Reward} \\
+\midrule
+R1 & binary pass/fail \\
+R2 & executable $+$ assertion pass ratio \\
+R3 & R2 $+$ tool-call penalty \\
+R4 & R3 $+$ API-legality term \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Evaluation Protocol}\label{sec:posttrain-eval}
+All post-training variants are scored on \textbf{EDA-Eval-PyAether}~\cite{liu2026zhulong}, a benchmark of $158$ real-world EDA scripting tasks.
+Each task pairs a natural-language prompt and a function signature with assertion-based test code, and is scored by execution in the vendor sandbox: a task passes when the generated code runs without error and every assertion holds.
+We follow the benchmark's own protocol so that our numbers are comparable to published ones: five independent runs with reshuffled task order and fresh context, reporting mean Pass@1 and its run-to-run standard deviation, with a $2500$-second per-task timeout and a single non-restartable trace per task.
+
+Two controls make the comparison interpretable.
+First, \emph{contamination}: no task, assertion, or reference solution from the benchmark enters any training split; PyAether training material is drawn only from API documentation, and we isolate it by symbol so that benchmark targets cannot leak.
+Second, \emph{harness parity}: only the backbone is varied. The retrieval stack, sandbox, anti-cheat hook, and agent scaffold are held byte-identical to the published configuration, because the harness supplies most of the observed accuracy and a variant harness would confound the model's contribution with the scaffold's.
+
+Results are reported as \textbf{[TBD]}.

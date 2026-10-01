@@ -1,8 +1,9 @@
 \section{Conclusion}
 
 We presented BaiZe, an end-to-end multimodal agentic system: a $\approx$2.2B-parameter hybrid (state-space + attention) language model built from scratch, post-trained for agentic capability, paired with a custom vision encoder, aligned into a multimodal model, and adapted to the semiconductor domain.
-Through a controlled from-scratch comparison, we selected a sequential Mamba2-hybrid backbone over a dense transformer for its lower loss-per-parameter and substantially faster inference, then applied a staged, budget-constrained hyper-parameter search (S1--S4) on the final backbone.
-Training and inference measurements are being re-executed on the final model and are reported as \textbf{[TBD]}; the complete recipe and a single reproducible command encapsulate the entire construction under the NVIDIA NeMo recipe.
+Through a controlled from-scratch comparison, we selected a sequential Mamba2-hybrid backbone over a dense transformer for its lower loss-per-parameter and substantially faster inference, then applied a staged, budget-constrained hyper-parameter search (S1--S5) on the final backbone.
+Stages~(ii) to~(v) are specified here as a protocol and evaluated on a common execution-based benchmark~\cite{liu2026zhulong}; their measurements are reported as \textbf{[TBD]}.
+The complete recipe and a single reproducible command encapsulate the entire construction under the NVIDIA NeMo recipe.
 
 The immediate next step is agentic fine-tuning with the \texttt{UltraData-SFT-Agent} corpus toward a deployable agent core for EDA and embedded applications.
 We hope this blueprint lowers the barrier for cost-bounded teams building their own efficient agentic SLMs from scratch.

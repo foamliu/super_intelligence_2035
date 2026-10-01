@@ -37,7 +37,7 @@ Parameters & $\approx$2.22B \\
 \end{table}
 
 \subsection{Vision Encoder}\label{sec:backbone-enc}
-The vision encoder is trained from scratch in stage~(iii); its architecture and configuration are reported in Section~\ref{sec:vision} (\textbf{[TBD]}).
+The vision encoder is pre-trained from scratch in stage~(iii) and is selected from four iso-parameter candidates at the $500$--$600$\,M scale; Section~\ref{sec:vision} reports the comparison and its outcome.
 
 \subsection{Pipeline and Global Environment}\label{sec:pipeline}
 Table~\ref{tab:pipeline} summarises the five-stage pipeline.
@@ -49,13 +49,13 @@ All stages run on $8\times$NVIDIA H100 GPUs (CUDA 12.8, PyTorch 2.8.0, Python 3.
 \label{tab:pipeline}
 \begin{tabular}{llll}
 \toprule
-\textbf{Stage} & \textbf{Task} & \textbf{Budget} & \textbf{Detailed in} \\
+\textbf{Stage} & \textbf{Task} & \textbf{Status} & \textbf{Section} \\
 \midrule
-(i) & LLM pre-training & $\approx$84 GPU-hours & Section~\ref{sec:llm-pretrain} \\
-(ii) & LLM post-training (SFT + agentic RL) & [TBD] & Section~\ref{sec:llm-posttrain} \\
-(iii) & Vision encoder pre-training & [TBD] & Section~\ref{sec:vision} \\
-(iv) & MLLM alignment & [TBD] & Section~\ref{sec:mllm} \\
-(v) & Semiconductor domain adaptation (RL) & [TBD] & Section~\ref{sec:domain} \\
+(i) & LM pre-training & complete & \ref{sec:llm-pretrain} \\
+(ii) & Post-training (SFT, RLVR) & design & \ref{sec:llm-posttrain} \\
+(iii) & Vision encoder & complete & \ref{sec:vision} \\
+(iv) & MLLM alignment & design & \ref{sec:mllm} \\
+(v) & Domain adapt.\ (RLHF) & design & \ref{sec:domain} \\
 \bottomrule
 \end{tabular}
 \end{table}

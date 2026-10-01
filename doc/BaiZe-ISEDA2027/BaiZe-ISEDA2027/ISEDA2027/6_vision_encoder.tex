@@ -19,16 +19,18 @@ Table~\ref{tab:visarch} summarizes the measured parameter counts and the three h
 
 \begin{table}[htbp]
 \centering
-\caption{Architecture-level comparison for the vision encoder (from-scratch, unified open\_clip + SigLIP + fixed text tower). Inference latency is measured at batch=1 / bf16 / 224/16.}
+\caption{Architecture-level comparison for the vision encoder (from-scratch, unified open\_clip + SigLIP + fixed text tower). Inference latency is measured at batch=1 / bf16 / 224/16. Type: Attn = attention, A+S = attention + SSM; MoE-ViE activates 222.0M parameters per token.}
 \label{tab:visarch}
+\small
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{lccccc}
 \toprule
-\textbf{Architecture} & \textbf{Params} & \textbf{Type} & \textbf{Loss@5k} & \textbf{Train img/s} & \textbf{Infer ms/img} \\
+\textbf{Arch.} & \textbf{Params} & \textbf{Type} & \textbf{Loss@5k} & \textbf{img/s} & \textbf{ms/img} \\
 \midrule
-OpenVision2 & 505.0M & Attention & \textbf{4.456} & \textbf{2139} & \textbf{6.51} \\
-DeepEncoderV2 & 516.9M & Attn+SSM & 4.466 & 1459 & 17.76 \\
+OpenVision2 & 505.0M & Attn & \textbf{4.456} & \textbf{2139} & \textbf{6.51} \\
+DeepEncoderV2 & 516.9M & A+S & 4.466 & 1459 & 17.76 \\
 MambaEye & 534.9M & SSM & 4.470 & 790 & hang@bs1 \\
-MoE-ViE & 505.2M (222M) & MoE & 4.466 & 852 & 141.7 \\
+MoE-ViE & 505.2M & MoE & 4.466 & 852 & 141.7 \\
 \bottomrule
 \end{tabular}
 \end{table}

@@ -1,4 +1,18 @@
 \section{Semiconductor Domain Adaptation}\label{sec:domain}
 
-Stage~(v) adapts the multimodal model to the semiconductor domain via reinforcement learning, targeting EDA tasks such as register-transfer-level understanding, verification, and bug triage (\textbf{[TBD]}).
-This section will describe the domain reward design, training setup, and EDA evaluation results.
+Stage~(v) completes the pipeline by adapting the multimodal model to proprietary design practice.
+It differs from stage~(ii) in two respects, which we state explicitly because otherwise the two stages would coincide: the reward is no longer verifiable but \emph{learned from human judgement}, and the target behaviour is no longer general API usage but a team's internal conventions---naming rules, layer policies, review checklists---which no public benchmark measures.
+
+\paragraph{Method.}
+We collect pairwise judgements from in-house design reviews over the stage-(iv) task families, fit a domain reward model on them, and optimise the aligned model against that model under a KL-regularised objective.
+Because preference data is far scarcer than the verifiable signal of stage~(ii), we initialise from the stage-(iv) checkpoint and constrain the update rather than training the objective from the pre-trained model.
+
+\paragraph{Why a small model.}
+The rationale for a $\approx$2.2B core is strongest here, and it is a constraint rather than a preference.
+Proprietary layouts and proprietary preference data cannot leave the premises, so the choice is not between a large hosted model and a small local one---it is between a small local model and no model at all.
+Serving cost then dominates, and for an agentic session the relevant cost is not throughput on a short prompt but memory that grows with accumulated context: in the hybrid backbone of Section~\ref{sec:arch}, the four attention layers are the only component whose serving state grows with the session, while the Mamba-2 layers hold a constant-size recurrent state.
+
+\paragraph{Evaluation.}
+We evaluate on held-out review items using expert agreement, and report the result beside the execution-based numbers of stage~(ii) so that verifiable and preference-based adaptation can be compared on the same system rather than in separate accounts.
+
+Results are reported as \textbf{[TBD]}.

@@ -3,7 +3,7 @@ Large language models (LLMs) exhibit strong reasoning and tool-use skills, yet t
 We present \textbf{BaiZe}, a $\approx$2.2-billion-parameter agentic language model built \emph{from scratch} on a fixed compute budget around a \emph{hybrid} state-space backbone.
 BaiZe adopts a sequential hybrid architecture---56 layers interleaving Mamba-2 state-space layers, four grouped-query-attention layers, and MLP layers---whose linear-time decoding is well suited to inference-heavy, cost-sensitive agents, and is trained with the NVIDIA NeMo recipe on Megatron-Core.
 The architecture is chosen through a matched from-scratch comparison against a dense transformer counterpart, in which the hybrid attains lower loss and faster inference with fewer parameters at a modest training-throughput cost.
-We then run a staged, budget-constrained hyper-parameter search (S1--S4) on $8\times$H100 over the final hybrid backbone; all loss, throughput, and inference measurements are re-evaluated on this backbone and reported as \textbf{[TBD]} pending full-scale training.
+We then run a staged, budget-constrained hyper-parameter search (S1--S5) on $8\times$H100 over the final hybrid backbone, which selects a stable learning rate of $1\times10^{-3}$ under a warmup--stable--decay schedule with an $86{:}10{:}4$ annealing mixture, reaching a validation loss of $\mathbf{2.2054}$ after $20000$ steps and $2.6739\pm0.0469$ across three seeds at $5000$ steps.
 We release the complete recipe and training command to support the reproducible construction of efficient agentic small language models.
 \end{abstract}
 

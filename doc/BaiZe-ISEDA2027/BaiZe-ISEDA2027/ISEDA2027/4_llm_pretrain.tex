@@ -53,14 +53,16 @@ Table~\ref{tab:archcomp} contrasts the hybrid backbone against a dense transform
 
 \begin{table}[htbp]
 \centering
-\caption{Architecture-level comparison motivating the hybrid choice (measured from scratch under matched data, seed, and GPU footprint). The decode gap is measured under the Megatron-Core direct-drive harness without CUDA graphs, where the dense baseline is CPU-launch-bound, and therefore narrows under production inference stacks.}
+\caption{Architecture-level comparison motivating the hybrid choice (Dense = MiniCPM5-2B, Hybrid = BaiZe; measured from scratch under matched data, seed, and GPU footprint). The decode gap is measured under the Megatron-Core direct-drive harness without CUDA graphs, where the dense baseline is CPU-launch-bound, and therefore narrows under production inference stacks.}
 \label{tab:archcomp}
+\small
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{lccc}
 \toprule
-\textbf{Metric} & \textbf{Dense (MiniCPM5-2B)} & \textbf{Hybrid (BaiZe)} & \textbf{Edge} \\
+\textbf{Metric} & \textbf{Dense} & \textbf{Hybrid} & \textbf{Edge} \\
 \midrule
 Parameters & 2.51B & \textbf{2.22B} & hybrid ($-11.6\%$) \\
-Final loss (1000 steps) & 4.81 & \textbf{4.68} & hybrid ($-0.12$) \\
+Final loss (1k steps) & 4.81 & \textbf{4.68} & hybrid ($-0.12$) \\
 Training tok/s & \textbf{89K} & 72K & dense ($+24\%$) \\
 Prefill tok/s & 21.4K & \textbf{23.7K} & hybrid ($+10.5\%$) \\
 Decode tok/s & 2.2 & \textbf{22.8} & hybrid ($+10.3\times$) \\
