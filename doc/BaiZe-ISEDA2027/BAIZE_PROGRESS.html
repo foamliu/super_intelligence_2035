@@ -69,9 +69,9 @@
 <div class="danger">
   <strong>🚨 当前紧要事项</strong>　<small>（第 1、3 条已闭环；第 2、4 条待办）</small>
   <ol>
-    <li><b>vision 的 R5 已于今晚下发</b>（<code>BAIZE_VISION_TASK.md</code> 顶部）—— 等 agent 唤醒接单即可开跑；
-        由于 <b>R1/R2 的架构 loss 结论已因坍缩全部作废</b>，
-        R5（用修好的 <code>sem_clip</code> recipe 重跑四架构对比）是 Stage (iii) 恢复有效产出的<b>唯一路径</b>。</li>
+    <li><b>vision 已派 R6 + R5</b>（<code>BAIZE_VISION_TASK.md</code> 顶部）—— 次序为 <b>R6（纯 CPU 裁定）→ R5（GPU 重跑）</b>。
+        R6 要回答三件事：<b>是否切 GPIC</b> · <b>77 截断的根因</b> · <b>正式训练能否/该不该放开 77</b>。
+        由于 R1/R2 的架构 loss 结论已因坍缩全部作废，R5 仍是 Stage (iii) 恢复有效产出的<b>唯一路径</b>。</li>
     <li><b>P-5b 一旦启动将独占 8 卡 ≈2.5 天</b> → <b>P-4 / P-6 / P-7 应排在它之前清掉</b>（合计 ≈5–9 小时）。</li>
     <li><b>人工项已清零</b>：① ✅ <code>UltraData-SFT-2605</code> 的 HF 条款<b>已点同意</b> → data agent 已被派<b>重下</b>；
         ② 🚫 <b>EDA 语料线已由运维正式取消</b>（评测 prompt 由 docstring 生成、与语料同源，"把测试集放进训练集"没有意义）。</li>
@@ -588,7 +588,7 @@
 
 <table>
   <tr><th>角色</th><th>脚本 / 文件</th><th>状态</th></tr>
-  <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-warn">⚠️ 队列空</span>（.12 · R2 ✅ → R3 定位<b>表征坍缩</b> → <b>R4 ✅ 解决核心阻塞（C1–C4 全过）</b> → <b>🚨 R5 待下发</b>）</td></tr>
+  <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-ok">✅ 已派活</span>（.12 · R2 ✅ → R3 定位<b>表征坍缩</b> → <b>R4 ✅ C1–C4 全过</b> → <b>R6 🔵 已下发（CPU 裁定）→ R5（GPU 重跑）</b>）</td></tr>
   <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ P-2 ✅ P-3 ✅</b> · <b>P-5a 运行中 7/9 点</b>（GBS=64/256 定稿，谷底均 1e-3，<b>未见右移</b>）· P-4 待 GPU · <b>P-6 / P-7 已下发</b>）</td></tr>
   <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · phase0/5 ✅ · R 阶段 ✅ 收敛（两问已答完，<code>DATA_RESEARCH.md</code> v1.1）→ 已派 <b>① SFT-2605 重下</b> + <b>② 🔴 R2 调研：P-8 数据方案</b>；<b>🚫 phase3_domain 已取消</b>；phase1/2/4 等下载）</td></tr>
   <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-ok">✅ 空闲待命</span>（.29 · 零 token · <b>RUN_ID 1/2/3 已全部回收</b>，随时可派 4）</td></tr>
@@ -728,17 +728,28 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
   </tr>
 
   <tr>
-    <td rowspan="2"><b>vision</b><br>(<code>10.239.2.12</code>)</td>
+    <td rowspan="3"><b>vision</b><br>(<code>10.239.2.12</code>)<br><br>
+        <small>🚦 次序<br><b>R6 → R5</b></small></td>
     <td><b>R4</b> 坍缩根因定位与修复</td>
     <td><span class="badge b-ok">✅ 已完成</span><br><small>C1–C4 全过</small></td>
     <td>—</td><td>已结束</td>
   </tr>
+  <tr class="ok-box">
+    <td class="ok-box" style="padding:6px 10px"><b>R6</b> 🔵 <b>文本塔上下文 与 数据切换 的裁定</b>（<u>先做</u>）<br>
+        <small>① 数据是否<b>切 GPIC</b>（含现有 tar 实测对数 vs R5 需求）·
+        ② <b>77 截断的根因</b>：是 open_clip 默认，还是 CLIP 文本塔<b>位置编码表只有 77 行</b>？·
+        ③ 正式训练<b>能否/该不该</b>放开 77（逐条给代价）</small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">🔄 已下发</span><br>
+        <small><b>纯 CPU</b> · 不占 GPU</small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≤ 1.5 小时</b></td>
+    <td class="ok-box" style="padding:6px 10px"><b>今晚 ≈ 24:00</b></td>
+  </tr>
   <tr>
     <td><b>R5</b>：用修好的 <code>sem_clip</code> recipe 重跑四架构 × 分辨率对比<br>
         <small>（R1/R2 的架构 loss 结论已全部作废，必须重跑）</small></td>
-    <td><span class="badge b-no">🚨 未下发 · 队列空</span><br><small>agent 处于 30 min 长睡</small></td>
+    <td><span class="badge b-no">⏸ 等 R6 定数据</span></td>
     <td>≈ 2–3 小时</td>
-    <td><b>若现在下发 → 今晚即可</b></td>
+    <td><b>≈ 10/02</b><br><small>R6 之后启动</small></td>
   </tr>
 
   <tr>
