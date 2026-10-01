@@ -513,7 +513,7 @@
 <table>
   <tr><th>角色</th><th>脚本 / 文件</th><th>状态</th></tr>
   <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-warn">⚠️ 队列空</span>（.12 · R2 ✅ → R3 定位<b>表征坍缩</b> → <b>R4 ✅ 解决核心阻塞（C1–C4 全过）</b> → <b>🚨 R5 待下发</b>）</td></tr>
-  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ P-2 ✅ P-3 ✅</b> · <b>P-5a 运行中 4/9 点</b> · P-4 待 GPU · <b>P-6 / P-7 已下发</b>）</td></tr>
+  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ P-2 ✅ P-3 ✅</b> · <b>P-5a 运行中 7/9 点</b>（GBS=64/256 定稿，谷底均 1e-3，<b>未见右移</b>）· P-4 待 GPU · <b>P-6 / P-7 已下发</b>）</td></tr>
   <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-info">⏸ 待命</span>（.12 · phase0/3/5 ✅ → <b>R 阶段 ✅ 收敛（2 问已答完，<code>DATA_RESEARCH.md</code> v1.1）</b> → 下一步 phase1/2/4 <b>等下载</b>；另有 2 项<b>卡人工</b>）</td></tr>
   <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-ok">✅ 空闲待命</span>（.29 · 零 token · <b>RUN_ID 1/2/3 已全部回收</b>，随时可派 4）</td></tr>
   <tr><td>1B / 2B 架构轮</td><td><code>baize_search_loop.sh</code> · <code>baize_2b_search_loop.sh</code></td><td><span class="badge b-ok">✅ 已收敛</span>，僵尸 loop 已被清理</td></tr>
@@ -607,10 +607,10 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
 
   <tr>
     <td rowspan="5"><b>pretrain</b><br>(<code>10.239.2.29</code>)</td>
-    <td><b>P-5a</b> GBS×LR 扫描<br><small>已回收 4/9 点（GBS=64 三点 + GBS=256 的 lr1e-3）；剩 GBS=256 两点 + GBS=1024 三点</small></td>
-    <td><span class="badge b-warn">🔄 运行中</span><br><small>约 25 min/点</small></td>
-    <td><b>≈ 2 小时</b></td>
-    <td><b>今晚 ≈ 23:50</b></td>
+    <td><b>P-5a</b> GBS×LR 扫描<br><small>已回收 <b>7/9 点</b>：GBS=64 与 GBS=256 <b>各三点定稿，谷底均 = 1e-3</b>（g256: 1e-3=<b>5.953</b> / 2e-3=6.470 / 4e-3=6.683）；GBS=1024 的 lr1e-3 运行中（~31 s/iter）</small></td>
+    <td><span class="badge b-warn">🔄 运行中</span><br><small>7/9 点；GBS=1024 为 <b>~31 s/iter</b>，比 GBS=64 慢得多</small></td>
+    <td><b>≈ 1–2 小时</b><br><small><b>但可能顺延</b>（见右）</small></td>
+    <td><b>今晚 ≈ 23:50</b><br><small>⚠️ GBS=1024 只有 <b>39 步 / 3 个满 log 点</b>（10/20/30）——<br>若噪声压过信号，按任务书防呆条款需<b>加大 token 预算</b>（如 ×128 步 = 537M token），则顺延数小时</small></td>
   </tr>
   <tr>
     <td><b>P-5b</b> 训练量 scaling 曲线（跑到 20B token，必要时延到 40–60B）</td>
