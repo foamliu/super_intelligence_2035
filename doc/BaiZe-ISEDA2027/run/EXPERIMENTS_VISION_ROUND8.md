@@ -1,6 +1,6 @@
 # EXPERIMENTS_VISION_ROUND8.md — 6 架构对比 + ImageNet-1k 指标
 
-> 日期：2026-10-02 · 数据裁定（R7）= **Stanford GPIC `short`** · 训练中（`/tmp/r8.log`）。
+> 日期：2026-10-02 · 数据裁定（R7）= **Stanford GPIC `short`** · **已完成**（`/tmp/r8.log` → `R8 ALL DONE 2026-10-02 04:23:25`）。
 
 ## §0 协议（与 R5 P0 / R7 B_gpic 同口径，只扩架构 + 换指标）
 
@@ -53,19 +53,20 @@
 
 > ⚠️ FastViTHD 首次实现把 37 个 attention 块都放 28×28（token 数 = ViT 的 4×），bs64 单卡 80GB **OOM**（实测 78.9GB）。已改为 FastViT 原生**分层**结构（conv 阶段 28×28 → stride-2 下采样 → attention 阶段 14×14），峰值显存降到 ~28GB、参数量 503→508M，仍在范围内。
 
-## §4 6 架构结果表（**训练中，部分回填 @03:41**）
+## §4 6 架构结果表（**完整回填 @04:23，R8 全结束**）
 
 | 架构 | loss@3k | 训练 img/s | C1 | C2_gap | fused? | IN-1k zs top1 | IN-1k zs top5 | IN-1k lp top1 |
 |:--|--:|--:|--:|--:|:--:|--:|--:|--:|
-| openvision2 | **4.8646** | 3051.8 | **0.2875** | +0.0867 | 否 | ⏳ | ⏳ | ⏳ |
-| mambaeye | 6.2507* | 949.5 | **1.0000** | **0.0000** | ✅熔断@300 | ⏳ | ⏳ | ⏳ |
-| moevie | 5.5580 | 1225.7 | 0.4109 | +0.0518 | 否 | ⏳ | ⏳ | ⏳ |
-| deepencoder_v2 | 6.2513* | 1864.5 | **1.0000** | **0.0000** | ✅熔断@300 | ⏳ | ⏳ | ⏳ |
-| aimv2 | 5.6370 | 3392.5 | 0.3931 | +0.0500 | 否 | ⏳ | ⏳ | ⏳ |
-| fastvithd | ⏳ | ⏳ | | | | ⏳ | ⏳ | ⏳ |
+| **openvision2** | **4.8646** | 3051.8 | **0.2875** | +0.0867 | 否 | **0.0095** | **0.0364** | **0.0114** |
+| mambaeye | 6.2507* | 949.5 | **1.0000** | **0.0000** | ✅熔断@300 | 0.0010 | 0.0050 | 0.0010 |
+| moevie | 5.5580 | 1225.7 | 0.4109 | +0.0518 | 否 | 0.0035 | 0.0153 | 0.0028 |
+| deepencoder_v2 | 6.2513* | 1864.5 | **1.0000** | **0.0000** | ✅熔断@300 | 0.0010 | 0.0050 | 0.0010 |
+| aimv2 | 5.6370 | **3392.5** | 0.3931 | +0.0500 | 否 | 0.0038 | 0.0161 | 0.0025 |
+| fastvithd | 5.6683 | 2097.4 | 0.4494 | +0.0369 | 否 | 0.0039 | 0.0157 | 0.0027 |
 
-> *6.25 ≈ ln(512)=6.238 = InfoNCE「无学习」熵平台，非正常收敛值。⏳ = 训练未到/未评测（IN-1k 评测在 6 架构训练全结束后由 r8_run.sh 末了自动跑）。
-> 🔑 **两个含 SSM 的架构（mambaeye 纯 SSM、deepencoder_v2 Attn+SSM 混合）都在 @300 熔断**（C1=1.0000、loss 卡 6.25 平台），纯 Attention 系（openvision2/moevie/aimv2）健康。
+> *6.25 ≈ ln(512)=6.238 = InfoNCE「无学习」熵平台，非正常收敛值。IN-1k chance = 1/1000 = 0.0010（0.10%）；**坍缩架构 = 精确 chance（0.0010）**，健康架构 2.5–9.5× chance。
+> 🔑 **两个含 SSM 的架构（mambaeye 纯 SSM、deepencoder_v2 Attn+SSM 混合）都在 @300 熔断**（C1=1.0000、loss 卡 6.25 平台、IN-1k=精确 chance），纯 Attention 系 4 架构（openvision2/moevie/aimv2/fastvithd）健康。
+> 🏆 **胜出 = OpenVision2**：loss（4.8646 最低）、C1（0.2875 最分散）、IN-1k zs（0.95%）、IN-1k lp（1.14%）四指标全第一。
 
 ## §7 🔑 六架构结果与「SSM 特异坍缩」发现（2026-10-02 03:41 巡检）
 
@@ -99,6 +100,11 @@
 - `[done] total=655.1s steps=3000 steady_image_s=3392.5 final_loss=5.6370 fused=False`；C2_gap +0.050~+0.118 恒正；loss 6.02→5.64。✅
 - ⚠️ 注：aimv2 训练吞吐 **3392.5 img/s 为 6 架构最快**（openvision2 3051.8 / deepencoder 1864.5 / moevie 1225.7 / mambaeye 949.5），但 loss 5.6370 差于 openvision2 4.8646。
 
+**fastvithd（conv-stem + 分层 conv/attention hybrid）—— 健康（exit 0，不坍缩）：**
+- C1 轨迹（震荡，峰值偏高）：0.228@300→0.272@600→0.299@900→0.572@1200→0.352@1500→0.386@1800→0.363@2100→**0.674@2400**→0.424@2700→0.449@3000。
+- `[done] total=1007.9s steps=3000 steady_image_s=2097.4 final_loss=5.6683 fused=False`；C2_gap +0.093→+0.037 恒正但逐步收窄；loss 5.63→5.67。
+- ⚠️ 注：C1 全程 <0.9 未熔断，但**震荡幅度大**（峰 0.674@2400，与 openvision2 的 0.2875 单峰缓升形成对比）；loss 5.6683 为 4 个健康架构中最差，IN-1k 0.39% 与 aimv2/moevie 同档。conv-stem hybrid（507.77M）在 500–600M 等参下**未带来优势**（不比纯 Attention ViT 好）。
+
 **🔑 坍缩是「SSM 特异」的（本轮最重要的发现，比 03:05 的「架构特异」更精确）：**
 - 同一 recipe（冻结 CLIP-768 文本塔 + InfoNCE + GPIC short + bs64=512 负样本 + lr 3e-3 + seed 1234）下：
   - **含 SSM 的两个架构（mambaeye 纯 SSM、deepencoder_v2 Attn+SSM 混合）都在 @300 坍缩（C1=1.0000、loss=6.25≈ln512）**；
@@ -106,6 +112,39 @@
 - 文本塔 / 数据 / 目标函数 / 随机种子完全相同，唯一变量是 vision 架构 → **坍缩倾向由 SSM 子结构决定**。
 - 对 R4 结论的修正：R4 把坍缩主因归到「随机文本塔」（S5：随机塔 offdiag 0.7258）并判定「修好文本塔即解决」→ R8 显示该判定**不完整**：配了冻结预训练文本塔后，SSM 塔仍坍缩、Attention 塔不坍缩。
 - ⚠️ 边界说明（如实书写，不掩盖）：mambaeye 在 R1（SigLIP + 随机文本塔 + en500k）曾能训练（S3 loss 6.73→4.64），故坍缩**依赖 recipe/目标函数/数据的组合**，未必是 SSM 结构的绝对缺陷；但「当前修复 recipe 下含 SSM 架构坍缩」是确定的实测事实，按任务铁律如实记录、不重试到「看起来好」为止。 |
+
+## §8 最终结论与 6 架构排名（2026-10-02 04:23 R8 全结束）
+
+**训练 + IN-1k 评测全部完成**（`/tmp/r8.log` → `R8 ALL DONE 2026-10-02 04:23:25`）。完整表见 §4。
+
+**胜出架构：OpenVision2（四指标全第一；R5/R7 判胜被 R8 强化确认，AIMv2/FastViTHD 未翻盘）**
+
+| 排名 | 架构 | loss@3k | C1 | IN-1k zs | IN-1k lp | 吞吐 img/s | 判定 |
+|:--|:--|--:|--:|--:|--:|--:|:--|
+| **1** | **openvision2** | **4.8646** | **0.2875** | **0.95%** | **1.14%** | 3051.8 | ✅ 胜出（loss/C1/IN-1k 全第一） |
+| 2 | moevie | 5.5580 | 0.4109 | 0.35% | 0.28% | 1225.7 | ✅ 健康（Attention+MoE-FFN，激活 222M） |
+| 3 | aimv2 | 5.6370 | 0.3931 | 0.38% | 0.25% | **3392.5** | ✅ 健康（ViT-GELU，吞吐最快） |
+| 4 | fastvithd | 5.6683 | 0.4494 | 0.39% | 0.27% | 2097.4 | ✅ 健康（conv-hybrid，C1 震荡偏大） |
+| — | mambaeye | 6.2507* | 1.0000 | 0.10% | 0.10% | 949.5 | ❌ @300 坍缩（纯 SSM） |
+| — | deepencoder_v2 | 6.2513* | 1.0000 | 0.10% | 0.10% | 1864.5 | ❌ @300 坍缩（Attn+SSM 混合） |
+
+**三条结论（可写进论文 finding）**：
+1. **架构有真实差异，胜出者稳定**：修复 recipe 下 4 个健康架构 loss 可分（4.8646~5.6683），新指标 IN-1k 也可分（openvision2 0.95%/1.14% vs 其余 0.35–0.39%/0.25–0.28%），OpenVision2 全指标第一 → **替换** R1/R2 因坍缩失效的「loss 与架构无关」结论。
+2. **坍缩是「SSM 特异」**：含 SSM 子结构的两架构（纯 SSM / Attn+SSM 混合）都在 @300 坍缩（C1=1.0000、loss=6.25≈ln512、IN-1k=精确 chance 0.10%），纯 Attention 系 4 架构（含 MoE-FFN / GELU / conv-hybrid）全不坍缩 → 对 R4「随机文本塔是主因」的修正（详见 §7）。
+3. **IN-1k 替换 R@1 成功**：R@1 在 R2/R3 退化为精确 1/5000 chance、零区分度；IN-1k（frozen trunk zs/lp）有区分度（0.10%~0.95%），可作为 Stage(iii) 主指标。
+
+**官方预训练参考表（R8.4 交付物之一，⚠️ 未跑，如实标注）**：
+- R8.3 矩阵「参考」行（`apple/aimv2-*` / `timm/fastvit_*` 官方权重，只测 IN-1k）**本轮未执行**：官方权重未在本机缓存（`~/.cache/huggingface/hub` 无 aimv2/fastvit），需下载（AIMv2-L ≈ 1.2GB）并让 `r8_eval_in1k.py` 支持 timm/HF 官方模型，估 ~30–45min。
+- 方法（供后续回填）：`apple/aimv2-large-patch14-224`（或 336/448）+ `timm/fastvit_s12/sa24/ma36` → 冻结 trunk → 同一套 IN-1k zs（用各自 text head）与 lp（单线性层 → 1000）。**协议不同（官方预训练 vs 我们从零），务必单独一张表、不并入本表排名。**
+
+## §9 论文回填建议（`tab:visarch` / `tab:visres` / `tab:visobj`；🚫 本任务不改 tex）
+
+- **`tab:visarch`（架构对比）**：整表重写（R1/R2 旧值全系坍缩读数已作废）。建议列：6 架构 × (numel、loss@3k、训练 img/s、C1、IN-1k zs/lp top-1、判定)，用本节 §4/§8 数值；OpenVision2 为胜出。AIMv2/FastViTHD 为「等参 500–600M 放大版」（非官方模型，标注 from-scratch/等参改编），官方权重参考值单独一行或单表、标「协议不同」。
+- **`tab:visres`（分辨率/patch）**：沿用 R5 P1 结论（胜出架构 OpenVision2：224/16 最佳 loss 3.0977/1361.7 img/s；336/14 3.1909；448/14 3.2711）。R2 坍缩读数已作废。
+- **`tab:visobj`（目标函数/数据）**：沿用 R4（SigLIP/InfoNCE A/B + 冻结 CLIP-768 文本塔）+ R7（数据臂 en500k vs GPIC-short vs CC12M，裁定 GPIC short），用本节 IN-1k 作为跨臂可通约主指标。
+- **数据来源段**：正式训练数据 = **Stanford GPIC `short`**（20 tok / 0% 截断 / off-diag 0.245 最分散 / permissive 许可），技术路线依据 R6.1 + R7。en500k（LLaVA imagenet/EN）为对照臂且标「与 IN-1k 同域、in-domain 污染不可比」。
+- **context length**：冻结 `clip-vit-large-patch14-336` text tower（768 维，context 77，max_position_embeddings=77，>77 抛 ValueError），R6.3 裁定保持 77（GPIC short 0% 截断，77 非瓶颈）。
+- **坍缩写法**：把「SSM 特异坍缩」写成 finding（含 SSM 架构在当前对比 recipe 下 @300 坍缩、纯 Attention 系健康），不用「loss 与架构无关」旧表述。
 
 ## §5 代码产物
 

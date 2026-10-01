@@ -1,17 +1,36 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R8_active**（6 架构 × 3000 步 @224/16 bs64 = GPIC `short`，训练中；末了自动跑 ImageNet-1k zero-shot / linear-probe） |
-| WAITING | 1（R8 训练 running：openvision2 ✅ / mambaeye ❌熔断@300 / moevie ✅ / deepencoder_v2 ❌熔断@300 / aimv2 ✅ / fastvithd 跑到~step100 进行中 → IN-1k 评测） |
+| PHASE | **R8_complete**（6 架构 × 3000 步 + IN-1k zs/lp 全结束；胜出=OpenVision2；含 SSM 两架构坍缩） |
+| WAITING | 0（R8 训练 + IN-1k 评测全结束 @04:23；下一步：可选官方权重 IN-1k 参考表 + 汇总 HTML/胜出命令到 EXPERIMENTS_VISION.md 顶部） |
 | ERROR_COUNT | 0 |
-| BUDGET_USED | R2/R3/R4 累计 ~19 GPU·h + R5（P0 1h12m + P1 ~28m）+ R7（~37min）+ R8（5/6 架构训练完成，aimv2 进行中 + fastvithd + IN-1k 待跑） |
-| 更新 | 2026-10-02 03:41（**R8 巡检**：🔑 **含 SSM 的两架构（mambaeye / deepencoder_v2）都 @300 坍缩 C1=1.0000**；纯 Attention 系（openvision2 / moevie / aimv2）健康 → 坍缩是 **SSM 特异**的） |
-| WINNER | **OpenVision2**（R5/R7 判胜；R8 六架构重比，看 AIMv2/FastViTHD 是否翻盘） |
+| BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（6 架构训练 ~69min 串行 ≈ 9.2 GPU·h + IN-1k 评测 ~23min） |
+| 更新 | 2026-10-02 04:45（**R8 完成**：6 架构训练 + IN-1k 评测全结束；OpenVision2 四指标第一；mambaeye/deepencoder_v2 SSM 坍缩；aimv2/fastvithd 未翻盘） |
+| WINNER | **OpenVision2**（R8 六架构重比确认：loss/C1/IN-1k zs/IN-1k lp 全第一） |
+
+## 🏁 R8 完成（2026-10-02 04:23 训练+评测全结束；最后回收）
+
+> `r8_run.sh` 全部跑完：`/tmp/r8.log` → `R8 ALL DONE 2026-10-02 04:23:25`。6 架构训练 + 末了 IN-1k 评测（zero-shot / linear-probe，frozen trunk）全收齐。
+
+- **最终排名（详见 `EXPERIMENTS_VISION_ROUND8.md` §4/§8）**：
+  - **胜出 = OpenVision2**：loss **4.8646**（最低）/ C1 **0.2875**（最分散）/ IN-1k zs **0.95%** / IN-1k lp **1.14%**（均四指标第一）✅
+  - moevie：loss 5.5580 / C1 0.4109 / zs 0.35% / lp 0.28%（健康，Attention+MoE-FFN）
+  - aimv2：loss 5.6370 / C1 0.3931 / **3392.5 img/s 吞吐最快** / zs 0.38% / lp 0.25%（健康，ViT-GELU）
+  - fastvithd：loss 5.6683 / C1 0.4494（震荡峰 0.674@2400）/ zs 0.39% / lp 0.27%（健康，conv-hybrid，未带来优势）
+  - mambaeye（纯 SSM）、deepencoder_v2（Attn+SSM）：**@300 坍缩**（C1=1.0000、loss 6.25≈ln512、IN-1k=精确 chance 0.10%）❌
+- **三条结论**：① 架构有真实差异，OpenVision2 稳胜（替换 R1/R2 失效的「loss 与架构无关」）；② 坍缩是 **SSM 特异**（含 SSM 子结构即坍缩，纯 Attention 系 4 架构全健康）；③ IN-1k 成功替换退化的 R@1（有区分度 0.10%~0.95%）。
+- **AIMv2 / FastViTHD 未翻盘**：二者等参 500–600M from-scratch 均健康但不优于纯 Attention ViT 基线（aimv2 吞吐最快但 loss 差、fastvithd loss 最差）。
+- **本轮动作（纯回收+回填，训练/评测已由 r8_run.sh 自动完成）**：① 回填 `EXPERIMENTS_VISION_ROUND8.md` §4 全表 + fastvithd 轨迹 + 新增 §8 排名结论 + §9 论文回填建议；② `MEMORY_VISION.md` WAITING 1→0、PHASE→`R8_complete`、状态头/BUDGET/更新；③ 本当日日志；④ git commit/push（只提交本任务文件）。
+- 🔵 **未做（如实标注，见报告 §8）**：R8.4 的「官方预训练参考表」（`apple/aimv2-*`/`timm/fastvit_*` 官方权重只测 IN-1k）**未跑**——官方权重未缓存，需下载 ~1.2GB + 适配 `r8_eval_in1k.py`，估 30–45min。已给方法，作后续可选回填。
+- **下一步（下次唤醒，WAITING=0）**：①（可选）补官方权重 IN-1k 参考表；② 汇总胜出架构 + 完整可复现命令到 `EXPERIMENTS_VISION.md` 顶部；③ 重生成最终 HTML 报告（`BAIZE_VISION_ENCODER_RESULT.html` 或 ROUND8 版）；④ 整体验收（三表回填建议已给，tex 由外部统一回填）。
+- 未改 `*.tex`；未碰 pretrain/data/ops 文件。
+
+## 🚀 R8 启动（第八轮：6 架构 + ImageNet-1k 指标，2026-10-02）
 
 ## 🚀 R8 启动（第八轮：6 架构 + ImageNet-1k 指标，2026-10-02）
 
