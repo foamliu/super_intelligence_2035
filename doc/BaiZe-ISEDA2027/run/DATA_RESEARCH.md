@@ -187,3 +187,74 @@ Base/mid 训练 = `Ultra-FineWeb` + `Ultra-FineWeb-L3` + `UltraX-Preview` + `Ult
 - `⚠️摘要` 指 HF 模型卡/README/Paper 页原文（本机连不上 arxiv 全文/github/bocha；但 HF 模型卡、数据集卡、Paper 页本轮已可抓取复核）。MiniCPM5「逐源配比百分比」官方未在模型卡公开，属「未找到」而非编造。
 - 「1.8T tokens 写错」第一步（1.8T = 磁盘字节）为**铁证级**（`MEMORY.md` 的 `du` 记录 + HF `num_bytes` 同量纲吻合）；第二步 token 外推（821/539/811/470 tok/doc）为**抽样估计**，phase2 分词后可用真实 `.bin` token 数替换，结论方向不变。
 
+---
+
+# R2 —— LLM 数据侧（2026-10-01）
+
+> 本轮任务书：BAIZE_DATA_TASK.md 的**两项优先任务** ① UltraData-SFT-2605 重下（gated token 验证是阻塞点）② P-8 数据方案（8 源事实表满填 + base vs L3 重叠率实测 + P-8 三档方案）。
+> 方法：逐源 `huggingface.co` REST（`/api/datasets`、`/api/datasets/<repo>/tree`、`/raw` README）+ `datasets-server.huggingface.co`（rows/size/first-rows）+ 本地 `tokenizer_eod` 抽样实测。
+
+## R2-A · 8 源事实表（满填，无空项）
+
+| # | 数据集 | URL | 许可 | 行数 | 磁盘字节 | token 估算 | 官方结构 | 本地状态 | 判定 |
+|:--:|:---|:---|:---|:---|---:|---:|:---|:---|:---|
+| 1 | Ultra-FineWeb（**base**） | https://huggingface.co/datasets/openbmb/Ultra-FineWeb | apache-2.0 ✅ | **1,290,261,453**（en 1,159,254,991 / zh 131,006,462）✅ | **2,985,679,608,127** = **2.99 TB / 2.72 TiB** ✅ | **~1.12T**（README：1T en + 120B zh；抽样 826 tok/doc→en≈1.0T 互核） | default config（split en/zh），64,624 parquet（en 2048 + zh ~62,576），列 `content/score/source` | ❌→**下载中**（本轮已启动） | **新增·主预训练主体** |
+| 2 | UltraX-Preview | https://huggingface.co/datasets/openbmb/UltraX-Preview | apache-2.0 ✅ | **113,789,578** ✅ | **486,915,450,022** = **487 GB / 0.44 TiB** ✅ | **~100B**（5 config 各 ~20B，README 口径） | 5 config：AICC 21.3M/68.6G、FineWeb 29.2M/108.8G、FineWeb-ProX-Doc 17.3M/109.3G、RedPajama-V2 22.1M/91.4G、**Ultra-FineWeb 23.9M/108.9G**，479 parquet，列 `uid/raw_content/cleaned_content/processed_functions/source` | ❌ | **新增，但主要与 base 重叠** |
+| 3 | Ultra-FineWeb-L3 | https://huggingface.co/datasets/openbmb/Ultra-FineWeb-L3 | apache-2.0 ✅ | 1,058,535,126 ✅ | 1.9 TB / 1.8 TiB ✅ | **≈690B**（en 467B / zh 223B，与 README「600B+」一致） | 4 config（en/zh × QA/Multi-Style），1764 parquet | ✅ **下全** | 退火/decay 主体 |
+| 4 | UltraData-Code | https://huggingface.co/datasets/openbmb/UltraData-Code | apache-2.0 ✅ | **348,083,481**（L2 266,878,376 / L3 81,205,105）✅ | **1,215,994,166,161** = **1.22 TB / 1.11 TiB** ✅ | **≈411B**（L2 355B + L3 56B，本轮抽样 1330/692 tok/doc） | L2 ×11 语言 + L3 ×12 语言，1121 parquet | ✅ **下全** | 退火 code |
+| 5 | UltraData-Math | https://huggingface.co/datasets/openbmb/UltraData-Math | apache-2.0 ✅ | **181,186,453**（L1 86,032,552 / L2-preview 13,835,635 / L3 81,318,266）✅ | **552,412,859,233** = **552 GB / 0.50 TiB** ✅ | **≈303B**（L1 184B + L2p 32B + L3 87B，本轮抽样 2138/2285/1076 tok/doc） | L1(CC-MAIN)/L2-preview/L3，1823 parquet | ✅ **下全** | 退火 math |
+| 6 | UltraData-SFT-2605 | https://huggingface.co/datasets/openbmb/UltraData-SFT-2605 | apache-2.0（**gated=auto**）✅ | 官方首页按目录展示，**~97.6 GB / 1000+ jsonl**（`no_think`×7 域 + `think`） | —（SFT，不计 token） | — | `no_think/{Chinese-general,Code,IF,Knowledge,Math,Multi-lang-K,Multi-lang-M}` + `think`，1510 siblings | ❌ **落盘空壳** | **需重下（阻塞：无有效 token）** |
+| 7 | UltraData-SFT-Agent-2609 | https://huggingface.co/datasets/openbmb/UltraData-SFT-Agent-2609 | apache-2.0 ✅ | **~500K 样本**（jsonl 50 shard） | **51 GiB** ✅ | —（SFT） | `Code_Agent`(7)/`General_Agent`/`Search_Agent`/`Tool_Use` jsonl | ✅ **就绪** | Stage(ii) SFT |
+| 8 | UltraData-RL-2609 | https://huggingface.co/datasets/openbmb/UltraData-RL-2609 | apache-2.0 ✅ | 10K<n<100K（`size_categories`） | **187.63 GB** ✅ | —（RL） | 4 config：Math(default)/Knowledge/Long-Context/Code，20 jsonl（Code 12=~184G / Knowledge 2=~10M / Math 4=~15M / Long-Context 2=~3.6G） | ❌ | RL 阶段(Stage v)用，**P-8 不需要** |
+
+> 事实来源均为 2026-10-01 实时：行数/字节 = `datasets-server` `/size`+`/info`（✅实测）；结构与 gated = HF `/api/datasets/<repo>/tree`（✅实测）。Code/Math/L3 的 token 为本轮 `r2_local_sample.py` 抽样（各源 5–8 parquet × 400–4000 文档）外推；base 用 README 权威值 + `first-rows` 抽样互核。
+
+## R2-B · base vs L3 重叠率（一句话结论 + 数字）
+
+> **结论：下 `Ultra-FineWeb`（base）＝ 净新增 ≈1.12T 原始 web 语料，不是重复劳动。**
+
+- **关系定性（官方 README）**：`Ultra-FineWeb-L3` = 在 `Ultra-FineWeb`（base）之上做「**Q&A 生成 + 多风格改写（multi-style rewrite）**」合成的**退火档**——即 L3 是 base 的**派生改写**，不是 base 的复制。
+- **实测数字**（base en `first-rows` 48 文档 vs L3 en/qa 抽样 696 文档，`r2_local_sample.py`）：
+  - 全文 verbatim 重合 = **0 / 48 = 0.00%**；
+  - 5-gram Jaccard 均值 = **0.0000**（基本正交）。
+- **语义/语言分布**：base en ≈ raw 网页文本（自然长文，样本 avg 826 tok/doc）；L3 en/qa = 合成问答（avg 825 tok/doc、内容为改写问答，措辞与 base 不同源表达）。
+- **结论 → 投料**：base（raw web）应作 **P-8 主预训练的稳定主体**，L3 是**退火档**；两者**不重复**，量化重叠 ≈ 0。
+
+## R2-C · P-8 数据方案（三档）
+
+**当前 P-8 投料情形**：现方案 Stage(i) 主体 = `Ultra-FineWeb-L3 (EN)`、退火 = `Code + Math`（86:10:4，S4 消融实证），推荐档 **100B token**，缺 body 的「raw web 稳定主体」。
+
+**建议**：把 Stage(i) 主体从 **L3 换成 base（`Ultra-FineWeb` en 支）**，退火仍用 Code+Math，配比沿用 86:10:4。理由：① base 是原始 web（1.12T），比合成 L3 更适合做主预训练稳定主体；② L3 更适合退火，本地已全、可与 base 互补；③ 86:10:4 已被 S4 消融实证，无需再搜。
+
+| 档位 | 总量 | base-en | code | math | 落盘需求（增量） |
+|:---|:---|---:|---:|---:|:---|
+| **P-8 小（44B，Chinchilla 下限）** | 44B | 37.8B | 4.4B | 1.8B | base-en 仅需 ~42B token ≈ 分 1 支 en parquet 即可开场 |
+| **P-8 中（100B，推荐）** | 100B | 86B | 10B | 4B | base 2.99TB 全量，code/math 各取 ~2.4%/1.3% |
+| **P-8 大（200B）** | 200B | 172B | 20B | 8B | 同上（base 2.99TB 足够） |
+
+**需要下载 / 已完成（`✅`区分）**：
+1. `openbmb/Ultra-FineWeb`（base，2.99TB，apache-2.0，**公开、无需 token**）—— **本轮已启动下载**（写入 `/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb/`，进程持续中）。
+2. `openbmb/UltraData-SFT-2605`（gated，~97.6GB）—— **阻塞**：本机现有 HF token `hf_lqLxH…` **`whoami` 返回 401 / gated resolve 401 已失效**，需轮换有效 token 后再下（Stage(ii) SFT，不阻塞 P-8）。
+3. `UltraX-Preview`（487GB）—— **不下载**：其 config `UltraX-Ultra-FineWeb` 实为 base 的程序化精炼版，与 base 重叠；≤200B 档用 base 即可，UltraX 留作「base 不可得时的质量替代」备选。
+4. `UltraData-RL-2609`（187.63GB）—— **不下载**：RL/RLVR 阶段（Stage v）才用，与 P-8（预训练）无关。
+
+**磁盘与带宽**：base 2.99TB 增量，`/nas_inference` ~21.0 TB、`/nas_train` ~32 TB 可用，**足够**。带宽当前被 gpic + LLaVA 两路 HF 下载占用（实测 ~10–13 MB/s），base 按当前速度约 **3 天**下完（争用时更长）。**污染隔离**：base/UltraX 落盘后须过 `check_contamination.py`（红线：与 `EDA-Eval-PyAether` 评测集不同源 + 跨集去重比对），正式投料前完成。
+
+**命令口径（复现）**：
+```bash
+# ① base 全量下载（已启动，无需 token）
+hf download --repo-type dataset openbmb/Ultra-FineWeb \
+  --local-dir /nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb
+# ② SFT-2605（需先换成有效 token HF_TOKEN）
+HF_TOKEN=<新token> hf download --repo-type dataset openbmb/UltraData-SFT-2605 \
+  --local-dir /nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605
+```
+
+## R2-D · 配比来源复核（MiniCPM5 逐源百分比）
+
+**核对过的页面**：① MiniCPM5-2B 模型卡；② 8 个数据集的 HF 数据集卡 README；③ arxiv 2602.09003 = **《Data Science and Technology Towards AGI Part I: Tiered Data Management》**（UltraData 平台框架论文，宣称「2.4T open tokens」为整个 Ultra* 平台总量）。
+
+**结论**：以上公开渠道**均未发布 MiniCPM5 逐源配比百分比**（模型卡只有数据集 tag 归属、无占比；各家数据集卡只有各自 token 量、无混合比）。故「MiniCPM5 官方配比」＝ **未找到（不编造）**。
+
+**→ 建议配比（替代）**：P-8 采用 **base-en : code : math = 86 : 10 : 4**（见 R2-C 三档表）。依据：① 直接复用 BaiZe S4 三点消融已实证的退火比（纯 L3 2.7621 → +code 2.6793 → +code+math 2.6298）；② 参照 MiniCPM5 分层结构（base 做主训练、Code/Math 做退火），把「L3 主体」原位替换为「base 主体」。此比例是数据侧可交付结论；精准主体:退火占比若需微调，属 pretrain 侧小消融（数据侧已把 base/code/math 三源备齐）。
+

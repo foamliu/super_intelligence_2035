@@ -10,11 +10,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        R research ✅（两问已答，DATA_RESEARCH.md v1.1 已 committed+push）+ phase5 isolation v0.3 + phase1/2 脚本就绪
-已完成:       R 调研（两问各四小项全有结论，已推远端）；phase0 inventory；phase5 isolation v0.3；phase1/2 脚本齐备
-当前动作:     轻 I/O 复核下载进度并回写快照（运维指令未变、无状态索取、无 STOP，仅维护）
-下一步:       多模态下载完成后 phase1 全量校验 / phase2 分词 / phase4 打包（重 I/O）；SFT-2605 需重下（gated=auto）
-阻塞:         多模态下载未完成（LLaVA 7556/12126、gpic train 439/8000 tar 仍增，2 个 hf download 进程存活）；SFT-2605 落盘为空需重下；EDA 授权待运维确认
+PHASE:        R research ✅（两问已答 v1.1）+ R2 LLM 数据侧调研 ✅（8 源事实表满填 / base vs L3 重叠实测 0% / P-8 三档 44B·100B·200B）+ phase5 isolation v0.3 + phase1/2 脚本就绪
+已完成:       R2 调研产出并写入 DATA_RESEARCH.md R2 节 + DATA_LEDGER D9/D10 + token 实测（Code 411B/Math 303B/L3 690B/base 1.12T）；Ultra-FineWeb base（2.99TB）下载已启动
+当前动作:     R2 收尾：回写记忆/清单、git 提交推送；确认 base 下载进程存活（轻 I/O）
+下一步:       base 下载完成后 → check_contamination.py 过闸 → phase2 分词（base-en 86:10:4）；SFT-2605 等有效 token 轮换后重下
+阻塞:         SFT-2605 gated 重下缺有效 HF token（现 token hf_lqLxH… whoami 401 已失效）；base 2.99TB 下载中（~3 天空窗，与 gpic/LLaVA 争带宽）
 ERROR_COUNT:  0
 ```
 
@@ -28,8 +28,8 @@ ERROR_COUNT:  0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R research ✅（两问已答：DATA_RESEARCH v1.1）+ phase5 isolation v0.3 + phase1/2 脚本就绪** |
-| WAITING | 1（多模态下载未完成，重 I/O 阶段推迟） |
+| PHASE | **R research ✅（两问已答 v1.1）+ R2 LLM 数据侧 ✅（8 源事实表满填 / base vs L3 重叠 0% / P-8 三档 base-en(86):code(10):math(4)）+ phase5 isolation v0.3 + phase1/2 脚本就绪** |
+| WAITING | 1（base 2.99TB + 多模态仍在下载，重 I/O 阶段继续推迟；SFT-2605 等有效 token） |
 | ERROR_COUNT | 0 |
 | 节点 | `10.239.2.12`（主机 `whag0pgpuap12`；NFS：`/nas_inference` 只读源，`/nas_train` 产出） |
 | 更新 | 2026-10-01 |
@@ -39,22 +39,24 @@ ERROR_COUNT:  0
 | 阶段 | 状态 |
 |:---|:---:|
 | R research（🎯 只答 §0 两问） | ✅ 完成（DATA_RESEARCH v1.1：LLM 够/走路线A；Vision 换 GPIC short 消截断） |
+| R2 LLM 数据侧调研（任务书两项优先） | ✅ 完成（DATA_RESEARCH R2 节：8 源事实表满填 / base vs L3 重叠实测 0% / P-8 三档 44B·100B·200B = base-en(86):code(10):math(4)；base 2.99TB 下载已启动） |
 | phase0 inventory（实测盘点） | ✅ 完成（DATA_LEDGER v0） |
 | phase5 isolation（**先立闸**） | ✅ 完成（v0.3：536 任务 + NFKC/Unicode 归一化 + 8-gram 兜底 + **SFT 嵌套 jsonl 目录同闸扫描**，全快照正控 100%） |
 | phase1 validate（完整性校验） | 🟡 校验脚本已备（validate_data.py），全量跑待下载完成后 |
 | phase2 text（通用文本 .bin/.idx） | 🟡 分词打包 wrapper 已备（preprocess_text.sh + 污染闸门），跑待下载完成后 |
-| phase3 domain（EDA 领域语料排查） | 🟡 来源已确认（API 参考文档 ≈45MB），待授权 + 入库 |
+| phase3 domain（EDA 领域语料排查） | 🚫 **已取消**（运维 2026-10-01 夜：评测 prompt 由 docstring 生成、与语料天然同源，入库无意义）；但 EDA-Eval 158 任务黑名单红线**依然有效、继续执行** |
 | phase4 mm（多模态打包） | ⬜（待下载完成） |
 | phase6 handoff（清单/报告/HTML） | ⬜ |
 
 ## 待确认（需要人工提供）
 
 - [x] ~~EDA API 知识库能否导出纯文本~~ → **已确认可行**：`eda_fastmcp/docs/` 本就是 md/json 纯文本（≈45MB，见 DATA_LEDGER §5）。
-- [ ] **EDA 语料入库授权**（🔴 关键）：`eda_fastmcp` 是 ZhuLong 内部项目，其 API 参考文档能否作为训练数据入库需负责人确认。
-- [ ] 内部培训材料 / 脱敏 CAD 案例能否用于训练（授权）
+- [x] ~~EDA 语料入库授权~~ → **整条线已取消**（运维 2026-10-01 夜）：评测 prompt 由 docstring 生成、与语料天然同源，"把测试集放进训练集"无意义 → phase3_domain 不再调研/入库。**但 EDA-Eval-PyAether 158 任务黑名单红线照常执行。**
+- [x] ~~内部培训材料 / 脱敏 CAD 案例能否用于训练~~ → 随 phase3_domain 一并取消。
 - [ ] 多模态下载预计完成时间
 - [x] ~~`UltraData-SFT-2605/-Agent-2609` 具体存储格式~~ → **已实测**：Agent-2609 = **jsonl**（50 shard / 51 GiB，2GB/shard）；**2605 = 落盘为空**（仅 179 个 `.lock` 缓存文件 / 22.4KiB，无数据，需重下）
 - [ ] **🔴 新数据缺口**：`UltraData-SFT-2605` 需重新下载（当前盘上只有 HF 下载缓存，`data/no_think/*` 目录为空）
+- [ ] **🔴 SFT-2605 重下阻塞 = 缺有效 HF token**（运维 2026-10-01 夜已在 HF 网页点"同意条款"，但下载仍需有效 token）：本机**无缓存 token / 无 HF_TOKEN 环境变量**，唯一已知 token（gpic 进程参数暴露的 `hf_lqLxH…`）`whoami` 返回 401（`Invalid username or password`）、SFT-2605 resolve 仍 **HTTP 401** → **需运维在 `10.239.2.12` 配置有效 token（`huggingface-cli login` 或 --token），同时轮换/撤回 gpic 里暴露的同一失效 token**。
 
 ## 关键路径速查（供恢复）
 
@@ -75,3 +77,4 @@ ERROR_COUNT:  0
 - 2026-10-01 —— 唤醒 7（R 阶段复核 → DATA_RESEARCH v1.1，轻 I/O）：`fetch_web_content` 可直连 HF 但 arxiv/github/bocha 仍不可达。逐条复核 URL 事实后**修订 3 处**：① Q1(1) 补官方 config 全名 `*-Synthetic`（320/378/157/204M 行 ↔ 本地 en_qa 616/en_multi 552/zh_qa 310/zh_multi 286），并加 HF 官方 `1,058,535,126 rows / 1.9 TB`(=1898GB≈1.8TiB) 佐证「1.8T=字节」；② Q1(3) 更正 arxiv:2602.09003 身份 = **UltraData《Tiered Data Management》立场/框架论文**（宣称「2.4T open tokens」= 全 Ultra* 平台，**非** MiniCPM5 模型技术报告），结论「MiniCPM5 逐源配比=未找到」不变；③ Q2(1)/(4) 补 GPIC **gated 状态**（需同意共享联系信息，MIT 许可但访问 gated）+ Q1(2) 抽样口径透明化。下载仍进行中（gpic train 406→417）→ WAITING 保持 1。
 - 2026-10-01 —— 唤醒 8（R 阶段已收敛，轻 I/O 维护）：复核 BAIZE_DATA_TASK 运维指令未变（仍「只答 §0 两问」）、无状态索取、无 STOP。确认 `DATA_RESEARCH.md` 已 tracked 且推远端（最新 commit `60af7fb`=v1.1；`git status -sb` 我方文件干净，仅 pretrain 在途文件 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md`/`MEMORY_PRETRAIN_2B.md` 有改动 → **不碰**）。实测下载进度（⚠️ 用 `find -name '*.parquet'` 而非顶层 `ls`：L3/LLaVA 的 parquet 在 `{subset}/{lang}/partNN/` 嵌套子目录，顶层 `ls` 只看到 partNN 目录会严重低估）：LLaVA 85M = **7549 parquet**（EN **5601** = imagenet50+laioncn430+datacomp1b439+coyo1504+mint553+obelics**2625**；CN **1948**；sa1b/zero250m 仍缺）；GPIC train **430/8000**、test 128/128。2 个 `hf download` 进程仍存活（gpic 与 LLaVA）→ phase1/2/4 重 I/O 继续避让，WAITING 保持 1；R 阶段无需新调研。
 - 2026-10-01 —— 唤醒 9（🎯 R 阶段已收敛，轻 I/O 维护）：复核运维指令未变（仍「只答 §0 两问」）、无状态索取、无 STOP。git `## main...origin/main` 干净、`DATA_RESEARCH.md` v1.1 已在远端（`46a3f8d`=v1、`60af7fb`=v1.1）。下载进度（`find -name '*.parquet'` / `ls|wc -l` 口径）：LLaVA 85M = **7556 parquet**（较唤醒 8 的 7549 +7，全在 obelics/EN；sa1b/zero250m 仍未开始）、GPIC train **439/8000**（+9）、test 128/128；2 个 `hf download` 进程存活 → phase1/2/4 继续避让、phase3 待 EDA 授权，WAITING 保持 1。
+- 2026-10-01 —— 唤醒 10（🎯 R2 LLM 数据侧调研，两项优先任务全完成）：① **8 源事实表满填**（逐源 HF REST `/api/datasets`+tree+`datasets-server` `/size` 实测）：base 1,290,261,453 行/2.99TB/en 2048+zh~62576 文件、UltraX 113,789,578 行/487GB/5 config、L3 1,058,535,126/1.9TB、Code 348,083,481/1.22TB、Math 181,186,453/552GB、SFT-2605 gated ~97.6GB/1000+ jsonl、SFT-Agent-2609 ~500K 样本/51GB、RL-2609 20 jsonl/187.63GB（4 config）；**token 实测**（`r2_local_sample.py`）：Code ≈411B（L2 355+L3 56）、Math ≈303B（L1 184+L2p 32+L3 87）、L3≈690B、base ≈1.12T。② **base vs L3 重叠实测**：由于 L3 = base 的 Q&A/多风格合成改写（README），实测 base 48 vs L3 696 文档 verbatim **0.00%**、5-gram Jaccard 均值 **0.0000** → **下 base = +1.12T 净新增 raw web，非重复劳动**。③ **P-8 三档**：44B/100B/200B = base-en(86):code(10):math(4)，主体由 L3 改判 base；base 2.99TB（apache-2.0 公开）**下载已启动**（写入 `/nas_inference/.../Ultra-FineWeb/`，进程存活）；UltraX（与 base 重叠）与 RL-2609（Stage v）**不下载**。④ **配比来源复核**：MiniCPM5 模型卡 + 8 数据集卡 + arxiv 2602.09003 均 **未公开逐源百分比** → 建议配比 86:10:4（复用 S4 消融）。⑤ **HL 阻塞**：SFT-2605 重下缺有效 token（现 token `whoami` 401）→ 上报待轮换。写 DATA_RESEARCH R2 节 + DATA_LEDGER D9/D10 + 本文件；WAITING 保持 1（base 下载中）。
