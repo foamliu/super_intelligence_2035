@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Stage(iii) 视觉编码器 · Round 5 架构/分辨率对比（修复 recipe）</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1a7f37 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:24px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.94; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.85; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--ok); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--ok); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#e9f5ec; color:#0b3d6e; font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  td.ok { background:#dafbe1; font-weight:700; }
+  td.bad { background:#ffebe9; font-weight:700; }
+  td.win { background:#dafbe1; font-weight:700; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .warncard { background:#fff; border:1px solid var(--border); border-left:5px solid var(--warn); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe Stage(iii) 视觉编码器 · Round 5 架构/分辨率对比（修复 recipe）</h1>
+  <div class="sub">用 R4 验证过的修复配方（冻结 CLIP 文本塔 768 + InfoNCE + head→768）重跑架构/分辨率对比，为 <code>tab:visarch</code>/<code>tab:visres</code> 取有效读数</div>
+  <div class="meta">
+    <span>📅 完成：2026-10-02</span>
+    <span>🖥️ GPU 10.239.2.12（8×H100, TP1/DP8）</span>
+    <span>📦 数据：en500k（LLaVA imagenet/EN 500K 对，webdataset）</span>
+    <span>🧪 判据 C1–C4（沿用 R4.1）</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <h3 style="margin-top:0;">🎯 R5 一句话结论</h3>
+  <p><b>在修复配方下，坍缩从「所有架构都坍缩」变成「与架构相关」：<br>
+  纯 Attention 的 <code>OpenVision2</code> 胜出（唯一不坍缩且最快）；<br>
+  含 SSM(Mamba) 块的 <code>MambaEye</code>/<code>DeepEncoderV2</code> 仍在 step300 精确坍缩（C1=1.0000）；<br>
+  分辨率方面，提高分辨率（更多 patch）在短地平线不再带来 loss 收益、且吞吐单调下降，锚点 224/16 最优。</b></p>
+  <ul>
+    <li>🔑 <b>架构层发现（R5 最有价值）</b>：坍缩不是纯 recipe 现象 —— 即便用 R4 验证过的固定 recipe，SSM 视觉塔仍 step300 内坍缩，Attention / Attention+MoE 不坍缩。</li>
+    <li>🔑 <b>P0 胜出 = OpenVision2</b>（505.2M）：final_loss 4.549 最低、训练 2419.8 img/s 最快、C2_gap +0.0818 最强、C1 0.301 不坍缩。</li>
+    <li>🔑 <b>P1 分辨率（224/16 最优）</b>：loss 3.0977 / 3.1909 / 3.2711；训练 1361.7 / 1264.1 / 764.7 img/s —— res/token ↑ 单调变差。</li>
+  </ul>
+</div>
+
+<h2 class="sec"><span class="no">1</span>固定 recipe（R4 已验证，R5 不改动）</h2>
+<table>
+  <thead><tr><th>项</th><th>取值</th></tr></thead>
+  <tbody>
+    <tr><td>文本塔</td><td>冻结 <code>openai/clip-vit-large-patch14-336</code> text tower（768 维、全参冻结、local_files_only）</td></tr>
+    <tr><td>目标函数</td><td><code>open_clip.loss.ClipLoss</code>（CLIP InfoNCE，local_loss=False，只学 logit_scale/温度，无 logit_bias）</td></tr>
+    <tr><td>vision 读出头</td><td>embed_dim → 768（对齐 CLIP 文本维）</td></tr>
+    <tr><td>训练</td><td>lr 3e-3、warmup 20 步、constant 其后、AdamW(0.9,0.95)、bf16、seed 1234</td></tr>
+    <tr><td>数据</td><td>en500k（LLaVA recaption，作对照臂；正式训练切 GPIC short 由 R6 裁定）</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec"><span class="no">2</span>P0 架构对比（4 架构 × 3000 步 @224/16，bs64=512 负样本，batch 匹配）</h2>
+<table>
+  <thead><tr><th>架构</th><th>参数量(总/激活)</th><th>final_loss</th><th>loss@1k/2k/3k</th><th>训练img/s</th><th>C1@终</th><th>C2_gap@终</th><th>判定</th></tr></thead>
+  <tbody>
+    <tr><td class="win"><b>OpenVision2</b>（纯 Attention）</td><td>505.2M / 505.2M</td><td class="win">4.5490</td><td>4.5385 / 4.6585 / 4.7695</td><td class="win">2419.8</td><td class="win">0.3008</td><td class="win">+0.0818</td><td><b>✅ 全过（胜出）</b></td></tr>
+    <tr><td>MoE-ViE（稀疏 MoE）</td><td>505.5M / 222.2M</td><td>5.7800</td><td>5.3322 / 5.5712 / 5.8605</td><td>1264.5</td><td>0.3202</td><td>+0.0466</td><td>✅ 全过（弱于 OV2）</td></tr>
+    <tr><td>DeepEncoderV2（Attn+SSM 混合）</td><td>517.2M / 517.2M</td><td class="bad">6.2518</td><td>—（step300 熔断）</td><td>1813.1</td><td class="bad">1.0000</td><td class="bad">−0.0000</td><td>❌ C1 坍缩 + C2 无间隙</td></tr>
+    <tr><td>MambaEye（纯 SSM）</td><td>535.2M / 535.2M</td><td class="bad">6.2526</td><td>—（step300 熔断）</td><td>918.4</td><td class="bad">1.0000</td><td class="bad">−0.0000</td><td>❌ C1 + C2 + C4 FAIL</td></tr>
+  </tbody>
+</table>
+<div class="warncard">
+  <p><b>🔴 核心发现</b>：R4 曾把坍缩主因归为「随机文本塔 + SigLIP」这一 recipe 层问题。R5 首次全架构放量揭示——即便换成 R4 验证过的固定 recipe，两个含 Mamba(SSM) 块的架构仍 <b>step300 崩掉</b>：C1=1.0000（128 张图特征两两余弦=1，完全坍缩）、C2_gap≈0（MambaEye 额外 C4=FAIL）。<b>坍缩是架构相关的</b>——可发表的正结论。</p>
+</div>
+<p>推理 ms/img（batch=1，架构固有）：OpenVision2 <b>6.51ms</b> / DeepEncoderV2 17.76ms / MambaEye 31.6ms / MoE-ViE 141.7ms。</p>
+
+<h2 class="sec"><span class="no">3</span>P1 分辨率对比（胜出架构 OpenVision2 × {224/16, 336/14, 448/14}，3000 步，bs16=128 负样本，batch 匹配）</h2>
+<table>
+  <thead><tr><th>分辨率/patch</th><th>token 数</th><th>final_loss</th><th>训练img/s</th><th>C1@终</th><th>C2_gap@终</th><th>C4</th><th>判定</th></tr></thead>
+  <tbody>
+    <tr><td class="win"><b>224/16</b></td><td>196</td><td class="win">3.0977</td><td class="win">1361.7</td><td>0.3078</td><td>+0.0906</td><td>OK</td><td><b>✅ 最优</b></td></tr>
+    <tr><td>336/14</td><td>576</td><td>3.1909</td><td>1264.1</td><td>0.3236</td><td>+0.0845</td><td>OK</td><td>✅ 全过</td></tr>
+    <tr><td>448/14</td><td>1024</td><td>3.2711</td><td>764.7</td><td>0.3037</td><td>+0.0805</td><td>OK</td><td>✅ 全过</td></tr>
+  </tbody>
+</table>
+<div class="card">
+  <h3 style="margin-top:0;">🔑 P1 结论（分辨率）</h3>
+  <ul>
+    <li>三组<b>全部过 C1–C4、无一熔断</b>（C1 全程 0.15–0.38，C2_gap 全程 +0.08~+0.12，C4 loss 持续下降）。</li>
+    <li><b>单调趋势</b>：res/token ↑ → loss ↑ 且训练 img/s ↓。224/16（196 tok）最优；448/14（1024 tok）最差（吞吐仅为 224/16 的 56%）。</li>
+    <li>即：<b>短地平线（3000 步）下提高分辨率不给 loss 带来收益</b>。锚点 224/16 胜出。</li>
+    <li>⚠️ 336/14 与 448/14 的 pos-emb 为插值/重建，从零模型短地平线内可能未充分吃到高 token 红利；长地平线是否翻转由 P2（已裁剪）交代不确定性。</li>
+  </ul>
+</div>
+
+<h3>C1–C4 轨迹（每 300 步；C4 全程 OK，无熔断）</h3>
+<table>
+  <thead><tr><th>step</th><th>C1 (224/16)</th><th>C1 (336/14)</th><th>C1 (448/14)</th><th>C2_gap (224/16)</th><th>C2_gap (336/14)</th><th>C2_gap (448/14)</th></tr></thead>
+  <tbody>
+    <tr><td>300</td><td>0.1468</td><td>0.1636</td><td>0.2399</td><td>+0.1087</td><td>+0.1079</td><td>+0.1032</td></tr>
+    <tr><td>600</td><td>0.1977</td><td>0.2258</td><td>0.2917</td><td>+0.1208</td><td>+0.1002</td><td>+0.0932</td></tr>
+    <tr><td>900</td><td>0.1934</td><td>0.2633</td><td>0.2417</td><td>+0.1077</td><td>+0.0903</td><td>+0.0938</td></tr>
+    <tr><td>1200</td><td>0.3404</td><td>0.2676</td><td>0.2923</td><td>+0.0924</td><td>+0.0897</td><td>+0.0948</td></tr>
+    <tr><td>1500</td><td>0.2929</td><td>0.2861</td><td>0.2737</td><td>+0.0854</td><td>+0.0867</td><td>+0.0853</td></tr>
+    <tr><td>1800</td><td>0.3395</td><td>0.2857</td><td>0.2782</td><td>+0.0920</td><td>+0.0851</td><td>+0.0869</td></tr>
+    <tr><td>2100</td><td>0.2904</td><td>0.2823</td><td>0.3372</td><td>+0.0879</td><td>+0.0865</td><td>+0.0824</td></tr>
+    <tr><td>2400</td><td>0.2822</td><td>0.3051</td><td>0.3070</td><td>+0.0899</td><td>+0.0836</td><td>+0.0786</td></tr>
+    <tr><td>2700</td><td>0.2776</td><td>0.3796</td><td>0.2897</td><td>+0.0948</td><td>+0.0775</td><td>+0.0807</td></tr>
+    <tr><td>3000</td><td>0.3078</td><td>0.3236</td><td>0.3037</td><td>+0.0906</td><td>+0.0845</td><td>+0.0805</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec"><span class="no">4</span>P2 / P3 裁剪决策（如实记录）</h2>
+<ul>
+  <li><b>P2 长地平线（胜出架构 × 10000 步 + eval5k R@1/5/10）→ 裁剪</b>：R4 已证 eval5k 检索 R@1 退化为精确 chance（1/5000）；P1 loss 在 step1000 后噪声震荡（lr constant 3e-3），无证据表明延长到 10000 步会带来下游能力爬坡；且 r5_train.py 只存终态 vision.pt（无中间 ckpt、无 eval 回路）。预期信号≈0。</li>
+  <li><b>P3 稳健性（胜出架构 3 seed）→ 裁剪</b>：胜出是「唯一不坍缩且最快」的 hard 结论，SSM 坍缩、MoE 明显弱，不存在排名翻转风险。</li>
+  <li>R5 必需产出（P0 + P1）已全部完成；正式数据/文本塔决策由 R6 承接（已完成）。</li>
+</ul>
+
+<h2 class="sec"><span class="no">5</span>论文回填建议（6_vision_encoder.tex；本任务不改 tex）</h2>
+<ul>
+  <li><b>tab:visarch / tab:visarch_res 必须回滚重写</b>：R2 那版是坍缩读数（四架构 loss 全 4.9962/6.7342 的 LR/坍缩伪影），一律作废。替换为 R5 P0 的 InfoNCE + 冻结 CLIP-768 修复配方读数。</li>
+  <li><b>核心叙事从「loss 与架构无关」改为「坍缩与架构相关」</b>：有效配方下四架构不再并列 —— OpenVision2 明显最优；SSM 类 vs Attention 类在「是否坍缩」上二值分化（可发表的正结论）。</li>
+  <li><b>tab:visres（分辨率）</b>：R2 loss 全 4.9962 作废；R5 P1 给出有效读数 loss 3.0977/3.1909/3.2711、训练 1361.7/1264.1/764.7 img/s，显式标注 batch 已匹配（全 bs16）。结论：提高分辨率在短地平线无 loss 收益、吞吐单调下降，锚点 224/16 最优。</li>
+  <li><b>tab:visobj（目标函数）</b>：R5 固定 InfoNCE（R4 选定 + R5 放量验证）。</li>
+  <li><b>命名去歧义</b>：论文 "OpenVision2" 须明确「本项目从零设计的纯 Attention ViT 基线」（30L/1024w/505M/SwiGLU/avg-pool/224-16），非复现 UCSC-VLAA 官方 OpenVision2（24L/1024w/304.5M/gelu/336-14）。</li>
+</ul>
+
+<footer>
+  <p>BaiZe Stage(iii) 视觉编码器 · Round 5 架构/分辨率对比（修复 recipe）· 完成 2026-10-02 · 复现命令见 <code>run/EXPERIMENTS_VISION_ROUND5.md</code> · 脚本 <code>run/vision/r5_train.py</code> + <code>r5_p0.sh</code>/<code>r5_p1.sh</code> · 日志 <code>/tmp/r5_p0.log</code>/<code>/tmp/r5_p1.log</code>。</p>
+</footer>
+
+</div>
+</body>
+</html>

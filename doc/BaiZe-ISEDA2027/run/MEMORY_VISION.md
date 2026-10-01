@@ -1,17 +1,17 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R5_active**（第五轮：**用修复 recipe 重跑架构/分辨率对比**。**P0 架构对比 ✅ 完成**、**P1 分辨率对比 running**——固定 recipe=冻结 CLIP 文本塔(768)+InfoNCE+vision head 768；胜出=OpenVision2）；**R6_probe 已完成**（纯 CPU 并列推进，结论见 `EXPERIMENTS_VISION_ROUND6.md`：数据分阶段切/77 根因=官方 config/bin 无 text tower/77 保持） |
-| WAITING | 1（R5 P1 分辨率扫描 async running，30min 轮询：openvision2 × {224/16,336/14,448/14} @bs16 进行中） |
+| PHASE | **R5_active → R5_complete 交接中**（第五轮：**用修复 recipe 重跑架构/分辨率对比**。**P0 架构对比 ✅ 完成**、**P1 分辨率对比 ✅ 完成**——固定 recipe=冻结 CLIP 文本塔(768)+InfoNCE+vision head 768；胜出=OpenVision2；P2/P3 已裁剪）；**R6_probe 已完成**（纯 CPU 并列推进，结论见 `EXPERIMENTS_VISION_ROUND6.md`：数据分阶段切/77 根因=官方 config/bin 无 text tower/77 保持） |
+| WAITING | 0（R5 P1 分辨率扫描 **已全部完成** @00:26；R5 必需产出 P0+P1 完成、P2/P3 已裁剪） |
 | ERROR_COUNT | 0 |
-| BUDGET_USED | ~19 GPU·h 墙钟（R2/R3/R4 累计）；R5 另计（P0 墙钟 1h12m 已完成） |
-| 更新 | 2026-10-01 深夜（**R5 P0 完成 + P1 启动**；**R6 完成**）；R5 详情见 `EXPERIMENTS_VISION_ROUND5.md` |
-| WINNER | **OpenVision2**（P0 全放量验证：loss 4.549 最低 / 训练 2419.8 img/s 最快 / C2_gap +0.082 最强 / 不坍缩；SSM 类架构 step300 坍缩） |
+| BUDGET_USED | ~19 GPU·h 墙钟（R2/R3/R4 累计）；R5 另计（P0 墙钟 1h12m + P1 墙钟 ~28m 已完成） |
+| 更新 | 2026-10-02 00:35（**R5 P1 完成 + ROUND5 HTML 产出**；R6 已完成）；R5 详情见 `EXPERIMENTS_VISION_ROUND5.md` |
+| WINNER | **OpenVision2**（P0 全放量验证：loss 4.549 最低 / 训练 2419.8 img/s 最快 / C2_gap +0.082 最强 / 不坍缩；P1 分辨率锚点 224/16 最优：loss 3.0977 / 1361.7 img/s；SSM 类架构 step300 坍缩） |
 
 ## 🏁 R5 P0 架构对比完成 + P1 分辨率对比启动（2026-10-01 深夜）
 
@@ -24,6 +24,17 @@ WAITING: 1
 - **P0 判胜 = OpenVision2**（loss/吞吐/C2_gap 三领先 + 不坍缩）。
 - **P1 已启动**（23:58，`setsid bash r5_p1.sh openvision2`，日志 `/tmp/r5_p1.log`）：胜出架构 × {224/16, 336/14, 448/14} × 3000 步 @bs16=128 负样本（batch 匹配）。已记 GPU 独占（0 MiB compute）+ NFS 争用核验（pretrain 在 .29 idle、P-5a 已完）。
 - 已产出 `EXPERIMENTS_VISION_ROUND5.md`（P0 表 + C1–C4 轨迹 + 论文回填建议；P1 运行中）。WAITING=1。
+
+## ✅ R5 P1 分辨率对比完成 + P2/P3 裁剪（2026-10-02 00:26 完成，00:35 收尾）
+
+- **P1 三组全部完成**（`/tmp/r5_p1.log`，23:58→00:04/00:13/00:26，串行 bs16=128 负样本、batch 匹配）：OpenVision2 × {224/16, 336/14, 448/14} 各 3000 步，**三组全过 C1–C4、无一熔断**。详见 `EXPERIMENTS_VISION_ROUND5.md` §3。
+  - **224/16（196 tok）**：final_loss **3.0977**（最低）、训练 **1361.7 img/s**（最快）、C1 0.3078、C2_gap +0.0906 → **最优**。
+  - 336/14（576 tok）：loss 3.1909、1264.1 img/s、C1 0.3236、C2_gap +0.0845。
+  - 448/14（1024 tok）：loss 3.2711、764.7 img/s、C1 0.3037、C2_gap +0.0805 → 最差（吞吐仅 56% of 224/16）。
+- 🔑 **P1 结论**：有效配方下，**res/token ↑ → loss ↑ 且训练 img/s ↓（单调）**——短地平线（3000 步）提高分辨率不给 loss 带来收益。锚点 224/16 胜出。推翻 R2「分辨率/架构无关」的坍缩伪影结论。
+- **P2/P3 裁剪（如实记录，见报告 §4）**：P2 长地平线+下游（eval5k R@1 已证退化为 chance、无中间 ckpt/无 eval 回路）与 P3 多种子（胜出为 hard 结论、无排名翻转风险）均**预期信号≈0 → 裁剪**。R5 必需产出（P0+P1）已全部完成。
+- **交付物**：`EXPERIMENTS_VISION_ROUND5.md`（P0+P1 表 + C1–C4 轨迹 + 论文回填建议 + 裁剪决策，已更新为终稿）；新建 `doc/BaiZe-ISEDA2027/BAIZE_VISION_ENCODER_RESULT_ROUND5.html`（自包含）。未改 `*.tex`、未碰他人文件。
+- **状态**：PHASE → **R5 complete（交接 R7）**；WAITING 0；**R7 需等 R5 完全结束再做**（现已结束，R7 前提满足；R7 数据臂对比尚未启动，下次唤醒按 R7.0 推进，需先读 data agent `BAIZE_DATA_TASK.md` §0.4 定臂 C′）。
 ## ✅ R6 完成（第六轮：文本塔 77 与数据切换裁定，纯 CPU，2026-10-01）
 
 > 交付物：`EXPERIMENTS_VISION_ROUND6.md`（全证据，含裁定表 + 逐字取证）。**纯 CPU、未占卡、未中断 R5 P0。**
