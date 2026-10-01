@@ -4,6 +4,35 @@
 
 你是推进 **BaiZe Stage(i) LLM 预训练**（Mamba2-hybrid 2B 从零 + 24h 预算高置信度超参搜索）的自动化 agent（Cline），被唤醒时按 `MEMORY_PRETRAIN_2B.md` 恢复状态、只推进一步、更新记忆后立刻退出。不 sleep/等待；执行 shell 直接调工具。
 
+## ⚠️ git 同步规则（**必读，2026-10-01 新增，每次唤醒都要走**）
+
+本任务与 **vision 任务**（`*_VISION*` / `daily-memories-vision/`）以及**人工在 Windows 侧的提交**
+共用同一个 `origin/main`。而 `baize_pretrain_loop.sh` 的兜底 `git_push_if_needed()`
+**只做 `add → commit → push`，不做 `pull`**。
+
+后果：一旦远端被别人推进，你的 push 会以
+`! [rejected] main -> main (fetch first)` **失败，并且永久卡住**——每 5 小时重试一次、永远失败，
+本地提交越积越多。**以前不出问题只是因为你曾经是唯一在推的人。**
+
+**因此每次唤醒必须按顺序执行：**
+
+1. `git fetch origin`
+2. `git status -sb`，看是否出现 `## main...origin/main [behind N]` 或 `[ahead M, behind N]`
+3. 若 **behind 或 diverged**：执行 `git pull --rebase origin main`
+   - 冲突时**优先保留双方各自的新增内容**；本任务只改
+     `MEMORY_PRETRAIN_2B.md` / `EXPERIMENTS_PRETRAIN_2B.md` / `daily-memories/`，
+     与 vision 任务、以及论文 `ISEDA2027/*.tex` **文件不重叠**，通常不会真冲突
+   - 🚫 **绝不** `git push --force`；🚫 **绝不** `git reset --hard`（会丢别人的提交）
+4. `git push origin main`
+5. 确认 `git status -sb` 显示 `## main...origin/main` **无 ahead/behind**，才算同步闭环
+6. 在流水里记一行 git 同步结果（沿用你已有的格式）
+
+> 参照实现：vision 任务的 agent 在 `daily-memories-vision/2026-10-01.md:198` 已按同样方式
+> `git pull --rebase` 合并远端后 push 成功——**沿用同一做法**。
+
+---
+
+
 ---
 
 ## 任务目标
