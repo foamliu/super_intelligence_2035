@@ -57,3 +57,51 @@ def build_loader(shard_list, batch_size: int, tokenizer, size: int = 224,
     loader = wds.WebLoader(dataset, batch_size=batch_size, num_workers=num_workers,
                            collate_fn=collate, drop_last=drop_last)
     return loader
+
+
+def build_gpic_loader(shard_list, batch_size: int, tokenizer, size: int = 224,
+                      num_workers: int = 6, shuffle: bool = True, train: bool = True,
+                      drop_last: bool = True):
+    """GPIC loader (no re-packing). Reads GPIC tar = `{key}.json` (caption/caption_type)
+    + `{key}.jpg|png`, keeps only `caption_type == 'short'` pairs (0% 77-truncation)."""
+    import json as _json
+    from PIL import Image as _Image
+    from webdataset import ignore_and_continue
+
+    tf = get_train_transform(size) if train else get_val_transform(size)
+
+    def gpic_decode(sample):
+        try:
+            meta = _json.loads(sample.get('json') or b'{}')
+        except Exception:
+            return None
+        if meta.get('caption_type') != 'short':
+            return None
+        cap = (meta.get('caption') or '').strip()
+        raw = sample.get('jpg') or sample.get('png') or sample.get('img')
+        if not raw or not cap:
+            return None
+        try:
+            img = _Image.open(io.BytesIO(raw)).convert('RGB')
+        except Exception:
+            return None
+        return tf(img), cap
+
+    dataset = (
+        wds.WebDataset(shard_list, nodesplitter=_no_split,
+                       shardshuffle=(200 if shuffle else 0),
+                       handler=ignore_and_continue)
+        .shuffle(2000 if shuffle else 0)
+        .map(gpic_decode)
+        .select(lambda s: s is not None)
+    )
+
+    def collate(batch):
+        imgs = torch.stack([b[0] for b in batch])
+        caps = [b[1] for b in batch]
+        texts = tokenizer(caps)
+        return imgs, texts
+
+    loader = wds.WebLoader(dataset, batch_size=batch_size, num_workers=num_workers,
+                           collate_fn=collate, drop_last=drop_last)
+    return loader

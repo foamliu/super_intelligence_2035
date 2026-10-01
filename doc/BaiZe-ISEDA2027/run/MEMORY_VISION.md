@@ -1,18 +1,31 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R5_active → R5_complete 交接中**（第五轮：**用修复 recipe 重跑架构/分辨率对比**。**P0 架构对比 ✅ 完成**、**P1 分辨率对比 ✅ 完成**——固定 recipe=冻结 CLIP 文本塔(768)+InfoNCE+vision head 768；胜出=OpenVision2；P2/P3 已裁剪）；**R6_probe 已完成**（纯 CPU 并列推进，结论见 `EXPERIMENTS_VISION_ROUND6.md`：数据分阶段切/77 根因=官方 config/bin 无 text tower/77 保持） |
-| WAITING | 0（R5 P1 分辨率扫描 **已全部完成** @00:26；R5 必需产出 P0+P1 完成、P2/P3 已裁剪） |
+| PHASE | **R7_active**（第七轮：**数据臂对比**。R5/R6 已收敛——胜出架构 OpenVision2 + 锚点 224/16 + 冻结 CLIP-768 text tower(77 硬约束)；R7 用 R5 P0 同口径×3000 步只换数据，对比 en500k(臂A,复用) / GPIC-short(臂B) / CC12M(臂C′)，训练已 `setsid` 后台启动，待回收 loss+C1/C2/C4+两套交叉评测） |
+| WAITING | 1（R7 训练臂 B/C′ 已后台启动，约 2×~16min；待回收 loss+C1/C2/C4 后做两套交叉评测；下次唤醒 WAITING=1） |
 | ERROR_COUNT | 0 |
 | BUDGET_USED | ~19 GPU·h 墙钟（R2/R3/R4 累计）；R5 另计（P0 墙钟 1h12m + P1 墙钟 ~28m 已完成） |
-| 更新 | 2026-10-02 00:35（**R5 P1 完成 + ROUND5 HTML 产出**；R6 已完成）；R5 详情见 `EXPERIMENTS_VISION_ROUND5.md` |
+| 更新 | 2026-10-02（**R7 启动**：臂 C′=CC12M / 臂 B=GPIC-short 训练已 `setsid` 后台启动，日志 `/tmp/r7.log`；详见 `EXPERIMENTS_VISION_ROUND7.md`） |
 | WINNER | **OpenVision2**（P0 全放量验证：loss 4.549 最低 / 训练 2419.8 img/s 最快 / C2_gap +0.082 最强 / 不坍缩；P1 分辨率锚点 224/16 最优：loss 3.0977 / 1361.7 img/s；SSM 类架构 step300 坍缩） |
 
+## 🚀 R7 启动（第七轮：数据臂对比，2026-10-02）
+
+> 交付物：`EXPERIMENTS_VISION_ROUND7.md`（R7.1 证据 + 矩阵 + 冒烟 + 待回填）。随 R5 complete 之后启动。
+
+- **背景**：R6 已定「77 是硬的（冻结 CLIP text tower `max_position_embeddings=77`）」→ 正式训练数据须适配 77。R7 用 R5 胜出 OpenVision2 × 3000 步、与 R5 P0 完全同口径（冻结 CLIP-768 + InfoNCE + lr 3e-3/warmup 20 + @224/16 bs64=512 负样本），**只换数据**。
+- **三臂**：A=en500k（LLaVA 长 recaption，100% 截断，复用 R5 P0 ckpt 不重跑）/ B=Stanford GPIC `short`（~2.77M 对，0% 截断）/ C′=CC12M webdataset（~11M 对，98% ≤77，**来自 data agent §0.4 已交付的 R2-视觉侧推荐**）。
+- **R7.1 pre-check（证据见报告 §1）**：CC12M 本地 `/nas_train/.../conceptual-captions-12m-webdataset/data/*.tar` = 1100 tar / 1.2T / bytes（.jpg/.json/.txt 三件套）；GPIC train 已 489 tar（下载中）、test 128 tar（齐）；磁盘 `/nas_train` 剩 32T；GPU 8×H100 全空闲；pretrain 在 .29 idle、data agent 4 路 hf download 仍在下载（重 I/O 需避让，本轮 GPIC 用**轻量直读 loader**回避）。
+- **代码**：`vision/data.py` 增 `build_gpic_loader`（.net 等价：json caption 过滤 `caption_type`，jpg 解码）；`vision/r7_train.py`（= r5_train.py + `--data-source {wds,gpic}` 分支）；`vision/r7_run.sh`（串行 C′→B，30 步冒烟+3000 步 full）；`vision/r7_eval.py`（cross-eval：wds/eval5k 与 gpic/GPIC-test 两套，冻结 CLIP-768 text，R@1/5/10）。
+- **冒烟（30 步，exit 0）**：C′=CC12M loss 6.1940 / 1528.9 img/s；B=GPIC-short loss 6.0905 / 1312.1 img/s（两 loader 均跑通，shards=138/rank 与 62/rank 与预期一致）。
+- **训练已启动**：`setsid bash r7_run.sh 3000`（PID 见 `/tmp/r7.log`），先 C′ 后 B 串行，~2×16min。ckpt `/nas_train/.../out/{R7_C_cc12m,R7_B_gpic}/vision.pt`。
+- **下一步（下次唤醒，WAITING=1）**：回收两臂 loss + C1/C2/C4 → 跑 `r7_eval.py` 两套交叉评测 → 三臂裁定正式训练数据 → 回填报告 §0 + MEMORY + git commit/push。
+
+## 🏁 R5 P0 架构对比完成 + P1 分辨率对比启动（2026-10-01 深夜）
 ## 🏁 R5 P0 架构对比完成 + P1 分辨率对比启动（2026-10-01 深夜）
 
 - **P0 全放量完成（22:29→23:41，`/tmp/r5_p0.log`）**：4 架构 × 3000 步 @224/16 bs64=512 负样本，固定 recipe。结论见 `EXPERIMENTS_VISION_ROUND5.md`。
