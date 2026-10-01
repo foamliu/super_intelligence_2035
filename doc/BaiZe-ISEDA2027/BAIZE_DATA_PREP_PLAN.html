@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 正式训练数据准备 · 方案</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr;} }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .flow { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; align-items:center; }
+  .flow .step { background:#fff; border:1px solid var(--border); border-radius:8px; padding:8px 14px; font-size:13px; font-weight:600; }
+  .flow .arrow { color:var(--muted); font-weight:700; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6a4a00; }
+  .danger { background:#fff0f0; border:1px solid #ffc9c9; border-left:4px solid var(--bad); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#8a1c1c; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe 正式训练数据准备 · 方案</h1>
+  <div class="sub">Stage (i) LLM 预训练 + Stage (iii/iv) 视觉编码器与多模态对齐 —— 数据的盘点、清洗、切分与污染隔离</div>
+  <div class="meta">
+    <span>📅 2026-10-01</span>
+    <span>🎯 投稿截止 ≈ 2027-02-01</span>
+    <span>⚙️ 执行：数据准备 agent（<code>baize_data_loop.sh</code>）</span>
+    <span>📦 产物落盘 <code>/nas_train/app.e0031982/datasets/baize-*</code></span>
+  </div>
+</header>
+
+<div class="verdict">
+  <strong>结论先行。</strong>
+  可获取语料已<strong>远超算力窗口能消费的量</strong>（文本侧 1.8T 已就绪，多模态下载过半），
+  因此本阶段的目标<strong>不是"拿到更多数据"，而是"把已有数据变成训练可直接用、配比正确、且不污染评测集的形式"</strong>。
+  三条数据线（通用文本 / 通用多模态 / EDA 领域）中，<strong>领域语料是唯一尚未落实来源的一条，也是最关键的一条</strong>。<br>
+  另有一条<strong>不可违反的红线</strong>：<code>EDA-Eval-PyAether</code> 的 158 个任务内容绝不进入任何训练集。
+</div>
+
+<div class="kpi-row">
+  <div class="kpi"><div class="v">1.8 T</div><div class="l">通用文本 token（已下载完）</div></div>
+  <div class="kpi"><div class="v">&gt;50%</div><div class="l">LLaVA-OneVision-1.5 下载进度</div></div>
+  <div class="kpi"><div class="v">≈ 240 B</div><div class="l">8×H100 连训 30 天可消费 token</div></div>
+  <div class="kpi"><div class="v">158</div><div class="l">必须隔离的评测任务</div></div>
+</div>
+
+<div class="toc">
+  <strong>目录</strong>
+  <ol>
+    <li><a href="#s1">数据资产盘点</a></li>
+    <li><a href="#s2">目标产物与 token 预算</a></li>
+    <li><a href="#s3">数据流水线（五步）</a></li>
+    <li><a href="#s4">三条数据线</a></li>
+    <li><a href="#s5">🚨 污染隔离（红线）</a></li>
+    <li><a href="#s6">里程碑与排期</a></li>
+    <li><a href="#s7">风险与依赖</a></li>
+    <li><a href="#s8">交付物与可复现命令</a></li>
+  </ol>
+</div>
+
+<h2 class="sec" id="s1"><span class="no">1</span>数据资产盘点</h2>
+
+<div class="danger">
+  ⚠️ <strong>下表的路径与规模来自仓库内既有记录，尚未经过真实盘点。</strong>
+  <code>phase0_inventory</code> 必须先对 <code>/nas_inference</code> 与 <code>/nas_train</code> 做一次实测清点
+  （文件数、总字节、可读性、格式抽样），结果回写 <code>DATA_LEDGER.md</code>。<strong>一律以实测为准。</strong>
+</div>
+
+<table>
+  <tr><th>线</th><th>数据集</th><th>路径</th><th>状态</th><th>用途</th></tr>
+  <tr>
+    <td rowspan="4"><b>通用文本</b></td>
+    <td>Ultra-FineWeb-L3 (EN) <span class="badge b-ok">1.8T tok</span></td>
+    <td><code>/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa</code></td>
+    <td><span class="badge b-ok">已下载</span></td>
+    <td>Stage (i) 预训练主体</td>
+  </tr>
+  <tr>
+    <td>UltraData-Code</td><td><code>/nas_inference/app.e0031982/datasets/openbmb/</code></td>
+    <td><span class="badge b-ok">已下载</span></td><td>退火混合 + 代码能力</td>
+  </tr>
+  <tr>
+    <td>UltraData-Math</td><td>同上</td>
+    <td><span class="badge b-ok">已下载</span></td><td>退火混合（4%）</td>
+  </tr>
+  <tr>
+    <td>UltraData-SFT-Agent</td><td>同上</td>
+    <td><span class="badge b-ok">已下载</span></td><td>Stage (ii) SFT</td>
+  </tr>
+  <tr>
+    <td rowspan="3"><b>通用多模态</b></td>
+    <td>LLaVA-OneVision-1.5 Mid-Training-85M</td>
+    <td><code>/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M/</code><br>
+        子集：imagenet / laioncn / datacomp1b / coyo / mint / obelics × EN/CN</td>
+    <td><span class="badge b-warn">下载中 &gt;50%</span></td>
+    <td>视觉编码器 + MLLM 对齐</td>
+  </tr>
+  <tr>
+    <td>baize-vision/en500k</td>
+    <td><code>/nas_train/app.e0031982/datasets/baize-vision/en500k/</code>（25 shard × 20K）</td>
+    <td><span class="badge b-ok">已就绪</span></td><td>Stage (iii) 四架构对比（已完成）</td>
+  </tr>
+  <tr>
+    <td>baize-vision/eval5k</td>
+    <td><code>/nas_train/app.e0031982/datasets/baize-vision/eval5k/</code>（laioncn/EN，与训练源不同源）</td>
+    <td><span class="badge b-ok">已就绪</span></td><td>零样本检索代理评估</td>
+  </tr>
+  <tr>
+    <td><b>领域（EDA）</b></td>
+    <td>PyAether / SKILL API 参考文档、EDA 工具文档、开源 HDL</td>
+    <td><span class="badge b-no">来源未落实</span></td>
+    <td><span class="badge b-no">待获取</span></td>
+    <td><b>Stage (ii) 领域退火 + SFT（最关键）</b></td>
+  </tr>
+</table>
+
+<p><b>已有派生数据</b>：<code>BASE_DIR/data/ultrafineweb_l3_qa</code>（<code>.bin/.idx</code>，200k docs / 165M token）
+与 tokenizer <code>BASE_DIR/data/tokenizer_eod</code>（DeepSeek-V4.1-Flash，vocab 129,281 / pad 129,408）。
+<strong>切分脚本与格式约定可直接复用，不要另起炉灶。</strong></p>
+
+<h2 class="sec" id="s2"><span class="no">2</span>目标产物与 token 预算</h2>
+
+<h3>2.1 约束分析：瓶颈是算力，不是数据</h3>
+<table>
+  <tr><th>项</th><th>值</th><th>依据</th></tr>
+  <tr><td>每步 token</td><td>≈ 32.7 K</td><td>GBS 8 × seq 4094（Round 1 口径）</td></tr>
+  <tr><td>每步耗时</td><td>≈ 350 ms/iter</td><td>Round 1 实测（8×H100 TP1/DP8）</td></tr>
+  <tr><td>吞吐</td><td>≈ 93 K tok/s</td><td>推算</td></tr>
+  <tr><td>日产能</td><td>≈ 8.0 B token</td><td>24 h 连续</td></tr>
+  <tr><td><b>连续训练 30 天</b></td><td><b>≈ 242 B token</b></td><td>8.0 B × 30</td></tr>
+  <tr><td>Chinchilla 最优（2.2B）</td><td>≈ 44 B token</td><td>20 × params</td></tr>
+  <tr><td>已有通用文本</td><td>1.8 T token</td><td>Ultra-FineWeb-L3</td></tr>
+</table>
+<p><strong>结论：30 天连续训练 ≈ 242 B token ≈ Chinchilla 最优的 5.5 倍，而可用语料是它的 7.4 倍以上。</strong>
+数据量<b>根本不是约束</b>——约束是<b>算力窗口</b>。因此本阶段的成功标准不是"下载/切分了更多数据"，
+而是<strong>质量、配比、格式可直接被训练消费、以及污染隔离</strong>。</p>
+
+<h3>2.2 目标产物（五类）</h3>
+<table>
+  <tr><th>#</th><th>产物</th><th>格式</th><th>消费者</th><th>优先级</th></tr>
+  <tr><td>1</td><td>通用文本 stable 主体</td><td>mcore <code>.bin/.idx</code></td><td>Stage (i) 预训练</td><td><span class="badge b-no">P0</span></td></tr>
+  <tr><td>2</td><td>退火混合源（code / math / <b>EDA</b>）</td><td>同上</td><td>Stage (i) decay 尾段</td><td><span class="badge b-no">P0</span></td></tr>
+  <tr><td>3</td><td>多模态训练集</td><td>webdataset tar</td><td>Stage (iii)/(iv)</td><td><span class="badge b-warn">P1</span></td></tr>
+  <tr><td>4</td><td>多模态 held-out 评估集</td><td>webdataset tar</td><td>检索代理评估</td><td><span class="badge b-warn">P1</span></td></tr>
+  <tr><td>5</td><td><b>隔离白/黑名单 + 校验脚本</b></td><td>text/JSON + py</td><td>全流程</td><td><span class="badge b-no">P0（红线）</span></td></tr>
+</table>
+
+<h3>2.3 token 配比（建议初值，待 Stage (ii) 消融确认）</h3>
+<table>
+  <tr><th>阶段</th><th>占比</th><th>来源</th><th>建议 token</th></tr>
+  <tr><td>stable 主体</td><td>85%</td><td>Ultra-FineWeb-L3 (EN)</td><td>≈ 200 B</td></tr>
+  <tr><td>decay 尾段</td><td>10%</td><td>UltraData-Code</td><td>≈ 24 B</td></tr>
+  <tr><td>decay 尾段</td><td>4%</td><td>UltraData-Math</td><td>≈ 10 B</td></tr>
+  <tr><td>decay 尾段</td><td><b>1%</b></td><td><b>EDA 领域语料（新）</b></td><td>≈ 2 B</td></tr>
+</table>
+<div class="note">
+  Round 1 的胜出配比是 <b>L3 86 : code 10 : math 4</b>，<b>不含任何 EDA 数据</b>。
+  上表的 1% EDA 是<b>新增项</b>，必须作为 Stage (ii) 的一等消融（"加 EDA vs 不加"），
+  不能直接当成既定事实写进论文。
+</div>
+
+<h2 class="sec" id="s3"><span class="no">3</span>数据流水线（五步）</h2>
+
+<div class="flow">
+  <span class="step">1 inventory<br><small>实测盘点</small></span><span class="arrow">→</span>
+  <span class="step">2 validate<br><small>完整性与可读性</small></span><span class="arrow">→</span>
+  <span class="step">3 filter &amp; dedup<br><small>质量与去重</small></span><span class="arrow">→</span>
+  <span class="step">4 tokenize &amp; pack<br><small>分词与打包</small></span><span class="arrow">→</span>
+  <span class="step">5 split &amp; manifest<br><small>切分与清单</small></span>
+</div>
+
+<table>
+  <tr><th>步</th><th>做什么</th><th>必须记录</th></tr>
+  <tr>
+    <td><b>1 inventory</b></td>
+    <td>对每条线实测：文件数、总字节、目录结构、抽样若干条看格式；确认哪些路径真实存在</td>
+    <td>写进 <code>DATA_LEDGER.md</code>；<b>与本文档 §1 的差异要显式列出</b></td>
+  </tr>
+  <tr>
+    <td><b>2 validate</b></td>
+    <td>下载完整性（parquet 能否全量打开、tar 能否解、shard 是否缺号）；损坏文件清单</td>
+    <td>损坏/缺失清单 + 校验命令</td>
+  </tr>
+  <tr>
+    <td><b>3 filter &amp; dedup</b></td>
+    <td>质量过滤（长度/重复率/语言）；<b>去重必须做 train↔eval 的跨集比对</b>（见 §5）</td>
+    <td>过滤前后条数与 token 数、去重阈值</td>
+  </tr>
+  <tr>
+    <td><b>4 tokenize &amp; pack</b></td>
+    <td>用 <code>tokenizer_eod</code>（DeepSeek-V4.1-Flash）分词并 packing 到 seq 4094；<b>复用 Round 1 的 <code>.bin/.idx</code> 脚本</b></td>
+    <td>产出路径、doc 数、token 数、压缩率（tok/byte）</td>
+  </tr>
+  <tr>
+    <td><b>5 split &amp; manifest</b></td>
+    <td>切 train/val；生成清单（路径、规模、用途、版本）；<b>跑污染校验</b></td>
+    <td><code>DATA_LEDGER.md</code> 终版 + 污染校验报告</td>
+  </tr>
+</table>
+
+<h2 class="sec" id="s4"><span class="no">4</span>三条数据线</h2>
+
+<h3>4.1 通用文本（已就绪）— 把 1.8T 变成"训练可直接消费"</h3>
+<ul>
+  <li><b>重点不是再下载，而是转格式 + 建配比。</b>产出 mcore <code>.bin/.idx</code>，直接喂 <code>pretrain_launcher.py</code>。</li>
+  <li><b>复用既有产物</b>：<code>BASE_DIR/data/ultrafineweb_l3_qa</code> 已经跑通过一次（200k docs / 165M token），
+      脚本与格式约定照抄，只改数据源与规模。</li>
+  <li>必须产出：stable 主体（≈200 B token）+ 退火源（code / math）各自的 <code>.bin/.idx</code>，
+      且<strong>能按配比混合</strong>（训练侧需要按比例采样）。</li>
+</ul>
+
+<h3>4.2 通用多模态（下载中 &gt;50%）— 等下载完再动，但预处理脚本可以先生成</h3>
+<ul>
+  <li><b>下载未完成前不要做重 I/O</b>（会与下载抢带宽/抢盘，且可能读到半截文件）。</li>
+  <li>可以先做的：写预处理脚本、定 shard 划分、复算 en500k 的 webdataset 打包参数。</li>
+  <li>下载完成后：校验完整性 → 统计（图像数 / caption 类型 tag·short·medium·long / 语言分布）
+      → 切统一子集 → webdataset 打包（复用 <code>run/vision/prep_data.py</code>）。</li>
+  <li><b>必须另切 held-out 评估集</b>，且与训练源不同源（Round 1 用的是 imagenet/EN 训练、laioncn/EN 评估，沿用该做法）。</li>
+</ul>
+
+<h3>4.3 EDA 领域语料（来源未落实）— <b>本方案最关键、也最不确定的一条</b></h3>
+<div class="note">
+  这条线是 <b>Stage (ii)「领域模型」claim 的唯一支撑</b>。当前 BaiZe 的预训练语料（web+code+math）
+  <b>不含任何 EDA 数据</b>，所以整个"领域模型"叙事目前是悬空的。
+</div>
+<table>
+  <tr><th>候选来源</th><th>可得性</th><th>用途</th><th>备注</th></tr>
+  <tr>
+    <td><b>PyAether / SKILL API 参考文档</b></td>
+    <td><span class="badge b-info">已有线索</span></td>
+    <td>领域退火 + SFT 语料</td>
+    <td>ZhuLong 的 <code>eda_fastmcp</code> 里已建有 API 知识库（检索索引），
+        <b>先去确认它能否导出为纯文本文档</b></td>
+  </tr>
+  <tr><td>EDA 工具文档 / 用户手册</td><td><span class="badge b-warn">待确认授权</span></td><td>退火语料</td><td>注意版权与"能否入库"</td></tr>
+  <tr><td>开源 HDL（Verilog / SystemVerilog）</td><td><span class="badge b-ok">公开可得</span></td><td>退火语料</td><td>与 PyAether 脚本语言不同，价值次要</td></tr>
+  <tr><td>内部培训材料 / 脱敏 CAD 案例</td><td><span class="badge b-no">未落实</span></td><td>SFT 语料（高价值）</td><td><b>需人工提供</b>，agent 无法自行获取</td></tr>
+</table>
+<p><b>行动</b>：<code>phase3_domain</code> 的第一步是<b>把"有哪些 EDA 语料、在哪、能不能用"这件事查清楚并汇报</b>，
+而不是硬造数据。<strong>来源未确认前，不要产出一个"看起来像 EDA"的合成语料</strong>——那会污染结论。</p>
+
+<h2 class="sec" id="s5"><span class="no">5</span>🚨 污染隔离（红线）</h2>
+
+<div class="danger">
+  <b><code>EDA-Eval-PyAether</code> 的 158 个任务内容（<code>prompt</code> / <code>entry_point</code> /
+  <code>canonical_solution</code> / <code>test</code> 断言）绝对不能进入任何训练集。</b><br>
+  一旦泄漏，<strong>全部下游结论作废</strong>，且事后无法补救。这不是"尽量做"，是<strong>红线</strong>。
+</div>
+
+<h3>5.1 允许与禁止</h3>
+<table>
+  <tr><th></th><th>内容</th><th>可否入训练集</th></tr>
+  <tr><td><span class="badge b-ok">允许</span></td><td>PyAether / SKILL 的 <b>API 参考文档</b>（函数签名、参数说明、示例）</td><td>✅ 可以——它是任务的"来源材料"</td></tr>
+  <tr><td><span class="badge b-no">禁止</span></td><td>评测任务的自然语言 prompt、函数名、参考解、断言代码</td><td>❌ 绝对不可以</td></tr>
+  <tr><td><span class="badge b-no">禁止</span></td><td>由上述任务<em>改写/ paraphrasing</em> 得到的版本</td><td>❌ 改写不洗白</td></tr>
+</table>
+
+<h3>5.2 隔离机制（必须实现并留证）</h3>
+<ol>
+  <li><b>建黑名单</b>：把 158 题逐条做规范化 + 指纹（n-gram / MinHash），落盘为可复用的黑名单文件。</li>
+  <li><b>训练集侧扫描</b>：对每一份候选训练文档算指纹，与黑名单重合超阈值即<b>剔除</b>并记录。</li>
+  <li><b>阈值要写明</b>：用多少 n-gram、多少重合度算命中，论文里要能复现。</li>
+  <li><b>SFT 语料同闸</b>：Stage (ii) 的 SFT 数据必须走同一套校验，不能只查预训练语料。</li>
+  <li><b>产出独立报告</b>：<code>CONTAMINATION_CHECK.md</code>——列出规则、阈值、扫描量、命中数、处置结果。</li>
+</ol>
+<div class="note">
+  同一条规则也适用于<b>多模态侧的 held-out 评估集</b>（如 <code>eval5k</code>）：评估集与训练集必须不同源，
+  且要做跨集去重比对。
+</div>
+
+<h2 class="sec" id="s6"><span class="no">6</span>里程碑与排期（对齐 4 个月倒推）</h2>
+
+<table>
+  <tr><th>时间</th><th>里程碑</th><th>对应阶段</th><th>判据</th></tr>
+  <tr>
+    <td><b>2026-10 上</b></td>
+    <td>实测盘点 + 完整性校验完成；<b>污染黑名单与校验脚本就位</b></td>
+    <td><code>phase0_inventory</code> / <code>phase1_validate</code> / <code>phase5_isolation</code></td>
+    <td><code>DATA_LEDGER.md</code> + <code>CONTAMINATION_CHECK.md</code> 初版</td>
+  </tr>
+  <tr>
+    <td><b>2026-10 下</b></td>
+    <td>通用文本 <code>.bin/.idx</code> 产出（stable 主体 + 退火源）</td>
+    <td><code>phase2_text</code></td>
+    <td>训练可直接加载（实测能跑 10 步冒烟）</td>
+  </tr>
+  <tr>
+    <td>2026-10 下 – 11 上</td>
+    <td>多模态下载完成 → 校验 + 切子集 + webdataset 打包 + held-out 评估集</td>
+    <td><code>phase4_mm</code></td>
+    <td>Stage (iii) 能直接开跑</td>
+  </tr>
+  <tr>
+    <td><b>2026-11</b></td>
+    <td><b>EDA 领域语料落实</b>（来源确认 + 入库 + 过闸）</td>
+    <td><code>phase3_domain</code></td>
+    <td>来源清单 + 实际入库量</td>
+  </tr>
+  <tr>
+    <td>2026-11 底</td>
+    <td>全部产物 + 污染校验报告定稿</td>
+    <td>—</td>
+    <td>可交接给训练</td>
+  </tr>
+</table>
+
+<div class="note">
+  <b>为什么"数据准备"要现在启动</b>：它是这条时间线上唯一的<b>长周期 + 可并行</b>项。
+  训练要等架构锁定，但数据不需要——<b>数据准备现在就能推进，而且必须现在推进</b>，否则 11 月会被连锁压缩。
+</div>
+
+<h2 class="sec" id="s7"><span class="no">7</span>风险与依赖</h2>
+
+<table>
+  <tr><th>#</th><th>风险</th><th>严重度</th><th>应对</th></tr>
+  <tr>
+    <td>1</td><td><b>EDA 语料来源未落实</b>——(ii) 的"领域模型"叙事的唯一支撑</td>
+    <td><span class="badge b-no">🔴 高</span></td>
+    <td>10 月内查清 <code>eda_fastmcp</code> 的 API 知识库能否导出；<b>若确认拿不到，须尽早降级 (ii) 的叙事</b>，而不是拖到最后</td>
+  </tr>
+  <tr>
+    <td>2</td><td>多模态下载未完成（&gt;50%）</td><td><span class="badge b-warn">🟠 中</span></td>
+    <td>先做脚本与 shard 规划；<b>下载期间不做重 I/O</b></td>
+  </tr>
+  <tr>
+    <td>3</td><td>NFS / 网络带宽争用（与两个 GPU agent 的下载、训练共享）</td><td><span class="badge b-warn">🟠 中</span></td>
+    <td>重 I/O 任务避开 vision 的 R2-4（干净吞吐测量）；不要在下载高峰期做全量扫描</td>
+  </tr>
+  <tr>
+    <td>4</td><td><b>污染泄漏</b></td><td><span class="badge b-no">🔴 高</span></td>
+    <td>§5 红线；独立报告留证</td>
+  </tr>
+  <tr>
+    <td>5</td><td>算力窗口被压缩，数据来不及</td><td><span class="badge b-warn">🟠 中</span></td>
+    <td>按产物优先级 P0 → P1 裁剪（先保通用文本 + 隔离，再保多模态）</td>
+  </tr>
+</table>
+
+<h2 class="sec" id="s8"><span class="no">8</span>交付物与可复现命令</h2>
+
+<table>
+  <tr><th>交付物</th><th>形式</th><th>说明</th></tr>
+  <tr><td><code>run/DATA_LEDGER.md</code></td><td>markdown</td><td>数据清单：路径 / 规模 / 用途 / 状态 / <b>与本文档 §1 的差异</b></td></tr>
+  <tr><td><code>run/CONTAMINATION_CHECK.md</code></td><td>markdown</td><td>污染隔离规则、阈值、扫描量、命中数、处置</td></tr>
+  <tr><td><code>run/data_pipeline/</code></td><td>脚本目录</td><td>可复现的盘点 / 校验 / 去重 / 分词打包 / 指纹比对本脚本</td></tr>
+  <tr><td><code>/nas_train/.../baize-data/</code></td><td>数据产物</td><td><code>.bin/.idx</code> + webdataset tar，<b>不入 git</b></td></tr>
+  <tr><td><code>BAIZE_DATA_PREP_RESULT.html</code></td><td>html</td><td>结果报告（与既有 HTML 报告同风格、自包含）</td></tr>
+</table>
+
+<h3>可复现命令（模板，agent 需按实测路径修正）</h3>
+<pre><code># 0) 环境
+source /nas_train/app.e0031982/miniforge3/bin/activate py310
+
+# 1) 盘点（示例）
+du -sh /nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa
+find /nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M -name '*.parquet' | wc -l
+
+# 2) 分词打包（复用 Round 1 约定：tokenizer_eod / seq 4094 / packing）
+#    BASE_DIR/data/ultrafineweb_l3_qa 的脚本为模板，只改数据源与输出路径
+
+# 3) 污染校验（示例）
+python run/data_pipeline/check_contamination.py \
+  --eval-jsonl <EDA-Eval-PyAether.jsonl> \
+  --train-glob '<训练语料 glob>' \
+  --ngram 13 --threshold 0.8 \
+  --out run/CONTAMINATION_CHECK.md
+</code></pre>
+
+<footer>
+  BaiZe 正式训练数据准备方案 · 生成于 2026-10-01 · 对应 <code>run/BAIZE_DATA_TASK.md</code>（执行任务书）<br>
+  ⚠️ 本文档中的路径与规模来自仓库既有记录，<b>Phase 0 实测盘点后必须回填修正</b>。<br>
+  上游约束见 <code>ISEDA 2027 投稿截止 ≈ 2027-02-01</code> 与 <code>README.md §0.5 时间线</code>。
+</footer>
+
+</div>
+</body>
+</html>
+
+
+
+
