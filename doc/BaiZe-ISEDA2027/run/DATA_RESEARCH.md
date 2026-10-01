@@ -203,7 +203,7 @@ Base/mid 训练 = `Ultra-FineWeb` + `Ultra-FineWeb-L3` + `UltraX-Preview` + `Ult
 | 3 | Ultra-FineWeb-L3 | https://huggingface.co/datasets/openbmb/Ultra-FineWeb-L3 | apache-2.0 ✅ | 1,058,535,126 ✅ | 1.9 TB / 1.8 TiB ✅ | **≈690B**（en 467B / zh 223B，与 README「600B+」一致） | 4 config（en/zh × QA/Multi-Style），1764 parquet | ✅ **下全** | 退火/decay 主体 |
 | 4 | UltraData-Code | https://huggingface.co/datasets/openbmb/UltraData-Code | apache-2.0 ✅ | **348,083,481**（L2 266,878,376 / L3 81,205,105）✅ | **1,215,994,166,161** = **1.22 TB / 1.11 TiB** ✅ | **≈411B**（L2 355B + L3 56B，本轮抽样 1330/692 tok/doc） | L2 ×11 语言 + L3 ×12 语言，1121 parquet | ✅ **下全** | 退火 code |
 | 5 | UltraData-Math | https://huggingface.co/datasets/openbmb/UltraData-Math | apache-2.0 ✅ | **181,186,453**（L1 86,032,552 / L2-preview 13,835,635 / L3 81,318,266）✅ | **552,412,859,233** = **552 GB / 0.50 TiB** ✅ | **≈303B**（L1 184B + L2p 32B + L3 87B，本轮抽样 2138/2285/1076 tok/doc） | L1(CC-MAIN)/L2-preview/L3，1823 parquet | ✅ **下全** | 退火 math |
-| 6 | UltraData-SFT-2605 | https://huggingface.co/datasets/openbmb/UltraData-SFT-2605 | apache-2.0（**gated=auto**）✅ | 官方首页按目录展示，**~97.6 GB / 1000+ jsonl**（`no_think`×7 域 + `think`） | —（SFT，不计 token） | — | `no_think/{Chinese-general,Code,IF,Knowledge,Math,Multi-lang-K,Multi-lang-M}` + `think`，1510 siblings | ❌ **落盘空壳** | **需重下（阻塞：无有效 token）** |
+| 6 | UltraData-SFT-2605 | https://huggingface.co/datasets/openbmb/UltraData-SFT-2605 | apache-2.0（**gated=auto**）✅ | 官方首页按目录展示，**318.99 GB / 1504 jsonl**（`no_think` 855 + `think` 649；⚠️ 2026-10-02 校正，旧记 97.6GB 有误） | —（SFT，不计 token） | — | `no_think/{Chinese-general,Code,IF,Knowledge,Math,Multi-lang-K,Multi-lang-M}` + `think`，1510 siblings | 🟠 **下载中（315/1504）** | **重下中（token 已有效）** |
 | 7 | UltraData-SFT-Agent-2609 | https://huggingface.co/datasets/openbmb/UltraData-SFT-Agent-2609 | apache-2.0 ✅ | **~500K 样本**（jsonl 50 shard） | **51 GiB** ✅ | —（SFT） | `Code_Agent`(7)/`General_Agent`/`Search_Agent`/`Tool_Use` jsonl | ✅ **就绪** | Stage(ii) SFT |
 | 8 | UltraData-RL-2609 | https://huggingface.co/datasets/openbmb/UltraData-RL-2609 | apache-2.0 ✅ | 10K<n<100K（`size_categories`） | **187.63 GB** ✅ | —（RL） | 4 config：Math(default)/Knowledge/Long-Context/Code，20 jsonl（Code 12=~184G / Knowledge 2=~10M / Math 4=~15M / Long-Context 2=~3.6G） | ❌ | RL 阶段(Stage v)用，**P-8 不需要** |
 
@@ -234,7 +234,7 @@ Base/mid 训练 = `Ultra-FineWeb` + `Ultra-FineWeb-L3` + `UltraX-Preview` + `Ult
 
 **需要下载 / 已完成（`✅`区分）**：
 1. `openbmb/Ultra-FineWeb`（base，2.99TB，apache-2.0，**公开、无需 token**）—— **本轮已启动下载**（写入 `/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb/`，进程持续中）。
-2. `openbmb/UltraData-SFT-2605`（gated，~97.6GB）—— **阻塞**：本机现有 HF token `hf_lqLxH…` **`whoami` 返回 401 / gated resolve 401 已失效**，需轮换有效 token 后再下（Stage(ii) SFT，不阻塞 P-8）。
+2. `openbmb/UltraData-SFT-2605`（gated，318.99GB / 1504 jsonl）—— **已在本轮重下**：token `hf_lqLxH…`（用户 foamliu）`whoami-v2` 实测**有效**、gated resolve 通过，下载中（315/1504 jsonl）；下完核验「实际字节+文件数 vs HF 官方清单」一致性（Stage(ii) SFT，不阻塞 P-8）。
 3. `UltraX-Preview`（487GB）—— **不下载**：其 config `UltraX-Ultra-FineWeb` 实为 base 的程序化精炼版，与 base 重叠；≤200B 档用 base 即可，UltraX 留作「base 不可得时的质量替代」备选。
 4. `UltraData-RL-2609`（187.63GB）—— **不下载**：RL/RLVR 阶段（Stage v）才用，与 P-8（预训练）无关。
 
@@ -332,7 +332,7 @@ HF_TOKEN=<新token> hf download --repo-type dataset openbmb/UltraData-SFT-2605 \
 → **结论：由 50 万 → ≈1800 万对，×~35 倍**，足以支撑 2.2B 视觉编码器 Stage(iii)/(iv)（这已不是"CLIP 级 4–20 亿"的量级，但 CLIP 级那批数据在 HF 上全是 URL 元数据、公司网络下不动图 → 拿不到就是拿不到，如实说明）。**若要强上 >1 亿对，唯一现实路径是在公司内网自行跑 `img2dataset` 重下 LAION（不在本轮范围，需运维放行出网）。**
 
 **下载清单 + 磁盘 + 带宽**：
-- **必下：无**（前 3 推荐全本地）。已在后台下载的 `SFT-2605`（97.6GB/978 jsonl，见 §0.3）与本结论无关。
+- **必下：无**（前 3 推荐全本地）。已在后台下载的 `SFT-2605`（318.99GB/1504 jsonl，见 §0.3）与本结论无关。
 - **可选补量（新 found bytes，磁盘允许时再下）**：`hanlincs/InternVL-SA1B-Caption-WebDataset`、`zenless-archive/danbooru-2023-webdataset`（域外）。
 - 磁盘：`/nas_train` 剩 32T、`/nas_user` 剩 29T，本地已下数据不新增占用；可选补量若下 InternVL-SA1B 全量需先查大小。
 - 带宽：当前 4 路 HF 下载（base 2.99TB / gpic / LLaVA / SFT-2605）共用，实测 ~10–13 MB/s，**本阶段不宜再开新大下载**。
