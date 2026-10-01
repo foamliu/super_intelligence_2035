@@ -1,0 +1,240 @@
+# BaiZe R2 P-4 BF16 profile (p4_profile)
+# GBS=8 MBS=1 seq=4094 TP=1 DP=8 bf16
+# warmup=20 profile_steps=80 num_microbatches=1
+
+=== key_averages sorted by self_device_time_total (CUDA) ===
+operator                                                      self_cuda_us      cuda_us    count
+record_param_comms                                              19089661.7   19099259.1    12080
+ncclDevKernel_ReduceScatter_Sum_f32_RING_LL(ncclDevKernelArgsStorage<4096ul>)     9787400.3    9787400.3     2960
+nccl:reduce_scatter_tensor_coalesced                             9787400.3    9787400.3     2960
+ncclDevKernel_AllGather_RING_LL(ncclDevKernelArgsStorage<4096ul>)     9222504.1    9222504.1     2960
+nccl:all_gather_into_tensor_coalesced                            9222504.1    9222504.1     2960
+_LayerNormLinearBackward                                         2488161.4    2488161.4     4480
+nvjet_tst_128x256_64x4_2x1_v_bz_coopA_NNN                        1675203.4    1675203.4     6800
+_LinearBackward                                                  1527700.4    1527700.4     4480
+MambaSplitConv1dScanCombinedFnBackward                           1515407.7    2017815.1     1920
+nvjet_tst_128x256_64x4_2x1_v_bz_coopA_NTN                        1493356.9    1493356.9     6800
+_LayerNormLinear                                                 1198613.7    1202223.7     4480
+nvjet_tst_128x256_64x4_2x1_v_bz_coopA_TNN                         924529.9     924529.9     4800
+aten::add_                                                        910389.9     910389.9    33520
+_Linear                                                           889683.1     890211.7     4480
+void at::native::unrolled_elementwise_kernel<at::native::CUDAFunctor_add<float>, std::array<char*, 3ul>, 4, TrivialOffsetCalculator<2, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<2>, at::native::memory::StoreWithCast<1> >(int, at::native::CUDAFunctor_add<float>, std::array<char*, 3ul>, TrivialOffsetCalculator<2, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<2>, at::native::memory::StoreWithCast<1>)      831580.6     831580.6    25200
+nvjet_tst_256x152_64x4_2x1_v_bz_coopA_TNT                         706361.9     706361.9     2320
+aten::mm                                                          637345.1     637345.1      240
+nvjet_tst_192x192_64x4_1x2_h_bz_coopB_TNN                         540317.4     540317.4     1920
+MambaSplitConv1dScanCombinedFn                                    493644.6     592514.5     1920
+nvjet_tst_256x152_64x4_2x1_v_bz_coopA_NNT                         484762.8     484762.8     2240
+aten::mul_                                                        469004.0     469004.0     2960
+void at::native::vectorized_elementwise_kernel<4, at::native::AUnaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float> >, std::array<char*, 2ul> >(int, at::native::AUnaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float> >, std::array<char*, 2ul>)      469004.0     469004.0     2960
+nvjet_tst_256x128_64x4_1x2_h_bz_coopA_NTT                         461741.1     461741.1     1920
+aten::linalg_vector_norm                                          287996.4     287996.4     2960
+void at::native::reduce_kernel<512, 1, at::native::ReduceOp<float, at::native::NormTwoOps<float, float, float>, unsigned int, float, 4, 4> >(at::native::ReduceOp<float, at::native::NormTwoOps<float, float, float>, unsigned int, float, 4, 4>)      285555.2     285555.2     2960
+_chunk_scan_chunk_state_bwd_dx_kernel                             259281.3     259281.3     1920
+aten::fill_                                                       255083.3     257784.3    15226
+_chunk_scan_fwd_kernel                                            249890.1     249890.1     1920
+Optimizer.step#FusedAdam.step                                     242677.7     242677.7       80
+void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::native::FillFunctor<float>, std::array<char*, 1ul>)      241295.5     241295.5    14880
+void multi_tensor_apply_kernel<TensorListMetadata<4, false>, transformer_engine::multi_tensor_adam::AdamFunctor<float, float, float, int>, float, float, float, float, float, float, transformer_engine::multi_tensor_adam::adamMode_t, float>(long, int volatile*, TensorListMetadata<4, false>, transformer_engine::multi_tensor_adam::AdamFunctor<float, float, float, int>, float, float, float, float, float, float, transformer_engine::multi_tensor_adam::adamMode_t, float)      240326.4     240326.4     1280
+triton_red_fused_exp_sub_sum_2                                    236788.4     236788.4       80
+triton_red_fused_exp_sub_sum_2                                    236788.4     236788.4       80
+_chunk_state_fwd_kernel                                           216213.9     216213.9     3840
+LayerNormFnBackward                                               210869.4     228540.6     1920
+_layer_norm_bwd_kernel                                            210869.4     210869.4     1920
+_state_passing_fwd_kernel                                         204355.0     204355.0     3840
+_state_passing_bwd_kernel                                         182600.8     182600.8     1920
+aten::sum                                                         176625.5     176629.3    15601
+aten::gelu_backward                                               176135.5     176135.5     2240
+void at::native::vectorized_elementwise_kernel<8, at::native::GeluBackwardCUDAKernelImpl(at::TensorIteratorBase&, at::native::GeluType)::{lambda()#2}::operator()() const::{lambda()#4}::operator()() const::{lambda(c10::BFloat16, c10::BFloat16)#1}, std::array<char*, 3ul> >(int, at::native::GeluBackwardCUDAKernelImpl(at::TensorIteratorBase&, at::native::GeluType)::{lambda()#2}::operator()() const::{lambda()#4}::operator()() const::{lambda(c10::BFloat16, c10::BFloat16)#1}, std::array<char*, 3ul>)      176135.5     176135.5     2240
+void transformer_engine::normalization::rmsnorm_bwd_finalize_general_kernel<__nv_bfloat16, float, 4u, 1u, 4u, 32u>(transformer_engine::normalization::BackwardKernelParams)      171906.9     171906.9     4560
+void at::native::reduce_kernel<128, 4, at::native::ReduceOp<float, at::native::func_wrapper_t<float, at::native::sum_functor<float, float, float>::operator()(at::TensorIterator&)::{lambda(float, float)#1}>, unsigned int, float, 4, 4> >(at::native::ReduceOp<float, at::native::func_wrapper_t<float, at::native::sum_functor<float, float, float>::operator()(at::TensorIterator&)::{lambda(float, float)#1}>, unsigned int, float, 4, 4>)      167540.7     167540.7    13440
+DaoAILab::_causal_conv1d_fwd_cpp                                  163668.2     163679.2     3840
+void causal_conv1d_channellast_fwd_kernel<Causal_conv1d_channellast_fwd_kernel_traits<128, 4, 64, true, c10::BFloat16, c10::BFloat16>, false>(ConvParamsBase)      163668.2     163668.2     3840
+_chunk_scan_bwd_ddAcs_stable_kernel                               162929.0     162929.0     1920
+DaoAILab::_causal_conv1d_bwd_cpp                                  156891.5     156891.5     1920
+void causal_conv1d_channellast_bwd_kernel<Causal_conv1d_channellast_bwd_kernel_traits<128, 4, 128, true, true, c10::BFloat16, c10::BFloat16>, false, false>(ConvParamsBwd)      156891.5     156891.5     1920
+_chunk_scan_bwd_dz_kernel                                         147073.7     147073.7     1920
+triton_poi_fused__to_copy_mul_2                                   144443.5     144443.5       80
+triton_poi_fused__to_copy_mul_2                                   144443.5     144443.5       80
+void transformer_engine::normalization::rmsnorm_bwd_general_kernel<transformer_engine::normalization::Kernel_traits<__nv_bfloat16, __nv_bfloat16, __nv_bfloat16, float, unsigned int, 2048u, 1u, 1u, 4u, 16u, transformer_engine::normalization::Kernel_traits_base<2048u, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, float, unsigned int, 128u> >, false>(transformer_engine::normalization::BackwardKernelParams)      122647.3     122647.3     4560
+aten::gelu                                                        122193.7     122193.7     2240
+void at::native::vectorized_elementwise_kernel<8, at::native::GeluCUDAKernelImpl(at::TensorIteratorBase&, at::native::GeluType)::{lambda()#2}::operator()() const::{lambda()#4}::operator()() const::{lambda(c10::BFloat16)#1}, std::array<char*, 2ul> >(int, at::native::GeluCUDAKernelImpl(at::TensorIteratorBase&, at::native::GeluType)::{lambda()#2}::operator()() const::{lambda()#4}::operator()() const::{lambda(c10::BFloat16)#1}, std::array<char*, 2ul>)      122193.7     122193.7     2240
+void transformer_engine::normalization::rmsnorm_fwd_general_kernel<transformer_engine::normalization::Kernel_traits<__nv_bfloat16, __nv_bfloat16, __nv_bfloat16, float, unsigned int, 2048u, 1u, 4u, 1u, 16u, transformer_engine::normalization::Kernel_traits_base<2048u, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, float, unsigned int, 128u> > >(transformer_engine::normalization::ForwardKernelParams)      122059.0     122059.0     4560
+flash_attn_3::bwd                                                 120999.9     123349.0      320
+aten::copy_                                                       119232.8     119561.3    32480
+_chunk_scan_bwd_dc_kernel                                         118478.2     118478.2     1920
+triton_poi_fused_div_1                                            117802.7     117802.7       80
+triton_poi_fused_div_1                                            117802.7     117802.7       80
+_chunk_state_bwd_db_kernel                                        116414.2     116414.2     1920
+triton_poi_fused__to_copy_index_index_put_rsub_sub_0              111324.8     111324.8       80
+triton_poi_fused__to_copy_index_index_put_rsub_sub_0              111324.8     111324.8       80
+void cutlass::device_kernel<flash::enable_sm90_or_later<flash::FlashAttnBwdSm90<flash::CollectiveMainloopBwdSm90<2, 2, 2, cute::tuple<cute::C<1>, cute::C<1>, cute::C<1> >, cute::tuple<cute::C<64>, cute::C<128>, cute::C<128> >, cutlass::bfloat16_t, float, cutlass::arch::Sm90, true, false, false, false, false, true, false, false, 2, 1, 2, 1, false>, flash::CollectiveEpilogueBwdGQA<cute::tuple<cute::C<64>, cute::C<128>, cute::C<128> >, float, cutlass::arch::Sm90, 256, false, false>, flash::SingleTileBwdLPTScheduler<false, 128, false> > > >(flash::enable_sm90_or_later<flash::FlashAttnBwdSm90<flash::CollectiveMainloopBwdSm90<2, 2, 2, cute::tuple<cute::C<1>, cute::C<1>, cute::C<1> >, cute::tuple<cute::C<64>, cute::C<128>, cute::C<128> >, cutlass::bfloat16_t, float, cutlass::arch::Sm90, true, false, false, false, false, true, false, false, 2, 1, 2, 1, false>, flash::CollectiveEpilogueBwdGQA<cute::tuple<cute::C<64>, cute::C<128>, cute::C<128> >, float, cutlass::arch::Sm90, 256, false, false>, flash::SingleTileBwdLPTScheduler<false, 128, false> > >::Params)      102742.5     102742.5      320
+_chunk_scan_bwd_dcb_kernel                                         93515.1      93515.1     1920
+triton_red_fused__to_copy_max_0                                    90087.4      90087.4       80
+triton_red_fused__to_copy_max_0                                    90087.4      90087.4       80
+cudaThreadExchangeStreamCaptureMode                                87862.2      87862.2    14196
+_bmm_chunk_bwd_kernel                                              86851.2      86851.2     3840
+_chunk_scan_bwd_dstates_kernel                                     86299.0      86299.0     1920
+void at::native::vectorized_elementwise_kernel<8, at::native::bfloat16_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda(float)#1}, std::array<char*, 2ul> >(int, at::native::bfloat16_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda(float)#1}, std::array<char*, 2ul>)       85947.0      85947.0    22640
+cudaStreamIsCapturing                                              82117.4      82117.4    41280
+cudaEventQuery                                                     81514.2      81514.2    13577
+ncclDevKernel_AllReduce_Sum_f32_RING_LL(ncclDevKernelArgsStorage<4096ul>)       79757.3      79757.3       80
+nccl:all_reduce                                                    79757.3      79757.3       80
+void at::native::vectorized_elementwise_kernel<8, at::native::CUDAFunctor_add<c10::BFloat16>, std::array<char*, 3ul> >(int, at::native::CUDAFunctor_add<c10::BFloat16>, std::array<char*, 3ul>)       69534.5      69534.5     4480
+triton_poi_fused_add_0                                             68958.4      71197.4     4480
+triton_poi_fused_add_0                                             68958.4      68958.4     4480
+_bmm_chunk_fwd_kernel                                              58164.6      58164.6     3840
+LayerNormFn                                                        48374.1      48424.3     1920
+_layer_norm_fwd_1pass_kernel                                       48374.1      48374.1     1920
+flash_attn_3::fwd                                                  44991.9      45490.2      320
+void cutlass::device_kernel<flash::enable_sm90_or_later<flash::FlashAttnFwdSm90<flash::CollectiveMainloopFwdSm90<2, cute::tuple<cute::C<1>, cute::C<1>, cute::C<1> >, cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> >, 128, cutlass::bfloat16_t, float, cutlass::arch::Sm90, true, false, false, false, false, false, false, true, true, false, false, false>, flash::CollectiveEpilogueFwd<cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> >, cute::tuple<cute::C<1>, cute::C<1>, cute::C<1> >, cutlass::bfloat16_t, cutlass::arch::Sm90, 256, false, false, false, false>, flash::DynamicPersistentTileScheduler<256, 32, false, false, true> > > >(flash::enable_sm90_or_later<flash::FlashAttnFwdSm90<flash::CollectiveMainloopFwdSm90<2, cute::tuple<cute::C<1>, cute::C<1>, cute::C<1> >, cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> >, 128, cutlass::bfloat16_t, float, cutlass::arch::Sm90, true, false, false, false, false, false, false, true, true, false, false, false>, flash::CollectiveEpilogueFwd<cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> >, cute::tuple<cute::C<1>, cute::C<1>, cute::C<1> >, cutlass::bfloat16_t, cutlass::arch::Sm90, 256, false, false, false, false>, flash::DynamicPersistentTileScheduler<256, 32, false, false, true> > >::Params)       44991.9      44991.9      320
+void multi_tensor_apply_kernel<TensorListMetadata<1, false>, transformer_engine::multi_tensor_l2norm::L2NormFunctor<float>, float*, float*, bool, int>(long, int volatile*, TensorListMetadata<1, false>, transformer_engine::multi_tensor_l2norm::L2NormFunctor<float>, float*, float*, bool, int)       34514.7      34514.7     1120
+nvjet_tst_128x192_64x5_2x1_v_bz_coopB_NTN                          31822.2      31822.2      320
+aten::cumsum                                                       24186.6      24186.6     3840
+void at::native::tensor_kernel_scan_innermost_dim<float, std::plus<float> >(float*, float const*, unsigned int, unsigned int, unsigned int, float, std::plus<float>)       24186.6      24186.6     3840
+void at::native::elementwise_kernel<128, 4, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#12}::operator()() const::{lambda(c10::BFloat16)#1}>(at::TensorIteratorBase&, at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#12}::operator()() const::{lambda(c10::BFloat16)#1} const&)::{lambda(int)#1}>(int, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#12}::operator()() const::{lambda(c10::BFloat16)#1}>(at::TensorIteratorBase&, at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#12}::operator()() const::{lambda(c10::BFloat16)#1} const&)::{lambda(int)#1})       23504.1      23504.1     2880
+void multi_tensor_apply_kernel<TensorListMetadata<2, false>, transformer_engine::multi_tensor_scale::ScaleFunctor<float, float>, float>(long, int volatile*, TensorListMetadata<2, false>, transformer_engine::multi_tensor_scale::ScaleFunctor<float, float>, float)       21592.5      21592.5      390
+Memset (Device)                                                    19258.3      19258.3    18960
+cudaLaunchKernel                                                   16837.4      16847.1   158016
+aten::flip                                                         15119.7      15119.7     3840
+void at::native::index_elementwise_kernel<128, 4, at::native::flip_kernel_impl<at::native::OpaqueType<4> >(at::TensorIterator&)::{lambda(int)#1}>(long, at::native::flip_kernel_impl<at::native::OpaqueType<4> >(at::TensorIterator&)::{lambda(int)#1})       15119.7      15119.7     3840
+_chunk_cumsum_fwd_kernel                                           14646.0      14646.0     3840
+aten::_local_scalar_dense                                          14212.1      51066.9    10960
+Memcpy DtoH (Device -> Pinned)                                     14212.1      14212.1     6160
+aten::embedding_dense_backward                                     14015.5      27161.0       80
+void at::native::vectorized_elementwise_kernel<8, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul>)       13018.4      13018.4       80
+_chunk_cumsum_bwd_kernel                                           12473.2      12473.2     1920
+aten::cat                                                          11209.7      11209.7      400
+void at::native::(anonymous namespace)::CatArrayBatchedCopy_alignedK_contig<at::native::(anonymous namespace)::OpaqueType<2u>, unsigned int, 4, 128, 1, 8>(at::native::(anonymous namespace)::OpaqueType<2u>*, at::native::(anonymous namespace)::CatArrInputTensorMetadata<at::native::(anonymous namespace)::OpaqueType<2u>, unsigned int, 128, 1>, at::native::(anonymous namespace)::TensorSizeStride<unsigned int, 4u>, int, unsigned int)       10970.0      10970.0      320
+void at::native::vectorized_elementwise_kernel<4, at::native::CUDAFunctor_add<float>, std::array<char*, 3ul> >(int, at::native::CUDAFunctor_add<float>, std::array<char*, 3ul>)        9259.4       9259.4     3840
+void at::native::reduce_kernel<512, 1, at::native::ReduceOp<float, at::native::func_wrapper_t<float, at::native::sum_functor<float, float, float>::operator()(at::TensorIterator&)::{lambda(float, float)#1}>, unsigned int, float, 4, 4> >(at::native::ReduceOp<float, at::native::func_wrapper_t<float, at::native::sum_functor<float, float, float>::operator()(at::TensorIterator&)::{lambda(float, float)#1}>, unsigned int, float, 4, 4>)        9084.8       9084.8     2160
+void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul>, 4, TrivialOffsetCalculator<1, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<1>, at::native::memory::StoreWithCast<1> >(int, at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul>, TrivialOffsetCalculator<1, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<1>, at::native::memory::StoreWithCast<1>)        8520.0       8520.0     3920
+void cutlass::device_kernel<flash::FlashAttnBwdPreprocess<cute::tuple<cute::C<64>, cute::C<128> >, cutlass::bfloat16_t, float, cutlass::arch::Sm90, true, false> >(flash::FlashAttnBwdPreprocess<cute::tuple<cute::C<64>, cute::C<128> >, cutlass::bfloat16_t, float, cutlass::arch::Sm90, true, false>::Params)        8295.6       8295.6      320
+aten::add                                                           6849.2       6849.2     2000
+cudaEventRecordWithFlags                                            6847.1       6847.1    12400
+void at::native::vectorized_elementwise_kernel<4, at::native::neg_kernel_cuda(at::TensorIteratorBase&)::{lambda()#2}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul> >(int, at::native::neg_kernel_cuda(at::TensorIteratorBase&)::{lambda()#2}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul>)        6769.0       6769.0     3840
+aten::neg                                                           6767.3       6767.3     3840
+_OperationFuserAutogradFunctionBackward                             6740.4       6740.4       80
+void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::CUDAFunctor_add<float> >(at::TensorIteratorBase&, at::native::CUDAFunctor_add<float> const&)::{lambda(int)#1}>(int, at::native::gpu_kernel_impl_nocast<at::native::CUDAFunctor_add<float> >(at::TensorIteratorBase&, at::native::CUDAFunctor_add<float> const&)::{lambda(int)#1})        6734.6       6734.6     1920
+aten::ne                                                            6458.2       6458.2     3040
+void at::native::vectorized_elementwise_kernel<4, at::native::BinaryFunctor<float, float, bool, at::native::(anonymous namespace)::CompareEqFunctor<float> >, std::array<char*, 3ul> >(int, at::native::BinaryFunctor<float, float, bool, at::native::(anonymous namespace)::CompareEqFunctor<float> >, std::array<char*, 3ul>)        6458.2       6458.2     3040
+aten::eq                                                            5555.1       5555.1     3360
+void at::native::vectorized_elementwise_kernel<4, at::native::AUnaryFunctor<float, float, bool, at::native::(anonymous namespace)::CompareEqFunctor<float> >, std::array<char*, 2ul> >(int, at::native::AUnaryFunctor<float, float, bool, at::native::(anonymous namespace)::CompareEqFunctor<float> >, std::array<char*, 2ul>)        5555.1       5555.1     3040
+void cutlass::device_kernel<flash::FlashAttnBwdPostprocessConvertdQ<cute::tuple<cute::C<64>, cute::C<128> >, cutlass::bfloat16_t, float, cutlass::arch::Sm90, 256, cute::TiledMMA<cute::MMA_Atom<cute::SM90::GMMA::MMA_64x64x16_F32BF16BF16_SS<(cute::SM90::GMMA::Major)0, (cute::SM90::GMMA::Major)1, (cute::SM90::GMMA::ScaleIn)1, (cute::SM90::GMMA::ScaleIn)1> >, cute::Layout<cute::tuple<cute::C<1>, cute::C<2>, cute::C<1> >, cute::tuple<cute::C<0>, cute::C<1>, cute::C<0> > >, cute::tuple<cute::Underscore, cute::Underscore, cute::Underscore> >, false> >(flash::FlashAttnBwdPostprocessConvertdQ<cute::tuple<cute::C<64>, cute::C<128> >, cutlass::bfloat16_t, float, cutlass::arch::Sm90, 256, cute::TiledMMA<cute::MMA_Atom<cute::SM90::GMMA::MMA_64x64x16_F32BF16BF16_SS<(cute::SM90::GMMA::Major)0, (cute::SM90::GMMA::Major)1, (cute::SM90::GMMA::ScaleIn)1, (cute::SM90::GMMA::ScaleIn)1> >, cute::Layout<cute::tuple<cute::C<1>, cute::C<2>, cute::C<1> >, cute::tuple<cute::C<0>, cute::C<1>, cute::C<0> > >, cute::tuple<cute::Underscore, cute::Underscore, cute::Underscore> >, false>::Params)        5511.2       5511.2      320
+aten::abs                                                           5189.3      10378.6     6080
+void at::native::vectorized_elementwise_kernel<4, at::native::AbsFunctor<float>, std::array<char*, 2ul> >(int, at::native::AbsFunctor<float>, std::array<char*, 2ul>)        5189.3       5189.3     3040
+void at_cuda_detail::cub::DeviceRadixSortOnesweepKernel<at_cuda_detail::cub::DeviceRadixSortPolicy<long, at::cuda::cub::detail::OpaqueType<8>, unsigned long long>::Policy900, false, long, at::cuda::cub::detail::OpaqueType<8>, unsigned long long, int, int, at_cuda_detail::cub::detail::identity_decomposer_t>(int*, int*, unsigned long long*, unsigned long long const*, long*, long const*, at::cuda::cub::detail::OpaqueType<8>*, at::cuda::cub::detail::OpaqueType<8> const*, int, int, int, at_cuda_detail::cub::detail::identity_decomposer_t)        4721.5       4721.5      640
+void cutlass::device_kernel<flash::FlashAttnBwdPostprocessConvertdQ<cute::tuple<cute::C<128>, cute::C<128> >, cutlass::bfloat16_t, float, cutlass::arch::Sm90, 256, cute::TiledMMA<cute::MMA_Atom<cute::SM90::GMMA::MMA_64x128x16_F32BF16BF16_RS<(cute::SM90::GMMA::Major)0, (cute::SM90::GMMA::Major)1, (cute::SM90::GMMA::ScaleIn)1, (cute::SM90::GMMA::ScaleIn)1> >, cute::Layout<cute::tuple<cute::C<2>, cute::C<1>, cute::C<1> >, cute::tuple<cute::C<1>, cute::C<0>, cute::C<0> > >, cute::tuple<cute::Underscore, cute::Underscore, cute::Underscore> >, false> >(flash::FlashAttnBwdPostprocessConvertdQ<cute::tuple<cute::C<128>, cute::C<128> >, cutlass::bfloat16_t, float, cutlass::arch::Sm90, 256, cute::TiledMMA<cute::MMA_Atom<cute::SM90::GMMA::MMA_64x128x16_F32BF16BF16_RS<(cute::SM90::GMMA::Major)0, (cute::SM90::GMMA::Major)1, (cute::SM90::GMMA::ScaleIn)1, (cute::SM90::GMMA::ScaleIn)1> >, cute::Layout<cute::tuple<cute::C<2>, cute::C<1>, cute::C<1> >, cute::tuple<cute::C<1>, cute::C<0>, cute::C<0> > >, cute::tuple<cute::Underscore, cute::Underscore, cute::Underscore> >, false>::Params)        4450.6       4450.6      640
+aten::mul                                                           3974.7       3974.7     2240
+void at::native::(anonymous namespace)::compute_grad_weight<c10::BFloat16, long>(long const*, c10::BFloat16 const*, long const*, long, long, long const*, long const*, at::AccumulateType<c10::BFloat16, true>::type*, long)        3791.5       3791.5       80
+void at::native::vectorized_elementwise_kernel<4, at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float> >, std::array<char*, 3ul> >(int, at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float> >, std::array<char*, 3ul>)        3784.3       3784.3     2160
+aten::exp                                                           3619.0       3619.0     1920
+void at::native::vectorized_elementwise_kernel<4, at::native::exp_kernel_cuda(at::TensorIteratorBase&)::{lambda()#2}::operator()() const::{lambda()#2}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul> >(int, at::native::exp_kernel_cuda(at::TensorIteratorBase&)::{lambda()#2}::operator()() const::{lambda()#2}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul>)        3619.0       3619.0     1920
+Activity Buffer Request                                             2976.4       2976.4       29
+void at::native::(anonymous namespace)::sum_and_scatter<c10::BFloat16, long>(long const*, c10::BFloat16*, long, long const*, long const*, at::AccumulateType<c10::BFloat16, true>::type const*, long const*, long const*, long, long)        2645.8       2645.8       80
+_OperationFuserAutogradFunction                                     1928.5       1928.5       80
+cudaPointerGetAttributes                                            1271.4       1327.6      400
+Memcpy HtoD (Pinned -> Device)                                      1025.2       1025.2      320
+aten::gather                                                         927.5        927.5       80
+void at::native::vectorized_gather_kernel<16, long>(char*, char*, long*, int, long, long, long, long, bool)         927.5        927.5       80
+void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<int>, std::array<char*, 1ul> >(int, at::native::FillFunctor<int>, std::array<char*, 1ul>)         769.4        769.4      506
+Buffer Flush                                                         435.1        435.1       31
+void at_cuda_detail::cub::DeviceUniqueByKeySweepKernel<at_cuda_detail::cub::DeviceUniqueByKeyPolicy<long const*, thrust::THRUST_200700_700_750_800_860_900_1000_1200_NS::counting_iterator<int, thrust::THRUST_200700_700_750_800_860_900_1000_1200_NS::use_default, thrust::THRUST_200700_700_750_800_860_900_1000_1200_NS::use_default, thrust::THRUST_200700_700_750_800_860_900_1000_1200_NS::use_default> >::Policy900, long const*, thrust::THRUST_200700_700_750_800_860_900_1000_1200_NS::counting_iterator<int, thrust::THRUST_200700_700_750_800_860_900_1000_1200_NS::use_default, thrust::THRUST_200700_700_750_800_860_900_1000_1200_NS::use_default, thrust::THRUST_200700_700_750_800_860_900_1000_1200_NS::use_default>, long*, long*, long*, at_cuda_detail::cub::ScanTileState<unsigned long long, true>, cuda::std::__4::equal_to<void>, unsigned long long>(long const*, thrust::THRUST_200700_700_750_800_860_900_1000_1200_NS::counting_iterator<int, thrust::THRUST_200700_700_750_800_860_900_1000_1200_NS::use_default, thrust::THRUST_200700_700_750_800_860_900_1000_1200_NS::use_default, thrust::THRUST_200700_700_750_800_860_900_1000_1200_NS::use_default>, long*, long*, long*, at_cuda_detail::cub::ScanTileState<unsigned long long, true>, cuda::std::__4::equal_to<void>, unsigned long long, int, at_cuda_detail::cub::detail::vsmem_t)         355.2        355.2       80
+Memcpy DtoD (Device -> Device)                                       328.6        328.6      240
+void at_cuda_detail::cub::DeviceRadixSortHistogramKernel<at_cuda_detail::cub::DeviceRadixSortPolicy<long, at::cuda::cub::detail::OpaqueType<8>, unsigned long long>::Policy900, false, long, unsigned long long, at_cuda_detail::cub::detail::identity_decomposer_t>(unsigned long long*, long const*, unsigned long long, int, int, at_cuda_detail::cub::detail::identity_decomposer_t)         307.5        307.5       80
+void at::native::unrolled_elementwise_kernel<at::native::BinaryFunctor<float, float, float, at::native::binary_internal::DivFunctor<float> >, std::array<char*, 3ul>, 4, TrivialOffsetCalculator<2, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<2>, at::native::memory::StoreWithCast<1> >(int, at::native::BinaryFunctor<float, float, float, at::native::binary_internal::DivFunctor<float> >, std::array<char*, 3ul>, TrivialOffsetCalculator<2, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<2>, at::native::memory::StoreWithCast<1>)         300.6        300.6      160
+triton_poi_fused__to_copy_index_index_put_rsub_sub_1                 272.0        272.0       80
+triton_poi_fused__to_copy_index_index_put_rsub_sub_1                 272.0        272.0       80
+aten::div_                                                           269.7        271.5      160
+void at_cuda_detail::cub::DeviceScanKernel<at_cuda_detail::cub::DeviceScanPolicy<long, at::cuda::cub::(anonymous namespace)::SumOp<long> >::Policy900, long const*, long*, at_cuda_detail::cub::ScanTileState<long, true>, at::cuda::cub::(anonymous namespace)::SumOp<long>, at_cuda_detail::cub::detail::InputValue<long, long*>, unsigned int, long, false>(long const*, long*, at_cuda_detail::cub::ScanTileState<long, true>, int, at::cuda::cub::(anonymous namespace)::SumOp<long>, at_cuda_detail::cub::detail::InputValue<long, long*>, unsigned int)         262.7        262.7       80
+aten::div                                                            260.7        260.7      160
+triton_poi_fused_bitwise_or_clone_ge_index_index_put_lift_fresh_lt_sub_0         236.4        236.4       80
+triton_poi_fused_bitwise_or_clone_ge_index_index_put_lift_fresh_lt_sub_0         236.4        236.4       80
+void at::native::vectorized_elementwise_kernel<4, at::native::BUnaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float> >, std::array<char*, 2ul> >(int, at::native::BUnaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float> >, std::array<char*, 2ul>)         229.8        229.8      160
+void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float> > >(at::TensorIteratorBase&, at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float> > const&)::{lambda(int)#1}>(int, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float> > >(at::TensorIteratorBase&, at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float> > const&)::{lambda(int)#1})         190.4        190.4       80
+void at::native::(anonymous namespace)::krn_partial_segment_offset<long>(long*, long const*, long const*, long const*, long const*)         170.0        170.0       80
+void at_cuda_detail::cub::DeviceCompactInitKernel<at_cuda_detail::cub::ScanTileState<unsigned long long, true>, long*>(at_cuda_detail::cub::ScanTileState<unsigned long long, true>, int, long*)         166.5        166.5       80
+triton_poi_fused_log_sub_0                                           163.8        163.8       80
+triton_poi_fused_log_sub_0                                           163.8        163.8       80
+void at::native::(anonymous namespace)::krn_partials_per_segment<long>(long*, long const*, long const*, long)         163.6        163.6       80
+transformer_engine::multi_tensor_l2norm::cleanup(float*, float*, float*, float*, bool, int)         150.3        150.3       80
+void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#3}::operator()() const::{lambda(int)#1}, std::array<char*, 2ul>, 4, TrivialOffsetCalculator<1, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<1>, at::native::memory::StoreWithCast<1> >(int, at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#3}::operator()() const::{lambda(int)#1}, std::array<char*, 2ul>, TrivialOffsetCalculator<1, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<1>, at::native::memory::StoreWithCast<1>)         147.6        147.6       80
+void at_cuda_detail::cub::DeviceRadixSortExclusiveSumKernel<at_cuda_detail::cub::DeviceRadixSortPolicy<long, at::cuda::cub::detail::OpaqueType<8>, unsigned long long>::Policy900, unsigned long long>(unsigned long long*)         147.3        147.3       80
+void at::native::(anonymous namespace)::compute_num_of_partial_segments<long>(long const*, long const*, long const*, long*)         143.0        143.0       80
+aten::pow                                                            141.0        141.0       80
+void at::native::vectorized_elementwise_kernel<4, at::native::(anonymous namespace)::pow_tensor_scalar_kernel_impl<float, float>(at::TensorIteratorBase&, float)::{lambda(float)#1}, std::array<char*, 2ul> >(int, at::native::(anonymous namespace)::pow_tensor_scalar_kernel_impl<float, float>(at::TensorIteratorBase&, float)::{lambda(float)#1}, std::array<char*, 2ul>)         141.0        141.0       80
+triton_poi_fused_cat_index_put_lift_fresh_1                          134.5        134.5       80
+triton_poi_fused_cat_index_put_lift_fresh_1                          134.5        134.5       80
+void at_cuda_detail::cub::DeviceScanInitKernel<at_cuda_detail::cub::ScanTileState<long, true> >(at_cuda_detail::cub::ScanTileState<long, true>, int)         132.8        132.8       80
+void at::native::vectorized_elementwise_kernel<4, at::native::CUDAFunctor_add<int>, std::array<char*, 3ul> >(int, at::native::CUDAFunctor_add<int>, std::array<char*, 3ul>)         129.9        129.9       80
+aten::arange                                                         127.1        254.2      160
+void (anonymous namespace)::elementwise_kernel_with_index<int, at::native::arange_cuda_out(c10::Scalar const&, c10::Scalar const&, c10::Scalar const&, at::Tensor&)::{lambda()#1}::operator()() const::{lambda()#4}::operator()() const::{lambda(long)#1}>(int, at::native::arange_cuda_out(c10::Scalar const&, c10::Scalar const&, c10::Scalar const&, at::Tensor&)::{lambda()#1}::operator()() const::{lambda()#4}::operator()() const::{lambda(long)#1}, function_traits<at::native::arange_cuda_out(c10::Scalar const&, c10::Scalar const&, c10::Scalar const&, at::Tensor&)::{lambda()#1}::operator()() const::{lambda()#4}::operator()() const::{lambda(long)#1}>::result_type*)         127.1        127.1       80
+void at::native::vectorized_elementwise_kernel<4, at::native::(anonymous namespace)::launch_clamp_scalar(at::TensorIteratorBase&, c10::Scalar, c10::Scalar, at::native::detail::ClampLimits)::{lambda()#1}::operator()() const::{lambda()#3}::operator()() const::{lambda(int)#1}, std::array<char*, 2ul> >(int, at::native::(anonymous namespace)::launch_clamp_scalar(at::TensorIteratorBase&, c10::Scalar, c10::Scalar, at::native::detail::ClampLimits)::{lambda()#1}::operator()() const::{lambda()#3}::operator()() const::{lambda(int)#1}, std::array<char*, 2ul>)         120.9        120.9       80
+aten::clamp                                                          119.3        119.3       80
+aten::zero_                                                            0.0     257681.0    14826
+aten::zeros                                                            0.0      15784.4      986
+aten::empty                                                            0.0        146.8   110586
+aten::to                                                               0.0      34676.2    45840
+aten::_to_copy                                                         0.0      34676.2    18320
+c10d::allgather_into_tensor_coalesced_                                 0.0    9232064.3     2960
+cudaStreamWaitEvent                                                    0.0         54.2    23840
+cuLaunchKernelEx                                                       0.0        473.5    75360
+aten::embedding                                                        0.0        927.5       80
+aten::reshape                                                          0.0       8483.8   176320
+aten::index_select                                                     0.0        927.5       80
+aten::permute                                                          0.0          4.2    76800
+aten::slice                                                            0.0         88.6    49280
+aten::item                                                             0.0      51066.9    10960
+Torch-Compiled Region: 1/2                                             0.0      75770.2     4480
+CompiledFunction                                                       0.0      75745.8     4480
+cuLaunchKernel                                                         0.0        361.1     5200
+aten::clone                                                            0.0      24046.4     3040
+aten::contiguous                                                       0.0       6317.5      640
+FlashAttnFunc                                                          0.0      45498.0      320
+flash_attn_3::_flash_attn_forward                                      0.0      45498.0      320
+LinearWithGradAccumulationAndAsyncCommunication                        0.0     208138.6       80
+aten::matmul                                                           0.0     637345.1      240
+_VocabParallelCrossEntropy                                             0.0     445213.2       80
+Torch-Compiled Region: 2/0                                             0.0      90087.4       80
+c10d::allreduce_                                                       0.0      79757.3      240
+Torch-Compiled Region: 3/0                                             0.0     237159.3       80
+Torch-Compiled Region: 4/0                                             0.0     117966.5       80
+aten::isnan                                                            0.0       6458.2     3040
+aten::is_nonzero                                                       0.0      50383.3     6080
+cudaStreamSynchronize                                                  0.0      36854.7     6160
+aten::isinf                                                            0.0      10744.4     3040
+aten::ones_like                                                        0.0        103.3       80
+autograd::engine::evaluate_function: MulBackward0                      0.0        572.0      160
+MulBackward0                                                           0.0        316.7      160
+autograd::engine::evaluate_function: DivBackward0                      0.0        260.7      160
+DivBackward0                                                           0.0        260.7      160
+autograd::engine::evaluate_function: _VocabParallelCrossEntropyBackward           0.0     256040.4       80
+_VocabParallelCrossEntropyBackward                                     0.0     256040.4       80
+Torch-Compiled Region: 5/0                                             0.0     256040.4       80
+autograd::engine::evaluate_function: LinearWithGradAccumulationAndAsyncCommunicationBackward           0.0     429206.6       80
+LinearWithGradAccumulationAndAsyncCommunicationBackward                0.0     429206.6       80
+autograd::engine::evaluate_function: torch::autograd::AccumulateGrad           0.0   11406410.0    25200
+c10d::reduce_scatter_tensor_coalesced_                                 0.0    9787400.3     2960
+autograd::engine::evaluate_function: _OperationFuserAutogradFunctionBackward           0.0       6740.4       80
+autograd::engine::evaluate_function: _LinearBackward                   0.0    1527700.4     4480
+autograd::engine::evaluate_function: GeluBackward0                     0.0     176135.5     2240
+GeluBackward0                                                          0.0     176135.5     2240
+autograd::engine::evaluate_function: _LayerNormLinearBackward           0.0    2557695.9     4480
+autograd::engine::evaluate_function: LayerNormFnBackward               0.0     228540.6     1920
+autograd::engine::evaluate_function: MambaSplitConv1dScanCombinedFnBackward           0.0    2017815.1     1920
+aten::zeros_like                                                       0.0       5555.2     3840
+aten::type_as                                                          0.0       8118.5     3840
+autograd::engine::evaluate_function: ToCopyBackward0                   0.0       6475.2     3840
+ToCopyBackward0                                                        0.0       6475.2     3840
+autograd::engine::evaluate_function: NegBackward0                      0.0       3605.3     1920
+NegBackward0                                                           0.0       3605.3     1920
+autograd::engine::evaluate_function: ExpBackward0                      0.0       3329.6     1920
+ExpBackward0                                                           0.0       3329.6     1920
+autograd::engine::evaluate_function: FlashAttnFuncBackward             0.0     123349.0      320
+FlashAttnFuncBackward                                                  0.0     123349.0      320
+flash_attn_3::_flash_attn_backward                                     0.0     123349.0      320
+autograd::engine::evaluate_function: SplitWithSizesBackward0           0.0      10970.0      320
+SplitWithSizesBackward0                                                0.0      10970.0      320
+autograd::engine::evaluate_function: EmbeddingBackward0                0.0      27161.0       80
+EmbeddingBackward0                                                     0.0      27161.0       80
+aten::embedding_backward                                               0.0      27161.0       80
+Optimizer.step#FusedAdam.step                                          0.0       8475.1       80

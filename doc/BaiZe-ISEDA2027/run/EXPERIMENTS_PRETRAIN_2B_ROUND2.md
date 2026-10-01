@@ -95,12 +95,83 @@
 - ✅ 配方已从 `Xmodel-2.5/ACL2026/method.tex` §FP8 摘取：forward **E4M3**（activations）、backward **E5M2**（gradients）、**master-weights bf16**；TE delayed-scaling `amax-history-len=128` / `amax-compute-algo=max`；经 `--transformer-impl transformer_engine` 启用（内核自动选择，无需改源码）。
 - ⚠️ 当前 `pretrain_launcher.py` **尚无** `--transformer-impl` / FP8 相关参数（仅有 `--precision`，默认 `bf16_mixed`）。第 2 步接 FP8 前需扩展 launcher（照抄 Xmodel-2.5 的 `--transformer-impl transformer_engine` + 传 fp8 recipe）。
 
-### 第 1 步（待 p3_hybrid 结束、GPU 空闲后执行）：profile 量 GEMM 占比
+### 第 1 步（✅ 完成，2026-10-01）：BF16 profile 量 GEMM 占比 → g 已量化
 
-- 计划：用 BF16 配置跑 ~100 步，`torch.profiler` 拆时间 → 归类 `GEMM（linear/attn/MLP）` / `SSM selective-scan` / `norm+act` / `通信（NCCL）` / `数据加载`，得 GEMM 占比 `g`。
-- ⚠️ 任务书自述「SSM 串行为 bottleneck」——若 scan 占大头，`g` 小，则 FP8 收益有限，**到此结论、不接 FP8**（第 2/3 步裁减）。
+> 方法：BF16 现有胜出配置（GBS=8/MBS=1/DP=8/TP=1/seq=4094，与 P-1 基线同口径），`torch.profiler` 跑 80 步（warmup 20 + active 60）。
+> 脚本：`profile_bf16.py`（+ `--lr-warmup-iters`/`--lr-decay-iters`，修复 scheduler assert）、`scripts/analyze_bf16_profile.py`、`scripts/profile_bf16.sh`。
+> 原始 kernel 表 → `run/p4_profile_bf16.txt`；归类口径见 `analyze_bf16_profile.py`。
+> **通信用 NCCL `reduce-scatter + all-gather`，GEMM 含 fused `LN→Linear` 主体。**
 
-### 状态：**待跑**（环境已备，仅差 GPU 空闲；profile 脚本落地 + 运行放在下一唤醒）
+**去重后 GPU 自耗时分解（80 步合计 self_device_time，已剔除 `record_param_comms`/`nccl:*` 与 `ncclDevKernel` 三重重复记账）：**
+
+| 类别 | 自耗时 (ms) | 占 GPU 总时间 | 占纯计算 |
+|:--|--:|--:|--:|
+| **通信 NCCL**（reduce-scatter 9.79 s + all-gather 9.22 s + allreduce 0.08 s） | 19089.7 | **41.7%** | — |
+| **GEMM**（fused LN+Linear 7482 + mm/linear 613 + stable-moe/MLP 内存 4703，含 0.17s vec∗mat 存算） | ~13101 | ~28.6% | **49.2%** |
+| **SSM**（selective-scan 3150 + conv1d 566 + cumsum 117） | ~3833 | ~8.4% | 14.4% |
+| **norm+act+逐元素**（layer-norm 1675 + rms-norm 769 + 各类逐元素 2366） | ~4810 | ~10.5% | 18.1% |
+| **attention**（flash-attn） | ~326 | ~0.7% | 1.2% |
+| **optimizer**（Adam step 2042 + grad-clip） | ~2577 | ~5.6% | 9.7% |
+| **misc / 发射开销**（cudaStreamSynchronize 36.9 s、cudaLaunchKernel 16.8 s、Memset、分桶等） | ~1997 | ~4.4% | 7.5% |
+| **数据加载** | ~0 | **0.0%** | — |
+
+### P-4 第 1 步结论（✅ 定稿，决定不接 FP8）
+
+- **GEMM 占比 `g`**：**~28.6%**（含通信的墙钟口径）／**~49.2%**（纯计算口径，通信充分重叠/高 GBS 时的上界口径）。
+- **Amdahl FP8 上限**：纯计算口径 `1/(1-g)=1.97×`（即便 FP8 GEMM 无限快）；含通信口径上限 `1.40×`。**现实**（FP8 GEMM 单算子 s≈1.3–1.6）→ **墙钟 ~1.1–1.2×**（纯计算 ~1.2–1.3×）。**远低于稠密 Transformer 的 +30%**。
+- **SSM 是 main compute 里的第二大项（~14.4% 纯计算）但并非独占**；真正的墙钟问题是 **通信 NCCL ≈ 41.7%**（GBS=8/MBS=1/DP=8 下 reduce-scatter + all-gather 梯度 comm 不被第二 micro-batch 掩盖）＋ **SSM+norm+act+optimizer ≈ 42% 纯计算均不被 FP8-GEMM 加速**。
+- ⚠️ **GBS 口径 caveat（如实）**：本 profile 用搜索口径 GBS=8/MBS=1，comm 占 41.7% 是**小 batch 下偏高、会高估高 GBS 生产场景的 comm 占比**（GBS=1024 时 comm 被摊销且可与 compute 重叠，占比远低于 41.7%）→ 此时回到纯计算口径 g≈0.49，FP8 上限 1.97×、现实 ~1.2–1.3×。**两种口径上限均 <2×，FP8 对 Mamba2-hybrid 的加速天花板被 SSM+norm+act（>50% 计算）卡死。**
+- ✅ **定稿判定**：FP8-GEMM 对 Mamba2-hybrid 2B **加速上限 ~1.2–1.3×（现实）**，低于论文可主张的显著收益、且需扩展 launcher/改 kernel 成本高 → **到此结论、不接 FP8**（P-4 第 2/3 步裁减）。数据加载在 GPU 侧 0% 占比（CPU 异步 prefetch 完全隐藏）。
+
+### 状态：**第 1 步 ✅ 完成、已定稿不接 FP8**（下一步按顺序 P-7 吞吐幅度核查）
+
+---
+
+## P-7　训练吞吐幅度核查（`tab:archcomp` 的 "+24%" 是跨节点测量的 artifact → 真值 ~8%）
+
+> 问题：论文 `tab:archcomp` 写 dense **89K** vs hybrid **72K**（dense **+24%**），摘要亦写 "~24% training-throughput cost"；
+> 但 P-3 同口径（6 卡 / TP1/DP6 / GBS=6 / seq4096）实测 dense **89.7K** vs hybrid **85.6K**（仅 **+4.8%**）。
+> 必须查明 "+24%" 真伪 —— 训练吞吐代价是 hybrid 论证里唯一的「成本侧」数字，直接决定 `tab:archcomp` 怎么写。
+
+### 第 1 步　算账：首步编译开销摊不摊得出 16%
+
+- Round 1 记录 hybrid 首步 SSM 编译 ~12.3s；摊进 1000 步平均 = 12.3s ÷ (1000 × 0.34s) ≈ **3.6%**（见任务书自算，复核一致）。
+- 但 340ms → 287~297ms 是 **~13–16%** 的位移，**远超 3.6%** → 首步开销不足以解释，必有其它原因。
+
+### 第 2 步　比对两次测量差异 → 根因定位：Round 1 把 hybrid 放到了另一台机器
+
+- **Round 1 架构对比（`EXPERIMENTS_2B.md:52`）**：MiniCPM5(A1) 跑在 **10.239.2.29 GPU0-5**（~275ms/89K），
+  **Mamba2(A2) 跑在 10.239.2.12 GPU0-5**（~340ms/72K）—— **两个架构在不同机器上测**（`EXPERIMENTS_2B.md:61-62` 亦注 "2.29 GPU0~5" vs "2.12 GPU0~5"）。
+- **P-3（`baize_p3_sweep.sh`）**：dense 与 hybrid **都在 10.239.2.29** 串行测。
+- `10.239.2.12` 与 **vision 任务共享**（vision 亦在该机跑，见 `MEMORY_VISION.md`），且两机硬件/争用状态不同；
+  把 hybrid 的 340ms 与 dense 的 275ms 相除记为 "dense +24%" 是**跨节点 artifact**，不是 hybrid 真实训练吞吐代价。
+- 其余比对项逐项核：micro-batch=1 / 无 grad-accum / TP1/DP6 / cosine(lr3e-4, warmup100, min_lr3e-5) / seq4096 / bf16 /
+  mcore 同版本 —— Round 1 与 P-3 **完全一致**。**唯一实质差异就是 hybrid 跑的节点不同。**
+
+### 第 3 步　同节点同配置稳态重测（本次唤醒实测）
+
+- 脚本 `baize_p7_remeasure.sh`（dense=minicpm5、hybrid=mamba2，各 **330 步**，6 卡/GBS=6/seq4096/cosine/lr3e-4，seed=1234）。
+- **GPU 独占核验**（脚本 `nvidia-smi --query-compute-apps` + `--query-gpu` 原文，见 `/tmp/baize_p7_sweep.log`）：测量前后 **8 卡均 0 MiB / 0%**、无 compute apps（vision 在 .12 与本测量无交集）。
+- 复用 P-3 的 **5000 步**全量日志（n≈490 稳态点，剔除前 10 点）交叉验证：
+
+| 架构 | 稳态 ms/iter（本唤醒 330 步，n=23） | 稳态 ms/iter（P-3 5000 步，n=490） | 训练 tok/s |
+|:--|:--|:--|:--|
+| dense（MiniCPM5-2B） | **276.77**（median 267.5，min 261 / max 416 单点尖峰） | **275.75**（median ~276） | **~89K** |
+| hybrid（Mamba2-hybrid） | **301.48**（median 295.6，min 286 / max 328） | **296.86**（median ~297） | **~82–83K** |
+
+- 两次独立测量**一致**（dense 276/276、hybrid 301/297）→ 真实稳态密集吞吐差距 ≈ **dense 快 ~7.7%–8.9%**（即 hybrid 训练吞吐代价 **~8%**），**不是 +24%**。
+  （P-3 报告里早先记的 "hybrid 287ms" 是 warmup 期 ~2180 步的单点快照，偏乐观；全量稳态均值 ~297ms。）
+
+### 第 4 步　结论 + `tab:archcomp` 该怎么写
+
+- **真值**：同节点同配置下 hybrid 训练吞吐代价 ≈ **8%**（dense ~89K vs hybrid ~82–83K），**远小于论文的 +24%**。
+- **72K/340ms 的定性**：属「**另一环境（10.239.2.12，与 vision 共享、非测量 dense 的节点）下的值**」，
+  **不是**「含首步开销的短跑均值」能解释（首步仅 3.6%）；主因是**跨节点测量 artifact**。
+- **回填建议**：`tab:archcomp` 的 "Training tok/s" 一列应改为 **dense 89K / hybrid ~83K（dense +~8%）**；
+  摘要 "~24% training-throughput cost" 应改为 **"~8% training-throughput cost"**。
+  这一修正**强化** hybrid 性价比论证：hybrid 的参数/质量优势（-11.6% 参数、更低 loss、decode +10.3×）不再被 -24% 的训练吞吐劣势抵消。
+  （🚫 按任务书 R2.3.3，我只给回填建议，不直接改 `*.tex`。）
+- **时间盒**：实测 ~5.5 min 墙钟（≤1h 框内）完成。
 
 ---
 
@@ -181,8 +252,10 @@ TRAIN_ITERS=5000 LR=1.5e-3 bash scripts/train.sh mamba2 p1_1p5e3 29711 8
 
 ---
 
-## 论文回填建议（待填，P-1/P-2/P-3 完成后给出精确数值与文字建议）
+## 论文回填建议（P-1/P-2/P-3/P-5a/P-7 已给出精确数值与文字建议）
 
 1. **「最优点是否在边界」怎么写**（P-1 ✅ 已定稿）：**最优不在网格边界，1e-3 是扩展网格内部的全局极小值**。10 点 LR 曲线（2e-4…3e-3）明确 U 形、极小值齐整落在 `1e-3`（左翼 2e-4→1e-3 单调降，右翼 1.5e-3→3e-3 单调升），且 3e-3 无 NaN 未发散（仅 loss 退化至 ~3e-4 档水平）。建议把论文 "loss improves monotonically" 那句改为交代完整网格 + 极小值位置：*"loss is U-shaped over LR ∈ [2e-4, 3e-3], attaining its minimum at LR=1e-3 (2.763); LR remains stable up to 3e-3 (no divergence, only degraded loss), so the optimum is an interior point of the grid, not a truncated boundary."*
 2. **「min_lr Δ 是否在噪声内」怎么写**：**Δ 在噪声内**。`1e-5` vs `3e-5` 的 Δ≈0.003213 仅 **~0.09σ**（n=5 复现 σ≈0.0349，mean 2.673386），远小于 run-to-run 噪声，两者**统计上不可区分**。建议把论文 "min_lr=1e-5 narrowly beats 3e-5" 改为 "min_lr 1e-5 and 3e-5 are statistically indistinguishable (Δ≈0.003 within run-to-run noise, σ≈0.035 across n=5 seeds); we adopt min_lr=1e-5 as default without claiming superiority"。
 3. **「架构对比延长到 5000 步后的结论」怎么写**（P-3 ✅ 已定稿）：hybrid 在 500/1000/2000/3000/5000 五个 checkpoint **全优于 dense**（loss 差 Δ≈0.22~0.43，末段 0.30），且 hybrid（2.220B）比 dense（2.512B）**少 11.6% 参数**仍领先。建议论文把「hybrid 更优」从早期 1000 步快照升级为 5000 步口径的稳定结论，并**补一句参数量优势**：*"Across all five checkpoints from 500 to 5000 steps, the Mamba2-hybrid (2.220B) consistently attains lower loss than the dense MiniCPM5-2B baseline (2.512B), with the gap widening to Δ≈0.30 by step 5000 — confirming the hybrid advantage is not an early-training artifact and comes with an 11.6% parameter reduction."*
+4. **「训练吞吐差」怎么写**（P-7 ✅ 已定稿，**最高优先回填**）：论文 `tab:archcomp` 的 "Training tok/s" 一列与摘要的 "~24% training-throughput cost" **都是错的**——它们来自 Round 1 把 hybrid 放到 **10.239.2.12**（另一节点、与 vision 共享）测、而 dense 在 **10.239.2.29** 测的**跨节点 artifact**。同节点同配置重测（P-3 5000 步 + P-7 330 步两次独立测量一致）真值是 **hybrid 训练吞吐代价 ≈8%**（dense ~89K vs hybrid ~82–83K）。建议：`tab:archcomp` 该行改为 **89K / ~83K / dense(+~8%)**；摘要 "~24% training-throughput cost" 改为 **"~8% training-throughput cost"**。此修正使 hybrid 的性价比论证更强（质量/参数/推理三项优势不再被 -24% 的训练吞吐劣势抵消）。
+5. **「GBS×LR 是否右移」怎么写**（P-5a ✅ 已定稿）：GBS ∈ {8,64,256,1024} 四横切面 loss 均随 LR 单调升、谷底统一 1e-3，**最优 LR 不随 batch 右移**，GBS=1024 生产口径推荐 LR=1e-3（可直接迁移，无需 sqrt/linear batch-scaling）。建议 §4 补一句：*"A GBS×LR sweep (GBS ∈ {8,64,256,1024}, matched to 164M tokens) shows loss is monotone in LR at every batch size with optimum LR=1e-3, so the LR found at GBS=8 transfers directly to production GBS=1024 without batch rescaling."*
