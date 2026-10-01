@@ -637,6 +637,20 @@
         并说明 24→30 层是有意的等参调整。否则审稿人查一眼 README 即可发现</td>
   </tr>
 
+  <tr>
+    <td>16</td><td>🚨 <b>训练数据 <code>en500k</code> 本身就是 LLaVA 的 <code>imagenet/EN</code> 子集</b>
+        —— 用 ImageNet 评测会有<b>同域 / 污染</b>风险</td>
+    <td><span class="badge b-warn">🟠 中（<b>R8 强制核查</b>）</span></td>
+    <td>依据 <code>run/EXPERIMENTS_VISION.md:21-22</code>：「切成统一子集 <code>imagenet/EN</code> 500K 对」。<br>
+        ① 若这 50 万对含 IN-1k <b>val</b> 的那 50k 张图 → <b>真污染，该臂的 IN-1k 数字不可比</b>，
+        须从跨数据臂比较中<b>剔除</b>；<br>
+        ② 若只有 train 图 → 仍是<b>同域</b>，<code>en500k</code> 臂的 IN-1k 会<b>系统性偏高</b>，
+        须在表里显式标注 <b>"in-domain"</b>。<br>
+        ✅ <b>切 GPIC 反而顺手解决了这个问题</b>：GPIC 与 ImageNet 不同域 →
+        <b>在 GPIC 上训练的模型，IN-1k 才是干净的 out-of-domain 指标</b>。<br>
+        → 已写成 <b>R8.2 的强制污染核查</b>（按图像 hash / 文件名匹配），<b>不查不许下结论</b></td>
+  </tr>
+
 
 
 </table>
@@ -785,8 +799,8 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
   </tr>
 
   <tr>
-    <td rowspan="4"><b>vision</b><br>(<code>10.239.2.12</code>)<br><br>
-        <small>🚦 次序<br><b>R6 → R5 → R7</b></small></td>
+    <td rowspan="5"><b>vision</b><br>(<code>10.239.2.12</code>)<br><br>
+        <small>🚦 次序<br><b>R6 → R5 → R7 → R8</b></small></td>
     <td><b>R4</b> 坍缩根因定位与修复</td>
     <td><span class="badge b-ok">✅ 已完成</span><br><small>C1–C4 全过</small></td>
     <td>—</td><td>已结束</td>
@@ -826,6 +840,22 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
     <td class="ok-box" style="padding:6px 10px"><b>≤ 3 小时</b><br>
         <small>+ 视打包 I/O</small></td>
     <td class="ok-box" style="padding:6px 10px"><b>≈ 10/02–10/03</b></td>
+  </tr>
+  <tr class="ok-box">
+    <td class="ok-box" style="padding:6px 10px"><b>R8</b> 🔵 <b>扩到 6 架构 + 加 IN-1k 指标</b>（<u>R7 之后</u>）<br>
+        <small><b>新增两架构</b>：<b>AIMv2</b>（Apple, arXiv:2411.14402 —— <b>自回归多模态预训练</b>，
+        非对比学习）· <b>FastViTHD</b>（Apple 高分辨率 hybrid 塔）<br>
+        <b>新指标</b>：<b>IN-1k Accuracy</b>（<code>imagenet-1k</code> 本机已有）——
+        <b>zero-shot</b>（用冻结 CLIP 文本塔）+ <b>linear probe</b>，<b>frozen trunk</b> 协议，
+        用来<b>替换退化的 R@1 检索代理</b><br>
+        ⚠️ <b>两个坑已写明</b>：① <b>等参问题</b>（AIMv2-L≈300M、FastViT-MA36≈43M，官方无 500–600M 档）
+        → 等参版与官方预训练版<b>必须分两张表，不许混排名</b>；
+        ② 🚨 <b>污染</b>：本机 <code>en500k</code> <b>就是 LLaVA 的 <code>imagenet/EN</code> 子集</b>
+        → 必须核查它是否含 IN-1k <b>val</b> 图，否则那个臂的 IN-1k 不可比</small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-info">⏸ 已下发·排队</span><br>
+        <small>在 <b>R7 之后</b></small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≤ 4 小时</b></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≈ 10/03</b></td>
   </tr>
 
   <tr>
