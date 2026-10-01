@@ -67,7 +67,7 @@
 </div>
 
 <div class="danger">
-  <strong>🚨 当前紧要事项</strong>　<small>（第 1、3 条已闭环，仅第 2 条待办）</small>
+  <strong>🚨 当前紧要事项</strong>　<small>（第 1、3 条已闭环；第 2、4 条待办）</small>
   <ol>
     <li><b>vision 的 R5 已于今晚下发</b>（<code>BAIZE_VISION_TASK.md</code> 顶部）—— 等 agent 唤醒接单即可开跑；
         由于 <b>R1/R2 的架构 loss 结论已因坍缩全部作废</b>，
@@ -75,6 +75,8 @@
     <li><b>P-5b 一旦启动将独占 8 卡 ≈2.5 天</b> → <b>P-4 / P-6 / P-7 应排在它之前清掉</b>（合计 ≈5–9 小时）。</li>
     <li><b>人工项已清零</b>：① ✅ <code>UltraData-SFT-2605</code> 的 HF 条款<b>已点同意</b> → data agent 已被派<b>重下</b>；
         ② 🚫 <b>EDA 语料线已由运维正式取消</b>（评测 prompt 由 docstring 生成、与语料同源，"把测试集放进训练集"没有意义）。</li>
+    <li>🚨 <b>Stage (i) 的正式预训练从未开始、也不在任何排期里</b> —— 已完成的只是<b>选型实验</b>（164M–655M token）。
+        详见 <a href="#s2">§2 措辞更正</a> 与 <a href="#s9">§9</a>：需要决定"只交付选型研究"还是"补一次 Chinchilla 量级真预训练"。</li>
   </ol>
   详见 <a href="#s9">§9 当前排期与预计完成时间</a>。
 </div>
@@ -126,9 +128,14 @@
   <tr><th>Stage</th><th>内容</th><th>状态</th><th>关键指标</th><th>计划</th></tr>
   <tr>
     <td><b>(i)</b></td><td>LLM 预训练（from scratch）</td>
-    <td><span class="badge b-ok">✅ 完成</span> + <span class="badge b-info">R2 加固</span></td>
-    <td>2.22B / 56 层（4 attention）· val loss <b>2.2054</b>@20k 步 · 3-seed <b>2.6739±0.0469</b></td>
-    <td><b>P-1 ✅ / P-2 ✅ / P-3 ✅</b> · P-4 待跑 · <b>P-5a 运行中</b> · P-6 已下发</td>
+    <td><span class="badge b-info">🟡 配方/架构选型完成</span><br>
+        <span class="badge b-no">🚨 正式预训练<b>未开始</b></span></td>
+    <td><b>⚠️ 已完成的只是「超参 + 架构选型实验」</b>（S0–S5 + R2 加固）：<br>
+        2.22B / 56 层（4 attention）· 单点 5000 步 ≈ <b>164M token</b> ·
+        「长跑」20000 步 ≈ <b>655M token</b> · 总消耗 <b>~85 GPU·h</b><br>
+        val loss <b>2.2054</b>@20k 步 · 3-seed <b>2.6739±0.0469</b></td>
+    <td><b>P-1 ✅ / P-2 ✅ / P-3 ✅</b> · P-4 待跑 · <b>P-5a 运行中</b> · P-6 / P-7 已下发<br>
+        <b>🚨 正式预训练：尚未排期</b></td>
   </tr>
   <tr>
     <td><b>(ii)</b></td><td>LLM 后训练（领域退火 + SFT + RLVR）</td>
@@ -154,9 +161,35 @@
 
 <h2 class="sec" id="s2"><span class="no">2</span>Stage (i) LLM 预训练</h2>
 
+<div class="danger">
+  <h3 style="margin-top:0">🚨 措辞更正：Stage (i) 的<b>正式预训练尚未开始</b></h3>
+  <p>
+    本页此前在 <a href="#s1">§1</a> 把 Stage (i) 标为「✅ 完成」，<b>那是错的</b>（我沿用并放大了这个错误）。
+    已完成的是 <b>Stage (i) 的「超参 + 架构选型实验」</b>（S0–S5 与 R2 的 P-1…P-3）；
+    <b>用选定配方在真实语料上从零预训练</b>这件事<b>从未开始</b>。
+  </p>
+  <table style="margin:8px 0">
+    <tr><th>口径</th><th>实际值</th><th>说明</th></tr>
+    <tr><td>单点短跑（S1–S4）</td><td>5000 步 ≈ <b>164 M token</b></td>
+        <td>GBS=8 × seq=4094 ≈ 32.7K token/步</td></tr>
+    <tr><td>「长跑」S5-01</td><td>20000 步 ≈ <b>655 M token</b></td>
+        <td>所用分片本身只有 <b>742 M token</b> → <b>连一个 epoch 都没跑完</b></td></tr>
+    <tr><td>总消耗</td><td><b>~85 GPU·h</b></td><td>计划 ~92 GPU·h（8×H100）</td></tr>
+    <tr><td>参照：Chinchilla 最优</td><td>2.22B × 20 ≈ <b>~44 B token</b></td>
+        <td>实际 655M ≈ <b>Chinchilla 的 1.5%（差 67×）</b></td></tr>
+    <tr><td>参照：真实可用语料</td><td><b>≈690 B token</b></td>
+        <td>实际用量 ≈ 语料的 <b>0.095%</b>（论文 §4 误写 1.8T）</td></tr>
+  </table>
+  <p style="margin-bottom:0">
+    <b>结论</b>：现有产物是<b>「选型实验」而非「训练好的模型」</b>。
+    论文 §4 的措辞本身是诚实的（明写 <i>reduced-horizon search</i> / <i>budget-constrained</i> / 92 GPU·h），
+    但有<b>两处会让审稿人误读</b> —— 见 <a href="#s6">§6</a> 新增风险项 #13。
+  </p>
+</div>
+
 <div class="grid2">
   <div class="card">
-    <h3 style="margin-top:0">已完成</h3>
+    <h3 style="margin-top:0">✅ 已完成：配方 / 架构选型（<b>实验</b>，非正式预训练）</h3>
     <ul>
       <li>架构：Mamba-2 hybrid，56 层，其中 <b>4 层 attention</b>，<b>2.220B</b>（实测 <code>numel()</code>）</li>
       <li>胜出配置：<b>LR 1e-3 / WSD / warmup 250 / decay 500 / min_lr 1e-5</b>，退火 <b>86:10:4</b></li>
@@ -512,6 +545,18 @@
         <b>通用语料 + 领域退火 + SFT</b> 承担。<b>不影响当前算力排期</b>，但<b>投稿前须在论文口径上落实</b></td>
   </tr>
 
+  <tr>
+    <td>13</td><td>🔴 <b>论文 §4 会让审稿人误以为「已预训练 1.8T token」</b></td>
+    <td><span class="badge b-no">🔴 高（<b>投稿前必改</b>）</span></td>
+    <td>两处：<br>
+        ① <code>4_llm_pretrain.tex</code> 写
+        <i>"Pre-training uses the Ultra-FineWeb-L3 English subset (≈1.8 T tokens)"</i>
+        —— 读起来像"训练了 1.8T token"，实际仅消耗 <b>655M token</b>（且 1.8T 本身是<b>字节误记</b>，真实 ≈690B）；<br>
+        ② 全文<b>没有一句</b>说明"这是预算受限的<b>选型研究</b>、不是训练充分的 LLM"。
+        <b>建议</b>：明确写出 <b>consumed tokens / GPU·h</b>，并加一句 limitation
+        （如 "we do not claim a fully-trained LLM"）—— 否则 stage (i) 的定位会被系统性误读</td>
+  </tr>
+
 </table>
 
 <h2 class="sec" id="s7"><span class="no">7</span>Agent 与基础设施状态</h2>
@@ -701,6 +746,19 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
 <div class="note">
   <b>关键路径</b>：<b>pretrain P-5b ≈ 2.5 天</b>是当前最长的一项；其余（vision R5、P-4/P-6/P-7、data phase1/2/4）都在<b>小时级</b>。
   因此<b>真正决定 11 月能否开训的，是 P-5a → P-5b 这条链</b>；其余各线可以并行推进、不构成瓶颈。</div>
+
+<div class="danger">
+  <b>🚨 最大的一个「没写进排期的洞」：Stage (i) 的正式预训练从未开始，也不在任何排期里</b>（见 <a href="#s2">§2</a> 的措辞更正）。<br>
+  当前所有 pretrain 工作（P-1 … P-7）都是<b>选型实验</b>，token 量级 164M–655M，合计 ~85 GPU·h。<br>
+  <b>算力现实</b>（按 8×H100 实测 ~89K tok/s）：
+  <ul style="margin:6px 0">
+    <li>跑 <b>Chinchilla 最优量</b>（2.22B × 20 = <b>~44B token</b>）→ <b>≈ 5.7 天</b>（可做，但会与 P-5b 争卡）</li>
+    <li>跑满<b>真实语料</b>（<b>≈690B token</b>，论文误写 1.8T）→ <b>≈ 90 天</b> · <b>在 2027-02-01 截止前不可能</b></li>
+  </ul>
+  → <b>需要决策：Stage (i) 到底交付什么</b> ①只交付「预算受限的选型研究」（则必须改论文措辞，见 <a href="#s6">§6</a> #13）；
+  ②还是补一次 Chinchilla 量级的真预训练（≈6 天）。
+</div>
+
 
 
 <footer>
