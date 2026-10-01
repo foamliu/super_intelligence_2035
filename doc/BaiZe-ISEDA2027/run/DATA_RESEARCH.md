@@ -258,3 +258,93 @@ HF_TOKEN=<新token> hf download --repo-type dataset openbmb/UltraData-SFT-2605 \
 
 **→ 建议配比（替代）**：P-8 采用 **base-en : code : math = 86 : 10 : 4**（见 R2-C 三档表）。依据：① 直接复用 BaiZe S4 三点消融已实证的退火比（纯 L3 2.7621 → +code 2.6793 → +code+math 2.6298）；② 参照 MiniCPM5 分层结构（base 做主训练、Code/Math 做退火），把「L3 主体」原位替换为「base 主体」。此比例是数据侧可交付结论；精准主体:退火占比若需微调，属 pretrain 侧小消融（数据侧已把 base/code/math 三源备齐）。
 
+---
+
+# 问题 2（R2 修订版）—— Vision encoder：去 HF 找更多通用图文对（§0.4）
+
+> 版本 R2-视觉侧 · 2026-10-01 夜 · 响应运维「三次修订」§0.4（上一轮把问题错缩小成"要不要找 EDA 版图"）。
+> 铁律落地：① **「图像形态」一票否决**（`bytes` / `URL-only` / 待抽验，逐行贴抽验证据）；② ≥10 个 HF 候选、每条实测短 caption(≤77 token)率；③ 前 3 推荐**必须全部 `bytes`**。
+> ⚠️ `cimi-search` 底层 `api.bocha.cn` 仍 SSL 被防火墙截断（本次复测仍不可达），故用 **HF 全文搜索 API（`/api/datasets?search=`）+ `datasets-server /first-rows` + 本地 `open_clip.tokenizer.SimpleTokenizer`** 完成等价动作，并把你**实际搜过的页面/请求**列在 B 表下方。
+
+## R2-视觉侧 A · 本地多模态源逐条实测（图像形态 + ≤77 率）
+
+> 抽验方法：webdataset→`tar -tf` 看是否内嵌 `.jpg`；parquet→`pyarrow.ParquetFile.schema`；（远程）→`datasets-server /first-rows` 看列类型是否 `Image`/`url`。≤77＝`open_clip SimpleTokenizer` 抽 N 条 caption 的 ≤77 token 占比。
+
+| 本地已有 | 路径 | 图像形态（证据） | 是图文对 | 图像/对数 | caption ≤77 率（实测） | 判定 |
+|:--|:--|:--|:--|:--|:--|:--|
+| `conceptual-captions-12m-webdataset` | `/nas_train/.../datasets/conceptual-captions-12m-webdataset/data/*.tar` | ✅ **bytes**（`tar -tf`＝`00010000.jpg/.json/.txt` 三件套） | ✅ | **1100 tar / 1.2T / ≈11M 对**（每 tar 30000 成员=10000 对） | **98.0% ≤77**（mean 20.9，N=100；样本"`<PERSON>, 'Chair from the Organic Design Competition', 1941`"） | ✅ 可用 |
+| `laion2B-en-aesthetic` | `/nas_train/.../datasets/laion2B-en-aesthetic/*.parquet` | 🚫 **URL-only**（schema＝`URL/TEXT/WIDTH/HEIGHT/similarity/hash/punsafe/pwatermark/aesthetic`，无 image bytes） | 是(文字) | ≈2500 parquet / ~8.1TB（仅元数据） | 99%≤77（但没图） | 🚫 淘汰 |
+| `Recap-DataComp-1B`（UCSC-VLAA + 顶层） | `/nas_user/.../UCSC-VLAA/Recap-DataComp-1B`(518G) + `/nas_user/.../Recap-DataComp-1B`(67G) | 🚫 **URL-only（运维已确认）** | 否 | — | — | 🚫 淘汰 |
+| `BLIP3o-Pretrain-Long-Caption` | `/nas_user/.../BLIP3o/BLIP3o-Pretrain-Long-Caption/sa_*.tar` | ✅ **bytes**（`sa_1665103.jpg/.txt`） | ✅ | 2891 tar / 1.3T | **0% ≤77**（mean 121.1 tok，N=100，长描述） | ⚠️ bytes 但 caption 超长，不适配冻结 CLIP 77-token |
+| `Amshaker/Mobile-O-Pre-Train` | `/nas_user/.../Amshaker/Mobile-O-Pre-Train/*.tar` | ✅ **bytes**（`000000000.jpg/.txt`） | ✅ | **2250 tar / 3.7T / ≈6M 对**（每 tar 5292 成员=2646 对） | **100% ≤77**（mean 12.6，N=100；样本"`A close-up of a textured, cream-colored upholstered chair backrest.`"） | ✅ 可用 |
+| `coco` / `vg` | `/nas_train/.../datasets/coco`、`vg`（`images.zip` 5.5G+`images2.zip` 9.7G） | ✅ bytes（zip/jpg） | 部分(VG 带 caption) | ≈108K（vg）+≈123K（coco） | 短（COCO 短图注） | 可作补充（量小） |
+| `FineVision`(188 子集) | `/nas_train/.../datasets/FineVision/{allava_laion, allava_vflan, ...}` | ⚠️ mixed（`allava_laion` URL；部分 bytes） | 部分 | 188 子集 | 待抽验 | ⚠️ 需按子集筛 URL |
+| `LLaVA-Pretrain`(664 子集) | `/nas_train/.../datasets/LLaVA-Pretrain/00000..00663/*.parquet` | ✅ **bytes**（parquet `image` 列＝文件名，图在 archive） | ✅(短 caption) | ≈**558K** | **100% ≤77**（mean 11.5，N=100） | ✅ 可用 |
+| `LLaVA-CC3M-Pretrain-595K` | `/nas_train/.../datasets/LLaVA-CC3M-Pretrain-595K`（`images.zip`+`chat.json`） | ✅ **bytes**（`image`＝`GCC_train_*.jpg`，图在 zip） | ✅ | ≈**595K** | **100% ≤77**（mean 12.3，N=100） | ✅ 可用 |
+| `ocr_vqa` / `textvqa` | `/nas_train/.../datasets/ocr_vqa/images/*.jpg`、`textvqa/train_images/*.jpg` | ✅ bytes（jpg） | ❌(VQA) | ≈200K | —（VQA 非图文对） | ⚠️ 非通用图文对 |
+| `LLaVA-OneVision-1.5` 全家桶 | `/nas_train/.../datasets/mvp-lab/` | ✅ **bytes**（parquet 内嵌，已知） | ✅(但 85M recaption 99.7% 截断) | 7549 parquet（下载中） | 见 v1.1（长 recaption 截断） | ⚠️ 长 caption |
+| `stanford-vision-lab/gpic` | `/nas_inference/.../stanford-vision-lab/gpic` | ✅ **bytes**（tar 内 `{key}.jpg`） | ✅(tag/short 短) | 8000 train | tag/short/medium 0% 截断（v1.1 已实测） | ✅ 但量小 |
+
+> **A 表结论**：本地**早已躺着一批「bytes + 短 caption」的通用图文对**，上轮盘点完全漏掉——`CC12M webdataset ≈11M`、`Amshaker Mobile-O ≈6M`、`LLaVA-Pretrain/CC3M ≈1.15M`，三者 ≤77 率 98–100%。这就是"补数据不足"的实际弹药。
+
+## R2-视觉侧 B · HF 通用图文对候选（图像形态 + 短 caption 率实测）
+
+> 证据来源：`datasets-server /first-rows` 实时取真实样本（列类型 + 首个样本原文）；≤77 率用 `open_clip SimpleTokenizer` 抽 ≤100 条 caption 实测。
+> ⚠️ **结论与现实完全印证运维预判**：CLIP 级大集（LAION/COYO/DataComp/PixelProse/Recap/OBELICS）**普通是 URL-only**，一票淘汰；真正「带图 + 短 caption」的是**中小规模（几万~千万）**集。
+
+| 候选 | HF repo | 规模 | 图像形态（证据） | 许可 | 短 caption ≤77 率 | 判定 |
+|:--|:--|:--|:--|:--|:--|:--|
+| DataComp-1B | `mlfoundations/datacomp_1b` | ~1.4B 行 | 🚫 **URL-only**（`url` 列=`https://...blob.core.windows.net`） | — | 99%≤77（mean13.8）但没图 | 🚫 淘汰 |
+| COYO-700M | `kakaobrain/coyo-700m` | ~747M 行 | 🚫 **URL-only**（`url` 列） | cc-by-4.0 | 99%≤77（mean18.7） | 🚫 淘汰 |
+| PixelProse | `tomg-group-umd/pixelprose` | ~46M | 🚫 **URL-only**（`url` 列，另有 `vlm_caption` 长） | — | original_caption 99%≤77 | 🚫 淘汰 |
+| Recap-DataComp-1B | `UCSC-VLAA/Recap-DataComp-1B` | ~1.3B | 🚫 **URL-only（运维已确认，本地也死）** | — | — | 🚫 淘汰 |
+| OBELICS（交错） | `HuggingFaceM4/OBELICS` | ~141M doc | 🚫 **URL-only**（`images`＝`https://...` 列表，交错网页） | — | n/a（非图文对） | 🚫 淘汰 |
+| LAION-COCO(-nllb) | `visheratin/laion-coco-nllb` | — | 🚫 **URL-only**（`url` 列） | — | 100%≤77（mean10.6） | 🚫 淘汰 |
+| LAION-2B-en-aesthetic | `laion/laion2B-en-aesthetic` | ~625M | 🚫 **URL-only**（本地 schema 已证 URL+embedding） | — | — | 🚫 淘汰 |
+| CC12M（webdataset 版） | `laion/conceptual-captions-12m-webdataset` | ~11M（1100 tar） | ✅ **bytes**（本地 `tar -tf`＝`.jpg/.json/.txt`） | CC 类 | **98.0%≤77**（mean20.9） | ✅ **推荐** |
+| LLaVA-CC3M-Pretrain-595K | `liuhaotian/LLaVA-CC3M-Pretrain-595K` | 595K | ✅ **bytes**（`image`=`GCC_train_*.jpg`，图在 `images.zip`） | CC 类 | **100%≤77**（mean12.3） | ✅ **推荐** |
+| LLaVA-Pretrain(558K) | `liuhaotian/LLaVA-Pretrain` | 558K | ✅ **bytes**（`image`=`00453/004539375.jpg`，图在 archive） | CC 类 | **100%≤77**（mean11.5） | ✅ **推荐** |
+| COCO（检测版） | `detection-datasets/coco` | 118K | ✅ **bytes**（`image` 列类型=`Image`，parquet 内嵌） | COCO 许可 | n/a（检测框，非 caption 对） | ⚠️ 非通用图文对 |
+| InternVL-SA1B-Caption | `hanlincs/InternVL-SA1B-Caption-WebDataset` | SA-1B 子集 | ✅ **bytes**（`jpg` 列类型=`Image`）+`__url__` | apache-2.0? | 待抽验（caption 字段未在 first-rows 显式出现） | ✅ 新发现·可选补量 |
+| cc12m-webdataset（镜像） | `yangyang857658468/cc12m-webdataset` | ~12M | ✅ bytes（webdataset） | — | 待抽验 | 新发现·与 CC12M 重复 |
+| danbooru-2023（动漫） | `zenless-archive/danbooru-2023-webdataset` | 千万级 | ✅ bytes（webdataset） | 需查（Danbooru 约束） | 待抽验 | 新发现·域外(动漫) |
+
+**实际搜过的请求/页面**（不编造，`cimi-search` 底层不可达，改用等价手段）：
+1. HF 搜索 `GET /api/datasets?search=image caption`（返回多为个人小样本，无价值）。
+2. HF 搜索 `GET /api/datasets?search=webdataset`（→ 命中 `hanlincs/InternVL-SA1B`、`zenless-archive/danbooru-2023`、`yangyang857658468/cc12m-webdataset`、`laion/conceptual-captions-12m-webdataset` 等真实 bytes webdataset）。
+3. `datasets-server /first-rows` 对上述候选逐条取真实样本判「图像形态」（见上表证据列）。
+4. 本地 `pyarrow` schema（laion2B-en-aesthetic）与 `tar -tf`（CC12M/BLIP3o/Amshaker）做 bytes 取证。
+
+## R2-视觉侧 C · 前 3 推荐 + 下载清单 + 「能不能补上数据不足」
+
+**前 3 推荐（全部 bytes、全部短 caption、全部已在盘上——无需下载）**：
+1. **`laion/conceptual-captions-12m-webdataset`（本地已下全 1100 tar / 1.2T / ≈11M 对，98% ≤77）** —— 通用自然图文对、短 caption，是 CLIP 式对比学习最对口的弹药。
+2. **`Amshaker/Mobile-O-Pre-Train`（本地已下 2250 tar / 3.7T / ≈6M 对，100% ≤77）** —— 短单句 caption、规模可观。
+3. **`liuhaotian/LLaVA-Pretrain` + `liuhaotian/LLaVA-CC3M-Pretrain-595K`（本地已下 ≈1.15M，100% ≤77）** —— 短 caption，与 1/2 互补。
+
+**「能不能补上数据不足」——能，且无需新下载**：
+
+| 口径 | 可用对数 |
+|:--|:--|
+| 现状（上轮口径） | `en500k` **≈50 万** + LLaVA 85M（caption 99.7% 截断，几乎不可用） |
+| 补齐后（**已扣除全部 URL-only**、只算"bytes+短 caption"） | ≈**11M（CC12M）+ 6M（Amshaker）+ 1.15M（LLaVA-Pretrain/CC3M）+ 金量 gpic/coco/vg ≈0.3M ≈ 18–19M 对** |
+
+→ **结论：由 50 万 → ≈1800 万对，×~35 倍**，足以支撑 2.2B 视觉编码器 Stage(iii)/(iv)（这已不是"CLIP 级 4–20 亿"的量级，但 CLIP 级那批数据在 HF 上全是 URL 元数据、公司网络下不动图 → 拿不到就是拿不到，如实说明）。**若要强上 >1 亿对，唯一现实路径是在公司内网自行跑 `img2dataset` 重下 LAION（不在本轮范围，需运维放行出网）。**
+
+**下载清单 + 磁盘 + 带宽**：
+- **必下：无**（前 3 推荐全本地）。已在后台下载的 `SFT-2605`（97.6GB/978 jsonl，见 §0.3）与本结论无关。
+- **可选补量（新 found bytes，磁盘允许时再下）**：`hanlincs/InternVL-SA1B-Caption-WebDataset`、`zenless-archive/danbooru-2023-webdataset`（域外）。
+- 磁盘：`/nas_train` 剩 32T、`/nas_user` 剩 29T，本地已下数据不新增占用；可选补量若下 InternVL-SA1B 全量需先查大小。
+- 带宽：当前 4 路 HF 下载（base 2.99TB / gpic / LLaVA / SFT-2605）共用，实测 ~10–13 MB/s，**本阶段不宜再开新大下载**。
+
+**可复制下载命令（若后续采纳可选补量）**：
+```bash
+# 可选① InternVL-SA1B caption（bytes webdataset）
+hf download --repo-type dataset hanlincs/InternVL-SA1B-Caption-WebDataset \
+  --local-dir /nas_user/app.e0031982/datasets/hanlincs/InternVL-SA1B-Caption-WebDataset
+# 可选② 动漫（域外，谨慎）
+hf download --repo-type dataset zenless-archive/danbooru-2023-webdataset \
+  --local-dir /nas_user/app.e0031982/datasets/zenless-archive/danbooru-2023-webdataset
+```
+
+**污染闸**：任何新落盘的图文源，投料前一律过 `run/data_pipeline/check_contamination.py`（`EDA-Eval-PyAether` 158 任务红线，同 §3 机制）；WebDataset 需先按 `{key}.txt/.json` 抽 caption 文本入库过闸。本地 CC12M/Amshaker/LLaVA 亦按 "多模态 held-out 评估集与训练集不同源 + 跨集去重" 同闸。

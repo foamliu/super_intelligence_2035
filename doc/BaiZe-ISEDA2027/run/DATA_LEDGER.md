@@ -141,3 +141,22 @@
 - [ ] 入库前逐片段过闸：API 文档与评测内容天然同源（评测 prompt 由 docstring 生成），正式入库前须用 `check_contamination.py` 逐片段（非整文件）扫描，剔除命中片段。
 - [ ] 量级评估：≈45MB 纯文本对"退火"偏少（对 SFT 足够）；是否补开源 HDL 待定。
 - 粗粒度预检：pyAether_API_Docstring / emyDesign / sklangref 整文件过闸 → **0 命中**（来源材料不含评测内容）。
+
+---
+
+## 6. R2 视觉侧 bytes 盘点（§0.4 实测 · 2026-10-01 夜）
+
+> 用途：vision encoder Stage(iii)/(iv) 的「**bytes + 短 caption**」通用图文对。硬筛：**URL-only 一票淘汰**。
+> 结论：本地已有 **≈18M 可用对**（CC12M≈11M + Amshaker≈6M + LLaVA≈1.15M + gpic/coco/vg≈0.3M），**前 3 推荐全本地、无需新下载**。详见 `DATA_RESEARCH.md`「R2-视觉侧」。
+
+| 源 | 路径 | 图像形态 | 规模 | ≤77 率 | 判定 |
+|:--|:--|:--|:--|:--|:--|
+| conceptual-captions-12m-webdataset | `/nas_train/app.e0031982/datasets/conceptual-captions-12m-webdataset/data/*.tar` | ✅ bytes | 1100 tar / 1.2T / ≈11M 对 | 98.0% | ✅ 可用 |
+| Amshaker/Mobile-O-Pre-Train | `/nas_user/app.e0031982/datasets/Amshaker/Mobile-O-Pre-Train/*.tar` | ✅ bytes | 2250 tar / 3.7T / ≈6M 对 | 100% | ✅ 可用 |
+| LLaVA-Pretrain + LLaVA-CC3M-595K | `/nas_train/app.e0031982/datasets/LLaVA-Pretrain/` + `LLaVA-CC3M-Pretrain-595K/` | ✅ bytes | ≈1.15M | 100% | ✅ 可用 |
+| BLIP3o-Pretrain-Long-Caption | `/nas_user/app.e0031982/datasets/BLIP3o/BLIP3o-Pretrain-Long-Caption/` | ✅ bytes | 2891 tar / 1.3T | 0%（长描述） | ⚠️ caption 超长 |
+| laion2B-en-aesthetic | `/nas_train/app.e0031982/datasets/laion2B-en-aesthetic/` | 🚫 URL-only | ≈8.1TB 元数据 | 99%（无图） | 🚫 淘汰 |
+| Recap-DataComp-1B | `/nas_user/app.e0031982/datasets/UCSC-VLAA/Recap-DataComp-1B` 等 | 🚫 URL-only | 518G + 67G | — | 🚫 淘汰 |
+| 新增候选（可选补量） | `hanlincs/InternVL-SA1B-Caption-WebDataset`、`zenless-archive/danbooru-2023-webdataset`、`yangyang857658468/cc12m-webdataset` | ✅ bytes | — | 待抽验 | 可选 |
+
+**D11（与方案 §1 的差异）**：phase0 §1.2 把多模态一律归 `/nas_train`，实测「bytes 通用图文对」还躺在 `/nas_user`（Amshaker 3.7T、BLIP3o 1.3T）与 `/nas_train`（CC12M webdataset 1.2T 带图、LLaVA-CC3M-595K）——这批是"补数据不足"的实际弹药，上轮盘点漏记。
