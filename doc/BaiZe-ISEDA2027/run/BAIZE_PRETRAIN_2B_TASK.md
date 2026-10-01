@@ -91,6 +91,7 @@ Round 1 的 S0–S5 已经收敛，但有三处**在论文里会被审稿人直�
   → 你的**每次测量都要记录"当时 vision 任务在跑什么"**。
 - 数据：P-1/P-2 沿用现有 200k docs / 165M token 即可（5000 步 ≈ 164M）；
   **P-3 若需更长的数据覆盖，先核对再启动**，不要中途断数据。
+- **收尾不杀 loop（关键）**：R2 的 P-1/P-2/P-3 全部完成（或按预算裁剪到只剩需等待的项）后，把结果写进报告并 git push，然后**停在原地**：`MEMORY_PRETRAIN_2B.md` 的 `PHASE` 置 `converged`、`WAITING` 置 `1`（30 分钟长轮询）；🚫 **绝不 kill / pkill `baize_pretrain_loop.sh`**。loop 必须持续运行，以便运维远程下发新任务（会改写本任务书，下次唤醒即按新指令执行）。
 
 ---
 
@@ -225,7 +226,7 @@ vision 任务的 agent 与本任务**共用同一份工作副本**——同一�
 - **S3 关键轴**：胜出 LR 上单变量跑 5 组（调度族/decay/warmup/min_lr）→ 确定胜出配置 → `PHASE=s4`
 - **S4 退火消融**：跑 3 组退火数据混合，量化退火质量增益 → `PHASE=s5`
 - **S5 长跑+多seed**：先补切数据到 ≥700M，跑 winner 20000 步收敛曲线 + 3 seed 复现 → `PHASE=converged`
-- **converged**：输出胜出配置 + 可复现命令 + `BAIZE_PRETRAIN_RESULT.html`，git push 后退出
+- **converged**：输出胜出配置 + 可复现命令 + `BAIZE_PRETRAIN_RESULT.html` 并 git push；**完成后停在原地：保持 `PHASE=converged`、把 `WAITING` 置 `1`（进入 30 分钟长轮询），🚫 绝不 kill / pkill `baize_pretrain_loop.sh`**——loop 必须持续运行，以便运维远程下发新任务（改写本任务书后，下次唤醒即按新指令执行）。
 
 每步先核对 `BUDGET_USED`（≤192 GPU·h）。val loss 必须在匹配步数下比较。
 
