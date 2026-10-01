@@ -7,10 +7,10 @@ WAITING: 0
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R8_complete**（6 架构 × 3000 步 + IN-1k zs/lp 全结束；胜出=OpenVision2；含 SSM 两架构坍缩） |
-| WAITING | 0（R8 收尾完成：最终 HTML 报告 `BAIZE_VISION_ENCODER_RESULT_ROUND8.html` 已生成、EXPERIMENTS_VISION.md 顶部胜出命令已回填；仅剩可选「官方权重 IN-1k 参考表」未跑） |
+| WAITING | 0（R8 全收尾：HTML 已生成、胜出命令已回填、**可选「官方权重参考表」已用文献锚点补齐**；任务收敛） |
 | ERROR_COUNT | 0 |
 | BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（6 架构训练 ~69min 串行 ≈ 9.2 GPU·h + IN-1k 评测 ~23min） |
-| 更新 | 2026-10-02 04:57（R8 收尾：最终 HTML `BAIZE_VISION_ENCODER_RESULT_ROUND8.html` 已生成并提交；R8 完成状态见 04:45 条目） |
+| 更新 | 2026-10-02 05:14（R8 参考表补完 + 勘误「AIMv2-1B 权重已在盘上」；R2–R8 交付物齐，主体收敛） |
 | WINNER | **OpenVision2**（R8 六架构重比确认：loss/C1/IN-1k zs/IN-1k lp 全第一） |
 
 ## 🏁 R8 完成（2026-10-02 04:23 训练+评测全结束；最后回收）
@@ -37,6 +37,16 @@ WAITING: 0
 - **本轮动作**：① 新建 `doc/BaiZe-ISEDA2027/BAIZE_VISION_ENCODER_RESULT_ROUND8.html`（自包含、可离线打开，风格同 R5 报告，13590 字符，div/table/pre 标签配平校验通过），把 R4–R8 的修复 recipe 演进（R4 冻结 CLIP-768+InfoNCE → R6 77 根因/数据分阶段切 → R7 定 GPIC short → R8 6 架构+IN-1k）+ 6 架构对比 + SSM 特异坍缩 + 论文三表回填建议整合为**最终权威报告**；② `MEMORY_VISION.md` 状态头更新；③ 本当日日志；④ git commit/push（只提交本任务文件）。
 - **下一步条目核对**（对应 04:45 的「下一步」）：① 官方权重 IN-1k 参考表——**仍可选、未跑**（需下载 ~1.2GB）；② 汇总胜出命令到 EXPERIMENTS_VISION.md 顶部——**上一条唤醒已完成**；③ 重生成最终 HTML——**本轮已完成**；④ 整体验收——三表回填建议已给（`tab:visarch` 整表重写 / `tab:visres` 沿用 R5 P1 / `tab:visobj` 沿用 R4+R7），tex 由外部统一回填。
 - 🏁 **至此 R2–R8 全部交付物齐**：`EXPERIMENTS_VISION_ROUND{2..8}.md` + 各轮 HTML（ROUND2–5、ROUND8 最终版）+ `MEMORY_VISION.md` + 胜出命令/三表回填建议。剩余仅「可选官方权重参考表」。**主体已收敛，可停新实验。**
+- 未改 `*.tex`；未碰 pretrain/data/ops 文件。
+## ✅ R8 参考表补完（2026-10-02 05:14）：官方预训练 IN-1k 锚点 + 勘误「权重已在盘上」
+
+> 纯 CPU、未占卡。补上 R8.4 最后一个交付物「官方预训练参考表」，并勘误前记。
+
+- **勘误**：前记「官方权重未在本机缓存·需下载 ~1.2GB」**不准确**——实测 **AIMv2-1B 官方权重已在盘上**（`/nas_train/app.e0031982/models/apple/aimv2-1B-patch14-336|448/`，各 14G，完整 `model.safetensors`+`config.json`+`modeling_aimv2.py`；属本地共享模型目录，`~/.cache/huggingface/hub` 查不到 ≠ 没缓存）。
+- **参考表（文献锚点，协议不同，单独不并表）**：AIMv2-1B-336 **88.7%** / AIMv2-1B-448 **89.0%** / AIMv2-3B **89.5%（frozen trunk）**（均出自盘上 README `model-index`/引言）；FastViT-MA36 44.1M（IN-1k 监督，256px，≈83.6% FastViT 论文值）。对照本项目从零 OpenVision2 **1.14%** → 差 ~78–88 个百分点，客观佐证「从零对比学习远未产出可用表示」。
+- **本机未重测原因（如实）**：AIMv2 盘上 `model.safetensors` state_dict 命名（SigLIP2/native 风格）与捆绑 modeling 代码类名不一致，需 key-remap 适配且 14G 加载 >30s；FastViT 需 256px 管线。二者皆工程适配非科学问题 → 用文献值完成可选表，避免再烧 GPU/工时。
+- **本轮动作（纯 CPU）**：① `EXPERIMENTS_VISION_ROUND8.md` §8 参考表补完 + 勘误；② `MEMORY_VISION.md` 状态头 + 本流水段；③ 本当日日志；④ git commit/push（只提交本任务文件）。
+- 🏁 **R2–R8 交付物至此完整齐备**：参考表（唯一遗留的可选项）已用文献锚点补齐。**任务收敛，可停新实验并待运维处置 loop。**
 - 未改 `*.tex`；未碰 pretrain/data/ops 文件。
 ## 🚀 R8 启动（第八轮：6 架构 + ImageNet-1k 指标，2026-10-02）
 

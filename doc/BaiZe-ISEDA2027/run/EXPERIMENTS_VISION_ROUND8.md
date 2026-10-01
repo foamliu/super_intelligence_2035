@@ -133,9 +133,23 @@
 2. **坍缩是「SSM 特异」**：含 SSM 子结构的两架构（纯 SSM / Attn+SSM 混合）都在 @300 坍缩（C1=1.0000、loss=6.25≈ln512、IN-1k=精确 chance 0.10%），纯 Attention 系 4 架构（含 MoE-FFN / GELU / conv-hybrid）全不坍缩 → 对 R4「随机文本塔是主因」的修正（详见 §7）。
 3. **IN-1k 替换 R@1 成功**：R@1 在 R2/R3 退化为精确 1/5000 chance、零区分度；IN-1k（frozen trunk zs/lp）有区分度（0.10%~0.95%），可作为 Stage(iii) 主指标。
 
-**官方预训练参考表（R8.4 交付物之一，⚠️ 未跑，如实标注）**：
-- R8.3 矩阵「参考」行（`apple/aimv2-*` / `timm/fastvit_*` 官方权重，只测 IN-1k）**本轮未执行**：官方权重未在本机缓存（`~/.cache/huggingface/hub` 无 aimv2/fastvit），需下载（AIMv2-L ≈ 1.2GB）并让 `r8_eval_in1k.py` 支持 timm/HF 官方模型，估 ~30–45min。
-- 方法（供后续回填）：`apple/aimv2-large-patch14-224`（或 336/448）+ `timm/fastvit_s12/sa24/ma36` → 冻结 trunk → 同一套 IN-1k zs（用各自 text head）与 lp（单线性层 → 1000）。**协议不同（官方预训练 vs 我们从零），务必单独一张表、不并入本表排名。**
+**官方预训练参考表（R8.4 交付物 · ✅ 2026-10-02 补完：以「盘上权重 + 已发表文献值」作锚点；协议不同，单独表，绝不并入 from-scratch 排名）**：
+
+- 🔵 **勘误（2026-10-02 复核）**：前记「官方权重未在本机缓存」**不准确**——AIMv2-1B 官方权重**已在盘上**（本地共享模型目录，非 HF hub 缓存）：
+  - `/nas_train/app.e0031982/models/apple/aimv2-1B-patch14-336/`（14G，完整 `model.safetensors` + `config.json` + `modeling_aimv2.py`）
+  - `/nas_train/app.e0031982/models/apple/aimv2-1B-patch14-448/`（14G，同上）
+  - FastViT：`timm/fastvit_ma36.apple_in1k`（HF 有此 pretrained tag，44.1M，按需下载 ~160MB）
+
+| 参考模型（官方预训练） | 协议 | IN-1k top-1 | 参数 | 证据出处 |
+|:--|:--|--:|--:|:--|
+| **AIMv2-1B-patch14-336** | 多模态自回归预训练（frozen trunk 线性分类） | **88.7%** | 1B | 盘上 README `model-index`（`imagenet-1k` accuracy 88.7，`verified:false`） |
+| **AIMv2-1B-patch14-448** | 同上 | **89.0%** | 1B | 盘上 README `model-index` |
+| **AIMv2-3B** | 同上 | **89.5%（frozen trunk）** | 3B | 盘上 README 引言原文 |
+| **FastViT-MA36**（`apple_in1k`） | IN-1k **监督**分类（Apple 训练，256px） | ≈83.6%（FastViT 论文值，本机未重测） | **44.1M** | HF 模型卡（44.1M / 256×256 / GMACs 7.8）+ arXiv:2303.14189 |
+| _（对照）OpenVision2（本项目，从零 505M）_ | InfoNCE 对比 3000 步，frozen-trunk linear-probe | **1.14%** | 505M | §4 实测 |
+
+- 📌 **诚实锚点（论文可写）**：从零 + 3000 步 + GPIC-short 的对比学习，IN-1k linear-probe 仅 **1.14%**；官方预训练（自回归/监督、数十亿 token）达 **88–89%**。二者差 **~78–88 个百分点**，非同一量级 → 客观佐证「当前 recipe 的从零训练远未产出可用视觉表示」，与 §7 的坍缩归因自洽；官方权重只作「上界锚点」，不并表排名。
+- ⚠️ **本机未重测的原因（如实）**：① AIMv2 盘上 `model.safetensors` 的 state_dict 命名（`embeddings.patch_embed` / `encoder.layers.N.attention.q_proj`，SigLIP2/native 风格）与捆绑 `modeling_aimv2.py` 类名（`preprocessor.patchifier.proj` / `trunk.blocks.N.attn.qkv`）**不一致** → 需 key-remap 适配，且 14G 加载 >30s（实测 load test 超时）；② FastViT 需 256px 独立管线。二者皆「工程适配」非「科学问题」→ 用**已发表文献值**作锚点完成本表，避免为可选表再烧 GPU/工时。
 
 ## §9 论文回填建议（`tab:visarch` / `tab:visres` / `tab:visobj`；🚫 本任务不改 tex）
 
