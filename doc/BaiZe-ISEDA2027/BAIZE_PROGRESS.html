@@ -569,6 +569,18 @@
         <i>"1.8 T tokens"</i> 改为<b>数据可用量</b>的正确表述。
         ⚠️ 在此之前，<b>不要把 §4 当作已完成</b></td>
   </tr>
+  <tr>
+    <td>14</td><td>🔴 <b>MiniCPM5 的 3 个数据源从未被真正评估</b> —— 上一轮调研用「BaiZe 计划未用」带过（<b>循环论证</b>）</td>
+    <td><span class="badge b-warn">🟠 中（<b>已派 R2</b>）</span></td>
+    <td>被跳过的三个源：<code>Ultra-FineWeb</code>(base, <b>1T en + 120B zh</b>) ·
+        <code>UltraX-Preview</code>（MiniCPM5 的<b>新增 web 源</b>，上轮<b>连规模都没写</b>，只有一句"HTTP 200"）·
+        <code>UltraData-RL-2609</code>。<br>
+        🚫 问题在于论证方式：<b>"计划里没有"不能证明"不需要"</b> —— 那个计划是在不知道这些源存在时定的。<br>
+        ✅ <b>已派 data agent R2 阶段</b>（<code>BAIZE_DATA_TASK.md</code> §0.3）：
+        8 源事实表填满 → base vs L3 <b>重叠率</b> → <b>P-8 三档投料/下载清单</b>。
+        <b>若判定为新增且磁盘允许，直接开始下载</b></td>
+  </tr>
+
 
 </table>
 
@@ -578,7 +590,7 @@
   <tr><th>角色</th><th>脚本 / 文件</th><th>状态</th></tr>
   <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-warn">⚠️ 队列空</span>（.12 · R2 ✅ → R3 定位<b>表征坍缩</b> → <b>R4 ✅ 解决核心阻塞（C1–C4 全过）</b> → <b>🚨 R5 待下发</b>）</td></tr>
   <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ P-2 ✅ P-3 ✅</b> · <b>P-5a 运行中 7/9 点</b>（GBS=64/256 定稿，谷底均 1e-3，<b>未见右移</b>）· P-4 待 GPU · <b>P-6 / P-7 已下发</b>）</td></tr>
-  <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · phase0/5 ✅ · <b>R 阶段 ✅ 收敛</b>（两问已答完，<code>DATA_RESEARCH.md</code> v1.1）→ 已派 <b>① SFT-2605 重下</b>；<b>🚫 phase3_domain 已取消</b>；phase1/2/4 等下载）</td></tr>
+  <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · phase0/5 ✅ · R 阶段 ✅ 收敛（两问已答完，<code>DATA_RESEARCH.md</code> v1.1）→ 已派 <b>① SFT-2605 重下</b> + <b>② 🔴 R2 调研：P-8 数据方案</b>；<b>🚫 phase3_domain 已取消</b>；phase1/2/4 等下载）</td></tr>
   <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-ok">✅ 空闲待命</span>（.29 · 零 token · <b>RUN_ID 1/2/3 已全部回收</b>，随时可派 4）</td></tr>
   <tr><td>1B / 2B 架构轮</td><td><code>baize_search_loop.sh</code> · <code>baize_2b_search_loop.sh</code></td><td><span class="badge b-ok">✅ 已收敛</span>，僵尸 loop 已被清理</td></tr>
 </table>
@@ -730,10 +742,20 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
   </tr>
 
   <tr>
-    <td rowspan="3"><b>data</b></td>
+    <td rowspan="4"><b>data</b></td>
     <td><b>R 阶段</b>（两问：LLM/Vision 数据够不够 + 配比）</td>
     <td><span class="badge b-ok">✅ 收敛</span></td>
     <td>—</td><td>已结束</td>
+  </tr>
+  <tr class="ok-box">
+    <td class="ok-box" style="padding:6px 10px"><b>🔴 R2 阶段：P-8 数据方案</b>（<u>当前主攻</u>）<br>
+        <small>8 源事实表（含 <code>Ultra-FineWeb</code>(base) / <code>UltraX-Preview</code> / <code>RL-2609</code>，<b>不许留 <code>?</code></b>）·
+        base vs L3 <b>重叠率</b> · P-8 三档（44B/100B/200B）<b>投料+下载清单</b> · 可复制下载命令</small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">🔄 已派</span><br>
+        <small>与 SFT-2605 重下可并行</small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>数小时</b><br>
+        <small>+ 视下载量</small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≈ 10/02</b></td>
   </tr>
   <tr>
     <td><b>phase1/2/4</b>：全量校验 → 分词 → webdataset 打包</td>
