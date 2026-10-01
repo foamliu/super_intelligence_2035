@@ -734,22 +734,25 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
     <td><span class="badge b-ok">✅ 已完成</span><br><small>C1–C4 全过</small></td>
     <td>—</td><td>已结束</td>
   </tr>
-  <tr class="ok-box">
-    <td class="ok-box" style="padding:6px 10px"><b>R6</b> 🔵 <b>文本塔上下文 与 数据切换 的裁定</b>（<u>先做</u>）<br>
-        <small>① 数据是否<b>切 GPIC</b>（含现有 tar 实测对数 vs R5 需求）·
-        ② <b>77 截断的根因</b>：是 open_clip 默认，还是 CLIP 文本塔<b>位置编码表只有 77 行</b>？·
-        ③ 正式训练<b>能否/该不该</b>放开 77（逐条给代价）</small></td>
-    <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">🔄 已下发</span><br>
-        <small><b>纯 CPU</b> · 不占 GPU</small></td>
-    <td class="ok-box" style="padding:6px 10px"><b>≤ 1.5 小时</b></td>
-    <td class="ok-box" style="padding:6px 10px"><b>今晚 ≈ 24:00</b></td>
-  </tr>
   <tr>
-    <td><b>R5</b>：用修好的 <code>sem_clip</code> recipe 重跑四架构 × 分辨率对比<br>
-        <small>（R1/R2 的架构 loss 结论已全部作废，必须重跑）</small></td>
-    <td><span class="badge b-no">⏸ 等 R6 定数据</span></td>
-    <td>≈ 2–3 小时</td>
-    <td><b>≈ 10/02</b><br><small>R6 之后启动</small></td>
+    <td><b>R5</b> 🔄 <b>P0 已启动</b>：<code>sem_clip</code> recipe 重跑 4 架构 × 3000 步 @224/16<br>
+        <small>数据 = 已打包 <code>en500k</code>（LLaVA）——<b>非 GPIC</b>，理由见 R6 行</small></td>
+    <td><span class="badge b-warn">🔄 运行中</span><br>
+        <small>首探针 OpenVision2 <b>C1=0.14 / gap +0.155 / C4 OK</b>（8 卡 512 负样本）</small></td>
+    <td><b>≈ 2–3 小时</b></td>
+    <td><b>≈ 10/02</b></td>
+  </tr>
+  <tr class="ok-box">
+    <td class="ok-box" style="padding:6px 10px"><b>R6</b> 🔵 <b>文本塔上下文（77）与数据切换的裁定</b><br>
+        <small>① <b>是否切 GPIC</b>（含现有 tar 实测对数 vs 需求）·
+        ② <b>77 的根因</b> ·
+        ③ 正式训练<b>能否/该不该</b>放开 77</small><br>
+        <small>⚠️ 已发现：GPIC 仅 <b>445/8000 tar</b> 落盘，打包需读 ≈712 GB @NFS 60 MB/s ≈ <b>&gt;3h</b>
+        → 超 R5 预算且与 pretrain 争 NFS，故 R5 先用 en500k</small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-info">⏸ 已下发·排队</span><br>
+        <small><b>纯 CPU</b> · 可与 R5 并行，不占卡</small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≤ 1.5 小时</b></td>
+    <td class="ok-box" style="padding:6px 10px"><b>R5 跑完后立即</b></td>
   </tr>
 
   <tr>
