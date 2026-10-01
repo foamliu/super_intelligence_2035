@@ -10,7 +10,7 @@ WAITING: 1
 | WAITING | 1 |
 | ERROR_COUNT | 0 |
 | BUDGET_USED | ~17 GPU·h 墙钟（S0–S3 ~11 + S4 ~5 + S6/S7/S8 ~3；墙钟约 11:29–17:05 ≈ 5.6h，远低 24h 上限） |
-| 更新 | 2026-10-01 13:48 |
+| 更新 | 2026-10-01 14:19 |
 | WINNER | OpenVision2（纯 Attention ViT 505M）——loss 四架构并列 ~4.45–4.47（不可区分），训练 2139 img/s / 推理 6.51ms 双最优 |
 
 ## R2 等待说明（WAITING=1，异步 pipeline running）
@@ -26,6 +26,7 @@ WAITING: 1
   - 剩余 ETA ~2-3h（R2-3 的 12 组×3000 步是大头，串行；openvision2 快、moevie/mambaeye 慢）。
 - 【13:15 巡检快照】R2-3（12 组架构×分辨率，patch=14）进行到 **第 4/12 组（mambaeye r224 p14 训练中 ~step400/3000）**。已完成 3 组并回填 `EXPERIMENTS_VISION_ROUND2.md`：openvision2 r224 loss=4.4567/1631.3img/s、deepencoder_v2 r224 4.4563/1408.0、moevie r224 4.4575/558.2；推理 bs1 ms/img=6.857/25.965/42.228，bs8=1.058/2.254/5.511。三架构 r224 loss 并列（差<0.002），吞吐分层（OV2>DE>MoE）。🔑 **batch 一致性警示已记入报告**：run_r2.sh 对 448/14 自动降 batch 32→16，故 448/14 列（bs=16）与 224/14、336/14（bs=32）batch 不同，token 趋势会被 SigLIP 负样本数混淆——「同分辨率内四架构比较」仍有效，「跨 token 趋势」需标注不可比。eval5k 仍全随机。剩余 ETA ~2-3h（336/14 4 组 + 448/14 4 组 + R2-5 40min）。
 - 【13:48 巡检快照】R2-3（12 组架构×分辨率，patch=14）进行到 **第 6/12 组（deepencoder_v2 r336 p14 训练中 ~step700/3000）**。已完成 **5 组**并回填 `EXPERIMENTS_VISION_ROUND2.md`。**r224（256 token）四架构全完成**：openvision2 4.4567/1631.3、deepencoder_v2 4.4563/1408.0、moevie 4.4575/558.2、mambaeye 4.4566/861.0 img/s，loss 极差 <0.0012（噪声级）→ **256 token 四架构 loss 不可区分（含 SSM/MoE）已实锤**；吞吐/延迟同 R2-4 干净复测同序（OV2>DE>MambaEye>MoE）。**r336（576 token）openvision2 完成**：loss 4.4560（与 r224 基本持平）、1281.4 img/s、推理 bs1 10.32ms/bs8 2.31ms。推理 bs1 ms/img 全序：OV2 6.86-10.32 < DE 25.97 < MambaEye 31.5 < MoE 42.2。eval5k 仍全随机。剩余 ETA ~2h（deepencoder r336 ~14min + moevie r336 ~23min + mambaeye r336 ~21min + r448 四架构（bs16，慢）~1h + R2-5 40min）。
+- 【14:19 巡检快照】R2-3（12 组）进行到 **第 7/12 组（moevie r336 p14 训练中 ~step2100/3000，loss 4.4568，~637 img/s）**。已完成 **6 组**并回填 `EXPERIMENTS_VISION_ROUND2.md`：**deepencoder_v2 r336 新完成**（loss 4.4566 / 599.4 img/s / 推理 bs1 18.378ms·bs8 3.761ms / eval 全随机）已回填 R2-3 表。r336 已完成的 OV2(4.4560/1281.4 img/s) 与 DE(4.4566/599.4) 仍与 r224 并列（loss 差<0.001）→ **token 256→576 未改变 loss 排序（架构仍不可区分）**。剩余：mambaeye r336 ~21min + r448 四架构（bs16，慢）~1h + R2-5 40min → ETA ~1.5h。eval5k 仍全随机。
 - 下次唤醒动作：先 tail `/tmp/vision_r2.log` 看 R2-3 进度并回填已完成格子（loss / train img/s / 推理 ms/img bs1+bs8 / eval5k R@1）到 `EXPERIMENTS_VISION_ROUND2.md` R2-3 表；若 ALL DONE 则回填 R2-5 + 补全「论文回填建议」R2-3 段（含 batch 混淆标注）+ 生成 `BAIZE_VISION_ENCODER_RESULT_ROUND2.html` → 更新 MEMORY/EXPERIMENTS → git commit+push，WAITING 置 0。
 
 ## 历史：Round 1 S4–S9 pipeline 等待说明（已收敛，供回溯）
