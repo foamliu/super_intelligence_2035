@@ -18,7 +18,15 @@ mark() { echo "===== $1 $(date '+%F %T') =====" | tee -a "$LOG"; }
 
 train() {
   local tower=$1 steps=$2 out=$3; shift 3
-  bash run_train.sh "$tower" "$steps" "$out" --data "$DATA" --batch-size 32 --log-every 50 "$@" >>"$LOG" 2>&1
+  local batch=32
+  # 448/14 -> 1024 tokens; ViT attention is O(n^2) (depth 30, no grad ckpt) ~30GB act @bs32,
+  # pushing past the H100-80GB edge (empirical 441-token run already 37GB). Drop to bs16 for that
+  # single config; documented VRAM constraint (global batch 96 vs 192 elsewhere).
+  local argline=" $* "
+  if [[ "$argline" == *" --resolution 448 "* && "$argline" == *" --patch 14 "* ]]; then
+    batch=16
+  fi
+  bash run_train.sh "$tower" "$steps" "$out" --data "$DATA" --batch-size "$batch" --log-every 50 "$@" >>"$LOG" 2>&1
 }
 
 eval_one() {

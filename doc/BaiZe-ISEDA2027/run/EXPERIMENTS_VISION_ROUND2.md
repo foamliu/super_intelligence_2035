@@ -68,6 +68,8 @@
 
 > 预期判读：若 lr=3e-3 下六格 loss 出现 v形分化（而非 Round 1 的 4.9962 全同平台），即证明 Round 1 那张全同表实为 LR 伪影；坍缩对照 `(224,16)@1e-3=4.9962` 提供**显式对照证据**。
 
+> ⚠️ **448/14 VRAM 约束（已防护）**：448/14 = 1024 tokens，ViT attention O(n²)（depth 30 无 grad ckpt）@ batch 32/rank 估算激活 ~64GB，逼近 H100-80GB（实测 441-token 已 37GB），会 OOM。`run_r2.sh` 已对 **448/14 单点自动降 batch 32→16**（global 192→96，`[[ ... == *" --resolution 448 "* && ... == *" --patch 14 "* ]]`）。故 448/14 的 loss 与其余 config 在不同 global batch 下略有不可比，**报告时标注 batch 96**。
+
 ---
 
 ## R2-2 目标函数消融（可通约指标 @ lr=3e-3）—— 待运行
