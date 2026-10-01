@@ -51,7 +51,7 @@
   <h1>BaiZe 实验进展 · 总看板</h1>
   <div class="sub">Stage (i) LLM 预训练 · Stage (iii) 视觉编码器 · Round 2 进展 · 阻塞项</div>
   <div class="meta">
-    <span>📅 更新 2026-10-01</span>
+    <span>📅 更新 2026-10-01 16:22</span>
     <span>🎯 ISEDA 2027 投稿截止 ≈ 2027-02-01</span>
     <span>📄 论文 7 页 / 0 编译错误</span>
   </div>
@@ -60,14 +60,15 @@
 <div class="verdict">
   <strong>一句话进展</strong>：Stage (i) 与 (iii) 均已完成并收敛，<strong>Round 2 正在加固两边的结论</strong>。
   vision 侧 R2 已跑出实证结果，并<strong>推翻了两个我们先前的判断</strong>（"分辨率表全同只是 LR 伪影"、"检索代理可用"）；
-  pretrain 侧 R2 <strong>因 loop 已死而尚未启动</strong>。
+  pretrain 侧 R2 <strong>已由重启后的 loop 拉起，P-1 第一点（LR=1.5e-3）已开训</strong>；
+  data agent 与 ops relay 也已常驻运行。
 </div>
 
 <div class="kpi-row">
   <div class="kpi"><div class="v">2 / 5</div><div class="l">已完成 Stage（i、iii）</div></div>
   <div class="kpi"><div class="v">R2 进行中</div><div class="l">vision 已出实证结果</div></div>
   <div class="kpi"><div class="v">0</div><div class="l">论文编译错误</div></div>
-  <div class="kpi"><div class="v">1</div><div class="l">阻塞项（pretrain loop 已死）</div></div>
+  <div class="kpi"><div class="v">0</div><div class="l">阻塞项（loop 已全部恢复）</div></div>
 </div>
 
 <div class="toc">
@@ -92,7 +93,7 @@
     <td><b>(i)</b></td><td>LLM 预训练（from scratch）</td>
     <td><span class="badge b-ok">✅ 完成</span></td>
     <td>2.22B / 56 层（4 attention）· val loss <b>2.2054</b>@20k 步 · 3-seed <b>2.6739±0.0469</b></td>
-    <td>R2 加固（<span class="badge b-no">受阻</span>）</td>
+    <td>R2 加固（<span class="badge b-info">进行中</span>）</td>
   </tr>
   <tr>
     <td><b>(ii)</b></td><td>LLM 后训练（领域退火 + SFT + RLVR）</td>
@@ -128,16 +129,16 @@
     </ul>
   </div>
   <div class="card">
-    <h3 style="margin-top:0">R2（P-1 / P-2 / P-3）—— <span class="badge b-no">未启动</span></h3>
+    <h3 style="margin-top:0">R2（P-1 / P-2 / P-3）—— <span class="badge b-info">进行中</span></h3>
     <ul>
       <li><b>P-1</b> LR 网格向上扩展（1.5e-3 / 2e-3 / 3e-3）— 因为胜出 LR 恰在网格<b>边界</b>上</li>
       <li><b>P-2</b> 补 seed 到 n=5 — 因为 Δ≈0.003 比噪声 σ=0.0469 小一个量级</li>
       <li><b>P-3</b> 架构对比 1000→5000 步 — 因为"hybrid 更优"只靠 <b>24.6M token</b> 的快照</li>
     </ul>
-    <div class="danger" style="margin-top:10px">
-      ⚠️ <b>任务书已就位，但没有任何进程会读它</b>：<code>baize_pretrain_loop.sh</code> 在
-      <b>04:03 被它自己的 agent 按"converged 后停止"的指令 kill 掉</b>；11:09 另一个 agent 复核时确认
-      "<b>仅 vision loop 仍在运行</b>"。需人工重启该 loop。
+    <div class="ok-box" style="margin-top:10px">
+      ✅ <b>loop 已重新拉起并接单</b>：<code>baize_pretrain_loop.sh</code> 已于 2026-10-01 人工重启
+      （.29 节点，PID 2425284），R2.0 状态切换完成，<b>P-1 第一点 <code>p1_1p5e3</code>
+      （LR=1.5e-3 × 5000 步，8×H100）已开训</b>。任务书顶部新增「🚫 绝不 kill watchdog」铁律，防止再次被空转 kill。
     </div>
   </div>
 </div>
@@ -264,8 +265,8 @@
   <tr><th>#</th><th>项</th><th>级别</th><th>状态 / 需要的动作</th></tr>
   <tr>
     <td>1</td><td><b>pretrain loop 已死，R2 不会执行</b></td>
-    <td><span class="badge b-no">🔴 阻塞</span></td>
-    <td>需人工重启 <code>baize_pretrain_loop.sh</code>（建议先修其 WAITING 正则 bug）</td>
+    <td><span class="badge b-ok">✅ 已解除</span></td>
+    <td>已人工重启（.29，PID 2425284），R2 的 P-1 已在训练；WAITING 正则、git fetch/pull/push、watchdog 铁律均已修复</td>
   </tr>
   <tr>
     <td>2</td><td><b>EDA 领域语料来源未落实</b></td><td><span class="badge b-no">🔴 高</span></td>
@@ -293,10 +294,10 @@
 
 <table>
   <tr><th>角色</th><th>脚本 / 文件</th><th>状态</th></tr>
-  <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（R2）</td></tr>
-  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-no">❌ loop 已死</span></td></tr>
-  <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-warn">⬜ 待启动</span></td></tr>
-  <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-warn">⬜ 待启动</span>（纯 bash，零 token）</td></tr>
+  <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12，R2）</td></tr>
+  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · R2 · P-1 训练中）</td></tr>
+  <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12）</td></tr>
+  <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · 零 token · RUN_ID=1 环境摸底已出）</td></tr>
   <tr><td>1B / 2B 架构轮</td><td><code>baize_search_loop.sh</code> · <code>baize_2b_search_loop.sh</code></td><td><span class="badge b-ok">✅ 已收敛</span>，僵尸 loop 已被清理</td></tr>
 </table>
 
@@ -310,54 +311,44 @@
 <h2 class="sec" id="s8"><span class="no">8</span>启动命令（复制即用）</h2>
 
 <div class="note">
-  <b>前提</b>：Windows 侧无法 SSH 到 GPU 服务器，以下命令需<b>在服务器上</b>执行（任选一台常驻节点，
-  代码/数据在共享 NFS <code>/nas_train</code> 上，两节点均可）。
-  当前有 <b>3 件待启动/待重启</b>的事，按下面的顺序做最省事；
-  <b>vision loop</b> 当前<b>运行中</b>，其启动方式见下面的 ④（仅重启时用）。
+  ✅ <b>截至 2026-10-01 16:22，四个常驻进程（vision / pretrain / data / ops_relay）均已启动。</b>
+  下面的命令仅作<b>日后重启 / 排障</b>用，正常情况下无需执行。
 </div>
 
 <h3>第 0 步 · 先同步（必做）</h3>
 <pre><code>cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
 git pull --rebase</code></pre>
 
-<h3>① 重启 pretrain loop <span class="badge b-no">当前已死</span></h3>
+<h3>① pretrain loop <span class="badge b-ok">✅ 运行中（.29）</span></h3>
 <p>
-  它已在 <b>04:03 被自己的 agent 按"converged 后停止"的指令 kill</b>，
-  所以 <b>pretrain 的 R2（P-1/P-2/P-3）任务书目前无人执行</b>。<br>
-  ✅ <b>两个已知缺陷已在仓库里修好</b>（本次提交），<code>git pull</code> 后直接启动即可，<b>不需要再手工改</b>：
+  已人工重启（PID 2425284）并完成 <code>R2.0</code> 状态切换——<code>MEMORY_PRETRAIN_2B.md</code> 已
+  <code>PHASE=R2_active</code>，<b>P-1 第一点 <code>p1_1p5e3</code>（LR=1.5e-3 × 5000 步，8×H100）训练中</b>。
+  重启前仓库已修好三处缺陷，无需再手工改：
 </p>
 <ul>
-  <li><b>WAITING 正则</b>收紧为行首匹配 <code>^WAITING:[[:space:]]*1</code>
-      （旧正则 <code>WAITING:[* ]*1</code> 会误匹配正文散文——<code>MEMORY_PRETRAIN_2B.md</code> 里就有一句被命中，导致睡眠时长由散文决定）</li>
-  <li><b>push 前先 <code>fetch</code> + <code>pull --rebase --autostash</code></b>
-      （旧版只 push 不 pull，远端一旦前进就永久卡死）</li>
-  <li>兜底提交改为<b>只 add 本任务自己的文件</b>（不再用 <code>git add -A</code> 卷入其他任务的在途文件）</li>
+  <li><b>WAITING 正则</b>收紧为行首匹配 <code>^WAITING:[[:space:]]*1</code>（旧正则 <code>WAITING:[* ]*1</code> 会误匹配正文散文）</li>
+  <li><b>push 前先 <code>fetch</code> + <code>pull --rebase --autostash</code></b>（旧版只 push 不 pull，远端前进即卡死）</li>
+  <li>兜底提交改为<b>只 add 本任务自己的文件</b>；任务书顶部新增<b>「🚫 绝不 kill watchdog」铁律</b></li>
 </ul>
 <pre><code>cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
-setsid bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 &lt; /dev/null &amp;</code></pre>
-<p><b>验证是否起来：</b></p>
-<pre><code>pgrep -af baize_pretrain_loop.sh            # 应恰好 1 个进程
-sleep 70 &amp;&amp; tail -5 /tmp/baize_pretrain_loop.log   # 应看到 [loop] ... wake up / cline returned</code></pre>
-<p><b>确认它接单（约 1 个唤醒周期后）：</b> 看 <code>run/MEMORY_PRETRAIN_2B.md</code> 的 <code>PHASE</code> 是否从
-  <code>converged</code> 变成 <code>R2_active</code>。</p>
+git pull --rebase</code></pre>
+<p><b>验证（在 .29）：</b><code>pgrep -af baize_pretrain_loop.sh</code> 应恰好 1 个进程；
+  <code>pgrep -af pretrain_launcher</code> 应看到 8 个 <code>p1_1p5e3</code> rank。</p>
 
-<h3>② 启动 ops relay <span class="badge b-warn">待启动</span></h3>
-<p>纯 bash、<b>零 token</b> 的命令中继。<b>启动后约 1 分钟内</b>会自动执行预置的「GPU 服务器环境摸底」命令，
-我这边 <code>git pull</code> 就能读到环境实况。</p>
+<h3>② ops relay <span class="badge b-ok">✅ 运行中（.29）</span></h3>
+<p>纯 bash、<b>零 token</b> 的命令中继。<b>RUN_ID=1「GPU 服务器环境摸底」已完成</b>并写入
+<code>run/ops/outbox.md</code>（已 commit+push，<code>git pull</code> 可读）。</p>
 <pre><code>cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
 setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 &lt; /dev/null &amp;</code></pre>
-<p><b>验证：</b></p>
-<pre><code>pgrep -af ops_relay.sh
-sleep 90 &amp;&amp; tail -8 /tmp/baize_ops_relay.log   # 期望看到 [relay] RUN_ID=1 executed, exit=0</code></pre>
-<p><b>结果在哪：</b><code>run/ops/outbox.md</code>（只增不改，<b>最新结果在文件末尾</b>）。</p>
+<p><b>验证（在 .29）：</b><code>pgrep -af ops_relay.sh</code> 应恰好 1 个进程；
+结果在 <code>run/ops/outbox.md</code>（只增不改，最新结果在文件末尾）。</p>
 
-<h3>③ 启动 data agent <span class="badge b-warn">待启动</span></h3>
+<h3>③ data agent <span class="badge b-ok">✅ 运行中（.12）</span></h3>
 <pre><code>cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
 setsid bash baize_data_loop.sh > /tmp/baize_data_loop.log 2>&1 &lt; /dev/null &amp;</code></pre>
-<p>它会先长睡（<code>MEMORY_DATA.md</code> 初始 <code>WAITING: 1</code>），首次唤醒后转 60 秒快跑，
-执行 <code>phase0</code> 实测盘点。</p>
+<p>已启动（.12，PID 1815254），执行 <code>phase0</code> 实测盘点中（<code>/tmp/baize_data_loop.log</code> 持续更新）。</p>
 
-<h3>④ 启动 vision loop <span class="badge b-ok">✅ 运行中</span></h3>
+<h3>④ vision loop <span class="badge b-ok">✅ 运行中（.12）</span></h3>
 <p>视觉编码器预训练 agent，循环读 <code>run/BAIZE_VISION_TASK.md</code> 连续推进，并把状态写入
    <code>run/MEMORY_VISION.md</code>（GPU 已改为 <code>10.239.2.12</code> 的<b>全部 8 卡</b>）。</p>
 <pre><code>cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
@@ -382,10 +373,10 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
 
 <div class="danger">
   ⚠️ <b>两个不要碰的东西</b>：<br>
-  1. <b>不要编辑正在运行的 loop 脚本</b>（<code>baize_vision_loop.sh</code> 正在跑）。
-  bash 是<b>增量读取</b>脚本的，修改运行中的脚本可能让它读到错乱内容。
-  本次只改了 <b>进程已死</b>的 <code>baize_pretrain_loop.sh</code>。<br>
-  2. <b>不要 <code>pkill</code> vision loop</b>——它的 R2（R2-2~R2-5）还没跑完。
+  1. <b>不要编辑正在运行的 loop 脚本</b>（四个 loop 现在都在跑）。
+  bash 是<b>增量读取</b>脚本的，修改运行中的脚本可能让它读到错乱内容。<br>
+  2. <b>不要 <code>pkill</code> 任何 loop</b>——vision 的 R2（R2-2~R2-5）还没跑完，
+  pretrain 的 P-1 训练正在进行，都不要中断。
 </div>
 
 
