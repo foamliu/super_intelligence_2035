@@ -233,6 +233,48 @@
 ### P-5a → 下一步
 - P-5a ✅ 定稿。按运维执行顺序（**P-4 → P-7 → P-6 第 1 步 → P-5b → P-8**），**下一唤醒 = P-4**（FP8 先 profile GEMM 占比，见 P-4 节，环境已备、仅差 GPU 空闲 + profile 脚本落地）。
 
+## P-5b　训练量 scaling 曲线 —— 🚧 数据分词启动（2026-10-02 ~06:25）
+
+> **目的**：从零训练，用 P-5a 定下的 GBS/LR，画出 loss-vs-tokens 曲线（log-x），**直接决定 P-8 的 token 预算**。
+> 记录点：655M / 1.3B / 2.6B / 5.2B / 10.5B / 20B token；若 20B 仍未变平则延到 40–60B。
+> ⚠️ 既有 `2.2054@655M` 是 **GBS=8** 口径，与本次 GBS=1024 不可直接比较，须注明。
+
+### 数据阻塞定位（本唤醒已解决前置）
+
+- 需求 20B token；现有 `.bin/.idx` 仅 ~1.26B token（L3 700m 742M + code 90M + math2 430M）→ 硬阻塞。
+- 核查：完整 **L3 en 690B token / 616 parquet（618G）早已下全** 于 `/nas_inference/.../ultrafineweb_en_l3/qa`；
+  data agent phase2 全量分词仍在等 base 下载（2.99TB 仅 0.15%）→ **本任务自行分词 ~25B token L3 切片**。
+- 分词速率实测：~826 tok/doc、单进程 ~450K tok/s → 改 **8 进程并行**，~2h 分完。
+
+### 分词（进行中）
+
+```
+# baize_p5b_tokenize.sh（setsid 后台 8 并行）：前 24 个 parquet ≈26.9B token → 8 分片
+# 输出：BASE/data/p5b_l3/p5b_l3_train_s{0..7}.bin/.idx（+ .json 记 token 数）
+# 汇总：/tmp/baize_p5b_tokenize.log
+```
+
+### P-5b 训练口径（P-5a 定，启动在分词完成后）
+
+| 项 | 值 |
+|:--|:--|
+| GBS | **1024**（P-5a 推荐，尽量接近生产口径；mb=1 / TP1 / DP8 / 8 卡） |
+| LR / min_lr | **1e-3** / **1e-5**（P-5a：最优 LR 不随 batch 右移） |
+| 调度 | WSD，5%·85%·10% 等比重标定：warmup **238** / stable / decay **477** |
+| 步数 | **4771 步 = 20B token**（GBS1024 × seq4094 = 4.192M token/步） |
+| seed / 精度 | 1234 / bf16 |
+| 数据 | 纯 L3（本切 8 分片 1:1 等权 blend，~26.9B token） |
+| checkpoint | 655M→156 步 / 1.3B→310 / 2.6B→620 / 5.2B→1240 / 10.5B→2505 / 20B→4771 |
+
+### ⚠️ 待定（启动前定，下一唤醒处理）
+
+1. **val loss 口径**：现 launcher `--eval-iters 0` 只记 train/lm loss；P-5b 任务书写「val loss」。
+   需决定：① 用 train/lm loss 作 scaling 代理（与既有 2.2054 同口径简单），或 ② 补 held-out 验证片 + 开 eval。
+2. **GBS=1024 绝对 loss 收敛疑虑**：P-5a 已见 GBS=1024 @164M token loss **7.78** ≫ GBS=8 的 2.76（大 batch 更少 optimizer-step 的期望现象）。
+   P-5b 首段（655M/1.3B 点）将直接量化「GBS=1024 + LR=1e-3 能否在合理 token 内收敛到可用 loss」，
+   若不能则需在 P-8 前重新审视 GBS（这是 P-5b 除「何时变平」外的第二个关键产出）。
+
+---
 ---
 
 ## 可复现命令
