@@ -17,7 +17,7 @@
 | 通用多模态 | LLaVA-OneVision-1.5 Mid-85M | EN **5545** + CN **1512** parquet（下载中） | 🟠 下载中 | 视觉编码器 + MLLM 对齐 |
 | 通用多模态·已派生 | baize-vision/en500k | 25 tar / **68.59 GiB** | ✅ 已就绪 | Stage(iii) 四架构对比（完成） |
 | 通用多模态·已派生 | baize-vision/eval5k | 1 tar / **1.27 GiB**（laioncn/EN） | ✅ 已就绪 | 检索代理评估（held-out） |
-| **领域（EDA）** | PyAether/SKILL API 文档、EDA 工具文档、开源 HDL | **未实测（来源未落实）** | ❌ 待获取 | Stage(ii) 领域退火 + SFT（最关键） |
+| **领域（EDA）** | PyAether/SKILL API 参考文档（`eda_fastmcp/docs/`）、EDA 工具文档、开源 HDL | **已确认来源 ≈45MB 纯文本**（API 参考文档） | 🟡 待授权确认 + 待入库 | Stage(ii) 领域退火 + SFT（最关键） |
 | **红线** | EDA-Eval-PyAether 评测集 | **158 任务**（v20260311.jsonl, 486 KB） | 🔒 只读隔离 | 建黑名单（见 CONTAMINATION_CHECK.md） |
 
 ---
@@ -59,8 +59,9 @@
 - **权威集（158 任务）**：`/nas_train/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl`（158 行 / 486 KB）
   - 每任务字段：`task_id` / `prompt` / `entry_point` / `test` / `metadata`（task_name, source, scenario, category, num_unique_apis, techlib_dependency, lines_of_code）。
   - ⚠️ **差异**：任务书提到 `canonical_solution` 字段，但本版本 jsonl **无该字段**（只有 prompt/entry_point/test）。
-- **同目录其他快照（也属评测内容，一并视为禁入）**：`EDA-Eval-PyAether-148.jsonl`(148)、`-46.jsonl`(46)、`-Updated102.jsonl`(102)、`-TEST.jsonl`(1)、`cuhk_benchmark_cxmt_format.jsonl`(80)。
-  - 处置：黑名单主集用 v20260311(158)，其余快照 phase1 时核对去重关系后纳入同一黑名单体系。
+- **同目录其他快照（也属评测内容，一并视为禁入）**：`EDA-Eval-PyAether-148.jsonl`(148)、`-46.jsonl`(46)、`-Updated102.jsonl`(102)、`-TEST.jsonl`(2)、`cuhk_benchmark_cxmt_format.jsonl`(80)。
+  - 关系（实测）：`148 = 46 ∪ Updated102`；`148` 与 `v20260311` task_id 0 重叠、但 entry_point 重叠 144/148（早期快照/旧格式）；`TEST`(2) 是 v20260311 子集；`cuhk`(80) 是独立 CUHK/CXMT 学术基准（仅 prompt，无 entry_point/test）。
+  - 处置：**已全部纳入同一并集黑名单**（536 任务 / 191,718 去重 13-gram，见 CONTAMINATION_CHECK.md v0.1）。
 
 ---
 
@@ -73,7 +74,7 @@
 | D3 | UltraData-Code / Math 路径仅写 `.../openbmb/` | Code 分 L2/L3、Math 分 L1 等多个子层 | 路径需下钻到具体 level |
 | D4 | LLaVA-OneVision "…× EN/CN" | **coyo 只有 EN（无 CN）**；各子集 EN/CN 数量不等 | "× EN/CN" 不适用于 coyo |
 | D5 | 多模态 "下载中 >50%" | 实测 EN 5545 / CN 1512 parquet | 与"过半"大致一致，phase4 前重测确认完成 |
-| D6 | 领域（EDA）"来源未落实" | 未变；`eda_fastmcp` 代码库存在（`/nas_train/app.e0031982/code/eda_fastmcp`），API 知识库能否导出纯文本待 phase3 查证 | 待 phase3 |
+| D6 | 领域（EDA）"来源未落实" | **已突破**：`eda_fastmcp/docs/` 已含 API 参考文档纯文本（pyAether_API_Docstring.md 144K、skill_data/*.md ≈8MB、API_INFO_MERGED_V3.json 18M/8464 条、innovus 6.8M 等，合计 ≈45MB）；导出纯文本**可行**，待授权确认后入库 | phase3 已确认来源 ✅ |
 | D7 | 已有派生数据 `BASE_DIR/data/ultrafineweb_l3_qa` | 确认在 `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/`（**非** super_intelligence_2035 仓库） | `BASE_DIR` = `code/BaiZe-ISEDA2027`（训练仓库），与文档 git 仓库分离 |
 
 ---
@@ -102,3 +103,29 @@
 | 多模态训练 webdataset | `/nas_train/app.e0031982/datasets/baize-data/mm/`（规划） | ⬜ phase4 |
 | 多模态 held-out 评估集 | 同上 | ⬜ phase4 |
 | 结果 HTML | `doc/BaiZe-ISEDA2027/BAIZE_DATA_PREP_RESULT.html` | ⬜ phase6 |
+
+---
+
+## 5. EDA 领域语料（phase3 排查结果，2026-10-01）
+
+**结论：EDA 领域"来源材料"已在盘上，且本就是纯文本**——`eda_fastmcp` 项目自带的 API 参考文档，导出为纯文本文档**可行**（本就是 md/json）。
+
+| 来源 | 绝对路径 | 规模 | 性质 | 可否入训练集 |
+|:---|:---|:---|:---|:---|
+| PyAether API docstring | `/nas_train/app.e0031982/code/eda_fastmcp/docs/pyAether_API_Docstring.md` | 144 KB | 函数签名 + 说明 | ✅ API 参考（来源材料） |
+| PyAether 设计文档 | `.../docs/emyDesign.md` | 16 KB | emyDesign 说明 | ✅ |
+| SKILL 参考（9 篇） | `.../docs/skill_data/*.md` | ≈8 MB | SKILL 语言/布局/DF 等参考 | ✅ API 参考 |
+| API 结构化索引 | `.../docs/api_functions.jsonl` / `api_classes.jsonl` / `api_methods.jsonl` | 3.5M / 2.2M / 2.3M | 结构化 API 清单 | ✅ |
+| API 全文合并 | `.../docs/API_INFO_MERGED_V3.json` | 18 MB（8464 条 api_descriptions） | 在线向量库主源 | ✅ |
+| 其他 EDA 工具 API | `.../docs/innovus_API_INFO.json`(6.8M) / `wv_ace_API_INFO.json`(224K) | — | Innovus / WV-ACE API | ✅（授权待确认） |
+| 向量库 `kb/` | `.../kb/chroma_db_v3_full` 等 | — | ChromaDB 检索索引 | 可追溯回 docs 的 JSON 源 |
+
+**关键区分（红线）**：
+- ✅ **允许**：上表 API 参考文档（函数签名、参数说明、示例）——它是评测任务的"来源材料"。
+- ❌ **禁止**：评测任务的 `prompt` / `entry_point` / `test` 断言及其改写版——这些在 `pyAether-eval/original_dataset/*.jsonl`，已全部纳入黑名单。
+
+**phase3 待办**：
+- [ ] 授权确认：`eda_fastmcp` 是 ZhuLong 内部项目，其 API 参考文档**能否作为训练数据入库需负责人确认**（任务书 §4.3"待确认授权"）。
+- [ ] 入库前逐片段过闸：API 文档与评测内容天然同源（评测 prompt 由 docstring 生成），正式入库前须用 `check_contamination.py` 逐片段（非整文件）扫描，剔除命中片段。
+- [ ] 量级评估：≈45MB 纯文本对"退火"偏少（对 SFT 足够）；是否补开源 HDL 待定。
+- 粗粒度预检：pyAether_API_Docstring / emyDesign / sklangref 整文件过闸 → **0 命中**（来源材料不含评测内容）。

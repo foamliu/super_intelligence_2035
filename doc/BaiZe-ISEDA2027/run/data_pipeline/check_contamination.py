@@ -175,7 +175,10 @@ def main() -> int:
     lines = [
         "# 污染扫描结果（自动生成）",
         "",
-        f"- 黑名单：{meta['eval_jsonl']}（{n_tasks} 任务）",
+        f"- 黑名单来源（评测快照并集，任务数 {n_tasks}）：",
+    ] + [
+        f"  - {s}" for s in (meta.get("eval_jsonls") or [meta["eval_jsonl"]])
+    ] + [
         f"- 输入：{args.input}",
         f"- 阈值：n-gram={ngram}，重合率 ≥ {args.threshold} 判定命中",
         f"- 扫描文档数：{scanned}（其中过短跳过 {short}）",

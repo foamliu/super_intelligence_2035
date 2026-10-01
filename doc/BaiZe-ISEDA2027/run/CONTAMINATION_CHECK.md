@@ -1,6 +1,6 @@
 # CONTAMINATION_CHECK.md — 污染隔离报告（红线留证）
 
-> 版本 v0 · 2026-10-01 · phase5_isolation 初版。
+> 版本 v0.1 · 2026-10-01 · phase5_isolation（**全评测快照并集立闸**，6 快照）。
 > 目标：确保 `EDA-Eval-PyAether` 的 158 任务内容（prompt / entry_point / test 断言，及改写版）
 > **绝不进入任何训练集**（含 SFT 语料同闸 + 多模态 held-out 不同源）。违反则下游结论全部作废。
 
@@ -39,19 +39,29 @@
 
 | 文件 | 大小 | 内容 |
 |:---|:---|:---|
-| `run/data_pipeline/blacklist/meta.json` | 579 KB | 158 任务 MinHash 签名 + 元信息 |
-| `run/data_pipeline/blacklist/ngram_hashes.txt` | 3.3 MB | 191,372 个去重 13-gram 的 64-bit hex |
-| `run/data_pipeline/blacklist/entry_points.sha256` | 13.8 KB | entry_point 函数名 sha256 |
+| `run/data_pipeline/blacklist/meta.json` | 2.0 MB | 536 任务 MinHash 签名 + 来源溯源（task_id 带快照文件名前缀） |
+| `run/data_pipeline/blacklist/ngram_hashes.txt` | 3.3 MB | 191,718 个去重 13-gram 的 64-bit hex |
+| `run/data_pipeline/blacklist/entry_points.sha256` | 58.7 KB | entry_point 函数名 sha256（536 行） |
 
-- 生成：`python run/data_pipeline/build_blacklist.py --eval-jsonl <v20260311.jsonl> --out-dir run/data_pipeline/blacklist`
-- 结果：158 任务 / 191,372 去重前 shingle（去重后相同，说明 13-gram 级几乎无跨任务重叠）。
+- 覆盖 **6 个评测快照**：`v20260311`(158) + `148`(148) + `46`(46) + `Updated102`(102) + `TEST`(2) + `cuhk`(80) = **536 任务**。
+- 生成：`python run/data_pipeline/build_blacklist.py --eval-jsonl <jsonl1> <jsonl2> ... --out-dir run/data_pipeline/blacklist`（脚本已改为多文件求**并集**）。
+- 结果：536 任务 / 191,718 去重后 13-gram（**去重前 = 去重后**，13-gram 级跨任务几乎无重叠）。
+
+#### 快照去重关系（实测）
+
+- `148 = 46 ∪ Updated102`（46 与 102 不相交，均为 148 子集；三者 task_id 互斥）。
+- `148` 与 `v20260311(158)` 的 **task_id 0 重叠**，但 **entry_point 重叠 144/148** → 判定为**同一批任务的旧格式/早期快照**（扁平字段 vs 嵌套 metadata）。已全部纳入并集，安全冗余、无漏。
+- `TEST`(2) 是 `v20260311` 的子集（2/2 重叠）；`cuhk`(80) 是独立学术基准（CUHK/CXMT，仅 `prompt` 无 `entry_point`/`test`）。
 
 ## 5. 实测扫描（phase5 冒烟）
 
 | 测试 | 输入 | 扫描量 | 命中 | 结论 |
 |:---|:---|:---|:---|:---|
 | 负控 | L3 qa `part-00000`（通用 web 文本） | 1500 文档 | **0** | ✅ 通用文本不含评测内容 |
-| 正控 | v20260311.jsonl 自身（当作训练输入） | 158 任务 | **158**（重合率全 1.0） | ✅ 闸门能 100% 抓住评测内容 |
+| 正控 | v20260311.jsonl 自身 | 158 任务 | **158**（重合率全 1.0） | ✅ 闸门 100% 抓住主评测集 |
+| 正控 | `-46.jsonl` 自身（**新增快照**） | 46 任务 | **46**（全 1.0） | ✅ 并集黑名单覆盖旧格式快照 |
+| 正控 | `cuhk_benchmark`（仅 prompt） | 80 任务 | **21**（59 过短跳过） | ⚠️ 短 prompt 限制见 §7 |
+| 来源对照 | API 参考文档（pyAether_API_Docstring / emyDesign / sklangref） | 3 文件 | **0** | ✅ 来源材料不含评测内容（粗粒度） |
 
 - 命令：
   ```
@@ -68,8 +78,10 @@
 
 ## 7. 状态与待办
 
-- [x] 黑名单指纹生成脚本 + 扫描脚本 + 初版本报告（phase5 v0）
-- [x] 负控 / 正控冒烟验证
-- [ ] 其余评测快照（148/46/Updated102/TEST）纳入同一黑名单（phase1 核对去重关系后）
+- [x] 黑名单指纹生成脚本 + 扫描脚本 + 报告（phase5 v0 → v0.1）
+- [x] 负控 / 正控冒烟验证（含新增快照正控：-46 46/46、cuhk 21 命中 + 59 过短跳过）
+- [x] 全部 6 个评测快照（148/46/Updated102/TEST/cuhk）纳入同一并集黑名单
+- [ ] **短 prompt 覆盖**：cuhk 80 任务中 59 条 prompt 归一化后 <13 字符，13-gram 无法指纹（被跳过）；phase1 补 8-gram 或整串精确匹配兜底
 - [ ] phase2 产出 `.bin/.idx` 前，对**全量训练文档**跑正式扫描并记录扫描量/命中
 - [ ] SFT 语料（UltraData-SFT-*）同闸正式扫描（phase2/3，需先确认其 jsonl 结构）
+- [ ] EDA API 参考文档正式入库前，逐片段（非整文件）跑同闸扫描，确保无评测内容泄漏

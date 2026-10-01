@@ -92,47 +92,52 @@ def jaccard_minhash(sig_a, sig_b) -> float:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="EDA-Eval-PyAether 黑名单指纹生成")
-    ap.add_argument("--eval-jsonl", required=True, help="评测集 jsonl（只读）")
+    ap.add_argument("--eval-jsonl", nargs="+", required=True, help="评测集 jsonl（只读，可多文件求并集黑名单）")
     ap.add_argument("--out-dir", required=True, help="黑名单输出目录（落盘指纹，不含原始内容）")
     ap.add_argument("--ngram", type=int, default=13)
     ap.add_argument("--minhash-k", type=int, default=128)
     args = ap.parse_args()
 
-    src = Path(args.eval_jsonl)
-    if not src.exists():
-        print(f"[error] 评测集不存在: {src}", file=sys.stderr)
+    srcs = [Path(p) for p in args.eval_jsonl]
+    missing = [str(s) for s in srcs if not s.exists()]
+    if missing:
+        print(f"[error] 评测集不存在: {missing}", file=sys.stderr)
         return 1
 
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
 
     tasks = []
-    global_shingles = {}  # shingle -> fnv hash，全局去重
+    global_shingles = {}  # shingle -> fnv hash，全局去重（取并集）
     n_lines = 0
-    with open(src, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            n_lines += 1
-            obj = json.loads(line)
-            tid = obj.get("task_id", f"unknown-{n_lines}")
-            fields_present = [k for k in FORBIDDEN_FIELDS if obj.get(k)]
-            # 拼接禁止字段内容
-            parts = [str(obj[k]) for k in FORBIDDEN_FIELDS if obj.get(k) is not None]
-            combined = "\n".join(parts)
-            sh = shingles(combined, args.ngram)
-            sig = minhash(sh, args.minhash_k)
-            ep = str(obj.get("entry_point", ""))
-            tasks.append({
-                "task_id": tid,
-                "fields": fields_present,
-                "n_shingles": len(sh),
-                "minhash": sig,
-                "entry_point_sha256": hashlib.sha256(ep.encode("utf-8")).hexdigest(),
-            })
-            for s in sh:
-                global_shingles.setdefault(s, fnv1a_64(s.encode("utf-8", "ignore")))
+    for src in srcs:
+        stem = src.stem
+        with open(src, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                n_lines += 1
+                obj = json.loads(line)
+                # task_id 带来源文件名前缀，避免多快照 task_id 重名冲突
+                tid = f"{stem}:{obj.get('task_id', f'unknown-{n_lines}')}"
+                fields_present = [k for k in FORBIDDEN_FIELDS if obj.get(k)]
+                # 拼接禁止字段内容
+                parts = [str(obj[k]) for k in FORBIDDEN_FIELDS if obj.get(k) is not None]
+                combined = "\n".join(parts)
+                sh = shingles(combined, args.ngram)
+                sig = minhash(sh, args.minhash_k)
+                ep = str(obj.get("entry_point", ""))
+                tasks.append({
+                    "task_id": tid,
+                    "source": str(src),
+                    "fields": fields_present,
+                    "n_shingles": len(sh),
+                    "minhash": sig,
+                    "entry_point_sha256": hashlib.sha256(ep.encode("utf-8")).hexdigest(),
+                })
+                for s in sh:
+                    global_shingles.setdefault(s, fnv1a_64(s.encode("utf-8", "ignore")))
 
     # 写 ngram_hashes.txt（排序去重后只存 64-bit hex）
     hashes = sorted(set(global_shingles.values()))
@@ -149,7 +154,8 @@ def main() -> int:
 
     # 写 meta.json
     meta = {
-        "eval_jsonl": str(src),
+        "eval_jsonl": str(srcs[0]),
+        "eval_jsonls": [str(s) for s in srcs],
         "ngram": args.ngram,
         "minhash_k": args.minhash_k,
         "normalization": "lowercase -> collapse non [a-z0-9_] to space -> strip spaces -> char n-gram",
