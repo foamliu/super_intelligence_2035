@@ -51,17 +51,31 @@
   <h1>BaiZe 实验进展 · 总看板</h1>
   <div class="sub">Stage (i) LLM 预训练 · Stage (iii) 视觉编码器 · Round 2 进展 · 阻塞项</div>
   <div class="meta">
-    <span>📅 更新 2026-10-01 20:00</span>
+    <span>📅 更新 2026-10-01 22:05</span>
     <span>🎯 ISEDA 2027 投稿截止 ≈ 2027-02-01</span>
     <span>📄 论文 7 页 / 0 编译错误</span>
   </div>
 </header>
 
+<div class="ok-box">
+  <strong>✅ 核心阻塞已解除</strong>：从零训练视觉编码器的 <b>表征坍缩</b> 已由 <b>vision R4</b> 定位并修复 ——
+  根因是 <b>「随机初始化的 text 塔」+「SigLIP 的可坍缩均衡」两个独立来源叠加</b>（单变量四档实验归因）；
+  修复 = <b>冻结的预训练 CLIP 文本塔 + CLIP InfoNCE</b>，<b>C1–C4 四项判据全部通过</b>：
+  C1 <code>1.0000 → 0.1909</code>；C2 间隙 <code>0 → +0.0850</code>；
+  C3 <code>eval5k R@1 1/5000 → 0.0064</code>（<b>32× chance</b>）；C4 loss 由钉在 4.45 转为持续下降。<br>
+  <small>另：R4 用决定性实验<b>证伪了「77-token 截断是主因」</b>——被丢弃的尾部（off-diag 0.372）比保留的头部（0.295）<b>更相似</b>，说明问题在于 recaption 通篇公式化，而非截断丢信息。</small>
+</div>
+
 <div class="danger">
-  <strong>🚨 当前核心阻塞（最高优先级）</strong>：<strong>从零训练视觉编码器训不起来 —— 表征坍缩</strong>。
-  R3 已定位根因（两塔退化为常量、四架构塌到同一均衡点、loss 4.45 是坍缩均衡的算术值）；
-  <strong>已下发 R4 单线程解决</strong>：6 条代码级怀疑（含 77-token 截断、空 caption、负样本质量）+ LLaVA vs GPIC 数据集对比
-  + 修复实验 + 路线裁定。<strong>此问题不解决，Stage (iii)/(iv) 无法前进。</strong>
+  <strong>🚨 当前最紧要的三件事</strong>
+  <ol>
+    <li><b>vision 的 R5 未下发</b> —— agent 队列空、正在长睡空转；而 <b>R1/R2 的架构 loss 结论已因坍缩全部作废</b>，
+        R5（用修好的 <code>sem_clip</code> recipe 重跑四架构对比）是 Stage (iii) 恢复有效产出的唯一路径。</li>
+    <li><b>P-5b 一旦启动将独占 8 卡 ≈2.5 天</b> → <b>P-4 / P-6 / P-7 应排在它之前清掉</b>（合计 ≈5–9 小时）。</li>
+    <li><b>两件事卡在人工</b>：① HF 上同意 <code>UltraData-SFT-2605</code> 条款后重下（Stage (ii) SFT 主体缺料）；
+        ② <b>EDA 语料授权确认</b>（Stage (ii)「领域模型」claim 的唯一支撑）。</li>
+  </ol>
+  详见 <a href="#s9">§9 当前排期与预计完成时间</a>。
 </div>
 
 <div class="verdict">
@@ -101,6 +115,7 @@
     <li><a href="#s6">阻塞与风险</a></li>
     <li><a href="#s7">Agent 与基础设施状态</a></li>
     <li><a href="#s8">启动命令（复制即用）</a></li>
+    <li><a href="#s9">当前排期与预计完成时间</a></li>
   </ol>
 </div>
 
@@ -283,6 +298,64 @@
     数据集对比、修复实验与路线裁定。
   </p>
 </div>
+<div class="ok-box">
+  <h3 style="margin-top:0">✅ R4 结论：坍缩根因已定位，修复<b>通过全部四项判据</b></h3>
+  <p>
+    单变量四档实验把坍缩拆成 <b>两个独立的来源</b>——<b>「随机初始化的 text 塔」与「SigLIP 的可坍缩均衡」，
+    二者叠加</b>才造成 <code>1.0000</code> 的精确坍缩。修复 = <b>冻结的预训练 CLIP 文本塔 + CLIP InfoNCE</b>。
+  </p>
+  <table>
+    <tr><th>配置</th><th>改动（相对上一行）</th><th>C1（&lt;0.9 过）</th><th>判定</th></tr>
+    <tr><td><b>A <code>baseline</code></b></td><td>现状：随机 text 塔 + SigLIP + 可学 scale/bias</td>
+        <td><b>1.0000</b> ❌</td><td>精确坍缩（复现 R3）</td></tr>
+    <tr><td><b>B <code>sem_siglip</code></b></td><td>只把 text 塔换成冻结语义 CLIP（保留 SigLIP + bias）</td>
+        <td>0.8982 ❌</td><td>仍近坍缩</td></tr>
+    <tr><td><b>C <code>sem_bias0</code></b></td><td>B 再把 <code>logit_bias</code> 冻结为 0</td>
+        <td>1.0000 ❌</td><td>🚨 <b>反平均坍缩</b>（vision 退化为「平均文本的<b>反</b>方向」，cross 分数恒 ≈ −0.436）</td></tr>
+    <tr><td class="ok-box" style="padding:6px 10px"><b>D <code>sem_clip</code></b> ✅</td>
+        <td class="ok-box" style="padding:6px 10px">B 把 SigLIP 换成 <b>CLIP InfoNCE</b>（无 bias，学温度）</td>
+        <td class="ok-box" style="padding:6px 10px"><b>0.1909</b> ✅</td>
+        <td class="ok-box" style="padding:6px 10px"><b>通过 C1/C2/C4</b></td></tr>
+  </table>
+
+  <table style="margin-top:10px">
+    <tr><th>判据</th><th>阈值</th><th>现状配置</th><th>修复后（<code>sem_clip</code>）</th></tr>
+    <tr><td><b>C1</b> 不坍缩（same-tower off-diag 余弦）</td><td>&lt; 0.9</td><td>1.0000 ❌</td><td><b>0.1909</b> ✅</td></tr>
+    <tr><td><b>C2</b> cross <code>diag−offdiag</code> 正间隙</td><td>&gt; 0</td><td>+0.0000 ❌</td><td><b>+0.0850</b> ✅</td></tr>
+    <tr><td><b>C3</b> <code>eval5k</code> R@1 显著高于 chance</td><td>≫ 1/5000</td><td>1/5000 ❌</td><td><b>0.0064</b>（<b>32× chance</b>）✅</td></tr>
+    <tr><td><b>C4</b> loss 持续下降</td><td>不钉平台</td><td>钉 <code>4.45</code> ❌</td><td><b>3.36 → 3.13</b> 持续降 ✅</td></tr>
+  </table>
+
+  <p style="margin-bottom:4px"><b>关键归因（两条）</b></p>
+  <ul>
+    <li><b>换语义 text 塔（B）显著缓解但不根治</b>：C1 <code>1.00 → 0.90</code>，说明随机 text 塔确实是坍缩燃料；
+        但 SigLIP 的可学 <code>logit_bias</code> 仍允许 vision 退化到「平均文本方向」这个近似常量解。</li>
+    <li><b>InfoNCE（D）是解药</b>：softmax 归一化强制「正样本要打败<b>所有</b>负样本」，
+        常量特征<b>无法</b>降低 loss → 模型被迫学出区分性表征。300 步即 C1=0.19、cross 正间隙出现、loss 单调下降。</li>
+  </ul>
+
+  <p>
+    <b>⚠️ 同时证伪了我先前的一个假设</b>：「<b>77-token 截断</b>导致坍缩」（截断保留套话前缀、丢掉区分性内容）。
+    R4 的决定性实验把<b>同一条长 caption</b> 的「保留头部 75 token」与「被丢弃的尾部 75 token」分别用冻结 CLIP 文本塔嵌入：
+    HEAD off-diag <code>0.2946</code> vs TAIL off-diag <code>0.3720</code> ——
+    <b>被丢弃的尾部反而更相似</b>。→ <b>截断没有丢掉区分性信息</b>，问题在于整条 recaption 通篇公式化。
+    截断 100% 属实，但只是<b>背景事实</b>，不是坍缩的直接推手。
+  </p>
+</div>
+
+<div class="danger">
+  <h3 style="margin-top:0">🚨 由此产生的<b>回滚</b>与<b>重跑</b>义务</h3>
+  <ul>
+    <li><b>回滚 <code>tab:visarch_res</code></b>：我在 R2 期间回填进论文的「架构 × 分辨率」表，
+        其 <code>loss</code> 列<b>全部是坍缩均衡值</b>，不是架构差异 → <b>必须撤下</b>。
+        <code>tab:visres</code> / <code>tab:visobj</code> 的 loss 类结论同样作废。</li>
+    <li><b>R1/R2 的架构损失结论与 R2-3 全部作废</b>：因为它们比较的是「四架构塌到同一均衡点」，
+        <b>架构在坍缩下不可区分</b>。→ <b>必须用修好的 recipe 重跑（R5）</b>，届时架构对比才有意义。</li>
+    <li><b>吞吐/延迟排序仍成立</b>：那是结构属性，不受坍缩影响（R2-4 已干净复测）。</li>
+  </ul>
+</div>
+
+
 
 <div class="note">
   🔧 <b>已据此修正 R2-3 的任务书</b>（同一 bug 会重现，因为 R2-3 是我设计的）：① 12 组<b>必须匹配 batch</b>
@@ -335,8 +408,9 @@
     <td><b>(iv)</b> MLLM 对齐</td>
     <td>三任务族（<code>image→script</code> 用同一断言沙盒打分 / <code>script→image</code> / layout VQA）；
         projector / 冻结策略 / 视觉 token 数消融</td>
-    <td>🔴 <b>硬阻塞：视觉编码器训不起来</b>（表征坍缩）——<b>必须先等 R4 解决</b>；
-        且需扩到 85M 对（当前仅 50 万对）</td>
+    <td>🟢 <b>原硬阻塞已解除</b>：视觉表征坍缩已由 <b>R4</b> 定位并修复（<code>sem_clip</code> recipe，C1–C4 全过）；
+        <b>待 R5 用新 recipe 重跑四架构 × 分辨率对比</b>（原 R1/R2 损失结论已作废）。
+        仍<b>需扩到 85M 对</b>（当前仅 50 万对）——按 vision 数据调研结论，caption 应以 <b>GPIC <code>short</code></b> 为主</td>
   </tr>
   <tr>
     <td><b>(v)</b> 领域适配</td>
@@ -360,9 +434,9 @@
         下一步：授权确认 + 入库（走污染闸）</td>
   </tr>
   <tr>
-    <td>3</td><td><b>视觉编码器无有效下游指标</b>（R@K 退化到随机水平）</td><td><span class="badge b-no">🔴 高</span></td>
-    <td><b>已下发 vision R3-1</b>：先做<b>评测自查</b>判定"训练不足"还是"评测坏了"，再决定是否延长训练；
-        <b>Stage (iv) 前必须解决</b></td>
+    <td>3</td><td><b>视觉编码器无有效下游指标</b>（R@K 退化到随机水平）</td><td><span class="badge b-ok">✅ 已裁决</span></td>
+    <td><b>根因 = 表征坍缩</b>（R3 定位）→ <b>R4 已定位并修复</b>（<code>sem_clip</code> = 冻结语义 CLIP 文本塔 + InfoNCE，<b>C1–C4 全过</b>）。
+        原 R1/R2 的 loss 类结论与 <code>tab:visarch_res</code> <b>已作废、待回滚</b>；<b>下一步：下发 R5 重跑</b></td>
   </tr>
   <tr>
     <td>4</td><td>OpenVision2 推理 <code>6.51ms</code> 存疑（vs 10.07ms）</td><td><span class="badge b-ok">✅ 已裁决</span></td>
@@ -390,28 +464,58 @@
     </td>
   </tr>
   <tr>
-    <td>8</td><td>🔴 <b>论文 §4 的 "≈1.8T tokens" 很可能是错的</b>——实测 Ultra-FineWeb-L3 只有 <b>616 parquet / 617.6 GiB</b>，
-        按已切产物的 <code>4 B/token</code> 口径反推<b>只对应 ~400B token</b>（差 4–6 倍）</td>
-    <td><span class="badge b-no">🔴 高</span></td>
-    <td>已派 data agent 的 <b>R-A4</b>：用 HF 官方标注 + 抽样分词外推给出判定。<b>投稿前必须修</b></td>
+    <td>8</td><td>🔴 <b>论文 §4 的 "≈1.8T tokens" 是错的</b>——把<b>磁盘字节直接当成了 token 数</b></td>
+    <td><span class="badge b-no">🔴 高（待改论文）</span></td>
+    <td><b>data R 阶段已查实</b>：<code>1.8 TiB = 1898 GB</code>，与 HF 官方 parquet 字节
+        <code>663+594+333+308 = 1898 GB</code> <b>精确吻合</b>；<b>真实 token ≈690B</b>（en ≈467B / zh ≈223B）
+        → 论文<b>高估 2.6×~3.9×</b>。<br>
+        且论文写的"English subset ≈1.8T"<b>还多错一处</b>（英文子集只有 1.2 TiB / ≈467B token）；
+        同段 <code>MEMORY.md</code> 的 <code>1.2T / 515G / 51G</code> <b>也全是字节</b>。<br>
+        ✅ 附带查实：L3 实际是 <b>1764 parquet / ≈1.9 TiB（4 个 config）</b>，此前台账只记了 en_qa 一支（616），<b>漏了 1148 支</b>；
+        逐文件与 HF 官方核对<b>一致 → 数据已下全</b>。<b>投稿前必须改</b></td>
   </tr>
   <tr>
     <td>9</td><td>🔴 <b>视觉编码器训练数据严重不足</b>——现用 <code>en500k</code> = <b>50 万对</b>，
         而 Round 1 实跑 3000 步 × 192 = <b>57.6 万张</b>（≈1 epoch）</td>
     <td><span class="badge b-no">🔴 高</span></td>
     <td>已下载的 LLaVA-OneVision-1.5 Mid-85M = <b>8500 万对（170×）</b>，业界 CLIP 级 4–20 亿对。
-        <b>架构对比够用，做出可用编码器不够</b>；打包后约 <b>12 TB</b>（注意磁盘）</td>
+        <b>架构对比够用，做出可用编码器不够</b>；打包后约 <b>12 TB</b>（注意磁盘）。<br>
+        ✅ <b>data R 阶段已给出数据路线</b>：<b>caption 改用 GPIC <code>short</code> 为主</b>
+        （20 token、<b>0% 截断</b>；全量 <b>8000 tar</b>、许可<b>全部 permissive</b> 可发布）；
+        LLaVA 85M <b>降级为「图像多样性来源」，其 caption 丢弃</b>
+        （EN 均值 202–228 / <b>CN 均值 498</b>，<b>99.7–100% 被 77-token 截断</b>）</td>
   </tr>
+  <tr>
+    <td>10</td><td>🚨 <b>vision 的 R5 未下发</b>——agent 队列空、正在长睡空转</td>
+    <td><span class="badge b-no">🔴 高（<b>需立即下发</b>）</span></td>
+    <td>R4 已完成核心修复，但 <b>R1/R2 的架构 loss 结论已因坍缩全部作废</b>；
+        <b>R5（用 <code>sem_clip</code> recipe 重跑四架构 × 分辨率对比）是 Stage (iii) 恢复有效产出的唯一路径</b>。
+        预计耗时 <b>≈2–3 小时</b>，<b>下发后当晚即可出结果</b>；且应全程监控 C1–C4</td>
+  </tr>
+  <tr>
+    <td>11</td><td>🔴 <b>SFT 主体语料缺料</b>——<code>UltraData-SFT-2605</code> <b>落盘为空</b>
+        （只有 README + LICENSE，179 个 <code>.lock</code>）</td>
+    <td><span class="badge b-no">🔴 高（<b>需人工</b>）</span></td>
+    <td>该数据集 <code>gated=auto</code>，<b>需先在 HF 网页点同意条款</b>，之后才能重下成功。
+        否则 Stage (ii) 的 SFT 主体<b>无料可用</b></td>
+  </tr>
+  <tr>
+    <td>12</td><td>🟡 <b>EDA 语料授权</b>（与 #2 同源，此处单列为<b>排期</b>项）</td>
+    <td><span class="badge b-warn">🟡 <b>需人工</b></span></td>
+    <td>来源已定位（<code>eda_fastmcp/docs/</code> ≈45 MB 纯文本），但<b>授权确认需人拍板</b>；
+        这是 Stage (ii)「领域模型」claim 的<b>唯一支撑</b>。在此期间 data agent 只能<b>待命</b></td>
+  </tr>
+
 </table>
 
 <h2 class="sec" id="s7"><span class="no">7</span>Agent 与基础设施状态</h2>
 
 <table>
   <tr><th>角色</th><th>脚本 / 文件</th><th>状态</th></tr>
-  <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · R2 ✅ → R3 定位<b>表征坍缩</b> → <b>R4 解决核心阻塞</b>已下发）</td></tr>
-  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ P-2 ✅ P-3 ✅</b> · <b>P-5a 运行中</b> · P-4 待 GPU · P-6 已下发）</td></tr>
-  <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · phase0/3/5 完成 → <b>「R 阶段：数据调研」10 个主题</b>，用 <code>cimi-search</code>/<code>cimi-fetch</code> 为 5 个阶段调研数据源）</td></tr>
-  <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · 零 token · RUN_ID 1/2 已回收 → <b>RUN_ID 3（磁盘）已排队</b>）</td></tr>
+  <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-warn">⚠️ 队列空</span>（.12 · R2 ✅ → R3 定位<b>表征坍缩</b> → <b>R4 ✅ 解决核心阻塞（C1–C4 全过）</b> → <b>🚨 R5 待下发</b>）</td></tr>
+  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ P-2 ✅ P-3 ✅</b> · <b>P-5a 运行中 4/9 点</b> · P-4 待 GPU · <b>P-6 / P-7 已下发</b>）</td></tr>
+  <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-info">⏸ 待命</span>（.12 · phase0/3/5 ✅ → <b>R 阶段 ✅ 收敛（2 问已答完，<code>DATA_RESEARCH.md</code> v1.1）</b> → 下一步 phase1/2/4 <b>等下载</b>；另有 2 项<b>卡人工</b>）</td></tr>
+  <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-ok">✅ 空闲待命</span>（.29 · 零 token · <b>RUN_ID 1/2/3 已全部回收</b>，随时可派 4）</td></tr>
   <tr><td>1B / 2B 架构轮</td><td><code>baize_search_loop.sh</code> · <code>baize_2b_search_loop.sh</code></td><td><span class="badge b-ok">✅ 已收敛</span>，僵尸 loop 已被清理</td></tr>
 </table>
 
@@ -491,6 +595,105 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
   bash 是<b>增量读取</b>脚本的，修改运行中的脚本可能让它读到错乱内容。<br>
   2. <b>不要 <code>pkill</code> 任何 loop</b>——vision 的 R2（R2-2~R2-5）还没跑完，
   pretrain 的 P-1 训练正在进行，都不要中断。
+</div>
+
+
+<h2 class="sec" id="s9"><span class="no">9</span>当前排期与预计完成时间</h2>
+
+<p style="color:var(--muted)">基准时刻：<b>2026-10-01 22:05</b>。下表"预计耗时"是该条工作**剩余**的工作量估计。</p>
+
+<table>
+  <tr><th>线</th><th>当前安排的工作</th><th>状态</th><th>预计耗时</th><th>预计完成</th></tr>
+
+  <tr>
+    <td rowspan="5"><b>pretrain</b><br>(<code>10.239.2.29</code>)</td>
+    <td><b>P-5a</b> GBS×LR 扫描<br><small>已回收 4/9 点（GBS=64 三点 + GBS=256 的 lr1e-3）；剩 GBS=256 两点 + GBS=1024 三点</small></td>
+    <td><span class="badge b-warn">🔄 运行中</span><br><small>约 25 min/点</small></td>
+    <td><b>≈ 2 小时</b></td>
+    <td><b>今晚 ≈ 23:50</b></td>
+  </tr>
+  <tr>
+    <td><b>P-5b</b> 训练量 scaling 曲线（跑到 20B token，必要时延到 40–60B）</td>
+    <td><span class="badge b-no">⬜ 待 P-5a 定 LR</span></td>
+    <td><b>≈ 2.5 天</b><br><small>20B token @ ~93K tok/s</small></td>
+    <td><b>≈ 10/04</b></td>
+  </tr>
+  <tr>
+    <td><b>P-4</b> FP8 profile（判 GEMM 占比）</td>
+    <td><span class="badge b-info">⬜ 等 GPU 空闲</span></td>
+    <td>≈ 2 小时</td>
+    <td>⚠️ 见下方排期建议</td>
+  </tr>
+  <tr>
+    <td><b>P-7</b> 训练吞吐幅度核查（+24% vs +4.8%）</td>
+    <td><span class="badge b-info">⬜ 已下发</span></td>
+    <td>≤ 1 小时</td>
+    <td>可穿插在 P-5a 之后</td>
+  </tr>
+  <tr>
+    <td><b>P-6</b> lm_eval 8 集零样本（HF→SGLang→local-completions）</td>
+    <td><span class="badge b-info">⬜ 已下发</span></td>
+    <td>≈ 2–6 小时<br><small>含转换 + 起服</small></td>
+    <td>需 GPU 起 SGLang</td>
+  </tr>
+
+  <tr>
+    <td rowspan="2"><b>vision</b><br>(<code>10.239.2.12</code>)</td>
+    <td><b>R4</b> 坍缩根因定位与修复</td>
+    <td><span class="badge b-ok">✅ 已完成</span><br><small>C1–C4 全过</small></td>
+    <td>—</td><td>已结束</td>
+  </tr>
+  <tr>
+    <td><b>R5</b>：用修好的 <code>sem_clip</code> recipe 重跑四架构 × 分辨率对比<br>
+        <small>（R1/R2 的架构 loss 结论已全部作废，必须重跑）</small></td>
+    <td><span class="badge b-no">🚨 未下发 · 队列空</span><br><small>agent 处于 30 min 长睡</small></td>
+    <td>≈ 2–3 小时</td>
+    <td><b>若现在下发 → 今晚即可</b></td>
+  </tr>
+
+  <tr>
+    <td rowspan="3"><b>data</b></td>
+    <td><b>R 阶段</b>（两问：LLM/Vision 数据够不够 + 配比）</td>
+    <td><span class="badge b-ok">✅ 收敛</span></td>
+    <td>—</td><td>已结束</td>
+  </tr>
+  <tr>
+    <td><b>phase1/2/4</b>：全量校验 → 分词 → webdataset 打包</td>
+    <td><span class="badge b-warn">⏸ 等下载</span><br><small>LLaVA 7549/12126、gpic 430/8000 tar</small></td>
+    <td>10+ 小时（重 I/O）</td>
+    <td>待下载完成后才能起</td>
+  </tr>
+  <tr>
+    <td><b>两个需人工的前置</b>：① <code>UltraData-SFT-2605</code> 重下（HF 上 <code>gated=auto</code>，需先点同意）② EDA 语料授权确认</td>
+    <td><span class="badge b-no">🔴 需<b>你</b>操作</span></td>
+    <td>小时级 / 待决策</td>
+    <td>—</td>
+  </tr>
+
+  <tr>
+    <td><b>ops relay</b></td>
+    <td>RUN_ID 1/2/3 已回收（环境、数据根目录、磁盘）</td>
+    <td><span class="badge b-ok">✅ 空闲待命</span></td>
+    <td>按需（~1 min 一轮）</td>
+    <td>随时可派 RUN_ID 4</td>
+  </tr>
+</table>
+
+<div class="danger">
+  <b>⚠️ 三条排期结论</b>
+  <ol>
+    <li><b>vision 队列是空的</b>：R4 已完成，但 <b>R5（重跑四架构对比）尚未下发</b> —— agent 正在 30 分钟长睡空转。
+        而 R1/R2 的架构结论已因坍缩全部作废，**R5 是 Stage (iii) 恢复有效产出的唯一路径**。建议**立即下发**。</li>
+    <li><b>P-5b 一旦启动会独占 8 卡约 2.5 天</b> → <b>P-4（≤2h）、P-7（≤1h）、P-6（需 GPU 起 SGLang）都会被挡住</b>。
+        建议在 P-5a 结束、P-5b 启动之前把这三项**先清掉**（合计 ≈5–9 小时），否则要等 2.5 天。</li>
+    <li><b>两件事卡在人工</b>：① HF 上同意 <code>UltraData-SFT-2605</code> 条款后重下（否则 Stage (ii) 的 SFT 主体缺料）；
+        ② <b>EDA 语料授权确认</b>（Stage (ii)「领域模型」claim 的唯一支撑）。这两条不解决，data agent 只能继续待命。</li>
+  </ol>
+</div>
+
+<div class="note">
+  <b>关键路径</b>：<b>pretrain P-5b ≈ 2.5 天</b>是当前最长的一项；其余（vision R5、P-4/P-6/P-7、data phase1/2/4）都在**小时级**。
+  因此<b>真正决定 11 月能否开训的，是 P-5a → P-5b 这条链</b>；其余各线可以并行推进、不构成瓶颈。
 </div>
 
 
