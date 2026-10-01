@@ -6,12 +6,42 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R2_complete**（R2-0~R2-5 全部完成；交付物 `EXPERIMENTS_VISION_ROUND2.md` + `BAIZE_VISION_ENCODER_RESULT_ROUND2.html` 齐备） |
-| WAITING | 1（终局 idle：无异步任务、无剩余工作，loop 按 30min 长睡省 token） |
+| PHASE | **R3_complete**（R3 第三轮已完成：判定 `eval5k R@K=精确随机` = **模型训练坍缩**；交付物 `EXPERIMENTS_VISION_ROUND3.md` + ROUND3 HTML 已就位，见下方 R3 小节） |
+| WAITING | 1（R3 已完成，终局 idle；步骤 A 判定「训练坍缩」、B/C 裁减、修复探针三配置跑完，详见 R3 小节） |
 | ERROR_COUNT | 0 |
-| BUDGET_USED | ~18 GPU·h 墙钟（R2 墙钟 ≈6h，撞在 ≤6h 预算内完成，未裁剪；S0–S3 ~11 + S4 ~5 + S6/S7/S8 ~3） |
-| 更新 | 2026-10-01 17:15（R2 全部完成收尾：R2-3 12/12 + R2-5 落盘 → 生成 ROUND2 HTML → MEMORY/EXPERIMENTS 更新 → commit+push） |
-| WINNER | OpenVision2（纯 Attention ViT 505M）——loss 四架构不可区分（R2-3 跨 256/576/1024 token 复证），训练 2017 img/s / 推理 6.87ms（R2-4 干净复测）双最优 |
+| BUDGET_USED | ~18 GPU·h 墙钟（R2 累计；R3 步骤 A 为轻量核验/诊断，无重训练，未新增实质性 GPU·h） |
+| 更新 | 2026-10-01（R3 完成：R3.0 状态切换 → R3.2 步骤 A 判定「训练坍缩」→ 修复探针三配置 → 写 `EXPERIMENTS_VISION_ROUND3.md` + ROUND3 HTML + 回填建议） |
+| WINNER | 仍为 OpenVision2（吞吐/延迟双最优这一**计算侧结论不受坍缩影响**仍成立）；但「loss 四架构不可区分（4.45）」经 R3 鉴定为**坍缩均衡 loss**，非有效学习结论（见 R3 判定） |
+
+## 🔬 R3 启动 + 决定性结论（评测自查「步骤 A」判定：**训练坍缩**，2026-10-01）
+
+> R3.0 状态切换已完成（R2_complete → **R3_active**，WAITING 1 → 0）。Round 1/2 结论保留作基线，不重跑。
+> R3.1 要解决的是「eval5k 检索 R@1/5/10 恰 = 1/5000·5/5000·10/5000（精确随机）」到底是 A（训练不足）还是 B（评测坏了）。
+> **步骤 A 判定：既非 A 也非 B（脚本 bug），而是「模型训练坍缩」——第三条原因，且更根本。**
+
+### 判定证据链（全部落盘，脚本 `vision/r3_stepA_diag.py` / `r3_collapse_diag.py`）
+
+1. **排除「text tower 随机 init」假设**：`S8_ov2_lr3e-3` / `R2_ov2_clip_lr3e-3` / `S4_*` 等 R2 检查点**都含 63.4M 参数的联合训练 text tower**（`has_text=True`，key 集与新建塔逐字匹配）；仅 Round 1 的 `S3_*`（1.9G）是 vision-only。→ R2-2 双臂 eval 用的都是**有正确 text 塔的 full ckpt**，并非「随机 text 塔」。
+2. **自检索 / 特征一致性**：`S8_ov2_lr3e-3`（SigLIP）eval5k 上 `mean_diag=0.9961 = mean_offdiag=0.9961`，`max_offdiag=1.0000` —— 所有余弦相似度≈1，检索排序纯随机 → R@1/5/10 = 0.001/0.005/0.010（n=1000，即恰 chance，n=5000 同）。
+3. **坍缩定位（双塔都坍缩）**：IMAGE 塔与 TEXT 塔的 same-tower 余弦 `min=max=1.0000`（**完全相同**）；原始特征 per-dim std≈0（跨样本几乎不变）。MambaEye（SSM）同样精确坍缩 1.0000；CLIP 臂也坍缩（cos≈0.99）。
+4. **控制实验（排除评测/输入 bug）**：同一批 eval 输入喂给**全新随机初始化的 OpenVision2**，IMAGE same-tower 余弦**发散**（mean 0.17，range −0.77..+0.99），CROSS≈0（随机）。→ 输入/评测无 bug，坍缩是**训练造成的**。
+5. **损失恒等式（坍缩均衡）**：SigLipLoss `-logsigmoid(label·logit).sum()/N`，在坍缩（sim≈1）+ 学习到的 `logit_scale=5.68 / logit_bias=-9.09` 下：`f_pos=-logsigmoid(5.68−9.09)=3.44`，`f_neg=-logsigmoid(−5.68+9.09)=0.0324`，`loss=3.44+31×0.0324=4.45` = **实测训练 loss 4.456 分毫不差**。→ Round 1/2 的「loss 4.45 四架构不可区分」= **坍缩均衡 loss**，不是有效学习结论。
+
+### R3.1 裁定与裁剪
+
+- **裁定**：`eval5k R@K = 精确随机` 的原因是**模型特征坍缩**（vision+text 双塔退化为常量输出），属第三条原因——不是 A（训练不足，延长 horizon 无用，S3 10k 已在 4.45 平台），也不是 B（评测脚本 bug，脚本本身正确）。
+- **步骤 B（R3.3 延长 20k）/ C（R3.4 换同源 held-out）裁减不跑**：坍缩是训练目标地形的均衡，与 horizon 和 eval 集来源无关（特征恒为常量，换任何 held-out 都随机）。
+- **回填建议**：`tab:visobj`/`tab:visarch` 的 loss 与 `eval5k R@K` **都不可用**（都是坍缩读数）→ 论文应如实写「当前从零 recipe 下**无有效代理指标**」；唯一可信的是**计算侧**结论（训练/推理吞吐排序，OpenVision2 双最优），其不受坍缩影响。
+- **修复探针已跑完（300 步短训，`vision/r3_fix_probe.py` 三配置）**：① baseline（text 联合训练 + bias 可学习）**300 步即精确坍缩**（vision/text same-tower cos=1.0000）→ 坍缩是 objective 固有吸引子，非 DDP/batch/horizon 副产物；② **冻结 text 塔（随机 init）不够**：vision 塔仍坍缩 0.9965（随机 text 塔自身 cos≈0.67，且 vision 可退化到「平均文本方向」）；③ **固定 bias=0 也不够**：双塔仍坍缩，且翻成**反平行坍缩**（cross diag/offdiag=−0.9999/−0.9999）。→ 结论：坍缩是「从零 + 每-batch 对比（少量负样本 32/64）+ 500k 对 + 可学习 scale/bias」整套 recipe 的属性，**一行改动修不掉**，需换初始化/目标（详见 `EXPERIMENTS_VISION_ROUND3.md` §7）。
+
+### R3 完成（交付物齐备，2026-10-01）
+
+- ✅ 交付 1 `run/EXPERIMENTS_VISION_ROUND3.md`（步骤 A 证据链 + R3.1 裁定 + B/C 裁减 + 修复探针 + 论文回填建议 + 可复现命令）。
+- ✅ 交付 2 `BAIZE_VISION_ENCODER_RESULT_ROUND3.html`（自包含，0 外部引用）。
+- ✅ 交付 3 本状态文件 + `daily-memories-vision/2026-10-01.md` 更新；git commit + push。未改任何 `.tex`。
+- 裁定定稿：`eval5k R@K=精确随机` = **模型训练坍缩**（双塔退化为常量特征），既非 A（训练不足）也非 B（评测 bug）；论文 loss/R@K 读数一律作废，仅保留计算侧（吞吐/延迟）结论。
+
+---
 
 ## ✅ R2 全部完成（收尾，2026-10-01 17:15）
 
