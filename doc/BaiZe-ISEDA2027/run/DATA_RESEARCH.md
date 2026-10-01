@@ -208,6 +208,8 @@ Base/mid 训练 = `Ultra-FineWeb` + `Ultra-FineWeb-L3` + `UltraX-Preview` + `Ult
 | 8 | UltraData-RL-2609 | https://huggingface.co/datasets/openbmb/UltraData-RL-2609 | apache-2.0 ✅ | 10K<n<100K（`size_categories`） | **187.63 GB** ✅ | —（RL） | 4 config：Math(default)/Knowledge/Long-Context/Code，20 jsonl（Code 12=~184G / Knowledge 2=~10M / Math 4=~15M / Long-Context 2=~3.6G） | ❌ | RL 阶段(Stage v)用，**P-8 不需要** |
 
 > 事实来源均为 2026-10-01 实时：行数/字节 = `datasets-server` `/size`+`/info`（✅实测）；结构与 gated = HF `/api/datasets/<repo>/tree`（✅实测）。Code/Math/L3 的 token 为本轮 `r2_local_sample.py` 抽样（各源 5–8 parquet × 400–4000 文档）外推；base 用 README 权威值 + `first-rows` 抽样互核。
+>
+> ⚠️ **R2-A 校正（唤醒 21，2026-10-02）**：① base 其实**并非"不在盘上"** —— `/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en/` 已残留 **1286/2048 parquet（1.67TB，2026-02 旧下载，含 13 个 `.incomplete`）**，与现下 `/nas_inference` 的 `ultrafineweb_en` 同名同构；上轮只查了 `/nas_inference`，漏记了 `/nas_train` 这 1.67TB（任务书 §1.1 的 ① 多模态主库其实就列了「`openbmb/Ultra-FineWeb` 在 `/nas_train`」）。② base 官方实为 **4 config**（`data/` 下）：`ultrafineweb_en`(2048) + `ultrafineweb_en_v1_4`(CC-MAIN-2013-20…2025-26 分片，~62k = 全仓 64624 的主体) + `ultrafineweb_l1_en_hq`(6 个 CC-MAIN-2025 快照) + `ultrafineweb_zh`(256)。上表「64,624 parquet（en 2048 + zh ~62,576）」把 ~62k 主体误记到了 zh（zh 实仅 256）。**核心结论不变**（base = raw web 主体、下 base = 净新增 ≈1.12T、P-8 三档 86:10:4）；仅结构归属与"是否已在盘"两处勘误。
 
 ## R2-B · base vs L3 重叠率（一句话结论 + 数字）
 
