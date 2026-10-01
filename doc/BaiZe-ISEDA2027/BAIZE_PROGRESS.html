@@ -397,9 +397,12 @@
     （其余 <code>vocab 49408 / width 512 / heads 8 / layers 12</code>）；
     本项目 <code>run/vision/train.py:50-52</code> <b>逐字段照搬</b>
     → <b>不是 open_clip 的默认值</b>（上一版说法已更正）。<br>
-    <b>③ 官方 repo 的文本侧其实有<i>两套</i></b>：那个 <code>text_cfg</code> 是 <b>CLIP 式对比学习</b>的规格；
-    而官方实际发布的 image→caption 走的是 <b>caption decoder</b>
-    （12L·768w·12h·vocab32000，concat/prefix-LM，<b>文本流无位置编码 → 不受 77 限制</b>）。<br>
+    <b>③ 官方文本侧有<i>两套</i>，而且官方<b>根本不做对比学习</b></b>：
+    官方 README 原文 —— OpenVision2 是 <i>"a simplified, <b>generative-only</b> version that
+    <b>removes the text encoder and contrastive loss</b>"</i>，<b>训练目标 = caption-only 生成式</b>，
+    训练数据 = <b>ReCap-DataComp-1B v2</b>（LLaMA-3 合成 caption）。
+    → 那个 <code>text_cfg</code>（含 77）是 <b>open_clip 格式的遗留字段</b>；官方实际走的是
+    <b>caption decoder</b>（12L·768w·12h，concat/prefix-LM，<b>文本流无位置编码 → 不受 77 限制</b>）。<br>
     <b>④ 顺带查出三处「本项目 vs 官方」差异</b>：vision 层数 <b>24 → 30</b>；
     <code>embed_dim</code> <b>1024 → 512</b>（R4/R5 又改成 <b>768</b>）；
     最要命的是 —— 官方 <code>text_cfg</code> 对应的是<b>与 vision 塔联合训练过</b>的文本塔，
@@ -612,6 +615,24 @@
         8 源事实表填满 → base vs L3 <b>重叠率</b> → <b>P-8 三档投料/下载清单</b>。
         <b>若判定为新增且磁盘允许，直接开始下载</b></td>
   </tr>
+  <tr>
+    <td>15</td><td>🔴 <b>本项目「OpenVision2」与官方有 5 处不一致</b> —— 论文若声称"复现官方架构"会被审稿人打</td>
+    <td><span class="badge b-no">🔴 高（<b>投稿前必交代</b>）</span></td>
+    <td>依据官方 README（<code>UCSC-VLAA/OpenVision</code>）+ 官方 config 逐条核对：<br>
+        ① <b>vision 层数 24 → 30</b>（<code>models.py: OpenVision2 depth=30</code>）<br>
+        ② <b><code>embed_dim</code> 1024 → 512</b>（<code>models.py: EMBED_DIM=512</code>；R4/R5 又改成 <b>768</b>）<br>
+        ③ 🔴 <b>训练目标</b>：官方 OpenVision2 是 <b>caption-only 生成式</b> —— README 原文
+        <i>"a simplified, <b>generative-only</b> version … <b>removes the text encoder and contrastive loss</b>"</i>；
+        <b>而我们用的是对比学习</b>（SigLIP → InfoNCE）<br>
+        ④ 🔴 <b>框架</b>：官方需<b>仓库自带的自定义 open_clip</b> —— README 原文
+        <i>"The upstream <code>open_clip</code> pip package is <b>not compatible</b>"</i>；
+        <b>我们用的是 pip <code>open_clip 3.2.0</code></b><br>
+        ⑤ <b>规模</b>：官方 L/14 = <b>304M</b>（@224 与 @336 同）/ So400M / H/14 = 632M / g/14 = 1.01B；
+        本项目 <b>505.0M</b> —— <b>落在 L 与 H 之间，两边都不是</b><br>
+        → <b>要求</b>：论文须明确写"<b>只用其 vision tower，训练目标与框架为自研</b>"，
+        并说明 24→30 层是有意的等参调整。否则审稿人查一眼 README 即可发现</td>
+  </tr>
+
 
 
 </table>
@@ -760,8 +781,8 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
   </tr>
 
   <tr>
-    <td rowspan="3"><b>vision</b><br>(<code>10.239.2.12</code>)<br><br>
-        <small>🚦 次序<br><b>R6 → R5</b></small></td>
+    <td rowspan="4"><b>vision</b><br>(<code>10.239.2.12</code>)<br><br>
+        <small>🚦 次序<br><b>R6 → R5 → R7</b></small></td>
     <td><b>R4</b> 坍缩根因定位与修复</td>
     <td><span class="badge b-ok">✅ 已完成</span><br><small>C1–C4 全过</small></td>
     <td>—</td><td>已结束</td>
@@ -786,6 +807,20 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
         <small><b>纯 CPU</b> · 可与 R5 并行，不占卡</small></td>
     <td class="ok-box" style="padding:6px 10px"><b>≤ 1.5 小时</b></td>
     <td class="ok-box" style="padding:6px 10px"><b>R5 跑完后立即</b></td>
+  </tr>
+  <tr class="ok-box">
+    <td class="ok-box" style="padding:6px 10px"><b>R7</b> 🔵 <b>数据臂对比：en500k vs GPIC vs ReCap</b>（<u>R5 之后</u>）<br>
+        <small>既然 <b>77 不能动</b>，就必须让<b>数据适配 77</b>；而 R5 用的 LLaVA 长 recaption <b>99.7–100% 被截断</b> ——
+        恰恰最不适配。<br>
+        <b>A</b> en500k（复用 R5）· <b>B</b> GPIC <code>short</code>（20 token / 0% 截断）·
+        <b>C</b> <code>Recap-DataComp-1B</code> = <b>官方 OpenVision2 的训练数据</b>（"按官方配方"）<br>
+        ⚠️ <b>必须交叉评测</b>（<code>eval5k</code> × GPIC <code>test</code> 128 tar），
+        否则分不清"数据更好"与"eval 更简单"</small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-info">⏸ 已下发·排队</span><br>
+        <small>在 <b>R5 完全结束之后</b></small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≤ 3 小时</b><br>
+        <small>+ 视打包 I/O</small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≈ 10/02–10/03</b></td>
   </tr>
 
   <tr>

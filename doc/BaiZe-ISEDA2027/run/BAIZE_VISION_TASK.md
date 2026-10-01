@@ -102,14 +102,22 @@
      **这正是 R4/S5 认定的坍缩主因**。
    - **→ 给出结论**：能否用官方 text tower 权重替代 `clip-vit-large-patch14-336`？
      若能，给出方案与代价（改回 512 维还是加投影？C1–C4 是否需重验？）。
-4. **顺带核实**本项目与官方的其他差异（**已发现两处，请确认并补全**）：
+4. **顺带核实**本项目与官方的**五处**差异（**前三处已发现，请确认并补全**）：
 
    | 项 | 官方 | 本项目 R1 | 本项目 R4/R5 |
    |:--|:--|:--|:--|
-   | vision 层数 | **24** | **30**（`models.py: OpenVision2 depth=30`） | 30 |
-   | `embed_dim` | **1024** | **512**（`models.py: EMBED_DIM = 512`） | **768** |
+   | ①`vision` 层数 | **24**（L/14） | **30**（`models.py: OpenVision2 depth=30`） | 30 |
+   | ②`embed_dim` | **1024** | **512**（`models.py: EMBED_DIM = 512`） | **768** |
+   | ③**训练目标** | 🔴 **caption-only 生成式**（README: *"removes the text encoder and contrastive loss"*） | **对比学习**（SigLIP） | **对比学习**（InfoNCE） |
+   | ④`open_clip` 版本 | 🔴 **仓库自带的自定义 fork**（README: *"The upstream `open_clip` pip package is **not compatible**"*） | pip `open_clip 3.2.0` | 同 |
+   | ⑤规模 | L/14=**304M** / So400M / H/14=**632M** / g/14=**1.01B** | **505.0M**（= 官方没有的点） | 505.0M |
 
-   → 说明这两处改动**是有意的还是无意的**，以及**对"与官方可比性"的影响**（论文里若声称复现官方架构，这两处必须交代）。
+   → **⑤ 请核对官方的规模表**（来源：`https://raw.githubusercontent.com/UCSC-VLAA/OpenVision/main/README.md`
+   的 *Model Zoo (OpenVision 2)*）：官方 **L/14 @224 与 @336 都是 304M**；本项目把 depth 24→30 凑到 **505M**，
+   **落在官方 L(304M) 与 H(632M) 之间，两边都不是**。**说明这是有意的等参调整还是误改。**
+   → **③④ 是最要紧的**：若论文声称"复现/对比 OpenVision2 架构"，这两条**必须交代**：
+   我们**只用它的 vision tower**，训练目标与训练框架都是我们自己的（这是合理做法，但**必须写清**）；
+   否则审稿人一查 README 就会发现我们既没用它的目标函数、也没用它的 open_clip fork。
 
 
 
@@ -294,6 +302,87 @@
   **这正是有价值的发现**，如实写，不要重试到它"看起来好"为止。
 
 ---
+
+# ══════════════ ROUND 7 · 第七轮任务（**数据臂对比：en500k vs GPIC vs ReCap** · 排在 R5 之后）══════════════
+
+## R7.0 定位与顺序 —— **必须等 R5 完全结束再做**
+
+> ### 为什么必须做这一轮
+> R6.2 已裁定：**77 是硬的**（出自官方 OpenVision2 的 `text_cfg`，本项目 `train.py:50-52` 逐字段照搬；
+> R4 换成冻结 CLIP-L/14-336 后更硬 —— 它的位置编码表只有 77 行）。
+> **→ 既然 77 不能动，"让数据适配 77"就从"加分项"变成"必要条件的候选"。**
+>
+> ⚠️ 而 **R5 现在用的 `en500k`（LLaVA 长 recaption）恰恰是最不适配 77 的数据** ——
+> 实测 **99.7–100% 被 77 截断**。所以 **GPIC（短 caption）的优先级确实提高了**。
+
+### 三条数据臂（本轮的实验矩阵）
+
+| 臂 | 训练数据 | caption | 为什么值得做 |
+|:--|:--|:--|:--|
+| **A** | `en500k`（LLaVA recaption） | 长 recaption（~200+ token） | **R5 正在跑，直接复用结果**（基线，**不要重跑**） |
+| **B** | **Stanford GPIC** | `short`（**20 token / 0% 截断**） | **天然适配 77** ← 运维点名的方向 |
+| **C** | **`Recap-DataComp-1B`** | **官方 OpenVision2 的训练数据** | 🔑 **官方 README 明写** → **"按官方配方来"** 说服力最强 |
+
+> ⚠️ **臂 C 的由来（运维提供的官方证据）**：`UCSC-VLAA/OpenVision` README 原文 ——
+> OpenVision2 = *"a simplified, **generative-only** version that **removes the text encoder and
+> contrastive loss**"*，训练数据 = ***ReCap-DataComp-1B v2***（LLaMA-3 合成 caption，conditioned on alt-text）。
+> **而 `Recap-DataComp-1B` 可能在本地盘上**（`/nas_user`，见 `BAIZE_DATA_TASK.md` §1.1）。
+> 🔴 **先核实它在不在、规模多少、caption 多长**（见 R7.1）。
+
+---
+
+## R7.1 前置检查（**先做，便宜**）
+
+1. **`Recap-DataComp-1B` 在不在本地？**
+   `du -sh` + 抽样看格式 + **实测 caption 长度分布与 77 截断率**。
+   - ⚠️ 它是 **LLaMA-3 合成的 dense caption**，**很可能也很长 → 同样会被 77 截断**。
+     若如此，臂 C **同时跑两版**：`截断到 77` 与 `过滤到 ≤77` —— 以分离"数据本身"与"截断伤害"。
+2. **GPIC 现有多大？够不够？**
+   当前 **445/8000 tar**。**抽 5–10 个 tar 实测每 tar 图文对数** → 算总量 → 与需求比
+   （3000 步 × bs64 ≈ **19.2 万对**）。
+   - **若不够**：要么等下载，要么只跑到现有数据支撑的步数，并**显式标注"步数不可比"**。
+3. **下 `Recap-DataComp-1B` 要多少磁盘/多久**（`/nas_train` 只剩 **32T**）。
+
+## R7.2 ⚠️ 评测设计（**最容易做错的地方，务必照做**）
+
+🚫 **不许每个臂用各自的 eval 自评** —— 那会把「训练数据更好」与「eval 更简单」混在一起。
+
+**必须做交叉评测**：
+
+1. **两套 held-out eval**：
+   - `eval5k`（en500k 自带，已在盘上）
+   - **GPIC `test`（128 tar 已在盘上）**
+2. **每个臂在两套 eval 上都评** → 得 **3 臂 × 2 eval 交叉表**
+   → 才能区分：某臂在自己 eval 上高分，是**真学到了**，还是**eval 同分布**。
+3. **报告**：C1 / C2 / C4 + loss + **两套 eval 各自的 R@1/5/10**。
+
+## R7.3 实验矩阵
+
+**胜出架构**（R5 的赢家）× 3000 步 × **与 R5 同口径**（同 batch / 同 lr / 同 recipe），**只换数据**：
+- **A**：直接复用 R5 结果（**不要重跑**）
+- **B**：GPIC `short`
+- **C**：`Recap-DataComp-1B`（版本按 R7.1 结论定）
+
+可选（余量内）：`GPIC medium`（46 token）。
+
+## R7.4 交付物
+
+1. **`run/EXPERIMENTS_VISION_ROUND7.md`**：三臂对比表 + **交叉 eval 表** + C1–C4 轨迹 + **明确结论**。
+2. **论文回填建议**：`6_vision_encoder.tex` 的数据来源该怎么写（**含与官方 OpenVision2 配方的对照**）。
+3. **正式训练的最终数据裁定**：用哪一臂、为什么。
+4. 更新 `MEMORY_VISION.md` + `daily-memories-vision/` + git push。
+
+## R7.5 约束
+
+- **≤ 3 小时**（A 臂复用，实际只跑 B / C）。
+- 🚫 **不中断 R5** —— 本轮**排在 R5 完全结束之后**。
+- ⚠️ 打包 GPIC / ReCap 是**重 I/O**：**先报磁盘（`/nas_train` 只剩 32T）与实测带宽**，
+  并与 pretrain 的 NFS 使用**错峰**。
+- ⚠️ **若某臂因数据不足只能少跑步数 → 必须显式标注"步数不可比"，不许混进排名。**
+- 🚫 不碰其他 agent 的文件。
+
+---
+
 
 # ══════════════ ROUND 4 · 第四轮任务（**✅ 已完成**，结论见 `EXPERIMENTS_VISION_ROUND4.md`）══════════════
 # 已交付：6 条怀疑逐一裁定（S5 随机文本塔 = #1 主因）；LLaVA vs GPIC 对比；
