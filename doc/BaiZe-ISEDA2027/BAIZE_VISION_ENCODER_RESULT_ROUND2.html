@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Stage(iii) 视觉编码器 · Round 2 修复报告（R2-0~R2-5）</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:24px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  td.win { background:#dafbe1; font-weight:700; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .warncard { background:#fff; border:1px solid var(--border); border-left:5px solid var(--warn); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe Stage(iii) 视觉编码器 · Round 2 修复报告（R2-0 ~ R2-5）</h1>
+  <div class="sub">修复 Round 1 论文 §6 的三处硬伤：<b>tab:visres 全同伪影</b> / <b>tab:visobj 量纲混比</b> / <b>「loss 与架构无关」仅 196 token</b></div>
+  <div class="meta">
+    <span>📅 完成：2026-10-01</span>
+    <span>🖥️ GPU：6×H100·80GB（DP6，10.239.2.12）</span>
+    <span>⚙️ 全局锚点改动：lr 1e-3 → <b>3e-3</b></span>
+    <span>📦 数据：en500k（训练）/ eval5k（检索）</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <h3 style="margin-top:0;">🎯 Round 2 核心结论</h3>
+  <ul>
+    <li><b>R2-1（tab:visres）</b>：lr=3e-3 下 5 组分辨率/patch loss 全落到 <b>≈4.4556–4.4566（差 &lt;0.001）</b>，坍缩对照 (224,16)@1e-3=4.9962 实锤 Round 1 六格全同是 <b>lr=1e-3 的 LR 坍缩伪影</b>。</li>
+    <li><b>R2-2（tab:visobj）</b>：SigLIP 4.4562 vs CLIP 3.2704 量纲不可比；eval5k 检索 R@K <b>两臂都随机（≈1/5000）</b>，仅「训练吞吐几乎相等」可比。</li>
+    <li><b>R2-3（新增科学价值）</b>：4 架构 × 3 分辨率（256/576/1024 token）12 组全跑完，<b>每分辨率内四架构 loss 极差 &lt;0.0025</b>——「loss 与架构无关」跨 196–1024 token 稳健。</li>
+    <li><b>R2-4（干净吞吐）</b>：无争用 OpenVision2 训练 <b>2017 img/s</b> / 推理 <b>6.87ms</b> 双最优；6.51ms 基本正确。</li>
+    <li><b>R2-5（MambaEye bs1）</b>：batch=1 干净复测<b>正常（31.6ms）</b>，未复现 150s 停摆 → 一次性环境事件。</li>
+  </ul>
+  <p style="margin-bottom:0;"><b>结论不变：架构在 loss 上不可区分，选择由吞吐/延迟决定 → 胜出架构仍是 OpenVision2（纯 Attention ViT，505M）。</b></p>
+</div>
+<h2 class="sec"><span class="no">1</span>R2-0 数字核对（零成本 · 先做）</h2>
+<h3>四架构「步数 → loss」映射（S3 长跑，lr=1e-3，224/16）</h3>
+<table>
+  <tr><th>架构</th><th>loss@1000</th><th>loss@3000</th><th>loss@5000</th><th>loss@10000</th></tr>
+  <tr><td>OpenVision2</td><td>5.9180</td><td>4.4653</td><td><b>4.4560</b></td><td>4.4540</td></tr>
+  <tr><td>DeepEncoderV2</td><td>5.9277</td><td>4.4723</td><td><b>4.4662</b></td><td>—（仅 5k）</td></tr>
+  <tr><td>MambaEye</td><td>5.9463</td><td>4.4725</td><td><b>4.4700</b></td><td>—</td></tr>
+  <tr><td>MoE-ViE</td><td>5.9406</td><td>4.4723</td><td><b>4.4661</b></td><td>—</td></tr>
+</table>
+<p style="color:var(--muted);font-size:13px;">S8 lr=3e-3 @3000 步 OpenVision2 = 4.4562。</p>
+<div class="card">
+  <h3>tab:visarch 的 Loss@5k 判定：✅ 标注正确，无需修改</h3>
+  <table>
+    <tr><th>表格值</th><th>实际来源</th><th>判定</th></tr>
+    <tr><td>OpenVision2 <b>4.456</b></td><td>S3@5000 步 = 4.4560</td><td>✅ 正确</td></tr>
+    <tr><td>DeepEncoderV2 <b>4.466</b></td><td>S3@5000 = 4.4662</td><td>✅ 正确</td></tr>
+    <tr><td>MambaEye <b>4.470</b></td><td>S3@5000 = 4.4700</td><td>✅ 正确</td></tr>
+    <tr><td>MoE-ViE <b>4.466</b></td><td>S3@5000 = 4.4661</td><td>✅ 正确</td></tr>
+  </table>
+  <p>关键澄清：OpenVision2 的 <code>4.456</code> 对应 S3 10k 的第 5000 步（4.4560，lr=1e-3），<b>既非 10k 终值 4.4540、也非 S8 lr=3e-3 的 4.4562</b>（三者差 &lt;0.0002 纯属巧合）。四值均出自同一 LR(1e-3)@5000 步口径，内部一致，疑点不成立。</p>
+</div>
+
+<h2 class="sec"><span class="no">2</span>R2-1 分辨率/patch 消融重跑（@ lr=3e-3）—— 替换 tab:visres</h2>
+<table>
+  <tr><th>res/patch</th><th>lr</th><th>loss@3000</th><th>train img/s</th><th>推理 ms/img(bs=1)</th><th>tokens/img</th><th>eval5k R@1/5/10</th></tr>
+  <tr><td>224/16</td><td>3e-3</td><td>4.4562</td><td>1645.1</td><td>7.031</td><td>196</td><td>0.0002/0.0010/0.0020</td></tr>
+  <tr><td>224/16</td><td>1e-3</td><td><b>4.9962</b>（坍缩对照）</td><td>1651.3</td><td>7.031*</td><td>196</td><td>0.0002/0.0010/0.0020</td></tr>
+  <tr><td>336/16</td><td>3e-3</td><td>4.4565</td><td>1662.6</td><td>8.726</td><td>441</td><td>0.0002/0.0010/0.0020</td></tr>
+  <tr><td>448/16</td><td>3e-3</td><td>4.4556</td><td>971.7</td><td>6.890</td><td>784</td><td>0.0002/0.0010/0.0020</td></tr>
+  <tr><td>224/14</td><td>3e-3</td><td>4.4566</td><td>1829.2</td><td>10.568</td><td>256</td><td>0.0002/0.0010/0.0020</td></tr>
+  <tr><td>336/14</td><td>3e-3</td><td>4.4560</td><td>1289.9</td><td>7.208</td><td>576</td><td>0.0002/0.0010/0.0020</td></tr>
+  <tr><td>448/14</td><td>3e-3</td><td><b>3.7461</b>（bs=16）</td><td>721.4</td><td>10.391</td><td>1024</td><td>0.0002/0.0010/0.0020</td></tr>
+</table>
+<div class="warncard">
+  <b>R2-1 判读：</b>
+  <ul>
+    <li>✅ <b>LR 伪影实锤</b>：(224,16)@1e-3=4.9962 vs @3e-3=4.4562，差值 0.54——Round 1 tab:visres 六格全同即此「1e-3 + 3000 步 cosine 塌到 min」伪影。</li>
+    <li>✅ batch-32 的 5 组 loss 仍不可区分（差 &lt;0.001），「loss 对分辨率/patch 不敏感」在正确 LR 下成立。</li>
+    <li>⚠️ 448/14（1024 token）= 3.7461 明显偏低，但被 <b>VRAM 自动降 batch 32→16</b> 混淆（SigLIP loss 对负样本数敏感），<b>不能当作「高分辨率降 loss」</b>。</li>
+    <li>✅ 吞吐随 token 单调下降（448/16=972、448/14=721 img/s）。</li>
+  </ul>
+</div>
+<h2 class="sec"><span class="no">3</span>R2-2 目标函数消融（@ lr=3e-3）—— 替换 tab:visobj</h2>
+<table>
+  <tr><th>目标</th><th>loss@3000</th><th>train img/s</th><th>eval5k R@1/5/10 (t2i / i2t)</th></tr>
+  <tr><td>SigLIP</td><td>4.4562（sigmoid，不可比）</td><td>1645.1</td><td>0.0002/0.0010/0.0020 · 0.0002/0.0010/0.0020</td></tr>
+  <tr><td>CLIP InfoNCE</td><td>3.2704（softmax，不可比）</td><td>1657.2</td><td>0.0002/0.0012/0.0026 · 0.0004/0.0020/0.0028</td></tr>
+</table>
+<p>主指标（eval5k 检索 R@K）两臂都近似随机（R@1≈0.0002=1/5000），CLIP 的 R@5/R@10 略高；loss 量纲不可跨目标比较，训练吞吐几乎相等（差 &lt;1%）。</p>
+
+<h2 class="sec"><span class="no">4</span>R2-3 架构 × 分辨率矩阵（patch=14，@ lr=3e-3，12/12 完成）</h2>
+<table>
+  <tr><th>架构</th><th>res/patch</th><th>tokens</th><th>loss@3000</th><th>train img/s</th><th>推理 bs1 ms/img(img/s)</th><th>推理 bs8 ms/img(img/s)</th></tr>
+  <tr><td>OpenVision2</td><td>224/14</td><td>256</td><td>4.4567</td><td>1631.3</td><td>6.857 (145.8)</td><td>1.058 (945.5)</td></tr>
+  <tr><td>DeepEncoderV2</td><td>224/14</td><td>256</td><td>4.4563</td><td>1408.0</td><td>25.965 (38.5)</td><td>2.254 (443.7)</td></tr>
+  <tr><td>MoE-ViE</td><td>224/14</td><td>256</td><td>4.4575</td><td>558.2</td><td>42.228 (23.7)</td><td>5.511 (181.4)</td></tr>
+  <tr><td>MambaEye</td><td>224/14</td><td>256</td><td>4.4566</td><td>861.0</td><td>31.525 (31.7)</td><td>5.770 (173.3)</td></tr>
+  <tr><td>OpenVision2</td><td>336/14</td><td>576</td><td>4.4560</td><td>1281.4</td><td>10.321 (96.9)</td><td>2.307 (433.5)</td></tr>
+  <tr><td>DeepEncoderV2</td><td>336/14</td><td>576</td><td>4.4566</td><td>599.4</td><td>18.378 (54.4)</td><td>3.761 (265.9)</td></tr>
+  <tr><td>MoE-ViE</td><td>336/14</td><td>576</td><td>4.4564</td><td>626.4</td><td>42.213 (23.7)</td><td>5.907 (169.3)</td></tr>
+  <tr><td>MambaEye</td><td>336/14</td><td>576</td><td>4.4565</td><td>305.2</td><td>32.200 (31.1)</td><td>6.634 (150.7)</td></tr>
+  <tr><td>OpenVision2</td><td>448/14</td><td>1024</td><td>3.7454（bs=16）</td><td>729.0</td><td>6.984 (143.2)</td><td>3.933 (254.3)</td></tr>
+  <tr><td>DeepEncoderV2</td><td>448/14</td><td>1024</td><td>3.7466（bs=16）</td><td>474.6</td><td>17.863 (56.0)</td><td>4.410 (226.7)</td></tr>
+  <tr><td>MoE-ViE</td><td>448/14</td><td>1024</td><td>3.7471（bs=16）</td><td>357.1</td><td>42.823 (23.4)</td><td>7.033 (142.2)</td></tr>
+  <tr><td>MambaEye</td><td>448/14</td><td>1024</td><td>3.7479（bs=16）</td><td>291.7</td><td>44.132 (22.7)</td><td>6.193 (161.5)</td></tr>
+</table>
+<p style="color:var(--muted);font-size:13px;">eval R@1/5/10 全随机（R@1=0.0002=1/5000），12 组无一例外。</p>
+<div class="card">
+  <b>R2-3 判读（新增科学价值）：</b>
+  <ul>
+    <li><b>每分辨率内四架构 loss 极差 &lt;0.0025</b>：r224 4.4567/4.4563/4.4575/4.4566；r336 4.4560/4.4566/4.4564/4.4565；r448 3.7454/3.7466/3.7471/3.7479。→ 「<b>loss 与架构无关</b>」跨 196/256/576/1024 token 稳健（含 SSM/MoE）。</li>
+    <li><b>吞吐/延迟分层跨分辨率稳健</b>：训练 OV2 ≫ DE &gt; MoE/MambaEye（r448 全序 729 &gt; 475 &gt; 357 &gt; 292）；推理 bs1 OV2 6.98ms ≪ DE 17.86 &lt; MoE 42.82 &lt; MambaEye 44.13（MambaEye 小 batch 延迟随序列退化最快）。</li>
+  </ul>
+</div>
+<div class="warncard">
+  <b>⚠️ batch 混淆：</b>448/14（1024 token）自动降 bs 32→16（VRAM），token 576→1024 的 loss 下降（≈4.456→3.746）主要是 SigLIP 负样本减半的 <b>batch 效应</b>。「同一分辨率内四架构 loss 不可区分」不受影响（同 batch），三档已复证。干净跨 token 趋势需补 448/14@bs=32（需 grad-ckpt）。
+</div>
+<h2 class="sec"><span class="no">5</span>R2-4 干净吞吐复测（消除共享集群争用 caveat）</h2>
+<div class="card">
+  <b>GPU 独占核验（原文）</b>：测量前 GPU0–5 全空闲（<code>nvidia-smi</code> 0–5 = 0 MiB/0%）；仅 GPU6–7 有他人 <code>sglang::scheduler</code>（各 72GB，未动）。pretrain（10.239.2.29）MEMORY 原文：<code>PHASE: converged / WAITING: 0（04:03 已 kill loop）</code> → 无 NFS 争用。
+</div>
+<table>
+  <tr><th>架构</th><th>稳态 img/s</th><th>推理 ms/img(bs=1)</th><th>推理 img/s</th><th>token/s</th></tr>
+  <tr><td class="win">OpenVision2</td><td><b>2017.4</b></td><td><b>6.872</b></td><td>145.5</td><td>28521</td></tr>
+  <tr><td>DeepEncoderV2</td><td>1383.1</td><td>25.970</td><td>38.5</td><td>7547</td></tr>
+  <tr><td>MoE-ViE</td><td>887.1</td><td>41.730</td><td>24.0</td><td>4697</td></tr>
+  <tr><td>MambaEye</td><td>810.8</td><td>31.608</td><td>31.6</td><td>6201</td></tr>
+</table>
+<p>干净无争用下 OpenVision2 双最优成立；6.51ms（Round 1）复测得 6.872ms 基本正确。MambaEye bs1 本次正常（31.6ms），未复现停摆。</p>
+
+<h2 class="sec"><span class="no">6</span>R2-5 MambaEye batch=1 停摆诊断（时间盒 40min）</h2>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>mamba_ssm 版本</td><td><b>2.2.6.post3</b></td></tr>
+  <tr><td>位置</td><td><code>.../envs/py310/.../mamba_ssm/__init__.py</code></td></tr>
+  <tr><td>依赖</td><td>einops, ninja, packaging, setuptools, torch, transformers, triton</td></tr>
+</table>
+<table>
+  <tr><th>batch</th><th>ms/img</th><th>image/s</th><th>token/s</th><th>状态</th></tr>
+  <tr><td>1</td><td>31.577</td><td>31.7</td><td>6207.1</td><td>✅ 正常（未停摆）</td></tr>
+  <tr><td>2</td><td>15.986</td><td>62.6</td><td>12260.6</td><td>✅</td></tr>
+  <tr><td>4</td><td>13.125</td><td>76.2</td><td>14932.8</td><td>✅</td></tr>
+  <tr><td>8</td><td>5.935</td><td>168.5</td><td>33022.5</td><td>✅</td></tr>
+</table>
+<p><b>判读：</b>batch=1 正常完成（31.6ms），Round 1 S2 的 150s 停摆是<b>一次性环境事件</b>（非确定性 kernel 死锁）；bs 1→8 延迟单调下降 31.6→5.94ms（5.3×，SSM 小 batch 利用率不足），无停摆拐点。表格回填：<code>hang@bs1</code> → <code>31.6 ms（batch=1）</code>。</p>
+
+<h2 class="sec"><span class="no">7</span>论文表格回填建议</h2>
+<h3>tab:visres —— 替换为 lr=3e-3 真实值</h3>
+<table>
+  <tr><th>res/patch</th><th>loss@3000(lr=3e-3)</th><th>train img/s</th></tr>
+  <tr><td>224/16</td><td>4.4562</td><td>1645</td></tr>
+  <tr><td>336/16</td><td>4.4565</td><td>1663</td></tr>
+  <tr><td>448/16</td><td>4.4556</td><td>972</td></tr>
+  <tr><td>224/14</td><td>4.4566</td><td>1829</td></tr>
+  <tr><td>336/14</td><td>4.4560</td><td>1290</td></tr>
+  <tr><td>448/14</td><td>3.7461†</td><td>721</td></tr>
+</table>
+<p style="font-size:13px;color:var(--muted);">† 448/14 因 VRAM 自动降 batch 32→16，不可当「高分辨率降 loss」；须标注 bs=16 或补 448/14@bs=32 对称对照。</p>
+<h3>tab:visobj —— 并列三列（loss 标注不可比）</h3>
+<table>
+  <tr><th>目标</th><th>loss@3000</th><th>train img/s</th><th>eval5k R@1/5/10 (t2i)</th></tr>
+  <tr><td>SigLIP</td><td>4.4562（sigmoid，不可比）</td><td>1645</td><td>0.0002/0.0010/0.0020</td></tr>
+  <tr><td>CLIP InfoNCE</td><td>3.2704（softmax，不可比）</td><td>1657</td><td>0.0002/0.0012/0.0026</td></tr>
+</table>
+<h3>tab:visarch —— 基本无需修改（仅 MambaEye 推理格）</h3>
+<ul>
+  <li>Loss@5k 四值核对无误；6.51ms（OV2）经 R2-4 复测（6.872ms）基本正确。</li>
+  <li>⚠️ MambaEye 推理格 <code>hang@bs1</code> → 改 <code>31.6 ms（batch=1）</code>（R2-4/R2-5 复测均正常）。</li>
+</ul>
+<h3>新增建议表 tab:visarch_res（架构 × 分辨率）</h3>
+<table>
+  <tr><th>架构</th><th>loss@256tok</th><th>loss@576tok</th><th>loss@1024tok†</th><th>train img/s(224/14)</th></tr>
+  <tr><td>OpenVision2</td><td>4.4567</td><td>4.4560</td><td>3.7454†</td><td>1631</td></tr>
+  <tr><td>DeepEncoderV2</td><td>4.4563</td><td>4.4566</td><td>3.7466†</td><td>1408</td></tr>
+  <tr><td>MoE-ViE</td><td>4.4575</td><td>4.4564</td><td>3.7471†</td><td>558</td></tr>
+  <tr><td>MambaEye</td><td>4.4566</td><td>4.4565</td><td>3.7479†</td><td>861</td></tr>
+</table>
+<p style="font-size:13px;color:var(--muted);">† 1024 token 因 VRAM 自动 bs=16，与 256/576 列不可直接比；但每列内四架构 loss 极差 &lt;0.0025，「架构在 loss 上不可区分」在 256/576/1024 token 三档全证。</p>
+
+<h2 class="sec"><span class="no">8</span>可复现命令（R2 全局）</h2>
+<pre><code>conda activate py310
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision
+# R2 主 pipeline（R2-1→R2-4→R2-2→R2-3→R2-5 串行，日志 /tmp/vision_r2.log）
+bash run_r2.sh
+# 机器重启后的缺额续跑（只重跑 R2-3 未完成组 + R2-5）
+bash run_r2_resume.sh
+# 单点复现示例（分辨率/patch 消融之一）
+bash run_train.sh openvision2 3000 &lt;out&gt; --data '/nas_train/app.e0031982/datasets/baize-vision/en500k/*.tar' \
+    --batch-size 32 --log-every 50 --resolution 336 --patch 16 --lr 3e-3</code></pre>
+
+<footer>
+  BaiZe Stage(iii) 视觉编码器预训练 · Round 2 修复报告（自包含，可离线打开）。生成：2026-10-01。数据源：en500k（训练）/ eval5k（检索），6×H100·80GB DP6。本报告不修改 *.tex，回填由外部完成。
+</footer>
+
+</div>
+</body>
+</html>

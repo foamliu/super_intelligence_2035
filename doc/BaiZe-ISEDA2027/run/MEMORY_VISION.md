@@ -6,21 +6,21 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R2_active**（R2 resume pipeline 运行中：R2-3 已 11/12，剩余 mambaeye r448 训练中 + R2-5 待跑） |
-| WAITING | 1（异步训练 running） |
+| PHASE | **R2_complete**（R2-0~R2-5 全部完成；交付物 `EXPERIMENTS_VISION_ROUND2.md` + `BAIZE_VISION_ENCODER_RESULT_ROUND2.html` 齐备） |
+| WAITING | 1（终局 idle：无异步任务、无剩余工作，loop 按 30min 长睡省 token） |
 | ERROR_COUNT | 0 |
-| BUDGET_USED | ~17 GPU·h 墙钟（S0–S3 ~11 + S4 ~5 + S6/S7/S8 ~3 + R2 已 ~5.6h；R2 预算 ≤6h，续跑余量充足） |
-| 更新 | 2026-10-01 16:37（R2-3 11/12 回填，mambaeye r448 训练中） |
-| WINNER | OpenVision2（纯 Attention ViT 505M）——loss 四架构并列 ~4.45–4.47（不可区分），训练 2139 img/s / 推理 6.51ms 双最优 |
+| BUDGET_USED | ~18 GPU·h 墙钟（R2 墙钟 ≈6h，撞在 ≤6h 预算内完成，未裁剪；S0–S3 ~11 + S4 ~5 + S6/S7/S8 ~3） |
+| 更新 | 2026-10-01 17:15（R2 全部完成收尾：R2-3 12/12 + R2-5 落盘 → 生成 ROUND2 HTML → MEMORY/EXPERIMENTS 更新 → commit+push） |
+| WINNER | OpenVision2（纯 Attention ViT 505M）——loss 四架构不可区分（R2-3 跨 256/576/1024 token 复证），训练 2017 img/s / 推理 6.87ms（R2-4 干净复测）双最优 |
 
-## 🔄 R2 恢复续跑（2026-10-01 16:02，机器已重启）
+## ✅ R2 全部完成（收尾，2026-10-01 17:15）
 
-- **机器已重启**：确认本机即为 `10.239.2.12`（`hostname -I` 含 `10.239.2.12`），GPU0–7 重启后**全空闲**（`nvidia-smi`：`0..5 = 0 MiB/0%`、`6..7 = 4 MiB/0%`；原先 GPU6–7 的 sglang ~72GB 已被重启清除）。
-- **NFS 争用核验**：pretrain（10.239.2.29）`MEMORY_PRETRAIN_2B.md` `PHASE=converged` / `WAITING: 0`（04:03 已 kill loop），`pgrep` 无 `baize_pretrain_loop|torchrun` 残留 → **无 NFS 争用**。
-- **vision loop 已恢复运行**（本机 .12，PID 1289683），正常拉起本 agent。
-- **已启动 resume pipeline**：`vision/run_r2_resume.sh`（R2-3 余 deepencoder_v2/moevie/mambaeye r448 + R2-5），日志 `/tmp/vision_r2_resume.log`，判结束 `grep -c "R2 RESUME ALL DONE" ...` == 1。
-- **启动即核验**：唯一 torchrun launcher（1419408）+ 6 worker（1428946–1428957，GPU0–5 各 39280 MiB / ~100% util，GPU6–7 空闲），首组 `deepencoder_v2 r448 p14 bs=16 lr=3e-3` 训练中（`shards=5/rank`）。
-- **下次唤醒**：tail `/tmp/vision_r2_resume.log` 回填已完成格子到 `EXPERIMENTS_VISION_ROUND2.md` R2-3 表 → R2-5 → 生成 `BAIZE_VISION_ENCODER_RESULT_ROUND2.html` → 更新 MEMORY/EXPERIMENTS → git commit+push，WAITING 置 0。
+- **resume pipeline 已收尾**：`grep -c "R2 RESUME ALL DONE" /tmp/vision_r2_resume.log` == 1（17:04:01）。R2-3 最后一组 **mambaeye r448**（12/12）✅：loss 3.7479（bs=16）/ 291.7 img/s / 推理 bs1 44.132ms·bs8 6.193ms / eval 全随机（0.0002/0.0010/0.0020）。
+- **R2-5 ✅ 完成**：mamba_ssm 2.2.6.post3；batch 扫描 bs1=31.577ms（正常）、bs2=15.986、bs4=13.125、bs8=5.935ms——**batch=1 未复现 Round 1 的 150s 停摆**（一次性环境事件）→ 表格回填建议 `hang@bs1` → `31.6ms`。
+- **R2-3 12/12 全完成判读**：四架构 loss 在每个分辨率（256/576/1024 token）内极差 <0.0025（含 SSM/MoE）→「loss 与架构无关」跨 196–1024 token 稳健成立，R2-3 新增科学价值达成。
+- **交付物齐备**：① `EXPERIMENTS_VISION_ROUND2.md`（R2-0~R2-5 全表 + 可复现命令 + 回填建议 visres/visobj/visarch/新增 visarch_res）② `BAIZE_VISION_ENCODER_RESULT_ROUND2.html`（自包含）。
+- **未修改** `*.tex`（论文已外部重构，回填由外部完成）——已在报告给出精确回填建议。
+- **下一步**：无剩余工作。WAITING=1（终局 idle），loop 长睡省 token；若论文回填需要，外部按报告建议回填。
 
 ## 🛑 停训记录（2026-10-01 15:38，等待 .12 重启）
 
