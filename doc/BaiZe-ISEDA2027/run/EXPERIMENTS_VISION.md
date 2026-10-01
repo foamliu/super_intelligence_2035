@@ -2,7 +2,48 @@
 
 > 四架构（500–600M）从零预训练公平对比。统一 open_clip(3.2.0) + SigLIP + 固定 text tower + 统一子集。
 
-## 胜出结论（S0+S1+S2+S3 汇总）
+## ⭐ 最终胜出结论（R4–R8 修复 recipe，2026-10-02，**权威**）
+
+> ⚠️ 本节为**最终结论**，覆盖下方「S0–S9 / converged」各节的 R1/R2 旧读数——那些旧读数**已因表征坍缩与 lr=1e-3 cosine 伪影作废**（详见 `EXPERIMENTS_VISION_ROUND2~ROUND8.md`）。数据与 recipe 的演进：R4 修 recipe（冻结 CLIP-768 文本塔 + InfoNCE）→ R5 架构/分辨率 → R6 77 裁定 → R7 数据裁定（GPIC short）→ R8 扩 6 架构 + IN-1k。
+
+**胜出架构：OpenVision2（纯 Attention ViT，505.2M）—— R8 六架构重比，四指标全第一**
+
+| 架构 | loss@3k | C1（同塔off-diag） | IN-1k zs top-1 | IN-1k lp top-1 | 训练 img/s | 判定 |
+|:--|--:|--:|--:|--:|--:|:--|
+| **OpenVision2** | **4.8646** | **0.2875** | **0.95%** | **1.14%** | 3051.8 | ✅ 胜出 |
+| MoE-ViE（moevie） | 5.5580 | 0.4109 | 0.35% | 0.28% | 1225.7 | ✅ 健康（激活 222M） |
+| AIMv2（等参改编） | 5.6370 | 0.3931 | 0.38% | 0.25% | **3392.5** | ✅ 健康（吞吐最快） |
+| FastViTHD（等参改编） | 5.6683 | 0.4494 | 0.39% | 0.27% | 2097.4 | ✅ 健康（conv-hybrid 无优势） |
+| MambaEye（纯 SSM） | 6.2507* | 1.0000 | 0.10% | 0.10% | 949.5 | ❌ @300 坍缩 |
+| DeepEncoderV2（Attn+SSM） | 6.2513* | 1.0000 | 0.10% | 0.10% | 1864.5 | ❌ @300 坍缩 |
+
+- **三条最终结论**：① 修复 recipe 下**架构有真实差异**（loss 4.8646~5.6683、IN-1k 0.95%~0.39% 可分），OpenVision2 全指标第一 → 作废旧「loss 与架构无关」；② 坍缩是 **SSM 特异**（含 SSM 子结构即 @300 坍缩，纯 Attention 系 4 架构全健康）；③ **IN-1k（frozen trunk zs/lp）成功替换退化的 R@1**（旧 R@1=1/5000 chance 零区分度）。
+- **最终 recipe**：Stanford **GPIC `short`**（20 tok / 0% 截断）+ InfoNCE + 冻结 `clip-vit-large-patch14-336` 768 维文本塔（context 77）+ lr 3e-3 / warmup 20 / seed 1234 / bf16 / bs64 × 8 卡 = 512 负样本。
+- 详见 `EXPERIMENTS_VISION_ROUND8.md`（§4 六表 + §8 排名 + §9 回填建议）。
+
+**完整可复现训练命令（R8 胜出架构）**：
+
+```bash
+conda activate py310
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision
+
+# 单架构（胜出 OpenVision2）完整训练：3000 步 @224/16 bs64，GPIC short，冻结 CLIP-768 文本塔
+python -m torch.distributed.run --nproc_per_node=8 --nnodes=1 \
+     --master_addr=127.0.0.1 --master_port=$((29400 + RANDOM % 1000)) \
+     r7_train.py --tower openvision2 --steps 3000 --resolution 224 --patch 16 \
+     --batch-size 64 --lr 3e-3 --warmup 20 --seed 1234 \
+     --data '/nas_inference/app.e0031982/datasets/stanford-vision-lab/gpic/train/*.tar' \
+     --data-source gpic --output-dir /nas_train/app.e0031982/datasets/baize-vision/out/R8_openvision2 \
+     --log-every 50 --probe-every 300 --probe-n 128 --num-workers 2 \
+     --eval-data '/nas_train/app.e0031982/datasets/baize-vision/eval5k/*.tar'
+
+# 六架构串行 + 末了 IN-1k zero-shot / linear-probe 评测
+bash r8_run.sh 3000
+```
+
+---
+
+## 胜出结论（S0+S1+S2+S3 汇总 · ⚠️ R1/R2 旧读数，已因坍缩/lr 伪影作废，仅作历史）
 
 **胜出架构：OpenVision2（纯 Attention ViT，w1024·d30·h16·mlp4096，505.0M）**
 
