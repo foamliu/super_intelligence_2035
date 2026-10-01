@@ -39,25 +39,35 @@ MoE-ViE & 505.2M & MoE & 4.466 & 852 & 141.7 \\
 Loss is therefore \emph{architecture-invariant} at this scale and token count: at $224/16$ the encoder produces only $196$ tokens, too short for the SSM recurrence or MoE routing to amortize their per-token overhead into a quality gain.
 Consequently the architecture choice is driven solely by efficiency, where the pure-attention \textbf{OpenVision2} dominates---$1.47\times$ the training throughput of the next-best (DeepEncoderV2) and $2.7\times$ lower inference latency, and full-SSM MambaEye even stalls at batch~1.
 
-\textit{Methodological note.} The apparent ``loss plateau'' of $6.7342$ observed in a $1000$-step sweep is an artifact of the cosine schedule collapsing the learning rate to $\approx10^{-5}$ by $\sim$step~700; extending the cosine span to $5000$--$10000$ steps lets the loss continue to $\approx4.45$. Sub-1k-step comparisons of these encoders are therefore uninformative.
+\textit{Methodological note.} Two apparent results in this section are artifacts of the cosine schedule collapsing the learning rate to $\approx10^{-5}$ before the run ends, and we flag both rather than report them.
+The first is the ``loss plateau'' of $6.7342$ in a $1000$-step sweep, which continues to $\approx4.45$ once the cosine span is extended to $5000$--$10000$ steps.
+The second is the flat $4.9962$ that $lr{=}10^{-3}$ produces in every ablation cell at $3000$ steps: the same run at $lr{=}3\times10^{-3}$ reaches $4.4562$, a gap of $0.54$.
+Sub-$1$k-step comparisons, and any $3000$-step comparison at $lr{=}10^{-3}$, are therefore uninformative.
 
 \subsection{Configuration and Ablations}\label{sec:vis-abl}
-Holding the winner (OpenVision2) fixed, we sweep the core degrees of freedom single-variable-at-a-time (each $3000$ steps, avoiding the LR-collapse regime): resolution/patch (Table~\ref{tab:visres}), objective function (Table~\ref{tab:visobj}), and learning rate, plus a multi-seed robustness check and a held-out retrieval proxy.
+Holding the winner (OpenVision2) fixed, we sweep the core degrees of freedom single-variable-at-a-time ($3000$ steps each, at $lr{=}3\times10^{-3}$---the rate at which the schedule does not collapse, see the note above): resolution/patch (Table~\ref{tab:visres}), objective function (Table~\ref{tab:visobj}), and learning rate, plus a multi-seed robustness check and a held-out retrieval proxy.
 
 \begin{table}[htbp]
 \centering
-\caption{Resolution/patch ablation on OpenVision2 (anchor 224/16).}
+\caption{Resolution/patch ablation on OpenVision2, all runs $3000$ steps.
+The original anchor $lr{=}10^{-3}$ collapsed the cosine schedule and pinned \emph{every} cell at $4.9962$; it is kept as the last row.
+At the corrected $lr{=}3{\times}10^{-3}$ the loss is flat to within $0.001$ across $196$--$784$ tokens, so the null result is real rather than a schedule artifact.
+The $448/14$ row is \emph{not comparable}: the memory guard halved its batch, and the SigLIP objective depends on the number of in-batch negatives.}
 \label{tab:visres}
-\begin{tabular}{lcc}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccccc}
 \toprule
-\textbf{res/patch} & \textbf{Loss} & \textbf{Train img/s} \\
+\textbf{res/patch} & \textbf{tok.} & \textbf{batch} & \textbf{Loss} & \textbf{img/s} & \textbf{lr} \\
 \midrule
-224/16 (anchor) & 4.9962 & 1582.1 \\
-336/16 & 4.9962 & 1630.1 \\
-448/16 & 4.9962 & 960.4 \\
-224/14 & 4.9962 & 1613.8 \\
-336/14 & 4.9962 & 1289.7 \\
-448/14 & 4.9962 & 757.3 \\
+224/16 & 196 & $32{\times}6$ & 4.4562 & 1645 & 3e-3 \\
+336/16 & 441 & $32{\times}6$ & 4.4565 & 1663 & 3e-3 \\
+448/16 & 784 & $32{\times}6$ & 4.4556 & 972 & 3e-3 \\
+224/14 & 256 & $32{\times}6$ & 4.4566 & 1829 & 3e-3 \\
+336/14 & 576 & $32{\times}6$ & 4.4560 & 1290 & 3e-3 \\
+448/14 & 1024 & $16{\times}6$ & 3.7461 & 721 & 3e-3 \\
+\midrule
+224/16 & 196 & $32{\times}6$ & 4.9962 & 1651 & 1e-3 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -79,8 +89,12 @@ lr $5{\times}10^{-3}$ & 4.4542 & --- \\
 \end{tabular}
 \end{table}
 
-Downstream validation is a zero-shot text$\leftrightarrow$image retrieval proxy ($R@1/5/10$ on a held-out 5K subset from \texttt{laioncn/EN}, disjoint from the training source), as no ImageNet-style class labels are available for top-1 or linear probing.
-Across the ablations (each $3000$ steps, anchor $lr{=}10^{-3}$), the resolution/patch sweep leaves loss essentially unchanged ($\approx4.996$ at every resolution/patch) because the anchor learning rate has already collapsed to its minimum by step~3000 and pins the loss at that floor; the informative signal is throughput, which falls monotonically with the token count ($1582 \rightarrow 757$ train img/s from $224/16$ to $448/14$).
-The objective switch (CLIP InfoNCE) yields a different loss scale ($2.894$ vs $4.996$, not directly comparable absent negative-logit calibration).
-The learning-rate sweep is decisive: raising $lr$ from $10^{-3}$ to $3\times10^{-3}$ / $5\times10^{-3}$ lowers the final loss from $4.996$ to $4.4562$ / $4.4542$, confirming that the anchor plateau is a learning-rate-collapse artifact rather than a data ceiling.
-The winning configuration remains \textbf{OpenVision2} at $224/16$, SigLIP, $lr{=}10^{-3}$ (with the caveat that $lr{=}3\times10^{-3}$ reaches a lower loss at the same step count); the full reproduction commands are in the companion result report.
+Downstream validation would ideally use task metrics; lacking ImageNet-style class labels we tried a zero-shot text$\leftrightarrow$image retrieval proxy ($R@1/5/10$ on a held-out 5K subset from \texttt{laioncn/EN}, disjoint from the training source).
+\textbf{That proxy is degenerate}: $R@1{=}0.0002$, which is exactly chance for $5000$ candidates, and it separates neither learning rates nor architectures.
+We report this as a negative result rather than ranking configurations with it, and we note that this stage therefore has \emph{no} working downstream metric---the main limitation of the comparison.
+Under the corrected learning rate the resolution/patch sweep is flat: loss varies by less than $0.001$ over $196$--$784$ tokens (Table~\ref{tab:visres}), so loss is genuinely insensitive to resolution and patch in this range, and the earlier all-identical column was a schedule artefact layered on top of a real null result.
+The informative signal is throughput, which falls with the token count ($1645 \rightarrow 972$ train img/s from $224/16$ to $448/16$).
+One cell is an apparent exception and must not be read as a win: $448/14$ reaches $3.7461$, but the memory guard halved its batch and the SigLIP objective is sensitive to the number of in-batch negatives, so the drop is confounded by the batch rather than attributable to the $1024$-token inputs.
+The objective switch (CLIP InfoNCE) yields a different loss scale ($2.894$ vs $4.996$) that cannot be compared without negative-logit calibration.
+The learning-rate sweep is the decisive result: raising $lr$ from $10^{-3}$ to $3\times10^{-3}$ / $5\times10^{-3}$ lowers the final loss from $4.996$ to $4.4562$ / $4.4542$, so the original anchor plateau was a schedule collapse rather than a data ceiling.
+We therefore report the corrected $lr{=}3\times10^{-3}$ numbers throughout this section; the full reproduction commands are in the companion result report.

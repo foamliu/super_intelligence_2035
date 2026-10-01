@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 实验进展 · 总看板</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr;} }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6a4a00; }
+  .danger { background:#fff0f0; border:1px solid #ffc9c9; border-left:4px solid var(--bad); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#8a1c1c; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#0d5c22; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe 实验进展 · 总看板</h1>
+  <div class="sub">Stage (i) LLM 预训练 · Stage (iii) 视觉编码器 · Round 2 进展 · 阻塞项</div>
+  <div class="meta">
+    <span>📅 更新 2026-10-01</span>
+    <span>🎯 ISEDA 2027 投稿截止 ≈ 2027-02-01</span>
+    <span>📄 论文 7 页 / 0 编译错误</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <strong>一句话进展</strong>：Stage (i) 与 (iii) 均已完成并收敛，<strong>Round 2 正在加固两边的结论</strong>。
+  vision 侧 R2 已跑出实证结果，并<strong>推翻了两个我们先前的判断</strong>（"分辨率表全同只是 LR 伪影"、"检索代理可用"）；
+  pretrain 侧 R2 <strong>因 loop 已死而尚未启动</strong>。
+</div>
+
+<div class="kpi-row">
+  <div class="kpi"><div class="v">2 / 5</div><div class="l">已完成 Stage（i、iii）</div></div>
+  <div class="kpi"><div class="v">R2 进行中</div><div class="l">vision 已出实证结果</div></div>
+  <div class="kpi"><div class="v">0</div><div class="l">论文编译错误</div></div>
+  <div class="kpi"><div class="v">1</div><div class="l">阻塞项（pretrain loop 已死）</div></div>
+</div>
+
+<div class="toc">
+  <strong>目录</strong>
+  <ol>
+    <li><a href="#s1">五阶段总览</a></li>
+    <li><a href="#s2">Stage (i) LLM 预训练</a></li>
+    <li><a href="#s3">Stage (iii) 视觉编码器 + Round 2 实证结果</a></li>
+    <li><a href="#s4">Round 2 推翻的两个先前判断</a></li>
+    <li><a href="#s5">待做 Stage（ii）(iv) (v)</a></li>
+    <li><a href="#s6">阻塞与风险</a></li>
+    <li><a href="#s7">Agent 与基础设施状态</a></li>
+  </ol>
+</div>
+
+<h2 class="sec" id="s1"><span class="no">1</span>五阶段总览</h2>
+
+<table>
+  <tr><th>Stage</th><th>内容</th><th>状态</th><th>关键指标</th><th>计划</th></tr>
+  <tr>
+    <td><b>(i)</b></td><td>LLM 预训练（from scratch）</td>
+    <td><span class="badge b-ok">✅ 完成</span></td>
+    <td>2.22B / 56 层（4 attention）· val loss <b>2.2054</b>@20k 步 · 3-seed <b>2.6739±0.0469</b></td>
+    <td>R2 加固（<span class="badge b-no">受阻</span>）</td>
+  </tr>
+  <tr>
+    <td><b>(ii)</b></td><td>LLM 后训练（领域退火 + SFT + RLVR）</td>
+    <td><span class="badge b-warn">⬜ 待做</span></td>
+    <td>—</td><td>2026-12</td>
+  </tr>
+  <tr>
+    <td><b>(iii)</b></td><td>视觉编码器预训练（四架构对比）</td>
+    <td><span class="badge b-ok">✅ 完成</span> + <span class="badge b-info">R2 进行中</span></td>
+    <td>胜出 <b>OpenVision2</b>（纯 attention ViT，505.0M）· 2139 img/s</td>
+    <td>R2 收尾</td>
+  </tr>
+  <tr>
+    <td><b>(iv)</b></td><td>MLLM 对齐</td><td><span class="badge b-warn">⬜ 待做</span></td>
+    <td>—</td><td>2026-12（需先修视觉编码器的下游指标）</td>
+  </tr>
+  <tr>
+    <td><b>(v)</b></td><td>半导体领域适配（偏好 RL）</td><td><span class="badge b-warn">⬜ 待做</span></td>
+    <td>—</td><td>2026-12</td>
+  </tr>
+</table>
+
+<h2 class="sec" id="s2"><span class="no">2</span>Stage (i) LLM 预训练</h2>
+
+<div class="grid2">
+  <div class="card">
+    <h3 style="margin-top:0">已完成</h3>
+    <ul>
+      <li>架构：Mamba-2 hybrid，56 层，其中 <b>4 层 attention</b>，<b>2.220B</b>（实测 <code>numel()</code>）</li>
+      <li>胜出配置：<b>LR 1e-3 / WSD / warmup 250 / decay 500 / min_lr 1e-5</b>，退火 <b>86:10:4</b></li>
+      <li>20000 步长跑 <b>final 2.2054</b>；3-seed（5000 步）<b>2.6739 ± 0.0469</b></li>
+      <li>预算：计划 ~92 GPU·h，实际消耗 <b>~85 GPU·h</b>（8×H100）</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">R2（P-1 / P-2 / P-3）—— <span class="badge b-no">未启动</span></h3>
+    <ul>
+      <li><b>P-1</b> LR 网格向上扩展（1.5e-3 / 2e-3 / 3e-3）— 因为胜出 LR 恰在网格<b>边界</b>上</li>
+      <li><b>P-2</b> 补 seed 到 n=5 — 因为 Δ≈0.003 比噪声 σ=0.0469 小一个量级</li>
+      <li><b>P-3</b> 架构对比 1000→5000 步 — 因为"hybrid 更优"只靠 <b>24.6M token</b> 的快照</li>
+    </ul>
+    <div class="danger" style="margin-top:10px">
+      ⚠️ <b>任务书已就位，但没有任何进程会读它</b>：<code>baize_pretrain_loop.sh</code> 在
+      <b>04:03 被它自己的 agent 按"converged 后停止"的指令 kill 掉</b>；11:09 另一个 agent 复核时确认
+      "<b>仅 vision loop 仍在运行</b>"。需人工重启该 loop。
+    </div>
+  </div>
+</div>
+
+<h2 class="sec" id="s3"><span class="no">3</span>Stage (iii) 视觉编码器 + Round 2 实证结果</h2>
+
+<h3>3.1 Round 1（已完成）</h3>
+<p>四个 500–600M 候选从零预训练（统一 <code>open_clip</code> + SigLIP + 冻结文本塔，en500k 子集）：</p>
+<table>
+  <tr><th>架构</th><th>参数</th><th>类型</th><th>Loss@5k</th><th>训练 img/s</th><th>推理 ms/img</th></tr>
+  <tr><td><b>OpenVision2</b></td><td>505.0M</td><td>Attention</td><td><b>4.456</b></td><td><b>2139</b></td><td><b>6.51</b> ⚠️</td></tr>
+  <tr><td>DeepEncoderV2</td><td>516.9M</td><td>Attn+SSM</td><td>4.466</td><td>1459</td><td>17.76</td></tr>
+  <tr><td>MambaEye</td><td>534.9M</td><td>SSM</td><td>4.470</td><td>790</td><td>hang@bs1</td></tr>
+  <tr><td>MoE-ViE</td><td>505.2M（222M 激活）</td><td>MoE</td><td>4.466</td><td>852</td><td>141.7</td></tr>
+</table>
+<p>结论：<b>loss 与架构无关</b>（差 &lt;0.02），选择由吞吐/延迟决定 → <b>OpenVision2 胜出</b>。</p>
+
+<h3>3.2 Round 2 实证结果（进行中）</h3>
+<table>
+  <tr><th>项</th><th>结论</th><th>出处</th></tr>
+  <tr>
+    <td><b>R2-0</b> 数字核对</td>
+    <td class="ok-box" style="padding:6px 10px">✅ <code>tab:visarch</code> 的 <code>Loss@5k</code> 四值<b>标注正确</b>，均出自 S3@5000 步 @ lr=1e-3，内部一致。<br>
+        我先前"可能混入 3e-3 的值"的疑点<b>不成立</b>（4.4560 / 4.4540 / 4.4562 三者差 &lt;0.0002，纯属巧合）</td>
+    <td><code>EXPERIMENTS_VISION_ROUND2.md</code></td>
+  </tr>
+  <tr>
+    <td><b>R2-0</b> 唯一待查</td>
+    <td>⚠️ OpenVision2 推理 <code>6.51 ms</code>（S2 bench）vs <b>S9 干净复测的 <code>10.07 ms</code></b>，差 <b>1.5×</b>。
+        这是论文卖点，<b>交由 R2-4 裁决</b></td>
+    <td>同上</td>
+  </tr>
+  <tr>
+    <td><b>R2-1</b> 分辨率消融重跑</td>
+    <td>✅ <b>LR 伪影实锤</b>：<code>1e-3 → 4.9962</code> vs <code>3e-3 → 4.4562</code>，<b>Δ0.54</b></td>
+    <td>同上</td>
+  </tr>
+  <tr>
+    <td><b>R2-1</b> 修正后结论</td>
+    <td>⚠️ <b>但 loss 对分辨率/patch 仍然不敏感</b>：5 组（batch 匹配 32×6）全在 4.4556~4.4566，
+        <b>差 &lt;0.001</b> → 这不只是 LR 伪影，<b>loss 本身就是平的</b></td>
+    <td>同上</td>
+  </tr>
+  <tr>
+    <td><b>R2-1</b> 混淆项</td>
+    <td>🚨 <code>448/14</code>（1024 token）<code>= 3.7461</code> 是 <b>batch 混淆</b>的产物：
+        VRAM 防护把 <code>batch 32→16</code>，而 SigLIP loss 对负样本数高度敏感。
+        <b>不能说成"高分辨率显著降低 loss"</b></td>
+    <td>同上</td>
+  </tr>
+  <tr>
+    <td><b>R2-1</b> 指标退化</td>
+    <td>🚨 <b>检索代理是退化的</b>：<code>eval5k</code> 的 <code>R@1 = 0.0002</code>，
+        <b>恰好等于 1/5000 的随机水平</b>，对不同 LR / 分支<b>零区分度</b></td>
+    <td>同上</td>
+  </tr>
+  <tr>
+    <td><b>R2-2 / R2-3 / R2-4 / R2-5</b></td>
+    <td><span class="badge b-warn">待运行</span></td><td>—</td>
+  </tr>
+</table>
+
+<div class="note">
+  🔧 <b>已据此修正 R2-3 的任务书</b>（同一 bug 会重现，因为 R2-3 是我设计的）：① 12 组<b>必须匹配 batch</b>
+  （放不下就全部降 bs=16 或开 grad-ckpt），batch 不一致的格子标注不可比；② <code>R@1</code> <b>不得当主指标</b>，
+  改用 loss + 吞吐 + 收敛轨迹。
+</div>
+
+<h2 class="sec" id="s4"><span class="no">4</span>Round 2 推翻的两个先前判断</h2>
+
+<div class="danger">
+  <b>这两条都是"我们先前以为已经解决、实际上没有"的问题</b>——列出来是为了避免它们再次被当成已解决。
+</div>
+
+<table>
+  <tr><th>#</th><th>先前判断</th><th>R2 实证结果</th><th>影响</th></tr>
+  <tr>
+    <td>1</td>
+    <td><code>tab:visres</code> 六格 loss 全同（4.9962）<b>只是 LR 坍缩伪影</b>，
+        换成正确 LR 就能得到有区分度的表</td>
+    <td>伪影属实（Δ0.54），<b>但修正 LR 后 loss 仍然平</b>：
+        5 组 4.4556~4.4566，<b>差 &lt;0.001</b>。
+        换言之 <b>"loss 对分辨率不敏感"是一个真实结论，不是伪影</b>
+        ——只是被伪影叠加放大成了"六格完全相同"</td>
+    <td>该表<b>不会</b>因为重跑而变得"有信息量"；
+        论文已改为<b>如实报告零结果</b> + 吞吐作为有效信号</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>可以用 <code>eval5k</code> 的<b>检索 R@K 作为可通约的下游代理指标</b>
+        （我据此设计了 R2-2 的主指标）</td>
+    <td><b>不可行</b>：<code>R@1 = 0.0002</code>，<b>恰好等于 1/5000 随机水平</b>，
+        对不同 LR 与分支<b>零区分度</b></td>
+    <td>R2-2 的主指标<b>作废</b>；更严重的是——
+        <b>视觉编码器目前没有任何有效的下游指标</b>（这条已写入论文 §6 与 README 风险清单）</td>
+  </tr>
+</table>
+
+<h2 class="sec" id="s5"><span class="no">5</span>待做 Stage</h2>
+
+<table>
+  <tr><th>Stage</th><th>内容（已写入论文作为设计/协议章节）</th><th>前置条件</th></tr>
+  <tr>
+    <td><b>(ii)</b> LLM 后训练</td>
+    <td>领域退火（<b>复用 Stage (i) 的 WSD 机制</b>）→ SFT → RLVR + GRPO（奖励 4 臂 R1–R4，含 anti-cheat 与 cheat rate）</td>
+    <td>⚠️ <b>EDA 领域语料来源未落实</b>——它是"领域模型"claim 的唯一支撑</td>
+  </tr>
+  <tr>
+    <td><b>(iv)</b> MLLM 对齐</td>
+    <td>三任务族（<code>image→script</code> 用同一断言沙盒打分 / <code>script→image</code> / layout VQA）；
+        projector / 冻结策略 / 视觉 token 数消融</td>
+    <td>⚠️ <b>必须先修视觉编码器的下游指标</b>（当前 R@K 退化）</td>
+  </tr>
+  <tr>
+    <td><b>(v)</b> 领域适配</td>
+    <td>偏好 RL（learned RM + KL 正则），与 (ii) 以"<b>奖励来源</b>"划清边界</td>
+    <td>需内部偏好数据</td>
+  </tr>
+</table>
+
+<h2 class="sec" id="s6"><span class="no">6</span>阻塞与风险</h2>
+
+<table>
+  <tr><th>#</th><th>项</th><th>级别</th><th>状态 / 需要的动作</th></tr>
+  <tr>
+    <td>1</td><td><b>pretrain loop 已死，R2 不会执行</b></td>
+    <td><span class="badge b-no">🔴 阻塞</span></td>
+    <td>需人工重启 <code>baize_pretrain_loop.sh</code>（建议先修其 WAITING 正则 bug）</td>
+  </tr>
+  <tr>
+    <td>2</td><td><b>EDA 领域语料来源未落实</b></td><td><span class="badge b-no">🔴 高</span></td>
+    <td>10 月内查清 <code>eda_fastmcp</code> 的 API 知识库能否导出；<b>拿不到就要尽早调整 (ii) 的叙事</b></td>
+  </tr>
+  <tr>
+    <td>3</td><td><b>视觉编码器无有效下游指标</b>（R@K 退化）</td><td><span class="badge b-no">🔴 高</span></td>
+    <td>R2-2 需改用别的可通约口径；Stage (iv) 前必须解决</td>
+  </tr>
+  <tr>
+    <td>4</td><td>OpenVision2 推理 <code>6.51ms</code> 存疑（vs 10.07ms）</td><td><span class="badge b-warn">🟠 中</span></td>
+    <td>R2-4 干净复测裁决——<b>论文卖点，投稿前必须闭环</b></td>
+  </tr>
+  <tr>
+    <td>5</td><td>SigLIP loss 对 batch 敏感 → 高 token 格子不可比</td><td><span class="badge b-warn">🟠 中</span></td>
+    <td>R2-3 已加"必须匹配 batch"约束</td>
+  </tr>
+  <tr>
+    <td>6</td><td>下游评测整体缺失（所有 Stage 只有 loss/吞吐）</td><td><span class="badge b-warn">🟠 中</span></td>
+    <td>按 4 个月时间线，<b>2027-01 阶段</b>补（当前不急）</td>
+  </tr>
+</table>
+
+<h2 class="sec" id="s7"><span class="no">7</span>Agent 与基础设施状态</h2>
+
+<table>
+  <tr><th>角色</th><th>脚本 / 文件</th><th>状态</th></tr>
+  <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（R2）</td></tr>
+  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-no">❌ loop 已死</span></td></tr>
+  <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-warn">⬜ 待启动</span></td></tr>
+  <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-warn">⬜ 待启动</span>（纯 bash，零 token）</td></tr>
+  <tr><td>1B / 2B 架构轮</td><td><code>baize_search_loop.sh</code> · <code>baize_2b_search_loop.sh</code></td><td><span class="badge b-ok">✅ 已收敛</span>，僵尸 loop 已被清理</td></tr>
+</table>
+
+<div class="ok-box">
+  <b>为什么运维看不到服务器</b>：Windows 侧无法 SSH 到 GPU 服务器，只能靠 git 交互。
+  因此新建了 <code>ops_relay.sh</code>——一条<b>纯 bash、零 token</b> 的命令中继：
+  运维写 <code>ops/inbox.md</code> → 中继执行 → 结果写 <code>ops/outbox.md</code>。
+  首次已预置「GPU 服务器环境摸底」命令（主机/CPU/内存/磁盘/GPU/进程/数据集规模/repo 布局）。
+</div>
+
+<footer>
+  BaiZe 实验进展总看板 · 更新于 2026-10-01 · 详细证据见
+  <code>run/EXPERIMENTS_VISION_ROUND2.md</code>、<code>run/EXPERIMENTS_PRETRAIN_2B.md</code>、
+  <code>run/AGENTS.md</code><br>
+  论文状态：<b>7 页 / 0 编译错误 / 0 未定义引用 / 0 排版溢出</b>；残留 <code>[TBD]</code> 4 处，均在 (ii)(iv)(v) 的结果位。
+</footer>
+
+</div>
+</body>
+</html>
+
