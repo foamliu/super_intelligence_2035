@@ -7,10 +7,10 @@ WAITING: 1
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R8_active**（6 架构 × 3000 步 @224/16 bs64 = GPIC `short`，训练中；末了自动跑 ImageNet-1k zero-shot / linear-probe） |
-| WAITING | 1（R8 训练 running：openvision2 ✅ / mambaeye ❌熔断@300 / moevie 跑到~step1450 进行中 → deepencoder_v2 → aimv2 → fastvithd → IN-1k 评测） |
+| WAITING | 1（R8 训练 running：openvision2 ✅ / mambaeye ❌熔断@300 / moevie ✅ / deepencoder_v2 ❌熔断@300 / aimv2 跑到~step2500 进行中 → fastvithd → IN-1k 评测） |
 | ERROR_COUNT | 0 |
-| BUDGET_USED | R2/R3/R4 累计 ~19 GPU·h + R5（P0 1h12m + P1 ~28m）+ R7（~37min）+ R8（6 架构训练 ~1.5–2h，进行中） |
-| 更新 | 2026-10-02 03:05（**R8 巡检**：🔑 mambaeye 在修复 recipe 下仍坍缩 C1=1.0000、openvision2 健康 C1=0.2875 → 坍缩是架构特异的） |
+| BUDGET_USED | R2/R3/R4 累计 ~19 GPU·h + R5（P0 1h12m + P1 ~28m）+ R7（~37min）+ R8（5/6 架构训练完成，aimv2 进行中 + fastvithd + IN-1k 待跑） |
+| 更新 | 2026-10-02 03:41（**R8 巡检**：🔑 **含 SSM 的两架构（mambaeye / deepencoder_v2）都 @300 坍缩 C1=1.0000**；纯 Attention 系（openvision2 / moevie / aimv2）健康 → 坍缩是 **SSM 特异**的） |
 | WINNER | **OpenVision2**（R5/R7 判胜；R8 六架构重比，看 AIMv2/FastViTHD 是否翻盘） |
 
 ## 🚀 R8 启动（第八轮：6 架构 + ImageNet-1k 指标，2026-10-02）
@@ -24,6 +24,20 @@ WAITING: 1
 - **训练已启动**：`setsid bash r8_run.sh 3000`，日志 `/tmp/r8.log`，6 架构串行（~1.5–2h）+ 末了自动 IN-1k 评测。ckpt `/nas_train/.../out/R8_{tower}/vision.pt`（或 vision_fused.pt）。
 - **下一步（下次唤醒，WAITING=1）**：回收 6 架构 loss + C1/C2/C4 + 吞吐 + IN-1k zs/lp → 回填报告 §4 表 + MEMORY + git commit/push。
 
+## 🔬 R8 巡检 03:41：🔑 含 SSM 的两架构（mambaeye + deepencoder_v2）都坍缩；纯 Attention 系健康
+
+> WAITING=1，训练仍在跑（r8_run.sh 串行：aimv2 跑到 ~step2500 → fastvithd → IN-1k 评测）。
+
+- **★本轮重要更新（比 03:05 更精确）**：同一修复 recipe 下，**含 SSM 的 2 个架构（mambaeye 纯 SSM、deepencoder_v2 Attn+SSM 混合）都在 @300 坍缩**（C1=1.0000、loss 卡 6.25≈ln512 无学习）；**纯 Attention 系 3 个架构（openvision2 / moevie / aimv2）都不坍缩** → 坍缩倾向由 **SSM 子结构** 决定，而非「架构特异」泛指。
+- **各架构终态 / 进行中（03:41）**：
+  - openvision2：final_loss 4.8646 / C1 0.2875 / C2_gap +0.0867 / 3051.8 img/s / exit 0 ✅
+  - mambaeye：@300 C1=1.0000 / loss 6.2507 / fused=True / exit 1 ❌
+  - moevie：final_loss 5.5580 / C1 0.4109（震荡 0.19–0.49 非单调）/ C2_gap +0.0518 / 1225.7 img/s / exit 0 ✅（修正 03:05「上升偏快」过虑）
+  - deepencoder_v2：@300 C1=1.0000 / loss 6.2513 / fused=True / exit 1 ❌（★新增：Attn+SSM 混合也坍缩）
+  - aimv2：跑到 ~step2500（进行中），C1 0.417@2400 / loss_ema 5.57 / ~3290 img/s，健康未熔断
+  - fastvithd：待跑
+- **下一步（下次唤醒，WAITING=1）**：回收 aimv2 + fastvithd 结果 → r8_run.sh 末了自动 IN-1k 评测 → 回填 `EXPERIMENTS_VISION_ROUND8.md` §4 全表 + 6 架构排名（含 SSM 坍缩如实记录）→ git commit/push。
+- 未改 `*.tex`；未碰 pretrain/data/ops 文件。
 ## 🔬 R8 进度巡检（2026-10-02 03:05）：🔑 mambaeye 坍缩（架构特异）、openvision2 健康
 
 > WAITING=1，训练仍在跑（r8_run.sh 串行：moevie → deepencoder_v2 → aimv2 → fastvithd → IN-1k 评测）。
