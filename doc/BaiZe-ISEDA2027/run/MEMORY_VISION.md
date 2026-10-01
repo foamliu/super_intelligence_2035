@@ -7,10 +7,10 @@ WAITING: 0
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R8_complete**（6 架构 × 3000 步 + IN-1k zs/lp 全结束；胜出=OpenVision2；含 SSM 两架构坍缩） |
-| WAITING | 0（R8 训练 + IN-1k 评测全结束 @04:23；下一步：可选官方权重 IN-1k 参考表 + 汇总 HTML/胜出命令到 EXPERIMENTS_VISION.md 顶部） |
+| WAITING | 0（R8 收尾完成：最终 HTML 报告 `BAIZE_VISION_ENCODER_RESULT_ROUND8.html` 已生成、EXPERIMENTS_VISION.md 顶部胜出命令已回填；仅剩可选「官方权重 IN-1k 参考表」未跑） |
 | ERROR_COUNT | 0 |
 | BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（6 架构训练 ~69min 串行 ≈ 9.2 GPU·h + IN-1k 评测 ~23min） |
-| 更新 | 2026-10-02 04:45（**R8 完成**：6 架构训练 + IN-1k 评测全结束；OpenVision2 四指标第一；mambaeye/deepencoder_v2 SSM 坍缩；aimv2/fastvithd 未翻盘） |
+| 更新 | 2026-10-02 04:57（R8 收尾：最终 HTML `BAIZE_VISION_ENCODER_RESULT_ROUND8.html` 已生成并提交；R8 完成状态见 04:45 条目） |
 | WINNER | **OpenVision2**（R8 六架构重比确认：loss/C1/IN-1k zs/IN-1k lp 全第一） |
 
 ## 🏁 R8 完成（2026-10-02 04:23 训练+评测全结束；最后回收）
@@ -30,6 +30,14 @@ WAITING: 0
 - **下一步（下次唤醒，WAITING=0）**：①（可选）补官方权重 IN-1k 参考表；② 汇总胜出架构 + 完整可复现命令到 `EXPERIMENTS_VISION.md` 顶部；③ 重生成最终 HTML 报告（`BAIZE_VISION_ENCODER_RESULT.html` 或 ROUND8 版）；④ 整体验收（三表回填建议已给，tex 由外部统一回填）。
 - 未改 `*.tex`；未碰 pretrain/data/ops 文件。
 
+## 🎉 R8 收尾（2026-10-02 04:57）：最终 HTML 报告生成 + commit/push
+
+> 纯 CPU、未占卡。补上 R8.4 之外的收尾交付物「最终 HTML 报告」。
+
+- **本轮动作**：① 新建 `doc/BaiZe-ISEDA2027/BAIZE_VISION_ENCODER_RESULT_ROUND8.html`（自包含、可离线打开，风格同 R5 报告，13590 字符，div/table/pre 标签配平校验通过），把 R4–R8 的修复 recipe 演进（R4 冻结 CLIP-768+InfoNCE → R6 77 根因/数据分阶段切 → R7 定 GPIC short → R8 6 架构+IN-1k）+ 6 架构对比 + SSM 特异坍缩 + 论文三表回填建议整合为**最终权威报告**；② `MEMORY_VISION.md` 状态头更新；③ 本当日日志；④ git commit/push（只提交本任务文件）。
+- **下一步条目核对**（对应 04:45 的「下一步」）：① 官方权重 IN-1k 参考表——**仍可选、未跑**（需下载 ~1.2GB）；② 汇总胜出命令到 EXPERIMENTS_VISION.md 顶部——**上一条唤醒已完成**；③ 重生成最终 HTML——**本轮已完成**；④ 整体验收——三表回填建议已给（`tab:visarch` 整表重写 / `tab:visres` 沿用 R5 P1 / `tab:visobj` 沿用 R4+R7），tex 由外部统一回填。
+- 🏁 **至此 R2–R8 全部交付物齐**：`EXPERIMENTS_VISION_ROUND{2..8}.md` + 各轮 HTML（ROUND2–5、ROUND8 最终版）+ `MEMORY_VISION.md` + 胜出命令/三表回填建议。剩余仅「可选官方权重参考表」。**主体已收敛，可停新实验。**
+- 未改 `*.tex`；未碰 pretrain/data/ops 文件。
 ## 🚀 R8 启动（第八轮：6 架构 + ImageNet-1k 指标，2026-10-02）
 
 ## 🚀 R8 启动（第八轮：6 架构 + ImageNet-1k 指标，2026-10-02）
