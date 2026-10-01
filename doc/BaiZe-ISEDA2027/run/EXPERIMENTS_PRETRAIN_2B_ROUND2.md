@@ -266,13 +266,20 @@
 | 数据 | 纯 L3（本切 8 分片 1:1 等权 blend，~26.9B token） |
 | checkpoint | 655M→156 步 / 1.3B→310 / 2.6B→620 / 5.2B→1240 / 10.5B→2505 / 20B→4771 |
 
-### ⚠️ 待定（启动前定，下一唤醒处理）
+### ✅ 已定口径与决策（2026-10-02 ~07:05，启动前定稿）
 
-1. **val loss 口径**：现 launcher `--eval-iters 0` 只记 train/lm loss；P-5b 任务书写「val loss」。
-   需决定：① 用 train/lm loss 作 scaling 代理（与既有 2.2054 同口径简单），或 ② 补 held-out 验证片 + 开 eval。
-2. **GBS=1024 绝对 loss 收敛疑虑**：P-5a 已见 GBS=1024 @164M token loss **7.78** ≫ GBS=8 的 2.76（大 batch 更少 optimizer-step 的期望现象）。
-   P-5b 首段（655M/1.3B 点）将直接量化「GBS=1024 + LR=1e-3 能否在合理 token 内收敛到可用 loss」，
-   若不能则需在 P-8 前重新审视 GBS（这是 P-5b 除「何时变平」外的第二个关键产出）。
+1. **val loss 口径 = train/lm loss 代理**（不改 recipe 加 held-out 验证片）：
+   ① scaling-law 曲线（Chinchilla）惯例用 train loss；② 与既有 `2.2054@655M` 同口径（该值本就是 lm loss）；
+   ③ 加 held-out val 需另切验证片 + 改 recipe 传 `valid_data_path` + 开 `eval_iters>0`，对 2.5 天长跑收益低、风险高。
+   → launcher 维持 `--eval-iters 0`；6 个记录点从**训练日志**（`log-interval=10`）读 **lm loss + grad norm**（launcher 默认 `check_for_nan_in_grad` 已打印学 grad norm）。
+2. **GBS=1024 绝对 loss 收敛 = 本次实验第 2 个关键产出**（不预设结论）：P-5a 已见 GBS=1024@164M loss 7.78 ≫ GBS=8 2.76（大 batch 更少 optimizer-step 的期望现象）。
+   P-5b 首段（655M/1.3B）直接量化「GBS=1024 + LR=1e-3 能否在合理 token 内收敛到可用 loss」；若 20B 前仍过高则 P-8 必须重新审视 GBS。
+3. **checkpoint 策略**：为给 P-6 第 2 步「能力 vs token」（6 个 ckpt 跑 lm_eval）提供 ckpt，新增 launcher `--save-interval`（recipe `pretrain_config` 已加 `save_interval` 参数，默认 2000 不变）。
+   P-5b 设 **`--save-interval 156`**（每 ~655M token 一个），恰落在 6 个 2 倍等分点 156/312/624/1248/2496 + final 4771（=655M/1.3B/2.6B/5.2B/10.5B/20B），天然对齐记录点。
+   模型-only torch_dist ckpt ≈4.4GB × ~30 ≈ **132GB**（save_optim=False，含 Adam 状态的 ~30GB 是 P-8 的下限口径，P-5b 无 optimizer 态更省）。P-6 第 2 步后清除非 6 点之外的中间 ckpt。
+4. **改动落地**：`mamba2_hybrid_2b/recipe.py`（+`save_interval` 参数）、`pretrain_launcher.py`（+`--save-interval` 传入 build_config），语法校验通过；`run/baize_p5b_train.sh`（新增，含 8 分片 1:1 等权 blend + 前置齐备检查 + `setsid` 后台）。
+
+> 📌 启动口令（分词完成后）：`setsid bash baize_p5b_train.sh &`（脚本自带 8 分片 `.bin/.idx/.json` 齐备检查，未分完会拒绝启动）。
 
 ---
 ---
