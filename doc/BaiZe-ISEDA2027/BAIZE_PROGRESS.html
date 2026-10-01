@@ -386,17 +386,31 @@
     <b>被丢弃的尾部反而更相似</b>。→ <b>截断没有丢掉区分性信息</b>，问题在于整条 recaption 通篇公式化。
     截断 100% 属实，但只是<b>背景事实</b>，不是坍缩的直接推手。
   </p>
-  <p style="margin-bottom:0">
-    <b>⚠️ 概念澄清（易混，特此注明）</b>：<b>77 属于 <i>text 塔</i>，与 OpenVision2（<i>vision 塔</i>）<u>无关</u></b> ——
-    对比学习是<b>双塔</b>：vision 塔处理图像、text 塔处理文本，77 只在 text 一侧。
-    <b>把 vision 架构从 OpenVision2 换成 DeepEncoderV2 / MambaEye / MoE-ViE 碰不到 77。</b><br>
-    且<b>四架构共用同一个 text tower</b>（任务书原话：「同一 text tower，只动 vision tower」）
-    → <b>77 是四架构共享的常数，它不可能解释架构差异</b> —— 这与 R3「四架构坍缩到同一均衡点、
-    问题在共享 recipe 不在架构」<b>完全自洽</b>。<br>
-    vision 侧另有它<b>自己</b>的长度旋钮 = <b>图像 token 数</b>（224/14→256、336/14→576、448/14→1024），
-    <b>那是另一个东西</b>，由 R5 的 P1 重跑（R2-3 在坍缩下测的读数已作废）。<br>
-    ⚠️ 另：<b>R4 换塔后 77 的限制"变硬"了</b> —— 从「open_clip tokenizer 截断（参数可改）」
-    变成「<b>CLIP-L/14-336 位置编码表只有 77 行（改不了，塔装不下）</b>」→ 这正是 R6 要裁定的问题。
+  <p>
+    <b>⚠️ 概念澄清（按官方 config 更正）</b><br>
+    <b>① 77 属于 <i>text 塔</i>，与 OpenVision2 的 <i>vision 塔</i>无关</b> —— 对比学习是双塔：
+    vision 塔处理图像、text 塔处理文本。<b>四架构共用同一个 text tower</b>（任务书：「只动 vision tower」）
+    → <b>77 是四架构共享的常数，不可能解释架构差异</b>，与 R3「坍缩到同一均衡点、问题在共享 recipe」<b>自洽</b>。<br>
+    <b>② 77 的直接出处已查实 = 官方 OpenVision2 的 config</b>：
+    <code>UCSC-VLAA/openvision2-vit-large-patch14-336-vision-only</code> 的
+    <code>open_clip_config.json → text_cfg.context_length = <b>77</b></code>
+    （其余 <code>vocab 49408 / width 512 / heads 8 / layers 12</code>）；
+    本项目 <code>run/vision/train.py:50-52</code> <b>逐字段照搬</b>
+    → <b>不是 open_clip 的默认值</b>（上一版说法已更正）。<br>
+    <b>③ 官方 repo 的文本侧其实有<i>两套</i></b>：那个 <code>text_cfg</code> 是 <b>CLIP 式对比学习</b>的规格；
+    而官方实际发布的 image→caption 走的是 <b>caption decoder</b>
+    （12L·768w·12h·vocab32000，concat/prefix-LM，<b>文本流无位置编码 → 不受 77 限制</b>）。<br>
+    <b>④ 顺带查出三处「本项目 vs 官方」差异</b>：vision 层数 <b>24 → 30</b>；
+    <code>embed_dim</code> <b>1024 → 512</b>（R4/R5 又改成 <b>768</b>）；
+    最要命的是 —— 官方 <code>text_cfg</code> 对应的是<b>与 vision 塔联合训练过</b>的文本塔，
+    而本项目 R1 <b>把它随机初始化了</b>（<code>EXPERIMENTS_VISION.md:24</code>「四架构共用随机 init」）
+    → <b>这正是 R4/S5 认定的坍缩主因</b>。<br>
+    <b>⑤ 一条可能更优的配方线索</b>：官方 repo 的 <code>open_clip_pytorch_model.bin</code> 若是双塔 checkpoint，
+    就可能含那个<b>训练过、且与 OpenVision2 vision 塔语义对齐</b>的 text tower
+    → 比换 <code>clip-vit-large-patch14-336</code> 更贴合。<b>已让 R6 核实</b>。<br>
+    <b>⑥ 别混两个旋钮</b>：vision 侧的长度旋钮是 <b>图像 token 数</b>
+    （224/14→256、336/14→576、448/14→1024），<b>那是另一个东西</b>，由 R5 的 P1 重跑
+    （R2-3 在坍缩下测的读数已作废）。
   </p>
 </div>
 
@@ -762,10 +776,11 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
   </tr>
   <tr class="ok-box">
     <td class="ok-box" style="padding:6px 10px"><b>R6</b> 🔵 <b>文本塔上下文（77）与数据切换的裁定</b><br>
-        <small>① <b>是否切 GPIC</b>（含现有 tar 实测对数 vs 需求）·
-        ② <b>77 的根因</b> ·
-        ③ 正式训练<b>能否/该不该</b>放开 77</small><br>
-        <small>⚠️ 已发现：GPIC 仅 <b>445/8000 tar</b> 落盘，打包需读 ≈712 GB @NFS 60 MB/s ≈ <b>&gt;3h</b>
+        <small>✅ <b>Q2 已由运维用官方 config 裁定</b>：77 = 官方 OpenVision2
+        <code>text_cfg.context_length</code>（本项目 <code>train.py:50-52</code> 逐字段照搬）<br>
+        待核实：① 数据是否<b>切 GPIC</b> · ② 官方 <code>open_clip_pytorch_model.bin</code>
+        <b>是否含训练过的 text tower 权重</b>（若有 → 比换 CLIP-L 更贴合）· ③ 正式训练<b>能否/该不该</b>放开 77<br>
+        ⚠️ 已知约束：GPIC 仅 <b>445/8000 tar</b> 落盘，打包需读 ≈712 GB @NFS 60 MB/s ≈ <b>&gt;3h</b>
         → 超 R5 预算且与 pretrain 争 NFS，故 R5 先用 en500k</small></td>
     <td class="ok-box" style="padding:6px 10px"><span class="badge b-info">⏸ 已下发·排队</span><br>
         <small><b>纯 CPU</b> · 可与 R5 并行，不占卡</small></td>

@@ -61,25 +61,57 @@
 ---
 
 ## R6.2 问题 2 —— 77 截断的原因是什么？**是 open_clip 的默认设置吗？**
+### → 已裁定：**不是 open_clip 的默认，是官方 OpenVision2 的 `text_cfg.context_length`**（详见下）
 
-### 逐条取证（**每条都要贴原文**）
+> ## ✅ **本节已被运维裁定（一手证据），你的任务是「核实」而不是「重查」**
+>
+> **运维提供了官方 OpenVision2 的 config（`UCSC-VLAA/openvision2-vit-large-patch14-336-vision-only`）：**
+>
+> ```json
+> "text_cfg": { "context_length": 77, "vocab_size": 49408,
+>               "width": 512, "heads": 8, "layers": 12 }
+> ```
+>
+> **而本项目 `run/vision/train.py:50-52` 是逐字段照搬的：**
+> ```python
+> TextTransformer(context_length=77, vocab_size=49408, width=512, heads=8, layers=12, ...)
+> ```
+>
+> ### → **裁定：77 的直接出处 = 官方 OpenVision2 的 `text_cfg.context_length`，不是 open_clip 的默认值。**
+> （更上游是 OpenAI CLIP 谱系，`vocab_size=49408` 正是其 BPE 词表 → 但**直接来源是这份官方 config**。）
+>
+> ### 官方 repo 还有第二套文本侧（**必须一并说明**）
+> model card 写明：该 repo = **vision encoder + caption text decoder**，
+> 且 `open_clip_pytorch_model.bin/config.json` 被官方称作 "**L/14 vision encoder (open_clip format)**"。
+> 那个 **caption decoder**（`text_decoder_config.json`：12L·768w·12h·vocab32000，**concat / prefix-LM**）
+> 明确写着 **`no positional embedding on the text stream`** → **不受 77 限制**。
+> → **所以官方自己的 image→caption 不走 77**；77 只属于那个 **CLIP 式对比学习 `text_cfg`**。
 
-1. **open_clip 源码**：`open_clip.tokenizer.SimpleTokenizer` 的 `context_length` **默认值**是多少？
-   - 贴 `__init__` 签名 + 默认值（**文件路径 + 行号**）。
-   - 同文件里 `HFTokenizer` / `SigLIPTokenizer` 等其他类的默认值呢？
-     **SigLIP 的默认 context 是多少？**（这关系到"换成 SigLIP 会不会更糟"）
-2. **实际调用处**：`run/vision/train.py` **到底怎么构造 tokenizer 的**？
-   - 是**用了默认值**，还是**显式传了 `context_length=77`**？**把那几行代码贴出来。**
-3. **⭐ 真正的根因（重点查这个）**：
-   77 是「**open_clip 随便定的默认**」，还是「**继承了 CLIP 文本塔自身的结构限制**」？
-   - 查 `openai/clip-vit-large-patch14-336` 的 HF `config.json` →
-     **`text_config.max_position_embeddings` = ?**
-   - 该文本塔的**位置编码表是不是正好 77 行**？**把那个字段贴出来。**
-   - **→ 必须明确回答**：根因是 **(a) open_clip 的默认** / **(b) CLIP 文本塔的位置编码表大小（继承自 OpenAI CLIP 原始设计）** / **(c) 两者巧合一致**。
-   - ⚠️ 若答案是 (b) → **说明即使把 open_clip 的参数改大也没用**，因为**塔本身装不下**。
-     这一点**必须写清楚**，它直接决定 R6.3 的答案。
-4. **确认 R4 的 `sem_clip` recipe 用的是哪种塔**：是不是 `clip-vit-large-patch14-336` 的
-   **text tower（冻结）**？它在哪被加载、`max_position_embeddings` 是多少？
+**你的任务（不要重查前提，只做下面这些）**
+
+1. **核实**上述五个字段确实在官方 config 里（贴出你抓到的 `open_clip_config.json` 原文片段 + 抓取命令）。
+2. **核实** `run/vision/train.py:50-52` 与官方 `text_cfg` 逐字段一致（贴代码行号）。
+3. **⭐⭐ 重点核实一个可能改变配方的线索**：
+   官方 repo 里的 **`open_clip_pytorch_model.bin`** 是 open_clip 格式的 checkpoint ——
+   **它里面到底有没有那个「训练过的 text tower」权重？**
+   - 有 `hf download` 能力的话，**只下 `open_clip_config.json` + 检查 bin 的 state_dict key 列表**
+     （不用全下，或用 `safetensors`/`torch.load(map_location='meta')` 只读 key）。
+   - **为什么要紧**：如果**有**，那我们就有一个**比 `clip-vit-large-patch14-336` 更贴合**的文本塔 ——
+     它是**与 OpenVision2 vision 塔联合训练**的，规格（512w/12L/8h）正是官方为该 vision 塔配的。
+     ⚠️ 而且本项目 R1 恰恰把这个塔**随机初始化**了（`EXPERIMENTS_VISION.md:24`「四架构共用随机 init」）——
+     **这正是 R4/S5 认定的坍缩主因**。
+   - **→ 给出结论**：能否用官方 text tower 权重替代 `clip-vit-large-patch14-336`？
+     若能，给出方案与代价（改回 512 维还是加投影？C1–C4 是否需重验？）。
+4. **顺带核实**本项目与官方的其他差异（**已发现两处，请确认并补全**）：
+
+   | 项 | 官方 | 本项目 R1 | 本项目 R4/R5 |
+   |:--|:--|:--|:--|
+   | vision 层数 | **24** | **30**（`models.py: OpenVision2 depth=30`） | 30 |
+   | `embed_dim` | **1024** | **512**（`models.py: EMBED_DIM = 512`） | **768** |
+
+   → 说明这两处改动**是有意的还是无意的**，以及**对"与官方可比性"的影响**（论文里若声称复现官方架构，这两处必须交代）。
+
+
 
 ---
 
@@ -155,7 +187,8 @@
      | 问题 | 结论 | 证据出处 |
      |:--|:--|:--|
      | 后续数据是否切 GPIC | 切 / 不切 / 分阶段 | |
-     | 77 的根因 | (a) / (b) / (c) | |
+     | 77 的根因 | ✅ **已裁定**：官方 `open_clip_config.json → text_cfg.context_length`（**非** open_clip 默认值）；官方另有**不受 77 限制**的 caption decoder |  |
+     | 官方 `open_clip_pytorch_model.bin` 是否含训练过的 text tower | 有 / 无 | |
      | 正式训练能否变长 | 能（到 N）/ 不能 / 换塔 | |
 
    - **所有取证的原文摘录**：源码行、`config.json` 字段、命令与输出、抽样的 GPIC `short` caption。
