@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R2_active**（机器已重启，GPU0–7 空闲，R2 resume pipeline `run_r2_resume.sh` 运行中：R2-3 余 3 组 + R2-5） |
+| PHASE | **R2_active**（R2 resume pipeline 运行中：R2-3 已 11/12，剩余 mambaeye r448 训练中 + R2-5 待跑） |
 | WAITING | 1（异步训练 running） |
 | ERROR_COUNT | 0 |
 | BUDGET_USED | ~17 GPU·h 墙钟（S0–S3 ~11 + S4 ~5 + S6/S7/S8 ~3 + R2 已 ~5.6h；R2 预算 ≤6h，续跑余量充足） |
-| 更新 | 2026-10-01 16:02（R2 续跑启动） |
+| 更新 | 2026-10-01 16:37（R2-3 11/12 回填，mambaeye r448 训练中） |
 | WINNER | OpenVision2（纯 Attention ViT 505M）——loss 四架构并列 ~4.45–4.47（不可区分），训练 2139 img/s / 推理 6.51ms 双最优 |
 
 ## 🔄 R2 恢复续跑（2026-10-01 16:02，机器已重启）
@@ -94,6 +94,7 @@ S3 权重落盘 `out/S3_<tower>/vision.pt`（vision-only 旧格式）；S4+ 起 
 
 ## 操作流水
 
+- ✅ [2026-10-01 ~16:37] **R2 resume 巡检 + 回填（11/12）**：resume pipeline 推进中。deepencoder_v2 r448（10/12）✅ done loss 3.7466 / 474.6 img/s / 推理 bs1 17.863ms·bs8 4.410ms；moevie r448（11/12）✅ done loss 3.7471 / 357.1 img/s / 推理 bs1 42.823ms·bs8 7.033ms；eval 全随机（0.0002/0.0010/0.0020）。→ **r448（1024 token，bs=16）三架构 OV2/DE/MoE loss 3.7454/3.7466/3.7471（极差<0.002），「架构不可区分」在 1024 token 下三架构已复证**；吞吐 OV2 729.0 > DE 474.6 > MoE 357.1 主序不变。剩余：mambaeye r448（最后一组，训练中 ~30min）+ R2-5（40min 时间盒）→ ETA ~1.1h。已回填 `EXPERIMENTS_VISION_ROUND2.md` R2-3 表。WAITING=1 等待 resume 收尾（判结束 `grep -c "R2 RESUME ALL DONE" /tmp/vision_r2_resume.log`==1）。git commit+push 已随本条一起做。
 - 🔄 [2026-10-01 10:50] **R2 启动**：MODE 从 Round 1 切到 Round 2（见 BAIZE_VISION_TASK.md 第二轮）。Round 1 三处硬伤（tab:visres 全 4.9962 伪影 / tab:visobj 不可跨目标比较 / 196token 结论自证）→ R2 全局锚点改动 lr 1e-3→3e-3。已落地 `run_r2.sh`（R2-1→R2-4→R2-2→R2-3→R2-5 串行）+ `eval_downstream.py` 多分辨率支持（实测 336/16 ckpt 检索跑通）。核验：10.239.2.12 GPU0-5 全空闲（0 MiB）、GPU6-7 被他人 sglang 占；pretrain 任务已 converged/stopped（无 NFS 争用）。R2-0 数字核对结论见下一条。
 - ✅ [2026-10-01 10:50] **R2-0 数字核对（零成本）**：`tab:visarch` 的 `Loss@5k` 四值**标注正确**，均出自 S3@5000 步@lr=1e-3：OpenVision2 **4.4560**（S3 10k 长跑的 5000 步处，而非 10k 终值 4.4540 或 S8 lr3e-3 的 4.4562——三者差 <0.0002 噪声级，纯属巧合）、DeepEncoderV2 4.4662、MambaEye 4.4700、MoE-ViE 4.4661。其余数值核对：2139=OpenVision2 S3 steady_image_s 2139.5✓、1459=DE 1458.7✓、790=MambaEye 790.0✓、852=MoE 852.3✓、505.0M✓、141.7=MoE S2 bench 141.72ms✓。⚠️ 唯一待查：`6.51ms`（S2 原始 bench）与 S9 干净复测 `10.07ms` 不一致（约 1.5×），交由 R2-4 干净复测裁决。四架构「步数→loss」映射表已备（openvision2: 5.918@1k/4.465@3k/4.456@5k/4.454@10k；其余三塔 5.92-5.95@1k/4.472@3k/~4.466-4.470@5k）。
 - ✅ [2026-09-30 17:38] **commit + push 完成（最终收尾）**：核实 `2440197`（vision-encoder: converge S0-S9）+ `4df6ef2`（auto-commit）已 push；`git fetch` 无新远端、`status -sb` 显示 `## main...origin/main` 无 ahead/behind → 本地==远端。HTML 0 残留 `__XX__` 占位 / 0 外部 http 引用（自包含）；tex `6_vision_encoder.tex` 0 残留 `[TBD]`（表 tab:visres/tab:visobj + narrative + methodology note 均已回填）。验收产出 1–4 全部就绪，任务终结（converged）。
