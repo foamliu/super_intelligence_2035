@@ -51,7 +51,7 @@
   <h1>BaiZe 实验进展 · 总看板</h1>
   <div class="sub">Stage (i) LLM 预训练 · Stage (iii) 视觉编码器 · Round 2 进展 · 阻塞项</div>
   <div class="meta">
-    <span>📅 更新 2026-10-01 18:40</span>
+    <span>📅 更新 2026-10-01 19:25</span>
     <span>🎯 ISEDA 2027 投稿截止 ≈ 2027-02-01</span>
     <span>📄 论文 7 页 / 0 编译错误</span>
   </div>
@@ -74,9 +74,9 @@
 
 <div class="kpi-row">
   <div class="kpi"><div class="v">4 / 4</div><div class="l">loop 全部运行中</div></div>
-  <div class="kpi"><div class="v">P-1 ✅<br>P-2 ✅</div><div class="l">pretrain 两项定稿</div></div>
-  <div class="kpi"><div class="v">R3-1</div><div class="l">vision 查下游指标退化</div></div>
-  <div class="kpi"><div class="v">R 阶段</div><div class="l">data 转调研（8+2 个主题）</div></div>
+  <div class="kpi"><div class="v">P-1✅ P-2✅ P-3✅</div><div class="l">pretrain 三项定稿 · P-4 FP8 进行中</div></div>
+  <div class="kpi"><div class="v">R4</div><div class="l">vision 解决核心阻塞（关键路径）</div></div>
+  <div class="kpi"><div class="v">10</div><div class="l">data R 阶段调研主题</div></div>
 </div>
 
 
@@ -110,9 +110,9 @@
   <tr><th>Stage</th><th>内容</th><th>状态</th><th>关键指标</th><th>计划</th></tr>
   <tr>
     <td><b>(i)</b></td><td>LLM 预训练（from scratch）</td>
-    <td><span class="badge b-ok">✅ 完成</span></td>
+    <td><span class="badge b-ok">✅ 完成</span> + <span class="badge b-info">R2 加固</span></td>
     <td>2.22B / 56 层（4 attention）· val loss <b>2.2054</b>@20k 步 · 3-seed <b>2.6739±0.0469</b></td>
-    <td>R2 加固（<span class="badge b-info">进行中</span>）</td>
+    <td><b>P-1 ✅ / P-2 ✅ / P-3 ✅</b> · P-4（FP8）进行中</td>
   </tr>
   <tr>
     <td><b>(ii)</b></td><td>LLM 后训练（领域退火 + SFT + RLVR）</td>
@@ -121,13 +121,14 @@
   </tr>
   <tr>
     <td><b>(iii)</b></td><td>视觉编码器预训练（四架构对比）</td>
-    <td><span class="badge b-ok">✅ 完成</span> + <span class="badge b-info">R2 进行中</span></td>
-    <td>胜出 <b>OpenVision2</b>（纯 attention ViT，505.0M）· 2139 img/s</td>
-    <td>R2 收尾</td>
+    <td><span class="badge b-no">⚠️ 阻塞：训练不收敛</span><br>（表征坍缩，R3 定位 / R4 处理中）</td>
+    <td>胜出 <b>OpenVision2</b>（505.0M）；<b>但 loss / Recall 类结论作废</b>，
+        <b>仅吞吐/延迟排序仍成立</b></td>
+    <td><b>R4 解决阻塞</b>（关键路径）</td>
   </tr>
   <tr>
     <td><b>(iv)</b></td><td>MLLM 对齐</td><td><span class="badge b-warn">⬜ 待做</span></td>
-    <td>—</td><td>2026-12（需先修视觉编码器的下游指标）</td>
+    <td>—</td><td>2026-12（<b>需先等 (iii) 解阻塞</b>）</td>
   </tr>
   <tr>
     <td><b>(v)</b></td><td>半导体领域适配（偏好 RL）</td><td><span class="badge b-warn">⬜ 待做</span></td>
@@ -263,33 +264,34 @@
   改用 loss + 吞吐 + 收敛轨迹。
 </div>
 
-<h2 class="sec" id="s4"><span class="no">4</span>Round 2 推翻的两个先前判断</h2>
+<h2 class="sec" id="s4"><span class="no">4</span>被后续实证<b>推翻</b>的先前判断（逐轮累积）</h2>
 
 <div class="danger">
-  <b>这两条都是"我们先前以为已经解决、实际上没有"的问题</b>——列出来是为了避免它们再次被当成已解决。
+  <b>这些都是"我们先前以为已经解决、后来发现并没有"的问题</b>——列出来是为了避免它们再次被当成已解决。<br>
+  ⚠️ <b>特别看第 1 条</b>：它<b>先被 R2 修正、又被 R3 完全推翻</b>——说明<b>只看一轮的结论很容易误判</b>。
 </div>
 
 <table>
-  <tr><th>#</th><th>先前判断</th><th>R2 实证结果</th><th>影响</th></tr>
+  <tr><th>#</th><th>先前判断</th><th>后续实证</th><th>影响</th></tr>
   <tr>
     <td>1</td>
-    <td><code>tab:visres</code> 六格 loss 全同（4.9962）<b>只是 LR 坍缩伪影</b>，
-        换成正确 LR 就能得到有区分度的表</td>
-    <td>伪影属实（Δ0.54），<b>但修正 LR 后 loss 仍然平</b>：
-        5 组 4.4556~4.4566，<b>差 &lt;0.001</b>。
-        换言之 <b>"loss 对分辨率不敏感"是一个真实结论，不是伪影</b>
-        ——只是被伪影叠加放大成了"六格完全相同"</td>
-    <td>该表<b>不会</b>因为重跑而变得"有信息量"；
-        论文已改为<b>如实报告零结果</b> + 吞吐作为有效信号</td>
+    <td><code>tab:visres</code> 六格 loss 全同（4.9962）<b>只是 LR 坍缩伪影</b>，换成正确 LR 就能得到有区分度的表</td>
+    <td><b>R2 先"证实"</b>：伪影属实（Δ0.54），但修正 LR 后 loss 仍平（5 组差 &lt;0.001），当时读作"零结果是真的"。<br>
+        <b>R3 完全推翻</b>：那个"平"是<b>表征坍缩的均衡点</b>，<b>不是</b>"loss 对分辨率不敏感"的证据</td>
+    <td>❌ <b>该表整张作废</b>：不能写"分辨率无关"，只能写"本轮 recipe 未训起来"</td>
   </tr>
   <tr>
     <td>2</td>
-    <td>可以用 <code>eval5k</code> 的<b>检索 R@K 作为可通约的下游代理指标</b>
-        （我据此设计了 R2-2 的主指标）</td>
-    <td><b>不可行</b>：<code>R@1 = 0.0002</code>，<b>恰好等于 1/5000 随机水平</b>，
-        对不同 LR 与分支<b>零区分度</b></td>
-    <td>R2-2 的主指标<b>作废</b>；更严重的是——
-        <b>视觉编码器目前没有任何有效的下游指标</b>（这条已写入论文 §6 与 README 风险清单）</td>
+    <td>可以用 <code>eval5k</code> 的<b>检索 R@K 作为可通约的下游代理指标</b></td>
+    <td><b>R2 判不可行</b>（<code>R@1=0.0002</code> 恰等于 1/5000）；<b>R3 进一步定位根因</b>——两塔退化为常量嵌入，与输入无关</td>
+    <td>❌ 指标作废；并暴露出更严重的<b>「训练不收敛」阻塞</b></td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>R2-3 的"<b>架构 loss 不可区分、且跨 token 预算稳健</b>"——我据此<b>新增了论文 <code>tab:visarch_res</code></b></td>
+    <td><b>R3 推翻</b>：四架构塌到<b>同一个均衡点</b>（学到的 `scale≈5.6~5.7 / bias≈−9.0~−9.1` 几乎同值）
+        → 那只是"<b>坍缩均衡与架构无关</b>"，不是"架构对表示学习无影响"</td>
+    <td>❌ <b>我上一轮刚回填进论文的 <code>tab:visarch_res</code> 也需回滚/改写</b>（已列入待办）</td>
   </tr>
 </table>
 
@@ -300,13 +302,15 @@
   <tr>
     <td><b>(ii)</b> LLM 后训练</td>
     <td>领域退火（<b>复用 Stage (i) 的 WSD 机制</b>）→ SFT → RLVR + GRPO（奖励 4 臂 R1–R4，含 anti-cheat 与 cheat rate）</td>
-    <td>⚠️ <b>EDA 领域语料来源未落实</b>——它是"领域模型"claim 的唯一支撑</td>
+    <td>🟡 <b>EDA 领域语料来源已找到</b>（<code>eda_fastmcp/docs/</code> ≈45 MB 纯文本）——
+        待<b>授权确认 + 逐片段过闸</b>入库（<b>注意：评测 prompt 由 docstring 生成，天然同源，必须逐片段扫描</b>）</td>
   </tr>
   <tr>
     <td><b>(iv)</b> MLLM 对齐</td>
     <td>三任务族（<code>image→script</code> 用同一断言沙盒打分 / <code>script→image</code> / layout VQA）；
         projector / 冻结策略 / 视觉 token 数消融</td>
-    <td>⚠️ <b>必须先修视觉编码器的下游指标</b>（当前 R@K 退化）</td>
+    <td>🔴 <b>硬阻塞：视觉编码器训不起来</b>（表征坍缩）——<b>必须先等 R4 解决</b>；
+        且需扩到 85M 对（当前仅 50 万对）</td>
   </tr>
   <tr>
     <td><b>(v)</b> 领域适配</td>
@@ -347,8 +351,17 @@
     <td>按 4 个月时间线，<b>2027-01 阶段</b>补（当前不急）</td>
   </tr>
   <tr>
-    <td>7</td><td>⚠️ <b><code>/nas_train</code> 已用 85%</b>（175T/207T，仅剩 33T）</td><td><span class="badge b-warn">🟠 中</span></td>
-    <td>数据准备要写 tokenized 数据 + webdataset；<b>需让 data agent 把磁盘配额纳入产物规划</b>（RUN_ID 3 正在实测）</td>
+    <td>7</td><td>⚠️ <b>磁盘余量偏紧</b>（RUN_ID 3 实测）</td><td><span class="badge b-warn">🟠 中</span></td>
+    <td>
+      <code>/nas_train</code> <b>176T/207T（85%，剩 32T）</b> ·
+      <code>/nas_inference</code> 25T/45T（54%，剩 21T） ·
+      <code>/home</code> <b>163G/196G（88%，剩 24G）</b> ·
+      <code>/tmp</code> 剩 39G<br>
+      ✅ <b><code>/data</code> 本地盘剩 6.5T（8%）</b>，可作中间产物落点。
+      inode 不是问题（<code>/nas_train</code> 9878 亿 inode，用 1%）。<br>
+      ⚠️ 视觉 85M 对的 webdataset 约 <b>12 TB</b>（按 en500k 的 143 KB/对推算）
+      → 会吃掉 <code>/nas_train</code> 剩余空间的 <b>37%</b>。需 data agent 把配额纳入产物规划。
+    </td>
   </tr>
   <tr>
     <td>8</td><td>🔴 <b>论文 §4 的 "≈1.8T tokens" 很可能是错的</b>——实测 Ultra-FineWeb-L3 只有 <b>616 parquet / 617.6 GiB</b>，
@@ -369,8 +382,8 @@
 
 <table>
   <tr><th>角色</th><th>脚本 / 文件</th><th>状态</th></tr>
-  <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · <b>R2 全部完成</b> → 已下发 <b>R3-1</b> 诊断下游指标）</td></tr>
-  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ / P-2 ✅</b> → P-3 架构对比 5000 步 + <b>P-4 FP8 评估</b> 排队）</td></tr>
+  <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · R2 ✅ → R3 定位<b>表征坍缩</b> → <b>R4 解决核心阻塞</b>已下发）</td></tr>
+  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ / P-2 ✅ / P-3 ✅</b> → <b>P-4 FP8 进行中</b>（TE 2.12.0 已装））</td></tr>
   <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · phase0/3/5 完成 → <b>「R 阶段：数据调研」10 个主题</b>，用 <code>cimi-search</code>/<code>cimi-fetch</code> 为 5 个阶段调研数据源）</td></tr>
   <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · 零 token · RUN_ID 1/2 已回收 → <b>RUN_ID 3（磁盘）已排队</b>）</td></tr>
   <tr><td>1B / 2B 架构轮</td><td><code>baize_search_loop.sh</code> · <code>baize_2b_search_loop.sh</code></td><td><span class="badge b-ok">✅ 已收敛</span>，僵尸 loop 已被清理</td></tr>
