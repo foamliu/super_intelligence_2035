@@ -51,7 +51,7 @@
   <h1>BaiZe 实验进展 · 总看板</h1>
   <div class="sub">Stage (i) LLM 预训练 · Stage (iii) 视觉编码器 · Round 2 进展 · 阻塞项</div>
   <div class="meta">
-    <span>📅 更新 2026-10-01 22:26</span>
+    <span>📅 更新 2026-10-01 23:22</span>
     <span>🎯 ISEDA 2027 投稿截止 ≈ 2027-02-01</span>
     <span>📄 论文 7 页 / 0 编译错误</span>
   </div>
@@ -84,16 +84,17 @@
 
 <div class="verdict">
   <strong>一句话进展</strong>：<strong>四个 loop 全部在跑</strong>。
-  vision <strong>R2 完成 → R3 定位坍缩根因 → R4 解决阻塞</strong>；pretrain <strong>P-1 + P-2 均已定稿</strong>
-  （U 形谷底 + Δ 落在噪声内），并新增 <strong>P-4 FP8 可行性评估</strong>；
-  data agent 的 <strong>R 阶段两问已收敛</strong>（<code>DATA_RESEARCH.md</code> v1.1：真实 token ≈690B、vision 用 GPIC <code>short</code>），现已被派 <strong>重下 SFT-2605</strong>；
+  vision <strong>R2 完成 → R3 定位坍缩根因 → R4 解决阻塞（C1–C4 全过）→ R5 重跑中</strong>
+  （R6/R7/R8 已排队）；pretrain <strong>P-1 / P-2 / P-3 / P-5a 均已定稿</strong>
+  （U 形谷底 + Δ 落在噪声内 · P-5a 9/9：<b>最优 LR 不随 GBS 右移</b>），<b>GPU 已空闲 → 下一步 P-4</b>；
+  data agent 的 <strong>R 阶段两问已收敛</strong>（<code>DATA_RESEARCH.md</code> v1.1：真实 token ≈690B、vision 用 GPIC <code>short</code>），现已被派 <strong>重下 SFT-2605 + R2 调研</strong>；
   ops relay 已执行 <strong>RUN_ID 1/2/3</strong>（环境 / 数据根目录 / 磁盘），<strong>现空闲待命</strong>。
 </div>
 
 <div class="kpi-row">
   <div class="kpi"><div class="v">4 / 4</div><div class="l">loop 全部运行中</div></div>
-  <div class="kpi"><div class="v">P-1✅ P-2✅ P-3✅</div><div class="l">pretrain 三项定稿 · P-4 FP8 进行中</div></div>
-  <div class="kpi"><div class="v">R4</div><div class="l">vision 解决核心阻塞（关键路径）</div></div>
+  <div class="kpi"><div class="v">P-5a ✅ 9/9</div><div class="l">GBS×LR 定稿：谷底恒 1e-3、<b>无右移</b></div></div>
+  <div class="kpi"><div class="v">R4 ✅</div><div class="l">vision 核心阻塞已解除 → R5/R7/R8 接力</div></div>
   <div class="kpi"><div class="v">690B</div><div class="l">实测真实 token（论文写 1.8T，高估 2.6–3.9×）</div></div>
 </div>
 
@@ -146,10 +147,11 @@
   </tr>
   <tr>
     <td><b>(iii)</b></td><td>视觉编码器预训练（四架构对比）</td>
-    <td><span class="badge b-no">⚠️ 阻塞：训练不收敛</span><br>（表征坍缩，R3 定位 / R4 处理中）</td>
-    <td>胜出 <b>OpenVision2</b>（505.0M）；<b>但 loss / Recall 类结论作废</b>，
-        <b>仅吞吐/延迟排序仍成立</b></td>
-    <td><b>R4 解决阻塞</b>（关键路径）</td>
+    <td><span class="badge b-ok">✅ 阻塞已解除</span><br>（R4 修复，<b>C1–C4 全过</b>）<br>
+        <span class="badge b-warn">🔄 R5 重跑 · R7 数据 · R8 扩架构</span></td>
+    <td>⚠️ <b>R1/R2 的 loss / Recall 类结论已作废</b>（坍缩读数）；<br>
+        ✅ <b>仅吞吐 / 延迟排序仍成立</b>（OpenVision2 双最优）</td>
+    <td><b>R5</b>（重跑）→ <b>R7</b>（数据臂）→ <b>R8</b>（6 架构 + IN-1k）</td>
   </tr>
   <tr>
     <td><b>(iv)</b></td><td>MLLM 对齐</td><td><span class="badge b-warn">⬜ 待做</span></td>
@@ -211,8 +213,8 @@
       <li><b>P-1</b> LR 网格向上扩展 <span class="badge b-ok">✅ 定稿</span>（10 点 U 形，谷底 <code>1e-3</code>）</li>
       <li><b>P-2</b> 补 seed 到 n=5 <span class="badge b-ok">✅ 定稿</span>（<b>2.673386 ± 0.0349</b>，Δ≈0.09σ 在噪声内）</li>
       <li><b>P-3</b> 架构对比 1000→5000 步 <span class="badge b-ok">✅ 定稿</span>（hybrid 五点全胜）</li>
-      <li><b>P-4</b> ⭐ FP8 可行性 <span class="badge b-info">待 GPU（次序 1）</span></li>
-      <li><b>P-5a</b> ⭐⭐ GBS×LR 扫描 <span class="badge b-warn">🔄 运行中（7/9 点）</span></li>
+      <li><b>P-4</b> ⭐ FP8 可行性 <span class="badge b-warn">待启动（次序 1，GPU 已空闲）</span></li>
+      <li><b>P-5a</b> ⭐⭐ GBS×LR 扫描 <span class="badge b-ok">✅ 已完成 9/9</span>（谷底恒 <code>1e-3</code>、<b>无右移</b>）</li>
       <li><b>P-7</b> ⭐ 训练吞吐幅度核查 <span class="badge b-info">已下发（次序 2）</span></li>
       <li><b>P-6</b> ⭐ lm_eval 8 集零样本 <span class="badge b-info">已下发（次序 3）</span></li>
       <li><b>P-5b</b> 训练量 scaling 曲线 <span class="badge b-no">次序 4（其曲线定 P-8 预算）</span></li>
@@ -340,7 +342,8 @@
     <b>影响</b>：<code>tab:visarch</code> / <code>tab:visres</code> / <code>tab:visobj</code> 的 <b>loss 类结论全部作废</b>；
     <b>仅吞吐/延迟排序仍成立</b>（结构属性，不受坍缩影响）。<br>
     <b>并已下 R4</b>：以"训练不收敛"为<b>核心阻塞</b>单线程解决 —— 含 6 条代码级怀疑、LLaVA vs Stanford GPIC
-    数据集对比、修复实验与路线裁定。
+    数据集对比、修复实验与路线裁定。<br>
+    ✅ <b>后续（已发生）</b>：<b>R4 已完成，C1–C4 全过 → 阻塞解除</b>；当前 <b>R5 重跑中</b>，R6/R7/R8 已排队。
   </p>
 </div>
 <div class="ok-box">
@@ -660,7 +663,7 @@
 <table>
   <tr><th>角色</th><th>脚本 / 文件</th><th>状态</th></tr>
   <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-ok">✅ 已派活</span>（.12 · R2 ✅ → R3 定位<b>表征坍缩</b> → <b>R4 ✅ C1–C4 全过</b> → <b>R6 🔵 已下发（CPU 裁定）→ R5（GPU 重跑）</b>）</td></tr>
-  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ P-2 ✅ P-3 ✅</b> · <b>P-5a 运行中 7/9 点</b>（GBS=64/256 定稿，谷底均 1e-3，<b>未见右移</b>）· P-4 待 GPU · <b>P-6 / P-7 已下发</b>）</td></tr>
+  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ P-2 ✅ P-3 ✅ P-5a ✅ 9/9</b>（谷底恒 <b>1e-3</b>、<b>无右移</b> → GBS=1024 推荐 LR=1e-3）· <b>GPU 已全空闲</b> → 下一步 <b>P-4</b>；<b>P-6 / P-7 已下发</b>）</td></tr>
   <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · phase0/5 ✅ · R 阶段 ✅ 收敛（两问已答完，<code>DATA_RESEARCH.md</code> v1.1）→ 已派 <b>① SFT-2605 重下</b> + <b>② 🔴 R2 调研（§0.3 LLM 侧 + §0.4 视觉侧找图文对）</b>；<b>🚫 phase3_domain 已取消</b>；phase1/2/4 等下载）</td></tr>
   <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-ok">✅ 空闲待命</span>（.29 · 零 token · <b>RUN_ID 1/2/3 已全部回收</b>，随时可派 4）</td></tr>
   <tr><td>1B / 2B 架构轮</td><td><code>baize_search_loop.sh</code> · <code>baize_2b_search_loop.sh</code></td><td><span class="badge b-ok">✅ 已收敛</span>，僵尸 loop 已被清理</td></tr>
@@ -747,7 +750,7 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
 
 <h2 class="sec" id="s9"><span class="no">9</span>当前排期与预计完成时间</h2>
 
-<p style="color:var(--muted)">基准时刻：<b>2026-10-01 22:26</b>。下表"预计耗时"是该条工作<b>剩余</b>的工作量估计。</p>
+<p style="color:var(--muted)">基准时刻：<b>2026-10-01 23:22</b>。下表"预计耗时"是该条工作<b>剩余</b>的工作量估计。</p>
 
 <table>
   <tr><th>线</th><th>当前安排的工作</th><th>状态</th><th>预计耗时</th><th>预计完成</th></tr>
@@ -755,16 +758,18 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
   <tr>
     <td rowspan="6"><b>pretrain</b><br>(<code>10.239.2.29</code>)<br><br>
         <small>🚦 次序<br><b>P-4→P-7→P-6<br>→P-5b→P-8</b></small></td>
-    <td><b>P-5a</b> GBS×LR 扫描（<b>先跑完</b>，它是后续的前置）<br><small>已回收 <b>7/9 点</b>：GBS=64 与 GBS=256 <b>各三点定稿，谷底均 = 1e-3</b>（g256: 1e-3=<b>5.953</b> / 2e-3=6.470 / 4e-3=6.683）；GBS=1024 的 lr1e-3 运行中（~31 s/iter）</small></td>
-    <td><span class="badge b-warn">🔄 运行中</span><br><small>7/9 点；GBS=1024 为 <b>~31 s/iter</b>，比 GBS=64 慢得多</small></td>
-    <td><b>≈ 1–2 小时</b><br><small><b>但可能顺延</b>（见右）</small></td>
-    <td><b>今晚 ≈ 23:50</b><br><small>⚠️ GBS=1024 只有 <b>39 步 / 3 个满 log 点</b>（10/20/30）——<br>若噪声压过信号，按任务书防呆条款需<b>加大 token 预算</b>（如 ×128 步 = 537M token），则顺延数小时</small></td>
+    <td><b>P-5a</b> GBS×LR 扫描 <span style="color:var(--ok)"><b>✅ 已完成 9/9</b></span>（2026-10-01 22:54）<br>
+        <small>结论：<b>最优 LR 不随 GBS 右移</b> —— 四横切面（GBS 8/64/256/1024）谷底<b>恒为 1e-3</b>；
+        <b>GBS=1024 生产口径推荐 <code>LR=1e-3</code></b>（无需 batch scaling）</small></td>
+    <td><span class="badge b-ok">✅ 已完成</span><br><small>12 点稳健（4e-3 明确更差 +0.66，1e-3 从未输）</small></td>
+    <td>—</td>
+    <td>已结束</td>
   </tr>
   <tr>
     <td><b>P-4</b> FP8 profile（判 GEMM 占比 → 决定 P-8 用不用 FP8）</td>
-    <td><span class="badge b-info">⬜ 待 GPU 空闲</span><br><small><b>次序 1</b>（P-5a 之后立即插）</small></td>
+    <td><span class="badge b-warn">⬜ 待启动</span><br><small><b>次序 1</b>（<b>GPU 已全空闲，可立即起</b>）</small></td>
     <td>≈ 2 小时</td>
-    <td><b>≈ 10/02 凌晨</b></td>
+    <td><b>可立即起</b></td>
   </tr>
   <tr>
     <td><b>P-7</b> 训练吞吐幅度核查（+24% vs +4.8%）</td>
