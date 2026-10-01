@@ -1,19 +1,45 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R2_active**（Round 2 进行中：重跑 res/patch、目标函数、架构×分辨率、干净吞吐、MambaEye 诊断；R2 全局锚点 lr 1e-3→3e-3） |
-| WAITING | 1 |
+| PHASE | **SUSPENDED**（人为停训，等待 10.239.2.12 机器重启后人工续跑；Loop 与 pipeline 均已 kill） |
+| WAITING | 0 |
 | ERROR_COUNT | 0 |
 | BUDGET_USED | ~17 GPU·h 墙钟（S0–S3 ~11 + S4 ~5 + S6/S7/S8 ~3；墙钟约 11:29–17:05 ≈ 5.6h，远低 24h 上限） |
-| 更新 | 2026-10-01 14:19 |
+| 更新 | 2026-10-01 15:38（停训快照） |
 | WINNER | OpenVision2（纯 Attention ViT 505M）——loss 四架构并列 ~4.45–4.47（不可区分），训练 2139 img/s / 推理 6.51ms 双最优 |
 
-## R2 等待说明（WAITING=1，异步 pipeline running）
+## 🛑 停训记录（2026-10-01 15:38，等待 .12 重启）
+
+> 用户需重启 10.239.2.12，已人工停掉 vision 的 loop 与全部训练。以下为**停训时刻的精确边界 + 重启续跑说明**，务必先读本节再动作。
+
+- **已停掉的对象**：
+  - 本机 watchdog loop：`baize_vision_loop.sh`（原 PID 2932291，.29 节点）——已 kill。
+  - .12 pipeline：`run_r2.sh`（原 PID 479476）+ launcher（479475）——已 kill。
+  - .12 正在训练：deepencoder_v2 r448 p14 的 torchrun（master 2748364）+ 6 worker ——已 kill（SIGTERM→SIGKILL）。
+  - 停训后核验：.12 GPU0–5 已 0 MiB（仅 GPU6–7 他人 sglang 未动），`ps` 无 `train.py --tower` / `run_r2.sh` 残留。
+- **停训时精确进度（R2 pipeline `run_r2.sh` 串行顺序 R2-1→R2-4→R2-2→R2-3→R2-5）**：
+  - ✅ R2-1（res/patch ×7）、✅ R2-4（干净吞吐）、✅ R2-2（目标函数）——**全部完成且已回填** `EXPERIMENTS_VISION_ROUND2.md`。
+  - ✅ R2-3（架构×分辨率 12 组，patch=14）：**9/12 完成**（openvision2/deepencoder_v2/moevie/mambaeye × r224 与 r336 共 8 组，+ openvision2 r448 共 9 组），结果已回填 `EXPERIMENTS_VISION_ROUND2.md` R2-3 表。
+  - 🛑 R2-3 第 **10/12 组（deepencoder_v2 r448 p14, bs=16）被中断于 ~step2850–2900/3000**（kill 前 tail 到 step2850/3000 loss≈3.7469）。**该组无 `vision.pt`**（train.py 只在第 3000 步结束才 `torch.save`，无周期性 ckpt、无 resume）→ **须整组重跑**。残留目录 `out/R2_deepencoder_v2_r448_p14/` 只有 train.log（train.py 日志为 append 模式）。
+  - ⏳ R2-3 第 11/12 组（moevie r448）与第 12/12 组（mambaeye r448）——未跑。
+  - ⏳ R2-5（MambaEye bs=1 停摆诊断）——未跑。
+- **重启后如何续跑（关键）**：
+  - **不要**再跑完整 `run_r2.sh`（它无 resume/skip 逻辑，会把你已完成的 R2-1/R2-4/R2-2 和 9 组全部重做、浪费 GPU·h）。
+  - **用我准备的续跑脚本** `vision/run_r2_resume.sh`（已建好、`bash -n` 通过、直接跑剩余 deepencoder_v2 r448 + moevie r448 + mambaeye r448 + R2-5）。启动命令（在 .12 GPU0–5）：
+    ```bash
+    cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision
+    setsid bash run_r2_resume.sh </dev/null >/tmp/vision_r2_resume.nohup 2>&1 &
+    ```
+  - 日志 `/tmp/vision_r2_resume.log`；判结束看 `grep -c "R2 RESUME ALL DONE" /tmp/vision_r2_resume.log` == 1。
+  - RESUME 完成后：回填新完成格子到 `EXPERIMENTS_VISION_ROUND2.md` R2-3 表 + R2-5 → 生成 `BAIZE_VISION_ENCODER_RESULT_ROUND2.html` → 更新 MEMORY/EXPERIMENTS → git commit+push。
+  - 若 loop 也需恢复无人值守，重启 `setsid bash baize_vision_loop.sh > /tmp/baize_vision_loop.log 2>&1 < /dev/null &`（loop 会在 WAITING=0 时以 1min 间隔继续推进）。
+
+## R2 等待说明（历史：停训前 pipeline running 状态，仅供回溯，勿按此状态判断）
 
 - 等待：**R2 主 pipeline `run_r2.sh`**（后台，10.239.2.12 GPU0-5，11:00:37 重启版，日志 `/tmp/vision_r2.log`）。
 - 串行顺序：R2-1（res/patch @ lr3e-3）→ R2-4（干净吞吐）→ R2-2（目标函数）→ R2-3（架构×分辨率）→ R2-5（MambaEye 诊断）。
@@ -27,6 +53,8 @@ WAITING: 1
 - 【13:15 巡检快照】R2-3（12 组架构×分辨率，patch=14）进行到 **第 4/12 组（mambaeye r224 p14 训练中 ~step400/3000）**。已完成 3 组并回填 `EXPERIMENTS_VISION_ROUND2.md`：openvision2 r224 loss=4.4567/1631.3img/s、deepencoder_v2 r224 4.4563/1408.0、moevie r224 4.4575/558.2；推理 bs1 ms/img=6.857/25.965/42.228，bs8=1.058/2.254/5.511。三架构 r224 loss 并列（差<0.002），吞吐分层（OV2>DE>MoE）。🔑 **batch 一致性警示已记入报告**：run_r2.sh 对 448/14 自动降 batch 32→16，故 448/14 列（bs=16）与 224/14、336/14（bs=32）batch 不同，token 趋势会被 SigLIP 负样本数混淆——「同分辨率内四架构比较」仍有效，「跨 token 趋势」需标注不可比。eval5k 仍全随机。剩余 ETA ~2-3h（336/14 4 组 + 448/14 4 组 + R2-5 40min）。
 - 【13:48 巡检快照】R2-3（12 组架构×分辨率，patch=14）进行到 **第 6/12 组（deepencoder_v2 r336 p14 训练中 ~step700/3000）**。已完成 **5 组**并回填 `EXPERIMENTS_VISION_ROUND2.md`。**r224（256 token）四架构全完成**：openvision2 4.4567/1631.3、deepencoder_v2 4.4563/1408.0、moevie 4.4575/558.2、mambaeye 4.4566/861.0 img/s，loss 极差 <0.0012（噪声级）→ **256 token 四架构 loss 不可区分（含 SSM/MoE）已实锤**；吞吐/延迟同 R2-4 干净复测同序（OV2>DE>MambaEye>MoE）。**r336（576 token）openvision2 完成**：loss 4.4560（与 r224 基本持平）、1281.4 img/s、推理 bs1 10.32ms/bs8 2.31ms。推理 bs1 ms/img 全序：OV2 6.86-10.32 < DE 25.97 < MambaEye 31.5 < MoE 42.2。eval5k 仍全随机。剩余 ETA ~2h（deepencoder r336 ~14min + moevie r336 ~23min + mambaeye r336 ~21min + r448 四架构（bs16，慢）~1h + R2-5 40min）。
 - 【14:19 巡检快照】R2-3（12 组）进行到 **第 7/12 组（moevie r336 p14 训练中 ~step2100/3000，loss 4.4568，~637 img/s）**。已完成 **6 组**并回填 `EXPERIMENTS_VISION_ROUND2.md`：**deepencoder_v2 r336 新完成**（loss 4.4566 / 599.4 img/s / 推理 bs1 18.378ms·bs8 3.761ms / eval 全随机）已回填 R2-3 表。r336 已完成的 OV2(4.4560/1281.4 img/s) 与 DE(4.4566/599.4) 仍与 r224 并列（loss 差<0.001）→ **token 256→576 未改变 loss 排序（架构仍不可区分）**。剩余：mambaeye r336 ~21min + r448 四架构（bs16，慢）~1h + R2-5 40min → ETA ~1.5h。eval5k 仍全随机。
+- 【14:51 巡检快照】R2-3（12 组）进行到 **第 8/12 组（mambaeye r336 p14 训练中 ~step1850/3000，loss 4.4575，~305 img/s）**。已完成 **7 组**并回填 `EXPERIMENTS_VISION_ROUND2.md`：**moevie r336 新完成**（loss 4.4564 / 626.4 img/s / 推理 bs1 42.213ms·bs8 5.907ms / eval 全随机）已回填 R2-3 表。r336 已完成的 OV2(4.4560)、DE(4.4566)、MoE(4.4564) 三架构 loss 极差 <0.0006（噪声级）→ **「架构不可区分」在 576 token 下仍成立**。训练吞吐 OV2(1281) > MoE(626) > DE(599)（DE/MoE 在 576 token 掉换位次，DE 长序列开销上升快）。剩余：mambaeye r336 ~12min + r448 四架构（bs16，慢）~1h + R2-5 40min → ETA ~1.5h。eval5k 仍全随机。
+- 【15:23 巡检快照】R2-3（12 组）进行到 **第 10/12 组（deepencoder_v2 r448 p14 训练中 ~step150/3000）**。已完成 **9 组**并回填 `EXPERIMENTS_VISION_ROUND2.md`：**mambaeye r336 新完成**（loss 4.4565 / 305.2 img/s / 推理 bs1 32.200ms·bs8 6.634ms / eval 全随机）、**openvision2 r448 新完成**（loss 3.7454 / 729.0 img/s / 推理 bs1 6.984ms·bs8 3.933ms / eval 全随机）。**r336 四架构 loss（4.4560/4.4566/4.4564/4.4565）极差 <0.0006 → 「架构不可区分」在 576 token 下四架构全证（含 SSM/MoE）**。r448 openvision2 loss 3.7454 与 R2-1 的 3.7461 高度一致（bs=16 复现，SigLIP 负样本敏感性实锤）；标注不可比 + ⚠️ ov2 r448 bs1=6.98ms 反常低于 r336 10.32ms（疑内核路径，待复测）。剩余：deepencoder r448 ~10min + moevie r448 ~20min + mambaeye r448 ~20min + R2-5 40min → ETA ~1.3h。
 - 下次唤醒动作：先 tail `/tmp/vision_r2.log` 看 R2-3 进度并回填已完成格子（loss / train img/s / 推理 ms/img bs1+bs8 / eval5k R@1）到 `EXPERIMENTS_VISION_ROUND2.md` R2-3 表；若 ALL DONE 则回填 R2-5 + 补全「论文回填建议」R2-3 段（含 batch 混淆标注）+ 生成 `BAIZE_VISION_ENCODER_RESULT_ROUND2.html` → 更新 MEMORY/EXPERIMENTS → git commit+push，WAITING 置 0。
 
 ## 历史：Round 1 S4–S9 pipeline 等待说明（已收敛，供回溯）
