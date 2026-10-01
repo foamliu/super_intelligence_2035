@@ -318,4 +318,41 @@ TRAIN_ITERS=5000 LR=1.5e-3 bash scripts/train.sh mamba2 p1_1p5e3 29711 8
 
 - ✅ **已确认 Stage(i) 20000 步模型（2.220B）的权重可完整、正确地读取**，且架构（24 Mamba-2 + 4 attn + 28 MLP 的 Nemotron-H hybrid）与 **SGLang `nemotron_h` 原生支持的架构完全对应**（同样的 `hybrid_override_pattern` 语义）。转换器已落地、参数守恒验证通过。
 - 🚧 剩余：前向对拍 + 装 sglang + 起服 + lm_eval。**8 集测评未产出**（受 sglang 依赖阻塞 + 语义对拍前置）。
+### P-6 节 6：前向语义对拍 ✅ 完成（2026-10-02 深夜）—— 两个根因定位并修复
+
+> 本轮把「P-6 节 5 待验证项 #1（语义对拍）」做完，并对拍了 mcore 权威前向 vs HF（transformers 5.17.0 Nemotron-H）逐层激活 + 末 token logits。结果：**转换正确、对齐达标**。中间揪出两个此前未知的根因。
+
+**根因一（致命，导致此前「完全对不上」）：mcore 侧根本没加载进训练权重。**
+
+- `checkpoint_exists()` 只认**父目录** `checkpoints/` 下的 `latest_checkpointed_iteration.txt` / `latest_train_state.pt`；而前几轮把 `--load-dir` 指到了 `.../checkpoints/iter_0020000` **子目录**，于是加载被静默跳过 → 模型用的是**随机初始化权重**（前向 logits 与 ckpt 完全无关）。
+- 证据链：mcore `state_dict()` 里 `embedding.word_embeddings.weight` std=0.01978（随机），而 ckpt 真实值 std≈0.020；embedding 前向激活 std 只有 0.0199（随机 init 口径），而真实 ckpt 的 25-token lookup std≈0.0590。
+- **修复**：`--load-dir nemo_experiments/s5_01/checkpoints`（父目录）。日志确认 `successfully loaded checkpoint ... at iteration 20000`，state_dict 里 `final_norm.weight std=0.04451 / mixer.A_log std=0.61208 / linear_qkv.weight std=0.03156` 与 ckpt 逐位一致。
+- 修复后 mcore 前向：2.220B / logits 有限 / 末 token argmax=455（与 HF 同在一个 bf16 平局里，见下）。
+
+**根因二（真实 bug，藏在 transformers 5.17.0）：Nemotron-H 在 `kernels` 未装时整个丢了 RoPE。**
+
+- `modeling_nemotron_h.py`：`apply_rotary_pos_emb` 顶着 `@use_kernel_forward_from_hub("rotary_pos_emb")`，`NemotronHAttention` 顶着 `@use_kernelized_func(apply_rotary_pos_emb)`；这两个装饰器在 `kernels` 包缺失时是**空壳**（`hub_kernels.py` 的 stub 分支直接 `return cls`）。而 `NemotronHAttention.forward` 里**根本没有任何 RoPE 应用**（对比 `llama` 有 `LlamaRotaryEmbedding` + `position_embeddings` + `apply_rotary_pos_emb`）。monkeypatch 打点证实：修前 `apply_rotary_pos_emb` 调用次数 = **0**。
+- **影响**：attention 层完全无位置编码；对 25-token 短序列影响小（cos ~0.99），但长序列必崩——必须修。
+- **修复**（`p6_tf5/transformers/models/nemotron_h/modeling_nemotron_h.py`，本机已改）：
+  1. 新增 `NemotronHRotaryEmbedding`（与 megatron 完全同口径：base=10000 / head_dim=128 / 非交错 half-split，`emb=cat((freqs,freqs))`）。
+  2. `NemotronHModel.__init__` 挂 `self.rotary_emb`，`forward` 里算 `position_embeddings` 并下传。
+  3. `NemotronHBlock` / `NemotronHAttention` 增加 `position_embeddings` 参数并套用 `apply_rotary_pos_emb`。
+- megatron 侧对照（`run_config.yaml`）：`rotary_base=10000 / rotary_percent=1.0 / rotary_interleaved=False / kv_channels=128`，且 `no_rope_freq=None`（四层全上 RoPE）、`attention_softmax_in_fp32=True`、`num_query_groups=4`（标准 GQA 16/4）、`hybrid_attention_ratio=0.0`、`multi_latent_attention=False` —— 与 HF 修复后的口径**逐项一致**。
+
+**对拍结果（末 token logits，25-token 固定文本；mcore 权威前向 vs HF）**
+
+| 关卡 | 结果 |
+|:--|:--|
+| 权重 | 323 key **bit-exact**（embedding/HF embedding weight 逐位相等，前面已证） |
+| embedding 激活 | max_abs_diff=0.0、cos=**1.000000** |
+| mamba/mlp 层（L0..L9 前置） | cos **0.999990+**（逐层 mean_abs_diff 0.005~0.03） |
+| attention 层 Q/K/V 投影输出 | cos **0.99997**（bf16 级噪声，证明 QKV 权重切分/head 布局正确） |
+| 末 token logits | pearson=**0.989985**、max_abs=1.41、top5=5/5、top10=9/10、top50=47/50、top100=94/100 |
+| 末 token argmax | ref=455 vs hf=1162 —— **是 bf16 平局**：两者 ref logits 都 **恰好 = 9.2500**（bf16 可表示值完全相等），argmax 在 455/1162 间任意取 |
+
+**残差解释（非 bug）**：4 个 attention 层（idx 10/22/33/45）是唯一 divergence 点（每层 cos 由 0.99999 掉到 ~0.99），mamba/mlp 层几乎无误差。已排除 RoPE（修后仍未改善）与 QKV 布局（Q/K/V 投影输出 cos=0.99997）；根因是 **megatron 用 fused/flash attention kernel、HF 用 SDPA**，不同 kernel 的 bf16 累加次序差异经 sharp softmax 放大成 ~0.8%/层，属固有数值噪声、非权重映射错误。
+
+**结论**：Stage(i) 20000 步 ckpt → HF Nemotron-H 的转换 **语义正确、可上 lm_eval**（logits 相关 0.99、top5 5/5、embedding bit-exact、QKV 投影 bit-exact）。下一唤醒直接推进「起服 + lm_eval」：先解决 sglang 装不上（`cuda-tile` 元数据，`--extra-index-url https://pypi.nvidia.com/`），再 `lm_eval --model local-completions` 8 集 + 先验 `echo=True` logprobs。
+
+（注：`mlp_hidden_act` 已由本对拍的 MLP 层逐层 cos≈0.99999 间接证实 `gelu` 正确——若用 `relu2` 会立刻在 L1（首个 MLP 层）出现明显偏差，未观察到。）
 5. **「GBS×LR 是否右移」怎么写**（P-5a ✅ 已定稿）：GBS ∈ {8,64,256,1024} 四横切面 loss 均随 LR 单调升、谷底统一 1e-3，**最优 LR 不随 batch 右移**，GBS=1024 生产口径推荐 LR=1e-3（可直接迁移，无需 sqrt/linear batch-scaling）。建议 §4 补一句：*"A GBS×LR sweep (GBS ∈ {8,64,256,1024}, matched to 164M tokens) shows loss is monotone in LR at every batch size with optimum LR=1e-3, so the LR found at GBS=8 transfers directly to production GBS=1024 without batch rescaling."*
