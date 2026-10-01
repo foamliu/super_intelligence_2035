@@ -7,10 +7,10 @@ WAITING: 1
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R8_active**（6 架构 × 3000 步 @224/16 bs64 = GPIC `short`，训练中；末了自动跑 ImageNet-1k zero-shot / linear-probe） |
-| WAITING | 1（R8 训练 running：`setsid bash r8_run.sh 3000`，日志 `/tmp/r8.log`，先 openvision2 后 5 架构串行） |
+| WAITING | 1（R8 训练 running：openvision2 ✅ / mambaeye ❌熔断@300 / moevie 跑到~step1450 进行中 → deepencoder_v2 → aimv2 → fastvithd → IN-1k 评测） |
 | ERROR_COUNT | 0 |
 | BUDGET_USED | R2/R3/R4 累计 ~19 GPU·h + R5（P0 1h12m + P1 ~28m）+ R7（~37min）+ R8（6 架构训练 ~1.5–2h，进行中） |
-| 更新 | 2026-10-02（**R8 启动**：6 架构 + IN-1k 指标；污染核查已完成；FastViTHD OOM 修复为分层下采样） |
+| 更新 | 2026-10-02 03:05（**R8 巡检**：🔑 mambaeye 在修复 recipe 下仍坍缩 C1=1.0000、openvision2 健康 C1=0.2875 → 坍缩是架构特异的） |
 | WINNER | **OpenVision2**（R5/R7 判胜；R8 六架构重比，看 AIMv2/FastViTHD 是否翻盘） |
 
 ## 🚀 R8 启动（第八轮：6 架构 + ImageNet-1k 指标，2026-10-02）
@@ -23,6 +23,19 @@ WAITING: 1
 - **冒烟**：6 架构 forward+backward 全过（0 死参）；`fastvithd` 8 卡 DDP 3 步 exit 0；`r8_eval_in1k.py` 端到端跑通（R7_B_gpic zs top1=1.0%）。
 - **训练已启动**：`setsid bash r8_run.sh 3000`，日志 `/tmp/r8.log`，6 架构串行（~1.5–2h）+ 末了自动 IN-1k 评测。ckpt `/nas_train/.../out/R8_{tower}/vision.pt`（或 vision_fused.pt）。
 - **下一步（下次唤醒，WAITING=1）**：回收 6 架构 loss + C1/C2/C4 + 吞吐 + IN-1k zs/lp → 回填报告 §4 表 + MEMORY + git commit/push。
+
+## 🔬 R8 进度巡检（2026-10-02 03:05）：🔑 mambaeye 坍缩（架构特异）、openvision2 健康
+
+> WAITING=1，训练仍在跑（r8_run.sh 串行：moevie → deepencoder_v2 → aimv2 → fastvithd → IN-1k 评测）。
+
+- **关键发现**：同一修复 recipe（冻结 CLIP-768 + InfoNCE + GPIC short + bs64[=512 负样本] + lr 3e-3 + seed 1234）下，
+  **openvision2（纯 Attention）健康、mambaeye（纯 SSM）坍缩**：
+  - openvision2：final_loss 4.8646 / C1 0.2875 / C2_gap +0.0867 / 3051.8 img/s / fused=False / 709.7s ✅（C1–C4 全过）
+  - mambaeye：**@step300 C1=1.0000 / C2_gap=0.0000 / C4=FAIL（loss 卡 6.25≈ln512 无学习）→ 触发熔断 `fused=True`，exit 1**（SIGABRT/NCCL 600s 超时为熔断后收尾副产物，非根因）❌
+  - → **坍缩是架构特异的**：R4 把主因归到「随机文本塔 S5」，但 R8 证明「配冻结 CLIP 文本塔后，SSM 塔仍坍缩而 Attention 塔不坍缩」→ 坍缩与 vision 架构本体相关，不只是文本塔。
+- **moevie 进行中需盯**：loss 5.48@300 → 反弹 5.88~6.0@1200~1450；C1 0.192@300→0.273@600→0.439@900（上升偏快），未熔断。
+- **下一步（下次唤醒，WAITING=1）**：回收 moevie/deepencoder_v2/aimv2/fastvithd 的 loss+C1/C2/C4+吞吐 → r8_run.sh 末了自动 IN-1k 评测 → 回填 `EXPERIMENTS_VISION_ROUND8.md` §4 全表 + 判定 6 架构排名（含 mambaeye 坍缩如实记录）→ git commit/push。
+- 未改 `*.tex`；未碰 pretrain/data/ops 文件。
 
 ## 🏁 R7 完成（第七轮：数据臂对比，2026-10-02 01:30 训练完 / 01:45 交叉评测完）
 

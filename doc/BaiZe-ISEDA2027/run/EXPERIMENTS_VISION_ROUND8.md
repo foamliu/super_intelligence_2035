@@ -53,16 +53,43 @@
 
 > ⚠️ FastViTHD 首次实现把 37 个 attention 块都放 28×28（token 数 = ViT 的 4×），bs64 单卡 80GB **OOM**（实测 78.9GB）。已改为 FastViT 原生**分层**结构（conv 阶段 28×28 → stride-2 下采样 → attention 阶段 14×14），峰值显存降到 ~28GB、参数量 503→508M，仍在范围内。
 
-## §4 6 架构结果表（**训练中，回填后覆盖本节**）
+## §4 6 架构结果表（**训练中，部分回填 @03:05**）
 
 | 架构 | loss@3k | 训练 img/s | C1 | C2_gap | fused? | IN-1k zs top1 | IN-1k zs top5 | IN-1k lp top1 |
 |:--|--:|--:|--:|--:|:--:|--:|--:|--:|
-| openvision2 | ⏳ | ⏳ | | | | | | |
-| mambaeye | ⏳ | ⏳ | | | | | | |
-| moevie | ⏳ | ⏳ | | | | | | |
-| deepencoder_v2 | ⏳ | ⏳ | | | | | | |
-| aimv2 | ⏳ | ⏳ | | | | | | |
-| fastvithd | ⏳ | ⏳ | | | | | | |
+| openvision2 | **4.8646** | 3051.8 | **0.2875** | +0.0867 | 否 | ⏳ | ⏳ | ⏳ |
+| mambaeye | 6.2507* | 949.5 | **1.0000** | **0.0000** | ✅熔断@300 | ⏳ | ⏳ | ⏳ |
+| moevie | ~5.92(跑到1450) | ~1210 | 0.439@900↑ | +0.036@900 | 进行中 | ⏳ | ⏳ | ⏳ |
+| deepencoder_v2 | ⏳ | ⏳ | | | | ⏳ | ⏳ | ⏳ |
+| aimv2 | ⏳ | ⏳ | | | | ⏳ | ⏳ | ⏳ |
+| fastvithd | ⏳ | ⏳ | | | | ⏳ | ⏳ | ⏳ |
+
+> *mambaeye loss=6.2507 ≈ ln(512)=6.238 = InfoNCE「无学习」熵平台，非正常收敛值。⏳ = 训练未到/未评测（IN-1k 评测在 6 架构训练全结束后由 r8_run.sh 末了自动跑）。moevie C1 上升偏快（见 §7），仍在跑未熔断。
+
+## §7 🔑 前 3 架构结果与「架构特异坍缩」发现（2026-10-02 03:05 巡检）
+
+**openvision2（纯 Attention）—— 健康，不复现坍缩：**
+- C1 轨迹 0.2295→0.2483→0.2738→0.2847→0.2775→0.2875（@1500..3000，缓慢抬升、远 <0.9）；C2_gap 全程 +0.0827~+0.0990（正常正间隙）；C4=OK（loss 5.9195→4.8646）。
+- `[done] total=709.7s steps=3000 steady_image_s=3051.8 final_loss=4.8646 fused=False` → `vision.pt`（2.02GB）。
+
+**mambaeye（纯 SSM，Vim 双向）—— @step300 坍缩，熔断器正确触发（原文）：**
+```text
+[step 300/3000] loss=6.2553 ... C1=1.0000 C2_diag=0.3115 C2_off=0.3115 C2_gap=+0.0000 loss_ema=6.2507 loss_early=6.2256 C4=FAIL
+[done] total=172.5s steps=300 steady_image_s=949.5 final_loss=6.2507 fused=True
+[saved] .../R8_mambaeye/vision_fused.pt (fused=True)
+===== R8 mambaeye done (exit 1) 2026-10-02 02:52:44 =====
+```
+- 根因：`[PROBE step 300] C1=1.0000`（offdiag>0.95 熔断线）= same-tower 余弦坍缩；loss 卡 6.25≈ln(512)「无学习」。exit 1 的 SIGABRT / NCCL ALLGATHER 超时（600s）是熔断后 DDP 收尾的副产物——训练在第 300 步已正常判熔断并写出 `vision_fused.pt`。
+
+**🔑 架构特异坍缩（本任务最重要的发现）：**
+- 同一 recipe（冻结 CLIP-768 文本塔 + InfoNCE + GPIC short + bs64=512 负样本 + lr 3e-3 + seed 1234）下，
+  **纯 Attention（openvision2）健康（C1 0.29）、纯 SSM（mambaeye）坍缩（C1=1.0000）**。文本塔 / 数据 / 目标函数 / 随机种子完全相同，唯一变量是 vision 架构。
+- 对 R4 结论的修正：R4 把坍缩主因归到「随机文本塔」（S5：随机塔 offdiag 0.7258）并判定「修好文本塔即解决」。R8 显示该判定**不完整**——配了冻结预训练文本塔后，SSM 塔仍坍缩、Attention 塔不坍缩 → **vision 架构本体也决定坍缩倾向**（纯 SSM 从零对比学习在本 recipe 下无法建立区分度）。
+- ⚠️ 边界说明（如实书写，不掩盖）：mambaeye 在 R1（SigLIP + 随机文本塔 + en500k）曾能训练（S3 loss 6.73→4.64 下降），故其坍缩**依赖 recipe/目标函数/数据的组合**，未必是 SSM 结构的绝对缺陷；但「在当前修复 recipe 下坍缩」是确定的实测事实，按任务铁律如实记录、不重试到「看起来好」为止。
+
+**moevie（稀疏 MoE）进行中 —— 趋势需盯：**
+- loss 5.79@100 → 5.48@300 → 反弹 5.88~6.0@1200~1450；C1 0.192@300 → 0.273@600 → **0.439@900**（上升偏快）。
+- 未熔断（C1<0.95、C2_gap 仍 +0.036>0.005）。若最终也触发熔断，即得到「Attention 稳 / MoE 边缘 / SSM 坍缩」的坍缩倾向排序，本身即产出。 |
 
 ## §5 代码产物
 
