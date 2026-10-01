@@ -6,12 +6,34 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R5_active**（第五轮：**用修复 recipe 重跑架构/分辨率对比**。P0 架构对比已启动——固定 recipe=冻结 CLIP 文本塔(768)+InfoNCE+vision head 768，4 架构 × 3000 步 @ 224/16 8 卡 TP1/DP8） |
-| WAITING | 1（R5 P0 4×3000 步流水 async running，30min 轮询；openvision2 首探针 C1=0.14/gap+0.155/C4=OK 已全规模验证） |
+| PHASE | **R5_active**（第五轮：**用修复 recipe 重跑架构/分辨率对比**。**P0 架构对比 ✅ 完成**、**P1 分辨率对比 running**——固定 recipe=冻结 CLIP 文本塔(768)+InfoNCE+vision head 768；胜出=OpenVision2）；**R6_probe 已完成**（纯 CPU 并列推进，结论见 `EXPERIMENTS_VISION_ROUND6.md`：数据分阶段切/77 根因=官方 config/bin 无 text tower/77 保持） |
+| WAITING | 1（R5 P1 分辨率扫描 async running，30min 轮询：openvision2 × {224/16,336/14,448/14} @bs16 进行中） |
 | ERROR_COUNT | 0 |
-| BUDGET_USED | ~19 GPU·h 墙钟（R2/R3/R4 累计）；R5 另计 |
-| 更新 | 2026-10-01（R5.0 状态切换 + R5.1 recipe 落实 + P0 启动） |
-| WINNER | OpenVision2（计算侧双最优）；**R5 recipe=冻结 CLIP 文本塔(768) + InfoNCE +（数据源见下）** |
+| BUDGET_USED | ~19 GPU·h 墙钟（R2/R3/R4 累计）；R5 另计（P0 墙钟 1h12m 已完成） |
+| 更新 | 2026-10-01 深夜（**R5 P0 完成 + P1 启动**；**R6 完成**）；R5 详情见 `EXPERIMENTS_VISION_ROUND5.md` |
+| WINNER | **OpenVision2**（P0 全放量验证：loss 4.549 最低 / 训练 2419.8 img/s 最快 / C2_gap +0.082 最强 / 不坍缩；SSM 类架构 step300 坍缩） |
+
+## 🏁 R5 P0 架构对比完成 + P1 分辨率对比启动（2026-10-01 深夜）
+
+- **P0 全放量完成（22:29→23:41，`/tmp/r5_p0.log`）**：4 架构 × 3000 步 @224/16 bs64=512 负样本，固定 recipe。结论见 `EXPERIMENTS_VISION_ROUND5.md`。
+  - ✅ **OpenVision2**（505.2M）跑满 3000 步：final_loss **4.549**、训练 **2419.8 img/s**、C1 0.3008、C2_gap **+0.0818**、C4 OK → **全过**。
+  - ✅ **MoE-ViE**（505.5M/活性 222M）跑满 3000 步：loss 5.780、1264.5 img/s、C1 0.3202、C2_gap +0.0466 → 全过但弱于 OV2。
+  - ❌ **DeepEncoderV2**（Attn+SSM 混合）与 **MambaEye**（纯 SSM）**step 300 就熔断**：C1=1.0000（完全坍缩）、C2_gap≈0；MambaEye 额外 C4=FAIL。checkpoint 已存 `vision_fused.pt`。
+  - 🔑 **核心发现**：坍缩**非纯 recipe 现象，而是架构相关**——即便用 R4 验证过的固定 recipe（冻结 CLIP text 768 + InfoNCE），**含 SSM(Mamba) 块的视觉塔 step300 内必坍缩；纯 Attention / Attention+MoE 不坍缩**。这是 R5 最有价值的发现。
+  - 🐛 脚本级缺陷（无害）：熔断 `break` 只在 rank0，触发其余 rank SIGABRT → 整体 exit 1，但数据已落盘。P1 不受影响。
+- **P0 判胜 = OpenVision2**（loss/吞吐/C2_gap 三领先 + 不坍缩）。
+- **P1 已启动**（23:58，`setsid bash r5_p1.sh openvision2`，日志 `/tmp/r5_p1.log`）：胜出架构 × {224/16, 336/14, 448/14} × 3000 步 @bs16=128 负样本（batch 匹配）。已记 GPU 独占（0 MiB compute）+ NFS 争用核验（pretrain 在 .29 idle、P-5a 已完）。
+- 已产出 `EXPERIMENTS_VISION_ROUND5.md`（P0 表 + C1–C4 轨迹 + 论文回填建议；P1 运行中）。WAITING=1。
+## ✅ R6 完成（第六轮：文本塔 77 与数据切换裁定，纯 CPU，2026-10-01）
+
+> 交付物：`EXPERIMENTS_VISION_ROUND6.md`（全证据，含裁定表 + 逐字取证）。**纯 CPU、未占卡、未中断 R5 P0。**
+
+- **三结论（详见报告）**：
+  1. **数据 = 分阶段切**：R5 P0/P1/P2 保持 en500k（LLaVA 长 recaption，**不中断已跑 P0**，作对照臂）；**正式训练（Stage(iii) 编码器训练，Stage(iv) 前）切 GPIC `short`**。实测：盘上 **462 tar ≈5.8M 对**（全量 8000，下载中）；short = 20 token / **0% 截断** / off-diag 0.245 最分散 → 足够且更优。
+  2. **77 根因 = 官方 OpenVision2 `open_clip_config.json → text_cfg.context_length=77`**（已抓原文核实：77/49408/512/8/12；`train.py:50-52` 逐字段一致）。⚠️ 追注：open_clip `TextTransformer` 类默认恰好也是 77（OpenAI-CLIP 谱系同值，报告 §2.5 如实说明）。**官方 `open_clip_pytorch_model.bin` 无 text tower**（294 key 纯 vision 304.55M，无 text/logit_scale）→ 无法用官方 text 塔替代，继续用冻结 `clip-vit-large-patch14-336`(768)。
+  3. **77 不能也不该变长**：冻结 CLIP 塔 `max_position_embeddings=77`（>77 实测抛 `ValueError`）；R4 已证截断非坍缩主因；正式训练用 GPIC short 让 77 天然冗余 → **保持 77**。
+- **对 R5 联动**：R5 recipe 不变（冻结 CLIP text + InfoNCE），数据 en500k **不变**；P1/P2 可加 GPIC 臂作对照（非必需）。论文回填建议见报告 §5（⚠️ 需「OpenVision2」命名去歧义：本项目 30L 非官方 24L）。
+- **状态**：PHASE → **R5_active**（R6_probe 已完成）；WAITING 维持 1（R5 P0 仍在跑，末架构 moevie）。未改 `*.tex`、未碰他人文件。
 
 ## 🔬 R5 启动（状态切换 + 目标，2026-10-01）
 
