@@ -12,8 +12,8 @@
 
 | 项 | 当前值 |
 |:---|:---|
-| **当前指令** | 🎯 **只回答 §0 的两个问题**（2026-10-01 修订，**原 10 主题清单作废**）：<br>**① LLM pretrain 的数据够不够 + 配比怎么定**<br>**② Vision encoder 的数据够不够 + 配比怎么定**<br>用 `cimi-search` / `cimi-fetch`，产出 `run/DATA_RESEARCH.md`。**不要扩展到这两个问题之外。** |
-| **优先级覆盖** | **两个问题 > 其他一切**；`phase1/2/4`（重 I/O，等下载）与 `phase3`（等授权）**本阶段一律不碰** |
+| **当前指令** | 🎯 **（2026-10-01 夜 · 二次修订）按序做这三件**：<br>**① ⭐ 立刻重下 `UltraData-SFT-2605`** —— 运维**已在 HF 网页点同意条款**（原先 `gated=auto` 卡住，落盘只有 README + LICENSE + 179 个 `.lock`）。这是 Stage (ii) 的 SFT 主体，**当前唯一在跑的实质任务**。下完报**实际字节数 + 文件数 + 与 HF 官方清单的一致性**。<br>**② 🚫 `phase3_domain`（EDA 领域语料）正式取消** —— **不再找来源、不再调研、不再入库、不再过闸**。<br>&nbsp;&nbsp;&nbsp;&nbsp;运维理由：该语料的评测 prompt 由 docstring 生成、**与语料天然同源**，"把测试集放进训练集"**没有意义**。<br>&nbsp;&nbsp;&nbsp;&nbsp;⚠️ **必须区分**：被取消的是「**EDA 语料线**」；<br>`EDA-Eval-PyAether` 158 任务的**黑名单红线依然有效、必须继续执行**（那是"禁止"，不是"语料"）。<br>**③ R 阶段两问已收敛** —— `DATA_RESEARCH.md` 复核若无**新事实**，**不要再扩写**。<br>调研类产出仍以 `run/DATA_RESEARCH.md` 为唯一交付物。 |
+| **优先级覆盖** | **① SFT-2605 重下 > 其他一切**；<br>`phase1/2/4`（重 I/O，等下载）**本阶段不碰**；<br>🚫 **`phase3_domain` 已取消**，**不要再碰**（任务书 §2 相应行已划掉） |
 | **状态索取** | `<无>`（若运维写入具体问题，本轮**先答该问题**再干活，答案写进 `MEMORY_DATA.md` 顶部的"运维问答"区） |
 | **暂停标志** | `<无>`（若写入 `STOP`，本轮**只更新记忆、不做任何 I/O 与数据处理**，然后退出） |
 
@@ -114,8 +114,9 @@ ERROR_COUNT:  <n>
 
 ### R 阶段执行要求（逐条遵守）
 
-1. 🚫 **只做上面两个问题**，**不要扩展**到 EDA 语料、agentic SFT/RL 数据、长上下文、去污染方法、偏好数据等
-   —— **那些本阶段一律不做、不写**
+1. 🚫 **只做上面两个问题**，**不要扩展**到 agentic SFT/RL 数据、长上下文、去污染方法、偏好数据等
+   —— **那些本阶段一律不做、不写**。
+   ⚠️ **EDA 语料已是"正式取消"，不再是"本阶段不做"** —— **永久不做**（见运维指令区 ②）
 2. 每问产出一张表：`候选源 | URL | 规模 | 许可 | 可得性 | 建议 | 优先级`
 3. **必须给 URL**；头部候选要用 `cimi-fetch` **抓正文核实**，**不要只凭搜索结果标题下结论**
 4. **区分三类可得性**：`公开可直接下载` / `需申请或注册` / `仅论文描述（无公开数据）`
@@ -143,7 +144,7 @@ ERROR_COUNT:  <n>
 把已在盘上的原始语料，变成**训练可直接消费、配比正确、且不污染评测集**的形式。产出五类（见方案文档 §2.2）：
 
 1. 通用文本 stable 主体（mcore `.bin/.idx`）
-2. 退火混合源（code / math / **EDA**）
+2. 退火混合源（code / math）　~~EDA~~ **← 🚫 已取消**（运维指令区 ②；与评测集同源，无意义）
 3. 多模态训练集（webdataset tar）
 4. 多模态 held-out 评估集
 5. **污染隔离白/黑名单 + 校验脚本（红线，P0）**
@@ -189,7 +190,7 @@ ERROR_COUNT:  <n>
 - `mvp-lab/`：`LLaVA-OneVision-1.5-Mid-Training-85M-webdataset`、`LLaVA-OneVision-2-Data`、`ov2_quickstart`
 - `BLIP3o/BLIP3o-Pretrain-Long-Caption`、`UCSC-VLAA/Recap-DataComp-1B`、`Recap-DataComp-1B`
 - `Amshaker/Mobile-O-Pre-Train`、`ayoubkirouane/CircuitVQA`
-- `cxmt/`（EDA / 电路相关标注与 benchmark —— phase3 领域排查时可查）
+- `cxmt/`（EDA / 电路相关标注与 benchmark —— ~~phase3 领域排查时可查~~ **🚫 该线已取消，不再排查**）
 
 > 对数据 agent 的影响：phase0 已盘点的主路径（`/nas_inference/openbmb`、`/nas_train/datasets/mvp-lab`）正确；
 > 但 phase0 尚未覆盖 `②` 里的 Ultra-FineWeb 基础版（`/nas_train/.../openbmb`）、`③ stanford-vision-lab/gpic`、`④ /nas_user` 整块 —— 后续 phase 复核时把这些补齐进 DATA_LEDGER。
@@ -199,7 +200,8 @@ ERROR_COUNT:  <n>
 ## 2. 阶段与推荐执行顺序
 
 ```
-推荐顺序： 【🎯 当前】R（调研，见 §0） → phase0 inventory ✅ → phase5 isolation ✅ → phase1 validate → phase2 text → phase3 domain → phase4 mm → phase6 handoff
+推荐顺序： 【🎯 当前】phase1 validate（含 ① SFT-2605 重下） → phase0 inventory ✅ → phase5 isolation ✅ → phase2 text → phase4 mm → phase6 handoff
+🚫 phase3 domain —— **已取消，从流水线移除**（见运维指令区 ②）
 ```
 
 > **为什么 phase5（污染隔离）排在最前**：它必须在**任何"训练可消费产物"产出之前**就位。
@@ -212,7 +214,7 @@ ERROR_COUNT:  <n>
 | **phase5** `isolation` | 建 EDA-Eval-PyAether 的黑名单指纹 + 训练集侧扫描脚本 + SFT 同闸 | `CONTAMINATION_CHECK.md` 初版 + 可复用脚本 |
 | **phase1** `validate` | 下载完整性（parquet 全量可开 / tar 可解 / shard 无缺号）；损坏清单 | 损坏/缺失清单 + 校验命令 |
 | **phase2** `text` | 通用文本分词打包成 `.bin/.idx`（stable 主体 + 退火源），**复用 Round 1 脚本** | 训练实测能加载并跑 10 步冒烟 |
-| **phase3** `domain` | EDA 领域语料**排查**（有哪些、在哪、能否导出/授权）→ 确认后入库并过闸 | 来源清单 + 实际入库量（**查不到就是结论，不要造数据**） |
+| **phase3** `domain` 🚫 **已取消** | ~~EDA 领域语料排查（有哪些、在哪、能否导出/授权）→ 确认后入库并过闸~~<br>**运维 2026-10-01 正式取消**：评测 prompt 由 docstring 生成、**与语料天然同源**，"把测试集放进训练集"没有意义 | —（不再产出） |
 | **phase4** `mm` | 多模态下载完成后：校验 → 统计 → 切子集 → webdataset 打包 → held-out 评估集 | Stage (iii) 能直接开跑 |
 | **phase6** `handoff` | 清单终版 + 污染报告终版 + 结果 HTML + 可复现命令 | 可交接给训练 |
 

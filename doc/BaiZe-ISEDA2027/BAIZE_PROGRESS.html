@@ -67,13 +67,14 @@
 </div>
 
 <div class="danger">
-  <strong>🚨 当前最紧要的三件事</strong>
+  <strong>🚨 当前紧要事项</strong>　<small>（第 1、3 条已闭环，仅第 2 条待办）</small>
   <ol>
-    <li><b>vision 的 R5 未下发</b> —— agent 队列空、正在长睡空转；而 <b>R1/R2 的架构 loss 结论已因坍缩全部作废</b>，
-        R5（用修好的 <code>sem_clip</code> recipe 重跑四架构对比）是 Stage (iii) 恢复有效产出的唯一路径。</li>
+    <li><b>vision 的 R5 已于今晚下发</b>（<code>BAIZE_VISION_TASK.md</code> 顶部）—— 等 agent 唤醒接单即可开跑；
+        由于 <b>R1/R2 的架构 loss 结论已因坍缩全部作废</b>，
+        R5（用修好的 <code>sem_clip</code> recipe 重跑四架构对比）是 Stage (iii) 恢复有效产出的<b>唯一路径</b>。</li>
     <li><b>P-5b 一旦启动将独占 8 卡 ≈2.5 天</b> → <b>P-4 / P-6 / P-7 应排在它之前清掉</b>（合计 ≈5–9 小时）。</li>
-    <li><b>两件事卡在人工</b>：① HF 上同意 <code>UltraData-SFT-2605</code> 条款后重下（Stage (ii) SFT 主体缺料）；
-        ② <b>EDA 语料授权确认</b>（Stage (ii)「领域模型」claim 的唯一支撑）。</li>
+    <li><b>人工项已清零</b>：① ✅ <code>UltraData-SFT-2605</code> 的 HF 条款<b>已点同意</b> → data agent 已被派<b>重下</b>；
+        ② 🚫 <b>EDA 语料线已由运维正式取消</b>（评测 prompt 由 docstring 生成、与语料同源，"把测试集放进训练集"没有意义）。</li>
   </ol>
   详见 <a href="#s9">§9 当前排期与预计完成时间</a>。
 </div>
@@ -82,15 +83,15 @@
   <strong>一句话进展</strong>：<strong>四个 loop 全部在跑</strong>。
   vision <strong>R2 完成 → R3 定位坍缩根因 → R4 解决阻塞</strong>；pretrain <strong>P-1 + P-2 均已定稿</strong>
   （U 形谷底 + Δ 落在噪声内），并新增 <strong>P-4 FP8 可行性评估</strong>；
-  data agent 已<strong>转为「R 阶段：数据调研」</strong>（用 cimi-search 为 5 个阶段调研数据源）；
-  ops relay 已执行 RUN_ID 1/2，<strong>RUN_ID 3（磁盘）已排队</strong>。
+  data agent 的 <strong>R 阶段两问已收敛</strong>（<code>DATA_RESEARCH.md</code> v1.1：真实 token ≈690B、vision 用 GPIC <code>short</code>），现已被派 <strong>重下 SFT-2605</strong>；
+  ops relay 已执行 <strong>RUN_ID 1/2/3</strong>（环境 / 数据根目录 / 磁盘），<strong>现空闲待命</strong>。
 </div>
 
 <div class="kpi-row">
   <div class="kpi"><div class="v">4 / 4</div><div class="l">loop 全部运行中</div></div>
   <div class="kpi"><div class="v">P-1✅ P-2✅ P-3✅</div><div class="l">pretrain 三项定稿 · P-4 FP8 进行中</div></div>
   <div class="kpi"><div class="v">R4</div><div class="l">vision 解决核心阻塞（关键路径）</div></div>
-  <div class="kpi"><div class="v">10</div><div class="l">data R 阶段调研主题</div></div>
+  <div class="kpi"><div class="v">690B</div><div class="l">实测真实 token（论文写 1.8T，高估 2.6–3.9×）</div></div>
 </div>
 
 
@@ -100,8 +101,8 @@
      → 原以为要"补更高的点来框住最优"，结果证明<b>最优本来就在网格内</b>，论文结论因此<b>更硬</b>；<br>
   ② <b>视觉 <code>6.51ms</code></b>：R2-4 干净复测得 <b>6.872ms</b>，<b>确认论文这个卖点数字正确</b>
      （之前怀疑的 10.07ms 才是伪影）；<br>
-  ③ <b>EDA 语料来源找到了</b>：<code>eda_fastmcp/docs/</code> 的 API 参考文档 <b>≈45 MB 纯文本</b>
-     —— Stage (ii)「领域模型」claim 的<b>唯一支撑</b>，此前一直是"来源未落实"。
+  ③ <b>SFT 主体语料解锁</b>：<code>UltraData-SFT-2605</code> 的 HF 条款<b>已点同意</b>
+     —— Stage (ii) 的 SFT 主体从"落盘为空"转为"可重下"（原先被 <code>gated=auto</code> 卡住）。
 </div>
 
 <div class="toc">
@@ -401,8 +402,10 @@
   <tr>
     <td><b>(ii)</b> LLM 后训练</td>
     <td>领域退火（<b>复用 Stage (i) 的 WSD 机制</b>）→ SFT → RLVR + GRPO（奖励 4 臂 R1–R4，含 anti-cheat 与 cheat rate）</td>
-    <td>🟡 <b>EDA 领域语料来源已找到</b>（<code>eda_fastmcp/docs/</code> ≈45 MB 纯文本）——
-        待<b>授权确认 + 逐片段过闸</b>入库（<b>注意：评测 prompt 由 docstring 生成，天然同源，必须逐片段扫描</b>）</td>
+    <td>🟢 <b>SFT 主体已解锁</b>：<code>UltraData-SFT-2605</code> 的 HF 条款<b>已点同意</b> → 正在<b>重下</b>。<br>
+        🚫 <b>EDA 领域语料线已取消</b>（2026-10-01 运维决定）—— 其评测 prompt 由 docstring 生成、<b>与语料天然同源</b>，
+        "把测试集放进训练集"没有意义。<br>
+        <b>→ Stage (ii) 的"领域性"改由通用语料 + 领域退火叙事承担</b>（论文口径待确认，tex 不动）</td>
   </tr>
   <tr>
     <td><b>(iv)</b> MLLM 对齐</td>
@@ -429,9 +432,12 @@
     <td>已人工重启（.29，PID 2425284），R2 的 P-1 已在训练；WAITING 正则、git fetch/pull/push、watchdog 铁律均已修复</td>
   </tr>
   <tr>
-    <td>2</td><td><b>EDA 领域语料来源</b></td><td><span class="badge b-warn">🟡 已找到，待授权/入库</span></td>
-    <td>data agent <b>已确认来源</b>：<code>eda_fastmcp/docs/</code> 的 API 参考文档 <b>≈45 MB 纯文本</b>。
-        下一步：授权确认 + 入库（走污染闸）</td>
+    <td>2</td><td><b>EDA 领域语料</b> —— 🚫 <b>已取消</b></td><td><span class="badge b-info">🚫 关闭</span></td>
+    <td><b>2026-10-01 运维正式取消</b>：不再找来源、不再调研、不再入库、不再过闸。<br>
+        理由：该语料的<b>评测 prompt 由 docstring 生成、与语料天然同源</b>，
+        "把测试集放进训练集"<b>没有意义</b>。<br>
+        ⚠️ 被取消的是「<b>EDA 语料线</b>」；<code>EDA-Eval-PyAether</code> 158 任务的
+        <b>黑名单红线依然有效、继续执行</b>（那是"禁止"，不是"语料"）</td>
   </tr>
   <tr>
     <td>3</td><td><b>视觉编码器无有效下游指标</b>（R@K 退化到随机水平）</td><td><span class="badge b-ok">✅ 已裁决</span></td>
@@ -486,24 +492,24 @@
         （EN 均值 202–228 / <b>CN 均值 498</b>，<b>99.7–100% 被 77-token 截断</b>）</td>
   </tr>
   <tr>
-    <td>10</td><td>🚨 <b>vision 的 R5 未下发</b>——agent 队列空、正在长睡空转</td>
-    <td><span class="badge b-no">🔴 高（<b>需立即下发</b>）</span></td>
+    <td>10</td><td><b>vision 的 R5</b>——已于 2026-10-01 晚<b>下发</b>（任务书顶部）</td>
+    <td><span class="badge b-ok">✅ 已下发，待接单</span></td>
     <td>R4 已完成核心修复，但 <b>R1/R2 的架构 loss 结论已因坍缩全部作废</b>；
         <b>R5（用 <code>sem_clip</code> recipe 重跑四架构 × 分辨率对比）是 Stage (iii) 恢复有效产出的唯一路径</b>。
-        预计耗时 <b>≈2–3 小时</b>，<b>下发后当晚即可出结果</b>；且应全程监控 C1–C4</td>
+        预计耗时 <b>≈2–3 小时</b>，agent 唤醒接单后当晚即可出结果；应全程监控 C1–C4（含熔断线）</td>
   </tr>
   <tr>
-    <td>11</td><td>🔴 <b>SFT 主体语料缺料</b>——<code>UltraData-SFT-2605</code> <b>落盘为空</b>
+    <td>11</td><td><b>SFT 主体语料</b>——<code>UltraData-SFT-2605</code> 原先落盘为空
         （只有 README + LICENSE，179 个 <code>.lock</code>）</td>
-    <td><span class="badge b-no">🔴 高（<b>需人工</b>）</span></td>
-    <td>该数据集 <code>gated=auto</code>，<b>需先在 HF 网页点同意条款</b>，之后才能重下成功。
-        否则 Stage (ii) 的 SFT 主体<b>无料可用</b></td>
+    <td><span class="badge b-ok">✅ 已解锁，重下中</span></td>
+    <td><b>HF 条款已由运维点同意</b>（原被 <code>gated=auto</code> 卡住）→ data agent 已被派<b>重下</b>。<br>
+        下完需报<b>实际字节数 + 文件数 + 与 HF 官方清单一致性</b></td>
   </tr>
   <tr>
-    <td>12</td><td>🟡 <b>EDA 语料授权</b>（与 #2 同源，此处单列为<b>排期</b>项）</td>
-    <td><span class="badge b-warn">🟡 <b>需人工</b></span></td>
-    <td>来源已定位（<code>eda_fastmcp/docs/</code> ≈45 MB 纯文本），但<b>授权确认需人拍板</b>；
-        这是 Stage (ii)「领域模型」claim 的<b>唯一支撑</b>。在此期间 data agent 只能<b>待命</b></td>
+    <td>12</td><td><b>Stage (ii)「领域模型」叙事的支撑</b> —— 因 EDA 语料取消而需要<b>重新定口径</b></td>
+    <td><span class="badge b-warn">🟡 待定（论文口径）</span></td>
+    <td>原计划的唯一支撑（EDA 语料）已取消。需确认 Stage (ii) 的"领域性"改由
+        <b>通用语料 + 领域退火 + SFT</b> 承担。<b>不影响当前算力排期</b>，但<b>投稿前须在论文口径上落实</b></td>
   </tr>
 
 </table>
@@ -514,7 +520,7 @@
   <tr><th>角色</th><th>脚本 / 文件</th><th>状态</th></tr>
   <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-warn">⚠️ 队列空</span>（.12 · R2 ✅ → R3 定位<b>表征坍缩</b> → <b>R4 ✅ 解决核心阻塞（C1–C4 全过）</b> → <b>🚨 R5 待下发</b>）</td></tr>
   <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ P-2 ✅ P-3 ✅</b> · <b>P-5a 运行中 7/9 点</b>（GBS=64/256 定稿，谷底均 1e-3，<b>未见右移</b>）· P-4 待 GPU · <b>P-6 / P-7 已下发</b>）</td></tr>
-  <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-info">⏸ 待命</span>（.12 · phase0/3/5 ✅ → <b>R 阶段 ✅ 收敛（2 问已答完，<code>DATA_RESEARCH.md</code> v1.1）</b> → 下一步 phase1/2/4 <b>等下载</b>；另有 2 项<b>卡人工</b>）</td></tr>
+  <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · phase0/5 ✅ · <b>R 阶段 ✅ 收敛</b>（两问已答完，<code>DATA_RESEARCH.md</code> v1.1）→ 已派 <b>① SFT-2605 重下</b>；<b>🚫 phase3_domain 已取消</b>；phase1/2/4 等下载）</td></tr>
   <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-ok">✅ 空闲待命</span>（.29 · 零 token · <b>RUN_ID 1/2/3 已全部回收</b>，随时可派 4）</td></tr>
   <tr><td>1B / 2B 架构轮</td><td><code>baize_search_loop.sh</code> · <code>baize_2b_search_loop.sh</code></td><td><span class="badge b-ok">✅ 已收敛</span>，僵尸 loop 已被清理</td></tr>
 </table>
@@ -600,7 +606,7 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
 
 <h2 class="sec" id="s9"><span class="no">9</span>当前排期与预计完成时间</h2>
 
-<p style="color:var(--muted)">基准时刻：<b>2026-10-01 22:05</b>。下表"预计耗时"是该条工作**剩余**的工作量估计。</p>
+<p style="color:var(--muted)">基准时刻：<b>2026-10-01 22:05</b>。下表"预计耗时"是该条工作<b>剩余</b>的工作量估计。</p>
 
 <table>
   <tr><th>线</th><th>当前安排的工作</th><th>状态</th><th>预计耗时</th><th>预计完成</th></tr>
@@ -664,10 +670,10 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
     <td>待下载完成后才能起</td>
   </tr>
   <tr>
-    <td><b>两个需人工的前置</b>：① <code>UltraData-SFT-2605</code> 重下（HF 上 <code>gated=auto</code>，需先点同意）② EDA 语料授权确认</td>
-    <td><span class="badge b-no">🔴 需<b>你</b>操作</span></td>
-    <td>小时级 / 待决策</td>
-    <td>—</td>
+    <td><b>原「两个需人工的前置」已清零</b>：① ✅ <code>UltraData-SFT-2605</code> 条款已点同意 → <b>重下中</b>；② 🚫 EDA 语料线<b>已取消</b>（同源，无意义）</td>
+    <td><span class="badge b-ok">✅ 已解决</span></td>
+    <td>重下视带宽</td>
+    <td>随 phase1 一起</td>
   </tr>
 
   <tr>
@@ -682,19 +688,19 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
 <div class="danger">
   <b>⚠️ 三条排期结论</b>
   <ol>
-    <li><b>vision 队列是空的</b>：R4 已完成，但 <b>R5（重跑四架构对比）尚未下发</b> —— agent 正在 30 分钟长睡空转。
-        而 R1/R2 的架构结论已因坍缩全部作废，**R5 是 Stage (iii) 恢复有效产出的唯一路径**。建议**立即下发**。</li>
+    <li><b>vision 队列</b>：R4 已完成，<b>R5 已于今晚下发</b>（任务书顶部）—— agent 唤醒接单即可开跑。
+        由于 R1/R2 的架构结论已因坍缩全部作废，<b>R5 是 Stage (iii) 恢复有效产出的唯一路径</b>。</li>
     <li><b>P-5b 一旦启动会独占 8 卡约 2.5 天</b> → <b>P-4（≤2h）、P-7（≤1h）、P-6（需 GPU 起 SGLang）都会被挡住</b>。
-        建议在 P-5a 结束、P-5b 启动之前把这三项**先清掉**（合计 ≈5–9 小时），否则要等 2.5 天。</li>
-    <li><b>两件事卡在人工</b>：① HF 上同意 <code>UltraData-SFT-2605</code> 条款后重下（否则 Stage (ii) 的 SFT 主体缺料）；
-        ② <b>EDA 语料授权确认</b>（Stage (ii)「领域模型」claim 的唯一支撑）。这两条不解决，data agent 只能继续待命。</li>
+        建议在 P-5a 结束、P-5b 启动之前把这三项<b>先清掉</b>（合计 ≈5–9 小时），否则要等 2.5 天。</li>
+    <li><b>人工项已清零</b>：① ✅ <code>UltraData-SFT-2605</code> 条款已点同意、<b>重下中</b>；
+        ② 🚫 <b>EDA 语料线已取消</b>（运维决定：评测 prompt 由 docstring 生成、与语料同源，没有意义）。
+        → data agent <b>可正常推进 phase1</b>，不再待命。</li>
   </ol>
 </div>
 
 <div class="note">
-  <b>关键路径</b>：<b>pretrain P-5b ≈ 2.5 天</b>是当前最长的一项；其余（vision R5、P-4/P-6/P-7、data phase1/2/4）都在**小时级**。
-  因此<b>真正决定 11 月能否开训的，是 P-5a → P-5b 这条链</b>；其余各线可以并行推进、不构成瓶颈。
-</div>
+  <b>关键路径</b>：<b>pretrain P-5b ≈ 2.5 天</b>是当前最长的一项；其余（vision R5、P-4/P-6/P-7、data phase1/2/4）都在<b>小时级</b>。
+  因此<b>真正决定 11 月能否开训的，是 P-5a → P-5b 这条链</b>；其余各线可以并行推进、不构成瓶颈。</div>
 
 
 <footer>

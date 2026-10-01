@@ -60,16 +60,29 @@
   </div>
 </header>
 
+<div class="danger">
+  <strong>🚫 2026-10-01 更新：EDA 领域语料线正式取消</strong><br>
+  运维决定：<b>不再做 EDA 数据</b>（<code>phase3_domain</code> 取消）。理由 ——
+  该语料的评测 prompt 由 docstring 生成、<b>与语料天然同源</b>，"把测试集放进训练集"<b>没有意义</b>。<br>
+  因此本方案中所有 <b>§4.3「EDA 领域语料」</b>、<b>§5 里程碑的 EDA 行</b>、<b>§7 风险 #1</b>、
+  以及配比表里的 <b>1% EDA 退火源</b>，<b>一律作废，请勿据此执行</b>。<br>
+  ⚠️ <b>但这条红线依然有效</b>：<code>EDA-Eval-PyAether</code> 的 158 个任务内容
+  <b>绝不进入任何训练集</b> —— 那是"<b>禁止</b>"，不是"<b>语料</b>"，两者勿混淆。<br>
+  ⚠️ 另：本页多处 <b>"1.8T token"</b> 系<b>把磁盘字节误当成 token</b>，实测<b>真实 ≈690B</b>
+  （详见 <code>run/DATA_RESEARCH.md</code> 与 <code>BAIZE_PROGRESS.html</code> §6 #8）。
+</div>
+
 <div class="verdict">
   <strong>结论先行。</strong>
-  可获取语料已<strong>远超算力窗口能消费的量</strong>（文本侧 1.8T 已就绪，多模态下载过半），
+  可获取语料已<strong>远超算力窗口能消费的量</strong>（文本侧实测 <strong>≈690 B token</strong> 已就绪，多模态下载过半），
   因此本阶段的目标<strong>不是"拿到更多数据"，而是"把已有数据变成训练可直接用、配比正确、且不污染评测集的形式"</strong>。
-  三条数据线（通用文本 / 通用多模态 / EDA 领域）中，<strong>领域语料是唯一尚未落实来源的一条，也是最关键的一条</strong>。<br>
+  两条数据线（通用文本 / 通用多模态）—— <s>三条（含 EDA 领域）</s>
+  <strong>EDA 领域线已于 2026-10-01 取消</strong>。<br>
   另有一条<strong>不可违反的红线</strong>：<code>EDA-Eval-PyAether</code> 的 158 个任务内容绝不进入任何训练集。
 </div>
 
 <div class="kpi-row">
-  <div class="kpi"><div class="v">1.8 T</div><div class="l">通用文本 token（已下载完）</div></div>
+  <div class="kpi"><div class="v">690 B</div><div class="l">通用文本真实 token（原写 1.8T = 字节误记）</div></div>
   <div class="kpi"><div class="v">&gt;50%</div><div class="l">LLaVA-OneVision-1.5 下载进度</div></div>
   <div class="kpi"><div class="v">≈ 240 B</div><div class="l">8×H100 连训 30 天可消费 token</div></div>
   <div class="kpi"><div class="v">158</div><div class="l">必须隔离的评测任务</div></div>
@@ -101,7 +114,7 @@
   <tr><th>线</th><th>数据集</th><th>路径</th><th>状态</th><th>用途</th></tr>
   <tr>
     <td rowspan="4"><b>通用文本</b></td>
-    <td>Ultra-FineWeb-L3 (EN) <span class="badge b-ok">1.8T tok</span></td>
+    <td>Ultra-FineWeb-L3 (EN) <span class="badge b-ok">≈467 B tok</span> <small>（原写 1.8T = 字节误记；en+zh 全量 ≈690B）</small></td>
     <td><code>/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa</code></td>
     <td><span class="badge b-ok">已下载</span></td>
     <td>Stage (i) 预训练主体</td>
@@ -160,7 +173,7 @@
   <tr><td>日产能</td><td>≈ 8.0 B token</td><td>24 h 连续</td></tr>
   <tr><td><b>连续训练 30 天</b></td><td><b>≈ 242 B token</b></td><td>8.0 B × 30</td></tr>
   <tr><td>Chinchilla 最优（2.2B）</td><td>≈ 44 B token</td><td>20 × params</td></tr>
-  <tr><td>已有通用文本</td><td>1.8 T token</td><td>Ultra-FineWeb-L3</td></tr>
+  <tr><td>已有通用文本</td><td>≈690 B token<br><small>（原写 1.8T = 磁盘字节误记）</small></td><td>Ultra-FineWeb-L3</td></tr>
 </table>
 <p><strong>结论：30 天连续训练 ≈ 242 B token ≈ Chinchilla 最优的 5.5 倍，而可用语料是它的 7.4 倍以上。</strong>
 数据量<b>根本不是约束</b>——约束是<b>算力窗口</b>。因此本阶段的成功标准不是"下载/切分了更多数据"，
@@ -170,7 +183,7 @@
 <table>
   <tr><th>#</th><th>产物</th><th>格式</th><th>消费者</th><th>优先级</th></tr>
   <tr><td>1</td><td>通用文本 stable 主体</td><td>mcore <code>.bin/.idx</code></td><td>Stage (i) 预训练</td><td><span class="badge b-no">P0</span></td></tr>
-  <tr><td>2</td><td>退火混合源（code / math / <b>EDA</b>）</td><td>同上</td><td>Stage (i) decay 尾段</td><td><span class="badge b-no">P0</span></td></tr>
+  <tr><td>2</td><td>退火混合源（code / math / <s>EDA</s> 🚫<b>已取消</b>）</td><td>同上</td><td>Stage (i) decay 尾段</td><td><span class="badge b-no">P0</span></td></tr>
   <tr><td>3</td><td>多模态训练集</td><td>webdataset tar</td><td>Stage (iii)/(iv)</td><td><span class="badge b-warn">P1</span></td></tr>
   <tr><td>4</td><td>多模态 held-out 评估集</td><td>webdataset tar</td><td>检索代理评估</td><td><span class="badge b-warn">P1</span></td></tr>
   <tr><td>5</td><td><b>隔离白/黑名单 + 校验脚本</b></td><td>text/JSON + py</td><td>全流程</td><td><span class="badge b-no">P0（红线）</span></td></tr>
@@ -182,7 +195,7 @@
   <tr><td>stable 主体</td><td>85%</td><td>Ultra-FineWeb-L3 (EN)</td><td>≈ 200 B</td></tr>
   <tr><td>decay 尾段</td><td>10%</td><td>UltraData-Code</td><td>≈ 24 B</td></tr>
   <tr><td>decay 尾段</td><td>4%</td><td>UltraData-Math</td><td>≈ 10 B</td></tr>
-  <tr><td>decay 尾段</td><td><b>1%</b></td><td><b>EDA 领域语料（新）</b></td><td>≈ 2 B</td></tr>
+  <tr style="opacity:.5"><td>decay 尾段</td><td><s><b>1%</b></s></td><td><s><b>EDA 领域语料（新）</b></s> 🚫 <b>已取消</b></td><td><s>≈ 2 B</s></td></tr>
 </table>
 <div class="note">
   Round 1 的胜出配比是 <b>L3 86 : code 10 : math 4</b>，<b>不含任何 EDA 数据</b>。
@@ -231,7 +244,7 @@
 
 <h2 class="sec" id="s4"><span class="no">4</span>三条数据线</h2>
 
-<h3>4.1 通用文本（已就绪）— 把 1.8T 变成"训练可直接消费"</h3>
+<h3>4.1 通用文本（已就绪）— 把 ≈690B 变成"训练可直接消费"</h3>
 <ul>
   <li><b>重点不是再下载，而是转格式 + 建配比。</b>产出 mcore <code>.bin/.idx</code>，直接喂 <code>pretrain_launcher.py</code>。</li>
   <li><b>复用既有产物</b>：<code>BASE_DIR/data/ultrafineweb_l3_qa</code> 已经跑通过一次（200k docs / 165M token），
@@ -249,7 +262,11 @@
   <li><b>必须另切 held-out 评估集</b>，且与训练源不同源（Round 1 用的是 imagenet/EN 训练、laioncn/EN 评估，沿用该做法）。</li>
 </ul>
 
-<h3>4.3 EDA 领域语料（来源未落实）— <b>本方案最关键、也最不确定的一条</b></h3>
+<h3 style="opacity:.55">4.3 <s>EDA 领域语料（来源未落实）— 本方案最关键、也最不确定的一条</s>　🚫 <b>本节已作废</b></h3>
+<div class="danger">
+  🚫 <b>2026-10-01 取消</b>：EDA 语料线不再推进 —— 其评测 prompt 由 docstring 生成、<b>与语料天然同源</b>，
+  "把测试集放进训练集"没有意义。以下内容<b>仅作历史记录，请勿执行</b>。
+</div>
 <div class="note">
   这条线是 <b>Stage (ii)「领域模型」claim 的唯一支撑</b>。当前 BaiZe 的预训练语料（web+code+math）
   <b>不含任何 EDA 数据</b>，所以整个"领域模型"叙事目前是悬空的。
@@ -323,7 +340,7 @@
   </tr>
   <tr>
     <td><b>2026-11</b></td>
-    <td><b>EDA 领域语料落实</b>（来源确认 + 入库 + 过闸）</td>
+    <td><s><b>EDA 领域语料落实</b>（来源确认 + 入库 + 过闸）</s> 🚫 <b>已取消，从里程碑移除</b></td>
     <td><code>phase3_domain</code></td>
     <td>来源清单 + 实际入库量</td>
   </tr>
@@ -345,9 +362,11 @@
 <table>
   <tr><th>#</th><th>风险</th><th>严重度</th><th>应对</th></tr>
   <tr>
-    <td>1</td><td><b>EDA 语料来源未落实</b>——(ii) 的"领域模型"叙事的唯一支撑</td>
-    <td><span class="badge b-no">🔴 高</span></td>
-    <td>10 月内查清 <code>eda_fastmcp</code> 的 API 知识库能否导出；<b>若确认拿不到，须尽早降级 (ii) 的叙事</b>，而不是拖到最后</td>
+    <td>1</td><td><s><b>EDA 语料来源未落实</b>——(ii) 的"领域模型"叙事的唯一支撑</s></td>
+    <td><span class="badge b-warn">🚫 已关闭</span></td>
+    <td><b>2026-10-01 运维决定取消该线</b>（评测 prompt 由 docstring 生成、与语料同源，没有意义）。<br>
+        → 由此<b>新产生</b>一项待办：<b>(ii) 的"领域性"需改由通用语料 + 领域退火叙事承担</b>，
+        <b>投稿前须在论文口径上落实</b>（不影响当前算力排期）</td>
   </tr>
   <tr>
     <td>2</td><td>多模态下载未完成（&gt;50%）</td><td><span class="badge b-warn">🟠 中</span></td>
