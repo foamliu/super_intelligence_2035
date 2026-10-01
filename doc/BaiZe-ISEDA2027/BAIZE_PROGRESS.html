@@ -527,13 +527,19 @@
   <tr>
     <td>9</td><td>🔴 <b>视觉编码器训练数据严重不足</b>——现用 <code>en500k</code> = <b>50 万对</b>，
         而 Round 1 实跑 3000 步 × 192 = <b>57.6 万张</b>（≈1 epoch）</td>
-    <td><span class="badge b-no">🔴 高</span></td>
+    <td><span class="badge b-warn">🟠 中（<b>已派 R2 去找</b>）</span></td>
     <td>已下载的 LLaVA-OneVision-1.5 Mid-85M = <b>8500 万对（170×）</b>，业界 CLIP 级 4–20 亿对。
         <b>架构对比够用，做出可用编码器不够</b>；打包后约 <b>12 TB</b>（注意磁盘）。<br>
         ✅ <b>data R 阶段已给出数据路线</b>：<b>caption 改用 GPIC <code>short</code> 为主</b>
         （20 token、<b>0% 截断</b>；全量 <b>8000 tar</b>、许可<b>全部 permissive</b> 可发布）；
         LLaVA 85M <b>降级为「图像多样性来源」，其 caption 丢弃</b>
-        （EN 均值 202–228 / <b>CN 均值 498</b>，<b>99.7–100% 被 77-token 截断</b>）</td>
+        （EN 均值 202–228 / <b>CN 均值 498</b>，<b>99.7–100% 被 77-token 截断</b>）。<br>
+        🚨 <b>但上一轮它答错了题</b>：既然给了"严重不足"的结论，<b>却从没去 HF 找过任何通用图文对</b> ——
+        反而把问题缩小成「要不要找 <b>EDA 版图/原理图</b>」然后答「不值得」。
+        <b>已派 R2 视觉侧任务</b>（<code>BAIZE_DATA_TASK.md</code> §0.4）：
+        ① 先盘点<b>本地已有</b>的多模态源（<b>可能漏了 <code>Recap-DataComp-1B</code>（十亿级）/ <code>conceptual-captions-12m</code>（短 alt-text）</b>）；
+        ② 用 <code>cimi-search</code> + HF API 找 <b>≥10 个</b>通用图文对候选（含<b>实测短 caption 率</b>）；
+        ③ 给出<b>前 3 推荐 + 下载命令</b>，并回答"能不能补上数据不足"</td>
   </tr>
   <tr>
     <td>10</td><td><b>vision 的 R5</b>——已于 2026-10-01 晚<b>下发</b>（任务书顶部）</td>
@@ -590,7 +596,7 @@
   <tr><th>角色</th><th>脚本 / 文件</th><th>状态</th></tr>
   <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-ok">✅ 已派活</span>（.12 · R2 ✅ → R3 定位<b>表征坍缩</b> → <b>R4 ✅ C1–C4 全过</b> → <b>R6 🔵 已下发（CPU 裁定）→ R5（GPU 重跑）</b>）</td></tr>
   <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ P-2 ✅ P-3 ✅</b> · <b>P-5a 运行中 7/9 点</b>（GBS=64/256 定稿，谷底均 1e-3，<b>未见右移</b>）· P-4 待 GPU · <b>P-6 / P-7 已下发</b>）</td></tr>
-  <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · phase0/5 ✅ · R 阶段 ✅ 收敛（两问已答完，<code>DATA_RESEARCH.md</code> v1.1）→ 已派 <b>① SFT-2605 重下</b> + <b>② 🔴 R2 调研：P-8 数据方案</b>；<b>🚫 phase3_domain 已取消</b>；phase1/2/4 等下载）</td></tr>
+  <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · phase0/5 ✅ · R 阶段 ✅ 收敛（两问已答完，<code>DATA_RESEARCH.md</code> v1.1）→ 已派 <b>① SFT-2605 重下</b> + <b>② 🔴 R2 调研（§0.3 LLM 侧 + §0.4 视觉侧找图文对）</b>；<b>🚫 phase3_domain 已取消</b>；phase1/2/4 等下载）</td></tr>
   <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-ok">✅ 空闲待命</span>（.29 · 零 token · <b>RUN_ID 1/2/3 已全部回收</b>，随时可派 4）</td></tr>
   <tr><td>1B / 2B 架构轮</td><td><code>baize_search_loop.sh</code> · <code>baize_2b_search_loop.sh</code></td><td><span class="badge b-ok">✅ 已收敛</span>，僵尸 loop 已被清理</td></tr>
 </table>
@@ -762,9 +768,10 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
     <td>—</td><td>已结束</td>
   </tr>
   <tr class="ok-box">
-    <td class="ok-box" style="padding:6px 10px"><b>🔴 R2 阶段：P-8 数据方案</b>（<u>当前主攻</u>）<br>
-        <small>8 源事实表（含 <code>Ultra-FineWeb</code>(base) / <code>UltraX-Preview</code> / <code>RL-2609</code>，<b>不许留 <code>?</code></b>）·
-        base vs L3 <b>重叠率</b> · P-8 三档（44B/100B/200B）<b>投料+下载清单</b> · 可复制下载命令</small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>🔴 R2 阶段</b>（<u>当前主攻</u>）<br>
+        <small><b>§0.3 LLM 侧</b>：8 源事实表（含 <code>Ultra-FineWeb</code>(base) / <code>UltraX-Preview</code> / <code>RL-2609</code>）·
+        base vs L3 <b>重叠率</b> · P-8 三档投料+下载清单<br>
+        <b>§0.4 视觉侧</b>：本地多模态源逐条实测 · <b>≥10 个 HF 通用图文对候选</b>（含<b>实测短 caption 率</b>）· 前 3 推荐+下载命令</small></td>
     <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">🔄 已派</span><br>
         <small>与 SFT-2605 重下可并行</small></td>
     <td class="ok-box" style="padding:6px 10px"><b>数小时</b><br>
