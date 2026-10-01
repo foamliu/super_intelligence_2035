@@ -1,4 +1,4 @@
-# DeepResearch 项目 · 智谱合作需求
+# DeepResearch 项目 · 长鑫智谱合作 需求沟通材料（2026/9/23）
 
 
 
