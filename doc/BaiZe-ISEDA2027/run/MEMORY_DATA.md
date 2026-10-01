@@ -11,10 +11,10 @@ WAITING: 1
 
 ```
 PHASE:        R research ✅ + R2 LLM 侧 ✅ + R2 视觉侧 ✅（§0.4）+ phase5 isolation v0.3 + phase1/2 脚本就绪
-已完成:       §0.3 8 源事实表满填·base vs L3 重叠 0%·P-8 三档 44/100/200B；§0.4 本地多模态 12 源逐条实测（图像形态+≤77 率）·13 HF 候选（7 URL-only 淘汰 / 6 bytes）·前 3 推荐；SFT-2605 重下已启动
-当前动作:     R2 收尾：回写记忆/清单、git 提交推送；SFT-2605（97.6GB/978 jsonl）后台下载中（token=foamliu 有效）
-下一步:       base(2.99TB) 与 SFT-2605(97.6GB) 下载完成后 → check_contamination.py 过闸 → phase2 分词（base-en 86:10:4）
-阻塞:         无硬阻塞；base 2.99TB + gpic + LLaVA + SFT-2605 四路 HF 下载争带宽（~10-13MB/s，重 I/O 继续避让）
+已完成:       §0.3 8 源事实表满填·base vs L3 重叠 0%·P-8 三档 44/100/200B；§0.4 本地多模态 12 源逐条实测（图像形态+≤77 率）·13 HF 候选（7 URL-only 淘汰 / 6 bytes）·前 3 推荐；SFT-2605 重下已启动（均推远端 commit 12553d7）
+当前动作:     轻 I/O 维护：实测四路 HF 下载进度并回写记忆/流水、git 提交推送
+下一步:       base(2.99TB) 与 SFT-2605(97.6GB) 下载完成后 → check_contamination.py 过闸 → phase2 分词（base-en 86:10:4）；SFT-2605 下完报实际字节/文件数与 HF 官方清单一致性
+阻塞:         无硬阻塞；四路下载争带宽——SFT-2605 179/978 jsonl（4.3G/97.6GB）·base 21/64624 parquet（26G/2.99TB）·gpic 1866 文件（843G）·LLaVA 7575 parquet；重 I/O 继续避让
 ERROR_COUNT:  0
 ```
 
@@ -29,10 +29,10 @@ ERROR_COUNT:  0
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R research ✅ + R2 LLM 侧 ✅（8 源满填 / base vs L3 重叠 0% / P-8 86:10:4）+ R2 视觉侧 ✅（§0.4：本地 bytes 图文对实测 / 13 HF 候选 / 前 3 推荐）+ phase5 isolation v0.3 + phase1/2 脚本就绪** |
-| WAITING | 1（base 2.99TB + gpic + LLaVA + SFT-2605 四路下载中，重 I/O 阶段继续推迟） |
+| WAITING | 1（base 2.99TB + gpic + LLaVA + SFT-2605 四路下载中：SFT-2605 179/978 · base 21/64624 · gpic 1866 文件 · LLaVA 7575，重 I/O 阶段继续推迟） |
 | ERROR_COUNT | 0 |
 | 节点 | `10.239.2.12`（主机 `whag0pgpuap12`；NFS：`/nas_inference` 只读源，`/nas_train` 产出） |
-| 更新 | 2026-10-01 |
+| 更新 | 2026-10-02 |
 
 ## 看板（按推荐执行顺序）
 
@@ -79,3 +79,4 @@ ERROR_COUNT:  0
 - 2026-10-01 —— 唤醒 9（🎯 R 阶段已收敛，轻 I/O 维护）：复核运维指令未变（仍「只答 §0 两问」）、无状态索取、无 STOP。git `## main...origin/main` 干净、`DATA_RESEARCH.md` v1.1 已在远端（`46a3f8d`=v1、`60af7fb`=v1.1）。下载进度（`find -name '*.parquet'` / `ls|wc -l` 口径）：LLaVA 85M = **7556 parquet**（较唤醒 8 的 7549 +7，全在 obelics/EN；sa1b/zero250m 仍未开始）、GPIC train **439/8000**（+9）、test 128/128；2 个 `hf download` 进程存活 → phase1/2/4 继续避让、phase3 待 EDA 授权，WAITING 保持 1。
 - 2026-10-01 —— 唤醒 10（🎯 R2 LLM 数据侧调研，两项优先任务全完成）：① **8 源事实表满填**（逐源 HF REST `/api/datasets`+tree+`datasets-server` `/size` 实测）：base 1,290,261,453 行/2.99TB/en 2048+zh~62576 文件、UltraX 113,789,578 行/487GB/5 config、L3 1,058,535,126/1.9TB、Code 348,083,481/1.22TB、Math 181,186,453/552GB、SFT-2605 gated ~97.6GB/1000+ jsonl、SFT-Agent-2609 ~500K 样本/51GB、RL-2609 20 jsonl/187.63GB（4 config）；**token 实测**（`r2_local_sample.py`）：Code ≈411B（L2 355+L3 56）、Math ≈303B（L1 184+L2p 32+L3 87）、L3≈690B、base ≈1.12T。② **base vs L3 重叠实测**：由于 L3 = base 的 Q&A/多风格合成改写（README），实测 base 48 vs L3 696 文档 verbatim **0.00%**、5-gram Jaccard 均值 **0.0000** → **下 base = +1.12T 净新增 raw web，非重复劳动**。③ **P-8 三档**：44B/100B/200B = base-en(86):code(10):math(4)，主体由 L3 改判 base；base 2.99TB（apache-2.0 公开）**下载已启动**（写入 `/nas_inference/.../Ultra-FineWeb/`，进程存活）；UltraX（与 base 重叠）与 RL-2609（Stage v）**不下载**。④ **配比来源复核**：MiniCPM5 模型卡 + 8 数据集卡 + arxiv 2602.09003 均 **未公开逐源百分比** → 建议配比 86:10:4（复用 S4 消融）。⑤ **HL 阻塞**：SFT-2605 重下缺有效 token（现 token `whoami` 401）→ 上报待轮换。写 DATA_RESEARCH R2 节 + DATA_LEDGER D9/D10 + 本文件；WAITING 保持 1（base 下载中）。
 - 2026-10-01 —— 唤醒 11（🎯 §0.4 R2 视觉侧 + ① SFT-2605 重下，两项均落地）：**① SFT-2605**：token `hf_lqLxH…` 实测 `whoami-v2`＝用户 **foamliu**（有效，非之前误判 401），gated resolve 通过、单文件试下成功 → **全量 97.6GB / 984 文件（978 jsonl）后台下载已启动**（进程存活，待下完核验一致性）。**② §0.4 视觉侧全完成**：本地 12 源逐条实测**图像形态 + ≤77 率**（`tar -tf`/`pyarrow` schema/`first-rows` 取证）：CC12M webdataset **bytes** 1100 tar/1.2T/≈11M 对 98%≤77 ✅；Amshaker Mobile-O **bytes** 2250 tar/3.7T/≈6M 对 100%≤77 ✅；BLIP3o **bytes** 但 0%≤77（长描述）⚠️；laion2B-en-aesthetic **URL-only**（schema=URL/TEXT/embedding）🚫；Recap-DataComp-1B URL-only 🚫。**13 个 HF 候选** first-rows 实测：7 URL-only 淘汰（DataComp/COYO/PixelProse/Recap/OBELICS/LAION-COCO/LAION2B）+ 6 bytes。**结论：可用对 50 万 → ≈1800 万（×35），前 3 推荐（CC12M + Amshaker + LLaVA）全本地、无需新下载**。`cimi-search`（api.bocha.cn）仍 SSL 阻断 → 用 HF 搜索 API + datasets-server 等价完成并列出请求。写 DATA_RESEARCH R2-视觉侧 + LEDGER §6 + 本文件；WAITING 保持 1（base/gpic/LLaVA/SFT-2605 四路下载中）。
+- 2026-10-02 —— 唤醒 12（🎯 R2 已全部交付，轻 I/O 维护）：复核 BAIZE_DATA_TASK 运维指令**未变**（仍是「三次修订」① SFT-2605 重下 ② §0.3/§0.4 R2 ③ phase3_domain 取消）、无状态索取、无 STOP。R2 两项（§0.3 LLM / §0.4 视觉）已在唤醒 10/11 完成并推远端（data 最后一次 commit `12553d7`=wake 11）。本唤醒仅实测四路下载进度并回写记忆：**SFT-2605 179/978 jsonl（4.3G/97.6GB，~18%）· base 21/64624 parquet（26G/2.99TB，~0.9%）· gpic 1866 文件（843G）· LLaVA 7575 parquet**，4 个 `hf download` 进程存活（gpic / base / LLaVA / SFT-2605）。磁盘 `/nas_train` 剩 32T、`/nas_inference` 剩 21T、`/nas_user` 剩 29T，均够。phase1/2/4 重 I/O 继续避让，WAITING 保持 1。下一步 = 各下载完成后（尤其 SFT-2605 下完需报实际字节/文件数与 HF 官方清单一致性、base 落地后过污染闸）→ 污染扫描 → phase2 分词。
