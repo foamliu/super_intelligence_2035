@@ -43,7 +43,9 @@ def build_config_json() -> dict:
 
     SGLang 新版以 layers_block_type（list）为规范写法，同时兼容 hybrid_override_pattern。
     """
-    mapping = {"M": "mamba", "*": "attention", "-": "mlp"}
+    # ★ transformers 5.17.0 NemotronHConfig 的规范层名：
+    #   linear_attention (Mamba2) / full_attention / mlp
+    mapping = {"M": "linear_attention", "*": "full_attention", "-": "mlp"}
     layers_block_type = [mapping[c] for c in HYBRID_PATTERN]
     assert len(layers_block_type) == NUM_LAYERS, len(layers_block_type)
     return {
@@ -52,8 +54,6 @@ def build_config_json() -> dict:
         "vocab_size": VOCAB_SIZE,
         "hidden_size": HIDDEN_SIZE,
         "intermediate_size": INTERMEDIATE_SIZE,
-        "num_hidden_layers": NUM_LAYERS,
-        "hybrid_override_pattern": HYBRID_PATTERN,
         "layers_block_type": layers_block_type,
         "num_attention_heads": NUM_ATTENTION_HEADS,
         "num_key_value_heads": NUM_KV_HEADS,
@@ -74,10 +74,13 @@ def build_config_json() -> dict:
         "time_step_min": 0.001,
         "time_step_max": 0.1,
         "time_step_floor": 1e-4,
-        # ★ 待验证：megatron run_config 报 activation_func=gelu；Nemotron-H MLP 默认 relu2。
+        # ★ 已确认：megatron run_config `activation_func: torch._C._nn.gelu` → 精确 erf GELU，
+        #   与 transformers ACT2FN["gelu"] 一致（非 tanh 近似）。
         "mlp_hidden_act": "gelu",
         "mamba_hidden_act": "silu",
-        "mamba_chunk_size": 256,
+        "chunk_size": 256,
+        "layer_norm_epsilon": 1e-5,
+        "rescale_prenorm_residual": False,
         "torch_dtype": "bfloat16",
         "bos_token_id": 1,
         "eos_token_id": 2,
@@ -94,13 +97,13 @@ def convert(sd: dict) -> dict:
       decoder.layers.{i}.mlp.linear_fc1/fc2.*   (mlp-only)
       decoder.final_norm.weight                 [2048]
       output_layer.weight                       [129408, 2048]
-    HF 命名（SGLang/vLLM NemotronH）：
-      model.embed_tokens.weight / lm_head.weight
-      model.layers.{i}.input_layernorm.weight
-      model.layers.{i}.mixer.{in_proj,conv1d,norm,out_proj}.weight + mixer.A_log/D/dt_bias
-      model.layers.{i}.self_attn.{q,k,v,o}_proj.weight
-      model.layers.{i}.mlp.{up,down}_proj.weight
-      model.norm.weight
+    HF 命名（transformers 5.17.0 NemotronHForCausalLM 实测 state_dict）：
+      model.embeddings.weight / lm_head.weight
+      model.layers.{i}.norm.weight
+      model.layers.{i}.mixer.{in_proj,conv1d,norm,out_proj}.weight + mixer.A_log/D/dt_bias   (linear_attention)
+      model.layers.{i}.mixer.{q,k,v,o}_proj.weight                                        (full_attention)
+      model.layers.{i}.mixer.{up,down}_proj.weight                                        (mlp)
+      model.norm_f.weight
     """
     hf = {}
 
@@ -108,8 +111,8 @@ def convert(sd: dict) -> dict:
         assert name not in hf, "dup key " + name
         hf[name] = t.contiguous()
 
-    put("model.embed_tokens.weight", sd["embedding.word_embeddings.weight"])
-    put("model.norm.weight", sd["decoder.final_norm.weight"])
+    put("model.embeddings.weight", sd["embedding.word_embeddings.weight"])
+    put("model.norm_f.weight", sd["decoder.final_norm.weight"])
     if "output_layer.weight" in sd:
         put("lm_head.weight", sd["output_layer.weight"])
     else:
@@ -124,7 +127,7 @@ def convert(sd: dict) -> dict:
         #   → 统一映射为 HF 的 input_layernorm.weight
         if btype == "M":
             m = f"{mcore}.mixer"
-            put(f"{hfp}.input_layernorm.weight", sd[f"{m}.in_proj.layer_norm_weight"])
+            put(f"{hfp}.norm.weight", sd[f"{m}.in_proj.layer_norm_weight"])
             # in_proj 拼接顺序（mamba_mixer.py "# z x B C dt"）：
             #   [z(4096)|x(4096)|B(1024)|C(1024)|dt(64)] → [10304, 2048]
             in_proj = torch.cat([
@@ -155,21 +158,21 @@ def convert(sd: dict) -> dict:
             put(f"{hfp}.mixer.out_proj.weight", sd[f"{m}.out_proj.weight"])
         elif btype == "*":
             a = f"{mcore}.self_attention"
-            put(f"{hfp}.input_layernorm.weight", sd[f"{a}.linear_qkv.layer_norm_weight"])
+            put(f"{hfp}.norm.weight", sd[f"{a}.linear_qkv.layer_norm_weight"])
             qkv = sd[f"{a}.linear_qkv.weight"]  # [3072,2048] = q(2048) k(512) v(512)
             sizes = [HIDDEN_SIZE, NUM_KV_HEADS * HEAD_DIM, NUM_KV_HEADS * HEAD_DIM]
             q, k, v = qkv.split(sizes, dim=0)
-            put(f"{hfp}.self_attn.q_proj.weight", q)
-            put(f"{hfp}.self_attn.k_proj.weight", k)
-            put(f"{hfp}.self_attn.v_proj.weight", v)
-            put(f"{hfp}.self_attn.o_proj.weight", sd[f"{a}.linear_proj.weight"])
+            put(f"{hfp}.mixer.q_proj.weight", q)
+            put(f"{hfp}.mixer.k_proj.weight", k)
+            put(f"{hfp}.mixer.v_proj.weight", v)
+            put(f"{hfp}.mixer.o_proj.weight", sd[f"{a}.linear_proj.weight"])
             # qk_layernorm=false（run_config）→ 无 q_norm/k_norm
         elif btype == "-":
             mlp = f"{mcore}.mlp"
-            put(f"{hfp}.input_layernorm.weight", sd[f"{mlp}.linear_fc1.layer_norm_weight"])
+            put(f"{hfp}.norm.weight", sd[f"{mlp}.linear_fc1.layer_norm_weight"])
             # 非门控单投影 MLP：fc1[8192,2048]=up、fc2[2048,8192]=down
-            put(f"{hfp}.mlp.up_proj.weight", sd[f"{mlp}.linear_fc1.weight"])
-            put(f"{hfp}.mlp.down_proj.weight", sd[f"{mlp}.linear_fc2.weight"])
+            put(f"{hfp}.mixer.up_proj.weight", sd[f"{mlp}.linear_fc1.weight"])
+            put(f"{hfp}.mixer.down_proj.weight", sd[f"{mlp}.linear_fc2.weight"])
         else:
             raise ValueError("unexpected pattern char " + btype)
     return hf

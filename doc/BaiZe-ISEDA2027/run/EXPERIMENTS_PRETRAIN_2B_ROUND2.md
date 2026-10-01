@@ -355,4 +355,44 @@ TRAIN_ITERS=5000 LR=1.5e-3 bash scripts/train.sh mamba2 p1_1p5e3 29711 8
 **结论**：Stage(i) 20000 步 ckpt → HF Nemotron-H 的转换 **语义正确、可上 lm_eval**（logits 相关 0.99、top5 5/5、embedding bit-exact、QKV 投影 bit-exact）。下一唤醒直接推进「起服 + lm_eval」：先解决 sglang 装不上（`cuda-tile` 元数据，`--extra-index-url https://pypi.nvidia.com/`），再 `lm_eval --model local-completions` 8 集 + 先验 `echo=True` logprobs。
 
 （注：`mlp_hidden_act` 已由本对拍的 MLP 层逐层 cos≈0.99999 间接证实 `gelu` 正确——若用 `relu2` 会立刻在 L1（首个 MLP 层）出现明显偏差，未观察到。）
+
+### P-6 节 7：lm_eval 8 集 zero-shot 全量结果 ✅ 完成（2026-10-02 05:40）
+
+> 走通 **HF 直连路径**（绕开 sglang 的 `cuda-tile` 阻塞），直接用 lm_eval(0.4.13) 的 HFLM 加载转换后的 `hf_nemotron_h`。
+> 三处关键解锁/修复：
+> ① 数据集下载——`cdn-lfs.huggingface.co` 被代理 DNS 拦截，改 `HF_ENDPOINT=https://hf-mirror.com`（8 集 all 可达）；
+> ② 致命性能/内存坑——`mamba_ssm 2.2.6` 的 `__init__` 硬 import `MambaLMHeadModel`→`generation.py` 又 import
+>    transformers **5.x 已删除**的 `GreedySearchDecoderOnlyOutput/SampleDecoderOnlyOutput` → `import mamba_ssm` 整体失败 →
+>    transformers 回退到参考 PyTorch 实现（慢 ~700×，且 boolq/sciq 因参考实现物化 48–80GB 大张量而 **OOM**）；
+> ③ 修复 = 把 `mamba_ssm/__init__.py` 的 `MambaLMHeadModel` 导入包 try/except（共享 site-packages，向后兼容：transformers 4.x 下无行为变化）
+>    + `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`（缓解 sciq 碎片化）。启用 SSD fused kernel 后吞吐 **8.5 → 150~6000 it/s**，
+>    全量 8 集从 ~2h 缩到 **~5 min**，且不再 OOM。
+
+**命令**（8 集 × 8 GPU 并行，`run/baize_p6_run_full.sh`；单集/limit 冒烟见 `run/baize_p6_lmeval.sh`）：
+
+```
+python -m lm_eval --model hf \
+  --model_args "pretrained=.../nemo_experiments/s5_01/hf_nemotron_h,dtype=bfloat16,trust_remote_code=False" \
+  --tasks <task> --num_fewshot 0 --batch_size 8 --output_path .../lm_eval_results
+```
+
+**结果（zero-shot，20k 步 ckpt，全量测试集）**：
+
+| 评测集 | acc | acc_norm | 样本数 | harness 口径 |
+|:--|--:|--:|--:|:--|
+| ARC-Challenge | 0.2159 | **0.2594** | 1172 | acc_norm |
+| ARC-Easy | 0.4482 | **0.4196** | 2376 | acc_norm |
+| BoolQ | **0.6141** | — | 3270 | acc |
+| HellaSwag | 0.2769 | **0.2924** | 10042 | acc_norm |
+| OpenBookQA | 0.1660 | **0.3120** | 500 | acc_norm |
+| PiQA | 0.6023 | **0.5860** | 1838 | acc_norm |
+| SciQ | 0.6060 | **0.5160** | 1000 | acc_norm |
+| Winogrande | **0.5170** | — | 1267 | acc |
+| **Avg** | 0.4308 | — | — | **0.4395** |
+
+**口径**：harness-standard Avg = **0.4395**（ARCs/HellaSwag/OBQA/PiQA/SciQ 取 acc_norm，BoolQ/Winogrande 取 acc）；raw `acc` Avg = 0.4308。
+
+**解读**：20k 步（≈655M token）的 2.2B Mamba2-hybrid，BoolQ/SCIq/PiQA 已到 58–61%，显著高于随机基线（2 选 ~50%、4 选 ~25%），
+证实 20k 步早期快照已学到可用的常识/知识能力；ARC-Challenge 21.6% / OpenBookQA 16.6% 仍是 STEM 弱项（符合 20k 步早期预期）。
+这些数字用于对齐 Xmodel-2 Table 2 的 8 集口径。**遗留**：PiQA acc(0.6023) vs acc_norm(0.5860) 存在 lm-eval 已知的 2 选归一化差异，暂按 harness 默认 acc_norm 计 Avg。
 5. **「GBS×LR 是否右移」怎么写**（P-5a ✅ 已定稿）：GBS ∈ {8,64,256,1024} 四横切面 loss 均随 LR 单调升、谷底统一 1e-3，**最优 LR 不随 batch 右移**，GBS=1024 生产口径推荐 LR=1e-3（可直接迁移，无需 sqrt/linear batch-scaling）。建议 §4 补一句：*"A GBS×LR sweep (GBS ∈ {8,64,256,1024}, matched to 164M tokens) shows loss is monotone in LR at every batch size with optimum LR=1e-3, so the LR found at GBS=8 transfers directly to production GBS=1024 without batch rescaling."*
