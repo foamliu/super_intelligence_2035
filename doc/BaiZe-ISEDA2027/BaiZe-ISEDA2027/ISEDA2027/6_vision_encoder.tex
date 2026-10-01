@@ -19,7 +19,7 @@ Table~\ref{tab:visarch} summarizes the measured parameter counts and the three h
 
 \begin{table}[htbp]
 \centering
-\caption{Architecture-level comparison for the vision encoder (from-scratch, unified open\_clip + SigLIP + fixed text tower). Inference latency is measured at batch=1 / bf16 / 224/16. Type: Attn = attention, A+S = attention + SSM; MoE-ViE activates 222.0M parameters per token.}
+\caption{Architecture-level comparison for the vision encoder (from-scratch, unified open\_clip + SigLIP + fixed text tower). Inference latency is measured at batch=1 / bf16 / 224/16. Type: Attn = attention, A+S = attention + SSM; MoE-ViE activates 222.0M parameters per token. MambaEye's batch-1 latency is $31.6$\,ms; a single $150$\,s stall seen once in an earlier sweep did not reproduce in two independent clean re-measurements.}
 \label{tab:visarch}
 \small
 \setlength{\tabcolsep}{4pt}
@@ -29,15 +29,33 @@ Table~\ref{tab:visarch} summarizes the measured parameter counts and the three h
 \midrule
 OpenVision2 & 505.0M & Attn & \textbf{4.456} & \textbf{2139} & \textbf{6.51} \\
 DeepEncoderV2 & 516.9M & A+S & 4.466 & 1459 & 17.76 \\
-MambaEye & 534.9M & SSM & 4.470 & 790 & hang@bs1 \\
+MambaEye & 534.9M & SSM & 4.470 & 790 & 31.6 \\
 MoE-ViE & 505.2M & MoE & 4.466 & 852 & 141.7 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
+\begin{table}[htbp]
+\centering
+\caption{Architecture comparison across token budgets (patch~14, $3000$ steps at $lr{=}3{\times}10^{-3}$). Within every column the four architectures lie within $0.0025$ of each other. The $1024$-token column was run at batch $16{\times}6$ instead of $32{\times}6$ because of the memory guard, and the SigLIP objective depends on the number of in-batch negatives, so that column is comparable within itself but not against the other two.}
+\label{tab:visarch_res}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Arch.} & \textbf{256 tok} & \textbf{576 tok} & \textbf{1024 tok} & \textbf{img/s} \\
+\midrule
+OpenVision2 & 4.4567 & \textbf{4.4560} & \textbf{3.7454} & \textbf{1631} \\
+DeepEncoderV2 & \textbf{4.4563} & 4.4566 & 3.7466 & 1408 \\
+MoE-ViE & 4.4575 & 4.4564 & 3.7471 & 558 \\
+MambaEye & 4.4566 & 4.4565 & 3.7479 & 861 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \textbf{Finding.} Over $5000$--$10000$-step horizons all four architectures converge to $\approx4.45$--$4.47$ loss, with inter-architecture differences $<0.02$ (within multi-seed variance).
-Loss is therefore \emph{architecture-invariant} at this scale and token count: at $224/16$ the encoder produces only $196$ tokens, too short for the SSM recurrence or MoE routing to amortize their per-token overhead into a quality gain.
-Consequently the architecture choice is driven solely by efficiency, where the pure-attention \textbf{OpenVision2} dominates---$1.47\times$ the training throughput of the next-best (DeepEncoderV2) and $2.7\times$ lower inference latency, and full-SSM MambaEye even stalls at batch~1.
+Loss is therefore \emph{architecture-invariant} at this scale, and a re-run across $256$, $576$ and $1024$ input tokens (Table~\ref{tab:visarch_res}) keeps the four-way spread below $0.0025$ at every token budget, so the conclusion is not an artifact of the short $196$-token sequence used for the main comparison.
+Consequently the architecture choice is driven by efficiency, where the pure-attention \textbf{OpenVision2} dominates on both axes---$1.47\times$ the training throughput of the next-best (DeepEncoderV2) and $2.7\times$ lower inference latency.
 
 \textit{Methodological note.} Two apparent results in this section are artifacts of the cosine schedule collapsing the learning rate to $\approx10^{-5}$ before the run ends, and we flag both rather than report them.
 The first is the ``loss plateau'' of $6.7342$ in a $1000$-step sweep, which continues to $\approx4.45$ once the cosine span is extended to $5000$--$10000$ steps.
@@ -74,17 +92,22 @@ The $448/14$ row is \emph{not comparable}: the memory guard halved its batch, an
 
 \begin{table}[htbp]
 \centering
-\caption{Objective-function (SigLIP vs CLIP InfoNCE) and learning-rate ablation on OpenVision2.}
+\caption{Objective function and learning rate on OpenVision2, all runs $3000$ steps.
+The two objectives produce losses on different scales and are \emph{not} comparable; the only commensurable quantity is throughput, where they tie to within $1\%$.
+Learning rate, by contrast, is decisive: the original anchor collapsed the schedule to its floor.}
 \label{tab:visobj}
-\begin{tabular}{lcc}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccc}
 \toprule
-\textbf{Variant} & \textbf{Loss} & \textbf{Note} \\
+\textbf{Variant} & \textbf{Loss} & \textbf{img/s} & \textbf{Note} \\
 \midrule
-SigLIP (anchor) & 4.9962 & sigmoid contrastive \\
-CLIP InfoNCE & 2.8941 & softmax contrastive (scale differs) \\
-lr $10^{-3}$ (anchor) & 4.9962 & --- \\
-lr $3{\times}10^{-3}$ & 4.4562 & --- \\
-lr $5{\times}10^{-3}$ & 4.4542 & --- \\
+SigLIP & 4.4562 & 1645 & sigmoid \\
+CLIP InfoNCE & 3.2704 & 1657 & softmax; scale differs \\
+\midrule
+lr $10^{-3}$ & 4.9962 & 1651 & schedule collapsed \\
+lr $3{\times}10^{-3}$ & 4.4562 & 1645 & selected \\
+lr $5{\times}10^{-3}$ & 4.4542 & --- & --- \\
 \bottomrule
 \end{tabular}
 \end{table}
