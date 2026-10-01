@@ -6,12 +6,21 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R4_complete**（第四轮完成：**核心阻塞=训练坍缩已解决**。根因=「随机 text 塔 + SigLIP 目标」双坍缩源；修复=「冻结预训练 CLIP 文本塔 + CLIP InfoNCE」，C1–C4 全过。详见 `EXPERIMENTS_VISION_ROUND4.md`） |
-| WAITING | 1（R4 收官；放大到全量 4 架构作为 R5 输入） |
+| PHASE | **R5_active**（第五轮：**用修复 recipe 重跑架构/分辨率对比**。P0 架构对比已启动——固定 recipe=冻结 CLIP 文本塔(768)+InfoNCE+vision head 768，4 架构 × 3000 步 @ 224/16 8 卡 TP1/DP8） |
+| WAITING | 1（R5 P0 4×3000 步流水 async running，30min 轮询；openvision2 首探针 C1=0.14/gap+0.155/C4=OK 已全规模验证） |
 | ERROR_COUNT | 0 |
-| BUDGET_USED | ~19 GPU·h 墙钟（R2/R3 ~18 + R4 修复实验 ~5×单卡短训 + C3 2000 步 ≈1 GPU·h） |
-| 更新 | 2026-10-01（R4 完成：步骤 A 六条怀疑 S1–S6 逐条定论 / 步骤 B LLaVA vs GPIC / 步骤 C 修复实验 C1–C4 全过） |
-| WINNER | OpenVision2（计算侧吞吐/延迟双最优结论不变）；**修复 recipe=冻结 CLIP 文本塔 + InfoNCE +（推荐）GPIC-short** |
+| BUDGET_USED | ~19 GPU·h 墙钟（R2/R3/R4 累计）；R5 另计 |
+| 更新 | 2026-10-01（R5.0 状态切换 + R5.1 recipe 落实 + P0 启动） |
+| WINNER | OpenVision2（计算侧双最优）；**R5 recipe=冻结 CLIP 文本塔(768) + InfoNCE +（数据源见下）** |
+
+## 🔬 R5 启动（状态切换 + 目标，2026-10-01）
+
+- **R5.0 已完成**：`PHASE` R4_complete → **R5_active**、`WAITING` 1 → 0；流水追加本条「R5 启动」。R3 坍缩判定 / R4 根因归因与修复 recipe 全保留作既定前提。
+- **R5 定位**：R4 已解决核心阻塞（C1–C4 全过），但 R1/R2 的 loss 类结论已因坍缩作废。**R5 = 用修好的 recipe 重跑架构/分辨率对比**，为 `tab:visarch`/`tab:visres`/`tab:visobj` 取有效读数。
+- **固定 recipe（R4 已验证，勿改）**：文本塔 `openai/clip-vit-large-patch14-336` text tower（768 维、全参冻结、`local_files_only`）；目标 `open_clip.loss.ClipLoss`（InfoNCE、`local_loss=False`、无 logit_bias、学 logit_scale）；vision 读出头 embed_dim→768；lr 3e-3、warmup 20；batch 尽量大（跨卡 gather 目标 512–1024 负样本）。
+- **数据源决策（如实记录）**：recipe 首选 GPIC-short，但 GPIC 仅 445/8000 tar 落盘且每 tar ~1.6GB（全量打包需读 ~712GB @NFS ~60MB/s ≈ >3h，**超 R5 6h 预算且与 pretrain NFS 争用**）。故 **P0/P1/P2 主数据 = 已打包 en500k（LLaVA 长 recaption）**——正是 R4 里 C1–C4 实际验证通过、且零额外 I/O 的数据；LLaVA 同时充当 recipe 要求的「必留对照臂」。GPIC-short 作为可选数据臂（加分项非必需项）在 P0/P1 有余量时再补。
+- **R5.5 约束**：≤6h；P0 > P1 > P2 > P3 逆序裁剪；只用 10.239.2.12（本 agent 现即在 .12 上，8×H100 全空闲）；不杀他人进程；测量记 GPU 独占 + NFS 并发核验原文。
+- **R5 P0 已启动并全规模验证（2026-10-01 22:40）**：`vision/r5_train.py`（固定 recipe）+ `vision/r5_p0.sh`（4 架构 × 3000 步 @224/16 bs64=512 负样本，串行）已 `setsid` 后台启动（日志 `/tmp/r5_p0.log`）。smoke：单卡 15 步 + 8 卡 gather（negatives=512）通过；openvision2 params 505.2M / embed=768。**首探针 @step300：C1=0.1402（≪0.95 不坍缩）、C2_gap=+0.1551、C4=OK（loss 5.82→4.17 降）、温度 22→36、~3000 img/s → 修复 recipe 在 8 卡 512 负样本 C1–C4 全过**。P1 脚本 `vision/r5_p1.sh`（胜出架构 × {224/16,336/14,448/14}，bs16=128 负样本）已预置待 P0 判胜。
 
 ## 🔬 R4 启动（状态切换 + 目标，2026-10-01）
 
