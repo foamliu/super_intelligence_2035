@@ -22,12 +22,12 @@ ls -1 "$OPENBMB" 2>/dev/null
 echo "=== 退火源：UltraData-Code 语言分布 ==="
 find "$OPENBMB/UltraData-Code/data" -maxdepth 3 -type d 2>/dev/null | sed 's#.*/##' | sort | uniq -c | head -40
 
-echo "=== 多模态：LLaVA-OneVision 子集结构 ==="
+echo "=== 多模态：LLaVA-OneVision 子集结构（注：coyo 中文目录叫 Language-CN，非 CN）==="
 for s in imagenet laioncn datacomp1b coyo mint obelics; do
   echo "[$s] EN/CN parquet 计数"
-  for lang in EN CN; do
+  for lang in EN CN Language-EN Language-CN; do
     n=$(find "$MM/$s/$lang" -maxdepth 3 -name '*.parquet' 2>/dev/null | wc -l)
-    echo "  $lang: $n"
+    [ "$n" -gt 0 ] && echo "  $lang: $n"
   done
 done
 

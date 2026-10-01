@@ -13,9 +13,9 @@
     --out /tmp/contam_smoke.md
 
 输入格式自动探测：
-  - 目录且含 *.snappy.parquet / *.parquet  → content 列（L3 通用文本）
-  - 单文件 .parquet                           → content 列
-  - .jsonl                                   → 字段 --jsonl-field（默认尝试 text/content/prompt）
+  - 目录                                      → 顶层 *.parquet（content/texts/text 列）+ 递归 *.jsonl（SFT 语料为嵌套 jsonl 目录）
+  - 单文件 .parquet                           → content/texts/text 列
+  - 单文件 .jsonl                             → 字段 --jsonl-field（默认尝试 text/content/prompt/messages 多轮对话）
   - .txt / 其他                              → 整文件为一段文本
 """
 from __future__ import annotations
@@ -58,70 +58,101 @@ def _flatten(v) -> str:
         segs = []
         for t in v:
             if isinstance(t, dict):
-                segs.append(str(t.get("user") or "") + " " + str(t.get("assistant") or ""))
+                segs.append(str(t.get("user") or t.get("assistant") or t.get("content") or ""))
             else:
                 segs.append(str(t))
         return "\n".join(segs)
     return str(v)
 
 
+def _extract_jsonl_text(obj, jsonl_field: str):
+    """从一条 jsonl 对象提取文本字段。
+
+    支持单一文本字段（text / content / prompt），以及多轮对话字段 messages
+    （list<{role,content}>，即 UltraData-SFT-Agent-2609 的格式）；
+    找不到已知字段时退化为整对象 JSON 字符串（保证不静默漏扫）。
+    """
+    keys = [jsonl_field] if jsonl_field else ["text", "content", "prompt", "messages"]
+    for key in keys:
+        if key in obj:
+            v = obj[key]
+            if isinstance(v, list):
+                parts = []
+                for m in v:
+                    if isinstance(m, dict):
+                        parts.append(str(m.get("content") or m.get("user") or m.get("assistant") or ""))
+                    else:
+                        parts.append(str(m))
+                return "\n".join(x for x in parts if x)
+            return v
+    return json.dumps(obj, ensure_ascii=False)
+
+
+def _iter_parquet(path: Path):
+    """流式产出单个 parquet 文件的文本（自动探测 content / texts / text 列）。"""
+    import pyarrow.parquet as pq
+    parrot = pq.ParquetFile(str(path))
+    for batch in parrot.iter_batches(batch_size=1024):
+        col = next((c for c in ("content", "texts", "text") if c in batch.schema.names), None)
+        if col is None:
+            break
+        for v in batch.column(col).to_pylist():
+            yield _flatten(v)
+
+
 def iter_texts(inp: str, max_docs: int, jsonl_field: str):
-    """流式产出 (idx, text)。"""
+    """流式产出 (idx, text)。目录时收集顶层 *.parquet + 递归 *.jsonl。
+
+    修复（2026-10-01）：旧版目录分支只 glob *.parquet，漏掉嵌套的 SFT jsonl 目录
+    （UltraData-SFT-Agent-2609 的 data/Code_Agent 等），导致目录输入的 jsonl 语料
+    被静默扫 0 文档。现目录也递归收集 *.jsonl，并按后缀分流读取。
+    """
     p = Path(inp)
     count = 0
 
     if p.is_dir():
-        files = sorted(list(p.glob("*.snappy.parquet")) + list(p.glob("*.parquet")))
-        import pyarrow.parquet as pq
-        for pf in files:
+        files = sorted(set(list(p.glob("*.parquet")) + list(p.rglob("*.jsonl"))))
+        if not files:
+            print(f"[warn] 目录下未找到 parquet/jsonl 文件：{inp}", file=sys.stderr)
+            return
+        for f in files:
             try:
-                parrot = pq.ParquetFile(str(pf))
+                if f.suffix == ".jsonl":
+                    with open(f, "r", encoding="utf-8") as fh:
+                        for line in fh:
+                            line = line.strip()
+                            if not line:
+                                continue
+                            if max_docs is not None and count >= max_docs:
+                                return
+                            obj = json.loads(line)
+                            yield count, _flatten(_extract_jsonl_text(obj, jsonl_field))
+                            count += 1
+                else:
+                    for text in _iter_parquet(f):
+                        if max_docs is not None and count >= max_docs:
+                            return
+                        yield count, text
+                        count += 1
             except Exception as e:
-                yield -1, f"__PARQUET_ERROR__{pf}:{e}"
+                yield -1, f"__READ_ERROR__{f}:{e}"
                 continue
-            for batch in parrot.iter_batches(batch_size=1024):
-                col = None
-                if "content" in batch.schema.names:
-                    col = "content"
-                elif "texts" in batch.schema.names:
-                    col = "texts"
-                elif "text" in batch.schema.names:
-                    col = "text"
-                if col is None:
-                    break
-                for v in batch.column(col).to_pylist():
-                    if max_docs is not None and count >= max_docs:
-                        return
-                    yield count, _flatten(v)
-                    count += 1
     elif p.suffix == ".parquet":
-        import pyarrow.parquet as pq
-        parrot = pq.ParquetFile(str(p))
-        for batch in parrot.iter_batches(batch_size=1024):
-            col = "content" if "content" in batch.schema.names else (
-                "texts" if "texts" in batch.schema.names else "text")
-            for v in batch.column(col).to_pylist():
-                if max_docs is not None and count >= max_docs:
-                    return
-                yield count, _flatten(v)
-                count += 1
+        for text in _iter_parquet(p):
+            if max_docs is not None and count >= max_docs:
+                return
+            yield count, text
+            count += 1
     elif p.suffix == ".jsonl":
         with open(p, "r", encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line:
                     continue
-                obj = json.loads(line)
-                text = None
-                for key in ([jsonl_field] if jsonl_field else ["text", "content", "prompt"]):
-                    if key in obj:
-                        text = obj[key]
-                        break
-                if text is None:
-                    text = json.dumps(obj, ensure_ascii=False)
                 if max_docs is not None and count >= max_docs:
                     return
-                yield count, _flatten(text)
+                obj = json.loads(line)
+                yield count, _flatten(_extract_jsonl_text(obj, jsonl_field))
                 count += 1
     else:
         with open(p, "r", encoding="utf-8") as f:
@@ -137,7 +168,8 @@ def main() -> int:
     ap.add_argument("--ngram", type=int, default=13)
     ap.add_argument("--threshold", type=float, default=0.8)
     ap.add_argument("--max-docs", type=int, default=None)
-    ap.add_argument("--jsonl-field", default=None)
+    ap.add_argument("--jsonl-field", default=None,
+                    help="jsonl 文本字段名；默认依次尝试 text/content/prompt/messages（messages 为 list<{role,content}> 多轮对话）")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
@@ -152,7 +184,7 @@ def main() -> int:
     flagged = 0
     hits = []
     for idx, text in iter_texts(args.input, args.max_docs, args.jsonl_field):
-        if text.startswith("__PARQUET_ERROR__"):
+        if text.startswith(("__PARQUET_ERROR__", "__READ_ERROR__")):
             continue
         scanned += 1
         sh = shingles(text, ngram)

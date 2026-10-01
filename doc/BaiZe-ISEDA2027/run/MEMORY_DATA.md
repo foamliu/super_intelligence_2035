@@ -10,11 +10,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        phase5_isolation（v0.2 完成）+ phase3_domain（来源已确认，待授权）+ phase1/2 脚本就绪
-已完成:       phase0_inventory；phase5 isolation v0.2；data_pipeline 补齐 校验脚本(validate_data.py)+分词打包 wrapper(preprocess_text.sh)
-当前动作:     补 data_pipeline 缺失脚本；实测 SFT 落盘格式（Agent=jsonl✅ / 2605=空需重下）；更新清单/记忆；git 同步
-下一步:       EDA 语料授权确认（需运维）→ 等下载完成后 phase1 全量校验 / phase2 分词 / phase4 打包（重 I/O）
-阻塞:         多模态下载未完成（LLaVA 7510 parquet 速增中）；SFT-2605 落盘为空需重下；EDA 授权待运维确认
+PHASE:        phase5_isolation（v0.3：修复 SFT 嵌套 jsonl 目录同闸）+ phase3_domain（已确认来源，待授权）+ phase1/2 脚本就绪
+已完成:       phase0_inventory；phase5 isolation v0.3；data_pipeline 盘点/校验/分词打包/指纹比对四类脚本齐备
+当前动作:     修 check_contamination.py 目录→递归 jsonl 扫描 + messages 字段；正控/负控回归冒烟；校正 LLaVA coyo Language-CN 目录计数
+下一步:       EDA 授权确认（需运维）；多模态下载完成后 phase1 全量校验 / phase2 分词 / phase4 打包（重 I/O）
+阻塞:         多模态下载未完成（LLaVA≈7519 parquet 仍增、gpic 687G）；SFT-2605 落盘为空需重下；EDA 授权待运维确认
 ERROR_COUNT:  0
 ```
 
@@ -28,7 +28,7 @@ ERROR_COUNT:  0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **phase5_isolation（v0.2 完成）+ phase3_domain（来源已确认，待授权）+ phase1/2 脚本就绪** |
+| PHASE | **phase5_isolation（v0.3 完成）+ phase3_domain（来源已确认，待授权）+ phase1/2 脚本就绪** |
 | WAITING | 1（多模态下载未完成，重 I/O 阶段推迟） |
 | ERROR_COUNT | 0 |
 | 节点 | `10.239.2.12`（主机 `whag0pgpuap12`；NFS：`/nas_inference` 只读源，`/nas_train` 产出） |
@@ -39,7 +39,7 @@ ERROR_COUNT:  0
 | 阶段 | 状态 |
 |:---|:---:|
 | phase0 inventory（实测盘点） | ✅ 完成（DATA_LEDGER v0） |
-| phase5 isolation（**先立闸**） | ✅ 完成（v0.2：536 任务 + NFKC/Unicode 归一化 + 8-gram 兜底，全快照正控 100%） |
+| phase5 isolation（**先立闸**） | ✅ 完成（v0.3：536 任务 + NFKC/Unicode 归一化 + 8-gram 兜底 + **SFT 嵌套 jsonl 目录同闸扫描**，全快照正控 100%） |
 | phase1 validate（完整性校验） | 🟡 校验脚本已备（validate_data.py），全量跑待下载完成后 |
 | phase2 text（通用文本 .bin/.idx） | 🟡 分词打包 wrapper 已备（preprocess_text.sh + 污染闸门），跑待下载完成后 |
 | phase3 domain（EDA 领域语料排查） | 🟡 来源已确认（API 参考文档 ≈45MB），待授权 + 入库 |
@@ -69,3 +69,4 @@ ERROR_COUNT:  0
 - 2026-10-01 —— 唤醒 2：phase5 升级为 **6 快照并集黑名单**（536 任务 / 191,718 ngram），`build_blacklist.py` 支持多 `--eval-jsonl`；正控 `-46`=46/46、`cuhk`=21(+59 短跳过)；API 参考文档粗扫 0 命中。**phase3**：确认 `eda_fastmcp/docs/` 有 ≈45MB API 参考文本（来源材料，红线内允许侧）。写 DATA_LEDGER §5、CONTAMINATION_CHECK v0.1。多模态 7500 parquet（基线 7057，仍在增）→ WAITING 保持 1。
 - 2026-10-01 —— 唤醒 3（phase5 修 bug → v0.2）：定位 `normalize()` 的 `[^a-z0-9_]` 会丢弃**所有非 ASCII 字符（含中文）**，导致 cuhk 80 任务中 59 条中文 prompt 丧失指纹。改为 `NFKC + Unicode \w`（NFKC 先把 Kangxi 部首兼容字 ⼀ U+2F00→一 等映射回标准 CJK）；对 NFKC 后仍 <13 字的 4 条（CUHK-012/037/042/052）加 **8-gram 兜底**（新增 `short_ngram_hashes.txt` 与扫描侧短 tier）。重生成黑名单：536 任务 / 193,295 13-gram（+1,577 全来自修复的中文）/ 4 短任务 / 10 8-gram。冒烟：cuhk **80/80**（原 21）、v20260311 158/158、148=148、46=46、Updated102=102、TEST=2、负控 L3 1500→0。多模态 7506 parquet（obelics EN 仍在增）→ WAITING 保持 1。
 - 2026-10-01 —— 唤醒 4（补齐 phase1/2 脚本 + 实测 SFT 落盘格式）：补齐 §7.3 验收所需但此前缺失的两类可复现脚本——`validate_data.py`（phase1 完整性校验：parquet/tar/jsonl/shards/census 五子命令，默认轻 I/O 只读 footer/成员名/前 N 行）与 `preprocess_text.sh`（phase2 分词打包 wrapper：复用 Round1 `preprocess_data.py` + 内置 `--with-contam` 污染闸门）。语法与实跑自测：`py_compile`/`bash -n` 通过；`shards` 自测 en500k 25 个 shard **0..24 连续无缺号**；`census` 自测 Code-L3/py = 147 parquet/148.4GiB。**关键实测**：`UltraData-SFT-Agent-2609` = jsonl（50 shard / 51GiB，2GB/shard，`data/Code_Agent` 等）✅；`UltraData-SFT-2605` = **落盘为空**（152K，仅 README+LICENSE，`data/no_think/*` 目录空，179 个 `.lock` 缓存），与任务书"已下载"不符 → 需重下（新数据缺口，已上报待确认）。下载仍进行中（LLaVA 7510 parquet）→ WAITING 保持 1。
+- 2026-10-01 —— 唤醒 5（修 SFT 同闸目录-jsonl 扫描 + 校正 LLaVA 目录命名）：发现 **check_contamination.py 目录分支只 glob parquet、漏掉嵌套 jsonl**（Agent-2609 实为 `data/{Code,General,Search,Tool}_Agent/*.jsonl`），"jsonl 模式直接可扫"对**目录输入不成立** → 会让 SFT 目录语料被静默扫 0 文档。修复：目录递归收集 `*.jsonl`(rglob) + 新增 `_extract_jsonl_text`（支持 Agent-2609 的 `messages` list<{role,content}> 多轮对话，实测单文档 40KB）+ `_flatten` 加 content 回退。冒烟回归全过：正控 v20260311 **158/158**；Agent-2609 单文件 30 文档 / 目录 10 文档均 **0 命中**（短兜底 0 → 证明 messages 非空）。另校正 LLaVA 计数：**coyo 中文在 `Language-CN` 目录（436 parquet，非 `CN`）**，phase0 误记 coyo CN=0 → 修正总数 ≈7519（EN 5571 / CN 1948）；inventory.sh 同步覆盖 Language-CN。下载仍进行中（LLaVA≈7519 / gpic 687G）→ WAITING 保持 1。

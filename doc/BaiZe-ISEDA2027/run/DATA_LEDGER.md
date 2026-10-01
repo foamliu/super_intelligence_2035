@@ -42,17 +42,20 @@
 | baize-vision/en500k | `/nas_train/app.e0031982/datasets/baize-vision/en500k/` | 25 tar（`shard-00000..00024`）/ 68.59 GiB | imagenet/EN，Round1 已派生 |
 | baize-vision/eval5k | `/nas_train/app.e0031982/datasets/baize-vision/eval5k/` | 1 tar / 1.27 GiB | laioncn/EN held-out |
 
-**LLaVA 85M 子集 parquet 计数（实测，下载进行中）：**
+**LLaVA 85M 子集 parquet 计数（实测，2026-10-01 下载进行中，数字仍增长）：**
 
-| 子集 | EN | CN |
-|:---|---:|---:|
-| imagenet | 50 | 32 |
-| laioncn | 430 | 132 |
-| datacomp1b | 439 | 136 |
-| coyo | 1504 | **0（无 CN）** |
-| mint | 553 | 152 |
-| obelics | 2569 | 1060 |
-| **合计** | **5545** | **1512** |
+| 子集 | EN | CN | 备注 |
+|:---|---:|---:|:---|
+| imagenet | 50 | 32 | |
+| laioncn | 430 | 132 | |
+| datacomp1b | 439 | 136 | |
+| coyo | 1504 | **436** | ⚠️ 中文在 **`Language-CN`**（非 `CN`）子目录 |
+| mint | 553 | 152 | |
+| obelics | 2594 | 1060 | EN 较 phase0(2569) +25 |
+| **合计** | **5571** | **1948** | 总数 ≈7519（下载中） |
+
+> **目录命名注意**（=D8）：六子集除 coyo 外，中文目录统一叫 `CN`；**coyo 的中文目录叫 `Language-CN`**。
+> phase4 打包与 inventory 计数必须**同时覆盖 `CN` 与 `Language-CN`**。
 
 ### 1.3 评测集（只读，红线，绝不写入训练集）
 
@@ -72,10 +75,11 @@
 | D1 | Ultra-FineWeb-L3 qa "1.8T tok" | **616 文件 / 617.6 GiB**（token 需分词后统计；Round 1 记忆写"31+ part 文件"与实测不符） | 文件数 >19×，以 616 为准；token 数 phase2 后补报 |
 | D2 | "UltraData-SFT-Agent" | 实际目录 `UltraData-SFT-Agent-2609`，且另有 `UltraData-SFT-2605`（方案未列） | 方案漏列 2605，名称带版本后缀 |
 | D3 | UltraData-Code / Math 路径仅写 `.../openbmb/` | Code 分 L2/L3、Math 分 L1 等多个子层 | 路径需下钻到具体 level |
-| D4 | LLaVA-OneVision "…× EN/CN" | **coyo 只有 EN（无 CN）**；各子集 EN/CN 数量不等 | "× EN/CN" 不适用于 coyo |
-| D5 | 多模态 "下载中 >50%" | 实测 EN 5545 / CN 1512 parquet | 与"过半"大致一致，phase4 前重测确认完成 |
+| D4 | LLaVA-OneVision "…× EN/CN" | 各子集 EN/CN 数量不等；coyo 的**中文目录叫 `Language-CN`**（非 `CN`），其余用 `CN`（见 D8） | "× EN/CN" 不严格适用于 coyo 的目录命名 |
+| D5 | 多模态 "下载中 >50%" | 实测 EN 5571 / CN 1512 + coyo `Language-CN` 436 ≈ CN 1948（总数 ≈7519，仍增长） | 与"过半"大致一致，phase4 前重测确认完成 |
 | D6 | 领域（EDA）"来源未落实" | **已突破**：`eda_fastmcp/docs/` 已含 API 参考文档纯文本（pyAether_API_Docstring.md 144K、skill_data/*.md ≈8MB、API_INFO_MERGED_V3.json 18M/8464 条、innovus 6.8M 等，合计 ≈45MB）；导出纯文本**可行**，待授权确认后入库 | phase3 已确认来源 ✅ |
 | D7 | 已有派生数据 `BASE_DIR/data/ultrafineweb_l3_qa` | 确认在 `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/`（**非** super_intelligence_2035 仓库） | `BASE_DIR` = `code/BaiZe-ISEDA2027`（训练仓库），与文档 git 仓库分离 |
+| D8 | （新增发现）LLaVA 子集目录命名 | coyo 中文 = `coyo/Language-CN`（436 parquet），其余子集中文 = `<s>/CN` | phase0 计数把 coyo CN 误记为 0；已修正，inventory.sh 同步覆盖 Language-CN |
 
 ---
 

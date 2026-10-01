@@ -1,6 +1,6 @@
 # CONTAMINATION_CHECK.md — 污染隔离报告（红线留证）
 
-> 版本 v0.2 · 2026-10-01 · phase5_isolation（**全评测快照并集立闸**，6 快照；**修复中文 prompt 指纹丢失 + 短文本 8-gram 兜底**）。
+> 版本 v0.3 · 2026-10-01 · phase5_isolation（**全评测快照并集立闸**，6 快照；**修复中文 prompt 指纹丢失 + 短文本 8-gram 兜底 + SFT 嵌套 jsonl 目录同闸扫描**）。
 > 目标：确保 `EDA-Eval-PyAether` 的 158 任务内容（prompt / entry_point / test 断言，及改写版）
 > **绝不进入任何训练集**（含 SFT 语料同闸 + 多模态 held-out 不同源）。违反则下游结论全部作废。
 
@@ -77,6 +77,8 @@
 | 正控 | `TEST.jsonl` 自身 | 2 任务 | **2** | ✅ |
 | 正控 | `cuhk_benchmark`（仅 prompt，中文） | 80 任务 | **80**（v0.1 仅 21；76 经 13-gram + 4 经短 8-gram 兜底） | ✅ v0.2 修复中文指纹丢失 |
 | 来源对照 | API 参考文档（pyAether_API_Docstring / emyDesign / sklangref） | 3 文件 | **0** | ✅ 来源材料不含评测内容（粗粒度） |
+| SFT 同闸 | UltraData-SFT-Agent-2609 `Code_Agent_part-1-of-7.jsonl`（单文件，`messages` 字段） | 30 文档 | **0** | ✅ SFT jsonl + `messages` 多轮对话字段可扫（实测单文档 ≈40KB，短兜底 0） |
+| SFT 同闸 | UltraData-SFT-Agent-2609 `data/Code_Agent/`（嵌套 jsonl **目录**） | 10 文档 | **0** | ✅ 目录输入递归收集 jsonl（旧版漏扫目录内 jsonl → 静默 0 文档，已修复） |
 
 - 命令：
   ```
@@ -99,5 +101,6 @@
 - [x] **中文 prompt 指纹丢失修复**（v0.2）：归一化改 `NFKC + Unicode \w`，cuhk 由 21→80 全覆盖
 - [x] **短 prompt 覆盖**：NFKC 后仍 <13 字符的 4 条 cuhk prompt 走 **8-gram 兜底**（`short_ngram_hashes.txt`，10 哈希）
 - [ ] phase2 产出 `.bin/.idx` 前，对**全量训练文档**跑正式扫描并记录扫描量/命中
-- [ ] SFT 语料（UltraData-SFT-*）同闸正式扫描（phase2/3）：Agent-2609 已确认 **jsonl**（check_contamination.py 的 jsonl 模式直接可扫）；2605 落盘为空需重下后再扫
+- [x] SFT 语料同闸机制修复 + 冒烟（唤醒 5）：check_contamination.py 目录分支现可递归扫描**嵌套 jsonl**（旧版只 glob parquet → 目录输入会静默扫 0 文档），并支持 Agent-2609 的 `messages`（list<{role,content}>）多轮对话字段；单文件 30 / 目录 10 文档均 **0 命中**、正控 158/158 无回归
+- [ ] SFT 语料（UltraData-SFT-*）同闸**全量正式扫描**（phase2/3）：Agent-2609 已就绪可扫；2605 落盘为空需重下后再扫。⚠️ **性能**：Agent-2609 单文档 ≈40KB，纯 Python 逐 13-gram 哈希全量扫 51GiB 会很慢（2000 文档 >30s），正式扫需按 shard 并行 / 加速
 - [ ] EDA API 参考文档正式入库前，逐片段（非整文件）跑同闸扫描，确保无评测内容泄漏
