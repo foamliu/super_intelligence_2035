@@ -14,7 +14,7 @@
 | 通用文本·退火 | UltraData-Code | **1121 个 parquet**（L2/L3 × 多语言） | ✅ 已下载 | 退火 code |
 | 通用文本·退火 | UltraData-Math | **1823 个 parquet**（L1 CC-MAIN shard） | ✅ 已下载 | 退火 math |
 | 通用文本·SFT | UltraData-SFT-2605 / -Agent-2609 | **2605 空/需重下**；Agent-2609=jsonl 50shard/51GiB | 🟠 部分就绪 | Stage(ii) SFT |
-| 通用多模态 | LLaVA-OneVision-1.5 Mid-85M | EN **5545** + CN **1512** parquet（下载中） | 🟠 下载中 | 视觉编码器 + MLLM 对齐 |
+| 通用多模态 | LLaVA-OneVision-1.5 Mid-85M | EN **5601** + CN **1948** parquet（7549，下载中，sa1b/zero250m 未下） | 🟠 下载中 | 视觉编码器 + MLLM 对齐 |
 | 通用多模态·已派生 | baize-vision/en500k | 25 tar / **68.59 GiB** | ✅ 已就绪 | Stage(iii) 四架构对比（完成） |
 | 通用多模态·已派生 | baize-vision/eval5k | 1 tar / **1.27 GiB**（laioncn/EN） | ✅ 已就绪 | 检索代理评估（held-out） |
 | **领域（EDA）** | PyAether/SKILL API 参考文档（`eda_fastmcp/docs/`）、EDA 工具文档、开源 HDL | **已确认来源 ≈45MB 纯文本**（API 参考文档） | 🟡 待授权确认 + 待入库 | Stage(ii) 领域退火 + SFT（最关键） |
@@ -51,8 +51,8 @@
 | datacomp1b | 439 | 136 | |
 | coyo | 1504 | **436** | ⚠️ 中文在 **`Language-CN`**（非 `CN`）子目录 |
 | mint | 553 | 152 | |
-| obelics | 2594 | 1060 | EN 较 phase0(2569) +25 |
-| **合计** | **5571** | **1948** | 总数 ≈7519（下载中） |
+| obelics | 2625 | 1060 | EN 较 phase0(2569) +56（仍在增） |
+| **合计** | **5601** | **1948** | 总数 ≈7549（下载中） |
 
 > **目录命名注意**（=D8）：六子集除 coyo 外，中文目录统一叫 `CN`；**coyo 的中文目录叫 `Language-CN`**。
 > phase4 打包与 inventory 计数必须**同时覆盖 `CN` 与 `Language-CN`**。

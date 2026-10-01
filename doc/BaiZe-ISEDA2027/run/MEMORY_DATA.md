@@ -10,11 +10,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        R research ✅（两问已答，DATA_RESEARCH.md v1.1 已复核）+ phase5 isolation v0.3 + phase1/2 脚本就绪
-已完成:       R 调研（两问各四小项全有结论）；phase0 inventory；phase5 isolation v0.3；phase1/2 脚本齐备
-当前动作:     用 fetch_web_content 直连 HF 复核 DATA_RESEARCH v1 的 URL 事实 → 修订 v1.1（3 处修正，轻 I/O）
+PHASE:        R research ✅（两问已答，DATA_RESEARCH.md v1.1 已 committed+push）+ phase5 isolation v0.3 + phase1/2 脚本就绪
+已完成:       R 调研（两问各四小项全有结论，已推远端）；phase0 inventory；phase5 isolation v0.3；phase1/2 脚本齐备
+当前动作:     轻 I/O 复核下载进度并回写快照（运维指令未变、无状态索取、无 STOP，仅维护）
 下一步:       多模态下载完成后 phase1 全量校验 / phase2 分词 / phase4 打包（重 I/O）；SFT-2605 需重下（gated=auto）
-阻塞:         多模态下载未完成（LLaVA 7519/12126、gpic train 417/8000 tar 仍增）；SFT-2605 落盘为空需重下；EDA 授权待运维确认
+阻塞:         多模态下载未完成（LLaVA 7549/12126、gpic train 430/8000 tar 仍增，2 个 hf download 进程存活）；SFT-2605 落盘为空需重下；EDA 授权待运维确认
 ERROR_COUNT:  0
 ```
 
@@ -73,3 +73,4 @@ ERROR_COUNT:  0
 - 2026-10-01 —— 唤醒 5（修 SFT 同闸目录-jsonl 扫描 + 校正 LLaVA 目录命名）：发现 **check_contamination.py 目录分支只 glob parquet、漏掉嵌套 jsonl**（Agent-2609 实为 `data/{Code,General,Search,Tool}_Agent/*.jsonl`），"jsonl 模式直接可扫"对**目录输入不成立** → 会让 SFT 目录语料被静默扫 0 文档。修复：目录递归收集 `*.jsonl`(rglob) + 新增 `_extract_jsonl_text`（支持 Agent-2609 的 `messages` list<{role,content}> 多轮对话，实测单文档 40KB）+ `_flatten` 加 content 回退。冒烟回归全过：正控 v20260311 **158/158**；Agent-2609 单文件 30 文档 / 目录 10 文档均 **0 命中**（短兜底 0 → 证明 messages 非空）。另校正 LLaVA 计数：**coyo 中文在 `Language-CN` 目录（436 parquet，非 `CN`）**，phase0 误记 coyo CN=0 → 修正总数 ≈7519（EN 5571 / CN 1948）；inventory.sh 同步覆盖 Language-CN。下载仍进行中（LLaVA≈7519 / gpic 687G）→ WAITING 保持 1。
 - 2026-10-01 —— 唤醒 6（🎯 R 阶段：只答 §0 两问，产出 DATA_RESEARCH v1，废弃旧 8 主题稿）：用 HF REST API + 本地 open_clip/DeepSeek tokenizer **逐条实测**。**Q1**：L3 4 config = 1764 parquet 与 HF 逐文件一致（en_qa 616/en_multi 552/zh_qa 310/zh_multi 286）、Code 1121、Math 1823 均下全；SFT-2605 落盘空（gated=auto）需重下；MiniCPM5 另有的 Ultra-FineWeb base/UltraX-Preview/RL-2609 本地无但 BaiZe 计划不用。token 实测外推 ≈**690B**（en 467B/zh 223B；README 自述 600B+）→ **判定「1.8T tokens」写错**（1.8T=磁盘字节 1.8TiB=HF parquet 1898GB；论文 §4 还误写「English subset」）。**配比建议走 A**（复用 MiniCPM5 源 + BaiZe 已消融 86:10:4）。**Q2**：LLaVA 85M recaption 实测 **99.7–100% >77 token 被截断**（en 均值 ~202–228/zh 498）；GPIC `tag/short/medium` 实测 **0% 截断**（11/20/46 token，仅 long 100% 截断）→ 换 GPIC short 即消截断。**Q2 配比**建议 caption 用 GPIC short。写 DATA_RESEARCH v1 + 备份旧稿为 DATA_RESEARCH.md.bak-8topics。WAITING 保持 1（多模态下载进行中）。
 - 2026-10-01 —— 唤醒 7（R 阶段复核 → DATA_RESEARCH v1.1，轻 I/O）：`fetch_web_content` 可直连 HF 但 arxiv/github/bocha 仍不可达。逐条复核 URL 事实后**修订 3 处**：① Q1(1) 补官方 config 全名 `*-Synthetic`（320/378/157/204M 行 ↔ 本地 en_qa 616/en_multi 552/zh_qa 310/zh_multi 286），并加 HF 官方 `1,058,535,126 rows / 1.9 TB`(=1898GB≈1.8TiB) 佐证「1.8T=字节」；② Q1(3) 更正 arxiv:2602.09003 身份 = **UltraData《Tiered Data Management》立场/框架论文**（宣称「2.4T open tokens」= 全 Ultra* 平台，**非** MiniCPM5 模型技术报告），结论「MiniCPM5 逐源配比=未找到」不变；③ Q2(1)/(4) 补 GPIC **gated 状态**（需同意共享联系信息，MIT 许可但访问 gated）+ Q1(2) 抽样口径透明化。下载仍进行中（gpic train 406→417）→ WAITING 保持 1。
+- 2026-10-01 —— 唤醒 8（R 阶段已收敛，轻 I/O 维护）：复核 BAIZE_DATA_TASK 运维指令未变（仍「只答 §0 两问」）、无状态索取、无 STOP。确认 `DATA_RESEARCH.md` 已 tracked 且推远端（最新 commit `60af7fb`=v1.1；`git status -sb` 我方文件干净，仅 pretrain 在途文件 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md`/`MEMORY_PRETRAIN_2B.md` 有改动 → **不碰**）。实测下载进度（⚠️ 用 `find -name '*.parquet'` 而非顶层 `ls`：L3/LLaVA 的 parquet 在 `{subset}/{lang}/partNN/` 嵌套子目录，顶层 `ls` 只看到 partNN 目录会严重低估）：LLaVA 85M = **7549 parquet**（EN **5601** = imagenet50+laioncn430+datacomp1b439+coyo1504+mint553+obelics**2625**；CN **1948**；sa1b/zero250m 仍缺）；GPIC train **430/8000**、test 128/128。2 个 `hf download` 进程仍存活（gpic 与 LLaVA）→ phase1/2/4 重 I/O 继续避让，WAITING 保持 1；R 阶段无需新调研。
