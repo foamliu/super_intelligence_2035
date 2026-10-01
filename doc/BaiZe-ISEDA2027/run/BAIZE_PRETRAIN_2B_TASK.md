@@ -46,6 +46,7 @@ Round 1 的 S0–S5 已经收敛，但有三处**在论文里会被审稿人直�
 | **P-1** | **LR 网格向上扩展**：stable LR ∈ **{1.5e-3, 2e-3, 3e-3}** × **5000 步**（WSD 固定） | **判定 1e-3 是否真的是最优** | 1.5h |
 | **P-2** | **补 2 个新 seed**（5000 步，胜出配置）→ **n=5** | **把 σ 压小 / 证实 Δ 在噪声内** | 1h |
 | **P-3** | **架构对比延长到 5000 步**（dense vs hybrid，**保持 Round 1 的 6 卡/GBS=6 口径**） | **让架构选型不再只靠 1000 步快照** | 1.5–2h |
+| **P-4** | ⭐ **FP8 可行性评估**（**先 profile，再决定**） | 判定 FP8 对 **Mamba-hybrid** 是否真的加速 | ≤2h |
 
 **P-1 细节**
 - 三点：`1.5e-3 / 2e-3 / 3e-3`，其余超参与 S2/S3 完全一致，各 5000 步。
@@ -71,6 +72,32 @@ Round 1 的 S0–S5 已经收敛，但有三处**在论文里会被审稿人直�
   train tok/s、prefill/decode（沿用 Round 1 的 mcore 直驱口径），确认与论文 `tab:archcomp` 一致。
 - 若 dense 在该口径下无法复现启动，**立即记录原因并跳过**（不要为此烧超过 30 分钟），
   P-3 降级为"仅 hybrid 单侧延长"。
+
+**P-4 细节 —— FP8 可行性评估（先 profile，再决定）**
+
+> **背景**：Xmodel-2.5（同为自研，Megatron-LM + TransformerEngine）**从 BF16 切到 FP8 混合精度，吞吐 +≈30%**
+> （见 `doc/BaiZe-ISEDA2027/Xmodel-2.5/ACL2026/method.tex` §FP8）。
+> 但 **Xmodel-2.5 是稠密 Transformer**（几乎全是 GEMM），而 **BaiZe 只有 4/56 层是 attention**，
+> 其余是 Mamba-2 SSM + MLP。**TE 的 FP8 加速的是 GEMM / LayerNorm / GeLU，不含 SSM 的 selective-scan。**
+> → **不能假定 +30% 会平移过来**，必须先量出 GEMM 占比（Amdahl 定律）。
+
+**第 1 步（先做，便宜）：profile，量出上限**
+- 用现有 BF16 配置跑 ~100 步，`torch.profiler` 拆时间：`GEMM（linear/attn/MLP）` / `SSM selective-scan` / `norm+act` / `通信` / `数据加载`。
+- 给出 GEMM 占比 `g`，则 **FP8 理论加速上限 = 1/(1-g)**。
+- ⚠️ 本任务书自己写着「**SSM 串行是 bottleneck**」——**若 profile 证实 scan 占大头，FP8 收益有限，到此即可结论，不必接 FP8**。
+
+**第 2 步（仅当 g ≳ 0.5）：试接 FP8**
+- **照抄 Xmodel-2.5 的既有配方**：forward **E4M3**（activations）、backward **E5M2**（gradients）、**master weights 保持 bf16**；
+  TE delayed-scaling `amax-history-len=128` / `amax-compute-algo=max`；经 `--transformer-impl transformer_engine` 启用（kernel 自动选择，无需改源码）。
+- 先确认环境：`transformer_engine` 是否已装、版本与 torch 2.8 / CUDA 12.8 是否匹配。
+- **冒烟**：能否跑通 10 步（不 OOM、不 NaN）。
+- **吞吐对比**：同配置 BF16 vs FP8，各 500–1000 步，报 tok/s 与 ms/iter。
+- **精度对齐**：同 seed 比较**前 200 步 loss 曲线**是否吻合；若出现尖峰/NaN，**如实记录，不要强行调参掩盖**。
+
+**第 3 步：结论** —— FP8 是否可行 / 实测增益 / 精度影响 / 是否建议正式训练采用。
+🚫 **不替换 BF16 基线**：Round 1/2 结果保持 BF16 口径，FP8 作为**并列报告**。
+
+**时间盒 ≤2h**；若第 1 步即显示 scan 主导，15 分钟内收尾并记录结论。
 
 ## R2.3 交付物
 

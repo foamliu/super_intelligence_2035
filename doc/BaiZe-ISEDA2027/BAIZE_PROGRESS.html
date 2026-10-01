@@ -51,26 +51,27 @@
   <h1>BaiZe 实验进展 · 总看板</h1>
   <div class="sub">Stage (i) LLM 预训练 · Stage (iii) 视觉编码器 · Round 2 进展 · 阻塞项</div>
   <div class="meta">
-    <span>📅 更新 2026-10-01 18:05</span>
+    <span>📅 更新 2026-10-01 18:40</span>
     <span>🎯 ISEDA 2027 投稿截止 ≈ 2027-02-01</span>
     <span>📄 论文 7 页 / 0 编译错误</span>
   </div>
 </header>
 
 <div class="verdict">
-  <strong>一句话进展</strong>：<strong>四个 loop 全部在跑</strong>（vision / pretrain / data / ops relay），
-  且三方都产出了结果。vision <strong>R2 全部完成</strong>并给出了完整的论文回填建议；
-  pretrain R2 的 <strong>P-1 已收尾</strong>（U 形谷底，此前"最优在网格边界"的过度声明风险<b>解除</b>）；
-  data agent 完成 phase0/phase5/phase3 并<strong>找到了 EDA 语料来源</strong>；
-  ops relay 已回收第一批服务器环境实况。
+  <strong>一句话进展</strong>：<strong>四个 loop 全部在跑且都在产出</strong>。
+  vision <strong>R2 全部完成</strong>（并已下发 R3-1 查"检索指标退化"）；pretrain <strong>P-1 + P-2 均已定稿</strong>
+  （U 形谷底 + Δ 落在噪声内），并新增 <strong>P-4 FP8 可行性评估</strong>；
+  data agent 已<strong>转为「R 阶段：数据调研」</strong>（用 cimi-search 为 5 个阶段调研数据源）；
+  ops relay 已执行 RUN_ID 1/2，<strong>RUN_ID 3（磁盘）已排队</strong>。
 </div>
 
 <div class="kpi-row">
   <div class="kpi"><div class="v">4 / 4</div><div class="l">loop 全部运行中</div></div>
-  <div class="kpi"><div class="v">R2 ✅</div><div class="l">vision R2-0~R2-5 全部完成</div></div>
-  <div class="kpi"><div class="v">P-1 ✅</div><div class="l">pretrain LR 网格扩展出结论</div></div>
-  <div class="kpi"><div class="v">0</div><div class="l">阻塞项</div></div>
+  <div class="kpi"><div class="v">P-1 ✅<br>P-2 ✅</div><div class="l">pretrain 两项定稿</div></div>
+  <div class="kpi"><div class="v">R3-1</div><div class="l">vision 查下游指标退化</div></div>
+  <div class="kpi"><div class="v">R 阶段</div><div class="l">data 转调研（8+2 个主题）</div></div>
 </div>
+
 
 <div class="ok-box">
   <strong>本轮三个关键好消息</strong><br>
@@ -140,17 +141,25 @@
     </ul>
   </div>
   <div class="card">
-    <h3 style="margin-top:0">R2（P-1 / P-2 / P-3）—— <span class="badge b-warn">P-1 完成</span></h3>
+    <h3 style="margin-top:0">R2（P-1 ✅ / P-2 ✅ / P-3 / P-4）</h3>
     <ul>
-      <li><b>P-1</b> LR 网格向上扩展（1.5e-3 / 2e-3 / 3e-3）<span class="badge b-ok">✅ 已出结论</span></li>
-      <li><b>P-2</b> 补 seed 到 n=5 — 因为 Δ≈0.003 比噪声 σ=0.0469 小一个量级 <span class="badge b-warn">待跑</span></li>
-      <li><b>P-3</b> 架构对比 1000→5000 步 — 因为"hybrid 更优"只靠 <b>24.6M token</b> 的快照 <span class="badge b-warn">待跑</span></li>
+      <li><b>P-1</b> LR 网格向上扩展 <span class="badge b-ok">✅ 定稿</span></li>
+      <li><b>P-2</b> 补 seed 到 n=5 <span class="badge b-ok">✅ 定稿</span></li>
+      <li><b>P-3</b> 架构对比 1000→5000 步 <span class="badge b-warn">运行中</span></li>
+      <li><b>P-4</b> ⭐ FP8 可行性评估 <span class="badge b-info">新增</span></li>
     </ul>
     <div class="ok-box" style="margin-top:10px">
-      🎯 <b>P-1 结论：LR 曲线是明确 U 形，谷底就在 <code>1e-3</code></b><br>
-      <code>2e-4→2.9037 … 1e-3→<b>2.7627</b>（谷底）… 1.5e-3→2.7752、2e-3→2.7889、3e-3→~3.19</code><br>
-      → <b>"最优落在网格边界上"的过度声明风险解除</b>：<code>1e-3</code> 不是被扫描截断的边界，
-      而是真正的谷底（左右邻点都更差）。这比原来"monotonically improves"的表述<b>更强、更可信</b>。
+      🎯 <b>P-1 定稿</b>：LR 曲线是明确 <b>U 形</b>，谷底就在 <code>1e-3</code><br>
+      <code>2e-4→2.9037 … 1e-3→<b>2.7627</b>（谷底）… 1.5e-3→2.7752、2e-3→2.7889、3e-3→2.8861</code><br>
+      → "最优点在网格边界"的过度声明风险<b>解除</b>，<b>10 点 LR 曲线</b>可回填论文。<br><br>
+      🎯 <b>P-2 定稿</b>：n=5 均值 <b>2.673386 ± 0.0349</b>；<code>min_lr 1e-5 vs 3e-5</code> 的 Δ
+      <b>≈ 0.09σ → 落在噪声内</b> ✅<br>
+      → 论文的 <b>"narrowly beats" 应改为 "within run-to-run noise"</b>（这正是回填时预判的问题）。
+    </div>
+    <div class="note" style="margin-top:10px">
+      ⭐ <b>P-4（新增）</b>：<b>FP8 可行性评估</b>。Xmodel-2.5 用 Megatron-LM + TransformerEngine 做 FP8，
+      吞吐 <b>+≈30%</b>。但 <b>TE 的 FP8 加速的是 GEMM / LayerNorm / GeLU，不含 SSM 的 selective-scan</b>，
+      而 BaiZe 只有 4/56 层是 attention → <b>先 profile 量出 GEMM 占比（Amdahl），再决定是否接 FP8</b>。
     </div>
   </div>
 </div>
@@ -306,7 +315,20 @@
   </tr>
   <tr>
     <td>7</td><td>⚠️ <b><code>/nas_train</code> 已用 85%</b>（175T/207T，仅剩 33T）</td><td><span class="badge b-warn">🟠 中</span></td>
-    <td>数据准备要写 tokenized 数据 + webdataset；<b>需让 data agent 把磁盘配额纳入产物规划</b></td>
+    <td>数据准备要写 tokenized 数据 + webdataset；<b>需让 data agent 把磁盘配额纳入产物规划</b>（RUN_ID 3 正在实测）</td>
+  </tr>
+  <tr>
+    <td>8</td><td>🔴 <b>论文 §4 的 "≈1.8T tokens" 很可能是错的</b>——实测 Ultra-FineWeb-L3 只有 <b>616 parquet / 617.6 GiB</b>，
+        按已切产物的 <code>4 B/token</code> 口径反推<b>只对应 ~400B token</b>（差 4–6 倍）</td>
+    <td><span class="badge b-no">🔴 高</span></td>
+    <td>已派 data agent 的 <b>R-A4</b>：用 HF 官方标注 + 抽样分词外推给出判定。<b>投稿前必须修</b></td>
+  </tr>
+  <tr>
+    <td>9</td><td>🔴 <b>视觉编码器训练数据严重不足</b>——现用 <code>en500k</code> = <b>50 万对</b>，
+        而 Round 1 实跑 3000 步 × 192 = <b>57.6 万张</b>（≈1 epoch）</td>
+    <td><span class="badge b-no">🔴 高</span></td>
+    <td>已下载的 LLaVA-OneVision-1.5 Mid-85M = <b>8500 万对（170×）</b>，业界 CLIP 级 4–20 亿对。
+        <b>架构对比够用，做出可用编码器不够</b>；打包后约 <b>12 TB</b>（注意磁盘）</td>
   </tr>
 </table>
 
@@ -315,9 +337,9 @@
 <table>
   <tr><th>角色</th><th>脚本 / 文件</th><th>状态</th></tr>
   <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · <b>R2 全部完成</b> → 已下发 <b>R3-1</b> 诊断下游指标）</td></tr>
-  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · R2 · P-1 训练中）</td></tr>
-  <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · phase0/3/5 完成 → <b>已转「R 阶段：数据调研」</b>，用 <code>cimi-search</code>/<code>cimi-fetch</code> 为 5 个阶段调研数据源）</td></tr>
-  <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · 零 token · RUN_ID=1 环境摸底已出）</td></tr>
+  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ / P-2 ✅</b> → P-3 架构对比 5000 步 + <b>P-4 FP8 评估</b> 排队）</td></tr>
+  <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · phase0/3/5 完成 → <b>「R 阶段：数据调研」10 个主题</b>，用 <code>cimi-search</code>/<code>cimi-fetch</code> 为 5 个阶段调研数据源）</td></tr>
+  <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · 零 token · RUN_ID 1/2 已回收 → <b>RUN_ID 3（磁盘）已排队</b>）</td></tr>
   <tr><td>1B / 2B 架构轮</td><td><code>baize_search_loop.sh</code> · <code>baize_2b_search_loop.sh</code></td><td><span class="badge b-ok">✅ 已收敛</span>，僵尸 loop 已被清理</td></tr>
 </table>
 

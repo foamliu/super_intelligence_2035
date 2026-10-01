@@ -59,8 +59,10 @@ ERROR_COUNT:  <n>
 | **R-A1** | **EDA / HDL 开源语料** | Stage (ii) 领域退火 + SFT | 有哪些**公开可得**的 Verilog / SystemVerilog / Tcl / SKILL 语料？各自规模、许可、获取方式？ |
 | **R-A2** | **Agentic SFT / RL 数据与奖励设计** | Stage (ii) SFT + RLVR | 公开的 **agent 轨迹数据**有哪些？**RLVR / GRPO 在代码与 agent 任务上的奖励设计**最佳实践？（对照论文 §5.3 的 R1–R4 奖励臂） |
 | **R-A3** | **长上下文语料与适配做法** | Stage (ii) 前置 | agentic trace 常规超 `4096` token；公开的**长上下文继续训练语料**与主流做法（RoPE 外推 / 数据混合 / 步数）？ |
+| **R-A4** | ⭐ **HF 文本语料调研 + 本地完整性核对** | Stage (i) / (ii) | ① **openbmb 在 HF 上的官方清单**：Ultra-FineWeb-L3 / UltraData 各子集的**官方文件数与规模**是多少？**本地是否下载全**（本地实测 616 parquet / 617.6 GiB，需与官方对照）？② 还有哪些**高质量纯文本语料**可用（如 FineWeb / FineWeb-Edu / DCLM / SlimPajama / Dolma / RedPajama / CulturaX 等）——规模、许可、可得性？<br>🔴 **附带的必答硬问题**：论文 §4 写的 **"≈1.8T tokens" 是否写错**？本地 617.6 GiB 的 snappy parquet 按已切产物的 `4 B/token` 口径反推**只对应 ~400B token**（差 4–6 倍）。用 HF 官方标注 + 抽样分词外推，**给出判定** |
 | **R-B1** | **EDA 视觉数据集** | Stage (iii) / (iv) | 公开的**版图 / 原理图 / DRC / 电路图**图像数据集有哪些？规模、标注形式、许可？ |
 | **R-B2** | **「图像 ↔ 代码」自标注数据构造的先例** | Stage (iv) | 是否有公开先例：**执行脚本即得配对数据**（image→script / script→image）？同类做法与坑？ |
+| **R-B3** | ⭐ **OpenVision2 论文 + 开源库调研** | Stage (iii) / (iv) | 既然**胜出架构是 OpenVision2**，必须把它研究透：① **开源库与论文链接**（repo / arXiv）；② **原作者的训练超参数**是什么——optimizer、lr、warmup、schedule、分辨率/patch、batch、数据增强、预训练语料与规模？**与我们 Round 1/R2 用的（lr=3e-3 / AdamW 0.9,0.95 / warmup 100 + cosine / 224-16 / bs 32×6 / en500k）差多少**？③ 🔴 **原作者是怎么评测 vision encoder 的**（zero-shot 分类 / linear probe / 检索 / 下游任务）？——这条**直接关系到 vision R3-1 正在查的"检索指标退化到随机水平"问题：如果原作者用的是别的评测口径，我们可能一直在用错的代理指标** |
 | **R-C1** | **偏好数据与领域 RLHF（数据稀缺场景）** | Stage (v) | 偏好数据稀缺时如何做领域适配？DPO / SimPO / KTO / GRPO 变体、弱标注、合成偏好数据的实践与风险？ |
 | **R-D1** | **去污染（decontamination）方法** | 全程**红线** | 当前公认做法？（13-gram / MinHash / 嵌入去重）业界对"评测集泄漏"的标准检测与报告方式？ |
 | **R-D2** | **数据配比与 token 预算** | Stage (i) / (ii) | 2B 级模型、给定算力窗口下的**数据配比**经验（Chinchilla 之后的过度训练实践、领域配比）？ |
