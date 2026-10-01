@@ -20,7 +20,7 @@ Round 1 的 S0–S9 结果里有三处**让论文 §6 站不住**的问题，全
 
 > **统一锚点改动（R2 全局）**：把 learning rate 从 Round 1 的 `1e-3` 改为 **`3e-3`**。
 > 依据：Round 1 的 S8 已实测 `3e-3 → loss 4.4562`，显著优于 `1e-3 → 4.9962`，即 1e-3 在 3000 步下是**退化配置**。
-> 其余锚点不变：SigLIP / AdamW(0.9,0.95) / warmup 100 + cosine / seed 1234 / bf16 / batch 32×6 / en500k / steps 3000。
+> 其余锚点不变：SigLIP / AdamW(0.9,0.95) / warmup 100 + cosine / seed 1234 / bf16 / batch 32×8 / en500k / steps 3000。
 
 | ID | 内容 | 目的 | 估时 |
 |:--|:--|:--|:--|
@@ -61,7 +61,7 @@ Round 1 的 S0–S9 结果里有三处**让论文 §6 站不住**的问题，全
 - ⚠️ 高 token 数会显著变慢（448/14 是 224/16 的 5.2 倍 token），**先跑低 token 再跑高 token**，超预算就只报已完成的格子。
 
 **R2-4 细节**
-- **先做 GPU 独占核验**：`ssh 10.239.2.12 'nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv'`，确认 GPU 0–5 无其他项目进程；**把核验结果原文记入报告**（这是这次测量的可信度凭证）。
+- **先做 GPU 独占核验**：`ssh 10.239.2.12 'nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv'`，确认 GPU 0–7 无其他项目进程；**把核验结果原文记入报告**（这是这次测量的可信度凭证）。
 - ⚠️ **还要查 NFS 并发（关键）**：本任务与 **pretrain 任务**（`baize_pretrain_loop.sh`，训练在 `10.239.2.29`）
   **共用同一块 `/nas_train` 盘**。Round 1 的吞吐正是被这类并发争用污染的，不能重蹈。测量前请额外：
   - 读 `run/MEMORY_PRETRAIN_2B.md`（**共享盘，你直接可见**）确认它当时**有没有在跑训练**；
@@ -69,7 +69,7 @@ Round 1 的 S0–S9 结果里有三处**让论文 §6 站不住**的问题，全
   - 若发现它有训练在跑，**先去做其它 R2 项、稍后再回来测 R2-4**
     （pretrain 那边已被要求优先避让你的 R2-4，通常它会主动等待）。
 - 4 架构各跑 ≥300 步取稳态 img/s；推理 ms/img 同测。
-- 若发现有人在用 GPU 0–5，**报告注明并等待下一轮**，不要与他人争抢。
+- 若发现有人在用 GPU 0–7，**报告注明并等待下一轮**，不要与他人争抢。
 
 **R2-5 细节**
 - 二分 `batch ∈ {1,2,4,8}` 找停摆阈值；查 `mamba_ssm` 版本 / selective_scan kernel；判断是 kernel 卡死还是代码路径问题。
@@ -86,7 +86,7 @@ Round 1 的 S0–S9 结果里有三处**让论文 §6 站不住**的问题，全
 ## R2.4 约束
 
 - **总预算**：R2 墙钟 **≤ 6 小时**（下次运维介入前）。超时按 **R2-0 > R2-1 > R2-4 > R2-2 > R2-3 > R2-5** 逆序裁剪，并在报告记录裁剪决策。
-- **GPU**：只用 `10.239.2.12` 的 **GPU 0–5**；**绝不杀他人进程**；GPU 6–7 是他人的，不碰。
+- **GPU**：只用 `10.239.2.12` 的 **全部 8 卡（GPU 0–7）**；**绝不杀他人进程**。
 - **每次测量都必须记录当时的 GPU 占用核验结果**（这是 R2-4 要解决的核心问题，不能重蹈覆辙）。
 - 串行优先，卡数/并发对齐，保证可比。
 
@@ -129,7 +129,7 @@ Round 1 的 S0–S9 结果里有三处**让论文 §6 站不住**的问题，全
 | 训练栈 | **OpenCLIP（open_clip 3.2.0）**，SigLIP/CLIP 对比学习，固定 text tower（只动 vision tower）；torchrun 直驱 |
 | 训练数据 | LLaVA-OneVision-1.5（parquet）或 GPIC（tar），切一个**统一固定子集**供四架构复用 |
 | 环境 | conda env `py310`（CUDA 12.8 / PyTorch 2.8.0 / torchvision 0.23.0 / open_clip 3.2.0 / timm 1.0.3 / mamba_ssm 2.2.6.post3 / flash_attn 2.8.4 / webdataset） |
-| GPU | `10.239.2.12` **前 6 卡（GPU 0–5，已实测空闲）**；GPU 6–7 被占（~72GB），如显存不够可杀后两卡进程（杀前先确认占用者） |
+| GPU | `10.239.2.12` **全部 8 卡（GPU 0–7，已实测空闲）** |
 | **预算上限** | **24 小时墙钟**（按 P0 > P1 > P2 > P3 优先级裁剪，见「时间估计」） |
 
 > 数据路径：
@@ -197,7 +197,7 @@ Round 1 的 S0–S9 结果里有三处**让论文 §6 站不住**的问题，全
 
 ## 推进状态机（PHASE，按 S0→S9 顺序，每阶段前核对预算）
 
-- **S0 data_check + smoke**：确认可用数据子集（选 LLaVA-OneVision 一段 或 GPIC 1–2 tar），验证 caption 可读、可切图像-文本对；`conda activate py310` 后确认 open_clip / mamba_ssm / flash_attn / webdataset 可 import、GPU 0–5 可见；落地 4 个 vision tower（open_clip 注册），跑 10–20 步冒烟，记录实测参数量 + 吞吐（image/s），参数量调平到 500–600M。某架构连续 3 次失败标记 `❌ NOT_RUNNABLE` 跳过 → `S1`
+- **S0 data_check + smoke**：确认可用数据子集（选 LLaVA-OneVision 一段 或 GPIC 1–2 tar），验证 caption 可读、可切图像-文本对；`conda activate py310` 后确认 open_clip / mamba_ssm / flash_attn / webdataset 可 import、GPU 0–7 可见；落地 4 个 vision tower（open_clip 注册），跑 10–20 步冒烟，记录实测参数量 + 吞吐（image/s），参数量调平到 500–600M。某架构连续 3 次失败标记 `❌ NOT_RUNNABLE` 跳过 → `S1`
 - **S1 main**：4 架构 × 1000 步（默认配置），记录 loss + image/s → `S2`
 - **S2 infer**：统一前向 bench 测各架构图像→token/s（batch=1、固定分辨率）→ 汇总三指标，**确定胜出架构 + 默认配置锚点** → `S3`
 - **S3 long_horizon**：胜出架构（+可并列次优）延长 5000–10000 步，看排名是否翻转 → `S4`
@@ -224,16 +224,16 @@ Round 1 的 S0–S9 结果里有三处**让论文 §6 站不住**的问题，全
 
 ## GPU 资源与进程管理
 
-- 主节点 `10.239.2.12`，用 **GPU 0–5**（已实测空闲 0 MiB）。
+- 主节点 `10.239.2.12`，用 **全部 8 卡（GPU 0–7）**（已实测空闲 0 MiB）。
 - 检查占用：`ssh 10.239.2.12 'nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv'`
-- 只杀本项目残留（`pgrep -af 'torchrun|open_clip_train|open_clip|pretrain'`），杀前记 PID 到 MEMORY_VISION 流水；**不杀他人进程**。GPU 6–7 被他人占 ~72GB，非本项目，默认不动；确需扩展先确认 pid 归属再 kill。
-- 卡数对齐：四架构须同卡数（6 卡 TP1/DP6），训练 image/s 才可比。
+- 只杀本项目残留（`pgrep -af 'torchrun|open_clip_train|open_clip|pretrain'`），杀前记 PID 到 MEMORY_VISION 流水；**不杀他人进程**。GPU 0–7 全部 8 卡归本项目使用，无他人占用。
+- 卡数对齐：四架构须同卡数（8 卡 TP1/DP8），训练 image/s 才可比。
 
 ---
 
 ## 时间估计（24 小时墙钟，量级 + 以冒烟实测反推）
 
-| 优先级 | 阶段 | 内容 | 估时（串行 6 卡） |
+| 优先级 | 阶段 | 内容 | 估时（串行 8 卡） |
 |:---|:---|:---|:---|
 | P0 | S0–S2 | 冒烟 + 主训练 + 推理基准（4 架构） | 2–4 h |
 | P1 | S3–S5 | 长地平线 + 多种子 + 下游代理 | 3–6 h |

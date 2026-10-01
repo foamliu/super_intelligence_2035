@@ -312,7 +312,8 @@
 <div class="note">
   <b>前提</b>：Windows 侧无法 SSH 到 GPU 服务器，以下命令需<b>在服务器上</b>执行（任选一台常驻节点，
   代码/数据在共享 NFS <code>/nas_train</code> 上，两节点均可）。
-  当前有 <b>3 件待启动/待重启</b>的事，按下面的顺序做最省事。
+  当前有 <b>3 件待启动/待重启</b>的事，按下面的顺序做最省事；
+  <b>vision loop</b> 当前<b>运行中</b>，其启动方式见下面的 ④（仅重启时用）。
 </div>
 
 <h3>第 0 步 · 先同步（必做）</h3>
@@ -355,6 +356,17 @@ sleep 90 &amp;&amp; tail -8 /tmp/baize_ops_relay.log   # 期望看到 [relay] RU
 setsid bash baize_data_loop.sh > /tmp/baize_data_loop.log 2>&1 &lt; /dev/null &amp;</code></pre>
 <p>它会先长睡（<code>MEMORY_DATA.md</code> 初始 <code>WAITING: 1</code>），首次唤醒后转 60 秒快跑，
 执行 <code>phase0</code> 实测盘点。</p>
+
+<h3>④ 启动 vision loop <span class="badge b-ok">✅ 运行中</span></h3>
+<p>视觉编码器预训练 agent，循环读 <code>run/BAIZE_VISION_TASK.md</code> 连续推进，并把状态写入
+   <code>run/MEMORY_VISION.md</code>（GPU 已改为 <code>10.239.2.12</code> 的<b>全部 8 卡</b>）。</p>
+<pre><code>cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+setsid bash baize_vision_loop.sh > /tmp/baize_vision_loop.log 2>&1 &lt; /dev/null &amp;</code></pre>
+<p><b>验证是否起来：</b></p>
+<pre><code>pgrep -af baize_vision_loop.sh            # 应恰好 1 个进程
+sleep 70 &amp;&amp; tail -5 /tmp/baize_vision_loop.log   # 应看到 [loop] ... wake up / cline returned</code></pre>
+<p><b>确认它接单（约 1 个唤醒周期后）：</b> 看 <code>run/MEMORY_VISION.md</code> 的 <code>PHASE</code> / <code>WAITING</code>
+  是否按 <code>BAIZE_VISION_TASK.md</code> 的 R2 指令更新。</p>
 
 <h3>停止 / 排障</h3>
 <pre><code># 停止某个 loop
