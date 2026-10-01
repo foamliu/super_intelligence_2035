@@ -51,7 +51,7 @@
   <h1>BaiZe 实验进展 · 总看板</h1>
   <div class="sub">Stage (i) LLM 预训练 · Stage (iii) 视觉编码器 · Round 2 进展 · 阻塞项</div>
   <div class="meta">
-    <span>📅 更新 2026-10-01 19:45</span>
+    <span>📅 更新 2026-10-01 20:00</span>
     <span>🎯 ISEDA 2027 投稿截止 ≈ 2027-02-01</span>
     <span>📄 论文 7 页 / 0 编译错误</span>
   </div>
@@ -112,7 +112,7 @@
     <td><b>(i)</b></td><td>LLM 预训练（from scratch）</td>
     <td><span class="badge b-ok">✅ 完成</span> + <span class="badge b-info">R2 加固</span></td>
     <td>2.22B / 56 层（4 attention）· val loss <b>2.2054</b>@20k 步 · 3-seed <b>2.6739±0.0469</b></td>
-    <td><b>P-1 ✅ / P-2 ✅</b> · P-3 <b>半程</b>（dense ✅ / hybrid 🔄 @2180）· P-4 待跑 · P-5 / P-6 已排</td>
+    <td><b>P-1 ✅ / P-2 ✅ / P-3 ✅</b> · P-4 待跑 · <b>P-5a 运行中</b> · P-6 已下发</td>
   </tr>
   <tr>
     <td><b>(ii)</b></td><td>LLM 后训练（领域退火 + SFT + RLVR）</td>
@@ -149,14 +149,15 @@
     </ul>
   </div>
   <div class="card">
-    <h3 style="margin-top:0">R2（P-1 ✅ / P-2 ✅ / P-3 半程 / P-4 待跑 / P-5 / P-6）</h3>
+    <h3 style="margin-top:0">R2（P-1 ✅ / P-2 ✅ / P-3 ✅ / P-4 待跑 / <b>P-5a 运行中</b> / P-6）</h3>
     <ul>
       <li><b>P-1</b> LR 网格向上扩展 <span class="badge b-ok">✅ 定稿</span>（10 点 U 形，谷底 <code>1e-3</code>）</li>
       <li><b>P-2</b> 补 seed 到 n=5 <span class="badge b-ok">✅ 定稿</span>（<b>2.673386 ± 0.0349</b>，Δ≈0.09σ 在噪声内）</li>
-      <li><b>P-3</b> 架构对比 1000→5000 步 <span class="badge b-warn">dense ✅ done / hybrid 🔄 @2180/5000</span></li>
-      <li><b>P-4</b> ⭐ FP8 可行性 <span class="badge b-info">环境已备（<b>TE 2.12.0</b>），等 GPU 空闲</span></li>
-      <li><b>P-5</b> ⭐⭐ LR@目标 GBS + 训练量 scaling 曲线 <span class="badge b-no">最高优先</span></li>
-      <li><b>P-6</b> ⭐ lm_eval 8 集零样本（HF→SGLang→local-completions） <span class="badge b-info">已下发</span></li>
+      <li><b>P-3</b> 架构对比 1000→5000 步 <span class="badge b-ok">✅ 定稿</span>（hybrid 五点全胜）</li>
+      <li><b>P-4</b> ⭐ FP8 可行性 <span class="badge b-info">环境已备（TE 2.12.0），待 GPU</span></li>
+      <li><b>P-5a</b> ⭐⭐ GBS×LR 扫描 <span class="badge b-warn">🔄 已启动运行中</span></li>
+      <li><b>P-5b</b> 训练量 scaling 曲线 <span class="badge b-no">待 P-5a 定 LR</span></li>
+      <li><b>P-6</b> ⭐ lm_eval 8 集零样本 <span class="badge b-info">已下发</span></li>
     </ul>
     <div class="ok-box" style="margin-top:10px">
       🎯 <b>P-1 定稿</b>：LR 曲线是明确 <b>U 形</b>，谷底就在 <code>1e-3</code><br>
@@ -172,14 +173,27 @@
       而 BaiZe 只有 4/56 层是 attention → <b>先 profile 量出 GEMM 占比（Amdahl），再决定是否接 FP8</b>。
       <br>（环境已备：<b>TransformerEngine 2.12.0 已装</b>；但 launcher 尚无 FP8 参数，需扩展。<b>当前被 p3_hybrid 占着 GPU，等空闲再跑 profile</b>。）
     </div>
-    <div class="note" style="margin-top:10px">
-      📊 <b>P-3 中间信号（待 hybrid 收完 5 点确认）</b>：<b>训练吞吐差距比 Round 1 小得多</b><br>
-      · Round 1（1000 步）：dense 89K vs hybrid <b>72K</b> → dense <b>+24%</b><br>
-      · P-3（5000 步）：dense 89.7K vs hybrid <b>85.6K</b> → dense 仅 <b>+4.8%</b><br>
-      dense 侧几乎没变（274 vs 275 ms/iter），是 <b>hybrid 从 ~340 降到 ~287 ms/iter（快 16%）</b>——
-      疑似 Round 1 的短跑把 <b>SSM 首步编译开销</b>（记录中的 ~12.3s 一次性开销）摊进了平均。<br>
-      → <b>若成立，论文 <code>tab:archcomp</code> 的"训练吞吐代价 ~24%"属高估，实际约 ~5%</b>（这对 hybrid 有利）。<br>
-      ✅ 同时复核通过：参数量 dense <b>2.512B</b> / hybrid <b>2.220B</b>，与 Round 1 及 <code>tab:archcomp</code> 一致。
+    <div class="ok-box" style="margin-top:10px">
+      ✅ <b>P-3 定稿（5000 步，dense vs hybrid，6 卡 / GBS=6 同口径）</b>：<b>hybrid 在全部 5 个 checkpoint 均优于 dense</b><br>
+      <table style="margin:8px 0;font-size:13px">
+        <tr><th>step</th><th>500</th><th>1000</th><th>2000</th><th>3000</th><th>5000</th></tr>
+        <tr><td>dense 2.512B</td><td>5.4683</td><td>4.8351</td><td>4.2269</td><td>3.8127</td><td>3.3575</td></tr>
+        <tr><td><b>hybrid 2.220B</b></td><td><b>5.1495</b></td><td><b>4.6143</b></td><td><b>3.8282</b></td><td><b>3.3818</b></td><td><b>3.0563</b></td></tr>
+        <tr><td>Δ (dense−hybrid)</td><td>0.319</td><td>0.221</td><td>0.399</td><td>0.431</td><td><b>0.301</b></td></tr>
+      </table>
+      → <b>Round 1 的「hybrid 更优」已从 1000 步 / 24.6M token 快照，升级为 5000 步 / 123M token 的稳定结论</b>，
+      且<b>非早期边界效应</b>（全程稳定领先）；hybrid 参数还<b>少 11.6%</b> → <b>更参数高效</b>。<br>
+      ✅ 参数量复核通过：dense <b>2.512B</b> / hybrid <b>2.220B</b>，与 Round 1 及 <code>tab:archcomp</code> 一致。
+    </div>
+    <div class="danger" style="margin-top:10px">
+      ⚠️ <b>需查明的一处矛盾：训练吞吐的幅度对不上</b><br>
+      · 论文 <code>tab:archcomp</code>：dense <b>89K</b> vs hybrid <b>72K</b> → dense <b>+24%</b><br>
+      · P-3（<b>同一口径</b>，只是延长到 5000 步）：dense <b>89.7K</b> vs hybrid <b>85.6K</b> → dense 仅 <b>+4.8%</b><br>
+      dense 侧几乎一致（89K → 89.7K）✓；<b>是 hybrid 从 72K 涨到 85.6K（+19%）</b>，即 ms/iter 由 ~340 降到 ~287。<br>
+      → <b>原因尚未查明</b>：可能是 Round 1 的 1000 步短跑把 SSM 首步编译开销摊进了平均，
+      也可能是两次测量之间的集群/配置差异——<b>但单靠 12.3s 首步开销只能解释约 3.6%，不足以解释 16%</b>。<br>
+      🔴 <b>这直接决定论文怎么写"hybrid 的训练吞吐代价"</b>：若真值接近 +5%，
+      hybrid 的性价比论证会明显更强。<b>P-3 的回填建议只写了"方向一致"，未处理幅度差异，建议补查。</b>
     </div>
   </div>
 </div>
@@ -395,7 +409,7 @@
 <table>
   <tr><th>角色</th><th>脚本 / 文件</th><th>状态</th></tr>
   <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · R2 ✅ → R3 定位<b>表征坍缩</b> → <b>R4 解决核心阻塞</b>已下发）</td></tr>
-  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ / P-2 ✅</b> · P-3 dense✅/hybrid🔄 · P-4 环境已备待 GPU · P-5/P-6 已排）</td></tr>
+  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ P-2 ✅ P-3 ✅</b> · <b>P-5a 运行中</b> · P-4 待 GPU · P-6 已下发）</td></tr>
   <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · phase0/3/5 完成 → <b>「R 阶段：数据调研」10 个主题</b>，用 <code>cimi-search</code>/<code>cimi-fetch</code> 为 5 个阶段调研数据源）</td></tr>
   <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · 零 token · RUN_ID 1/2 已回收 → <b>RUN_ID 3（磁盘）已排队</b>）</td></tr>
   <tr><td>1B / 2B 架构轮</td><td><code>baize_search_loop.sh</code> · <code>baize_2b_search_loop.sh</code></td><td><span class="badge b-ok">✅ 已收敛</span>，僵尸 loop 已被清理</td></tr>
