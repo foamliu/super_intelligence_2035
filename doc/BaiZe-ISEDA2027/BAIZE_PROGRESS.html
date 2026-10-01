@@ -126,6 +126,7 @@
     <li><a href="#s7">Agent 与基础设施状态</a></li>
     <li><a href="#s8">启动命令（复制即用）</a></li>
     <li><a href="#s9">当前排期与预计完成时间</a></li>
+    <li><a href="#s10">待人类决策（卡点清单）</a></li>
   </ol>
 </div>
 
@@ -951,6 +952,67 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
 </div>
 
 <div class="ok-box">
+<h2 class="sec" id="s10"><span class="no">10</span>待人类决策（卡点清单）</h2>
+
+<p style="color:var(--muted)">更新于 2026-10-02 07:50。<b>没有任何 agent 卡在"等运维回答"上</b>（三份记忆的「运维问答」区均为"暂无"）；
+下表是<b>只有人能做主</b>的事项。</p>
+
+<div class="danger">
+  <b>🔴 需要决策（越靠前越紧急）</b>
+  <table style="margin:8px 0">
+    <tr><th>#</th><th>事项</th><th>为什么需要人</th><th>不做的后果</th></tr>
+    <tr>
+      <td><b>1</b></td><td><b>Stage (i)/(ii)/(iv)/(v) 的启动排期</b><br>
+          <small>尤其：<b>P-8 要独占 8 卡 ≈12.5 天</b>（≈10/03–10/16）</small></td>
+      <td><b>卡只有一套</b> —— P-8 期间 (ii)/(iv) 无法并行</td>
+      <td>排期冲突；或 (ii)/(iv)/(v) 拖到 11 月后</td>
+    </tr>
+    <tr>
+      <td><b>2</b></td><td><b>论文口径：要不要声称"复现官方 OpenVision2"</b><br>
+          <small>官方是 <b>caption-only 生成式</b>（无文本编码器/无对比损失）、<b>自带 open_clip fork</b>、<b>24 层</b>；
+          我们是对比学习 + pip open_clip + <b>30 层</b>（见 <a href="#s6">§6</a> #15）</small></td>
+      <td><b>表述口径</b>只能人定</td>
+      <td>审稿人查一眼官方 README 即可发现，<b>被当作过度声明</b></td>
+    </tr>
+    <tr>
+      <td><b>3</b></td><td><b>Stage (ii)「领域模型」叙事怎么改</b><br>
+          <small>EDA 语料已取消 → 原支撑没了（<a href="#s6">§6</a> #12）</small></td>
+      <td>需要重新<b>定口径</b>（改由通用语料 + 领域退火承担？）</td>
+      <td>(ii) 的 claim 悬空</td>
+    </tr>
+    <tr>
+      <td><b>4</b></td><td><b>vision 正式训练的规格</b>（数据量 / 训多久 / 何时插排期）<br>
+          <small>R9 已声明"仍非正式"；GPIC 目前仅 <b>688/8000 tar（8.6%）</b></small></td>
+      <td>规模与时机需要人定</td>
+      <td>(iv) 的基座没着落</td>
+    </tr>
+    <tr>
+      <td><b>5</b></td><td><b>磁盘清理</b>：<code>/nas_train</code> 残留 <code>base-en</code> <b>1286/2048</b> 去留<br>
+          <small>（该盘只剩 <b>32T</b>，base 全量 64624 文件 / 2.99 TB）</small></td>
+      <td>data agent 明确挂着"<b>待运维定夺</b>"</td>
+      <td>挤占 P-8 ckpt 与数据产物空间</td>
+    </tr>
+  </table>
+</div>
+
+<div class="ok-box">
+  <b>🟡 我可以代做、不需要决策的（论文事实性回填）</b>
+  <ul style="margin:6px 0">
+    <li>§4 <code>≈1.8T tokens</code> → <b><code>≈690B</code></b>（字节误记，已铁证）</li>
+    <li><code>tab:archcomp</code> <code>+24%</code> → <b><code>~8%</code></b>（P-7 已定稿）</li>
+    <li><code>tab:visarch</code> / <code>tab:visres</code> / <code>tab:visobj</code> 按 <b>R8</b> 结果重填；<code>tab:visarch_res</code> <b>回滚</b></li>
+  </ul>
+  <small>⚠️ 运维此前指示「论文统一处理」，故未擅动。<b>需要时招呼一声即可。</b></small>
+</div>
+
+<div class="note">
+  <b>⏳ 等 agent 的（不需要人）</b>：P-5b 跑 scaling 曲线（≈10/04）· P-4R 测 FP8 `s`（≤2h）·
+  R9 跑数据扩容（5–29h）· SFT-2605 / Ultra-FineWeb base 下载中 · 4 处 <code>[TBD]</code> 在 (ii)(iv)(v) 结果位。
+  <br>⚠️ <b>已发现一处待补的抢卡风险</b>：<b>P-4R 与 P-5b 都要用 <code>.29</code> 的 8 卡</b>（P-5b 在跑）。
+  微基准其实 1 卡几十分钟即可 → <b>建议在任务书补一句「P-4R 限 1 卡、与 P-5b 共存」</b>。
+</div>
+
+
   <b>✅ 本轮已闭环的两件大事</b>
   <ul style="margin:6px 0">
     <li><b>vision（Stage iii）跑通</b>：R2–R8 全完成 —— 修坍缩 → 重跑架构/分辨率 → 77 裁定 →
