@@ -1,17 +1,26 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **SUSPENDED**（人为停训，等待 10.239.2.12 机器重启后人工续跑；Loop 与 pipeline 均已 kill） |
-| WAITING | 0 |
+| PHASE | **R2_active**（机器已重启，GPU0–7 空闲，R2 resume pipeline `run_r2_resume.sh` 运行中：R2-3 余 3 组 + R2-5） |
+| WAITING | 1（异步训练 running） |
 | ERROR_COUNT | 0 |
-| BUDGET_USED | ~17 GPU·h 墙钟（S0–S3 ~11 + S4 ~5 + S6/S7/S8 ~3；墙钟约 11:29–17:05 ≈ 5.6h，远低 24h 上限） |
-| 更新 | 2026-10-01 15:38（停训快照） |
+| BUDGET_USED | ~17 GPU·h 墙钟（S0–S3 ~11 + S4 ~5 + S6/S7/S8 ~3 + R2 已 ~5.6h；R2 预算 ≤6h，续跑余量充足） |
+| 更新 | 2026-10-01 16:02（R2 续跑启动） |
 | WINNER | OpenVision2（纯 Attention ViT 505M）——loss 四架构并列 ~4.45–4.47（不可区分），训练 2139 img/s / 推理 6.51ms 双最优 |
+
+## 🔄 R2 恢复续跑（2026-10-01 16:02，机器已重启）
+
+- **机器已重启**：确认本机即为 `10.239.2.12`（`hostname -I` 含 `10.239.2.12`），GPU0–7 重启后**全空闲**（`nvidia-smi`：`0..5 = 0 MiB/0%`、`6..7 = 4 MiB/0%`；原先 GPU6–7 的 sglang ~72GB 已被重启清除）。
+- **NFS 争用核验**：pretrain（10.239.2.29）`MEMORY_PRETRAIN_2B.md` `PHASE=converged` / `WAITING: 0`（04:03 已 kill loop），`pgrep` 无 `baize_pretrain_loop|torchrun` 残留 → **无 NFS 争用**。
+- **vision loop 已恢复运行**（本机 .12，PID 1289683），正常拉起本 agent。
+- **已启动 resume pipeline**：`vision/run_r2_resume.sh`（R2-3 余 deepencoder_v2/moevie/mambaeye r448 + R2-5），日志 `/tmp/vision_r2_resume.log`，判结束 `grep -c "R2 RESUME ALL DONE" ...` == 1。
+- **启动即核验**：唯一 torchrun launcher（1419408）+ 6 worker（1428946–1428957，GPU0–5 各 39280 MiB / ~100% util，GPU6–7 空闲），首组 `deepencoder_v2 r448 p14 bs=16 lr=3e-3` 训练中（`shards=5/rank`）。
+- **下次唤醒**：tail `/tmp/vision_r2_resume.log` 回填已完成格子到 `EXPERIMENTS_VISION_ROUND2.md` R2-3 表 → R2-5 → 生成 `BAIZE_VISION_ENCODER_RESULT_ROUND2.html` → 更新 MEMORY/EXPERIMENTS → git commit+push，WAITING 置 0。
 
 ## 🛑 停训记录（2026-10-01 15:38，等待 .12 重启）
 
