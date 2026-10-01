@@ -99,5 +99,5 @@
 - [x] **中文 prompt 指纹丢失修复**（v0.2）：归一化改 `NFKC + Unicode \w`，cuhk 由 21→80 全覆盖
 - [x] **短 prompt 覆盖**：NFKC 后仍 <13 字符的 4 条 cuhk prompt 走 **8-gram 兜底**（`short_ngram_hashes.txt`，10 哈希）
 - [ ] phase2 产出 `.bin/.idx` 前，对**全量训练文档**跑正式扫描并记录扫描量/命中
-- [ ] SFT 语料（UltraData-SFT-*）同闸正式扫描（phase2/3，需先确认其 jsonl 结构）
+- [ ] SFT 语料（UltraData-SFT-*）同闸正式扫描（phase2/3）：Agent-2609 已确认 **jsonl**（check_contamination.py 的 jsonl 模式直接可扫）；2605 落盘为空需重下后再扫
 - [ ] EDA API 参考文档正式入库前，逐片段（非整文件）跑同闸扫描，确保无评测内容泄漏

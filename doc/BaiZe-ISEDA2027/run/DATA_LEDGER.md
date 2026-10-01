@@ -13,7 +13,7 @@
 | 通用文本·主体 | Ultra-FineWeb-L3 (EN) qa | **616 个 parquet / 617.6 GiB** | ✅ 已下载 | Stage(i) 预训练主体 |
 | 通用文本·退火 | UltraData-Code | **1121 个 parquet**（L2/L3 × 多语言） | ✅ 已下载 | 退火 code |
 | 通用文本·退火 | UltraData-Math | **1823 个 parquet**（L1 CC-MAIN shard） | ✅ 已下载 | 退火 math |
-| 通用文本·SFT | UltraData-SFT-2605 / -Agent-2609 | parquet=0（**疑似 jsonl 格式**，待 phase1 补查） | ✅ 已下载 | Stage(ii) SFT |
+| 通用文本·SFT | UltraData-SFT-2605 / -Agent-2609 | **2605 空/需重下**；Agent-2609=jsonl 50shard/51GiB | 🟠 部分就绪 | Stage(ii) SFT |
 | 通用多模态 | LLaVA-OneVision-1.5 Mid-85M | EN **5545** + CN **1512** parquet（下载中） | 🟠 下载中 | 视觉编码器 + MLLM 对齐 |
 | 通用多模态·已派生 | baize-vision/en500k | 25 tar / **68.59 GiB** | ✅ 已就绪 | Stage(iii) 四架构对比（完成） |
 | 通用多模态·已派生 | baize-vision/eval5k | 1 tar / **1.27 GiB**（laioncn/EN） | ✅ 已就绪 | 检索代理评估（held-out） |
@@ -31,8 +31,8 @@
 | Ultra-FineWeb-L3 (EN) | `/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa` | 616 × `part-*.snappy.parquet`（各 ~1.07 GB），共 617.6 GiB | 内容列 `content`；snappy 压缩 |
 | UltraData-Code | `/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/` | 1121 parquet；`L2/`(cpp,cs,go,java,js,php,py,r,rb,rust,sh) + `L3/`(+rs) | 退火源用 L3（Round 1 用 `--mode turns` 读 `texts` 列） |
 | UltraData-Math | `/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/` | 1823 parquet；`L1/<CC-MAIN-*>` shard 结构 | 退火源 |
-| UltraData-SFT-2605 | `/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605/data/` | parquet=0；子目录 `no_think/Chinese-general`、`no_think/Code`… | 疑似 jsonl，phase1 补查 |
-| UltraData-SFT-Agent-2609 | `/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-Agent-2609/data/` | parquet=0；`Code_Agent/General_Agent/Search_Agent/Tool_Use` | 疑似 jsonl，phase1 补查 |
+| UltraData-SFT-2605 | `/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605/data/` | **落盘为空**：总 152K，仅 README+LICENSE；`no_think/Chinese-general`、`no_think/Code` 目录空；179 个 `.lock` 缓存 | ❌ 未下载完整，需重下（新数据缺口） |
+| UltraData-SFT-Agent-2609 | `/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-Agent-2609/data/` | **jsonl，50 shard / 51 GiB**；`Code_Agent`(7)/`General_Agent`/`Search_Agent`/`Tool_Use`，2GB/shard | ✅ 已就绪（jsonl，check_contamination.py 直接可扫） |
 
 ### 1.2 通用多模态（产出来源 `/nas_train`）
 
@@ -97,7 +97,7 @@
 
 | 产物 | 目标路径 | 状态 |
 |:---|:---|:---|
-| 黑名单指纹 + 校验脚本 | `run/data_pipeline/`（已建 ✅；v0.2：NFKC/Unicode 归一化 + 8-gram 兜底） | ✅ v0.2 |
+| 黑名单指纹 + 校验/打包脚本 | `run/data_pipeline/`（build_blacklist + check_contamination + inventory + **validate_data.py** 校验 + **preprocess_text.sh** 分词打包） | ✅ v0.2 + 校验/打包脚本新补齐 |
 | 通用文本 stable 主体 `.bin/.idx` | `/nas_train/app.e0031982/datasets/baize-data/text/`（规划） | ⬜ phase2 |
 | 退火源 `.bin/.idx`（code/math/EDA） | 同上 | ⬜ phase2/3 |
 | 多模态训练 webdataset | `/nas_train/app.e0031982/datasets/baize-data/mm/`（规划） | ⬜ phase4 |
