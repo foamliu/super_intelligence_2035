@@ -51,7 +51,7 @@
   <h1>BaiZe 实验进展 · 总看板</h1>
   <div class="sub">Stage (i) LLM 预训练 · Stage (iii) 视觉编码器 · Round 2 进展 · 阻塞项</div>
   <div class="meta">
-    <span>📅 更新 2026-10-01 19:25</span>
+    <span>📅 更新 2026-10-01 19:45</span>
     <span>🎯 ISEDA 2027 投稿截止 ≈ 2027-02-01</span>
     <span>📄 论文 7 页 / 0 编译错误</span>
   </div>
@@ -112,7 +112,7 @@
     <td><b>(i)</b></td><td>LLM 预训练（from scratch）</td>
     <td><span class="badge b-ok">✅ 完成</span> + <span class="badge b-info">R2 加固</span></td>
     <td>2.22B / 56 层（4 attention）· val loss <b>2.2054</b>@20k 步 · 3-seed <b>2.6739±0.0469</b></td>
-    <td><b>P-1 ✅ / P-2 ✅ / P-3 ✅</b> · P-4（FP8）进行中</td>
+    <td><b>P-1 ✅ / P-2 ✅</b> · P-3 <b>半程</b>（dense ✅ / hybrid 🔄 @2180）· P-4 待跑 · P-5 / P-6 已排</td>
   </tr>
   <tr>
     <td><b>(ii)</b></td><td>LLM 后训练（领域退火 + SFT + RLVR）</td>
@@ -149,12 +149,14 @@
     </ul>
   </div>
   <div class="card">
-    <h3 style="margin-top:0">R2（P-1 ✅ / P-2 ✅ / P-3 / P-4）</h3>
+    <h3 style="margin-top:0">R2（P-1 ✅ / P-2 ✅ / P-3 半程 / P-4 待跑 / P-5 / P-6）</h3>
     <ul>
-      <li><b>P-1</b> LR 网格向上扩展 <span class="badge b-ok">✅ 定稿</span></li>
-      <li><b>P-2</b> 补 seed 到 n=5 <span class="badge b-ok">✅ 定稿</span></li>
-      <li><b>P-3</b> 架构对比 1000→5000 步 <span class="badge b-warn">运行中</span></li>
-      <li><b>P-4</b> ⭐ FP8 可行性评估 <span class="badge b-info">新增</span></li>
+      <li><b>P-1</b> LR 网格向上扩展 <span class="badge b-ok">✅ 定稿</span>（10 点 U 形，谷底 <code>1e-3</code>）</li>
+      <li><b>P-2</b> 补 seed 到 n=5 <span class="badge b-ok">✅ 定稿</span>（<b>2.673386 ± 0.0349</b>，Δ≈0.09σ 在噪声内）</li>
+      <li><b>P-3</b> 架构对比 1000→5000 步 <span class="badge b-warn">dense ✅ done / hybrid 🔄 @2180/5000</span></li>
+      <li><b>P-4</b> ⭐ FP8 可行性 <span class="badge b-info">环境已备（<b>TE 2.12.0</b>），等 GPU 空闲</span></li>
+      <li><b>P-5</b> ⭐⭐ LR@目标 GBS + 训练量 scaling 曲线 <span class="badge b-no">最高优先</span></li>
+      <li><b>P-6</b> ⭐ lm_eval 8 集零样本（HF→SGLang→local-completions） <span class="badge b-info">已下发</span></li>
     </ul>
     <div class="ok-box" style="margin-top:10px">
       🎯 <b>P-1 定稿</b>：LR 曲线是明确 <b>U 形</b>，谷底就在 <code>1e-3</code><br>
@@ -168,6 +170,16 @@
       ⭐ <b>P-4（新增）</b>：<b>FP8 可行性评估</b>。Xmodel-2.5 用 Megatron-LM + TransformerEngine 做 FP8，
       吞吐 <b>+≈30%</b>。但 <b>TE 的 FP8 加速的是 GEMM / LayerNorm / GeLU，不含 SSM 的 selective-scan</b>，
       而 BaiZe 只有 4/56 层是 attention → <b>先 profile 量出 GEMM 占比（Amdahl），再决定是否接 FP8</b>。
+      <br>（环境已备：<b>TransformerEngine 2.12.0 已装</b>；但 launcher 尚无 FP8 参数，需扩展。<b>当前被 p3_hybrid 占着 GPU，等空闲再跑 profile</b>。）
+    </div>
+    <div class="note" style="margin-top:10px">
+      📊 <b>P-3 中间信号（待 hybrid 收完 5 点确认）</b>：<b>训练吞吐差距比 Round 1 小得多</b><br>
+      · Round 1（1000 步）：dense 89K vs hybrid <b>72K</b> → dense <b>+24%</b><br>
+      · P-3（5000 步）：dense 89.7K vs hybrid <b>85.6K</b> → dense 仅 <b>+4.8%</b><br>
+      dense 侧几乎没变（274 vs 275 ms/iter），是 <b>hybrid 从 ~340 降到 ~287 ms/iter（快 16%）</b>——
+      疑似 Round 1 的短跑把 <b>SSM 首步编译开销</b>（记录中的 ~12.3s 一次性开销）摊进了平均。<br>
+      → <b>若成立，论文 <code>tab:archcomp</code> 的"训练吞吐代价 ~24%"属高估，实际约 ~5%</b>（这对 hybrid 有利）。<br>
+      ✅ 同时复核通过：参数量 dense <b>2.512B</b> / hybrid <b>2.220B</b>，与 Round 1 及 <code>tab:archcomp</code> 一致。
     </div>
   </div>
 </div>
@@ -383,7 +395,7 @@
 <table>
   <tr><th>角色</th><th>脚本 / 文件</th><th>状态</th></tr>
   <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · R2 ✅ → R3 定位<b>表征坍缩</b> → <b>R4 解决核心阻塞</b>已下发）</td></tr>
-  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ / P-2 ✅ / P-3 ✅</b> → <b>P-4 FP8 进行中</b>（TE 2.12.0 已装））</td></tr>
+  <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1 ✅ / P-2 ✅</b> · P-3 dense✅/hybrid🔄 · P-4 环境已备待 GPU · P-5/P-6 已排）</td></tr>
   <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · phase0/3/5 完成 → <b>「R 阶段：数据调研」10 个主题</b>，用 <code>cimi-search</code>/<code>cimi-fetch</code> 为 5 个阶段调研数据源）</td></tr>
   <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · 零 token · RUN_ID 1/2 已回收 → <b>RUN_ID 3（磁盘）已排队</b>）</td></tr>
   <tr><td>1B / 2B 架构轮</td><td><code>baize_search_loop.sh</code> · <code>baize_2b_search_loop.sh</code></td><td><span class="badge b-ok">✅ 已收敛</span>，僵尸 loop 已被清理</td></tr>
