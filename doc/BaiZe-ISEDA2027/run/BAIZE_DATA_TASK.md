@@ -12,7 +12,7 @@
 
 | 项 | 当前值 |
 |:---|:---|
-| **当前指令** | 🎯 **（2026-10-01 夜 · 三次修订）按序做这几件**：<br>**① ⭐ 重下 `UltraData-SFT-2605`** —— 运维**已在 HF 网页点同意条款**（原先 `gated=auto` 卡住，落盘只有 README + LICENSE + 179 个 `.lock`）。下完报**实际字节数 + 文件数 + 与 HF 官方清单的一致性**。<br>**② 🔴 当前主攻 = §0.3 + §0.4「R2 阶段」** —— 上一轮 R 的**事实层合格、结论层不合格**（两处）：<br>&nbsp;&nbsp;&nbsp;&nbsp;**§0.3（LLM 侧 / P-8 数据方案）**：你拿 **"BaiZe 计划未用"** 当理由跳过了 `Ultra-FineWeb`(base) / `UltraX-Preview` / `UltraData-RL-2609`，**那是循环论证**（计划是在不知道这些源存在时定的）。<br>&nbsp;&nbsp;&nbsp;&nbsp;**§0.4（视觉侧 / 找更多图文对）**：你**自己**给了「视觉编码器训练数据**严重不足**」的结论（`en500k` 仅 50 万对、LLaVA 85M 的 caption 99.7–100% 被截断），**却从没去 HF 找过任何通用图文对** —— 反而把问题缩小成「要不要找 EDA 版图/原理图」然后答「不值得」。**那是答错了题。**<br>&nbsp;&nbsp;&nbsp;&nbsp;**本轮两份都要交**：**8 源事实表填满（无 `?`）· base vs L3 重叠率数字 · P-8 三档投料+下载清单** **＋** **本地多模态源逐条实测 · ≥10 个 HF 通用图文对候选（含实测短 caption 率）· 前 3 推荐 + 下载命令**。<br>&nbsp;&nbsp;&nbsp;&nbsp;🚫 **禁止"待定"/"视情况"/"不在计划内"/"不值得找"（除非先给出找过的清单与规模）**；**若判定为新增且磁盘允许 → 直接开始下载**。<br>&nbsp;&nbsp;&nbsp;&nbsp;💡 特别提示：**`Recap-DataComp-1B`（十亿级）与 `conceptual-captions-12m`（CC12M，短 alt-text）可能已经在盘上** —— 优先核实。<br>**③ 🚫 `phase3_domain`（EDA 领域语料）已正式取消** —— 不再找来源、不再调研、不再入库。理由：其评测 prompt 由 docstring 生成、**与语料天然同源**，"把测试集放进训练集"**没有意义**。<br>&nbsp;&nbsp;&nbsp;&nbsp;⚠️ **必须区分**：被取消的是「**EDA 语料线**」；`EDA-Eval-PyAether` 158 任务的**黑名单红线依然有效、必须继续执行**（那是"禁止"，不是"语料"）。 |
+| **当前指令** | 🎯 **（2026-10-01 夜 · 三次修订）按序做这几件**：<br>**① ⭐ 重下 `UltraData-SFT-2605`** —— 运维**已在 HF 网页点同意条款**（原先 `gated=auto` 卡住，落盘只有 README + LICENSE + 179 个 `.lock`）。下完报**实际字节数 + 文件数 + 与 HF 官方清单的一致性**。<br>**② 🔴 当前主攻 = §0.3 + §0.4「R2 阶段」** —— 上一轮 R 的**事实层合格、结论层不合格**（两处）：<br>&nbsp;&nbsp;&nbsp;&nbsp;**§0.3（LLM 侧 / P-8 数据方案）**：你拿 **"BaiZe 计划未用"** 当理由跳过了 `Ultra-FineWeb`(base) / `UltraX-Preview` / `UltraData-RL-2609`，**那是循环论证**（计划是在不知道这些源存在时定的）。<br>&nbsp;&nbsp;&nbsp;&nbsp;**§0.4（视觉侧 / 找更多图文对）**：你**自己**给了「视觉编码器训练数据**严重不足**」的结论（`en500k` 仅 50 万对、LLaVA 85M 的 caption 99.7–100% 被截断），**却从没去 HF 找过任何通用图文对** —— 反而把问题缩小成「要不要找 EDA 版图/原理图」然后答「不值得」。**那是答错了题。**<br>&nbsp;&nbsp;&nbsp;&nbsp;**本轮两份都要交**：**8 源事实表填满（无 `?`）· base vs L3 重叠率数字 · P-8 三档投料+下载清单** **＋** **本地多模态源逐条实测 · ≥10 个 HF 通用图文对候选（含实测短 caption 率）· 前 3 推荐 + 下载命令**。<br>&nbsp;&nbsp;&nbsp;&nbsp;🚫 **禁止"待定"/"视情况"/"不在计划内"/"不值得找"（除非先给出找过的清单与规模）**；**若判定为新增且磁盘允许 → 直接开始下载**。<br>&nbsp;&nbsp;&nbsp;&nbsp;💡 **⚠️ 一条新增的硬筛条件（运维补充）**：**必须筛掉「只有 image URL、没有 image bytes」的数据集** —— 本地 `Recap-DataComp-1B` 就是**只有 URL**，而那些 URL **绝大多数被公司网络限制、下不下来**，**等于不可用**。<br>&nbsp;&nbsp;&nbsp;&nbsp;**→ A / B 两表都要新增「图像形态」列（`bytes` / `URL-only` / 待抽验），且必须抽分片实测取证（贴原文）；URL-only 一票否决、不得进推荐。**<br>&nbsp;&nbsp;&nbsp;&nbsp;⚠️ 预期会被淘汰的"大集"：`LAION-*` / `COYO-700M` / `DataComp-1B` / `DFN-*` / `RedCaps` / `YFCC` / `CC12M` / `CC3M` / `SBU` / `WIT` / `PixelProse` / **`Recap-DataComp-1B`（已确认）** —— 若大集普遍 URL-only，<b>请把重心转到"小一些但真的带图"的集</b>，并如实说明这个现实。<br>**③ 🚫 `phase3_domain`（EDA 领域语料）已正式取消** —— 不再找来源、不再调研、不再入库。理由：其评测 prompt 由 docstring 生成、**与语料天然同源**，"把测试集放进训练集"**没有意义**。<br>&nbsp;&nbsp;&nbsp;&nbsp;⚠️ **必须区分**：被取消的是「**EDA 语料线**」；`EDA-Eval-PyAether` 158 任务的**黑名单红线依然有效、必须继续执行**（那是"禁止"，不是"语料"）。 |
 | **优先级覆盖** | **① SFT-2605 重下 + ② §0.3/§0.4 R2 调研 > 其他一切**（三者可并行：重下是 I/O，调研是读 + 少量下载）；<br>`phase1/2/4`（重 I/O，等下载）**本阶段不碰**；<br>🚫 **`phase3_domain` 已取消**，**不要再碰**（任务书 §2 相应行已划掉） |
 | **状态索取** | `<无>`（若运维写入具体问题，本轮**先答该问题**再干活，答案写进 `MEMORY_DATA.md` 顶部的"运维问答"区） |
 | **暂停标志** | `<无>`（若写入 `STOP`，本轮**只更新记忆、不做任何 I/O 与数据处理**，然后退出） |
@@ -228,23 +228,28 @@ MiniCPM5 官方列的 8 个训练数据源，逐个填满：
 `BAIZE_DATA_TASK.md` §1.1 列了 `/nas_user` 那一整块，**其中有多条可能直接可用**。
 **逐条实测**（`du -sh` + 抽样看格式），把下表**填满**：
 
-| 本地已有 | 路径 | 是图文对吗 | 图像数 | caption 长度分布 | **≤77 可用率** | 判定 |
-|:--|:--|:--|:--|:--|:--|:--|
-| `conceptual-captions-12m-webdataset` | | | | | | |
-| `laion2B-en-aesthetic` | | | | | | |
-| `Recap-DataComp-1B` / `UCSC-VLAA/Recap-DataComp-1B` | | | | | | |
-| `BLIP3o-Pretrain-Long-Caption` | | | | | | |
-| `Amshaker/Mobile-O-Pre-Train` | | | | | | |
-| `coco` / `vg` | | | | | | |
-| `FineVision`(188 子集) / `LLaVA-Pretrain`(664 子集) | | | | | | |
-| `ocr_vqa` / `textvqa` | | | | | | |
-| `LLaVA-OneVision-1.5` 全家桶（含 `-packed-webdataset`） | | | | | | |
+| 本地已有 | 路径 | **图像形态** | 是图文对吗 | 图像数 | caption 长度分布 | **≤77 可用率** | 判定 |
+|:--|:--|:--|:--|:--|:--|:--|:--|
+| `conceptual-captions-12m-webdataset` | | | | | | | |
+| `laion2B-en-aesthetic` | | | | | | | |
+| `Recap-DataComp-1B` / `UCSC-VLAA/Recap-DataComp-1B` | | **🚫 URL-only（已确认）** | | | | | **🚫 不可用** |
+| `BLIP3o-Pretrain-Long-Caption` | | | | | | | |
+| `Amshaker/Mobile-O-Pre-Train` | | | | | | | |
+| `coco` / `vg` | | | | | | | |
+| `FineVision`(188 子集) / `LLaVA-Pretrain`(664 子集) | | | | | | | |
+| `ocr_vqa` / `textvqa` | | | | | | | |
+| `LLaVA-OneVision-1.5` 全家桶（含 `-packed-webdataset`） | | **✅ bytes（已知）** | | | | | |
+| `stanford-vision-lab/gpic` | | **✅ bytes（`{key}.jpg`）** | | | | | |
 
-> ⚠️ **每一行都必须填。** 特别留意两个：
-> - **`Recap-DataComp-1B`** —— 重新打标的 DataComp-1B，**十亿级**；
-> - **`conceptual-captions-12m`（CC12M）** —— **短 alt-text，天然适合 CLIP 式对比**。
+> 🔴 **「图像形态」这一列是新增的一票否决项**（见 §0.4 B 开头的硬筛条件）：
+> 必须填 **`bytes`**（数据里真的带图）/ **`URL-only`**（只有 URL → **淘汰**）/ **待抽验**。
+> **`Recap-DataComp-1B` 已由运维确认是 URL-only 且公司网络下不下来 → 直接判死。**
 >
-> **这两个如果真在盘上，可能直接解决"数据不足"。请优先核实。**
+> ⚠️ **每一行都必须填。** 特别留意：
+> - **`Recap-DataComp-1B`** —— 🚫 **已淘汰**（URL-only），不要再推荐；
+> - **`conceptual-captions-12m`（CC12M）** —— 若它是**真的 webdataset（内嵌图）**则很有价值，
+>   **但若只是 URL 重打包则同样淘汰** → **必须抽分片确认**；
+> - **`laion2B-en-aesthetic`** —— **大概率 URL-only**，优先核实。
 
 ---
 
@@ -252,7 +257,27 @@ MiniCPM5 官方列的 8 个训练数据源，逐个填满：
 
 **目标量级**：CLIP 级是 **4–20 亿对**；本项目即使打折，也应瞄准 **≥1 亿对可用**。
 
-**"合适"的三条判据（三条都要满足）**：
+> ## 🔴 第一条硬筛条件（**运维 2026-10-01 深夜补充，优先级最高**）
+> ### **必须筛掉「只有 image URL、没有 image bytes」的数据集。**
+>
+> **原因（运维实测）**：本地下载的 **`Recap-DataComp-1B` 就是这样 —— `image` 字段只有 URL**，
+> 而这些 URL **绝大多数被公司网络限制、根本下不下来** → **数据等于不可用**。
+>
+> **所以 B 表每一行都必须明确标注「图像形态」**：
+> - ✅ **`bytes`** —— 数据集里**真的带图**（parquet/tar/webdataset 内嵌图像字节）
+> - 🚫 **`URL-only`** —— 只有 URL + caption → **直接判死，不许进推荐**
+> - ⚠️ **`mixed` / `unknown`** —— **必须实地抽一个分片确认**，不许推测
+>
+> **验证方法**（必做）：`datasets-server /first-rows` 取真实样本，**看有没有 image 字节**；
+> 或下**一个** parquet/tar，`ls` 看是图还是纯文本字段。**贴出你看到的原文。**
+>
+> ⚠️ **预警：以下这些「CLIP 级大集」很可能是 URL-only，请优先核实（预期多数会被淘汰）**：
+> `LAION-2B` / `LAION-400M` / `COYO-700M` / `DataComp-1B` / `DFN-*` / `RedCaps` / `YFCC-15M` /
+> `CC12M` / `CC3M` / `SBU` / `WIT` / `PixelProse` / **`Recap-DataComp-1B`（已确认 URL-only）**。
+> → **如果大集普遍是 URL-only，请把重心转向「小一些但真的带图」的集**，并在结论里说明这个现实。
+
+**"合适"的四条判据（四条都要满足）**：
+0. 🔴 **图像是 bytes 不是 URL**（见上，**一票否决**）
 1. **是图像-文本对**（不是纯图像分类集、不是 VQA、不是交错网页）
 2. **caption 短且干净** —— **≤77 token 占比要高**
    （这一条**直接决定**能不能用当前那个**冻结的 CLIP 文本塔 + 77 token**）
@@ -260,20 +285,26 @@ MiniCPM5 官方列的 8 个训练数据源，逐个填满：
 
 **必查清单（至少覆盖这些，且每行都要有实测数字）**：
 
-| 候选 | HF repo | 规模（行/字节） | 许可 | **短 caption 率** | 判定 |
-|:--|:--|:--|:--|:--|:--|
-| DataComp-1B 系列 | | | | | |
-| LAION-2B / LAION-400M（及 aesthetic 子集） | | | | | |
-| COYO-700M | | | | | |
-| Recap-DataComp-1B | | | | | |
-| DFN / DFN-2B / DFN-5B | | | | | |
-| PixelProse | | | | | |
-| RedCaps / YFCC-15M | | | | | |
-| CC12M / CC3M / SBU | | | | | |
-| WIT（Wikipedia Image-Text） | | | | | |
-| LAION-COCO | | | | | |
-| OBELICS / MMC4（交错图文，需切对） | | | | | |
-| **你自己搜到的其他源**（见下） | | | | | |
+| 候选 | HF repo | 规模（行/字节） | **图像形态** | 许可 | **短 caption 率** | 判定 |
+|:--|:--|:--|:--|:--|:--|:--|
+| **（新增列：必须填 bytes / URL-only / 待抽验）** | | | **🔴** | | | |
+| DataComp-1B 系列 | | | | | | |
+| LAION-2B / LAION-400M（及 aesthetic 子集） | | | | | | |
+| COYO-700M | | | | | | |
+| Recap-DataComp-1B | | | **🚫 URL-only（已确认）** | | | **🚫 淘汰** |
+| DFN / DFN-2B / DFN-5B | | | | | | |
+| PixelProse | | | | | | |
+| RedCaps / YFCC-15M | | | | | | |
+| CC12M / CC3M / SBU | | | | | | |
+| WIT（Wikipedia Image-Text） | | | | | | |
+| LAION-COCO | | | | | | |
+| OBELICS / MMC4（交错图文，需切对） | | | | | | |
+| **你自己搜到的其他源**（见下） | | | | | | |
+
+> ### 🚫 **本地已有源也必须按同一条硬筛重查**（见 §0.4 A 表）
+> 特别是 `laion2B-en-aesthetic`（**大概率 URL-only**）、`conceptual-captions-12m-webdataset`、
+> `BLIP3o-Pretrain-Long-Caption`、`FineVision` **—— 逐个抽分片确认带不带图**。
+> **已知带图的**：`stanford-vision-lab/gpic`（tar 内 `{key}.jpg`）、LLaVA-OneVision-1.5（parquet 内嵌）。
 
 > ### 🔴 必须真的用 `cimi-search` 去搜
 > 用 `cimi-search` / `cimi-fetch` 搜这些方向，**把你新找到的也加进上表**：
@@ -289,18 +320,23 @@ MiniCPM5 官方列的 8 个训练数据源，逐个填满：
 
 ### C. 给出**数据方案**（**不要再只给方案不执行**）
 
-1. **推荐用哪几个源？** 按「规模 × 短 caption 率 × 许可清晰度」排序，给出**前 3 个**。
+1. **推荐用哪几个源？** 按「**① 带图（bytes）** × 规模 × 短 caption 率 × 许可清晰度」排序，给出**前 3 个**。
+   🔴 **URL-only 的一律不得进入推荐**（见 B 开头的硬筛条件）。
 2. **🔴 能不能补上"数据不足"这个洞？** 必须明确回答：
    **当前可用对数 → 补齐后可用对数 → 是否足以支撑 Stage (iii)/(iv)**。
+   ⚠️ 这里的"可用"**必须已经扣除 URL-only 的部分** ——
+   不许把"下载了 13 亿行 URL"算成"有 13 亿对可用"。
 3. **下载清单 + 磁盘 + 带宽**：下什么、多大、`/nas_train` 剩 **32T** 够不够、按**实测带宽**要多久。
 4. **可复制的下载命令**（`hf download ...`）。
 5. **污染闸**：新源必须过 `check_contamination.py`（`EDA-Eval-PyAether` 158 任务红线）。
 
 ### 完成判据
-- [ ] **A 表全部填满**（本地已有源逐条实测，含 ≤77 可用率）
-- [ ] **B 表 ≥ 10 行**，每行含 HF **实测规模 + 实测短 caption 率**
+- [ ] **A 表全部填满**（本地已有源逐条实测，含 **图像形态** 与 ≤77 可用率）
+- [ ] 🔴 **A / B 两表的「图像形态」列全部填满**，且**每一行都有抽验证据**（贴 `first-rows` 或分片 `ls` 的原文）
+- [ ] **B 表 ≥ 10 行**，每行含 HF **实测规模 + 实测短 caption 率 + 图像形态**
 - [ ] 至少**新增 3 个**由 `cimi-search` 找到、不在上表清单里的候选源
-- [ ] **C 给出前 3 推荐 + 下载清单 + 可复制命令**，并**明确回答"能不能补上数据不足"**
+- [ ] **推荐的前 3 个源全部是 `bytes`**（URL-only 一个都不许进）
+- [ ] **C 给出前 3 推荐 + 下载清单 + 可复制命令**，并**明确回答"能不能补上数据不足"**（已扣除 URL-only）
 - [ ] 更新 `DATA_RESEARCH.md`（追加「R2 视觉侧」节）+ `DATA_LEDGER.md` + `MEMORY_DATA.md`
 
 ---

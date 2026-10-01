@@ -321,27 +321,31 @@
 |:--|:--|:--|:--|
 | **A** | `en500k`（LLaVA recaption） | 长 recaption（~200+ token） | **R5 正在跑，直接复用结果**（基线，**不要重跑**） |
 | **B** | **Stanford GPIC** | `short`（**20 token / 0% 截断**） | **天然适配 77** ← 运维点名的方向 |
-| **C** | **`Recap-DataComp-1B`** | **官方 OpenVision2 的训练数据** | 🔑 **官方 README 明写** → **"按官方配方来"** 说服力最强 |
+| ~~**C**~~ | ~~`Recap-DataComp-1B`~~ | — | 🚫 **已作废：只有 image URL、没有 bytes，公司网络下不下来**（运维实测） |
+| **C′** | **（待定：由 data agent 的 §0.4 调研给出）** | — | 从「**真的带图（bytes）**」的候选里挑最大最好的那个 |
 
-> ⚠️ **臂 C 的由来（运维提供的官方证据）**：`UCSC-VLAA/OpenVision` README 原文 ——
-> OpenVision2 = *"a simplified, **generative-only** version that **removes the text encoder and
-> contrastive loss**"*，训练数据 = ***ReCap-DataComp-1B v2***（LLaMA-3 合成 caption，conditioned on alt-text）。
-> **而 `Recap-DataComp-1B` 可能在本地盘上**（`/nas_user`，见 `BAIZE_DATA_TASK.md` §1.1）。
-> 🔴 **先核实它在不在、规模多少、caption 多长**（见 R7.1）。
+> ### 🔴 一条硬约束（**运维 2026-10-01 深夜补充**）
+> **只筛「带 image bytes」的数据集。** 本地 `Recap-DataComp-1B` 是**只有 URL**，
+> 而那些 URL **绝大多数被公司网络限制、下不下来** → **等于不可用**。
+> **臂 C 因此作废。**
+> **替代来源**：等 data agent 的 **`BAIZE_DATA_TASK.md` §0.4** 结论（它会按同一硬筛给出
+> 「本地已有 / HF 候选」两张带「图像形态」列的表）。**R7 跑之前先读那份结论**。
+> **已知带图的**：`stanford-vision-lab/gpic`（`{key}.jpg`）、LLaVA-OneVision-1.5（parquet 内嵌）。
 
 ---
 
 ## R7.1 前置检查（**先做，便宜**）
 
-1. **`Recap-DataComp-1B` 在不在本地？**
-   `du -sh` + 抽样看格式 + **实测 caption 长度分布与 77 截断率**。
-   - ⚠️ 它是 **LLaMA-3 合成的 dense caption**，**很可能也很长 → 同样会被 77 截断**。
-     若如此，臂 C **同时跑两版**：`截断到 77` 与 `过滤到 ≤77` —— 以分离"数据本身"与"截断伤害"。
+1. **（臂 C′ 的来源）先读 data agent 的 `BAIZE_DATA_TASK.md` §0.4 结论**：
+   它会给出「本地已有（A 表）」与「HF 候选（B 表）」两张表，**每行都带「图像形态」列**
+   （`bytes` / `URL-only` / 待抽验）。
+   🚫 **只从标为 `bytes` 的源里挑臂 C′**；URL-only 的一律不用。
+   ⚠️ **若 §0.4 还没出结论 → 先做臂 A / B，臂 C′ 留空并注明"等调研"**，不要卡住整个 R7。
 2. **GPIC 现有多大？够不够？**
    当前 **445/8000 tar**。**抽 5–10 个 tar 实测每 tar 图文对数** → 算总量 → 与需求比
    （3000 步 × bs64 ≈ **19.2 万对**）。
    - **若不够**：要么等下载，要么只跑到现有数据支撑的步数，并**显式标注"步数不可比"**。
-3. **下 `Recap-DataComp-1B` 要多少磁盘/多久**（`/nas_train` 只剩 **32T**）。
+3. **若臂 C′ 需要新下载**：报**磁盘**（`/nas_train` 只剩 **32T**）与**实测带宽/耗时**。
 
 ## R7.2 ⚠️ 评测设计（**最容易做错的地方，务必照做**）
 
@@ -361,7 +365,7 @@
 **胜出架构**（R5 的赢家）× 3000 步 × **与 R5 同口径**（同 batch / 同 lr / 同 recipe），**只换数据**：
 - **A**：直接复用 R5 结果（**不要重跑**）
 - **B**：GPIC `short`
-- **C**：`Recap-DataComp-1B`（版本按 R7.1 结论定）
+- **C′**：由 R7.1 从「带 bytes」的候选里选定（**源未定前不要开跑**）
 
 可选（余量内）：`GPIC medium`（46 token）。
 

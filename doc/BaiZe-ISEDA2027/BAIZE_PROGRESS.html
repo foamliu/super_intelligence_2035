@@ -568,7 +568,11 @@
         <b>已派 R2 视觉侧任务</b>（<code>BAIZE_DATA_TASK.md</code> §0.4）：
         ① 先盘点<b>本地已有</b>的多模态源（<b>可能漏了 <code>Recap-DataComp-1B</code>（十亿级）/ <code>conceptual-captions-12m</code>（短 alt-text）</b>）；
         ② 用 <code>cimi-search</code> + HF API 找 <b>≥10 个</b>通用图文对候选（含<b>实测短 caption 率</b>）；
-        ③ 给出<b>前 3 推荐 + 下载命令</b>，并回答"能不能补上数据不足"</td>
+        ③ 给出<b>前 3 推荐 + 下载命令</b>，并回答"能不能补上数据不足"。<br>
+        🔴 <b>新增硬筛（运维实测）：只筛「带 image bytes」的数据集</b> ——
+        本地 <code>Recap-DataComp-1B</code> <b>只有 image URL</b>，而那些 URL <b>绝大多数被公司网络限制、下不下来 → 等于不可用</b>。
+        <b>→ A/B 两表都加「图像形态」列（<code>bytes</code> / <code>URL-only</code> / 待抽验），URL-only 一票否决。</b>
+        预期 <code>LAION-*</code> / <code>COYO</code> / <code>DataComp-1B</code> / <code>DFN</code> / <code>CC12M</code> 等"大集"多数会被淘汰</td>
   </tr>
   <tr>
     <td>10</td><td><b>vision 的 R5</b>——已于 2026-10-01 晚<b>下发</b>（任务书顶部）</td>
@@ -809,11 +813,12 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
     <td class="ok-box" style="padding:6px 10px"><b>R5 跑完后立即</b></td>
   </tr>
   <tr class="ok-box">
-    <td class="ok-box" style="padding:6px 10px"><b>R7</b> 🔵 <b>数据臂对比：en500k vs GPIC vs ReCap</b>（<u>R5 之后</u>）<br>
+    <td class="ok-box" style="padding:6px 10px"><b>R7</b> 🔵 <b>数据臂对比：en500k vs GPIC vs C′</b>（<u>R5 之后</u>）<br>
         <small>既然 <b>77 不能动</b>，就必须让<b>数据适配 77</b>；而 R5 用的 LLaVA 长 recaption <b>99.7–100% 被截断</b> ——
         恰恰最不适配。<br>
         <b>A</b> en500k（复用 R5）· <b>B</b> GPIC <code>short</code>（20 token / 0% 截断）·
-        <b>C</b> <code>Recap-DataComp-1B</code> = <b>官方 OpenVision2 的训练数据</b>（"按官方配方"）<br>
+        <s><b>C</b> <code>Recap-DataComp-1B</code></s> 🚫 <b>已作废</b> →
+        <b>C′</b> 由 §0.4 调研从「<b>带 image bytes</b>」的候选里选<br>
         ⚠️ <b>必须交叉评测</b>（<code>eval5k</code> × GPIC <code>test</code> 128 tar），
         否则分不清"数据更好"与"eval 更简单"</small></td>
     <td class="ok-box" style="padding:6px 10px"><span class="badge b-info">⏸ 已下发·排队</span><br>
