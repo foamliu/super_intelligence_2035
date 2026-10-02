@@ -124,27 +124,52 @@ ERROR_COUNT:  <n>
 
 ---
 
-#### ⭐ 第 0 步（**10 秒定生死，先做这个**）：**连通性测试**
+#### ⭐ 第 0 步（**先做**）：**连通性测试 —— 分清「事实」与「推测」**
 
-> **背景**：DeepSeek 建议用 **`sb-cli`**（SWE-bench 官方云评测 CLI）。它**确实能绕开 Docker**，
-> **但它是"API 客户端"—— 必须能访问 SWE-bench 的云**。
-> 而 `.29` 上已知：**`docker pull` 不行**、**arxiv/github 不可达**、**bocha API 被截断**，**只有 HF 能通**。
-> **→ 所以先测连通性，别先写代码。**
+> ### ⚠️ 运维更正（2026-10-02）：**github 是可达的**
+> **`.29` / `.12` 都能从 github `git clone` 代码** —— **本任务线用于发布任务的仓库本身就在 github 上**，
+> 所有 agent 的 `git fetch/pull/push` **一直正常**。
+> → **不要把"github 不可达"当作前提**（那是把"爬取层面不可达"错当成了"git 不可达"）。
+>
+> ### 🔑 还必须分清另外两件**被我混淆过**的事
+> | | 实际状态 | 依据 |
+> |:--|:--|:--|
+> | **`docker` 命令可用吗** | ❌ **不可用**（`docker info` → `NOT AVAILABLE`）| **实测（RUN_ID 5）** |
+> | **能不能 `docker pull`** | ❓ **从未测过** | **此前只是推测，不要当事实** |
+> → **"没装 Docker" 与 "装了也 pull 不到镜像" 是两件完全不同的事**，**都要实测**。
+
+**要测的清单（逐条记 `http_code` 或错误原文）**
 
 ```bash
-# 逐条测，记下 http_code 或错误信息（超时/拒绝/SSL）
-for u in https://api.swebench.com/ https://www.swebench.com/ https://pypi.org/simple/sb-cli/ ; do
-  printf '%-40s : ' "$u"
-  curl -sS -m 10 -o /dev/null -w '%{http_code}\n' "$u" 2>&1 | tail -1
+echo "=== A. GitHub（已知可达，复核 git 通道） ==="
+timeout 20 git ls-remote https://github.com/SWE-bench/SWE-bench.git HEAD 2>&1 | head -2
+
+echo "=== B. 依赖源（E′ 的关键待验项） ==="
+for u in https://pypi.org/simple/ https://files.pythonhosted.org/ ; do
+  printf '%-38s : ' "$u"; curl -sS -m 10 -o /dev/null -w '%{http_code}\n' "$u" 2>&1 | tail -1
 done
-# 顺便测 pip 能不能装（内网镜像？）
-timeout 60 pip download sb-cli -d /tmp/sbcli_probe --no-deps 2>&1 | tail -5
+# 内网镜像？（替换成你们实际的内网源）
+pip config list 2>/dev/null; cat /etc/pip.conf ~/.pip/pip.conf ~/.config/pip/pip.conf 2>/dev/null
+
+echo "=== C. Docker 相关（注意：docker 命令本身当前不可用） ==="
+which docker dockerd podman nerdctl 2>/dev/null || echo "(no docker/podman CLI)"
+curl -sS -m 10 -o /dev/null -w 'registry-1.docker.io : %{http_code}\n' https://registry-1.docker.io/v2/ 2>&1 | tail -1
+curl -sS -m 10 -o /dev/null -w 'ghcr.io             : %{http_code}\n' https://ghcr.io/v2/ 2>&1 | tail -1
+
+echo "=== D. SWE-bench 云（sb-cli 的命门） ==="
+for u in https://api.swebench.com/ https://www.swebench.com/ ; do
+  printf '%-38s : ' "$u"; curl -sS -m 10 -o /dev/null -w '%{http_code}\n' "$u" 2>&1 | tail -1
+done
+timeout 60 pip download sb-cli -d /tmp/sbcli_probe --no-deps 2>&1 | tail -3
 ```
 
-**判定**：
-- **能通** → 走 **§1.1-ter 的 sb-cli 路线**（**但先确认合规**，见下），
-  并**与 E′ 并行**：E′ 用于**横评几个 harness**，sb-cli 用于**给最强那个拿一个标准分数**。
-- **不通** → **明确写"不通"**，**放弃 sb-cli**，专注 **E′**。
+**判定（据此选路线）**
+| 测试结果 | 结论 |
+|:--|:--|
+| **B（pypi/内网镜像）通** | ✅ **E′ 完全可行** —— `git clone`（已成立）+ 装依赖 → 不需要 Docker |
+| **C 里能看到内网 registry 或 `docker pull` 成功** | ✅ 原路可行（最省事） |
+| **D 通（且合规批准）** | ✅ sb-cli 可用 → 给最强 harness 拿标准分数 |
+| **B/C/D 全不通** | ⚠️ 才需要考虑自建沙箱 / 换口径 |
 
 #### 🚫 关于 sb-cli 的合规红线（**必须先确认，再上传任何东西**）
 
@@ -157,21 +182,22 @@ timeout 60 pip download sb-cli -d /tmp/sbcli_probe --no-deps 2>&1 | tail -5
 
 ---
 
-#### 路线优先级（连通性测试之后据此执行）
+#### 路线优先级（**连通性测试之后**据此执行）
 
-1. **先查：内网有没有 Docker Hub 代理（Harbor 镜像站）？**
-   - 有 → 配 `registry-mirrors` → **原路可行**（写清结论）。
-2. **⭐ 路线 E′（推荐，完全离线）：只挑 1–3 个高频 repo 的 instance**
+1. **若 `docker pull` 实测可行**（或内网有 Harbor 镜像代理）→ **原路最省事**（写清证据）。
+2. **⭐ 路线 E′（推荐）：只挑 1–3 个高频 repo 的 instance**
    - 统计 `SWE-bench Lite`(300) 的 **repo 分布** → 挑**占比最高的 1–3 个 repo**。
-   - **只装这 1–3 套 conda/venv 环境**（用**内网 pypi / conda 镜像**）。
-   - **不需要 Docker、不需要外网**；几个 harness 跑**同一批 instance** → **公平横评成立**。
+   - **`git clone` 该 repo @ `base_commit`**（✅ github 已确认可达）+ **装该 repo 的依赖**（待验 pypi/内网镜像）。
+   - 几个 harness 跑**同一批 instance** → **公平横评成立**。
    - ⚠️ **报告里必须标注**：这是**内部横评口径**，**不是标准 SWE-bench 分数，不能与 leaderboard 直接比**。
-3. **路线 sn（若连通性通过且合规批准）：`sb-cli`**
-   - 用于**给最强 harness 拿一个标准分数**（与 leaderboard 可比）。
-   - **只上传开源 repo 的 patch**；**先确认合规**。
-4. **备选：自建轻量沙箱** —— `conda env per repo` + **`bwrap` / `nsjail`**。
-5. **若都不可行** → 明确写"**H-A 在 `docker pull` 受限的前提下无法按标准口径进行**"，
+   - 💡 **加强版**：`SWE-bench` 仓库里带着**每个 instance 的镜像构建规格**（`swebench/harness/`）——
+     **可直接照规格 build env**，完全绕开 Docker Hub。
+3. **路线 sn（若 D 通 且 合规批准）：`sb-cli`** —— 给最强 harness 拿**与 leaderboard 可比**的标准分数。
+4. **备选：自建轻量沙箱** —— `conda env per repo` + **`bwrap` / `nsjail`**（只替代"隔离"职责）。
+5. **若以上都不可行** → 明确写"**H-A 在受限前提下无法按标准口径进行**"，
    并给**替代评测口径**建议，**但不得把它称作 SWE-bench 结果**。
+
+
 
 
 
