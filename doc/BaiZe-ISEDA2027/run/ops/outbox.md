@@ -680,3 +680,197 @@ Downloading 'obelics/EN/part48/train-00000-of-00063.parquet' to 'mvp-lab/LLaVA-O
 
 =========== DONE ===========
 ```
+
+---
+
+## RUN_ID 4 · 2026-10-02 09:22:10 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=========== DF -H (ALL MOUNTS) ==========="
+df -h
+echo
+echo "=========== DF -H (NAS + ROOT, explicit) ==========="
+df -h /nas_train /nas_inference /nas_user /nas_env / 2>/dev/null
+echo
+echo "=========== DF -I (INODES — large-corpus trap) ==========="
+df -i /nas_train /nas_inference /nas_user / 2>/dev/null
+echo
+echo "=========== TARGETED DU (bounded, timeout 150s each) ==========="
+for d in \
+  /nas_train/app.e0031982/datasets/baize-vision \
+  /nas_train/app.e0031982/datasets/baize-data \
+  /nas_train/app.e0031982/datasets/mvp-lab \
+  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data \
+  /nas_train/app.e0031982/models \
+  /nas_inference/app.e0031982/datasets/openbmb ; do
+  if [ -e "$d" ]; then
+    printf '%-58s : ' "$d"
+    timeout 150 du -sh "$d" 2>/dev/null | cut -f1 || echo "(du timeout/fail)"
+  else
+    echo "$d : MISSING"
+  fi
+done
+echo
+echo "=========== TOP-LEVEL LISTING (no du, just names) ==========="
+echo "-- /nas_train/app.e0031982 --"
+ls -1 /nas_train/app.e0031982 2>/dev/null | head -20
+echo "-- /nas_train/app.e0031982/datasets --"
+ls -1 /nas_train/app.e0031982/datasets 2>/dev/null | head -40
+echo "-- /nas_user/app.e0031982/datasets --"
+ls -1 /nas_user/app.e0031982/datasets 2>/dev/null | head -40
+echo
+echo "=========== BAZE-VISION DETAIL (stage iii/iv) ==========="
+ls -1 /nas_train/app.e0031982/datasets/baize-vision 2>/dev/null || echo "MISSING"
+timeout 60 du -sh /nas_train/app.e0031982/datasets/baize-vision/* 2>/dev/null | cut -f1,2 | head -10
+echo
+echo "=========== ANY IN-PROGRESS DOWNLOAD? ==========="
+ps -eo pid=,etime=,comm=,args= 2>/dev/null | grep -E 'wget|curl|hf_transfer|datasets|nohup' | grep -v grep | cut -c1-140 | head -10 || echo "(none)"
+echo "-- nohup.out tail (if a download is logging) --"
+for f in /nas_inference/app.e0031982/datasets/nohup.out /nas_train/app.e0031982/datasets/nohup.out; do
+  [ -f "$f" ] && { echo "== $f"; tail -5 "$f" | cut -c1-140; }
+done
+echo
+echo "=========== DONE ==========="
+```
+
+**输出**
+```
+=========== DF -H (ALL MOUNTS) ===========
+Filesystem                                                                                    Size  Used Avail Use% Mounted on
+tmpfs                                                                                         202G  380M  202G   1% /run
+/dev/mapper/vgroot-lv_root                                                                    384G   13G  351G   4% /
+/dev/disk/by-id/dm-uuid-LVM-7REZHedvpF4bkkJNhmRZBzI5uNORjyT0tXXhvbSyDpfPi1ITi32wKNaWxz2MpChC   98G   25G   69G  27% /usr
+tmpfs                                                                                        1008G  1.5G 1007G   1% /dev/shm
+tmpfs                                                                                         5.0M     0  5.0M   0% /run/lock
+/dev/sdb2                                                                                     2.0G  346M  1.5G  19% /boot
+/dev/sdb1                                                                                     1.1G  6.1M  1.1G   1% /boot/efi
+/dev/mapper/vgroot-lv_home                                                                    196G  163G   24G  88% /home
+/dev/mapper/vgroot-lv_tmp                                                                      98G   55G   39G  59% /tmp
+/dev/mapper/vgroot-lv_var                                                                      98G  6.2G   87G   7% /var
+/dev/mapper/vgdata-lv_data                                                                    7.0T  510G  6.5T   8% /data
+10.239.23.31:/vol_CTE0_data01                                                                 207T  176T   32T  85% /nas_train
+10.239.23.32:/vol_CTE0_data02                                                                 108T   80T   29T  74% /nas_user
+10.239.23.32:/vol_CTE0_data03                                                                  45T   25T   21T  55% /nas_inference
+10.239.23.32:/vol_CTE0_data04                                                                  10T   14G  9.9T   1% /nas_env
+tmpfs                                                                                         202G  4.0K  202G   1% /run/user/6203
+tmpfs                                                                                         202G  4.0K  202G   1% /run/user/6218
+
+=========== DF -H (NAS + ROOT, explicit) ===========
+Filesystem                     Size  Used Avail Use% Mounted on
+10.239.23.31:/vol_CTE0_data01  207T  176T   32T  85% /nas_train
+10.239.23.32:/vol_CTE0_data03   45T   25T   21T  55% /nas_inference
+10.239.23.32:/vol_CTE0_data02  108T   80T   29T  74% /nas_user
+10.239.23.32:/vol_CTE0_data04   10T   14G  9.9T   1% /nas_env
+/dev/mapper/vgroot-lv_root     384G   13G  351G   4% /
+
+=========== DF -I (INODES — large-corpus trap) ===========
+Filesystem                          Inodes     IUsed        IFree IUse% Mounted on
+10.239.23.31:/vol_CTE0_data01 987842478080 246285036 987596193044    1% /nas_train
+10.239.23.32:/vol_CTE0_data03 214748364800    311815 214748052985    1% /nas_inference
+10.239.23.32:/vol_CTE0_data02 515396075520 154161191 515241914329    1% /nas_user
+/dev/mapper/vgroot-lv_root        25608192      7522     25600670    1% /
+
+=========== TARGETED DU (bounded, timeout 150s each) ===========
+/nas_train/app.e0031982/datasets/baize-vision              : 207G
+/nas_train/app.e0031982/datasets/baize-data : MISSING
+/nas_train/app.e0031982/datasets/mvp-lab                   : /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data          : 46G
+/nas_train/app.e0031982/models                             : 452G
+/nas_inference/app.e0031982/datasets/openbmb               : 3.7T
+
+=========== TOP-LEVEL LISTING (no du, just names) ===========
+-- /nas_train/app.e0031982 --
+agents
+author.txt
+cache
+chip_expert
+cline
+code
+core
+datasets
+download
+Downloads
+harness
+hello.py
+hf_cache
+load_model_arch.py
+midtraining_checksums_partial.txt
+midtraining_filelist_20260316_1610.txt
+miniforge3
+models
+omegaconf_230
+outputs
+-- /nas_train/app.e0031982/datasets --
+allenai
+AMSbench
+armanakbari4
+baize-vision
+check_parquet.py
+coco
+conceptual-captions-12m-webdataset
+download2.sh
+download_llava_onevision_fixed.sh
+download_llava_onevision.sh
+download_llava_onevision_subset.sh
+download.log
+download_missing_files.py
+download.sh
+FineVision
+gqa
+HuggingFaceFW
+imagenet-1k
+laion2B-en-aesthetic
+LLaVA-CC3M-Pretrain-595K
+LLaVA-Instruct-150K
+LLaVA-OneVision-1.5-Instruct-Data-webdataset-16384
+LLaVA-Pretrain
+lmms-lab
+MMMU
+mvp-lab
+nohup.out
+ocr_vqa
+openbmb
+red_caps
+stack.txt
+stanford-corenlp-full-2016-10-31
+stanford-corenlp-full-2016-10-31.zip
+textvqa
+vg
+-- /nas_user/app.e0031982/datasets --
+Amshaker
+ayoubkirouane
+BLIP3o
+cxmt
+download_llava_onevision.sh
+mvp-lab
+nohup.out
+Recap-DataComp-1B
+UCSC-VLAA
+
+=========== BAZE-VISION DETAIL (stage iii/iv) ===========
+en500k
+eval5k
+out
+smoke
+69G	/nas_train/app.e0031982/datasets/baize-vision/en500k
+1.3G	/nas_train/app.e0031982/datasets/baize-vision/eval5k
+134G	/nas_train/app.e0031982/datasets/baize-vision/out
+3.3G	/nas_train/app.e0031982/datasets/baize-vision/smoke
+
+=========== ANY IN-PROGRESS DOWNLOAD? ===========
+-- nohup.out tail (if a download is logging) --
+== /nas_inference/app.e0031982/datasets/nohup.out
+Downloading 'train/gpic_train_00602.tar' to 'stanford-vision-lab/gpic/.cache/huggingface/download/train/NRZoGfQUlSP3ALCPpMjeaiknM6A=.e44f010
+Download complete. Moving file to stanford-vision-lab/gpic/train/gpic_train_00602.tar
+Downloading 'train/gpic_train_00603.tar' to 'stanford-vision-lab/gpic/.cache/huggingface/download/train/25KmNfKKxIxKVGrbcQ6V1garJoM=.f69b394
+Download complete. Moving file to stanford-vision-lab/gpic/train/gpic_train_00603.tar
+Downloading 'train/gpic_train_00604.tar' to 'stanford-vision-lab/gpic/.cache/huggingface/download/train/qs10NsKkfQEhQWGV0AsTHPv922U=.ff0f1bf
+== /nas_train/app.e0031982/datasets/nohup.out
+Downloading 'obelics/EN/part50/train-00041-of-00063.parquet' to 'mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M/.cache/huggingface/download/ob
+Download complete. Moving file to mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M/obelics/EN/part50/train-00041-of-00063.parquet
+Downloading 'obelics/EN/part50/train-00042-of-00063.parquet' to 'mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M/.cache/huggingface/download/ob
+Download complete. Moving file to mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M/obelics/EN/part50/train-00042-of-00063.parquet
+Downloading 'obelics/EN/part50/train-00043-of-00063.parquet' to 'mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M/.cache/huggingface/download/ob
+
+=========== DONE ===========
+```
