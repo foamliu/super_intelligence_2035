@@ -10,11 +10,11 @@
 
 | 线 | 数据集 | 实测规模 | 状态 | 用途 |
 |:---|:---|:---|:---|:---|
-| 通用文本·主体 | Ultra-FineWeb（base） | **2.99 TB / 2.72 TiB = 64,624 parquet / 4 config**（`ultrafineweb_en`2048 + `ultrafineweb_en_v1_4`~62k 主体 + `ultrafineweb_l1_en_hq` 快照 + `ultrafineweb_zh`256）✅；**en 已在盘 1370/2048（复用旧 1286 + 新下 ~84）**：`/nas_train`…Ultra-FineWeb/data/ultrafineweb_en 残留旧 **1286/2048（1.67TB，2026-02）已复用** | 🟠 **下载中**（R2 启动 → **改落 `/nas_train` 复用旧 1286**；`--include data/ultrafineweb_en/*` 避 64k 全量树崩溃，速率回升至 ~13MB/s（🔴 12:15 曾 xethub 网络崩溃、已重启 pid 1672113 续传 part-1332）；en 完后续下 en_v1_4/zh/l1_en_hq ≈0.33TB） | **Stage(i) 预训练主体（R2 改判：base 替 L3 做主体）** |
+| 通用文本·主体 | Ultra-FineWeb（base） | **2.99 TB / 2.72 TiB = 64,624 parquet / 4 config**（`ultrafineweb_en`2048 + `ultrafineweb_en_v1_4`~62k 主体 + `ultrafineweb_l1_en_hq` 快照 + `ultrafineweb_zh`256）✅；**en 已在盘 1386/2048（复用旧 1286 + 新下 ~100）**：`/nas_train`…Ultra-FineWeb/data/ultrafineweb_en 残留旧 **1286/2048（1.67TB，2026-02）已复用** | 🟠 **下载中**（R2 启动 → **改落 `/nas_train` 复用旧 1286**；`--include data/ultrafineweb_en/*` 避 64k 全量树崩溃，速率回升至 ~13MB/s（🔴 12:15 曾 xethub 网络崩溃、已重启 pid 1672113 续传 part-1332）；en 完后续下 en_v1_4/zh/l1_en_hq ≈0.33TB） | **Stage(i) 预训练主体（R2 改判：base 替 L3 做主体）** |
 | 通用文本·退火/decay | Ultra-FineWeb-L3 | **1764 parquet / 1.9 TB**，≈**690B token** | ✅ 已下全 | 退火/decay 档（合成 Q&A，README 明为 base 派生） |
 | 通用文本·退火 | UltraData-Code | **1121 parquet / 1.22 TB**，≈**411B token**（L2 355B + L3 56B） | ✅ 已下载 | 退火 code |
 | 通用文本·退火 | UltraData-Math | **1823 parquet / 552 GB**，≈**303B token**（L1 184B + L2p 32B + L3 87B） | ✅ 已下载 | 退火 math |
-| 通用文本·SFT | UltraData-SFT-2605 / -Agent-2609 | **2605 下载中（1214/1504 jsonl，218G/318.99GB；no_think 855✓ 全下满；think 359/649 = Chinese-general 50✓ + Code 279✓ + IF 20✓ + Knowledge 10/50 + Math 250 未下）**；Agent-2609=jsonl 50shard/51GiB | 🟠 部分就绪 | Stage(ii) SFT |
+| 通用文本·SFT | UltraData-SFT-2605 / -Agent-2609 | **2605 下载中（1262/1504 jsonl，230G/318.99GB；no_think 855✓ 全下满；think 407/649 = Chinese-general 50✓ + Code 279✓ + IF 20✓ + Knowledge 50✓ + Math 8/250 进行中）**；Agent-2609=jsonl 50shard/51GiB | 🟠 部分就绪 | Stage(ii) SFT |
 | 通用多模态 | LLaVA-OneVision-1.5 Mid-85M | EN **5601** + CN **1948** parquet（🔴 **已停、冻结 7629 parquet/26T，sa1b/zero250m 未下**，运维令停 85M 让位 base/gpic） | ⏸ 已停（不删） | 视觉编码器 + MLLM 对齐 |
 | 通用多模态·已派生 | baize-vision/en500k | 25 tar / **68.59 GiB** | ✅ 已就绪 | Stage(iii) 四架构对比（完成） |
 | 通用多模态·已派生 | baize-vision/eval5k | 1 tar / **1.27 GiB**（laioncn/EN） | ✅ 已就绪 | 检索代理评估（held-out） |
@@ -32,10 +32,10 @@
 | Ultra-FineWeb-L3 (EN) | `/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/ultrafineweb_en_l3/qa` | 616 × `part-*.snappy.parquet`（各 ~1.07 GB），共 617.6 GiB | 内容列 `content`；snappy 压缩 |
 | UltraData-Code | `/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/` | 1121 parquet；`L2/`(cpp,cs,go,java,js,php,py,r,rb,rust,sh) + `L3/`(+rs) | 退火源用 L3（Round 1 用 `--mode turns` 读 `texts` 列） |
 | UltraData-Math | `/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/` | 1823 parquet；`L1/<CC-MAIN-*>` shard 结构 | 退火源 |
-| Ultra-FineWeb（base） | `/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/`（已改落此，复用旧副本） | **R2 下载中（复用旧副本）**：base-en 1370/2048 parquet（1.7T / 全量 2.99TB）；⚠️ **4 config**=`ultrafineweb_en`(2048)+`ultrafineweb_en_v1_4`(CC-MAIN 分片 ~62k 主体)+`ultrafineweb_l1_en_hq`(6 快照)+`ultrafineweb_zh`(256)，列 `content/score/source`；🔴 旧残留 `/nas_train/.../data/ultrafineweb_en`=1286/2048（1.67TB，2026-02）**已复用**为现下载目标 | **P-8 主预训练主体（R2 改判）** |
+| Ultra-FineWeb（base） | `/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/`（已改落此，复用旧副本） | **R2 下载中（复用旧副本）**：base-en 1386/2048 parquet（1.73T / 全量 2.99TB）；⚠️ **4 config**=`ultrafineweb_en`(2048)+`ultrafineweb_en_v1_4`(CC-MAIN 分片 ~62k 主体)+`ultrafineweb_l1_en_hq`(6 快照)+`ultrafineweb_zh`(256)，列 `content/score/source`；🔴 旧残留 `/nas_train/.../data/ultrafineweb_en`=1286/2048（1.67TB，2026-02）**已复用**为现下载目标 | **P-8 主预训练主体（R2 改判）** |
 | UltraX-Preview | `/nas_inference/app.e0031982/datasets/openbmb/UltraX-Preview/`（未下） | HF 113,789,578 行 / 487 GB / 479 parquet，5 config，~100B token | 备选（与 base 重叠，≤200B 不下载） |
 | UltraData-RL-2609 | `/nas_inference/app.e0031982/datasets/openbmb/UltraData-RL-2609/`（未下） | HF 20 jsonl / 187.63 GB，4 config（Math default/Knowledge/Long-Context/Code） | Stage(v) RL 用，P-8 不需要 |
-| UltraData-SFT-2605 | /nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605/data/ | **下载中**：1214/1504 jsonl（218G / **318.99GB**；`no_think` 855/855 ✅ 下满，`think` 359/649）——think 现状：Chinese-general 50✓ / Code 279✓ / IF 20✓ / Knowledge 10/50 进行中 / Math 250 未下；HF 官方=**1504 jsonl**（`no_think` 855 + `think` 649，其中 `think/Code` 279=177.5GB 为主体体积） | 🟠 下载中（gated=auto，token 有效），下完核验一致性 |
+| UltraData-SFT-2605 | /nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-2605/data/ | **下载中**：1262/1504 jsonl（230G / **318.99GB**；`no_think` 855/855 ✅ 下满，`think` 407/649）——think 现状：Chinese-general 50✓ / Code 279✓ / IF 20✓ / Knowledge 50✓ / Math 8/250 进行中；HF 官方=**1504 jsonl**（`no_think` 855 + `think` 649，其中 `think/Code` 279=177.5GB 为主体体积） | 🟠 下载中（gated=auto，token 有效），下完核验一致性 |
 | UltraData-SFT-Agent-2609 | `/nas_inference/app.e0031982/datasets/openbmb/UltraData-SFT-Agent-2609/data/` | **jsonl，50 shard / 51 GiB**；`Code_Agent`(7)/`General_Agent`/`Search_Agent`/`Tool_Use`，2GB/shard | ✅ 已就绪（jsonl，check_contamination.py 直接可扫） |
 
 ### 1.2 通用多模态（产出来源 `/nas_train`）
