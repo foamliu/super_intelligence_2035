@@ -64,7 +64,13 @@ ERROR_COUNT:  <n>
 > ```
 > **文件日期为 Sep 4 – Sep 15**，**早于本线创建（Oct 2）**，**非本线产物**。
 >
-> ### ✅ 运维指示：**可以合并**
+> ### ✅ 运维确认 + 指示（2026-10-02）
+> - **运维确认**：**9 月初确实下发过一次「5 个 harness 比较」的任务**（就是这条线）；
+> - **⚠️ 它的 `loop.sh` 早已停掉** → **不会与我们冲突**，也**不要**去重启它；
+> - **指示：可以合并**。
+>
+> **→ 所以它的产物是「纯输入」**：`analyze_harness_sources.md` / `report.html` / `evidence/` / `mechanisms/`
+> 都是**可复用的既有素材**，但**其结论需要按我们的 5 条主线重新审视**（它的分析角度可能不同）。
 >
 > **你要做的（H-B 开始前先做）**：
 > 1. **先把这条既有线的家底摸清**（**只读**，不要改动它）：
@@ -106,34 +112,68 @@ ERROR_COUNT:  <n>
 > **已查实的事实（官方仓库原文）**：
 > - SWE-bench 官方 harness **默认绑 Docker**（README：「SWE-bench uses **Docker** for reproducible evaluations」；
 >   2024-06-27 起改为「**fully containerized** evaluation harness using Docker」）。
-> - **官方唯一的"无 Docker"后端是 Modal（云）**：`--modal true` —— 但**要外网**，**内网不可用**。
-> - `sb-cli` 同为云服务，**同样不可用**。
+> - **官方唯一的"无 Docker"本地后端是 Modal（云）**：`--modal true` —— 但要外网。
 > - **`SWE-ReX`**（SWE-agent 家族）支持 **local / remote / Docker / Modal 等后端**，
->   原文：「Whether commands are executed **locally** or remotely in Docker containers, AWS remote machines, Modal, or something else…」+
+>   原文：「…executed **locally** or remotely in Docker containers, AWS remote machines, Modal, or something else…」+
 >   「Support a broad range of platforms, **including non-Linux machines without Docker**」。
-> - 🚫 **`SWE-MiniSandbox`** —— **在官方仓库中未找到该名称**。
->   **→ 请自行查证它是否存在**（若有，给 URL + 它解决什么）；**查不到就写"未找到"，不要猜**。
+> - 🚫 **`SWE-MiniSandbox`** —— **在官方仓库中未找到该名称**。**请自行查证**（有就给 URL + 它解决什么）；**查不到就写"未找到"，不要猜**。
 
 > ### 🔑 关键认知：Docker 在这里**不只是"隔离"，更是"per-instance 依赖环境的分发机制"**
 > 每个 instance 一个**预构建镜像**，装着**该 repo 在该 `base_commit` 下正确的依赖**。
-> **换掉"隔离"很容易**（bwrap / nsjail / local）；**换掉"环境供应链"很难** —— 那等于为 300 个 instance 装 300 套 conda env。
+> **换掉"隔离"很容易**（bwrap / nsjail / local）；**换掉"环境供应链"很难**。
 
-**要做的（按顺序，逐条给结论）**
+---
 
-1. **先问/先查：内网有没有 Docker Hub 代理（Harbor 镜像站）？**
-   - 若有 → 配 `registry-mirrors` 即可直接 pull → **原路可行**（把结论写清楚）。
-   - 若无 → 走下面 2/3。
-2. **⭐ 推荐路线 E′：只挑 1–3 个高频 repo 的 instance**
-   - 先统计 `SWE-bench Lite`(300) 的 **repo 分布** → 挑**占比最高的 1–3 个 repo**。
+#### ⭐ 第 0 步（**10 秒定生死，先做这个**）：**连通性测试**
+
+> **背景**：DeepSeek 建议用 **`sb-cli`**（SWE-bench 官方云评测 CLI）。它**确实能绕开 Docker**，
+> **但它是"API 客户端"—— 必须能访问 SWE-bench 的云**。
+> 而 `.29` 上已知：**`docker pull` 不行**、**arxiv/github 不可达**、**bocha API 被截断**，**只有 HF 能通**。
+> **→ 所以先测连通性，别先写代码。**
+
+```bash
+# 逐条测，记下 http_code 或错误信息（超时/拒绝/SSL）
+for u in https://api.swebench.com/ https://www.swebench.com/ https://pypi.org/simple/sb-cli/ ; do
+  printf '%-40s : ' "$u"
+  curl -sS -m 10 -o /dev/null -w '%{http_code}\n' "$u" 2>&1 | tail -1
+done
+# 顺便测 pip 能不能装（内网镜像？）
+timeout 60 pip download sb-cli -d /tmp/sbcli_probe --no-deps 2>&1 | tail -5
+```
+
+**判定**：
+- **能通** → 走 **§1.1-ter 的 sb-cli 路线**（**但先确认合规**，见下），
+  并**与 E′ 并行**：E′ 用于**横评几个 harness**，sb-cli 用于**给最强那个拿一个标准分数**。
+- **不通** → **明确写"不通"**，**放弃 sb-cli**，专注 **E′**。
+
+#### 🚫 关于 sb-cli 的合规红线（**必须先确认，再上传任何东西**）
+
+`sb-cli` 的工作方式是 **把 `predictions.json`（含 `model_patch`）上传到 SWE-bench 云端评测**。
+- ✅ **缓解**：patch 针对的是**开源 repo**（django / sympy 等），**不是我们的私有代码**。
+- ⚠️ **但**：**这是把代码片段发到外部服务** —— **公司政策可能不允许**。
+- **→ 要求**：**上传前必须由运维/合规确认**。**未经确认，不得使用 sb-cli 上传任何东西。**
+- 📌 另：sb-cli 需要**邮箱 + 邮件验证码**注册（`sb-cli gen-api-key <email>` → `verify-api-key <code>`），
+  且**有配额**（`sb-cli quota <subset> <split>`）—— 这两条也要先记下来。
+
+---
+
+#### 路线优先级（连通性测试之后据此执行）
+
+1. **先查：内网有没有 Docker Hub 代理（Harbor 镜像站）？**
+   - 有 → 配 `registry-mirrors` → **原路可行**（写清结论）。
+2. **⭐ 路线 E′（推荐，完全离线）：只挑 1–3 个高频 repo 的 instance**
+   - 统计 `SWE-bench Lite`(300) 的 **repo 分布** → 挑**占比最高的 1–3 个 repo**。
    - **只装这 1–3 套 conda/venv 环境**（用**内网 pypi / conda 镜像**）。
-   - **不需要 Docker、不需要外网**，且**几个 harness 跑同一批 instance** → **公平横评成立**。
-   - ⚠️ **必须在报告里标注**：这是**内部横评口径**，**不是标准 SWE-bench 分数，不能与 leaderboard 直接比**。
-3. **备选：自建轻量沙箱**（若 E′ 也不可行）
-   - `conda env per repo` + **`bwrap` / `nsjail`** 做隔离（替代 Docker 的隔离职责）。
-   - 报**工作量与风险**。
-4. **若以上都不可行** → 明确写"**H-A 在 `docker pull` 受限的前提下无法按标准口径进行**"，
-   并给出**替代评测口径**的建议（例如改用不需要 per-repo 环境的代码基准），
-   **但不得把它称作 SWE-bench 结果**。
+   - **不需要 Docker、不需要外网**；几个 harness 跑**同一批 instance** → **公平横评成立**。
+   - ⚠️ **报告里必须标注**：这是**内部横评口径**，**不是标准 SWE-bench 分数，不能与 leaderboard 直接比**。
+3. **路线 sn（若连通性通过且合规批准）：`sb-cli`**
+   - 用于**给最强 harness 拿一个标准分数**（与 leaderboard 可比）。
+   - **只上传开源 repo 的 patch**；**先确认合规**。
+4. **备选：自建轻量沙箱** —— `conda env per repo` + **`bwrap` / `nsjail`**。
+5. **若都不可行** → 明确写"**H-A 在 `docker pull` 受限的前提下无法按标准口径进行**"，
+   并给**替代评测口径**建议，**但不得把它称作 SWE-bench 结果**。
+
+
 
 
 
