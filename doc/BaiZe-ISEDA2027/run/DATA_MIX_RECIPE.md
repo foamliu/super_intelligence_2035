@@ -106,12 +106,12 @@ Xmodel-2 原文（`xmodel-2.tex:138,144-146,152-154`）：
 
 | 源 | 是否就位 | 状态 / 缺口 |
 |:--|:--|:--|
-| `Ultra-FineWeb (base)` | 🟡 下载中 | en 配置已复用 1286/2048 旧副本，剩 ~762 en + en_v1_4 + zh + l1_en_hq |
+| `Ultra-FineWeb (base)` | 🟡 下载中 | en 配置 1409/2048（复用旧 1286 续推），剩 ~639 en + en_v1_4 + zh + l1_en_hq |
 | `UltraX-Preview` | ❌ 未下 | 规模/重叠待实测（§1） |
 | `Ultra-FineWeb-L3` | ✅ 就绪 | 1764 parquet / 617.6 GiB（4 config） |
 | `UltraData-Code` | ✅ 就绪 | 1121 parquet |
 | `UltraData-Math` | ✅ 就绪 | 1823 parquet |
-| `UltraData-SFT-2605` | 🟡 下载中 | 918/1504 jsonl（think/ 主体积进行中） |
+| `UltraData-SFT-2605` | 🟡 下载中 | 1321/1504 jsonl（剩 think/Math 183 件） |
 | `UltraData-SFT-Agent-2609` | ✅ 就绪 | 50 shard jsonl / 51 GiB |
 
 ---
