@@ -10,8 +10,18 @@ WAITING: 1
 | WAITING | 1（R9 阶段一 3 臂后台重跑中；已修 wds 脏图容错 + 加周期 ckpt，置 1 长睡，下次唤醒回收 + 阶段二） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @step~8900 崩溃：CC12M/Amshaker wds 含损坏 jpg → PIL.UnidentifiedImageError） |
 | BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（≈9.2 GPU·h + ~23min）+ R9（冒烟 ~0.06 + 首跑 w512 32min + w768 ~8min 报废） |
-| 更新 | 2026-10-02 11:06（巡检：stage-1 w512 健康 @~9.5k/30k；备好阶段二 launcher `r9_run_stage2.sh`） |
+| 更新 | 2026-10-02 12:10（巡检：stage-1 w512 健康 @~26.5k/30k，周期 ckpt vision_step10000/20000.pt 已落盘；w768/w1024 排队；WAITING=1） |
 | WINNER | **OpenVision2**（R8 六架构四指标第一；R9 只做空塔规模缩放，不改架构排名） |
+
+## 巡检（2026-10-02 12:10）：stage-1 w512 近尾声 + 周期 ckpt 已落盘
+
+> 纯 CPU，未占卡。本次唤醒巡检 R9 阶段一，无新实验、无脚本改动（阶段二 launcher 上个唤醒已备好）。
+
+- **w512 健康 & 近尾声**：`/tmp/r9.log` 持续写入（mtime 12:10）；w512（126.8M）跑至 **~step 26550/30000（88.5%）**；最近 PROBE step 26400 `C1=0.4098 C2_gap=+0.1020 C4=OK`，`loss_ema=3.97`（已从 early 5.96 持续下降，无坍缩）；loss 3.7–4.4 波动属正常（InfoNCE 温度≈50）。GPU 0–7 8×~16.3G、util 100%（GPU6 瞬时 0% 为采样抖动）。
+- **周期 ckpt 已落盘**：`R9_stage1_w512/vision_step10000.pt`（11:05）、`vision_step20000.pt`（11:44），各 507MB → 证实 `--save-every 10000`（r9_train.py 默认）在 stage-1 也已生效——缩塔三臂顺带多出周期点，可进 scaling 图（R9.4 要求"阶段一 3 臂也进同一张图"）。
+- **吞吐 & ETA（据实测反推）**：10:27:45 启动 → 12:10 @ 26550 步 = **~260 步/min**（≈2300 img/s，data agent hf download 三路仍在占用 NFS 带宽所致，较冒烟 2827 略低，不杀他人进程）。外推：w512 收尾 ~12:23；w768 ~14:20；w1024 ~16:15；末了 `r8_eval_in1k.py` 三 ckpt IN-1k 评测 ~0.5–1h → **stage-1 全完成 ≈17:00–17:30**。
+- **下一步（WAITING=1 不变）**：stage-1 3 臂 training + IN-1k 全完后 → 回收 3×`vision.pt`（+周期 ckpt）→ 按 IN-1k lp（及 loss/C1/吞吐）选**每样本效率最高**塔 → `bash r9_run_stage2.sh <选中width> 108000 6` 启动阶段二长训。
+- 未改 `*.tex`；未碰 pretrain/data/ops 文件。
 
 ## 摸底巡检（2026-10-02 11:06）：stage-1 健康运行 + 备好阶段二 launcher
 
