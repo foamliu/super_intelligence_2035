@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 工作汇报 · 2026-10-02</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr;} }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+    .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#0d5c22; }`n  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6a4a00; }
+  .danger { background:#fff0f0; border:1px solid #ffc9c9; border-left:4px solid var(--bad); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#8a1c1c; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe 工作汇报 · 2026-10-02</h1>
+  <div class="sub">Stage (i) 本体明确化（P-8）· 视觉线 R5–R9 全线贯通 · 第 4 条 harness 线新建 · 运维基础设施两处修复</div>
+  <div class="meta">
+    <span>📅 2026-10-02 22:55</span>
+    <span>📦 <code>foamliu/super_intelligence_2035</code> @ <code>main</code></span>
+    <span>📈 当日提交 <b>110</b> 个</span>
+    <span>🎯 投稿截止 ≈ 2027-02-01（余 <b>≈122 天</b>）</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <strong>今天做成四件事，同时纠正了三个此前的错误判断。</strong>
+  <ol style="margin:10px 0 0">
+    <li><b>Stage (i) 的定位被重新锚定</b> —— 此前看板把 Stage (i) 标为「✅ 完成」，实际完成的只是
+        <b>超参 / 架构选型实验</b>；<b>本体 = P-8 完整训练，从未开始</b>。现已明确并排入序列。</li>
+    <li><b>视觉线全线贯通</b> —— R5（重跑）→ R6（77 裁定）→ R7（数据裁定 = GPIC <code>short</code>）
+        → R8（六架构 + IN-1k，<b>OpenVision2 四指标全第一</b>）→ <b>R9（数据扩容 + 长训练）启动</b>。</li>
+    <li><b>第 4 条任务线 harness 建成并当日出成果</b> —— 任务书 + loop + ops 启动，
+        <b>首份交付 <code>cline_SOURCE_ANALYSIS.html</code>（47 KB）当晚完成</b>。</li>
+    <li><b>运维基础设施两处修复</b> —— 中继「只执行第一个 <code>bash</code> 块」的 bug（害得 RUN_ID 4 静默失效）、
+        以及<b>重复 relay 的误杀风险</b>。</li>
+  </ol>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi"><div class="v">R9 阶段一 ✅</div><div class="l">缩塔 w512(126.8M) 胜出 · IN-1k lp <b>6.10%</b></div></div>
+  <div class="kpi"><div class="v">P-4R ✅</div><div class="l">FP8 实测 <b>s=0.65 倒挂</b> → 维持 bf16</div></div>
+  <div class="kpi"><div class="v">P-7 ✅</div><div class="l">+24% 是跨节点 artifact · 真值 <b>~8%</b></div></div>
+  <div class="kpi"><div class="v">1504/1504</div><div class="l">SFT-2605 下满 · 与 HF 逐字节一致</div></div>
+</div>
+
+<div class="toc">
+  <strong>目录</strong>
+  <ol>
+    <li><a href="#s1">五条线状态一览</a></li>
+    <li><a href="#s2">视觉线（R5 → R9）</a></li>
+    <li><a href="#s3">预训练线（P-4R / P-5b / P-8）</a></li>
+    <li><a href="#s4">数据线（§0.3 ~ §0.7）</a></li>
+    <li><a href="#s5">harness 线（新建）</a></li>
+    <li><a href="#s6">🚨 今天被推翻 / 纠正的判断</a></li>
+    <li><a href="#s7">关键数字修正</a></li>
+    <li><a href="#s8">需要运维决策</a></li>
+    <li><a href="#s9">下一步排期</a></li>
+  </ol>
+</div>
+
+
+<h2 class="sec" id="s1"><span class="no">1</span>五条线状态一览</h2>
+
+<table>
+  <tr><th>线</th><th>今日进展</th><th>当前状态</th><th>下一步</th></tr>
+  <tr>
+    <td><b>vision</b><br><code>.12</code></td>
+    <td><b>R5 → R6 → R7 → R8 全部完成</b>，<b>R9 启动并跑完阶段一</b></td>
+    <td><span class="badge b-ok">✅ R5–R8 完成</span> · <span class="badge b-ok">🔄 R9 阶段二 ~68.8%</span></td>
+    <td>等 R9 出 <b>scaling law 曲线 + 外推</b></td>
+  </tr>
+  <tr>
+    <td><b>pretrain</b><br><code>.29</code></td>
+    <td><b>P-4 ✅ · P-5a ✅ 9/9 · P-6 第1步 ✅ · P-7 ✅ · P-4R ✅</b>；<b>P-8 明确为本体</b>；P-5b 长跑中</td>
+    <td><span class="badge b-ok">✅ 7 项完成</span> · <span class="badge b-ok">🔄 P-5b 30.8%</span></td>
+    <td>P-5b → P-6② → <b>P-8</b>（暂缓，等 base + 配比）</td>
+  </tr>
+  <tr>
+    <td><b>data</b><br><code>.12</code></td>
+    <td><b>§0.3 / §0.4 / §0.5 / §0.6 / §0.7 全部交付</b>；<b>SFT-2605 下满</b>；base-en 1564/2048；gpic 929/8000</td>
+    <td><span class="badge b-ok">✅ 调研全交付</span> · <span class="badge b-warn">🔄 三路下载中</span></td>
+    <td>base 下满 → 过闸 → 分词；配比实验（等卡）</td>
+  </tr>
+  <tr>
+    <td><b>harness</b> 🆕<br><code>.29</code></td>
+    <td><b>任务线当日建成</b>（任务书 + loop + ops 启动），<b>当天交付 cline 源码分析 47 KB</b></td>
+    <td><span class="badge b-ok">✅ 运行中 · H-B cline 完成</span></td>
+    <td>下一个 harness / H-A 可行性核查</td>
+  </tr>
+  <tr>
+    <td><b>ops relay</b></td>
+    <td>RUN_ID 3 → <b>6</b>；修「只跑第一个 bash 块」bug；<b>清重复 relay</b>（保住跑了 30.4 h 的）</td>
+    <td><span class="badge b-ok">✅ 空闲待命</span></td>
+    <td>随时可派 RUN_ID 7</td>
+  </tr>
+</table>
+
+<h2 class="sec" id="s2"><span class="no">2</span>视觉线（R5 → R9）</h2>
+
+<h3>2.1 全链贯通</h3>
+<table>
+  <tr><th>轮次</th><th>做了什么</th><th>结论</th></tr>
+  <tr><td><b>R5</b></td><td>用 R4 修复的 <code>sem_clip</code> recipe 重跑架构 / 分辨率</td>
+      <td>OpenVision2 胜出；分辨率 <b>224/16 最优</b>（loss 3.0977）</td></tr>
+  <tr><td><b>R6</b></td><td>裁定 77 截断的根因与数据切换</td>
+      <td><b>77 = 官方 OpenVision2 的 <code>text_cfg.context_length</code></b>（原样照搬，非 open_clip 默认）</td></tr>
+  <tr><td><b>R7</b></td><td>三条数据臂交叉评测（en500k / GPIC-short / CC12M）</td>
+      <td><b>数据裁定 = GPIC <code>short</code></b>（跨域最稳健）；CC12M 规模最大却处处最弱、淘汰</td></tr>
+  <tr><td><b>R8</b></td><td><b>六架构 + IN-1k</b>（新增 AIMv2 / FastViTHD）</td>
+      <td>见下表</td></tr>
+</table>
+
+<h3>2.2 R8 六架构最终结果（<b>权威</b>）</h3>
+<table>
+  <tr><th>架构</th><th>loss@3k</th><th>C1</th><th>IN-1k zs</th><th>IN-1k lp</th><th>img/s</th><th>判定</th></tr>
+  <tr><td><b>OpenVision2</b></td><td><b>4.8646</b></td><td><b>0.2875</b></td><td><b>0.95%</b></td><td><b>1.14%</b></td><td>3051.8</td><td>🏆 <b>胜出（四指标全第一）</b></td></tr>
+  <tr><td>MoE-ViE</td><td>5.5580</td><td>0.4109</td><td>0.35%</td><td>0.28%</td><td>1225.7</td><td>健康</td></tr>
+  <tr><td>AIMv2（等参改编）</td><td>5.6370</td><td>0.3931</td><td>0.38%</td><td>0.25%</td><td><b>3392.5</b></td><td>健康（吞吐最快）</td></tr>
+  <tr><td>FastViTHD（等参改编）</td><td>5.6683</td><td>0.4494</td><td>0.39%</td><td>0.27%</td><td>2097.4</td><td>健康</td></tr>
+  <tr><td>MambaEye（纯 SSM）</td><td>6.2507</td><td><b>1.0000</b></td><td>0.10%</td><td>0.10%</td><td>949.5</td><td>❌ <b>@300 坍缩</b></td></tr>
+  <tr><td>DeepEncoderV2（Attn+SSM）</td><td>6.2513</td><td><b>1.0000</b></td><td>0.10%</td><td>0.10%</td><td>1864.5</td><td>❌ <b>@300 坍缩</b></td></tr>
+</table>
+<div class="ok-box">
+  <b>三条最终结论</b>：① <b>修复 recipe 下架构有真实差异</b>（旧结论「loss 与架构无关」是坍缩伪影，<b>作废</b>）；
+  ② <b>坍缩是 SSM 特异</b> —— 含 SSM 子结构的两个架构 @300 步即坍缩，纯 Attention 四架构全健康；
+  ③ <b>IN-1k 成功替换了退化的 R@1</b>（旧 <code>R@1=1/5000</code> 是精确 chance、零区分度）。
+</div>
+
+<h3>2.3 R9 缩塔先导 —— <b>今天最有价值的单个结果</b></h3>
+<p>动机：<b>「模型远大于数据」</b> —— R8 的 505 M 塔只喂了 150 万样本，<b>样本/参数 = 0.003</b>（AIMv2-L 是 ~40）。</p>
+<table>
+  <tr><th>塔规模</th><th>结果</th></tr>
+  <tr><td>w512 = <b>126.8 M</b></td><td>🏆 <b>胜出</b> —— <b>IN-1k lp 6.10%</b>（vs R8 的 1.14%，<b>5.4×</b>）；C1 0.3502、C2_gap +0.108、2938.6 img/s</td></tr>
+  <tr><td>w768</td><td>ema 4.0496 / C1 0.3813 / 2978.2 img/s</td></tr>
+  <tr><td>w1024（= R8 的 505M）</td><td>作为基线对照</td></tr>
+</table>
+<div class="note">
+  ✅ <b>「模型过大」的判断被证实</b>：换成 126.8 M 的塔后，同样的数据预算下 IN-1k lp <b>翻了 5.4 倍</b>。
+  阶段二正在用 w512 跑 <b>108k 步</b>，每 10k 步存点，<b>当前 @~68.8% 健康</b>（ckpt 10k~70k 已落盘）。
+</div>
+
+
+<h2 class="sec" id="s3"><span class="no">3</span>预训练线（P-4R / P-5b / P-8）</h2>
+
+<h3>3.1 P-4R —— FP8 重开，<b>实测倒挂</b></h3>
+<div class="card">
+  <b>背景</b>：上一轮以「Amdahl 上限 &lt;2×」判定不接 FP8，但运维指出它<b>用错了 <code>g</code></b> ——
+  用了 GBS=8 的墙钟 <code>g=0.286</code>（其自身 caveat 已说不适用于生产），而 <b>P-5a 定稿的生产口径 GBS=1024 → <code>g≈0.49</code></b>。
+  按 <code>g=0.49</code> 重算，端到端收益应在 <b>+14.5% ~ +30%</b>。<br><br>
+  <b>重开后的实测结论</b>（<code>scripts/p4r_fp8_gemm_bench.py</code>，1 卡）：
+  <pre><code>实测 FP8 GEMM 单算子 s = t_bf16 / t_fp8 ≈ 0.65  (< 1，即 FP8 反而慢 ~35%)</code></pre>
+  <b>机制</b>：生产口径（GBS=1024 但 mb=1 → 每 GEMM 的 <b>M = seq = 4094</b>）下，我们 56 层 hybrid 的
+  GEMM <b>全是访存受限的小 / 瘦 GEMM</b>，FP8 的 2× FLOPs 换不来收益。<br>
+  <b>交叉点</b>：<code>s</code> 在 <b>M≈16K</b> 跨过 1.0，<b>M≥32K 饱和在 ~1.34</b> ——
+  与 Xmodel-2.5 反推的 <code>s≈1.35</code> <b>一致</b>，但<b>那是在稠密模型的大 GEMM 上（我们够不到那个区间）</b>。<br>
+  → <b>结论：P-8 / P-5b 维持 bf16。</b>
+</div>
+<div class="note">
+  ⚠️ <b>诚实说明</b>：我此前估算 <code>s≈1.35 → +14.5%</code>，<b>方向对但应用错了</b> ——
+  没意识到我们的 <code>M</code> 只有 4094。<b>agent 的实测 + 交叉点分析给出了机制，比我的估算强。</b>
+  这也说明<b>重开这个决策是对的</b>：现在拿到的是一个<b>有机制、可复现</b>的结论，而不是一句「不值得」。
+</div>
+
+<h3>3.2 P-5b 长跑（提供 P-6 第 2 步的输入）</h3>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>进度</td><td><b>iter 1470 / 4771（30.8%）</b> · loss <b>2.2952</b> · 健康（无 NaN/skip）</td></tr>
+  <tr><td>已记里程碑</td><td><b>655M / 1.3B / 2.6B / 5.2B token</b></td></tr>
+  <tr><td>checkpoint</td><td><b>每 156 步存一个</b> —— 供 P-6 第 2 步在这些 ckpt 上跑评测</td></tr>
+  <tr><td>ETA</td><td>≈ 10-04 00:50</td></tr>
+</table>
+
+<h3>3.3 P-8 = Stage (i) 的<b>本体</b>（此前被错标为「已完成」）</h3>
+<div class="danger">
+  <b>今天纠正的最大一个错误</b>：看板此前把 Stage (i) 标为「✅ 完成」，<b>实际上完成的只是「超参 / 架构选型实验」</b>。
+  <ul style="margin:8px 0">
+    <li>已完成的实验 token 量级：单点 5000 步 ≈ <b>164 M token</b>；「长跑」20000 步 ≈ <b>655 M token</b>；合计 <b>~85 GPU·h</b></li>
+    <li>对照：<b>Chinchilla 最优 = 2.22 B × 20 ≈ 44 B token</b> → 实际只到 <b>1.5%</b></li>
+    <li><b>🚨 P-8（正式预训练）从未开始</b> —— 已明确为本体并排入序列</li>
+  </ul>
+  <b>P-8 的 token 预算三档</b>（按实测 ~83K tok/s）：44 B ≈ <b>5.5 天</b> · <b>100 B ≈ 12.5 天（推荐）</b> · 200 B ≈ 25 天。<br>
+  ⚠️ <b>P-8 已按运维指令「暂缓启动」</b> —— 等 <b>① base 下好 ② 配比实验定稿</b>。
+  <b>不要因为 P-5b 跑完就顺手启动。</b>
+</div>
+
+<h3>3.4 P-6 第 2 步升级为「scaling law 曲线 + 外推」</h3>
+<p>运维要求：<b>估计常识推理 8 任务与复杂推理 6 任务要达到更高的水平需要多少训练数据</b>。</p>
+<table>
+  <tr><th>项</th><th>内容</th></tr>
+  <tr><td>数据点</td><td>P-5b 的 <b>6 个 ckpt</b>（655M / 1.3B / 2.6B / 5.2B / 10.5B / 20B token）</td></tr>
+  <tr><td>两套指标（<b>全走 lm_eval</b>，n-shot 用框架默认值）</td>
+      <td><b>常识 8 集</b>：ARC-C / ARC-E / BoolQ / HellaSwag / OpenBookQA / PiQA / SciQ / Winogrande<br>
+          <b>复杂 6 集</b>：GSM8K / MATH / BBH / MMLU / HumanEval / MBPP</td></tr>
+  <tr><td>参照线（Xmodel-2 公开值）</td>
+      <td>常识 Avg：<b>我们起点 43.95%</b>（P-6 第 1 步）| 最弱 1B 级 <b>55.24</b> | <b>Xmodel-2-1.2B 61.79</b> | Phi-1.5-1.3B 65.68</td></tr>
+  <tr><td>外推要回答</td>
+      <td><b>常识 Avg 达到 50% / 55% / 60% 各需要多少 token？</b> → 折算成天数 → <b>用来定 P-8 的预算</b></td></tr>
+</table>
+<div class="note">
+  🚨 <b>预期校准</b>：1B 级模型在<b>复杂 6 集</b>上<b>本来就贴地板</b>（GSM8K 0.45–2.5%、MATH ~1%、MMLU/BBH ~25% ≈ chance）→
+  我们 2.2 B / ≤20 B token <b>很可能全程贴地板</b>。<b>若确实贴地板，「量不出斜率」本身就是结论</b>
+  （说明复杂推理在更晚才涌现）—— <b>如实写，不要硬拟合。</b>
+</div>
+
+
+<h2 class="sec" id="s4"><span class="no">4</span>数据线（§0.3 ~ §0.7）</h2>
+
+<h3>4.1 五轮调研全部交付</h3>
+<table>
+  <tr><th>轮次</th><th>交付</th><th>关键结论</th></tr>
+  <tr><td><b>§0.3</b> LLM 侧</td><td>8 源事实表<b>满填</b>；base vs L3 重叠分析；P-8 三档配方</td>
+      <td><b><code>Ultra-FineWeb</code>(base) 与 L3 重叠率 = 0%</b>（互不相交，可叠加）；P-8 配比 86:10:4</td></tr>
+  <tr><td><b>§0.4</b> 视觉侧</td><td>本地 12 源<b>图像形态</b>实测；<b>13 个 HF 候选（7 个 URL-only 淘汰 / 6 个 bytes）</b>；前 3 推荐</td>
+      <td>🔑 <b>「只筛带 image bytes」这条硬筛淘汰了近一半候选</b> —— <code>LAION-*</code> / <code>COYO</code> / <code>DataComp-1B</code> / <code>Recap-DataComp-1B</code> 等大集<b>全是 URL-only</b>，公司内网下不来</td></tr>
+  <tr><td><b>§0.5 / §0.7</b></td><td>base 下载推进 + <b>ETA 估时</b> + <b>旧副本复用</b></td>
+      <td>见 4.3</td></tr>
+  <tr><td><b>§0.6</b> P-8 配方</td><td><b><code>DATA_MIX_RECIPE.md</code> v1</b></td>
+      <td>见 4.2</td></tr>
+</table>
+
+<h3>4.2 P-8 数据配方 —— follow MiniCPM5 / Xmodel-2 的 <b>WSD 双阶段配比</b></h3>
+<table>
+  <tr><th>阶段</th><th>数据源</th><th>代理指标</th></tr>
+  <tr><td><b>Stable</b></td><td><code>Ultra-FineWeb</code>(base) · <code>UltraX-Preview</code> · <code>UltraData-Math</code> · <code>UltraData-Code</code>（<b>以前两者为主</b>）</td>
+      <td><b>Xmodel-2 Table 2 的 8 个</b>（Commonsense）</td></tr>
+  <tr><td><b>Decay</b></td><td><code>Ultra-FineWeb-L3</code> · <code>Math</code> · <code>Code</code> · <b><code>UltraData-SFT-2605</code></b> · <b><code>UltraData-SFT-Agent-2609</code></b></td>
+      <td><b>Table 3 的 6 个</b>（Complex Reasoning）</td></tr>
+</table>
+<div class="danger">
+  🚨 <b>一条可能改变全局的发现</b>（来自 <code>Xmodel-2/xmodel-2.tex:144-154</code>）<br>
+  把配比搜索空间收敛到<b>两个问题</b>后跑了 <b>400+ 次试验</b>，实测<b>最优 SFT 数据占比落在 60%–69%</b>（实际取 <b>64%</b>）；
+  SFT 由 5 类构成（Math / Code / Logic / Knowledge / Commonsense，CoT 归入 Logic）。<br>
+  → <b>即「SFT 数据是进到<u>预训练 decay 段</u>里的」，不是事后单独做一遍 SFT。</b>
+  这<b>模糊了 Stage (i) 与 Stage (ii) 的边界</b>——decay 段本身就是「带 SFT 数据的退火」。<br>
+  ✅ 这与运维给的 decay 假设（含 SFT-2605 / SFT-Agent-2609）<b>一致</b>。
+</div>
+<p>另：<code>xmodel-2.tex:142</code> 引 <b>Data Mixing Laws</b> ——「<b>小模型上的配比实验可有效迁移到大模型</b>」，
+这就是「用小规模搜配比」的正当性依据（不必在 2.2 B 全量上试）。</p>
+
+<h3>4.3 下载与磁盘</h3>
+<table>
+  <tr><th>项</th><th>进度</th><th>ETA</th></tr>
+  <tr><td>✅ <b>SFT-2605</b></td><td><b>已下满</b> —— 1504 / 1504 jsonl，<b>318,990,252,711 B 与 HF 官方清单逐字节一致</b></td><td>已完成</td></tr>
+  <tr><td>🔵 <b>base-en</b></td><td><b>1564 / 2048</b> parquet（≈14 MB/s 真推进，<b>0 个 <code>.incomplete</code></b>）</td><td><b>≈ 1 天</b></td></tr>
+  <tr><td>🔵 <b>gpic</b></td><td><b>929 / 8000</b> tar（test <b>128/128 ✓</b>）</td><td><b>≈ 6–8 天</b></td></tr>
+  <tr><td>🚫 <b>LLaVA 85M</b></td><td><b>已按指令停掉</b>（冻结在 7629 parquet）</td><td>—</td></tr>
+</table>
+<div class="ok-box">
+  <b>⭐ <code>base-en</code> 旧副本复用（运维问「是不是没用的数据」）</b><br>
+  查实结论：<b>不是没用的数据</b>——它是 <b>同一份 base-en 的 2026-02 <u>旧下载</u></b>（<code>/nas_train</code>，1286/2048 = <b>1.67 TB</b>），
+  而新下载到 <code>/nas_inference</code>，<b>同名同构 → 会把那 1286 个<u>重下一遍</u></b>。<br>
+  ✅ <b>改用「复用」路线后已生效</b>：按实测带宽，重下 1.67 TB ≈ <b>49 小时 ≈ 2 天</b>，
+  <b>复用把这 2 天省了下来</b>（ETA 由 ≈46 h 降到 ≈16.6 h）。
+</div>
+<div class="note">
+  ⚠️ <b>base 下载不稳</b>：今天多次出现<b>进程假活</b>（PID 存活但 <code>.incomplete</code> 冻结 0 字节、日志停更，
+  系 <code>hf_transfer</code> 掉连接挂死）→ 已多次 <code>kill</code> + 重启。<b>每轮唤醒都在巡检。</b>
+</div>
+
+
+<h2 class="sec" id="s5"><span class="no">5</span>harness 线（新建）</h2>
+
+<h3>5.1 当日建成并出成果</h3>
+<table>
+  <tr><th>件</th><th>内容</th></tr>
+  <tr><td>任务书</td><td><code>run/BAIZE_HARNESS_TASK.md</code>（与既有三条线同构：只读指令文件 + 运维指令区 + 进度快照 + WAITING 纪律）</td></tr>
+  <tr><td>loop</td><td><code>run/baize_harness_loop.sh</code>（以 <code>baize_data_loop.sh</code> 为模板，<b>三个历史坑天然避开</b>）</td></tr>
+  <tr><td>启动</td><td>ops <b>RUN_ID 5</b> 启动（PID 2228938），agent 当日接单</td></tr>
+  <tr><td>登记</td><td><code>AGENTS.md</code> 改为 <b>4 个活跃 agent</b>；<code>harness/</code>、<code>MEMORY_HARNESS.md</code>、<code>daily-memories-harness/</code> 就位</td></tr>
+</table>
+
+<h3>5.2 两条任务</h3>
+<div class="grid2">
+  <div class="card">
+    <h3 style="margin-top:0">H-B 源码分析（<b>先做</b>）</h3>
+    <p>从 <b>cline</b> 起，沿「<b>上下文生命周期</b>」展开 <b>5 条线</b>：</p>
+    <ol>
+      <li>上下文注入与预处理管线（<code>ContextPipelinePrepareTurn</code>；<code>EditType</code>/<code>ContextUpdate</code> 无损投影）</li>
+      <li>检查点与状态恢复（非破坏性编辑 + 时间戳截断；compaction sidecar / PR #12747）</li>
+      <li>插件与 Hook（<code>beforeRun/afterRun/beforeTool</code>；<code>manifest.capabilities</code>）</li>
+      <li>Focus Chain（短期记忆 vs 长期目标解耦）</li>
+      <li>模型适配降级（<code>context-window-utils.ts</code>；3 字符/token；Issue #7772）</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">H-A SWE-bench 横评（后做）</h3>
+    <p><b>5 个 harness</b>：<code>cline</code> · <code>opencode</code> · <code>deepseek-harness</code> · <code>codex</code> · <code>claude-code</code></p>
+    <p>⚠️ <b>卡在 Docker</b>：<code>.29</code> 上 <code>docker</code> <b>不可用</b>，且公司内网<b>无法 <code>docker pull</code></b>。
+    已查实并给出替代路线（见 5.4）。</p>
+  </div>
+</div>
+
+<h3>5.3 ✅ H-B cline 分析已交付（<b>47 KB</b>）</h3>
+<div class="ok-box">
+  <code>run/harness/cline_SOURCE_ANALYSIS.html</code> —— 含 <b>①「上下文生命周期全景图」总图</b> + <b>② 5 条线全齐</b>。<br>
+  📌 亮点：<b>Hook 点查全 7 个（全在 <code>shared/agent.ts</code>）</b> · 明确回答「<b>Auto Compact 能否用插件实现</b>」并划出<b>扩展边界</b> ·
+  核实 <b>Issue #7772</b> 与「128K 兜底」的代价 · 给出「<b>五个内核保留、形态迁移</b>」的判断。<br>
+  🔑 <b>一个重要发现</b>：它每一节都做「<b>① 任务书假设 vs ② 当前真实实现</b>」的对比 ——
+  <b>说明运维朋友给的笔记描述的是 Cline 的<u>旧版本</u>，真实代码已变形态</b>。若照笔记写，会写出一份<b>对不上代码</b>的报告。
+</div>
+
+<h3>5.4 无 Docker 路线 —— 已查实并给出方案</h3>
+<table>
+  <tr><th>候选</th><th>结论</th></tr>
+  <tr><td>官方 harness</td><td>❌ <b>默认绑 Docker</b>（README：「fully containerized evaluation harness using Docker」）</td></tr>
+  <tr><td>Modal（云）</td><td>⚠️ 官方唯一「无 Docker」后端（<code>--modal true</code>），但<b>要外网</b></td></tr>
+  <tr><td><b><code>sb-cli</code></b>（DeepSeek 建议）</td>
+      <td>✅ <b>确实能绕开 Docker</b> —— 但是 <b>API 客户端</b>，需访问 SWE-bench 云；<br>
+          ⚠️ 还需<b>邮箱注册 + 邮件验证码</b>、<b>有配额</b>、且<b>把 <code>model_patch</code> 上传到外部服务 → <u>需合规批准</u></b>；<br>
+          ⚠️ 且它<b>只替代「评测」这一半</b>，agent 生成 patch 仍要本地跑</td></tr>
+  <tr><td><code>SWE-MiniSandbox</code></td><td>🚫 <b>在官方仓库中未找到该名称</b>（已让 agent 自行查证，不许猜）</td></tr>
+  <tr><td><b>⭐ 路线 E′（推荐）</b></td>
+      <td>✅ <b>只挑 1–3 个高频 repo 的 instance</b>，<code>git clone</code>（<b>github 已确认可达</b>）+ 装 1–3 套 env → <b>不需要 Docker、不需要外网</b></td></tr>
+</table>
+<div class="note">
+  🔑 <b>关键认知</b>：Docker 在 SWE-bench 里<b>不只是「隔离」，更是「per-instance 依赖环境的分发机制」</b>。
+  <b>换掉隔离很容易</b>（bwrap / nsjail / local）；<b>换掉环境供应链很难</b>。<br>
+  💡 加强版：SWE-bench 仓库里带着<b>每个 instance 的镜像构建规格</b>（<code>swebench/harness/</code>）→ 可照规格直接 build env。
+</div>
+
+<h3>5.5 与原「既有 harness 线」的合并</h3>
+<div class="card">
+  运维确认：<b><code>/nas_train/app.e0031982/harness/</code> 那条线是 9 月初下发的「5 个 harness 比较」任务</b>，
+  <b>其 <code>loop.sh</code> 早已停掉</b>（RUN_ID 6 实测 <code>pgrep</code> 为空）。
+  <ul style="margin:8px 0">
+    <li>它的 <code>report.html</code>（24.6 KB）是「<b>横向对比矩阵 + 雷达评估</b>」—— <b>角度与我们不同</b></li>
+    <li><code>analyze_harness_sources.md</code>（11.8 KB）有内容，但 <b><code>evidence/</code> 与 <code>mechanisms/</code> 是<u>空目录</u></b> ——
+        那条线<b>没留下证据与机制底稿</b></li>
+  </ul>
+  <b>处置</b>：<b>不删、不改、不重启它的 loop</b>；把它的产物当<b>纯输入</b>，
+  出一份「<b>重合 vs 缺口</b>」对照表，产出统一落到我们的 <code>run/harness/</code>。
+</div>
+
+
+<h2 class="sec" id="s6"><span class="no">6</span>🚨 今天被推翻 / 纠正的判断</h2>
+
+<p>今天有 <b>6 处</b>此前的判断被推翻或纠正。其中 <b>4 处是运维抓出来的</b>，2 处是实证推翻的：</p>
+
+<table>
+  <tr><th>#</th><th>此前的判断</th><th>推翻 / 纠正</th><th>谁发现的</th></tr>
+  <tr>
+    <td><b>1</b></td><td>看板把 <b>Stage (i) 标为「✅ 完成」</b></td>
+    <td>❌ <b>错的</b> —— 完成的只是<b>超参 / 架构选型实验</b>（token 只到 Chinchilla 的 1.5%）。<br>
+        <b>本体 = P-8 从未开始</b>。已新增 P-8 并排入序列</td>
+    <td>🔴 <b>运维</b></td>
+  </tr>
+  <tr>
+    <td><b>2</b></td><td>P-4 结论「<b>FP8 上限 &lt;2×，不值得</b>」</td>
+    <td>⚠️ <b>口径用错了</b> —— 用了 GBS=8 的墙钟 <code>g=0.286</code>，而生产口径是 <code>g≈0.49</code>。<br>
+        <b>重开（P-4R）后实测 <code>s=0.65</code> 倒挂 → 结论仍是不接，但理由强得多</b></td>
+    <td>🔴 <b>运维</b></td>
+  </tr>
+  <tr>
+    <td><b>3</b></td><td>论文 §4「Ultra-FineWeb-L3 English subset <b>≈1.8T tokens</b>」</td>
+    <td>❌ <b>把磁盘字节当成了 token</b>。<code>1.8 TiB = 1898 GB</code> 与 HF parquet 字节<b>精确吻合</b>；
+        <b>真实 ≈690B</b>（英文子集 ≈467B）→ 论文<b>高估 2.6–3.9×</b></td>
+    <td>✅ data agent 实测</td>
+  </tr>
+  <tr>
+    <td><b>4</b></td><td>数据调研结论「<b>BaiZe 计划未用</b>」→ 不评估 base / UltraX-Preview</td>
+    <td>❌ <b>循环论证</b> —— 计划是在<b>不知道这些源存在</b>时定的。已重做（§0.3），
+        并查出 <b>base 与 L3 重叠率 = 0%</b></td>
+    <td>🔴 <b>运维</b></td>
+  </tr>
+  <tr>
+    <td><b>5</b></td><td>我推断「<b>github 不可达</b>」（据 data agent 的爬取层记录）</td>
+    <td>❌ <b>混淆了「爬取不可达」与「git 不可达」</b> —— 实际上 <b>github 一直可达</b>，
+        我自己整轮都在推 commit。<br>→ 影响：E′ 路线的关键使能条件（<code>git clone</code>）<b>本来就成立</b></td>
+    <td>🔴 <b>运维</b></td>
+  </tr>
+  <tr>
+    <td><b>6</b></td><td>我把「<b>docker 命令不可用</b>」当成了「<b>docker pull 也不行</b>」</td>
+    <td>⚠️ <b>两件不同的事</b> —— 「没装 Docker」是实测；「装了也 pull 不到」<b>从未测过</b>。<br>
+        → 已把「事实 vs 推测」列成表，并要求<b>先实测再选路线</b></td>
+    <td>🔴 <b>运维</b></td>
+  </tr>
+</table>
+
+<div class="danger">
+  <b>另有一处「我的估算被实测修正」</b>：<br>
+  FP8 这件事上我估 <code>s≈1.35 → +14.5%</code>，<b>方向对但应用错了</b> —— 没意识到我们每 GEMM 的 <code>M</code> 只有 4094
+  （<code>s</code> 要到 <code>M≈16K</code> 才跨过 1.0）。<b>agent 的实测 + 交叉点分析给出了机制，比我的估算强。</b>
+</div>
+
+<div class="ok-box">
+  <b>这些纠正的共同价值</b>：<b>全部换来了更强的结论</b> ——
+  P-4R 给的是<b>有机制、可复现</b>的答案（而不是一句「不值得」）；
+  §0.3 重做查出 base 与 L3 <b>零重叠</b>（可直接叠加）；
+  E′ 路线的可行性<b>比我说的更高</b>。
+</div>
+
+<h2 class="sec" id="s7"><span class="no">7</span>关键数字修正</h2>
+<table>
+  <tr><th>项</th><th>旧</th><th>新（实测）</th><th>出处</th></tr>
+  <tr><td>Stage (i) 训练量</td><td>暗示「已完成」</td><td><b>单点 164 M / 长跑 655 M token</b> · ~85 GPU·h · <b>Chinchilla 的 1.5%</b></td><td><code>EXPERIMENTS_PRETRAIN_2B.md</code></td></tr>
+  <tr><td>论文 §4 token</td><td>≈1.8 T</td><td><b>≈690 B</b>（en ≈467 B）</td><td><code>DATA_RESEARCH.md</code></td></tr>
+  <tr><td>hybrid 训练吞吐代价</td><td>+24%（论文 <code>tab:archcomp</code>）</td><td><b>≈ 8%</b>（P-7 查明 24% 是<b>跨节点 artifact</b>）</td><td><code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code></td></tr>
+  <tr><td>FP8 GEMM 单算子 <code>s</code></td><td>假设 1.35</td><td><b>实测 0.65</b>（访存受限 → <b>倒挂</b>）</td><td>P-4R 微基准</td></tr>
+  <tr><td>视觉编码器 IN-1k lp</td><td>—（旧 R@1 = <b>1/5000 chance</b>）</td><td>R8 <b>1.14%</b> → <b>R9 缩塔后 6.10%</b>（5.4×）</td><td><code>EXPERIMENTS_VISION_ROUND8/9</code></td></tr>
+  <tr><td>视觉数据与 AIMv2 差距</td><td>未量化</td><td><b>AIMv2 ≈120 亿对 vs 我们 18.5 M = 649× 少</b></td><td>运维提供 + 本地核算</td></tr>
+</table>
+
+<h2 class="sec" id="s8"><span class="no">8</span>需要运维决策</h2>
+<table>
+  <tr><th>#</th><th>事项</th><th>说明</th></tr>
+  <tr><td><b>1</b></td><td><b>P-8 的启动配置</b></td>
+      <td><code>DATA_MIX_RECIPE v1</code> 已交付，但<b>配比实验尚未跑</b>（需卡）。<b>定稿后仍需运维过目</b>（P-8 是 12.5 天的一次性大投入）</td></tr>
+  <tr><td><b>2</b></td><td><b>vision 正式训练的规格与时机</b></td>
+      <td>等 R9 的「IN-1k vs 步数」曲线；且 <b>GPIC 还要 6–8 天</b>才下完</td></tr>
+  <tr><td><b>3</b></td><td>🆕 <b>harness 的 sb-cli 合规批准</b></td>
+      <td>它能<b>绕开 Docker</b>，但<b>把 <code>model_patch</code> 上传到外部服务</b>。<b>需先批准</b>，否则只走 E′（本地、不上传）</td></tr>
+</table>
+
+<h2 class="sec" id="s9"><span class="no">9</span>下一步排期</h2>
+<table>
+  <tr><th>线</th><th>下一步</th><th>ETA</th></tr>
+  <tr><td><b>vision</b></td><td>R9 阶段二跑完 → <b>scaling law 曲线 + 外推</b></td><td><b>今晚</b></td></tr>
+  <tr><td><b>pretrain</b></td><td>P-5b 跑完（→10/04）→ P-6 第 2 步；<b>P-8 暂缓</b>（等 base + 配比）</td><td>P-5b <b>10/04</b></td></tr>
+  <tr><td><b>data</b></td><td>base 下完（<b>≈1 天</b>）→ 过污染闸 → 分词；<b>配比实验（等 .29 空窗）</b></td><td>base <b>10/03</b></td></tr>
+  <tr><td><b>harness</b></td><td>下一个 harness 源码分析 / H-A 可行性核查（含<b>连通性测试</b>）</td><td>持续</td></tr>
+  <tr><td><b>ops</b></td><td>空闲待命，随时可派 RUN_ID 7</td><td>—</td></tr>
+</table>
+<div class="note">
+  <b>关键路径</b>：<b>P-5b（≈2 天）→ P-6② → P-8（≥5.5 天，推荐 12.5 天）</b> 是当前最长的一条链；
+  <b>vision 线已收尾在望</b>；data 只等 base 下完。<br>
+  → <b>真正决定能否交出 Stage (i) 成品的，就是 P-8 这条链</b>，而它<b>卡在 base 与配比实验</b>上。
+</div>
+
+<footer>
+  BaiZe 工作汇报 · 2026-10-02 22:55 · 当日提交 <b>110</b> 个 ·
+  详细证据见 <code>run/EXPERIMENTS_VISION_ROUND8.md</code>、<code>run/EXPERIMENTS_VISION_ROUND4.md</code>、
+  <code>run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code>、<code>run/DATA_RESEARCH.md</code>、<code>run/DATA_MIX_RECIPE.md</code>、
+  <code>run/harness/cline_SOURCE_ANALYSIS.html</code>。<br>
+  实时看板：<code>BAIZE_PROGRESS.html</code> · Agent 总表：<code>run/AGENTS.md</code>
+</footer>
+
+</div>
+</body>
+</html>
+
