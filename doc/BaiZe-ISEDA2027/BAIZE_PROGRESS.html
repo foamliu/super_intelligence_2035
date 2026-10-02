@@ -51,7 +51,7 @@
   <h1>BaiZe 实验进展 · 总看板</h1>
   <div class="sub">Stage (i) LLM 预训练 · Stage (iii) 视觉编码器 · Round 2 进展 · 阻塞项</div>
   <div class="meta">
-    <span>📅 更新 2026-10-02 08:05</span>
+    <span>📅 更新 2026-10-02 22:48</span>
     <span>🎯 ISEDA 2027 投稿截止 ≈ 2027-02-01</span>
     <span>📄 论文 7 页 / 0 编译错误</span>
   </div>
@@ -740,8 +740,8 @@
   <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-info">⏹ 已收敛待处置</span>（.12 · <b>R2–R8 全部完成</b> · 胜出 <b>OpenVision2</b> · 数据定 <b>GPIC short</b> · <code>WAITING=1</code> 待运维决定关循环还是派新任务）</td></tr>
   <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1…P-4 ✅ · P-5a ✅ 9/9 · P-6 第1步 ✅ · P-7 ✅</b> · 下一步 <b>P-5b</b>）</td></tr>
   <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · <b>§0.3 ✅ 8 源事实表满填 · base vs L3 重叠 0%</b> · <b>§0.4 ✅ 13 HF 候选 / 7 个 URL-only 淘汰</b> · SFT-2605 重下中 no_think <b>855/855 ✅</b> · 四路下载健康）</td></tr>
-  <tr><td><b>harness</b> 🆕</td><td><code>baize_harness_loop.sh</code> · <code>BAIZE_HARNESS_TASK.md</code> · <code>MEMORY_HARNESS.md</code></td><td><span class="badge b-warn">⬜ 待 ops 启动</span>（.29 · <b>H-B 源码分析</b>（从 cline 起，沿「上下文生命周期」5 条线）→ <b>H-A SWE-bench 横评</b>（cline/opencode/deepseek harness 等）；<b>不占 GPU</b>，但可能吃 CPU/磁盘/Docker → 重 I/O 避让训练）</td></tr>
-  <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-warn">🔄 <b>RUN_ID 4 已排队</b></span>（.29 · 零 token · RUN_ID 1/2/3 已回收；<b>4 = 启动 harness 线</b>）</td></tr>
+  <tr><td><b>harness</b> 🆕</td><td><code>baize_harness_loop.sh</code> · <code>BAIZE_HARNESS_TASK.md</code> · <code>MEMORY_HARNESS.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · PID 2228938 · <b>H-B ✅ cline 源码分析已交付</b>：<code>harness/cline_SOURCE_ANALYSIS.html</code> <b>47 KB</b>，含<b>上下文生命周期全景图</b> + 5 条线全齐 + 每节<b>「任务书假设 vs 真实实现」对比</b>（<b>说明你朋友给的笔记是旧版本</b>）→ 下一步：下一个 harness / <b>H-A 可行性核查</b>；<b>不占 GPU</b>）</td></tr>
+  <tr><td><b>ops relay</b></td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-ok">✅ 已清重复</span>（.29 · 零 token · <b>RUN_ID 6 已回收</b>：清掉重复 relay（<code>3156278</code> etime=0）<b>保住跑了 30.4h 的 <code>2489749</code></b>；并勘查回既有 harness 线）</td></tr>
   <tr><td>1B / 2B 架构轮</td><td><code>baize_search_loop.sh</code> · <code>baize_2b_search_loop.sh</code></td><td><span class="badge b-ok">✅ 已收敛</span>，僵尸 loop 已被清理</td></tr>
 </table>
 
@@ -826,7 +826,7 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
 
 <h2 class="sec" id="s9"><span class="no">9</span>当前排期与预计完成时间</h2>
 
-<p style="color:var(--muted)">基准时刻：<b>2026-10-02 08:05</b>。下表"预计耗时"是该条工作<b>剩余</b>的工作量估计。</p>
+<p style="color:var(--muted)">基准时刻：<b>2026-10-02 22:48</b>。下表"预计耗时"是该条工作<b>剩余</b>的工作量估计。</p>
 
 <table>
   <tr><th>线</th><th>当前安排的工作</th><th>状态</th><th>预计耗时</th><th>预计完成</th></tr>
@@ -854,7 +854,7 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
   </tr>
   <tr class="ok-box">
     <td class="ok-box" style="padding:6px 10px"><b>P-5b</b> 训练量 scaling 曲线 <span class="badge b-ok">🔄 长跑中</span><br>
-        <small><b>iter 1400/4771（29.34%）· loss 2.3170 · 健康</b>（无 NaN/skip；期间有 NFS 抖动已恢复）<br>
+        <small><b>iter 1470/4771（30.8%）· loss 2.2952 · 健康</b>（无 NaN/skip；曾有 NFS 抖动已恢复）<br>
         已记里程碑：<b>655M / 1.3B / 2.6B / 5.2B token</b>；<b>每 156 步存 ckpt</b> 供 P-6 第 2 步用<br>
         ETA ≈ 10-04 00:50</small></td>
     <td class="ok-box" style="padding:6px 10px"><span class="badge b-ok">🔄 运行中</span><br>
@@ -984,11 +984,13 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
   </tr>
   <tr>
     <td><b>正在重下 / 下载中</b><br>
-        <small>SFT-2605 <b>903/1504</b>（no_think <b>855/855 ✅</b>）· base <b>115/64624</b> ·
-        gpic 688 tar · LLaVA 7629 parquet</small></td>
-    <td><span class="badge b-warn">🔄 下载中</span><br><small>四路 HF 下载健康</small></td>
-    <td>视带宽</td>
-    <td><b>≈ 10/02–10/03</b></td>
+        <small>✅ <b>SFT-2605 已下满</b>（1504/1504，<b>318,990,252,711 B 与 HF 官方清单逐字节一致</b>）<br>
+        🔵 <b>base-en 1564/2048</b>（≈14 MB/s 真推进，0 个 <code>.incomplete</code>）——<b>ETA 复用路线 ≈1 天</b><br>
+        🔵 <b>gpic 929/8000 tar</b>（test <b>128/128 ✓</b>）—— <b>ETA ≈6–8 天</b><br>
+        🚫 LLaVA 85M <b>已停</b>（冻结在 7629 parquet）</small></td>
+    <td><span class="badge b-warn">🔄 下载中</span><br><small>均真推进、无假活</small></td>
+    <td>base <b>≈1 天</b><br>gpic <b>≈6–8 天</b></td>
+    <td>base <b>≈10/03</b></td>
   </tr>
   <tr>
     <td><b>phase1/2/4</b>：全量校验 → 分词 → webdataset 打包</td>
@@ -1006,20 +1008,22 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
 
   <tr class="ok-box">
     <td class="ok-box" style="padding:6px 10px"><b>🆕 harness</b></td>
-    <td class="ok-box" style="padding:6px 10px"><b>H-B 源码分析</b>（先做）：<code>/nas_train/app.e0031982/harness</code>，<b>从 cline 起</b><br>
-        <small>以 <b>Auto Compact</b> 为切入点，沿「<b>上下文生命周期</b>」展开 <b>5 条线</b>：
-        ① 预处理管线（<code>ContextPipelinePrepareTurn</code>／<code>EditType</code>·<code>ContextUpdate</code> 无损投影）·
-        ② 检查点与状态恢复（非破坏性编辑＋时间戳截断；compaction sidecar／PR #12747）·
-        ③ 插件与 Hook（<code>beforeRun/afterRun/beforeTool</code>；<code>manifest.capabilities</code>；<code>setup(_api,ctx)</code>）·
-        ④ Focus Chain（短期记忆 vs 长期目标解耦）·
-        ⑤ 模型适配降级（<code>context-window-utils.ts</code>；3 字符/token；Issue #7772）<br>
-        交付：<code>harness/cline_SOURCE_ANALYSIS.html</code>（含<b>上下文生命周期全景图</b>）<br>
-        <b>H-A SWE-bench 横评</b>（后做）：cline / opencode / deepseek harness 等 ——
-        ⚠️ <b>先做可行性核查</b>（harness 形态 / 模型可用性 / 数据集 / <b>Docker</b> / 预估），再定规模；<b>先 20–50 条</b></small></td>
-    <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">🔄 <b>RUN_ID 5 已排队</b></span><br>
-        <small>⚠️ <b>RUN_ID 4 没生效</b> —— 中继<b>只执行文件里第一个 <code>```bash</code> 块</b>，
-        所以它把 RUN_ID 3 的磁盘勘察又跑了一遍。<b>已修正</b>（把启动块提到最前 + 旧块降级 <code>```text</code>，
-        见 <code>ops/inbox.md</code> 顶部）</small></td>
+    <td class="ok-box" style="padding:6px 10px">✅ <b>H-B cline 源码分析已交付</b> ——
+        <code>harness/cline_SOURCE_ANALYSIS.html</code>（<b>47 KB</b>，自包含）<br>
+        <small>含 <b>①「上下文生命周期全景图」总图</b> + <b>② 5 条线全齐</b>（预处理管线 / 检查点与恢复 / Hook 系统 /
+        Focus Chain / 模型适配降级）· 每节都做 <b>「任务书假设 vs 真实实现」对比</b> ——
+        <b>结论：你朋友给的笔记描述的是<u>旧版本</u>，真实代码已变形态</b><br>
+        📌 亮点：<b>Hook 点查全 7 个（全在 <code>shared/agent.ts</code>）</b> ·
+        明确回答「<b>Auto Compact 能否用插件实现</b>」并划出<b>扩展边界</b> ·
+        核实 <b>Issue #7772</b> 与「128K 兜底」的代价 · 给出「<b>五个内核保留、形态迁移</b>」的判断<br>
+        ✅ <b>合并已开始</b>：勘查回既有线（Sep 4–15 那批，<b>loop 确认已死</b>）的
+        <code>report.html</code>（横向对比矩阵 + 雷达评估，<b>角度与我们不同</b>）与
+        <code>analyze_harness_sources.md</code>（<b>evidence/ 与 mechanisms/ 是空的</b>）<br>
+        ▶ 下一步：<b>下一个 harness</b> 或 <b>H-A 可行性核查</b>（含<b>连通性测试</b>，见 §1.1-bis）</small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-ok">✅ 已启动·H-B cline 完成</span><br>
+        <small>RUN_ID 5 起 loop（PID 2228938）<br>
+        ✅ 中继「只跑第一个 <code>```bash</code> 块」的坑已修<br>
+        ✅ 重复 relay 已清（保住跑了 30.4h 的那个）</small></td>
     <td class="ok-box" style="padding:6px 10px">源码分析 <b>小时级</b><br>
         <small>SWE-bench 视规模</small></td>
     <td class="ok-box" style="padding:6px 10px">启动后 <b>≈ 10/02</b></td>
@@ -1105,9 +1109,16 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
     </tr>
     <tr>
       <td><b>2</b></td><td><b>vision 正式训练的规格与时机</b><br>
-          <small>R9 已声明"仍非正式"；GPIC 仅 <b>688/8000 tar（8.6%）</b></small></td>
+          <small>R9 已声明"仍非正式"；GPIC 仅 <b>929/8000 tar</b>（<b>ETA ≈6–8 天</b>）</small></td>
       <td>待 R9 的「IN-1k vs 步数」曲线出来后，再定<b>正式训练用多少数据 / 训多久 / 何时插排期</b><br>
           （届时需与 P-8 错峰，两者都要 8 卡）</td>
+    </tr>
+    <tr>
+      <td><b>3</b></td><td>🆕 <b>harness 线：sb-cli 的合规批准</b><br>
+          <small><code>sb-cli</code> 是官方云评测 CLI，<b>能绕开 Docker</b>（本地无 Docker）——
+          但它<b>把 <code>model_patch</code> 上传到外部服务</b>（虽是开源 repo 的 patch）</small></td>
+      <td><b>需先批准合规</b>，否则只能用 <b>E′ 路线</b>（本地挑 1–3 个 repo，不上传任何东西）<br>
+          <small>另：sb-cli 还需邮箱注册 + 邮件验证码 + 有配额；且 <code>api.swebench.com</code> 连通性<b>尚未实测</b></small></td>
     </tr>
   </table>
 </div>
