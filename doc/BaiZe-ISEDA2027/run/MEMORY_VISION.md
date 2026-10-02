@@ -7,12 +7,22 @@ WAITING: 1
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R9_active**（第九轮：数据扩容 + 长训练；阶段一完成 → w512 胜出 → 阶段二 w512 × 108k 运行中） |
-| WAITING | 1（R9 阶段二 w512 × 108k 步训练中（16:38 启动，19:53 @step 49750/108000≈46%）；置 1 长睡；判结束 `grep -c "R9 stage2 ALL DONE" /tmp/r9_stage2.log`==1 → 收 11 ckpt IN-1k → scaling 曲线 + 外推） |
+| WAITING | 1（R9 阶段二 w512 × 108k 步训练中（16:38 启动，20:25 @step 58050/108000≈53.7%）；置 1 长睡；判结束 `grep -c "R9 stage2 ALL DONE" /tmp/r9_stage2.log`==1 → 收 11 ckpt IN-1k → scaling 曲线 + 外推） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @step~8900 崩溃：CC12M/Amshaker wds 含损坏 jpg → PIL.UnidentifiedImageError） |
 | BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（≈9.2 GPU·h + ~23min）+ R9阶段一（冒烟 ~0.06 + 首跑 w512 32min + w768 ~8min 报废 + w512 15.4 + w768 15.3 + w1024 15.5 GPU·h）+ R9阶段二 w512 进行中 |
-| 更新 | 2026-10-02 19:53（巡检：阶段二 w512 @~46.1% 健康无坍缩；核实周期 ckpt 落盘节奏正确 10k/20k/30k/40k；磁盘剩 31T） |
+| 更新 | 2026-10-02 20:25（巡检：阶段二 w512 @~53.7% 健康无坍缩；周期 ckpt 已落盘 10k~50k 共 5 个；磁盘剩 31T） |
 | WINNER | **OpenVision2**（R8 六架构四指标第一；R9 选中 w512=126.8M 缩塔，不改架构排名） |
 
+## 巡检（2026-10-02 20:25）：R9 阶段二 w512 @≈53.7% 健康推进 + 核实周期 ckpt（WAITING=1 不变）
+
+> 纯 CPU，未占卡。仅巡检 + 核实周期 ckpt 节奏（R9.4 依赖 11 个 ckpt，save-every=10000 已在盘上确认累计 5 个）。
+
+- **训练健康核实**（证据 = `/tmp/r9_stage2.log`，20:25）：step **58050/108000（53.7%）**；最近 PROBE step 57900 `C1=0.3454 C2_gap=+0.1028 C4=OK`、`loss_ema=3.9061`（early 5.9857 → 持续降，近期 C1 在 0.345–0.390 波动、C2_gap 稳定 +0.10）→ **无坍缩**；GPU 0–7 8×~16.3GB 全为本任务 torchrun（pid 3773019..3773076，与上一巡检同一组，确认未再起新进程）。
+- **周期 ckpt 节奏核实**（证据 = `ls /nas_train/app.e0031982/datasets/baize-vision/out/R9_stage2_w512/`）：已落盘 **vision_step10000/20000/30000/40000/50000.pt**（各 ~507MB，17:16/17:55/18:35/19:16/19:53，~37–39min/个）→ **save-every=10000 稳定**；后续 60000/70000/80000/90000/100000 + 最终 `vision.pt`（step 108000）由既有机制落盘 → 收齐 11 ckpt 无风险。
+- **ETA**：19:53→20:25（32min）推进 49750→58050 = **~259 步/min**；剩余 49950 步 ≈3h13m → **训练 ~23:38 完成**；+11 ckpt IN-1k 评测 ~0.7h → **`R9 stage2 ALL DONE` ≈ 00:15–00:30**。磁盘 `/nas_train` 剩 31T（充足）。
+- **本轮动作（纯 CPU，未占卡）**：仅巡检 + 核实 ckpt 落盘 + 回写 MEMORY_VISION 状态头/巡检段 + 当日日志；无脚本/实验改动。
+- **下一步（WAITING=1 不变）**：`grep -c "R9 stage2 ALL DONE" /tmp/r9_stage2.log`==1 后 → `python vision/r9_scaling.py`（默认读 /tmp/r9_stage2.log + /tmp/r9.log）→ 曲线拟合+外推 20/40/60% → 回填 ROUND9 报告 + EXPERIMENTS_VISION.md 顶部 → git push。
+- 未改 `*.tex`；未碰 pretrain/data/ops 文件。
 ## 巡检（2026-10-02 19:53）：R9 阶段二 w512 @≈46% 健康推进 + 核实周期 ckpt 落盘（WAITING=1 不变）
 
 > 纯 CPU，未占卡。仅巡检 + 核实周期 ckpt 节奏（R9.4 交付物依赖 11 个 ckpt，趁训练中先在盘上确认 save-every=10000 生效）。
