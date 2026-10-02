@@ -6,12 +6,29 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R9_active**（第九轮：数据扩容 + 长训练；阶段一缩塔 3 臂 × 30k，因 wds 坏图 crash 已修复重启） |
-| WAITING | 1（R9 阶段一 3 臂后台重跑中；已修 wds 脏图容错 + 加周期 ckpt，置 1 长睡，下次唤醒回收 + 阶段二） |
+| PHASE | **R9_active**（第九轮：数据扩容 + 长训练；阶段一缩塔 3 臂 × 30k：w512 完成、w768 运行中、w1024 排队） |
+| WAITING | 1（R9 阶段一 w768 训练中 @~5.1k/30k；w512 已完、w1024 排队；置 1 长睡，下次唤醒回收 + 阶段二） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @step~8900 崩溃：CC12M/Amshaker wds 含损坏 jpg → PIL.UnidentifiedImageError） |
-| BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（≈9.2 GPU·h + ~23min）+ R9（冒烟 ~0.06 + 首跑 w512 32min + w768 ~8min 报废） |
-| 更新 | 2026-10-02 12:10（巡检：stage-1 w512 健康 @~26.5k/30k，周期 ckpt vision_step10000/20000.pt 已落盘；w768/w1024 排队；WAITING=1） |
+| BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（≈9.2 GPU·h + ~23min）+ R9（冒烟 ~0.06 + 首跑 w512 32min + w768 ~8min 报废 + w512 完成 ~15.4 GPU·h） |
+| 更新 | 2026-10-02 12:45（巡检：w512 完成 loss_ema=4.0496 / C1=0.3502 / C2_gap=+0.1079 / steady 2938.6 img/s，4 ckpt 落盘；w768 训练中 @~5.1k 健康；w1024 排队；WAITING=1） |
 | WINNER | **OpenVision2**（R8 六架构四指标第一；R9 只做空塔规模缩放，不改架构排名） |
+
+## 巡检（2026-10-02 12:45）：stage-1 w512 完成（final 数字落盘）+ w768 运行中
+
+> 纯 CPU，未占卡。只回收 w512 终值并巡检 w768，无脚本改动、无新实验。
+
+- **w512（126.8M）✅ 完成**（`exit 0，12:24:02`，历时 6948.1s ≈ 115.8min）：
+  `final_loss(ema)=4.0496`（early 5.9603 → 持续降至 4.05）、最后 PROBE step 30000 `C1=0.3502`、
+  `C2_gap=+0.1079`、`C4=OK`、`steady_image_s=2938.6 img/s`。**4 个 ckpt 全落盘**：
+  `vision_step10000/20000/30000.pt` + `vision.pt`（各 507MB）→ 缩塔臂周期点可进 scaling 图。
+- **w768（284.5M）🔄 运行中**：12:24:02 启动，12:42 @ **~step 5100/30000（17%）**；
+  最近 PROBE step 5100 `C1=0.2741 C2_gap=+0.0894 C4=OK`、`loss_ema=5.14`（early 6.04，健康下降中）；
+  GPU 0–7 8×~24.7G、util 100%。
+- **w1024（505.0M）⏳ 排队**（w768 结束后串行）。
+- **ETA 复核**：w768 ~14:20、w1024 ~16:15、+ IN-1k 三 ckpt 评测 ~0.5–1h → **stage-1 全完成 ≈17:00–17:30**。
+- **下一步（WAITING=1 不变）**：stage-1 三臂全完 + IN-1k 评测后 → 按 IN-1k lp（+loss/C1/吞吐）选
+  每样本效率最高塔 → `bash r9_run_stage2.sh <width> 108000 6` 启动阶段二长训（scaling 曲线）。
+- 未改 `*.tex`；未碰 pretrain/data/ops 文件。
 
 ## 巡检（2026-10-02 12:10）：stage-1 w512 近尾声 + 周期 ckpt 已落盘
 
