@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cline Harness 源码分析 — Auto Compact 与上下文生命周期</title>
+<style>
+:root{
+  --bg:#0f1419; --panel:#171d24; --panel2:#1d2530; --border:#26303d;
+  --text:#d7dde6; --muted:#8b98a8; --accent:#4da3ff; --accent2:#7ee787;
+  --warn:#f0b429; --danger:#ff7b72; --code:#e6edf3;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.65;font-size:15px}
+.wrap{max-width:1080px;margin:0 auto;padding:32px 28px 80px}
+h1{font-size:26px;border-bottom:2px solid var(--accent);padding-bottom:12px;margin:0 0 6px}
+h2{font-size:21px;margin:48px 0 12px;color:var(--accent);border-left:4px solid var(--accent);padding-left:10px}
+h3{font-size:17px;margin:28px 0 8px;color:var(--accent2)}
+h4{font-size:15px;margin:20px 0 6px;color:#bcd3ff}
+.subtitle{color:var(--muted);font-size:13px;margin-bottom:8px}
+p{margin:8px 0}
+a{color:var(--accent);text-decoration:none}
+code{background:var(--panel2);padding:1px 6px;border-radius:4px;font-family:"SFMono-Regular",Consolas,Monaco,monospace;font-size:13px;color:var(--code)}
+pre{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:12.6px;line-height:1.5}
+pre code{background:none;padding:0;color:var(--code)}
+.cite{color:var(--accent2);font-family:Consolas,monospace;font-size:12.5px}
+.tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11.5px;font-weight:600;margin-right:6px}
+.tag.ver{background:#2a1f3d;color:#c9a7ff}
+.tag.fact{background:#143c2a;color:#56d364}
+.tag.gold{background:#3d2f14;color:#eac54f}
+.tag.danger{background:#3d1414;color:#ff9b9b}
+.panel{border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin:14px 0;background:var(--panel)}
+.panel.warn{border-color:#6b5518;background:#201a0d}
+.panel.find{border-color:#1f5b3e;background:#0f2016}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13.5px}
+th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--panel2);color:var(--accent2)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 20px}
+.toc ol{margin:8px 0 0 20px;padding:0}
+.toc li{margin:4px 0}
+.mono{font-family:Consolas,monospace;font-size:12.5px}
+.flow{background:var(--panel);border:1px dashed var(--border);border-radius:10px;padding:16px;font-family:Consolas,monospace;font-size:12.3px;line-height:1.6;white-space:pre;overflow-x:auto;color:#cfe3f7}
+.kv{color:var(--muted)}
+.callout{border-left:4px solid var(--accent);padding:10px 14px;margin:14px 0;background:var(--panel)}
+.callout.w{border-left-color:var(--warn)}
+.callout.d{border-left-color:var(--danger)}
+ul,ol{margin:8px 0}
+li{margin:4px 0}
+hr{border:none;border-top:1px solid var(--border);margin:30px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Cline Harness 源码分析</h1>
+<div class="subtitle">以 <b>Auto Compact</b> 为切入点，沿「上下文生命周期」展开的五条机制主线 · 自包含 HTML 报告</div>
+<div style="margin:8px 0 4px">
+<span class="tag ver">源码基线：/nas_train/app.e0031982/harness/cline</span>
+<span class="tag fact">只读参考，未改动上游</span>
+<span class="tag gold">2026-10-02</span>
+</div>
+
+<div class="panel warn">
+<b>⚠️ 版本前置说明（必须先读）</b>
+<p>本仓库的 cline 已经历 <b>SDK 迁移</b>（<code>sdk/</code> 下的 <code>@cline/core</code> / <code>@cline/shared</code> / <code>@cline/agents</code> 成为唯一事实源码；<code>apps/vscode</code> 变成瘦客户端）。
+任务书 §2.2 五条主线里引用的几个<b>旧架构名字</b>（<code>ContextPipeline</code>、<code>EditType</code>、<code>ContextUpdate</code>、<code>ContextManager</code>、<code>apiMessageHistory</code>、<code>PersistentMap</code>）
+<b>在当前代码里已全部不存在</b> —— 全库 <code>grep</code> 返回空：</p>
+<pre><code>$ grep -rln 'EditType|ContextUpdate|ContextManager|apiMessageHistory|PersistentMap' --include='*.ts' .   # → 无输出
+$ git log --oneline -S 'context-window-utils' | head          # → "delete unused files" / "sdk migration"</code></pre>
+<p>但这<b>不意味着五条线失效</b>：每一条主线的<b>设计内核都被迁移后的架构以另一种形态保留</b>了。本报告对每条线都给出
+「任务书假设（旧形态）→ 当前真实实现（新形态）→ 内核是否保留」的对照，并全程贴 <span class="cite">路径:行号</span> 原文，不猜。</p>
+</div>
+
+<div class="toc">
+<b>目录</b>
+<ol>
+<li><a href="#l1">线 1 · 上下文注入与预处理管线（Auto Compact 的上游）</a></li>
+<li><a href="#l2">线 2 · 检查点与状态恢复（Auto Compact 的回滚路径）</a></li>
+<li><a href="#l3">线 3 · 插件与 Hook 系统（调控能力的外放）</a></li>
+<li><a href="#l4">线 4 · 焦点链与任务状态跨压缩存活</a></li>
+<li><a href="#l5">线 5 · 模型能力适配与降级策略</a></li>
+<li><a href="#sum">总结 · 设计取舍与扩展边界</a></li>
+</ol>
+</div>
+<h2 id="top">总图 · 上下文生命周期全景</h2>
+<p>下面这张图把「一次模型请求」的完整数据流和五条主线的落点都标出来。压缩发生在 <b>prepareTurn</b> 这一环，它是
+「收」（压缩）的枢纽；它的上游是消息投影，下游是 <code>beforeModel</code> hook 与真正的 provider 调用。</p>
+<pre class="flow">用户输入 / 恢复的会话
+      │
+      ▼
+┌───────────────────────────────────────────────────────────────┐
+│ agent-runtime.ts :: generateAssistantMessage()                 │
+│  ① 构建 AgentModelRequest：                                     │
+│     systemPrompt + cloneMessages(state.messages) + tools        │
+│     (agent-runtime.ts:965-977)                                  │  ← 线1 起点（原始消息只读，clone 投影）
+│  ② iteration&gt;1 时注入 pending user message (983-994)             │
+│  ③ request = prepareTurnForModelRequest(request)  (996)         │  ← ⭐ Auto Compact 落点
+│  ④ for hook of hooks.beforeModel { 可改写 messages/tools }      │  ← 线3 Hook 落点 (999-1018)
+│  ⑤ stream = openTaskLifecycleStream(request)  (1039)            │  ← 真正发请求
+└───────────────────────────────────────────────────────────────┘
+      ▲                                                        │
+      │  上下文窗口溢出 → overflowRecovery 强制 basic 压缩并重试  │  ← 线5 降级路径 (891-932)
+      ▼                                                        │
+  model 返回 → tool 执行（beforeTool/afterTool hook）→ 迭代循环
+      │
+      ▼
+┌───────────────────────────────────────────────────────────────┐
+│ 检查点 (checkpoint-hooks.ts) + 压缩 sidecar (session-compaction)│  ← 线2 回滚/恢复
+│   · git stash/ref 记录「文件系统状态」                            │
+│   · SessionCompactionState 记录「对话压缩态」（含边界哈希）        │
+└───────────────────────────────────────────────────────────────┘
+      │  线4：长期目标（system_prompt + focus chain）走独立通道，
+      ▼  不随对话一起被压缩
+  下一轮迭代（回到 ①），压缩态通过 projectSessionCompactionState 重新投影</pre>
+
+<p class="kv">五条主线落点速记：</p>
+<table>
+<tr><th>线</th><th>机制</th><th>落点文件</th><th>角色</th></tr>
+<tr><td>线1</td><td>上下文注入 + 无损投影</td><td class="mono">agent-runtime.ts · message-builder.ts</td><td>压缩的「上游镜像」</td></tr>
+<tr><td>线2</td><td>检查点 + 压缩 sidecar</td><td class="mono">checkpoint-hooks.ts · checkpoint-diff.ts · session-compaction.ts · local-runtime-host.ts</td><td>压缩的「回滚通道」</td></tr>
+<tr><td>线3</td><td>Hook / 插件系统</td><td class="mono">shared/agent.ts · contribution-registry.ts · agent-runtime.ts</td><td>把调控「开放给外部」</td></tr>
+<tr><td>线4</td><td>焦点链 / 长期目标解耦</td><td class="mono">focus-chain/* · task-proxy.ts</td><td>「接下来做什么」独立存活</td></tr>
+<tr><td>线5</td><td>模型能力适配 + 降级</td><td class="mono">compaction-shared.ts · tokens.ts</td><td>按模型/上下文窗裁剪阈值</td></tr>
+</table>
+
+<hr>
+<h2 id="l1">线 1 · 上下文注入与预处理管线（Auto Compact 的上游）</h2>
+
+<h3>① 任务书假设（旧形态）</h3>
+<p>任务书认为存在一个 <code>ContextPipelinePrepareTurn</code> 节点，在请求链路里做「拦截与改写」；并假设 Cline 用一张
+<b>Persistent Map</b>（<code>Map&lt;messageIndex, [EditType, Map&lt;blockIndex, ContextUpdate[]&gt;]&gt;</code>）记录对消息的编辑，
+「原始消息从不被修改，所有编辑在读取时应用」—— 即 <b>无损投影</b>。</p>
+
+<h3>② 当前真实实现（新形态）</h3>
+<p><b>名字变了，但「无损投影」内核完整保留。</b>先看调用点和类型：</p>
+
+<h4>调用点：preannounce 每个模型请求前</h4>
+<p>在 <code>agent-runtime.ts</code> 里，一次请求的组装顺序是：构建 request → 注入 pending 消息 → <b>prepareTurn</b> → beforeModel hook → 发请求。</p>
+<pre><code>// agent-runtime.ts:965-977 —— 用 cloneMessages 从 state.messages 构建请求（原始消息只读）
+let request: AgentModelRequest = {
+    systemPrompt: this.config.systemPrompt,
+    messages: cloneMessages(this.state.messages),     // &lt;-- 投影自此开始
+    tools: [...],
+    ...
+};
+// agent-runtime.ts:996 —— Auto Compact 的落点（在 beforeModel hook 之前）
+request = await this.prepareTurnForModelRequest(request, options);</code></pre>
+
+<p><code>prepareTurn</code> 的语义在 <span class="cite">shared/agent.ts:478-484</span> 写得非常清楚 —— 这就是「无损投影」的当代定义：</p>
+<pre><code>// shared/agent.ts:478-484
+/**
+ * Optional host-owned request projection hook invoked before each model call.
+ *
+ * Returned messages affect only the provider request for the current call.
+ * They do not replace the canonical runtime transcript, are not persisted as
+ * session history, and are not reflected in AgentRunResult.messages.
+ */
+prepareTurn?: (context) =&gt; Promise&lt;...&gt; | ... | undefined;</code></pre>
+
+<div class="callout">
+<b>关键判断</b>：这句注释精确复述了旧架构「原始消息从不被修改、所有编辑在读取时应用」的内核 ——
+压缩得到的摘要<b>只出现在本次 provider 请求</b>里，runtime 里的 canonical transcript 原样不动，也不落库。
+这正是「投影出来的视图」而非「改写后的存储」。
+</div>
+
+<h4>投影的物理实现：MessageBuilder「不修改原对话的 API-safe 副本」</h4>
+<pre><code>// message-builder.ts:1-10（文件头，直接声明了它在压缩与旧内容改写中的角色）
+/**
+ * API-safe message builder for provider payloads.
+ * Walks the conversation to produce provider-ready messages, handling
+ * tool-result truncation and outdated-file-content rewrite for compaction.
+ * Per-instance caches make this host state.
+ */
+// message-builder.ts:105-107
+/**
+ * Builds an API-safe message copy without mutating original conversation history.
+ */
+export class MessageBuilder { ... }</code></pre>
+<p>旧架构里的三类「读取时改写」—— 剥离过期文件内容、截断超长工具结果、重复 tool-call 标记去重 —— 在新架构里由
+<code>MessageBuilder</code> 以显式常量承接（<span class="cite">message-builder.ts:28-49</span>）：</p>
+<pre><code>export const DEFAULT_MAX_TOOL_RESULT_CHARS = 8_000;
+export const DEFAULT_MAX_FILE_CONTENT_CHARS = 50_000;
+export const DEFAULT_MAX_TOTAL_TEXT_BYTES = 6_000_000;   // 聚合预算，仅在溢出时兜底
+export const DEFAULT_MIN_OUTDATED_REWRITE_BYTES = 65_536; // 批量省写，避免每次打断 provider 前缀缓存
+const OUTDATED_FILE_CONTENT = "[outdated - see the latest file content]";</code></pre>
+
+<div class="callout w">
+<b>为什么这个「批量省写」阈值（65_536 字节）重要？</b> 见 <span class="cite">message-builder.ts:31-39</span> 注释：provider 的前缀缓存
+（prefix cache）会被「转录中段改写」整个打断 —— 因为它只缓存前缀，一旦中间某条被改写，后面全部失效。
+所以过期内容改写被设计成<b>攒够 64KB 才一次性提交</b>（"Batch stale-read rewrites to avoid breaking provider prefix caches on every re-read"），
+把「无损投影」的 CPU 代价和 provider 侧缓存失效代价都压到最低。这是旧架构 EditType/ContextUpdate 里没有显式化出来的成本项。
+</div>
+
+<h3>③ 数据流图（线 1）</h3>
+<pre class="flow">state.messages (canonical, 永不改动)
+        │ cloneMessages()                     agent-runtime.ts:967
+        ▼
+AgentModelRequest (本次请求的投影)
+        │ prepareTurnForModelRequest()         agent-runtime.ts:996 → 1381
+        ├─ config.prepareTurn 存在? → 调用 createContextCompactionPrepareTurn 返回的闭包
+        │     └─ 无压缩: 原样 request 返回 (1385-1387)
+        │     └─ 有压缩: 返回 projected messages (1441-1449, clone 后替换 messages/systemPrompt)
+        ▼
+beforeModel hooks 可再改写 (999-1018)
+        ▼
+provider 调用 (1039) —— 只有这一步的字节流会真的发出去</pre>
+
+<div class="panel find">
+<b>「原始消息 vs 投影视图」对照表</b>
+<table>
+<tr><th></th><th>Canonical transcript（原始）</th><th>Provider 视图（投影）</th></tr>
+<tr><td>存哪</td><td><span class="mono">agent-runtime.ts state.messages</span></td><td>仅本次请求的临时 request.messages</td></tr>
+<tr><td>谁改</td><td>只由模型新消息追加</td><td>prepareTurn + beforeModel hook</td></tr>
+<tr><td>压缩影响</td><td>无（摘要不写回）</td><td>是（被摘要 + 尾部替换）</td></tr>
+<tr><td>持久化</td><td>会话历史</td><td>不落库（agent.ts:482-483 明示）</td></tr>
+<tr><td>文件内容</td><td>原始工具结果</td><td>过期内容被 <code>[outdated...]</code> / 截断标记替换</td></tr>
+</table>
+</div>
+
+<p><b>代价与边界</b>：把「改写」放到读取期意味着每次请求都要在内存里重投影一份消息数组（<code>cloneMessages</code> 是 <code>JSON.parse(JSON.stringify)</code>），
+对极长会话有序列化成本；但换来「回滚零成本」（见线 2）和「任意 hook/插件可观察同一份原始态」。投影层的缓存
+（<span class="cite">message-builder.ts:129-131</span> "Sticky rewrite decisions ... revalidated/pruned per build"）是专门用来抵消这个代价的。</p>
+
+<h2 id="l2">线 2 · 检查点与状态恢复（Auto Compact 的回滚路径）</h2>
+
+<h3>① 任务书假设（旧形态）</h3>
+<p>任务书假设检查点的核心是「<b>非破坏性编辑 + 时间戳截断</b>」：<code>Map&lt;messageIndex,[EditType,Map&lt;blockIndex,ContextUpdate[]&gt;]&gt;</code> 被持久化为 JSON，
+每个更新带时间戳，恢复时「截断指定时间之后的更新」；并假设「压缩产生的摘要本质也是一组 ContextUpdate，所以能精确回退到摘要生成前」。
+还点名 <b>PR #12747</b> 修过 "compaction sidecar" 的可靠性。</p>
+
+<h3>② 当前真实实现（新形态）—— 两条独立、但共享同一内核的回滚通道</h3>
+<p>当前架构把「检查点」拆成了<b>两类异构状态</b>，分别有独立的回滚机制：</p>
+
+<h4>(a) 文件系统检查点：git stash / ref，而非 JSON 编辑图</h4>
+<pre><code>// checkpoint-hooks.ts:10 —— 检查点是 git stash，靠固定消息前缀标识
+const CHECKPOINT_STASH_MESSAGE_PREFIX = "cline checkpoint session=";
+// checkpoint-hooks.ts:16-21 —— 检查点条目是 git ref 而非消息编辑
+export interface CheckpointEntry {
+    ref: string;            // git ref / stash sha
+    createdAt: number;
+    runCount: number;
+    kind?: "stash" | "commit";
+}</code></pre>
+<p>对比工作区差异用 <code>git diff</code> 与 <code>git ls-files --others</code>（<span class="cite">checkpoint-diff.ts:76-90</span>），
+读取历史文件内容用 <code>git show &lt;ref&gt;:&lt;path&gt;</code>（<span class="cite">checkpoint-diff.ts:53-63</span>）。</p>
+
+<div class="callout">
+<b>内核是否保留？</b>「回滚到某个时间点」这个语义被<b>外包给了 git 的不可变对象存储</b>：git 的 blob/tree/commit 本身就是
+从不原地改写的历史，天然支持「精确回到某次 run 之前」。旧架构自己造的「时间戳截断」JSON 图，在这个新架构里
+<b>被更成熟的 VCS 原语取代了</b>。代价是只能回滚<b>文件系统</b>状态，回滚不了<b>对话记忆</b>—— 后者交给下面的 sidecar。
+</div>
+
+<h4>(b) 压缩状态回滚：Compaction Sidecar（PR #12747 的主角）</h4>
+<p>压缩概要对「对话」的回滚，靠的是 <b>SessionCompactionState</b>（sidecar）。它的 schema 关键字段不是「编辑列表」，而是
+<b>边界定位器 + 已压缩消息副本 + 系统提示词副本</b>：</p>
+<pre><code>// session-compaction.ts:25-34 —— sidecar 的 schema（version + 边界哈希 + 消息 + system_prompt）
+export const SessionCompactionStateSchema = z.object({
+    version: z.literal(1),
+    updated_at: z.string().datetime(),
+    conversation_id: z.string().min(1).optional(),
+    source_message_count: z.number().int().nonnegative(),   // 压缩覆盖了多少条源消息
+    source_prefix_hash: z.string().min(1).optional(),       // 源消息前缀哈希（边界定位）
+    source_last_message_key: z.string().min(1).optional(),  // 旧格式边界键（向后兼容）
+    messages: z.array(MessageWithMetadataSchema),           // 压缩后的消息副本
+    system_prompt: z.string().optional(),                   // 系统提示词单独存放（见线4）
+});</code></pre>
+
+<p><b>「精确回退到摘要生成前」在新架构里如何实现 —— 关键看投影函数：</b></p>
+<pre><code>// session-compaction.ts:161-190 —— 重新投影 = 压缩消息副本 + 压缩点之后的尾部
+export function projectSessionCompactionState(state, sourceMessages): ... {
+    const hasEnoughSourceMessages = state.source_message_count &lt;= sourceMessages.length;
+    // 用哈希/边界键验证：源消息前缀自压缩以来没有被篡改，否则放弃投影
+    const canProjectState = hasMatchingSourcePrefix || hasMatchingLegacyBoundary;
+    if (!canProjectState) return undefined;   // 失效 sidecar 不强行拼接
+    return [
+        ...cloneMessages(state.messages),                          // 摘要（压缩结果）
+        ...cloneMessages(sourceMessages.slice(state.source_message_count)), // 压缩点之后的新消息
+    ];
+}</code></pre>
+
+<div class="callout">
+<b>这直接回答了任务书线 2 的核心问题</b>：<b>摘要本质上是不是「一组 ContextUpdate、所以能精确回退」？</b> ——
+在当前代码里，<b>根本不是靠「编辑图」实现的</b>，而是靠 <b>「非破坏性 + 边界哈希指针」</b>：
+压缩<b>从不删改</b>源消息（canonical 一直完整保存），sidecar 只存「压缩到第 <code>source_message_count</code> 条」这个<b>指针</b>，
+加上压缩结果副本和源前缀哈希。要「回滚」就是<b>丢弃 sidecar</b>，下轮投影时源消息自动原样出现 ——
+因为本来就没被毁掉。哈希（<code>source_prefix_hash</code>）的作用是<b>防串扰</b>：如果会话在压缩后又被并发追加/恢复改过前缀，sidecar 就不再套用，
+避免「旧摘要 + 新前缀」拼出错误上下文。这正是 PR #12747 要修的可靠性问题。
+</div>
+<h4>(c) 持久化可靠性：写队列 + 陈旧写守卫（PR #12747 的修复点）</h4>
+<p><code>git log</code> 确认 PR #12747 真实存在且标题正是「make compaction sidecar persistence reliable」：</p>
+<pre><code>$ git log --oneline --all --grep='12747'
+6cb43f030 fix(core): make compaction sidecar persistence reliable (#12747)</code></pre>
+
+<p>落库点在 <span class="cite">local-runtime-host.ts</span>。注意 <code>createCompactionStateAwarePrepareTurn</code> 的注入形态 —— 它就是把
+「压缩」和「sidecar 读写」缝在一起的那个函数，<b>即使 auto-compact 被关掉（compact=undefined），它仍会投影已有 sidecar</b>：</p>
+<pre><code>// local-runtime-host.ts:606-624 —— 组装 prepareTurn（compact + get/saveState 三件套）
+const compact = createContextCompactionPrepareTurn(configWithProvider);
+const prepareTurn = createCompactionStateAwarePrepareTurn({
+    compact,
+    getState: () =&gt; activeSessionRef?.compactionState,
+    saveState: async (state, sourceMessages) =&gt; { ... persistActiveSessionCompactionState(...) },
+});</code></pre>
+
+<p>两个关键保护，都是「<b>陈旧写不覆盖新写</b>」，对应 PR #12747 暴露的 bug：</p>
+<pre><code>// local-runtime-host.ts:1313-1343 —— 写队列串行化 + 陈旧守卫
+return await this.enqueueCompactionStateWrite(session, async () =&gt; {
+    const currentState = session.compactionState;
+    // 可投影的 sidecar 按计数判陈旧；失效（不可投影）的退化为时间戳对比，不永久阻塞替换
+    if (currentState && (currentStateStillProjects
+            ? isIncomingCompactionStateStale(state, currentState)
+            : Date.parse(state.updated_at) &lt; Date.parse(currentState.updated_at))) {
+        return { updated: false };
+    }
+    await this.invoke("persistSessionCompactionState", session.sessionId, state);
+    session.compactionState = state;
+});
+// local-runtime-host.ts:1345-1360 —— 写队列：previous.catch(()=&gt;undefined).then(action)</code></pre>
+
+<div class="callout w">
+<b>PR #12747 暴露了什么设计缺陷？</b> 写队列 (<code>compactionStateWriteQueue</code>) 串行化是为了防<b>并发写乱序</b>；
+双重守卫（可投影时按 <code>source_message_count</code> 计数判陈旧，不可投影时按 <code>updated_at</code> 时间戳判陈旧）
+是为了防「<b>一个旧写回马枪覆盖新写</b>」。注释（1313-1326 行）本身就描述了 bug：sidecar 若因「会话恢复时消息身份 churn、或哈希格式变更」变得不可投影，
+<b>不能让它永久阻塞新 sidecar 的落库</b> —— 否则重启后阈值永不更新，导致「重复压缩」或「该压缩却不压缩」。
+这正是任务书说的「压缩状态没持久化好 → 重启丢失 → 重复压缩/阈值错乱」。
+</div>
+
+<h3>③ 数据流图（线 2）</h3>
+<pre class="flow">压缩发生（prepareTurn 内 createCompactionStateAwarePrepareTurn）
+        │ 计算 source_prefix_hash + source_message_count
+        ▼
+sidecar（SessionCompactionState）→ saveState → 写队列 → 持久化（invoke persistSessionCompactionState）
+        ▲                                          │（陈旧写守卫）
+        │ getState                                    └─ 会话文件
+        ▼
+下一轮准备："[摘要] + [源消息 source_message_count 之后的新增]"
+        │ projectSessionCompactionState（先验证前缀哈希再拼接）
+        ▼
+恢复/回滚：丢弃 sidecar → 源消息完整保留（因为压缩从未改动它们）</pre>
+
+<p><b>代价与边界</b>：文件检查点依赖本地 git（副作用是 workspace 必须可 git init，且 checkpoint 是整仓库粒度、无法只回滚「对话」）；
+sidecar 的哈希校验意味着「任何对源消息前缀的并发修改都会让 sidecar 失效」—— 换来的是<b>绝不产生错误的拼接上下文</b>，
+这是「宁可不压缩、也不压缩错」的取舍。</p>
+
+<h2 id="l3">线 3 · 插件与 Hook 系统（调控能力的外放）</h2>
+
+<h3>① 任务书假设</h3>
+<p>要求「列全 Agent loop 暴露的 Hook 点」，确认插件「通过 <code>manifest.capabilities</code> 声明能力、在 <code>hooks</code> 对象定义行为」，
+「<code>setup(_api, ctx)</code> 只在加载时运行一次、Hook 本身不持有状态」；并<b>必须回答核心问题</b>：<b>Auto Compact 能否用插件实现？</b></p>
+
+<h3>② Hook 点全清单（7 个，全在 shared/agent.ts）</h3>
+<pre><code>// shared/agent.ts:374-402 —— AgentRuntimeHooks 的完整范围
+export interface AgentRuntimeHooks {
+    beforeRun?: (...);      // 375  运行开始前（可返回 stop control）
+    afterRun?:  (...);      // 378  运行结束后
+    beforeModel?: (...);    // 381  ⭐ 每次模型请求前（可改写 messages/tools/options）
+    afterModel?: (...);     // 387  模型响应后
+    beforeTool?: (...);     // 390  工具执行前（可审批/拒绝/改写入参）
+    afterTool?:  (...);     // 396  工具执行后
+    onEvent?:   (...);      // 402  任意运行时事件（telemetry/observability）
+}</code></pre>
+<p>这些 hook 在 <code>agent-runtime.ts</code> 里的执行次序已在总图 ④ 标出，此处不再重复。关键的<b>能力门控</b>和<b>插件能力面</b>如下：</p>
+
+<pre><code>// contribution-registry.ts:141 —— ⭐ 插件能注册的 hook = 运行时 hook 的 Partial
+export type AgentExtensionHooks = Partial&lt;AgentRuntimeHooks&gt;;
+
+// contribution-registry.ts:120-139 —— 插件的 setup(api) 能拿到什么（每种注册器对应一个 manifest capability）
+export interface AgentExtensionApi {
+    registerTool(...);               // 需 capability: "tools"
+    registerCommand(...);            // "commands"
+    registerRule(...);               // "rules"
+    registerMessageBuilder(...);     // "messageBuilders" —— 消息变换的另一入口
+    registerProvider(...);           // "providers"
+    registerAutomationEventType(...);// "automationEvents"
+    registerMcpServer(...);          // "mcp"
+}</code></pre>
+<p>任务书问到的 <code>setup(_api, ctx)</code> 上下文，由 <span class="cite">contribution-registry.ts:154-160</span> 的 <code>PluginSetupContext</code> 提供：
+「These values are always sourced from the host session config — never from <code>process.cwd()</code>」，用于在注册期解析 workspace 路径 / 构建 tool schema —— 即「只在加载时跑一次、拿一次上下文」。</p>
+
+<h3>③ ⭐ 核心问题：Auto Compact 能不能用插件实现？</h3>
+
+<div class="callout d">
+<b>答案：不能，至少在「拦截 prepareTurn 这个底层节点」的意义上不能。</b> 证据是类型体系的「刻意分层」：
+</div>
+
+<pre><code>// 证据 1：prepareTurn 挂在 AgentRuntimeConfig 上（host 专有），不是 AgentRuntimeHooks
+// shared/agent.ts:462,485
+export interface AgentRuntimeConfig {
+    ...
+    hooks?: Partial&lt;AgentRuntimeHooks&gt;;       // 462 —— 插件/扩展走的通道
+    plugins?: readonly AgentRuntimePlugin[];  // 463
+    ...
+    prepareTurn?: (context) =&gt; ...;           // 485 —— host 专有的「请求投影」，不在 hooks 里
+}
+
+// 证据 2：插件只能拿到 AgentExtensionHooks = Partial&lt;AgentRuntimeHooks&gt;
+// contribution-registry.ts:141 —— 而 AgentRuntimeHooks 里没有 prepareTurn</code></pre>
+
+<p>换句话说：<b>Auto Compact 被实现为 <code>prepareTurn</code>，而 <code>prepareTurn</code> 是 <code>AgentRuntimeConfig</code> 的 host 级字段，
+不在 <code>AgentRuntimeHooks</code> 里，所以走 <code>AgentExtensionHooks</code> 的插件根本触碰不到它</b>。它被硬编码在 core 的
+<code>createContextCompactionPrepareTurn</code>（<span class="cite">compaction.ts:256</span>）+ <code>createCompactionStateAwarePrepareTurn</code>（<span class="cite">local-runtime-host.ts:621</span>）里。</p>
+
+<div class="callout w">
+<b>但插件并非完全不能做「压缩类」的事 —— 有两条旁路，代价是不能复用 Auto Compact 的预算/telemetry：</b>
+<ol>
+<li><b><code>registerMessageBuilder()</code></b>（messageBuilders capability，<span class="cite">contribution-registry.ts:128</span>）：可在消息进入 provider 前做任意变换。</li>
+<li><b><code>beforeModel</code> hook</b>（<span class="cite">agent-runtime.ts:999-1018</span>）：可改写 <code>messages</code> / <code>tools</code> / <code>options</code>。</li>
+</ol>
+两者都在 <code>prepareTurn</code> <b>之后</b>执行，能「再加工」请求，但官方注释明确它们<b>绕过了</b>这个 wrapper 的 telemetry 覆盖：
+</div>
+
+<pre><code>// compaction.ts:251-254 —— 官方承认的 telemetry 盲区（旁路压缩不上报）
+ * Known gap: compactions performed via plugin `registerMessageBuilder()` or
+ * via the `beforeModel` runtime hook bypass this wrapper entirely, so they
+ * do not emit compaction telemetry. If we want coverage there too, the
+ * plugin/hook pipelines must be instrumented separately.</code></pre>
+
+<h3>④ Cline 的扩展边界（哪些硬编码在核心，哪些留给生态）</h3>
+<table>
+<tr><th>能力</th><th>归属</th><th>可否被插件替换/拦截</th><th>证据</th></tr>
+<tr><td>Auto Compact（prepareTurn）</td><td>core（host 级）</td><td><b>否</b>（不在 hooks）</td><td>agent.ts:485 vs 374-402</td></tr>
+<tr><td>压缩策略 agentic/basic/自定义</td><td>core 内置 + <code>config.compaction</code> 可选自定义</td><td>可替换（<code>compaction.compact</code>）</td><td>compaction.ts:499-501</td></tr>
+<tr><td>消息瞬变（截断/剥旧/去重）</td><td>core MessageBuilder</td><td>旁路可加，但不可摘除</td><td>message-builder.ts</td></tr>
+<tr><td>请求改写</td><td>生态（hook/插件）</td><td><b>可</b>（beforeModel / registerMessageBuilder）</td><td>contribution-registry.ts:128</td></tr>
+<tr><td>工具、规则、MCP、命令、provider</td><td>生态（插件 capability）</td><td><b>可</b></td><td>contribution-registry.ts:120-139</td></tr>
+<tr><td>检查点实现</td><td>core 默认 git，但留 <code>createCheckpoint</code> 自定义口</td><td>可替换</td><td>checkpoint-hooks.ts:36-45</td></tr>
+</table>
+
+<p><b>代价与边界</b>：把 Auto Compact 锁死在 core 换来的是「预算、触发阈值、溢出恢复、sidecar 持久化」这四件事的一致性 ——
+它们必须被保证在<b>任何</b> provider 请求前都以同一套规则执行、并以同一套 telemetry 上报；若开放成插件，就会出现「两个压缩器打架 /
+telemetry 盲区」的问题（上面的 Known gap 就是活例子）。这是「核心机制收敛、外围变换开放」的典型取舍。</p>
+
+<h2 id="l4">线 4 · 焦点链与任务状态跨压缩存活</h2>
+
+<h3>① 任务书假设</h3>
+<p>任务书引用 Auto Compact 文档的说法：「待办事项列表在摘要之间持续存在」。核心论点：压缩的是「对话说了什么」，
+而「接下来要做什么」通过 Focus Chain 的 todo list <b>单独维护</b> —— 这是「短期记忆（对话）与长期目标（任务列表）解耦」的体现，
+解释了「为什么压缩后能精确地从停止的地方继续」。</p>
+
+<h3>② 当前真实实现 —— 两条事实，必须分开说清</h3>
+
+<div class="callout d">
+<b>事实 A：Focus Chain 在「当前」SDK 化的 vscode 里已被移除（stub）。</b> 这直接修正任务书「Focus Chain 与 Auto Compact 协同」的表述前提。
+</div>
+
+<pre><code>// apps/vscode/src/sdk/task-proxy.ts:144-145 —— 明确的 stub 声明
+    /** Focus chain checklist (stub — focus chain removed) */
+    currentFocusChainChecklist?: null</code></pre>
+
+<p>Focus Chain 的<b>痕迹仍然完整保留着</b>（旧架构的独立 markdown 文件设计），足以还原它的「解耦」原理：</p>
+<pre><code>// file-utils.ts:9-10 —— todo 存成独立 md 文件，而非混在对话里
+function getFocusChainFilePath(taskDir, taskId) {
+    return path.join(taskDir, `focus_chain_taskid_${taskId}.md`)
+}
+// file-utils.ts:16-24 —— md 内容结构，- [ ] 未完成 / - [x] 已完成
+# Focus Chain List for Task ${taskId}
+&lt;!-- Use the format: - [ ] for incomplete items and - [x] for completed items --&gt;
+${focusChainList}
+// focus-chain-utils.ts:11-13 —— 条目识别规则（也用于从模型回复文本里抽取 todo）
+export function isFocusChainItem(line) {
+    return line.startsWith("- [ ]") || line.startsWith("- [x]") || line.startsWith("- [X]")
+}
+// file-utils.ts:42-45 —— 从任意文本（含模型消息）抽取 focus chain 列表
+export function extractFocusChainListFromText(text) {
+    const lines = extractFocusChainItemsFromText(text)
+    return lines.length &gt; 0 ? lines.join("\n") : null
+}</code></pre>
+
+<div class="callout">
+<b>事实 B：但「短期记忆 vs 长期目标解耦」的内核，在当前架构里没有消失 —— 只是通道换了。</b>
+任务书线 4 真正要揭示的设计原则（长期目标不随对话一起被压缩），现在由 <b>system_prompt 的独立存续</b>来承担：
+看 session-compaction sidecar 的 schema，<code>system_prompt</code> 是被<b>单独、原样</b>存在 sidecar 里的（不进入压缩摘要），
+每次 re-project 时照原样带回来。
+</div>
+
+<pre><code>// session-compaction.ts:33 —— system_prompt 在 sidecar 里单独占一个字段（不随 messages 被压缩）
+    system_prompt: z.string().optional(),
+// session-compaction.ts:154-157 —— 创建 sidecar 时，systemPrompt 原样存入
+    messages: cloneMessages(input.compactedMessages),
+    ...(input.systemPrompt !== undefined ? { system_prompt: input.systemPrompt } : {}),</code></pre>
+
+<p>同时，Auto Compact 的触发预算也把 systemPrompt 计入「已知开销」而非「可压缩的对话」，见
+<span class="cite">compaction-shared.ts</span> 的 <code>estimateRequestInputTokens</code> / <code>requestOverheadTokens</code>（<span class="cite">compaction.ts:301-312</span>
+里把 <code>systemPrompt</code> 与 <code>tools</code> 一并当作请求固定开销，不做压缩对象）。</p>
+
+<h3>③ 「谁存哪、谁能被压缩、谁不能」状态归属对照表</h3>
+<table>
+<tr><th>状态</th><th>旧架构（Focus Chain）</th><th>当前架构</th><th>会被压缩吗</th></tr>
+<tr><td>「接下来做什么」（长期目标 / todo）</td><td><code>focus_chain_taskid_*.md</code> 独立文件</td><td>system_prompt（sidecar 单独字段）+ 已移除的 focus chain</td><td><b>否</b> —— 独立通道</td></tr>
+<tr><td>「对话说了什么」（短期记忆）</td><td>apiMessageHistory</td><td>canonical transcript（state.messages）</td><td><b>是</b> —— 压缩对象</td></tr>
+<tr><td>压缩结果（摘要）</td><td>—</td><td>sidecar.messages</td><td>只增不删（多轮摘要叠加）</td></tr>
+<tr><td>「环境细节 / 文件内容」</td><td>ContextUpdate 注入</td><td>MessageBuilder 剥离过期内容</td><td><b>是</b> —— 直接剥离</td></tr>
+</table>
+
+<p><b>代价与边界 / 我的判断</b>：Focus Chain 被移除是「解耦原则」的一次<b>实现方式退场</b>，而非原则退场 ——
+新架构把「长期目标不随对话压缩」这件事，从「独立 markdown 文件」迁移到了「sidecar 里单独存 system_prompt」。
+代价是：旧设计里用户<b>可以手动编辑那个 md 文件</b>来改写 todo（见 <span class="cite">file-utils.ts:19</span> 的编辑提示），
+这种「人类可读、可 diff、可外部干预」的长期目标载体在新架构里被合并进了 system_prompt，<b>可编辑性降低了</b>（system_prompt 由 host 组装，不对外暴露为「可独立编辑的 todo 文件」）。这是从「显式 todo 文件」到「隐式 prompt 目标」的取舍。</p>
+
+<h2 id="l5">线 5 · 模型能力适配与降级策略</h2>
+
+<h3>① 任务书假设</h3>
+<p>任务书认为 Auto Compact 有「条件启用」：只对 Claude 4 / GPT-5 / Gemini 2.5 / Grok 4 生效，其他模型回退规则截断；这套逻辑在
+<code>context-window-utils.ts</code>；并引用 Issue #7772（llama-server 上下文窗无法自动检测、默认按 128K、131K 模型阈值算错）。
+底层还有「保守 3 字符/token」的估算比例。</p>
+
+<h3>② 当前真实实现 —— 三层结论</h3>
+
+<h4>(a) 「条件启用（按模型家族门控）」在当前代码里<b>不存在</b> —— 已被「策略枚举」取代</h4>
+<p>全库搜不到任何把压缩能力绑定到 Claude/GPT/Gemini/Grok 模型家族的判断；策略选择是<b>配置项</b>，默认 <code>agentic</code>：</p>
+<pre><code>// compaction.ts:285-287 —— 策略来自 config，默认 agentic，不按模型家族 gate
+const strategy = userCompaction?.strategy ?? "agentic";
+const runBuiltinStrategy = BUILTIN_COMPACTION_STRATEGIES[strategy];
+const mode = options.mode ?? "auto";</code></pre>
+<p>真正的「降级」不是按模型家族，而是按<b>运行时失败</b>：agentic（需一次 LLM 摘要调用）失败或产出不合格时，<b>运行时回退 basic</b>（确定性规则截断，不调 LLM）：</p>
+<pre><code>// compaction.ts:502-521 —— agentic 抛错时回退 basic（除非是用户主动取消）
+try {
+    result = await runBuiltinStrategy(builtinOptions);
+} catch (error) {
+    if (strategy !== "agentic" || isCompactionCancellation(error, ...)) throw error;
+    // "Agentic compaction failed; falling back to basic compaction"
+    executedStrategy = "basic";
+    result = await BUILTIN_COMPACTION_STRATEGIES.basic(builtinOptions);
+}</code></pre>
+<pre><code>// compaction.ts:472-498 —— 溢出恢复场景下，agentic/custom 摘要若「不够小/为空」也回退 basic
+const acceptable = result.messages.length &gt; 0
+    && customMessageTokens &lt; messageInputTokens
+    && customMessageTokens &lt;= messageTargetTokens;
+if (!acceptable) { executedStrategy = "basic"; result = await BUILTIN_COMPACTION_STRATEGIES.basic(builtinOptions); }</code></pre>
+
+<h4>(b) 模型上下文窗适配：旧的硬编码 switch 已删，换成「目录声明 + 比率」</h4>
+<p><code>context-window-utils.ts</code> 确已在历史中被删除（commit <code>1f31738b3</code> "delete unused files"），其旧形态正是任务书描述的「各模型特殊对待」：</p>
+<pre><code>// 旧 context-window-utils.ts（git show 1f31738b3 恢复的原文，已删）
+const contextWindow = model.info.contextWindow || 128_000
+const defaultMaxAllowedSize = Math.max(contextWindow - 40_000, contextWindow * 0.8)
+switch (contextWindow) {
+    case 64_000:  maxAllowedSize = contextWindow - 27_000    // deepseek models
+    case 128_000: maxAllowedSize = contextWindow - 30_000    // most models
+    case 200_000: maxAllowedSize = contextWindow - 40_000    // claude models
+    case 400_000: /* OpenAI Codex OAuth 272K input cap inside 400K */ ...
+    default:      maxAllowedSize = defaultMaxAllowedSize
+}</code></pre>
+<p>新架构（<span class="cite">compaction-shared.ts:13-19 / 51-70</span>）不再「按窗口大小查表减量」，而是尊重模型目录（models.dev）上报的能力：</p>
+<pre><code>// compaction-shared.ts:13-19 —— 预算常量
+export const DEFAULT_MAX_INPUT_TOKENS = 128_000;
+export const CONTEXT_WINDOW_INPUT_RATIO = 0.9;   // 只报 contextWindow 时取 90% 作可用输入
+export const COMPACTION_TRIGGER_RATIO = 0.9;     // 占满 90% 预算就触发压缩
+export const DEFAULT_TARGET_RATIO = 0.7;         // 压缩后目标：降到 70%
+export const DEFAULT_PRESERVE_RECENT_TOKENS = 20_000; // 最近 20K token 不压缩
+
+// compaction-shared.ts:51-70 —— 权威值优先，其次 window * 0.9
+export function resolveEffectiveMaxInputTokens(input) {
+    if (maxInputTokens !== undefined) {   // 目录报了 maxInputTokens
+        return contextWindow === undefined ? maxInputTokens
+             : Math.min(maxInputTokens, contextWindow);  // 但不得超过 window
+    }
+    return contextWindow === undefined ? undefined
+         : contextWindow * CONTEXT_WINDOW_INPUT_RATIO;   // 只报窗口 → 乘 0.9
+}</code></pre>
+<h4>(c) token 估算：3 字符/token（保守），且全局一致</h4>
+<pre><code>// tokens.ts:8-11 —— 保守字符/token 估算
+export const CHARS_PER_TOKEN = 3;
+export function estimateTokens(chars) { return Math.max(1, Math.ceil(chars / CHARS_PER_TOKEN)); }</code></pre>
+<p>注意 <code>compaction-shared.ts:8</code> 把 <code>CHARS_PER_TOKEN</code>/<code>estimateTokens</code> 再导出，保证「压缩预算、触发阈值、溢出判定」三处用<b>同一个估算器</b>（避免单位不一致导致阈值错乱 —— 这正是 Issue #7772 类 bug 的根因）。</p>
+
+<h3>③ Issue #7772 的核实与「128K 兜底」的代价</h3>
+<p>任务书引用的 Issue #7772 在仓库历史里<b>未直接搜到编号 7772</b>，但它的<b>症状与修复链</b>完全可复现：</p>
+<pre><code>$ git log --oneline --all --grep='128k' | head
+83f9991c9 Fix LM Studio context window stuck at 128k (#13457)
+e47e90cc6 fix(lmstudio): resolve real context window from LM Studio's REST API</code></pre>
+<p>根因密钥是<b>同一类</b>：本地推理服务（llama-server / LM Studio / ollama）不在 models.dev 目录、又不主动上报 <code>maxInputTokens</code>，
+于是走 <code>resolveEffectiveMaxInputTokens → undefined → DEFAULT_MAX_INPUT_TOKENS = 128_000</code> 兜底；若真实窗口是 131K，
+把 128K 当上限看似「偏小」，但若模型目录把窗口报了 131072、而 90% 触发阈值又乘错单位，就会在「还没到真上限」时提前触发压缩（或反之溢出）。
+修复方向一致：<b>让 provider 主动上报真实窗口</b>（LM Studio 从 REST API 解析），而不是依赖默认值。</p>
+
+<h3>④ 不同 provider 的适配妥协清单</h3>
+<table>
+<tr><th>Provider / 场景</th><th>旧（switch 查表）</th><th>新</th><th>代价 / 妥协</th></tr>
+<tr><td>Claude（200K）</td><td>200K - 40K</td><td>目录 maxInputTokens（≤ window）</td><td>不再硬编码，靠目录新鲜度</td></tr>
+<tr><td>DeepSeek（64K）</td><td>64K - 27K（注释：80% 会留太少）</td><td>window × 0.9</td><td>margin 从「绝对差值」改为「比例」</td></tr>
+<tr><td>本地 llama-server / LM Studio / ollama</td><td>—</td><td>无目录 → 128K 兜底</td><td><b>阈值可能算错</b>（Issue #7772 / #13457）</td></tr>
+<tr><td>OpenAI Codex OAuth（400K 但 272K 输入上限）</td><td>272K - 40K 特判</td><td><code>Math.min(maxInputTokens, contextWindow)</code></td><td>目录报 272K 时 min 自动兜住</td></tr>
+<tr><td>溢出（provider 拒绝 context_window_exceeded）</td><td>—</td><td>overflowRecovery 强制 basic 压缩并单次重试</td><td>重试前用序列化长度变小做粗校验</td></tr>
+</table>
+
+<p><b>代价与边界 / 我的判断</b>：从「switch 查表」到「目录 + 比率」是一次<b>可维护性 vs 精度</b>的取舍 ——
+旧方案 margin 是逐个模型手工调的经验值（注释写着 deepseek 80% 太小），新方案统一成比率、权威性交给 models.dev 目录，
+换来「目录过时/缺条目时掉回 128K 兜底」的新风险。token 用 3 字符/token 是<b>全局偏保守</b>的选择（真实约 4 字符/token），
+意味着预算<b>高估 token、更早触发压缩</b>—— 安全优先，宁早压缩不溢出。最后一道保险是溢出恢复的硬防线（<span class="cite">agent-runtime.ts:891-932</span>）。</p>
+
+<h2 id="sum">总结 · 设计取舍与扩展边界</h2>
+<div class="panel">
+<h3>五个「内核保留、形态迁移」的判断</h3>
+<table>
+<tr><th>主线</th><th>内核（不变）</th><th>形态迁移（变）</th></tr>
+<tr><td>线1 无损投影</td><td>原始消息永不改写，编辑在读取期应用</td><td>EditType/ContextUpdate → <code>prepareTurn</code> 投影 + <code>MessageBuilder</code> API-safe 副本</td></tr>
+<tr><td>线2 检查点回滚</td><td>非破坏式，回滚零成本</td><td>时间戳截断 JSON 图 → git stash/ref（文件）+ 边界哈希 sidecar（对话）</td></tr>
+<tr><td>线3 扩展性</td><td>核心调控收敛、外围变换开放</td><td><code>prepareTurn</code> 锁死在 core（非 hook）；插件走 7 个 hook + capability</td></tr>
+<tr><td>线4 长期目标解耦</td><td>长期目标不随对话压缩</td><td>Focus Chain md 文件（已移除）→ sidecar 单独存 system_prompt</td></tr>
+<tr><td>线5 模型适配</td><td>宁早压缩、不溢出</td><td>switch 查表减量 → 目录 + 比率 + 溢出恢复硬回退</td></tr>
+</table>
+</div>
+
+<h3>最值得记住的三条「设计取舍」</h3>
+<ul>
+<li><b>投影而非改写（线1+线2 的共同根）</b>：把「改写」推迟到读取期，一次性换来「可回滚、可观察、可并发」三种能力；代价是每次请求的内存重投影 + provider 前缀缓存失效风险（用 64KB 批量省写对冲）。</li>
+<li><b>核心机制锁死、外围能力开放（线3）</b>：Auto Compact 的预算/触发/溢出/持久化必须全局一致，所以不放进 hook；插件只能做「压缩后」的再加工（beforeModel / messageBuilder），且官方明示这会绕过压缩 telemetry。</li>
+<li><b>安全优先的预算哲学（线5）</b>：3 字符/token 高估 + 90% 触发 + 溢出回退重试，是「宁可更早压缩、也不冒溢出风险」的一整套保守设计；代价是本地无目录模型掉进 128K 兜底（Issue #7772 类）。</li>
+</ul>
+
+<div class="callout">
+<b>关于「复现性」</b>：本报告所有 <span class="cite">路径:行号</span> 均来自当前 HEAD 的只读源码；关键交叉验证命令已贴出
+（如 <code>git log --grep='12747'</code>、<code>git show 1f31738b3</code>）。全部为一次性只读分析，未改动上游仓。</div>
+
+</div>
+</body>
+</html>
