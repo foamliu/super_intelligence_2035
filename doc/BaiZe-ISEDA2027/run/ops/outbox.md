@@ -1003,3 +1003,229 @@ I'll start by understanding the current state. Let me read the key files and exp
 
 =========== DONE ===========
 ```
+
+---
+
+## RUN_ID 6 · 2026-10-02 22:33:35 · host=`whag0pgpuap29` · exit=143
+
+**命令**
+```bash
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+
+echo "=========== 1. 当前 relay / loop 进程 ==========="
+pgrep -af 'ops_relay.sh|baize_.*_loop\.sh' | cut -c1-140
+echo
+
+echo "=========== 2. 清重复的 ops_relay.sh（保留【启动最早】的那个） ==========="
+echo "⚠️ 用 etimes(已运行秒数) 排序取最早，不用 PID 数字 —— PID 会回绕，数字小不代表更早"
+echo "   证据：两次独立观测（RUN_ID 2 与 5）都看到【2 个】relay，其中 2489749 跨两次存活，"
+echo "         另一个从 1276654 变成 2228582 → 2489749 是更早/更稳的那个。"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | cut -c1-140
+KEEP=$(ps -eo pid=,etimes=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | sort -k2 -nr | awk 'NR==1{print $1}')
+RELAYS=$(ps -eo pid=,etimes=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | awk '{print $1}')
+echo "keep (longest-running) = $KEEP ; all = $(echo $RELAYS | tr '\n' ' ')"
+for p in $RELAYS; do
+  if [ "$p" != "$KEEP" ]; then
+    echo "killing duplicate relay pid=$p"
+    kill "$p" 2>/dev/null
+  fi
+done
+sleep 3
+echo "-- after（预期只剩 1 个） --"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | cut -c1-140 || echo "(none)"
+echo
+
+echo "=========== 3. 勘查【既有】harness 研究线（只读，不改动） ==========="
+H=/nas_train/app.e0031982/harness
+echo "-- 顶层（含日期，用于确认它早于我们） --"
+ls -la "$H" 2>/dev/null | cut -c1-140
+echo
+echo "-- 它的 loop.sh 是否在跑？ --"
+pgrep -af 'harness/loop.sh' | cut -c1-140 || echo "(NOT running)"
+echo
+echo "-- MEMORY.md 顶部 25 行 --"
+head -25 "$H/MEMORY.md" 2>/dev/null | cut -c1-170 || echo "(no MEMORY.md)"
+echo
+echo "-- analyze_harness_sources.md 的章节标题 --"
+grep -nE '^#{1,3} ' "$H/analyze_harness_sources.md" 2>/dev/null | head -25 | cut -c1-150 || echo "(none)"
+echo
+echo "-- report.html 的 title/h1/h2（看它覆盖了什么） --"
+grep -oE '<(title|h1|h2)[^>]*>[^<]{0,90}' "$H/report.html" 2>/dev/null | head -18 || echo "(none)"
+echo
+echo "-- evidence/ --"
+ls -la "$H/evidence" 2>/dev/null | head -15 | cut -c1-140
+echo "-- mechanisms/ --"
+ls -la "$H/mechanisms" 2>/dev/null | head -15 | cut -c1-140
+echo
+echo "-- daily-memories/ 最近 5 个 --"
+ls -1t "$H/daily-memories" 2>/dev/null | head -5
+echo
+
+echo "=========== 4. 5 个 harness 的形态（目录 + README 首 3 行） ==========="
+for d in cline opencode deepseek-harness codex claude-code; do
+  if [ -d "$H/$d" ]; then
+    echo "---- $d ----"
+    ls "$H/$d" 2>/dev/null | head -14 | tr '\n' ' '; echo
+    head -3 "$H/$d/README.md" 2>/dev/null | cut -c1-150
+    echo
+  else
+    echo "---- $d : MISSING ----"
+  fi
+done
+
+echo "=========== DONE ==========="
+```
+
+**输出**
+```
+=========== 1. 当前 relay / loop 进程 ===========
+2228938 bash baize_harness_loop.sh
+2228956 bun /home/app.e0031982/.bun/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve
+2425284 bash baize_pretrain_loop.sh
+2489749 bash ops_relay.sh
+3156278 bash ops_relay.sh
+
+=========== 2. 清重复的 ops_relay.sh（保留【启动最早】的那个） ===========
+⚠️ 用 etimes(已运行秒数) 排序取最早，不用 PID 数字 —— PID 会回绕，数字小不代表更早
+   证据：两次独立观测（RUN_ID 2 与 5）都看到【2 个】relay，其中 2489749 跨两次存活，
+         另一个从 1276654 变成 2228582 → 2489749 是更早/更稳的那个。
+2489749  109310 bash ops_relay.sh
+3156278       0 bash ops_relay.sh
+keep (longest-running) = 2489749 ; all = 2489749 3156278 
+killing duplicate relay pid=3156278
+-- after（预期只剩 1 个） --
+2489749  109313 bash ops_relay.sh
+
+=========== 3. 勘查【既有】harness 研究线（只读，不改动） ===========
+-- 顶层（含日期，用于确认它早于我们） --
+total 144
+drwxr-x--- 10 app.e0031982 app.adm  4096 Sep 15 09:35 .
+drwxr-xr-x 26 app.e0031982 sudo     8192 Sep 29 18:46 ..
+-rw-r-----  1 app.e0031982 app.adm 11795 Sep 11 17:12 analyze_harness_sources.md
+drwxr-x---  6 app.e0031982 app.adm  4096 Sep  4 16:10 claude-code
+drwxr-x--- 21 app.e0031982 app.adm  8192 Sep  8 09:13 cline
+drwxr-x--- 16 app.e0031982 app.adm  8192 Sep  4 16:09 codex
+drwxr-x---  2 app.e0031982 app.adm  4096 Sep 15 14:08 daily-memories
+drwxr-x--- 16 app.e0031982 app.adm  8192 Sep  4 16:07 deepseek-harness
+drwxr-x---  2 app.e0031982 app.adm  4096 Sep 12 03:50 evidence
+-rw-r-----  1 app.e0031982 app.adm  2433 Sep  4 17:52 loop.sh
+drwxr-x---  2 app.e0031982 app.adm  4096 Sep 12 03:50 mechanisms
+-rw-r-----  1 app.e0031982 app.adm  3172 Sep 15 16:36 MEMORY.md
+drwxr-x--- 18 app.e0031982 app.adm 12288 Sep  4 16:04 opencode
+-rw-r-----  1 app.e0031982 app.adm 24552 Sep  4 18:18 report.html
+
+-- 它的 loop.sh 是否在跑？ --
+
+-- MEMORY.md 顶部 25 行 --
+# 项目记忆库：Agent Harness 源码分析
+
+| 字段 | 内容 |
+|------|------|
+| 项目目标 | 深入分析五个 Agent Harness 源码，比较架构优劣，生成 HTML 报告 |
+| 最后更新 | 复验执行 #489（2026-09-15）：强制工作流 §0.2 已遵守；决策树 §四 第2步命中完成态 exit 0；复验通过：report.html 257 行 
+| 当前阶段 | 已完成 |
+
+> 历史复验记录（#112~#227）均为同构完成态复验，已折叠。机制级代码证据沉淀于 report.html，证据目录 evidence/ 与 mechanisms/ 当前为
+
+## 1. 项目分析进度
+
+| 项目 | 状态 | 完成度 | 备注 |
+|------|------|--------|------|
+| claude-code | ✅ 已完成 | 100% | 见 report.html |
+| cline | ✅ 已完成 | 100% | 见 report.html |
+| codex | ✅ 已完成 | 100% | 见 report.html |
+| deepseek-harness | ✅ 已完成 | 100% | 见 report.html |
+| opencode | ✅ 已完成 | 100% | 见 report.html |
+
+> 完成度按“机制清单”计算，不按“项目过一遍”计算。详见 §2.2。
+
+## 2. 机制分析进度
+
+### 2.1 机制清单（每个项目均需覆盖）
+
+-- analyze_harness_sources.md 的章节标题 --
+2:# 任务：Agent Harness 源码深度分析与比较
+10:## 零、记忆系统（最高优先级）
+12:### 0.1 记忆文件路径
+24:### 0.2 强制工作流程
+44:### 0.3 主记忆库模板 (`MEMORY.md`)
+47:# 项目记忆库：Agent Harness 源码分析
+55:## 1. 项目分析进度
+67:## 2. 机制分析进度
+69:### 2.1 机制清单（每个项目均需覆盖）
+84:### 2.2 单个机制“完成”的验收标准
+98:## 3. 关键发现（持续追加）
+104:## 4. 当前进行中
+112:## 5. 决策记录
+121:## 一、任务目标
+131:## 二、分析要求
+133:### 2.1 源码分析：必须回答的问题
+148:### 2.2 机制清单（必须覆盖）
+163:### 2.3 比较与评估：机制级对比，而非字段级对比
+187:### 2.4 输出形式
+200:## 三、资源与环境
+212:## 四、执行逻辑
+240:## 五、约束
+258:## 六、深度自检清单（每个机制完成前必查）
+275:## 七、推荐的分析模板（单机制 × 单项目）
+278:# [项目] × [机制]
+
+-- report.html 的 title/h1/h2（看它覆盖了什么） --
+<title>Agent Harness 源码深度分析与横向对比报告
+<h1>Agent Harness 源码深度分析与横向对比
+<h2 id="overview">一、项目概览
+<h2 id="individual">二、各项目独立分析
+<h2 id="compare">三、横向对比矩阵
+<h2 id="radar">四、多维度雷达评估
+<h2 id="architecture">五、架构模式对比
+<h2 id="recommend">六、综合评估与建议
+
+-- evidence/ --
+total 8
+drwxr-x---  2 app.e0031982 app.adm 4096 Sep 12 03:50 .
+drwxr-x--- 10 app.e0031982 app.adm 4096 Sep 15 09:35 ..
+-- mechanisms/ --
+total 8
+drwxr-x---  2 app.e0031982 app.adm 4096 Sep 12 03:50 .
+drwxr-x--- 10 app.e0031982 app.adm 4096 Sep 15 09:35 ..
+
+-- daily-memories/ 最近 5 个 --
+2026-09-15.md
+2026-09-14.md
+2026-09-13.md
+2026-09-12.md
+2026-09-11.md
+
+=========== 4. 5 个 harness 的形态（目录 + README 首 3 行） ===========
+---- cline ----
+AGENTS.md apps assets biome.json BUILD_CLI.md bun.lock CHANGELOG.md CODE_OF_CONDUCT.md CONTRIBUTING.md docs evals LICENSE linux-x64.tar.gz node_modules 
+<p align="center">
+  <img src="assets/icons/icon.png" width="80" alt="Cline" />
+</p>
+
+---- opencode ----
+AGENTS.md artifacts bunfig.toml bun.lock CONTEXT.md CONTRIBUTING.md flake.lock flake.nix github infra install LICENSE nix package.json 
+<p align="center">
+  <a href="https://opencode.ai">
+    <picture>
+
+---- deepseek-harness ----
+AGENTS.md apps BENCHMARK.md BRAND_GUIDELINES.i18n.yaml BRAND_GUIDELINES.md BRAND_GUIDELINES.zh.md CLAUDE.md CONTRIBUTING.i18n.yaml CONTRIBUTING.md CONTRIBUTING.zh.md docs lefthook.yml LICENSE native 
+# DeepSeek Harness
+
+English | [中文](README.zh.md)
+
+---- codex ----
+AGENTS.md announcement_tip.toml bazel BUILD.bazel CHANGELOG.md codex-cli codex-rs defs.bzl docs flake.lock flake.nix justfile LICENSE MODULE.bazel 
+<p align="center"><strong>Codex CLI</strong> is a coding agent from OpenAI that runs locally on your computer.
+<p align="center">
+  <img src="https://github.com/openai/codex/blob/main/.github/codex-cli-splash.png" alt="Codex CLI splash" width="80%" />
+
+---- claude-code ----
+bunfig.toml bun.lock package.json plugins README.md src stubs tsconfig.json 
+# Claude Code — Leaked Source (2026-03-31)
+
+> **On March 31, 2026, the full source code of Anthropic's Claude Code CLI was leaked** via a `.map` file exposed in their npm registry.
+
+=========== DONE ===========
+```
