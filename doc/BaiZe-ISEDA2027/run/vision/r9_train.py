@@ -121,6 +121,8 @@ def main():
     ap.add_argument('--probe-every', type=int, default=300)
     ap.add_argument('--probe-n', type=int, default=128)
     ap.add_argument('--num-workers', type=int, default=2)
+    ap.add_argument('--save-every', type=int, default=10000,
+                    help='save a checkpoint every N steps (0 = only final)')
     args = ap.parse_args()
 
     rank = int(os.environ['RANK'])
@@ -206,6 +208,29 @@ def main():
     fused = False
     fuse_reason = None
 
+    def save_ckpt(fname, fused=False, reason=None):
+        if not is_main:
+            return
+        state = {
+            'vision': dict(vision.module.state_dict()),
+            'logit_scale': logit_scale.detach().cpu(),
+            'config': {'tower': args.tower, 'resolution': args.resolution,
+                       'patch': args.patch, 'steps': step, 'loss': 'clip_infonce',
+                       'embed_dim': EMBED, 'lr': args.lr, 'warmup': args.warmup,
+                       'batch_size': args.batch_size, 'world_size': world_size,
+                       'seed': args.seed, 'objective': 'InfoNCE', 'text': 'frozen-CLIP-768',
+                       'width': args.width, 'depth': args.depth,
+                       'heads': args.heads, 'mlp_dim': args.mlp_dim},
+            'final_loss': loss_ema,
+            'params_total': param_count(vision.module),
+            'params_active': active_param_count(vision.module),
+            'fused': fused,
+        }
+        if fused:
+            state['fuse_reason'] = reason
+        torch.save(state, os.path.join(args.output_dir, fname))
+        log(f'[saved] {os.path.join(args.output_dir, fname)} (fused={fused})')
+
     t_start = time.time()
     step = 0
     while step < args.steps:
@@ -266,6 +291,10 @@ def main():
             elif not c4_ok:
                 fused, fuse_reason = True, f'C4 loss-not-decreasing (ema={loss_ema:.4f} vs early={loss_early:.4f})@step{step}'
 
+        # periodic checkpoint (R9.3 stage-2 needs a ckpt every 10k; also crash resilience)
+        if args.save_every and step and step % args.save_every == 0:
+            save_ckpt(f'vision_step{step}.pt')
+
         if fused:
             break
 
@@ -274,29 +303,8 @@ def main():
     log(f'[done] total={total_wall:.1f}s steps={step} steady_image_s={steady_img_s:.1f} '
         f'final_loss={loss_ema:.4f} fused={fused}')
 
+    save_ckpt('vision_fused.pt' if fused else 'vision.pt', fused=fused, reason=fuse_reason)
     if is_main:
-        ckpt = os.path.join(args.output_dir, 'vision.pt')
-        if fused:
-            ckpt = os.path.join(args.output_dir, 'vision_fused.pt')
-        state = {
-            'vision': dict(vision.module.state_dict()),
-            'logit_scale': logit_scale.detach().cpu(),
-            'config': {'tower': args.tower, 'resolution': args.resolution,
-                       'patch': args.patch, 'steps': step, 'loss': 'clip_infonce',
-                       'embed_dim': EMBED, 'lr': args.lr, 'warmup': args.warmup,
-                       'batch_size': args.batch_size, 'world_size': world_size,
-                       'seed': args.seed, 'objective': 'InfoNCE', 'text': 'frozen-CLIP-768',
-                       'width': args.width, 'depth': args.depth,
-                       'heads': args.heads, 'mlp_dim': args.mlp_dim},
-            'final_loss': loss_ema,
-            'params_total': param_count(vision.module),
-            'params_active': active_param_count(vision.module),
-            'fused': fused,
-        }
-        if fused:
-            state['fuse_reason'] = fuse_reason
-        torch.save(state, ckpt)
-        log(f'[saved] {ckpt} (fused={fused})')
         logf.close()
 
     cleanup()

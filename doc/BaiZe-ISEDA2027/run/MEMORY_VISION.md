@@ -6,12 +6,38 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R9_active**（第九轮：数据扩容 + 长训练的缩放先导；阶段一缩塔 3 臂 × 30k 已后台启动） |
-| WAITING | 1（R9 阶段一 3 臂后台跑中，置 1 长睡省 token；下次唤醒回收 + 阶段二） |
-| ERROR_COUNT | 0 |
-| BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（≈9.2 GPU·h + ~23min）+ R9 冒烟（3×1×100 步 ≈ 0.06 GPU·h） |
-| 更新 | 2026-10-02 09:44（R9 启动：冒烟测吞吐 → ETA 报运维 → 阶段一 3 臂后台启动） |
+| PHASE | **R9_active**（第九轮：数据扩容 + 长训练；阶段一缩塔 3 臂 × 30k，因 wds 坏图 crash 已修复重启） |
+| WAITING | 1（R9 阶段一 3 臂后台重跑中；已修 wds 脏图容错 + 加周期 ckpt，置 1 长睡，下次唤醒回收 + 阶段二） |
+| ERROR_COUNT | 1（R9 阶段一 w512 首跑 @step~8900 崩溃：CC12M/Amshaker wds 含损坏 jpg → PIL.UnidentifiedImageError） |
+| BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（≈9.2 GPU·h + ~23min）+ R9（冒烟 ~0.06 + 首跑 w512 32min + w768 ~8min 报废） |
+| 更新 | 2026-10-02 10:30（R9 阶段一 w512 首跑 crash → 修 wds 脏图容错 + 加周期 ckpt → 重启） |
 | WINNER | **OpenVision2**（R8 六架构四指标第一；R9 只做空塔规模缩放，不改架构排名） |
+
+## 🐛 R9 阶段一 crash 诊断 + 修复 + 重启（2026-10-02 10:30）
+
+> 本次唤醒发现 R9 阶段一首跑已 **crash**：`w512`（126.8M）跑至 **~step 8900/30000** 被
+> **`PIL.UnidentifiedImageError: cannot identify image file`** 打崩（`webdataset.autodecode.DecodingError` → torchrun `ChildFailedError`）。
+> **根因**：CC12M + Amshaker 的 webdataset shard 里**混有损坏 .jpg**（非 jpg 脏字节），
+> 而 `data.py build_loader`（wds 路径）用 `.decode('pil')` **无脏图容错**（对比 `build_gpic_loader` 已在 `gpic_decode` 里 try/except）。
+> 且 `r9_train.py` **只在训练循环结束才存 ckpt** → 中间无 checkpoint，崩溃即全损（w512 首跑 8900 步作废、无 ckpt）。
+
+### 修复（已落地 + 实测通过）
+1. **`data.py build_loader` 加脏图容错**：`.decode('pil', handler=wds.ignore_and_continue)` + `.map(..., handler=wds.ignore_and_continue)`。
+   - ⚠️ 关键实测：webdataset **1.0.2** 的 `handler` 是**逐 stage** 参数（默认 `reraise_exception`），**不会**从 `WebDataset(handler=...)` 构造器传播 → 先试错发现，改为传在 `.decode/.map` 上。
+   - 实测：`/tmp/test_wds_fix.py`（tar 内 good1/坏字节/good2）→ `[num_workers=0/1] yielded 2 samples`，坏图跳过不崩。
+   - 用 `ignore_and_continue` 而非 `warn_and_continue`：后者源码含 `time.sleep(0.5)`/样本，脏图多会把训练拖慢。
+2. **`r9_train.py` 加周期 ckpt**（R9.3 阶段二本就要求"每 10k 存 ckpt"；同时防单张脏图再毁整轮）：
+   `--save-every`（默认 10000）→ 每 N 步存 `vision_step{N}.pt`，末了仍存 `vision.pt`/`vision_fused.pt`（`r9_run.sh` 找 ckpt 逻辑不变）。
+
+### 处置
+- 记 PID 后 kill 注定同点崩的 `w768`（torchrun 1223947 + 8 rank）与父 `r9_run.sh`（3061764）；GPU 0–7 清空核验（0 MiB）。
+- 清 stale 输出目录后 **`setsid bash r9_run.sh stage1 30000 6` 重启**（新父 1959850，w512 torchrun 1960801，GPU ~16GB/75–84%）。
+- 新跑健康：`[PROBE step 300] C1=0.1347 C2_gap=+0.1375 C4=OK`，loss 5.58→4.52 降。
+- ⚠️ NFS：data agent 的 `hf download gpic` 等仍在下（日志已录原文），或造成吞吐波动（w512 首段 4300–6000 → 后段 ~2400 img/s），**不杀他人进程**、如实记录。
+- crash 证据备份：`/tmp/r9.log.crash_w512_*.bak`。
+
+### 下一步（WAITING=1）
+- 回收 3 臂 `vision.pt`（+ 周期 `vision_step{N}.pt`）→ `r8_eval_in1k.py` 测 IN-1k zs/lp → 选每样本效率最高塔 → 阶段二（108k 长训 + 每 10k ckpt + scaling 曲线 + 外推）。
 
 ## 🚀 R9 启动（2026-10-02 09:44）：数据扩容 + 长训练 —— 阶段一缩塔先导
 

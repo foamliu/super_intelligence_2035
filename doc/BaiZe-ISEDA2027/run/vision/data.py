@@ -43,9 +43,9 @@ def build_loader(shard_list, batch_size: int, tokenizer, size: int = 224,
         wds.WebDataset(shard_list, nodesplitter=_no_split,
                        shardshuffle=(200 if shuffle else 0))
         .shuffle(2000 if shuffle else 0)
-        .decode('pil')
+        .decode('pil', handler=wds.ignore_and_continue)
         .to_tuple('png;jpg;img', 'txt')
-        .map(lambda s: (tf(s[0]), s[1]))
+        .map(lambda s: (tf(s[0]), s[1]), handler=wds.ignore_and_continue)
     )
 
     def collate(batch):
