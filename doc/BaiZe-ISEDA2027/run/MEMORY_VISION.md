@@ -7,11 +7,25 @@ WAITING: 1
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R9_active**（第九轮：数据扩容 + 长训练；阶段一缩塔 3 臂 × 30k：w512 完成、w768 运行中、w1024 排队） |
-| WAITING | 1（R9 阶段一 w768 训练中 @~5.1k/30k；w512 已完、w1024 排队；置 1 长睡，下次唤醒回收 + 阶段二） |
+| WAITING | 1（R9 阶段一 w768 训练中 @~13.7k/30k；w512 已完、w1024 排队；置 1 长睡，下次唤醒回收 + 阶段二） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @step~8900 崩溃：CC12M/Amshaker wds 含损坏 jpg → PIL.UnidentifiedImageError） |
 | BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（≈9.2 GPU·h + ~23min）+ R9（冒烟 ~0.06 + 首跑 w512 32min + w768 ~8min 报废 + w512 完成 ~15.4 GPU·h） |
-| 更新 | 2026-10-02 12:45（巡检：w512 完成 loss_ema=4.0496 / C1=0.3502 / C2_gap=+0.1079 / steady 2938.6 img/s，4 ckpt 落盘；w768 训练中 @~5.1k 健康；w1024 排队；WAITING=1） |
+| 更新 | 2026-10-02 13:16（巡检：w768 训练中 @~13.7k/30k、C1≈0.36、C2_gap≈+0.085 健康无坍缩、vision_step10000.pt 已落盘；w512 完成、w1024 排队；stage-2 launcher + IN-1k 评测脚本已复核就绪；WAITING=1） |
 | WINNER | **OpenVision2**（R8 六架构四指标第一；R9 只做空塔规模缩放，不改架构排名） |
+
+## 巡检（2026-10-02 13:16）：w768 @ ~45.7% 健康推进，stage-1 全线按计划
+
+> 纯 CPU，未占卡。只登记状态，无脚本改动、无新实验（stage-2 launcher + IN-1k 评测均已就绪并复核）。
+
+- **w768（284.5M）🔄 运行中 @ ~step 13700/30000（45.7%）**：12:24:02 启动，13:16 已跑 52min≈13700 步（≈263 步/min，稳态 ~2700–2800 img/s，瞬时因 data-agent NFS 下载争用波动到 2400–5600）；
+  最近 PROBE step 13500 `C1=0.3554 C2_gap=+0.0899 loss_ema=4.9118 C4=OK`，step 12900/13200 各 C1≈0.36、C2_gap≈+0.087 → **无坍缩、健康**；`vision_step10000.pt`（1.14GB）已按 `--save-every 10000` 落盘。
+- **w512（126.8M）✅ 完成**：final loss_ema 4.0496 / C1 0.3502 / steady 2938.6 img/s，4 ckpt 全落盘（step10k/20k/30k + vision.pt）。
+- **w1024（505.0M）⏳ 排队**：w768 结束后 `r9_run.sh` 串行续跑（`stage1` 分支已把 3 臂训练 + 末了 `r8_eval_in1k.py --ckpts` 逐臂 IN-1k 评测串成一条龙）。
+- **ETA 复核**：w768 ~14:18；w1024 ~16:15；+ 3 臂 IN-1k 评测（decode 100k IN-1k 图 once + 3 ckpt，~0.5–1h）→ **stage-1 全完成 ≈17:00–17:30**。
+- **✅ 已复核 stage-2 就绪（纯 CPU）**：`vision/r9_run_stage2.sh`（`bash r9_run_stage2.sh <width> 108000 6`）在盘、含 exit-code 检查 + ckpt 收集 + IN-1k 逐点 scaling 评测；`r8_eval_in1k.py --ckpts`（`nargs='+'` 多 ckpt + frozen trunk zs/lp + `load_vision` 从 ckpt `config` 重建 tower（:85-101））接口正确。
+- **磁盘**：`/nas_train` 剩 **32T**（176T/207T used，85%）；阶段二 108k 步 11 个 ckpt（每 ~0.5–1.1G）无压力。
+- **下一步（WAITING=1 不变）**：stage-1 三臂全完 + IN-1k 评测后 → 读 `/tmp/r9.log` 三臂 IN-1k lp / loss / C1 / 吞吐 → 选**每样本效率最高**塔 → `bash r9_run_stage2.sh <选中width> 108000 6` 启动阶段二（scaling 曲线）。
+- 未改 `*.tex`；未碰 pretrain/data/ops 文件。
 
 ## 巡检（2026-10-02 12:45）：stage-1 w512 完成（final 数字落盘）+ w768 运行中
 
