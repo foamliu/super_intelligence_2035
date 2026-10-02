@@ -42,19 +42,23 @@ echo "=========== 1. 当前 relay / loop 进程 ==========="
 pgrep -af 'ops_relay.sh|baize_.*_loop\.sh' | cut -c1-140
 echo
 
-echo "=========== 2. 清重复的 ops_relay.sh（保留最早的那个） ==========="
-RELAYS=$(pgrep -f 'ops_relay.sh' | sort -n)
-echo "found: $(echo $RELAYS | wc -w) -> $RELAYS"
-KEEP=$(echo "$RELAYS" | head -1)
+echo "=========== 2. 清重复的 ops_relay.sh（保留【启动最早】的那个） ==========="
+echo "⚠️ 用 etimes(已运行秒数) 排序取最早，不用 PID 数字 —— PID 会回绕，数字小不代表更早"
+echo "   证据：两次独立观测（RUN_ID 2 与 5）都看到【2 个】relay，其中 2489749 跨两次存活，"
+echo "         另一个从 1276654 变成 2228582 → 2489749 是更早/更稳的那个。"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | cut -c1-140
+KEEP=$(ps -eo pid=,etimes=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | sort -k2 -nr | awk 'NR==1{print $1}')
+RELAYS=$(ps -eo pid=,etimes=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | awk '{print $1}')
+echo "keep (longest-running) = $KEEP ; all = $(echo $RELAYS | tr '\n' ' ')"
 for p in $RELAYS; do
   if [ "$p" != "$KEEP" ]; then
-    echo "killing duplicate relay pid=$p  (keeping $KEEP)"
+    echo "killing duplicate relay pid=$p"
     kill "$p" 2>/dev/null
   fi
 done
 sleep 3
-echo "-- after --"
-pgrep -af 'ops_relay.sh' | cut -c1-140 || echo "(none)"
+echo "-- after（预期只剩 1 个） --"
+ps -eo pid=,etimes=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | cut -c1-140 || echo "(none)"
 echo
 
 echo "=========== 3. 勘查【既有】harness 研究线（只读，不改动） ==========="
