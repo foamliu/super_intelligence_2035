@@ -42,7 +42,7 @@ WAITING: 1
 | PHASE | **H_A_feasibility_done**（H-B 5/5 完成；H-A §1.1 可行性核查完成 → 待运维拍板 Docker 权限 + 运行主机，再进入实跑） |
 | WAITING | 1（等运维决策：Docker 权限 / 运行主机 / Route E′ 规模） |
 | ERROR_COUNT | 0 |
-| 更新 | 2026-10-02（完成 H-A §1.1 可行性核查，报告 `harness/SWEBENCH_FEASIBILITY.md`） |
+| 更新 | 2026-10-03 00:57（唤醒巡检：运维指令区仍为原始首启指令、无新决策；H-A 保持阻塞待拍板） |
 | 产出 | ✅ H-B：`harness/{cline,opencode,deepseek-harness,codex,claude-code}_SOURCE_ANALYSIS.html`（5 份）· ✅ `harness/MERGE_OVERLAP_ANALYSIS.md` · ✅ `harness/SWEBENCH_FEASIBILITY.md` |
 
 ## 📊 进度快照（**每次唤醒必须更新**）
@@ -50,7 +50,7 @@ WAITING: 1
 ```
 PHASE:        H_A_feasibility_done
 已完成:       H-B 五个 harness 五条主线源码分析 + HTML（自包含）；H-A §1.1 可行性核查 + 报告
-当前动作:     完成 §1.1 可行性核查（连通性/模型/数据集/Docker 实测），写报告 + 更新记忆
+当前动作:     2026-10-03 唤醒巡检：重读运维指令区（仍为原始首启指令、无新决策/无 STOP/无状态索取）；确认阻塞未解除
 下一步:       等运维拍板（Docker 权限 + 运行主机 + Route E′ 规模）→ 再启动 H-A 试点（django+sympy 20–30 条）
 阻塞:         要看运维 —— ① Docker 权限（usermod -aG docker 或走 Route E′）② 运行主机（.29 是训练机，重 I/O 冲突）
 ERROR_COUNT:  0
@@ -110,4 +110,5 @@ ERROR_COUNT:  0
   - sb-cli 云：api.swebench.com=000 不可达 + 合规红线 → **排除**。
   - 主机：我方在 `.29`（pretrain 训练机）→ H-A 实跑重 I/O 与训练冲突，须运维指定仓位。
   - **判定**：Route E′（无 docker）技术可行；待运维拍板 ①Docker 权限（usermod 或走 E′）②运行主机。**未获确认前不启动实跑**。
+- 2026-10-03 00:57 —— **唤醒巡检（非推进）**：重读 `BAIZE_HARNESS_TASK.md` 运维指令区 —— 仍为原始「2026-10-02 首启」指令，**无新决策 / 无 STOP / 无状态索取**。确认 H-A §1.1 两处阻塞（Docker 权限 · 运行主机）**未解除**。遵守「先报预算再跑」「重 I/O 避让训练」铁律，**不启动 H-A 实跑**，保持 `WAITING=1`。本线当前无待办推进项（H-B 5/5、H-A 核查 done），静待运维拍板。
 
