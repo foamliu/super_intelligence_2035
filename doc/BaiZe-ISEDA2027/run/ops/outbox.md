@@ -874,3 +874,132 @@ Downloading 'obelics/EN/part50/train-00043-of-00063.parquet' to 'mvp-lab/LLaVA-O
 
 =========== DONE ===========
 ```
+
+---
+
+## RUN_ID 5 · 2026-10-02 22:20:40 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+
+echo "=========== 1. 前置校验（任务书 / loop / 状态文件） ==========="
+for f in BAIZE_HARNESS_TASK.md baize_harness_loop.sh MEMORY_HARNESS.md; do
+  if [ -f "$f" ]; then printf '%-28s : OK (%s bytes)\n' "$f" "$(stat -c%s "$f")"; else printf '%-28s : MISSING !!!\n' "$f"; fi
+done
+echo
+echo "-- H-B 的分析对象：harness 源码目录 --"
+ls -la /nas_train/app.e0031982/harness/ 2>/dev/null | head -30 || echo "MISSING: /nas_train/app.e0031982/harness/"
+echo
+
+echo "=========== 2. 资源摸底（harness 线跑在本机，先看余量 + Docker） ==========="
+echo "-- CPU / 内存 --"
+nproc; free -g | head -2
+echo "-- 磁盘 --"
+df -h /nas_train /tmp 2>/dev/null
+echo "-- Docker（H-A 的 SWE-bench 评测依赖它） --"
+docker info >/dev/null 2>&1 && echo "docker: AVAILABLE" || echo "docker: NOT AVAILABLE (H-A 会因此受阻，如实上报)"
+echo "-- 本机已有 loop（预期 3 个：vision/pretrain/data） --"
+pgrep -af 'baize_.*_loop\.sh' | cut -c1-140 || echo "(none)"
+echo
+
+echo "=========== 3. 查重（避免起两个） ==========="
+if pgrep -f 'baize_harness_loop.sh' >/dev/null 2>&1; then
+  echo "ALREADY RUNNING - skip launch:"
+  pgrep -af 'baize_harness_loop.sh' | cut -c1-140
+else
+  echo "(not running yet — will launch)"
+fi
+echo
+
+echo "=========== 4. 启动（脱离进程组，防工具超时误杀） ==========="
+if ! pgrep -f 'baize_harness_loop.sh' >/dev/null 2>&1; then
+  chmod +x baize_harness_loop.sh
+  touch MEMORY_HARNESS.md
+  setsid bash baize_harness_loop.sh > /tmp/baize_harness_loop.log 2>&1 < /dev/null &
+  sleep 8
+  echo "launched."
+else
+  echo "skip (already running)."
+fi
+echo
+
+echo "=========== 5. 验证（应恰好 1 个进程 + 日志出现 [loop] 行） ==========="
+pgrep -af 'baize_harness_loop.sh' | cut -c1-140 || echo "!!! NOT RUNNING — 需排查 /tmp/baize_harness_loop.log"
+echo "-- log tail --"
+tail -8 /tmp/baize_harness_loop.log 2>/dev/null | cut -c1-160 || echo "(no log yet)"
+echo
+
+echo "=========== 6. 全量 loop 一览（预期 4 个） ==========="
+pgrep -af 'baize_.*_loop\.sh|ops_relay\.sh' | cut -c1-140
+echo
+
+echo "=========== DONE ==========="
+```
+
+**输出**
+```
+=========== 1. 前置校验（任务书 / loop / 状态文件） ===========
+BAIZE_HARNESS_TASK.md        : OK (13205 bytes)
+baize_harness_loop.sh        : OK (4660 bytes)
+MEMORY_HARNESS.md            : OK (1928 bytes)
+
+-- H-B 的分析对象：harness 源码目录 --
+total 144
+drwxr-x--- 10 app.e0031982 app.adm  4096 Sep 15 09:35 .
+drwxr-xr-x 26 app.e0031982 sudo     8192 Sep 29 18:46 ..
+-rw-r-----  1 app.e0031982 app.adm 11795 Sep 11 17:12 analyze_harness_sources.md
+drwxr-x---  6 app.e0031982 app.adm  4096 Sep  4 16:10 claude-code
+drwxr-x--- 21 app.e0031982 app.adm  8192 Sep  8 09:13 cline
+drwxr-x--- 16 app.e0031982 app.adm  8192 Sep  4 16:09 codex
+drwxr-x---  2 app.e0031982 app.adm  4096 Sep 15 14:08 daily-memories
+drwxr-x--- 16 app.e0031982 app.adm  8192 Sep  4 16:07 deepseek-harness
+drwxr-x---  2 app.e0031982 app.adm  4096 Sep 12 03:50 evidence
+-rw-r-----  1 app.e0031982 app.adm  2433 Sep  4 17:52 loop.sh
+drwxr-x---  2 app.e0031982 app.adm  4096 Sep 12 03:50 mechanisms
+-rw-r-----  1 app.e0031982 app.adm  3172 Sep 15 16:36 MEMORY.md
+drwxr-x--- 18 app.e0031982 app.adm 12288 Sep  4 16:04 opencode
+-rw-r-----  1 app.e0031982 app.adm 24552 Sep  4 18:18 report.html
+
+=========== 2. 资源摸底（harness 线跑在本机，先看余量 + Docker） ===========
+-- CPU / 内存 --
+224
+               total        used        free      shared  buff/cache   available
+Mem:            2015          71          78           7        1865        1925
+-- 磁盘 --
+Filesystem                     Size  Used Avail Use% Mounted on
+10.239.23.31:/vol_CTE0_data01  207T  177T   31T  86% /nas_train
+/dev/mapper/vgroot-lv_tmp       98G   55G   39G  59% /tmp
+-- Docker（H-A 的 SWE-bench 评测依赖它） --
+docker: NOT AVAILABLE (H-A 会因此受阻，如实上报)
+-- 本机已有 loop（预期 3 个：vision/pretrain/data） --
+2425284 bash baize_pretrain_loop.sh
+
+=========== 3. 查重（避免起两个） ===========
+(not running yet — will launch)
+
+=========== 4. 启动（脱离进程组，防工具超时误杀） ===========
+launched.
+
+=========== 5. 验证（应恰好 1 个进程 + 日志出现 [loop] 行） ===========
+2228938 bash baize_harness_loop.sh
+2228956 bun /home/app.e0031982/.bun/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve
+-- log tail --
+-[0m[2m H-B[0m[2m (source[0m[2m analysis of[0m[2m harnesses[0m[2m, starting[0m[2m with cl[0m[2mine[0m[2m) -[0m[2m produce self[0m[2m-contain
+[0m[2m- H[0m[2m-A ([0m[2mSWE[0m[2m-bench[0m[2m 横[0m[2m评)[0m[2m - feasibility[0m[2m check[0m[2m first
+
+[0m[2mPriority:[0m[2m H-B[0m[2m > H[0m[2m-A.[0m[2m And H[0m[2m-A only[0m[2m after feasibility[0m[2m check passes[0m[2m.
+
+Let[0m[2m me start[0m[2m by gathering[0m[2m context.[0m
+I'll start by understanding the current state. Let me read the key files and explore the environment.
+
+
+=========== 6. 全量 loop 一览（预期 4 个） ===========
+2228582 bash ops_relay.sh
+2228938 bash baize_harness_loop.sh
+2228956 bun /home/app.e0031982/.bun/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve
+2425284 bash baize_pretrain_loop.sh
+2489749 bash ops_relay.sh
+
+=========== DONE ===========
+```
