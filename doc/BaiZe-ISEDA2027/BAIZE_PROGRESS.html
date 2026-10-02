@@ -854,15 +854,18 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
     <td><b>≈ 10/04</b></td>
   </tr>
   <tr class="ok-box">
-    <td class="ok-box" style="padding:6px 10px"><b>🏁 P-8 Stage (i) 完整训练（正式预训练 · <u>本体</u>）</b><br>
-        <small>用 P-5a/P-5b 定下的 GBS·LR·调度，在<b>真实全量语料</b>上从零训到
-        <b>P-5b 曲线决定的预算</b>（推荐 <b>100B token</b>，下限 44B）。<br>
-        ⚠️ <b>FP8 是否采用待 P-4R 定</b>（若实测收益 ≥15%，12.5 天里能省 ≥1.9 天）</small></td>
-    <td class="ok-box" style="padding:6px 10px"><span class="badge b-no">🚨 未开始</span><br>
-        <small>最后一项</small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>🏁 P-8 Stage (i) 完整训练（正式预训练 · <u>本体</u>）</b>
+        <span class="badge b-warn">⏸ 运维指令：<b>暂缓启动</b></span><br>
+        <small><b>原因：两条前置都没就绪</b> —— ① <code>Ultra-FineWeb</code>(base) 还在下载（stable 段主力）；
+        ② WSD 双阶段配比实验还没做（§0.6）。<br>
+        <b>→ 不要因为 P-5b 跑完就顺手启动。</b> 等 <b>base 就绪 + 配比定稿 + 你过目</b> 再开。<br>
+        ⚠️ FP8 是否采用待 P-4R 定（若收益 ≥15%，12.5 天里省 ≥1.9 天）</small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">⏸ 暂缓</span><br>
+        <small>等 base + 配比</small></td>
     <td class="ok-box" style="padding:6px 10px"><b>≥ 5.5 天</b><br>
         <small>44B ≈ 5.5 天<br><b>100B ≈ 12.5 天</b></small></td>
-    <td class="ok-box" style="padding:6px 10px"><b>≈ 10/16</b><br><small>（按 100B 档）</small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>待前置就绪</b><br>
+        <small>（原估 ≈10/16）</small></td>
   </tr>
 
   <tr>
@@ -895,7 +898,7 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
   </tr>
 
   <tr>
-    <td rowspan="7"><b>data</b></td>
+    <td rowspan="8"><b>data</b></td>
     <td><b>R 阶段</b>（两问：LLM/Vision 数据够不够 + 配比）</td>
     <td><span class="badge b-ok">✅ 收敛</span></td>
     <td>—</td><td>已结束</td>
@@ -940,6 +943,20 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
     <td class="ok-box" style="padding:6px 10px"><b>先出方案</b><br>
         <small>实验待卡</small></td>
     <td class="ok-box" style="padding:6px 10px"><b>≈ 10/02–10/03</b></td>
+  </tr>
+  <tr class="ok-box">
+    <td class="ok-box" style="padding:6px 10px"><b>🔴 §0.7 R5 阶段</b>（<u>运维 2026-10-02 追加</u>）<br>
+        <small>① 🚫 <b>停掉 85M（LLaVA）下载</b> —— 优先级最低，<b>释放带宽给 base 与 gpic</b>
+        （stage (i) 要 base、stage (iii) 要 gpic；85M 是将来扩数据用的，非当前阻塞）<br>
+        ② ⭐ <b>给出 base 下载 ETA</b>（分「复用旧副本 / 不复用」两种；⚠️ 别用文件数比例估 ——
+        <code>ultrafineweb_en</code> 那 <b>2048 个 1.3GB 大文件 = 全量 89%</b>）<br>
+        ③ ⭐⭐ <b>复用 <code>/nas_train</code> 那 1286 个 <code>ultrafineweb_en</code></b> ——
+        <b>≈1.67 TB ≈ base 全量的 56%，省 ≈2 天</b>（49h @9.4MB/s）<br>
+        <b>优先级</b>：<b>base（stage i）> 配比实验 > gpic（stage iii）> 85M（已停）</b></small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">🔄 已派</span><br>
+        <small>下载是 I/O，不占卡</small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>数小时</b></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≈ 10/02</b></td>
   </tr>
   <tr>
     <td><b>正在重下 / 下载中</b><br>
@@ -1029,6 +1046,7 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
       <td>🟢 <b>已从"拍脑袋"变成"有配方可循"</b> —— 已派 <b>data agent §0.6</b> 做配比实验：<br>
           <b>Stable 段</b>（base + UltraX-Preview + Math + Code）→ 代理 <b>Xmodel-2 Table 2 的 8 个</b><br>
           <b>Decay 段</b>（L3 + Math + Code + <b>SFT-2605</b> + <b>SFT-Agent-2609</b>）→ 代理 <b>Table 3 的 6 个</b><br>
+          ⏸ <b>P-8 已按运维指令「暂缓启动」</b> —— 等 <b>base 下好 + 配比定稿</b>；<br>
           ⚠️ <b>配比定稿后仍需你过目</b>（P-8 是 12.5 天的一次性大投入）</td>
     </tr>
     <tr>
