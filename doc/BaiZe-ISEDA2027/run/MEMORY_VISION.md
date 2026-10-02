@@ -6,12 +6,41 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R8_complete**（6 架构 × 3000 步 + IN-1k zs/lp 全结束；胜出=OpenVision2；含 SSM 两架构坍缩） |
-| WAITING | 1（R2–R8 交付物全齐、任务收敛；置 1 使 loop 由 60s 短睡改 30min 长睡，避免空转烧 token，待运维处置 loop） |
+| PHASE | **R9_active**（第九轮：数据扩容 + 长训练的缩放先导；阶段一缩塔 3 臂 × 30k 已后台启动） |
+| WAITING | 1（R9 阶段一 3 臂后台跑中，置 1 长睡省 token；下次唤醒回收 + 阶段二） |
 | ERROR_COUNT | 0 |
-| BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（6 架构训练 ~69min 串行 ≈ 9.2 GPU·h + IN-1k 评测 ~23min） |
-| 更新 | 2026-10-02 05:24（最终唤醒：R2–R8 全收敛、无剩余工作，置 WAITING=1 待运维处置 loop） |
-| WINNER | **OpenVision2**（R8 六架构重比确认：loss/C1/IN-1k zs/IN-1k lp 全第一） |
+| BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（≈9.2 GPU·h + ~23min）+ R9 冒烟（3×1×100 步 ≈ 0.06 GPU·h） |
+| 更新 | 2026-10-02 09:44（R9 启动：冒烟测吞吐 → ETA 报运维 → 阶段一 3 臂后台启动） |
+| WINNER | **OpenVision2**（R8 六架构四指标第一；R9 只做空塔规模缩放，不改架构排名） |
+
+## 🚀 R9 启动（2026-10-02 09:44）：数据扩容 + 长训练 —— 阶段一缩塔先导
+
+> 本任务书新增 R9（运维 2026-10-02 明确），R2–R8 已收敛，本轮为下一轮。
+
+### R9.0 所需时长估计（运维硬要求：先估再启动）
+
+**冒烟实测**（多源数据 CC12M 11M + Amshaker 6M，100 步，冻结 CLIP-768 + InfoNCE @224/16 bs64×8=512 负样本）：
+
+| 塔规模 | width(depth=30) | 参数量(实测) | 稳态 img/s (num_workers=2) | 稳态 img/s (num_workers=6) |
+|:--|--:|--:|--:|--:|
+| 小 | 512 | **126.8M** | 2321.6 | （更快，未单测） |
+| 中 | 768 | **284.5M** | 1975.6 | （未单测） |
+| 大（R8 基线） | 1024 | **505.2M** | 2083.7 | **2826.9** |
+
+- 🔑 **关键发现**：CC12M+Amshaker 多源 pipeline 是**数据瓶颈**——num_workers=2 时三塔吞吐 ~2000–2300 img/s 几乎不随塔缩小而变快（对比 R8 gpic 单源 3051 img/s）；**num_workers 2→6 把 w1024 从 2084 → 2827 img/s（+36%）** → 阶段一/二用 num_workers=6。
+- **ETA 外推（ETA = 步数 × 512 / img_s）**：
+  - 阶段一（缩塔 3 臂 × 30000 步，串行，nw6）：w512 ≈1.3h + w768 ≈1.5h + w1024 ≈1.5h ≈ **4.3h**
+  - 阶段二（选定塔 × 108000 步）：w1024 ≈ **5.4h**（更小塔更快）
+  - IN-1k 评测（R8 口径 frozen trunk zs+lp）：阶段一 3 ckpt ≈0.3h + 阶段二 11 ckpt ≈0.7h
+  - **R9 总计 ≈ 11h**
+- **对比任务书参考量级**（R8 0.168 s/步 → 1 架构 5h）：我方 nw6 吞吐 2827 img/s（0.181 s/步 @512）≈ 参考 1.08×，**基本吻合**；但 num_workers=2 时只有 2084 img/s（0.246 s/步 = 1.46× 慢），必须加开 worker 伺候。
+
+### 本轮动作（纯 setup + 冒烟，训练已交后台）
+- 代码：`models.py get_vision_tower` 支持 width/depth/heads/mlp_dim 缩放；新建 `vision/r9_train.py`（= r7_train.py + 缩放参 + 多源逗号分隔 glob）+ `vision/r9_run.sh`（smoke/stage1 两模式，nw6）+ `r8_eval_in1k.py load_vision` 支持缩放 ckpt 重建。
+- 数据：**不重新打包**——CC12M 与 Amshaker 本就是 webdataset `.jpg/.txt` shard（实测直读 ~630 MB/s），多源直接逗号拼 glob；LLaVA-CC3M（zip，~1.15M，占 6%）与 gpic 增量（605 tar）留待后续/正式训练（R9.1 注 1）。
+- **阶段一 3 臂 × 30000 步已后台启动**（`setsid bash r9_run.sh stage1 30000 6`，日志 `/tmp/r9.log`）。
+- 下一步（下次唤醒，WAITING=1）：回收 3 臂 loss/C1/img/s + IN-1k zs/lp → 选每样本效率最高塔 → 阶段二（108k 长训 + 每 10k ckpt + scaling 曲线 + 外推）。
+- 未改 `*.tex`；未碰 pretrain/data/ops 文件。
 
 ## 🛑 任务收敛（2026-10-02 05:24）：R2–R8 交付物齐备，WAITING 0→1 待运维处置 loop
 

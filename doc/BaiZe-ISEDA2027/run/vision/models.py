@@ -396,7 +396,11 @@ class FastViTHD(nn.Module):
         return self.head(x)
 
 
-def get_vision_tower(name: str) -> nn.Module:
+def get_vision_tower(name: str, width: int = None, depth: int = None,
+                     heads: int = None, mlp_dim: int = None) -> nn.Module:
+    """Construct a vision tower. `width/depth/heads/mlp_dim` are scale overrides
+    currently honoured by OpenVision2 (R9 shrink-tower pilot: w512/w768/w1024 ->
+    ~126M / ~284M / 505M). Other towers ignore them and keep their default config."""
     towers = {
         'openvision2': OpenVision2,
         'mambaeye': MambaEye,
@@ -407,6 +411,12 @@ def get_vision_tower(name: str) -> nn.Module:
     }
     if name not in towers:
         raise ValueError(f"Unknown tower '{name}'. Options: {list(towers)}")
+    if name == 'openvision2':
+        w = width if width is not None else 1024
+        d = depth if depth is not None else 30
+        h = heads if heads is not None else max(1, w // 64)
+        m = mlp_dim if mlp_dim is not None else (4 * w)
+        return OpenVision2(width=w, depth=d, heads=h, mlp_dim=m)
     return towers[name]()
 
 

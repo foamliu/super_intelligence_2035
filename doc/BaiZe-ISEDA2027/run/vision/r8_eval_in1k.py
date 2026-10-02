@@ -89,7 +89,8 @@ def load_vision(ckpt, device):
     res = cfg.get('resolution', 224)
     patch = cfg.get('patch', 16)
     embed = cfg.get('embed_dim', EMBED)
-    v = get_vision_tower(tower)
+    v = get_vision_tower(tower, width=cfg.get('width'), depth=cfg.get('depth'),
+                         heads=cfg.get('heads'), mlp_dim=cfg.get('mlp_dim'))
     w = v.head.proj.in_features
     v.head = ReadoutHead(w, embed_dim=embed)
     if (res != 224 or patch != 16) and hasattr(v, 'embed'):
