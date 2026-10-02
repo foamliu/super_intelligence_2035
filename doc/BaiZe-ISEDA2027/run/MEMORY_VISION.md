@@ -10,8 +10,18 @@ WAITING: 1
 | WAITING | 1（R9 阶段一 3 臂后台重跑中；已修 wds 脏图容错 + 加周期 ckpt，置 1 长睡，下次唤醒回收 + 阶段二） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @step~8900 崩溃：CC12M/Amshaker wds 含损坏 jpg → PIL.UnidentifiedImageError） |
 | BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（≈9.2 GPU·h + ~23min）+ R9（冒烟 ~0.06 + 首跑 w512 32min + w768 ~8min 报废） |
-| 更新 | 2026-10-02 10:30（R9 阶段一 w512 首跑 crash → 修 wds 脏图容错 + 加周期 ckpt → 重启） |
+| 更新 | 2026-10-02 11:06（巡检：stage-1 w512 健康 @~9.5k/30k；备好阶段二 launcher `r9_run_stage2.sh`） |
 | WINNER | **OpenVision2**（R8 六架构四指标第一；R9 只做空塔规模缩放，不改架构排名） |
+
+## 摸底巡检（2026-10-02 11:06）：stage-1 健康运行 + 备好阶段二 launcher
+
+> 纯 CPU，未占卡。本次唤醒巡检 R9 阶段一，并为阶段二做纯 CPU 准备。
+
+- **stage-1 健康核实**：`/tmp/r9.log` mtime 11:04（持续写入）；w512（126.8M）跑至 **~step 9500/30000**；PROBE step 9300 `C1=0.3059 C2_gap=+0.1010 C4=OK`，loss 4.32–4.77 波动但无坍缩；GPU 0–7 8×~16.3G、util 72–100%；父 `r9_run.sh stage1 30000 6`（PID 1959850）与 w512 torchrun（1960801）均在跑。启动时 GPU/NFS 核验原文已写入 `/tmp/r9.log` 头（GPU 清 0、data agent 4 路 hf download 仍在下载）。
+- **阶段二准备（纯 CPU）**：新建 `run/vision/r9_run_stage2.sh`（**独立文件**，未动正在运行的 `r9_run.sh`——bash 增量读脚本、改运行中脚本有风险）。用法 `bash r9_run_stage2.sh <width> [steps=108000] [nw=6]`：串行训练选定塔 108k 步（`--save-every 10000` → 10 个周期 ckpt + 终 `vision.pt` = 11 点），**检查训练 exit code**（修复 stage-1 `run_one` 不查 exit 的缺陷），再用 `r8_eval_in1k.py --ckpts`（`sort -V` + 终 ckpt）逐点测 IN-1k zs/lp → scaling 曲线。`bash -n`、`chmod +x`、排序逻辑实测均通过。
+- **复核代码链路（已取证）**：`r9_train.py` `save_ckpt` 把 `width/depth/heads/mlp_dim` 写进 ckpt `config`（:217-223）；`r8_eval_in1k.py load_vision` 读回这些字段重建缩放塔（:85-101）→ 缩放塔 IN-1k 评测链路闭环，且 zs/lp 均对 768 维读出头量化（跨塔可比）。
+- **下一步（WAITING=1 不变）**：stage-1 3 臂跑完 → 回收 `vision.pt`（+周期 ckpt）→ IN-1k 选每样本效率最高塔 → `bash r9_run_stage2.sh <选中的width>` 启动阶段二。
+- 未改 `*.tex`；未碰 pretrain/data/ops 文件。
 
 ## 🐛 R9 阶段一 crash 诊断 + 修复 + 重启（2026-10-02 10:30）
 
