@@ -3,7 +3,8 @@
 # 从零训练，用 P-5a 定的 GBS=1024 / LR=1e-3 / min_lr=1e-5 / WSD，纯 L3 8 分片 1:1 等权 blend。
 # 记录点（token → 步）：655M→156 / 1.3B→310 / 2.6B→620 / 5.2B→1240 / 10.5B→2505 / 20B→4771。
 #
-# 依赖：baize_p5b_tokenize.sh 已产出 data/p5b_l3/p5b_l3_train_s{0..7}.bin/.idx/.json（~26.9B token）。
+# 依赖：baize_p5b_tokenize.sh（s0..s7，10.2B）+ baize_p5b_tokenize_b2.sh（s8..s15，+10.2B）
+#   已产出 data/p5b_l3/p5b_l3_train_s{0..15}.bin/.idx/.json（合计 ~20.6B token，覆盖 20B 目标）。
 #
 # ⚠️ 口径决策（详见 ROUND2 报告 P-5b 节）：
 #   ① val loss = train/lm loss 代理（与既有 2.2054@655M 同口径；不接 held-out val，避免改 recipe + 加切验证片）。
@@ -29,15 +30,15 @@ LR="1e-3"
 MIN_LR="1e-5"
 SAVE_INTERVAL=156     # 每 ~655M token 一个 ckpt（对齐 6 个 2 倍等分点）
 
-# 前置检查：8 分片 .bin/.idx/.json 齐备（分词未完成则拒绝启动）
-for s in 0 1 2 3 4 5 6 7; do
+# 前置检查：16 分片 .bin/.idx/.json 齐备（batch1+batch2 分词未完成则拒绝启动）
+for s in $(seq 0 15); do
     for ext in bin idx json; do
-        [ -f "$OUT/p5b_l3_train_s${s}.${ext}" ] || { echo "❌ 缺 $OUT/p5b_l3_train_s${s}.${ext}（baize_p5b_tokenize.sh 未完成？）"; exit 1; }
+        [ -f "$OUT/p5b_l3_train_s${s}.${ext}" ] || { echo "❌ 缺 $OUT/p5b_l3_train_s${s}.${ext}（baize_p5b_tokenize[_b2].sh 未完成？）"; exit 1; }
     done
 done
 
 # 1:1 等权 blend（megatron 扁平 weight/prefix 平铺：[w p w p ...]）
-BLEND="1 ${OUT}/p5b_l3_train_s0 1 ${OUT}/p5b_l3_train_s1 1 ${OUT}/p5b_l3_train_s2 1 ${OUT}/p5b_l3_train_s3 1 ${OUT}/p5b_l3_train_s4 1 ${OUT}/p5b_l3_train_s5 1 ${OUT}/p5b_l3_train_s6 1 ${OUT}/p5b_l3_train_s7"
+BLEND="1 ${OUT}/p5b_l3_train_s0 1 ${OUT}/p5b_l3_train_s1 1 ${OUT}/p5b_l3_train_s2 1 ${OUT}/p5b_l3_train_s3 1 ${OUT}/p5b_l3_train_s4 1 ${OUT}/p5b_l3_train_s5 1 ${OUT}/p5b_l3_train_s6 1 ${OUT}/p5b_l3_train_s7 1 ${OUT}/p5b_l3_train_s8 1 ${OUT}/p5b_l3_train_s9 1 ${OUT}/p5b_l3_train_s10 1 ${OUT}/p5b_l3_train_s11 1 ${OUT}/p5b_l3_train_s12 1 ${OUT}/p5b_l3_train_s13 1 ${OUT}/p5b_l3_train_s14 1 ${OUT}/p5b_l3_train_s15"
 
 SUM="$LOGDIR/baize_p5b_train.log"
 LOG="$LOGDIR/baize_${NAME}.log"
