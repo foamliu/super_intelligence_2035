@@ -7,11 +7,22 @@ WAITING: 1
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R9_active**（第九轮：数据扩容 + 长训练；阶段一完成 → w512 胜出 → 阶段二 w512 × 108k 运行中） |
-| WAITING | 1（R9 阶段二 w512 × 108k 步训练中（16:38 启动）；置 1 长睡；判结束 `grep -c "R9 stage2 ALL DONE" /tmp/r9_stage2.log`==1 → 收 11 ckpt IN-1k → scaling 曲线 + 外推） |
+| WAITING | 1（R9 阶段二 w512 × 108k 步训练中（16:38 启动，17:14 @step 9450/108000≈8.7%）；置 1 长睡；判结束 `grep -c "R9 stage2 ALL DONE" /tmp/r9_stage2.log`==1 → 收 11 ckpt IN-1k → scaling 曲线 + 外推） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @step~8900 崩溃：CC12M/Amshaker wds 含损坏 jpg → PIL.UnidentifiedImageError） |
 | BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（≈9.2 GPU·h + ~23min）+ R9阶段一（冒烟 ~0.06 + 首跑 w512 32min + w768 ~8min 报废 + w512 15.4 + w768 15.3 + w1024 15.5 GPU·h）+ R9阶段二 w512 进行中 |
-| 更新 | 2026-10-02 16:45（阶段一完成：三臂 IN-1k 收齐，w512 lp 6.10% 胜出；阶段二 w512 108k 步 16:38 已启动） |
+| 更新 | 2026-10-02 17:14（巡检：阶段二 w512 @~8.7% 健康无坍缩；备好 scaling 拟合脚本 r9_scaling.py） |
 | WINNER | **OpenVision2**（R8 六架构四指标第一；R9 选中 w512=126.8M 缩塔，不改架构排名） |
+
+## 巡检（2026-10-02 17:14）：R9 阶段二 w512 @~8.7% 健康推进 + 备好 scaling 拟合脚本（WAITING=1 不变）
+
+> 纯 CPU prep：确认长训健康 + 落地 R9.4 的 scaling 曲线拟合/外推脚本 `vision/r9_scaling.py`。未占卡。
+
+- **恢复状态**：MEMORY `WAITING=1`、PHASE `R9_active`（阶段二 w512 × 108k 步，16:38 启动）。
+- **训练健康核实**（证据 = `/tmp/r9_stage2.log`，17:14）：step **9450/108000（8.75%）**；最近 PROBE step 9300 `C1=0.3507 C2_gap=+0.0995 C4=OK`、`loss_ema=4.6065`（early 5.99 持续降）→ **无坍缩**；GPU 0–7 8×~16.3GB 全部为本任务 torchrun（pid 3773xxx）。
+- **ETA**：~262 步/min → 108000 步 ≈6.9h → **训练 ~23:25 完成**；+11 ckpt IN-1k 评测 ~0.7h → **`R9 stage2 ALL DONE` ≈ 00:10–00:30**。
+- **本轮动作（纯 CPU，未占卡）**：新增 `vision/r9_scaling.py`（scaling 拟合+外推，等训练完再跑）：解析 stage-2（11 ckpt）+ stage-1（3 臂）IN-1k zs/lp → 拟合幂律 `acc=a-b·N^-c` 与对数 `acc=a+b·log10(N)` 双模型报 R² → 外推 20/40/60% 所需样本并对照 53M 上限。**关键修复**：`r9_train.py` 周期 ckpt 只存 `vision_step{10k..100k}.pt`（10 个）+ 最终 `vision.pt`（step=108000），脚本据此识别最终点（从 log `steps=` 头解析终步）；py_compile + 合成数据端到端验证通过（14 点解析、双拟合、外推均正确）。
+- **下一步（WAITING=1 不变）**：`grep -c "R9 stage2 ALL DONE" /tmp/r9_stage2.log`==1 后 → `python vision/r9_scaling.py`（默认读 /tmp/r9_stage2.log + /tmp/r9.log）→ 曲线拟合+外推 → 回填 ROUND9 报告 + 论文回填建议 + EXPERIMENTS_VISION.md 顶部 → git push。
+- 未改 `*.tex`；未碰 pretrain/data/ops 文件。
 
 ## ✅ R9 阶段一完成 + 阶段二启动（2026-10-02 16:45）：w512（126.8M）胜出，108k 步启动
 
