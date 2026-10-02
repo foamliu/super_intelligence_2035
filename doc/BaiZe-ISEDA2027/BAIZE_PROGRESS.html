@@ -888,10 +888,12 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
         <b>1 架构 ≈5h · 2 架构 ≈9.5h · 4 架构 ≈29h</b><br>
         ⭐ <b>核心产出 = 「IN-1k vs 步数」曲线</b>（每 10k 步存 ckpt 各测一次），
         <b>不预设"能到 X%"</b><br>
+        ⏱ <b>运维硬要求：启动前先「估时」</b> —— 先用新数据跑 50–100 步冒烟量 <b>img/s</b>，
+        再逐架构外推 ETA，<b>报运维后才启动</b>（参考量级：1 架构 ≈5h / 4 架构 ≈29h）<br>
         ⚠️ GPIC 仅 <b>688/8000 tar（8.6%）</b> → <b>R9 不等它</b>，用当前可用全集；
         ⚠️ 打包是重 I/O，须与 P-5b 错峰</small></td>
-    <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">🔵 已下发·待启动</span><br>
-        <small><b>用满 8 卡</b>（R5/R8 本就是 8 卡）</small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">⏱ 先估时再启动</span><br>
+        <small><b>`.12` 的 8 卡</b></small></td>
     <td class="ok-box" style="padding:6px 10px"><b>5–29 小时</b><br>
         <small>视架构数<br>+ 打包 I/O</small></td>
     <td class="ok-box" style="padding:6px 10px"><b>≈ 10/03</b></td>
@@ -936,8 +938,9 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
         🔴 <b>关键发现（Xmodel-2 §decay 配比）</b>：最优 <b>SFT 占比 60–69%（取 64%）</b>，
         SFT 由 5 类构成（Math/Code/Logic/Knowledge/Commonsense）；
         <b>→ 即「SFT 数据是进到预训练 decay 段里」的，不是事后单独做</b><br>
-        ⚠️ 需 GPU（小模型短跑搜配比，依据「Data Mixing Laws 可小→大迁移」）→
-        <b>先出方案，卡的空窗再排，不与 R9 / P-5b 抢</b></small></td>
+        ⚠️ 需 GPU → 🎯 <b>运维规则：配比实验用「它所服务的那个正式训练」所用的机器</b> ——
+        <b>LLM 侧（本节）用 <code>.29</code></b>；<b>若 vision 将来也做配比 → 用 <code>.12</code></b><br>
+        <b><code>.29</code> 排期：P-4R（1 卡 ≤2h）→ 配比实验 → 恢复 P-5b</b>（三者都在 .29，需串行）</small></td>
     <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">🔄 已派</span><br>
         <small>先设计 + 备数据</small></td>
     <td class="ok-box" style="padding:6px 10px"><b>先出方案</b><br>
