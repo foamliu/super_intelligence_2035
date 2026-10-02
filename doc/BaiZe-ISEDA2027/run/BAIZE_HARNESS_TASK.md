@@ -49,7 +49,38 @@ ERROR_COUNT:  <n>
 | **H-B** | **源码分析**（从 **cline** 开始） | `harness/<name>_SOURCE_ANALYSIS.html`（自包含） |
 | **H-A** | **SWE-bench 横评**（cline / opencode / deepseek harness 等） | `harness/SWEBENCH_COMPARE.html` + 结果表 |
 
-**代码位置**：`/nas_train/app.e0031982/harness/`（先 `ls` 看清有哪些 harness、各自是什么形态）
+**代码位置**：`/nas_train/app.e0031982/harness/`
+
+> ## 🔍 **重要：该目录下已存在一条「同类研究线」（运维 2026-10-02 指示：可以合并）**
+>
+> 首次勘察（RUN_ID 5）发现 `/nas_train/app.e0031982/harness/` 里**不只有 5 个 harness 源码**，还有：
+> ```
+> claude-code/  cline/  codex/  deepseek-harness/  opencode/     ← 5 个 harness
+> loop.sh                                                          ← 它自己的 loop
+> MEMORY.md                                                        ← 它自己的状态文件
+> daily-memories/  evidence/  mechanisms/                          ← 它自己的记忆与证据目录
+> analyze_harness_sources.md   (11.8 KB)                           ← 已有源码分析文档
+> report.html                  (24.6 KB)                           ← 已有报告
+> ```
+> **文件日期为 Sep 4 – Sep 15**，**早于本线创建（Oct 2）**，**非本线产物**。
+>
+> ### ✅ 运维指示：**可以合并**
+>
+> **你要做的（H-B 开始前先做）**：
+> 1. **先把这条既有线的家底摸清**（**只读**，不要改动它）：
+>    - `MEMORY.md`：它的 PHASE / 已完成 / 产出
+>    - `loop.sh`：它跑什么、是否还在运行（`pgrep -af 'harness/loop.sh'`）
+>    - `analyze_harness_sources.md`：已有的分析**到什么程度**
+>    - `report.html`：已有报告**覆盖什么**
+>    - `evidence/` `mechanisms/`：已有的证据与机制梳理
+> 2. **出一份「重合与差异对照表」**：它的产出 vs 本任务书 §2.2 的 5 条主线 ——
+>    **哪些已经做过（可直接引用）· 哪些做了但不符合我们的分析要求（需重做）· 哪些完全没做（我们的增量）**。
+> 3. **产出统一落到本线的 `harness/` 目录**（`doc/BaiZe-ISEDA2027/run/harness/`），
+>    **旧的 `report.html` / `analyze_harness_sources.md` 作为输入引用**（给出路径）。
+> 4. ⚠️ **不要删、不要改** `/nas_train/app.e0031982/harness/` 里的任何东西 ——
+>    **合并 = 在我们这边整合，不是去动它的目录**。
+> 5. 🚫 **不要**去启动它的 `loop.sh`（避免两个同类 loop 抢 token）。
+
 
 ---
 
@@ -65,10 +96,46 @@ ERROR_COUNT:  <n>
 | 2 | 每个 harness **怎么启动**、**接什么模型**（是否要 API key、能否接本地模型）| 读文档 + 试 `--help` |
 | 3 | **模型可用性**：本机能调哪些模型？（DeepSeek API？本地 vLLM？）| 实测一次最小调用 |
 | 4 | **SWE-bench 数据集**：能否取到？取哪个子集？ | `swebench` 包 / HF 数据集；**建议先 `SWE-bench Lite`(300) 或再抽 50 条** |
-| 5 | **评测容器**：SWE-bench 官方评测需要 **Docker**（每实例一个容器）→ 本机 Docker 可用吗？| `docker ps` / `docker info`；**若不可用，明确写"不可用"并给替代方案** |
+| 5 | **评测容器 / 沙箱**：见下方「§1.1-bis 无 Docker 路线」 | `docker info`；**不可用就按 §1.1-bis 改道** |
 | 6 | **磁盘/时长预估**：跑 N 条大概要多久、多少磁盘 | 按单条实测反推 |
 
-🚫 **第 0 步没通过（尤其 5）之前，不许"假装跑了"或"用其他指标代替 SWE-bench"** —— 如实报告阻塞。
+🚫 **第 0 步没通过之前，不许"假装跑了"或"用其他指标冒充 SWE-bench"** —— 如实报告阻塞。
+
+### 1.1-bis ⚠️ **无 Docker 路线（运维 2026-10-02 明确：公司内网无法 `docker pull`）**
+
+> **已查实的事实（官方仓库原文）**：
+> - SWE-bench 官方 harness **默认绑 Docker**（README：「SWE-bench uses **Docker** for reproducible evaluations」；
+>   2024-06-27 起改为「**fully containerized** evaluation harness using Docker」）。
+> - **官方唯一的"无 Docker"后端是 Modal（云）**：`--modal true` —— 但**要外网**，**内网不可用**。
+> - `sb-cli` 同为云服务，**同样不可用**。
+> - **`SWE-ReX`**（SWE-agent 家族）支持 **local / remote / Docker / Modal 等后端**，
+>   原文：「Whether commands are executed **locally** or remotely in Docker containers, AWS remote machines, Modal, or something else…」+
+>   「Support a broad range of platforms, **including non-Linux machines without Docker**」。
+> - 🚫 **`SWE-MiniSandbox`** —— **在官方仓库中未找到该名称**。
+>   **→ 请自行查证它是否存在**（若有，给 URL + 它解决什么）；**查不到就写"未找到"，不要猜**。
+
+> ### 🔑 关键认知：Docker 在这里**不只是"隔离"，更是"per-instance 依赖环境的分发机制"**
+> 每个 instance 一个**预构建镜像**，装着**该 repo 在该 `base_commit` 下正确的依赖**。
+> **换掉"隔离"很容易**（bwrap / nsjail / local）；**换掉"环境供应链"很难** —— 那等于为 300 个 instance 装 300 套 conda env。
+
+**要做的（按顺序，逐条给结论）**
+
+1. **先问/先查：内网有没有 Docker Hub 代理（Harbor 镜像站）？**
+   - 若有 → 配 `registry-mirrors` 即可直接 pull → **原路可行**（把结论写清楚）。
+   - 若无 → 走下面 2/3。
+2. **⭐ 推荐路线 E′：只挑 1–3 个高频 repo 的 instance**
+   - 先统计 `SWE-bench Lite`(300) 的 **repo 分布** → 挑**占比最高的 1–3 个 repo**。
+   - **只装这 1–3 套 conda/venv 环境**（用**内网 pypi / conda 镜像**）。
+   - **不需要 Docker、不需要外网**，且**几个 harness 跑同一批 instance** → **公平横评成立**。
+   - ⚠️ **必须在报告里标注**：这是**内部横评口径**，**不是标准 SWE-bench 分数，不能与 leaderboard 直接比**。
+3. **备选：自建轻量沙箱**（若 E′ 也不可行）
+   - `conda env per repo` + **`bwrap` / `nsjail`** 做隔离（替代 Docker 的隔离职责）。
+   - 报**工作量与风险**。
+4. **若以上都不可行** → 明确写"**H-A 在 `docker pull` 受限的前提下无法按标准口径进行**"，
+   并给出**替代评测口径**的建议（例如改用不需要 per-repo 环境的代码基准），
+   **但不得把它称作 SWE-bench 结果**。
+
+
 
 ### 1.2 评测设计（**核查通过后**）
 

@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 5 -->
+<!-- RUN_ID: 6 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,79 @@
 
 ---
 
-## RUN_ID 5 — 启动 harness 线 ⚠️ **必须是文件里第一个 ```bash 块**
+## RUN_ID 6 — 清重复 relay + 勘查既有 harness 研究线 ⚠️ **必须是文件里第一个 ```bash 块**
+
+**目标**：① 清掉重复的 `ops_relay.sh`；② **只读**勘查 `/nas_train/app.e0031982/harness/` 里那条**既有的** harness 研究线（运维指示：**可以合并**）。
+
+```bash
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+
+echo "=========== 1. 当前 relay / loop 进程 ==========="
+pgrep -af 'ops_relay.sh|baize_.*_loop\.sh' | cut -c1-140
+echo
+
+echo "=========== 2. 清重复的 ops_relay.sh（保留最早的那个） ==========="
+RELAYS=$(pgrep -f 'ops_relay.sh' | sort -n)
+echo "found: $(echo $RELAYS | wc -w) -> $RELAYS"
+KEEP=$(echo "$RELAYS" | head -1)
+for p in $RELAYS; do
+  if [ "$p" != "$KEEP" ]; then
+    echo "killing duplicate relay pid=$p  (keeping $KEEP)"
+    kill "$p" 2>/dev/null
+  fi
+done
+sleep 3
+echo "-- after --"
+pgrep -af 'ops_relay.sh' | cut -c1-140 || echo "(none)"
+echo
+
+echo "=========== 3. 勘查【既有】harness 研究线（只读，不改动） ==========="
+H=/nas_train/app.e0031982/harness
+echo "-- 顶层（含日期，用于确认它早于我们） --"
+ls -la "$H" 2>/dev/null | cut -c1-140
+echo
+echo "-- 它的 loop.sh 是否在跑？ --"
+pgrep -af 'harness/loop.sh' | cut -c1-140 || echo "(NOT running)"
+echo
+echo "-- MEMORY.md 顶部 25 行 --"
+head -25 "$H/MEMORY.md" 2>/dev/null | cut -c1-170 || echo "(no MEMORY.md)"
+echo
+echo "-- analyze_harness_sources.md 的章节标题 --"
+grep -nE '^#{1,3} ' "$H/analyze_harness_sources.md" 2>/dev/null | head -25 | cut -c1-150 || echo "(none)"
+echo
+echo "-- report.html 的 title/h1/h2（看它覆盖了什么） --"
+grep -oE '<(title|h1|h2)[^>]*>[^<]{0,90}' "$H/report.html" 2>/dev/null | head -18 || echo "(none)"
+echo
+echo "-- evidence/ --"
+ls -la "$H/evidence" 2>/dev/null | head -15 | cut -c1-140
+echo "-- mechanisms/ --"
+ls -la "$H/mechanisms" 2>/dev/null | head -15 | cut -c1-140
+echo
+echo "-- daily-memories/ 最近 5 个 --"
+ls -1t "$H/daily-memories" 2>/dev/null | head -5
+echo
+
+echo "=========== 4. 5 个 harness 的形态（目录 + README 首 3 行） ==========="
+for d in cline opencode deepseek-harness codex claude-code; do
+  if [ -d "$H/$d" ]; then
+    echo "---- $d ----"
+    ls "$H/$d" 2>/dev/null | head -14 | tr '\n' ' '; echo
+    head -3 "$H/$d/README.md" 2>/dev/null | cut -c1-150
+    echo
+  else
+    echo "---- $d : MISSING ----"
+  fi
+done
+
+echo "=========== DONE ==========="
+```
+
+---
+
+## RUN_ID 5 — 启动 harness 线（✅ **已执行 2026-10-02 22:20, exit=0**）
+
+> ✅ **已生效**：`baize_harness_loop.sh` 已启动（pid 2228938），agent 已接单并读到任务书。
+> ⚠️ 围栏已降级为 ```text，**避免霸占"第一个块"**（本文件太长，只认第一个是 relay 的既有行为）。
 
 **目标**：起 `baize_harness_loop.sh`（H-A: SWE-bench 横评 / H-B: harness 源码分析），并校验它接单。
 
@@ -39,7 +111,7 @@
 任务书 `BAIZE_HARNESS_TASK.md`、loop `baize_harness_loop.sh`、状态 `MEMORY_HARNESS.md`、
 产物 `harness/`、日志 `daily-memories-harness/`。**已在 `AGENTS.md` 登记。**
 
-```bash
+```text
 cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
 
 echo "=========== 1. 前置校验（任务书 / loop / 状态文件） ==========="
