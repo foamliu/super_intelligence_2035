@@ -106,7 +106,7 @@ Xmodel-2 原文（`xmodel-2.tex:138,144-146,152-154`）：
 
 | 源 | 是否就位 | 状态 / 缺口 |
 |:--|:--|:--|
-| `Ultra-FineWeb (base)` | 🟡 下载中 | en 配置 **1641/2048**（复用旧 1286 续推，0 .incomplete），剩 ~407 en + en_v1_4 + zh + l1_en_hq |
+| `Ultra-FineWeb (base)` | 🟡 下载中 | en 配置 **1723/2048**（复用旧 1286 续推，0 .incomplete），剩 ~325 en + en_v1_4 + zh + l1_en_hq |
 | `UltraX-Preview` | ❌ 未下 | 规模/重叠待实测（§1） |
 | `Ultra-FineWeb-L3` | ✅ 就绪 | 1764 parquet / 617.6 GiB（4 config） |
 | `UltraData-Code` | ✅ 就绪 | 1121 parquet |
