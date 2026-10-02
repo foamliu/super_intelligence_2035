@@ -841,27 +841,26 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
     <td>—</td><td>已结束</td>
   </tr>
   <tr class="ok-box">
-    <td class="ok-box" style="padding:6px 10px"><b>P-4R</b> 🔴 <b>先做它</b> —— 上一轮「不接 FP8」<b>判定依据有误</b><br>
-        <small>它用了 <b>GBS=8 的墙钟 g=0.286</b>，但它<b>自己的 caveat 就写明</b>生产口径（GBS=1024）应为
-        <b>g≈0.49</b>；且把「GEMM 单算子上限 &lt;2×」误当端到端收益。<br>
-        用 g=0.49 重算：<b>s=1.35 → +14.5%</b> · s=1.6 → +22.6% · s=2.0 → +32.6%
-        （Xmodel-2.5 的 +30% 反推 s≈1.35）。<br>
-        <b>→ 实测我们自己的 FP8 GEMM 单算子 s，再定接不接。</b>
-        ✅ 收益 ≥15% 对 P-8（12.5 天）就是 ≥1.9 天 —— <b>长训练里很值</b><br>
-        🔴 <b>运维 2026-10-02 指令：先暂停 P-5b，做它</b>（⚠️ 先查 P-5b 能否断点续跑再决定）</small></td>
-    <td class="ok-box" style="padding:6px 10px"><span class="badge b-no">🔴 立即执行</span><br>
-        <small><b>只占 1 卡</b></small></td>
-    <td class="ok-box" style="padding:6px 10px"><b>≤ 2 小时</b></td>
-    <td class="ok-box" style="padding:6px 10px"><b>今天上午</b></td>
+    <td class="ok-box" style="padding:6px 10px"><b>P-4R</b> ✅ <b>已完成</b>（2026-10-02 ~09:47）—— 结论仍是<b>不接 FP8</b>，但理由<b>更强、且是实测的</b><br>
+        <small>🔑 <b>实测 FP8 GEMM 单算子 s ≈ 0.65 &lt; 1 —— FP8 反而慢 ~35%</b>。<br>
+        <b>机制</b>：生产口径（GBS=1024 但 mb=1 → 每 GEMM 的 <b>M = seq = 4094</b>）下，
+        我们 56 层 hybrid 的 GEMM 全是<b>访存受限的小/瘦 GEMM</b>，FP8 的 2× FLOPs 换不来收益。<br>
+        📐 <b>交叉点</b>：s 在 <b>M≈16K</b> 处跨过 1.0，<b>M≥32K 饱和在 ~1.34</b>
+        —— 与 Xmodel-2.5 反推的 s≈1.35 <b>一致</b>，但那是在<b>稠密模型的大 GEMM</b>上（我们够不到那个区间）。<br>
+        → <b>P-8 / P-5b 维持 bf16</b></small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-ok">✅ 已完成</span></td>
+    <td class="ok-box" style="padding:6px 10px">—</td>
+    <td class="ok-box" style="padding:6px 10px">已结束</td>
   </tr>
   <tr class="ok-box">
-    <td class="ok-box" style="padding:6px 10px"><b>P-5b</b> 训练量 scaling 曲线 <span class="badge b-warn">⏸ 按指令暂停中</span><br>
-        <small>已 <b>tokenize ~25B L3 切片</b>（8 路并行）；跑到 20B token，必要时延到 40–60B。<br>
-        <b>它的 loss-vs-token 曲线直接决定 P-8 的 token 预算</b>；
-        ⚠️ 暂停代价取决于<b>能否断点续跑</b>（若不可续，净亏 ≈2.5 天）</small></td>
-    <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">⏸ 暂停（等 P-4R）</span></td>
-    <td class="ok-box" style="padding:6px 10px"><b>恢复后 ≈2.5 天</b></td>
-    <td class="ok-box" style="padding:6px 10px"><b>≈ 10/04–10/05</b></td>
+    <td class="ok-box" style="padding:6px 10px"><b>P-5b</b> 训练量 scaling 曲线 <span class="badge b-ok">🔄 长跑中</span><br>
+        <small><b>iter 1400/4771（29.34%）· loss 2.3170 · 健康</b>（无 NaN/skip；期间有 NFS 抖动已恢复）<br>
+        已记里程碑：<b>655M / 1.3B / 2.6B / 5.2B token</b>；<b>每 156 步存 ckpt</b> 供 P-6 第 2 步用<br>
+        ETA ≈ 10-04 00:50</small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-ok">🔄 运行中</span><br>
+        <small>8 卡（.29）</small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≈ 2 天</b></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≈ 10/04</b></td>
   </tr>
   <tr class="ok-box">
     <td class="ok-box" style="padding:6px 10px"><b>P-6 第 2 步 ⭐</b>「能力 vs token」<b><u>scaling law 曲线 + 外推</u></b>
@@ -907,23 +906,18 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
     <td>—</td><td>2026-10-02</td>
   </tr>
   <tr class="ok-box">
-    <td class="ok-box" style="padding:6px 10px"><b>🔵 R9 数据扩容 + 长训练</b>（<u>已下发·仍非正式训练</u>）<br>
-        <small><b>数据</b>：≈<b>18–19M 对</b>（CC12M 11M + Amshaker 6M + LLaVA-Pretrain/CC3M 1.15M + gpic/coco/vg 0.3M），
-        全部 <b>bytes 源</b><br>
-        🥇 <b>阶段一（先做）</b>：<b>缩塔先导</b> —— OpenVision2 × 塔 ∈ {~150M, ~250M, 505M} × 30k 步，
-        1–2 卡，<b>≈2–4h</b>（现"样本/参数=0.003"，模型远大于数据）<br>
-        🥈 <b>阶段二</b>：用<b>选定的塔</b>跑 <b>108k 步</b>，每 10k 步记一个点 → <b>≈5h</b><br>
-        🎯 <b>核心交付 = scaling law 曲线（x=log 样本数, y=IN-1k lp）+ <u>外推</u></b>：
-        <b>"到 lp 20/40/60% 各需多少样本？对照本地上限 ≈53M"</b><br>
-        ✅ <b>靶子已校准</b>：运维认可 <b>lp ≈10–25% 就算很好</b>；与 AIMv2（120 亿对）差 649×，<b>不许再无标注并列</b><br>
-        ⏱ <b>启动前先估时</b>（先冒烟量 img/s 再外推，报运维后才启动）<br>
-        ⚠️ GPIC 仅 <b>688/8000 tar（8.6%）</b> → R9 不等它；打包是重 I/O，须与 P-5b 错峰</small></td>
-    <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">⏱ 先估时再启动</span><br>
-        <small><b>`.12` 的 8 卡</b><br>缩塔可只用 1–2 卡</small></td>
-    <td class="ok-box" style="padding:6px 10px"><b>阶段一 ≈2–4h</b><br>
-        <b>阶段二 ≈5h</b><br>
-        <small>+ 打包 I/O</small></td>
-    <td class="ok-box" style="padding:6px 10px"><b>≈ 10/02–10/03</b></td>
+    <td class="ok-box" style="padding:6px 10px"><b>🔵 R9 数据扩容 + 长训练</b><br>
+        <small>🥇 <b>阶段一 ✅ 完成</b>：<b>缩塔实验有结论</b> —— 塔规模 {w512=126.8M, w768, w1024} × 30k 步，
+        <b>w512（126.8M）胜出</b>：<b>IN-1k lp 6.10%</b>（vs R8 的 1.14%，<b>5.4×</b>）<br>
+        🥈 <b>阶段二 🔄 运行中</b>：<b>w512 × 108k 步 @~68.8%</b>，健康无坍缩（C1=0.350 · C2_gap=+0.103）；
+        周期 ckpt <b>10k~70k 共 7 个已落盘</b><br>
+        🎯 核心交付 = <b>scaling law 曲线 + 外推</b>（脚本 <code>r9_scaling.py</code> 已备好）<br>
+        ⚠️ 期望校准：与 AIMv2（120 亿对）差 <b>649×</b>，运维认可 <b>≈10–25% 就算很好</b></small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-ok">🔄 阶段二运行中</span><br>
+        <small><b>`.12` 的 8 卡</b></small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>阶段一 ✅</b><br>
+        阶段二 <b>≈ 3–5 小时</b></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≈ 今晚</b></td>
   </tr>
 
   <tr>
@@ -1022,18 +1016,21 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
         交付：<code>harness/cline_SOURCE_ANALYSIS.html</code>（含<b>上下文生命周期全景图</b>）<br>
         <b>H-A SWE-bench 横评</b>（后做）：cline / opencode / deepseek harness 等 ——
         ⚠️ <b>先做可行性核查</b>（harness 形态 / 模型可用性 / 数据集 / <b>Docker</b> / 预估），再定规模；<b>先 20–50 条</b></small></td>
-    <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">⬜ 待 ops 启动</span><br>
-        <small><b>RUN_ID 4 已排队</b></small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">🔄 <b>RUN_ID 5 已排队</b></span><br>
+        <small>⚠️ <b>RUN_ID 4 没生效</b> —— 中继<b>只执行文件里第一个 <code>```bash</code> 块</b>，
+        所以它把 RUN_ID 3 的磁盘勘察又跑了一遍。<b>已修正</b>（把启动块提到最前 + 旧块降级 <code>```text</code>，
+        见 <code>ops/inbox.md</code> 顶部）</small></td>
     <td class="ok-box" style="padding:6px 10px">源码分析 <b>小时级</b><br>
         <small>SWE-bench 视规模</small></td>
     <td class="ok-box" style="padding:6px 10px">启动后 <b>≈ 10/02</b></td>
   </tr>
   <tr>
     <td><b>ops relay</b></td>
-    <td>RUN_ID 1/2/3 已回收（环境、数据根目录、磁盘）；<b>RUN_ID 4 = 启动 harness 线</b></td>
-    <td><span class="badge b-warn">🔄 RUN_ID 4 已排队</span></td>
+    <td>RUN_ID 1/2/3 已回收；<b>RUN_ID 4 跑了但取错块</b>（中继只认第一个 <code>```bash</code>）；
+        <b>RUN_ID 5 = 启动 harness 线（已修正）</b></td>
+    <td><span class="badge b-warn">🔄 <b>RUN_ID 5 已排队</b></span></td>
     <td>按需（~1 min 一轮）</td>
-    <td>随时可派 RUN_ID 5</td>
+    <td>随时可派 RUN_ID 6</td>
   </tr>
 </table>
 
