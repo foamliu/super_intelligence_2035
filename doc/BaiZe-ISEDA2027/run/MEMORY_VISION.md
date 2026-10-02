@@ -6,12 +6,24 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R9_active**（第九轮：数据扩容 + 长训练；阶段一缩塔 3 臂 × 30k：w512 完成、w768 完成、w1024 运行中） |
-| WAITING | 1（R9 阶段一 w1024 训练中 @~17.4k/30k（58%）；w512/w768 已完；置 1 长睡，下次唤醒收 w1024 + 三臂 IN-1k 评测 → 选塔 → 阶段二） |
+| PHASE | **R9_active**（第九轮：数据扩容 + 长训练；阶段一缩塔 3 臂 × 30k：w512 完成、w768 完成、w1024 运行中 @88%） |
+| WAITING | 1（R9 阶段一 w1024 训练中 @~26.5k/30k（88%）；w512/w768 已完；置 1 长睡，下次唤醒收三臂 IN-1k 评测 → 选塔 → 阶段二） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @step~8900 崩溃：CC12M/Amshaker wds 含损坏 jpg → PIL.UnidentifiedImageError） |
 | BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（≈9.2 GPU·h + ~23min）+ R9（冒烟 ~0.06 + 首跑 w512 32min + w768 ~8min 报废 + w512 完成 ~15.4 + w768 完成 ~15.3 GPU·h） |
-| 更新 | 2026-10-02 15:27（巡检：w1024 训练中 @~17.4k/30k（58%）健康无坍缩 C1=0.3465/C2_gap=+0.0870/loss_ema 4.7223；w512/w768 已完；WAITING=1） |
+| 更新 | 2026-10-02 16:05（巡检：w1024 训练中 @~26.5k/30k（88%）健康无坍缩 C1=0.3799/C2_gap=+0.0777/loss_ema=4.8715；w512/w768 已完；WAITING=1 不变） |
 | WINNER | **OpenVision2**（R8 六架构四指标第一；R9 只做空塔规模缩放，不改架构排名） |
+
+## 巡检（2026-10-02 16:05）：R9 stage-1 w1024 @88% 健康推进（WAITING=1 不变）
+
+> 纯 CPU，未占卡。只巡检 w1024，无脚本改动、无新实验。
+
+- **恢复状态**：MEMORY_VISION `WAITING=1`、PHASE `R9_active`；`r9_run.sh stage1 30000 6` 后台串行运行中（w512 完 → w768 完 → w1024 运行中 @~step 26500/30000）。
+- **w1024（505.0M）🔄 运行中 @ ~step 26500/30000（88%）**：14:19 启动，~105min≈26500 步（~252 步/min；稳态 ~2940–4100 img/s，NFS 偶发争用波动）；PROBE step 26400 `C1=0.3799 C2_gap=+0.0777 C4=OK`、`loss_ema=4.8715`（early 6.04 健康下降）→ 无坍缩；`vision_step10000.pt`/`vision_step20000.pt`（各 2.02GB）已落盘，`vision_step30000.pt`/`vision.pt` 待 30000 步。
+- **w512 ✅ 完成**（final 4.0496 / C1 0.3502 / 2938.6 img/s）；**w768 ✅ 完成**（final 4.0448 / C1 0.3813 / 2978.2 img/s）。
+- **ETA 复核**：w1024 训练 ~16:20 完成 → `r9_run.sh` 自动接三臂 IN-1k 评测（`r8_eval_in1k.py --ckpts`）~0.5–1h → **stage-1 全完成（`R9 ALL DONE (stage1)`）≈17:15–17:45**。
+- **本轮动作（纯 CPU，未占卡）**：仅巡检 + 回写 `MEMORY_VISION.md` 状态头/新增巡检段 + 本日志；无脚本/实验改动。`r9_run_stage2.sh` 已复核就绪（exit-code 检查 + `--save-every 10000` scaling ckpt + IN-1k 逐点评测）。
+- **下一步（WAITING=1 不变）**：`grep -c "R9 ALL DONE (stage1)" /tmp/r9.log`==1 后 → 读三臂 IN-1k zs/lp → 选每样本效率最高塔 → `bash r9_run_stage2.sh <width> 108000 6` 阶段二。
+- 未改 `*.tex`；未碰 pretrain/data/ops 文件。
 
 ## 巡检（2026-10-02 15:27）：R9 stage-1 w1024 @58% 健康推进（WAITING=1 不变）
 
