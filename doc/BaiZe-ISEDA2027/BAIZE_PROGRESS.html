@@ -862,12 +862,22 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
     <td class="ok-box" style="padding:6px 10px"><b>恢复后 ≈2.5 天</b></td>
     <td class="ok-box" style="padding:6px 10px"><b>≈ 10/04–10/05</b></td>
   </tr>
-  <tr>
-    <td><b>P-6 第 2 步</b>「能力 vs token」曲线<br>
-        <small>在 P-5b 的 6 个 ckpt 上各跑一次 8 集评测，得「8 集均分 vs token」曲线</small></td>
-    <td><span class="badge b-no">⬜ 待 P-5b 的 ckpt</span></td>
-    <td>≈ 2–4 小时</td>
-    <td><b>≈ 10/04</b></td>
+  <tr class="ok-box">
+    <td class="ok-box" style="padding:6px 10px"><b>P-6 第 2 步 ⭐</b>「能力 vs token」<b><u>scaling law 曲线 + 外推</u></b>
+        <span class="badge b-warn">运维 2026-10-02 新增</span><br>
+        <small>在 <b>P-5b 的 6 个 ckpt</b>（655M/1.3B/2.6B/5.2B/10.5B/20B token）上跑：
+        <b>常识 8 集</b> + <b>复杂 6 集</b>（<code>GSM8K/MATH/BBH/MMLU/HumanEval/MBPP</code>）<br>
+        🔧 <b>全部走 <code>lm_eval</code>（不换框架，HumanEval/MBPP 已原生支持）；n-shot 用框架默认值</b><br>
+        🎯 <b>外推</b>：常识 Avg 到 <b>50% / 55% / 60%</b> 各需多少 token？
+        <b>→ 那个答案用来定 P-8 的预算</b><br>
+        📌 <b>参照线</b>：我们起点 <b>43.95%</b>（P-6 第 1 步）· 最弱 1B 级 <b>55.24</b> ·
+        <b>Xmodel-2-1.2B 61.79</b> · Phi-1.5-1.3B 65.68<br>
+        🚨 <b>预期校准</b>：1B 级在复杂 6 集上<b>本就贴地板</b>（GSM8K 0.45–2.5% / MATH ~1% / MMLU·BBH ~25%≈chance）
+        → 我们很可能<b>全程贴地板</b>，那「<b>量不出斜率本身就是结论</b>」</small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-no">⬜ 待 P-5b 的 ckpt</span><br>
+        <small>P-5b 须<b>按 token 命名存 6 个 ckpt</b></small></td>
+    <td class="ok-box" style="padding:6px 10px">≈ 2–4 小时<br><small>+ 复杂 6 集另计</small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≈ 10/04</b></td>
   </tr>
   <tr class="ok-box">
     <td class="ok-box" style="padding:6px 10px"><b>🏁 P-8 Stage (i) 完整训练（正式预训练 · <u>本体</u>）</b>
