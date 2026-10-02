@@ -12,9 +12,9 @@ WAITING: 1
 ```
 PHASE:        §0.5/§0.6/§0.7 推进中（§0.6 配方 + §0.7 ETA/复用/停85M 均已交付 + §0.5 base 下载推进中；✅ SFT-2605 已下满 1504=318.99GB 与 HF 官方清单一致；仅余 base/gpic 下载巡检 + 待 base 下满后过闸分词）
 已完成:       §0.3 8 源事实表满填·base vs L3 重叠 0%·P-8 三档 86:10:4；§0.4 R2 视觉侧 12 本地源+13 HF 候选+前 3 推荐；§0.6 DATA_MIX_RECIPE v1（WSD 双阶段 + decay SFT 64% + Table2/Table3 代理指标 + ~24-40 组配比实验设计）；§0.7 ①②③ 达成：🔴 LLaVA 85M 已停（7629 parquet 冻结 26T 不删）+ base 复用旧 base-en 1286 已生效 + 给出 base ETA（复用/不复用两档 + 停 LLaVA 提速 +70%）；✅ UltraData-SFT-2605 重下完成（1504/1504 = 318,990,252,711 B 与 HF 官方清单逐字节一致）
-当前动作:     唤醒 37（轻 I/O 巡检 + ✅ 确认 SFT-2605 下满）：🔴 SFT-2605 已完成 —— /tmp/sft2605_dl.log 尾部逐条 Download complete 至 think/Math part-250-of-250 后落 local-dir（pid 65426 自然退出，非崩溃）；实测 1504 jsonl = 318,990,252,711 B = 318.99GB，0 .incomplete，与 HF 官方清单逐字节一致+逐子目录齐。🔵 base 2553305 存活（1510/2048 parquet，1.8T，0 .incomplete，~7-8MB/s）、gpic 2426795 存活（train 860/8000 tar + test 128✓，1.4T）。🔴 LLaVA 85M 仍停
-下一步:       base-en 下满 2048（剩 538 件 ≈700GB ≈21~28h @~7-8MB/s）后接续 en_v1_4/zh/l1_en_hq（≈0.33TB ≈8~12h）→ base 落地过 check_contamination 过闸 → phase2 分词（base-en 86:10:4）；gpic 续下至 8000 tar（剩 7140）
-阻塞:         无硬阻塞；⚠️ base/gpic 易因 CDN 瞬时网络错误反复崩溃（base 已两次），下轮必先复核 base 2553305 / gpic 2426795 存活；vision R9 占 8/8 卡 + 并行下载争带宽；磁盘 /nas_train 31T / /nas_inference 20T / /nas_user 29T 均够
+当前动作:     唤醒 38（轻 I/O 巡检）：复核运维指令未变（§0.5/§0.6/§0.7 + 三件套，无索取/无 STOP）。🔵 base 2553305 存活（1522/2048 parquet，1.8T，0 .incomplete，~8.3MB/s，xet 自适应并发 22→29 全 success ratio 1.0 健康）；🔵 gpic 2426795 存活（train 877/8000 tar + test 128✓，1.4T，~13.7MB/s）。🔴 LLaVA 85M 仍停（7629 冻结未删）。✅ SFT-2605 维持 1504/1504 下满一致
+下一步:       base-en 剩 522 件 ≈680GB ≈22~25h（@~8.3MB/s）→ en 完后续下 en_v1_4/zh/l1_en_hq（≈0.33TB ≈8~12h，config 级 --include）→ base 落地过 check_contamination → phase2 分词（base-en 86:10:4）；gpic 续下至 8000 tar（剩 7123 ≈11.4TB ≈9~10 天）
+阻塞:         无硬阻塞；⚠️ base/gpic 易因 CDN 瞬时错误崩溃（base 已两次），下轮必先复核 base 2553305 / gpic 2426795 存活；2 路下载并行共用 ~22MB/s；磁盘 /nas_train 31T / /nas_inference 20T / /nas_user 29T 均够
 ERROR_COUNT:  0
 ```
 
@@ -35,7 +35,7 @@ ERROR_COUNT:  0
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R research ✅ + R2 LLM 侧 ✅（8 源满填 / base vs L3 重叠 0% / P-8 86:10:4）+ R2 视觉侧 ✅（§0.4：本地 bytes 图文对实测 / 13 HF 候选 / 前 3 推荐）+ phase5 isolation v0.3 + phase1/2 脚本就绪；§0.5/§0.6/§0.7 推进中（§0.6 配方✅ / §0.7 停85M·复用·ETA✅ / SFT-2605 下满一致✅）** |
-| WAITING | 1（下载中：base-en 1510/2048（pid 2553305）· gpic train 860/8000 + test 128✓ = 1.4T（pid 2426795）；🔴 LLaVA 已停冻结 7629/26T 未删；重 I/O 阶段继续推迟） |
+| WAITING | 1（下载中：base-en 1522/2048（pid 2553305）· gpic train 877/8000 + test 128✓ = 1.4T（pid 2426795）；🔴 LLaVA 已停冻结 7629/26T 未删；重 I/O 阶段继续推迟） |
 | ERROR_COUNT | 0 |
 | 节点 | `10.239.2.12`（主机 `whag0pgpuap12`；NFS：`/nas_inference` 只读源，`/nas_train` 产出） |
 | 更新 | 2026-10-02 |
