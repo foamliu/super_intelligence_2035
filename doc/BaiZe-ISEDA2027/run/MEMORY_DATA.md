@@ -10,11 +10,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.5/§0.6/§0.7 推进中（§0.6 配方 + §0.7 ETA/复用/停85M 均已交付 + §0.5 base 下载推进中；本轮三路下载均存活无崩溃；仅余三路下载巡检 + 待落地下满后过闸分词）
+PHASE:        §0.5/§0.6/§0.7 推进中（§0.6 配方 + §0.7 ETA/复用/停85M 均已交付 + §0.5 base 下载推进中；三路下载均存活无崩溃；仅余下载巡检 + 待下满后过闸分词）
 已完成:       §0.3 8 源事实表满填·base vs L3 重叠 0%·P-8 三档 86:10:4；§0.4 R2 视觉侧 12 本地源+13 HF 候选+前 3 推荐；§0.6 DATA_MIX_RECIPE v1（WSD 双阶段 + decay SFT 64% + Table2/Table3 代理指标 + ~24-40 组配比实验设计）；§0.7 ①②③ 达成：🔴 LLaVA 85M 已停（7629 parquet 冻结 26T 不删）+ base 复用旧 base-en 1286 已生效 + 给出 base ETA（复用/不复用两档 + 停 LLaVA 提速 +70%）
-当前动作:     唤醒 34（轻 I/O 巡检，核实三路下载存活 + 速率复测）：🔵 本轮三路 `hf download` 均存活推进、无 CDN 崩溃、无重启——base pid 2553305、SFT-2605 pid 2553307、gpic pid 289448。base-en 1426/2048 parquet（1.7T，0 .incomplete）；SFT-2605 1357/1504（no_think 855✓ full，think Math 103/250）；gpic 1.3T；🔴 LLaVA 85M 仍停
-下一步:       base-en 下满 2048（剩 622 件 ≈808GB ≈18~23h @~12MB/s）后接续 en_v1_4/zh/l1_en_hq（≈0.33TB ≈8~12h）；SFT-2605 下满 1504（剩 147 件全 think/Math ≈68GB ≈2~3h，下轮或已下满即报一致性）→ 报 1504 文件一致性 → base 落地过闸 → phase2 分词（base-en 86:10:4）
-阻塞:         无硬阻塞；⚠️ base/SFT 易因 CDN 瞬时网络错误崩溃（往轮多次），下轮必先复核 base 2553305 / SFT 2553307 存活；gpic 289448 长期存活；vision R9 占 8/8 卡 + 并行下载争带宽；磁盘 /nas_train 31T / /nas_inference 20T / /nas_user 29T 均够
+当前动作:     唤醒 35（轻 I/O 巡检，核实三路下载存活 + 速率复测）：🔵 三路 `hf download` 均存活推进、无 CDN 崩溃、无重启——base pid 2553305、SFT-2605 pid 2553307、gpic pid 289448。base-en 1443/2048 parquet（1.8T，0 .incomplete，~10MB/s）；SFT-2605 1401/1504 jsonl（296.4G，no_think 855✓ 满，think Math 147/250）；gpic 2787 文件/1.3T；🔴 LLaVA 85M 仍停
+下一步:       SFT-2605 下满 1504（剩 103 件全 think/Math ≈22.6GB ≈~1h，下轮或已下满即报一致性）→ base-en 下满 2048（剩 605 件 ≈786GB ≈18~22h @~10MB/s）后接续 en_v1_4/zh/l1_en_hq（≈0.33TB ≈8~12h）→ base 落地过闸 → phase2 分词（base-en 86:10:4）
+阻塞:         无硬阻塞；⚠️ base/SFT 易因 CDN 瞬时网络错误崩溃（往轮已多次），下轮必先复核 base 2553305 / SFT 2553307 存活；gpic 289448 长期存活；vision R9 占 8/8 卡 + 并行下载争带宽；磁盘 /nas_train 31T / /nas_inference 20T / /nas_user 29T 均够
 ERROR_COUNT:  0
 ```
 
@@ -29,7 +29,7 @@ ERROR_COUNT:  0
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R research ✅ + R2 LLM 侧 ✅（8 源满填 / base vs L3 重叠 0% / P-8 86:10:4）+ R2 视觉侧 ✅（§0.4：本地 bytes 图文对实测 / 13 HF 候选 / 前 3 推荐）+ phase5 isolation v0.3 + phase1/2 脚本就绪** |
-| WAITING | 1（下载中：base-en 1426/2048（pid 2553305）· SFT-2605 1357/1504（think/Math 103/250，pid 2553307）· gpic 1.3T（pid 289448）；🔴 LLaVA 已停冻结 7629/26T 未删；重 I/O 阶段继续推迟） |
+| WAITING | 1（下载中：base-en 1443/2048（pid 2553305）· SFT-2605 1401/1504（think/Math 147/250，pid 2553307）· gpic 2787 文件/1.3T（pid 289448）；🔴 LLaVA 已停冻结 7629/26T 未删；重 I/O 阶段继续推迟） |
 | ERROR_COUNT | 0 |
 | 节点 | `10.239.2.12`（主机 `whag0pgpuap12`；NFS：`/nas_inference` 只读源，`/nas_train` 产出） |
 | 更新 | 2026-10-02 |
