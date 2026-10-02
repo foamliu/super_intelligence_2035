@@ -740,7 +740,8 @@
   <tr><td><b>vision agent</b></td><td><code>baize_vision_loop.sh</code> · <code>MEMORY_VISION.md</code></td><td><span class="badge b-info">⏹ 已收敛待处置</span>（.12 · <b>R2–R8 全部完成</b> · 胜出 <b>OpenVision2</b> · 数据定 <b>GPIC short</b> · <code>WAITING=1</code> 待运维决定关循环还是派新任务）</td></tr>
   <tr><td><b>pretrain agent</b></td><td><code>baize_pretrain_loop.sh</code> · <code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.29 · <b>P-1…P-4 ✅ · P-5a ✅ 9/9 · P-6 第1步 ✅ · P-7 ✅</b> · 下一步 <b>P-5b</b>）</td></tr>
   <tr><td><b>data agent</b></td><td><code>baize_data_loop.sh</code> · <code>MEMORY_DATA.md</code></td><td><span class="badge b-ok">✅ 运行中</span>（.12 · <b>§0.3 ✅ 8 源事实表满填 · base vs L3 重叠 0%</b> · <b>§0.4 ✅ 13 HF 候选 / 7 个 URL-only 淘汰</b> · SFT-2605 重下中 no_think <b>855/855 ✅</b> · 四路下载健康）</td></tr>
-  <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-ok">✅ 空闲待命</span>（.29 · 零 token · <b>RUN_ID 1/2/3 已全部回收</b>，随时可派 4）</td></tr>
+  <tr><td><b>harness</b> 🆕</td><td><code>baize_harness_loop.sh</code> · <code>BAIZE_HARNESS_TASK.md</code> · <code>MEMORY_HARNESS.md</code></td><td><span class="badge b-warn">⬜ 待 ops 启动</span>（.29 · <b>H-B 源码分析</b>（从 cline 起，沿「上下文生命周期」5 条线）→ <b>H-A SWE-bench 横评</b>（cline/opencode/deepseek harness 等）；<b>不占 GPU</b>，但可能吃 CPU/磁盘/Docker → 重 I/O 避让训练）</td></tr>
+  <tr><td><b>ops relay</b>（新建）</td><td><code>ops_relay.sh</code> · <code>ops/inbox.md</code> · <code>ops/outbox.md</code></td><td><span class="badge b-warn">🔄 <b>RUN_ID 4 已排队</b></span>（.29 · 零 token · RUN_ID 1/2/3 已回收；<b>4 = 启动 harness 线</b>）</td></tr>
   <tr><td>1B / 2B 架构轮</td><td><code>baize_search_loop.sh</code> · <code>baize_2b_search_loop.sh</code></td><td><span class="badge b-ok">✅ 已收敛</span>，僵尸 loop 已被清理</td></tr>
 </table>
 
@@ -1009,12 +1010,30 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
     <td>—</td>
   </tr>
 
+  <tr class="ok-box">
+    <td class="ok-box" style="padding:6px 10px"><b>🆕 harness</b></td>
+    <td class="ok-box" style="padding:6px 10px"><b>H-B 源码分析</b>（先做）：<code>/nas_train/app.e0031982/harness</code>，<b>从 cline 起</b><br>
+        <small>以 <b>Auto Compact</b> 为切入点，沿「<b>上下文生命周期</b>」展开 <b>5 条线</b>：
+        ① 预处理管线（<code>ContextPipelinePrepareTurn</code>／<code>EditType</code>·<code>ContextUpdate</code> 无损投影）·
+        ② 检查点与状态恢复（非破坏性编辑＋时间戳截断；compaction sidecar／PR #12747）·
+        ③ 插件与 Hook（<code>beforeRun/afterRun/beforeTool</code>；<code>manifest.capabilities</code>；<code>setup(_api,ctx)</code>）·
+        ④ Focus Chain（短期记忆 vs 长期目标解耦）·
+        ⑤ 模型适配降级（<code>context-window-utils.ts</code>；3 字符/token；Issue #7772）<br>
+        交付：<code>harness/cline_SOURCE_ANALYSIS.html</code>（含<b>上下文生命周期全景图</b>）<br>
+        <b>H-A SWE-bench 横评</b>（后做）：cline / opencode / deepseek harness 等 ——
+        ⚠️ <b>先做可行性核查</b>（harness 形态 / 模型可用性 / 数据集 / <b>Docker</b> / 预估），再定规模；<b>先 20–50 条</b></small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">⬜ 待 ops 启动</span><br>
+        <small><b>RUN_ID 4 已排队</b></small></td>
+    <td class="ok-box" style="padding:6px 10px">源码分析 <b>小时级</b><br>
+        <small>SWE-bench 视规模</small></td>
+    <td class="ok-box" style="padding:6px 10px">启动后 <b>≈ 10/02</b></td>
+  </tr>
   <tr>
     <td><b>ops relay</b></td>
-    <td>RUN_ID 1/2/3 已回收（环境、数据根目录、磁盘）</td>
-    <td><span class="badge b-ok">✅ 空闲待命</span></td>
+    <td>RUN_ID 1/2/3 已回收（环境、数据根目录、磁盘）；<b>RUN_ID 4 = 启动 harness 线</b></td>
+    <td><span class="badge b-warn">🔄 RUN_ID 4 已排队</span></td>
     <td>按需（~1 min 一轮）</td>
-    <td>随时可派 RUN_ID 4</td>
+    <td>随时可派 RUN_ID 5</td>
   </tr>
 </table>
 

@@ -7,13 +7,18 @@
 
 ---
 
-## 1. 活跃 agent（**3 个**）
+## 1. 活跃 agent（**4 个**）
 
 | Agent | loop 脚本 | 任务书 | 状态文件 | 日志目录 | 跑什么 | 状态 |
 |:---|:---|:---|:---|:---|:---|:---|
-| **vision** | `baize_vision_loop.sh` | `BAIZE_VISION_TASK.md` | `MEMORY_VISION.md` | `daily-memories-vision/` | 视觉编码器 R2-0~R2-5（训练在 `10.239.2.12`） | ✅ 运行中 |
-| **pretrain** | `baize_pretrain_loop.sh` | `BAIZE_PRETRAIN_2B_TASK.md` | `MEMORY_PRETRAIN_2B.md` | `daily-memories/` | 预训练 R2 P-1/P-2/P-3（训练在 `10.239.2.29`） | ✅ 运行中 |
-| **data** | `baize_data_loop.sh` | `BAIZE_DATA_TASK.md` | `MEMORY_DATA.md` | `daily-memories-data/` | 数据准备 phase0~phase6 | ⬜ 待启动 |
+| **vision** | `baize_vision_loop.sh` | `BAIZE_VISION_TASK.md` | `MEMORY_VISION.md` | `daily-memories-vision/` | 视觉编码器 R2~R8（已收敛，待运维处置）+ **R9**（训练在 `10.239.2.12`） | ⏹ 收敛/待派 |
+| **pretrain** | `baize_pretrain_loop.sh` | `BAIZE_PRETRAIN_2B_TASK.md` | `MEMORY_PRETRAIN_2B.md` | `daily-memories/` | 预训练 R2 P-1~P-8（训练在 `10.239.2.29`） | ✅ 运行中 |
+| **data** | `baize_data_loop.sh` | `BAIZE_DATA_TASK.md` | `MEMORY_DATA.md` | `daily-memories-data/` | 数据准备 phase0~phase6 + R2/R3 调研 | ✅ 运行中 |
+| **harness** 🆕 | `baize_harness_loop.sh` | `BAIZE_HARNESS_TASK.md` | `MEMORY_HARNESS.md` | `daily-memories-harness/` | **H-A** SWE-bench 横评 · **H-B** harness 源码分析（从 cline 起） | ⬜ 待 ops 启动 |
+
+> 🆕 **harness 线（2026-10-02 新建）**：与三条 BaiZe 训练线**互不干扰** ——
+> 它**不占 GPU**（源码分析 + SWE-bench 评测），但**可能吃 CPU/磁盘/Docker**，
+> **重 I/O 仍要避让** `10.239.2.12` / `10.239.2.29` 上的训练。
 
 ## 2. 已收敛（**2 个，不应再跑**）
 
