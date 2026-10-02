@@ -6,12 +6,23 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R9_active**（第九轮：数据扩容 + 长训练；阶段一完成 → w512 胜出 → 阶段二 w512 × 108k 运行中 @~92.0%） |
-| WAITING | 1（R9 阶段二 w512 × 108k 步训练中（16:38 启动，23:08 @step 99350/108000≈92.0%）；置 1 长睡；判结束 `grep -c "R9 stage2 ALL DONE" /tmp/r9_stage2.log`==1 → 收 11 ckpt IN-1k → scaling 曲线 + 外推） |
+| PHASE | **converged**（R9 已完成并出终论；任务线闭合，无阻塞事项 → 长睡待派） |
+| WAITING | 1（R9 已完成：训练 + 11 ckpt IN-1k + scaling 拟合/外推 + 报告回填全落盘；置 1 长睡。可选后续【R10 下探更小塔 w384 / 补评 stage-1 周期 ckpt / 按 §5.3 换路线】留待运维派活） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @step~8900 崩溃：CC12M/Amshaker wds 含损坏 jpg → PIL.UnidentifiedImageError） |
-| BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（≈9.2 GPU·h + ~23min）+ R9阶段一（冒烟 ~0.06 + 首跑 w512 32min + w768 ~8min 报废 + w512 15.4 + w768 15.3 + w1024 15.5 GPU·h）+ R9阶段二 w512 进行中 |
-| 更新 | 2026-10-02 23:10（巡检：阶段二 w512 @~92.0% 健康无坍缩；周期 ckpt 已落盘 10k~90k 共 9 个；磁盘剩 31T） |
+| BUDGET_USED | R2/R3/R4 ~19 GPU·h + R5（1h12m+28m）+ R7（~37min）+ R8（≈9.2 GPU·h + ~23min）+ R9阶段一（冒烟 ~0.06 + 首跑 w512 32min + w768 ~8min 报废 + w512 15.4 + w768 15.3 + w1024 15.5 GPU·h）+ R9阶段二 w512 7.06h（25417.9s）+ 11 ckpt IN-1k ~0.7h |
+| 更新 | 2026-10-03 00:15（R9 完成收尾：训练 + 11 ckpt IN-1k + scaling 拟合/外推 + 报告回填，PHASE→converged；磁盘剩 31T） |
 | WINNER | **OpenVision2**（R8 六架构四指标第一；R9 选中 w512=126.8M 缩塔，不改架构排名） |
+
+## R9 完成（converged）：阶段二训练收尾 + 11 ckpt IN-1k + scaling 外推 + 报告回填（2026-10-03）
+
+> 纯 CPU 收尾（训练由后台 `r9_run_stage2.sh` 自动完成 + 自动跑完 11 ckpt IN-1k）。无脚本/实验改动，仅回填报告 + 记忆 + push。
+
+- **训练完成核实**（证据 = `/tmp/r9_stage2.log`）：`R9 stage2 ALL DONE 2026-10-03 00:00:08`；`[done] total=25417.9s steps=108000 steady_image_s=2904.2 final_loss=3.7073`；末 PROBE `C1=0.3595 C2_gap=+0.1014 C4=OK` → **无坍缩**。11 ckpt（step10000~100000 + `vision.pt`）全落盘（各 507MB）。
+- **11 ckpt IN-1k（frozen trunk，自动评测）**：lp 3.96%(10k)→5.44%(30k)→6.70%(50k)→7.35%(60k)→**7.70%(100k 峰值)**→7.40%(108k)；zs top-1 1.40%→3.59%、top-5 5.37%→11.47%。
+- **scaling 拟合**（`python vision/r9_scaling.py`，R²≈0.94）：幂律 `acc=0.251−0.864·N^−0.090`（渐近 25.1%）；对数线性 `acc=−0.229+0.0398·log10(N)`。外推 20% = 619 亿样本（对数线性）/ 41 万亿（幂律）→ **够不到 20%+**；40/60% 幂律不可达。
+- **产出**：回填 `EXPERIMENTS_VISION_ROUND9.md` §4/§5 + `EXPERIMENTS_VISION.md` 顶部「R9 追加结论」+ 今日日志。PNG `/tmp/r9_scaling_curve.png`、点集 `/tmp/r9_scaling_points.csv`（图不入库）。
+- **下一步（WAITING=1 长睡）**：任务线闭合，无阻塞。可选后续（留待运维派活，本轮不做）：① R10 下探更小塔（w384≈71M 可能更优）；② 补评 stage-1 周期 ckpt（+9 点，~0.7h GPU）；③ 按 §5.3 换路线（现成编码器 / MAE 重构 / 大规模预训练权重）。
+- 未改 `*.tex`；未碰 pretrain/data/ops 文件。
 
 ## 巡检（2026-10-02 23:10）：R9 阶段二 w512 @92.0% 健康推进 + 收尾管线就绪核验（WAITING=1 不变）
 
