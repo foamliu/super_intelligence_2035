@@ -895,7 +895,7 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
   </tr>
 
   <tr>
-    <td rowspan="6"><b>data</b></td>
+    <td rowspan="7"><b>data</b></td>
     <td><b>R 阶段</b>（两问：LLM/Vision 数据够不够 + 配比）</td>
     <td><span class="badge b-ok">✅ 收敛</span></td>
     <td>—</td><td>已结束</td>
@@ -923,6 +923,23 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
     <td class="ok-box" style="padding:6px 10px"><b>数小时</b><br>
         <small>+ 视复用结论</small></td>
     <td class="ok-box" style="padding:6px 10px"><b>≈ 10/02</b></td>
+  </tr>
+  <tr class="ok-box">
+    <td class="ok-box" style="padding:6px 10px"><b>🎯 §0.6 R4 阶段 —— P-8 数据配方：follow MiniCPM5 / Xmodel-2 的 <u>WSD 双阶段配比</u></b><br>
+        <small><b>Stable 段</b>：<code>Ultra-FineWeb</code>(base) · <code>UltraX-Preview</code> · <code>Math</code> · <code>Code</code>（<b>以前两者为主</b>）<br>
+        <b>Decay 段</b>：<code>L3</code> · <code>Math</code> · <code>Code</code> · <b><code>SFT-2605</code></b> · <b><code>SFT-Agent-2609</code></b><br>
+        <b>代理指标</b>：Stable → <b>Xmodel-2 Table 2 的 8 个</b>（Commonsense）；
+        Decay → <b>Table 3 的 6 个</b>（GSM8K/MATH/BBH/MMLU/HumanEval/MBPP）<br>
+        🔴 <b>关键发现（Xmodel-2 §decay 配比）</b>：最优 <b>SFT 占比 60–69%（取 64%）</b>，
+        SFT 由 5 类构成（Math/Code/Logic/Knowledge/Commonsense）；
+        <b>→ 即「SFT 数据是进到预训练 decay 段里」的，不是事后单独做</b><br>
+        ⚠️ 需 GPU（小模型短跑搜配比，依据「Data Mixing Laws 可小→大迁移」）→
+        <b>先出方案，卡的空窗再排，不与 R9 / P-5b 抢</b></small></td>
+    <td class="ok-box" style="padding:6px 10px"><span class="badge b-warn">🔄 已派</span><br>
+        <small>先设计 + 备数据</small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>先出方案</b><br>
+        <small>实验待卡</small></td>
+    <td class="ok-box" style="padding:6px 10px"><b>≈ 10/02–10/03</b></td>
   </tr>
   <tr>
     <td><b>正在重下 / 下载中</b><br>
@@ -1008,9 +1025,20 @@ cd /nas_train/app.e0031982/code/super_intelligence_2035 &amp;&amp; git fetch ori
     <tr><th>#</th><th>事项</th><th>现状 / 需要的动作</th></tr>
     <tr>
       <td><b>1</b></td><td><b>P-8 的启动配置 —— 尤其「用什么数据」</b><br>
-          <small>运维明确：「<b>启动配置需要慎重</b>」</small></td>
-      <td>已派 <b>data agent §0.5 C</b> 给「P-8 数据方案定稿」（实测 token / 配比 / 切分 / 磁盘 / 命令）<br>
-          ⚠️ <b>定稿后仍需你过目</b>（因为 P-8 是 12.5 天的一次性大投入）</td>
+          <small>运维已给出方向：<b>follow MiniCPM5 的 WSD 双阶段配比</b>（见下表）</small></td>
+      <td>🟢 <b>已从"拍脑袋"变成"有配方可循"</b> —— 已派 <b>data agent §0.6</b> 做配比实验：<br>
+          <b>Stable 段</b>（base + UltraX-Preview + Math + Code）→ 代理 <b>Xmodel-2 Table 2 的 8 个</b><br>
+          <b>Decay 段</b>（L3 + Math + Code + <b>SFT-2605</b> + <b>SFT-Agent-2609</b>）→ 代理 <b>Table 3 的 6 个</b><br>
+          ⚠️ <b>配比定稿后仍需你过目</b>（P-8 是 12.5 天的一次性大投入）</td>
+    </tr>
+    <tr>
+      <td><b>📍</b></td><td><b>一条需要你知晓的<b>框架级</b>影响</b><br>
+          <small>来自 Xmodel-2 的 decay 配比结论</small></td>
+      <td>Xmodel-2 实测最优 <b>SFT 数据占比 60–69%（取 64%）</b> —— 即
+          <b>SFT 数据是进到「预训练 decay 段」里的</b>，<b>不是事后单独做一遍 SFT</b>。<br>
+          → 这<b>模糊了 Stage (i) 与 Stage (ii) 的边界</b>：decay 段本身就是「带 SFT 数据的退火」。<br>
+          <b>→ 我们的 P-8 与 Stage (ii) 的关系需要按此重划</b>（但<b>10 月不展开</b>，先按 data agent 的配比方案走）。
+          <small>这与运维给的 decay 假设（含 SFT-2605 / SFT-Agent-2609）<b>一致</b>。</small></td>
     </tr>
     <tr>
       <td><b>2</b></td><td><b>vision 正式训练的规格与时机</b><br>
