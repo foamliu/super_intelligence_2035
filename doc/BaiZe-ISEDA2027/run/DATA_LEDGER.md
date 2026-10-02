@@ -10,12 +10,12 @@
 
 | 线 | 数据集 | 实测规模 | 状态 | 用途 |
 |:---|:---|:---|:---|:---|
-| 通用文本·主体 | Ultra-FineWeb（base） | **2.99 TB / 2.72 TiB = 64,624 parquet / 4 config**（`ultrafineweb_en`2048 + `ultrafineweb_en_v1_4`~62k 主体 + `ultrafineweb_l1_en_hq` 快照 + `ultrafineweb_zh`256）✅；**en 已在盘 1303/2048（复用旧 1286 + 新下 17+）**：`/nas_train`…Ultra-FineWeb/data/ultrafineweb_en 残留旧 **1286/2048（1.67TB，2026-02）已复用** | 🟠 **下载中**（R2 启动 → **改落 `/nas_train` 复用旧 1286**；`--include data/ultrafineweb_en/*` 避 64k 全量树崩溃，~16MB/s；en 完后续下 en_v1_4/zh/l1_en_hq ≈0.33TB） | **Stage(i) 预训练主体（R2 改判：base 替 L3 做主体）** |
+| 通用文本·主体 | Ultra-FineWeb（base） | **2.99 TB / 2.72 TiB = 64,624 parquet / 4 config**（`ultrafineweb_en`2048 + `ultrafineweb_en_v1_4`~62k 主体 + `ultrafineweb_l1_en_hq` 快照 + `ultrafineweb_zh`256）✅；**en 已在盘 1321/2048（复用旧 1286 + 新下 ~35）**：`/nas_train`…Ultra-FineWeb/data/ultrafineweb_en 残留旧 **1286/2048（1.67TB，2026-02）已复用** | 🟠 **下载中**（R2 启动 → **改落 `/nas_train` 复用旧 1286**；`--include data/ultrafineweb_en/*` 避 64k 全量树崩溃，速率受 vision R9 争抢降至 ~3-4MB/s；en 完后续下 en_v1_4/zh/l1_en_hq ≈0.33TB） | **Stage(i) 预训练主体（R2 改判：base 替 L3 做主体）** |
 | 通用文本·退火/decay | Ultra-FineWeb-L3 | **1764 parquet / 1.9 TB**，≈**690B token** | ✅ 已下全 | 退火/decay 档（合成 Q&A，README 明为 base 派生） |
 | 通用文本·退火 | UltraData-Code | **1121 parquet / 1.22 TB**，≈**411B token**（L2 355B + L3 56B） | ✅ 已下载 | 退火 code |
 | 通用文本·退火 | UltraData-Math | **1823 parquet / 552 GB**，≈**303B token**（L1 184B + L2p 32B + L3 87B） | ✅ 已下载 | 退火 math |
-| 通用文本·SFT | UltraData-SFT-2605 / -Agent-2609 | **2605 下载中（952/1504 jsonl，80G/318.99GB；no_think 855✓ 全下满；think 中国-general 50✓ + Code 47/279）**；Agent-2609=jsonl 50shard/51GiB | 🟠 部分就绪 | Stage(ii) SFT |
-| 通用多模态 | LLaVA-OneVision-1.5 Mid-85M | EN **5601** + CN **1948** parquet（7549，下载中，sa1b/zero250m 未下） | 🟠 下载中 | 视觉编码器 + MLLM 对齐 |
+| 通用文本·SFT | UltraData-SFT-2605 / -Agent-2609 | **2605 下载中（1025/1504 jsonl，135G/318.99GB；no_think 855✓ 全下满；think 170/649 = Chinese-general 50✓ + Code 121/279）**；Agent-2609=jsonl 50shard/51GiB | 🟠 部分就绪 | Stage(ii) SFT |
+| 通用多模态 | LLaVA-OneVision-1.5 Mid-85M | EN **5601** + CN **1948** parquet（🔴 **已停、冻结 7629 parquet/26T，sa1b/zero250m 未下**，运维令停 85M 让位 base/gpic） | ⏸ 已停（不删） | 视觉编码器 + MLLM 对齐 |
 | 通用多模态·已派生 | baize-vision/en500k | 25 tar / **68.59 GiB** | ✅ 已就绪 | Stage(iii) 四架构对比（完成） |
 | 通用多模态·已派生 | baize-vision/eval5k | 1 tar / **1.27 GiB**（laioncn/EN） | ✅ 已就绪 | 检索代理评估（held-out） |
 | **领域（EDA）** | PyAether/SKILL API 参考文档（`eda_fastmcp/docs/`）、EDA 工具文档、开源 HDL | **已确认来源 ≈45MB 纯文本**（API 参考文档） | 🟡 待授权确认 + 待入库 | Stage(ii) 领域退火 + SFT（最关键） |
