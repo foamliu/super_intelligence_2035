@@ -42,7 +42,7 @@ WAITING: 1
 | PHASE | **H_A_feasibility_done**（H-B 5/5 完成；H-A §1.1 可行性核查完成 → 待运维拍板 Docker 权限 + 运行主机，再进入实跑） |
 | WAITING | 1（等运维决策：Docker 权限 / 运行主机 / Route E′ 规模） |
 | ERROR_COUNT | 0 |
-| 更新 | 2026-10-03 02:02（唤醒巡检：`git fetch` 确认远端无新提交、任务书运维指令区未变；H-A 保持阻塞待拍板） |
+| 更新 | 2026-10-03 02:33（唤醒巡检：`git fetch` 确认远端无新提交、任务书运维指令区未变；H-A 保持阻塞待拍板） |
 | 产出 | ✅ H-B：`harness/{cline,opencode,deepseek-harness,codex,claude-code}_SOURCE_ANALYSIS.html`（5 份）· ✅ `harness/MERGE_OVERLAP_ANALYSIS.md` · ✅ `harness/SWEBENCH_FEASIBILITY.md` |
 
 ## 📊 进度快照（**每次唤醒必须更新**）
@@ -50,7 +50,7 @@ WAITING: 1
 ```
 PHASE:        H_A_feasibility_done
 已完成:       H-B 五个 harness 五条主线源码分析 + HTML（自包含）；H-A §1.1 可行性核查 + 报告
-当前动作:     2026-10-03 02:02 唤醒巡检：`git fetch` 确认远端无新提交、运维指令区仍为原始首启指令（无新决策/无 STOP/无状态索取）；阻塞未解除
+当前动作:     2026-10-03 02:33 唤醒巡检：`git fetch` 确认远端无新提交（HEAD==origin/main==2694fee）、运维指令区仍为原始首启指令（无新决策/无 STOP/无状态索取）；阻塞未解除
 下一步:       等运维拍板（Docker 权限 + 运行主机 + Route E′ 规模）→ 再启动 H-A 试点（django+sympy 20–30 条）
 阻塞:         要看运维 —— ① Docker 权限（usermod -aG docker 或走 Route E′）② 运行主机（.29 是训练机，重 I/O 冲突）
 ERROR_COUNT:  0
