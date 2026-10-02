@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Claude Code CLI 源码分析 — 以上下文压缩为切入点的五条主线</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#c9d1d9;--muted:#8b949e;--accent:#3fb950;--a2:#58a6ff;--warn:#d2991d;--code:#1f2937}
+*{box-sizing:border-box}body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.65;max-width:1080px;margin:0 auto;padding:2rem}
+h1{font-size:2rem;color:#fff;text-align:center}h2{font-size:1.4rem;margin:2.5rem 0 1rem;color:#fff;border-bottom:2px solid var(--border);padding-bottom:.4rem}
+h3{font-size:1.1rem;margin:1.6rem 0 .6rem;color:var(--a2)}h4{color:#e6edf3;margin:1rem 0 .4rem}
+.subtitle{text-align:center;color:var(--muted);margin-bottom:2rem;font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.4rem;margin:1rem 0}
+code,.code{font-family:'SF Mono',Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:4px;font-size:.9em}
+pre{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:.9rem;overflow-x:auto;font-size:.82rem;line-height:1.5}
+pre code{background:none;padding:0}
+table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.86rem}th,td{border:1px solid var(--border);padding:.5rem .7rem;text-align:left;vertical-align:top}th{background:#21262d}
+.tag{display:inline-block;padding:.1em .6em;border-radius:12px;font-size:.75rem;font-weight:600}
+.t1{background:#1b3826;color:#3fb950}.t2{background:#1a2b3a;color:#58a6ff}.t3{background:#3a2f1a;color:#d2991d}.t4{background:#2a1f3a;color:#bc8cff}.t5{background:#3a1f1f;color:#f85149}
+.diagram{background:#0a0e14;border:1px solid var(--border);border-radius:8px;padding:.8rem;overflow-x:auto;font-family:'SF Mono',Consolas,monospace;font-size:.8rem;line-height:1.55;white-space:pre}
+.footnote{color:var(--muted);font-size:.82rem}
+a{color:var(--a2)}
+.toc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.4rem}
+.toc ol{padding-left:1.5rem}
+li{margin:.25rem 0}
+.quote{border-left:3px solid var(--accent);padding:.2rem .8rem;color:var(--muted);margin:.5rem 0;font-size:.88rem}
+.warnbox{border:1px solid var(--warn);border-radius:8px;padding:.8rem 1rem;margin:1rem 0;background:#1a1610}
+</style>
+</head>
+<body>
+
+<h1>Claude Code CLI 源码分析</h1>
+<p class="subtitle">以 <b>上下文压缩（Compaction）</b> 为切入点，沿「上下文生命周期」展开五条主线<br>
+源码根：<code>/nas_train/app.e0031982/harness/claude-code/</code> · 报告日期：2026-10-02 · 上游 commit <code>6f6f12b</code><br>
+铁律：每条结论贴 <code>路径:行号</code> 原文 · 查不到的写「查不到 + 查了什么」</p>
+
+<div class="warnbox">⚠️ <b>特殊背景（必须先说）</b>：这不是「克隆/复刻」repo，而是 <b>Anthropic Claude Code CLI 的泄漏源码</b>（README 写明 <i>«Leaked Source (2026-03-31)»</i>，经 npm 包里暴露的 <code>.map</code> 文件泄出）。因此它 <b>并非完整</b>：<code>README.md</code> 自述「Some modules … were not included in the leak（Anthropic-internal <code>@ant/*</code> packages, some tools）… replaced with stubs」。实测证据：<code>tools/SnipTool/SnipTool.ts:1-2</code> 全文为 <code>// Stub: This module was not included in the leaked source. / export const SnipTool = null</code>；<code>messages.ts:4650</code> <code>require('../services/compact/snipProjection.js')</code> 指向的文件在该目录<b>不存在</b>；README 称 <code>QueryEngine.ts</code>「~46K lines」，实测仅 <b>1,295 行 / 46 KB</b>（lines/bytes 混淆或截断）。本报告所有结论仅针对「泄漏后可读」的部分成立。</div>
+
+<div class="toc"><b>目录</b>
+<ol>
+<li><a href="#overview">0. 概况与术语体系</a></li>
+<li><a href="#panorama">1. 上下文生命周期全景图（总图）</a></li>
+<li><a href="#l1">2. 线1 — 上下文注入与「投影」管线</a></li>
+<li><a href="#l2">3. 线2 — 检查点与「boundary 切片」式恢复</a></li>
+<li><a href="#l3">4. 线3 — Hook / 插件 / Skill（扩展边界）</a></li>
+<li><a href="#l4">5. 线4 — Todo / Session Memory 任务状态跨压缩存活</a></li>
+<li><a href="#l5">6. 线5 — 模型能力适配与 token 计数策略</a></li>
+<li><a href="#tradeoff">7. 与 cline / opencode / deepseek / codex 的对照 · 设计取舍</a></li>
+</ol>
+</div>
+<h2 id="overview">0. 概况与术语体系</h2>
+<div class="card">
+<p><b>Claude Code</b> 是 Anthropic 官方「终端里的 agent」。技术栈（<code>package.json</code> / <code>README.md</code>）：<b>TypeScript + Bun</b> 运行时，<b>React + Ink</b>（React 渲染 CLI）做 TUI，<b>Commander.js</b> 解析 CLI，<b>Zod v4</b> 校验，<b>ripgrep</b> 做代码搜索，<b>MCP SDK / LSP</b> 接协议，OpenTelemetry + gRPC 遥测，GrowthBook 做 feature flag。核心引擎是两个大文件：<code>QueryEngine.ts</code>（1,295 行，Anthropic API 调用 / 流式 / 工具循环 / 重试）与 <code>query.ts</code>（query loop，68KB）。</p>
+<p>它给自己建立的术语体系，本质是把<b>「持久的事实源」与「要注入模型的投影片段」严格分离</b>：</p>
+<table>
+<tr><th>术语</th><th>含义</th><th>证据</th></tr>
+<tr><td><b>SystemCompactBoundaryMessage</b></td><td>压缩点插入的 <code>type:'system', subtype:'compact_boundary'</code> 标记，带 <code>compactMetadata{trigger,preTokens,userContext,messagesSummarized}</code> 与 <code>logicalParentUuid</code>（链回压缩前最后一条消息）。</td><td><code>utils/messages.ts:4530-4555</code></td></tr>
+<tr><td><b>SystemMicrocompactBoundaryMessage</b></td><td>「微压缩」标记（清掉旧工具结果/附件），带 <code>microcompactMetadata{tokensSaved,compactedToolIds,…}</code>。</td><td><code>utils/messages.ts:4557-4583</code></td></tr>
+<tr><td><b>Transcript（JSONL）</b></td><td>append-only 的会话事实源，每个 session 一个 <code>.jsonl</code>，<b>完整历史永不删除</b>；模型可见视图从它「投影」出来。</td><td><code>utils/sessionStorage.ts</code>（<code>parseJSONL</code> / <code>getTranscriptPath</code>）</td></tr>
+<tr><td><b>normalizeMessagesForAPI</b></td><td>把完整消息流「投影」成 Anthropic API 参数的最终转换；system 类 meta 消息在此被过滤。</td><td><code>utils/messages.ts:1989</code></td></tr>
+<tr><td><b>getMessagesAfterCompactBoundary</b></td><td>取「最近一个 boundary 之后（含 boundary）」的切片，是模型侧上下文投影的核心。</td><td><code>utils/messages.ts:4643-4656</code></td></tr>
+<tr><td><b>Session Memory / auto-memory</b></td><td>「长期目标/记忆」：独立 markdown 文件（非消息流），forked subagent 周期性抽取，跨压缩存活。</td><td><code>services/SessionMemory/sessionMemory.ts</code>；<code>services/extractMemories/extractMemories.ts</code></td></tr>
+<tr><td><b>TodoWrite(todo list)</b></td><td>「接下来做什么」：V1 存 <code>appState.todos[todoKey]</code>，V2 落盘 <code>~/.claude/tasks/</code>，与对话解耦。</td><td><code>tools/TodoWriteTool/TodoWriteTool.ts:65-94</code>；<code>utils/tasks.ts:199/221</code></td></tr>
+</table>
+<p class="footnote">⚠️ 任务书 5 条线用的是 <b>cline 旧 vscode 架构名</b>（<code>ContextPipelinePrepareTurn</code> / <code>EditType</code>·<code>ContextUpdate</code> / 时间戳截断 / Focus Chain / <code>context-window-utils.ts</code>）。claude-code 是<b>完全不同的代码库</b>，内核<b>同构但形态不同</b>：预处理 = <code>getSystemPrompt</code>+<code>getUserContext</code>+<code>getSystemContext</code>（memoize 前置注入）+ <code>normalizeMessagesForAPI</code>（投影）；无损编辑 = <b>append-only JSONL + boundary 切片</b>（非 EditMap）；Focus Chain = <b>TodoWrite + Session Memory</b>。本报告逐线给「旧→新」对照。</p>
+</div>
+
+<h2 id="panorama">1. 上下文生命周期全景图（总图）</h2>
+<div class="card">
+<div class="diagram">                          ┌──────────────────────────────────────────────────────────────┐
+                          │           持久事实源（append-only JSONL transcript，永不删）        │
+                          │   ... pre-compact messages | boundary | summary | messagesToKeep | ... │
+                          └──────────────────────────────────────────────────────────────┘
+                                                     │ 读入 / 投影
+  user input ──▶ REPL query loop ──▶ Promise.all([ getSystemPrompt, getUserContext, getSystemContext ])   ← 线1 注入
+        │                                  │
+        │                                  ▼
+        │                    shouldAutoCompact?（tokenCountWithEstimation ≥ 阈值）                 ← 线5 计数
+        │                       │ yes（且未触发 circuit breaker）
+        │                       ▼
+        │              executePreCompactHooks ──▶ forked agent 生成摘要 ──▶ 插入 boundary         ← 线3 PreCompact / 线2 锚点
+        │                                  │  executePostCompactHooks
+        │                                  ▼
+        └──────────────▶ normalizeMessagesForAPI( getMessagesAfterCompactBoundary(messages) ) ──▶ API ──▶ model
+                                                      ▲
+                          todo(AppState/disk) / session-memory(md) / auto-memory   ──▶  线4（不在消息流内，压缩不碰）
+</div>
+<p class="footnote">五条线的位置：<span class="tag t1">线1</span>=注入/投影管线（上游）· <span class="tag t2">线2</span>=boundary 切片+JSONL 持久化（回滚路径）· <span class="tag t3">线3</span>=PreCompact/PostCompact Hook 与插件· <span class="tag t4">线4</span>=Todo/SessionMemory（旁路，不被压缩）· <span class="tag t5">线5</span>=token 计数与模型阈值（触发条件）。</p>
+</div>
+<h2 id="l1">2. 线1 — 上下文注入与「投影」管线</h2>
+<div class="card">
+<h3>① 它解决什么问题</h3>
+<p>每次请求发给模型前，要把「系统提示 / 环境上下文 / 用户配置（CLAUDE.md）/ git 状态」注入进去。claude-code 没有 cline 那种单一 <code>ContextPipelinePrepareTurn</code> 拦截器，而是把「上下文装配」拆成 <b>多个 memoize 的纯函数</b> + 一个「消息投影」函数。</p>
+<h3>② 怎么实现（贴原文）</h3>
+<p><b>注入分三块，装配在 REPL 的 query loop 里 <code>Promise.all</code> 并行拉取</b>：</p>
+<pre><code>// screens/REPL.tsx:2535
+const [defaultSystemPrompt, userContext, systemContext] = await Promise.all([
+  getSystemPrompt(toolUseContext.options.tools, mainLoopModel, ...),
+  getUserContext(), getSystemContext(),
+])</code></pre>
+<p><b>系统上下文（git 状态快照）+ 用户上下文（CLAUDE.md）都是 memoize 的、会话内只算一次</b>：</p>
+<pre><code>// context.ts:113-115  ← getSystemContext / getUserContext 的注释
+/** This context is prepended to each conversation, and cached for the
+ *  duration of the conversation. */
+export const getSystemContext = memoize(async () =&gt; { ... })   // :116
+export const getUserContext  = memoize(async () =&gt; { ... })   // :155
+// getUserContext 返回 { claudeMd, currentDate: `Today's date is ${getLocalISODate()}.` }  :184-187</code></pre>
+<p><b>系统提示主体在 <code>constants/prompts.ts:444</code> 的 <code>getSystemPrompt(tools, model, mcpClients)</code></b>（914 行文件），根据 model / tools / skills / env 动态拼装；<code>getSystemContext</code> 里 git 状态被截断到 2k 字符：</p>
+<pre><code>// context.ts:20, 85-89
+const MAX_STATUS_CHARS = 2000
+const truncatedStatus = status.length &gt; MAX_STATUS_CHARS
+  ? status.substring(0, MAX_STATUS_CHARS) + '\n... (truncated because it exceeds 2k characters...)' : status</code></pre>
+<h3>③ 数据流图</h3>
+<div class="diagram">getSystemPrompt(tools,model,mcp) ─┐
+getUserContext()  (CLAUDE.md, date) ─┼─▶ Promise.all ─▶ prepend 到消息头
+getSystemContext() (git status, cacheBreaker) ─┘
+                        │
+完整 messages（含 system meta / 完整历史 / snip 标签）
+        → getMessagesAfterCompactBoundary()（切片，去 pre-compact）
+        → (HISTORY_SNIP 时) projectSnippedView()（过滤 snipped 消息）
+        → normalizeMessagesForAPI()（滤掉 system meta 消息 → API 参数）      ←「投影」终点</div>
+<h3>④ 代价与边界</h3>
+<ul>
+<li>「无损投影」的 claude-code 版 = <b>完整 transcript（事实源）vs 模型投影视图</b>，而非 cline 的「逐消息 EditMap」。边界消息、api_error、snip 标签等 <code>type:'system'</code> meta 消息在 <code>normalizeMessagesForAPI</code> 被滤掉，但它们仍留在内存/盘上（UI 滚动回看不丢）。</li>
+<li>代价：注入是「按会话 memoize」的，意味着 <code>getUserContext</code> / <code>getSystemContext</code> <b>一旦算出就不再随会话演进而更新</b>（git status 写死「snapshot in time, will not update」）。需要强制刷新得手动 <code>.cache.clear()</code>（见 <code>commands/clear/caches.ts:52-53</code>）。</li>
+<li><code>systemPromptInjection</code>（cache breaker）是 ant-only 调试态，靠改注入就 <code>clear()</code> 缓存来破坏 prompt cache（<code>context.ts:29-34</code>）。</li>
+</ul>
+<h3>⑤ 我的判断</h3>
+<p>claude-code 把「上下文注入」实现成<b>函数式、可缓存、可并行</b>的装配，而非一个处处拦截的中间件管线。这更简单直接，但也意味着<b>没有单一可挂载的「prepareTurn」节点</b>——这与线3「能否插件化拦截底层管线」直接相关（见 §4）。</p>
+</div>
+
+<h2 id="l2">3. 线2 — 检查点与「boundary 切片」式恢复</h2>
+<div class="card">
+<h3>① 它解决什么问题</h3>
+<p>压缩后如何「回滚 / 恢复」到压缩前？claude-code 的答案不是时间戳截断（cline），也不是事件重放（deepseek），而是：<b>append-only transcript + 一条 in-band 的 boundary 标记 + 「切片」投影</b>。</p>
+<h3>② 怎么实现（贴原文）</h3>
+<p><b>边界消息是「写进 transcript 里的检查点标记」</b>，并带 <code>logicalParentUuid</code> 链回压缩前最后一条消息：</p>
+<pre><code>// utils/messages.ts:4530-4555
+export function createCompactBoundaryMessage(trigger, preTokens, lastPreCompactMessageUuid, userContext, messagesSummarized) {
+  return { type:'system', subtype:'compact_boundary', content:`Conversation compacted`,
+    timestamp, uuid, level:'info',
+    compactMetadata:{ trigger, preTokens, userContext, messagesSummarized },
+    ...(lastPreCompactMessageUuid &amp;&amp; { logicalParentUuid: lastPreCompactMessageUuid }),
+  }
+}</code></pre>
+<p><b>压缩结果 &amp; 压缩后消息的固定顺序（boundary → summary → keep → attachments → hookResults）</b>：</p>
+<pre><code>// services/compact/compact.ts:299-310, 330-338
+export interface CompactionResult {
+  boundaryMarker: SystemMessage
+  summaryMessages: UserMessage[]
+  attachments: AttachmentMessage[]
+  hookResults: HookResultMessage[]
+  messagesToKeep?: Message[]
+  ...
+}
+export function buildPostCompactMessages(r) {
+  return [r.boundaryMarker, ...r.summaryMessages, ...(r.messagesToKeep ?? []), ...r.attachments, ...r.hookResults]
+}</code></pre>
+<p><b>「投影 / 恢复」= 找最近一个 boundary，从它往后切</b>（pre-compact 消息留盘、不进模型侧）：</p>
+<pre><code>// utils/messages.ts:4618-4643
+export function findLastCompactBoundaryIndex(messages) { /* 从后往前扫，返回最近 boundary 下标 */ }
+export function getMessagesAfterCompactBoundary(messages, options?) {
+  const boundaryIndex = findLastCompactBoundaryIndex(messages)
+  const sliced = boundaryIndex === -1 ? messages : messages.slice(boundaryIndex)
+  if (!options?.includeSnipped &amp;&amp; feature('HISTORY_SNIP'))   // 再叠加 snip 投影
+    return projectSnippedView(sliced)
+  return sliced
+}</code></pre>
+<p><b>盘上持久化的「跳过 pre-compact」阈值（resume 用）</b>：</p>
+<pre><code>// utils/sessionStoragePortable.ts:480
+export const SKIP_PRECOMPACT_THRESHOLD = 5 * 1024 * 1024   // 读取 transcript 时据此跳过 pre-compact 段</code></pre>
+<p><b>partial compact 的「保留段重链接」元数据</b>（边界消息上再挂 <code>preservedSegment{headUuid,anchorUuid,tailUuid}</code>）：</p>
+<pre><code>// services/compact/compact.ts:349-367
+export function annotateBoundaryWithPreservedSegment(boundary, anchorUuid, messagesToKeep) {
+  ...  return {...boundary, compactMetadata:{...boundary.compactMetadata,
+    preservedSegment:{ headUuid: keep[0].uuid, anchorUuid, tailUuid: keep.at(-1).uuid }}}
+}</code></pre>
+<h3>③ 数据流图</h3>
+<div class="diagram">append-only transcript (.jsonl)
+  └─ 压缩时：executePreCompactHooks → forked agent 生成摘要 → createCompactBoundaryMessage(+logicalParentUuid)
+       → buildPostCompactMessages([boundary, summary, keep, attachments, hookResults]) 写回 transcript
+  └─ 恢复/发请求：readTranscriptForLoad（SKIP_PRECOMPACT_THRESHOLD 跳过 pre-compact）
+       → getMessagesAfterCompactBoundary（slice(boundaryIndex)）→ normalizeMessagesForAPI → API</div>
+<h3>④ 代价与边界</h3>
+<ul>
+<li><b>「非破坏」</b>体现在：pre-compact 消息<b>从不删除</b>，只靠 boundary 标记 + 切片把它从模型视图里「摘出」。UI 滚动回看仍能见到完整历史。</li>
+<li><b>「回滚」语义弱</b>：测得 .ts 里<b>没有</b> <code>uncompact/revert/rollback</code> 这类用户态 API（grep 命中仅 <code>RecompactionInfo</code> 诊断字段、<code>uncompacted</code> 形容词）。回滚靠的是「换 boundary 重新切片」这个<b>投影层动作</b>，而非显式 undo。</li>
+<li>与 cline「PR #12747 专门修 compaction sidecar 可靠性」对照：claude-code 的「sidecar」就是<b>这条 in-band boundary 消息本身</b>（存在 transcript 里），没有独立的 sidecar 文件，因此不会出现「sidecar 丢而 transcript 在」的裂脑问题——但也意味着 boundary 一旦没写进 transcript，恢复就没有独立抓手。</li>
+</ul>
+<h3>⑤ 我的判断</h3>
+<p>claude-code 的检查点模型是<b>「单事实源 + 切片投影」</b>：事实源是 append-only JSONL，boundary 是写进源里的锚，视图靠切片产生。<b>优点</b>：无 sidecar 一致性负担、历史天然可回看；<b>代价</b>：无用户态回滚、pre-compact 段长期占盘（靠 <code>SKIP_PRECOMPACT_THRESHOLD</code> 只做读时跳过，不做物理裁剪）。这与 codex 的「WorldState Diff / AutoCompactWindow sidecar」、deepseek 的「重放即回滚」各是一条独立技术路线。</p>
+</div>
+<h2 id="l3">4. 线3 — Hook / 插件 / Skill（扩展边界）</h2>
+<div class="card">
+<h3>① 它解决什么问题</h3>
+<p>把「上下文调控能力」开放给外部。claude-code 的答案是三件套：<b>Hook（事件级拦截）+ 插件（Hook/MCP/Skill 打包分发）+ Skill（可复用工作流）</b>。</p>
+<h3>② 怎么实现（贴原文）</h3>
+<p><b>Hook 事件全集（27 个，比 cline 的 beforeRun/afterRun/beforeTool 宽得多，且有 PreCompact/PostCompact）</b>：</p>
+<pre><code>// entrypoints/sdk/coreTypes.ts:25-53
+export const HOOK_EVENTS = [
+  'PreToolUse','PostToolUse','PostToolUseFailure','Notification','UserPromptSubmit',
+  'SessionStart','SessionEnd','Stop','StopFailure','SubagentStart','SubagentStop',
+  'PreCompact','PostCompact',
+  'PermissionRequest','PermissionDenied','Setup','TeammateIdle','TaskCreated','TaskCompleted',
+  'Elicitation','ElicitationResult','ConfigChange','WorktreeCreate','WorktreeRemove',
+  'InstructionsLoaded','CwdChanged','FileChanged',
+] as const</code></pre>
+<p><b>Hook 有 4 种执行形态（command / prompt / http / agent），且每个带 <code>if</code> 权限式匹配与 once/async/asyncRewake</b>：</p>
+<pre><code>// schemas/hooks.ts:32-65（BashCommandHookSchema）
+{ type:'command', command, if: IfConditionSchema(), shell, timeout,
+  statusMessage, once, async, asyncRewake }
+// schemas/hooks.ts:194-213 Hook 配置 = Partial&lt;Record&lt;HookEvent, HookMatcher[]&gt;&gt;
+// HookMatcher = { matcher?: string, hooks: HookCommand[] }</code></pre>
+<p><b>压缩路径上 Hook 确实被调用（PreCompact 注入自定义指令）</b>：</p>
+<pre><code>// services/compact/compact.ts:411-423
+const hookResult = await executePreCompactHooks(
+  { trigger: isAutoCompact ? 'auto' : 'manual', customInstructions: customInstructions ?? null },
+  context.abortController.signal)
+customInstructions = mergeHookInstructions(customInstructions, hookResult.newCustomInstructions)</code></pre>
+<p><b>插件 = manifest + hooks + mcpServers + skills 的打包单位</b>：</p>
+<pre><code>// plugins/builtinPlugins.ts:6-19
+/** They can provide multiple components (skills, hooks, MCP servers) */
+// plugin IDs: `{name}@builtin` vs `{name}@{marketplace}`  → enable/disable 持久化到 settings</code></pre>
+<h3>③ 数据流图</h3>
+<div class="diagram">Hook 触发点（QueryEngine/query loop / toolExecution / compact.ts / sessionStart）
+   → 匹配 hook 配置 (Partial&lt;Record&lt;HookEvent, HookMatcher[]&gt;&gt;，if 权限规则过滤)
+   → 执行 command / prompt(llm) / http / agent(子agent) 四类 hook
+   → 结果：PreToolUse 可拦/改参数，PostToolUse 可读结果，PreCompact 可注入 customInstructions，
+        hookResult 作为 HookResultMessage 进 transcript</div>
+<h3>④ 代价与边界</h3>
+<ul>
+<li><b>核心问题（Auto Compact 可否插件化实现？）—— 答：部分可。</b>Hook 能拦截到 <code>PreCompact</code>/<code>PostCompact</code> 节点、注入自定义指令（<code>mergeHookInstructions</code>），<b>但不能替换压缩引擎本身</b>：摘要生成走的是 <code>compactConversation → getCompactPrompt → streamCompactSummary</code>（forked agent）这条<u>硬编码在 <code>services/compact/</code> 核心</u>的路径，<code>PreCompact</code> hook 只能在它前面「加指令 / 加副作用」，拦不住也不替换总结动作。</li>
+<li><b>扩展边界结论</b>：<b>硬编码在核心</b>的 = 压缩引擎、token 预算/阈值、forked-agent 总结、prompt-cache 管理；<b>留给生态</b>的 = 事件级 Hook（含 PreCompact/PostCompact）、插件打包的 MCP server / Skill、权限决策旁路。<u>压缩策略本身不做成插件</u>，与 deepseek-harness「压缩以插件形态实现但不开放给第三方」形成两种取向。</li>
+<li>代价：Hook 是<b>进程外 command / 额外 LLM 调用</b>（prompt/agent 类）——每次触发都有 spawn/roundtrip 开销；once/async/asyncRewake 引入并发与「唤醒模型」复杂度。</li>
+</ul>
+<h3>⑤ 我的判断</h3>
+<p>claude-code 的 Hook 粒度（27 事件 × 4 形态 × if 匹配）是四个 harness 里<b>最细、最像「可编程操作系统」</b>的，尤其 PreCompact/PostCompact 直击本任务主题。但它的「压缩」本体仍是<b>核心硬编码</b>，生态拿到的只是压缩「前后」的插入点，而非「中间」的替换点。</p>
+</div>
+
+<h2 id="l4">5. 线4 — Todo / Session Memory 任务状态跨压缩存活</h2>
+<div class="card">
+<h3>① 它解决什么问题</h3>
+<p>压缩只收「对话说了什么」，而「接下来要做什么」「长期该记住什么」必须跨压缩存活。claude-code 用<b>三条旁路</b>把短期记忆（对话）与长期目标（todo / memory）解耦。</p>
+<h3>② 怎么实现（贴原文）</h3>
+<p><b>① TodoWriteTool（V1）—— todo 存在 AppState，按 agent/session 键控，不进消息流</b>：</p>
+<pre><code>// tools/TodoWriteTool/TodoWriteTool.ts:65-94
+async call({ todos }, context) {
+  const appState = context.getAppState()
+  const todoKey = context.agentId ?? getSessionId()
+  const oldTodos = appState.todos[todoKey] ?? []
+  ...
+  context.setAppState(prev =&gt; ({ ...prev, todos: { ...prev.todos, [todoKey]: newTodos } }))
+}</code></pre>
+<p><b>② Todo V2 —— 落盘到 <code>~/.claude/tasks/&lt;taskListId&gt;/</code>（taskListId = 团队名/leaderTeamName/sessionId），是可直接跨 session 运行的 task 清单</b>：</p>
+<pre><code>// utils/tasks.ts:199-224
+export function getTaskListId(): string {
+  if (process.env.CLAUDE_CODE_TASK_LIST_ID) return process.env.CLAUDE_CODE_TASK_LIST_ID
+  const teammateCtx = getTeammateContext(); if (teammateCtx) return teammateCtx.teamName
+  return getTeamName() || leaderTeamName || getSessionId()
+}
+export function getTasksDir(taskListId) { return join(getClaudeConfigHomeDir(), 'tasks', ...) }</code></pre>
+<p><b>③ Session Memory / auto-memory —— 后台 subagent 周期抽取「本会话要点」写独立 markdown</b>：</p>
+<pre><code>// services/SessionMemory/sessionMemory.ts:1-6
+/** Session Memory automatically maintains a markdown file with notes about the
+ *  current conversation. It runs periodically in the background using a forked
+ *  subagent to extract key information without interrupting the main conversation flow. */
+// services/extractMemories/extractMemories.ts:1-6
+/** Extracts durable memories ... writes them to the auto-memory directory
+ *  (~/.claude/projects/&lt;path&gt;/memory/). ... runs once at the end of each complete query loop */</code></pre>
+<h3>③ 数据流图</h3>
+<div class="diagram">对话 (messages) ──压缩──▶ boundary + 摘要        （被压缩 = 「收」）
+todo   V1 → appState.todos[todoKey]（内存，会话内）
+       V2 → ~/.claude/tasks/&lt;id&gt;/*.json（磁盘，跨会话/跨 teammate）
+memory → ~/.claude/projects/&lt;path&gt;/session-memory/*.md（forked subagent 抽）
+         ~/.claude/projects/&lt;path&gt;/memory/*.md（end-of-loop 抽）
+        （↑ 三者都不在消息流里，压缩/切片碰不到它们）</div>
+<h3>④ 代价与边界</h3>
+<ul>
+<li><b>状态归属对照</b>：<b>可被压缩</b> = 对话消息（transcript pre-compact 段）；<b>不可被压缩</b> = todo 清单（AppState / tasks 盘）、session-memory / auto-memory（独立 md）、plan（<code>utils/plans.ts</code> 的 <code>getPlanFilePath</code>）。</li>
+<li>代价：V1 的 <code>appState.todos</code> 是<b>纯内存 React 状态</b>，<b>重启即丢</b>（除非走 V2 落盘）。V1/V2 靠 <code>isTodoV2Enabled()</code> 切换，存在两套并存的分裂。</li>
+<li>Session Memory / auto-memory 用 <b>forked subagent</b>（复用父会话 prompt cache）跑，是「用 token 换长期记忆」——每轮 loop 末或周期性的额外 LLM 调用。</li>
+</ul>
+<h3>⑤ 我的判断</h3>
+<p>claude-code 的「长期目标解耦」是三套机制叠加（todo / session-memory / auto-memory），比 cline 的 Focus Chain（当前多 stub）更落地，但因为机制多、且 V1/V2 并存，<b>「状态到底存哪」没有一个唯一答案</b>——这是它相对 opencode「一张 SQL 表」最不「干净」的地方。</p>
+</div>
+<h2 id="l5">6. 线5 — 模型能力适配与 token 计数策略</h2>
+<div class="card">
+<h3>① 它解决什么问题</h3>
+<p>Auto Compact 的触发依赖「当前上下文用了多少 token」与「模型窗口多大」。claude-code 的计数策略与 cline（3 字符/token、默认 128K）<b>显著不同</b>。</p>
+<h3>② 怎么实现（贴原文）</h3>
+<p><b>窗口默认 200K 而非 128K，且支持 [1m] 后缀 / capability / beta 多级解析</b>：</p>
+<pre><code>// utils/context.ts:9, 51-98
+export const MODEL_CONTEXT_WINDOW_DEFAULT = 200_000
+export function getContextWindowForModel(model, betas?) {
+  if (has1mContext(model)) return 1_000_000          // [1m] 后缀
+  const cap = getModelCapability(model)               // 能力表 max_input_tokens
+  if (cap?.max_input_tokens &amp;&amp; cap.max_input_tokens &gt;= 100_000) return ...cap.max_input_tokens
+  ...
+  return MODEL_CONTEXT_WINDOW_DEFAULT           // 兜底 200_000
+}</code></pre>
+<p><b>「规范」计数 = 上次 API 响应的 usage + 新消息的粗略估算（不是纯字符）</b>：</p>
+<pre><code>// utils/tokens.ts:226-261 tokenCountWithEstimation
+// = getTokenCountFromUsage(usage) + roughTokenCountEstimationForMessages(messages.slice(i+1))
+//   getTokenCountFromUsage = input + cache_creation + cache_read + output  (tokens.ts:46-53)</code></pre>
+<p><b>粗略估算默认 4 字符/token（比 cline 的 3 更保守），JSON 修正为 2</b>：</p>
+<pre><code>// services/tokenEstimation.ts:203-224
+export function roughTokenCountEstimation(content, bytesPerToken = 4) {
+  return Math.round(content.length / bytesPerToken)
+}
+export function bytesPerTokenForFileType(fileExtension) {
+  switch (fileExtension) { case 'json': case 'jsonl': case 'jsonc': return 2; default: return 4 }
+}</code></pre>
+<p>另有「精确」API 计数（<code>countTokens</code>）+ Bedrock 回退；附图/文档固定按 2000 token 保守估（<code>tokenEstimation.ts:400-411</code>：<i>matches microCompact's IMAGE_MAX_TOKEN_SIZE</i>）。</p>
+<p><b>压缩阈值 = 有效窗口 − 20k 摘要输出预留 − 13k 缓冲，且带熔断</b>：</p>
+<pre><code>// services/compact/autoCompact.ts:28-70
+const MAX_OUTPUT_TOKENS_FOR_SUMMARY = 20_000       // p99.99 摘要输出 17,387
+export const AUTOCOMPACT_BUFFER_TOKENS = 13_000
+const MAX_CONSECUTIVE_AUTOCOMPACT_FAILURES = 3      // 熔断：连败 3 次停止重试（曾浪费 ~250K API calls/day）</code></pre>
+<h3>③ 数据流图</h3>
+<div class="diagram">getContextWindowForModel(model,betas) ─▶ 有效窗口 = 窗口 − min(maxOutput, 20k)
+                                     ─▶ 阈值 = 有效窗口 − 13k
+tokenCountWithEstimation(messages)   ─▶ ≥ 阈值 且 未熔断/未禁用 ─▶ autoCompact
+                                       └ 否则：warning/error/blocking 分级提示（calculateTokenWarningState）</div>
+<h3>④ 代价与边界</h3>
+<ul>
+<li><b>provider 适配清单</b>：Bedrock 无 countTokens → <code>countTokensWithBedrock</code> + 需要 foundation/backing model 解析；Vertex 要<b>过滤不支持的 beta</b>（<code>VERTEX_COUNT_TOKENS_ALLOWED_BETAS</code>，见 <code>tokenEstimation.ts:167-170</code>）；1M 上下文按 <code>[1m]</code> 后缀 / capability / beta header 三级判定，HIPAA 可 <code>CLAUDE_CODE_DISABLE_1M_CONTEXT</code> 关闭。</li>
+<li><b>「4 字符/token」是低估风险的修正方向</b>：注释明说 <i>«an underestimate can let an oversized tool result slip into the conversation»</i>（<code>tokenEstimation.ts:230-232</code>），且对 JSON/图/文档做专门修正，避免「压缩触发太晚」。</li>
+<li>代价：计数依赖「上次 API 响应的 usage 存在」，<b>并行工具调用会把同一消息 id 拆成多条 assistant 记录</b>，<code>tokenCountWithEstimation</code> 必须回走到同一 <code>message.id</code> 的首条兄弟记录，否则漏算交错 tool_result（<code>tokens.ts:214-224</code> 注释详解）——这是它比 cline「字符估算」复杂的地方。</li>
+</ul>
+<h3>⑤ 我的判断</h3>
+<p>对照任务书 line5 的「Issue #7772（llama-server 窗口无法自动检测、默认按 128K 导致 131K 模型算错）」，claude-code <b>没有</b>那个具体问题——它默认 200K 且走 capability/beta 多级 <code>getContextWindowForModel</code>。但它引入的<b>新权衡</b>是「usage+粗略双轨计数」的复杂度：精确但依赖 API 回执，估算则靠「4 字符/token」保守兜底。这是四个 harness 里<b>最「工程化」的计数策略</b>（精确 API 路径 + 有损估算路径 + Bedrock/Vertex 分支 + 熔断），也是最重的。</p>
+</div>
+
+<h2 id="tradeoff">7. 与 cline / opencode / deepseek / codex 的对照 · 设计取舍</h2>
+<div class="card">
+<table>
+<tr><th>维度</th><th>cline</th><th>opencode</th><th>deepseek-harness</th><th>codex</th><th><b>claude-code（本报告）</b></th></tr>
+<tr><td>语言/范式</td><td>TS（SDK 迁移后）</td><td>TS + Effect DI</td><td>TS + Cordis 全插件</td><td>Rust 微内核</td><td><b>TS + Bun + React/Ink TUI</b></td></tr>
+<tr><td>预处理管线</td><td>ContextPipelinePrepareTurn 拦截改写</td><td>chat.* hook + Context Epoch</td><td>agent/pre-step waterfall + surface</td><td>WorldState snapshot/render_diff</td><td><b>getSystemPrompt + user/systemContext(memoize) + normalizeMessagesForAPI</b></td></tr>
+<tr><td>无损编辑</td><td>EditMap（EditType/ContextUpdate）</td><td>SQL 截断</td><td>事件溯源 + 影子替换</td><td>WorldState Diff</td><td><b>append-only JSONL + boundary 切片（投影）</b></td></tr>
+<tr><td>检查点</td><td>时间戳截断 + sidecar（PR #12747）</td><td>Context Epoch</td><td>checkpoint-policy flush</td><td>AutoCompactWindow sidecar</td><td><b>in-band boundary 消息（compactMetadata）+ SKIP_PRECOMPACT_THRESHOLD</b></td></tr>
+<tr><td>Hook 粒度</td><td>beforeRun/afterRun/beforeTool（粗）</td><td>chat.*/tool.*/permission.*（细，字符串键）</td><td>hook-protocol 事件</td><td>ext 可插拔宿主</td><td><b>27 事件（含 PreCompact/PostCompact）× 4 形态 × if 匹配</b></td></tr>
+<tr><td>压缩可否插件化</td><td>Auto Compact 硬编码</td><td>provider/config 参数化</td><td>插件形态但不开放第三方</td><td>compaction 核心硬编码</td><td><b>可 hook Pre/Post Compact、可注入指令，不可替换压缩引擎</b></td></tr>
+<tr><td>任务状态解耦</td><td>Focus Chain（多 stub）</td><td>TodoTable 独立 SQL 表</td><td>goal/todo 包</td><td>Goal/Plan 独立 crate</td><td><b>TodoWrite(AppState/盘) + Session Memory + auto-memory（三旁路）</b></td></tr>
+<tr><td>token 估算</td><td>3 字符/token（保守）</td><td>4 字符/token（乐观）</td><td>4 字符/token</td><td>token-budget compaction</td><td><b>usage 回执 + 4 字符/token（JSON=2，图=2000）+ 熔断</b></td></tr>
+<tr><td>窗口默认</td><td>128K（Issue #7772）</td><td>—</td><td>—</td><td>—</td><td><b>200K（[1m]→1M，capability/beta 三级）</b></td></tr>
+</table>
+<p class="footnote">设计取舍一句话：claude-code 是「<b>单事实源（append-only transcript）+ 切片投影 + 超细粒度可编程 Hook</b>」；它的强项是<b>扩展面（Hook）与工程化计数</b>，弱项是<b>无明显用户态回滚、多套并存的任务状态</b>。由于是泄漏源码，部分模块（SnipTool、snipProjection、@ant/*、QueryEngine 疑似截断）缺失，上述结论的完整性受泄漏范围约束。</p>
+</div>
+
+<p class="footnote" style="margin-top:2rem">报告依据可复现命令产出，证据均为 <code>grep/sed/wc</code> 从 <code>/nas_train/app.e0031982/harness/claude-code/src/</code> 直接提取（<code>git rev-parse HEAD = 6f6f12b37f529488b10e53928dd5508bb93535c7</code>）。上游既有线对照见 <code>harness/MERGE_OVERLAP_ANALYSIS.md</code>；本报告为 H-B 第五份（前四：cline / opencode / deepseek-harness / codex）。</p>
+
+</body>
+</html>

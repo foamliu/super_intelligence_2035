@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Codex CLI 源码分析 — 以上下文压缩为切入点的五条主线</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#c9d1d9;--muted:#8b949e;--accent:#3fb950;--a2:#58a6ff;--warn:#d2991d;--code:#1f2937}
+*{box-sizing:border-box}body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.65;max-width:1080px;margin:0 auto;padding:2rem}
+h1{font-size:2rem;color:#fff;text-align:center}h2{font-size:1.4rem;margin:2.5rem 0 1rem;color:#fff;border-bottom:2px solid var(--border);padding-bottom:.4rem}
+h3{font-size:1.1rem;margin:1.6rem 0 .6rem;color:var(--a2)}h4{color:#e6edf3;margin:1rem 0 .4rem}
+.subtitle{text-align:center;color:var(--muted);margin-bottom:2rem;font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.4rem;margin:1rem 0}
+code,.code{font-family:'SF Mono',Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:4px;font-size:.9em}
+pre{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:.9rem;overflow-x:auto;font-size:.82rem;line-height:1.5}
+pre code{background:none;padding:0}
+table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.86rem}th,td{border:1px solid var(--border);padding:.5rem .7rem;text-align:left;vertical-align:top}th{background:#21262d}
+.tag{display:inline-block;padding:.1em .6em;border-radius:12px;font-size:.75rem;font-weight:600}
+.t1{background:#1b3826;color:#3fb950}.t2{background:#1a2b3a;color:#58a6ff}.t3{background:#3a2f1a;color:#d2991d}.t4{background:#2a1f3a;color:#bc8cff}.t5{background:#3a1f1f;color:#f85149}
+.diagram{background:#0a0e14;border:1px solid var(--border);border-radius:8px;padding:.8rem;overflow-x:auto}
+.footnote{color:var(--muted);font-size:.82rem}
+a{color:var(--a2)}
+.toc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.4rem}
+.toc ol{padding-left:1.5rem}
+li{margin:.25rem 0}
+.quote{border-left:3px solid var(--accent);padding:.2rem .8rem;color:var(--muted);margin:.5rem 0;font-size:.88rem}
+</style>
+</head>
+<body>
+
+<h1>Codex CLI 源码分析</h1>
+<p class="subtitle">以 <b>上下文压缩（Compaction）</b> 为切入点，沿「上下文生命周期」展开五条主线<br>
+源码根：<code>/nas_train/app.e0031982/harness/codex/codex-rs/</code> · 报告日期：2026-10-02 · 上游 commit <code>8e6a44b428</code>（2026-09-04）· 铁律：每条结论贴 <code>路径:行号</code> 原文</p>
+
+<div class="toc"><b>目录</b>
+<ol>
+<li><a href="#overview">0. 概况与术语体系</a></li>
+<li><a href="#panorama">1. 上下文生命周期全景图（总图）</a></li>
+<li><a href="#l1">2. 线1 — 上下文注入与「WorldState 投影」管线</a></li>
+<li><a href="#l2">3. 线2 — 检查点与压缩窗口 sidecar（回滚路径）</a></li>
+<li><a href="#l3">4. 线3 — Hook/插件/扩展 API（扩展边界）</a></li>
+<li><a href="#l4">5. 线4 — Goal/Plan 任务状态跨压缩存活</a></li>
+<li><a href="#l5">6. 线5 — 模型能力适配与降级策略</a></li>
+<li><a href="#tradeoff">7. 与 cline / opencode / deepseek 的对照 / 设计取舍</a></li>
+</ol>
+</div>
+
+<h2 id="overview">0. 概况与术语体系</h2>
+<div class="card">
+<p><b>Codex CLI</b>（OpenAI Codex 的命令行版本）是一个 **Rust workspace**，核心在 <code>codex-rs/</code>，约 **115 个 crate**（<code>codex-rs/Cargo.toml</code> 的 <code>[workspace] members</code> 清单），根 <code>README.md:1</code> 仅一行 <code># Codex CLI</code>。架构范式属「**Rust 微内核 + 分层 crate**」：核心代理循环在 <code>core/</code>，协议与模型元数据在 <code>protocol/</code>，可插拔宿主扩展在 <code>ext/</code>（当中就包括 <code>goal</code> / <code>memories</code> / <code>history-notes</code> / <code>skills</code> 等）。</p>
+<p>它给自己建立的术语体系，本质是「上下文生命周期」设计主张 —— <b>把「持久的状态快照」与「要注入模型的投影片段」严格分离</b>。核心术语：</p>
+<table>
+<tr><th>术语</th><th>含义</th><th>证据</th></tr>
+<tr><td><b>WorldState</b></td><td>「模型可见状态」集合，按稳定 <code>&amp;'static str</code> section ID 键控；每个 section 既能 <code>snapshot()</code>（持久化）也能 <code>render_diff()</code>（相对上一快照的差，注入模型）。</td><td><code>core/src/context/world_state/mod.rs:285-289</code>；trait <code>:228</code></td></tr>
+<tr><td><b>ContextualUserFragment</b></td><td>注入模型的消息片段统一接口：<code>role()/content_kind()/markers()/body()</code>，后续能按 marker 反向识别。</td><td><code>context-fragments/src/fragment.rs:64-99</code></td></tr>
+<tr><td><b>Compaction</b></td><td>把历史「收」成摘要 + 重装初始上下文的生命周期；三种实现：local / remote（<code>compact_remote*</code>）/ token-budget。</td><td><code>core/src/compact.rs</code>；<code>compact_token_budget.rs:21-25</code></td></tr>
+<tr><td><b>CompactionSummary</b></td><td>压缩后注入的一条 <code>user</code> 片段，<code>content_kind="compaction.summary"</code>。</td><td><code>core/src/context/compaction_summary.rs:17-19</code></td></tr>
+<tr><td><b>AutoCompactWindow / sidecar</b></td><td>每次压缩开新「window」，带 <code>{first/previous/window}_id</code>（Uuid v7）边界标识，随检查点持久化。</td><td><code>core/src/state/auto_compact_window.rs:4-9</code></td></tr>
+<tr><td><b>Rollout</b></td><td>append-only 持久化条目流（<code>RolloutItem::{Compacted,WorldState,TurnContext,RetainedContext…}</code>），是检查点/恢复的事实源。</td><td><code>core/src/session/mod.rs:3812-3816</code></td></tr>
+<tr><td><b>Goal / Plan</b></td><td>「接下来要做什么」独立存 <code>codex_state::ThreadGoal</code> 与 <code>update_plan</code> 工具，与对话历史解耦。</td><td><code>ext/goal/src/spec.rs:9-11</code>；<code>core/src/tools/handlers/plan.rs</code></td></tr>
+</table>
+<p class="quote">相对 cline 的「编辑 map + 读取时投影」、deepseek 的「事件溯源 + surface 投影」，codex 走第三条路：<b>「WorldState 快照 diff 投影 + Rollout 回放」</b> —— 每个投影 section 自带可序列化的 <code>snapshot()</code>，压缩时落盘，开新窗口时用 <code>render_diff(上一快照)</code> 只把「变了的部分」重新注入。</p>
+</div>
+
+<h2 id="panorama">1. 上下文生命周期全景图（总图）</h2>
+<div class="diagram"><pre><code>
+                  user input ──────────────────────────────────────────┐
+                                                                       ▼
+  ┌──────────────────────────────────────────────────────────────────────────────┐
+  │  线1  Session::build_world_state_for_step(step_context)  (world_state.rs:35)  │
+  │      把 ~15 个内置 section + 扩展 section 放进 WorldState；                    │
+  │      每个 section =「可 snapshot + 可 render_diff」的投影                      │
+  └──────────────────────────────────┬───────────────────────────────────────────┘
+                                     │ render_diff(上一 WorldStateSnapshot)
+                                     ▼
+  ┌──────────────────────────────────────────────────────────────────────────────┐
+  │ ~48 个 ContextualUserFragment 注入器 (context/mod.rs:1)                        │
+  │   developer 片段 + contextual_user 片段 + 隔离的 guardian developer 片段      │
+  └──────────────────────────────────┬───────────────────────────────────────────┘
+                                     │
+            ┌────────────────────────┴───────────────────────────┐
+            │ 线5  context_window_token_status()                 │
+            │ (session/context_window.rs:25) 判定 token_limit_reached │
+            │ —— auto_compact_scope vs full_context_window 双阈值   │
+            └─────────────────────────────────────────────────────┘
+                                     │ 未超→发请求；超→触发压缩
+                                     ▼
+        ┌──────────────────────── 模型请求 ─────► assistant tool call
+        │                                                                  │
+        │ 线3  Hook 拦截点：Pre/PostCompact · Pre/PostToolUse ·            │
+        │      SessionStart/End · Stop · Interrupt · UserPromptSubmit ·    │
+        │      PermissionRequest · SubagentStart/Stop                      │
+        │      (protocol/protocol.rs:1576-1589)                            │
+        └──────────────────────────────────────────────────┬───────────────┘
+                                                           │ tool 执行完 / 预算耗尽
+                                                           ▼
+  ┌──────────────────────────────────────────────────────────────────────────────┐
+  │ 线2  压缩 · 检查点                                                             │
+  │  compact.rs 按 SUMMARIZATION_PROMPT 生成摘要 → 注入 CompactionSummary(731-733) │
+  │  Session::start_new_context_window → replace_compacted_history(3752)           │
+  │    → 落 RolloutItem::Compacted{replacement_history, retained_context,          │
+  │       window_number, first/prev/window_id} + RolloutItem::WorldState(基线)     │
+  └──────────────────────────────────┬───────────────────────────────────────────┘
+                                     │ 新 window_id；world_state.snapshot() 作新基线
+                                     ▼
+        ┌─────────────── 线4：Goal/Plan 不在此对话流里 ─────────────────┐
+        │ goal 存 codex_state::ThreadGoal（ext/goal）· plan 走 update_plan·│
+        │ world_state 中 should_persist=true 的 section 随快照跨压缩存活 │
+        └───────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<div class="card">
+<p><b>一句话主线</b>：codex 把「上下文生命周期」切成三段可独立替换的部件 —— <b>线1（放）</b>用 WorldState 快照求 diff 决定「这次往模型里多注入哪些投影片段」；<b>线2（收）</b>用摘要 + <code>start_new_context_window</code> 开新窗口，把「旧历史 → 摘要 + 新基线」这条变换持久化为可回放的 RolloutItem；<b>线3</b>在放/收两侧都埋了 Hook 拦截点、并允许扩展用 <code>contribute_world_state</code> 塞进自己的投影 section；<b>线4</b>把「目标」从「对话」里请出来存到独立 thread state；<b>线5</b>用后端下发的 per-model 元数据决定「什么时候该压、压到哪一档」。</p>
+</div>
+
+<h2 id="l1">2. 线1 — 上下文注入与「WorldState 投影」管线</h2>
+<div class="card">
+<p><span class="tag t1">线1</span> <b>① 解决什么问题</b>：模型到底能看到什么，必须是一条<b>可回放、可求差</b>的规则，而不是散落的拼接字符串。codex 的答案是两层抽象：<b>①</b> 一批 <b>ContextualUserFragment</b>（一次性注入的「片段」，约 48 类，<code>core/src/context/mod.rs:1</code> 的 <code>mod</code> 清单）；<b>②</b> 一个 <b>WorldState</b>（跨轮、跨压缩持久的「投影」，每个 section 都有 snapshot 与 diff 两套形态）。</p>
+<h4>② 怎么实现（贴原文）</h4>
+<p><b>片段统一接口</b> —— <code>context-fragments/src/fragment.rs:64-68</code>：</p>
+<pre><code>pub trait ContextualUserFragment {
+    fn role(&self) -&gt; &amp;'static str;
+    /// Returns a stable `&lt;feature&gt;.&lt;name&gt;` classification, using `generic` for shared fragments.
+    fn content_kind(&self) -&gt; ContentItemKind;</code></pre>
+<p><code>render()</code> 用 marker 把 body 包起来，<b>marker 是后续「反向识别」的锚点</b>（<code>fragment.rs:91-99</code>）——这就是「注入后可再认出这条片段」的机制。</p>
+<p><b>WorldState 的投影本质</b> —— <code>core/src/context/world_state/mod.rs:285-289</code> 与 trait <code>:228-262</code>：</p>
+<pre><code>pub(crate) struct WorldState {
+    sections: IndexMap&lt;&amp;'static str, Box&lt;dyn ErasedWorldStateSection&gt;&gt;,
+}
+// ...
+fn snapshot(&self) -&gt; Self::Snapshot;           // 落盘用
+fn should_persist(&self) -&gt; bool { true }        // 是否参与持久化的 rollout 比对
+fn render_diff(&self, previous: PreviousSectionState&lt;'_&gt;) -&gt; Option&lt;Box&lt;dyn ContextualUserFragment&gt;&gt;;</code></pre>
+<p><b>「无损投影」的核心 = 差量渲染</b> —— <code>world_state/mod.rs:405-413</code>（相对精确持久化快照求差）：</p>
+<pre><code>/// Renders each section against the exact persisted snapshot when available.
+pub(crate) fn render_diff(&amp;self, previous: &amp;WorldStateSnapshot) -&gt; Vec&lt;Box&lt;dyn ContextualUserFragment&gt;&gt; {
+    self.render_with(|id, _| match previous.sections.get(id) {
+        Some(previous) =&gt; PreviousSectionState::Known(previous),
+        None =&gt; PreviousSectionState::Absent,
+    })
+}</code></pre>
+<p>还有两条兜底：<code>render_history_diff</code>（<code>:416-436</code>）在没有精确快照时<b>回退到「保留在历史里的旧片段」</b>用 <code>matches_retained_fragment</code> 识别；<code>merge_patch</code>（<code>:499-528</code>）用 **RFC 7386 JSON Merge Patch** 算「上一快照 → 当前快照」的最小差异。</p>
+<p><b>装配点</b> —— <code>core/src/session/world_state.rs:35-38</code>（每 step 构建一次）：</p>
+<pre><code>pub(crate) async fn build_world_state_for_step(&amp;self, step_context: &amp;StepContext) -&gt; CodexResult&lt;WorldState&gt; {</code></pre>
+</div>
+<div class="card">
+<h4>③ 数据流图</h4>
+<div class="diagram"><pre><code>
+  世界状态 section（~15 内置 + 扩展）
+  ModelInstructionsState / PermissionsState / ContextWindowGuidanceState /
+  CollaborationModeState / PersonalityState / ToolsState / … world_state/mod.rs:1-19
+        │  snapshot()（serde_json::to_value 序列化）
+        ▼
+  WorldStateSnapshot { sections: BTreeMap&lt;String, Value&gt; }        (mod.rs:294-296)
+        │  persist → RolloutItem::WorldState（落盘基线）
+        ▼
+  ────────（下次 step）────────
+        │  build_world_state_for_step 重建 live WorldState
+        │  render_diff(previous=WorldStateSnapshot)
+        ▼
+  每个 section：
+    Known(prev==cur) → None（没变，不重复注入）          ← 关键：原始消息/片段从不被删改
+    Known(prev!=cur) → RFC7386 merge_patch diff → 注入「变化部分」
+    Absent           → render_full 全量注入
+        │
+        ▼
+  ~48 个 ContextualUserFragment（context/mod.rs）最终拼进 developer / contextual_user 消息
+</code></pre></div>
+</div>
+<div class="card">
+<h4>④ 代价与边界</h4>
+<p>「快照 + diff」比「编辑 map」更强的地方：<b>每个 section 自带可序列化 Snapshot 类型</b>，rollout 里存的是<b>完整的、可独立校验</b>的状态值，恢复时不必重建历史。代价：① 每个 section 都要手写 <code>snapshot()/render_diff()/matches_legacy_fragment()</code> 三件套（样板代码多）；② diff 正确性依赖 <code>PreviousSectionState::Known/Unknown/Absent</code> 三态判据——<code>Unknown</code>（能从旧历史认出片段但无精确快照）是兼容老会话的妥协，属于隐藏复杂度。</p>
+<h4>⑤ 我的判断</h4>
+<p>这比 cline 的「<code>EditType</code>/<code>ContextUpdate</code> 记录编辑、读取时应用」更<b>面向持久化与恢复</b>：投影的产物直接就是可落盘的 snapshot，而非仅作用于内存视图。代价是把「投影」从「一处集中逻辑」摊到「每个 section 各写一份」。</p>
+</div>
+
+<h2 id="l2">3. 线2 — 检查点与压缩窗口 sidecar（回滚路径）</h2>
+<div class="card">
+<p><span class="tag t2">线2</span> <b>① 解决什么问题</b>：压缩不是单向的——要能<b>精确知道「压缩到第几窗、基线是哪一版」</b>，重启后不丢、不回错。codex 的答案是把压缩变成**一个带持久化 sidecar 的检查点事务**：摘要 + 新窗口边界 + WorldState 基线一起落进 Rollout。</p>
+<h4>② 怎么实现（贴原文）</h4>
+<p><b>压缩摘要是一条标准的 ContextualUserFragment</b> —— <code>core/src/context/compaction_summary.rs:17-25</code>：</p>
+<pre><code>impl ContextualUserFragment for CompactionSummary {
+    fn content_kind(&amp;self) -&gt; ContentItemKind {
+        ContentItemKind("compaction.summary".to_string())
+    }
+    fn role(&amp;self) -&gt; &amp;'static str { "user" }</code></pre>
+<p>摘要被追加进「替代历史」的末尾 —— <code>core/src/compact.rs:731-733</code>（证明摘要走的是同一条 <code>ContextualUserFragment</code> 通路，检查点因此能精确回退到「摘要生成前」）：</p>
+<pre><code>history.push(ResponseItemEnvelope::new(ContextualUserFragment::into(
+    CompactionSummary::new(summary_text),
+)));</code></pre>
+<p><b>压缩窗口 sidecar（可靠的推进凭据）</b> —— <code>core/src/state/auto_compact_window.rs:4-20</code>：</p>
+<pre><code>pub(crate) struct AutoCompactWindowIds {
+    pub(crate) first_window_id: Uuid,
+    pub(crate) previous_window_id: Option&lt;Uuid&gt;,
+    pub(crate) window_id: Uuid,
+}
+impl AutoCompactWindowIds {
+    pub(crate) fn new_initial() -&gt; Self {
+        let window_id = Uuid::now_v7();
+        Self { first_window_id: window_id, previous_window_id: None, window_id }
+    }
+}</code></pre>
+<p><b>「restore」语义</b> —— <code>auto_compact_window.rs:72-75</code>：</p>
+<pre><code>pub(super) fn restore(&amp;mut self, window_number: u64, ids: AutoCompactWindowIds) {
+    self.window_number = window_number;
+    self.ids = ids;
+}</code></pre>
+<p><b>检查点落盘</b> —— <code>core/src/session/mod.rs:3752-3816</code>（<code>replace_compacted_history</code> 构造 <code>CompactedItem</code> 并把 <code>window_number + 三个 window_id</code> 一起持久化）：</p>
+<pre><code>window_number: Some(metadata.window_number),
+first_window_id: Some(metadata.window_ids.first_window_id.to_string()),
+previous_window_id: metadata.window_ids.previous_window_id.map(|id| id.to_string()),
+window_id: Some(metadata.window_ids.window_id.to_string()),
+// ...
+let mut rollout_items = vec![RolloutItem::Compacted(compacted_item)];
+if let Some(world_state_item) = world_state_item {
+    rollout_items.push(RolloutItem::WorldState(world_state_item));  // 基线跟在替代历史之后
+}</code></pre>
+<p><b>开新窗口 = 重装初始上下文 + 替换历史</b> —— <code>core/src/session/mod.rs:4198-4249</code>（<code>start_new_context_window</code> 最终调 <code>replace_compacted_history</code>）。</p>
+</div>
+<div class="card">
+<h4>③ 数据流图</h4>
+<div class="diagram"><pre><code>
+  触发（token 超限 / 用户 / 模型降级）
+        │  run_pre_compact_hooks (hook_runtime.rs:528)
+        ▼
+  生成摘要（SUMMARIZATION_PROMPT，prompts/src/compact.rs:1）
+        │  摘要 → CompactionSummary（user 角色 · compaction.summary）
+        ▼
+  start_new_context_window：
+    ① state.start_new_context_window() → advance() 得到 (window_number, 新 window_ids)
+    ② build_initial_context_with_world_state → 重装初始上下文 + render_diff(新基线)
+    ③ replace_compacted_history：
+        CompactedItem{ replacement_history=[初始上下文+摘要+保留消息],
+                       retained_context, window_number, first/prev/window_id }
+        + WorldStateItem::full(snapshot)   ← 「压缩前状态」的可回放基线
+        ▼
+  Rollout（append-only）落盘，run_post_compact_hooks (hook_runtime.rs:565) 收尾
+</code></pre></div>
+</div>
+<div class="card">
+<h4>④ 代价与边界</h4>
+<p>关键取舍：codex 的「回滚」不是 cline 的「时间戳截断」也不是 deepseek 的「重放整条事件流」，而是<b>「新窗口 + 直达新基线的替换历史」</b>——它把被压缩的那段历史<b>整体替换</b>成「初始上下文 + 摘要 + 保留片段」，旧窗口边界只用 <code>window_id</code> 链（<code>first/previous/window_id</code>）留痕，用作审计与恢复的锚，而不是保留完整旧文本。代价：① 一旦替换历史写完，旧的逐轮细节在核心 history 里就不再逐条可查（如需取证要靠 guardian_history / retained_context 旁路）；② 跨窗口一致性依赖 <code>Uuid::now_v7()</code> 的单调性（时间有序 id，用于断点排序）。</p>
+<h4>⑤ 我的判断</h4>
+<p>与任务书里 cline 的「PR #12747 修 compaction sidecar」是同构问题：两者都担心「压缩状态没持久化好导致重启后重复压缩/阈值错乱」。codex 把 sidecar 直接做成 <code>AutoCompactWindowIds</code> + <code>window_number</code> 并随 <code>CompactedItem</code> 一起原子落盘，是同一风险的工程解法，只是用了 Rust + Rollout 的类型化表达。</p>
+</div>
+
+<h2 id="l3">4. 线3 — Hook/插件/扩展 API（扩展边界）</h2>
+<div class="card">
+<p><span class="tag t3">线3</span> <b>① 解决什么问题</b>：核心循环里的「压缩前后、工具前后」这些关键时刻，如何让<b>第三方</b>安全地插一脚。codex 有三层扩展机制，粒度从粗到细：<b>Hook</b>（生命周期回调）→ <b>Plugin manifest</b>（声明式能力清单）→ <b>Extension API</b>（Rust trait，直接贡献世界状态）。</p>
+<h4>② 怎么实现（贴原文）</h4>
+<p><b>A. Hook：12 个生命周期事件 + handler 分型</b> —— <code>protocol/src/protocol.rs:1576-1605</code>：</p>
+<pre><code>pub enum HookEventName {
+    PreToolUse, PostToolUse, Notification, UserPromptSubmit, Stop,
+    SubagentStart, SubagentStop, SessionStart, SessionEnd,
+    PreCompact, PostCompact, PermissionRequest,
+}
+pub enum HookHandlerType { Command, McpTool, Prompt, Agent }
+pub enum HookExecutionMode { Sync, Async }</code></pre>
+<p><b>B. 压缩钩子在 core 里的落点</b> —— <code>core/src/hook_runtime.rs:528-531</code>（<code>run_pre_compact_hooks</code>）与 <code>:565-568</code>（<code>run_post_compact_hooks</code>），同文件还有 <code>pre_tool_use:184</code> / <code>post_tool_use:285</code> / <code>permission_request:246</code> / <code>session_start:124</code> / <code>session_end:455</code> / <code>stop:376</code> / <code>interrupt:486</code>。</p>
+<p><b>C. Plugin manifest</b> —— <code>plugin/src/manifest.rs</code>（<code>PluginManifestPaths { skills, mcp_servers, apps, hooks }</code> 与 <code>interface.capabilities</code>）。</p>
+<p><b>D. Extension API 直接贡献世界状态</b> —— <code>ext/extension-api/src/contributors.rs:92-118</code>（<code>ContextContributor</code> trait）与 <code>contributors/world_state.rs:79</code>（<code>WorldStateSectionContribution</code>）：</p>
+<pre><code>pub trait ContextContributor {
+    fn contribute_world_state(&amp;self) -&gt; Vec&lt;WorldStateSectionContribution&gt;;  // 扩展塞进新投影 section
+    fn contribute_contextual_user(&amp;self, _ctx: &amp;Context) -&gt; Vec&lt;ContextualUserFragment&gt;; // 塞进一次性片段
+    fn contribute_contextual_developer(&amp;self, _ctx: &amp;Context) -&gt; ...;
+}</code></pre>
+<p>装配点 —— <code>core/src/context/world_state/mod.rs:369</code> 的 <code>add_extension_section</code>，把扩展开贡献的 section 挂进同一张 <code>IndexMap</code>，从而与内置 section 走<b>完全相同的 snapshot/render_diff 管线</b>。</p>
+</div>
+<div class="card">
+<h4>③ 核心问题的边界判断：Auto Compact 能不能做成插件？</h4>
+<div class="diagram"><pre><code>
+                      ┌────────────── （收：压缩引擎）────────────────┐
+   compaction 决策    compact.rs:731 / compact_remote.rs /            │  ← 硬编码在 core，
+   与摘要生成         compact_token_budget.rs                          │    不可插件化
+                      └───────────────────────────────────────────────┘
+                      ┌────────────── （放：注入给模型看的内容）───────┐
+   WorldState section  ContextContributor::contribute_world_state      │  ← 开放：扩展可
+   + 一次性片段        + contribute_contextual_user/developer          │    新增投影 & 片段
+                      └───────────────────────────────────────────────┘
+                      ┌────────────── （任务状态）────────────────────┐
+   Goal / Plan / TODO  ext/goal → codex_state::ThreadGoal；            │  ← 独立于对话，
+                      update_plan 工具                                 │    跨压缩存活
+                      └───────────────────────────────────────────────┘
+</code></pre></div>
+<p><b>结论</b>：<b>「收」（何时压缩、怎么摘要、怎么替换历史）是 core 内置，不可插件化</b>（压缩引擎三种实现都写在 <code>core/src/compact*.rs</code>，没有 trait 边界）；<b>「放」（模型能看到哪些 world-state / 片段）是开放的</b>（<code>ContextContributor</code>）；<b>「任务状态」是第三条独立出路</b>（goal 扩展靠 <code>codex_state::ThreadGoal</code> 存在 thread 上，不靠对话历史）。</p>
+<h4>④ 代价与边界</h4>
+<p>Hook 的 <code>Sync/Async</code> 双模式意味着「同步钩子能阻塞核心循环」——这是一把双刃剑：强一致性（<code>PreCompact</code> 同步钩子能拒绝压缩）但也会引入第三方的延迟/死锁风险。Extension API 要求写 Rust 并链接进 workspace，比 Hook 的「外部命令/JSON 协议」门槛高得多。</p>
+<h4>⑤ 我的判断</h4>
+<p>相对 cline 的「箱内插件」和 opencode 的「WebSocket hook」，codex 的三层（Hook 进程级 / Plugin 声明级 / Extension Rust trait 级）覆盖了从「运维脚本」到「深度定制投影」的全谱系，且<b>把「投影注入」这个我们最关心的面，明确定位成 Extension API 的开放点</b>——这是回答任务书 H-B「能否把别家的压缩/投影做成 BaiZe 的插件」的直接教材。</p>
+</div>
+
+<h2 id="l4">5. 线4 — Goal/Plan 任务状态跨压缩存活</h2>
+<div class="card">
+<p><span class="tag t4">线4</span> <b>① 解决什么问题</b>：压缩把对话历史「收」掉之后，「现在要做什么、做到哪了」不能丢。codex 把「任务状态」从「对话」里拆出来，给了两条独立出路：<b>goal 扩展</b>（持久化的 thread 目标，带预算/用时）与 <b>plan 工具</b>（任务清单/进度）。</p>
+<h4>② 怎么实现（贴原文）</h4>
+<p><b>goal 的三个工具名</b> —— <code>ext/goal/src/spec.rs:9-11</code>：</p>
+<pre><code>pub const GET_GOAL_TOOL_NAME: &amp;str = "get_goal";
+pub const CREATE_GOAL_TOOL_NAME: &amp;str = "create_goal";
+pub const UPDATE_GOAL_TOOL_NAME: &amp;str = "update_goal";</code></pre>
+<p><b>goal 不是普通工具调用，它落进持久化 thread 状态</b> —— <code>ext/goal/src/runtime.rs:65-71</code>（<code>PreviousGoalSnapshot</code> 由 <code>codex_state::ThreadGoal</code> 而来）：</p>
+<pre><code>pub struct PreviousGoalSnapshot {
+    pub id: String,
+    pub objective: String,
+    pub status: GoalStatus,
+    pub token_budget: Option&lt;u32&gt;,
+    pub token_usage: Option&lt;u32&gt;,
+    pub elapsed_time_seconds: Option&lt;u32&gt;,
+}
+impl From&lt;&amp;codex_state::ThreadGoal&gt; for PreviousGoalSnapshot { ... }</code></pre>
+<p><b>「只为跨轮审计」的快照入账</b> —— <code>runtime.rs:521-536</code> 用 <code>progress_snapshot(turn_id)</code> 拿到 <code>{expected_goal_id, time_delta_seconds, token_delta}</code> 后调 <code>current_goal_status_for_metrics</code>，说明 goal 的「预算消耗/剩余」是<b>会计级</b>独立记账、与对话轮次解耦。</p>
+<p><b>plan 工具</b> —— <code>core/src/tools/handlers/plan.rs</code>（<code>update_plan</code>），与 <code>context/mod.rs</code> 里的 plan 片段联动。</p>
+</div>
+<div class="card">
+<h4>③ goal 为什么「跨压缩存活」很多人没答清的两层</h4>
+<p>① <b>持久层</b>：goal 存在 <code>codex_state::ThreadGoal</code>（thread 作用域的键值侧表）里，<b>不落在被压缩的对话 history 中</b>，因此摘要替换历史动不到它。② <b>投影层</b>：goal 在每轮通过 <code>get_goal</code> / 扩展开的 world-state 片段重新注入给模型，属于「每次重算当前状态」，而非「依赖历史前缀」。这与线1 的 WorldState 同构：<b>状态 ≠ 文本，状态落侧表、文本才进 history</b>。</p>
+<h4>④ 代价与边界</h4>
+<p>goal 的「blocked 审计」有严格语义（<code>spec.rs</code>：<code>blocked</code> 需「同一阻塞条件连续 ≥3 个 goal turn 复发」且「恢复后重置审计」）——这是把「任务停滞」也做成<b>引擎级状态机</b>，而非纯提示词。代价：goal 状态一旦与对话历史不同步（例如模型口头说完成但没调 <code>update_goal</code>），会出现「状态表与叙述脱节」的经典问题，codex 靠 <code>get_goal</code> 的 <code>status/budgets/usage/remaining</code> 输出强制对齐。</p>
+<h4>⑤ 我的判断</h4>
+<p>这是五条线里对「H-A SWE-bench 长任务」最有用的一条：codex 明确区分了<b>「任务意图（goal，跨压缩持久）」</b>与<b>「执行产物（history，可压缩）」</b>。cline 靠 <code>taskId</code> 元数据近似实现，deepseek 靠事件溯源里的 immutable 意图事件，codex 直接给了 <code>ThreadGoal</code> 独立存储——三家的「意图存续」解法可以横向对比成一张表（见 §7）。</p>
+</div>
+
+<h2 id="l5">6. 线5 — 模型能力适配与降级策略</h2>
+<div class="card">
+<p><span class="tag t5">线5</span> <b>① 解决什么问题</b>：不同模型上下文窗口不同（200K / 1M…），<b>「什么时候该压缩、压到剩多少」必须由模型能力驱动</b>，而不是拍脑袋。codex 把阈值计算集中到 <code>protocol/src/openai_models.rs</code> 的 <code>ModelInfo</code>，再由 <code>session/context_window.rs</code> 消费。</p>
+<h4>② 怎么实现（贴原文）</h4>
+<p><b>三阶阈值：resolved → usable → auto_compact</b> —— <code>protocol/src/openai_models.rs:488-511</code>：</p>
+<pre><code>pub fn resolved_context_window(&amp;self) -&gt; Option&lt;i64&gt; {
+    self.context_window.or(self.max_context_window)          // 档位上限
+}
+pub fn usable_context_window(&amp;self) -&gt; Option&lt;i64&gt; {
+    self.resolved_context_window()
+        .map(|cw| cw.saturating_mul(self.effective_context_window_percent) / 100)  // 默认 ×95%
+}
+pub fn auto_compact_token_limit(&amp;self) -&gt; Option&lt;i64&gt; {
+    if let Some(limit) = self.auto_compact_token_limit { return Some(limit); }
+    self.resolved_context_window().map(|cw| (cw * 9) / 10)   // 兜底 clamp 到 90%
+}</code></pre>
+<p>默认 <code>effective_context_window_percent = 95</code>（<code>:377-379</code> 与 <code>:448</code> 的 serde default），单测明确三者语义不混（<code>:1976-1988</code>：<code>272_000 / 380_000 / 360_000</code>）。</p>
+<p><b>消费端：双阈值 + 作用域</b> —— <code>core/src/session/context_window.rs:62-83</code>（<code>AutoCompactTokenLimitScope::{Total, BodyAfterPrefix}</code>）与 <code>:105-109</code>：</p>
+<pre><code>let full_context_window_limit_reached =
+    full_context_window_limit.is_some_and(|limit| active_context_tokens &gt;= limit);
+let token_limit_reached = buffered_auto_compact_limit.is_some_and(|limit| active_context_tokens &gt;= limit)
+    || full_context_window_limit_reached;</code></pre>
+<p><b>token 预算解析</b> —— <code>core/src/session/token_budget.rs:79-101</code>：<code>resolve_token_budget</code> 优先显式配置 → 回退 <code>model_messages.token_budget</code> → 再回退默认 <code>TokenBudgetConfig</code>（与 <code>use_history_notes_extension</code> 联动）。</p>
+<h4>③ 关键洞见：token 计数「服务端观测优先，客户端估算兜底」</h4>
+<p>—— <code>core/src/state/auto_compact_window.rs:24-30</code>：</p>
+<pre><code>pub(crate) enum AutoCompactWindowPrefill {
+    ServerObserved(i64),   // 后端在 usage 里回报的真实 prompt tokens
+    Estimated(i64),        // 本地估算（精度较低）
+}</code></pre>
+<p><code>ensure_server_observed_prefill_from_usage:108-117</code> 用 <code>TokenUsage</code> 覆盖本地估算；不被覆盖时才保留 <code>Estimated</code>（<code>:121-129</code>）。这跟 cline 的「字符数 ÷ 经验系数」token 估算、deepseek 的「token 事件」是<b>三种不同的计量策略</b>——codex 直接信任服务端 <code>usage</code> 字段。</p>
+<h4>④ 模型降级（fallback）</h4>
+<p>—— <code>core/src/compact_model_fallback.rs:9-20</code>：</p>
+<pre><code>pub(crate) fn should_retry_with_current_model(error: &amp;CodexErr) -&gt; bool {
+    matches!(error.details(),
+        CodexErrorDetails::ContextWindowExceeded
+        | CodexErrorDetails::UsageLimitReached(_)
+        | CodexErrorDetails::ServerOverloaded
+        | CodexErrorDetails::InvalidRequest(_))
+}</code></pre>
+<p>即：遇到「上下文超窗 / 用量达限 / 服务过载 / 非法请求」时，不急着彻底换模型，而是<b>先用当前模型重试并配合压缩</b>——把「压缩」当作模型降级的第一道闸门。</p>
+<h4>⑤ 代价与判断</h4>
+<p>代价：每模型都要在后端 <code>model_info</code> 里维护 <code>context_window / max_context_window / auto_compact_token_limit / effective_context_window_percent</code> 四个字段（<code>:433-448</code>），配置面更宽、更容易写错（所以才有 <code>:1976</code> 那个「三语义勿混」的守护测试）。判断：这是一套<b>「以模型元数据为单一事实源」</b>的自适应压缩，比硬编码阈值可移植；BaiZe 若要支持多个不同窗口的模型，这条「config 元数据 + 消费端三阶阈值 + 服务端观测优先」值得照抄。</p>
+</div>
+
+<h2 id="tradeoff">7. 与 cline / deepseek 的对照 · 设计取舍</h2>
+<div class="card">
+<p>把本报告五条主线，与 H-A 横评已覆盖的 cline、deepseek 摆到同一张「上下文生命周期」坐标里：</p>
+<table>
+<tr><th>维度（线）</th><th>cline</th><th>deepseek</th><th><b>codex（本报告）</b></th></tr>
+<tr><td>投影 / 注入（线1）</td><td>编辑 map（<code>EditType</code>/<code>ContextUpdate</code>）+ 读取时 apply</td><td>事件溯源 + surface 投影表达式</td><td><b>WorldState snapshot + RFC7386 merge_patch 「差量」渲染</b>（<code>world_state/mod.rs:405/499</code>）</td></tr>
+<tr><td>检查点 / 回滚（线2）</td><td>时间戳截断；PR#12747 修 compaction sidecar</td><td>重放整条事件流</td><td><b>新窗口 + 直达新基线的 replacement_history，sidecar=AutoCompactWindowIds(window_id 链)</b>（<code>mod.rs:3752</code>）</td></tr>
+<tr><td>扩展（线3）</td><td>箱内插件</td><td>（surface 投影本身即扩展点）</td><td><b>三层：Hook(12 事件/进程级) / Plugin manifest / Extension ContextContributor(投影开放点)</b></td></tr>
+<tr><td>任务状态（线4）</td><td><code>taskId</code> 元数据（近似）</td><td>immutable 意图事件</td><td><b>codex_state::ThreadGoal（goal）+ update_plan，明确脱离对话历史</b></td></tr>
+<tr><td>模型适配（线5）</td><td>字符 ÷ 经验系数估算 token</td><td>token 事件</td><td><b>服务端 usage 观测优先 + per-model 三阶阈值(config 元数据为单一事实源)</b></td></tr>
+</table>
+<h4>三条最有迁移价值的判断</h4>
+<ol>
+<li><b>「状态 ≠ 文本」</b>：要把「意图/目标」（goal）、「环境投影」（WorldState）长期存侧表，只让「对话文本」进可压缩的 history。这是 codex 对「压缩不丢任务」的最干净回答（§5③）。</li>
+<li><b>「压缩 = 一个带 sidecar 的检查点事务」</b>：摘要生成、新窗口、WorldState 基线三者必须<b>原子</b>落进同一 Rollout，<code>window_id</code> 链提供审计与恢复锚（§3④）。</li>
+<li><b>「收（压缩引擎）关、放（投影注入）开」</b>：想复用别家压缩算法，BaiZe 应把「压缩决策/摘要」与「投影注入」拆成两个接口，前者保留自家核心，后者开放给插件（§4③）。</li>
+</ol>
+</div>
+
+<div class="card" style="text-align:center;color:var(--muted)">
+<p>—— 报告完 ——<br>
+<code>harness/codex_SOURCE_ANALYSIS.html</code> · OpenAI Codex CLI · commit <code>8e6a44b428</code><br>
+所有行号均对照 <code>/nas_train/app.e0031982/harness/codex/codex-rs/</code> 实测</p>
+</div>
+
+</body>
+</html>

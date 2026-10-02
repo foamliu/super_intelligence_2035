@@ -1,6 +1,33 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 0
+WAITING: 1
+
+## 🔴 运维必读（阻塞：需运维拍板，否则 H-A 不能安全推进）
+
+> H-B 已 5/5 完成。H-A §1.1 **可行性核查已完成**，详见 `harness/SWEBENCH_FEASIBILITY.md`。
+> 实跑前需运维决策 **两件事**：
+
+1. **Docker 权限（二选一）**
+   - (a) 走官方 docker 口径 → 请执行 `usermod -aG docker app.e0031982`（+ `newgrp docker`/重登）。
+   - (b) 走 **Route E′（无 docker）** → 无需改权限，我方直接 `git clone` + aliyun 镜像装依赖。
+   - ⚠️ 现状：守护进程是 `active`，但 `app.e0031982` **不在 docker 组**、`sudo` 要密码；socket 是 `root:docker 0640`。
+2. **运行主机**：我方当前在 **`.29`（10.239.2.29）= pretrain R2 训练机**。H-A 实跑 = 重 I/O，与训练冲突。
+   → 请确认在 `.29` 轻量推进 / 换 `.12` / 给专用仓位。
+
+**可行性核查关键结论（可复现命令已全部记录在 `harness/SWEBENCH_FEASIBILITY.md`）**：
+
+| 项 | 结果 |
+|:--|:--|
+| GitHub git | ✅ `git ls-remote` 拿到 HEAD |
+| pypi | ❌ 官方 000，✅ **内网镜像 `mirrors.aliyun.com/pypi` = 200** |
+| Docker | ❌ 守护进程 active 但**无 socket 权限**；registry-1.docker.io=401、ghcr.io=000、daemon.json 无 mirror |
+| 模型 | ✅ 内网网关 `http://agi-gateway.cxmt.com/v1` → `deepseek-v4-flash`（reasoning），最小调用 HTTP 200 |
+| 数据集 | ✅ HF 可达 200；SWE-bench_Lite/test=300 条已拉取；`datasets==4.8.4` 已装、`swebench` 包未装 |
+| sb-cli 云 | ❌ api.swebench.com=000 + 合规红线 |
+| 磁盘 | ✅ /data 6.5T、/nas_train 31T |
+
+**SWE-bench_Lite repo 分布**：django 114(38%) · sympy 77(26%) · matplotlib 23 · scikit-learn 23 · pytest 17 · sphinx 16 · 其余 <7 条。
+→ Route E′ 建议先跑 **django + sympy** 两库 **20–30 条** 试点。
 
 ## 运维问答
 
@@ -12,21 +39,20 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **H_B_cline_done**（cline 源码分析已完成并交付 HTML；下一步 = 下一个 harness 或 H-A 可行性核查 §1.1） |
-| WAITING | 0（无异步阻塞，应连续推进） |
+| PHASE | **H_A_feasibility_done**（H-B 5/5 完成；H-A §1.1 可行性核查完成 → 待运维拍板 Docker 权限 + 运行主机，再进入实跑） |
+| WAITING | 1（等运维决策：Docker 权限 / 运行主机 / Route E′ 规模） |
 | ERROR_COUNT | 0 |
-| 更新 | 2026-10-02（完成 cline H-B 源码分析） |
-| 产出 | ✅ `harness/cline_SOURCE_ANALYSIS.html`（自包含，46.5KB / 619 行，含总图 + 5 条线） |
+| 更新 | 2026-10-02（完成 H-A §1.1 可行性核查，报告 `harness/SWEBENCH_FEASIBILITY.md`） |
+| 产出 | ✅ H-B：`harness/{cline,opencode,deepseek-harness,codex,claude-code}_SOURCE_ANALYSIS.html`（5 份）· ✅ `harness/MERGE_OVERLAP_ANALYSIS.md` · ✅ `harness/SWEBENCH_FEASIBILITY.md` |
 
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        H_B_cline_done
-已完成:       cline harness 源码环境勘察 + Auto Compact 五条主线源码分析 + 报告 HTML 交付
-当前动作:     更新 MEMORY（本条）
-下一步:       (a) 下一个 harness 源码分析（opencode / deepseek harness 等，同格式）
-              或 (b) H-A SWE-bench 横评 —— 但必先做 §1.1 可行性核查（尤其 Docker）
-阻塞:         无
+PHASE:        H_A_feasibility_done
+已完成:       H-B 五个 harness 五条主线源码分析 + HTML（自包含）；H-A §1.1 可行性核查 + 报告
+当前动作:     完成 §1.1 可行性核查（连通性/模型/数据集/Docker 实测），写报告 + 更新记忆
+下一步:       等运维拍板（Docker 权限 + 运行主机 + Route E′ 规模）→ 再启动 H-A 试点（django+sympy 20–30 条）
+阻塞:         要看运维 —— ① Docker 权限（usermod -aG docker 或走 Route E′）② 运行主机（.29 是训练机，重 I/O 冲突）
 ERROR_COUNT:  0
 ```
 
@@ -57,4 +83,31 @@ ERROR_COUNT:  0
   - Focus Chain（已 stub）`apps/vscode/src/sdk/task-proxy.ts:144-145`；`apps/vscode/src/core/task/focus-chain/file-utils.ts`
   - 旧 context-window-utils 已删（`git show 1f31738b3`）；PR #12747（compaction sidecar）`git log --grep=12747` 验证存在。
   - ⚠️ 关键结论：任务书 5 条线基于**旧 vscode 架构名**（EditType/ContextUpdate/ContextPipeline/FocusChain），当前仓已 SDK 迁移，内核保留、形态迁移 —— 报告已逐线给「旧→新」对照。
+- 2026-10-02 —— **H-B（opencode）源码分析完成**，交付 `harness/opencode_SOURCE_ANALYSIS.html`（第二份）。
+- 2026-10-02 —— **H-B（deepseek-harness）源码分析完成**，交付 `harness/deepseek-harness_SOURCE_ANALYSIS.html`（第三份，368 行）。核心架构 = Cordis「everything-is-a-plugin」+ 事件溯源。关键证据路径：
+  - 投影：`packages/core/session/src/surface.ts:22-26/81-90/397/415/460`（SURFACE_EVENT_TYPES / deriveEventMessage / foldSurface / replacement not retained / _processDelta）
+  - 影子替换：`packages/compaction/compaction/src/types.ts:34-40`；`compaction-basic/src/region.ts:472-475`（surfaceOp:{replace}）
+  - 检查点：`packages/session/session-checkpoint-policy/src/index.ts:29-37/63-82`（flush fail-closed）
+  - Hook 桥：`packages/hooks/hook-protocol/src/types.ts:48/56/119/128-136`；`events.ts:76-102`
+  - Goal/Todo：`packages/goal/goal/src/domain.ts:14-22/66/71`；`packages/todo/tool-todo/src/types.ts:30-31`
+  - token：`packages/llm/token-meter/src/estimate.ts:12-19`（CHARS_PER_TOKEN=4）；`compaction-basic/src/config.ts:18-22/133`（DEFAULT_THRESHOLD_RATIO=0.8 / resolveCompactSpec）
+  - 触发：`compaction-basic/src/index.ts:148-166/180-195`（agent/pre-step pressure + agent/request-error context-overflow）
+  - ⚠️ 关键结论：deepseek 用**事件溯源 + surface 投影（影子替换）**，非 cline 的「编辑 map」也非 opencode 的「SQL 截断」；「重放即回滚」；压缩以插件形态实现但被 bundle 进每个 profile，压缩策略不开放给第三方生态。
+- 2026-10-02 —— **H-B（codex）源码分析完成**，交付 `harness/codex_SOURCE_ANALYSIS.html`（第四份）。Rust workspace，核心机制 = **WorldState 投影（snapshot/render_diff）** + AutoCompactWindow sidecar + Rollout append-only 流。
+- 2026-10-02 —— **H-B（claude-code）源码分析完成**，交付 `harness/claude-code_SOURCE_ANALYSIS.html`（第五份，最后一份，354 行 / 35.5KB）。⚠️ **这是 Anthropic Claude Code CLI 的「泄漏源码」**（README 自述 *Leaked Source 2026-03-31*，经 npm `.map` 泄出），**不完整**（SnipTool 是 stub、`snipProjection.js` 缺失、QueryEngine.ts 实测仅 1,295 行/46KB 而非 README 所写 "~46K lines"）。核心证据路径（源根 `/nas_train/app.e0031982/harness/claude-code/src/`）：
+  - 注入：`context.ts:116` getSystemContext / `:155` getUserContext（均 memoize）；装配 `screens/REPL.tsx:2535` Promise.all；系统提示 `constants/prompts.ts:444` getSystemPrompt；投影终点 `utils/messages.ts:1989` normalizeMessagesForAPI
+  - 检查点：boundary 标记 `utils/messages.ts:4530-4555`（SystemCompactBoundaryMessage + logicalParentUuid）；切片 `:4643` getMessagesAfterCompactBoundary；跳过阈值 `sessionStoragePortable.ts:480` SKIP_PRECOMPACT_THRESHOLD=5MB；压缩结果顺序 `services/compact/compact.ts:330-338`
+  - Hook：`entrypoints/sdk/coreTypes.ts:25-53` HOOK_EVENTS=27 个（**含 PreCompact/PostCompact**）；`schemas/hooks.ts:32-65` 4 形态（command/prompt/http/agent）
+  - 任务解耦：TodoWrite `tools/TodoWriteTool/TodoWriteTool.ts:65-94`；Todo V2 落盘 `utils/tasks.ts:199/221`；Session Memory `services/SessionMemory/sessionMemory.ts:1-6`；auto-memory `services/extractMemories/extractMemories.ts:1-6`
+  - token/模型：窗口 `utils/context.ts:9`（默认 200_000）/:51 getContextWindowForModel；计数 `tokens.ts:226` tokenCountWithEstimation（usage 回执 + 粗略）；粗略估 `tokenEstimation.ts:203`（默认 **4 字符/token**，JSON 修正=2）；阈值/熔断 `services/compact/autoCompact.ts:28-70`（20k 摘要预留 + 13k 缓冲 + 连败 3 熔断）
+  - ⚠️ 关键结论：claude-code 的检查点模型 = **append-only JSONL transcript + in-band boundary 消息（切片投影）**，非 cline 的 EditMap / deepseek 的事件溯源 / codex 的 WorldState Diff；Hook 是四 harness 里最细（27 事件×4 形态×if），但压缩引擎本身**核心硬编码**（PreCompact 只能加指令、不能替换总结）。**H-B 至此 5/5 harness 全部完成。**
+- 2026-10-02 —— **H-A §1.1 可行性核查完成**，交付 `harness/SWEBENCH_FEASIBILITY.md`。关键结论（命令+输出均在报告内）：
+  - **更正 RUN_ID 5 的「docker 不可用」**：守护进程 `active`、CLI 存在，实为**权限问题**（`app.e0031982` 不在 docker 组、socket `root:docker 0640`、无 sudo）。解除 = `usermod -aG docker app.e0031982`。
+  - 依赖源：官方 pypi 000，**内网 aliyun 镜像 200**（`pip config list` → `mirrors.aliyun.com/pypi`）。
+  - 模型：**内网网关 `agi-gateway.cxmt.com/v1` → `deepseek-v4-flash`（reasoning 模型，vllm-0.28.0-tp8-ep）**，最小调用 HTTP 200；⚠️ reasoning 模型 `max_tokens` 小时 `content:null` 走 `reasoning` 字段。
+  - 数据集：HF 200、`datasets==4.8.4` 已装、SWE-bench_Lite/test=300 已拉取（django 114 / sympy 77 / matplotlib 23 / sklearn 23 / pytest 17 / sphinx 16）。
+  - Docker 仓库：registry-1.docker.io=401（可达需鉴权）、ghcr.io=000、daemon.json **无 registry-mirrors**。
+  - sb-cli 云：api.swebench.com=000 不可达 + 合规红线 → **排除**。
+  - 主机：我方在 `.29`（pretrain 训练机）→ H-A 实跑重 I/O 与训练冲突，须运维指定仓位。
+  - **判定**：Route E′（无 docker）技术可行；待运维拍板 ①Docker 权限（usermod 或走 E′）②运行主机。**未获确认前不启动实跑**。
 

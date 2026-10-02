@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>OpenCode Harness 源码分析 — 以上下文压缩为切入点的五条主线</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#c9d1d9;--muted:#8b949e;--accent:#3fb950;--a2:#58a6ff;--warn:#d2991d;--code:#1f2937}
+*{box-sizing:border-box}body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.65;max-width:1080px;margin:0 auto;padding:2rem}
+h1{font-size:2rem;color:#fff;text-align:center}h2{font-size:1.4rem;margin:2.5rem 0 1rem;color:#fff;border-bottom:2px solid var(--border);padding-bottom:.4rem}
+h3{font-size:1.1rem;margin:1.6rem 0 .6rem;color:var(--a2)}h4{color:#e6edf3;margin:1rem 0 .4rem}
+.subtitle{text-align:center;color:var(--muted);margin-bottom:2rem;font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.4rem;margin:1rem 0}
+code,.code{font-family:'SF Mono',Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:4px;font-size:.9em}
+pre{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:.9rem;overflow-x:auto;font-size:.82rem;line-height:1.5}
+pre code{background:none;padding:0}
+table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.86rem}th,td{border:1px solid var(--border);padding:.5rem .7rem;text-align:left;vertical-align:top}th{background:#21262d}
+.tag{display:inline-block;padding:.1em .6em;border-radius:12px;font-size:.75rem;font-weight:600}
+.t1{background:#1b3826;color:#3fb950}.t2{background:#1a2b3a;color:#58a6ff}.t3{background:#3a2f1a;color:#d2991d}.t4{background:#2a1f3a;color:#bc8cff}.t5{background:#3a1f1f;color:#f85149}
+.diagram{background:#0a0e14;border:1px solid var(--border);border-radius:8px;padding:.8rem;overflow-x:auto}
+.footnote{color:var(--muted);font-size:.82rem}
+a{color:var(--a2)}
+.toc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.4rem}
+.toc ol{padding-left:1.5rem}
+li{margin:.25rem 0}
+.quote{border-left:3px solid var(--accent);padding:.2rem .8rem;color:var(--muted);margin:.5rem 0;font-size:.88rem}
+</style>
+</head>
+<body>
+
+<h1>OpenCode Harness 源码分析</h1>
+<p class="subtitle">以 <b>上下文压缩（Compaction）</b> 为切入点，沿「上下文生命周期」展开五条主线<br>
+源码根：<code>/nas_train/app.e0031982/harness/opencode/</code> · 报告日期：2026-10-02 · 铁律：每条结论贴 <code>路径:行号</code> 原文</p>
+
+<div class="toc"><b>目录</b>
+<ol>
+<li><a href="#overview">0. 概况与术语体系</a></li>
+<li><a href="#panorama">1. 上下文生命周期全景图（总图）</a></li>
+<li><a href="#l1">2. 线1 — 上下文注入与「投影」管线</a></li>
+<li><a href="#l2">3. 线2 — Context Epoch / 检查点与回滚</a></li>
+<li><a href="#l3">4. 线3 — 插件与 Hook 系统（扩展边界）</a></li>
+<li><a href="#l4">5. 线4 — Todo 任务状态跨压缩存活</a></li>
+<li><a href="#l5">6. 线5 — 模型适配与 token 计数策略</a></li>
+<li><a href="#tradeoff">7. 与 cline 的对照 / 设计取舍</a></li>
+</ol>
+</div>
+
+<h2 id="overview">0. 概况与术语体系</h2>
+<div class="card">
+<p><b>OpenCode</b>（<code>opencode-ai</code>，TypeScript + <code>bun@1.3.14</code>，Effect 效应系统 DI）是一个开源 AI 编码 agent。</p>
+<p>它为自己的上下文模型建立了一套<b>严谨、带「避讳词」的术语表</b>（<code>CONTEXT.md:7-52</code>）——这本身就是一条「上下文生命周期」设计主张：<b>区分「持久的历史」与「投影出来的运行时上下文」</b>。核心术语：</p>
+<table>
+<tr><th>术语（原文定义位置）</th><th>含义</th></tr>
+<tr><td><b>System Context</b>（<code>CONTEXT.md:7</code>）</td><td>呈现给模型的结构化上下文事实（初始指令 + 时序更新）。<i>Avoid</i>：System prompt</td></tr>
+<tr><td><b>Session History</b>（<code>CONTEXT.md:11</code>）</td><td>「<b>投影后的</b>、按时间排序的对话」——在应用活动 compaction 与 Context Epoch 截断<b>之后</b>选出。</td></tr>
+<tr><td><b>Context Source</b>（<code>CONTEXT.md:15</code>）</td><td>一个独立观察到的类型化值：稳定 key + JSON codec + 无错 loader + 纯 baseline/update renderer + 可选 removal renderer。</td></tr>
+<tr><td><b>Context Epoch</b>（<code>CONTEXT.md:26</code>）</td><td>一段跨度：初始渲染的 System Context 保持为不可变 provider-cache 基线，<b>结束于已完成 compaction / Session 移动 / 不兼容上下文切换</b>。</td></tr>
+<tr><td><b>Context Snapshot</b>（<code>CONTEXT.md:33</code>）</td><td>可覆盖的、<b>对模型隐藏</b>的 JSON 状态，用于把每个 Context Source 与「上次进入 provider turn 的值」做比较。</td></tr>
+<tr><td><b>Provider Turn</b>（<code>CONTEXT.md:48</code>）</td><td>一次对 provider 的请求 + 该请求的投影响应。</td></tr>
+</table>
+<p class="footnote">这条术语表的关键洞察：<b>Session History 是「投影」而非「原始存储」</b>——与 cline 的「无损投影（原始消息从不被修改）」是同一哲学，但 opencode 用「Epoch + seq 截断」而非 cline 的「EditType/ContextUpdate map」来实现。</p>
+<h2 id="panorama">1. 上下文生命周期全景图（总图）</h2>
+<div class="card">
+<p>把五条线摆进同一条生命周期链路（复用 cline 报告的总图骨架，换成 opencode 的机制名）：</p>
+<div class="diagram"><pre><code>
+  [user input]                                                   【线1 注入/投影】
+      │  Admitted Prompt → Prompt Promotion（append 到 Session History）
+      ▼
+  buildPrompt  ──▶  System Context（Context Source registry + 各 loader）   【线1】
+      │              Context Epoch 决定「本次采用哪个 baseline」
+      │              history.ts:messageRows() 按 compaction.seq / baselineSeq 投影出 Session History
+      ▼
+  provider turn ──▶ LLM（tool_call ↘ model_response 循环）
+      ▼
+  tool execute  ──▶  [before/after hook] + overflow 判定 + snapshot         【线3】
+      │              文件增删 → 记录进 git-worktree snapshot                【线2】
+      ▼
+  上下文超限? ──▶ 是 ──▶ Compaction：prune（规则清 tool 输出）或 process（LLM 摘要）【核心】
+      │              │  触发 "experimental.session.compacting" hook         【线3】
+      │              │  summary 落 assistant message；compaction part 记 tail_start_id
+      │              ▼
+      │         Context Epoch 结束 → 新 baseline（system context 重新渲染）  【线2】
+      │              │
+      └── 否 ──（继续）◀── 注入 autocontinue 消息（compaction_continue）
+                                    Todo 全程不参与压缩，独立 DB 表持久化     【线4】
+                                    token 估算 CHARS_PER_TOKEN=4            【线5】
+</code></pre></div>
+<p class="footnote">标 <span class="tag t1">核心</span> 的是本报告切入点的「压缩」机制，五条线各自标注了位置。证据落在 <code>packages/opencode/src/session/</code> 与 <code>packages/core/src/session/</code>。</p>
+</div>
+
+<h2 id="l1">2. 线1 — 上下文注入与「投影」管线（Compaction 的上游）</h2>
+
+<h3>① 它解决什么问题</h3>
+<div class="card">
+<p>把「发什么给模型」从「存了什么」里<b>解耦</b>：历史是<b>追加式持久</b>的，但每轮 provider turn 只发一个<b>投影视图</b>——这个投影同时叠加三件事：① compaction 之后的摘要、② Context Epoch 截断（只保留 compaction 之后的消息 + baseline 之后的 system 消息）、③ 指令文件注入（AGENTS.md/CLAUDE.md 向上遍历附加）。</p>
+</div>
+
+<h3>② 怎么实现（原文）</h3>
+<div class="card">
+<p><b>投影的核心 SQL</b>——<code>packages/core/src/session/history.ts:30-52</code> <code>messageRows()</code> 决定哪些消息进入 Session History：</p>
+<pre><code>.where(and(
+  eq(SessionMessageTable.session_id, sessionID),
+  compaction
+    ? or(
+        gte(SessionMessageTable.seq, compaction.seq),                 // 压缩之后的消息全保留
+        baselineSeq === undefined ? undefined
+          : and(eq(SessionMessageTable.type, "system"), gt(SessionMessageTable.seq, baselineSeq)),
+      )
+    : undefined,                                                      // 压缩前 system 消息只留 baseline 之后
+  baselineSeq === undefined ? undefined
+    : or(ne(SessionMessageTable.type, "system"), gt(SessionMessageTable.seq, baselineSeq)),
+)).orderBy(asc(SessionMessageTable.seq))</code></pre>
+<p>这是「<b>无损投影</b>」的 opencode 版：<b>原始消息行从不被删除或改写</b>，投影在读取时用 <code>seq &gt;= compaction.seq</code> 与 <code>seq &gt; baselineSeq</code> 两个阈值实时算出。压缩后的「摘要」是带 <code>summary</code> 字段的普通 assistant message，靠 seq 门槛自然成为投影「头部」。</p>
+
+<p><b>指令文件注入</b>——<code>packages/opencode/src/session/instruction.ts:64-68</code> 定义注入源，<code>:193-218</code> 向上遍历附加（每 message 只一次）：</p>
+<pre><code>const instructionFiles = ["AGENTS.md", ...(!flags.disableClaudeCodePrompt ? ["CLAUDE.md"] : []), "CONTEXT.md"]  // :64-68
+// Walk upward from the file being read and attach nearby instruction files once per message. :193
+while (current.startsWith(root) && current !== root) {
+  const found = yield* find(current)
+  ... if (set.has(found)) { current = path.dirname(current); continue }  // 每 message 去重
+  set.add(found); results.push({ filepath: found, content: `Instructions from: ${found}\n${content}` })
+  current = path.dirname(current)
+}</code></pre>
+
+<p><b>压缩触发在 buildPrompt 里</b>——<code>packages/opencode/src/session/prompt.ts:1149-1166</code>：</p>
+<pre><code>if (task?.type === "compaction") { const result = yield* compaction.process({...}) }
+if (lastFinished.summary !== true && (yield* compaction.isOverflow({ tokens: lastFinished.tokens, model })))
+  yield* compaction.create({ sessionID, agent: lastUser.agent, model: lastUser.model, auto: true })</code></pre>
+
+<p><b>已压缩 tool 输出被清空</b>——<code>packages/opencode/src/session/message-v2.ts:294-297</code>：</p>
+<pre><code>const outputText = part.state.time.compacted
+  ? "[Old tool result content cleared]"
+  : truncateToolOutput(part.state.output, options?.toolOutputMaxChars)              // :294-296
+const attachments = part.state.time.compacted || options?.stripMedia ? [] : (part.state.attachments ?? [])  // :297</code></pre>
+</div>
+
+<h3>③ 数据流图</h3>
+<div class="diagram"><pre><code>
+原始持久历史（SessionMessageTable，全部消息行，含 compaction/summary 标记）
+        │  读时投影（history.ts messageRows）
+        ├── seq >= compaction.seq ─────────────▶ 压缩后的「尾」
+        ├── (system 消息 且 seq > baselineSeq) ▶ Epoch 基线后的 system 事实
+        └── 其余（压缩前旧对话）────────────────▶ 丢弃（不进投影）
+        ＋ 指令注入（instruction.resolve 向上遍历，每 message 一次）
+        ＋ 已压缩 tool 输出（time.compacted）→ output/attachments 置空
+                ▼
+        buildPrompt → System Context + projected Session History → provider turn
+</code></pre></div>
+
+<h3>④ 代价与边界</h3>
+<div class="card">
+<ul>
+<li><b>代价</b>：投影逻辑分散在 SQL 层（history.ts）、消息层（message-v2.ts）、prompt 层（prompt.ts）三处，读代码需跨层还原「一条消息最终长什么样」。CONTEXT.md 术语表的存在本身就是对「概念太多」的补救。</li>
+<li><b>边界</b>：<code>part.state.time.compacted</code> 是<b>不可逆</b>标记删减——一旦 prune 抹掉 tool 输出，原始内容从常规投影失去，只能靠 <code>PRUNE_PROTECTED_TOOLS=["skill"]</code>（compaction.ts:31）保护少数工具。</li>
+<li><b>失败模式</b>：指令 <code>globUp</code> 失败时 <code>Effect.catch(() => Effect.succeed([] as string[]))</code>（instruction.ts:84）——指令文件缺失会<b>静默降级</b>为无注入，模型可能少看到关键规则。</li>
+</ul>
+</div>
+
+<h3>⑤ 我的判断</h3>
+<div class="card">
+<p>opencode 的「投影」比 cline 的「EditType/ContextUpdate map」更<b>结构化</b>：把「哪些内容进上下文」提炼成两个<b>单调递增 seq 阈值</b>（compaction.seq、baselineSeq），投影就是一条 SQL <code>where</code>，可复现、可审计、无重写。代价是灵活性：cline 的 map 能做<b>任意粒度逐块编辑</b>（剥离某段文件内容），opencode 的 seq 阈值只有「整段前后截断 + 逐 part compacted 标记」两档。这是「结构化简单性」换「编辑自由度」。</p>
+</div>
+<h2 id="l2">3. 线2 — Context Epoch / 检查点与回滚（Compaction 的可回退路径）</h2>
+
+<h3>① 它解决什么问题</h3>
+<div class="card">
+<p>cline 的检查点是「<b>非破坏性编辑 + 时间戳截断</b>」（对话级回滚）。opencode 把它<b>拆成两个正交机制</b>：</p>
+<ul>
+<li><b>Context Epoch</b>（context 级）：记录 System Context 的「不可变 baseline」，compaction 完成后开启新 epoch，靠 <code>baselineSeq</code> 截断旧的 system 事实。</li>
+<li><b>git-worktree Snapshot</b>（workspace 级）：<code>revert.ts</code> 用 git 快照回滚<b>文件改动</b>，不是回滚对话。</li>
+</ul>
+<p>两者都解决「<b>压缩/操作之后还能精确回到之前状态</b>」，但一个管「模型看到的上下文」，一个管「磁盘上的文件」。</p>
+</div>
+
+<h3>② 怎么实现（原文）</h3>
+<div class="card">
+<p><b>Context Epoch 的表结构</b>——<code>packages/core/src/session/context-epoch.ts:18-21</code> 与 <code>:122-139</code>（持久化 baseline + snapshot + baseline_seq）：</p>
+<pre><code>interface Prepared { readonly baseline: string; readonly baselineSeq: number }   // :18-21
+const insert = Effect.fnUntraced(function* (db, sessionID, generation) {
+  const baselineSeq = yield* EventV2.latestSequence(db, sessionID)
+  yield* db.insert(SessionContextEpochTable).values({
+    session_id, baseline: generation.baseline, snapshot: generation.snapshot, baseline_seq: baselineSeq,
+  }).run()
+  return baselineSeq
+})</code></pre>
+
+<p><b>关键：compaction 结束一个 epoch</b>——<code>context-epoch.ts:59-70</code>（compaction 的 seq 超过旧 baseline_seq 时，触发 <code>SystemContext.replace</code> 换新基线）：</p>
+<pre><code>const replacementSeq = compaction !== undefined && compaction.seq > stored.baseline_seq ? compaction.seq : undefined
+const result = replacementSeq
+  ? yield* SystemContext.replace(value, snapshot)   // compaction 后：整体替换
+  : yield* SystemContext.reconcile(value, snapshot) // 正常：增量 reconcile
+if (result._tag === "Unchanged" || result._tag === "ReplacementBlocked") {
+  return { baseline: stored.baseline, baselineSeq: stored.baseline_seq }
+}
+if (result._tag === "ReplacementReady") {
+  const baselineSeq = replacementSeq ?? (yield* EventV2.latestSequence(db, sessionID))
+  yield* replace(db, sessionID, baselineSeq, result.generation)
+  return { baseline: result.generation.baseline, baselineSeq }
+}</code></pre>
+<p>「compaction 找最新 compaction 消息 seq」的证据在 <code>packages/core/src/session/history.ts:13-22</code> <code>latestCompaction()</code>。</p>
+
+<p><b>git-worktree 快照回滚</b>——<code>packages/opencode/src/session/revert.ts:70-73</code>（先 <code>track()</code> 再 <code>restore()</code> 旧快照、<code>revert(patches)</code> 撤文件）：</p>
+<pre><code>rev.snapshot = session.revert?.snapshot ?? (yield* snap.track())
+if (session.revert?.snapshot) yield* snap.restore(session.revert.snapshot)
+yield* snap.revert(patches)
+if (rev.snapshot) rev.diff = yield* snap.diff(rev.snapshot)</code></pre>
+<p>快照底层是 git——<code>packages/opencode/src/snapshot/index.ts:382-399</code>（restore = <code>git read-tree</code>）、<code>:408-441</code>（revert = checkout/delete）：</p>
+<pre><code>const result = yield* git([...core, ...args(["read-tree", snapshot])], { cwd: state.worktree })  // :386 restore
+// revert: file existed in snapshot → checkout；not existed → delete            // :408-441</code></pre>
+<p>关键差异：opencode 的「检查点」持久化的是<b>文件改动 diff</b>（<code>revert.ts:76-77</code> 用 <code>summary.computeDiff</code> 算出并写 <code>session_diff</code>；<code>:79-87</code> <code>setRevert</code> 记录 revert 点），<b>不是</b> cline 那种对话编辑的 timestamp 截断。</p>
+</div>
+
+<h3>③ 数据流图</h3>
+<div class="diagram"><pre><code>
+              Context Epoch（DB: SessionContextEpochTable）
+                 baseline / snapshot / baseline_seq
+                        │
+  buildPrompt ──▶ context-epoch.prepare：
+        │           无存储 → initialize（insert baseline）
+        │           有存储 + compaction.seq > baseline_seq → replace（新 epoch）
+        │           有存储 + 无新 compaction → reconcile（publish ContextUpdated + advance snapshot）
+        ▼
+  provider turn（投影用 baselineSeq 截断 system 消息 —— history.ts）
+  ============ workspace 侧（正交）============
+  tool 改文件 → Snapshot.track()（git commit 快照）
+  revert()  → snap.restore(旧快照) + snap.revert(patches) → 文件回到之前状态
+               session.revert 持久化 revert 点（messageID/partID/snapshot）→ unrevert() 可撤销回滚
+</code></pre></div>
+
+<h3>④ 代价与边界</h3>
+<div class="card">
+<ul>
+<li><b>代价</b>：两套机制（context 侧 epoch + workspace 侧 git 快照）带来<b>概念成本</b>——「回滚」在 opencode 里是<b>两个不同动词</b>：epoch 的 <code>replace/reconcile</code> 管上下文，snapshot 的 <code>restore/revert</code> 管文件。</li>
+<li><b>边界</b>：git 快照依赖底层 git（<code>snapshot/index.ts:71</code> 用 <code>Global.Path.data/snapshot/&lt;project&gt;/&lt;worktree hash&gt;</code> 作独立 gitdir）；大仓库会拖慢 <code>track()</code>（<code>:277-294</code> 有 <code>large</code> 大仓库过滤）。</li>
+<li><b>失败模式</b>：<code>restore</code>/<code>revert</code> 大量 <code>Effect.logError("failed to restore snapshot")</code>（<code>:392/:399/:435</code>）——git 快照失败时<b>只记日志、不抛异常</b>，回滚可能半途而废而不被上层感知。</li>
+</ul>
+</div>
+
+<h3>⑤ 我的判断</h3>
+<div class="card">
+<p>cline 用「非破坏性编辑 + 时间戳截断」把<b>对话与压缩</b>做成一体的可回退历史；opencode 把「上下文状态」（epoch）和「文件状态」（git snapshot）<b>分层</b>。后者更贴合「agent 真正要回滚的是磁盘副作用」这一事实，且 git 快照天然复用成熟的 diff/checkout——但要说明：<b>opencode 没有 cline 那种「精确回退到摘要生成前」的对话级时间戳截断</b>；它对「压缩」的回退通过「epoch 换基线」而非「截断时间戳」实现。<span class="tag t2">线2</span></p>
+</div>
+<h2 id="l3">4. 线3 — 插件与 Hook 系统（把调控能力开放给外部）</h2>
+
+<h3>① 它解决什么问题</h3>
+<div class="card">
+<p>和 cline 的 Hook 系统同源：<b>把内置的上下文/tool/权限调控能力，以受控方式开放给插件</b>。但 opencode 的插件面<b>更细</b>——不是 cline 的粗粒度 <code>beforeRun/afterRun/beforeTool</code>，而是一张<b>字符串键控的细粒度 Hook 表</b>。</p>
+</div>
+
+<h3>② 怎么实现（原文）</h3>
+<div class="card">
+<p><b>Hook 接口全清单</b>——<code>packages/plugin/src/index.ts:222-334</code>（<code>Hooks</code> interface），关键项（贴要点非全文）：</p>
+<pre><code>export interface Hooks {
+  dispose?: () => Promise&lt;void&gt;
+  event?: (input: { event: Event }) => Promise&lt;void&gt;
+  config?: (input: Config) => Promise&lt;void&gt;
+  auth?: AuthHook
+  provider?: ProviderHook
+  "chat.message"?: (input) => Promise&lt;void&gt;                    // :234
+  "chat.params"?: (input) => Promise&lt;void&gt;                     // :247 provider 请求参数
+  "chat.headers"?: (input) => Promise&lt;void&gt;                    // :257
+  "permission.ask"?: (input, output) => Promise&lt;void&gt;          // :261 权限裁决
+  "command.execute.before"?: (input) => Promise&lt;void&gt;          // :262
+  "tool.execute.before"?: (input) => Promise&lt;void&gt;             // :266
+  "tool.execute.after"?: (input) => Promise&lt;void&gt;              // :274
+  "experimental.chat.messages.transform"?: (input) => Promise&lt;void&gt;  // :282
+  "experimental.chat.system.transform"?: (input) => Promise&lt;void&gt;    // :291 ⭐ 管线改写
+  "experimental.provider.small_model"?: (input, output) => Promise&lt;void&gt; // :297
+  "experimental.session.compacting"?: (input) => Promise&lt;void&gt;       // :305 ⭐ 压缩 Hook
+  "experimental.compaction.autocontinue"?: (input) => Promise&lt;void&gt;  // :316 ⭐ 压缩续跑
+  "experimental.text.complete"?: (input) => Promise&lt;void&gt;           // :327
+  "tool.definition"?: (input, output) => Promise&lt;void&gt;              // :334
+}</code></pre>
+<p>插件形态：<code>Plugin = (input, options) =&gt; Promise&lt;Hooks&gt;</code>（<code>:74</code>）——<b>插件是一次函数调用，返回 Hook 集合</b>，与 cline 的「manifest.capabilities 声明 + hooks 对象」同一思想、不同封装。加载应用见 <code>packages/opencode/src/plugin/index.ts:114</code> <code>applyPlugin(load, input, hooks[])</code>。</p>
+
+<p><b>⭐ 核心问题：Compaction 能否插件化？</b>——证据矛盾，如实拆解：</p>
+<ul>
+<li>✅ <b>有 Hook 接入压缩生命周期</b>：<code>experimental.session.compacting</code>（<code>:305-306</code>）压缩时触发；<code>experimental.compaction.autocontinue</code>（<code>:316-318</code>）控制压缩后自动续跑。</li>
+<li>❌ <b>压缩算法本身硬编码在核心</b>：真正的压缩逻辑在 <code>packages/opencode/src/session/compaction.ts</code> 的 <code>SessionCompaction</code> Service（<code>prune</code> + <code>processCompaction</code>），插件<b>无法替换</b>。</li>
+<li>📌 <b>官方自承边界</b>——<code>CONTEXT.md:223-225</code> 明确：<code>experimental.chat.system.transform</code> 能改 baseline system prompt，但「<b>V2 插件尚未暴露等价 Hook</b>」，是否移植另行决定：</li>
+</ul>
+<div class="quote">- Legacy <code>experimental.chat.system.transform</code> can mutate the assembled baseline system prompt arbitrarily, but V2 plugins do not yet expose an equivalent hook. Decide separately whether to port it, replace dynamic uses with plugin-defined Context Sources, or narrow its semantics.</div>
+</div>
+
+<h3>③ 数据流图</h3>
+<div class="diagram"><pre><code>
+  插件（Plugin = input => Promise&lt;Hooks&gt;）→ applyPlugin 挂进 Provider/Agent 生命周期
+        │
+        ├─ chat.message / params / headers —— 劫持 provider 请求收发
+        ├─ tool.execute.before / after  —— 包裹工具执行
+        ├─ permission.ask —— 权限裁决（allow/deny/ask）
+        ├─ experimental.chat.system.transform —— 改写 assembled system prompt（⭐ 可拦管线节点）
+        ├─ experimental.session.compacting / autocontinue —— 压缩时机挂钩（⭐ 可观测，算法不可替换）
+        └─ provider / auth —— 模型与鉴权扩展
+  内部硬编码（不可替换）：SessionCompaction.prune / processCompaction、Context Epoch、Snapshot
+</code></pre></div>
+
+<h3>④ 代价与边界</h3>
+<div class="card">
+<ul>
+<li><b>代价</b>：字符串键 Hook 表让插件 API 表面扁平，但 <code>experimental.*</code> 前缀 Hook 是<b>临时契约</b>——<code>compaction.ts:537-539</code> 注释明确 <code>compaction_continue</code> 标记「<b>not a stable plugin contract and may change or disappear</b>」，依赖它的插件有漂移风险。</li>
+<li><b>边界</b>：扩展边界画在「<b>观测与包裹</b>」而非「<b>替换核心</b>」——与 cline 结论一致：Compaction 这类<b>上下文调控核心硬编码</b>，Hook 能挂时长、能改 system prompt，但换不掉压缩算法。</li>
+</ul>
+</div>
+
+<h3>⑤ 我的判断</h3>
+<div class="card">
+<p>opencode 的 Hook 面比 cline <b>更细、更贴近请求生命周期</b>（细分到 <code>chat.params</code>/<code>chat.headers</code>/<code>tool.execute.before/after</code>），反映它把「provider 请求」当一等抽象。但两者在「<b>上下文调控核心是否可替换</b>」上给出<b>相同的保守答案</b>：压缩算法硬编码，Hook 只开放「观测 + 外围改写」。真正开放给生态的，是 cline 的「工具/权限/生命周期包裹」与 opencode 的「provider 接入 + system prompt transform + 压缩时机」——<b>压缩策略本身都在核心，留给生态的是它的『四周』</b>。<span class="tag t3">线3</span></p>
+</div>
+<h2 id="l4">5. 线4 — Todo 任务状态跨压缩存活（长期目标解耦）</h2>
+
+<h3>① 它解决什么问题</h3>
+<div class="card">
+<p>cline 的 Focus Chain 命题：「压缩的是『对话说了什么』，但『接下来要做什么』通过 todo list 单独维护」。opencode 的实现更直白：<b>Todo 存在一张独立 SQL 表里，与消息表（会被压缩投影）彻底分开</b>——压缩天然碰不到它。</p>
+</div>
+
+<h3>② 怎么实现（原文）</h3>
+<div class="card">
+<p>Todo 用独立表 <code>TodoTable</code> 持久化（非消息、非投影）——<code>packages/opencode/src/session/todo.ts:29-51</code>：</p>
+<pre><code>const update = Effect.fn("Todo.update")(function* (input: { sessionID; todos }) {
+  yield* db.transaction((tx) =>
+    Effect.gen(function* () {
+      yield* tx.delete(TodoTable).where(eq(TodoTable.session_id, input.sessionID)).run()   // 先清空
+      if (input.todos.length === 0) return
+      yield* tx.insert(TodoTable).values(
+        input.todos.map((todo, position) => ({          // 重插，position 显式编码顺序
+          session_id, content: todo.content, status: todo.status, priority: todo.priority, position,
+        })),
+      ).run()
+    }),
+  ).pipe(Effect.orDie)
+  yield* events.publish(Event.Updated, input)
+})</code></pre>
+<p>读取按 <code>position</code> 升序——<code>todo.ts:54-60</code> <code>orderBy(asc(TodoTable.position))</code>。<code>position</code>（<code>:38-43</code>）让「顺序」成为显式持久化事实，不依赖消息时间。</p>
+</div>
+
+<h3>③ 数据流图</h3>
+<div class="diagram"><pre><code>
+  短期记忆（会话）：SessionMessageTable ──▶ 会被 compaction 摘要 / seq 截断（投影里消失）
+  长期目标（Todo）：TodoTable（session_id/content/status/priority/position）
+                    └── 独立表，从不进入 compaction 的 prune/process 对象
+                    └── 每次 update 是「delete+insert」整体覆盖，position 定义顺序
+        → 压缩发生后：todo 原样保留，agent 靠 todo 而非对话历史记住「接下来做什么」
+</code></pre></div>
+
+<h3>④ 代价与边界</h3>
+<div class="card">
+<ul>
+<li><b>代价</b>：<code>update</code> 是<b>全量 delete+insert</b>（<code>:33-46</code>），无增量 diff——todo 每更新都重写整表，todo 多时有 O(n) 写放大。</li>
+<li><b>边界</b>：todo 内容如何进 system prompt 属于「注入」（走 <code>experimental.chat.system.transform</code> 之类外围 Hook），不是 compression 本体职责。</li>
+</ul>
+</div>
+
+<h3>⑤ 我的判断</h3>
+<div class="card">
+<p>opencode 的「长期目标 vs 短期对话」解耦最朴素也最彻底：<b>换一张表</b>。cline 的 Focus Chain 是「todo 作独立消息流/文件」的显式机制（目前甚至还是 stub），opencode 直接用数据库表物理隔离。「跨压缩存活」这一性质<b>由 schema 保证、无需额外代码</b>，但代价是灵活性低（全量覆盖、无历史版本）。<span class="tag t4">线4</span></p>
+</div>
+<h2 id="l5">6. 线5 — 模型适配与 token 计数策略</h2>
+
+<h3>① 它解决什么问题</h3>
+<div class="card">
+<p>cline 用「3 字符/token」保守估算 <code>effectiveMaxInputTokens</code>，并有 Issue #7772（local 模型上下文窗口无法自动检测）。opencode 有同样两件事：token 估算 + 压缩条件启用，但参数取值不同。</p>
+</div>
+
+<h3>② 怎么实现（原文）</h3>
+<div class="card">
+<p><b>token 估算</b>——<code>packages/core/src/util/token.ts:3-5</code>（<b>4 字符/token</b>）：</p>
+<pre><code>const CHARS_PER_TOKEN = 4
+export const estimate = (input: string) => Math.max(0, Math.round(input.length / CHARS_PER_TOKEN))</code></pre>
+<div class="quote">对照：cline 用 <code>3 字符/token</code>（更保守 → 高估 token，压缩来得早）；opencode 用 <code>4 字符/token</code>（更乐观 → 低估 token，压缩来得晚）。直接影响「何时触发压缩」。</div>
+
+<p><b>压缩预算常量</b>——<code>packages/opencode/src/session/compaction.ts:28-33</code>：</p>
+<pre><code>export const PRUNE_MINIMUM = 20_000
+export const PRUNE_PROTECT = 40_000
+const TOOL_OUTPUT_MAX_CHARS = 2_000
+const PRUNE_PROTECTED_TOOLS = ["skill"]
+const MIN_PRESERVE_RECENT_TOKENS = 2_000
+const MAX_PRESERVE_RECENT_TOKENS = 15_000</code></pre>
+
+<p><b>保留近端预算</b>——<code>compaction.ts:115-119</code>（默认保留可用窗口 25%，夹在 2k~15k）：</p>
+<pre><code>return input.cfg.compaction?.preserve_recent_tokens ??
+  Math.min(MAX_PRESERVE_RECENT_TOKENS, Math.max(MIN_PRESERVE_RECENT_TOKENS, Math.floor(usable(input) * 0.25)))</code></pre>
+
+<p><b>条件启用开关</b>——<code>packages/opencode/src/config/config.ts:594-597</code>：</p>
+<pre><code>if (Flag.OPENCODE_DISABLE_AUTOCOMPACT) { result.compaction = { ...result.compaction, auto: false } }    // :593-595
+if (Flag.OPENCODE_DISABLE_PRUNE)     { result.compaction = { ...result.compaction, prune: false } }   // :596-598</code></pre>
+<p>注：这是<b>环境变量 flag</b> 开关（<code>OPENCODE_DISABLE_AUTOCOMPACT</code> / <code>OPENCODE_DISABLE_PRUNE</code>），不是 per-provider 白名单。自动压缩运行时判定见 <code>processor.ts:622</code>（<code>compaction?.auto === false &amp;&amp; !ctx.assistantMessage.summary</code>）与 <code>:693</code>（<code>if (ctx.needsCompaction) return "compact"</code>）。</p>
+</div>
+
+<h3>③ 数据流图</h3>
+<div class="diagram"><pre><code>
+  消息文本 → Token.estimate（len / CHARS_PER_TOKEN=4）→ 各层估算 token
+        │
+        ├─ isOverflow(token, model)？→ 超 provider 限额 → compaction.create(auto:true)
+        ├─ needsCompaction（processor 累积超预算）→ return "compact"
+        ├─ prune：保留 2k~15k（默认 25% 窗口）近端，向前抹旧 tool 输出（PRUNE_PROTECT=40k 门槛）
+        └─ 受 config.compaction.auto/prune + preserve_recent_tokens 调制（多模型 provider 走 Provider 抽象）
+</code></pre></div>
+
+<h3>④ 代价与边界</h3>
+<div class="card">
+<ul>
+<li><b>代价</b>：4 字符/token 是<b>乐观</b>估算，对 token 密集文本（代码、表格）会低估，压缩触发偏晚，可能撞 provider 真实硬上限。</li>
+<li><b>边界</b>：开关系（auto/prune）与预算常量是<b>全局/配置</b>级，非 per-provider 白名单——cline 有 provider 特殊待遇清单（Claude 4/GPT-5 等才启 Auto Compact），opencode 的适配靠 <code>Provider</code> 抽象（<code>usable(input)</code> 取 model 可用窗口）而非硬编码白名单。</li>
+<li><b>失败模式</b>：<code>prune</code> 只保护 <code>skill</code>（<code>PRUNE_PROTECTED_TOOLS=["skill"]</code>），其他工具（read/bash 等）大输出可能被抹掉，模型丢失关键中间结果。</li>
+</ul>
+</div>
+
+<h3>⑤ 我的判断</h3>
+<div class="card">
+<p>两条线都承认「token 估算是<b>启发式</b>」，但取值方向相反：cline 偏保守（宁早压缩不留溢出），opencode 偏乐观（宁晚不浪费上下文）。折射两类产品哲学：cline 面向「多 provider 兼容 + 本地模型兜底」，opencode 面向「头部云模型 + 高效利用上下文」。适配上，cline 做显式白名单，opencode 做 provider 抽象 + 配置开关——<b>前者硬编码在 utils，后者参数化在 config</b>。<span class="tag t5">线5</span></p>
+</div>
+</div>
+<h2 id="tradeoff">7. 与 cline 的对照 / 设计取舍小结</h2>
+<div class="card">
+<table>
+<tr><th>维度</th><th>cline</th><th>opencode</th></tr>
+<tr><td><b>投影抽象</b></td><td>EditType/ContextUpdate map（逐块编辑，任意粒度）</td><td>seq 阈值 + baselineSeq（SQL 截断，结构化简单）</td></tr>
+<tr><td><b>检查点回滚</b></td><td>非破坏性编辑 + 时间戳截断（对话级）</td><td>Context Epoch（上下文）+ git snapshot（文件），分层</td></tr>
+<tr><td><b>Hook 粒度</b></td><td>beforeRun/afterRun/beforeTool（粗）</td><td>chat.*/tool.*/permission.*/experimental.*（细，字符串键）</td></tr>
+<tr><td><b>任务状态解耦</b></td><td>Focus Chain todo（当前多为 stub）</td><td>TodoTable 独立 SQL 表（schema 保证）</td></tr>
+<tr><td><b>token 估算</b></td><td>3 字符/token（保守）</td><td>4 字符/token（乐观）</td></tr>
+<tr><td><b>provider 适配</b></td><td>白名单（Claude 4/GPT-5 等才启 Auto Compact）</td><td>Provider 抽象 + config 开关（参数化）</td></tr>
+</table>
+<p class="footnote">共同结论：<b>两者都把「上下文压缩」硬编码在核心，把「观察与外围改写」开放给 Hook——压缩策略本身不留给生态。</b></p>
+</div>
+
+<footer style="text-align:center;color:var(--muted);font-size:.85rem;margin-top:3rem;padding-top:1rem;border-top:1px solid var(--border)">
+<p>报告根：<code>/nas_train/app.e0031982/harness/opencode/</code> · 关键证据全部贴 <code>路径:行号</code> · 2026-10-02</p>
+<p>下一步（同格式）：deepseek-harness / codex / claude-code</p>
+</footer>
+
+</body>
+</html>
