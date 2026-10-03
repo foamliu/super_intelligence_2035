@@ -130,11 +130,10 @@ WAITING: 0
 
 ## 7. 已知坑（会复发）
 
-- 🔴 **`baize_vision_loop.sh` 至今无 `git pull`（2026-10-03 复核脚本原文确认，非传闻）**：循环体只做 `git add -A` + `commit` + `push`（每 5h）。
-  → **后果**：**我推给 vision 的任务书更新，不会自行到达 vision 的工作副本**；只能靠**同一 NFS 工作副本**上**别的线（`baize_data_loop.sh` 会 `fetch + pull --rebase --autostash`）**顺手拉下来 → 这正是此前 **R14 / E1 / R11-L** 能到达的原因（**间接依赖，不是设计如此**）。
-  → 🔴 **对 `R11-L2` 批准的实际影响**：`84d7990`（批准 R11-L2）**要等 data 线（或任何拉取者）跑过一次 pull 后**才会出现在 vision 的树里。
-  → 🔧 **根治（需登机；🚫 我不登录训练机）**：`pkill -f baize_vision_loop.sh` → 照抄 `baize_pretrain_loop.sh`（已含 `fetch + pull --rebase --autostash` + 行首 `^WAITING:` 正则 + 只 add 本任务文件）→ `setsid bash baize_vision_loop.sh > /tmp/baize_vision_loop.log 2>&1 < /dev/null &`。
-  → ⚠️ **附带坑**：它的 `git add -A` 会把**整棵树**的改动一起提交（不只 vision 文件）——在**共享副本**上叠加时**易误提交别线在途文件**。
+- 🟡 **`baize_vision_loop.sh` 无 `git pull`**（2026-10-03 复核脚本原文：只做 `git add -A` + `commit` + `push`，每 5h）—— **✅ 但不构成阻塞（用户 2026-10-03 确认）**：
+  → **机制**：**仓库是共享的** —— **别的线（`baize_pretrain_loop.sh` / `baize_data_loop.sh` 都会 `fetch + pull --rebase --autostash`）拉一次，vision 在同一工作副本上就看到**我的任务书更新。→ 所以 `84d7990`（R11-L2 批准）**会经由 pretrain/data 的 pull 自然到达**，**无需任何专门处理**。
+  → 🔧 **可选根治（需登机；非必须）**：`pkill -f baize_vision_loop.sh` → 照抄 `baize_pretrain_loop.sh`（自带 pull + 行首 `^WAITING:` 正则 + 只 add 本任务文件）→ 再 `setsid` 起。
+  → ⚠️ 附带注意：它的 `git add -A` 会把**整棵树**的改动一起提交（不只 vision 文件）——共享副本上叠加时**可能误提交别线在途文件**。
 - `run/ops/inbox.md` **只执行第一个 ```bash 块**（踩过：RUN_ID 4 静默失效）。
 - `ops_relay.sh` 会跑出**多副本**（共享 `.last_run_id` → 重复执行）→ 保留 **`etimes` 最大**者。
 - **WAITING 正则**：旧版 `WAITING:[* ]*1` 误匹配正文散文 → 已收紧为行首 `^WAITING:[[:space:]]*1`。
