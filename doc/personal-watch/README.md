@@ -37,20 +37,23 @@
 | 项 | 值 |
 |:---|:---|
 | 建哨日 | **2026-10-03** |
-| 当前阶段 | **起步**：仅 **news** 一条线（新闻采集） |
-| 规划中的线 | [TBD] 后续可按需增设（如 paper/daily/paper 追踪、主题深挖、competitive-watch） |
+| 当前阶段 | **起步**：**news（新闻）+ research（论文）** 两条线 |
+| 规划中的线 | news：**纠偏中**（中文权威源/新闻定义）；research：**刚建线**（先打通 arXiv API） |
 
 ---
 
-## 3. Agent 线（**当前 1 条**）
+## 3. Agent 线（**当前 2 条**）
 
 > **唯一权威**清单见 **`AGENTS.md`**（避免数错）。`run/` 下可能同时存在多个脚本，以 `AGENTS.md` 为准。
 
 | 线 | 任务书 | loop 脚本 | 状态文件 | 产物 | 状态 |
 |:---|:---|:---|:---|:---|:---|
-| **news** 🆕 | `run/WATCH_NEWS_TASK.md` | `run/watch_news_loop.sh` | `run/MEMORY_NEWS.md` | `run/news/` | ⬜ 待启动 |
+| **news** 🆕 | `run/WATCH_NEWS_TASK.md` | `run/watch_news_loop.sh` | `run/MEMORY_NEWS.md` | `run/news/` | 🔄 运行中（纠偏中） |
+| **research** 🆕 | `run/WATCH_RESEARCH_TASK.md` | `run/watch_research_loop.sh` | `run/MEMORY_RESEARCH.md` | `run/research/` | ⬜ 待启动 |
 
 **news 线定位**：按关注清单（`WATCH_NEWS_TASK.md` §1）**常态化采集**超级智能/前沿 AI 相关的**新闻**，每轮产出一份**当日摘要** `run/news/<YYYY-MM-DD>.md`，并维护去重台账 `run/news/SEEN.md`。
+
+**research 线定位**：**打通 arXiv API**（`export.arxiv.org/api/query`）并**常态化采集 & 整理 AI 论文**，重点 **LLM / SLM / 多模态 / agent harness**。产出 `run/research/<YYYY-MM-DD>.md` 日报 + `SEEN.md`（**主键 arXiv ID**）+ `INDEX.md` + `papers.jsonl`（结构化台账），并留 `ARXIV_API.md` 打通记录。**范式与铁律继承 news 线**（含"`200 ≠ 有料`"：必须验 `Content-Type` + `published` 日期）。
 
 ---
 
@@ -63,12 +66,17 @@ doc/personal-watch/
 ├── AGENTS.md                      # agent 状态总表（"谁在跑"的唯一权威）
 ├── daily-memories/                # supervisor 侧每日流水
 └── run/                           # worker agent 编排 + 产物
-    ├── README.md                  # run/ 使用说明
-    ├── WATCH_NEWS_TASK.md         # 新闻 agent 任务书（agent 只读）
-    ├── watch_news_loop.sh         # 新闻 agent 循环脚本
-    ├── MEMORY_NEWS.md             # 新闻 agent 运行时状态（含 WAITING）
-    ├── daily-memories-news/       # 新闻 agent 每日流水
-    └── news/                      # 新闻产物（<date>.md 摘要 + SEEN.md 去重台账 + INDEX.md）
+    ├── README.md                  # run/ 使用说明（启动/巡检/调参）
+    ├── WATCH_NEWS_TASK.md         # news 任务书（agent 只读）
+    ├── watch_news_loop.sh         # news 循环脚本
+    ├── MEMORY_NEWS.md             # news 运行时状态（含 WAITING）
+    ├── daily-memories-news/       # news 每日流水
+    ├── news/                      # news 产物（<date>.md + SEEN.md + INDEX.md + 免 key MCP）
+    ├── WATCH_RESEARCH_TASK.md     # research 任务书（agent 只读）
+    ├── watch_research_loop.sh     # research 循环脚本
+    ├── MEMORY_RESEARCH.md         # research 运行时状态（含 WAITING）
+    ├── daily-memories-research/   # research 每日流水
+    └── research/                  # research 产物（<date>.md + SEEN.md + INDEX.md + papers.jsonl + ARXIV_API.md + pdf/）
 ```
 
 ---

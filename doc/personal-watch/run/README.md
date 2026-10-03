@@ -46,6 +46,31 @@ pkill -f 'watch_news_loop.sh'
 
 ---
 
+## 2.1 启动 research 线（**在可出外网的机器上**）
+
+```bash
+cd <仓库根>/doc/personal-watch/run
+git pull --rebase --autostash
+setsid bash watch_research_loop.sh > /tmp/watch_research_loop.log 2>&1 < /dev/null &
+```
+
+**验证 / 停止**（把 `news` 换成 `research`）：
+
+```bash
+pgrep -af 'watch_research_loop.sh'          # 应恰好 1 个进程
+tail -f /tmp/watch_research_loop.log
+pkill -f 'watch_research_loop.sh'
+```
+
+> ⚠️ **前提**：运行机器需能访问 **`export.arxiv.org`**（arXiv API）。
+> 首轮执行 **R1（打通 arXiv API）**：**必须给实测证据**（真查询 + 条目 + `published` 日期 + `Content-Type`），
+> 且遵守 **arXiv 礼貌限速（请求间隔 ≥ 3 秒）**。
+>
+> ℹ️ **两条线可同时跑**：它们各自有独立 loop / MEMORY / 产物目录；共享工作副本——
+> 两个 loop 都**只 `git add` 本线文件**，互不干扰。
+
+---
+
 ## 2.5 常用调参（都在 `watch_news_loop.sh` 顶部）
 
 | 变量 | 默认 | 作用 / 备注 |

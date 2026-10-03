@@ -50,6 +50,7 @@ WAITING: 0
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
 | **news** | **第 6 批 T10**（封装 `fetch_cn_news()` 统一中文入口）+ **T9**（中文源必须产出真新闻）+ **T8**（非新闻直接不收）；并行 T5–T7 | `news/mcp_web_search_free.py` 的 `cn_news`/CLI + `news/FETCH_CN_NEWS.md`；`run/news/<date>.md`（只留真新闻，中文≥英文） | ⚠️ 待纠偏（**31 条中文权威新闻 = 0**；已下发 T8–T10） |
+| **research** 🆕 | **R1–R4**（建线首启）：打通 arXiv API → 检索策略 → 常态采集 → 日报/台账/jsonl | `run/research/ARXIV_API.md` · `run/research/<date>.md` · `SEEN.md`(arXiv ID) · `INDEX.md` · `papers.jsonl` | 🆕 已建线，**待启动 loop** |
 
 > ✅ **T1–T4 已完成并交付（2026-10-03，commit `c326ba8`）**：
 > - **T1** 核实 12 个 web-search 候选；**T2** 新建**免 key MCP** `run/news/mcp_web_search_free.py`（3 工具 `web_search`/`search_news`/`rss_latest`）+ `run/news/cline_mcp_config.json`，**stdio 全链路实测通过**；
@@ -184,6 +185,12 @@ WAITING: 0
   并**指定由 news agent 自己实现**（熟环境、调试方便）。
   - 规格已下发（第 6 批）：**MCP 工具 `cn_news` + CLI 直调 双形态**；**内建 死源黑名单 / `pubDate≤72h` / `Content-Type` 校验 / UA / 限速降级**；返回 `{title,source,url,published,lang,type}`；**自测必交证据**。
   - ⚠️ 强调：**MCP 未装进 cline 时，CLI 直调是一等公民**。
+- **2026-10-03（建第 2 条线：research）** —— 用户要求"**类似 news，建个 research agent：打通 arXiv 下载 API，收集&整理论文（AI，特别是 LLM/SLM/多模态/agent harness）**"。
+  - **落地**（范式照抄 news）：`run/WATCH_RESEARCH_TASK.md`（只读任务书，含 §0.1 论文入账判据 + §1 关注领域 + R1–R5）·
+    `run/watch_research_loop.sh`（同款加固 loop）· `run/MEMORY_RESEARCH.md` · `run/research/`（+`pdf/`）· `run/daily-memories-research/`。
+  - **继承的铁律**：不许编造 · 字段缺一不可 · **`200 ≠ 有料`（验 `Content-Type` + `published`）** · **礼貌限速（arXiv ≥3s）** · 不整篇转载 · 只加本线文件。
+  - **R1 先跑**：打通 arXiv API 并**给实测证据**（真查询 + 条目 + 日期）；**R1 未打通不做常态采集**。
+  - **待办**：用户需在运行机上 `setsid bash watch_research_loop.sh ...` **拉起 loop**（见 `run/README.md`）。
 - **2026-10-03（news worker 首交付）** —— agent 完成 **T1–T4**（`c326ba8`）+ **首轮 smoke 16 条**（`3fcd854`）+ 记忆回写（`bdc20db`），已转**常态采集**（`WAITING=1`）。
   亮点：**真跑实测**（给报错原文）、**建了免 key MCP**、报告**自包含**、**360 无日期就拒收**（守"字段缺一不可"）。
   待用户拍板：**是否补正规 API key**（免 key 抓取脆弱/合规灰区）。待核：**MCP 是否已装进运行机 cline**。

@@ -10,10 +10,15 @@
 
 | Agent | loop 脚本 | 任务书 | 状态文件 | 日志目录 | 跑什么 | 状态 |
 |:---|:---|:---|:---|:---|:---|:---|
-| **news** 🆕 | `run/watch_news_loop.sh` | `run/WATCH_NEWS_TASK.md` | `run/MEMORY_NEWS.md` | `run/daily-memories-news/` | 按关注清单**常态化采集超级智能/前沿 AI 新闻**，产出 `run/news/<date>.md` 摘要 + `run/news/SEEN.md` 去重台账 | ⬜ 待启动 |
+| **news** 🆕 | `run/watch_news_loop.sh` | `run/WATCH_NEWS_TASK.md` | `run/MEMORY_NEWS.md` | `run/daily-memories-news/` | 按关注清单**常态化采集超级智能/前沿 AI 新闻**，产出 `run/news/<date>.md` 摘要 + `run/news/SEEN.md` 去重台账 | 🔄 运行中（纠偏中：中文权威源 / 新闻定义） |
+| **research** 🆕 | `run/watch_research_loop.sh` | `run/WATCH_RESEARCH_TASK.md` | `run/MEMORY_RESEARCH.md` | `run/daily-memories-research/` | **打通 arXiv API** + 采集/整理 AI 论文（**LLM / SLM / 多模态 / agent harness**），产出 `run/research/<date>.md` + `SEEN.md`(arXiv ID) + `papers.jsonl` | ⬜ 待启动 |
 
 > 🆕 **news 线（2026-10-03 新建）**：本哨位的**第一条线**。依赖**外网搜索**（MCP `web-search` / `search_news`）。
 > **不占 GPU、不登录训练机**；唯一资源是**网络请求**，注意控制频率与合规（见任务书铁律）。
+>
+> 🆕 **research 线（2026-10-03 新建）**：依赖 **arXiv API**（`export.arxiv.org/api/query`）。**不占 GPU**；
+> ⚠️ **礼貌限速**（arXiv 要求请求间隔 **≥3s**）；**继承 news 线全部铁律**，尤其 **"`200 ≠ 有料`"（验 `Content-Type` + `published`）**。
+> 姊妹关系：**news 管"发生了什么"，research 管"研究界出了什么"**；两条线共用工作副本，**注意 loop 的 `git add` 只加本线文件**。
 
 ---
 
