@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 17 -->
+<!-- RUN_ID: 18 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,54 @@
 
 ---
 
-## RUN_ID 17 — 🔎 **harness 日志里的 16 次 `Forbidden` 是 loop 自身还是 agent 内部嵌套调用？**（**纯只读**）（**本块最新，优先执行**）
+## RUN_ID 18 — 🔧 **修复第二版：loop 自己注入有效 key（而非 unset）+ 重启**（**已获批准**）（**本块最新，优先执行**）
+
+**为何要改（RUN_ID 17 发现，2026-10-04 07:37）**：
+- ⚠️ 我上一版补丁把 `OPENAI_API_KEY` **unset** 掉 → **`run_harness.py:105-108`**（`self.api_key=os.environ.get("OPENAI_API_KEY","")` / `available()` 要求非空）会让 **harness 自己的 driver 变 `available()==False`** → 我在修 bug 时引入了新 bug
+- ✅ 正确做法：**把有效 key 注入 loop 环境**（从 `~/.cline/data/secrets.json` 现读，不落仓库）→ cline 与所有子进程（含 `ClineDriver`）都拿到它
+- 📌 脚本已改：两条 loop 顶部新增 `export OPENAI_API_KEY="$(...secrets.json...)"`；cline 调用行只保留 proxy 屏蔽
+- ℹ️ 另注：RUN_ID 16 的「harness Forbidden=16」经 RUN_ID 17 判定为**假阳性**（agent 推理文本在讨论该词），**精确探针应为 `grep -c 'error:.*Forbidden'`**
+
+**本块动作**：checkout 新脚本 → 停两条 loop（**🚫 不动 GPU 上的 P-9 进程**）→ 重启 → 校验（含 loop 环境里 key 是否已注入，仅打 masked 前缀）。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
+
+echo; echo "=== 1. checkout 最新 loop 脚本 ==="
+git -C "$WK" fetch origin --quiet 2>/dev/null
+git -C "$WK" checkout origin/main -- doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh && echo "   checked out"
+grep -n 'export OPENAI_API_KEY' "$RUN/baize_pretrain_loop.sh" "$RUN/baize_harness_loop.sh" | cut -c1-115
+
+echo; echo "=== 2. 停两条 loop（🚫 不碰 GPU 上的 P-9）==="
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'baize_(pretrain|harness)_loop\.sh' | grep -v grep | cut -c1-105
+pkill -f 'baize_pretrain_loop.sh'; pkill -f 'baize_harness_loop.sh'; sleep 5
+pgrep -af 'baize_(pretrain|harness)_loop\.sh' | cut -c1-105 || echo "   已停止"
+
+echo; echo "=== 3. 重启（由脚本自身注入 key）==="
+cd "$RUN"
+setsid bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+sleep 3
+setsid bash baize_harness_loop.sh > /tmp/baize_harness_loop.log 2>&1 < /dev/null &
+sleep 20
+
+echo; echo "=== 4. 校验 ==="
+for n in pretrain harness; do
+  P=$(pgrep -f "baize_${n}_loop.sh" | head -1); printf '   %-9s pid=%-9s ' "$n" "${P:-none}"
+  [ -n "$P" ] && tr '\0' '\n' < "/proc/$P/environ" 2>/dev/null | grep '^OPENAI_API_KEY=' | sed 's/=\(.\{6\}\).*/key= \1...(masked)/' || echo "(no key in env!)"
+done
+echo "   secrets.json: $(python3 -c "import json,os;k=json.load(open(os.path.expanduser('~/.cline/data/secrets.json')))['openAiApiKey'];print('len',len(k),'prefix6',k[:6])" 2>/dev/null)"
+echo "-- 进程 --"; pgrep -af 'baize_(pretrain|harness)_loop\.sh|bun.*cline' | cut -c1-118
+echo "-- 真实报错数（应为 0）--"; grep -c 'error:.*Forbidden' /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log 2>/dev/null
+echo "-- pretrain 日志尾 --"; tail -c 400 /tmp/baize_pretrain_loop.log 2>/dev/null | tr -d '\r' | tail -3 | cut -c1-140
+echo "-- GPU（P-9 应仍在跑）--"; nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null
+
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 17**（Forbidden 定性，**✅ 已执行 07:37:28**）为 ```text。
+
+## RUN_ID 17 — 🔎 **harness 日志里的 16 次 `Forbidden` 是 loop 自身还是 agent 内部嵌套调用？**（✅ 已执行，本块不再运行）
 
 **RUN_ID 16 复查（2026-10-04 07:36:21）**：
 - ✅ **pretrain 完全正常**：`Forbidden=0`；日志显示 **"P-5b completion recorded in report, P-9.1 running"**；**GPU 8 卡已重新忙起来**（22–84% util / ~39GB）→ 不再是空转
@@ -42,7 +89,7 @@
 
 🚫 **纯只读**。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 echo; echo "=== 1. harness 日志 Forbidden 上下文（前 3 处，看是否紧跟 [loop] wake up）==="
 grep -n -B4 -A2 'Forbidden' /tmp/baize_harness_loop.log 2>/dev/null | head -34 | cut -c1-165
