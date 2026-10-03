@@ -11,13 +11,13 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        collecting（建线首轮 R1–R4 已收官；第二轮 R1′/R2′ 已落盘；第三、四轮常态增量完成 → 均 0 新增）
-已完成:       R1 打通 arXiv API（HTTPS/Atom，实测 HTTP/2 200 + application/atom+xml → research/ARXIV_API.md）；R2 固化检索策略（queries.json）；R3/R4 首轮采集（抓取 214 → 收录 34 + 候选 180）；R1′ 运行机取源复验（--probe：arXiv ✅ / HF ❌ / RSS 周末空）；R2′ 时效 published-first + 周末自动放宽（120h，weekend_batch）；第二轮增量（15/15 ok，新增 193 → 收录 27 + 候选 166）；第三、**第四轮增量（各 15/15 ok，窗口内 404 条全部已在 SEEN + 196 超龄 → kept 0；R1′ 复验 arXiv ✅/HF ❌/RSS 空）**
-当前动作:     第四轮落盘收官：日报第四轮章节 + INDEX/SEEN/ARXIV_API（§9.5）更新 → 提交本线文件
+PHASE:        collecting（建线首轮 R1–R4 已收官；第二轮 R1′/R2′ 已落盘；第三/四/**五**轮常态增量完成 → 均 0 新增）
+已完成:       R1 打通 arXiv API（HTTPS/Atom，实测 HTTP/2 200 + application/atom+xml → research/ARXIV_API.md）；R2 固化检索策略（queries.json）；R3/R4 首轮采集（抓取 214 → 收录 34 + 候选 180）；R1′ 运行机取源复验（--probe：arXiv ✅ / HF ❌ / RSS 周末空）；R2′ 时效 published-first + 周末自动放宽（120h，weekend_batch）；第二轮增量（15/15 ok，新增 193 → 收录 27 + 候选 166）；第三、四、**第五轮增量（各 15/15 ok，窗口内 404 条全部已在 SEEN + 196 超龄 → kept 0；R1′ 复验 arXiv ✅/HF ❌/RSS 空）**
+当前动作:     第五轮落盘收官：日报第五轮章节 + INDEX/SEEN/ARXIV_API（§9.6）更新 → 提交本线文件
 下一步:       常态采集——下一轮按 SOP 增量采集（先读 SEEN.md 去重、定窗口）；无近期待办则 WAITING=1（睡 30min）
 本轮新增:     0 篇（领域数：0；**周六 arXiv 未公告**，最近批次仍为 2026-10-01，如实标注窗口区间）
 阻塞:         无（HF Daily Papers 本机不可达 → 如实记录，不伪造 hf_daily；RSS 周末空按规则标注「周末/未公告」）
-ERROR_COUNT:  0（第四轮 15/15 查询 ok、无重试；回归测试 49/49 PASS；历史 1 次 Read timeout 已重试成功）
+ERROR_COUNT:  0（第五轮 15/15 查询 ok、无重试；回归测试 49/49 PASS；历史 1 次 Read timeout 已重试成功）
 ```
 
 ---
@@ -38,13 +38,19 @@ ERROR_COUNT:  0（第四轮 15/15 查询 ok、无重试；回归测试 49/49 PAS
 - **日流水**：`daily-memories-research/<YYYY-MM-DD>.md`
 - **关注领域**：LLM · SLM · 多模态 · agent harness（+ 邻域，见任务书 §1）
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-03`（第四轮；窗口 **≤120h**（周六，`window_mode=weekend_batch`）；实际批次 `2026-09-28 ~ 2026-10-01`，本轮 **0 新增**）
-- **累计收录**：`61` 篇（另候选 346 篇，仅存 `SEEN.md` 防重；四轮累计抓取 407 条 —— 第三、四轮新增均 0）
+- **上次采集窗口**：`2026-10-03`（第五轮；窗口 **≤120h**（周六，`window_mode=weekend_batch`）；实际批次 `2026-09-28 ~ 2026-10-01`，本轮 **0 新增**）
+- **累计收录**：`61` 篇（另候选 346 篇，仅存 `SEEN.md` 防重；五轮累计抓取 407 条 —— 第三/四/五轮新增均 0）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-03** —— **第五轮（常态增量 · 周六，第四轮后 ~30min）→ 0 新增**。
+  - **R1′（取源复验）**：`--probe --config research/queries.json`（`generated=2026-10-03T11:47:29Z`）→ **arXiv API ✅** `HTTP 200`+`application/atom+xml`（最新 `published=2026-10-01T17:59:59Z`，`totalResults=625914`）；**HF ❌ `Network is unreachable`**；**RSS cs.CL/CV/LG ⚠️ 200 但 `items=0`（周末/未公告）**。证据 → `research/raw/2026-10-03-probe-r5.json`。
+  - **增量采集**：`--fetch --seen research/SEEN.md`（`window_mode=weekend_batch`，窗口 120h，`generated=2026-10-03T11:47:40Z`）→ **15/15 查询 ok**（无重试），**kept 0 / dropped 600**（**404 = already in SEEN** + **196 = stale >120h**）。证据 → `research/raw/2026-10-03-fetch-r5.json`。
+  - **结论**：本日**周六**、arXiv **周末不发公告**，最近批次仍为 `2026-10-01` → **0 新增属正常**；按 R2′ 在日报**如实标注实际日期区间**（`2026-09-28 ~ 2026-10-01`），**不写成「无数据」**。
+  - **落盘**：日报追加「第五轮」章节（5 领域均记「周末/未公告 · 无新增」+ R1′ 表）；`INDEX.md` / `SEEN.md` 计数与备注更新（累计仍 **407 = 收录 61 / 候选 346**）；`ARXIV_API.md` 新增 **§9.6**。
+  - **回归测试**：`research/test_arxiv_fetch.py` **49/49 PASS**（离线）。
 - **2026-10-03** —— **第四轮（常态增量 · 周六，第三轮后 ~30min）→ 0 新增**。
   - **R1′（取源复验）**：`--probe --config research/queries.json`（`generated=2026-10-03T11:13:02Z`）→ **arXiv API ✅** `HTTP 200`+`application/atom+xml`（最新 `published=2026-10-01T17:59:59Z`，`totalResults=625914`）；**HF ❌ `Network is unreachable`**；**RSS cs.CL/CV/LG ⚠️ 200 但 `items=0`（周末/未公告）**。证据 → `research/raw/2026-10-03-probe-r4.json`。
   - **增量采集**：`--fetch --seen research/SEEN.md`（`window_mode=weekend_batch`，窗口 120h）→ **15/15 查询 ok**（无重试），**kept 0 / dropped 600**（**404 = already in SEEN** + **196 = stale >120h**）。证据 → `research/raw/2026-10-03-fetch-r4.json`。
