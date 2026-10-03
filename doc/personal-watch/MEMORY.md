@@ -49,7 +49,7 @@ WAITING: 0
 
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
-| **news** | **第 5 批 T9**（中文权威源必须真正产出新闻）+ **T8**（非新闻直接不收）；并行 T5–T7 | `run/news/<date>.md`（只留真新闻）+ `SEEN.md`(加 `类型` 列) + `INDEX.md`；中文条目占比须 ≥ 英文 | ⚠️ 待纠偏（**31 条里中文权威新闻 = 0**，用户已点名批评） |
+| **news** | **第 6 批 T10**（封装 `fetch_cn_news()` 统一中文入口）+ **T9**（中文源必须产出真新闻）+ **T8**（非新闻直接不收）；并行 T5–T7 | `news/mcp_web_search_free.py` 的 `cn_news`/CLI + `news/FETCH_CN_NEWS.md`；`run/news/<date>.md`（只留真新闻，中文≥英文） | ⚠️ 待纠偏（**31 条中文权威新闻 = 0**；已下发 T8–T10） |
 
 > ✅ **T1–T4 已完成并交付（2026-10-03，commit `c326ba8`）**：
 > - **T1** 核实 12 个 web-search 候选；**T2** 新建**免 key MCP** `run/news/mcp_web_search_free.py`（3 工具 `web_search`/`search_news`/`rss_latest`）+ `run/news/cline_mcp_config.json`，**stdio 全链路实测通过**；
@@ -180,6 +180,10 @@ WAITING: 0
     正确地址是 `https://news.un.org/feed/subscribe/zh/news/all/rss.xml`。
   - **处置（T9 新增第 7 条）**：URL 写死正确值 · **校验 `Content-Type`（rss/xml）+ `pubDate`，拿到 HTML/404 判失败** · 设可识别 UA 作**通用防御**（非本因）。
   - → **教训再升级：连"病因诊断"也要能实测证伪——两轮下来，"想当然"已两次出错（央视 RSS 活着 / UA 被拦）。**
+- **2026-10-03（派活 T10）** —— 用户同意把三个**已实测活源**（中新网 RSS / 联合国中文 RSS / 央视网 HTML）**固化成 `fetch_cn_news()`**，
+  并**指定由 news agent 自己实现**（熟环境、调试方便）。
+  - 规格已下发（第 6 批）：**MCP 工具 `cn_news` + CLI 直调 双形态**；**内建 死源黑名单 / `pubDate≤72h` / `Content-Type` 校验 / UA / 限速降级**；返回 `{title,source,url,published,lang,type}`；**自测必交证据**。
+  - ⚠️ 强调：**MCP 未装进 cline 时，CLI 直调是一等公民**。
 - **2026-10-03（news worker 首交付）** —— agent 完成 **T1–T4**（`c326ba8`）+ **首轮 smoke 16 条**（`3fcd854`）+ 记忆回写（`bdc20db`），已转**常态采集**（`WAITING=1`）。
   亮点：**真跑实测**（给报错原文）、**建了免 key MCP**、报告**自包含**、**360 无日期就拒收**（守"字段缺一不可"）。
   待用户拍板：**是否补正规 API key**（免 key 抓取脆弱/合规灰区）。待核：**MCP 是否已装进运行机 cline**。
