@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 23 -->
+<!-- RUN_ID: 24 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,53 @@
 
 ---
 
-## RUN_ID 23 — 🎯 **正确复测（带 proxy 剥离）+ 通过则自动重启**（**已获批准**）（**本块最新，优先执行**）
+## RUN_ID 24 — 🔬 **对撞：同一 key 下 `.12` 的 cline 能跑、`.29` 不能 —— 差在哪**（**只读**）（**本块最新，优先执行**）
+
+**现状（2026-10-04 07:52）**：
+- ❌ `.29`：**任何 env 组合**（剥/不剥 proxy、剥/放 OPENAI_API_KEY、v1/v2/v3）→ cline 一律 **3 秒内 `error: Forbidden`**
+- ✅ **同一把 key** → `curl /v1/chat/completions` = **200**
+- ✅ **`.12` 的 vision/data 一直在正常干活**（clog mtime 07:46）
+- ⇒ **问题已从「key/proxy」转移到「`.29` 上的 cline 客户端本身」**（本地配置 / 版本 / data-dir）
+
+**本块四连测（全只读，绝不重启任何 loop）**：
+| # | 测什么 | 判定 |
+|:--|:--|:--|
+| 1 | 两机 cline **版本** | 版本不同 → 升级/回滚 |
+| 2 | 两机 `globalState.json` **全量键值对比** | 找出唯一差异 |
+| 3 | **在 `.12` 上跑同一 smoke**（经 ssh） | 若 OK → 坐实"host-local" |
+| 4 | 在 `.29` 用 **全新 `--data-dir`** 跑 smoke | 若 OK → **`.29` 的 `~/.cline/data` 坏了**（可隔离修复） |
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; cd /tmp
+_k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" | head -1)"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY"
+SM="reply with exactly OK"
+
+echo; echo "=== 1. 两机 cline 版本 ==="
+echo -n "   .29: "; "$C" --version 2>&1 | head -1
+timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 "echo -n '   .12: '; /home/app.e0031982/.bun/bin/cline --version 2>&1 | head -1" 2>&1 | tail -1
+
+echo; echo "=== 2. globalState.json 键值对比（只打非敏感项）==="
+sed -n '1,400p' "$HOME/.cline/data/globalState.json" 2>/dev/null | tr ',' '\n' | grep -iE 'provider|model|baseurl|version|telemetry|proxy|auth' | head -20 | sed 's/^/   .29 /'
+echo "   -- .12 --"
+timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 "sed -n '1,400p' \$HOME/.cline/data/globalState.json 2>/dev/null | tr ',' '\n' | grep -iE 'provider|model|baseurl|version|telemetry|proxy|auth' | head -20 | sed 's/^/   .12 /'" 2>&1 | head -22
+
+echo; echo "=== 3. 在 .12 上跑同一 smoke（判定 host-local）==="
+timeout 60 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 "cd /tmp && env $P -u OPENAI_API_KEY timeout 45 /home/app.e0031982/.bun/bin/cline -c /tmp -m $M --auto-approve true -t 30 '$SM' 2>&1 | head -3 | cut -c1-140" 2>&1 | cut -c1-150
+
+echo; echo "=== 4. 在 .29 用【全新 --data-dir】跑 smoke（判定本地配置是否坏了）==="
+rm -rf /tmp/_cd_probe 2>/dev/null
+env $P -u OPENAI_API_KEY timeout 90 "$C" --data-dir /tmp/_cd_probe -c /tmp -m "$M" --auto-approve true -t 45 "$SM" 2>&1 | head -3 | cut -c1-150
+
+echo; echo "=== 5. 当前 loop 状态（不动）==="
+pgrep -af 'bash baize_(pretrain|harness)_loop\.sh' | cut -c1-95
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 23**（正确复测，**✅ 已执行 07:52:08**，**结果：T1/T2/T3 全 Forbidden → 未重启**）为 ```text。
+
+## RUN_ID 23 — 🎯 **正确复测（带 proxy 剥离）+ 通过则自动重启**（✅ 已执行，⚠️ 全挂、未重启，见 RUN_ID 24）
 
 **RUN_ID 22 关键结论（2026-10-04 07:49:40）**：
 - 🔑 **key 是有效的**：`.29` secrets key → **curl 200** ✅；`.12` key → **200** ✅，且 `.12` 一直在干活
@@ -49,7 +95,7 @@
 
 > 仅当 **T1 通过**才重启；T1 若仍 Forbidden → **不动 loop**，只报告。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 WK=/nas_train/app.e0031982/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
 C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; cd /tmp
