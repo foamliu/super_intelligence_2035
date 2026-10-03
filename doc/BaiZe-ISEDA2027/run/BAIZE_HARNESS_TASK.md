@@ -73,6 +73,32 @@ sg docker -c 'docker info'      # 非登录 shell 下验证 socket 可访问（�
 **产出**：`run/harness/CLINE_IMPROVEMENTS_TOP5.html` —— **自包含**（内联 CSS、离线可开、**无外链依赖**）。
 **纪律**：**不占 GPU**；重 I/O 避让训练；沿用「贴 `路径:行号`」铁律。
 
+### 🆕 运维指令 · 2026-10-03（第 4 批：**SWE-bench-Lite 全量可行性/成本评估** + 准备 root 解锁）
+
+> 运维确认 **sudo 口令 = `Ly3960405#`**（`@` 变体已实测无效；**口令已入库，用完请轮换**）。
+> ✅ **授权用 root 做「评估 + 准备命令」**；⚠️ **但改 dockerd 配置 / 重启 daemon 这类有扰动的动作，先报方案 + 精确命令，运维批准后再执行**（共享主机）。
+
+**A. 只读评估（先做，纯 CPU）→ 产出 `harness/SWEBENCH_LITE_FEASIBILITY.md`**
+
+| # | 要查什么 | 怎么查 | 为什么 |
+|:--|:--|:--|:--|
+| 1 | **镜像总体积** | 用 Docker Hub API 查 Lite 300 条对应镜像的 manifest → 报 **sum(size)** 与「**按 layer digest 去重后的实际下载量**」 | 300 张 ≠ 300 倍体积（层共享） |
+| 2 | ⚠️ **Docker Root Dir + 剩余空间** | `docker info \| grep 'Docker Root Dir'` + `df -h <该目录>` | **镜像落在本地盘（不是 NFS）** → **这是硬约束，必须先给数** |
+| 3 | **本机已有镜像** | `docker images`（已知 11 个） | 是否含可用 base |
+| 4 | **【root·只读】dockerd 配置口子** | `systemctl show docker -p Environment` · `cat /etc/docker/daemon.json` · `ls /etc/systemd/system/docker.service.d/` | 能否加代理 |
+| 5 | **重启风险** | `docker ps -a`（是否有**别人在跑**的容器） | 判断 restart dockerd 是否扰动共享主机 |
+| 6 | **时间估算** | 给出 **300 题 × N harness** 的墙钟（agent 时间 + 测试时间）；并给 **子集（django+sympy 20–30）× N** 对照 | 时间才是真成本 |
+| 7 | **结论** | **全量 300 是否值得** + 推荐规模 | 决策用 |
+
+**另：给出「给 daemon 配代理」的精确命令（systemd drop-in + `daemon-reload` + `restart docker`），但 🚫 本轮不执行**；
+并评估**免重启的替代**（如 `skopeo copy` + `docker load`，走 client 侧代理）。
+
+**B. 更正 Aider 的表述（必做）**
+- 把 H-C 报告/记忆里「**Aider Polyglot 无 docker 可立即开跑**」**更正为「沙箱前提未满足」**（本地 `bwrap/nsjail/podman` 全 absent）。
+- 补：**有了 root 后**的两条解法 —— ① `apt install bubblewrap`（或 nsjail）② 用**已存在且实测可用**的 `unshare --user --map-root-user` + `--mount` + tmpfs/chroot。
+
+**纪律**：**只读为先**；**root 动作先报后做**；贴**命令 + 原始输出**；**不许猜**。
+
 ### 📉 记忆维护规程（2026-10-03 运维新增，**硬性**）
 > 理由：`MEMORY_*.md` **每次唤醒都被 agent 全文读取** → 越大越烧 token。本线 `MEMORY_HARNESS.md` ≈ **18KB（当前未超标，保持即可）**。
 - **上限**：本线 `MEMORY_HARNESS.md` 控制在 **≤ 32KB**；一旦超限即执行滚动。
