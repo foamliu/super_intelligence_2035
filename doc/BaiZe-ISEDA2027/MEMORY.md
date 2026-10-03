@@ -47,7 +47,7 @@ WAITING: 0
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
 | **pretrain** | P-5b 长跑（20B）→ 跑完**立即 P-9**（MBS/精度/seq/profiling） | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md`「P-9」节 | 🔄 P-5b ~57%，ETA 10-04 凌晨 |
-| **vision** | **R10③**（w384/w640 补密 M 轴）→ **R11-D**（GPIC vs CC12M+Amshaker）/ **R11-L**（loss 轴）/ **R11-L3**（读 OpenVision2 官方代码） | `run/EXPERIMENTS_VISION_ROUND10/11.md` | 🔄 R10_active |
+| **vision** | **R10③**（w384/w640 补密 M 轴）→ **R14**（官方仓库资源调研，高优先·纯CPU）→ **R11-D/L/L3**（数据/loss/官方代码） | `run/EXPERIMENTS_VISION_ROUND10/11.md` · `run/VISION_OFFICIAL_REPOS_SURVEY.md` | 🔄 R10_active |
 | **data** | 下载巡检 + **D-CLEAN-2**（已批删除 ≈8.6T）+ `servers` 探查 | `run/DISK_CLEANUP_INVENTORY.md` 更新 | 🔄 |
 | **harness** | **H-A′ Aider Polyglot 横评** + **H-D** 5-harness 对比与 cline 机会点 | `run/harness/AIDER_POLYGLOT_COMPARE.html` · `HARNESS_COMPARE_MATRIX.html` · `CLINE_IMPROVEMENT_OPPORTUNITIES.md` | 🔄 |
 
@@ -78,6 +78,7 @@ WAITING: 0
 - **`WAITING:` 纪律**：只在各 `MEMORY_*.md` **顶部出现一次**（否则误触发 30 分钟长睡）。
 - **记忆体量 ≤32KB**（4 线已达标；超限滚动到 `daily-memories*/`）。
 - **不许猜**：源码结论贴 `路径:行号`；实验结论贴 **命令 + 原始输出**。
+- 🚫 **不许闭门造车**（**2026-10-03 教训**）：凡涉及"别人怎么做"的结论（架构 / loss / 评测 / 数据），**必须去读官方仓库或论文原文**（能 `git clone` 就 clone），**不得凭印象或二手描述下结论**——当天我就把 R8 的**自研改编**误当成"官方实现"来下了结论。
 - **预注册判据先定后测**（P-9a-ext G、R11 都用了）。
 - 🔒 **红线**：`EDA-Eval-PyAether` 158 任务只读隔离区**绝不可动**；base/gpic 下载目标、L3/code/math、SFT、GPIC、en500k/eval5k 均不可删。
 - ⚠️ **`run/nemo_experiments` 含 P-5b 正在写的 ckpt**，且 **P-6② 要用其中 6 个里程碑 ckpt** → 只能「先列清单、保住最晚/最优 + 里程碑，再删早期项」。

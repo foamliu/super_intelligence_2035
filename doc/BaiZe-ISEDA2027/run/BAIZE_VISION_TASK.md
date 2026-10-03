@@ -116,6 +116,34 @@
 - 若要下"前沿架构在我们场景行不行"的结论，**至少**补 **官方 AIMv2 / FastViTHD（可及则加 MambaEye）的冻结 trunk IN-1k** 参照。
 - **前置**：先交「值不值得 / 成本（下载 ~1.2GB + 延展 `r8_eval_in1k.py`，估 30–45min）」的书面判断，**运维批准后再跑**。
 
+### 📚 R14（**高优先 · 纯 CPU/网络 · 不占 GPU**）：官方仓库资源调研 —— 🚫 **不许闭门造车**
+
+> **运维 2026-10-03**：**OpenVision2 的训练脚本是开源的** → **值得重点读**；同时把前沿路线的官方仓库都摸一遍，**尽量找现成可复用的资源**（loss / 数据 pipeline / config / 权重）。
+> ⚠️ **前提**：`.29`/`.12` **能 `git clone` GitHub**（任务书已确认）→ **去 clone 真代码读**，**不要只看 README 或二手描述**。
+> 🚩 **本轮的由来**：上一轮我们把 R8 的**自研改编**误当作"官方实现"来下结论 → **必须用真代码纠正认知**。
+
+**要读的仓库（clone 到 `/tmp/`，**只读、不改上游**）**：
+
+| # | 仓库 | 重点看 | 优先级 |
+|:--|:--|:--|:--|
+| 1 | **`UCSC-VLAA/OpenVision`**（Apache-2.0） | **训练脚本**：两套目标（**contrastive + generative** / **caption-only**）各自怎么实现；`src/configs/openvision.py`；**`DECODER_NAME`**；数据格式 / augmentation / 优化器 / schedule；**JAX-TPU 与 PyTorch 两套分别在哪** | ⭐⭐⭐ |
+| 2 | **`apple-aiml-research/ml-aim`**（含 `aim-v2/`） | **多模态自回归目标**实现；**image patch 预测**怎么做；decoder 结构；数据 pipeline；**LICENSE 逐字** | ⭐⭐⭐ |
+| 3 | **OpenVision2 权重**（HF `UCSC-VLAA/openvision2-*-vision-only`） | 是否**真的带 caption decoder 权重**（README 称 2026-08 已放）；`open_clip_config.json`；**能否直接加载** | ⭐⭐ |
+| 4 | `apple/ml-fastvlm`（FastVLM / FastViTHD） | 混合编码器实现；**若有官方权重 → 供 R13 参照** | ⭐⭐ |
+| 5 | MambaEye / MoE-ViE / **iGVLM** / TuringViT | **先查证官方仓库是否存在**（有 → 给 URL；**查不到 → 写"未找到"，不许猜**） | ⭐ |
+
+**每个仓库固定产出（模板）**：
+1. **目标函数**（贴源码 `路径:行号`）；
+2. **数据 pipeline**（shard/格式/caption 处理/分辨率）；
+3. **config & 超参**（优化器 / schedule / batch / lr）；
+4. **与我们 `run/vision/models.py` 的差异**（结构级，逐条）；
+5. **可复用资产**（loss 实现 / augmentation / tokenizer / **预训练权重**）；
+6. **LICENSE**（能否用 / 能否发布）；
+7. ⭐ **「我们能**直接抄**什么 / 要**改**什么 / **成本**」三列表**。
+
+**产出**：`run/VISION_OFFICIAL_REPOS_SURVEY.md`（自包含；**每条带 URL 或 `路径:行号`**）。
+**纪律**：**只读不改上游**；**不占 GPU**；重 I/O 避让训练；**找不到就如实写"未找到"**；**不许猜**。
+
 ### 📉 记忆维护规程（2026-10-03 运维新增，**硬性**）
 > 理由：`MEMORY_*.md` **每次唤醒都被 agent 全文读取** → 越大越烧 token。当前 `MEMORY_VISION.md` ≈ **94KB（超标）**。
 - **上限**：本线 `MEMORY_VISION.md` 控制在 **≤ 32KB**；**下次唤醒立即执行一次滚动归档**。
