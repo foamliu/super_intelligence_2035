@@ -97,6 +97,7 @@ while true; do
         #   10-04 07:15 ops 探查定位；.12 于 2026-09-29 遇过同样问题，unset http_proxy 即解决）。
         #   ⚠️ 只作用于本行：loop 自身/`git push` 仍保留 proxy（外网仍需代理）。
         env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
+            -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
           cline -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
         echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git sync ..."
     else

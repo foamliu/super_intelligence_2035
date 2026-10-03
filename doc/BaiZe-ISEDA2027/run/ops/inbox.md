@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 14 -->
+<!-- RUN_ID: 15 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,75 @@
 
 ---
 
-## RUN_ID 14 — 🎯 **钥匙对钥匙：3 个 key 分别 curl + 用 `.12` 的 key 跑 smoke**（**纯只读**）（**本块最新，优先执行**）
+## RUN_ID 15 — ✅ **执行修复：把 `.12` 的有效 key 写到 `.29` + 重启两条 loop**（**运维已批准**）
+
+**RUN_ID 14 一锤定音（2026-10-04 07:26）**：
+- ✅ **`.12` 的 secrets key → `chat/completions` = 200**；用它跑 cline smoke **返回 OK**
+- ❌ **`.29` 的两个 key 都 403**（env `01_549…` 与 secrets `02_088…`）；两者 prefix6 相同但**内容不同** → **`.29` 持有的是已被吊销的旧 key**
+- ✅ `.12` / `.29` 的 `globalState`（provider / modelId / openAiBaseUrl）**完全一致** → 配置无差异
+- ⏱ 与"10-03 22:12 后开始全程 Forbidden"**时间线吻合**
+
+**本块动作（破坏性，已获批准）**：
+1. **备份** `.29` 的 `~/.cline/data/secrets.json`
+2. 从 `.12` 取有效 key，**经 stdin 管道**写入 `.29`（🚫 **key 明文绝不落入命令文本/outbox**）
+3. 先用**新 secrets**（不带 `-k`）跑 smoke 验证
+4. `pkill` 两条 loop → 用**已打好补丁的脚本**（`-u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE -u *_PROXY`）重启
+5. 校验：进程在 + 日志**不再出现 Forbidden**
+
+🚫 **红线**：不动 vision/data；不改任何其它文件；key 只以 `len/prefix6` 形式回显。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T %Z'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
+C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; GW=http://agi-gateway.cxmt.com/v1
+S=~/.cline/data/secrets.json; TS=$(date +%Y%m%d-%H%M%S); cd /tmp
+
+echo; echo "=== 1. 备份 .29 的 secrets.json ==="
+cp -a "$S" "$S.bak.$TS" && echo "   backed up -> $S.bak.$TS"
+python3 -c "import json,pathlib;k=json.load(open(str(pathlib.Path.home())+'/.cline/data/secrets.json'))['openAiApiKey'];print('   old: len=',len(k),'prefix6=',k[:6])"
+
+echo; echo "=== 2. 从 .12 取有效 key 并写入（管道传递，不回显明文）==="
+timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 \
+  'python3 -c "import json,pathlib;print(json.load(open(str(pathlib.Path.home())+\"/.cline/data/secrets.json\"))[\"openAiApiKey\"])"' \
+  | tr -d '\r\n' | python3 -c "import json,sys,os;k=sys.stdin.read().strip();\
+assert len(k)>32,'ABORT: fetched key too short -> nothing written';json.dump({'openAiApiKey':k},open(os.path.expanduser('~/.cline/data/secrets.json'),'w'));print('   new: len=',len(k),'prefix6=',k[:6])" \
+  || { echo "!!! 写入失败 → 中止"; echo DONE; exit 0; }
+
+echo; echo "=== 3. 用【新 secrets、不带 -k】跑 cline smoke（仿 .12 环境）==="
+env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
+  timeout 90 "$C" -c /tmp -m "$M" --auto-approve true -t 45 "reply with exactly OK" 2>&1 | head -4 | cut -c1-150
+
+echo; echo "=== 4. 取最新 loop 脚本（只 checkout 这两个文件）==="
+git -C "$WK" fetch origin --quiet 2>/dev/null
+git -C "$WK" checkout origin/main -- doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh && echo "   checked out"
+grep -n 'OPENAI_API_KEY' "$RUN/baize_pretrain_loop.sh" "$RUN/baize_harness_loop.sh" | cut -c1-110
+
+echo; echo "=== 5. 停旧 loop ==="
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'baize_(pretrain|harness)_loop\.sh' | grep -v grep | cut -c1-105
+pkill -f 'baize_pretrain_loop.sh'; pkill -f 'baize_harness_loop.sh'; sleep 5
+pgrep -af 'baize_(pretrain|harness)_loop\.sh' | cut -c1-105 || echo "   已全部停止"
+
+echo; echo "=== 6. 重启（无 proxy / 无 stale OPENAI_*）==="
+cd "$RUN"
+setsid env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
+  bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+sleep 2
+setsid env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
+  bash baize_harness_loop.sh > /tmp/baize_harness_loop.log 2>&1 < /dev/null &
+sleep 28
+
+echo; echo "=== 7. 校验 ==="
+pgrep -af 'baize_(pretrain|harness)_loop\.sh' | cut -c1-130
+echo "-- pretrain log --"; tail -6 /tmp/baize_pretrain_loop.log | cut -c1-150
+echo "-- harness log --";  tail -6 /tmp/baize_harness_loop.log  | cut -c1-150
+echo "-- Forbidden 计数（新日志，应为 0）--"; grep -c Forbidden /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log 2>/dev/null
+
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 14**（key 对钥匙，**✅ 已执行 07:26:10**）为 ```text。
+
+## RUN_ID 14 — 🎯 **钥匙对钥匙：3 个 key 分别 curl + 用 `.12` 的 key 跑 smoke**（✅ 已执行，本块不再运行）
 
 **RUN_ID 13 决定性证据（2026-10-04 07:23）**：
 - 🔴 **`curl /v1/chat/completions`（带 `$OPENAI_API_KEY`）→ `http=403`**（`/v1/models` 200，但该端点不校验）
@@ -45,7 +113,7 @@
 🚫 **纯只读**：不写文件 / 不 kill / 不重启。
 > ⚠️ **严禁打印 key 明文** —— 只打 `len` 和 `prefix6`。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T %Z'
 C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; GW=http://agi-gateway.cxmt.com/v1; cd /tmp
 
