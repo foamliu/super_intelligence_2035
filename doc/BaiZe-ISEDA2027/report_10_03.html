@@ -49,11 +49,11 @@
 
 <header class="hero">
   <h1>BaiZe 工作汇报 · 2026-10-03</h1>
-  <div class="sub">运维下发 7 项处置全落地 · P-5b 过半（54.08%）· 视觉线 R9 收敛 + R10 补模型规模轴 · harness 线 Docker 解锁</div>
+  <div class="sub">运维下发 7 项处置全落地 · P-5b 已过半（57.0%）· 记忆滚动规程生效（四线 ≤32KB）· harness Docker socket 解锁 · vision R10/R11 开跑</div>
   <div class="meta">
     <span>📅 2026-10-03</span>
     <span>📝 <code>foamliu/super_intelligence_2035</code> @ <code>main</code></span>
-    <span>📈 当日提交 <b>≈40</b> 个</span>
+    <span>📈 当日提交 <b>≈57</b> 个</span>
     <span>🎯 投稿截止 ≈ 2027-02-01（余 <b>≈121 天</b>）</span>
   </div>
 </header>
@@ -69,11 +69,24 @@
   </ol>
 </div>
 
+<div class="ok-box">
+  <b>🔄 本文件已刷新（2026-10-03 ~09:00）—— 相对初版的增量：</b>
+  <ul style="margin:8px 0 0">
+    <li><b>提交 40 → 57</b>。</li>
+    <li><b>pretrain</b>：P-5b <b>54.08% → 57.0%</b>（iter 2720/4771，loss <b>2.0961</b>，健康）；<b>P-9 规格已重写</b>为 P-9.0–P-9.6 干净版（seq 统一 4096 · <b>每步 ≈4M token 不变量</b> · seq 多点扫描 {2048/4096/8192/16384} · <b>FP8 按 <code>M=MBS×seq</code> 扫</b> · profiling 工具已授权自装）。</li>
+    <li><b>记忆滚动规程已生效</b>：pretrain <b>248KB→30KB</b> · data <b>87KB→27KB</b> · vision <b>94KB→4.2KB</b> · harness 18→23KB → <b>四线全部 ≤32KB</b> ✅。</li>
+    <li><b>harness</b>：sudo 生效 → <b>Docker socket 解锁成功</b>；但 <b><code>docker pull</code> 仍不通</b>（dockerd 无代理）→ 实跑需本地镜像或 Route E′；<b>Aider Polyglot 可行性已确认（不需 docker）</b>。</li>
+    <li><b>data</b>：D-CLEAN 盘点已交付；<b>D-CLEAN-2 删除已获批</b>（laion2B <b>8.1 T</b> + zhulong.tar.gz + 早期 ckpt + pip cache ≈ <b>8.6 T</b>）；<code>servers</code>(974 G) 待探查。</li>
+    <li><b>vision</b>：<b>R10 已开跑</b>（① 12 点回收 ✅ ② 二维拟合 ✅ ③ w384/w640 训练中）；新增 <b>R11 目标函数轴</b> 与 <b>R11-D 数据轴（GPIC vs CC12M+Amshaker）</b>。</li>
+    <li>⚠️ <b>一处口径更正</b>：当前 scaling 路线的数据是 <b>CC12M+Amshaker（≈18.5M 对）</b>，<b>不是 GPIC</b>（GPIC 仍在下载）。</li>
+  </ul>
+</div>
+
 <div class="kpi-row">
-  <div class="kpi"><div class="v">54.08%</div><div class="l">P-5b 长跑（iter 2580/4771）· loss 2.1107 · 健康</div></div>
-  <div class="kpi"><div class="v">P-9 已下发</div><div class="l">MBS{1,2,4,8} × FP8 复评</div></div>
-  <div class="kpi"><div class="v">R9 ✅ / R10 已下发</div><div class="l">lp 峰值 7.70% · 补模型规模轴</div></div>
-  <div class="kpi"><div class="v">7 份</div><div class="l">今日运维处置全落地</div></div>
+  <div class="kpi"><div class="v">57.0%</div><div class="l">P-5b 长跑（iter 2720/4771）· loss 2.0961 · 健康</div></div>
+  <div class="kpi"><div class="v">P-9 规格就绪</div><div class="l">MBS × 精度 × seq 多点 × profiling（尽早，早于 P-6②）</div></div>
+  <div class="kpi"><div class="v">R10 进行中</div><div class="l">(N,M) 二维 scaling · R11 loss/数据轴已下发</div></div>
+  <div class="kpi"><div class="v">MEMORY ≤32KB ✅</div><div class="l">四线全部滚动归档（248→30KB 等）</div></div>
 </div>
 
 <div class="toc">
@@ -97,27 +110,27 @@
   <tr><th>线</th><th>今日进展</th><th>当前状态</th><th>下一步</th></tr>
   <tr>
     <td><b>pretrain</b><br><code>.29</code></td>
-    <td>P-5b 长跑继续（20+ 次健康巡检）；<b>10.5B token 里程碑记录</b>；运维新增 <b>P-9</b></td>
-    <td><span class="badge b-ok">🔄 P-5b 54.08%</span> · 健康（loss 2.1107）</td>
-    <td>P-5b 跑完 → <b>P-9</b>（MBS×FP8）→ P-6② → P-8（暂缓）</td>
+    <td>P-5b 健康巡检至第 35 次；<b>P-9 规格已重写</b>（seq 统一 4096 · 4M/步不变量 · seq 多点 · FP8 按 M 扫 · profiling）</td>
+    <td><span class="badge b-ok">🔄 P-5b 57.0%</span> · 健康（loss 2.0961）</td>
+    <td>P-5b 跑完 → <b>P-9</b>（尽早，早于 P-6②）→ P-6② → P-8（暂缓）</td>
   </tr>
   <tr>
     <td><b>vision</b><br><code>.12</code></td>
-    <td><b>R9 全链收敛</b>（训练+11 ckpt IN-1k+scaling 外推+报告）；运维新增 <b>R10</b>（模型规模轴）</td>
-    <td><span class="badge b-ok">⏹ R9 converged</span> · 长睡待派</td>
-    <td>R10①：回收三档塔 ckpt 的 IN-1k → 拟合 (N,M) 二维</td>
+    <td><b>R9 收敛</b>后，<b>R10 已开跑</b>（① 12 点回收 ✅ ② (N,M) 二维拟合 ✅ ③ w384/w640 训练中）；新增 <b>R11</b> 目标函数轴 + <b>R11-D</b> 数据轴</td>
+    <td><span class="badge b-info">🔄 R10_active</span></td>
+    <td>R10③ 收尾 → R11-D（GPIC vs CC12M+Amshaker）/ R11-L（loss 轴）</td>
   </tr>
   <tr>
     <td><b>data</b><br><code>.12</code></td>
-    <td>三路下载巡检（base-en 1810/2048 · gpic 1120/8000 · SFT-2605 一致）；运维新增 <b>D-CLEAN</b></td>
-    <td><span class="badge b-warn">🔄 下载中</span> · 真推进无假活</td>
-    <td>下载续跑 + <b>D-CLEAN</b> 磁盘盘点（只报不删）</td>
+    <td>下载巡检（base-en / gpic / SFT-2605）持续真推进；<b>D-CLEAN 盘点交付</b> → <b>D-CLEAN-2 删除已获批</b></td>
+    <td><span class="badge b-warn">🔄 下载中</span> · <span class="badge b-ok">✅ 可回收 ≈8.6T</span></td>
+    <td>执行删除 + <code>servers</code>(974G) 探查 → 回写 `DISK_CLEANUP_INVENTORY.md`</td>
   </tr>
   <tr>
     <td><b>harness</b><br><code>.29</code></td>
-    <td>H-B 5/5、H-A 可行性核查完成；<b>今日解锁 Docker</b> + 交付 <b>评测调研</b></td>
-    <td><span class="badge b-info">🔓 阻塞解除</span> · 可进入实跑</td>
-    <td>docker 验证 → Aider Polyglot 对照线 → SWE-bench 试点</td>
+    <td>H-B 5/5 + H-A 可行性核查；<b>sudo 生效 → Docker socket 解锁</b>（但 <code>docker pull</code> 仍不通）；<b>Aider Polyglot 可行性确认</b></td>
+    <td><span class="badge b-warn">🔓 socket 解锁 / pull 受阻</span></td>
+    <td>Aider Polyglot（无 docker，可立即开跑）→ 本地镜像或 Route E′ 走 SWE-bench</td>
   </tr>
   <tr>
     <td><b>ops relay</b></td>
@@ -270,10 +283,11 @@
 
 <h2 class="sec" id="s6"><span class="no">6</span>harness 线：Docker 解锁 + H-C 评测调研</h2>
 
-<h3>6.1 Docker 阻塞解除（今日）</h3>
-<div class="ok-box">
-  运维确认 <code>app.e0031982</code> 在 <b>sudo 组</b>并提供口令 → 已把 <code>usermod -aG docker app.e0031982</code> 与验证步骤写进任务书。
-  H-A 从「阻塞待拍板」变为<b>可进入实跑</b>。运行主机仍须<b>避让 .29 训练</b>（先 ≤5 条 smoke，再 20–30 条 django+sympy 试点）。
+<h3>6.1 Docker：socket 已解锁，但 <code>pull</code> 仍不通（更新）</h3>
+<div class="note">
+  <b>实测结果（harness agent, r14）</b>：sudo 口令生效 → <code>usermod -aG docker app.e0031982</code> <b>成功</b>，<b>Docker socket 已可访问</b>；
+  但 <b><code>docker pull</code> 仍不通</b>（dockerd <b>无代理</b>、公司内网拉不到镜像）。<br>
+  → <b>结论</b>：SWE-bench 的容器路线需要「本地已有镜像」或走 <b>Route E′</b>；<b>Aider Polyglot 可行性已确认（不需要 docker）</b>，可立即开跑。
 </div>
 
 <h3>6.2 H-C：SWE-bench 之外的权威 coding-agent 评测（已交付调研）</h3>
@@ -364,11 +378,14 @@
 <h3>10.2 MEMORY 是否该卡最大尺寸？— <span class="badge b-warn">该卡，且已下发</span></h3>
 <table>
   <tr><th>文件</th><th>体量</th><th>状态</th></tr>
-  <tr><td><code>MEMORY_PRETRAIN_2B.md</code></td><td><b>≈243 KB</b>（334 行）</td><td>🔴 严重超标</td></tr>
-  <tr><td><code>MEMORY_VISION.md</code></td><td>≈94 KB（630 行）</td><td>🟠 超标</td></tr>
-  <tr><td><code>MEMORY_DATA.md</code></td><td>≈85 KB</td><td>🟠 超标</td></tr>
-  <tr><td><code>MEMORY_HARNESS.md</code></td><td>≈18 KB</td><td>🟢 正常</td></tr>
+  <tr><td><code>MEMORY_PRETRAIN_2B.md</code></td><td>243 KB → <b>≈30 KB</b></td><td>✅ 已滚动</td></tr>
+  <tr><td><code>MEMORY_VISION.md</code></td><td>94 KB → <b>≈4.2 KB</b></td><td>✅ 已滚动</td></tr>
+  <tr><td><code>MEMORY_DATA.md</code></td><td>85 KB → <b>≈27 KB</b></td><td>✅ 已滚动</td></tr>
+  <tr><td><code>MEMORY_HARNESS.md</code></td><td>18 KB → <b>23 KB</b>（仍在 32KB 内）</td><td>🟢 正常</td></tr>
 </table>
+<div class="ok-box">
+  <b>规程已生效：四线 MEMORY 全部 ≤ 32KB ✅</b>（滚动归档 → <code>daily-memories*/</code>，原文不改、不参与每次唤醒读取）。
+</div>
 <div class="note">
   <b>为什么</b>：loop 只用 <code>grep '^WAITING:'</code>（近零成本），但 <b>agent 每次唤醒全文读取 MEMORY</b> → 243KB ≈ 8 万级 token，<b>每 30 分钟一次</b>，且无上限增长。
 </div>
@@ -381,7 +398,7 @@
 </ul>
 
 <footer>
-  BaiZe 工作汇报 · 2026-10-03 · 当日提交 ≈40 个 ·
+  BaiZe 工作汇报 · 2026-10-03（刷新于 ~09:00）· 当日提交 <b>≈57</b> 个 ·
   详细证据见 <code>run/MEMORY_PRETRAIN_2B.md</code>、<code>run/EXPERIMENTS_VISION_ROUND9.md</code>、
   <code>run/DATA_LEDGER.md</code>、<code>run/harness/CODE_AGENT_BENCHMARKS_SURVEY.md</code>。<br>
   本次运维处置已写入各任务书「运维指令区」：<code>BAIZE_PRETRAIN_2B_TASK.md</code>（P-9）、
