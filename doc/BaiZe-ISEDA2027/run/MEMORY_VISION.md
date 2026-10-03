@@ -1,16 +1,16 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L 预注册 ✅ · arm② SigLIP ✅（未翻盘）**；**R11-L arm③ LocalLoss 已启动（8 卡 · .12 · ETA ~1.9h）**：`r9_train.py --loss localloss`（`ClipLoss(local_loss=True)` 负样本池 512→64 · 冻结 CLIP-768 · 同 R9 数据/步数/opt）→ 跑 `R11L_localloss_w512` 30k 步（N=15.36M，对照基线 lp 6.08%）；R13 待运维批准 |
-| WAITING | 1（R11-L arm③ LocalLoss 训练 running · `.12` 全 8 卡 · `/tmp/r11_localloss.log`） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L 预注册 ✅ · arm② SigLIP ✅（未翻盘）· arm③ LocalLoss ✅（未翻盘）**；**下一步 arm④ CoCa（首个稠密监督臂）待实现 decoder**；R13 待运维批准 |
+| WAITING | 0（无异步训练运行；下一步 arm④ CoCa 需先写 caption decoder，纯 CPU） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
-| BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡，详见 EXPERIMENTS_VISION_ROUND10.md） |
-| 更新 | 2026-10-03 17:14（巡检：**arm③ LocalLoss step 25850/30000（86%）** healthy——C1 0.1821 / C2_gap +0.1152 / C4=OK / loss_ema ~4.78 / steady ~2780 img/s；ETA ~17:27 训完 → 脚本自动回收 4 ckpt IN-1k lp，判据 `grep -c 'R11-L arm3 LocalLoss ALL DONE' /tmp/r11_localloss.log`==1） |
+| BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡） |
+| 更新 | 2026-10-03 17:47（**arm③ LocalLoss `ALL DONE 17:43:31` → 收尾完成**：lp 1.81/3.60/4.33% < 基线 3.43/5.45/6.08% → **未翻盘**；GPU 已空闲；臂④ CoCa 已定待实现，见 ROUND11 §8） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -49,14 +49,14 @@ WAITING: 1
 - `caption_type` mix：short **45.0%** / medium 45.1% / long 9.0% / tag 1.0% → **可训练 short 子类：全量 ≈45M / 已下 ≈6.8M**。
 - 🔑 **C1 口径定案**：R9 用过 18.5M / 盘上现有 ≈32M / 本地全量 ≈118M（动态、仍在下载）——与 `r9_scaling.py --local-cap-m default=118.0` 一致；R11-E「同 N」可比区间被压到 ≈6.8M（short 已下 < 18.5M），须如实说明。已回填 `VISION_ARCH_FRONTIER_2026.md §5`。
 
-## R11-L 目标函数轴（2026-10-03）：arm② SigLIP ✅ → arm③ LocalLoss 运行中
+## R11-L 目标函数轴（2026-10-03）：arm② SigLIP ✅ → arm③ LocalLoss ✅ → 臂④ CoCa 待实现
 
 > 只变目标函数，其余控变量（塔 w512 · 冻结 CLIP-768 · CC12M+Amshaker · lr3e-3 · bs512 · N=15.36M/30k 步 · IN-1k frozen-trunk lp）。预注册判据：同 N 下 lp 比基线 +1.5 点 → 局部推翻「25.1%=对比渐近」。
 
 - ✅ **arm② SigLIP 完成（15:26，`ALL DONE`）**：`r9_train.py --loss siglip`（`SigLipLoss` bidir + 可训 `logit_bias` init−10，`r9_train.py:162-165`）。30k 步无坍缩（C1 0.333 / C2_gap +0.103 / C4=OK / final_loss 5.4643 / steady 2448 img/s）。IN-1k lp = **2.19 / 3.13 / 4.36%** @5.12/10.24/15.36M，全 < 基线（3.43/5.45/6.08%）→ **未超 +1.5 阈值、未翻盘**。证据 `/tmp/r11_siglip.log`。
 - 🚀 **arm③ LocalLoss 已启动（15:29，.12 全 8 卡）**：`r9_train.py --loss localloss`（`ClipLoss(local_loss=True, gather_with_grad=False)`，`r9_train.py:166-168`）→ `R11L_localloss_w512` 30k 步。⚠️ **更正**：读 open_clip 源码（`loss.py:56-63,116-121`）确认 `local_loss=True` **仍是 512 负样本 all-gather**，只算本地 64 行 logits（省算/内存 + 本地图像不再从 text→image 拿梯度）→ 是「计算/梯度路径」变体、**非「负样本池 512→64」**（此前描述有误，已改）。arm③ 因此可证「损失对 local-vs-global 行是否不变」，但**不再测试负样本池大小**——真正池大小消融需另写不 gather 的自定义 loss（待后续决定）。
-- **arm③ 跑完判据**：`grep -c 'R11-L arm3 LocalLoss ALL DONE' /tmp/r11_localloss.log` == 1；脚本自动回收 step{10k,20k,30k}+final 4 ckpt IN-1k lp。
-- **arm③ 收尾（跑完后）**：lp 对照基线 → 判据裁定 → 回填 ROUND11 + VISION 顶部 + 本状态头 → push，再决定臂④ CoCa。
+- ✅ **arm③ LocalLoss 完成（17:43，`ALL DONE`，收尾已做）**：`[done] total=7076.8s final_loss=4.4774 steady=2343 img/s fused=False`，无坍缩（C1 0.2378 / C2_gap +0.1101 / C4=OK）。IN-1k lp = **1.81 / 3.60 / 4.33%** @5.12/10.24/15.36M，全 < 基线（3.43/5.45/6.08%）→ Δ −1.62~−1.85 点、**未翻盘**。证据 `/tmp/r11_localloss.log`。⚠️ arm②③ 监督密度都 = 1 全局标量 → **「稠密监督翻盘」假说仍未检验**。
+- ⏸ **臂④ CoCa 决策（17:47 已定，待实现）**：CoCa = 对比 + caption 自回归 = **首个稠密监督臂**，值得做；⚠️ 我们 caption 偏短拖累生成项；需**新写 caption decoder**（OpenVision2 = concat/prefix-LM，非 CoCa cross-attn）+ 公平表报参数量/额外 token/每步耗时；见了 ROUND11 §8。下一步实施：`r9_train.py` 加 `--loss coca` 分支 → 核 `.12` 8 卡空闲 → 跑 30k 步。
 - 🔍 **巡检（16:44）**：arm③ LocalLoss @ step 17400/30000（58%），健康——C1 0.22 / C2_gap +0.11 / C4=OK、loss_ema 5.91→~4.64、steady ~2500 img/s；ETA ~17:30（剩 ~46 min）后自动回收 4 ckpt IN-1k lp。无异常，继续 WAITING。
 - 🔍 **巡检（17:14）**：arm③ LocalLoss @ step 25850/30000（86%），健康——C1 0.1821 / C2_gap +0.1152 / C4=OK、loss_ema 5.91→~4.78、steady ~2780 img/s；ETA ~17:27 训完（剩 ~13 min）→ 脚本自动回收 4 ckpt IN-1k lp → 下次唤醒（≈17:44）做 arm③ 收尾。无异常，继续 WAITING。
 - 📝 **文档修正（17:14，纯 CPU）**：`EXPERIMENTS_VISION_ROUND11.md` §5 状态行原「负样本池 512→64」为误述，已改为「⚠️ 仍 all-gather 512 → 池仍是 512、只算本地 64 行」（对齐 §0 更正）。另注：`r11_run_localloss.sh` 头注释（`negative pool = per-rank 64`）亦含同一旧表述——该 runner 为一次性脚本（正在运行、跑完不复用），故未改运行中脚本，仅在此记录，待跑完若需复用再改。
