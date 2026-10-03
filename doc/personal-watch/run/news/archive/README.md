@@ -29,10 +29,11 @@
 
 > 📖 完整规则见 `../WATCH_NEWS_TASK.md` **§0.0.0 / §0.0.2 / 第 7 批 N1 / §9**。
 
-## 4. 当前状态（2026-10-03）
+## 4. 当前状态（2026-10-04）
 
 - 新华网（主源）**实测 403/405 未通** → 按任务书走**兜底源 `chinanews`**（🚫 不绕、不冒充）。
-- 已抓 **2024-05-07 ~ 2026-10-03 ＝ 880 天 / 408,956 条**（2024/2025/2026 三片；单片 ≪20 MB，均入 git）· 详见 `PROGRESS.md` / `INDEX_FILES.md`。
-- **续抓**：`python3 news/archive/fetch_archive.py --max-seconds 600`（倒序逐日扩，**断点续抓**）。
+- 已抓 **2023-06-27 ~ 2026-10-03 ＝ 1194 天 / 557,197 条**（2023/2024/2025/2026 四片；单片 ≪20 MB，均入 git）· 详见 `PROGRESS.md` / `INDEX_FILES.md`。
+  - ⚠️ **新增 2023 片**（`chinanews-2023.jsonl.gz`，86,699 行 / 3.87 MB）→ 语料**首次进入 2023 年**；顶到 `2016-01-01` 前**继续倒序扩**。
+- **续抓**：`python3 news/archive/fetch_archive.py --max-seconds 900`（倒序逐日扩，**断点续抓**）。
 - 工具：`fetch_archive.py` —— `--stats` / `--index` / `--repair`（修历史 URL，幂等）/ `--check`。
 - 下游：**`news/policy/eda.py` → `EDA.md`**，**`news/policy/taxonomy.py` → `TAXONOMY.md`**（语料扩后**须重跑**刷新计数）。
