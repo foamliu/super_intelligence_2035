@@ -108,8 +108,8 @@ sg docker -c 'docker info'      # 非登录 shell 下验证 socket 可访问（�
 
 | 步 | 做什么 | 关键约束 |
 |:--|:--|:--|
-| **1** | **完成第 4 批只读核查**（`SWEBENCH_LITE_FEASIBILITY.md`） | ⚠️ **唯一硬闸 = Docker Root Dir 剩余空间**（镜像在本地盘、**不在 NFS**）。**放不下 → 停手报告**，给「迁 docker root 到大盘 / 用子集」两个方案；🚫 **不要擅自迁 docker root** |
-| **2** | **打通 docker 镜像来源**（⚠️ **运维判断：配 daemon 代理大概率被公司信息安全管控挡住 → 只快速试一次**） | 见下「**镜像来源三路线**」：**L1（首选）client 侧取镜像** → **L2 本地 build（兜底）** → **L0 daemon 代理（试一次即弃）** |
+| **1** | **只读核查（硬闸）** | ✅ **走 R1 时**：验证 **`unshare` 三件套**（`--user --map-root-user` + `--mount` + `--pid`）**可用** + `/nas_train` 余量（已知 32T，够）。⚠️ 仅当**不得不走 docker（L1/L2）**时，才需要 `Docker Root Dir` 余量。**任一不过 → 停手报告** |
+| **2** | **走 R1（运维 2026-10-03 已确认：先走 R1）** | **`unshare` 用户命名空间沙箱 + 每实例 rootfs 落 `/nas_train`** —— 见下「**镜像来源路线**」。🚫 **不碰 docker/daemon**；**L0 已取消**；docker 系（L1/L2）**仅末选** |
 | **3** | **写适配层**（`benchmark.py` 只驱动 aider → 另 5 个都要适配） | ⚠️ **先跑通 1 个**（建议 `codex` 或 `opencode`，源码最规整）**再复制**；**复用官方 `swebench` 包的 `run_evaluation` 口径**（`FAIL_TO_PASS`/`PASS_TO_PASS`），🚫 不许猜 |
 | **4** | **顺序跑**：5 harness × **Lite 全量 300** | 内网网关 + `deepseek-v4-flash`（**同一模型 → 公平**）；⚠️ **受 5h 滑动窗口共享 key 约束 → 低并发（≤4）且跨 harness 串行**；**每个 harness 跑完立即固化**（yaml/json + 命令 + 版本），再跑下一个（防长跑中断丢结果） |
 | **5** | **产出** | `harness/SWEBENCH_COMPARE.html`（自包含）+ 结果表（**pass rate / well-formed / token 与成本 / 墙钟**）+ **相对排名** |
