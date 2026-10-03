@@ -1457,3 +1457,183 @@ OK: 至少 1 个存活（通讯可用）
 
 =========== DONE ===========
 ```
+
+---
+
+## RUN_ID 9 · 2026-10-04 07:13:17 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST / TIME ==="; hostname; date '+%F %T %Z'
+
+echo; echo "=== 1. [.29] LOOPS ==="
+pgrep -af 'baize_.*_loop\.sh' | cut -c1-140 || echo "(none)"
+
+echo; echo "=== 2. [.29] LOOP LOGS (tail 18 + Token额度 命中数) ==="
+for f in /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log; do
+  echo "-- $f  mtime=$(stat -c %y "$f" 2>/dev/null | cut -c1-19)  size=$(stat -c %s "$f" 2>/dev/null)"
+  printf '   Token额度相关行数 = '; grep -c '额度\|quota\|Token\|Forbidden' "$f" 2>/dev/null || echo 0
+  tail -n 18 "$f" 2>/dev/null | cut -c1-160
+  echo
+done
+
+echo "=== 3. [.29] /tmp 最近改动的日志（判断最后一次唤醒时间）==="
+ls -lt --time-style=long-iso /tmp/*.log 2>/dev/null | head -12
+
+echo; echo "=== 4. [.29] 训练进程 + GPU（P-5b 是否还在跑）==="
+pgrep -af 'pretrain_launcher|torchrun|p5b' | cut -c1-140 | head -10 || echo "(NO torchrun => 训练已结束)"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null || echo "(nvidia-smi failed)"
+echo "-- /tmp/baize_p5b.log tail 10 --"; tail -n 10 /tmp/baize_p5b.log 2>/dev/null | cut -c1-160 || echo "(no p5b log)"
+
+echo; echo "=== 5. [.29] P-5b ckpt（看 final @4771 是否落盘）==="
+CK=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments
+ls -1 "$CK" 2>/dev/null | head -15
+for d in "$CK"/p5b "$CK"/p5b_*; do [ -d "$d" ] && { echo "-- $d"; ls -1t "$d" 2>/dev/null | head -8; }; done
+echo "-- 含 4771 的路径 --"; find "$CK" -maxdepth 2 -name '*4771*' 2>/dev/null | head -5
+
+echo; echo "=== 6. [.12] 远端（ssh）loops + GPU —— 做对照 ==="
+timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'hostname; echo "-- loops --"; pgrep -af "baize_.*_loop\.sh" | cut -c1-140; echo "-- gpu --"; nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader' 2>&1 | cut -c1-160 || echo "ssh 10.239.2.12 FAILED"
+
+echo; echo "=== 7. 共享工作副本 git 状态 ==="
+git -C /nas_train/app.e0031982/code/super_intelligence_2035 log --oneline -3 2>/dev/null
+git -C /nas_train/app.e0031982/code/super_intelligence_2035 status -sb 2>/dev/null | head -6
+
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST / TIME ===
+whag0pgpuap29
+2026-10-04 07:13:17 CST
+
+=== 1. [.29] LOOPS ===
+2228938 bash baize_harness_loop.sh
+2425284 bash baize_pretrain_loop.sh
+
+=== 2. [.29] LOOP LOGS (tail 18 + Token额度 命中数) ===
+-- /tmp/baize_pretrain_loop.log  mtime=2026-10-04 07:09:15  size=12407888
+   Token额度相关行数 = 108
+[loop] 2026-10-04 05:08:59 cline returned (exit 0), checking git push ...
+[loop] 2026-10-04 05:08:59 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-04 05:38:59 wake up, invoking cline ...
+[31merror:[0m Forbidden
+[loop] 2026-10-04 05:39:04 cline returned (exit 0), checking git push ...
+[loop] 2026-10-04 05:39:04 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-04 06:09:04 wake up, invoking cline ...
+[31merror:[0m Forbidden
+[loop] 2026-10-04 06:09:07 cline returned (exit 0), checking git push ...
+[loop] 2026-10-04 06:09:07 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-04 06:39:07 wake up, invoking cline ...
+[31merror:[0m Forbidden
+[loop] 2026-10-04 06:39:11 cline returned (exit 0), checking git push ...
+[loop] 2026-10-04 06:39:11 WAITING=1（异步任务 running）→ sleep 1800s
+[loop] 2026-10-04 07:09:11 wake up, invoking cline ...
+[31merror:[0m Forbidden
+[loop] 2026-10-04 07:09:15 cline returned (exit 0), checking git push ...
+[loop] 2026-10-04 07:09:15 WAITING=1（异步任务 running）→ sleep 1800s
+
+-- /tmp/baize_harness_loop.log  mtime=2026-10-04 06:44:34  size=5685386
+   Token额度相关行数 = 114
+[loop] 2026-10-04 05:14:19 WAITING=1 (async task running) → sleep 1800s
+[loop] 2026-10-04 05:44:19 wake up, invoking cline ...
+[31merror:[0m Forbidden
+[loop] 2026-10-04 05:44:23 cline returned (exit 0), checking git sync ...
+[push] 2026-10-04 05:44:23 push interval reached, syncing ...
+[push] ahead=0 behind=0
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-10-04 05:44:27 WAITING=1 (async task running) → sleep 1800s
+[loop] 2026-10-04 06:14:27 wake up, invoking cline ...
+[31merror:[0m Forbidden
+[loop] 2026-10-04 06:14:30 cline returned (exit 0), checking git sync ...
+[loop] 2026-10-04 06:14:30 WAITING=1 (async task running) → sleep 1800s
+[loop] 2026-10-04 06:44:30 wake up, invoking cline ...
+[31merror:[0m Forbidden
+[loop] 2026-10-04 06:44:34 cline returned (exit 0), checking git sync ...
+[loop] 2026-10-04 06:44:34 WAITING=1 (async task running) → sleep 1800s
+
+=== 3. [.29] /tmp 最近改动的日志（判断最后一次唤醒时间）===
+-rw-r----- 1 app.e0031982 app.adm 12407888 2026-10-04 07:09 /tmp/baize_pretrain_loop.log
+-rw-r----- 1 app.e0031982 app.adm  5685386 2026-10-04 06:44 /tmp/baize_harness_loop.log
+-rw-r----- 1 app.e0031982 app.adm     1404 2026-10-04 01:37 /tmp/baize_p5b_train.log
+-rw-r----- 1 app.e0031982 app.adm   289241 2026-10-04 01:37 /tmp/baize_p5b.log
+-rw-r----- 1 app.e0031982 app.adm     8308 2026-10-03 19:36 /tmp/r1_eval_run.log
+-rw-r----- 1 app.e0031982 app.adm     4479 2026-10-03 16:32 /tmp/sb_tasks_checkout.log
+-rw-r----- 1 app.e0031982 app.adm     1779 2026-10-03 15:37 /tmp/fetch_sizes.log
+-rw-r----- 1 app.e0031982 app.adm     1641 2026-10-03 15:35 /tmp/fetch2.log
+-rw-r----- 1 app.e0031982 app.adm       94 2026-10-03 15:34 /tmp/fetch_manifests.log
+-rw-r----- 1 app.e0031982 app.adm      563 2026-10-03 11:17 /tmp/baize_ops_relay.log
+-rw-r----- 1 app.e0031982 app.adm      682 2026-10-03 08:26 /tmp/aider_clone.log
+-rw-r----- 1 app.e0031982 app.adm       91 2026-10-03 08:22 /tmp/polyglot_clone.log
+
+=== 4. [.29] 训练进程 + GPU（P-5b 是否还在跑）===
+0, 0 %, 0 MiB
+1, 0 %, 0 MiB
+2, 0 %, 0 MiB
+3, 0 %, 0 MiB
+4, 0 %, 0 MiB
+5, 0 %, 0 MiB
+6, 0 %, 0 MiB
+7, 0 %, 0 MiB
+-- /tmp/baize_p5b.log tail 10 --
+Storing distributed optimizer sharded state of type fully_reshardable
+  successfully saved checkpoint from iteration    4771 to /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/p5b/checkpoints [ t 1/1, p 1/1 ]
+[rank2]:[W1004 01:37:03.193503883 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resour
+[rank0]:[W1004 01:37:03.229084231 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resour
+[rank3]:[W1004 01:37:03.244858998 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resour
+[rank1]:[W1004 01:37:03.359346953 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resour
+[rank4]:[W1004 01:37:03.594602235 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resour
+[rank7]:[W1004 01:37:03.722892640 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resour
+[rank6]:[W1004 01:37:03.897274109 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resour
+[rank5]:[W1004 01:37:03.933781235 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resour
+
+=== 5. [.29] P-5b ckpt（看 final @4771 是否落盘）===
+p1_1p5e3
+p1_2e3
+p1_3e3
+p2_seed2025
+p2_seed7
+p3_dense
+p3_hybrid
+p5a_g1024_lr1e-3
+p5a_g1024_lr2e-3
+p5a_g1024_lr4e-3
+p5a_g256_lr1e-3
+p5a_g256_lr2e-3
+p5a_g256_lr4e-3
+p5a_g64_lr1e-3
+p5a_g64_lr2e-3
+-- /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/p5b
+checkpoints
+tb_logs
+-- 含 4771 的路径 --
+
+=== 6. [.12] 远端（ssh）loops + GPU —— 做对照 ===
+whag0pgpuap12
+-- loops --
+1289683 bash baize_vision_loop.sh
+1815254 bash baize_data_loop.sh
+3817975 bun /home/app.e0031982/.bun/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve
+-- gpu --
+0, 0 %, 0 MiB
+1, 0 %, 0 MiB
+2, 0 %, 0 MiB
+3, 0 %, 0 MiB
+4, 0 %, 0 MiB
+5, 0 %, 0 MiB
+6, 0 %, 4 MiB
+7, 0 %, 4 MiB
+
+=== 7. 共享工作副本 git 状态 ===
+a1e63ee ops: RUN_ID 9 -- read-only probe of why pretrain/harness went silent ~9h on .29 (loop procs? token-quota exhausted? did P-5b finish / is GPU idle? ssh .12 as control); downgrade RUN_ID 8 block to text fence so it no longer owns the first bash block; RUN_ID 8 -> 9
+8280409 research 第十三轮: 常态增量0篇(周末未公告; 15/15 ok, kept0/dropped600) + 日报/INDEX/SEEN/ARXIV_API(§9.15) + 快照/流水 + raw r13证据; 复核第3批A/B交付; 回归49/49+25/25
+440475f news: L1链重跑(1296天/605311条/25032事件) + 语料·事件轴对齐修复(AUC去伪) + §4.2数据驱动(BH-FDR+效果量门槛) + EXPLORE重生成 + 记忆滚动至23KB
+## main...origin/main
+ M doc/BaiZe-ISEDA2027/run/EXPERIMENTS_VISION.md
+ M doc/BaiZe-ISEDA2027/run/EXPERIMENTS_VISION_ROUND11.md
+ M doc/BaiZe-ISEDA2027/run/MEMORY_VISION.md
+
+=== DONE ===
+```
