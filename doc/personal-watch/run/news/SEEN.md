@@ -77,3 +77,9 @@
 | 2026-10-03 | Meta wants your next gadget to be Muse-infused | TechCrunch | news | https://techcrunch.com/2026/10/02/meta-wants-you-to-build-your-own-muse-gadget/ |
 | 2026-10-03 | Sean Parker is rebuilding Stability AI around music | TechCrunch | news | https://techcrunch.com/2026/10/02/sean-parker-is-rebuilding-stability-ai-around-music/ |
 | 2026-10-03 | Circuit Breaker Labs hopes to make AI safer for your kids (and you) | TechCrunch | news | https://techcrunch.com/2026/10/02/circuit-breaker-labs-hopes-to-make-ai-safer-for-your-kids-and-you/ |
+| 2026-10-03 | AI 自动识别后厨违规行为，浙江 19.5 万家外卖商家接入系统 | IT之家 | news | https://www.ithome.com/1/009/527.htm |
+| 2026-10-03 | 体长仅 1 毫米的稻飞虱怎么防？AI 眼镜给稻田精准“把脉” | 央视网 | news | https://news.cctv.com/2026/10/03/ARTIXFnAX46AMW2xIplK7Zj9261003.shtml |
+| 2026-10-03 | Slovenia's .si domain sees a surge in registrations after Trump's 'super intelligence' order | TechCrunch | news | https://techcrunch.com/2026/10/02/slovenias-si-domain-sees-a-surge-in-registrations-after-trumps-super-intelligence-order/ |
+| 2026-10-03 | These AI Experts Want to Do High-Stakes Research Out in the Open | WIRED | news | https://www.wired.com/story/trillium-labs-wants-to-do-high-risk-ai-research-in-the-open/ |
+| 2026-10-03 | AI 视频榜全球第二，藏着一家新影视公司的野心 | 爱范儿 | feature | https://www.ifanr.com/1682888 |
+| 2026-10-03 | OpenAI's Dot agent is enterprise software that can also order your dinner | The Verge | feature | https://www.theverge.com/ai-artificial-intelligence/1004096/openai-chatgpt-dots-hands-on-agent |

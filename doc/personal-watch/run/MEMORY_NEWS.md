@@ -12,11 +12,11 @@ WAITING: 1
 
 ```
 PHASE:        常态采集（T1–T10 全部 ✅；自第四轮起进入常态采集）
-已完成:       T1–T10 全部 ✅ · 首轮 smoke ✅ · 第二~七轮常态 ✅（第三轮含中文权威源真新闻）
-当前动作:     第七轮常态采集：`cn_news`（6 活源全 200；命中仍多为国庆/时政/民生 → 未录）+ **IT之家 RSS**（中文主供给）+ 量子位 RSS + **爱范儿 RSS**（新增中文 dated 源）+ **TechCrunch RSS**（英文）→ 落盘 news/2026-10-03.md「七、第七轮」**news 6 条（中文 3 / 英文 3）**；SEEN +6；INDEX news 44→50
-下一步:       常态采集（WAITING=1，睡 30min）：逐类搜索→去重→追加当日摘要；**每轮先用 `cn_news` + IT之家/量子位/爱范儿 RSS 补中文（中文≥英文）**，英文走 `search_news`(HN) / TechCrunch / 官方 RSS；GDELT 限频退避
-本轮新增:     news 6 条（**中文 3**：IT之家 2〔AI 面试官"恐怖谷"上热搜 / 大众 CARIAD 裁员 1000 人〕+ 爱范儿 1〔MiniMax M3.1 Flash Preview 实测报道〕；**英文 3**：TechCrunch 3〔Meta Muse 开源进消费设备 / Sean Parker 围绕音乐重建 Stability AI / Circuit Breaker Labs 让 AI 对孩子更安全〕）
-阻塞:         无
+已完成:       T1–T10 全部 ✅ · 首轮 smoke ✅ · 第二~八轮常态 ✅（第三轮含中文权威源真新闻）；确认 **T10 `fetch_cn_news()` 已实现并随 `1872c1f` 提交**
+当前动作:     第八轮常态采集：`cn_news`（6 活源全 200；命中仍多为国庆/时政/民生 → 仅录 1 条央视网 AI 应用）+ **IT之家 RSS**（中文主供给）+ 央视网 tech（AI 眼镜稻飞虱）+ **TechCrunch RSS**（英文：`.si / 超级智能行政令`）+ **WIRED RSS**（Trillium Labs）→ 落盘 news/2026-10-03.md「八、第八轮」**news 4 条（中文 2 / 英文 2）**；SEEN +6（含 2 条拒收 feature）；INDEX news 50→54
+下一步:       常态采集（WAITING=1，睡 30min）：逐类搜索→去重→追加当日摘要；**每轮先用 `cn_news` + IT之家/量子位/爱范儿 RSS 补中文（中文≥英文）**，英文走 `search_news`(HN) / TechCrunch / WIRED / 官方 RSS；GDELT 限频退避
+本轮新增:     news 4 条（**中文 2**：IT之家〔AI 自动识别后厨违规 / 浙江 19.5 万外卖商家接入〕+ 央视网〔AI 眼镜给稻田精准"把脉"〕；**英文 2**：TechCrunch〔特朗普"超级智能"行政令致斯洛文尼亚 `.si` 域名注册激增〕+ WIRED〔Trillium Labs 公开做 RSI/agent 高风险研究〕）
+阻塞:         无（**中文 AI 新料仍依赖 IT之家 RSS**；`cn_news` 当日命中几乎全为国庆/民生）
 ERROR_COUNT:  1（历史：模型名 deepseek-v4-pro-fp4 不被网关支持 → 白睡一轮；已修。GDELT 429 属频控，已如实记录、未重试）
 ```
 
@@ -86,13 +86,20 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **产物**：`news/<YYYY-MM-DD>.md`（当日摘要）· `news/SEEN.md`（去重台账）· `news/INDEX.md`（索引）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-03` 第六轮常态（10:00 UTC）~ `2026-10-03` 第七轮常态（10:40 UTC）
-- **累计收录**：`72` 条（**news 50**〔第一轮 3 + 第二轮 6 + 第三轮 6 + 第四轮 15 + 第五轮 5 + 第六轮 9 + 第七轮 6〕+ 非新闻 22〔仅存 `SEEN.md`〕）
+- **上次采集窗口**：`2026-10-03` 第七轮常态（10:40 UTC）~ `2026-10-03` 第八轮常态（11:10 UTC）
+- **累计收录**：`78` 条（**news 54**〔第一轮 3 + 第二轮 6 + 第三轮 6 + 第四轮 15 + 第五轮 5 + 第六轮 9 + 第七轮 6 + 第八轮 4〕+ 非新闻 24〔仅存 `SEEN.md`〕）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-03** —— ✅ **第八轮常态采集完成（news 4 条：中文 2 / 英文 2）**。PHASE=常态采集。
+  - **`cn_news`（T10）实跑**：`--cn-news --limit 90` → **6 活源全 200**；新鲜度：中新网×3 kept=30/30/30（drop 0）· 联合国 kept=18(drop 12，超龄) · 央视 news_1 kept=80 / tech_1 kept=11(drop 69，超龄)；**丢弃合计 ≈81**。⚠️ 命中仍多为**国庆/时政/民生（非 AI）** → **仅从中录 1 条**（央视网 AI 眼镜稻飞虱），其余**未凑数**。
+  - **落盘**：`news/2026-10-03.md` 追加「八、第八轮」4 条 · `SEEN.md` +6 行（4 news + 2 拒收 feature）· `INDEX.md` news 50→54（另非新闻 24）。
+  - **代表条目**：TechCrunch《斯洛文尼亚 `.si` 域名在特朗普"超级智能"行政令后注册激增》（§1.3）· WIRED《这些 AI 专家想把高风险研究放到公开场合做》（Trillium Labs，§1.2）· IT之家《AI 自动识别后厨违规行为，浙江 19.5 万家外卖商家接入系统》（§1.4）· 央视网《体长仅 1 毫米的稻飞虱怎么防？AI 眼镜给稻田精准"把脉"》（§1.4）。
+  - **方法观察**：**中文主供给仍是 IT之家 RSS**；**量子位 RSS** 最新仍为 10-03 04:41「OpenAI 安全团队」（**与第四轮同题 → 去重**）；**爱范儿 RSS** 最新 10-03 07:00《AI 视频榜…》(feature→拒收)；**钛媒体 `tmtpost.com/feed`** 可用但本轮无 AI 新闻；**36氪 `feed`/`feed-newsflash`、cnBeta `backend.php`、机器之心 `rss`、观察者 `rss`** 经 stdlib **解析失败**；界面 404 / 澎湃空 / C114 解析失败 / **Guardian 本机不可达**；**GDELT 未调**（退避）；**science.org**（HN 收录的《An AI agent emailed researchers…》）**正文 403** → 未收录。
+  - **拒收例（§0.1）**：量子位《OpenAI 安全团队持续地震…》(与第四轮同题**去重**) · 爱范儿《AI 视频榜全球第二…》/ The Verge《OpenAI's Dot agent…hands-on》(feature；Dots 发布 09-29 >72h) · 钛媒体《AI 正在造 AI》《国庆出游用 AI…》(analysis/专栏) · TechCrunch《Sanders…Flock》(车牌监控，非 AI 主线) /《Pope Leo XIV…AI art》(离题) · WIRED《ICE…Palantir database》(非 AI) · 央视网《机器人巡检…特色养殖》(农业科技) · 极客公园《英伟达股价创新高…》(日汇总) → **存疑即不收**。
+  - 判据复核：4/4 字段齐全（标题 + 来源 + 发布日期 + 🔗链接 + 🏷 类型：news）；**中文 2 ≥ 英文 2**。**下一步常态采集（WAITING=1）。**
 - **2026-10-03** —— ✅ **第七轮常态采集完成（news 6 条：中文 3 / 英文 3）**。PHASE=常态采集。
   - **`cn_news`（T10）实跑**：`--cn-news --limit 300 --json` → `exit=0`、**6 活源全 200**；新鲜度：中新网×3 kept=30/30/30（drop 0）· 联合国 kept=18(drop 12，超龄) · 央视 news_1 kept=80 / tech_1 kept=11(drop 69，超龄)；**丢弃合计 81**。⚠️ 命中仍多为**国庆/时政/民生（非 AI）** → **未从中录条目**（宁缺勿滥）。
   - **落盘**：`news/2026-10-03.md` 追加「七、第七轮」6 条 · `SEEN.md` +6 行 · `INDEX.md` news 44→50（另非新闻 22）。
