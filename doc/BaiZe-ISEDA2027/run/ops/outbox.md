@@ -1363,3 +1363,97 @@ STILL EXISTS
 
 =========== DONE ===========
 ```
+
+---
+
+## RUN_ID 8 · 2026-10-03 11:17:36 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=========== 0. 时间 ==========="
+hostname; date '+%F %T %Z'
+echo
+
+echo "=========== 1. 现有 relay 清单（pid / ppid / etimes） ==========="
+ps -eo pid=,ppid=,etimes=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | cut -c1-150
+echo
+
+echo "=========== 2. 定位【执行本命令的】relay（沿祖先进程回溯） ==========="
+SELF=""
+p=$$
+for i in 1 2 3 4 5 6 7 8 9 10; do
+  [ -z "$p" ] && break; [ "$p" = "0" ] && break; [ "$p" = "1" ] && break
+  c=$(ps -o args= -p "$p" 2>/dev/null)
+  case "$c" in *ops_relay.sh*) SELF="$p"; break;; esac
+  p=$(ps -o ppid= -p "$p" 2>/dev/null | tr -d ' ')
+done
+echo "SELF = ${SELF:-<not found>}"
+
+echo "=========== 3. KEEP = 运行最久者（etimes 最大） ==========="
+KEEP=$(ps -eo pid=,etimes=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | sort -k2 -nr | awk 'NR==1{print $1}')
+echo "KEEP = ${KEEP:-<none>}"
+
+echo "=========== 4. 清理（**只杀** 既非 KEEP 也非 SELF 的副本） ==========="
+COUNT=$(ps -eo pid=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | wc -l)
+echo "relay count before = $COUNT"
+if [ -z "$KEEP" ]; then
+  echo "!!! 未找到任何 relay → 不杀任何进程（fail-safe）"
+elif [ "$COUNT" -le 1 ]; then
+  echo "只有 1 个 → 无需清理"
+else
+  for pid in $(ps -eo pid=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | awk '{print $1}'); do
+    if [ "$pid" = "$KEEP" ]; then echo "keep   pid=$pid (longest-running)"; continue; fi
+    if [ -n "$SELF" ] && [ "$pid" = "$SELF" ]; then echo "keep   pid=$pid (=== SELF，延后处理)"; continue; fi
+    echo "kill   pid=$pid (duplicate)"
+    kill -TERM "$pid" 2>/dev/null
+  done
+fi
+sleep 3
+
+echo "=========== 5. 若 SELF 是副本 → **延后 90s 自行退出**（先让 outbox 写完并 push） ==========="
+if [ -n "$SELF" ] && [ "$SELF" != "$KEEP" ]; then
+  echo "SELF=$SELF ≠ KEEP=$KEEP → 本进程为副本，90s 后自行退出（setsid 脱离，保证 outbox 先落地）"
+  setsid sh -c "sleep 90; kill -TERM $SELF" >/dev/null 2>&1 < /dev/null &
+else
+  echo "SELF == KEEP（或未定位）→ 无需自退"
+fi
+
+echo "=========== 6. 收尾核对（**必须 ≥1 存活**） ==========="
+sleep 2
+REMAIN=$(ps -eo pid=,etimes=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | cut -c1-150)
+echo "$REMAIN"
+n=$(ps -eo pid=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | wc -l)
+echo "relay count after = $n"
+if [ "$n" -ge 1 ]; then echo "OK: 至少 1 个存活（通讯可用）"; else echo "!!! 警告：0 个存活 —— 需人工重启 relay（勿删本目录）"; fi
+echo
+echo "=========== DONE ==========="
+```
+
+**输出**
+```
+=========== 0. 时间 ===========
+whag0pgpuap29
+2026-10-03 11:17:36 CST
+
+=========== 1. 现有 relay 清单（pid / ppid / etimes） ===========
+2489749       1  155150 bash ops_relay.sh
+3521816 2489749       0 bash ops_relay.sh
+
+=========== 2. 定位【执行本命令的】relay（沿祖先进程回溯） ===========
+SELF = 3521816
+=========== 3. KEEP = 运行最久者（etimes 最大） ===========
+KEEP = 2489749
+=========== 4. 清理（**只杀** 既非 KEEP 也非 SELF 的副本） ===========
+relay count before = 2
+keep   pid=2489749 (longest-running)
+keep   pid=3521816 (=== SELF，延后处理)
+=========== 5. 若 SELF 是副本 → **延后 90s 自行退出**（先让 outbox 写完并 push） ===========
+SELF=3521816 ≠ KEEP=2489749 → 本进程为副本，90s 后自行退出（setsid 脱离，保证 outbox 先落地）
+=========== 6. 收尾核对（**必须 ≥1 存活**） ===========
+2489749  155155 bash ops_relay.sh
+3521816       5 bash ops_relay.sh
+relay count after = 2
+OK: 至少 1 个存活（通讯可用）
+
+=========== DONE ===========
+```
