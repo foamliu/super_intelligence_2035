@@ -49,11 +49,11 @@
 
 <header class="hero">
   <h1>BaiZe 工作汇报 · 2026-10-03</h1>
-  <div class="sub">R14 官方仓库调研 ✅ · H-D 五 harness 对比+机会点 O1–O5 ✅ · 任务书瘦身 <b>-52%</b> · P-5b 63.7% · P-9 非 GPU 预研已落地</div>
+  <div class="sub">R14 全完成 + <b>E1 实测</b>（GPIC 全量 ≈100M / 上限 ≈118M）· H-D ✅ · 任务书瘦身 <b>-52%</b> · 磁盘今日回收 <b>≈1.31 TB</b> · P-5b 63.7%</div>
   <div class="meta">
     <span>📅 2026-10-03</span>
     <span>📝 <code>foamliu/super_intelligence_2035</code> @ <code>main</code></span>
-    <span>📈 当日提交 <b>≈86</b> 个</span>
+    <span>📈 当日提交 <b>≈96</b> 个</span>
     <span>🎯 投稿截止 ≈ 2027-02-01（余 <b>≈121 天</b>）</span>
   </div>
 </header>
@@ -88,6 +88,10 @@
     <li>🔧 <b>推翻了 AGENTS.md 的一条结论：</b>「ops_relay 会跑出多个副本」= <b>误判</b> —— 第 2 行是 relay 的<b>子 shell</b>（<code>ppid</code>=真 relay、<code>etimes≈0</code>）。判别看 <b><code>ppid</code></b>，🚫 绝不要两个都杀。</li>
     <li>🧪 <b>pretrain 已做 P-9 非 GPU 预研</b>（不碰 GPU）：核实 <b>TE 2.12.0 / torch 2.8.0+cu128 / CUDA 12.8</b>；并查明 <b><code>launcher</code> 只暴露 MBS / TP / SP / seq-length / precision</b> —— ⚠️ <b>P-9.2 的 flag 扫描（recompute / 通信重叠 / dataloader…）多数需改 recipe</b>，不是一行开关。</li>
     <li>🗑 <b>D-CLEAN-3 已下发</b>（删 <code>servers/</code> 974 G，带 <b>P1/P2/P3 前置检查</b>）；<b><code>nemo_experiments</code> R2 ckpt 按运维决定保留</b>。执行结果待 data 线下次唤醒。</li>
+    <li>✅ <b>D-CLEAN-3 执行成功：<code>servers</code>(974 G) 已删，实收 ≈972 G</b> —— <b>P1/P2/P3 全过</b>（无进程占用 / 无 7 天活动 / 无脚本引用）；<b>外部 symlink 未被跟随 → 数据集完好</b>；<b><code>/nas_train</code> 86%→85%、Avail 31218G→32190G</b>。</li>
+    <li>🧪 <b>R14 全部完成 + E1 实测</b>：GPIC **12,537 对/tar（±2%）→ 全量 ≈100.3M**（证官方 100M）、**已下 15.2M**、**C1 本地上限定案 ≈118M（动态）**；`r9_scaling.py --local-cap-m` 已改 default=118.0。⚠️ <b>R11-E 可比 N 区间被压到 ≈6.8M</b>（须如实说明）。</li>
+    <li>❌ <b>iGVLM / TuringViT 关闭</b>（R14 普查**未找到官方仓库** → 按「不许闭门造车」不值得自研）；<b>R12 取消</b>，<b>R13 保留</b>（且只能在有官方实现的那几个上做）。</li>
+    <li>🧪 <b>P-9.2 收窄</b>：只用 <b>已暴露开关</b>（MBS/TP/SP/seq-length/precision）；recompute/通信重叠/dataloader/attn-backend **冻结**（需改 recipe）；**NCCL（P-4 占 41.7%）** 记录为最大待批杠杆。</li>
   </ul>
 </div>
 
@@ -128,15 +132,15 @@
   </tr>
   <tr>
     <td><b>vision</b><br><code>.12</code></td>
-    <td><b>R10③</b> w384/w640 训练中；✅ <b>R14 官方仓库调研交付</b>（OpenVision 源码级普查 + AIMv2）；✅ <b>C1/C2/E1 修正</b>已落地</td>
-    <td><span class="badge b-info">🔄 R10_active</span> · <span class="badge b-ok">✅ R14 完成</span></td>
-    <td>R10③ 收尾 → <b>E1</b>（GPIC 规模实测）→ <b>R11-E/L/L2</b>（数据/loss/文本塔）</td>
+    <td><b>R10③</b> w384/w640 训练中；✅ <b>R14 全部完成</b>（OpenVision2 权重+decoder 验证、FastVLM/MambaEye/MoE-ViE 找到、<b>iGVLM/TuringViT 未找到</b>）；✅ <b>E1 GPIC 实测</b> + C1 定案</td>
+    <td><span class="badge b-info">🔄 R10_active</span> · <span class="badge b-ok">✅ R14+E1 完成</span></td>
+    <td>R10③ 收尾 → <b>R11-E/L/L2</b>（数据/loss/文本塔）；<b>R12 已取消</b></td>
   </tr>
   <tr>
     <td><b>data</b><br><code>.12</code></td>
-    <td>下载推进（<b>gpic tar 1198</b>）；✅ <b>D-CLEAN-2 已执行</b>（<b>实收 ≈341G</b>：laion2B 7.8G · nemo Round1 ~310G · zhulong · pip）</td>
-    <td><span class="badge b-warn">🔄 下载中</span> · <span class="badge b-ok">✅ 已回收 ≈341G</span></td>
-    <td>执行删除 + <code>servers</code>(974G) 探查 → 回写磁盘清单</td>
+    <td>✅ <b>D-CLEAN-2（≈341G）+ D-CLEAN-3（<code>servers</code> 974G → 实收 ≈972G）全部完成</b>，P1/P2/P3 全过；gpic tar 1213+</td>
+    <td><span class="badge b-warn">🔄 下载中</span> · <span class="badge b-ok">✅ 今日回收 ≈1.31T</span></td>
+    <td>续下 base/gpic；<b>磁盘 86%→85%</b>（首个改善）</td>
   </tr>
   <tr>
     <td><b>harness</b><br><code>.29</code></td>
@@ -436,15 +440,15 @@
   </tr>
   <tr>
     <td><b>vision</b><br><code>.12</code></td>
-    <td>① R10③ 收尾 ≈1h → ② <b>E1</b> GPIC 规模实测 ≈1h → ③ <b>R11-E</b> 数据臂 ≈5h → ④ <b>R11-L</b> loss 轴（~5 臂）≈20h → ⑤ <b>R11-L2</b> 文本塔 ≈12h<br><small>（✅ R14 官方仓库调研已完成，已从队列移除）</small></td>
+    <td>① R10③ 收尾 ≈1h → ② <b>R11-E</b> 数据臂 ≈5h → ③ <b>R11-L</b> loss 轴（~5 臂）≈20h → ④ <b>R11-L2</b> 文本塔 ≈12h<br><small>（✅ R14 / E1 已完成；❌ R12 已取消；R13 待批）</small></td>
     <td>~39h</td>
     <td><b>10-05 ≈02:00</b></td>
   </tr>
   <tr>
     <td><b>data</b><br><code>.12</code></td>
-    <td>① ✅ <b>D-CLEAN-2 完成</b>（≈341 G）→ ② ✅ <code>servers</code> 探查完成 → ③ <b>D-CLEAN-3</b>：删 <code>servers/</code> <b>974 G</b>（带 P1/P2/P3 前置检查）≈1–2h → ④ 回写 §7</td>
-    <td>~2h（待下次唤醒）</td>
-    <td><b>10-03 ≈13:00</b><br><small>（半空闲：仍有 gpic 长下载）</small></td>
+    <td>① ✅ <b>D-CLEAN-2</b>（≈341 G）→ ② ✅ <code>servers</code> 探查 → ③ ✅ <b>D-CLEAN-3</b>（974 G → 实收 <b>≈972 G</b>，P1/P2/P3 全过）→ ④ ✅ 回写 §7</td>
+    <td>已完成</td>
+    <td><b>10-03 ≈12:15</b><br><small>（转 30min 轮询：gpic 长下载）</small></td>
   </tr>
   <tr>
     <td><b>harness</b><br><code>.29</code></td>
@@ -515,8 +519,19 @@
   <br>✅ <b>教训：引用他人清点数字前，先核单位与量级</b>（这是运维侧的失误，由 data agent 实测抓出）。
 </div>
 
+<h3>12.6 💾 磁盘：今日回收 <b>≈1.31 TB</b>（首个真·TB 级）</h3>
+<table>
+  <tr><th>轮次</th><th>内容</th><th>回收</th></tr>
+  <tr><td><b>D-CLEAN-2</b></td><td>laion2B(7.8G) + zhulong(0.49G) + pip(3.3G) + <b>nemo Round1 ~310G</b></td><td><b>≈341 G</b></td></tr>
+  <tr><td><b>D-CLEAN-3</b></td><td><code>servers/</code> = 旧 LLaVA-V1.5-Qwen3-4B 训练部署（<b>三项前置检查全过</b>；外部 symlink 未跟随 → 数据集完好）</td><td><b>≈972 G</b></td></tr>
+  <tr><td>🚫 保留</td><td><code>nemo_experiments</code> 的 <b>R2 ckpt ~135 G</b>（运维决定保留）+ <code>p5b</code>(live 79G)</td><td>—</td></tr>
+</table>
+<div class="ok-box">
+  <b><code>/nas_train</code>：Used 180,751G → <b>179,779G</b> · Avail 31,218G → <b>32,190G</b>（<b>86% → 85%</b>）</b> —— 这是磁盘占用首次出现改善。
+</div>
+
 <footer>
-  BaiZe 工作汇报 · 2026-10-03（刷新于 <b>~11:45</b>）· 当日提交 <b>≈86</b> 个 ·
+  BaiZe 工作汇报 · 2026-10-03（刷新于 <b>~12:20</b>）· 当日提交 <b>≈96</b> 个 ·
   详细证据见 <code>run/MEMORY_PRETRAIN_2B.md</code>、<code>run/EXPERIMENTS_VISION_ROUND9.md</code>、
   <code>run/DATA_LEDGER.md</code>、<code>run/harness/CODE_AGENT_BENCHMARKS_SURVEY.md</code>。<br>
   本次运维处置已写入各任务书「运维指令区」：<code>BAIZE_PRETRAIN_2B_TASK.md</code>（P-9）、
