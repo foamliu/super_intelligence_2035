@@ -49,15 +49,18 @@ WAITING: 0
 
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
-| **news** | 建哨，尚未启动 loop | `run/news/<date>.md` 摘要 + `run/news/SEEN.md` 去重台账 | ⬜ 待启动 |
+| **news** | **前期任务 T1–T4**（2026-10-03 下发）：① 找免费 web search API ② 配 web search MCP（+实测） ③ 找免费·权威新闻 API ④ 自包含对比报告 | `run/news/API_COMPARISON.html`（自包含）+ `run/news/API_COMPARISON.md`（底稿）；选定方案写回 `run/MEMORY_NEWS.md`（`PHASE=prep_api`） | 🆕 已下发，待 worker 执行 |
 
-> 说明：news 线为**新线**，尚无历史。启动后每轮采集的产出会落到 `run/news/`，supervisor 只需 `git pull` 读 `run/MEMORY_NEWS.md` 顶部快照。
+> 说明：news 线为**新线**。**前期任务 T1–T4 完成前暂缓常态采集**；完成后回到 §1 关注清单做日常采集，产出落 `run/news/`。supervisor 只需 `git pull` 读 `run/MEMORY_NEWS.md` 顶部快照 + `run/news/` 即可巡检。
+> **前期任务口径（2026-10-03 用户）**：重点是**免费**（web search API / 新闻 API）+ **可实测** + **对比成表**；强调"权威"新闻源。
 
 ---
 
 ## 4. 待拍板 / 我欠的答复
 
 - [x] ✅ **worker 运行主机已确认（2026-10-03 用户）**：**可连外网且速度不慢** → news 线具备运行前提。待 loop 拉起后即可派活。
+- [ ] **搜索/新闻 API 选型**：待 news 线交付 `API_COMPARISON.html` 后，由 supervisor/用户拍板**最终方案**（免费额度、中文覆盖、权威性、稳定性）。
+- [ ] **MCP 配置归属**：T2 配置的是否为**运行机**上的 cline MCP 配置（路径/生效方式需在报告里写清）。
 - [ ] **采集节律**：默认长睡 6 小时（每日 4 轮）是否合适？还是每日 1 轮晨报？
 - [ ] **输出形态**：日报够不够，是否要**周报合订** / **主题归档**（按关注清单分类长期累积）。
 - [ ] **关注清单**是否要收敛（现在 6 大类，见 `WATCH_NEWS_TASK.md` §1），避免噪声。
