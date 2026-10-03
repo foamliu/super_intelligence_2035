@@ -49,11 +49,11 @@
 
 <header class="hero">
   <h1>BaiZe 工作汇报 · 2026-10-03</h1>
-  <div class="sub">R14 全完成 + <b>E1 实测</b>（GPIC 全量 ≈100M / 上限 ≈118M）· H-D ✅ · 任务书瘦身 <b>-52%</b> · 磁盘今日回收 <b>≈1.31 TB</b> · P-5b 63.7%</div>
+  <div class="sub">P-5b <b>81.3%</b>（loss <b>跌破 2.0</b>）· vision R10 ✅（<b>w384 新高 7.99%</b>）+ R11-L 连跑（<b>2 臂未翻盘</b>，CoCa 跑中）· data <b>base-en 下满</b> · harness <b>R1 适配器交付</b> · 磁盘回收 ≈1.31T</div>
   <div class="meta">
     <span>📅 2026-10-03</span>
     <span>📝 <code>foamliu/super_intelligence_2035</code> @ <code>main</code></span>
-    <span>📈 当日提交 <b>≈96</b> 个</span>
+    <span>📈 当日提交 <b>≈178</b> 个</span>
     <span>🎯 投稿截止 ≈ 2027-02-01（余 <b>≈121 天</b>）</span>
   </div>
 </header>
@@ -92,6 +92,12 @@
     <li>🧪 <b>R14 全部完成 + E1 实测</b>：GPIC <b>12,537 对/tar（±2%）→ 全量 ≈100.3M</b>（证官方 100M）· <b>已下 15.2M</b> · <b>C1 本地上限定案 ≈118M（动态）</b>；<code>r9_scaling.py --local-cap-m</code> 已改 <code>default=118.0</code>。⚠️ <b>R11-E 可比 N 区间被压到 ≈6.8M</b>（须如实说明）。</li>
     <li>❌ <b>iGVLM / TuringViT 关闭</b>（R14 普查<b>未找到官方仓库</b> → 按「不许闭门造车」不值得自研）；<b>R12 取消</b>，<b>R13 保留</b>（且只能在有官方实现的那几个上做）。</li>
     <li>🧪 <b>P-9.2 收窄</b>：只用 <b>已暴露开关</b>（MBS/TP/SP/seq-length/precision）；recompute / 通信重叠 / dataloader / attn-backend <b>冻结</b>（需改 recipe）；<b>NCCL（P-4 占 41.7%）</b> 记录为最大待批杠杆。</li>
+    <li>🏃 <b>pretrain：P-5b 巡检 #49 —— iter 3880/4771 = 81.3%，loss <b>1.997177（跌破 2.00）</b></b>，健康 · ~143–147K tok/s → ETA <b>10-04 ≈01:40</b>。</li>
+    <li>⭐ <b>vision：R10③ 完成 + 5 点 M 重拟合</b> —— <b>w384(71.5M) lp 5.77/6.92/<b>7.99%</b>（全部宽度最高，超 w512 的 6.08%）</b>；M 边际 ≈ −2.2~−2.4 lp/参数翻倍，<b>最优 M 仍在观测下界之下 → 无饱和点</b>。</li>
+    <li>⭐ <b>vision：R11-L 已出 2 臂，均未翻盘</b> —— arm② SigLIP lp 2.19/3.13/4.36% · arm③ LocalLoss 1.81/3.60/4.33%（<b>均 &lt; 基线 3.43/5.45/6.08</b>）；<b>arm④ CoCa 🚀 跑中</b>（加了 <code>CoCaDecoder</code>）。</li>
+    <li>✅ <b>data：base-en 2048/2048 下满</b> → 已重启其余 3 个 config；⚠️ <b>base 总量实测更正为 <b>10.21 TB</b></b>（原估 2.99 TB，<b>低 3.4 倍</b>）；gpic 1383/8000。</li>
+    <li>✅ <b>harness：R1 路线从「设计」走到「可跑」</b> —— <code>r1_eval.py</code>（282 行，<b>无 docker 的 SWE-bench-Lite 评测适配器</b>）+ <code>R1_ADAPTER_DESIGN.md</code> + <code>STEP2_RUNBOOK.md</code>；<b>env 已 de-risk</b>（conda 20/20 pins + 镜像有 pip cp36 wheels）。</li>
+    <li>🆕 <b>发现：<code>doc/personal-watch/</code> 另有 3 条线</b>（news / research / archive）也在跑，<b>很可能共用同一个 cline key</b> → 实际是 <b>7 条线抢那个 5h 滑动窗口</b>（不止 BaiZe 4 条）。</li>
   </ul>
 </div>
 
@@ -126,27 +132,27 @@
   <tr><th>线</th><th>今日进展</th><th>当前状态</th><th>下一步</th></tr>
   <tr>
     <td><b>pretrain</b><br><code>.29</code></td>
-    <td>P-5b 巡检 #37；✅ <b>P-9 非 GPU 预研已落地</b>（TE 2.12.0 / torch 2.8.0+cu128 核实；⚠️ <b><code>launcher</code> 只暴露 MBS/TP/SP/seq/precision</b> → flag 扫描多需改 recipe）</td>
-    <td><span class="badge b-ok">🔄 P-5b 63.7%</span> · 健康（loss 2.0656）</td>
-    <td>P-5b 收官 → <b>P-9</b>（尽早，早于 P-6②）→ P-6② → P-8（暂缓）</td>
+    <td>P-5b 巡检 #49；✅ <b>P-9 非 GPU 预研已落地</b>（TE 2.12.0 核实；⚠️ <b><code>launcher</code> 只暴露 MBS/TP/SP/seq/precision</b> → P-9.2 已收窄为"只用已暴露开关"）</td>
+    <td><span class="badge b-ok">🔄 P-5b 81.3%</span> · 健康（loss <b>1.9972</b>，跌破 2.0）</td>
+    <td>P-5b 收官（10-04 ≈01:40）→ <b>P-9</b> → P-6② → P-8（暂缓）</td>
   </tr>
   <tr>
     <td><b>vision</b><br><code>.12</code></td>
-    <td><b>R10③</b> w384/w640 训练中；✅ <b>R14 全部完成</b>（OpenVision2 权重+decoder 验证、FastVLM/MambaEye/MoE-ViE 找到、<b>iGVLM/TuringViT 未找到</b>）；✅ <b>E1 GPIC 实测</b> + C1 定案</td>
-    <td><span class="badge b-info">🔄 R10_active</span> · <span class="badge b-ok">✅ R14+E1 完成</span></td>
-    <td>R10③ 收尾 → <b>R11-E/L/L2</b>（数据/loss/文本塔）；<b>R12 已取消</b></td>
+    <td>✅ <b>R10③ 完成</b>（<b>w384@15.36M = 7.99% 全部宽度最高</b>；5 点 M 拟合 R²=0.960，<b>无饱和点</b>）· R14 ✅ · E1 ✅ · <b>R11-L 连跑：arm② SigLIP ❌ · arm③ LocalLoss ❌ · arm④ CoCa 🚀</b></td>
+    <td><span class="badge b-info">🔄 R11-L 跑中</span> · <span class="badge b-ok">✅ R10/R14/E1 完成</span></td>
+    <td>arm④ CoCa → arm⑤ GenLIP → <b>R11-L2</b>（文本塔）；<b>R13 待批</b></td>
   </tr>
   <tr>
     <td><b>data</b><br><code>.12</code></td>
-    <td>✅ <b>D-CLEAN-2（≈341G）+ D-CLEAN-3（<code>servers</code> 974G → 实收 ≈972G）全部完成</b>，P1/P2/P3 全过；gpic tar 1213+</td>
-    <td><span class="badge b-warn">🔄 下载中</span> · <span class="badge b-ok">✅ 今日回收 ≈1.31T</span></td>
-    <td>续下 base/gpic；<b>磁盘 86%→85%</b>（首个改善）</td>
+    <td>✅ <b>D-CLEAN-2 + D-CLEAN-3 完成</b>（今日回收 <b>≈1.31 TB</b>，磁盘 86%→85%）；✅ <b>base-en 2048/2048 下满</b> → 重启其余 3 config；⚠️ <b>base 总量实测更正为 10.21 TB</b>（原估 2.99 TB）</td>
+    <td><span class="badge b-warn">🔄 下载中</span> · <span class="badge b-ok">✅ base-en 完成</span></td>
+    <td>其余 3 config → base 过污染闸 → <b>分词</b>；gpic 1383/8000</td>
   </tr>
   <tr>
     <td><b>harness</b><br><code>.29</code></td>
-    <td>✅ <b>H-D 交付</b>（对比矩阵 + <b>O1–O5 机会点</b>）；docker socket 已解锁但 <b><code>pull</code> 仍不通</b>（dockerd 无代理）；<b>Aider 仓库已 clone</b>（225 题），但 <b>go/rust 工具链缺失</b></td>
-    <td><span class="badge b-ok">✅ H-D 完成</span> · <span class="badge b-warn">H-A′ 未实跑</span></td>
-    <td><b>CLINE_IMPROVEMENTS_TOP5.html</b>（新派）· H-A′ 待工具链/口径</td>
+    <td>✅ <b>H-D + CLINE_IMPROVEMENTS_TOP5.html 交付</b>（P0=O5 计量 / O4 状态持久层）· ✅ <b>R1 路线从"设计"到"可跑"</b>：<code>r1_eval.py</code>（<b>无 docker 的评测适配器</b>）+ env de-risk（conda 20/20 pins）· ✅ <b>R1 硬闸通过</b>（unshare 三件套 OK）</td>
+    <td><span class="badge b-ok">✅ R1 就绪</span> · <span class="badge b-warn">django 试点待跑</span></td>
+    <td><b>django 端到端 1–2 条 → 报失败率</b> → 再 scale 到 300</td>
   </tr>
   <tr>
     <td><b>ops relay</b></td>
@@ -423,10 +429,10 @@
 <h3>11.1 执行中（正在跑）</h3>
 <table>
   <tr><th>线</th><th>正在执行</th><th>预计结束</th></tr>
-  <tr><td><b>pretrain</b> <code>.29</code></td><td>P-5b 20B 长跑（<b>iter 3040/4771 = 63.7%</b>，健康，loss 2.0656，~29s/iter）+ <b>P-9 非 GPU 预研已做</b></td><td><b>10-04 ≈00:30</b></td></tr>
-  <tr><td><b>vision</b> <code>.12</code></td><td><b>R10③</b> w384+w640 各 30k 步（8 卡，08:46 启动）+ 训完自动跑 8 ckpt IN-1k</td><td><b>10-03 ≈12:15</b></td></tr>
-  <tr><td><b>data</b> <code>.12</code></td><td>✅ <b>D-CLEAN-2 已执行</b>（实收 <b>≈341G</b>）+ <code>servers</code> 探查完成（= LLaVA 旧部署，待批）；后台 base/gpic 下载</td><td><b>10-03 ≈12:30</b></td></tr>
-  <tr><td><b>harness</b> <code>.29</code></td><td><b>H-A′ Aider Polyglot</b>（6 参赛者，先 smoke）+ <b>H-D</b> 五 harness 对比矩阵</td><td><b>10-04 ~ 10-06</b>（区间大）</td></tr>
+  <tr><td><b>pretrain</b> <code>.29</code></td><td>P-5b 20B 长跑（<b>iter 3880/4771 = 81.3%</b>，loss <b>1.9972</b>，~29s/iter）+ P-9 非 GPU 预研已完成</td><td><b>10-04 ≈01:40</b></td></tr>
+  <tr><td><b>vision</b> <code>.12</code></td><td><b>R11-L arm④ CoCa</b>（30k 步，8 卡；已加 <code>CoCaDecoder</code>）</td><td><b>10-03 ≈19:30</b></td></tr>
+  <tr><td><b>data</b> <code>.12</code></td><td>✅ base-en 下满 → <b>其余 3 config 续下</b>（en_v1_4 50/512 ~1.8MB/s）+ gpic 1383/8000</td><td>长周期（gpic ≥5 天）</td></tr>
+  <tr><td><b>harness</b> <code>.29</code></td><td><b>R1 django 端到端试点</b>（1–2 条，验证沙箱+依赖+测试链路）</td><td><b>10-03 晚</b>（单题级）</td></tr>
 </table>
 
 <h3>11.2 已排任务（队列）与累计时间</h3>
@@ -434,36 +440,36 @@
   <tr><th>线</th><th>队列（按序）</th><th>估时</th><th><b>预计空闲</b></th></tr>
   <tr>
     <td><b>pretrain</b><br><code>.29</code></td>
-    <td>① P-5b 收官 → ② <b>P-9</b>（MBS / flag / seq 多点 / FP8-by-M / profiling）≈14h → ③ <b>P-6②</b> lm_eval（6 ckpt × 14 集）≈7h</td>
-    <td>~21h<br><small>(+P-5b 余 ~16.5h)</small></td>
+    <td>① P-5b 收官（余 ~7h）→ ② <b>P-9</b>（MBS / TP·SP / seq 多点 / FP8，<b>仅已暴露开关</b>）≈14h → ③ <b>P-6②</b> lm_eval ≈7h</td>
+    <td>~21h</td>
     <td><b>10-05 ≈00:00</b></td>
   </tr>
   <tr>
     <td><b>vision</b><br><code>.12</code></td>
-    <td>① R10③ 收尾 ≈1h → ② <b>R11-E</b> 数据臂 ≈5h → ③ <b>R11-L</b> loss 轴（~5 臂）≈20h → ④ <b>R11-L2</b> 文本塔 ≈12h<br><small>（✅ R14 / E1 已完成；❌ R12 已取消；R13 待批）</small></td>
-    <td>~39h</td>
-    <td><b>10-05 ≈02:00</b></td>
+    <td>① arm④ CoCa → ② arm⑤ GenLIP → ③ <b>R11-L2</b> 文本塔 ≈12h<br><small>（✅ R10/R14/E1 已完成；❌ R12 已取消；R13 待批）</small></td>
+    <td>~24h</td>
+    <td><b>10-05 ≈06:00</b></td>
   </tr>
   <tr>
     <td><b>data</b><br><code>.12</code></td>
-    <td>① ✅ <b>D-CLEAN-2</b>（≈341 G）→ ② ✅ <code>servers</code> 探查 → ③ ✅ <b>D-CLEAN-3</b>（974 G → 实收 <b>≈972 G</b>，P1/P2/P3 全过）→ ④ ✅ 回写 §7</td>
-    <td>已完成</td>
-    <td><b>10-03 ≈12:15</b><br><small>（转 30min 轮询：gpic 长下载）</small></td>
+    <td>① ✅ D-CLEAN-2/3 完成 → ② ✅ base-en 下满 → ③ <b>其余 3 config 续下</b> → ④ 过污染闸 → ⑤ <b>phase2 分词</b>（重 I/O）</td>
+    <td>下载长周期</td>
+    <td><b>已半空闲</b>（30min 轮询）</td>
   </tr>
   <tr>
     <td><b>harness</b><br><code>.29</code></td>
-    <td>① <b>CLINE_IMPROVEMENTS_TOP5.html</b> ≈2h（新派，产出给你看）→ ② <b>H-A′ Aider 横评</b>：⚠️ <b>受工具链限制</b>（<b>go/rust 缺失</b>、<code>benchmark.py</code> <b>只驱动 aider 本体</b>）→ 规模待定</td>
-    <td>~2h + H-A′（待定）</td>
-    <td><b>10-03 ≈14:00</b>（TOP5 之后）</td>
+    <td>① ✅ R1 沙箱硬闸通过 + <code>r1_eval.py</code> 交付 → ② <b>django 1–2 条试点</b> → ③ 报失败率 → ④ <b>scale 到 300 × 5 harness</b>（~75–225h/harness）</td>
+    <td>试点 ~2h<br>全量 <b>数天~2 周</b></td>
+    <td><b>10-04 起进入长跑</b></td>
   </tr>
 </table>
 
 <h3>11.3 会让线"停下等你"的决策</h3>
 <table>
   <tr><th>#</th><th>事项</th><th>影响</th></tr>
-  <tr><td>1</td><td><b>R13（官方 vs 自研对照）/ R12（iGVLM）是否批准</b></td><td>vision：不批 → 队列到 <b>R11-L2（10-05 上午）</b>就断档</td></tr>
+  <tr><td>1</td><td><b>R13（官方实现 vs 我们自研改编 对照）是否批准</b></td><td>vision：不批 → 队列到 <b>R11-L2（10-05 上午）</b>就断档（只能在 FastVLM/MambaEye/MoE-ViE 上做）</td></tr>
   <tr><td>2</td><td><b>P-8 启动配置</b>（仍暂缓：等 base 下满 + 配比定稿）</td><td>pretrain：不批 → 10-05 后转 30min 轮询</td></tr>
-  <tr><td>3</td><td><b>D-CLEAN-2 回收量</b> + <code>servers</code>(974G) 去留</td><td>data：只影响磁盘，不阻塞</td></tr>
+  <tr><td>3</td><td>~~R12 (iGVLM)~~ / ~~D-CLEAN-2·3~~ / ~~daemon 代理~~</td><td>✅ 均已结案（R12 取消 · 磁盘已回收 ≈1.31T · daemon 路线取消改 R1）</td></tr>
 </table>
 
 <h3>11.4 一句话</h3>
@@ -530,8 +536,23 @@
   <b><code>/nas_train</code>：Used 180,751G → <b>179,779G</b> · Avail 31,218G → <b>32,190G</b>（<b>86% → 85%</b>）</b> —— 这是磁盘占用首次出现改善。
 </div>
 
+<h3>12.7 🆕 两条新发现 + 一处数字更正</h3>
+<table>
+  <tr><th>#</th><th>发现</th><th>含义</th></tr>
+  <tr><td><b>1</b></td><td><b><code>doc/personal-watch/</code> 下另有 3 条线</b>（news / research / archive，各自 <code>AGENTS.md</code>/<code>MEMORY.md</code>/loop），今日持续提交</td><td>⚠️ 很可能<b>共用同一个 cline 项目 key</b> → 实际是 <b>7 条线抢那个 5h 滑动窗口</b>（不止 BaiZe 4 条）→ <b>治"额度"要把总条数算进去</b>（这 3 条不在我维护范围，未触碰）</td></tr>
+  <tr><td><b>2</b></td><td><b>base 总量实测更正：<code>10.21 TB</code></b>（原记 <b>2.99 TB</b>，<b>低估 3.4 倍</b>）</td><td>影响 P-8 的"数据够不够"与下载/存储排期（已回写 <code>DATA_LEDGER</code>）；base-en 2048/2048 已下满</td></tr>
+  <tr><td><b>3</b></td><td><b>vision w384(71.5M) lp@15.36M = 7.99%</b>，<b>超过 w512 的 6.08%</b></td><td>「塔越小越高」在 <b>5 点 M 轴</b>上继续成立，<b>最优 M 仍在观测下界之下（无饱和点）</b> → 进一步支持"模型规模不是瓶颈"</td></tr>
+</table>
+
+<h3>12.8 ⏳ 仍在等运维拍板（仅剩 2 件）</h3>
+<table>
+  <tr><th>#</th><th>事项</th><th>影响</th></tr>
+  <tr><td>1</td><td><b>R13</b>（官方实现 vs 我们自研改编 对照）是否批准</td><td>vision：不批 → <b>10-05 上午</b>后断档</td></tr>
+  <tr><td>2</td><td><b>P-8 启动配置</b>（暂缓：等 base 全下满 + 配比定稿）</td><td>pretrain：不批 → 10-05 后转轮询</td></tr>
+</table>
+
 <footer>
-  BaiZe 工作汇报 · 2026-10-03（刷新于 <b>~12:20</b>）· 当日提交 <b>≈96</b> 个 ·
+  BaiZe 工作汇报 · 2026-10-03（刷新于 <b>~18:45</b>）· 当日提交 <b>≈178</b> 个 ·
   详细证据见 <code>run/MEMORY_PRETRAIN_2B.md</code>、<code>run/EXPERIMENTS_VISION_ROUND9.md</code>、
   <code>run/DATA_LEDGER.md</code>、<code>run/harness/CODE_AGENT_BENCHMARKS_SURVEY.md</code>。<br>
   本次运维处置已写入各任务书「运维指令区」：<code>BAIZE_PRETRAIN_2B_TASK.md</code>（P-9）、
