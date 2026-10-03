@@ -1,17 +1,17 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_active**（① 回收 stage-1 周期 ckpt IN-1k ✅ → ② 拟合二维 (N,M) scaling ✅ → ③ 补密 M 轴 **w384/w640 训练中**） |
-| WAITING | 1（R10-③ 补密 M 轴训练后台运行：`r10_run_denseM.sh`，8 卡；**w384 ✅ done、w640 训练中** ~24850/30000，ETA ~30min） |
+| PHASE | **R10_done**（① 回收 12 点 IN-1k ✅ → ② 3 点 M 拟合 ✅ → ③ 补密 w384/w640 + **5 点 M 重拟合 ✅**）；**R14 ✅ · E1 ✅**；下一批 R11-L/R11-L2 可开（R14 前置已满足）、R13 待运维批准 |
+| WAITING | 0（R10-③ `denseM ALL DONE @13:00:30`；收尾 4 步已执行：5-M 拟合 + 回填 §2/§3/§4 + 状态头 + push） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
-| BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h ✅；R10-③ w384+w640 在跑，详见 EXPERIMENTS_VISION_ROUND10.md） |
-| 更新 | 2026-10-03（R10 ①② 完成、③ w384✅ w640 训练中；**R14 ✅ + E1 ✅**；**实际 numel 已测** + `r10_scaling2d.py` 已预置 5-M 拟合，待 denseM eval 落盘后重跑） |
-| WINNER | OpenVision2（R8 六架构四指标第一；R9 选中 w512=126.8M 缩塔，不改架构排名） |
+| BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡，详见 EXPERIMENTS_VISION_ROUND10.md） |
+| 更新 | 2026-10-03（R10 全部完成：③ denseM w384/w640 ✅ → 5 点 M 重拟合 R²=0.960 → **w384@15.36M=7.99% 全宽最高、无饱和点**；收尾回填 + push） |
+| WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
 
@@ -26,13 +26,12 @@ WAITING: 1
 
 - ✅ **R10-① 回收 12 点 IN-1k 完成**：3 塔 × step{10k,20k,30k}，`r10_eval_stage1.sh` → `r8_eval_in1k.py --ckpts`（exit 0）。lp(w512/w768/w1024 @N=5.12/10.24/15.36M)：3.43/5.45/**6.08**%、1.14/2.03/**3.63**%、0.67/0.99/**0.93**%（证据 `/tmp/r10_stage1_in1k.log`）。
 - ✅ **R10-② 2D 拟合完成（3 点 M 轴）**：`r10_scaling2d.py`，19 点 → 带交互 R²=0.980：`acc=-1.737+0.333·log10(N)+0.185·log10(M)-0.036·log10(N)·log10(M)`；M 边际效应**全区间为负** ≈ **−2.2 lp pp/参数翻倍**（无交互 c=−0.070，R²=0.975）。→ 数据受限区间**加宽塔是负收益**。
-- 🔄 **R10-③ 运行中**：M 轴太稀（3 点、无 <126.8M）+ 最优 M 落在观测下界之下 → `r10_run_denseM.sh` 训 w384(71.49M)+w640(197.80M，实际 numel) 各 30k 步（同数据 CC12M+Amshaker、同 recipe）。当前：**w384 ✅ done（exit 0 @10:45）**、w640 训练中（C1≈0.40/C2_gap≈+0.09/loss_ema 4.45 健康，无坍缩）。完成后自动回收 8 ckpt IN-1k，拼 5 点 M 轴。
+- ✅ **R10-③ 完成（`denseM ALL DONE @13:00:30`，exit 0）**：`r10_run_denseM.sh` 训 w384(71.49M)+w640(197.80M) 各 30k 步（同数据/recipe）+ 自动回收 8 ckpt IN-1k。结果 lp（@N=5.12/10.24/15.36M）：**w384 = 5.77/6.92/7.99%**、**w640 = 1.66/1.99/3.62%**；w384 吞吐 6583 img/s（w640 2418）、final_loss 3.7769（w640 4.3485）。
+- ✅ **5 点 M 重拟合完成**：带交互 R²=0.960 `acc=-1.452+0.298·log10(N)+0.150·log10(M)-0.0318·log10(N)·log10(M)`；M 边际 ≈ **−2.2~−2.4 lp pp/参数翻倍**；最优 M 仍在观测下界（71.5M）之下 → **无饱和点、更小塔持续更优**。**w384@15.36M=7.99% 为全部宽度最高**。
 - **铁律**：不重跑阶段一训练；每条结论贴证据（命令 + 原始输出 + 路径）；不许猜。
 
-### 🕐 本轮等待（WAITING=1）
-- **等什么**：R10-③ 训练+自动评测（后台 `/tmp/r10_denseM.log`，10.239.2.12 全 8 卡）。
-- **判结束**：`grep -c 'denseM ALL DONE' /tmp/r10_denseM.log` == 1。
-- **收尾步骤**（下次唤醒先查是否 DONE，若 DONE 再执行）：① 从 `/tmp/r10_denseM.log` 取 w384/w640 的 8 个 [R8-IN1K] point（**实际 numel 已测**：w384=71.49M / w640=197.80M / w512=126.78M / w768=284.54M / w1024=505.22M）；② `r10_scaling2d.py` **已预置**（`WIDTH_RE` 扩 `R10_denseM_w(\d+)` + `WIDTH_PARAMS` 用实际 numel + `--denseM-log`），直接 `python r10_scaling2d.py` 出 5-M 拟合；③ 回填 `EXPERIMENTS_VISION_ROUND10.md` §2/§3/§4 最终值 + `EXPERIMENTS_VISION.md` 顶部 + 本状态头；④ git push。
+### 🕐 R10-③ 等待已结束（收尾 4 步已执行完毕）
+- **结果**：5-M 拟合 R²=0.960（§2.3）+ 最优 N/M（§2.4）+ denseM 8 点表（§3）+ 结论（§4）均已回填 `EXPERIMENTS_VISION_ROUND10.md`；`EXPERIMENTS_VISION.md` 顶部 R10 节 + 本状态头已更新，随后 push。
 
 ## R14 官方仓库调研（✅ 全部完成，2026-10-03）
 
