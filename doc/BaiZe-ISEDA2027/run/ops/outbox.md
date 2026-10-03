@@ -2180,3 +2180,91 @@ The[0m[2m GPUs[0m[2m show [0m[2m0 Mi[0m[2mB →[0m[2m training is[0m
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 16 · 2026-10-04 07:36:21 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+
+echo; echo "=== 1. loop + cline 进程 ==="
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'baize_(pretrain|harness)_loop\.sh|bun.*cline' | grep -v grep | cut -c1-115
+
+echo; echo "=== 2. Forbidden 计数（应为 0）==="
+grep -c Forbidden /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log 2>/dev/null
+
+echo; echo "=== 3. 日志尾（看是否在正常推理 / 有无新报错）==="
+echo "-- pretrain(loop) --"; tail -c 1500 /tmp/baize_pretrain_loop.log 2>/dev/null | tr -d '\r' | tail -c 500 | cut -c1-150
+echo "-- harness(loop) --";  tail -c 1500 /tmp/baize_harness_loop.log  2>/dev/null | tr -d '\r' | tail -c 500 | cut -c1-150
+echo "-- pretrain(P5B 训练日志最后 3 行) --"; tail -3 /tmp/baize_p5b.log 2>/dev/null | cut -c1-150
+
+echo; echo "=== 4. 两线产物 mtime（判断是否已在写文件）==="
+ls -l --time-style=+%m-%d_%H:%M "$R/MEMORY_PRETRAIN_2B.md" "$R/MEMORY_HARNESS.md" 2>/dev/null | cut -c1-110
+echo "-- cline sessions 最近 3 个 --"; ls -lt --time-style=+%m-%d_%H:%M ~/.cline/data/sessions 2>/dev/null | head -4 | cut -c1-115
+
+echo; echo "=== 5. GPU ==="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null
+
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 07:36:21
+
+=== 1. loop + cline 进程 ===
+2233867     468 bash baize_pretrain_loop.sh
+2233923     468 bun /home/app.e0031982/.bun/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/B
+2235589     466 bash baize_harness_loop.sh
+2745244      38 bun /home/app.e0031982/.bun/bin/cline -c /nas_train/app.e0031982/harness_work/workdirs/django__djan
+
+=== 2. Forbidden 计数（应为 0）===
+/tmp/baize_pretrain_loop.log:0
+/tmp/baize_harness_loop.log:16
+
+=== 3. 日志尾（看是否在正常推理 / 有无新报错）===
+-- pretrain(loop) --
+[0m[2mLet me[0m[2m write the[0m[2m Python approach[0m[2m.
+
+Actually[0m[2m, a[0m[2m cleaner and[0m[2m simpler method[0m[2m: use[0m[2m Python to[0m[2m rewrite the[0m[2m specific lines[0m[2m by in
+
+Let[0m[2m me do[0m[2m this with[0m[2m a single[0m[2m Python hered[0m[2moc.[0m
+P-5b completion recorded in report, P-9.1 running. Now update MEMORY (status head + roll) and daily-memories atomically via Python.
+
+-- harness(loop) --
+oviderOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+      at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+
+-- pretrain(P5B 训练日志最后 3 行) --
+[rank7]:[W1004 01:37:03.722892640 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can l
+[rank6]:[W1004 01:37:03.897274109 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can l
+[rank5]:[W1004 01:37:03.933781235 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can l
+
+=== 4. 两线产物 mtime（判断是否已在写文件）===
+-rw-r----- 1 app.e0031982 app.adm 30632 10-03_22:12 /nas_train/app.e0031982/code/super_intelligence_2035/doc/B
+-rw-r----- 1 app.e0031982 app.adm 30645 10-03_22:07 /nas_train/app.e0031982/code/super_intelligence_2035/doc/B
+-- cline sessions 最近 3 个 --
+total 12748
+drwxr-x--- 2 app.e0031982 app.adm 4096 10-04_07:35 1791070546204_v0nop
+drwxr-x--- 2 app.e0031982 app.adm 4096 10-04_07:28 1791070117827_0oudb
+drwxr-x--- 2 app.e0031982 app.adm 4096 10-04_07:28 1791070115770_86v5q
+
+=== 5. GPU ===
+0, 49 %, 39111 MiB
+1, 62 %, 39205 MiB
+2, 32 %, 39251 MiB
+3, 51 %, 39211 MiB
+4, 52 %, 39143 MiB
+5, 84 %, 39109 MiB
+6, 79 %, 39225 MiB
+7, 22 %, 38585 MiB
+
+=== DONE ===
+```
