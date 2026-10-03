@@ -9,12 +9,12 @@ WAITING: 1
 ---
 
 ## 📊 进度快照（**每次唤醒必须更新**）
-
-```
-PHASE:        collecting + **selection**（R1–R5 常态采集已收官；**运维第 2 批 TOP-K 精选排序已交付**：≤30d 全量重扫 → TOP-20）
-已完成:       R1 打通 arXiv API（HTTPS/Atom → research/ARXIV_API.md）；R2 固化检索策略（queries.json）；R3/R4 首轮采集（抓取 214 → 收录 34 + 候选 180）；R1′ 取源复验；R2′ published-first + 周末自动放宽；第二~五轮增量（常 15/15 ok）；**运维第 2 批：`arxiv_fetch.py` 增 `comment`/`journal_ref` 字段 → ≤30d 全量重扫（15/15 ok，候选池 1118）→ 新建 `top_k.py`（rel/q 双维 + HN 热度）→ `TOP_K.md`/`TOP_K.jsonl`（TOP-20）+ 离线回归 `test_top_k.py` 20/20**
-当前动作:     第 2 批落盘收官：TOP_K 产物 + 日报/INDEX/ARXIV_API(§9.7) 更新 → 提交本线文件
-下一步:       ① 常态采集按 SOP 增量（先读 SEEN.md 去重、定窗口）；② TOP-K 可按需重跑（`--w1/--w2/--top` 可调）；③ **邮件职能待用户批准后才可启动**（现仅登记）
+已完成:       R1 打通 arXiv API（HTTPS/Atom → research/ARXIV_API.md）；R2 固化检索策略（queries.json）；R3/R4 首轮采集（抓取 214 → 收录 34 + 候选 180）；R1′ 取源复验；R2′ published-first + 周末自动放宽；第二~六轮增量（常 15/15 ok）；**运维第 2 批**：`arxiv_fetch.py` 增 `comment`/`journal_ref` → ≤30d 全量重扫（候选池 1118）→ 新建 `top_k.py`（rel/q 双维 + HN 热度）→ `TOP_K.md`/`TOP_K.jsonl`（TOP-20）+ `test_top_k.py` 20/20；**运维第 3 批**：`top_k.py` 增 `--takeaways-json`（人工 `takeaway`/`action` 注入，不打分）→ `TOP_K_takeaways.json`（20 条）→ 相关面放宽「存储/芯片」重排（**#1 DeepSeek-V4.1-Flash**）→ `TAKEAWAYS.md`（≤5 条）→ `test_top_k.py` **25/25**；**视频线** `video/SHORTLIST.md`（17 条）+ `video/scripts/`（3 份口播稿）
+当前动作:     第 3 批落盘收官：TOP_K/TAKEAWAYS/视频线 + 日报/INDEX/ARXIV_API(§9.8) 更新 → 提交本线文件
+下一步:       ① 常态采集按 SOP 增量（先读 SEEN.md 去重、定窗口）；② TOP-K 可按需重跑（`--w1/--w2/--top/--takeaways-json` 可调）；③ **视频 V3（生成）待用户确认运行机工具链后再动**；④ **邮件职能待用户批准后才可启动**（现仅登记）
+本轮新增:     0 篇采集（周六未公告）；**TOP-20 重排（含 takeaway/action）** + **TAKEAWAYS.md（5 条）** + **视频 SHORTLIST（17 条）+ 3 份口播稿**
+阻塞:         无（HF Daily Papers 本机不可达 → 社区热度**改用 HN Algolia 替代并注明**，不伪造 hf_daily；**视频 V3 待工具链确认**）
+ERROR_COUNT:  0（第六轮 15/15 查询 ok、无重试；回归 test_arxiv_fetch 49/49 + test_top_k **25/25** PASS）
 本轮新增:     0 篇采集（周六未公告）；**新增 TOP-20 精选**（候选池 1118 篇 ≤30d）
 阻塞:         无（HF Daily Papers 本机不可达 → 社区热度**改用 HN Algolia 替代并注明**；不伪造 hf_daily）
 ERROR_COUNT:  0（第 2 批 15/15 查询 ok、无重试；回归 test_arxiv_fetch 49/49 + test_top_k 20/20 PASS）
@@ -30,25 +30,41 @@ ERROR_COUNT:  0（第 2 批 15/15 查询 ok、无重试；回归 test_arxiv_fetc
   **A（本线）**：**已登记为未来职能，本批只登记、不实施**。启用**前提（须用户明确批准）**：① 发件邮箱/身份/署名；② 邮件模板；③ 频率上限；④ 每封是否需用户先审。
   **红线**：**未获批准，绝不自动发送任何邮件**。当前各线上均**无任何发信动作**。
 
+- **Q（运维第 3 批 B 节 · 视频线）**：`V3`（把口播稿变成成片）什么时候能启动？需要用户/环境确认什么？
+  **A（本线）**：**V1/V2 已交付**（选题表 + 3 份口播稿，纯文本）；**V3 会用到运行机可能没有的工具链**，故**本批不做**，先把**待确认清单**摆出来，获批后再动：
+  ① **TTS / 配音**：用哪个引擎（系统 `espeak`？本机有无可用的中文 TTS？还是要用户自录口播）；② **文生图/画面**：运行机是否可访问图像生成服务（**HF 本机不可达**，需另定；否则退化为**纯自绘 SVG/图表**）；
+  ③ **剪辑**：有无 `ffmpeg`；成片**>20MB 不入 git**（走外部目录 + 清单）；④ **栏目名**：本线**须自起**（避免与已有知名频道「两分钟论文」混淆）；
+  ⑤ **发布**：B站/抖音账号、实名与平台规则在**用户侧**，**发布由用户本人执行**。
+  **红线**：**不盗用论文原图、不夸大、不曲解**；未获确认**不擅自生成/发布成片**。
+
 ---
 
 ## 1. 状态头
 
 - **线**：research（arXiv 论文采集/整理）
 - **任务书**：`WATCH_RESEARCH_TASK.md`（只读）
-- **产物**：`research/<YYYY-MM-DD>.md`（日报）· `research/SEEN.md`（去重台账，主键 arXiv ID）· `research/INDEX.md`（索引）· `research/papers.jsonl`（结构化台账）· `research/ARXIV_API.md`（R1）· **`research/TOP_K.md` + `research/TOP_K.jsonl`**（精选排序，运维第 2 批；源 `TOP_K_notes.md`）
-- **工具/回归**：`research/arxiv_fetch.py` + `research/test_arxiv_fetch.py`（49/49）· **`research/top_k.py` + `research/test_top_k.py`（20/20）**
+- **产物**：`research/<YYYY-MM-DD>.md`（日报）· `research/SEEN.md`（去重台账，主键 arXiv ID）· `research/INDEX.md`（索引）· `research/papers.jsonl`（结构化台账）· `research/ARXIV_API.md`（R1）· **`research/TOP_K.md` + `research/TOP_K.jsonl`**（精选排序；源 `TOP_K_notes.md` + **`TOP_K_takeaways.json`**）· **`research/TAKEAWAYS.md`**（第 3 批 A 节：≤5 条可借鉴结论）· **`research/video/SHORTLIST.md` + `research/video/scripts/<arXiv_ID>.md`**（第 3 批 B 节：视频线 V1/V2）
+- **工具/回归**：`research/arxiv_fetch.py` + `research/test_arxiv_fetch.py`（49/49）· **`research/top_k.py`（含 `--takeaways-json`）+ `research/test_top_k.py`（25/25）**
 - **日流水**：`daily-memories-research/<YYYY-MM-DD>.md`
 - **关注领域**：LLM · SLM · 多模态 · agent harness（+ 邻域，见任务书 §1）
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-03`（第五轮；窗口 **≤120h**（周六，`window_mode=weekend_batch`）；实际批次 `2026-09-28 ~ 2026-10-01`，本轮 **0 新增**）
-- **TOP-K 窗口（第 2 批专用）**：`2026-09-03 ~ 2026-10-01`（**≤30d / 720h**，`window_mode=override`；候选池 **1118** 篇 → TOP-20）
-- **累计收录**：`61` 篇（另候选 346 篇，仅存 `SEEN.md` 防重；五轮累计抓取 407 条 —— 第三/四/五轮新增均 0）
+- **上次采集窗口**：`2026-10-03`（第六轮；窗口 **≤120h**（周六，`window_mode=weekend_batch`）；实际批次 `2026-09-28 ~ 2026-10-01`，本轮 **0 新增**）
+- **TOP-K 窗口（第 2 批专用，第 3 批沿用）**：`2026-09-03 ~ 2026-10-01`（**≤30d / 720h**，`window_mode=override`；候选池 **1118** 篇 → TOP-20）
+- **累计收录**：`61` 篇（另候选 346 篇，仅存 `SEEN.md` 防重；六轮累计抓取 407 条 —— 第三~六轮新增均 0）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-03** —— **运维指令第 3 批：更多借鉴（takeaway）+ 视频线（V1/V2）✅ 交付**。
+  - **A 节 · 工具增强**：`research/top_k.py` 新增 **`--takeaways-json`**（人工 `takeaway`/`action` 注入 `TOP_K.md`/`.jsonl`，**不打分**；源 `research/TOP_K_takeaways.json` 为唯一真相）；模块 docstring 增第 3 批说明。
+  - **A 节 · 相关面放宽**：`rel` 词表在 BaiZe 下新增 **`BaiZe·存储/内存技术`**、**`BaiZe·芯片/加速器`** → 重排后 **#1 = DeepSeek-V4.1-Flash（2609.19969，rel 4.0→5.0，total 4.6）**（ExecCritic 降 #2）。生成命令：`python3 research/top_k.py --in research/raw/2026-10-03-topk-fetch.json --top 20 --pool 60 --out-md research/TOP_K.md --out-jsonl research/TOP_K.jsonl --notes-md research/TOP_K_notes.md --takeaways-json research/TOP_K_takeaways.json`（HN 慢 → `nohup` + 轮询）。
+  - **A 节 · 产物**：**`research/TOP_K_takeaways.json`**（**20 条**，`action ∈ {试跑,读原文,仅备忘}`，JSON 校验通过）；`TOP_K.md` 每条新增 **`🎯 takeaway` / `✅ action`** 行；新产出 **`research/TAKEAWAYS.md`**（**≤5 条**：**来自哪篇 + 能改什么 + 预期收益 + 成本** → ① Sharpening Tax · 后训练覆盖度 ② ExecCritic · 测试/修复分权 ③ One to More · 类别跷跷板 ④ DeepSeek-V4.1-Flash · KV 压缩 + HBM/SSD 分层 ⑤ Mamba recall 规模律）。
+  - **A 节 · 诚实复核**：**Faynt（2610.02144）的 `q` org 代理系假阳性**——白名单命中的 `nvidia` 来自摘要「on an NVIDIA T4」**硬件型号**、**非作者机构**；已在 `TOP_K_notes.md` 如实标注（并保留「疑似词表过配」提示）。
+  - **B 节 · 视频线**：V1 **`research/video/SHORTLIST.md`（17 条）**（口径：大众能懂 / 传播力 / 可讲清 / 真实来源）；**TOP-3 = Faynt（2610.02144）· Codoku（2609.34661）· Moore-Escher-Penrose（2610.02210）**。V2 **`research/video/scripts/{2610.02144,2609.34661,2610.02210}.md`**：**固定 5 段结构**（钩子 0–10s → 问题 10–30s → 方法 30–80s → 结果 80–105s → 意义 105–120s），中文 **~405–445 字 ≈2 分钟**，每段含**分镜提示**（**自绘/自生成，🚫 不用论文原图**），含标题 + 作者 + **arXiv 链接**（口播「链接放简介」）。**V3（生成）待工具链确认，本批不做**。
+  - **第六轮常态增量（周六）**：R1′ `--probe`（`2026-10-03T14:43:38Z`）→ **arXiv ✅ `200`+`atom+xml`（最新 `2026-10-01T17:59:59Z`）/ HF ❌ `Network is unreachable` / RSS ⚠️ `items=0`**（→ `raw/2026-10-03-probe-r6.json`）；`--fetch --seen`（`weekend_batch`，120h）→ **15/15 `ok`（无重试），kept 0 / dropped 600（404 already in SEEN + 196 stale）** → **0 新增**（→ `raw/2026-10-03-fetch-r6.json`）。
+  - **回归测试**：`research/test_top_k.py` 扩展 `takeaway`/`action` 用例（`write_outputs(takeaways=...)` 注入 + `--takeaways-json` 加载）→ **25/25 PASS**（离线）。
+  - **落盘**：日报追加「第 3 批」章节 + 第六轮 R1′ 表；`INDEX.md` 计数/备注更新；`ARXIV_API.md` 新增 **§9.8**。
 - **2026-10-03** —— **运维指令第 2 批：TOP-K 精选排序（窗口 ≤30d）✅ 交付**。
   - **R-T1（≤30d 全量重扫）**：`arxiv_fetch.py` 先扩 `comment`/`journal_ref` 字段（回归仍 49/49）；再 `--fetch --window-hours 720 --max-results 100`（`window_mode=override`）→ **15/15 查询 `ok`**（无重试），**kept 1118 / dropped 288**（全部 `stale > 720h`），覆盖 **`2026-09-03 ~ 2026-10-01`**。证据 → `research/raw/2026-10-03-topk-fetch.json`。
   - **R-T2（双维打分）**：新建 `research/top_k.py`：**rel** 走 BaiZe/ZhuLong 主题词表（**词边界**匹配，修复 `Harnessing`→`harness`、`limit`→`mit` 误命中）；**q** = `min(5, code+method+org+comment+hn)`；**`total = 0.6·rel + 0.4·q`**。

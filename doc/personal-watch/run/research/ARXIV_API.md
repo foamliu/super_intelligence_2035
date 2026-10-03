@@ -172,6 +172,28 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **增量取数** `--fetch --seen research/SEEN.md`（`window_mode=weekend_batch`，窗口 **120h**，`generated=2026-10-03T11:13:37Z`）：**15/15 查询 `ok`**（无重试），**kept 0 / dropped 600**；其中 **404 条 = `already in SEEN`**（窗口 `2026-09-28 ~ 2026-10-01` 内条目**均已登记**），其余 **196 条 = `stale > 120h`**。证据 `research/raw/2026-10-03-fetch-r4.json`。
 - **结论**：本日仍为**周六**、arXiv **周末不发公告**，最近批次仍为 **2026-10-01** → **0 新增属正常**（**非「无数据」**），按 R2′ 已在日报**如实标注实际日期区间**。
 
+### 9.8 第 3 批运维指令：TOP-K 增 `takeaway`/`action` + `TAKEAWAYS.md` + 《两分钟论文》视频线（2026-10-03 晚）⭐
+
+> 来源：`WATCH_RESEARCH_TASK.md` 运维指令区 **2026-10-03 第 3 批**（A 节「更多借鉴」+ B 节「视频线 V1/V2」）。
+
+**A 节 · TOP-K 增强 + 借鉴结论**
+- **工具改动**：`research/top_k.py` 新增 **`--takeaways-json`** —— 把**人工撰写**的 `takeaway`（可借鉴点）/`action`（建议动作）注入 `TOP_K.md`/`TOP_K.jsonl`；**不参与打分**（源 `research/TOP_K_takeaways.json` 为唯一真相）。模块 docstring 增第 3 批说明。
+- **相关面放宽**：`rel` 词表按**「存储/芯片 AI 研究院」视角**扩充（BaiZe 下新增 `BaiZe·存储/内存技术`、`BaiZe·芯片/加速器` 两组）→ **重排后 #1 = DeepSeek-V4.1-Flash（2609.19969，`rel` 4.0→5.0，`total` 4.6）**；ExecCritic 降为 #2。
+- **产物**：`research/TOP_K_takeaways.json`（**20 条**，`action ∈ {试跑,读原文,仅备忘}`，JSON 校验通过）；`research/TOP_K.md` 每条新增 **`🎯 takeaway` / `✅ action`** 行；新产出 **`research/TAKEAWAYS.md`** —— **≤5 条**可借鉴结论（**来自哪篇 + 能改什么 + 预期收益 + 成本**）：
+  ① **Sharpening Tax**（2610.01509，后训练税 / pass@K 覆盖度）② **ExecCritic**（2609.09133，测试与修复分权 + fail-closed 冻结测试）③ **One to More**（2609.23377，类别跷跷板 + 专家/同源蒸馏）④ **DeepSeek-V4.1-Flash**（2609.19969，KV 压缩 + HBM/SSD 分层）⑤ **Mamba recall 规模律**（2609.07681）。
+- **回归**：`research/test_top_k.py` 扩展 `takeaway`/`action` 用例（`write_outputs(takeaways=...)` 注入 + `--takeaways-json` 加载）→ **25/25 PASS**。
+- **诚实复核**：`q` 的 `org` 代理在 **Faynt（2610.02144）为假阳性**（白名单命中的 `nvidia` 来自摘要「on an NVIDIA T4」**硬件型号**，非作者机构）——已在 `TOP_K_notes.md` 如实标注。
+
+**B 节 · 《两分钟论文》视频线（目的 2，与目的 1 口径分开）**
+- **V1 选题表**：`research/video/SHORTLIST.md`（**17 条**候选；口径 = **大众能懂 / 传播力 / 可讲清 / 真实来源**）；**TOP-3 选题** = **Faynt（2610.02144）· Codoku（2609.34661）· Moore-Escher-Penrose（2610.02210）**。
+- **V2 口播稿**：`research/video/scripts/{2610.02144,2609.34661,2610.02210}.md` —— **固定 5 段结构**（钩子 0–10s → 问题 10–30s → 方法 30–80s → 结果 80–105s → 意义 105–120s），中文 **~405–445 字 ≈2 分钟**，每段含**分镜提示**（**自绘/自生成，🚫 不使用论文原图**），含**标题 + 作者 + arXiv 链接**（口播提「链接放简介」）。
+- **红线**：不夸大、不曲解、必标「论文解读」；**栏目名须自起**（避免与已有知名频道「两分钟论文」混淆）。**V3（视频生成）待用户/supervisor 确认运行机工具链后再动，本批不做**。
+
+**第六轮常态增量（同日晚 · 周六）**
+- **R1′ `--probe`**（`generated=2026-10-03T14:43:38Z`）→ **arXiv API ✅** `HTTP 200` + `application/atom+xml`（最新 `published=2026-10-01T17:59:59Z`，`totalResults=625914`）；**HF ❌ `Network is unreachable`**；**RSS cs.CL/CV/LG ⚠️ 200 但 `items=0`（周末/未公告）**。证据 → `research/raw/2026-10-03-probe-r6.json`。
+- **`--fetch --seen research/SEEN.md`**（`window_mode=weekend_batch`，窗口 **120h**）→ **15/15 查询 `ok`**（无重试），**kept 0 / dropped 600**（**404 = `already in SEEN`** + **196 = `stale > 120h`**）。证据 → `research/raw/2026-10-03-fetch-r6.json`。
+- **结论**：**0 新增属正常**（周六未公告，最近批次仍 `2026-10-01`）。
+
 ### 9.7 第 2 批运维指令：TOP-K 精选排序（窗口 ≤30d 全量重扫 + HN 热度替代）
 
 > 触发：supervisor 运维指令 **2026-10-03 第 2 批**（`WATCH_RESEARCH_TASK.md` §运维指令区 L14–40）。

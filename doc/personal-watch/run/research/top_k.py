@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""research 线 · TOP-K 精选排序（运维指令 2026-10-03 第 2 批）。
+"""research 线 · TOP-K 精选排序（运维指令 2026-10-03 第 2 批；第 3 批强化）。
 
 对**近期（窗口 <=30d）**论文池按两个维度打分并排序：
 - **rel（相关性，0-5）**：与两条在研论文线的相关度 ——
   · **BaiZe**：从零训练的 ~2B 模型 / Mamba-2 x attention 混合 / 规模律 / 预训练数据配比 /
     后训练（SFT/RL）/ 多模态对齐 / 高效推理；
+    （第 3 批：相关面放宽到「**存储/芯片 AI 研究院**」视角 → 新增
+     `BaiZe·存储/内存技术`、`BaiZe·芯片/加速器` 两组，半导体/EDA/存储相关 AI 论文 `rel` 上调）
   · **ZhuLong**：execution-grounded EDA coding agent / MCP 工具 / generate-execute-refine 闭环 /
     code agent / agent harness / 评测基准（SWE-bench 类）。
 - **q（质量，0-5）**：**可操作代理**（不是主观感觉）——
@@ -17,6 +19,8 @@
 排序：`total = w1*rel + w2*q`（默认 w1=0.6 / w2=0.4，**偏向与本线研工作的相关性**）。
 
 产出：`research/TOP_K.md`（人读）+ `research/TOP_K.jsonl`（机读）。
+第 3 批：每条附 **`takeaway`（可借鉴点）+ `action`（建议动作）**（人工，源 `TOP_K_takeaways.json`，
+经 `--takeaways-json` 注入；不参与打分）；行动清单见 `research/TAKEAWAYS.md`。
 
 ⚠️ 代理指标 != 真实影响力（局限已在 TOP_K.md 注明）。
 """
@@ -52,6 +56,14 @@ BAIZE_TOPICS = [
     ("BaiZe·高效推理", 1.0,
      ["quantization", "quantized", "kv cache", "distillation", "distill", "speculative decoding",
       "efficient inference", "inference optimization", "pruning", "low-bit"]),
+    # 运维第 3 批：相关面放宽到「存储/芯片 AI 研究院」视角（半导体/存储相关 AI 论文 rel 上调）
+    ("BaiZe·存储/内存技术", 1.5,
+     ["memory-semantic", "flash memory", "nand flash", "solid-state drive", "persistent memory",
+      "storage", "dram", "hbm", "high bandwidth memory", "memory hierarchy", "memory bandwidth",
+      "memory wall", "cxl", "ssd", "memory tiering"]),
+    ("BaiZe·芯片/加速器", 1.0,
+     ["npu", "asic", "fpga", "tensor core", "hardware accelerator", "silicon", "semiconductor",
+      "on-chip", "chip-level", "wafer", "gpu kernel", "cuda kernel", "inference chip", "chiplet"]),
 ]
 
 ZHULONG_TOPICS = [
@@ -217,8 +229,9 @@ def rank(items, w1=0.6, w2=0.4, pool=60, use_hn=True, hn_interval=1.0):
     return head
 
 
-def _row(s, rank):
+def _row(s, rank, takeaways=None):
     it = s["it"]
+    tw = (takeaways or {}).get(it.get("arxiv_id"), {}) or {}
     return {
         "rank": rank,
         "arxiv_id": it.get("arxiv_id"),
@@ -233,20 +246,26 @@ def _row(s, rank):
         "abs_url": it.get("abs_url"),
         "pdf_url": it.get("pdf_url"),
         "code_url": s["code_url"] or "",
+        # 运维第 3 批：可借鉴点 + 建议动作（人工填写，见 TOP_K_takeaways.json）
+        "takeaway": tw.get("takeaway", ""),
+        "action": tw.get("action", ""),
     }
 
 
-def write_outputs(head, top, out_md, out_jsonl, meta, w1, w2, notes=None):
-    rows = [_row(s, i + 1) for i, s in enumerate(head[:top])]
+def write_outputs(head, top, out_md, out_jsonl, meta, w1, w2, notes=None, takeaways=None):
+    rows = [_row(s, i + 1, takeaways) for i, s in enumerate(head[:top])]
     with open(out_jsonl, "w", encoding="utf-8") as fh:
         for r in rows:
             fh.write(json.dumps(r, ensure_ascii=False) + "\n")
     L = []
     L.append("# TOP-K 精选论文（研究相关性 x 质量）")
     L.append("")
-    L.append("> research 线 · 运维指令 2026-10-03 第 2 批。窗口 **<=30d**（`published` 首次提交）。")
+    L.append("> research 线 · 运维指令 2026-10-03 第 2 批（第 3 批强化）。窗口 **<=30d**（`published` 首次提交）。")
     L.append("> 候选池：%s 篇（生成于 %s）｜ TOP-%d ｜ 权重 **w1(rel)=%s / w2(q)=%s**。" %
              (meta.get("n_candidates", "?"), meta.get("generated", "?"), top, w1, w2))
+    L.append("> 第 3 批新增：① 相关面放宽到「**存储/芯片 AI 研究院**」视角（新增 `BaiZe·存储/内存技术`、")
+    L.append("> `BaiZe·芯片/加速器` 两组，半导体/EDA/存储相关 AI 论文 `rel` 上调）；② 每条附 **`takeaway`（可借鉴点）+ `action`（建议动作）**，")
+    L.append("> 源 `TOP_K_takeaways.json`；③ 行动清单见 `TAKEAWAYS.md`。")
     L.append("")
     L.append("## 排序方法")
     L.append("")
@@ -258,6 +277,8 @@ def write_outputs(head, top, out_md, out_jsonl, meta, w1, w2, notes=None):
     L.append("  · **comment** = arXiv `comment` 或 `journal_ref` 非空")
     L.append("  · **hn** = **HN Algolia**（`https://hn.algolia.com/api/v1/search`）标题命中且 points>=5（+1）/ 弱命中（+0.5）")
     L.append("- **total = %s·rel + %s·q**（偏向与本线研工作的相关性）。" % (w1, w2))
+    L.append("- **takeaway / action（人工，不参与打分）**：每条给「对我们工作的**可借鉴点**」与**建议动作**")
+    L.append("  （`试跑` / `读原文` / `仅备忘`），源 `TOP_K_takeaways.json`。")
     L.append("")
     L.append("## 局限（诚实声明）")
     L.append("")
@@ -286,6 +307,9 @@ def write_outputs(head, top, out_md, out_jsonl, meta, w1, w2, notes=None):
         L.append("- **#%d %s**（arXiv:%s）" % (r["rank"], r["title"], r["arxiv_id"]))
         L.append("  · 🔗 rel=%s（%s）" % (r["rel"], r["relevance_reason"]))
         L.append("  · 🏅 q=%s（%s）" % (r["q"], r["quality_evidence"]))
+        if r.get("takeaway") or r.get("action"):
+            L.append("  · 🎯 takeaway: %s" % (r.get("takeaway") or "（待填）"))
+            L.append("  · ✅ action: %s" % (r.get("action") or "（待填）"))
         L.append("  · abs: %s ｜ pdf: %s%s" % (
             r["abs_url"], r["pdf_url"], (" ｜ 💻 %s" % r["code_url"]) if r["code_url"] else ""))
     L.append("")
@@ -306,6 +330,8 @@ def main(argv=None):
     ap.add_argument("--out-jsonl", default=str(RESEARCH_DIR / "TOP_K.jsonl"))
     ap.add_argument("--notes-md", default=str(RESEARCH_DIR / "TOP_K_notes.md"),
                     help="可选：人工 TOP-5 导读（markdown），存在则嵌入 TOP_K.md")
+    ap.add_argument("--takeaways-json", default=str(RESEARCH_DIR / "TOP_K_takeaways.json"),
+                    help="可选：人工 takeaway/action 映射（arxiv_id -> {takeaway, action}）")
     args = ap.parse_args(argv)
 
     items, meta = _load_pool(args.inp)
@@ -313,9 +339,13 @@ def main(argv=None):
     notes = None
     if args.notes_md and Path(args.notes_md).exists():
         notes = Path(args.notes_md).read_text(encoding="utf-8")
+    takeaways = None
+    if args.takeaways_json and Path(args.takeaways_json).exists():
+        takeaways = json.loads(Path(args.takeaways_json).read_text(encoding="utf-8"))
     head = rank(items, w1=args.w1, w2=args.w2, pool=args.pool,
                 use_hn=not args.no_hn, hn_interval=args.hn_interval)
-    rows = write_outputs(head, args.top, args.out_md, args.out_jsonl, meta, args.w1, args.w2, notes=notes)
+    rows = write_outputs(head, args.top, args.out_md, args.out_jsonl, meta, args.w1, args.w2,
+                         notes=notes, takeaways=takeaways)
     print("[top_k] 候选 %d 篇 -> TOP-%d（w1=%s w2=%s）；写 %s / %s" %
           (len(items), len(rows), args.w1, args.w2, args.out_md, args.out_jsonl))
     for r in rows[:5]:

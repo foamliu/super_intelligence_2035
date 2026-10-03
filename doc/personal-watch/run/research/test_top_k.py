@@ -9,6 +9,7 @@ test_top_k · `top_k.py` 的**离线**校验（**不联网**）
   3. `rank(use_hn=False)`：total 单调不增、HN 关闭时不联网
   4. `write_outputs`：jsonl 字段齐备 + md 含方法/局限/TOP 表
   5. CLI `--in ... --no-hn`：端到端写出 TOP_K.md / TOP_K.jsonl（退出码 0）
+  6. （第 3 批）`takeaway`/`action`：`write_outputs(takeaways=...)` 注入 + `--takeaways-json` 加载
 
 用法：`python3 research/test_top_k.py`   # 全 PASS 退出码 0
 """
@@ -104,11 +105,52 @@ def test_write_outputs_fields():
         got = [json.loads(l) for l in open(jl, encoding="utf-8") if l.strip()]
         txt = open(md, encoding="utf-8").read()
     need = {"rank", "arxiv_id", "title", "submitted", "primary_category", "rel", "q",
-            "total", "relevance_reason", "quality_evidence", "abs_url", "code_url"}
+            "total", "relevance_reason", "quality_evidence", "abs_url", "code_url",
+            "takeaway", "action"}
     check("write.has_rows", len(got) == 1 and len(rows) == 1)
     check("write.fields", need <= set(got[0].keys()), str(sorted(set(got[0]) ^ need)))
     check("write.md_method", "排序方法" in txt and "局限" in txt and "TOP-5" in txt)
     check("write.md_notes", "TOP-5 导读" in txt and "人工导读" in txt)
+
+
+def test_takeaways_injection():
+    # 第 3 批 A 节：write_outputs(takeaways=...) 应写入 jsonl 并渲染进 md
+    items = [_item(arxiv_id="2610.00011", title="agent harness tool use for coding agent",
+                   summary="code at https://github.com/a/b", comment="Accepted",
+                   category="cs.SE", published="2026-10-01T00:00:00Z")]
+    head = top_k.rank(items, pool=5, use_hn=False)
+    tk = {"2610.00011": {"takeaway": "可迁移到 ZhuLong 的执行闭环", "action": "试跑"}}
+    with tempfile.TemporaryDirectory() as d:
+        md = os.path.join(d, "TOP_K.md")
+        jl = os.path.join(d, "TOP_K.jsonl")
+        top_k.write_outputs(head, 5, md, jl, {"n_candidates": 1, "generated": "T"}, 0.6, 0.4,
+                            takeaways=tk)
+        got = [json.loads(l) for l in open(jl, encoding="utf-8") if l.strip()]
+        txt = open(md, encoding="utf-8").read()
+    check("takeaway.jsonl_field", got[0].get("takeaway") == "可迁移到 ZhuLong 的执行闭环",
+          str(got[0].get("takeaway")))
+    check("takeaway.action_field", got[0].get("action") == "试跑", str(got[0].get("action")))
+    check("takeaway.md_rendered", "🎯 takeaway" in txt and "✅ action" in txt and "试跑" in txt)
+
+
+def test_cli_takeaways_json():
+    # 第 3 批 A 节：CLI --takeaways-json 应加载并注入
+    with tempfile.TemporaryDirectory() as d:
+        pool = os.path.join(d, "pool.json")
+        tk = os.path.join(d, "tk.json")
+        json.dump({"items": [_item(arxiv_id="2610.00012", title="agent harness",
+                                   summary="tool use and code at https://github.com/a/b",
+                                   comment="Accepted", published="2026-10-01T00:00:00Z")],
+                   "meta": {"generated": "T"}}, open(pool, "w", encoding="utf-8"))
+        json.dump({"2610.00012": {"takeaway": "TK", "action": "读原文"}},
+                  open(tk, "w", encoding="utf-8"))
+        md = os.path.join(d, "TOP_K.md")
+        jl = os.path.join(d, "TOP_K.jsonl")
+        rc = top_k.main(["--in", pool, "--top", "5", "--pool", "5", "--no-hn",
+                         "--out-md", md, "--out-jsonl", jl, "--takeaways-json", tk])
+        data = [json.loads(l) for l in open(jl, encoding="utf-8") if l.strip()]
+    check("cli.takeaways_rc==0", rc == 0)
+    check("cli.takeaways_loaded", data[0].get("takeaway") == "TK" and data[0].get("action") == "读原文")
 
 
 def test_cli_no_hn():
@@ -131,7 +173,8 @@ def test_cli_no_hn():
 
 def main():
     tests = [test_rel_word_boundary, test_org_word_boundary, test_q_code_and_comment,
-             test_rank_monotonic_no_hn, test_write_outputs_fields, test_cli_no_hn]
+             test_rank_monotonic_no_hn, test_write_outputs_fields, test_takeaways_injection,
+             test_cli_takeaways_json, test_cli_no_hn]
     for t in tests:
         print("── %s ──" % t.__name__)
         t()

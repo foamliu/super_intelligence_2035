@@ -16,3 +16,8 @@
 
 > ⭐ **TOP-K 精选（2026-10-03 运维第 2 批）**：窗口放宽 **≤30d** 全量重扫（`window_mode=override`，15/15 查询 `ok`，候选池 **1118** 篇）→ 双维度打分 `total = 0.6·rel + 0.4·q` → **TOP-20** 落 `TOP_K.md`/`TOP_K.jsonl`。
 > ⚠️ **HF Daily Papers 本机不可达 → 社区热度改用 HN Algolia**（不伪造 `hf_daily`）。口径见 `ARXIV_API.md` §9.7；TOP-5 中文导读见 `TOP_K.md`（源 `research/TOP_K_notes.md`）。
+>
+> ⭐ **第 3 批（2026-10-03 晚）**：① TOP-K 每增 **`takeaway` / `action`**（源 `research/TOP_K_takeaways.json`；生成器 `--takeaways-json`，**不打分**）；
+> 相关面放宽至「**存储/芯片 AI 研究院**」视角 → **重排后 #1 = DeepSeek-V4.1-Flash（2609.19969）**；② 新产出 **`research/TAKEAWAYS.md`**（≤5 条可借鉴结论：Sharpening Tax / ExecCritic / One to More / DeepSeek-V4.1-Flash / Mamba recall）；
+> ③ 建 **科普视频线** `research/video/`（`SHORTLIST.md` 17 条 + `scripts/` 3 份口播稿；**V3 待工具链确认**）；④ 离线回归 `test_top_k.py` **25/25 PASS**。
+> 🗓 **第六轮常态增量（周六）**：15/15 查询 `ok`，**kept 0 / dropped 600**（404 already in SEEN + 196 stale）→ **0 新增**（`raw/2026-10-03-{probe,fetch}-r6.json`；口径 `ARXIV_API.md` §9.8）。
