@@ -3,8 +3,9 @@
 
 Data (parsed verbatim from r8_eval_in1k.py output):
   stage-1 periodic ckpts: /tmp/r10_stage1_in1k.log (R10-1, r10_eval_stage1.sh)
-      3 towers (w512=126.8M / w768=284.5M / w1024=505.0M) x step{10k,20k,30k}
+      3 towers (w512 / w768 / w1024) x step{10k,20k,30k} + final
   stage-2 long curve    : /tmp/r9_stage2.log (R9, 11 ckpts, M=w512)
+  denseM (R10-3)        : /tmp/r10_denseM.log (w384 / w640 x step{10k,20k,30k} + final)
 Axes: N = step*512 samples (bs64 x 8 rank); M = tower params; acc = IN-1k lp top-1.
 """
 import argparse, os, re
@@ -14,8 +15,16 @@ CKPT_RE = re.compile(r"\[R8-IN1K\] ckpt=(\S+)")
 ACC_RE = re.compile(r"\[R8-IN1K\] zero-shot top1=([0-9.]+) top5=([0-9.]+)"
                     r"\s+linear-probe top1=([0-9.]+)")
 STEP_RE = re.compile(r"vision_step(\d+)\.pt$")
-WIDTH_RE = re.compile(r"R9_stage\d+_w(\d+)")
-WIDTH_PARAMS = {512: 126.8e6, 768: 284.5e6, 1024: 505.2e6}
+WIDTH_RE = re.compile(r"R(?:9_stage\d+|10_denseM)_w(\d+)")
+# Actual measured numel (sum over state_dict, 2026-10-03). The 4.8e-4*w^2 formula is a
+# close estimate; true counts differ slightly (w384=71.49M +0.7M, w640=197.80M +1.2M).
+WIDTH_PARAMS = {
+    384: 71_491_584,    # 71.49M
+    512: 126_779_392,   # 126.78M
+    640: 197_795_840,   # 197.80M
+    768: 284_540_928,   # 284.54M
+    1024: 505_217_024,  # 505.22M
+}
 SPP = 512
 
 
@@ -58,16 +67,18 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--stage1-log', default='/tmp/r10_stage1_in1k.log')
     ap.add_argument('--stage2-log', default='/tmp/r9_stage2.log')
+    ap.add_argument('--denseM-log', default='/tmp/r10_denseM.log')
     ap.add_argument('--csv', default='/tmp/r10_scaling2d_points.csv')
     args = ap.parse_args()
 
     s1 = parse_log(args.stage1_log, final_step_default=30000)
     s2 = parse_log(args.stage2_log, final_step_default=108000)
+    sd = parse_log(args.denseM_log, final_step_default=30000)
 
     print('=' * 82)
     print('R10 2D scaling-law analysis  acc = f(N, M)  (IN-1k linear-probe top-1)')
     print(f'  samples/step = {SPP} (bs64 x 8 rank)')
-    print(f'  stage-1 points: {len(s1)}   stage-2 points: {len(s2)}')
+    print(f'  stage-1 points: {len(s1)}   stage-2 points: {len(s2)}   denseM points: {len(sd)}')
     print('=' * 82)
 
     rows = []
@@ -89,6 +100,15 @@ def main():
         rows.append({'tag': 'stage2', 'width': p['width'], 'step': p['step'],
                      'N': p['step'] * SPP, 'M': M, 'M_m': M / 1e6,
                      'lp': p['lp'], 'zs1': p['zs1'], 'zs5': p['zs5'], 'path': p['path']})
+    for p in sd:
+        if p['step'] is None:
+            continue
+        M = WIDTH_PARAMS.get(p['width'])
+        if M is None:
+            continue
+        rows.append({'tag': 'denseM', 'width': p['width'], 'step': p['step'],
+                     'N': p['step'] * SPP, 'M': M, 'M_m': M / 1e6,
+                     'lp': p['lp'], 'zs1': p['zs1'], 'zs5': p['zs5'], 'path': p['path']})
 
     print('\n--- all raw points (N, M, acc) ---')
     print(f"{'tag':>7} {'w':>4} {'step':>8} {'samples(M)':>11} {'M(M)':>8} "
@@ -108,13 +128,15 @@ def main():
     except OSError as e:
         print(f'\n[csv] WARN could not write {args.csv}: {e}')
 
-    # Primary fit: stage2 w512 (N-axis) + stage1 w768/w1024 (M-axis).
-    # Stage1 w512 dup-region kept OUT (covered by stage2); reported as consistency check.
+    # Primary fit: stage2 w512 (N-axis) + stage1 w768/w1024 (M-axis high) + denseM
+    # w384/w640 (M-axis low). Stage1 w512 dup-region kept OUT (covered by stage2);
+    # reported as consistency check.
     fit_rows = [r for r in rows if r['tag'] == 'stage2']
     fit_rows += [r for r in rows if r['tag'] == 'stage1' and r['width'] in (768, 1024)]
+    fit_rows += [r for r in rows if r['tag'] == 'denseM']
     fit_rows = sorted(fit_rows, key=lambda x: (x['width'], x['N']))
 
-    print('\n--- fit set (stage2 w512 long curve + stage1 w768/w1024 M-axis) ---')
+    print('\n--- fit set (stage2 w512 long curve + stage1 w768/w1024 + denseM w384/w640 M-axis) ---')
     print(f'n = {len(fit_rows)} points')
     for r in fit_rows:
         print(f"  {r['tag']:>7} w={r['width']:>4} N={r['N']/1e6:9.3f}M "
@@ -165,21 +187,22 @@ def main():
     print(f'  [A] sweep M in [20M..2G] @ fixed C_ref -> max acc={acc_s[i_best]*100:.2f}% at '
           f'M={sweep_M[i_best]/1e6:.0f}M, N={N_sweep[i_best]/1e6:.1f}M '
           f'(observed M range [126.8M..505.2M]; else EXTRAPOLATION)')
-    if sweep_M[i_best] < 126.8e6:
-        print('  => optimum M BELOW observed floor -> extend M axis downward (R10-3: w384 ~71M / w640 ~197M)')
+    if sweep_M[i_best] < M.min():
+        print(f'  => optimum M BELOW observed floor ({M.min()/1e6:.0f}M) -> extend M axis downward (R10-3 done)')
     else:
         print(f'  => optimum M={sweep_M[i_best]/1e6:.0f}M within/near observed range.')
-    x_anchor = np.log10(126.8e6); K_anchor = np.log10(15.36e6) + x_anchor
+    x_anchor = np.log10(WIDTH_PARAMS[512]); K_anchor = np.log10(15.36e6) + x_anchor
     ddx = (c - b + d * K_anchor) - 2 * d * x_anchor
     print(f'  [A] dacc/dlog10(M) @anchor(N=15.4M,M=126.8M own budget)={ddx:+.4f} -> '
           f'{"larger M WORSE here (data-limited regime)" if ddx < 0 else "larger M better here"}')
 
     print('\n--- span & uncertainty (honest) ---')
     print(f'  N span: {N.min()/1e6:.2f}M .. {N.max()/1e6:.2f}M samples ({N.max()/N.min():.1f}x, ~1 order)')
-    Ms = np.array([WIDTH_PARAMS[w] for w in (512, 768, 1024)])
+    Ms = np.sort(np.unique(M))
     print(f'  M span: {Ms.min()/1e6:.1f}M .. {Ms.max()/1e6:.1f}M params ({Ms.max()/Ms.min():.1f}x, '
-          f'~0.6 orders, {len(Ms)} points; no point < 126.8M)')
-    print('  -> M axis VERY sparse (3 pts, 4x). Extrapolation to smaller/larger M is highly uncertain.')
+          f'{len(Ms)} distinct widths: ' + ', '.join(f'{m/1e6:.0f}M' for m in Ms) + ')')
+    print(f'  -> M axis points: {len(Ms)} widths (floor now {Ms.min()/1e6:.0f}M). '
+          f'Extrapolation to smaller/larger M still uncertain.')
     print('  -> run variance: stage-1 w512 @30k vs stage-2 w512 @30k = 2 independent runs same (N,M).')
 
     print('\n--- consistency check: stage-1 w512 (dup region) vs stage-2 w512 curve ---')
