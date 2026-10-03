@@ -1,0 +1,101 @@
+idx,action_type,noise_risk,actor,title,url,verdict
+0,A1,中,李强,李强同新西兰总理拉克森会谈,https://www.chinanews.com.cn/gn/2024/06-13/10233199.shtml,1
+1,A1,低,李强,（聚焦中非合作）李强会见津巴布韦总统姆南加古瓦,https://www.chinanews.com.cn/gn/2024/09-04/10279606.shtml,1
+2,A1,低,习近平,时政快讯丨习近平会见南苏丹总统基尔,https://www.chinanews.com.cn/gn/2024/09-06/10281459.shtml,1
+3,A1,低,习近平,中非合作论坛丨习近平会见利比里亚总统博阿凯,https://www.chinanews.com.cn/tp/hd2011/2024/09-06/1121428.shtml,1
+4,A1,低,习近平,习近平会见俄罗斯统一俄罗斯党主席梅德韦杰夫,https://www.chinanews.com.cn/gn/2024/12-12/10335186.shtml,1
+5,A1,低,外交部,王毅会见捷克外长利帕夫斯基,https://www.chinanews.com.cn/gn/2025/02-16/10369459.shtml,1
+6,A1,低,美国,何立峰分别会见美国花旗集团董事长杜颂安、凯雷投资集团首席执行官施瓦茨,https://www.chinanews.com.cn/gn/2025/05-23/10420889.shtml,1
+7,A1,低,习近平,习近平会见厄瓜多尔总统诺沃亚,https://www.chinanews.com.cn/gn/2025/06-27/10438904.shtml,1
+8,A1,中,外交部,王毅同法国外长巴罗会谈,https://www.chinanews.com.cn/gn/2025/07-05/10443071.shtml,1
+9,A1,低,习近平,习近平会见土库曼斯坦总统别尔德穆哈梅多夫,https://www.chinanews.com.cn/gn/2025/09-02/10475442.shtml,1
+10,A1,中,习近平,（抗战胜利80周年）习近平同朝鲜劳动党总书记、国务委员长金正恩会谈,https://www.chinanews.com.cn/tp/hd2011/2025/09-04/1163934.shtml,1
+11,A1,低,法国,李鸿忠会见法国参议院法中友好小组代表团,https://www.chinanews.com.cn/gn/2025/09-26/10490095.shtml,1
+12,A1,中,外交部,王毅同约旦副首相兼外交大臣萨法迪会谈,https://www.chinanews.com.cn/gn/2025/12-15/10534066.shtml,1
+13,A1,低,习近平,习近平会见加拿大总理卡尼,https://www.chinanews.com.cn/tp/hd2011/2026/01-16/1178657.shtml,1
+14,A1,低,李强,李强会见美国国会参议员代表团,https://www.chinanews.com.cn/tp/hd2011/2026/05-08/1190628.shtml,1
+15,A1,中,习近平,习近平同美国总统特朗普在中南海小范围会晤,https://www.chinanews.com.cn/gn/2026/05-15/10621631.shtml,1
+16,A1,中,外交部,王毅同奥地利外长赖辛格会谈,https://www.chinanews.com.cn/gn/2026/06-25/10647458.shtml,1
+17,A1,低,习近平,习近平会见柬埔寨首相洪玛奈,https://www.chinanews.com.cn/gn/2026/07-17/10661569.shtml,1
+18,A10,中,李强,李强签署国务院令 公布《生态环境监测条例》,https://www.chinanews.com.cn/gn/2025/11-06/10511043.shtml,1
+19,A10,中,加拿大,加拿大与丹麦签署防务合作协议 应对特朗普“夺岛”威胁,https://www.chinanews.com.cn/gj/2026/02-14/10572440.shtml,1
+20,A11,高,证监会,证监会发布监管指引 事关上市公司破产重整,https://www.chinanews.com.cn/cj/2025/03-14/10383270.shtml,1
+21,A11,高,（地方）政府,香港特区政府确认推进宏福苑未受灾楼宇业权收购工作,https://www.chinanews.com.cn/dwq/2026/09-03/10689751.shtml,1
+22,A12,低,美国,美国SpaceX“星舰”第四次试飞 目前已发射升空,https://www.chinanews.com.cn/gj/2024/06-06/10229793.shtml,0
+23,A12,低,俄罗斯,俄罗斯在地中海举行演习并发射高精度导弹,https://www.chinanews.com.cn/gj/2024/12-04/10330117.shtml,1
+24,A13,高,日本,日本启动第五批福岛核污染水排海 中国驻日使馆回应,https://www.chinanews.com.cn/gj/2024/04-20/10202328.shtml,1
+25,A13,低,美国,中方决定对美国军工企业及高级管理人员采取反制措施,https://www.chinanews.com.cn/gn/2024/07-12/10250405.shtml,1
+26,A13,高,韩国,朝鲜宣布切断与韩国连接的公路和铁路 中方回应,https://www.chinanews.com.cn/gn/2024/10-09/10298629.shtml,1
+27,A13,中,欧盟,欧盟决定扩大对伊朗的制裁范围 将多个实体列入制裁名单,https://www.chinanews.com.cn/gj/2024/11-18/10321706.shtml,1
+28,A13,高,商务部,中国商务部回应美发布TikTok延期行政令,https://www.chinanews.com.cn/cj/2025/04-09/10396922.shtml,1
+29,A13,高,欧洲,中方回应欧洲议会涉华决议：停止在出口管制问题搞双重标准,https://www.chinanews.com.cn/gj/2025/07-11/10446521.shtml,1
+30,A13,中,商务部,商务部新闻发言人就欧盟第18轮对俄制裁列单中国企业和金融机构事答记者问,https://www.chinanews.com.cn/cj/2025/07-21/10451185.shtml,1
+31,A13,高,国务院,国务院台办回应连续新增两位发言人：更好宣介大陆对台方针政策,https://www.chinanews.com.cn/gn/2025/11-05/10510267.shtml,1
+32,A13,高,日本,国台办回应高市早苗涉台言论：日本应深刻反省历史汲取教训,https://www.chinanews.com.cn/gn/2025/11-12/10514170.shtml,1
+33,A13,高,商务部,如何进一步提升中欧班列运输效率？商务部回应,https://www.chinanews.com.cn/cj/2026/05-14/10621097.shtml,1
+34,A13,中,美国,美国加码对伊朗制裁暗藏风险，这场“豪赌”恐反噬自身,https://www.chinanews.com.cn/gj/2026/08-25/10683546.shtml,0
+35,A13,高,商务部,美利用G20炒作所谓“贸易失衡”等论调 中国商务部回应,https://www.chinanews.com.cn/cj/2026/09-03/10689697.shtml,1
+36,A13,高,欧盟,中方回应欧盟年度涉港和涉澳报告：立即停止以任何形式插手港澳事务,https://www.chinanews.com.cn/gj/2026/09-23/10702614.shtml,1
+37,A14,高,财政部,财政部等九部门推广应用电子凭证会计数据标准,https://www.chinanews.com.cn/cj/2025/05-19/10418093.shtml,1
+38,A14,中,国务院,国务院批复同意自即日起2年内开展北京城市副中心等10个要素市场化配置综合改革试点,https://www.chinanews.com.cn/gn/2025/09-11/10480584.shtml,1
+39,A15,低,中国人民银行,9月11日央行开展2100亿元7天期逆回购操作,https://www.chinanews.com.cn/cj/2024/09-11/10283917.shtml,1
+40,A15,低,美国·美联储,（财经天下）美联储降息节奏要变？,https://www.chinanews.com.cn/cj/2024/11-09/10316433.shtml,0
+41,A15,低,中国人民银行,（经济观察）降准降息可期 中国央行明确今年工作重点,https://www.chinanews.com.cn/cj/2026/01-07/10547586.shtml,0
+42,A15,低,澳大利亚,澳大利亚央行年内第三次加息,https://www.chinanews.com.cn/gj/2026/05-05/10615865.shtml,1
+43,A15,低,中国人民银行,央行优化公开市场临时隔夜正、逆回购操作机制,https://www.chinanews.com.cn/cj/2026/06-17/10642108.shtml,1
+44,A2,低,习近平,习近平抵达巴西利亚开始对巴西进行国事访问,https://www.chinanews.com.cn/gn/2024/11-20/10322363.shtml,1
+45,A2,低,习近平,习近平抵达莫斯科对俄罗斯进行国事访问并出席纪念苏联伟大卫国战争胜利80周年庆典,https://www.chinanews.com.cn/gn/2025/05-08/10412018.shtml,1
+46,A3,低,中国人民银行,中国人民银行在四川、陕西召开优化支付服务推进会,https://www.chinanews.com.cn/cj/2024/06-17/10235565.shtml,1
+47,A3,低,政协,中共全国政协党组召开会议 传达学习贯彻党的二十届四中全会精神 王沪宁主持并讲话,https://www.chinanews.com.cn/tp/hd2011/2025/10-24/1169289.shtml,1
+48,A3,高,（地方）政府,辽宁省政府残工委全体会议在沈阳召开,https://www.chinanews.com.cn/gn/2026/01-23/10557767.shtml,1
+49,A4,高,日本,“如何理解中国经济”专题讲座在日本东京举行,https://www.chinanews.com.cn/hr/2024/05-24/10222780.shtml,0
+50,A4,高,外交部,王毅同美国总统国家安全事务助理沙利文举行战略沟通,https://www.chinanews.com.cn/gn/2024/08-28/10276039.shtml,1
+51,A4,高,巴西,中国-巴西心血管创新论坛线上举行,https://www.chinanews.com.cn/gj/2024/09-29/10294818.shtml,0
+52,A4,高,澳大利亚,澳大利亚东莞同乡会公义堂董事局举行交流座谈,https://www.chinanews.com.cn/hr/2024/10-09/10298800.shtml,0
+53,A4,高,习近平,习近平同俄罗斯总统普京举行视频会晤,https://www.chinanews.com.cn/gn/2025/01-21/10357536.shtml,1
+54,A4,高,全国人大,十四届全国人大三次会议6日下午举行经济主题记者会,https://www.chinanews.com.cn/gn/2025/03-05/10378046.shtml,1
+55,A4,高,全国人大,十四届全国人大三次会议举行第二次全体会议 习近平等出席,https://www.chinanews.com.cn/gn/2025/03-08/10380050.shtml,1
+56,A4,高,习近平,《习近平经济思想系列讲读》节目研讨会在京举行,https://www.chinanews.com.cn/gn/2025/04-23/10404015.shtml,0
+57,A4,高,美国·白宫,美韩领导人在白宫举行会晤,https://www.chinanews.com.cn/gj/2025/08-26/10471114.shtml,1
+58,A4,高,习近平,庆祝中华人民共和国成立76周年招待会在京举行 习近平发表重要讲话,https://www.chinanews.com.cn/tp/hd2011/2025/09-30/1166695.shtml,1
+59,A4,高,中国人民银行,第十四届中日韩央行行长会议在华盛顿举行,https://www.chinanews.com.cn/cj/2025/10-17/10499886.shtml,1
+60,A4,高,美国,“创新·开放·共享发展”全球对话会美国专场在华盛顿举行,https://www.chinanews.com.cn/gj/2025/10-25/10504555.shtml,0
+61,A4,高,澳大利亚,澳大利亚商业峰会理事会年会在悉尼举行,https://www.chinanews.com.cn/gj/2026/06-03/10633742.shtml,0
+62,A5,高,最高检,最高检发布检察公益诉讼助力噪声污染防治典型案例,https://www.chinanews.com.cn/gn/2024/04-23/10203999.shtml,1
+63,A5,高,加拿大,已失控！加拿大石油重镇野火蔓延 当地发布疏散通知,https://www.chinanews.com.cn/gj/2024/05-12/10215611.shtml,0
+64,A5,中,人社部,人社部出台支持福建探索海峡两岸融合发展新路政策措施,https://www.chinanews.com.cn/gn/2024/07-23/10255725.shtml,1
+65,A5,高,澳大利亚,澳大利亚《中秋之夜》大型文艺晚会新闻发布会在悉尼举行,https://www.chinanews.com.cn/hr/2024/08-24/10274002.shtml,0
+66,A5,中,国务院,国务院办公厅印发《关于全面深化药品医疗器械监管改革促进医药产业高质量发展的意见》,https://www.chinanews.com.cn/gn/2025/01-03/10347238.shtml,1
+67,A5,高,全国人大,两会受权发布丨十四届全国人大三次会议主席团举行第二次会议,https://www.chinanews.com.cn/gn/2025/03-09/10380278.shtml,1
+68,A5,高,自然资源部,自然资源部与中国气象局联合发布地质灾害气象风险预警,https://www.chinanews.com.cn/sh/2025/07-27/10454459.shtml,0
+69,A5,高,全国人大,2025年全国人大常委会备案审查“成绩单”发布,https://www.chinanews.com.cn/gn/2025/12-22/10538197.shtml,1
+70,A5,高,巴西,巴西迎来“大烤” 多地发布红色高温预警,https://www.chinanews.com.cn/tp/hd2011/2025/12-28/1176873.shtml,0
+71,A5,高,美国,美国丹佛市长发布行政令 限制联邦移民执法行动,https://www.chinanews.com.cn/gj/2026/02-27/10577613.shtml,1
+72,A5,高,最高法,最高法发布案例 保障规范律师参与诉讼,https://www.chinanews.com.cn/gn/2026/04-07/10599680.shtml,1
+73,A5,高,自然资源部,自然资源部与中国气象局联合发布地质灾害橙色预警,https://www.chinanews.com.cn/gn/2026/08-09/10674570.shtml,0
+74,A6,中,应急管理部,未来三天华北东北等地有强降雨 国家防总办公室、应急管理部部署重点地区防范应对,https://www.chinanews.com.cn/sh/2024/07-30/10260331.shtml,1
+75,A6,高,水利部,开创高质量发展新局面｜水利部：2024年实施水利项目4.7万个、完成投资1.35万亿元,https://www.chinanews.com.cn/gn/2024/12-31/10345259.shtml,1
+76,A6,高,市场监管总局,销户不销责 市场监管总局发布《强制注销公司登记制度实施办法》,https://www.chinanews.com.cn/cj/2025/09-09/10479137.shtml,1
+77,A6,高,财政部,财政部：已制定财税体制改革实施方案和分年度工作计划,https://www.chinanews.com.cn/cj/2025/09-12/10481503.shtml,1
+78,A6,高,最高法,最高法工作报告：马某组织女子闪婚闪离实施诈骗被判刑,https://www.chinanews.com.cn/gn/2026/03-09/10583748.shtml,0
+79,A6,高,国务院,国务院关于印发《实施就业优先战略“十五五”规划》的通知,https://www.chinanews.com.cn/gn/2026/06-17/10642473.shtml,1
+80,A6,中,水利部,水利部部署加强水利计量工作,https://www.chinanews.com.cn/gn/2026/06-30/10649904.shtml,1
+81,A7,中,卫健委,一游客在三亚被不明物咬伤身亡 当地卫健委通报,https://www.chinanews.com.cn/sh/2025/06-03/10426561.shtml,0
+82,A7,中,自然资源部,自然资源部、国家林业和草原局通报8个违法违规典型问题,https://www.chinanews.com.cn/sh/2026/02-04/10565536.shtml,1
+83,A8,高,习近平,习近平在重庆考察调研,https://www.chinanews.com.cn/gn/2024/04-23/10204135.shtml,1
+84,A8,高,习近平,习近平在重庆考察时强调 进一步全面深化改革开放 不断谱写中国式现代化重庆篇章,https://www.chinanews.com.cn/gn/2024/04-24/10205162.shtml,1
+85,A8,高,习近平,时政微纪录丨潮起海天阔——习近平总书记山东考察调研纪行,https://www.chinanews.com.cn/gn/2024/05-26/10223624.shtml,0
+86,A8,低,政协,全国政协十四届常委会第七次会议闭幕 王沪宁主持并讲话,https://www.chinanews.com.cn/gn/2024/06-06/10229443.shtml,1
+87,A8,高,外交部,王毅出席第三次中俄巴伊四国外长阿富汗问题非正式会议,https://www.chinanews.com.cn/gn/2024/09-28/10294175.shtml,1
+88,A8,低,习近平,习近平在视察火箭军某旅时强调 坚持政治引领 强化使命担当 埋头苦干实干 提升战略导弹部队威慑和实战能力,https://www.chinanews.com.cn/gn/2024/10-19/10304296.shtml,1
+89,A8,高,习近平,多次考察湖北 习近平重点关注这项工作,https://www.chinanews.com.cn/gn/2024/11-10/10316704.shtml,0
+90,A8,低,习近平,习近平出席澳门特别行政区政府欢迎晚宴并发表重要讲话,https://www.chinanews.com.cn/tp/hd2011/2024/12-20/1134675.shtml,1
+91,A8,高,习近平,习近平抵达阿斯塔纳出席第二届中国—中亚峰会,https://www.chinanews.com.cn/tp/hd2011/2025/06-16/1155408.shtml,1
+92,A8,低,习近平,习近平在纪念中国人民抗日战争暨世界反法西斯战争胜利80周年大会上发表重要讲话,https://www.chinanews.com.cn/gn/2025/09-03/10475722.shtml,1
+93,A8,低,习近平,习言道｜金句来了！视频回顾习近平总书记九三重要讲话,https://www.chinanews.com.cn/gn/shipin/cns/2025/09-03/news1029231.shtml,0
+94,A8,高,李强,李强出席中国发展高层论坛2026年年会开幕式并发表主旨演讲,https://www.chinanews.com.cn/tp/hd2011/2026/03-23/1186158.shtml,1
+95,A8,高,俄罗斯,韩正将赴俄罗斯出席第二十九届圣彼得堡国际经济论坛并访问白俄罗斯,https://www.chinanews.com.cn/gn/2026/06-02/10632853.shtml,1
+96,A8,高,习近平,习近平出席金正恩举行的欢送仪式,https://www.chinanews.com.cn/gn/2026/06-09/10636993.shtml,1
+97,A8,低,中共中央,中共中央召开党外人士座谈会 习近平主持并发表重要讲话,https://www.chinanews.com.cn/gn/2026/07-30/10669287.shtml,1
+98,A9,高,美国,湖北鄂州花湖国际机场开通美国芝加哥航线,https://www.chinanews.com.cn/sh/2024/06-19/10236900.shtml,1
+99,A9,高,俄罗斯,中国黑河—俄罗斯卡尼库尔干公路口岸旅客运输正式开通,https://www.chinanews.com.cn/cj/2024/12-10/10333871.shtml,1
