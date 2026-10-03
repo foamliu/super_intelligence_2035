@@ -86,7 +86,7 @@ bash r8_run.sh 3000
 - ✅ **臂③ LocalLoss（完成，2026-10-03 17:43）**：lp = **1.81 / 3.60 / 4.33%** @5.12/10.24/15.36M，全 **< 基线（3.43/5.45/6.08%）** → **未翻盘**（Δ −1.62 ~ −1.85 点）。⚠️ 臂②③ 监督密度仍 = 1 全局标量，**「稠密监督翻盘」假说还未被检验**。
 - ✅ **臂④ CoCa（完成，2026-10-03 20:13）**：+76.2M decoder + caption CE（weight 2.0，首个稠密监督臂）→ IN-1k frozen-trunk lp **0.29 / 0.37 / 0.47%** @5.12/10.24/15.36M（**≈随机**）vs 基线 3.43/5.45/6.08% → **Δ −3.14 ~ −5.61 点，未翻盘且 trunk 被 caption 项（~68% 梯度）打回随机**。⚠️ 限于「自写 CoCa decoder + 冻结 CLIP-768 + 短 caption + weight2.0（未消融）」，不得推广到官方 CoCa。见 `EXPERIMENTS_VISION_ROUND11.md` §9。
 - ✅ **R11-L2 文本塔解冻 LoRA（完成，2026-10-04 02:12）**：只解冻 CLIP-768 文本塔（LoRA r8 α16 lr1e-4，+0.30M、零初始化起点）。**未坍缩**（C1~0.28 / C2_gap+0.11 / C4 OK）；IN-1k lp = **3.13 / 4.75 / 5.28%** @5.12/10.24/15.36M vs 基线 3.43/5.45/6.08% → Δ −0.30 ~ −0.80 → **未翻盘**。→ 「冻结文本塔锁死上限」假说未获支持，**冻结仍最优**（重训 text 塔不再推荐）。见 `EXPERIMENTS_VISION_ROUND11.md §11.7`。
-- 🚀 **R11-L caption-weight 消融（替代臂⑤ GenLIP，已启动 2026-10-04）**：CoCa 只变 `--caption-loss-weight` {0.5,1.0}（2.0=arm④ lp 0.47%≈随机）→ 回答「caption 监督本身正交 vs weight=2.0 压死 trunk」。预注册 ROUND11 §12。
+- ✅ **R11-L caption-weight 消融（替代臂⑤ GenLIP，完成 2026-10-04 06:54）**：CoCa 只变 `--caption-loss-weight`，三点 lp@15.36M = 2.0→**0.47%** / 1.0→**0.61%** / 0.5→**0.60%**，全≈随机、无单调 → **caption 监督本身与 IN-1k 正交**（假设 B 成立，非 weight 压死）→ 臂⑤ GenLIP 跳过坐实。见 `EXPERIMENTS_VISION_ROUND11.md §12.5`。
 - 📌 **运维已裁定（2026-10-03（三））**：臂⑤ GenLIP 🚫 跳过（→ caption 消融替代）；臂⑥ AIMv2 ⏸ 暂缓；R13 ⏸ 批准后只做 OpenVision2 官方单臂；R11-E ⏸ 等 GPIC short ≥18.5M。
 
 ---

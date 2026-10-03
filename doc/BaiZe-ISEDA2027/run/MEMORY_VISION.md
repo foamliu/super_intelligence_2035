@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ 四臂全兑现 · R11-L2 ✅ 完成（未翻盘、冻结文本塔最优）· 🚀 R11-L caption-weight 消融：weight0.5 ✅ 训完+评测（lp 0.60%≈随机 → caption 监督本身正交）、weight1.0 训练中(~7100/30000)**；臂⑤ GenLIP 🚫 跳过（→替 caption 消融）/ 臂⑥ AIMv2 ⏸ 暂缓 / R13 ⏸ 只做 OV2 单臂 / R11-E ⏸ 等数据 |
-| WAITING | 1（**语义=训练 running（异步）**：R11-L `caption-loss-weight` {0.5,1.0} 消融在 `.12` 跑，日志 `/tmp/r11_capweight.log`；weight0.5 ✅ 训完+评测完（lp 0.60%≈随机）；weight1.0 训练中 @~7100/30000（04:36:52 起，30k≈2h）→ ~06:40 训完 + 自动 4-ckpt IN-1k eval ~06:50 ALL DONE → 置 1 长睡省 token、ALL DONE 后回填 §12.5 + 收尾再置 0） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ 四臂全兑现 · R11-L2 ✅ 完成（未翻盘、冻结文本塔最优）· R11-L caption-weight 三点消融 ✅ 全完成（0.5/1.0/2.0 全≈随机 → caption 监督本身与 IN-1k 正交、假设 B 坐实）**；臂⑤ GenLIP 🚫 跳过（已坐实）/ 臂⑥ AIMv2 ⏸ 暂缓 / R13 ⏸ 只做 OV2 单臂 / R11-E ⏸ 等数据 |
+| WAITING | 1（**语义=待运维拍板（非训练 running）**：所有已批准/可批准 GPU 项全部完成——R11-L 四臂 + R11-L2 LoRA + caption-weight {0.5,1.0} 消融（2.0=arm④）均已训完+评测完、GPU 已空。后续 臂⑥ AIMv2 ⏸ / R13 ⏸（须单独批准、只做 OV2 单臂）/ R11-E ⏸（等 GPIC short ≥18.5M）均**未经批准、不主动起训练**。置 1 长睡省 token，等运维在任务书勾选下一项） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
-| BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡）+ arm④ CoCa（1.92h×8 卡）+ R11-L2 LoRA（2.09h×8 卡 ≈16.7 GPU·h）+ R11-L caption-weight 消融（训练中，2 点 × 30k ≈ 2 臂） |
-| 更新 | 2026-10-04 05:06（巡检：weight0.5 ✅ 训完+评测完——IN-1k lp @10k/20k/30k/final = **0.45/0.43/0.60/0.60%**（zs 0.55/0.51/0.68%）= 全≈随机 < 4.58% 预注册阈值 → **caption 监督本身与 IN-1k 正交（非 weight 压死）**；weight1.0 训练中 @~7100/30000 无坍缩 C1 0.13–0.43 / C2_gap +0.05~+0.11 / C4=OK；R11-L2 ✅ 未翻盘） |
+| BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡）+ arm④ CoCa（1.92h×8 卡）+ R11-L2 LoRA（2.09h×8 卡 ≈16.7 GPU·h）+ R11-L caption-weight 消融（✅ 2 点：7261.3s+7440.6s ≈ 2.02h+2.07h×8 卡 ≈ 32.7 GPU·h） |
+| 更新 | 2026-10-04 07:00（收尾：caption-weight 三点消融全完成——lp@15.36M = weight2.0(arm④) 0.47% / 1.0 0.61% / 0.5 0.60%，全≈随机、无单调 → **假设 B 成立：caption 监督本身与 IN-1k 正交**；weight1.0 done total=7440.6s steady=2796.3img/s no collapse C4=OK；§12.5 + §5 状态 + EXPERIMENTS_VISION 顶部已回填；GPU 已空，待运维拍板下一项） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -74,7 +74,7 @@ WAITING: 1
 - ✅ **完成（02:00 训完 / 02:12 评测完，exit 0）**：`total=7530.7s steps=30000 steady=2480.1 img/s final_loss=3.7105`；全程**无坍缩**（C1 0.24–0.31 / C2_gap +0.11~+0.14 / C4 OK）。
 - **IN-1k lp = 3.13 / 4.75 / 5.28%** @5.12/10.24/15.36M（zs 1.10/1.61/1.77%）vs 基线 6.08%@15.36M → Δ **−0.30/−0.70/−0.80** → **未翻盘**（<+1.5 阈值）。→ **冻结文本塔仍最优**；「文本塔解冻」在本规模非杠杆，重训 text 塔不再推荐。公平性：+0.30M、0 extra token、≈1.0×。证据 `/tmp/r11_lora.log`。
 
-## R11-L caption-weight 消融（🚀 weight0.5 ✅ / weight1.0 待跑，2026-10-04）
+## R11-L caption-weight 消融（✅ 两点全完成，2026-10-04）
 
 > 替代臂⑤ GenLIP（运维已批跳过）：CoCa 只变 `--caption-loss-weight` ∈ {0.5,1.0}（2.0=arm④ lp 0.47%≈随机）→ 回答「caption 监督本身与 IN-1k 正交，还是 weight=2.0 压死 trunk」。预注册见 ROUND11 §12。
 
@@ -83,7 +83,8 @@ WAITING: 1
 - 🔍 **weight0.5 全程巡检摘要（02:55→04:00 三巡）**：C1 0.28–0.43 / C2_gap +0.065~+0.077 / C4=OK 全程未坍缩（@16200 单点探针 C1 瞬冲 0.86 属 128 样本噪声、下探针即回落）；loss_ema 10.17→~7.95 递减；进程组 1 master + 1 torchrun + 8 rank + 48 worker 无重复 run；8 卡全忙。
 - ✅ **weight0.5 训完（04:23:34，exit 0）**：`[done] total=7261.3s steps=30000 steady_image_s=2628.7 final_loss=8.3768`；末点探针 C1=0.3422 / C2_gap=+0.0760 / C4=OK → 无坍缩；loss=contrast+0.5×caption（末步 contrast 5.183 / caption CE 5.772）。
 - ✅ **weight0.5 IN-1k 评测完（04:36）**：4-ckpt lp @{10k,20k,30k,final} = **0.45 / 0.43 / 0.60 / 0.60%**；zs top1 = 0.55/0.51/0.68/0.68%、top5 = 2.40/2.36/3.11/3.11%。**全部≈随机，远 < 4.58% 预注册阈值（§12.2）** → ① caption weight 降到 0.5（对比项 5 倍权重）trunk 仍被打回随机；② 判定 = **caption 监督本身与 IN-1k frozen-trunk 特征正交（非 weight=2.0 压死）**。证据 `/tmp/r11_capweight.log:774-781`。
-- 🔍 **weight1.0 训练中（05:06 @~7100/30000）**：START 04:36:52，全程无坍缩（C1 0.13–0.43 / C2_gap +0.05~+0.11 / C4=OK；@6900 单点 128 样本瞬冲 0.43 回落）；loss=contrast+1.0×caption（末步 contrast ~5.6 / caption ~6.5）；8 卡全忙（22.7/81.6 GB，util 58–96%）。ETA ~06:40 训完 + 自动 4-ckpt eval ~06:50 ALL DONE。WAITING 保持 1（下次唤醒收尾：§12.5 回填 + 结论 + push）。
+- ✅ **weight1.0 训完+评测完（06:54 ALL DONE，exit 0）**：`[done] total=7440.6s steps=30000 steady_image_s=2796.3 final_loss=11.3492`；末点探针 C1=0.3217 / C2_gap=+0.0729 / C4=OK；全程无坍缩。IN-1k lp @{10k,20k,30k,final} = **0.39 / 0.34 / 0.61 / 0.61%**（zs 0.43/0.48/0.62/0.62%、top5 2.00/2.08/2.78/2.78%）。证据 `/tmp/r11_capweight.log:1543-1551`。
+- 📌 **三点裁定（§12.5）**：lp@15.36M = w2.0(arm④) 0.47 / w1.0 0.61 / w0.5 0.60%，全 ≈ 随机、无单调 → **假设 B：caption 监督本身与 IN-1k frozen-trunk 特征正交（非 weight 压死）** → 臂⑤ GenLIP 跳过坐实；AIMv2（唯一 caption-无关稠密）仍 ⏸ 待运维。
 
 ## 历史条目已滚动归档（2026-10-03）
 
