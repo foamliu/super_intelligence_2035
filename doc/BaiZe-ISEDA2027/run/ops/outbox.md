@@ -2677,3 +2677,247 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 22 · 2026-10-04 07:49:40 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+GW=http://agi-gateway.cxmt.com/v1; E=/nas_train/app.e0031982/code/eda_fastmcp/.env
+
+echo; echo "=== 1. .env 存在性 + 变量名（值仅 len/prefix4）==="
+if [ -f "$E" ]; then
+  ls -l "$E" | cut -c1-100
+  while IFS='=' read -r k v; do
+    case "$k" in ''|'#'*) continue;; esac
+    v="${v%\"}"; v="${v#\"}"; v="${v%\'}"; v="${v#\'}"
+    printf '   %-30s len=%-4s prefix4=%s\n' "$k" "${#v}" "${v:0:4}"
+  done < "$E"
+else
+  echo "   !!! 不存在：$E"; ls -l /nas_train/app.e0031982/code/ 2>/dev/null | head -15
+fi
+
+echo; echo "=== 2. 每个 key × 2 个模型 → http code（200=可用）==="
+while IFS='=' read -r k v; do
+  case "$k" in ''|'#'*) continue;; esac
+  v="${v%\"}"; v="${v#\"}"; v="${v%\'}"; v="${v#\'}"
+  [ "${#v}" -lt 16 ] && continue
+  for M in deepseek-v4-flash deepseek-v4-pro-fp4; do
+    code=$(timeout 20 curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $v" -H 'Content-Type: application/json' \
+      -d "{\"model\":\"$M\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}],\"max_tokens\":3}" "$GW/chat/completions" 2>/dev/null)
+    printf '   %-30s %-22s -> %s\n' "$k" "$M" "$code"
+  done
+done < "$E"
+
+echo; echo "=== 3. 顺带：.29 当前 key 是否也失效 ==="
+sk="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" | head -1)"
+echo "   .29 secrets: len=${#sk} prefix4=${sk:0:4} mtime=$(stat -c %y "$HOME/.cline/data/secrets.json" | cut -c1-19)"
+echo -n "   .29 curl -> "; timeout 20 curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $sk" -H 'Content-Type: application/json' -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"hi"}],"max_tokens":3}' "$GW/chat/completions"
+
+echo; echo "=== 4. 对照 .12：key 状态 + 是否仍在干活 ==="
+timeout 30 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 '
+S="$HOME/.cline/data/secrets.json"
+k="$(sed -n "s/.*\"openAiApiKey\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p" "$S" | head -1)"
+echo "   .12 secrets: len=${#k} prefix4=${k:0:4} mtime=$(stat -c %y "$S" | cut -c1-19)"
+printf "   .12 curl -> "; timeout 20 curl -s -o /dev/null -w "%{http_code}\n" -H "Authorization: Bearer $k" -H "Content-Type: application/json" -d "{\"model\":\"deepseek-v4-pro-fp4\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}],\"max_tokens\":3}" http://agi-gateway.cxmt.com/v1/chat/completions
+echo "   -- .12 loops --"; pgrep -af "baize_.*_loop\.sh" | cut -c1-90
+echo "   -- .12 vision log mtime --"; stat -c %y /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-19
+' 2>&1 | cut -c1-165 || echo "ssh .12 FAILED"
+
+echo; echo "=== 5. GPU（P-9 应仍在跑）==="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -2
+
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 07:49:40
+
+=== 1. .env 存在性 + 变量名（值仅 len/prefix4）===
+-rw-r----- 1 app.e0031982 app.adm 13952 Sep 30 10:25 /nas_train/app.e0031982/code/eda_fastmcp/.env
+   DEEPSEEK_MODEL                 len=17   prefix4=deep
+   DEEPSEEK_API_KEY               len=72   prefix4=02_0
+   DEEPSEEK_BASE_URL              len=31   prefix4=http
+   QWEN_MODEL                     len=15   prefix4=qwen
+   QWEN_API_KEY                   len=72   prefix4=02_0
+   QWEN_BASE_URL                  len=31   prefix4=http
+   DOUBAO_MODEL                   len=25   prefix4=doub
+   DOUBAO_API_KEY                 len=72   prefix4=02_0
+   DOUBAO_BASE_URL                len=37   prefix4=http
+   KIMI_MODEL                     len=15   prefix4=kimi
+   KIMI_API_KEY                   len=72   prefix4=02_0
+   KIMI_BASE_URL                  len=37   prefix4=http
+   GLM_MODEL                      len=7    prefix4=glm-
+   GLM_API_KEY                    len=72   prefix4=02_0
+   GLM_BASE_URL                   len=37   prefix4=http
+   VQA_MODEL                      len=15   prefix4=kimi
+   VQA_API_KEY                    len=72   prefix4=02_0
+   VQA_BASE_URL                   len=36   prefix4=http
+   VQA_TIMEOUT                    len=3    prefix4=120
+   VQA_MAX_IMAGE_MB               len=2    prefix4=20
+   T2I_MODEL                      len=30   prefix4=doub
+   T2I_API_KEY                    len=72   prefix4=02_0
+   T2I_BASE_URL                   len=36   prefix4=http
+   T2I_TIMEOUT                    len=3    prefix4=300
+   T2I_DEFAULT_SIZE               len=2    prefix4=2K
+   EDA_MCP_PORT                   len=22   prefix4=${ED
+   EDA_MCP_HOST                   len=7    prefix4=0.0.
+   EDA_MCP_TRANSPORT              len=3    prefix4=sse
+   EDA_MCP_TELEMETRY_ENABLED      len=5    prefix4=fals
+   EDA_MCP_SIGNOZ_ENDPOINT        len=31   prefix4=http
+   MCP_SERVICE_NAME               len=14   prefix4=eda-
+   MCP_SERVICE_VERSION            len=5    prefix4=1.0.
+   DEPLOYMENT_ENV                 len=10   prefix4=prod
+   SANDBOX_HOST                   len=12   prefix4=10.1
+   PROXY_PORTS                    len=19   prefix4=8664
+   SANDBOX_PORT_HTTP              len=4    prefix4=8655
+   SANDBOX_PORT_TCP               len=4    prefix4=8668
+   SANDBOX_TIMEOUT                len=3    prefix4=150
+   SANDBOX_SOCKET_BUFFER_SIZE     len=4    prefix4=4096
+   SANDBOX_WORKDIR                len=35   prefix4=/pro
+   SANDBOX_ENDPOINTS              len=163  prefix4=8664
+   SANDBOX_URL_PATH               len=11   prefix4=v1/r
+   EVAL_SANDBOX_WORKERS           len=1    prefix4=4
+   RAG_RECALL_URL                 len=28   prefix4=http
+   RAG_DEFAULT_TOP_K              len=1    prefix4=5
+   RAG_RECALL_TIMEOUT             len=2    prefix4=25
+   MEMORY_VECTOR_URL              len=21   prefix4=http
+   RAG_RECALL_URL_LOCAL           len=28   prefix4=http
+   API_INFO_MERGED_FILE           len=30   prefix4=./do
+   SKILL_DATA_DIR                 len=17   prefix4=./do
+   TCL_API_FILE                   len=27   prefix4=./do
+   INNOVUS_API_FILE               len=28   prefix4=./do
+   FUNC_ALL_FILE                  len=23   prefix4=./do
+   LOG_MAX_BYTES                  len=8    prefix4=1048
+   LOG_BACKUP_COUNT               len=1    prefix4=5
+   REFLECTION_ENABLED             len=4    prefix4=true
+   REFLECTION_DELAY_SEC           len=3    prefix4=1.0
+   REFLECTION_CONCURRENCY         len=1    prefix4=5
+   REFLECTION_MAX_RETRIES         len=1    prefix4=2
+   REFLECTION_FALLBACK_ENABLED    len=4    prefix4=true
+   CLI_AGENT                      len=5    prefix4=clin
+   QUERY_REWRITE_ENABLED          len=4    prefix4=true
+   QUERY_REWRITE_LLM_ENABLED      len=5    prefix4=fals
+   QUERY_REWRITE_ABBREV_ENABLED   len=4    prefix4=true
+   QUERY_REWRITE_MAX_TOKENS       len=3    prefix4=128
+   REFLEXION_MAX_ROUNDS           len=1    prefix4=3
+   SANDBOX_PROBE_ENABLED          len=5    prefix4=fals
+   SANDBOX_PROBE_TIMEOUT          len=2    prefix4=15
+   EDA_MCP_TOOLS_DISABLED         len=88   prefix4=clea
+   EDA_RUNCODE_GUARDRAILS         len=5    prefix4=fals
+   EDA_VALIDATOR_EVOLVE           len=4    prefix4=true
+   EVAL_FW_DIR                    len=69   prefix4=${EV
+   EVAL_FW_DIR_SKILL              len=47   prefix4=${EV
+   EVAL_FW_DIR_TCL                len=68   prefix4=${EV
+   EVAL_ROOT_DIR                  len=21   prefix4=${HO
+   EDA_PROMPT_TEMPLATE_PYAETHER   len=31   prefix4=eval
+   EDA_PROMPT_TEMPLATE_SKILL      len=33   prefix4=eval
+   EDA_PROMPT_TEMPLATE_TCL        len=31   prefix4=eval
+   EDA_PHI_BUDGET                 len=1    prefix4=0
+   EDA_PHI_LAGGED                 len=1    prefix4=0
+   EDA_OMEGA_FIDELITY             len=4    prefix4=high
+   EDA_RUNCODE_READBACK           len=4    prefix4=full
+
+=== 2. 每个 key × 2 个模型 → http code（200=可用）===
+   DEEPSEEK_MODEL                 deepseek-v4-flash      -> 401
+   DEEPSEEK_MODEL                 deepseek-v4-pro-fp4    -> 401
+   DEEPSEEK_API_KEY               deepseek-v4-flash      -> 200
+   DEEPSEEK_API_KEY               deepseek-v4-pro-fp4    -> 403
+   DEEPSEEK_BASE_URL              deepseek-v4-flash      -> 401
+   DEEPSEEK_BASE_URL              deepseek-v4-pro-fp4    -> 401
+   QWEN_API_KEY                   deepseek-v4-flash      -> 403
+   QWEN_API_KEY                   deepseek-v4-pro-fp4    -> 403
+   QWEN_BASE_URL                  deepseek-v4-flash      -> 401
+   QWEN_BASE_URL                  deepseek-v4-pro-fp4    -> 401
+   DOUBAO_MODEL                   deepseek-v4-flash      -> 401
+   DOUBAO_MODEL                   deepseek-v4-pro-fp4    -> 401
+   DOUBAO_API_KEY                 deepseek-v4-flash      -> 403
+   DOUBAO_API_KEY                 deepseek-v4-pro-fp4    -> 403
+   DOUBAO_BASE_URL                deepseek-v4-flash      -> 401
+   DOUBAO_BASE_URL                deepseek-v4-pro-fp4    -> 401
+   KIMI_API_KEY                   deepseek-v4-flash      -> 403
+   KIMI_API_KEY                   deepseek-v4-pro-fp4    -> 403
+   KIMI_BASE_URL                  deepseek-v4-flash      -> 401
+   KIMI_BASE_URL                  deepseek-v4-pro-fp4    -> 401
+   GLM_API_KEY                    deepseek-v4-flash      -> 403
+   GLM_API_KEY                    deepseek-v4-pro-fp4    -> 403
+   GLM_BASE_URL                   deepseek-v4-flash      -> 401
+   GLM_BASE_URL                   deepseek-v4-pro-fp4    -> 401
+   VQA_API_KEY                    deepseek-v4-flash      -> 403
+   VQA_API_KEY                    deepseek-v4-pro-fp4    -> 403
+   VQA_BASE_URL                   deepseek-v4-flash      -> 401
+   VQA_BASE_URL                   deepseek-v4-pro-fp4    -> 401
+   T2I_MODEL                      deepseek-v4-flash      -> 401
+   T2I_MODEL                      deepseek-v4-pro-fp4    -> 401
+   T2I_API_KEY                    deepseek-v4-flash      -> 403
+   T2I_API_KEY                    deepseek-v4-pro-fp4    -> 403
+   T2I_BASE_URL                   deepseek-v4-flash      -> 401
+   T2I_BASE_URL                   deepseek-v4-pro-fp4    -> 401
+   EDA_MCP_PORT                   deepseek-v4-flash      -> 401
+   EDA_MCP_PORT                   deepseek-v4-pro-fp4    -> 401
+   EDA_MCP_SIGNOZ_ENDPOINT        deepseek-v4-flash      -> 401
+   EDA_MCP_SIGNOZ_ENDPOINT        deepseek-v4-pro-fp4    -> 401
+   PROXY_PORTS                    deepseek-v4-flash      -> 401
+   PROXY_PORTS                    deepseek-v4-pro-fp4    -> 401
+   SANDBOX_WORKDIR                deepseek-v4-flash      -> 401
+   SANDBOX_WORKDIR                deepseek-v4-pro-fp4    -> 401
+   SANDBOX_ENDPOINTS              deepseek-v4-flash      -> 401
+   SANDBOX_ENDPOINTS              deepseek-v4-pro-fp4    -> 401
+   RAG_RECALL_URL                 deepseek-v4-flash      -> 401
+   RAG_RECALL_URL                 deepseek-v4-pro-fp4    -> 401
+   MEMORY_VECTOR_URL              deepseek-v4-flash      -> 401
+   MEMORY_VECTOR_URL              deepseek-v4-pro-fp4    -> 401
+   RAG_RECALL_URL_LOCAL           deepseek-v4-flash      -> 401
+   RAG_RECALL_URL_LOCAL           deepseek-v4-pro-fp4    -> 401
+   API_INFO_MERGED_FILE           deepseek-v4-flash      -> 401
+   API_INFO_MERGED_FILE           deepseek-v4-pro-fp4    -> 401
+   SKILL_DATA_DIR                 deepseek-v4-flash      -> 401
+   SKILL_DATA_DIR                 deepseek-v4-pro-fp4    -> 401
+   TCL_API_FILE                   deepseek-v4-flash      -> 401
+   TCL_API_FILE                   deepseek-v4-pro-fp4    -> 401
+   INNOVUS_API_FILE               deepseek-v4-flash      -> 401
+   INNOVUS_API_FILE               deepseek-v4-pro-fp4    -> 401
+   FUNC_ALL_FILE                  deepseek-v4-flash      -> 401
+   FUNC_ALL_FILE                  deepseek-v4-pro-fp4    -> 401
+   EDA_MCP_TOOLS_DISABLED         deepseek-v4-flash      -> 401
+   EDA_MCP_TOOLS_DISABLED         deepseek-v4-pro-fp4    -> 401
+   EVAL_FW_DIR                    deepseek-v4-flash      -> 401
+   EVAL_FW_DIR                    deepseek-v4-pro-fp4    -> 401
+   EVAL_FW_DIR_SKILL              deepseek-v4-flash      -> 401
+   EVAL_FW_DIR_SKILL              deepseek-v4-pro-fp4    -> 401
+   EVAL_FW_DIR_TCL                deepseek-v4-flash      -> 401
+   EVAL_FW_DIR_TCL                deepseek-v4-pro-fp4    -> 401
+   EVAL_ROOT_DIR                  deepseek-v4-flash      -> 401
+   EVAL_ROOT_DIR                  deepseek-v4-pro-fp4    -> 401
+   EDA_PROMPT_TEMPLATE_PYAETHER   deepseek-v4-flash      -> 401
+   EDA_PROMPT_TEMPLATE_PYAETHER   deepseek-v4-pro-fp4    -> 401
+   EDA_PROMPT_TEMPLATE_SKILL      deepseek-v4-flash      -> 401
+   EDA_PROMPT_TEMPLATE_SKILL      deepseek-v4-pro-fp4    -> 401
+   EDA_PROMPT_TEMPLATE_TCL        deepseek-v4-flash      -> 401
+   EDA_PROMPT_TEMPLATE_TCL        deepseek-v4-pro-fp4    -> 401
+
+=== 3. 顺带：.29 当前 key 是否也失效 ===
+   .29 secrets: len=72 prefix4=02_0 mtime=2026-10-04 07:28:21
+   .29 curl -> 200
+
+=== 4. 对照 .12：key 状态 + 是否仍在干活 ===
+   .12 secrets: len=72 prefix4=02_0 mtime=2026-09-08 11:26:55
+   .12 curl -> 200
+   -- .12 loops --
+1289683 bash baize_vision_loop.sh
+1815254 bash baize_data_loop.sh
+2265240 bun /home/app.e0031982/.bun/bin/cline -c /nas_train/app.e0031982/code/super_intell
+   -- .12 vision log mtime --
+2026-10-04 07:46:11
+
+=== 5. GPU（P-9 应仍在跑）===
+0, 67 %, 39111 MiB
+1, 33 %, 39207 MiB
+
+=== DONE ===
+```
