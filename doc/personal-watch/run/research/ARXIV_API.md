@@ -10,6 +10,8 @@
 - **返回**：Atom XML（`content-type: application/atom+xml; charset=utf-8`）。
 - **状态**：✅ **已打通**（2026-10-03 实测 `HTTP/2 200`，见 §3/§4）。
 - **采集脚本**：`research/arxiv_fetch.py`（限速 + 校验 + 去重 + 时间窗）；**查询清单固化**在 `research/queries.json`（R2）。
+- **取源复验**：`--probe` 逐源探测（R1′）→ 运行机实测 **arXiv ✅ / HF ❌ 不可达 / RSS 周末空**，见 §9.1。
+- **时效口径（R2′）**：以**首次提交 `published`** 为准，**周末自动放宽窗口**（周六 → 120h），见 §5 第 5 条 / §9.2。
 
 ## 1. 端点与常用参数
 
@@ -72,7 +74,7 @@ XML 根节点自报总命中（`opensearch` 命名空间）：
 2. **类型**：`content-type` 含 `application/atom+xml` 或 `xml`；
 3. **可解析**：能被 `xml.etree.ElementTree` 解析，且含 `<feed>`；
 4. **非空**：`<entry>` 数量 > 0；若为 0 则记「空 feed」；
-5. **日期真实**：`published` / `updated` 能被 `datetime.fromisoformat` 解析，且落在 **≤72h** 窗口内（用**真实提交日期**，**不用**抓取时间冒充）；
+5. **日期真实 / 时效（R2′ 修订）**：`published` / `updated` 能被 `datetime.fromisoformat` 解析；**时效以首次提交 `published` 为准**（与 `sortBy=submittedDate` 自洽，避免把旧论文的 `updated` 误当新），窗口默认 **72h**、**周末/未公告自动放宽**（见 §9.2），窗口模式 `window_mode` 写入 meta；**不用**抓取时间冒充提交日期；
 6. **去重**：主键 = **arXiv ID（去版本号）**。
 
 ## 6. 坑（实测踩到，逐条记）
@@ -91,11 +93,15 @@ XML 根节点自报总命中（`opensearch` 命名空间）：
 ## 7. 复现入口（自测 / 采集）
 
 ```bash
-# 【离线】回归测试（**不联网**）：把 R1 铁律变成 31 项断言 —— 期望 `RESULT: PASS`
+# 【离线】回归测试（**不联网**）：把 R1/R1′/R2′ 铁律变成 49 项断言 —— 期望 `RESULT: PASS`
 python3 research/test_arxiv_fetch.py
 
 # 【联网】单点自测：端点 / Content-Type / 解析 / 重试 —— 期望 `RESULT: PASS`
 python3 research/arxiv_fetch.py --selftest
+
+# 【联网】取源复验（R1′）：逐源探测可达性 + 证据落盘 —— 期望输出各源状态表
+python3 research/arxiv_fetch.py --probe --queries research/queries.json \
+  --out research/raw/$(date +%F)-probe.json
 
 # 真跑：读固化查询清单 queries.json，按 ≥3s 限速逐条拉取 ≤72h 新论文
 nohup python3 research/arxiv_fetch.py --fetch \
@@ -113,3 +119,32 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max 20 \
 - 抓取域内新论文：**214 篇**（去重主键 arXiv ID + ≤72h 窗口）。
 - **收录**：34 篇（逐条中文摘要 → `research/2026-10-03.md`、`papers.jsonl`）；**候选** 180 篇（`SEEN.md`）。
 - 原始证据：`research/raw/2026-10-03-fetch.json`。
+
+## 9. R1′ / R2′ 修订（2026-10-03 第二轮）
+
+> 触发：操作员最高优先级注记 —— **R1′**（取源须在本机**复验可达性**，不得假设）与 **R2′**（**时效以首次提交为准**；周末/未公告时**自动放宽窗口**，且**不得把补录当"新增"**）。
+
+### 9.1 R1′：运行机取源复验（新增 `--probe`）
+
+`--probe` 读 `queries.json` 的 `sources`，逐源探测并把证据落盘。实测（运行机为国内网络，证据：`research/raw/2026-10-03-probe.json`）：
+
+| 源 | 端点 | 实测结果 | 判定 |
+|:--|:--|:--|:--|
+| **arXiv API** | `https://export.arxiv.org/api/query` | `HTTP 200`，`application/atom+xml`，最新 `published=2026-10-01T17:59:59Z` | ✅ 可达，**主源** |
+| HF Daily Papers | `https://huggingface.co/api/daily_papers` | `Network is unreachable`（本机无法出网到 HF） | ❌ **不可达** → 本轮**不**写 `🏷 hf_daily`，**如实记录** |
+| RSS（cs.CL / cs.CV / cs.LG） | `https://export.arxiv.org/rss/...` | `HTTP 200`，`application/rss+xml`，但 `items=0` | ⚠️ **周末空** → 标注「周末/未公告」，**不得**写成「无新增」 |
+
+> 结论：**主源 arXiv API 可用**；HF / RSS 的「不可达 / 为空」是**环境 + 时点**所致，已在日报与 meta（`window_note`）中**如实标注**，不伪装成「无新增」。
+
+### 9.2 R2′：时效口径与自动窗口
+
+- **以 `published`（首次提交）判定时效**（非 `updated`）；仍按 `sortBy=submittedDate&descending` 拉取。
+- **自动窗口**（`auto_window_hours`）：工作日默认 **72h**；**周六/周日 → 120h**（`window_mode=weekend_batch`），以覆盖「最近一次公告批次」。
+- **诚实口径**：放宽窗口会带入更早（如 `2026-09-28/29`）的条目 —— 这些**只登记为候选**、**不计入收录**；收录聚焦最新批次（`2026-09-30` / `2026-10-01`）。该规则以 `window_mode` / `window_note` 写入 meta。
+
+### 9.3 第二轮结果（`--fetch --seen`，增量）
+
+- 15/15 查询 `ok=True`（无重试）；**kept 193 / dropped 405**；kept 跨度 `2026-09-28 ~ 2026-10-01`。
+- 与首轮 `papers.jsonl` 比对：**重叠 0**（193 全为新增）。
+- **收录 27 / 候选 166**；原始证据：`research/raw/2026-10-03-fetch-r2.json`。
+- 工具回归测试：`test_arxiv_fetch.py` **49/49 PASS**（含 R1′/R2′ 新增用例）；`--selftest` 联网 PASS。

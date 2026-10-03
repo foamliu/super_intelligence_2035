@@ -1,25 +1,43 @@
 {
-  "_comment": "research 线检索策略（R2 固化）。每轮采集直接读本文件，不要每轮现拼。改关注领域请改 WATCH_RESEARCH_TASK.md §1 并同步本表。",
+  "_comment": "research 线检索策略（R2 固化；**R1′ 修订 · 2026-10-03**）。每轮采集直接读本文件，不要每轮现拼。领域类别（R1′）：cs.CL / cs.CV / cs.MM / cs.SE / cs.AI / cs.MA / cs.LG（注意：**不是 AI+EDA**）。改关注领域请改 WATCH_RESEARCH_TASK.md §1 并同步本表。",
   "endpoint": "https://export.arxiv.org/api/query",
   "rate_limit_seconds": 3.0,
   "timeout_seconds": 30,
   "retries": 2,
   "retry_backoff_seconds": 20.0,
+  "_window_comment": "R2′：常态日报口径 window_hours；周末/周一早 arXiv 不公告 → 放宽到 window_hours_weekend（覆盖最近一次公告批次），并要求日报如实标注实际日期区间。window_mode=auto 时按当前 UTC 时间自动切换。",
+  "window_mode": "auto",
   "window_hours": 72,
+  "window_hours_weekend": 120,
   "max_results_per_query": 40,
   "sort_by": "submittedDate",
   "sort_order": "descending",
+  "hf_daily": {
+    "endpoint": "https://huggingface.co/api/daily_papers",
+    "enabled": true,
+    "role": "community_selection_signal",
+    "note": "副源：仅用于给**已收论文**打社区精选标记（🏷 hf_daily）。publishedAt 实测滞后 3~8 天，**不得**作新鲜度依据；运行机不可达时如实记录并跳过（**不编造标记**）。"
+  },
+  "rss": {
+    "endpoint": "https://rss.arxiv.org/rss/",
+    "categories": ["cs.CL", "cs.CV", "cs.LG", "cs.AI", "cs.MM", "cs.SE"],
+    "role": "weekday_supplement",
+    "note": "仅工作日可作补充；周末必空（feed 含 <skipDays>Saturday/Sunday</skipDays>）。遇空 feed **不得**写『无新增』，须标注『周末/未公告』。"
+  },
   "queries": [
+    {"area": "广度扫描", "name": "sweep-cs-5cats", "search_query": "cat:cs.CL OR cat:cs.CV OR cat:cs.SE OR cat:cs.AI OR cat:cs.LG", "max_results": 50},
     {"area": "LLM", "name": "llm-large-language-model", "search_query": "cat:cs.CL AND all:\"large language model\""},
     {"area": "LLM", "name": "llm-long-context", "search_query": "cat:cs.CL AND all:\"long context\""},
     {"area": "LLM", "name": "llm-scaling-law", "search_query": "cat:cs.LG AND all:\"scaling law\""},
-    {"area": "SLM", "name": "slm-small-language-model", "search_query": "cat:cs.CL AND all:\"small language model\""},
+    {"area": "SLM", "name": "slm-small-language-model", "search_query": "abs:\"small language model\""},
     {"area": "SLM", "name": "slm-on-device", "search_query": "cat:cs.LG AND all:\"on-device\""},
-    {"area": "多模态", "name": "mm-vision-language-model", "search_query": "cat:cs.CV AND all:\"vision-language model\""},
+    {"area": "多模态", "name": "mm-vision-language", "search_query": "all:\"vision-language\""},
     {"area": "多模态", "name": "mm-multimodal", "search_query": "cat:cs.CV AND all:\"multimodal\""},
+    {"area": "多模态", "name": "mm-csmm", "search_query": "cat:cs.MM", "max_results": 40},
+    {"area": "agent harness", "name": "agent-harness-title", "search_query": "ti:\"agent harness\""},
     {"area": "agent harness", "name": "agent-swe-bench", "search_query": "cat:cs.SE AND all:\"SWE-bench\""},
     {"area": "agent harness", "name": "agent-tool-use", "search_query": "cat:cs.AI AND all:\"tool use\""},
-    {"area": "agent harness", "name": "agent-multi-agent", "search_query": "cat:cs.AI AND all:\"multi-agent\""},
+    {"area": "agent harness", "name": "agent-csma-multiagent", "search_query": "cat:cs.MA AND all:\"multi-agent\""},
     {"area": "邻域", "name": "nb-retrieval-augmented", "search_query": "cat:cs.CL AND all:\"retrieval augmented\""},
     {"area": "邻域", "name": "nb-alignment", "search_query": "cat:cs.AI AND all:\"alignment\""}
   ]

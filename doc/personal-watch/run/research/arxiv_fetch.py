@@ -96,8 +96,8 @@ def _http_get(url, params, timeout):
     if requests is not None:
         r = requests.get(url, params=params, headers=HEADERS, timeout=timeout)
         return r.status_code, r.headers.get("Content-Type", ""), r.text
-    qs = urllib.parse.urlencode(params)
-    req = urllib.request.Request(url + "?" + qs, headers=HEADERS)
+    qs = urllib.parse.urlencode(params) if params else ""
+    req = urllib.request.Request(url + ("?" + qs if qs else ""), headers=HEADERS)
     with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310
         return resp.status, resp.headers.get("Content-Type", ""), resp.read().decode("utf-8", "replace")
 
@@ -205,16 +205,41 @@ def query_arxiv(search_query, max_results=40, start=0, sort_by="submittedDate",
 
 
 def _within_window(entry, window_hours, now):
+    """R2′ 口径：新鲜度**以首次提交（`published`）为准**。
+    `updated` 也解析（用于交叉核对 / 展示），但**不得**用「近期更新」把陈年论文洗成新论文；
+    `published` 缺失时才退回 `updated`；两者都解析不到 -> **丢弃**（不许用抓取时间冒充）。"""
     p = _parse_dt(entry.get("published"))
     u = _parse_dt(entry.get("updated"))
-    stamps = [d for d in (p, u) if d is not None]
-    if not stamps:
+    first = p if p is not None else u
+    if first is None:
         return False, "no parseable date"
-    newest = max(stamps)
-    age_h = (now - newest).total_seconds() / 3600.0
+    age_h = (now - first).total_seconds() / 3600.0
     if age_h <= window_hours:
-        return True, "age %.1fh <= %dh" % (age_h, window_hours)
-    return False, "stale %.1fh > %dh" % (age_h, window_hours)
+        note = ""
+        if p is not None and u is not None and u > p:
+            note = " (updated 较新，但以首次提交计)"
+        return True, "since-first-submit %.1fh <= %gh%s" % (age_h, window_hours, note)
+    return False, "stale %.1fh > %gh (since first submit)" % (age_h, window_hours)
+
+
+def auto_window_hours(now, config):
+    """R2′ 时效口径（自动）：
+
+    - **常态（工作日）**：日报口径 <= `window_hours`（默认 72h）；
+    - **周末 / 周一早**：arXiv **工作日 20:00 ET 公告、周末不发**（周五投的周一才公告）
+      -> 放宽到覆盖「**最近一次公告批次**」（`window_hours_weekend`，默认 120h），
+      并要求日报**如实标注实际日期区间**（例：`10-01 ~ 10-03（含周末，取最近公告批次）`）。
+
+    返回 `(window_hours, mode, note)`。
+    """
+    base = float(config.get("window_hours", 72))
+    we = float(config.get("window_hours_weekend", 120))
+    wd = now.weekday()  # Mon=0 .. Sun=6
+    # 10 月美东为 EDT(UTC-4)：周一 UTC 13:00 前视为「周一早」（周一公告尚未刷新）
+    if wd in (5, 6) or (wd == 0 and now.hour < 13):
+        return we, "weekend_batch", (
+            "含周末：arXiv 周末不公告 → 放宽至最近一次公告批次（<=%gh）；日报须如实标注实际日期区间" % we)
+    return base, "daily", "日报口径：首次提交 <= %gh" % base
 
 
 def load_config(path=DEFAULT_CONFIG):
@@ -225,7 +250,15 @@ def load_config(path=DEFAULT_CONFIG):
 def fetch_all(config, window_hours=None, seen_ids=None, max_results=None):
     """跑 config['queries'] 全部查询 -> 去重 + 新鲜度过滤。返回 {"items": [...], "meta": {...}}。"""
     now = _now_utc()
-    wh = window_hours if window_hours is not None else config.get("window_hours", 72)
+    win_mode = config.get("window_mode", "fixed")
+    if window_hours is not None:
+        wh = window_hours
+        win_label, win_note = "override", "命令行 --window-hours 覆盖（不再自动切换）"
+    elif win_mode == "auto":
+        wh, win_label, win_note = auto_window_hours(now, config)
+    else:
+        wh = config.get("window_hours", 72)
+        win_label, win_note = "fixed", "固定口径：首次提交 <= %gh" % wh
     mi = config.get("rate_limit_seconds", 3.0)
     mr = max_results if max_results is not None else config.get("max_results_per_query", 40)
     seen_ids = seen_ids or set()
@@ -272,6 +305,8 @@ def fetch_all(config, window_hours=None, seen_ids=None, max_results=None):
             "generated": now.isoformat(),
             "endpoint": config.get("endpoint", ENDPOINT),
             "window_hours": wh,
+            "window_mode": win_label,
+            "window_note": win_note,
             "rate_limit_seconds": mi,
             "n_queries": len(config["queries"]),
             "n_kept": len(ordered),
@@ -291,6 +326,8 @@ def _fmt_human(res):
     lines.append("[arxiv_fetch] %s | endpoint=%s | 窗口<=%s | 查询 %d 次 | 保留 %d 篇（丢弃 %d）"
                  % (m["generated"], m["endpoint"], wh_s, m["n_queries"],
                     m["n_kept"], m["n_dropped"]))
+    if m.get("window_note"):
+        lines.append("  ⏱ 口径: %s（window_mode=%s）" % (m["window_note"], m.get("window_mode")))
     for it in res["items"]:
         au = it["authors"]
         alist = (", ".join(au[:3]) + (" et al" if len(au) > 3 else "")) if au else "(无作者)"
@@ -320,6 +357,30 @@ def _fmt_human(res):
     return "\n".join(lines)
 
 
+def _fmt_probe(ev):
+    """R1′ 取源复验证据的人类可读输出。"""
+    lines = ["[probe] %s" % ev.get("generated")]
+    a = ev.get("arxiv_api") or {}
+    lines.append("• arXiv API（主力）: status=%s ok=%s ct=%r entries=%s total=%s%s"
+                 % (a.get("status"), a.get("ok"), a.get("content_type"),
+                    a.get("n_entries"), a.get("total_results"),
+                    (" err=%s" % a["error"]) if a.get("error") else ""))
+    for s in a.get("sample") or []:
+        lines.append("    - arXiv:%s | %s | published=%s" % (s.get("arxiv_id"), s.get("category"), s.get("published")))
+    h = ev.get("hf_daily")
+    if h is not None:
+        lines.append("• HF Daily Papers（副源/社区加权）: ok=%s n_ids=%s%s"
+                     % (h.get("ok"), h.get("n_ids"),
+                        (" ⚠ %s" % h["error"]) if h.get("error") else ""))
+    r = ev.get("arxiv_rss")
+    if r:
+        for c, v in r.items():
+            lines.append("• RSS %s: status=%s ct=%r items=%s%s"
+                         % (c, v.get("status"), v.get("content_type"), v.get("items"),
+                            (" note=%s" % v["note"]) if v.get("note") else ""))
+    return "\n".join(lines)
+
+
 def _load_seen_ids(path):
     ids = set()
     p = Path(path)
@@ -329,6 +390,88 @@ def _load_seen_ids(path):
         for m in re.finditer(r"\b([0-9]{4}\.[0-9]{4,5})\b", line):
             ids.add(m.group(1))
     return ids
+
+
+# ─────────── 副源（R1′）：HF Daily Papers / arXiv RSS —— 可达性与加权 ───────────
+HF_DAILY_ENDPOINT = "https://huggingface.co/api/daily_papers"
+RSS_ENDPOINT = "https://rss.arxiv.org/rss/"
+
+
+def fetch_hf_daily(timeout=15):
+    """**副源**：HF Daily Papers API。用途 = 给**已收论文**打社区精选标记（`🏷 hf_daily`）。
+
+    ⚠️ `publishedAt` 实测滞后 3~8 天 -> **不得**作新鲜度依据。
+    返回 `(ok, {arxiv_id: {...}} | None, error)`；**不可达/非 JSON/空** 一律 `ok=False`
+    （如实记录，**不编造标记**）。主键取 paper.id 的 arXiv ID（去版本号）。
+    """
+    try:
+        status, ctype, body = _http_get(HF_DAILY_ENDPOINT, None, timeout)
+    except Exception as exc:  # noqa: BLE001
+        return False, None, "request failed: %s" % exc
+    if status != 200:
+        return False, None, "HTTP %s (expected 200)" % status
+    if "json" not in (ctype or "").lower():
+        return False, None, "content-type not JSON: %r (200 != 有料)" % ctype
+    try:
+        data = json.loads(body)
+    except ValueError as exc:
+        return False, None, "JSON parse error: %s" % exc
+    if not isinstance(data, list) or not data:
+        return False, None, "empty/invalid HF payload"
+    ids = {}
+    for row in data:
+        paper = row.get("paper") or {}
+        m = re.match(r"^\s*([0-9]{4}\.[0-9]{4,5})", paper.get("id") or "")
+        if m:
+            ids[m.group(1)] = {"publishedAt": row.get("publishedAt"), "title": paper.get("title")}
+    if not ids:
+        return False, None, "no parseable arXiv IDs in HF payload"
+    return True, ids, None
+
+
+def probe_rss(categories, timeout=20, min_interval=3.0):
+    """arXiv RSS（**仅工作日可作补充**；周末必空）。返回 `{cat: {status, content_type, items, note}}`。
+
+    空 feed（200 + `items==0`）**不得**当作「无新增」，标注「周末/未公告」。"""
+    out = {}
+    for c in categories:
+        _throttle(min_interval)
+        try:
+            status, ctype, body = _http_get(RSS_ENDPOINT + c, None, timeout)
+            n = body.count("<item>") if isinstance(body, str) else 0
+            out[c] = {"status": status, "content_type": ctype, "items": n,
+                      "note": ("周末/未公告（rss 空 feed）" if (status == 200 and n == 0) else "")}
+        except Exception as exc:  # noqa: BLE001
+            out[c] = {"status": None, "content_type": "", "items": 0, "error": str(exc)}
+    return out
+
+
+def probe_sources(config):
+    """R1′：在**运行机**复验取源可达性（arXiv API 主源 / HF 副源 / RSS 工作日补充）。
+
+    返回可直接写入 `ARXIV_API.md` / 日报的证据 dict。"""
+    mi = config.get("rate_limit_seconds", 3.0)
+    timeout = config.get("timeout_seconds", 30)
+    first_q = config["queries"][0]["search_query"]
+    meta, entries = query_arxiv(first_q, max_results=3, min_interval=mi, timeout=timeout,
+                                retries=config.get("retries", 2),
+                                retry_backoff=config.get("retry_backoff_seconds", 20.0))
+    out = {"generated": _now_utc().isoformat(),
+           "arxiv_api": {"endpoint": ENDPOINT, "status": meta["status"],
+                         "content_type": meta["content_type"], "ok": meta["ok"],
+                         "total_results": meta["total_results"], "n_entries": len(entries),
+                         "sample": [{"arxiv_id": e["arxiv_id"], "published": e["published"],
+                                     "category": e["category"]} for e in entries[:3]],
+                         "error": meta["error"]}}
+    hf_cfg = config.get("hf_daily") or {}
+    if hf_cfg.get("enabled", True):
+        ok, ids, err = fetch_hf_daily(timeout=15)
+        out["hf_daily"] = {"endpoint": HF_DAILY_ENDPOINT, "ok": ok,
+                           "n_ids": (len(ids) if ids else 0), "error": err}
+    rss_cfg = config.get("rss") or {}
+    if rss_cfg.get("categories"):
+        out["arxiv_rss"] = probe_rss(rss_cfg["categories"][:3], timeout=timeout, min_interval=mi)
+    return out
 
 
 def _selftest(config):
@@ -360,6 +503,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description="arXiv 论文取数（research 线）")
     ap.add_argument("--config", default=str(DEFAULT_CONFIG))
     ap.add_argument("--selftest", action="store_true", help="单点自测（端点/Content-Type/解析）")
+    ap.add_argument("--probe", action="store_true", help="R1′：复现取源可达性（arXiv 主源 / HF 副源 / RSS）")
     ap.add_argument("--fetch", action="store_true", help="跑 queries.json 全部查询（默认动作）")
     ap.add_argument("--query", help="临时单条 search_query（配合 --max-results）")
     ap.add_argument("--max-results", type=int, default=None)
@@ -374,6 +518,16 @@ def main(argv=None):
 
     if args.selftest:
         return _selftest(config)
+
+    if args.probe:
+        ev = probe_sources(config)
+        if args.out:
+            Path(args.out).write_text(json.dumps(ev, ensure_ascii=False, indent=2), encoding="utf-8")
+        if args.json:
+            print(json.dumps(ev, ensure_ascii=False, indent=2))
+        else:
+            print(_fmt_probe(ev))
+        return 0 if (ev.get("arxiv_api") or {}).get("ok") else 1
 
     if args.query:
         meta, entries = query_arxiv(
