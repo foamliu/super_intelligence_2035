@@ -12,10 +12,10 @@ WAITING: 1
 
 ```
 PHASE:        常态采集（T1–T10 全部 ✅；自第四轮起进入常态采集）
-已完成:       T1–T10 全部 ✅ · 首轮 smoke ✅ · 第二轮常态 ✅ · 第三轮·中文权威源 ✅ · 第四轮常态 ✅ · 第五轮常态 ✅
-当前动作:     第五轮常态采集：`cn_news`（6 活源全 200，但命中多为国庆/时政/民生 → 未录）+ **IT之家 RSS**（中文主供给）+ 量子位 RSS（自第四轮起无新）+ HN(Algolia)（英文）→ 落盘 news/2026-10-03.md「五、第五轮」**news 5 条（中文 4 / 英文 1）**；SEEN +5；INDEX news 30→35
+已完成:       T1–T10 全部 ✅ · 首轮 smoke ✅ · 第二~六轮常态 ✅（第三轮含中文权威源真新闻）
+当前动作:     第六轮常态采集：`cn_news`（6 活源全 200；命中仍多为国庆/时政/民生 → 未录）+ **IT之家 RSS**（中文主供给）+ 量子位 RSS + **HN(Algolia)** + 官博/外媒（英文）→ 落盘 news/2026-10-03.md「六、第六轮」**news 9 条（中文 7 / 英文 2）**；SEEN +9；INDEX news 35→44
 下一步:       常态采集（WAITING=1，睡 30min）：逐类搜索→去重→追加当日摘要；**每轮先用 `cn_news` + IT之家/量子位 RSS 补中文（中文≥英文）**，英文走 `search_news`(HN) / 官方 RSS；GDELT 限频退避
-本轮新增:     news 5 条（**中文 4**：IT之家 4〔Airbnb AI 图片勒索 / 韩国银行 AI 黑客 / 华为 Mate 90 韬芯片 / 三星 HBM4 定价〕；**英文 1**：WSJ〔OpenAI 解雇研究人员，经 HN〕）
+本轮新增:     news 9 条（**中文 7**：IT之家 6〔Strands Decider 2B 决策模型 / AMD Versal 航天 SoC / 华为小艺智能体调整 / YouTube Shorts 算法 / LG AIDC 工厂 / Neurable 脑电耳机〕+ 量子位 1〔DeepSeek 扩招〕；**英文 2**：CBS News〔Qwen 偏向研究〕/ Aleph Alpha 官博〔Kolibri 主权模型，经 HN〕）
 阻塞:         无
 ERROR_COUNT:  1（历史：模型名 deepseek-v4-pro-fp4 不被网关支持 → 白睡一轮；已修。GDELT 429 属频控，已如实记录、未重试）
 ```
@@ -83,13 +83,20 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **产物**：`news/<YYYY-MM-DD>.md`（当日摘要）· `news/SEEN.md`（去重台账）· `news/INDEX.md`（索引）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-03` 第四轮常态（06:45 UTC）~ `2026-10-03` 第五轮常态（07:17 UTC）
-- **累计收录**：`57` 条（**news 35**〔第一轮 3 + 第二轮 6 + 第三轮 6 + 第四轮 15 + 第五轮 5〕+ 非新闻 22〔仅存 `SEEN.md`〕）
+- **上次采集窗口**：`2026-10-03` 第五轮常态（07:17 UTC）~ `2026-10-03` 第六轮常态（10:00 UTC）
+- **累计收录**：`66` 条（**news 44**〔第一轮 3 + 第二轮 6 + 第三轮 6 + 第四轮 15 + 第五轮 5 + 第六轮 9〕+ 非新闻 22〔仅存 `SEEN.md`〕）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-03** —— ✅ **第六轮常态采集完成（news 9 条：中文 7 / 英文 2）**。PHASE=常态采集。
+  - **`cn_news`（T10）实跑**：`--cn-news --limit 40 --json` → `exit=0`、**6 活源全 200**；新鲜度：中新网×3 kept=30/30/30（drop 0）· 联合国 kept=18(drop 12，超龄) · 央视 news_1 kept=80 / tech_1 kept=11(drop 69，超龄)；**丢弃合计 81**。⚠️ 命中仍多为**国庆/时政/民生（非 AI）** → **未从中录条目**（宁缺勿滥）。
+  - **落盘**：`news/2026-10-03.md` 追加「六、第六轮」9 条 · `SEEN.md` +9 行 · `INDEX.md` news 35→44（另非新闻 22）。
+  - **代表条目**：Amazon《Strands Decider 2B 开源决策模型》(IT之家) · Aleph Alpha《Kolibri 主权开源权重模型》(官博，经 HN) · CBS《Qwen 政治偏向研究》(英文) · AMD《Versal 航天级 AI SoC 出样》· 华为《小艺帮帮忙智能体调整》· YouTube《Shorts 算法调整》· LG《美国 AI 数据中心冷水机组工厂》· 量子位《DeepSeek 扩招》· Neurable《EEG 脑电耳机》。
+  - **方法观察**：中文 AI 新料主来自 **IT之家 RSS**；英文来自 **CBS News / Aleph Alpha 官博（经 HN）**；**Ars RSS** 仍停 10-02（无新）；**The Register** `headlines.atom` 经 stdlib **仍报 `not well-formed ... line 7, column 22`**（待修，改经 HN）；**GDELT 未调**（退避）。
+  - **拒收例（§0.1）**：NPR《AI 数据中心：居民电价谁埋单》(explainer/泛论) · Guardian《OpenAI 称大规模黑客调查昂贵》(与第四轮 IT之家同题**去重**) · qz/Reuters/Tom's Hardware/Ars(Shield TV)（**均已 SEEN**）· Reddit《Gemini 取消免费》(论坛帖) · EFF deeplink(倡导/分析) · HN `Show/Ask HN`(tool/discussion) → **存疑即不收**。
+  - 判据复核：9/9 字段齐全（标题 + 来源 + 发布日期 + 🔗链接 + 🏷 类型：news）；**中文 7 ≥ 英文 2**。**下一步常态采集（WAITING=1）。**
 - **2026-10-03** —— ✅ **第五轮常态采集完成（news 5 条：中文 4 / 英文 1）**。PHASE=常态采集。
   - **`cn_news`（T10）实跑**：`--cn-news --limit 60` → **6 活源全 200**；新鲜度：中新网×3 kept=30/30/30 · 联合国 kept=18(drop 12) · 央视 news_1 kept=80 / tech_1 kept=11(drop 69)；**丢弃合计 81**（均超龄 >72h）。⚠️ 命中多为**国庆/时政/民生（非 AI）** → **未从中录条目**（宁缺勿滥）。
   - **落盘**：`news/2026-10-03.md` 追加「五、第五轮」5 条（中文 4：IT之家；英文 1：WSJ 经 HN）· `SEEN.md` +5 行 · `INDEX.md` news 30→35（另非新闻 22）。

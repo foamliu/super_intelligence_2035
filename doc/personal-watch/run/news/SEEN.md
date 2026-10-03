@@ -62,3 +62,12 @@
 | 2026-10-03 | 爱彼迎 Airbnb 民宿房东利用 AI 图片勒索房客要求其支付维修费，后者利用水印检测器成功识破 | IT之家 | news | https://www.ithome.com/1/009/473.htm |
 | 2026-10-03 | 「争气机」换更强「争气芯」：全系韬芯片之华为 Mate 90 发布，央视报道称走出世界半导体的新路 | IT之家 | news | https://www.ithome.com/1/009/451.htm |
 | 2026-10-03 | 超 HBM3E 当前价 3 倍：消息称三星电子为 2027 年 HBM4 内存寻求高额定价 | IT之家 | news | https://www.ithome.com/1/009/417.htm |
+| 2026-10-03 | 亚马逊推出 Strands Decider 2B 开源决策模型，支持本地部署 | IT之家 | news | https://www.ithome.com/1/009/509.htm |
+| 2026-10-03 | Kolibri Has Landed: A Sovereign Open-Weight Model | Aleph Alpha（官方博客，经 HN） | news | https://aleph-alpha.com/en/blog/kolibri-has-landed-a-sovereign-open-weight-model/ |
+| 2026-10-03 | Some topics are off limits inside popular Chinese-made free AI, researchers find | CBS News | news | https://www.cbsnews.com/news/china-ai-qwen-artificial-intelligence-bias-analysis/ |
+| 2026-10-03 | YouTube 调整 Shorts 短视频推荐算法：打击搬运内容、优先推荐原创作品 | IT之家 | news | https://www.ithome.com/1/009/511.htm |
+| 2026-10-03 | AMD 出样 Versal AI Core XQRVC1902 自适应 SoC，满足 15 年太空任务要求 | IT之家 | news | https://www.ithome.com/1/009/521.htm |
+| 2026-10-03 | 华为 HarmonyOS 7.0 小艺帮帮忙智能体功能调整，将不再支持后续新增的设备 | IT之家 | news | https://www.ithome.com/1/009/516.htm |
+| 2026-10-03 | LG 电子将在美国新建 AI 数据中心冷水机组工厂，韩国本土同步扩产 | IT之家 | news | https://www.ithome.com/1/009/505.htm |
+| 2026-10-03 | DeepSeek 扩招！弹性计算团队大量 HC，尤其需要资深工程师 | 量子位 | news | https://www.qbitai.com/2026/10/501381.html |
+| 2026-10-03 | Neurable One 头戴式耳机发布：号称能够监测用户脑电信号，499 美元 | IT之家 | news | https://www.ithome.com/1/009/502.htm |
