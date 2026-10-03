@@ -10,7 +10,7 @@ WAITING: 1
 | WAITING | 1（R11-L arm② SigLIP 训练 running · `.12` 全 8 卡 · `/tmp/r11_siglip.log`） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡，详见 EXPERIMENTS_VISION_ROUND10.md） |
-| 更新 | 2026-10-03（R11-L arm② SigLIP 实现+启动：`r9_train.py` 支持 `--loss {clip,siglip}`，8 卡跑 `R11L_siglip_w512` 30k 步；step50 loss=7.10 scale=10.85 bias=-9.92、2389 img/s、无坍缩） |
+| 更新 | 2026-10-03 14:22（R11-L arm② SigLIP 巡检：step ~16700/30000（55.7%），loss≈5.8（early 8.24→5.6）、C1≈0.23、C2_gap≈+0.10、C4=OK、~2700 img/s → **无坍缩**，ETA≈40min） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
