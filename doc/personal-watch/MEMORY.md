@@ -50,7 +50,7 @@ WAITING: 0
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
 | **news** | ✅ **T8–T10 已交付**（`fd32d67`）：`fetch_cn_news()` 落地（MCP `cn_news` + CLI `--cn-news`）· 中文权威真新闻 6 条（中文 4 ≥ 英文 2）· 原 31 条按 §0.1 收口（**留 news 9 / 移出非新闻 22**）；T5–T7 仍待办 | `news/FETCH_CN_NEWS.md` · `news/2026-10-03.md`（第三轮）· `news/mcp_web_search_free.py`（+`cn_news`） | ✅ 运行中（**supervisor 已独立复跑 CLI 验证通过**） |
-| **research** 🆕 | **第 1 批 R1′/R2′**（已实测取源：**arXiv API 为主** + HF Daily Papers 作社区信号；**RSS 周末空**不作主力；时效口径含周末放宽）+ R1–R4 | `run/research/ARXIV_API.md` · `run/research/<date>.md` · `SEEN.md`(arXiv ID) · `INDEX.md` · `papers.jsonl` | 🔄 已启动（loop 已拉起，待首轮交付） |
+| **research** 🆕 | **第 1 批 R1′/R2′ 已下发**（实测取源：**arXiv API 为主** + HF Daily Papers 作社区信号；**RSS 周末空**不作主力；时效口径含周末放宽）；**首轮已交付 34 篇**（R1 打通 + 12 条固化查询 + 抓 214/精选 34） | `run/research/ARXIV_API.md` · `run/research/<date>.md` · `SEEN.md` · `INDEX.md` · `papers.jsonl` · `queries.json` · `arxiv_fetch.py` | ✅ 运行中（**supervisor 抽验 3 个 arXiv ID 全真实**） |
 
 > ✅ **T1–T4 已完成并交付（2026-10-03，commit `c326ba8`）**：
 > - **T1** 核实 12 个 web-search 候选；**T2** 新建**免 key MCP** `run/news/mcp_web_search_free.py`（3 工具 `web_search`/`search_news`/`rss_latest`）+ `run/news/cline_mcp_config.json`，**stdio 全链路实测通过**；
@@ -198,6 +198,15 @@ WAITING: 0
   - **产出/下发**：research 任务书新增「第 1 批：已实测取源清单 + 3 个陷阱」= **R1′**（主力 arXiv API + 副源 HF；RSS 周末空不得写"无新增"）+ **R2′**：
     **`≤72h` 对 arXiv 会误杀**（工作日 20:00 ET 公告、周末不发）→ 改为"日报 ≤72h；周末/周一放宽到**最近一次公告批次**并标注实际区间"。同步修正 §0.1 时效判据。
   - **纠正**：DeepSeek 那套是 **AI+EDA**（cs.AR），本线类别改为 **cs.CL/cs.CV/cs.MM/cs.SE/cs.AI/cs.MA/cs.LG**。
+- **2026-10-03（research 首轮交付 + 我的抽验）** —— research agent 交 `4360401`：**首轮 34 篇**（R1–R4）。
+  - **R1** arXiv API **已打通**（**HTTPS**/Atom，实测 `HTTP/2 200`，`Content-Type: application/atom+xml`）→ `research/ARXIV_API.md`（含可复现命令）；
+    ⚠️ **它自己也发现"http→301、必须 https"** —— 与我的实测一致（独立复现）。
+  - **R2** 查询固化 → `research/queries.json`（12 查询 / 5 领域）。
+  - **R3/R4** 抓 **214 篇**（≤72h + arXiv ID 去重）→ **精选收录 34 篇**（含中文摘要/作者/分类/abs+pdf）+ **180 篇记入 SEEN 候选**（候选≠不存在，仅未逐条摘要）；
+    产物：日报 + `SEEN.md` + `INDEX.md` + **`papers.jsonl`** + `arxiv_fetch.py`（限速≥3s + 校验 + 去重 + 窗口）+ `test_arxiv_fetch.py`。
+  - ✅ **我抽验 3 个 arXiv ID**（`id_list=` 反查）：**全部真实**，标题与 `published` 逐字吻合（2026-09-30，落在声明的 ≤72h 窗口内）。
+  - **诚实项**：1 次查询 `Read timeout` **如实记录并重试成功**（非静默丢弃）。
+  - **待办**：R1′/R2′（HF Daily Papers 副源 + 周末时效放宽）将于**下一轮唤醒**生效。
 - **2026-10-03（news 交付 T8–T10 + 我的独立验证）** —— news agent 交 `fd32d67`：
   - **T10** `fetch_cn_news()` 落地（MCP `cn_news` + CLI `--cn-news --limit N [--json] [--max-age-hours]` + Python 直调）；
   - **T9** 中文权威真新闻 **6 条（中文 4 ≥ 英文 2）**：央视网 2 + 中新网 2 + Ars 2；
