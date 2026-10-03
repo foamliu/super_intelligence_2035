@@ -99,6 +99,36 @@ sg docker -c 'docker info'      # 非登录 shell 下验证 socket 可访问（�
 
 **纪律**：**只读为先**；**root 动作先报后做**；贴**命令 + 原始输出**；**不许猜**。
 
+### 🆕 运维指令 · 2026-10-03（第 5 批：**放行 —— 全量 SWE-bench-Lite × 5 harness（顺序跑）**）
+
+> 运维决定（2026-10-03）：**时间（~150 h ≈ 6.25 天连续）与 Token（~1.8–9 亿）都可接受** → **按全量做，不要缩水**。
+> **5 个 harness = `cline` / `opencode` / `deepseek-harness` / `codex` / `claude-code`**（`aider` 作可选基线）。
+
+**执行顺序（硬性，逐步来）**：
+
+| 步 | 做什么 | 关键约束 |
+|:--|:--|:--|
+| **1** | **完成第 4 批只读核查**（`SWEBENCH_LITE_FEASIBILITY.md`） | ⚠️ **唯一硬闸 = Docker Root Dir 剩余空间**（镜像在本地盘、**不在 NFS**）。**放不下 → 停手报告**，给「迁 docker root 到大盘 / 用子集」两个方案；🚫 **不要擅自迁 docker root** |
+| **2** | **打通 docker 镜像来源**（⚠️ **运维判断：配 daemon 代理大概率被公司信息安全管控挡住 → 只快速试一次**） | 见下「**镜像来源三路线**」：**L1（首选）client 侧取镜像** → **L2 本地 build（兜底）** → **L0 daemon 代理（试一次即弃）** |
+| **3** | **写适配层**（`benchmark.py` 只驱动 aider → 另 5 个都要适配） | ⚠️ **先跑通 1 个**（建议 `codex` 或 `opencode`，源码最规整）**再复制**；**复用官方 `swebench` 包的 `run_evaluation` 口径**（`FAIL_TO_PASS`/`PASS_TO_PASS`），🚫 不许猜 |
+| **4** | **顺序跑**：5 harness × **Lite 全量 300** | 内网网关 + `deepseek-v4-flash`（**同一模型 → 公平**）；⚠️ **受 5h 滑动窗口共享 key 约束 → 低并发（≤4）且跨 harness 串行**；**每个 harness 跑完立即固化**（yaml/json + 命令 + 版本），再跑下一个（防长跑中断丢结果） |
+| **5** | **产出** | `harness/SWEBENCH_COMPARE.html`（自包含）+ 结果表（**pass rate / well-formed / token 与成本 / 墙钟**）+ **相对排名** |
+
+**镜像来源三路线（按顺序试，前一条通就不做后一条）**：
+
+| 路线 | 做法 | 需 root / 改 daemon？ | 备注 |
+|:--|:--|:--|:--|
+| **L1 ⭐ 首选** | **client 侧取镜像**：`skopeo copy docker://swebench/… docker-archive:/path/x.tar`（或 `crane pull`）→ `docker load -i x.tar` | ❌ **不改 daemon** ✅ | 🔑 **证据**：host shell 走代理 `curl registry-1.docker.io` 得 **401（= 可达，仅需鉴权）** → **代理能通 Docker Hub**；skopeo/crane 用 **client 侧 `HTTPS_PROXY`** → **绕开 dockerd 无代理**。装法：**curl+代理下静态二进制**，或 aliyun 镜像 pip |
+| **L2 兜底** | **真·本地 build**：① host 侧 `debootstrap`/conda 造 rootfs → `docker import` → **打上 `constants.py` 所需 base 的 tag**；② `docker build --build-arg http_proxy=… --build-arg https_proxy=…` | 仅需 `docker import/build`（**docker 组即可，无需 sudo 改 daemon**） | 先读 `swebench/harness/constants.py` → **列出 Lite 300 需要的 distinct base**；缺的先补齐 |
+| **L0 试一次** | 给 dockerd 配代理（systemd drop-in + restart） | ✅ 需 root / 改 daemon / 重启 | ⚠️ **运维判断走不通**（公司信息安全管控）→ **只试一次，失败立即转 L1，不要纠缠** |
+
+**⚠️ 硬闸（先给数）**：`docker info \| grep 'Docker Root Dir'` + `df -h <该目录>` —— **镜像在本地盘、不在 NFS** → **放不下就停手报告**（给「迁 docker root / 用子集」两方案）。
+
+**验证顺序（重要）**：**先用 1 个 repo（django）端到端跑通**（取镜像或构建 → 跑 1–2 条实例 → 测试通过）→ **再 scale 到 300**。
+**必须记录**：每个 env 的 **取镜像/构建耗时** 与 **失败率**（本地 build 的失败率是重要风险项）。
+
+**纪律**：**root 动作先贴命令后执行**；**每个 harness 跑完即固化**；贴**命令 + 原始输出**；**不许猜**。
+
 ### 📉 记忆维护规程（2026-10-03 运维新增，**硬性**）
 > 理由：`MEMORY_*.md` **每次唤醒都被 agent 全文读取** → 越大越烧 token。本线 `MEMORY_HARNESS.md` ≈ **18KB（当前未超标，保持即可）**。
 - **上限**：本线 `MEMORY_HARNESS.md` 控制在 **≤ 32KB**；一旦超限即执行滚动。
