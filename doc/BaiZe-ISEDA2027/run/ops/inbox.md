@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 21 -->
+<!-- RUN_ID: 22 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,66 @@
 
 ---
 
-## RUN_ID 21 — 🔴 **决定性判定：key 是不是【又被轮换】了？**（**纯只读**）（**本块最新，优先执行**）
+## RUN_ID 22 — 🔑 **读 `eda_fastmcp/.env` 的候选 key + 逐个打网关筛出可用的**（**只读**）（**本块最新，优先执行**）
+
+**背景（用户 2026-10-04 提供）**：`/nas_train/app.e0031982/code/eda_fastmcp/.env` 里还有几把 key（**GLM-5.2 / deepseek-v4-flash / kimi-k2.6 / 豆包**）→ 若其中一把能过网关，即可替换 `.29` 的失效 key。
+**RUN_ID 20 遗留**：三路 smoke（env=valid / unset / env=stale）**全 Forbidden** → 当前那把 `02_088…` 疑似**也失效了**。
+
+🚫 **本块只读**；⚠️ **key 一律只打 `len` + `prefix4`，绝不输出完整值**。
+> 📌 同时顺带完成 RUN_ID 21 的判定（`.29` vs `.12` 的 key/存活/mtime）。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+GW=http://agi-gateway.cxmt.com/v1; E=/nas_train/app.e0031982/code/eda_fastmcp/.env
+
+echo; echo "=== 1. .env 存在性 + 变量名（值仅 len/prefix4）==="
+if [ -f "$E" ]; then
+  ls -l "$E" | cut -c1-100
+  while IFS='=' read -r k v; do
+    case "$k" in ''|'#'*) continue;; esac
+    v="${v%\"}"; v="${v#\"}"; v="${v%\'}"; v="${v#\'}"
+    printf '   %-30s len=%-4s prefix4=%s\n' "$k" "${#v}" "${v:0:4}"
+  done < "$E"
+else
+  echo "   !!! 不存在：$E"; ls -l /nas_train/app.e0031982/code/ 2>/dev/null | head -15
+fi
+
+echo; echo "=== 2. 每个 key × 2 个模型 → http code（200=可用）==="
+while IFS='=' read -r k v; do
+  case "$k" in ''|'#'*) continue;; esac
+  v="${v%\"}"; v="${v#\"}"; v="${v%\'}"; v="${v#\'}"
+  [ "${#v}" -lt 16 ] && continue
+  for M in deepseek-v4-flash deepseek-v4-pro-fp4; do
+    code=$(timeout 20 curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $v" -H 'Content-Type: application/json' \
+      -d "{\"model\":\"$M\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}],\"max_tokens\":3}" "$GW/chat/completions" 2>/dev/null)
+    printf '   %-30s %-22s -> %s\n' "$k" "$M" "$code"
+  done
+done < "$E"
+
+echo; echo "=== 3. 顺带：.29 当前 key 是否也失效 ==="
+sk="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" | head -1)"
+echo "   .29 secrets: len=${#sk} prefix4=${sk:0:4} mtime=$(stat -c %y "$HOME/.cline/data/secrets.json" | cut -c1-19)"
+echo -n "   .29 curl -> "; timeout 20 curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $sk" -H 'Content-Type: application/json' -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"hi"}],"max_tokens":3}' "$GW/chat/completions"
+
+echo; echo "=== 4. 对照 .12：key 状态 + 是否仍在干活 ==="
+timeout 30 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 '
+S="$HOME/.cline/data/secrets.json"
+k="$(sed -n "s/.*\"openAiApiKey\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p" "$S" | head -1)"
+echo "   .12 secrets: len=${#k} prefix4=${k:0:4} mtime=$(stat -c %y "$S" | cut -c1-19)"
+printf "   .12 curl -> "; timeout 20 curl -s -o /dev/null -w "%{http_code}\n" -H "Authorization: Bearer $k" -H "Content-Type: application/json" -d "{\"model\":\"deepseek-v4-pro-fp4\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}],\"max_tokens\":3}" http://agi-gateway.cxmt.com/v1/chat/completions
+echo "   -- .12 loops --"; pgrep -af "baize_.*_loop\.sh" | cut -c1-90
+echo "   -- .12 vision log mtime --"; stat -c %y /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-19
+' 2>&1 | cut -c1-165 || echo "ssh .12 FAILED"
+
+echo; echo "=== 5. GPU（P-9 应仍在跑）==="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -2
+
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 21**（key 是否再轮换，**未推送**）为 ```text —— 其内容已并入本块第 3/4 节。
+
+## RUN_ID 21 — 🔴 **决定性判定：key 是不是【又被轮换】了？**（⛔ 未执行，已并入 RUN_ID 22）
 
 **RUN_ID 20 的意外结果（2026-10-04 07:44:05）**：**三路 smoke 全 `Forbidden`** —— 连 **B（unset）** 也失败，而 **07:29 时同一招是 OK 的**（RUN_ID 15 §3 明确 OK）。
 ⇒ **不是 env 变体的问题**；**key 本身在 07:29→07:44 之间再次失效**（或网关开始拒绝）。
@@ -45,7 +104,7 @@
 | **`.12` 的 vision/data 是否仍在干活** | 若也停了 → 全局面（`02_088` 死）；若还在跑 → 只有 `.29` 异常 |
 | 两机 secrets.json 的 **mtime** | 若 `.12` 的 mtime 变成今天 → **刚被轮换过** |
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 GW=http://agi-gateway.cxmt.com/v1
 S="$HOME/.cline/data/secrets.json"
