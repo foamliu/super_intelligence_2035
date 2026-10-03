@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 15 -->
+<!-- RUN_ID: 16 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,41 @@
 
 ---
 
-## RUN_ID 15 — ✅ **执行修复：把 `.12` 的有效 key 写到 `.29` + 重启两条 loop**（**运维已批准**）
+## RUN_ID 16 — 🩺 **复工确认：两条线是否真在产出**（**纯只读**）（**本块最新，优先执行**）
+
+**RUN_ID 15 修复已执行（2026-10-04 07:29:03）**：`.29` 换上新 key + 两条 loop 已重启 → `Forbidden=0` ✅。
+**本块在 ~7 分钟后复查**：① 进程/会话是否仍在 ② **`Forbidden` 是否仍为 0**（防复发）③ 两线产物 mtime 是否在动 ④ GPU 状态。
+
+🚫 **纯只读**。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+
+echo; echo "=== 1. loop + cline 进程 ==="
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'baize_(pretrain|harness)_loop\.sh|bun.*cline' | grep -v grep | cut -c1-115
+
+echo; echo "=== 2. Forbidden 计数（应为 0）==="
+grep -c Forbidden /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log 2>/dev/null
+
+echo; echo "=== 3. 日志尾（看是否在正常推理 / 有无新报错）==="
+echo "-- pretrain(loop) --"; tail -c 1500 /tmp/baize_pretrain_loop.log 2>/dev/null | tr -d '\r' | tail -c 500 | cut -c1-150
+echo "-- harness(loop) --";  tail -c 1500 /tmp/baize_harness_loop.log  2>/dev/null | tr -d '\r' | tail -c 500 | cut -c1-150
+echo "-- pretrain(P5B 训练日志最后 3 行) --"; tail -3 /tmp/baize_p5b.log 2>/dev/null | cut -c1-150
+
+echo; echo "=== 4. 两线产物 mtime（判断是否已在写文件）==="
+ls -l --time-style=+%m-%d_%H:%M "$R/MEMORY_PRETRAIN_2B.md" "$R/MEMORY_HARNESS.md" 2>/dev/null | cut -c1-110
+echo "-- cline sessions 最近 3 个 --"; ls -lt --time-style=+%m-%d_%H:%M ~/.cline/data/sessions 2>/dev/null | head -4 | cut -c1-115
+
+echo; echo "=== 5. GPU ==="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null
+
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 15**（修复块，**✅ 已执行 07:29:03**）为 ```text。
+
+## RUN_ID 15 — ✅ **执行修复：把 `.12` 的有效 key 写到 `.29` + 重启两条 loop**（✅ 已执行，本块不再运行）
 
 **RUN_ID 14 一锤定音（2026-10-04 07:26）**：
 - ✅ **`.12` 的 secrets key → `chat/completions` = 200**；用它跑 cline smoke **返回 OK**
@@ -48,7 +82,7 @@
 
 🚫 **红线**：不动 vision/data；不改任何其它文件；key 只以 `len/prefix6` 形式回显。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T %Z'
 WK=/nas_train/app.e0031982/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
 C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; GW=http://agi-gateway.cxmt.com/v1
