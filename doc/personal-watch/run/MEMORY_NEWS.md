@@ -12,11 +12,11 @@ WAITING: 1
 
 ```
 PHASE:        常态采集（T1–T10 全部 ✅；自第四轮起进入常态采集）
-已完成:       T1–T10 全部 ✅ · 首轮 smoke ✅ · 第二~八轮常态 ✅（第三轮含中文权威源真新闻）；确认 **T10 `fetch_cn_news()` 已实现并随 `1872c1f` 提交**
-当前动作:     第八轮常态采集：`cn_news`（6 活源全 200；命中仍多为国庆/时政/民生 → 仅录 1 条央视网 AI 应用）+ **IT之家 RSS**（中文主供给）+ 央视网 tech（AI 眼镜稻飞虱）+ **TechCrunch RSS**（英文：`.si / 超级智能行政令`）+ **WIRED RSS**（Trillium Labs）→ 落盘 news/2026-10-03.md「八、第八轮」**news 4 条（中文 2 / 英文 2）**；SEEN +6（含 2 条拒收 feature）；INDEX news 50→54
-下一步:       常态采集（WAITING=1，睡 30min）：逐类搜索→去重→追加当日摘要；**每轮先用 `cn_news` + IT之家/量子位/爱范儿 RSS 补中文（中文≥英文）**，英文走 `search_news`(HN) / TechCrunch / WIRED / 官方 RSS；GDELT 限频退避
-本轮新增:     news 4 条（**中文 2**：IT之家〔AI 自动识别后厨违规 / 浙江 19.5 万外卖商家接入〕+ 央视网〔AI 眼镜给稻田精准"把脉"〕；**英文 2**：TechCrunch〔特朗普"超级智能"行政令致斯洛文尼亚 `.si` 域名注册激增〕+ WIRED〔Trillium Labs 公开做 RSI/agent 高风险研究〕）
-阻塞:         无（**中文 AI 新料仍依赖 IT之家 RSS**；`cn_news` 当日命中几乎全为国庆/民生）
+已完成:       T1–T10 全部 ✅ · 首轮 smoke ✅ · 第二~九轮常态 ✅（第三轮含中文权威源真新闻）；确认 **T10 `fetch_cn_news()` 已实现并随 `1872c1f` 提交**
+当前动作:     第九轮常态采集：`cn_news`（6 活源全 200；188 条命中几乎全为国庆/时政/民生 → **未录条目**）+ **IT之家首页（新增抓取面，补 10-02 漏收 5 条）** + 量子位/爱范儿 RSS（中文）+ **Tom's Hardware**（Anthropic 称智谱 GLM-5.3 具 Mythos 级漏洞利用能力）+ **TechCrunch**（特朗普 AI 承诺拼错美国国名）→ 落盘 news/2026-10-03.md「九、第九轮」**news 7 条（中文 5 / 英文 2）**；SEEN +9（7 news + 2 非新闻）；INDEX news 54→61
+下一步:       常态采集（WAITING=1，睡 30min）：逐类搜索→去重→追加当日摘要；**每轮先用 `cn_news` + IT之家〔RSS **与首页**〕/量子位/爱范儿 补中文（中文≥英文）**，英文走 `search_news`(HN) / TechCrunch / **Tom's Hardware** / 官方 RSS；GDELT 限频退避
+本轮新增:     news 7 条（**中文 5**：IT之家〔Cloudflare 开源 Qwen 多模态决策模型 Clef / DeepSeek 伦理研究 / OpenAI 融资 200 亿美元·估值 8,520 亿 / 博通筹 600 亿美元为 Anthropic 购芯片 / Anthropic 最早 11 月中旬上市〕；**英文 2**：Tom's Hardware〔Anthropic 称智谱 GLM-5.3 具 Mythos 级漏洞利用能力〕+ TechCrunch〔特朗普与 AI 领袖签署承诺拼错美国国名〕）
+阻塞:         无（**IT之家 RSS 窗口仅 ~5h** → 已加抓首页补齐；`cn_news` 当日 188 条命中无 AI）
 ERROR_COUNT:  1（历史：模型名 deepseek-v4-pro-fp4 不被网关支持 → 白睡一轮；已修。GDELT 429 属频控，已如实记录、未重试）
 ```
 
@@ -86,13 +86,21 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **产物**：`news/<YYYY-MM-DD>.md`（当日摘要）· `news/SEEN.md`（去重台账）· `news/INDEX.md`（索引）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-03` 第七轮常态（10:40 UTC）~ `2026-10-03` 第八轮常态（11:10 UTC）
-- **累计收录**：`78` 条（**news 54**〔第一轮 3 + 第二轮 6 + 第三轮 6 + 第四轮 15 + 第五轮 5 + 第六轮 9 + 第七轮 6 + 第八轮 4〕+ 非新闻 24〔仅存 `SEEN.md`〕）
+- **上次采集窗口**：`2026-10-03` 第八轮常态（11:10 UTC）~ `2026-10-03` 第九轮常态（11:55 UTC）
+- **累计收录**：`87` 条（**news 61**〔第一轮 3 + 第二轮 6 + 第三轮 6 + 第四轮 15 + 第五轮 5 + 第六轮 9 + 第七轮 6 + 第八轮 4 + 第九轮 7〕+ 非新闻 26〔仅存 `SEEN.md`〕）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-03** —— ✅ **第九轮常态采集完成（news 7 条：中文 5 / 英文 2）**。PHASE=常态采集。
+  - **`cn_news`（T10）实跑**：`--cn-news --limit 40 --json` → `exit=0`、**6 活源全 200**（`limit=200` 复核命中 188 条）；中新网×3 kept=30/30/30（drop 0）· 联合国 kept=18(drop 12，超龄) · 央视 news_1 kept=80 / tech_1 kept=11(drop 69，超龄)。⚠️ 命中**几乎全为国庆/时政/民生/亚运（非 AI）** → **未从中录条目**（宁缺勿滥）。
+  - **关键补漏（方法改进，建议固化）**：实测 **IT之家 RSS 窗口仅 ~5h**（`count=60`、`pubDate` 06:23~11:45 GMT、`id` 445→533）→ **10-02 的 `1/009/237`–`270` 段整体漏收**；改用 **IT之家首页 `www.ithome.com/` 枚举**（覆盖更深）**补齐 5 条 10-02 中文 AI 新闻** → **建议后续每轮固定加抓首页**。
+  - **落盘**：`news/2026-10-03.md` 追加「九、第九轮」7 条 · `SEEN.md` +9 行（7 news + 2 非新闻）· `INDEX.md` news 54→**61**（另非新闻 24→**26**）。
+  - **代表条目**：IT之家《Cloudflare 推出基于 Qwen 的开源多模态决策模型 Clef》(§1.1) · Tom's Hardware《Anthropic 称智谱 GLM-5.3 具 Mythos 级漏洞利用能力》(§1.2) · IT之家《AI 伦理研究：DeepSeek 对男女一视同仁…》(§1.2) · TechCrunch《特朗普与 AI 领袖签署的承诺拼错美国国名》(§1.3) · IT之家《OpenAI 融资再落袋 200 亿美元·估值 8,520 亿》/《博通筹 600 亿美元》/《Anthropic 最早 11 月中旬上市》(§1.5)。
+  - **方法观察**：**新发现不可达**：Reuters `www.reuters.com`、NY Post `nypost.com`（`Network is unreachable`）→ Bull 超算/FTC 立案两条**无法核验 → 未收录**；**CN-Bing 新闻垂直 `cn.bing.com/news/search`** 为 **JS 渲染**（HTML 无正文）；**360 `web_search`** 中英混合长查询**返 0**；**cnBeta `backend.php` / 钛媒体 `tmtpost.com/rss` / 36氪 `feed-newsflash`** 经 stdlib **解析失败**；**新浪科技 RSS** 仍停 2018-09-23；**虎嗅 `rss/0.xml`** 超时；**英文 = Tom's Hardware 正文直取** + **TechCrunch** + HN(Algolia)；**GDELT 未调**（退避）。
+  - **拒收例（§0.1）**：雷峰网《连败 6 场…寒武纪前高管…》(特稿) · 量子位《Jev 估值 100 亿美元…回答一切》(AMA/访谈，与第四轮同题) · IT之家《苹果 homeOS 前瞻…》(前瞻/传闻) · IT之家《迈富时 GEO…》三连(`1/009/523–525`，软文) · IT之家《贝恩：…2031 年 6 万亿美元…》(报告解读/预测) · IT之家《纳德拉重申 Copilot 定位》(表态、无新事件) · IT之家《OpenAI 澳洲机构遭入侵》/《`.si` 域名激增》/《苹果收紧 macOS 27》/《DGX Spark 64GB》/《Anthropic 1 亿美元培训》/《arXiv 限投 2 篇》(**均已在 SEEN，同题去重**) → **存疑即不收**。
+  - 判据复核：7/7 字段齐全（标题 + 来源 + 发布日期 + 🔗链接 + 🏷 类型：news）；**中文 5 ≥ 英文 2**。**下一步常态采集（WAITING=1）。**
 - **2026-10-03** —— ✅ **第八轮常态采集完成（news 4 条：中文 2 / 英文 2）**。PHASE=常态采集。
   - **`cn_news`（T10）实跑**：`--cn-news --limit 90` → **6 活源全 200**；新鲜度：中新网×3 kept=30/30/30（drop 0）· 联合国 kept=18(drop 12，超龄) · 央视 news_1 kept=80 / tech_1 kept=11(drop 69，超龄)；**丢弃合计 ≈81**。⚠️ 命中仍多为**国庆/时政/民生（非 AI）** → **仅从中录 1 条**（央视网 AI 眼镜稻飞虱），其余**未凑数**。
   - **落盘**：`news/2026-10-03.md` 追加「八、第八轮」4 条 · `SEEN.md` +6 行（4 news + 2 拒收 feature）· `INDEX.md` news 50→54（另非新闻 24）。

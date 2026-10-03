@@ -83,3 +83,12 @@
 | 2026-10-03 | These AI Experts Want to Do High-Stakes Research Out in the Open | WIRED | news | https://www.wired.com/story/trillium-labs-wants-to-do-high-risk-ai-research-in-the-open/ |
 | 2026-10-03 | AI 视频榜全球第二，藏着一家新影视公司的野心 | 爱范儿 | feature | https://www.ifanr.com/1682888 |
 | 2026-10-03 | OpenAI's Dot agent is enterprise software that can also order your dinner | The Verge | feature | https://www.theverge.com/ai-artificial-intelligence/1004096/openai-chatgpt-dots-hands-on-agent |
+| 2026-10-03 | Cloudflare 推出基于 Qwen 的开源多模态决策模型 Clef | IT之家 | news | https://www.ithome.com/1/009/262.htm |
+| 2026-10-03 | Anthropic claims popular Chinese AI model has Mythos-class hacking abilities — frontier red teaming report details weak safeguards on open-weight AI | Tom's Hardware | news | https://www.tomshardware.com/tech-industry/artificial-intelligence/anthropic-claims-popular-chinese-ai-model-has-mythos-class-hacking-abilities-frontier-red-teaming-report-details-weak-safeguards-on-open-weight-ai |
+| 2026-10-03 | AI 伦理研究：DeepSeek 对男女一视同仁，美系模型却“区别对待” | IT之家 | news | https://www.ithome.com/1/009/243.htm |
+| 2026-10-03 | Pledge signed by President Trump and top AI leaders misspells the United States | TechCrunch | news | https://techcrunch.com/2026/09/30/pledge-signed-by-president-trump-and-top-ai-leaders-misspells-the-united-states/ |
+| 2026-10-03 | 填充 AI 资金弹药：曝 OpenAI 融资再落袋 200 亿美元，英伟达、软银和亚马逊已出资约 90% | IT之家 | news | https://www.ithome.com/1/009/270.htm |
+| 2026-10-03 | 消息称博通着手筹集 600 亿美元，为 Anthropic 等公司采购芯片提供资金 | IT之家 | news | https://www.ithome.com/1/009/261.htm |
+| 2026-10-03 | 史上最大 IPO 冲刺感恩节前挂牌，消息称 Anthropic 寻求最早 11 月中旬上市 | IT之家 | news | https://www.ithome.com/1/009/237.htm |
+| 2026-10-03 | 连败 6 场遭强制执行 寒武纪前高管无端再提天价索赔 谁最受伤？ | 雷峰网 | analysis | https://www.leiphone.com/category/industrynews/kf23Cq1EQJfpwbcX.html |
+| 2026-10-03 | 苹果 homeOS 前瞻：整合 iOS / iPadOS / watchOS 特性，主打 Siri AI 交互 | IT之家 | analysis | https://www.ithome.com/1/009/380.htm |

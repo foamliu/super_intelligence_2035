@@ -6,9 +6,9 @@
 
 | 日期 | news 条数 | 非新闻 条数 | 文件 | 备注 |
 |:--|--:|--:|:--|:--|
-| 2026-10-03 | 54 | 24 | [2026-10-03.md](2026-10-03.md) | 第一轮 smoke（原 16 → **news 3**）+ 第二轮（原 15 → **news 6**）+ **第三轮 · 中文权威源（T9）news 6（中文 4 / 英文 2）** + **第四轮 · 常态采集 news 15（中文 11 / 英文 4）** + **第五轮 · 常态采集 news 5（中文 4 / 英文 1）** + **第六轮 · 常态采集 news 9（中文 7 / 英文 2）** + **第七轮 · 常态采集 news 6（中文 3 / 英文 3）** + **第八轮 · 常态采集 news 4（中文 2 / 英文 2）**。非新闻 24 条（feature / opinion / analysis / paper / tool / discussion）仅存 `SEEN.md`。来源：IT之家 · 量子位 · 爱范儿 · 中新网 · 央视网 · 联合国新闻 · The Register · WSJ · NYT · Guardian · NBC · Fortune · TechCrunch · Ars Technica · Anthropic · NVIDIA · Aleph Alpha · CBS News · WIRED · HN(Algolia) |
+| 2026-10-03 | 61 | 26 | [2026-10-03.md](2026-10-03.md) | 第一轮 smoke（原 16 → **news 3**）+ 第二轮（原 15 → **news 6**）+ **第三轮 · 中文权威源（T9）news 6（中文 4 / 英文 2）** + **第四轮 · 常态采集 news 15（中文 11 / 英文 4）** + **第五轮 · 常态采集 news 5（中文 4 / 英文 1）** + **第六轮 · 常态采集 news 9（中文 7 / 英文 2）** + **第七轮 · 常态采集 news 6（中文 3 / 英文 3）** + **第八轮 · 常态采集 news 4（中文 2 / 英文 2）** + **第九轮 · 常态采集 news 7（中文 5 / 英文 2；含 IT之家首页补漏 10-02 漏收 5 条）**。非新闻 26 条（feature / opinion / analysis / paper / tool / discussion）仅存 `SEEN.md`。来源：IT之家 · 量子位 · 爱范儿 · 中新网 · 央视网 · 联合国新闻 · The Register · WSJ · NYT · Guardian · NBC · Fortune · TechCrunch · Ars Technica · Anthropic · NVIDIA · Aleph Alpha · CBS News · WIRED · Tom's Hardware · HN(Algolia) |
 
-**累计收录：news 54 条**（另非新闻 24 条，仅存 `SEEN.md` 防重）
+**累计收录：news 61 条**（另非新闻 26 条，仅存 `SEEN.md` 防重）
 
 > 🧭 **工具**：免 key MCP `web-search-free` —— `web_search`（CN-Bing/360）· `search_news`（HN/GDELT）· `rss_latest`（**含新增中文 dated 源：量子位 `qbitai.com/feed`、IT之家 `ithome.com/rss/`**）· **`cn_news`（T10 中文活源统一入口）**。
 > 📄 中文入口用法与自测：`news/FETCH_CN_NEWS.md`。
