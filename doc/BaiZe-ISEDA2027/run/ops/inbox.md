@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 7 -->
+<!-- RUN_ID: 8 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,13 +31,81 @@
 
 ---
 
-## RUN_ID 7 — 🩺 **只读诊断**：各 loop 是否活着 / 共享副本是否落后 / 磁盘与 GPIC 进度
+## RUN_ID 8 — 🧹 **清 ops_relay 重复副本**（⚠️ **fail-safe：绝不杀到 0 个**）
+
+**背景**：`.29` 上又见 **2 个 `ops_relay.sh`**（`2489749` etimes≈42.8h + `2315903` etimes≈0）。
+**目标**：只保留「运行最久」的那个；**若清理有任何不确定，就不杀、只报告**。
+**底线**：**执行完必须仍有 ≥1 个 relay 存活**（否则假期无法通讯）。
+
+```bash
+echo "=========== 0. 时间 ==========="
+hostname; date '+%F %T %Z'
+echo
+
+echo "=========== 1. 现有 relay 清单（pid / ppid / etimes） ==========="
+ps -eo pid=,ppid=,etimes=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | cut -c1-150
+echo
+
+echo "=========== 2. 定位【执行本命令的】relay（沿祖先进程回溯） ==========="
+SELF=""
+p=$$
+for i in 1 2 3 4 5 6 7 8 9 10; do
+  [ -z "$p" ] && break; [ "$p" = "0" ] && break; [ "$p" = "1" ] && break
+  c=$(ps -o args= -p "$p" 2>/dev/null)
+  case "$c" in *ops_relay.sh*) SELF="$p"; break;; esac
+  p=$(ps -o ppid= -p "$p" 2>/dev/null | tr -d ' ')
+done
+echo "SELF = ${SELF:-<not found>}"
+
+echo "=========== 3. KEEP = 运行最久者（etimes 最大） ==========="
+KEEP=$(ps -eo pid=,etimes=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | sort -k2 -nr | awk 'NR==1{print $1}')
+echo "KEEP = ${KEEP:-<none>}"
+
+echo "=========== 4. 清理（**只杀** 既非 KEEP 也非 SELF 的副本） ==========="
+COUNT=$(ps -eo pid=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | wc -l)
+echo "relay count before = $COUNT"
+if [ -z "$KEEP" ]; then
+  echo "!!! 未找到任何 relay → 不杀任何进程（fail-safe）"
+elif [ "$COUNT" -le 1 ]; then
+  echo "只有 1 个 → 无需清理"
+else
+  for pid in $(ps -eo pid=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | awk '{print $1}'); do
+    if [ "$pid" = "$KEEP" ]; then echo "keep   pid=$pid (longest-running)"; continue; fi
+    if [ -n "$SELF" ] && [ "$pid" = "$SELF" ]; then echo "keep   pid=$pid (=== SELF，延后处理)"; continue; fi
+    echo "kill   pid=$pid (duplicate)"
+    kill -TERM "$pid" 2>/dev/null
+  done
+fi
+sleep 3
+
+echo "=========== 5. 若 SELF 是副本 → **延后 90s 自行退出**（先让 outbox 写完并 push） ==========="
+if [ -n "$SELF" ] && [ "$SELF" != "$KEEP" ]; then
+  echo "SELF=$SELF ≠ KEEP=$KEEP → 本进程为副本，90s 后自行退出（setsid 脱离，保证 outbox 先落地）"
+  setsid sh -c "sleep 90; kill -TERM $SELF" >/dev/null 2>&1 < /dev/null &
+else
+  echo "SELF == KEEP（或未定位）→ 无需自退"
+fi
+
+echo "=========== 6. 收尾核对（**必须 ≥1 存活**） ==========="
+sleep 2
+REMAIN=$(ps -eo pid=,etimes=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | cut -c1-150)
+echo "$REMAIN"
+n=$(ps -eo pid=,args= 2>/dev/null | grep 'ops_relay\.sh' | grep -v grep | wc -l)
+echo "relay count after = $n"
+if [ "$n" -ge 1 ]; then echo "OK: 至少 1 个存活（通讯可用）"; else echo "!!! 警告：0 个存活 —— 需人工重启 relay（勿删本目录）"; fi
+echo
+echo "=========== DONE ==========="
+```
+
+---
+
+## RUN_ID 7（**已被 RUN_ID 8 接管，本块不再执行**）— 只读诊断
 
 **背景（运维 2026-10-03 10:57）**：`09:00` 之后**没有 agent 的提交**（只有运维自己的），而各线 `WAITING=1` 预期约每 50 分钟一轮。
 → 疑因：某线 cline 会话较长（data 可能在 `rm -rf` 8.1T）、或 `git pull --rebase` 撞上运维的密集推送而跳过 push 周期。
 **本块只读，不改任何东西、不 kill 任何进程。**
 
-```bash
+```text
 echo "=========== 0. 时间（host / date） ==========="
 hostname; date '+%F %T %Z'
 echo
