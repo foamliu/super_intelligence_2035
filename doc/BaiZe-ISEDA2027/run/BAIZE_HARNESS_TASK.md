@@ -114,18 +114,25 @@ sg docker -c 'docker info'      # 非登录 shell 下验证 socket 可访问（�
 | **4** | **顺序跑**：5 harness × **Lite 全量 300** | 内网网关 + `deepseek-v4-flash`（**同一模型 → 公平**）；⚠️ **受 5h 滑动窗口共享 key 约束 → 低并发（≤4）且跨 harness 串行**；**每个 harness 跑完立即固化**（yaml/json + 命令 + 版本），再跑下一个（防长跑中断丢结果） |
 | **5** | **产出** | `harness/SWEBENCH_COMPARE.html`（自包含）+ 结果表（**pass rate / well-formed / token 与成本 / 墙钟**）+ **相对排名** |
 
-**镜像来源三路线（按顺序试，前一条通就不做后一条）**：
+**镜像来源路线（⚠️ 2026-10-03 运维修订：**L0 已删除**；**docker 系整体降为末选**）**：
 
-| 路线 | 做法 | 需 root / 改 daemon？ | 备注 |
-|:--|:--|:--|:--|
-| **L1 ⭐ 首选** | **client 侧取镜像**：`skopeo copy docker://swebench/… docker-archive:/path/x.tar`（或 `crane pull`）→ `docker load -i x.tar` | ❌ **不改 daemon** ✅ | 🔑 **证据**：host shell 走代理 `curl registry-1.docker.io` 得 **401（= 可达，仅需鉴权）** → **代理能通 Docker Hub**；skopeo/crane 用 **client 侧 `HTTPS_PROXY`** → **绕开 dockerd 无代理**。装法：**curl+代理下静态二进制**，或 aliyun 镜像 pip |
-| **L2 兜底** | **真·本地 build**：① host 侧 `debootstrap`/conda 造 rootfs → `docker import` → **打上 `constants.py` 所需 base 的 tag**；② `docker build --build-arg http_proxy=… --build-arg https_proxy=…` | 仅需 `docker import/build`（**docker 组即可，无需 sudo 改 daemon**） | 先读 `swebench/harness/constants.py` → **列出 Lite 300 需要的 distinct base**；缺的先补齐 |
-| **L0 试一次** | 给 dockerd 配代理（systemd drop-in + restart） | ✅ 需 root / 改 daemon / 重启 | ⚠️ **运维判断走不通**（公司信息安全管控）→ **只试一次，失败立即转 L1，不要纠缠** |
+> **运维关切（原话）**：① **改 daemon 会影响其它 docker 使用者**（全局配置 + `restart` 中断所有容器）；② **root 配置一动公司服务器管理员就会知道**（drop-in 文件 + `daemon-reload` + `restart` 全留痕）。
+> **运维补充**：③ **L1/L2 也会占共享的 `/var/lib/docker`**（通常在本地盘）→ 塞 50–200 GB 可能挤爆别人的盘。
+> → 因此 **🚫 L0 取消（连"试一次"都不做，避免留痕）**；**docker 系（L1/L2）降为末选**，且**若用，必须先报"共享 docker 存储的剩余空间 + 我们预计占用"**。
 
-**⚠️ 硬闸（先给数）**：`docker info \| grep 'Docker Root Dir'` + `df -h <该目录>` —— **镜像在本地盘、不在 NFS** → **放不下就停手报告**（给「迁 docker root / 用子集」两方案）。
+| 路线 | 做法 | 碰 daemon/共享存储？ | 审计可见性 | 备注 |
+|:--|:--|:--|:--|:--|
+| **R1 ⭐⭐ 首选（新增）** | **`unshare` 用户命名空间沙箱 + 每实例 rootfs 落 NFS**：`unshare --user --map-root-user --mount --pid` + bind/chroot + tmpfs；每实例的 rootfs/env 建在 **`/nas_train`（32T，非共享 docker 存储）** | ✅ **完全不碰 docker/daemon** | 🟢 **低**（只在自己的 NFS 目录里干活） | ⭐ **一套沙箱同时服务 SWE-bench 实例 与 Aider**（Aider 的沙箱缺口也一并解决）；`unshare --user --map-root-user true` **已实测 OK** |
+| **L1（末选）** | `skopeo copy docker://swebench/… docker-archive:x.tar` → `docker load -i x.tar` | ⚠️ **占共享 `/var/lib/docker`** | 🟡 中（镜像数变多） | 优点：拿官方预建镜像、**失败率≈0**；**用前必须先报共享存储余量 + 预计占用** |
+| **L2（末选）** | 本地 build（host 造 base → `docker import` → `docker build --build-arg proxy`） | ⚠️ 同上 | 🟡 中 | 失败率高（老版本依赖装不上的经典坑） |
+| ~~L0~~ | ~~给 dockerd 配代理~~ | — | 🔴 **高（root+重启）** | ❌ **已取消**（运维判断：公司信息安全管控，且会留痕） |
 
-**验证顺序（重要）**：**先用 1 个 repo（django）端到端跑通**（取镜像或构建 → 跑 1–2 条实例 → 测试通过）→ **再 scale 到 300**。
-**必须记录**：每个 env 的 **取镜像/构建耗时** 与 **失败率**（本地 build 的失败率是重要风险项）。
+**⚠️ 硬闸（先给数，任一不过就停手报告）**：
+1. 若走 **R1**：`/nas_train` 剩余空间（**已知 32T，够**）+ `unshare` 沙箱可行性验证（user+mount+pid 三件套）。
+2. 若走 **L1/L2**：**`docker info | grep 'Docker Root Dir'` + 该目录剩余空间** + **"我们的预计占用"** → 两者之差**必须留足余量**给其它 docker 使用者。
+
+**验证顺序（重要）**：**先用 1 个 repo（django）端到端跑通**（建沙箱/取镜像 → 跑 1–2 条实例 → 测试通过）→ **再 scale 到 300**。
+**必须记录**：每个 env 的**准备耗时**与**失败率**。
 
 **纪律**：**root 动作先贴命令后执行**；**每个 harness 跑完即固化**；贴**命令 + 原始输出**；**不许猜**。
 

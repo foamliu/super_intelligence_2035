@@ -67,7 +67,10 @@ WAITING: 0
   → **C1 口径定案**：**R9 用过 18.5M / 盘上现有 ≈32M / 本地全量 ≈118M（动态）**；`r9_scaling.py` 的 `--local-cap-m` 已改 **default=118.0**。
   → ⚠️ **R11-E 的可比 N 区间被压到 ≈6.8M**（GPIC-short 已下 < 18.5M）→ **须如实说明「可比区间更窄」**。
 - [ ] ⛔ **loop 优化：暂不做（用户 2026-10-03 决定）** —— `SLEEP_WAIT 1800→3600` 与「训练未完成就跳过 cline 调用」的前置检查，**都需在公司重启 loop**（假期内做不了），且 1800→3600 **会让反应变慢**。→ **待回公司后择机**。
-- [x] ✅ **H-A′ 已放行（运维 2026-10-03）**：**时间（~150h）与 Token（~1.8–9 亿）均可接受** → **全量 SWE-bench-Lite(300) × 5 harness（顺序跑）**。顺序：① 只读核查（**硬闸 = Docker Root Dir 空间**）→ ② **打通 docker（root 已授权，口令 `Ly3960405#`）** → ③ 写适配层（**先 1 个再复制**）→ ④ 顺序跑（低并发、每个跑完即固化）→ ⑤ `SWEBENCH_COMPARE.html`。
+- [x] ✅ **H-A′ 已放行（运维 2026-10-03）**：**时间（~150h）与 Token（~1.8–9 亿）均可接受** → **全量 SWE-bench-Lite(300) × 5 harness（顺序跑）**。
+  顺序：① 只读核查（硬闸）→ ② **镜像来源走 R1（新增·首选）** → ③ 写适配层（**先 1 个再复制**）→ ④ 顺序跑（低并发、每个跑完即固化）→ ⑤ `SWEBENCH_COMPARE.html`。
+- [x] 🚫 **docker 系降为末选（运维 2026-10-03 关切）**：**L0（改 daemon 配代理）彻底取消** —— ① 改 daemon **影响其它 docker 使用者**（全局配置 + `restart` 中断所有容器）；② **root 配置留痕 → 管理员会知道**；③ **L1/L2 还占共享 `/var/lib/docker`**（可能挤爆别人的盘）。
+  → **新首选 = R1：`unshare --user --map-root-user --mount --pid` 沙箱 + 每实例 rootfs 落 `/nas_train`（32T）** —— **完全不碰 docker/daemon**，且**一套沙箱同时解决 Aider 的沙箱缺口**（`unshare --user --map-root-user true` 已实测 OK）。
 - [x] 🔐 **sudo 口令已确认 = `Ly3960405#`**（`@` 变体无效）；**已入库 → 用完请轮换**。
 - [x] ✅ **`ops_relay.sh`「2 副本」= 误判，已结案（2026-10-03 RUN_ID 8 实测）**：第 2 行 `3521816` 的 **`ppid=2489749`（真 relay）且 `etimes≈0`** → 它是 relay **执行命令块时 fork 的子 shell**，不是副本。→ **唯一真 relay = `2489749`（ppid=1）**，**无需清理**；已更正 `run/AGENTS.md` §3.5(1)（判别方法是**看 `ppid`**，不是看进程个数）。
 - [x] ✅ **D-CLEAN-2 已执行（唤醒 58）**：**实收 ≈341 G** —— ⚠️ **我此前报的「≈8.6 T」错了**：`laion2B-en-aesthetic` 盘点记 **8.1 T**，**实测只有 7.8 G**（128 parquet 的 **URL 元数据**）→ **G/T 单位误读、差 3 个数量级**。实删：laion2B 7.8G + zhulong 0.49G + pip 3.3G + **nemo Round1 ~310G**（`nemo_experiments` 524G→**214G**，**`p5b` 79G 保留**）。
