@@ -11,13 +11,13 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        常态采集（第二轮已完成）
-已完成:       T1–T4 前期任务 ✅ · 首轮 smoke ✅（16 条）· 第二轮常态采集 ✅（15 条）
-当前动作:     第二轮常态采集落盘（追加 news/2026-10-03.md 15 条）+ 更新 SEEN/INDEX + 本轮直连可达性抽检
-下一步:       常态采集（WAITING=1，睡 30min）：逐类搜索→去重→追加当日摘要；GDELT 需限频（本轮 429，省额度未重试）
-本轮新增:     15 条（来源数：HN · TechCrunch · Anthropic · Ars Technica · Guardian · NYT · NBC · arXiv · MIT Tech Review · GitHub · Medium）
+PHASE:        T10「中文活源统一入口 fetch_cn_news()」✅ + T9「中文权威源真新闻」✅ + T8「§0.1 收口」✅（T1–T10 全部完成）
+已完成:       T1–T10 全部 ✅ · 首轮 smoke ✅ · 第二轮常态 ✅ · 第三轮·中文权威源 ✅
+当前动作:     ① T10 落地 `fetch_cn_news()`（MCP `cn_news` + CLI `--cn-news`）并实跑 ② 追加 news/2026-10-03.md「三、第三轮·中文权威源（T9）6 条」③ SEEN 增「类型」列（37 行）④ INDEX 改 news-only 计数 ⑤ 新增 news/FETCH_CN_NEWS.md
+下一步:       常态采集（WAITING=1，睡 30min）：逐类搜索→去重→追加当日摘要；**每轮先用 `cn_news` 补中文权威源（中文≥英文）**，英文走 `search_news`/`rss_latest`；GDELT 限频
+本轮新增:     真新闻 6 条（**中文 4**：央视网 2 + 中新网 2；**英文 2**：Ars Technica）；另原 31 条按 §0.1 收口 → 保留 news 9、移出非新闻 22（仅存 SEEN）
 阻塞:         无
-ERROR_COUNT:  1（历史：模型名 deepseek-v4-pro-fp4 不被网关支持 → 白睡一轮；已修。本轮 GDELT 429 属频控，已如实记录、未重试）
+ERROR_COUNT:  1（历史：模型名 deepseek-v4-pro-fp4 不被网关支持 → 白睡一轮；已修。GDELT 429 属频控，已如实记录、未重试）
 ```
 
 **选定方案（prep_api 结论）**
@@ -32,6 +32,29 @@ ERROR_COUNT:  1（历史：模型名 deepseek-v4-pro-fp4 不被网关支持 → 
 
 ---
 
+## 🧰 取数用法（T10：`cn_news` 中文活源统一入口 —— **CLI 是一等公民**）
+
+> ⚠️ **MCP 仍未装进 cline**（见下方运维问答）→ **一律用 CLI / Python 直调**。
+
+```bash
+# ① 中文权威源真新闻（中新网 + 联合国新闻·中文 + 央视网；内建 死源黑名单 + pubDate≤72h + Content-Type 校验）
+cd /home/liuyang/super_intelligence_2035/doc/personal-watch/run
+python3 news/mcp_web_search_free.py --cn-news --limit 30            # 人类可读（条目 + 各源新鲜度 + 丢弃原因）
+python3 news/mcp_web_search_free.py --cn-news --limit 30 --json     # JSON（含 meta：per_source）
+
+# ② 其它工具（Python 直调）
+python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as m; print(m.search_news('AI regulation',5))"
+python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as m; print(m.fetch_cn_news(30)['items'][:3])"
+```
+
+**返回样例（每条）**：
+```json
+{"title":"OpenAI披露澳大利亚又一政府机构遭入侵","source":"央视网","url":"https://news.cctv.com/2026/10/03/ARTI3jDXniV5jQDx59hwBf6y261003.shtml","published":"2026-10-03T01:14:00+00:00","lang":"zh","type":"news","snippet":"…"}
+```
+**实测（2026-10-03）**：6 活源全 `200` → 命中 30 条；丢弃 83 条（超龄 >72h）。**详见 `news/FETCH_CN_NEWS.md`**。
+
+---
+
 ## 🗣 运维问答（supervisor 提问 → 本线回答）
 
 > supervisor 可在任务书运维指令区「状态索取」写入问题；本区**先答该问题**再干活。
@@ -40,6 +63,12 @@ ERROR_COUNT:  1（历史：模型名 deepseek-v4-pro-fp4 不被网关支持 → 
   **A（本线 2026-10-03 实测）：未装。** 运行机上 `~/.cline/data/settings/` 只有 `cli-notices.json` + `providers.json`，**无 `cline_mcp_settings.json`**；`find ~/.cline -iname '*mcp*'` 无结果 → cline 会话**没有** `web_search`/`search_news`/`rss_latest` 这三个 MCP 工具（`web-search-free` 字样只出现在会话消息日志里，不在任何配置）。
   **对本线影响：无。** 本线取数改为**直接调用交付的 Python 模块**：`cd run/news && python3 -c "import mcp_web_search_free as m; print(m.search_news('AI regulation',5))"`（本轮 15 条即如此取得，链路实测可用）。
   **若要装 MCP（供 cline 工具化调用）**：把 `run/news/cline_mcp_config.json` 的 `mcpServers['web-search-free']` 并入运行机 cline 的 `cline_mcp_settings.json`（`command`=`python3`，`args`=`["/home/liuyang/super_intelligence_2035/doc/personal-watch/run/news/mcp_web_search_free.py"]`）；⚠️ 需 loop 重启 / cline 重载 MCP 才生效（是否重载由 supervisor 定）。
+
+- **Q（第 6 批 T10 · 2026-10-03）：`fetch_cn_news()`（中文活源统一入口）是否落地？确切怎么用？**
+  **A（本线 2026-10-03 实测）：已落地并实跑。** 实现于 `news/mcp_web_search_free.py`：`fetch_cn_news()` / `cn_news_report()` + **MCP 工具 `cn_news`** + **CLI `--cn-news`**（两种调用方式齐备）。
+  - **确切命令**：`cd run && python3 news/mcp_web_search_free.py --cn-news --limit 30`（人类可读）／ `… --cn-news --limit 30 --json`（JSON）。
+  - **实测结果**：**6 个活源全部 200** → **命中 30 条**（`lang=zh type=news`，按 `published` 倒序）；**丢弃 83 条**（超龄 >72h）。各源新鲜度：中新网×3 kept=30/30/30 · 联合国·中文 kept=18(drop 12) · 央视网 news_1 kept=80 · 央视网 tech_1 kept=9(drop 71)。
+  - **用法 + 返回结构 + 自测原始输出**：见 `news/FETCH_CN_NEWS.md`。
 
 ---
 
@@ -50,13 +79,19 @@ ERROR_COUNT:  1（历史：模型名 deepseek-v4-pro-fp4 不被网关支持 → 
 - **产物**：`news/<YYYY-MM-DD>.md`（当日摘要）· `news/SEEN.md`（去重台账）· `news/INDEX.md`（索引）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-03` 首轮 smoke ~ `2026-10-03` 第二轮常态
-- **累计收录**：`31` 条（首轮 16 + 第二轮 15）
+- **上次采集窗口**：`2026-10-03` 第二轮常态 ~ `2026-10-03` 第三轮·中文权威源
+- **累计收录**：`37` 条（**news 15**〔第一轮 3 + 第二轮 6 + 第三轮 6〕+ 非新闻 22〔仅存 `SEEN.md`〕）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-03** —— ✅ **第三轮：T10「中文活源统一入口」+ T9「中文权威源真新闻」+ T8「§0.1 收口」全部完成**。PHASE→常态采集。
+  - **T10 落地**：`news/mcp_web_search_free.py` 新增 `fetch_cn_news()` / `cn_news_report()` + **MCP 工具 `cn_news`** + **CLI `--cn-news`**；**实跑** `--cn-news --limit 30` → **6 活源全 200、命中 30 条、丢弃 83 条**（超龄 >72h）；文档 `news/FETCH_CN_NEWS.md`。
+  - **T9 产出**：`news/2026-10-03.md` 追加「三、第三轮 · 中文权威源」**真新闻 6 条（中文 4：央视网 2 + 中新网 2；英文 2：Ars Technica）** → **中文 ≥ 英文**（彻底纠正此前「中文权威新闻 = 0」）。
+  - **T8 收口**：原 31 条逐条打 `🏷 类型` → **保留 news 9**、移出非新闻 22（feature / opinion / analysis / paper / tool / discussion；依修订版**不设「非新闻附录」**）；`SEEN.md` **增「类型」列**（37 行）；`INDEX.md` 计数改 **news-only**（news 15 / 非新闻 22）。
+  - **关键方法**：**央视网 → 站内 JSONP 接口**（`news.cctv.com/2019/07/gaiban/cmsdatainterface/page/{news,tech}_1.jsonp`，自带 `focus_date`；页面为 JS 渲染，直抓 HTML 拿不到条目链接）；死源黑名单（新华 / 人民 / 央视 RSS）**永不请求**。
+  - 判据复核：本文件所有条目均带 标题 + 来源 + 发布日期 + 链接。**下一步常态采集（WAITING=1）。**
 - **2026-10-03** —— ✅ **第二轮常态采集完成（15 条）**。PHASE→常态采集。
   - 工具：免 key MCP `web-search-free`（`search_news`=HN/GDELT、`rss_latest`、`web_search`=CN-Bing/360）。
   - 落盘：`news/2026-10-03.md` 追加「第二轮」段（15 条，均带 标题+来源+日期+链接）· `SEEN.md` +15 行 · `INDEX.md` 当日 16→31、累计 31。

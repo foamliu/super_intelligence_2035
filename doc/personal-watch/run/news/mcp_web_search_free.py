@@ -27,9 +27,12 @@ news 线「前期任务 T2」交付物：在**无任何付费 API key**的前提
 """
 
 import html as _html
+import json
 import re
 import xml.etree.ElementTree as ET
-from typing import Any, Dict, List, Literal
+from datetime import datetime, timedelta, timezone
+from email.utils import parsedate_to_datetime
+from typing import Any, Dict, List, Literal, Tuple
 
 import requests
 
@@ -217,6 +220,222 @@ def rss_latest(url: str, count: int = 10) -> str:
         return f"[rss_latest] {url} 失败：{type(e).__name__}: {e}"
 
 
+# ──────────────────── T10：统一中文新闻入口 fetch_cn_news() ────────────────────
+#
+# 背景（2026-10-03 实测，见 news/API_COMPARISON.md 与 news/FETCH_CN_NEWS.md）：
+#   🔴 中文权威源里「接口 200」≠「有新闻」—— 死源照样返 200/300 条。
+#   本函数把**已实测活源**固化为统一入口，并内建 **死源黑名单 / pubDate≤72h / Content-Type 校验**。
+#
+# 🔴 死源黑名单（返 200 但内容不更新，**永不请求**；内容停更时间 = 2026-10-03 实测）：
+#   - 新华网   www.xinhuanet.com/{tech,politics,world}/news_*.xml   → 内容停在 2022
+#   - 新华英文 www.xinhuanet.com/english/rss/*                       → 停在 2017/2018
+#   - 人民网   www.people.com.cn/rss/*.xml                           → 停在 2021/2024
+#   - 央视RSS  www.cctv.com/program/rss/**/index.xml                 → 停在 2006/2007
+#   （要新华/人民/央视的实时内容 → 只能走"网页列表页 / 站内接口"并校验页面日期；
+#     央视网已实测可用**站内 JSONP 接口**，见下。本函数**绝不**请求上述死源。）
+DEAD_SOURCES: List[str] = [
+    "www.xinhuanet.com/{tech,politics,world}/news_*.xml（内容停在 2022）",
+    "www.xinhuanet.com/english/rss/*（停在 2017/2018）",
+    "www.people.com.cn/rss/*.xml（停在 2021/2024）",
+    "www.cctv.com/program/rss/*（停在 2006/2007）",
+]
+
+# ✅ 已实测活源白名单：(媒体名, URL, 类型)
+CN_LIVE_SOURCES: List[Tuple[str, str, str]] = [
+    ("中新网", "https://www.chinanews.com.cn/rss/scroll-news.xml", "rss"),   # 即时（当日持续更新）
+    ("中新网", "https://www.chinanews.com.cn/rss/world.xml", "rss"),         # 国际
+    ("中新网", "https://www.chinanews.com.cn/rss/finance.xml", "rss"),       # 财经
+    # ⚠️ URL 必须写死正确值：news.un.org/zh/rss 会 404 并返回 HTML（那才是"unable to parse"的真因）
+    ("联合国新闻", "https://news.un.org/feed/subscribe/zh/news/all/rss.xml", "rss"),
+    # 央视网 news.cctv.com 的 HTML 是 JS 渲染 → 走其**站内 JSONP 接口**（数据源，带 focus_date）
+    ("央视网", "https://news.cctv.com/2019/07/gaiban/cmsdatainterface/page/news_1.jsonp", "cctv"),
+    ("央视网", "https://news.cctv.com/2019/07/gaiban/cmsdatainterface/page/tech_1.jsonp", "cctv"),
+]
+
+CN_UA = "Mozilla/5.0 (compatible; PersonalWatch/1.0)"  # 可识别 UA（通用防御）
+CN_MAX_AGE_HOURS = 72                                  # 日报口径：只留 ≤72h
+RSS_CONTENT_TYPES = ("application/rss+xml", "text/xml", "application/xml", "application/atom+xml")
+
+
+def _iso(dt: datetime) -> str:
+    """转 ISO8601（UTC）。"""
+    return dt.astimezone(timezone.utc).isoformat()
+
+
+def _parse_rfc822(s: str):
+    """解析 RSS pubDate（RFC822）。失败 → None（该条**丢弃**，不用抓取时间冒充）。"""
+    try:
+        dt = parsedate_to_datetime((s or "").strip())
+        if dt is None:
+            return None
+        return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _parse_cctv_date(s: str):
+    """解析央视 focus_date（形如 '2026-10-03 11:32:17'，北京时间）。失败 → None。"""
+    try:
+        dt = datetime.strptime((s or "").strip(), "%Y-%m-%d %H:%M:%S")
+        return dt.replace(tzinfo=timezone(timedelta(hours=8)))  # 中国标准时间
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _fetch_rss(source: str, url: str, now: datetime, max_age_hours: float):
+    """抓单个 RSS 活源 → (items, meta)。失败**降级**（返回空 + 原因），不抛、不阻塞整轮。"""
+    meta: Dict[str, Any] = {"source": source, "url": url, "kind": "rss",
+                            "status": None, "content_type": None, "kept": 0, "dropped": []}
+    try:
+        r = requests.get(url, headers={"User-Agent": CN_UA, "Accept-Language": "zh-CN,zh;q=0.9"},
+                         timeout=TIMEOUT)
+    except Exception as e:  # noqa: BLE001
+        meta["status"] = "REQUEST_FAIL"
+        meta["dropped"].append(f"请求失败 {type(e).__name__}: {e}")
+        return [], meta
+    meta["status"] = r.status_code
+    ct = (r.headers.get("Content-Type") or "").lower()
+    meta["content_type"] = ct
+    # 🔴 Content-Type 校验：非 rss/xml（拿到 HTML / 404 页）→ **判源失败并记录**（不得静默当"无新增"）
+    if r.status_code != 200 or not any(k in ct for k in RSS_CONTENT_TYPES):
+        meta["dropped"].append(f"Content-Type/status 不符（status={r.status_code}, ct={ct!r}）→ 判源失败")
+        return [], meta
+    try:
+        root = ET.fromstring(r.content)
+    except Exception as e:  # noqa: BLE001
+        meta["dropped"].append(f"XML 解析失败 {type(e).__name__}: {e}")
+        return [], meta
+    items: List[Dict[str, Any]] = []
+    for it in root.findall(".//item"):
+        title = _clean(it.findtext("title", ""))
+        link = (it.findtext("link", "") or "").strip()
+        pub = (it.findtext("pubDate", "") or "").strip()
+        if not title or not link:
+            meta["dropped"].append(f"缺 title/link：{title[:24]!r}")
+            continue
+        dt = _parse_rfc822(pub)
+        if dt is None:
+            meta["dropped"].append(f"无/坏 pubDate（{pub[:31]!r}）：{title[:24]!r}")
+            continue
+        age_h = (now - dt).total_seconds() / 3600.0
+        if age_h > max_age_hours:
+            meta["dropped"].append(f"超龄 {age_h:.1f}h>{max_age_hours}h：{title[:24]!r}")
+            continue
+        items.append({"title": title, "source": source, "url": link,
+                      "published": _iso(dt), "lang": "zh", "type": "news",
+                      "snippet": _clean(it.findtext("description", ""))[:160]})
+    meta["kept"] = len(items)
+    return items, meta
+
+
+def _fetch_cctv(source: str, url: str, now: datetime, max_age_hours: float):
+    """抓央视网**站内 JSONP 接口**（news.cctv.com 页面为 JS 渲染，真实数据在此接口）。"""
+    meta: Dict[str, Any] = {"source": source, "url": url, "kind": "cctv-jsonp",
+                            "status": None, "content_type": None, "kept": 0, "dropped": []}
+    try:
+        r = requests.get(url, headers={"User-Agent": CN_UA}, timeout=TIMEOUT)
+    except Exception as e:  # noqa: BLE001
+        meta["status"] = "REQUEST_FAIL"
+        meta["dropped"].append(f"请求失败 {type(e).__name__}: {e}")
+        return [], meta
+    meta["status"] = r.status_code
+    meta["content_type"] = (r.headers.get("Content-Type") or "").lower()
+    if r.status_code != 200:
+        meta["dropped"].append(f"HTTP {r.status_code} → 判源失败")
+        return [], meta
+    # ⚠️ JSONP 接口的 Content-Type 是 text/html（非 xml）；此处改以「能否解析出 JSONP.data.list」作校验：
+    #    若拿到 HTML/404 页 → JSON 解析必失败 → 同样**判失败并记录**（等价满足 Content-Type 校验的目的）。
+    body = r.content.decode("utf-8", errors="replace")
+    m = re.search(r"\(([\s\S]*)\)\s*;?\s*$", body.strip())
+    if not m:
+        meta["dropped"].append("非 JSONP 结构（疑似拿到 HTML/404 页）→ 判源失败")
+        return [], meta
+    try:
+        lst = json.loads(m.group(1)).get("data", {}).get("list", [])
+    except Exception as e:  # noqa: BLE001
+        meta["dropped"].append(f"JSONP 解析失败 {type(e).__name__}: {e}")
+        return [], meta
+    items: List[Dict[str, Any]] = []
+    for rec in lst:
+        title = _clean(rec.get("title", ""))
+        link = (rec.get("url", "") or "").strip()
+        dt = _parse_cctv_date(rec.get("focus_date", ""))
+        if not title or not link:
+            meta["dropped"].append(f"缺 title/url：{title[:24]!r}")
+            continue
+        if dt is None:
+            meta["dropped"].append(f"无/坏 focus_date：{title[:24]!r}")
+            continue
+        age_h = (now - dt).total_seconds() / 3600.0
+        if age_h > max_age_hours:
+            meta["dropped"].append(f"超龄 {age_h:.1f}h>{max_age_hours}h：{title[:24]!r}")
+            continue
+        items.append({"title": title, "source": source, "url": link,
+                      "published": _iso(dt), "lang": "zh", "type": "news",
+                      "snippet": _clean(rec.get("brief", ""))[:160]})
+    meta["kept"] = len(items)
+    return items, meta
+
+
+def fetch_cn_news(limit: int = 30, max_age_hours: float = CN_MAX_AGE_HOURS) -> Dict[str, Any]:
+    """统一中文新闻入口（T10）：聚合已实测活源 → 去重 → 按 published 倒序。
+
+    返回 ``{"items": [...], "meta": {...}}``；每条 item =
+    ``{title, source, url, published(ISO8601), lang:"zh", type:"news"}``（+ snippet 便于落盘）。
+    单源失败**降级**：记录到 meta.per_source，不影响其它源。
+    """
+    now = datetime.now(timezone.utc)
+    items: List[Dict[str, Any]] = []
+    metas: List[Dict[str, Any]] = []
+    seen = set()
+    for source, url, kind in CN_LIVE_SOURCES:
+        fn = _fetch_rss if kind == "rss" else _fetch_cctv
+        try:
+            got, meta = fn(source, url, now, max_age_hours)
+        except Exception as e:  # noqa: BLE001  # 兜底：整轮不得因一个源卡死
+            got, meta = [], {"source": source, "url": url, "kind": kind, "status": "EXC",
+                             "content_type": None, "kept": 0,
+                             "dropped": [f"{type(e).__name__}: {e}"]}
+        metas.append(meta)
+        for it in got:
+            key = it["url"].split("?")[0]
+            if key in seen:
+                continue
+            seen.add(key)
+            items.append(it)
+    items.sort(key=lambda x: x["published"], reverse=True)
+    items = items[:limit]
+    return {"items": items,
+            "meta": {"generated": _iso(now), "per_source": metas,
+                     "dropped_total": sum(len(m["dropped"]) for m in metas)}}
+
+
+def cn_news_report(limit: int = 30, max_age_hours: float = CN_MAX_AGE_HOURS,
+                   as_json: bool = False) -> str:
+    """``fetch_cn_news`` 的报告（人类可读 / JSON）：条目 + 各源新鲜度 + 丢弃原因。"""
+    res = fetch_cn_news(limit, max_age_hours)
+    if as_json:
+        return json.dumps(res, ensure_ascii=False, indent=2)
+    out = [f"[cn_news] 生成 {res['meta']['generated']} ｜ 新鲜度窗口 ≤{max_age_hours}h ｜ 活源 {len(CN_LIVE_SOURCES)} 个",
+           f"命中 {len(res['items'])} 条（按发布时间倒序）：", ""]
+    for i, it in enumerate(res["items"], 1):
+        out.append(f"{i}. {it['title']}")
+        out.append(f"   🔗 {it['url']}")
+        out.append(f"   🏷 来源：{it['source']} ｜ 发布：{it['published']} ｜ lang={it['lang']} type={it['type']}")
+        if it.get("snippet"):
+            out.append(f"   摘要：{it['snippet']}")
+        out.append("")
+    out.append("—— 各源状态 / 新鲜度 / 丢弃 ——")
+    for m in res["meta"]["per_source"]:
+        out.append(f"• {m['source']} <{m['kind']}> status={m['status']} ct={m['content_type']!r} "
+                   f"kept={m['kept']} dropped={len(m['dropped'])}")
+        for d in m["dropped"][:6]:
+            out.append(f"    - {d}")
+    out.append(f"\n丢弃合计：{res['meta']['dropped_total']} 条（原因见上）")
+    out.append("死源黑名单（永不请求）：" + " ；".join(DEAD_SOURCES))
+    return "\n".join(out)
+
+
 # ──────────────────────────── MCP Server（mcp 1.x/2.x 通用装饰器 API）────────────────────────────
 mcp = _MCPServer("web-search-free")
 
@@ -247,5 +466,33 @@ def _tool_rss_latest(url: str, count: int = 10) -> str:
     return rss_latest(url, count)
 
 
+@mcp.tool(name="cn_news")
+def _tool_cn_news(limit: int = 30, max_age_hours: float = CN_MAX_AGE_HOURS) -> str:
+    """统一中文新闻入口（T10）：中新网 RSS + 联合国新闻·中文 RSS + 央视网站内接口（均已实测活源）。
+
+    内建死源黑名单 + pubDate≤72h 校验 + Content-Type 校验；单源失败降级不阻塞整轮。
+    """
+    return cn_news_report(limit, max_age_hours)
+
+
+# ──────────────────── CLI（T10：MCP 未装进 cline 时，直调是"一等公民"）────────────────────
+def _cli_cn_news(argv: List[str]) -> int:
+    import argparse
+    p = argparse.ArgumentParser(
+        prog="mcp_web_search_free.py --cn-news",
+        description="统一中文新闻入口（T10）：聚合 中新网 / 联合国新闻·中文 / 央视网 已实测活源")
+    p.add_argument("--cn-news", action="store_true", help="抓取中文活源新闻（本入口）")
+    p.add_argument("--limit", type=int, default=30, help="最多返回条数（默认 30）")
+    p.add_argument("--max-age-hours", type=float, default=CN_MAX_AGE_HOURS,
+                   help="新鲜度窗口（小时，默认 72）")
+    p.add_argument("--json", action="store_true", help="输出 JSON（含 meta：各源新鲜度 / 丢弃原因）")
+    a = p.parse_args(argv)
+    print(cn_news_report(a.limit, a.max_age_hours, a.json))
+    return 0
+
+
 if __name__ == "__main__":
-    mcp.run()  # 默认 stdio 传输
+    import sys as _sys
+    if "--cn-news" in _sys.argv:       # CLI 直调模式
+        raise SystemExit(_cli_cn_news(_sys.argv[1:]))
+    mcp.run()                          # 默认 stdio 传输（MCP）
