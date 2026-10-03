@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 24 -->
+<!-- RUN_ID: 25 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,55 @@
 
 ---
 
-## RUN_ID 24 — 🔬 **对撞：同一 key 下 `.12` 的 cline 能跑、`.29` 不能 —— 差在哪**（**只读**）（**本块最新，优先执行**）
+## RUN_ID 25 — 🔎 **最后一击：cline 是否在 10-03 22:10 前后被自动升级**（**只读**）（**本块最新，优先执行**）
+
+**RUN_ID 24 唯一实质差异（2026-10-04 07:54:35）**：
+| 项 | `.29` | `.12` |
+|:--|:--|:--|
+| **clineVersion** | **4.1.21**（较新） | **4.0.8**（较旧） |
+| actModeOpenAiModelId | `deepseek-v4-flash` | `deepseek-v4-pro-fp4` |
+| provider / openAiBaseUrl | `openai` / 网关 | `openai` / 网关（**一致**） |
+
+⇒ **假说：`.29` 的 cline 在 10-03 22:10 前后被自动升级到 4.1.21，新版与我们的网关配置不兼容** → 这正好是停摆起点。
+
+**本块要证/否证的**：
+1. **`.29` cline 安装目录的 mtime** —— 若 ≈ `2026-10-03 22:xx` → **升级坐实**
+2. **`.12` 上把同一 smoke 跑通**（上次因 ssh 的 PATH 缺 `bun` 而无效，本次显式加 `$HOME/.bun/bin`）
+3. 两机 `--version` 并排
+
+🚫 **只读**：不安装、不降级、不重启任何 loop。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+
+echo; echo "=== 1. [.29] cline 安装痕迹（找自动升级时间）==="
+ls -l --time-style=long-iso "$HOME/.bun/bin/cline" 2>/dev/null
+readlink -f "$HOME/.bun/bin/cline" 2>/dev/null | sed 's/^/   -> /'
+find "$HOME/.bun" -maxdepth 7 -name 'package.json' -path '*cline*' -printf '   %TY-%Tm-%Td %TH:%TM  %p\n' 2>/dev/null | head -6
+find "$HOME/.bun/install/global" -maxdepth 3 -printf '   %TY-%Tm-%Td %TH:%TM  %p\n' 2>/dev/null | head -8
+echo -n "   .29 cline --version: "; "$HOME/.bun/bin/cline" --version 2>&1 | head -1
+
+echo; echo "=== 2. [.12] 对照 ==="
+timeout 35 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 '
+ls -l --time-style=long-iso $HOME/.bun/bin/cline 2>/dev/null | sed "s/^/   /"
+find $HOME/.bun -maxdepth 7 -name package.json -path "*cline*" -printf "   %TY-%Tm-%Td %TH:%TM  %p\n" 2>/dev/null | head -6
+export PATH=$HOME/.bun/bin:$PATH
+echo -n "   .12 cline --version: "; cline --version 2>&1 | head -1' 2>&1 | cut -c1-165
+
+echo; echo "=== 3. [.12] 同一 smoke（显式补 PATH）—— 预期 OK ==="
+timeout 70 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 '
+export PATH=$HOME/.bun/bin:$PATH; cd /tmp
+env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u OPENAI_API_KEY \
+  timeout 50 cline -c /tmp -m deepseek-v4-pro-fp4 --auto-approve true -t 35 "reply with exactly OK" 2>&1 | head -3' 2>&1 | cut -c1-155
+
+echo; echo "=== 4. 现状（不动）==="
+pgrep -af 'bash baize_(pretrain|harness)_loop\.sh' | cut -c1-90
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 24**（对撞测试，**✅ 已执行 07:54:35**）为 ```text。
+
+## RUN_ID 24 — 🔬 **对撞：同一 key 下 `.12` 的 cline 能跑、`.29` 不能 —— 差在哪**（✅ 已执行，本块不再运行）
 
 **现状（2026-10-04 07:52）**：
 - ❌ `.29`：**任何 env 组合**（剥/不剥 proxy、剥/放 OPENAI_API_KEY、v1/v2/v3）→ cline 一律 **3 秒内 `error: Forbidden`**
@@ -47,7 +95,7 @@
 | 3 | **在 `.12` 上跑同一 smoke**（经 ssh） | 若 OK → 坐实"host-local" |
 | 4 | 在 `.29` 用 **全新 `--data-dir`** 跑 smoke | 若 OK → **`.29` 的 `~/.cline/data` 坏了**（可隔离修复） |
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; cd /tmp
 _k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" | head -1)"
