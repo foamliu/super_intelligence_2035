@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 12 -->
+<!-- RUN_ID: 13 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,49 @@
 
 ---
 
-## RUN_ID 12 — 🎯 **env 矩阵 smoke：找出让 cline 变绿的组合**（**纯只读**）（**本块最新，优先执行**）
+## RUN_ID 13 — 🎯 **对 `.29` vs `.12` 的 `globalState.json` 字段 + 直连网关验证**（**纯只读**）（**本块最新，优先执行**）
+
+**RUN_ID 12 结论（2026-10-04 07:21）—— 已排除的假设**：
+- ❌ **不是 proxy**（`env -u *_PROXY` 仍 Forbidden；虽然 `via-proxy -> 503` / `no-proxy -> 200`）
+- ❌ **不是 `OPENAI_API_URL`/`API_TYPE`/`OPENAI_API_KEY`**（"完全模仿 .12"的 NO_ALL 变体仍 Forbidden）
+- ✅ `-k` 确为 API key（`-k, --key <api-key>`）
+- 🔑 **两个 host 的 `secrets.json` 都是 96 B、同一个 key**；但 **`globalState.json` 不同**：
+  `.29` = 2765 B / **mtime 2026-09-29 19:31**（被人改过）vs `.12` = 3122 B / **2026-09-08 11:26**
+- 🎯 **本块要判定**：`.29` 的 **`openAiBaseUrl` / `actModeApiProvider` / `actModeOpenAiModelId`** 是否被改坏（→ 这个假设能解释"为什么 unset 环境变量没用"）
+
+🚫 **纯只读** —— 不 kill / 不重启 / **不改文件**；
+> ⚠️ **严禁打印任何 key 明文**（RUN_ID 11 已泄一次：`OPENAI_API_KEY` 明文进了 outbox，**请尽快轮换**）。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T %Z'
+C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; cd /tmp
+
+echo; echo "=== 1. [.29] globalState.json 关键字段（无 key）==="
+python3 -c "import json,pathlib;d=json.load(open(pathlib.Path.home()/'.cline/data/globalState.json'));[print('   ',k,'=',repr(d.get(k))) for k in ('actModeApiProvider','planModeApiProvider','actModeOpenAiModelId','planModeOpenAiModelId','openAiBaseUrl')]" 2>&1 | cut -c1-180
+
+echo; echo "=== 2. [.12] 同样字段（对照）==="
+timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'echo "   HOME=$HOME"; hostname; python3 -c "import json,pathlib;d=json.load(open(pathlib.Path.home()+\"/.cline/data/globalState.json\"));[print(\"   \",k,\"=\",repr(d.get(k))) for k in (\"actModeApiProvider\",\"planModeApiProvider\",\"actModeOpenAiModelId\",\"planModeOpenAiModelId\",\"openAiBaseUrl\")]"' 2>&1 | cut -c1-180 || echo "ssh .12 FAILED"
+
+echo; echo "=== 3. [.29] cline 是否支持显式 base-url / 其它 key 参数 ==="
+"$C" --help 2>&1 | grep -inE 'base|url|key|provider' | head -12 | cut -c1-150
+
+echo; echo "=== 4. [.29] 直连网关：models（带 key）==="
+timeout 20 curl -s -o /tmp/_m2.json -w '   models  http=%{http_code}\n' -H "Authorization: Bearer $OPENAI_API_KEY" http://agi-gateway.cxmt.com/v1/models; head -c 300 /tmp/_m2.json; echo
+
+echo; echo "=== 5. [.29] 直连网关：chat/completions（关键！）==="
+timeout 30 curl -s -o /tmp/_c.json -w '   chat    http=%{http_code}\n' -H "Authorization: Bearer $OPENAI_API_KEY" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"hi"}],"max_tokens":5}' http://agi-gateway.cxmt.com/v1/chat/completions; head -c 300 /tmp/_c.json; echo
+
+echo; echo "=== 6. [.29] 用 -k 显式传 key 再 smoke 一次（对照 RUN_ID 10 的结论）==="
+env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY \
+  timeout 90 "$C" -c /tmp -m "$M" -k "$OPENAI_API_KEY" --auto-approve true -t 45 "reply OK" 2>&1 | head -5 | cut -c1-170
+
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 12**（env 矩阵，**✅ 已执行 07:21:35**）为 ```text。
+
+## RUN_ID 12 — 🎯 **env 矩阵 smoke：找出让 cline 变绿的组合**（✅ 已执行，本块不再运行）
 
 **RUN_ID 11 结论（2026-10-04 07:18）**：
 - ✅ **`no-proxy -> 200`** vs **`via-proxy -> 503`** → **代理确实打不通内网网关**（但只去 proxy **没修好** cline，仍 Forbidden）
@@ -42,7 +84,7 @@
 🚫 **纯只读** —— 不 kill / 不重启 / 不写文件；只在 `/tmp` 做 smoke。
 > ⚠️ **请务必不要打印任何 key 明文**（RUN_ID 11 的脱敏 sed 失效了，`OPENAI_API_KEY` 已被明文写入 `outbox.md`）。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T %Z'
 CLINE=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; T='reply with exactly OK'; cd /tmp
 "$CLINE" --version 2>&1 | head -2
