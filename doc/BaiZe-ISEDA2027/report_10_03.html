@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 工作汇报 · 2026-10-03</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr;} }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#0d5c22; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6a4a00; }
+  .danger { background:#fff0f0; border:1px solid #ffc9c9; border-left:4px solid var(--bad); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#8a1c1c; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe 工作汇报 · 2026-10-03</h1>
+  <div class="sub">运维下发 7 项处置全落地 · P-5b 过半（54.08%）· 视觉线 R9 收敛 + R10 补模型规模轴 · harness 线 Docker 解锁</div>
+  <div class="meta">
+    <span>📅 2026-10-03</span>
+    <span>📝 <code>foamliu/super_intelligence_2035</code> @ <code>main</code></span>
+    <span>📈 当日提交 <b>≈40</b> 个</span>
+    <span>🎯 投稿截止 ≈ 2027-02-01（余 <b>≈121 天</b>）</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <strong>今天的主线：运维一次性下发 7 项处置，全部转化为「分析结论 + 任务书指令」并入库。</strong>
+  <ol style="margin:10px 0 0">
+    <li><b>预训练</b>：把「MBS 太小」与「FP8 拿不到收益」<b>合并成一个问题</b> —— 新增 <b>P-9</b>（MBS×精度联合扫描），并给出机制：<b>FP8 要 <code>M≳16K</code> 才转正，而 <code>M≈MBS×seq</code></b>。</li>
+    <li><b>视觉</b>：指出 R9 的 scaling law <b>只扫了数据侧、漏了模型规模轴</b> → 新增 <b>R10</b>（回收三档塔 ckpt + 拟合 <b>(N,M) 二维</b> scaling）。</li>
+    <li><b>数据</b>：新增 <b>D-CLEAN</b>（磁盘清理机会盘点，含他人久不用目录）—— <b>只盘点、不删除</b>。</li>
+    <li><b>harness</b>：Docker 阻塞 <b>解锁</b>（运维提供 sudo 口令）+ 交付 <b>coding-agent 评测调研</b>（SWE-bench 之外）。</li>
+    <li><b>报告</b>：本文件。</li>
+  </ol>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi"><div class="v">54.08%</div><div class="l">P-5b 长跑（iter 2580/4771）· loss 2.1107 · 健康</div></div>
+  <div class="kpi"><div class="v">P-9 已下发</div><div class="l">MBS{1,2,4,8} × FP8 复评</div></div>
+  <div class="kpi"><div class="v">R9 ✅ / R10 已下发</div><div class="l">lp 峰值 7.70% · 补模型规模轴</div></div>
+  <div class="kpi"><div class="v">7 份</div><div class="l">今日运维处置全落地</div></div>
+</div>
+
+<div class="toc">
+  <strong>目录</strong>
+  <ol>
+    <li><a href="#s1">五条线状态一览</a></li>
+    <li><a href="#s2">运维 7 项处置 → 落地对照</a></li>
+    <li><a href="#s3">预训练线：P-9（MBS × FP8 联合优化）</a></li>
+    <li><a href="#s4">视觉线：R9 收敛 + R10 模型规模轴</a></li>
+    <li><a href="#s5">数据线：下载巡检 + D-CLEAN 磁盘盘点</a></li>
+    <li><a href="#s6">harness 线：Docker 解锁 + H-C 评测调研</a></li>
+    <li><a href="#s7">关键数字</a></li>
+    <li><a href="#s8">需要运维决策 / 注意</a></li>
+    <li><a href="#s9">下一步排期</a></li>
+  </ol>
+</div>
+
+<h2 class="sec" id="s1"><span class="no">1</span>五条线状态一览</h2>
+
+<table>
+  <tr><th>线</th><th>今日进展</th><th>当前状态</th><th>下一步</th></tr>
+  <tr>
+    <td><b>pretrain</b><br><code>.29</code></td>
+    <td>P-5b 长跑继续（20+ 次健康巡检）；<b>10.5B token 里程碑记录</b>；运维新增 <b>P-9</b></td>
+    <td><span class="badge b-ok">🔄 P-5b 54.08%</span> · 健康（loss 2.1107）</td>
+    <td>P-5b 跑完 → <b>P-9</b>（MBS×FP8）→ P-6② → P-8（暂缓）</td>
+  </tr>
+  <tr>
+    <td><b>vision</b><br><code>.12</code></td>
+    <td><b>R9 全链收敛</b>（训练+11 ckpt IN-1k+scaling 外推+报告）；运维新增 <b>R10</b>（模型规模轴）</td>
+    <td><span class="badge b-ok">⏹ R9 converged</span> · 长睡待派</td>
+    <td>R10①：回收三档塔 ckpt 的 IN-1k → 拟合 (N,M) 二维</td>
+  </tr>
+  <tr>
+    <td><b>data</b><br><code>.12</code></td>
+    <td>三路下载巡检（base-en 1810/2048 · gpic 1120/8000 · SFT-2605 一致）；运维新增 <b>D-CLEAN</b></td>
+    <td><span class="badge b-warn">🔄 下载中</span> · 真推进无假活</td>
+    <td>下载续跑 + <b>D-CLEAN</b> 磁盘盘点（只报不删）</td>
+  </tr>
+  <tr>
+    <td><b>harness</b><br><code>.29</code></td>
+    <td>H-B 5/5、H-A 可行性核查完成；<b>今日解锁 Docker</b> + 交付 <b>评测调研</b></td>
+    <td><span class="badge b-info">🔓 阻塞解除</span> · 可进入实跑</td>
+    <td>docker 验证 → Aider Polyglot 对照线 → SWE-bench 试点</td>
+  </tr>
+  <tr>
+    <td><b>ops relay</b></td>
+    <td>RUN_ID 保持 6（无新下发）；单副本值守</td>
+    <td><span class="badge b-ok">✅ 空闲待命</span></td>
+    <td>可随时派 RUN_ID 7</td>
+  </tr>
+</table>
+
+<h2 class="sec" id="s2"><span class="no">2</span>运维 7 项处置 → 落地对照</h2>
+
+<table>
+  <tr><th>#</th><th>运维提出问题</th><th>结论 / 动作</th><th>落地位置</th></tr>
+  <tr>
+    <td><b>1</b></td>
+    <td><b>MBS 1→2 能否提速？</b>（8 卡各 ~39GB，显存余量过半）</td>
+    <td>✅ <b>值得测，且与 FP8 绑定</b>：<code>MBS=1</code> 时每步 <b>128 次 grad-accum</b>、每 GEMM <code>M=4094</code>（访存受限）→ 抬 MBS 同时<b>减少累积开销</b>并<b>放大 M</b>。→ 新增 <b>P-9a</b> 扫 <code>MBS∈{1,2,4,8}</code></td>
+    <td><code>BAIZE_PRETRAIN_2B_TASK.md</code> 运维指令区 · P-9</td>
+  </tr>
+  <tr>
+    <td><b>2</b></td>
+    <td><b>FP8</b>：Xmodel-2.5 用 <b>Megatron-LM + TransformerEngine</b> 拿到 +30%，与 P-4R 倒挂冲突</td>
+    <td>✅ <b>复评并给机制</b>：P-4R 的 <code>s=0.65</code> 是 <code>M=4094</code> 下测的；<b>FP8 要 <code>M≳16K</code> 才转正</b>，<b>MBS=4 才 ≈ 交叉点</b> → <b>P-9b</b> 在最大可行 MBS 下 bf16 vs FP8 对照</td>
+    <td><code>BAIZE_PRETRAIN_2B_TASK.md</code> · P-9b</td>
+  </tr>
+  <tr>
+    <td><b>3</b></td>
+    <td><b>磁盘清理机会</b>（含他人久不用目录）</td>
+    <td>✅ 新增 <b>D-CLEAN</b>：<code>df</code> 大盘 + 分级候选（🟢可清/🟡需确认/🔴不可动）+ 他人目录只读排查；<b>只盘点不删除</b>，产出 <code>DISK_CLEANUP_INVENTORY.md</code></td>
+    <td><code>BAIZE_DATA_TASK.md</code> · D-CLEAN</td>
+  </tr>
+  <tr>
+    <td><b>4</b></td>
+    <td><b>harness</b>：给了 sudo 组口令</td>
+    <td>✅ 解锁 <b>Docker 阻塞</b>：任务书给出 <code>usermod -aG docker</code> 命令 + 验证步骤；运行主机仍避让训练</td>
+    <td><code>BAIZE_HARNESS_TASK.md</code> ①</td>
+  </tr>
+  <tr>
+    <td><b>5</b></td>
+    <td><b>找 SWE-bench 之外权威 coding-agent 评测</b></td>
+    <td>✅ 交付 <code>CODE_AGENT_BENCHMARKS_SURVEY.md</code>：SWE-bench 家族 / <b>Aider Polyglot</b> / <b>Terminal-Bench</b> / LiveCodeBench / BigCodeBench（含来源与选型）→ 新增 <b>H-C</b></td>
+    <td><code>run/harness/CODE_AGENT_BENCHMARKS_SURVEY.md</code> + harness 任务书 ③</td>
+  </tr>
+  <tr>
+    <td><b>6</b></td>
+    <td><b>vision scaling law 只做了数据侧，没做模型规模</b></td>
+    <td>✅ 新增 <b>R10</b>：回收阶段一 <b>三档塔</b>（w512=126.8M / w768=284.5M / w1024=505.0M）周期 ckpt 的 IN-1k → 拟合 <b>(N,M) 二维 scaling</b></td>
+    <td><code>BAIZE_VISION_TASK.md</code> · R10</td>
+  </tr>
+  <tr>
+    <td><b>7</b></td>
+    <td><b>出今日进展报告</b> <code>report_MM_DD.html</code></td>
+    <td>✅ 本文件 <code>report_10_03.html</code></td>
+    <td>根目录</td>
+  </tr>
+</table>
+
+
+<h2 class="sec" id="s3"><span class="no">3</span>预训练线：P-9（MBS × FP8 联合优化）</h2>
+
+<h3>3.1 P-5b 长跑（进行中，健康）</h3>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>进度</td><td><b>iter 2580 / 4771（54.08%）</b> · lm loss <b>2.110706</b> · 健康（skip=0/nan=0）</td></tr>
+  <tr><td>已记里程碑</td><td>655M / 1.3B / 2.6B / 5.2B / <b>10.5B</b> token（loss 依次 5.367 / 3.988 / 2.9246 / 2.3605 / <b>2.1189</b>）</td></tr>
+  <tr><td>吞吐</td><td>~140–143K tok/s（GBS=1024 × seq4094 = 4.192M tok/步）· 8 卡各 ~39GB</td></tr>
+  <tr><td>ETA</td><td>final@4771（20B）≈ 10-04 凌晨 → 之后 P-6②「能力 vs token」</td></tr>
+</table>
+
+<h3>3.2 为什么「MBS 小」和「FP8 没收益」是同一个问题</h3>
+<div class="card">
+  <p><b>现状</b>：<code>--micro-batch-size 1</code>，<code>GBS=1024</code>，<code>DP=8</code> → 每步 <b>1024 ÷ 8 ÷ 1 = 128 次 grad-accum</b>；显存只用 <b>~39/80 GB</b>。</p>
+  <p><b>关键量：每 GEMM 的 M ≈ MBS × seq</b>（seq=4094）：</p>
+  <table>
+    <tr><th>MBS</th><th>每 GEMM 的 M</th><th>FP8 单算子 s（bf16/fp8）</th><th>预期</th></tr>
+    <tr><td>1</td><td>~4,094</td><td><b>0.65</b>（P-4R 实测，倒挂）</td><td>FP8 反而慢 ~35%</td></tr>
+    <tr><td>2</td><td>~8,188</td><td>&lt; 1（仍 &lt; 交叉点）</td><td>FP8 预计仍倒挂</td></tr>
+    <tr><td><b>4</b></td><td>~16,376</td><td><b>≈ 1.0（交叉点）</b></td><td>FP8 开始打平</td></tr>
+    <tr><td>8</td><td>~32,768</td><td><b>→1.34（饱和区）</b>（与 Xmodel-2.5 反推一致）</td><td>FP8 才有真收益</td></tr>
+  </table>
+  <p>→ <b>抬 MBS 有两个好处</b>：① 减少 grad-accum 次数（少 128→64→32→16）；② 把 M 推进到 FP8 的收益区。<b>这就是 P-9 把两者捆在一起测的原因。</b></p>
+</div>
+
+<h3>3.3 P-9 任务（已下发，排在 P-5b 之后、P-6② 之前）</h3>
+<table>
+  <tr><th>项</th><th>内容</th><th>产出</th></tr>
+  <tr><td><b>P-9a</b></td><td>MBS ∈ {1,2,4,8} × 短测 ~60 步（bf16，不存 ckpt）→ 记 <b>s/iter、tok/s、峰值显存、OOM</b></td><td>「MBS → 吞吐/显存」表 + 最大可行 MBS</td></tr>
+  <tr><td><b>P-9b</b></td><td>在最大可行 MBS 下，<b>Megatron-LM + TransformerEngine</b> 做 <b>bf16 vs FP8</b> 对照，报端到端 <code>s=t_bf16/t_fp8</code></td><td>FP8 生产口径真实收益（能否复现 +30%）</td></tr>
+  <tr><td><b>P-9c</b></td><td>给出 <b>P-8 推荐配置</b>（MBS/精度/预期 tok/s）+ 代价</td><td>回填 <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code></td></tr>
+</table>
+<div class="note">
+  <b>纪律</b>：P-9 只是<b>吞吐基准</b>，<b>不改 P-5b 正在跑的 recipe</b>（改了会让那条 20B 曲线断裂）；结论用于 <b>P-8</b>。
+  若 FP8 仍倒挂 → <b>如实写「本模型/本 seq 下不可行」</b>，不得为迎合结论调参。
+</div>
+
+<h2 class="sec" id="s4"><span class="no">4</span>视觉线：R9 收敛 + R10 模型规模轴</h2>
+
+<h3>4.1 R9 已收敛（数据侧 scaling）</h3>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>阶段二</td><td>w512（126.8M）× 108k 步 = 55.3M 样本完成；final loss_ema 3.7073；无坍缩</td></tr>
+  <tr><td>IN-1k 峰值</td><td><b>lp 7.70%@51.2M 样本</b>（zs top-1 3.59% / top-5 11.47%）</td></tr>
+  <tr><td>scaling 拟合</td><td>幂律 <code>acc = 0.251 − 0.864·N^−0.090</code>（R²≈0.94）→ <b>渐近 25.1%</b>；斜率 +4 lp 点 / 10× 数据</td></tr>
+  <tr><td>结论</td><td>此「从零 + 对比学习」路线在本地 53M 上限内<b>够不到 20%+</b>（瓶颈在数据量与目标函数）</td></tr>
+</table>
+
+<h3>4.2 R10：补上被漏掉的「模型规模轴」（已下发）</h3>
+<div class="danger">
+  <b>运维指出的缺口</b>：R9 的 scaling law <b>只扫了数据侧 N</b>（固定 w512），<b>模型规模 M 轴几乎没做</b>。
+  但阶段一其实已跑过 <b>三档塔宽</b>：<b>w512=126.8M · w768=284.5M · w1024=505.0M</b> —— 这些 ckpt 仍在盘上，可<b>近零成本回收</b>。
+</div>
+<table>
+  <tr><th>项</th><th>内容</th><th>成本</th></tr>
+  <tr><td><b>R10-①</b></td><td>回收三档塔 × step{10k,20k,30k} 的 IN-1k = <b>9 点</b>（+各臂 final），与 R9 阶段二 w512 的 11 点合并</td><td>~0.7h GPU</td></tr>
+  <tr><td><b>R10-②</b></td><td>拟合 <b>(N, M) 二维</b> scaling：<code>acc = a + b·log10(N) + c·log10(M) + d·log10(N)log10(M)</code>（或 Chinchilla 式）</td><td>纯 CPU</td></tr>
+  <tr><td><b>R10-③</b></td><td>（条件触发）若 M 轴太稀 → 补 w384（≈71M）/ w640 一两臂</td><td>~数 GPU·h</td></tr>
+</table>
+<p>目的：回答「<b>给定算力预算，塔宽 × 数据量怎么分配最优</b>」，避免「只扫数据侧」的审稿人质疑。</p>
+
+
+<h2 class="sec" id="s5"><span class="no">5</span>数据线：下载巡检 + D-CLEAN 磁盘盘点</h2>
+
+<h3>5.1 三路下载（真推进，无假活）</h3>
+<table>
+  <tr><th>数据</th><th>进度</th><th>状态</th></tr>
+  <tr><td>Ultra-FineWeb base-en</td><td><b>1810 / 2048</b> parquet（~2.2T）</td><td>续下（约 1 天）</td></tr>
+  <tr><td>GPIC（视觉）</td><td>train <b>1120 / 8000</b> + test 128/128 ✓</td><td>续下（长周期）</td></tr>
+  <tr><td>UltraData-SFT-2605</td><td><b>1504/1504 = 318.99GB</b>（与 HF 官方清单逐字节一致）</td><td>✅ 就绪</td></tr>
+  <tr><td>LLaVA 85M</td><td>已停（7629 parquet / 26T 冻结未删）</td><td>⏸ 按要求停</td></tr>
+</table>
+
+<h3>5.2 D-CLEAN：磁盘清理机会盘点（新增，只报不删）</h3>
+<div class="note">
+  <b>背景</b>：<code>/nas_train</code> 已用 ~85%（仅剩 ~31T）。运维要求盘点可回收空间，<b>包括他人久已不用的目录</b>。
+  🚫 <b>本任务只盘点、不删除</b> —— 产出候选清单交运维拍板；红线（EDA-Eval 隔离区 / 正在用的下载与训练目标）绝不可动。
+</div>
+<table>
+  <tr><th>等级</th><th>候选</th></tr>
+  <tr><td>🟢 明确可清</td><td>HF cache 重复 blob、pip/conda 缓存、<code>/tmp</code> 大文件、core dump、旧 log</td></tr>
+  <tr><td>🟡 需确认</td><td>旧 checkpoint（Nemo / vision R*）、下载中断残留（<code>.incomplete</code>）、重复副本<br>❗已知 base-en 旧副本 <b>1.67TB 已被复用</b> → <b>不要删</b></td></tr>
+  <tr><td>🔴 不可动</td><td><code>p5b_l3/*</code>、base/gpic 下载目标、SFT-2605、L3/code/math、GPIC、en500k/eval5k、EDA-Eval 隔离区</td></tr>
+</table>
+<p>产出：<code>run/DISK_CLEANUP_INVENTORY.md</code>（含 <b>owner / 大小 / mtime / 安全等级 / 判据 / 建议</b> + 可回收合计）。</p>
+
+<h2 class="sec" id="s6"><span class="no">6</span>harness 线：Docker 解锁 + H-C 评测调研</h2>
+
+<h3>6.1 Docker 阻塞解除（今日）</h3>
+<div class="ok-box">
+  运维确认 <code>app.e0031982</code> 在 <b>sudo 组</b>并提供口令 → 已把 <code>usermod -aG docker app.e0031982</code> 与验证步骤写进任务书。
+  H-A 从「阻塞待拍板」变为<b>可进入实跑</b>。运行主机仍须<b>避让 .29 训练</b>（先 ≤5 条 smoke，再 20–30 条 django+sympy 试点）。
+</div>
+
+<h3>6.2 H-C：SWE-bench 之外的权威 coding-agent 评测（已交付调研）</h3>
+<table>
+  <tr><th>优先级</th><th>评测</th><th>测什么 / 特点</th><th>需 Docker</th></tr>
+  <tr><td>P0</td><td><b>SWE-bench / Verified / Lite</b></td><td>真实 GitHub issue→patch，行业事实标准（Verified=500 人工校验；Lite=300）</td><td>✅</td></tr>
+  <tr><td>P1</td><td><b>Aider Polyglot</b></td><td>225 道 Exercism，6 语言，考「编辑格式 + 多轮修复」；<b>基建最轻（git+python）</b></td><td>❌</td></tr>
+  <tr><td>P1</td><td><b>Terminal-Bench</b></td><td>终端/CLI agent 任务（Stanford/Harbor/Laude，ICLR 2026）；最贴近「agent 干活」</td><td>✅</td></tr>
+  <tr><td>P2</td><td><b>LiveCodeBench</b></td><td><b>抗污染</b>（按发布时间切窗）；code-gen / self-repair / test-output-prediction</td><td>❌</td></tr>
+  <tr><td>P2</td><td><b>BigCodeBench</b></td><td>1140 题、多样库调用（比 HumanEval 难）；Hard 子集 ~150</td><td>❌</td></tr>
+</table>
+<div class="note">
+  <b>合规提醒</b>：SWE-bench <b>Verified/Multilingual 官方榜（2025-11-18 起）</b>只接受「学术/研究机构 + 开源方法 + arXiv/同行评审」的提交 → 我们做 <b>内部横评</b>可以，<b>不要指望上官方榜</b>。<br>
+  <b>建议</b>：先开一条<b>无 Docker 的 Aider Polyglot 对照线</b>（可立即跑），Docker 打通后再扩 Terminal-Bench。
+</div>
+
+
+<h2 class="sec" id="s7"><span class="no">7</span>关键数字</h2>
+<table>
+  <tr><th>项</th><th>值</th><th>出处</th></tr>
+  <tr><td>P-5b 进度 / loss</td><td><b>54.08%</b>（iter 2580/4771）· loss <b>2.1107</b></td><td><code>MEMORY_PRETRAIN_2B.md</code></td></tr>
+  <tr><td>P-5b 里程碑</td><td>655M/1.3B/2.6B/5.2B/<b>10.5B</b> token → loss 5.367/3.988/2.9246/2.3605/<b>2.1189</b></td><td>同上</td></tr>
+  <tr><td>显存占用</td><td>8 卡各 <b>~39 / 80 GB</b>（→ 有抬 MBS 的余量）</td><td>P-5b 巡检</td></tr>
+  <tr><td>FP8 交叉点</td><td><code>M≈16K</code> 过 1.0 · <code>M≥32K</code> 饱和 <b>~1.34</b>（Xmodel-2.5 反推一致）</td><td>P-4R / 本次机制分析</td></tr>
+  <tr><td>视觉 IN-1k lp 峰值</td><td><b>7.70%</b>@51.2M 样本（R9，w512）</td><td><code>EXPERIMENTS_VISION_ROUND9.md</code></td></tr>
+  <tr><td>视觉 scaling 渐近</td><td>幂律 <b>25.1%</b>；+4 lp 点 / 10× 数据</td><td>同上</td></tr>
+  <tr><td>三档塔参数量</td><td>w512=<b>126.8M</b> · w768=<b>284.5M</b> · w1024=<b>505.0M</b></td><td>R9 §1</td></tr>
+  <tr><td>SFT-2605</td><td>1504 文件 / <b>318,990,252,711 B</b>（与 HF 逐字节一致）</td><td><code>DATA_LEDGER.md</code></td></tr>
+</table>
+
+<h2 class="sec" id="s8"><span class="no">8</span>需要运维决策 / 注意</h2>
+<table>
+  <tr><th>#</th><th>事项</th><th>说明</th></tr>
+  <tr><td><b>1</b></td><td>🔐 <b>sudo 口令安全</b></td>
+      <td>口令已随 <code>BAIZE_HARNESS_TASK.md</code> 入库（git 历史）。<b>建议 H-A 打通后立即轮换该口令</b>；需要我改成「口令走 host 本地文件、不入库」的方式也可以</td></tr>
+  <tr><td><b>2</b></td><td><b>harness 运行主机</b></td>
+      <td>仍建议明确：是允许在 <code>.29</code> 低负载时段跑，还是给专用仓位（避免与 pretrain 抢 I/O）</td></tr>
+  <tr><td><b>3</b></td><td><b>D-CLEAN 是否授权删除</b></td>
+      <td>当前只盘点。盘点出清单后，<b>需运维逐档批准</b>再删（尤其他人目录）</td></tr>
+  <tr><td><b>4</b></td><td><b>P-9 是否插入到 P-5b 与 P-6② 之间</b></td>
+      <td>若不希望改动执行顺序，可把 P-9 挪到 P-6② 之后（但那时 P-8 已在排队）</td></tr>
+  <tr><td><b>5</b></td><td><b>P-8 启动配置</b></td>
+      <td>P-8 仍是 Stage (i) 本体、仍按令暂缓（等 base 下满 + 配比实验）；<b>P-9 的结论会直接改 P-8 的 MBS/精度</b></td></tr>
+</table>
+<div class="danger">
+  <b>需注意的一条诚实说明</b>：P-9 的「MBS↑ → FP8 转正」目前是<b>机制推断</b>（基于 P-4R 的 M 交叉点），
+  <b>尚未实测</b>；真正的收益数字要等 P-9a/P-9b 跑完。<b>不要把推断当结论引用。</b>
+</div>
+
+
+<h2 class="sec" id="s9"><span class="no">9</span>下一步排期</h2>
+<table>
+  <tr><th>线</th><th>下一步</th><th>ETA</th></tr>
+  <tr><td><b>pretrain</b></td><td>P-5b 跑完 → <b>P-9</b>（MBS×FP8）→ P-6② → P-8（暂缓）</td><td>P-5b 10-04 凌晨</td></tr>
+  <tr><td><b>vision</b></td><td><b>R10①</b> 回收三档塔 ckpt IN-1k → <b>R10②</b> 二维 scaling</td><td>待派（≈0.7h GPU）</td></tr>
+  <tr><td><b>data</b></td><td>下载续跑 + <b>D-CLEAN</b> 盘点 → 出清单待批</td><td>并行</td></tr>
+  <tr><td><b>harness</b></td><td>docker 验证 → <b>Aider Polyglot</b> 对照线 → SWE-bench 试点</td><td>今日起</td></tr>
+  <tr><td><b>ops</b></td><td>空闲待命（RUN_ID 7 随时可派）</td><td>—</td></tr>
+</table>
+<div class="note">
+  <b>关键路径不变</b>：仍是 <b>P-5b → (P-9) → P-6② → P-8</b>（Stage (i) 本体）。<br>
+  <b>今日新增的三条旁路</b>（vision R10 / data D-CLEAN / harness H-C）<b>都不占关键路径的主卡</b>（R10-① 仅 0.7h、D-CLEAN 轻 I/O、H-C 无 Docker 可并行）。
+</div>
+
+<footer>
+  BaiZe 工作汇报 · 2026-10-03 · 当日提交 ≈40 个 ·
+  详细证据见 <code>run/MEMORY_PRETRAIN_2B.md</code>、<code>run/EXPERIMENTS_VISION_ROUND9.md</code>、
+  <code>run/DATA_LEDGER.md</code>、<code>run/harness/CODE_AGENT_BENCHMARKS_SURVEY.md</code>。<br>
+  本次运维处置已写入各任务书「运维指令区」：<code>BAIZE_PRETRAIN_2B_TASK.md</code>（P-9）、
+  <code>BAIZE_VISION_TASK.md</code>（R10）、<code>BAIZE_DATA_TASK.md</code>（D-CLEAN）、<code>BAIZE_HARNESS_TASK.md</code>（Docker/H-C）。<br>
+  实时看板：<code>BAIZE_PROGRESS.html</code> · Agent 总表：<code>run/AGENTS.md</code>
+</footer>
+
+</div>
+</body>
+</html>
+

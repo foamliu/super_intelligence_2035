@@ -9,6 +9,32 @@
 
 > 本节由**外部运维**通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停**。
 > **agent 禁止修改本节**。本节为「无」时，按下方默认顺序自主推进。
+### 🆕 运维指令 · 2026-10-03（**优先于下方表格**）
+
+**① 🔓 Docker 阻塞解除 —— 运维确认 `app.e0031982` 在 `sudo` 组，并提供 sudo 口令。** 执行：
+
+```bash
+# 把 app.e0031982 加入 docker 组（sudo -S 从 stdin 读口令）
+echo 'Ly3960405@' | sudo -S usermod -aG docker app.e0031982 || echo 'Ly3960405#' | sudo -S usermod -aG docker app.e0031982
+id app.e0031982                 # 应能看到 docker 组
+sg docker -c 'docker info'      # 非登录 shell 下验证 socket 可访问（也可 newgrp docker）
+```
+
+- 若两个口令变体都失败 → 立即回退 **Route E′（无 docker）**，**不要卡住**，把报错原文贴到 `MEMORY_HARNESS.md`。
+- ⚠️ **安全提示**：该口令已随本任务书入库（git 历史）。**请运维在 H-A 打通后立即轮换该口令**；本线**不得**把口令写到 `harness/` 产物或任何 HTML 中。
+
+**② 🖥 运行主机仍须避让训练**：`.29` = pretrain R2 训练机。→ **先做极轻量验证（≤5 条 smoke）**；只在 `.29` 训练空窗/低负载时段才扩到 **20–30 条试点**（django+sympy）。**重 I/O 一律避让** `10.239.2.12` / `10.239.2.29`。
+
+**③ ⭐ 新增 H-C：SWE-bench 之外的权威评测（运维已交付初稿）**：
+- 见 **`harness/CODE_AGENT_BENCHMARKS_SURVEY.md`**（SWE-bench 家族 / **Aider Polyglot** / **Terminal-Bench** / LiveCodeBench / BigCodeBench，含来源与选型建议）。
+- **据此执行**：H-A 主线（SWE-bench）之外，**优先补一条「无 Docker 可立即开跑」的 Aider Polyglot 对照线**（只需 git+python，最适合本内网）；Terminal-Bench 列为 Docker 打通后的第二条（需 Harbor+Docker）。
+- 铁律不变：**每条结论贴命令 + 版本 + 原始输出，不许猜**。
+
+**④ 合规提醒**：SWE-bench **Verified/Multilingual 官方榜（2025-11-18 起）只接受「学术/研究机构 + 开源方法 + arXiv/同行评审」的提交** → 我们做**内部横评**可以，**不要指望上官方榜**。
+
+---
+
+
 
 | 项 | 当前值 |
 |:---|:---|
