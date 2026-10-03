@@ -13,9 +13,9 @@ WAITING: 1
 ```
 PHASE:        常态采集（T1–T10 ✅）+ 🆕 **N1/N3 语料与 EDA 启动**（L1 主线）
 已完成:       T1–T10 ✅ · 首~九轮常态 ✅ · 🆕 **N1 抓取器 + 3.2 个月语料（96 天 / 46,883 条）· N3-1 EDA · L2 预注册 · 价格源运行机复测**
-当前动作:     **转 L1/N1 主线**：① 新华网主源**实测 403/405 → 走兜底**（🚫 不绕）；② 新建 `news/archive/fetch_archive.py`（中新网逐日枚举·断点续抓·≥2s/req）→ 抓 **2026-06-30~2026-10-03＝96 天 / 46,883 条**（`chinanews-2026.jsonl.gz` 2.06 MB）；③ `news/policy/eda.py` → `news/policy/EDA.md`（**真实计数**）；④ `news/policy/L2_PREREG.md`（G2 预注册，窗口/口径/检验/多重比较先写死）；⑤ **价格源运行机复测**（腾讯实时+日K ✅ / 新浪 ✅ / 东财 ❌ TLS reset）
+当前动作:     **转 L1/N1 主线**：① 新华网主源**实测 403/405 → 走兜底**（🚫 不绕）；② 新建 `news/archive/fetch_archive.py`（中新网逐日枚举·断点续抓·≥2s/req）→ 抓 **2026-06-30~2026-10-03＝96 天 / 46,883 条**（`chinanews-2026.jsonl.gz` 2.07 MB）；③ `news/policy/eda.py` → `news/policy/EDA.md`（**真实计数**）；④ `news/policy/L2_PREREG.md`（G2 预注册，窗口/口径/检验/多重比较先写死）；⑤ **价格源运行机复测**（腾讯实时+日K ✅ / 新浪 ✅ / 东财 ❌ TLS reset）
 下一步:       续抓 N1（`python3 news/archive/fetch_archive.py --max-seconds 600`，倒序从 2026-06-29 继续 → 逐段覆盖近 3 年→10 年）；语料够后出 `news/policy/TAXONOMY.md`（**必须由 EDA 归纳**）→ N3-2 信号 → N3-3 事件库 → N3-4 预警
-本轮新增:     **N1 语料 46,883 条**（`chinanews`，96 天，2.06 MB）；**news 日报 0 条**（本轮专注 N1/N3，未做常态采集）
+本轮新增:     **N1 语料 46,883 条**（`chinanews`，96 天，2.07 MB）；**news 日报 0 条**（本轮专注 N1/N3，未做常态采集）
 阻塞:         无（新华网长期 403/405 → 已用兜底源 `chinanews`；⚠️ **东财日K 运行机 TLS 被重置不可用** → 历史日线改用腾讯 `ifzq` 日K）
 ERROR_COUNT:  1（历史：模型名 `deepseek-v4-pro-fp4` 白睡一轮，已修；本轮 0）
 ```
@@ -104,7 +104,7 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **2026-10-03** —— 🆕 **转 L1/N1 主线：N1 语料抓取 + N3-1 EDA + L2 预注册 + 价格源复测**。
   - **新华网主源复测（结论）**：`www.xinhuanet.com/politics/2016-01/01/` → **HTTP 403**；`so.news.cn/getNews` → **HTTP 405**（WAF 页）→ **如实记录、🚫 不绕**（不代理/不伪造 UA）；按任务书**改用兜底源**。
   - **新建 `news/archive/fetch_archive.py`**（中新网逐日枚举 `scroll-news/{YYYY}/{MMDD}/news.shtml`，实测 2016/2023/2024 全 200；**GBK/UTF-8 自动探测**；**≥2s 限速**；断点续抓；子模式 `--stats/--index/--repair/--check`）。
-  - **本轮语料**：倒序抓 **2026-06-30 ~ 2026-10-03 ＝ 96 天 / 46,883 条**（`chinanews-2026.jsonl.gz` 2.06 MB；0 失败 / 0 空页）；`--repair` 修 **2653** 条协议相对 URL（修后抽检 `HTTP 200`）。⚠️ 抓取中 `pkill -f fetch_archive.py` **误杀自身 shell**（模式匹配到命令行）→ 记一笔，改用 PID 精确 kill。
+  - **本轮语料**：倒序抓 **2026-06-30 ~ 2026-10-03 ＝ 96 天 / 46,883 条**（`chinanews-2026.jsonl.gz` 2.07 MB；0 失败 / 0 空页）；`--repair` 修 **2653** 条协议相对 URL（修后抽检 `HTTP 200`）。⚠️ 抓取中 `pkill -f fetch_archive.py` **误杀自身 shell**（模式匹配到命令行）→ 记一笔，改用 PID 精确 kill。
   - **N3-1 EDA**（`news/policy/EDA.md`，**真实计数**）：频道 top = 社会 10,383 / **时政 8,648** / 财经 8,567 / 国际 3,899；动作词 top = 发布 1,373 · 举行 1,320 · 启动 963 · 回应 393 · 调研 391 · **会见 282** · 出席 246；主体词 = 习近平（示例）/ 政治局 13 / 国务院常务会议 8；标题模式 = 「X 会见 Y」281 · 「X 决定/批准…」148 · 「签署协议」48 · 「就…作出重要指示」3。
   - **L2 预注册**（`news/policy/L2_PREREG.md`，窗口/口径/检验/多重比较**先写死**）+ **价格源运行机复测**：腾讯实时 `qt.gtimg.cn` **200** · 腾讯日K `web.ifzq.gtimg.cn` **200 JSON** · 新浪 `hq.sinajs.cn`（需 `Referer`）**200**；**东财 `push2his.eastmoney.com` ❌（TLS reset：`decode error 562`）** → 历史日线改用腾讯。
   - **下一步**：继续续抓 N1（近 3 年 → 10 年）→ 由 EDA 归纳 `TAXONOMY.md` → N3-2/3/4。本轮**未做常态采集**（专注 N1/N3）。
