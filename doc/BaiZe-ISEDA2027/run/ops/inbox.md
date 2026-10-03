@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 11 -->
+<!-- RUN_ID: 12 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,50 @@
 
 ---
 
-## RUN_ID 11 — 🎯 **验证 `Forbidden` 是否由 `https_proxy` 引起**（**纯只读；顺带试出修法**）（**本块最新，优先执行**）
+## RUN_ID 12 — 🎯 **env 矩阵 smoke：找出让 cline 变绿的组合**（**纯只读**）（**本块最新，优先执行**）
+
+**RUN_ID 11 结论（2026-10-04 07:18）**：
+- ✅ **`no-proxy -> 200`** vs **`via-proxy -> 503`** → **代理确实打不通内网网关**（但只去 proxy **没修好** cline，仍 Forbidden）
+- 🔑 **`.12` 的差异 = 它的(非交互)环境里【没有 proxy、也没有 `OPENAI_*`/`API_TYPE`】** → cline 走自己的 secrets/config 就能用
+- ❌ `.29` 有：`OPENAI_API_KEY=01_549…` · `API_TYPE=openai` · `OPENAI_API_URL=http://agi-gateway.cxmt.com/v1` · `https_proxy=…`
+- 📌 **所以本块要判定**：是 `OPENAI_API_URL`/`API_TYPE` 让 cline 选错 provider，还是别的（本矩阵会直接给出答案）
+
+🚫 **纯只读** —— 不 kill / 不重启 / 不写文件；只在 `/tmp` 做 smoke。
+> ⚠️ **请务必不要打印任何 key 明文**（RUN_ID 11 的脱敏 sed 失效了，`OPENAI_API_KEY` 已被明文写入 `outbox.md`）。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T %Z'
+CLINE=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; T='reply with exactly OK'; cd /tmp
+"$CLINE" --version 2>&1 | head -2
+
+echo; echo "=== 1. cline 的 -k 到底是什么 ==="
+"$CLINE" --help 2>&1 | grep -inE -- '-k|api.?key' | head -8 | cut -c1-150
+
+echo; echo "=== 2. ~/.cline/data 清单（只看文件名/mtime，不打印内容）==="
+ls -la ~/.cline/data/ 2>/dev/null | cut -c1-130
+
+echo; echo "=== 3. 🔬 smoke 矩阵（每条 head -4，只看是否 Forbidden）==="
+try() { L="$1"; shift; printf '%-14s => ' "$L"; env "$@" timeout 90 "$CLINE" -c /tmp -m "$M" --auto-approve true -t 45 "$T" 2>&1 | head -4 | tr '\n' ' ' | cut -c1-165; echo; }
+try "ALL"            
+try "NO_PROXY"       -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY
+try "NO_OPENAI"      -u OPENAI_API_URL -u API_TYPE
+try "NO_BOTH"        -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u OPENAI_API_URL -u API_TYPE
+try "NO_ALL(仿.12)"  -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u OPENAI_API_URL -u API_TYPE -u OPENAI_API_KEY
+
+echo; echo "=== 4. 若上面全 Forbidden → 看 cline 自己的 provider 配置文件名 ==="
+for f in ~/.cline/data/settings.json ~/.cline/data/globalState.json ~/.cline/data/secrets.json; do
+  [ -f "$f" ] && { printf '%s : %s bytes, mtime %s\n' "$f" "$(stat -c%s "$f")" "$(stat -c%y "$f" | cut -c1-19)"; python3 -c "import json,sys;d=json.load(open('$f'));print('   keys:',[k for k in d][:14])" 2>/dev/null; }
+done
+
+echo; echo "=== 5. 对照 .12：它的 ~/.cline/data 清单 ==="
+timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'ls -la ~/.cline/data/ 2>/dev/null | cut -c1-130; echo "-- whoami/host --"; hostname' 2>&1 | cut -c1-140 || echo "ssh .12 FAILED"
+
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 11**（proxy 验证，**✅ 已执行 07:18:00**）为 ```text。
+
+## RUN_ID 11 — 🎯 **验证 `Forbidden` 是否由 `https_proxy` 引起**（✅ 已执行，本块不再运行）
 
 **RUN_ID 10 已排除的假设（2026-10-04 07:15）**：
 - ❌ **不是 key**：`.29` smoke **带 `-k $OPENAI_API_KEY` 依然 `Forbidden`**；且 `.12` 的 secrets key 与之**完全相同**（`02_088…len72`）
@@ -44,7 +87,7 @@
 
 🚫 **纯只读** —— 不 kill / 不重启 / 不写文件（只在 `/tmp` 做 smoke）。
 
-```bash
+```text
 echo "=== 0. HOST / TIME / CLINE VERSION ==="; hostname; date '+%F %T %Z'
 CLINE=/home/app.e0031982/.bun/bin/cline
 "$CLINE" --version 2>&1 | head -3

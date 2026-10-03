@@ -91,7 +91,13 @@ while true; do
     echo "[loop] $(date '+%F %T') wake up, invoking cline ..."
     if [[ -f "$TASK_MD" ]]; then
         prompt="$(< "$TASK_MD")"
-        cline -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+        # 🚫 2026-10-04 运维修复：给 cline 剥掉代理环境变量。
+        #   内网网关 (OPENAI_API_URL=http://agi-gateway.cxmt.com/v1) 不该走外网代理，
+        #   否则网关返回 `error: Forbidden`，而 cline 仍 exit 0 → loop 静默空转（.29 曾因此瞎跑 ~9h，
+        #   10-04 07:15 ops 探查定位；.12 于 2026-09-29 遇过同样问题，unset http_proxy 即解决）。
+        #   ⚠️ 只作用于本行：loop 自身/`git push` 仍保留 proxy（外网仍需代理）。
+        env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
+          cline -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
         echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git sync ..."
     else
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"
