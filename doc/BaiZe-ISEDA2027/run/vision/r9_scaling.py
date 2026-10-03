@@ -18,8 +18,10 @@ Fits two models on the STAGE-2 points and reports R^2:
   2. log-linear acc = a + b * log10(N)  (scipy.stats.linregress on log10(N))
 
 Then extrapolates each model to target accuracies (default 20/40/60 %) and
-compares required samples vs the local unique-pair ceiling (~53M). Also flags
-the fitted asymptote `a` (power law saturates at `a`).
+compares required samples vs the local unique-pair ceiling (measured
+2026-10-03 E1: ~118M = GPIC-full ~100M + CC12M ~11M + Amshaker ~6M; on-disk
+now ~33M; R9 used ~18.5M). Also flags the fitted asymptote `a` (power law
+saturates at `a`).
 
 Does NOT run training/eval; pure CPU, no GPU. Run AFTER:
   grep -c "R9 stage2 ALL DONE" /tmp/r9_stage2.log  == 1
@@ -27,7 +29,7 @@ Does NOT run training/eval; pure CPU, no GPU. Run AFTER:
 Usage:
   python r9_scaling.py [--stage2-log /tmp/r9_stage2.log] [--stage1-log /tmp/r9.log]
                        [--samples-per-step 512] [--targets 0.20,0.40,0.60]
-                       [--local-cap-m 53] [--csv /tmp/r9_scaling_points.csv]
+                       [--local-cap-m 118] [--csv /tmp/r9_scaling_points.csv]
 """
 import argparse
 import csv
@@ -155,7 +157,9 @@ def main():
     ap.add_argument('--stage1-log', default='/tmp/r9.log')
     ap.add_argument('--samples-per-step', type=int, default=512)
     ap.add_argument('--targets', default='0.20,0.40,0.60')
-    ap.add_argument('--local-cap-m', type=float, default=53.0)
+    # C1 修正 (2026-10-03 E1 实测): 本地全量上限 ≈118M (GPIC-full ~100M + CC12M ~11M
+    # + Amshaker ~6M)，非原假设的 53M。盘上现有 ≈33M；R9 用过 18.5M。
+    ap.add_argument('--local-cap-m', type=float, default=118.0)
     ap.add_argument('--csv', default='/tmp/r9_scaling_points.csv')
     args = ap.parse_args()
 
@@ -259,10 +263,11 @@ def main():
             n_str = f'{n/1e6:.2f}' if n != float('inf') else 'inf'
             print(f'{name:>10} {t*100:>8.0f} {n_str:>12} {note:>11} {spp_:>14.2f}')
 
-    print('\n--- context ---')
-    print(f'local unique-pair ceiling ~= {args.local_cap_m}M (GPIC full + CC12M '
-          f'+ Amshaker + CC3M + small sets)')
-    print('AIMv2: ~12B pairs (649x R9 18.5M, 226x the 53M cap).')
+    print('\n--- context (C1-corrected 2026-10-03, E1 measured) ---')
+    print(f'local unique-pair ceiling ~= {args.local_cap_m}M '
+          f'(GPIC-full ~100M + CC12M ~11M + Amshaker ~6M; +LLaVA/CC3M ~1.15M)')
+    print('  three denominators: R9-used ~18.5M | on-disk-now ~33M | local-full ~118M (dynamic, still downloading)')
+    print('AIMv2: ~12B pairs = 649x R9-18.5M, 359x on-disk-33M, 102x local-full-118M.')
     print('NOTE: 11 points span ~1 order of magnitude; extrapolating to '
           '20/40/60% is 1-2 orders beyond the data -> large uncertainty.')
     print('DONE')

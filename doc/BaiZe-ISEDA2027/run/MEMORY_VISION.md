@@ -10,14 +10,14 @@ WAITING: 1
 | WAITING | 1（R10-③ 补密 M 轴训练后台运行：`r10_run_denseM.sh`，8 卡，ETL ~3.5h） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h ✅；R10-③ w384+w640 在跑，详见 EXPERIMENTS_VISION_ROUND10.md） |
-| 更新 | 2026-10-03（R10 ①② 完成、③ 触发启动；live MEMORY ≤32KB 已维持） |
+| 更新 | 2026-10-03（R10 ①② 完成、③ 训练中；**R14 官方仓库调研第一阶段**：两个 ⭐⭐⭐ 仓库源码普查完成 → `VISION_OFFICIAL_REPOS_SURVEY.md`） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9 选中 w512=126.8M 缩塔，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
 
 - **阶段一缩塔先导**（OpenVision2 × width{512,768,1024} × 30k，同 recipe/数据/batch512）：IN-1k lp = **6.10% / 3.63% / 1.03%**（zs 2.74/1.91/1.02）→ **塔越小每样本效率越高** → 选 **w512（126.8M）**。
 - **阶段二**（w512 × 108k 步 = 55.3M 样本）：无坍缩（C1≈0.36 / C2_gap≈+0.10 / loss_ema 5.99→3.71，steady 2904 img/s）；IN-1k lp 峰值 **7.70%**@51.2M，zs top-1 3.59% / top-5 11.47%。
-- **scaling 拟合**（11 点 R²≈0.94）：幂律 acc=0.251−0.864·N^−0.090（渐近 **25.1%**）；对数线性 acc=−0.229+0.0398·log10(N)。外推 20% 需 619 亿（对数）/ 41 万亿（幂律）样本 → **本地 53M 唯一对上限够不到 20%+**。
+- **scaling 拟合**（11 点 R²≈0.94）：幂律 acc=0.251−0.864·N^−0.090（渐近 **25.1%**）；对数线性 acc=−0.229+0.0398·log10(N)。外推 20% 需 619 亿（对数）/ 41 万亿（幂律）样本 → **本地 ≈118M 唯一对上限（C1 修正）够不到 20%+**。
 - **结论**：瓶颈在数据量与目标函数（AIMv2 ≈120 亿对，我们 649× 少），非架构。详见 EXPERIMENTS_VISION_ROUND9.md §4–§5。
 
 ## R10（2026-10-03）：补全 M 轴的 scaling law
@@ -33,6 +33,14 @@ WAITING: 1
 - **等什么**：R10-③ 训练+自动评测（后台 `/tmp/r10_denseM.log`，10.239.2.12 全 8 卡）。
 - **判结束**：`grep -c 'denseM ALL DONE' /tmp/r10_denseM.log` == 1。
 - **收尾步骤**（下次唤醒先查是否 DONE，若 DONE 再执行）：① 从 `/tmp/r10_denseM.log` 取 w384/w640 的 8 个 [R8-IN1K] point + 实际 numel；② 用 5 点 M 轴 {71,126.8,197,284.5,505.2}M 重跑 2D 拟合（`r10_scaling2d.py` 需把 WIDTH_PARAMS 加入 384:70.8M/640:196.6M、WIDTH_RE 加 `R10_denseM_w(\d+)`，或用实际 numel）；③ 回填 `EXPERIMENTS_VISION_ROUND10.md` §2/§3/§4 最终值 + `EXPERIMENTS_VISION.md` 顶部 + 本状态头；④ git push。
+
+## R14 官方仓库调研（第一阶段完成，2026-10-03）
+
+- CPU-only 源码普查，与 R10-③ denseM 训练并行。产物：`VISION_OFFICIAL_REPOS_SURVEY.md`（含每仓库 ①目标②数据③config④结构差异⑤可复用资产⑥LICENSE⑦三清单）。
+- ✅ 两个 ⭐⭐⭐ 仓库源码普查完成：
+  - **OpenVision**（`/tmp/ov_survey`@c3f7d96，JAX/TPU、big_vision 派生）：官方 ViT-L/16 = w1024/**d24**/h16/m4096（`vit.py:829-832`）；我们 OpenVision2 = w1024/**d30**（`models.py:170`，505M = 深度上采样）。官方文本 = **BERT-128 + LLaVA/LLaMA3 dense caption + caption decoder + keep_ratio=0.35 掩码**（`openvision2.py:46,49,129,236`）→ **目标函数与我们「CLIP-77+短caption+纯对比」完全不同**。
+  - **ml-aim/AIMv2**（`/tmp/mlaim_survey`@a018ae32）：仓库只含**模型接口**（无训练/损失/数据，`aim/v2/mixins.py:11-42`）；LICENSE = **Apple Sample Code License（非 Apache/MIT、不授专利）** → 🔴 不可 COPY 代码进拟开源仓库；AIMv2-3B frozen trunk 89.5%（README:33）。
+- ⏳ 待办（下 cycle）：OpenVision2 权重是否真开源（HF/release 核）+ FastVLM + 疑似不存在条目（MambaEye/MoE-ViE/iGVLM/TuringViT 等）逐字核实。
 
 ## 历史条目已滚动归档（2026-10-03）
 
