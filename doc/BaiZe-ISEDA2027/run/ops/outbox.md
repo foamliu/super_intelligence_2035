@@ -3151,3 +3151,50 @@ Warning: AI SDK Warning System: To turn off warning logging, set the AI_SDK_LOG_
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 26 · 2026-10-04 07:58:03 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; cd /tmp
+_k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" | head -1)"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY"
+SM="reply with exactly OK"
+run() { L="$1"; shift; printf '   %-30s => ' "$L"; env "$@" timeout 90 "$C" -c /tmp -m "$M" --auto-approve true -t 45 "$SM" 2>&1 | head -2 | tr -d '\r' | tr '\n' ' ' | cut -c1-135; echo; }
+
+echo; echo "=== 1. 4 路矩阵 ==="
+run "V0 原样"
+run "V1 剥KEY+URL+TYPE"        -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE
+run "V2 剥proxy+KEY+URL+TYPE"  $P -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE
+printf '   %-30s => ' "V3 同V2 + -k"; env $P -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE timeout 90 "$C" -c /tmp -m "$M" -k "$_k" --auto-approve true -t 45 "$SM" 2>&1 | head -2 | tr -d '\r' | tr '\n' ' ' | cut -c1-135; echo
+
+echo; echo "=== 2. 现状（不动 loop）==="
+pgrep -af 'bash baize_(pretrain|harness)_loop\.sh' | cut -c1-90
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 07:58:03
+
+=== 1. 4 路矩阵 ===
+   V0 原样                      => [31merror:[0m Forbidden 
+
+   V1 剥KEY+URL+TYPE             => [31merror:[0m Forbidden 
+
+   V2 剥proxy+KEY+URL+TYPE       => [31merror:[0m Forbidden 
+
+   V3 同V2 + -k                  => OK Warning: AI SDK Warning System: To turn off warning logging, set the AI_SDK_LOG_WARNINGS global to false. 
+
+
+=== 2. 现状（不动 loop）===
+3228163 bash baize_pretrain_loop.sh
+3234430 bash baize_harness_loop.sh
+
+=== DONE ===
+```
