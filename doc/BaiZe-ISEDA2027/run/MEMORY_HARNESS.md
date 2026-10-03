@@ -67,20 +67,20 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **H_D_done + TOP5_done + SWEBENCH_LITE_feas_done + batch5_step1_gate_PASS**（batch-4 已交付；batch-5 步1 硬闸已核验 R1 可行 → 下一步 = R1 沙箱 + 适配层） |
-| WAITING | 1（实跑 300×5 需 **低负载窗口**〔.29 是 pretrain R2 训练机〕+ 步2/步3 工程量大；**非等运维拍板**——运维已放行，仅受训练避让 + 工程进度约束） |
+| PHASE | **R1_design_done**（batch-4 已交付；batch-5 步1 硬闸 PASS；第二十六轮：克隆 SWE-bench + tasks 仓库、重构 R1 架构、实测 conda 通道 → 交付 `R1_ADAPTER_DESIGN.md`） |
+| WAITING | 1（步2 建 1 个 django env = 重 I/O〔conda env create 下载大 + pip〕，须避让 `.29` pretrain R2 训练〔当前 load 15+GPU 满载〕，留待低负载窗口；**非等运维拍板**） |
 | ERROR_COUNT | 0 |
-| 更新 | 2026-10-03 15:xx（第二十五轮：收到 batch-5「放行」，核验步1 硬闸=unshare 三件套 + /nas_train 32T → PASS） |
+| 更新 | 2026-10-03 16:35（第二十六轮：R1 前置调研完成 + conda 通道连通性实测 + `R1_ADAPTER_DESIGN.md` 交付） |
 | 产出 | ✅ H-B 5 份源码 HTML · ✅ `MERGE_OVERLAP_ANALYSIS.md` · ✅ `SWEBENCH_FEASIBILITY.md` · ✅ H-C survey v2 · ✅ H-D 矩阵 + 机会点 · ✅ `CLINE_IMPROVEMENTS_TOP5.html` · ✅ `SWEBENCH_LITE_FEASIBILITY.md`（batch-4，含 batch-5 增补） |
 
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        H_D_done + TOP5_done + SWEBENCH_LITE_feas_done + batch5_step1_gate_PASS
-已完成:       H-B 5 份源码分析；H-A §1.1 可行性；Docker socket 解锁；H-C Aider v2（更正沙箱前提）；H-D 矩阵+机会点+TOP5；SWE-bench-Lite 全量可行性评估(batch-4)；batch-5 步1 硬闸=unshare三件套(/nas_train 32T) PASS
-当前动作:     2026-10-03 第二十五轮：收到 batch-5「放行全量 300×5」+ 核验步1 硬闸 —— unshare --user --map-root-user --mount --pid --fork 三件套 OK、tmpfs mount OK、unprivileged_userns_clone=1、/nas_train 剩 32T → R1 可行
-下一步:       步2 = 用 django 端到端跑通 R1 沙箱（unshare user ns + per-instance rootfs 落 /nas_train，不碰 docker）→ 步3 = 写适配层（先 codex/opencode，复用官方 run_evaluation）→ 步4 = 顺序跑 300×5（低并发≤4 + 跨 harness 串行 + 每 harness 即固化）
-阻塞:         R1 已放行（无 docker 依赖）；仅剩 ① 实跑重 I/O 须避让 .29/.12 训练（低负载窗口）② 5h 滑动窗口共享 key → 低并发 ③ 适配层工程量大
+PHASE:        R1_design_done
+已完成:       H-B 5 份源码分析；H-A §1.1 可行性；Docker socket 解锁；H-C Aider v2；H-D 矩阵+机会点+TOP5；SWE-bench-Lite 全量可行性(batch-4)；batch-5 步1 硬闸=unshare三件套 PASS；第二十六轮 R1 前置调研（克隆 SWE-bench + swe-bench-tasks、重构可复用/重写切分、实测 conda 通道=tsinghua 镜像可达）→ 交付 R1_ADAPTER_DESIGN.md
+当前动作:     2026-10-03 第二十六轮：clone SWE-bench（github OK）+ swe-bench-tasks（2519 任务，含 Lite 300）；确认官方 run_evaluation 全绑 docker、但 make_test_spec/get_eval_report/GIT_APPLY_CMDS 纯函数可复用；数据集改用 SWE-bench/SWE-bench_Lite（含 eval_script/log_parser/eval_type）；环境 install spec=每个 instance 的 Dockerfile/environment.yml
+下一步:       步2 = 低负载窗口时 conda 走 tsinghua 镜像建 1 个 django env（python 3.6 老环境）→ unshare 沙箱对照 gold.patch 跑通 → 再写 r1_eval.py 适配层（纯 CPU 可先行）→ 步4 顺序跑 300×5
+阻塞:         步2 建环境的 conda env create（重 I/O 下载）须避让 .29/.12 训练〔当前 load 15+GPU 满载〕；另待验：environment.yml 精确 build-string 钉版在当前 tsinghua pkgs/main 快照是否齐全
 ERROR_COUNT:  0
 ```
 
@@ -125,3 +125,5 @@ ERROR_COUNT:  0
 - 2026-10-03 14:23 —— **第二十二轮（唤醒巡检，无新指令）**：`git fetch` → HEAD==origin/main==`8fd9b7f`（远端推进的是 vision R11-L ``8fd9b7f``、pretrain P-5b#42 `9e6a5c2`、personal-watch/news 派活第3~6批、data 唤醒62，**均与本线任务书无关**；`git log origin/main -- BAIZE_HARNESS_TASK.md` 最近仍是 `7e0b168` batch-3，**已交付**）。任务书「运维指令区」无 batch-4 / 无 STOP / 无状态索取；`ops/.last_run_id` = `ops/inbox.md` RUN_ID = 8（ops 级「清 ops_relay 副本」fail-safe，**非本线下发**）；`ops_relay.sh` 单副本（pid `2489749`，ppid=1，真守护）。⚠️ **发现第二十一轮的滚动改动当时未提交**（`git status` 见 `MEMORY_HARNESS.md` + `daily-memories-harness/2026-10-02.md` + `2026-10-03.md` 三文件 modified）→ 本轮补提交并新增本条目。结论：batch-3 `CLINE_IMPROVEMENTS_TOP5.html` 已交付入库；H-A′ 实跑三项（沙箱方案 / 参赛者范围 / go+rust 工具链）**仍待运维拍板**，无待办推进项，不启动实跑、不做重 I/O，保持 `WAITING=1`。MEMORY_HARNESS.md 26302B（未超 32KB，无需滚动）。
 
 - 2026-10-03 14:56 —— **第二十三轮（唤醒巡检，无新指令）**：`git fetch` → HEAD==origin/main==`25c3415f`（**与本线无关的新提交，均非本线任务书**；`git log origin/main -- BAIZE_HARNESS_TASK.md` 最近仍是 `7e0b168` batch-3，**已交付**）。任务书「运维指令区」无 batch-4 / 无 STOP / 无状态索取；`ops/.last_run_id` = `ops/inbox.md` RUN_ID = 8（ops 级「清 ops_relay 副本」fail-safe，**非本线下发**，本线只读不动）；`ops_relay.sh` 单副本（pid `2489749`，ppid=1，真守护）。结论：batch-3 `CLINE_IMPROVEMENTS_TOP5.html` 已交付入库；H-A′ 实跑三项（沙箱方案 / 参赛者范围 / go+rust 工具链）**仍待运维拍板**，无待办推进项，不启动实跑、不做重 I/O，保持 `WAITING=1`。工作树仅 `vision/r9_train.py` 未提交（vision 线在途，非本线，不触碰）。MEMORY_HARNESS.md 27511B（未超 32KB，无需滚动）。
+
+- 2026-10-03 16:35 —— **第二十六轮（推进 batch-5 步2/步3 前置调研，无新指令）**：`git fetch` → HEAD==origin/main==`4a75c348`（`git log -- BAIZE_HARNESS_TASK.md` 最近仍是 `a5b4b4f` batch-5，已收到并核验）。本轮做了 R1 前置调研（纯 CPU/网络，避让了重 I/O）：① **clone `SWE-bench`**（shallow，github OK）→ 确认官方 `run_evaluation.py` 全绑 docker（`import docker`/`create_container`/`container.exec_run`），但 `make_test_spec`(utils.py:251)/`get_eval_report`(grading.py:329)/`GIT_APPLY_CMDS`(run_evaluation.py:45-49) 是 docker 无关纯函数、可复用；② **clone `swe-bench-tasks`**（`SWE-bench/swe-bench-tasks`，2519 任务，Lite 300 在内）→ `tasks/<id>/{Dockerfile,environment.yml,eval.sh,test.patch,gold.patch,task.yaml}`，**环境 install spec = 每 instance 的 Dockerfile/environment.yml**；③ **数据集改用 `SWE-bench/SWE-bench_Lite`**（旧 `princeton-nlp/SWE-bench_Lite` 缺 eval_script/log_parser/eval_type/image，新的全齐）；④ **实测 conda 通道**：直连 `repo.anaconda.com`/`conda.anaconda.org`/miniconda 安装包均 000，但 **tsinghua 镜像 `mirrors.tuna.tsinghua.edu.cn/anaconda/{pkgs/main=200,pkgs/free=200,cloud/conda-forge=200}` 全可达**，且 `pkgs/main` 仍带 `python-3.6.*`（29 个）→ 老版本 conda env 有望走镜像重建。**交付 `harness/R1_ADAPTER_DESIGN.md`**（可复用/重写切分 + 环境构建 + unshare 沙箱模板 + harness 适配 + 步2 具体命令，贴 `路径:行号` 原文）。⏸ **下一大步（步2 建 1 个 django env，python 3.6 老环境）是重 I/O（conda env create 下载 + pip）**，`.29` 当前 load 15 + GPU 56–86% 满载 → **留待低负载窗口**，本轮不启动实跑。保持 `WAITING=1`（受训练避让，非等运维拍板）。MEMORY_HARNESS.md 未超 32KB（本轮改动后需留意，已控制增量）。
