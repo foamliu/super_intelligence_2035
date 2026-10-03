@@ -7,10 +7,10 @@ WAITING: 1
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ 四臂全兑现（①基线/②SigLIP/③LocalLoss/④CoCa 均未翻盘）· R11-L2 ✅ 完成（未坍缩、lp 5.28%<基线 6.08%→未翻盘、冻结文本塔仍最优）· 🚀 R11-L caption-weight 消融(0.5/1.0) 训练中**；臂⑤ GenLIP 🚫 跳过（→替 caption 消融）/ 臂⑥ AIMv2 ⏸ 暂缓 / R13 ⏸ 只做 OV2 单臂 / R11-E ⏸ 等数据 |
-| WAITING | 1（**语义=训练 running（异步）**：R11-L `caption-loss-weight` {0.5,1.0} 消融在 `.12` 跑（`whag0pgpuap12`），`bash r11_run_capweight.sh 30000`，日志 `/tmp/r11_capweight.log`，ETA ~4–5h → 置 1 长睡省 token、`ALL DONE` 后回收 IN-1k lp 再置 0） |
+| WAITING | 1（**语义=训练 running（异步）**：R11-L `caption-loss-weight` {0.5,1.0} 消融在 `.12` 跑（`whag0pgpuap12`），`bash r11_run_capweight.sh 30000`，日志 `/tmp/r11_capweight.log`，当前 weight0.5 @~16750/30000（56%），ETA weight0.5 ~04:20 / weight1.0 ~06:20 / ALL DONE+评测 ~06:30–07:00 → 置 1 长睡省 token、`ALL DONE` 后回收 IN-1k lp 再置 0） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
-| BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡）+ arm④ CoCa（1.92h×8 卡）+ R11-L2 LoRA（训练中，30k 步 ≈1.9–2.1h×8 卡） |
-| 更新 | 2026-10-04 02:18（R11-L2 LoRA ✅ 完成：未坍缩、lp 3.13/4.75/5.28% < 基线 6.08%、未翻盘、冻结文本塔仍最优；随即启动 caption-weight 消融 0.5/1.0，2.0 复用 arm④） |
+| BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡）+ arm④ CoCa（1.92h×8 卡）+ R11-L2 LoRA（2.09h×8 卡 ≈16.7 GPU·h）+ R11-L caption-weight 消融（训练中，2 点 × 30k ≈ 2 臂） |
+| 更新 | 2026-10-04 03:30（巡检：caption-weight 消融 weight0.5 @~16750/30000=56% 健康无坍缩、@16200 C1 瞬冲 0.86 判噪声、无重复 run、8 卡全忙；R11-L2 LoRA ✅ 已完成 lp 3.13/4.75/5.28% < 基线 6.08% 未翻盘、冻结文本塔仍最优） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -81,6 +81,7 @@ WAITING: 1
 - 控变量同 arm④（w512 + 冻结 CLIP-768 + CoCaDecoder +76.2M + 短 caption + 30k 步）；只变 caption weight。2 点 × 30k ≈ 2 臂 ≈ 4–5h。
 - 🚀 已启动（`.12` 全 8 卡）：`bash r11_run_capweight.sh 30000`；输出 `R11L_capw0p5_w512` / `R11L_capw1p0_w512`；日志 `/tmp/r11_capweight.log`；ETA ~4–5h + 自动回收各 4 ckpt IN-1k lp。**预注册裁定（§12.2）**：0.5 或 1.0 lp ≥4.58% → weight 压死主因；都 <4.58% → caption 监督本身正交。
 - 🔍 **巡检（02:55，weight=0.5）**：@step 8500/30000（28.3%，02:21:59 起跑）健康——C1 0.32–0.37 / C2_gap +0.069~+0.074 / C4=OK（未坍缩）；loss=contrast+0.5×caption（contrast ~5.4–5.6 / caption 原始 CE ~5.6–6.7）、loss_ema 10.17→~8.4–8.8 递减、吞吐 ~2130–3630 img/s；进程组核验 1 master + 1 torchrun + 8 rank + 48 dataloader worker（**无重复 run**）；8 卡全忙（util 52–76%，显存 22.7/81.6 GB）。ETA weight0.5 ~04:20 / weight1.0 ~06:20 / ALL DONE+评测 ~06:30–07:00。无异常，继续 WAITING。
+- 🔍 **巡检（03:30，weight=0.5）**：@step 16750/30000（56%，02:21:59 起跑）健康——C1 0.32–0.43 / C2_gap +0.065~+0.075 / C4=OK（未坍缩）；⚠️ @16200 单点探针 C1 瞬时冲至 0.8635、C2_gap 掉到 +0.0291（**仍 <0.95 阈值、gap 仍 >0.005**），下一探针 @16500 即回落 C1=0.3864 / gap +0.0687 → 判为 128 样本探针噪声、非坍缩；loss=contrast+0.5×caption（contrast ~5.2–5.6 / caption 原始 CE ~6.3–6.5）、loss_ema 10.17→8.65 递减、吞吐 ~2200–2600 img/s（数据载入波动）；进程组核验 1 master(3842922) + 1 torchrun(3843230) + 8 rank + 48 dataloader worker（**无重复 run**）；8 卡全忙（util 46–73%，显存 22.7/81.6 GB）。ETA weight0.5 ~04:20 / weight1.0 ~06:20 / ALL DONE+评测 ~06:30–07:00。无异常，继续 WAITING。
 ## 历史条目已滚动归档（2026-10-03）
 
 - 更早的全部巡检/流水（R1–R9 完整过程，live MEMORY 原 95.7KB）已滚动归档至 `daily-memories-vision/2026-10-03.md`（追加「滚动归档快照」）+ 各日期 daily 文件（2026-09-30 / 10-01 / 10-02）。live MEMORY 已压至 ≤32KB。
