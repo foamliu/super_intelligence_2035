@@ -2,9 +2,11 @@
 
 WAITING: 1
 
-## 🔴 运维必读（2026-10-03 更新：Docker 已解锁，但 `docker pull` 仍被网络阻断；H-C Aider 可行性已确认）
+## 🔴 运维必读（2026-10-03 更新：H-D 已完成；H-A′ 模型/工具链/沙箱核查已完成，实跑待拍板）
 
-> 本轮已执行运维指令 ①（Docker 解锁）+ ③ 前置（H-C Aider 可行性核查）。H-B 5/5、H-A §1.1 核查均已完成。
+> 本轮（第十六轮）执行**运维指令 2026-10-03 第 2 批**（commit `80729fd`：H-A′ + H-D）。
+> ✅ **H-D 已交付**：`harness/HARNESS_COMPARE_MATRIX.html`（D1 对比矩阵 5 harness × 5 主线）+ `harness/CLINE_IMPROVEMENT_OPPORTUNITIES.md`（D2 五条机会点 O1–O5，四段式 + 类别标注）。
+> ⏸ **H-A′ 未实跑**（见下）。此前 ①Docker 解锁 ③H-C Aider 核查已办；H-B 5/5、H-A §1.1 核查均已完成。
 
 ### ✅ 已办：Docker 权限解锁（运维指令 ①）
 - `usermod -aG docker app.e0031982` **成功**（口令变体 `Ly3960405@` = ❌；`Ly3960405#` = ✅）。
@@ -23,6 +25,14 @@ WAITING: 1
 - **模型**：接内网网关 `http://agi-gateway.cxmt.com/v1`（OpenAI 兼容）+ `deepseek-v4-flash`。
 - 🔴 **安全待决策**：harness README 明确「intended to run inside docker」——因为它**直接执行 LLM 生成的代码**。本机 `.29` 是 **pretrain R2 训练机**，无隔离执不可信代码 = 风险。需运维在 ① docker（待 pull 打通）② bwrap/nsjail 本地沙箱 ③ 接受风险直跑 之间拍板。→ **本轮未启动评测实跑**。
 - 🔴 **新发现（第十五轮补测）**：任务书所谓的「本地沙箱」二选一路线里，**本机 `bwrap`/`nsjail`/`firejail`/`bubblewrap`/`podman`/`nerdctl` 全部 `(absent)`**，仅 `docker` 存在（socket 已解、pull 仍被网络阻断）。→ 意味着「任务书 H-C 说 Aider Polyglot『无 Docker 可立即开跑』」有**前提漏洞**：harness 会**执行 LLM 生成的 6 语言代码**，而本地沙箱工具一个都没装。故 Aider 沙箱「三选一」实际收窄为：**① 打通 docker pull**（需 dockerd 配代理/内网 Harbor）**② root 安装 bwrap 或 nsjail**（共享训练机上新装包，本身就是新 ops 动作）**③ 接受风险直跑**。**在运维未拍板前，本线不启动任何评测实跑。**
+
+### ⏸ 已办：H-A′ 前置核查（batch 2）—— 实跑待运维拍板「沙箱 + 参赛者适配范围」
+- **执行模型已证**：aider 基准**确实执行 LLM 生成的代码**（`benchmark/README.md:22-27`「taking code written by an LLM and executing it without human review… could `sudo rm -rf /`」+ `benchmark.py:1027` `subprocess.run` 跑测试）。→ 沙箱不是可选项。
+- **新发现（推翻第十五轮「本地沙箱工具全 absent」的一半）**：`unshare`（util-linux）**存在**，`unshare --user --map-root-user true` 实测 **OK**（用户命名空间可用）；但 `proot/nsjail/firejail/bwrap/podman/nerdctl` 仍 absent。⚠️ 仅 user namespace **不足以防 NFS 破坏**（需再加 mount namespace + tmpfs/chroot 全量沙箱，是独立基建动作）。
+- **工具链缺口**：`python/node/javac/g++` 在，`go/rustc/cargo` **均 absent** → 6 语言只能跑 cpp/java/js/python 四语言子集（或装 go/rust）。
+- **参赛者适配**：`benchmark.py` **只原生驱动 aider**（`from aider.coders import Coder`）→ cline/opencode/deepseek/codex/claude-code 五者需各自写适配层接入 polyglot 任务格式，是额外工程。
+- **aider-chat 未装**（`pip show aider-chat` 空）。
+- → **待运维拍板**：① 沙箱方案（A. 我自建 `unshare --user --mount --pid` + tmpfs/chroot 沙箱〔需确认允许在共享训练机起命名空间〕B. root 装 bwrap/nsjail C. 运维明确授权无隔离直跑〔不推荐，README 自证 `rm -rf` 风险〕）② 参赛者范围（先只 aider 基线？还是 6 者全适配〔成本高〕）③ go/rust 工具链是否补装。
 
 **可行性关键结论（可复现命令已全部记录）**：
 
@@ -50,20 +60,20 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **H_Docker_unlocked**（Docker socket 已解锁；`docker pull` 仍被网络阻断；H-C Aider Polyglot 可行性已确认；本地沙箱工具 bwrap/nsjail/podman 等全部 absent → 待运维拍板：① docker pull 通路 ② root 装沙箱工具 ③ 接受风险直跑） |
+| PHASE | **H_D_done**（batch-2：H-D 已交付；H-A′ 执行模型已证=执行 LLM 代码，`unshare` 可用但需 mount+chroot 全量沙箱、go/rust 工具链缺、5 非-aider 参赛者需适配 → 实跑待运维拍板） |
 | WAITING | 1（等运维：① docker pull 通路 ② Aider 执行代码沙箱〔本地沙箱工具均未装〕③ 运行主机 .29 是训练机） |
 | ERROR_COUNT | 0 |
-| 更新 | 2026-10-03 08:59（第十五轮：巡检无新指令；补测确认本地沙箱工具 bwrap/nsjail/firejail/podman/nerdctl 全部 absent，收窄 Aider 沙箱三选一） |
-| 产出 | ✅ H-B：`harness/{cline,opencode,deepseek-harness,codex,claude-code}_SOURCE_ANALYSIS.html`（5 份）· ✅ `harness/MERGE_OVERLAP_ANALYSIS.md` · ✅ `harness/SWEBENCH_FEASIBILITY.md` · ✅ H-C Aider 可行性（本节） |
+| 更新 | 2026-10-03 11:07（第十六轮：执行 batch-2 指令 → H-D 交付；H-A′ 前置核查完成、实跑待拍板） |
+| 产出 | ✅ H-B 5 份源码 HTML · ✅ `harness/MERGE_OVERLAP_ANALYSIS.md` · ✅ `harness/SWEBENCH_FEASIBILITY.md` · ✅ H-C Aider 可行性 · ✅ **H-D：`harness/HARNESS_COMPARE_MATRIX.html` + `harness/CLINE_IMPROVEMENT_OPPORTUNITIES.md`（新）** |
 
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        H_Docker_unlocked
-已完成:       H-B 5 份源码分析 HTML；H-A §1.1 可行性核查；Docker socket 解锁；H-C Aider Polyglot 可行性核查；本地沙箱工具核查（全部 absent）
-当前动作:     2026-10-03 08:59 第十五轮：巡检无新指令（HEAD==origin/main==ba5811e9，ops/inbox RUN_ID=6 无新下发）；补测本地沙箱工具 bwrap/nsjail/firejail/podman/nerdctl 全部 absent → 收窄 Aider 沙箱三选一
-下一步:       等运维拍板：① docker pull 通路 ② root 装沙箱工具 ③ 接受风险直跑 → 再启动 H-A 或 H-C 轻量 smoke（≤5 条）
-阻塞:         ① docker pull 网络通路（dockerd 无代理、无内网 registry）② Aider 执行不可信代码需沙箱（本地沙箱工具均未装）③ 运行主机 .29 是训练机
+PHASE:        H_D_done
+已完成:       H-B 5 份源码分析 HTML；H-A §1.1 可行性核查；Docker socket 解锁；H-C Aider 可行性核查；H-D 对比矩阵 + 5 条机会点
+当前动作:     2026-10-03 11:07 第十六轮：执行 batch-2 指令 → H-D 交付（HARNESS_COMPARE_MATRIX.html + CLINE_IMPROVEMENT_OPPORTUNITIES.md）；H-A′ 前置核查（执行模型/沙箱/工具链/参赛者适配）
+下一步:       等运维拍板 H-A′ 三项（沙箱方案 / 参赛者范围 / go+rust 工具链）→ 再装 aider-chat + smoke 5-10 题
+阻塞:         H-A′ ① 执行 LLM 代码需沙箱（本地 sandbox 工具 absent，仅 unshare 可用但需 mount+chroot）② benchmark.py 只驱动 aider、另 5 参赛者需适配 ③ go/rustc/cargo 缺失 ④ 运行主机 .29 训练机
 ERROR_COUNT:  0
 ```
 
@@ -132,4 +142,5 @@ ERROR_COUNT:  0
 - 2026-10-03 07:49 —— **唤醒巡检（非推进，第十三轮）**：`git fetch` → HEAD==origin/main==`e5dc62b`（远端推进的是 pretrain `e5dc62b` R2 P-5b 健康巡检第33次 与 data `85f7d4a` wake55，均与本线任务书无关；`git log origin/main -- BAIZE_HARNESS_TASK.md` 最近仍是 10-02 的 `a821eba`/`3d03a4b`/`d57763a`/`f69b0e5`，任务书运维指令区未变）。任务书「运维指令区」（第 12–18 行）仍为原始「2026-10-02 首启」两条线指令，无新决策/无 STOP/无状态索取；`ops/.last_run_id` = 6、`ops/inbox.md` RUN_ID = 6（无新下发）；`ops_relay.sh` 单副本（pid `2489749`，etimes≈142.6k）。H-A §1.1 两处阻塞（①Docker 权限 usermod 或走 Route E′ ②运行主机 .29 是训练机）**仍未获运维拍板** → 不启动 H-A 实跑、不做重 I/O，保持 `WAITING=1`。本线无待办推进项，静待运维。
 - 2026-10-03 08:24 —— **第十四轮：执行运维指令（2026-10-03 批次）**。① **Docker 解锁成功**：`usermod -aG docker app.e0031982`（口令变体 `Ly3960405@` ❌ / `Ly3960405#` ✅）→ `id` 显示 `122(docker)`、`sg docker -c 'docker info'` OK（Docker 27.5.1）。② **补测 `docker pull hello-world`** → `dial tcp 65.49.68.152:443: connect: network is unreachable`；根因 **dockerd（root/systemd）无代理配置**（shell 有 `https_proxy=172.19.92.25:13128`，curl 经代理可达 registry-1.docker.io=401）+ `daemon.json` 无 `registry-mirrors` + 无内网 Harbor（harbor.cxmt.com/registry.cxmt.com/10.239.2.1 均 000）。→ **socket 已解但官方 docker 口径仍不通**，需运维三选一。③ **H-C Aider Polyglot 可行性**：`Aider-AI/polyglot-benchmark`（225 题/6 语言）+ `Aider-AI/aider`（140MB）git 可达并克隆到 `/nas_train/app.e0031982/harness_work/`（不入库）；harness=`aider/benchmark/benchmark.py`（执行 LLM 生成代码，README 要求 docker 隔离）；包=`aider-chat` 0.86.2（aliyun 镜像，⚠️ `aider` 是占位包）；模型=内网网关 `deepseek-v4-flash`。因「执行不可信代码需沙箱」+ `.29` 是训练机，**未启动实跑**，待运维拍板沙箱方案。
 - 2026-10-03 08:59 —— **唤醒巡检（第十五轮，含一项新补测）**：`git fetch` → HEAD==origin/main==`ba5811e9`（`git log origin/main -- BAIZE_HARNESS_TASK.md` 最近仍是 `1fe0d49`/`0919838` 这批 2026-10-03 指令，**第十四轮已执行完**，无更新指令）。任务书「运维指令区」仍为 2026-10-03 批次（①Docker 解锁 ②避让 ③H-C Aider ④合规），无 STOP、无状态索取；`ops/.last_run_id` = `ops/inbox.md` RUN_ID = 6（无新下发）；`ops_relay.sh` 单副本（pid `2489749`）。**新增补测（轻量，非重 I/O）**：本地沙箱工具排查 `which bwrap nsjail firejail bubblewrap podman nerdctl docker` → **仅 `docker` 命中，其余全部 `(absent)`**。→ 结论：任务书 H-C 说 Aider Polyglot「无 Docker 可立即开跑」需修正——该 harness **执行 LLM 生成的 6 语言代码**，而本地沙箱工具未安装，故「三选一」实际收窄为 ① 打通 docker pull ② root 装 bwrap/nsjail ③ 接受风险直跑。**运维未拍板前不启动任何实跑，保持 `WAITING=1`**（MEMORY_HARNESS.md 21.5KB，未超 32KB 上限，无需滚动）。
+- 2026-10-03 11:07 —— **第十六轮：执行运维指令 2026-10-03 第 2 批（`80729fd`：H-A′ + H-D）**。① **H-D 交付**：`harness/HARNESS_COMPARE_MATRIX.html`（D1 对比矩阵：5 harness × 5 主线，含压缩策略/投影/检查点粒度/hook 边界/降级触发子项）+ `harness/CLINE_IMPROVEMENT_OPPORTUNITIES.md`（D2 五条机会点 O1–O5，每条四段式〔①其它 harness 做法→②cline 现状→③差距→④建议+收益+风险+优先级，均贴 `路径:行号` 原文〕，类别 = O1/O3/O5 可直接借鉴、O2/O4 需架构改动）。核心证据本轮回读 cline/shared/agent.ts:374-402/485、message-builder.ts:105-107、compaction-shared.ts:13-15/61-69、tokens.ts:8、task-proxy.ts:144（Focus Chain 已移除）、compaction.ts:251-254（Telemetry 盲区）；对照 claude-code coreTypes.ts:25-53（27 hook 含 PreCompact/PostCompact）、TodoWriteTool.ts:65-94、sessionMemory.ts:1-6、extractMemories.ts:1-10、tokens.ts:226；deepseek estimate.ts:12-19、surface.ts:22-26；codex auto_compact_window.rs:24-30、compact_model_fallback.rs:9-20。② **H-A′ 前置核查（未实跑）**：aider `benchmark/README.md:22-27` 自证「executing LLM code without human review → 可能 `sudo rm -rf /`」+ `benchmark.py:1027` `subprocess.run`；**新发现** `unshare` 可用（`unshare --user --map-root-user true`=OK），但仅 user ns 不足以防 NFS 破坏、需 mount+chroot 全量沙箱；工具链 `go/rustc/cargo` 缺失（仅 python/node/javac/g++）；`benchmark.py` 只原生驱动 aider、另 5 参赛者需适配；`aider-chat` 未装。→ **H-A′ 实跑待运维拍板三项**：沙箱方案（自建 unshare 沙箱 / root 装 bwrap / 授权直跑〔不推荐〕）、参赛者范围（先 aider 基线 or 6 者全适配）、go+rust 补装。保持 `WAITING=1`。③ HEAD==origin/main==`a96ef20c`（batch-2 `80729fd` 是最近一次任务书改动），ops/inbox RUN_ID=7（只读诊断，非本线下发）。
 
