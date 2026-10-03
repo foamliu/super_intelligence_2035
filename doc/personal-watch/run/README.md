@@ -46,6 +46,21 @@ pkill -f 'watch_news_loop.sh'
 
 ---
 
+## 2.5 常用调参（都在 `watch_news_loop.sh` 顶部）
+
+| 变量 | 默认 | 作用 / 备注 |
+|:--|:--|:--|
+| `MODEL` | `deepseek-flash` | 规范 ID（本机 DeepSeek 官方 API 仅 `deepseek-flash` / `deepseek-v4-pro`） |
+| `THINKING` | `low` | **推理强度**：`none\|low\|medium\|high\|xhigh`。`deepseek-flash` provider 默认 `high`（想得久/费 token）→ 已降到 `low`；要更省设 `none` |
+| `SLEEP_SHORT` | `60` | `WAITING=0`/失败重试（= BaiZe `SLEEP_BUSY`） |
+| `SLEEP_LONG` | `1800` | `WAITING=1`（= BaiZe `SLEEP_WAIT`） |
+| `CLINE_TIMEOUT` | `1500` | 单次 cline 上限（= BaiZe） |
+| `PUSH_INTERVAL` | `18000` | git 兜底同步间隔（= BaiZe） |
+
+> ⚠️ **改 `watch_news_loop.sh` 后必须重启 loop 才生效**（bash 不会重读已在运行的脚本）。
+
+---
+
 ## 3. 新建更多线的模板
 
 照抄 news 一组文件，替换 `<线>` 名即可（loop 脚本**已内置**三处防坑）：

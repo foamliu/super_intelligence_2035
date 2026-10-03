@@ -90,6 +90,10 @@ WAITING: 0
   1. push 前先 `fetch + pull --rebase --autostash`（只 push 不 pull 会永久卡死）；
   2. `WAITING` 正则收紧为**行首**匹配（旧版 `WAITING:[* ]*1` 会误匹配散文）；
   3. 兜底提交**只 add 本线文件**（避免 `git add -A` 卷入他人在途文件）。
+- 🧠 **降低思考量（2026-10-03，实测）**：cline CLI 有 **`--thinking none|low|medium|high|xhigh`**（省略 = 用 provider 默认；**`deepseek-flash` 默认 `high`** → 想得久/费 token）。
+  - news loop 已加变量 **`THINKING="low"`** 并透传给 `cline ... --thinking "$THINKING"`；要更省改成 `none`。
+  - 校验实测：`cline --thinking bogus` → `error: invalid thinking level "bogus" (expected "none", "low", "medium", "high", or "xhigh")`（枚举即这 5 档）。
+  - ⚠️ **改 `loop.sh` 需重启 loop 才生效**（bash 已解析的运行中脚本不重读）。
 - **搜索能力**：本机（含 Windows 侧 cline 会话）已挂 `web-search` MCP（bocha，中文友好）；通用工具为 `web_search` / `search_news` / `fetch_page` / `wiki_lookup`。
 - 🔑 **news worker 运行主机（2026-10-03 实测）**：`liuyang@iZuf65t80q2n4qgbjqbcp0Z`（阿里云），**可出外网**。
   - **网关 = DeepSeek 官方 API**（`https://api.deepseek.com`）。**规范模型 ID 只有两个**（2026-10-03 实测 `GET /models` → 200）：

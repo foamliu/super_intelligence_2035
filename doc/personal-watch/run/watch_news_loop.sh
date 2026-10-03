@@ -35,6 +35,10 @@ REL="doc/personal-watch/run"     # 本任务在仓库中的相对目录（只提
 #   🚫 `deepseek-v4-flash` 也**不是官方 ID** —— Flash 的官方 ID 就是 `deepseek-flash`
 #     （它俩在 OpenAI 兼容层会被别名成同一个，但换台机就可能像 `-fp4` 一样直接报错，别赌）。
 MODEL="deepseek-flash"          # 调研+整理用 flash（便宜/快）；要更强可换 deepseek-v4-pro
+# 推理强度（cline `--thinking`）：none|low|medium|high|xhigh；省略=用 provider 默认。
+# ⚠️ deepseek-flash 的 provider 默认 effort 是 **high**（想得久/费 token）；
+#    新闻采集主要是"搜索 + 读 + 写摘要"，不需要深推理 → 默认 **low**；要更省可设 `none`。
+THINKING="low"
 CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟（与 BaiZe 一致）
 PUSH_INTERVAL=18000             # 每 5 小时兜底同步一次（与 BaiZe 一致；agent 每轮自己也会提交）
 SLEEP_SHORT=60                  # WAITING=0 / 失败重试：短睡 1 分钟（= BaiZe SLEEP_BUSY）
@@ -109,7 +113,7 @@ while true; do
     FORCE_SHORT=0
     if [[ -f "$TASK_MD" ]]; then
         prompt="$(< "$TASK_MD")"
-        cline -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null 2>&1 | tee "$CLINE_LOG"
+        cline -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" --thinking "$THINKING" "$prompt" < /dev/null 2>&1 | tee "$CLINE_LOG"
         rc="${PIPESTATUS[0]}"
         echo "[loop] $(date '+%F %T') cline returned (exit ${rc}); log=$CLINE_LOG"
         # 兜底：cline 常"报错仍 exit 0"（模型名错 / 额度耗尽）→ 从日志抓错，失败则强制短睡重试，不空耗
