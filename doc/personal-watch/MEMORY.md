@@ -174,6 +174,12 @@ WAITING: 0
     另测出 **央视网网页是活的**（`news.cctv.com/tech/` 含当天日期）→ 央视要用须**走 HTML 抓取，不是老 RSS**。
   - **更新 T9 活/死源清单**（活：中新网 RSS + 联合国 RSS + 央视网页；死：新华/人民/央视 RSS + xinhuanet english）。
   - → **再证**：**"源"必须自己测过才用，连 LLM 的推荐也一样**。
+- **2026-10-03（"UA 被拦"诊断复核 → 证伪）** —— 对方补充"联合国源 `unable to parse` 是 feedparser 的 UA 被拦"。
+  - **实测**：4 种 UA（`feedparser/6.0.11` / 浏览器 / `curl/8.0` / 无）**全部 200 `application/rss+xml`** → **联合国不拦 UA**。
+  - **真正原因**：**URL 写错** —— `https://news.un.org/zh/rss` → **404 `text/html`**（57KB HTML 页）→ feedparser 收到 HTML 自然 `unable to parse`；
+    正确地址是 `https://news.un.org/feed/subscribe/zh/news/all/rss.xml`。
+  - **处置（T9 新增第 7 条）**：URL 写死正确值 · **校验 `Content-Type`（rss/xml）+ `pubDate`，拿到 HTML/404 判失败** · 设可识别 UA 作**通用防御**（非本因）。
+  - → **教训再升级：连"病因诊断"也要能实测证伪——两轮下来，"想当然"已两次出错（央视 RSS 活着 / UA 被拦）。**
 - **2026-10-03（news worker 首交付）** —— agent 完成 **T1–T4**（`c326ba8`）+ **首轮 smoke 16 条**（`3fcd854`）+ 记忆回写（`bdc20db`），已转**常态采集**（`WAITING=1`）。
   亮点：**真跑实测**（给报错原文）、**建了免 key MCP**、报告**自包含**、**360 无日期就拒收**（守"字段缺一不可"）。
   待用户拍板：**是否补正规 API key**（免 key 抓取脆弱/合规灰区）。待核：**MCP 是否已装进运行机 cline**。
