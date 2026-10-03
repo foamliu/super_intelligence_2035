@@ -1229,3 +1229,137 @@ bunfig.toml bun.lock package.json plugins README.md src stubs tsconfig.json
 
 =========== DONE ===========
 ```
+
+---
+
+## RUN_ID 7 · 2026-10-03 11:00:51 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=========== 0. 时间（host / date） ==========="
+hostname; date '+%F %T %Z'
+echo
+
+echo "=========== 1. loop / relay 进程（预期 4 loop + 1 relay） ==========="
+ps -eo pid=,etimes=,stat=,args= 2>/dev/null | grep -E 'baize_.*_loop\.sh|ops_relay\.sh' | grep -v grep | cut -c1-150
+echo
+
+echo "=========== 2. 共享工作副本：未提交 / 未推送 / 最近提交 ==========="
+cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null || { echo "REPO MISSING"; exit 0; }
+git status -sb 2>&1 | head -25
+echo "-- 最近 6 条本地提交 --"
+git --no-pager log --oneline -6 2>&1 | cut -c1-120
+echo "-- 与远端 leading/behind（L=ahead R=behind，fetch 由 relay 自己做过） --"
+git rev-list --left-right --count origin/main...HEAD 2>/dev/null || echo "(no origin/main ref)"
+echo
+
+echo "=========== 3. 各 loop 日志尾部（是否在跑 / 报错） ==========="
+for f in /tmp/baize_pretrain_loop.log /tmp/baize_vision_loop.log /tmp/baize_data_loop.log /tmp/baize_harness_loop.log; do
+  if [ -f "$f" ]; then
+    printf '== %s (mtime %s)\n' "$f" "$(date -r "$f" '+%F %T' 2>/dev/null)"
+    tail -4 "$f" | cut -c1-160
+  else
+    printf '== %s : (no log)\n' "$f"
+  fi
+done
+echo "-- ops relay 日志 --"
+tail -6 /tmp/ops_relay.log 2>/dev/null | cut -c1-160 || echo "(no /tmp/ops_relay.log)"
+echo
+
+echo "=========== 4. GPU 占用（谁在跑） ==========="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | cut -c1-60 || echo "(no nvidia-smi)"
+echo
+
+echo "=========== 5. 关键训练日志 ==========="
+for f in /tmp/r10_denseM.log /tmp/baize_p5b_train.log; do
+  [ -f "$f" ] && { printf '== %s (mtime %s)\n' "$f" "$(date -r "$f" '+%F %T')"; tail -3 "$f" | cut -c1-160; }
+done
+echo "-- R10③ 是否 DONE（预期 0→1） --"
+grep -c 'denseM ALL DONE' /tmp/r10_denseM.log 2>/dev/null || echo 0
+echo
+
+echo "=========== 6. 磁盘 + GPIC / laion2B ==========="
+df -hT /nas_train 2>/dev/null | tail -1
+echo "-- gpic train tar 数（预期 ≥1131/8000） --"
+ls -1 /nas_inference/app.e0031982/datasets/stanford-vision-lab/gpic/train/*.tar 2>/dev/null | wc -l
+echo "-- laion2B-en-aesthetic 是否已删 --"
+if [ -d /nas_train/app.e0031982/datasets/laion2B-en-aesthetic ]; then echo "STILL EXISTS"; else echo "GONE (deleted)"; fi
+echo
+
+echo "=========== DONE ==========="
+```
+
+**输出**
+```
+=========== 0. 时间（host / date） ===========
+whag0pgpuap29
+2026-10-03 11:00:51 CST
+
+=========== 1. loop / relay 进程（预期 4 loop + 1 relay） ===========
+2228938   45611 Ss   bash baize_harness_loop.sh
+2315903       0 S    bash ops_relay.sh
+2425284  154198 Ss   bash baize_pretrain_loop.sh
+2489749  154145 Ss   bash ops_relay.sh
+
+=========== 2. 共享工作副本：未提交 / 未推送 / 最近提交 ===========
+## main...origin/main
+ M doc/BaiZe-ISEDA2027/run/EXPERIMENTS_VISION.md
+ M doc/BaiZe-ISEDA2027/run/EXPERIMENTS_VISION_ROUND10.md
+ M doc/BaiZe-ISEDA2027/run/EXPERIMENTS_VISION_ROUND9.md
+ M doc/BaiZe-ISEDA2027/run/MEMORY_VISION.md
+ M doc/BaiZe-ISEDA2027/run/vision/r9_scaling.py
+-- 最近 6 条本地提交 --
+7d9b2bd ops RUN_ID 7: read-only diagnostic (loops alive? shared workcopy behind? disk/GPIC progress, training logs, laio
+9cf5d3a P-5b 巡检 #36：iter2970(62.25%) loss2.0684 健康；MEMORY 滚动归档3条→daily-memories/2026-10-02
+2e19442 report_10_03 refresh (~10:00): add section 11 (in-flight / queued tasks / cumulative ETA / when each line goes i
+2c6ac99 vision: RESTRUCTURE operator notes (was 12 stacked blocks) into status-dashboard / global-rules / must-fix / pri
+217ab5c vision: dispatch R14 (official-repo resource survey, high priority, CPU-only) - clone & read OpenVision/AIMv2/Fa
+f0fdf84 vision CORRECTIONS: (1) R8 six towers are self-written from-scratch adaptations, NOT official implementations ->
+-- 与远端 leading/behind（L=ahead R=behind，fetch 由 relay 自己做过） --
+0	0
+
+=========== 3. 各 loop 日志尾部（是否在跑 / 报错） ===========
+== /tmp/baize_pretrain_loop.log (mtime 2026-10-03 10:58:48)
+      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+
+[loop] 2026-10-03 10:58:48 cline returned (exit 0), checking git push ...
+[loop] 2026-10-03 10:58:48 WAITING=1（异步任务 running）→ sleep 1800s
+== /tmp/baize_vision_loop.log (mtime 2026-10-01 15:25:49)
+      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+
+[loop] 2026-10-01 15:25:49 cline returned (exit 0), checking git push ...
+[loop] 2026-10-01 15:25:49 WAITING=1（异步任务 running）→ sleep 1800s
+== /tmp/baize_data_loop.log : (no log)
+== /tmp/baize_harness_loop.log (mtime 2026-10-03 10:31:30)
+[loop] 2026-10-03 10:31:20 wake up, invoking cline ...
+[31merror:[0m 本次Token额度已用完，请等待16分钟6秒后重试
+[loop] 2026-10-03 10:31:30 cline returned (exit 0), checking git sync ...
+[loop] 2026-10-03 10:31:30 WAITING=1 (async task running) → sleep 1800s
+-- ops relay 日志 --
+
+=========== 4. GPU 占用（谁在跑） ===========
+0, 33 %, 41353 MiB
+1, 87 %, 39273 MiB
+2, 52 %, 39269 MiB
+3, 79 %, 39277 MiB
+4, 65 %, 39209 MiB
+5, 86 %, 39177 MiB
+6, 69 %, 39237 MiB
+7, 57 %, 38597 MiB
+
+=========== 5. 关键训练日志 ===========
+== /tmp/baize_p5b_train.log (mtime 2026-10-02 10:56:34)
+===== P-5b train START @ 2026-10-02 10:56:34 ITERS=4771 GBS=1024 LR=1e-3 min=1e-5 warmup=238 decay=477 save-interval=156 =====
+  BLEND=[1 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/p5b_l3/p5b_l3_train_s0 1 /nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/p5b_l3/p5b_l3_train_s1 1
+-- R10③ 是否 DONE（预期 0→1） --
+0
+
+=========== 6. 磁盘 + GPIC / laion2B ===========
+10.239.23.31:/vol_CTE0_data01 nfs   207T  177T   31T  86% /nas_train
+-- gpic train tar 数（预期 ≥1131/8000） --
+1198
+-- laion2B-en-aesthetic 是否已删 --
+STILL EXISTS
+
+=========== DONE ===========
+```
