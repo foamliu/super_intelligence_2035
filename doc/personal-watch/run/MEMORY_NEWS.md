@@ -13,7 +13,7 @@ WAITING: 0
 ```
 PHASE:        prep_api（前期任务 T1–T4，尚未开工）
 已完成:       无（首轮因模型名写错而空转，已修）
-当前动作:     等待 loop 重启（模型名已改为 deepseek-v4-pro）；随后执行任务书运维指令区第2批 T1–T4
+当前动作:     等待 loop 重启（模型名已改为规范 ID `deepseek-flash`）；随后执行任务书运维指令区第2批 T1–T4
 下一步:       T1+T3 调研 → T2 配置并实测 web search MCP → T4 产出 news/API_COMPARISON.html
 本轮新增:     0 条
 阻塞:         无（模型名问题已修：本机网关仅支持 deepseek-flash / deepseek-v4-pro；WAITING 已置 0）
@@ -47,7 +47,8 @@ ERROR_COUNT:  1（首轮：模型名 deepseek-v4-pro-fp4 不被网关支持 → 
 - **2026-10-03** —— 建线。任务书 / loop / 记忆 / 产物目录就位。
 - **2026-10-03** —— ⚠️ **首轮空转（已修）**：loop 拉起后 cline 报
   `The supported API model names are deepseek-flash, deepseek-v4-pro, but you passed deepseek-v4-pro-fp4`
-  → 本轮什么都没干却 `exit 0`，且 `WAITING:1` 触发长睡。修复：① loop `MODEL` 改 `deepseek-v4-pro`；
+  → 本轮什么都没干却 `exit 0`，且 `WAITING:1` 触发长睡。修复：① loop `MODEL` 改**规范 ID `deepseek-flash`**
+  （2026-10-03 实测 `GET https://api.deepseek.com/models` → 官方仅 `deepseek-flash` / `deepseek-v4-pro`；`deepseek-v4-flash` 非官方 ID）；
   ② `WAITING` 置 `0`；③ loop 增加"抓 cline 致命错→强制短睡重试"兜底；④ `SLEEP_LONG` 6h→1h。
   **待 loop 重启后执行前期任务 T1–T4。**
 

@@ -28,10 +28,13 @@ CWD="$SCRIPT_DIR"
 GIT_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo "$SCRIPT_DIR/../../..")"
 REL="doc/personal-watch/run"     # 本任务在仓库中的相对目录（只提交这里的文件）
 
-# ⚠️ 模型名必须是本机网关支持的：`deepseek-flash` / `deepseek-v4-pro`
-#    （不要写 `deepseek-v4-pro-fp4` —— 那是别的机器的名字，本机网关会报
-#     "The supported API model names are deepseek-flash, deepseek-v4-pro"。）
-MODEL="deepseek-v4-pro"         # 调研+整理任务的模型（可按需换成 deepseek-flash）
+# ⚠️ 模型名用 DeepSeek 官方 API 的**规范 ID**（2026-10-03 实测 `GET https://api.deepseek.com/models` → HTTP 200）：
+#     `deepseek-flash`    显示名 DeepSeek-V4.1-Flash（1M ctx，text+image，reasoning）
+#     `deepseek-v4-pro`   显示名 DeepSeek-V4-Pro  （1M ctx，text）
+#   🚫 `deepseek-v4-pro-fp4` 本机网关不认（报 "The supported API model names are deepseek-flash, deepseek-v4-pro"）；
+#   🚫 `deepseek-v4-flash` 也**不是官方 ID** —— Flash 的官方 ID 就是 `deepseek-flash`
+#     （它俩在 OpenAI 兼容层会被别名成同一个，但换台机就可能像 `-fp4` 一样直接报错，别赌）。
+MODEL="deepseek-flash"          # 调研+整理用 flash（便宜/快）；要更强可换 deepseek-v4-pro
 CLINE_TIMEOUT=1200              # 单次 cline 最多 20 分钟
 PUSH_INTERVAL=3600              # 每 1 小时兜底同步一次（新闻轮次间即会提交）
 SLEEP_SHORT=1800               # WAITING=0 / 失败重试：短睡 30 分钟
