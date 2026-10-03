@@ -1,13 +1,13 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L 预注册 ✅ · arm② SigLIP ✅（未翻盘）· arm③ LocalLoss ✅（未翻盘）· arm④ CoCa ✅（lp 0.47%≈随机、Δ−5.6 点，首个稠密臂=负结果·未翻盘）**；臂⑤ GenLIP 建议跳过 / 臂⑥ AIMv2 · R11-L2 待运维裁决；R13 待运维批准 |
-| WAITING | 0（arm④ CoCa 已 `ALL DONE` @20:13 且收尾完毕；GPU 已空；臂⑤/⑥ 与 R11-L2/R13 的下一步抉择待运维拍板，见流水尾条） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L 预注册 ✅ · arm② SigLIP ✅（未翻盘）· arm③ LocalLoss ✅（未翻盘）· arm④ CoCa ✅（lp 0.47%≈随机、Δ−5.6 点，首个稠密臂=负结果·未翻盘）**；臂⑤ GenLIP 🚫 跳过建议 / 臂⑥ AIMv2 ⏸ 暂缓 / R11-L2 ✅ 下一优先级 / R13 ⏸ 只做 OV2 单臂 / R11-E ⏸ 等数据；**书面判断已交 ROUND11 §10（待运维拍板）** |
+| WAITING | 1（**语义=待运维拍板、非训练 running**：GPU 已空、无训练在跑；R11-L 四臂全完结、书面成本/收益判断已交 `EXPERIMENTS_VISION_ROUND11.md §10` → 等运维在任务书勾选后再起下一训练；置 1 省唤醒 token） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡）+ arm④ CoCa（1.92h×8 卡） |
 | 更新 | 2026-10-03 20:32（arm④ CoCa `ALL DONE` @20:13 收尾已做：lp **0.29/0.37/0.47%** ≈随机 → Δ **−3.14/−5.08/−5.61** 点，未翻盘且 trunk 被 caption 项（~68% 梯度）打回随机；探针名义通过但 C2_diag≈0.09/off=+0.02/C2_gap 从 +0.092 单调下滑，远弱于臂②③；见 ROUND11 §9。GPU 已空；臂⑤ GenLIP 建议跳过、臂⑥ AIMv2 / R11-L2 待运维裁决） |
@@ -63,6 +63,8 @@ WAITING: 0
 - 🔍 **巡检（18:39，arm④ CoCa）**：@step 9100/30000（30.3%）健康——C1 0.4362 / C2_gap +0.0600 / C4=OK，loss_ema 22.55→17.77（contrast ~5.6 / caption ~6.0），吞吐 ~2500–4900 img/s（随迭代波动，低值出现在 probe 前后）；单进程组核验（1 master + 8 rank + 48 dataloader worker，**无重复 run**）；8 卡全忙（util 67–88%，显存 22.7/81.6 GB）。ETA ~20:05–20:15 训完 → 脚本自动回收 4 ckpt IN-1k lp → 下次唤醒做 arm④ CoCa 收尾（§9 回填 + §3 公平表 + 判据裁定）。无异常，继续 WAITING。
 - 🔍 **巡检（19:13，arm④ CoCa）**：@step 17950/30000（59.8%）健康——C1 0.3704 / C2_gap +0.0637 / C4=OK，loss_ema 22.55→16.93（contrast ~5.6–5.9 / caption ~5.4–6.4），吞吐 ~2270–5100 img/s（前段 ~2400，17450 步后数据加载提速至 ~4900）；进程组**再核验** 1 master(1359723) + 8 rank(1359914–1359921) + 48 dataloader worker（**无重复 run**）；8 卡全忙（util 31–82%，显存 22.7 GB）。ETA ~20:05–20:15 训完 → 脚本自动回收 4 ckpt IN-1k lp → 下次唤醒做 arm④ CoCa 收尾（§9 回填 + §3 公平表 + 判据裁定）。无异常，继续 WAITING。
 - ✅ **arm④ CoCa 完成（20:13，`ALL DONE`，收尾 20:32 已做）**：`[done] total=6911.7s final_loss=17.4016 steady=3486.8 img/s fused=False`；探针名义通过但弱（C1 0.339 / C2_diag 0.089 / C2_off +0.021 / C2_gap +0.068，且 C2_gap 从 @300 的 +0.092 单调下滑；caption 项 ~68% 梯度）。IN-1k lp = **0.29 / 0.37 / 0.47%** ≈ 随机（<1/1000），zs 0.40/0.41/0.53% → Δ **−3.14/−5.08/−5.61** 点、**未翻盘且 trunk 被 caption 监督打回随机**。⚠️ 限于「自写 CoCa decoder + 冻结 CLIP-768 + 短 caption + weight2.0（未消融）」，**不得推广到官方 CoCa**。证据 `/tmp/r11_coca.log`。→ **首个稠密监督臂=负结果，「稠密监督翻盘」假说反向**；后续：臂⑤ GenLIP（纯 caption、坍缩先验更强）**建议跳过**，臂⑥ AIMv2 patch（唯一 caption-无关稠密、最贵、需自研）与 R11-L2（文本塔解冻）**待运维裁决**（详见 ROUND11 §9）。
+
+- 📌 **decision gate（2026-10-03 21:31）**：R11-L 四臂（①基线/②SigLIP/③LocalLoss/④CoCa）全部兑现、无一翻盘；GPU 已空。**书面成本/收益判断已交 `EXPERIMENTS_VISION_ROUND11.md §10`**（臂⑤→🚫跳过 / 臂⑥ AIMv2→⏸暂缓 / **R11-L2→✅下一优先级** / R13→⏸批准后只做 OV2 单臂 / R11-E→⏸等 short≥18.5M）。⚠️ 全部**未经批准、不主动起训练**；WAITING 置 1 省 token，等运维在任务书 §3 + §10 勾选后执行。
 
 ## 历史条目已滚动归档（2026-10-03）
 
