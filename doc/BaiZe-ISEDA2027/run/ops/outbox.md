@@ -2921,3 +2921,73 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 23 · 2026-10-04 07:51:58 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
+C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; cd /tmp
+_k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" | head -1)"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY"
+
+echo; echo "=== 1. T1 剥proxy + 剥OPENAI_API_KEY（=v1）==="
+T1=$(env $P -u OPENAI_API_KEY timeout 90 "$C" -c /tmp -m "$M" --auto-approve true -t 45 "reply with exactly OK" 2>&1 | head -3 | tr -d '\r' | tr '\n' ' ')
+echo "   T1 => ${T1:0:150}"
+
+echo; echo "=== 2. T2 剥proxy + OPENAI_API_KEY=有效(secrets) ==="
+env $P OPENAI_API_KEY="$_k" timeout 90 "$C" -c /tmp -m "$M" --auto-approve true -t 45 "reply with exactly OK" 2>&1 | head -3 | cut -c1-150
+
+echo; echo "=== 3. T3 剥proxy + OPENAI_API_KEY=stale(env) ==="
+env $P OPENAI_API_KEY="$OPENAI_API_KEY" timeout 90 "$C" -c /tmp -m "$M" --auto-approve true -t 45 "reply with exactly OK" 2>&1 | head -3 | cut -c1-150
+
+echo; echo "=== 4. 条件重启 ==="
+if echo "$T1" | grep -q 'Forbidden'; then
+  echo "   !!! T1 仍 Forbidden → 不重启，保留现状待运维决策"
+else
+  echo "   T1 通过 → checkout v1 脚本并重启两条 loop"
+  git -C "$WK" fetch origin --quiet 2>/dev/null
+  git -C "$WK" checkout origin/main -- doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh && echo "   checked out"
+  pkill -f 'baize_pretrain_loop.sh'; pkill -f 'baize_harness_loop.sh'; sleep 5
+  cd "$RUN"
+  setsid bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+  sleep 3
+  setsid bash baize_harness_loop.sh > /tmp/baize_harness_loop.log 2>&1 < /dev/null &
+  sleep 25
+  echo "   -- 校验 --"; pgrep -af 'bash baize_(pretrain|harness)_loop\.sh' | cut -c1-100
+  echo "   -- 真实报错数（应为 0）--"; grep -c 'error:.*Forbidden' /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log 2>/dev/null
+  echo "   -- pretrain 日志尾 --"; tail -c 300 /tmp/baize_pretrain_loop.log | tr -d '\r' | tail -3 | cut -c1-135
+  echo "   -- harness 日志尾 --"; tail -c 300 /tmp/baize_harness_loop.log | tr -d '\r' | tail -3 | cut -c1-135
+fi
+
+echo; echo "=== 5. GPU（P-9）==="; nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -2
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 07:51:58
+
+=== 1. T1 剥proxy + 剥OPENAI_API_KEY（=v1）===
+   T1 => [31merror:[0m Forbidden 
+
+=== 2. T2 剥proxy + OPENAI_API_KEY=有效(secrets) ===
+[31merror:[0m Forbidden
+
+=== 3. T3 剥proxy + OPENAI_API_KEY=stale(env) ===
+[31merror:[0m Forbidden
+
+=== 4. 条件重启 ===
+   !!! T1 仍 Forbidden → 不重启，保留现状待运维决策
+
+=== 5. GPU（P-9）===
+0, 27 %, 39111 MiB
+1, 50 %, 39207 MiB
+
+=== DONE ===
+```
