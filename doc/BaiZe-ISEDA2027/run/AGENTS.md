@@ -107,3 +107,12 @@ ps -eo pid=,etimes=,args= | grep 'ops_relay\.sh' | grep -v grep
 4. **纪律**：归档**不得改变任何结论**；`WAITING:` 纪律（正文/流水/快照里不得再出现以 `WAITING:` 开头的行）不变。
 
 > 各 loop 的 `git add` **已包含** `MEMORY_*.md` 与 `daily-memories*/`，故滚动后**照常被提交**，无需额外改动脚本。
+
+## 7. 🧭 运维侧记忆（**2026-10-03 新增**）
+
+> §1 的 4 条 agent 线各有自己的 `MEMORY_*.md`；**指挥它们的外部运维（operator）此前没有记忆** → 已补上。
+
+- **主记忆**：`run/MEMORY_OPERATOR.md` —— **运维「醒来」先读本文件**（SOP / 通讯协议 / 在途任务 / 待拍板 / 铁律 / 关键事实 / 已知坑）。
+- **日流水**：`run/daily-memories-operator/<YYYY-MM-DD>.md`（记录：**用户指令 → 处置 → commit → agent 回报**）。
+- **与各线的关系**：operator **不属于**任何 agent 线；它通过**改各任务书的「运维指令区」+ `git push`** 下发，通过**读各线 `MEMORY_*` / `daily-memories*` / 产物** 查看成果（**不登录服务器**）。
+- **纪律同各线**：`WAITING:` 只在顶部出现一次；**≤32KB**，超限滚动到 `daily-memories-operator/`。

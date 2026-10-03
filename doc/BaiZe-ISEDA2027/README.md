@@ -424,7 +424,9 @@ doc/BaiZe-ISEDA2027/
 ├── run/                           # 实验执行编排 + 记录
 │   ├── EXPERIMENTS*.md            #   实验台账（2B / pretrain / vision）
 │   ├── MEMORY*.md                 #   agent 运行时状态
-│   ├── daily-memories/            #   每日流水
+│   │                              #   ⭐ MEMORY_OPERATOR.md = 运维侧长期记忆（醒来先读）
+│   ├── daily-memories/            #   每日流水（各线：daily-memories-{data,vision,harness,operator}/）
+│   ├── AGENTS.md                  #   谁在跑（总表）+ 记忆维护规程
 │   └── train_s*.sh, baize_*.sh    #   可复现命令
 ├── data/                          # s5_01_loss_curve.csv
 ├── *.html                         # 对外报告（ARCH / PRETRAIN / VISION）
