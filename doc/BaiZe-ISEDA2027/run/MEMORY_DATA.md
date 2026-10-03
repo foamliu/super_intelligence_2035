@@ -10,11 +10,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.5/§0.6/§0.7 推进中 · 🔴白名单锁定(只下 l1_en_hq+zh+GPIC；en_v1_4 已停 488分片保留) · zh 152/256 · l1_en_hq 0/6006(排队) · gpic train 1745/8001+test 128✓ · D-CLEAN 全完成
+PHASE:        §0.5/§0.6/§0.7 推进中 · 🔴白名单锁定(只下 l1_en_hq+zh+GPIC；en_v1_4 已停 488分片保留) · zh 171/256 · l1_en_hq 1/6000(启动·CDN偏慢) · gpic train 1759/8001+test 128✓ · D-CLEAN 全完成 · 🔴唤醒85 base崩后已重启
 已完成:       §0.3 8源/§0.4 R2视觉/§0.6 配方/§0.7 停85M·复用·ETA 交付；SFT-2605 下满一致；D-CLEAN 盘点/-2 ≈341G/-3 servers ≈972G；base-en 2048/2048 满(1T tok)
-当前动作:     唤醒 84 巡检：确认白名单 2 进程真推进(无假活、无重启) —— pid 550476 拉 zh 152/256(part-152@04:28、0 .incomplete、write_bytes 193GB) + l1_en_hq 排队(0/6006) · pid 2426795 gpic train 1745/8001(test 128✓、0 .incomplete、write_bytes 1.5TB)
-下一步:       下轮巡检 l1_en_hq/zh(550476)、gpic(2426795) 真推进（最新 mtime 停>10min 且 .incomplete 不增=僵死→kill+重启）→ zh(剩104件≈130GB)+l1_en_hq(478GB)≈610GB 下满即「MiniCPM5 base 族就绪」报运维；gpic 续下至 8001 tar
-阻塞:         无硬阻塞；磁盘 /nas_train 86%（Avail 31T）
+当前动作:     唤醒85 发现 base 550476 已崩(CDN ConnectionError@zh-part-172)→重启 retry-loop 3076502+hf 3076519，现先拉 l1_en_hq(CC-MAIN-2025-30 part-0001✓73.8MB，part-0002 CDN慢段)；gpic 2426795 真推进 train 1759/8001+test 128✓
+下一步:       下轮判 retry-loop(3076502) 真推进(僵死看 retry 自愈；连崩则查 CDN/代理)→ zh(剩85件≈107GB)+l1_en_hq(6000件≈443GB) 下满即「MiniCPM5 base 族就绪」报运维；gpic 续下至 8001 tar
+阻塞:         无硬阻塞；l1_en_hq 现 CDN 偏慢(趋零)；磁盘 /nas_train 86%（Avail 31T）
 ERROR_COUNT:  0
 ```
 
@@ -80,7 +80,7 @@ ERROR_COUNT:  0
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R research ✅ + R2 LLM 侧 ✅（8 源满填 / base vs L3 重叠 0% / P-8 86:10:4）+ R2 视觉侧 ✅（§0.4：本地 bytes 图文对实测 / 13 HF 候选 / 前 3 推荐）+ phase5 isolation v0.3 + phase1/2 脚本就绪；§0.5/§0.6/§0.7 推进中（§0.6 配方✅ / §0.7 停85M·复用·ETA✅ / SFT-2605 下满一致✅）** |
-| WAITING | 1（下载中：白名单锁定——pid 550476 只下 l1_en_hq(445GiB,排队)+zh(302GiB,124/256@~13.7MB/s)；gpic pid 2426795 train 1711/8001+test 128✓@~8.4MB/s；en 2048/2048 满；en_v1_4 已停(488分片保留)；LLaVA 85M 停无进程(7629/26T 未删)；D-CLEAN-3 servers GONE(Avail 31T/86%)；重 I/O 推迟） |
+| WAITING | 1（下载中：白名单锁定——base 崩后已重启 retry-loop 3076502+hf 3076519 先拉 l1_en_hq(445GiB)+zh(171/256)；gpic pid 2426795 train 1759/8001+test 128✓；en 2048/2048 满；en_v1_4 已停(488分片保留)；LLaVA 85M 停无进程(7629/26T 未删)；D-CLEAN-3 servers GONE(Avail 31T/86%)；重 I/O 推迟） |
 | ERROR_COUNT | 0 |
 | 节点 | `10.239.2.12`（主机 `whag0pgpuap12`；NFS：`/nas_inference` 只读源，`/nas_train` 产出） |
 | 更新 | 2026-10-04 |
@@ -122,6 +122,7 @@ ERROR_COUNT:  0
 
 - 2026-10-04 —— 唤醒 84（白名单 4 项巡检，无假活、无重启）：复核运维指令未变（下载白名单锁定：只下 l1_en_hq+zh+GPIC、停 en_v1_4；D-CLEAN 系列已全部完成并提交；无新增指令、无索取、无 STOP）。🔵 base **550476**（etime ~4h48m）真推进：拉 **zh**（256 文件 flat/302GiB=324GB）已 **152/256**、0 .incomplete（part-152-of-256@04:28，~1.265GB/件；上轮 137@03:57→本轮 +15 件/31min ≈~10MB/s；write_bytes 累计 193GB）；**l1_en_hq=0/6006**（445.1GiB=478GB，随 zh 之后按 HF 树序串行执行，目录尚未创建）。🔵 gpic **2426795**（etime ~1d10h）真推进：train **1745/8001** + test 128/128✓、0 .incomplete（gpic_train_01744.tar@04:29 ~1.55GB/件；上轮 1731@03:56→+14 件/33min ≈~11MB/s；write_bytes 累计 1.5TB）。🔴 en_v1_4 无进程（✅ 已停，488 parquet/≈41.5GB 保留未删）；LLaVA 85M 停无进程。✅ en 2048/2048 满（1T tok）。✅ SFT-2605 1504/1504 intact。✅ servers GONE。ETA（@~10-11MB/s）：zh 剩 104 件≈130GB≈3.7h；l1_en_hq 478GB≈13h → **l1_en_hq+zh 合计 ≈17h≈0.7 天**（吻合运维 1–2 天预估）；gpic 剩 6256 件≈9.4TiB @~11MB/s≈10 天（波动 8–16 天）。磁盘 /nas_train 86%(31T)、/nas_inference 59%(19T)、/nas_user 74%(29T) 均够，WAITING 保持 1。📉 MEMORY 体量 26KB ≤32KB，本轮无需滚动。⚠️ 安全：gpic 进程 2426795 命令行仍暴露 HF token（建议运维轮换，勿写入文档/日志）。git 本轮回写后提交。下一步 = 下轮判 l1_en_hq/zh(550476)、gpic(2426795) 真推进（僵死即 kill+重启）→ zh(剩104件)+l1_en_hq(478GB) 下满即「MiniCPM5 base 族就绪」报运维 → gpic 续下至 8001 tar。
 
+- 2026-10-04 —— 唤醒 85（🔴 base 进程崩溃，已重启 + 白名单 4 项巡检）：复核运维指令未变（下载白名单锁定：只下 l1_en_hq+zh+GPIC、停 en_v1_4；D-CLEAN 系列已全部完成并提交；无新增指令、无索取、无 STOP）。🔴 **事件**：base 进程 **550476** 已在两次唤醒间**崩溃退出**（`ps -p 550476` = 空）—— `download_l1_zh.log` tail 显示在 `ultrafineweb-zh-part-172-of-256` 处 `ConnectionError: Network error: ... us.aws.cdn.hf.co/xorbs/...`（**hf CLI 无自动重试，直接崩**）。**处置（已重启，标「已重启」）**：重启为 **retry-loop**（bash wrapper pid **3076502** + hf 子进程 **3076519**，`--include 'data/ultrafineweb_l1_en_hq/*' 'data/ultrafineweb_zh/*'` → `/nas_train/.../Ultra-FineWeb`，300 次重试、失败 `sleep 30` 自愈，log=`download_l1_zh.log`）。**重启后顺序反转（符合运维 ④ 优先级 l1_en_hq>zh）**：先拉 **l1_en_hq** `CC-MAIN-2025-30` part-0001-of-1000 ✓（**73.8MB/件**，05:05:42）→ part-0002 处 **CDN 慢段**（`.incomplete` 0 字节 ~1.5min、但进程存活 `Sl` + 5 ESTAB 到代理 `172.19.92.25:13128`、mtime 05:06:54 活跃，**非僵死**，retry-loop 崩即自愈）。🔵 zh **171/256**、0 .incomplete（上轮 152→171，即崩溃前又 +19 件）。🔵 gpic **2426795**（etime ~1d11h）真推进：train **1759/8001**（上轮 1745→+14）+ test 128/128✓、0 .incomplete。🔴 en_v1_4 无进程（✅ 已停，488 parquet/≈41.5GB 保留未删）；LLaVA 85M 停无进程。✅ en 2048/2048 满（1T tok）。✅ SFT-2605 1504/1504 intact。✅ servers GONE。ETA：zh 剩 85 件≈107GB + l1_en_hq 6000 件≈443GB ≈ **550GB**，@历史 7-14MB/s ≈ 11-22h（当前 l1_en_hq CDN 偏慢、按恢复常态计）→ 下满即「MiniCPM5 base 族就绪」；gpic 剩 6242 件≈9.4TiB。磁盘 /nas_train 86%(31T)、/nas_inference 59%(19T)、/nas_user 74%(29T)、/data 4%(6.8T) 均够，WAITING 保持 1。📉 MEMORY 体量 28KB ≤32KB，本轮无需滚动。⚠️ 安全：gpic 进程 2426795 命令行仍暴露 HF token（建议运维轮换，勿写入文档/日志）。git 本轮回写后提交。下一步 = 下轮判 retry-loop(3076502) 真推进（僵死即看 retry 是否自愈；连崩则查 CDN/代理链路）→ l1_en_hq+zh 下满即报运维 → gpic 续下至 8001 tar。
 ## 关键路径速查（供恢复）
 
 - 训练仓库 `BASE_DIR` = `/nas_train/app.e0031982/code/BaiZe-ISEDA2027`（复用其 `mamba2_hybrid_2b/preprocess_data.py` + `data/tokenizer_eod` + `pretrain_launcher.py`）。
