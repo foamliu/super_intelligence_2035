@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 9 -->
+<!-- RUN_ID: 10 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,57 @@
 
 ---
 
-## RUN_ID 9 — 🔍 **只读探查：`.29` 的 pretrain / harness 为何静默 ~9 小时**（**本块为最新，优先执行**）
+## RUN_ID 10 — 🔍 **定位 `Forbidden` 根因**（**纯只读，不写任何东西**）（**本块为最新，优先执行**）
+
+**RUN_ID 9 已定位（2026-10-04 07:13）**：
+- ✅ 两条 `.29` loop **进程都活着**（`baize_pretrain_loop.sh` / `baize_harness_loop.sh`）
+- ✅ **P-5b 已于 10-04 01:37 跑完**（`successfully saved checkpoint from iteration 4771`）→ **8 卡全空闲（0% / 0 MiB）已 ~5.6h**
+- 🔴 **根因候选**：`/tmp/baize_*_loop.log` 每个 30min 周期都是 **`error: Forbidden`**，而 **`cline returned (exit 0)`** → loop 分辨不出失败 → **静默空转 ~9h**。**不是 token 额度，是 `Forbidden`（鉴权 / 模型名 / 网关）**
+- ✅ `.12` 正常（vision/data loop 活着且干活）→ **问题只在 `.29`**
+
+**本块目标**：判定 `Forbidden` 属于哪一种，并验证 `-k $OPENAI_API_KEY` 能否修好：
+① **key 不对**（`~/.cline/data/secrets.json` 里的 stale key）② **模型名不对**（`MODEL=` 变量已失效）③ **网关/base-url 不对**（cline 没用内网网关）。
+
+🚫 **纯只读** —— 不 kill / 不重启 / **不写任何文件**；smoke 测试只往 `/tmp` 落地（可接受）。
+
+```bash
+echo "=== 0. HOST / TIME / CLINE ==="; hostname; date '+%F %T %Z'
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+CLINE=$(command -v cline 2>/dev/null || echo "$HOME/.bun/bin/cline"); echo "CLINE=$CLINE"
+
+echo; echo "=== 1. 两条 loop 的 cline 调用行 + 关键变量 ==="
+for f in baize_pretrain_loop.sh baize_harness_loop.sh; do
+  echo "-- $f"; grep -nE 'cline |^MODEL=|^CLINE_TIMEOUT=|^SLEEP_|^PUSH_' "$RUN/$f" 2>/dev/null | cut -c1-190
+done
+
+echo; echo "=== 2. Forbidden 时间线（总数 / 首次 / 最近）+ 最后一次正常周期 ==="
+for f in /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log; do
+  echo "-- $f : Forbidden 总数=$(grep -c 'Forbidden' "$f" 2>/dev/null)"
+  grep -n 'Forbidden' "$f" 2>/dev/null | head -1 | cut -c1-120
+done
+grep -nE 'Forbidden|wake up|push OK|nothing to commit' /tmp/baize_pretrain_loop.log 2>/dev/null | tail -14 | cut -c1-130
+
+echo; echo "=== 3. secrets.json（脱敏）==="
+python3 -c "import json,pathlib;p=pathlib.Path.home()/'.cline/data/secrets.json';print('exists',p.exists(),'mtime',__import__('datetime').datetime.fromtimestamp(p.stat().st_mtime).isoformat() if p.exists() else '');d=json.loads(p.read_text()) if p.exists() else {};[print(' ',k,'=',(str(v)[:6]+'...len'+str(len(str(v)))) if any(t in k.lower() for t in ('key','token','secret')) else v) for k,v in d.items()]" 2>&1 | cut -c1-200
+
+echo; echo "=== 4. 环境变量凭据（脱敏：只看名字/length/前 8 位）==="
+python3 -c "import os;[print(' ',k,'len',len(v),'prefix',v[:8]) for k,v in sorted(os.environ.items()) if any(t in k.upper() for t in ('KEY','TOKEN','API','PROXY'))]" 2>&1 | cut -c1-160
+
+echo; echo "=== 5. cline smoke ——【不带 -k】（复现 loop 的失败）==="
+cd /tmp && timeout 150 "$CLINE" -c /tmp -m deepseek-v4-pro-fp4 --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tail -6 | cut -c1-170
+
+echo; echo "=== 6. cline smoke ——【带 -k \$OPENAI_API_KEY】==="
+cd /tmp && timeout 150 "$CLINE" -c /tmp -m deepseek-v4-pro-fp4 -k "$OPENAI_API_KEY" --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tail -6 | cut -c1-170
+
+echo; echo "=== 7. 对照：.12 用的是哪个 MODEL（为什么它没 Forbidden）==="
+timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'grep -nE "^MODEL=|cline " /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_vision_loop.sh | cut -c1-190; echo "-- .12 secrets --"; python3 -c "import json,pathlib;p=pathlib.Path.home()/\".cline/data/secrets.json\";d=json.loads(p.read_text()) if p.exists() else {};[print(k,len(str(v)),str(v)[:6]) for k,v in d.items() if \"key\" in k.lower()]"' 2>&1 | cut -c1-170 || echo "ssh .12 FAILED"
+
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 9**（`.29` 静默探查，**✅ 已执行 07:13:17 exit=0**）为 ```text —— 它不再霸占「第一个块」。
+
+## RUN_ID 9 — 🔍 **只读探查：`.29` 的 pretrain / harness 为何静默 ~9 小时**（✅ 已执行，本块不再运行）
 
 **背景**：`MEMORY_PRETRAIN_2B.md` 最后更新停在 **10-03 22:05**（第 54 次巡检，P-5b **90.97%**，final ETA 10-04 ~01:36）；`MEMORY_HARNESS.md` 停在 **10-03 22:43**。
 **10-04 全天只有 vision / data 在写文件**（07:06 仍在写）→ 而 pretrain/harness **零文件变更**。
@@ -40,7 +90,7 @@
 
 **约束**：🚫 **纯只读** —— 不 kill / 不重启 / 不 `rm` / 不改任何文件；长输出 `cut -c1-140`；**不整树 `du`**。
 
-```bash
+```text
 echo "=== 0. HOST / TIME ==="; hostname; date '+%F %T %Z'
 
 echo; echo "=== 1. [.29] LOOPS ==="
