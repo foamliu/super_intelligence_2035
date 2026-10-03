@@ -47,9 +47,14 @@ WAITING: 0
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
 | **pretrain** | P-5b 长跑（20B）→ 跑完**立即 P-9**（MBS/精度/seq/profiling） | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md`「P-9」节 | 🔄 P-5b ~57%，ETA 10-04 凌晨 |
-| **vision** | **R10③**（w384/w640 补密 M 轴）→ **R11-D**（GPIC vs CC12M+Amshaker）/ **R11-L**（loss 轴） | `run/EXPERIMENTS_VISION_ROUND10/11.md` | 🔄 R10_active |
+| **vision** | **R10③**（w384/w640 补密 M 轴）→ **R11-D**（GPIC vs CC12M+Amshaker）/ **R11-L**（loss 轴）/ **R11-L3**（读 OpenVision2 官方代码） | `run/EXPERIMENTS_VISION_ROUND10/11.md` | 🔄 R10_active |
 | **data** | 下载巡检 + **D-CLEAN-2**（已批删除 ≈8.6T）+ `servers` 探查 | `run/DISK_CLEANUP_INVENTORY.md` 更新 | 🔄 |
 | **harness** | **H-A′ Aider Polyglot 横评** + **H-D** 5-harness 对比与 cline 机会点 | `run/harness/AIDER_POLYGLOT_COMPARE.html` · `HARNESS_COMPARE_MATRIX.html` · `CLINE_IMPROVEMENT_OPPORTUNITIES.md` | 🔄 |
+
+> ⚠️ **待运维决策（vision 叙事，可能比 loss 调优更关键）**：R9 的 **25.1% 是「从零训练」的上限**；
+> 而已核实 **AIMv2-L(0.3B) 冻结 trunk = 87.6% IN-1k / LiT zero-shot = 77.0%**、**OpenVision 官方权重**也开源 →
+> **加载现成权重可立刻进入 80%+ 区间**。→ 需用户定：**Stage(iii) 要保持「从零训练」叙事，还是允许「选型 + 微调/评估现成编码器」**。
+> （R9 自己已把这两条列为逃逸路线 ①③。）
 
 ---
 
@@ -98,6 +103,7 @@ WAITING: 0
 - **WAITING 正则**：旧版 `WAITING:[* ]*1` 误匹配正文散文 → 已收紧为行首 `^WAITING:[[:space:]]*1`。
 - `baize_vision_loop.sh` 只 push 不 pull 的缺陷**未修**（运行时不宜改脚本）→ 等它停再照抄 pretrain 新版。
 - 本机 PowerShell 读 UTF-8 中文会乱码——**只影响显示**；校验用 `read_files`。
+- 🌐 **本机外网「时通时断」的原因已查明（2026-10-03 用户确认）**：**用户开 VPN（用于 Google 搜索）时 GitHub 不通，关掉即通** → 抓 GitHub / HF 前先确认 **VPN 已关**；断连**重试即可**，不是仓库/权限问题。
 
 ---
 

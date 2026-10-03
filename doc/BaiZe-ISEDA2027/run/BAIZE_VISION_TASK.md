@@ -58,8 +58,17 @@
 - ⭐ **② 监督密度是关键变量（新增视角）**：InfoNCE 每对只给 **1 个全局标量**；而 **AIMv2 = 自回归生成 raw image patches + text tokens**、**OpenVision2 官方 = caption-only 自回归** → 都是**逐 patch/token 的稠密监督**。→ **数据越少，稠密监督的样本效率优势越可能翻盘**（我们 18.5M vs AIMv2 **12B，649×**）——这正是"数据少 ⇒ 目标函数更重要"的机制。
 - ⭐ **③ 文本塔是否必须冻结？（新增，可能被低估的杠杆）**：R4 因「随机 text 塔 → 坍缩」而**冻结 CLIP-768**，但**冻结 = 上限锁死在外来静态文本空间**。→ 增一档 **R11-L2**：**冻结 vs LoRA/Adapter 轻量微调 vs 重训 text 塔**（同样控变量）。⚠️ **必须重跑 R4 的坍缩判据 C1–C4** 确认不坍缩。
 - ⭐ **④ 读 OpenVision2 官方训练代码（它开源、且塔与我们同源）—— R11-L3**：
-  - 已核实：官方是 **generative-only（caption-only 自回归）**、**无训练过的 text tower**、且 README 明说 **pip `open_clip` 不兼容（需其仓库自带 fork）** → **产出「要抄什么 / 要改什么 / 移植成本」**（caption decoder 结构、数据格式、依赖改动），**每条贴文件 URL 或 `路径:行号`**。
-  - ⚠️ **AIMv2 的开源程度（权重/代码/许可）也一并核实**，**不预设结论**。
+  - **已核实（运维 2026-10-03 抓官方仓库，比 R6 记录更新）**：
+    - 统一仓库 = **`UCSC-VLAA/OpenVision`**（含 **OpenVision ICCV2025 / OpenVision 2 CVPR2026 / OpenVision 3**），**Apache-2.0**。
+    - README 原文：该仓库含**训练代码**，且**同时支持两套目标**：**① OpenVision（原始）= contrastive + generative**；**② OpenVision 2 = simplified caption-only generative**。→ ⚠️ **①「对比+生成」与我们说的 CoCa 同构**，应一并看。
+    - **2026-08 已放出 OpenVision 2 的 caption text decoder**（每个 `*-vision-only` repo 现在**也带 jointly-trained decoder**）。
+    - 训练栈 = **TPU + big_vision(JAX)**（`tpu_command.sh` / `gs://` 路径）；PyTorch 侧基于 **OpenCLIP**（fork）；config `src/configs/openvision.py`，**decoder 由 `DECODER_NAME` 控制**。
+    - ⚠️ 与 R6 的差异：R6 记的是「pip `open_clip` 不兼容、需自带 fork」，**仍成立**；但**decoder 已放出**是新增事实。
+  - **产出**：**「要抄什么 / 要改什么 / 移植成本」**（caption decoder 结构、数据格式、依赖改动；**官方是 TPU/JAX，我们是 8×H100+PyTorch → 移植成本必须如实评估**），**每条贴文件 URL 或 `路径:行号`**。
+  - **AIMv2 已核实（运维 2026-10-03 抓官方仓库）**：仓库 = **`apple-aiml-research/ml-aim`**（`apple/ml-aim` 重定向至此），**AIMv1 + AIMv2 的代码与权重均已发布**；目标 = **多模态自回归（multimodal autoregressive）**。
+    - **冻结 trunk IN-1k**：`AIMv2-L`(0.3B)@336 = **87.6%** · `AIMv2-3B`(2.7B)@448 = **89.5%**（正是我们引用的那个数）。
+    - ⭐ **另有 LiT（对比）调过的 zero-shot 版**：`AIMv2-L`(0.3B) = **77.0% zero-shot IN-1k** → **R9 逃逸路线③「用现成编码器」有了具体可选项**。
+    - ⚠️ **LICENSE 需逐字核实**（README 只说"见 LICENSE"，未写明许可类型）。
   - 🚩 **数据侧硬约束（关键判据）**：我们 caption **偏短** —— **CC12M = alt-text 短句** · **Amshaker = 中长** · **GPIC short = 20 tok**；而官方用 **ReCap-DataComp-1B v2 的 LLaMA-3 合成长 caption**。
     → **caption-only 生成式的监督密度会被我们的短 caption 拖累**；而 **AIMv2 式（额外预测 image patches）不依赖 caption 丰富度** → **对我们这种数据更友好**。**此判断须在 R11 实测中验证，不得当结论引用。**
 - **公平性（硬要求）**：生成式/混合臂需要**文本解码器**（不再是冻结 CLIP 文本塔）→ **必须报「参数量 + 训练 token + 每步耗时」**，不能只比 acc。
