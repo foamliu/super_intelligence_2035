@@ -10,11 +10,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.5/§0.6/§0.7 推进中 · D-CLEAN-3 执行完成（servers 974G 已删，回收 ≈972G）
+PHASE:        §0.5/§0.6/§0.7 推进中 · base 下载巡检中（base-en 1911/2048）· D-CLEAN 系列已全部完成（回收 ≈1.31TiB）
 已完成:       §0.3 8源/§0.4 R2视觉/§0.6 配方/§0.7 停85M·复用·ETA 均已交付；SFT-2605 下满一致；D-CLEAN 盘点；D-CLEAN-2 已删 laion2B(7.8G)·zhulong(493M)·pip(3.3G)·nemo Round1(~310G)；🆕 D-CLEAN-3 已删 servers(974G)
-当前动作:     唤醒 59：D-CLEAN-3 servers 删除（P1/P2/P3 全过）+ 报表回写
-下一步:       base-en 剩 ~150 件下满 2048 → 重启 en_v1_4/zh/l1_en_hq → base 过闸分词；gpic 续下至 8000 tar
-阻塞:         无硬阻塞；磁盘 /nas_train 已回收 ~1T（Avail 32190G，85%）
+当前动作:     唤醒 60：轻 I/O 下载巡检（base 1911/2048·gpic 1241/8000 真推进；无新指令/索取/STOP）
+下一步:       base-en 剩 137 件下满 2048 → 重启 en_v1_4/zh/l1_en_hq → base 过闸分词；gpic 续下至 8000 tar
+阻塞:         无硬阻塞；磁盘 /nas_train 已回收 ≈1.31TiB（Avail 32T，85%）
 ERROR_COUNT:  0
 ```
 
@@ -69,7 +69,7 @@ ERROR_COUNT:  0
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R research ✅ + R2 LLM 侧 ✅（8 源满填 / base vs L3 重叠 0% / P-8 86:10:4）+ R2 视觉侧 ✅（§0.4：本地 bytes 图文对实测 / 13 HF 候选 / 前 3 推荐）+ phase5 isolation v0.3 + phase1/2 脚本就绪；§0.5/§0.6/§0.7 推进中（§0.6 配方✅ / §0.7 停85M·复用·ETA✅ / SFT-2605 下满一致✅）** |
-| WAITING | 1（下载中：base-en 1897/2048（pid 2023896）· gpic train 1223/8000 + test 128✓（pid 2426795）；🔴 LLaVA 85M 已停无进程 7629/26T 未删；✅ D-CLEAN-3 已删 servers 974G（Avail 32190G/85%）；重 I/O 阶段继续推迟） |
+| WAITING | 1（下载中：base-en 1911/2048（pid 2023896）· gpic train 1241/8000 + test 128✓（pid 2426795）；🔴 LLaVA 85M 已停无进程 7629/26T 未删；✅ D-CLEAN-3 已删 servers 974G（Avail 32T/85%）；重 I/O 阶段继续推迟） |
 | ERROR_COUNT | 0 |
 | 节点 | `10.239.2.12`（主机 `whag0pgpuap12`；NFS：`/nas_inference` 只读源，`/nas_train` 产出） |
 | 更新 | 2026-10-03 |
@@ -107,6 +107,7 @@ ERROR_COUNT:  0
 
 ## 操作流水
 
+- 2026-10-03 —— 唤醒 60（轻 I/O 巡检，无假活、无重启）：复核运维指令未变（D-CLEAN-3 servers 删除已在 唤醒 59 完成并提交、无新增指令）、无索取、无 STOP。🔵 base 2023896 真推进（base-en 1911/2048，0 .incomplete，du 2.3T；log 尾部「Download complete part-1911」+ 在途 part-1912；mtime 1907@12:23→1911@12:36 ≈4件/13min ≈~7MB/s 发布率；`/proc/io` write 6s +1.23GB 为缓冲高速）；🔵 gpic 2426795 真推进（train 1241/8000 + test 128/128✓，du 1.8T；`/proc/io` write 6s 仅 +16KB → 本轮显著让位 base，符合 §0.7 base>gpic；1 .incomplete 为在途件）；🔴 LLaVA 85M 仍停（pgrep 无进程，7629/26T 冻结未删）；✅ SFT-2605 1504/1504 intact。本轮无 CDN 假活。ETA：base-en 剩 137 件 ≈178GB，@~7MB/s ≈7h / @~14MB/s ≈3.5h；en 后接 en_v1_4/zh/l1_en_hq ≈0.33TB ≈8~12h → 复用路线全 base ≈11.5~19h（≈0.5~0.8 天）；不复用 ≈64~88h → 复用已省 ≈1.67TB ≈44~65h；gpic 剩 6759 ≈11TB，@base 完 ~12MB/s ≈~10 天 / @保守 ~8.7MB/s ≈~15 天。⚠️ 交接：base 现进程 2023896 只 --include data/ultrafineweb_en/* → 下满 2048 后自动退出，下轮若见 en=2048 须重启 hf download 加 --include 拉 en_v1_4/zh/l1_en_hq。磁盘 /nas_train 32T、/nas_inference 20T、/nas_user 29T 均够，WAITING 保持 1。git 本轮回写后提交。下一步 = 下轮按 log/mtime 判 base 2023896 / gpic 2426795 真推进（发现僵死即 kill+重启）→ base-en 下满 2048（预计 ~3.5-7h 内）→ 重启 en_v1_4/zh/l1_en_hq（config 级 --include）→ base 落地过闸 → phase2 分词（base-en 86:10:4）；gpic 续下至 8000 tar。
 - 2026-10-03 —— 唤醒 59（🆕 D-CLEAN-3 servers 删除 + 轻巡检）：复核运维指令（新增 D-CLEAN-3：删 servers 974G、nemo R2 ckpt 不删）、无索取、无 STOP。✅ 三项前置检查全过：P1 `fuser -v`(无 -m) 空 / open-fd 0 / 关键进程 cwd 均不在 servers（vision R9 在 run/vision，hf 下载在 datasets）；P2 `find -newermt '-7 days'` 空；P3 共享副本 grep 0 命中（全树 grep 后台 119s 亦 0）。→ `rm -rf /nas_train/app.e0031982/servers` 完成、`ls -d`=GONE；symlink 指向外部数据集（coco/gqa/ocr_vqa/textvqa/vg）不跟随、逐一 `ls -d` 完好。df 删前 180751G→删后 179779G = **回收 ≈972G（=du 974G，86%→85%）**（⚠️ 删后 df 曾短暂显示仅 -271G 系 NFS statfs 延迟，2 分钟后稳定）。🔵 base 2023896 真推进（base-en 1897/2048，0 .incomplete）；🔵 gpic 2426795 真推进（train 1223/8000 + test 128✓）；🔴 LLaVA 85M 仍停（无进程）；✅ SFT-2605 1504/1504 intact。磁盘 /nas_train Avail 32190G（85%）、/nas_inference 20T、/nas_user 29T 均够，WAITING 保持 1。下一步 = 下轮按 log/mtime 判 base/gpic 真推进（僵死即 kill+重启）→ base-en 下满 2048（剩 ~147 件预计 ~4-8h）→ 重启 en_v1_4/zh/l1_en_hq（config 级 --include）→ base 过闸 → phase2 分词（base-en 86:10:4）；gpic 续下至 8000 tar。
 - 2026-10-03 —— 唤醒 58（🆕 D-CLEAN-2 执行 + servers 探查 + 轻巡检）：复核运维指令（新增 D-CLEAN-2 已批准删除项 + servers 探查）、无索取、无 STOP。✅ 已执行删除：laion2B-en-aesthetic **实测 7.8G（⚠️ 纠正：D-CLEAN 记的 8.1T 是 G/T 单位误读，128 parquet URL 元数据，非 8.1TB）** + zhulong.tar.gz 493,894,409B + `~/.cache/pip` 3.3G + nemo_experiments **Round1/S系列 27 目录 ≈310G**（保留 live p5b 79G + R2 p1–p7 ≈135G；524G→214G）→ 实际回收 ≈341G（df -hT /nas_train 仍 31T 整 TB 粒度不变，df -BG Avail 30964G）。🔍 servers 探查（未删）：974G = 6 节点 × LLaVA-V1.5-Qwen3-4B 旧训练 ckpt（2026-02），高价值回收候选待 owner 确认。🔵 base 2023896 真推进（base-en 1882/2048，0 .incomplete）；🔵 gpic 2426795 真推进（train 1203/8000 + test 128✓）；🔴 LLaVA 85M 仍停（无进程）；✅ SFT-2605 1504/1504 不变。磁盘 /nas_train 30.96T、/nas_inference 20T、/nas_user 29T，WAITING=1。下一步 = 下轮判 base/gpic 真推进 → base-en 下满 2048（剩 166 件）→ 重启 en_v1_4/zh/l1_en_hq → base 过闸 → phase2 分词；gpic 续下至 8000。git 回写后提交。
 - 2026-10-03 —— 唤醒 55（轻 I/O 巡检，无假活、无重启）：复核运维指令未变、无索取、无 STOP。🔵 base 2023896 真推进（base-en 1795/2048，0 .incomplete 残留，du 2.2T；log 尾部「Download complete part-1795」+ 在途 part-1796；/proc/io write 8s 内 +67MB ≈~8.4MB/s）；🔵 gpic 2426795 真推进（train 1117/8000 + test 128/128✓，du 1.8T；gpic_train 01114@07:12→01116@07:17 ≈3件/5min ≈~15MB/s，1 .incomplete 为在途 01117）；🔴 LLaVA 85M 仍停（无进程，7629/26T 冻结未删）；✅ SFT-2605 1504/1504 = 318,990,252,711 B、0 .incomplete 一致。本轮无 CDN 假活。ETA：base-en 剩 253 件 ≈329GB，@~7-9MB/s ≈10~13h；en 后接 en_v1_4/zh/l1_en_hq ≈0.33TB ≈8~12h → 复用路线全 base ≈18~25h（≈0.75~1 天）；不复用 ≈64~88h → 复用已省 ≈1.67TB ≈44~65h；gpic train 剩 6883 ≈10.7TB，@近端 ~15MB/s ≈~8 天 / @保守 ~8.7MB/s ≈~14 天。磁盘 /nas_train 31T、/nas_inference 20T、/nas_user 29T 均够，WAITING 保持 1。git 本轮回写后提交。下一步 = 下轮按 /proc/io + log 尾部判 base 2023896 / gpic 2426795 真推进 → base-en 下满 2048（约 10-13h 内）→ 重启 en_v1_4/zh/l1_en_hq（config 级 --include）→ base 落地过闸 → phase2 分词（base-en 86:10:4）；gpic 续下至 8000 tar。
