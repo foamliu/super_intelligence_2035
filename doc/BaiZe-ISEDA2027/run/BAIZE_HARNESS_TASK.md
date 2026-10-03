@@ -32,6 +32,32 @@ sg docker -c 'docker info'      # 非登录 shell 下验证 socket 可访问（�
 
 **④ 合规提醒**：SWE-bench **Verified/Multilingual 官方榜（2025-11-18 起）只接受「学术/研究机构 + 开源方法 + arXiv/同行评审」的提交** → 我们做**内部横评**可以，**不要指望上官方榜**。
 
+### 🆕 运维指令 · 2026-10-03（第 2 批：**H-A′ Aider Polyglot 横评** + **H-D 5-harness 对比与「对 cline 的启发」**）
+
+> **背景（运维 2026-10-03）**：SWE-bench / Terminal-Bench **都要 docker**，而本机 **docker socket 虽已解锁、`docker pull` 仍不通**（dockerd 无代理）。
+> **Aider Polyglot 已确认可行（不需 docker）** → **先测它并做横评**；同时把 5 个 harness 的源码分析**综合成对比表**，并**提炼对 cline 的改进机会点**。
+
+**H-A′ —— Aider Polyglot 横评（最高优先，立即开跑）**
+- 依据：`harness/CODE_AGENT_BENCHMARKS_SURVEY.md` §2（**225 题 / 6 语言 / 仅需 git+python**）。
+- **参赛者（≥6）**：`/nas_train/app.e0031982/harness/` 下的 **cline / opencode / deepseek-harness / codex / claude-code** + **`aider` 本体**作对照基线。
+- 固定口径：同一模型（内网网关）、同一题集、**同 edit-format 口径**；指标 = **pass rate（pass@1/@2）+ well-formed 编辑率 + token/成本 + 墙钟**（对齐 aider 榜单口径）。
+- 规模：先 **smoke 5–10 题**打通链路 → 再全量 225（预算不足则抽子集并**注明 N**）。
+- ⚠️ 无 docker ≠ 无风险：仍须**避让 `.29`/`.12` 训练**（低负载时段跑）；**不占 GPU**。
+- **产出**：`harness/AIDER_POLYGLOT_COMPARE.html`（自包含）+ 结果表（**含命令与原始输出**）。
+
+**H-D —— 5-harness 对比表 + ⭐「对 cline 的启发 / 改进机会点」**
+> ⚠️ **H-B 的 5 份源码分析已完成**（`harness/{cline,opencode,deepseek-harness,codex,claude-code}_SOURCE_ANALYSIS.html`）→ **本轮不从零重做**，而是**跨 harness 综合 + 补齐薄弱项**。
+- **D1 对比矩阵**：行 = 5 个 harness；列 = **§2.2 的 5 条主线**（①上下文注入/预处理 ②检查点/状态恢复 ③插件/Hook ④焦点链/任务状态跨压缩存活 ⑤模型能力适配与降级）+ 关键子项（压缩策略、投影是否无损、检查点粒度、hook 边界、降级触发条件）。
+- **D2 ⭐ 重点交付 —— `harness/CLINE_IMPROVEMENT_OPPORTUNITIES.md`**：每条机会点用**四段式**：
+  ① **其它 harness 的做法**（贴 `路径:行号` 原文）→ ② **cline 现状**（贴 `路径:行号`）→ ③ **差距** → ④ **改进建议 + 预期收益 + 风险 + 优先级**。
+  - **5 条主线各至少 1 条**；并标注该建议属「**可直接借鉴 / 需架构改动 / 不建议改**」。
+  - 🚫 **不许编造 cline 现状**——cline 侧同样要 `路径:行号`。
+- **D3 补齐**：若某 harness 的分析深度明显弱于 cline（如缺证据路径）→ **补到同深度**，并在报告里注明「本轮补了什么」。
+- **产出**：`harness/HARNESS_COMPARE_MATRIX.html`（自包含：对比表 + 机会点摘要）+ `harness/CLINE_IMPROVEMENT_OPPORTUNITIES.md`。
+
+**顺序**：**H-A′ 先启动（长跑）→ 并行做 H-D**（两者资源不冲突）。
+**铁律**：源码结论**贴 `路径:行号` 原文**；评测**贴命令 + 原始输出**；**不许猜**；**不占 GPU**；重 I/O 避让训练。
+
 ### 📉 记忆维护规程（2026-10-03 运维新增，**硬性**）
 > 理由：`MEMORY_*.md` **每次唤醒都被 agent 全文读取** → 越大越烧 token。本线 `MEMORY_HARNESS.md` ≈ **18KB（当前未超标，保持即可）**。
 - **上限**：本线 `MEMORY_HARNESS.md` 控制在 **≤ 32KB**；一旦超限即执行滚动。
