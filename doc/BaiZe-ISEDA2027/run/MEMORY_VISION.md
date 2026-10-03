@@ -10,7 +10,7 @@ WAITING: 1
 | WAITING | 1（**语义=训练 running（异步）**：R11-L2 LoRA 臂 30k 步在 `.12` 跑（`whag0pgpuap12`），`bash r11_run_lora.sh 30000`，日志 `/tmp/r11_lora.log`，ETA ~2h → 置 1 长睡省 token、训练 `ALL DONE` 后回收 IN-1k lp 再置 0） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡）+ arm④ CoCa（1.92h×8 卡）+ R11-L2 LoRA（训练中，30k 步 ≈1.9–2.1h×8 卡） |
-| 更新 | 2026-10-03 23:56（**R11-L2 文本塔解冻 LoRA 臂 已启动**：smoke 通过 → `r11_run_lora.sh 30000` 在 `.12` 跑；控变量同基线只变「文本塔解冻」；可训 +0.30M 文本 LoRA（q+v r=8 α=16 lr=1e-4）、重跑 C1–C4；预注册见 ROUND11 §11） |
+| 更新 | 2026-10-04 01:34（R11-L2 LoRA 训练中 @step 23850/30000≈80% 健康：C1 ~0.29–0.31 / C2_gap +0.117~+0.142 / C4=OK、loss_ema 5.95→~3.84；`.12` 8 卡全忙 ~18GB；ckpt step10000/20000 已落盘；ETA ~02:00 训完 → 自动回收 4 ckpt IN-1k lp） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -74,6 +74,9 @@ WAITING: 1
 - ✅ **smoke 通过（exit 0）**：8 卡 30 步、`trainable=0.295M`、探针 `C1=0.09–0.34 / C2_gap=+0.03–+0.07 / C4=OK`（无坍缩）；ckpt 字段 `text=lora-CLIP-768 / text_trainable_params=294912`。
 - 🚀 **正式 30k 已启动（23:54，`.12` 全 8 卡）**：`bash r11_run_lora.sh 30000` → `R11L2_lora_w512`；日志 `/tmp/r11_lora.log`；hostname `whag0pgpuap12`、GPU 独占核验。ETA ~2h + 自动回收 4 ckpt IN-1k lp。
 - **预注册裁定（§11.4）**：坍缩（C1>0.95 / C2_gap≤0.005 / C4 fail）→ 负结果；未坍缩且 lp > 基线+1.5（>7.58%）→ 局部翻盘（冻结文本塔锁上限）；否则未翻盘。
+- 🔍 **巡检（2026-10-04 00:30）**：@step 8100/30000（27%）健康——C1 0.25–0.29 / C2_gap +0.12~+0.13 / C4=OK、loss_ema 5.95→~4.5~4.6；`.12` 8 卡全忙（util 53–72%、显存 ~18/81.6 GB）；吞吐 ~2.4k–5.1k img/s（NFS I/O 波动，正常）。ETA ~01:50–02:00 训完 → 脚本自动回收 4 ckpt IN-1k lp → 下次唤醒做 R11-L2 收尾（§11.6 回填 lp + C1–C4 裁定）。无坍缩、无异常，继续 WAITING=1。
+- 🔍 **巡检（2026-10-04 01:02）**：@step 15900/30000（53%）健康——C1 0.24–0.30 / C2_gap +0.1199~+0.1309 / C4=OK、loss_ema 5.95→~3.92；吞吐 ~2.2k–3.2k img/s（NFS I/O 波动，正常）；进程组核验 **1 master(1493889) + 8 rank + 48 dataloader worker**（无重复 run）；`.12` 8 卡全忙（util 45–91%、显存 ~18/81.6 GB）。ETA ~02:00 训完 → 脚本自动回收 4 ckpt IN-1k lp → 下次唤醒做 R11-L2 收尾（§11.6 回填 lp + C1–C4 裁定）。无坍缩、无异常，继续 WAITING=1。
+- 🔍 **巡检（2026-10-04 01:34）**：@step 23850/30000（~80%）健康——C1 0.287~0.307 / C2_gap +0.117~+0.142 / C4=OK、loss_ema 5.95→~3.84；吞吐 ~2.2k–5.1k img/s（NFS I/O 波动，正常）；2 ckpt 已落盘（step10000@00:37、step20000@01:18，各 507MB）；`.12` 8 卡全忙（util ~0–100%、显存 ~18/81.6 GB）。ETA ~02:00 训完 → 脚本自动回收 4 ckpt IN-1k lp → 下次唤醒做 R11-L2 收尾（§11.6 回填 lp + C1–C4 裁定）。无坍缩、无异常，继续 WAITING=1。
 ## 历史条目已滚动归档（2026-10-03）
 
 - 更早的全部巡检/流水（R1–R9 完整过程，live MEMORY 原 95.7KB）已滚动归档至 `daily-memories-vision/2026-10-03.md`（追加「滚动归档快照」）+ 各日期 daily 文件（2026-09-30 / 10-01 / 10-02）。live MEMORY 已压至 ≤32KB。
