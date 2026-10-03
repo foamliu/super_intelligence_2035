@@ -6,7 +6,7 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done**（① 回收 12 点 IN-1k ✅ → ② 3 点 M 拟合 ✅ → ③ 补密 w384/w640 + **5 点 M 重拟合 ✅**）；**R14 ✅ · E1 ✅**；下一批 R11-L/R11-L2 可开（R14 前置已满足）、R13 待运维批准 |
+| PHASE | **R10_done**（① 回收 12 点 IN-1k ✅ → ② 3 点 M 拟合 ✅ → ③ 补密 w384/w640 + **5 点 M 重拟合 ✅**）；**R14 ✅ · E1 ✅**；**R11-L 预注册 ✅**（`EXPERIMENTS_VISION_ROUND11.md`，判据+公平表+6 臂）→ 下一步实现+启动臂② SigLIP（8 卡）；R13 待运维批准 |
 | WAITING | 0（R10-③ `denseM ALL DONE @13:00:30`；收尾 4 步已执行：5-M 拟合 + 回填 §2/§3/§4 + 状态头 + push） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡，详见 EXPERIMENTS_VISION_ROUND10.md） |
