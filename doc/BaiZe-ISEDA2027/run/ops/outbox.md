@@ -2530,3 +2530,83 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 19 · 2026-10-04 07:42:19 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
+
+echo; echo "=== 1. 先验证 sed 提取（只打 masked）==="
+_k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" 2>/dev/null | head -1)"
+echo "   extracted: len=${#_k} prefix6=${_k:0:6}  (期望 len=72 prefix6=02_088)"
+[ -n "$_k" ] || { echo "   !!! sed 取不到 → 中止，不改动任何 loop"; echo DONE; exit 0; }
+unset _k
+
+echo; echo "=== 2. checkout v3 脚本 ==="
+git -C "$WK" fetch origin --quiet 2>/dev/null
+git -C "$WK" checkout origin/main -- doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh && echo "   checked out"
+grep -n 'openAiApiKey' "$RUN/baize_pretrain_loop.sh" "$RUN/baize_harness_loop.sh" | cut -c1-120
+
+echo; echo "=== 3. 停 + 重启（🚫 不碰 GPU 上的 P-9）==="
+pkill -f 'baize_pretrain_loop.sh'; pkill -f 'baize_harness_loop.sh'; sleep 5
+pgrep -af 'baize_(pretrain|harness)_loop\.sh' | cut -c1-100 || echo "   已停止"
+cd "$RUN"
+setsid bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+sleep 3
+setsid bash baize_harness_loop.sh > /tmp/baize_harness_loop.log 2>&1 < /dev/null &
+sleep 25
+
+echo; echo "=== 4. 校验（重点：loop 环境里的 key 前缀必须是 02_088）==="
+for n in pretrain harness; do
+  P=$(pgrep -f "bash baize_${n}_loop.sh" | head -1); printf '   %-9s pid=%-9s ' "$n" "${P:-none}"
+  [ -n "$P" ] && tr '\0' '\n' < "/proc/$P/environ" 2>/dev/null | grep '^OPENAI_API_KEY=' | sed 's/=\(.\{6\}\).*/key= \1...(masked)/' || echo "(no pid!)"
+done
+echo "-- 进程 --"; pgrep -af 'bash baize_(pretrain|harness)_loop\.sh' | cut -c1-105
+echo "-- 真实报错数（应为 0）--"; grep -c 'error:.*Forbidden' /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log 2>/dev/null
+echo "-- pretrain 日志尾 --"; tail -c 400 /tmp/baize_pretrain_loop.log 2>/dev/null | tr -d '\r' | tail -4 | cut -c1-140
+echo "-- GPU（P-9 应仍在跑）--"; nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -3
+
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 07:42:19
+
+=== 1. 先验证 sed 提取（只打 masked）===
+   extracted: len=72 prefix6=02_088  (期望 len=72 prefix6=02_088)
+
+=== 2. checkout v3 脚本 ===
+   checked out
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh:24:if _k="$(sed -n '
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh:32:if _k="$(sed -n 's
+
+=== 3. 停 + 重启（🚫 不碰 GPU 上的 P-9）===
+
+=== 4. 校验（重点：loop 环境里的 key 前缀必须是 02_088）===
+   pretrain  pid=3228163   OPENAI_API_KEYkey= 01_549...(masked)
+   harness   pid=3234430   OPENAI_API_KEYkey= 01_549...(masked)
+-- 进程 --
+3228163 bash baize_pretrain_loop.sh
+3234430 bash baize_harness_loop.sh
+-- 真实报错数（应为 0）--
+/tmp/baize_pretrain_loop.log:1
+/tmp/baize_harness_loop.log:1
+-- pretrain 日志尾 --
+[loop] 2026-10-04 07:42:25 wake up, invoking cline ...
+[31merror:[0m Forbidden
+[loop] 2026-10-04 07:42:28 cline returned (exit 0), checking git push ...
+[loop] 2026-10-04 07:42:28 WAITING=1（异步任务 running）→ sleep 1800s
+-- GPU（P-9 应仍在跑）--
+0, 36 %, 39111 MiB
+1, 65 %, 39207 MiB
+2, 36 %, 39251 MiB
+
+=== DONE ===
+```
