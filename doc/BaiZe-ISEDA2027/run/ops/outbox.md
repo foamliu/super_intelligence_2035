@@ -1824,3 +1824,104 @@ via-proxy -> 503
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 12 · 2026-10-04 07:21:10 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T %Z'
+CLINE=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; T='reply with exactly OK'; cd /tmp
+"$CLINE" --version 2>&1 | head -2
+
+echo; echo "=== 1. cline 的 -k 到底是什么 ==="
+"$CLINE" --help 2>&1 | grep -inE -- '-k|api.?key' | head -8 | cut -c1-150
+
+echo; echo "=== 2. ~/.cline/data 清单（只看文件名/mtime，不打印内容）==="
+ls -la ~/.cline/data/ 2>/dev/null | cut -c1-130
+
+echo; echo "=== 3. 🔬 smoke 矩阵（每条 head -4，只看是否 Forbidden）==="
+try() { L="$1"; shift; printf '%-14s => ' "$L"; env "$@" timeout 90 "$CLINE" -c /tmp -m "$M" --auto-approve true -t 45 "$T" 2>&1 | head -4 | tr '\n' ' ' | cut -c1-165; echo; }
+try "ALL"            
+try "NO_PROXY"       -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY
+try "NO_OPENAI"      -u OPENAI_API_URL -u API_TYPE
+try "NO_BOTH"        -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u OPENAI_API_URL -u API_TYPE
+try "NO_ALL(仿.12)"  -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u OPENAI_API_URL -u API_TYPE -u OPENAI_API_KEY
+
+echo; echo "=== 4. 若上面全 Forbidden → 看 cline 自己的 provider 配置文件名 ==="
+for f in ~/.cline/data/settings.json ~/.cline/data/globalState.json ~/.cline/data/secrets.json; do
+  [ -f "$f" ] && { printf '%s : %s bytes, mtime %s\n' "$f" "$(stat -c%s "$f")" "$(stat -c%y "$f" | cut -c1-19)"; python3 -c "import json,sys;d=json.load(open('$f'));print('   keys:',[k for k in d][:14])" 2>/dev/null; }
+done
+
+echo; echo "=== 5. 对照 .12：它的 ~/.cline/data 清单 ==="
+timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'ls -la ~/.cline/data/ 2>/dev/null | cut -c1-130; echo "-- whoami/host --"; hostname' 2>&1 | cut -c1-140 || echo "ssh .12 FAILED"
+
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 07:21:10 CST
+3.0.51
+
+=== 1. cline 的 -k 到底是什么 ===
+25:  -k, --key <api-key>           API key override for this run
+44:  --kanban                      Run the kanban app
+
+=== 2. ~/.cline/data 清单（只看文件名/mtime，不打印内容）===
+total 228
+drwxr-x---   11 app.e0031982 app.adm   4096 Sep 29 19:31 .
+drwxr-x---    5 app.e0031982 app.adm   4096 Sep  7 09:38 ..
+drwx------    2 app.e0031982 app.adm   4096 Jul 29 14:18 cache
+drwxr-x---    2 app.e0031982 app.adm   4096 Sep  7 09:38 db
+-rw-r--r--    1 app.e0031982 app.adm   2765 Sep 29 19:31 globalState.json
+drwxr-x---    3 app.e0031982 app.adm   4096 Sep  7 09:38 locks
+drwxr-x---    2 app.e0031982 app.adm   4096 Jul 29 14:44 logs
+-rw-------    1 app.e0031982 app.adm     96 Sep 29 14:35 secrets.json
+drwxr-x--- 3178 app.e0031982 app.adm 143360 Oct  4 07:17 sessions
+drwxr-x---    2 app.e0031982 app.adm   4096 Oct  4 07:17 settings
+drwxr-x---    2 app.e0031982 app.adm   4096 Sep  8 09:20 state
+drwxr-x--- 1217 app.e0031982 app.adm  36864 Sep  8 09:18 tasks
+drwxr-x---   28 app.e0031982 app.adm   4096 Sep 29 13:31 workspaces
+
+=== 3. 🔬 smoke 矩阵（每条 head -4，只看是否 Forbidden）===
+ALL            => [31merror:[0m Forbidden 
+
+NO_PROXY       => [31merror:[0m Forbidden 
+
+NO_OPENAI      => [31merror:[0m Forbidden 
+
+NO_BOTH        => [31merror:[0m Forbidden 
+
+NO_ALL(仿.12) => [31merror:[0m Forbidden 
+
+
+=== 4. 若上面全 Forbidden → 看 cline 自己的 provider 配置文件名 ===
+/home/app.e0031982/.cline/data/globalState.json : 2765 bytes, mtime 2026-09-29 19:31:23
+   keys: ['actModeApiProvider', 'planModeApiProvider', 'actModeOpenAiModelId', 'planModeOpenAiModelId', 'openAiBaseUrl', 'welcomeViewCompleted', 'remoteRulesToggles', 'remoteWorkflowToggles', 'actModeThinkingBudgetTokens', 'planModeThinkingBudgetTokens', 'autoApprovalSettings', 'workspaceRoots', 'primaryRootIndex', 'globalWorkflowToggles']
+/home/app.e0031982/.cline/data/secrets.json : 96 bytes, mtime 2026-09-29 14:35:41
+   keys: ['openAiApiKey']
+
+=== 5. 对照 .12：它的 ~/.cline/data 清单 ===
+total 220
+drwxr-x---   11 app.e0031982 app.adm   4096 Sep  4 17:30 .
+drwxr-xr-x    6 app.e0031982 app.adm   4096 Sep  4 17:18 ..
+drwx------    2 app.e0031982 app.adm   4096 Jul 28 16:57 cache
+drwxr-x---    2 app.e0031982 app.adm   4096 Sep  7 09:12 db
+-rw-r-----    1 app.e0031982 app.adm   3122 Sep  8 11:26 globalState.json
+drwxr-x---    3 app.e0031982 app.adm   4096 Sep  4 17:18 locks
+drwxr-x---    2 app.e0031982 app.adm   4096 Jul 29 14:12 logs
+-rw-------    1 app.e0031982 app.adm     96 Sep  8 11:26 secrets.json
+drwxr-x--- 3356 app.e0031982 app.adm 135168 Oct  4 07:10 sessions
+drwxr-x---    2 app.e0031982 app.adm   4096 Oct  4 07:10 settings
+drwxr-x---    2 app.e0031982 app.adm   4096 Sep  8 11:27 state
+drwxr-x---  819 app.e0031982 app.adm  36864 Sep  8 11:25 tasks
+drwxr-x---   32 app.e0031982 app.adm   4096 Sep  8 09:09 workspaces
+-- whoami/host --
+whag0pgpuap12
+
+=== DONE ===
+```
