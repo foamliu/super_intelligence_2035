@@ -32,6 +32,7 @@
 ## 4. 当前状态（2026-10-03）
 
 - 新华网（主源）**实测 403/405 未通** → 按任务书走**兜底源 `chinanews`**（🚫 不绕、不冒充）。
-- 已抓 **2026-06-30 ~ 2026-10-03 ＝ 96 天 / 46,883 条** → `chinanews-2026.jsonl.gz`（**2.07 MB**，≪20 MB，入 git）· 详见 `PROGRESS.md` / `INDEX_FILES.md`。
+- 已抓 **2024-05-07 ~ 2026-10-03 ＝ 880 天 / 408,956 条**（2024/2025/2026 三片；单片 ≪20 MB，均入 git）· 详见 `PROGRESS.md` / `INDEX_FILES.md`。
 - **续抓**：`python3 news/archive/fetch_archive.py --max-seconds 600`（倒序逐日扩，**断点续抓**）。
 - 工具：`fetch_archive.py` —— `--stats` / `--index` / `--repair`（修历史 URL，幂等）/ `--check`。
+- 下游：**`news/policy/eda.py` → `EDA.md`**，**`news/policy/taxonomy.py` → `TAXONOMY.md`**（语料扩后**须重跑**刷新计数）。
