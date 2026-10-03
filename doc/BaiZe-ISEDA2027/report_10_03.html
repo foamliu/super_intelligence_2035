@@ -202,7 +202,8 @@
   <div class="ok-box">
     <b>📐 口径不变量（运维 2026-10-03 定）</b>：<b>每步更新固定 ≈ 4M token</b>（<code>GBS × seq ≈ 4.0M</code>；SLM 公认口径，决定总体训练速度）→
     <code>seq=4096 ↔ GBS=1024</code> · <code>seq=8192 ↔ GBS=512</code>。<br>
-    <b>seq 今后统一 4096</b>（P-9 / P-8）；<code>seq=4094</code> 仅存于正在跑的 <b>P-5b（不动、不参与对比）</b>；<b>seq=8192 是否上 P-8，由 P-9a-ext 的 G 项结果决定</b>。
+    <b>seq 今后统一 4096</b>（P-9 / P-8）；<code>seq=4094</code> 仅存于正在跑的 <b>P-5b（不动、不参与对比）</b>；<b>seq=8192 是否上 P-8，由 P-9a-ext 的 G 项结果决定</b>。<br>
+    <b>📌 总步数 = 总训练 token ÷ 4M，与 seq 无关</b>（总 token 由数据量决定）→ seq 翻倍只使<b>每步样本数</b>（4M/seq）与<b>总序列数</b>（总token/seq）<b>减半</b>，<b>总步数与 LR 计划不变</b>；seq 的代价只体现在<b>每步耗时/显存</b>（由 G 项实测）。
   </div>
 </div>
 
