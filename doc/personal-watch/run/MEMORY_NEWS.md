@@ -11,13 +11,13 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        常态采集（T1–T10 全部 ✅；自第四轮起进入常态采集）
-已完成:       T1–T10 全部 ✅ · 首轮 smoke ✅ · 第二~九轮常态 ✅（第三轮含中文权威源真新闻）；确认 **T10 `fetch_cn_news()` 已实现并随 `1872c1f` 提交**
-当前动作:     第九轮常态采集：`cn_news`（6 活源全 200；188 条命中几乎全为国庆/时政/民生 → **未录条目**）+ **IT之家首页（新增抓取面，补 10-02 漏收 5 条）** + 量子位/爱范儿 RSS（中文）+ **Tom's Hardware**（Anthropic 称智谱 GLM-5.3 具 Mythos 级漏洞利用能力）+ **TechCrunch**（特朗普 AI 承诺拼错美国国名）→ 落盘 news/2026-10-03.md「九、第九轮」**news 7 条（中文 5 / 英文 2）**；SEEN +9（7 news + 2 非新闻）；INDEX news 54→61
-下一步:       常态采集（WAITING=1，睡 30min）：逐类搜索→去重→追加当日摘要；**每轮先用 `cn_news` + IT之家〔RSS **与首页**〕/量子位/爱范儿 补中文（中文≥英文）**，英文走 `search_news`(HN) / TechCrunch / **Tom's Hardware** / 官方 RSS；GDELT 限频退避
-本轮新增:     news 7 条（**中文 5**：IT之家〔Cloudflare 开源 Qwen 多模态决策模型 Clef / DeepSeek 伦理研究 / OpenAI 融资 200 亿美元·估值 8,520 亿 / 博通筹 600 亿美元为 Anthropic 购芯片 / Anthropic 最早 11 月中旬上市〕；**英文 2**：Tom's Hardware〔Anthropic 称智谱 GLM-5.3 具 Mythos 级漏洞利用能力〕+ TechCrunch〔特朗普与 AI 领袖签署承诺拼错美国国名〕）
-阻塞:         无（**IT之家 RSS 窗口仅 ~5h** → 已加抓首页补齐；`cn_news` 当日 188 条命中无 AI）
-ERROR_COUNT:  1（历史：模型名 deepseek-v4-pro-fp4 不被网关支持 → 白睡一轮；已修。GDELT 429 属频控，已如实记录、未重试）
+PHASE:        常态采集（T1–T10 ✅）+ 🆕 **N1/N3 语料与 EDA 启动**（L1 主线）
+已完成:       T1–T10 ✅ · 首~九轮常态 ✅ · 🆕 **N1 抓取器 + 3.2 个月语料（96 天 / 46,883 条）· N3-1 EDA · L2 预注册 · 价格源运行机复测**
+当前动作:     **转 L1/N1 主线**：① 新华网主源**实测 403/405 → 走兜底**（🚫 不绕）；② 新建 `news/archive/fetch_archive.py`（中新网逐日枚举·断点续抓·≥2s/req）→ 抓 **2026-06-30~2026-10-03＝96 天 / 46,883 条**（`chinanews-2026.jsonl.gz` 2.06 MB）；③ `news/policy/eda.py` → `news/policy/EDA.md`（**真实计数**）；④ `news/policy/L2_PREREG.md`（G2 预注册，窗口/口径/检验/多重比较先写死）；⑤ **价格源运行机复测**（腾讯实时+日K ✅ / 新浪 ✅ / 东财 ❌ TLS reset）
+下一步:       续抓 N1（`python3 news/archive/fetch_archive.py --max-seconds 600`，倒序从 2026-06-29 继续 → 逐段覆盖近 3 年→10 年）；语料够后出 `news/policy/TAXONOMY.md`（**必须由 EDA 归纳**）→ N3-2 信号 → N3-3 事件库 → N3-4 预警
+本轮新增:     **N1 语料 46,883 条**（`chinanews`，96 天，2.06 MB）；**news 日报 0 条**（本轮专注 N1/N3，未做常态采集）
+阻塞:         无（新华网长期 403/405 → 已用兜底源 `chinanews`；⚠️ **东财日K 运行机 TLS 被重置不可用** → 历史日线改用腾讯 `ifzq` 日K）
+ERROR_COUNT:  1（历史：模型名 `deepseek-v4-pro-fp4` 白睡一轮，已修；本轮 0）
 ```
 
 **选定方案（prep_api 结论）**
@@ -77,6 +77,12 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
   - **实测结果**：**6 个活源全部 200** → **命中 30 条**（`lang=zh type=news`，按 `published` 倒序）；**丢弃 83 条**（超龄 >72h）。各源新鲜度：中新网×3 kept=30/30/30 · 联合国·中文 kept=18(drop 12) · 央视网 news_1 kept=80 · 央视网 tech_1 kept=9(drop 71)。
   - **用法 + 返回结构 + 自测原始输出**：见 `news/FETCH_CN_NEWS.md`。
 
+- **Q（第 9 批 N4 · 2026-10-03）：G2「准备项」做到哪一步？价格源在运行机通吗？**
+  **A（本线 2026-10-03 实测）**：
+  - **① 价格源运行机复测 ✅**：腾讯实时 `qt.gtimg.cn` **200** · **腾讯日K `web.ifzq.gtimg.cn/appstock/app/fqkline/get` 200（JSON）** · 新浪 `hq.sinajs.cn`（需 `Referer`）**200**；**东财日K `push2his.eastmoney.com` ❌ 运行机 TLS 被重置**（`TLS alert, decode error (562)`，HTTP 000）→ **历史日线改走腾讯**。
+  - **② 方法预注册 ✅** → `news/policy/L2_PREREG.md`（事件窗 `[-1,+1]/[-5,+5]/[+1,+20]`；基准=**指数调整 + 市场模型**；`t` 检验 + bootstrap CI；**FDR 校正**；四坑逐条）。
+  - **③ 事件源 `EVENTS.csv`（N3-3）尚未就绪 → 未过 G2 → L2 不产出任何结论**（N4 目前**只做"准备"，不跑 CAR**）。
+
 ---
 
 ## 1. 状态头
@@ -84,6 +90,8 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **线**：news（新闻采集）
 - **任务书**：`WATCH_NEWS_TASK.md`（只读）
 - **产物**：`news/<YYYY-MM-DD>.md`（当日摘要）· `news/SEEN.md`（去重台账）· `news/INDEX.md`（索引）
+- **N1 语料库**：`news/archive/chinanews-<年>.jsonl.gz`（只 5 字段；**仅取 标题+日期+来源+链接，不抓正文**）
+- **L1 产物**：`news/policy/`（`EDA.md` / `TAXONOMY.md` / `SIGNALS.md` / `EVENTS.csv` / `EARLY_WARNING.md` / `L2_PREREG.md`）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
 - **上次采集窗口**：`2026-10-03` 第八轮常态（11:10 UTC）~ `2026-10-03` 第九轮常态（11:55 UTC）
@@ -93,6 +101,14 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-03** —— 🆕 **转 L1/N1 主线：N1 语料抓取 + N3-1 EDA + L2 预注册 + 价格源复测**。
+  - **新华网主源复测（结论）**：`www.xinhuanet.com/politics/2016-01/01/` → **HTTP 403**；`so.news.cn/getNews` → **HTTP 405**（WAF 页）→ **如实记录、🚫 不绕**（不代理/不伪造 UA）；按任务书**改用兜底源**。
+  - **新建 `news/archive/fetch_archive.py`**（中新网逐日枚举 `scroll-news/{YYYY}/{MMDD}/news.shtml`，实测 2016/2023/2024 全 200；**GBK/UTF-8 自动探测**；**≥2s 限速**；断点续抓；子模式 `--stats/--index/--repair/--check`）。
+  - **本轮语料**：倒序抓 **2026-06-30 ~ 2026-10-03 ＝ 96 天 / 46,883 条**（`chinanews-2026.jsonl.gz` 2.06 MB；0 失败 / 0 空页）；`--repair` 修 **2653** 条协议相对 URL（修后抽检 `HTTP 200`）。⚠️ 抓取中 `pkill -f fetch_archive.py` **误杀自身 shell**（模式匹配到命令行）→ 记一笔，改用 PID 精确 kill。
+  - **N3-1 EDA**（`news/policy/EDA.md`，**真实计数**）：频道 top = 社会 10,383 / **时政 8,648** / 财经 8,567 / 国际 3,899；动作词 top = 发布 1,373 · 举行 1,320 · 启动 963 · 回应 393 · 调研 391 · **会见 282** · 出席 246；主体词 = 习近平（示例）/ 政治局 13 / 国务院常务会议 8；标题模式 = 「X 会见 Y」281 · 「X 决定/批准…」148 · 「签署协议」48 · 「就…作出重要指示」3。
+  - **L2 预注册**（`news/policy/L2_PREREG.md`，窗口/口径/检验/多重比较**先写死**）+ **价格源运行机复测**：腾讯实时 `qt.gtimg.cn` **200** · 腾讯日K `web.ifzq.gtimg.cn` **200 JSON** · 新浪 `hq.sinajs.cn`（需 `Referer`）**200**；**东财 `push2his.eastmoney.com` ❌（TLS reset：`decode error 562`）** → 历史日线改用腾讯。
+  - **下一步**：继续续抓 N1（近 3 年 → 10 年）→ 由 EDA 归纳 `TAXONOMY.md` → N3-2/3/4。本轮**未做常态采集**（专注 N1/N3）。
+  - 判据复核：语料 5 字段齐全、**可回溯 url**；EDA 数字**均来自真实语料**；L2 全文**无因果措辞**（只 相关/同期/滞后/共现）。
 - **2026-10-03** —— ✅ **第九轮常态采集完成（news 7 条：中文 5 / 英文 2）**。PHASE=常态采集。
   - **`cn_news`（T10）实跑**：`--cn-news --limit 40 --json` → `exit=0`、**6 活源全 200**（`limit=200` 复核命中 188 条）；中新网×3 kept=30/30/30（drop 0）· 联合国 kept=18(drop 12，超龄) · 央视 news_1 kept=80 / tech_1 kept=11(drop 69，超龄)。⚠️ 命中**几乎全为国庆/时政/民生/亚运（非 AI）** → **未从中录条目**（宁缺勿滥）。
   - **关键补漏（方法改进，建议固化）**：实测 **IT之家 RSS 窗口仅 ~5h**（`count=60`、`pubDate` 06:23~11:45 GMT、`id` 445→533）→ **10-02 的 `1/009/237`–`270` 段整体漏收**；改用 **IT之家首页 `www.ithome.com/` 枚举**（覆盖更深）**补齐 5 条 10-02 中文 AI 新闻** → **建议后续每轮固定加抓首页**。
@@ -141,35 +157,7 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
   - **T8 收口**：原 31 条逐条打 `🏷 类型` → **保留 news 9**、移出非新闻 22（feature / opinion / analysis / paper / tool / discussion；依修订版**不设「非新闻附录」**）；`SEEN.md` **增「类型」列**（37 行）；`INDEX.md` 计数改 **news-only**（news 15 / 非新闻 22）。
   - **关键方法**：**央视网 → 站内 JSONP 接口**（`news.cctv.com/2019/07/gaiban/cmsdatainterface/page/{news,tech}_1.jsonp`，自带 `focus_date`；页面为 JS 渲染，直抓 HTML 拿不到条目链接）；死源黑名单（新华 / 人民 / 央视 RSS）**永不请求**。
   - 判据复核：本文件所有条目均带 标题 + 来源 + 发布日期 + 链接。**下一步常态采集（WAITING=1）。**
-- **2026-10-03** —— ✅ **第二轮常态采集完成（15 条）**。PHASE→常态采集。
-  - 工具：免 key MCP `web-search-free`（`search_news`=HN/GDELT、`rss_latest`、`web_search`=CN-Bing/360）。
-  - 落盘：`news/2026-10-03.md` 追加「第二轮」段（15 条，均带 标题+来源+日期+链接）· `SEEN.md` +15 行 · `INDEX.md` 当日 16→31、累计 31。
-  - 类目分布：①前沿模型 3 ②安全对齐 3 ③政策治理 4 ④AI与社会 2 ⑤公司人物 1 ⑥与本书相关 2。
-  - 代表条目：Amazon 发布自家 "Jev" 决策模型克隆（TechCrunch）；Apple 收紧完全磁盘访问以遏制 AI agent 滥用（Ars）；特朗普呼吁 AI 公司"极大自我监管"（NBC）；比尔·盖茨称不受约束 AI 或"致十亿人死亡"（Guardian）；NVIDIA OpenShell 自主 agent 安全运行时（GitHub）。
-  - 方法观察：**GDELT 本轮 429**（省额度未重试）→ 必须限频；**中文通用搜索仍无日期**（CN-Bing 返词典噪声、360 无 pubDate）→ 未从中录入；直连 **HEAD 抽检** TechCrunch/Anthropic/GitHub/arXiv=200、Ars=405（不支持 HEAD，条目经 RSS 取得）。
-  - 判据核对：15/15 字段齐全；判断类已标"**我们的观察**"。**下一步常态采集（WAITING=1）。**
-- **2026-10-03** —— ✅ **首轮 smoke 完成（6 类 16 条落盘）**。
-  - 工具：免 key MCP `web-search-free`（`search_news`=HN、`rss_latest`、`web_search`）。
-  - 落盘：`news/2026-10-03.md`（16 条，均带 标题+来源+日期+链接）· `news/SEEN.md`（16 行）· `news/INDEX.md`（当日 16 / 累计 16）。
-  - 类别覆盖：①前沿模型 3 ②安全对齐 3 ③政策治理 3 ④AI与社会 3 ⑤公司人物 2 ⑥与本书相关 2。
-  - 关键发现（方法）：**`IT之家 RSS`（ithome.com/rss/）可用且带 pubDate**，补上中文 dated 源；**360 中文召回好但无日期**（本轮未正式录入）；**CN-Bing 多关键词中文长查询质量差**（返词典噪声）→ 中文改走 360/IT之家；**arXiv cs.AI RSS 当日空**；GDELT 本轮未调（省额度）。
-  - 判据核对：16/16 条字段齐全；判断类内容已显式标"我们的观察"。**下一步常态采集（WAITING=1）。**
-- **2026-10-03** —— ✅ **前期任务 T1–T4 完成**。
-  - **T1 Web 搜索调研**：核实 12 个候选（Brave/CSE/SerpAPI/Tavily/Exa/ddgs/SearXNG/Mojeek/Bocha/Bing-Azure + CN-Bing/360）。
-    决定性事实：本机（中国网络）Google/DDG/Brave/Yahoo/公共 SearXNG **全部不可达**；CN-Bing(200)、360(200)、Tavily/Exa/SerpAPI/Bocha **可达**。
-  - **T2 MCP 配置+实测**：新建 `news/mcp_web_search_free.py`（`MCPServer`，兼容 1.x；3 工具 `web_search`/`search_news`/`rss_latest`），
-    并 `news/cline_mcp_config.json`。**stdio 全链路实测通过**（initialize→tools/list→tools/call，exit 0）。
-  - **T3 新闻 API 调研**：核实 17 个源（HN/HN-Algolia/GDELT/Guardian/NYT/NewsAPI/GNews/NewsData/Currents/Mediastack/TheNewsAPI + 官媒 RSS…）。
-    **已实测取数**：HN 200、GDELT 200（含 429 频控样本）、中新/新华/人民 RSS 200、arXiv 200。
-  - **T4 报告**：产出 `news/API_COMPARISON.md`（底稿）+ `news/API_COMPARISON.html`（自包含、内联 CSS、无外链、离线可开，2 大对比表 + 表下实测记录 + 风险）。
-  - 详见报告 §4「实测记录」。**下一步：常态采集 smoke。**
-- **2026-10-03** —— 建线。任务书 / loop / 记忆 / 产物目录就位。
-- **2026-10-03** —— ⚠️ **首轮空转（已修）**：loop 拉起后 cline 报
-  `The supported API model names are deepseek-flash, deepseek-v4-pro, but you passed deepseek-v4-pro-fp4`
-  → 本轮什么都没干却 `exit 0`，且 `WAITING:1` 触发长睡。修复：① loop `MODEL` 改**规范 ID `deepseek-flash`**
-  （2026-10-03 实测 `GET https://api.deepseek.com/models` → 官方仅 `deepseek-flash` / `deepseek-v4-pro`；`deepseek-v4-flash` 非官方 ID）；
-  ② `WAITING` 置 `0`；③ loop 增加"抓 cline 致命错→强制短睡重试"兜底；④ 睡眠改为**对齐 BaiZe**（`SLEEP_SHORT=60` / `SLEEP_LONG=1800`）。
-  **待 loop 重启后执行前期任务 T1–T4。**
+- （更早流水：第二轮 / 首轮 smoke / 前期任务 T1–T4 / 建线 / 首轮空转 → 已归档 `daily-memories-news/2026-10-03.md`）
 
 ---
 

@@ -28,3 +28,10 @@
 7. ⚖️ 只用**公开新闻**；不采集任何非公开/涉密信息。
 
 > 📖 完整规则见 `../WATCH_NEWS_TASK.md` **§0.0.0 / §0.0.2 / 第 7 批 N1 / §9**。
+
+## 4. 当前状态（2026-10-03）
+
+- 新华网（主源）**实测 403/405 未通** → 按任务书走**兜底源 `chinanews`**（🚫 不绕、不冒充）。
+- 已抓 **2026-06-30 ~ 2026-10-03 ＝ 96 天 / 46,883 条** → `chinanews-2026.jsonl.gz`（**2.07 MB**，≪20 MB，入 git）· 详见 `PROGRESS.md` / `INDEX_FILES.md`。
+- **续抓**：`python3 news/archive/fetch_archive.py --max-seconds 600`（倒序逐日扩，**断点续抓**）。
+- 工具：`fetch_archive.py` —— `--stats` / `--index` / `--repair`（修历史 URL，幂等）/ `--check`。

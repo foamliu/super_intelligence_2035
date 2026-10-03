@@ -1,0 +1,14 @@
+{
+  "source": "chinanews",
+  "next_day": "2026-06-29",
+  "start": "2026-10-03",
+  "end": "2016-01-01",
+  "done_days": 96,
+  "total_recs": 46883,
+  "empty_days": 0,
+  "fail_days": [],
+  "per_year": {
+    "2026": 46883
+  },
+  "updated": "2026-10-03 22:43:41"
+}
