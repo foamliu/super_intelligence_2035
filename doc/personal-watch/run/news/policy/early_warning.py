@@ -15,6 +15,7 @@ news/policy/early_warning.py — N3-4 **预警方案（规则 + 评估协议）*
   * 规则 = **固定、预注册阈值** `s_norm ≥ 1.0`（**不拟合** → 天然无前视）；另记录「训练段 F1 最优」
     的**拟合阈值变体**，如实报告其**退化**（θ→0 恒正，见 §4.0）；
   * 指标 = **precision / recall / F1 / AUC** + **提前期（lead time）**；
+  * **多重比较校正**：对全部 `类型×Δ` 格（单族）做 **BH-FDR**（单格 p 值不得单独解读，见 §4.2）；
   * **必须给可比基线** = ① 随机（= 基准率 base rate）② 气候/历史频率（多数类）③ 恒正 ④ 恒负；
   * **低频/稀疏类** → 只做观察、如实写「样本不足」，🚫 不上复杂模型（只用**阈值规则**）。
 
@@ -34,6 +35,7 @@ import csv
 import glob
 import gzip
 import json
+import math
 import os
 from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta
@@ -195,6 +197,56 @@ def bootstrap_ci(labels, preds, n=BOOTSTRAP_N, seed=SEED):
     return (accs[int(0.025 * n)], accs[int(0.975 * n)])
 
 
+def mannwhitney_auc_p(scores, labels):
+    """AUC 的显著性：Mann–Whitney U（=AUC）正态近似，**含并列秩校正**。
+
+    → (auc, p_two_sided, n_pos, n_neg)；样本不足（无正/无负）时 p=None。
+    用于 §4.2 的**多重比较校正**（BH-FDR）—— 单格 p 值不可单独解读。
+    """
+    pos = [s for s, y in zip(scores, labels) if y == 1]
+    neg = [s for s, y in zip(scores, labels) if y == 0]
+    n1, n2 = len(pos), len(neg)
+    if n1 == 0 or n2 == 0:
+        return None, None, n1, n2
+    m = n1 + n2
+    pairs = sorted(zip(scores, labels))
+    vals = [p[0] for p in pairs]
+    ranks, tie_term, i = {}, 0.0, 0
+    while i < m:
+        j = i
+        while j + 1 < m and vals[j + 1] == vals[i]:
+            j += 1
+        ranks[vals[i]] = (i + j) / 2 + 1
+        t = j - i + 1
+        if t > 1:
+            tie_term += t ** 3 - t
+        i = j + 1
+    r1 = sum(ranks[s] for s in pos)
+    u1 = r1 - n1 * (n1 + 1) / 2
+    auc = u1 / (n1 * n2)
+    mu = n1 * n2 / 2
+    var = (n1 * n2 / 12.0) * ((m + 1) - tie_term / (m * (m - 1)))
+    if var <= 0:
+        return auc, None, n1, n2
+    z = (u1 - mu) / math.sqrt(var)
+    p = math.erfc(abs(z) / math.sqrt(2))          # 双侧 p
+    return auc, p, n1, n2
+
+
+def bh_fdr(pvals):
+    """Benjamini–Hochberg FDR。入参 [(key, p), ...] → {key: q}（q 单调、≤1）。"""
+    m = len(pvals)
+    if m == 0:
+        return {}
+    order = sorted(range(m), key=lambda i: pvals[i][1])
+    q, prev = {}, 1.0
+    for rank in range(m, 0, -1):
+        k, p = pvals[order[rank - 1]]
+        prev = min(prev, p * m / rank)
+        q[k] = min(prev, 1.0)
+    return q
+
+
 def main() -> int:
     corpus_by_date, comment_by_date = load_corpus()
     by_type_date, cn_by_type, total_ev = load_events()
@@ -205,6 +257,12 @@ def main() -> int:
         return 1
     d0 = date.fromisoformat(min(corpus_by_date))
     d1 = date.fromisoformat(max(corpus_by_date))
+    # 对齐（防语料/事件源错位）：`EVENTS.csv` 由语料抽取，其覆盖区间是语料的**子集**；
+    # 取 **交集** 作评估轴 —— 否则会在「有语料、无事件」段**凭空造出全 0 负例**，污染 AUC。
+    ev_days = sorted({d for ctr in by_type_date.values() for d in ctr})
+    if ev_days:
+        d0 = max(d0, date.fromisoformat(ev_days[0]))
+        d1 = min(d1, date.fromisoformat(ev_days[-1]))
     axis = daterange(d0, d1)
     N = len(axis)
 
@@ -264,7 +322,8 @@ def main() -> int:
         "只给**概率 + 时间窗**，措辞用**迹象/倾向**。")
     add("- ⚠️ **事件抽取噪声**：`EVENTS.csv` precision≈80%（标题规则）→ 假阳性抬高基准率，**会压低 precision 增益**。")
     add("- ⚠️ **不涉因果/外生冲击识别**：本表**不区分**「动作是否是对市场的回应」（那属 L2，另受 G2 门约束）。")
-    add("- ⚠️ **多重比较**：`类型 × Δ` 共 45 格**未校正** → 每格结论均标**「探索性」**；以**与基线对比**为准。")
+    add(f"- ⚠️ **多重比较**：`类型 × Δ` 共 `{len(cats)}×{len(HORIZONS)}` 格 → 用 **BH-FDR** 校正"
+        "（§4.2）；§4 表同时列 **`p(MW)`（Mann–Whitney 双侧）与 `q(BH)`**，**以校正后的 `q` 为准**。")
     at()
     add("---")
     at()
@@ -338,6 +397,7 @@ def main() -> int:
             base = sum(labs) / n_test if n_test else 0.0
             tp, fp, fn, prec, rec, f1 = prf(preds, labs)
             auc = auc_score(scores, labs)
+            _, p_auc, n_pos, n_neg = mannwhitney_auc_p(scores, labs)
             lo, hi = bootstrap_ci(labs, preds)
             maj = 1 if base >= 0.5 else 0
             _, _, _, mprec, mrec, _ = prf([maj] * n_test, labs)
@@ -367,6 +427,7 @@ def main() -> int:
             results[(typ, H)] = {
                 "tier": tier, "n_test": n_test, "base": base,
                 "prec": prec, "rec": rec, "f1": f1, "auc": auc, "ci": (lo, hi),
+                "p": p_auc, "n_pos": n_pos, "n_neg": n_neg,
                 "n_pred": tp + fp, "lead_med": lead_med,
                 "maj_prec": mprec, "maj_rec": mrec, "maj": maj,
                 "comb_prec": comb_prec, "simple_prec": simple_prec, "simple_rec": simple_rec,
@@ -379,6 +440,17 @@ def main() -> int:
                 rows.append((name, len(idxs),
                              (sum(y[i] for i in idxs) / len(idxs)) if idxs else 0.0))
             cond_tables[(typ, H)] = rows
+
+    # ── 多重比较校正（BH-FDR，单族 = 全部「类型×Δ」格）──────────────────────
+    pvals = [(k, r["p"]) for k, r in results.items() if r.get("p") is not None]
+    q_adj = bh_fdr(pvals)
+    for k, r in results.items():
+        r["q"] = q_adj.get(k)
+    n_tests = len(pvals)
+    n_raw = sum(1 for _, p in pvals if p < 0.05)
+    n_surv = sum(1 for v in q_adj.values() if v < 0.05)
+    survivors = sorted((k for k, v in q_adj.items() if v < 0.05),
+                       key=lambda k: results[k]["p"])
 
     # §3 规则草案
     add("## 3. 规则草案 · `信号 → P(活跃度高于常态) + 时间窗`（描述性，全样本）")
@@ -411,8 +483,8 @@ def main() -> int:
     add("> **基线**：base rate = 随机 precision（AUC=0.5）；「气候」= 多数类；「恒正」precision=基准率、recall=1。")
     add("> `ΔP` = 规则 precision − 基准率（>0 才算**有增益**）；`提前期` = 命中日的**中位**提前天数。")
     at()
-    add("| 类型 | 层级 | Δ | 测试N | 基准率 | precision | recall | F1 | AUC | ΔP | 提前期(中位) | 判定 |")
-    add("|:--|:--|--:|--:|--:|--:|--:|--:|--:|--:|--:|:--|")
+    add("| 类型 | 层级 | Δ | 测试N | 基准率 | precision | recall | F1 | AUC | p(MW) | q(BH) | ΔP | 提前期(中位) | 判定 |")
+    add("|:--|:--|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|:--|")
 
     def verdict(r):
         if r["n_test"] == 0 or r["n_pred"] == 0:
@@ -435,9 +507,11 @@ def main() -> int:
                 continue
             auc_s = f"{r['auc']:.3f}" if r["auc"] is not None else "—"
             lead_s = f"{r['lead_med']}天" if r["lead_med"] is not None else "—"
+            p_s = f"{r['p']:.3f}" if r.get("p") is not None else "—"
+            q_s = f"{r['q']:.3f}" if r.get("q") is not None else "—"
             add(f"| {typ} {c['name']} | {r['tier']} | {H} | {r['n_test']} | {r['base']:.2f} | "
-                f"{r['prec']:.2f} | {r['rec']:.2f} | {r['f1']:.2f} | {auc_s} | {r['prec'] - r['base']:+.2f} | "
-                f"{lead_s} | {verdict(r)} |")
+                f"{r['prec']:.2f} | {r['rec']:.2f} | {r['f1']:.2f} | {auc_s} | {p_s} | {q_s} | "
+                f"{r['prec'] - r['base']:+.2f} | {lead_s} | {verdict(r)} |")
     at()
 
     add("### 4.0 对照：拟合阈值变体（**已证明退化，故弃用**）")
@@ -466,6 +540,41 @@ def main() -> int:
         if not r or r["tier"] == "低频":
             continue
         add(f"| {typ} {c['name']} | {r['simple_prec']:.2f} | {r['comb_prec']:.2f} | {r['simple_rec']:.2f} |")
+    at()
+
+    add("### 4.2 多重比较校正（BH-FDR · **单族 = 全部「类型×Δ」格**）")
+    at()
+    add(f"> 全表共 **{n_tests}** 个 `类型×Δ` 检验（**单族**）；以 **Benjamini–Hochberg** 对 AUC 的 "
+        "Mann–Whitney 双侧 p 值做 FDR 校正。**未校正的单格 p 值不得单独解读**（§4 表已列 `p(MW)` 与 `q(BH)`）。")
+    add(f"- **原始 `p<0.05`**：**{n_raw}** / {n_tests} 格；**BH 校正后 `q<0.05`**：**{n_surv}** / {n_tests} 格。")
+    if survivors:
+        surv_s = "、".join(f"`{k[0]} Δ={k[1]}`（q={q_adj[k]:.3f}）" for k in survivors)
+        add(f"- **校正后仍显著**（共 {n_surv} 格）：{surv_s}。")
+        if n_surv < n_raw:
+            add(f"  - 即**原始显著的 {n_raw} 格中，有 {n_raw - n_surv} 格在校正后不再显著** → 判为多重比较假阳性。")
+    else:
+        add("- **校正后无一格显著**。")
+    strong = [k for k, v in results.items()
+              if v.get("q") is not None and v["q"] < 0.05
+              and (v.get("auc") or 0.0) >= 0.60 and v["tier"] != "低频"]
+    n_strong = len(strong)
+    low = sorted((k for k, v in results.items()
+                  if v.get("auc") is not None and v["auc"] < 0.5),
+                 key=lambda k: results[k]["auc"])
+    add(f"- ⚠️ **显著 ≠ 可用（防过度声称）**：Mann–Whitney 检验的只是「**AUC 是否 ≠ 0.5**」；"
+        f"本设置 **N 很大**（数百~上千测试日）且**标签与信号强自相关**（政治动作**成簇**，见 §5）"
+        f"→ **多数格天然显著**；**`q<0.05` 只说明「非随机」，🚫 不等于「可预警」**。")
+    add(f"- 🔑 **另设效果量门槛（本表口径）**：**`q<0.05` 且 `AUC ≥ 0.60` 且非低频类** → "
+        f"**{n_strong}** / {n_tests} 格判为「**可预警候选**」"
+        + ("（**校正显著但效果量不足的格不计入**）。" if n_surv > n_strong else "。"))
+    if low:
+        low_s = "、".join(f"`{k[0]} Δ={k[1]}`（AUC={results[k]['auc']:.3f}）" for k in low)
+        add(f"- ⚠️ **方向相反（AUC<0.5）如实列出**：{low_s} —— 信号对这些格**为反向**，**如实保留、不粉饰**。")
+    add("- ✅ **诚实结论**：本信号本质是**「活动聚簇 / 持续性」**检测（**近期密集 → 近期仍密集**），"
+        "**属弱信息、🚫 不是「预测新起点」**；**低频类**（样本稀疏）AUC 纵高**也只作参考**；"
+        "**未胜出 / 反向格同样保留**。")
+    add("- ⚠️ **能力护栏**：本校正只对**这一族**（全部 `类型×Δ` 格）负责；**分族**（如仅高频类、仅 Δ=7）会改变结论 —— "
+        "本文**不事后换族、不反复换窗**（§0.0.2 数据窥探红线）。")
     at()
 
     # §5 频率分层结论
@@ -500,7 +609,8 @@ def main() -> int:
     add("> 🔑 **诚实结论（供上层判断）**：")
     add("> 1. **「过去 7 天活跃度」对高频类**（外事/会议/政策）**有可用的样本外信息** —— 多个 `类型×Δ` 的 AUC 明显 >0.5，"
         "即**近期密集 → 未来 Δ 天更可能继续密集**（政治动作**成簇发生**）；")
-    add("> 2. **但增益幅度有限、且不稳定**，有类型 AUC≈0.5（**未胜出基线**）—— **负面结果同样如实列出**，不粉饰；")
+    add("> 2. **但须防过度声称（见 §4.2）**：MW 显著只说明「**非随机**」；该信号本质是**活动聚簇 / 持续性**，"
+        "**🚫 不是「预测新起点」**；**未胜出 / 反向（AUC<0.5）格如实保留**，不粉饰；")
     add("> 3. **越长的时间窗（Δ=90）信号越弱**（噪声累积），**预警的可用提前量主要在 Δ=7~30**；")
     add("> 4. **「组合信号」（节奏+评论体）未显示稳定增益**（见 §4.1，组合 P ≈ 单信号 P）→ 需更强的文本信号（措辞/新词，见 `SIGNALS.md`）。")
     at()
@@ -511,11 +621,11 @@ def main() -> int:
     add("- ⚠️ **代理源**：全部来自 `chinanews`，**非新华社**；并入其它源须**按源分列**重算。")
     add("- ⚠️ **事件抽取噪声**：`EVENTS.csv` precision≈80%（标题规则）→ 假阳性抬高基准率。")
     add("- ⚠️ **测试窗重叠**：Δ=90 时相邻测试日标签窗**重叠** → precision/recall 的**有效性受影响**（已给 N）。")
-    add("- ⚠️ **未做多重比较校正**：`类型 × Δ` 共 45 格 → 一律标**「探索性」**。")
+    add("- ✅ **多重比较已校正（BH-FDR）**：单族 = 全部 `类型×Δ` 格（见 §4.2）；⚠️ **只对本族负责**（换族会改变结论）。")
     add("- ⚠️ **信号仍浅**：仅「归一化节奏 + 评论体密度」；**措辞强度/新词/版面**（见 `SIGNALS.md`）**尚未纳入**。")
-    add("- **下一步**：① 用**更合适的阈值准则**（固定召回率下的 precision / 预注册阈值）替代 F1 调参；"
-        "② 纳入措辞/新词信号并**系统评估组合规则**；③ 加 **FDR 校正**；④ 扩充语料源（按源分列）；"
-        "⑤ 按 **G2′** 做**连续多周稳定运行**记录（预警有基线 + 报提前期 + 覆盖主要动作类型）。")
+    add("- **下一步**：① 用**更合适的阈值准则**（固定召回率下的 precision）替代 F1 调参；"
+        "② 纳入措辞/新词信号（`SIGNALS.md`）并**系统评估组合规则**；③ 扩充语料源（按源分列）；"
+        "④ 按 **G2′** 做**连续多周稳定运行**记录（预警有基线 + 报提前期 + 覆盖主要动作类型）。")
     at()
 
     with open(OUT_MD, "w", encoding="utf-8") as f:
