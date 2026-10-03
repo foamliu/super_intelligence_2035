@@ -49,23 +49,23 @@
 
 <header class="hero">
   <h1>观察哨（personal-watch）工作汇报 · 2026-10-03</h1>
-  <div class="sub">建哨 + <b>2 条 worker 线</b>（news / research）· <b>11 轮运维指令</b> · 两处<b>用户点名纠错</b>并闭环 · 当日 <b>29</b> 个提交 · news <b>35</b> 条 / research <b>34</b> 篇</div>
+  <div class="sub">建哨 + <b>2 条 worker 线</b>（news / research）· 三次<b>用户点名纠错</b>并闭环 · 当日 <b>39</b> 个提交 · news <b>54</b> 条 / research <b>61</b> 篇 · 一次<b>组织调整</b>（archive 并入 news）</div>
   <div class="meta">
-    <span>📅 2026-10-03（刷新于 <b>~17:00</b>）</span>
+    <span>📅 2026-10-03（刷新于 <b>~19:50</b>）</span>
     <span>📝 <code>foamliu/super_intelligence_2035</code> @ <code>main</code></span>
-    <span>📈 当日提交 <b>29</b> 个（<code>doc/personal-watch/</code>）</span>
+    <span>📈 当日提交 <b>39</b> 个（<code>doc/personal-watch/</code>）</span>
     <span>🧭 supervisor 通道 = 任务书「运维指令区」+ git</span>
   </div>
 </header>
 
 <div class="ok-box">
-  <b>🔄 本文件已刷新（2026-10-03 ~17:00）—— 相对首版（~15:00）的增量：</b>
+  <b>🔄 本文件已刷新（2026-10-03 ~19:50）—— 相对上一版（~17:00）的增量：</b>
   <ul style="margin:8px 0 0">
-    <li><b>提交 22 → 29</b>。</li>
-    <li><b>news</b>：由 3 轮 → <b>5 轮</b>；真新闻 <b>15 → 35</b> 条；<b>中文覆盖逆转</b>（后三轮 中文 19 : 英文 7）→ <b>T6 的意图已达成</b>。</li>
-    <li><b>research</b>：由「待启动」→ <b>已启动并交付首轮 34 篇</b>（R1 API 打通 + R2 查询固化 + R3/R4 采集整理），<b>supervisor 抽验 3 个 arXiv ID 全真实</b>。</li>
-    <li><b>新增取源实测</b>：arXiv <b>RSS 周末为空</b>（第 3 次「200 ≠ 有料」）· HF Daily Papers <b>滞后 3~8 天</b> · <b><code>≤72h</code> 对 arXiv 会误杀</b> → 已修订为 R1′/R2′。</li>
-    <li>⚠️ <b>状态观察</b>：两条线自 ~15:15 后无新提交（同期 BaiZe 线仍在提交）→ 疑似 <b>loop 停摆或 token 额度</b>，需在运行机确认（见 §7）。</li>
+    <li><b>提交 29 → 39</b>。</li>
+    <li><b>news：35 → 54 条</b>（已到<b>第 8 轮</b>）；<b>后 5 轮中文 27 : 英文 12</b> → <b>中文覆盖持续占优</b>。</li>
+    <li><b>research：34 → 61 篇</b>（候选 346）；<b>R1′/R2′ 已交付</b>，第 3/4 轮因<b>周六 arXiv 不公告</b>而<b>如实报 0 新增</b>。</li>
+    <li><b>组织调整（用户 5 条指令）</b>：<b>archive 线并入 news</b>（不新增智能体）；news 加 <b>N1 十年回溯 + 分析/饼图</b>、<b>N2 新闻×资产价格相关性</b>；research 加 <b>TOP-K 排序</b>（质量 × 与 BaiZe/ZhuLong 相关性，≤30d）；📧 research「给作者发邮件」<b>已登记未批准</b>。</li>
+    <li>新增实测：<b>HF Daily Papers 本机不可达</b>（research 如实记录、<b>未伪造 <code>hf_daily</code></b>）；<b>R2′ 周末时效放宽生效</b>；我此前 "&gt;45 天" 的成本估算<b>已更正</b>（按天枚举 ≈2–3 小时）。</li>
   </ul>
 </div>
 
@@ -82,17 +82,17 @@
 <div class="note">
   <b>⚠️ 如实标注未完成项：</b>
   <ul style="margin:8px 0 0">
-    <li>news 线 <b>T5（自建 MCP 装进 cline）</b> 与 <b>T7（GDELT 退避）</b> 仍待办；<b>T6（中文占比）意图已达成</b>。</li>
-    <li>research 线的 <b>R1′/R2′</b>（HF Daily Papers 副源 + 周末时效放宽）<b>尚未回执</b>。</li>
-    <li>⚠️ <b>两条线自 ~15:15 后无新提交</b>（同期 BaiZe 线仍在提交）→ 见 §7 第 1 项。</li>
+    <li><b>news N1/N2</b>（十年回溯 + 价格相关性）与 <b>research TOP-K</b> 均 <b>刚下发、待交付</b>。</li>
+    <li>news <b>T5</b>（自建 MCP 装进 cline）与 <b>T7</b>（GDELT 退避）仍待办（非阻塞：CLI 直调已可用）。</li>
+    <li>📧 research「给作者发邮件」<b>已登记、未批准</b>（未获批准不得发送）。</li>
     <li>所有数字均来自仓库内可核验文件（<code>MEMORY*.md</code> / <code>news/</code> / <code>research/</code>）与 supervisor 亲自复跑的输出。</li>
   </ul>
 </div>
 
 <div class="kpi-row">
-  <div class="kpi"><div class="v">2 条线</div><div class="l">news 35 条 · research 34 篇</div></div>
-  <div class="kpi"><div class="v">35 条</div><div class="l">news 真新闻（§0.1 口径；另 22 条非新闻移出）</div></div>
-  <div class="kpi"><div class="v">34 篇</div><div class="l">research 论文（首轮；另 180 候选记台账）</div></div>
+  <div class="kpi"><div class="v">2 条线</div><div class="l">news 54 条 · research 61 篇（不新增智能体）</div></div>
+  <div class="kpi"><div class="v">54 条</div><div class="l">news 真新闻（8 轮；另 24 非新闻移出）</div></div>
+  <div class="kpi"><div class="v">61 篇</div><div class="l">research 论文（4 轮；另 346 候选记台账）</div></div>
   <div class="kpi"><div class="v">3 次</div><div class="l">「200 ≠ 有料」实测命中（新华 / 央视 / arXiv RSS）</div></div>
 </div>
 
@@ -116,16 +116,16 @@
 <table>
   <tr><th>线</th><th>今日进展</th><th>当前状态</th><th>下一步</th></tr>
   <tr>
-    <td><b>news</b><br>新闻采集</td>
-    <td>✅ <b>T1–T10 全部交付</b>：API 调研 → 免 key MCP → 自包含对比报告 → <b>§0.1 新闻判据</b> → <b>中文活源统一入口 <code>fetch_cn_news()</code></b>；<b>两次用户点名纠错并闭环</b>；<b>5 轮采集</b>（smoke + 4 轮常态）</td>
-    <td><span class="badge b-ok">✅ 运行中</span> · 真新闻 <b>35</b> 条（<b>中文 ≈23 / 英文 ≈12</b>）· 非新闻 22 条移出</td>
-    <td><b>T5</b>（自建 MCP 装进 cline）· <b>T7</b>（GDELT 退避）；T6 意图已达成</td>
+    <td><b>news</b><br>新闻 / 回溯 / 分析</td>
+    <td>✅ <b>T1–T10 全部交付</b>（免 key MCP · §0.1 新闻判据 · 中文活源统一入口 <code>fetch_cn_news()</code>）；<b>三次用户点名纠错全部闭环</b>；<b>已采 8 轮</b>；🆕 <b>N1 十年回溯 + N2 价格相关性</b>（archive 线并入）</td>
+    <td><span class="badge b-ok">✅ 运行中</span> · 真新闻 <b>54</b> 条（<b>后 5 轮 中文 27 : 英文 12</b>）· 非新闻 24 移出</td>
+    <td><b>N1</b>（新华社 2016–2026 标题+日期+链接 + 分析/饼图）→ <b>N2</b>（×资产价格相关性）；T5/T7</td>
   </tr>
   <tr>
     <td><b>research</b><br>arXiv 论文</td>
-    <td>✅ <b>已启动 + 首轮交付</b>：<b>R1</b> arXiv API 打通（HTTPS/Atom，<code>HTTP/2 200</code>）· <b>R2</b> 12 条查询固化进 <code>queries.json</code> · <b>R3/R4</b> 抓 214 篇 → 精选 <b>34</b> + 候选 180</td>
-    <td><span class="badge b-ok">✅ 运行中</span> · 收录 <b>34</b> 篇（<b>supervisor 抽验 3 个 ID 全真实</b>）</td>
-    <td><b>R1′/R2′</b>（HF Daily Papers 副源 + 周末时效放宽）待回执 → R2 常态化</td>
+    <td>✅ <b>R1–R4 + R1′/R2′ 已交付</b>：arXiv API 打通（HTTPS/Atom）· 12 条查询固化 · 抓 407 篇 → <b>收录 61</b> + 候选 346；R1′ 复验 <b>arXiv ✅ / HF ❌ 不可达 / RSS 周末空</b>；R2′ 时效改 <b>published-first + 周末放宽</b>；🆕 <b>TOP-K 排序已下发</b></td>
+    <td><span class="badge b-ok">✅ 运行中</span> · 收录 <b>61</b> 篇 · 第 3/4 轮<b>如实报 0 新增</b>（周六 arXiv 不公告）</td>
+    <td><b>TOP-K</b>（质量 × 与 <b>BaiZe/ZhuLong</b> 相关性，≤30d）→ <code>TOP_K.md</code> / <code>TOP_K.jsonl</code></td>
   </tr>
 </table>
 
@@ -253,7 +253,27 @@
   并如实记了一条「The Register RSS 解析异常」。<b>这正是 §0.1 铁律生效的样子。</b>
 </div>
 
-<h2 class="sec" id="s4"><span class="no">4</span>research 线：新建（R1–R5）</h2>
+<h3>3.6 🆕 news 线扩权：N1 十年回溯 + N2 价格相关性（archive 线已并入）</h3>
+<div class="note">
+  <b>用户 5 条指令（2026-10-03）</b>：① research 出 TOP-K；② <b>archive 职能并入 news</b>；③ news 做新闻×资产价格相关性；
+  ④ <b>暂不新增智能体</b>；⑤ research 登记"给作者发邮件"。→ 已全部落地：<b>archive 线脚手架删除</b>，职能转为 news 第 7 批。
+</div>
+<table>
+  <tr><th>任务</th><th>做什么</th><th>关键约束</th></tr>
+  <tr><td><b>N1 · 新华社 2016–2026 十年回溯</b></td>
+      <td><b>只取 标题 + 日期 + 来源 + 链接</b> → <code>news/archive/xinhua-&lt;年&gt;.jsonl.gz</code>；再出<b>分析 + 饼图</b> → <code>news/analysis/XINHUA_2016_2026.html</code>（自包含、内联 SVG）</td>
+      <td>🚫 <b>不抓正文</b> · ⏱ 同站 <b>≥2s</b> · <code>PROGRESS.md</code> 断点续抓 · <b>单年 &gt;20MB 不入 git</b> · 图表<b>必须由真实数据生成</b></td></tr>
+  <tr><td><b>N2 · 新闻 × 资产价格相关性</b></td>
+      <td>新闻时间序列（条数/主题/关键词热度）× 资产价格 → <code>NEWS_vs_PRICES.html</code> + <code>corr.csv</code></td>
+      <td><b>先做 N1</b>；价格源先做<b>免 key + 可达性</b>实测；须写<b>样本区间/对齐方法/相关系数(+p值)/「相关≠因果」</b></td></tr>
+</table>
+<div class="danger">
+  <b>N1 的最大不确定性：新华社归档端点。</b>supervisor 实测：<b>新华网 <code>/politics/2016-01/01/</code> → 403</b>、<code>so.news.cn/getNews</code> → <b>405 + WAF 页</b>；央视网 <b>403</b>；
+  而 <b>中新网可按天枚举</b>（<code>/scroll-news/{YYYY}/{MMDD}/news.shtml</code> ✅）。
+  → 🚫 <b>不许绕封锁</b>（不代理/不伪造 UA）；<b>走不通就用中新网兜底并明确标注"非新华社"，不许冒充</b>。
+</div>
+
+<h2 class="sec" id="s4"><span class="no">4</span>research 线：arXiv 采集 + <b>TOP-K 精选排序</b></h2>
 
 <p><b>用户需求</b>："类似 news，建个 research agent —— <b>打通 arXiv 下载 API</b>，收集 &amp; 整理论文（AI 领域，特别是 <b>LLM、SLM、多模态、agent harness</b>）。"</p>
 
@@ -286,15 +306,31 @@
   <tr><td><b><code>https://export.arxiv.org/api/query</code></b></td><td><b>200 <code>application/atom+xml</code>，真条目 + <code>published</code></b>（http→<b>301</b>，须 https+跟随重定向）</td><td><span class="badge b-ok">✅ 主力源</span></td></tr>
   <tr><td><code>https://huggingface.co/api/daily_papers</code></td><td><b>200 JSON</b>，但 <code>publishedAt</code> <b>滞后 3~8 天</b>（实测 09-25~09-30）</td><td><span class="badge b-warn">社区加权</span> 非新鲜源</td></tr>
 </table>
+<div class="ok-box">
+  <b>R1′/R2′ 已交付（research，2026-10-03）</b>：
+  ① <b>R1′ 取源复验</b>（运行机）：<b>arXiv ✅ / HF Daily Papers ❌ 不可达 / arXiv RSS 周末空</b> → 👏 <b>如实记录，未伪造 <code>hf_daily</code></b>；
+  ② <b>R2′ 时效修订</b>：改为 <b>published-first + 周末自动放宽（120h, <code>window_mode=weekend_batch</code>）</b>；
+  ③ 第 2 轮增量 <b>+27 篇</b>（15/15 查询 ok）；第 <b>3/4 轮因周六 arXiv 不公告报 0 新增</b>——<b>正是 R2′ 预判的场景，且如实标注</b>。
+</div>
 <div class="note">
-  <b>R2′ · 时效口径修订（重要）</b>：arXiv <b>工作日 20:00 ET 公告、周末不发</b>（周五投的周一才公告）→ <b><code>≤72h</code> 会误杀</b>。
-  已改为「<b>日报 ≤72h；周末/周一放宽到"最近一次公告批次"，并如实标注实际区间</b>」；任务书 §0.1 同步修正。
-  <br>⚠️ <b>R1′/R2′ 尚未回执</b>（我 15:16 下发，它上次交付 15:12）—— 见 §7。
+  <b>⚠️ 两点待收</b>：<b>TOP-K</b>（本轮新派）尚未产出；<code>research/raw/</code> 已 <b>0.73 MB</b>（7 个原始 JSON，逐日累积）→ 需定<b>保留策略</b>（gzip / 只留最近 N 天）。
+</div>
+
+<h3>4.2 🆕 TOP-K 精选排序（已下发 R-T1~T3）</h3>
+<table>
+  <tr><th>项</th><th>规定</th></tr>
+  <tr><td><b>窗口</b></td><td><b>≤30d</b>（仅本任务；日报口径不变）→ <b>全量重扫</b>，不只扫增量</td></tr>
+  <tr><td><b>相关性 <code>rel</code>（0–5）</b></td><td>与 <b>BaiZe</b>（从零训练 / Mamba-2×attention 混合 / 规模律 / 数据配比 / SFT·RL / 多模态对齐 / 高效推理）与 <b>ZhuLong</b>（execution-grounded EDA coding agent / MCP 工具 / generate–execute–refine / code agent / harness / 评测基准）</td></tr>
+  <tr><td><b>质量 <code>q</code>（0–5）</b></td><td><b>可操作代理</b>：有官方代码 · 提出方法/基准 · <b>社区热度（HN Algolia）</b> · 机构/作者 · <code>comment</code>/<code>journal_ref</code></td></tr>
+  <tr><td><b>产出</b></td><td><code>research/TOP_K.md</code> + <code>TOP_K.jsonl</code>（TOP-20），字段含 <code>rel/q/total/理由/证据</code>；<b>必须附方法 + 权重 + 局限</b></td></tr>
+</table>
+<div class="note">
+  ⚠️ <b>HF Daily Papers 本机不可达</b>（已实测）→ 🚫 <b>不许伪造 <code>hf_daily</code> 标记</b>；改用 <b>HN 热度</b>替代并<b>注明替代关系</b>。
 </div>
 
 <h2 class="sec" id="s5"><span class="no">5</span>⭐ 核心产出：关键教训与铁律</h2>
 
-<p>今天最有价值的东西不是那 35 条新闻，而是<b>这 11 条被"打脸"换来的规则</b> —— 它们已写进任务书与 supervisor 记忆。</p>
+<p>今天最有价值的东西不是那 54 条新闻或 61 篇论文，而是<b>这 13 条被"打脸"换来的规则</b> —— 它们已写进任务书与 supervisor 记忆。</p>
 
 <div class="card">
 <ol>
@@ -329,6 +365,16 @@
     news 线的 <code>≤72h</code> 直接搬到论文线就错了：arXiv <b>工作日公告、周末停更</b> →
     <code>≤72h</code> 在周末/周一早会<b>把真有货的窗口判成"无新增"</b>。
     → 改为<b>「≤72h，周末/周一放宽到最近公告批次，并标注实际区间」</b>。同一铁律，<b>换场景要重新校准</b>。</li>
+  <li><b>源不可达时，"如实说不"比"编一个"更有价值。</b>
+    research 的 <b>R1′ 复验</b>：<b>arXiv ✅ / HF Daily Papers ❌ 不可达 / arXiv RSS 周末空</b> —— 它<b>没有伪造 <code>hf_daily</code></b>，而是改用 HN 热度并<b>注明替代关系</b>。
+    → <b>"做不到"要写进产物，不许用假数据填。</b></li>
+  <li><b>规则写对了，agent 会自己按规则"报 0"。</b>
+    R2′（周末放宽 120h + <code>weekend_batch</code>）上线后，第 3/4 轮 <b>如实报"新增 0（周六 arXiv 未公告）"</b> 而不是硬凑——
+    <b>这正是 supervisor 预判的场景</b>。→ <b>好的规则让"没有"也能被正确表达。</b></li>
+  <li><b>估算前先问"计量单位是什么"。</b>
+    我一度把"10 年 ≈200 万条 × 2s"算成 <b>&gt;45 天</b> → 结论"不可行"；<b>错在按"条"算</b>。
+    方案 C 是<b>按"天"枚举</b>（1 天 1 个列表页）→ <b>3650 请求 ≈ 2–3 小时</b>，<b>完全可行</b>。
+    → <b>量级估算的"单位"错了，结论就会南辕北辙。</b></li>
 </ol>
 </div>
 
@@ -356,57 +402,67 @@
 <h2 class="sec" id="s7"><span class="no">7</span>需要你决策 / 注意</h2>
 <table>
   <tr><th>#</th><th>事项</th><th>状态 / 我欠你什么</th></tr>
-  <tr><td>1</td><td>⚠️ <b>两条线疑似停摆（最需要注意）</b></td><td><code>doc/personal-watch/</code> <b>自 ~15:15–15:18 后无任何新提交</b>，而<b>同期 BaiZe 各线仍在提交</b>（机器/网络/仓库正常）→ 指向 <b>personal-watch 的 loop 停了 / 卡了 / token 额度耗尽</b>。<br>请在运行机执行：<code>pgrep -af 'watch_(news|research)_loop.sh'</code> + <code>tail -20 /tmp/watch_(news|research)_loop.log</code>（看有无 <code>额度已用完</code>）。</td></tr>
-  <tr><td>2</td><td><b>research R1′/R2′ 未回执</b></td><td><span class="badge b-warn">⬜ 待办</span> 我 15:16 下发；它上次交付 15:12 → 应于下一轮生效（若 loop 在跑）。</td></tr>
-  <tr><td>3</td><td><b>news T5</b>：自建 MCP 装进 cline</td><td><span class="badge b-warn">⬜ 待办</span> agent 已实测<b>未装</b>（无 <code>cline_mcp_settings.json</code>）→ 现靠 <b>CLI 直调</b>（已可用，非阻塞）。</td></tr>
-  <tr><td>4</td><td><b>历史回溯（2016–2026）</b></td><td><span class="badge b-info">★ 待你定</span> 现行 feed <b>不支持</b>（RSS=最近窗口）→ 见 §9；<b>要不要新开 archive 线？回溯什么主题/窗口？</b></td></tr>
-  <tr><td>5</td><td><b>news T7</b>（GDELT 退避）· 是否要<b>周报合订</b></td><td><span class="badge b-info">待你定</span></td></tr>
-  <tr><td>6</td><td>✅ 已定（无需再议）</td><td><b>不用付费 key</b>（一律免 key）· <b>非新闻直接不收</b> · <b>免 key 自建 MCP 为准</b></td></tr>
+  <tr><td>1</td><td><b>news N1</b>（新华社十年回溯 + 分析/饼图）</td><td><span class="badge b-warn">⬜ 刚下发</span> <b>最大不确定性 = 新华网归档端点</b>（我这边 403/WAF）。→ 我会验：<b>新华网到底通不通</b>、走不通时它<b>有没有如实标注"非新华社"</b>、<code>.jsonl.gz</code> <b>是否只有 5 字段无正文</b>、<b>饼图是否由真实数据生成</b>。</td></tr>
+  <tr><td>2</td><td><b>news N2</b>（新闻 × 资产价格相关性）</td><td><span class="badge b-warn">⬜ 依赖 N1</span> 价格源需先做<b>免 key 可达性实测</b>（yahoo 可能被墙）。</td></tr>
+  <tr><td>3</td><td><b>research TOP-K</b></td><td><span class="badge b-warn">⬜ 刚下发</span> 我会验：打分<b>是否有理由/证据</b>（非拍脑袋）、<b>有没有伪造 <code>hf_daily</code></b>、是否附<b>方法与权重</b>。</td></tr>
+  <tr><td>4</td><td><b>news T5</b>（自建 MCP 装进 cline）· <b>T7</b>（GDELT 退避）</td><td><span class="badge b-info">非阻塞</span> CLI 直调已可用。</td></tr>
+  <tr><td>5</td><td>📧 <b>research 邮件交流</b></td><td><span class="badge b-info">已登记 · 未批准</span> 启用前须定：<b>发件邮箱/署名 · 模板 · 频率上限 · 是否逐封审核</b>。🚫 未批准不得发送。</td></tr>
+  <tr><td>6</td><td><b>research <code>raw/</code> 保留策略</b>（已 0.73 MB 且逐日增长）</td><td><span class="badge b-info">待你定</span> gzip / 只留最近 N 天 / 不入 git。</td></tr>
+  <tr><td>7</td><td>✅ <b>已定（无需再议）</b></td><td>全程<b>免 key</b> · <b>非新闻直接不收</b> · <b>暂不新增智能体</b>（archive 并入 news）· research 窗口 ≤30d（仅 TOP-K）</td></tr>
 </table>
 
 <h2 class="sec" id="s8"><span class="no">8</span>下一步排期</h2>
 <table>
   <tr><th>优先级</th><th>事项</th><th>判据（怎么算完成）</th></tr>
-  <tr><td>P0</td><td><b>确认/重启两条 line 的 loop</b>（§7-1）</td><td>运行机能看到恰好各 1 个 loop 进程；日志无额度错误</td></tr>
-  <tr><td>P0</td><td><b>research R1′/R2′ 回执</b></td><td>① 真调 HF Daily Papers 且<b>标明滞后 3~8 天</b> ② 周末空 feed <b>如实标注</b>（不写"无新增"）③ <code>papers.jsonl</code> 字段齐全</td></tr>
-  <tr><td>P1</td><td><b>news 常态采集</b>（继续 中文 ≥ 英文）</td><td>每轮日报只含 §0.1 真新闻，条目带链接 + 日期</td></tr>
-  <tr><td>P1</td><td><b>news T5</b>：把 <code>web-search-free</code> 装进运行机 cline</td><td>cline 会话能调 <code>web_search</code>/<code>search_news</code>/<code>rss_latest</code>/<code>cn_news</code>（贴证据）</td></tr>
-  <tr><td>P2</td><td>research <b>R2 常态化</b>（增量采集按 SOP）</td><td>日报 + <code>SEEN</code> 增量、<b>不重复</b>、限速 ≥3s</td></tr>
+  <tr><td>P0</td><td><b>news N1</b>：新华社十年回溯</td><td>① 端点勘察表（403 也如实记）② <code>news/archive/xinhua-&lt;年&gt;.jsonl.gz</code> <b>只有 5 字段</b> ③ <code>PROGRESS.md</code> 可续抓 ④ 饼图<b>由真实数据生成</b></td></tr>
+  <tr><td>P0</td><td><b>research TOP-K</b></td><td>① <code>TOP_K.md</code>+<code>.jsonl</code>（TOP-20）② 每条有 <code>rel/q/理由/证据</code> ③ 附方法 + 权重 + 局限 ④ <b>无伪造 <code>hf_daily</code></b></td></tr>
+  <tr><td>P1</td><td><b>news N2</b>：×资产价格相关性</td><td>样本区间/对齐方法/相关系数(+p值)/「相关≠因果」/ 价格源 URL 齐全</td></tr>
+  <tr><td>P2</td><td>news <b>T5</b>（MCP 装 cline）· <b>T7</b>（GDELT 退避）· research <b><code>raw/</code> 瘦身</b></td><td>可核验证据</td></tr>
 </table>
 
-<h2 class="sec" id="s9"><span class="no">9</span>附：历史回溯（2016–2026）可行性</h2>
+<h2 class="sec" id="s9"><span class="no">9</span>附：历史回溯（新华社 2016–2026）—— <b>已定案</b></h2>
 
-<p><b>问</b>：当前 news feed 能不能拉 2016–2026 这 10 年的新闻？<b>答：不能</b> —— 现行管线从设计上就是<b>「最新」管线</b>（§0.1 口径 <b>≤72h</b>），而它的源决定它<b>只看得见"最近"</b>。</p>
+<p><b>问</b>：现行 news feed 能拉 2016–2026 的新闻吗？<b>答：不能</b> —— 现行管线是<b>「最新」管线</b>（§0.1 口径 <b>≤72h</b>），而 <b>RSS = 最近 N 条的滚动窗口</b>，天然没有历史。</p>
 
+<div class="ok-box">
+  <b>✅ 用户已定案（2026-10-03）</b>：走 <b>方案 C</b> —— <b>只取 标题 + 日期 + 来源 + 链接</b>（🚫 <b>不抓正文</b>）；
+  🚫 <b>不用任何 key</b>；✅ <b>只锁国内权威源</b>；职能 <b>并入 news 线</b>（不单开 agent）。<br>
+  🧮 <b>成本（按"天"枚举）</b>：10 年 ≈ <b>3650 个列表页</b> × ~3s ≈ <b>2–3 小时</b>；4 个源 ≈ 10 小时级（可分轮）。
+  <span style="color:var(--muted)">（我先前 "&gt;45 天" 的估算按"条"算，<b>错误，已作废</b>。）</span>
+</div>
+
+<h3>9.1 国内源「能否按历史枚举」实测（supervisor 亲测，2026-10-03）</h3>
 <table>
-  <tr><th>现行源</th><th>能否回溯</th><th>实测 / 原因</th></tr>
-  <tr><td>IT之家 / 量子位 / 中新网 / 联合国 / The Register / Ars —— <b>RSS</b></td><td><span class="badge b-no">❌</span></td><td><b>RSS = 最近 N 条</b>的<b>滚动窗口</b>，拿完即止（这也是"RSS 无历史"的本质）</td></tr>
-  <tr><td>央视网 <b>HTML 列表页</b></td><td><span class="badge b-warn">⚠️ 需专门做</span></td><td>列表页只给最近；站点有<b>按日期的历史页</b>，但要另写抓取+解析</td></tr>
-  <tr><td>CN-Bing / 360 <b>HTML 抓取</b></td><td><span class="badge b-warn">⚠️ 很弱</span></td><td>索引进度不定、无稳定归档；且 <b>360 无发布日期</b>（已因此被我们拒收）</td></tr>
-  <tr><td><b>HN Algolia API</b></td><td><span class="badge b-ok">✅ 可以</span></td><td><b>实测</b> <code>numericFilters=created_at_i&gt;…&lt;…</code>（2016-01 区间）→ <b>200</b>，<code>nbHits=91</code>，<code>first=2016-01-01T23:57:10Z</code> → 支持<b>时间戳区间全文检索</b>（HN 覆盖 2007 起）</td></tr>
-  <tr><td><b>GDELT Doc API</b></td><td><span class="badge b-ok">✅ 可以（2017 起）</span></td><td>支持 <code>startdatetime</code>/<code>enddatetime</code>；但<b>频控严格（要求 1 req/5s）</b> —— 我连试 <b>3 次全 429</b>，须严格退避</td></tr>
-  <tr><td>Guardian Open Platform</td><td><span class="badge b-ok">✅ 可（1999 起）</span></td><td><code>api-key=test</code> → <b>401</b>，需<b>免费注册 key</b>（<b>非付费</b>）</td></tr>
-  <tr><td>Wayback Machine CDX</td><td><span class="badge b-warn">⚠️ 未验证</span></td><td>我这边<b>请求超时</b> → 可达性存疑（运行机未必通）</td></tr>
+  <tr><th>源</th><th>端点 / 路径</th><th>结果</th><th>判定</th></tr>
+  <tr><td><b>中新网</b>（中新社）</td><td><code>https://www.chinanews.com.cn/scroll-news/{YYYY}/{MMDD}/news.shtml</code></td><td><b>200</b>（173–378 KB）；条目 <code>/{频道}/{YYYY}/{MM-DD}/{id}.shtml</code></td><td><span class="badge b-ok">✅ 可按天枚举</span>（可作<b>兜底源</b>）</td></tr>
+  <tr><td><b>新华网</b>（新华社）</td><td><code>/politics/2016-01/01/</code></td><td><b>403</b></td><td><span class="badge b-no">❌ 未通</span></td></tr>
+  <tr><td><b>新华网</b></td><td><code>so.news.cn/getNews?…</code>（站内检索）</td><td><b>405</b> + <b>WAF 反爬页</b>（响应体为混淆 HTML）</td><td><span class="badge b-no">❌ 未通</span></td></tr>
+  <tr><td><b>央视网</b></td><td><code>news.cctv.com/2016/01/01/</code></td><td><b>403</b></td><td><span class="badge b-no">❌ 未通</span></td></tr>
+  <tr><td><b>人民网</b></td><td>RSS（<code>/rss/*.xml</code>）</td><td>200，<b>但内容停在 2021/2024</b></td><td><span class="badge b-no">❌ 死源</span>（须另找路径）</td></tr>
+</table>
+<div class="note">
+  <b>抽样（中新网 · 同日 06-15 跨年）</b>：2016 <b>1237</b> · 2019 <b>400</b> · 2022 <b>803</b> · 2025 <b>327</b> · 2026 <b>490</b> 条 → <b>≈0.3k–1.2k 条/日</b> → <b>年量级 ≈12–45 万条</b>（<b>仅抽样估算</b>）。
+</div>
+
+<h3>9.2 已排除（按用户要求）</h3>
+<p>
+  🚫 <b>Guardian</b>（需免费 key）· 🚫 <b>GDELT</b>（外国聚合，且 1 req/5s，我实测连吃 3 次 429）· 🚫 <b>HN Algolia</b>（英文社区，非国内权威）· ⚠️ <b>Wayback</b>（我这边请求超时，可达性存疑）。
+  → 结论：<b>回溯只能靠国内站点的自有归档页</b>，这已写进 news N1。
+</p>
+
+<h3>9.3 落地形态（并入 news）</h3>
+<table>
+  <tr><th>项</th><th>规定</th></tr>
+  <tr><td><b>产物</b></td><td><code>news/archive/xinhua-&lt;年&gt;.jsonl.gz</code>（<b>5 字段</b>）+ <code>news/analysis/XINHUA_2016_2026.html</code>（自包含 + 饼图）+ <code>xinhua_stats.csv</code></td></tr>
+  <tr><td><b>断点续抓</b></td><td><code>news/archive/PROGRESS.md</code>（源/年/月/日 游标，可中断可恢复）</td></tr>
+  <tr><td><b>体积纪律</b></td><td><b>单年 &gt;20MB → 不入 git</b>（只记 <code>INDEX_FILES.md</code>：路径/行数/大小/sha256；本体放 <code>~/archive_data/</code>）</td></tr>
+  <tr><td><b>限速</b></td><td>同站 <b>≥2s</b> · 不并发 · 失败重试 ≤2 次后跳过并记录</td></tr>
+  <tr><td><b>红线</b></td><td>🚫 不绕封锁（403/WAF 如实记录）· 🚫 不抓正文 · 🚫 图表必须由真实数据生成（画不出就不画）</td></tr>
 </table>
 
-<div class="note">
-  <b>结论</b>：覆盖这 10 年现实可行的组合是 <b>GDELT（2017–2026）+ HN Algolia（2007–2026）+（可选）Guardian（1999–）</b>；
-  <b>中文档案</b>则须<b>官媒按日期抓历史页</b>（新华 / 人民 / 中新有历史页，但要专门写）。
-</div>
-
-<div class="danger">
-  <b>建议：不要塞进 news 线，应单开一条「archive（回溯）线」。</b>
-  理由：<b>口径 / 限速 / 产物</b>三者都不同 —— 硬塞会污染 news 的「日更 ≤72h」口径（就像上次把特稿混进来一样）。新线要点：
-  <ol style="margin:8px 0 0">
-    <li><b>用途</b>：为<b>某章 / 某主题</b>做<b>历史素材回溯</b>（一次性 / 限定窗口），<b>不是日更</b>；</li>
-    <li><b>口径</b>：产物标注「<b>历史检索</b>」，🚫 <b>不得标成 news</b>（<code>type: archive</code>）；</li>
-    <li><b>硬约束</b>：<b>GDELT ≥5s/req</b> · <b>HN ≥3s/req</b> · <b>任务级配额</b>（防打爆 / 被封）；</li>
-    <li><b>产物</b>：<code>archive/&lt;主题&gt;-&lt;时间窗&gt;.md</code> + 结构化台账 + 每条<b>必带 日期 + 来源 + 链接</b>（同铁律）。</li>
-  </ol>
-</div>
 
 <footer>
-  观察哨（personal-watch）工作汇报 · 2026-10-03（<b>刷新版 ~17:00</b>）· 当日 <b>29</b> 个提交（<code>doc/personal-watch/</code>）<br>
+  观察哨（personal-watch）工作汇报 · 2026-10-03（<b>刷新版 ~19:50</b>）· 当日 <b>39</b> 个提交（<code>doc/personal-watch/</code>）<br>
   证据来源：<code>MEMORY.md</code> · <code>run/MEMORY_NEWS.md</code> · <code>run/MEMORY_RESEARCH.md</code> ·
   <code>run/news/</code>（<code>INDEX.md</code> / <code>SEEN.md</code> / <code>FETCH_CN_NEWS.md</code> / <code>API_COMPARISON.html</code>）·
   <code>run/research/</code>（<code>ARXIV_API.md</code> / <code>papers.jsonl</code> / <code>queries.json</code> / <code>arxiv_fetch.py</code>）·
