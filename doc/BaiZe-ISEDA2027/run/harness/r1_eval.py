@@ -44,6 +44,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shlex
 import subprocess
 import sys
 import time
@@ -53,7 +54,6 @@ from swebench.harness.utils import make_test_spec, get_predictions_from_file
 from swebench.harness.grading import get_eval_report
 from swebench.harness.constants import (
     APPLY_PATCH_PASS,
-    CONTAINER_PATCH_FILE,
     LOG_REPORT,
     LOG_TEST_OUTPUT,
 )
@@ -66,6 +66,10 @@ GIT_APPLY_CMDS = [
     "git apply --verbose --reject",
     "patch --batch --forward --fuzz=5 -p1 -i",
 ]
+
+# Patch file lives at the rootfs ROOT (NOT /tmp): the sandbox mounts a fresh
+# tmpfs over /tmp, which would hide a patch the host wrote under rootfs/tmp.
+PATCH_FILE = "/patch.diff"
 
 
 # ---------------------------------------------------------------------------
@@ -120,21 +124,31 @@ class NativeSandbox(Sandbox):
 
 
 class UnshareSandbox(Sandbox):
-    """Production sandbox — user+mount+pid namespace then chroot into rootfs.
+    """Production sandbox — user+mount namespace then chroot into rootfs.
 
-    Mirrors R1_ADAPTER_DESIGN.md §5; the namespace triple was validated in
-    batch-5 step-1 (``unshare --user --map-root-user --mount --pid --fork`` OK,
-    ``unprivileged_userns_clone=1``). EXACT flags must be confirmed against a
-    real rootfs in step 2.
+    Mirrors the mount sequence proven end-to-end in step 2
+    (``harness_work/run_eval_sandbox.sh``, ``django__django-10914`` resolved=True):
+    bind host ``/usr`` (base system), bind the writable locale archive, mount a
+    tmpfs on ``/tmp``, then ``chroot``. ``--pid`` is dropped to match the proven
+    script (a chroot PID-1 without init can mis-clean child daemons). Guest env
+    pins the intra-net proxy + aliyun PyPI so ``pip install -e .`` reaches wheels.
     """
 
     def run(self, cmd: str, workdir: str | None = None):
         full = f"cd {workdir} && {cmd}" if workdir else cmd
-        argv = [
-            "unshare", "--user", "--map-root-user", "--mount", "--pid", "--fork",
-            "chroot", str(self.rootfs),
-            "/bin/bash", "-c", full,
-        ]
+        r = str(self.rootfs)
+        inner = (
+            f"mount --bind /usr {r}/usr || exit 11; "
+            f"mount --bind {r}/.locale {r}/usr/lib/locale || exit 12; "
+            f"mount -t tmpfs tmpfs {r}/tmp || exit 13; "
+            f"chroot {r} /usr/bin/env HOME=/tmp TMPDIR=/tmp PIP_NO_INPUT=1 "
+            f"http_proxy=http://172.19.92.25:13128 "
+            f"https_proxy=http://172.19.92.25:13128 "
+            f"PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/ "
+            f"/bin/bash -c {shlex.quote(full)}"
+        )
+        argv = ["unshare", "--user", "--map-root-user", "--mount", "--fork",
+                "bash", "-c", inner]
         t0 = time.time()
         try:
             p = subprocess.run(argv, capture_output=True, timeout=self.timeout)
@@ -162,7 +176,7 @@ def r1_run_instance(test_spec, pred, rootfs: Path, sandbox_cls, timeout: int,
     if not skip_patch:
         patch = pred.get("model_patch") or ""
         (inst_log_dir / "patch.diff").write_text(patch)
-        dst = rootfs / CONTAINER_PATCH_FILE.lstrip("/")
+        dst = rootfs / PATCH_FILE.lstrip("/")
         dst.parent.mkdir(parents=True, exist_ok=True)
         dst.write_text(patch)
 
@@ -172,7 +186,7 @@ def r1_run_instance(test_spec, pred, rootfs: Path, sandbox_cls, timeout: int,
             if attempt:
                 sb.run("git checkout -- . ; git clean -fd", workdir=CONTAINER_WORKDIR)
             out, code, _, _ = sb.run(
-                f"{git_apply_cmd} {CONTAINER_PATCH_FILE}", workdir=CONTAINER_WORKDIR
+                f"{git_apply_cmd} {PATCH_FILE}", workdir=CONTAINER_WORKDIR
             )
             if code == 0:
                 applied = True
@@ -180,7 +194,7 @@ def r1_run_instance(test_spec, pred, rootfs: Path, sandbox_cls, timeout: int,
             last_out = out
         if not applied:
             _, code, _, _ = sb.run(
-                f"git apply --check --reverse {CONTAINER_PATCH_FILE}",
+                f"git apply --check --reverse {PATCH_FILE}",
                 workdir=CONTAINER_WORKDIR,
             )
             if code == 0:
