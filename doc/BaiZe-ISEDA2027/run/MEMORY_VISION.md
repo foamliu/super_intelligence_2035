@@ -10,7 +10,7 @@ WAITING: 1
 | WAITING | 1（R10-③ 补密 M 轴训练后台运行：`r10_run_denseM.sh`，8 卡，ETL ~3.5h） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h ✅；R10-③ w384+w640 在跑，详见 EXPERIMENTS_VISION_ROUND10.md） |
-| 更新 | 2026-10-03（R10 ①② 完成、③ 训练中；**R14 官方仓库调研第一阶段**：两个 ⭐⭐⭐ 仓库源码普查完成 → `VISION_OFFICIAL_REPOS_SURVEY.md`） |
+| 更新 | 2026-10-03（R10 ①② 完成、③ 训练中；**R14 官方仓库调研 ✅ 全部完成** + **E1 GPIC 规模实测 ✅** → `VISION_OFFICIAL_REPOS_SURVEY.md` / `VISION_ARCH_FRONTIER_2026.md §5`） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9 选中 w512=126.8M 缩塔，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -34,13 +34,21 @@ WAITING: 1
 - **判结束**：`grep -c 'denseM ALL DONE' /tmp/r10_denseM.log` == 1。
 - **收尾步骤**（下次唤醒先查是否 DONE，若 DONE 再执行）：① 从 `/tmp/r10_denseM.log` 取 w384/w640 的 8 个 [R8-IN1K] point + 实际 numel；② 用 5 点 M 轴 {71,126.8,197,284.5,505.2}M 重跑 2D 拟合（`r10_scaling2d.py` 需把 WIDTH_PARAMS 加入 384:70.8M/640:196.6M、WIDTH_RE 加 `R10_denseM_w(\d+)`，或用实际 numel）；③ 回填 `EXPERIMENTS_VISION_ROUND10.md` §2/§3/§4 最终值 + `EXPERIMENTS_VISION.md` 顶部 + 本状态头；④ git push。
 
-## R14 官方仓库调研（第一阶段完成，2026-10-03）
+## R14 官方仓库调研（✅ 全部完成，2026-10-03）
 
-- CPU-only 源码普查，与 R10-③ denseM 训练并行。产物：`VISION_OFFICIAL_REPOS_SURVEY.md`（含每仓库 ①目标②数据③config④结构差异⑤可复用资产⑥LICENSE⑦三清单）。
-- ✅ 两个 ⭐⭐⭐ 仓库源码普查完成：
-  - **OpenVision**（`/tmp/ov_survey`@c3f7d96，JAX/TPU、big_vision 派生）：官方 ViT-L/16 = w1024/**d24**/h16/m4096（`vit.py:829-832`）；我们 OpenVision2 = w1024/**d30**（`models.py:170`，505M = 深度上采样）。官方文本 = **BERT-128 + LLaVA/LLaMA3 dense caption + caption decoder + keep_ratio=0.35 掩码**（`openvision2.py:46,49,129,236`）→ **目标函数与我们「CLIP-77+短caption+纯对比」完全不同**。
-  - **ml-aim/AIMv2**（`/tmp/mlaim_survey`@a018ae32）：仓库只含**模型接口**（无训练/损失/数据，`aim/v2/mixins.py:11-42`）；LICENSE = **Apple Sample Code License（非 Apache/MIT、不授专利）** → 🔴 不可 COPY 代码进拟开源仓库；AIMv2-3B frozen trunk 89.5%（README:33）。
-- ⏳ 待办（下 cycle）：OpenVision2 权重是否真开源（HF/release 核）+ FastVLM + 疑似不存在条目（MambaEye/MoE-ViE/iGVLM/TuringViT 等）逐字核实。
+- CPU-only 源码普查，与 R10-③ denseM 训练并行。产物：`VISION_OFFICIAL_REPOS_SURVEY.md`（①目标②数据③config④结构差异⑤可复用资产⑥LICENSE⑦三清单）。
+- ✅ 两个 ⭐⭐⭐ 仓库源码普查完成（上一 cycle）：**OpenVision**（JAX/TPU，官方 ViT-L/16 = w1024/d24/h16；文本 = BERT-128 + LLaMA3 dense caption + caption decoder + keep_ratio=0.35）；**ml-aim/AIMv2**（仅模型接口，无训练/损失/数据；LICENSE = Apple Sample Code，🔴 不可 COPY）。
+- ✅ 第二阶段（本轮）全部核毕：
+  - **OpenVision2 权重 = ✅ 已放出且真带 caption decoder**：HF `UCSC-VLAA/openvision2-vit-{so400m,large,huge,giant}-patch14-{224,336,384,448}-vision-only`；含 `caption_decoder.safetensors` + `text_decoder_config.json`（concat/prefix-LM，非 CoCa cross-attn）。🔑 官方 = **patch14/d24**，我们 = **patch16/d30**（models.py:170）→ R13 需另建官方结构塔才能 load。
+  - **FastVLM** = ✅ `apple/ml-fastvlm`（FastViTHD 1024² conv-hybrid RepMixer）；LICENSE = Apple Sample Code（research-only，不可抄）。
+  - **MambaEye** = ✅ `usingcolor/MambaEye`（MIT）：纯 Mamba2、**小模型监督分类**（非对比）；**MoE-ViE** = ✅ `facebookresearch/moe_vie`（CC BY-NC 4.0）：CLIP 风格 MoE-ViT，官方权重 HF；**iGVLM(AdaLN)/TuringViT** = 🚫 **未找到官方实现**（iGVLM 同名 IG-VLM 是视频QA；TuringViT 仅项目主页）。
+- 关键产出（对 R13/R12）：官方 MoE-ViE/FastVLM/MambaEye/AIMv2 权重均可作「官方 vs 自研」对照标尺；OpenVision2 官方是 patch14/d24，需建官方结构塔。
+
+## E1 GPIC 规模实测（✅ 完成，2026-10-03）
+
+- 抽 **8 个 tar 均匀抽样**（index 0..1212）实测：**12,537 图文对/tar**（稳定 ±2%）→ **GPIC 全量 ≈ 100.3M**（证官方 100M 卡；旧「5 tar=86M」少计 png 作废）；**已下 1213/8000 tar ≈ 15.2M**。
+- `caption_type` mix：short **45.0%** / medium 45.1% / long 9.0% / tag 1.0% → **可训练 short 子类：全量 ≈45M / 已下 ≈6.8M**。
+- 🔑 **C1 口径定案**：R9 用过 18.5M / 盘上现有 ≈32M / 本地全量 ≈118M（动态、仍在下载）——与 `r9_scaling.py --local-cap-m default=118.0` 一致；R11-E「同 N」可比区间被压到 ≈6.8M（short 已下 < 18.5M），须如实说明。已回填 `VISION_ARCH_FRONTIER_2026.md §5`。
 
 ## 历史条目已滚动归档（2026-10-03）
 

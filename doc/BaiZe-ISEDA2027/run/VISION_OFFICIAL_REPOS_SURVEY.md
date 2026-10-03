@@ -6,7 +6,7 @@
 >
 > 纪律：每条结论贴 `路径:行号`；不许猜；拿不到的明确写「不在仓库中，见论文」。
 
-最后更新：2026-10-03（第一阶段：两个 ⭐⭐⭐ 仓库已完成源码级普查）
+最后更新：2026-10-03（第二阶段：全部核毕 —— OpenVision2 权重 ✅ 含 decoder、FastVLM ✅、MambaEye ✅、MoE-ViE ✅、iGVLM/TuringViT 🚫 未找到官方实现）
 
 ---
 
@@ -16,9 +16,11 @@
 |:---|:---|:---|:---|
 | **OpenVision**（UCSC-VLAA） | ⭐⭐⭐ | ✅ 源码普查完成 | JAX/TPU 全开源训练栈；文本用 **BERT-128 + LLaMA3 dense caption + caption decoder + keep_ratio=0.35 掩码**，与我们的「CLIP-77 + 短 caption + 纯对比」**目标函数完全不同** |
 | **ml-aim**（apple-aiml-research / AIMv2） | ⭐⭐⭐ | ✅ 源码普查完成 | 仓库只含**模型接口**（无训练/损失/数据代码）；LICENSE 是 **Apple Sample Code License**，**不可抄代码进我们仓库** |
-| OpenVision2 权重是否真开源 | ⭐⭐ | ⏳ 待办 | 需核 HF/release 页（下轮） |
-| FastVLM | ⭐⭐ | ⏳ 待办 | 下轮 |
-| MambaEye / MoE-ViE / iGVLM / TuringViT 等疑似不存在 | ⭐ | ⏳ 待办 | 下轮逐字核实 |
+| OpenVision2 权重 | ⭐⭐ | ✅ 已核 | **真带 caption decoder**（`caption_decoder.safetensors`）；官方 L/14=w1024/d24/**patch14**，⚠️ 我们=patch16/d30 |
+| FastVLM | ⭐⭐ | ✅ 已核 | LLaVA 内 FastViTHD（1024² conv-hybrid RepMixer）；LICENSE=Apple Sample Code（research-only） |
+| MambaEye | ⭐ | ✅ 存在（MIT） | usingcolor/MambaEye：纯 Mamba2、**小模型监督分类**（非对比） |
+| MoE-ViE | ⭐ | ✅ 存在（CC BY-NC 4.0） | facebookresearch/moe_vie：CLIP 风格 MoE-ViT，官方权重 HF |
+| iGVLM / TuringViT | ⭐ | 🚫 未找到官方实现 | iGVLM 同名 IG-VLM 是视频QA（非目标）；TuringViT 仅项目主页 |
 
 ---
 
@@ -152,9 +154,60 @@
 
 ---
 
-## 3. ⭐⭐ / ⭐ 待办（下一 cycle）
+## 3. OpenVision2 权重核实（HF） ⭐⭐
 
-- [ ] **OpenVision2 权重是否真开源**（HF / release 资产核实 + MD5）—— ⭐⭐。
-- [ ] **FastVLM**（图像理解；查独立纬线结果）—— ⭐⭐。
-- [ ] **疑似不存在条目逐字核实**：MambaEye、MoE-ViE、iGVLM、TuringViT、MM1.5、SPACL —— ⭐（先确认无此开源仓库，再决定是否从基准表删除）。
-- `openvision2.py:237-239`：`loss_use_global_batch=True`、`local_loss=True`、`cpu_unit8=True`。
+- ✅ **确实已放出**：HF `UCSC-VLAA/openvision2-vit-{so400m,large,huge,giant}-patch14-{224,336,384,448}-vision-only` 共 7 个（`library_name=open_clip`，`pipeline_tag=image-to-text`，`tags=[open_clip,openvision2]`）。
+- ✅ **真带 caption decoder 权重**（README 原话："the encoder files are unchanged; only the decoder (and this card) were added"）：
+  `openvision2-vit-large-patch14-224-vision-only` 的 files：`open_clip_pytorch_model.bin`（视觉塔）+ **`caption_decoder.safetensors` + `text_decoder_config.json` + `modeling_openvision2_decoder.py`**（生成解码器）+ `bert_base_vocab_bos_eos.txt`（BERT wordpiece 词表，`[PAD]=0 [bos]=1 [eos]=2`）+ `caption_example.py`。
+- 视觉塔 config（`open_clip_config.json`）：`L/14 @224` = width **1024** / layers **24** / heads 64 / patch_size **14** / pool_type=avg / `output_tokens=True` / embed_dim 1024 / `no_ln_pre`。
+- 解码器（`text_decoder_config.json`）：**concat / prefix-LM**（**非 CoCa cross-attn**），12 层 / width 768 / 12 heads / mlp 3072 / vocab 32000 / vision_width 1024；ViT patch token 线性投影后**作为双向前缀 prepend**，文本**因果**生成（`vision` 侧无 text 位置编码）。
+- 🔑 **对 R13 的硬约束**：官方权重是 **patch14 / depth 24**，而我们 `vision/models.py:168-170` 的 OpenVision2 塔是 **patch16 / depth 30**（自研改编）→ **官方权重无法直接 load 进我们的塔**（patch embedding 尺度和深度都不匹配）；要跑「官方 vs 自研」对照必须**用官方 patch14/d24 结构另建塔**（或改写 patch/深度）。
+- ⑥ LICENSE：README tags 标 `license:apache-2.0`（weights 与 OpenVision 代码同 Apache-2.0）。
+- ⑦ 三清单：能直接抄（concat/prefix-LM 解码器结构）；要改（patch14→patch16、depth24→30、open_clip 需打 patched fork `create_vision_encoder_and_transforms`）；成本（若做生成头 / R13 对照，需另建官方结构塔 + 打补丁 open_clip，成本中等）。
+
+## 4. FastVLM / FastViTHD（apple/ml-fastvlm） ⭐⭐
+
+- Clone：`/tmp/fastvlm_survey` @ HEAD `6f7b131`。arXiv 2412.13303（CVPR 2025）。
+- 定位：**VLM 的视觉编码器**（非独立对比预训练兽）；训练用 **LLaVA 代码库**（README:26 "use LLaVA codebase to train FastVLM variants"）。
+- ②③ 结构：FastViTHD 编码器在 `llava/model/multimodal_encoder/mobileclip/mci.py:1455`（`fastvithd()`）：**5 阶段 hybrid**（`token_mixers = repmixer×3 + attention×2`）、`layers=[2,12,24,4,2]`、`embed_dims=[96,192,384,768,1536]`、mlp_ratio=4；`configs/mobileclip_l.json`：image_size **1024**、embed_dim 3072、patch_size **64**（conv stem + RepMixer conv-FFN + RepCPE）。
+- ① 目标：VLM 端到端（LLaVA 风格）；仓库无独立预训练 loss/脚本（`predict.py` 仅推理）。
+- ④ 结构差异：官方 FastViTHD 是 **1024² 高分辨率 conv-hybrid**；我们 `vision/models.py:359` 的 FastViTHD 是 **RepMixer conv-FFN 缩到 ~500M 的 224/16 改编**（R8 标「等参改编」）。
+- ⑤ 可复用资产：RepMixer / RepCPE / TrainableCPE 结构（`mci.py:1210+`）；官方权重（`get_models.sh` 指向 **Apple CDN**，非 HF）——可作 R13 hybrid 参照标尺。
+- ⑥ LICENSE：code = **Apple Sample Code License**（`LICENSE:1-49`，不授专利）；weights = **LICENSE_MODEL research-only 非商用**（`LICENSE_MODEL` 头 + `get_models.sh` 头）→ 🔴 **不可抄进拟开源仓库**。
+- ⑦ 三清单：能直接抄（RepMixer conv-FFN 思路）；要改（1024²→224、+对比 readout）；成本（conv-hybrid 对 224/16 几乎无收益，R8 已证）。
+
+## 5. MambaEye（usingcolor/MambaEye，MIT） ⭐
+
+- ✅ **存在**：`https://github.com/usingcolor/MambaEye`（CVPR 2026 Findings，arXiv 2511.19963）。Clone `/tmp/mambaeye`。
+- 结构：**纯 Mamba2 因果序列**编码器（README:35 "linear memory/complexity by Mamba2"），尺寸无关、多分辨率/任意宽高比（size-agnostic，`scan.py` 扫描路径 + 位置编码）。
+- 训练：PyTorch Lightning + Hydra；**监督 ImageNet 分类**（`train.py model=base_48layers`），**非对比预训练**。
+- 权重：HF `usingcolor/MambaEye-{tiny,small,base}[-ft]`；Tiny 5.8M @66.2%、Base 21.3M @73.5%（IN-1k@512，README:74-79）。
+- ⑥ LICENSE：**MIT**（`/tmp/mambaeye/LICENSE`）→ ✅ 可抄。
+- ⑦ 关键对照：官方 MambaEye 是**小模型（5.8–21.3M）监督分类**且**不冻结 text 塔**；我们 R8 的 mambaeye 是 **534.9M 等参 from-scratch 对比改编** → **协议完全不同**；⚠️ R8「SSM 坍缩」**只对**我们 recipe 成立，不适用官方（C2 限定）。
+
+## 6. MoE-ViE（facebookresearch/moe_vie，CC BY-NC 4.0） ⭐
+
+- ✅ **存在**：`https://github.com/facebookresearch/moe_vie`（ECCV 2026，arXiv 2608.17402）。官方 code release（模型定义 + config + 零样本评测套件）。
+- 结构：**CLIP 风格对比预训练 + 细粒度 MoE 视觉 transformer**（自定义 Triton kernel，需 CUDA）。
+- 规模/性能（README）：B/16@224 **79.3%**、L/16@384 **83.6%**、H/14@448 **85.1%**（IN-1k top-1）+ retrieval；权重 HF `facebook/MoEViE-*`。
+- ⑥ LICENSE：**CC BY-NC 4.0（非商用）**（`LICENSE`）→ 🔴 不可用于商用开源，只可学术对照。
+- ⑦ 关键对照：官方 MoE-ViE = **官方对比预训练 + 大模型**；我们 R8 moevie = **505.9M 等参 from-scratch 改编 @3000 步，loss 与 OV2 噪声级不可区分**（R8）→ 无法据此裁决 MoE，需「官方 vs 自研」对照（R13）。
+
+## 7. iGVLM / TuringViT 逐字核实（🚫 均未找到官方实现） ⭐
+
+- **iGVLM（AdaLN 指令/文本条件化，`VISION_ARCH_FRONTIER_2026.md` §1/§3 所指）**：🚫 **未找到对应开源仓库**。GitHub 搜索 `iGVLM` 仅 1 命中 = `doublekwsj/IGVLM`，但那是 **IG-VLM（Image-Grid VLM，零样本视频问答）**，与「指令条件化视觉编码器」**不是同一工作**（无 LICENSE、无 AdaLN 相关代码）。→ 结论：**iGVLM(AdaLN) 官方实现未公开**。
+- **TuringViT（小鹏，线性注意力混合 Block）**：🚫 **未找到代码仓库**；仅找到**项目主页** `https://github.com/TuringViT/turingvit.github.io`（github.io，非代码）。→ 结论：**官方代码未公开**。且按 R12 裁定，TuringViT 对本线价值低（attention 仅占 0.7%、224/16 只有 256 token，O(n²) 不痛）。
+- 📌 附（OpenVision 代码 config，`openvision2.py:237-239`）：`loss_use_global_batch=True`、`local_loss=True`、`cpu_unit8=True`；MM1.5 / SPACL 仍**未核实**（不在 R14 五仓清单内，留待后续）。
+
+## 8. 阶段小结（R14 全部完成）
+
+| 仓库 | 优先级 | LICENSE | 对我们价值 |
+|:--|:--|:--|:--|
+| OpenVision | ⭐⭐⭐ | Apache-2.0 | 目标函数/解码器/损失可抄（JAX→PyTorch 要改） |
+| OpenVision2 权重 | ⭐⭐ | Apache-2.0 | ✅ 含 decoder；R13 对照需建官方 patch14/d24 塔 |
+| ml-aim / AIMv2 | ⭐⭐⭐ | Apple Sample Code | 官方权重作 baseline 标尺（不可抄代码） |
+| FastVLM | ⭐⭐ | Apple Sample Code（research-only） | hybrid 无 224/16 收益 |
+| MambaEye | ⭐ | MIT | 官方=小模型监督分类，协议不同 |
+| MoE-ViE | ⭐ | CC BY-NC 4.0 | 官方权重作 R13 参照 |
+| iGVLM(AdaLN) | ⭐ | — | 🚫 未找到（同名 IG-VLM 是视频QA） |
+| TuringViT | ⭐ | — | 🚫 仅项目主页；价值低（O(n²) 不痛） |
