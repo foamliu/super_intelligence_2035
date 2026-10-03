@@ -48,7 +48,7 @@ WAITING: 0
 |:--|:--|:--|:--|
 | **pretrain** | P-5b 长跑（20B）→ 跑完**立即 P-9**（MBS/精度/seq/profiling） | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md`「P-9」节 | 🔄 P-5b ~57%，ETA 10-04 凌晨 |
 | **vision** | R10③ 收尾（4 步）→ **R14**（官方仓库调研·纯CPU）+ **E1**（GPIC 规模实测）→ **R11-E/L/L2**（数据/loss/文本塔）→ **R13/R12**（待批） | `run/EXPERIMENTS_VISION_ROUND10/11.md` · `run/VISION_OFFICIAL_REPOS_SURVEY.md` | 🔄 R10_active |
-| **data** | 下载巡检 + **D-CLEAN-2**（已批删除 ≈8.6T）+ `servers` 探查 | `run/DISK_CLEANUP_INVENTORY.md` 更新 | 🔄 |
+| **data** | 下载巡检 + **D-CLEAN-2 ✅ 已执行**（**实收 ≈341G**，非 8.6T）+ `servers` 探查完成（=LLaVA 旧部署 974G，待批） | `run/DISK_CLEANUP_INVENTORY.md` §6 | 🔄 |
 | **harness** | **H-A′ Aider Polyglot 横评** + **H-D** 5-harness 对比与 cline 机会点 | `run/harness/AIDER_POLYGLOT_COMPARE.html` · `HARNESS_COMPARE_MATRIX.html` · `CLINE_IMPROVEMENT_OPPORTUNITIES.md` | 🔄 |
 
 > ✅ **vision 叙事已决（2026-10-03 用户）：走 A = 保持「从零训练」**（"A 本身也是为了学习"）。
@@ -67,7 +67,9 @@ WAITING: 0
 - [ ] ⛔ **loop 优化：暂不做（用户 2026-10-03 决定）** —— `SLEEP_WAIT 1800→3600` 与「训练未完成就跳过 cline 调用」的前置检查，**都需在公司重启 loop**（假期内做不了），且 1800→3600 **会让反应变慢**。→ **待回公司后择机**。
 - [ ] 🆕 **agent key 是「项目级共用 + 5h 滑动窗口」**（用户 2026-10-03 说明）→ 我们只能**降低自身消耗**；已做**任务书瘦身**（见 §6 备注）。
 - [x] ✅ **`ops_relay.sh`「2 副本」= 误判，已结案（2026-10-03 RUN_ID 8 实测）**：第 2 行 `3521816` 的 **`ppid=2489749`（真 relay）且 `etimes≈0`** → 它是 relay **执行命令块时 fork 的子 shell**，不是副本。→ **唯一真 relay = `2489749`（ppid=1）**，**无需清理**；已更正 `run/AGENTS.md` §3.5(1)（判别方法是**看 `ppid`**，不是看进程个数）。
-- [ ] ❌ **`laion2B-en-aesthetic` 仍是 `STILL EXISTS`** → D-CLEAN-2 的删除**尚未执行/未完成**（data 在 `.12`，本机看不到其日志）。
+- [x] ✅ **D-CLEAN-2 已执行（唤醒 58）**：**实收 ≈341 G** —— ⚠️ **我此前报的「≈8.6 T」错了**：`laion2B-en-aesthetic` 盘点记 **8.1 T**，**实测只有 7.8 G**（128 parquet 的 **URL 元数据**）→ **G/T 单位误读、差 3 个数量级**。实删：laion2B 7.8G + zhulong 0.49G + pip 3.3G + **nemo Round1 ~310G**（`nemo_experiments` 524G→**214G**，**`p5b` 79G 保留**）。
+- [ ] ⭐ **`servers`(974 G) 已探明 = LLaVA-V1.5-Qwen3-4B 旧训练部署**（2026-02，跨 6 节点，含 ckpt + LLaVA 源码 + 大日志；已被 LLaVA-OneVision-1.5 pipeline 取代）→ **高价值回收候选，但属模型权重且跨节点 symlink → 需 owner 确认后再删**（本轮未动）。
+- [ ] 🟡 **`nemo_experiments` 里 R2 近期 ckpt（~135 G）**：`p1_*`/`p2_*`/`p3_*`/`p5a_*`/`p7_*`（10-01~10-02）—— data agent **建议运维确认是否可清**。
 - [ ] 🚩 **R9 的「本地 53M 上限」是 `r9_scaling.py` 的假设常量（default=53），非实测** → 按 GPIC 采样应为 **≈103M**；**必须用真实 cap 重算所有 "×N 缺口"**（已在 vision 任务书下达「口径修正」）。
 - [ ] 🚩 **R8 的 6 架构是「自研 from-scratch 等参改编」，非官方实现** → 「SSM 坍缩」不得推广为对官方架构的否定；要下"前沿行不行"的结论需做 **R13（官方 vs 自研 对照）**。
 - [ ] **文档口径统一**：seq 已定 4096（P-8 起），README/论文里残留的 4094 需对齐。

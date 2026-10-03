@@ -76,7 +76,7 @@
     <li><b>pretrain</b>：P-5b <b>54.08% → 57.0%</b>（iter 2720/4771，loss <b>2.0961</b>，健康）；<b>P-9 规格已重写</b>为 P-9.0–P-9.6 干净版（seq 统一 4096 · <b>每步 ≈4M token 不变量</b> · seq 多点扫描 {2048/4096/8192/16384} · <b>FP8 按 <code>M=MBS×seq</code> 扫</b> · profiling 工具已授权自装）。</li>
     <li><b>记忆滚动规程已生效</b>：pretrain <b>248KB→30KB</b> · data <b>87KB→27KB</b> · vision <b>94KB→4.2KB</b> · harness 18→23KB → <b>四线全部 ≤32KB</b> ✅。</li>
     <li><b>harness</b>：sudo 生效 → <b>Docker socket 解锁成功</b>；但 <b><code>docker pull</code> 仍不通</b>（dockerd 无代理）→ 实跑需本地镜像或 Route E′；<b>Aider Polyglot 可行性已确认（不需 docker）</b>。</li>
-    <li><b>data</b>：D-CLEAN 盘点已交付；<b>D-CLEAN-2 删除已获批</b>（laion2B <b>8.1 T</b> + zhulong.tar.gz + 早期 ckpt + pip cache ≈ <b>8.6 T</b>）；<code>servers</code>(974 G) 待探查。</li>
+    <li><b>data</b>：D-CLEAN 盘点交付 → <b>D-CLEAN-2 已执行</b> —— ⚠️ <b>实收 ≈341 GB</b>（<b>不是此前报的 ≈8.6 T</b>）：<b><code>laion2B</code> 实测仅 7.8 G（原记 8.1 T 属 G/T 单位误读，差 3 个数量级）</b> + zhulong + pip + <b>nemo Round1 ~310 G</b>；<code>servers</code>(974 G) 已探明为 <b>LLaVA-V1.5-Qwen3-4B 旧部署</b>（待 owner 确认）。</li>
     <li><b>vision</b>：<b>R10 已开跑</b>（① 12 点回收 ✅ ② 二维拟合 ✅ ③ w384/w640 训练中）；新增 <b>R11 目标函数轴</b> 与 <b>R11-D 数据轴（GPIC vs CC12M+Amshaker）</b>。</li>
     <li>⚠️ <b>一处口径更正</b>：当前 scaling 路线的数据是 <b>CC12M+Amshaker（≈18.5M 对）</b>，<b>不是 GPIC</b>（GPIC 仍在下载）。</li>
     <li><b>vision（第二批）：</b>① 决策 <b>锁定 A = 从零训练</b>；② 新增 <b>R14</b>（官方仓库资源调研，纯 CPU）+ <b>R12/R13</b>（候选，待批）；③ <b>两处更正</b>——R8 六架构是<b>自研改编（非官方实现）</b>、「本地 53M 上限」是<b>假设常量</b>（按实测 GPIC ≈0.1B 应为 ≈103M）；④ 任务书<b>去堆叠重写</b>（12 块 → 6 节，0 重复）。</li>
@@ -132,8 +132,8 @@
   </tr>
   <tr>
     <td><b>data</b><br><code>.12</code></td>
-    <td>下载推进（<b>gpic tar 1198</b>，11:00 实测）；D-CLEAN 盘点交付 → <b>D-CLEAN-2 删除获批</b>（<b>laion2B 11:00 仍 STILL EXISTS</b>）</td>
-    <td><span class="badge b-warn">🔄 下载中</span> · <span class="badge b-ok">✅ 可回收 ≈8.6T</span></td>
+    <td>下载推进（<b>gpic tar 1198</b>）；✅ <b>D-CLEAN-2 已执行</b>（<b>实收 ≈341G</b>：laion2B 7.8G · nemo Round1 ~310G · zhulong · pip）</td>
+    <td><span class="badge b-warn">🔄 下载中</span> · <span class="badge b-ok">✅ 已回收 ≈341G</span></td>
     <td>执行删除 + <code>servers</code>(974G) 探查 → 回写磁盘清单</td>
   </tr>
   <tr>
@@ -419,7 +419,7 @@
   <tr><th>线</th><th>正在执行</th><th>预计结束</th></tr>
   <tr><td><b>pretrain</b> <code>.29</code></td><td>P-5b 20B 长跑（<b>iter 2970/4771 = 62.3%</b>，健康，~29s/iter）</td><td><b>10-04 ≈01:30</b></td></tr>
   <tr><td><b>vision</b> <code>.12</code></td><td><b>R10③</b> w384+w640 各 30k 步（8 卡，08:46 启动）+ 训完自动跑 8 ckpt IN-1k</td><td><b>10-03 ≈12:15</b></td></tr>
-  <tr><td><b>data</b> <code>.12</code></td><td><b>D-CLEAN-2</b> 删除（≈8.6T）+ <code>servers</code> 探查；后台 base/gpic 下载（不占 agent）</td><td><b>10-03 ≈12:30</b></td></tr>
+  <tr><td><b>data</b> <code>.12</code></td><td>✅ <b>D-CLEAN-2 已执行</b>（实收 <b>≈341G</b>）+ <code>servers</code> 探查完成（= LLaVA 旧部署，待批）；后台 base/gpic 下载</td><td><b>10-03 ≈12:30</b></td></tr>
   <tr><td><b>harness</b> <code>.29</code></td><td><b>H-A′ Aider Polyglot</b>（6 参赛者，先 smoke）+ <b>H-D</b> 五 harness 对比矩阵</td><td><b>10-04 ~ 10-06</b>（区间大）</td></tr>
 </table>
 
@@ -504,6 +504,14 @@
   <tr><td><code>SLEEP_WAIT</code> 1800 → 3600</td><td>唤醒次数减半 → <b>总 token 消耗减半</b></td><td>需重启 loop（假期做不了）；且<b>会让响应变慢</b></td></tr>
   <tr><td>加「训练未完成 → 跳过 cline 调用」前置检查</td><td>等待期 <b>零 token</b></td><td>同上（需改运行中的脚本 + 重启）</td></tr>
 </table>
+
+<h3>12.5 ⚠️ 本轮更正的第二个数字错误：<code>laion2B</code> 的 <b>8.1 T → 7.8 G</b></h3>
+<div class="danger">
+  D-CLEAN 盘点把 <code>laion2B-en-aesthetic</code> 记为 <b>≈8.1 T</b>，运维据此把它当「最大回收项」拍板；
+  <b>D-CLEAN-2 实测只有 7.8 G</b>（128 parquet 的 <b>URL 元数据</b>）→ <b>G/T 单位误读、差 3 个数量级</b>。
+  <br>→ D-CLEAN-2 <b>实际回收 ≈341 G</b>（<b>不是 ≈8.6 T</b>）。
+  <br>✅ <b>教训：引用他人清点数字前，先核单位与量级</b>（这是运维侧的失误，由 data agent 实测抓出）。
+</div>
 
 <footer>
   BaiZe 工作汇报 · 2026-10-03（刷新于 <b>~11:25</b>）· 当日提交 <b>≈81</b> 个 ·
