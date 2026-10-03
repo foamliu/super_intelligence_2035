@@ -76,8 +76,8 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 - ✅ **臂 ② SigLIP 完成（2026-10-03 15:26，`ALL DONE`）**：`r9_train.py --loss siglip` 30k 步无坍缩（C1 0.333 / C2_gap +0.103 / C4=OK）；IN-1k lp **2.19 / 3.13 / 4.36%** @5.12/10.24/15.36M，全 < 基线（3.43/5.45/6.08%）→ **未超 +1.5 点阈值、未翻盘**。详见 §6。
 - ✅ **臂 ③ LocalLoss 完成（2026-10-03 17:43，`ALL DONE`）**：`r9_train.py --loss localloss`（`ClipLoss(local_loss=True)`：⚠️ 仍 all-gather 512 → **负样本池仍是 512**，只算本地 64 行 logits，见 §0 更正）+ `r11_run_localloss.sh`（`R11L_localloss_w512`）。30k 步无坍缩；IN-1k lp **1.81 / 3.60 / 4.33%** @5.12/10.24/15.36M，全 < 基线（3.43/5.45/6.08%）→ **未超 +1.5 点阈值、未翻盘**。详见 §7。
 - ✅ **臂 ④ CoCa 完成（2026-10-03 20:13，`ALL DONE`）**：+76.2M decoder + caption CE（weight 2.0）30k 步无强制融合、但 IN-1k frozen-trunk lp **0.29 / 0.37 / 0.47%** @5.12/10.24/15.36M（≈随机 1/1000）→ **Δ −3.14 / −5.08 / −5.61 点，未翻盘且把 trunk 打回随机**（total loss 里 caption 项 ≈68% 梯度、盖过对比项）。**首个稠密监督臂 = 负结果** → 「25.1%=对比渐近」未被颠覆、反被强化。详见 §9。
-- 🚀 **R11-L2 文本塔解冻臂 已启动（2026-10-03 23:54，运维已批准）**：`r9_train.py --loss clip --text-finetune lora`（CLIP-768 文本塔 LoRA q+v r=8 α=16 lr=1e-4），跑 30k 步（N=15.36M 主锚点）；冻塔(w512)/数据/步数/优化器/评测全固定，**只变「文本塔是否解冻」**。smoke 通过、正式训练在 `.12` 运行中（`whag0pgpuap12`，日志 `/tmp/r11_lora.log`）。预注册见 §11。
-- 📌 **后续臂决策（待运维裁决）**：臂⑤ GenLIP（纯 caption 生成，去掉仍在工作的对比项 → 坍缩先验更强、边际价值低）**建议跳过**；臂⑥ AIMv2（**唯一 caption-无关稠密监督**、最贵、需自研）与 R11-L2（文本塔解冻）**待运维拍板**。见 §9 尾。
+- ✅ **R11-L2 文本塔解冻臂 完成（2026-10-04 02:12，运维已批准）**：`r9_train.py --loss clip --text-finetune lora`（CLIP-768 文本塔 LoRA q+v r=8 α=16 lr=1e-4），30k 步（N=15.36M），冻塔(w512)/数据/步数/优化器/评测全固定、只变「文本塔是否解冻」。**未坍缩 + IN-1k lp 3.13/4.75/5.28% < 基线 6.08%@15.36M → 未翻盘**（Δ −0.30~−0.80）。详见 §11.7。
+- 📌 **后续臂（运维已裁定 2026-10-03（三））**：臂⑤ GenLIP **🚫 跳过** → 替代 = `caption-loss-weight` 三点消融（已排期，R11-L2 之后，见 §12）；臂⑥ AIMv2 ⏸ 暂缓（等 R11-L2 结果——现已出、仍未翻盘）；R13 ⏸ 批准后只做 OV2 单臂；R11-E ⏸ 等 GPIC short ≥18.5M。
 - 每臂训练需 8 卡（`.12`），启动前先核 GPU 空闲（同 R10-③ 的 GPU 核验）。
 
 ---
@@ -287,4 +287,51 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 - **训练**：`r9_train.py` 新增 `--text-finetune {frozen,lora}` + `--lora-rank/--lora-alpha/--lora-lr`；`FrozenClipText` 加 `LoRAParam`（`torch.nn.utils.parametrize`）；文本塔可训时 `DDP(text.clip, find_unused_parameters=True)` 包裹 + 独立参数组 + 探针重算 pT。ckpt 记录 `config['text']='lora-CLIP-768'` + `text_trainable_params/lora_rank/alpha/lr` 字段。
 - **启动脚本**：`r11_run_lora.sh 30000`（镜像 `r11_run_siglip.sh`；`--loss clip --text-finetune lora --lora-rank 8 --lora-alpha 16 --lora-lr 1e-4`）。
 - ✅ **smoke 通过（exit 0）**：8 卡 30 步；`[text-finetune] trainable=0.295M`；探针（probe-every 5）`C1=0.09–0.34 / C2_gap=+0.03–+0.07 / C4=OK`，无坍缩；ckpt 字段核验 `text=lora-CLIP-768 / text_trainable_params=294912 / params_active=126779392`。
-- 🚀 **正式 30k 已启动（2026-10-03 23:54，`.12` 全 8 卡）**：`cd run/vision && bash r11_run_lora.sh 30000` → `R11L2_lora_w512`；日志 `/tmp/r11_lora.log`；hostname `whag0pgpuap12` + GPU 独占核验（0 MiB 占用）。**结果待训练完成（~2h）后回填本节。**
+- 🚀 **正式 30k 已启动（2026-10-03 23:54，`.12` 全 8 卡）**：`cd run/vision && bash r11_run_lora.sh 30000` → `R11L2_lora_w512`；日志 `/tmp/r11_lora.log`；hostname `whag0pgpuap12` + GPU 独占核验（0 MiB 占用）。**下文 §11.7 为结果与裁定。**
+
+### 11.7 结果与裁定（✅ 完成，2026-10-04）
+
+> 命令：`cd run/vision && bash r11_run_lora.sh 30000`（`r9_train.py --loss clip --text-finetune lora --lora-rank 8 --lora-alpha 16 --lora-lr 1e-4`，8 卡 `.12`）；证据：`/tmp/r11_lora.log`，末行 `R11-L2 LoRA(w512) ALL DONE 2026-10-04 02:12:53`（exit 0）。
+
+- **训练健康（无坍缩）**：`[done] total=7530.7s steps=30000 steady_image_s=2480.1 final_loss=3.7105 fused=False`；末点探针 `C1=0.2839 C2_diag=0.1978 C2_off=0.0872 C2_gap=+0.1106 loss_ema=3.7105 loss_early=5.9503 C4=OK`。全程 C1 ~0.24–0.31（≪0.95）、C2_gap +0.11~+0.14（≫0.005）、C4=OK → **未触发 R4 坍缩**。
+- **IN-1k frozen-trunk lp / zs**（`r8_eval_in1k.py --ckpts step{10k,20k,30k}+final`，同 R9/R10 口径）：
+
+| N | 步 | lp top-1 | zs top-1 | zs top-5 | InfoNCE 基线 lp | Δ lp |
+|:--|:--|--:|--:|--:|--:|--:|
+| 5.12M | 10k | **3.13%** | 1.10% | 3.94% | 3.43% | **−0.30** |
+| 10.24M | 20k | **4.75%** | 1.61% | 5.78% | 5.45% | **−0.70** |
+| 15.36M | 30k | **5.28%** | 1.77% | 6.36% | 6.08% | **−0.80** |
+
+- **裁定（预注册 §11.4）**：**未坍缩**；lp @15.36M = **5.28% < 基线 6.08% + 1.5 = 7.58%** → **未翻盘**；三档 N 的 Δ lp 全为微负（−0.30 ~ −0.80，落在 run 噪声带 0.5–1.1 pp 内）→ **「冻结 CLIP-768 文本塔锁死渐近上限」假说未获支持**：轻量 LoRA 解冻（+0.30M、零初始化起点）不抬高 frozen-trunk lp、反略低 → **冻结文本塔在本 recipe 下仍最优**（与 R11-L 前四臂一致）。
+- **科学意义**：LoRA 解冻**不坍缩**（零初始化 + lr1e-4 防住 R4「随机 text 塔坍缩」）但**也无正收益** → 「文本塔解冻」在当前数据/塔规模**不是杠杆**；**重训文本塔（≈3+ 臂）不再推荐**。
+- **公平性（§11.5）**：参数量 **+0.30M 可训**（文本塔 LoRA；vision trunk 仍 126.78M，lp 只读 trunk）、额外 token=0；总墙 **7530.7s ≈ 2.09h**、`steady_image_s=2480.1`（vs 基线 ~1.98h / arm② 2447.7 img/s）→ 每步耗时 **≈1.0×**（LoRA 前向开销可忽略）。
+
+---
+
+## 12. R11-L `caption-loss-weight` 三点消融（替代臂⑤ GenLIP）· 预注册 + 启动（2026-10-04）
+
+> **批准依据**：运维指令 2026-10-03（三）row #2 —— 臂⑤ GenLIP 🚫 跳过，替代为 `--caption-loss-weight` **{0.5, 1.0, 2.0}** 三点消融（2.0 已 = arm④ CoCa，lp 0.47%≈随机），**排期：R11-L2 之后**。回答「是 caption 监督本身与 IN-1k frozen-trunk 特征正交，还是 weight=2.0 压死 trunk」。
+
+### 12.1 臂定义（只变 caption weight，其余同 arm④）
+
+- 复用 arm④ CoCa 全配置：OV2 w512 + 冻结 CLIP-768 + `CoCaDecoder`（depth4/w768/h12，+76.2M 可训）+ 短 caption 数据（CC12M+Amshaker）+ 30k 步（N=15.36M）+ IN-1k frozen-trunk lp。
+- **唯一变化**：`--caption-loss-weight` ∈ **{0.5, 1.0}**（2.0 已 = arm④，作对照第三点）。
+
+### 12.2 预注册判据（先定后测，不许改）
+
+- 参照：InfoNCE 基线 lp = **6.08%@15.36M**；arm④ CoCa weight=2.0 lp = **0.47%@15.36M**（≈随机）。
+- **假设 A（weight 是压死 trunk 主因）**：若 weight=0.5 **或** 1.0 的 lp@15.36M **≥ 基线 −1.5 = 4.58%** → caption 监督与 IN-1k 非正交，weight=2.0 是「打回随机」主因；低 weight 下对比+生成可兼容。
+- **假设 B（caption 监督本身与 IN-1k 正交）**：若 0.5 **与** 1.0 两点的 lp@15.36M **都 < 4.58%**（仍≈随机）→ caption 监督与 IN-1k frozen-trunk 特征正交（无论 weight 都破坏 trunk）→ 稠密 caption 路径判死，臂⑤ GenLIP 跳过结论坐实。
+- **单调性增量判据**：若 lp 随 weight↓（2.0→1.0→0.5）单调回升 → 主因是 weight（A 增强）；若三点 lp 都≈随机、无单调 → 主因是 caption 监督本身（B）。
+
+### 12.3 公平性（§3 口径，同 arm④）
+
+| 臂 | 参数量增量 | 额外 token | 每步耗时 |
+|:--|:--|:--|:--|
+| arm④ CoCa w=2.0 | +76.2M decoder | +caption CE | 0.97×（6911.7s） |
+| caption_weight 0.5 / 1.0 | +76.2M decoder（同） | +caption CE（同） | 待实测（应 ≈0.97–1.0×） |
+
+### 12.4 启动脚本与进度
+
+- 脚本：`r11_run_capweight.sh`（循环 weight ∈ {0.5, 1.0}，各训 30k 步 + 自动回收 4 ckpt IN-1k lp）；日志 `/tmp/r11_capweight.log`；输出 `R11L_capw0p5_w512` / `R11L_capw1p0_w512`。
+- 🚀 **启动（2026-10-04 02:15，`.12` 全 8 卡，GPU 已核空闲）**。**结果待训练+评测完成后回填 §12.5。**

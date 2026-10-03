@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L 预注册 ✅ · arm② SigLIP ✅（未翻盘）· arm③ LocalLoss ✅（未翻盘）· arm④ CoCa ✅（lp 0.47%≈随机、Δ−5.6 点，首个稠密臂=负结果·未翻盘）· 🚀 R11-L2 文本塔解冻 LoRA 训练中**；臂⑤ GenLIP 🚫 跳过建议 / 臂⑥ AIMv2 ⏸ 暂缓 / R13 ⏸ 只做 OV2 单臂 / R11-E ⏸ 等数据；**R11-L2 已批准并在 `.12` 跑 30k 步（预注册见 ROUND11 §11）** |
-| WAITING | 1（**语义=训练 running（异步）**：R11-L2 LoRA 臂 30k 步在 `.12` 跑（`whag0pgpuap12`），`bash r11_run_lora.sh 30000`，日志 `/tmp/r11_lora.log`，ETA ~2h → 置 1 长睡省 token、训练 `ALL DONE` 后回收 IN-1k lp 再置 0） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ 四臂全兑现（①基线/②SigLIP/③LocalLoss/④CoCa 均未翻盘）· R11-L2 ✅ 完成（未坍缩、lp 5.28%<基线 6.08%→未翻盘、冻结文本塔仍最优）· 🚀 R11-L caption-weight 消融(0.5/1.0) 训练中**；臂⑤ GenLIP 🚫 跳过（→替 caption 消融）/ 臂⑥ AIMv2 ⏸ 暂缓 / R13 ⏸ 只做 OV2 单臂 / R11-E ⏸ 等数据 |
+| WAITING | 1（**语义=训练 running（异步）**：R11-L `caption-loss-weight` {0.5,1.0} 消融在 `.12` 跑（`whag0pgpuap12`），`bash r11_run_capweight.sh 30000`，日志 `/tmp/r11_capweight.log`，ETA ~4–5h → 置 1 长睡省 token、`ALL DONE` 后回收 IN-1k lp 再置 0） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡）+ arm④ CoCa（1.92h×8 卡）+ R11-L2 LoRA（训练中，30k 步 ≈1.9–2.1h×8 卡） |
-| 更新 | 2026-10-04 01:34（R11-L2 LoRA 训练中 @step 23850/30000≈80% 健康：C1 ~0.29–0.31 / C2_gap +0.117~+0.142 / C4=OK、loss_ema 5.95→~3.84；`.12` 8 卡全忙 ~18GB；ckpt step10000/20000 已落盘；ETA ~02:00 训完 → 自动回收 4 ckpt IN-1k lp） |
+| 更新 | 2026-10-04 02:18（R11-L2 LoRA ✅ 完成：未坍缩、lp 3.13/4.75/5.28% < 基线 6.08%、未翻盘、冻结文本塔仍最优；随即启动 caption-weight 消融 0.5/1.0，2.0 复用 arm④） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -66,17 +66,20 @@ WAITING: 1
 
 - 📌 **decision gate（2026-10-03 21:31）**：R11-L 四臂（①基线/②SigLIP/③LocalLoss/④CoCa）全部兑现、无一翻盘；GPU 已空。**书面成本/收益判断已交 `EXPERIMENTS_VISION_ROUND11.md §10`**（臂⑤→🚫跳过 / 臂⑥ AIMv2→⏸暂缓 / **R11-L2→✅下一优先级** / R13→⏸批准后只做 OV2 单臂 / R11-E→⏸等 short≥18.5M）。⚠️ 全部**未经批准、不主动起训练**；WAITING 置 1 省 token，等运维在任务书 §3 + §10 勾选后执行。
 
-## R11-L2 文本塔解冻臂（🚀 训练中，2026-10-03）
+## R11-L2 文本塔解冻臂（✅ 完成，2026-10-04 02:12）
 
-> 只变「文本塔是否解冻」：基线 = 冻结 CLIP-768（R9 6.08%@15.36M）vs 本臂 = CLIP-768 文本塔 **LoRA 轻量微调**。其余控变量（OV2 w512 · CC12M+Amshaker · 视觉 lr3e-3 · bs512 · N=15.36M/30k 步 · IN-1k frozen-trunk lp）**全固定**；**重跑 R4 坍缩判据 C1–C4**。预注册见 `EXPERIMENTS_VISION_ROUND11.md §11`。
+> 只变「文本塔是否解冻」：冻结 CLIP-768（基线）vs LoRA（r=8 α=16 lr=1e-4，+0.30M、零初始化起点）；其余（OV2 w512 · CC12M+Amshaker · 视觉 lr3e-3 · bs512 · N=15.36M · IN-1k lp）全固定；重跑 C1–C4。预注册见 ROUND11 §11。
 
-- **实现**：`r9_train.py` 增 `--text-finetune {frozen,lora}` + `--lora-rank/--lora-alpha/--lora-lr`；LoRA = `torch.nn.utils.parametrize` 注入 q_proj+v_proj（r=8 α=16），`lora_B` 零初始化（步 0 == 冻结塔），**可训 +0.30M**；视觉 lr 3e-3、LoRA lr 1e-4（独立参数组）。探针 `pT` 改为每次用当前文本塔重算。
-- ✅ **smoke 通过（exit 0）**：8 卡 30 步、`trainable=0.295M`、探针 `C1=0.09–0.34 / C2_gap=+0.03–+0.07 / C4=OK`（无坍缩）；ckpt 字段 `text=lora-CLIP-768 / text_trainable_params=294912`。
-- 🚀 **正式 30k 已启动（23:54，`.12` 全 8 卡）**：`bash r11_run_lora.sh 30000` → `R11L2_lora_w512`；日志 `/tmp/r11_lora.log`；hostname `whag0pgpuap12`、GPU 独占核验。ETA ~2h + 自动回收 4 ckpt IN-1k lp。
-- **预注册裁定（§11.4）**：坍缩（C1>0.95 / C2_gap≤0.005 / C4 fail）→ 负结果；未坍缩且 lp > 基线+1.5（>7.58%）→ 局部翻盘（冻结文本塔锁上限）；否则未翻盘。
-- 🔍 **巡检（2026-10-04 00:30）**：@step 8100/30000（27%）健康——C1 0.25–0.29 / C2_gap +0.12~+0.13 / C4=OK、loss_ema 5.95→~4.5~4.6；`.12` 8 卡全忙（util 53–72%、显存 ~18/81.6 GB）；吞吐 ~2.4k–5.1k img/s（NFS I/O 波动，正常）。ETA ~01:50–02:00 训完 → 脚本自动回收 4 ckpt IN-1k lp → 下次唤醒做 R11-L2 收尾（§11.6 回填 lp + C1–C4 裁定）。无坍缩、无异常，继续 WAITING=1。
-- 🔍 **巡检（2026-10-04 01:02）**：@step 15900/30000（53%）健康——C1 0.24–0.30 / C2_gap +0.1199~+0.1309 / C4=OK、loss_ema 5.95→~3.92；吞吐 ~2.2k–3.2k img/s（NFS I/O 波动，正常）；进程组核验 **1 master(1493889) + 8 rank + 48 dataloader worker**（无重复 run）；`.12` 8 卡全忙（util 45–91%、显存 ~18/81.6 GB）。ETA ~02:00 训完 → 脚本自动回收 4 ckpt IN-1k lp → 下次唤醒做 R11-L2 收尾（§11.6 回填 lp + C1–C4 裁定）。无坍缩、无异常，继续 WAITING=1。
-- 🔍 **巡检（2026-10-04 01:34）**：@step 23850/30000（~80%）健康——C1 0.287~0.307 / C2_gap +0.117~+0.142 / C4=OK、loss_ema 5.95→~3.84；吞吐 ~2.2k–5.1k img/s（NFS I/O 波动，正常）；2 ckpt 已落盘（step10000@00:37、step20000@01:18，各 507MB）；`.12` 8 卡全忙（util ~0–100%、显存 ~18/81.6 GB）。ETA ~02:00 训完 → 脚本自动回收 4 ckpt IN-1k lp → 下次唤醒做 R11-L2 收尾（§11.6 回填 lp + C1–C4 裁定）。无坍缩、无异常，继续 WAITING=1。
+- **实现**：`r9_train.py` 增 `--text-finetune {frozen,lora}` + `--lora-*`；LoRA=parametrize 注入 q_proj+v_proj，lora_B 零初始化；探针 pT 每步重算。
+- ✅ **完成（02:00 训完 / 02:12 评测完，exit 0）**：`total=7530.7s steps=30000 steady=2480.1 img/s final_loss=3.7105`；全程**无坍缩**（C1 0.24–0.31 / C2_gap +0.11~+0.14 / C4 OK）。
+- **IN-1k lp = 3.13 / 4.75 / 5.28%** @5.12/10.24/15.36M（zs 1.10/1.61/1.77%）vs 基线 6.08%@15.36M → Δ **−0.30/−0.70/−0.80** → **未翻盘**（<+1.5 阈值）。→ **冻结文本塔仍最优**；「文本塔解冻」在本规模非杠杆，重训 text 塔不再推荐。公平性：+0.30M、0 extra token、≈1.0×。证据 `/tmp/r11_lora.log`。
+
+## R11-L caption-weight 消融（🚀 训练中，2026-10-04）
+
+> 替代臂⑤ GenLIP（运维已批跳过）：CoCa 只变 `--caption-loss-weight` ∈ {0.5,1.0}（2.0=arm④ lp 0.47%≈随机）→ 回答「caption 监督本身与 IN-1k 正交，还是 weight=2.0 压死 trunk」。预注册见 ROUND11 §12。
+
+- 控变量同 arm④（w512 + 冻结 CLIP-768 + CoCaDecoder +76.2M + 短 caption + 30k 步）；只变 caption weight。2 点 × 30k ≈ 2 臂 ≈ 4–5h。
+- 🚀 已启动（`.12` 全 8 卡）：`bash r11_run_capweight.sh 30000`；输出 `R11L_capw0p5_w512` / `R11L_capw1p0_w512`；日志 `/tmp/r11_capweight.log`；ETA ~4–5h + 自动回收各 4 ckpt IN-1k lp。**预注册裁定（§12.2）**：0.5 或 1.0 lp ≥4.58% → weight 压死主因；都 <4.58% → caption 监督本身正交。
 ## 历史条目已滚动归档（2026-10-03）
 
 - 更早的全部巡检/流水（R1–R9 完整过程，live MEMORY 原 95.7KB）已滚动归档至 `daily-memories-vision/2026-10-03.md`（追加「滚动归档快照」）+ 各日期 daily 文件（2026-09-30 / 10-01 / 10-02）。live MEMORY 已压至 ≤32KB。
