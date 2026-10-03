@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 8 -->
+<!-- RUN_ID: 9 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,13 +31,62 @@
 
 ---
 
-## RUN_ID 8 — 🧹 **清 ops_relay 重复副本**（⚠️ **fail-safe：绝不杀到 0 个**）
+## RUN_ID 9 — 🔍 **只读探查：`.29` 的 pretrain / harness 为何静默 ~9 小时**（**本块为最新，优先执行**）
+
+**背景**：`MEMORY_PRETRAIN_2B.md` 最后更新停在 **10-03 22:05**（第 54 次巡检，P-5b **90.97%**，final ETA 10-04 ~01:36）；`MEMORY_HARNESS.md` 停在 **10-03 22:43**。
+**10-04 全天只有 vision / data 在写文件**（07:06 仍在写）→ 而 pretrain/harness **零文件变更**。
+**怀疑**：**pretrain/vision/data/harness 四条线共用同一 cline key** → vision+data 整夜抢占 → **pretrain/harness 被 Token 额度饿死**（已知坑：cline 额度耗尽**仍返回 `exit 0`**，loop 分辨不出，只睡 30min 再试 = **静默变慢而非崩溃**）。
+**要回答的 4 个问题**：① loop 进程还在不在？② 日志里有没有「额度已用完」？③ **P-5b 到底跑完没有 / GPU 是否在空转**？④ `.12` 侧是否正常（做对照）。
+
+**约束**：🚫 **纯只读** —— 不 kill / 不重启 / 不 `rm` / 不改任何文件；长输出 `cut -c1-140`；**不整树 `du`**。
+
+```bash
+echo "=== 0. HOST / TIME ==="; hostname; date '+%F %T %Z'
+
+echo; echo "=== 1. [.29] LOOPS ==="
+pgrep -af 'baize_.*_loop\.sh' | cut -c1-140 || echo "(none)"
+
+echo; echo "=== 2. [.29] LOOP LOGS (tail 18 + Token额度 命中数) ==="
+for f in /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log; do
+  echo "-- $f  mtime=$(stat -c %y "$f" 2>/dev/null | cut -c1-19)  size=$(stat -c %s "$f" 2>/dev/null)"
+  printf '   Token额度相关行数 = '; grep -c '额度\|quota\|Token\|Forbidden' "$f" 2>/dev/null || echo 0
+  tail -n 18 "$f" 2>/dev/null | cut -c1-160
+  echo
+done
+
+echo "=== 3. [.29] /tmp 最近改动的日志（判断最后一次唤醒时间）==="
+ls -lt --time-style=long-iso /tmp/*.log 2>/dev/null | head -12
+
+echo; echo "=== 4. [.29] 训练进程 + GPU（P-5b 是否还在跑）==="
+pgrep -af 'pretrain_launcher|torchrun|p5b' | cut -c1-140 | head -10 || echo "(NO torchrun => 训练已结束)"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null || echo "(nvidia-smi failed)"
+echo "-- /tmp/baize_p5b.log tail 10 --"; tail -n 10 /tmp/baize_p5b.log 2>/dev/null | cut -c1-160 || echo "(no p5b log)"
+
+echo; echo "=== 5. [.29] P-5b ckpt（看 final @4771 是否落盘）==="
+CK=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments
+ls -1 "$CK" 2>/dev/null | head -15
+for d in "$CK"/p5b "$CK"/p5b_*; do [ -d "$d" ] && { echo "-- $d"; ls -1t "$d" 2>/dev/null | head -8; }; done
+echo "-- 含 4771 的路径 --"; find "$CK" -maxdepth 2 -name '*4771*' 2>/dev/null | head -5
+
+echo; echo "=== 6. [.12] 远端（ssh）loops + GPU —— 做对照 ==="
+timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'hostname; echo "-- loops --"; pgrep -af "baize_.*_loop\.sh" | cut -c1-140; echo "-- gpu --"; nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader' 2>&1 | cut -c1-160 || echo "ssh 10.239.2.12 FAILED"
+
+echo; echo "=== 7. 共享工作副本 git 状态 ==="
+git -C /nas_train/app.e0031982/code/super_intelligence_2035 log --oneline -3 2>/dev/null
+git -C /nas_train/app.e0031982/code/super_intelligence_2035 status -sb 2>/dev/null | head -6
+
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 8**（清 relay 副本）为 ```text —— 它现在**不再**霸占「第一个块」。
+
+## RUN_ID 8 — 🧹 **清 ops_relay 重复副本**（⚠️ **已被 RUN_ID 9 接管，本块不再执行**）
 
 **背景**：`.29` 上又见 **2 个 `ops_relay.sh`**（`2489749` etimes≈42.8h + `2315903` etimes≈0）。
 **目标**：只保留「运行最久」的那个；**若清理有任何不确定，就不杀、只报告**。
 **底线**：**执行完必须仍有 ≥1 个 relay 存活**（否则假期无法通讯）。
 
-```bash
+```text
 echo "=========== 0. 时间 ==========="
 hostname; date '+%F %T %Z'
 echo
