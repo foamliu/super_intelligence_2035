@@ -2070,3 +2070,113 @@ Warning: AI SDK Warning System: To turn off warning logging, set the AI_SDK_LOG_
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 15 · 2026-10-04 07:28:20 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T %Z'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
+C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; GW=http://agi-gateway.cxmt.com/v1
+S=~/.cline/data/secrets.json; TS=$(date +%Y%m%d-%H%M%S); cd /tmp
+
+echo; echo "=== 1. 备份 .29 的 secrets.json ==="
+cp -a "$S" "$S.bak.$TS" && echo "   backed up -> $S.bak.$TS"
+python3 -c "import json,pathlib;k=json.load(open(str(pathlib.Path.home())+'/.cline/data/secrets.json'))['openAiApiKey'];print('   old: len=',len(k),'prefix6=',k[:6])"
+
+echo; echo "=== 2. 从 .12 取有效 key 并写入（管道传递，不回显明文）==="
+timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 \
+  'python3 -c "import json,pathlib;print(json.load(open(str(pathlib.Path.home())+\"/.cline/data/secrets.json\"))[\"openAiApiKey\"])"' \
+  | tr -d '\r\n' | python3 -c "import json,sys,os;k=sys.stdin.read().strip();\
+assert len(k)>32,'ABORT: fetched key too short -> nothing written';json.dump({'openAiApiKey':k},open(os.path.expanduser('~/.cline/data/secrets.json'),'w'));print('   new: len=',len(k),'prefix6=',k[:6])" \
+  || { echo "!!! 写入失败 → 中止"; echo DONE; exit 0; }
+
+echo; echo "=== 3. 用【新 secrets、不带 -k】跑 cline smoke（仿 .12 环境）==="
+env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
+  timeout 90 "$C" -c /tmp -m "$M" --auto-approve true -t 45 "reply with exactly OK" 2>&1 | head -4 | cut -c1-150
+
+echo; echo "=== 4. 取最新 loop 脚本（只 checkout 这两个文件）==="
+git -C "$WK" fetch origin --quiet 2>/dev/null
+git -C "$WK" checkout origin/main -- doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh && echo "   checked out"
+grep -n 'OPENAI_API_KEY' "$RUN/baize_pretrain_loop.sh" "$RUN/baize_harness_loop.sh" | cut -c1-110
+
+echo; echo "=== 5. 停旧 loop ==="
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'baize_(pretrain|harness)_loop\.sh' | grep -v grep | cut -c1-105
+pkill -f 'baize_pretrain_loop.sh'; pkill -f 'baize_harness_loop.sh'; sleep 5
+pgrep -af 'baize_(pretrain|harness)_loop\.sh' | cut -c1-105 || echo "   已全部停止"
+
+echo; echo "=== 6. 重启（无 proxy / 无 stale OPENAI_*）==="
+cd "$RUN"
+setsid env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
+  bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+sleep 2
+setsid env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
+  bash baize_harness_loop.sh > /tmp/baize_harness_loop.log 2>&1 < /dev/null &
+sleep 28
+
+echo; echo "=== 7. 校验 ==="
+pgrep -af 'baize_(pretrain|harness)_loop\.sh' | cut -c1-130
+echo "-- pretrain log --"; tail -6 /tmp/baize_pretrain_loop.log | cut -c1-150
+echo "-- harness log --";  tail -6 /tmp/baize_harness_loop.log  | cut -c1-150
+echo "-- Forbidden 计数（新日志，应为 0）--"; grep -c Forbidden /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log 2>/dev/null
+
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 07:28:20 CST
+
+=== 1. 备份 .29 的 secrets.json ===
+   backed up -> /home/app.e0031982/.cline/data/secrets.json.bak.20261004-072820
+   old: len= 72 prefix6= 02_088
+
+=== 2. 从 .12 取有效 key 并写入（管道传递，不回显明文）===
+   new: len= 72 prefix6= 02_088
+
+=== 3. 用【新 secrets、不带 -k】跑 cline smoke（仿 .12 环境）===
+OK
+Warning: AI SDK Warning System: To turn off warning logging, set the AI_SDK_LOG_WARNINGS global to false.
+      at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+      at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:626:5)
+
+=== 4. 取最新 loop 脚本（只 checkout 这两个文件）===
+   checked out
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh:82:       
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh:100:       
+
+=== 5. 停旧 loop ===
+2228938  119267 bash baize_harness_loop.sh
+2425284  227854 bash baize_pretrain_loop.sh
+
+=== 6. 重启（无 proxy / 无 stale OPENAI_*）===
+
+=== 7. 校验 ===
+2233867 bash baize_pretrain_loop.sh
+2233923 bun /home/app.e0031982/.bun/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --au
+2235589 bash baize_harness_loop.sh
+2235597 bun /home/app.e0031982/.bun/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --au
+-- pretrain log --
+
+Let[0m[2m me check[0m[2m the training[0m[2m process on[0m[2m .29[0m[2m and find[0m[2m the training[0m[2m output[0m[2m log.
+
+[0m[2mActually,[0m[2m I was[0m[2m paged[0m[2m here.[0m[2m The current[0m[2m date is[0m[2m [0m[2m2026[0m[2m-10[0m[2m-04[0m[2m 07
+
+The[0m[2m GPUs[0m[2m show [0m[2m0 Mi[0m[2mB →[0m[2m training is[0m[2m NOT[0m[2m running.[0m[2m Either it[0m[2m finished successful
+-- harness log --
+   [90m⎿ [0m[2m## 第三十一轮（21:35）—— 🚀 scale sympy 1 条 = `sympy__sympy-11400` resolved=True（R1 ... (+1 more)[0m
+[36m[read_files][0m {"files":[{"path":"/nas_train/app.e0031982/code/super_int...
+   [90m⎿ [0m[2m1 | #!/usr/bin/env python3   2 | """R1 evaluation adapter — run SWE-bench-Lit...[0m
+[2m[thinking] [0m[2mNow[0m[2m I understand[0m[2m the full[0m[2m state[0m[2m. The[0m[2m next step[0m[2m (from[0m[2m round [0m[2m32's
+
+[0m[2m**Run[0m[2m cl[0m[2mine driver[0m[2m end-to[0m[2m-end on[0m[2m real instance[0m[2m `d[0m[2mjango__[0m[2mdjango[0m[2m-109[0m
+-- Forbidden 计数（新日志，应为 0）--
+/tmp/baize_pretrain_loop.log:0
+/tmp/baize_harness_loop.log:0
+
+=== DONE ===
+```
