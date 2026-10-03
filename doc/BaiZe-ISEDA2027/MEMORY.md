@@ -42,14 +42,14 @@ WAITING: 0
 
 ---
 
-## 3. 在途任务（截至 2026-10-03 ~09:00）
+## 3. 在途任务（截至 2026-10-03 ~23:25）
 
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
-| **pretrain** | P-5b 长跑（20B）→ 跑完**立即 P-9**（MBS/精度/seq/profiling） | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md`「P-9」节 | 🔄 P-5b ~57%，ETA 10-04 凌晨 |
-| **vision** | R10③ 收尾（4 步）→ **R14**（官方仓库调研·纯CPU）+ **E1**（GPIC 规模实测）→ **R11-E/L/L2**（数据/loss/文本塔）→ **R13/R12**（待批） | `run/EXPERIMENTS_VISION_ROUND10/11.md` · `run/VISION_OFFICIAL_REPOS_SURVEY.md` | 🔄 R10_active |
-| **data** | 下载巡检 + **D-CLEAN-2 ✅ 已执行**（**实收 ≈341G**，非 8.6T）+ `servers` 探查完成（=LLaVA 旧部署 974G，待批） | `run/DISK_CLEANUP_INVENTORY.md` §6 | 🔄 |
-| **harness** | **H-A′ Aider Polyglot 横评** + **H-D** 5-harness 对比与 cline 机会点 | `run/harness/AIDER_POLYGLOT_COMPARE.html` · `HARNESS_COMPARE_MATRIX.html` · `CLINE_IMPROVEMENT_OPPORTUNITIES.md` | 🔄 |
+| **pretrain** | **P-5b 长跑（20B，decay 退火尾段）** → 跑完**立即 P-6②**（6 ckpt 能力-vs-token）→ **P-9**（空窗 MBS/精度/seq/profiling）→ P-8 暂缓 | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` | 🔄 **90.97% @4340/4771**，final ETA **10-04 ~01:36** |
+| **vision** | ✅ R9/R10/R14/E1 + **R11-L 四臂全兑现（无一翻盘）** → 🟢 **R11-L2 文本塔解冻（LoRA）已批准 = 下一优先级**（见 `BAIZE_VISION_TASK.md`「运维指令 · 2026-10-03（三）」）→ 之后 **`caption-loss-weight` 三点消融** | `run/EXPERIMENTS_VISION_ROUND11.md` · `VISION_OFFICIAL_REPOS_SURVEY.md` | ✅ **GPU 空**，等唤醒接令 |
+| **data** | 下载巡检 —— 🆕 **白名单锁定 = `l1_en_hq` + `zh` + GPIC**；🔴 **立即停 `en_v1_4`**；D-CLEAN 系列 ✅ 全完成（累计回收 **≈1.31 TiB**） | `run/DISK_CLEANUP_INVENTORY.md` · `DATA_MIX_RECIPE.md` | 🔄 **唤醒 75**，等唤醒接令 |
+| **harness** | ✅ **R1 无 docker 沙箱路线跑通**（django + sympy **双绿**）· **步3 适配层 + R32 5 drivers 已交付** → **步4：300 × 5 全量按序跑** | `run/harness/SWEBENCH_LITE_FEASIBILITY.md` · `r1_eval.py` | 🔄 待实跑 |
 
 > ✅ **vision 叙事已决（2026-10-03 用户）：走 A = 保持「从零训练」**（"A 本身也是为了学习"）。
 > → R9 的 **~25.1% 渐近 = 从零路线的如实上限**（负结果有价值）；**loss 轴 R11 = 主线**；**架构轴非主要杠杆**。
@@ -61,8 +61,11 @@ WAITING: 0
 ## 4. 待拍板 / 我欠的答复
 
 - [ ] **P-9 结果** → 定 **P-8 的 seq(4096/8192) / MBS / 精度(bf16/FP8)**（含 16384 是否 OOM 的长上下文边界）。
-- [ ] **D-CLEAN-2 实际回收量** + **`servers`(974G, `/nas_train/app.e0031982/servers`) 是什么** → 用户定夺。
-- [ ] **harness 运行主机**（`docker pull` 不通后是否需本地镜像 / 专用仓位）。
+- [x] ✅ **D-CLEAN-2 回收量已核实**：**实收 ≈341 GB ≈0.33 TiB**（远小于 `~8.6T` 预期，根因 = 盘点把 `laion2B-en-aesthetic` 的 **7.8G 误读成 8.1T**）。
+- [x] ✅ **`servers`(974G) 已查清 + 已批准删除**（= `LLaVA-V1.5-Qwen3-4B` 旧训练 ckpt，2026-02 消融）→ **D-CLEAN-3 已执行，回收 ≈972 GB**；symlink 指向的外部数据集**完好**。
+  → **D-CLEAN 系列全部完成，累计回收 ≈1.31 TiB**（⚠️ **教训已入库：引用他人清点数字前先核单位/量级**）。
+- [x] ✅ **harness 运行主机问题已自行解决（2026-10-03）**：**R1 路线（`unshare` 用户命名空间 chroot 沙箱 + rootfs 落 `/nas_train`）跑通官方 `eval.sh`** —— **django + sympy 双绿**；`docker pull` 不通**已不再是阻塞**（L0/dockerd 配代理**已取消**）。
+  → ⚠️ R1 已知风险敞口：沙箱内**挂不了 `/dev` `/proc` `/sys`**（scale 到 300 时留意）。
 - [x] ✅ **GPIC 规模已实测（E1，2026-10-03）**：抽 **8 tar（index 0..1212）→ 12,537 对/tar（±2%）** → **GPIC 全量 ≈100.3M**（**证官方 100M**；旧「5 tar=86M」**因少计 png 作废**）；**已下 1213/8000 ≈15.2M**。
   → **C1 口径定案**：**R9 用过 18.5M / 盘上现有 ≈32M / 本地全量 ≈118M（动态）**；`r9_scaling.py` 的 `--local-cap-m` 已改 **default=118.0**。
   → ⚠️ **R11-E 的可比 N 区间被压到 ≈6.8M**（GPIC-short 已下 < 18.5M）→ **须如实说明「可比区间更窄」**。
@@ -76,11 +79,13 @@ WAITING: 0
 - [x] ✅ **D-CLEAN-2 已执行（唤醒 58）**：**实收 ≈341 G** —— ⚠️ **我此前报的「≈8.6 T」错了**：`laion2B-en-aesthetic` 盘点记 **8.1 T**，**实测只有 7.8 G**（128 parquet 的 **URL 元数据**）→ **G/T 单位误读、差 3 个数量级**。实删：laion2B 7.8G + zhulong 0.49G + pip 3.3G + **nemo Round1 ~310G**（`nemo_experiments` 524G→**214G**，**`p5b` 79G 保留**）。
 - [ ] ⭐ **`servers`(974 G) 已探明 = LLaVA-V1.5-Qwen3-4B 旧训练部署** → ✅ **运维已批准删除** → **D-CLEAN-3 已下发**（**带 P1/P2/P3 前置检查**：无进程占用 / 无近期活动 / 无脚本引用；任一不过即停手报告）。
 - [x] 🚫 **`nemo_experiments` 的 R2 近期 ckpt（~135 G）：运维决定「先不清」**（保留）。
-- [ ] 📄 **论文（ISEDA2027）刷新后的待定项（2026-10-03）** —— 论文已**刷新并推送**（**commit `afa2624`**；审计见 `PAPER_STALENESS_AUDIT.md`），以下**等用户拍板**：
-  1. **abstract 是否加一句 scaling**（R9/R10 的**渐近 25.1%** = 从零路线的诚实上限）；
-  2. **seeds n=3 → n=5**（统计强度 vs 机时）；
-  3. **§2 相关工作是否补视觉线**（当前 §2 未覆盖我们已做的视觉发现）；
-  4. `tab:visobj` 建议补一句区分「**lr-坍缩**（可被 lr 3e-3 修复）vs **SSM-坍缩**（不可修复）」。
+- [x] ⏸ **论文（ISEDA2027）：已定「冻结不动、等实验结果」（2026-10-03 用户拍板）** —— 本轮刷新（**commit `afa2624`**，审计 `PAPER_STALENESS_AUDIT.md`）**即为当前定稿态**，**不再单独改**；下列 4 项**暂缓**，等 vision/pretrain 出结果后**一次性回填**：
+  1. abstract 加 scaling 句（渐近 **25.1%**）
+  2. seeds n=3 → n=5
+  3. §2 相关工作补视觉线
+  4. `tab:visobj` 补「lr-坍缩 vs SSM-坍缩」区分
+- [x] ✅ **vision 队列已裁定（2026-10-03 用户：按 agent 建议执行）** —— **R11-L2 文本塔解冻（LoRA/Adapter）= 下一优先级、已批准立即执行**；臂⑤ GenLIP **跳过**（→ 改 `caption-loss-weight` 三点消融）；臂⑥ AIMv2 **暂缓**；**R13 仍须单独批**（只做 OV2 单臂）；**R11-E 等 GPIC `short` ≥18.5M**。→ 已写入 `BAIZE_VISION_TASK.md`「运维指令 · 2026-10-03（三）」。
+- [x] ✅ **data 下载白名单已锁定（2026-10-03 用户）** —— **只下 `ultrafineweb_l1_en_hq` + `zh`（MiniCPM5 base 族剩余）+ GPIC**；🔴 **立即停 `ultrafineweb_en_v1_4`**（6.7TB / ≈43 天 / 非 P-8 必需 / 阻塞后两项）；🚫 **白名单外一律不下载、不调研**（含 `UltraX-Preview` → 配比实验 **S1 轴降级为「仅 base」**）。→ 已写入 `BAIZE_DATA_TASK.md` 顶部新块。
 
 - [ ] 🚩 **R9 的「本地 53M 上限」是 `r9_scaling.py` 的假设常量（default=53），非实测** → 按 GPIC 采样应为 **≈103M**；**必须用真实 cap 重算所有 "×N 缺口"**（已在 vision 任务书下达「口径修正」）。
 - [ ] 🚩 **R8 的 6 架构是「自研 from-scratch 等参改编」，非官方实现** → 「SSM 坍缩」不得推广为对官方架构的否定；要下"前沿行不行"的结论需做 **R13（官方 vs 自研 对照）**。
@@ -152,5 +157,10 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
+- **2026-10-03（晚 · 三项拍板，全部落地）** —— 用户下达三条指令：
+  - **① 📄 论文冻结**：**「论文不动，等实验结果」** → `afa2624`（§6 重写）+ 已推送即为**定稿态**；4 项润色（abstract scaling / seeds n=5 / §2 视觉线 / `tab:visobj` 区分）**暂缓**，等结果后一次性回填。
+  - **② 🟢 vision 按 agent 建议执行** → **commit `84d7990`**：**R11-L2 文本塔解冻（LoRA/Adapter）已批准 = 下一优先级、立即执行**（必须重跑 R4 坍缩判据 C1–C4）；臂⑤ GenLIP **跳过**（→ 改 `caption-loss-weight` {0.5,1.0,2.0} 三点消融）；臂⑥ AIMv2 **暂缓**；**R13 仍须单独批**（批准后只做 OV2 单臂）；**R11-E 等 GPIC `short` ≥18.5M**。同步**修掉陈旧 §0 速览**（原还写"在跑 R10-③"）+ 重写 §3 队列（8 行）。
+  - **③ 🎯 data 下载白名单锁定** → **commit `1c2f248`**：**只下 `ultrafineweb_l1_en_hq`(478G) + `zh`(324G) + GPIC**；🔴 **立即停 `ultrafineweb_en_v1_4`**（6.7TB / @1.8MB/s ≈ **43 天** / **非 P-8 必需**（base-en 1T tok 已够）/ **阻塞后两项**）；带宽优先级 **GPIC > l1_en_hq > zh**；🚫 **白名单外一律不下载、不调研、不推荐**。⚠️ **如实记录的后果**：配方 Stable 段原列的 **`UltraX-Preview` 因此出局** → 配比实验 **S1 轴（base vs UltraX 占比）降级为「仅 base」**，需要时由运维点名再议。
+  - 🔧 **工具教训（本次踩到）**：`git fetch` 一度 **>30s**（7 线高频抢占的窗口期），超单条命令超时 → 可靠做法 = **`cmd /c "... > log 2>&1"`**（PowerShell 会把 git stderr 当异常）**+ 脱离进程的后台重试循环**（`fetch → rebase --autostash → push` ×20）；本轮 2 次 push 均 **attempt=1~2 成功**。
 - **2026-10-03** —— 建本记忆机制（先放 `run/`，按用户要求**迁到项目根**）。当日运维侧 push **14 个 commit**（见 `daily-memories/2026-10-03.md`）：7 项处置 · P-9 规格重写（seq4096 + 4M 不变量 + seq 多点 + FP8-by-M + profiling）· 记忆滚动规程 · R11/R11-D · D-CLEAN/D-CLEAN-2（≈8.6T）· harness H-A′+H-D · `report_10_03.html`（含刷新）。
 - **2026-10-03（补）** —— **论文陈旧性审计 + 刷新**（**commit `afa2624`**）：⭐ 查出 **§6 整节停留在 R1/R2 坍缩期**（4 表全是 **4.456x** 坍缩读数，被 R3 自我推翻）→ 已**整节重写**（6 架构 + 纠正 recipe + R8/IN-1k + 新增 scaling 子节，渐近 **25.1%** 诚实负结果）；连带修 §3 `4094`/`six`、§1 补"为什么小"、§7 去掉"resolution immaterial"。产物 `PAPER_STALENESS_AUDIT.md`。编译 **7 页 / 0 error / 0 undef / 0 overfull**。⚠️ 推送插曲：远端 7 线高频抢占致 `fetch`>30s、push 被拒 ×3 → **后台重试循环**第 2 次成功。
