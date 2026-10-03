@@ -2,13 +2,17 @@
 
 WAITING: 1
 
-## 🔴 运维必读（2026-10-03 更新：✅ 第 3 批 TOP5 报告已交付；H-A′ 实跑待拍板）
+## 🔴 运维必读（2026-10-03 更新：✅ 第 4 批可行性评估已交付 + ✅ 第 5 批步1 硬闸已核验 R1 可行；下一步 = R1 沙箱 + 适配层）
 
-> 本轮（第十七轮）执行**运维指令 2026-10-03 第 3 批**（commit `7e0b168`：把「对 cline 的改进机会」做成可读的自包含 HTML 报告）。
-> ✅ **新交付**：`harness/CLINE_IMPROVEMENTS_TOP5.html`（自包含：顶部一句话总览 + 优先级排序表 P0/P1/P2 + 5 条四段式改进 + 诚实条款）。
-> - 排名：**P0** O5 token 计量（服务端 usage 优先，修 #7772）、O4 任务状态持久层；**P1** O3 Pre/PostCompact Hook；**P2** O1 投影归一化、O2 检查点原子事务。
-> - 铁律遵守：每条照旧贴 `路径:行号` 原文；工作量估计已标注「人工工程估计，非实测」；O4「Focus Chain 已移除」的证据边界已在「诚实条款」注明。
-> - 输入来源：`CLINE_IMPROVEMENT_OPPORTUNITIES.md`（O1–O5）+ `HARNESS_COMPARE_MATRIX.html` + 5 份 `*_SOURCE_ANALYSIS.html`。
+> 🆕 **batch-5（运维「放行」）已收到**：全量 SWE-bench-Lite 300 × 5 harness（cline/opencode/deepseek-harness/codex/claude-code）**按序跑，不要缩水**；**L0（dockerd 配代理）已取消**；**R1（`unshare` 用户命名空间沙箱 + 每实例 rootfs 落 `/nas_train`）为首选**；docker 系（L1 skopeo / L2 build）降为末选。
+> ✅ **batch-5 步1 硬闸已核验通过**（本轮回贴原始输出）：`unshare --user --map-root-user --mount --pid --fork` 三件套 **OK**、user ns 内 `mount -t tmpfs` **OK**、`unprivileged_userns_clone=1`、`/nas_train` 剩 **32T** → **R1 完全可行，不碰 docker/daemon**。
+> ⏭ **下一步**：步2（用 1 个 repo=django 端到端跑通 R1 沙箱）→ 步3（写适配层：`benchmark.py` 只驱动 aider，另 5 者需适配；先跑通 codex/opencode 再复制，复用官方 `run_evaluation` 口径）→ 步4（顺序跑 300×5，受 5h 滑动窗口 key 约束 → 低并发 ≤4 + 跨 harness 串行 + 每 harness 跑完即固化）。
+> ⚠️ **重 I/O 避让训练**：.29 是 pretrain R2 训练机，实跑 300×5 只在低负载窗口；步3 适配层（纯 CPU）可先行。
+
+> 🆕 **已交付 batch-4**：`harness/SWEBENCH_LITE_FEASIBILITY.md`（只读评估 §1–8）+ `harness/CODE_AGENT_BENCHMARKS_SURVEY.md` 升 v2（更正 Aider「无 docker 可立即开跑」→「沙箱前提未满足」+ 两条 root 解法）。
+> 🔑 batch-4 关键数据（仍为 R1 硬闸与镜像决策依据）：① 磁盘不约束（`/data/docker` 本地 6.5T 可用，非 NFS）；② 镜像 nominal ≈420–430GB、**层去重后 ~50–100GB**（32 张深清单实测 15.4% 共享率）；③ ⚠️ **Docker Hub 匿名拉取限流 100 次/h**（共用代理出口 IP）；④ 本机 11 镜像无一 SWE-bench；⑤ 重启风险低（0 running 容器）。
+
+> （旧）第十七轮执行**第 3 批**（`7e0b168`）：`harness/CLINE_IMPROVEMENTS_TOP5.html` 已交付（P0 O5/O4、P1 O3、P2 O1/O2，四段式 + 诚实条款）。
 > - ⏸ **H-A′ 仍未实跑**（见「待运维拍板」）；H-B 5/5、H-D 均已交付。
 
 ### ✅ 已办：Docker 权限解锁（运维指令 ①）
@@ -63,20 +67,20 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **H_D_done + TOP5_done**（batch-3：`CLINE_IMPROVEMENTS_TOP5.html` 已交付；H-A′ 执行模型已证=执行 LLM 代码，`unshare` 可用但需 mount+chroot 全量沙箱、go/rust 工具链缺、5 非-aider 参赛者需适配 → 实跑待运维拍板） |
-| WAITING | 1（等运维：① docker pull 通路 ② Aider 执行代码沙箱〔本地沙箱工具均未装〕③ 运行主机 .29 是训练机） |
+| PHASE | **H_D_done + TOP5_done + SWEBENCH_LITE_feas_done + batch5_step1_gate_PASS**（batch-4 已交付；batch-5 步1 硬闸已核验 R1 可行 → 下一步 = R1 沙箱 + 适配层） |
+| WAITING | 1（实跑 300×5 需 **低负载窗口**〔.29 是 pretrain R2 训练机〕+ 步2/步3 工程量大；**非等运维拍板**——运维已放行，仅受训练避让 + 工程进度约束） |
 | ERROR_COUNT | 0 |
-| 更新 | 2026-10-03 14:56（第二十三轮：唤醒巡检，无新指令，batch-3 已交付） |
-| 产出 | ✅ H-B 5 份源码 HTML · ✅ `harness/MERGE_OVERLAP_ANALYSIS.md` · ✅ `harness/SWEBENCH_FEASIBILITY.md` · ✅ H-C Aider 可行性 · ✅ H-D：`HARNESS_COMPARE_MATRIX.html` + `CLINE_IMPROVEMENT_OPPORTUNITIES.md` · ✅ **H-D 报告：`CLINE_IMPROVEMENTS_TOP5.html`（新）** |
+| 更新 | 2026-10-03 15:xx（第二十五轮：收到 batch-5「放行」，核验步1 硬闸=unshare 三件套 + /nas_train 32T → PASS） |
+| 产出 | ✅ H-B 5 份源码 HTML · ✅ `MERGE_OVERLAP_ANALYSIS.md` · ✅ `SWEBENCH_FEASIBILITY.md` · ✅ H-C survey v2 · ✅ H-D 矩阵 + 机会点 · ✅ `CLINE_IMPROVEMENTS_TOP5.html` · ✅ `SWEBENCH_LITE_FEASIBILITY.md`（batch-4，含 batch-5 增补） |
 
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        H_D_done + TOP5_done
-已完成:       H-B 5 份源码分析 HTML；H-A §1.1 可行性核查；Docker socket 解锁；H-C Aider 可行性核查；H-D 对比矩阵 + 5 条机会点；CLINE_IMPROVEMENTS_TOP5.html（batch-3）
-当前动作:     2026-10-03 第二十三轮：唤醒巡检 —— git fetch 至 25c3415f 无本线新提交、任务书运维指令区仍为 batch-3（已交付）、ops RUN_ID=8 为 ops 级 relay 清理（非本线），无待办推进项
-下一步:       等运维拍板 H-A′ 三项（沙箱方案 / 参赛者范围 / go+rust 工具链）→ 再装 aider-chat + smoke 5-10 题
-阻塞:         H-A′ ① 执行 LLM 代码需沙箱（本地 sandbox 工具 absent，仅 unshare 可用但需 mount+chroot）② benchmark.py 只驱动 aider、另 5 参赛者需适配 ③ go/rustc/cargo 缺失 ④ 运行主机 .29 训练机
+PHASE:        H_D_done + TOP5_done + SWEBENCH_LITE_feas_done + batch5_step1_gate_PASS
+已完成:       H-B 5 份源码分析；H-A §1.1 可行性；Docker socket 解锁；H-C Aider v2（更正沙箱前提）；H-D 矩阵+机会点+TOP5；SWE-bench-Lite 全量可行性评估(batch-4)；batch-5 步1 硬闸=unshare三件套(/nas_train 32T) PASS
+当前动作:     2026-10-03 第二十五轮：收到 batch-5「放行全量 300×5」+ 核验步1 硬闸 —— unshare --user --map-root-user --mount --pid --fork 三件套 OK、tmpfs mount OK、unprivileged_userns_clone=1、/nas_train 剩 32T → R1 可行
+下一步:       步2 = 用 django 端到端跑通 R1 沙箱（unshare user ns + per-instance rootfs 落 /nas_train，不碰 docker）→ 步3 = 写适配层（先 codex/opencode，复用官方 run_evaluation）→ 步4 = 顺序跑 300×5（低并发≤4 + 跨 harness 串行 + 每 harness 即固化）
+阻塞:         R1 已放行（无 docker 依赖）；仅剩 ① 实跑重 I/O 须避让 .29/.12 训练（低负载窗口）② 5h 滑动窗口共享 key → 低并发 ③ 适配层工程量大
 ERROR_COUNT:  0
 ```
 
@@ -97,6 +101,8 @@ ERROR_COUNT:  0
 ## 流水
 
 > 📦 2026-10-02 的 7 条流水条目（H-B 5 份源码分析 + H-A §1.1 可行性核查的关键证据路径 `文件:行号`）已于第二十一轮滚动归档至 `daily-memories-harness/2026-10-02.md`「从 MEMORY_HARNESS.md 滚动归档」节（原文不改）。
+
+- 2026-10-03 15:xx —— **第二十四轮：执行运维指令 2026-10-03 第 4 批（`c9f331a`：SWE-bench-Lite 全量 300 可行性/成本评估 + 准备 root 解锁）**。① **只读评估**（`git fetch` → HEAD==origin/main==`c9f331a`，batch-4 确认为最新任务书改动）：Docker Root Dir=`/data/docker`（本地 `/data` 7.0T 剩 6.5T，非 NFS）→ 磁盘不约束；`docker images` 11 个无一 SWE-bench；`docker ps -a` 0 running（2 stopped 训练容器 13 天前退）；`systemctl show docker -p Environment`=空、`daemon.json` 无 proxy/mirrors、无 `docker.service.d/` 目录 → 配代理口子干净。② **镜像体积实测**（Docker Hub API，经代理可达）：还原命名规则 `instance_id.replace('__','_1776_')`（`django__django-11099`→`sweb.eval.x86_64.django_1776_django-11099`）；Hub `tags/latest` 元数据 API 拿 `full_size` 180/300=257.24GB（均值 1.429GB）→ nominal ≈420–430GB；registry manifest API 深扫 32 张（6 astropy+26 django）=36.76GB→按 layer digest 去重 5.68GB（84 独有层）→ **15.4% 共享率 → 全量实际下载 ~50–100GB**。③ ⚠️ **新发现：Docker Hub 匿名拉取限流 100 次/h**（`x-ratelimit-limit:100;w=3600`、出口 IP `203.127.181.131` 共用），registry+hub 两 API 均 429 → 缺 120 张（sympy77/sklearn23/sphinx16/pytest4）未测，repo 均值类比估计并标注「估」。④ **更正 Aider 表述**（batch-4 B）：`CODE_AGENT_BENCHMARKS_SURVEY.md` 升 v2，「无 docker 可立即开跑」→「沙箱前提未满足」，补 2 条 root 解法（含实测内网 apt 镜 `172.16.13.24` 有 `bubblewrap 0.6.1-1ubuntu0.1`）。⑤ 交付 `harness/SWEBENCH_LITE_FEASIBILITY.md`（§1–8 + 附，含 §6 配代理精确命令〔**未执行**〕+ skopeo 免重启替选〔skopeo 未装〕）。**未执行任何 root/dockerd 改动**（遵守「root 动作先报后做」）。保持 `WAITING=1`。MEMORY_HARNESS.md 体量未超 32KB。
 
 - 2026-10-03 00:57 —— **唤醒巡检（非推进）**：重读 `BAIZE_HARNESS_TASK.md` 运维指令区 —— 仍为原始「2026-10-02 首启」指令，**无新决策 / 无 STOP / 无状态索取**。确认 H-A §1.1 两处阻塞（Docker 权限 · 运行主机）**未解除**。遵守「先报预算再跑」「重 I/O 避让训练」铁律，**不启动 H-A 实跑**，保持 `WAITING=1`。本线当前无待办推进项（H-B 5/5、H-A 核查 done），静待运维拍板。
 - 2026-10-03 03:36 —— **唤醒巡检（非推进）**：`git fetch` → HEAD==origin/main==`7e5a8e8`（远端无本线相关新提交）；任务书「运维指令区」仍是原始「2026-10-02 首启」两条线指令，无新决策/无 STOP/无状态索取；`ops/.last_run_id` = `ops/inbox.md` RUN_ID = 6（无新下发）。H-A §1.1 两处阻塞（①Docker 权限 usermod 或走 Route E′ ②运行主机 .29 是训练机）**仍未获运维拍板** → 不启动 H-A 实跑、不做重 I/O，保持 `WAITING=1`。本线无待办推进项，静待运维。
