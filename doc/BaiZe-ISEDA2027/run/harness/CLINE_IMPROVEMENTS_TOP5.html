@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>对 cline 最值得做的 5 条改进（Top 5）</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#c9d1d9;--muted:#8b949e;--accent:#3fb950;--a2:#58a6ff;--warn:#d2991d;--code:#1f2937;--p0:#f85149;--p1:#d2991d;--p2:#8b949e}
+*{box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.65;max-width:1080px;margin:0 auto;padding:2rem}
+h1{font-size:1.8rem;color:#fff;text-align:center;margin-bottom:.3rem}
+h2{font-size:1.3rem;margin:2.2rem 0 1rem;color:#fff;border-bottom:2px solid var(--border);padding-bottom:.4rem}
+h3{font-size:1.02rem;margin:0;color:var(--a2)}
+p{margin:.5rem 0}
+.subtitle{text-align:center;color:var(--muted);margin-bottom:1.5rem;font-size:.86rem}
+code,.m{font-family:'SF Mono',Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:4px;font-size:.85em;color:#e6edf3}
+.tldr{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;padding:.9rem 1.1rem;margin:1rem 0;font-size:.95rem}
+.tldr b{color:#fff}
+.rank{display:inline-block;padding:.15em .65em;border-radius:12px;font-size:.72rem;font-weight:700;color:#fff;vertical-align:middle}
+.rp0{background:#5c1f1f}.rp1{background:#5c4a1a}.rp2{background:#3a3f45}
+.tag{display:inline-block;padding:.1em .6em;border-radius:12px;font-size:.72rem;font-weight:600;vertical-align:middle}
+.t1{background:#1b3826;color:#3fb950}.t2{background:#1a2b3a;color:#58a6ff}.t3{background:#3a2f1a;color:#d2991d}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.3rem;margin:1.1rem 0}
+.card.p0{border-left:4px solid var(--p0)}
+.card.p1{border-left:4px solid var(--p1)}
+.card.p2{border-left:4px solid var(--p2)}
+.sec{margin:.7rem 0 .3rem;font-weight:700;color:#fff;font-size:.9rem}
+.lbl-why{color:var(--warn);font-weight:700}
+.ev{background:var(--code);border:1px solid var(--border);border-radius:6px;padding:.6rem .8rem;margin:.4rem 0;font-size:.84rem;overflow-x:auto}
+.ev code{background:none;padding:0;font-size:.84em}
+.verify{background:#2a1f3a;border:1px solid #4a3a6a;border-radius:6px;padding:.5rem .8rem;margin:.6rem 0;font-size:.85rem;color:#d2c4f0}
+.foot{color:var(--muted);font-size:.8rem}
+table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.82rem}
+th,td{border:1px solid var(--border);padding:.5rem .6rem;text-align:left;vertical-align:top}
+th{background:#21262d;color:#fff}
+footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:3rem;padding-top:1rem;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<h1>对 cline 最值得做的 5 条改进</h1>
+<p class="subtitle">CLINE_IMPROVEMENTS_TOP5 · 2026-10-03 · 依据运维指令 2026-10-03 第 3 批<br>
+输入：<code>CLINE_IMPROVEMENT_OPPORTUNITIES.md</code>（O1–O5 四段式） + <code>HARNESS_COMPARE_MATRIX.html</code> + 5 份 <code>harness/*_SOURCE_ANALYSIS.html</code><br>
+🚫 铁律：每条结论贴 <code>路径:行号</code> 原文，不许编造 cline 现状。</p>
+
+<div class="tldr">
+<b>一句话总览</b>：cline 的五份源码分析收敛到同一个命题——<b>「状态 ≠ 文本」</b>。最值得做的 5 件事里，
+<b>P0 两条修「正确性/体验」硬伤</b>（token 计量不吃服务端 usage、压缩后丢任务进度），
+<b>P1 一条低风险开压缩生命周期 Hook</b>（回答「Auto Compact 能否插件化」），
+<b>P2 两条做性能/可观测性与长期架构收敛</b>（投影归一化 + 检查点单事实源）。
+其中 O5/O3/O1 可直接借鉴、O4 组合、O2 需架构改动。
+</div>
+
+<h2>优先级排序 + 一句话总览</h2>
+<table>
+<thead><tr><th>优先级</th><th>#</th><th>主线</th><th>一句话</th><th>类别</th></tr></thead>
+<tbody>
+<tr><td><span class="rank rp0">P0</span></td><td>O5</td><td>线5 模型适配/token</td><td>token 计量改「服务端 usage 优先 + 保守兜底」，修本地模型踩 128K 假窗口（Issue #7772）</td><td><span class="tag t1">可直接借鉴</span></td></tr>
+<tr><td><span class="rank rp0">P0</span></td><td>O4</td><td>线4 任务状态解耦</td><td>补回 TodoWrite 等价物，让「接下来做什么」不随压缩丢（Focus Chain 已被移除）</td><td><span class="tag t2">需架构改动</span></td></tr>
+<tr><td><span class="rank rp1">P1</span></td><td>O3</td><td>线3 Hook/扩展</td><td>补 <code>PreCompact</code>/<code>PostCompact</code> 压缩生命周期 Hook，让 Auto Compact 可被观测/干预</td><td><span class="tag t1">可直接借鉴</span></td></tr>
+<tr><td><span class="rank rp2">P2</span></td><td>O1</td><td>线1 注入/投影</td><td>补单一 memoized 归一化终点 + 全链路 Telemetry，降低投影成本并补盲区</td><td><span class="tag t1">可直接借鉴</span></td></tr>
+<tr><td><span class="rank rp2">P2</span></td><td>O2</td><td>线2 检查点/回滚</td><td>把文件快照与压缩状态收进同一原子事务，消除 sidecar 漂移整类 bug</td><td><span class="tag t2">需架构改动</span></td></tr>
+</tbody>
+</table>
+<p class="foot">优先级说明：P0 = 正确性/体验硬伤、低风险可直接起步；P1 = 低风险高生态价值；P2 = 性能/可观测性优化或需架构重构的长期项。</p>
+
+<h2>O5 · token 计量：服务端 usage 优先 + 保守兜底 <span class="rank rp0">P0</span> <span class="tag t1">可直接借鉴</span></h2>
+<div class="card p0">
+<div class="sec">① 现状 / 问题（cline）</div>
+<p>token 计量只用一个静态系数，预算解析在「模型不报窗口」时直接返回 <code>undefined</code>：</p>
+<div class="ev"><code>cline/sdk/packages/shared/src/llms/tokens.ts:8</code><br>
+<code>export const CHARS_PER_TOKEN = 3;</code></div>
+<div class="ev"><code>cline/sdk/packages/core/src/extensions/context/compaction-shared.ts:13-15</code> → <code>DEFAULT_MAX_INPUT_TOKENS = 128_000</code> / <code>CONTEXT_WINDOW_INPUT_RATIO = 0.9</code><br>
+<code>compaction-shared.ts:61-69</code> <code>resolveEffectiveMaxInputTokens</code>：<code>maxInputTokens</code> 空 → <code>contextWindow * 0.9</code>；<code>contextWindow</code> 也空 → <code>undefined</code>。</div>
+<p>本地模型坑（任务书 §2.2 线5 <b>Issue #7772</b>）：<code>llama-server</code> 上下文窗口无法自动探测，Cline 默认按 128K 处理，131K 模型触发阈值计算错误。</p>
+
+<div class="sec">② 其它 harness 怎么做</div>
+<p>codex 把 token 计量做成「服务端 usage 观测优先、客户端估算兜底」，且「压缩」是模型降级的第一闸门：</p>
+<div class="ev"><code>codex-rs/core/src/state/auto_compact_window.rs:24-30</code><br>
+<code>pub(crate) enum AutoCompactWindowPrefill { ServerObserved(i64), Estimated(i64) }</code></div>
+<div class="ev"><code>codex-rs/core/src/compact_model_fallback.rs:9-20</code> <code>should_retry_with_current_model</code>：遇 <code>ContextWindowExceeded / UsageLimitReached / ServerOverloaded / InvalidRequest</code> 先压缩+当前模型重试，再降级。</div>
+<p>claude-code 同样「usage 回执 + 粗略估算」并用：</p>
+<div class="ev"><code>claude-code/src/utils/tokens.ts:226</code> <code>tokenCountWithEstimation</code>（优先取 api <code>usage</code>，回退 <code>roughTokenCountEstimation</code>，默认 4 字符/token，见 <code>tokenEstimation.ts:203-208</code>）。</div>
+
+<div class="sec">③ 为什么值得做（收益 / 风险）</div>
+<p><span class="lbl-why">收益</span>：阈值准确 → 少溢出、少过早压缩；本地模型不踩 128K 假窗口；多窗口模型可移植。<br>
+<span class="lbl-why">风险</span>：<b>低–中</b>（①② 是增量改动；③ 迁 hardcode 白名单到 config，测试面变宽）。</p>
+
+<div class="sec">④ 落地建议 + 工作量估计</div>
+<ul>
+<li>① token 计量改「<b>服务端 usage 优先 + 3 字符/token 兜底</b>」（对齐 codex / claude-code）。</li>
+<li>② <code>resolveEffectiveMaxInputTokens</code> 无窗口信息时<b>给保守默认值而非 <code>undefined</code></b>，并对本地模型做显式窗口探测/可配置覆盖（修 #7772）。</li>
+<li>③ 「provider 白名单」参数化为 config 元数据（对齐 codex 的可参数化阈值）。</li>
+</ul>
+<p class="foot"><b>工作量估计</b>：①② 约 <b>1–2 人日</b>（增量 + 覆盖测试）；③ 约 <b>1 人周</b>（迁 hardcode 白名单 + 回归）。<i>（人工工程估计，非实测）</i></p>
+</div>
+
+<h2>O4 · 补回任务目标持久层，解耦长期目标与可压缩对话 <span class="rank rp0">P0</span> <span class="tag t2">需架构改动（组合）</span></h2>
+<div class="card p0">
+<div class="sec">① 现状 / 问题（cline）</div>
+<p>cline 的 Focus Chain <b>已被移除 / stub 化</b>，不再有「把『接下来做什么』与『可压缩对话』解耦」的持久层，压缩后「从停止处继续」只能重新依赖摘要文本：</p>
+<div class="ev"><code>cline/apps/vscode/src/sdk/task-proxy.ts:144</code><br>
+<code>/** Focus chain checklist (stub — focus chain removed) */</code><br>
+<code>currentFocusChainChecklist?: null</code></div>
+
+<div class="sec">② 其它 harness 怎么做</div>
+<p>claude-code 把「接下来要做什么」拆成独立于对话历史的持久状态 + 自动记忆抽取：</p>
+<div class="ev"><code>claude-code/src/tools/TodoWriteTool/TodoWriteTool.ts:65-94</code> —— <code>call({ todos })</code> 写进 <code>appState.todos</code>（session 状态，不随压缩丢）；</div>
+<div class="ev"><code>claude-code/src/services/SessionMemory/sessionMemory.ts:1-6</code> ——「automatically maintains a markdown file … forked subagent」后台抽取会话要点；<br>
+<code>claude-code/src/services/extractMemories/extractMemories.ts:1-10</code> ——「Extracts durable memories … runs once at the end of each complete query loop」。</div>
+<p>codex 用 <code>codex_state::ThreadGoal</code>（goal）+ <code>update_plan</code> 把目标/计划脱离对话历史。</p>
+
+<div class="sec">③ 为什么值得做（收益 / 风险）</div>
+<p><span class="lbl-why">收益</span>：压缩后进度不丢；长期记忆跨会话复用，减少重复探索。<br>
+<span class="lbl-why">风险</span>：①（补 TodoWrite 等价物）<b>低</b>；②（Session Memory / auto-memory）<b>中</b>——后台 subagent 抽取有成本/延迟，memory 文件污染需管控。</p>
+
+<div class="sec">④ 落地建议 + 工作量估计</div>
+<ul>
+<li>① 补回 <b>TodoWrite 等价物</b>（任务清单存 session 状态，不随压缩丢）——低成本高价值。</li>
+<li>② 中长期补 <b>Session Memory / auto-memory</b>（后台 subagent 抽取要点落盘，跨 session 记忆）。</li>
+</ul>
+<p class="foot"><b>工作量估计</b>：① 约 <b>1 人日</b>；② 约 <b>1–2 人周</b>（引入后台抽取流程 + 污染管控）。<i>（人工工程估计，非实测）</i></p>
+</div>
+
+<h2>O3 · 补 PreCompact/PostCompact 压缩生命周期 Hook <span class="rank rp1">P1</span> <span class="tag t1">可直接借鉴</span></h2>
+<div class="card p1">
+<div class="sec">① 现状 / 问题（cline）</div>
+<p>运行时 Hook 只有 7 个生命周期回调 + 1 个 <code>prepareTurn</code>，<b>无压缩生命周期 Hook</b>：</p>
+<div class="ev"><code>cline/sdk/packages/shared/src/agent.ts:374-402</code><br>
+<code>export interface AgentRuntimeHooks { beforeRun?/ afterRun?/ beforeModel?/ afterModel?/ beforeTool?/ afterTool?/ onEvent?; }</code></div>
+<div class="ev"><code>agent.ts:485-490</code>（<code>prepareTurn</code>）返回的消息「affect only the provider request … not persisted as session history」（<code>agent.ts:481-483</code>）。</div>
+<p>压缩（<code>createContextCompactionPrepareTurn</code>）在 Hook 之内、自身<b>不暴露 Hook</b>：插件<b>观察不到也无法干预</b>「何时压缩、摘要是什么」。</p>
+
+<div class="sec">② 其它 harness 怎么做</div>
+<p>claude-code 的 Hook 事件面最全，且显式包含压缩生命周期：</p>
+<div class="ev"><code>claude-code/src/entrypoints/sdk/coreTypes.ts:25-53</code> —— <code>HOOK_EVENTS</code> 共 <b>27 个</b>，含 <code>'PreCompact'</code>、<code>'PostCompact'</code>；每个事件支持 <code>command / prompt / http / agent</code> 四种形态（<code>schemas/hooks.ts:30-53</code>）。</div>
+
+<div class="sec">③ 为什么值得做（收益 / 风险）</div>
+<p><span class="lbl-why">收益</span>：直接回答「Auto Compact 能否插件化」= <b>能观测/干预、不能替换核心压缩算法</b>，扩展边界清晰；生态可做调优/审计/成本观测。<br>
+<span class="lbl-why">风险</span>：<b>低</b>（新增回调，不改既有 7 个 Hook 语义；调用序需文档化）。</p>
+
+<div class="sec">④ 落地建议 + 工作量估计</div>
+<ul>
+<li>给 <code>AgentRuntimeHooks</code> 增加 <code>beforeCompaction</code> / <code>afterCompaction</code>，让插件<b>观察</b>压缩触发、<b>注入</b>指令或拦截摘要。</li>
+</ul>
+<p class="foot"><b>工作量估计</b>：约 <b>0.5–1 人日</b>（新增回调 + 调用序文档 + 单测）。<i>（人工工程估计，非实测）</i></p>
+</div>
+
+<h2>O1 · 补单一 memoized 归一化终点 + 全链路 Telemetry <span class="rank rp2">P2</span> <span class="tag t1">可直接借鉴</span></h2>
+<div class="card p2">
+<div class="sec">① 现状 / 问题（cline）</div>
+<p>投影是「每请求全量 walk + 逐实例缓存」的 <code>MessageBuilder</code>：</p>
+<div class="ev"><code>cline/sdk/packages/core/src/session/services/message-builder.ts:105-107</code><br>
+<code>/** Builds an API-safe message copy without mutating original conversation history. */</code><br>
+<code>export class MessageBuilder {</code></div>
+<p>且自认存在<b>投影旁路 / Telemetry 盲区</b>：</p>
+<div class="ev"><code>cline/sdk/packages/core/src/extensions/context/compaction.ts:251-254</code><br>
+<code>// Known gap: compactions performed via plugin registerMessageBuilder() or via the beforeModel</code><br>
+<code>// runtime hook bypass this wrapper entirely, so they do not emit compaction telemetry. ...</code></div>
+
+<div class="sec">② 其它 harness 怎么做</div>
+<p>claude-code 把「系统/用户上下文」做 memoized 单例，并收口到单一归一化终点：</p>
+<div class="ev"><code>claude-code/src/context.ts:116</code> <code>getSystemContext</code>、<code>:155</code> <code>getUserContext</code>（均 memoize）；投影终点 <code>claude-code/src/utils/messages.ts:1989</code> <code>normalizeMessagesForAPI</code>。</div>
+<p>codex 把「投影注入」抽象为可插拔 <code>ContextContributor</code>（开放给插件）。</p>
+
+<div class="sec">③ 为什么值得做（收益 / 风险）</div>
+<p><span class="lbl-why">收益</span>：投影成本从「每请求全量 walk」降到「增量/缓存」，延迟下降；Telemetry 补齐 → 压缩行为端到端可审计。<br>
+<span class="lbl-why">风险</span>：<b>低</b>（不动投影语义，只做收口与埋点；需定义 memoize 失效时机）。</p>
+
+<div class="sec">④ 落地建议 + 工作量估计</div>
+<ul>
+<li>① 加一个 <b>memoized 归一化终点</b>（等价 <code>normalizeMessagesForAPI</code>），把「系统提示 + 环境注入 + 文件剥离 + 过期内容改写」收口为一处。</li>
+<li>② 把 <code>registerMessageBuilder()</code> / <code>beforeModel</code> 两条旁路管线<b>纳入 Telemetry</b>（补 <code>compaction.ts:251-254</code> 自认的盲区）。</li>
+</ul>
+<p class="foot"><b>工作量估计</b>：约 <b>2–3 人日</b>（收口 + memoize 失效时机设计 + 埋点）。<i>（人工工程估计，非实测）</i></p>
+</div>
+
+<h2>O2 · 检查点收敛为单一原子事务 <span class="rank rp2">P2</span> <span class="tag t2">需架构改动</span></h2>
+<div class="card p2">
+<div class="sec">① 现状 / 问题（cline）</div>
+<p>检查点是<b>两套并存</b>：文件级用 git stash/ref，对话/压缩级用独立 JSON sidecar，各自成单：</p>
+<div class="ev"><code>cline/sdk/packages/core/src/hooks/checkpoint-hooks.ts:16-26</code><br>
+<code>export interface CheckpointEntry { ref: string; createdAt: number; runCount: number; kind?: "stash" | "commit"; }</code></div>
+<div class="ev">压缩 sidecar schema/projection 见 <code>cline/sdk/packages/core/src/session/models/session-compaction.ts:25-34/161-190</code>；持久化守卫 <code>.../runtime/host/local-runtime-host.ts:621/1297-1360</code>。</div>
+<p>sidecar 可靠性<b>曾被专项修复</b>（<b>PR #12747</b>「compaction sidecar」）——暴露了「两套状态各自落盘 → 会漂移」的固有缺陷；一旦 sidecar 落盘失败，重启后阈值错乱、可能重复压缩。</p>
+
+<div class="sec">② 其它 harness 怎么做</div>
+<p>deepseek 用事件溯源：检查点 = append-only 事件流 flush，「<b>重放即回滚</b>」，无第二份状态需对齐。<br>
+codex 把「摘要生成 / 新窗口 / WorldState 基线」三者原子落进同一条 Rollout，以 <code>window_id</code> 链提供审计与恢复锚：</p>
+<div class="ev"><code>codex-rs/core/src/state/auto_compact_window.rs</code> / <code>mod.rs:3752</code>（sidecar = <code>AutoCompactWindowIds(window_id 链)</code>）。</div>
+
+<div class="sec">③ 为什么值得做（收益 / 风险）</div>
+<p><span class="lbl-why">收益</span>：消除 PR #12747 类「sidecar 与文件状态不一致」整个 bug 类；恢复从「多源对齐」简化为「单源截断」。<br>
+<span class="lbl-why">风险</span>：<b>高</b>——涉及 git 检查点、事务存储、迁移兼容的核心重构。</p>
+
+<div class="sec">④ 落地建议 + 工作量估计</div>
+<ul>
+<li>把「检查点」收敛为<b>一个原子事务</b>——文件快照 + 压缩摘要 + 阈值窗口<b>同一条记录</b>落盘（借鉴 codex 的 Rollout/<code>window_id</code> 链，或 deepseek 的 append-only 事件流）。</li>
+</ul>
+<p class="foot"><b>工作量估计</b>：约 <b>2–4 人周</b>（git 检查点 + 事务存储 + 迁移兼容 + 回归）。<i>（人工工程估计，非实测）</i></p>
+</div>
+
+<h2>诚实条款（Honesty）</h2>
+<div class="card">
+<p>本报告全部结论来自 <code>harness/CLINE_IMPROVEMENT_OPPORTUNITIES.md</code>（O1–O5，四段式均已贴 <code>路径:行号</code> 原文），cline 侧现状均为源码佐证，<b>未编造</b>。两点说明：</p>
+<div class="verify">⚠️ <b>待验证（非源码事实，属工程判断）</b>：各条「工作量估计」（O1–O5 的 ④）为<b>人工工程估计</b>，未经工时实测，仅用于排优先级，落地前需按 cline 实际代码结构与团队能力复核。</div>
+<div class="verify">⚠️ <b>证据边界提醒</b>：O4「Focus Chain 已移除」的结论依据为 <code>task-proxy.ts:144</code> 的 stub 注释（<code>// focus chain removed</code>）——这是<b>该文件呈现的状态</b>；若 cline 另有未在 <code>sdk/task-proxy</code> 暴露的等价机制，需扩展检索范围复核（本报告已按现有源码边界如实呈现）。</div>
+<p class="foot">证据链完整原文见 <code>harness/CLINE_IMPROVEMENT_OPPORTUNITIES.md</code>；五份逐 harness 源码分析见 <code>harness/cline_SOURCE_ANALYSIS.html</code> 等；对比矩阵见 <code>harness/HARNESS_COMPARE_MATRIX.html</code>。</p>
+</div>
+
+<footer>
+<p>CLINE_IMPROVEMENTS_TOP5 · 自包含 HTML（内联 CSS，离线可开，无外链依赖） · 2026-10-03 · 不占 GPU / 重 I/O 避让训练</p>
+</footer>
+
+</body>
+</html>
