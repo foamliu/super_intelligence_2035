@@ -11,13 +11,13 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        smoke ✅（首轮采集已完成，链路打通）
-已完成:       T1–T4 前期任务 ✅ · 首轮 smoke ✅（6 类 16 条，全部带 标题+来源+日期+链接）
-当前动作:     首轮 smoke 落盘 news/2026-10-03.md + SEEN + INDEX；更新记忆
-下一步:       常态采集（WAITING=1，睡 30min）：逐类搜索→去重→追加当日摘要；观察中文 dated 源（IT之家 RSS）
-本轮新增:     16 条（来源数：HN · IT之家 · The Register · WSJ · Lawfare · NYT · Guardian · New Yorker · LA Times · Substack · 等）
+PHASE:        常态采集（第二轮已完成）
+已完成:       T1–T4 前期任务 ✅ · 首轮 smoke ✅（16 条）· 第二轮常态采集 ✅（15 条）
+当前动作:     第二轮常态采集落盘（追加 news/2026-10-03.md 15 条）+ 更新 SEEN/INDEX + 本轮直连可达性抽检
+下一步:       常态采集（WAITING=1，睡 30min）：逐类搜索→去重→追加当日摘要；GDELT 需限频（本轮 429，省额度未重试）
+本轮新增:     15 条（来源数：HN · TechCrunch · Anthropic · Ars Technica · Guardian · NYT · NBC · arXiv · MIT Tech Review · GitHub · Medium）
 阻塞:         无
-ERROR_COUNT:  1（历史：模型名 deepseek-v4-pro-fp4 不被网关支持 → 白睡一轮；已修）
+ERROR_COUNT:  1（历史：模型名 deepseek-v4-pro-fp4 不被网关支持 → 白睡一轮；已修。本轮 GDELT 429 属频控，已如实记录、未重试）
 ```
 
 **选定方案（prep_api 结论）**
@@ -47,13 +47,20 @@ ERROR_COUNT:  1（历史：模型名 deepseek-v4-pro-fp4 不被网关支持 → 
 - **产物**：`news/<YYYY-MM-DD>.md`（当日摘要）· `news/SEEN.md`（去重台账）· `news/INDEX.md`（索引）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：建线以来 ~ `2026-10-03`（首轮 smoke）
-- **累计收录**：`16` 条
+- **上次采集窗口**：`2026-10-03` 首轮 smoke ~ `2026-10-03` 第二轮常态
+- **累计收录**：`31` 条（首轮 16 + 第二轮 15）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-03** —— ✅ **第二轮常态采集完成（15 条）**。PHASE→常态采集。
+  - 工具：免 key MCP `web-search-free`（`search_news`=HN/GDELT、`rss_latest`、`web_search`=CN-Bing/360）。
+  - 落盘：`news/2026-10-03.md` 追加「第二轮」段（15 条，均带 标题+来源+日期+链接）· `SEEN.md` +15 行 · `INDEX.md` 当日 16→31、累计 31。
+  - 类目分布：①前沿模型 3 ②安全对齐 3 ③政策治理 4 ④AI与社会 2 ⑤公司人物 1 ⑥与本书相关 2。
+  - 代表条目：Amazon 发布自家 "Jev" 决策模型克隆（TechCrunch）；Apple 收紧完全磁盘访问以遏制 AI agent 滥用（Ars）；特朗普呼吁 AI 公司"极大自我监管"（NBC）；比尔·盖茨称不受约束 AI 或"致十亿人死亡"（Guardian）；NVIDIA OpenShell 自主 agent 安全运行时（GitHub）。
+  - 方法观察：**GDELT 本轮 429**（省额度未重试）→ 必须限频；**中文通用搜索仍无日期**（CN-Bing 返词典噪声、360 无 pubDate）→ 未从中录入；直连 **HEAD 抽检** TechCrunch/Anthropic/GitHub/arXiv=200、Ars=405（不支持 HEAD，条目经 RSS 取得）。
+  - 判据核对：15/15 字段齐全；判断类已标"**我们的观察**"。**下一步常态采集（WAITING=1）。**
 - **2026-10-03** —— ✅ **首轮 smoke 完成（6 类 16 条落盘）**。
   - 工具：免 key MCP `web-search-free`（`search_news`=HN、`rss_latest`、`web_search`）。
   - 落盘：`news/2026-10-03.md`（16 条，均带 标题+来源+日期+链接）· `news/SEEN.md`（16 行）· `news/INDEX.md`（当日 16 / 累计 16）。
