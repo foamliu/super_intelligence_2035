@@ -3,7 +3,7 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_PRETRAIN_2B.md` / `daily-memories/` / `EXPERIMENTS_*`）。本节为「无」时按下方 Round 2 默认顺序推进。
 
-### 🆕 运维指令 · 2026-10-03（新增 **P-9**，**排在 P-5b 之后、P-6② 之前**）
+### 🆕 运维指令 · 2026-10-03（新增 **P-9**，**排在 P-5b 之后、P-6② 之前** —— ⏱ **尽早跑，🚫 不得后置到 P-6② 之后**）
 
 > 🚫 **铁律不变**：**绝不打断正在跑的 P-5b**（改 MBS/精度会使该 long-run recipe 失效、loss 曲线断裂）。
 > **P-9 只在 P-5b 跑完后的空窗执行**；**P-8 仍按原令暂缓**（等 base 下满 + 配比实验定稿）。
@@ -31,7 +31,26 @@
 - 先核实 **`transformer_engine` 版本**（此前记录 2.12.0，Torch 2.8.0+cu128），贴原文。
 - **不许猜**：每条数（s/iter、显存、`s`）都要贴**命令 + 原始输出**。
 
-**优先级覆盖**：**P-5b（自然跑完）> P-9 > P-6② > P-8（暂缓）**。（Round 2 其余项已收敛，见下方清单。）
+**优先级覆盖**：**P-5b（自然跑完）> P-9 > P-6② > P-8（暂缓）**（Round 2 其余项已收敛，见下方清单。）
+- ⏱ **P-9 必须尽早**：P-5b 一结束**立即**开始 P-9（P-9a → P-9a-ext → P-9b → P-9d，可交错）；**🚫 不得后置到 P-6② 之后**。
+- 理由：P-9 的结论**直接决定 P-8 的 MBS/精度/吞吐**，越早出结论，P-8 越省时间（P-8 是周级墙钟任务）。
+
+**P-9a-ext —— 其它可变参数扫描（运维 2026-10-03 追加：🚫 不要只试 MBS）**：
+> 目标：在 profiling 指出的**瓶颈**上找出**训练速度**的提升点。**固定其余项，每次只动一个变量**（短测 ~50–100 步，bf16，记 **s/iter + 峰值显存 + tok/s**）。
+> ⚠️ **以本仓实际 `--help` 存在的 flag 为准**；不存在的跳过并记明「本仓无此 flag」，**不许猜**。
+
+| 类 | 变量 | 试什么 | 预期作用 |
+|:--|:--|:--|:--|
+| **A** grad-accum | `--micro-batch-size`（=P-9a） | 1→2/4/8 | 减 128 段累积 + 抬高 FP8 的 M |
+| **B** 重计算 | `--recompute-activations` / `--recompute-granularity {full,selective}` | 关 / selective / full | 显存有余 → 可能可关，换速度 |
+| **C** 通信重叠 | `--use-distributed-optimizer` · `--overlap-grad-reduce` · `--overlap-param-gather` | on/off | 隐藏 DP 通信 |
+| **D** 并行切分 | `--tensor-parallel`(1 vs 2) × `--sequence-parallel` | TP1/DP8 vs TP2/DP4；SP on/off | 改每卡形状与通信 |
+| **E** 数据加载 | `--num-workers` · `--dataloader-type` · `--num-dataset-builder-threads` | 提高 worker 数 | 若 profiling 显示 **input-bound**（GPU 等数据）则显著 |
+| **F** 注意力/内核 | `--attention-backend` 等 | 按实际存在的 flag | 减少访存受限的 elementwise/scan 开销 |
+| **G** 上下文 | `--seq-length` 4094→8192 | **单独实验，不混进本轮结论** | 看长上下文代价 |
+
+- 🚫 **不要一次改多个**（否则无法归因）；**不改 P-5b**；每条结论**贴 flag + 命令 + s/iter 原始输出**。
+- **产出**：`变量 → Δ吞吐 / Δ显存` 表 + **推荐给 P-8 的最终配置组合**（与 P-9d 瓶颈诊断一致）。
 
 **P-9d —— 训练性能 profiling / 瓶颈诊断（新增，与 P-9a 同批做；🚫 不要在 live 20B 长跑上 attach）**：
 > 运维问：能否对**进行中的训练**做 profiling、诊断瓶颈、给改进建议？**能 —— 但要做在「短测」上，绝不扰动正在跑的 P-5b。**
@@ -40,8 +59,9 @@
   1. **已有日志**：从 iteration 行算 **MFU**（已观测 ~345–358 TFLOP/s/GPU vs H100 bf16 ≈ 989 → **~35%**，说明有空间）；贴原文。
   2. `nvidia-smi dmon` / `dcgm`：SM util、显存带宽占用。
   3. **`torch.profiler`**（`profile_memory=True, record_shapes=True, with_stack=True`）跑 20–50 步 → **top kernels + 时间占比 + 显存峰值**（导出 chrome trace，**trace 不入库，只留摘要**）。
-  4. **`nsys profile`**（若已装）：timeline / kernel 间隔 / grad-accum bubble。
-  5. **`ncu`**（若已装）：只对**少数热点 kernel**取证，**必须**在短测上。
+  4. **`nsys profile`**：timeline / kernel 间隔 / grad-accum bubble。**需要就自己装**（运维 2026-10-03 授权：可经内网 pip 镜像 / conda 自装 `nvidia-nsight-systems`，或 apt `nsight-systems`）。
+  5. **`ncu`**：只对**少数热点 kernel**取证，**必须**在短测上。**需要就自己装**（同上授权：pip / conda / apt 均可）。
+  > ✅ **工具安装已获授权**（运维 2026-10-03）：**能装就装**；**装不上就回落 `torch.profiler`**（它本身足够定位瓶颈），**不要为装工具卡住 P-9**。
 - **重点诊断（hybrid 先验）**：① **grad-accum 空隙**（MBS=1 → 128 段）② **访存受限的 SSM scan / elementwise / LayerNorm**（M=4094 时 GEMM 亦访存受限）③ recompute 是否过重 ④ mamba 自定义 kernel 是否走高效路径。
 - **产出**：`EXPERIMENTS_PRETRAIN_2B_ROUND2.md`「P-9d」节 —— **瓶颈 TOP-N（含证据）+ 预计收益 + 风险**，并与 P-9a/P-9b 交叉印证（MBS↑ / FP8 是否正打中瓶颈）。
 - **铁律**：**不许猜**（每条瓶颈须有 profile 命令 + 原始输出）；**不改训练代码**，只给建议（改动留待运维批准）。

@@ -346,7 +346,9 @@
     <tr><td>高</td><td><code>ncu</code></td><td>仅少数热点 kernel，必须在短测上</td></tr>
   </table>
   <p><b>重点怀疑（hybrid 先验）</b>：① <b>grad-accum 空隙</b>（MBS=1 → 每步 128 段）② 访存受限的 <b>SSM scan / elementwise / LayerNorm</b>（<code>M=4094</code> 下 GEMM 亦访存受限）③ recompute 过重 ④ mamba 自定义 kernel 路径。</p>
-  <p><b>纪律</b>：🚫 不对 20B 长跑 <code>nsys --attach</code>/<code>ncu</code>（污染 loss 曲线）；只给建议、不改训练代码。</p>
+  <p><b>纪律</b>：🚫 不对 20B 长跑 <code>nsys --attach</code>/<code>ncu</code>（污染 loss 曲线）；只给建议、不改训练代码。<br>
+     ✅ 工具（<code>nsys</code>/<code>ncu</code>）<b>需要就自己装</b>（运维已授权）；装不上回落 <code>torch.profiler</code>。</p>
+  <p><b>2026-10-03 追加</b>：P-9 <b>尽早跑（严格早于 P-6②）</b>；除 MBS 外新增 <b>P-9a-ext</b> 可变参数扫描（重计算 / 通信重叠 / 并行切分 / 数据加载 / 注意力内核 / 上下文）。</p>
 </div>
 
 <h3>10.2 MEMORY 是否该卡最大尺寸？— <span class="badge b-warn">该卡，且已下发</span></h3>
