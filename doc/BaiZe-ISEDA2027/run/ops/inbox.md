@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 6 -->
+<!-- RUN_ID: 7 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,11 +31,73 @@
 
 ---
 
-## RUN_ID 6 — 清重复 relay + 勘查既有 harness 研究线 ⚠️ **必须是文件里第一个 ```bash 块**
+## RUN_ID 7 — 🩺 **只读诊断**：各 loop 是否活着 / 共享副本是否落后 / 磁盘与 GPIC 进度
+
+**背景（运维 2026-10-03 10:57）**：`09:00` 之后**没有 agent 的提交**（只有运维自己的），而各线 `WAITING=1` 预期约每 50 分钟一轮。
+→ 疑因：某线 cline 会话较长（data 可能在 `rm -rf` 8.1T）、或 `git pull --rebase` 撞上运维的密集推送而跳过 push 周期。
+**本块只读，不改任何东西、不 kill 任何进程。**
+
+```bash
+echo "=========== 0. 时间（host / date） ==========="
+hostname; date '+%F %T %Z'
+echo
+
+echo "=========== 1. loop / relay 进程（预期 4 loop + 1 relay） ==========="
+ps -eo pid=,etimes=,stat=,args= 2>/dev/null | grep -E 'baize_.*_loop\.sh|ops_relay\.sh' | grep -v grep | cut -c1-150
+echo
+
+echo "=========== 2. 共享工作副本：未提交 / 未推送 / 最近提交 ==========="
+cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null || { echo "REPO MISSING"; exit 0; }
+git status -sb 2>&1 | head -25
+echo "-- 最近 6 条本地提交 --"
+git --no-pager log --oneline -6 2>&1 | cut -c1-120
+echo "-- 与远端 leading/behind（L=ahead R=behind，fetch 由 relay 自己做过） --"
+git rev-list --left-right --count origin/main...HEAD 2>/dev/null || echo "(no origin/main ref)"
+echo
+
+echo "=========== 3. 各 loop 日志尾部（是否在跑 / 报错） ==========="
+for f in /tmp/baize_pretrain_loop.log /tmp/baize_vision_loop.log /tmp/baize_data_loop.log /tmp/baize_harness_loop.log; do
+  if [ -f "$f" ]; then
+    printf '== %s (mtime %s)\n' "$f" "$(date -r "$f" '+%F %T' 2>/dev/null)"
+    tail -4 "$f" | cut -c1-160
+  else
+    printf '== %s : (no log)\n' "$f"
+  fi
+done
+echo "-- ops relay 日志 --"
+tail -6 /tmp/ops_relay.log 2>/dev/null | cut -c1-160 || echo "(no /tmp/ops_relay.log)"
+echo
+
+echo "=========== 4. GPU 占用（谁在跑） ==========="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | cut -c1-60 || echo "(no nvidia-smi)"
+echo
+
+echo "=========== 5. 关键训练日志 ==========="
+for f in /tmp/r10_denseM.log /tmp/baize_p5b_train.log; do
+  [ -f "$f" ] && { printf '== %s (mtime %s)\n' "$f" "$(date -r "$f" '+%F %T')"; tail -3 "$f" | cut -c1-160; }
+done
+echo "-- R10③ 是否 DONE（预期 0→1） --"
+grep -c 'denseM ALL DONE' /tmp/r10_denseM.log 2>/dev/null || echo 0
+echo
+
+echo "=========== 6. 磁盘 + GPIC / laion2B ==========="
+df -hT /nas_train 2>/dev/null | tail -1
+echo "-- gpic train tar 数（预期 ≥1131/8000） --"
+ls -1 /nas_inference/app.e0031982/datasets/stanford-vision-lab/gpic/train/*.tar 2>/dev/null | wc -l
+echo "-- laion2B-en-aesthetic 是否已删 --"
+if [ -d /nas_train/app.e0031982/datasets/laion2B-en-aesthetic ]; then echo "STILL EXISTS"; else echo "GONE (deleted)"; fi
+echo
+
+echo "=========== DONE ==========="
+```
+
+---
+
+## RUN_ID 6（**已被 RUN_ID 7 接管，本块不再执行**）— 清重复 relay + 勘查既有 harness 研究线
 
 **目标**：① 清掉重复的 `ops_relay.sh`；② **只读**勘查 `/nas_train/app.e0031982/harness/` 里那条**既有的** harness 研究线（运维指示：**可以合并**）。
 
-```bash
+```text
 cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
 
 echo "=========== 1. 当前 relay / loop 进程 ==========="
