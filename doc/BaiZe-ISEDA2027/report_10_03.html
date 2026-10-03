@@ -49,11 +49,11 @@
 
 <header class="hero">
   <h1>BaiZe 工作汇报 · 2026-10-03</h1>
-  <div class="sub">四线均有「执行中 + 已排」队列 · 预计 <b>10-05 前后</b> GPU 线集中空闲 · P-5b 57% · vision R10③ 在跑 · data 可回收 ≈8.6T</div>
+  <div class="sub">R14 官方仓库调研 ✅ · H-D 五 harness 对比+机会点 O1–O5 ✅ · 任务书瘦身 <b>-52%</b> · P-5b 62% · 定位到「额度耗尽」根因</div>
   <div class="meta">
     <span>📅 2026-10-03</span>
     <span>📝 <code>foamliu/super_intelligence_2035</code> @ <code>main</code></span>
-    <span>📈 当日提交 <b>≈68</b> 个</span>
+    <span>📈 当日提交 <b>≈81</b> 个</span>
     <span>🎯 投稿截止 ≈ 2027-02-01（余 <b>≈121 天</b>）</span>
   </div>
 </header>
@@ -82,6 +82,10 @@
     <li><b>vision（第二批）：</b>① 决策 <b>锁定 A = 从零训练</b>；② 新增 <b>R14</b>（官方仓库资源调研，纯 CPU）+ <b>R12/R13</b>（候选，待批）；③ <b>两处更正</b>——R8 六架构是<b>自研改编（非官方实现）</b>、「本地 53M 上限」是<b>假设常量</b>（按实测 GPIC ≈0.1B 应为 ≈103M）；④ 任务书<b>去堆叠重写</b>（12 块 → 6 节，0 重复）。</li>
     <li><b>新增运维记忆机制</b>：项目根 <code>MEMORY.md</code> + <code>daily-memories/</code>（运维侧长期记忆，与 <code>run/</code> 下各 agent 分离）。</li>
     <li><b>harness：</b>排查出 <b>bwrap/nsjail/podman 全 absent</b>，仅 docker 可用（socket 通、pull 被网络阻断）→ 结论：<b>先走 Aider Polyglot（无 docker）</b>。</li>
+    <li>🎁 <b>两条线交付（11:06 / 11:09）：</b><b>R14 官方仓库调研</b>（<code>VISION_OFFICIAL_REPOS_SURVEY.md</code>）· <b>H-D</b>（<code>HARNESS_COMPARE_MATRIX.html</code> + <code>CLINE_IMPROVEMENT_OPPORTUNITIES.md</code>，<b>O1–O5</b>）· 以及 vision 的 <b>C1/C2/E1 修正</b>已落到 <code>r9_scaling.py</code>。</li>
+    <li>🪶 <b>任务书瘦身（为省 agent 共享 key 的 token）：</b>vision <b>92.5→11.7KB(-87%)</b> · pretrain <b>57.1→33.3KB</b> · data <b>60.1→42.6KB</b> → <b>4 份活跃任务书 237→115KB（-52%）</b>，每次全唤醒省 ≈41K prompt token。</li>
+    <li>🔴 <b>定位到「静默变慢」根因：cline Token 额度耗尽</b>（<code>/tmp/baize_harness_loop.log</code> 原文 <code>error: 本次Token额度已用完…</code>；<b>cline 仍返回 exit 0</b> → loop 分辨不出）。→ <b>loop 优化延后</b>（需回公司重启；1800→3600 会拖慢响应）。</li>
+    <li>🔧 <b>推翻了 AGENTS.md 的一条结论：</b>「ops_relay 会跑出多个副本」= <b>误判</b> —— 第 2 行是 relay 的<b>子 shell</b>（<code>ppid</code>=真 relay、<code>etimes≈0</code>）。判别看 <b><code>ppid</code></b>，🚫 绝不要两个都杀。</li>
   </ul>
 </div>
 
@@ -106,6 +110,7 @@
     <li><a href="#s9">下一步排期</a></li>
     <li><a href="#s10">补记：训练 profiling 与记忆体量</a></li>
     <li><a href="#s11">⭐ 执行中 / 已排任务 · 何时空闲</a></li>
+    <li><a href="#s12">运维基础设施：Token 治理 · 诊断 · 更正</a></li>
   </ol>
 </div>
 
@@ -115,27 +120,27 @@
   <tr><th>线</th><th>今日进展</th><th>当前状态</th><th>下一步</th></tr>
   <tr>
     <td><b>pretrain</b><br><code>.29</code></td>
-    <td>P-5b 健康巡检至第 35 次；<b>P-9 规格已重写</b>（seq 统一 4096 · 4M/步不变量 · seq 多点 · FP8 按 M 扫 · profiling）</td>
-    <td><span class="badge b-ok">🔄 P-5b 57.0%</span> · 健康（loss 2.0961）</td>
-    <td>P-5b 跑完 → <b>P-9</b>（尽早，早于 P-6②）→ P-6② → P-8（暂缓）</td>
+    <td>P-5b 巡检 #36；<b>P-9 规格重写</b>（seq 4096 · 4M/步不变量 · seq 多点 · FP8 按 M 扫 · profiling）；<b>任务书瘦身 57→33KB</b></td>
+    <td><span class="badge b-ok">🔄 P-5b 62.3%</span> · 健康（loss 2.0684）</td>
+    <td>P-5b 收官 → <b>P-9</b>（尽早，早于 P-6②）→ P-6② → P-8（暂缓）</td>
   </tr>
   <tr>
     <td><b>vision</b><br><code>.12</code></td>
-    <td><b>R9 收敛</b>后，<b>R10 已开跑</b>（① 12 点回收 ✅ ② (N,M) 二维拟合 ✅ ③ w384/w640 训练中）；新增 <b>R11</b> 目标函数轴 + <b>R11-D</b> 数据轴</td>
-    <td><span class="badge b-info">🔄 R10_active</span></td>
-    <td>R10③ 收尾 → R11-D（GPIC vs CC12M+Amshaker）/ R11-L（loss 轴）</td>
+    <td><b>R10③</b> w384/w640 训练中；✅ <b>R14 官方仓库调研交付</b>（OpenVision 源码级普查 + AIMv2）；✅ <b>C1/C2/E1 修正</b>已落地</td>
+    <td><span class="badge b-info">🔄 R10_active</span> · <span class="badge b-ok">✅ R14 完成</span></td>
+    <td>R10③ 收尾 → <b>E1</b>（GPIC 规模实测）→ <b>R11-E/L/L2</b>（数据/loss/文本塔）</td>
   </tr>
   <tr>
     <td><b>data</b><br><code>.12</code></td>
-    <td>下载巡检（base-en / gpic / SFT-2605）持续真推进；<b>D-CLEAN 盘点交付</b> → <b>D-CLEAN-2 删除已获批</b></td>
+    <td>下载推进（<b>gpic tar 1198</b>，11:00 实测）；D-CLEAN 盘点交付 → <b>D-CLEAN-2 删除获批</b>（<b>laion2B 11:00 仍 STILL EXISTS</b>）</td>
     <td><span class="badge b-warn">🔄 下载中</span> · <span class="badge b-ok">✅ 可回收 ≈8.6T</span></td>
-    <td>执行删除 + <code>servers</code>(974G) 探查 → 回写 `DISK_CLEANUP_INVENTORY.md`</td>
+    <td>执行删除 + <code>servers</code>(974G) 探查 → 回写磁盘清单</td>
   </tr>
   <tr>
     <td><b>harness</b><br><code>.29</code></td>
-    <td>H-B 5/5 + H-A 可行性核查；<b>sudo 生效 → Docker socket 解锁</b>（但 <code>docker pull</code> 仍不通）；<b>Aider Polyglot 可行性确认</b></td>
-    <td><span class="badge b-warn">🔓 socket 解锁 / pull 受阻</span></td>
-    <td>Aider Polyglot（无 docker，可立即开跑）→ 本地镜像或 Route E′ 走 SWE-bench</td>
+    <td>✅ <b>H-D 交付</b>（对比矩阵 + <b>O1–O5 机会点</b>）；docker socket 已解锁但 <b><code>pull</code> 仍不通</b>（dockerd 无代理）；<b>Aider 仓库已 clone</b>（225 题），但 <b>go/rust 工具链缺失</b></td>
+    <td><span class="badge b-ok">✅ H-D 完成</span> · <span class="badge b-warn">H-A′ 未实跑</span></td>
+    <td><b>CLINE_IMPROVEMENTS_TOP5.html</b>（新派）· H-A′ 待工具链/口径</td>
   </tr>
   <tr>
     <td><b>ops relay</b></td>
@@ -412,7 +417,7 @@
 <h3>11.1 执行中（正在跑）</h3>
 <table>
   <tr><th>线</th><th>正在执行</th><th>预计结束</th></tr>
-  <tr><td><b>pretrain</b> <code>.29</code></td><td>P-5b 20B 长跑（<b>iter 2720/4771 = 57%</b>，健康，~29s/iter）</td><td><b>10-04 ≈02:30</b></td></tr>
+  <tr><td><b>pretrain</b> <code>.29</code></td><td>P-5b 20B 长跑（<b>iter 2970/4771 = 62.3%</b>，健康，~29s/iter）</td><td><b>10-04 ≈01:30</b></td></tr>
   <tr><td><b>vision</b> <code>.12</code></td><td><b>R10③</b> w384+w640 各 30k 步（8 卡，08:46 启动）+ 训完自动跑 8 ckpt IN-1k</td><td><b>10-03 ≈12:15</b></td></tr>
   <tr><td><b>data</b> <code>.12</code></td><td><b>D-CLEAN-2</b> 删除（≈8.6T）+ <code>servers</code> 探查；后台 base/gpic 下载（不占 agent）</td><td><b>10-03 ≈12:30</b></td></tr>
   <tr><td><b>harness</b> <code>.29</code></td><td><b>H-A′ Aider Polyglot</b>（6 参赛者，先 smoke）+ <b>H-D</b> 五 harness 对比矩阵</td><td><b>10-04 ~ 10-06</b>（区间大）</td></tr>
@@ -429,21 +434,21 @@
   </tr>
   <tr>
     <td><b>vision</b><br><code>.12</code></td>
-    <td>① R10③ 收尾 ≈1h → ② <b>R14</b> 官方仓库调研 ≈3h → ③ <b>E1</b> GPIC 规模实测 ≈1h → ④ <b>R11-E</b> 数据臂 ≈5h → ⑤ <b>R11-L</b> loss 轴（~5 臂）≈20h → ⑥ <b>R11-L2</b> 文本塔 ≈12h</td>
-    <td>~42h</td>
-    <td><b>10-05 ≈06:00</b></td>
+    <td>① R10③ 收尾 ≈1h → ② <b>E1</b> GPIC 规模实测 ≈1h → ③ <b>R11-E</b> 数据臂 ≈5h → ④ <b>R11-L</b> loss 轴（~5 臂）≈20h → ⑤ <b>R11-L2</b> 文本塔 ≈12h<br><small>（✅ R14 官方仓库调研已完成，已从队列移除）</small></td>
+    <td>~39h</td>
+    <td><b>10-05 ≈02:00</b></td>
   </tr>
   <tr>
     <td><b>data</b><br><code>.12</code></td>
     <td>① D-CLEAN-2 删除 ≈2h → ② <code>servers</code> 探查 ≈0.5h → ③ 回写报告 →（之后转 30min 轮询）</td>
     <td>~2.5h</td>
-    <td><b>10-03 ≈12:30</b><br><small>（半空闲：仍有 gpic 长下载）</small></td>
+    <td><b>10-03 ≈13:00</b><br><small>（半空闲：仍有 gpic 长下载）</small></td>
   </tr>
   <tr>
     <td><b>harness</b><br><code>.29</code></td>
-    <td>① H-A′ smoke ≈0.5h → ② <b>H-A′ 全量 225 题 × 6 参赛者</b> ≈17h（乐观 45s/题）～ 73h（悲观 194s/题）→ ③ <b>H-D</b> ≈6h（可并行）</td>
-    <td>~17–73h</td>
-    <td><b>10-04 ≈04:00</b>（乐观）<br>～<b>10-06 ≈11:00</b>（悲观）</td>
+    <td>① <b>CLINE_IMPROVEMENTS_TOP5.html</b> ≈2h（新派，产出给你看）→ ② <b>H-A′ Aider 横评</b>：⚠️ <b>受工具链限制</b>（<b>go/rust 缺失</b>、<code>benchmark.py</code> <b>只驱动 aider 本体</b>）→ 规模待定</td>
+    <td>~2h + H-A′（待定）</td>
+    <td><b>10-03 ≈14:00</b>（TOP5 之后）</td>
   </tr>
 </table>
 
@@ -463,8 +468,45 @@
   → <b>若要插新实验/改排期，最好在 10-05 前后动手</b>：那时两条 GPU 线都空，且 data 的 base 下载也基本结束。
 </div>
 
+<h2 class="sec" id="s12"><span class="no">12</span>运维基础设施：Token 治理 · 诊断 · 更正</h2>
+
+<h3>12.1 🔴 根因：cline Token 额度耗尽（不是"挂了"）</h3>
+<div class="danger">
+  <b>RUN_ID 7 只读诊断（<code>.29</code> @11:00）</b> 原文：
+  <pre>error: 本次Token额度已用完，请等待16分钟6秒后重试
+[loop] cline returned (exit 0), checking git sync ...
+[loop] WAITING=1 (async task running) → sleep 1800s</pre>
+  → <b>cline 失败仍返回 <code>exit 0</code></b>，各 loop 分辨不出 → 只睡 30min 再试 → 表现为<b>「静默变慢」</b>（不是停摆）。
+  <br>额度是 <b>项目级共用 + 5 小时滑动窗口</b> → <b>我们只能降低自身消耗</b>。
+</div>
+
+<h3>12.2 🪶 已做：任务书瘦身（<b>-52%</b>）</h3>
+<div class="note">各 loop 是 <code>prompt="$(< TASK_MD)"</code> → <b>任务书全文 = 每次唤醒的 prompt</b>。已把<b>已完成轮次</b>移出 prompt：</div>
+<table>
+  <tr><th>任务书</th><th>之前</th><th>现在</th><th>省</th></tr>
+  <tr><td><code>BAIZE_VISION_TASK.md</code></td><td>92.5 KB</td><td><b>11.7 KB</b></td><td><b>-87%</b></td></tr>
+  <tr><td><code>BAIZE_PRETRAIN_2B_TASK.md</code></td><td>57.1 KB</td><td><b>33.3 KB</b></td><td>-42%</td></tr>
+  <tr><td><code>BAIZE_DATA_TASK.md</code></td><td>60.1 KB</td><td><b>42.6 KB</b></td><td>-29%</td></tr>
+  <tr><td><code>BAIZE_HARNESS_TASK.md</code></td><td>27.5 KB</td><td>27.5 KB</td><td>—</td></tr>
+  <tr><td><b>合计（4 份活跃）</b></td><td><b>237 KB</b></td><td><b>114.6 KB</b></td><td><b>-52%</b></td></tr>
+</table>
+<p>归档：<code>run/vision/ARCHIVE_ROUNDS_2-9.md</code> · <code>run/ARCHIVE_PRETRAIN_ROUND1_AND_DONE_R2.md</code> · <code>run/ARCHIVE_DATA_R_AND_R2_RESEARCH.md</code>（<b>不进 prompt</b>，agent 需要时才读）。</p>
+
+<h3>12.3 🔧 已做：更正一条错误结论（relay「多副本」）</h3>
+<div class="ok-box">
+  RUN_ID 8 实测：<code>2489749 · ppid=1 · etimes=155150</code>（真 relay）与 <code>3521816 · ppid=2489749 · etimes≈0</code>（<b>它的子 shell</b>）。
+  → <b>从来没有"重复 relay"</b>；旧 <code>AGENTS.md §3.5(1)</code>「会跑出多个副本、需人工清理」是<b>误判</b>，已更正为<b>按 <code>ppid</code> 判别</b>，并明确 <b>🚫 绝不要两个都杀</b>（会切断假期远程通讯）。
+</div>
+
+<h3>12.4 ⛔ 延后（需回公司做）</h3>
+<table>
+  <tr><th>项</th><th>收益</th><th>为何延后</th></tr>
+  <tr><td><code>SLEEP_WAIT</code> 1800 → 3600</td><td>唤醒次数减半 → <b>总 token 消耗减半</b></td><td>需重启 loop（假期做不了）；且<b>会让响应变慢</b></td></tr>
+  <tr><td>加「训练未完成 → 跳过 cline 调用」前置检查</td><td>等待期 <b>零 token</b></td><td>同上（需改运行中的脚本 + 重启）</td></tr>
+</table>
+
 <footer>
-  BaiZe 工作汇报 · 2026-10-03（刷新于 <b>~10:00</b>）· 当日提交 <b>≈68</b> 个 ·
+  BaiZe 工作汇报 · 2026-10-03（刷新于 <b>~11:25</b>）· 当日提交 <b>≈81</b> 个 ·
   详细证据见 <code>run/MEMORY_PRETRAIN_2B.md</code>、<code>run/EXPERIMENTS_VISION_ROUND9.md</code>、
   <code>run/DATA_LEDGER.md</code>、<code>run/harness/CODE_AGENT_BENCHMARKS_SURVEY.md</code>。<br>
   本次运维处置已写入各任务书「运维指令区」：<code>BAIZE_PRETRAIN_2B_TASK.md</code>（P-9）、
