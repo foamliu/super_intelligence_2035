@@ -2268,3 +2268,179 @@ drwxr-x--- 2 app.e0031982 app.adm 4096 10-04_07:28 1791070115770_86v5q
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 17 · 2026-10-04 07:37:28 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+echo; echo "=== 1. harness 日志 Forbidden 上下文（前 3 处，看是否紧跟 [loop] wake up）==="
+grep -n -B4 -A2 'Forbidden' /tmp/baize_harness_loop.log 2>/dev/null | head -34 | cut -c1-165
+
+echo; echo "=== 2. harness 最近的 [loop] 行（应只有重启后的 1 次 wake up）==="
+grep -n '\[loop\]' /tmp/baize_harness_loop.log 2>/dev/null | tail -8 | cut -c1-140
+echo "-- Forbidden 计数（同一次运行内）--"; grep -c Forbidden /tmp/baize_harness_loop.log 2>/dev/null
+
+echo; echo "=== 3. pretrain 对照（应为 0）==="
+grep -c Forbidden /tmp/baize_pretrain_loop.log 2>/dev/null
+
+echo; echo "=== 4. GPU 上跑的是什么 + 进程 ==="
+nvidia-smi --query-compute-apps=pid,used_memory --format=csv,noheader 2>/dev/null | head -10 | cut -c1-80
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'torchrun|pretrain_launcher' | grep -v grep | cut -c1-120
+
+echo; echo "=== 5. harness 的 driver 代码里怎么取 key（举证）==="
+grep -n 'OPENAI_API_KEY\|"-k"\|api_key' /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/run_harness.py 2>/dev/null | head -8 | cut -c1-150
+
+echo; echo "=== 6. pretrain 是否已回写 MEMORY ==="
+ls -l --time-style=+%m-%d_%H:%M /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md 2>/dev/null | cut -c1-110
+
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 07:37:28
+
+=== 1. harness 日志 Forbidden 上下文（前 3 处，看是否紧跟 [loop] wake up）===
+234-But[0m[2m wait,[0m[2m my `[0m[2mgit fetch[0m[2m` in[0m[2m the tools[0m[2m failed with[0m[2m "Network[0m[2m is[0m[2m unreachable[0m[2m". That
+235-
+236-[0m[2mBut actually[0m[2m, this[0m[2m is confusing[0m[2m. Let[0m[2m me understand[0m[2m the[0m[2m actual current[0m[2m state and[0m[2m what I[0
+237-
+238:[0m[2mActually,[0m[2m the[0m[2m key realization[0m[2m: **[0m[2mThe loop[0m[2m script was[0m[2m JUST modified[0m[2m (07[0m[2m:28[0m[2m) by[0m
+239-
+240:[0m[2mSo what[0m[2m happened:[0m[2m Between round[0m[2m 32[0m[2m (22[0m[2m:07[0m[2m on [0m[2m10-[0m[2m03)[0m[2m and now[0m[2m (07[0m[2m:2
+241-
+242-Now[0m[2m ops fixed[0m[2m the loop[0m[2m to strip[0m[2m proxy +[0m[2m OPENAI[0m[2m_API_KEY[0m[2m. And[0m[2m now I[0m[2m've been[0m[2m woken[
+--
+277-Actually[0m[2m, wait[0m[2m — let[0m[2m me reconsider[0m[2m the whole[0m[2m network[0m[2m/proxy[0m[2m situation more[0m[2m carefully,[0m[2m be
+278-
+279-The[0m[2m loop[0m[2m comment says[0m[2m: the[0m[2m gateway `[0m[2mhttp://[0m[2magi-g[0m[2mateway[0m[2m.cx[0m[2mmt[0m[2m.com/v[0m[2m1`[0m[
+280-
+281:[0m[2mBut round[0m[2m 32[0m[2m's finding[0m[2m was[0m[2m that the[0m[2m Forbidden[0m[2m was[0m[2m due to[0m[2m the ST[0m[2mALE KEY[0m[2m (0
+282-
+283:So[0m[2m round [0m[2m32 attributed[0m[2m Forbidden[0m[2m to the[0m[2m stale[0m[2m key.[0m[2m But now[0m[2m ops ([0m[2m07:[0m[2m28)[0m[2m at
+284-
+285-[0m[2mActually,[0m[2m both[0m[2m could be[0m[2m involved.[0m[2m The ops[0m[2m comment says[0m[2m ".29[0m[2m 曾[0m[2m因此[0m[2m瞎跑[0m[
+286-
+287:[0m[2mSo the[0m[2m proxy theory[0m[2m is:[0m[2m going through[0m[2m proxy[0m[2m → For[0m[2mbidden.[0m[2m Round[0m[2m 32[0m[2m's key[0m[2m
+288-
+289-[0m[2mThe truth[0m[2m might be[0m[2m: The[0m[2m proxy IS[0m[2m the issue[0m[2m. Round[0m[2m 32[0m[2m's "[0m[2mcurl [0m[2m直连[0m[2m网关
+--
+370-Now[0m[2m,[0m[2m the crucial[0m[2m question I[0m[2m need to[0m[2m answer:[0m[2m **What[0m[2m is my[0m[2m actual task[0m[2m right now[0m[2m,[
+371-
+372-Given[0m[2m:
+373-[0m[2m- The[0m[2m loop script[0m[2m was[0m[2m just fixed[0m[2m by ops[0m[2m (07[0m[2m:28[0m[2m) to[0m[2m strip proxy[0m[2m + OPEN[0m[2mAI_A
+374:-[0m[2m This implies[0m[2m: the[0m[2m ~9[0m[2mh[0m[2m of silent[0m[2m spinning was[0m[2m because the[0m[2m loop's[0m[2m cline[0m[2m (me[0m[
+375-[0m[2m- Now[0m[2m, with[0m[2m proxy stripped[0m[2m, my[0m[2m cline[0m[2m invocation[0m[2m should be[0m[2m able to[0m[2m reach[0m[2m the gatew
+376-
+377:Wait[0m[2m,[0m[2m but actually[0m[2m — is[0m[2m the[0m[2m proxy the[0m[2m ROOT[0m[2m cause[0m[2m, or[0m[2m the stale[0m[2m key?[0m[2m Rou
+378-
+379-Both[0m[2m might be[0m[2m true in[0m[2m a sense[0m[2m:
+
+=== 2. harness 最近的 [loop] 行（应只有重启后的 1 次 wake up）===
+1:[loop] 2026-10-04 07:28:35 wake up, invoking cline ...
+-- Forbidden 计数（同一次运行内）--
+16
+
+=== 3. pretrain 对照（应为 0）===
+0
+
+=== 4. GPU 上跑的是什么 + 进程 ===
+2560064, 39102 MiB
+2560065, 39198 MiB
+2560069, 39242 MiB
+2560073, 39202 MiB
+2560074, 39134 MiB
+2560075, 39102 MiB
+2560076, 39212 MiB
+2560078, 38572 MiB
+2559799     258 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/b
+2560064     255 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2560065     255 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2560069     255 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2560073     255 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2560074     255 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2560075     255 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2560076     255 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2560078     255 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597109     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597110     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597111     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597112     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597113     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597114     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597115     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597116     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597117     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597118     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597119     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597120     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597121     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597122     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597123     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597124     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597125     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597126     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597127     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597128     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597129     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597130     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597131     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597132     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597133     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597134     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597135     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597136     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597137     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597138     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597139     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597140     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597141     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597142     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597143     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597144     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597145     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597146     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597147     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597148     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597149     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597150     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597151     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597152     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597153     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597154     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597155     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597156     226 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597157     225 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597158     225 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597159     225 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597160     225 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597161     225 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597162     225 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597164     225 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597181     225 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597183     225 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597184     225 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597185     225 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597186     225 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597223     225 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597233     225 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597234     225 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+2597236     225 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p9
+
+=== 5. harness 的 driver 代码里怎么取 key（举证）===
+96:    env `OPENAI_API_KEY`) and the gateway answers `Forbidden` on the first
+97:    model call.  With `-k "$OPENAI_API_KEY"` the run completes (smoke:
+105:        self.api_key = os.environ.get("OPENAI_API_KEY", "")
+108:        return Path(CLINE_BIN).exists() and bool(self.api_key)
+114:            "-k", self.api_key,
+
+=== 6. pretrain 是否已回写 MEMORY ===
+-rw-r----- 1 app.e0031982 app.adm 30821 10-04_07:37 /nas_train/app.e0031982/code/super_intelligence_2035/doc/B
+
+=== DONE ===
+```
