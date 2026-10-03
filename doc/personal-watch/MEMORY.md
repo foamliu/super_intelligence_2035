@@ -49,9 +49,8 @@ WAITING: 0
 
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
-| **news** | ✅ **T8–T10 已交付**（`fd32d67`）：`fetch_cn_news()` 落地（MCP `cn_news` + CLI `--cn-news`）· 中文权威真新闻 6 条（中文 4 ≥ 英文 2）· 原 31 条按 §0.1 收口（**留 news 9 / 移出非新闻 22**）；T5–T7 仍待办 | `news/FETCH_CN_NEWS.md` · `news/2026-10-03.md`（第三轮）· `news/mcp_web_search_free.py`（+`cn_news`） | ✅ 运行中（**supervisor 已独立复跑 CLI 验证通过**） |
-| **research** 🆕 | **第 1 批 R1′/R2′ 已下发**（实测取源：**arXiv API 为主** + HF Daily Papers 作社区信号；**RSS 周末空**不作主力；时效口径含周末放宽）；**首轮已交付 34 篇**（R1 打通 + 12 条固化查询 + 抓 214/精选 34） | `run/research/ARXIV_API.md` · `run/research/<date>.md` · `SEEN.md` · `INDEX.md` · `papers.jsonl` · `queries.json` · `arxiv_fetch.py` | ✅ 运行中（**supervisor 抽验 3 个 arXiv ID 全真实**） |
-| **archive** 🆕 | **第 2 批：方案 C 定案**（**只取 标题+日期+来源+链接**，🚫 不抓正文）—— A1 端点勘察 → A2 计数 → C 建索引；🚫 免 key、**锁国内权威源** | `run/archive/ENDPOINTS.md` · `COUNT_STUDY.md` · `index/<源>-<年>.jsonl.gz` · `PROGRESS.md` · `INDEX_FILES.md` | 🆕 已建线 + C 已定案，**待启动 loop** |
+| **news** | **第 7 批 N1/N2**（**十年回溯**：新华社 2016–2026 标题+日期+链接 + **分析/饼图**；**N2 新闻×资产价格相关性**）；T1–T10 全 ✅（`fetch_cn_news` 已复跑验证） | `news/archive/`（`xinhua-<年>.jsonl.gz` + `PROGRESS.md` + `INDEX_FILES.md`）· `news/analysis/`（`XINHUA_2016_2026.html` · `NEWS_vs_PRICES.html` · `corr.csv`） | ✅ 运行中（54 条真新闻；N1/N2 待做） |
+| **research** | **第 2 批：TOP-K 排序**（窗口 **≤30d**；**质量 × 与 BaiZe/ZhuLong 相关性** 双维度打分）+ 常态增量 | `research/TOP_K.md` · `TOP_K.jsonl`；已交付 `papers.jsonl`/`ARXIV_API.md` 等 | ✅ 运行中（**61 篇**收录 / 346 候选；R1′ 复验 arXiv ✅/**HF ❌**/RSS 周末空） |
 
 > ✅ **T1–T4 已完成并交付（2026-10-03，commit `c326ba8`）**：
 > - **T1** 核实 12 个 web-search 候选；**T2** 新建**免 key MCP** `run/news/mcp_web_search_free.py`（3 工具 `web_search`/`search_news`/`rss_latest`）+ `run/news/cline_mcp_config.json`，**stdio 全链路实测通过**；
@@ -66,17 +65,25 @@ WAITING: 0
 
 ## 4. 待拍板 / 我欠的答复
 
-- [x] ✅ **worker 运行主机已确认（2026-10-03 用户）**：**可连外网且速度不慢** → news 线具备运行前提。待 loop 拉起后即可派活。
-- [x] ✅ **搜索/新闻 API 选型已定（2026-10-03 用户）**：**暂不使用付费 API key**；搜索/新闻取数**一律走免 key**，搜索能力**以本机自建 MCP 为准**。→ 不再评估付费路径。
-- [ ] ⭐ **自建 MCP 落地（已核实：未装）**：news 线自查确认运行机 `~/.cline/data/settings/` **无 `cline_mcp_settings.json`** → cline 会话**没有** `web_search`/`search_news`/`rss_latest`（现靠**直调 python 模块**工作）。**已下发 T5**：把它真正装进运行机 cline 并实测，或给出等效 CLI 包装。
-- [ ] ⭐ **中文覆盖偏薄**（两轮 31 条中文源基本只有 IT之家）→ 已下发 **T6** 补强带日期的中文权威源。
-- [ ] **GDELT 429 频控** → 已下发 **T7**（退避/降频）。
-- [ ] ⭐ **非新闻条目怎么处理？（待用户拍板）**：现默认 **T8 = 保留但单列到「附录 · 非新闻」并打类型标签**。
-  → 问用户：是否**干脆不收**（只留真新闻）？还是**保留附录**（另有「深读/观点」需求时再看）？
-- [ ] **采集节律**：当前**对齐 BaiZe**（`WAITING=1` 睡 30min → 常态约每 30 分钟一轮）。这个频率对"新闻"是否偏密（token 消耗）？是否要改成更疏（如 1~2h）？——**由用户拍板**。
-- [ ] **输出形态**：日报够不够，是否要**周报合订** / **主题归档**（按关注清单分类长期累积）。
-- [ ] **关注清单**是否要收敛（现在 6 大类，见 `WATCH_NEWS_TASK.md` §1），避免噪声。
-- [ ] 是否增设 **paper 线**（arXiv 等）。
+**已定（无需再议）**
+- [x] ✅ **运行主机可连外网**。
+- [x] ✅ **全程免 key**（不用付费 API）；搜索能力**以本机自建 MCP 为准**。
+- [x] ✅ **非新闻"直接不收"**（用户拍板 → T8 修订版）。
+- [x] ✅ **暂不新增智能体** → 原 **archive 线并入 news**（`news/archive/` + `news/analysis/`），脚手架已删。
+- [x] ✅ **research 窗口放宽到 ≤30d**（仅限 TOP-K 任务；日报口径不变）。
+
+**在飞（等交付）**
+- [ ] ⭐ **news N1**：新华社 2016–2026 十年回溯（标题+日期+链接）+ 分析/饼图 → `news/archive/` `news/analysis/`。
+      ⚠️ **前置**：新华网 `/politics/…` **403**、`so.news.cn/getNews` **405+WAF**（**须在运行机复测**）；走不通则用**中新网兜底并标注"非新华社"**（🚫 不许冒充）。
+- [ ] ⭐ **news N2**：新闻 ×**资产价格**相关性（**先做 N1**；价格源需先做**免 key + 可达性**实测）。
+- [ ] ⭐ **research TOP-K**：`TOP_K.md`/`TOP_K.jsonl`（**质量 × BaiZe/ZhuLong 相关性**，≤30d）。
+- [ ] **news T5**：自建 MCP 装进运行机 cline（**非阻塞** —— CLI 直调已可用）；**T7** GDELT 退避。
+
+**待你拍板 / 未来职能**
+- [ ] 📧 **research 邮件交流**：**已登记、未批准**。启用前须先定：**发件邮箱/身份/署名 · 模板 · 频率上限 · 是否逐封审核**。🚫 **未批准不得发送**。
+- [ ] **采集节律**：现为 `WAITING=1` 睡 30min（≈每日 48 轮）。对"新闻"是否偏密？是否改 1~2h？
+- [ ] **输出形态**：是否需要**周报合订**（把日报并成一份）。
+- [ ] **news 关注清单**是否收敛（现 6 大类）。
 
 ---
 
@@ -241,6 +248,13 @@ WAITING: 0
 - **2026-10-03（用户拍板 archive 方案 C）** —— 用户选 **C：只取「标题+日期+链接」，不抓正文**。
   - **我纠正了自己的错误估算**：先前 ">45 天" 是**按条**算的（200 万条 × 2s）；**方案 C 按"天"枚举**（一天 1 个列表页）→ 10 年 ≈ **3650 请求 ≈ 2–3 小时**（4 源 ≈ 10 小时级）。→ **C 可行**。
   - **下发 archive 第 2 批**：C 规格 = 5 字段（`date/source/channel/title/url`）· 主键 `url` · **按年分片压缩** `index/<源>-<年>.jsonl.gz` · `PROGRESS.md` 断点续抓 · `INDEX_FILES.md` 清单 · **单年 >20MB 不入 git**（本体放 `~/archive_data/`）· 限速 ≥2s · **A1 未通前 C 仅对中新网先行**。
+- **2026-10-03（用户 5 条指令 → 组织调整）** ——
+  1. **research**：按**质量 + 与 BaiZe/ZhuLong 相关性**排序出 **TOP-K**，窗口放宽 **≤30d** → 下发 **R-T1~T3**（双维度 0–5 打分 / HN 热度替代 HF / `TOP_K.md`+`.jsonl` / 必须附方法与局限）。
+  2. **archive 并入 news**（**不新增智能体**）→ **删除 archive 线脚手架**（`WATCH_ARCHIVE_TASK.md`/loop/MEMORY/产物目录），职能改为 **news 第 7 批 N1**（新华社十年回溯 标题+日期+链接 + **分析/饼图**）。
+  3. **news N2**：新闻 ×**资产价格**相关性分析（先做 N1；价格源先做免 key 可达性实测；须写"相关≠因果"）。
+  4. **暂不新增智能体**（写入 README §2/§3、AGENTS §1、任务书）。
+  5. **research 未来职能**：给作者**发邮件**做学术交流 → **只登记、不实施**；启用前置（邮箱/署名/模板/频次/逐封审核）已写进任务书，🚫 **未批准不得发送**。
+  - 同步：`README.md`（**回退为 2 条线** + 三类产出口径）· `AGENTS.md`（删 archive 行 + 不新增声明）· `run/README.md`（删 §2.2）· 创建 `news/archive/` `news/analysis/`。
 - **2026-10-03（news worker 首交付）** —— agent 完成 **T1–T4**（`c326ba8`）+ **首轮 smoke 16 条**（`3fcd854`）+ 记忆回写（`bdc20db`），已转**常态采集**（`WAITING=1`）。
   亮点：**真跑实测**（给报错原文）、**建了免 key MCP**、报告**自包含**、**360 无日期就拒收**（守"字段缺一不可"）。
   待用户拍板：**是否补正规 API key**（免 key 抓取脆弱/合规灰区）。待核：**MCP 是否已装进运行机 cline**。

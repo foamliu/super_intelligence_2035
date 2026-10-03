@@ -37,26 +37,28 @@
 | 项 | 值 |
 |:---|:---|
 | 建哨日 | **2026-10-03** |
-| 当前阶段 | **起步**：**news（新闻）+ research（论文）+ archive（历史回溯）** 三条线 |
-| 规划中的线 | news：纠偏已闭环；research：已交付首轮；archive：**刚建线**（先做端点勘察 + 年条数估计） |
+| 当前阶段 | **起步**：**news（新闻+回溯+分析）+ research（论文+TOP-K）** 两条线（**用户已定：暂不新增智能体**） |
+| 规划中的线 | ❌ **不新增**。新职能一律**并入既有线**（例：原 archive 线已并入 news）。 |
 
 ---
 
-## 3. Agent 线（**当前 3 条**）
+## 3. Agent 线（**当前 2 条** · 用户已定"**暂不新增智能体**"）
 
 > **唯一权威**清单见 **`AGENTS.md`**（避免数错）。`run/` 下可能同时存在多个脚本，以 `AGENTS.md` 为准。
 
 | 线 | 任务书 | loop 脚本 | 状态文件 | 产物 | 状态 |
 |:---|:---|:---|:---|:---|:---|
-| **news** | `run/WATCH_NEWS_TASK.md` | `run/watch_news_loop.sh` | `run/MEMORY_NEWS.md` | `run/news/` | 🔄 运行中（35 条真新闻） |
-| **research** | `run/WATCH_RESEARCH_TASK.md` | `run/watch_research_loop.sh` | `run/MEMORY_RESEARCH.md` | `run/research/` | ✅ 运行中（首轮 34 篇） |
-| **archive** 🆕 | `run/WATCH_ARCHIVE_TASK.md` | `run/watch_archive_loop.sh` | `run/MEMORY_ARCHIVE.md` | `run/archive/` | ⬜ 待启动（历史回溯） |
+| **news** | `run/WATCH_NEWS_TASK.md` | `run/watch_news_loop.sh` | `run/MEMORY_NEWS.md` | `run/news/` | ✅ 运行中（54 条真新闻；**新增 ① 十年回溯 ② 价格相关性**） |
+| **research** | `run/WATCH_RESEARCH_TASK.md` | `run/watch_research_loop.sh` | `run/MEMORY_RESEARCH.md` | `run/research/` | ✅ 运行中（61 篇；**新增 TOP-K 排序**） |
 
-**news 线定位**：按关注清单（`WATCH_NEWS_TASK.md` §1）**常态化采集**超级智能/前沿 AI 相关的**新闻**，每轮产出一份**当日摘要** `run/news/<YYYY-MM-DD>.md`，并维护去重台账 `run/news/SEEN.md`。
+**news 线定位**：**三类产出，口径严格分开** ——
+① **新闻日报** `run/news/`（§0.1：**≤72h 真新闻**）；
+② **历史回溯** `run/news/archive/`（`type: archive`；**只取 标题+日期+来源+链接**，🚫 不抓正文）；
+③ **数据分析** `run/news/analysis/`（统计 / **相关性** / 图表，**数据来源必须标注**）。
+> 📌 **原 `archive` 线（历史回溯）已按用户指示并入 news 线**（不再单独成线）。
 
-**research 线定位**：**打通 arXiv API** 并**常态化采集 & 整理 AI 论文**，重点 **LLM / SLM / 多模态 / agent harness**。产出 `run/research/<YYYY-MM-DD>.md` 日报 + `SEEN.md`（**主键 arXiv ID**）+ `INDEX.md` + `papers.jsonl`（结构化台账）。**范式与铁律继承 news 线**。
-
-**archive 线定位**：**历史回溯**（**不是日更**）—— 对**国内权威源**（新华网/人民网/中新网/央视网，**全程免 key**）在**指定时间窗**（当前 **2016–2026**）内做**端点勘察 → 抽样计数 → 按需抓取**。产物标 `🏷 类型：archive`，🚫 **不混入 news 的「日更 ≤72h」口径**；⏱ 同站限速 **≥2s**；**全量抓取须 supervisor 批准**。
+**research 线定位**：**arXiv** 论文采集/整理（**LLM / SLM / 多模态 / agent harness**）+ **TOP-K 精选排序**（质量 × 与 **BaiZe / ZhuLong** 相关性，窗口 ≤30d）。产出 `run/research/<date>.md` + `SEEN.md`（arXiv ID）+ `papers.jsonl` + **`TOP_K.md`/`TOP_K.jsonl`**（+ `ARXIV_API.md` 接口记录）。
+> 📧 **已登记未来职能**：给论文作者**发邮件**做学术交流 —— **未获用户批准前不得发送**。
 
 ---
 
@@ -75,17 +77,14 @@ doc/personal-watch/
     ├── watch_news_loop.sh         # news 循环脚本
     ├── MEMORY_NEWS.md             # news 运行时状态（含 WAITING）
     ├── daily-memories-news/       # news 每日流水
-    ├── news/                      # news 产物（<date>.md + SEEN.md + INDEX.md + 免 key MCP）
+    ├── news/                      # news 产物：<date>.md + SEEN.md + INDEX.md + 免 key MCP
+    │   ├── archive/               #   ② 历史回溯（xinhua-<年>.jsonl.gz + PROGRESS.md + INDEX_FILES.md）
+    │   └── analysis/              #   ③ 数据分析（XINHUA_2016_2026.html + corr.csv + NEWS_vs_PRICES.html）
     ├── WATCH_RESEARCH_TASK.md     # research 任务书（agent 只读）
     ├── watch_research_loop.sh     # research 循环脚本
     ├── MEMORY_RESEARCH.md         # research 运行时状态（含 WAITING）
     ├── daily-memories-research/   # research 每日流水
-    ├── research/                  # research 产物（<date>.md + SEEN.md + INDEX.md + papers.jsonl + ARXIV_API.md + pdf/）
-    ├── WATCH_ARCHIVE_TASK.md      # archive 任务书（历史回溯，agent 只读）
-    ├── watch_archive_loop.sh      # archive 循环脚本
-    ├── MEMORY_ARCHIVE.md          # archive 运行时状态（含 WAITING）
-    ├── daily-memories-archive/    # archive 每日流水
-    └── archive/                   # archive 产物（ENDPOINTS.md + COUNT_STUDY.md + <主题>-<窗口>.md）
+    └── research/                  # research 产物（<date>.md + SEEN.md + INDEX.md + papers.jsonl + TOP_K.* + ARXIV_API.md + pdf/）
 ```
 
 ---
