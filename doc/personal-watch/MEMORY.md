@@ -49,7 +49,7 @@ WAITING: 0
 
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
-| **news** | **常态采集**（`WAITING=1`，睡 30min）；工具 = 免 key MCP `web-search-free` | `run/news/<date>.md` 日报 + `SEEN.md` + `INDEX.md` | ✅ 运行中（T1–T4 已完成并交付） |
+| **news** | **第 3 批 T5–T7**（自建 MCP 落地 / 中文覆盖补强 / GDELT 退避）；常态采集继续 | `run/news/<date>.md` 日报 + `SEEN.md` + `INDEX.md`；MCP 装上后的证据 | ✅ 运行中（已采 **31 条**：首轮 16 + 第二轮 15） |
 
 > ✅ **T1–T4 已完成并交付（2026-10-03，commit `c326ba8`）**：
 > - **T1** 核实 12 个 web-search 候选；**T2** 新建**免 key MCP** `run/news/mcp_web_search_free.py`（3 工具 `web_search`/`search_news`/`rss_latest`）+ `run/news/cline_mcp_config.json`，**stdio 全链路实测通过**；
@@ -65,11 +65,10 @@ WAITING: 0
 ## 4. 待拍板 / 我欠的答复
 
 - [x] ✅ **worker 运行主机已确认（2026-10-03 用户）**：**可连外网且速度不慢** → news 线具备运行前提。待 loop 拉起后即可派活。
-- [ ] ⭐ **搜索/新闻 API 选型（报告已交付，待用户拍板）**：news 线选定**免 key 抓取**（CN-Bing/360 + HN/GDELT/RSS）。
-  - **风险**：CN-Bing/360 是**非官方 HTML 抓取**（反爬/可能改版/ToS 灰区）→ 稳定性与合规存疑。
-  - **升级路径**（本机多数可达，需注册 key）：**Exa**（免费 $10/月、免信用卡）/ **Tavily** / **SerpAPI**（100/月）/ **Bocha**（充值）。→ **问用户：是否补一个正规 key 提高稳定性？**
-- [ ] ⭐ **MCP 是否真装进运行机 cline**：交付的是**片段** `run/news/cline_mcp_config.json`（指向 `/home/liuyang/...`）。
-  须确认它已并入运行机 cline 的 MCP 配置（`~/.cline/data/settings/cline_mcp_settings.json`），否则**下一轮 cline 可能没有这些工具**。
+- [x] ✅ **搜索/新闻 API 选型已定（2026-10-03 用户）**：**暂不使用付费 API key**；搜索/新闻取数**一律走免 key**，搜索能力**以本机自建 MCP 为准**。→ 不再评估付费路径。
+- [ ] ⭐ **自建 MCP 落地（已核实：未装）**：news 线自查确认运行机 `~/.cline/data/settings/` **无 `cline_mcp_settings.json`** → cline 会话**没有** `web_search`/`search_news`/`rss_latest`（现靠**直调 python 模块**工作）。**已下发 T5**：把它真正装进运行机 cline 并实测，或给出等效 CLI 包装。
+- [ ] ⭐ **中文覆盖偏薄**（两轮 31 条中文源基本只有 IT之家）→ 已下发 **T6** 补强带日期的中文权威源。
+- [ ] **GDELT 429 频控** → 已下发 **T7**（退避/降频）。
 - [ ] **采集节律**：当前**对齐 BaiZe**（`WAITING=1` 睡 30min → 常态约每 30 分钟一轮）。这个频率对"新闻"是否偏密（token 消耗）？是否要改成更疏（如 1~2h）？——**由用户拍板**。
 - [ ] **输出形态**：日报够不够，是否要**周报合订** / **主题归档**（按关注清单分类长期累积）。
 - [ ] **关注清单**是否要收敛（现在 6 大类，见 `WATCH_NEWS_TASK.md` §1），避免噪声。
