@@ -66,7 +66,7 @@ WAITING: 1
 | PHASE | **H_D_done + TOP5_done**（batch-3：`CLINE_IMPROVEMENTS_TOP5.html` 已交付；H-A′ 执行模型已证=执行 LLM 代码，`unshare` 可用但需 mount+chroot 全量沙箱、go/rust 工具链缺、5 非-aider 参赛者需适配 → 实跑待运维拍板） |
 | WAITING | 1（等运维：① docker pull 通路 ② Aider 执行代码沙箱〔本地沙箱工具均未装〕③ 运行主机 .29 是训练机） |
 | ERROR_COUNT | 0 |
-| 更新 | 2026-10-03 13:19（第二十轮：唤醒巡检，无新指令，batch-3 已交付） |
+| 更新 | 2026-10-03 14:23（第二十二轮：唤醒巡检，无新指令，batch-3 已交付；补提交第二十一轮滚动） |
 | 产出 | ✅ H-B 5 份源码 HTML · ✅ `harness/MERGE_OVERLAP_ANALYSIS.md` · ✅ `harness/SWEBENCH_FEASIBILITY.md` · ✅ H-C Aider 可行性 · ✅ H-D：`HARNESS_COMPARE_MATRIX.html` + `CLINE_IMPROVEMENT_OPPORTUNITIES.md` · ✅ **H-D 报告：`CLINE_IMPROVEMENTS_TOP5.html`（新）** |
 
 ## 📊 进度快照（**每次唤醒必须更新**）
@@ -74,7 +74,7 @@ WAITING: 1
 ```
 PHASE:        H_D_done + TOP5_done
 已完成:       H-B 5 份源码分析 HTML；H-A §1.1 可行性核查；Docker socket 解锁；H-C Aider 可行性核查；H-D 对比矩阵 + 5 条机会点；CLINE_IMPROVEMENTS_TOP5.html（batch-3）
-当前动作:     2026-10-03 第二十轮：唤醒巡检 —— git fetch 无新提交、任务书运维指令区仍为 batch-3（已交付）、ops RUN_ID=8 为 ops 级 relay 清理（非本线），无待办推进项
+当前动作:     2026-10-03 第二十二轮：唤醒巡检 —— git fetch 至 8fd9b7f 无本线新提交、任务书运维指令区仍为 batch-3（已交付）、ops RUN_ID=8 为 ops 级 relay 清理（非本线），无待办推进项；补提交第二十一轮滚动改动
 下一步:       等运维拍板 H-A′ 三项（沙箱方案 / 参赛者范围 / go+rust 工具链）→ 再装 aider-chat + smoke 5-10 题
 阻塞:         H-A′ ① 执行 LLM 代码需沙箱（本地 sandbox 工具 absent，仅 unshare 可用但需 mount+chroot）② benchmark.py 只驱动 aider、另 5 参赛者需适配 ③ go/rustc/cargo 缺失 ④ 运行主机 .29 训练机
 ERROR_COUNT:  0
@@ -96,44 +96,8 @@ ERROR_COUNT:  0
 
 ## 流水
 
-- 2026-10-02 —— 运维创建 `BAIZE_HARNESS_TASK.md` + `baize_harness_loop.sh`，本文件初始化；待 ops 启动 loop。
-- 2026-10-02 —— **H-B（cline）源码分析完成**，交付 `harness/cline_SOURCE_ANALYSIS.html`。关键证据路径（供后续 harness 复用 / 巡检）：
-  - 压缩策略选择 `sdk/packages/core/src/extensions/context/compaction.ts:256/285/495/502`
-  - 预算常量 `sdk/packages/core/src/extensions/context/compaction-shared.ts:13-19/51-70`
-  - 请求组装 + prepareTurn 调用 `sdk/packages/agents/src/agent-runtime.ts:965-996/1381-1450`；溢出恢复 `:891-932`
-  - 无损投影 `sdk/packages/core/src/session/services/message-builder.ts:1-10/105-107`
-  - 检查点（git）`sdk/packages/core/src/hooks/checkpoint-hooks.ts:10/16-21`；sidecar schema/projection `sdk/packages/core/src/session/models/session-compaction.ts:25-34/161-190`；持久化守卫 `sdk/packages/core/src/runtime/host/local-runtime-host.ts:621/1297-1360`
-  - Hook 边界 `sdk/packages/shared/src/agent.ts:374-402/485`；插件能力面 `sdk/packages/shared/src/extensions/contribution-registry.ts:120-141`
-  - Focus Chain（已 stub）`apps/vscode/src/sdk/task-proxy.ts:144-145`；`apps/vscode/src/core/task/focus-chain/file-utils.ts`
-  - 旧 context-window-utils 已删（`git show 1f31738b3`）；PR #12747（compaction sidecar）`git log --grep=12747` 验证存在。
-  - ⚠️ 关键结论：任务书 5 条线基于**旧 vscode 架构名**（EditType/ContextUpdate/ContextPipeline/FocusChain），当前仓已 SDK 迁移，内核保留、形态迁移 —— 报告已逐线给「旧→新」对照。
-- 2026-10-02 —— **H-B（opencode）源码分析完成**，交付 `harness/opencode_SOURCE_ANALYSIS.html`（第二份）。
-- 2026-10-02 —— **H-B（deepseek-harness）源码分析完成**，交付 `harness/deepseek-harness_SOURCE_ANALYSIS.html`（第三份，368 行）。核心架构 = Cordis「everything-is-a-plugin」+ 事件溯源。关键证据路径：
-  - 投影：`packages/core/session/src/surface.ts:22-26/81-90/397/415/460`（SURFACE_EVENT_TYPES / deriveEventMessage / foldSurface / replacement not retained / _processDelta）
-  - 影子替换：`packages/compaction/compaction/src/types.ts:34-40`；`compaction-basic/src/region.ts:472-475`（surfaceOp:{replace}）
-  - 检查点：`packages/session/session-checkpoint-policy/src/index.ts:29-37/63-82`（flush fail-closed）
-  - Hook 桥：`packages/hooks/hook-protocol/src/types.ts:48/56/119/128-136`；`events.ts:76-102`
-  - Goal/Todo：`packages/goal/goal/src/domain.ts:14-22/66/71`；`packages/todo/tool-todo/src/types.ts:30-31`
-  - token：`packages/llm/token-meter/src/estimate.ts:12-19`（CHARS_PER_TOKEN=4）；`compaction-basic/src/config.ts:18-22/133`（DEFAULT_THRESHOLD_RATIO=0.8 / resolveCompactSpec）
-  - 触发：`compaction-basic/src/index.ts:148-166/180-195`（agent/pre-step pressure + agent/request-error context-overflow）
-  - ⚠️ 关键结论：deepseek 用**事件溯源 + surface 投影（影子替换）**，非 cline 的「编辑 map」也非 opencode 的「SQL 截断」；「重放即回滚」；压缩以插件形态实现但被 bundle 进每个 profile，压缩策略不开放给第三方生态。
-- 2026-10-02 —— **H-B（codex）源码分析完成**，交付 `harness/codex_SOURCE_ANALYSIS.html`（第四份）。Rust workspace，核心机制 = **WorldState 投影（snapshot/render_diff）** + AutoCompactWindow sidecar + Rollout append-only 流。
-- 2026-10-02 —— **H-B（claude-code）源码分析完成**，交付 `harness/claude-code_SOURCE_ANALYSIS.html`（第五份，最后一份，354 行 / 35.5KB）。⚠️ **这是 Anthropic Claude Code CLI 的「泄漏源码」**（README 自述 *Leaked Source 2026-03-31*，经 npm `.map` 泄出），**不完整**（SnipTool 是 stub、`snipProjection.js` 缺失、QueryEngine.ts 实测仅 1,295 行/46KB 而非 README 所写 "~46K lines"）。核心证据路径（源根 `/nas_train/app.e0031982/harness/claude-code/src/`）：
-  - 注入：`context.ts:116` getSystemContext / `:155` getUserContext（均 memoize）；装配 `screens/REPL.tsx:2535` Promise.all；系统提示 `constants/prompts.ts:444` getSystemPrompt；投影终点 `utils/messages.ts:1989` normalizeMessagesForAPI
-  - 检查点：boundary 标记 `utils/messages.ts:4530-4555`（SystemCompactBoundaryMessage + logicalParentUuid）；切片 `:4643` getMessagesAfterCompactBoundary；跳过阈值 `sessionStoragePortable.ts:480` SKIP_PRECOMPACT_THRESHOLD=5MB；压缩结果顺序 `services/compact/compact.ts:330-338`
-  - Hook：`entrypoints/sdk/coreTypes.ts:25-53` HOOK_EVENTS=27 个（**含 PreCompact/PostCompact**）；`schemas/hooks.ts:32-65` 4 形态（command/prompt/http/agent）
-  - 任务解耦：TodoWrite `tools/TodoWriteTool/TodoWriteTool.ts:65-94`；Todo V2 落盘 `utils/tasks.ts:199/221`；Session Memory `services/SessionMemory/sessionMemory.ts:1-6`；auto-memory `services/extractMemories/extractMemories.ts:1-6`
-  - token/模型：窗口 `utils/context.ts:9`（默认 200_000）/:51 getContextWindowForModel；计数 `tokens.ts:226` tokenCountWithEstimation（usage 回执 + 粗略）；粗略估 `tokenEstimation.ts:203`（默认 **4 字符/token**，JSON 修正=2）；阈值/熔断 `services/compact/autoCompact.ts:28-70`（20k 摘要预留 + 13k 缓冲 + 连败 3 熔断）
-  - ⚠️ 关键结论：claude-code 的检查点模型 = **append-only JSONL transcript + in-band boundary 消息（切片投影）**，非 cline 的 EditMap / deepseek 的事件溯源 / codex 的 WorldState Diff；Hook 是四 harness 里最细（27 事件×4 形态×if），但压缩引擎本身**核心硬编码**（PreCompact 只能加指令、不能替换总结）。**H-B 至此 5/5 harness 全部完成。**
-- 2026-10-02 —— **H-A §1.1 可行性核查完成**，交付 `harness/SWEBENCH_FEASIBILITY.md`。关键结论（命令+输出均在报告内）：
-  - **更正 RUN_ID 5 的「docker 不可用」**：守护进程 `active`、CLI 存在，实为**权限问题**（`app.e0031982` 不在 docker 组、socket `root:docker 0640`、无 sudo）。解除 = `usermod -aG docker app.e0031982`。
-  - 依赖源：官方 pypi 000，**内网 aliyun 镜像 200**（`pip config list` → `mirrors.aliyun.com/pypi`）。
-  - 模型：**内网网关 `agi-gateway.cxmt.com/v1` → `deepseek-v4-flash`（reasoning 模型，vllm-0.28.0-tp8-ep）**，最小调用 HTTP 200；⚠️ reasoning 模型 `max_tokens` 小时 `content:null` 走 `reasoning` 字段。
-  - 数据集：HF 200、`datasets==4.8.4` 已装、SWE-bench_Lite/test=300 已拉取（django 114 / sympy 77 / matplotlib 23 / sklearn 23 / pytest 17 / sphinx 16）。
-  - Docker 仓库：registry-1.docker.io=401（可达需鉴权）、ghcr.io=000、daemon.json **无 registry-mirrors**。
-  - sb-cli 云：api.swebench.com=000 不可达 + 合规红线 → **排除**。
-  - 主机：我方在 `.29`（pretrain 训练机）→ H-A 实跑重 I/O 与训练冲突，须运维指定仓位。
-  - **判定**：Route E′（无 docker）技术可行；待运维拍板 ①Docker 权限（usermod 或走 E′）②运行主机。**未获确认前不启动实跑**。
+> 📦 2026-10-02 的 7 条流水条目（H-B 5 份源码分析 + H-A §1.1 可行性核查的关键证据路径 `文件:行号`）已于第二十一轮滚动归档至 `daily-memories-harness/2026-10-02.md`「从 MEMORY_HARNESS.md 滚动归档」节（原文不改）。
+
 - 2026-10-03 00:57 —— **唤醒巡检（非推进）**：重读 `BAIZE_HARNESS_TASK.md` 运维指令区 —— 仍为原始「2026-10-02 首启」指令，**无新决策 / 无 STOP / 无状态索取**。确认 H-A §1.1 两处阻塞（Docker 权限 · 运行主机）**未解除**。遵守「先报预算再跑」「重 I/O 避让训练」铁律，**不启动 H-A 实跑**，保持 `WAITING=1`。本线当前无待办推进项（H-B 5/5、H-A 核查 done），静待运维拍板。
 - 2026-10-03 03:36 —— **唤醒巡检（非推进）**：`git fetch` → HEAD==origin/main==`7e5a8e8`（远端无本线相关新提交）；任务书「运维指令区」仍是原始「2026-10-02 首启」两条线指令，无新决策/无 STOP/无状态索取；`ops/.last_run_id` = `ops/inbox.md` RUN_ID = 6（无新下发）。H-A §1.1 两处阻塞（①Docker 权限 usermod 或走 Route E′ ②运行主机 .29 是训练机）**仍未获运维拍板** → 不启动 H-A 实跑、不做重 I/O，保持 `WAITING=1`。本线无待办推进项，静待运维。
 - 2026-10-03 04:08 —— **唤醒巡检（非推进，第七轮）**：`git fetch` → HEAD==origin/main==`a77db26`（远端推进的是 pretrain `a77db26` P-5b 巡检第26次 与本线 harness auto-commit `093556a`，均与本线任务书无关；`git log -- BAIZE_HARNESS_TASK.md` 最近仍是 10-02 的 `a821eba`/`3d03a4b`/`d57763a`）。任务书「运维指令区」仍为原始「2026-10-02 首启」两条线指令，无新决策/无 STOP/无状态索取；`ops/.last_run_id` = `ops/inbox.md` RUN_ID = 6（无新下发）；`ops_relay.sh` 单副本（pid `2489749`）。H-A §1.1 两处阻塞（①Docker 权限 usermod 或走 Route E′ ②运行主机 .29 是训练机）**仍未获运维拍板** → 不启动 H-A 实跑、不做重 I/O，保持 `WAITING=1`。本线无待办推进项，静待运维。
@@ -149,5 +113,7 @@ ERROR_COUNT:  0
 - 2026-10-03 11:07 —— **第十六轮：执行运维指令 2026-10-03 第 2 批（`80729fd`：H-A′ + H-D）**。① **H-D 交付**：`harness/HARNESS_COMPARE_MATRIX.html`（D1 对比矩阵：5 harness × 5 主线，含压缩策略/投影/检查点粒度/hook 边界/降级触发子项）+ `harness/CLINE_IMPROVEMENT_OPPORTUNITIES.md`（D2 五条机会点 O1–O5，每条四段式〔①其它 harness 做法→②cline 现状→③差距→④建议+收益+风险+优先级，均贴 `路径:行号` 原文〕，类别 = O1/O3/O5 可直接借鉴、O2/O4 需架构改动）。核心证据本轮回读 cline/shared/agent.ts:374-402/485、message-builder.ts:105-107、compaction-shared.ts:13-15/61-69、tokens.ts:8、task-proxy.ts:144（Focus Chain 已移除）、compaction.ts:251-254（Telemetry 盲区）；对照 claude-code coreTypes.ts:25-53（27 hook 含 PreCompact/PostCompact）、TodoWriteTool.ts:65-94、sessionMemory.ts:1-6、extractMemories.ts:1-10、tokens.ts:226；deepseek estimate.ts:12-19、surface.ts:22-26；codex auto_compact_window.rs:24-30、compact_model_fallback.rs:9-20。② **H-A′ 前置核查（未实跑）**：aider `benchmark/README.md:22-27` 自证「executing LLM code without human review → 可能 `sudo rm -rf /`」+ `benchmark.py:1027` `subprocess.run`；**新发现** `unshare` 可用（`unshare --user --map-root-user true`=OK），但仅 user ns 不足以防 NFS 破坏、需 mount+chroot 全量沙箱；工具链 `go/rustc/cargo` 缺失（仅 python/node/javac/g++）；`benchmark.py` 只原生驱动 aider、另 5 参赛者需适配；`aider-chat` 未装。→ **H-A′ 实跑待运维拍板三项**：沙箱方案（自建 unshare 沙箱 / root 装 bwrap / 授权直跑〔不推荐〕）、参赛者范围（先 aider 基线 or 6 者全适配）、go+rust 补装。保持 `WAITING=1`。③ HEAD==origin/main==`a96ef20c`（batch-2 `80729fd` 是最近一次任务书改动），ops/inbox RUN_ID=7（只读诊断，非本线下发）。
 - 2026-10-03 12:15 —— **第十八轮（唤醒巡检，无新指令）**：`git fetch` → HEAD==origin/main==`a95503b`（`47f1f17 harness: deliver CLINE_IMPROVEMENTS_TOP5.html` 已在远端，batch-3 已交付并入库，工作树 clean）。`git log origin/main -- BAIZE_HARNESS_TASK.md` 最近仍是 `7e0b168`（batch-3），无 batch-4 / 无 STOP / 无状态索取；`ops/.last_run_id` = `ops/inbox.md` RUN_ID = 8（内容为 ops 级「清 ops_relay 重复副本」fail-safe，**非本线下发**）；`ops_relay.sh` 单副本（pid `2489749`，ppid=1，真守护）。结论：H-A′ 实跑三项（沙箱方案 / 参赛者范围 / go+rust 工具链）**仍待运维拍板**，无待办推进项，不启动任何实跑、不做重 I/O，保持 `WAITING=1`。MEMORY_HARNESS.md 29.5KB（未超 32KB，无需滚动）。
 - 2026-10-03 13:19 —— **第二十轮（唤醒巡检，无新指令）**：`git fetch` → HEAD==origin/main==`bb80e5c`（远端推进为 vision R11-L / personal-watch / data 唤醒61 / pretrain P-5b 巡检 等，均与本线任务书无关；`git log origin/main -- BAIZE_HARNESS_TASK.md` 最近仍是 `7e0b168` batch-3，**已交付**）。任务书「运维指令区」无 batch-4 / 无 STOP / 无状态索取；`ops/.last_run_id` = `ops/inbox.md` RUN_ID = 8（ops 级「清 ops_relay 副本」fail-safe，**非本线下发**）；`ops_relay.sh` 单副本（pid `2489749`，ppid=1，真守护）。结论：batch-3 `CLINE_IMPROVEMENTS_TOP5.html` 已交付入库、工作树 clean；H-A′ 实跑三项（沙箱方案 / 参赛者范围 / go+rust 工具链）**仍待运维拍板**，无待办推进项，不启动实跑、不做重 I/O，保持 `WAITING=1`。MEMORY_HARNESS.md 31053B（未超 32KB，无需滚动）。
+- 2026-10-03 13:50 —— **第二十一轮（唤醒巡检，无新指令）**：`git fetch` → HEAD==origin/main==`f312c64`（远端无本线相关新提交；`git log origin/main -- BAIZE_HARNESS_TASK.md` 最近仍是 `7e0b168` batch-3，**已交付**）。任务书「运维指令区」无 batch-4 / 无 STOP / 无状态索取；`ops/.last_run_id` = `ops/inbox.md` RUN_ID = 8（ops 级「清 ops_relay 副本」fail-safe，**非本线下发**）。结论：batch-3 `CLINE_IMPROVEMENTS_TOP5.html` 已交付入库、工作树 clean（仅 data 线的 MEMORY_DATA.md / daily-memories-data 有未提交改动，非本线，不触碰）；H-A′ 实跑三项（沙箱方案 / 参赛者范围 / go+rust 工具链）**仍待运维拍板**，无待办推进项，不启动实跑、不做重 I/O，保持 `WAITING=1`。⚠️ 已滚动 2026-10-02 流水 38 行至 `daily-memories-harness/2026-10-02.md`，MEMORY_HARNESS.md 降至 25KB（<32KB）。
 - 2026-10-03 12:47 —— **第十九轮（唤醒巡检，无新指令）**：`git fetch` → HEAD==origin/main==`604f415`（远端推进的是 data `604f415` 唤醒60 下载巡检、pretrain `719de41` P-5b 健康巡检#39、vision `6a58e5b` R10-3 prep 等，均与本线任务书无关；`git log origin/main -- BAIZE_HARNESS_TASK.md` 最近仍是 `7e0b168` batch-3，**已交付**）。任务书「运维指令区」无 batch-4 / 无 STOP / 无状态索取；`ops/.last_run_id` = `ops/inbox.md` RUN_ID = 8（ops 级「清 ops_relay 副本」fail-safe，**非本线下发**）；`ops_relay.sh` 单副本（pid `2489749`，ppid=1，真守护）。结论：batch-3 `CLINE_IMPROVEMENTS_TOP5.html` 已交付入库、工作树 clean；H-A′ 实跑三项（沙箱方案 / 参赛者范围 / go+rust 工具链）**仍待运维拍板**，无待办推进项，不启动实跑、不做重 I/O，保持 `WAITING=1`。MEMORY_HARNESS.md 未超 32KB。
 
+- 2026-10-03 14:23 —— **第二十二轮（唤醒巡检，无新指令）**：`git fetch` → HEAD==origin/main==`8fd9b7f`（远端推进的是 vision R11-L ``8fd9b7f``、pretrain P-5b#42 `9e6a5c2`、personal-watch/news 派活第3~6批、data 唤醒62，**均与本线任务书无关**；`git log origin/main -- BAIZE_HARNESS_TASK.md` 最近仍是 `7e0b168` batch-3，**已交付**）。任务书「运维指令区」无 batch-4 / 无 STOP / 无状态索取；`ops/.last_run_id` = `ops/inbox.md` RUN_ID = 8（ops 级「清 ops_relay 副本」fail-safe，**非本线下发**）；`ops_relay.sh` 单副本（pid `2489749`，ppid=1，真守护）。⚠️ **发现第二十一轮的滚动改动当时未提交**（`git status` 见 `MEMORY_HARNESS.md` + `daily-memories-harness/2026-10-02.md` + `2026-10-03.md` 三文件 modified）→ 本轮补提交并新增本条目。结论：batch-3 `CLINE_IMPROVEMENTS_TOP5.html` 已交付入库；H-A′ 实跑三项（沙箱方案 / 参赛者范围 / go+rust 工具链）**仍待运维拍板**，无待办推进项，不启动实跑、不做重 I/O，保持 `WAITING=1`。MEMORY_HARNESS.md 26302B（未超 32KB，无需滚动）。
