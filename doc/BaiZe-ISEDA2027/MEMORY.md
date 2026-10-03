@@ -51,10 +51,10 @@ WAITING: 0
 | **data** | 下载巡检 + **D-CLEAN-2**（已批删除 ≈8.6T）+ `servers` 探查 | `run/DISK_CLEANUP_INVENTORY.md` 更新 | 🔄 |
 | **harness** | **H-A′ Aider Polyglot 横评** + **H-D** 5-harness 对比与 cline 机会点 | `run/harness/AIDER_POLYGLOT_COMPARE.html` · `HARNESS_COMPARE_MATRIX.html` · `CLINE_IMPROVEMENT_OPPORTUNITIES.md` | 🔄 |
 
-> ⚠️ **待运维决策（vision 叙事，可能比 loss 调优更关键）**：R9 的 **25.1% 是「从零训练」的上限**；
-> 而已核实 **AIMv2-L(0.3B) 冻结 trunk = 87.6% IN-1k / LiT zero-shot = 77.0%**、**OpenVision 官方权重**也开源 →
-> **加载现成权重可立刻进入 80%+ 区间**。→ 需用户定：**Stage(iii) 要保持「从零训练」叙事，还是允许「选型 + 微调/评估现成编码器」**。
-> （R9 自己已把这两条列为逃逸路线 ①③。）
+> ✅ **vision 叙事已决（2026-10-03 用户）：走 A = 保持「从零训练」**（"A 本身也是为了学习"）。
+> → R9 的 **~25.1% 渐近 = 从零路线的如实上限**（负结果有价值）；**loss 轴 R11 = 主线**；**架构轴非主要杠杆**。
+> → 登记 **R12（候选）**：仅补 **iGVLM 式指令条件化**（TuringViT 低优先 —— attention 仅占 0.7%）；**须先报"值不值得"再批**。
+> → 参考 **`run/VISION_ARCH_FRONTIER_2026.md`**（前沿 5 方向 vs 我们 R8 已测 4 个的逐项对照）。
 
 ---
 
