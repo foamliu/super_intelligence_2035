@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 16 -->
+<!-- RUN_ID: 17 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,14 +31,52 @@
 
 ---
 
-## RUN_ID 16 — 🩺 **复工确认：两条线是否真在产出**（**纯只读**）（**本块最新，优先执行**）
+## RUN_ID 17 — 🔎 **harness 日志里的 16 次 `Forbidden` 是 loop 自身还是 agent 内部嵌套调用？**（**纯只读**）（**本块最新，优先执行**）
+
+**RUN_ID 16 复查（2026-10-04 07:36:21）**：
+- ✅ **pretrain 完全正常**：`Forbidden=0`；日志显示 **"P-5b completion recorded in report, P-9.1 running"**；**GPU 8 卡已重新忙起来**（22–84% util / ~39GB）→ 不再是空转
+- ✅ harness loop + 一个 `bun cline` **正跑在 `harness_work/workdirs/django__django-…` 里**（= 步3 真实端到端）
+- ⚠️ **harness 日志 `Forbidden=16`（修复后新日志）** → 本块判定其性质：
+  - **(A) loop 自身调用失败** → 说明修复没兜住，必须再修
+  - **(B) agent 自己嵌套调 cline**（如 `run_harness.py` 的 `ClineDriver` 用 `os.environ["OPENAI_API_KEY"]`，而我把该变量 unset 了 → 传空 key → 403）→ 属**我引入的副作用**，需把"unset"改成"**设为有效 key**"
+
+🚫 **纯只读**。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+echo; echo "=== 1. harness 日志 Forbidden 上下文（前 3 处，看是否紧跟 [loop] wake up）==="
+grep -n -B4 -A2 'Forbidden' /tmp/baize_harness_loop.log 2>/dev/null | head -34 | cut -c1-165
+
+echo; echo "=== 2. harness 最近的 [loop] 行（应只有重启后的 1 次 wake up）==="
+grep -n '\[loop\]' /tmp/baize_harness_loop.log 2>/dev/null | tail -8 | cut -c1-140
+echo "-- Forbidden 计数（同一次运行内）--"; grep -c Forbidden /tmp/baize_harness_loop.log 2>/dev/null
+
+echo; echo "=== 3. pretrain 对照（应为 0）==="
+grep -c Forbidden /tmp/baize_pretrain_loop.log 2>/dev/null
+
+echo; echo "=== 4. GPU 上跑的是什么 + 进程 ==="
+nvidia-smi --query-compute-apps=pid,used_memory --format=csv,noheader 2>/dev/null | head -10 | cut -c1-80
+ps -eo pid=,etimes=,args= 2>/dev/null | grep -E 'torchrun|pretrain_launcher' | grep -v grep | cut -c1-120
+
+echo; echo "=== 5. harness 的 driver 代码里怎么取 key（举证）==="
+grep -n 'OPENAI_API_KEY\|"-k"\|api_key' /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/run_harness.py 2>/dev/null | head -8 | cut -c1-150
+
+echo; echo "=== 6. pretrain 是否已回写 MEMORY ==="
+ls -l --time-style=+%m-%d_%H:%M /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md 2>/dev/null | cut -c1-110
+
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 16**（复工复查，**✅ 已执行 07:36:21**）为 ```text。
+
+## RUN_ID 16 — 🩺 **复工确认：两条线是否真在产出**（✅ 已执行，本块不再运行）
 
 **RUN_ID 15 修复已执行（2026-10-04 07:29:03）**：`.29` 换上新 key + 两条 loop 已重启 → `Forbidden=0` ✅。
 **本块在 ~7 分钟后复查**：① 进程/会话是否仍在 ② **`Forbidden` 是否仍为 0**（防复发）③ 两线产物 mtime 是否在动 ④ GPU 状态。
 
 🚫 **纯只读**。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
 
