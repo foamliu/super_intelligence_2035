@@ -28,7 +28,7 @@
 | 节 | 内容 |
 |:--|:--|
 | **P-9.1** | MBS 扫描（问题①） |
-| **P-9.2** | 其它可变参数扫描（A–G） |
+| **P-9.2** | 其它可变参数扫描（**仅已暴露开关** A–D） |
 | **P-9.3** | seq 多点扫描 + 预注册预测/判据 |
 | **P-9.4** | FP8 复评（⚠️ **按 M 扫**，问题②） |
 | **P-9.5** | profiling / 瓶颈诊断（问题③） |
@@ -40,18 +40,26 @@
 - `MBS ∈ {1,2,4,8}` × **短测 ~60 步**（bf16、不存 ckpt）@ `seq=4096 / GBS=1024`；记 **s/iter、tok/s、峰值显存、是否 OOM**。
 - 产出：`MBS → 吞吐/显存` 表 + **最大可行 MBS**。
 
-#### P-9.2 其它可变参数扫描（🚫 不要只试 MBS）
-> 每次**只动一个变量**（短测 ~50–100 步，bf16，记 s/iter + 峰值显存 + tok/s）；**全程维持 4M/步**。**以本仓 `--help` 实际存在的 flag 为准**；不存在则记明「本仓无此 flag」。
+#### P-9.2 其它可变参数扫描 —— **只用「已暴露的开关」**（⏱ 运维 2026-10-03 定）
 
-| 类 | 变量 | 试什么 | 预期作用 |
+> 🚩 **前置事实（agent 的 P-9 非 GPU 预研已查明，2026-10-03 #37）**：
+> **`launcher` 只暴露 `--micro-batch-size` / `--tensor-parallel` / `--sequence-parallel` / `--seq-length` / `--precision`**（+ 口径项 `--global-batch-size` / `--train-iters`）。
+> 👉 **P-9 只用这些**；**🚫 不改 `recipe`**。每次**只动一个变量**（短测 ~50–100 步，bf16，记 **s/iter + 峰值显存 + tok/s**）；**全程维持 4M/步**。
+
+| 类 | 变量（**已暴露**） | 试什么 | 预期作用 |
 |:--|:--|:--|:--|
-| **A** | `--micro-batch-size`（=P-9.1） | 1→2/4/8 | 减 128 段累积 + 抬高 M |
-| **B** | `--recompute-activations` / `--recompute-granularity {full,selective}` | 关 / selective / full | 显存有余 → 换速度 |
-| **C** | `--use-distributed-optimizer` · `--overlap-grad-reduce` · `--overlap-param-gather` | on/off | **隐藏 NCCL —— P-4 profile 里占 41.7%，是最大单项** |
-| **D** | `--tensor-parallel`(1/2) × `--sequence-parallel` | TP1·DP8 vs TP2·DP4；SP on/off | 改每卡形状/通信 |
-| **E** | `--num-workers` · `--dataloader-type` · `--num-dataset-builder-threads` | 提高 worker | 若 input-bound（GPU 等数据）则显著 |
-| **F** | `--attention-backend` 等 | 按实际 flag | 减 elementwise/scan 开销 |
-| **G** | `--seq-length`（见 **P-9.3**） | — | 长上下文档价 |
+| **A** | `--micro-batch-size`（= **P-9.1**） | 1→2/4/8 | 减 128 段累积 + **抬高 M（FP8 的 M）** |
+| **B** | `--tensor-parallel` × `--sequence-parallel` | TP1·DP8 vs TP2·DP4；SP on/off | 改每卡形状 / 通信 |
+| **C** | `--seq-length`（→ **P-9.3** 多点扫描） | 2048 / 4096 / 8192 / 16384（**GBS 同步**） | 长上下文档价 |
+| **D** | `--precision`（→ **P-9.4** FP8 复评） | bf16 vs fp8 | 精度轴 |
+
+**🚫 本阶段不做（需改 `recipe` → 已冻结）**：
+`--recompute-*` · `--overlap-grad-reduce` / `--overlap-param-gather` / `--use-distributed-optimizer` · `--num-workers` / `--dataloader-type` · `--attention-backend`。
+
+> 📌 **记录在案（不在 P-9 内做）**：其中 **通信重叠类** 理论收益最大 —— P-4 profile 显示 **NCCL 占 GPU 自耗时 41.7%（最大单项）**。若 **P-9d 的 profiling 证实它仍是瓶颈** → **另开任务、经运维批准后再改 recipe**。
+
+- 🚫 **不要一次改多个**（否则无法归因）；**不改 P-5b**；每条结论**贴 flag + 命令 + s/iter 原始输出**。
+- **产出**：`变量 → Δ吞吐 / Δ显存` 表 + **推荐给 P-8 的配置（仅在已暴露开关内）**，与 P-9d 瓶颈诊断交叉印证。
 
 #### P-9.3 seq 多点扫描（G 项扩展）— 保持 4M/步
 > 运维洞察：hybrid 几乎关掉了「注意力随上下文爆炸」→ 值得多扫几个 seq。
