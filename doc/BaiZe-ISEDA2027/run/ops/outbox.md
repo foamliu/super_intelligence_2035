@@ -1998,3 +1998,75 @@ TypeError: unsupported operand type(s) for +: 'PosixPath' and 'str'
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 14 · 2026-10-04 07:26:02 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T %Z'
+C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; GW=http://agi-gateway.cxmt.com/v1; cd /tmp
+
+echo; echo "=== 1. 取三个 key（只显示 len + prefix6）==="
+K12=$(timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'python3 -c "import json,pathlib;print(json.load(open(str(pathlib.Path.home())+\"/.cline/data/secrets.json\"))[\"openAiApiKey\"])"' 2>/dev/null | tr -d '\r\n')
+K29S=$(python3 -c "import json,pathlib;print(json.load(open(str(pathlib.Path.home())+'/.cline/data/secrets.json'))['openAiApiKey'])" 2>/dev/null | tr -d '\r\n')
+K29E="${OPENAI_API_KEY:-}"
+for kv in ".12 secrets:$K12" ".29 secrets:$K29S" ".29 env:$K29E"; do
+  n="${kv%%:*}"; k="${kv#*:}"
+  printf '   %-12s len=%-4s prefix6=%s\n' "$n" "${#k}" "${k:0:6}"
+done
+echo "   .29 secrets == .12 secrets ?  $([ "$K29S" = "$K12" ] && echo YES || echo NO)"
+
+echo; echo "=== 2. 三个 key 分别打 chat/completions ==="
+for kv in "env:$K29E" "sec29:$K29S" "sec12:$K12"; do
+  n="${kv%%:*}"; k="${kv#*:}"
+  code=$(timeout 20 curl -s -o /tmp/_cc.json -w '%{http_code}' -H "Authorization: Bearer $k" -H 'Content-Type: application/json' \
+    -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"hi"}],"max_tokens":3}' "$GW/chat/completions")
+  printf '   %-7s -> %s   ' "$n" "$code"; head -c 120 /tmp/_cc.json | tr -d '\n'; echo
+done
+
+echo; echo "=== 3. 用【.12 的 key】跑 cline smoke（仿 .12 环境）==="
+env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
+  timeout 90 "$C" -c /tmp -m "$M" -k "$K12" --auto-approve true -t 45 "reply with exactly OK" 2>&1 | head -6 | cut -c1-170
+
+echo; echo "=== 4. [.12] globalState 对照（修正版）==="
+timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'python3 -c "import json,pathlib;d=json.load(open(str(pathlib.Path.home())+\"/.cline/data/globalState.json\"));[print(\"   \",k,\"=\",repr(d.get(k))) for k in (\"actModeApiProvider\",\"planModeApiProvider\",\"actModeOpenAiModelId\",\"planModeOpenAiModelId\",\"openAiBaseUrl\")]"' 2>&1 | cut -c1-180
+
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 07:26:02 CST
+
+=== 1. 取三个 key（只显示 len + prefix6）===
+   .12 secrets  len=72   prefix6=02_088
+   .29 secrets  len=72   prefix6=02_088
+   .29 env      len=45   prefix6=01_549
+   .29 secrets == .12 secrets ?  NO
+
+=== 2. 三个 key 分别打 chat/completions ===
+   env     -> 403   
+   sec29   -> 403   
+   sec12   -> 200   {"id":"202610040726059127c1d8065c4d2a","object":"chat.completion","created":1791069964,"model":"deepseek-v4-pro-260813",
+
+=== 3. 用【.12 的 key】跑 cline smoke（仿 .12 环境）===
+OK
+Warning: AI SDK Warning System: To turn off warning logging, set the AI_SDK_LOG_WARNINGS global to false.
+      at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+      at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:626:5)
+      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+
+
+=== 4. [.12] globalState 对照（修正版）===
+    actModeApiProvider = 'openai'
+    planModeApiProvider = 'openai'
+    actModeOpenAiModelId = 'deepseek-v4-pro-fp4'
+    planModeOpenAiModelId = 'deepseek-v4-pro-fp4'
+    openAiBaseUrl = 'http://agi-gateway.cxmt.com/v1'
+
+=== DONE ===
+```
