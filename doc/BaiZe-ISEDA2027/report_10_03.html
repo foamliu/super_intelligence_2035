@@ -356,7 +356,9 @@
      ✅ 工具（<code>nsys</code>/<code>ncu</code>）<b>需要就自己装</b>（运维已授权）；装不上回落 <code>torch.profiler</code>。</p>
   <p><b>2026-10-03 追加</b>：P-9 <b>尽早跑（严格早于 P-6②）</b>；除 MBS 外新增 <b>P-9a-ext</b> 可变参数扫描（重计算 / 通信重叠 / 并行切分 / 数据加载 / 注意力内核 / 上下文）。</p>
   <p><b>🔎 已有实测证据（P-4 profile，80 步 torch.profiler）</b>：<code>attention flash</code> 仅占 GPU 自耗时 <b>0.7%</b>（SSM 8.4% / GEMM ~28.6% / NCCL 41.7% / norm+act 10.5%）→ seq 翻倍使注意力项 ~×4，最坏 <b>0.7%→~2.8%（+~2pp）</b>；其余按 token 计价、与 seq 无关。<br>
-     <b>预注册预测</b>：<code>r = t_step(8192)/t_step(4096)</code> 应落在 <b>1.05–1.20</b>（若为纯 Transformer 会是 <b>2–4×</b>）；<b>判据</b> <code>r≤1.2</code> → 8192 作 P-8 候选，<code>r≥1.5</code> → 沿用 4096。</p>
+     <b>预注册预测</b>：<code>r = t_step(8192)/t_step(4096)</code> 应落在 <b>1.05–1.20</b>（若为纯 Transformer 会是 <b>2–4×</b>）；<b>判据</b> <code>r≤1.2</code> → 8192 作 P-8 候选，<code>r≥1.5</code> → 沿用 4096。<br>
+     <b>seq 多点扫描</b>（保持 4M/步）：<code>seq ∈ {2048, 4096, 8192, 16384}</code> → <code>GBS ∈ {2048, 1024, 512, 256}</code>；<b>16384 是 O(n²) 首次冒头的边界点</b>（注意力 ~11%，显存 ~4×，可能 OOM）。<br>
+     ⚠️ <b>FP8 按 <code>M = MBS × seq</code> 扫，不按 seq 扫</b>（<code>seq4096+MBS4</code> 与 <code>seq8192+MBS2</code> 命中同一 M=16384）→ 扩 P-4R 的 <code>s(M)</code> 曲线到 M∈{4K,8K,16K,32K,64K}。</p>
 </div>
 
 <h3>10.2 MEMORY 是否该卡最大尺寸？— <span class="badge b-warn">该卡，且已下发</span></h3>
