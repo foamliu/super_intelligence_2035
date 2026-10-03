@@ -64,7 +64,8 @@ WAITING: 0
 - [ ] **D-CLEAN-2 实际回收量** + **`servers`(974G, `/nas_train/app.e0031982/servers`) 是什么** → 用户定夺。
 - [ ] **harness 运行主机**（`docker pull` 不通后是否需本地镜像 / 专用仓位）。
 - [ ] **GPIC 已下部分的「唯一对」是否 > 18.5M**（R11-D；**按 GPIC 采样外推：GPIC 全量 ≈86M ≈0.1B**；**11:00 实测 tar 已 1198/8000 ≈12.7M 对**）。
-- [ ] 🔴 **cline Token 额度**（4 线共用同一模型）：实测已出现「本次Token额度已用完」→ 是否**提高额度 / 错峰 / 调大 `SLEEP_WAIT`**？否则各线会持续"静默变慢"。
+- [ ] ⛔ **loop 优化：暂不做（用户 2026-10-03 决定）** —— `SLEEP_WAIT 1800→3600` 与「训练未完成就跳过 cline 调用」的前置检查，**都需在公司重启 loop**（假期内做不了），且 1800→3600 **会让反应变慢**。→ **待回公司后择机**。
+- [ ] 🆕 **agent key 是「项目级共用 + 5h 滑动窗口」**（用户 2026-10-03 说明）→ 我们只能**降低自身消耗**；已做**任务书瘦身**（见 §6 备注）。
 - [ ] ⚠️ **`ops_relay.sh` 又出现 2 副本**（`.29` 上 `2489749` + `2315903`）→ 需要清理（保留 etimes 最大者）。
 - [ ] ❌ **`laion2B-en-aesthetic` 仍是 `STILL EXISTS`** → D-CLEAN-2 的删除**尚未执行/未完成**（data 在 `.12`，本机看不到其日志）。
 - [ ] 🚩 **R9 的「本地 53M 上限」是 `r9_scaling.py` 的假设常量（default=53），非实测** → 按 GPIC 采样应为 **≈103M**；**必须用真实 cap 重算所有 "×N 缺口"**（已在 vision 任务书下达「口径修正」）。
@@ -98,6 +99,11 @@ WAITING: 0
 - **FP8 机制**：`s` 取决于 **GEMM 的 M**，大 GEMM `M = MBS × seq`；**`M≳16K` 才 `s>1`**（seq 与 MBS 是等价杠杆）。
 - **vision 现状**：R9 lp 渐近 **25.1%**（当前路线 = **OpenVision2 w512 + CC12M+Amshaker + 冻结CLIP文本塔 + InfoNCE**；⚠️ **不是 GPIC**）；`attention flash` 仅占 GPU 自耗 **0.7%**（P-4 profile）。
 - **磁盘**：`/nas_train` 207T/剩 ~31T（86%）· `/nas_inference` 剩 20T · `/nas_user` 剩 29T。
+- 🪶 **任务书瘦身（2026-10-03，为省 agent key 的 token）**：loop 是 `prompt="$(< TASK_MD)"` → **任务书全文 = 每次唤醒的 prompt**。
+  已把**已完成轮次**移出 prompt：**vision 92.5→11.7KB** · **pretrain 57.1→32.9KB** · **data 60.1→42KB**
+  （归档：`run/vision/ARCHIVE_ROUNDS_2-9.md` · `run/ARCHIVE_PRETRAIN_ROUND1_AND_DONE_R2.md` · `run/ARCHIVE_DATA_R_AND_R2_RESEARCH.md`）。
+  → **4 份活跃任务书 237.2 → 114.1 KB（-52%）**，每次全唤醒省 ≈**41K prompt token**。
+  ⚠️ 归档文件**不进 prompt**；agent **需要时才去读**（已在各任务书里写明指引）。
 - **本机（Windows 侧）**：`C:\Users\liuyu\super_intelligence_2035`（git clone）；**可 fetch/pull/push GitHub**；**不能直连 `.12`/`.29`**（SSH 超时）——**通道就是 git**。
 
 ---
