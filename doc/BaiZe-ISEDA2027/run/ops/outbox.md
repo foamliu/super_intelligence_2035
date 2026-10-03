@@ -1925,3 +1925,76 @@ whag0pgpuap12
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 13 · 2026-10-04 07:23:45 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T %Z'
+C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; cd /tmp
+
+echo; echo "=== 1. [.29] globalState.json 关键字段（无 key）==="
+python3 -c "import json,pathlib;d=json.load(open(pathlib.Path.home()/'.cline/data/globalState.json'));[print('   ',k,'=',repr(d.get(k))) for k in ('actModeApiProvider','planModeApiProvider','actModeOpenAiModelId','planModeOpenAiModelId','openAiBaseUrl')]" 2>&1 | cut -c1-180
+
+echo; echo "=== 2. [.12] 同样字段（对照）==="
+timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'echo "   HOME=$HOME"; hostname; python3 -c "import json,pathlib;d=json.load(open(pathlib.Path.home()+\"/.cline/data/globalState.json\"));[print(\"   \",k,\"=\",repr(d.get(k))) for k in (\"actModeApiProvider\",\"planModeApiProvider\",\"actModeOpenAiModelId\",\"planModeOpenAiModelId\",\"openAiBaseUrl\")]"' 2>&1 | cut -c1-180 || echo "ssh .12 FAILED"
+
+echo; echo "=== 3. [.29] cline 是否支持显式 base-url / 其它 key 参数 ==="
+"$C" --help 2>&1 | grep -inE 'base|url|key|provider' | head -12 | cut -c1-150
+
+echo; echo "=== 4. [.29] 直连网关：models（带 key）==="
+timeout 20 curl -s -o /tmp/_m2.json -w '   models  http=%{http_code}\n' -H "Authorization: Bearer $OPENAI_API_KEY" http://agi-gateway.cxmt.com/v1/models; head -c 300 /tmp/_m2.json; echo
+
+echo; echo "=== 5. [.29] 直连网关：chat/completions（关键！）==="
+timeout 30 curl -s -o /tmp/_c.json -w '   chat    http=%{http_code}\n' -H "Authorization: Bearer $OPENAI_API_KEY" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"hi"}],"max_tokens":5}' http://agi-gateway.cxmt.com/v1/chat/completions; head -c 300 /tmp/_c.json; echo
+
+echo; echo "=== 6. [.29] 用 -k 显式传 key 再 smoke 一次（对照 RUN_ID 10 的结论）==="
+env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY \
+  timeout 90 "$C" -c /tmp -m "$M" -k "$OPENAI_API_KEY" --auto-approve true -t 45 "reply OK" 2>&1 | head -5 | cut -c1-170
+
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 07:23:45 CST
+
+=== 1. [.29] globalState.json 关键字段（无 key）===
+    actModeApiProvider = 'openai'
+    planModeApiProvider = 'openai'
+    actModeOpenAiModelId = 'deepseek-v4-flash'
+    planModeOpenAiModelId = 'deepseek-v4-pro-fp4'
+    openAiBaseUrl = 'http://agi-gateway.cxmt.com/v1'
+
+=== 2. [.12] 同样字段（对照）===
+   HOME=/home/app.e0031982
+whag0pgpuap12
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: unsupported operand type(s) for +: 'PosixPath' and 'str'
+
+=== 3. [.29] cline 是否支持显式 base-url / 其它 key 参数 ===
+18:                                medium; omitted leaves provider default.
+24:  -P, --provider <id>           Provider id (default: cline)
+25:  -k, --key <api-key>           API key override for this run
+27:                                provider
+49:  auth [options] [provider]     Authenticate a provider and configure what model
+
+=== 4. [.29] 直连网关：models（带 key）===
+   models  http=200
+{"object":"list","data":[{"id":null,"object":"model","owned_by":"cloud"}]}
+
+=== 5. [.29] 直连网关：chat/completions（关键！）===
+   chat    http=403
+
+
+=== 6. [.29] 用 -k 显式传 key 再 smoke 一次（对照 RUN_ID 10 的结论）===
+[31merror:[0m Forbidden
+
+=== DONE ===
+```
