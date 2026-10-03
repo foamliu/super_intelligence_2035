@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>观察哨 personal-watch 工作汇报 · 2026-10-03</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr;} }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#0d5c22; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6b4e00; }
+  .danger { background:#fff0f0; border:1px solid #ffc9c9; border-left:4px solid var(--bad); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#8a1c1c; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>观察哨（personal-watch）工作汇报 · 2026-10-03</h1>
+  <div class="sub">建哨 + <b>2 条 worker 线</b>（news / research）· <b>9 轮运维指令</b> · 两处<b>用户点名纠错</b>并闭环 · 当日 <b>22</b> 个提交</div>
+  <div class="meta">
+    <span>📅 2026-10-03</span>
+    <span>📝 <code>foamliu/super_intelligence_2035</code> @ <code>main</code></span>
+    <span>📈 当日提交 <b>22</b> 个（<code>doc/personal-watch/</code>）</span>
+    <span>🧭 supervisor 通道 = 任务书「运维指令区」+ git</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <strong>今天的主线：从零建起「观察哨」——一个用 git 当总线的多 agent 采集系统，并在同一天完成两次「被用户当场证伪 → 立刻纠偏」的闭环。</strong>
+  <ol style="margin:10px 0 0">
+    <li><b>建哨</b>：<b>supervisor</b>（README + MEMORY + AGENTS + daily-memories）统筹，worker 走 <code>run/</code> 的 <b>任务书 + loop.sh</b> 范式（照抄已生产验证的 <code>BaiZe-ISEDA2027</code>）。</li>
+    <li><b>news 线</b>：交付 T1–T10；两轮被点名（<b>特稿当新闻</b> / <b>中文权威新闻 0 条</b>）→ 已闭环为「§0.1 新闻判据 + 中文活源统一入口」。</li>
+    <li><b>research 线</b>：新建（arXiv 论文采集/整理，重点 LLM/SLM/多模态/agent harness），待启动。</li>
+    <li><b>最有价值的产出不是数据，是一条铁律</b>：<b>「接口 200 ≠ 有料」</b>（详见 §5）。</li>
+  </ol>
+</div>
+
+<div class="note">
+  <b>⚠️ 本报告是「首版」，如实标注未完成项：</b>
+  <ul style="margin:8px 0 0">
+    <li><b>research 线尚未启动</b>（loop 未拉起，收录 0 篇）。</li>
+    <li>news 线 <b>T5（自建 MCP 装进 cline）/ T6 / T7</b> 仍待办。</li>
+    <li>所有数字均来自仓库内可核验文件（<code>MEMORY*.md</code> / <code>news/</code> / <code>research/</code>）与 supervisor 亲自复跑的输出。</li>
+  </ul>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi"><div class="v">2 条线</div><div class="l">news（运行中）+ research（待启动）</div></div>
+  <div class="kpi"><div class="v">15 条</div><div class="l">news 真新闻（§0.1 口径；另 22 条非新闻移出）</div></div>
+  <div class="kpi"><div class="v">9 轮指令</div><div class="l">T1–T10 · R1–R5（经任务书运维指令区下发）</div></div>
+  <div class="kpi"><div class="v">2 次纠错</div><div class="l">用户点名 → 当日闭环</div></div>
+</div>
+
+<div class="toc">
+  <strong>目录</strong>
+  <ol>
+    <li><a href="#s1">两条线状态一览</a></li>
+    <li><a href="#s2">组织方式：supervisor + run 范式</a></li>
+    <li><a href="#s3">news 线：从建线到两次纠偏（T1–T10）</a></li>
+    <li><a href="#s4">research 线：新建（R1–R5）</a></li>
+    <li><a href="#s5">⭐ 核心产出：关键教训与铁律</a></li>
+    <li><a href="#s6">系统组件：loop / 模型 / 睡眠 / 记忆</a></li>
+    <li><a href="#s7">需要你决策 / 注意</a></li>
+    <li><a href="#s8">下一步排期</a></li>
+  </ol>
+</div>
+
+<h2 class="sec" id="s1"><span class="no">1</span>两条线状态一览</h2>
+
+<table>
+  <tr><th>线</th><th>今日进展</th><th>当前状态</th><th>下一步</th></tr>
+  <tr>
+    <td><b>news</b><br>新闻采集</td>
+    <td>✅ <b>T1–T10 全部交付</b>：API 调研 → 免 key MCP → 自包含对比报告 → <b>§0.1 新闻判据</b> → <b>中文活源统一入口 <code>fetch_cn_news()</code></b>；<b>两次用户点名纠错并闭环</b></td>
+    <td><span class="badge b-ok">✅ 运行中</span> · 真新闻 <b>15</b> 条（中文 4 / 英文 2 在第三轮）· 非新闻 22 条移出</td>
+    <td><b>T5</b>（自建 MCP 装进 cline）· <b>T6</b>（中文覆盖）· <b>T7</b>（GDELT 退避）</td>
+  </tr>
+  <tr>
+    <td><b>research</b><br>arXiv 论文</td>
+    <td>🆕 <b>建线完成</b>：任务书 + loop + MEMORY + 产物目录（范式照抄 news，继承全部铁律）；关注 <b>LLM / SLM / 多模态 / agent harness</b></td>
+    <td><span class="badge b-warn">⬜ 待启动</span> · 收录 <b>0</b> 篇</td>
+    <td>拉起 loop → <b>R1 打通 arXiv API</b>（必须给实测证据）→ R2 检索策略 → R3/R4 常态采集</td>
+  </tr>
+</table>
+
+<h2 class="sec" id="s2"><span class="no">2</span>组织方式：supervisor + run 范式</h2>
+
+<p>整个系统<strong>没有中央服务</strong>：<b>git 就是总线</b>，任务书就是接口。supervisor（对话侧的我）与 worker（<code>cline</code> 循环）通过仓库文件异步协作。</p>
+
+<pre><code>doc/personal-watch/
+├── README.md            # 项目总纲（定位/角色/SOP/协议/铁律）
+├── MEMORY.md            # ⭐ supervisor 长期记忆 —— 醒来先读（含 WAITING）
+├── AGENTS.md            # agent 状态总表（"谁在跑"的唯一权威）
+├── daily-memories/      # supervisor 侧每日流水
+├── report_10_03.html    # 本文件
+└── run/                 # worker 编排 + 产物
+    ├── README.md                 # 启动 / 巡检 / 调参
+    ├── WATCH_NEWS_TASK.md        # news 任务书（agent 只读）
+    ├── watch_news_loop.sh        # news 循环（自适应唤醒 + git 兜底）
+    ├── MEMORY_NEWS.md            # news 运行时状态（含 WAITING）
+    ├── daily-memories-news/      # news 每日流水
+    ├── news/                     # news 产物（日报 / SEEN / INDEX / 免 key MCP / FETCH_CN_NEWS）
+    ├── WATCH_RESEARCH_TASK.md    # research 任务书（agent 只读）
+    ├── watch_research_loop.sh    # research 循环
+    ├── MEMORY_RESEARCH.md        # research 运行时状态
+    ├── daily-memories-research/  # research 每日流水
+    └── research/                 # research 产物（日报 / SEEN / INDEX / papers.jsonl / pdf/）</code></pre>
+
+<div class="grid2">
+  <div class="card">
+    <h3 style="margin-top:0">supervisor 的四个动作</h3>
+    <ol>
+      <li><b>派活</b>：在任务书「🔧 运维指令区」加<b>带日期的 block</b>（新块放最前），<code>commit + push</code>。</li>
+      <li><b>巡检</b>：<code>git pull</code> 读 <code>MEMORY_*.md</code> 顶部快照 + 产物目录（<b>不登录服务器</b>）。</li>
+      <li><b>验证</b>：不只看 agent 自述——<b>亲自复跑它的输出</b>（如 §3.4 的 <code>--cn-news</code>）。</li>
+      <li><b>回写</b>：把结论/教训写进 <code>MEMORY.md</code> + <code>daily-memories/</code>。</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">worker 的自适应唤醒</h3>
+    <p><code>MEMORY_&lt;线&gt;.md</code> 顶部的 <code>WAITING</code> 驱动 loop 睡眠：</p>
+    <ul>
+      <li><code>WAITING: 0</code>（有近期待办）→ 睡 <b>60s</b>，连续推进；</li>
+      <li><code>WAITING: 1</code>（无近期待办）→ 睡 <b>1800s</b>（30min）省 token。</li>
+    </ul>
+    <p style="color:var(--muted);font-size:13px">两条线的数值<b>与已生产验证的 BaiZe loop 完全一致</b>（这不是巧合，是 §5 第 4 条）。</p>
+  </div>
+</div>
+
+<h2 class="sec" id="s3"><span class="no">3</span>news 线：从建线到两次纠偏（T1–T10）</h2>
+
+<h3>3.1 T1–T4：调研 + 免 key MCP + 自包含对比报告 <span class="badge b-ok">✅</span></h3>
+<p>核实 <b>12</b> 个 web-search 候选 + <b>17</b> 个新闻源，并<b>真跑实测</b>（不是抄文档）。<b>决定性事实</b>（运行机 = 中国网络）：</p>
+<ul>
+  <li>❌ <b>不可达（被墙）</b>：Google · DuckDuckGo · Brave · Yahoo · <b>公共 SearXNG（8 实例全灭）</b> · newsapi.org · BBC · Reuters · Google News RSS</li>
+  <li>⚠️ <b>原 bocha key 额度耗尽</b>：<code>HTTP 403 not enough money or package quota</code> → 逼出"免 key 自建"路线</li>
+  <li>✅ <b>可达</b>：CN-Bing(200) · 360(200) · HN · GDELT · 中新网/新华/人民 RSS · arXiv · Ars Technica</li>
+</ul>
+<p><b>交付</b>：<code>news/mcp_web_search_free.py</code>（免 key MCP，3 工具 <code>web_search</code>/<code>search_news</code>/<code>rss_latest</code>）+ <code>cline_mcp_config.json</code> + <b>自包含</b> <code>API_COMPARISON.html</code>（+ <code>.md</code> 底稿）。</p>
+
+<h3>3.2 纠错一：把「特稿」当成了「新闻」</h3>
+<div class="danger">
+  <b>用户抽查</b>：<code>news/2026-10-03.md</code> 里的《Faster Louder Brighter: How the attention economy overwhelmed children's TV》（Guardian，<b>09-17 长篇特稿</b>）——
+  <b>"这是新闻吗？什么是新闻？"</b><br>
+  <b>复核</b>：31 条里真·新闻<b>仅约 9~10 条</b>，其余是<b>特稿 / 观点 / 专栏 / 个人博客 / arXiv 论文 / 论坛帖(Ask HN) / Show HN / 工具仓库</b>。<br>
+  <b>根因</b>：任务书从没定义"新闻"（原文只写"抓什么（<b>信号</b>）"）→ agent 按最宽口径填充。
+</div>
+<p><b>修复</b>：任务书新增 <b>§0.1「什么是新闻」（入账判据 · 硬性）</b>：</p>
+<table>
+  <tr><th>#</th><th>判据（4 条同时成立）</th><th>反例</th></tr>
+  <tr><td>1</td><td><b>时效</b>：事件发生于 <b>≤72h</b></td><td>09-17 的儿童电视特稿 ✗</td></tr>
+  <tr><td>2</td><td><b>事件性</b>：报道具体发生的事（发布/决定/事故/数据/人事/诉讼…）</td><td>NYT 专栏《Will A.I. Still Take Our Jobs?》泛论 ✗</td></tr>
+  <tr><td>3</td><td><b>报道体</b>：新闻机构/官方公告报道他人</td><td>个人博客观点 ✗ · Show HN 自述 ✗ · Ask HN 讨论帖 ✗</td></tr>
+  <tr><td>4</td><td><b>可核验</b>：谁 / 何时 / 什么数字或决定</td><td>Lawfare 评论文章 ✗</td></tr>
+</table>
+<p>下发 <b>T8</b>；用户拍板「<b>非新闻直接不收</b>」→ 原 31 条收口为 <b>news 9 / 移出 22</b>（类型标签仅存 <code>SEEN.md</code> 防重）。</p>
+
+<h3>3.3 纠错二：真正的新闻（中文权威源）一条没拉</h3>
+<div class="danger">
+  <b>用户</b>："<b>新华社没有 RSS 吗？真正的新闻你一个都没拉，净做些没用的。</b>"<br>
+  <b>复核</b>：<b>用户是对的</b> —— 31 条里<b>中文权威新闻 = 0</b>；agent 把"RSS 返回 <b>200</b>"当成了"源可用"，<b>从未真正产出中文条目</b>。
+</div>
+<p><b>supervisor 亲自实测「活/死源」</b>（可复现，见 §5）：</p>
+<table>
+  <tr><th>源</th><th>HTTP</th><th>条目</th><th>最新内容</th><th>判定</th></tr>
+  <tr><td>新华网 <code>{tech,politics,world}/news_*.xml</code></td><td>200</td><td>300</td><td><b>停在 2022</b>（"微厘空间 S5/S6"、"2022 诺奖"…）</td><td><span class="badge b-no">❌ 死源</span></td></tr>
+  <tr><td>新华网 <code>english/rss/*</code></td><td>200</td><td>20</td><td><b>停在 2017/2018</b></td><td><span class="badge b-no">❌ 死源</span></td></tr>
+  <tr><td>人民网 <code>rss/{politics,it,scitech}.xml</code></td><td>200</td><td>100</td><td><b>停在 2021/2024</b></td><td><span class="badge b-no">❌ 死源</span></td></tr>
+  <tr><td>央视 <code>cctv.com/program/rss/*</code>（DeepSeek 曾力荐）</td><td>200</td><td>30</td><td><b>停在 2006/2007</b>（比新华还老）</td><td><span class="badge b-no">❌ 死源</span></td></tr>
+  <tr><td><b>中新网 <code>scroll-news.xml</code></b></td><td>200</td><td>30</td><td><b>2026-10-03 13:28（今天）</b></td><td><span class="badge b-ok">✅ 活源</span></td></tr>
+  <tr><td><b>联合国新闻·中文</b> <code>news.un.org/feed/subscribe/zh/news/all/rss.xml</code></td><td>200</td><td>30</td><td><b>2026-10-02</b></td><td><span class="badge b-ok">✅ 活源</span></td></tr>
+  <tr><td><b>央视网·网页</b> <code>news.cctv.com/tech/</code></td><td>200</td><td>—</td><td><b>含 2026/10/03</b>（RSS 死、网页活）</td><td><span class="badge b-ok">✅ 活（HTML）</span></td></tr>
+</table>
+<p>下发 <b>T9</b>（只认条目不认"接口 200"、<b>验 <code>Content-Type</code> + <code>pubDate≤72h</code></b>、活源固化、死源禁用、中文条目 ≥ 英文）。</p>
+
+<h3>3.4 T10 交付 + <span class="badge b-info">supervisor 独立验证</span></h3>
+<p>agent 交付 <code>fetch_cn_news()</code>：MCP 工具 <code>cn_news</code> + <b>CLI <code>--cn-news</code></b>（MCP 未装进 cline，故 CLI 是一等公民）+ Python 直调；文档 <code>news/FETCH_CN_NEWS.md</code>。<b>我亲自复跑它：</b></p>
+<pre><code>$ PYTHONIOENCODING=utf-8 python news/mcp_web_search_free.py --cn-news --limit 5   # exit=0
+[cn_news] 生成 2026-10-03T06:13 ｜ 新鲜度窗口 ≤72h ｜ 活源 6 个
+1. 新业态催生"文旅+"新玩法…            🏷 央视网 ｜ 发布：2026-10-03T06:00:01
+5. 澳大利亚发生汽车冲撞人群事件…       🏷 中新网 ｜ 发布：2026-10-03T05:46:17
+—— 各源状态 / 新鲜度 / 丢弃 ——
+• 中新网     &lt;rss&gt; 200 text/xml              kept=30  dropped=0
+• 联合国新闻 &lt;rss&gt; 200 application/rss+xml   kept=18  dropped=12（超龄 90.2h&gt;72h…）
+• 央视网     &lt;cctv-jsonp&gt; 200                kept=80/9 dropped=71（超龄 76.5h&gt;72h…）
+丢弃合计：83 条 ｜ 死源黑名单：新华/人民/央视 RSS（永不请求）</code></pre>
+<div class="ok-box">
+  <b>验收通过（证据 = 我亲跑的输出）</b>：条目<b>均带当天 <code>published</code></b> · 各源状态/Content-Type 透明 ·
+  <b>超龄条目列明理由被丢</b> · <b>死源黑名单确实永不请求</b>。第三轮产出 <b>真新闻 6 条（中文 4 ≥ 英文 2）</b>。
+  <br>⚠️ 两点观察：① <code>cn_news</code> 是<b>通用</b>中文新闻管道（返回"最新"非"AI 相关"）→ <b>调用方仍须按领域过滤</b>；
+  ② 央视走 <code>cctv-jsonp</code>(text/html) 是对"央视无活 RSS"的<b>合理例外</b>。
+</div>
+
+<h2 class="sec" id="s4"><span class="no">4</span>research 线：新建（R1–R5）</h2>
+
+<p><b>用户需求</b>："类似 news，建个 research agent —— <b>打通 arXiv 下载 API</b>，收集 &amp; 整理论文（AI 领域，特别是 <b>LLM、SLM、多模态、agent harness</b>）。"</p>
+
+<table>
+  <tr><th>项</th><th>设计</th></tr>
+  <tr><td><b>首启任务</b></td><td><b>R1</b> 打通 arXiv API（<code>export.arxiv.org/api/query</code>，<b>必须给实测证据</b>）→ <b>R2</b> 检索策略（分类+关键词，<b>固化进脚本</b>）→ <b>R3</b> 采集/去重/整理 → <b>R4</b> 产出 → <b>R5</b> PDF 下载（可选）</td></tr>
+  <tr><td><b>关注领域</b></td><td><b>LLM</b>(cs.CL/cs.LG) · <b>SLM 小模型</b>(端侧/蒸馏/量化) · <b>多模态</b>(cs.CV/cs.MM) · <b>agent harness</b>(cs.SE/cs.AI/cs.MA) · 邻域(RAG/评测/对齐)</td></tr>
+  <tr><td><b>入账判据 §0.1</b></td><td>① 来源=arXiv（必给 <b>arXiv ID</b>+abs 链接）② 时效 <code>published/updated ≤72h</code> ③ 可核验（ID+标题+作者+日期+分类+链接）④ 领域相关</td></tr>
+  <tr><td><b>产出</b></td><td><code>research/&lt;date&gt;.md</code> 日报 · <code>SEEN.md</code>（<b>主键 arXiv ID</b>）· <code>INDEX.md</code> · <b><code>papers.jsonl</code></b>（结构化台账）· <code>ARXIV_API.md</code>（R1 打通记录）</td></tr>
+  <tr><td><b>继承铁律</b></td><td>🔴 <b>200 ≠ 有料</b>（验 <code>Content-Type</code> + <code>published</code>）· ⏱ <b>arXiv 礼貌限速 ≥3s</b> · 不许编造 · 字段缺一不可 · <b>不整篇转载</b>（摘要自写）· 只 add 本线文件</td></tr>
+</table>
+
+<div class="note">
+  <b>状态：⬜ 待启动。</b> 落地文件：<code>run/WATCH_RESEARCH_TASK.md</code> · <code>run/watch_research_loop.sh</code> ·
+  <code>run/MEMORY_RESEARCH.md</code> · <code>run/research/</code>（+<code>pdf/</code>）· <code>run/daily-memories-research/</code>。
+  已通过 <code>bash -n</code> 与桩测试（任务书正确注入 prompt、<code>WAITING:</code> 恰好 1 次）。
+  启动：<code>setsid bash watch_research_loop.sh &gt; /tmp/watch_research_loop.log 2&gt;&amp;1 &lt; /dev/null &amp;</code>
+</div>
+
+<h2 class="sec" id="s5"><span class="no">5</span>⭐ 核心产出：关键教训与铁律</h2>
+
+<p>今天最有价值的东西不是那 15 条新闻，而是<b>这 8 条被"打脸"换来的规则</b> —— 它们已写进任务书与 supervisor 记忆。</p>
+
+<div class="card">
+<ol>
+  <li><b>🔴 「接口 200 ≠ 有料」</b>（本线<u>最有价值</u>的产出）。
+    死源与活源在 HTTP 层<b>长得一模一样</b>：新华网 RSS 返 <b>200/300 条</b>却<b>停在 2022</b>；央视 RSS 返 200 却停在 <b>2006</b>。
+    <b>只有 <code>pubDate ≤72h</code> 的硬校验能区分它们。</b> → 已入两线任务书铁律。</li>
+  <li><b>关键术语必须在任务书里给出可操作定义。</b>
+    "新闻"没定义 → agent 收了一堆特稿/观点/博客。<b>没定义的词，agent 会按最宽口径填充。</b></li>
+  <li><b>连 LLM 的建议/诊断也要实测。</b>
+    ① DeepSeek 力荐"央视 RSS 是官方长期维护通道"→ 实测是 <b>2006 死源</b>；
+    ② "联合国源 <code>unable to parse</code> 是 UA 被拦" → 实测 <b>4 种 UA 全 200</b>，真因是 <b>URL 写错</b>（<code>/zh/rss</code> 404 返 HTML）。
+    <b>"想当然"今天已错两次。</b></li>
+  <li><b>别自创数值，先照抄已验证的模板。</b>
+    loop 睡眠我一度自造 <b>6 小时</b> → 用户质问"BaiZe 有 6 小时吗？" → 核查：<b>BaiZe 实为 <code>SLEEP_BUSY=60</code> / <code>SLEEP_WAIT=1800</code></b>，从无小时级睡眠。已完全对齐。</li>
+  <li><b>模型名必须用「规范 ID」。</b>
+    照抄 BaiZe 的 <code>deepseek-v4-pro-fp4</code> → 本机网关不认；实测 <code>GET api.deepseek.com/models</code> → 官方只有 <b><code>deepseek-flash</code></b> / <code>deepseek-v4-pro</code>（<code>deepseek-v4-flash</code> 也不是官方 ID）。</li>
+  <li><b>cline 报错可能仍返回 <code>exit 0</code>。</b>
+    模型名错/额度耗尽时 cline 打印 <code>error:</code> 却退 0 → loop 分辨不出，会"静默白睡"。→ loop 现会 <b>tee 输出 + 命中致命特征即强制短睡重试</b>。</li>
+  <li><b>记忆文件 ≤ 32KB（照 BaiZe）。</b>
+    理由：<code>MEMORY_*.md</code> <b>每次唤醒被全文读进上下文</b> → 越大越烧 token，且会无上限增长。超限即滚动到 <code>daily-memories*/</code>。</li>
+  <li><b>验收标准要钉在「产出物」上，不能停在「接口通不通」。</b>
+    agent 曾"验证 12 个 API 都 200"却<b>一条真新闻都没产出</b>。→ 现在验收看的是<b>条目、<code>pubDate</code>、中文占比</b>，并<b>由 supervisor 亲自复跑</b>。</li>
+</ol>
+</div>
+
+<h2 class="sec" id="s6"><span class="no">6</span>系统组件：loop / 模型 / 睡眠 / 记忆</h2>
+
+<h3>6.1 loop 的 5 处加固（每一处都对应一个踩过的坑）</h3>
+<table>
+  <tr><th>加固</th><th>不这么做会怎样</th></tr>
+  <tr><td><code>fetch</code> + <code>pull --rebase --autostash</code> 再 push</td><td>只 push 不 pull → 远端一前进就<b>永久 push 失败</b>（BaiZe 踩过）</td></tr>
+  <tr><td><code>WAITING</code> 正则收紧为 <b>行首</b> <code>^WAITING:[[:space:]]*1</code></td><td>宽正则会<b>误匹配正文里的散文</b> → 睡眠时长由散文决定</td></tr>
+  <tr><td>兜底提交 <b>只 <code>git add</code> 本线文件</b></td><td><code>git add -A</code> 会把<b>别线/兄弟项目在途文件</b>一起卷进提交</td></tr>
+  <tr><td>tee cline 输出 + 命中致命特征<b>强制短睡重试</b></td><td>cline 报错却 <code>exit 0</code> → loop 分辨不出 → <b>白睡长觉</b></td></tr>
+  <tr><td>传 <code>--thinking low</code></td><td><code>deepseek-flash</code> provider 默认 effort=<b>high</b> → <b>想得久 / 费 token</b></td></tr>
+</table>
+
+<h3>6.2 参数（两条线一致，均对齐 BaiZe）</h3>
+<table>
+  <tr><th><code>MODEL</code></th><th><code>THINKING</code></th><th><code>CLINE_TIMEOUT</code></th><th><code>PUSH_INTERVAL</code></th><th><code>SLEEP_SHORT</code></th><th><code>SLEEP_LONG</code></th></tr>
+  <tr><td><code>deepseek-flash</code></td><td><code>low</code></td><td>1500s</td><td>18000s</td><td><b>60s</b></td><td><b>1800s</b></td></tr>
+</table>
+
+<h3>6.3 记忆维护（≤32KB，照 BaiZe）</h3>
+<p><code>MEMORY_*.md</code> <b>每次唤醒都被全文读进上下文</b> → 越大越烧 token。规则：超 <b>32KB</b> 就把较早流水<b>追加</b>到 <code>daily-memories*/&lt;日期&gt;.md</code>（原文不改、<b>不进 prompt</b>），顶部永久保留 <code>WAITING:</code> / 进度快照 / 运维问答 / 最近 ~20 条。</p>
+
+<h2 class="sec" id="s7"><span class="no">7</span>需要你决策 / 注意</h2>
+<table>
+  <tr><th>#</th><th>事项</th><th>状态 / 我欠你什么</th></tr>
+  <tr><td>1</td><td><b>research 线启动</b></td><td><span class="badge b-warn">⬜ 待你拉起</span> <code>setsid bash watch_research_loop.sh …</code>；启动后我等它交 <b>R1 实测证据</b>再核</td></tr>
+  <tr><td>2</td><td><b>news T5</b>：自建 MCP 装进 cline</td><td><span class="badge b-warn">⬜ 待办</span> 现状：agent 已实测<b>未装</b>（<code>~/.cline/data/settings/</code> 无 <code>cline_mcp_settings.json</code>）→ 目前靠 <b>CLI 直调</b>（已可用）</td></tr>
+  <tr><td>3</td><td><b>news T6/T7</b>：中文覆盖补强 / GDELT 退避</td><td><span class="badge b-warn">⬜ 待办</span>（T9 已把中文活源打通，T6 是"多用"）</td></tr>
+  <tr><td>4</td><td><b>是否要周报合订</b>（把 7 天日报并成一份）</td><td><span class="badge b-info">待你定</span></td></tr>
+  <tr><td>5</td><td>✅ 已定：<b>不用付费 key</b>、<b>非新闻直接不收</b></td><td>已写入任务书，无需再议</td></tr>
+</table>
+
+<h2 class="sec" id="s8"><span class="no">8</span>下一步排期</h2>
+<table>
+  <tr><th>优先级</th><th>事项</th><th>判据（怎么算完成）</th></tr>
+  <tr><td>P0</td><td><b>research R1</b>：打通 arXiv API</td><td>真跑查询命令 + <b>≥3 条带 <code>published</code> 的条目</b> + <code>Content-Type</code> 校验，落到 <code>research/ARXIV_API.md</code></td></tr>
+  <tr><td>P0</td><td><b>news 常态采集</b>（用 <code>cn_news</code> 保中文 ≥ 英文）</td><td>每轮日报<b>只含 §0.1 真新闻</b>，条目带链接+日期</td></tr>
+  <tr><td>P1</td><td><b>news T5</b>：把 <code>web-search-free</code> 装进运行机 cline</td><td>cline 会话能调 <code>web_search</code>/<code>search_news</code>/<code>rss_latest</code>/<code>cn_news</code>（贴证据）</td></tr>
+  <tr><td>P2</td><td>news T6（中文占比）/ T7（GDELT 退避）；research R2 检索清单固化</td><td>方法观察里可核验</td></tr>
+</table>
+
+<footer>
+  观察哨（personal-watch）工作汇报 · 2026-10-03（首版）· 当日 <b>22</b> 个提交（<code>doc/personal-watch/</code>）<br>
+  证据来源：<code>MEMORY.md</code> · <code>run/MEMORY_NEWS.md</code> · <code>run/MEMORY_RESEARCH.md</code> ·
+  <code>run/news/</code>（<code>INDEX.md</code> / <code>SEEN.md</code> / <code>FETCH_CN_NEWS.md</code> / <code>API_COMPARISON.html</code>）·
+  <code>run/research/</code> · <code>daily-memories/2026-10-03.md</code>；<br>
+  以及 <b>supervisor 亲自复跑的实测输出</b>（<code>--cn-news</code> / 官媒 RSS <code>pubDate</code> 核验）。<br>
+  规范范式：<code>doc/BaiZe-ISEDA2027/</code>（supervisor + run + loop + MEMORY 的同构来源）· Agent 总表：<code>AGENTS.md</code>
+</footer>
+
+</div>
+</body>
+</html>
