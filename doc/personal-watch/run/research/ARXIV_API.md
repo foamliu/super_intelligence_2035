@@ -100,18 +100,22 @@ python3 research/test_arxiv_fetch.py
 python3 research/arxiv_fetch.py --selftest
 
 # 【联网】取源复验（R1′）：逐源探测可达性 + 证据落盘 —— 期望输出各源状态表
-python3 research/arxiv_fetch.py --probe --queries research/queries.json \
-  --out research/raw/$(date +%F)-probe.json
+#   ⚠️ 取源清单用 `--config`（**不是** `--queries`）；`--json` 是开关（**不接文件名**）
+python3 research/arxiv_fetch.py --probe --config research/queries.json \
+  --json --out research/raw/$(date +%F)-probe.json
 
-# 真跑：读固化查询清单 queries.json，按 ≥3s 限速逐条拉取 ≤72h 新论文
-nohup python3 research/arxiv_fetch.py --fetch \
-  --queries research/queries.json --json /tmp/research_fetch.json \
-  --out research/raw/$(date +%F)-fetch.json > /tmp/fetch.log 2>&1 &
+# 真跑：读固化查询清单（--config），按 ≥3s 限速逐条拉取新论文，并用 SEEN 去重（--seen）
+#   ⚠️ `--json` 为布尔开关；结果文件用 `--out`；条数上限用 `--max-results`（**不是** `--max`）
+nohup python3 research/arxiv_fetch.py --fetch --config research/queries.json \
+  --seen research/SEEN.md --json --out research/raw/$(date +%F)-fetch.json \
+  > /tmp/fetch.log 2>&1 &
 
 # 单条查询（遵守 --out）
-python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max 20 \
+python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-results 20 \
   --out /tmp/one.json
 ```
+
+> 📌 **参数速记**（`arxiv_fetch.py --help` 为准）：取源清单 `--config` ｜ 结果落盘 `--out` ｜ JSON 输出开关 `--json` ｜ 去重台账 `--seen` ｜ 单查询条数 `--max-results` ｜ 窗口覆盖 `--window-hours`。
 
 ## 8. 本轮（2026-10-03）采集结果
 
@@ -148,3 +152,13 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max 20 \
 - 与首轮 `papers.jsonl` 比对：**重叠 0**（193 全为新增）。
 - **收录 27 / 候选 166**；原始证据：`research/raw/2026-10-03-fetch-r2.json`。
 - 工具回归测试：`test_arxiv_fetch.py` **49/49 PASS**（含 R1′/R2′ 新增用例）；`--selftest` 联网 PASS。
+
+### 9.4 第三轮（2026-10-03 晚 · 周六）：周末口径复核 → 0 新增
+
+- **取源复验（R1′）** `--probe`（`generated=2026-10-03T10:40:01Z`，证据 `research/raw/2026-10-03-probe-r3.json`）：
+  - **arXiv API**：`HTTP 200` + `application/atom+xml`，最新 `published=2026-10-01T17:59:59Z` → ✅ **可达**；
+  - **HF Daily Papers**：`Network is unreachable` → ❌ 不可达（**如实记录，不伪造 `hf_daily` 标记**）；
+  - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml` + `items=0` → ⚠️ **周末/未公告**。
+- **增量取数** `--fetch --seen research/SEEN.md`（`window_mode=weekend_batch`，窗口 **120h**）：**15/15 查询 `ok`**（无重试），**kept 0 / dropped 600**；其中 **404 条 = `already in SEEN`**（窗口 `2026-09-28 ~ 2026-10-01` 内条目**均已登记**），其余 **196 条 = `stale > 120h`**。证据 `research/raw/2026-10-03-fetch-r3.json`。
+- **结论**：本日为**周六**、arXiv **周末不发公告**，最近批次仍为 **2026-10-01** → **0 新增属正常**，按 R2′ 已在日报**如实标注实际日期区间**（**非「无数据」**）。
+- **文档修正**：§7 复现命令原先误用 `--queries` / `--json <file>` / `--max`（脚本实际参数为 `--config` / `--json` 开关 / `--max-results`）→ **已改正**并补「参数速记」。

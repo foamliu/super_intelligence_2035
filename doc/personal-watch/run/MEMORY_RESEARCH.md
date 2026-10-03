@@ -11,13 +11,13 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        collecting（建线首轮 R1–R4 已收官；第二轮常态增量 R1′/R2′ 已落盘）
-已完成:       R1 打通 arXiv API（HTTPS/Atom，实测 HTTP/2 200 + application/atom+xml → research/ARXIV_API.md）；R2 固化检索策略（queries.json）；R3/R4 首轮采集（抓取 214 篇 → 收录 34 + 候选 180）；R1′ 运行机取源复验（新增 --probe：arXiv ✅ / HF ❌ 不可达 / RSS 周末空）；R2′ 时效口径改为 published-first + 周末自动放宽（周六 120h，window_mode=weekend_batch）；第二轮增量采集（15/15 查询 ok，新增 193 → 收录 27 + 候选 166；日报/SEEN/INDEX/papers.jsonl/ARXIV_API 已更新）
-当前动作:     第二轮落盘收官：提交 research 线文件（仅本线）
+PHASE:        collecting（建线首轮 R1–R4 已收官；第二轮 R1′/R2′ 已落盘；第三轮常态增量完成 → 0 新增）
+已完成:       R1 打通 arXiv API（HTTPS/Atom，实测 HTTP/2 200 + application/atom+xml → research/ARXIV_API.md）；R2 固化检索策略（queries.json）；R3/R4 首轮采集（抓取 214 → 收录 34 + 候选 180）；R1′ 运行机取源复验（--probe：arXiv ✅ / HF ❌ / RSS 周末空）；R2′ 时效 published-first + 周末自动放宽（120h，weekend_batch）；第二轮增量（15/15 ok，新增 193 → 收录 27 + 候选 166）；**第三轮增量（15/15 ok，窗口内 404 条全部已在 SEEN + 196 超龄 → kept 0；R1′ 复验 arXiv ✅/HF ❌/RSS 空）**
+当前动作:     第三轮落盘收官：日报第三轮章节 + INDEX/SEEN/ARXIV_API 更新 + 修正 §7 CLI 文档（--config/--json/--max-results）→ 提交本线文件
 下一步:       常态采集——下一轮按 SOP 增量采集（先读 SEEN.md 去重、定窗口）；无近期待办则 WAITING=1（睡 30min）
-本轮新增:     27 篇（领域数：5；另候选 166）
-阻塞:         无（HF Daily Papers 在本机网络不可达 → 如实记录，不伪造 hf_daily 标记；RSS 周末为空按规则标注「周末/未公告」）
-ERROR_COUNT:  0（第二轮 15/15 查询 ok、无重试；历史遗留 1 次 Read timeout 已重试成功）
+本轮新增:     0 篇（领域数：0；**周六 arXiv 未公告**，最近批次仍为 2026-10-01，如实标注窗口区间）
+阻塞:         无（HF Daily Papers 本机不可达 → 如实记录，不伪造 hf_daily；RSS 周末空按规则标注「周末/未公告」）
+ERROR_COUNT:  0（第三轮 15/15 查询 ok、无重试；回归测试 49/49 PASS；历史 1 次 Read timeout 已重试成功）
 ```
 
 ---
@@ -38,13 +38,19 @@ ERROR_COUNT:  0（第二轮 15/15 查询 ok、无重试；历史遗留 1 次 Rea
 - **日流水**：`daily-memories-research/<YYYY-MM-DD>.md`
 - **关注领域**：LLM · SLM · 多模态 · agent harness（+ 邻域，见任务书 §1）
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-03`（第二轮；窗口 = **≤120h**（周六放宽，`window_mode=weekend_batch`）~ `2026-10-03`）
-- **累计收录**：`61` 篇（另候选 346 篇，仅存 `SEEN.md` 防重；两轮累计抓取 407 条）
+- **上次采集窗口**：`2026-10-03`（第三轮；窗口 **≤120h**（周六，`window_mode=weekend_batch`）；实际批次 `2026-09-28 ~ 2026-10-01`，本轮 **0 新增**）
+- **累计收录**：`61` 篇（另候选 346 篇，仅存 `SEEN.md` 防重；三轮累计抓取 407 条 —— 第三轮新增 0）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-03** —— **第三轮（常态增量 · 周六）→ 0 新增**。
+  - **R1′（取源复验）**：`--probe --config research/queries.json`（`2026-10-03T10:40Z`）→ **arXiv API ✅** `HTTP 200`+`application/atom+xml`（最新 `published=2026-10-01T17:59:59Z`）；**HF ❌ `Network is unreachable`**；**RSS cs.CL/CV/LG ⚠️ 200 但 `items=0`（周末/未公告）**。证据 → `research/raw/2026-10-03-probe-r3.json`。
+  - **增量采集**：`--fetch --seen research/SEEN.md`（`window_mode=weekend_batch`，窗口 120h）→ **15/15 查询 ok**（无重试），**kept 0 / dropped 600**（**404 = already in SEEN** + **196 = stale >120h**）。证据 → `research/raw/2026-10-03-fetch-r3.json`。
+  - **结论**：本日**周六**、arXiv **周末不发公告**，最近批次仍为 `2026-10-01` → **0 新增属正常**；按 R2′ 在日报**如实标注实际日期区间**（`2026-09-28 ~ 2026-10-01`），**不写成「无数据」**。
+  - **落盘**：日报追加「第三轮」章节（5 领域均记「周末/未公告 · 无新增」+ 各查询状态 + R1′ 表）；`INDEX.md` / `SEEN.md` 计数与备注更新（累计仍 **407**）；`ARXIV_API.md` 新增 §9.4 并**修正 §7 复现命令**（`--queries`→`--config`、`--json <file>`→`--json` 开关、`--max`→`--max-results`）。
+  - **回归测试**：`research/test_arxiv_fetch.py` **49/49 PASS**（离线）。
 - **2026-10-03** —— **第二轮（常态增量）+ R1′/R2′ 修订落地**。
   - **R1′（取源复验）**：新增 `--probe`（读 `queries.json` 的 `sources`）。运行机实测 → **arXiv API ✅** `HTTP 200` `application/atom+xml`（最新 `2026-10-01T17:59:59Z`）；**HF Daily Papers ❌ `Network is unreachable`**（本机不可出网）；**RSS（cs.CL/CV/LG）⚠️ 200 但 `items=0`**（周末/未公告）。证据 → `research/raw/2026-10-03-probe.json`；写入 `ARXIV_API.md` §9.1。**不伪造 `🏷 hf_daily`**。
   - **R2′（时效口径）**：改为**以首次提交 `published` 判定时效**；新增 `auto_window_hours` —— 工作日 **72h**、**周六/周日 120h**（`window_mode=weekend_batch`）；放宽窗口带入的更早条目（09-28/29）**只记候选、不计收录**。详见 `ARXIV_API.md` §5 / §9.2。
