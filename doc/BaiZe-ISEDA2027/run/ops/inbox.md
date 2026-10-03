@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 10 -->
+<!-- RUN_ID: 11 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,51 @@
 
 ---
 
-## RUN_ID 10 — 🔍 **定位 `Forbidden` 根因**（**纯只读，不写任何东西**）（**本块为最新，优先执行**）
+## RUN_ID 11 — 🎯 **验证 `Forbidden` 是否由 `https_proxy` 引起**（**纯只读；顺带试出修法**）（**本块最新，优先执行**）
+
+**RUN_ID 10 已排除的假设（2026-10-04 07:15）**：
+- ❌ **不是 key**：`.29` smoke **带 `-k $OPENAI_API_KEY` 依然 `Forbidden`**；且 `.12` 的 secrets key 与之**完全相同**（`02_088…len72`）
+- ❌ **不是模型名**：`.12` 用的是**同一个** `MODEL="deepseek-v4-pro-fp4"`，却工作正常
+- ✅ **`.29` 独有的一张牌 = `https_proxy`（len25, `http://1…`）**，而网关是**内网** `OPENAI_API_URL=http://a…`（len30）
+- 📌 Forbidden 计数：pretrain 日志 **18** 次、harness 日志 **37** 次；`.29` 最后一次正常 cline 是 **10-03 22:12**（harness smoke 成功）
+
+**本块要判定的**：`.29` 的 cline 是否把**内网网关**的请求也塞进了外网代理 → 网关 `Forbidden`。
+**第 4 节 = 直接试修法**（`env -u *_PROXY` 后再 smoke）；若通过 → 修法 = **以不带 proxy 的环境重启两条 loop**。
+
+🚫 **纯只读** —— 不 kill / 不重启 / 不写文件（只在 `/tmp` 做 smoke）。
+
+```bash
+echo "=== 0. HOST / TIME / CLINE VERSION ==="; hostname; date '+%F %T %Z'
+CLINE=/home/app.e0031982/.bun/bin/cline
+"$CLINE" --version 2>&1 | head -3
+
+echo; echo "=== 1. [.29] proxy / openai 相关 env（key 已脱敏）==="
+env | grep -iE 'proxy|openai|api_type' | sed 's/\(key=[^ ]\{0,8\}\)[^ ]*/\1.../' | cut -c1-160
+
+echo; echo "=== 2. [.12] 同一组 env + cline 版本（对照）==="
+timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'echo "-- cline --"; /home/app.e0031982/.bun/bin/cline --version 2>&1 | head -2; echo "-- env --"; env | grep -iE "proxy|openai|api_type" | sed "s/\(key=[^ ]\{0,8\}\)[^ ]*/\1.../" | cut -c1-160' 2>&1 | cut -c1-170 || echo "ssh .12 FAILED"
+
+echo; echo "=== 3. [.29] cline smoke 完整错误（head 40，找 'Interesting:' 真解释）==="
+cd /tmp && timeout 120 "$CLINE" -c /tmp -m deepseek-v4-pro-fp4 --auto-approve true -t 60 "reply with exactly OK" 2>&1 | head -40 | cut -c1-190
+
+echo; echo "=== 4. [.29] ⭐ smoke【剥掉全部 proxy 环境变量】—— 期待变绿 ==="
+cd /tmp && env -u https_proxy -u http_proxy -u HTTPS_PROXY -u HTTP_PROXY -u all_proxy -u ALL_PROXY -u no_proxy -u NO_PROXY \
+  timeout 120 "$CLINE" -c /tmp -m deepseek-v4-pro-fp4 --auto-approve true -t 60 "reply with exactly OK" 2>&1 | head -20 | cut -c1-190
+
+echo; echo "=== 5. [.29] 链路对照：直连 vs 走代理 ==="
+timeout 20 curl -s -o /dev/null -w 'no-proxy  -> %{http_code}\n' "${OPENAI_API_URL:-http://agi-gateway.cxmt.com/v1}/models" 2>&1
+timeout 20 curl -s -o /dev/null -w 'via-proxy -> %{http_code}\n' -x "${https_proxy:-${http_proxy}}" "${OPENAI_API_URL:-http://agi-gateway.cxmt.com/v1}/models" 2>&1
+echo "-- no_proxy 当前值: [${no_proxy:-<empty>}] --"
+
+echo; echo "=== 6. 首个 Forbidden 的上下文（含时间戳）==="
+grep -n -B4 -A1 'Forbidden' /tmp/baize_pretrain_loop.log 2>/dev/null | head -24 | cut -c1-175
+
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 10**（Forbidden 根因探查，**✅ 已执行 07:15:37 exit=0**）为 ```text。
+
+## RUN_ID 10 — 🔍 **定位 `Forbidden` 根因**（✅ 已执行，本块不再运行）
 
 **RUN_ID 9 已定位（2026-10-04 07:13）**：
 - ✅ 两条 `.29` loop **进程都活着**（`baize_pretrain_loop.sh` / `baize_harness_loop.sh`）
@@ -44,7 +88,7 @@
 
 🚫 **纯只读** —— 不 kill / 不重启 / **不写任何文件**；smoke 测试只往 `/tmp` 落地（可接受）。
 
-```bash
+```text
 echo "=== 0. HOST / TIME / CLINE ==="; hostname; date '+%F %T %Z'
 RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
 CLINE=$(command -v cline 2>/dev/null || echo "$HOME/.bun/bin/cline"); echo "CLINE=$CLINE"
