@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 26 -->
+<!-- RUN_ID: 27 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,58 @@
 
 ---
 
-## RUN_ID 26 — 🎯 **锁定唯一残留变量：`OPENAI_API_URL` + `API_TYPE`（4 路矩阵）**（**只读**）（**本块最新，优先执行**）
+## RUN_ID 27 — ✅ **应用 V3 配方（`-k` 显式传 key）+ 重启两条 loop**（**已获批准**）（**本块最新，优先执行**）
+
+**RUN_ID 26 四路矩阵（2026-10-04 07:58:23）—— 定论**：
+| 组 | env | 结果 |
+|:--|:--|:--|
+| V0 | 原样 | Forbidden |
+| V1 | 剥 `KEY+URL+TYPE` | Forbidden |
+| V2 | 剥 `proxy+KEY+URL+TYPE` | Forbidden |
+| **V3** | V2 **+ `-k <有效key>`** | **OK** ✅ |
+
+⇒ **`.29` 的 cline 必须显式 `-k`**（key 请 curl 200；`.12` 不带 `-k` 也能跑，但 `.29` 不行）。
+📌 已把两条 loop 的 cline 调用行改成：`env -u <所有 *_proxy> -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE cline … -k "$CLINE_KEY" …`，`CLINE_KEY` 在脚本启动时用 `sed` 从 `secrets.json` 现读（**不落仓库**）。
+
+**本块**：先跑一次 V3 前置校验（**不 OK 就不重启**）→ checkout 新脚本 → 重启 → 校验 `error:.*Forbidden == 0`。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
+C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; cd /tmp
+_k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" | head -1)"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY"
+
+echo; echo "=== 1. 前置：V3 复核（必须 OK 才重启）==="
+V3=$(env $P -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE timeout 90 "$C" -c /tmp -m "$M" -k "$_k" --auto-approve true -t 45 "reply with exactly OK" 2>&1 | head -2 | tr -d '\r' | tr '\n' ' ')
+echo "   V3 => ${V3:0:130}"
+
+echo; echo "=== 2. 条件重启 ==="
+if echo "$V3" | grep -q 'Forbidden'; then
+  echo "   !!! V3 仍失败 → 不重启，保留现状待运维"
+else
+  git -C "$WK" fetch origin --quiet 2>/dev/null
+  git -C "$WK" checkout origin/main -- doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh && echo "   checked out"
+  grep -c 'CLINE_KEY' "$RUN/baize_pretrain_loop.sh" "$RUN/baize_harness_loop.sh"
+  pkill -f 'baize_pretrain_loop.sh'; pkill -f 'baize_harness_loop.sh'; sleep 5
+  cd "$RUN"
+  setsid bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+  sleep 3
+  setsid bash baize_harness_loop.sh > /tmp/baize_harness_loop.log 2>&1 < /dev/null &
+  sleep 30
+  echo "   -- 进程 --"; pgrep -af 'bash baize_(pretrain|harness)_loop\.sh|bun.*cline' | cut -c1-102
+  echo "   -- 真实报错数（应为 0）--"; grep -c 'error:.*Forbidden' /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log 2>/dev/null
+  echo "   -- pretrain 日志尾 --"; tail -c 320 /tmp/baize_pretrain_loop.log | tr -d '\r' | tail -3 | cut -c1-135
+  echo "   -- harness 日志尾 --"; tail -c 320 /tmp/baize_harness_loop.log | tr -d '\r' | tail -3 | cut -c1-135
+fi
+
+echo; echo "=== 3. GPU（P-9）==="; nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -2
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 26**（4 路矩阵，**✅ 已执行 07:58:23**，**结果：V3 = OK**）为 ```text。
+
+## RUN_ID 26 — 🎯 **锁定唯一残留变量：`OPENAI_API_URL` + `API_TYPE`（4 路矩阵）**（✅ 已执行 → **V3 是解**，见 RUN_ID 27）
 
 **已排除（2026-10-04 07:56）**：
 - ❌ **cline 版本**：`.29`/`.12` 都是 **CLI 3.0.51**，安装日期同为 **2026-09-08**（globalState 里的 4.1.21/4.0.8 是 **VSCode 扩展**版本，与 CLI 无关）→ "10-03 自动升级"**否证**
@@ -48,7 +99,7 @@
 | V2 | 剥 proxy + 剥三者（=RUN_ID 14 的配方，**不带 -k**） | 若 OK → **修法 = 在 cline 调用行补 `-u OPENAI_API_URL -u API_TYPE`** |
 | V3 | 剥三者 + `-k <secrets>`（=RUN_ID 14 原样） | 若 OK 而 V2 不 → 需要显式 `-k` |
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; cd /tmp
 _k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" | head -1)"
