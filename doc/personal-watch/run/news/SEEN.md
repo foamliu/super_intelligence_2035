@@ -42,3 +42,18 @@
 | 2026-10-03 | 体长仅1毫米的稻飞虱怎么防？AI眼镜给稻田精准"把脉" | 央视网（cn_news） | news | https://news.cctv.com/2026/10/03/ARTIXFnAX46AMW2xIplK7Zj9261003.shtml |
 | 2026-10-03 | US arrests tech CEO accused of smuggling $300M in Nvidia chips into China | Ars Technica | news | https://arstechnica.com/tech-policy/2026/10/us-arrests-tech-ceo-accused-of-smuggling-300m-in-nvidia-chips-into-china/ |
 | 2026-10-03 | Amazon's $1B plan to combat data center backlash draws more backlash | Ars Technica | news | https://arstechnica.com/tech-policy/2026/10/amazons-1b-plan-to-combat-data-center-backlash-draws-more-backlash/ |
+| 2026-10-03 | 谷歌 Gemini 4 突然发布：多项榜单登顶，成本约为 Astra 一半 | 量子位 | news | https://www.qbitai.com/2026/10/499663.html |
+| 2026-10-03 | 何恺明团队新作：纯视觉方案 NAT-ARC 挑战 ARC 抽象推理 | 量子位 | news | https://www.qbitai.com/2026/10/499812.html |
+| 2026-10-03 | AI 音乐平台 Suno 推出 Speech 语音功能 | IT之家 | news | https://www.ithome.com/1/009/440.htm |
+| 2026-10-03 | Nvidia DGX Spark 64GB Gives Developers More Ways to Build and Scale Local AI | NVIDIA（官方博客） | news | https://blogs.nvidia.com/blog/local-ai-dgx-spark-64gb-sync/ |
+| 2026-10-03 | 旗下智能体频繁"闯祸"，OpenAI 每天要烧掉超 50 万美元来调查 | IT之家 | news | https://www.ithome.com/1/009/444.htm |
+| 2026-10-03 | OpenAI 安全团队持续地震：安全透明度负责人离职，三名员工因泄密被开 | 量子位 | news | https://www.qbitai.com/2026/10/501368.html |
+| 2026-10-03 | OpenAI's wandering AI agents earn it a California subpoena | The Register | news | https://www.theregister.com/ai-and-ml/2026/10/02/openais-wandering-ai-agents-earn-it-a-california-subpoena/5300850 |
+| 2026-10-03 | arXiv 最严新规：每人每月最多提交 2 篇，拒稿不退额度 | 量子位 | news | https://www.qbitai.com/2026/10/499958.html |
+| 2026-10-03 | 中国年轻人掀起"AI定制游"热潮 | 中新网 | news | https://www.chinanews.com.cn/cj/2026/10-02/10707226.shtml |
+| 2026-10-03 | The 7-year-old Nvidia Shield TV is now $100 more expensive thanks to AI | Ars Technica | news | https://arstechnica.com/gadgets/2026/10/the-7-year-old-nvidia-shield-tv-is-now-100-more-expensive-thanks-to-ai/ |
+| 2026-10-03 | HPE 获得其首笔 AMD "Helios" AI 机架订单，价值 12 亿美元 | IT之家 | news | https://www.ithome.com/1/009/446.htm |
+| 2026-10-03 | AI godfather Yann LeCun: Anthropic CEO deluded, doesn't understand cybersecurity | Fortune | news | https://fortune.com/2026/10/01/yann-lecun-anthropic-ceo-dario-amodei-deluded-crazy-cybersecurity/ |
+| 2026-10-03 | 消息称亚马逊考虑剥离并回租 80 亿美元英伟达 Grace Blackwell AI 芯片 | IT之家 | news | https://www.ithome.com/1/009/407.htm |
+| 2026-10-03 | 曝美国陆军着手组建自主系统司令部，推动机器人技术进入未来战争 | IT之家 | news | https://www.ithome.com/1/009/427.htm |
+| 2026-10-03 | 丘成桐新论文致谢了 GPT 和 Claude | 量子位 | news | https://www.qbitai.com/2026/10/499991.html |

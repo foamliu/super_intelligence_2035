@@ -11,11 +11,11 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        T10「中文活源统一入口 fetch_cn_news()」✅ + T9「中文权威源真新闻」✅ + T8「§0.1 收口」✅（T1–T10 全部完成）
-已完成:       T1–T10 全部 ✅ · 首轮 smoke ✅ · 第二轮常态 ✅ · 第三轮·中文权威源 ✅
-当前动作:     ① T10 落地 `fetch_cn_news()`（MCP `cn_news` + CLI `--cn-news`）并实跑 ② 追加 news/2026-10-03.md「三、第三轮·中文权威源（T9）6 条」③ SEEN 增「类型」列（37 行）④ INDEX 改 news-only 计数 ⑤ 新增 news/FETCH_CN_NEWS.md
-下一步:       常态采集（WAITING=1，睡 30min）：逐类搜索→去重→追加当日摘要；**每轮先用 `cn_news` 补中文权威源（中文≥英文）**，英文走 `search_news`/`rss_latest`；GDELT 限频
-本轮新增:     真新闻 6 条（**中文 4**：央视网 2 + 中新网 2；**英文 2**：Ars Technica）；另原 31 条按 §0.1 收口 → 保留 news 9、移出非新闻 22（仅存 SEEN）
+PHASE:        常态采集（T1–T10 全部 ✅；自第四轮起进入常态采集）
+已完成:       T1–T10 全部 ✅ · 首轮 smoke ✅ · 第二轮常态 ✅ · 第三轮·中文权威源 ✅ · 第四轮常态采集 ✅
+当前动作:     第四轮常态采集：中文走 `cn_news` + **IT之家 RSS** + **新增量子位 RSS（`qbitai.com/feed`，实测 dated 活源）**；英文走 HN/Algolia + 官方 RSS → 落盘 news/2026-10-03.md「四、第四轮」**15 条（中文 11 / 英文 4）**；SEEN +15；INDEX news 15→30
+下一步:       常态采集（WAITING=1，睡 30min）：逐类搜索→去重→追加当日摘要；**每轮先用 `cn_news` + 量子位/IT之家 RSS 补中文（中文≥英文）**，英文走 `search_news`/`rss_latest`；GDELT 限频
+本轮新增:     news 15 条（**中文 11**：量子位 5 + IT之家 5 + 中新网 1；**英文 4**：NVIDIA / The Register / Ars Technica / Fortune）
 阻塞:         无
 ERROR_COUNT:  1（历史：模型名 deepseek-v4-pro-fp4 不被网关支持 → 白睡一轮；已修。GDELT 429 属频控，已如实记录、未重试）
 ```
@@ -45,6 +45,10 @@ python3 news/mcp_web_search_free.py --cn-news --limit 30 --json     # JSON（含
 # ② 其它工具（Python 直调）
 python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as m; print(m.search_news('AI regulation',5))"
 python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as m; print(m.fetch_cn_news(30)['items'][:3])"
+
+# ③ 中文 dated 补充源（T6 中文补强；均带 pubDate、实测活源 → 以 rss_latest 取）
+python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as m; print(m.rss_latest('https://www.qbitai.com/feed',8))"    # 量子位（AI 纵深）
+python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as m; print(m.rss_latest('https://www.ithome.com/rss/',20))"      # IT之家（科技产业）
 ```
 
 **返回样例（每条）**：
@@ -86,6 +90,12 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-03** —— ✅ **第四轮常态采集完成（news 15 条：中文 11 / 英文 4）**。PHASE=常态采集。
+  - **新增中文 dated 活源：量子位 RSS**（`https://www.qbitai.com/feed`，实测 `200` + 带 `pubDate`）→ 补齐中文 AI 纵深报道（Gemini 4 / 何恺明 NAT-ARC / OpenAI 安全团队 / arXiv 新规 / 丘成桐论文）。依 **T10** 规定**未并入** `CN_LIVE_SOURCES`（只准三类活源），以 `rss_latest` 单独取数。
+  - **落盘**：`news/2026-10-03.md` 追加「四、第四轮」15 条（中文 11：量子位 5 + IT之家 5 + 中新网 1；英文 4：NVIDIA 官方 / The Register / Ars Technica / Fortune）· `SEEN.md` +15 行 · `INDEX.md` news 15→30（另非新闻 22）。
+  - **代表条目**：谷歌 Gemini 4 发布（量子位）· arXiv 最严投稿新规（量子位）· OpenAI 智能体闯祸「每天烧 50 万美元」调查（IT之家）· OpenAI 收加州传票（The Register）· 美国陆军组建自主系统司令部（IT之家，🏷 关联「自主系统」）。
+  - **拒收例（§0.1）**：路透《AI 正竞相在资金耗尽之前改变世界》(feature / 泛论) · OpenAI GPT-6 使用指南 (tutorial) · 量子位《Jev 估值…回答一切》(AMA/访谈) · 量子位《openJiuwen X-Router…》(疑似软文) → **存疑即不收**。
+  - 判据复核：15/15 字段齐全（标题 + 来源 + 发布日期 + 链接 + 🏷 类型：news）。**下一步常态采集（WAITING=1）。**
 - **2026-10-03** —— ✅ **第三轮：T10「中文活源统一入口」+ T9「中文权威源真新闻」+ T8「§0.1 收口」全部完成**。PHASE→常态采集。
   - **T10 落地**：`news/mcp_web_search_free.py` 新增 `fetch_cn_news()` / `cn_news_report()` + **MCP 工具 `cn_news`** + **CLI `--cn-news`**；**实跑** `--cn-news --limit 30` → **6 活源全 200、命中 30 条、丢弃 83 条**（超龄 >72h）；文档 `news/FETCH_CN_NEWS.md`。
   - **T9 产出**：`news/2026-10-03.md` 追加「三、第三轮 · 中文权威源」**真新闻 6 条（中文 4：央视网 2 + 中新网 2；英文 2：Ars Technica）** → **中文 ≥ 英文**（彻底纠正此前「中文权威新闻 = 0」）。
