@@ -176,4 +176,64 @@ pip cache         3.3G  /home/app.e0031982/.cache/pip
 | **合计** | **≈341 GB（≈0.33 TiB）** |
 
 > **一句话结论**：本轮回收到 **≈341 GB**（远小于运维预期的 ~8.6T，主因 `laion2B` 的 **8.1T 系单位误读、实测 7.8G**）；`servers`(974G) 为高价值回收候选但未删（待 owner 确认）；`nemo_experiments` 的 R2 p1–p7（~135G）**保守保留**，建议运维二次确认是否也可清。
+
+---
+
+## 7. D-CLEAN-3 执行结果（2026-10-03 唤醒 59 · 删除 `servers/` 974G）
+
+> 运维拍板（D-CLEAN-3）：✅ `servers` 可清理；🚫 `nemo_experiments` R2 ckpt 保留。
+> ⚠️ 974G 的 `rm -rf` → 三项前置检查全过后执行。
+
+### 7.1 前置检查（P1/P2/P3，贴命令 + 原始输出）
+
+**P1 无进程占用 → ✅ 过**
+```bash
+$ timeout 60 fuser -v /nas_train/app.e0031982/servers 2>&1 | head -30
+Cannot stat file /proc/3041408/fd/139: Stale file handle
+（无任何 PID/ACCESS/COMMAND 行 —— 目录本身无进程占用）
 ```
+- 补充：指令给的 `fuser -vm` 带 `-m` 是「整挂载」口径（会列出所有用 /nas_train 的进程，易误判）；改无 `-m` 精确口径后为空。
+- 全用户 open-fd 扫描命中 `servers` = 0；关键进程 cwd 均不在 servers：vision R9 `pt_elastic`(2902543)+python(2904755/6/7) cwd=`run/vision`；hf 下载 2023896/2426795 cwd=`datasets`。
+
+**P2 无近期活动 → ✅ 过**
+```bash
+$ timeout 120 find /nas_train/app.e0031982/servers -newermt '-7 days' -print 2>/dev/null | head -20
+（空输出 —— 无 7 天内改动）
+```
+
+**P3 无脚本引用 → ✅ 过**
+```bash
+$ grep -rn 'app.e0031982/servers' /nas_train/app.e0031982/code/super_intelligence_2035 --include='*.sh' --include='*.py' --exclude-dir=.git | head
+（空输出 —— 0 命中）
+```
+- 全树 grep（`/nas_train/app.e0031982/code`，含历史 LLaVA 代码，后台 119s）0 命中后停（.sh/.py 无引用）。
+
+### 7.2 symlink 留证（`maxdepth 6`，节选）
+
+| symlink | 指向 | 处置 |
+|:--|:--|:--|
+| `…/10_239_2_{12,24,26,27,28,29}/LLaVA/playground/data/{coco,gqa,ocr_vqa,textvqa,vg}/…` | **外部** `/nas_train/app.e0031982/datasets/…` | 🔒 不跟随，**外部数据集完好**（已 `ls -d` 逐一复核） |
+| `10_239_2_29/…/siglip2-384-adamw[.pretrain] -> …/siglip2-384[.pretrain]` | 族内 | 随删 |
+| `10_239_2_28/…/layerwise-a -> layerwise-lr-group-a`；`model-0000[1|2]-of-00002.safetensors -> checkpoint-3000/…` | 族内 | 随删 |
+
+### 7.3 删前后 `df` + 实际回收
+
+| 时点 | `/nas_train`（`df -BG`） | 命令 |
+|:--|:--|:--|
+| 删前 | Used 180751G / Avail **31218G**（86%） | `df -BG /nas_train \| tail -1` |
+| 删后（稳定） | Used **179779G** / Avail **32190G**（85%） | 同上 |
+
+- 删前实测大小：`timeout 240 du -sh /nas_train/app.e0031982/servers` = **974G**。
+- **实际回收 = 180751G − 179779G = ≈972 GB**（含并发 base 下载写入 ~2-3G 对冲；**≈与 `du` 974G 一致**）。
+- `[ -d /nas_train/app.e0031982/servers ] && echo STILL || echo GONE` → **GONE**。
+- ⚠️ 过程记录：删后最初一两次 `df -BG` 只显示 -271G（NFS statfs 延迟），约 2 分钟后稳定为 -972G；**最终以稳定值为准**。
+
+### 7.4 本轮累计回收
+
+| 轮次 | 回收 |
+|:--|--:|
+| D-CLEAN-2 | ≈341 GB |
+| **D-CLEAN-3（servers）** | **≈972 GB（≈0.95 TiB）** |
+| **合计** | **≈1.31 TiB** |
+
+> **一句话结论（D-CLEAN-3）**：`servers/`（974G，LLaVA-V1.5-Qwen3-4B 旧消融 ckpt）已删除，三项前置检查全过、外部数据集 symlink 目标不受影响；`df` 净回收 **≈972 GB**，`/nas_train` 使用率 **86%→85%**。`nemo_experiments` R2 ckpt 按运维令保留。
