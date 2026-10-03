@@ -10,10 +10,10 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.5/§0.6/§0.7 推进中 · 🔴白名单锁定(只下 l1_en_hq+zh+GPIC；en_v1_4 已停 488分片保留) · zh 81/256@~14MB/s · l1_en_hq 0/6000(445GiB 排队) · gpic train 1688/8001+test 128✓ · D-CLEAN 全完成
+PHASE:        §0.5/§0.6/§0.7 推进中 · 🔴白名单锁定(只下 l1_en_hq+zh+GPIC；en_v1_4 已停 488分片保留) · zh 103/256@~13.6MB/s · l1_en_hq 0/6000(445GiB 排队) · gpic train 1699/8001+test 128✓ · D-CLEAN 全完成
 已完成:       §0.3 8源/§0.4 R2视觉/§0.6 配方/§0.7 停85M·复用·ETA 交付；SFT-2605 下满一致；D-CLEAN 盘点/-2 ≈341G/-3 servers ≈972G；base-en 2048/2048 满(1T tok)
-当前动作:     唤醒 80 巡检：确认白名单 2 进程真推进(无假活、无重启) —— pid 550476 拉 zh 81/256(part-081@02:09·~14MB/s)+l1_en_hq 排队(0/6000) · pid 2426795 gpic train 1688/8001@~7.4MB/s(test 128✓、0 .incomplete)
-下一步:       下轮巡检 l1_en_hq/zh(550476)、gpic(2426795) 真推进（最新文件 mtime 停>10min 且 .incomplete 不增=僵死→kill+重启）→ zh(剩175件≈221GB)+l1_en_hq(445GiB)≈666GB 下满即「MiniCPM5 base 族就绪」报运维；gpic 续下至 8001 tar
+当前动作:     唤醒 81 巡检：确认白名单 2 进程真推进(无假活、无重启) —— pid 550476 拉 zh 103/256(part-103@02:43·~13.6MB/s)+l1_en_hq 排队(0/6000) · pid 2426795 gpic train 1699/8001@~8.4MB/s(test 128✓、0 .incomplete)
+下一步:       下轮巡检 l1_en_hq/zh(550476)、gpic(2426795) 真推进（最新文件 mtime 停>10min 且 .incomplete 不增=僵死→kill+重启）→ zh(剩153件≈194GB)+l1_en_hq(445GiB)≈672GB 下满即「MiniCPM5 base 族就绪」报运维；gpic 续下至 8001 tar
 阻塞:         无硬阻塞；磁盘 /nas_train 86%（Avail 32T）
 ERROR_COUNT:  0
 ```
@@ -80,7 +80,7 @@ ERROR_COUNT:  0
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R research ✅ + R2 LLM 侧 ✅（8 源满填 / base vs L3 重叠 0% / P-8 86:10:4）+ R2 视觉侧 ✅（§0.4：本地 bytes 图文对实测 / 13 HF 候选 / 前 3 推荐）+ phase5 isolation v0.3 + phase1/2 脚本就绪；§0.5/§0.6/§0.7 推进中（§0.6 配方✅ / §0.7 停85M·复用·ETA✅ / SFT-2605 下满一致✅）** |
-| WAITING | 1（下载中：白名单锁定——pid 550476 只下 l1_en_hq(445GiB,排队)+zh(302GiB,81/256@~14MB/s)；gpic pid 2426795 train 1688/8001+test 128✓@~7.4MB/s；en 2048/2048 满；en_v1_4 已停(488分片保留)；LLaVA 85M 停无进程(7629/26T 未删)；D-CLEAN-3 servers GONE(Avail 32T/86%)；重 I/O 推迟） |
+| WAITING | 1（下载中：白名单锁定——pid 550476 只下 l1_en_hq(445GiB,排队)+zh(302GiB,103/256@~13.6MB/s)；gpic pid 2426795 train 1699/8001+test 128✓@~8.4MB/s；en 2048/2048 满；en_v1_4 已停(488分片保留)；LLaVA 85M 停无进程(7629/26T 未删)；D-CLEAN-3 servers GONE(Avail 32T/86%)；重 I/O 推迟） |
 | ERROR_COUNT | 0 |
 | 节点 | `10.239.2.12`（主机 `whag0pgpuap12`；NFS：`/nas_inference` 只读源，`/nas_train` 产出） |
 | 更新 | 2026-10-04 |
@@ -114,6 +114,7 @@ ERROR_COUNT:  0
 - 2026-10-04 —— 唤醒 79（白名单 4 项巡检，无假活、无重启）：复核运维指令未变（下载白名单锁定：只下 l1_en_hq+zh+GPIC、停 en_v1_4；D-CLEAN 系列已全部完成并提交；无新增指令、无索取、无 STOP）。🔵 base **550476**（etime ~2.1h）真推进：拉 **zh**（256 文件 flat/302GiB=324GB）已 **57/256**（part-057-of-256@01:33，~1.265GB/件；上轮 37@00:57→本轮 +20 件/36min ≈~11.7MB/s）；**l1_en_hq=0/6000**（445GiB，随 zh 之后按 HF 树序串行执行）。🔵 gpic **2426795**（etime ~31h）真推进：train **1678/8001** + test 128/128✓、1 .incomplete=在途 01678（gpic_train_01677.tar@01:32 ~1.6GB/件；上轮 1665@00:57→本轮 +13 件/35min ≈~10MB/s）。🔴 en_v1_4 无进程（✅ 已停，488 parquet/≈41.5GB 保留未删）；LLaVA 85M 停无进程。✅ en 2048/2048 满（1T tok）。✅ SFT-2605 1504/1504 intact。✅ servers GONE。ETA（@当前速率）：zh 剩 199 件≈252GB≈6h；l1_en_hq 445GiB≈12h → **l1_en_hq+zh 合计 ≈18h≈0.75 天**（吻合运维 1–2 天预估）；gpic 剩 6323 件≈10.1TiB @~10MB/s≈12 天。磁盘 /nas_train 85%(32T)、/nas_inference 59%(19T)、/nas_user 74%(29T)、/data 4%(6.8T) 均够，WAITING 保持 1。📉 MEMORY 滚动：唤醒 68–71 共 4 条迁 daily-memories-data/2026-10-03.md（原文不改），31084B→24404B(<24KB)。git 本轮回写后提交。下一步 = 下轮判 l1_en_hq/zh(550476)、gpic(2426795) 真推进（僵死即 kill+重启）→ l1_en_hq+zh 下满（≈18h）即「MiniCPM5 base 族就绪」报运维 → gpic 续下至 8001 tar。
 
 - 2026-10-04 —— 唤醒 80（白名单 4 项巡检，无假活、无重启）：复核运维指令未变（下载白名单锁定：只下 l1_en_hq+zh+GPIC、停 en_v1_4；D-CLEAN 系列已全部完成并提交；无新增指令、无索取、无 STOP）。🔵 base **550476**（etime 2h28m）真推进：拉 **zh**（256 文件 flat/302GiB=324GB）已 **81/256**、0 .incomplete（part-081-of-256@02:09，~1.265GB/件；上轮 57@01:33→本轮 +24 件/36min ≈~14.1MB/s）；**l1_en_hq=0/6000**（445.1GiB=478GB，随 zh 之后按 HF 树序串行执行，目录尚未创建）。🔵 gpic **2426795**（etime 31.9h）真推进：train **1688/8001** + test 128/128✓、0 .incomplete（gpic_train_01687.tar@02:08 ~1.6GB/件；上轮 1678@01:32→+10 件/36min ≈~7.4MB/s）。🔴 en_v1_4 无进程（✅ 已停，488 parquet/≈41.5GB 保留未删）；LLaVA 85M 停无进程。✅ en 2048/2048 满（1T tok）。✅ SFT-2605 1504/1504 intact。✅ servers GONE。ETA（@当前速率）：zh 剩 175 件≈221GB≈4.4h；l1_en_hq 445GiB≈9.5h → **l1_en_hq+zh 合计 ≈14h≈0.6 天**（吻合运维 1–2 天预估）；gpic 剩 6313 件≈10.1TiB @~7.4MB/s≈16 天（🔻 zh 提速抢带宽，gpic 由 ~10MB/s 略降）。磁盘 /nas_train 86%(32T)、/nas_inference 59%(19T)、/nas_user 74%(29T)、/data 4%(6.8T) 均够，WAITING 保持 1。git 本轮回写后提交。下一步 = 下轮判 l1_en_hq/zh(550476)、gpic(2426795) 真推进（僵死即 kill+重启）→ l1_en_hq+zh 下满（≈14h）即「MiniCPM5 base 族就绪」报运维 → gpic 续下至 8001 tar。
+- 2026-10-04 —— 唤醒 81（白名单 4 项巡检，无假活、无重启）：复核运维指令未变（下载白名单锁定：只下 l1_en_hq+zh+GPIC、停 en_v1_4；D-CLEAN 系列已全部完成并提交；无新增指令、无索取、无 STOP）。🔵 base **550476**（etime ~3h03m）真推进：拉 **zh**（256 文件 flat/302GiB=324GB）已 **103/256**、0 .incomplete（part-103-of-256@02:43，~1.265GB/件；上轮 81@02:09→本轮 +22 件/34min ≈~13.6MB/s）；**l1_en_hq=0/6000**（445.1GiB=478GB，随 zh 之后按 HF 树序串行执行，目录尚未创建）。🔵 gpic **2426795**（etime ~32.5h）真推进：train **1699/8001** + test 128/128✓、0 .incomplete（gpic_train_01698.tar@02:43 ~1.6GB/件；上轮 1688@02:08→+11 件/35min ≈~8.4MB/s）。🔴 en_v1_4 无进程（✅ 已停，488 parquet/≈41.5GB 保留未删）；LLaVA 85M 停无进程（仅见 t0002965 的 tensorboard 进程，非本线下载）。✅ en 2048/2048 满（1T tok）。✅ SFT-2605 1504/1504 intact。✅ servers GONE。ETA（@当前速率）：zh 剩 153 件≈194GB≈3.9h；l1_en_hq 445GiB≈9.5h → **l1_en_hq+zh 合计 ≈13.5h≈0.56 天**（吻合运维 1–2 天预估）；gpic 剩 6302 件≈10.1TiB @~8.4MB/s≈16 天。磁盘 /nas_train 86%(32T)、/nas_inference 59%(19T)、/nas_user 74%(29T)、/data 4%(6.8T) 均够，WAITING 保持 1。git 本轮回写后提交。下一步 = 下轮判 l1_en_hq/zh(550476)、gpic(2426795) 真推进（僵死即 kill+重启）→ l1_en_hq+zh 下满（≈13.5h）即「MiniCPM5 base 族就绪」报运维 → gpic 续下至 8001 tar。
 
 ## 关键路径速查（供恢复）
 
