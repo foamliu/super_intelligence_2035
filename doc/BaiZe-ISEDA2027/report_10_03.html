@@ -89,9 +89,9 @@
     <li>🧪 <b>pretrain 已做 P-9 非 GPU 预研</b>（不碰 GPU）：核实 <b>TE 2.12.0 / torch 2.8.0+cu128 / CUDA 12.8</b>；并查明 <b><code>launcher</code> 只暴露 MBS / TP / SP / seq-length / precision</b> —— ⚠️ <b>P-9.2 的 flag 扫描（recompute / 通信重叠 / dataloader…）多数需改 recipe</b>，不是一行开关。</li>
     <li>🗑 <b>D-CLEAN-3 已下发</b>（删 <code>servers/</code> 974 G，带 <b>P1/P2/P3 前置检查</b>）；<b><code>nemo_experiments</code> R2 ckpt 按运维决定保留</b>。执行结果待 data 线下次唤醒。</li>
     <li>✅ <b>D-CLEAN-3 执行成功：<code>servers</code>(974 G) 已删，实收 ≈972 G</b> —— <b>P1/P2/P3 全过</b>（无进程占用 / 无 7 天活动 / 无脚本引用）；<b>外部 symlink 未被跟随 → 数据集完好</b>；<b><code>/nas_train</code> 86%→85%、Avail 31218G→32190G</b>。</li>
-    <li>🧪 <b>R14 全部完成 + E1 实测</b>：GPIC **12,537 对/tar（±2%）→ 全量 ≈100.3M**（证官方 100M）、**已下 15.2M**、**C1 本地上限定案 ≈118M（动态）**；`r9_scaling.py --local-cap-m` 已改 default=118.0。⚠️ <b>R11-E 可比 N 区间被压到 ≈6.8M</b>（须如实说明）。</li>
-    <li>❌ <b>iGVLM / TuringViT 关闭</b>（R14 普查**未找到官方仓库** → 按「不许闭门造车」不值得自研）；<b>R12 取消</b>，<b>R13 保留</b>（且只能在有官方实现的那几个上做）。</li>
-    <li>🧪 <b>P-9.2 收窄</b>：只用 <b>已暴露开关</b>（MBS/TP/SP/seq-length/precision）；recompute/通信重叠/dataloader/attn-backend **冻结**（需改 recipe）；**NCCL（P-4 占 41.7%）** 记录为最大待批杠杆。</li>
+    <li>🧪 <b>R14 全部完成 + E1 实测</b>：GPIC <b>12,537 对/tar（±2%）→ 全量 ≈100.3M</b>（证官方 100M）· <b>已下 15.2M</b> · <b>C1 本地上限定案 ≈118M（动态）</b>；<code>r9_scaling.py --local-cap-m</code> 已改 <code>default=118.0</code>。⚠️ <b>R11-E 可比 N 区间被压到 ≈6.8M</b>（须如实说明）。</li>
+    <li>❌ <b>iGVLM / TuringViT 关闭</b>（R14 普查<b>未找到官方仓库</b> → 按「不许闭门造车」不值得自研）；<b>R12 取消</b>，<b>R13 保留</b>（且只能在有官方实现的那几个上做）。</li>
+    <li>🧪 <b>P-9.2 收窄</b>：只用 <b>已暴露开关</b>（MBS/TP/SP/seq-length/precision）；recompute / 通信重叠 / dataloader / attn-backend <b>冻结</b>（需改 recipe）；<b>NCCL（P-4 占 41.7%）</b> 记录为最大待批杠杆。</li>
   </ul>
 </div>
 
