@@ -51,7 +51,7 @@ WAITING: 0
 |:--|:--|:--|:--|
 | **news** | ✅ **T8–T10 已交付**（`fd32d67`）：`fetch_cn_news()` 落地（MCP `cn_news` + CLI `--cn-news`）· 中文权威真新闻 6 条（中文 4 ≥ 英文 2）· 原 31 条按 §0.1 收口（**留 news 9 / 移出非新闻 22**）；T5–T7 仍待办 | `news/FETCH_CN_NEWS.md` · `news/2026-10-03.md`（第三轮）· `news/mcp_web_search_free.py`（+`cn_news`） | ✅ 运行中（**supervisor 已独立复跑 CLI 验证通过**） |
 | **research** 🆕 | **第 1 批 R1′/R2′ 已下发**（实测取源：**arXiv API 为主** + HF Daily Papers 作社区信号；**RSS 周末空**不作主力；时效口径含周末放宽）；**首轮已交付 34 篇**（R1 打通 + 12 条固化查询 + 抓 214/精选 34） | `run/research/ARXIV_API.md` · `run/research/<date>.md` · `SEEN.md` · `INDEX.md` · `papers.jsonl` · `queries.json` · `arxiv_fetch.py` | ✅ 运行中（**supervisor 抽验 3 个 arXiv ID 全真实**） |
-| **archive** 🆕 | **第 1 批 A1/A2**：端点勘察（**新华网优先**）+ 抽样计数（**2016–2026 每年多少条**）；🚫 不用 key、**锁国内权威源**（新华/人民/中新/央视） | `run/archive/ENDPOINTS.md` · `run/archive/COUNT_STUDY.md` | 🆕 已建线，**待启动 loop** |
+| **archive** 🆕 | **第 2 批：方案 C 定案**（**只取 标题+日期+来源+链接**，🚫 不抓正文）—— A1 端点勘察 → A2 计数 → C 建索引；🚫 免 key、**锁国内权威源** | `run/archive/ENDPOINTS.md` · `COUNT_STUDY.md` · `index/<源>-<年>.jsonl.gz` · `PROGRESS.md` · `INDEX_FILES.md` | 🆕 已建线 + C 已定案，**待启动 loop** |
 
 > ✅ **T1–T4 已完成并交付（2026-10-03，commit `c326ba8`）**：
 > - **T1** 核实 12 个 web-search 候选；**T2** 新建**免 key MCP** `run/news/mcp_web_search_free.py`（3 工具 `web_search`/`search_news`/`rss_latest`）+ `run/news/cline_mcp_config.json`，**stdio 全链路实测通过**；
@@ -238,6 +238,9 @@ WAITING: 0
   - ⚠️ **规模警示**：若新华社 20 万条/年 → 10 年 **≈200 万条**；限速 ≥2s 下**仅枚举就 >45 天** → **全量不可行**，须缩窗/抽样/只取标题+链接。
   - **建 archive 线**（第 3 条）：`WATCH_ARCHIVE_TASK.md`（A1 端点勘察 + A2 抽样计数 + §0.1 口径「archive ≠ news」）· `watch_archive_loop.sh`（同款加固）· `MEMORY_ARCHIVE.md` · `archive/`（`ENDPOINTS.md` / `COUNT_STUDY.md`）· `daily-memories-archive/`。
   - 已同步 `README.md`（3 条线）· `AGENTS.md` · `run/README.md`（§2.2 启动）。
+- **2026-10-03（用户拍板 archive 方案 C）** —— 用户选 **C：只取「标题+日期+链接」，不抓正文**。
+  - **我纠正了自己的错误估算**：先前 ">45 天" 是**按条**算的（200 万条 × 2s）；**方案 C 按"天"枚举**（一天 1 个列表页）→ 10 年 ≈ **3650 请求 ≈ 2–3 小时**（4 源 ≈ 10 小时级）。→ **C 可行**。
+  - **下发 archive 第 2 批**：C 规格 = 5 字段（`date/source/channel/title/url`）· 主键 `url` · **按年分片压缩** `index/<源>-<年>.jsonl.gz` · `PROGRESS.md` 断点续抓 · `INDEX_FILES.md` 清单 · **单年 >20MB 不入 git**（本体放 `~/archive_data/`）· 限速 ≥2s · **A1 未通前 C 仅对中新网先行**。
 - **2026-10-03（news worker 首交付）** —— agent 完成 **T1–T4**（`c326ba8`）+ **首轮 smoke 16 条**（`3fcd854`）+ 记忆回写（`bdc20db`），已转**常态采集**（`WAITING=1`）。
   亮点：**真跑实测**（给报错原文）、**建了免 key MCP**、报告**自包含**、**360 无日期就拒收**（守"字段缺一不可"）。
   待用户拍板：**是否补正规 API key**（免 key 抓取脆弱/合规灰区）。待核：**MCP 是否已装进运行机 cline**。
