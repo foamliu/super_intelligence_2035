@@ -415,6 +415,8 @@ cline auth -p openai -k <API_KEY> -b <BASE_URL> -m <MODEL_ID>
 ```
 doc/BaiZe-ISEDA2027/
 ├── README.md                      # 本文件（项目总纲）
+├── MEMORY.md                      # ⭐ 运维（operator）长期记忆 —— 醒来先读
+├── daily-memories/                #   运维侧每日流水（⚠️ 与 run/daily-memories*/ 区分）
 ├── BaiZe-ISEDA2027/               # 论文 LaTeX 树（IEEEtran，自包含）
 │   ├── main.tex                   #   注意：作者信息已注释（ISEDA 需匿名）
 │   ├── main.pdf                   #   5 页（随正文更新）
@@ -423,9 +425,8 @@ doc/BaiZe-ISEDA2027/
 │   └── ISEDA2027/                 #   0_abstract … 9_conclusion
 ├── run/                           # 实验执行编排 + 记录
 │   ├── EXPERIMENTS*.md            #   实验台账（2B / pretrain / vision）
-│   ├── MEMORY*.md                 #   agent 运行时状态
-│   │                              #   ⭐ MEMORY_OPERATOR.md = 运维侧长期记忆（醒来先读）
-│   ├── daily-memories/            #   每日流水（各线：daily-memories-{data,vision,harness,operator}/）
+│   ├── MEMORY*.md                 #   agent 运行时状态（pretrain/data/vision/harness）
+│   ├── daily-memories*/           #   各线每日流水（data / vision / harness）
 │   ├── AGENTS.md                  #   谁在跑（总表）+ 记忆维护规程
 │   └── train_s*.sh, baize_*.sh    #   可复现命令
 ├── data/                          # s5_01_loss_curve.csv
