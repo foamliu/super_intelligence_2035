@@ -49,11 +49,11 @@
 
 <header class="hero">
   <h1>BaiZe 工作汇报 · 2026-10-03</h1>
-  <div class="sub">R14 官方仓库调研 ✅ · H-D 五 harness 对比+机会点 O1–O5 ✅ · 任务书瘦身 <b>-52%</b> · P-5b 62% · 定位到「额度耗尽」根因</div>
+  <div class="sub">R14 官方仓库调研 ✅ · H-D 五 harness 对比+机会点 O1–O5 ✅ · 任务书瘦身 <b>-52%</b> · P-5b 63.7% · P-9 非 GPU 预研已落地</div>
   <div class="meta">
     <span>📅 2026-10-03</span>
     <span>📝 <code>foamliu/super_intelligence_2035</code> @ <code>main</code></span>
-    <span>📈 当日提交 <b>≈81</b> 个</span>
+    <span>📈 当日提交 <b>≈86</b> 个</span>
     <span>🎯 投稿截止 ≈ 2027-02-01（余 <b>≈121 天</b>）</span>
   </div>
 </header>
@@ -86,6 +86,8 @@
     <li>🪶 <b>任务书瘦身（为省 agent 共享 key 的 token）：</b>vision <b>92.5→11.7KB(-87%)</b> · pretrain <b>57.1→33.3KB</b> · data <b>60.1→42.6KB</b> → <b>4 份活跃任务书 237→115KB（-52%）</b>，每次全唤醒省 ≈41K prompt token。</li>
     <li>🔴 <b>定位到「静默变慢」根因：cline Token 额度耗尽</b>（<code>/tmp/baize_harness_loop.log</code> 原文 <code>error: 本次Token额度已用完…</code>；<b>cline 仍返回 exit 0</b> → loop 分辨不出）。→ <b>loop 优化延后</b>（需回公司重启；1800→3600 会拖慢响应）。</li>
     <li>🔧 <b>推翻了 AGENTS.md 的一条结论：</b>「ops_relay 会跑出多个副本」= <b>误判</b> —— 第 2 行是 relay 的<b>子 shell</b>（<code>ppid</code>=真 relay、<code>etimes≈0</code>）。判别看 <b><code>ppid</code></b>，🚫 绝不要两个都杀。</li>
+    <li>🧪 <b>pretrain 已做 P-9 非 GPU 预研</b>（不碰 GPU）：核实 <b>TE 2.12.0 / torch 2.8.0+cu128 / CUDA 12.8</b>；并查明 <b><code>launcher</code> 只暴露 MBS / TP / SP / seq-length / precision</b> —— ⚠️ <b>P-9.2 的 flag 扫描（recompute / 通信重叠 / dataloader…）多数需改 recipe</b>，不是一行开关。</li>
+    <li>🗑 <b>D-CLEAN-3 已下发</b>（删 <code>servers/</code> 974 G，带 <b>P1/P2/P3 前置检查</b>）；<b><code>nemo_experiments</code> R2 ckpt 按运维决定保留</b>。执行结果待 data 线下次唤醒。</li>
   </ul>
 </div>
 
@@ -120,8 +122,8 @@
   <tr><th>线</th><th>今日进展</th><th>当前状态</th><th>下一步</th></tr>
   <tr>
     <td><b>pretrain</b><br><code>.29</code></td>
-    <td>P-5b 巡检 #36；<b>P-9 规格重写</b>（seq 4096 · 4M/步不变量 · seq 多点 · FP8 按 M 扫 · profiling）；<b>任务书瘦身 57→33KB</b></td>
-    <td><span class="badge b-ok">🔄 P-5b 62.3%</span> · 健康（loss 2.0684）</td>
+    <td>P-5b 巡检 #37；✅ <b>P-9 非 GPU 预研已落地</b>（TE 2.12.0 / torch 2.8.0+cu128 核实；⚠️ <b><code>launcher</code> 只暴露 MBS/TP/SP/seq/precision</b> → flag 扫描多需改 recipe）</td>
+    <td><span class="badge b-ok">🔄 P-5b 63.7%</span> · 健康（loss 2.0656）</td>
     <td>P-5b 收官 → <b>P-9</b>（尽早，早于 P-6②）→ P-6② → P-8（暂缓）</td>
   </tr>
   <tr>
