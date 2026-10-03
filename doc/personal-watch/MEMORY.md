@@ -50,7 +50,7 @@ WAITING: 0
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
 | **news** | ✅ **T8–T10 已交付**（`fd32d67`）：`fetch_cn_news()` 落地（MCP `cn_news` + CLI `--cn-news`）· 中文权威真新闻 6 条（中文 4 ≥ 英文 2）· 原 31 条按 §0.1 收口（**留 news 9 / 移出非新闻 22**）；T5–T7 仍待办 | `news/FETCH_CN_NEWS.md` · `news/2026-10-03.md`（第三轮）· `news/mcp_web_search_free.py`（+`cn_news`） | ✅ 运行中（**supervisor 已独立复跑 CLI 验证通过**） |
-| **research** 🆕 | **R1–R4**（建线首启）：打通 arXiv API → 检索策略 → 常态采集 → 日报/台账/jsonl | `run/research/ARXIV_API.md` · `run/research/<date>.md` · `SEEN.md`(arXiv ID) · `INDEX.md` · `papers.jsonl` | 🆕 已建线，**待启动 loop** |
+| **research** 🆕 | **第 1 批 R1′/R2′**（已实测取源：**arXiv API 为主** + HF Daily Papers 作社区信号；**RSS 周末空**不作主力；时效口径含周末放宽）+ R1–R4 | `run/research/ARXIV_API.md` · `run/research/<date>.md` · `SEEN.md`(arXiv ID) · `INDEX.md` · `papers.jsonl` | 🔄 已启动（loop 已拉起，待首轮交付） |
 
 > ✅ **T1–T4 已完成并交付（2026-10-03，commit `c326ba8`）**：
 > - **T1** 核实 12 个 web-search 候选；**T2** 新建**免 key MCP** `run/news/mcp_web_search_free.py`（3 工具 `web_search`/`search_news`/`rss_latest`）+ `run/news/cline_mcp_config.json`，**stdio 全链路实测通过**；
@@ -191,6 +191,13 @@ WAITING: 0
   - **继承的铁律**：不许编造 · 字段缺一不可 · **`200 ≠ 有料`（验 `Content-Type` + `published`）** · **礼貌限速（arXiv ≥3s）** · 不整篇转载 · 只加本线文件。
   - **R1 先跑**：打通 arXiv API 并**给实测证据**（真查询 + 条目 + 日期）；**R1 未打通不做常态采集**。
   - **待办**：用户需在运行机上 `setsid bash watch_research_loop.sh ...` **拉起 loop**（见 `run/README.md`）。
+- **2026-10-03（research 取源实测 + 派活第 1 批）** —— 用户：research 线**已启动**；问"从哪里获取最新 AI 前沿信息"（附 DeepSeek 建议）。
+  - **supervisor 实测候选源**：`rss.arxiv.org/rss/cs.{LG,AI,CL}` → **200 rss+xml 但 items=0**（feed 含 `<skipDays>Saturday/Sunday</skipDays>` → **周末不发**）→ **不作主力**；
+    **`https://export.arxiv.org/api/query`** → **200 atom+xml，真条目 + `published`** → ✅ **主力**（⚠️ http→**301**，须 https + 跟随重定向）；
+    **`https://huggingface.co/api/daily_papers`** → **200 JSON**，但 `publishedAt` **滞后 3~8 天** → ✅ 仅作**社区精选加权**，**不作新鲜源**。
+  - **产出/下发**：research 任务书新增「第 1 批：已实测取源清单 + 3 个陷阱」= **R1′**（主力 arXiv API + 副源 HF；RSS 周末空不得写"无新增"）+ **R2′**：
+    **`≤72h` 对 arXiv 会误杀**（工作日 20:00 ET 公告、周末不发）→ 改为"日报 ≤72h；周末/周一放宽到**最近一次公告批次**并标注实际区间"。同步修正 §0.1 时效判据。
+  - **纠正**：DeepSeek 那套是 **AI+EDA**（cs.AR），本线类别改为 **cs.CL/cs.CV/cs.MM/cs.SE/cs.AI/cs.MA/cs.LG**。
 - **2026-10-03（news 交付 T8–T10 + 我的独立验证）** —— news agent 交 `fd32d67`：
   - **T10** `fetch_cn_news()` 落地（MCP `cn_news` + CLI `--cn-news --limit N [--json] [--max-age-hours]` + Python 直调）；
   - **T9** 中文权威真新闻 **6 条（中文 4 ≥ 英文 2）**：央视网 2 + 中新网 2 + Ars 2；

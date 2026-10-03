@@ -11,7 +11,37 @@
 > 本节由 **supervisor** 通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停**。
 > **agent 禁止修改本节**。本节为「无」时，按下方默认顺序自主推进。
 
-### 🆕 运维指令 · 2026-10-03（**建线首启：打通 arXiv API + 建论文采集线**）⭐ **当前最高优先**
+### 🆕 运维指令 · 2026-10-03（第 1 批：**已实测取源清单 + 3 个陷阱**）⭐ **最高优先**（**优先于下方建线首启**）
+
+> **背景**：supervisor 已把候选源**逐个实测**（结论可直接用，但你**仍须在运行机上复验可达性**——运行机在国内网络，与 supervisor 机器不同）。
+
+| 端点 | 实测结果（2026-10-03） | 判定 |
+|:--|:--|:--|
+| `rss.arxiv.org/rss/cs.{LG,AI,CL}` | **200 `application/rss+xml` 但 `<item>` = 0（892 B）**；feed 内含 `<skipDays><day>Saturday</day><day>Sunday</day></skipDays>` | ⚠️ **活的，但周末为空**；**一天一次、不可检索** → **不作主力** |
+| **`https://export.arxiv.org/api/query`** | **200 `application/atom+xml`，真条目 + `published`** | ✅ **主力源**（⚠️ 必须 **https**；http 版本 → **301**，须跟随重定向） |
+| **`https://huggingface.co/api/daily_papers`** | **200 JSON**，含 `publishedAt`（实测 **滞后 3~8 天**） | ✅ 可用，**但只作"社区精选"加权信号，不作新鲜源** |
+| `huggingface.co/papers`（网页） | 302 | 用 **API** 更稳 |
+
+**R1′ · 取源（修订）**
+1. **主力 = arXiv API**，例：
+   ```
+   https://export.arxiv.org/api/query?search_query=cat:cs.CL+OR+cat:cs.CV+OR+cat:cs.SE+OR+cat:cs.AI+OR+cat:cs.LG&sortBy=submittedDate&sortOrder=descending&max_results=50
+   ```
+   关键词变体：`abs:"small language model"` · `ti:"agent harness"` · `all:"vision-language"`。
+   **仍须校验**：`Content-Type` 是 **XML**（不是 HTML）+ 每条有 **`published`**。
+2. **副源 = HF Daily Papers API**：取"当日精选"，用于给已收论文**打社区精选标记**（`🏷 hf_daily`），**不得**用它当新鲜度依据。
+3. **RSS 仅在工作日**可作补充（周末必空）；**遇到空 feed 不得写"无新增"**，要标注"周末/未公告"。
+4. **领域类别（注意：不是 AI+EDA）**：**cs.CL**（LLM/SLM）· **cs.CV/cs.MM**（多模态）· **cs.SE/cs.AI/cs.MA**（agent harness）· **cs.LG**。查询清单**固化进脚本**。
+
+**R2′ · 时效口径修订（重要）**
+- arXiv **工作日 20:00 ET 公告、周末不发**（周五投的周一才公告）→ **`≤72h` 会误杀**。
+- 改为：**日报口径 ≤72h；若落在周末/周一早，则放宽到"最近一次公告批次"，并如实标注实际日期区间**（例如 `窗口：10-01 ~ 10-03（含周末，取最近公告批次）`）。
+- 🚫 仍**不许**为了凑数把陈年论文当新论文（`published` 与 `updated` 都要看，以**首次提交**为准）。
+
+**铁律（不变）**：不许编造 · 字段缺一不可 · **`200 ≠ 有料`（验 `Content-Type` + 日期）** · **arXiv 礼貌限速 ≥3s** · 不整篇转载 · 只 add 本线文件。
+**完成后**：更新 `MEMORY_RESEARCH.md`（`PHASE=arxiv_bootstrap`）+ 当日流水；commit → push。
+
+### 🆕 运维指令 · 2026-10-03（**建线首启：打通 arXiv API + 建论文采集线**）（⬇️ 基础要求仍有效）
 
 > **背景（用户 2026-10-03）**：新建 **research 线**，用于**打通 arXiv 下载 API**、并**持续收集 & 整理 AI 论文**
 > （重点：**LLM / SLM / 多模态 / agent harness**）。范式与 **news 线**一致（见 `WATCH_NEWS_TASK.md`），**并继承其全部铁律**。
@@ -95,7 +125,7 @@ ERROR_COUNT:  <n>
 | # | 判据 | 说明 |
 |:--|:--|:--|
 | 1 | **来源** | **arXiv**（一手预印本）；**必须给 `arXiv ID` + `abs` 链接**（有 pdf 也给）。其它一手源（OpenReview / ACL Anthology）须**显式标注**。 |
-| 2 | **时效** | `published` 或 `updated` **≤ 72 小时**（日报口径）。**陈年经典不算**（除非 supervisor 点名）。 |
+| 2 | **时效** | `published`（首次提交）**≤ 72 小时**（日报口径）。**陈年经典不算**（除非 supervisor 点名）。<br>⚠️ **例外**：arXiv **周末不公告**（见运维指令 R2′）→ 落在**周末/周一早**时，可放宽到「**最近一次公告批次**」并**如实标注实际日期区间**。 |
 | 3 | **可核验** | 齐备：`arXiv ID` + `标题` + `作者` + `提交/更新日期` + `主分类` + `链接`。 |
 | 4 | **领域相关** | 命中 §1 关注领域。 |
 
