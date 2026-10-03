@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 19 -->
+<!-- RUN_ID: 20 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,14 +31,58 @@
 
 ---
 
-## RUN_ID 19 — 🔧 **修复第三版：改纯 shell 的 sed 取 key + 重启**（**已获批准**）（**本块最新，优先执行**）
+## RUN_ID 20 — 🔬 **判定：cline 在「env=有效 key」下能否跑（vs「彻底 unset」）**（**纯只读**）（**本块最新，优先执行**）
+
+**已知事实**：
+- ✅ **07:28 那版**（启动时 `env -u OPENAI_API_KEY` + cline 行也 `-u OPENAI_API_KEY`）= **彻底没有该变量** → **clinely 正常工作**（pretrain 因此产出 `beea3f1`「P-5b 完成 + P-9.1 启动」）
+- ❌ **07:39 / 07:42 两版**（脚本注入 key）→ 重启后 **3 秒即 `error: Forbidden`**
+- ⚠️ 我上一轮的校验方法**无效**：`/proc/<pid>/environ` 是 **exec 时的初始环境**，脚本里的 `export`/`unset` 不会反映进去 → 无法用它判断注入是否生效
+- ✅ 但 `sed` 提取本身没问题：本块第 1 节会再验一次（应 `len=72 prefix6=02_088`）
+
+**本块 = 三路 smoke 对照**（只读，不改任何文件）：
+| 组 | 环境 | 判定 |
+|:--|:--|:--|
+| **A** | `OPENAI_API_KEY=<有效>` | 若 OK → 「注入有效 key」可行，问题在脚本没生效 |
+| **B** | `OPENAI_API_KEY` 被 unset | 若 OK（预期）→ **以 unset 为准** |
+| **C** | `OPENAI_API_KEY=<stale 01_549…>` | 若 Forbidden → 坐实 stale env key 会毒化 cline |
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; cd /tmp
+_k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" 2>/dev/null | head -1)"
+
+echo; echo "=== 1. key 提取自检（masked）==="
+echo "   valid(sed): len=${#_k} prefix6=${_k:0:6}"
+echo "   stale(env): len=${#OPENAI_API_KEY} prefix6=${OPENAI_API_KEY:0:6}"
+
+try() { L="$1"; shift; printf '   [%s] => ' "$L"; env "$@" timeout 90 "$C" -c /tmp -m "$M" --auto-approve true -t 45 "reply with exactly OK" 2>&1 | head -3 | tr -d '\r' | tr '\n' ' ' | cut -c1-150; echo; }
+
+echo; echo "=== 2. 三路 smoke ==="
+try "A env=valid"  OPENAI_API_KEY="$_k"
+try "B unset"      -u OPENAI_API_KEY
+try "C env=stale"  OPENAI_API_KEY="${OPENAI_API_KEY}"
+
+echo; echo "=== 3. 顺便：harness 的 driver 会不会因 unset 而不可用 ==="
+echo "   run_harness.py 读 key 的行："
+grep -n 'OPENAI_API_KEY' /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/run_harness.py 2>/dev/null | head -4 | cut -c1-140
+
+echo; echo "=== 4. 当前两条 loop 的日志尾（现状）==="
+tail -c 300 /tmp/baize_pretrain_loop.log 2>/dev/null | tr -d '\r' | tail -3 | cut -c1-130
+tail -c 300 /tmp/baize_harness_loop.log  2>/dev/null | tr -d '\r' | tail -3 | cut -c1-130
+
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 19**（v3 sed 注入，**✅ 已执行 07:42:54**，**结果：仍 Forbidden**）为 ```text。
+
+## RUN_ID 19 — 🔧 **修复第三版：改纯 shell 的 sed 取 key + 重启**（✅ 已执行，⚠️ 仍 Forbidden，见 RUN_ID 20）
 
 **RUN_ID 18 暴露的回归（2026-10-04 07:40）**：
 - ❌ 我 v2 用 `python3 -c ...` 注入 key，但 **relay 拉起的 non-interactive shell 里 `python3` 不在 PATH** → 取不到 → **没覆盖** → loop 继承了父进程那把 **stale `01_549…`** → 重启后立刻又 `error: Forbidden`（pretrain/harness 各 1 次）
 - ✅ v3：改用 **纯 shell `sed`** 从 secrets.json 提取（不依赖 python），并加 **兜底 `unset`**（读不到就退回 secrets.json，绝不撞 stale key）
 - 📌 本块**先验证 sed 能取到 key**（只打 len/prefix6），**取不到就中止、不动 loop**
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 WK=/nas_train/app.e0031982/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
 
