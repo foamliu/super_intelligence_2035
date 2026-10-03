@@ -6,9 +6,9 @@
 
 | 日期 | news 条数 | 非新闻 条数 | 文件 | 备注 |
 |:--|--:|--:|:--|:--|
-| 2026-10-03 | 30 | 22 | [2026-10-03.md](2026-10-03.md) | 第一轮 smoke（原 16 → **news 3**）+ 第二轮（原 15 → **news 6**）+ **第三轮 · 中文权威源（T9）news 6（中文 4 / 英文 2）** + **第四轮 · 常态采集 news 15（中文 11 / 英文 4）**。非新闻 22 条（feature / opinion / analysis / paper / tool / discussion）仅存 `SEEN.md`。来源：IT之家 · 量子位 · 中新网 · 央视网 · 联合国新闻 · The Register · WSJ · NYT · Guardian · NBC · Fortune · TechCrunch · Ars Technica · Anthropic · NVIDIA · HN(Algolia) |
+| 2026-10-03 | 35 | 22 | [2026-10-03.md](2026-10-03.md) | 第一轮 smoke（原 16 → **news 3**）+ 第二轮（原 15 → **news 6**）+ **第三轮 · 中文权威源（T9）news 6（中文 4 / 英文 2）** + **第四轮 · 常态采集 news 15（中文 11 / 英文 4）** + **第五轮 · 常态采集 news 5（中文 4 / 英文 1）**。非新闻 22 条（feature / opinion / analysis / paper / tool / discussion）仅存 `SEEN.md`。来源：IT之家 · 量子位 · 中新网 · 央视网 · 联合国新闻 · The Register · WSJ · NYT · Guardian · NBC · Fortune · TechCrunch · Ars Technica · Anthropic · NVIDIA · HN(Algolia) |
 
-**累计收录：news 30 条**（另非新闻 22 条，仅存 `SEEN.md` 防重）
+**累计收录：news 35 条**（另非新闻 22 条，仅存 `SEEN.md` 防重）
 
 > 🧭 **工具**：免 key MCP `web-search-free` —— `web_search`（CN-Bing/360）· `search_news`（HN/GDELT）· `rss_latest`（**含新增中文 dated 源：量子位 `qbitai.com/feed`、IT之家 `ithome.com/rss/`**）· **`cn_news`（T10 中文活源统一入口）**。
 > 📄 中文入口用法与自测：`news/FETCH_CN_NEWS.md`。

@@ -12,10 +12,10 @@ WAITING: 1
 
 ```
 PHASE:        常态采集（T1–T10 全部 ✅；自第四轮起进入常态采集）
-已完成:       T1–T10 全部 ✅ · 首轮 smoke ✅ · 第二轮常态 ✅ · 第三轮·中文权威源 ✅ · 第四轮常态采集 ✅
-当前动作:     第四轮常态采集：中文走 `cn_news` + **IT之家 RSS** + **新增量子位 RSS（`qbitai.com/feed`，实测 dated 活源）**；英文走 HN/Algolia + 官方 RSS → 落盘 news/2026-10-03.md「四、第四轮」**15 条（中文 11 / 英文 4）**；SEEN +15；INDEX news 15→30
-下一步:       常态采集（WAITING=1，睡 30min）：逐类搜索→去重→追加当日摘要；**每轮先用 `cn_news` + 量子位/IT之家 RSS 补中文（中文≥英文）**，英文走 `search_news`/`rss_latest`；GDELT 限频
-本轮新增:     news 15 条（**中文 11**：量子位 5 + IT之家 5 + 中新网 1；**英文 4**：NVIDIA / The Register / Ars Technica / Fortune）
+已完成:       T1–T10 全部 ✅ · 首轮 smoke ✅ · 第二轮常态 ✅ · 第三轮·中文权威源 ✅ · 第四轮常态 ✅ · 第五轮常态 ✅
+当前动作:     第五轮常态采集：`cn_news`（6 活源全 200，但命中多为国庆/时政/民生 → 未录）+ **IT之家 RSS**（中文主供给）+ 量子位 RSS（自第四轮起无新）+ HN(Algolia)（英文）→ 落盘 news/2026-10-03.md「五、第五轮」**news 5 条（中文 4 / 英文 1）**；SEEN +5；INDEX news 30→35
+下一步:       常态采集（WAITING=1，睡 30min）：逐类搜索→去重→追加当日摘要；**每轮先用 `cn_news` + IT之家/量子位 RSS 补中文（中文≥英文）**，英文走 `search_news`(HN) / 官方 RSS；GDELT 限频退避
+本轮新增:     news 5 条（**中文 4**：IT之家 4〔Airbnb AI 图片勒索 / 韩国银行 AI 黑客 / 华为 Mate 90 韬芯片 / 三星 HBM4 定价〕；**英文 1**：WSJ〔OpenAI 解雇研究人员，经 HN〕）
 阻塞:         无
 ERROR_COUNT:  1（历史：模型名 deepseek-v4-pro-fp4 不被网关支持 → 白睡一轮；已修。GDELT 429 属频控，已如实记录、未重试）
 ```
@@ -83,13 +83,20 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **产物**：`news/<YYYY-MM-DD>.md`（当日摘要）· `news/SEEN.md`（去重台账）· `news/INDEX.md`（索引）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-03` 第二轮常态 ~ `2026-10-03` 第三轮·中文权威源
-- **累计收录**：`37` 条（**news 15**〔第一轮 3 + 第二轮 6 + 第三轮 6〕+ 非新闻 22〔仅存 `SEEN.md`〕）
+- **上次采集窗口**：`2026-10-03` 第四轮常态（06:45 UTC）~ `2026-10-03` 第五轮常态（07:17 UTC）
+- **累计收录**：`57` 条（**news 35**〔第一轮 3 + 第二轮 6 + 第三轮 6 + 第四轮 15 + 第五轮 5〕+ 非新闻 22〔仅存 `SEEN.md`〕）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-03** —— ✅ **第五轮常态采集完成（news 5 条：中文 4 / 英文 1）**。PHASE=常态采集。
+  - **`cn_news`（T10）实跑**：`--cn-news --limit 60` → **6 活源全 200**；新鲜度：中新网×3 kept=30/30/30 · 联合国 kept=18(drop 12) · 央视 news_1 kept=80 / tech_1 kept=11(drop 69)；**丢弃合计 81**（均超龄 >72h）。⚠️ 命中多为**国庆/时政/民生（非 AI）** → **未从中录条目**（宁缺勿滥）。
+  - **落盘**：`news/2026-10-03.md` 追加「五、第五轮」5 条（中文 4：IT之家；英文 1：WSJ 经 HN）· `SEEN.md` +5 行 · `INDEX.md` news 30→35（另非新闻 22）。
+  - **代表条目**：《爱彼迎房东用 AI 生成「漏水」照勒索房客》(IT之家) · 《韩国五大银行首次同时遭（疑似 AI 驱动）黑客攻击、三家信息泄露》(IT之家/韩联社) · 《OpenAI 解雇被指共享机密的研究人员》(WSJ) · 《三星为 2027 HBM4 寻求超 HBM3E 三倍定价》(IT之家)。
+  - **方法观察**：本窗口仅 ~30min → 新料有限，**未凑数**；**量子位 RSS 自第四轮无新**；**The Register** 的 `headlines.atom`/`.rss` 经 stdlib 解析**均报 `not well-formed ... line 7, column 22`** → 该源 RSS 改由 **HN** 取（记一笔待修）；**Ars RSS** 最新停在 10-02（无新）；**GDELT 未调**（退避）。
+  - **拒收例（§0.1）**：路透《AI 竞相在资金耗尽前改变世界》(feature) · OpenAI《GPT-6 使用指南》(tutorial) · Yahoo Finance《Google 员工对新 Gemini 存疑》(非具体事件) · `Codex Originals`(产品页) · 各类 `Show HN`/`Ask HN` → **存疑即不收**。
+  - 判据复核：5/5 字段齐全（标题 + 来源 + 发布日期 + 🔗链接 + 🏷 类型：news）；**中文 4 ≥ 英文 1**。**下一步常态采集（WAITING=1）。**
 - **2026-10-03** —— ✅ **第四轮常态采集完成（news 15 条：中文 11 / 英文 4）**。PHASE=常态采集。
   - **新增中文 dated 活源：量子位 RSS**（`https://www.qbitai.com/feed`，实测 `200` + 带 `pubDate`）→ 补齐中文 AI 纵深报道（Gemini 4 / 何恺明 NAT-ARC / OpenAI 安全团队 / arXiv 新规 / 丘成桐论文）。依 **T10** 规定**未并入** `CN_LIVE_SOURCES`（只准三类活源），以 `rss_latest` 单独取数。
   - **落盘**：`news/2026-10-03.md` 追加「四、第四轮」15 条（中文 11：量子位 5 + IT之家 5 + 中新网 1；英文 4：NVIDIA 官方 / The Register / Ars Technica / Fortune）· `SEEN.md` +15 行 · `INDEX.md` news 15→30（另非新闻 22）。

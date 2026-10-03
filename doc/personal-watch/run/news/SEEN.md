@@ -57,3 +57,8 @@
 | 2026-10-03 | 消息称亚马逊考虑剥离并回租 80 亿美元英伟达 Grace Blackwell AI 芯片 | IT之家 | news | https://www.ithome.com/1/009/407.htm |
 | 2026-10-03 | 曝美国陆军着手组建自主系统司令部，推动机器人技术进入未来战争 | IT之家 | news | https://www.ithome.com/1/009/427.htm |
 | 2026-10-03 | 丘成桐新论文致谢了 GPT 和 Claude | 量子位 | news | https://www.qbitai.com/2026/10/499991.html |
+| 2026-10-03 | OpenAI Fires Researchers for Allegedly Sharing Information with AI Safety Group | The Wall Street Journal | news | https://www.wsj.com/tech/ai/openai-parts-ways-with-researchers-who-allegedly-shared-confidential-information-aebac528 |
+| 2026-10-03 | 韩国五大商业银行首次同时被黑客攻击，其中三家发生客户信息泄露 | IT之家 | news | https://www.ithome.com/1/009/420.htm |
+| 2026-10-03 | 爱彼迎 Airbnb 民宿房东利用 AI 图片勒索房客要求其支付维修费，后者利用水印检测器成功识破 | IT之家 | news | https://www.ithome.com/1/009/473.htm |
+| 2026-10-03 | 「争气机」换更强「争气芯」：全系韬芯片之华为 Mate 90 发布，央视报道称走出世界半导体的新路 | IT之家 | news | https://www.ithome.com/1/009/451.htm |
+| 2026-10-03 | 超 HBM3E 当前价 3 倍：消息称三星电子为 2027 年 HBM4 内存寻求高额定价 | IT之家 | news | https://www.ithome.com/1/009/417.htm |
