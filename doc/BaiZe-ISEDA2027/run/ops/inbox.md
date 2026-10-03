@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 20 -->
+<!-- RUN_ID: 21 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,54 @@
 
 ---
 
-## RUN_ID 20 — 🔬 **判定：cline 在「env=有效 key」下能否跑（vs「彻底 unset」）**（**纯只读**）（**本块最新，优先执行**）
+## RUN_ID 21 — 🔴 **决定性判定：key 是不是【又被轮换】了？**（**纯只读**）（**本块最新，优先执行**）
+
+**RUN_ID 20 的意外结果（2026-10-04 07:44:05）**：**三路 smoke 全 `Forbidden`** —— 连 **B（unset）** 也失败，而 **07:29 时同一招是 OK 的**（RUN_ID 15 §3 明确 OK）。
+⇒ **不是 env 变体的问题**；**key 本身在 07:29→07:44 之间再次失效**（或网关开始拒绝）。
+🔎 **高度怀疑**：我在 07:15 建议"尽快轮换 key" → **若你已轮换，则 `.12` 那把（`02_088`，我复制到 `.29` 的）也已作废** → 完美解释"三路全挂"。
+
+**本块 = 一锤定音**（只读，不动任何 loop）：
+| 测点 | 含义 |
+|:--|:--|
+| `.29` secrets key → curl | 若 403 → 该 key 死了 |
+| **`.12` secrets key → curl** | 若也 403 → **key 被全局轮换**（两机都失效）；若 200 → 只有 `.29` 有问题 |
+| **`.12` 的 vision/data 是否仍在干活** | 若也停了 → 全局面（`02_088` 死）；若还在跑 → 只有 `.29` 异常 |
+| 两机 secrets.json 的 **mtime** | 若 `.12` 的 mtime 变成今天 → **刚被轮换过** |
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+GW=http://agi-gateway.cxmt.com/v1
+S="$HOME/.cline/data/secrets.json"
+_k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$S" | head -1)"
+
+echo; echo "=== 1. [.29] secrets.json + curl（用当前 key）==="
+echo "   mtime=$(stat -c %y "$S" | cut -c1-19)  len=${#_k} prefix6=${_k:0:6}"
+timeout 20 curl -s -o /tmp/_a.json -w '   curl code=%{http_code}\n' -H "Authorization: Bearer $_k" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"hi"}],"max_tokens":3}' "$GW/chat/completions"
+head -c 200 /tmp/_a.json 2>/dev/null; echo
+echo "   [.29] env 里的 key: len=${#OPENAI_API_KEY} prefix6=${OPENAI_API_KEY:0:6}"
+
+echo; echo "=== 2. [.12] secrets.json + curl + 是否仍在干活 ==="
+timeout 35 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 '
+GW=http://agi-gateway.cxmt.com/v1; S="$HOME/.cline/data/secrets.json"
+k="$(sed -n "s/.*\"openAiApiKey\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p" "$S" | head -1)"
+echo "   mtime=$(stat -c %y "$S" | cut -c1-19)  len=${#k} prefix6=${k:0:6}"
+timeout 20 curl -s -o /dev/null -w "   curl code=%{http_code}\n" -H "Authorization: Bearer $k" -H "Content-Type: application/json" -d "{\"model\":\"deepseek-v4-pro-fp4\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}],\"max_tokens\":3}" "$GW/chat/completions"
+echo "-- loops --"; pgrep -af "baize_.*_loop\.sh" | cut -c1-95
+echo "-- logs mtime --"; for f in /tmp/baize_vision_loop.log /tmp/baize_data_loop.log; do printf "   %s %s\n" "$(stat -c %y $f 2>/dev/null | cut -c1-19)" "$f"; done
+echo "-- vision log tail --"; tail -c 250 /tmp/baize_vision_loop.log 2>/dev/null | tr -d "\r" | tail -2 | cut -c1-120
+' 2>&1 | cut -c1-168 || echo "ssh .12 FAILED"
+
+echo; echo "=== 3. 现有 loop 状态（不动它们）==="
+pgrep -af "bash baize_(pretrain|harness)_loop\.sh" | cut -c1-95
+echo "-- GPU（P-9 应仍在跑）--"; nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -2
+
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 20**（三路 smoke，**✅ 已执行 07:44:14**，**结果：A/B/C 全 Forbidden**）为 ```text。
+
+## RUN_ID 20 — 🔬 **判定：cline 在「env=有效 key」下能否跑（vs「彻底 unset」）**（✅ 已执行，⚠️ 三路全挂，见 RUN_ID 21）
 
 **已知事实**：
 - ✅ **07:28 那版**（启动时 `env -u OPENAI_API_KEY` + cline 行也 `-u OPENAI_API_KEY`）= **彻底没有该变量** → **clinely 正常工作**（pretrain 因此产出 `beea3f1`「P-5b 完成 + P-9.1 启动」）
@@ -46,7 +93,7 @@
 | **B** | `OPENAI_API_KEY` 被 unset | 若 OK（预期）→ **以 unset 为准** |
 | **C** | `OPENAI_API_KEY=<stale 01_549…>` | 若 Forbidden → 坐实 stale env key 会毒化 cline |
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; cd /tmp
 _k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" 2>/dev/null | head -1)"
