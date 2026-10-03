@@ -2,6 +2,7 @@
 
 > 由 **research agent** 维护：每轮落盘后更新当日计数与累计。
 > 日报：`research/<YYYY-MM-DD>.md`；去重台账：`research/SEEN.md`；结构化台账：`research/papers.jsonl`；接口记录：`research/ARXIV_API.md`。
+> ⭐ **精选排序（运维第 2 批）**：`research/TOP_K.md`（人读）+ `research/TOP_K.jsonl`（机读，TOP-20，窗口 **≤30d**）；生成器 `research/top_k.py`（离线回归 `research/test_top_k.py`）。
 > **计数口径（R4）**：`收录篇数` = 已逐条中文摘要并进入 `papers.jsonl` 的论文；本轮**抓取到但未逐条摘要**者记 `SEEN.md` 状态=**候选**，**单列计数**（防重复评估，**不计入收录**）。
 
 | 日期 | 收录篇数 | 候选 篇数 | 文件 | 备注 |
@@ -12,3 +13,6 @@
 
 > 🧭 **工具**：`research/arxiv_fetch.py`（读 `research/queries.json`）。铁律：**HTTPS**（`http://export.arxiv.org` 会 301）· **`200 ≠ 有料`**（验 `Content-Type: application/atom+xml` + 可解析 + 非空 + `published` 日期真实）· **请求间隔 ≥3s** · 去重**主键 = arXiv ID**。
 > 📄 接口打通记录 / 参数 / 原始输出 / 坑：`research/ARXIV_API.md`。
+
+> ⭐ **TOP-K 精选（2026-10-03 运维第 2 批）**：窗口放宽 **≤30d** 全量重扫（`window_mode=override`，15/15 查询 `ok`，候选池 **1118** 篇）→ 双维度打分 `total = 0.6·rel + 0.4·q` → **TOP-20** 落 `TOP_K.md`/`TOP_K.jsonl`。
+> ⚠️ **HF Daily Papers 本机不可达 → 社区热度改用 HN Algolia**（不伪造 `hf_daily`）。口径见 `ARXIV_API.md` §9.7；TOP-5 中文导读见 `TOP_K.md`（源 `research/TOP_K_notes.md`）。

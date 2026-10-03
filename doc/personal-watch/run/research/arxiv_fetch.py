@@ -139,6 +139,8 @@ def _parse_feed(body):
             "summary": _clean(e.findtext(ATOM + "summary")),
             "abs_url": abs_url,
             "pdf_url": pdf_url,
+            "comment": _clean(e.findtext(ARXIV + "comment")),
+            "journal_ref": _clean(e.findtext(ARXIV + "journal_ref")),
         })
     return (int(total) if total and total.isdigit() else None), entries
 

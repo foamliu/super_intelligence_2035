@@ -11,13 +11,13 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        collecting（建线首轮 R1–R4 已收官；第二轮 R1′/R2′ 已落盘；第三/四/**五**轮常态增量完成 → 均 0 新增）
-已完成:       R1 打通 arXiv API（HTTPS/Atom，实测 HTTP/2 200 + application/atom+xml → research/ARXIV_API.md）；R2 固化检索策略（queries.json）；R3/R4 首轮采集（抓取 214 → 收录 34 + 候选 180）；R1′ 运行机取源复验（--probe：arXiv ✅ / HF ❌ / RSS 周末空）；R2′ 时效 published-first + 周末自动放宽（120h，weekend_batch）；第二轮增量（15/15 ok，新增 193 → 收录 27 + 候选 166）；第三、四、**第五轮增量（各 15/15 ok，窗口内 404 条全部已在 SEEN + 196 超龄 → kept 0；R1′ 复验 arXiv ✅/HF ❌/RSS 空）**
-当前动作:     第五轮落盘收官：日报第五轮章节 + INDEX/SEEN/ARXIV_API（§9.6）更新 → 提交本线文件
-下一步:       常态采集——下一轮按 SOP 增量采集（先读 SEEN.md 去重、定窗口）；无近期待办则 WAITING=1（睡 30min）
-本轮新增:     0 篇（领域数：0；**周六 arXiv 未公告**，最近批次仍为 2026-10-01，如实标注窗口区间）
-阻塞:         无（HF Daily Papers 本机不可达 → 如实记录，不伪造 hf_daily；RSS 周末空按规则标注「周末/未公告」）
-ERROR_COUNT:  0（第五轮 15/15 查询 ok、无重试；回归测试 49/49 PASS；历史 1 次 Read timeout 已重试成功）
+PHASE:        collecting + **selection**（R1–R5 常态采集已收官；**运维第 2 批 TOP-K 精选排序已交付**：≤30d 全量重扫 → TOP-20）
+已完成:       R1 打通 arXiv API（HTTPS/Atom → research/ARXIV_API.md）；R2 固化检索策略（queries.json）；R3/R4 首轮采集（抓取 214 → 收录 34 + 候选 180）；R1′ 取源复验；R2′ published-first + 周末自动放宽；第二~五轮增量（常 15/15 ok）；**运维第 2 批：`arxiv_fetch.py` 增 `comment`/`journal_ref` 字段 → ≤30d 全量重扫（15/15 ok，候选池 1118）→ 新建 `top_k.py`（rel/q 双维 + HN 热度）→ `TOP_K.md`/`TOP_K.jsonl`（TOP-20）+ 离线回归 `test_top_k.py` 20/20**
+当前动作:     第 2 批落盘收官：TOP_K 产物 + 日报/INDEX/ARXIV_API(§9.7) 更新 → 提交本线文件
+下一步:       ① 常态采集按 SOP 增量（先读 SEEN.md 去重、定窗口）；② TOP-K 可按需重跑（`--w1/--w2/--top` 可调）；③ **邮件职能待用户批准后才可启动**（现仅登记）
+本轮新增:     0 篇采集（周六未公告）；**新增 TOP-20 精选**（候选池 1118 篇 ≤30d）
+阻塞:         无（HF Daily Papers 本机不可达 → 社区热度**改用 HN Algolia 替代并注明**；不伪造 hf_daily）
+ERROR_COUNT:  0（第 2 批 15/15 查询 ok、无重试；回归 test_arxiv_fetch 49/49 + test_top_k 20/20 PASS）
 ```
 
 ---
@@ -26,7 +26,9 @@ ERROR_COUNT:  0（第五轮 15/15 查询 ok、无重试；回归测试 49/49 PAS
 
 > supervisor 可在任务书运维指令区「状态索取」写入问题；本区**先答该问题**再干活。
 
-- （暂无）
+- **Q（运维第 2 批登记）**：是否要**给论文作者发邮件**做学术交流/技术沟通？
+  **A（本线）**：**已登记为未来职能，本批只登记、不实施**。启用**前提（须用户明确批准）**：① 发件邮箱/身份/署名；② 邮件模板；③ 频率上限；④ 每封是否需用户先审。
+  **红线**：**未获批准，绝不自动发送任何邮件**。当前各线上均**无任何发信动作**。
 
 ---
 
@@ -34,17 +36,28 @@ ERROR_COUNT:  0（第五轮 15/15 查询 ok、无重试；回归测试 49/49 PAS
 
 - **线**：research（arXiv 论文采集/整理）
 - **任务书**：`WATCH_RESEARCH_TASK.md`（只读）
-- **产物**：`research/<YYYY-MM-DD>.md`（日报）· `research/SEEN.md`（去重台账，主键 arXiv ID）· `research/INDEX.md`（索引）· `research/papers.jsonl`（结构化台账）· `research/ARXIV_API.md`（R1）
+- **产物**：`research/<YYYY-MM-DD>.md`（日报）· `research/SEEN.md`（去重台账，主键 arXiv ID）· `research/INDEX.md`（索引）· `research/papers.jsonl`（结构化台账）· `research/ARXIV_API.md`（R1）· **`research/TOP_K.md` + `research/TOP_K.jsonl`**（精选排序，运维第 2 批；源 `TOP_K_notes.md`）
+- **工具/回归**：`research/arxiv_fetch.py` + `research/test_arxiv_fetch.py`（49/49）· **`research/top_k.py` + `research/test_top_k.py`（20/20）**
 - **日流水**：`daily-memories-research/<YYYY-MM-DD>.md`
 - **关注领域**：LLM · SLM · 多模态 · agent harness（+ 邻域，见任务书 §1）
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
 - **上次采集窗口**：`2026-10-03`（第五轮；窗口 **≤120h**（周六，`window_mode=weekend_batch`）；实际批次 `2026-09-28 ~ 2026-10-01`，本轮 **0 新增**）
+- **TOP-K 窗口（第 2 批专用）**：`2026-09-03 ~ 2026-10-01`（**≤30d / 720h**，`window_mode=override`；候选池 **1118** 篇 → TOP-20）
 - **累计收录**：`61` 篇（另候选 346 篇，仅存 `SEEN.md` 防重；五轮累计抓取 407 条 —— 第三/四/五轮新增均 0）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-03** —— **运维指令第 2 批：TOP-K 精选排序（窗口 ≤30d）✅ 交付**。
+  - **R-T1（≤30d 全量重扫）**：`arxiv_fetch.py` 先扩 `comment`/`journal_ref` 字段（回归仍 49/49）；再 `--fetch --window-hours 720 --max-results 100`（`window_mode=override`）→ **15/15 查询 `ok`**（无重试），**kept 1118 / dropped 288**（全部 `stale > 720h`），覆盖 **`2026-09-03 ~ 2026-10-01`**。证据 → `research/raw/2026-10-03-topk-fetch.json`。
+  - **R-T2（双维打分）**：新建 `research/top_k.py`：**rel** 走 BaiZe/ZhuLong 主题词表（**词边界**匹配，修复 `Harnessing`→`harness`、`limit`→`mit` 误命中）；**q** = `min(5, code+method+org+comment+hn)`；**`total = 0.6·rel + 0.4·q`**。
+  - **社区热度替代（诚实）**：**HF Daily Papers 本机 `Network is unreachable`** → **改用 HN Algolia**（`https://hn.algolia.com/api/v1/search`，HTTPS 200 JSON），**不伪造 `hf_daily`**；HN 偏英文技术圈（中文/冷门低估）。TOP-20 中仅 `2609.19969 DeepSeek-V4.1-Flash` 命中 HN（131 分）。
+  - **R-T3（产出）**：`research/TOP_K.md`（方法 + 权重 + **局限** + **TOP-5 人工中文导读** + TOP-20 明细）+ `research/TOP_K.jsonl`（20 行，字段齐全）。**Top-1 = ExecCritic（2609.09133，rel 4.5 / q 4.0 / total 4.3）**。
+  - **诚实复核**：**#5 Faynt（2610.02144）疑似词表过配**（游戏 RL，仅泛词命中）已在导读标注；提示人工看 **#18 Sharpening Tax（2610.01509）**（预训练 LLM + 轻量 harness 即可是 agent、pass@K 常胜 post-tuned）。
+  - **回归测试**：`test_arxiv_fetch.py` **49/49** + 新增 `test_top_k.py` **20/20** PASS（离线）。
+  - **📧 邮件职能**：按指令**只登记**（运维问答区），**未获批准绝不发信**。
+  - **落盘**：日报追加「第 2 批」章节；`INDEX.md` 头部 + 工具行；`ARXIV_API.md` **§9.7**。
 - **2026-10-03** —— **第五轮（常态增量 · 周六，第四轮后 ~30min）→ 0 新增**。
   - **R1′（取源复验）**：`--probe --config research/queries.json`（`generated=2026-10-03T11:47:29Z`）→ **arXiv API ✅** `HTTP 200`+`application/atom+xml`（最新 `published=2026-10-01T17:59:59Z`，`totalResults=625914`）；**HF ❌ `Network is unreachable`**；**RSS cs.CL/CV/LG ⚠️ 200 但 `items=0`（周末/未公告）**。证据 → `research/raw/2026-10-03-probe-r5.json`。
   - **增量采集**：`--fetch --seen research/SEEN.md`（`window_mode=weekend_batch`，窗口 120h，`generated=2026-10-03T11:47:40Z`）→ **15/15 查询 ok**（无重试），**kept 0 / dropped 600**（**404 = already in SEEN** + **196 = stale >120h**）。证据 → `research/raw/2026-10-03-fetch-r5.json`。
