@@ -64,6 +64,7 @@ doc/personal-watch/
 ├── README.md                      # 本文件（项目总纲）
 ├── MEMORY.md                      # ⭐ supervisor 长期记忆 —— 醒来先读
 ├── AGENTS.md                      # agent 状态总表（"谁在跑"的唯一权威）
+├── report_10_03.html              # 对外工作汇报（自包含 HTML，对齐 BaiZe 报告范式）
 ├── daily-memories/                # supervisor 侧每日流水
 └── run/                           # worker agent 编排 + 产物
     ├── README.md                  # run/ 使用说明（启动/巡检/调参）
