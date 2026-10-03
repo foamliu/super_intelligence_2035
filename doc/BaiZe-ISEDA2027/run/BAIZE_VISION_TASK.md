@@ -21,6 +21,36 @@
 
 **⚠️ 铁律**：**不重跑阶段一训练**（只复用已落盘 ckpt 做评测）；每条结论**贴证据（命令 + 原始输出 + 文件路径）**；**不许猜**。
 
+### 🆕 运维指令 · 2026-10-03（新增 **R11：目标函数(loss)轴 ——「~25% 上限」是不是被对比学习锁死的？**）
+
+> 背景（运维）：R9 拟合出「当前路线 lp 渐近 ≈**25.1%**」并判定**瓶颈在数据量与目标函数**。现核实**当前路线**＝
+> **OpenVision2(w512) 塔 + `CC12M(11M)+Amshaker(6M)`≈18.5M 对 + 冻结 CLIP-768 文本塔 + `open_clip.loss.ClipLoss`(InfoNCE)**；
+> 框架＝**pip `open_clip 3.2.0` 的 loss 类** + 自研 torchrun 训练环（`run/vision/r9_train.py`）。
+> ⚠️ **注意**：R6/R7 的「正式训练切 GPIC `short`」是**另一条线**（GPIC 仍在下载 1120/8000）；**R9/R10 的 scaling 用的是 CC12M+Amshaker**。**R11 以 R9/R10 的实际数据为准**，并在报告里写清这条区分。
+
+**已核实候选目标函数**（`open_clip/loss.py` 内均存在；**以本机 3.2.0 实际 `create_loss` 支持名为准，不支持就记明，不许猜**）：
+
+| 目标 | 类 | 性质 | 现状 |
+|:--|:--|:--|:--|
+| InfoNCE | `ClipLoss` | 对比（softmax） | ✅ 当前基线 |
+| SigLIP | `SigLipLoss` | 对比（sigmoid pairwise） | R4 在 ~0.5M 对下**坍缩**；**18.5M 下未复测** |
+| CoCa | `CoCaLoss` | **对比 + caption 生成** 混合 | 未试 |
+| LocalCLIP | `LocalLoss` | 逐 token 局部对比 | 未试 |
+| GenLIP | `GenLipLoss` | **纯自回归 LM（生成式，无对比）** | 未试 |
+
+**外部证据（说明这不是空想，两个参考模型都弃用了对比学习）**：
+- **AIMv2**（arXiv 2411.14402 摘要原文）：*"pairing the vision encoder with a multimodal decoder that **autoregressively generates raw image patches and text tokens**"*；*"consistently **outperforms state-of-the-art contrastive models (e.g., CLIP, SigLIP)**"* → **生成式/自回归**。
+- **OpenVision2（官方）**：README 原文 *"generative-only … **removes the text encoder and contrastive loss**"*，目标＝**caption-only 生成式**，数据 ReCap-DataComp-1B v2。
+> 🚩 另：R8 的 "AIMv2" 臂用的是 **AIMv2 的塔结构**、跑的是**我们的对比 recipe** → **从未真正用过 AIMv2 的目标函数**。
+
+**R11 任务（严格控变量）**：
+- **固定**：数据（CC12M+Amshaker）· 塔（OpenVision2 w512）· 步数/样本预算 · 优化器 · 评测（IN-1k **frozen-trunk lp**，同 R9 口径）。
+- **只变**：目标函数 → 至少 **① InfoNCE（基线，已有）② SigLIP（18.5M 复测）③ CoCa ④ GenLIP/AR**；`Local` 可选。
+- **公平性（硬要求）**：生成式/混合臂需要**文本解码器**（不再是冻结 CLIP 文本塔）→ **必须报「参数量 + 训练 token + 每步耗时」**，不能只比 acc。
+- **预注册判据（先定后测，🚫 不许事后改）**：**同 N、同口径**下，若某臂 **lp 比 InfoNCE 基线高 > 1.5 个点** → 「**25.1% 是对比学习路线的渐近**」被**局部推翻** → **对该臂重拟合 scaling 曲线并外推**。
+- **产出**：`run/EXPERIMENTS_VISION_ROUND11.md` —— 各目标 × 同 N 的 acc + **参数量/token 公平表** + 结论「上限是否由 loss 锁定」。
+- **铁律**：贴证据（命令 + 原始输出）；**不改阶段一/二已落盘结论**；跑不通就如实记。
+
 ### 📉 记忆维护规程（2026-10-03 运维新增，**硬性**）
 > 理由：`MEMORY_*.md` **每次唤醒都被 agent 全文读取** → 越大越烧 token。当前 `MEMORY_VISION.md` ≈ **94KB（超标）**。
 - **上限**：本线 `MEMORY_VISION.md` 控制在 **≤ 32KB**；**下次唤醒立即执行一次滚动归档**。
