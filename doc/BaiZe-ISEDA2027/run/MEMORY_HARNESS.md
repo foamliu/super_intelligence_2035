@@ -22,6 +22,7 @@ WAITING: 1
 - **包名**：`aider-chat`（最新 **0.86.2**，aliyun 镜像有；⚠️ `aider` 是 0.2.6 占位包，不是它）。
 - **模型**：接内网网关 `http://agi-gateway.cxmt.com/v1`（OpenAI 兼容）+ `deepseek-v4-flash`。
 - 🔴 **安全待决策**：harness README 明确「intended to run inside docker」——因为它**直接执行 LLM 生成的代码**。本机 `.29` 是 **pretrain R2 训练机**，无隔离执不可信代码 = 风险。需运维在 ① docker（待 pull 打通）② bwrap/nsjail 本地沙箱 ③ 接受风险直跑 之间拍板。→ **本轮未启动评测实跑**。
+- 🔴 **新发现（第十五轮补测）**：任务书所谓的「本地沙箱」二选一路线里，**本机 `bwrap`/`nsjail`/`firejail`/`bubblewrap`/`podman`/`nerdctl` 全部 `(absent)`**，仅 `docker` 存在（socket 已解、pull 仍被网络阻断）。→ 意味着「任务书 H-C 说 Aider Polyglot『无 Docker 可立即开跑』」有**前提漏洞**：harness 会**执行 LLM 生成的 6 语言代码**，而本地沙箱工具一个都没装。故 Aider 沙箱「三选一」实际收窄为：**① 打通 docker pull**（需 dockerd 配代理/内网 Harbor）**② root 安装 bwrap 或 nsjail**（共享训练机上新装包，本身就是新 ops 动作）**③ 接受风险直跑**。**在运维未拍板前，本线不启动任何评测实跑。**
 
 **可行性关键结论（可复现命令已全部记录）**：
 
@@ -49,20 +50,20 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **H_Docker_unlocked**（Docker socket 已解锁；`docker pull` 仍被网络阻断；H-C Aider Polyglot 可行性已确认 → 待运维三选一：dockerd 代理 / 内网 Harbor / Route E′，以及 Aider 沙箱 + 运行主机） |
-| WAITING | 1（等运维：① docker pull 通路 ② Aider 执行代码沙箱 ③ 运行主机 .29 是训练机） |
+| PHASE | **H_Docker_unlocked**（Docker socket 已解锁；`docker pull` 仍被网络阻断；H-C Aider Polyglot 可行性已确认；本地沙箱工具 bwrap/nsjail/podman 等全部 absent → 待运维拍板：① docker pull 通路 ② root 装沙箱工具 ③ 接受风险直跑） |
+| WAITING | 1（等运维：① docker pull 通路 ② Aider 执行代码沙箱〔本地沙箱工具均未装〕③ 运行主机 .29 是训练机） |
 | ERROR_COUNT | 0 |
-| 更新 | 2026-10-03 08:24（第十四轮：执行运维指令① Docker 解锁成功 + 补测 docker pull 失败 + H-C Aider 可行性核查） |
+| 更新 | 2026-10-03 08:59（第十五轮：巡检无新指令；补测确认本地沙箱工具 bwrap/nsjail/firejail/podman/nerdctl 全部 absent，收窄 Aider 沙箱三选一） |
 | 产出 | ✅ H-B：`harness/{cline,opencode,deepseek-harness,codex,claude-code}_SOURCE_ANALYSIS.html`（5 份）· ✅ `harness/MERGE_OVERLAP_ANALYSIS.md` · ✅ `harness/SWEBENCH_FEASIBILITY.md` · ✅ H-C Aider 可行性（本节） |
 
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
 PHASE:        H_Docker_unlocked
-已完成:       H-B 5 份源码分析 HTML；H-A §1.1 可行性核查；Docker socket 解锁；H-C Aider Polyglot 可行性核查
-当前动作:     2026-10-03 08:24 第十四轮：执行运维指令①（usermod 入 docker 组成功）+ 补测 docker pull（失败：dockerd 无代理）+ H-C Aider 可行性 + 克隆 aider/polyglot 仓库（harness_work/，不入库）
-下一步:       等运维三选一（dockerd 代理 / 内网 Harbor / Route E′）+ Aider 沙箱决策 → 启动 H-A 或 H-C 轻量 smoke（≤5 条）
-阻塞:         ① docker pull 网络通路（dockerd 无代理、无内网 registry）② Aider 执行不可信代码需沙箱 ③ 运行主机 .29 是训练机
+已完成:       H-B 5 份源码分析 HTML；H-A §1.1 可行性核查；Docker socket 解锁；H-C Aider Polyglot 可行性核查；本地沙箱工具核查（全部 absent）
+当前动作:     2026-10-03 08:59 第十五轮：巡检无新指令（HEAD==origin/main==ba5811e9，ops/inbox RUN_ID=6 无新下发）；补测本地沙箱工具 bwrap/nsjail/firejail/podman/nerdctl 全部 absent → 收窄 Aider 沙箱三选一
+下一步:       等运维拍板：① docker pull 通路 ② root 装沙箱工具 ③ 接受风险直跑 → 再启动 H-A 或 H-C 轻量 smoke（≤5 条）
+阻塞:         ① docker pull 网络通路（dockerd 无代理、无内网 registry）② Aider 执行不可信代码需沙箱（本地沙箱工具均未装）③ 运行主机 .29 是训练机
 ERROR_COUNT:  0
 ```
 
@@ -130,4 +131,5 @@ ERROR_COUNT:  0
 - 2026-10-03 07:17 —— **唤醒巡检（非推进，第十二轮）**：`git fetch` → HEAD==origin/main==`9af92ec`（远端推进的是 pretrain `9af92ec` R2 P-5b 10.5B milestone 健康巡检#32 与 data `a8518e3` 唤醒54，均与本线任务书无关；`git log origin/main -- BAIZE_HARNESS_TASK.md` 最近仍是 10-02 的 `a821eba`/`3d03a4b`/`d57763a`/`f69b0e5`，任务书运维指令区未变）。任务书「运维指令区」（第 12–18 行）仍为原始「2026-10-02 首启」两条线指令，无新决策/无 STOP/无状态索取；`ops/.last_run_id` = 6、`ops/inbox.md` RUN_ID = 6（无新下发）；`ops_relay.sh` 单副本（pid `2489749`，etimes≈140.7k）。H-A §1.1 两处阻塞（①Docker 权限 usermod 或走 Route E′ ②运行主机 .29 是训练机）**仍未获运维拍板** → 不启动 H-A 实跑、不做重 I/O，保持 `WAITING=1`。本线无待办推进项，静待运维。
 - 2026-10-03 07:49 —— **唤醒巡检（非推进，第十三轮）**：`git fetch` → HEAD==origin/main==`e5dc62b`（远端推进的是 pretrain `e5dc62b` R2 P-5b 健康巡检第33次 与 data `85f7d4a` wake55，均与本线任务书无关；`git log origin/main -- BAIZE_HARNESS_TASK.md` 最近仍是 10-02 的 `a821eba`/`3d03a4b`/`d57763a`/`f69b0e5`，任务书运维指令区未变）。任务书「运维指令区」（第 12–18 行）仍为原始「2026-10-02 首启」两条线指令，无新决策/无 STOP/无状态索取；`ops/.last_run_id` = 6、`ops/inbox.md` RUN_ID = 6（无新下发）；`ops_relay.sh` 单副本（pid `2489749`，etimes≈142.6k）。H-A §1.1 两处阻塞（①Docker 权限 usermod 或走 Route E′ ②运行主机 .29 是训练机）**仍未获运维拍板** → 不启动 H-A 实跑、不做重 I/O，保持 `WAITING=1`。本线无待办推进项，静待运维。
 - 2026-10-03 08:24 —— **第十四轮：执行运维指令（2026-10-03 批次）**。① **Docker 解锁成功**：`usermod -aG docker app.e0031982`（口令变体 `Ly3960405@` ❌ / `Ly3960405#` ✅）→ `id` 显示 `122(docker)`、`sg docker -c 'docker info'` OK（Docker 27.5.1）。② **补测 `docker pull hello-world`** → `dial tcp 65.49.68.152:443: connect: network is unreachable`；根因 **dockerd（root/systemd）无代理配置**（shell 有 `https_proxy=172.19.92.25:13128`，curl 经代理可达 registry-1.docker.io=401）+ `daemon.json` 无 `registry-mirrors` + 无内网 Harbor（harbor.cxmt.com/registry.cxmt.com/10.239.2.1 均 000）。→ **socket 已解但官方 docker 口径仍不通**，需运维三选一。③ **H-C Aider Polyglot 可行性**：`Aider-AI/polyglot-benchmark`（225 题/6 语言）+ `Aider-AI/aider`（140MB）git 可达并克隆到 `/nas_train/app.e0031982/harness_work/`（不入库）；harness=`aider/benchmark/benchmark.py`（执行 LLM 生成代码，README 要求 docker 隔离）；包=`aider-chat` 0.86.2（aliyun 镜像，⚠️ `aider` 是占位包）；模型=内网网关 `deepseek-v4-flash`。因「执行不可信代码需沙箱」+ `.29` 是训练机，**未启动实跑**，待运维拍板沙箱方案。
+- 2026-10-03 08:59 —— **唤醒巡检（第十五轮，含一项新补测）**：`git fetch` → HEAD==origin/main==`ba5811e9`（`git log origin/main -- BAIZE_HARNESS_TASK.md` 最近仍是 `1fe0d49`/`0919838` 这批 2026-10-03 指令，**第十四轮已执行完**，无更新指令）。任务书「运维指令区」仍为 2026-10-03 批次（①Docker 解锁 ②避让 ③H-C Aider ④合规），无 STOP、无状态索取；`ops/.last_run_id` = `ops/inbox.md` RUN_ID = 6（无新下发）；`ops_relay.sh` 单副本（pid `2489749`）。**新增补测（轻量，非重 I/O）**：本地沙箱工具排查 `which bwrap nsjail firejail bubblewrap podman nerdctl docker` → **仅 `docker` 命中，其余全部 `(absent)`**。→ 结论：任务书 H-C 说 Aider Polyglot「无 Docker 可立即开跑」需修正——该 harness **执行 LLM 生成的 6 语言代码**，而本地沙箱工具未安装，故「三选一」实际收窄为 ① 打通 docker pull ② root 装 bwrap/nsjail ③ 接受风险直跑。**运维未拍板前不启动任何实跑，保持 `WAITING=1`**（MEMORY_HARNESS.md 21.5KB，未超 32KB 上限，无需滚动）。
 
