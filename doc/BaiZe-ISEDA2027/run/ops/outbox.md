@@ -1637,3 +1637,122 @@ a1e63ee ops: RUN_ID 9 -- read-only probe of why pretrain/harness went silent ~9h
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 10 · 2026-10-04 07:15:28 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST / TIME / CLINE ==="; hostname; date '+%F %T %Z'
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+CLINE=$(command -v cline 2>/dev/null || echo "$HOME/.bun/bin/cline"); echo "CLINE=$CLINE"
+
+echo; echo "=== 1. 两条 loop 的 cline 调用行 + 关键变量 ==="
+for f in baize_pretrain_loop.sh baize_harness_loop.sh; do
+  echo "-- $f"; grep -nE 'cline |^MODEL=|^CLINE_TIMEOUT=|^SLEEP_|^PUSH_' "$RUN/$f" 2>/dev/null | cut -c1-190
+done
+
+echo; echo "=== 2. Forbidden 时间线（总数 / 首次 / 最近）+ 最后一次正常周期 ==="
+for f in /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log; do
+  echo "-- $f : Forbidden 总数=$(grep -c 'Forbidden' "$f" 2>/dev/null)"
+  grep -n 'Forbidden' "$f" 2>/dev/null | head -1 | cut -c1-120
+done
+grep -nE 'Forbidden|wake up|push OK|nothing to commit' /tmp/baize_pretrain_loop.log 2>/dev/null | tail -14 | cut -c1-130
+
+echo; echo "=== 3. secrets.json（脱敏）==="
+python3 -c "import json,pathlib;p=pathlib.Path.home()/'.cline/data/secrets.json';print('exists',p.exists(),'mtime',__import__('datetime').datetime.fromtimestamp(p.stat().st_mtime).isoformat() if p.exists() else '');d=json.loads(p.read_text()) if p.exists() else {};[print(' ',k,'=',(str(v)[:6]+'...len'+str(len(str(v)))) if any(t in k.lower() for t in ('key','token','secret')) else v) for k,v in d.items()]" 2>&1 | cut -c1-200
+
+echo; echo "=== 4. 环境变量凭据（脱敏：只看名字/length/前 8 位）==="
+python3 -c "import os;[print(' ',k,'len',len(v),'prefix',v[:8]) for k,v in sorted(os.environ.items()) if any(t in k.upper() for t in ('KEY','TOKEN','API','PROXY'))]" 2>&1 | cut -c1-160
+
+echo; echo "=== 5. cline smoke ——【不带 -k】（复现 loop 的失败）==="
+cd /tmp && timeout 150 "$CLINE" -c /tmp -m deepseek-v4-pro-fp4 --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tail -6 | cut -c1-170
+
+echo; echo "=== 6. cline smoke ——【带 -k \$OPENAI_API_KEY】==="
+cd /tmp && timeout 150 "$CLINE" -c /tmp -m deepseek-v4-pro-fp4 -k "$OPENAI_API_KEY" --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tail -6 | cut -c1-170
+
+echo; echo "=== 7. 对照：.12 用的是哪个 MODEL（为什么它没 Forbidden）==="
+timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'grep -nE "^MODEL=|cline " /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_vision_loop.sh | cut -c1-190; echo "-- .12 secrets --"; python3 -c "import json,pathlib;p=pathlib.Path.home()/\".cline/data/secrets.json\";d=json.loads(p.read_text()) if p.exists() else {};[print(k,len(str(v)),str(v)[:6]) for k,v in d.items() if \"key\" in k.lower()]"' 2>&1 | cut -c1-170 || echo "ssh .12 FAILED"
+
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST / TIME / CLINE ===
+whag0pgpuap29
+2026-10-04 07:15:28 CST
+CLINE=/home/app.e0031982/.bun/bin/cline
+
+=== 1. 两条 loop 的 cline 调用行 + 关键变量 ===
+-- baize_pretrain_loop.sh
+3:# 让 cline 读任务书连续推进，并每约 PUSH_INTERVAL 秒兜底做一次 git commit + push（无人值守时保证成果不丢）。
+17:MODEL="deepseek-v4-pro-fp4"      # 换成你用于工程任务的模型
+18:CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟
+19:PUSH_INTERVAL=18000             # 每 5 小时 git push 一次（4~6 小时间隔内）
+20:SLEEP_BUSY=60                   # 无阻塞任务时的唤醒间隔：约 1 分钟（连续推进，不空耗）
+21:SLEEP_WAIT=1800                 # 有异步阻塞任务(训练 running)时的唤醒间隔：30 分钟（省 token）
+73:    echo "[loop] $(date '+%F %T') wake up, invoking cline ..."
+76:        cline -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+77:        echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git push ..."
+83:    # WAITING=0（无阻塞、应连续推进）→ 短睡 1 分钟，让 cline 尽快续跑下一轮。
+-- baize_harness_loop.sh
+3:# 让 cline 读任务书连续推进，并每约 PUSH_INTERVAL 秒兜底做一次 git 同步 + commit + push。
+25:MODEL="deepseek-v4-pro-fp4"      # 工程任务模型
+26:CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟
+27:PUSH_INTERVAL=18000             # 每 5 小时兜底同步一次
+28:SLEEP_BUSY=60                   # 无阻塞时的唤醒间隔（源码分析是连续任务，用短睡尽快续跑）
+29:SLEEP_WAIT=1800                 # 有异步阻塞时的唤醒间隔（省 token）
+91:    echo "[loop] $(date '+%F %T') wake up, invoking cline ..."
+94:        cline -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+95:        echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git sync ..."
+
+=== 2. Forbidden 时间线（总数 / 首次 / 最近）+ 最后一次正常周期 ===
+-- /tmp/baize_pretrain_loop.log : Forbidden 总数=18
+-- /tmp/baize_harness_loop.log : Forbidden 总数=37
+40112:Interesting[0m[2m: the[0m[2m model `[0m[2mdeepseek[0m[2m-v4[0m[2m-fl[0m[2mash`[0m[2m with provider[
+55903:[loop] 2026-10-02 15:45:28 wake up, invoking cline ...
+56281:[loop] 2026-10-02 16:17:13 wake up, invoking cline ...
+57110:[loop] 2026-10-02 16:50:49 wake up, invoking cline ...
+57482:[loop] 2026-10-02 17:22:35 wake up, invoking cline ...
+57839:[loop] 2026-10-02 17:54:10 wake up, invoking cline ...
+57843:[loop] 2026-10-02 18:24:21 wake up, invoking cline ...
+57847:[loop] 2026-10-02 18:54:30 wake up, invoking cline ...
+57851:[loop] 2026-10-02 19:24:41 wake up, invoking cline ...
+57857:[push] push OK.
+57859:[loop] 2026-10-02 19:54:55 wake up, invoking cline ...
+58253:[loop] 2026-10-02 20:26:36 wake up, invoking cline ...
+58705:[loop] 2026-10-02 20:58:53 wake up, invoking cline ...
+59370:[loop] 2026-10-02 21:33:00 wake up, invoking cline ...
+59806:[loop] 2026-10-02 22:05:06 wake up, invoking cline ...
+
+=== 3. secrets.json（脱敏）===
+exists True mtime 2026-09-29T14:35:41.772831
+  openAiApiKey = 02_088...len72
+
+=== 4. 环境变量凭据（脱敏：只看名字/length/前 8 位）===
+  API_TYPE len 6 prefix openai
+  OPENAI_API_KEY len 45 prefix 01_54973
+  OPENAI_API_URL len 30 prefix http://a
+  https_proxy len 25 prefix http://1
+
+=== 5. cline smoke ——【不带 -k】（复现 loop 的失败）===
+[31merror:[0m Forbidden
+
+=== 6. cline smoke ——【带 -k $OPENAI_API_KEY】===
+[31merror:[0m Forbidden
+
+=== 7. 对照：.12 用的是哪个 MODEL（为什么它没 Forbidden）===
+3:# 让 cline 读任务书连续推进，并每约 PUSH_INTERVAL 秒兜底做一次 git commit + push（无人值守时保证成果不丢）。
+17:MODEL="deepseek-v4-pro-fp4"      # 换成你用于工程任务的模型
+18:CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟
+50:    echo "[loop] $(date '+%F %T') wake up, invoking cline ..."
+53:        cline -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+54:        echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git push ..."
+60:    # WAITING=0（无阻塞、应连续推进）→ 短睡 1 分钟，让 cline 尽快续跑下一轮。
+-- .12 secrets --
+openAiApiKey 72 02_088
+
+=== DONE ===
+```
