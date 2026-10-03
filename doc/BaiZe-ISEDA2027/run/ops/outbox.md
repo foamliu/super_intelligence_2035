@@ -2991,3 +2991,96 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 24 · 2026-10-04 07:54:23 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; cd /tmp
+_k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" | head -1)"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY"
+SM="reply with exactly OK"
+
+echo; echo "=== 1. 两机 cline 版本 ==="
+echo -n "   .29: "; "$C" --version 2>&1 | head -1
+timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 "echo -n '   .12: '; /home/app.e0031982/.bun/bin/cline --version 2>&1 | head -1" 2>&1 | tail -1
+
+echo; echo "=== 2. globalState.json 键值对比（只打非敏感项）==="
+sed -n '1,400p' "$HOME/.cline/data/globalState.json" 2>/dev/null | tr ',' '\n' | grep -iE 'provider|model|baseurl|version|telemetry|proxy|auth' | head -20 | sed 's/^/   .29 /'
+echo "   -- .12 --"
+timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 "sed -n '1,400p' \$HOME/.cline/data/globalState.json 2>/dev/null | tr ',' '\n' | grep -iE 'provider|model|baseurl|version|telemetry|proxy|auth' | head -20 | sed 's/^/   .12 /'" 2>&1 | head -22
+
+echo; echo "=== 3. 在 .12 上跑同一 smoke（判定 host-local）==="
+timeout 60 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 "cd /tmp && env $P -u OPENAI_API_KEY timeout 45 /home/app.e0031982/.bun/bin/cline -c /tmp -m $M --auto-approve true -t 30 '$SM' 2>&1 | head -3 | cut -c1-140" 2>&1 | cut -c1-150
+
+echo; echo "=== 4. 在 .29 用【全新 --data-dir】跑 smoke（判定本地配置是否坏了）==="
+rm -rf /tmp/_cd_probe 2>/dev/null
+env $P -u OPENAI_API_KEY timeout 90 "$C" --data-dir /tmp/_cd_probe -c /tmp -m "$M" --auto-approve true -t 45 "$SM" 2>&1 | head -3 | cut -c1-150
+
+echo; echo "=== 5. 当前 loop 状态（不动）==="
+pgrep -af 'bash baize_(pretrain|harness)_loop\.sh' | cut -c1-95
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 07:54:23
+
+=== 1. 两机 cline 版本 ===
+   .29: 3.0.51
+   .12: /usr/bin/env: ‘bun’: No such file or directory
+
+=== 2. globalState.json 键值对比（只打非敏感项）===
+   .29   "actModeApiProvider": "openai"
+   .29   "planModeApiProvider": "openai"
+   .29   "actModeOpenAiModelId": "deepseek-v4-flash"
+   .29   "planModeOpenAiModelId": "deepseek-v4-pro-fp4"
+   .29   "openAiBaseUrl": "http://agi-gateway.cxmt.com/v1"
+   .29     "version": 1225
+   .29   "clineVersion": "4.1.21"
+   .29   "lastDismissedInfoBannerVersion": 1
+   .29   "azureApiVersion": ""
+   .29   "planModeOpenRouterModelId": "x-ai/grok-code-fast-1"
+   .29   "planModeFireworksModelId": "accounts/fireworks/models/kimi-k2-instruct-0905"
+   .29   "actModeOpenRouterModelId": "x-ai/grok-code-fast-1"
+   .29   "actModeOpenAiModelInfo": {
+   .29   "actModeFireworksModelId": "accounts/fireworks/models/kimi-k2-instruct-0905"
+   .29   "planActSeparateModelsSetting": true
+   .29   "__vscodeMigrationVersion": 3
+   .29   "telemetrySetting": "enabled"
+   -- .12 --
+   .12   "actModeApiProvider": "openai"
+   .12   "planModeApiProvider": "openai"
+   .12   "actModeOpenAiModelId": "deepseek-v4-pro-fp4"
+   .12   "planModeOpenAiModelId": "deepseek-v4-pro-fp4"
+   .12   "openAiBaseUrl": "http://agi-gateway.cxmt.com/v1"
+   .12     "version": 415
+   .12   "openTelemetryEnabled": false
+   .12   "clineVersion": "4.0.8"
+   .12   "lastDismissedInfoBannerVersion": 1
+   .12   "azureApiVersion": ""
+   .12   "planModeOpenRouterModelId": "x-ai/grok-code-fast-1"
+   .12   "planModeFireworksModelId": "accounts/fireworks/models/kimi-k2-instruct-0905"
+   .12   "actModeOpenRouterModelId": "x-ai/grok-code-fast-1"
+   .12   "actModeOpenAiModelInfo": {
+   .12   "actModeFireworksModelId": "accounts/fireworks/models/kimi-k2-instruct-0905"
+   .12   "planActSeparateModelsSetting": true
+   .12   "__vscodeMigrationVersion": 1
+
+=== 3. 在 .12 上跑同一 smoke（判定 host-local）===
+/usr/bin/env: ‘bun’: No such file or directory
+
+=== 4. 在 .29 用【全新 --data-dir】跑 smoke（判定本地配置是否坏了）===
+[31merror:[0m Cannot connect to API: Unable to connect. Is the computer able to access the url?: Unable to connect. Is the computer able to access t
+
+=== 5. 当前 loop 状态（不动）===
+3228163 bash baize_pretrain_loop.sh
+3234430 bash baize_harness_loop.sh
+
+=== DONE ===
+```
