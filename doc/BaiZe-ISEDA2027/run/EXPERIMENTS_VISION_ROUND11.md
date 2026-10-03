@@ -53,7 +53,7 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 | ① InfoNCE | 0（基线） | 0 | 1.0× | w512=126.78M |
 | ② SigLIP | +1（logit bias 标量） | 0 | ≈1.0× | 无 decoder |
 | ③ LocalLoss | 0 | 0 | ≈1.0×（仍 all-gather，仅算本地 64 行 logits） | 同 512 负样本（非池缩小） |
-| ④ CoCa | **+76.2M 可训**（decoder w768·12H·4L + LM head 49408；总 114.1M 含冻结 CLIP token_embed 37.9M 不更新） | +caption 自回归（≈24–40 tok/样本×bs512，逐 token masked CE） | ≈1.05×（smoke 稳态 2267 vs 基线 ~2448 img/s；**实跑 `[done]` 后回填精确值**） | depth=4/w768/h12，vocab=CLIP 49408，caption_weight=2.0 |
+| ④ CoCa | **+76.2M 可训**（decoder w768·12H·4L + LM head 49408；总 114.1M 含冻结 CLIP token_embed 37.9M 不更新） | +caption 自回归（≈24–40 tok/样本×bs512，逐 token masked CE） | **≈0.97×**（实跑 6911.7s ≈1.92h vs 基线 ~1.98h；steady 3487 img/s 反而略高于基线，因数据加载提速） | depth=4/w768/h12，vocab=CLIP 49408，caption_weight=2.0 |
 | ⑤ GenLIP | +decoder（同上） | +caption 自回归 | 待实测 | — |
 | ⑥ AIMv2 式 | +patch head + text AR | +patch/text token | 待实测（最贵） | — |
 
@@ -75,7 +75,8 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 
 - ✅ **臂 ② SigLIP 完成（2026-10-03 15:26，`ALL DONE`）**：`r9_train.py --loss siglip` 30k 步无坍缩（C1 0.333 / C2_gap +0.103 / C4=OK）；IN-1k lp **2.19 / 3.13 / 4.36%** @5.12/10.24/15.36M，全 < 基线（3.43/5.45/6.08%）→ **未超 +1.5 点阈值、未翻盘**。详见 §6。
 - ✅ **臂 ③ LocalLoss 完成（2026-10-03 17:43，`ALL DONE`）**：`r9_train.py --loss localloss`（`ClipLoss(local_loss=True)`：⚠️ 仍 all-gather 512 → **负样本池仍是 512**，只算本地 64 行 logits，见 §0 更正）+ `r11_run_localloss.sh`（`R11L_localloss_w512`）。30k 步无坍缩；IN-1k lp **1.81 / 3.60 / 4.33%** @5.12/10.24/15.36M，全 < 基线（3.43/5.45/6.08%）→ **未超 +1.5 点阈值、未翻盘**。详见 §7。
-- ⏸ **臂 ④ CoCa 决策（2026-10-03）**：见 §8（预注册 + 值不值得/成本 + 启动前核 GPU 空闲）。
+- ✅ **臂 ④ CoCa 完成（2026-10-03 20:13，`ALL DONE`）**：+76.2M decoder + caption CE（weight 2.0）30k 步无强制融合、但 IN-1k frozen-trunk lp **0.29 / 0.37 / 0.47%** @5.12/10.24/15.36M（≈随机 1/1000）→ **Δ −3.14 / −5.08 / −5.61 点，未翻盘且把 trunk 打回随机**（total loss 里 caption 项 ≈68% 梯度、盖过对比项）。**首个稠密监督臂 = 负结果** → 「25.1%=对比渐近」未被颠覆、反被强化。详见 §9。
+- 📌 **后续臂决策（待运维裁决）**：臂⑤ GenLIP（纯 caption 生成，去掉仍在工作的对比项 → 坍缩先验更强、边际价值低）**建议跳过**；臂⑥ AIMv2（**唯一 caption-无关稠密监督**、最贵、需自研）与 R11-L2（文本塔解冻）**待运维拍板**。见 §9 尾。
 - 每臂训练需 8 卡（`.12`），启动前先核 GPU 空闲（同 R10-③ 的 GPU 核验）。
 
 ---
@@ -137,4 +138,32 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 - **实施**：先在 `r9_train.py` 增加 `--loss coca` 分支（+caption decoder）；启动前核 `.12` 8 卡空闲（同 R10-③ 核验），跑 30k 步（N=15.36M 主锚点）。
 - **✅ 实现完成（2026-10-03）**：`models.py` 增 `CoCaDecoder`（causal self-attn + cross-attn→patch，共享冻结 CLIP token embedding vocab 49408）+ `OpenVision2.forward(return_patch=True)` patch 路径；`r9_train.py` 增 `tokenize_cap()`、`coca_caption_loss()`、`--loss coca`、`--caption-loss-weight`(default 2.0)、`--decoder-depth`(default 4)。decoder 实测 `trainable=76.2M / total=114.1M`（w768·12H·4L + LM head 37.9M + 冻结 token_embed 37.9M）。
 - **✅ smoke 通过（exit 0）**：`bash r11_run_coca.sh 30` → 8 卡 DDP 全链路 OK；`[decoder] depth=4 dim=768 heads=12 trainable=76.2M total=114.1M vocab=49408 caption_weight=2.0`；`[step 30/30] loss=18.6150 contrast=6.1165 caption=6.2493 scale=10.182 image/s=2337.9`；`[done] total=8.6s ... fused=False`。ckpt 字段核验：`vision`(277 keys) / `decoder_params=76166400` / `loss=coca` / `objective=CoCa`。
-- ✅ **正文 smoke 已清理，正式 30k 已启动（2026-10-03 ~18:05，.12 全 8 卡，hostname=whag0pgpuap12 核验）**：`cd run/vision && bash r11_run_coca.sh 30000` → `R11L_coca_w512`，30k 步（N=15.36M 主锚点）。启动打印 `[start] steps=30000 objective=CoCa shards=419/rank`。稳态吞吐 smoke≈2267 img/s → ETA ≈1.9~2.1h 训完 + 自动回收 4 ckpt IN-1k lp（`r8_eval_in1k.py`）。日志 `/tmp/r11_coca.log`。**结果待回填（§9）**。
+- ✅ **正文 smoke 已清理，正式 30k 已启动（2026-10-03 ~18:05，.12 全 8 卡，hostname=whag0pgpuap12 核验）**：`cd run/vision && bash r11_run_coca.sh 30000` → `R11L_coca_w512`，30k 步（N=15.36M 主锚点）。启动打印 `[start] steps=30000 objective=CoCa shards=419/rank`；日志 `/tmp/r11_coca.log`；稳态吞吐 smoke≈2267 img/s。**正式结果见 §9**。
+---
+
+## 9. 臂 ④ CoCa 结果（✅ 完成，2026-10-03）
+
+> 命令：`cd run/vision && bash r11_run_coca.sh 30000`（`r9_train.py --loss coca --caption-loss-weight 2.0 --decoder-depth 4`，8 卡 `.12`）；
+> 证据：`/tmp/r11_coca.log`，末行 `R11-L arm4 CoCa ALL DONE 2026-10-03 20:13:06`（exit 0）。
+> decoder：`[decoder] depth=4 dim=768 heads=12 trainable=76.2M total=114.1M vocab=49408 caption_weight=2.0`。
+
+- **训练健康（探针名义通过，但图文对齐已明显弱化）**：`[done] total=6911.7s steps=30000 steady_image_s=3486.8 final_loss=17.4016 fused=False`（全程未触发强制融合）。
+  末点探针 `C1=0.3390 C2_diag=0.0892 C2_off=+0.0213 C2_gap=+0.0679 loss_ema=17.4016 loss_early=22.5549 C4=OK`。
+  ⚠️ 但看**趋势与数值**：`C2_gap` 从 @300 的 **+0.0924** 单调下滑到 @30000 的 **+0.0679**；`C2_diag` 仅 **~0.08–0.09**、`C2_off=+0.02` 为**正**——对照 arm② SigLIP（diag 0.045 / off **−0.058** / gap +0.103）与 arm③ LocalLoss（diag 0.103 / off **−0.0075** / gap +0.110），CoCa 的对齐**远弱**。即探针阈值（C2 gap>0.005）很松、判「无坍缩」，但对比对齐实际已**几近随机**（diag 0.089 vs 随机≈0）。
+- **IN-1k frozen-trunk lp / zs**（`r8_eval_in1k.py --ckpts step{10k,20k,30k}+final`，与 R9/R10 同口径）：
+
+| N | 步 | lp top-1 | zs top-1 | InfoNCE 基线 lp | Δ lp |
+|:--|:--|--:|--:|--:|--:|
+| 5.12M | 10k | **0.29%** | 0.40% | 3.43% | **−3.14** |
+| 10.24M | 20k | **0.37%** | 0.41% | 5.45% | **−5.08** |
+| 15.36M | 30k | **0.47%** | 0.53% | 6.08% | **−5.61** |
+
+- **裁定（预注册 §1）**：三档 N 的 Δ lp 全为**大幅负**（−3.14 ~ −5.61 点，lp 已≈随机 1/1000=0.1%），**无一超 +1.5 点阈值** →
+  **「25.1% 是对比学习的渐近」未被 CoCa 颠覆，反而被强化**：首个稠密监督臂（caption 逐 token CE）不仅没翻盘，还把 frozen-trunk lp 打回随机。**已测目标中 InfoNCE 仍最优**。
+- **机制解读（⚠️ 推断，须实测，不得当结论引用）**：total loss = contrast（≈5.43）+ **2.0×caption（≈5.86）** ≈ 17.15 → **caption 项占 ~68% 梯度**。我们 caption 偏短（CC12M alt-text 短句 / Amshaker 中长，任务书 §5 数据侧硬约束），caption CE 是「监督容量被短 caption 封顶、且与 IN-1k 分类正交性弱」的稠密信号 → 在 weight=2.0 下**压过对比项、洗掉全局可分类特征**；C2 探针仍名义通过只因此对比项仍在跑、但已弱到 diag≈0.09。故「数据越少稠密监督越可能翻盘」在本臂**不成立且方向相反**。
+- ⚠️ **限定（铁律，不得过度推广）**：本结果为「**我们自写** CoCa cross-attn decoder + 冻结 CLIP-768 文本塔 + 短 caption + caption_weight=2.0 单点（未消融）」下成立；🚫 **不得**推出「官方 CoCa / OpenVision2 caption 训练会坍缩」——官方 = concat/prefix-LM + BERT-128 + LLaMA-3 ReCap 长合成 caption（`VISION_OFFICIAL_REPOS_SURVEY.md §1`）。weight 消融（0.5/1.0）未做。
+- **公平性（§3）**：decoder **+76.2M 可训**（总 114.1M）+ caption 逐 token CE（`max_length=77`，实际短 caption，**未逐 token 计数**，口径同 §5）；总墙 **6911.7s ≈ 1.92h vs 基线 ~1.98h → ≈0.97×**（无实质开销，steady 3487 img/s 反略高因数据加载提速）。
+- **对后续臂的影响（决策建议，待运维裁决）**：
+  ① 臂⑤ GenLIP（纯 caption 生成、无对比项）= 去掉唯一仍在工作的对比项的臂④ → **坍缩先验更强、边际价值低**；建议**跳过**，或降级为「caption_weight 消融（0.5/1.0/2.0）」替代（成本更低、信息更准）。
+  ② 臂⑥ AIMv2 式 patch 预测 = **唯一不依赖 caption 丰富度的稠密监督**（任务书 §5），是「稠密监督能否翻盘」的**决定性检验**；但「最贵 + 需自研 mask/双流 AR（Apple Sample Code 不可抄）」→ 建议**先交书面值不值/成本判断、运维批准后再起**（同 R13 口径）。
+  ③ 备选更高杠杆轴：**R11-L2（文本塔解冻 LoRA/Adapter）**——冻结 CLIP-768 把上限锁死在外来静态文本空间，可能才是真天花板；比继续踩「caption 稠密」更值得试。
