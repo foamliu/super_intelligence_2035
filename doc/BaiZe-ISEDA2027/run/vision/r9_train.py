@@ -110,8 +110,9 @@ def main():
     ap.add_argument('--steps', type=int, default=3000)
     ap.add_argument('--lr', type=float, default=3e-3)
     ap.add_argument('--warmup', type=int, default=20)
-    ap.add_argument('--loss', choices=['clip', 'siglip'], default='clip',
-                    help='clip=InfoNCE (R9/R10 baseline); siglip=SigLIP bidirectional sigmoid (R11-L arm2)')
+    ap.add_argument('--loss', choices=['clip', 'siglip', 'localloss'], default='clip',
+                    help='clip=InfoNCE (R9/R10 baseline); siglip=SigLIP bidirectional sigmoid (R11-L arm2); '
+                         'localloss=InfoNCE local_loss=True per-rank pool (R11-L arm3)')
     ap.add_argument('--data', required=True,
                     help='tar shard glob(s), comma-separated for multi-source (e.g. CC12M,Amshaker)')
     ap.add_argument('--data-source', default='wds', choices=['wds', 'gpic'],
@@ -126,6 +127,9 @@ def main():
     ap.add_argument('--save-every', type=int, default=10000,
                     help='save a checkpoint every N steps (0 = only final)')
     args = ap.parse_args()
+
+    _OBJ = {'clip': 'InfoNCE', 'siglip': 'SigLIP', 'localloss': 'LocalLoss'}[args.loss]
+    _LOSS_KEY = {'clip': 'clip_infonce', 'siglip': 'siglip', 'localloss': 'clip_local'}[args.loss]
 
     rank = int(os.environ['RANK'])
     world_size = int(os.environ['WORLD_SIZE'])
@@ -159,6 +163,9 @@ def main():
         logit_bias = nn.Parameter(torch.full((), -10.0, device=device),
                                   requires_grad=True)
         loss_fn = SigLipLoss(rank=rank, world_size=world_size)
+    elif args.loss == 'localloss':
+        loss_fn = ClipLoss(local_loss=True, gather_with_grad=False,
+                           rank=rank, world_size=world_size)
     else:
         loss_fn = ClipLoss(local_loss=False, gather_with_grad=False,
                            rank=rank, world_size=world_size)
@@ -199,7 +206,7 @@ def main():
 
     log(f'[start] tower={args.tower} lr={args.lr} warmup={args.warmup} bs={args.batch_size} '
         f'world={world_size} steps={args.steps} res={args.resolution} patch={args.patch} '
-        f"seed={args.seed} shards={len(my_shards)}/rank objective={'SigLIP' if args.loss == 'siglip' else 'InfoNCE'} "
+        f"seed={args.seed} shards={len(my_shards)}/rank objective={_OBJ} "
         f'text=frozen-CLIP-768 negatives={args.batch_size*world_size}')
 
 # ---- fixed probe batch (rank 0): precompute once; text is FROZEN so T is constant ----
@@ -228,11 +235,11 @@ def main():
             'logit_bias': logit_bias.detach().cpu() if logit_bias is not None else None,
             'config': {'tower': args.tower, 'resolution': args.resolution,
                        'patch': args.patch, 'steps': step,
-                       'loss': 'siglip' if args.loss == 'siglip' else 'clip_infonce',
+                       'loss': _LOSS_KEY,
                        'embed_dim': EMBED, 'lr': args.lr, 'warmup': args.warmup,
                        'batch_size': args.batch_size, 'world_size': world_size,
                        'seed': args.seed,
-                       'objective': 'SigLIP' if args.loss == 'siglip' else 'InfoNCE',
+                       'objective': _OBJ,
                        'text': 'frozen-CLIP-768',
                        'width': args.width, 'depth': args.depth,
                        'heads': args.heads, 'mlp_dim': args.mlp_dim},
