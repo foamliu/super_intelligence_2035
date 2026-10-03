@@ -49,11 +49,11 @@
 
 <header class="hero">
   <h1>BaiZe 工作汇报 · 2026-10-03</h1>
-  <div class="sub">运维下发 7 项处置全落地 · P-5b 已过半（57.0%）· 记忆滚动规程生效（四线 ≤32KB）· harness Docker socket 解锁 · vision R10/R11 开跑</div>
+  <div class="sub">四线均有「执行中 + 已排」队列 · 预计 <b>10-05 前后</b> GPU 线集中空闲 · P-5b 57% · vision R10③ 在跑 · data 可回收 ≈8.6T</div>
   <div class="meta">
     <span>📅 2026-10-03</span>
     <span>📝 <code>foamliu/super_intelligence_2035</code> @ <code>main</code></span>
-    <span>📈 当日提交 <b>≈57</b> 个</span>
+    <span>📈 当日提交 <b>≈68</b> 个</span>
     <span>🎯 投稿截止 ≈ 2027-02-01（余 <b>≈121 天</b>）</span>
   </div>
 </header>
@@ -79,6 +79,9 @@
     <li><b>data</b>：D-CLEAN 盘点已交付；<b>D-CLEAN-2 删除已获批</b>（laion2B <b>8.1 T</b> + zhulong.tar.gz + 早期 ckpt + pip cache ≈ <b>8.6 T</b>）；<code>servers</code>(974 G) 待探查。</li>
     <li><b>vision</b>：<b>R10 已开跑</b>（① 12 点回收 ✅ ② 二维拟合 ✅ ③ w384/w640 训练中）；新增 <b>R11 目标函数轴</b> 与 <b>R11-D 数据轴（GPIC vs CC12M+Amshaker）</b>。</li>
     <li>⚠️ <b>一处口径更正</b>：当前 scaling 路线的数据是 <b>CC12M+Amshaker（≈18.5M 对）</b>，<b>不是 GPIC</b>（GPIC 仍在下载）。</li>
+    <li><b>vision（第二批）：</b>① 决策 <b>锁定 A = 从零训练</b>；② 新增 <b>R14</b>（官方仓库资源调研，纯 CPU）+ <b>R12/R13</b>（候选，待批）；③ <b>两处更正</b>——R8 六架构是<b>自研改编（非官方实现）</b>、「本地 53M 上限」是<b>假设常量</b>（按实测 GPIC ≈0.1B 应为 ≈103M）；④ 任务书<b>去堆叠重写</b>（12 块 → 6 节，0 重复）。</li>
+    <li><b>新增运维记忆机制</b>：项目根 <code>MEMORY.md</code> + <code>daily-memories/</code>（运维侧长期记忆，与 <code>run/</code> 下各 agent 分离）。</li>
+    <li><b>harness：</b>排查出 <b>bwrap/nsjail/podman 全 absent</b>，仅 docker 可用（socket 通、pull 被网络阻断）→ 结论：<b>先走 Aider Polyglot（无 docker）</b>。</li>
   </ul>
 </div>
 
@@ -101,6 +104,8 @@
     <li><a href="#s7">关键数字</a></li>
     <li><a href="#s8">需要运维决策 / 注意</a></li>
     <li><a href="#s9">下一步排期</a></li>
+    <li><a href="#s10">补记：训练 profiling 与记忆体量</a></li>
+    <li><a href="#s11">⭐ 执行中 / 已排任务 · 何时空闲</a></li>
   </ol>
 </div>
 
@@ -397,8 +402,69 @@
   <li>loop 的 <code>git add</code> 已含 MEMORY 与 daily-memories，<b>滚动后照常提交，无需改脚本</b>。</li>
 </ul>
 
+<h2 class="sec" id="s11"><span class="no">11</span>⭐ 执行中 / 已排任务 · 「何时空闲」预估</h2>
+
+<div class="note">
+  <b>基准时间：2026-10-03 10:00（CST）</b>。下表为<b>粗估</b>（按各线自报 ETA + 历史吞吐推算），
+  ⚠️ <b>不是承诺</b>：GPU 争用、下载带宽、评测耗时都会显著影响。
+</div>
+
+<h3>11.1 执行中（正在跑）</h3>
+<table>
+  <tr><th>线</th><th>正在执行</th><th>预计结束</th></tr>
+  <tr><td><b>pretrain</b> <code>.29</code></td><td>P-5b 20B 长跑（<b>iter 2720/4771 = 57%</b>，健康，~29s/iter）</td><td><b>10-04 ≈02:30</b></td></tr>
+  <tr><td><b>vision</b> <code>.12</code></td><td><b>R10③</b> w384+w640 各 30k 步（8 卡，08:46 启动）+ 训完自动跑 8 ckpt IN-1k</td><td><b>10-03 ≈12:15</b></td></tr>
+  <tr><td><b>data</b> <code>.12</code></td><td><b>D-CLEAN-2</b> 删除（≈8.6T）+ <code>servers</code> 探查；后台 base/gpic 下载（不占 agent）</td><td><b>10-03 ≈12:30</b></td></tr>
+  <tr><td><b>harness</b> <code>.29</code></td><td><b>H-A′ Aider Polyglot</b>（6 参赛者，先 smoke）+ <b>H-D</b> 五 harness 对比矩阵</td><td><b>10-04 ~ 10-06</b>（区间大）</td></tr>
+</table>
+
+<h3>11.2 已排任务（队列）与累计时间</h3>
+<table>
+  <tr><th>线</th><th>队列（按序）</th><th>估时</th><th><b>预计空闲</b></th></tr>
+  <tr>
+    <td><b>pretrain</b><br><code>.29</code></td>
+    <td>① P-5b 收官 → ② <b>P-9</b>（MBS / flag / seq 多点 / FP8-by-M / profiling）≈14h → ③ <b>P-6②</b> lm_eval（6 ckpt × 14 集）≈7h</td>
+    <td>~21h<br><small>(+P-5b 余 ~16.5h)</small></td>
+    <td><b>10-05 ≈00:00</b></td>
+  </tr>
+  <tr>
+    <td><b>vision</b><br><code>.12</code></td>
+    <td>① R10③ 收尾 ≈1h → ② <b>R14</b> 官方仓库调研 ≈3h → ③ <b>E1</b> GPIC 规模实测 ≈1h → ④ <b>R11-E</b> 数据臂 ≈5h → ⑤ <b>R11-L</b> loss 轴（~5 臂）≈20h → ⑥ <b>R11-L2</b> 文本塔 ≈12h</td>
+    <td>~42h</td>
+    <td><b>10-05 ≈06:00</b></td>
+  </tr>
+  <tr>
+    <td><b>data</b><br><code>.12</code></td>
+    <td>① D-CLEAN-2 删除 ≈2h → ② <code>servers</code> 探查 ≈0.5h → ③ 回写报告 →（之后转 30min 轮询）</td>
+    <td>~2.5h</td>
+    <td><b>10-03 ≈12:30</b><br><small>（半空闲：仍有 gpic 长下载）</small></td>
+  </tr>
+  <tr>
+    <td><b>harness</b><br><code>.29</code></td>
+    <td>① H-A′ smoke ≈0.5h → ② <b>H-A′ 全量 225 题 × 6 参赛者</b> ≈17h（乐观 45s/题）～ 73h（悲观 194s/题）→ ③ <b>H-D</b> ≈6h（可并行）</td>
+    <td>~17–73h</td>
+    <td><b>10-04 ≈04:00</b>（乐观）<br>～<b>10-06 ≈11:00</b>（悲观）</td>
+  </tr>
+</table>
+
+<h3>11.3 会让线"停下等你"的决策</h3>
+<table>
+  <tr><th>#</th><th>事项</th><th>影响</th></tr>
+  <tr><td>1</td><td><b>R13（官方 vs 自研对照）/ R12（iGVLM）是否批准</b></td><td>vision：不批 → 队列到 <b>R11-L2（10-05 上午）</b>就断档</td></tr>
+  <tr><td>2</td><td><b>P-8 启动配置</b>（仍暂缓：等 base 下满 + 配比定稿）</td><td>pretrain：不批 → 10-05 后转 30min 轮询</td></tr>
+  <tr><td>3</td><td><b>D-CLEAN-2 回收量</b> + <code>servers</code>(974G) 去留</td><td>data：只影响磁盘，不阻塞</td></tr>
+</table>
+
+<h3>11.4 一句话</h3>
+<div class="ok-box">
+  <b>最早空闲 = data（今天 ≈12:30）</b>（之后只是 30min 轮询盯下载）；
+  <b>两条 GPU 线（pretrain / vision）都在 <u>10-05 前后</u>集中空闲</b>；
+  <b>harness 的 Aider 全量是唯一可能拖到 10-06 的长尾</b>（取决于单题 45s 还是 194s）。<br>
+  → <b>若要插新实验/改排期，最好在 10-05 前后动手</b>：那时两条 GPU 线都空，且 data 的 base 下载也基本结束。
+</div>
+
 <footer>
-  BaiZe 工作汇报 · 2026-10-03（刷新于 ~09:00）· 当日提交 <b>≈57</b> 个 ·
+  BaiZe 工作汇报 · 2026-10-03（刷新于 <b>~10:00</b>）· 当日提交 <b>≈68</b> 个 ·
   详细证据见 <code>run/MEMORY_PRETRAIN_2B.md</code>、<code>run/EXPERIMENTS_VISION_ROUND9.md</code>、
   <code>run/DATA_LEDGER.md</code>、<code>run/harness/CODE_AGENT_BENCHMARKS_SURVEY.md</code>。<br>
   本次运维处置已写入各任务书「运维指令区」：<code>BAIZE_PRETRAIN_2B_TASK.md</code>（P-9）、
