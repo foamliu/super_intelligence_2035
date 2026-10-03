@@ -33,6 +33,26 @@
 
 **优先级覆盖**：**P-5b（自然跑完）> P-9 > P-6② > P-8（暂缓）**。（Round 2 其余项已收敛，见下方清单。）
 
+**P-9d —— 训练性能 profiling / 瓶颈诊断（新增，与 P-9a 同批做；🚫 不要在 live 20B 长跑上 attach）**：
+> 运维问：能否对**进行中的训练**做 profiling、诊断瓶颈、给改进建议？**能 —— 但要做在「短测」上，绝不扰动正在跑的 P-5b。**
+- **载体**：用 **P-9a 的短测（~50–100 步）** profile；🚫 **不要**对 P-5b 的 20B 长跑 `nsys --attach` / `ncu`（会拖慢并污染那条 loss 曲线）。
+- **工具（按成本从低到高）**：
+  1. **已有日志**：从 iteration 行算 **MFU**（已观测 ~345–358 TFLOP/s/GPU vs H100 bf16 ≈ 989 → **~35%**，说明有空间）；贴原文。
+  2. `nvidia-smi dmon` / `dcgm`：SM util、显存带宽占用。
+  3. **`torch.profiler`**（`profile_memory=True, record_shapes=True, with_stack=True`）跑 20–50 步 → **top kernels + 时间占比 + 显存峰值**（导出 chrome trace，**trace 不入库，只留摘要**）。
+  4. **`nsys profile`**（若已装）：timeline / kernel 间隔 / grad-accum bubble。
+  5. **`ncu`**（若已装）：只对**少数热点 kernel**取证，**必须**在短测上。
+- **重点诊断（hybrid 先验）**：① **grad-accum 空隙**（MBS=1 → 128 段）② **访存受限的 SSM scan / elementwise / LayerNorm**（M=4094 时 GEMM 亦访存受限）③ recompute 是否过重 ④ mamba 自定义 kernel 是否走高效路径。
+- **产出**：`EXPERIMENTS_PRETRAIN_2B_ROUND2.md`「P-9d」节 —— **瓶颈 TOP-N（含证据）+ 预计收益 + 风险**，并与 P-9a/P-9b 交叉印证（MBS↑ / FP8 是否正打中瓶颈）。
+- **铁律**：**不许猜**（每条瓶颈须有 profile 命令 + 原始输出）；**不改训练代码**，只给建议（改动留待运维批准）。
+
+### 📉 记忆维护规程（2026-10-03 运维新增，**硬性**）
+> 理由：`MEMORY_*.md` **每次唤醒都被 agent 全文读取** → 越大越烧 token。当前 `MEMORY_PRETRAIN_2B.md` ≈ **243KB（严重超标）**。
+- **上限**：本线 `MEMORY_PRETRAIN_2B.md` 控制在 **≤ 32KB**；**下次唤醒立即执行一次滚动归档**。
+- **滚动**：把**较早的流水条目**（保留最近 ~20 条）**追加**到 `daily-memories/<条目日期>.md`（原文不改），再从 MEMORY 删除。
+- **顶部必须保留**：① `WAITING:` 行（**仍只出现一次**）② 状态头 /「进度快照」③ 最近 ~20 条流水。
+- **纪律**：归档**不改变任何结论**；`WAITING:` 纪律不变（正文/流水/快照里**不得**再出现以 `WAITING:` 开头的行）。
+
 ---
 
 

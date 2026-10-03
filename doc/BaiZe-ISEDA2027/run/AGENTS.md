@@ -82,3 +82,28 @@ ps -eo pid=,etimes=,args= | grep 'ops_relay\.sh' | grep -v grep
 ## 5. 相关但不属于本目录的 agent
 
 - **ZhuLong（DAC 2027）**：`doc/ZhuLong_DAC2027/run/` 下有自己的 loop 与 MEMORY（另一套代码库 `eda_fastmcp`），与本目录无关。
+
+## 6. 📉 记忆体量维护（**2026-10-03 运维新增**）
+
+> **为什么**：loop 脚本对 `MEMORY_*.md` 只做 `grep '^WAITING:'`（近零成本），
+> 但 **cline agent 每次唤醒会把整个 `MEMORY_*.md` 读进上下文** → 文件越大，**每次唤醒烧的 token 越多**，且**无上限增长**。
+
+**实测体量（2026-10-03）**：
+
+| 文件 | 体量 | 状态 |
+|:--|--:|:--|
+| `MEMORY_PRETRAIN_2B.md` | **≈243 KB**（334 行） | 🔴 严重超标 |
+| `MEMORY_VISION.md` | ≈94 KB（630 行） | 🟠 超标 |
+| `MEMORY_DATA.md` | ≈85 KB | 🟠 超标 |
+| `MEMORY_HARNESS.md` | ≈18 KB | 🟢 正常 |
+| `MEMORY_2B.md` / `MEMORY.md` | ~13 / ~6 KB | 🟢 已收敛 |
+
+**规程（已写入各任务书「运维指令区」）**：
+
+1. **上限**：每个 `MEMORY_*.md` **≤ 32 KB**。
+2. **超限即滚动**：把**较早的流水条目**（**保留最近 ~20 条**）**追加**到对应 `daily-memories*/<条目日期>.md`，
+   再从 MEMORY 中删除这些旧条目。**归档文件原文不改**，且**不参与每次唤醒读取**（作为长期归档 / grep 用）。
+3. **顶部必须保留**：① `WAITING:` 行（**仍只出现一次**）② 状态头 /「进度快照」③ 「运维问答」④ 最近 ~20 条流水。
+4. **纪律**：归档**不得改变任何结论**；`WAITING:` 纪律（正文/流水/快照里不得再出现以 `WAITING:` 开头的行）不变。
+
+> 各 loop 的 `git add` **已包含** `MEMORY_*.md` 与 `daily-memories*/`，故滚动后**照常被提交**，无需额外改动脚本。

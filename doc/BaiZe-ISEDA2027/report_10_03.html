@@ -332,6 +332,42 @@
   <b>今日新增的三条旁路</b>（vision R10 / data D-CLEAN / harness H-C）<b>都不占关键路径的主卡</b>（R10-① 仅 0.7h、D-CLEAN 轻 I/O、H-C 无 Docker 可并行）。
 </div>
 
+<h2 class="sec" id="s10"><span class="no">10</span>补记：训练 profiling 与记忆体量</h2>
+
+<h3>10.1 pretrain 能否对进行中的训练做 profiling？— <span class="badge b-ok">能</span></h3>
+<div class="card">
+  <p><b>结论：能，但必须做在「短测」上，绝不扰动正在跑的 P-5b。</b>已下发 <b>P-9d</b>。</p>
+  <table>
+    <tr><th>层次</th><th>手段</th><th>说明</th></tr>
+    <tr><td>零成本</td><td>已有 iteration 日志算 <b>MFU</b></td><td>观测 ~345–358 TFLOP/s/GPU vs H100 bf16 ≈ 989 → <b>~35% MFU</b>（有空间）</td></tr>
+    <tr><td>低</td><td><code>nvidia-smi dmon</code> / dcgm</td><td>SM util、显存带宽</td></tr>
+    <tr><td>中</td><td><b><code>torch.profiler</code></b></td><td>top kernels + 时间占比 + 显存峰值（trace 不入库）</td></tr>
+    <tr><td>中</td><td><code>nsys profile</code></td><td>timeline / grad-accum bubble</td></tr>
+    <tr><td>高</td><td><code>ncu</code></td><td>仅少数热点 kernel，必须在短测上</td></tr>
+  </table>
+  <p><b>重点怀疑（hybrid 先验）</b>：① <b>grad-accum 空隙</b>（MBS=1 → 每步 128 段）② 访存受限的 <b>SSM scan / elementwise / LayerNorm</b>（<code>M=4094</code> 下 GEMM 亦访存受限）③ recompute 过重 ④ mamba 自定义 kernel 路径。</p>
+  <p><b>纪律</b>：🚫 不对 20B 长跑 <code>nsys --attach</code>/<code>ncu</code>（污染 loss 曲线）；只给建议、不改训练代码。</p>
+</div>
+
+<h3>10.2 MEMORY 是否该卡最大尺寸？— <span class="badge b-warn">该卡，且已下发</span></h3>
+<table>
+  <tr><th>文件</th><th>体量</th><th>状态</th></tr>
+  <tr><td><code>MEMORY_PRETRAIN_2B.md</code></td><td><b>≈243 KB</b>（334 行）</td><td>🔴 严重超标</td></tr>
+  <tr><td><code>MEMORY_VISION.md</code></td><td>≈94 KB（630 行）</td><td>🟠 超标</td></tr>
+  <tr><td><code>MEMORY_DATA.md</code></td><td>≈85 KB</td><td>🟠 超标</td></tr>
+  <tr><td><code>MEMORY_HARNESS.md</code></td><td>≈18 KB</td><td>🟢 正常</td></tr>
+</table>
+<div class="note">
+  <b>为什么</b>：loop 只用 <code>grep '^WAITING:'</code>（近零成本），但 <b>agent 每次唤醒全文读取 MEMORY</b> → 243KB ≈ 8 万级 token，<b>每 30 分钟一次</b>，且无上限增长。
+</div>
+<p><b>已下发规程</b>（写入 4 份任务书「运维指令区」+ <code>AGENTS.md</code> §6）：</p>
+<ul>
+  <li><b>上限 ≤ 32 KB</b>；超限即滚动。</li>
+  <li>较早流水（<b>保留最近 ~20 条</b>）<b>追加</b>到 <code>daily-memories*/</code>（原文不改，作为长期归档，不参与每次唤醒读取）。</li>
+  <li>顶部保留：<code>WAITING:</code> 行、状态头/进度快照、运维问答、最近 ~20 条。</li>
+  <li>loop 的 <code>git add</code> 已含 MEMORY 与 daily-memories，<b>滚动后照常提交，无需改脚本</b>。</li>
+</ul>
+
 <footer>
   BaiZe 工作汇报 · 2026-10-03 · 当日提交 ≈40 个 ·
   详细证据见 <code>run/MEMORY_PRETRAIN_2B.md</code>、<code>run/EXPERIMENTS_VISION_ROUND9.md</code>、
