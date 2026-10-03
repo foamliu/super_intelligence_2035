@@ -27,6 +27,35 @@
 
 **优先级**：与现有下载巡检**并行**（D-CLEAN 属轻 I/O：`df` + 有界 `du`）；**重 I/O 仍避让下载与训练**。
 
+### 🆕 运维指令 · 2026-10-03（**D-CLEAN-2：已批准删除项 + `servers` 探查**）
+
+> 运维已对 `DISK_CLEANUP_INVENTORY.md` 的候选拍板。**执行前先记录（路径 + `du` 实测 + `df` 前），执行后回写 `DISK_CLEANUP_INVENTORY.md` + `MEMORY_DATA.md`。**
+
+**✅ 已批准删除（可执行 `rm -rf`）**：
+
+| # | 路径 | 大小 | 备注 |
+|:--|:--|--:|:--|
+| 1 | `.../datasets/laion2B-en-aesthetic/` | **≈8.1 T** | URL-only 已淘汰（DATA_LEDGER §6）→ **最大回收项** |
+| 2 | `/nas_train/app.e0031982/zhulong.tar.gz` | 493 M | ZhuLong 旧打包（2026-03-06），运维确认可删 |
+| 3 | `.../code/BaiZe-ISEDA2027/nemo_experiments` | **524 G** | **只删「早期、已不再需要的 ckpt」**（＝ data agent 原建议「保留最晚/最优，其余可清」）；**保留最晚/最优 + P-6② 所需里程碑**（见下） |
+| 4 | `/home/app.e0031982/.cache/pip` | 3.3 G | 🟢 缓存，可从 PyPI 重建（顺带清） |
+
+**🔴 `nemo_experiments` 保留 / 清理规则（**先列清单、再删**；**不删整个目录**）**：
+- **P-5b 正在往这里写**（`--save-interval 156 --dir nemo_experiments`）→ **🚫 绝不动任何近期 mtime 的目录**。
+- **保留（最晚/最优 + P-6② 所需）**：**最新一个** + **P-6② 的 6 个里程碑 ckpt**（`--save-interval 156` → 约 `iter_0000156 / 0000312 / 0000624 / 0001248 / 0002496` + **final `iter_0004771`**；**以实际落盘名为准**）。
+- **可清（早期、已不再需要）**：Round 1 / S 系列等**被更晚 ckpt 取代、且无后续用途**的旧 ckpt。
+- **流程**：先 `ls -la --time-style=long-iso` 列清单 → 贴「保留 / 可清」两列到报告 **再删**。
+- ⚠️ 若无法可靠区分「早期不再需要」与「仍需」→ 本轮**只列清单、不删**，等运维二次确认。
+
+**🔍 待探查（**先不删**）：`/nas_train/app.e0031982/servers`（974 G）**
+- `ls -la --time-style=long-iso servers/` + `du -sh --max-depth=1 servers/*`（**每条带 `timeout`**，避免全树超时；已知子目录 `du` 会超时）。
+- 产出：**内部结构 + 用途判断 + 建议**，写进 `DISK_CLEANUP_INVENTORY.md` 新节。
+
+**❌ 本轮不动（保持「待确认」）**：`models`(452G) · `hf_cache`(20G) · `outputs` · `download` · `Downloads` · 旧 filelist/checksums · **LLaVA 85M（26T，运维令保留）**。
+**🚫 红线不变**：base/gpic 下载目标、L3/code/math、SFT、GPIC、en500k/eval5k、`EDA-Eval` 隔离区。
+
+**产出**：更新 `DISK_CLEANUP_INVENTORY.md` —— **实际回收合计（`df` 前后对比）+ `servers` 探查结论**；口径仍**贴命令 + 原始输出**。
+
 ### 📉 记忆维护规程（2026-10-03 运维新增，**硬性**）
 > 理由：`MEMORY_*.md` **每次唤醒都被 agent 全文读取** → 越大越烧 token。当前 `MEMORY_DATA.md` ≈ **85KB（超标）**。
 - **上限**：本线 `MEMORY_DATA.md` 控制在 **≤ 32KB**；**下次唤醒立即执行一次滚动归档**。
