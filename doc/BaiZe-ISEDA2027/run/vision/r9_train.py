@@ -110,6 +110,8 @@ def main():
     ap.add_argument('--steps', type=int, default=3000)
     ap.add_argument('--lr', type=float, default=3e-3)
     ap.add_argument('--warmup', type=int, default=20)
+    ap.add_argument('--loss', choices=['clip', 'siglip'], default='clip',
+                    help='clip=InfoNCE (R9/R10 baseline); siglip=SigLIP bidirectional sigmoid (R11-L arm2)')
     ap.add_argument('--data', required=True,
                     help='tar shard glob(s), comma-separated for multi-source (e.g. CC12M,Amshaker)')
     ap.add_argument('--data-source', default='wds', choices=['wds', 'gpic'],
@@ -136,7 +138,7 @@ def main():
     np.random.seed(args.seed)
 
     import data as D
-    from open_clip.loss import ClipLoss
+    from open_clip.loss import ClipLoss, SigLipLoss
 
     vision = get_vision(args.tower, args.resolution, args.patch, device,
                         args.width, args.depth, args.heads, args.mlp_dim)
@@ -152,9 +154,18 @@ def main():
 
     logit_scale = nn.Parameter(torch.full((), float(np.log(10)), device=device),
                                requires_grad=True)
-    loss_fn = ClipLoss(local_loss=False, gather_with_grad=False,
-                       rank=rank, world_size=world_size)
-    opt = torch.optim.AdamW([{'params': list(vision.parameters()) + [logit_scale]}],
+    logit_bias = None
+    if args.loss == 'siglip':
+        logit_bias = nn.Parameter(torch.full((), -10.0, device=device),
+                                  requires_grad=True)
+        loss_fn = SigLipLoss(rank=rank, world_size=world_size)
+    else:
+        loss_fn = ClipLoss(local_loss=False, gather_with_grad=False,
+                           rank=rank, world_size=world_size)
+    opt_params = list(vision.parameters()) + [logit_scale]
+    if logit_bias is not None:
+        opt_params.append(logit_bias)
+    opt = torch.optim.AdamW([{'params': opt_params}],
                             lr=args.lr, betas=(0.9, 0.95), eps=1e-6)
 
     def lr_at(s):
@@ -188,7 +199,7 @@ def main():
 
     log(f'[start] tower={args.tower} lr={args.lr} warmup={args.warmup} bs={args.batch_size} '
         f'world={world_size} steps={args.steps} res={args.resolution} patch={args.patch} '
-        f'seed={args.seed} shards={len(my_shards)}/rank objective=InfoNCE '
+        f"seed={args.seed} shards={len(my_shards)}/rank objective={'SigLIP' if args.loss == 'siglip' else 'InfoNCE'} "
         f'text=frozen-CLIP-768 negatives={args.batch_size*world_size}')
 
 # ---- fixed probe batch (rank 0): precompute once; text is FROZEN so T is constant ----
@@ -214,11 +225,15 @@ def main():
         state = {
             'vision': dict(vision.module.state_dict()),
             'logit_scale': logit_scale.detach().cpu(),
+            'logit_bias': logit_bias.detach().cpu() if logit_bias is not None else None,
             'config': {'tower': args.tower, 'resolution': args.resolution,
-                       'patch': args.patch, 'steps': step, 'loss': 'clip_infonce',
+                       'patch': args.patch, 'steps': step,
+                       'loss': 'siglip' if args.loss == 'siglip' else 'clip_infonce',
                        'embed_dim': EMBED, 'lr': args.lr, 'warmup': args.warmup,
                        'batch_size': args.batch_size, 'world_size': world_size,
-                       'seed': args.seed, 'objective': 'InfoNCE', 'text': 'frozen-CLIP-768',
+                       'seed': args.seed,
+                       'objective': 'SigLIP' if args.loss == 'siglip' else 'InfoNCE',
+                       'text': 'frozen-CLIP-768',
                        'width': args.width, 'depth': args.depth,
                        'heads': args.heads, 'mlp_dim': args.mlp_dim},
             'final_loss': loss_ema,
@@ -249,7 +264,10 @@ def main():
         with torch.autocast('cuda', dtype=torch.bfloat16):
             If = torch.nn.functional.normalize(vision(imgs), dim=-1)
             Tf = torch.nn.functional.normalize(text(txts), dim=-1)
-            cur_loss = loss_fn(If, Tf, logit_scale.exp(), None)
+            if args.loss == 'siglip':
+                cur_loss = loss_fn(If, Tf, logit_scale.exp(), logit_bias)
+            else:
+                cur_loss = loss_fn(If, Tf, logit_scale.exp(), None)
         opt.zero_grad(set_to_none=True)
         cur_loss.backward()
         opt.step()
@@ -264,7 +282,8 @@ def main():
         if step % args.log_every == 0 or step == args.steps:
             avg_dt = float(np.mean(roll[-args.log_every:]))
             imgs_per_sec = args.batch_size * world_size / avg_dt
-            log(f'[step {step}/{args.steps}] loss={li:.4f} temp={logit_scale.exp().item():.3f} '
+            bias_s = f' bias={logit_bias.item():.3f}' if logit_bias is not None else ''
+            log(f'[step {step}/{args.steps}] loss={li:.4f} scale={logit_scale.exp().item():.3f}{bias_s} '
                 f'ms/iter={avg_dt*1000:.1f} image/s={imgs_per_sec:.1f} lr={lr_at(step):.2e}')
 
         # ---- C1/C2/C4 probe ---- #

@@ -33,7 +33,7 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 | # | 臂 | 目标函数 | 实现来源 | 成本/风险 | 状态 |
 |:--|:--|:--|:--|:--|:--|
 | ① | **InfoNCE（基线）** | `open_clip.loss.ClipLoss(local_loss=False)` | 已有（R9/R10） | — | ✅ 已有 |
-| ② | **SigLIP** | `open_clip.loss.SigLipLoss`（双向 sigmoid） | `train.py:110-111` 已写；R14 `sigmoid_xent`(OpenVision `losses/common.py:40`) 同源 | 低（改 1 处 loss + 保留冻结文本塔） | ⏸ 待实现 |
+| ② | **SigLIP** | `open_clip.loss.SigLipLoss`（双向 sigmoid） | `train.py:110-111` 已写；R14 `sigmoid_xent`(OpenVision `losses/common.py:40`) 同源 | 低（改 1 处 loss + 保留冻结文本塔） | 🚀 running（30k 步 `R11L_siglip_w512`） |
 | ③ | **LocalLoss** | InfoNCE 的 `local_loss=True`（逐卡局部 batch，不 cross-rank gather） | `open_clip.loss.ClipLoss(local_loss=True)` | 低（改 1 参数；⚠️ 改变负样本池语义，须盯 C1–C4 不坍缩） | ⏸ 待实现 |
 | ④ | **CoCa**（对比 + caption 生成） | 对比 + 自回归 caption CE（OpenVision `caption CE` + `coca_caption_loss_weight=2`） | 需**新写 caption decoder**（OpenVision2 权重 = concat/prefix-LM，**非 CoCa cross-attn**）；R14 可抄 Apache-2.0 的 caption CE 写法 | 高（新 decoder + 参数量/token 报备） | ⏸ |
 | ⑤ | **GenLIP / AR（纯生成）** | caption-only 自回归（无对比项） | 需 caption decoder；⚠️ 我们 caption 偏短（CC12M=Amshaker alt-text 短句 / GPIC short=20 tok）→ 生成监督密度被短 caption 拖累（机制推断须实测） | 高 | ⏸ |
@@ -71,5 +71,6 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 
 ## 5. 状态
 
-- 🕐 **R11-L 预注册完成（本文档）**；臂 ① 基线已有，**臂 ② SigLIP 待实现（下一唤醒）**。
-- 每臂灰印培训需要 8 卡（`.12`），启动前先核 GPU 空闲（同 R10-③ 的 GPU 核验）。
+- 🚀 **臂 ② SigLIP 已实现并启动（2026-10-03）**：`r9_train.py --loss siglip`（`SigLipLoss` bidir · 冻结 CLIP-768 · 同 R9 数据/步数/opt）；8 卡跑 `R11L_siglip_w512` 30k 步（N=15.36M 锚点，对照基线 lp 6.08%），日志 `/tmp/r11_siglip.log`。臂 ① 基线已有（InfoNCE）。
+- 跑完对照基线（3.43/5.45/6.08%）按判据（+1.5 点）裁定，再回填本文档结果 + `EXPERIMENTS_VISION.md` 顶部 + `MEMORY_VISION.md`。
+- 每臂训练需 8 卡（`.12`），启动前先核 GPU 空闲（同 R10-③ 的 GPU 核验）。

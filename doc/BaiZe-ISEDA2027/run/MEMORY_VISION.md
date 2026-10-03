@@ -1,16 +1,16 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done**（① 回收 12 点 IN-1k ✅ → ② 3 点 M 拟合 ✅ → ③ 补密 w384/w640 + **5 点 M 重拟合 ✅**）；**R14 ✅ · E1 ✅**；**R11-L 预注册 ✅**（`EXPERIMENTS_VISION_ROUND11.md`，判据+公平表+6 臂）→ 下一步实现+启动臂② SigLIP（8 卡）；R13 待运维批准 |
-| WAITING | 0（R10-③ `denseM ALL DONE @13:00:30`；收尾 4 步已执行：5-M 拟合 + 回填 §2/§3/§4 + 状态头 + push） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L 预注册 ✅**；**R11-L arm② SigLIP 已实现并启动（8 卡 · .12 · ETA ~1.8h）**：`r9_train.py` 加 `--loss siglip`（`SigLipLoss` bidir · 冻结 CLIP-768 · 同 R9 数据/步数/opt）→ 跑 `R11L_siglip_w512` 30k 步（N=15.36M 锚点，对照基线 lp 6.08%）；R13 待运维批准 |
+| WAITING | 1（R11-L arm② SigLIP 训练 running · `.12` 全 8 卡 · `/tmp/r11_siglip.log`） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡，详见 EXPERIMENTS_VISION_ROUND10.md） |
-| 更新 | 2026-10-03（R10 全部完成：③ denseM w384/w640 ✅ → 5 点 M 重拟合 R²=0.960 → **w384@15.36M=7.99% 全宽最高、无饱和点**；收尾回填 + push） |
+| 更新 | 2026-10-03（R11-L arm② SigLIP 实现+启动：`r9_train.py` 支持 `--loss {clip,siglip}`，8 卡跑 `R11L_siglip_w512` 30k 步；step50 loss=7.10 scale=10.85 bias=-9.92、2389 img/s、无坍缩） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -48,6 +48,15 @@ WAITING: 0
 - 抽 **8 个 tar 均匀抽样**（index 0..1212）实测：**12,537 图文对/tar**（稳定 ±2%）→ **GPIC 全量 ≈ 100.3M**（证官方 100M 卡；旧「5 tar=86M」少计 png 作废）；**已下 1213/8000 tar ≈ 15.2M**。
 - `caption_type` mix：short **45.0%** / medium 45.1% / long 9.0% / tag 1.0% → **可训练 short 子类：全量 ≈45M / 已下 ≈6.8M**。
 - 🔑 **C1 口径定案**：R9 用过 18.5M / 盘上现有 ≈32M / 本地全量 ≈118M（动态、仍在下载）——与 `r9_scaling.py --local-cap-m default=118.0` 一致；R11-E「同 N」可比区间被压到 ≈6.8M（short 已下 < 18.5M），须如实说明。已回填 `VISION_ARCH_FRONTIER_2026.md §5`。
+
+## R11-L 目标函数轴（2026-10-03）：arm② SigLIP 已启动
+
+> 只变目标函数，其余控变量（塔 w512 · 冻结 CLIP-768 · CC12M+Amshaker · lr3e-3 · bs512 · N=15.36M/30k 步 · IN-1k frozen-trunk lp）。预注册判据：同 N 下 lp 比基线 +1.5 点 → 局部推翻「25.1%=对比渐近」。
+
+- ✅ **arm② SigLIP 实现**：`r9_train.py` 加 `--loss {clip,siglip}`（`open_clip.loss.SigLipLoss`，dist_impl=bidir 默认 → 512 负样本池同 InfoNCE）；新增可训 `logit_bias`（init −10），`logit_scale.exp()` 当 sigmoid 尺度；冻结文本塔不变。启动脚本 `r11_run_siglip.sh`。
+- 🚀 **已启动（.12 全 8 卡）**：`R11L_siglip_w512` 30k 步（N=15.36M=R9 阶段一锚点）。step50 loss=7.10（init≈10 → 正常下降）、scale=10.85、bias=−9.92、2389 img/s、`[probe-setup] n=128` OK。ETA ≈1.8h。
+- **跑完判据**：`grep -c 'R11-L arm2 SigLIP ALL DONE' /tmp/r11_siglip.log` == 1；脚本自动回收 step{10k,20k,30k}+final 的 4 个 ckpt IN-1k lp。
+- **收尾（跑完后）**：lp@5.12/10.24/15.36M 对照基线（InfoNCE w512：3.43/5.45/6.08%）→ 判据裁定 → 回填 `EXPERIMENTS_VISION_ROUND11.md` + `EXPERIMENTS_VISION.md` 顶部 + 本状态头 → push。
 
 ## 历史条目已滚动归档（2026-10-03）
 
