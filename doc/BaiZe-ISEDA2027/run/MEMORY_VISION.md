@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L 预注册 ✅**；**R11-L arm② SigLIP 已实现并启动（8 卡 · .12 · ETA ~1.8h）**：`r9_train.py` 加 `--loss siglip`（`SigLipLoss` bidir · 冻结 CLIP-768 · 同 R9 数据/步数/opt）→ 跑 `R11L_siglip_w512` 30k 步（N=15.36M 锚点，对照基线 lp 6.08%）；R13 待运维批准 |
-| WAITING | 1（R11-L arm② SigLIP 训练 running · `.12` 全 8 卡 · `/tmp/r11_siglip.log`） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L 预注册 ✅ · arm② SigLIP ✅（未翻盘）**；**R11-L arm③ LocalLoss 已启动（8 卡 · .12 · ETA ~1.9h）**：`r9_train.py --loss localloss`（`ClipLoss(local_loss=True)` 负样本池 512→64 · 冻结 CLIP-768 · 同 R9 数据/步数/opt）→ 跑 `R11L_localloss_w512` 30k 步（N=15.36M，对照基线 lp 6.08%）；R13 待运维批准 |
+| WAITING | 1（R11-L arm③ LocalLoss 训练 running · `.12` 全 8 卡 · `/tmp/r11_localloss.log`） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡，详见 EXPERIMENTS_VISION_ROUND10.md） |
-| 更新 | 2026-10-03 14:53（R11-L arm② SigLIP 巡检：step ~25000/30000（83.3%），C1≈0.24–0.30、C2_gap≈+0.10、C4=OK、~3100 img/s → **无坍缩**，ETA≈15min；同轮**预实现 arm③ LocalLoss**：`r9_train.py --loss localloss` + `r11_run_localloss.sh` 已就绪，待 arm② 判据+GPU 空闲启动） |
+| 更新 | 2026-10-03 15:29（**arm② SigLIP 完成**：lp 2.19/3.13/4.36% @5.12/10.24/15.36M，全 < 基线 3.43/5.45/6.08 → 未翻盘；已回填 ROUND11 §6 + VISION 顶部 + 本文件；**随即启动 arm③ LocalLoss** `R11L_localloss_w512`，判据 `grep -c 'R11-L arm3 LocalLoss ALL DONE' /tmp/r11_localloss.log`==1） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -53,10 +53,10 @@ WAITING: 1
 
 > 只变目标函数，其余控变量（塔 w512 · 冻结 CLIP-768 · CC12M+Amshaker · lr3e-3 · bs512 · N=15.36M/30k 步 · IN-1k frozen-trunk lp）。预注册判据：同 N 下 lp 比基线 +1.5 点 → 局部推翻「25.1%=对比渐近」。
 
-- ✅ **arm② SigLIP 实现**：`r9_train.py` 加 `--loss {clip,siglip}`（`open_clip.loss.SigLipLoss`，dist_impl=bidir 默认 → 512 负样本池同 InfoNCE）；新增可训 `logit_bias`（init −10），`logit_scale.exp()` 当 sigmoid 尺度；冻结文本塔不变。启动脚本 `r11_run_siglip.sh`。
-- 🚀 **已启动（.12 全 8 卡）**：`R11L_siglip_w512` 30k 步（N=15.36M=R9 阶段一锚点）。step50 loss=7.10（init≈10 → 正常下降）、scale=10.85、bias=−9.92、2389 img/s、`[probe-setup] n=128` OK。ETA ≈1.8h。
-- **跑完判据**：`grep -c 'R11-L arm2 SigLIP ALL DONE' /tmp/r11_siglip.log` == 1；脚本自动回收 step{10k,20k,30k}+final 的 4 个 ckpt IN-1k lp。
-- **收尾（跑完后）**：lp@5.12/10.24/15.36M 对照基线（InfoNCE w512：3.43/5.45/6.08%）→ 判据裁定 → 回填 `EXPERIMENTS_VISION_ROUND11.md` + `EXPERIMENTS_VISION.md` 顶部 + 本状态头 → push。
+- ✅ **arm② SigLIP 完成（15:26，`ALL DONE`）**：`r9_train.py --loss siglip`（`SigLipLoss` bidir + 可训 `logit_bias` init−10，`r9_train.py:162-165`）。30k 步无坍缩（C1 0.333 / C2_gap +0.103 / C4=OK / final_loss 5.4643 / steady 2448 img/s）。IN-1k lp = **2.19 / 3.13 / 4.36%** @5.12/10.24/15.36M，全 < 基线（3.43/5.45/6.08%）→ **未超 +1.5 阈值、未翻盘**。证据 `/tmp/r11_siglip.log`。
+- 🚀 **arm③ LocalLoss 已启动（15:29，.12 全 8 卡）**：`r9_train.py --loss localloss`（`ClipLoss(local_loss=True, gather_with_grad=False)`，`r9_train.py:166-168`）→ `R11L_localloss_w512` 30k 步。⚠️ **更正**：读 open_clip 源码（`loss.py:56-63,116-121`）确认 `local_loss=True` **仍是 512 负样本 all-gather**，只算本地 64 行 logits（省算/内存 + 本地图像不再从 text→image 拿梯度）→ 是「计算/梯度路径」变体、**非「负样本池 512→64」**（此前描述有误，已改）。arm③ 因此可证「损失对 local-vs-global 行是否不变」，但**不再测试负样本池大小**——真正池大小消融需另写不 gather 的自定义 loss（待后续决定）。
+- **arm③ 跑完判据**：`grep -c 'R11-L arm3 LocalLoss ALL DONE' /tmp/r11_localloss.log` == 1；脚本自动回收 step{10k,20k,30k}+final 4 ckpt IN-1k lp。
+- **arm③ 收尾（跑完后）**：lp 对照基线 → 判据裁定 → 回填 ROUND11 + VISION 顶部 + 本状态头 → push，再决定臂④ CoCa。
 
 ## 历史条目已滚动归档（2026-10-03）
 
