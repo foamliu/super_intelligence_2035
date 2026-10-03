@@ -71,3 +71,9 @@
 | 2026-10-03 | LG 电子将在美国新建 AI 数据中心冷水机组工厂，韩国本土同步扩产 | IT之家 | news | https://www.ithome.com/1/009/505.htm |
 | 2026-10-03 | DeepSeek 扩招！弹性计算团队大量 HC，尤其需要资深工程师 | 量子位 | news | https://www.qbitai.com/2026/10/501381.html |
 | 2026-10-03 | Neurable One 头戴式耳机发布：号称能够监测用户脑电信号，499 美元 | IT之家 | news | https://www.ithome.com/1/009/502.htm |
+| 2026-10-03 | AI 数字人面试官引发求职者"恐怖谷效应"吐槽，相关话题冲上热搜 | IT之家 | news | https://www.ithome.com/1/009/495.htm |
+| 2026-10-03 | 大众 CARIAD 拟进一步裁员 1000 人，未来 5 年削减 61 亿欧元投资 | IT之家 | news | https://www.ithome.com/1/009/515.htm |
+| 2026-10-03 | 和 Opus 5.5 同题交卷，MiniMax M3.1 让 Flash 开始超纲了 | 爱范儿 | news | https://www.ifanr.com/1682850 |
+| 2026-10-03 | Meta wants your next gadget to be Muse-infused | TechCrunch | news | https://techcrunch.com/2026/10/02/meta-wants-you-to-build-your-own-muse-gadget/ |
+| 2026-10-03 | Sean Parker is rebuilding Stability AI around music | TechCrunch | news | https://techcrunch.com/2026/10/02/sean-parker-is-rebuilding-stability-ai-around-music/ |
+| 2026-10-03 | Circuit Breaker Labs hopes to make AI safer for your kids (and you) | TechCrunch | news | https://techcrunch.com/2026/10/02/circuit-breaker-labs-hopes-to-make-ai-safer-for-your-kids-and-you/ |

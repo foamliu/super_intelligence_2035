@@ -12,10 +12,10 @@ WAITING: 1
 
 ```
 PHASE:        常态采集（T1–T10 全部 ✅；自第四轮起进入常态采集）
-已完成:       T1–T10 全部 ✅ · 首轮 smoke ✅ · 第二~六轮常态 ✅（第三轮含中文权威源真新闻）
-当前动作:     第六轮常态采集：`cn_news`（6 活源全 200；命中仍多为国庆/时政/民生 → 未录）+ **IT之家 RSS**（中文主供给）+ 量子位 RSS + **HN(Algolia)** + 官博/外媒（英文）→ 落盘 news/2026-10-03.md「六、第六轮」**news 9 条（中文 7 / 英文 2）**；SEEN +9；INDEX news 35→44
-下一步:       常态采集（WAITING=1，睡 30min）：逐类搜索→去重→追加当日摘要；**每轮先用 `cn_news` + IT之家/量子位 RSS 补中文（中文≥英文）**，英文走 `search_news`(HN) / 官方 RSS；GDELT 限频退避
-本轮新增:     news 9 条（**中文 7**：IT之家 6〔Strands Decider 2B 决策模型 / AMD Versal 航天 SoC / 华为小艺智能体调整 / YouTube Shorts 算法 / LG AIDC 工厂 / Neurable 脑电耳机〕+ 量子位 1〔DeepSeek 扩招〕；**英文 2**：CBS News〔Qwen 偏向研究〕/ Aleph Alpha 官博〔Kolibri 主权模型，经 HN〕）
+已完成:       T1–T10 全部 ✅ · 首轮 smoke ✅ · 第二~七轮常态 ✅（第三轮含中文权威源真新闻）
+当前动作:     第七轮常态采集：`cn_news`（6 活源全 200；命中仍多为国庆/时政/民生 → 未录）+ **IT之家 RSS**（中文主供给）+ 量子位 RSS + **爱范儿 RSS**（新增中文 dated 源）+ **TechCrunch RSS**（英文）→ 落盘 news/2026-10-03.md「七、第七轮」**news 6 条（中文 3 / 英文 3）**；SEEN +6；INDEX news 44→50
+下一步:       常态采集（WAITING=1，睡 30min）：逐类搜索→去重→追加当日摘要；**每轮先用 `cn_news` + IT之家/量子位/爱范儿 RSS 补中文（中文≥英文）**，英文走 `search_news`(HN) / TechCrunch / 官方 RSS；GDELT 限频退避
+本轮新增:     news 6 条（**中文 3**：IT之家 2〔AI 面试官"恐怖谷"上热搜 / 大众 CARIAD 裁员 1000 人〕+ 爱范儿 1〔MiniMax M3.1 Flash Preview 实测报道〕；**英文 3**：TechCrunch 3〔Meta Muse 开源进消费设备 / Sean Parker 围绕音乐重建 Stability AI / Circuit Breaker Labs 让 AI 对孩子更安全〕）
 阻塞:         无
 ERROR_COUNT:  1（历史：模型名 deepseek-v4-pro-fp4 不被网关支持 → 白睡一轮；已修。GDELT 429 属频控，已如实记录、未重试）
 ```
@@ -49,6 +49,9 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 # ③ 中文 dated 补充源（T6 中文补强；均带 pubDate、实测活源 → 以 rss_latest 取）
 python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as m; print(m.rss_latest('https://www.qbitai.com/feed',8))"    # 量子位（AI 纵深）
 python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as m; print(m.rss_latest('https://www.ithome.com/rss/',20))"      # IT之家（科技产业）
+python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as m; print(m.rss_latest('https://www.ifanr.com/feed',15))"       # 爱范儿（T6 新增；AI/数码）
+# 备用活源（本轮实测 200 + 带 pubDate，未启用）：雷峰网 https://www.leiphone.com/feed · 钛媒体 https://www.tmtpost.com/rss
+# ⚠️ 死源：新浪科技 http://rss.sina.com.cn/tech/rollnews.xml（接口 200 但内容停在 2018-09-23）；中新网 https://www.chinanews.com.cn/rss/it.xml（空 feed）
 ```
 
 **返回样例（每条）**：
@@ -83,13 +86,20 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **产物**：`news/<YYYY-MM-DD>.md`（当日摘要）· `news/SEEN.md`（去重台账）· `news/INDEX.md`（索引）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-03` 第五轮常态（07:17 UTC）~ `2026-10-03` 第六轮常态（10:00 UTC）
-- **累计收录**：`66` 条（**news 44**〔第一轮 3 + 第二轮 6 + 第三轮 6 + 第四轮 15 + 第五轮 5 + 第六轮 9〕+ 非新闻 22〔仅存 `SEEN.md`〕）
+- **上次采集窗口**：`2026-10-03` 第六轮常态（10:00 UTC）~ `2026-10-03` 第七轮常态（10:40 UTC）
+- **累计收录**：`72` 条（**news 50**〔第一轮 3 + 第二轮 6 + 第三轮 6 + 第四轮 15 + 第五轮 5 + 第六轮 9 + 第七轮 6〕+ 非新闻 22〔仅存 `SEEN.md`〕）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-03** —— ✅ **第七轮常态采集完成（news 6 条：中文 3 / 英文 3）**。PHASE=常态采集。
+  - **`cn_news`（T10）实跑**：`--cn-news --limit 300 --json` → `exit=0`、**6 活源全 200**；新鲜度：中新网×3 kept=30/30/30（drop 0）· 联合国 kept=18(drop 12，超龄) · 央视 news_1 kept=80 / tech_1 kept=11(drop 69，超龄)；**丢弃合计 81**。⚠️ 命中仍多为**国庆/时政/民生（非 AI）** → **未从中录条目**（宁缺勿滥）。
+  - **落盘**：`news/2026-10-03.md` 追加「七、第七轮」6 条 · `SEEN.md` +6 行 · `INDEX.md` news 44→50（另非新闻 22）。
+  - **代表条目**：Meta《Muse 开源、进消费设备》(TechCrunch) · Sean Parker《围绕音乐重建 Stability AI》(TechCrunch) · Circuit Breaker Labs《让 AI 对孩子更安全》(TechCrunch) · 爱范儿《MiniMax M3.1 Flash Preview 实测》 · IT之家《AI 面试官"恐怖谷"上热搜》 · IT之家《大众 CARIAD 裁员 1000 人》。
+  - **方法观察**：**新增中文 dated 活源：爱范儿 RSS**（`ifanr.com/feed`，200 + 带 pubDate）；本轮另实测 **雷峰网 `leiphone.com/feed`**、**钛媒体 `tmtpost.com/rss`** 亦为活源（记备用）；**新发现死源**：**新浪科技 `rss.sina.com.cn/tech/rollnews.xml`** = 接口 200 但**内容停在 2018-09-23**（又一「200 ≠ 有新闻」例）；**中新网 `/rss/it.xml`** 空 feed；**机器之心/澎湃 302、智东西 500、虎嗅超时、pingwest 返 HTML**；**GDELT 未调**（退避）。
+  - **拒收例（§0.1）**：钛媒体《AI 正在造 AI》《AI 杀不死咨询公司》《大模型一体机缩水》《Muse 狂飙，龙虾退潮》(analysis/专栏) · 钛媒体《苏姿丰抬头，李飞飞低头》(报道 AMD 9/28 收购 World Labs，**事件 >72h** 且为特稿) · 雷峰网《DeepSeek 开源算子工具…》(09-30 18:58 北京，**≈72h 边界**) · 爱范儿《AI 视频榜全球第二…》(feature) /《Gemini 4 正式发布…》(与量子位**同题去重**) · 路透《AI 竞相在资金耗尽前改变世界》(feature) · HN `Show/Ask HN`(tool/discussion) · qz/Ars(Shield TV/Apple FDA)（**均已 SEEN**） → **存疑即不收**。
+  - 判据复核：6/6 字段齐全（标题 + 来源 + 发布日期 + 🔗链接 + 🏷 类型：news）；**中文 3 ≥ 英文 3**。**下一步常态采集（WAITING=1）。**
 - **2026-10-03** —— ✅ **第六轮常态采集完成（news 9 条：中文 7 / 英文 2）**。PHASE=常态采集。
   - **`cn_news`（T10）实跑**：`--cn-news --limit 40 --json` → `exit=0`、**6 活源全 200**；新鲜度：中新网×3 kept=30/30/30（drop 0）· 联合国 kept=18(drop 12，超龄) · 央视 news_1 kept=80 / tech_1 kept=11(drop 69，超龄)；**丢弃合计 81**。⚠️ 命中仍多为**国庆/时政/民生（非 AI）** → **未从中录条目**（宁缺勿滥）。
   - **落盘**：`news/2026-10-03.md` 追加「六、第六轮」9 条 · `SEEN.md` +9 行 · `INDEX.md` news 35→44（另非新闻 22）。
