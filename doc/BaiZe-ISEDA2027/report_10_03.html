@@ -419,7 +419,7 @@
 <h3>11.1 执行中（正在跑）</h3>
 <table>
   <tr><th>线</th><th>正在执行</th><th>预计结束</th></tr>
-  <tr><td><b>pretrain</b> <code>.29</code></td><td>P-5b 20B 长跑（<b>iter 2970/4771 = 62.3%</b>，健康，~29s/iter）</td><td><b>10-04 ≈01:30</b></td></tr>
+  <tr><td><b>pretrain</b> <code>.29</code></td><td>P-5b 20B 长跑（<b>iter 3040/4771 = 63.7%</b>，健康，loss 2.0656，~29s/iter）+ <b>P-9 非 GPU 预研已做</b></td><td><b>10-04 ≈00:30</b></td></tr>
   <tr><td><b>vision</b> <code>.12</code></td><td><b>R10③</b> w384+w640 各 30k 步（8 卡，08:46 启动）+ 训完自动跑 8 ckpt IN-1k</td><td><b>10-03 ≈12:15</b></td></tr>
   <tr><td><b>data</b> <code>.12</code></td><td>✅ <b>D-CLEAN-2 已执行</b>（实收 <b>≈341G</b>）+ <code>servers</code> 探查完成（= LLaVA 旧部署，待批）；后台 base/gpic 下载</td><td><b>10-03 ≈12:30</b></td></tr>
   <tr><td><b>harness</b> <code>.29</code></td><td><b>H-A′ Aider Polyglot</b>（6 参赛者，先 smoke）+ <b>H-D</b> 五 harness 对比矩阵</td><td><b>10-04 ~ 10-06</b>（区间大）</td></tr>
@@ -442,8 +442,8 @@
   </tr>
   <tr>
     <td><b>data</b><br><code>.12</code></td>
-    <td>① D-CLEAN-2 删除 ≈2h → ② <code>servers</code> 探查 ≈0.5h → ③ 回写报告 →（之后转 30min 轮询）</td>
-    <td>~2.5h</td>
+    <td>① ✅ <b>D-CLEAN-2 完成</b>（≈341 G）→ ② ✅ <code>servers</code> 探查完成 → ③ <b>D-CLEAN-3</b>：删 <code>servers/</code> <b>974 G</b>（带 P1/P2/P3 前置检查）≈1–2h → ④ 回写 §7</td>
+    <td>~2h（待下次唤醒）</td>
     <td><b>10-03 ≈13:00</b><br><small>（半空闲：仍有 gpic 长下载）</small></td>
   </tr>
   <tr>
@@ -516,7 +516,7 @@
 </div>
 
 <footer>
-  BaiZe 工作汇报 · 2026-10-03（刷新于 <b>~11:25</b>）· 当日提交 <b>≈81</b> 个 ·
+  BaiZe 工作汇报 · 2026-10-03（刷新于 <b>~11:45</b>）· 当日提交 <b>≈86</b> 个 ·
   详细证据见 <code>run/MEMORY_PRETRAIN_2B.md</code>、<code>run/EXPERIMENTS_VISION_ROUND9.md</code>、
   <code>run/DATA_LEDGER.md</code>、<code>run/harness/CODE_AGENT_BENCHMARKS_SURVEY.md</code>。<br>
   本次运维处置已写入各任务书「运维指令区」：<code>BAIZE_PRETRAIN_2B_TASK.md</code>（P-9）、
