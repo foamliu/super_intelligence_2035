@@ -2610,3 +2610,70 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 20 · 2026-10-04 07:44:05 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; cd /tmp
+_k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" 2>/dev/null | head -1)"
+
+echo; echo "=== 1. key 提取自检（masked）==="
+echo "   valid(sed): len=${#_k} prefix6=${_k:0:6}"
+echo "   stale(env): len=${#OPENAI_API_KEY} prefix6=${OPENAI_API_KEY:0:6}"
+
+try() { L="$1"; shift; printf '   [%s] => ' "$L"; env "$@" timeout 90 "$C" -c /tmp -m "$M" --auto-approve true -t 45 "reply with exactly OK" 2>&1 | head -3 | tr -d '\r' | tr '\n' ' ' | cut -c1-150; echo; }
+
+echo; echo "=== 2. 三路 smoke ==="
+try "A env=valid"  OPENAI_API_KEY="$_k"
+try "B unset"      -u OPENAI_API_KEY
+try "C env=stale"  OPENAI_API_KEY="${OPENAI_API_KEY}"
+
+echo; echo "=== 3. 顺便：harness 的 driver 会不会因 unset 而不可用 ==="
+echo "   run_harness.py 读 key 的行："
+grep -n 'OPENAI_API_KEY' /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/run_harness.py 2>/dev/null | head -4 | cut -c1-140
+
+echo; echo "=== 4. 当前两条 loop 的日志尾（现状）==="
+tail -c 300 /tmp/baize_pretrain_loop.log 2>/dev/null | tr -d '\r' | tail -3 | cut -c1-130
+tail -c 300 /tmp/baize_harness_loop.log  2>/dev/null | tr -d '\r' | tail -3 | cut -c1-130
+
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 07:44:05
+
+=== 1. key 提取自检（masked）===
+   valid(sed): len=72 prefix6=02_088
+   stale(env): len=45 prefix6=01_549
+
+=== 2. 三路 smoke ===
+   [A env=valid] => [31merror:[0m Forbidden 
+
+   [B unset] => [31merror:[0m Forbidden 
+
+   [C env=stale] => [31merror:[0m Forbidden 
+
+
+=== 3. 顺便：harness 的 driver 会不会因 unset 而不可用 ===
+   run_harness.py 读 key 的行：
+96:    env `OPENAI_API_KEY`) and the gateway answers `Forbidden` on the first
+97:    model call.  With `-k "$OPENAI_API_KEY"` the run completes (smoke:
+105:        self.api_key = os.environ.get("OPENAI_API_KEY", "")
+
+=== 4. 当前两条 loop 的日志尾（现状）===
+[31merror:[0m Forbidden
+[loop] 2026-10-04 07:42:28 cline returned (exit 0), checking git push ...
+[loop] 2026-10-04 07:42:28 WAITING=1（异步任务 running）→ sleep 1800s
+[31merror:[0m Forbidden
+[loop] 2026-10-04 07:42:31 cline returned (exit 0), checking git sync ...
+[loop] 2026-10-04 07:42:31 WAITING=1 (async task running) → sleep 1800s
+
+=== DONE ===
+```
