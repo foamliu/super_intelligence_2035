@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L 预注册 ✅ · arm② SigLIP ✅（未翻盘）· arm③ LocalLoss ✅（未翻盘）· arm④ CoCa 🚀 running（@step ~9100/30000 ≈30%）**；R13 待运维批准 |
-| WAITING | 1（arm④ CoCa 30k 训练 running @step ~9100，.12 全 8 卡，ETA ~20:05–20:15） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L 预注册 ✅ · arm② SigLIP ✅（未翻盘）· arm③ LocalLoss ✅（未翻盘）· arm④ CoCa 🚀 running（@step ~17950/30000 ≈60%）**；R13 待运维批准 |
+| WAITING | 1（arm④ CoCa 30k 训练 running @step ~17950，.12 全 8 卡，ETA ~20:05–20:15） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡） |
-| 更新 | 2026-10-03 18:39（巡检 @step 9100/30000 ≈30% 健康；**arm④ CoCa 已实现并启动** `R11L_coca_w512` 30k；arm③ LocalLoss `ALL DONE` 未翻盘：lp 1.81/3.60/4.33% < 基线；smoke 通过、decoder 76.2M 可训；见 ROUND11 §8） |
+| 更新 | 2026-10-03 19:13（巡检 @step 17950/30000 ≈60% 健康；**arm④ CoCa 已实现并启动** `R11L_coca_w512` 30k；arm③ LocalLoss `ALL DONE` 未翻盘：lp 1.81/3.60/4.33% < 基线；smoke 通过、decoder 76.2M 可训；见 ROUND11 §8） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -61,6 +61,7 @@ WAITING: 1
 - 🔍 **巡检（17:14）**：arm③ LocalLoss @ step 25850/30000（86%），健康——C1 0.1821 / C2_gap +0.1152 / C4=OK、loss_ema 5.91→~4.78、steady ~2780 img/s；ETA ~17:27 训完（剩 ~13 min）→ 脚本自动回收 4 ckpt IN-1k lp → 下次唤醒（≈17:44）做 arm③ 收尾。无异常，继续 WAITING。
 - 📝 **文档修正（17:14，纯 CPU）**：`EXPERIMENTS_VISION_ROUND11.md` §5 状态行原「负样本池 512→64」为误述，已改为「⚠️ 仍 all-gather 512 → 池仍是 512、只算本地 64 行」（对齐 §0 更正）。另注：`r11_run_localloss.sh` 头注释（`negative pool = per-rank 64`）亦含同一旧表述——该 runner 为一次性脚本（正在运行、跑完不复用），故未改运行中脚本，仅在此记录，待跑完若需复用再改。
 - 🔍 **巡检（18:39，arm④ CoCa）**：@step 9100/30000（30.3%）健康——C1 0.4362 / C2_gap +0.0600 / C4=OK，loss_ema 22.55→17.77（contrast ~5.6 / caption ~6.0），吞吐 ~2500–4900 img/s（随迭代波动，低值出现在 probe 前后）；单进程组核验（1 master + 8 rank + 48 dataloader worker，**无重复 run**）；8 卡全忙（util 67–88%，显存 22.7/81.6 GB）。ETA ~20:05–20:15 训完 → 脚本自动回收 4 ckpt IN-1k lp → 下次唤醒做 arm④ CoCa 收尾（§9 回填 + §3 公平表 + 判据裁定）。无异常，继续 WAITING。
+- 🔍 **巡检（19:13，arm④ CoCa）**：@step 17950/30000（59.8%）健康——C1 0.3704 / C2_gap +0.0637 / C4=OK，loss_ema 22.55→16.93（contrast ~5.6–5.9 / caption ~5.4–6.4），吞吐 ~2270–5100 img/s（前段 ~2400，17450 步后数据加载提速至 ~4900）；进程组**再核验** 1 master(1359723) + 8 rank(1359914–1359921) + 48 dataloader worker（**无重复 run**）；8 卡全忙（util 31–82%，显存 22.7 GB）。ETA ~20:05–20:15 训完 → 脚本自动回收 4 ckpt IN-1k lp → 下次唤醒做 arm④ CoCa 收尾（§9 回填 + §3 公平表 + 判据裁定）。无异常，继续 WAITING。
 
 ## 历史条目已滚动归档（2026-10-03）
 
