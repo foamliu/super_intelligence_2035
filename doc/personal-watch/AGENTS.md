@@ -15,6 +15,9 @@
 
 > 🚫 **用户已定（2026-10-03）：暂不新增智能体。** 新职能**一律并入既有线**。
 > 例：原 **archive（历史回溯）线已并入 news**（职能 = `news/archive/` + `news/analysis/`），脚手架已删除。
+>
+> 🎯 **两条线的长期目的**：**news → 量化交易 agent（副业）**（路线图 S0–S5，见 `WATCH_NEWS_TASK.md` §0.0）；
+> **research → ① 借鉴 BaiZe/ZhuLong ② 《两分钟论文》科普视频**（见 `WATCH_RESEARCH_TASK.md` §0）。
 
 > 🆕 **news 线（2026-10-03 新建）**：本哨位的**第一条线**。依赖**外网搜索**（MCP `web-search` / `search_news`）。
 > **不占 GPU、不登录训练机**；唯一资源是**网络请求**，注意控制频率与合规（见任务书铁律）。
