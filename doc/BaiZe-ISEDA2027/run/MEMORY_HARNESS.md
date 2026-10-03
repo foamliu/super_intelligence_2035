@@ -66,7 +66,7 @@ WAITING: 1
 | PHASE | **H_D_done + TOP5_done**（batch-3：`CLINE_IMPROVEMENTS_TOP5.html` 已交付；H-A′ 执行模型已证=执行 LLM 代码，`unshare` 可用但需 mount+chroot 全量沙箱、go/rust 工具链缺、5 非-aider 参赛者需适配 → 实跑待运维拍板） |
 | WAITING | 1（等运维：① docker pull 通路 ② Aider 执行代码沙箱〔本地沙箱工具均未装〕③ 运行主机 .29 是训练机） |
 | ERROR_COUNT | 0 |
-| 更新 | 2026-10-03 14:23（第二十二轮：唤醒巡检，无新指令，batch-3 已交付；补提交第二十一轮滚动） |
+| 更新 | 2026-10-03 14:56（第二十三轮：唤醒巡检，无新指令，batch-3 已交付） |
 | 产出 | ✅ H-B 5 份源码 HTML · ✅ `harness/MERGE_OVERLAP_ANALYSIS.md` · ✅ `harness/SWEBENCH_FEASIBILITY.md` · ✅ H-C Aider 可行性 · ✅ H-D：`HARNESS_COMPARE_MATRIX.html` + `CLINE_IMPROVEMENT_OPPORTUNITIES.md` · ✅ **H-D 报告：`CLINE_IMPROVEMENTS_TOP5.html`（新）** |
 
 ## 📊 进度快照（**每次唤醒必须更新**）
@@ -74,7 +74,7 @@ WAITING: 1
 ```
 PHASE:        H_D_done + TOP5_done
 已完成:       H-B 5 份源码分析 HTML；H-A §1.1 可行性核查；Docker socket 解锁；H-C Aider 可行性核查；H-D 对比矩阵 + 5 条机会点；CLINE_IMPROVEMENTS_TOP5.html（batch-3）
-当前动作:     2026-10-03 第二十二轮：唤醒巡检 —— git fetch 至 8fd9b7f 无本线新提交、任务书运维指令区仍为 batch-3（已交付）、ops RUN_ID=8 为 ops 级 relay 清理（非本线），无待办推进项；补提交第二十一轮滚动改动
+当前动作:     2026-10-03 第二十三轮：唤醒巡检 —— git fetch 至 25c3415f 无本线新提交、任务书运维指令区仍为 batch-3（已交付）、ops RUN_ID=8 为 ops 级 relay 清理（非本线），无待办推进项
 下一步:       等运维拍板 H-A′ 三项（沙箱方案 / 参赛者范围 / go+rust 工具链）→ 再装 aider-chat + smoke 5-10 题
 阻塞:         H-A′ ① 执行 LLM 代码需沙箱（本地 sandbox 工具 absent，仅 unshare 可用但需 mount+chroot）② benchmark.py 只驱动 aider、另 5 参赛者需适配 ③ go/rustc/cargo 缺失 ④ 运行主机 .29 训练机
 ERROR_COUNT:  0
@@ -117,3 +117,5 @@ ERROR_COUNT:  0
 - 2026-10-03 12:47 —— **第十九轮（唤醒巡检，无新指令）**：`git fetch` → HEAD==origin/main==`604f415`（远端推进的是 data `604f415` 唤醒60 下载巡检、pretrain `719de41` P-5b 健康巡检#39、vision `6a58e5b` R10-3 prep 等，均与本线任务书无关；`git log origin/main -- BAIZE_HARNESS_TASK.md` 最近仍是 `7e0b168` batch-3，**已交付**）。任务书「运维指令区」无 batch-4 / 无 STOP / 无状态索取；`ops/.last_run_id` = `ops/inbox.md` RUN_ID = 8（ops 级「清 ops_relay 副本」fail-safe，**非本线下发**）；`ops_relay.sh` 单副本（pid `2489749`，ppid=1，真守护）。结论：batch-3 `CLINE_IMPROVEMENTS_TOP5.html` 已交付入库、工作树 clean；H-A′ 实跑三项（沙箱方案 / 参赛者范围 / go+rust 工具链）**仍待运维拍板**，无待办推进项，不启动实跑、不做重 I/O，保持 `WAITING=1`。MEMORY_HARNESS.md 未超 32KB。
 
 - 2026-10-03 14:23 —— **第二十二轮（唤醒巡检，无新指令）**：`git fetch` → HEAD==origin/main==`8fd9b7f`（远端推进的是 vision R11-L ``8fd9b7f``、pretrain P-5b#42 `9e6a5c2`、personal-watch/news 派活第3~6批、data 唤醒62，**均与本线任务书无关**；`git log origin/main -- BAIZE_HARNESS_TASK.md` 最近仍是 `7e0b168` batch-3，**已交付**）。任务书「运维指令区」无 batch-4 / 无 STOP / 无状态索取；`ops/.last_run_id` = `ops/inbox.md` RUN_ID = 8（ops 级「清 ops_relay 副本」fail-safe，**非本线下发**）；`ops_relay.sh` 单副本（pid `2489749`，ppid=1，真守护）。⚠️ **发现第二十一轮的滚动改动当时未提交**（`git status` 见 `MEMORY_HARNESS.md` + `daily-memories-harness/2026-10-02.md` + `2026-10-03.md` 三文件 modified）→ 本轮补提交并新增本条目。结论：batch-3 `CLINE_IMPROVEMENTS_TOP5.html` 已交付入库；H-A′ 实跑三项（沙箱方案 / 参赛者范围 / go+rust 工具链）**仍待运维拍板**，无待办推进项，不启动实跑、不做重 I/O，保持 `WAITING=1`。MEMORY_HARNESS.md 26302B（未超 32KB，无需滚动）。
+
+- 2026-10-03 14:56 —— **第二十三轮（唤醒巡检，无新指令）**：`git fetch` → HEAD==origin/main==`25c3415f`（**与本线无关的新提交，均非本线任务书**；`git log origin/main -- BAIZE_HARNESS_TASK.md` 最近仍是 `7e0b168` batch-3，**已交付**）。任务书「运维指令区」无 batch-4 / 无 STOP / 无状态索取；`ops/.last_run_id` = `ops/inbox.md` RUN_ID = 8（ops 级「清 ops_relay 副本」fail-safe，**非本线下发**，本线只读不动）；`ops_relay.sh` 单副本（pid `2489749`，ppid=1，真守护）。结论：batch-3 `CLINE_IMPROVEMENTS_TOP5.html` 已交付入库；H-A′ 实跑三项（沙箱方案 / 参赛者范围 / go+rust 工具链）**仍待运维拍板**，无待办推进项，不启动实跑、不做重 I/O，保持 `WAITING=1`。工作树仅 `vision/r9_train.py` 未提交（vision 线在途，非本线，不触碰）。MEMORY_HARNESS.md 27511B（未超 32KB，无需滚动）。
