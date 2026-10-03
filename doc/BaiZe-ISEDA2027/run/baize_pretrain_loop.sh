@@ -21,8 +21,13 @@ MODEL="deepseek-v4-pro-fp4"      # 换成你用于工程任务的模型
 #   子进程（如 harness 的 run_harness.py → ClineDriver 读 os.environ["OPENAI_API_KEY"]）
 #   会拿到空值 → available()==False。⚠️ 禁用 `unset OPENAI_API_KEY`（那会让 driver 失效）。
 #   key 从 secrets.json 现读，**不落仓库**；secrets.json 由运维用有效 key 维护。
-if _k="$(python3 -c "import json,os;print(json.load(open(os.path.expanduser('~/.cline/data/secrets.json')))['openAiApiKey'])" 2>/dev/null)" && [ -n "$_k" ]; then
-    export OPENAI_API_KEY="$_k"
+if _k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" 2>/dev/null | head -1)"; then
+    :
+fi
+if [ -n "${_k:-}" ]; then
+    export OPENAI_API_KEY="$_k"        # ✅ 注入【有效】key（cline 与 ClineDriver 等子进程共用）
+else
+    unset OPENAI_API_KEY              # 兜底：读不到就让 cline 走 secrets.json（至少不撞 stale key）
 fi
 unset _k
 

@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 18 -->
+<!-- RUN_ID: 19 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,53 @@
 
 ---
 
-## RUN_ID 18 — 🔧 **修复第二版：loop 自己注入有效 key（而非 unset）+ 重启**（**已获批准**）（**本块最新，优先执行**）
+## RUN_ID 19 — 🔧 **修复第三版：改纯 shell 的 sed 取 key + 重启**（**已获批准**）（**本块最新，优先执行**）
+
+**RUN_ID 18 暴露的回归（2026-10-04 07:40）**：
+- ❌ 我 v2 用 `python3 -c ...` 注入 key，但 **relay 拉起的 non-interactive shell 里 `python3` 不在 PATH** → 取不到 → **没覆盖** → loop 继承了父进程那把 **stale `01_549…`** → 重启后立刻又 `error: Forbidden`（pretrain/harness 各 1 次）
+- ✅ v3：改用 **纯 shell `sed`** 从 secrets.json 提取（不依赖 python），并加 **兜底 `unset`**（读不到就退回 secrets.json，绝不撞 stale key）
+- 📌 本块**先验证 sed 能取到 key**（只打 len/prefix6），**取不到就中止、不动 loop**
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
+
+echo; echo "=== 1. 先验证 sed 提取（只打 masked）==="
+_k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" 2>/dev/null | head -1)"
+echo "   extracted: len=${#_k} prefix6=${_k:0:6}  (期望 len=72 prefix6=02_088)"
+[ -n "$_k" ] || { echo "   !!! sed 取不到 → 中止，不改动任何 loop"; echo DONE; exit 0; }
+unset _k
+
+echo; echo "=== 2. checkout v3 脚本 ==="
+git -C "$WK" fetch origin --quiet 2>/dev/null
+git -C "$WK" checkout origin/main -- doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh && echo "   checked out"
+grep -n 'openAiApiKey' "$RUN/baize_pretrain_loop.sh" "$RUN/baize_harness_loop.sh" | cut -c1-120
+
+echo; echo "=== 3. 停 + 重启（🚫 不碰 GPU 上的 P-9）==="
+pkill -f 'baize_pretrain_loop.sh'; pkill -f 'baize_harness_loop.sh'; sleep 5
+pgrep -af 'baize_(pretrain|harness)_loop\.sh' | cut -c1-100 || echo "   已停止"
+cd "$RUN"
+setsid bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+sleep 3
+setsid bash baize_harness_loop.sh > /tmp/baize_harness_loop.log 2>&1 < /dev/null &
+sleep 25
+
+echo; echo "=== 4. 校验（重点：loop 环境里的 key 前缀必须是 02_088）==="
+for n in pretrain harness; do
+  P=$(pgrep -f "bash baize_${n}_loop.sh" | head -1); printf '   %-9s pid=%-9s ' "$n" "${P:-none}"
+  [ -n "$P" ] && tr '\0' '\n' < "/proc/$P/environ" 2>/dev/null | grep '^OPENAI_API_KEY=' | sed 's/=\(.\{6\}\).*/key= \1...(masked)/' || echo "(no pid!)"
+done
+echo "-- 进程 --"; pgrep -af 'bash baize_(pretrain|harness)_loop\.sh' | cut -c1-105
+echo "-- 真实报错数（应为 0）--"; grep -c 'error:.*Forbidden' /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log 2>/dev/null
+echo "-- pretrain 日志尾 --"; tail -c 400 /tmp/baize_pretrain_loop.log 2>/dev/null | tr -d '\r' | tail -4 | cut -c1-140
+echo "-- GPU（P-9 应仍在跑）--"; nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -3
+
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 18**（v2 注入，**✅ 已执行 07:40:10**，**结果=回归**）为 ```text。
+
+## RUN_ID 18 — 🔧 **修复第二版：loop 自己注入有效 key（而非 unset）+ 重启**（✅ 已执行，⚠️ 该版有回归，见 RUN_ID 19）
 
 **为何要改（RUN_ID 17 发现，2026-10-04 07:37）**：
 - ⚠️ 我上一版补丁把 `OPENAI_API_KEY` **unset** 掉 → **`run_harness.py:105-108`**（`self.api_key=os.environ.get("OPENAI_API_KEY","")` / `available()` 要求非空）会让 **harness 自己的 driver 变 `available()==False`** → 我在修 bug 时引入了新 bug
@@ -41,7 +87,7 @@
 
 **本块动作**：checkout 新脚本 → 停两条 loop（**🚫 不动 GPU 上的 P-9 进程**）→ 重启 → 校验（含 loop 环境里 key 是否已注入，仅打 masked 前缀）。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 WK=/nas_train/app.e0031982/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
 
