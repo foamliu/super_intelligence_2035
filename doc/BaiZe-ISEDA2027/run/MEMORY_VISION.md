@@ -49,7 +49,7 @@ WAITING: 1
 - `caption_type` mix：short **45.0%** / medium 45.1% / long 9.0% / tag 1.0% → **可训练 short 子类：全量 ≈45M / 已下 ≈6.8M**。
 - 🔑 **C1 口径定案**：R9 用过 18.5M / 盘上现有 ≈32M / 本地全量 ≈118M（动态、仍在下载）——与 `r9_scaling.py --local-cap-m default=118.0` 一致；R11-E「同 N」可比区间被压到 ≈6.8M（short 已下 < 18.5M），须如实说明。已回填 `VISION_ARCH_FRONTIER_2026.md §5`。
 
-## R11-L 目标函数轴（2026-10-03）：arm② SigLIP 已启动
+## R11-L 目标函数轴（2026-10-03）：arm② SigLIP ✅ → arm③ LocalLoss 运行中
 
 > 只变目标函数，其余控变量（塔 w512 · 冻结 CLIP-768 · CC12M+Amshaker · lr3e-3 · bs512 · N=15.36M/30k 步 · IN-1k frozen-trunk lp）。预注册判据：同 N 下 lp 比基线 +1.5 点 → 局部推翻「25.1%=对比渐近」。
 
@@ -57,6 +57,7 @@ WAITING: 1
 - 🚀 **arm③ LocalLoss 已启动（15:29，.12 全 8 卡）**：`r9_train.py --loss localloss`（`ClipLoss(local_loss=True, gather_with_grad=False)`，`r9_train.py:166-168`）→ `R11L_localloss_w512` 30k 步。⚠️ **更正**：读 open_clip 源码（`loss.py:56-63,116-121`）确认 `local_loss=True` **仍是 512 负样本 all-gather**，只算本地 64 行 logits（省算/内存 + 本地图像不再从 text→image 拿梯度）→ 是「计算/梯度路径」变体、**非「负样本池 512→64」**（此前描述有误，已改）。arm③ 因此可证「损失对 local-vs-global 行是否不变」，但**不再测试负样本池大小**——真正池大小消融需另写不 gather 的自定义 loss（待后续决定）。
 - **arm③ 跑完判据**：`grep -c 'R11-L arm3 LocalLoss ALL DONE' /tmp/r11_localloss.log` == 1；脚本自动回收 step{10k,20k,30k}+final 4 ckpt IN-1k lp。
 - **arm③ 收尾（跑完后）**：lp 对照基线 → 判据裁定 → 回填 ROUND11 + VISION 顶部 + 本状态头 → push，再决定臂④ CoCa。
+- 🔍 **巡检（16:07）**：arm③ LocalLoss @ step 8850/30000（29.5%），健康——C1 0.22 / C2_gap +0.10 / C4=OK、loss_ema 5.91→~5.0、steady ~2753 img/s；ETA ~17:35（剩 ~84 min）后自动回收 4 ckpt IN-1k lp。无异常，继续 WAITING。
 
 ## 历史条目已滚动归档（2026-10-03）
 
