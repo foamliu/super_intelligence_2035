@@ -50,7 +50,7 @@ WAITING: 0
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
 | **news** | **第 7 批 N1/N2**（**十年回溯**：新华社 2016–2026 标题+日期+链接 + **分析/饼图**；**N2 新闻×资产价格相关性**）；T1–T10 全 ✅（`fetch_cn_news` 已复跑验证） | `news/archive/`（`xinhua-<年>.jsonl.gz` + `PROGRESS.md` + `INDEX_FILES.md`）· `news/analysis/`（`XINHUA_2016_2026.html` · `NEWS_vs_PRICES.html` · `corr.csv`） | ✅ 运行中（54 条真新闻；N1/N2 待做） |
-| **research** | **第 2 批：TOP-K 排序**（窗口 **≤30d**；**质量 × 与 BaiZe/ZhuLong 相关性** 双维度打分）+ 常态增量 | `research/TOP_K.md` · `TOP_K.jsonl`；已交付 `papers.jsonl`/`ARXIV_API.md` 等 | ✅ 运行中（**61 篇**收录 / 346 候选；R1′ 复验 arXiv ✅/**HF ❌**/RSS 周末空） |
+| **research** | **第 3 批：两大目的定案** —— ① **借鉴**（与 BaiZe/ZhuLong 相关，含**半导体/EDA/存储**视角）→ `TOP_K.*`(加 `takeaway`/`action`) + **`TAKEAWAYS.md`≤5 条**；② **科普视频《两分钟论文》**（B站/抖音涨粉）→ `video/SHORTLIST.md` + `video/scripts/*.md`；并行常态增量 | `research/TOP_K.*` · `TAKEAWAYS.md` · `video/SHORTLIST.md` · `video/scripts/<arXiv ID>.md` | ✅ 运行中（61 篇；第 3 批刚派） |
 
 > ✅ **T1–T4 已完成并交付（2026-10-03，commit `c326ba8`）**：
 > - **T1** 核实 12 个 web-search 候选；**T2** 新建**免 key MCP** `run/news/mcp_web_search_free.py`（3 工具 `web_search`/`search_news`/`rss_latest`）+ `run/news/cline_mcp_config.json`，**stdio 全链路实测通过**；
@@ -76,7 +76,9 @@ WAITING: 0
 - [ ] ⭐ **news N1**：新华社 2016–2026 十年回溯（标题+日期+链接）+ 分析/饼图 → `news/archive/` `news/analysis/`。
       ⚠️ **前置**：新华网 `/politics/…` **403**、`so.news.cn/getNews` **405+WAF**（**须在运行机复测**）；走不通则用**中新网兜底并标注"非新华社"**（🚫 不许冒充）。
 - [ ] ⭐ **news N2**：新闻 ×**资产价格**相关性（**先做 N1**；价格源需先做**免 key + 可达性**实测）。
-- [ ] ⭐ **research TOP-K**：`TOP_K.md`/`TOP_K.jsonl`（**质量 × BaiZe/ZhuLong 相关性**，≤30d）。
+- [ ] ⭐ **research TOP-K**：`TOP_K.md`/`TOP_K.jsonl`（**质量 × BaiZe/ZhuLong 相关性**，≤30d）＋ **A 节强化**（加 `takeaway`/`action` + `TAKEAWAYS.md`≤5 条）。
+- [ ] ⭐ **research 视频线 V1/V2**：《两分钟论文》**选题表** + **3 条两分钟口播稿**（`research/video/`）。
+- [ ] ⚠️ **V3 视频生成工具链待确认**：运行机是否有 **TTS / 文生图 / 剪辑**？（我这边有 ComfyUI 系工具，**但不确定运行机可用**）→ **确认后再派**。
 - [ ] **news T5**：自建 MCP 装进运行机 cline（**非阻塞** —— CLI 直调已可用）；**T7** GDELT 退避。
 
 **待你拍板 / 未来职能**
@@ -259,6 +261,11 @@ WAITING: 0
   新增 **§3.6（N1/N2 + archive 并入）**、**§4.2（TOP-K 规格）**、**§5 追加 3 条教训**（HF 不可达不伪造 / R2′ 周末生效 / **我的">45 天"估算按"条"算错，作废**）；
   **§9 重写为"已定案"**（方案 C + 国内源实测表 + 已排除 GDELT/HN/Guardian/Wayback + 落地形态）；§7/§8 更新为 N1/N2/TOP-K。
   - 校验：标签平衡 · **`**` = 0 · 反引号 = 0**。
+- **2026-10-03（用户明确 research 两大目的 → 派第 3 批）** ——
+  - **目的 1 · 借鉴**：找与 **BaiZe/ZhuLong** 相关的前沿研究**以资借鉴**（**刘杨 = 长鑫存储 AI 研究院**）→ TOP-K 加 `takeaway`/`action` + **`TAKEAWAYS.md`（≤5 条）**；**相关面含半导体/EDA/存储**。
+  - **目的 2 · 科普**：做 **《两分钟论文》** 视频**发 B站/抖音涨粉变现** → 新 `research/video/` 线：**V1 选题表 → V2 三条两分钟口播稿（350–450 字，固定结构，🚫 不盗用原图）→ V3 视频（待确认工具链）**。
+  - ⚠️ **两目的口径不同，选题必须分开**（已写进任务书与 README）。
+  - **待确认**：运行机是否有 **TTS/文生图/剪辑** 工具链（**V3 前置**）。
 - **2026-10-03（news worker 首交付）** —— agent 完成 **T1–T4**（`c326ba8`）+ **首轮 smoke 16 条**（`3fcd854`）+ 记忆回写（`bdc20db`），已转**常态采集**（`WAITING=1`）。
   亮点：**真跑实测**（给报错原文）、**建了免 key MCP**、报告**自包含**、**360 无日期就拒收**（守"字段缺一不可"）。
   待用户拍板：**是否补正规 API key**（免 key 抓取脆弱/合规灰区）。待核：**MCP 是否已装进运行机 cline**。

@@ -57,7 +57,10 @@
 ③ **数据分析** `run/news/analysis/`（统计 / **相关性** / 图表，**数据来源必须标注**）。
 > 📌 **原 `archive` 线（历史回溯）已按用户指示并入 news 线**（不再单独成线）。
 
-**research 线定位**：**arXiv** 论文采集/整理（**LLM / SLM / 多模态 / agent harness**）+ **TOP-K 精选排序**（质量 × 与 **BaiZe / ZhuLong** 相关性，窗口 ≤30d）。产出 `run/research/<date>.md` + `SEEN.md`（arXiv ID）+ `papers.jsonl` + **`TOP_K.md`/`TOP_K.jsonl`**（+ `ARXIV_API.md` 接口记录）。
+**research 线定位**（**用户 2026-10-03 明确两大目的**）：
+- **目的 1 · 借鉴**：找与 **BaiZe / ZhuLong** 相关的前沿研究**以资借鉴**（刘杨 = **长鑫存储 AI 研究院**）→ `TOP_K.md`/`TOP_K.jsonl`（质量 × 相关性，≤30d）+ **`TAKEAWAYS.md`**（≤5 条可借鉴结论）；相关面含**半导体/EDA/存储**视角。
+- **目的 2 · 科普**：找有潜力的论文做 **《两分钟论文》** 科普视频，**发 B站/抖音 → 涨粉变现** → `research/video/SHORTLIST.md`（选题表）+ `research/video/scripts/<arXiv ID>.md`（两分钟中文口播稿）；（后续成片）。
+> ⚠️ **两个目的口径不同，选题必须分开**（勿混）。
 > 📧 **已登记未来职能**：给论文作者**发邮件**做学术交流 —— **未获用户批准前不得发送**。
 
 ---
