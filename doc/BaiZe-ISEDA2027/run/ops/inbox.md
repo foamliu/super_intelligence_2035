@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 22 -->
+<!-- RUN_ID: 23 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,67 @@
 
 ---
 
-## RUN_ID 22 — 🔑 **读 `eda_fastmcp/.env` 的候选 key + 逐个打网关筛出可用的**（**只读**）（**本块最新，优先执行**）
+## RUN_ID 23 — 🎯 **正确复测（带 proxy 剥离）+ 通过则自动重启**（**已获批准**）（**本块最新，优先执行**）
+
+**RUN_ID 22 关键结论（2026-10-04 07:49:40）**：
+- 🔑 **key 是有效的**：`.29` secrets key → **curl 200** ✅；`.12` key → **200** ✅，且 `.12` 一直在干活
+- ❌ `.env` 里那些 `*_API_KEY`（len=72, `02_0…`）→ **403**（无效，不用了）
+- 🩹 **我的 RUN_ID 20 测试有缺陷**：A/B/C 三组**都漏了剥 proxy**（`via-proxy -> 503` 早就测出来了）→ 结论无效
+- ✅ **07:28 那版（`-u <所有 *_proxy>` + `-u OPENAI_API_KEY`）是能跑的**（pretrain 因此产出 `beea3f1`）；我在"修 driver"时把它改坏了
+- 📌 已把两条 loop 回退为 **v1**（proxy 全剥 + `-u OPENAI_API_KEY`）
+
+**本块 = 一次把事做实**：
+| 组 | 环境 | 预期 |
+|:--|:--|:--|
+| **T1** | 剥 proxy + `-u OPENAI_API_KEY`（=v1） | **OK** → 自动重启两条 loop |
+| **T2** | 剥 proxy + `OPENAI_API_KEY=<有效>` | 若也 OK → 将来可用它救 driver |
+| **T3** | 剥 proxy + `OPENAI_API_KEY=<stale>` | 预期 Forbidden（坐实 stale env key 有毒） |
+
+> 仅当 **T1 通过**才重启；T1 若仍 Forbidden → **不动 loop**，只报告。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
+C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; cd /tmp
+_k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" | head -1)"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY"
+
+echo; echo "=== 1. T1 剥proxy + 剥OPENAI_API_KEY（=v1）==="
+T1=$(env $P -u OPENAI_API_KEY timeout 90 "$C" -c /tmp -m "$M" --auto-approve true -t 45 "reply with exactly OK" 2>&1 | head -3 | tr -d '\r' | tr '\n' ' ')
+echo "   T1 => ${T1:0:150}"
+
+echo; echo "=== 2. T2 剥proxy + OPENAI_API_KEY=有效(secrets) ==="
+env $P OPENAI_API_KEY="$_k" timeout 90 "$C" -c /tmp -m "$M" --auto-approve true -t 45 "reply with exactly OK" 2>&1 | head -3 | cut -c1-150
+
+echo; echo "=== 3. T3 剥proxy + OPENAI_API_KEY=stale(env) ==="
+env $P OPENAI_API_KEY="$OPENAI_API_KEY" timeout 90 "$C" -c /tmp -m "$M" --auto-approve true -t 45 "reply with exactly OK" 2>&1 | head -3 | cut -c1-150
+
+echo; echo "=== 4. 条件重启 ==="
+if echo "$T1" | grep -q 'Forbidden'; then
+  echo "   !!! T1 仍 Forbidden → 不重启，保留现状待运维决策"
+else
+  echo "   T1 通过 → checkout v1 脚本并重启两条 loop"
+  git -C "$WK" fetch origin --quiet 2>/dev/null
+  git -C "$WK" checkout origin/main -- doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh && echo "   checked out"
+  pkill -f 'baize_pretrain_loop.sh'; pkill -f 'baize_harness_loop.sh'; sleep 5
+  cd "$RUN"
+  setsid bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+  sleep 3
+  setsid bash baize_harness_loop.sh > /tmp/baize_harness_loop.log 2>&1 < /dev/null &
+  sleep 25
+  echo "   -- 校验 --"; pgrep -af 'bash baize_(pretrain|harness)_loop\.sh' | cut -c1-100
+  echo "   -- 真实报错数（应为 0）--"; grep -c 'error:.*Forbidden' /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log 2>/dev/null
+  echo "   -- pretrain 日志尾 --"; tail -c 300 /tmp/baize_pretrain_loop.log | tr -d '\r' | tail -3 | cut -c1-135
+  echo "   -- harness 日志尾 --"; tail -c 300 /tmp/baize_harness_loop.log | tr -d '\r' | tail -3 | cut -c1-135
+fi
+
+echo; echo "=== 5. GPU（P-9）==="; nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -2
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 22**（读 .env + 筛 key，**✅ 已执行 07:49:48**）为 ```text。
+
+## RUN_ID 22 — 🔑 **读 `eda_fastmcp/.env` 的候选 key + 逐个打网关筛出可用的**（✅ 已执行，本块不再运行）
 
 **背景（用户 2026-10-04 提供）**：`/nas_train/app.e0031982/code/eda_fastmcp/.env` 里还有几把 key（**GLM-5.2 / deepseek-v4-flash / kimi-k2.6 / 豆包**）→ 若其中一把能过网关，即可替换 `.29` 的失效 key。
 **RUN_ID 20 遗留**：三路 smoke（env=valid / unset / env=stale）**全 Forbidden** → 当前那把 `02_088…` 疑似**也失效了**。
@@ -39,7 +99,7 @@
 🚫 **本块只读**；⚠️ **key 一律只打 `len` + `prefix4`，绝不输出完整值**。
 > 📌 同时顺带完成 RUN_ID 21 的判定（`.29` vs `.12` 的 key/存活/mtime）。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 GW=http://agi-gateway.cxmt.com/v1; E=/nas_train/app.e0031982/code/eda_fastmcp/.env
 

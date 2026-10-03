@@ -16,20 +16,12 @@ REL="doc/BaiZe-ISEDA2027/run"   # 本任务在仓库中的相对目录（只提�
 
 MODEL="deepseek-v4-pro-fp4"      # 换成你用于工程任务的模型
 
-# 🔑 2026-10-04 运维修复（第二版）：把【有效】的 cline key 注入本 loop 的环境。
-#   原因：key 会被轮换；若这里不注入，cline 靠 secrets.json 也能跑，但
-#   子进程（如 harness 的 run_harness.py → ClineDriver 读 os.environ["OPENAI_API_KEY"]）
-#   会拿到空值 → available()==False。⚠️ 禁用 `unset OPENAI_API_KEY`（那会让 driver 失效）。
-#   key 从 secrets.json 现读，**不落仓库**；secrets.json 由运维用有效 key 维护。
-if _k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" 2>/dev/null | head -1)"; then
-    :
-fi
-if [ -n "${_k:-}" ]; then
-    export OPENAI_API_KEY="$_k"        # ✅ 注入【有效】key（cline 与 ClineDriver 等子进程共用）
-else
-    unset OPENAI_API_KEY              # 兜底：读不到就让 cline 走 secrets.json（至少不撞 stale key）
-fi
-unset _k
+# ⚠️ 2026-10-04 运维注记（两次踩坑后定稿）：**不要**在这里 export OPENAI_API_KEY。
+#   实测结论：`/v1/chat/completions` 直连 200，但**走 https_proxy -> 503**；且 loop 继承的
+#   `OPENAI_API_KEY`（01_549…）是**已失效**的旧 key，会**覆盖** secrets.json 里的有效 key
+#   （02_088…）→ cline 报 `error: Forbidden` 且 `exit 0` → loop 静默空转（10-04 曾瞎跑 ~9h）。
+#   ⇒ 正解：cline 调用行同时 `-u <所有 *_proxy>` + `-u OPENAI_API_KEY`（见下方），
+#     让 cline 走 secrets.json 里那把有效 key。
 
 CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟
 PUSH_INTERVAL=18000             # 每 5 小时 git push 一次（4~6 小时间隔内）
@@ -95,6 +87,7 @@ while true; do
         #   10-04 07:15 ops 探查定位；.12 于 2026-09-29 遇过同样问题，unset http_proxy 即解决）。
         #   ⚠️ 只作用于本行：loop 自身/`git push` 仍保留 proxy（外网仍需代理）。
         env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
+            -u OPENAI_API_KEY \
           cline -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
         echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git push ..."
     else
