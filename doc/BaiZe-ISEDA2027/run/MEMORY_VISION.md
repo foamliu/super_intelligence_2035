@@ -80,6 +80,7 @@ WAITING: 1
 
 - 控变量同 arm④（w512 + 冻结 CLIP-768 + CoCaDecoder +76.2M + 短 caption + 30k 步）；只变 caption weight。2 点 × 30k ≈ 2 臂 ≈ 4–5h。
 - 🚀 已启动（`.12` 全 8 卡）：`bash r11_run_capweight.sh 30000`；输出 `R11L_capw0p5_w512` / `R11L_capw1p0_w512`；日志 `/tmp/r11_capweight.log`；ETA ~4–5h + 自动回收各 4 ckpt IN-1k lp。**预注册裁定（§12.2）**：0.5 或 1.0 lp ≥4.58% → weight 压死主因；都 <4.58% → caption 监督本身正交。
+- 🔍 **巡检（02:55，weight=0.5）**：@step 8500/30000（28.3%，02:21:59 起跑）健康——C1 0.32–0.37 / C2_gap +0.069~+0.074 / C4=OK（未坍缩）；loss=contrast+0.5×caption（contrast ~5.4–5.6 / caption 原始 CE ~5.6–6.7）、loss_ema 10.17→~8.4–8.8 递减、吞吐 ~2130–3630 img/s；进程组核验 1 master + 1 torchrun + 8 rank + 48 dataloader worker（**无重复 run**）；8 卡全忙（util 52–76%，显存 22.7/81.6 GB）。ETA weight0.5 ~04:20 / weight1.0 ~06:20 / ALL DONE+评测 ~06:30–07:00。无异常，继续 WAITING。
 ## 历史条目已滚动归档（2026-10-03）
 
 - 更早的全部巡检/流水（R1–R9 完整过程，live MEMORY 原 95.7KB）已滚动归档至 `daily-memories-vision/2026-10-03.md`（追加「滚动归档快照」）+ 各日期 daily 文件（2026-09-30 / 10-01 / 10-02）。live MEMORY 已压至 ≤32KB。
