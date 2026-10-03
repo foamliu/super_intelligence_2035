@@ -43,27 +43,34 @@
 
 ## 3.5 ⚠️ 已知的运维级问题（**会复发，需周期性检查**）
 
-### (1) `ops_relay.sh` 会跑出**多个副本** —— 需人工清理
+### (1) `ops_relay.sh` 的「多个副本」—— ⚠️ **2026-10-03 更正：多半是「子进程」，不是副本**
 
-**证据（两次独立观测，不同命令/不同时间）**：
+> **2026-10-03 实测（RUN_ID 8，`.29`）**：`ps -eo pid=,ppid=,etimes=,args=` 看到 2 行，但
+> ```
+> 2489749       1  155150 bash ops_relay.sh   ← ppid=1（真守护进程）
+> 3521816 2489749       0 bash ops_relay.sh   ← **ppid=2489749、etimes≈0 → 它刚派出的子进程**
+> ```
+> → **`2489749` 是唯一真 relay**；另一行是**它执行命令块时 fork 出来的子 shell**（所以 etimes≈0、每次执行都换 PID —— 这正好解释了旧证据里"另一个 PID 会变、`2489749` 不变"）。
+> ✅ **结论：此前记的「会跑出多个副本、需人工清理」很可能是一次误判**（把子进程当成了副本）。
+> （当时的清理**没有造成损害**——保留的正是 etimes 最大的真 relay。）
 
-| 观测 | 命令格式 | 看到的 relay |
-|:--|:--|:--|
-| 较早（RUN_ID 2） | `ps -o pid,comm,args` | `1276654` · `2489749` |
-| 较晚（RUN_ID 5） | `pgrep -af` | `2228582` · `2489749` |
+**✅ 正确判别（先看 `ppid`，再看 etimes）**：
 
-**→ 两次都看到 <u>2 个</u>**；其中 **`2489749` 跨两次存活**，另一个从 `1276654` 换成了 `2228582`（说明它被重启过）。
-
-**危害**：多个 relay 共享同一个 `ops/.last_run_id`，会**重复执行同一条命令**、并互相覆盖 outbox。
-
-**清理**：**保留"已运行最久"的那个（按 `etimes` 排序）**，不要按 PID 数字 —— **PID 会回绕，数字小 ≠ 启动早**。
 ```bash
-ps -eo pid=,etimes=,args= | grep 'ops_relay\.sh' | grep -v grep
-# 保留 etimes 最大者，kill 其余
+ps -eo pid=,ppid=,etimes=,args= | grep 'ops_relay\.sh' | grep -v grep
+# 真 relay：ppid=1（或不指向另一个 relay）
+# 子进程 ：ppid = <另一个 relay 的 pid>，且 etimes 很小
 ```
-**排查时的假阳性提醒**：`pgrep -f 'ops_relay.sh'` 的匹配串本身含 `ops_relay.sh`，
-但中继的临时文件是 `mktemp`（`/tmp/tmp.XXXXXXXXXX`）且子进程为 `bash /tmp/tmp.XXXX`，
-**argv 不含该字样** → 不会自匹配。**命中的都是真实的 `bash ops_relay.sh`。**
+
+- **只有当两个 `bash ops_relay.sh` 的 `ppid` 都不指向对方**时，才是**真副本**（才需要清理）。
+- 清理时**仍保留 `etimes` 最大者**（PID 会回绕，数字小 ≠ 启动早）：
+  ```bash
+  ps -eo pid=,ppid=,etimes=,args= | grep 'ops_relay\.sh' | grep -v grep | sort -k3 -nr | head -1
+  ```
+- 🚫 **绝不要把两个都杀掉** —— 那会**切断假期/远程的通讯通道**。
+
+**旧证据（保留备查）**：RUN_ID 2 见 `1276654`·`2489749`；RUN_ID 5 见 `2228582`·`2489749`。
+按新判据，那两个"会变"的 PID 更可能是**子进程**，而非"被重启的副本"。
 
 ### (2) `ops/inbox.md` 中继**只执行<u>第一个</u> ```bash 块** —— 见 `ops/inbox.md` 顶部
 下发新命令**必须**把块放到最前面，并把旧块降级为 ```text，否则新命令**永远不会执行**（已踩过一次）。
