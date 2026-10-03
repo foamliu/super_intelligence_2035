@@ -1,9 +1,9 @@
 #!/bin/bash
 # personal-watch（观察哨）· 新闻 agent 自动推进循环
 # 让 cline 读任务书（WATCH_NEWS_TASK.md）连续采集新闻，并每约 PUSH_INTERVAL 秒兜底做一次 git 同步 + commit + push。
-# 唤醒间隔自适应：读 MEMORY_NEWS.md 顶部的 WAITING 标志 ——
-#   WAITING=0（有近期待办，如追某事件后续）→ 短睡 SLEEP_SHORT（默认 30 分钟）续跑；
-#   WAITING=1（无近期待办，常态省 token）  → 睡 SLEEP_LONG （默认 1 小时）。
+# 唤醒间隔自适应（**与 BaiZe 的 loop 完全一致**：SLEEP_BUSY=60 / SLEEP_WAIT=1800）：
+#   WAITING=0（有近期待办，如追某事件后续）→ 短睡 SLEEP_SHORT = 60 秒，连续推进；
+#   WAITING=1（无近期待办，常态）          → 睡 SLEEP_LONG = 1800 秒（30 分钟）省 token。
 # 兜底：若本轮 cline 报致命错（模型名错 / 额度耗尽 / hook 失败）→ 无论 WAITING 都**强制短睡重试**，
 #   避免"报错却 exit 0 → 白睡长觉"（BaiZe 记录过这个坑）。
 #
@@ -35,10 +35,10 @@ REL="doc/personal-watch/run"     # 本任务在仓库中的相对目录（只提
 #   🚫 `deepseek-v4-flash` 也**不是官方 ID** —— Flash 的官方 ID 就是 `deepseek-flash`
 #     （它俩在 OpenAI 兼容层会被别名成同一个，但换台机就可能像 `-fp4` 一样直接报错，别赌）。
 MODEL="deepseek-flash"          # 调研+整理用 flash（便宜/快）；要更强可换 deepseek-v4-pro
-CLINE_TIMEOUT=1200              # 单次 cline 最多 20 分钟
-PUSH_INTERVAL=3600              # 每 1 小时兜底同步一次（新闻轮次间即会提交）
-SLEEP_SHORT=1800               # WAITING=0 / 失败重试：短睡 30 分钟
-SLEEP_LONG=3600                # WAITING=1（无近期待办）→ 睡 1 小时（原来是 6 小时，太钝；稳定后可调大）
+CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟（与 BaiZe 一致）
+PUSH_INTERVAL=18000             # 每 5 小时兜底同步一次（与 BaiZe 一致；agent 每轮自己也会提交）
+SLEEP_SHORT=60                  # WAITING=0 / 失败重试：短睡 1 分钟（= BaiZe SLEEP_BUSY）
+SLEEP_LONG=1800                 # WAITING=1（无近期待办）→ 睡 30 分钟（= BaiZe SLEEP_WAIT）
 MEMORY="$SCRIPT_DIR/MEMORY_NEWS.md"
 LAST_PUSH="/tmp/watch_news_last_push"
 CLINE_LOG="/tmp/watch_news_cline_last.log"   # cline 本轮输出，用于检测"报错却 exit 0"

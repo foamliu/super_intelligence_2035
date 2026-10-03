@@ -3,7 +3,7 @@
 WAITING: 0
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（`watch_news_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配它决定睡眠时长）。
-> 语义：`0` = 有近期待办（短睡 30min 续跑）；`1` = 无近期待办（常态，睡 1h 省 token）。
+> 语义（**对齐 BaiZe**：`SLEEP_BUSY=60` / `SLEEP_WAIT=1800`）：`0` = 有近期待办（短睡 **60s** 续跑）；`1` = 无近期待办（常态，睡 **30min** 省 token）。
 > 纪律：**正文/快照/流水里绝不再出现以 `WAITING:` 开头的行**。
 
 ---
@@ -36,7 +36,7 @@ ERROR_COUNT:  1（首轮：模型名 deepseek-v4-pro-fp4 不被网关支持 → 
 - **任务书**：`WATCH_NEWS_TASK.md`（只读）
 - **产物**：`news/<YYYY-MM-DD>.md`（当日摘要）· `news/SEEN.md`（去重台账）· `news/INDEX.md`（索引）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
-- **采集节律**：常态每小时一轮上限（`WAITING=1` 睡 1h）；有近期待办 `WAITING=0` 短睡 30min
+- **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
 - **上次采集窗口**：`<尚未开始>`
 - **累计收录**：`0` 条
 
@@ -49,7 +49,7 @@ ERROR_COUNT:  1（首轮：模型名 deepseek-v4-pro-fp4 不被网关支持 → 
   `The supported API model names are deepseek-flash, deepseek-v4-pro, but you passed deepseek-v4-pro-fp4`
   → 本轮什么都没干却 `exit 0`，且 `WAITING:1` 触发长睡。修复：① loop `MODEL` 改**规范 ID `deepseek-flash`**
   （2026-10-03 实测 `GET https://api.deepseek.com/models` → 官方仅 `deepseek-flash` / `deepseek-v4-pro`；`deepseek-v4-flash` 非官方 ID）；
-  ② `WAITING` 置 `0`；③ loop 增加"抓 cline 致命错→强制短睡重试"兜底；④ `SLEEP_LONG` 6h→1h。
+  ② `WAITING` 置 `0`；③ loop 增加"抓 cline 致命错→强制短睡重试"兜底；④ 睡眠改为**对齐 BaiZe**（`SLEEP_SHORT=60` / `SLEEP_LONG=1800`）。
   **待 loop 重启后执行前期任务 T1–T4。**
 
 ---

@@ -40,7 +40,7 @@ WAITING: 0
 - **各线回写位置**：`run/MEMORY_NEWS.md`（状态头 + 进度快照 + 运维问答 + 流水）、`run/daily-memories-news/`、`run/news/`。
 - **`WAITING` 机制**：`run/MEMORY_NEWS.md` **顶部**的 `WAITING:` 行驱动 loop 睡眠：
   - `WAITING: 0` = **有近期待办**（要追后续）→ 短睡（默认 30 分钟）续跑；
-  - `WAITING: 1` = **无近期待办（常态）** → 长睡（默认 6 小时）省 token。
+  - `WAITING: 1` = **无近期待办（常态）** → 睡 30 分钟（`SLEEP_LONG=1800`，**与 BaiZe `SLEEP_WAIT` 一致**）省 token。
 - ⚠️ **正则只认行首** `^WAITING:[[:space:]]*1`；**绝不要在正文/快照/流水里再出现以 `WAITING:` 开头的行**。
 
 ---
@@ -61,7 +61,7 @@ WAITING: 0
 - [x] ✅ **worker 运行主机已确认（2026-10-03 用户）**：**可连外网且速度不慢** → news 线具备运行前提。待 loop 拉起后即可派活。
 - [ ] **搜索/新闻 API 选型**：待 news 线交付 `API_COMPARISON.html` 后，由 supervisor/用户拍板**最终方案**（免费额度、中文覆盖、权威性、稳定性）。
 - [ ] **MCP 配置归属**：T2 配置的是否为**运行机**上的 cline MCP 配置（路径/生效方式需在报告里写清）。
-- [ ] **采集节律**：默认长睡 6 小时（每日 4 轮）是否合适？还是每日 1 轮晨报？
+- [ ] **采集节律**：当前**对齐 BaiZe**（`WAITING=1` 睡 30min → 常态约每 30 分钟一轮）。这个频率对"新闻"是否偏密（token 消耗）？是否要改成更疏（如 1~2h）？——**由用户拍板**。
 - [ ] **输出形态**：日报够不够，是否要**周报合订** / **主题归档**（按关注清单分类长期累积）。
 - [ ] **关注清单**是否要收敛（现在 6 大类，见 `WATCH_NEWS_TASK.md` §1），避免噪声。
 - [ ] 是否增设 **paper 线**（arXiv 等）。
@@ -131,3 +131,6 @@ WAITING: 0
 - **2026-10-03** —— **建哨**：新建 `doc/personal-watch/`（观察哨）。落地 supervisor（`README.md` / `MEMORY.md` / `AGENTS.md` / `daily-memories/`）+ 首条 worker 线 **news**（`run/WATCH_NEWS_TASK.md` / `run/watch_news_loop.sh` / `run/MEMORY_NEWS.md` / `run/news/` / `run/daily-memories-news/`），范式照抄 `doc/BaiZe-ISEDA2027/`。
   - **已 push**：commit **`8a0a3ca`** 到 `origin/main`（`run/watch_news_loop.sh` 入库为 `i/lf`）。
   - **用户已确认**：运行主机可连外网且速度不慢 → 具备运行前提，**待拉起 loop** 后即可派活。
+- **2026-10-03（纠错）** —— ① **模型名**：loop 曾用 BaiZe 的 `deepseek-v4-pro-fp4`，本机（DeepSeek 官方 API）不认 → 实测 `GET api.deepseek.com/models` 得规范 ID 仅 **`deepseek-flash` / `deepseek-v4-pro`**，已改 **`deepseek-flash`**（`deepseek-v4-flash` 非官方 ID）。
+  ② **睡眠**：我曾自创 `SLEEP_LONG=21600`（6h）→ 用户质问后核查 **BaiZe 全部 loop 实为 `SLEEP_BUSY=60` / `SLEEP_WAIT=1800`**，从无小时级睡眠 → 已**完全对齐 BaiZe**（60 / 1800 / PUSH 18000 / TIMEOUT 1500）。
+  → 教训：**不自创数值，先照抄已验证模板；引用"XX 那边是多少"必须真去读源码**。
