@@ -155,7 +155,7 @@
 | Amshaker/Mobile-O-Pre-Train | `/nas_user/app.e0031982/datasets/Amshaker/Mobile-O-Pre-Train/*.tar` | ✅ bytes | 2250 tar / 3.7T / ≈6M 对 | 100% | ✅ 可用 |
 | LLaVA-Pretrain + LLaVA-CC3M-595K | `/nas_train/app.e0031982/datasets/LLaVA-Pretrain/` + `LLaVA-CC3M-Pretrain-595K/` | ✅ bytes | ≈1.15M | 100% | ✅ 可用 |
 | BLIP3o-Pretrain-Long-Caption | `/nas_user/app.e0031982/datasets/BLIP3o/BLIP3o-Pretrain-Long-Caption/` | ✅ bytes | 2891 tar / 1.3T | 0%（长描述） | ⚠️ caption 超长 |
-| laion2B-en-aesthetic | `/nas_train/app.e0031982/datasets/laion2B-en-aesthetic/` | 🚫 URL-only | ≈8.1TB 元数据 | 99%（无图） | 🚫 淘汰 |
+| laion2B-en-aesthetic | ~~`/nas_train/app.e0031982/datasets/laion2B-en-aesthetic/`~~ **🗑 已删（D-CLEAN-2，2026-10-03；实测仅 7.8G 非 8.1T，128 parquet URL 元数据）** | 🚫 URL-only | ~~≈8.1TB~~ → **7.8G** | 99%（无图） | 🚫 淘汰→已删 |
 | Recap-DataComp-1B | `/nas_user/app.e0031982/datasets/UCSC-VLAA/Recap-DataComp-1B` 等 | 🚫 URL-only | 518G + 67G | — | 🚫 淘汰 |
 | 新增候选（可选补量） | `hanlincs/InternVL-SA1B-Caption-WebDataset`、`zenless-archive/danbooru-2023-webdataset`、`yangyang857658468/cc12m-webdataset` | ✅ bytes | — | 待抽验 | 可选 |
 
