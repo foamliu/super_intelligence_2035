@@ -271,5 +271,14 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
   - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml` + `items=0` → ⚠️ **周末/未公告**。
 - **增量取数** `--fetch --seen research/SEEN.md`（`window_mode=weekend_batch`，窗口 **120h**，`generated=2026-10-03T20:25:30Z`）：**15/15 查询 `ok`**（无重试），**kept 0 / dropped 600**；其中 **404 条 = `already in SEEN`**，其余 **196 条 = `stale > 120h`**。证据 `research/raw/2026-10-03-fetch-r11.json`。
 - **结论**：**UTC 仍为 `2026-10-03`（周六）**、**本地已跨入 `10-04`（周日）凌晨**，arXiv **周末不发公告**，最近批次仍为 **2026-10-01** → **0 新增属正常**（**非「无数据」**），按 R2′ 已在日报**如实标注实际日期区间**（`2026-09-28 ~ 2026-10-01`）。
-- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
+
+### 9.14 第十二轮（周日凌晨，第十一轮后 ~30min）：周末口径复核 → 再次 0 新增（**本轮实时取数**）
+
+- **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-03T21:54:55Z`，证据 `research/raw/2026-10-03-probe-r12.json`）：
+  - **arXiv API**：`HTTP 200` + `application/atom+xml`，最新 `published=2026-10-01T17:59:59Z`（`totalResults=625914`，样本 `2610.02210 / 2610.02208 / 2610.02207`）→ ✅ **可达**；
+  - **HF Daily Papers**：`Network is unreachable` → ❌ 不可达（**如实记录，不伪造 `hf_daily` 标记**）；
+  - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml` + `items=0` → ⚠️ **周末/未公告**。
+- **增量取数** `--fetch --seen research/SEEN.md`（`window_mode=weekend_batch`，窗口 **120h**，`generated=2026-10-03T21:55:17Z`）：**15/15 查询 `ok`**（无重试），**kept 0 / dropped 600**；其中 **404 条 = `already in SEEN`**，其余 **196 条 = `stale > 120h`**。证据 `research/raw/2026-10-03-fetch-r12.json`。
+- **结论**：**UTC 仍为 `2026-10-03`（周六）**、**本地已跨入 `10-04`（周日）凌晨**，arXiv **周末不发公告**，最近批次仍为 **2026-10-01** → **0 新增属正常**（**非「无数据」**），按 R2′ 已在日报**如实标注实际日期区间**（`2026-09-28 ~ 2026-10-01`）。
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
