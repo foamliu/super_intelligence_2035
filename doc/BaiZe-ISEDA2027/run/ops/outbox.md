@@ -3084,3 +3084,70 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 25 · 2026-10-04 07:56:43 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+
+echo; echo "=== 1. [.29] cline 安装痕迹（找自动升级时间）==="
+ls -l --time-style=long-iso "$HOME/.bun/bin/cline" 2>/dev/null
+readlink -f "$HOME/.bun/bin/cline" 2>/dev/null | sed 's/^/   -> /'
+find "$HOME/.bun" -maxdepth 7 -name 'package.json' -path '*cline*' -printf '   %TY-%Tm-%Td %TH:%TM  %p\n' 2>/dev/null | head -6
+find "$HOME/.bun/install/global" -maxdepth 3 -printf '   %TY-%Tm-%Td %TH:%TM  %p\n' 2>/dev/null | head -8
+echo -n "   .29 cline --version: "; "$HOME/.bun/bin/cline" --version 2>&1 | head -1
+
+echo; echo "=== 2. [.12] 对照 ==="
+timeout 35 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 '
+ls -l --time-style=long-iso $HOME/.bun/bin/cline 2>/dev/null | sed "s/^/   /"
+find $HOME/.bun -maxdepth 7 -name package.json -path "*cline*" -printf "   %TY-%Tm-%Td %TH:%TM  %p\n" 2>/dev/null | head -6
+export PATH=$HOME/.bun/bin:$PATH
+echo -n "   .12 cline --version: "; cline --version 2>&1 | head -1' 2>&1 | cut -c1-165
+
+echo; echo "=== 3. [.12] 同一 smoke（显式补 PATH）—— 预期 OK ==="
+timeout 70 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 '
+export PATH=$HOME/.bun/bin:$PATH; cd /tmp
+env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u OPENAI_API_KEY \
+  timeout 50 cline -c /tmp -m deepseek-v4-pro-fp4 --auto-approve true -t 35 "reply with exactly OK" 2>&1 | head -3' 2>&1 | cut -c1-155
+
+echo; echo "=== 4. 现状（不动）==="
+pgrep -af 'bash baize_(pretrain|harness)_loop\.sh' | cut -c1-90
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 07:56:43
+
+=== 1. [.29] cline 安装痕迹（找自动升级时间）===
+lrwxrwxrwx 1 app.e0031982 app.adm 54 2026-09-08 09:20 /home/app.e0031982/.bun/bin/cline -> ../install/global/node_modules/@cline/cli/src/index.ts
+   -> /nas_train/app.e0031982/harness/cline/apps/cli/src/index.ts
+   2026-09-04 16:42  /home/app.e0031982/.bun/install/global
+   2026-09-04 16:41  /home/app.e0031982/.bun/install/global/node_modules
+   2026-09-08 09:20  /home/app.e0031982/.bun/install/global/node_modules/@cline
+   2026-09-08 09:20  /home/app.e0031982/.bun/install/global/node_modules/@cline/cli
+   2026-09-04 16:41  /home/app.e0031982/.bun/install/global/node_modules/@cline/packages
+   2026-09-04 16:42  /home/app.e0031982/.bun/install/global/package.json
+   .29 cline --version: 3.0.51
+
+=== 2. [.12] 对照 ===
+   lrwxrwxrwx 1 app.e0031982 app.adm 54 2026-09-08 09:15 /home/app.e0031982/.bun/bin/cline -> ../install/global/node_modules/@cline/cli/src/index.ts
+   2026-09-07 17:50  /home/app.e0031982/.bun/install/cache/@cline/shared@0.0.82@@@1/package.json
+   .12 cline --version: 3.0.51
+
+=== 3. [.12] 同一 smoke（显式补 PATH）—— 预期 OK ===
+[2m[thinking] [0m[2mThe[0m[2m user wants[0m[2m me to[0m[2m reply with[0m[2m exactly "[0m[2mOK".[0m[2m No[0m[2m tools needed[0m[2m.[0m
+OK
+Warning: AI SDK Warning System: To turn off warning logging, set the AI_SDK_LOG_WARNINGS global to false.
+
+=== 4. 现状（不动）===
+3228163 bash baize_pretrain_loop.sh
+3234430 bash baize_harness_loop.sh
+
+=== DONE ===
+```
