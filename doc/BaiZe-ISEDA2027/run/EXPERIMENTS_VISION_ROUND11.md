@@ -74,7 +74,7 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 ## 5. 状态
 
 - ✅ **臂 ② SigLIP 完成（2026-10-03 15:26，`ALL DONE`）**：`r9_train.py --loss siglip` 30k 步无坍缩（C1 0.333 / C2_gap +0.103 / C4=OK）；IN-1k lp **2.19 / 3.13 / 4.36%** @5.12/10.24/15.36M，全 < 基线（3.43/5.45/6.08%）→ **未超 +1.5 点阈值、未翻盘**。详见 §6。
-- 🚀 **臂 ③ LocalLoss 已启动（2026-10-03）**：`r9_train.py --loss localloss`（`ClipLoss(local_loss=True)`：负样本池 512→64）+ `r11_run_localloss.sh`（`R11L_localloss_w512`，日志 `/tmp/r11_localloss.log`）。arm② 未翻盘 → 按序继续（成本递增 ②→③→④→⑤→⑥）。
+- 🚀 **臂 ③ LocalLoss 已启动（2026-10-03）**：`r9_train.py --loss localloss`（`ClipLoss(local_loss=True)`：⚠️ 仍 all-gather 512 → **负样本池仍是 512**，只算本地 64 行 logits，见 §0 更正）+ `r11_run_localloss.sh`（`R11L_localloss_w512`，日志 `/tmp/r11_localloss.log`）。arm② 未翻盘 → 按序继续（成本递增 ②→③→④→⑤→⑥）。
 - 跑完对照基线（3.43/5.45/6.08%）按判据（+1.5 点）裁定，再回填本文档结果 + `EXPERIMENTS_VISION.md` 顶部 + `MEMORY_VISION.md`。
 - 每臂训练需 8 卡（`.12`），启动前先核 GPU 空闲（同 R10-③ 的 GPU 核验）。
 
