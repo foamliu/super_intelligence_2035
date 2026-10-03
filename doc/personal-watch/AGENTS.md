@@ -11,7 +11,8 @@
 | Agent | loop 脚本 | 任务书 | 状态文件 | 日志目录 | 跑什么 | 状态 |
 |:---|:---|:---|:---|:---|:---|:---|
 | **news** 🆕 | `run/watch_news_loop.sh` | `run/WATCH_NEWS_TASK.md` | `run/MEMORY_NEWS.md` | `run/daily-memories-news/` | 按关注清单**常态化采集超级智能/前沿 AI 新闻**，产出 `run/news/<date>.md` 摘要 + `run/news/SEEN.md` 去重台账 | 🔄 运行中（纠偏中：中文权威源 / 新闻定义） |
-| **research** 🆕 | `run/watch_research_loop.sh` | `run/WATCH_RESEARCH_TASK.md` | `run/MEMORY_RESEARCH.md` | `run/daily-memories-research/` | **打通 arXiv API** + 采集/整理 AI 论文（**LLM / SLM / 多模态 / agent harness**），产出 `run/research/<date>.md` + `SEEN.md`(arXiv ID) + `papers.jsonl` | ⬜ 待启动 |
+| **research** 🆕 | `run/watch_research_loop.sh` | `run/WATCH_RESEARCH_TASK.md` | `run/MEMORY_RESEARCH.md` | `run/daily-memories-research/` | **打通 arXiv API** + 采集/整理 AI 论文（**LLM / SLM / 多模态 / agent harness**），产出 `run/research/<date>.md` + `SEEN.md`(arXiv ID) + `papers.jsonl` | ✅ 运行中（首轮 34 篇） |
+| **archive** 🆕 | `run/watch_archive_loop.sh` | `run/WATCH_ARCHIVE_TASK.md` | `run/MEMORY_ARCHIVE.md` | `run/daily-memories-archive/` | **历史回溯**（非日更）：**国内权威源**（新华/人民/中新/央视，免 key）在 **2016–2026** 窗内做**端点勘察 → 抽样计数 → 按需抓取**；产物 `run/archive/`（`ENDPOINTS.md` / `COUNT_STUDY.md`） | ⬜ 待启动 |
 
 > 🆕 **news 线（2026-10-03 新建）**：本哨位的**第一条线**。依赖**外网搜索**（MCP `web-search` / `search_news`）。
 > **不占 GPU、不登录训练机**；唯一资源是**网络请求**，注意控制频率与合规（见任务书铁律）。

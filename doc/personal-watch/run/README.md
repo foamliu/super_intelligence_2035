@@ -71,6 +71,24 @@ pkill -f 'watch_research_loop.sh'
 
 ---
 
+## 2.2 启动 archive 线（**历史回溯**）
+
+```bash
+cd <仓库根>/doc/personal-watch/run
+git pull --rebase --autostash
+setsid bash watch_archive_loop.sh > /tmp/watch_archive_loop.log 2>&1 < /dev/null &
+```
+
+**验证 / 停止**（把 `news` 换成 `archive`）：`pgrep -af 'watch_archive_loop.sh'` · `tail -f /tmp/watch_archive_loop.log` · `pkill -f 'watch_archive_loop.sh'`
+
+> ⚠️ **前提**：运行机需能访问**新华网 / 人民网 / 中新网 / 央视网**（国内源，通常无碍）。
+> 首轮做 **A1 端点勘察**（新华网优先）+ **A2 抽样计数**（2016–2026 每年条数）。
+> ⏱ **同站限速 ≥2s**；🚫 **A3 全量抓取须 supervisor 批准**（先算代价）。
+>
+> ℹ️ **三条线可同时跑**：各自独立 loop / MEMORY / 产物；**都只 `git add` 本线文件**。
+
+---
+
 ## 2.5 常用调参（都在 `watch_news_loop.sh` 顶部）
 
 | 变量 | 默认 | 作用 / 备注 |

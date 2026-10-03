@@ -51,6 +51,7 @@ WAITING: 0
 |:--|:--|:--|:--|
 | **news** | ✅ **T8–T10 已交付**（`fd32d67`）：`fetch_cn_news()` 落地（MCP `cn_news` + CLI `--cn-news`）· 中文权威真新闻 6 条（中文 4 ≥ 英文 2）· 原 31 条按 §0.1 收口（**留 news 9 / 移出非新闻 22**）；T5–T7 仍待办 | `news/FETCH_CN_NEWS.md` · `news/2026-10-03.md`（第三轮）· `news/mcp_web_search_free.py`（+`cn_news`） | ✅ 运行中（**supervisor 已独立复跑 CLI 验证通过**） |
 | **research** 🆕 | **第 1 批 R1′/R2′ 已下发**（实测取源：**arXiv API 为主** + HF Daily Papers 作社区信号；**RSS 周末空**不作主力；时效口径含周末放宽）；**首轮已交付 34 篇**（R1 打通 + 12 条固化查询 + 抓 214/精选 34） | `run/research/ARXIV_API.md` · `run/research/<date>.md` · `SEEN.md` · `INDEX.md` · `papers.jsonl` · `queries.json` · `arxiv_fetch.py` | ✅ 运行中（**supervisor 抽验 3 个 arXiv ID 全真实**） |
+| **archive** 🆕 | **第 1 批 A1/A2**：端点勘察（**新华网优先**）+ 抽样计数（**2016–2026 每年多少条**）；🚫 不用 key、**锁国内权威源**（新华/人民/中新/央视） | `run/archive/ENDPOINTS.md` · `run/archive/COUNT_STUDY.md` | 🆕 已建线，**待启动 loop** |
 
 > ✅ **T1–T4 已完成并交付（2026-10-03，commit `c326ba8`）**：
 > - **T1** 核实 12 个 web-search 候选；**T2** 新建**免 key MCP** `run/news/mcp_web_search_free.py`（3 工具 `web_search`/`search_news`/`rss_latest`）+ `run/news/cline_mcp_config.json`，**stdio 全链路实测通过**；
@@ -228,6 +229,15 @@ WAITING: 0
 - **2026-10-03（用户问历史回溯）** —— 实测：**现行 feed 不支持** 2016–2026 回溯（RSS=滚动窗口）；
   **HN Algolia ✅**（2016 区间实测 200/nbHits=91）· **GDELT ✅（2017 起，但 1 req/5s，我连试 3 次 429）** · Guardian 需免费 key（401）· Wayback 超时未验。
   → 建议**单开 archive 线**（`type: archive`，不污染 news 口径）；**待用户定主题/窗口**。
+- **2026-10-03（用户定 archive 范围 → 建第 3 条线）** —— 用户：**回溯 = 新华社 2016–2026，先估每年条数**；🚫 **不用 Guardian 类 key**；**锁国内权威源**。
+  - **supervisor 实测（决定性）**：
+    - ✅ **中新网可按天枚举**：`/scroll-news/{YYYY}/{MMDD}/news.shtml` → 200/173–378KB；条目 `/{频道}/{YYYY}/{MM-DD}/{id}.shtml`；
+    - ⚠️ **新华网归档未打通**：`/politics/2016-01/01/` → **403**；`so.news.cn/getNews` → **405 + WAF 页**（需**在国内运行机重试**）；
+    - ⚠️ 央视网日期路径 → **403**。
+  - **抽样（中新网 · 同日 06-15 跨年）**＝ 2016:1237 · 2019:400 · 2022:803 · 2025:327 · 2026:490 → **≈0.3k–1.2k 条/日** → **年量级 ≈12–45 万条**（**抽样，非精确**）。
+  - ⚠️ **规模警示**：若新华社 20 万条/年 → 10 年 **≈200 万条**；限速 ≥2s 下**仅枚举就 >45 天** → **全量不可行**，须缩窗/抽样/只取标题+链接。
+  - **建 archive 线**（第 3 条）：`WATCH_ARCHIVE_TASK.md`（A1 端点勘察 + A2 抽样计数 + §0.1 口径「archive ≠ news」）· `watch_archive_loop.sh`（同款加固）· `MEMORY_ARCHIVE.md` · `archive/`（`ENDPOINTS.md` / `COUNT_STUDY.md`）· `daily-memories-archive/`。
+  - 已同步 `README.md`（3 条线）· `AGENTS.md` · `run/README.md`（§2.2 启动）。
 - **2026-10-03（news worker 首交付）** —— agent 完成 **T1–T4**（`c326ba8`）+ **首轮 smoke 16 条**（`3fcd854`）+ 记忆回写（`bdc20db`），已转**常态采集**（`WAITING=1`）。
   亮点：**真跑实测**（给报错原文）、**建了免 key MCP**、报告**自包含**、**360 无日期就拒收**（守"字段缺一不可"）。
   待用户拍板：**是否补正规 API key**（免 key 抓取脆弱/合规灰区）。待核：**MCP 是否已装进运行机 cline**。
