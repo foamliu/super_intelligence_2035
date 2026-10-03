@@ -9,15 +9,14 @@ WAITING: 1
 ---
 
 ## 📊 进度快照（**每次唤醒必须更新**）
-已完成:       R1 打通 arXiv API（HTTPS/Atom → research/ARXIV_API.md）；R2 固化检索策略（queries.json）；R3/R4 首轮采集（抓取 214 → 收录 34 + 候选 180）；R1′ 取源复验；R2′ published-first + 周末自动放宽；第二~六轮增量（常 15/15 ok）；**运维第 2 批**：`arxiv_fetch.py` 增 `comment`/`journal_ref` → ≤30d 全量重扫（候选池 1118）→ 新建 `top_k.py`（rel/q 双维 + HN 热度）→ `TOP_K.md`/`TOP_K.jsonl`（TOP-20）+ `test_top_k.py` 20/20；**运维第 3 批**：`top_k.py` 增 `--takeaways-json`（人工 `takeaway`/`action` 注入，不打分）→ `TOP_K_takeaways.json`（20 条）→ 相关面放宽「存储/芯片」重排（**#1 DeepSeek-V4.1-Flash**）→ `TAKEAWAYS.md`（≤5 条）→ `test_top_k.py` **25/25**；**视频线** `video/SHORTLIST.md`（17 条）+ `video/scripts/`（3 份口播稿）
-当前动作:     第 3 批落盘收官：TOP_K/TAKEAWAYS/视频线 + 日报/INDEX/ARXIV_API(§9.8) 更新 → 提交本线文件
+
+```
+已完成:       R1 打通 arXiv API（HTTPS/Atom → research/ARXIV_API.md）；R2 固化检索策略（queries.json）；R3/R4 首轮采集（抓取 214 → 收录 34 + 候选 180）；R1′ 取源复验；R2′ published-first + 周末自动放宽；第二~七轮增量（15/15 ok）；**运维第 2 批**：`arxiv_fetch.py` 增 `comment`/`journal_ref` → ≤30d 全量重扫（候选池 1118）→ 新建 `top_k.py`（rel/q 双维 + HN 热度）→ `TOP_K.md`/`TOP_K.jsonl`（TOP-20）+ `test_top_k.py` 20/20；**运维第 3 批**：`top_k.py` 增 `--takeaways-json`（人工 `takeaway`/`action` 注入，不打分）→ `TOP_K_takeaways.json`（20 条）→ 相关面放宽「存储/芯片」重排（**#1 DeepSeek-V4.1-Flash**）→ `TAKEAWAYS.md`（≤5 条）→ `test_top_k.py` **25/25**；**视频线** `video/SHORTLIST.md`（17 条）+ `video/scripts/`（3 份口播稿）
+当前动作:     第七轮常态增量（周六，第六轮后 ~35min）：`--probe`(R1′) 复验 + `--fetch` 增量 → 0 新增（周末未公告）→ 落盘日报/INDEX/ARXIV_API(§9.9) + 本记忆
 下一步:       ① 常态采集按 SOP 增量（先读 SEEN.md 去重、定窗口）；② TOP-K 可按需重跑（`--w1/--w2/--top/--takeaways-json` 可调）；③ **视频 V3（生成）待用户确认运行机工具链后再动**；④ **邮件职能待用户批准后才可启动**（现仅登记）
-本轮新增:     0 篇采集（周六未公告）；**TOP-20 重排（含 takeaway/action）** + **TAKEAWAYS.md（5 条）** + **视频 SHORTLIST（17 条）+ 3 份口播稿**
+本轮新增:     0 篇采集（周六未公告）；R1′/R2′ 复验（arXiv ✅ / HF ❌ / RSS 空）+ 第七轮 **15/15 ok**
 阻塞:         无（HF Daily Papers 本机不可达 → 社区热度**改用 HN Algolia 替代并注明**，不伪造 hf_daily；**视频 V3 待工具链确认**）
-ERROR_COUNT:  0（第六轮 15/15 查询 ok、无重试；回归 test_arxiv_fetch 49/49 + test_top_k **25/25** PASS）
-本轮新增:     0 篇采集（周六未公告）；**新增 TOP-20 精选**（候选池 1118 篇 ≤30d）
-阻塞:         无（HF Daily Papers 本机不可达 → 社区热度**改用 HN Algolia 替代并注明**；不伪造 hf_daily）
-ERROR_COUNT:  0（第 2 批 15/15 查询 ok、无重试；回归 test_arxiv_fetch 49/49 + test_top_k 20/20 PASS）
+ERROR_COUNT:  0（第七轮 15/15 查询 ok、1 次读超时重试；回归 test_arxiv_fetch 49/49 + test_top_k 25/25 PASS）
 ```
 
 ---
@@ -48,14 +47,19 @@ ERROR_COUNT:  0（第 2 批 15/15 查询 ok、无重试；回归 test_arxiv_fetc
 - **日流水**：`daily-memories-research/<YYYY-MM-DD>.md`
 - **关注领域**：LLM · SLM · 多模态 · agent harness（+ 邻域，见任务书 §1）
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-03`（第六轮；窗口 **≤120h**（周六，`window_mode=weekend_batch`）；实际批次 `2026-09-28 ~ 2026-10-01`，本轮 **0 新增**）
+- **上次采集窗口**：`2026-10-03`（第七轮；窗口 **≤120h**（周六，`window_mode=weekend_batch`）；实际批次 `2026-09-28 ~ 2026-10-01`，本轮 **0 新增**）
 - **TOP-K 窗口（第 2 批专用，第 3 批沿用）**：`2026-09-03 ~ 2026-10-01`（**≤30d / 720h**，`window_mode=override`；候选池 **1118** 篇 → TOP-20）
-- **累计收录**：`61` 篇（另候选 346 篇，仅存 `SEEN.md` 防重；六轮累计抓取 407 条 —— 第三~六轮新增均 0）
+- **累计收录**：`61` 篇（另候选 346 篇，仅存 `SEEN.md` 防重；七轮累计抓取 407 条 —— 第三~七轮新增均 0）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-03** —— **第七轮（常态增量 · 周六，第六轮后 ~35min）→ 0 新增**。
+  - **R1′（取源复验）**：`--probe`（`2026-10-03T15:20:56Z`）→ **arXiv ✅ `200`+`atom+xml`（最新 `2026-10-01T17:59:59Z`，`totalResults=625914`）** / **HF ❌ `Network is unreachable`** / **RSS cs.CL/CV/LG ⚠️ `items=0`（周末/未公告）**。证据 → `research/raw/2026-10-03-probe-r7.json`。
+  - **增量采集**：`--fetch --seen research/SEEN.md`（`weekend_batch`，120h，`2026-10-03T15:21:23Z`）→ **15/15 `ok`**（`mm-multimodal` **读超时 1 次 → backoff 20s 重试成功**），**kept 0 / dropped 600（404 already in SEEN + 196 stale）** → **0 新增**（周六未公告，最近批次仍 `2026-10-01`）。证据 → `research/raw/2026-10-03-fetch-r7.json`。
+  - **落盘**：日报追加「第七轮」章节（R1′ 表 + 0 新增如实标注）；`INDEX.md` 累计/备注更新（七轮累计抓取 407 条）；`ARXIV_API.md` 新增 **§9.9**；快照**去重**（清掉第 2 批残留的重复字段行）。
+  - **回归测试**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）。
 - **2026-10-03** —— **运维指令第 3 批：更多借鉴（takeaway）+ 视频线（V1/V2）✅ 交付**。
   - **A 节 · 工具增强**：`research/top_k.py` 新增 **`--takeaways-json`**（人工 `takeaway`/`action` 注入 `TOP_K.md`/`.jsonl`，**不打分**；源 `research/TOP_K_takeaways.json` 为唯一真相）；模块 docstring 增第 3 批说明。
   - **A 节 · 相关面放宽**：`rel` 词表在 BaiZe 下新增 **`BaiZe·存储/内存技术`**、**`BaiZe·芯片/加速器`** → 重排后 **#1 = DeepSeek-V4.1-Flash（2609.19969，rel 4.0→5.0，total 4.6）**（ExecCritic 降 #2）。生成命令：`python3 research/top_k.py --in research/raw/2026-10-03-topk-fetch.json --top 20 --pool 60 --out-md research/TOP_K.md --out-jsonl research/TOP_K.jsonl --notes-md research/TOP_K_notes.md --takeaways-json research/TOP_K_takeaways.json`（HN 慢 → `nohup` + 轮询）。
