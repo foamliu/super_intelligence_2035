@@ -91,13 +91,19 @@ WAITING: 0
   2. `WAITING` 正则收紧为**行首**匹配（旧版 `WAITING:[* ]*1` 会误匹配散文）；
   3. 兜底提交**只 add 本线文件**（避免 `git add -A` 卷入他人在途文件）。
 - **搜索能力**：本机（含 Windows 侧 cline 会话）已挂 `web-search` MCP（bocha，中文友好）；通用工具为 `web_search` / `search_news` / `fetch_page` / `wiki_lookup`。
+- 🔑 **news worker 运行主机（2026-10-03 实测）**：`liuyang@iZuf65t80q2n4qgbjqbcp0Z`（阿里云），**可出外网**。
+  - **网关支持的模型名只有 `deepseek-flash` / `deepseek-v4-pro`**（🚫 不是 `deepseek-v4-pro-fp4`）。
+  - 日志：`/tmp/watch_news_loop.log`；本轮 cline 原始输出：`/tmp/watch_news_cline_last.log`。
 - **仓库**：`origin = git@github.com:foamliu/super_intelligence_2035.git`，分支 `main`。
 
 ---
 
 ## 7. 已知坑（会复发）
 
-- 🔴 **cline Token 额度会耗尽**：报错时 cline 仍可能返回 `exit 0` → loop 分辨不出失败、只睡一轮再试（表现为"静默变慢"，不是挂了）。多线共用同一模型时会互抢额度。排查入口：各 `*_loop.sh` 重定向的日志文件。
+- 🔴 **cline 报错仍返回 `exit 0`（本线已踩，2026-10-03）**：模型名写错 / 额度耗尽时，cline 打印 `error: ...` 却 `exit 0` → loop 分辨不出失败、按 `WAITING` 白睡。
+  - **本线修法**：loop 把 cline 输出 tee 到 `/tmp/watch_news_cline_last.log`，命中致命特征（`supported API model names` / `额度已用完` / `hook dispatch failed` / `unauthoriz`）或 `exit!=0` 时**强制短睡重试**。
+  - ⚠️ 别用裸 `error:` 做特征：agent 干活时会把 API 报错当**证据**贴出来，会误判。
+- 🔴 **模型名必须与本机网关匹配**：本机只支持 **`deepseek-flash` / `deepseek-v4-pro`**。抄别的机器的脚本（如 BaiZe 用的 `deepseek-v4-pro-fp4`）会直接失败 → **新线/换机时先核对模型名**。
 - ⚠️ **`.29` 与 `.12` 的 `/tmp` 不共享**；若 worker 跨机，诊断日志必须**指明机器**。
 - ⚠️ **`MEMORY_*.md` 每次唤醒被全文读进上下文** → 越大越烧 token；超 32KB 必须滚动归档。
 - ⚠️ **任务书全文 = 每次唤醒的 prompt**（loop 里 `prompt="$(< TASK_MD)"`）→ 任务书要**精简**，历史移入归档文件、不进 prompt。

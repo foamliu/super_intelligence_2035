@@ -3,7 +3,9 @@
 # 让 cline 读任务书（WATCH_NEWS_TASK.md）连续采集新闻，并每约 PUSH_INTERVAL 秒兜底做一次 git 同步 + commit + push。
 # 唤醒间隔自适应：读 MEMORY_NEWS.md 顶部的 WAITING 标志 ——
 #   WAITING=0（有近期待办，如追某事件后续）→ 短睡 SLEEP_SHORT（默认 30 分钟）续跑；
-#   WAITING=1（无近期待办，常态省 token）  → 长睡 SLEEP_LONG （默认 6 小时）轮询。
+#   WAITING=1（无近期待办，常态省 token）  → 睡 SLEEP_LONG （默认 1 小时）。
+# 兜底：若本轮 cline 报致命错（模型名错 / 额度耗尽 / hook 失败）→ 无论 WAITING 都**强制短睡重试**，
+#   避免"报错却 exit 0 → 白睡长觉"（BaiZe 记录过这个坑）。
 #
 # 启动方式（脱离进程组，防工具超时误杀）:
 #   cd <仓库根>/doc/personal-watch/run
@@ -26,13 +28,17 @@ CWD="$SCRIPT_DIR"
 GIT_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo "$SCRIPT_DIR/../../..")"
 REL="doc/personal-watch/run"     # 本任务在仓库中的相对目录（只提交这里的文件）
 
-MODEL="deepseek-v4-pro-fp4"      # 采集+整理任务的模型（可按需更换）
+# ⚠️ 模型名必须是本机网关支持的：`deepseek-flash` / `deepseek-v4-pro`
+#    （不要写 `deepseek-v4-pro-fp4` —— 那是别的机器的名字，本机网关会报
+#     "The supported API model names are deepseek-flash, deepseek-v4-pro"。）
+MODEL="deepseek-v4-pro"         # 调研+整理任务的模型（可按需换成 deepseek-flash）
 CLINE_TIMEOUT=1200              # 单次 cline 最多 20 分钟
 PUSH_INTERVAL=3600              # 每 1 小时兜底同步一次（新闻轮次间即会提交）
-SLEEP_SHORT=1800               # WAITING=0：有近期待办 → 短睡 30 分钟
-SLEEP_LONG=21600               # WAITING=1：无近期待办（常态）→ 长睡 6 小时（约每日 4 轮）
+SLEEP_SHORT=1800               # WAITING=0 / 失败重试：短睡 30 分钟
+SLEEP_LONG=3600                # WAITING=1（无近期待办）→ 睡 1 小时（原来是 6 小时，太钝；稳定后可调大）
 MEMORY="$SCRIPT_DIR/MEMORY_NEWS.md"
 LAST_PUSH="/tmp/watch_news_last_push"
+CLINE_LOG="/tmp/watch_news_cline_last.log"   # cline 本轮输出，用于检测"报错却 exit 0"
 
 # ── git 兜底同步：fetch → 必要时 pull --rebase → 只提交本线文件 → push ──
 git_sync_and_push() {
@@ -92,17 +98,31 @@ waiting_is_1() {
     grep -qE '^WAITING:[[:space:]]*1' "$MEMORY" 2>/dev/null
 }
 
+# cline 级致命错误特征（**不要**用裸 `error:` —— agent 干活时会把 API 报错当证据贴出来，会误判）
+FATAL_RE='(supported API model names|额度已用完|hook dispatch failed|[Uu]nauthoriz|[Aa]uthentication (failed|error)|请等待[0-9]+分钟)'
+
 while true; do
     echo "[loop] $(date '+%F %T') wake up, invoking cline ..."
+    FORCE_SHORT=0
     if [[ -f "$TASK_MD" ]]; then
         prompt="$(< "$TASK_MD")"
-        cline -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
-        echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git sync ..."
+        cline -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null 2>&1 | tee "$CLINE_LOG"
+        rc="${PIPESTATUS[0]}"
+        echo "[loop] $(date '+%F %T') cline returned (exit ${rc}); log=$CLINE_LOG"
+        # 兜底：cline 常"报错仍 exit 0"（模型名错 / 额度耗尽）→ 从日志抓错，失败则强制短睡重试，不空耗
+        if [ "${rc:-0}" -ne 0 ] || grep -qiE "$FATAL_RE" "$CLINE_LOG" 2>/dev/null; then
+            FORCE_SHORT=1
+            echo "[loop] $(date '+%F %T') ⚠️ 检测到 cline 失败/报错 → 本轮强制短睡重试（不睡长觉）"
+        fi
     else
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"
+        FORCE_SHORT=1
     fi
     git_sync_and_push
-    if waiting_is_1; then
+    if [ "$FORCE_SHORT" -eq 1 ]; then
+        echo "[loop] $(date '+%F %T') 失败/异常重试 → sleep ${SLEEP_SHORT}s"
+        sleep "$SLEEP_SHORT"
+    elif waiting_is_1; then
         echo "[loop] $(date '+%F %T') WAITING=1 (no pending follow-up) → sleep ${SLEEP_LONG}s"
         sleep "$SLEEP_LONG"
     else
