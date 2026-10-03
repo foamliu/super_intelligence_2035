@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L 预注册 ✅ · arm② SigLIP ✅（未翻盘）· arm③ LocalLoss ✅（未翻盘）· arm④ CoCa ✅（lp 0.47%≈随机、Δ−5.6 点，首个稠密臂=负结果·未翻盘）**；臂⑤ GenLIP 🚫 跳过建议 / 臂⑥ AIMv2 ⏸ 暂缓 / R11-L2 ✅ 下一优先级 / R13 ⏸ 只做 OV2 单臂 / R11-E ⏸ 等数据；**书面判断已交 ROUND11 §10（待运维拍板）** |
-| WAITING | 1（**语义=待运维拍板、非训练 running**：GPU 已空、无训练在跑；R11-L 四臂全完结、书面成本/收益判断已交 `EXPERIMENTS_VISION_ROUND11.md §10` → 等运维在任务书勾选后再起下一训练；置 1 省唤醒 token） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L 预注册 ✅ · arm② SigLIP ✅（未翻盘）· arm③ LocalLoss ✅（未翻盘）· arm④ CoCa ✅（lp 0.47%≈随机、Δ−5.6 点，首个稠密臂=负结果·未翻盘）· 🚀 R11-L2 文本塔解冻 LoRA 训练中**；臂⑤ GenLIP 🚫 跳过建议 / 臂⑥ AIMv2 ⏸ 暂缓 / R13 ⏸ 只做 OV2 单臂 / R11-E ⏸ 等数据；**R11-L2 已批准并在 `.12` 跑 30k 步（预注册见 ROUND11 §11）** |
+| WAITING | 1（**语义=训练 running（异步）**：R11-L2 LoRA 臂 30k 步在 `.12` 跑（`whag0pgpuap12`），`bash r11_run_lora.sh 30000`，日志 `/tmp/r11_lora.log`，ETA ~2h → 置 1 长睡省 token、训练 `ALL DONE` 后回收 IN-1k lp 再置 0） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
-| BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡）+ arm④ CoCa（1.92h×8 卡） |
-| 更新 | 2026-10-03 20:32（arm④ CoCa `ALL DONE` @20:13 收尾已做：lp **0.29/0.37/0.47%** ≈随机 → Δ **−3.14/−5.08/−5.61** 点，未翻盘且 trunk 被 caption 项（~68% 梯度）打回随机；探针名义通过但 C2_diag≈0.09/off=+0.02/C2_gap 从 +0.092 单调下滑，远弱于臂②③；见 ROUND11 §9。GPU 已空；臂⑤ GenLIP 建议跳过、臂⑥ AIMv2 / R11-L2 待运维裁决） |
+| BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡）+ arm④ CoCa（1.92h×8 卡）+ R11-L2 LoRA（训练中，30k 步 ≈1.9–2.1h×8 卡） |
+| 更新 | 2026-10-03 23:56（**R11-L2 文本塔解冻 LoRA 臂 已启动**：smoke 通过 → `r11_run_lora.sh 30000` 在 `.12` 跑；控变量同基线只变「文本塔解冻」；可训 +0.30M 文本 LoRA（q+v r=8 α=16 lr=1e-4）、重跑 C1–C4；预注册见 ROUND11 §11） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -66,6 +66,14 @@ WAITING: 1
 
 - 📌 **decision gate（2026-10-03 21:31）**：R11-L 四臂（①基线/②SigLIP/③LocalLoss/④CoCa）全部兑现、无一翻盘；GPU 已空。**书面成本/收益判断已交 `EXPERIMENTS_VISION_ROUND11.md §10`**（臂⑤→🚫跳过 / 臂⑥ AIMv2→⏸暂缓 / **R11-L2→✅下一优先级** / R13→⏸批准后只做 OV2 单臂 / R11-E→⏸等 short≥18.5M）。⚠️ 全部**未经批准、不主动起训练**；WAITING 置 1 省 token，等运维在任务书 §3 + §10 勾选后执行。
 
+## R11-L2 文本塔解冻臂（🚀 训练中，2026-10-03）
+
+> 只变「文本塔是否解冻」：基线 = 冻结 CLIP-768（R9 6.08%@15.36M）vs 本臂 = CLIP-768 文本塔 **LoRA 轻量微调**。其余控变量（OV2 w512 · CC12M+Amshaker · 视觉 lr3e-3 · bs512 · N=15.36M/30k 步 · IN-1k frozen-trunk lp）**全固定**；**重跑 R4 坍缩判据 C1–C4**。预注册见 `EXPERIMENTS_VISION_ROUND11.md §11`。
+
+- **实现**：`r9_train.py` 增 `--text-finetune {frozen,lora}` + `--lora-rank/--lora-alpha/--lora-lr`；LoRA = `torch.nn.utils.parametrize` 注入 q_proj+v_proj（r=8 α=16），`lora_B` 零初始化（步 0 == 冻结塔），**可训 +0.30M**；视觉 lr 3e-3、LoRA lr 1e-4（独立参数组）。探针 `pT` 改为每次用当前文本塔重算。
+- ✅ **smoke 通过（exit 0）**：8 卡 30 步、`trainable=0.295M`、探针 `C1=0.09–0.34 / C2_gap=+0.03–+0.07 / C4=OK`（无坍缩）；ckpt 字段 `text=lora-CLIP-768 / text_trainable_params=294912`。
+- 🚀 **正式 30k 已启动（23:54，`.12` 全 8 卡）**：`bash r11_run_lora.sh 30000` → `R11L2_lora_w512`；日志 `/tmp/r11_lora.log`；hostname `whag0pgpuap12`、GPU 独占核验。ETA ~2h + 自动回收 4 ckpt IN-1k lp。
+- **预注册裁定（§11.4）**：坍缩（C1>0.95 / C2_gap≤0.005 / C4 fail）→ 负结果；未坍缩且 lp > 基线+1.5（>7.58%）→ 局部翻盘（冻结文本塔锁上限）；否则未翻盘。
 ## 历史条目已滚动归档（2026-10-03）
 
 - 更早的全部巡检/流水（R1–R9 完整过程，live MEMORY 原 95.7KB）已滚动归档至 `daily-memories-vision/2026-10-03.md`（追加「滚动归档快照」）+ 各日期 daily 文件（2026-09-30 / 10-01 / 10-02）。live MEMORY 已压至 ≤32KB。

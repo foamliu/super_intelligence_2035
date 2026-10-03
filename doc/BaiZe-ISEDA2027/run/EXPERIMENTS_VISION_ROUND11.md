@@ -76,6 +76,7 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 - ✅ **臂 ② SigLIP 完成（2026-10-03 15:26，`ALL DONE`）**：`r9_train.py --loss siglip` 30k 步无坍缩（C1 0.333 / C2_gap +0.103 / C4=OK）；IN-1k lp **2.19 / 3.13 / 4.36%** @5.12/10.24/15.36M，全 < 基线（3.43/5.45/6.08%）→ **未超 +1.5 点阈值、未翻盘**。详见 §6。
 - ✅ **臂 ③ LocalLoss 完成（2026-10-03 17:43，`ALL DONE`）**：`r9_train.py --loss localloss`（`ClipLoss(local_loss=True)`：⚠️ 仍 all-gather 512 → **负样本池仍是 512**，只算本地 64 行 logits，见 §0 更正）+ `r11_run_localloss.sh`（`R11L_localloss_w512`）。30k 步无坍缩；IN-1k lp **1.81 / 3.60 / 4.33%** @5.12/10.24/15.36M，全 < 基线（3.43/5.45/6.08%）→ **未超 +1.5 点阈值、未翻盘**。详见 §7。
 - ✅ **臂 ④ CoCa 完成（2026-10-03 20:13，`ALL DONE`）**：+76.2M decoder + caption CE（weight 2.0）30k 步无强制融合、但 IN-1k frozen-trunk lp **0.29 / 0.37 / 0.47%** @5.12/10.24/15.36M（≈随机 1/1000）→ **Δ −3.14 / −5.08 / −5.61 点，未翻盘且把 trunk 打回随机**（total loss 里 caption 项 ≈68% 梯度、盖过对比项）。**首个稠密监督臂 = 负结果** → 「25.1%=对比渐近」未被颠覆、反被强化。详见 §9。
+- 🚀 **R11-L2 文本塔解冻臂 已启动（2026-10-03 23:54，运维已批准）**：`r9_train.py --loss clip --text-finetune lora`（CLIP-768 文本塔 LoRA q+v r=8 α=16 lr=1e-4），跑 30k 步（N=15.36M 主锚点）；冻塔(w512)/数据/步数/优化器/评测全固定，**只变「文本塔是否解冻」**。smoke 通过、正式训练在 `.12` 运行中（`whag0pgpuap12`，日志 `/tmp/r11_lora.log`）。预注册见 §11。
 - 📌 **后续臂决策（待运维裁决）**：臂⑤ GenLIP（纯 caption 生成，去掉仍在工作的对比项 → 坍缩先验更强、边际价值低）**建议跳过**；臂⑥ AIMv2（**唯一 caption-无关稠密监督**、最贵、需自研）与 R11-L2（文本塔解冻）**待运维拍板**。见 §9 尾。
 - 每臂训练需 8 卡（`.12`），启动前先核 GPU 空闲（同 R10-③ 的 GPU 核验）。
 
@@ -230,4 +231,60 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 | R13 官方对照 | ⏸ 批准后只做 OV2 单臂 | 0.5–1 臂 | 补结论边界、不抬上限 |
 | R11-E GPIC 数据轴 | ⏸ 等 short ≥18.5M（或先 6.8M 试点） | 1 臂 | 数据仍在下载、当前区间太窄 |
 
-> ⚠️ **本表为书面判断（非已批准）**：臂⑥ / R11-L2 / R13 / R11-E **均未经批准、不主动起训练**；等运维在任务书 §3 队列 + 上表勾选后再执行。
+> ⚠️ **本表为书面判断**：**R11-L2 已获运维批准并启动**（见 §11）；臂⑥ / R13 / R11-E **仍未经批准、不主动起训练**；等运维在任务书 §3 队列 + 上表勾选后再执行。
+
+---
+
+## 11. R11-L2 文本塔解冻臂（LoRA vs 冻结）· 预注册 + 进行中（2026-10-03）
+
+> **批准依据**：§10.3 已把 R11-L2 列为「✅ 建议下一优先级」（当前最高杠杆）；运维已批准立即执行（本臂无需再等拍板）。
+> **预注册原则（铁律）**：判据先定后测——以下 C1–C4 坍缩判据与「翻盘」阈值在拿到评测结果前**冻结不变**。
+
+### 11.1 臂定义（控变量：**只变「文本塔是否解冻」**）
+
+| 控制变量 | 值（与基线臂① / R9 阶段一 **完全一致**） |
+|:--|:--|
+| 视觉塔 | OpenVision2 **w512（126.78M）**，depth30 / patch16 / 224² |
+| 数据 | CC12M + Amshaker ≈18.5M 对（同 glob、`--data` 同路径） |
+| 步数 / 样本预算 | **30k 步 = N 15.36M**（= R9 阶段一主锚点） |
+| 优化器 / schedule | AdamW(0.9, 0.95, eps 1e-6)；视觉 lr 3e-3、warmup 20、cosine；seed 1234；bf16；bs64×8=512 |
+| 目标函数 | InfoNCE（`--loss clip`，512 负样本池）—— 与基线臂①**同目标** |
+| 评测 | IN-1k **frozen-trunk lp**（`r8_eval_in1k.py`，step{10k,20k,30k}+final）+ 坍缩探针 C1–C4 |
+| **唯一变化** | **文本塔：冻结 CLIP-768（基线） vs LoRA 轻量微调（本臂）** |
+
+### 11.2 LoRA 配置（文本塔 = `openai/clip-vit-large-patch14-336` 的 `text_model`）
+
+- **注入位置**：12 个 BERT encoder 层的 `self_attn` 的 **q_proj + v_proj**（各 Linear 768×768、无 bias）。预训练权重**原地冻结**，仅 `lora_A/lora_B` 可训。
+- **rank r=8、alpha=16（scale=α/r=2）**；`lora_A` Kaiming 初始化、`lora_B` **零初始化** → 步 0 有效权重 == 冻结文本塔（无冷启动漂移，臂从与基线字节一致的点出发）。
+- **可训参数量 = 12 层 × 2 投影 × (8×768×2) = 294,912 ≈ 0.30M**（已实测 `[text-finetune] trainable=0.295M`）。
+- **LoRA 独立参数组**：lr **1e-4**（warmup 20、wd=0），视觉 lr 仍 3e-3 —— 理由：「文本塔解冻」本质要求给新增可训参数一个 lr；沿用 3e-3 会违背「轻量微调」、极可能重蹈 R4「随机 text 塔坍缩」。⚠️ 此 lr 为预注册值，出结果前不变。
+
+### 11.3 重跑 R4 坍缩判据 C1–C4（probe-every 300，自动中止）
+
+| 判据 | 定义 | 判阈值 |
+|:--|:--|:--|
+| C1（视觉特征坍缩） | probe 128 图视觉特征两两 cosine 上三角均值 | `C1 > 0.95` |
+| C2（图文跨塔对齐） | probe 图文对 diag 均值 − 非对角均值 的 gap | `gap ≤ 0.005` |
+| C4（损失形态） | total loss 相对早期指不异常回升 | 末点 loss 相对 early 异常回升 |
+
+⚠️ **本臂文本塔可训** → 探针 `pT`（probe 文本特征）改为**每次探针用当前文本塔重算**（`text.text_module().get_text_features(...)`），不再像基线那样预计算常量 `pT`（`r9_train.py` 已改）。任一判据触发 → 训练自动中止（FUSED），记为**负结果**。
+
+### 11.4 「翻盘」阈值（预注册）
+
+- **坍缩（C1/C2/C4 任一触发）→ 负结果**：文本塔解冻@本 recipe 重蹈 R4 坍缩。
+- **未坍缩且 IN-1k lp > 基线（6.08%@15.36M）+ 1.5 点（即 >7.58%）→ 局部翻盘**：支持「冻结 CLIP-768 文本塔正锁死渐近上限」→ 后续可升级重训文本塔。
+- **未坍缩且 lp ≤ 基线+1.5 → 未翻盘**：「冻结文本塔最优」不变（同 R11-L 前四臂）。
+
+### 11.5 公平性（§3 口径）
+
+| 臂 | 参数量增量 | 每步额外 token | 每步耗时 |
+|:--|:--|:--|:--|
+| 基线① InfoNCE | 0 | 0 | 1.0× |
+| **R11-L2 LoRA** | **+0.30M 可训**（文本塔 LoRA；视觉 trunk 仍 126.78M，lp 只读 trunk） | 0（无 decoder） | 待实测（应≈1.0×，LoRA 前向开销极小） |
+
+### 11.6 实现 & 进度
+
+- **训练**：`r9_train.py` 新增 `--text-finetune {frozen,lora}` + `--lora-rank/--lora-alpha/--lora-lr`；`FrozenClipText` 加 `LoRAParam`（`torch.nn.utils.parametrize`）；文本塔可训时 `DDP(text.clip, find_unused_parameters=True)` 包裹 + 独立参数组 + 探针重算 pT。ckpt 记录 `config['text']='lora-CLIP-768'` + `text_trainable_params/lora_rank/alpha/lr` 字段。
+- **启动脚本**：`r11_run_lora.sh 30000`（镜像 `r11_run_siglip.sh`；`--loss clip --text-finetune lora --lora-rank 8 --lora-alpha 16 --lora-lr 1e-4`）。
+- ✅ **smoke 通过（exit 0）**：8 卡 30 步；`[text-finetune] trainable=0.295M`；探针（probe-every 5）`C1=0.09–0.34 / C2_gap=+0.03–+0.07 / C4=OK`，无坍缩；ckpt 字段核验 `text=lora-CLIP-768 / text_trainable_params=294912 / params_active=126779392`。
+- 🚀 **正式 30k 已启动（2026-10-03 23:54，`.12` 全 8 卡）**：`cd run/vision && bash r11_run_lora.sh 30000` → `R11L2_lora_w512`；日志 `/tmp/r11_lora.log`；hostname `whag0pgpuap12` + GPU 独占核验（0 MiB 占用）。**结果待训练完成（~2h）后回填本节。**

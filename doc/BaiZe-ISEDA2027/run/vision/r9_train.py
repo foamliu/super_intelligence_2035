@@ -17,6 +17,7 @@ torchrun DDP, TP1/DP8. All four candidate towers supported.
 """
 import argparse
 import glob
+import math
 import os
 import time
 
@@ -42,17 +43,63 @@ def cleanup():
     dist.destroy_process_group()
 
 
-class FrozenClipText(nn.Module):
-    """Frozen pretrained CLIP text tower (768-dim). Consistent with R4 TextEnc('sem_clip')."""
+class LoRAParam(nn.Module):
+    """R11-L2: low-rank additive parametrization for a Linear weight.
 
-    def __init__(self, path, device):
+    Implemented via torch.nn.utils.parametrize so the pretrained weight stays frozen
+    in-place and only lora_A/lora_B are trainable. lora_B is *zero*-initialised, so at
+    step 0 the effective weight == the frozen CLIP weight (no cold-start drift: the
+    LoRA arm starts byte-identical to the frozen baseline).
+    """
+
+    def __init__(self, in_features, out_features, rank, alpha):
+        super().__init__()
+        self.rank = rank
+        self.scale = alpha / (rank if rank > 0 else 1)
+        self.lora_A = nn.Parameter(torch.zeros(rank, in_features))
+        self.lora_B = nn.Parameter(torch.zeros(out_features, rank))
+        nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
+        nn.init.zeros_(self.lora_B)
+
+    def forward(self, W):
+        return W + self.scale * (self.lora_B @ self.lora_A)
+
+
+class FrozenClipText(nn.Module):
+    """Pretrained CLIP text tower (768-dim).
+
+    finetune='frozen' (R4/R9/R10/R11-L baseline): every param frozen (default).
+    finetune='lora'   (R11-L2 arm): inject zero-init LoRA on q_proj+v_proj of each of
+       the 12 BERT encoder layers; pretrained weights stay frozen, only lora_A/lora_B
+       are trainable.
+    """
+
+    def __init__(self, path, device, finetune='frozen', lora_rank=8, lora_alpha=16.0):
         super().__init__()
         from transformers import CLIPModel, CLIPTokenizer
         self.tok = CLIPTokenizer.from_pretrained(path, local_files_only=True)
         clip = CLIPModel.from_pretrained(path, local_files_only=True)
         for p in clip.parameters():
             p.requires_grad_(False)
+        self.finetune = finetune
+        if finetune == 'lora':
+            from torch.nn.utils.parametrize import register_parametrization
+            for layer in clip.text_model.encoder.layers:
+                for proj_name in ('q_proj', 'v_proj'):
+                    proj = getattr(layer.self_attn, proj_name)
+                    out_f, in_f = proj.weight.shape
+                    register_parametrization(
+                        proj, 'weight', LoRAParam(in_f, out_f, lora_rank, lora_alpha))
+        elif finetune != 'frozen':
+            raise ValueError(f"unknown text-finetune mode {finetune!r}")
         self.clip = clip.to(device).eval()
+
+    def trainable_params(self):
+        return [p for p in self.clip.parameters() if p.requires_grad]
+
+    def text_module(self):
+        c = self.clip
+        return c.module if isinstance(c, DDP) else c
 
     def tokenize(self, caps):
         return self.tok(caps, return_tensors='pt', padding='max_length',
@@ -65,7 +112,7 @@ class FrozenClipText(nn.Module):
         return out['input_ids'], out['attention_mask']
 
     def forward(self, ids):
-        return self.clip.get_text_features(ids)
+        return self.text_module().get_text_features(ids)
 
 
 def cosine_offdiag(X):
@@ -153,6 +200,13 @@ def main():
                     help='CoCa caption-CE weight (OpenVision coca_caption_loss_weight=2)')
     ap.add_argument('--decoder-depth', type=int, default=4,
                     help='CoCa caption decoder layers (dim=768 heads=12, cross-attn to patches)')
+    ap.add_argument('--text-finetune', choices=['frozen', 'lora'], default='frozen',
+                    help='R11-L2: frozen=CLIP-768 text tower frozen (baseline); '
+                         'lora=zero-init LoRA on q+v proj (lightweight unfreeze)')
+    ap.add_argument('--lora-rank', type=int, default=8, help='LoRA rank r (R11-L2)')
+    ap.add_argument('--lora-alpha', type=float, default=16.0, help='LoRA alpha (scale=alpha/r)')
+    ap.add_argument('--lora-lr', type=float, default=1e-4,
+                    help='LoRA parameter-group lr (separate from vision lr=3e-3)')
     args = ap.parse_args()
 
     _OBJ = {'clip': 'InfoNCE', 'siglip': 'SigLIP', 'localloss': 'LocalLoss', 'coca': 'CoCa'}[args.loss]
@@ -181,7 +235,16 @@ def main():
               f'patch={args.patch}', flush=True)
 
     vision = DDP(vision, device_ids=[rank], find_unused_parameters=True)
-    text = FrozenClipText(CLIP_PATH, device)
+    text = FrozenClipText(CLIP_PATH, device, finetune=args.text_finetune,
+                          lora_rank=args.lora_rank, lora_alpha=args.lora_alpha)
+    text_trainable = args.text_finetune != 'frozen'
+    if text_trainable:
+        text.clip = DDP(text.clip, device_ids=[rank], find_unused_parameters=True)
+        if is_main:
+            n_lora = sum(p.numel() for p in text.trainable_params())
+            print(f'[text-finetune] mode={args.text_finetune} rank={args.lora_rank} '
+                  f'alpha={args.lora_alpha} lr={args.lora_lr} '
+                  f'trainable={n_lora/1e6:.3f}M', flush=True)
 
     logit_scale = nn.Parameter(torch.full((), float(np.log(10)), device=device),
                                requires_grad=True)
@@ -221,12 +284,19 @@ def main():
         opt_params.append(logit_bias)
     if decoder is not None:
         opt_params += list(decoder.parameters())
-    opt = torch.optim.AdamW([{'params': opt_params}],
-                            lr=args.lr, betas=(0.9, 0.95), eps=1e-6)
+    opt_groups = [{'params': opt_params}]
+    if text_trainable:
+        opt_groups.append({'params': text.trainable_params(),
+                           'lr': args.lora_lr, 'weight_decay': 0.0})
+    opt = torch.optim.AdamW(opt_groups, lr=args.lr, betas=(0.9, 0.95), eps=1e-6)
 
     def lr_at(s):
         w = args.warmup
         return args.lr * (s / max(1, w)) if s < w else args.lr
+
+    def lora_lr_at(s):
+        w = args.warmup
+        return args.lora_lr * (s / max(1, w)) if s < w else args.lora_lr
 
     # rank-sliced shard list (disjoint reads across ranks).
     # Multi-source: --data accepts comma-separated globs (CC12M + Amshaker both wds .txt).
@@ -257,7 +327,8 @@ def main():
     log(f'[start] tower={args.tower} lr={args.lr} warmup={args.warmup} bs={args.batch_size} '
         f'world={world_size} steps={args.steps} res={args.resolution} patch={args.patch} '
         f"seed={args.seed} shards={len(my_shards)}/rank objective={_OBJ} "
-        f'text=frozen-CLIP-768 negatives={args.batch_size*world_size}')
+        f'text={args.text_finetune}-CLIP-768(r={args.lora_rank},a={args.lora_alpha},lr={args.lora_lr}) '
+        f'negatives={args.batch_size*world_size}')
 
 # ---- fixed probe batch (rank 0): precompute once; text is FROZEN so T is constant ----
     if is_main:
@@ -266,9 +337,10 @@ def main():
         pr = load_eval_set(args.eval_data, args.resolution, args.probe_n)
         peimgs = torch.stack([p[0] for p in pr]).to(device)
         pcap = [p[1] for p in pr]
+        pcap_ids = text.tokenize(pcap).to(device)
         with torch.no_grad(), torch.autocast('cuda', dtype=torch.bfloat16):
-            pT = text(text.tokenize(pcap).to(device)).float()
-        log(f'[probe-setup] n={len(pr)} wall={time.time()-t0p:.0f}s')
+            pT = text.text_module().get_text_features(pcap_ids).float()
+        log(f'[probe-setup] n={len(pr)} wall={time.time()-t0p:.0f}s text_trainable={text_trainable}')
 
     roll = []          # per-step wall times (training forward/backward)
     loss_ema = None
@@ -290,7 +362,7 @@ def main():
                        'batch_size': args.batch_size, 'world_size': world_size,
                        'seed': args.seed,
                        'objective': _OBJ,
-                       'text': 'frozen-CLIP-768',
+                       'text': ('lora-CLIP-768' if text_trainable else 'frozen-CLIP-768'),
                        'width': args.width, 'depth': args.depth,
                        'heads': args.heads, 'mlp_dim': args.mlp_dim,
                        'caption_loss_weight': args.caption_loss_weight if args.loss == 'coca' else None,
@@ -299,6 +371,12 @@ def main():
             'params_total': param_count(vision.module),
             'params_active': active_param_count(vision.module),
             'decoder_params': dec_trainable,
+            'text_finetune': args.text_finetune,
+            'text_trainable_params': (sum(p.numel() for p in text.trainable_params())
+                                      if text_trainable else 0),
+            'lora_rank': args.lora_rank if args.text_finetune == 'lora' else None,
+            'lora_alpha': args.lora_alpha if args.text_finetune == 'lora' else None,
+            'lora_lr': args.lora_lr if args.text_finetune == 'lora' else None,
             'fused': fused,
         }
         if fused:
@@ -309,8 +387,11 @@ def main():
     t_start = time.time()
     step = 0
     while step < args.steps:
-        for g in opt.param_groups:
-            g['lr'] = lr_at(step)
+        for gi, g in enumerate(opt.param_groups):
+            if text_trainable and gi == len(opt.param_groups) - 1:
+                g['lr'] = lora_lr_at(step)
+            else:
+                g['lr'] = lr_at(step)
         try:
             batch = next(loader_iter)
         except StopIteration:
@@ -371,6 +452,10 @@ def main():
             vision_module = vision.module
             with torch.no_grad(), torch.autocast('cuda', dtype=torch.bfloat16):
                 pI = vision_module(peimgs).float()
+                # R11-L2: if the text tower is trainable, recompute T with the CURRENT
+                # text params each probe (the frozen-baseline precomputed pT would be stale).
+                if text_trainable:
+                    pT = text.text_module().get_text_features(pcap_ids).float()
             c1 = cosine_offdiag(pI)
             diag, off = cross_gap(pI, pT)
             gap = diag - off
