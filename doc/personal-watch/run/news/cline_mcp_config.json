@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "web-search-free": {
+      "command": "python3",
+      "args": [
+        "/home/liuyang/super_intelligence_2035/doc/personal-watch/run/news/mcp_web_search_free.py"
+      ],
+      "description": "免 key 网页搜索/新闻取数（CN-Bing + 360 + HackerNews + RSS）；news 线 T2 交付",
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    }
+  }
+}
