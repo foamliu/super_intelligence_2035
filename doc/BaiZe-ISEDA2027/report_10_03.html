@@ -190,15 +190,20 @@
 <h3>3.2 为什么「MBS 小」和「FP8 没收益」是同一个问题</h3>
 <div class="card">
   <p><b>现状</b>：<code>--micro-batch-size 1</code>，<code>GBS=1024</code>，<code>DP=8</code> → 每步 <b>1024 ÷ 8 ÷ 1 = 128 次 grad-accum</b>；显存只用 <b>~39/80 GB</b>。</p>
-  <p><b>关键量：每 GEMM 的 M ≈ MBS × seq</b>（seq=4094）：</p>
+  <p><b>关键量：每 GEMM 的 M ≈ MBS × seq</b>（<b>seq=4096</b>）：</p>
   <table>
     <tr><th>MBS</th><th>每 GEMM 的 M</th><th>FP8 单算子 s（bf16/fp8）</th><th>预期</th></tr>
-    <tr><td>1</td><td>~4,094</td><td><b>0.65</b>（P-4R 实测，倒挂）</td><td>FP8 反而慢 ~35%</td></tr>
-    <tr><td>2</td><td>~8,188</td><td>&lt; 1（仍 &lt; 交叉点）</td><td>FP8 预计仍倒挂</td></tr>
-    <tr><td><b>4</b></td><td>~16,376</td><td><b>≈ 1.0（交叉点）</b></td><td>FP8 开始打平</td></tr>
+    <tr><td>1</td><td>~4,096</td><td><b>0.65</b>（P-4R 实测，倒挂）</td><td>FP8 反而慢 ~35%</td></tr>
+    <tr><td>2</td><td>~8,192</td><td>&lt; 1（仍 &lt; 交叉点）</td><td>FP8 预计仍倒挂</td></tr>
+    <tr><td><b>4</b></td><td>~16,384</td><td><b>≈ 1.0（交叉点）</b></td><td>FP8 开始打平</td></tr>
     <tr><td>8</td><td>~32,768</td><td><b>→1.34（饱和区）</b>（与 Xmodel-2.5 反推一致）</td><td>FP8 才有真收益</td></tr>
   </table>
   <p>→ <b>抬 MBS 有两个好处</b>：① 减少 grad-accum 次数（少 128→64→32→16）；② 把 M 推进到 FP8 的收益区。<b>这就是 P-9 把两者捆在一起测的原因。</b></p>
+  <div class="ok-box">
+    <b>📐 口径不变量（运维 2026-10-03 定）</b>：<b>每步更新固定 ≈ 4M token</b>（<code>GBS × seq ≈ 4.0M</code>；SLM 公认口径，决定总体训练速度）→
+    <code>seq=4096 ↔ GBS=1024</code> · <code>seq=8192 ↔ GBS=512</code>。<br>
+    <b>seq 今后统一 4096</b>（P-9 / P-8）；<code>seq=4094</code> 仅存于正在跑的 <b>P-5b（不动、不参与对比）</b>；<b>seq=8192 是否上 P-8，由 P-9a-ext 的 G 项结果决定</b>。
+  </div>
 </div>
 
 <h3>3.3 P-9 任务（已下发，排在 P-5b 之后、P-6② 之前）</h3>
