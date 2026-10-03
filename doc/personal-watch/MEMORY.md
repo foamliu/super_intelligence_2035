@@ -301,3 +301,11 @@ WAITING: 0
 - **2026-10-03（news worker 首交付）** —— agent 完成 **T1–T4**（`c326ba8`）+ **首轮 smoke 16 条**（`3fcd854`）+ 记忆回写（`bdc20db`），已转**常态采集**（`WAITING=1`）。
   亮点：**真跑实测**（给报错原文）、**建了免 key MCP**、报告**自包含**、**360 无日期就拒收**（守"字段缺一不可"）。
   待用户拍板：**是否补正规 API key**（免 key 抓取脆弱/合规灰区）。待核：**MCP 是否已装进运行机 cline**。
+- **2026-10-03（产物目录加 README 契约）** —— 巡检发现 `news/archive/` `news/analysis/` `news/policy/` `research/video/` **四个产物目录全空**
+  → **git 不跟踪空目录**（clone 后目录消失，agent 易写错路径）→ 已加 **5 份契约**：
+  `news/README.md`（**三类产出口径分开**：① 日报 ≤72h 计入 / ② archive / ③ analysis+policy **不计入**）·
+  `news/archive/README.md`（`<source>-<年>.jsonl.gz` 5 字段 · `PROGRESS.md` · `INDEX_FILES.md` · 不抓正文/不冒充）·
+  `news/analysis/README.md`（自包含 HTML+饼图 · `EXPLORE.*` 非因果 · `L2_PREREG.md` · 描述性优先/禁数据窥探/必给 N）·
+  `news/policy/README.md`（**L1 五步硬顺序** EDA→TAXONOMY→SIGNALS→EVENTS→EARLY_WARNING · walk-forward + 基线）·
+  `research/video/README.md`（`SHORTLIST.md` + `scripts/<arXiv ID>.md` · 350–450 字固定结构 · 不盗图/不夸大）。
+
