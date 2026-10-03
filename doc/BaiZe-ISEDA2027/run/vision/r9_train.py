@@ -27,7 +27,7 @@ from torch import nn
 from torch.nn.parallel import DistributedDataParallel as DDP
 
 import models
-from models import get_vision_tower, param_count, active_param_count
+from models import get_vision_tower, param_count, active_param_count, CoCaDecoder
 
 EMBED = 768
 CLIP_PATH = '/nas_train/app.e0031982/models/openai/clip-vit-large-patch14-336'
@@ -58,6 +58,12 @@ class FrozenClipText(nn.Module):
         return self.tok(caps, return_tensors='pt', padding='max_length',
                         max_length=77, truncation=True)['input_ids']
 
+    def tokenize_cap(self, caps):
+        """Caption tokens with attention mask (for autoregressive caption CE)."""
+        out = self.tok(caps, return_tensors='pt', padding='max_length',
+                       max_length=77, truncation=True)
+        return out['input_ids'], out['attention_mask']
+
     def forward(self, ids):
         return self.clip.get_text_features(ids)
 
@@ -80,6 +86,22 @@ def cross_gap(I, T):
     diag = G.diagonal().mean().item()
     off = G[~eye].reshape(n, n - 1).mean().item()
     return diag, off
+
+
+def coca_caption_loss(logits, labels, mask):
+    """Autoregressive caption CE (teacher forcing). Only masked positions are penalised.
+
+    logits: (B, T-1, V) from decoder(ids[:, :-1])
+    labels: (B, T-1)  = ids[:, 1:]  (predict next token)
+    mask  : (B, T-1)  = attention_mask[:, 1:] (1 = real caption token)
+    """
+    B, T, V = logits.shape
+    ce = torch.nn.functional.cross_entropy(
+        logits.reshape(B * T, V), labels.reshape(B * T), reduction='none').reshape(B, T)
+    m = mask.float()
+    denom = m.sum().clamp(min=1.0)
+    loss = (ce * m).sum() / denom
+    return loss, float(denom.item())
 
 
 def get_vision(name, resolution, patch, device,
@@ -110,9 +132,10 @@ def main():
     ap.add_argument('--steps', type=int, default=3000)
     ap.add_argument('--lr', type=float, default=3e-3)
     ap.add_argument('--warmup', type=int, default=20)
-    ap.add_argument('--loss', choices=['clip', 'siglip', 'localloss'], default='clip',
+    ap.add_argument('--loss', choices=['clip', 'siglip', 'localloss', 'coca'], default='clip',
                     help='clip=InfoNCE (R9/R10 baseline); siglip=SigLIP bidirectional sigmoid (R11-L arm2); '
-                         'localloss=InfoNCE local_loss=True per-rank pool (R11-L arm3)')
+                         'localloss=InfoNCE local_loss=True per-rank pool (R11-L arm3); '
+                         'coca=InfoNCE contrastive + autoregressive caption CE (R11-L arm4)')
     ap.add_argument('--data', required=True,
                     help='tar shard glob(s), comma-separated for multi-source (e.g. CC12M,Amshaker)')
     ap.add_argument('--data-source', default='wds', choices=['wds', 'gpic'],
@@ -126,10 +149,14 @@ def main():
     ap.add_argument('--num-workers', type=int, default=2)
     ap.add_argument('--save-every', type=int, default=10000,
                     help='save a checkpoint every N steps (0 = only final)')
+    ap.add_argument('--caption-loss-weight', type=float, default=2.0,
+                    help='CoCa caption-CE weight (OpenVision coca_caption_loss_weight=2)')
+    ap.add_argument('--decoder-depth', type=int, default=4,
+                    help='CoCa caption decoder layers (dim=768 heads=12, cross-attn to patches)')
     args = ap.parse_args()
 
-    _OBJ = {'clip': 'InfoNCE', 'siglip': 'SigLIP', 'localloss': 'LocalLoss'}[args.loss]
-    _LOSS_KEY = {'clip': 'clip_infonce', 'siglip': 'siglip', 'localloss': 'clip_local'}[args.loss]
+    _OBJ = {'clip': 'InfoNCE', 'siglip': 'SigLIP', 'localloss': 'LocalLoss', 'coca': 'CoCa'}[args.loss]
+    _LOSS_KEY = {'clip': 'clip_infonce', 'siglip': 'siglip', 'localloss': 'clip_local', 'coca': 'coca'}[args.loss]
 
     rank = int(os.environ['RANK'])
     world_size = int(os.environ['WORLD_SIZE'])
@@ -169,9 +196,31 @@ def main():
     else:
         loss_fn = ClipLoss(local_loss=False, gather_with_grad=False,
                            rank=rank, world_size=world_size)
+
+    # ---- CoCa caption decoder (R11-L arm4): contrastive + autoregressive caption ---- #
+    decoder = None
+    dec_trainable = 0
+    dec_total = 0
+    if args.loss == 'coca':
+        tok_emb = text.clip.text_model.embeddings.token_embedding
+        _vis_w = args.width if args.width is not None else 1024
+        dec_mod = CoCaDecoder(dim=EMBED, heads=12, depth=args.decoder_depth, mlp_dim=2048,
+                              vocab_size=tok_emb.num_embeddings, max_len=77,
+                              vision_width=_vis_w, token_embed=tok_emb).to(device)
+        decoder = DDP(dec_mod, device_ids=[rank], find_unused_parameters=True)
+        dec_trainable = sum(p.numel() for p in dec_mod.parameters() if p.requires_grad)
+        dec_total = param_count(dec_mod)
+        if is_main:
+            print(f'[decoder] depth={args.decoder_depth} dim={EMBED} heads=12 '
+                  f'trainable={dec_trainable/1e6:.1f}M total={dec_total/1e6:.1f}M '
+                  f'vocab={tok_emb.num_embeddings} caption_weight={args.caption_loss_weight}',
+                  flush=True)
+
     opt_params = list(vision.parameters()) + [logit_scale]
     if logit_bias is not None:
         opt_params.append(logit_bias)
+    if decoder is not None:
+        opt_params += list(decoder.parameters())
     opt = torch.optim.AdamW([{'params': opt_params}],
                             lr=args.lr, betas=(0.9, 0.95), eps=1e-6)
 
@@ -187,11 +236,12 @@ def main():
         all_shards.extend(sorted(glob.glob(_g)))
     all_shards = sorted(set(all_shards))
     my_shards = all_shards[rank::world_size]
+    _tok = text.tokenize_cap if args.loss == 'coca' else text.tokenize
     if args.data_source == 'gpic':
-        loader = D.build_gpic_loader(my_shards, args.batch_size, text.tokenize,
+        loader = D.build_gpic_loader(my_shards, args.batch_size, _tok,
                                      size=args.resolution, num_workers=args.num_workers)
     else:
-        loader = D.build_loader(my_shards, args.batch_size, text.tokenize,
+        loader = D.build_loader(my_shards, args.batch_size, _tok,
                                 size=args.resolution, num_workers=args.num_workers)
     loader_iter = iter(loader)
 
@@ -242,10 +292,13 @@ def main():
                        'objective': _OBJ,
                        'text': 'frozen-CLIP-768',
                        'width': args.width, 'depth': args.depth,
-                       'heads': args.heads, 'mlp_dim': args.mlp_dim},
+                       'heads': args.heads, 'mlp_dim': args.mlp_dim,
+                       'caption_loss_weight': args.caption_loss_weight if args.loss == 'coca' else None,
+                       'decoder_depth': args.decoder_depth if args.loss == 'coca' else None},
             'final_loss': loss_ema,
             'params_total': param_count(vision.module),
             'params_active': active_param_count(vision.module),
+            'decoder_params': dec_trainable,
             'fused': fused,
         }
         if fused:
@@ -259,22 +312,41 @@ def main():
         for g in opt.param_groups:
             g['lr'] = lr_at(step)
         try:
-            imgs, txts = next(loader_iter)
+            batch = next(loader_iter)
         except StopIteration:
             loader_iter = iter(loader)
-            imgs, txts = next(loader_iter)
+            batch = next(loader_iter)
 
+        if args.loss == 'coca':
+            imgs, (ids, mask) = batch
+            ids = ids.to(device, non_blocking=True)
+            mask = mask.to(device, non_blocking=True)
+        else:
+            imgs, txts = batch
+            txts = txts.to(device, non_blocking=True)
         imgs = imgs.to(device, non_blocking=True)
-        txts = txts.to(device, non_blocking=True)
 
         t0 = time.time()
+        contr_i = None
+        cap_i = None
         with torch.autocast('cuda', dtype=torch.bfloat16):
-            If = torch.nn.functional.normalize(vision(imgs), dim=-1)
-            Tf = torch.nn.functional.normalize(text(txts), dim=-1)
-            if args.loss == 'siglip':
-                cur_loss = loss_fn(If, Tf, logit_scale.exp(), logit_bias)
+            if args.loss == 'coca':
+                pooled, patches = vision(imgs, return_patch=True)
+                If = torch.nn.functional.normalize(pooled, dim=-1)
+                Tf = torch.nn.functional.normalize(text(ids), dim=-1)
+                contrastive = loss_fn(If, Tf, logit_scale.exp(), None)
+                cap_logits = decoder(ids[:, :-1], patches)
+                cap_loss, _ntok = coca_caption_loss(cap_logits, ids[:, 1:], mask[:, 1:])
+                cur_loss = contrastive + args.caption_loss_weight * cap_loss
+                contr_i = contrastive.item()
+                cap_i = cap_loss.item()
             else:
-                cur_loss = loss_fn(If, Tf, logit_scale.exp(), None)
+                If = torch.nn.functional.normalize(vision(imgs), dim=-1)
+                Tf = torch.nn.functional.normalize(text(txts), dim=-1)
+                if args.loss == 'siglip':
+                    cur_loss = loss_fn(If, Tf, logit_scale.exp(), logit_bias)
+                else:
+                    cur_loss = loss_fn(If, Tf, logit_scale.exp(), None)
         opt.zero_grad(set_to_none=True)
         cur_loss.backward()
         opt.step()
@@ -290,7 +362,8 @@ def main():
             avg_dt = float(np.mean(roll[-args.log_every:]))
             imgs_per_sec = args.batch_size * world_size / avg_dt
             bias_s = f' bias={logit_bias.item():.3f}' if logit_bias is not None else ''
-            log(f'[step {step}/{args.steps}] loss={li:.4f} scale={logit_scale.exp().item():.3f}{bias_s} '
+            cap_s = f' contrast={contr_i:.4f} caption={cap_i:.4f}' if args.loss == 'coca' else ''
+            log(f'[step {step}/{args.steps}] loss={li:.4f}{cap_s} scale={logit_scale.exp().item():.3f}{bias_s} '
                 f'ms/iter={avg_dt*1000:.1f} image/s={imgs_per_sec:.1f} lr={lr_at(step):.2e}')
 
         # ---- C1/C2/C4 probe ---- #

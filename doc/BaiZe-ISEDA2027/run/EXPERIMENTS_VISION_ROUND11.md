@@ -37,7 +37,7 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 | ① | **InfoNCE（基线）** | `open_clip.loss.ClipLoss(local_loss=False)` | 已有（R9/R10） | — | ✅ 已有 |
 | ② | **SigLIP** | `open_clip.loss.SigLipLoss`（双向 sigmoid；`r9_train.py:162-165`） | R14 `sigmoid_xent`(OpenVision `losses/common.py:40`) 同源 | 低（改 1 处 loss + 保留冻结文本塔） | ✅ 完成（lp 2.19/3.13/4.36% < 基线，未翻盘） |
 | ③ | **LocalLoss** | InfoNCE 的 `local_loss=True`（⚠️ **仍 all-gather → 负样本池仍是 512**；只把 loss 算在本地 64 行（省内存/算），且本地图像不再从 text→image 方向拿梯度（`open_clip/loss.py:56-63,116-121`）；`r9_train.py:166-168`） | `open_clip.loss.ClipLoss(local_loss=True)` | 低（改 1 参数；⚠️ **非「负样本池缩小」**，见 §0 更正） | ✅ 完成（lp 1.81/3.60/4.33% < 基线，未翻盘，见 §7） |
-| ④ | **CoCa**（对比 + caption 生成） | 对比 + 自回归 caption CE（OpenVision `caption CE` + `coca_caption_loss_weight=2`） | 需**新写 caption decoder**（OpenVision2 权重 = concat/prefix-LM，**非 CoCa cross-attn**）；R14 可抄 Apache-2.0 的 caption CE 写法 | 高（新 decoder + 参数量/token 报备） | ⏸ |
+| ④ | **CoCa**（对比 + caption 生成） | 对比 + 自回归 caption CE（OpenVision `caption CE` + `coca_caption_loss_weight=2`） | 需**新写 caption decoder**（OpenVision2 权重 = concat/prefix-LM，**非 CoCa cross-attn**）；R14 可抄 Apache-2.0 的 caption CE 写法 | 高（新 decoder + 参数量/token 报备） | 🚀 已启动（30k，2026-10-03） |
 | ⑤ | **GenLIP / AR（纯生成）** | caption-only 自回归（无对比项） | 需 caption decoder；⚠️ 我们 caption 偏短（CC12M=Amshaker alt-text 短句 / GPIC short=20 tok）→ 生成监督密度被短 caption 拖累（机制推断须实测） | 高 | ⏸ |
 | ⑥ | **AIMv2 式（patch+text 双 AR）** | patch 预测 + text token 自回归（多模态 AR） | 官方 `ml-aim` 仅模型接口、**无 loss/训练代码 + Apple Sample Code 不可抄**；需自研 mask+双流 AR | 🔴 最贵；**条件触发**（臂②–⑤无翻盘迹象才做） | ⏸ |
 
@@ -53,7 +53,7 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 | ① InfoNCE | 0（基线） | 0 | 1.0× | w512=126.78M |
 | ② SigLIP | +1（logit bias 标量） | 0 | ≈1.0× | 无 decoder |
 | ③ LocalLoss | 0 | 0 | ≈1.0×（仍 all-gather，仅算本地 64 行 logits） | 同 512 负样本（非池缩小） |
-| ④ CoCa | +decoder（≈参考 OpenVision2 `text_decoder w768·12L`） | +caption 自回归 | 待实测 | 须报 decoder 层数/宽度 |
+| ④ CoCa | **+76.2M 可训**（decoder w768·12H·4L + LM head 49408；总 114.1M 含冻结 CLIP token_embed 37.9M 不更新） | +caption 自回归（≈24–40 tok/样本×bs512，逐 token masked CE） | ≈1.05×（smoke 稳态 2267 vs 基线 ~2448 img/s；**实跑 `[done]` 后回填精确值**） | depth=4/w768/h12，vocab=CLIP 49408，caption_weight=2.0 |
 | ⑤ GenLIP | +decoder（同上） | +caption 自回归 | 待实测 | — |
 | ⑥ AIMv2 式 | +patch head + text AR | +patch/text token | 待实测（最贵） | — |
 
@@ -135,3 +135,6 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 - ⚖️ **公平性预注册（先定后测）**：decoder 参数量 / 额外 caption token / 每步耗时**必须实测并报在 §3 公平表**（不许只比 acc）。对照基线 = InfoNCE w512 同 N 同口径。
 - **判据**：沿用 §1（同 N 同口径 lp 比基线 > +1.5 点才算翻盘）。
 - **实施**：先在 `r9_train.py` 增加 `--loss coca` 分支（+caption decoder）；启动前核 `.12` 8 卡空闲（同 R10-③ 核验），跑 30k 步（N=15.36M 主锚点）。
+- **✅ 实现完成（2026-10-03）**：`models.py` 增 `CoCaDecoder`（causal self-attn + cross-attn→patch，共享冻结 CLIP token embedding vocab 49408）+ `OpenVision2.forward(return_patch=True)` patch 路径；`r9_train.py` 增 `tokenize_cap()`、`coca_caption_loss()`、`--loss coca`、`--caption-loss-weight`(default 2.0)、`--decoder-depth`(default 4)。decoder 实测 `trainable=76.2M / total=114.1M`（w768·12H·4L + LM head 37.9M + 冻结 token_embed 37.9M）。
+- **✅ smoke 通过（exit 0）**：`bash r11_run_coca.sh 30` → 8 卡 DDP 全链路 OK；`[decoder] depth=4 dim=768 heads=12 trainable=76.2M total=114.1M vocab=49408 caption_weight=2.0`；`[step 30/30] loss=18.6150 contrast=6.1165 caption=6.2493 scale=10.182 image/s=2337.9`；`[done] total=8.6s ... fused=False`。ckpt 字段核验：`vision`(277 keys) / `decoder_params=76166400` / `loss=coca` / `objective=CoCa`。
+- ✅ **正文 smoke 已清理，正式 30k 已启动（2026-10-03 ~18:05，.12 全 8 卡，hostname=whag0pgpuap12 核验）**：`cd run/vision && bash r11_run_coca.sh 30000` → `R11L_coca_w512`，30k 步（N=15.36M 主锚点）。启动打印 `[start] steps=30000 objective=CoCa shards=419/rank`。稳态吞吐 smoke≈2267 img/s → ETA ≈1.9~2.1h 训完 + 自动回收 4 ckpt IN-1k lp（`r8_eval_in1k.py`）。日志 `/tmp/r11_coca.log`。**结果待回填（§9）**。

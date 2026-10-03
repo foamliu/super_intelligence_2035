@@ -41,11 +41,11 @@ class Attention(nn.Module):
         self.qkv = nn.Linear(dim, dim * 3, bias=qkv_bias)
         self.proj = nn.Linear(dim, dim, bias=False)
 
-    def forward(self, x):
+    def forward(self, x, attn_mask=None):
         B, N, C = x.shape
         qkv = self.qkv(x).reshape(B, N, 3, self.heads, self.head_dim).permute(2, 0, 3, 1, 4)
         q, k, v = qkv[0], qkv[1], qkv[2]
-        out = F.scaled_dot_product_attention(q, k, v)
+        out = F.scaled_dot_product_attention(q, k, v, attn_mask=attn_mask)
         out = out.transpose(1, 2).reshape(B, N, C)
         return self.proj(out)
 
@@ -176,11 +176,13 @@ class OpenVision2(nn.Module):
         self.norm = LayerNorm(width)
         self.head = ReadoutHead(width)
 
-    def forward(self, x):
+    def forward(self, x, return_patch: bool = False):
         x = self.embed(x)
         for b in self.blocks:
             x = b(x)
-        return self.head(self.norm(x))
+        x = self.norm(x)
+        pooled = self.head(x)
+        return (pooled, x) if return_patch else pooled
 
 
 # --------------------------------------------------------------------------- #
@@ -394,6 +396,83 @@ class FastViTHD(nn.Module):
             x = b(x)
         x = x.mean(dim=[2, 3]).unsqueeze(1)  # (B,1,width) -> ReadoutHead mean(dim=1)
         return self.head(x)
+
+
+class CrossAttention(nn.Module):
+    """Multi-head cross attention: queries from `x` attend to keys/values from `ctx`."""
+
+    def __init__(self, dim: int, heads: int, qkv_bias: bool = False):
+        super().__init__()
+        assert dim % heads == 0
+        self.heads = heads
+        self.head_dim = dim // heads
+        self.q = nn.Linear(dim, dim, bias=qkv_bias)
+        self.kv = nn.Linear(dim, dim * 2, bias=qkv_bias)
+        self.proj = nn.Linear(dim, dim, bias=False)
+
+    def forward(self, x, ctx):
+        B, N, C = x.shape
+        q = self.q(x).reshape(B, N, self.heads, self.head_dim).transpose(1, 2)
+        kv = self.kv(ctx).reshape(B, ctx.shape[1], 2, self.heads, self.head_dim).permute(2, 0, 3, 1, 4)
+        k, v = kv[0], kv[1]
+        out = F.scaled_dot_product_attention(q, k, v)
+        out = out.transpose(1, 2).reshape(B, N, C)
+        return self.proj(out)
+
+
+class CoCaDecoderBlock(nn.Module):
+    """Causal self-attn -> cross-attn to vision patches -> MLP (CoCa-style caption decoder block)."""
+
+    def __init__(self, dim: int, heads: int, mlp_dim: int):
+        super().__init__()
+        self.norm1 = LayerNorm(dim)
+        self.self_attn = Attention(dim, heads)
+        self.norm2 = LayerNorm(dim)
+        self.cross_attn = CrossAttention(dim, heads)
+        self.norm3 = LayerNorm(dim)
+        self.mlp = SwiGLU(dim, mlp_dim)
+
+    def forward(self, x, ctx, causal):
+        x = x + self.self_attn(self.norm1(x), attn_mask=causal)
+        x = x + self.cross_attn(self.norm2(x), ctx)
+        x = x + self.mlp(self.norm3(x))
+        return x
+
+
+class CoCaDecoder(nn.Module):
+    """Self-written CoCa-style caption decoder (contrastive + autoregressive caption).
+
+    A causal transformer decoder conditions on vision *patch* features via cross-attention
+    and predicts caption tokens left-to-right, giving per-token dense supervision. The input
+    token embedding is a frozen CLIP token embedding (shared with the frozen text tower, kept
+    out of the optimizer); only pos_embed / vision_proj / decoder blocks / output head train.
+    """
+
+    def __init__(self, dim: int = 768, heads: int = 12, depth: int = 4, mlp_dim: int = 2048,
+                 vocab_size: int = 49408, max_len: int = 77, vision_width: int = 512,
+                 token_embed: nn.Module = None):
+        super().__init__()
+        self.dim = dim
+        self.max_len = max_len
+        if token_embed is None:
+            token_embed = nn.Embedding(vocab_size, dim)
+            nn.init.normal_(token_embed.weight, std=0.02)
+        self.token_embed = token_embed
+        self.pos_embed = nn.Parameter(torch.randn(max_len, dim) * (dim ** -0.5))
+        self.vision_proj = nn.Linear(vision_width, dim, bias=False)
+        self.blocks = nn.ModuleList([CoCaDecoderBlock(dim, heads, mlp_dim) for _ in range(depth)])
+        self.norm = LayerNorm(dim)
+        self.head = nn.Linear(dim, vocab_size, bias=False)
+        nn.init.normal_(self.head.weight, std=0.02)
+
+    def forward(self, ids, ctx_patches):
+        B, T = ids.shape
+        ctx = self.vision_proj(ctx_patches)
+        x = self.token_embed(ids) + self.pos_embed[:T]
+        causal = torch.tril(torch.ones(T, T, dtype=torch.bool, device=ids.device))
+        for b in self.blocks:
+            x = b(x, ctx, causal)
+        return self.head(self.norm(x))
 
 
 def get_vision_tower(name: str, width: int = None, depth: int = None,
