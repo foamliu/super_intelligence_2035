@@ -111,11 +111,17 @@ WAITING: 0
   - 🚫 `deepseek-v4-pro-fp4`（BaiZe 那台 `agi-gateway.cxmt.com` 的名字）本机不认；🚫 `deepseek-v4-flash` **不是官方 ID**（会被别名成 `deepseek-flash`，但换机可能直接报错）。
   - 日志：`/tmp/watch_news_loop.log`；本轮 cline 原始输出：`/tmp/watch_news_cline_last.log`。
 - **仓库**：`origin = git@github.com:foamliu/super_intelligence_2035.git`，分支 `main`。
-- 📰 **中文官媒 RSS 的「活/死」实测（2026-10-03，重要）**：
-  - 🚫 **死源（返 200 但内容不更新，禁用）**：新华网 `www.xinhuanet.com/{tech,politics,world}/news_*.xml`（各 300 条，**停在 2022**）、
-    `xinhuanet english/rss/*`（**停在 2017/2018**）、人民网 `www.people.com.cn/rss/*.xml`（**停在 2021/2024**）。
-  - ✅ **活源**：**中新网** `www.chinanews.com.cn/rss/scroll-news.xml`（+ `world.xml` / `finance.xml`）→ pubDate = 当天，持续更新。
-  - 🔑 **铁律**：**"接口 200" ≠ "有新闻"** —— **必须校验 `pubDate` 新鲜度（≤72h）**，否则是在用旧闻充数。
+- 📰 **中文权威源「活/死」实测（2026-10-03，重要 —— 接源前必测 pubDate）**：
+  - 🚫 **死源（返 200 但内容不更新，禁用）**：
+    新华网 `www.xinhuanet.com/{tech,politics,world}/news_*.xml`（各 300 条，**停在 2022**）·
+    人民网 `www.people.com.cn/rss/*.xml`（**2021/2024**）·
+    **央视 `www.cctv.com/program/rss/**/index.xml`（**2006/2007**）** ·
+    `xinhuanet english/rss/*`（**2017/2018**）。
+  - ✅ **活源（必须接）**：
+    **中新网** `www.chinanews.com.cn/rss/{scroll-news,world,finance}.xml`（pubDate = 当天）·
+    **联合国新闻·中文** `news.un.org/feed/subscribe/zh/news/all/rss.xml`（2026-10-02）·
+    **央视网·新闻/科技网页** `news.cctv.com/`（**RSS 是死的，但网页活**：含当天日期，**须 HTML 抓取**）。
+  - 🔑 **铁律**：**"接口 200" ≠ "有新闻"** —— **必须校验 `pubDate` 新鲜度（≤72h）**；**连 LLM 给的源清单也要先测**（DeepSeek 推荐的央视 RSS 实测是 2006 死源）。
 
 ---
 
@@ -163,6 +169,11 @@ WAITING: 0
   - **下发 T9**：只认**条目**不认"接口 200"、**校验 pubDate ≤72h**、**活源白名单（中新网）固化进 MCP**、**死源禁用**、新华/人民要走网页列表页或放弃换活源、**中文条目数 ≥ 英文**；并重申**主线是采集真新闻**，报告是副产品。
   - **T8 修订**：按用户拍板 —— 非新闻**直接不收**（取消附录方案）。
   - → **教训：验收标准要钉在"产出物"上（条目/证据），不能停在"接口通不通"；并要教 agent"200≠有料，必须验新鲜度"。**
+- **2026-10-03（DeepSeek 建议 → 我的实测复核）** —— 用户转来 DeepSeek 建议：**央视 RSS 为首选**（给了 6 个 `cctv.com/program/rss/...` 地址）+ 联合国新闻中文。
+  - **实测**：**央视 RSS = 死源（2006/2007）**，建议**不成立**；**联合国新闻·中文 RSS = 活源（2026-10-02）**，**成立**；
+    另测出 **央视网网页是活的**（`news.cctv.com/tech/` 含当天日期）→ 央视要用须**走 HTML 抓取，不是老 RSS**。
+  - **更新 T9 活/死源清单**（活：中新网 RSS + 联合国 RSS + 央视网页；死：新华/人民/央视 RSS + xinhuanet english）。
+  - → **再证**：**"源"必须自己测过才用，连 LLM 的推荐也一样**。
 - **2026-10-03（news worker 首交付）** —— agent 完成 **T1–T4**（`c326ba8`）+ **首轮 smoke 16 条**（`3fcd854`）+ 记忆回写（`bdc20db`），已转**常态采集**（`WAITING=1`）。
   亮点：**真跑实测**（给报错原文）、**建了免 key MCP**、报告**自包含**、**360 无日期就拒收**（守"字段缺一不可"）。
   待用户拍板：**是否补正规 API key**（免 key 抓取脆弱/合规灰区）。待核：**MCP 是否已装进运行机 cline**。
