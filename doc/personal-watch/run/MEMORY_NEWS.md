@@ -1,6 +1,6 @@
 # MEMORY_NEWS.md — 观察哨 · **新闻 agent** 运行时记忆
 
-WAITING: 0
+WAITING: 1
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（`watch_news_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配它决定睡眠时长）。
 > 语义（**对齐 BaiZe**：`SLEEP_BUSY=60` / `SLEEP_WAIT=1800`）：`0` = 有近期待办（短睡 **60s** 续跑）；`1` = 无近期待办（常态，睡 **30min** 省 token）。
@@ -11,13 +11,13 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        prep_api（前期任务 T1–T4 ✅ 已完成）
-已完成:       T1 Web搜索API调研 · T2 MCP配置+stdio实测 · T3 新闻API调研 · T4 对比报告（.md+.html）
-当前动作:     T1–T4 交付完成；转常态采集，下一步做 1 轮 smoke
-下一步:       常态采集 smoke：用 MCP `web-search-free` 每类取 1~2 条 → 落盘 news/2026-10-03.md + SEEN + INDEX
-本轮新增:     0 条
+PHASE:        smoke ✅（首轮采集已完成，链路打通）
+已完成:       T1–T4 前期任务 ✅ · 首轮 smoke ✅（6 类 16 条，全部带 标题+来源+日期+链接）
+当前动作:     首轮 smoke 落盘 news/2026-10-03.md + SEEN + INDEX；更新记忆
+下一步:       常态采集（WAITING=1，睡 30min）：逐类搜索→去重→追加当日摘要；观察中文 dated 源（IT之家 RSS）
+本轮新增:     16 条（来源数：HN · IT之家 · The Register · WSJ · Lawfare · NYT · Guardian · New Yorker · LA Times · Substack · 等）
 阻塞:         无
-ERROR_COUNT:  1（首轮：模型名 deepseek-v4-pro-fp4 不被网关支持 → cline 报错退出、白睡一轮；已修）
+ERROR_COUNT:  1（历史：模型名 deepseek-v4-pro-fp4 不被网关支持 → 白睡一轮；已修）
 ```
 
 **选定方案（prep_api 结论）**
@@ -47,13 +47,19 @@ ERROR_COUNT:  1（首轮：模型名 deepseek-v4-pro-fp4 不被网关支持 → 
 - **产物**：`news/<YYYY-MM-DD>.md`（当日摘要）· `news/SEEN.md`（去重台账）· `news/INDEX.md`（索引）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`<尚未开始>`
-- **累计收录**：`0` 条
+- **上次采集窗口**：建线以来 ~ `2026-10-03`（首轮 smoke）
+- **累计收录**：`16` 条
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-03** —— ✅ **首轮 smoke 完成（6 类 16 条落盘）**。
+  - 工具：免 key MCP `web-search-free`（`search_news`=HN、`rss_latest`、`web_search`）。
+  - 落盘：`news/2026-10-03.md`（16 条，均带 标题+来源+日期+链接）· `news/SEEN.md`（16 行）· `news/INDEX.md`（当日 16 / 累计 16）。
+  - 类别覆盖：①前沿模型 3 ②安全对齐 3 ③政策治理 3 ④AI与社会 3 ⑤公司人物 2 ⑥与本书相关 2。
+  - 关键发现（方法）：**`IT之家 RSS`（ithome.com/rss/）可用且带 pubDate**，补上中文 dated 源；**360 中文召回好但无日期**（本轮未正式录入）；**CN-Bing 多关键词中文长查询质量差**（返词典噪声）→ 中文改走 360/IT之家；**arXiv cs.AI RSS 当日空**；GDELT 本轮未调（省额度）。
+  - 判据核对：16/16 条字段齐全；判断类内容已显式标"我们的观察"。**下一步常态采集（WAITING=1）。**
 - **2026-10-03** —— ✅ **前期任务 T1–T4 完成**。
   - **T1 Web 搜索调研**：核实 12 个候选（Brave/CSE/SerpAPI/Tavily/Exa/ddgs/SearXNG/Mojeek/Bocha/Bing-Azure + CN-Bing/360）。
     决定性事实：本机（中国网络）Google/DDG/Brave/Yahoo/公共 SearXNG **全部不可达**；CN-Bing(200)、360(200)、Tavily/Exa/SerpAPI/Bocha **可达**。
