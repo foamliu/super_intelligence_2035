@@ -1756,3 +1756,71 @@ openAiApiKey 72 02_088
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 11 · 2026-10-04 07:17:50 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST / TIME / CLINE VERSION ==="; hostname; date '+%F %T %Z'
+CLINE=/home/app.e0031982/.bun/bin/cline
+"$CLINE" --version 2>&1 | head -3
+
+echo; echo "=== 1. [.29] proxy / openai 相关 env（key 已脱敏）==="
+env | grep -iE 'proxy|openai|api_type' | sed 's/\(key=[^ ]\{0,8\}\)[^ ]*/\1.../' | cut -c1-160
+
+echo; echo "=== 2. [.12] 同一组 env + cline 版本（对照）==="
+timeout 25 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'echo "-- cline --"; /home/app.e0031982/.bun/bin/cline --version 2>&1 | head -2; echo "-- env --"; env | grep -iE "proxy|openai|api_type" | sed "s/\(key=[^ ]\{0,8\}\)[^ ]*/\1.../" | cut -c1-160' 2>&1 | cut -c1-170 || echo "ssh .12 FAILED"
+
+echo; echo "=== 3. [.29] cline smoke 完整错误（head 40，找 'Interesting:' 真解释）==="
+cd /tmp && timeout 120 "$CLINE" -c /tmp -m deepseek-v4-pro-fp4 --auto-approve true -t 60 "reply with exactly OK" 2>&1 | head -40 | cut -c1-190
+
+echo; echo "=== 4. [.29] ⭐ smoke【剥掉全部 proxy 环境变量】—— 期待变绿 ==="
+cd /tmp && env -u https_proxy -u http_proxy -u HTTPS_PROXY -u HTTP_PROXY -u all_proxy -u ALL_PROXY -u no_proxy -u NO_PROXY \
+  timeout 120 "$CLINE" -c /tmp -m deepseek-v4-pro-fp4 --auto-approve true -t 60 "reply with exactly OK" 2>&1 | head -20 | cut -c1-190
+
+echo; echo "=== 5. [.29] 链路对照：直连 vs 走代理 ==="
+timeout 20 curl -s -o /dev/null -w 'no-proxy  -> %{http_code}\n' "${OPENAI_API_URL:-http://agi-gateway.cxmt.com/v1}/models" 2>&1
+timeout 20 curl -s -o /dev/null -w 'via-proxy -> %{http_code}\n' -x "${https_proxy:-${http_proxy}}" "${OPENAI_API_URL:-http://agi-gateway.cxmt.com/v1}/models" 2>&1
+echo "-- no_proxy 当前值: [${no_proxy:-<empty>}] --"
+
+echo; echo "=== 6. 首个 Forbidden 的上下文（含时间戳）==="
+grep -n -B4 -A1 'Forbidden' /tmp/baize_pretrain_loop.log 2>/dev/null | head -24 | cut -c1-175
+
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST / TIME / CLINE VERSION ===
+whag0pgpuap29
+2026-10-04 07:17:50 CST
+3.0.51
+
+=== 1. [.29] proxy / openai 相关 env（key 已脱敏）===
+OPENAI_API_KEY=01_54973_258234ec-c44c-4e24-b124-1073fb5d1f78
+API_TYPE=openai
+https_proxy=http://172.19.92.25:13128
+OPENAI_API_URL=http://agi-gateway.cxmt.com/v1
+
+=== 2. [.12] 同一组 env + cline 版本（对照）===
+-- cline --
+/usr/bin/env: ‘bun’: No such file or directory
+-- env --
+
+=== 3. [.29] cline smoke 完整错误（head 40，找 'Interesting:' 真解释）===
+[31merror:[0m Forbidden
+
+=== 4. [.29] ⭐ smoke【剥掉全部 proxy 环境变量】—— 期待变绿 ===
+[31merror:[0m Forbidden
+
+=== 5. [.29] 链路对照：直连 vs 走代理 ===
+no-proxy  -> 200
+via-proxy -> 503
+-- no_proxy 当前值: [<empty>] --
+
+=== 6. 首个 Forbidden 的上下文（含时间戳）===
+
+=== DONE ===
+```
