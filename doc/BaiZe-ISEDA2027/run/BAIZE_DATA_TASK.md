@@ -56,6 +56,30 @@
 
 **产出**：更新 `DISK_CLEANUP_INVENTORY.md` —— **实际回收合计（`df` 前后对比）+ `servers` 探查结论**；口径仍**贴命令 + 原始输出**。
 
+### 🆕 运维指令 · 2026-10-03（**D-CLEAN-3：删除 `servers/`（974 G）**；`nemo_experiments` R2 ckpt **不删**）
+
+> 运维拍板（2026-10-03）：① ✅ **`servers` 可以清理**；② 🚫 **`nemo_experiments` 的 R2 近期 ckpt 先不清**（**保留**）。
+> ⚠️ 这是 **974 G 的 `rm -rf`** → **必须先过下面 3 道前置检查**；**任一不过 → 停手 + 报告，不要删**。
+
+**前置检查（三项全过才删；每条贴命令 + 原始输出）**：
+
+| # | 查什么 | 怎么查 | 不过怎么办 |
+|:--|:--|:--|:--|
+| **P1** | **无进程占用** | `fuser -vm /nas_train/app.e0031982/servers 2>&1 \| head -20`；并核 `pgrep -af` 是否有训练/推理在读该目录 | **停手报告** |
+| **P2** | **无近期活动** | `find /nas_train/app.e0031982/servers -newermt '-7 days' -print 2>/dev/null \| head -20`（应为空或仅无害项） | 有近期写入 → **停手报告** |
+| **P3** | **无脚本引用** | 在共享工作副本内 grep：`grep -rn 'app.e0031982/servers' /nas_train/app.e0031982/code --include='*.sh' --include='*.py' --exclude-dir=.git 2>/dev/null \| head -10` | 被引用 → **停手报告** |
+
+**执行（只有 P1/P2/P3 全过才做）**：
+1. 删前记录：`df -BG /nas_train | tail -1` + `timeout 300 du -sh /nas_train/app.e0031982/servers`（**带 timeout**）。
+2. **列 symlink**（供留证）：`find /nas_train/app.e0031982/servers -maxdepth 3 -type l -printf '%p -> %l\n' 2>/dev/null | head -40`
+   - 说明：`rm -rf` **不跟随**符号链接（只删链接本身）→ 指向 `servers` **外部**的目标**不受影响**；但仍要列出发现的 symlink。
+3. `rm -rf /nas_train/app.e0031982/servers`
+4. 删后记录：`df -BG /nas_train | tail -1`，并核 `[ -d .../servers ] && echo STILL || echo GONE`。
+
+**🚫 明确不动**：`nemo_experiments` 的 **R2 近期 ckpt**（`p1_*`/`p2_*`/`p3_*`/`p5a_*`/`p7_*` ~135 G，**保留**）与 **`p5b`**（live）。
+
+**产出**：更新 `run/DISK_CLEANUP_INVENTORY.md` **§7**（P1/P2/P3 结果 + 删前后 `df` + 实际回收 + symlink 清单）；**贴命令 + 原始输出，不许猜**。
+
 ### 📉 记忆维护规程（2026-10-03 运维新增，**硬性**）
 > 理由：`MEMORY_*.md` **每次唤醒都被 agent 全文读取** → 越大越烧 token。当前 `MEMORY_DATA.md` ≈ **85KB（超标）**。
 - **上限**：本线 `MEMORY_DATA.md` 控制在 **≤ 32KB**；**下次唤醒立即执行一次滚动归档**。
