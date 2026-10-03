@@ -1,0 +1,26 @@
+{
+  "_comment": "research 线检索策略（R2 固化）。每轮采集直接读本文件，不要每轮现拼。改关注领域请改 WATCH_RESEARCH_TASK.md §1 并同步本表。",
+  "endpoint": "https://export.arxiv.org/api/query",
+  "rate_limit_seconds": 3.0,
+  "timeout_seconds": 30,
+  "retries": 2,
+  "retry_backoff_seconds": 20.0,
+  "window_hours": 72,
+  "max_results_per_query": 40,
+  "sort_by": "submittedDate",
+  "sort_order": "descending",
+  "queries": [
+    {"area": "LLM", "name": "llm-large-language-model", "search_query": "cat:cs.CL AND all:\"large language model\""},
+    {"area": "LLM", "name": "llm-long-context", "search_query": "cat:cs.CL AND all:\"long context\""},
+    {"area": "LLM", "name": "llm-scaling-law", "search_query": "cat:cs.LG AND all:\"scaling law\""},
+    {"area": "SLM", "name": "slm-small-language-model", "search_query": "cat:cs.CL AND all:\"small language model\""},
+    {"area": "SLM", "name": "slm-on-device", "search_query": "cat:cs.LG AND all:\"on-device\""},
+    {"area": "多模态", "name": "mm-vision-language-model", "search_query": "cat:cs.CV AND all:\"vision-language model\""},
+    {"area": "多模态", "name": "mm-multimodal", "search_query": "cat:cs.CV AND all:\"multimodal\""},
+    {"area": "agent harness", "name": "agent-swe-bench", "search_query": "cat:cs.SE AND all:\"SWE-bench\""},
+    {"area": "agent harness", "name": "agent-tool-use", "search_query": "cat:cs.AI AND all:\"tool use\""},
+    {"area": "agent harness", "name": "agent-multi-agent", "search_query": "cat:cs.AI AND all:\"multi-agent\""},
+    {"area": "邻域", "name": "nb-retrieval-augmented", "search_query": "cat:cs.CL AND all:\"retrieval augmented\""},
+    {"area": "邻域", "name": "nb-alignment", "search_query": "cat:cs.AI AND all:\"alignment\""}
+  ]
+}

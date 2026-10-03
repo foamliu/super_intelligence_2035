@@ -1,0 +1,5412 @@
+{
+ "generated": "2026-10-03T07:00:00+00:00",
+ "endpoint": "https://export.arxiv.org/api/query",
+ "window_hours": 72,
+ "n_kept": 214,
+ "per_query": [
+  {
+   "search_query": "cat:cs.CL AND all:\"large language model\"",
+   "status": 200,
+   "content_type": "application/atom+xml; charset=utf-8",
+   "ok": true,
+   "error": null,
+   "total_results": 38691,
+   "n_entries": 40,
+   "area": "LLM",
+   "name": "llm-large-language-model",
+   "kept": 40
+  },
+  {
+   "search_query": "cat:cs.CL AND all:\"long context\"",
+   "status": 200,
+   "content_type": "application/atom+xml; charset=utf-8",
+   "ok": true,
+   "error": null,
+   "total_results": 1800,
+   "n_entries": 40,
+   "area": "LLM",
+   "name": "llm-long-context",
+   "kept": 5
+  },
+  {
+   "search_query": "cat:cs.LG AND all:\"scaling law\"",
+   "status": 200,
+   "content_type": "application/atom+xml; charset=utf-8",
+   "ok": true,
+   "error": null,
+   "total_results": 983,
+   "n_entries": 40,
+   "area": "LLM",
+   "name": "llm-scaling-law",
+   "kept": 6
+  },
+  {
+   "search_query": "cat:cs.CL AND all:\"small language model\"",
+   "status": 200,
+   "content_type": "application/atom+xml; charset=utf-8",
+   "ok": true,
+   "error": null,
+   "total_results": 734,
+   "n_entries": 40,
+   "area": "SLM",
+   "name": "slm-small-language-model",
+   "kept": 2
+  },
+  {
+   "search_query": "cat:cs.LG AND all:\"on-device\"",
+   "status": 200,
+   "content_type": "application/atom+xml; charset=utf-8",
+   "ok": true,
+   "error": null,
+   "total_results": 10914,
+   "n_entries": 40,
+   "area": "SLM",
+   "name": "slm-on-device",
+   "kept": 14
+  },
+  {
+   "search_query": "cat:cs.CV AND all:\"vision-language model\"",
+   "status": 200,
+   "content_type": "application/atom+xml; charset=utf-8",
+   "ok": true,
+   "error": null,
+   "total_results": 9127,
+   "n_entries": 40,
+   "area": "多模态",
+   "name": "mm-vision-language-model",
+   "kept": 40
+  },
+  {
+   "search_query": "cat:cs.CV AND all:\"multimodal\"",
+   "status": 200,
+   "content_type": "application/atom+xml; charset=utf-8",
+   "ok": true,
+   "error": null,
+   "total_results": 16235,
+   "n_entries": 40,
+   "area": "多模态",
+   "name": "mm-multimodal",
+   "kept": 28
+  },
+  {
+   "search_query": "cat:cs.SE AND all:\"SWE-bench\"",
+   "status": 200,
+   "content_type": "application/atom+xml; charset=utf-8",
+   "ok": true,
+   "error": null,
+   "total_results": 373,
+   "n_entries": 40,
+   "area": "agent harness",
+   "name": "agent-swe-bench",
+   "kept": 2
+  },
+  {
+   "search_query": "cat:cs.AI AND all:\"tool use\"",
+   "status": 200,
+   "content_type": "application/atom+xml; charset=utf-8",
+   "ok": true,
+   "error": null,
+   "total_results": 1562,
+   "n_entries": 40,
+   "area": "agent harness",
+   "name": "agent-tool-use",
+   "kept": 12
+  },
+  {
+   "search_query": "cat:cs.AI AND all:\"multi-agent\"",
+   "status": null,
+   "content_type": "",
+   "ok": false,
+   "error": "request failed: HTTPSConnectionPool(host='export.arxiv.org', port=443): Read timed out. (read timeout=30)",
+   "total_results": null,
+   "n_entries": 0,
+   "area": "agent harness",
+   "name": "agent-multi-agent",
+   "kept": 0
+  },
+  {
+   "search_query": "cat:cs.CL AND all:\"retrieval augmented\"",
+   "status": 200,
+   "content_type": "application/atom+xml; charset=utf-8",
+   "ok": true,
+   "error": null,
+   "total_results": 3888,
+   "n_entries": 40,
+   "area": "邻域",
+   "name": "nb-retrieval-augmented",
+   "kept": 3
+  },
+  {
+   "search_query": "cat:cs.AI AND all:\"alignment\"",
+   "status": 200,
+   "content_type": "application/atom+xml; charset=utf-8",
+   "ok": true,
+   "error": null,
+   "total_results": 21503,
+   "n_entries": 40,
+   "area": "邻域",
+   "name": "nb-alignment",
+   "kept": 35
+  }
+ ],
+ "multiagent_retry": {
+  "search_query": "cat:cs.AI AND all:\"multi-agent\"",
+  "status": 200,
+  "content_type": "application/atom+xml; charset=utf-8",
+  "ok": true,
+  "error": null,
+  "total_results": 7753,
+  "n_entries": 40
+ },
+ "items": [
+  {
+   "arxiv_id": "2610.02207",
+   "title": "One Basis to Animate Them All: Gaussian Blendshape Distillation for Real-Time Avatars",
+   "authors": [
+    "Ramazan Fazylov",
+    "Stamatis Lefkimmiatis",
+    "Ivan Laptev"
+   ],
+   "published": "2026-10-01T17:59:58Z",
+   "updated": "2026-10-01T17:59:58Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI",
+    "cs.HC",
+    "cs.LG"
+   ],
+   "areas": [
+    "SLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02207v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02207v1",
+   "matched_query": "slm-on-device"
+  },
+  {
+   "arxiv_id": "2610.02206",
+   "title": "KaliBench: A Fine-Grained Benchmark for Cybersecurity Tool Use on Kali Linux with Runtime-Free Verifiable Rewards",
+   "authors": [
+    "Pengfei Li",
+    "Naufal Suryanto",
+    "Sicheng Zhang",
+    "Muzammal Naseer"
+   ],
+   "published": "2026-10-01T17:59:55Z",
+   "updated": "2026-10-01T17:59:55Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI",
+    "cs.CR"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02206v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02206v1",
+   "matched_query": "agent-tool-use"
+  },
+  {
+   "arxiv_id": "2610.02201",
+   "title": "SILSA: Sliding-Window Slice Latents for Topology-Preserving High-Resolution 3D Generation",
+   "authors": [
+    "Tianjiao Yu",
+    "Xinzhuo Li",
+    "Yifan Shen",
+    "Ying Shen",
+    "Kiet A. Nguyen",
+    "Adheesh Sunil Juvekar",
+    "Ismini Lourentzou"
+   ],
+   "published": "2026-10-01T17:59:46Z",
+   "updated": "2026-10-01T17:59:46Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI",
+    "cs.LG"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02201v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02201v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.02200",
+   "title": "VISTA: A Visual Harness for Reasoning in an Interactive World",
+   "authors": [
+    "Qiushi Han",
+    "Keya Hu",
+    "Linlu Qiu",
+    "Cathy Wu",
+    "Kaiming He"
+   ],
+   "published": "2026-10-01T17:59:45Z",
+   "updated": "2026-10-01T17:59:45Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02200v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02200v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2610.02186",
+   "title": "Higher-Order Molecular Grammars for Generative and Foundation Models in Chemistry",
+   "authors": [
+    "Yiming Huang",
+    "Yujie Zeng",
+    "Vijay Prakash Dwivedi",
+    "Simone Foti",
+    "Jianmin Wang",
+    "Jure Leskovec",
+    "Tolga Birdal"
+   ],
+   "published": "2026-10-01T17:58:45Z",
+   "updated": "2026-10-01T17:58:45Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02186v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02186v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.02150",
+   "title": "From Knowledge Access to Source Learning: Developing Source-Specific Competence",
+   "authors": [
+    "Lucheng Fu",
+    "Kejing Xia",
+    "Yiyang Wang",
+    "Yiqiao Jin",
+    "Jinjin He",
+    "Xiyuan Yang",
+    "Haoxin Liu",
+    "Ye Yu",
+    "Haibo Jin",
+    "Yijia Xiao",
+    "Wenke Lee",
+    "B. Aditya Prakash",
+    "Haohan Wang"
+   ],
+   "published": "2026-10-01T17:50:16Z",
+   "updated": "2026-10-01T17:50:16Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI",
+    "cs.LG"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02150v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02150v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.02142",
+   "title": "Keyword Harnesses Fail Open: A Cheap Diagnostic Ladder for Tool-Use Claims in Small Language Models",
+   "authors": [
+    "Juan S. Santillana"
+   ],
+   "published": "2026-10-01T17:46:38Z",
+   "updated": "2026-10-01T17:46:38Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "SLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02142v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02142v1",
+   "matched_query": "slm-small-language-model"
+  },
+  {
+   "arxiv_id": "2610.02136",
+   "title": "MIRTO: a registration-gated, multiverse-tested evaluation protocol for unsupervised anomaly segmentation in brain MRI",
+   "authors": [
+    "Negin Kafee Hernashki",
+    "Soumick Chatterjee"
+   ],
+   "published": "2026-10-01T17:44:22Z",
+   "updated": "2026-10-01T17:44:22Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI",
+    "eess.IV",
+    "physics.med-ph"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02136v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02136v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.02123",
+   "title": "Harnessing Domain Specialists in Multimodal Mixture-of-Experts for Efficient Adaptation",
+   "authors": [
+    "Damiano Marsili",
+    "Raphi Kang",
+    "Aditya Mehta",
+    "Pietro Perona",
+    "Georgia Gkioxari"
+   ],
+   "published": "2026-10-01T17:37:13Z",
+   "updated": "2026-10-01T17:37:13Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02123v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02123v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2610.02117",
+   "title": "Where-OPD: Spatially Guided On-Policy Self-Distillation of MLLMs with Synthetic Scenes",
+   "authors": [
+    "Sophia Sirko-Galouchenko",
+    "Monika Wysoczanska",
+    "Andrei Bursuc",
+    "Nicolas Thome",
+    "Spyros Gidaris"
+   ],
+   "published": "2026-10-01T17:34:10Z",
+   "updated": "2026-10-01T17:34:10Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI",
+    "cs.CL",
+    "cs.LG"
+   ],
+   "areas": [
+    "LLM",
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02117v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02117v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.02092",
+   "title": "Scalable, Transferable Meta-network for Data Selection Requires a Different Loss (and Why the Obvious Choice is Problematic)",
+   "authors": [
+    "Zilin Du",
+    "Bowen Yang",
+    "Boyang Albert Li"
+   ],
+   "published": "2026-10-01T17:23:29Z",
+   "updated": "2026-10-01T17:23:29Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI",
+    "cs.LG"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02092v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02092v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.02091",
+   "title": "GeoLatent: Geometry-Guided Latent Structuring with Routed Optimization for 3D Reasoning",
+   "authors": [
+    "Yakun Zhu",
+    "Yi Bin",
+    "Yujuan Ding",
+    "Zheng Wang",
+    "Pengpeng Zeng",
+    "Duo Peng",
+    "Jingkuan Song",
+    "Heng Tao Shen"
+   ],
+   "published": "2026-10-01T17:22:40Z",
+   "updated": "2026-10-01T17:22:40Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "多模态",
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02091v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02091v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.02089",
+   "title": "HumanoidToolBench: Benchmarking Humanoid Tool Use from Selection to Mobile Execution",
+   "authors": [
+    "Kyochul Jang",
+    "Seohyeon Park",
+    "Ohchul Kwon",
+    "Sangjun Park",
+    "Junhyeok Choi",
+    "Seungyeop Yi",
+    "Chaeyun Kim",
+    "Sangkyu Lee",
+    "Idan Szpektor",
+    "Avi Caciularu",
+    "Jongmin Park",
+    "Youngjae Yu"
+   ],
+   "published": "2026-10-01T17:21:54Z",
+   "updated": "2026-10-01T17:21:54Z",
+   "category": "cs.RO",
+   "categories": [
+    "cs.RO",
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02089v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02089v1",
+   "matched_query": "agent-tool-use"
+  },
+  {
+   "arxiv_id": "2610.02068",
+   "title": "Sequential Capacity of Quantum Processes with Finite Memory",
+   "authors": [
+    "Yibin Wang"
+   ],
+   "published": "2026-10-01T17:08:19Z",
+   "updated": "2026-10-01T17:08:19Z",
+   "category": "quant-ph",
+   "categories": [
+    "quant-ph",
+    "cs.LG"
+   ],
+   "areas": [
+    "SLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02068v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02068v1",
+   "matched_query": "slm-on-device"
+  },
+  {
+   "arxiv_id": "2610.02045",
+   "title": "Form and Void: Entangled Composition through an Autonomous AI Agent",
+   "authors": [
+    "Shiwen Wang",
+    "Jian Yang",
+    "Xu Wang",
+    "Xincan Wang",
+    "Weiming Dong"
+   ],
+   "published": "2026-10-01T16:55:37Z",
+   "updated": "2026-10-01T16:55:37Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.MA"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02045v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02045v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2610.02039",
+   "title": "CARM: Cancellation-Aware Response Masking for LLM Reinforcement Learning",
+   "authors": [
+    "Yafei Zhang",
+    "Songshuo Lu",
+    "Sicong Liao",
+    "Zhi Chen",
+    "Yaohua Tang"
+   ],
+   "published": "2026-10-01T16:51:56Z",
+   "updated": "2026-10-01T16:51:56Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.AI",
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02039v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02039v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.02038",
+   "title": "Mimir: Physics-Grounded LLM Agents for Long-Horizon Irrigation Control",
+   "authors": [
+    "Yimeng Liu",
+    "Mi Zhang",
+    "Younsuk Dong",
+    "Zhichao Cao"
+   ],
+   "published": "2026-10-01T16:50:52Z",
+   "updated": "2026-10-01T16:50:52Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02038v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02038v1",
+   "matched_query": "agent-tool-use"
+  },
+  {
+   "arxiv_id": "2610.02036",
+   "title": "Global Coherence: When Every Agent Is Right and the Team Is Still Wrong - A Local-to-Global Semantic Foundation for Multi-Agent Collaboration",
+   "authors": [
+    "Xin Heng"
+   ],
+   "published": "2026-10-01T16:49:40Z",
+   "updated": "2026-10-01T16:49:40Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02036v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02036v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2610.02023",
+   "title": "SPHERE: Adaptive VR Indoor Scene Generation via LLM-Enhanced Spatial Preference Learning and Human-in-the-Loop RL",
+   "authors": [
+    "Hyeonmin Lee",
+    "Zheng Wei",
+    "Kyungmin Kwon",
+    "Jumin Seo",
+    "Jiwon Park",
+    "Hayoung Oh"
+   ],
+   "published": "2026-10-01T16:43:27Z",
+   "updated": "2026-10-01T16:43:27Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.HC"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02023v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02023v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.02022",
+   "title": "Old Ideas, Novel Problems: The Instability of LLM-Based Novelty Evaluation",
+   "authors": [
+    "Noy Sternlicht",
+    "Simra Shahid",
+    "Peter Jansen",
+    "Daniel S. Weld",
+    "Pao Siangliulue",
+    "Tom Hope"
+   ],
+   "published": "2026-10-01T16:43:18Z",
+   "updated": "2026-10-01T16:43:18Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02022v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02022v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.02021",
+   "title": "Task-Adaptive Grounded 3D-Programmers Using 2D VLMs",
+   "authors": [
+    "Arman Raayatsanati",
+    "Sombit Dey",
+    "Anna-Maria Halacheva",
+    "Jan-Nico Zaech",
+    "Luc Van Gool",
+    "Danda Pani Paudel"
+   ],
+   "published": "2026-10-01T16:43:17Z",
+   "updated": "2026-10-01T16:43:17Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02021v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02021v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.02019",
+   "title": "Controllable Multi-label Video Safety Detection via Adaptive Tversky Policy Optimization",
+   "authors": [
+    "Guangyu Yang",
+    "Jingbiao Mei",
+    "Mingsheng Sun",
+    "Jinghong Chen",
+    "Yingtong Bu",
+    "Pengda Qin",
+    "Da Chen",
+    "Bill Byrne"
+   ],
+   "published": "2026-10-01T16:42:30Z",
+   "updated": "2026-10-01T16:42:30Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02019v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02019v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.02005",
+   "title": "Counting Moves, Weighing Voices: Bayesian Dialectical Argumentation for Calibrated Multi-LLM Councils under Persistent Adversaries",
+   "authors": [
+    "Ionel Eduard Stan",
+    "Paolo Napoletano"
+   ],
+   "published": "2026-10-01T16:34:50Z",
+   "updated": "2026-10-01T16:34:50Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02005v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02005v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2610.02002",
+   "title": "Mem++: Non-Destructive Memory for Long-Term Organizational LLM Agents",
+   "authors": [
+    "Ahmad Yehia",
+    "Aly O. Abdelkareem",
+    "Islam Ahmed",
+    "Hesham Omran",
+    "Khaled Alashmouny",
+    "Christian Claudel",
+    "Abduallah Mohamed"
+   ],
+   "published": "2026-10-01T16:32:38Z",
+   "updated": "2026-10-01T16:32:38Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.02002v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.02002v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01999",
+   "title": "From Reasoning Failures to Composable Video Spatial Intelligence",
+   "authors": [
+    "Pengzhan Sun",
+    "Junbin Xiao",
+    "Ramanathan Rajaraman",
+    "Shiu-hong Kao",
+    "Angela Yao"
+   ],
+   "published": "2026-10-01T16:31:19Z",
+   "updated": "2026-10-01T16:31:19Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01999v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01999v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01984",
+   "title": "Universal Byte-Level Encoding: UTF-8/UTF-16 Routing to Reduce Cross-Script Token-Budget Disparities",
+   "authors": [
+    "Hyunsik Kim",
+    "Youngmoon Jung"
+   ],
+   "published": "2026-10-01T16:26:10Z",
+   "updated": "2026-10-01T16:26:10Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.LG"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01984v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01984v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01981",
+   "title": "Universal interpolation for deep residual self-attention networks",
+   "authors": [
+    "Sibylle Marcotte",
+    "Joan Bruna"
+   ],
+   "published": "2026-10-01T16:25:13Z",
+   "updated": "2026-10-01T16:25:13Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01981v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01981v1",
+   "matched_query": "llm-scaling-law"
+  },
+  {
+   "arxiv_id": "2610.01973",
+   "title": "Token-Level Video Reinforcement Learning",
+   "authors": [
+    "Yifan Wang",
+    "Gordon Guocheng Qian",
+    "Yanyu Li",
+    "Anil Kag",
+    "Yun Fu"
+   ],
+   "published": "2026-10-01T16:22:41Z",
+   "updated": "2026-10-01T16:22:41Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01973v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01973v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01963",
+   "title": "Counterfactual Auditing of Bias in Open-Source Large Language Models for Clinical Triage",
+   "authors": [
+    "Manar Aljohani",
+    "Brandon Ho",
+    "Kenneth McKinley",
+    "Dennis Ren",
+    "Xuan Wang"
+   ],
+   "published": "2026-10-01T16:17:43Z",
+   "updated": "2026-10-01T16:17:43Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.CL",
+    "cs.LG"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01963v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01963v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01962",
+   "title": "SIEVE: Selective attention-value Suppression for Vision-Language Models Unlearning",
+   "authors": [
+    "Si Qi Goh",
+    "Cap Dang Xuan Kiet",
+    "Tat-Jen Cham",
+    "Kwok-Yan Lam"
+   ],
+   "published": "2026-10-01T16:16:53Z",
+   "updated": "2026-10-01T16:16:53Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01962v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01962v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01947",
+   "title": "Latent JEPA: Abstract Future Prediction for Latent Reasoning in Chemistry",
+   "authors": [
+    "Xinjian Zhao",
+    "Yaoyao Xu",
+    "Xuemin Chen",
+    "Xiaozhuang Song",
+    "Tianshu Yu"
+   ],
+   "published": "2026-10-01T16:11:23Z",
+   "updated": "2026-10-01T16:11:23Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01947v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01947v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01944",
+   "title": "Anti-Persona: Disrupting Unauthorized Identity Binding and Recognition in Personalized Vision--Language Models",
+   "authors": [
+    "Abhishek Basu",
+    "Fahad Shamshad",
+    "Karthik Nandakumar"
+   ],
+   "published": "2026-10-01T16:10:33Z",
+   "updated": "2026-10-01T16:10:33Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01944v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01944v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01939",
+   "title": "Fewer Tokens, Better Action: GPT-6 Astra Robot Agents with 14% Higher Success Rate but 65% Fewer Tokens",
+   "authors": [
+    "Ruiyang Si",
+    "Jianxin Bi",
+    "Shunyu Yang",
+    "Rui Ni",
+    "Wenbo Huang",
+    "Qiang Wang",
+    "Shulong Jiang",
+    "Duomin Wang",
+    "Xiuyu Li",
+    "Haiwen Feng",
+    "Zhen Dong",
+    "Daquan Zhou"
+   ],
+   "published": "2026-10-01T16:07:49Z",
+   "updated": "2026-10-01T16:07:49Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01939v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01939v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01938",
+   "title": "A rubric landscape for evaluating clinical reasoning in large language models: what exists, what is missing, and what needs to be combined",
+   "authors": [
+    "Zhangshu Joshua Jiang",
+    "Zina Ibrahim",
+    "James T. Teo"
+   ],
+   "published": "2026-10-01T16:07:12Z",
+   "updated": "2026-10-01T16:07:12Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01938v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01938v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01921",
+   "title": "Cross-Lingual Alignment for Decoder-Only Models using MoE Routers",
+   "authors": [
+    "Lucas Bandarkar",
+    "Clark Peng",
+    "Ahmed Haj Ahmed",
+    "Aditi Khandelwal",
+    "Nanyun Peng"
+   ],
+   "published": "2026-10-01T15:56:54Z",
+   "updated": "2026-10-01T15:56:54Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01921v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01921v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01917",
+   "title": "MoLE: Mixture of Latent Experts for Complementary Visual Reasoning",
+   "authors": [
+    "Yingcheng Liu",
+    "Tianyi Jiang",
+    "Yujuan Ding",
+    "jiangbo Ai",
+    "Xun Jiang",
+    "Guoqing Wang",
+    "Wei Ye",
+    "Yi Bin"
+   ],
+   "published": "2026-10-01T15:54:37Z",
+   "updated": "2026-10-01T15:54:37Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI",
+    "cs.CL"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01917v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01917v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01893",
+   "title": "A Structured State Space Sequence Model for Multi-Class Classification of Malware",
+   "authors": [
+    "Emmanuela Andam",
+    "Rana Shaaban",
+    "Emanuel Grant",
+    "Naima Kaabouch"
+   ],
+   "published": "2026-10-01T15:42:56Z",
+   "updated": "2026-10-01T15:42:56Z",
+   "category": "cs.CR",
+   "categories": [
+    "cs.CR",
+    "cs.AI",
+    "cs.LG"
+   ],
+   "areas": [
+    "SLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01893v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01893v1",
+   "matched_query": "slm-on-device"
+  },
+  {
+   "arxiv_id": "2610.01890",
+   "title": "Unsupervised Domain Adaptation for Enhanced Radiometer Image Precipitation Estimation using Conditional Flow Matching",
+   "authors": [
+    "Victor Enescu",
+    "Assaad Zeghina",
+    "Matthieu Meignin",
+    "Nicolas Viltard",
+    "Cécile Mallet"
+   ],
+   "published": "2026-10-01T15:40:49Z",
+   "updated": "2026-10-01T15:40:49Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01890v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01890v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01882",
+   "title": "Flowing Faster to Coordinate: One-Step Online Multi-Agent Flow Policies",
+   "authors": [
+    "Zhuoran Li",
+    "Yunzhan Li",
+    "Xun Wang",
+    "Yihan Du",
+    "Longbo Huang"
+   ],
+   "published": "2026-10-01T15:36:31Z",
+   "updated": "2026-10-01T15:36:31Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01882v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01882v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2610.01864",
+   "title": "From Isolated Feature to Orbits: Discovering Music Concepts via Multi-SAE Alignment",
+   "authors": [
+    "Liwei Lin",
+    "Gus Xia"
+   ],
+   "published": "2026-10-01T15:25:51Z",
+   "updated": "2026-10-01T15:25:51Z",
+   "category": "cs.SD",
+   "categories": [
+    "cs.SD",
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01864v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01864v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01861",
+   "title": "AVSD-Scenes: A Dataset for Audio-Visual Description of Urban Scenes",
+   "authors": [
+    "Dhanunjaya Varma Devalraju",
+    "Arshdeep Singh",
+    "Mark D. Plumbley"
+   ],
+   "published": "2026-10-01T15:24:23Z",
+   "updated": "2026-10-01T15:24:23Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.SD",
+    "eess.AS"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01861v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01861v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01847",
+   "title": "Detecting Inconsistencies in Model Specifications with LLM-as-Verifier Reasoning",
+   "authors": [
+    "Zichen Xie",
+    "Mrigank Pawagi",
+    "Lize Shao",
+    "Yang Hu",
+    "Wenxi Wang"
+   ],
+   "published": "2026-10-01T15:13:31Z",
+   "updated": "2026-10-01T15:13:31Z",
+   "category": "cs.SE",
+   "categories": [
+    "cs.SE",
+    "cs.AI",
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM",
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01847v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01847v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01826",
+   "title": "Token Communication-Assisted Collaborative Embodied Artificial Intelligence: Concepts, Framework, and Opportunities",
+   "authors": [
+    "Peng Yi",
+    "Ying-Chang Liang"
+   ],
+   "published": "2026-10-01T15:01:50Z",
+   "updated": "2026-10-01T15:01:50Z",
+   "category": "eess.SP",
+   "categories": [
+    "eess.SP",
+    "cs.AI",
+    "cs.MA"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01826v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01826v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01821",
+   "title": "Beyond Linear Concepts: Discovering and Aligning Non-Linear Concept Manifolds in Large Language Models",
+   "authors": [
+    "Tido Specht",
+    "Elias Benedict Krey",
+    "Nils Neukirch",
+    "Nils Strodthoff"
+   ],
+   "published": "2026-10-01T14:55:03Z",
+   "updated": "2026-10-01T14:55:03Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01821v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01821v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01794",
+   "title": "Continuous Conditioning of VLAs with Augmenting EMG and Visual Task Descriptors",
+   "authors": [
+    "Edward W. Staley",
+    "Connor O. Pyles",
+    "Rahul Hingorani",
+    "Frank Camargo",
+    "Griffin Milsap",
+    "Jared Markowitz",
+    "Matthew S. Fifer",
+    "Michael Wolmetz"
+   ],
+   "published": "2026-10-01T14:37:05Z",
+   "updated": "2026-10-01T14:37:05Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.RO"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01794v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01794v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2610.01792",
+   "title": "Learnt Attacks on Quantum Key Distribution under Channel Noise and Device Drift",
+   "authors": [
+    "Marcel Mordarski",
+    "Benjamin Gras",
+    "Abdelrahman Shehata",
+    "Daniel Budina",
+    "Roberto Bondesan"
+   ],
+   "published": "2026-10-01T14:36:30Z",
+   "updated": "2026-10-01T14:36:30Z",
+   "category": "quant-ph",
+   "categories": [
+    "quant-ph",
+    "cs.CR",
+    "cs.IT",
+    "cs.LG"
+   ],
+   "areas": [
+    "SLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01792v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01792v1",
+   "matched_query": "slm-on-device"
+  },
+  {
+   "arxiv_id": "2610.01789",
+   "title": "iADD: Improving Alignment and Diversity in Diffusion Policy Optimization",
+   "authors": [
+    "Ashok Prasad Neupane",
+    "Saugat Adhikari",
+    "Pramish Paudel",
+    "Ajad Chhatkuli",
+    "Danda Pani Paudel"
+   ],
+   "published": "2026-10-01T14:35:26Z",
+   "updated": "2026-10-01T14:35:26Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01789v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01789v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01785",
+   "title": "VETO: Video Efficient Token Optimization for Vision Language Models",
+   "authors": [
+    "Gueter Josmy Faure",
+    "Hao Ping Wang",
+    "Min-Hung Chen",
+    "Winston H. Hsu"
+   ],
+   "published": "2026-10-01T14:32:43Z",
+   "updated": "2026-10-01T14:32:43Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI",
+    "cs.CL"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01785v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01785v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01767",
+   "title": "A Matryoshka Hierarchical RAG for Efficient Multi-Hop Question Answering",
+   "authors": [
+    "Gianluca Bonifazi",
+    "Christopher Buratti",
+    "Michele Marchetti",
+    "Federica Parlapiano",
+    "Giulia Quaglieri",
+    "Davide Traini",
+    "Domenico Ursino",
+    "Luca Virgili"
+   ],
+   "published": "2026-10-01T14:25:23Z",
+   "updated": "2026-10-01T14:25:23Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.IR"
+   ],
+   "areas": [
+    "LLM",
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01767v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01767v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01754",
+   "title": "Cog-VADU: A Training-Free Cognitive Reasoning Framework for Video Anomaly Detection and Understanding",
+   "authors": [
+    "Mohd Ubaid Wani",
+    "Sara Atito",
+    "Josef Kittler",
+    "Muhammad Awais"
+   ],
+   "published": "2026-10-01T14:18:32Z",
+   "updated": "2026-10-01T14:18:32Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "多模态",
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01754v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01754v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01718",
+   "title": "vFedProtoQNAS: Prototype-Guided Personalized Quantum Neural Architecture Search for Virtual Federated Learning",
+   "authors": [
+    "Seok Bin Son",
+    "Samuel Yen-Chi Chen",
+    "Soohyun Park",
+    "Joongheon Kim"
+   ],
+   "published": "2026-10-01T13:57:53Z",
+   "updated": "2026-10-01T13:57:53Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01718v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01718v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01710",
+   "title": "CoEvolve: Construct-to-Edit Visual Grounding with Bidirectional State Refinement",
+   "authors": [
+    "Dongwei Sun",
+    "Yujie Zhang",
+    "Bowen Yao",
+    "Pei Liu",
+    "Jing Yao",
+    "Xiangyong Cao"
+   ],
+   "published": "2026-10-01T13:54:05Z",
+   "updated": "2026-10-01T13:54:05Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01710v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01710v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2610.01696",
+   "title": "Acmite: Mitigating Gender Bias in LLMs through Concept-Guided Mutual Information",
+   "authors": [
+    "Tian Lan",
+    "Xiaoqing Cheng",
+    "Han Zhang",
+    "Jiang Li"
+   ],
+   "published": "2026-10-01T13:46:57Z",
+   "updated": "2026-10-01T13:46:57Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01696v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01696v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01692",
+   "title": "Artifact Annotations Partially Substitute for Per-User Calibration: SAFE-EDA and a Normalization-Controlled Evaluation of Wrist-EDA Affect Recognition",
+   "authors": [
+    "Haochen Chai",
+    "Xinbi Luo",
+    "Zining Liu",
+    "Fangfang Jiang"
+   ],
+   "published": "2026-10-01T13:45:54Z",
+   "updated": "2026-10-01T13:45:54Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "eess.SP"
+   ],
+   "areas": [
+    "SLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01692v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01692v1",
+   "matched_query": "slm-on-device"
+  },
+  {
+   "arxiv_id": "2610.01687",
+   "title": "Architectural Sampling: Test-Time Scaling via Computational Diversity in Frozen Vision-Language Models",
+   "authors": [
+    "Akshit Singh",
+    "Shyam Marjit",
+    "Wei Lin",
+    "Leonid Karlinsky",
+    "M. Jehanzeb Mirza"
+   ],
+   "published": "2026-10-01T13:44:11Z",
+   "updated": "2026-10-01T13:44:11Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01687v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01687v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01670",
+   "title": "Do MLLM Judges Judge the Edit? Auditing Bias in Image Editing Evaluation with Verified Quality Preservation",
+   "authors": [
+    "Yuan Huang",
+    "Zirui Song",
+    "Xiuying Chen"
+   ],
+   "published": "2026-10-01T13:30:07Z",
+   "updated": "2026-10-01T13:30:07Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.LG"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01670v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01670v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2610.01652",
+   "title": "Iterative Policy Refinement through Semantic Rollout Analysis",
+   "authors": [
+    "Feiyu Gavin Zhu",
+    "Qi Xu",
+    "Zhifei Deng",
+    "Zhigang Hua",
+    "Luke Simon",
+    "Jean Oh",
+    "Reid Simmons"
+   ],
+   "published": "2026-10-01T13:15:42Z",
+   "updated": "2026-10-01T13:15:42Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01652v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01652v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01640",
+   "title": "Not All Error Yields to Scale: Where Scaling Stops in Vision-Language Inference",
+   "authors": [
+    "Xinye Zhao",
+    "Yunkai Dang",
+    "Yunchen Wu",
+    "Wenbin Li"
+   ],
+   "published": "2026-10-01T13:05:39Z",
+   "updated": "2026-10-01T13:05:39Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01640v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01640v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01638",
+   "title": "FedSAP: Federated Learning with Structured Adaptive Partitioning for Multi-Domain Heterogeneous Edge Devices",
+   "authors": [
+    "Wentao Yue",
+    "Tianyou Lai",
+    "Hongji Li",
+    "Qingyu Mao",
+    "Qilei Li"
+   ],
+   "published": "2026-10-01T13:05:01Z",
+   "updated": "2026-10-01T13:05:01Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG"
+   ],
+   "areas": [
+    "SLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01638v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01638v1",
+   "matched_query": "slm-on-device"
+  },
+  {
+   "arxiv_id": "2610.01634",
+   "title": "Yo-ByT5: Efficient and High-Fidelity Diacritic Restoration for Yorùbá",
+   "authors": [
+    "Ahmad Samuel Gali",
+    "Shamsuddeen Hassan Muhammad"
+   ],
+   "published": "2026-10-01T13:03:49Z",
+   "updated": "2026-10-01T13:03:49Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01634v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01634v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01625",
+   "title": "Beyond Domain-Level Adaptation: Margin-Oriented Semantic-Appearance Interaction Correction for Personalized Federated Vision-Language Models",
+   "authors": [
+    "Wentao Yue",
+    "Qingyu Mao",
+    "Tianyou Lai",
+    "Ahmed M. Abdelmoniem",
+    "Qilei Li"
+   ],
+   "published": "2026-10-01T12:57:30Z",
+   "updated": "2026-10-01T12:57:30Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01625v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01625v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01616",
+   "title": "Can LLMs Reliably Annotate Bioassay Metadata to Improve Data Readiness?",
+   "authors": [
+    "Laura van Weesep",
+    "Riccardo Tedoldi",
+    "Jens Sjölund",
+    "Hossein Azizpour",
+    "Susanne Winiwarter",
+    "Ola Engkvist",
+    "Jon Paul Janet",
+    "Samuel Genheden",
+    "Juan Viguera Diez"
+   ],
+   "published": "2026-10-01T12:54:29Z",
+   "updated": "2026-10-01T12:54:29Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI",
+    "cs.DB",
+    "q-bio.QM"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01616v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01616v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01592",
+   "title": "Which LLM to pick? Online Active Model Selection for Large Language Models",
+   "authors": [
+    "Alessandro Turrin",
+    "Patrik Okanovic",
+    "Torsten Hoefler",
+    "Nezihe Merve Gürel"
+   ],
+   "published": "2026-10-01T12:43:21Z",
+   "updated": "2026-10-01T12:43:21Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.LG"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01592v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01592v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01581",
+   "title": "Evaluating Physical Consistency and Plausibility in Generative Scenario Models for Autonomous Driving",
+   "authors": [
+    "Manasa Mariam Mammen",
+    "Zafer Kayatas",
+    "Stefan Wagner"
+   ],
+   "published": "2026-10-01T12:36:51Z",
+   "updated": "2026-10-01T12:36:51Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01581v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01581v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01579",
+   "title": "Beyond Pointwise Error: A Multi-Metric Evaluation of Spatial Climate Downscaling",
+   "authors": [
+    "Loys Masquelier",
+    "Etienne Le Naour"
+   ],
+   "published": "2026-10-01T12:35:39Z",
+   "updated": "2026-10-01T12:35:39Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01579v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01579v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01554",
+   "title": "QK-Wanda: Coupling Queries and Keys for Unstructured Pruning",
+   "authors": [
+    "Ivan Ilin",
+    "Peter Richtárik"
+   ],
+   "published": "2026-10-01T12:22:44Z",
+   "updated": "2026-10-01T12:22:44Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01554v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01554v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01531",
+   "title": "Towards Reliable Vision-Language Models for Autonomous Driving",
+   "authors": [
+    "Manasa Mariam Mammen",
+    "Priyanka Mary Mammen",
+    "Zafer Kayatas",
+    "Stefan Wagner"
+   ],
+   "published": "2026-10-01T12:06:13Z",
+   "updated": "2026-10-01T12:06:13Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01531v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01531v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01514",
+   "title": "How the Audit Rule Shapes Faithful Factor Explanations in LLMs",
+   "authors": [
+    "Taolin Zhang",
+    "Hanyu Wang",
+    "Jiuheng Wan",
+    "Tingyuan Hu",
+    "Chengyu Wang"
+   ],
+   "published": "2026-10-01T11:48:59Z",
+   "updated": "2026-10-01T11:48:59Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01514v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01514v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01509",
+   "title": "Sharpening Tax in Post-Training",
+   "authors": [
+    "Changdae Oh",
+    "Qi Zeng",
+    "Qi Qi",
+    "Andrey Zhmoginov",
+    "Deren Lei",
+    "Yun He",
+    "Hoang Phan",
+    "Hangoo Kang",
+    "Azalia Mirhoseini",
+    "Sharon Li"
+   ],
+   "published": "2026-10-01T11:46:00Z",
+   "updated": "2026-10-01T11:46:00Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.LG"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01509v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01509v1",
+   "matched_query": "agent-tool-use"
+  },
+  {
+   "arxiv_id": "2610.01493",
+   "title": "No Model Required: Text Entropy Rate Filtering Mitigates Iterative Fine-Tuning Collapse",
+   "authors": [
+    "Lewis Mitchell"
+   ],
+   "published": "2026-10-01T11:36:55Z",
+   "updated": "2026-10-01T11:36:55Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI",
+    "cs.IT",
+    "physics.data-an",
+    "stat.ML"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01493v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01493v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2610.01491",
+   "title": "Auditing Web Agent Evaluation on WebArena-Lite: Human Review of Outcomes and Trajectories",
+   "authors": [
+    "Chengguang Gan",
+    "Zimeng He",
+    "Yoshihiro Tsujii",
+    "Ken-ichiro Kobayashi",
+    "Hiroki Itoh",
+    "Kotaro Funakoshi"
+   ],
+   "published": "2026-10-01T11:31:37Z",
+   "updated": "2026-10-01T11:31:37Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01491v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01491v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01471",
+   "title": "When Does a Second Model Help? Cross-Model Review in LLM Verification",
+   "authors": [
+    "Tae-Eun Song"
+   ],
+   "published": "2026-10-01T11:12:36Z",
+   "updated": "2026-10-01T11:12:36Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI",
+    "cs.SE"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01471v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01471v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01451",
+   "title": "A Multi-Agent LLM Framework for Personalized Health Checkup Interpretation and Guidance",
+   "authors": [
+    "HyungJun Kim",
+    "Taehan Lee",
+    "Soojin Cheon"
+   ],
+   "published": "2026-10-01T10:48:04Z",
+   "updated": "2026-10-01T10:48:04Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.MA"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01451v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01451v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2610.01436",
+   "title": "A Deterministic and Auditable AI Security Risk Assessment Framework with ATLAS Aligned Executable Rules and Formal Verification",
+   "authors": [
+    "Yixuan Huang",
+    "Basel Halak",
+    "Boojoong Kang"
+   ],
+   "published": "2026-10-01T10:33:04Z",
+   "updated": "2026-10-01T10:33:04Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01436v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01436v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01434",
+   "title": "MWOP: Modality-aware Width-wise Operation Pruning for Efficient MLLMs",
+   "authors": [
+    "Xudong Wang",
+    "Hao Wu",
+    "Haozhe Hu",
+    "Peiran Yin",
+    "Xinghao Chen",
+    "Yunpu Ma",
+    "Wei Zhang",
+    "Xiaoyu Shen"
+   ],
+   "published": "2026-10-01T10:31:21Z",
+   "updated": "2026-10-01T10:31:21Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI",
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM",
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01434v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01434v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01428",
+   "title": "Generalization Is Stability, Not Accuracy: Multi-Axis Evaluation of LLMs",
+   "authors": [
+    "Nagham Omar",
+    "Mahmoud Jabarin",
+    "Maya Rozenshtein",
+    "Rom Himelstein",
+    "Avi Mendelson",
+    "Amit LeVi"
+   ],
+   "published": "2026-10-01T10:27:25Z",
+   "updated": "2026-10-01T10:27:25Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI",
+    "cs.LG"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01428v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01428v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01389",
+   "title": "AiSearch: Interactive Multi-Modal Search with VLMs",
+   "authors": [
+    "Ali Koksal",
+    "Mei Chee Leong",
+    "Vicky Sintunata",
+    "Ching Ling Chin",
+    "Wee Teck Fong"
+   ],
+   "published": "2026-10-01T09:56:32Z",
+   "updated": "2026-10-01T09:56:32Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01389v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01389v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01383",
+   "title": "PRISM: A Category-Theoretic Framework for Measuring and Refining Multimodal Analogies",
+   "authors": [
+    "Mirella Zeisler",
+    "Ojas Shirekar",
+    "Mircea Licǎ",
+    "Chirag Raman"
+   ],
+   "published": "2026-10-01T09:49:30Z",
+   "updated": "2026-10-01T09:49:30Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01383v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01383v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01364",
+   "title": "LLM-Driven Multi-Agent Control for Skill-Based Smart Manufacturing",
+   "authors": [
+    "Kay Köhle",
+    "Darko Anicic",
+    "Thomas A. Runkler",
+    "René Graf"
+   ],
+   "published": "2026-10-01T09:34:25Z",
+   "updated": "2026-10-01T09:34:25Z",
+   "category": "cs.MA",
+   "categories": [
+    "cs.MA",
+    "cs.AI",
+    "eess.SY"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01364v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01364v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2610.01353",
+   "title": "Does AI-Generated Scientific Text Follow Human Argumentation Patterns? A CARS-Based Comparison of Research Article Introductions",
+   "authors": [
+    "Abdelrahman Sadallah",
+    "Narjes Sheikh Asadi",
+    "Lonneke van der Plas"
+   ],
+   "published": "2026-10-01T09:22:04Z",
+   "updated": "2026-10-01T09:22:04Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01353v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01353v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01352",
+   "title": "MMVistaReason: Toward Open-Data and Post-Training Recipes for Multimodal Reasoning",
+   "authors": [
+    "Juekai Lin",
+    "Honglin Lin",
+    "Yuqian Yuan",
+    "Xiaolong Wu",
+    "Jie Cao",
+    "Liang Liang",
+    "Yunqi Cao",
+    "Yun Zhu",
+    "Wenqiao Zhang",
+    "Lijun Wu"
+   ],
+   "published": "2026-10-01T09:22:00Z",
+   "updated": "2026-10-01T09:22:00Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01352v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01352v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2610.01349",
+   "title": "PACE: Provenance-Aware Capability Enforcement for Tool-Using LLM Agents",
+   "authors": [
+    "Fengpeng Li",
+    "Qizhou Wang",
+    "Yuke Hu",
+    "Kemou Li",
+    "Jun Liu",
+    "Haiwei Wu",
+    "Jiantao Zhou",
+    "Di Wang"
+   ],
+   "published": "2026-10-01T09:18:05Z",
+   "updated": "2026-10-01T09:18:05Z",
+   "category": "cs.CR",
+   "categories": [
+    "cs.CR",
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01349v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01349v1",
+   "matched_query": "agent-tool-use"
+  },
+  {
+   "arxiv_id": "2610.01326",
+   "title": "An ontology for cross-sectoral crisis management: core and public health modules",
+   "authors": [
+    "Aldo Gangemi",
+    "Rita T. Sousa",
+    "Luigi Asprino",
+    "Giorgia Lodi",
+    "Andrea G. Nuzzolese",
+    "Valentina Presutti",
+    "Johannes Gysen",
+    "Diana F. Sousa",
+    "Luigi Spagnolo"
+   ],
+   "published": "2026-10-01T08:52:29Z",
+   "updated": "2026-10-01T08:52:29Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.LO"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01326v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01326v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01324",
+   "title": "Evaluating Biomedical Reranking for LLM-Based Question Answering over Longitudinal Clinical Notes",
+   "authors": [
+    "Maryam Shahbaz Ali",
+    "Laura B. Strachan",
+    "Caitlin Sherman",
+    "Mark Kovler",
+    "Eleanor Mackey",
+    "Syed Muhammad Anwar"
+   ],
+   "published": "2026-10-01T08:49:43Z",
+   "updated": "2026-10-01T08:49:43Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.ET"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01324v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01324v1",
+   "matched_query": "nb-retrieval-augmented"
+  },
+  {
+   "arxiv_id": "2610.01323",
+   "title": "TRACE: Trajectory Return Attribution and Contrastive Erasure for Multi-Turn Safety",
+   "authors": [
+    "Fengpeng Li",
+    "Kemou Li",
+    "Qizhou Wang",
+    "Haiwei Wu",
+    "Jiantao Zhou",
+    "Di Wang"
+   ],
+   "published": "2026-10-01T08:49:41Z",
+   "updated": "2026-10-01T08:49:41Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01323v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01323v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01286",
+   "title": "Dyna3: VLM-Guided Training-Free 4D Reconstruction via Depth Foundation Models",
+   "authors": [
+    "Xinhao Xiang",
+    "Weiyang Li",
+    "Zhijie Zheng",
+    "Abhijeet Rastogi",
+    "Jiawei Zhang"
+   ],
+   "published": "2026-10-01T08:24:21Z",
+   "updated": "2026-10-01T08:24:21Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01286v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01286v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01256",
+   "title": "DeFA: Dependency-Guided Failure Attribution for LLM Agents",
+   "authors": [
+    "Bo Deng",
+    "Xinlei Zheng",
+    "Yi Wei",
+    "Kang Zhou",
+    "Chongyang Tao",
+    "Renzhao Liang",
+    "Xuanren Chen",
+    "Lifan Guo",
+    "Chi Zhang"
+   ],
+   "published": "2026-10-01T07:50:22Z",
+   "updated": "2026-10-01T07:50:22Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01256v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01256v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01253",
+   "title": "Context-Aware Error Mitigation Orchestration for Hybrid Quantum Reinforcement Learning on NISQ Systems",
+   "authors": [
+    "Bisma Majid",
+    "Shabir Ahmed Sofi",
+    "Mir Mohammad Yousuf"
+   ],
+   "published": "2026-10-01T07:45:12Z",
+   "updated": "2026-10-01T07:45:12Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "quant-ph"
+   ],
+   "areas": [
+    "SLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01253v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01253v1",
+   "matched_query": "slm-on-device"
+  },
+  {
+   "arxiv_id": "2610.01249",
+   "title": "Revision-Aware Independent Agent Graphs for Dynamic Reasoning",
+   "authors": [
+    "Yan Luo",
+    "Selim-Antoine Lali",
+    "Jeremy Moebel",
+    "Iliass Khoutaibi",
+    "Ahmadou Aidara",
+    "Mengyu Wang"
+   ],
+   "published": "2026-10-01T07:43:33Z",
+   "updated": "2026-10-01T07:43:33Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.CL"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01249v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01249v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2610.01243",
+   "title": "When the Judge Acts: Auditing VLM-Guided Image Selection on Culturally Situated Prompts",
+   "authors": [
+    "Huichan Seo"
+   ],
+   "published": "2026-10-01T07:40:33Z",
+   "updated": "2026-10-01T07:40:33Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI",
+    "cs.CY"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01243v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01243v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01241",
+   "title": "Evaluating the Robustness of Japanese LLMs to IME-Related and Typographical Errors",
+   "authors": [
+    "Ryota Mibayashi",
+    "Hiroaki Ohshima"
+   ],
+   "published": "2026-10-01T07:40:06Z",
+   "updated": "2026-10-01T07:40:06Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01241v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01241v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01230",
+   "title": "HHR: Hierarchical Hash Retrieval for Efficient LLM Generation",
+   "authors": [
+    "Lianjun Liu",
+    "Tiantian Zheng",
+    "You Huang",
+    "Weiqi Yan",
+    "Mingte Qiu",
+    "Huazhong Liu",
+    "Xiaofeng Zhu",
+    "Yunshan Zhong"
+   ],
+   "published": "2026-10-01T07:31:44Z",
+   "updated": "2026-10-01T07:31:44Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01230v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01230v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01218",
+   "title": "AGO AI Quality Gate: Evidence-First Release Decisions for Retrieval-Augmented Generation",
+   "authors": [
+    "Giulio Zeloni",
+    "Enrico Lo Conte",
+    "Salvatore Rionero",
+    "Giuseppe Santoro",
+    "Alessandro Rastelli",
+    "Fabio Sorrentino"
+   ],
+   "published": "2026-10-01T07:24:04Z",
+   "updated": "2026-10-01T07:24:04Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01218v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01218v1",
+   "matched_query": "nb-retrieval-augmented"
+  },
+  {
+   "arxiv_id": "2610.01195",
+   "title": "Federated Agent Optimization",
+   "authors": [
+    "Qiang Yang",
+    "Zhiqiang Kou",
+    "Xueyi Zhang",
+    "Dong-Dong Wu",
+    "Hanlin Gu",
+    "Jing Guo",
+    "Yang Liu",
+    "Di Jiang",
+    "Qian Xu"
+   ],
+   "published": "2026-10-01T07:06:00Z",
+   "updated": "2026-10-01T07:06:00Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01195v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01195v1",
+   "matched_query": "agent-tool-use"
+  },
+  {
+   "arxiv_id": "2610.01192",
+   "title": "FlashBack: Knowing When to Remember in Streaming Vision-Language Models",
+   "authors": [
+    "Yi Chen",
+    "MingMing Yu",
+    "Rui-Qi Wang",
+    "Boran Wang",
+    "Xiaohang Cao",
+    "Chu Tang",
+    "Jingmin Chen",
+    "Jie Gu"
+   ],
+   "published": "2026-10-01T07:05:08Z",
+   "updated": "2026-10-01T07:05:08Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01192v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01192v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01180",
+   "title": "Skeleton-and-Strategy Prompting: Training-Free Negation Understanding for Vision-Language Models",
+   "authors": [
+    "Yuliang Cai",
+    "Mohammad Rostami",
+    "Jesse Thomason"
+   ],
+   "published": "2026-10-01T06:53:45Z",
+   "updated": "2026-10-01T06:53:45Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01180v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01180v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01166",
+   "title": "CineMR: Tool-Integrated Vision-Language Reasoning for Quantitative Cardiac MRI Assessment",
+   "authors": [
+    "Kunyang Li",
+    "Hai Nguyen",
+    "Joshua Lowe",
+    "Chenguang Zhao",
+    "Peace C. Madueme",
+    "Mehdi Hedjazi Moghari",
+    "Mubarak Shah",
+    "Pegah Khosravi",
+    "Yuzhang Zhang"
+   ],
+   "published": "2026-10-01T06:43:42Z",
+   "updated": "2026-10-01T06:43:42Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness",
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01166v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01166v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.01161",
+   "title": "My FAULT: Self-Diagnosis as Credit Assignment in Self-Evolving Agentic Reinforcement Learning",
+   "authors": [
+    "Yihua Zhu",
+    "Qianying Liu",
+    "Weixu Qiao",
+    "Xuan Ren",
+    "Weiwei Xu",
+    "Wenbo Li",
+    "Wei Wang",
+    "Ruijia Chen",
+    "Xinmiao Luan",
+    "Yin Luo",
+    "Hao Huang",
+    "Xiang Zheng",
+    "Hidetoshi Shimodaira"
+   ],
+   "published": "2026-10-01T06:41:10Z",
+   "updated": "2026-10-01T06:41:10Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01161v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01161v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01127",
+   "title": "Counting and Min-Cost Encoding for Tokenization in Large Language Models",
+   "authors": [
+    "Shuming Shi",
+    "Xiang Zhang",
+    "Hao Yu",
+    "Wenbo Fei",
+    "Changjian Wang",
+    "Zhan Wang",
+    "Guoqing Pang",
+    "Guangye Yu",
+    "Quan Lu",
+    "Ning Jiang"
+   ],
+   "published": "2026-10-01T06:11:38Z",
+   "updated": "2026-10-01T06:11:38Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01127v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01127v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01124",
+   "title": "CortexBridge: Cortical Alignment of EEG Montages for Foundation Models",
+   "authors": [
+    "Jiazhen Hong",
+    "Xiaotian Zhou",
+    "Zihao Ding",
+    "Kailong Wang",
+    "Yu Wu"
+   ],
+   "published": "2026-10-01T06:08:56Z",
+   "updated": "2026-10-01T06:08:56Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "eess.SP"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01124v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01124v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01097",
+   "title": "YouRA: A Persistent-State Architecture for Evidence-Traceable Autonomous Research Agents",
+   "authors": [
+    "Yoonkyu Woo",
+    "Woojin Lee",
+    "Jin-Xia Huang"
+   ],
+   "published": "2026-10-01T05:40:21Z",
+   "updated": "2026-10-01T05:40:21Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01097v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01097v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01066",
+   "title": "Probe with Participation Trophies: Random-Reward RL as a Probe of LLM Capability",
+   "authors": [
+    "Yu Mao",
+    "Lei Yu",
+    "Zining Zhu",
+    "Yusheng Zheng",
+    "Haohang Li",
+    "Freda Shi",
+    "Yutong Yin",
+    "Zhaoran Wang",
+    "Jingcheng Niu"
+   ],
+   "published": "2026-10-01T05:05:29Z",
+   "updated": "2026-10-01T05:05:29Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01066v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01066v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01058",
+   "title": "MOMAT: Mixture of Multiple Atlases for Low-Power Jailbreak Defense of Quantized LLMs",
+   "authors": [
+    "Boyang Li",
+    "Bingyu Shen",
+    "Weihao Hong",
+    "Zhiyuan Jiang",
+    "Xinlei Guan",
+    "Yan Ma",
+    "Miles Q. Li",
+    "Yi Sheng",
+    "Ruiyang Qin"
+   ],
+   "published": "2026-10-01T04:55:41Z",
+   "updated": "2026-10-01T04:55:41Z",
+   "category": "cs.CR",
+   "categories": [
+    "cs.CR",
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01058v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01058v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01042",
+   "title": "Beyond Final Accuracy: Auditing Communication in LLM Multi-Agent Systems",
+   "authors": [
+    "Shixuan Li",
+    "Wei Yang",
+    "Peiyu Zhang",
+    "Anzhe Cheng",
+    "Heng Ping",
+    "Paul Bogdan"
+   ],
+   "published": "2026-10-01T04:34:59Z",
+   "updated": "2026-10-01T04:34:59Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.CL"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01042v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01042v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2610.01028",
+   "title": "Optimal Transport Reweighting for Robust Learning under Spurious Correlations and Label Noise",
+   "authors": [
+    "Sung Ho Jo",
+    "Seonghwi Kim",
+    "Wonsang Yun",
+    "Minwoo Chae"
+   ],
+   "published": "2026-10-01T04:16:23Z",
+   "updated": "2026-10-01T04:16:23Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01028v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01028v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.01027",
+   "title": "LawCompass: Navigating from Legal QA to Multi-Agent Deep Research with Grounded Evidence",
+   "authors": [
+    "Xiaoxia Cheng",
+    "Linnan Wang",
+    "Jiahao Ma",
+    "Zhichuan Ye",
+    "Xuemei Zhou",
+    "Chuanyu Tong",
+    "Bo Jiang",
+    "Qing Zhu"
+   ],
+   "published": "2026-10-01T04:16:08Z",
+   "updated": "2026-10-01T04:16:08Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM",
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01027v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01027v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01026",
+   "title": "It Takes Workflows to Evolve Better Workflows",
+   "authors": [
+    "Xuehang Guo",
+    "Haoyu Wang",
+    "Haifeng Chen",
+    "Yangyi Chen",
+    "Zhenhailong Wang",
+    "Qingyun Wang"
+   ],
+   "published": "2026-10-01T04:15:49Z",
+   "updated": "2026-10-01T04:15:49Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01026v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01026v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.01019",
+   "title": "FutureWorlds: Learning Robotic World Models from Alternative Futures",
+   "authors": [
+    "Hao Wu",
+    "Shengju Qian",
+    "Weiyan Wang",
+    "Fan Xu",
+    "Fan Zhang",
+    "Yuanpeng He",
+    "Qingsong Wen",
+    "Yuxuan Liang"
+   ],
+   "published": "2026-10-01T04:04:31Z",
+   "updated": "2026-10-01T04:04:31Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.RO"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01019v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01019v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2610.01017",
+   "title": "Pay for the Fault, Not the Flow: Label-Free In-Flow Multi-Agent Workflow Optimization",
+   "authors": [
+    "Xuehang Guo",
+    "Haoyu Wang",
+    "Shengyu Chen",
+    "Zach Chen",
+    "Wei Cheng",
+    "Qingyun Wang",
+    "Haifeng Chen"
+   ],
+   "published": "2026-10-01T04:01:23Z",
+   "updated": "2026-10-01T04:01:23Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.01017v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.01017v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.00997",
+   "title": "Distilling Directional Verification",
+   "authors": [
+    "Jungseob Lee",
+    "Sugyeong Eo",
+    "Seongtae Hong",
+    "Seungyoon Lee",
+    "Chanjun Park",
+    "Jaehyung Seo",
+    "Heuiseok Lim"
+   ],
+   "published": "2026-10-01T03:33:28Z",
+   "updated": "2026-10-01T03:33:28Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI",
+    "cs.LG"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00997v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00997v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.00985",
+   "title": "Neural scaling laws and evolution of learnable activation functions of Kolmogorov-Arnold networks",
+   "authors": [
+    "Tilen Cadez",
+    "Sanghoon Lee",
+    "Kyoung-Min Kim"
+   ],
+   "published": "2026-10-01T03:22:11Z",
+   "updated": "2026-10-01T03:22:11Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00985v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00985v1",
+   "matched_query": "llm-scaling-law"
+  },
+  {
+   "arxiv_id": "2610.00980",
+   "title": "Can AI Scientists Coordinate at Runtime?",
+   "authors": [
+    "Zijian Liu",
+    "Yangzhixin Luo",
+    "Junyu Lu",
+    "Yi Li",
+    "Yu Chen",
+    "David Xu",
+    "William F. Shen",
+    "Xinchi Qiu",
+    "Xisen Wang"
+   ],
+   "published": "2026-10-01T03:18:07Z",
+   "updated": "2026-10-01T03:18:07Z",
+   "category": "cs.MA",
+   "categories": [
+    "cs.MA",
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00980v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00980v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2610.00979",
+   "title": "RISED: RubrIcs for agentic multi-environment Selection and sElf-Distillation",
+   "authors": [
+    "Jingtan Wang",
+    "Sirajul Salekin",
+    "Young mok Jung",
+    "Javier Movellan",
+    "Bryan Kian Hsiang Low",
+    "Manjot Bilkhu"
+   ],
+   "published": "2026-10-01T03:16:58Z",
+   "updated": "2026-10-01T03:16:58Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00979v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00979v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.00973",
+   "title": "Concept Driven Domain Adaptation: Finding an Abstract Needle in a Haystack",
+   "authors": [
+    "Haiming Zhao",
+    "Tai Wang",
+    "Kun Zhang",
+    "Xicheng Peng",
+    "Zhiyang Li"
+   ],
+   "published": "2026-10-01T03:03:08Z",
+   "updated": "2026-10-01T03:03:08Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "physics.ed-ph"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00973v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00973v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.00969",
+   "title": "A Citation-Grounded Benchmark for Trustworthy Earnings Call Transcript Analysis with Large Language Models",
+   "authors": [
+    "Yingzhu Zhao",
+    "Vlad Pandelea",
+    "Han Yuan",
+    "Bo Hu",
+    "Wuqiong Luo",
+    "Li Zhang",
+    "Zheng Ma"
+   ],
+   "published": "2026-10-01T02:59:14Z",
+   "updated": "2026-10-01T02:59:14Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00969v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00969v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.00964",
+   "title": "RPTune: Learned Context Curation for LLM Catalog Search",
+   "authors": [
+    "Chuxuan Hu",
+    "Hejie Cui",
+    "Norman Huang",
+    "Shubham Kumar Bharti",
+    "Wang-Chiew Tan",
+    "Sercan Ö. Arık"
+   ],
+   "published": "2026-10-01T02:52:24Z",
+   "updated": "2026-10-01T02:52:24Z",
+   "category": "cs.IR",
+   "categories": [
+    "cs.IR",
+    "cs.CL",
+    "cs.LG"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00964v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00964v1",
+   "matched_query": "llm-long-context"
+  },
+  {
+   "arxiv_id": "2610.00958",
+   "title": "Role-aware Heuristic Episodic Attention for Conversational LLMs",
+   "authors": [
+    "Wanyang Hong",
+    "Zhaoning Zhang",
+    "Yi Chen",
+    "Libo Zhang",
+    "Baihui Liu",
+    "Linbo Qiao",
+    "Zhiliang Tian",
+    "Dongsheng Li"
+   ],
+   "published": "2026-10-01T02:39:52Z",
+   "updated": "2026-10-01T02:39:52Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00958v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00958v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.00954",
+   "title": "Beyond Leaderboards: Tokenomics of Agentic Small Language Model Ensembles",
+   "authors": [
+    "Alexei N. Skurikhin",
+    "Emily M. Taylor",
+    "Nathan A. DeBardeleben"
+   ],
+   "published": "2026-10-01T02:37:56Z",
+   "updated": "2026-10-01T02:37:56Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM",
+    "SLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00954v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00954v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.00952",
+   "title": "A Matched-Budget Audit Framework for Recaptioned Image-Text Supervision Distributions",
+   "authors": [
+    "Giyeong Oh",
+    "Junghun Park",
+    "Yuhan Bae",
+    "Youngjae Yu"
+   ],
+   "published": "2026-10-01T02:35:20Z",
+   "updated": "2026-10-01T02:35:20Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00952v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00952v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.00949",
+   "title": "PG-SFT: Balancing Capability Acquisition and Retention in Offline Agent Fine-Tuning",
+   "authors": [
+    "Ronghua Li",
+    "Zi Liang",
+    "Zhishan Li",
+    "Shinan Liu"
+   ],
+   "published": "2026-10-01T02:32:20Z",
+   "updated": "2026-10-01T02:32:20Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00949v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00949v1",
+   "matched_query": "agent-tool-use"
+  },
+  {
+   "arxiv_id": "2610.00948",
+   "title": "GUI-HARVEST: Self-Improving GUI Agents through Evidence-Driven Harness Evolution",
+   "authors": [
+    "Geyi Yang",
+    "Zikun Qu",
+    "Xiang Li",
+    "Zhiyong Wang",
+    "Min Zhang",
+    "Shipei Zeng",
+    "Zhongxiang Dai"
+   ],
+   "published": "2026-10-01T02:31:20Z",
+   "updated": "2026-10-01T02:31:20Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00948v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00948v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.00940",
+   "title": "ReHoPER: Receding-Horizon Planning for Enhanced Reasoning",
+   "authors": [
+    "Saeed Ahmadnia",
+    "Cornelia Caragea"
+   ],
+   "published": "2026-10-01T02:16:27Z",
+   "updated": "2026-10-01T02:16:27Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI",
+    "cs.LG"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00940v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00940v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.00928",
+   "title": "Efficient Task Adaptation in Large Language Models: A Survey of Weight-Based, Prompt-Based, and Embedding-Based Adaptations",
+   "authors": [
+    "Jungwon Park",
+    "Changin Choi",
+    "Jimyeong Kim",
+    "Nojun Kwak",
+    "Wonjong Rhee"
+   ],
+   "published": "2026-10-01T02:05:00Z",
+   "updated": "2026-10-01T02:05:00Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00928v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00928v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.00926",
+   "title": "A Survey on End-to-End Autonomous Driving Training from the Perspectives of Data, Strategy, and Platform",
+   "authors": [
+    "Chengkai Xu",
+    "Yiming Cui",
+    "Jiaqi Liu",
+    "Yicheng Guo",
+    "Cheng Qin",
+    "Geyuan Zhang",
+    "Xinwei Dong",
+    "Shiyu Fang",
+    "Peng Hang",
+    "Jian Sun"
+   ],
+   "published": "2026-10-01T02:00:52Z",
+   "updated": "2026-10-01T02:00:52Z",
+   "category": "cs.RO",
+   "categories": [
+    "cs.RO",
+    "cs.CV",
+    "cs.LG"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00926v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00926v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2610.00905",
+   "title": "Understanding Issues, Causes and Solutions in Open-Source LLM-based Multi-Agent Systems",
+   "authors": [
+    "Asad Ur Rehman",
+    "Syed Mohammad Kashif",
+    "Ruiyin Li",
+    "Peng Liang",
+    "Zengyang Li",
+    "Arif Ali Khan"
+   ],
+   "published": "2026-10-01T01:34:45Z",
+   "updated": "2026-10-01T01:34:45Z",
+   "category": "cs.SE",
+   "categories": [
+    "cs.SE",
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00905v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00905v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2610.00890",
+   "title": "Cross-Benchmark Transfer from RL on Agentic Coding Tasks",
+   "authors": [
+    "Sushant Mehta",
+    "Logan Ritchie",
+    "Edwin Chen"
+   ],
+   "published": "2026-10-01T01:12:24Z",
+   "updated": "2026-10-01T01:12:24Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.AI",
+    "cs.SE"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00890v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00890v1",
+   "matched_query": "agent-swe-bench"
+  },
+  {
+   "arxiv_id": "2610.00873",
+   "title": "Rethinking Data Augmentation under Covariate Shift: Invariant-Guided Diffusion and Prototype Reweighting",
+   "authors": [
+    "Hongyu Cao",
+    "Xinyuan Wang",
+    "Arun Vignesh Malarkkan",
+    "Kunpeng Liu",
+    "Haifeng Chen",
+    "Yanjie Fu"
+   ],
+   "published": "2026-10-01T00:46:17Z",
+   "updated": "2026-10-01T00:46:17Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00873v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00873v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.00855",
+   "title": "Lang3DSeg: Annotation-Free Open-Vocabulary 3D Segmentation with Point Transformers",
+   "authors": [
+    "Cigdem Kokenoz",
+    "Amir Salarpour",
+    "Alkim Domeke",
+    "Christopher Salas",
+    "Pedram MohajerAnsari",
+    "Long Cheng",
+    "Mert D. Pesé",
+    "Bing Li"
+   ],
+   "published": "2026-10-01T00:15:47Z",
+   "updated": "2026-10-01T00:15:47Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.RO"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00855v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00855v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.00848",
+   "title": "Geometric Similarity in VLM Low-Level Vision Representations",
+   "authors": [
+    "Shao-Jun Xia",
+    "Huixin Zhang",
+    "Zhen Lei",
+    "Anlan Sun",
+    "Yuner Zhang",
+    "Xiaoyang Chen"
+   ],
+   "published": "2026-10-01T00:06:17Z",
+   "updated": "2026-10-01T00:06:17Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00848v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00848v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.00840",
+   "title": "Contextual trajectory and incremental contextual displacement: Towards using LLMs to understand dynamic, utterance-specific meaning construction",
+   "authors": [
+    "Grayson Wycliffe Storer",
+    "Julia Witte Zimmerman"
+   ],
+   "published": "2026-09-30T23:56:18Z",
+   "updated": "2026-09-30T23:56:18Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00840v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00840v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.00827",
+   "title": "Verbalized and Internal Probabilities Are Coupled in Large Language Models",
+   "authors": [
+    "Sinead Williamson",
+    "Jiaxuan Li",
+    "Nick Foti",
+    "Russ Webb",
+    "Masha Fedzechkina"
+   ],
+   "published": "2026-09-30T23:37:26Z",
+   "updated": "2026-09-30T23:37:26Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI"
+   ],
+   "areas": [
+    "LLM",
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00827v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00827v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.00825",
+   "title": "Align Then Reason: A Multimodal Lip-Sync Judge for Dubbing",
+   "authors": [
+    "Rui Liu",
+    "Bhavin Jawade",
+    "Haoqi Li",
+    "Shivam Mehta",
+    "Karan Saxena",
+    "Yinghong Lan",
+    "Cameron R. Wolfe"
+   ],
+   "published": "2026-09-30T23:35:37Z",
+   "updated": "2026-09-30T23:35:37Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00825v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00825v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2610.00812",
+   "title": "Video Generation Models: A Survey of Post-Training and Alignment",
+   "authors": [
+    "Chaoyu Li",
+    "Xiaoyi Gu",
+    "Yogesh Kulkarni",
+    "Eun Woo Im",
+    "Mohammadmahdi Honarmand",
+    "Zeyu Wang",
+    "Juntong Song",
+    "Fei Du",
+    "Xilin Jiang",
+    "Kexin Zheng",
+    "Tianzhi Li",
+    "Fei Tao",
+    "Pooyan Fazli"
+   ],
+   "published": "2026-09-30T23:13:08Z",
+   "updated": "2026-09-30T23:13:08Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI",
+    "cs.LG"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00812v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00812v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.00809",
+   "title": "Paying for Too Many Tokens? Valid and Cost-Efficient Multimodal LLM Annotation with Simple Heuristics",
+   "authors": [
+    "Zhixi Zhu",
+    "Kristina Gligoric"
+   ],
+   "published": "2026-09-30T22:59:51Z",
+   "updated": "2026-09-30T22:59:51Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.CL",
+    "cs.SI"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00809v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00809v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.00795",
+   "title": "Can large language models unlock discrete data in ophthalmic diagnostic reports?",
+   "authors": [
+    "Umair A. Zaidi",
+    "An-Lun Wu",
+    "Wei-Chun Lin",
+    "Thomas S. Hwang",
+    "Michelle R. Hribar"
+   ],
+   "published": "2026-09-30T22:35:13Z",
+   "updated": "2026-09-30T22:35:13Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00795v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00795v1",
+   "matched_query": "llm-large-language-model"
+  },
+  {
+   "arxiv_id": "2610.00767",
+   "title": "Pre-training interventions, ex post facto: Grafting model beliefs across checkpoints",
+   "authors": [
+    "Peter Nutter",
+    "Dani Roytburg",
+    "Clément Dumas",
+    "Jinghua Ou",
+    "Shi Feng"
+   ],
+   "published": "2026-09-30T22:02:46Z",
+   "updated": "2026-09-30T22:02:46Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.AI",
+    "cs.CL"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00767v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00767v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.00737",
+   "title": "Personalized Image Generation with Reasoning and Reflection",
+   "authors": [
+    "Bo Ni",
+    "Ngoc N. Tran",
+    "Qinwen Ge",
+    "Franck Dernoncourt",
+    "Seunghyun Yoon",
+    "Samyadeep Basu",
+    "Sungchul Kim",
+    "Puneet Mathur",
+    "Nedim Lipka",
+    "Tong Yu",
+    "Yu Wang",
+    "Ryan A. Rossi",
+    "Tyler Derr"
+   ],
+   "published": "2026-09-30T21:30:26Z",
+   "updated": "2026-09-30T21:30:26Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "多模态",
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00737v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00737v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2610.00715",
+   "title": "Robust Nash Alignment under Preference Uncertainty",
+   "authors": [
+    "Shihab Ahmed",
+    "Debamita Ghosh",
+    "David Tang",
+    "Yudan Wang",
+    "Alvaro Velasquez",
+    "Yue Wang"
+   ],
+   "published": "2026-09-30T21:05:43Z",
+   "updated": "2026-09-30T21:05:43Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00715v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00715v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.00705",
+   "title": "Meta-Multi-Agent Reinforcement Learning for Fast Adaptation of Interactive Policies with Applications to Autonomous Driving",
+   "authors": [
+    "Huiwen Yan",
+    "Kyriakos G. Vamvoudakis",
+    "Mushuang Liu"
+   ],
+   "published": "2026-09-30T20:52:19Z",
+   "updated": "2026-09-30T20:52:19Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.MA",
+    "eess.SY"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00705v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00705v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2610.00677",
+   "title": "Harnessing Vision-Language Models for Perceptual Quality Assessment and Autonomous Content Adjustment in Augmented Reality",
+   "authors": [
+    "Elias Rotondo",
+    "Lin Duan",
+    "Yanming Xiu",
+    "Sangjun Eom",
+    "Conrad Li",
+    "Maria Gorlatova"
+   ],
+   "published": "2026-09-30T20:13:50Z",
+   "updated": "2026-09-30T20:13:50Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00677v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00677v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.00668",
+   "title": "A Simple Doxastic Deontic Logic for Norm-Guided Decision Making",
+   "authors": [
+    "Thorsten Engesser",
+    "Agata Ciabattoni"
+   ],
+   "published": "2026-09-30T20:04:32Z",
+   "updated": "2026-09-30T20:04:32Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.LO"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00668v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00668v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2610.00666",
+   "title": "VisionQ: VLM-as-a-Judge Taxonomy, Dataset and Benchmark for Qualitative Analysis in Computer Vision",
+   "authors": [
+    "Vu Dinh Xuan",
+    "Duc-Hai Nguyen",
+    "Minh-Dung Dao",
+    "Vu Quynh Giao",
+    "Quang Hong Nguyen",
+    "Binh-Son Hua",
+    "Barry O'Sullivan",
+    "David Murphy",
+    "Hoang D. Nguyen"
+   ],
+   "published": "2026-09-30T20:03:52Z",
+   "updated": "2026-09-30T20:03:52Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00666v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00666v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.00623",
+   "title": "HAWK: Rethinking Multimodal Drafting for Speculative Decoding",
+   "authors": [
+    "Wenhan Yang",
+    "Anirudh Rao",
+    "Ashwin Chandra"
+   ],
+   "published": "2026-09-30T19:26:06Z",
+   "updated": "2026-09-30T19:26:06Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00623v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00623v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.00620",
+   "title": "Misalignment of Low-Loss Regions Causes Grokking",
+   "authors": [
+    "Yongding Tian",
+    "Zaid Al-Ars",
+    "Maksim Kitsak",
+    "Peter Hofstee"
+   ],
+   "published": "2026-09-30T19:22:20Z",
+   "updated": "2026-09-30T19:22:20Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00620v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00620v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.00606",
+   "title": "Where's Waldo? Query-language Preference under Cross-lingual Knowledge Disparities",
+   "authors": [
+    "Dayeon Ki",
+    "Ruochen Zhang",
+    "Silviu Cucerzan",
+    "Ryen W. White",
+    "Ning Gao"
+   ],
+   "published": "2026-09-30T19:11:19Z",
+   "updated": "2026-09-30T19:11:19Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00606v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00606v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.00583",
+   "title": "Worse Together: How Performance Breaks Down in Multi-User Multi-Agent Teams",
+   "authors": [
+    "Sahan Paliskara",
+    "Nattaput Namchittai",
+    "Andrew Lampinen"
+   ],
+   "published": "2026-09-30T18:49:25Z",
+   "updated": "2026-09-30T18:49:25Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00583v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00583v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2610.00576",
+   "title": "Gestalt: Large Multimodal Interplay Model",
+   "authors": [
+    "Zequn Yang",
+    "Yu Miao",
+    "Haotian Ni",
+    "Ziheng Chen",
+    "Chengxiang Huang",
+    "Dongzhan Zhou",
+    "Kai Chen",
+    "Qi Zhang",
+    "Ji-Rong Wen",
+    "Yake Wei",
+    "Di Hu"
+   ],
+   "published": "2026-09-30T18:45:38Z",
+   "updated": "2026-09-30T18:45:38Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00576v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00576v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2610.00573",
+   "title": "FORTE: Adaptive Scoring and Exact Keyframe Selection for Long-Video Question Answering",
+   "authors": [
+    "Haifeng Huang",
+    "Biyin Xu",
+    "Chunsheng Xin",
+    "Yang Li"
+   ],
+   "published": "2026-09-30T18:45:18Z",
+   "updated": "2026-09-30T18:45:18Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00573v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00573v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2610.00568",
+   "title": "Emergent Unfaithfulness: How Alignment Training Causes Language Models to Silently Override Task Faithfulness",
+   "authors": [
+    "Pardis Sadat Zahraei",
+    "Janvijay Singh",
+    "Gokhan Tur",
+    "Dilek Hakkani-Tur"
+   ],
+   "published": "2026-09-30T18:41:05Z",
+   "updated": "2026-09-30T18:41:05Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00568v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00568v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.00562",
+   "title": "Can LLMs Reason Over Long Horizons? An Empirical Evaluation of Context Strategies for Longitudinal Clinical Reasoning",
+   "authors": [
+    "Taye Akinrele",
+    "Noorbakhsh Amiri Golilarz",
+    "Subash Neupane",
+    "Sudip Mittal",
+    "Shahram Rahimi"
+   ],
+   "published": "2026-09-30T18:36:19Z",
+   "updated": "2026-09-30T18:36:19Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI",
+    "cs.LG"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00562v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00562v1",
+   "matched_query": "llm-long-context"
+  },
+  {
+   "arxiv_id": "2610.00559",
+   "title": "PhysVista: Benchmarking Physical Intelligence in VLMs via a Perception-Reasoning-Assessment Loop",
+   "authors": [
+    "Xinge Peng",
+    "Yiting Lu",
+    "Tianwu Zhi",
+    "Wen Wen",
+    "Jianzhao Liu",
+    "Xin Li",
+    "Zhibo Chen"
+   ],
+   "published": "2026-09-30T18:34:22Z",
+   "updated": "2026-09-30T18:34:22Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00559v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00559v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2610.00557",
+   "title": "No One Architecture Fits All: A Cross-Environment Evaluation of Hierarchical Red Team Agents",
+   "authors": [
+    "Ayan Javeed Shaikh",
+    "Arunesh Sinha",
+    "Nathaniel D. Bastian",
+    "Ankit Shah"
+   ],
+   "published": "2026-09-30T18:32:50Z",
+   "updated": "2026-09-30T18:32:50Z",
+   "category": "cs.CR",
+   "categories": [
+    "cs.CR",
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00557v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00557v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2610.00538",
+   "title": "Multi-agent Auditory Scene Analysis: Improved Localization Speed and Robustness by Multi-beamformed Speech Quality Feedback",
+   "authors": [
+    "Caleb Rascon"
+   ],
+   "published": "2026-09-30T18:20:40Z",
+   "updated": "2026-09-30T18:20:40Z",
+   "category": "eess.AS",
+   "categories": [
+    "eess.AS",
+    "cs.AI",
+    "cs.MA"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00538v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00538v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2610.00465",
+   "title": "AIR-LLM: Broadcasting AI Weights over Radio for Memory-Free Edge LLM Inference via RF Computing",
+   "authors": [
+    "Zhihui Gao",
+    "Tingjun Chen",
+    "Dirk Englund"
+   ],
+   "published": "2026-09-30T18:00:02Z",
+   "updated": "2026-09-30T18:00:02Z",
+   "category": "cs.IT",
+   "categories": [
+    "cs.IT",
+    "cs.ET",
+    "cs.LG",
+    "eess.SP",
+    "physics.app-ph"
+   ],
+   "areas": [
+    "SLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00465v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00465v1",
+   "matched_query": "slm-on-device"
+  },
+  {
+   "arxiv_id": "2609.40362",
+   "title": "Multimodal Flow: Unified Flow Modeling of Language and Vision in Embedding Spaces",
+   "authors": [
+    "Hongyuan Tao",
+    "Xinggang Wang",
+    "Lianghui Zhu",
+    "Yongkang Li",
+    "Yunchao Wei",
+    "Bin Feng",
+    "Shaoyu Chen",
+    "Qian Zhang",
+    "Chang Huang",
+    "Kai Yu"
+   ],
+   "published": "2026-09-30T17:59:57Z",
+   "updated": "2026-09-30T17:59:57Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.40362v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.40362v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2609.40361",
+   "title": "Ranking-Aware Prompt Optimization for Multimodal Clinical Diagnosis",
+   "authors": [
+    "Tian Xia",
+    "Minghao Liu",
+    "Yiqing Liang",
+    "Laixi Shi",
+    "Jiayun Wang"
+   ],
+   "published": "2026-09-30T17:59:56Z",
+   "updated": "2026-09-30T17:59:56Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.CL",
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.40361v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.40361v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2609.40356",
+   "title": "ViTeX-Bench: Benchmarking High-Fidelity Video Scene Text Editing",
+   "authors": [
+    "Xinghao Chen",
+    "Xiangbo Gao",
+    "Jiongze Yu",
+    "Yuheng Wu",
+    "Zhengzhong Tu"
+   ],
+   "published": "2026-09-30T17:59:33Z",
+   "updated": "2026-09-30T17:59:33Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.40356v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.40356v1",
+   "matched_query": "nb-alignment"
+  },
+  {
+   "arxiv_id": "2609.40324",
+   "title": "Cogentic: Multi-Agent Orchestration for Automated Proof Discovery",
+   "authors": [
+    "Yang Cai",
+    "Vineet Gupta",
+    "Yanchen Jiang",
+    "Christopher Liaw",
+    "Aranyak Mehta",
+    "Grigoris Velegkas",
+    "Di Wang"
+   ],
+   "published": "2026-09-30T17:55:22Z",
+   "updated": "2026-09-30T17:55:22Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.GT"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.40324v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.40324v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2609.40316",
+   "title": "Scaling Laws for Looped Mixture of Experts",
+   "authors": [
+    "Yanbei Chen",
+    "Anirudh Goyal",
+    "Raghuraman Krishnamoorthi"
+   ],
+   "published": "2026-09-30T17:53:47Z",
+   "updated": "2026-09-30T17:53:47Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.AI",
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.40316v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.40316v1",
+   "matched_query": "llm-scaling-law"
+  },
+  {
+   "arxiv_id": "2609.40303",
+   "title": "How Much of a Harness Does a Strong Agent Need for Autonomous ML Engineering?",
+   "authors": [
+    "Kirill Brilliantov",
+    "Alejandro Hernández-Cano",
+    "Emmanuel Abbé"
+   ],
+   "published": "2026-09-30T17:51:30Z",
+   "updated": "2026-09-30T17:51:30Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.40303v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.40303v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2609.40295",
+   "title": "How Much Is an AI Token Worth? Scaling Laws for Wild AI-Generated Web Text",
+   "authors": [
+    "Jenna Russell",
+    "Ben Glickenhaus",
+    "Katherine Thai",
+    "John Wieting",
+    "Mohit Iyyer",
+    "Max Spero",
+    "Bradley Emi"
+   ],
+   "published": "2026-09-30T17:50:22Z",
+   "updated": "2026-09-30T17:50:22Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.LG"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.40295v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.40295v1",
+   "matched_query": "llm-scaling-law"
+  },
+  {
+   "arxiv_id": "2609.40269",
+   "title": "Belief-Aware Multi-Agent Path Finding under Map Uncertainty",
+   "authors": [
+    "Viraj Parimi",
+    "Shao-Hung Chan",
+    "Han Zhang",
+    "Jingkai Chen",
+    "Brian Williams"
+   ],
+   "published": "2026-09-30T17:44:19Z",
+   "updated": "2026-09-30T17:44:19Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.MA",
+    "cs.RO"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.40269v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.40269v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2609.40230",
+   "title": "EviRover: Reinforcing Agentic Perception Beyond a Glance",
+   "authors": [
+    "Kaixuan Fan",
+    "Kaituo Feng",
+    "Tianshuo Peng",
+    "Yilei Jiang",
+    "Manyuan Zhang",
+    "Junke Wang",
+    "Xiangyu Yue"
+   ],
+   "published": "2026-09-30T17:30:09Z",
+   "updated": "2026-09-30T17:30:09Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.40230v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.40230v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2609.40195",
+   "title": "MemLife: Curating and Reasoning over Long-Term Egocentric Video Memories",
+   "authors": [
+    "Guangzhi Xiong",
+    "Xinyuan Zhang",
+    "Xiao Yang",
+    "Hyokun Yun",
+    "Kai Zhang",
+    "Shiun-Zu Kuo",
+    "Hyeonjeong Ha",
+    "Xilun Chen",
+    "Kai Sun",
+    "Lucas Liang",
+    "Guangqiang Dong",
+    "Ejaz Ahmed",
+    "Ahmed A Aly",
+    "Anuj Kumar",
+    "Raffay Hamid",
+    "Aidong Zhang",
+    "Xin Luna Dong"
+   ],
+   "published": "2026-09-30T17:11:33Z",
+   "updated": "2026-09-30T17:11:33Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI",
+    "cs.CL"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.40195v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.40195v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2609.40169",
+   "title": "Learning from Research: Toward Lifelong Agent Harness Evolution",
+   "authors": [
+    "Jingbo Yang",
+    "Kwei-Herng Lai",
+    "Xiaowen Wang",
+    "Yaar Harari",
+    "Evgeniy Gabrilovich",
+    "Shiyu Chang"
+   ],
+   "published": "2026-09-30T17:00:38Z",
+   "updated": "2026-09-30T17:00:38Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.40169v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.40169v1",
+   "matched_query": "agent-tool-use"
+  },
+  {
+   "arxiv_id": "2609.40148",
+   "title": "From Spectra to Joint Schedules in LLM Pre-training: 3+3(+2) Scaling-Law Regimes",
+   "authors": [
+    "Yichen Wang",
+    "Fanghui Liu",
+    "Yudong Chen"
+   ],
+   "published": "2026-09-30T16:53:23Z",
+   "updated": "2026-09-30T16:53:23Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.40148v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.40148v1",
+   "matched_query": "llm-scaling-law"
+  },
+  {
+   "arxiv_id": "2610.00430",
+   "title": "Memetic Trojans: Social Contagions as Carriers of Adversarial Payloads in Agent Networks",
+   "authors": [
+    "Birk Torpmann-Hagen",
+    "Finn Schwall",
+    "Leon Moonen"
+   ],
+   "published": "2026-09-30T16:43:02Z",
+   "updated": "2026-09-30T16:43:02Z",
+   "category": "cs.SI",
+   "categories": [
+    "cs.SI",
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00430v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00430v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2609.40079",
+   "title": "LongEmo: Towards Emotion Understanding and Reasoning in Long Videos",
+   "authors": [
+    "Shuo Zhang",
+    "Yifan Zhou",
+    "Han Wang",
+    "Jinsong Zhang",
+    "Jingyu Li",
+    "Hongbing Li",
+    "Zhejun Zhang",
+    "Chengyi Zhao",
+    "Yuquan Hao",
+    "Yitong Liu",
+    "Jiyin Li",
+    "Ruiqi Tang",
+    "Zixuan Lin",
+    "Yi Luo",
+    "Xurui Zhang",
+    "Ronghao Chen",
+    "Huacan Wang",
+    "Lei Li"
+   ],
+   "published": "2026-09-30T16:27:25Z",
+   "updated": "2026-09-30T16:27:25Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.40079v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.40079v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2609.40055",
+   "title": "Less Data, Better Timing: Student-Curriculum Coupling for VLM On-Policy Distillation in Temporal Video Grounding",
+   "authors": [
+    "Jiacheng Qiu",
+    "Yunsoo Kim",
+    "Ruichen Xu",
+    "Jian Luo",
+    "Petar M. Djurić",
+    "Sima Mofakham"
+   ],
+   "published": "2026-09-30T16:18:31Z",
+   "updated": "2026-09-30T16:18:31Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.40055v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.40055v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2609.40027",
+   "title": "Who Verifies the Graph? Misspecification Attacks on Causal Action Verification for Language Agents",
+   "authors": [
+    "Fabio Rovai"
+   ],
+   "published": "2026-09-30T16:02:04Z",
+   "updated": "2026-09-30T16:02:04Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.LG"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.40027v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.40027v1",
+   "matched_query": "agent-tool-use"
+  },
+  {
+   "arxiv_id": "2609.40014",
+   "title": "Can We Anticipate Violence? Multimodal Learning from Pre-Incident Behavioral Cues",
+   "authors": [
+    "Sindhuja Penchala",
+    "Mohammed Yusuf Mujawar",
+    "Noorbakhsh Amiri Golilarz",
+    "Sudip Mittal",
+    "Shahram Rahimi"
+   ],
+   "published": "2026-09-30T15:52:22Z",
+   "updated": "2026-09-30T15:52:22Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.40014v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.40014v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2609.39957",
+   "title": "Learning When and How to Intervene: A Hindsight-Distilled Sentinel for Coding Agents",
+   "authors": [
+    "Jiangrui Zhao",
+    "Chenglong Li",
+    "Meng Zhang",
+    "Xiaoting Du"
+   ],
+   "published": "2026-09-30T15:26:16Z",
+   "updated": "2026-09-30T15:26:16Z",
+   "category": "cs.SE",
+   "categories": [
+    "cs.SE",
+    "cs.AI",
+    "cs.LG"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39957v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39957v1",
+   "matched_query": "agent-swe-bench"
+  },
+  {
+   "arxiv_id": "2609.39953",
+   "title": "Learning to Reason with Compressed Context: Ground-Truth-Free Adaptation of OmniLLMs via Self-Distillation",
+   "authors": [
+    "Jianghao Wang",
+    "Ke Meng",
+    "Jian Li",
+    "Chi Cheng",
+    "Longyu Qi",
+    "Liyin Liang",
+    "Yifeng Qian",
+    "Chunbo Lai",
+    "Yutian Lin",
+    "Zeyu Wang"
+   ],
+   "published": "2026-09-30T15:24:57Z",
+   "updated": "2026-09-30T15:24:57Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39953v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39953v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2609.39929",
+   "title": "RoPE at the End of Its Rope? Theory, Diagnosis, and Mitigation of Long-Context Failures",
+   "authors": [
+    "Yuyang Wu",
+    "Yufeng Du",
+    "Hao Peng"
+   ],
+   "published": "2026-09-30T15:14:39Z",
+   "updated": "2026-09-30T15:14:39Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39929v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39929v1",
+   "matched_query": "llm-long-context"
+  },
+  {
+   "arxiv_id": "2609.39924",
+   "title": "CoVisco: Codec-Native Vision Encoder with Native Token Compression for Unified Image-Video Understanding",
+   "authors": [
+    "Yulong Liu",
+    "Xiaotian Han",
+    "Junyuan Shang",
+    "Yuchen Ding",
+    "Zhenyu Zhang",
+    "Shuohuan Wang",
+    "Guibo Zhu",
+    "Sirui Han",
+    "Dianhai Yu"
+   ],
+   "published": "2026-09-30T15:12:10Z",
+   "updated": "2026-09-30T15:12:10Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39924v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39924v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2609.39920",
+   "title": "MCD: Causal Distillation of Multimodal In-Context Learning in Large Vision-Language Models",
+   "authors": [
+    "Yanshu Li",
+    "Jiaqian Li",
+    "Canran Xiao",
+    "Xi Xiao",
+    "Tianyang Wang",
+    "Yongtai Liu"
+   ],
+   "published": "2026-09-30T15:10:44Z",
+   "updated": "2026-09-30T15:10:44Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.CL"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39920v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39920v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2609.39915",
+   "title": "NavHarness: Adaptive Goals for Agentic Vision-Language Navigation",
+   "authors": [
+    "Haoxiang Shi",
+    "Zaijing Li",
+    "Muhe Ding",
+    "Xiang Deng",
+    "Yaowei Wang",
+    "Liqiang Nie"
+   ],
+   "published": "2026-09-30T15:06:45Z",
+   "updated": "2026-09-30T15:06:45Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.RO"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39915v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39915v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2609.39899",
+   "title": "Learning Where to Look: Anatomical Grounding and Guided Attention for Cardiac MRI Vision-Language Models",
+   "authors": [
+    "Bangwei Guo",
+    "Xiao Chen",
+    "Boris Mailhe",
+    "Jia Yao",
+    "Yiqing Wang",
+    "Ankush Mukherjee",
+    "Yikang Liu",
+    "Zheyuan Zhang",
+    "Hang Yu",
+    "Terrence Chen",
+    "Shanhui Sun"
+   ],
+   "published": "2026-09-30T15:00:44Z",
+   "updated": "2026-09-30T15:00:44Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39899v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39899v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2609.39836",
+   "title": "Spherical Interpolation for Backward-Compatible Multimodal Representations",
+   "authors": [
+    "Simone Ricci",
+    "Niccolò Biondi",
+    "Federico Pernici"
+   ],
+   "published": "2026-09-30T14:32:02Z",
+   "updated": "2026-09-30T14:32:02Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.LG"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39836v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39836v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2609.39788",
+   "title": "Safety of Latent Communication in Multi-Agent Systems",
+   "authors": [
+    "Muhammad Huzaifa",
+    "Sina Mavali",
+    "Thorsten Eisenhofer"
+   ],
+   "published": "2026-09-30T14:09:57Z",
+   "updated": "2026-10-01T09:39:34Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.LG",
+    "cs.MA"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39788v2",
+   "pdf_url": "https://arxiv.org/pdf/2609.39788v2",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2609.39784",
+   "title": "CORD: Learning Reusable Degradation Representations Across Heterogeneous Physical Systems",
+   "authors": [
+    "Haibo Li",
+    "Zhiguo Zeng"
+   ],
+   "published": "2026-09-30T14:05:52Z",
+   "updated": "2026-09-30T14:05:52Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG"
+   ],
+   "areas": [
+    "SLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39784v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39784v1",
+   "matched_query": "slm-on-device"
+  },
+  {
+   "arxiv_id": "2609.39740",
+   "title": "LatentHarness: Learning Latent Actions for Memory and Reasoning via Counterfactual Policy Distillation",
+   "authors": [
+    "Xiaoqiang Wang",
+    "Suyuchen Wang",
+    "Bang Liu"
+   ],
+   "published": "2026-09-30T13:42:26Z",
+   "updated": "2026-09-30T13:42:26Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39740v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39740v1",
+   "matched_query": "llm-long-context"
+  },
+  {
+   "arxiv_id": "2610.00406",
+   "title": "LLM-as-a-Judge for Low-Resource Languages: Adapting Ragas and Comparative Ranking for Romanian",
+   "authors": [
+    "Claudiu Creanga",
+    "Liviu P. Dinu"
+   ],
+   "published": "2026-09-30T13:19:21Z",
+   "updated": "2026-09-30T13:19:21Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "邻域"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00406v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00406v1",
+   "matched_query": "nb-retrieval-augmented"
+  },
+  {
+   "arxiv_id": "2609.39688",
+   "title": "ShieldCLIP: Selective Safety Alignment for Harmful Content Mitigation in Multimodal Foundation Models",
+   "authors": [
+    "Tobia Poppi",
+    "Silvia Cappelletti",
+    "Samuele Poppi",
+    "Marcella Cornia",
+    "Lorenzo Baraldi",
+    "Diego Garcia-Olano",
+    "Rita Cucchiara"
+   ],
+   "published": "2026-09-30T13:14:56Z",
+   "updated": "2026-09-30T13:14:56Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI",
+    "cs.CL",
+    "cs.MM"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39688v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39688v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2610.00405",
+   "title": "RACE: Residual-Aware Test-Time Adaptation for Neighbor-Rich Time-Series Foundation Model Forecasting",
+   "authors": [
+    "Hao-Nan Shi",
+    "Tong Wu",
+    "Chen-Cong Sun",
+    "Yuan Jiang",
+    "Han-Jia Ye",
+    "De-Chuan Zhan"
+   ],
+   "published": "2026-09-30T13:14:38Z",
+   "updated": "2026-09-30T13:14:38Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "stat.ML"
+   ],
+   "areas": [
+    "SLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00405v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00405v1",
+   "matched_query": "slm-on-device"
+  },
+  {
+   "arxiv_id": "2609.39662",
+   "title": "Typographic Attack Against VLM-based AI-generated Image Detection",
+   "authors": [
+    "Eunmin Lee",
+    "Jungwoo Kim",
+    "Jong-Seok Lee"
+   ],
+   "published": "2026-09-30T13:03:01Z",
+   "updated": "2026-09-30T13:03:01Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39662v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39662v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2609.39645",
+   "title": "SEPAL: Separated Expert Pairs with Answer-Level Fusion for Reliable LLM Collaboration",
+   "authors": [
+    "Weijie Ren",
+    "Yanwen Zhang",
+    "Hao Li",
+    "Zhuolin Qi",
+    "Hengyi Zhang",
+    "Naibo Wang"
+   ],
+   "published": "2026-09-30T12:49:00Z",
+   "updated": "2026-09-30T12:49:00Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI",
+    "cs.LG"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39645v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39645v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2609.39601",
+   "title": "GroundingPI: A Grounding Foundation Model towards Physical Intelligence with Visual Primitives",
+   "authors": [
+    "Qize Yu",
+    "Lianrui Fan",
+    "Boyu Chen",
+    "Jiaqi Liang",
+    "Xini Ding",
+    "Yue Chen",
+    "Zetian Song",
+    "Yuran Wang",
+    "Yi Zou",
+    "Kaixuan Wang",
+    "Tianxing Chen",
+    "Wenxuan Song",
+    "Bohan Zhou",
+    "Mingleyang Li",
+    "Siqiao Huang",
+    "Yuqi Ye",
+    "Caigao Jiang",
+    "Wei Wei",
+    "Ruihai Wu",
+    "Hang Zhang",
+    "Yixiao Ge",
+    "Shuchang Zhou",
+    "Shilong Liu",
+    "Xianming Liu",
+    "Ping Luo",
+    "Shiyu Huang"
+   ],
+   "published": "2026-09-30T12:20:54Z",
+   "updated": "2026-09-30T12:20:54Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI",
+    "cs.LG",
+    "cs.RO"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39601v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39601v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2609.39588",
+   "title": "KilometerVision: A New Frontier for Large-Scale Spatial Intelligence in VLMs",
+   "authors": [
+    "Aravindh Mahendran",
+    "Michael King",
+    "Matthew Koichi Grimes",
+    "Antoine Yang",
+    "Tyler Zhu",
+    "Joseph Heyward",
+    "Tengda Han",
+    "Shiry Ginosar",
+    "Chen Sun",
+    "Dima Damen",
+    "Simon Osindero",
+    "Noah Snavely",
+    "Simon Lynen",
+    "João Carreira",
+    "Viorica Pătrăucean"
+   ],
+   "published": "2026-09-30T12:14:26Z",
+   "updated": "2026-09-30T12:14:26Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.LG"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39588v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39588v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2609.39584",
+   "title": "Cybersecurity in Edge Computing: A Trust-Aware Federated Hybrid Intrusion Detection Framework",
+   "authors": [
+    "Zawad Yalmie Sazid",
+    "Robert Abbas"
+   ],
+   "published": "2026-09-30T12:12:26Z",
+   "updated": "2026-09-30T12:12:26Z",
+   "category": "cs.CR",
+   "categories": [
+    "cs.CR",
+    "cs.LG"
+   ],
+   "areas": [
+    "SLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39584v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39584v1",
+   "matched_query": "slm-on-device"
+  },
+  {
+   "arxiv_id": "2609.39566",
+   "title": "From Given to Gathered Evidence: Agentic Learning for Longitudinal Medical Reasoning",
+   "authors": [
+    "Minye Shao",
+    "Chaohui Yu",
+    "Yixuan Wu",
+    "Fan Wang",
+    "Ling Shao",
+    "Yang Long"
+   ],
+   "published": "2026-09-30T12:01:45Z",
+   "updated": "2026-09-30T12:01:45Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39566v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39566v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2609.39559",
+   "title": "Divide and Collapse: MAPF-Collapse via Exact Decomposition into Independent Sub-Instances",
+   "authors": [
+    "Oren Salzman"
+   ],
+   "published": "2026-09-30T11:57:35Z",
+   "updated": "2026-09-30T11:57:35Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.RO"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39559v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39559v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2610.00397",
+   "title": "NEUROTOKEN: Joint Source and Directional AAD with Envelope Decoding via Conditional Flow Matching",
+   "authors": [
+    "Ali Alavi",
+    "Donald S. Williamson"
+   ],
+   "published": "2026-09-30T11:55:25Z",
+   "updated": "2026-09-30T11:55:25Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG"
+   ],
+   "areas": [
+    "SLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2610.00397v1",
+   "pdf_url": "https://arxiv.org/pdf/2610.00397v1",
+   "matched_query": "slm-on-device"
+  },
+  {
+   "arxiv_id": "2609.39551",
+   "title": "RankEvolve: A Reliable Multi-Agent Auto-Research Harness for Evolving Ranking Models",
+   "authors": [
+    "Zheng Chen",
+    "Linfeng Liu",
+    "Hong Li",
+    "Hong Yan"
+   ],
+   "published": "2026-09-30T11:50:46Z",
+   "updated": "2026-09-30T11:50:46Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39551v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39551v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2609.39549",
+   "title": "Speculative Safety Honeypot: Toward Proactive Defense Against Multi-turn Agent Attacks",
+   "authors": [
+    "Zezhong Wang",
+    "Xueyang Tang",
+    "Rui Lian",
+    "Yang Lou",
+    "Heqing Huang"
+   ],
+   "published": "2026-09-30T11:50:06Z",
+   "updated": "2026-09-30T11:50:06Z",
+   "category": "cs.CR",
+   "categories": [
+    "cs.CR",
+    "cs.AI",
+    "cs.CL"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39549v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39549v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2609.39547",
+   "title": "Learning Reliable GUI Agents under Imperfect Priors",
+   "authors": [
+    "Bo Han",
+    "Qianyi Wang",
+    "Shuai Liu",
+    "Xiong Zifan",
+    "Changqiao Wu",
+    "Yuanfa Li",
+    "Pengzhi Gao",
+    "Wei Liu",
+    "Jian Luan",
+    "Heng Qu",
+    "Yunpeng Song",
+    "Zhongmin Cai"
+   ],
+   "published": "2026-09-30T11:45:51Z",
+   "updated": "2026-09-30T11:45:51Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG"
+   ],
+   "areas": [
+    "SLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39547v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39547v1",
+   "matched_query": "slm-on-device"
+  },
+  {
+   "arxiv_id": "2609.39492",
+   "title": "Front-to-Back: Benchmarking Vision-Language Models for Asymmetric Cross-View Vehicle Re-Identification",
+   "authors": [
+    "Moseli Mots'oehli",
+    "Thulani Babeli"
+   ],
+   "published": "2026-09-30T10:53:40Z",
+   "updated": "2026-09-30T10:53:40Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39492v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39492v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2609.39486",
+   "title": "From Wrecks to Wisdom: Recovering Crash Mechanics from Real-World Multi-View Photos",
+   "authors": [
+    "Ondřej Valach",
+    "Václav Diviš",
+    "Ivan Gruber"
+   ],
+   "published": "2026-09-30T10:47:28Z",
+   "updated": "2026-09-30T10:47:28Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39486v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39486v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2609.39456",
+   "title": "Mutual Equilibrium: Multimodal Representation Learning through Reciprocal Feedback",
+   "authors": [
+    "Ho-min Park",
+    "Byungkon Kang"
+   ],
+   "published": "2026-09-30T10:27:14Z",
+   "updated": "2026-09-30T10:27:14Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39456v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39456v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2609.39450",
+   "title": "ActionGuard: Tool Call Authorization under Poisoned Skills",
+   "authors": [
+    "Jihun Han",
+    "Yejin Jang",
+    "Byung Il Kwak",
+    "Mee Lan Han"
+   ],
+   "published": "2026-09-30T10:23:57Z",
+   "updated": "2026-09-30T10:23:57Z",
+   "category": "cs.CR",
+   "categories": [
+    "cs.CR",
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39450v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39450v1",
+   "matched_query": "agent-tool-use"
+  },
+  {
+   "arxiv_id": "2609.39378",
+   "title": "EgoTools: Towards Tool-Centric Reasoning in Real-World Egocentric Videos",
+   "authors": [
+    "Shulin Tian",
+    "Junsu Kim",
+    "Shuai Liu",
+    "Hao Li",
+    "Yujiao Shen",
+    "Sihan Li",
+    "Zhe Yang",
+    "Yeongon Kim",
+    "Feiyu Li",
+    "Jialin Wu",
+    "Yichi Zhang",
+    "Wenhui Wang",
+    "Runmao Yao",
+    "Yuhao Dong",
+    "Zhaoxi Chen",
+    "Fangzhou Hong",
+    "Antonino Furnari",
+    "Jingkang Yang",
+    "Hongyuan Zhu",
+    "Ziwei Liu"
+   ],
+   "published": "2026-09-30T09:30:23Z",
+   "updated": "2026-09-30T09:30:23Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39378v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39378v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2609.39363",
+   "title": "Rethinking Multi-Image Re-Representation in Multi-Image Understanding",
+   "authors": [
+    "Gengyuan Zhang",
+    "Xiao Han",
+    "Xinyu Xie",
+    "Tong Liu",
+    "Volker Tresp"
+   ],
+   "published": "2026-09-30T09:20:21Z",
+   "updated": "2026-09-30T09:20:21Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39363v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39363v1",
+   "matched_query": "agent-tool-use"
+  },
+  {
+   "arxiv_id": "2609.39346",
+   "title": "Offline Guidance, Online Reasoning: Reusing LLM Feedback for Small Language Models",
+   "authors": [
+    "Bohan Zhang",
+    "Linan Yue",
+    "Weibo Gao",
+    "Pengyu Chen",
+    "Hong Guo",
+    "Yanqi Hao"
+   ],
+   "published": "2026-09-30T09:09:56Z",
+   "updated": "2026-09-30T09:09:56Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL"
+   ],
+   "areas": [
+    "SLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39346v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39346v1",
+   "matched_query": "slm-small-language-model"
+  },
+  {
+   "arxiv_id": "2609.39336",
+   "title": "How Many Samples Are Enough for Learning Across Domains?",
+   "authors": [
+    "Hong Zheng"
+   ],
+   "published": "2026-09-30T09:05:40Z",
+   "updated": "2026-09-30T09:05:40Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39336v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39336v1",
+   "matched_query": "llm-scaling-law"
+  },
+  {
+   "arxiv_id": "2609.39315",
+   "title": "Rethinking Generative Image Compression at Extremely Low Bitrates",
+   "authors": [
+    "Tianyu Zhang",
+    "Zhaoyang Jia",
+    "Houqiang Li",
+    "Dong Liu"
+   ],
+   "published": "2026-09-30T08:53:11Z",
+   "updated": "2026-09-30T08:53:11Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39315v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39315v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2609.39297",
+   "title": "MiniRep: Robust Reputation-Based Aggregation for Multi-Agent Debate",
+   "authors": [
+    "Jiaming Zhang",
+    "Yuwan Liu",
+    "Yue Huang",
+    "Sisi Duan"
+   ],
+   "published": "2026-09-30T08:41:08Z",
+   "updated": "2026-09-30T08:41:08Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39297v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39297v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2609.39195",
+   "title": "Uruqi: Learning Spatial Cognition from Visual Experience",
+   "authors": [
+    "Shichao Li",
+    "Meiqi Wang",
+    "Fei Su",
+    "Zhicheng Zhao"
+   ],
+   "published": "2026-09-30T07:47:02Z",
+   "updated": "2026-09-30T07:47:02Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39195v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39195v1",
+   "matched_query": "mm-vision-language-model"
+  },
+  {
+   "arxiv_id": "2609.39194",
+   "title": "Importance-Aware Feature Sparsification for Wireless Split Learning",
+   "authors": [
+    "Bumjun Kim",
+    "Yoon Huh",
+    "Wan Choi"
+   ],
+   "published": "2026-09-30T07:46:35Z",
+   "updated": "2026-09-30T07:46:35Z",
+   "category": "cs.LG",
+   "categories": [
+    "cs.LG",
+    "eess.SP"
+   ],
+   "areas": [
+    "SLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39194v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39194v1",
+   "matched_query": "slm-on-device"
+  },
+  {
+   "arxiv_id": "2609.39154",
+   "title": "DAGent: Evaluate-then-Grow Planning for Deep Research Agents",
+   "authors": [
+    "Hanwen Liu",
+    "Yuanfu Sun",
+    "Qiaoyu Tan"
+   ],
+   "published": "2026-09-30T07:19:01Z",
+   "updated": "2026-09-30T07:19:01Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39154v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39154v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2609.39150",
+   "title": "OP-CAD: On-Policy Clean-Audio Distillation for Robust Audio-Visual Reasoning",
+   "authors": [
+    "Xingming Shui",
+    "Dapeng Chen",
+    "Bowei Liu",
+    "Jingqi Tian",
+    "Minfu Li",
+    "Kun Yi",
+    "Jiapeng Hong",
+    "Yansong Tang"
+   ],
+   "published": "2026-09-30T07:16:22Z",
+   "updated": "2026-09-30T07:16:22Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.SD"
+   ],
+   "areas": [
+    "多模态"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39150v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39150v1",
+   "matched_query": "mm-multimodal"
+  },
+  {
+   "arxiv_id": "2609.39146",
+   "title": "MADBench: Benchmarking the Security of Multi-Agent Debate",
+   "authors": [
+    "Yuwan Liu",
+    "Jiaming Zhang",
+    "Yue Huang",
+    "Sisi Duan"
+   ],
+   "published": "2026-09-30T07:12:59Z",
+   "updated": "2026-09-30T07:12:59Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.39146v1",
+   "pdf_url": "https://arxiv.org/pdf/2609.39146v1",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2609.38660",
+   "title": "Breaking Babel: A Self-Evolving Multi-Agent System for Long-Form Subtitle Translation",
+   "authors": [
+    "Haibo Jin",
+    "Xinjie Li",
+    "Najmeh Sadoughi",
+    "Yang Liu",
+    "Yibo Wang",
+    "Zhu Liu",
+    "Yuzong Liu"
+   ],
+   "published": "2026-09-29T23:36:17Z",
+   "updated": "2026-10-01T05:12:06Z",
+   "category": "cs.CL",
+   "categories": [
+    "cs.CL",
+    "cs.AI",
+    "cs.CV",
+    "cs.MA"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.38660v2",
+   "pdf_url": "https://arxiv.org/pdf/2609.38660v2",
+   "matched_query": "agent-multi-agent(retry)"
+  },
+  {
+   "arxiv_id": "2609.37002",
+   "title": "Visual Parallel Search: Learning to Search High-Resolution Images with Parallel Tile Inspection and Adaptive Zoom",
+   "authors": [
+    "Xijia Tao",
+    "Yihua Teng",
+    "Xinyu Fu",
+    "Cheng Gong",
+    "Ziru Liu",
+    "Xudong Xie",
+    "Rui Liu",
+    "Lingpeng Kong"
+   ],
+   "published": "2026-09-29T08:29:48Z",
+   "updated": "2026-09-30T11:24:23Z",
+   "category": "cs.CV",
+   "categories": [
+    "cs.CV",
+    "cs.AI"
+   ],
+   "areas": [
+    "agent harness"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.37002v2",
+   "pdf_url": "https://arxiv.org/pdf/2609.37002v2",
+   "matched_query": "agent-tool-use"
+  },
+  {
+   "arxiv_id": "2609.36935",
+   "title": "CoEM: Empowering Long-Context Reasoning with Commit-on-Evidence Memory",
+   "authors": [
+    "Jingguang Li",
+    "Yebo Wu",
+    "Zuyi Guo",
+    "Kailang Ma",
+    "Xianjie Dai",
+    "Han Zheng",
+    "Benwang Chen",
+    "Li Li",
+    "Can Rong",
+    "Heye Huang"
+   ],
+   "published": "2026-09-29T07:48:18Z",
+   "updated": "2026-09-30T09:18:33Z",
+   "category": "cs.AI",
+   "categories": [
+    "cs.AI",
+    "cs.CL"
+   ],
+   "areas": [
+    "LLM"
+   ],
+   "abs_url": "https://arxiv.org/abs/2609.36935v2",
+   "pdf_url": "https://arxiv.org/pdf/2609.36935v2",
+   "matched_query": "llm-long-context"
+  }
+ ]
+}
