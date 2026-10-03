@@ -10,11 +10,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.5/§0.6/§0.7 推进中 · base-en 2048/2048 下满(1T tok) · base-rest(2061268) en_v1_4 442/512 · gpic train 1607/8000+test✓ · D-CLEAN 全完成(回收≈1.31TiB)
-已完成:       §0.3 8源/§0.4 R2视觉/§0.6 配方/§0.7 停85M·复用·ETA 交付；SFT-2605 下满一致；D-CLEAN 盘点/D-CLEAN-2 ≈341G/D-CLEAN-3 servers ≈972G；base-en 2048/2048 下满
-当前动作:     唤醒 75：轻 I/O 巡检 —— base-rest 2061268 真推进（en_v1_4 首快照 CC-MAIN-2013-20 442/512 ~1.8MB/s）；gpic 2426795 真推进（train 1607/8000+test 128✓ ~20MB/s）
-下一步:       持续巡检 base-rest/gpic 真推进（僵死即 kill+重启）；🔑 en_v1_4(6.7TB≈43天) 非 P-8 必需（base-en 1T tok 已够）→ 待运维拍板：停 en_v1_4 只续 l1_en_hq(478G)+zh(324G) / 继续全下 / 停 gpic 让带宽
-阻塞:         无硬阻塞；磁盘 /nas_train 85%（Avail 32T）；⚠️ 待运维拍板 en_v1_4 是否全下（~6.7TB@1.8MB/s≈43天，且阻塞其后 l1_en_hq/zh）
+PHASE:        §0.5/§0.6/§0.7 推进中 · 🔴已停 en_v1_4(488分片保留) · 只下 l1_en_hq+zh(新 pid 550476) · gpic train 1634/8000+test✓ · D-CLEAN 全完成(回收≈1.31TiB)
+已完成:       §0.3 8源/§0.4 R2视觉/§0.6 配方/§0.7 停85M·复用·ETA 交付；SFT-2605 下满一致；D-CLEAN 盘点/D-CLEAN-2 ≈341G/D-CLEAN-3 servers ≈972G；base-en 2048/2048 下满；🔴白名单锁定执行(停 en_v1_4)
+当前动作:     唤醒 76：执行 2026-10-03 下载白名单锁定 —— kill en_v1_4 进程 2061268、重启 pid 550476 只下 l1_en_hq(478G)+zh(324G)；gpic 2426795 推进中(train 1634/8000+test 128✓)
+下一步:       巡检 l1_en_hq/zh 新下载(550476) 真推进（僵死即 kill+重启）→ l1_en_hq(478G)+zh(324G)≈802GB 下满即「MiniCPM5 base 族就绪」报运维；gpic 续下至 8000 tar
+阻塞:         无硬阻塞；磁盘 /nas_train 85%（Avail 32T）
 ERROR_COUNT:  0
 ```
 
@@ -64,12 +64,23 @@ ERROR_COUNT:  0
 - **df 前后**：删前 `180751G used / 31218G avail` → 删后稳定 `179779G used / 32190G avail`（85%）→ **回收 ≈972 GB**。⚠️ 说明：删后 df 曾短暂只显示 -271G（NFS statfs 延迟），约 2 分钟后稳定为 -972G；最终以稳定值为准。
 - **`nemo_experiments` R2 ckpt（p1/p2/p3/p5a/p7 ≈135G）按运维令保留**，本轮未动。
 
+### ⑤ 🔴 下载白名单锁定（2026-10-03 运维指令，**本轮唯一动作项**）— ✅ 已执行：停 `en_v1_4`，只下 `l1_en_hq` + `zh` + GPIC
+
+> 运维拍板：「数据下载现在就 MiniCPM5 的数据 + GPIC，不要再节外生枝。」→ 白名单 = ① `ultrafineweb_l1_en_hq`(478G) + `ultrafineweb_zh`(324G) ② GPIC；🔴 立即停 `en_v1_4`。
+
+- **停了什么**：`kill 2061268`（旧 base-rest 进程，`--include` 含 `en_v1_4`+`l1_en_hq`+`zh` 三 config、顺序执行中，卡在 en_v1_4 首个快照 CC-MAIN-2013-20 **488/512** @~1.8MB/s）。✅ 进程已死（`ps -p 2061268` = DEAD）。
+- **保留已下内容（🚫 不删）**：`en_v1_4` 已下 **488 parquet**（≈41.5GB，仅 CC-MAIN-2013-20 快照）**原样保留**在 `/nas_train/.../Ultra-FineWeb/data/ultrafineweb_en_v1_4/`。
+- **释放带宽去向**：en_v1_4 = 6.75TB/56,461 文件（@1.8MB/s≈43 天）的巨量阻塞 → 停后带宽让给 `l1_en_hq`(478G)+`zh`(324G) 与 gpic。
+- **新任务 pid**：**550476**（`setsid` 去进程组 + `nohup`、ppid=1；`--include 'data/ultrafineweb_l1_en_hq/*' 'data/ultrafineweb_zh/*' --local-dir /nas_train/.../Ultra-FineWeb`；log=`Ultra-FineWeb/download_l1_zh.log`）。起步仍在 `list_repo_tree`（列 64,771 文件）阶段、l1_en_hq/zh 尚未落盘（起步速率待下轮实测）。
+- **带宽优先级（运维 ④）**：GPIC > l1_en_hq > zh —— 新任务按 `--include` 顺序先 l1_en_hq 后 zh，符合优先级。
+- **白名单 4 项口径（⑤）**：`en`=2048/2048✅满 · `l1_en_hq`=0（刚启动）· `zh`=0（随后）· `gpic`=train 1634/8000+test 128/128✓（pid 2426795，~20MB/s）。
+
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R research ✅ + R2 LLM 侧 ✅（8 源满填 / base vs L3 重叠 0% / P-8 86:10:4）+ R2 视觉侧 ✅（§0.4：本地 bytes 图文对实测 / 13 HF 候选 / 前 3 推荐）+ phase5 isolation v0.3 + phase1/2 脚本就绪；§0.5/§0.6/§0.7 推进中（§0.6 配方✅ / §0.7 停85M·复用·ETA✅ / SFT-2605 下满一致✅）** |
-| WAITING | 1（下载中：base-rest 3 config en_v1_4+l1_en_hq+zh ≈7.54T（pid 2061268，/nas_train；en_v1_4 首快照 396/512、l1_en_hq/zh 未开、被 en_v1_4 阻塞）· gpic train 1580/8000 + test 128✓（pid 2426795）；base-en 1T token 已下满 2048/2048；🔴 LLaVA 85M 已停无进程 7629/26T 未删；✅ D-CLEAN-3 servers 已删（GONE，Avail 32T/85%）；🔑 待运维拍板：停 en_v1_4（非 P-8 必需，~41天）+ 保留 l1_en_hq/zh；重 I/O 阶段继续推迟） |
+| WAITING | 1（下载中：🔴白名单锁定已执行——停 en_v1_4（pid 2061268 已杀、488 分片保留）、新 pid 550476 只下 l1_en_hq(478G)+zh(324G)（/nas_train，起步 list_repo_tree 阶段）；gpic train 1634/8000 + test 128✓（pid 2426795）；base-en 1T token 已下满 2048/2048；🔴 LLaVA 85M 已停无进程 7629/26T 未删；✅ D-CLEAN-3 servers 已删（GONE，Avail 32T/85%）；重 I/O 阶段继续推迟） |
 | ERROR_COUNT | 0 |
 | 节点 | `10.239.2.12`（主机 `whag0pgpuap12`；NFS：`/nas_inference` 只读源，`/nas_train` 产出） |
 | 更新 | 2026-10-03 |
@@ -97,6 +108,7 @@ ERROR_COUNT:  0
 - [ ] 多模态下载预计完成时间
 - [x] ~~`UltraData-SFT-2605/-Agent-2609` 具体存储格式~~ → **已实测**：Agent-2609 = **jsonl**（50 shard / 51 GiB，2GB/shard）；**2605 = 落盘为空**（仅 179 个 `.lock` 缓存文件 / 22.4KiB，无数据，需重下）
 - [x] ~~`UltraData-SFT-2605` 重新下载~~ → **✅ 已下满并核验一致（2026-10-02 唤醒 37）**：落盘 **1504 jsonl / 318,990,252,711 B = 318.99GB（297.08 GiB）**，`.incomplete` = 0，**与 HF 官方清单（1504 文件 / 318,990,252,711 B）逐字节完全一致**；逐子目录 `no_think` 855✓（CG 50/Code 300/IF 20/Kn 80/Math 300/ML-Kn 50/ML-Math 55）+ `think` 649✓（CG 50/Code 279/IF 20/Kn 50/Math 250）。token `hf_lqLxH…`（用户 foamliu）。
+- 2026-10-03 —— 唤醒 76（执行运维 2026-10-03 下载白名单锁定，🔴 停 en_v1_4）：复核运维指令区**有新增**「下载白名单锁定：只下 l1_en_hq+zh+GPIC；立即停 en_v1_4」（覆盖此前下载类指令）、无索取、无 STOP。🟢 **执行**：`kill 2061268`（旧 base-rest，`--include en_v1_4+l1_en_hq+zh`，正卡 en_v1_4 首快照 CC-MAIN-2013-20 488/512 @~1.8MB/s）→ 重启 **pid 550476** 只 `--include 'data/ultrafineweb_l1_en_hq/*' 'data/ultrafineweb_zh/*'`（`setsid`+`nohup`、ppid=1、log=`Ultra-FineWeb/download_l1_zh.log`）；🚫 保留已下 en_v1_4 488 parquet 原样不删。🔵 gpic 2426795 真推进（etime 1d5h27m；train 1634/8000 + test 128/128✓ ~20MB/s）。✅ base-en 2048/2048 满（1T tok）；✅ l1_en_hq/zh=0（刚启动、list_repo_tree 中）；✅ SFT-2605 1504/1504 intact；✅ servers GONE。⚠️ launch 细节：首启 `nohup &` 子进程被 run_commands 进程组清理误杀 → 改 `setsid` 后 pid 550476 ppid=1 稳定存活。磁盘 /nas_train 32T(85%)、/nas_inference 19T(59%)、/nas_user 29T(74%) 均够，WAITING=1。git 本轮回写后提交。下一步 = 下轮判 l1_en_hq/zh(550476) 真推进（僵死即 kill+重启）→ l1_en_hq(478G)+zh(324G)≈802GB 下满即「MiniCPM5 base 族就绪」报运维 → gpic 续下至 8000 tar。
 
 ## 关键路径速查（供恢复）
 
