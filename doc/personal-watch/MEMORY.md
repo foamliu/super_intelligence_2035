@@ -45,22 +45,31 @@ WAITING: 0
 
 ---
 
-## 3. 在途任务（截至 2026-10-03 建哨）
+## 3. 在途任务（截至 2026-10-03）
 
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
-| **news** | **前期任务 T1–T4**（2026-10-03 下发）：① 找免费 web search API ② 配 web search MCP（+实测） ③ 找免费·权威新闻 API ④ 自包含对比报告 | `run/news/API_COMPARISON.html`（自包含）+ `run/news/API_COMPARISON.md`（底稿）；选定方案写回 `run/MEMORY_NEWS.md`（`PHASE=prep_api`） | 🆕 已下发，待 worker 执行 |
+| **news** | **常态采集**（`WAITING=1`，睡 30min）；工具 = 免 key MCP `web-search-free` | `run/news/<date>.md` 日报 + `SEEN.md` + `INDEX.md` | ✅ 运行中（T1–T4 已完成并交付） |
 
-> 说明：news 线为**新线**。**前期任务 T1–T4 完成前暂缓常态采集**；完成后回到 §1 关注清单做日常采集，产出落 `run/news/`。supervisor 只需 `git pull` 读 `run/MEMORY_NEWS.md` 顶部快照 + `run/news/` 即可巡检。
-> **前期任务口径（2026-10-03 用户）**：重点是**免费**（web search API / 新闻 API）+ **可实测** + **对比成表**；强调"权威"新闻源。
+> ✅ **T1–T4 已完成并交付（2026-10-03，commit `c326ba8`）**：
+> - **T1** 核实 12 个 web-search 候选；**T2** 新建**免 key MCP** `run/news/mcp_web_search_free.py`（3 工具 `web_search`/`search_news`/`rss_latest`）+ `run/news/cline_mcp_config.json`，**stdio 全链路实测通过**；
+> - **T3** 核实 17 个新闻源；**T4** 产出 `run/news/API_COMPARISON.html`（自包含）+ `.md` 底稿。
+> - **选定方案**：Web 搜索 = **CN-Bing 主 + 360 备**（免 key）；新闻 = **Hacker News + GDELT + 官方 RSS**。
+> - **决定性事实（本机=中国网络）**：Google / DuckDuckGo / Brave / Yahoo / 公共 SearXNG / newsapi.org / BBC / Reuters **全部不可达**；原 **bocha key 额度已耗尽**（`403 not enough money`）→ 故走免 key 自建。
+>
+> ✅ **首轮 smoke 已完成（commit `3fcd854`）**：`run/news/2026-10-03.md` **16 条**（6 类，均带 标题+来源+日期+链接）。
+> supervisor 巡检 = `git pull` 读 `run/MEMORY_NEWS.md` 顶部快照 + `run/news/`。
 
 ---
 
 ## 4. 待拍板 / 我欠的答复
 
 - [x] ✅ **worker 运行主机已确认（2026-10-03 用户）**：**可连外网且速度不慢** → news 线具备运行前提。待 loop 拉起后即可派活。
-- [ ] **搜索/新闻 API 选型**：待 news 线交付 `API_COMPARISON.html` 后，由 supervisor/用户拍板**最终方案**（免费额度、中文覆盖、权威性、稳定性）。
-- [ ] **MCP 配置归属**：T2 配置的是否为**运行机**上的 cline MCP 配置（路径/生效方式需在报告里写清）。
+- [ ] ⭐ **搜索/新闻 API 选型（报告已交付，待用户拍板）**：news 线选定**免 key 抓取**（CN-Bing/360 + HN/GDELT/RSS）。
+  - **风险**：CN-Bing/360 是**非官方 HTML 抓取**（反爬/可能改版/ToS 灰区）→ 稳定性与合规存疑。
+  - **升级路径**（本机多数可达，需注册 key）：**Exa**（免费 $10/月、免信用卡）/ **Tavily** / **SerpAPI**（100/月）/ **Bocha**（充值）。→ **问用户：是否补一个正规 key 提高稳定性？**
+- [ ] ⭐ **MCP 是否真装进运行机 cline**：交付的是**片段** `run/news/cline_mcp_config.json`（指向 `/home/liuyang/...`）。
+  须确认它已并入运行机 cline 的 MCP 配置（`~/.cline/data/settings/cline_mcp_settings.json`），否则**下一轮 cline 可能没有这些工具**。
 - [ ] **采集节律**：当前**对齐 BaiZe**（`WAITING=1` 睡 30min → 常态约每 30 分钟一轮）。这个频率对"新闻"是否偏密（token 消耗）？是否要改成更疏（如 1~2h）？——**由用户拍板**。
 - [ ] **输出形态**：日报够不够，是否要**周报合订** / **主题归档**（按关注清单分类长期累积）。
 - [ ] **关注清单**是否要收敛（现在 6 大类，见 `WATCH_NEWS_TASK.md` §1），避免噪声。
@@ -138,3 +147,6 @@ WAITING: 0
 - **2026-10-03（纠错）** —— ① **模型名**：loop 曾用 BaiZe 的 `deepseek-v4-pro-fp4`，本机（DeepSeek 官方 API）不认 → 实测 `GET api.deepseek.com/models` 得规范 ID 仅 **`deepseek-flash` / `deepseek-v4-pro`**，已改 **`deepseek-flash`**（`deepseek-v4-flash` 非官方 ID）。
   ② **睡眠**：我曾自创 `SLEEP_LONG=21600`（6h）→ 用户质问后核查 **BaiZe 全部 loop 实为 `SLEEP_BUSY=60` / `SLEEP_WAIT=1800`**，从无小时级睡眠 → 已**完全对齐 BaiZe**（60 / 1800 / PUSH 18000 / TIMEOUT 1500）。
   → 教训：**不自创数值，先照抄已验证模板；引用"XX 那边是多少"必须真去读源码**。
+- **2026-10-03（news worker 首交付）** —— agent 完成 **T1–T4**（`c326ba8`）+ **首轮 smoke 16 条**（`3fcd854`）+ 记忆回写（`bdc20db`），已转**常态采集**（`WAITING=1`）。
+  亮点：**真跑实测**（给报错原文）、**建了免 key MCP**、报告**自包含**、**360 无日期就拒收**（守"字段缺一不可"）。
+  待用户拍板：**是否补正规 API key**（免 key 抓取脆弱/合规灰区）。待核：**MCP 是否已装进运行机 cline**。
