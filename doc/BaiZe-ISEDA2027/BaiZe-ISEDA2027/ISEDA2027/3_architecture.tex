@@ -27,7 +27,7 @@ Attention heads (Q) & 16 \\
 Query groups (GQA) & 4 \\
 Mamba-2 state-space groups & 8 \\
 Vocabulary size & 129{,}281 \\
-Sequence length & 4096 \\
+Sequence length & 4094 \\
 Activation & SiLU / SwiGLU \\
 Normalisation & RMSNorm \\
 Precision & BF16 \\
@@ -37,7 +37,7 @@ Parameters & $\approx$2.22B \\
 \end{table}
 
 \subsection{Vision Encoder}\label{sec:backbone-enc}
-The vision encoder is pre-trained from scratch in stage~(iii) and is selected from four iso-parameter candidates at the $500$--$600$\,M scale; Section~\ref{sec:vision} reports the comparison and its outcome.
+The vision encoder is pre-trained from scratch in stage~(iii) and is selected from six iso-parameter candidates at the $500$--$600$\,M scale; Section~\ref{sec:vision} reports the comparison and its outcome.
 
 \subsection{Pipeline and Global Environment}\label{sec:pipeline}
 Table~\ref{tab:pipeline} summarises the five-stage pipeline.

@@ -2,6 +2,8 @@
 
 Large language models have recently demonstrated agentic capabilities---planning, tool invocation, and long-horizon reasoning---that make them attractive cores for intelligent assistants spanning chip design, verification, and other domains of electronic design automation.
 However, state-of-the-art agent backbones are routinely 7\,B parameters or larger, demanding high-end accelerators and memory footprints that are incompatible with edge, embedded, and cost-sensitive deployments where inference latency and energy are first-class constraints.
+The constraint is sharper than raw cost in the settings we target: proprietary design artifacts---layouts, schematics and review judgements---cannot leave the premises, so an agentic core must be served locally; and because an agentic session accumulates context, what dominates serving cost is not prompt throughput but the memory that grows with the session.
+For a hybrid backbone this is architectural: only the four attention layers carry a session-growing state, while the Mamba-2 layers hold a constant-size recurrent one.
 
 Recent small language models (SLMs, $<\,$2\,B) have closed much of the gap with larger counterparts on single-turn benchmarks, but building such a model \emph{from scratch} remains an under-documented engineering problem.
 Every choice---architecture, optimizer, learning-rate schedule, data mixture---interacts with every other, and a naive grid search is prohibitively expensive.

@@ -14,7 +14,7 @@ The first family is the strongest of the three: its output is a script, so it is
 We run stage-1 projector pre-training on caption-style pairs, stage-1.5 mid-training on the three families above, and stage-2 instruction tuning on the full mixture.
 The ablations vary the projector (MLP versus query-based), whether the vision tower is frozen or updated, and the number of visual tokens per image.
 The last is of particular interest.
-The architecture study of Section~\ref{sec:vision} found image resolution immaterial at $224/16$, where an image becomes only $196$ tokens---a regime in which the training objective is dominated by coarse semantics and the encoder differences we measured were within noise.
+The architecture study of Section~\ref{sec:vision} selected $224/16$, where an image becomes only $196$ tokens---a regime in which the training objective is dominated by coarse semantics; whether that setting transfers to detail-dense views is precisely what stage~(iv) tests.
 Layout and schematic views are the opposite: they are detail-dense line drawings whose meaning lives in fine geometry.
 We therefore treat resolution and visual-token count as first-order variables here rather than inheriting the earlier null result, which we read as a property of the proxy task and not of the encoder.
 

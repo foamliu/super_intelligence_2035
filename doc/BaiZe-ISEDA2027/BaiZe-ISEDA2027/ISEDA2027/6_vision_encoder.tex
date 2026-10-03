@@ -4,88 +4,97 @@ Stage~(iii) pre-trains a custom vision encoder from scratch for the multimodal s
 This section presents the architecture-selection rationale, the pre-training recipe, and the resulting measurements.
 
 \subsection{Architecture Selection}\label{sec:vis-rationale}
-We compare four candidate vision encoders at an iso-parameter $500$--$600$\,M scale, all \emph{randomly initialized} (no upstream ImageNet/CLIP/SigLIP weights) so that only the architecture body is contrasted.
-All candidates are trained under a unified stack: \texttt{open\_clip}~3.2.0, a frozen shared text tower (12 layers, width~512, 8 heads, one BPE for all towers), the SigLIP sigmoid-contrastive objective, and a unified 500K subset of LLaVA-OneVision-1.5 (\texttt{imagenet/EN}), at resolution~224 / patch~16 / bf16, learning rate $10^{-3}$ (AdamW, warmup~100 + cosine), seed~1234, batch $32{\times}6$.
-The four candidates are:
+We compare six candidate vision encoders at an iso-parameter $500$--$600$\,M scale, all \emph{randomly initialized} (no upstream ImageNet/CLIP/SigLIP weights) so that only the architecture body is contrasted.
+All candidates are trained under a unified stack: \texttt{open\_clip}~3.2.0 loss modules with a \emph{frozen} CLIP-ViT-L/14-336 text tower ($768$-d, context $77$), the CLIP InfoNCE (softmax-contrastive) objective, and the Stanford GPIC \texttt{short} caption split ($\approx2.77$\,M pairs, $0\%$ truncation), at resolution~$224$ / patch~$16$ / bf16, learning rate $3{\times}10^{-3}$ (AdamW, warmup~$20$), seed~$1234$, batch $64{\times}8$ (i.e.\ $512$ in-batch negatives).
+The six candidates are:
 
 \begin{itemize}
-\item \textbf{OpenVision2} — a pure-attention ViT (width~1024, depth~30, heads~16, MLP~4096), $505.0$\,M parameters.
-\item \textbf{MambaEye} — a pure visual state-space model (Vim-style bidirectional SSM, width~1024, depth~40, $d_{\mathrm{state}}{=}16$, expand~2), $534.9$\,M.
-\item \textbf{MoE-ViE} — a sparse Mixture-of-Experts encoder (8 experts $\times$ ff~512, top-2 routing), $505.2$\,M total / $222.0$\,M active per token.
-\item \textbf{DeepEncoderV2} — an Attention+SSM hybrid (Alternating Attention Mamba blocks), $516.9$\,M.
+\item \textbf{OpenVision2} --- a pure-attention ViT (width~$1024$, depth~$30$), $505.2$\,M.
+\item \textbf{MambaEye} --- a pure visual state-space model (Vim-style bidirectional SSM), $535.2$\,M.
+\item \textbf{MoE-ViE} --- a sparse Mixture-of-Experts encoder ($222.2$\,M active per token), $505.5$\,M total.
+\item \textbf{DeepEncoderV2} --- an Attention+SSM hybrid, $517.2$\,M.
+\item \textbf{AIMv2} --- a ViT-GELU variant, $505.5$\,M.
+\item \textbf{FastViTHD} --- a conv-stem $+$ hierarchical conv/attention hybrid, $507.8$\,M.
 \end{itemize}
 
-Table~\ref{tab:visarch} summarizes the measured parameter counts and the three hard metrics (loss, training throughput, inference latency), all measured under DP6 on 6$\times$H100 with matched batch and seed.
+The last two are \emph{iso-parameter adaptations} of the AIMv2 and FastViTHD designs to this scale, not the official released models.
+Table~\ref{tab:visarch} reports the measured parameter counts, the training loss at $3000$ steps, training throughput, and---crucially---two downstream metrics on ImageNet-1k measured on the \emph{frozen} trunk: zero-shot top-1/top-5 and linear-probe top-1.
 
 \begin{table}[htbp]
 \centering
-\caption{Architecture-level comparison for the vision encoder (from-scratch, unified open\_clip + SigLIP + fixed text tower). Inference latency is measured at batch=1 / bf16 / 224/16. Type: Attn = attention, A+S = attention + SSM; MoE-ViE activates 222.0M parameters per token. MambaEye's batch-1 latency is $31.6$\,ms; a single $150$\,s stall seen once in an earlier sweep did not reproduce in two independent clean re-measurements.}
+\caption{Vision-encoder comparison (from-scratch, unified \texttt{open\_clip} loss modules $+$ CLIP InfoNCE $+$ frozen CLIP-ViT-L/14-336 text tower; Stanford GPIC \texttt{short}; $3000$ steps; lr $3{\times}10^{-3}$; $512$ in-batch negatives).
+Downstream metrics are measured on the \emph{frozen} trunk (ImageNet-1k self-split, $50$k val images), so they probe the learned representation rather than an attached classifier; zero-shot top-1 chance is $0.10\%$.
+\textbf{zs t1/t5} = zero-shot top-1/top-5 (\%); \textbf{lp t1} = linear-probe top-1 (\%).
+$^{\dagger}$~run terminated early by the collapse circuit-breaker (see text).}
 \label{tab:visarch}
 \small
-\setlength{\tabcolsep}{4pt}
+\setlength{\tabcolsep}{3pt}
 \begin{tabular}{lccccc}
 \toprule
-\textbf{Arch.} & \textbf{Params} & \textbf{Type} & \textbf{Loss@5k} & \textbf{img/s} & \textbf{ms/img} \\
+\textbf{Arch.} & \textbf{Params} & \textbf{Loss@3k} & \textbf{img/s} & \textbf{zs t1/t5} & \textbf{lp t1} \\
 \midrule
-OpenVision2 & 505.0M & Attn & \textbf{4.456} & \textbf{2139} & \textbf{6.51} \\
-DeepEncoderV2 & 516.9M & A+S & 4.466 & 1459 & 17.76 \\
-MambaEye & 534.9M & SSM & 4.470 & 790 & 31.6 \\
-MoE-ViE & 505.2M & MoE & 4.466 & 852 & 141.7 \\
+\textbf{OpenVision2} & 505.2M & \textbf{4.865} & 3052 & \textbf{0.95/3.64} & \textbf{1.14} \\
+MambaEye$^{\dagger}$ & 535.2M & 6.251 & 950 & 0.10/0.50 & 0.10 \\
+MoE-ViE & 505.5M & 5.558 & 1226 & 0.35/1.53 & 0.28 \\
+DeepEncoderV2$^{\dagger}$ & 517.2M & 6.251 & 1865 & 0.10/0.50 & 0.10 \\
+AIMv2 (adapt.) & 505.5M & 5.637 & \textbf{3393} & 0.38/1.61 & 0.25 \\
+FastViTHD (adapt.) & 507.8M & 5.668 & 2097 & 0.39/1.57 & 0.27 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\textbf{Finding.} \textbf{OpenVision2} ranks first on every quality metric---lowest loss, most dispersed features, and the best ImageNet-1k zero-shot and linear-probe accuracy (Table~\ref{tab:visarch}).
+The pure-attention family (plus MoE or a conv stem) trains normally: AIMv2 is the fastest to train but does not convert speed into quality, and neither hybrid beats a plain attention ViT at equal parameter count.
+
+\textbf{An architecture-specific failure mode.} The two candidates that contain state-space sub-structure---MambaEye (pure SSM) and DeepEncoderV2 (attn$+$SSM)---\emph{exactly} collapse: their loss pins at $6.25\approx\ln 512$, the entropy of an unlearned $512$-way InfoNCE problem, with a same-tower feature cosine of $1.0000$ and ImageNet-1k at exactly chance ($0.10\%$).
+The text tower, data, objective, batch size and seed are identical across the six runs, so the only variable is the vision architecture; under this contrastive recipe the collapse is tied to the SSM sub-structure rather than to the recipe.
+We report it as a negative result, with its boundary stated: an earlier sweep under a different objective trained MambaEye without collapsing, so this is a property of the (architecture, objective) pair rather than evidence that state-space vision encoders are unusable.
+
+\textit{Methodological note.} An earlier sweep at $lr{=}10^{-3}$ pinned every ablation cell at an identical loss, because the cosine schedule collapsed the learning rate to $\approx10^{-5}$ before the run ended.
+We therefore re-ran all configurations at $lr{=}3\times10^{-3}$; sub-$1$k-step comparisons, and any $3000$-step comparison at $lr{=}10^{-3}$, are uninformative, and every number in this section uses the corrected rate.
+
+\subsection{Scaling Behaviour}\label{sec:vis-scaling}
+Holding the winning architecture fixed, we ask how far the representation improves with data, and how tower width trades against data at a fixed sample budget.
+Stage-1 trains three widths for $30000$ steps on the same $\approx18.5$\,M-pair corpus (CC12M $+$ Amshaker) under the recipe above: linear-probe top-1 falls monotonically with width---$6.10\%$ (w512, $126.8$\,M), $3.63\%$ (w768, $284.5$\,M), $1.03\%$ (w1024, $505.0$\,M).
+At this data scale the \emph{smaller} tower is therefore the more sample-efficient one.
+Stage-2 then trains w512 for $108{,}000$ steps ($55.3$\,M samples) and evaluates every $10{,}000$-step checkpoint on the frozen trunk (Table~\ref{tab:visscale}): linear-probe top-1 rises from $3.96\%$ at $5.1$\,M samples to a peak of $7.70\%$ at $51.2$\,M.
 
 \begin{table}[htbp]
 \centering
-\caption{Architecture comparison across token budgets (patch~14, $3000$ steps at $lr{=}3{\times}10^{-3}$). Within every column the four architectures lie within $0.0025$ of each other. The $1024$-token column was run at batch $16{\times}6$ instead of $32{\times}6$ because of the memory guard, and the SigLIP objective depends on the number of in-batch negatives, so that column is comparable within itself but not against the other two.}
-\label{tab:visarch_res}
+\caption{Data-side scaling of the selected vision tower (OpenVision2, w512 $=126.8$\,M, frozen trunk, ImageNet-1k linear probe at $10{,}000$-step checkpoints).}
+\label{tab:visscale}
 \small
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{lcccc}
+\begin{tabular}{lccccccc}
 \toprule
-\textbf{Arch.} & \textbf{256 tok} & \textbf{576 tok} & \textbf{1024 tok} & \textbf{img/s} \\
+\textbf{Samples (M)} & 5.1 & 10.2 & 20.5 & 30.7 & 41.0 & 51.2 & 55.3 \\
 \midrule
-OpenVision2 & 4.4567 & \textbf{4.4560} & \textbf{3.7454} & \textbf{1631} \\
-DeepEncoderV2 & \textbf{4.4563} & 4.4566 & 3.7466 & 1408 \\
-MoE-ViE & 4.4575 & 4.4564 & 3.7471 & 558 \\
-MambaEye & 4.4566 & 4.4565 & 3.7479 & 861 \\
+\textbf{lp top-1} & 3.96 & 4.39 & 6.46 & 7.35 & 7.30 & \textbf{7.70} & 7.40 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Finding.} Over $5000$--$10000$-step horizons all four architectures converge to $\approx4.45$--$4.47$ loss, with inter-architecture differences $<0.02$ (within multi-seed variance).
-Loss is therefore \emph{architecture-invariant} at this scale, and a re-run across $256$, $576$ and $1024$ input tokens (Table~\ref{tab:visarch_res}) keeps the four-way spread below $0.0025$ at every token budget, so the conclusion is not an artifact of the short $196$-token sequence used for the main comparison.
-Consequently the architecture choice is driven by efficiency, where the pure-attention \textbf{OpenVision2} dominates on both axes---$1.47\times$ the training throughput of the next-best (DeepEncoderV2) and $2.7\times$ lower inference latency.
-
-\textit{Methodological note.} Two apparent results in this section are artifacts of the cosine schedule collapsing the learning rate to $\approx10^{-5}$ before the run ends, and we flag both rather than report them.
-The first is the ``loss plateau'' of $6.7342$ in a $1000$-step sweep, which continues to $\approx4.45$ once the cosine span is extended to $5000$--$10000$ steps.
-The second is the flat $4.9962$ that $lr{=}10^{-3}$ produces in every ablation cell at $3000$ steps: the same run at $lr{=}3\times10^{-3}$ reaches $4.4562$, a gap of $0.54$.
-Sub-$1$k-step comparisons, and any $3000$-step comparison at $lr{=}10^{-3}$, are therefore uninformative.
+A power law $acc = 0.251 - 0.864\,N^{-0.090}$ fits the eleven checkpoints ($R^2\approx0.94$) and implies an asymptote of $25.1\%$: even with unlimited data this from-scratch contrastive route saturates near $25\%$ linear-probe top-1, and reaching $20\%$ would take on the order of $6\times10^{10}$ samples under the more favourable log-linear extrapolation---roughly three orders of magnitude beyond the $\approx1.2\times10^{8}$ unique image--text pairs available locally.
+A complementary five-point model-size sweep (widths $384$--$1024$ at matched samples) finds the marginal effect of width to be negative throughout ($\approx-2.2$ to $-2.4$ linear-probe points per doubling of parameters) with no saturation point: the best configuration observed is the smallest tower tried ($71.5$\,M, $7.99\%$ at $15.4$\,M samples).
+We read this as the central limitation of the vision stage---the binding constraint is data volume and objective function, not architecture.
 
 \subsection{Configuration and Ablations}\label{sec:vis-abl}
 Holding the winner (OpenVision2) fixed, we sweep the core degrees of freedom single-variable-at-a-time ($3000$ steps each, at $lr{=}3\times10^{-3}$---the rate at which the schedule does not collapse, see the note above): resolution/patch (Table~\ref{tab:visres}), objective function (Table~\ref{tab:visobj}), and learning rate, plus a multi-seed robustness check and a held-out retrieval proxy.
 
 \begin{table}[htbp]
 \centering
-\caption{Resolution/patch ablation on OpenVision2, all runs $3000$ steps.
-The original anchor $lr{=}10^{-3}$ collapsed the cosine schedule and pinned \emph{every} cell at $4.9962$; it is kept as the last row.
-At the corrected $lr{=}3{\times}10^{-3}$ the loss is flat to within $0.001$ across $196$--$784$ tokens, so the null result is real rather than a schedule artifact.
-The $448/14$ row is \emph{not comparable}: the memory guard halved its batch, and the SigLIP objective depends on the number of in-batch negatives.}
+\caption{Resolution/patch ablation on OpenVision2 under the corrected objective (run on the LLaVA \texttt{imagenet/EN} $500$K arm, hence a different loss scale from Table~\ref{tab:visarch}, which uses GPIC), all runs $3000$ steps.
+$224/16$ is best on both axes: lowest loss and highest throughput; the coarsest grid retains only $\approx56\%$ of that throughput, so all later stages use $224/16$.}
 \label{tab:visres}
 \small
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{lccccc}
+\begin{tabular}{lc}
 \toprule
-\textbf{res/patch} & \textbf{tok.} & \textbf{batch} & \textbf{Loss} & \textbf{img/s} & \textbf{lr} \\
+\textbf{res/patch} & \textbf{Val.\ loss} \\
 \midrule
-224/16 & 196 & $32{\times}6$ & 4.4562 & 1645 & 3e-3 \\
-336/16 & 441 & $32{\times}6$ & 4.4565 & 1663 & 3e-3 \\
-448/16 & 784 & $32{\times}6$ & 4.4556 & 972 & 3e-3 \\
-224/14 & 256 & $32{\times}6$ & 4.4566 & 1829 & 3e-3 \\
-336/14 & 576 & $32{\times}6$ & 4.4560 & 1290 & 3e-3 \\
-448/14 & 1024 & $16{\times}6$ & 3.7461 & 721 & 3e-3 \\
-\midrule
-224/16 & 196 & $32{\times}6$ & 4.9962 & 1651 & 1e-3 \\
+\textbf{224/16} & \textbf{3.0977} \\
+336/14 & 3.1909 \\
+448/14 & 3.2711 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -112,12 +121,9 @@ lr $5{\times}10^{-3}$ & 4.4542 & --- & --- \\
 \end{tabular}
 \end{table}
 
-Downstream validation would ideally use task metrics; lacking ImageNet-style class labels we tried a zero-shot text$\leftrightarrow$image retrieval proxy ($R@1/5/10$ on a held-out 5K subset from \texttt{laioncn/EN}, disjoint from the training source).
-\textbf{That proxy is degenerate}: $R@1{=}0.0002$, which is exactly chance for $5000$ candidates, and it separates neither learning rates nor architectures.
-We report this as a negative result rather than ranking configurations with it, and we note that this stage therefore has \emph{no} working downstream metric---the main limitation of the comparison.
-Under the corrected learning rate the resolution/patch sweep is flat: loss varies by less than $0.001$ over $196$--$784$ tokens (Table~\ref{tab:visres}), so loss is genuinely insensitive to resolution and patch in this range, and the earlier all-identical column was a schedule artefact layered on top of a real null result.
-The informative signal is throughput, which falls with the token count ($1645 \rightarrow 972$ train img/s from $224/16$ to $448/16$).
-One cell is an apparent exception and must not be read as a win: $448/14$ reaches $3.7461$, but the memory guard halved its batch and the SigLIP objective is sensitive to the number of in-batch negatives, so the drop is confounded by the batch rather than attributable to the $1024$-token inputs.
-The objective switch (CLIP InfoNCE) yields a different loss scale ($2.894$ vs $4.996$) that cannot be compared without negative-logit calibration.
-The learning-rate sweep is the decisive result: raising $lr$ from $10^{-3}$ to $3\times10^{-3}$ / $5\times10^{-3}$ lowers the final loss from $4.996$ to $4.4562$ / $4.4542$, so the original anchor plateau was a schedule collapse rather than a data ceiling.
-We therefore report the corrected $lr{=}3\times10^{-3}$ numbers throughout this section; the full reproduction commands are in the companion result report.
+\paragraph{Evaluation.}
+Domain task metrics are not yet available for this stage, so we adopt the standard frozen-trunk protocol: ImageNet-1k zero-shot (class prototypes synthesised from the frozen CLIP text tower) and a linear probe on the frozen trunk, over a deterministic self-split of the ImageNet-1k training set ($50$ images per class for the probe and $50$ for validation, disjoint from every corpus used for training).
+We first tried a zero-shot text$\leftrightarrow$image retrieval proxy ($R@1/5/10$ on a held-out 5K subset of \texttt{laioncn/EN}, disjoint from the training source) and found it \emph{degenerate}: $R@1{=}0.0002$, exactly chance for $5000$ candidates, separating neither learning rates nor architectures.
+We report that as a methodological warning and use ImageNet-1k instead, on which the architectures do separate---healthy candidates reach $2.5$--$9.5\times$ chance, whereas the two collapsed ones sit at exactly chance.
+Resolution is not a free variable in this comparison: $224/16$ is best on both loss and throughput (Table~\ref{tab:visres}).
+Stage~(iv) revisits the visual-token count for detail-dense layout and schematic views, where the reasoning of this section---that a $196$-token view is dominated by coarse semantics---does not transfer.
