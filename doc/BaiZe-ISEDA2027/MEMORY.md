@@ -47,7 +47,7 @@ WAITING: 0
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
 | **pretrain** | P-5b 长跑（20B）→ 跑完**立即 P-9**（MBS/精度/seq/profiling） | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md`「P-9」节 | 🔄 P-5b ~57%，ETA 10-04 凌晨 |
-| **vision** | **R10③**（w384/w640 补密 M 轴）→ **R14**（官方仓库资源调研，高优先·纯CPU）→ **R11-D/L/L3**（数据/loss/官方代码） | `run/EXPERIMENTS_VISION_ROUND10/11.md` · `run/VISION_OFFICIAL_REPOS_SURVEY.md` | 🔄 R10_active |
+| **vision** | R10③ 收尾（4 步）→ **R14**（官方仓库调研·纯CPU）+ **E1**（GPIC 规模实测）→ **R11-E/L/L2**（数据/loss/文本塔）→ **R13/R12**（待批） | `run/EXPERIMENTS_VISION_ROUND10/11.md` · `run/VISION_OFFICIAL_REPOS_SURVEY.md` | 🔄 R10_active |
 | **data** | 下载巡检 + **D-CLEAN-2**（已批删除 ≈8.6T）+ `servers` 探查 | `run/DISK_CLEANUP_INVENTORY.md` 更新 | 🔄 |
 | **harness** | **H-A′ Aider Polyglot 横评** + **H-D** 5-harness 对比与 cline 机会点 | `run/harness/AIDER_POLYGLOT_COMPARE.html` · `HARNESS_COMPARE_MATRIX.html` · `CLINE_IMPROVEMENT_OPPORTUNITIES.md` | 🔄 |
 

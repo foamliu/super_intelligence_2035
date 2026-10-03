@@ -3,146 +3,108 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_VISION.md` / `EXPERIMENTS_VISION*` / `daily-memories-vision/` / `vision/`）。
 
-### 🆕 运维指令 · 2026-10-03（新增 **R10：模型规模轴的 scaling law** —— 补全 R9 只做了数据侧的缺口）
+### 0. 🎯 当前状态速览（**每次唤醒先看这里**）
 
-**背景（运维指出）**：R9 的 scaling law **只扫了数据侧 N**（固定 w512=126.8M），**模型规模 M 轴几乎没做** ——
-但阶段一其实已跑过 **三档塔宽**（w512=**126.8M** / w768=**284.5M** / w1024=**505.0M**）。
-→ 需要把 **M 轴**补起来，拟合 **(N, M) 二维 scaling law**，回答「**给定算力预算，塔宽 × 数据量怎么分配最优**」。
+| 项 | 值（2026-10-03） |
+|:--|:--|
+| **在跑** | **R10-③**：`r10_run_denseM.sh`（w384+w640 各 30k 步，`.12` 全 8 卡，ETA ~3.5h）→ 训完**自动回收 8 ckpt IN-1k** |
+| **跑完判据** | `grep -c 'denseM ALL DONE' /tmp/r10_denseM.log` == 1 |
+| **跑完收尾（4 步）** | ① 取 w384/w640 的 8 个 `[R8-IN1K]` 点 + 实际 numel；② 用 **5 点 M 轴** {70.8,126.8,196.6,284.5,505.2}M 重跑 2D 拟合（`r10_scaling2d.py` 需加 `WIDTH_PARAMS` 384:70.8M/640:196.6M + `WIDTH_RE` 加 `R10_denseM_w(\d+)`）；③ 回填 `EXPERIMENTS_VISION_ROUND10.md` §2/§3/§4 + `EXPERIMENTS_VISION.md` 顶部 + `MEMORY_VISION.md` 状态头；④ push |
+| **可立即开跑（不占卡）** | **R14 官方仓库调研** · **E1 GPIC 规模实测** |
+| **待运维批准** | **R13**（官方 vs 自研对照）· **R12**（iGVLM） |
+| **叙事** | ✅ **锁定 A = 从零训练**（不改用预训练权重） |
 
-**R10 任务（按顺序做，①/② 近零 GPU，③ 才需卡）**：
+### 1. 📌 全局口径与铁律（**一次性质，对所有 R 生效**）
 
-| 项 | 内容 | 成本 |
+- **叙事 = A（从零训练）**：**不**改用预训练权重、**不**预设"选型"结论 → R9 的 **~25.1% 渐近 = 从零路线的如实上限**（负结果有价值）。
+- 🚫 **不许猜**：源码结论贴 `路径:行号`；实验结论贴 **命令 + 原始输出**。
+- 🚫 **不许闭门造车**：涉及"别人怎么做"（架构/loss/评测/数据）**必须去读官方仓库或论文原文**（能 clone 就 clone）—— **不得凭二手描述下结论**（本线已因此出错一次）。
+- **不重跑已落盘训练**；**不改 R8/R9/R10 已落盘结论**（只在 §2 明确"修正"条目下补限定）。
+- **控变量**：除被考察变量外，数据/塔/步数/优化器/评测口径全部固定。
+- **公平性**：加 decoder 的臂**必须报「参数量 + 训练 token + 每步耗时」**，不许只比 acc。
+- **预注册**：判据**先定后测**，不许事后改。
+- **记忆**：`MEMORY_VISION.md` **≤32KB**（超限滚动到 `daily-memories-vision/`）。
+
+### 2. 🚩 必做修正（**最高优先 · 纯 CPU · 与 R14/E1 合并做**）
+
+| # | 修正 | 要点 |
 |:--|:--|:--|
-| **R10-①** | **回收阶段一已有周期 ckpt 的 IN-1k**：三档塔（w512/768/1024）× 周期点 step{10000, 20000, 30000} = **9 点**（+各臂 final，共 12 点）。脚本用现成 `vision/r8_eval_in1k.py --ckpts`（多 ckpt 一次解码复用）。ckpt 仍在盘：`R9_stage1_w{512,768,1024}/vision_step*.pt`（w512 507MB / w768 1.14GB / w1024 ~）| ~0.7h GPU |
-| **R10-②** | **拟合二维 scaling law**：把 R10-① 的 **(N, M, acc)** 与 R9 阶段二 w512 的 11 点合并 → 拟合 `acc = a + b·log10(N) + c·log10(M) + d·log10(N)·log10(M)`（或 Chinchilla 式 `L = E + A/N^α + B/M^β`），报 **R²**，并给出**最优 N/M 分配**；**诚标 11+9 点的跨度与不确定度** | 纯 CPU |
-| **R10-③** | **（条件触发）补密 M 轴**：若二维拟合显示 M 轴点太稀，固定 token 预算，**补 w384（≈71M）与/或 w640** 一两臂，与既有 3 塔拼成更密的 M 轴 | ~数 GPU·h |
+| **C1** | **数据量口径** | `r9_scaling.py:158` 的「本地 53M 上限」是 **`--local-cap-m default=53.0`＝假设、非实测**。按 DATA_RESEARCH 实测（GPIC **5 tar=53,637 图 → ~10,727/tar × 8000 ≈ 86M**）外推 → **本地全量上限 ≈103M**（GPIC 86M + CC12M 11M + Amshaker 6M）。→ 用**真实 cap 重算** R9 所有 "×N 缺口"（含 "226× the 53M cap"）；报告中**统一三类分母**：**R9 用过 18.5M / 盘上现有 ≈29M / 本地全量 ≈103M**，并标注**数据仍在下载（动态值）**。 |
+| **C2** | **R8 结论加限定** | R8 的 6 架构**全是自研 from-scratch 等参改编**（`run/vision/models.py` 头行自证；R8 亦标「等参改编（非官方模型）」）→ **「SSM 坍缩」只能表述为「我们 recipe（冻结语义文本塔 + InfoNCE）下、我们自研改编版的坍缩」**，🚫 **不得**推广成「官方 MambaEye/DeepEncoderV2 会坍缩」。 |
 
-**产出**：`run/EXPERIMENTS_VISION_ROUND10.md`（二维表 + 拟合参数 + R² + 外推 + 结论）+ 回填 `EXPERIMENTS_VISION.md` 顶部 + `MEMORY_VISION.md` 状态头。
+### 3. 🔜 任务队列（**按优先级；不要跳序、并行不超过 2 项**）
 
-**⚠️ 铁律**：**不重跑阶段一训练**（只复用已落盘 ckpt 做评测）；每条结论**贴证据（命令 + 原始输出 + 文件路径）**；**不许猜**。
+| 序 | 任务 | 类型 | 前置 | 状态 |
+|:--|:--|:--|:--|:--|
+| **1** | **R14 官方仓库资源调研** | 调研 · 纯 CPU | — | ⏳ **可立即开跑** |
+| **2** | **E1 GPIC 规模实测** + **R11-E 数据轴** | 轻(测) / 重(训) | 抽 tar | ⏳ 与 R14 并行 |
+| **3** | **R11-L loss 轴** | GPU | **R14 完成**（先看官方实现） | ⏸ |
+| **4** | **R11-L2 文本塔解冻（LoRA）** | GPU | 同上 | ⏸ |
+| **5** | **R13 官方 vs 自研对照** | GPU · 轻 | **需运维批准** | ⏸ **待批** |
+| **6** | **R12 iGVLM 指令条件化** | GPU | **需运维批准** | ⏸ **待批** |
 
-### 🆕 运维指令 · 2026-10-03（新增 **R11：目标函数(loss)轴 ——「~25% 上限」是不是被对比学习锁死的？**）
+> **已合并（不再单列）**：**「R11-L3 读 OpenVision 官方代码」→ 并入 R14**；**「R11-D 的先验证 GPIC tar」→ 并入 E1/C1**。
 
-> 背景（运维）：R9 拟合出「当前路线 lp 渐近 ≈**25.1%**」并判定**瓶颈在数据量与目标函数**。现核实**当前路线**＝
-> **OpenVision2(w512) 塔 + `CC12M(11M)+Amshaker(6M)`≈18.5M 对 + 冻结 CLIP-768 文本塔 + `open_clip.loss.ClipLoss`(InfoNCE)**；
-> 框架＝**pip `open_clip 3.2.0` 的 loss 类** + 自研 torchrun 训练环（`run/vision/r9_train.py`）。
-> ⚠️ **注意**：R6/R7 的「正式训练切 GPIC `short`」是**另一条线**（GPIC 仍在下载 1120/8000）；**R9/R10 的 scaling 用的是 CC12M+Amshaker**。**R11 以 R9/R10 的实际数据为准**，并在报告里写清这条区分。
+---
 
-**已核实候选目标函数**（`open_clip/loss.py` 内均存在；**以本机 3.2.0 实际 `create_loss` 支持名为准，不支持就记明，不许猜**）：
+### 4. 任务详情
 
-| 目标 | 类 | 性质 | 现状 |
-|:--|:--|:--|:--|
-| InfoNCE | `ClipLoss` | 对比（softmax） | ✅ 当前基线 |
-| SigLIP | `SigLipLoss` | 对比（sigmoid pairwise） | R4 在 ~0.5M 对下**坍缩**；**18.5M 下未复测** |
-| CoCa | `CoCaLoss` | **对比 + caption 生成** 混合 | 未试 |
-| LocalCLIP | `LocalLoss` | 逐 token 局部对比 | 未试 |
-| GenLIP | `GenLipLoss` | **纯自回归 LM（生成式，无对比）** | 未试 |
+#### R14 —— 官方仓库资源调研（**高优先 · 纯 CPU/网络 · 不占 GPU**）🚫 不许闭门造车
 
-**外部证据（说明这不是空想，两个参考模型都弃用了对比学习）**：
-- **AIMv2**（arXiv 2411.14402 摘要原文）：*"pairing the vision encoder with a multimodal decoder that **autoregressively generates raw image patches and text tokens**"*；*"consistently **outperforms state-of-the-art contrastive models (e.g., CLIP, SigLIP)**"* → **生成式/自回归**。
-- **OpenVision2（官方）**：README 原文 *"generative-only … **removes the text encoder and contrastive loss**"*，目标＝**caption-only 生成式**，数据 ReCap-DataComp-1B v2。
-> 🚩 另：R8 的 "AIMv2" 臂用的是 **AIMv2 的塔结构**、跑的是**我们的对比 recipe** → **从未真正用过 AIMv2 的目标函数**。
-
-**R11-D 数据轴（运维 2026-10-03 追加）：GPIC(已下载部分) vs CC12M+Amshaker**
-> 运维判断：GPIC 虽仍在下载，但**已下部分可能已超过产出 7.7% 的那个训练量**（**需验证**）。
-> 🔎 **先验证（必做）**：抽 **5–10 个 GPIC tar**，实测**每 tar 的图文对数** → 外推**已下 1131 tar 的配对总数**（并给 8000 tar 全量估计）。
->   - 对照基线（R9）：**唯一对 ≈18.5M**；**训练量 = 55.3M 样本**（108k 步 ×512 ≈2.8 epoch）；**7.70% 峰值在 51.2M 样本处**。
->   - ⚠️ 判「是否超过」**必须分清「唯一对」与「样本数（可重复轮）」两个口径**，两个都报。
->   - 旁证：`vision/r9_scaling.py` 把**本地 53M 唯一对上限**算作「**GPIC 全量** + CC12M + Amshaker + CC3M + 小集」→ **GPIC 全量很可能是本地最大单一图文源**。
-> **跑（控变量）**：固定塔（OpenVision2 w512）· 步数/样本预算 · loss（InfoNCE）· 评测（IN-1k lp），**只把数据臂换成 GPIC `short`（已下载部分）**，与 R9 的 CC12M+Amshaker 基线**同 N 对照** → 回答「**GPIC 是否把上限抬高**」。
-> ⚠️ 若已下 GPIC 的**唯一对 < 18.5M**，则如实说明「可比的 N 区间更窄」，并把 N 对齐到两者共有区间再比。
-
-**R11-L 目标函数轴（控变量）**：
-- **固定**：数据 · 塔（OpenVision2 w512）· 步数/样本预算 · 优化器 · 评测（IN-1k **frozen-trunk lp**，同 R9 口径）。
-- **只变**：目标函数 → 至少 **① InfoNCE（基线，已有）② SigLIP（18.5M 复测）③ `LocalLoss`（局部对比）④ CoCa（对比+caption）⑤ GenLIP/AR（纯生成）**；⑥ **AIMv2 式「patch+text 双 AR」**（成本最高，条件触发）。
-- ⭐ **② 监督密度是关键变量（新增视角）**：InfoNCE 每对只给 **1 个全局标量**；而 **AIMv2 = 自回归生成 raw image patches + text tokens**、**OpenVision2 官方 = caption-only 自回归** → 都是**逐 patch/token 的稠密监督**。→ **数据越少，稠密监督的样本效率优势越可能翻盘**（我们 18.5M vs AIMv2 **12B，649×**）——这正是"数据少 ⇒ 目标函数更重要"的机制。
-- ⭐ **③ 文本塔是否必须冻结？（新增，可能被低估的杠杆）**：R4 因「随机 text 塔 → 坍缩」而**冻结 CLIP-768**，但**冻结 = 上限锁死在外来静态文本空间**。→ 增一档 **R11-L2**：**冻结 vs LoRA/Adapter 轻量微调 vs 重训 text 塔**（同样控变量）。⚠️ **必须重跑 R4 的坍缩判据 C1–C4** 确认不坍缩。
-- ⭐ **④ 读 OpenVision2 官方训练代码（它开源、且塔与我们同源）—— R11-L3**：
-  - **已核实（运维 2026-10-03 抓官方仓库，比 R6 记录更新）**：
-    - 统一仓库 = **`UCSC-VLAA/OpenVision`**（含 **OpenVision ICCV2025 / OpenVision 2 CVPR2026 / OpenVision 3**），**Apache-2.0**。
-    - README 原文：该仓库含**训练代码**，且**同时支持两套目标**：**① OpenVision（原始）= contrastive + generative**；**② OpenVision 2 = simplified caption-only generative**。→ ⚠️ **①「对比+生成」与我们说的 CoCa 同构**，应一并看。
-    - **2026-08 已放出 OpenVision 2 的 caption text decoder**（每个 `*-vision-only` repo 现在**也带 jointly-trained decoder**）。
-    - 训练栈 = **TPU + big_vision(JAX)**（`tpu_command.sh` / `gs://` 路径）；PyTorch 侧基于 **OpenCLIP**（fork）；config `src/configs/openvision.py`，**decoder 由 `DECODER_NAME` 控制**。
-    - ⚠️ 与 R6 的差异：R6 记的是「pip `open_clip` 不兼容、需自带 fork」，**仍成立**；但**decoder 已放出**是新增事实。
-  - **产出**：**「要抄什么 / 要改什么 / 移植成本」**（caption decoder 结构、数据格式、依赖改动；**官方是 TPU/JAX，我们是 8×H100+PyTorch → 移植成本必须如实评估**），**每条贴文件 URL 或 `路径:行号`**。
-  - **AIMv2 已核实（运维 2026-10-03 抓官方仓库）**：仓库 = **`apple-aiml-research/ml-aim`**（`apple/ml-aim` 重定向至此），**AIMv1 + AIMv2 的代码与权重均已发布**；目标 = **多模态自回归（multimodal autoregressive）**。
-    - **冻结 trunk IN-1k**：`AIMv2-L`(0.3B)@336 = **87.6%** · `AIMv2-3B`(2.7B)@448 = **89.5%**（正是我们引用的那个数）。
-    - ⭐ **另有 LiT（对比）调过的 zero-shot 版**：`AIMv2-L`(0.3B) = **77.0% zero-shot IN-1k** → **R9 逃逸路线③「用现成编码器」有了具体可选项**。
-    - ⚠️ **LICENSE 需逐字核实**（README 只说"见 LICENSE"，未写明许可类型）。
-  - 🚩 **数据侧硬约束（关键判据）**：我们 caption **偏短** —— **CC12M = alt-text 短句** · **Amshaker = 中长** · **GPIC short = 20 tok**；而官方用 **ReCap-DataComp-1B v2 的 LLaMA-3 合成长 caption**。
-    → **caption-only 生成式的监督密度会被我们的短 caption 拖累**；而 **AIMv2 式（额外预测 image patches）不依赖 caption 丰富度** → **对我们这种数据更友好**。**此判断须在 R11 实测中验证，不得当结论引用。**
-- **公平性（硬要求）**：生成式/混合臂需要**文本解码器**（不再是冻结 CLIP 文本塔）→ **必须报「参数量 + 训练 token + 每步耗时」**，不能只比 acc。
-- **预注册判据（先定后测，🚫 不许事后改）**：**同 N、同口径**下，若某臂 **lp 比 InfoNCE 基线高 > 1.5 个点** → 「**25.1% 是对比学习路线的渐近**」被**局部推翻** → **对该臂重拟合 scaling 曲线并外推**。
-- **产出**：`run/EXPERIMENTS_VISION_ROUND11.md` —— 各目标 × 同 N 的 acc + **参数量/token 公平表** + 结论「上限是否由 loss 锁定」。
-- **铁律**：贴证据（命令 + 原始输出）；**不改阶段一/二已落盘结论**；跑不通就如实记。
-
-### ✅ 运维决策 · 2026-10-03：vision 走 **A（保持「从零训练」）**
-
-- **Stage(iii) 叙事锁定 = 从零训练**（**不**走"加载现成权重 / 选型"）。理由：**A 本身也是学习目的**。
-- **推论**：R9 的 **~25.1% 渐近 = "从零"路线的如实上限**（负结果也有价值，与 ZhuLong「规模非瓶颈」自洽）；**loss 轴 R11 成为主线**；**架构轴不再是主要杠杆**（R9/R10 已证瓶颈在**数据+目标**，且 R10 的 2D 拟合给出，M 边际效应全区间为负）。
-- ⚠️ **不要**擅自改用预训练权重 / 不要预设"选型"结论。
-
-### 📚 新增参考 · 前沿架构调研（**输入素材，不是结论**）
-
-- 见 **`run/VISION_ARCH_FRONTIER_2026.md`**（iGVLM / TuringViT / MambaEye / MoE-ViE / FastVLM 五方向 + **与 R8 六架构的逐项对照**）。
-- ⭐ **该文件的关键提醒**：这 5 个方向里 **4 个我们 R8 已实测** → **SSM 系（MambaEye / DeepEncoderV2）@300 步即坍缩** · **MoE-ViE 与基线 loss 不可区分（<0.0017）** · **FastViTHD 未翻盘**。
-  → **「与"前沿即更优"相反的证据」本身就是贡献**，论文应写清"同数据/同步数/等参/from-scratch 实测了其中 4 个"。
-
-### 🧪 R12（**候选，非默认**）：架构轴补充 —— 仅补 **iGVLM 式「指令/文本条件化」**
-
-- **缺口**：报告 5 方向中我们**未测**的仅 **iGVLM（AdaLN 指令条件化）** 与 **TuringViT（线性注意力混合 Block）**。
-- **优先级：iGVLM ≫ TuringViT**：
-  - **iGVLM** 是**唯一"质性不同"**的方向（改「学什么」而非「多快」）→ 可用 **caption 充当"指令"** 做条件化。
-  - **TuringViT 低优先**：我们 **`attention flash` 仅占 GPU 自耗 0.7%**（P-4）、分辨率仅 **224/16** → **O(n²) 不是我们的瓶颈**。
-- **前置（先做，纯 CPU）**：**先交一份"值不值得做"的书面判断**（预期收益 / 成本 / 与 R11 的排期冲突），**运维批准后**再跑。🚫 **未经批准不得直接起训练**。
-- **铁律**：控变量同 R8；贴证据；**不改 R8/R9/R10 已落盘结论**。
-
-### 🚩 口径修正（运维 2026-10-03，**必做**）
-
-- **R9 的「本地 53M 唯一对上限」是假设、非实测** —— 它是 `vision/r9_scaling.py:158` 的 `--local-cap-m` **`default=53.0`**。
-  按 **DATA_RESEARCH 实测**（GPIC **5 tar = 53,637 图** → **~10,727 图/tar × 8000 tar ≈ 86M**）外推，本地上限应为
-  **≈103M**（GPIC 全量 86M + CC12M 11M + Amshaker 6M）。
-- **必做**：① 抽 **5–10 个 GPIC tar 实测每 tar 对数** → 定 GPIC 全量（与 R11-D 合并做）；② **用真实 cap 重算** R9 报告里所有 "×N 缺口"（含 "226× the 53M cap"）；③ 报告中**统一口径**，明确区分三类分母：**「R9 用过 18.5M」/「盘上现有 ≈29M」/「本地全量上限 ≈103M」**，并标注**数据仍在下载（动态值）**。
-
-### ⚠️ R8 结论必须加限定（**必做**）
-
-- R8 的 6 个架构**全部是自研 from-scratch 等参改编**（`run/vision/models.py` 头行自证；R8 亦标 **「AIMv2 / FastViTHD = 等参改编（非官方模型）」**）。
-  → **「SSM 坍缩」只能表述为「我们 recipe（冻结语义文本塔 + InfoNCE）下、我们自研改编版的坍缩」**，
-  **🚫 不得**推广成「官方 MambaEye / DeepEncoderV2 会坍缩」。（R8 报告已自标该局限：坍缩依赖 recipe/目标/数据组合，且未溯源 SSM kernel/初始化。）
-
-### 🧪 R13（**候选**）：**官方实现 vs 自研改编** —— 回答「前沿架构到底行不行」的**唯一**方式
-
-- R8 已计划但**未跑**：**官方权重只测 IN-1k**（`apple/aimv2-*` / `timm/fastvit_*`）。⚠️ 协议不同（官方预训练 vs 我们从零）→ **必须单列一张表，不并入排名**。
-- 若要下"前沿架构在我们场景行不行"的结论，**至少**补 **官方 AIMv2 / FastViTHD（可及则加 MambaEye）的冻结 trunk IN-1k** 参照。
-- **前置**：先交「值不值得 / 成本（下载 ~1.2GB + 延展 `r8_eval_in1k.py`，估 30–45min）」的书面判断，**运维批准后再跑**。
-
-### 📚 R14（**高优先 · 纯 CPU/网络 · 不占 GPU**）：官方仓库资源调研 —— 🚫 **不许闭门造车**
-
-> **运维 2026-10-03**：**OpenVision2 的训练脚本是开源的** → **值得重点读**；同时把前沿路线的官方仓库都摸一遍，**尽量找现成可复用的资源**（loss / 数据 pipeline / config / 权重）。
-> ⚠️ **前提**：`.29`/`.12` **能 `git clone` GitHub**（任务书已确认）→ **去 clone 真代码读**，**不要只看 README 或二手描述**。
-> 🚩 **本轮的由来**：上一轮我们把 R8 的**自研改编**误当作"官方实现"来下结论 → **必须用真代码纠正认知**。
-
-**要读的仓库（clone 到 `/tmp/`，**只读、不改上游**）**：
+> **OpenVision2 的训练脚本是开源的** → 重点读；把前沿路线的官方仓库都摸一遍，**尽量找现成可复用资源**（loss / 数据 pipeline / config / 权重）。
+> ⚠️ `.29`/`.12` **能 `git clone` GitHub** → **clone 真代码读**，不看 README / 二手描述。
 
 | # | 仓库 | 重点看 | 优先级 |
 |:--|:--|:--|:--|
-| 1 | **`UCSC-VLAA/OpenVision`**（Apache-2.0） | **训练脚本**：两套目标（**contrastive + generative** / **caption-only**）各自怎么实现；`src/configs/openvision.py`；**`DECODER_NAME`**；数据格式 / augmentation / 优化器 / schedule；**JAX-TPU 与 PyTorch 两套分别在哪** | ⭐⭐⭐ |
-| 2 | **`apple-aiml-research/ml-aim`**（含 `aim-v2/`） | **多模态自回归目标**实现；**image patch 预测**怎么做；decoder 结构；数据 pipeline；**LICENSE 逐字** | ⭐⭐⭐ |
-| 3 | **OpenVision2 权重**（HF `UCSC-VLAA/openvision2-*-vision-only`） | 是否**真的带 caption decoder 权重**（README 称 2026-08 已放）；`open_clip_config.json`；**能否直接加载** | ⭐⭐ |
-| 4 | `apple/ml-fastvlm`（FastVLM / FastViTHD） | 混合编码器实现；**若有官方权重 → 供 R13 参照** | ⭐⭐ |
-| 5 | MambaEye / MoE-ViE / **iGVLM** / TuringViT | **先查证官方仓库是否存在**（有 → 给 URL；**查不到 → 写"未找到"，不许猜**） | ⭐ |
+| 1 | **`UCSC-VLAA/OpenVision`**（Apache-2.0） | **训练脚本**：两套目标（**contrastive+generative** / **caption-only**）怎么实现；`src/configs/openvision.py`；**`DECODER_NAME`**；数据格式 / Aug / 优化器 / schedule；**JAX-TPU 与 PyTorch 两套分别在哪** | ⭐⭐⭐ |
+| 2 | **`apple-aiml-research/ml-aim`**（`aim-v2/`） | **多模态自回归**实现；**image patch 预测**怎么做；decoder 结构；数据 pipeline；**LICENSE 逐字** | ⭐⭐⭐ |
+| 3 | **OpenVision2 权重**（HF `UCSC-VLAA/openvision2-*-vision-only`） | 是否**真带 caption decoder 权重**（README 称 2026-08 已放）；`open_clip_config.json`；**能否加载** | ⭐⭐ |
+| 4 | `apple/ml-fastvlm`（FastVLM / FastViTHD） | 混合编码器实现；**有官方权重 → 供 R13 参照** | ⭐⭐ |
+| 5 | MambaEye / MoE-ViE / **iGVLM** / TuringViT | **先查证仓库是否存在**（有 → URL；**查不到 → 写"未找到"**） | ⭐ |
 
-**每个仓库固定产出（模板）**：
-1. **目标函数**（贴源码 `路径:行号`）；
-2. **数据 pipeline**（shard/格式/caption 处理/分辨率）；
-3. **config & 超参**（优化器 / schedule / batch / lr）；
-4. **与我们 `run/vision/models.py` 的差异**（结构级，逐条）；
-5. **可复用资产**（loss 实现 / augmentation / tokenizer / **预训练权重**）；
-6. **LICENSE**（能否用 / 能否发布）；
-7. ⭐ **「我们能**直接抄**什么 / 要**改**什么 / **成本**」三列表**。
+**每仓固定产出**：① 目标函数（`路径:行号`）② 数据 pipeline ③ config / 超参 ④ **与我们 `run/vision/models.py` 的结构差异** ⑤ **可复用资产**（loss / aug / tokenizer / **权重**）⑥ **LICENSE** ⑦ ⭐ **「能直接抄 / 要改 / 成本」三列表**。
+**产出**：`run/VISION_OFFICIAL_REPOS_SURVEY.md`。**纪律**：只读不改上游 · 不占 GPU · 重 I/O 避让训练。
 
-**产出**：`run/VISION_OFFICIAL_REPOS_SURVEY.md`（自包含；**每条带 URL 或 `路径:行号`**）。
-**纪律**：**只读不改上游**；**不占 GPU**；重 I/O 避让训练；**找不到就如实写"未找到"**；**不许猜**。
+#### E1 + R11-E —— 数据轴：GPIC 规模实测 + GPIC vs CC12M+Amshaker
+
+- **E1（先做，轻）**：抽 **5–10 个 GPIC tar** 实测**每 tar 图文对数** → 定 **GPIC 全量** 与 **已下 1131 tar 的对数**（**同时喂 §2-C1**）。
+  ⚠️ 分清「**唯一对**」与「**样本数（可重复轮）**」两个口径，**两个都报**。
+- **R11-E（再训，重）**：固定塔（OpenVision2 w512）· 步数 · loss（InfoNCE）· 评测（IN-1k lp），**只把数据臂换成 GPIC `short`**，与 R9 的 CC12M+Amshaker **同 N 对照** → 回答「**GPIC 是否把上限抬高**」。
+  ⚠️ 若已下 GPIC 唯一对 < 18.5M → **如实说明"可比 N 区间更窄"**，并把 N 对齐到**共有区间**再比。
+
+#### R11-L —— loss 轴（**R14 完成后才开**；控变量）
+
+- **固定**：数据 · 塔（w512）· 步数/样本预算 · 优化器 · 评测（IN-1k **frozen-trunk lp**，同 R9）。**只变目标函数**。
+- **臂**：① InfoNCE（基线，已有）② **SigLIP**（18.5M 复测；R4 只在 ~0.5M 下坍缩）③ `LocalLoss` ④ **CoCa**（对比 + caption）⑤ `GenLIP/AR`（纯生成）⑥ **AIMv2 式 patch+text 双 AR**（最贵，条件触发）。
+- ⭐ **机制（监督密度）**：InfoNCE 每对只给 **1 个全局标量**；AIMv2 / OpenVision2 官方都是**逐 patch / token 的稠密监督** → **数据越少，"稠密监督可能翻盘"的动机越强**（⚠️ 机制推断，**须实测**）。
+- **预注册判据（先定后测）**：同 N 同口径下，某臂 **lp 比基线 > +1.5 点** → 「25.1% 是对比学习的渐近」**局部推翻** → 对该臂**重拟合 scaling 并外推**。
+- **产出**：`run/EXPERIMENTS_VISION_ROUND11.md`（各臂 × 同 N + **参数量/token 公平表** + 结论）。
+
+#### R11-L2 —— 文本塔是否必须冻结（**可能被低估的杠杆**）
+
+- R4 因「随机 text 塔 → 坍缩」而**冻结 CLIP-768**，但**冻结 = 上限锁死在外来静态文本空间**。
+- **臂**：冻结（现状）vs **LoRA/Adapter 轻量微调** vs 重训 text 塔。⚠️ **必须重跑 R4 的坍缩判据 C1–C4** 确认不坍缩。
+
+#### R12 / R13（**候选 · 🚫 未经运维批准不得起训练**）
+
+- **R12 iGVLM（AdaLN 指令/文本条件化）**：报告的 5 个方向里我们**未测**的两个之一，且是**唯一"质性不同"**（改"学什么"而非"多快"）；可用 **caption 充当"指令"**。
+  **TuringViT 不做** —— 我们 `attention flash` 仅占 **0.7%**、分辨率仅 **224/16** → **O(n²) 不痛**。
+- **R13 官方实现 vs 自研改编**：R8 已计划但未跑（**官方权重只测 IN-1k**）。⚠️ 协议不同（官方预训练 vs 从零）→ **单列一张表，不并入排名**。
+  要下"前沿架构在我们场景行不行"的结论，**必须有这个对照**。
+- **两者前置**：先交**书面「值不值得 / 成本」判断**，**运维批准后再跑**。
+
+### 5. 📚 背景参考（**输入素材，不是任务**）
+
+- **`run/VISION_ARCH_FRONTIER_2026.md`** —— 2026 前沿架构调研（iGVLM / TuringViT / MambaEye / MoE-ViE / FastVLM）+ **与 R8 的逐项对照** + **§5 数据量口径错误更正**。
+- **关键事实速查**：
+  - R9 lp 渐近 **25.1%**（幂律 `acc=0.251−0.864·N^−0.090`，R²≈0.94）· 当前路线 = **OpenVision2 w512 + CC12M+Amshaker + 冻结 CLIP-768 文本塔 + InfoNCE**。
+  - R10-② 二维拟合（3 点 M 轴）：**M 边际效应全区间为负**（≈ −2.2 lp pp/参数翻倍）→ 数据受限区间**加宽塔是负收益**。
+  - `attention flash` 仅占 GPU 自耗 **0.7%**（P-4）· 分辨率 **224/16**。
+- **已核实官方资源**（运维 2026-10-03）：
+  - `UCSC-VLAA/OpenVision`（**Apache-2.0**；**同时支持「对比+生成」与「caption-only」两套目标**；**2026-08 已放出 decoder**；训练栈 **TPU/JAX**，PyTorch 侧基于 OpenCLIP fork）。
+  - `apple-aiml-research/ml-aim`（**AIMv2-L 0.3B = 87.6% 冻结 trunk / 77.0% LiT zero-shot**；代码与权重均已发布；LICENSE 待逐字核实）。
+- **数据侧硬约束（机制推断，⚠️ 须 R11 实测验证，不得当结论引用）**：我们 caption **偏短**（CC12M = alt-text 短句 / Amshaker = 中长 / GPIC short = 20 tok），官方用 **ReCap-DataComp-1B v2 的 LLaMA-3 长合成 caption** → **caption-only 生成式的监督密度会被我们的短 caption 拖累**；**AIMv2 式（含 patch 预测）不依赖 caption 丰富度**。
+- **口径提醒**：R6/R7 的「**正式训练**切 GPIC `short`」是**另一条线**；**R9/R10 的 scaling 实际用的是 CC12M+Amshaker** —— 报告里必须写清这条区分。
 
 ### 📉 记忆维护规程（2026-10-03 运维新增，**硬性**）
 > 理由：`MEMORY_*.md` **每次唤醒都被 agent 全文读取** → 越大越烧 token。当前 `MEMORY_VISION.md` ≈ **94KB（超标）**。
