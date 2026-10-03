@@ -49,7 +49,7 @@ WAITING: 0
 
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
-| **news** | **第 6 批 T10**（封装 `fetch_cn_news()` 统一中文入口）+ **T9**（中文源必须产出真新闻）+ **T8**（非新闻直接不收）；并行 T5–T7 | `news/mcp_web_search_free.py` 的 `cn_news`/CLI + `news/FETCH_CN_NEWS.md`；`run/news/<date>.md`（只留真新闻，中文≥英文） | ⚠️ 待纠偏（**31 条中文权威新闻 = 0**；已下发 T8–T10） |
+| **news** | ✅ **T8–T10 已交付**（`fd32d67`）：`fetch_cn_news()` 落地（MCP `cn_news` + CLI `--cn-news`）· 中文权威真新闻 6 条（中文 4 ≥ 英文 2）· 原 31 条按 §0.1 收口（**留 news 9 / 移出非新闻 22**）；T5–T7 仍待办 | `news/FETCH_CN_NEWS.md` · `news/2026-10-03.md`（第三轮）· `news/mcp_web_search_free.py`（+`cn_news`） | ✅ 运行中（**supervisor 已独立复跑 CLI 验证通过**） |
 | **research** 🆕 | **R1–R4**（建线首启）：打通 arXiv API → 检索策略 → 常态采集 → 日报/台账/jsonl | `run/research/ARXIV_API.md` · `run/research/<date>.md` · `SEEN.md`(arXiv ID) · `INDEX.md` · `papers.jsonl` | 🆕 已建线，**待启动 loop** |
 
 > ✅ **T1–T4 已完成并交付（2026-10-03，commit `c326ba8`）**：
@@ -191,6 +191,16 @@ WAITING: 0
   - **继承的铁律**：不许编造 · 字段缺一不可 · **`200 ≠ 有料`（验 `Content-Type` + `published`）** · **礼貌限速（arXiv ≥3s）** · 不整篇转载 · 只加本线文件。
   - **R1 先跑**：打通 arXiv API 并**给实测证据**（真查询 + 条目 + 日期）；**R1 未打通不做常态采集**。
   - **待办**：用户需在运行机上 `setsid bash watch_research_loop.sh ...` **拉起 loop**（见 `run/README.md`）。
+- **2026-10-03（news 交付 T8–T10 + 我的独立验证）** —— news agent 交 `fd32d67`：
+  - **T10** `fetch_cn_news()` 落地（MCP `cn_news` + CLI `--cn-news --limit N [--json] [--max-age-hours]` + Python 直调）；
+  - **T9** 中文权威真新闻 **6 条（中文 4 ≥ 英文 2）**：央视网 2 + 中新网 2 + Ars 2；
+  - **T8** 原 31 条按 §0.1 收口 → **留 news 9 / 移出非新闻 22**（仅存 SEEN）。
+  - ✅ **我亲自复跑其 CLI**（`PYTHONIOENCODING=utf-8 python news/mcp_web_search_free.py --cn-news --limit 5`，exit=0）：
+    输出条目**均带当天 `published`**（2026-10-03）· 各源 status/Content-Type 透明 · **超龄丢弃有理由**（90.2h/76.5h>72h）· **死源黑名单确实永不请求**。
+  - ⚠️ **两点观察**（已记录，非缺陷）：
+    ① `cn_news` 是**通用中文新闻管道**（返回"最新"而非"AI 相关"）→ **调用方仍须按 §1/§0.1 过滤**（agent 写日报时确实过滤了）；
+    ② **央视走 `cctv-jsonp`（ct=text/html）**，是对"央视无活 RSS"的合理例外；与"非 rss/xml 判失败"规则不冲突（该规则针对 RSS 源）。
+  - **仍待办**：T5（自建 MCP 装进 cline / 等效 CLI 已具备）· T6 · T7。
 - **2026-10-03（news worker 首交付）** —— agent 完成 **T1–T4**（`c326ba8`）+ **首轮 smoke 16 条**（`3fcd854`）+ 记忆回写（`bdc20db`），已转**常态采集**（`WAITING=1`）。
   亮点：**真跑实测**（给报错原文）、**建了免 key MCP**、报告**自包含**、**360 无日期就拒收**（守"字段缺一不可"）。
   待用户拍板：**是否补正规 API key**（免 key 抓取脆弱/合规灰区）。待核：**MCP 是否已装进运行机 cline**。
