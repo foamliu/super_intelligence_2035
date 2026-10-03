@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 25 -->
+<!-- RUN_ID: 26 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,45 @@
 
 ---
 
-## RUN_ID 25 — 🔎 **最后一击：cline 是否在 10-03 22:10 前后被自动升级**（**只读**）（**本块最新，优先执行**）
+## RUN_ID 26 — 🎯 **锁定唯一残留变量：`OPENAI_API_URL` + `API_TYPE`（4 路矩阵）**（**只读**）（**本块最新，优先执行**）
+
+**已排除（2026-10-04 07:56）**：
+- ❌ **cline 版本**：`.29`/`.12` 都是 **CLI 3.0.51**，安装日期同为 **2026-09-08**（globalState 里的 4.1.21/4.0.8 是 **VSCode 扩展**版本，与 CLI 无关）→ "10-03 自动升级"**否证**
+- ❌ **看门 | key**：`.29` secrets key → `curl` = **200**
+- ❌ **`-c /tmp` / 模型名**：`.12` 用**完全相同的命令**跑通了（`[thinking] … → OK`）
+- ✅ **`.12` 与 `.29` 的唯一环境差异 = `.29` 多出 `OPENAI_API_URL=http://agi-gateway.cxmt.com/v1` 与 `API_TYPE=openai`**
+- 📌 **旁证**：唯一在 `.29` 上成功过的那次 smoke（RUN_ID 14 §3）**恰好也 unset 了这两个变量**；我后续几轮都漏了
+
+**4 路矩阵**（每组都只改 env，不改文件）：
+| 组 | env | 期望 |
+|:--|:--|:--|
+| V0 | 原样 | Forbidden（基线） |
+| V1 | 剥 `OPENAI_API_KEY`+`OPENAI_API_URL`+`API_TYPE`（**不剥 proxy**） | 看 URL/TYPE 是否单独致命 |
+| V2 | 剥 proxy + 剥三者（=RUN_ID 14 的配方，**不带 -k**） | 若 OK → **修法 = 在 cline 调用行补 `-u OPENAI_API_URL -u API_TYPE`** |
+| V3 | 剥三者 + `-k <secrets>`（=RUN_ID 14 原样） | 若 OK 而 V2 不 → 需要显式 `-k` |
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; cd /tmp
+_k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" | head -1)"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY"
+SM="reply with exactly OK"
+run() { L="$1"; shift; printf '   %-30s => ' "$L"; env "$@" timeout 90 "$C" -c /tmp -m "$M" --auto-approve true -t 45 "$SM" 2>&1 | head -2 | tr -d '\r' | tr '\n' ' ' | cut -c1-135; echo; }
+
+echo; echo "=== 1. 4 路矩阵 ==="
+run "V0 原样"
+run "V1 剥KEY+URL+TYPE"        -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE
+run "V2 剥proxy+KEY+URL+TYPE"  $P -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE
+printf '   %-30s => ' "V3 同V2 + -k"; env $P -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE timeout 90 "$C" -c /tmp -m "$M" -k "$_k" --auto-approve true -t 45 "$SM" 2>&1 | head -2 | tr -d '\r' | tr '\n' ' ' | cut -c1-135; echo
+
+echo; echo "=== 2. 现状（不动 loop）==="
+pgrep -af 'bash baize_(pretrain|harness)_loop\.sh' | cut -c1-90
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 25**（cline 升级假说，**✅ 已执行 07:56:56**，**结果：版本相同 3.0.51 → 否证**）为 ```text。
+
+## RUN_ID 25 — 🔎 **最后一击：cline 是否在 10-03 22:10 前后被自动升级**（✅ 已执行，❌ 否证，见 RUN_ID 26）
 
 **RUN_ID 24 唯一实质差异（2026-10-04 07:54:35）**：
 | 项 | `.29` | `.12` |
@@ -49,7 +87,7 @@
 
 🚫 **只读**：不安装、不降级、不重启任何 loop。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 
 echo; echo "=== 1. [.29] cline 安装痕迹（找自动升级时间）==="
