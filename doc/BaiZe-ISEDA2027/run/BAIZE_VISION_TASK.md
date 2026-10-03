@@ -57,6 +57,11 @@
 - **只变**：目标函数 → 至少 **① InfoNCE（基线，已有）② SigLIP（18.5M 复测）③ `LocalLoss`（局部对比）④ CoCa（对比+caption）⑤ GenLIP/AR（纯生成）**；⑥ **AIMv2 式「patch+text 双 AR」**（成本最高，条件触发）。
 - ⭐ **② 监督密度是关键变量（新增视角）**：InfoNCE 每对只给 **1 个全局标量**；而 **AIMv2 = 自回归生成 raw image patches + text tokens**、**OpenVision2 官方 = caption-only 自回归** → 都是**逐 patch/token 的稠密监督**。→ **数据越少，稠密监督的样本效率优势越可能翻盘**（我们 18.5M vs AIMv2 **12B，649×**）——这正是"数据少 ⇒ 目标函数更重要"的机制。
 - ⭐ **③ 文本塔是否必须冻结？（新增，可能被低估的杠杆）**：R4 因「随机 text 塔 → 坍缩」而**冻结 CLIP-768**，但**冻结 = 上限锁死在外来静态文本空间**。→ 增一档 **R11-L2**：**冻结 vs LoRA/Adapter 轻量微调 vs 重训 text 塔**（同样控变量）。⚠️ **必须重跑 R4 的坍缩判据 C1–C4** 确认不坍缩。
+- ⭐ **④ 读 OpenVision2 官方训练代码（它开源、且塔与我们同源）—— R11-L3**：
+  - 已核实：官方是 **generative-only（caption-only 自回归）**、**无训练过的 text tower**、且 README 明说 **pip `open_clip` 不兼容（需其仓库自带 fork）** → **产出「要抄什么 / 要改什么 / 移植成本」**（caption decoder 结构、数据格式、依赖改动），**每条贴文件 URL 或 `路径:行号`**。
+  - ⚠️ **AIMv2 的开源程度（权重/代码/许可）也一并核实**，**不预设结论**。
+  - 🚩 **数据侧硬约束（关键判据）**：我们 caption **偏短** —— **CC12M = alt-text 短句** · **Amshaker = 中长** · **GPIC short = 20 tok**；而官方用 **ReCap-DataComp-1B v2 的 LLaMA-3 合成长 caption**。
+    → **caption-only 生成式的监督密度会被我们的短 caption 拖累**；而 **AIMv2 式（额外预测 image patches）不依赖 caption 丰富度** → **对我们这种数据更友好**。**此判断须在 R11 实测中验证，不得当结论引用。**
 - **公平性（硬要求）**：生成式/混合臂需要**文本解码器**（不再是冻结 CLIP 文本塔）→ **必须报「参数量 + 训练 token + 每步耗时」**，不能只比 acc。
 - **预注册判据（先定后测，🚫 不许事后改）**：**同 N、同口径**下，若某臂 **lp 比 InfoNCE 基线高 > 1.5 个点** → 「**25.1% 是对比学习路线的渐近**」被**局部推翻** → **对该臂重拟合 scaling 曲线并外推**。
 - **产出**：`run/EXPERIMENTS_VISION_ROUND11.md` —— 各目标 × 同 N 的 acc + **参数量/token 公平表** + 结论「上限是否由 loss 锁定」。
