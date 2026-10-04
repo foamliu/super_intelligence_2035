@@ -710,12 +710,26 @@ python -m lm_eval --model hf \
 | 对照 | bf16 s/iter | FP8 s/iter | FP8 GPU util | FP8 峰值显存 | **端到端 s = t_bf16/t_fp8** |
 |:--|:--|:--|:--|:--|:--|
 | **A. TP2·SP-off·MBS4**（vs ②） | **21.2s** | **~21.0s** | 479.3 TFLOP/s/GPU | **50721 MiB** | **~1.01（+~1%，等价持平）** |
-| **B. TP2·SP-on·MBS4**（vs ④） | **20.0s** | ~23.0s（iter40/60，running） | ~435–440 TFLOP/s/GPU | ~45947 MiB | ~0.87（**反变慢 ~+15%**，待收官） |
+| **B. TP2·SP-on·MBS4**（vs ④） | **20.0s** | **~23.2s**（60 步 rc=0 收官） | 434.7/429.8/436.1 TFLOP/s/GPU | **47987 MiB** | **~0.86（反变慢 ~+16%，倒挂）** |
 
 - **config A 原始输出**（`/tmp/baize_p94_fp8_tp2_mbs4.log`，60 步 rc=0，loss 7.352→ grad norm 0.262，无 NaN/skip）：
   `Step Time : 21.01s GPU utilization: 479.3TFLOP/s/GPU`，peak_gpu_mem_MiB=50721。
-- **⭐⭐ 结论（初步，待 B 收官确认）**：**FP8 在 M=16384（TP2·MBS4）下端到端不转正** ——
-  A（SP-off）21.0s vs bf16 ② 21.2s = **+~1%（噪声级）**；B（SP-on）反而 ~23.0s vs bf16 ④ 20.0s = **~+15% 变慢**（疑似 FP8 的 amax/delayed-scaling allreduce 与 SP 的 allreduce 叠加冲突，且 SP 下 `CUDA_DEVICE_MAX_CONNECTIONS=1` 建议未设置）。
-  → **未复现 Xmodel-2.5 的 +30%**。这与 P-9.4 微基准一致（交叉点 M≈30–32K 而非 16K；M=16384 未加权 s=0.90 倒挂）——**本模型在「bf16 可达最大 M」下 FP8 不可行**。
+- **⭐⭐ 最终结论（P-9.4 铁律，诚实记录）**：**FP8 在 M=16384（TP2·MBS4）下端到端不转正** ——
+  A（SP-off）21.0s vs bf16 ② 21.2s = **+~1%（噪声级持平）**；B（SP-on）~23.2s vs bf16 ④ 20.0s = **~+16% 变慢（倒挂）**（FP8 的 amax/delayed-scaling allreduce 与 SP 的 allreduce 叠加冲突）。
+  → **未复现 Xmodel-2.5 的 +30%**。这与 P-9.4 微基准一致（交叉点 M≈30–32K 而非 16K；M=16384 未加权 s=0.90 倒挂）——**本模型在「bf16 可达最大 M」下 FP8 不可行**。A/B 均 60 步 rc=0、loss 7.35→ grad norm 0.26、无 NaN/skip。
 - **诚实记录（P-9.4 铁律）**：不迎合运维「s→1.34 饱和区」预期 —— **本模型/本口径下 FP8 不转正**，P-8 应**维持 bf16**，最优配置回到 **④ TP2·DP4·SP-on·MBS4（~210K）** 或 **P-9.1 的 TP1·DP8·MBS2（218K）**（后者无 FP8 收益、但吞吐更高、显存 57GB 更省）。
-> 脚本 `run/baize_p94_fp8_e2e.sh`，SUM=`/tmp/baize_p94_fp8_e2e.log`。**结果待下轮回收。**
+> 脚本 `run/baize_p94_fp8_e2e.sh`，SUM=`/tmp/baize_p94_fp8_e2e.log`。**✅ P-9.4 端到端完成（A/B 均 rc=0 收官）。**
+
+### P-9.3 seq 多点扫描 🚀 running（2026-10-04 12:15 启动，第 63 次唤醒）
+
+> **方法**：TP1·DP8·MBS=2 · bf16 · seed1234；seq ∈ {2048, 4096, 8192, 16384}，GBS 同步维持每步 ≈4.19M token（2048→2048 / 4096→1024 / 8192→512 / 16384→256）。每点 60 步短测（不存 ckpt），记 t_step / tok/s / 峰值显存 / OOM。
+> **目的**：量化「hybrid 把注意力 O(n²) 关掉多少」——`r = t_step(seq)/t_step(4096)`。纯 Transformer 会 2–4×；P-4 实测 attention flash 仅占 0.7%（seq4096），预计 hybrid 的 8192 落在 r≈1.05–1.20。
+> **判据（预注册，先定后测，🚫 不改）**：`r ≤ 1.2` → 该 seq 作 P-8 候选；`r ≥ 1.5` → P-8 沿用 4096。**16384 若 OOM → 如实记 OOM**（= 显存先于算力成为限制）。
+> **5-way 归因**（attention/SSM/GEMM/comm/elementwise）由 **P-9.5 profiling** 承担。脚本 `run/baize_p9_seq_scan.sh`，SUM=`/tmp/baize_p9_seq_scan.log`。
+
+| seq | GBS | 状态 | 峰值显存 | r vs 4096 | 备注 |
+|:--|--:|:--|--:|--:|:--|
+| 2048 | 2048 | running | — | — | |
+| 4096 | 1024 | 待 | — | 1.0 | 同-run 基线（vs P-9.1 TP1·MBS2 19.3s/218K） |
+| 8192 | 512 | 待 | — | — | |
+| 16384 | 256 | 待 | — | — | 边界点，可能 OOM |
