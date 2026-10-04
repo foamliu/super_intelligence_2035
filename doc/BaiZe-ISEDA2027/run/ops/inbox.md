@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 50 -->
+<!-- RUN_ID: 51 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,56 @@
 
 ---
 
-## RUN_ID 50 — 🏗 **为 4 条线建独立 cline 配置目录（`--data-dir`）+ 逐个 smoke 验证**（**已获批准**）（**本块最新，优先执行**）
+## RUN_ID 51 — 🔧 **纠正 `--data-dir` 布局并重测 smoke（上一轮放错目录）**（承接 RUN_ID 50）（**本块最新，优先执行**）
+
+> **RUN_ID 50 的实测结论（17:46:41 exit=0）**：`cline --help` → **`--data-dir <path>` = 隔离的 local state 目录，默认 `~/.cline/data`** ⇒ **配置文件应直接在 `<D>/` 下**（harness 实证：`--data-dir .../cline_harness_data`，其 `globalState.json` 就在该目录里）。
+> ⚠️ **上一轮把配置放到了 `<D>/data/`（多了一层）** → cline 找不到 `globalState.json` → 4 条线 smoke **全 `error: Cannot connect to API`**（注意：**不是 Forbidden**，说明是 base 缺失、不是凭据问题）。
+> ⇒ 本轮 = **把配置纠正到 `<D>/` 根** + 复测 smoke **必须回 `OK`**。
+
+**做什么**
+1. 清掉 `<D>/data/`（上轮错位），把 `globalState.json` + `secrets.json` **直接放到 `<D>/`**（用法 `--data-dir <D>`）
+2. 4 条线逐个 smoke：`cline --data-dir <D> -c /tmp -m glm-5.2 -k <key> -P openai-compatible …` → 必须回 **OK**
+3. 🚫 **仍不改任何 loop 脚本**（下一步单独做、单独验）
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME; B=/nas_train/app.e0031982
+CL=/home/app.e0031982/.bun/bin/cline
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+SRC="$H/.cline/data"
+
+echo; echo "=== 1. 以 harness 现成用法为准，复核 --data-dir 布局 ==="
+echo "   harness 目录内容: $(ls -1 /nas_train/app.e0031982/harness_work/cline_harness_data 2>/dev/null | tr '\n' ' ')"
+echo "   => --data-dir 指向【data 目录本身】；文件在 <D>/ 下，非 <D>/data/"
+
+echo; echo "=== 2. 纠正布局：配置放到 <D>/ 根 ==="
+for n in pretrain harness vision data; do
+  D="$B/.cline_$n"
+  rm -rf "$D/data" 2>/dev/null
+  mkdir -p "$D"
+  cp -a "$SRC/globalState.json" "$D/globalState.json" 2>/dev/null
+  cp -a "$SRC/secrets.json"     "$D/secrets.json"     2>/dev/null
+  chmod 600 "$D/secrets.json" 2>/dev/null
+  echo "   $D/ -> $(ls -1 "$D" 2>/dev/null | tr '\n' ' ')"
+done
+
+echo; echo "=== 3. 逐个 smoke（必须回 OK）==="
+cd /tmp
+for n in pretrain harness vision data; do
+  D="$B/.cline_$n"
+  K=$(python3 -c "import json;print(json.load(open('$D/secrets.json'))['openAiApiKey'])" 2>/dev/null | tr -d '\r\n')
+  R=$(env $P timeout 90 "$CL" --data-dir "$D" -c /tmp -m glm-5.2 -k "$K" -P openai-compatible --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tr -d '\r' | tr '\n' ' ' | cut -c1-160)
+  printf '   %-9s (key len %s) => %s\n' "$n" "${#K}" "$R"
+done
+
+echo; echo "=== 4. 共享配置现状（应仍正常）==="
+echo "   ~/.cline/data/globalState.json base = $(sed -n 's/.*\"openAiBaseUrl\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p' "$SRC/globalState.json" | head -1)"
+echo; echo "=== DONE ==="
+```
+
+> ⛔ 已降级 RUN_ID 50（17:46:41 exit=0，**布局放错**，见 RUN_ID 51）为 text。
+
+## RUN_ID 50 — 🏗 **为 4 条线建独立 cline 配置目录（`--data-dir`）+ 逐个 smoke 验证**（✅ 已执行 → ⚠️ **布局放错，见 RUN_ID 51**）
 
 **动机（RUN_ID 49 定位的真凶）**：`.29` 上 pretrain 与 harness **共用一份 `~/.cline/data/globalState.json`**，而 harness 把它改成了自己的 `gw_proxy`（`http://127.0.0.1:9090/v1`）→ **pretrain 的 cline 被指到本地代理 → `Forbidden`**。⇒ **必须给每条线独立配置**（cline 支持 `--data-dir`，harness 已在用）。
 
@@ -42,7 +91,7 @@
 3. **逐个 smoke**：`cline --data-dir <D> -c /tmp -m glm-5.2 -k <该目录的 key> -P openai-compatible …` → 必须 **OK**（不是 Forbidden）
 4. 报告（key 脱敏）
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 H=$HOME; B=/nas_train/app.e0031982
 C=/home/app.e0031982/.bun/bin/cline
