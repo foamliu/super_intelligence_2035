@@ -95,6 +95,17 @@ ERROR_COUNT:  0
 - **🟢 可回收（用户已确认"绝大部分可删"）≈ 22 TiB**（删全部 iter ckpt + 被取代 release/HF 旧版，仅保留每 stage 最终 best ≈30G）。
 - ⚠️ **史上最大单项**（远超 servers 974G / FineVision 4.3T / nemo_exp 272G 之和）；P1/P2/P3 全过 → 建议运维一次性拍板。
 
+### ⑧ ⭐ BaiZe 论文「idea 文献调研」HTML 报告（2026-10-04 运维指令 · 最高优先 · 明早 08:30 前）— ✅ 已产出并提交
+
+> 运维指令：用 `cimi-search`/`cimi-fetch` 调研 7 方向（方向 0 成本经济性为最高优先），产出自包含 HTML `doc/BaiZe-ISEDA2027/LIT_IDEAS_2026-10-04.html`，明早 08:30 前交付。
+
+- **产出**：`doc/BaiZe-ISEDA2027/LIT_IDEAS_2026-10-04.html`（**65 KB / 567 行 / 自包含 · 无外部 CDN**），数据 agent 唤醒 110 于 2026-10-04 23:30 生成。
+- **结构齐全**：① TL;DR(10 条) ② 主表(50 idea × 全列：idea/出处/BaiZe 阶段/提升什么/可行性(数据·算力·工程量)/潜力/证据强度/落地动作) ③ 分三档(立即可做 16 条 / 需小实验 3 条 / 需长期 4 条) ④ 专章「成本救场」(4 子命题证据链：70–80% 能力 / ~1/100 成本 / 分档承接 / 口径) ⑤ 最高性价比 TOP-10 ⑥ 7 方向详述(含经典锚点 + 前沿) ⑦ 参考清单(37 条本地 bib 核验 + 15 条待在线核验，均可点 URL) ⑧ 缺口清单 ⑨ 给运维下一步建议。
+- **🚫 工具/网络如实报告**：`cimi-search`/`cimi-fetch` **不可用**（非 PATH 可执行、MCP 未注册）；`curl`/`fetch_web_content` → arXiv/GitHub/HF 均 **`Network is unreachable`**（运维侧 2026-10-05 00:05 复测确认仍未恢复）。→ 报告内 37 条 arXiv ID 来自**本地 .bib 文件一手核验**；15 条标 `⚠️未在线核验`（基于训练知识，提供真实 arXiv ID + URL 供运维在线抽验）。
+- **缺口（已如实列入报告 §8）**：① 15 条未在线核验（含 DeepSeek-V3 成本数字、GRPO、推测解码、FrugalGPT、RouteLLM、SigLIP、MAE、CLIP）；② 无法搜索 2026 最新工作；③ DeepSeek-Flash $/1M tok 定价未核验（成本对比表大模型基线待填）；④ ISEDA 2027 录用率/页数上限未核验。
+- **建议运维网络恢复后**：对 §7「⚠️未在线核验」15 条用 `cimi-fetch` 抽验 → 通过后可直接写进论文；档① 16 条全部零成本（改 .tex 加引用 + 写 Limitations + 改 §2 related work）可一次性执行。
+- **git**：本轮已 `git add` 该 HTML + 本记忆 + 当日日志并**本地提交**；`git push` 因 `Network is unreachable` 失败（与 pretrain/vision/harness 线同因），待网络恢复后由任一 agent `git pull --rebase` + push 即可同步远端。
+
 ## 状态头
 
 | 字段 | 值 |

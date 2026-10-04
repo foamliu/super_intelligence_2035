@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 论文 Idea 文献调研 — 2026-10-04</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--yellow:#d29922;--red:#f85149;--purple:#bc8cff;--orange:#e8873c}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;line-height:1.6;font-size:15px;padding:20px;max-width:1400px;margin:0 auto}
+h1{font-size:1.8em;color:var(--accent);border-bottom:2px solid var(--border);padding-bottom:.3em;margin-bottom:.5em}
+h2{font-size:1.4em;color:var(--purple);margin-top:1.8em;margin-bottom:.5em;border-bottom:1px solid var(--border);padding-bottom:.2em}
+h3{font-size:1.15em;color:var(--green);margin-top:1.2em;margin-bottom:.3em}
+h4{font-size:1.05em;color:var(--yellow);margin-top:1em;margin-bottom:.2em}
+p{margin-bottom:.6em}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code{background:#1c2333;padding:1px 5px;border-radius:3px;font-size:.9em;color:var(--orange)}
+table{width:100%;border-collapse:collapse;margin:1em 0;font-size:.85em}
+th,td{border:1px solid var(--border);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#21262d;color:var(--accent);font-weight:600;position:sticky;top:0}
+tr:nth-child(even){background:#161b22}
+tr:hover{background:#1c2333}
+.notice{background:#1c1f2e;border:1px solid var(--yellow);border-radius:8px;padding:12px 16px;margin:1em 0}
+.notice-red{background:#2a1517;border:1px solid var(--red);border-radius:8px;padding:12px 16px;margin:1em 0}
+.notice-green{background:#0d1f0d;border:1px solid var(--green);border-radius:8px;padding:12px 16px;margin:1em 0}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.8em;font-weight:600;margin:1px}
+.b-green{background:#1a3a1a;color:var(--green)}
+.b-yellow{background:#3a3a1a;color:var(--yellow)}
+.b-red{background:#3a1a1a;color:var(--red)}
+.b-blue{background:#1a2a3a;color:var(--accent)}
+.b-purple{background:#2a1a3a;color:var(--purple)}
+.b-orange{background:#3a2a1a;color:var(--orange)}
+.tldr-item{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--green);border-radius:6px;padding:10px 14px;margin:.5em 0}
+.tldr-item .why{color:var(--muted);font-size:.9em;margin-top:2px}
+.tier{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;margin:1em 0}
+.tier-1{border-left:4px solid var(--green)}
+.tier-2{border-left:4px solid var(--yellow)}
+.tier-3{border-left:4px solid var(--orange)}
+.cost-card{background:#1a1520;border:1px solid var(--purple);border-radius:8px;padding:14px;margin:.8em 0}
+.cost-card h4{color:var(--purple)}
+.ref-list{columns:2;column-gap:30px;font-size:.85em}
+.ref-list li{break-inside:avoid;margin-bottom:4px}
+.tag-verified{color:var(--green);font-size:.75em;font-weight:600}
+.tag-unverified{color:var(--yellow);font-size:.75em;font-weight:600}
+.tag-classic{color:var(--muted);font-size:.75em;font-style:italic}
+.tag-frontier{color:var(--accent);font-size:.75em;font-weight:600}
+ul,ol{margin-left:1.2em;margin-bottom:.6em}
+li{margin-bottom:.2em}
+hr{border:none;border-top:1px solid var(--border);margin:2em 0}
+.scroll-table{max-height:600px;overflow-y:auto;border:1px solid var(--border);border-radius:6px}
+.scroll-table table{margin:0}
+.top10-item{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:6px;padding:8px 12px;margin:.4em 0;font-size:.9em}
+.score{font-weight:700;font-size:1.1em}
+</style>
+</head>
+<body>
+
+<h1>BaiZe 论文 Idea 文献调研 — LIT_IDEAS_2026-10-04</h1>
+
+<p><strong>生成时间</strong>：2026-10-04 23:30 CST · <strong>截止</strong>：明早 08:30 · <strong>数据 agent 唤醒 110</strong></p>
+
+<div class="notice-red">
+<h3>⚠️ 工具与网络状态声明（硬性如实报告）</h3>
+<p><strong>任务要求</strong>：用 <code>cimi-search</code> 搜索 + <code>cimi-fetch</code> 取正文（MCP）。</p>
+<p><strong>实测结果</strong>：</p>
+<ul>
+<li><code>cimi-search</code> / <code>cimi-fetch</code>：<strong>不可用</strong>（<code>which</code> / <code>command -v</code> 均无返回，非 PATH 可执行文件；MCP 工具未注册到当前 agent 工具列表）。</li>
+<li><code>fetch_web_content</code>（替代方案）：<strong>网络不可达</strong>。<code>curl</code> → arXiv/GitHub/HF 均 <code>Network is unreachable</code>。<code>ping 8.8.8.8</code> → <code>Destination Net Unreachable</code>。与 <code>MEMORY_DATA.md</code> 记录一致。</li>
+</ul>
+<p><strong>影响</strong>：无法进行在线搜索 / 在线抓取论文正文。<strong>所有 arXiv ID 与 URL 均来自以下两类来源</strong>：</p>
+<ul>
+<li><span class="tag-verified">✅ 本地核验</span>：项目仓库内的 <code>.bib</code> 文件（BaiZe <code>reference.bib</code>、Xmodel-2 <code>xmodel-2.bib</code>、Xmodel-2.5 <code>reference.bib</code>）及 <code>.tex</code>/<code>.md</code> 文件中已包含的文献条目 —— 一手来源，arXiv ID 直接从 bib 文件读出。</li>
+<li><span class="tag-unverified">⚠️ 未在线核验</span>：基于模型训练知识引用的论文 —— 提供真实 arXiv ID 和 URL 供运维在线核验，但<strong>本轮未能在线确认</strong>。数字（如成本、参数量）如来自此类来源会显式标注。</li>
+</ul>
+<p><strong>缺口</strong>：无法抓取论文正文做逐句核实 → 部分 idea 的"具体做法/超参"来自训练知识而非原文截图。建议运维在网络恢复后对标 <span class="tag-unverified">⚠️ 未在线核验</span> 的条目做一次 <code>cimi-fetch</code> 抽验。</p>
+</div>
+
+<div class="notice">
+<h3>📋 调研定位（来自运维指令）</h3>
+<p><strong>第 1 读者</strong>：公司领导 + ~1400 位设计工程师（DE），目的是<strong>技术影响力</strong>（让人看出我们真懂细节）。投中 ISEDA 是加分项。</p>
+<p><strong>核心商业命题</strong>：ZhuLong 让越来越多 DE 用上 EDA agent → 随用户增长 token 成本急剧上涨 → ≈2027 H2 时 BaiZe 可"救场"分档承接流量：指标达到 DeepSeek-Flash 的 <strong>70–80%</strong>，成本仅其 <strong>~1/100</strong>。</p>
+<p><strong>取舍规则</strong>：优先找"能写进论文、让人看出我们懂行"的深度细节 + "支撑成本命题"的一手证据；不堆砌空话。</p>
+</div>
+
+<hr>
+<h2>1. TL;DR — 最值得做的 10 条</h2>
+
+<div class="tldr-item">
+<strong>① 把"混合架构 → 长会话服务成本"写成论文核心卖点</strong>（支撑 §0 命题）
+<div class="why">BaiZe 的 4 层 attention + 52 层 Mamba-2 意味着只有 4/56 的层携带 session-growing KV cache —— 这是"1/100 成本"命题的<strong>架构根基</strong>，且已有实测数据（decode 22.8 tok/s vs dense 2.2 tok/s = 10.3×）。论文 §4 tab:archcomp 已有此数，但 §1/§8 未把它与"成本救场"叙事挂钩。<strong>零成本</strong>。</div>
+</div>
+
+<div class="tldr-item">
+<strong>② 引用 Xmodel-2 的"decay 段 = 带 SFT 的退火"（64% SFT 占比）作为 P-8 配方的文献锚点</strong>（方向 1+2）
+<div class="why">Xmodel-2 跑 400+ 次试验得出 SFT 占比 60–69%（取 64%），复杂推理 +29.31%，SimHash 去重 +1.7% —— 这些数字在本地 <code>xmodel-2.tex:142-154</code> 中已验证。BaiZe 的 P-8 配方正在 follow 这条路线，但论文 §4 没有引用 Xmodel-2。<strong>零成本</strong>。</div>
+</div>
+
+<div class="tldr-item">
+<strong>③ 引用 Data Mixing Laws（Ye 2024, arXiv 2403.16952）为"小规模配比搜索可迁移"的法理依据</strong>（方向 1）
+<div class="why">这是 BaiZe "reduced-horizon proxy search" 支柱的直接文献支撑 —— 论文 §1 列了三个 design pillar 但 related work 只引了 MiniCPM，没引 Data Mixing Laws。已在本地 <code>xmodel-2.bib</code> 验证。<strong>零成本</strong>。</div>
+</div>
+
+<div class="tldr-item">
+<strong>④ 引用 μP / Tensor Programs V（arXiv 2203.03466）为超参迁移性的第二条法理</strong>（方向 1）
+<div class="why">μP 是"小模型超参排名迁移到大模型"的经典锚点，与 BaiZe 的 S1–S5 proxy search 方法论直接对应。已在本地 <code>Xmodel-2.5/reference.bib</code> 验证。论文 §2 和 §4 均未引用。<strong>零成本</strong>。</div>
+</div>
+
+<div class="tldr-item">
+<strong>⑤ 引用 Chinchilla（arXiv 2203.15556）并在 Limitations 中诚实交代"655M token = Chinchilla 下限的 1.5%"</strong>（方向 1+6）
+<div class="why">Chinchilla 20:1 token:param → 2.2B 需 44B token；BaiZe 只跑了 655M = 1.5%。已在本地 <code>DATA_RESEARCH.md:70</code> 引用（含 URL）。把这一 limitation 主动写出来比被审稿人发现强得多。<strong>零成本</strong>。</div>
+</div>
+
+<div class="tldr-item">
+<strong>⑥ 补 §2 related work 的"视觉编码器"一线</strong>（方向 6 · PAPER_STALENESS_AUDIT 已标红）
+<div class="why">论文 §2 只有三个 subsection（SLM、Hybrid SSM、VLM），完全没有视觉编码器预训练的 related work —— 但 §6 整节都在讲视觉编码器。AIMv2（arXiv 2411.14402，本地验证）、SigLIP（arXiv 2303.15343）、MAE（arXiv 2111.06377）应各引一句。<strong>零成本</strong>。</div>
+</div>
+
+<div class="tldr-item">
+<strong>⑦ 把 R8/R9/R10 的 scaling law 写成"诚实的负结果 + 方法论贡献"</strong>（方向 3+6）
+<div class="why">BaiZe vision 的 R9 scaling 拟合（幂律渐近 25.1%，本地数据够不到 20%+）和 R10（加宽塔是负收益，−2.2 lp pp/翻倍）已在 <code>PAPER_STALENESS_AUDIT.md</code> 中回填到 §6。"够不到 20% 但给出了 scaling law + 瓶颈诊断"本身是<strong>技术深度</strong>的体现。<strong>零成本</strong>。</div>
+</div>
+
+<div class="tldr-item">
+<strong>⑧ 在"成本救场"叙事中引用推测解码 + 级联/路由作为"分档承接流量"的机制</strong>（方向 0 ⭐）
+<div class="why">BaiZe 的成本命题不仅是"单模型便宜"，还是"分档承接"——简单请求走小模型、复杂请求升级到大模型。推测解码（Leviathan 2023, ⚠️未在线核验）让小模型生成 + 大模型验证；级联/路由（FrugalGPT 2023, RouteLLM 2024, ⚠️未在线核验）做请求分流。这是"1/100 成本"命题的<strong>机制层证据</strong>。<strong>零成本</strong>。</div>
+</div>
+
+<div class="tldr-item">
+<strong>⑨ 引用 DeepSeek-V3 / DeepSeek-R1 的成本数据作为"大模型成本基线"</strong>（方向 0 ⭐）
+<div class="why">DeepSeek-V3 报告了训练成本和推理成本（⚠️具体数字未在线核验），是"大模型有多贵"的公开锚点。"70–80% @ 1/100 成本"命题需要一个大模型成本基线来对比。DeepSeek-Flash 是运维指令中点名的对标对象。<strong>需运维在线核验具体数字后写入</strong>。</div>
+</div>
+
+<div class="tldr-item">
+<strong>⑩ 引用 GRPO（DeepSeekMath, arXiv 2402.03300）+ DPO（arXiv 2305.18290）为 Stage (ii) RL/SFT 的文献锚点</strong>（方向 2）
+<div class="why">论文 §5 已写"group-relative policy optimization and no value network"（即 GRPO）但未引用出处；DPO 在 <code>xmodel-2.bib</code> 已有（arXiv 2305.18290，本地验证）。GRPO 的 arXiv ID 来自训练知识（⚠️未在线核验）。<strong>零成本</strong>。</div>
+</div>
+
+<hr>
+<h2>2. 主表 — 全部 Idea</h2>
+
+<p>列说明：<strong>方向</strong>（0–6）· <strong>Idea</strong> · <strong>出处</strong>（标题/年份/arXiv/URL）· <strong>BaiZe 阶段</strong> · <strong>提升什么</strong> · <strong>可行性</strong>（数据/算力/工程量 三档）· <strong>潜力</strong>（⭐~⭐⭐⭐）· <strong>证据</strong>（一手/二手）· <strong>落地动作</strong>。</p>
+
+<div class="scroll-table">
+<table>
+<thead>
+<tr>
+<th>#</th><th>方向</th><th>Idea</th><th>出处（标题 / 年份 / arXiv / URL）</th><th>BaiZe 阶段/章节</th><th>提升什么</th><th>可行性</th><th>潜力</th><th>证据</th><th>落地动作</th>
+</tr>
+</thead>
+<tbody>
+
+<!-- Direction 0 -->
+<tr><td>1</td><td>0 ⭐</td><td>混合架构的长会话服务成本量化：4 层 attention vs 56 层 → KV cache 仅 4/56 增长</td><td>BaiZe 自有实测（tab:archcomp）+ Mamba-2 (arXiv 2405.21060) + Nemotron-H (arXiv 2504.03624) <span class="tag-verified">✅本地</span></td><td>§1/§4/§8 成本叙事</td><td>效果·速度·成本·叙事</td><td>🟢数据(自有)·🟢算力(0)·🟢工程(改文字)</td><td>⭐⭐⭐</td><td>一手</td><td>把 tab:archcomp 的 decode 10.3× 数据写进 §1/§8 成本叙事段</td></tr>
+
+<tr><td>2</td><td>0 ⭐</td><td>推测解码（speculative decoding）：小模型生成 + 大模型验证</td><td>"Fast Inference from Transformers via Speculative Decoding" / Leviathan et al. 2023 / arXiv 2211.17192 / <a href="https://arxiv.org/abs/2211.17192">link</a> <span class="tag-unverified">⚠️未在线核验</span></td><td>§8 成本叙事·未来部署</td><td>速度·成本</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐⭐</td><td>一手(论文)</td><td>在 §8 "成本救场"段引用，作为"分档承接"的加速机制</td></tr>
+
+<tr><td>3</td><td>0 ⭐</td><td>级联/路由（cascade & routing）：简单请求走小模型，复杂请求升级大模型</td><td>"FrugalGPT" / Chen et al. 2023 / arXiv 2305.05176 / <a href="https://arxiv.org/abs/2305.05176">link</a> + "RouteLLM" / Ong et al. 2024 / arXiv 2406.08502 <span class="tag-unverified">⚠️未在线核验</span></td><td>§8 成本叙事</td><td>成本·叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐⭐</td><td>一手(论文)</td><td>在 §8 引用为"分档承接流量"的公开机制</td></tr>
+
+<tr><td>4</td><td>0 ⭐</td><td>知识蒸馏（knowledge distillation）：大模型→小模型的能力转移</td><td>"Distilling the Knowledge in a Neural Network" / Hinton et al. 2015 / arXiv 1503.02531 / <a href="https://arxiv.org/abs/1503.02531">link</a> <span class="tag-unverified">⚠️未在线核验</span> <span class="tag-classic">经典锚点</span></td><td>§2 related work·§5 posttrain</td><td>效果·成本·叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手(论文)</td><td>在 §2 引为"大→小成本转移"的经典起点</td></tr>
+
+<tr><td>5</td><td>0 ⭐</td><td>DeepSeek-V3 成本数据：大模型训练/推理成本公开锚点</td><td>"DeepSeek-V3 Technical Report" / DeepSeek 2024 / arXiv 2412.19437 / <a href="https://arxiv.org/abs/2412.19437">link</a> <span class="tag-unverified">⚠️未在线核验</span></td><td>§8 成本叙事·对标基线</td><td>成本·叙事</td><td>🟡数据(需核验数字)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐⭐</td><td>一手(报告)</td><td>运维在线核验后，把 DeepSeek-Flash 的 $/1M tok 作为大模型成本基线写入 §8</td></tr>
+
+<tr><td>6</td><td>0 ⭐</td><td>SLM 在 tool-use/agentic 上的实测</td><td>"Small Language Models: Survey, Measurements, and Insights" / Lu et al. 2024 / arXiv 2409.15790 / <a href="https://arxiv.org/abs/2409.15790">link</a> <span class="tag-verified">✅本地bib</span> + Xmodel-2 (arXiv 2412.19638) <span class="tag-verified">✅本地bib</span></td><td>§2 related work·§8 成本</td><td>叙事·效果</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手(论文)</td><td>引用 SLM Survey + Xmodel-2 的 agentic benchmark 结果为"小模型可用"的证据</td></tr>
+
+<tr><td>7</td><td>0 ⭐</td><td>MiniCPM WSD schedule + 小模型可扩展训练策略</td><td>"MiniCPM" / Hu et al. 2024 / arXiv 2404.06395 / <a href="https://arxiv.org/abs/2404.06395">link</a> <span class="tag-verified">✅本地bib</span> <span class="tag-classic">经典锚点</span></td><td>§2 related work·§4 pretrain</td><td>效果·叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐⭐</td><td>一手</td><td>已在 reference.bib，确认 §2/§4 正文有引用</td></tr>
+
+<tr><td>8</td><td>0 ⭐</td><td>推理成本口径标准化：$/1M token · KV cache · 并发 · 长会话</td><td>—（行业实践；引 DeepSeek-V3 报告 + Nemotron-H 报告作为口径来源）</td><td>§8 成本叙事</td><td>成本·叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(定义口径)</td><td>⭐⭐</td><td>混合</td><td>在 §8 定义 BaiZe 的成本口径，与大模型做并列对比表</td></tr>
+
+<!-- Direction 1 -->
+<tr><td>9</td><td>1</td><td>Chinchilla compute-optimal scaling：20:1 token:param ratio</td><td>"Training Compute-Optimal Large Language Models" / Hoffmann et al. 2022 / arXiv 2203.15556 / <a href="https://arxiv.org/abs/2203.15556">link</a> <span class="tag-verified">✅本地</span> <span class="tag-classic">经典锚点</span></td><td>§2 related work·§4 Limitations</td><td>叙事·诚实</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐⭐</td><td>一手</td><td>引为"2.2B 需 44B token"的计算最优依据；Limitations 写明 655M = 1.5% Chinchilla</td></tr>
+
+<tr><td>10</td><td>1</td><td>μP / Tensor Programs V：超参从小模型迁移到大模型</td><td>"Tensor Programs V" / Yang et al. 2022 / arXiv 2203.03466 / <a href="https://arxiv.org/abs/2203.03466">link</a> <span class="tag-verified">✅本地bib</span> <span class="tag-classic">经典锚点</span></td><td>§2 related work·§4 search protocol</td><td>叙事·方法论</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐⭐</td><td>一手</td><td>引为"reduced-horizon proxy search"的第二条法理</td></tr>
+
+<tr><td>11</td><td>1</td><td>Data Mixing Laws：数据配比可预测 LM 性能 + 小→大迁移</td><td>"Data Mixing Laws" / Ye et al. 2024 / arXiv 2403.16952 / <a href="https://arxiv.org/abs/2403.16952">link</a> <span class="tag-verified">✅本地bib</span></td><td>§2 related work·§4 search protocol</td><td>叙事·方法论</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐⭐</td><td>一手</td><td>引为 proxy search 的法理</td></tr>
+
+<tr><td>12</td><td>1</td><td>WSD 学习率调度（warmup-stable-decay）+ decay 段退火</td><td>MiniCPM (arXiv 2404.06395) <span class="tag-verified">✅本地</span> + Xmodel-2 (arXiv 2412.19638) <span class="tag-verified">✅本地bib</span></td><td>§4 pretrain（已用）</td><td>效果</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手</td><td>确认 §4 已引 MiniCPM；补引 Xmodel-2 的 64% SFT decay 结论</td></tr>
+
+<tr><td>13</td><td>1</td><td>SmolLM2 数据中心化小模型训练</td><td>"SmolLM2" / Ben Allal et al. 2025 / arXiv 2502.02737 / <a href="https://arxiv.org/abs/2502.02737">link</a> <span class="tag-verified">✅本地bib</span></td><td>§2 related work</td><td>叙事·数据</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手</td><td>引为"数据质量 > 数据量"的最新佐证</td></tr>
+
+<tr><td>14</td><td>1</td><td>MiniCPM4：端侧超高效 LLM</td><td>"MiniCPM4" / 2025 / arXiv 2506.07900 / <a href="https://arxiv.org/abs/2506.07900">link</a> <span class="tag-verified">✅本地bib</span> <span class="tag-frontier">前沿</span></td><td>§2 related work·§8 成本</td><td>叙事·成本</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手</td><td>引为"小模型端侧部署"的最新同期工作</td></tr>
+
+<tr><td>15</td><td>1</td><td>Hymba：混合头小语言模型</td><td>"Hymba" / Dong et al. 2024 / arXiv 2411.13676 / <a href="https://arxiv.org/abs/2411.13676">link</a> <span class="tag-verified">✅本地bib</span></td><td>§2 related work（已引）</td><td>叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手</td><td>确认 §2 已引；补一句与 BaiZe 56 层 4-attention 的异同</td></tr>
+
+<tr><td>16</td><td>1</td><td>FP8 训练格式：M≥16K 时 FP8 收益</td><td>"FP8 Formats for Deep Learning" / Micikevicius et al. 2022 / arXiv 2209.05433 / <a href="https://arxiv.org/abs/2209.05433">link</a> <span class="tag-verified">✅本地bib</span></td><td>§4 pretrain（P-9 实验已做）</td><td>速度·成本</td><td>🟢数据(自有P-9)·🟢算力(已做)·🟢工程(写结论)</td><td>⭐⭐</td><td>一手</td><td>把 P-9 的 FP8 交叉点实验写进论文 §4</td></tr>
+
+<tr><td>17</td><td>1</td><td>Batch size 不衰减 LR 而增大 batch</td><td>"Don't Decay the Learning Rate, Increase the Batch Size" / Smith et al. 2018 / arXiv 1711.00489 / <a href="https://arxiv.org/abs/1711.00489">link</a> <span class="tag-verified">✅本地bib</span> <span class="tag-classic">经典锚点</span></td><td>§4 pretrain</td><td>效果·叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐</td><td>一手</td><td>引为"GBS 变化时 LR 需重搜"的理论依据</td></tr>
+
+<tr><td>18</td><td>1</td><td>Cerebras-GPT：开源 compute-optimal 小模型</td><td>"Cerebras-GPT" / Dey et al. 2023 / arXiv 2304.03208 / <a href="https://arxiv.org/abs/2304.03208">link</a> <span class="tag-verified">✅本地bib</span></td><td>§2 related work</td><td>叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐</td><td>一手</td><td>引为 compute-optimal 小模型的开府先例</td></tr>
+
+<tr><td>19</td><td>1</td><td>OpenELM：开源高效 LLM 族</td><td>"OpenELM" / Mehta et al. 2024 / arXiv 2404.14619 / <a href="https://arxiv.org/abs/2404.14619">link</a> <span class="tag-verified">✅本地bib</span></td><td>§2 related work</td><td>叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐</td><td>一手</td><td>引为"开源完整训练流程"的同期工作</td></tr>
+
+<tr><td>20</td><td>1</td><td>TinyLlama：开源小模型基线</td><td>"TinyLlama" / Zhang et al. 2024 / arXiv 2401.02385 / <a href="https://arxiv.org/abs/2401.02385">link</a> <span class="tag-verified">✅本地bib</span></td><td>§2 related work</td><td>叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐</td><td>一手</td><td>引为 1.1B 开源基线</td></tr>
+
+<!-- Direction 2 -->
+<tr><td>21</td><td>2</td><td>Xmodel-2 decay 段 SFT 占比搜索：60–69% 最优，64% 实取</td><td>Xmodel-2 Technical Report / Wang et al. 2024 / arXiv 2412.19638 / <a href="https://arxiv.org/abs/2412.19638">link</a> <span class="tag-verified">✅本地tex</span></td><td>§4 pretrain·§5 posttrain</td><td>效果·叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐⭐</td><td>一手</td><td>在 §4 引用"decay 段 = 带 SFT 的退火"，给 64% + 29.31% + SimHash +1.7% 三个数字</td></tr>
+
+<tr><td>22</td><td>2</td><td>GRPO：group-relative policy optimization（无 value network 的 RL）</td><td>"DeepSeekMath" / Shao et al. 2024 / arXiv 2402.03300 / <a href="https://arxiv.org/abs/2402.03300">link</a> <span class="tag-unverified">⚠️未在线核验</span></td><td>§5 posttrain（已写方法，缺引用）</td><td>效果·叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(加引用)</td><td>⭐⭐⭐</td><td>一手(论文)</td><td>§5 已写 "group-relative policy optimization"，补 cite DeepSeekMath</td></tr>
+
+<tr><td>23</td><td>2</td><td>DAPO：改进的 GRPO（Clip-Higher + 动态采样 + token-level 梯度）</td><td>"DAPO" / ByteDance 2025 / arXiv 2503.14476 / <a href="https://arxiv.org/abs/2503.14476">link</a> <span class="tag-unverified">⚠️未在线核验</span> <span class="tag-frontier">前沿</span></td><td>§5 posttrain</td><td>效果</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手(论文)</td><td>引为 GRPO 的最新改进，在 §5 R1–R4 reward 表后补一句对比</td></tr>
+
+<tr><td>24</td><td>2</td><td>DPO：直接偏好优化</td><td>"Direct Preference Optimization" / Rafailov et al. 2023 / arXiv 2305.18290 / <a href="https://arxiv.org/abs/2305.18290">link</a> <span class="tag-verified">✅本地bib</span></td><td>§5/§8 posttrain</td><td>效果·叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手</td><td>引为 §8 domain RL 的替代/对比方法</td></tr>
+
+<tr><td>25</td><td>2</td><td>RLVR with verifiable rewards：GSM8K verifier</td><td>"Training Verifiers to Solve Math Word Problems" / Cobbe et al. 2021 / arXiv 2110.14168 / <a href="https://arxiv.org/abs/2110.14168">link</a> <span class="tag-verified">✅本地bib</span> <span class="tag-classic">经典锚点</span></td><td>§5 posttrain</td><td>叙事·方法论</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手</td><td>引为"verifiable reward"的经典起源</td></tr>
+
+<tr><td>26</td><td>2</td><td>ReAct：推理+行动协同的 agent 范式</td><td>"ReAct" / Yao et al. 2023 / arXiv 2207.01206 / <a href="https://arxiv.org/abs/2207.01206">link</a> <span class="tag-verified">✅本地bib</span> <span class="tag-classic">经典锚点</span></td><td>§2 related work·§5 posttrain</td><td>叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手</td><td>引为 agentic loop 的经典范式</td></tr>
+
+<tr><td>27</td><td>2</td><td>LoRA：低秩适配</td><td>"LoRA" / Hu et al. 2021 / arXiv 2106.09685 / <a href="https://arxiv.org/abs/2106.09685">link</a> <span class="tag-verified">✅本地bib</span> <span class="tag-classic">经典锚点</span></td><td>§5 posttrain（已写 full FT vs LoRA）</td><td>叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐</td><td>一手</td><td>§5 已提到 LoRA ablation，补 cite</td></tr>
+
+<tr><td>28</td><td>2</td><td>Scaling math reasoning with LLMs（数据扩增）</td><td>"Scaling Relationship on Learning Mathematical Reasoning" / Yuan et al. 2023 / arXiv 2308.01825 / <a href="https://arxiv.org/abs/2308.01825">link</a> <span class="tag-verified">✅本地bib</span></td><td>§5 posttrain</td><td>效果·叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐</td><td>一手</td><td>引为"推理数据扩增"的方法参考</td></tr>
+
+<tr><td>29</td><td>2</td><td>LLM-as-a-Judge 评测方法</td><td>"Judging LLM-as-a-Judge" / Zheng et al. 2023 / arXiv 2306.05685 / <a href="https://arxiv.org/abs/2306.05685">link</a> <span class="tag-verified">✅本地bib</span></td><td>§5/§8 evaluation</td><td>叙事·评测</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐</td><td>一手</td><td>§8 domain RL 用 expert agreement 评测，可引 LLM-as-Judge 做自动评测对照</td></tr>
+
+<!-- Direction 3 -->
+<tr><td>30</td><td>3</td><td>AIMv2：自回归多模态预训练（dense supervision），IN-1k 88.7% frozen trunk</td><td>"AIMv2" / Apple 2024 / arXiv 2411.14402 / <a href="https://arxiv.org/abs/2411.14402">link</a> <span class="tag-verified">✅本地(代码注释)</span> <span class="tag-frontier">前沿</span></td><td>§2 related work·§6 vision</td><td>效果·叙事·数据效率</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐⭐</td><td>一手</td><td>引为"dense supervision 在数据受限下翻盘"的前沿证据；BaiZe R11 臂⑥ AIMv2 翻盘 12.08% 已验证</td></tr>
+
+<tr><td>31</td><td>3</td><td>SigLIP：sigmoid 损失 image-text 预训练</td><td>"Sigmoid Loss for Language Image Pre-Training" / Zhai et al. 2023 / arXiv 2303.15343 / <a href="https://arxiv.org/abs/2303.15343">link</a> <span class="tag-unverified">⚠️未在线核验</span> <span class="tag-classic">经典锚点</span></td><td>§2 related work·§6 vision</td><td>叙事·方法论</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手(论文)</td><td>引为对比学习目标函数的经典方法；BaiZe R4 已证 InfoNCE > SigLIP</td></tr>
+
+<tr><td>32</td><td>3</td><td>SigLIP 2：改进的 SigLIP（多分辨率 + naFlex + 去 nonce）</td><td>"SigLIP 2" / Tschannen et al. 2025 / arXiv 2502.04433 / <a href="https://arxiv.org/abs/2502.04433">link</a> <span class="tag-unverified">⚠️未在线核验</span> <span class="tag-frontier">前沿</span></td><td>§2 related work·§6 vision</td><td>叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手(论文)</td><td>引为 SigLIP 的最新改进</td></tr>
+
+<tr><td>33</td><td>3</td><td>MAE：masked autoencoders（掩码自监督视觉预训练）</td><td>"Masked Autoencoders Are Scalable Vision Learners" / He et al. 2022 / arXiv 2111.06377 / <a href="https://arxiv.org/abs/2111.06377">link</a> <span class="tag-unverified">⚠️未在线核验</span> <span class="tag-classic">经典锚点</span></td><td>§2 related work</td><td>叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手(论文)</td><td>引为"掩码自监督视觉预训练"的经典起点</td></tr>
+
+<tr><td>34</td><td>3</td><td>CLIP：对比学习 image-text 预训练</td><td>"Learning Transferable Visual Models From Natural Language Supervision" / Radford et al. 2021 / arXiv 2103.00020 / <a href="https://arxiv.org/abs/2103.00020">link</a> <span class="tag-unverified">⚠️未在线核验</span> <span class="tag-classic">经典锚点</span></td><td>§2 related work·§6 vision</td><td>叙事·方法论</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手(论文)</td><td>引为对比学习视觉编码器的经典起点</td></tr>
+
+<tr><td>35</td><td>3</td><td>DINOv2：自监督视觉特征学习</td><td>"DINOv2" / Oquab et al. 2023 / arXiv 2304.07193 / <a href="https://arxiv.org/abs/2304.07193">link</a> <span class="tag-unverified">⚠️未在线核验</span></td><td>§2 related work</td><td>叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐</td><td>一手(论文)</td><td>引为自监督视觉预训练的前沿工作</td></tr>
+
+<tr><td>36</td><td>3</td><td>BaiZe 自有 vision scaling law（R9/R10）</td><td>BaiZe 自有实验（EXPERIMENTS_VISION_ROUND9/10.md）<span class="tag-verified">✅本地</span></td><td>§6 vision（已回填 tab:visscale）</td><td>效果·叙事·诚实</td><td>🟢数据(自有)·🟢算力(已做)·🟢工程(写好叙事)</td><td>⭐⭐⭐</td><td>一手</td><td>把 R9 幂律渐近 25.1% + R10 加宽塔负收益写成"瓶颈是数据与目标函数"</td></tr>
+
+<!-- Direction 4 -->
+<tr><td>37</td><td>4</td><td>LLaVA：visual instruction tuning</td><td>"Visual Instruction Tuning" / Liu et al. 2023 / NeurIPS 2023 <span class="tag-verified">✅本地bib</span> <span class="tag-classic">经典锚点</span></td><td>§2 related work·§7 MLLM（已引）</td><td>叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手</td><td>确认已引</td></tr>
+
+<tr><td>38</td><td>4</td><td>LLaVA-OneVision：staged curriculum</td><td>"LLaVA-OneVision" / Li et al. 2024 / arXiv 2408.03326 / <a href="https://arxiv.org/abs/2408.03326">link</a> <span class="tag-verified">✅本地bib</span></td><td>§2 related work·§7 MLLM（已引）</td><td>叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手</td><td>确认已引；BaiZe §7 follow 其三阶段 curriculum</td></tr>
+
+<tr><td>39</td><td>4</td><td>AnyRes：可变分辨率多图输入</td><td>"LLaVA-NeXT" / Liu et al. 2024 / arXiv 2406.16860 / <a href="https://arxiv.org/abs/2406.16860">link</a> <span class="tag-unverified">⚠️未在线核验</span></td><td>§7 MLLM</td><td>效果·叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手(论文)</td><td>§7 已写"resolution and visual-token count as first-order variables"</td></tr>
+
+<tr><td>40</td><td>4</td><td>视觉 token 压缩（token merging / pruning）</td><td>"Token Merging" / Bolya et al. 2023 / arXiv 2210.09461 / <a href="https://arxiv.org/abs/2210.09461">link</a> <span class="tag-unverified">⚠️未在线核验</span></td><td>§7 MLLM</td><td>速度·成本</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手(论文)</td><td>引为"减少 visual token 数 → 降低 MLLM 推理成本"的方法</td></tr>
+
+<!-- Direction 5 -->
+<tr><td>41</td><td>5</td><td>多模态 RLVR / DPO：视觉-语言模型的强化学习</td><td>引 DPO (arXiv 2305.18290) <span class="tag-verified">✅本地</span> + RLVR from Cobbe (arXiv 2110.14168) <span class="tag-verified">✅本地</span></td><td>§7 MLLM·§8 domain RL</td><td>效果</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>混合</td><td>在 §7/§8 引 DPO + RLVR 为多模态后训练的方法基础</td></tr>
+
+<tr><td>42</td><td>5</td><td>细粒度视觉推理的数据合成：execution-based self-labeling</td><td>BaiZe 自有设计（§7 task families）<span class="tag-verified">✅本地tex</span></td><td>§7 MLLM</td><td>效果·叙事</td><td>🟢数据(自有)·🟢算力(0)·🟡工程(需实现)</td><td>⭐⭐⭐</td><td>一手</td><td>execution self-labeling 是 BaiZe 独有创新，写好叙事即可</td></tr>
+
+<!-- Direction 6 -->
+<tr><td>43</td><td>6</td><td>补 §2 related work 视觉编码器一线</td><td>PAPER_STALENESS_AUDIT.md §3 已标红 <span class="tag-verified">✅本地</span></td><td>§2 related work</td><td>叙事·完整性</td><td>🟢数据(0)·🟢算力(0)·🟢工程(写一段)</td><td>⭐⭐⭐</td><td>一手</td><td>新增 §2.3：引 MAE / CLIP / SigLIP / AIMv2</td></tr>
+
+<tr><td>44</td><td>6</td><td>写 Limitations 节</td><td>README §9 已列 TODO <span class="tag-verified">✅本地</span></td><td>新节（论文末尾）</td><td>诚实·叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(写)</td><td>⭐⭐⭐</td><td>一手</td><td>写明：① 655M = 1.5% Chinchilla ② vision 数据不足 ③ Stage (ii)–(v) 待结果 ④ 单节点 8×H100</td></tr>
+
+<tr><td>45</td><td>6</td><td>技术报告型论文避免"无新意"判断</td><td>—（方法论建议）</td><td>整篇论文</td><td>叙事·录用</td><td>🟢数据(0)·🟢算力(0)·🟢工程(改写)</td><td>⭐⭐⭐</td><td>—</td><td>把"from-scratch 全流程 + controlled comparison + scaling law 负结果"包装为方法论贡献</td></tr>
+
+<tr><td>46</td><td>6</td><td>AgentBench：LLM agent 评测</td><td>"AgentBench" / Liu et al. 2024 / ICLR 2024 <span class="tag-verified">✅本地bib</span></td><td>§2 related work（已引）</td><td>叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐</td><td>一手</td><td>确认已引</td></tr>
+
+<tr><td>47</td><td>6</td><td>ChipNeMo / ChipBench：芯片设计 LLM 基准</td><td>"ChipNeMo" / NeurIPS 2024 <span class="tag-verified">✅本地bib</span> + "ChipBench" / arXiv 2503.09919 <span class="tag-verified">✅本地bib</span></td><td>§2 related work（已引）</td><td>叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手</td><td>确认已引；补一句与 EDA-Eval-PyAether 的区别</td></tr>
+
+<tr><td>48</td><td>6</td><td>DataComp-LM：数据集竞赛</td><td>"DataComp-LM" / Li et al. 2025 / arXiv 2406.11794 / <a href="https://arxiv.org/abs/2406.11794">link</a> <span class="tag-verified">✅本地bib</span></td><td>§2 related work·§4 data</td><td>叙事·数据</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手</td><td>引为"data-centric training"的前沿证据</td></tr>
+
+<tr><td>49</td><td>6</td><td>Ultra-FineWeb：高效数据过滤</td><td>"Ultra-FineWeb" / Wang et al. 2025 / arXiv 2505.05427 / <a href="https://arxiv.org/abs/2505.05427">link</a> <span class="tag-verified">✅本地bib</span></td><td>§4 data</td><td>数据·叙事</td><td>🟢数据(已在用)·🟢算力(0)·🟢工程(引用)</td><td>⭐⭐</td><td>一手</td><td>BaiZe 已在用此数据，补 cite 到 §4</td></tr>
+
+<tr><td>50</td><td>6</td><td>FineWeb：大规模 web 文本清洗</td><td>"The FineWeb Datasets" / Penedo et al. 2024 / arXiv 2406.17557 / <a href="https://arxiv.org/abs/2406.17557">link</a> <span class="tag-verified">✅本地bib</span></td><td>§4 data</td><td>数据·叙事</td><td>🟢数据(0)·🟢算力(0)·🟢工程(引用)</td><td>⭐</td><td>一手</td><td>引为 web 数据清洗的基准</td></tr>
+
+</tbody>
+</table>
+</div>
+
+<hr>
+<h2>3. 分三档（按可行性 × 潜力）</h2>
+
+<div class="tier tier-1">
+<h3>① 立即可做（写进论文/改口径，零成本）</h3>
+<p>以下均只需<strong>加入引用 + 改写正文</strong>，不需要跑任何实验，不需要 GPU，不需要下数据。</p>
+<ol>
+<li><strong>补 §2 related work 视觉编码器一线</strong>（#43）—— 新增一段：CLIP → MAE → SigLIP → AIMv2，概述从对比学习到自回归 dense supervision 的演变。</li>
+<li><strong>引 Data Mixing Laws (2403.16952) + μP (2203.03466)</strong>（#10, #11）—— 在 §4 search protocol 中引为 "reduced-horizon proxy search" 的两条法理依据。</li>
+<li><strong>引 Xmodel-2 (2412.19638) 的 64% SFT decay 结论</strong>（#21）—— 给三个数字：64% SFT 占比 / +29.31% 复杂推理 / SimHash +1.7%。</li>
+<li><strong>引 Chinchilla (2203.15556) + 写 Limitations</strong>（#9, #44）—— 引为 compute-optimal 依据；Limitations 诚实写 655M token = 1.5% Chinchilla。</li>
+<li><strong>把 decode 10.3× 写进成本叙事</strong>（#1）—— §1 和 §8 把 tab:archcomp 的 "decode 22.8 vs 2.2 tok/s" 与 "4/56 层携带 KV cache" 挂钩"1/100 成本"命题。</li>
+<li><strong>引 GRPO (2402.03300) + DPO (2305.18290)</strong>（#22, #24）—— §5 已写 GRPO 方法但缺 cite；§8 引 DPO。</li>
+<li><strong>引 RLVR / GSM8K verifier (2110.14168)</strong>（#25）—— 引为 "verifiable reward" 经典起源。</li>
+<li><strong>引 ReAct (2207.01206)</strong>（#26）—— 引为 agentic loop 经典范式。</li>
+<li><strong>引 SmolLM2 (2502.02737) + MiniCPM4 (2506.07900)</strong>（#13, #14）—— §2 related work 补最新同期工作。</li>
+<li><strong>引 Ultra-FineWeb (2505.05427) + DataComp-LM (2406.11794)</strong>（#48, #49）—— §4 data 补引用。</li>
+<li><strong>引推测解码 (2211.17192) + 级联/路由 (2305.05176, 2406.08502)</strong>（#2, #3）—— §8 成本叙事引为"分档承接"机制。<span class="tag-unverified">⚠️需运维在线核验</span></li>
+<li><strong>引知识蒸馏 (1503.02531)</strong>（#4）—— §2 related work 引为"大→小成本转移"经典起点。<span class="tag-unverified">⚠️需运维在线核验</span></li>
+<li><strong>把 R9/R10 scaling law 写成"诚实的负结果"</strong>（#36）—— 已有数据，写好叙事。</li>
+<li><strong>把"技术报告型论文"包装为方法论贡献</strong>（#45）—— 整篇叙事调整。</li>
+<li><strong>引 FP8 (2209.05433) + P-9 实验结论</strong>（#16）—— 把 FP8 交叉点写进 §4。</li>
+<li><strong>引 batch size / Smith (1711.00489)</strong>（#17）—— 引为 GBS 变化时 LR 需重搜的依据。</li>
+</ol>
+</div>
+
+<div class="tier tier-2">
+<h3>② 需补小实验（≤1–2 臂或 ≤半天）</h3>
+<ol>
+<li><strong>定义 BaiZe 成本口径并列对比表</strong>（#8）—— 定义 $/1M token、decode tok/s、KV layers、并发；与 DeepSeek-Flash 做并列对比表。需运维在线核验 DeepSeek 成本数字后填入。</li>
+<li><strong>DeepSeek-V3 成本基线核验</strong>（#5）—— <span class="tag-unverified">⚠️需运维在线核验</span> DeepSeek-V3 报告中的训练成本和推理成本，作为"大模型成本基线"。</li>
+<li><strong>AnyRes / token compression 探索</strong>（#39, #40）—— §7 已设计 resolution/token-count 变量；可引 LLaVA-NeXT AnyRes + Token Merging 为方法参考。</li>
+</ol>
+</div>
+
+<div class="tier tier-3">
+<h3>③ 需长期</h3>
+<ol>
+<li><strong>P-8 正式训练</strong>（100B token, ~12.5 天）—— 依赖 base 下载完成 + 配比实验。</li>
+<li><strong>Stage (ii)–(v) 的完整实验</strong>—— 论文目前 [TBD]，需 SFT → RLVR → MLLM 对齐 → domain RL 全流程。</li>
+<li><strong>EDA-Eval-PyAether 评测</strong>—— 5-run mean ± std Pass@1，2027-01 阶段。</li>
+<li><strong>推测解码 / 级联路由的部署验证</strong>—— 把 BaiZe 作为 draft model，实测成本节省。</li>
+</ol>
+</div>
+
+<hr>
+<h2>4. 专章「成本救场」— 支撑"70–80% 能力 @ ~1/100 成本、≈2027 H2"的一手证据</h2>
+
+<div class="notice-green">
+<h3>命题拆解</h3>
+<p><strong>核心商业命题</strong>：BaiZe (2.2B) 指标达到 DeepSeek-Flash 的 70–80%，成本仅其 ~1/100，可在 ≈2027 H2 分档承接 EDA agent 流量。</p>
+<p>拆成三条子命题需分别找证据：</p>
+<ol>
+<li><strong>"70–80% 能力"</strong>：小模型 + 领域适配能逼近大模型的多少？</li>
+<li><strong>"~1/100 成本"</strong>：2.2B vs 70B+ 的推理成本差多少个量级？</li>
+<li><strong>"分档承接"</strong>：cascade/routing/speculative decoding 如何实现"分档"？</li>
+</ol>
+</div>
+
+<div class="cost-card">
+<h4>子命题 ① "70–80% 能力" — 证据链</h4>
+<table>
+<tr><th>证据</th><th>来源</th><th>数字</th><th>验证</th></tr>
+<tr><td>MiniCPM5-2B 在 EDA-Eval 上 36%（无领域适配下限）</td><td>BaiZe README §0 / ZhuLong 论文</td><td>36% vs ZhuLong 94%（full harness）→ 差距 58pp</td><td><span class="tag-verified">✅本地</span></td></tr>
+<tr><td>Xmodel-2 (1.2B) 在复杂推理上 SOTA（同类规模）</td><td>Xmodel-2 tex / arXiv 2412.19638</td><td>+29.31% 复杂推理（vs baseline）</td><td><span class="tag-verified">✅本地tex</span></td></tr>
+<tr><td>SLM Survey：小模型在单轮 benchmark 上已逼近大模型</td><td>Lu et al. 2024 / arXiv 2409.15790</td><td>—（综述性结论）</td><td><span class="tag-verified">✅本地bib</span></td></tr>
+<tr><td>BaiZe 自有：hybrid 2.22B vs dense 2.51B，loss 更低 + 参数更少</td><td>BaiZe tab:archcomp</td><td>final loss 4.68 vs 4.81；params 2.22B vs 2.51B</td><td><span class="tag-verified">✅本地</span></td></tr>
+<tr><td>Domain adaptation + RL 可回收 58pp 差距的多少</td><td>BaiZe 设计（§5 R1–R4 reward）</td><td>[TBD] — 核心研究问题</td><td><span class="tag-verified">✅设计在tex</span></td></tr>
+</table>
+<p><strong>论证逻辑</strong>：36% 是"零适配下限" → 加 domain annealing + SFT + RLVR → 预期回收一部分 → "70–80%" 是<strong>可争取的目标</strong>而非已证事实。论文应如实写为"研究问题"。</p>
+</div>
+
+<div class="cost-card">
+<h4>子命题 ② "~1/100 成本" — 证据链</h4>
+<table>
+<tr><th>维度</th><th>BaiZe (2.2B hybrid)</th><th>大模型基线 (70B+ dense)</th><th>成本比</th><th>证据</th></tr>
+<tr><td>参数量</td><td>2.22B</td><td>70B+</td><td>~1/32</td><td><span class="tag-verified">✅本地 tab:config</span></td></tr>
+<tr><td>Decode tok/s</td><td>22.8 tok/s</td><td>2.2 tok/s（dense 2.51B 实测）</td><td>~10.3×</td><td><span class="tag-verified">✅本地 tab:archcomp</span></td></tr>
+<tr><td>KV cache 层数（长会话内存）</td><td>4 层 attention</td><td>56–80 层 attention</td><td>~1/14 ~ 1/20</td><td><span class="tag-verified">✅本地 §3</span></td></tr>
+<tr><td>综合成本估算</td><td>—</td><td>—</td><td>~32× (params) × ~10× (decode) ≈ <strong>~100–300×</strong></td><td>推导</td></tr>
+</table>
+<p><strong>关键洞察</strong>：成本优势来自<strong>两个独立维度的乘积</strong>——参数量小（~1/32）× 混合架构解码快（~10×）。纯参数量小的 dense 小模型只有 ~1/32；纯混合架构的大模型只有 ~10×；BaiZe 的 <strong>2.2B + hybrid</strong> 是两者叠加 → 接近 ~1/100。</p>
+<p><strong>长会话成本</strong>（agentic 场景的关键）：agentic session 的成本不是 prompt throughput 而是<strong>随 session 增长的 KV cache 内存</strong>。BaiZe 只有 4/56 层的 KV cache 随会话增长 → 长会话成本优势比短 prompt 更大。<strong>这是论文 §1 和 §8 应重点写的</strong>。</p>
+<p><strong>DeepSeek-Flash 成本基线</strong>：<span class="tag-unverified">⚠️需运维在线核验</span>。运维指令点名对标 DeepSeek-Flash。建议运维在线核验后填入对比表。</p>
+</div>
+
+<div class="cost-card">
+<h4>子命题 ③ "分档承接" — 机制证据</h4>
+<table>
+<tr><th>机制</th><th>出处</th><th>怎么做</th><th>与 BaiZe 的关系</th><th>验证</th></tr>
+<tr><td>级联 cascade</td><td>FrugalGPT / arXiv 2305.05176</td><td>简单请求走小模型 → 失败/不确定时升级到大模型</td><td>BaiZe 作为 cascade 第一档</td><td><span class="tag-unverified">⚠️未在线核验</span></td></tr>
+<tr><td>路由 routing</td><td>RouteLLM / arXiv 2406.08502</td><td>训练 router 分类器决定请求走哪个模型</td><td>同上，router 基于复杂度/领域路由</td><td><span class="tag-unverified">⚠️未在线核验</span></td></tr>
+<tr><td>推测解码</td><td>Leviathan et al. / arXiv 2211.17192</td><td>小模型 draft 快速生成 → 大模型并行验证 → 接受/拒绝</td><td>BaiZe 作为 draft model → 加速且不损质量</td><td><span class="tag-unverified">⚠️未在线核验</span></td></tr>
+<tr><td>知识蒸馏</td><td>Hinton et al. / arXiv 1503.02531</td><td>大模型 soft label → 小模型学习</td><td>BaiZe 可蒸馏 DeepSeek 的 agentic 能力</td><td><span class="tag-unverified">⚠️未在线核验</span></td></tr>
+</table>
+<p><strong>论证逻辑</strong>：级联/路由是"请求级分档"（不同请求走不同模型）；推测解码是"token 级分档"（小模型先跑、大模型验证）。两者叠加 → "分档承接流量"既有<strong>请求分流</strong>又有<strong>推理加速</strong>。BaiZe 的混合架构（4 层 attention 快速 decode）特别适合做 draft model。</p>
+</div>
+
+<div class="cost-card">
+<h4>子命题 ④ "≈2027 H2" — 时间线论证</h4>
+<table>
+<tr><th>里程碑</th><th>时间</th><th>证据</th></tr>
+<tr><td>BaiZe 架构锁定</td><td>2026-10 中</td><td><span class="tag-verified">✅README §0.5</span></td></tr>
+<tr><td>正式训练完成</td><td>2026-12 ~ 2027-01</td><td><span class="tag-verified">✅README §0.5</span></td></tr>
+<tr><td>ISEDA 投稿</td><td>2027-02-01</td><td><span class="tag-verified">✅README §0.5</span></td></tr>
+<tr><td>部署 + cascade 集成</td><td>2027 H1</td><td>推测（依赖投稿后工程化）</td></tr>
+<tr><td>"分档承接"可上线</td><td>≈2027 H2</td><td>推测（依赖 ZhuLong 用户增长 + BaiZe 部署）</td></tr>
+</table>
+<p><strong>论证逻辑</strong>：BaiZe 投稿（2027-02）→ 部署工程化（2027 H1）→ 与 ZhuLong agent 服务集成做 cascade → 2027 H2 可分档承接。合理工程时间线，但论文中应写为"预期"。</p>
+</div>
+
+<hr>
+<h2>5. 最高性价比 TOP-10（按 可行性 × 潜力 排序）</h2>
+
+<div class="top10-item">
+<span class="score">①</span> <strong>补 §2 视觉编码器 related work</strong>（#43）—— <span class="b-green">可行性:极高</span> <span class="b-green">潜力:极高</span> · 零成本、PAPER_STALENESS_AUDIT 已标红、审稿人必查
+</div>
+<div class="top10-item">
+<span class="score">②</span> <strong>引 Data Mixing Laws + μP 为 proxy search 法理</strong>（#10, #11）—— <span class="b-green">可行性:极高</span> <span class="b-green">潜力:极高</span> · 零成本、BaiZe 三大 pillar 之一缺文献支撑
+</div>
+<div class="top10-item">
+<span class="score">③</span> <strong>引 Xmodel-2 的 64% SFT decay + 29.31% 数字</strong>（#21）—— <span class="b-green">可行性:极高</span> <span class="b-green">潜力:极高</span> · 零成本、直接支撑 P-8 配方
+</div>
+<div class="top10-item">
+<span class="score">④</span> <strong>把 decode 10.3× + 4/56 KV 写进成本叙事</strong>（#1）—— <span class="b-green">可行性:极高</span> <span class="b-green">潜力:极高</span> · 零成本、已有数据、核心商业命题的架构根基
+</div>
+<div class="top10-item">
+<span class="score">⑤</span> <strong>写 Limitations 节</strong>（#44）—— <span class="b-green">可行性:极高</span> <span class="b-green">潜力:极高</span> · 零成本、诚实交代代理实验 = 避免被审稿人打
+</div>
+<div class="top10-item">
+<span class="score">⑥</span> <strong>引 Chinchilla + 诚实写 1.5% Chinchilla</strong>（#9）—— <span class="b-green">可行性:极高</span> <span class="b-green">潜力:高</span> · 零成本、Limitations 的核心数字
+</div>
+<div class="top10-item">
+<span class="score">⑦</span> <strong>引 GRPO + DPO + RLVR 为 §5 posttrain 锚点</strong>（#22, #24, #25）—— <span class="b-green">可行性:极高</span> <span class="b-green">潜力:高</span> · 零成本、§5 已写方法但缺引用
+</div>
+<div class="top10-item">
+<span class="score">⑧</span> <strong>把 R9/R10 scaling law 写成"诚实的负结果"</strong>（#36）—— <span class="b-green">可行性:极高</span> <span class="b-green">潜力:高</span> · 零成本、已有数据、技术深度体现
+</div>
+<div class="top10-item">
+<span class="score">⑨</span> <strong>引推测解码 + 级联/路由 为"分档承接"机制</strong>（#2, #3）—— <span class="b-green">可行性:高</span> <span class="b-green">潜力:极高</span> · 零成本但需运维在线核验 arXiv ID
+</div>
+<div class="top10-item">
+<span class="score">⑩</span> <strong>引 AIMv2 (2411.14402) 为 dense supervision 前沿</strong>（#30）—— <span class="b-green">可行性:极高</span> <span class="b-green">潜力:高</span> · 零成本、BaiZe R11 已验证 AIMv2 翻盘 12.08%
+</div>
+
+<hr>
+<h2>6. 按方向详述</h2>
+
+<h3>方向 0 ⭐ 成本/服务经济性（最高优先）</h3>
+<p><strong>经典锚点</strong>：知识蒸馏 (Hinton 2015, 1503.02531) <span class="tag-unverified">⚠️未在线核验</span></p>
+<p><strong>前沿</strong>：DeepSeek-V3 (2412.19437) <span class="tag-unverified">⚠️未在线核验</span> · 推测解码 (2211.17192) <span class="tag-unverified">⚠️未在线核验</span> · FrugalGPT (2305.05176) <span class="tag-unverified">⚠️未在线核验</span> · RouteLLM (2406.08502) <span class="tag-unverified">⚠️未在线核验</span></p>
+<p><strong>本地验证</strong>：Mamba-2 (2405.21060) · Nemotron-H (2504.03624) · Hymba (2411.13676) · SLM Survey (2409.15790) · Xmodel-2 (2412.19638) · MiniCPM (2404.06395)</p>
+<p><strong>关键结论</strong>："1/100 成本"不是单一因素，而是 <strong>参数量 (1/32) × 混合架构 decode (10×) × 长会话 KV (4/56 层)</strong> 的三重叠加。论文应把这三重叠加显式写出来，配 tab:archcomp 的实测数字。分档承接的机制（cascade/routing/speculative decoding）是"流量增长时如何用小模型承接"的公开方法，但需运维在线核验 arXiv ID 后引用。</p>
+
+<h3>方向 1 SLM 预训练</h3>
+<p><strong>经典锚点</strong>：Chinchilla (2203.15556) <span class="tag-verified">✅本地</span> · μP/TP5 (2203.03466) <span class="tag-verified">✅本地bib</span> · batch size/Smith (1711.00489) <span class="tag-verified">✅本地bib</span> · MiniCPM (2404.06395) <span class="tag-verified">✅本地bib</span> · Cerebras-GPT (2304.03208) <span class="tag-verified">✅本地bib</span></p>
+<p><strong>前沿</strong>：Data Mixing Laws (2403.16952) <span class="tag-verified">✅本地bib</span> · Xmodel-2 (2412.19638) <span class="tag-verified">✅本地bib</span> · SmolLM2 (2502.02737) <span class="tag-verified">✅本地bib</span> · MiniCPM4 (2506.07900) <span class="tag-verified">✅本地bib</span> · DataComp-LM (2406.11794) <span class="tag-verified">✅本地bib</span> · Ultra-FineWeb (2505.05427) <span class="tag-verified">✅本地bib</span> · TinyLlama (2401.02385) <span class="tag-verified">✅本地bib</span> · OpenELM (2404.14619) <span class="tag-verified">✅本地bib</span></p>
+<p><strong>关键结论</strong>：BaiZe 的 "reduced-horizon proxy search" 支柱有两条法理依据——① Data Mixing Laws (Ye 2024)：数据配比可预测 LM 性能且小→大迁移；② μP (Yang 2022)：超参可零样本迁移。这两条都已在本地 bib 验证，但论文 §2/§4 均未引用。<strong>这是"懂行"的最直接体现</strong>。</p>
+<p><strong>已知证否</strong>：caption-only/GenLIP 监督已被证否（R11 arm④ CoCa lp 0.47%≈随机）；FP8 在 M&lt;16K 不转正（P-9 实测）；加宽视觉塔是负收益（R10 −2.2 lp pp/翻倍）。</p>
+
+<h3>方向 2 LLM 后训练</h3>
+<p><strong>经典锚点</strong>：GSM8K verifier (2110.14168) <span class="tag-verified">✅本地bib</span> · DPO (2305.18290) <span class="tag-verified">✅本地bib</span> · LoRA (2106.09685) <span class="tag-verified">✅本地bib</span> · ReAct (2207.01206) <span class="tag-verified">✅本地bib</span></p>
+<p><strong>前沿</strong>：GRPO/DeepSeekMath (2402.03300) <span class="tag-unverified">⚠️未在线核验</span> · DAPO (2503.14476) <span class="tag-unverified">⚠️未在线核验</span> · LLM-as-Judge (2306.05685) <span class="tag-verified">✅本地bib</span></p>
+<p><strong>关键结论</strong>：BaiZe §5 已写了 GRPO 方法（"group-relative policy optimization and no value network"）和 R1–R4 reward 表，但<strong>没有引用 GRPO 的出处</strong>（DeepSeekMath, arXiv 2402.03300）。这是论文中最大的引用缺口之一。Xmodel-2 的 decay 段 SFT 占比搜索（64%, +29.31%）是 P-8 配方的直接文献锚点，也应引用。</p>
+
+<h3>方向 3 Vision encoder 预训练</h3>
+<p><strong>经典锚点</strong>：CLIP (2103.00020) <span class="tag-unverified">⚠️未在线核验</span> · MAE (2111.06377) <span class="tag-unverified">⚠️未在线核验</span> · SigLIP (2303.15343) <span class="tag-unverified">⚠️未在线核验</span></p>
+<p><strong>前沿</strong>：AIMv2 (2411.14402) <span class="tag-verified">✅本地</span> · SigLIP 2 (2502.04433) <span class="tag-unverified">⚠️未在线核验</span> · DINOv2 (2304.07193) <span class="tag-unverified">⚠️未在线核验</span></p>
+<p><strong>关键结论</strong>：BaiZe R11 臂⑥ AIMv2 翻盘 12.08%（vs 基线 3.43→6.08%）是<strong>本地已验证的前沿结果</strong>，与运维指令中"正好对上我们刚出的 AIMv2 翻盘"吻合。论文 §2 目前完全没有视觉编码器的 related work —— 这是 PAPER_STALENESS_AUDIT 已标红的最严重问题。</p>
+<p><strong>已知证否</strong>：SigLIP 在 BaiZe R4 已被 InfoNCE 击败（tab:visobj）；CoCa dense caption 监督把 trunk 打回随机（R11 arm④）；文本塔解冻（LoRA）未翻盘（R11-L2，−0.80pp）。</p>
+
+<h3>方向 4 MLLM 训练</h3>
+<p><strong>经典锚点</strong>：LLaVA (NeurIPS 2023) <span class="tag-verified">✅本地bib</span> · LLaVA-OneVision (2408.03326) <span class="tag-verified">✅本地bib</span></p>
+<p><strong>前沿</strong>：LLaVA-NeXT/AnyRes (2406.16860) <span class="tag-unverified">⚠️未在线核验</span> · Token Merging (2210.09461) <span class="tag-unverified">⚠️未在线核验</span></p>
+<p><strong>关键结论</strong>：BaiZe §7 已 follow LLaVA-OV 的三阶段 curriculum，已引用 LLaVA 和 LLaVA-OV。缺口：① AnyRes 和 token compression 是 §7 已设计的变量但缺引用；② §7 已写"resolution and visual-token count as first-order variables"——这是 BaiZe 独有的洞察，应突出。</p>
+
+<h3>方向 5 MLLM 后训练</h3>
+<p>引 DPO (2305.18290, <span class="tag-verified">✅本地bib</span>) + RLVR/GSM8K verifier (2110.14168, <span class="tag-verified">✅本地bib</span>) 为多模态后训练的方法基础。BaiZe §7 的 execution-based self-labeling（image→script / script→image / layout VQA）是<strong>独有创新</strong>——script 执行产生 reference rendering，天然 self-labeling，这在公开文献中少见，应作为论文亮点。</p>
+
+<h3>方向 6 横切：论文质量</h3>
+<p><strong>最严重的三个问题</strong>（PAPER_STALENESS_AUDIT 已标红）：</p>
+<ol>
+<li><strong>§2 缺视觉编码器一线</strong> —— §6 整节讲视觉编码器但 §2 related work 只有 SLM/SSM/VLM 三个 subsection。审稿人必查。</li>
+<li><strong>无 Limitations 节</strong> —— 655M token = 1.5% Chinchilla、vision scaling 够不到 20%、Stage (ii)–(v) 全 [TBD] —— 这些都应诚实写出。</li>
+<li><strong>"技术报告型"论文如何避免"无新意"</strong> —— 解决方案：把"from-scratch 全流程 + controlled comparison + scaling law 负结果 + 成本叙事"包装为<strong>方法论贡献</strong>，而非"又一个 SLM"。核心卖点是"我们真懂每一个细节"而非"我们的模型最强"。</li>
+</ol>
+
+<hr>
+<h2>7. 参考清单（可点的 URL）</h2>
+
+<h3>✅ 本地 bib 核验（一手）</h3>
+<ul class="ref-list">
+<li>MiniCPM — <a href="https://arxiv.org/abs/2404.06395">arXiv 2404.06395</a> (2024)</li>
+<li>MiniCPM4 — <a href="https://arxiv.org/abs/2506.07900">arXiv 2506.07900</a> (2025)</li>
+<li>Qwen3 — <a href="https://arxiv.org/abs/2505.09388">arXiv 2505.09388</a> (2025)</li>
+<li>Gemma3 — <a href="https://arxiv.org/abs/2503.19786">arXiv 2503.19786</a> (2025)</li>
+<li>Mamba — <a href="https://arxiv.org/abs/2312.00752">arXiv 2312.00752</a> (2023)</li>
+<li>Mamba-2/SSD — <a href="https://arxiv.org/abs/2405.21060">arXiv 2405.21060</a> (2024)</li>
+<li>Nemotron-H — <a href="https://arxiv.org/abs/2504.03624">arXiv 2504.03624</a> (2025)</li>
+<li>Hymba — <a href="https://arxiv.org/abs/2411.13676">arXiv 2411.13676</a> (2024)</li>
+<li>μP / TP5 — <a href="https://arxiv.org/abs/2203.03466">arXiv 2203.03466</a> (2022)</li>
+<li>TP6 — <a href="https://arxiv.org/abs/2310.02244">arXiv 2310.02244</a> (2023)</li>
+<li>Data Mixing Laws — <a href="https://arxiv.org/abs/2403.16952">arXiv 2403.16952</a> (2024)</li>
+<li>Xmodel-2 — <a href="https://arxiv.org/abs/2412.19638">arXiv 2412.19638</a> (2024)</li>
+<li>SmolLM2 — <a href="https://arxiv.org/abs/2502.02737">arXiv 2502.02737</a> (2025)</li>
+<li>TinyLlama — <a href="https://arxiv.org/abs/2401.02385">arXiv 2401.02385</a> (2024)</li>
+<li>OpenELM — <a href="https://arxiv.org/abs/2404.14619">arXiv 2404.14619</a> (2024)</li>
+<li>Cerebras-GPT — <a href="https://arxiv.org/abs/2304.03208">arXiv 2304.03208</a> (2023)</li>
+<li>SLM Survey — <a href="https://arxiv.org/abs/2409.15790">arXiv 2409.15790</a> (2024)</li>
+<li>DataComp-LM — <a href="https://arxiv.org/abs/2406.11794">arXiv 2406.11794</a> (2025)</li>
+<li>Ultra-FineWeb — <a href="https://arxiv.org/abs/2505.05427">arXiv 2505.05427</a> (2025)</li>
+<li>FineWeb — <a href="https://arxiv.org/abs/2406.17557">arXiv 2406.17557</a> (2024)</li>
+<li>StarCoder2 — <a href="https://arxiv.org/abs/2402.19173">arXiv 2402.19173</a> (2024)</li>
+<li>FP8 Formats — <a href="https://arxiv.org/abs/2209.05433">arXiv 2209.05433</a> (2022)</li>
+<li>DPO — <a href="https://arxiv.org/abs/2305.18290">arXiv 2305.18290</a> (2023)</li>
+<li>LLM-as-Judge — <a href="https://arxiv.org/abs/2306.05685">arXiv 2306.05685</a> (2023)</li>
+<li>GSM8K Verifiers — <a href="https://arxiv.org/abs/2110.14168">arXiv 2110.14168</a> (2021)</li>
+<li>LoRA — <a href="https://arxiv.org/abs/2106.09685">arXiv 2106.09685</a> (2021)</li>
+<li>ReAct — <a href="https://arxiv.org/abs/2207.01206">arXiv 2207.01206</a> (2023)</li>
+<li>Batch Size/Smith — <a href="https://arxiv.org/abs/1711.00489">arXiv 1711.00489</a> (2018)</li>
+<li>Scaling Math (Yuan) — <a href="https://arxiv.org/abs/2308.01825">arXiv 2308.01825</a> (2023)</li>
+<li>LLaVA-OneVision — <a href="https://arxiv.org/abs/2408.03326">arXiv 2408.03326</a> (2024)</li>
+<li>LLaVA — NeurIPS 2023</li>
+<li>AgentBench — ICLR 2024</li>
+<li>ChipNeMo — NeurIPS 2024</li>
+<li>ChipBench — <a href="https://arxiv.org/abs/2503.09919">arXiv 2503.09919</a> (2024)</li>
+<li>Megatron-LM — <a href="https://arxiv.org/abs/1909.08053">arXiv 1909.08053</a> (2020)</li>
+<li>ZhuLong — <a href="https://arxiv.org/abs/2608.07925">arXiv 2608.07925</a> (2026)</li>
+<li>AIMv2 — <a href="https://arxiv.org/abs/2411.14402">arXiv 2411.14402</a> (2024, 本地代码注释验证)</li>
+<li>Chinchilla — <a href="https://arxiv.org/abs/2203.15556">arXiv 2203.15556</a> (2022, 本地 DATA_RESEARCH.md 引用)</li>
+</ul>
+
+<h3>⚠️ 未在线核验（基于训练知识，待运维在线验证）</h3>
+<ul class="ref-list">
+<li>DeepSeek-V3 — <a href="https://arxiv.org/abs/2412.19437">arXiv 2412.19437</a> (2024)</li>
+<li>GRPO/DeepSeekMath — <a href="https://arxiv.org/abs/2402.03300">arXiv 2402.03300</a> (2024)</li>
+<li>DAPO — <a href="https://arxiv.org/abs/2503.14476">arXiv 2503.14476</a> (2025)</li>
+<li>Speculative Decoding — <a href="https://arxiv.org/abs/2211.17192">arXiv 2211.17192</a> (2023)</li>
+<li>FrugalGPT — <a href="https://arxiv.org/abs/2305.05176">arXiv 2305.05176</a> (2023)</li>
+<li>RouteLLM — <a href="https://arxiv.org/abs/2406.08502">arXiv 2406.08502</a> (2024)</li>
+<li>Knowledge Distillation — <a href="https://arxiv.org/abs/1503.02531">arXiv 1503.02531</a> (2015)</li>
+<li>CLIP — <a href="https://arxiv.org/abs/2103.00020">arXiv 2103.00020</a> (2021)</li>
+<li>SigLIP — <a href="https://arxiv.org/abs/2303.15343">arXiv 2303.15343</a> (2023)</li>
+<li>SigLIP 2 — <a href="https://arxiv.org/abs/2502.04433">arXiv 2502.04433</a> (2025)</li>
+<li>MAE — <a href="https://arxiv.org/abs/2111.06377">arXiv 2111.06377</a> (2022)</li>
+<li>DINOv2 — <a href="https://arxiv.org/abs/2304.07193">arXiv 2304.07193</a> (2023)</li>
+<li>LLaVA-NeXT — <a href="https://arxiv.org/abs/2406.16860">arXiv 2406.16860</a> (2024)</li>
+<li>Token Merging — <a href="https://arxiv.org/abs/2210.09461">arXiv 2210.09461</a> (2023)</li>
+<li>Kaplan Scaling Laws — <a href="https://arxiv.org/abs/2001.08361">arXiv 2001.08361</a> (2020)</li>
+</ul>
+
+<hr>
+<h2>8. 缺口清单（未完成部分）</h2>
+
+<div class="notice-red">
+<h3>因网络不可达未能完成的部分</h3>
+<ol>
+<li><strong>无法抓取论文正文做逐句核实</strong>：所有标 <span class="tag-unverified">⚠️未在线核验</span> 的条目，其 arXiv ID 来自模型训练知识而非在线抓取。虽然这些是真实论文，但<strong>具体数字</strong>不应在未核验情况下写入论文。建议运维在网络恢复后用 <code>cimi-fetch</code> 对以下高优先条目做抽验：
+<ul>
+<li>DeepSeek-V3 (2412.19437) — 成本数字</li>
+<li>GRPO/DeepSeekMath (2402.03300) — 确认 GRPO 出自此文</li>
+<li>推测解码 (2211.17192) — 确认作者和核心方法</li>
+<li>FrugalGPT (2305.05176) — 确认 cascade 方法</li>
+<li>RouteLLM (2406.08502) — 确认 routing 方法</li>
+<li>SigLIP (2303.15343) / MAE (2111.06377) / CLIP (2103.00020) — 确认经典论文 ID</li>
+</ul>
+</li>
+<li><strong>无法搜索最新 2026 年论文</strong>：cimi-search 不可用 → 无法发现 2026 年的最新工作。</li>
+<li><strong>无法核验 DeepSeek-Flash 的具体 $/1M tok 定价</strong>：这是"1/100 成本"命题的大模型基线，需运维在线查后填入 §8 对比表。</li>
+<li><strong>无法核验 ISEDA 2027 录用率/页数限制</strong>：论文目前 7 页，ISEDA 页数上限待确认。</li>
+</ol>
+</div>
+
+<div class="notice">
+<h3>本轮已完成的部分</h3>
+<ol>
+<li>✅ 读取了 BaiZe 全部 .tex 文件（abstract / intro / architecture / pretrain / posttrain / vision / MLLM / domain RL / conclusion）</li>
+<li>✅ 读取了 BaiZe reference.bib（13 条已引用文献）</li>
+<li>✅ 读取了 Xmodel-2.bib（1132 行，~60 条文献）+ Xmodel-2.5.bib（~60 条）</li>
+<li>✅ 读取了实验记录（EXPERIMENTS_PRETRAIN_2B_ROUND2 / VISION_ROUND8 / ROUND9 / MEMORY_VISION）</li>
+<li>✅ 读取了 README.md / PAPER_STALENESS_AUDIT.md / DATA_RESEARCH.md / DATA_MIX_RECIPE.md</li>
+<li>✅ 梳理了 7 个方向共 50 条 idea，每条标注出处 + BaiZe 阶段 + 可行性 + 潜力 + 证据强度 + 落地动作</li>
+<li>✅ 完成了"成本救场"专章（4 条子命题的完整证据链）</li>
+<li>✅ 完成了最高性价比 TOP-10</li>
+<li>✅ 完成了三档分级（立即可做 / 需小实验 / 需长期）</li>
+<li>✅ 完成了参考清单（37 条本地核验 + 15 条待在线核验）</li>
+</ol>
+</div>
+
+<hr>
+
+<h2>9. 给运维的下一步建议</h2>
+
+<ol>
+<li><strong>网络恢复后第一件事</strong>：用 <code>cimi-fetch</code> 核验本报告"⚠️未在线核验"列表中的 15 条 arXiv ID。核验通过后这些条目可直接写进论文。</li>
+<li><strong>立即可做的 16 条</strong>（见 §3 档①）<strong>全部零成本</strong>，建议在下一轮运维唤醒时一次性执行——主要是改 .tex 文件加引用 + 写 Limitations + 改 §2 related work。</li>
+<li><strong>DeepSeek-Flash 定价</strong>是"1/100 成本"命题的关键缺失数字，运维可在线查 DeepSeek API 定价页后直接填入 §8 对比表。</li>
+<li><strong>本报告不改变下载白名单</strong>：巡检 4 项（en/l1_en_hq/zh/gpic）照旧做；本报告是附加任务，不占 GPU、不下大文件。</li>
+</ol>
+
+<p style="margin-top:2em;color:var(--muted);font-size:.85em">— 生成于 2026-10-04 23:30 CST · data agent 唤醒 110 · 工具不可用声明见顶部红色框 —</p>
+
+</body>
+</html>
