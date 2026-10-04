@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 43 -->
+<!-- RUN_ID: 44 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,86 @@
 
 ---
 
-## RUN_ID 43 — 🔍 **摸清 cline 的 base URL 怎么切 + 逐个验证 `doc/keys.txt` 的 8 个 LLM key**（**只读**）（**本块最新，优先执行**）
+## RUN_ID 44 — 🔑 **用 python3 重做候选验证（awk 多字节分隔符失败）**（**只读**）（**本块最新，优先执行**）
+
+**RUN_ID 43 战果**：
+- ✅ **cline 的 LLM base URL = 配置项 `openAiBaseUrl`**（源码 17729 行）；env `CLINE_API_BASE_URL` 是 **Cline 平台自身 API**（`mcpBaseUrl`），**不是** provider base
+- ✅ 当前 `globalState.json`：**`openAiBaseUrl = http://agi-gateway.cxmt.com/cloud/v1`**（15:45 那次切的），`actModeProvider=openai`
+- ❌ **第 3 节为空** —— 我的 `awk -F'：'` 遇到**多字节分隔符**（非 UTF-8 locale）**切不开** → 改用 **python3** 重做
+
+**本轮（只读）**：① 用 python3 解析 `doc/keys.txt` 得 8 个 chat LLM；② **逐个 curl `/chat/completions`**；③ **并对 `deepseek-v4-flash` 额外测 `/v1` 与 `/cloud/v1` 两个 base** —— 判定「base 是否必须与模型匹配」。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+K=$R/doc/keys.txt
+
+echo; echo "=== 1. python3 解析候选（排除 asr/seedream）==="
+python3 - "$K" <<'PY' 2>&1 | cut -c1-190
+import sys, json, pathlib
+p = pathlib.Path(sys.argv[1])
+blocks, cur = [], {}
+for raw in p.read_text(encoding='utf-8', errors='replace').split('\n'):
+    s = raw.strip()
+    if not s:
+        if cur.get('model'): blocks.append(cur); cur = {}
+        continue
+    for lab, key in (('模型名字','model'), ('API Key','key'), ('Base Url (OpenAI)','oai'), ('Base Url (Anthropic)','ant')):
+        if lab in s:
+            cur[key] = s.split('：', 1)[-1].strip() if '：' in s else s.split(':', 1)[-1].strip()
+            break
+if cur.get('model'): blocks.append(cur)
+seen, out = set(), []
+for b in blocks:
+    m = b.get('model','')
+    if m in seen: continue
+    seen.add(m)
+    if 'asr' in m.lower() or 'seedream' in m.lower():
+        print('   [排除-非chat] %s' % m); continue
+    out.append(b)
+    print('   [候选] %-30s keylen=%-4s base=%s' % (m, len(b.get('key','')), b.get('oai','')))
+pathlib.Path('/tmp/_llm_cand.json').write_text(json.dumps(out, ensure_ascii=False), encoding='utf-8')
+print('   -> 候选数 = %d（已写 /tmp/_llm_cand.json）' % len(out))
+PY
+
+echo; echo "=== 2. 逐个 curl /chat/completions（200=可用）==="
+[ -f /tmp/_llm_cand.json ] && python3 - <<'PY' 2>&1 | cut -c1-175
+import json, subprocess, pathlib
+cands = json.loads(pathlib.Path('/tmp/_llm_cand.json').read_text(encoding='utf-8'))
+for c in cands:
+    m, k, b = c.get('model'), c.get('key'), c.get('oai')
+    body = json.dumps({'model': m, 'messages': [{'role': 'user', 'content': 'hi'}], 'max_tokens': 2})
+    try:
+        r = subprocess.run(['curl','-s','-o','/dev/null','-w','%{http_code}','--max-time','20',
+                            '-H','Authorization: Bearer '+k,'-H','Content-Type: application/json',
+                            '-d',body, b+'/chat/completions'], capture_output=True, text=True, timeout=25)
+        code = (r.stdout or '').strip()
+    except Exception as e:
+        code = 'ERR:'+type(e).__name__
+    print('   %-30s %-40s -> %s' % (m, b, code))
+PY
+
+echo; echo "=== 3. 同一模型 × 两个 base（判 base 是否必须匹配）==="
+python3 - <<'PY' 2>&1 | cut -c1-175
+import json, subprocess, pathlib
+cands = json.loads(pathlib.Path('/tmp/_llm_cand.json').read_text(encoding='utf-8'))
+c = next((x for x in cands if x.get('model') == 'deepseek-v4-flash'), None)
+if not c:
+    print('   (未找到 deepseek-v4-flash)')
+else:
+    for b in ('http://agi-gateway.cxmt.com/v1', 'http://agi-gateway.cxmt.com/cloud/v1'):
+        body = json.dumps({'model': 'deepseek-v4-flash', 'messages': [{'role': 'user', 'content': 'hi'}], 'max_tokens': 2})
+        r = subprocess.run(['curl','-s','-o','/dev/null','-w','%{http_code}','--max-time','20',
+                            '-H','Authorization: Bearer '+c['key'],'-H','Content-Type: application/json',
+                            '-d',body, b+'/chat/completions'], capture_output=True, text=True)
+        print('   flash @ %-42s -> %s' % (b, (r.stdout or '').strip()))
+PY
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 43**（cline base URL 机制 + 候选验证，**✅ 已执行 16:51:25 exit=0**，**第 3 节 awk 失败**）为 ```text。
+
+## RUN_ID 43 — 🔍 **摸清 cline 的 base URL 怎么切**（✅ 已执行 → **LLM base = 配置项 `openAiBaseUrl`**；awk 多字节失败，见 RUN_ID 44）
 
 **背景（用户 2026-10-04 指令）**：要把「**额度/鉴权体检 + 自动换 key**」做进 **4 条 loop**（因为额度耗尽时 agent 自己也动不了）。`doc/keys.txt` 有 10 项，其中 **8 个是 chat/coding LLM**（排除 `doubao-asr-realtime` = ASR、`doubao-seedream-5.0-lite-cloud` = 文生图）。
 **要做的事**：loop 在调用 cline 前**探一次**当前模型；失败则**自动切到下一个候选**。⚠️ 但**候选的 base URL 分两类**（`/v1` vs `/cloud/v1`），而 **`-b` 是无效 flag**（15:37 已修）→ **必须先搞清 cline 到底从哪里读 base URL**。
@@ -42,7 +121,7 @@
 3. **8 个 LLM 逐一 `curl /chat/completions`** —— 哪些 key 当前有效（200）
 4. 是否有 **`OPENAI_BASE_URL` / `OPENAI_API_URL` 之类 env** 被 cline 读取
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 R=/nas_train/app.e0031982/code/super_intelligence_2035
 K=$R/doc/keys.txt
