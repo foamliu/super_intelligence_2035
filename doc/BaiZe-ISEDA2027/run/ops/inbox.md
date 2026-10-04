@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 27 -->
+<!-- RUN_ID: 28 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,56 @@
 
 ---
 
-## RUN_ID 27 — ✅ **应用 V3 配方（`-k` 显式传 key）+ 重启两条 loop**（**已获批准**）（**本块最新，优先执行**）
+## RUN_ID 28 — 🔍 **查清那两个变量在哪设的 + 去掉各自会有什么后果**（**只读**）（**本块最新，优先执行**）
+
+**用户提问（2026-10-04）**：`OPENAI_API_KEY` / `*_proxy` 是不是在 `.29` 的 `~/.bashrc` 里设的？要不要注释掉？
+
+**先搞清事实再动手**（🚫 本块**只读**，不改任何 rc 文件）：
+1. **在哪设的**：`~/.bashrc` / `~/.bash_profile` / `~/.profile` / `~/.bash_aliases` / `/etc/profile.d/*` / `/etc/environment`（**值只打 masked**）
+2. **`.12` 对照**：为什么 `.12` 没这些变量（它的 rc 里有什么）
+3. **去掉 proxy 的后果**：`git ls-remote github` 在没有 proxy 时通不通（**决定能不能注释掉**）
+4. **gateway 域名是否适合放进 `no_proxy`**（比全局删 proxy 更精准的解法）
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+
+echo; echo "=== 1. [.29] rc 文件里的相关设置（masked）==="
+for f in "$HOME/.bashrc" "$HOME/.bash_profile" "$HOME/.profile" "$HOME/.bash_aliases" "$HOME/.bash_login"; do
+  [ -f "$f" ] || continue
+  echo "-- $f (mtime $(stat -c %y "$f" | cut -c1-19)) --"
+  grep -inE 'proxy|OPENAI|API_TYPE|ANTHROPIC|no_proxy' "$f" 2>/dev/null \
+    | sed -E 's/(=|")[A-Za-z0-9_]{6}[A-Za-z0-9_.-]*/\1<MASKED>/g' | cut -c1-150 | head -12
+done
+
+echo; echo "=== 2. [.29] 系统级 /etc/profile.d 与 /etc/environment ==="
+grep -rinE 'proxy|OPENAI|API_TYPE' /etc/profile.d/ /etc/environment /etc/profile 2>/dev/null \
+  | sed -E 's/(=|")[A-Za-z0-9_]{6}[A-Za-z0-9_.-]*/\1<MASKED>/g' | cut -c1-140 | head -12
+
+echo; echo "=== 3. [.29] proxy 是否在外网可达上必需（关键！）==="
+echo -n "   github WITHOUT proxy : "; timeout 25 env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY \
+  git ls-remote --heads https://github.com/openai/openai-python.git HEAD >/dev/null 2>&1 && echo OK || echo FAIL
+echo -n "   github WITH proxy    : "; timeout 25 git ls-remote --heads https://github.com/openai/openai-python.git HEAD >/dev/null 2>&1 && echo OK || echo FAIL
+echo -n "   gateway WITHOUT proxy: "; timeout 15 env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY curl -s -o /dev/null -w '%{http_code}' http://agi-gateway.cxmt.com/v1/models; echo
+echo -n "   gateway WITH proxy   : "; timeout 15 curl -s -o /dev/null -w '%{http_code}' http://agi-gateway.cxmt.com/v1/models; echo
+echo "   no_proxy 现值: [${no_proxy:-<empty>}] / [${NO_PROXY:-<empty>}]"
+echo "   https_proxy 现值: $(echo "${https_proxy:-<empty>}" | cut -c1-20)"
+
+echo; echo "=== 4. [.12] 对照：它的 rc 里有什么 ==="
+timeout 30 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 '
+for f in $HOME/.bashrc $HOME/.bash_profile $HOME/.profile; do
+  [ -f "$f" ] || continue
+  echo "-- $f --"; grep -inE "proxy|OPENAI|API_TYPE|no_proxy" "$f" 2>/dev/null | sed -E "s/(=|\")[A-Za-z0-9_]{6}[A-Za-z0-9_.-]*/\1<MASKED>/g" | cut -c1-130 | head -8
+done
+echo "   .12 env: https_proxy=[${https_proxy:-<empty>}] OPENAI_API_KEY len=${#OPENAI_API_KEY}"' 2>&1 | cut -c1-155
+
+echo; echo "=== 5. 当前 loop 状态（不动）==="
+pgrep -af 'bash baize_(pretrain|harness)_loop\.sh' | cut -c1-90
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 27**（最终修复，**✅ 已执行 08:01:13**，**两线已复工**）为 ```text。
+
+## RUN_ID 27 — ✅ **应用 V3 配方（`-k` 显式传 key）+ 重启两条 loop**（✅ 已执行，两线复工）
 
 **RUN_ID 26 四路矩阵（2026-10-04 07:58:23）—— 定论**：
 | 组 | env | 结果 |
@@ -46,7 +95,7 @@
 
 **本块**：先跑一次 V3 前置校验（**不 OK 就不重启**）→ checkout 新脚本 → 重启 → 校验 `error:.*Forbidden == 0`。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 WK=/nas_train/app.e0031982/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
 C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; cd /tmp
