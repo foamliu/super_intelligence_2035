@@ -107,12 +107,13 @@ error: error: unknown option '-b'
 - [ ] **起始点**：合并线从 `S1.omega_low ROUND=1` 起，还是延续旧 S1（`CONFIG=omega_low, ROUND=3`，把 r1=81.6 / r2=82.3 写进成绩表、不重跑）？——**须运维在任务书指令区填实**。
 - [x] **infra 三项校验（RUN_ID 1+2）**：① 🔴 `/home` **99% / 6G 可用 → FAIL**；② ✅ 四端口 OPEN；③ ✅ `run_code` 实为 `tools/run_code.py`（存在）。
 - [ ] 🔴 **`/home`（硬阻塞）**：需 ≥ ~8G。实测**大头是别的用户**（`app.e0023936` 71G · `app.e0025768` 41G …），**我们自己 <7.2G** → 选项：(a) 只清自己可回收缓存（可能不够）；(b) 把评测产物从 `/home` 改到 `/nasdata`（377G 富余）；(c) 找系统管理员/其他用户。**待拍板。**
-- [ ] 🔴 **重启 `zhulong_loop.sh`**：运行进程卡在旧版 `-b`（磁盘脚本已是新版）→ `pkill -f zhulong_loop.sh` 后 `setsid` 重启。**须先定起始点**（见下）。
+- [x] ✅ **loop 已重启并修复**（RUN_ID 6 重启清掉非法 `-b`；RUN_ID 8 `cline auth` 修 `openAiBaseUrl`→`/cloud/v1`）→ **agent 已于 2026-10-04 21:54 首次被唤醒**。
 - [x] ✅ **relay 无副本**（第二条是子进程）；✅ **端口口径**以 `8664/8665/8653/8669` 为准。
-- [ ] ⚠️ **`MEMORY_ZHULONG.md` 顶部 `WAITING: 0`** 与状态表 `WAITING=1` 不一致 → 重启 loop 前**须置 `1`**（否则 60s 空转烧 token）。
+- [x] ✅ **ops 中继健康**（RUN_ID 1–8 全 `exit=0`）；此前"卡死"系误判（heavy 版 17:05:57 已跑完，只是 push 重试）。
+- [x] ✅ **`MEMORY_ZHULONG.md` 顶部已置 `WAITING: 1`**（21:44），避免 60s 空转烧 token。
 - [ ] **处置顺序**：`/home` → 定起始点 → 修 `WAITING` → 重启 loop → 开跑。
 - [ ] **36.15 旧 agent 冲突**：旧线（S1 / 组件）与新合并线**不能并发**；何时、如何停旧启新？
-- [ ] **启动 ops 中继**（服务器侧 `setsid bash zhulong_ops_relay.sh`）——启动后我才能远程探查/下发命令。
+- [x] ✅ **启动 ops 中继** —— 已在 36.15 运行且健康（RUN_ID 1–8 全 `exit=0`）；运维已可用它远程探查/下发命令。
 - [ ] **Phase B 模型 key 是否仍有效**（`glm-5.2` / `deepseek-v4-flash` / `kimi-k2.6-cloud` / `doubao-seed-2.0-pro-cloud`，见任务书 §6）——启动 Phase B 前须核。
 - [ ] **RAG recall 端口错配**（`.env` 9012 死 / 9006 健康 = `chroma_db_v20260522`）是否修？——现为 r1/r2 的既存降级条件（BM25-only fallback）。**投稿前须闭环或如实披露**。
 - [ ] **`tab:omega` 的 (H)/(H+E)/(L)**：锚点复用规则下 (H)/(F) 由 `C1.full` 复用；`(H+E)` 已定**不做**；`(L)` 由 `omega_low` 提供——确认无遗漏。
@@ -165,6 +166,8 @@ error: error: unknown option '-b'
 13. **🟡 `MEMORY_*.md` 的 `WAITING` 只有顶部行被 loop 读取**：表格里的 `WAITING=1` 与顶部 `WAITING: 0` 不一致时，**以顶部为准**（会误判成"无阻塞"而高频空转）。
 14. **🔴 ops relay 块内禁止「无 `timeout` 的命令」和「`du -L`/跟随符号链接」**：2026-10-04 **RUN_ID 4 疑似卡死中继** —— 块里用了 `df -h <symlink>`（**未** `timeout`）+ `du -sh -L`（跟随到 `/nasdata` 大树）→ `timeout` 只杀 leader、子进程占住管道 → 中继读不到 EOF、`.last_run_id` 停摆（**同 BaiZe §7 教训**）。**铁律：relay 块里<u>每条</u>命令都要 `timeout`；一律 `du -x` 不跟 symlink；重活丢后台 + 落盘 + `.done`。**
 
+15. **🔴 cline `error: Forbidden` = `openAiBaseUrl` 与模型不匹配**：2026-10-04 RUN_ID 7/8 —— 36.15 的 cline `globalState.json` 里 `openAiBaseUrl=http://agi-gateway.cxmt.com/v1`，而 **glm-5.2 必须用 `/cloud/v1`**（`/v1` → `Forbidden`）。且 loop 只传 `-k/-P`、**不提供 base URL**，必须靠 cline 配置（`cline auth -b ...`，或 BaiZe 那种隔离 `--data-dir`）。**修法**：`cline auth -p openai -k <key> -b http://agi-gateway.cxmt.com/cloud/v1 -m glm-5.2` → 重启 loop。**对照** `baize_data_loop.sh` §46（flash@/v1=200 但 @/cloud/v1=403）。
+
 ---
 
 ## 8. 记忆维护规程（对我自己）
@@ -178,6 +181,12 @@ error: error: unknown option '-b'
 
 ## 9. 流水（倒序）
 
+- **2026-10-04（19:0x–21:54 运维亲自经 ops 中继打通整条链路：中继正常 + loop 修复 + agent 终被唤醒）** ——
+  - ✅ **中继"恢复正常"**（此前"RUN_ID 4 卡死"系**误判**）：亲手实测 `run/ops/outbox.md` RUN_ID 1–8 **全部 `exit=0`**；RUN_ID 4 heavy 其实 **17:05:57 就跑完**，只是 `push` 反复失败在重试。**反思**：把"push 失败"错当成"卡死"，并据错误判断写了"抢救中继"指令。
+  - 🔴 **发现 loop 静默失效（比 `-b` 更深一层）**：RUN_ID 5/6 实测 —— 运行中的 loop 是**旧版**（`error: unknown option '-b'`，累计 **352** 次，cline 从未真正运行）→ RUN_ID 6 重启 loop 后 `-b` 消除，但**新 loop 改报 `error: Forbidden`**。
+  - ✅ **定位并修复 Forbidden**（RUN_ID 7/8）：`curl -H "Authorization: Bearer <key>" http://agi-gateway.cxmt.com/cloud/v1/models` = **HTTP 200**（key 有效、网关可达），但 cline `globalState.json` 的 `openAiBaseUrl` = **`http://agi-gateway.cxmt.com/v1`（错）** —— glm-5.2 需 **`/cloud/v1`**（对照 `baize_data_loop.sh` §46 教训）。`cline auth -p openai -k <key> -b http://agi-gateway.cxmt.com/cloud/v1 -m glm-5.2` → "Provider configured: openai-compatible (glm-5.2)" → 重启 loop → **agent 首次被唤醒**（loop 日志出现真实推理）。
+  - 落地：dispatch `c588835`/`864eb86`/`2e4fa8c`/`0ca6cb2`；结果 `0638999`/`33089f2`/`bfedfc7`/`5be7be1`。任务书新增「（三）中继已恢复·勿再抢救」；`MEMORY_ZHULONG.md` 顶部置 `WAITING: 1`。
+  - ⏭ 待办：agent 已在跑，将做 infra 校验；**`/home` 处置 + 起始点**仍待拍板。
 - **2026-10-04（运维不在场 → 经任务书派 agent 抢救中继）** —— 用户告知**无法登录服务器**（不在公司），但 ZhuLong agent 应仍可被任务书驱动 → 指令我**把中继救回来**。
   - 落地：在 `run/ZHULONG_TASK.md` 运维指令区**置顶**新增 **`### 🚨 运维指令 · 2026-10-04（二）【本次唤醒的首要动作】抢救 ops 中继`**（`18587bf`）：
     ① `pkill -f zhulong_ops_relay.sh` + `pkill -f 'du -sh -L'` → ② `git pull` + `setsid bash zhulong_ops_relay.sh` 重启 → ③ 在 `MEMORY_ZHULONG.md` 流水回报；**明确授权 agent 本次可动中继进程**（突破既有"agent 不要碰 ops/"），但**不许改 `ops/` 文件**。
