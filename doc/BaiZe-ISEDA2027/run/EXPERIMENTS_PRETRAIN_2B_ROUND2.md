@@ -586,3 +586,22 @@ python -m lm_eval --model hf \
 > **目的**：TP2·DP4 把每卡 weight+optimizer 减半 → 能否让 MBS=4 落地（从而 M=16384 进 FP8 交叉点）？**SP on/off** 对通信/显存的影响。
 > **配置**（每点只动一个变量，60 步 bf16 短测）：① TP2·MBS=2 ② TP2·MBS=4 ③ TP2·SP·MBS=2 ④ TP2·SP·MBS=4；**基准** = P-9.1 TP1·DP8 MBS=2（218K tok/s）。
 > 脚本 `run/baize_p9_tpsp_scan.sh`（`--tensor-parallel 2 [--sequence-parallel]`），SUM=`/tmp/baize_p9_tpsp_scan.log`。**结果待下轮回收。**
+
+**🩺 中间发现（2026-10-04 ~09:10，config ① 收尾前）—— ⭐ TP2 自身明显变慢，价值只在「换 MBS=4 落地」**：
+
+| 配置 | TP | SP | MBS | 稳态 s/iter | tok/s | GPU util (TFLOP/s/GPU) | 峰值显存 (max/8) |
+|:--|:--|:--|:--|--:|--:|--:|--:|
+| P-9.1 基线 | 1 | off | 2 | **19.3** | **218K** | **519** | 56865 MiB |
+| **① TP2·MBS2** | 2 | off | 2 | **34.1** | **123K** | **~290** | **34265 MiB** |
+
+- **TP2 吞吐 = 123K vs TP1 218K → 慢 ~44%（s/iter 34.1 vs 19.3 = 1.77×）**；但显存减半（34GB vs 57GB）。
+- **机制**：TP2 每层引入 allreduce 通信 + 每卡 GEMM K/N 减半（`Total params 3.00B`，`most-loaded shard 1.4986B`）→ 单卡算力效率掉到 ~290 TFLOP/s/GPU（BF16 ≈989 的 ~29%，vs TP1 519 = ~52%）。
+- **结论待定**：TP2 自身不划算；**唯一价值 = 让 MBS=4 落地**（M=MBS×seq=16384 进 FP8 交叉点）。等 config ②（TP2·MBS4）/④（TP2·SP·MBS4）收尾：
+  - 若 ②/④ 的 MBS=4 **落地且 s/iter 较 ① 显著下降**（M↑ 摊薄通信）→ TP2·MBS4 可能仍是 FP8 的一把钥匙；
+  - 若 MBS=4 **仍 OOM 或 s/iter 不降** → **P-8 维持 TP1·DP8·MBS=2（218K tok/s）**，FP8 走 P-9.3 抬 seq 那条杠杆。
+- 原始输出（config ①，`/tmp/baize_p9_tp2_mbs2.log`）：
+  - `[08:42:10] iteration 10/60 ... elapsed 37864.5ms`（首 10 步含编译/预热）
+  - `[08:48:00] iteration 20/60 ... 34988.9ms | Step Time 34.99s GPU 287.8 TFLOP/s/GPU`
+  - `[08:53:52] iteration 30/60 ... 35236.2ms`
+  - `[08:59:39] iteration 40/60 ... 34694.0ms | Step Time 34.69s GPU 290.3`
+  - `[09:05:21] iteration 50/60 ... 34139.1ms | Step Time 34.14s GPU 295.0`
