@@ -248,6 +248,42 @@ B:  glm-5.2 → deepseek-v4-flash → kimi-k2.6-cloud → doubao-seed-2.0-pro-cl
   <tr><td><code>holiday_run_report.html</code></td><td><code>doc/ZhuLong_DAC2027/run/</code></td><td>—</td><td>旧报告（已不再使用）</td></tr>
 </table>
 
+
+<!-- 5.5 编排模型切换（2026-10-04） -->
+<h3>5.5 编排模型切换</h3>
+
+<p><b>起因：</b>BaiZe vision 与 pretrain 两 agent 均使用 <code>deepseek-v4-pro-fp4</code> 作为编排模型，该模型 token 额度已于 2026-10-04 耗尽，API 返回 <code>Forbidden</code>。ZhuLong loop 此前已记录该问题（report 初版即标注「模型消融 API key 待核实」），经运维确认 vision/pretrain 也报相同错误。</p>
+
+<p><b>解决方案：</b>编排模型统一切换为 <code>glm-5.2</code>，API key 与 base URL 已在三个 loop 脚本中硬编码更新：</p>
+
+<table>
+  <tr><th>Loop 脚本</th><th>模型</th><th>API Key</th><th>Base URL</th></tr>
+  <tr><td><code>doc/ZhuLong_DAC2027/run/zhulong_loop.sh</code></td><td><code>glm-5.2</code></td><td rowspan="3"><code>02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23</code></td><td rowspan="3"><code>http://agi-gateway.cxmt.com/cloud/v1</code></td></tr>
+  <tr><td><code>doc/BaiZe-ISEDA2027/run/baize_vision_loop.sh</code></td><td><code>glm-5.2</code></td></tr>
+  <tr><td><code>doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh</code></td><td><code>glm-5.2</code></td></tr>
+</table>
+
+<p><b>在 36.15 服务器上重启两个 BaiZe loop：</b></p>
+<pre class="cmd"><code><span class="cm"># 停止旧 loop</span>
+pkill -f baize_vision_loop.sh
+pkill -f baize_pretrain_loop.sh
+
+<span class="cm"># 拉取最新代码（含模型切换 &amp; 冻结解除）</span>
+cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+git pull --rebase
+
+<span class="cm"># 重启 vision loop</span>
+setsid bash baize_vision_loop.sh > /tmp/baize_vision_loop.log 2>&1 < /dev/null &
+
+<span class="cm"># 重启 pretrain loop</span>
+setsid bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+
+<span class="cm"># 确认启动</span>
+sleep 2 && head -3 /tmp/baize_vision_loop.log /tmp/baize_pretrain_loop.log</code></pre>
+
+<p><b>ZhuLong loop</b>（本 repo）已在同一 commit 中更新为 glm-5.2 + 解除冻结令，36.15 上同步后重启命令见 §6.2。</p>
+
+
 <!-- 6. OPS 中继通道 -->
 <h2><span class="sec-no">6</span>OPS 中继通道</h2>
 
