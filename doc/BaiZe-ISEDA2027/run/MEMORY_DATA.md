@@ -10,11 +10,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.5/§0.6/§0.7 推进中 · 🔴白名单锁定(只下 l1_en_hq+zh+GPIC；en_v1_4 已停) · l1_en_hq 628/6006 · zh 171/256(冻结待续) · gpic train 2098/8001+test 128✓ · D-CLEAN-4 复扫(§8)+⭐LLaVA-4B ckpt 专项(§9)已完成待拍板
+PHASE:        §0.5/§0.6/§0.7 推进中 · 🔴白名单锁定(只下 l1_en_hq+zh+GPIC；en_v1_4 已停) · l1_en_hq 674/6006 · zh 171/256(冻结待续) · gpic train 2123/8001+test 128✓ · D-CLEAN-4 复扫(§8)+⭐LLaVA-4B ckpt 专项(§9)已完成待拍板
 已完成:       §0.3 8源/§0.4 R2视觉/§0.6 配方/§0.7 停85M·复用·ETA；SFT-2605 下满一致；D-CLEAN 盘点/-2 ≈341G/-3 servers ≈972G/-4 复扫(§8)+⭐LLaVA-4B ckpt 专项(§9)·367 iter≈22 TiB 可回收
-当前动作:     唤醒95 巡检(白名单4项)：l1_en_hq 628/6006(+47)、gpic train 2098/8001(+27) 真推进；en 2048✓满/zh 171/256 冻结/en_v1_4 488停保留；无僵死无需重启；task.md mtime 09:39 未变、无新指令
-下一步:       下轮判 retry-loop(3076502)+gpic(2426795) 真推进(僵死即 kill+重启)→ l1_en_hq(剩5378件~398GB)+zh(剩85件~108GB) 下满即报运维；D-CLEAN-4 候选(LLaVA≈22T/FineVision 4.3T/hell 1.24T/跨用户 3.4T)等运维拍板
-阻塞:         无硬阻塞；⚠️ l1_en_hq 速率 ~1.5MB/s 偏慢(74MB 小文件+CDN 慢，非僵死)；磁盘 /nas_train 84%(Avail 35T)；🟡 D-CLEAN-4 候选全部等运维拍板(只盘点不删除)
+当前动作:     唤醒96 巡检(白名单4项)：l1_en_hq 674/6006(+46)、gpic train 2123/8001(+25) 真推进；en 2048✓满/zh 171/256 冻结(04:59待续)/en_v1_4 停保留；无僵死无需重启；task.md mtime 09:39 未变、无新指令
+下一步:       下轮判 retry-loop(3076502)+gpic(2426795) 真推进(僵死即 kill+重启)→ l1_en_hq(剩5332件~394GB)+zh(剩85件~108GB) 下满即报运维；D-CLEAN-4 候选(LLaVA≈22T/FineVision 4.3T/hell 1.24T/跨用户 3.4T)等运维拍板
+阻塞:         无硬阻塞；⚠️ l1_en_hq 速率偏慢(小文件+CDN，非僵死)；磁盘 /nas_train 84%(Avail 35T)；🟡 D-CLEAN-4 候选全部等运维拍板(只盘点不删除)
 ERROR_COUNT:  0
 ```
 
