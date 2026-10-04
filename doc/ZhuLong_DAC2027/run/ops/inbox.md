@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 4 -->
+<!-- RUN_ID: 5 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,36 @@
 
 ---
 
+## RUN_ID 5 — 🩺 只读健康探针：中继 / loop 是否活着（**本次首要**）
+
+**背景**：RUN_ID 4（heavy）已由中继于 **17:05:57 成功执行并回推**（`.last_run_id=4`）→ 中继看似已恢复。本块**只读**确认三件事：① `zhulong_ops_relay.sh` / `zhulong_loop.sh` 进程是否在；② loop 是否仍在报非法 `-b`（静默失效，见 MEMORY §7-10）；③ loop 日志里 `cline returned` 计数（判断 agent 是否真被唤醒）。**全部命令带 `timeout`、不跟 symlink。**
+
+```bash
+# RUN_ID 5 — read-only relay/loop health probe
+echo "===== TIME ====="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "===== 1. processes ====="
+echo "-- relay --"; timeout 10 pgrep -af zhulong_ops_relay.sh | cut -c1-140
+echo "-- loop  --"; timeout 10 pgrep -af zhulong_loop.sh | cut -c1-140
+echo "===== 2. relay log tail ====="; timeout 10 tail -n 8 /tmp/zhulong_ops_relay.log 2>/dev/null | cut -c1-140
+echo "===== 3. loop log tail =====";  timeout 10 tail -n 14 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-140
+echo "===== 4. loop log health counts ====="
+echo -n "unknown option -b : "; timeout 20 grep -c "unknown option '-b'" /tmp/zhulong_loop.log 2>/dev/null
+echo -n "Forbidden         : "; timeout 20 grep -c "Forbidden"                /tmp/zhulong_loop.log 2>/dev/null
+echo -n "cline returned    : "; timeout 20 grep -c "cline returned"          /tmp/zhulong_loop.log 2>/dev/null
+echo "===== 5. /home =====";  timeout 15 df -BG /home | tail -1
+echo "===== 6. MEMORY_ZHULONG WAITING (line1) ====="; timeout 10 grep -m1 "^WAITING" /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md
+echo "===== DONE ====="
+```
+
+---
+
 ## RUN_ID 4（**轻量重发**）— 确认 home symlink（**全部命令带 timeout、不跟 symlink**）
 
 **背景**：首版 RUN_ID 4 用 `du -sh -L` + 未 `timeout` 的 `df` → **疑似卡死中继**（见 MEMORY §7 教训）。本版每条命令都 `timeout` 包裹、不跟随 symlink。
 
-```bash
+> ⛔ **本块已作废**（中继已用 heavy 版于 17:05:57 成功执行）——降级为 text，让位给 RUN_ID 5。
+
+```text
 # RUN_ID 4 (light) — 每条命令带 timeout；不用 du -L
 H="/home/app.e0031982"
 echo "===== TIME ====="; timeout 10 date '+%F %T'; timeout 10 hostname
