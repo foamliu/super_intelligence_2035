@@ -345,3 +345,49 @@ $ grep -rn 'app.e0031982/servers' /nas_train/app.e0031982/code/super_intelligenc
 > 🔴 红线确认未越界：base/gpic 下载、`BaiZe-ISEDA2027`（P-5b/P-9 live）、`eda_fastmcp`、`baize-vision`、`super_intelligence_2035` repo、harness 工作区、miniforge3 均标为不可动。
 > ⚠️ `sudo` 不可用（需密码）→ 跨用户 `root`/权限收紧目录无法测实，需运维提供 sudo 或 owner 各自报账。
 > 💡 **建议**：运维先拍板 `FineVision` / `hell` / `chip_expert` / 跨用户 `wangcongtao`+`app.e0025692` 这 5 项（合计可回 **≈9.5 TiB**），其余多为 vision 线历史资产需 owner 二次确认。
+---
+
+## 9. ⭐ `LLaVA-OneVision-1.5` 4B checkpoint 专项盘点（用户 2026-10-04 点名追加 · **只盘点、不删除**）
+
+> 用户指令：`LLaVA-OneVision-1.5` 目录做了大量实验、沉淀了大量 **4B 模型检查点，绝大部分可删**。本轮单列一节：定位 → 列出所有 ckpt/checkpoint/save/4B 目录的大小+mtime+数量 → 估算可回收合计。
+> 目标目录：**`/nas_train/app.e0031982/code/LLaVA-OneVision-1.5/`**（203 个顶层项；整目录最后活动 **2026-09-25**（≈9 天前），当前**无活跃训练/写入**——活跃训练已迁 `BaiZe-ISEDA2027/nemo_experiments`）。
+> 方法：整树 `du` 在下载负载下超时（此前 §8.5 标「未测」）→ 改用「逐 run `iter_*` 计数 × 实测单 ckpt 大小」估算（4 处实测一致，误差 ±10%），轻量 HF 目录已 `du -sc` 精确。
+
+### 9.1 检查点清单（大小 / 数量 / mtime）
+
+| 家族（顶层目录） | 目录数 | `iter_*` 分布式 ckpt | mtime 范围 | 实测样例 | 估算 |
+|:--|--:|--:|:--|:--|--:|
+| `stage_1.5_mid_training_llava_ov_4b*`（Megatron 训练 run） | 21 | **299** | 2026-08-03 ~ 09-25 | opt36=804G(13) · opt40=928G(15) · opt57=1.1T(18) | **≈18.0 TiB** |
+| `stage_2_instruct_llava_ov_4b*`（训练 run） | 23（22 opt + 1 base） | **68** | 2026-08-15 ~ 09-25 | opt40=186G(3) · opt57=186G(3) | **≈4.1 TiB** |
+| `LLaVA-OneVision-1.5-4B-*`（HF `.safetensors` 转换） | 23 | — | 2026-08-03 ~ 09-25 | opt40=8.9G | ≈205 GiB |
+| `*_release*`（HF 终版） | 19 | — | 2026-09-08 ~ 09-24 | ≈8.8 G/个 | ≈191 GiB |
+| `stage_1_alignment_llava_ov_4b*` | 4 | 0（仅 base 19G） | 2026-08-03 ~ 09-09 | base=19G | ≈19 GiB |
+| `checkpoints/baize_4b` | 1 | — | 2026-08-11 | — | 142 GiB |
+
+> **release + 4B-HF 小计（`du -sc` 实测）= 396 GiB**（415,586,204 KB）。
+> **单个 `iter_*` ckpt ≈ 61.6 GiB**（4 处一致：804/13≈61.8 · 928/15≈61.9 · 1.1T/18≈61.1 · 186/3≈62.0）。
+> **367 个 `iter_*` × 61.6 GiB ≈ 22.0 TiB**。
+> 备注：`raw_packing_data_midtraining_85m`、`runs` 均已**空**（32 B）；`logs` 65M；脚本/`.log`/`configs`/`examples` 等代码资产体量小。
+
+### 9.2 可回收合计（分档）
+
+| 档 | 项 | 合计 |
+|:--|:--|--:|
+| 🟢 **用户已确认可删** | 367 个 `iter_*` 分布式 ckpt（stage_1.5 299 + stage_2 68） | **≈22.0 TiB** |
+| 🟢 用户已确认可删（被取代旧版） | 42 个 release/HF 旧版（仅保留每 stage 最终 best） | ≈360 GiB |
+| 🟡 建议保留（待运维定） | 最终 best `LLaVA-OneVision-1.5-4B-QS-…-opt57`（≈9G）+ `checkpoints/baize_4b`（142G，若有复用） | ≈0.15 TiB |
+
+> **→ 🟢 可回收合计 ≈ 22.4 TiB**（总库存 ≈22.5 TiB）。
+> **这是 D-CLEAN 系列史上最大单项**（远超已删 `servers` 974G / `FineVision` 4.3T / `nemo_experiments` 272G 之和）。
+
+### 9.3 安全判据（沿用 servers/ D-CLEAN-3 同款前置检查 → 全部通过）
+
+- **P1 无进程占用 ✅**：`fuser -v` 无训练/inference 进程（仅 agent 基建进程 cwd；他人 `app.t0002965` 的 tensorboard `--logdir /nas_train/app.t0002965/outputs/LLaVA-OneVision-1.5-4b` 指向**其自身 outputs，与本目录无关**）。
+- **P2 无近期活动 ✅**：整目录 mtime 最后 2026-09-25（9 天前）；无 `.incomplete`/在途写入。
+- **P3 无脚本引用 ✅**：BaiZe 仓库（活跃 loop/task 脚本）grep `LLaVA-OneVision-1.5` = 0 命中；目录内仅本仓库自带 `examples/llava_ov_1_5/convert/*` 转换脚本（非引用本路径）。
+
+### 9.4 建议
+
+> 运维可**一次性拍板**删除（保留 `checkpoints/baize_4b` + 各 stage 最终 best 的 `_release`/`4B-QS` ≈30G，其余全部 iter ckpt + 被取代 release/HF 旧版可清），**回收 ≈22 TiB**（/nas_train 约 84% → ≈73%）。
+> ⚠️ **本期只盘点、不删除**；执行前照 D-CLEAN-3 再核 P1/P2/P3 并贴命令+原始输出。
+> 关联：`code/hell/LLaVA-OneVision-1.5`（**1.24 TiB**，2026-03-11，§8.5 已列 🟡）是同名**另一旧目录**，与本 §9 目标互不重叠、需 owner 另行定性。

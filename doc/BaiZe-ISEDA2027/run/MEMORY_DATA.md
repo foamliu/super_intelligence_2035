@@ -10,11 +10,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.5/§0.6/§0.7 推进中 · 🔴白名单锁定(只下 l1_en_hq+zh+GPIC；en_v1_4 已停 488分片保留) · l1_en_hq 362/6000 · zh 171/256(待续) · gpic train 1954/8001+test 128✓ · D-CLEAN-4 大盘复扫完成(只盘点)
-已完成:       §0.3 8源/§0.4 R2视觉/§0.6 配方/§0.7 停85M·复用·ETA 交付；SFT-2605 下满一致；D-CLEAN 盘点/-2 ≈341G/-3 servers ≈972G/-4 复扫(🟡≈14.8T 需确认)；base-en 2048/2048 满(1T tok)；en_v1_4 已停(488子片保留)
-当前动作:     唤醒90 巡检+D-CLEAN-4 大盘复扫：retry-loop 3076502+hf 3076519 真推进 l1_en_hq 362/6000；gpic 2426795 真推进 train 1954/8001；产出 DISK_CLEANUP_INVENTORY.md §8
-下一步:       下轮判 retry-loop(3076502)+gpic(2426795) 真推进(僵死即 kill+重启)→ l1_en_hq(剩~420GB)+zh(剩85件107GB) 下满即「MiniCPM5 base 族就绪」报运维；D-CLEAN-4 候选(FineVision/hell/chip_expert/wangcongtao+app.e0025692 ≈9.5T)等运维拍板
-阻塞:         无硬阻塞；⚠️ l1_en_hq 速率 ~1.7MB/s 偏慢(74MB 小文件+CDN 端点慢，非僵死) ETA≈2.9天 超运维 1–2 天预估；磁盘 /nas_train 86%(Avail 31T)；🟡 D-CLEAN-4 候选全部等运维拍板(只盘点不删除)
+PHASE:        §0.5/§0.6/§0.7 推进中 · 🔴白名单锁定(只下 l1_en_hq+zh+GPIC；en_v1_4 已停) · l1_en_hq 423/6000 · zh 171/256(待续) · gpic train 1988/8001+test 128✓ · D-CLEAN-4 复扫+⭐LLaVA-4B ckpt 专项(只盘点)
+已完成:       §0.3 8源/§0.4 R2视觉/§0.6 配方/§0.7 停85M·复用·ETA；SFT-2605 下满一致；D-CLEAN 盘点/-2 ≈341G/-3 servers ≈972G/-4 复扫；⭐ LLaVA-OneVision-1.5 4B ckpt 专项(367 iter≈22 TiB 可回收)
+当前动作:     唤醒91 巡检+D-CLEAN-4 ⭐LLaVA专项盘点：l1_en_hq 423/6000(+61)、gpic train 1988/8001(+34) 真推进；定位 code/LLaVA-OneVision-1.5 → 367 iter ckpt≈22 TiB；产出 §8+§9
+下一步:       下轮判 retry-loop(3076502)+gpic(2426795) 真推进(僵死即 kill+重启)→ l1_en_hq(剩~420GB)+zh(剩85件107GB) 下满即报运维；D-CLEAN-4 候选(LLaVA≈22T/FineVision 4.3T/hell 1.24T/跨用户 3.4T)等运维拍板
+阻塞:         无硬阻塞；⚠️ l1_en_hq 速率 ~1.5MB/s 偏慢(74MB 小文件+CDN 慢，非僵死)；磁盘 /nas_train 84%(Avail 35T)；🟡 D-CLEAN-4 候选全部等运维拍板(只盘点不删除)
 ERROR_COUNT:  0
 ```
 
@@ -86,12 +86,21 @@ ERROR_COUNT:  0
 - **可回收合计（分档）**：🟢 ≈0.6G · 🟡本用户 ≈**11.4 TiB** · 🟡跨用户 ≈**3.4 TiB**；🔴 不可动（mvp-lab 26T / base 2.74T / BaiZe-ISEDA2027 421G / eda_fastmcp / baize-vision / repo / harness / miniforge3）。
 - **建议运维先拍板 5 项**：`FineVision` / `hell` / `chip_expert` / 跨 `wangcongtao`+`app.e0025692`（合计可回 **≈9.5 TiB**），其余多为 vision 线历史资产需 owner 二次确认。
 
+### ⑦ ⭐ LLaVA-OneVision-1.5 4B checkpoint 专项（2026-10-04 用户点名追加 · D-CLEAN-4 下）— ✅ 已盘点（只盘点、不删除）
+
+> 用户点名：`LLaVA-OneVision-1.5` 目录沉淀大量 **4B 检查点，绝大部分可删**。产出 `DISK_CLEANUP_INVENTORY.md` §9。
+
+- **目标**：`/nas_train/app.e0031982/code/LLaVA-OneVision-1.5/`（203 项；最后活动 2026-09-25 ≈9 天前；无活跃训练）。
+- **核心（实测+计数）**：单个 Megatron 分布式 `iter_*` ckpt ≈ **61.6 GiB**（4 处一致）。**367 个 iter ckpt**（stage_1.5=299 + stage_2=68）≈ **22 TiB**；+ HF 转换 45 目录 **396 GiB**（du 精确）+ `checkpoints/baize_4b` 142G → **总 ≈22.5 TiB**。
+- **🟢 可回收（用户已确认"绝大部分可删"）≈ 22 TiB**（删全部 iter ckpt + 被取代 release/HF 旧版，仅保留每 stage 最终 best ≈30G）。
+- ⚠️ **史上最大单项**（远超 servers 974G / FineVision 4.3T / nemo_exp 272G 之和）；P1/P2/P3 全过 → 建议运维一次性拍板。
+
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R research ✅ + R2 LLM 侧 ✅（8 源满填 / base vs L3 重叠 0% / P-8 86:10:4）+ R2 视觉侧 ✅（§0.4：本地 bytes 图文对实测 / 13 HF 候选 / 前 3 推荐）+ phase5 isolation v0.3 + phase1/2 脚本就绪；§0.5/§0.6/§0.7 推进中（§0.6 配方✅ / §0.7 停85M·复用·ETA✅ / SFT-2605 下满一致✅）** |
-| WAITING | 1（下载中：白名单锁定——retry-loop 3076502+hf 3076519 先拉 l1_en_hq(362/6000)+zh(171/256 待续)；gpic 2426795 train 1954/8001+test 128✓；en 2048/2048 满；en_v1_4 已停(488分片保留)；LLaVA 85M 停无进程(7629/26T 未删)；D-CLEAN-4 大盘复扫 done(只盘点，🟡≈14.8T 需确认，Avail 31T/86%)；重 I/O 推迟） |
+| WAITING | 1（下载中：白名单锁定——retry-loop 3076502+hf 3076519 先拉 l1_en_hq(423/6000)+zh(171/256 待续)；gpic 2426795 train 1988/8001+test 128✓；en 2048/2048 满；en_v1_4 已停(489 保留)；LLaVA 85M 停无进程；D-CLEAN-4 大盘复扫+⭐LLaVA-4B ckpt 专项(367 iter≈22 TiB 可回收) done（只盘点，Avail 35T/84%）；重 I/O 推迟） |
 | ERROR_COUNT | 0 |
 | 节点 | `10.239.2.12`（主机 `whag0pgpuap12`；NFS：`/nas_inference` 只读源，`/nas_train` 产出） |
 | 更新 | 2026-10-04 |
@@ -129,6 +138,8 @@ ERROR_COUNT:  0
 - 2026-10-04 —— 唤醒 89（白名单 4 项巡检，无假活、无重启）：复核运维指令未变（下载白名单锁定：只下 l1_en_hq+zh+GPIC、停 en_v1_4；D-CLEAN 系列已全部完成并提交；无新增指令、无索取、无 STOP）。🔵 base retry-loop **3076502**+hf **3076519**（etime ~3h51m）真推进：**l1_en_hq = 325/6000**（CC-MAIN-2025-30 part-0325-of-1000 在途，~74.1MB/件；上轮 278@08:23→本轮 325@08:56 = +47 件/33min ≈ **~1.75MB/s**；log 逐件 `Download complete` part-0312→0323 连续推进、进程存活 `Sl`、retry-loop 崩即自愈 → **非僵死，不重启**；⚠️ 速率仍偏慢、疑 74MB 小文件连接开销 + 该 CDN 端点慢；分母 6006→**6000** 更正=6 子目录×1000 件）。🔵 zh **171/256**、0 .incomplete（冻结，随 l1_en_hq 之后串行续）。🔵 gpic **2426795**（etime ~1d14.7h）真推进：train **1926/8001** + test 128/128✓、1 .incomplete=在途（上轮 1903@08:23→+23 件/33min ≈ **~19MB/s**）。🔴 en_v1_4 无进程（✅ 已停，488 parquet≈41.5GB 保留 CC-MAIN-2013-20 未删）；LLaVA 85M 停无进程。✅ en 2048/2048 满（1T tok）。✅ SFT-2605 1504/1504 intact。✅ servers GONE。ETA：l1_en_hq 剩 5675 件≈420GB @~1.75MB/s ≈ **~2.9 天**（⚠️ 已超运维 1–2 天预估；若回升 7–10MB/s 则 ≈12–17h）；zh 剩 85 件≈107GB @~10MB/s ≈3h → **l1_en_hq+zh 合计 ≈3 天（偏慢口径）/ ≈0.7 天（乐观口径）**；gpic 剩 6075 件≈9.5TiB @~19MB/s ≈ **~6 天**。磁盘 /nas_train 86%(31T)、/nas_inference 60%(19T)、/nas_user 74%(29T) 均够，WAITING 保持 1。📉 MEMORY 滚动：唤醒 78–83 共 6 条迁 daily-memories-data/2026-10-04.md（原文不改），体量 33.7KB→22.8KB(≤32KB)。⚠️ 安全：gpic 进程 2426795 命令行仍暴露 HF token（建议运维轮换，勿写入文档/日志）。git 本轮回写后提交。下一步 = 下轮判 retry-loop(3076502)、gpic(2426795) 真推进（僵死即 kill+重启；l1_en_hq 连崩则查 CDN/代理链路）→ l1_en_hq+zh 下满即「MiniCPM5 base 族就绪」报运维 → gpic 续下至 8001 tar。
 
 - 2026-10-04 —— 唤醒 90（🔴 D-CLEAN-4 大盘复扫 + 白名单 4 项巡检）：复核运维指令新增 **D-CLEAN-4**（`/nas_train` 清理 → sudo 盘点各目录大小、找可删除大目录、重点本用户目录，**只盘点不删除**）；下载白名单不变（只下 l1_en_hq+zh+GPIC）。**D-CLEAN-4 盘点（未删任何东西）**：`df` /nas_train 177T/207T(86%、Avail 31T)；`sudo -n true`=需密码→未 sudo（跨用户 root/权限收紧目录只读顶层）；`ls /nas_train/*/`+stat 见 33 顶层 mtime/owner。本用户一级 du（超时大项用二级钻取补）**新发现 🟡 大候选**：`datasets/FineVision` 4.32T、`code/hell/LLaVA-OneVision-1.5` 1.24T、`datasets/HuggingFaceFW` 1.24T、`conceptual-captions` 1.13T、`code/chip-mllm` 896G、`code/LLaVA` 716G、`code/LLaVA-OneVision-2` 650G、`chip_expert` 468G(4× chipexpert-cn 快照)、`models` 452G、`circuitvision-encoder` 244G；🔴 不可动=mvp-lab 26T/`datasets/openbmb` 2.74T(下载中)/BaiZe-ISEDA2027 421G(nemo_exp 280G live P-5b+P-9)/eda_fastmcp/baize-vision/repo/harness/miniforge3。跨用户：`wangcongtao` 2.42T(2026-01-13)、`app.e0025692` 946G(2026-02-14)。可回收分档：🟢≈0.6G、🟡本用户≈**11.4T**、🟡跨用户≈**3.4T**。产出 §8。🔵 base retry-loop **3076502**+hf **3076519** 真推进：**l1_en_hq 362/6000**（CC-MAIN-2025-30 part-0362-of-1000；上轮 325@08:56→362 ≈ +37 件/~40min ≈ ~1.5MB/s，非僵死不重启）；zh 171/256 冻结(随 l1_en_hq 后串行)；gpic **2426795** 真推进：train 1954/8001+test 128✓（上轮 1926→+28/~40min）。en 2048✅满、en_v1_4 无进程(488 保留)、SFT-2605 intact、servers GONE。磁盘 31T/86% 够。📉 MEMORY ≈28KB≤32KB 无需滚动。git 本轮回写后提交。下一步=下轮判 retry-loop+gpic 真推进→l1_en_hq+zh 下满报运维；D-CLEAN-4 候选(FineVision/hell/chip_expert/wangcongtao+app.e0025692 ≈9.5T)等运维拍板。
+
+- 2026-10-04 —— 唤醒 91（🔴 D-CLEAN-4 ⭐用户点名 LLaVA-4B ckpt 专项 + 白名单巡检）：复核指令：D-CLEAN-4 追加「⭐用户点名 LLaVA-OneVision-1.5 4B ckpt 绝大部分可删」→ 单列专节定位盘点（产出 §9）。**专项结论（只盘点不删除）**：`/nas_train/app.e0031982/code/LLaVA-OneVision-1.5/`（203 项，最后活动 09-25）= Megatron 训练 run `stage_1.5_*` 21 dir(299 iter) + `stage_2_*` 23(68 iter) + HF `4B-*` 23 + `*_release*` 19 + `checkpoints/baize_4b` 142G；**单 iter ckpt ≈61.6GiB**（804/13·928/15·1.1T/18·186/3 一致）→ **367 iter ≈22 TiB** + HF 45 dir 396GiB ≈ **总 22.5 TiB · 🟢可回收≈22 TiB**。安全：fuser 无训练/inference（他人 app.t0002965 tensorboard 指其自身 outputs）；BaiZe repo grep 0 命中。🔵 base **3076502/3076519** 真推进 l1_en_hq **423/6000**(+61)；zh 171/256 冻结；gpic **2426795** train **1988/8001**+test 128✓(+34)。en 2048✓、en_v1_4 489 停、servers GONE。磁盘 84%(Avail 35T)。📉 MEMORY ≈30KB 无需滚动。git 提交。下一步=下轮判 retry-loop+gpic 真推进→l1_en_hq+zh 下满报运维；D-CLEAN-4 候选(LLaVA 22T/FineVision 4.3T/hell 1.24T/跨 3.4T)等运维拍板。
 
 ## 关键路径速查（供恢复）
 
