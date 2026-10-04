@@ -7,7 +7,7 @@ WAITING: 1
 - 🚀🚀 **3/5 harness 已在同一 instance（`django__django-10914`）+ 同一模型（`deepseek-v4-flash`）端到端 `resolved=true`**：cline（墙钟 131.2s）· **codex 0.94.0（patch 2903B/4 文件，墙钟 182.6s）** · **opencode 1.18.27（patch 4848B/6 文件，墙钟 231.2s）** → 步4「300×5」的生成侧 + 评分侧已就绪 3 个。
 - 🛠 **关键基建 = 本地流式反代 `gw_proxy.py`**（`harness_work/`，监听 `127.0.0.1:9090`）：① `developer→system` 角色改写 ② 注入 flash key（单一密钥，不落各 harness 配置）③ 透传 SSE。一并解决两个硬障碍：**codex≥0.95 已删 `wire_api="chat"`（网关无 `/v1/responses`）** + **网关只认 system/user/assistant 角色** → **codex 钉 0.94.0**（最后一个 chat 版）、**opencode 配 `@ai-sdk/openai-compatible`**。详见 `harness_work/HARNESS_BUILD_STATUS.md`（不入库）。
 - 🔧 **修复 `r1_eval.py` 关键 bug**：rootfs/testbed 被**跨 run 复用**（官方 docker 每 instance 新容器，R1 复用一个 rootfs）→ 上一次 run 的已应用 patch + `git apply --reject` 的 `.rej` + `--3way` 的 `UU` 态泄漏到下一次 → 下次 patch 假失败（opencode 首评 `patch_successfully_applied=false`）。修法 = apply 前 `git reset --hard <base_commit> ; git clean -fdq`（⚠️ `test_spec` 无 `base_commit` 属性，改从 dataset `row` 传入）。修后 opencode → `resolved=true`。
-- ⛔ **仍 2 个 blocker**：claude-code（Anthropic Messages API + tool_use，网关仅 OpenAI chat，需 Messages→chat 翻译）、deepseek-harness（rust `landlock-run` + pnpm@11 + node22）。
+- ⛔ **仍 2 个 blocker**：claude-code（**已 `bun install` 成功〔R38〕**，但 headless `-p` 打印流早退、反代未收到模型请求，待深挖 `loadInitialMessages`）、deepseek-harness（rust `landlock-run` + pnpm@11 + node22，需运维装工具链）。
 
 ## 🆕 第三十四轮速览（2026-10-04）
 
