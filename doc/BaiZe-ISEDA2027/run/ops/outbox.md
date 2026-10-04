@@ -5869,3 +5869,97 @@ whag0pgpuap12
   data    (key len 72) => [31merror:[0m Forbidden 
 === relay block done ===
 ```
+
+---
+
+## RUN_ID 57 · 2026-10-04 18:08:49 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+echo; echo "=== [.12] Forbidden 诊断 + llm_pick key 验证 + 逐线重启 ==="
+timeout 520 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+export PATH="$HOME/.bun/bin:$PATH"
+hostname; date '+%F %T'; echo "  bun=$(command -v bun)"
+W=/nas_train/app.e0031982/code/super_intelligence_2035
+R=$W/doc/BaiZe-ISEDA2027/run
+B=/nas_train/app.e0031982; H=$HOME; SRC="$H/.cline/data"; C=/home/app.e0031982/.bun/bin/cline
+KEYS="$W/doc/keys.txt"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "--- A. base 对比 ---"
+for d in "$SRC" "$B/.cline_vision" "$B/.cline_data"; do
+  echo "  $(basename "$d") base = $(sed -n 's/.*"openAiBaseUrl"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$d/globalState.json" 2>/dev/null | head -1)"
+done
+
+echo; echo "--- B. llm_pick 取 .12 可用候选（LLM_DATA_DIR 指向空目录 → 不写真实配置）---"
+LLM_DATA_DIR=/tmp/_none; . "$R/llm_rotate.sh"
+ST=/tmp/_pick_idx; rm -f "$ST"
+if llm_pick "$ST" "$KEYS"; then echo "  picked: model=$LLM_MODEL key=${LLM_KEY:0:8}.. base=$LLM_BASE"; else echo "  !! 无可用候选"; fi
+
+echo; echo "--- C. 用该 key/model + 各隔离目录 smoke（附对照）---"
+if [ -n "${LLM_MODEL:-}" ]; then
+  for n in vision data; do
+    D="$B/.cline_$n"
+    "$PYBIN" - "$D/globalState.json" "$LLM_BASE" <<'PY' 2>/dev/null
+import json,sys
+p,b=sys.argv[1],sys.argv[2]
+d=json.load(open(p,encoding='utf-8')); d['openAiBaseUrl']=b
+json.dump(d,open(p,'w',encoding='utf-8'),ensure_ascii=False,indent=2)
+PY
+    OUT=$(env $P timeout 90 "$C" --data-dir "$D" -c /tmp -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tr -d '\r' | tr '\n' ' ' | cut -c1-140)
+    printf "  %-7s => %s\n" "$n" "$OUT"
+  done
+  OUT=$(env $P timeout 90 "$C" -c /tmp -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tr -d '\r' | tr '\n' ' ' | cut -c1-140)
+  printf "  %-7s => %s\n" "control" "$OUT"
+fi
+
+echo; echo "--- D. 逐线安全重启 vision / data ---"
+for L in vision data; do
+  LP=$(pgrep -f "bash baize_${L}_loop.sh" 2>/dev/null | head -1)
+  if [ -z "$LP" ]; then echo "  [$L] loop 未在跑 → 启动"; CL=0
+  else CL=$(pgrep -P "$LP" -f 'bun' 2>/dev/null | wc -l); echo "  [$L] loop pid=$LP cline 子进程=$CL"; fi
+  if [ "$CL" -gt 0 ]; then echo "  [$L] cline 活动中 → 跳过（下轮再试）"; continue; fi
+  pkill -f "baize_${L}_loop.sh"; sleep 4
+  cd "$R"; setsid env $P bash "baize_${L}_loop.sh" > "/tmp/baize_${L}_loop.log" 2>&1 < /dev/null &
+  echo "  [$L] 已重启"
+done
+
+echo; echo "--- E. 40s 后验证 ---"
+sleep 40
+for L in vision data; do
+  echo "  [$L] loop=$(pgrep -fc "baize_${L}_loop.sh" 2>/dev/null || echo 0)  Forbidden=$(grep -c Forbidden /tmp/baize_${L}_loop.log 2>/dev/null)"
+  tail -3 "/tmp/baize_${L}_loop.log" 2>/dev/null | tr '\n' ' ' | cut -c1-140 | sed 's/^/       /'; echo
+done
+echo "  cline cmdline: $(pgrep -af 'bun.*cline' 2>/dev/null | cut -c1-110 | head -3)"
+echo; echo "=== DONE (.12) ==="
+EOS12
+echo "=== relay block done ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 18:08:49
+
+=== [.12] Forbidden 诊断 + llm_pick key 验证 + 逐线重启 ===
+whag0pgpuap12
+2026-10-04 18:08:50
+  bun=/home/app.e0031982/.bun/bin/bun
+
+--- A. base 对比 ---
+  data base = http://agi-gateway.cxmt.com/cloud/v1
+  .cline_vision base = http://agi-gateway.cxmt.com/cloud/v1
+  .cline_data base = http://agi-gateway.cxmt.com/cloud/v1
+
+--- B. llm_pick 取 .12 可用候选（LLM_DATA_DIR 指向空目录 → 不写真实配置）---
+[llmrot] 2026-10-04 18:08:50 选中 #0 deepseek-v4-flash @ http://agi-gateway.cxmt.com/v1 (probe=200)
+  picked: model=deepseek-v4-flash key=02_088EE.. base=http://agi-gateway.cxmt.com/v1
+
+--- C. 用该 key/model + 各隔离目录 smoke（附对照）---
+  vision  => [31merror:[0m Forbidden 
+  data    => [31merror:[0m Forbidden 
+  control => [31merror:[0m Forbidden 
+=== relay block done ===
+```
