@@ -69,12 +69,12 @@ WAITING: 0
 | `/tmp` | 49G / 25G 可用 / 54% | ✅ |
 | **shard 端口 8664/8665/8653/8669** | 四个全 ✅ OPEN | ✅（但见下 `.env` PROXY_PORTS 口径不符） |
 | **eda_fastmcp** | `/nasdata/app.e0031982/code/eda_fastmcp` 存在（含 `main.py` / `venv` / `kb` / `logs` / `memory_bank`） | ✅ 代码在 |
-| **`run_code` 入口** | ⚠️ 根目录**未找到** `run_code`/`run_code.sh`（只有 `run_monday_eval.sh` / `run_monday.sh`） | ⚠️ **待确认**（可能是 MCP 工具而非独立脚本 → 需用真实 `run_code` 调用验） |
-| **进程：zhulong_loop** | pgrep 未列出，但 `/tmp/zhulong_loop.log` 每 60s 在唤醒 → **在跑**（pgrep 正则 `zhulong_loop\\.sh` 双重转义写错，漏报） | 🟠 在跑但**静默失效**（见下） |
-| **进程：zhulong_ops_relay** | **两个** PID `1071337` 与 `1239220`（+ 一个 `tail -f`） | ⚠️ **待查 ppid**（一个可能是子进程，也可能真重复 → 会重复执行 RUN_ID） |
+| **`run_code` 入口** | ✅ **实为 Python 工具**：`tools/run_code.py`（+ `server/sandbox_server/exec_code.py`），非 shell 脚本（探针误报） | ✅ 代码在（licence 需实跑验） |
+| **进程：zhulong_loop** | ✅ **在跑**（PID `1069304`，ppid=1，etimes≈97min）——但**在跑的进程是旧版**（cline 带 `-b`）；**磁盘上的脚本已是新版**（第 112 行 `-P openai-compatible`，无 `-b`）→ **只需重启即修复** | 🔴 **静默失效**（RUN_ID 2 修正） |
+| **进程：zhulong_ops_relay** | ✅ **单实例**：真 relay `1071337`（ppid=1）；另一 PID `1245242`（ppid=1071337、etimes=0）= 它 fork 的**子进程** → **不是副本**（与 BaiZe §3.5 结论一致） | ✅ 正常 |
 | **`.env` 当前臂** | `EDA_OMEGA_FIDELITY=high` · `EDA_RUNCODE_READBACK=full` · `EDA_PHI_BUDGET=0` · `EDA_PHI_LAGGED=0` · **`EDA_MCP_TOOLS_DISABLED` 含 `get_api_details,search_apis,search_api…`（检索关）** | 🔴 反映**上一个臂 = `wo_retrieval`（检索 OFF + run_code ON）**，`.env` 已被改（git ` M .env`） |
-| **`.env` 端口** | `PROXY_PORTS=8650,8651,8652,8654`（注释里示例才是 8664,8665,8653,8669） | ⚠️ 与任务书口径不符，**待核**（实际用的代理端口是 8650-8654？） |
-| **机器负载** | `/home` 下**多个其他用户**在跑 `eda_platform` / `eda_fastmcp` / sandbox bootstrap（`app.e0030884`/`t0002949`/`t0002638`/`e0042624`/`vendor.ai.ruide01`…） | ⚠️ **高共享**，重 I/O 需避让 |
+| **端口** | ✅ 任务书口径正确：`ss` 实测监听 `8653/8664/8665/8668/8669/18890/9006`；`.env` 里 `PROXY_PORTS=8650-8654` 是**陈旧行**（未监听、未被使用） | ✅ 以 8664/8665/8653/8669 为准 |
+| **机器负载 / `/home` 大头** | `/home` 下**多个其他用户**在跑 `eda_platform` / `eda_fastmcp` / sandbox bootstrap；**`/home` 大头是别的用户**（`app.e0023936` **71G** · `app.e0025768` 41G · `vendor.ai.ruide01` 24G · `app.t0002147/e0041392/e0030544` 各 16G …；**我们自己 `app.e0031982` <7.2G、不在 top-15**） | ⚠️ 高共享；**`/home` 满主因非本用户** → 自己可清空间有限 |
 
 **🔴 关键结论 —— zhulong_loop 静默失效（与 BaiZe 的 `Forbidden+exit0` 同类）**：
 
@@ -89,7 +89,15 @@ error: error: unknown option '-b'
 - 仓库版本早已修复（`c3d52e9` 删 `-b`、`81d6869` 改 `-P openai-compatible`）→ **需在 36.15 `git pull` 后重启 loop**（bash 增量读脚本，改运行中的脚本无效）。
 - 另：`MEMORY_ZHULONG.md` 顶部 `WAITING: 0`（loop 读这行）与状态表 `WAITING=1` 不一致 → loop 按"无阻塞"每 **60s** 空转（应 `1` → 30min）。**两处都要修。**
 
-> 处置建议（待拍板）：**① 先清 `/home`（目标回到 ≥8G，参考 BaiZe `.29` 回收思路）→ ② 修 `MEMORY_ZHULONG.md` 顶部 `WAITING: 1` → ③ `git pull` + 重启 `zhulong_loop.sh`（用新版无 `-b`）→ ④ 查 relay 是否真重复（ppid）→ ⑤ 再定起始点启动合并线。**
+> 处置建议（待拍板）：**① 评估 `/home`（🔴 大头是别的用户，自己可清空间有限）→ ② 定起始点（R1 起 / 延续 R3）→ ③ 重启 `zhulong_loop.sh`（磁盘已是新版）→ ④ 开跑。**
+
+**✅ RUN_ID 2 修正（2026-10-04 16:57，`outbox.md` RUN_ID 2）**：
+- loop **确实在跑**（PID `1069304`/ppid=1）；**磁盘脚本已是新版**（112 行 `-P openai-compatible`，无 `-b`）→ **重启即修复**（证明运行进程没吃到新脚本）。
+- relay **不是副本**（`1245242` 是 `1071337` fork 的子进程，etimes=0）。
+- `run_code` = `tools/run_code.py`（+ `exec_code.py`）→ **存在**（探针误报）。
+- 端口以 **8664/8665/8653/8669** 为准（`.env` 的 8650-8654 未监听 = 陈旧行）。
+- loop 日志：**`unknown option '-b'` 计数 69** · `Forbidden` 0 · **16:57 仍报错**。
+- **唯一硬阻塞 = `/home` 99%（6G）**，且**大头是别的用户** → 见 §4 待拍板。
 
 
 ---
@@ -97,11 +105,12 @@ error: error: unknown option '-b'
 ## 4. 待拍板 / 我欠的答复
 
 - [ ] **起始点**：合并线从 `S1.omega_low ROUND=1` 起，还是延续旧 S1（`CONFIG=omega_low, ROUND=3`，把 r1=81.6 / r2=82.3 写进成绩表、不重跑）？——**须运维在任务书指令区填实**。
-- [x] **infra 三项前置校验 → 🔴 未通过**（RUN_ID 1 实测）：① `/home` **99% / 仅 6G 可用 → FAIL**；② 四端口 ✅ OPEN；③ `run_code` 入口**未在根目录找到 → 待确认**。
-- [ ] 🔴 **清 `/home`**（≥8G 才可能开跑；旧 S1 停摆老根因）——用什么目录回收、是否动别的用户目录，**待拍板**。
-- [ ] 🔴 **重启 `zhulong_loop.sh`**（现版静默失效：cline 带非法 `-b`，agent 从未被唤醒）——须先在 36.15 `git pull`。
-- [ ] ⚠️ **relay 疑似重复**（PID `1071337` / `1239220`）→ 查 `ppid`；⚠️ **`MEMORY_ZHULONG.md` 顶部 `WAITING` 0/1 不一致**（loop 读顶部那行）→ 修为 `1`。
-- [ ] ⚠️ **`.env` `PROXY_PORTS=8650-8654`** 与任务书口径 `8664/8665/8653/8669` 不符 → 核实哪个才对。
+- [x] **infra 三项校验（RUN_ID 1+2）**：① 🔴 `/home` **99% / 6G 可用 → FAIL**；② ✅ 四端口 OPEN；③ ✅ `run_code` 实为 `tools/run_code.py`（存在）。
+- [ ] 🔴 **`/home`（硬阻塞）**：需 ≥ ~8G。实测**大头是别的用户**（`app.e0023936` 71G · `app.e0025768` 41G …），**我们自己 <7.2G** → 选项：(a) 只清自己可回收缓存（可能不够）；(b) 把评测产物从 `/home` 改到 `/nasdata`（377G 富余）；(c) 找系统管理员/其他用户。**待拍板。**
+- [ ] 🔴 **重启 `zhulong_loop.sh`**：运行进程卡在旧版 `-b`（磁盘脚本已是新版）→ `pkill -f zhulong_loop.sh` 后 `setsid` 重启。**须先定起始点**（见下）。
+- [x] ✅ **relay 无副本**（第二条是子进程）；✅ **端口口径**以 `8664/8665/8653/8669` 为准。
+- [ ] ⚠️ **`MEMORY_ZHULONG.md` 顶部 `WAITING: 0`** 与状态表 `WAITING=1` 不一致 → 重启 loop 前**须置 `1`**（否则 60s 空转烧 token）。
+- [ ] **处置顺序**：`/home` → 定起始点 → 修 `WAITING` → 重启 loop → 开跑。
 - [ ] **36.15 旧 agent 冲突**：旧线（S1 / 组件）与新合并线**不能并发**；何时、如何停旧启新？
 - [ ] **启动 ops 中继**（服务器侧 `setsid bash zhulong_ops_relay.sh`）——启动后我才能远程探查/下发命令。
 - [ ] **Phase B 模型 key 是否仍有效**（`glm-5.2` / `deepseek-v4-flash` / `kimi-k2.6-cloud` / `doubao-seed-2.0-pro-cloud`，见任务书 §6）——启动 Phase B 前须核。
@@ -168,6 +177,13 @@ error: error: unknown option '-b'
 
 ## 9. 流水（倒序）
 
+- **2026-10-04（RUN_ID 2 聚焦诊断 → 收敛为"唯一硬阻塞 = `/home`"）** —— 经 ops 中继跑只读诊断（`outbox.md` RUN_ID 2，16:57，exit=0）：
+  - ✅ **loop 确实在跑**（PID `1069304`，ppid=1，etimes≈97min）；**磁盘上的 `zhulong_loop.sh` 已是新版**（112 行 `-P openai-compatible`，**无 `-b`**）→ **运行进程没吃到新脚本 → 重启即修复**（loop 日志 16:57 仍在报 `-b`，`unknown option` 计数 **69**、`Forbidden` 0）。
+  - ✅ **relay 不是副本**：`1245242`（ppid=`1071337`、etimes=0）= 真 relay fork 的**子进程**（同 BaiZe §3.5 结论）。
+  - ✅ **`run_code` 存在**：`tools/run_code.py`（+ `server/sandbox_server/exec_code.py`），非 shell 脚本（RUN_ID 1 探针误报）。
+  - ✅ **端口**以 `8664/8665/8653/8669` 为准（`.env` 里 `PROXY_PORTS=8650-8654` 未监听 = 陈旧行）。
+  - 🔴 **`/home` 99%（6G）= 唯一硬阻塞**，且**大头是别的用户**（`app.e0023936` 71G · `app.e0025768` 41G · `vendor.ai.ruide01` 24G …；**我方 `<7.2G`**）。
+  - 下一步：**定 `/home` 处置 + 起始点 → 修 `WAITING` → 重启 loop**（见 §4）。
 - **2026-10-04（RUN_ID 1 环境摸底 → 发现两处致命问题）** —— 经 ops 中继在 36.15（`hfeg0tedaap02`）跑环境摸底，结果见 §3.1 / `run/ops/outbox.md`：
   - 🔴 **`/home` 99%（仅 6G 可用）→ infra 前置校验 FAIL**（旧 S1 停摆老根因复现）。
   - 🔴 **`zhulong_loop.sh` 静默失效**：在跑的版本 cline 带非法 `-b` → `unknown option '-b'` + `exit 0` → **agent 从未被唤醒**（"已启动"实为"空转"）。
