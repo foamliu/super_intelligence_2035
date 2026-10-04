@@ -82,6 +82,12 @@ def git_clone_or_fetch(repo, base_commit, workdir):
     workdir = Path(workdir)
     url = f"https://github.com/{repo}"
     if workdir.exists() and (workdir / ".git").exists():
+        # Clean up stale lock files from previous failed fetches
+        for lock in (workdir / ".git").glob("*.lock"):
+            try:
+                lock.unlink()
+            except OSError:
+                pass
         out, rc = run(["git", "fetch", "--depth=1", "origin", base_commit], cwd=workdir, timeout=120)
         if rc != 0:
             # NFS resilience: try checkout anyway (see new-branch comment above)
