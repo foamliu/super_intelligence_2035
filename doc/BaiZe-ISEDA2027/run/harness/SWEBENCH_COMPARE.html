@@ -55,7 +55,7 @@ tr:nth-child(even) { background: var(--table-stripe); }
 
 <div class="card">
 <p><strong>Setup:</strong> 4 agent harnesses (cline, codex, opencode, claude-code) + 1 blocked (deepseek-harness),
-each run on 2 SWE-bench-Lite instances with the <strong>same model</strong> (<code>deepseek-v4-flash</code> via internal gateway),
+each run on <strong>7 SWE-bench-Lite instances</strong> (2 smoke + 5 pilot batch) with the <strong>same model</strong> (<code>deepseek-v4-flash</code> via internal gateway),
 <strong>same sandbox</strong> (R1 unshare user-namespace, rootfs on /nas_train), and <strong>same eval script</strong> (official <code>swebench</code> harness scoring).</p>
 </div>
 
@@ -63,12 +63,13 @@ each run on 2 SWE-bench-Lite instances with the <strong>same model</strong> (<co
 <div class="card">
 <table>
 <tr><th>#</th><th>Finding</th><th>Evidence</th></tr>
-<tr><td>1</td><td><strong>All 4 harnesses resolved django__django-10914</strong> — a straightforward ORM Union queryset fix.</td><td>F2P 1/1, P2P 98/98 for all 4</td></tr>
-<tr><td>2</td><td><strong>No harness resolved sympy__sympy-11400</strong> — requires implementing ccode(sinc(x)) with exact output format + fixing ccode(Relational).</td><td>F2P 0/2 or 1/2 for all 4</td></tr>
-<tr><td>3</td><td><strong>cline was the only harness to partially solve sympy</strong> (1/2 F2P: fixed Relational but not sinc). It took 5.7x longer (707s vs ~124s).</td><td>cline F2P 1/2, others 0/2</td></tr>
-<tr><td>4</td><td><strong>codex produced the most robust _print_sinc</strong> (with x==0 guard) but still failed F2P (format mismatch + missed Relational fix).</td><td>Patch analysis §5</td></tr>
-<tr><td>5</td><td><strong>claude-code produced the smallest patch</strong> (609B — only _print_sinc, no Relational fix) and was fastest on sympy (122s) but slowest on django (686s).</td><td>§3, §4 patch sizes</td></tr>
-<tr><td>6</td><td><strong>deepseek-harness remains blocked</strong> — node22 + rust toolchain unavailable.</td><td>R1_DJANGO10914_RESULTS.yaml</td></tr>
+<tr><td>1</td><td><strong>All 4 harnesses resolved django__django-10914 and django__django-11001</strong> — straightforward instances where all harnesses produce correct patches.</td><td>10914: F2P 1/1 P2P 98/98 all 4; 11001: F2P 2/2 P2P 118/118 all 4</td></tr>
+<tr><td>2</td><td><strong>codex is the only harness to resolve django__django-10924</strong> (FilePathField callable path). cline-patched's patch broke a P2P test (0/1 P2P).</td><td>codex F2P 1/1 P2P 1/1; cline F2P 0/1 P2P 0/1</td></tr>
+<tr><td>3</td><td><strong>No harness resolved 3 of 5 pilot instances</strong> (11019, 11039, 11049) — all F2P 0/N. Instance 11019 has 16 F2P tests (very hard).</td><td>Eval reports in logs_eval/R1_PILOT_*/</td></tr>
+<tr><td>4</td><td><strong>Token quota exhaustion (5h sliding window) degraded pilot batch results</strong> — from instance 11039 onward, ALL harnesses produced empty patches (~129–135B). These are "no attempt" not "attempted and failed."</td><td>Prediction file sizes: 129–135B = empty JSON wrapper</td></tr>
+<tr><td>5</td><td><strong>cline was the only harness to partially solve sympy-11400</strong> (1/2 F2P: fixed Relational but not sinc). It took 5.7x longer (707s vs ~124s).</td><td>cline F2P 1/2, others 0/2</td></tr>
+<tr><td>6</td><td><strong>Aggregate resolve rate (7 instances, quota-affected):</strong> codex 3/7 (43%), cline 2/7 (29%), opencode 2/7 (29%), claude-code 2/7 (29%).</td><td>See §7 Combined Summary</td></tr>
+<tr><td>7</td><td><strong>deepseek-harness remains blocked</strong> — node22 + rust toolchain unavailable.</td><td>R1_DJANGO10914_RESULTS.yaml</td></tr>
 </table>
 </div>
 
@@ -80,7 +81,7 @@ each run on 2 SWE-bench-Lite instances with the <strong>same model</strong> (<co
 <tr><td>Model</td><td><code>deepseek-v4-flash</code></td><td>Same model for all harnesses → fair comparison</td></tr>
 <tr><td>Gateway</td><td><code>http://127.0.0.1:9090</code> (gw_proxy.py)</td><td>Local proxy translating OpenAI chat ↔ Anthropic messages</td></tr>
 <tr><td>Dataset</td><td>SWE-bench/SWE-bench_Lite (test split)</td><td>Loaded from HF cache (offline mode)</td></tr>
-<tr><td>Instances</td><td>django__django-10914, sympy__sympy-11400</td><td>2 instances — smoke/pilot scale</td></tr>
+<tr><td>Instances</td><td>7 SWE-bench-Lite (2 smoke + 5 pilot batch)</td><td>django__django-10914, sympy__sympy-11400 (smoke); django__django-{10924,11001,11019,11039,11049} (pilot)</td></tr>
 <tr><td>Sandbox</td><td>R1: unshare --user --map-root-user --mount --pid</td><td>No Docker; per-instance rootfs on /nas_train (32T NFS)</td></tr>
 <tr><td>Eval script</td><td>Official swebench harness (make_test_spec, get_eval_report)</td><td>Imported by r1_eval.py — NOT a reimplementation</td></tr>
 <tr><td>Scoring</td><td>FAIL_TO_PASS + PASS_TO_PASS (official)</td><td>patch applied via git apply (4 fallback strategies)</td></tr>
@@ -179,40 +180,59 @@ each run on 2 SWE-bench-Lite instances with the <strong>same model</strong> (<co
 </table>
 </div>
 
-<h2>6. Combined Summary Table</h2>
+<h2>6. Pilot Batch Results (5 django instances)</h2>
 <div class="card">
+<p><strong>Phase:</strong> R1 pilot batch v2 — 5 consecutive django__django-* instances from SWE-bench-Lite, run sequentially via <code>run_pilot_batch.py --all-prepared --resume</code>.</p>
+<p class="muted">⚠️ <strong>Token quota note:</strong> The internal gateway enforces a 5-hour sliding window token quota. From instance 11039 onward, ALL harnesses produced empty patches (~129–135B). These are <strong>"no attempt"</strong> results, not "attempted and failed."</p>
 <table>
-<tr><th>Harness</th><th>Instance</th><th>Wall (s)</th><th>Patch (B)</th><th>Resolved</th><th>F2P</th><th>P2P</th><th>Infra Fail</th></tr>
-<tr><td rowspan="2">cline</td><td>django-10914</td><td>131.2</td><td>2,576</td><td class="pass">✅</td><td class="pass">1/1</td><td class="pass">98/98</td><td>No</td></tr>
-<tr><td>sympy-11400</td><td>707.1</td><td>2,216</td><td class="fail">❌</td><td class="partial">1/2</td><td class="pass">29/29</td><td>No</td></tr>
-<tr><td rowspan="2">codex</td><td>django-10914</td><td>182.6</td><td>2,903</td><td class="pass">✅</td><td class="pass">1/1</td><td class="pass">98/98</td><td>No</td></tr>
-<tr><td>sympy-11400</td><td>124.4</td><td>1,617</td><td class="fail">❌</td><td class="fail">0/2</td><td class="pass">29/29</td><td>No</td></tr>
-<tr><td rowspan="2">opencode</td><td>django-10914</td><td>231.2</td><td>4,848</td><td class="pass">✅</td><td class="pass">1/1</td><td class="pass">98/98</td><td>No</td></tr>
-<tr><td>sympy-11400</td><td>124.9</td><td>1,590</td><td class="fail">❌</td><td class="fail">0/2</td><td class="pass">29/29</td><td>No</td></tr>
-<tr><td rowspan="2">claude-code</td><td>django-10914</td><td>685.8</td><td>5,640</td><td class="pass">✅</td><td class="pass">1/1</td><td class="pass">98/98</td><td>No</td></tr>
-<tr><td>sympy-11400</td><td>121.6</td><td>609</td><td class="fail">❌</td><td class="fail">0/2</td><td class="pass">29/29</td><td>No</td></tr>
-<tr><td>deepseek-harness</td><td colspan="7"><span class="badge badge-blocked">BLOCKED</span></td></tr>
+<tr><th>Instance</th><th>Harness</th><th>Patch (B)</th><th>Resolved</th><th>F2P</th><th>P2P</th><th>Quota?</th></tr>
+<tr><td rowspan="4">django__django-10924</td><td>cline-patched</td><td>8,245</td><td class="fail">False</td><td class="fail">0/1</td><td class="fail">0/1</td><td>OK</td></tr>
+<tr><td>codex</td><td>3,389</td><td class="pass">True</td><td class="pass">1/1</td><td class="pass">1/1</td><td>OK</td></tr>
+<tr><td>opencode</td><td>132</td><td class="fail">False</td><td class="fail">0/1</td><td class="pass">1/1</td><td class="badge badge-blocked">EMPTY</td></tr>
+<tr><td>claude-code</td><td>135</td><td class="fail">False</td><td class="fail">0/1</td><td class="pass">1/1</td><td class="badge badge-blocked">EMPTY</td></tr>
+<tr><td rowspan="4">django__django-11001</td><td>cline-patched</td><td>3,772</td><td class="pass">True</td><td class="pass">2/2</td><td class="pass">118/118</td><td>OK</td></tr>
+<tr><td>codex</td><td>3,492</td><td class="pass">True</td><td class="pass">2/2</td><td class="pass">118/118</td><td>OK</td></tr>
+<tr><td>opencode</td><td>686</td><td class="pass">True</td><td class="pass">2/2</td><td class="pass">118/118</td><td>OK</td></tr>
+<tr><td>claude-code</td><td>1,493</td><td class="pass">True</td><td class="pass">2/2</td><td class="pass">118/118</td><td>OK</td></tr>
+<tr><td rowspan="4">django__django-11019</td><td>cline-patched</td><td>8,661</td><td class="fail">False</td><td class="fail">0/16</td><td class="pass">58/58</td><td>OK</td></tr>
+<tr><td>codex</td><td>129</td><td class="fail">False</td><td class="fail">0/16</td><td class="pass">58/58</td><td class="badge badge-blocked">EMPTY</td></tr>
+<tr><td>opencode</td><td>132</td><td class="fail">False</td><td class="fail">0/16</td><td class="pass">58/58</td><td class="badge badge-blocked">EMPTY</td></tr>
+<tr><td>claude-code</td><td>135</td><td class="fail">False</td><td class="fail">0/16</td><td class="pass">58/58</td><td class="badge badge-blocked">EMPTY</td></tr>
+<tr><td rowspan="4">django__django-11039</td><td>cline-patched</td><td>129</td><td class="fail">False</td><td class="fail">0/1</td><td class="pass">88/88</td><td class="badge badge-blocked">EMPTY</td></tr>
+<tr><td>codex</td><td>129</td><td class="fail">False</td><td class="fail">0/1</td><td class="pass">88/88</td><td class="badge badge-blocked">EMPTY</td></tr>
+<tr><td>opencode</td><td>132</td><td class="fail">False</td><td class="fail">0/1</td><td class="pass">88/88</td><td class="badge badge-blocked">EMPTY</td></tr>
+<tr><td>claude-code</td><td>135</td><td class="fail">False</td><td class="fail">0/1</td><td class="pass">88/88</td><td class="badge badge-blocked">EMPTY</td></tr>
+<tr><td rowspan="4">django__django-11049</td><td>cline-patched</td><td>129</td><td class="fail">False</td><td class="fail">0/1</td><td class="pass">8/8</td><td class="badge badge-blocked">EMPTY</td></tr>
+<tr><td>codex</td><td>129</td><td class="fail">False</td><td class="fail">0/1</td><td class="pass">8/8</td><td class="badge badge-blocked">EMPTY</td></tr>
+<tr><td>opencode</td><td>132</td><td class="fail">False</td><td class="fail">0/1</td><td class="pass">8/8</td><td class="badge badge-blocked">EMPTY</td></tr>
+<tr><td>claude-code</td><td>135</td><td class="fail">False</td><td class="fail">0/1</td><td class="pass">8/8</td><td class="badge badge-blocked">EMPTY</td></tr>
 </table>
-<h3>Aggregate Scores (2 instances)</h3>
-<table>
-<tr><th>Harness</th><th>Resolve Rate</th><th>Avg Wall (s)</th><th>Avg Patch (B)</th><th>Total F2P Pass</th></tr>
-<tr><td>cline</td><td class="partial">1/2 (50%)</td><td>419.2</td><td>2,396</td><td class="partial">2/3</td></tr>
-<tr><td>codex</td><td class="partial">1/2 (50%)</td><td>153.5</td><td>2,260</td><td class="partial">1/3</td></tr>
-<tr><td>opencode</td><td class="partial">1/2 (50%)</td><td>178.1</td><td>3,219</td><td class="partial">1/3</td></tr>
-<tr><td>claude-code</td><td class="partial">1/2 (50%)</td><td>403.7</td><td>3,125</td><td class="partial">1/3</td></tr>
-</table>
-<p class="muted">All 4 harnesses have the same resolve rate (1/2) — all solved django, all failed sympy. Differentiation comes from F2P partial credit and efficiency metrics.</p>
+<p class="muted"><strong>11001 = "sweet spot"</strong> (all 4 resolved). <strong>10924 = codex differentiator</strong> (only codex resolved; cline broke P2P). <strong>11039/11049 = no-attempt</strong> (all empty, quota). <strong>11019 = very hard</strong> (16 F2P tests, only cline produced a real patch but failed all 16).</p>
 </div>
 
-<h2>7. Reproduction Commands</h2>
+<h2>7. Combined Summary (7 instances: 2 smoke + 5 pilot)</h2>
 <div class="card">
-<h3>7.1 Environment Setup</h3>
+<h3>7.1 Aggregate Scores</h3>
+<table>
+<tr><th>Harness</th><th>Resolve Rate</th><th>Resolve (quota-OK only)</th><th>Real Patches</th><th>Empty Patches</th></tr>
+<tr><td>cline / cline-patched</td><td class="partial">2/7 (29%)</td><td class="partial">2/5 (40%)</td><td>5/7</td><td>2/7</td></tr>
+<tr><td>codex</td><td class="pass">3/7 (43%)</td><td class="pass">3/4 (75%)</td><td>4/7</td><td>3/7</td></tr>
+<tr><td>opencode</td><td class="partial">2/7 (29%)</td><td class="partial">2/3 (67%)</td><td>3/7</td><td>4/7</td></tr>
+<tr><td>claude-code</td><td class="partial">2/7 (29%)</td><td class="partial">2/3 (67%)</td><td>3/7</td><td>4/7</td></tr>
+</table>
+<p class="muted"><strong>codex leads</strong> with 3/7 overall (43%) and 3/4 on quota-OK instances (75%). cline produced the most real patches (5/7) but only resolved 2. Sample too small for statistical significance.</p>
+<p class="muted"><strong>Quota-OK resolve rate</strong> = resolved / instances where the harness produced a real (non-empty) patch. This excludes no-attempt runs caused by the 5h sliding window token quota.</p>
+</div>
+
+<h2>8. Reproduction Commands</h2>
+<div class="card">
+<h3>8.1 Environment Setup</h3>
 <pre>export PYTHONPATH=/nas_train/app.e0031982/harness_work/SWE-bench
 export HF_DATASETS_OFFLINE=1
 export HF_HUB_OFFLINE=1
 cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness
 pgrep -af gw_proxy || python3 /nas_train/app.e0031982/harness_work/gw_proxy.py &amp;</pre>
-<h3>7.2 Run a Harness on an Instance</h3>
+<h3>8.2 Run a Harness on an Instance</h3>
 <pre>python3 run_single.py \
   --harness codex \
   --instance-json /nas_train/app.e0031982/harness_work/swe-bench-tasks/tasks/sympy__sympy-11400/instance.json \
@@ -223,7 +243,7 @@ pgrep -af gw_proxy || python3 /nas_train/app.e0031982/harness_work/gw_proxy.py &
 
 # For cline (requires --data-dir + -P openai workaround):
 python3 run_single.py --harness cline-patched ...</pre>
-<h3>7.3 Evaluate a Prediction</h3>
+<h3>8.3 Evaluate a Prediction</h3>
 <pre>bash /nas_train/app.e0031982/harness_work/eval_sympy11400.sh codex
 
 # Or directly:
@@ -234,7 +254,7 @@ python3 r1_eval.py \
   --run-id R1_CODEX_SYMPY11400 \
   --log-dir /nas_train/app.e0031982/harness_work/logs_eval \
   --sandbox unshare --timeout 1800</pre>
-<h3>7.4 Key File Paths</h3>
+<h3>8.4 Key File Paths</h3>
 <table>
 <tr><th>Artifact</th><th>Path</th></tr>
 <tr><td>Eval reports (django)</td><td>/nas_train/.../logs_eval/R1_{CLINE,CODEX,OPENCODE,CLAUDE_CODE}/</td></tr>
@@ -246,23 +266,25 @@ python3 r1_eval.py \
 </table>
 </div>
 
-<h2>8. Caveats &amp; Limitations</h2>
+<h2>9. Caveats &amp; Limitations</h2>
 <div class="card">
 <ul>
-<li><strong>This is an internal cross-harness comparison, NOT a standard SWE-bench score.</strong> Cannot be compared to the leaderboard (only 2 instances, unshare sandbox instead of Docker, internal gateway proxy).</li>
+<li><strong>This is an internal cross-harness comparison, NOT a standard SWE-bench score.</strong> Cannot be compared to the leaderboard (7 instances, unshare sandbox instead of Docker, internal gateway proxy).</li>
 <li><strong>The eval script IS the official swebench harness</strong> (make_test_spec, get_eval_report) — imported by r1_eval.py, not reimplemented. Only the execution layer (Docker → unshare) was swapped.</li>
 <li><strong>deepseek-harness is excluded</strong> due to build dependency blocker (node22 + rust).</li>
 <li><strong>F2P tests check exact string output</strong> — functionally correct implementations can fail if formatting doesn't match the gold patch. Known SWE-bench characteristic.</li>
-<li><strong>2 instances is too few for statistical significance.</strong> Next step: scale to 20–30 instances per operator's batch-5 instructions.</li>
+<li><strong>7 instances is too few for statistical significance.</strong> Pilot batch v2 is running (30 instances planned) but the 5h sliding window token quota limits effective throughput to ~3–4 instances per batch.</li>
+<li><strong>Token quota exhaustion degrades later instances</strong> — from instance 11039 onward, ALL harnesses produced empty patches. These results are "no attempt" and should not be counted as failures. The "quota-OK resolve rate" in §7 is the fairer metric.</li>
 <li><strong>cline required --data-dir workaround</strong> — vision loop's cline daemon overwrote API base URL. See run_single.py::run_cline_patched().</li>
 <li><strong>claude-code required bun --preload + --define MACRO.* workaround</strong> — bunfig.toml [define] not loaded when cwd is outside source dir.</li>
+<li><strong>Wall clock times not available for pilot batch instances</strong> — the batch script does not record per-run wall time. Only smoke test instances (10914, 11400) have wall time data.</li>
 </ul>
 </div>
 
 <div class="footer">
-<p><strong>Generated:</strong> 2026-10-04 · <strong>Line:</strong> BaiZe Harness Research (H-A) · <strong>Phase:</strong> R1 pilot (2 instances × 4 harnesses)</p>
-<p><strong>Source files:</strong> r1_eval.py, run_harness.py, run_single.py, R1_DJANGO10914_RESULTS.yaml</p>
-<p><strong>Honesty note:</strong> All results from actual runs on 10.239.2.29 with deepseek-v4-flash. Eval reports are official swebench harness output. No results were simulated or estimated.</p>
+<p><strong>Generated:</strong> 2026-10-05 · <strong>Line:</strong> BaiZe Harness Research (H-A) · <strong>Phase:</strong> R1 pilot (7 instances × 4 harnesses, batch v2 in progress)</p>
+<p><strong>Source files:</strong> r1_eval.py, run_harness.py, run_single.py, run_pilot_batch.py, R1_DJANGO10914_RESULTS.yaml</p>
+<p><strong>Honesty note:</strong> All results from actual runs on 10.239.2.29 with deepseek-v4-flash. Eval reports are official swebench harness output. No results were simulated or estimated. Quota-exhausted runs are explicitly labeled as EMPTY/no-attempt.</p>
 </div>
 
 </body>
