@@ -5,13 +5,21 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A pilot batch v2 running (16/30 setup, actively on sympy-11897; quota contamination identified)
-已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A 16/30 scored (pilot_results.json 16 entries)
-当前动作:     R60: relay healthy skip (14th) + batch v2 progress (16/30, sympy-11897 opencode w/ quota retry) + quota contamination deep-dive (fair metric: codex 2/3=67%, cline 1/4=25%, opencode 1/2=50%, claude-code 1/1=100%)
+PHASE:        H-A pilot batch v2 running (19/30 scored, actively on sympy-12419; quota contamination confirmed)
+已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A 19/30 scored (pilot_results.json 19 entries)
+当前动作:     R61: relay healthy skip (15th) + batch v2 progress (19/30, sympy-12419 opencode active) + aggregate codex 2/19=11% leads
 下一步:       等 batch v2 跑完 30/30 → 用 fair metric（仅 genuine patches）更新 SWEBENCH_COMPARE.html 最终版 → 报运维决定是否扩 300
-阻塞:         无（relay 健康、batch alive w/ active child run_single.py、github 可达、.last_run_id=63）；⚠️ 5h quota 窗口致大量空 patch（13-15/16 inst per harness）
+阻塞:         无（relay 健康、batch alive PID 4045197 w/ active child run_single.py、github 可达、.last_run_id=63）；⚠️ 5h quota 窗口致大量空 patch（135B，33 QUOTA 事件）
 ERROR_COUNT:  0
 ```
+
+## 🆕 第六十一轮速览（2026-10-05 06:36）
+
+- ✅ **ops 中继复核（响应运维 2026-10-04 第 2 条，第 15 次）→ 健康，跳过重启**。① relay `2489749 1 310940 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、wchan=do_wai、etimes≈3.6d、pstree=`bash---sleep`）；② `cat ops/.last_run_id`=`63`（62+63 已执行，无新单）；③ `grep -c 'RUN_ID 62' ops/outbox.md`=`1`；④ log 末行 `[relay] RUN_ID=63 executed, exit=0`；⑤ **⭐ `timeout 30 git fetch origin` → exit=0**（github 持续可达）；⑥ 无 index.lock（git status clean）。**判据**：outbox 含 RUN_ID 62 + relay 健康 → **跳过重启**。✅ URGENT 完成。
+- ✅ **无新运维指令**：`git rev-list --left-right --count HEAD...origin/main` = `2 0`（本地领先 2，无新远端指令）。task file 仍 `4d1c276`。
+- 📊 **batch v2 进度**（PID 4045197，etimes≈25719s≈7.1h，stat=S wchan=do_sel）：pilot_results.json **19 entries**（83486B，mtime 06:32）。batch log 19 SETUP / 75 RUN / 33 QUOTA。当前 instance 20/30 = `sympy__sympy-12419`，活跃子进程 `run_single.py --harness opencode`（PID 1446490，etimes≈28s）。预计还需 ~11 inst × ~16min ≈ 3h。
+- 📊 **aggregate resolve（19 inst）**：codex 2/19 (11%)、cline-patched 1/19 (5%)、opencode 1/19 (5%)、claude-code 1/19 (5%)。patch_applied=19/19 全 harness（但多数为 135B 空 patch）。**genuine patches（>200B）** 集中于前 4 instance（django-10924/11001/11019 + sympy-11870）。django-11001 = 唯一 4/4 全 resolve。quota 5h 窗口致后续 instance 大量空 patch。
+- ⏭ **下一步**：让 batch v2 继续跑到 30/30 → 用 fair metric（仅 genuine patches）+ aggregate 双口径更新 SWEBENCH_COMPARE.html 最终版 → 报运维决定是否扩 300。保持 `WAITING=1`。
 
 ## 🆕 第六十轮速览（2026-10-05 06:10）
 
@@ -21,12 +29,7 @@ ERROR_COUNT:  0
 - 🔬 **quota 污染深度分析**：v2 log 29 次 QUOTA 事件（28 opencode + 1 cline-patched）。预测文件大小分析：**genuine patches（>200B）per harness** = cline-patched 4/17、codex 3/17、opencode 2/17、claude-code 1/17。其余 13-15 个均为空 patch（127-135B JSON）。**Fair metric（仅 genuine attempts）**：codex 2/3 (67%)、cline-patched 1/4 (25%)、opencode 1/2 (50%)、claude-code 1/1 (100%)。根因：5h 滑动窗口 quota 在前 2-3 个 instance 后即耗尽，后续 300s×2 retry 仍失败→空 patch。sympy-11870（~04:55-05:30）获 3 个 genuine patch=quota 窗口重置证据。
 - ⏭ **下一步**：让 batch v2 继续跑到 30/30（预计还需 ~14 inst × ~16min/inst ≈ 3.7h）→ 用 fair metric 更新 SWEBENCH_COMPARE.html → 报运维决定是否扩 300。保持 `WAITING=1`。
 
-## 🆕 第五十九轮速览（2026-10-05 06:10）
-
-- ✅ **ops 中继复核（响应运维 2026-10-04 第 2 条，第 13 次）→ 健康，跳过重启**。① relay `2489749 1 306632 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、wchan=do_wai、etimes≈3.55d、pstree=`bash---sleep`）；② `cat ops/.last_run_id`=`63`（62+63 已执行，无新单）；③ `grep -c 'RUN_ID 62' ops/outbox.md`=`1`（62 已执行）；④ log 末行 `[relay] RUN_ID=63 executed, exit=0`；⑤ **⭐ `timeout 30 git fetch origin` → exit=0**（github 持续可达）；⑥ 无 index.lock（仅 1 个 NFS temp `.nfs*` 无害）；⑦ ⚠️ `pgrep -f 'bash ops_relay.sh'` 误匹配本 cline agent 进程（cmdline 含该串），以 `ps -eo|grep` 的 `2489749 ppid=1` 为准。**判据**：outbox 含 RUN_ID 62 + relay 健康 → **跳过重启**。✅ URGENT 完成。原始输出已存档至 `daily-memories-harness/2026-10-05.md`。
-- ✅ **无新运维指令**：git log 顶部 `d3dfb68`(vision)/`c57f5d9`(data)/`08ee542`(pretrain)/`2fc6379`(harness R58) —— 无新 harness 指令。task file 仍 `4d1c276`。
-- 📊 **batch v2 进度**（PID 4045197，etimes≈21439s≈5.95h，stat=S）：pilot_results.json 仍 15 entries（03:25 写入未刷新），但 **batch log 已推进**至 `django__django-11283`（SETUP），说明 sympy-11870 quota retry 已完成并跑完后续 sympy，现回 django 批次。活跃子进程 `python3(4045197)---python3(4187954)-+-unshare(15392)---bash(15413)---python(19107)---python(19121)`。Aggregate resolve（15 inst）= codex 2/15 (13%)、cline 1/15 (7%)、opencode 1/15 (7%)、claude-code 1/15 (7%)。
-- ⏭ **下一步**：让 batch v2 继续跑到 30/30 → 刷新 pilot_results.json → 最终汇总 → 更新 SWEBENCH_COMPARE.html 最终版。保持 `WAITING=1`。
+## 🆕 第五十九轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-05.md`（结论不改：relay 健康 skip 第 13 次 + batch v2 15/30 log 推进至 django-11283 + aggregate codex 2/15=13% 领先）
 
 ## 🆕 第五十八轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-05.md`（结论不改：relay 健康 skip 第 12 次 + batch v2 15/30 完整评分 + quota-OK fair metric codex 2/2=100%/cline 1/3=33%/opencode 1/1=100%/claude-code 1/1=100%）
 
