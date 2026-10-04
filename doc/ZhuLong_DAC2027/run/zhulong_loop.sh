@@ -32,12 +32,11 @@ PAPER_REL="doc/ZhuLong_DAC2027/ZhuLong_DAC2027"        # 论文权威树：最�
 #   本 loop 的 `-m "$MODEL"` 只负责读 MEMORY / pgrep / 打分 / 切臂 / cline auth。
 #   被评测的求解 agent 由任务书内 `cline auth -m <MODEL_ID>` 切换（见 ablation_run_task_model_full.md），
 #   run_cline_script.sh 读取 ~/.cline/data/settings，与本 loop 的 -m 无关。
-MODEL="deepseek-v4-flash"
+MODEL="glm-5.2"
 
-# 🔑 flash 专用 key（deepseek-v4-flash 用此 key；网关按模型授权，pro-fp4 的 key 对 flash 会 403）。
-#   硬编码（与 ZHULONG_TASK.md §6 模型切换表同一值），不运行时读 secrets.json。
-CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c43c1f4a-03c6-4148-b722-f4c8604c78d3"
-CLINE_BASE="http://agi-gateway.cxmt.com/v1"
+# 🔑 glm-5.2 key（编排模型；deepseek-v4-pro-fp4 额度已耗尽，改用 glm-5.2）
+CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
+CLINE_BASE="http://agi-gateway.cxmt.com/cloud/v1"
 
 CLINE_TIMEOUT=2700              # 单次编排 cline 最多 45 分钟（读态+打分+切臂+启动，足够）
 PUSH_INTERVAL=18000             # 每 5 小时兜底同步一次

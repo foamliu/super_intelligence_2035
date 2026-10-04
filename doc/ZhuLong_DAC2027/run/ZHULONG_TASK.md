@@ -1,16 +1,5 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
-## 🚨⚠️ 冻结令：36.15 旧 agent 冲突，新 agent 必须立刻沉睡 ⚠️🚨
-
-> **36.15 服务器上已有旧 agent（`/nasdata/app.e0031982/code/ZhuLong_DAC2027/`）在跑任务，新 agent 启动会造成冲突。本任务书处于「冻结」状态。**
->
-> **每次唤醒读到本段，必须立刻沉睡，禁止做任何事：**
-> 1. **不要执行**任何评测 / 切臂 / 启动 / 打分 / canary 动作（不碰 `eda_fastmcp`、不 `cline auth`、不跑任何命令）。
-> 2. 确认 `MEMORY_ZHULONG.md` 顶部 `WAITING:` 为 **1**（若不是 1，改成 1）。
-> 3. **立刻退出**，不写任何日志、不做任何推进、不启动训练/评测。
->
-> **运维收集旧 agent 进度并找到妥当切换方法后，会修改本任务书、删掉这段冻结令**；那时才恢复下方正常推进流程。
-
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memories/` / `run/` 下自建脚本 / 论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`）。
@@ -20,7 +9,8 @@
 | 项 | 值（**2026-10-04 运维更新**）|
 |:--|:--|
 | **环境** | ⚠️ **两服务器独立挂载**：当前 2.12 开发机路径前缀为 <code>/nas_train/</code>；最终运行目标 36.15 路径前缀为 <code>/nasdata/</code>。评测代码 <code>eda_fastmcp</code> 在 36.15 上位于 <code>/nasdata/app.e0031982/code/eda_fastmcp</code>（未迁移）。旧 task book 中 <code>/nasdata/</code> 开头的路径仍然有效。 |
-| **当前阶段** | ⭕ **待运维确认 infra / 起始点**（见下方「运维指令 · 2026-10-04」） |
+| **当前阶段** | ✅ **冻结令已解除；编排模型已切换为 glm-5.2（deepseek-v4-pro-fp4 额度已耗尽）；agent 可正常推进。** |
+| **编排模型** | `glm-5.2`（`02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23` · `http://agi-gateway.cxmt.com/cloud/v1`） |
 | **已完成（探路 1-shot）** | ✅ 组件 `pure_llm` 11.4% / `rag` 70.3% / `wo_retrieval` 81.6% / `full` 84.8%；✅ S2 Φ `k10` 75.3% / `k3` 69.0% / `k1` 60.8% / `lagged` 84.2%（r2 修复后 98.1% 满分） |
 | **旧 5-run 进行到哪** | ⏸ 旧 S1（`omega_low`）r1=81.6 / r2=82.3 ✅；r3 因 **infra 作废**（license 耗尽 + shard0/1 端口 8664/8665 宕 + `/home` 磁盘 <8G）自 9/30 停摆至今 |
 | **🚫 不做** | `wo_sandbox` / `wo_selfexpl`（tab:main-ablation 这两行暂缓）· `(H+E)` 档 · `phi_unbounded`（≡ full 锚点）· 主基座 `deepseek-v4-pro-fp4` 的模型消融臂（≡ full×5 锚点，不重跑） |

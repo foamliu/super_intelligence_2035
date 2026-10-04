@@ -1,6 +1,6 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态（合并版）
 
-WAITING: 1
+WAITING: 0
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
 
@@ -15,7 +15,7 @@ WAITING: 1
 | WAITING | 1（语义 = 待运维拍板 infra/起始点，非 eval running）|
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
-| 基座 | `deepseek-v4-pro-fp4`（编排 + 主 backbone；只有 STAGE=B 换被评测模型）|
+| 基座 | `glm-5.2`（编排模型；deepseek-v4-pro-fp4 额度已耗尽故更换）|
 
 ## 执行看板（15 臂 × 5 轮）
 
