@@ -49,15 +49,14 @@
 
 <header class="hero">
   <h1>BaiZe 工作汇报 · 2026-10-04</h1>
-  <div class="sub">🔑 <b>P-9 收官在望</b>：<b>MBS 1→2 = +59%</b>（138K→<b>218K tok/s</b>）· ⭐ <b>TP2·MBS4 落地不 OOM → M=16384 命中 FP8 交叉点（~200K tok/s）</b> ·
-     🔴→✅ <b><code>.29</code> 9 小时静默事故</b>已定位并修复（<b>cline 必须显式 <code>-k</code></b>）·
-     💾 磁盘<b>回收 ≈3.65 TB</b>（86%→84%）·
-     harness <b>3/5 harness 端到端 <code>resolved=true</code></b> ·
-     vision <b>R11-E（GPIC 数据轴）已开跑</b></div>
+  <div class="sub">🔒 <b>晚间头条：挖出「9 小时静默事故」的深层真凶 —— 4 条线共用同一份 cline 配置</b>；已为每条线建<b>独立 <code>--data-dir</code></b> 并全部切过去（<code>Forbidden=0</code>）·
+     ⭐ <b>P-9.6② FP8 首次转正</b>（s=1.24 @ M=65536）· 🔜 pretrain <b>P-9.7 A1 稳态吞吐</b>跑中（~249K tok/s，ETA 22:38）·
+     vision <b>R11-F 数据源横比已批准</b>（GPIC short/medium/short+medium vs en500k vs CC12M）· harness <b>4/5 harness <code>resolved=true</code></b> ·
+     🔴→🟢 <b>ops 中继曾断连 ≈1h</b>（git 通道瞬断）→ <b>19:27 自愈</b></div>
   <div class="meta">
     <span>📅 2026-10-04</span>
     <span>📝 <code>foamliu/super_intelligence_2035</code> @ <code>main</code></span>
-    <span>📈 当日提交 <b>≈105</b>（截至 10:33）</span>
+    <span>📈 当日提交 <b>≈238</b>（截至 19:27）</span>
     <span>🎯 投稿截止 ≈ 2027-02-01（余 <b>≈120 天</b>）</span>
   </div>
 </header>
@@ -69,6 +68,8 @@
     <li><b>定位（18 轮 ops 远程探查，全程留痕于 <code>run/ops/outbox.md</code>）</b>：逐条否证 额度 / proxy / 环境变量 / 模型名 / 配置 / 版本，最后用 <b>四路 env 矩阵</b> 收敛 → <b>真凶 = <code>.29</code> 的 cline 必须显式 <code>-k &lt;key&gt;</code></b>。</li>
     <li><b>修复</b>：两条 loop 改为 <code>剥 proxy + 剥 OPENAI_* + -k "$CLINE_KEY"</code>（key 运行时现读、<b>不落仓库</b>）→ <b>08:01 复工</b>，两条线立刻产出真实工作。</li>
     <li><b>源头加固</b>：<code>.29</code> 的 <code>~/.bashrc</code> 里那把<b>已吊销的</b> <code>OPENAI_API_KEY</code> 已注释（原值保留为注记）；<b><code>https_proxy</code> 保留不动</b>（实测 GitHub 离了它就不通）。</li>
+    <li><b>晚间：第二层根因浮出 —— 4 条线共用一份 cline 配置</b>。<code>.29</code> 上 pretrain 与 harness <b>共用 <code>~/.cline/data/globalState.json</code></b>，而 harness 把它改成了自己的 <code>gw_proxy</code>（<code>127.0.0.1:9090</code>）→ pretrain 的 cline 被指向本地死代理 → <code>Forbidden</code>。<b>⇒ 已给 4 条线各建独立 <code>--data-dir</code></b>（<code>.cline_pretrain / .cline_harness / .cline_vision / .cline_data</code>）并逐个切过去（<code>Forbidden=0</code>）。</li>
+    <li><b>隔离机制踩到的三个坑（全部解决）</b>：① <code>--data-dir</code> 指向的是 <b>data 目录本身</b> —— 文件放 <code>&lt;D&gt;/</code> 根、不是 <code>&lt;D&gt;/data/</code>；② 只播 <code>globalState.json</code>+<code>secrets.json</code> <b>不够</b>，provider/base 还在 <code>settings/</code>（漏了就连不上）；③ <code>llm_pick</code> 会选中「<b>curl 200 但 cline 403</b>」的候选 → 已改为 <b>优先 glm-5.2</b>。</li>
   </ol>
 </div>
 
@@ -77,6 +78,7 @@
   <div class="kpi"><div class="v">249K</div><div class="l">P-9.3：<b>seq4096 速度最优</b>（TP1·MBS2，全系最高）</div></div>
   <div class="kpi"><div class="v">s=1.24</div><div class="l">⭐ P-9.6②：<b>FP8 首次转正</b> @ M=65536（TP4·SP·MBS8·seq8192）</div></div>
   <div class="kpi"><div class="v">4 / 5</div><div class="l">harness 端到端 <b>resolved=true</b>（<b>claude-code 已打通</b>）</div></div>
+  <div class="kpi"><div class="v">4 / 4</div><div class="l">各线 cline 配置已<b>隔离</b>（<code>--data-dir</code>），互不干扰</div></div>
 </div>
 
 <div class="toc">
@@ -90,7 +92,7 @@
     <li><a href="#s6">harness：R31–R34</a></li>
     <li><a href="#s7">关键数字</a></li>
     <li><a href="#s8">需要你决策 / 注意</a></li>
-    <li><a href="#s9">运维基础设施：零 token 的 ops relay</a></li>
+    <li><a href="#s9">运维基础设施：零 token 的 ops relay + <b>每条线独立 cline 配置</b>（今晚新装）</a></li>
     <li><a href="#s10">诚实条款：我犯的错与更正</a></li>
     <li><a href="#s11">💾 磁盘清理专项（D-CLEAN-4，已按指示收尾）</a></li>
   </ol>
@@ -171,27 +173,28 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
 <table>
   <tr><th>线</th><th>主机</th><th>状态</th><th>当前在做什么</th><th>关键数字</th></tr>
   <tr>
-    <td><b>pretrain</b></td><td><code>.29</code></td><td><span class="badge b-ok">✅ 推进中（P-9）</span></td>
-    <td><b>P-9.6 全收官</b>（① bf16 最优搜索 ✅ + ② FP8 e2e ✅ 转正）→ 随后 P-9.5 profiling · P-6② · 定 P-8</td>
-    <td>bf16 最优 <b>seq4096=249K</b> · ⭐ <b>P-9.6② FP8 @ M=65536 s≈1.24 🎉 首次转正</b></td>
+    <td><b>pretrain</b></td><td><code>.29</code></td><td><span class="badge b-ok">✅ P-9 收官 + P-9.7 跑中</span></td>
+    <td><b>P-9.6 全收官</b>（bf16 最优 + <b>FP8 转正</b>）→ <b>P-9.7「A1 稳态吞吐」≥1000 步长跑中</b>（P-9.5 profiling 崩过、待补）</td>
+    <td>bf16 最优 <b>seq4096=249K</b> · ⭐ <b>FP8 @ M=65536 s≈1.24 首次转正</b> · P-9.7 中间值 <b>~249K tok/s</b>（iter 340/1100，ETA 22:38）</td>
   </tr>
   <tr>
-    <td><b>vision</b></td><td><code>.12</code></td><td><span class="badge b-ok">🚀 R11-E 已开跑</span></td>
-    <td><b>所有已批准实验完成</b>（R11-E ✅ · R13 ✅ · R11-L家族全 ✅）</td>
-    <td>R11-E ✅ GPIC short 同 N <b>未抬高 ceiling</b> · R13 ✅ 官方 OV2 lp=79.81% vs 自研 7.99% · ⏸ AIMv2 暂缓</td>
+    <td><b>vision</b></td><td><code>.12</code></td><td><span class="badge b-info">🔄 臂⑥ AIMv2 训练中</span></td>
+    <td>已批全完成（R11-L 家族 / R11-L2 / caption-weight / R11-E / R13）→ 用户批准 <b>AIMv2</b>（跑中）→ 之后 <b>R11-F 数据源横比</b>（已批准、代码已备、自动接棒）</td>
+    <td>R11-E <b>未抬高</b> · R13 官方 <b>79.81%</b> vs 自研 7.99% · AIMv2 ~step 18850/30000 无坍缩</td>
   </tr>
   <tr>
     <td><b>data</b></td><td><code>.12</code></td><td><span class="badge b-ok">🔄 下载中</span></td>
-    <td>白名单 3 项（<code>l1_en_hq</code> 优先）· D-CLEAN-4 ✅ 已交付</td>
-    <td><code>l1_en_hq</code> <b>≈866/6006</b> · <code>zh</code> <b>171/256</b> · <code>gpic</code> <b>≈2234/8001</b></td>
+    <td>白名单 3 项（<code>l1_en_hq</code> 优先）· D-CLEAN-4 ✅ 已交付（§11）</td>
+    <td><code>l1_en_hq</code> <b>1114/6006</b> · <code>zh</code> <b>171/256</b> · <code>gpic</code> <b>2361/8001</b></td>
   </tr>
   <tr>
-    <td><b>harness</b></td><td><code>.29</code></td><td><span class="badge b-ok">✅ 3/5 端到端打通</span></td>
-    <td><b>R35–R36</b>：4/5 harness <code>resolved=true</code> → 剩 deepseek-harness（缺工具链）</td>
+    <td><b>harness</b></td><td><code>.29</code></td><td><span class="badge b-ok">✅ 4/5 端到端打通</span></td>
+    <td><b>R41–R44</b>：4/5 <code>resolved=true</code> → 剩 deepseek-harness（缺工具链）；本轮已 5 次复核 ops 中继健康</td>
     <td>cline · codex · opencode · <b>claude-code ✅</b> · ⏳ deepseek-harness</td>
   </tr>
 </table>
-<p class="note">⚠️ <b>两条 <code>.29</code> 线与两条 <code>.12</code> 线的差异，本身就是这次事故的画像</b>：同一把 key、同一份代码、同一套任务书，<b>只有 <code>.29</code> 全挂</b> —— 因为差异在 <b>宿主环境</b>（<code>~/.bashrc</code> 里多一把失效 key）。</p>
+<p class="note">⚠️ <b>两条 <code>.29</code> 线与两条 <code>.12</code> 线的差异，本身就是这次事故的画像</b>：同一把 key、同一份代码、同一套任务书，<b>只有 <code>.29</code> 全挂</b> —— 差异在 <b>宿主环境</b>（<code>~/.bashrc</code> 里多一把失效 key）。<br>
+🔒 <b>晚间的第二层真因（更根本）</b>：<code>.29</code> 上 <b>pretrain 与 harness 共用一份 <code>~/.cline/data/globalState.json</code></b> —— harness 把它改成自己的 <code>gw_proxy</code>（<code>127.0.0.1:9090</code>）后，pretrain 的 cline 就指向了本地死代理。<b>这解释了为什么“修好 key 之后又会复发”</b>。⇒ 已为 4 条线各建独立 <code>--data-dir</code>（见 <a href="#s9">§9.3</a>）。</p>
 
 <h2 class="sec" id="s3"><span class="no">3</span>pretrain：P-5b ✅ + P-9 全系收官 ⭐ P-9.6② FP8 首次转正</h2>
 
@@ -312,7 +315,19 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
 </table>
 <p>⇒ <b>bf16 seq4096 仍是绝对速度最优</b>（249K）；FP8 在 M=65536 翻倍但 TP4 通信开销让净吞吐只到 234K。若 P-8 正式训练追求<b>吞吐第一</b> → <b>A1（TP1·DP8·MBS2·bf16）</b>；若需要 <b>长上下文（seq8192）</b>→ 可接受 ~6% 吞吐损失选 B（FP8 更有性价比，因 bf16 基线只有 189K）。<b>等待 P-5b recipe 调优（P-9.5 profiling）与数据配比（base 下满）后再定 P-8</b>。</p>
 
-<h2 class="sec" id="s4"><span class="no">4</span>vision：R11-L2 + caption 权重消融</h2>
+<h3>3.7 🔜 P-9.7：A1 稳态吞吐确认（≥1000 步长跑，跑中）</h3>
+<p><b>动机</b>：P-9.6 得出「A1（TP1·DP8·MBS2·seq4096·bf16）= <b>249K tok/s 速度最优</b>」，但这是 <b>60 步短测</b>；而 P-9.1 早测同配置只有 <b>218K</b>（差 14%，当时标注「疑有争用」）。⇒ <b>拿短测数字去定 P-8 的吞吐预期有风险</b>，必须先确认 A1 的<b>稳态</b>。</p>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>配置（固定）</td><td><code>seq4096 / GBS1024 / TP1·DP8 / MBS2 / bf16</code> ＝ P-9.1 胜出点；<code>--save-interval 0</code>（不存 ckpt，免尾部 save gather 干扰）</td></tr>
+  <tr><td><b>判据（预注册）</b></td><td>取 <b>last-100 步稳态均值</b>：<b>≥240K</b> → 确认 249K 可信（P-8 按 A1 定）｜ <b>218–240K</b> → 以实测稳态为基线、注明短测不可用 ｜ <b>&lt;218K</b> → 以长跑为准</td></tr>
+  <tr><td>进度</td><td>✅ 已启动（脚本 <code>baize_p97_a1_steady.sh</code>）；<b>iter 340/1100 @19:05，~249K tok/s</b>，健康；<b>ETA ≈22:38</b>（1000 步 × ~17–20s ≈ 5–6 h，GPU 独占）</td></tr>
+</table>
+<div class="ok-box">
+  📌 它是 <b>P-8 决策的直接输入</b>（排 P-9.5 / P-6② 之前）。⚠️ 顺带记录：<b>P-9.5 的 torch.profiler 那次跑崩了</b>（level-1 MFU 分析已出：bf16 MFU <b>52.8–60.6%</b>、FP8 32.7% → <b>瓶颈是通信而非算力</b>），待后续补跑。
+</div>
+
+<h2 class="sec" id="s4"><span class="no">4</span>vision：R11-E / R13 收尾 → <b>臂⑥ AIMv2 跑中</b> → R11-F 数据源横比（已批准）</h2>
 
 <h3>4.1 R11-L 家族：<b>五臂全部未翻盘</b></h3>
 <table>
@@ -337,9 +352,51 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <tr><td>1.0</td><td><b>0.61%</b></td><td>—</td></tr>
   <tr><td>0.5</td><td><b>0.60%</b></td><td>0.55 / 0.51 / 0.68%</td></tr>
 </table>
-<p>两点合计 <b>≈32.7 GPU·h</b>。这条负结果<b>很有价值</b>：它把「稠密监督翻盘」这条路的<b>唯一便宜分支</b>也证否了 —— 剩下的只有最贵的 AIMv2 式 patch 预测（⏸ 暂缓）。</p>
+<p>两点合计 <b>≈32.7 GPU·h</b>。这条负结果<b>很有价值</b>：它把「稠密监督翻盘」这条路的<b>唯一便宜分支</b>也证否了 —— 剩下的只有最贵的 AIMv2 式 patch 预测（<b>用户已批准、正在跑，见 §4.5</b>）。</p>
 
-<h3>4.3 本线的叙事已经收敛</h3>
+<h3>4.3 ✅ R11-E：GPIC 数据轴 —— 「未抬高 ceiling」（11:19 完成）</h3>
+<table>
+  <tr><th>对照点 N</th><th>GPIC <code>short</code> lp</th><th>基线 CC12M+Amshaker</th><th>Δ</th><th>裁定</th></tr>
+  <tr><td>5.12M</td><td><b>6.01%</b></td><td>3.43%</td><td><span class="badge b-ok">+2.58</span></td><td>该点「抬高」✓</td></tr>
+  <tr><td>10.24M</td><td><b>5.69%</b></td><td>5.45%</td><td><span class="badge b-warn">+0.24</span></td><td>该点「未抬高」（±1.5 内）</td></tr>
+  <tr><td>15.36M（补充）</td><td>5.73%</td><td>6.08%</td><td>−0.35</td><td>唯一对已耗尽，仅作补充</td></tr>
+</table>
+<div class="note">两点<b>交叉</b>（一点过线、一点在噪声带内）→ 预注册裁定 = <b>「未抬高 / 无显著差异」</b>。含义：<b>GPIC short 有显著先发优势（低 N 起步更快），但不抬 ceiling</b> —— <b>数据质量加速早期，数据总量/多样性决定上限</b>。R9 的 25.1% 渐近不被数据臂改动推翻。⚠️ 可比区间仅 ≤10.9M，<b>不外推</b>。公平性：同 126.78M / 0 extra token，30k 步 3892.7s（吞吐 5918.6 ≈2.0× 基线）。</div>
+
+<h3>4.4 ✅ R13：OpenVision2 <b>官方权重</b>单臂对照（13:01 完成）</h3>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>对象</td><td><code>UCSC-VLAA/openvision2-vit-large-patch14-224-vision-only</code>（Apache-2.0；<b>294 keys strict 全对上</b>）</td></tr>
+  <tr><td>官方结构</td><td>patch14 / d24 / w1024 / h16 / <b>GELU</b> / pool=avg（256 patch）· params <b>304.23M</b>（我们自研=patch16/d30 → <b>须另建官方结构塔才 load 得动</b>）</td></tr>
+  <tr><td><b>IN-1k frozen-trunk lp</b></td><td><b>79.81%</b>（zs = N/A：1024-dim 生成式，与冻结 CLIP-L/336 的 768-dim 不对齐）· 0.57 ms/img = 1766.5 img/s</td></tr>
+  <tr><td>对照</td><td>官方同族 <b>79.81%</b> vs 我们 from-scratch 峰值 <b>7.99%</b>（渐近 25.1%）→ <b>+71.8 点</b></td></tr>
+</table>
+<div class="ok-box">📌 <b>结论边界（不抬上限）</b>：官方同族 ViT 同口径就是 79.81%，我们从零对比学习只有 7.99% → <b>「上限低是因为数据量 + 目标函数，不是塔写得烂」</b>。⚠️ <b>协议不同（官方大尺度预训练 vs 我们从零）→ 单列一张表、不并入排名</b>。</div>
+
+<h3>4.5 🔄 臂⑥ AIMv2（patch 预测 + text 双流 AR）—— 训练中</h3>
+<p><b>批准来源</b>：用户 2026-10-04 拍板 <b>「Approve &amp; start AIMv2 now」</b>（本线此前 ⏸ 暂缓的唯一剩余项）。实现：InfoNCE + <b>masked patch reconstruction</b>，<code>PatchPredictor</code> <b>0.66M</b> 自研（<code>norm_pix</code> 参考 OpenVision Apache-2.0，<b>不碰 Apple Sample Code</b>）。</p>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>进度</td><td>S1 实现 ✅ / S2 smoke ✅ / <b>S3 全量 30k 步跑中</b>（~step 18850/30000）</td></tr>
+  <tr><td>健康度</td><td>无坍缩：PROBE@8100 <b>C1=0.35 / C2_gap +0.116 / C4=OK</b>；contrast ~3.6–3.8、patch_mse ~0.25、scale ~49–53（坍缩先验 scale ≪6.2）</td></tr>
+  <tr><td>⚠️ 已知噪声</td><td><code>/tmp/r11_aimv2.log</code> 里的 NCCL <code>Broken pipe / TCPStore shut down too early</code> = <b>HeartbeatMonitor 后台线程的非致命噪声</b>（主线 step 持续推进、8 卡 71–92% util）→ <b>不要误判为 crash、不要 kill</b></td></tr>
+  <tr><td>⚠️ 待盯</td><td>曾观测到 <b><code>r11_run_aimv2.sh</code> 父进程 DIED（workers 变孤儿 ppid=1）</b> → <b>auto-eval 可能触发不到</b>，需确认「[done] + 4-ckpt IN-1k lp」</td></tr>
+</table>
+
+<h3>4.6 🆕 R11-F：数据源横向对比（<b>已批准</b>，排在 AIMv2 之后）</h3>
+<p><b>用户指令</b>：「把几个数据源<b>横着比</b>一下；GPIC 至少试试 <code>short</code> 和 <code>medium</code>（合计 90%），跟 <b>en500k</b>、<b>CC12M</b> 一起比。」</p>
+<table>
+  <tr><th>臂</th><th>数据</th><th>规模</th><th>说明</th></tr>
+  <tr><td>A</td><td>GPIC <code>short</code></td><td>≈13M</td><td>与 R11-E 交叉验证</td></tr>
+  <tr><td>B</td><td>GPIC <code>medium</code></td><td>≈13M</td><td>🆕 <b>Q1：更长 caption（46 tok）是否有益</b></td></tr>
+  <tr><td>C</td><td>GPIC <code>short+medium</code></td><td>≈26M</td><td>🆕 <b>Q3：用户点名的「合计 90%」</b></td></tr>
+  <tr><td>D</td><td>en500k</td><td><b>0.5M</b></td><td>⚠️ 单列（IN-1k <b>in-domain</b> + 30k 步 ≈ 30 epochs）</td></tr>
+  <tr><td>E</td><td>CC12M</td><td>≈11M</td><td>纯 CC12M（不含 Amshaker）</td></tr>
+</table>
+<p>统一 recipe：<b>w512 + 冻结 CLIP-768 + InfoNCE + 固定 30k 步 + IN-1k lp</b>；预注册判据 <b>±1.5 pp</b>；成本 <b>≈8–10h</b>（5 臂串行）。<b>前置发现</b>：R4 实测 GPIC 四档 —— <code>tag</code> 11 tok/0% 截断 · <code>short</code> 20 tok/0% · <b><code>medium</code> 46 tok/仅 0.1% 截断</b> · <code>long</code> 157 tok/<b>100% 截断（故不提供）</b>。</p>
+<div class="ok-box">📌 代码准备已就绪（<code>data.py</code> + <code>r9_train.py</code> + <code>r11_run_datasource.sh</code> + 预注册 §15）；<b>auto-launcher：AIMv2 训完 → AIMv2 eval → 等 GPU 空 → 启动 R11-F</b>。⚠️ 待复核 <code>build_gpic_loader</code> 是否真支持 <code>medium</code>（relay 巡检时仍见旧的 <code>!= 'short'</code>）。</div>
+
+<h3>4.7 本线的叙事已经收敛</h3>
 <div class="ok-box">
   从零路线 + <b>冻结文本塔</b> + <b>对比学习</b> + <b>w512 小塔</b> = 当前配置下的最优解；
   上限由 <b>数据量</b>（本地 ≈118M 唯一对 vs AIMv2 的 ≈120 亿）决定，<b>不是架构</b>。
@@ -353,20 +410,20 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <tr><th>项</th><th>规模</th><th>状态</th><th>说明</th></tr>
   <tr><td><code>ultrafineweb_en</code></td><td>1 T tok</td><td><span class="badge b-ok">✅ 已下满</span></td><td>P-8 的 S 段主体已够</td></tr>
   <tr><td><code>ultrafineweb_en_v1_4</code></td><td>6.7 TB</td><td><span class="badge b-no">🔴 已停</span></td><td>@1.8 MB/s ≈ <b>43 天</b>、非 P-8 必需、且阻塞后两项 → <b>已停，488 分片保留不删</b></td></tr>
-  <tr><td><code>ultrafineweb_l1_en_hq</code></td><td>478 GB</td><td><span class="badge b-info">🔄 优先下</span></td><td><b>866 / 6006</b> @~1.5 MB/s（连续推进，非僵死）</td></tr>
+  <tr><td><code>ultrafineweb_l1_en_hq</code></td><td>478 GB</td><td><span class="badge b-info">🔄 优先下</span></td><td><b>1114 / 6006</b>（已过第 1 快照 CC-MAIN-2025-30 的 1000 件、进入第 2 快照）@~1.9 MB/s（连续推进，非僵死）</td></tr>
   <tr><td><code>ultrafineweb_zh</code></td><td>324 GB</td><td><span class="badge b-info">🔄 排队</span></td><td><b>171 / 256</b></td></tr>
-  <tr><td><b>GPIC</b></td><td>—</td><td><span class="badge b-info">🔄 继续</span></td><td>train <b>2234 / 8001</b> + test 128 ✓</td></tr>
+  <tr><td><b>GPIC</b></td><td>—</td><td><span class="badge b-info">🔄 继续</span></td><td>train <b>2361 / 8001</b>（重连续传中）+ test 128 ✓</td></tr>
 </table>
 <p>🚫 <b>白名单外一律不下载、不调研、不推荐</b>（含 <code>UltraX-Preview</code>）→ 配比实验的 <b>S1 轴（base vs UltraX）相应降级为「仅 base」</b>，已在任务书如实记录。</p>
 
 <h3>5.2 风险与进度</h3>
 <ul>
-  <li>⚠️ <b><code>l1_en_hq</code> 速度偏慢</b>（~1.5 MB/s；小文件 74MB/件 + CDN 端点慢，<b>已证非僵死</b>）→ 剩 ≈380 GB + <code>zh</code> ≈107 GB，<b>ETA ≈2.9 天</b>（偏慢）；路径更正：实际落盘 <code>/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb</code>。</li>
+  <li>⚠️ <b><code>l1_en_hq</code> 速度偏慢</b>（~1.9 MB/s；小文件 73–74 MB/件 + CDN 端点慢，<b>已证非僵死</b>）→ 剩 ≈5032 件/≈367 GB + <code>zh</code> 剩 85 件/≈108 GB，<b>ETA ≈2.7 天</b>（偏慢）/ 乐观 1 天；路径更正：实际落盘 <code>/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb</code>。</li>
   <li>✅ 磁盘 <code>/nas_train</code> <b>84%</b>（Avail 35T）；<b>D-CLEAN 系列累计回收 ≈4.96 TiB</b>（含 <code>servers/</code> 972 G）。</li>
-  <li>🔄 base retry-loop 真推进（l1_en_hq 866/6006 + gpic 2234/8001），非僵死不重启。</li>
+  <li>🔄 base retry-loop 真推进（<code>l1_en_hq</code> <b>1114/6006</b> + <code>gpic</code> <b>2361/8001</b>），非僵死不重启；磁盘 <code>/nas_train</code> <b>84%</b>（Avail 35T）。</li>
 </ul>
 
-<h2 class="sec" id="s6"><span class="no">6</span>harness：R31–R34</h2>
+<h2 class="sec" id="s6"><span class="no">6</span>harness：R30–R44（<b>4/5 harness 端到端打通</b>）</h2>
 <table>
   <tr><th>轮次</th><th>成果</th><th>状态</th></tr>
   <tr><td><b>R30</b></td><td><code>r1_eval.py</code> 端到端跑通 → 官方 <code>get_eval_report</code> 返回 <code>resolved: true</code>（<code>django__django-10914</code>）</td><td><span class="badge b-ok">✅</span></td></tr>
@@ -374,6 +431,8 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <tr><td><b>R32</b></td><td><code>run_harness.py</code>（<b>5 个 Driver</b>）+ <b>cline headless 全链路 smoke 跑通</b>；定位 <code>-k</code> 必传 gotcha</td><td><span class="badge b-ok">✅</span></td></tr>
   <tr><td><b>R34</b></td><td><b>npm/bun 镜像口子打通</b>（腾讯镜像 + 代理）+ node-gyp headers 镜像 → 开始 build opencode</td><td><span class="badge b-ok">✅</span></td></tr>
   <tr><td><b>R35</b></td><td>⭐⭐ <b>3/5 harness 端到端 <code>resolved=true</code></b>（同一 instance <code>django__django-10914</code>、同一模型 <code>deepseek-v4-flash</code>）：<b>cline</b> · <b>codex 0.94.0</b>（patch 2903B/4 文件 · 182.6s）· <b>opencode 1.18.27</b>（4848B/6 文件 · 231.2s）<br>+ 交付 <code>gw_proxy.py</code>（本地 SSE 反代：<code>developer→system</code> 改写 + 注入 key）+ <b>修掉 <code>r1_eval.py</code> 一个致命 bug</b>（rootfs/testbed 跨 run 复用导致 patch 假失败 → apply 前 <code>git reset --hard base_commit; git clean -fdq</code>）</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td><b>R41–R42</b></td><td><b>claude-code 1.0.0 端到端打通</b>（工具回路 Bash/Write + 文件写回实测通过）。避坑：<code>bun run</code> 从非源码目录会跳过 <code>bunfig.toml</code> 的 <code>[define]</code> → <code>MACRO is not defined</code>，改用 <code>--preload</code> + 显式 <code>--define</code> 注入解决。<b>→ 4/5 harness <code>resolved=true</code></b>（claude-code patch 5640B：<code>FAIL_TO_PASS 1/1</code>、<code>PASS_TO_PASS 98/98</code>）</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td><b>R43–R44</b></td><td>固化「5h 滑动窗口 key ⇒ 低并发 ≤4 / 跨 harness 串行 / 每个 harness 跑完即固化」；并<b>连续 5 次复核 ops 中继健康、跳过重启</b>（未误杀健康中继）</td><td><span class="badge b-ok">✅</span></td></tr>
 </table>
 <div class="note">
   <b>路线已定型：无 docker</b> —— <code>unshare --user --map-root-user --mount --pid --fork</code> 用户命名空间 chroot 沙箱（rootfs 落 <code>/nas_train</code>），绕开 <code>docker pull</code> 不通的死局。
@@ -391,6 +450,7 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
       <li><b>P-9.3 seq4096 = 249K tok/s</b>（全系最高速度最优）</li>
       <li><b>P-9.2</b>：TP2·MBS4=200K · ④ TP2·SP·MBS4=210K</li>
       <li>⭐ <b>P-9.6② FP8 @ M=65536：s=1.24 🎉 转正</b>（A: CUDA_DEVICE_MAX_CONNECTIONS=1）</li>
+      <li>🔜 <b>P-9.7 A1 稳态吞吐</b>（≥1000 步）：iter 340/1100，<b>~249K tok/s</b>，ETA 22:38</li>
       <li>胜出配置：LR 1e-3 · WSD · warmup 238 / decay 477 · bf16</li>
       <li>每步 <b>≈4M token</b> 不变量（4096↔1024 / 8192↔512）</li>
     </ul>
@@ -402,12 +462,14 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
       <li>数据 scaling：幂律渐近 <b>25.1%</b>（R²≈0.94）</li>
       <li>塔宽：<b>越小越好</b>（w512 6.10% &gt; w768 3.63% &gt; w1024 1.03%）</li>
       <li>M 轴：<b>w384 lp 7.99% 为全部宽度最高，无饱和点</b></li>
+      <li>R11-E <b>未抬高 ceiling</b>（@5.12M +2.58 / @10.24M +0.24 交叉）· R13 官方 OV2 <b>79.81%</b> vs 自研 7.99%</li>
+      <li>🔄 臂⑥ <b>AIMv2 跑中</b>（用户批准）· 🆕 <b>R11-F 数据源横比已批准</b></li>
     </ul>
   </div>
   <div class="card">
     <h3 style="margin-top:0">数据 / 磁盘</h3>
     <ul>
-      <li><b>l1_en_hq ≈866/6006</b> · <b>zh 171/256</b> · <b>gpic ≈2234/8001</b> 推进中</li>
+      <li><b>l1_en_hq 1114/6006</b> · <b>zh 171/256</b> · <b>gpic 2361/8001</b> 推进中</li>
       <li>💾 <b>本日回收 ≈3.65 TB</b>（5 个旧实验目录）→ <code>/nas_train</code> <b>86% → 84%</b></li>
       <li><b>累计回收 ≈4.96 TiB</b>（含 D-CLEAN-3 的 <code>servers/</code> 972 G）</li>
       <li>⚠️ 仍待拍板：<code>datasets/FineVision</code> <b>4.32 TiB</b>（最大单点，8.5 月未动）</li>
@@ -416,10 +478,10 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <div class="card">
     <h3 style="margin-top:0">运维侧</h3>
     <ul>
-      <li>当日提交 <b>≈105</b>（截至 10:33，含 9a49fcf data 推送）</li>
-      <li>本次事故探查 <b>18 轮 ops 命令（RUN_ID 9→29）</b></li>
-      <li>记忆体量：<code>MEMORY.md</code> <b>27.2KB</b>（≤32KB ✅）</li>
-      <li>任务书瘦身：<b>4 份 237KB → 115KB（-52%）</b></li>
+      <li>当日提交 <b>≈238</b>（截至 19:27）</li>
+      <li>本日 ops 探查：<b>RUN_ID 9→62</b>（credential 18 轮 + <b>配置隔离 13 轮</b> + 1 次只读巡检）</li>
+      <li>新增基础设施：<b>4 条线独立 cline 配置</b>（<code>--data-dir</code>）+ <code>llm_pick</code> 优先 glm-5.2</li>
+      <li>⚠️ ops 中继曾<b>断连 ≈1h</b>（git 通道瞬断）→ <b>19:27 自愈</b>，无需人工救</li>
     </ul>
   </div>
 </div>
@@ -429,13 +491,13 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <tr><th>#</th><th>事项</th><th>状态 / 我的建议</th></tr>
   <tr>
     <td>1</td>
-    <td><b>vision 已全部完成</b>（R11-E ✅ 所有批准实验 done；R13 ✅ OV2 官方对照 79.81% vs 自研 7.99%）</td>
-    <td><span class="badge b-ok">✅ 所有已批准实验完成</span> <b>GPU 闲置，等下一批指令</b>。剩臂⑥ AIMv2 ⏸ 暂缓。📌 <a href="#s4">见 §4</a>。</td>
+    <td><b>vision 已排到两条后续</b>：臂⑥ <b>AIMv2 训练中</b>（用户批准）→ 之后 <b>R11-F 数据源横比</b>（已批准、代码已备、自动接棒）</td>
+    <td><span class="badge b-info">🔄 AIMv2 跑中</span> 两处待盯：① AIMv2 父脚本曾 DIED → 确认 auto-eval；② 复核 <code>build_gpic_loader</code> 是否真支持 <code>medium</code>。📌 <a href="#s4">见 §4.5 / §4.6</a>。</td>
   </tr>
   <tr>
     <td>2</td>
     <td><b><code>l1_en_hq</code> 下载偏慢</b>（~1.5 MB/s，ETA ≈2.9 天）</td>
-    <td><span class="badge b-warn">需知悉</span> 已证<b>非僵死</b>，进度 <b>866/6006</b>。GPIC <b>2234/8001</b> 正常。路径更正：落盘 <code>/nas_train/…/Ultra-FineWeb</code>（非 <code>/nas_inference</code>）。</td>
+    <td><span class="badge b-warn">需知悉</span> 已证<b>非僵死</b>，进度 <b>1114/6006</b>。GPIC <b>2361/8001</b> 正常。路径更正：落盘 <code>/nas_train/…/Ultra-FineWeb</code>（非 <code>/nas_inference</code>）。</td>
   </tr>
   <tr>
     <td>3</td>
@@ -457,12 +519,18 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
     <td><b>磁盘清理</b></td>
     <td><span class="badge b-ok">✅ 按你指示「到此为止」</span> 已停；本日回收 ≈3.65 TB。<b>未动的候选</b>（<code>FineVision</code> 4.32T / <code>HuggingFaceFW</code> 1.24T / CC12M 1.13T / <code>chip_expert</code>+<code>models</code> 0.92T）<b>保持原样</b>。</td>
   </tr>
+  <tr>
+    <td>7</td>
+    <td><b>🆕 4 条线独立 cline 配置（<code>--data-dir</code>）</b> —— 根治「共享配置」隐患（<a href="#s9">§9.3</a>）</td>
+    <td><span class="badge b-ok">pretrain / vision / data ✅ 已切（Forbidden=0）</span> · <span class="badge b-warn">harness 已建目录、按你指示暂未切</span>。<br>⚠️ 另：<b>ops 中继今晚断连 ≈1h</b>（git 通道瞬断）→ <b>19:27 自愈</b>；已把「先只读诊断、判定卡死才重启」的排查指令写进 harness 任务书（<b>替换掉旧的会无条件 pkill 的粗暴 rescue 块</b>）。</td>
+  </tr>
 </table>
 
-<h2 class="sec" id="s9"><span class="no">9</span>运维基础设施：零 token 的 ops relay（今天立了大功）</h2>
+<h2 class="sec" id="s9"><span class="no">9</span>运维基础设施：零 token 的 ops relay + 每条线独立 cline 配置</h2>
 <div class="ok-box">
   <b>ops relay 是一条「纯 bash、零 token、~20s 轮询」的远程命令通道</b>（Windows 侧 → git → 服务器执行 → 结果写回 <code>run/ops/outbox.md</code>）。
-  它今天的价值被彻底验证：<b>18 轮探查 + 3 次修复动作，全部通过它完成，没有消耗一个 agent token、没有打扰任何正在干活的线。</b>
+  它今天的价值被彻底验证：<b>RUN_ID 9 → 62（≈54 条命令），全部通过它完成，没有消耗一个 agent token、没有打扰任何正在干活的线。</b>
+  <br>🔴 今晚它也出过一次故障：<b>18:2x → 19:27 断连 ≈1h</b>（<code>.29</code> ↔ github 瞬时不可达）→ <b>自愈</b>；判别信号 =「<code>.last_run_id</code> 长时间不涨 <b>且</b> <code>git fetch</code> 失败」。⚠️ 这次也暴露一个依赖：<b>中继靠它自己的 <code>git pull</code> 更新共享工作副本</b>，所以 git 通道一断，指令就送不到服务器。
 </div>
 <ul>
   <li><b>用法铁律（已记入记忆）</b>：① 命令块必须放在文件<b>最前面</b>（中继只执行<b>第一个</b> bash 代码块）② 旧块要降级为 text 围栏（否则它一直霸占"第一个块"）③ <code>RUN_ID</code> 每次 +1。</li>
@@ -541,6 +609,23 @@ sleep 2 && pgrep -af 'baize_(vision|data)_loop'</code></pre>
 
 
 
+<h3>9.3 🔒 每条线独立 cline 配置（今晚新装，根治「共享配置」隐患）</h3>
+<div class="danger">
+  <b>为什么必须做</b>：<code>.29</code> 上 pretrain 与 harness <b>共用同一份 <code>~/.cline/data/globalState.json</code></b> —— harness 把它改成自己的 <code>gw_proxy</code>（<code>127.0.0.1:9090</code>）后，pretrain 的 cline 就被指向本地死代理 → <code>error: Forbidden</code>（而 cline 仍 <code>exit 0</code> → 静默）。<b>这就是「9 小时静默」的深层真因，而且它会反复复发。</b>
+</div>
+<table>
+  <tr><th>隔离目录（NFS，两机共享）</th><th>用于</th><th>状态</th></tr>
+  <tr><td><code>/nas_train/app.e0031982/.cline_pretrain</code></td><td>pretrain（<code>.29</code>）</td><td><span class="badge b-ok">✅ 已切 · <code>Forbidden=0</code></span></td></tr>
+  <tr><td><code>/nas_train/app.e0031982/.cline_vision</code></td><td>vision（<code>.12</code>）</td><td><span class="badge b-ok">✅ 已切 · model=glm-5.2 · <code>Forbidden=0</code></span></td></tr>
+  <tr><td><code>/nas_train/app.e0031982/.cline_data</code></td><td>data（<code>.12</code>）</td><td><span class="badge b-ok">✅ 已切 · model=glm-5.2 · <code>Forbidden=0</code></span></td></tr>
+  <tr><td><code>/nas_train/app.e0031982/.cline_harness</code></td><td>harness（<code>.29</code>）</td><td><span class="badge b-warn">⚠️ 目录已建，<b>按你指示暂未切</b></span></td></tr>
+</table>
+<p><b>怎么做</b>（RUN_ID 50→61，全程见 <code>run/ops/outbox.md</code>）：① 摸清 <code>--data-dir</code> 语义 = <b>指向 data 目录本身</b>（文件放 <code>&lt;D&gt;/</code> 根）；② 每条线播 <code>globalState.json</code> + <code>secrets.json</code> + <b><code>settings/</code></b>；③ 逐线 smoke（必须回 <code>OK</code>）；④ 回写各 loop 的 cline 调用加 <code>--data-dir "$DATA_DIR"</code>；⑤ <b>自保护重启</b>（该线有活动 cline 就不动）。</p>
+<div class="note">
+  ⚠️ <b>三个坑（都已解决，写下来免得再踩）</b>：① <b>只播两个 json 不够</b> —— provider/base 也在 <code>settings/providers.json</code> / <code>models.json</code>，漏了就 <code>Cannot connect to API</code>（<b>不是</b> Forbidden）；② <b>ssh 非交互 shell 的 PATH 没有 <code>bun</code></b> → 需显式 <code>export PATH=$HOME/.bun/bin:$PATH</code>（否则 <code>/usr/bin/env: 'bun': No such file</code>）；③ <b>smoke 的 cline 必须加 <code>&lt; /dev/null</code></b>，否则它会把 ssh heredoc 里<b>剩余的脚本当 stdin 吃掉</b>（害我误判了两轮）。<br>
+  🔑 另修一个真缺陷：<code>llm_rotate.sh</code> 的 <code>llm_pick</code> 会选中「<b>curl 探针 200 但 cline 实际 403</b>」的候选（<code>deepseek-v4-flash @ /v1</code>）→ 已改为 <b>优先 glm-5.2</b>（<code>glm-5.2 @ /cloud/v1</code> 实测 cline 可用）。这直接修好了 vision/data 切隔离目录后的一轮 <code>Forbidden</code>。
+</div>
+
 <h2 class="sec" id="s10"><span class="no">10</span>诚实条款：我犯的错与更正</h2>
 <table>
   <tr><th>#</th><th>我犯了什么</th><th>后果 / 更正</th></tr>
@@ -549,11 +634,15 @@ sleep 2 && pgrep -af 'baize_(vision|data)_loop'</code></pre>
   <tr><td>3</td><td>在 loop 里用 <code>python3 -c</code> 取 key</td><td>relay 非交互 shell <b>PATH 无 python3</b> → 静默退回 stale key。改用 <code>sed</code> 解决。</td></tr>
   <tr><td>4</td><td>为「修 driver」把<b>能跑的版本改坏</b></td><td>制造了一次回归（07:39–07:42）。现已<b>回退到实证配方 + 单独修 driver</b>。</td></tr>
   <tr><td>5</td><td>脱敏 <code>sed</code> 写错</td><td>RUN_ID 11 把一把<b>（已失效的）</b> <code>OPENAI_API_KEY</code> 明文写进了 <code>outbox.md</code>。<b>风险很低但仍是失误</b>；后续所有输出均改用 <code>&lt;MASKED&gt;</code>。</td></tr>
+  <tr><td>6</td><td>RUN_ID 50 的块<b>只写在本地、且忘了把顶部 <code>&lt;!-- RUN_ID --&gt;</code> 标记加 1</b></td><td>中继判据是 <code>rid &gt; last_run_id</code> → 相等即<b>永不触发</b>，卡了整整一轮。教训：<b>下发的最后一步必须核对「头标已加、文件已 push」</b>。</td></tr>
+  <tr><td>7</td><td>relay 块里的 cline smoke <b>漏了 <code>&lt; /dev/null</code></b></td><td>cline <b>把 ssh heredoc 里剩余的脚本当 stdin 吃掉</b> → 输出莫名截断，<b>害我误判成「嵌套 heredoc bug」</b>、白绕两轮。已全量修正。</td></tr>
+  <tr><td>8</td><td>验证隔离目录时 <b>用错了 (model, base) 配对</b></td><td>新建 state 让 <code>llm_pick</code> 选到 <code>flash@/v1</code>（curl 200 / cline 403）→ 连报两轮 <code>Forbidden</code>，<b>差点误判「<code>--data-dir</code> 不可用」</b>。教训：<b>要复现 loop 的真实配对</b>（<code>glm-5.2 @ /cloud/v1</code>）。</td></tr>
 </table>
 <div class="note">
-  <b>这次事故留下的两条最有价值的经验</b>：<br>
+  <b>这次事故留下的三条最有价值的经验</b>：<br>
   ① <b><code>exit 0</code> ≠ 成功</b> —— cline 在鉴权失败时也返回 0，loop 一律当成功 → 必须靠 <code>grep -c 'error:.*Forbidden'</code> 这类<b>主动探针</b>兜底。<br>
-  ② <b>多机部署的凭据必须同步轮换</b> —— 一半的线因为「只有一台更新过」而静默死亡 9 小时。
+  ② <b>多机部署的凭据必须同步轮换</b> —— 一半的线因为「只有一台更新过」而静默死亡 9 小时。<br>
+  ③ <b>不要共用一份可变配置</b> —— 4 条线抢同一份 <code>~/.cline/data/globalState.json</code>，谁改一次就踩别人一脚；<b>必须按线隔离</b>（<code>--data-dir</code>）。
 </div>
 
 <h2 class="sec" id="s11"><span class="no">11</span>💾 磁盘清理专项（D-CLEAN-4，已按指示收尾）</h2>
@@ -605,7 +694,7 @@ sleep 2 && pgrep -af 'baize_(vision|data)_loop'</code></pre>
 
 <footer>
   <p>本报告由<b>运维</b>（外部指挥 4 条 agent 线）生成 · 数据来源：各线 <code>run/MEMORY_*.md</code> · <code>run/EXPERIMENTS_*.md</code> · <code>run/ops/outbox.md</code> · <code>git log</code>。</p>
-  <p>⚠️ 所有数字均可在仓库中溯源；凡未能取证的一律标注「待实测 / 假设」。<b>本日最值得记住的一句：<code>exit 0</code> ≠ 成功。</b></p>
+  <p>⚠️ 所有数字均可在仓库中溯源；凡未能取证的一律标注「待实测 / 假设」。<b>本日最值得记住的两句：<code>exit 0</code> ≠ 成功；「共用一份配置」= 迟早互相踩。</b></p>
 </footer>
 
 
