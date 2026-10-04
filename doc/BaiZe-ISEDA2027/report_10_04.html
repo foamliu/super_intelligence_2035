@@ -49,14 +49,15 @@
 
 <header class="hero">
   <h1>BaiZe 工作汇报 · 2026-10-04</h1>
-  <div class="sub">🔴→✅ <b>`.29` 两条线静默 9 小时事故</b>：定位（<b>cline 必须显式 <code>-k</code></b>）+ 修复 + 源头加固 ·
-     🔑 <b>P-5b 完成（20B，final loss 1.9141）</b> → <b>P-9.1 吞吐扫描在跑</b> ·
-     vision <b>R11-L2 ✅ 未翻盘</b> + <b>caption 三点消融（全 ≈ 随机）</b> ·
-     data <b>白名单已执行</b> · harness <b>R34 镜像打通</b></div>
+  <div class="sub">🔑 <b>P-9 收官在望</b>：<b>MBS 1→2 = +59%</b>（138K→<b>218K tok/s</b>）· ⭐ <b>TP2·MBS4 落地不 OOM → M=16384 命中 FP8 交叉点（~200K tok/s）</b> ·
+     🔴→✅ <b><code>.29</code> 9 小时静默事故</b>已定位并修复（<b>cline 必须显式 <code>-k</code></b>）·
+     💾 磁盘<b>回收 ≈3.65 TB</b>（86%→84%）·
+     harness <b>3/5 harness 端到端 <code>resolved=true</code></b> ·
+     vision <b>R11-E（GPIC 数据轴）已开跑</b></div>
   <div class="meta">
     <span>📅 2026-10-04</span>
     <span>📝 <code>foamliu/super_intelligence_2035</code> @ <code>main</code></span>
-    <span>📈 当日提交 <b>≈72</b>（截至 08:15；10-03 全天 235）</span>
+    <span>📈 当日提交 <b>≈105</b>（截至 10:33）</span>
     <span>🎯 投稿截止 ≈ 2027-02-01（余 <b>≈120 天</b>）</span>
   </div>
 </header>
@@ -64,24 +65,24 @@
 <div class="verdict">
   <strong>今天的主线：一次「没有报错的故障」被揪出来并修掉 —— 而它差点让 8 卡白烧一整天。</strong>
   <ol style="margin:10px 0 0">
-    <li><b>发现</b>：`.29` 的 pretrain / harness <b>整整 9 小时零产出</b>，日志里却只有 <code>error: Forbidden</code> + <b><code>exit 0</code></b> → loop 判定“成功”、继续睡 = <b>完全静默</b>。</li>
-    <li><b>定位（18 轮 ops 远程探查，全程留痕于 <code>run/ops/outbox.md</code>）</b>：逐条否证 额度 / proxy / 环境变量 / 模型名 / 配置 / 版本，最后用 <b>四路 env 矩阵</b> 收敛 → <b>真凶 = `.29` 的 cline 必须显式 <code>-k &lt;key&gt;</code></b>。</li>
+    <li><b>发现</b>：<code>.29</code> 的 pretrain / harness <b>整整 9 小时零产出</b>，日志里却只有 <code>error: Forbidden</code> + <b><code>exit 0</code></b> → loop 判定“成功”、继续睡 = <b>完全静默</b>。</li>
+    <li><b>定位（18 轮 ops 远程探查，全程留痕于 <code>run/ops/outbox.md</code>）</b>：逐条否证 额度 / proxy / 环境变量 / 模型名 / 配置 / 版本，最后用 <b>四路 env 矩阵</b> 收敛 → <b>真凶 = <code>.29</code> 的 cline 必须显式 <code>-k &lt;key&gt;</code></b>。</li>
     <li><b>修复</b>：两条 loop 改为 <code>剥 proxy + 剥 OPENAI_* + -k "$CLINE_KEY"</code>（key 运行时现读、<b>不落仓库</b>）→ <b>08:01 复工</b>，两条线立刻产出真实工作。</li>
-    <li><b>源头加固</b>：`.29` 的 <code>~/.bashrc</code> 里那把<b>已吊销的</b> <code>OPENAI_API_KEY</code> 已注释（原值保留为注记）；<b><code>https_proxy</code> 保留不动</b>（实测 GitHub 离了它就不通）。</li>
+    <li><b>源头加固</b>：<code>.29</code> 的 <code>~/.bashrc</code> 里那把<b>已吊销的</b> <code>OPENAI_API_KEY</code> 已注释（原值保留为注记）；<b><code>https_proxy</code> 保留不动</b>（实测 GitHub 离了它就不通）。</li>
   </ol>
 </div>
 
 <div class="kpi-row">
-  <div class="kpi"><div class="v">1.9141</div><div class="l">P-5b <b>20B 长跑完成</b>（final loss · 01:37 落盘 @4771）</div></div>
-  <div class="kpi"><div class="v">9h → 0</div><div class="l">静默停摆已修复（08:01 复工，两条线均产出）</div></div>
-  <div class="kpi"><div class="v">P-9.1 跑中</div><div class="l">MBS 吞吐扫描 · ~137K tok/s · 8 卡 80%+</div></div>
-  <div class="kpi"><div class="v">全≈随机</div><div class="l">vision caption 权重 3 点消融（0.47 / 0.61 / 0.60%）</div></div>
+  <div class="kpi"><div class="v">+59%</div><div class="l">P-9.1：MBS 1→2 提速（138K→<b>218K tok/s</b>；MBS≥4 OOM）</div></div>
+  <div class="kpi"><div class="v">M=16384</div><div class="l">P-9.2：<b>TP2·MBS4 落地</b> → 命中 <b>FP8 交叉点</b>（~200K tok/s）</div></div>
+  <div class="kpi"><div class="v">≈3.65 TB</div><div class="l">磁盘回收（<code>/nas_train</code> 86%→<b>84%</b>，5 个旧实验目录）</div></div>
+  <div class="kpi"><div class="v">3 / 5</div><div class="l">harness 端到端 <b>resolved=true</b>（cline·codex·opencode）</div></div>
 </div>
 
 <div class="toc">
   <strong>目录</strong>
   <ol>
-    <li><a href="#s1">🔴 头条：`.29` 静默 9 小时事故（定位 → 修复）</a></li>
+    <li><a href="#s1">🔴 头条：<code>.29</code> 静默 9 小时事故（定位 → 修复）</a></li>
     <li><a href="#s2">四条线状态一览</a></li>
     <li><a href="#s3">pretrain：P-5b 完成 + P-9.1</a></li>
     <li><a href="#s4">vision：R11-L2 + caption 权重消融</a></li>
@@ -91,13 +92,14 @@
     <li><a href="#s8">需要你决策 / 注意</a></li>
     <li><a href="#s9">运维基础设施：零 token 的 ops relay</a></li>
     <li><a href="#s10">诚实条款：我犯的错与更正</a></li>
+    <li><a href="#s11">💾 磁盘清理专项（D-CLEAN-4，已按指示收尾）</a></li>
   </ol>
 </div>
 
-<h2 class="sec" id="s1"><span class="no">1</span>🔴 头条：`.29` 静默 9 小时事故（定位 → 修复）</h2>
+<h2 class="sec" id="s1"><span class="no">1</span>🔴 头条：<code>.29</code> 静默 9 小时事故（定位 → 修复）</h2>
 
 <div class="danger">
-  <b>症状：一个「不报错的故障」。</b> `.29` 上的 pretrain / harness 两条线，从 <b>10-03 22:10 到 10-04 08:01</b> 整整 <b>9 小时零文件产出</b>；而 <code>/tmp/baize_*_loop.log</code> 每个周期只打印一行
+  <b>症状：一个「不报错的故障」。</b> <code>.29</code> 上的 pretrain / harness 两条线，从 <b>10-03 22:10 到 10-04 08:01</b> 整整 <b>9 小时零文件产出</b>；而 <code>/tmp/baize_*_loop.log</code> 每个周期只打印一行
   <code>error: Forbidden</code>，紧接着 <code>[loop] … cline returned (exit 0)</code> —— <b>loop 把它当成“成功”</b>，继续睡 30 分钟再来一次。
   同一时段 <code>.12</code> 上的 vision / data <b>整夜正常</b>，所以从仓库表面完全看不出异常（只是“没动静”）。
 </div>
@@ -134,7 +136,7 @@
   <tr><td><b>V3</b></td><td><b>V2 + 显式 <code>-k &lt;secrets 里的有效 key&gt;</code></b></td><td><span class="badge b-ok">OK ✅</span></td></tr>
 </table>
 <div class="ok-box">
-  <b>结论：`.29` 的 cline 必须显式传 <code>-k</code>。</b>
+  <b>结论：<code>.29</code> 的 cline 必须显式传 <code>-k</code>。</b>
   叠加的第二个故障：loop 继承的 <code>OPENAI_API_KEY=01_549…</code> 是一把 <b>已吊销</b>的旧 key，<b>会覆盖</b> <code>secrets.json</code> 里的有效 key（<code>02_088…</code>，curl 实测 <b>200</b>）。
   <br>⚠️ <b>诚实限定</b>：机制未 100% 解释（<code>.12</code> 不带 <code>-k</code> 也一直能跑）→ 因此以 <b>可复现的 V3</b> 定稿，并在记忆里如实标注「未完全解释」。
 </div>
@@ -162,34 +164,34 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
 </table>
 <div class="note">
   ⭐ <b>现成范本</b>：<code>.12</code> 的 <code>~/.bashrc:143</code> 早就注释着
-  <code># disabled: proxy DNS cannot resolve internal agi-gateway.cxmt.com</code> —— 即「内网网关不能走代理」。<b>`.29` 从没做过这一步。</b>
+  <code># disabled: proxy DNS cannot resolve internal agi-gateway.cxmt.com</code> —— 即「内网网关不能走代理」。<b><code>.29</code> 从没做过这一步。</b>
 </div>
 
 <h2 class="sec" id="s2"><span class="no">2</span>四条线状态一览</h2>
 <table>
   <tr><th>线</th><th>主机</th><th>状态</th><th>当前在做什么</th><th>关键数字</th></tr>
   <tr>
-    <td><b>pretrain</b></td><td><code>.29</code></td><td><span class="badge b-ok">✅ 复工并推进</span></td>
-    <td><b>P-9.1</b> MBS 吞吐扫描（P-5b 已收尾）</td>
-    <td>P-5b <b>20B 完成 · loss 1.9141</b> · P-9.1 <b>~137K tok/s</b></td>
+    <td><b>pretrain</b></td><td><code>.29</code></td><td><span class="badge b-ok">✅ 推进中（P-9）</span></td>
+    <td><b>P-9.2</b> TP/SP 扫描（④ 收尾中）→ 随后 <b>P-9.3</b>（seq 多点）· <b>P-9.4</b>（FP8 复评）</td>
+    <td>MBS 1→2 <b>+59%</b>（218K）· ⭐ <b>TP2·MBS4 → M=16384（FP8 交叉点）</b></td>
   </tr>
   <tr>
-    <td><b>vision</b></td><td><code>.12</code></td><td><span class="badge b-warn">⏸ 待你拍板</span></td>
-    <td>所有已批准 GPU 项<b>全部完成</b>，GPU 已空</td>
+    <td><b>vision</b></td><td><code>.12</code></td><td><span class="badge b-ok">🚀 R11-E 已开跑</span></td>
+    <td><b>R11-E</b>：GPIC <code>short</code> 30k 步 · 同 N 两点对照（5.12M / 10.24M）</td>
     <td>R11-L2 ✅ 未翻盘 · caption 3 点 <b>0.47/0.61/0.60%</b></td>
   </tr>
   <tr>
     <td><b>data</b></td><td><code>.12</code></td><td><span class="badge b-ok">🔄 下载中</span></td>
-    <td>白名单 3 项（<code>l1_en_hq</code> 优先）</td>
-    <td><code>l1_en_hq</code> <b>231/6006</b> · <code>zh</code> <b>171/256</b> · <code>gpic</code> <b>1877/8001</b></td>
+    <td>白名单 3 项（<code>l1_en_hq</code> 优先）· D-CLEAN-4 盘点已交付</td>
+    <td><code>l1_en_hq</code> <b>≈325+/6000</b> · <code>zh</code> <b>171/256</b> · <code>gpic</code> <b>≈1926+/8001</b></td>
   </tr>
   <tr>
-    <td><b>harness</b></td><td><code>.29</code></td><td><span class="badge b-ok">🔄 复工并推进</span></td>
-    <td><b>R34</b>：打通 npm/bun 镜像以 build 那 4 个 harness</td>
-    <td>R1 沙箱<b>双绿</b>（django+sympy）· 步3 驱动已交付</td>
+    <td><b>harness</b></td><td><code>.29</code></td><td><span class="badge b-ok">✅ 3/5 端到端打通</span></td>
+    <td><b>R35</b>：3/5 harness 同 instance <code>resolved=true</code> → 剩 2 个 build</td>
+    <td>cline · <b>codex 0.94.0</b> · <b>opencode 1.18.27</b> 均 resolved</td>
   </tr>
 </table>
-<p class="note">⚠️ <b>两条 `.29` 线与两条 `.12` 线的差异，本身就是这次事故的画像</b>：同一把 key、同一份代码、同一套任务书，<b>只有 `.29` 全挂</b> —— 因为差异在 <b>宿主环境</b>（`~/.bashrc` 里多一把失效 key）。</p>
+<p class="note">⚠️ <b>两条 <code>.29</code> 线与两条 <code>.12</code> 线的差异，本身就是这次事故的画像</b>：同一把 key、同一份代码、同一套任务书，<b>只有 <code>.29</code> 全挂</b> —— 因为差异在 <b>宿主环境</b>（<code>~/.bashrc</code> 里多一把失效 key）。</p>
 
 <h2 class="sec" id="s3"><span class="no">3</span>pretrain：P-5b 完成 + P-9.1</h2>
 
@@ -206,12 +208,49 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   ⚠️ <b>它是在 01:37 完成的，但直到 08:01 才被发现</b> —— 因为 loop 静默（见 §1）。<b>这 6.4 小时的 GPU 空转，是这次故障最实在的代价。</b>
 </div>
 
-<h3>3.2 🔄 P-9.1：MBS 吞吐扫描（在跑）</h3>
+<h3>3.2 ✅ P-9.1：MBS 吞吐/显存扫描（08:33 完成）—— <b>MBS=2 是 TP1 下的天花板</b></h3>
+<p><b>问题</b>（运维提）：「MBS 太小、显存余量过半」能否提速？<b>口径</b>：seq=4096 / GBS=1024（每步 4.19M tok） / TP1·DP8 / bf16 / seed1234，各 60 步短测。</p>
+<table>
+  <tr><th>MBS</th><th>稳态 s/iter</th><th>tok/s</th><th>峰值显存（单卡 max）</th><th>OOM?</th></tr>
+  <tr><td>1</td><td>~30.4</td><td>~138K</td><td>41.4 GiB</td><td>否</td></tr>
+  <tr><td><b>2</b></td><td><b>~19.3</b></td><td><b>~218K（+59%）</b></td><td>57.0 GiB</td><td>否</td></tr>
+  <tr><td>4</td><td>—</td><td>—</td><td>81.1 GiB</td><td><span class="badge b-no">✅ OOM</span></td></tr>
+  <tr><td>8</td><td>—</td><td>—</td><td>81.1 GiB</td><td><span class="badge b-no">✅ OOM</span></td></tr>
+</table>
+<div class="ok-box">
+  <b>结论</b>：<b>MBS 1→2 提速 +59%</b>（30.4→19.3 s/iter），显存 40→55 GiB 仍在 80 GiB 内 → <b>MBS=2 = TP1·DP8 下最大可行 + 推荐</b>。运维「MBS 太小」的判断<b>被实测证实</b>。<br>
+  ⭐ <b>但对 FP8 是关键含义</b>：<code>M = MBS × seq</code>，MBS=2 时 M≈8192 <b>仍 &lt; 交叉点 16K</b>；要进 FP8 收益区需 MBS≥4（M≈16384），<b>而 TP1 下 MBS=4 OOM</b> → 只能靠 <b>TP2</b> 或 <b>抬 seq</b> 把 M 抬进去。
+</div>
+
+<h3>3.3 🚀 P-9.2：TP/SP 扫描（4 点）—— <b>⭐ 破局：TP2·MBS4 落地，M 正好到 16384</b></h3>
+<table>
+  <tr><th>配置</th><th>TP</th><th>SP</th><th>MBS</th><th>稳态 s/iter</th><th>tok/s</th><th>TFLOP/s/GPU</th><th>峰值显存</th></tr>
+  <tr><td>P-9.1 基线</td><td>1</td><td>off</td><td>2</td><td><b>19.3</b></td><td><b>218K</b></td><td>519</td><td>56.9 GiB</td></tr>
+  <tr><td>① TP2·MBS2</td><td>2</td><td>off</td><td>2</td><td>34.1</td><td>123K</td><td>~290</td><td>36.4 GiB</td></tr>
+  <tr><td><b>② TP2·MBS4</b></td><td>2</td><td>off</td><td><b>4</b></td><td><b>~20.7</b></td><td><b>~200K</b></td><td><b>482</b></td><td><b>55.7 GiB ✅ 不 OOM</b></td></tr>
+  <tr><td>③ TP2·SP·MBS2</td><td>2</td><td><b>on</b></td><td>2</td><td>~35.7</td><td>~117K</td><td>~272</td><td>34.8 GiB</td></tr>
+  <tr><td>④ TP2·SP·MBS4</td><td>2</td><td>on</td><td>4</td><td colspan="4"><i>待收（ETA ~11:00）</i></td></tr>
+</table>
 <ul>
-  <li><b>目标</b>：把「MBS 太小」与「FP8 拿不到收益」<b>当成同一个问题</b>解决 —— 机制是 <b>FP8 要 <code>M ≳ 16K</code> 才转正，而 <code>M ≈ MBS × seq</code></b>。</li>
-  <li><b>实测</b>：<code>MBS=1</code> · <code>iter 40/60</code> · <b>~30.5 s/iter</b> · <b>~137K tok/s</b>（与 P-5b 同量级 → 基准可信）。</li>
-  <li>⚠️ <b>口径限制（已记录）</b>：<code>launcher</code> <b>只暴露 MBS / TP / SP / seq-length / precision</b> 五类开关 → recompute / 通信重叠 / dataloader / attn-backend <b>需改 recipe，暂冻结</b>；<b>NCCL（P-4 占 41.7%）</b> 是最大的待批杠杆。</li>
-  <li><b>排期</b>：P-5b（✅）→ <b>P-9（跑中）</b> → P-6②（能力-vs-token）→ P-8 正式训练（暂缓，等 base 下满 + 配比定稿）。</li>
+  <li><b>① TP2·MBS2 = 123K（比基线慢 44%）</b>：TP2 每层 allreduce + 每卡 GEMM 的 K/N 减半 → 单卡效率掉到 ~290 TFLOP/s/GPU（≈29% 峰值）。<b>TP2 自身不划算</b>。</li>
+  <li>⭐ <b>② TP2·MBS4 = ~200K（只比基线慢 ~8%）且不 OOM</b>（55.7 GiB，比 TP1 下 MBS=4 的 81 GiB <b>省 ~25 GB</b>）→ <b>M = 4×4096 = <u>16384</u>，正好命中 FP8 交叉点</b>。机制：M 翻倍摊薄了 TP2 的通信开销，单卡效率从 ① 的 290 跳到 <b>482 TFLOP/s/GPU</b>。</li>
+  <li><b>③ SP on 对 MBS=2 <u>无收益</u></b>：s/iter 34.1→35.7（<b>+4.7% 变慢</b>），显存仅省 4.3%（1.5 GB）→ 若 ④ 同样无加速则 <b>SP 不推荐</b>。</li>
+</ul>
+
+<h3>3.4 ⭐ P-8 决策分叉（成形）</h3>
+<table>
+  <tr><th>方案</th><th>配置</th><th>bf16 吞吐</th><th>M</th><th>FP8 前景</th></tr>
+  <tr><td><b>A</b></td><td>TP1·DP8·MBS2</td><td><b>218K tok/s</b></td><td>8192</td><td><span class="badge b-no">M&lt;16K → 无收益</span></td></tr>
+  <tr><td><b>B</b></td><td><b>TP2·DP4·MBS4</b></td><td>~200K tok/s（-8%）</td><td><b>16384</b></td><td><span class="badge b-ok">命中交叉点</span> → 若 FP8 给出 s&gt;1（预期 ~1.34 饱和区）⇒ <b>B·FP8 ≈ 260K，反超 A</b></td></tr>
+</table>
+<p>⇒ <b>P-9.4（FP8 复评）有了具体载体</b>：在 <b>TP2·MBS4（M=16384）</b> 下做 <b>bf16 vs FP8 端到端对照</b>。这直接印证了运维的机制判断 ——「<b>MBS 与 FP8 是同一件事</b>」。</p>
+
+<h3>3.5 🔧 P-9.4 前置已就绪（10:16 核实）</h3>
+<ul>
+  <li>环境核实：<code>torch 2.8.0+cu128</code> / <code>CUDA 12.8</code> / <b><code>transformer_engine 2.12.0+5671fd36</code></b> / <code>megatron-core 0.16.1</code> / <code>mamba-ssm 2.2.6.post3</code>（与预期一致）。</li>
+  <li>P-4R 微基准脚本（TE Linear fwd+bwd，E4M3/E5M2 vs bf16）已具备，将<b>扩展到 <code>M ∈ {4096, 8192, 16384, 32768, 65536}</code></b>（用 (MBS,seq) 组合命中），生产载体 = TP2·MBS4。</li>
+  <li>⚠️ <b>口径限制</b>：<code>launcher</code> 只暴露 <b>MBS / TP / SP / seq-length / precision</b> 五类开关 → recompute / 通信重叠 / dataloader / attn-backend <b>需改 recipe，暂冻结</b>；<b>NCCL（P-4 占 41.7%）</b> 是最大的待批杠杆。</li>
+  <li><b>排期</b>：P-9.1 ✅ → P-9.2（③✅ / ④收尾中）→ <b>P-9.3（seq 多点）</b> → <b>P-9.4（FP8 复评 · 关键）</b> → P-9.5（profiling）→ P-6②（能力-vs-token）→ P-8。</li>
 </ul>
 
 <h2 class="sec" id="s4"><span class="no">4</span>vision：R11-L2 + caption 权重消融</h2>
@@ -274,12 +313,14 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <tr><td><b>R30</b></td><td><code>r1_eval.py</code> 端到端跑通 → 官方 <code>get_eval_report</code> 返回 <code>resolved: true</code>（<code>django__django-10914</code>）</td><td><span class="badge b-ok">✅</span></td></tr>
   <tr><td><b>R31</b></td><td><code>sympy__sympy-11400</code> 同样 <code>resolved: true</code> → <b>跨 repo 模板验证（django + sympy 双绿）</b></td><td><span class="badge b-ok">✅</span></td></tr>
   <tr><td><b>R32</b></td><td><code>run_harness.py</code>（<b>5 个 Driver</b>）+ <b>cline headless 全链路 smoke 跑通</b>；定位 <code>-k</code> 必传 gotcha</td><td><span class="badge b-ok">✅</span></td></tr>
-  <tr><td><b>R34</b></td><td><b>npm/bun 镜像口子打通</b>（腾讯镜像 + 代理）+ node-gyp headers 镜像 → 开始 build opencode</td><td><span class="badge b-info">🔄 进行中</span></td></tr>
+  <tr><td><b>R34</b></td><td><b>npm/bun 镜像口子打通</b>（腾讯镜像 + 代理）+ node-gyp headers 镜像 → 开始 build opencode</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td><b>R35</b></td><td>⭐⭐ <b>3/5 harness 端到端 <code>resolved=true</code></b>（同一 instance <code>django__django-10914</code>、同一模型 <code>deepseek-v4-flash</code>）：<b>cline</b> · <b>codex 0.94.0</b>（patch 2903B/4 文件 · 182.6s）· <b>opencode 1.18.27</b>（4848B/6 文件 · 231.2s）<br>+ 交付 <code>gw_proxy.py</code>（本地 SSE 反代：<code>developer→system</code> 改写 + 注入 key）+ <b>修掉 <code>r1_eval.py</code> 一个致命 bug</b>（rootfs/testbed 跨 run 复用导致 patch 假失败 → apply 前 <code>git reset --hard base_commit; git clean -fdq</code>）</td><td><span class="badge b-ok">✅</span></td></tr>
 </table>
 <div class="note">
   <b>路线已定型：无 docker</b> —— <code>unshare --user --map-root-user --mount --pid --fork</code> 用户命名空间 chroot 沙箱（rootfs 落 <code>/nas_train</code>），绕开 <code>docker pull</code> 不通的死局。
   <br>⚠️ <b>已知风险敞口</b>：沙箱内挂不了 <code>/dev</code> <code>/proc</code> <code>/sys</code>（<code>/dev</code> 只能用普通文件桩）→ 是 scale 到 300 条时最需要盯的点。
-  <br>⏭ <b>下一步</b>：步3 收尾（真实 instance 端到端产 <code>model_patch</code> → 复用 <code>r1_eval.py</code> 评分）→ 步4 顺序跑 <b>300 × 5</b>。
+  <br>🔧 <b>网关两坑（已解）</b>：① <b>codex ≥0.95 删掉了 <code>wire_api="chat"</code></b>（网关 vLLM 0.28 无 <code>/v1/responses</code>）→ 锁 <b>codex 0.94.0</b>；② <b>网关只认 system/user/assistant</b>，而 OpenAI SDK 对 reasoning 模型发 <code>role:developer</code> → 422 → 由 <code>gw_proxy.py</code> 改写解决。
+  <br>⏭ <b>剩 2 个 build</b>：<code>claude-code</code>（Anthropic Messages API，需 Messages→chat 翻译）· <code>deepseek-harness</code>（rust + pnpm@11 + node ^22，本机 cargo/pnpm absent）→ 之后就绪可跑 <b>300 × 5</b>。
 </div>
 
 <h2 class="sec" id="s7"><span class="no">7</span>关键数字</h2>
@@ -288,8 +329,9 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
     <h3 style="margin-top:0">预训练（Stage i）</h3>
     <ul>
       <li><b>P-5b：20B token 完成</b>，final loss <b>1.9141</b></li>
-      <li>吞吐 <b>~137–147K tok/s</b>（P-5b / P-9.1 同量级）</li>
-      <li>胜出配置：LR 1e-3 · WSD · warmup 238 / decay 477 · <b>seq 4094</b> · bf16</li>
+      <li><b>P-9.1</b>：MBS 1→2 <b>+59%</b>（138K→<b>218K tok/s</b>）；MBS≥4 OOM</li>
+      <li>⭐ <b>P-9.2</b>：<b>TP2·MBS4 = ~200K tok/s 且不 OOM</b> → <b>M=16384</b>（FP8 交叉点）</li>
+      <li>胜出配置：LR 1e-3 · WSD · warmup 238 / decay 477 · bf16</li>
       <li>每步 <b>≈4M token</b> 不变量（4096↔1024 / 8192↔512）</li>
     </ul>
   </div>
@@ -305,10 +347,10 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <div class="card">
     <h3 style="margin-top:0">数据 / 磁盘</h3>
     <ul>
-      <li><b>D-CLEAN 累计回收 ≈1.31 TiB</b>（含 <code>servers/</code> 972 G）</li>
-      <li><code>/nas_train</code> <b>86%</b>（Avail 31T）·<code>/nas_inference</code> 剩 20T</li>
-      <li>base-en <b>2048/2048 下满（1 T tok）</b></li>
-      <li>GPU 侧 <b>GPIC 全量 ≈100.3M</b> 唯一对（E1 实测）</li>
+      <li>💾 <b>本日回收 ≈3.65 TB</b>（5 个旧实验目录）→ <code>/nas_train</code> <b>86% → 84%</b></li>
+      <li><b>累计回收 ≈4.96 TiB</b>（含 D-CLEAN-3 的 <code>servers/</code> 972 G）</li>
+      <li>base-en <b>2048/2048 下满（1 T tok）</b> · GPIC 全量 <b>≈100.3M</b> 唯一对（E1 实测）</li>
+      <li>⚠️ 仍待拍板：<code>datasets/FineVision</code> <b>4.32 TiB</b>（最大单点，8.5 月未动）</li>
     </ul>
   </div>
   <div class="card">
@@ -327,18 +369,18 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <tr><th>#</th><th>事项</th><th>状态 / 我的建议</th></tr>
   <tr>
     <td>1</td>
-    <td><b>vision 下一项做什么</b>（GPU 已空，所有已批准项都做完了）</td>
-    <td><span class="badge b-warn">等你拍板</span> 候选：<b>R13</b>（OV2 官方权重单臂对照，须单独批）· <b>臂⑥ AIMv2</b>（3–5 臂 + 1–2 天自研，最贵）· <b>R11-E</b>（等 GPIC <code>short</code> ≥18.5M）。<br>📌 我的建议：<b>先 R13</b>（0.5–1 臂、便宜、能补「结论边界」），AIMv2 继续压后。</td>
+    <td><b>vision 下一项做什么</b>（R11-E 正在跑，之后 GPU 又空）</td>
+    <td><span class="badge b-warn">R11-E 跑完后定</span> 候选：<b>R13</b>（OV2 官方权重单臂对照，须单独批）· <b>臂⑥ AIMv2</b>（3–5 臂 + 1–2 天自研，最贵）。<br>📌 R11-E 结果出来后我再给你建议。</td>
   </tr>
   <tr>
     <td>2</td>
-    <td><b><code>l1_en_hq</code> 下载偏慢</b>（ETA ≈2.9 天，超出你给的 1–2 天预估）</td>
+    <td><b><code>l1_en_hq</code> 下载偏慢</b>（~1.75 MB/s，ETA ≈2.9 天，超出你给的 1–2 天预估）</td>
     <td><span class="badge b-warn">需知悉</span> 已证<b>非僵死</b>（CDN 端点慢 + 74MB/件小文件）。要么接受 ≈3 天，要么允许换源/加并发。</td>
   </tr>
   <tr>
     <td>3</td>
-    <td><b>harness 全量跑受 key 5h 滑动窗口约束</b></td>
-    <td><span class="badge b-info">已按此排期</span> ≤4 并发 + 跨 harness 串行；实测 <code>.29</code> 与 <code>.12</code> 共用 key。</td>
+    <td><b>harness 步4（300×5）还差 2 个 harness</b></td>
+    <td><span class="badge b-info">3/5 已就绪</span> 剩 <code>claude-code</code>（需 Messages→chat 翻译反代）· <code>deepseek-harness</code>（需 rust + pnpm + node22，<b>共享训练机装工具链</b>需你批）。</td>
   </tr>
   <tr>
     <td>4</td>
@@ -350,6 +392,11 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
     <td><b>轮换 cline key 时的纪律</b></td>
     <td><span class="badge b-ok">已固化</span> 只需更新两台机的 <code>~/.cline/data/secrets.json</code>（<code>.bashrc</code> 里已无 key）→ 但仍<b>必须两台都更新</b>。</td>
   </tr>
+  <tr>
+    <td>6</td>
+    <td><b>磁盘清理</b></td>
+    <td><span class="badge b-ok">✅ 按你指示「到此为止」</span> 已停；本日回收 ≈3.65 TB。<b>未动的候选</b>（<code>FineVision</code> 4.32T / <code>HuggingFaceFW</code> 1.24T / CC12M 1.13T / <code>chip_expert</code>+<code>models</code> 0.92T）<b>保持原样</b>。</td>
+  </tr>
 </table>
 
 <h2 class="sec" id="s9"><span class="no">9</span>运维基础设施：零 token 的 ops relay（今天立了大功）</h2>
@@ -358,7 +405,7 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   它今天的价值被彻底验证：<b>18 轮探查 + 3 次修复动作，全部通过它完成，没有消耗一个 agent token、没有打扰任何正在干活的线。</b>
 </div>
 <ul>
-  <li><b>用法铁律（已记入记忆）</b>：① 命令块必须放在文件<b>最前面</b>（中继只执行<b>第一个</b> <code>```bash</code> 块）② 旧块降级为 <code>```text</code> ③ <code>RUN_ID</code> 每次 +1。</li>
+  <li><b>用法铁律（已记入记忆）</b>：① 命令块必须放在文件<b>最前面</b>（中继只执行<b>第一个</b> bash 代码块）② 旧块要降级为 text 围栏（否则它一直霸占"第一个块"）③ <code>RUN_ID</code> 每次 +1。</li>
   <li><b>安全检查已内建</b>：本次全部命令<b>只读优先</b>；所有「写」动作（改 secrets / 改 loop / 改 rc）都<b>先备份</b>并在下一轮验证。</li>
   <li><b>教训</b>：<code>grep -c Forbidden</code> 会<b>数到 agent 的散文</b>（假阳性）→ 精确探针是 <code>grep -c 'error:.*Forbidden'</code>；且 <code>/proc/&lt;pid&gt;/environ</code> <b>只反映 exec 时的初始环境</b>，不能用来验证脚本里的 <code>export</code>。</li>
 </ul>
@@ -377,6 +424,51 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   ① <b><code>exit 0</code> ≠ 成功</b> —— cline 在鉴权失败时也返回 0，loop 一律当成功 → 必须靠 <code>grep -c 'error:.*Forbidden'</code> 这类<b>主动探针</b>兜底。<br>
   ② <b>多机部署的凭据必须同步轮换</b> —— 一半的线因为「只有一台更新过」而静默死亡 9 小时。
 </div>
+
+<h2 class="sec" id="s11"><span class="no">11</span>💾 磁盘清理专项（D-CLEAN-4，已按指示收尾）</h2>
+
+<div class="ok-box">
+  <b>本日净回收 ≈ 3.65 TB</b>（<code>/nas_train</code> <b>86% → 84%</b>，Used 180365G → <b>176713G</b>，Avail 31604G → <b>35256G</b>）——
+  与预期 3.67 TB 吻合（期间 base/gpic 下载仍在<b>并发写入</b>）。<b>用户已指示「到此为止」→ 清理已停，其余候选保持原样。</b>
+</div>
+
+<h3>11.1 大盘（<code>df</code> 实测）</h3>
+<table>
+  <tr><th>挂载</th><th>总</th><th>已用</th><th>可用</th><th>使用率</th></tr>
+  <tr><td><b><code>/nas_train</code></b></td><td>207 T</td><td>173 T</td><td><b>35 T</b></td><td><b>84%</b>（清理前 86%）</td></tr>
+  <tr><td><code>/nas_user</code></td><td>108 T</td><td>80 T</td><td>29 T</td><td>74%</td></tr>
+  <tr><td><code>/nas_inference</code></td><td>45 T</td><td>27 T</td><td>19 T</td><td>60%</td></tr>
+  <tr><td><code>/data</code></td><td>7.0 T</td><td>285 G</td><td>6.8 T</td><td>4%</td></tr>
+</table>
+
+<h3>11.2 ✅ 本批已删（用户批准 → 已核验 GONE）</h3>
+<table>
+  <tr><th>目标</th><th>大小</th><th>mtime</th><th>结果</th></tr>
+  <tr><td><code>code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b</code>（6 × 198 G）</td><td><b>1.16 T</b></td><td>2026-03-11</td><td><span class="badge b-ok">✅ GONE</span></td></tr>
+  <tr><td><code>code/chip-mllm</code></td><td>896 G</td><td>2026-01-07</td><td><span class="badge b-ok">✅ GONE</span></td></tr>
+  <tr><td><code>code/LLaVA</code></td><td>716 G</td><td>2026-02-25</td><td><span class="badge b-ok">✅ GONE</span></td></tr>
+  <tr><td><code>code/LLaVA-OneVision-2</code></td><td>650 G</td><td>2026-07-31</td><td><span class="badge b-ok">✅ GONE</span></td></tr>
+  <tr><td><code>code/circuitvision-encoder</code></td><td>244 G</td><td>2026-01-20</td><td><span class="badge b-ok">✅ GONE</span></td></tr>
+</table>
+<p><b>安全流程</b>（沿用删 974 G <code>servers/</code> 那套）：身份证据（mtime / <code>.git</code> / <code>.py</code> 计数）→ <b>P1 无进程占用</b> → <b>P2 无近期活动</b>（用 <code>stat</code> mtime 代替全树 <code>find</code>）→ <b>P3 无脚本引用</b>（只扫几百 MB 的 git 副本）→ <b>留证</b>（顶层小文本 + &lt;300MB 的 <code>.git</code> → <code>_ARCHIVE_*.tgz</code>，共 <b>30 MB</b>）→ <b>后台低优先级顺序 <code>rm -rf</code></b>（日志 + <code>.done</code> 标记）→ <b>下一轮只读块核验</b>。</p>
+
+<h3>11.3 ⏳ 未动的候选（按你的指示保持原样）</h3>
+<table>
+  <tr><th>目标</th><th>大小</th><th>mtime</th><th>备注</th></tr>
+  <tr><td><code>datasets/FineVision</code></td><td><b>4.32 TiB</b></td><td>2026-01-14</td><td>188 子集，<b>~8.5 月未动</b>，方案里标「可选补充源」→ <b>最大单点</b></td></tr>
+  <tr><td><code>datasets/HuggingFaceFW</code></td><td>1.24 TiB</td><td>2026-02-04</td><td>文本语料，<b>疑与 Ultra-FineWeb 重叠</b></td></tr>
+  <tr><td><code>datasets/conceptual-captions-12m-webdataset</code></td><td>1.13 TiB</td><td>2025-12-22</td><td>⚠️ <b>CC12M 是 vision R9 的数据臂之一</b> → 删前须确认</td></tr>
+  <tr><td><code>chip_expert</code> + <code>models</code></td><td>0.92 TiB</td><td>2026-06 / 09</td><td>需确认无人在用</td></tr>
+  <tr><td>（他人）<code>wangcongtao</code> · <code>app.e0025692</code></td><td>3.3 TiB</td><td>2026-01 / 02</td><td>~230–260 天未动；<b>需 sudo 或 owner 确认</b>（<code>sudo -n</code> 需密码，非交互不可用）</td></tr>
+</table>
+
+<h3>11.4 ⚠️ 过程中的一个失误（已入库）</h3>
+<div class="danger">
+  我在删除块里写了 <b>① 没加 <code>timeout</code> 的 <code>fuser</code> ② 对 8 TiB 的 <code>code/</code> 做 <code>grep -rln</code></b> → <b>中继被卡 ~11 分钟</b>（<code>.last_run_id</code> 停摆）；<code>timeout</code> 只杀 leader、子进程占着管道。
+  <br>⇒ <b>铁律</b>：relay 块内<b>每条命令都要有界</b>；重活一律丢<b>后台 <code>setsid nice -n 19</code> + 落盘 + <code>.done</code></b>。
+  <br>ℹ️ 另：那段超时块（<code>exit=124</code>）<b>其实在被杀前已把 <code>rm -rf</code> 跑完</b> → <b>「超时 ≠ 没执行」</b>，必须用后续只读块核验事实。
+</div>
+
 
 <p style="text-align:center;margin:30px 0 0;color:var(--muted);font-size:13px">— 报告完 —</p>
 
