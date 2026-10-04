@@ -5,54 +5,32 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A pilot batch v2 running (15/30 instances scored, sympy-11870 quota retry ~15min remaining)
+PHASE:        H-A pilot batch v2 running (15/30 scored, sympy-11870 actively running post-quota-retry)
 已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A 15/30 scored (15 pilot + 2 smoke)
-当前动作:     R57: relay healthy skip (11th) + batch v2 progress check (15/30 scored, sympy-11870 cline-patched quota retry ETA ~04:27)
-下一步:       等 batch v2 quota 恢复续跑 sympy-11870+ → 跑完 30/30 → 汇总 pilot_results.json → 更新 SWEBENCH_COMPARE.html 最终版
-阻塞:         无（relay 健康、batch alive wchan=do_select S sleeping、github 可达；quota 5h 窗口致 sympy-11870 暂停 ~15min 后自动恢复）
+当前动作:     R58: relay healthy skip (12th) + batch v2 progress check (15/30 scored, sympy-11870 quota retry completed, actively running with child processes)
+下一步:       等 batch v2 跑完剩余 15/30 instances → 汇总 pilot_results.json → 更新 SWEBENCH_COMPARE.html 最终版
+阻塞:         无（relay 健康、batch alive wchan=do_poll with active unshare→bash→python children、github 可达）
 ERROR_COUNT:  0
 ```
 
-## 🆕 第五十七轮速览（2026-10-05 04:12）
+## 🆕 第五十八轮速览（2026-10-05 04:47）
 
-- ✅ **ops 中继复核（响应运维 2026-10-04 第 2 条，第 11 次）→ 健康，跳过重启**。① relay `2489749 1 302263 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、etimes≈3.50d）；② `cat ops/.last_run_id`=`63`（无新单，62+63 已执行）；③ `grep -c 'RUN_ID 62' ops/outbox.md`=`1`（62 已执行）；④ log 末行 `[relay] RUN_ID=63 executed, exit=0`；⑤ **⭐ `timeout 30 git fetch origin` → exit=0**（github 持续可达）；⑥ 无 index.lock（仅 1 个 NFS temp `.nfs*` 无害）；⑦ `pstree`=`bash---sleep`（正常）。**判据**：git fetch exit=0 + .last_run_id=63 → **跳过重启**。✅ URGENT 完成。
-- ✅ **无新运维指令**：git log 顶部 `6f0a1cf`(pretrain) / `2127db3`(data) / `1567190`(vision) / `b064f1b`(harness R56) —— 无新 harness 指令。
-- 📊 **batch v2 进度**（PID 4045197，etimes≈17201s≈4.8h，stat=S wchan=do_select=sleeping in quota wait）：**15/30 完整评分**（django 10924~11742 全部已评分，当前 instance 16/30 sympy__sympy-11870 cline-patched quota retry 3606s）。
-  - **quota 等待 ETA**：log 末次写入 03:26:56（cline-patched quota retry 2/3 开始），3606s ≈ 60min → **ETA ~04:27**（距当前 ~04:12 还有 ~15min）。batch 进程 alive（wchan=do_select，无子进程=在 time.sleep 中）。
-  - **pilot_results.json 已产出**（65KB，15 entries）：Aggregate resolve = **codex 2/15 (13%), cline 1/15 (7%), opencode 1/15 (7%), claude-code 1/15 (7%)**。
+- ✅ **ops 中继复核（响应运维 2026-10-04 第 2 条，第 12 次）→ 健康，跳过重启**。① relay `2489749 1 304413 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、etimes≈3.53d）；② `cat ops/.last_run_id`=`63`（无新单，62+63 已执行）；③ `grep -c 'RUN_ID 62' ops/outbox.md`=`1`（62 已执行）；④ log 末行 `[relay] RUN_ID=63 executed, exit=0`；⑤ **⭐ `timeout 30 git fetch origin` → exit=0**（github 持续可达）；⑥ 无 index.lock（仅 1 个 NFS temp `.nfs*` 无害）；⑦ `pstree`=`bash---sleep`（正常）。**判据**：git fetch exit=0 + .last_run_id=63 → **跳过重启**。✅ URGENT 完成。
+- ✅ **无新运维指令**：git log 顶部 `02b1541`(data) / `e14fd25`(vision) / `0c6a69c`(vision) / `35a061d`(harness R57) / `6f0a1cf`(pretrain) —— 无新 harness 指令。task file 仍 `4d1c276`。
+- 📊 **batch v2 进度**（PID 4045197，etimes≈19311s≈5.36h，stat=S wchan=do_poll.constprop.0）：**15/30 完整评分**（django 10924~11742 全部已评分，当前 instance 16/30 sympy__sympy-11870 cline-patched quota retry 已完成，正在活跃执行）。
+  - **quota retry 已过**：log 末次写入 03:26:56（cline-patched quota retry 2/3 开始，3606s≈60min），ETA ~04:27 已到。当前 04:47，batch 有**活跃子进程** `python3(4045197)---python3(1303770)-+-unshare(1315796)---bash(1315797)---python(1315855)---python(1321916)` → 正在 unshare 沙箱内跑 harness evaluation。log 未更新是因为子进程输出被父进程捕获，完成后才 flush。
+  - **pilot_results.json 已产出**（64KB，15 entries）：Aggregate resolve = **codex 2/15 (13%), cline 1/15 (7%), opencode 1/15 (7%), claude-code 1/15 (7%)**。
   - **逐 instance 详**：11001=4/4 全 resolve 🎉（F2P 2/2 P2P 118/118）；10924=codex only resolve（F2P 1/1 P2P 1/1）；11099=0/4 但 F2P 1/3（部分通过）；11019=0/4 F2P 0/16（极难 instance）；11039~11742=0/4 F2P 0/1~0/2（quota 窗口耗尽致空 patch）。
   - **Quota-OK resolve rate（fair metric）**：codex 2/2 (100%), cline 1/3 (33%), opencode 1/1 (100%), claude-code 1/1 (100%)。
-  - **predictions 文件**：/dev/shm 已有 61 个 predictions_*.json（15 django × 4 = 60 + sympy-11870 cline-patched 1 个 127B 空 patch）；/dev/shm tmpfs 文件可能被清理但 eval 结果已固化在 pilot_results.json。
-- ⏭ **下一步**：① 让 batch v2 在 ~04:27 quota 恢复后自动续跑 sympy-11870（cline-patched retry → codex → opencode → claude-code）→ 剩余 14 instances × 4 harnesses → ② 跑完 30/30 后最终汇总 → ③ 更新 SWEBENCH_COMPARE.html 最终版。保持 `WAITING=1`。
+  - **deliverables 全在**：5×SOURCE_ANALYSIS.html · HARNESS_COMPARE_MATRIX.html · CLINE_IMPROVEMENT_OPPORTUNITIES.md · CLINE_IMPROVEMENTS_TOP5.html · CODE_AGENT_BENCHMARKS_SURVEY.md · SWEBENCH_COMPARE.html (32KB, 03:36 updated) · SWEBENCH_LITE_FEASIBILITY.md · R1_ADAPTER_DESIGN.md · STEP2_RUNBOOK.md。H-A′ Aider Polyglot 尚未启动（sandbox 前提与 SWE-bench 共用 R1 unshare，待 SWE-bench batch 完成后可复用）。
+- ⏭ **下一步**：① 让 batch v2 继续跑 sympy-11870（cline-patched retry → codex → opencode → claude-code）→ 剩余 14 instances × 4 harnesses → ② 跑完 30/30 后最终汇总 → ③ 更新 SWEBENCH_COMPARE.html 最终版。保持 `WAITING=1`。
 
 
-## 🆕 第五十六轮速览（2026-10-05 03:30）
+## 🆕 第五十七轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-05.md`（结论不改：relay 健康 skip 第 11 次 + batch v2 15/30 scored + sympy-11870 quota retry ETA ~04:27）
 
-- ✅ **ops 中继复核（响应运维 2026-10-04 第 2 条，第 10 次）→ 健康，跳过重启**。① relay `2489749 1 299734 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、etimes≈3.47d）；② `cat ops/.last_run_id`=`63`（无新单，62+63 已执行）；③ `grep -c 'RUN_ID 62' ops/outbox.md`=`1`（62 已执行）；④ log 末行 `[relay] RUN_ID=63 executed, exit=0`；⑤ **⭐ `timeout 30 git fetch origin` → exit=0**（github 持续可达）；⑥ 无 index.lock（仅 1 个 NFS temp `.nfs*` 无害）；⑦ `pstree`=`bash---sleep`（正常）。**判据**：git fetch exit=0 + .last_run_id=63 → **跳过重启**。✅ URGENT 完成。
-- ✅ **无新运维指令**：task file 仍 `4d1c276`，无新批次。
-- 📊 **batch v2 进度**（PID 4045197，etimes≈14744s≈4.1h，wchan=do_select=running subprocess）：**15/30 完整评分**（django 10924~11742，当前 instance 16/30 sympy__sympy-11870 cline-patched quota retry 3606s）。
-  - **pilot_results.json 已产出**（65KB，15 entries）：Aggregate resolve = codex 2/15 (13%), cline 1/15 (7%), opencode 1/15 (7%), claude-code 1/15 (7%)。
-  - **Patch size 确认 quota 瓶颈**：10924(cline 7826B+codex 3174B)、11001(全 4 real)、11019(cline 8276B only) 有 real patch；**11039~11742 全 0B 空 patch**（5h 窗口耗尽）。
-  - **Quota-OK resolve rate（fair metric）**：codex 2/2 (100%), cline 1/3 (33%), opencode 1/1 (100%), claude-code 1/1 (100%)。
-  - **11001=4/4 全 resolve 🎉**（F2P 2/2, P2P 118/118）；10924=codex only resolve；11019=all 0/16 F2P（hard instance, cline 有 real patch 但 16 个 F2P 全失败）。
-- ✅ **SWEBENCH_COMPARE.html 更新**：12→17 instances（2 smoke + 15 pilot），10/30→15/30 scored，新增 5 instance rows（11564~11742），更新 failure mode table（3/10→3/15 等）、combined summary、caveats、footer。
-- ⏭ **下一步**：① 让 batch v2 继续后台跑（sympy-11870 quota retry 中，剩余 ~14 instances × 4 harnesses）→ ② 跑完 30/30 后最终汇总 → ③ 更新 SWEBENCH_COMPARE.html 最终版。保持 `WAITING=1`。
+## 🆕 第五十六轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-05.md`（结论不改：relay 健康 skip 第 10 次 + batch v2 15/30 scored + SWEBENCH_COMPARE.html updated to 17 inst）
 
-
-## 🆕 第五十五轮速览（2026-10-05 02:49）
-
-- ✅ **ops 中继复核（响应运维 2026-10-04 第 2 条，第 9 次）→ 健康，跳过重启**。① relay `2489749 1 297423 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、etimes≈3.44d）；② `cat ops/.last_run_id`=`63`（无新单）；③ `grep -c 'RUN_ID 62' ops/outbox.md`=`1`（62 已执行）；④ log 末行 `[relay] RUN_ID=63 executed, exit=0`；⑤ **⭐ `timeout 30 git fetch origin` → exit=0**（github 持续可达）；⑥ 无 index.lock（仅 1 个 NFS temp `.nfs*` 无害）；⑦ `pstree`=`bash---sleep`（正常）。**判据**：git fetch exit=0 + .last_run_id=63 → **跳过重启**。✅ URGENT 完成。
-- ✅ **无新运维指令**：task file 最近仍 `4d1c276`，无新批次。
-- 📊 **batch v2 进度**（PID 4045197，etimes≈12246s≈3.4h，wchan=do_select=running subprocess）：**12/30 完整评分**（10924~11620，当前 instance 13/30 django__django-11620 cline+codex eval done, opencode quota retry + claude-code pending）。
-  - **完整 eval 结果（12 pilot instances × 4 harnesses，从 eval 日志解析）**：
-    - `10924`=**codex only** resolve（cline-patched=False, codex=True, opencode=False, claude-code=False）
-    - `11001`=**4/4 全 resolve** 🎉（F2P 2/2 P2P 118/118）
-    - `11019`~`11620`=**全 0/4**（ALL 4 harnesses resolved=False）
-  - **Aggregate（12 inst）**：codex 2/12 (17%), cline-patched 1/12 (8%), opencode 1/12 (8%), claude-code 1/12 (8%)。
-  - **Quota 瓶颈持续**：从 11039 起 ALL 4 harnesses 产出空 patch（5h 滑动窗口耗尽）。仅 10924（2/4 real patch）、11001（4/4 real）、11019（1/4 real）有实际 patch。11049~11620 全空 patch = quota 未恢复。
-  - **eval 日志计数**：CLINE_PATCHED=13, CODEX=13, OPENCODE=12, CLAUDE_CODE=12（11620 opencode+claude-code 进行中）。
-- ✅ **MEMORY 滚动**：R53/R51/R52/R50 速览归档至 `daily-memories-harness/2026-10-05.md`（结论不改）。
-- ⏭ **下一步**：① 让 batch v2 继续后台跑（当前 13/30，剩余 ~17 instances × 4 harnesses，quota 窗口 5h 后重置可能带来新 real patch）→ ② 跑完后最终汇总 → ③ 更新 SWEBENCH_COMPARE.html 最终版。保持 `WAITING=1`。
+## 🆕 第五十五轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-05.md`（结论不改：relay 健康 skip 第 9 次 + batch v2 12/30 scored + quota 瓶颈从 11039 起全空 patch）
 
 
 ## 🆕 第五十三轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-05.md`（结论不改：relay 健康 skip 第 7 次 + batch v2 5/30 scored + SWEBENCH_COMPARE.html 7 instances + quota 瓶颈从 11039 起全空 patch）
