@@ -28,12 +28,12 @@ PAPER_REL="doc/ZhuLong_DAC2027/ZhuLong_DAC2027"        # 论文权威树：最�
 #   本 loop 的 `-m "$MODEL"` 只负责读 MEMORY / pgrep / 打分 / 切臂 / cline auth。
 #   被评测的求解 agent 由任务书内 `cline auth -m <MODEL_ID>` 切换（见 ablation_run_task_model_full.md），
 #   run_cline_script.sh 读取 ~/.cline/data/settings，与本 loop 的 -m 无关。
-MODEL="deepseek-v4-pro-fp4"
+MODEL="deepseek-v4-flash"
 
-# 🔑 与 baize_harness_loop.sh 同款鉴权修复：给 cline 显式传 `-k <有效key>`。
-#   key 运行时从 secrets.json 现读（不落仓库）；编排 agent 的 key 读一次（启动时），
-#   避免 Phase B 里 `cline auth` 切换被评测模型后污染编排 agent 的鉴权。
-CLINE_KEY="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\\([^\"]*\\)".*/\\1/p' "$HOME/.cline/data/secrets.json" 2>/dev/null | head -1)"
+# 🔑 flash 专用 key（deepseek-v4-flash 用此 key；网关按模型授权，pro-fp4 的 key 对 flash 会 403）。
+#   硬编码（与 ZHULONG_TASK.md §6 模型切换表同一值），不运行时读 secrets.json。
+CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c43c1f4a-03c6-4148-b722-f4c8604c78d3"
+CLINE_BASE="http://agi-gateway.cxmt.com/v1"
 
 CLINE_TIMEOUT=2700              # 单次编排 cline 最多 45 分钟（读态+打分+切臂+启动，足够）
 PUSH_INTERVAL=18000             # 每 5 小时兜底同步一次
@@ -107,7 +107,7 @@ while true; do
         #    ⚠️ 只作用于本行 cline；loop 自身 / git push 仍保留 proxy（外网仍需代理）。
         env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
             -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
-          cline -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+          cline -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -b "$CLINE_BASE" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
         echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git sync ..."
     else
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"

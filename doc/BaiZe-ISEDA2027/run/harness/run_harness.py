@@ -215,21 +215,65 @@ class OpencodeDriver:
         return r
 
 
-class ClaudeCodeDriver:
-    """claude-code — leaked source (2026-03-31), bun bundle, NOT built here.
+CLAUDE_CODE_DIR = Path("/nas_train/app.e0031982/harness_work/builds/claude-code")
+CLAUDE_CODE_ENTRY = CLAUDE_CODE_DIR / "src" / "entrypoints" / "cli.tsx"
+CLAUDE_CODE_PRELOAD = CLAUDE_CODE_DIR / "plugins" / "bunBundleDev.ts"
 
-    README.md documents `bun run start -- -p "<prompt>"`; needs
-    `ANTHROPIC_API_KEY` and a base-URL override for the gateway.
+# Build-time macros that bunfig.toml normally injects (--define) when run from
+# the claude-code source dir.  We run bun from the *workdir* (so claude-code's
+# process.cwd() is the repo it must edit), so we re-inject them explicitly.
+CLAUDE_CODE_MACROS = [
+    "MACRO.VERSION:\"1.0.0-dev\"",
+    "MACRO.BUILD_TIME:\"\"",
+    "MACRO.PACKAGE_URL:\"@anthropic-ai/claude-code\"",
+    "MACRO.FEEDBACK_CHANNEL:\"https://github.com/anthropics/claude-code/issues\"",
+    "MACRO.ISSUES_EXPLAINER:\"file an issue at https://github.com/anthropics/claude-code/issues\"",
+    "MACRO.VERSION_CHANGELOG:\"\"",
+]
+
+
+class ClaudeCodeDriver:
+    """claude-code — leaked source (2026-03-31), built under harness_work/.
+
+    Invocation (verified 2026-10-04 R41, `path:line` cited):
+      - entry  : `bun run src/entrypoints/cli.tsx` (package.json `"start"`)
+      - `-p/--print` headless + `--bare` (strict `ANTHROPIC_API_KEY`) +
+        `--dangerously-skip-permissions` (auto-run tools) — all in src/main.tsx:976.
+      - model API base URL comes from SDK default `ANTHROPIC_BASE_URL`
+        (node_modules/@anthropic-ai/sdk/index.js:56), model from `--model`
+        (src/main.tsx:2012).
+
+    GOTCHA (corrected 2026-10-04 R41): running `bun run <entry>` from a foreign
+    cwd skips the source dir's `bunfig.toml`, so its `[define]` MACRO globals are
+    undefined -> `ReferenceError: MACRO is not defined` (src/utils/user.ts:108).
+    Fix: re-inject the macros (and the `bun:bundle` dev preload plugin) via bun's
+    own `--preload` / `--define` flags, so the shell cwd can stay the *workdir*
+    (claude-code edits the repo it is launched in, i.e. process.cwd()).
     """
 
     name = "claude-code"
 
     def available(self) -> bool:
-        return shutil.which("claude") is not None
+        return CLAUDE_CODE_ENTRY.exists() and shutil.which("bun") is not None
 
     def run(self, instance: dict, workdir: Path, timeout: int = 3600) -> DriverResult:
-        cmd = ["bun", "run", "start", "--", "-p", instance["problem_statement"]]
-        r = _run(cmd, workdir, timeout)
+        cmd = ["bun", "run", "--preload", str(CLAUDE_CODE_PRELOAD)]
+        for m in CLAUDE_CODE_MACROS:
+            cmd += ["--define", m]
+        cmd += [
+            str(CLAUDE_CODE_ENTRY), "--", "-p", instance["problem_statement"],
+            "--model", UNIFIED_MODEL,
+            "--bare",
+            "--dangerously-skip-permissions",
+        ]
+        env = {
+            "ANTHROPIC_BASE_URL": "http://127.0.0.1:9090",  # local gw_proxy
+            "ANTHROPIC_API_KEY": DUMMY_KEY,
+            "ANTHROPIC_MODEL": UNIFIED_MODEL,
+            "NO_PROXY": "127.0.0.1,localhost",
+            "no_proxy": "127.0.0.1,localhost",
+        }
+        r = _run(cmd, workdir, timeout, env=env)
         r.harness = self.name
         r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
         return r

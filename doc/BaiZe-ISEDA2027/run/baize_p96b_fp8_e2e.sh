@@ -48,34 +48,26 @@ run_one() {
     local SAMPLER_PID=$!
 
     cd "$BASE" || exit 1
+    # --save-interval 0：关掉 checkpoint 保存（bridge 在 save_interval!=0 与
+    # 周期性 save_interval 真值判断处短路），避免 60 iter 收尾 save 触发
+    # state_dict_async_plan gather 时的尾部 OOM → NCCL 死锁卡死。
+    local -a TC=("$PY/torchrun" --nnodes=1 --nproc_per_node=8 \
+      --master_addr=127.0.0.1 --master_port="$PORT" \
+      pretrain_launcher.py \
+      --arch mamba2 --name "$NAME" --dir "$BASE/nemo_experiments" \
+      --tokenizer-path "$BASE/data/tokenizer_eod" \
+      --train-data-path $BLEND \
+      --tensor-parallel "$TP" --sequence-parallel \
+      --train-iters "$ITERS" --global-batch-size "$GBS" --micro-batch-size "$MBS" --seq-length "$SEQ" \
+      --eval-interval 250 --eval-iters 0 \
+      --save-interval 0 \
+      --lr 1e-3 --min-lr 1e-5 --lr-warmup-iters 10 --lr-decay-iters 10 --lr-decay-style WSD \
+      --seed 1234 \
+      --precision "$PREC")
     if [ "$CMDC" = "1" ]; then
-      CUDA_DEVICE_MAX_CONNECTIONS=1 "$PY/torchrun" --nnodes=1 --nproc_per_node=8 \
-        --master_addr=127.0.0.1 --master_port="$PORT" \
-        pretrain_launcher.py \
-        --arch mamba2 --name "$NAME" --dir "$BASE/nemo_experiments" \
-        --tokenizer-path "$BASE/data/tokenizer_eod" \
-        --train-data-path $BLEND \
-        --tensor-parallel "$TP" --sequence-parallel \
-        --train-iters "$ITERS" --global-batch-size "$GBS" --micro-batch-size "$MBS" --seq-length "$SEQ" \
-        --eval-interval 250 --eval-iters 0 \
-        --save-interval 99999 \
-        --lr 1e-3 --min-lr 1e-5 --lr-warmup-iters 10 --lr-decay-iters 10 --lr-decay-style WSD \
-        --seed 1234 \
-        --precision "$PREC" > "$LOG" 2>&1
+        CUDA_DEVICE_MAX_CONNECTIONS=1 "${TC[@]}" > "$LOG" 2>&1
     else
-      "$PY/torchrun" --nnodes=1 --nproc_per_node=8 \
-        --master_addr=127.0.0.1 --master_port="$PORT" \
-        pretrain_launcher.py \
-        --arch mamba2 --name "$NAME" --dir "$BASE/nemo_experiments" \
-        --tokenizer-path "$BASE/data/tokenizer_eod" \
-        --train-data-path $BLEND \
-        --tensor-parallel "$TP" --sequence-parallel \
-        --train-iters "$ITERS" --global-batch-size "$GBS" --micro-batch-size "$MBS" --seq-length "$SEQ" \
-        --eval-interval 250 --eval-iters 0 \
-        --save-interval 99999 \
-        --lr 1e-3 --min-lr 1e-5 --lr-warmup-iters 10 --lr-decay-iters 10 --lr-decay-style WSD \
-        --seed 1234 \
-        --precision "$PREC" > "$LOG" 2>&1
+        "${TC[@]}" > "$LOG" 2>&1
     fi
     local RC=$?
 

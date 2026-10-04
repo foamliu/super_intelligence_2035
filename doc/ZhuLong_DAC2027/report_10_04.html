@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZhuLong (DAC 2027) · 合并消融评测报告 · 2026-10-04</title>
+<style>
+  :root{--bg:#f4f6fa;--card:#fff;--ink:#1a2233;--muted:#5b6779;--line:#e3e8f0;--accent:#2456e6;--accent-soft:#eef3ff;
+    --done-bg:#e7f6ec;--done-fg:#157a3c;--todo-bg:#fff4e0;--todo-fg:#a05a00;--wait-bg:#fdeceb;--wait-fg:#b3271e;
+    --defer-bg:#eef0f4;--defer-fg:#54607a;--info-bg:#e9f3fb;--info-fg:#1a5f9c}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;font-size:15px}
+  .wrap{max-width:1060px;margin:0 auto;padding:32px 20px 72px}
+  header.hero{background:linear-gradient(135deg,#14213d 0%,#2456e6 100%);color:#fff;border-radius:14px;padding:30px 32px;margin-bottom:26px}
+  header.hero h1{margin:0 0 8px;font-size:25px;letter-spacing:.3px}
+  header.hero p{margin:2px 0;opacity:.92;font-size:14px}
+  header.hero .tag{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);padding:2px 10px;border-radius:20px;font-size:12px;margin-top:10px}
+  h2{font-size:19px;margin:38px 0 6px;padding-left:11px;border-left:4px solid var(--accent)}
+  h2 .sec-no{color:var(--accent);margin-right:6px;font-weight:700}
+  h3{font-size:16px;margin:24px 0 8px;color:#22304d}
+  p{margin:8px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .card.soft{background:var(--accent-soft);border-color:#d6e1ff}
+  .card.freeze{background:#fff4f0;border-color:#e6a090}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin:14px 0}
+  .kv{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .kv b{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:4px}
+  .kv span{font-size:14px}
+  code{font-family:"SFMono-Regular",Consolas,Menlo,monospace;background:#f0f2f7;border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:13px;color:#8a2be2}
+  pre.cmd{background:#0f172a;color:#e2e8f0;padding:14px 16px;border-radius:8px;font-size:13px;line-height:1.75;overflow-x:auto;margin:10px 0}
+  pre.cmd code{background:none;border:none;color:inherit;padding:0;font-size:13px}
+  pre.cmd .cm{color:#7d8ca3}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px;background:#fff}
+  th,td{border:1px solid var(--line);padding:8px 9px;text-align:left;vertical-align:top}
+  th{background:#f7f9fc;font-weight:600;color:#22304d;white-space:nowrap}
+  tr:nth-child(even) td{background:#fbfcfe}
+  .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .badge{display:inline-block;border-radius:20px;padding:1px 9px;font-size:12px;font-weight:600;white-space:nowrap}
+  .b-done{background:var(--done-bg);color:var(--done-fg)}
+  .b-todo{background:var(--todo-bg);color:var(--todo-fg)}
+  .b-wait{background:var(--wait-bg);color:var(--wait-fg)}
+  .b-defer{background:var(--defer-bg);color:var(--defer-fg)}
+  .b-info{background:var(--info-bg);color:var(--info-fg)}
+  .b-run{background:#e8f1ff;color:#1d4ed8;border:1px solid #93b8f5}
+  .b-freeze{background:#fce8e6;color:#b71c1c;border:1px solid #ef9a9a}
+  .callout{border-left:4px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0}
+  .callout.warn{border-left-color:#e0a306;background:#fff8e6}
+  .callout.danger{border-left-color:#d1342c;background:#fdeceb}
+  .callout.ok{border-left-color:#2f9e5a;background:var(--done-bg)}
+  .callout.freeze{border-left-color:#b71c1c;background:#fef0ef}
+  ul.tight{margin:6px 0;padding-left:20px}
+  ul.tight li{margin:4px 0}
+  .muted{color:var(--muted)}
+  .small{font-size:13px}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+  .flow .step{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:13px}
+  .flow .arr{color:#9aa4b5;font-weight:700}
+  footer{margin-top:44px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>ZhuLong (DAC 2027) · 合并消融评测报告</h1>
+  <p>四阶段单任务书 + 单循环串行推进 | 15 臂 × 5 轮 = 75 轮 | 回填论文 6 表 56 个 <code>[TBD]</code></p>
+  <p style="color:#dde4f0">报告日期 2026-10-04 · 基于 <code>ZHULONG_TASK.md</code> + <code>zhulong_loop.sh</code> + <code>MEMORY_ZHULONG.md</code></p>
+  <span class="tag">S1 保真度 · C1 组件消融 · C2 S2 Φ 轴 · B 模型消融 · infra 未就绪 · ⛔ 冻结中</span>
+</header>
+
+<!-- 0. 冻结令 -->
+<div class="callout freeze">
+  <b>⛔ 环境冻结中 — loop 尚未启动</b><br>
+  运维正在配置环境（EDA license / 沙箱端口 / 磁盘空间 / API key）。在冻结解除前：
+  <ul class="tight" style="margin-top:6px">
+    <li>评价脚本路径已迁移至 <code>/nas_train/app.e0031982/code/eda_fastmcp</code>（旧 <code>/nasdata/</code> 路径作废）</li>
+    <li>四个 shard 端口（8664/8665/8653/8669）待修复验证</li>
+    <li><code>/home</code> 磁盘待清理至 ≥8G 可用</li>
+    <li>模型消融 API key 待核实有效期</li>
+  </ul>
+  任务书置顶已写入冻结令，agent 读到会自动沉睡。环境准备好后运维删掉冻结令即可启动。
+</div>
+
+<!-- 0.5 设计概览 -->
+<h2><span class="sec-no">0.5</span>设计概览（相较 holiday 版的变更）</h2>
+
+<div class="card soft">
+  <p><b>核心变化：</b>将原来 3 份 task book + 4 个 loop 脚本 + 1 个 shell conductor 的拆分架构，<b>合并为单一任务书（<code>ZHULONG_TASK.md</code>）+ 单一循环（<code>zhulong_loop.sh</code>）+ 单一状态文件（<code>MEMORY_ZHULONG.md</code>）</b>，完全沿用 <code>baize_vision_loop.sh</code> + <code>BAIZE_VISION_TASK.md</code> 的"任务书式编排 agent"范式。</p>
+  <p>执行顺序不变（README §8：S1 → 组件 → S2 Φ → 模型），4 阶段通过统一状态机（<code>STAGE</code> / <code>CONFIG</code> / <code>ROUND</code> / <code>PHASE</code> / <code>WAITING</code>）串行轮转。</p>
+</div>
+
+<table>
+  <tr><th>项</th><th>旧方案（holiday 版）</th><th>新方案（合并版）</th></tr>
+  <tr><td>任务书</td><td><code>ablation_run_task_{s1,component_s2,model}_full.md</code> × 3</td><td><code>ZHULONG_TASK.md</code> × 1（§1–§12，含运维指令区 + 冻结令）</td></tr>
+  <tr><td>循环脚本</td><td><code>ablation_run_loop_{s1,component_s2,model}_full.sh</code> × 3 + <code>ablation_run_conductor_serial.sh</code> × 1</td><td><code>zhulong_loop.sh</code> × 1</td></tr>
+  <tr><td>状态文件</td><td><code>MEMORY.md</code> / <code>MEMORY_s1_full.md</code> / <code>MEMORY_s2_1shot.md</code>（不统一）</td><td><code>MEMORY_ZHULONG.md</code> × 1（统一状态机）</td></tr>
+  <tr><td>锚点复用</td><td>隐式约定，易漏</td><td>写死规则：<code>C1.full</code> 一次喂 5 张表的锚点行，S1(H)/(F) / C2 <code>phi_unbounded</code> / B 主基座臂全部跳过</td></tr>
+  <tr><td>infra 作废处置</td><td>无明确规则（旧 S1 因此停摆）</td><td>明文规则：整批作废不计数、记 <code>⚠️ infra</code>、<code>WAITING=1</code> 复检后重跑</td></tr>
+  <tr><td>loop 轮询</td><td>固定间隔</td><td>自适应：<code>WAITING=0</code> → ~1min；<code>WAITING=1</code> → ~30min</td></tr>
+  <tr><td>git 同步</td><td>无兜底 push</td><td>每 ~5h fetch+rebase+push，只 add <code>run/</code> + 论文树</td></tr>
+</table>
+
+<!-- 1. 执行流水 -->
+<h2><span class="sec-no">1</span>执行流水（4 阶段 · 15 臂 · 75 轮 · 串行）</h2>
+
+<div class="flow">
+  <span class="step">S1 保真度</span><span class="arr">→</span>
+  <span class="step">C1 组件消融</span><span class="arr">→</span>
+  <span class="step">C2 S2 Φ 轴</span><span class="arr">→</span>
+  <span class="step">B 模型消融</span>
+</div>
+
+<table>
+  <tr><th>阶段</th><th>流</th><th>臂（顺序）</th><th class="num">轮</th><th class="num">~耗时</th><th>状态</th></tr>
+  <tr>
+    <td>S1</td><td>A</td>
+    <td><code>omega_low</code> → <code>readback_binary</code> → <code>readback_none</code></td>
+    <td class="num">15</td><td class="num">~53h</td>
+    <td><span class="badge b-freeze">⛔ 冻结</span></td>
+  </tr>
+  <tr>
+    <td>C1</td><td>C</td>
+    <td><code>pure_llm</code> → <code>rag</code> → <code>wo_retrieval</code> → <code>full</code>（锚点）</td>
+    <td class="num">20</td><td class="num">~70h</td>
+    <td><span class="badge b-freeze">⛔ 冻结</span></td>
+  </tr>
+  <tr>
+    <td>C2</td><td>C</td>
+    <td><code>phi_k10</code> → <code>phi_k3</code> → <code>phi_k1</code> → <code>phi_lagged</code></td>
+    <td class="num">20</td><td class="num">~70h</td>
+    <td><span class="badge b-freeze">⛔ 冻结</span></td>
+  </tr>
+  <tr>
+    <td>B</td><td>B</td>
+    <td><code>glm-5.2</code> → <code>deepseek-v4-flash</code> → <code>kimi-k2.6-cloud</code> → <code>doubao-seed-2.0-pro-cloud</code></td>
+    <td class="num">20</td><td class="num">~70h</td>
+    <td><span class="badge b-freeze">⛔ 冻结</span></td>
+  </tr>
+  <tr>
+    <td colspan="3" style="text-align:right"><b>合计</b></td>
+    <td class="num"><b>75</b></td>
+    <td class="num"><b>~263h（~11 天）</b></td>
+    <td><span class="badge b-freeze">⛔ 冻结中</span></td>
+  </tr>
+</table>
+
+<h3>锚点复用（禁止重复跑）</h3>
+<table>
+  <tr><th>锚点</th><th>回填的表 &amp; 行</th></tr>
+  <tr><td><code>C1.full</code> ×5</td>
+    <td><code>tab:main-ablation</code>(full) + <code>tab:omega</code>(H) + <code>tab:ablation-harness</code>(F) + <code>tab:phi-bound</code>(unbounded) + <code>tab:llm-comparison</code>(DeepSeek-V4-Pro 主基座)</td></tr>
+  <tr><td><b>跳过</b></td><td>S1 的 (H)/(F) 臂 · C2 <code>phi_unbounded</code> 臂 · B 主基座模型臂</td></tr>
+</table>
+
+<h3>旧 S1 omega_low 进度（infra 作废停摆）</h3>
+<table>
+  <tr><th>轮次</th><th class="num">Pass@1</th><th>状态</th></tr>
+  <tr><td>r1</td><td class="num">81.6</td><td><span class="badge b-done">✅ 有效</span></td></tr>
+  <tr><td>r2</td><td class="num">82.3</td><td><span class="badge b-done">✅ 有效</span></td></tr>
+  <tr><td>r3（两次作废）</td><td class="num">—</td>
+    <td><span class="badge b-wait">❌ 第 1 次：磁盘 100% 满，sandbox 大面积 150s 超时（0930_012235）<br>❌ 第 2 次：EDA license 耗尽 + 端口 8669 宕（0930_090126）</span></td></tr>
+</table>
+<p class="small muted">起始点由运维决定：延续 <code>omega_low r3</code>（r1/r2 有效不重跑），或清零从 <code>omega_low r1</code> 重新开始。</p>
+
+<!-- 2. 探路成绩 -->
+<h2><span class="sec-no">2</span>探路成绩（1-shot 基线，供参考）</h2>
+
+<table>
+  <tr><th>轴</th><th>成绩</th></tr>
+  <tr><td>组件消融</td><td><code>pure_llm</code> <b>11.4%</b> · <code>rag</code> <b>70.3%</b> · <code>wo_retrieval</code> <b>81.6%</b> · <code>full</code> <b>84.8%</b></td></tr>
+  <tr><td>S2 Φ 轴</td><td><code>k10</code> <b>75.3%</b> · <code>k3</code> <b>69.0%</b> · <code>k1</code> <b>60.8%</b> · <code>lagged</code> <b>84.2%→98.1%</b>（r2 修复后 Converged）</td></tr>
+</table>
+<p class="small muted">正式值以本轮 5-run <code>mean ± std</code> 回填为准。</p>
+
+<!-- 3. 一键启动 -->
+<h2><span class="sec-no">3</span>一键启动（环境就绪后）</h2>
+
+<div class="callout ok">
+  <b>启动前需确认：</b>
+  <ol class="tight" style="margin:6px 0">
+    <li>运维已删掉 <code>ZHULONG_TASK.md</code> 置顶的冻结令</li>
+    <li>infra 三项校验通过：<code>/home</code> 磁盘 ≥~8G + 四 shard 端口 OPEN + <code>run_code</code> 正常执行</li>
+    <li>旧 S1 omega_low r1/r2 成绩已录入 MEMORY_ZHULONG.md 成绩表（如需延续）</li>
+    <li>模型消融 API key 已核有效期</li>
+  </ol>
+</div>
+
+<h3>3.1 启动 loop（登入机器后执行）</h3>
+<pre class="cmd"><code><span class="cm"># 脱离进程组启动，防工具超时误杀；不占用终端</span>
+setsid bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh \
+  &gt; /tmp/zhulong_loop.log 2&gt;&amp;1 &lt; /dev/null &amp;</code></pre>
+
+<h3>3.2 启动后 3 秒确认</h3>
+<pre class="cmd"><code><span class="cm"># 应看到循环启动信息，否则查看日志</span>
+sleep 3 &amp;&amp; head -10 /tmp/zhulong_loop.log</code></pre>
+
+<h3>3.3 停止 / 重启（全程幂等）</h3>
+<pre class="cmd"><code><span class="cm"># 停止 loop（eval 由 setsid 脱离，需单独停）</span>
+pkill -f zhulong_loop.sh
+
+<span class="cm"># 停止正在跑的 eval 轮次（慎用，建议等本轮自然结束）</span>
+pkill -f 'run_cline_script'
+</code></pre>
+
+<h3>3.4 监测</h3>
+<pre class="cmd"><code><span class="cm"># 实时看日志</span>
+tail -f /tmp/zhulong_loop.log
+
+<span class="cm"># 看当前状态</span>
+head -30 /nas_train/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md</code></pre>
+
+<!-- 4. 状态机速查 -->
+<h2><span class="sec-no">4</span>状态机说明</h2>
+
+<table>
+  <tr><th>字段</th><th>取值 &amp; 含义</th></tr>
+  <tr><td><code>STAGE</code></td><td><code>S1</code> → <code>C1</code> → <code>C2</code> → <code>B</code>（顺序轮转）</td></tr>
+  <tr><td><code>CONFIG</code></td><td>当前臂名（见 §1 表）</td></tr>
+  <tr><td><code>ROUND</code></td><td>1..5（当前臂的第几轮）</td></tr>
+  <tr><td><code>PHASE</code></td><td><code>init</code>（初始/预热） · <code>running</code>（eval 在跑） · <code>just_finished</code>（5 轮跑完，待切臂） · <code>done_all</code>（全阶段完成）</td></tr>
+  <tr><td><code>WAITING</code></td><td><code>0</code>（无阻塞，~1min 续跑） · <code>1</code>（eval 在跑 / infra 不就绪，~30min 轮询）</td></tr>
+  <tr><td><code>ERROR_COUNT</code></td><td>连续失败计数；≥3 强制推进</td></tr>
+</table>
+
+<h3>臂轮转矩阵</h3>
+<pre class="cmd"><code><span class="cm"># PHASE=just_finished 时查下表切下一臂</span>
+S1: omega_low → readback_binary → readback_none → C1.pure_llm
+C1: pure_llm → rag → wo_retrieval → full → C2.phi_k10
+C2: phi_k10 → phi_k3 → phi_k1 → phi_lagged → B.glm-5.2
+B:  glm-5.2 → deepseek-v4-flash → kimi-k2.6-cloud → doubao-seed-2.0-pro-cloud → done_all</code></pre>
+
+<!-- 5. 文件清单 -->
+<h2><span class="sec-no">5</span>文件清单</h2>
+
+<table>
+  <tr><th>文件</th><th>位置</th><th>大小</th><th>说明</th></tr>
+  <tr><td><code>ZHULONG_TASK.md</code></td><td><code>doc/ZhuLong_DAC2027/run/</code></td><td>~15KB</td><td>合并任务书（运维指令区 + 4 阶段状态机 + 推进逻辑 + 规格归档）</td></tr>
+  <tr><td><code>zhulong_loop.sh</code></td><td><code>doc/ZhuLong_DAC2027/run/</code></td><td>~6KB</td><td>自动推进循环（自适应唤醒、git 兜底同步）</td></tr>
+  <tr><td><code>MEMORY_ZHULONG.md</code></td><td><code>doc/ZhuLong_DAC2027/run/</code></td><td>~2KB</td><td>运行时状态（WAITING 标志 + 执行看板 + 成绩记录 + 操作流水）</td></tr>
+  <tr><td><code>report_10_04.html</code></td><td><code>doc/ZhuLong_DAC2027/</code></td><td>本文件</td><td>本报告（含启动指令）</td></tr>
+  <tr><td class="muted" colspan="4">以下旧文件保留，只读历史参考</td></tr>
+  <tr><td><code>ablation_run_task_{s1,component_s2,model}_full.md</code></td><td><code>doc/ZhuLong_DAC2027/run/</code></td><td>—</td><td>旧逐臂详细规格（已不再使用）</td></tr>
+  <tr><td><code>ablation_run_conductor_serial.sh</code></td><td><code>doc/ZhuLong_DAC2027/run/</code></td><td>—</td><td>旧总控（已不再使用）</td></tr>
+  <tr><td><code>holiday_run_report.html</code></td><td><code>doc/ZhuLong_DAC2027/run/</code></td><td>—</td><td>旧报告（已不再使用）</td></tr>
+</table>
+
+<!-- 6. 风险备忘 -->
+<h2><span class="sec-no">6</span>风险备忘</h2>
+
+<div class="grid">
+  <div class="kv"><b>infra 停摆（已发生）</b><span>旧 S1 r3 因磁盘满 + license 耗尽 + 端口宕两次作废。新方案加入 infra 三项前置校验 + WAITING=1 自恢复机制。</span></div>
+  <div class="kv"><b>API key 过期</b><span>Phase B 模型消融的 4 个 key 取自 <code>ablation_run_task_model_full.md</code>，启动前须核实有效期。</span></div>
+  <div class="kv"><b>环境迁移断连</b><span>评测代码从 <code>/nasdata/</code> 迁至 <code>/nas_train/</code>，旧 task book 路径全部作废。已统一改写为 <code>BASE_DIR</code> + <code>PAPER</code> + <code>GIT_ROOT</code> 三变量。</span></div>
+  <div class="kv"><b>.env 并发截断</b><span>禁止并发执行改写 <code>.env</code> 的脚本；切臂命令必须串行 <code>&&</code> 链。</span></div>
+  <div class="kv"><b>S2 Φ 语义</b><span>预算约束的是能执行的次数，不是提交时间；严禁逼迫/提示提前提交。k 臂记 <code>Converged (%)</code> + <code>Mean read-backs</code>；lagged 臂核 <code>reported_call_index</code> 差 ==1。</span></div>
+  <div class="kv"><b>记忆体积控制</b><span><code>MEMORY_ZHULONG.md</code> 上限 ≤32KB，超了滚动到 <code>daily-memories/</code>。</span></div>
+</div>
+
+<footer>
+  <b>权威依据：</b><code>doc/ZhuLong_DAC2027/README.md</code> §2（实验设置）· §4.1（口径）· §5（表）· §6（数字填写）· §8（消融顺序）· §9（取舍项）。<br>
+  <b>6 表 [TBD]：</b><code>tab:selfdoc-cost</code> 6 · <code>tab:main-ablation</code> 7 · <code>tab:omega</code> 6 · <code>tab:ablation-harness</code> 9 · <code>tab:phi-bound</code> 14 · <code>tab:llm-comparison</code> 14 = <b>56 个</b>。<br>
+  本报告生成于 <b>2026-10-04 14:38 CST</b> · 环境冻结中 · 等待运维解除。
+</footer>
+
+</div>
+</body>
+</html>
