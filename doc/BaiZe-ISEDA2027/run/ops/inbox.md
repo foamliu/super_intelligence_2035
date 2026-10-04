@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 28 -->
+<!-- RUN_ID: 29 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,49 @@
 
 ---
 
-## RUN_ID 28 — 🔍 **查清那两个变量在哪设的 + 去掉各自会有什么后果**（**只读**）（**本块最新，优先执行**）
+## RUN_ID 29 — ✂️ **注释 `.29` 的 `~/.bashrc` 里的 `OPENAI_API_KEY`（已获批准）**（**本块最新，优先执行**）
+
+**用户决定（2026-10-04）**：**只注释 `OPENAI_API_KEY`（原值保留为注记）**；**`https_proxy` 不动**（实测 GitHub 没它就 FAIL）；同时已把 harness 的 driver 改成读 `secrets.json`。
+
+**RUN_ID 28 事实基础**：
+- 该变量在 **`~/.bashrc:170`**（`export OPENAI_API_KEY=…`，连同 `API_TYPE`:169 / `OPENAI_API_URL`:171）；`/etc/profile.d`、`/etc/environment` **均无**
+- 它是**已吊销**的 key → 会**覆盖** `secrets.json` 里的有效 key（V0/V1/V2 全 Forbidden 的一半原因）
+- **`.12` 是范本**：它的 `.bashrc:143` 就注释着 `# disabled: proxy DNS cannot resolve internal agi-gateway.cxmt.com`
+
+**本块动作**：备份 `.bashrc` → 用 `sed` 把 `export OPENAI_API_KEY=` 行**原地注释**（**原值保留**，不删）→ 语法自检 → 确认 `https_proxy`/`API_TYPE`/`OPENAI_API_URL` **未被动** → 确认两条 loop 仍在跑（**本次不动进程**）。
+
+> ⚠️ 注：改 `.bashrc` **不影响已在运行的 loop**（进程 env 在启动时已固化），属"防未来"；loop 侧的 V3 配方（剥 proxy + 显式 `-k`）**保持不变**。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+B="$HOME/.bashrc"; TS=$(date +%Y%m%d-%H%M%S)
+
+echo; echo "=== 1. 备份 .bashrc ==="
+cp -a "$B" "$B.bak.$TS" && echo "   backed up -> $B.bak.$TS"
+echo "   改前 165-175 行（masked）:"
+sed -n '165,175p' "$B" | sed -E 's/(=|")[A-Za-z0-9_]{6}[A-Za-z0-9_.-]*/\1<MASKED>/g' | cut -c1-130
+
+echo; echo "=== 2. 原地注释 export OPENAI_API_KEY（原值保留）==="
+sed -i -E 's|^([[:space:]]*)export[[:space:]]+OPENAI_API_KEY=|\1# [2026-10-04 ops] export OPENAI_API_KEY=|' "$B"
+echo "   改后 165-175 行（masked）:"
+sed -n '165,175p' "$B" | sed -E 's/(=|")[A-Za-z0-9_]{6}[A-Za-z0-9_.-]*/\1<MASKED>/g' | cut -c1-130
+
+echo; echo "=== 3. 自检 ==="
+bash -n "$B" && echo "   bash -n : OK"
+echo -n "   已注释的 OPENAI_API_KEY 行数 = "; grep -c '^[[:space:]]*#[[:space:]]*\[2026-10-04 ops\][[:space:]]*export OPENAI_API_KEY=' "$B"
+echo -n "   仍生效的 OPENAI_API_KEY 行数 = "; grep -c '^[[:space:]]*export[[:space:]]+OPENAI_API_KEY=' "$B"
+
+echo; echo "=== 4. 确认其余未被动（masked）==="
+grep -nE '^[[:space:]]*(export[[:space:]]+)?(https_proxy|http_proxy|API_TYPE|OPENAI_API_URL)' "$B" | sed -E 's/(=|")[A-Za-z0-9_]{6}[A-Za-z0-9_.-]*/\1<MASKED>/g' | cut -c1-135
+
+echo; echo "=== 5. 两条 loop 仍在跑（本次不动进程）==="
+pgrep -af 'bash baize_(pretrain|harness)_loop\.sh' | cut -c1-92
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 28**（rc 探查，**✅ 已执行 08:06:30**）为 ```text。
+
+## RUN_ID 28 — 🔍 **查清那两个变量在哪设的 + 去掉各自会有什么后果**（✅ 已执行，本块不再运行）
 
 **用户提问（2026-10-04）**：`OPENAI_API_KEY` / `*_proxy` 是不是在 `.29` 的 `~/.bashrc` 里设的？要不要注释掉？
 
@@ -41,7 +83,7 @@
 3. **去掉 proxy 的后果**：`git ls-remote github` 在没有 proxy 时通不通（**决定能不能注释掉**）
 4. **gateway 域名是否适合放进 `no_proxy`**（比全局删 proxy 更精准的解法）
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 
 echo; echo "=== 1. [.29] rc 文件里的相关设置（masked）==="

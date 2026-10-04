@@ -26,6 +26,7 @@ are written to the correct invocation surface (path:line cited) but are marked
 
 from __future__ import annotations
 
+import json
 import os
 import shutil
 import subprocess
@@ -35,6 +36,27 @@ from pathlib import Path
 GATEWAY = os.environ.get("OPENAI_API_URL", "http://agi-gateway.cxmt.com/v1")
 UNIFIED_MODEL = "deepseek-v4-flash"
 CLINE_BIN = shutil.which("cline") or "/home/app.e0031982/.bun/bin/cline"
+CLINE_SECRETS = Path.home() / ".cline" / "data" / "secrets.json"
+
+
+def resolve_cline_key() -> str:
+    """Resolve the cline API key: `$OPENAI_API_KEY` first, else cline's own secrets.json.
+
+    2026-10-04 ops: `.29`'s `~/.bashrc` exported a **revoked** key under
+    `OPENAI_API_KEY`, which **shadowed** the valid one in
+    `~/.cline/data/secrets.json` -> every cline call answered `Forbidden` while
+    still exiting 0, so the loop span **silently for ~9h**.  That export has been
+    commented out at the source (ops, RUN_ID 29); this fallback makes the driver
+    read the **single source of truth** (secrets.json) instead of depending on
+    whatever the launching shell happened to export.
+    """
+    k = (os.environ.get("OPENAI_API_KEY") or "").strip()
+    if k:
+        return k
+    try:
+        return str(json.loads(CLINE_SECRETS.read_text())["openAiApiKey"]).strip()
+    except Exception:
+        return ""
 
 
 @dataclass
@@ -91,18 +113,21 @@ class ClineDriver:
     Provider/base-url come from ~/.cline/data/globalState.json (already
     openai@http://agi-gateway.cxmt.com/v1).
 
-    GOTCHA (observed 2026-10-03): WITHOUT `-k`, the nested cline reads
-    ~/.cline/data/secrets.json `openAiApiKey` (a DIFFERENT, stale key than
-    env `OPENAI_API_KEY`) and the gateway answers `Forbidden` on the first
-    model call.  With `-k "$OPENAI_API_KEY"` the run completes (smoke:
-    created answer.txt, 3 iterations, rc=0).  So we ALWAYS pass the env key
-    explicitly; it never appears in this file (read at runtime).
+    GOTCHA (corrected 2026-10-04 by ops — the 2026-10-03 note had it backwards):
+    on `.29` the **shell environment** exported a REVOKED key via `OPENAI_API_KEY`
+    (from `~/.bashrc`), which **SHADOWED** the valid key in
+    `~/.cline/data/secrets.json` -> the gateway answered `Forbidden` on the first
+    model call, **while cline still exited 0** (the loop therefore span silently
+    for ~9h).  Empirically, on `.29` ONLY an explicit `-k <valid key>` works
+    (env matrix: V0 原样 / V1 剥OPENAI_* / V2 剥proxy+OPENAI_* all `Forbidden`;
+    V3 = V2 + `-k` -> OK).  Hence we ALWAYS pass `-k`, resolved at runtime via
+    `resolve_cline_key()` (env first, else secrets.json) — it never appears here.
     """
 
     name = "cline"
 
     def __init__(self):
-        self.api_key = os.environ.get("OPENAI_API_KEY", "")
+        self.api_key = resolve_cline_key()
 
     def available(self) -> bool:
         return Path(CLINE_BIN).exists() and bool(self.api_key)
