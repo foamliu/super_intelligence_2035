@@ -3198,3 +3198,79 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 27 · 2026-10-04 08:00:29 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
+C=/home/app.e0031982/.bun/bin/cline; M=deepseek-v4-pro-fp4; cd /tmp
+_k="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" | head -1)"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY"
+
+echo; echo "=== 1. 前置：V3 复核（必须 OK 才重启）==="
+V3=$(env $P -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE timeout 90 "$C" -c /tmp -m "$M" -k "$_k" --auto-approve true -t 45 "reply with exactly OK" 2>&1 | head -2 | tr -d '\r' | tr '\n' ' ')
+echo "   V3 => ${V3:0:130}"
+
+echo; echo "=== 2. 条件重启 ==="
+if echo "$V3" | grep -q 'Forbidden'; then
+  echo "   !!! V3 仍失败 → 不重启，保留现状待运维"
+else
+  git -C "$WK" fetch origin --quiet 2>/dev/null
+  git -C "$WK" checkout origin/main -- doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh && echo "   checked out"
+  grep -c 'CLINE_KEY' "$RUN/baize_pretrain_loop.sh" "$RUN/baize_harness_loop.sh"
+  pkill -f 'baize_pretrain_loop.sh'; pkill -f 'baize_harness_loop.sh'; sleep 5
+  cd "$RUN"
+  setsid bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+  sleep 3
+  setsid bash baize_harness_loop.sh > /tmp/baize_harness_loop.log 2>&1 < /dev/null &
+  sleep 30
+  echo "   -- 进程 --"; pgrep -af 'bash baize_(pretrain|harness)_loop\.sh|bun.*cline' | cut -c1-102
+  echo "   -- 真实报错数（应为 0）--"; grep -c 'error:.*Forbidden' /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log 2>/dev/null
+  echo "   -- pretrain 日志尾 --"; tail -c 320 /tmp/baize_pretrain_loop.log | tr -d '\r' | tail -3 | cut -c1-135
+  echo "   -- harness 日志尾 --"; tail -c 320 /tmp/baize_harness_loop.log | tr -d '\r' | tail -3 | cut -c1-135
+fi
+
+echo; echo "=== 3. GPU（P-9）==="; nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -2
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 08:00:29
+
+=== 1. 前置：V3 复核（必须 OK 才重启）===
+   V3 => OK Warning: AI SDK Warning System: To turn off warning logging, set the AI_SDK_LOG_WARNINGS global to false. 
+
+=== 2. 条件重启 ===
+   checked out
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh:2
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh:2
+   -- 进程 --
+357386 bash baize_pretrain_loop.sh
+357397 bun /home/app.e0031982/.bun/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/d
+357876 bash baize_harness_loop.sh
+357887 bun /home/app.e0031982/.bun/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/d
+   -- 真实报错数（应为 0）--
+/tmp/baize_pretrain_loop.log:0
+/tmp/baize_harness_loop.log:0
+   -- pretrain 日志尾 --
+[0m[2m30.[0m[2m5s[0m[2m ≈ [0m[2m137K[0m[2m tok[0m[2m/s.[0m[2m This is[0m[2m consistent[0m[2m with P[0m[2m-5[0m[
+
+[0m[2mWait,[0m[2m interesting -[0m[2m but[0m[2m the P[0m[2m-5[0m[2mb seq[0m
+   -- harness 日志尾 --
+[0m[2m new instructions[0m[2m. Also[0m[2m check[0m[2m the harness[0m[2m directory at[0m[2m /[0m[2mnas_train[0m[2m/app.e
+
+Let[0m[2m me do[0m[2m these checks[0m[2m in parallel[0m[2m.[0m
+
+=== 3. GPU（P-9）===
+0, 80 %, 39111 MiB
+1, 84 %, 39207 MiB
+
+=== DONE ===
+```
