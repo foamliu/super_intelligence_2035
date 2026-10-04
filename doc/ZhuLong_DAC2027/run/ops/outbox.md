@@ -437,3 +437,116 @@ Forbidden 次数: 0
 
 ===== DONE =====
 ```
+
+---
+
+## RUN_ID 3 · 2026-10-04 17:01:50 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 3 — 只读盘点（不删除）
+H="/home/app.e0031982"
+echo "===== 0. TIME ====="; date '+%F %T'; hostname
+echo "===== 1. /home 大盘 ====="; df -BG /home | tail -1
+
+echo; echo "===== 2. $H 一级（体积，有界 du）====="
+timeout 60 du -x -d1 -h "$H" 2>/dev/null | sort -h | tail -25
+
+echo; echo "===== 3. 常见缓存/会话目录体积 ====="
+for d in .cache .cline .bun .npm .local .npm-global .vscode-server .triton .config .nv .conda; do
+  [ -e "$H/$d" ] && timeout 25 du -x -sh "$H/$d" 2>/dev/null
+done
+
+echo; echo "===== 4. .cache 下二级 ====="
+[ -d "$H/.cache" ] && timeout 40 du -x -d1 -h "$H/.cache" 2>/dev/null | sort -h | tail -15
+
+echo; echo "===== 5. eda_code_eval 评测产物 ====="
+if [ -d "$H/eda_code_eval" ]; then
+  echo -n "   批次数: "; ls -1 "$H/eda_code_eval" 2>/dev/null | wc -l
+  echo -n "   总大小: "; timeout 45 du -x -sh "$H/eda_code_eval" 2>/dev/null | cut -f1
+  echo "   -- 最新 8 个批次 --"; ls -1t "$H/eda_code_eval" 2>/dev/null | head -8
+  echo "   -- 最旧 8 个批次 --"; ls -1t "$H/eda_code_eval" 2>/dev/null | tail -8
+  echo "   -- 按批次大小 top10 --"; timeout 40 du -x -d1 -h "$H/eda_code_eval" 2>/dev/null | sort -h | tail -10
+else
+  echo "   (无 $H/eda_code_eval)"
+fi
+
+echo; echo "===== 6. 其它可能产物区 + HOME 一级清单 ====="
+for d in eda_platform zhulong runs experiments .ena_feature_cache .hf_cache hf_cache; do
+  [ -e "$H/$d" ] && echo "   存在: $d ($(timeout 20 du -x -sh "$H/$d" 2>/dev/null | cut -f1))"
+done
+echo "   -- ls -1 $H --"; ls -1 "$H" 2>/dev/null | head -40
+
+echo; echo "===== 7. 大文件 top15（>100M）====="
+timeout 60 find "$H" -xdev -type f -size +100M -printf '%s\t%p\n' 2>/dev/null | sort -nr | head -15 | awk '{printf "   %.2fG\t%s\n", $1/1073741824, $2}'
+
+echo; echo "===== DONE ====="
+```
+
+**输出**
+```
+===== 0. TIME =====
+2026-10-04 17:01:50
+hfeg0tedaap02
+===== 1. /home 大盘 =====
+/dev/mapper/vgroot-lv_home      394G  371G        6G  99% /home
+
+===== 2. /home/app.e0031982 一级（体积，有界 du）=====
+4.0K	/home/app.e0031982/logs
+8.0K	/home/app.e0031982/.pip
+12K	/home/app.e0031982/Cline
+16K	/home/app.e0031982/.copilot
+24K	/home/app.e0031982/mcp_tmp
+24K	/home/app.e0031982/.ssh
+32K	/home/app.e0031982/.config
+68K	/home/app.e0031982/.eda_mcp
+3.6M	/home/app.e0031982/.nvm
+3.8M	/home/app.e0031982
+
+===== 3. 常见缓存/会话目录体积 =====
+0	/home/app.e0031982/.cache
+0	/home/app.e0031982/.cline
+0	/home/app.e0031982/.npm
+0	/home/app.e0031982/.local
+0	/home/app.e0031982/.vscode-server
+32K	/home/app.e0031982/.config
+
+===== 4. .cache 下二级 =====
+0	/home/app.e0031982/.cache
+
+===== 5. eda_code_eval 评测产物 =====
+   批次数: 87
+   总大小: 0
+   -- 最新 8 个批次 --
+2026_1004_122050
+completed_code_generation_2026_1004_122050.jsonl
+code_generation_2026_1004_122050.jsonl
+2026_1004_111533
+completed_code_generation_2026_1004_111533.jsonl
+code_generation_2026_1004_111533.jsonl
+2026_1004_090528
+completed_code_generation_2026_1004_090528.jsonl
+   -- 最旧 8 个批次 --
+completed_code_generation_2026_0930_090126.jsonl
+code_generation_2026_0930_090126.jsonl
+2026_0929_214931
+completed_code_generation_2026_0929_214931.jsonl
+code_generation_2026_0929_214931.jsonl
+2026_0929_181818
+completed_code_generation_2026_0929_181818.jsonl
+code_generation_2026_0929_181818.jsonl
+   -- 按批次大小 top10 --
+0	/home/app.e0031982/eda_code_eval
+
+===== 6. 其它可能产物区 + HOME 一级清单 =====
+   -- ls -1 /home/app.e0031982 --
+Cline
+eda_code_eval
+logs
+mcp_tmp
+n#
+
+===== 7. 大文件 top15（>100M）=====
+
+===== DONE =====
+```
