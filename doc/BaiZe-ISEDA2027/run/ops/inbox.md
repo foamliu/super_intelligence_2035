@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 63 -->
+<!-- RUN_ID: 64 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,13 +31,69 @@
 
 ---
 
-## RUN_ID 63 — 🩺 **只读巡检：BaiZe 四线「19:30 后集体静默」排查（.12 + .29）**（**本块最新，优先执行**）
+## RUN_ID 64 — 🔌 **确认/启动 `eda_fastmcp` 的 SSE MCP（`.29:8090`，含 `cimi_search`+`cimi_fetch`）+ 双机验证**（**本块最新，优先执行**）
+
+> **用户指令（2026-10-05）**：`.29` 的 **8090 端口**有一个 **SSE MCP 服务**，里边是 **`cimi_search` + `cimi_fetch`**；**若没在跑就自己启动**：目录 `/nas_train/app.e0031982/code/eda_fastmcp`，`bash scripts/start.sh`，`.env` 里 `EDA_MCP_PORT=8090`。**跑通后 `.29` 与 `.12` 可共用**（与 ops 中继同机，所以由中继来确认最合适）。
+> **为什么重要**：昨晚 data agent 交的 `LIT_IDEAS_2026-10-04.html` 里 **15 条 arXiv 只有「本地 bib 核验」、没做在线核验** —— 根因是服务器侧 `cimi-search` 命令不存在 / 底层 `api.bocha.cn` SSL 被防火墙截断。**这个 MCP 服务就是那条缺失的在线检索能力**（`.12` 的 data/vision 也都能用）。
+> **本块三件事**：① **只读确认**（目录/start.sh/.env/8090 是否在听）② **未跑则启动**（`EDA_MCP_PORT=8090` + 后台 + 日志）③ **双机验证**（`.29` 本机 + 从 `.12` 访问）。
+> 🚫 **红线**：**不要碰 9090**（那是 harness 的 `gw_proxy`）· **不改 `eda_fastmcp` 的业务代码**（只确保端口与启动）· **`.env` 里任何密钥不得回显**（只以「含/不含该键」形式报告）· 该目录属 `🔴不可动` 清单，**不要删/移**。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+D=/nas_train/app.e0031982/code/eda_fastmcp
+
+echo; echo "=== 1. 目录 / 启动脚本 / .env（敏感值不回显）==="
+if [ -d "$D" ]; then ls -1 "$D" | head -20 | sed 's/^/   /'; else echo "   ⛔ 目录不存在: $D"; fi
+echo "   scripts/start.sh : $([ -f "$D/scripts/start.sh" ] && echo YES || echo NO)"
+echo "   .env             : $([ -f "$D/.env" ] && echo YES || echo NO)"
+echo "   .env 是否含 EDA_MCP_PORT : $(grep -c 'EDA_MCP_PORT' "$D/.env" 2>/dev/null || echo 0)"
+grep -n 'EDA_MCP_PORT' "$D/.env" 2>/dev/null | sed 's/=.*/=<masked>/' | sed 's/^/      /'
+echo "   -- start.sh 前 30 行（含 key/token/secret/pass 的行已屏蔽）--"
+head -30 "$D/scripts/start.sh" 2>/dev/null | grep -viE 'key|token|secret|pass' | cut -c1-150 | sed 's/^/      /'
+
+echo; echo "=== 2. 8090 是否已在监听 / 相关进程 ==="
+(ss -ltnp 2>/dev/null || netstat -ltnp 2>/dev/null) | grep ':8090' | cut -c1-140 | sed 's/^/   /' || echo "   (8090 未监听)"
+pgrep -af 'eda_fastmcp|fastmcp|uvicorn' | cut -c1-140 | sed 's/^/   /' || echo "   (无相关进程)"
+echo -n "   本机 /sse 探测: "; timeout 6 curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8090/sse 2>&1 | tail -1
+
+echo; echo "=== 3. 未监听则启动（EDA_MCP_PORT=8090）==="
+if (ss -ltn 2>/dev/null || netstat -ltn 2>/dev/null) | grep -q ':8090'; then
+  echo "   ✅ 已在监听 → 跳过启动（不做任何写操作）"
+elif [ ! -f "$D/scripts/start.sh" ]; then
+  echo "   ⛔ 无 scripts/start.sh → 无法启动，请运维处理"
+else
+  [ -f "$D/.env" ] && cp -a "$D/.env" "$D/.env.bak.$(date +%Y%m%d-%H%M%S)" 2>/dev/null && echo "   已备份 .env"
+  if [ -f "$D/.env" ]; then
+    if grep -q '^EDA_MCP_PORT=' "$D/.env"; then sed -i 's/^EDA_MCP_PORT=.*/EDA_MCP_PORT=8090/' "$D/.env"
+    else printf '\nEDA_MCP_PORT=8090\n' >> "$D/.env"; fi
+    echo "   已确保 .env 中 EDA_MCP_PORT=8090（其余行未动、未回显）"
+  else
+    echo "   ⚠️ 无 .env → 用环境变量注入 EDA_MCP_PORT=8090"
+  fi
+  cd "$D" || exit 1
+  setsid env EDA_MCP_PORT=8090 bash scripts/start.sh > /tmp/eda_mcp_8090.log 2>&1 < /dev/null &
+  echo "   已后台启动，等待 20s ..."; sleep 20
+  echo -n "   8090 监听条数: "; (ss -ltn 2>/dev/null || netstat -ltn 2>/dev/null) | grep -c ':8090'
+  echo "   日志尾（20 行）："; tail -20 /tmp/eda_mcp_8090.log 2>/dev/null | cut -c1-160 | sed 's/^/      /'
+fi
+
+echo; echo "=== 4. 启动后验证：本机 + 从 .12 访问 ==="
+echo "   .29 监听详情: $( (ss -ltnp 2>/dev/null || netstat -ltnp 2>/dev/null) | grep ':8090' | cut -c1-120)"
+echo -n "   .29 /sse     : "; timeout 6 curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8090/sse 2>&1 | tail -1
+echo -n "   .12 → .29:8090 /sse : "; timeout 15 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'timeout 6 curl -sS -o /dev/null -w "%{http_code}" http://10.239.2.29:8090/sse 2>&1 | tail -1' 2>&1 | tail -1; echo
+echo "   ⚠️ 若只绑 127.0.0.1 → .12 访问不通，需改绑 0.0.0.0（看 start.sh 里的 host 配置，勿改业务逻辑）"
+echo; echo "=== DONE ==="
+```
+
+> ⛔ 已降级 RUN_ID 63（21:41:50 exit=0，四线静默排查 → 结论「无停摆、真因=GitHub 推送网络抖动」）为 text。
+
+## RUN_ID 63 — 🩺 **只读巡检：BaiZe 四线「19:30 后集体静默」排查（.12 + .29）**（✅ 已执行 → **无停摆；真因 = GitHub 推送网络抖动**）
 
 > **背景**：2026-10-04 21:37 实拉 `origin/main`，发现 **BaiZe 四条线在 ~19:00–19:27 后全部无新提交** —— vision 最后 `b4c5c80`@**18:44**、data @19:06、pretrain @19:09、ops-relay @19:27；之后仅 `zhulong`（**另一个项目** ZhuLong-DAC2027）@20:20。
 > vision loop 为 `WAITING=1`（30min 轮询）+ cline≤25min → **正常应每 ~30–55min 一次提交** → 疑似 `.12`/`.29` **再次静默停摆**（同日早上刚发生 ~9h 事故，根因=cline 凭据/Forbidden）。
 > **本块🚫纯只读**：不启停任何进程、不改任何文件、不删数据。目的 = 钉死 21:37 真状态：① loop 是否存活 ② 是否 `Forbidden`/额度耗尽 ③ GPU 是**在跑**还是**空转**（区分"只是没推"vs"真停摆"）④ AIMv2 是否收尾/评测 ⑤ R11-F 是否起跑 ⑥ 本地是否有未推送提交。
 
-```bash
+```text
 echo "=== RUN_ID 63 · 只读 · BaiZe 四线静默排查 $(date '+%F %T') ==="; hostname; whoami
 
 echo; echo "=== [A] .12 · vision/data（ssh 只读）==="
