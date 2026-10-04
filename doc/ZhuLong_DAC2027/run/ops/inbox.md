@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 8 -->
+<!-- RUN_ID: 9 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,33 @@
 
 ---
 
+## RUN_ID 9 — 🟢 唤醒后快照：agent 首轮在做什么？
+
+**背景**：RUN_ID 8 已把 `openAiBaseUrl` 修成 `/cloud/v1` 并重启 loop，**agent 首次被唤醒**（loop 日志出现真实推理）。本块**只读**快照：loop/cline 进程、loop 日志、`MEMORY_ZHULONG.md` 现状、`run/` 最新文件、agent 日报、git 状态。
+
+```bash
+# RUN_ID 9 — post-wake snapshot (read-only)
+REPO=/nasdata/app.e0031982/code/super_intelligence_2035
+CWD="$REPO/doc/ZhuLong_DAC2027/run"
+echo "===== 0. TIME ====="; timeout 10 date '+%F %T'
+echo "===== 1. procs (loop + cline) ====="; timeout 10 pgrep -af 'zhulong_loop.sh|cline ' | cut -c1-140
+echo "===== 2. loop log tail (last 30) ====="; timeout 10 tail -n 30 /tmp/zhulong_loop.log | cut -c1-160
+echo "===== 3. MEMORY_ZHULONG (mtime + head) ====="; timeout 10 ls -la "$CWD/MEMORY_ZHULONG.md"; timeout 10 sed -n '1,5p' "$CWD/MEMORY_ZHULONG.md"
+echo "===== 4. newest files in run/ ====="; timeout 10 ls -lat "$CWD" | head -12
+echo "===== 5. agent daily-memory tail ====="; timeout 10 tail -n 15 "$CWD/daily-memories/2026-10-04.md" 2>/dev/null | cut -c1-160
+echo "===== 6. repo git status / log ====="; timeout 20 git -C "$REPO" status -sb | head -8; timeout 20 git -C "$REPO" log --oneline -3
+echo "===== DONE ====="
+```
+
+---
+
 ## RUN_ID 8 — 🔑 修 `error: Forbidden`：给 glm-5.2 写 cline 的 base URL（`cline auth`）+ 重启 loop
 
 **根因（RUN_ID 7 + 对照 BaiZe 可用 loop）**：新 loop 已能调用 cline，但报 `error: Forbidden`；而 `curl -H "Authorization: Bearer <key>" http://agi-gateway.cxmt.com/cloud/v1/models` = **HTTP 200**（key 有效、网关可达）。`~/.cline` 下**查不到 settings/globalState 的 base URL 配置** → cline 只拿到 `-k/-P`、**不知道网关地址** → 打到默认端点被 `Forbidden`。BaiZe 的可用 loop 之所以正常，是因为其 cline 配置里 `openAiBaseUrl=agi-gateway …/cloud/v1`（见 `baize_data_loop.sh` §27–46：**base 必须与模型匹配**，glm-5.2 → `/cloud/v1`）。仓库文档给出的正确写法 = **`cline auth -p openai -k <key> -b <base> -m <model>`**（`ablation_run_task_model_full.md`）。
 
-```bash
+> ⛔ **已作废**（已执行于 21:53:51，base url 已修、agent 已唤醒）——降级为 text，让位给 RUN_ID 9。
+
+```text
 # RUN_ID 8 — set cline base URL for glm-5.2 (fix Forbidden), then restart loop
 REPO=/nasdata/app.e0031982/code/super_intelligence_2035
 LD="$REPO/doc/ZhuLong_DAC2027/run/zhulong_loop.sh"
