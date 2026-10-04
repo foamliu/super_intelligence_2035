@@ -22,21 +22,25 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 HARNESS_WORK = Path("/nas_train/app.e0031982/harness_work")
 INSTANCES_DIR = HARNESS_WORK / "instances"
-WORKDIRS = HARNESS_WORK / "workdirs"
+WORKDIRS = Path("/dev/shm/harness_work/workdirs")  # tmpfs: avoids NFS+git tmp_pack issues
 ROOTFS_DIR = HARNESS_WORK / "rootfs"
 LOGS_EVAL = HARNESS_WORK / "logs_eval"
 
 ROOTFS_TEMPLATES = {
-    "django/django": {"3.0": ROOTFS_DIR / "django__django-10914"},
-    "sympy/sympy": {"1.1": ROOTFS_DIR / "sympy__sympy-11400"},
+    "django/django": ROOTFS_DIR / "django__django-10914",
+    "sympy/sympy": ROOTFS_DIR / "sympy__sympy-11400",
 }
 HARNESSES = ["cline-patched", "codex", "opencode", "claude-code"]
 TIMEOUT_RUN = 1800
 TIMEOUT_EVAL = 1800
+PROXY = "http://172.19.92.25:13128"
 
 
 def run(cmd, cwd=None, timeout=300, env=None):
     e = os.environ.copy()
+    e.setdefault("https_proxy", PROXY)
+    e.setdefault("http_proxy", PROXY)
+    e.setdefault("no_proxy", "127.0.0.1,localhost")
     if env:
         e.update(env)
     try:
@@ -48,57 +52,81 @@ def run(cmd, cwd=None, timeout=300, env=None):
 
 
 def git_clone_or_fetch(repo, base_commit, workdir):
+    """Shallow-init workdir + fetch only the base_commit (no full clone).
+
+    Uses git init + git remote add + git fetch --depth=1 to avoid downloading
+    the entire repo history (django repo is ~1GB; full clone is very slow
+    via proxy).  Shared workdirs per repo are used (see process_instance).
+    """
     workdir = Path(workdir)
+    url = f"https://github.com/{repo}"
     if workdir.exists() and (workdir / ".git").exists():
         out, rc = run(["git", "fetch", "--depth=1", "origin", base_commit], cwd=workdir, timeout=120)
         if rc != 0:
-            out2, rc2 = run(["git", "fetch", "--unshallow"], cwd=workdir, timeout=300)
-            if rc2 != 0:
-                return False, f"git fetch failed: {out[:200]}"
+            # NFS resilience: try checkout anyway (see new-branch comment above)
+            out2, rc2 = run(["git", "checkout", base_commit], cwd=workdir, timeout=60)
+            if rc2 == 0:
+                return True, f"fetch errored but checkout succeeded (NFS race): {out[:100]}"
+            return False, f"git fetch failed: {out[:200]}"
         out, rc = run(["git", "checkout", base_commit], cwd=workdir, timeout=60)
         if rc != 0:
             return False, f"git checkout failed: {out[:200]}"
         return True, "existing workdir updated"
     else:
-        workdir.parent.mkdir(parents=True, exist_ok=True)
-        url = f"https://github.com/{repo}"
-        out, rc = run(["git", "clone", "--no-checkout", url, str(workdir)], timeout=300)
+        workdir.mkdir(parents=True, exist_ok=True)
+        out, rc = run(["git", "init", "-q"], cwd=workdir, timeout=30)
         if rc != 0:
-            return False, f"git clone failed: {out[:200]}"
+            return False, f"git init failed: {out[:200]}"
+        out, rc = run(["git", "remote", "add", "origin", url], cwd=workdir, timeout=30)
+        if rc != 0:
+            # remote might already exist
+            run(["git", "remote", "set-url", "origin", url], cwd=workdir, timeout=30)
         out, rc = run(["git", "fetch", "--depth=1", "origin", base_commit], cwd=workdir, timeout=120)
         if rc != 0:
+            # On NFS, git fetch can report errors (tmp_pack) while objects are
+            # actually downloaded.  Try checkout anyway — if it works, we're fine.
+            out2, rc2 = run(["git", "checkout", base_commit], cwd=workdir, timeout=60)
+            if rc2 == 0:
+                return True, f"fetch errored but checkout succeeded (NFS race): {out[:100]}"
             return False, f"git fetch base_commit failed: {out[:200]}"
         out, rc = run(["git", "checkout", base_commit], cwd=workdir, timeout=60)
+        if rc != 0:
+            return False, f"git checkout failed: {out[:200]}"
+        return True, "init+shallow fetch"
         if rc != 0:
             return False, f"git checkout failed: {out[:200]}"
         return True, "cloned fresh"
 
 
 def setup_rootfs(instance, rootfs_path):
-    rootfs_path = Path(rootfs_path)
-    if rootfs_path.exists() and (rootfs_path / "testbed").exists():
-        return True, "rootfs already exists"
+    """Use the shared template rootfs directly (no cp -a).
+
+    The template rootfs has the conda env + repo already set up.
+    r1_eval.py does `git reset --hard <base_commit>` + `git clean -fdq`
+    before applying each patch, so sharing is safe for sequential runs.
+    """
     repo = instance["repo"]
-    version = instance.get("version", "")
-    template = ROOTFS_TEMPLATES.get(repo, {}).get(version)
+    template = ROOTFS_TEMPLATES.get(repo)
     if not template or not Path(template).exists():
-        return False, f"no rootfs template for {repo} v{version}"
-    print(f"  [rootfs] copying template {template.name} -> {rootfs_path.name} ...")
-    out, rc = run(["cp", "-a", str(template), str(rootfs_path)], timeout=600)
-    if rc != 0:
-        return False, f"cp -a failed: {out[:200]}"
-    testbed = rootfs_path / "testbed"
+        return False, f"no rootfs template for {repo}"
+    testbed = template / "testbed"
+    if not testbed.exists():
+        return False, f"template testbed missing: {testbed}"
     base_commit = instance["base_commit"]
-    out, rc = run(["git", "fetch", "--depth=1", "origin", base_commit], cwd=testbed, timeout=120)
-    if rc != 0:
-        out2, rc2 = run(["git", "fetch", "--unshallow"], cwd=testbed, timeout=300)
-        if rc2 != 0:
-            return False, f"rootfs git fetch failed: {out[:200]}"
-    out, rc = run(["git", "checkout", base_commit], cwd=testbed, timeout=60)
-    if rc != 0:
-        return False, f"rootfs git checkout failed: {out[:200]}"
-    out, rc = run(["pip", "install", "-e", ".", "--no-deps", "-q"], cwd=testbed, timeout=300)
-    return True, f"rootfs created from template, pip install rc={rc}"
+    # Verify base_commit is available; fetch if needed (via proxy in run())
+    out, rc = run(["git", "cat-file", "-t", base_commit], cwd=testbed, timeout=10)
+    if rc != 0 or "commit" not in out:
+        # Clean stale temp pack files that block git fetch
+        import glob
+        for tmp in glob.glob(str(testbed / ".git" / "objects" / "pack" / "tmp_*")):
+            try:
+                os.unlink(tmp)
+            except OSError:
+                pass
+        out, rc = run(["git", "fetch", "--depth=1", "origin", base_commit], cwd=testbed, timeout=120)
+        if rc != 0:
+            return False, f"base_commit fetch failed: {out[:200]}"
+    return True, f"using template {template.name} directly (shared rootfs)"
 
 
 def run_harness(harness, instance_json, workdir, predictions_out):
@@ -140,7 +168,10 @@ def process_instance(instance_id, do_setup=True, do_run=True, do_eval=True):
         return {"instance_id": instance_id, "error": "instance JSON not found"}
     instance = json.loads(inst_json.read_text())
     results = {"instance_id": instance_id, "repo": instance["repo"], "version": instance.get("version", "")}
-    workdir = WORKDIRS / instance_id
+    # Use shared workdir per repo (not per instance) — run_single.py does git reset --hard before/after
+    workdir = WORKDIRS / instance["repo"].replace("/", "_")
+    # Use shared template rootfs (not per-instance copy) for eval
+    rootfs_path = ROOTFS_TEMPLATES.get(instance["repo"], ROOTFS_DIR / instance_id)
     if do_setup:
         print(f"\n{'='*60}\n[SETUP] {instance_id}")
         ok, msg = git_clone_or_fetch(instance["repo"], instance["base_commit"], workdir)
@@ -148,7 +179,6 @@ def process_instance(instance_id, do_setup=True, do_run=True, do_eval=True):
         if not ok:
             results["blocked"] = msg
             return results
-        rootfs_path = ROOTFS_DIR / instance_id
         ok, msg = setup_rootfs(instance, rootfs_path)
         results["rootfs_setup"] = {"ok": ok, "msg": msg}
         if not ok:
@@ -162,7 +192,7 @@ def process_instance(instance_id, do_setup=True, do_run=True, do_eval=True):
             ok, hres = run_harness(harness, inst_json, workdir, pred_file)
             if do_eval and ok:
                 run_id = f"R1_PILOT_{harness.replace('-', '_').upper()}_{instance_id.replace('-', '_')}"
-                eok, eres = eval_instance(instance_id, pred_file, ROOTFS_DIR / instance_id, run_id)
+                eok, eres = eval_instance(instance_id, pred_file, rootfs_path, run_id)
                 hres["eval"] = eres
             harness_results[harness] = hres
         results["harnesses"] = harness_results
