@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 36 -->
+<!-- RUN_ID: 37 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,45 @@
 
 ---
 
-## RUN_ID 36 — 🗑 **合并删除：LLaVA-1.5 的 1.16T + 4 个旧实验目录（≈2.5T）**（**均获用户批准**）（**本块最新，优先执行**）
+## RUN_ID 37 — ✅ **核验 5 项删除的最终状态 + 实际回收量**（**只读**）（**本块最新，优先执行**）
+
+**RUN_ID 36 已执行（✅ 09:57:17 exit=0）**，日志显示 5 个目标**全部 `GONE`**，但**速度不合常理**（1.16 T 在 1 秒内"消失"）→ **极可能是 RUN_ID 34 在超时前已经把 `rm -rf` 跑了**（34 的 exit=124 = 超时）。本块**核实**：
+1. 后台任务 `/tmp/_clean36.log` **全文** + `/tmp/_clean36.done`
+2. **5 个目标路径**逐个 `[ -e ]` 判定（最终事实）
+3. 留证包是否存在
+4. `df`（⚠️ NFS statfs 可能延迟 ~2 分钟；**对照基线：09:35 时 Used 180365G / Avail 31604G**）
+
+🚫 **只读**。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+D=/nas_train/app.e0031982; CODE=$D/code
+
+echo; echo "=== 1. 后台删除任务日志（全文）==="
+cat /tmp/_clean36.log 2>/dev/null | sed 's/^/   /'
+echo "   done 标记 = $([ -f /tmp/_clean36.done ] && cat /tmp/_clean36.done || echo 'NO（可能仍在跑）')"
+echo "   rm 进程还在吗: $(pgrep -fc 'rm -rf /nas_train/app.e0031982/code' 2>/dev/null || echo 0)"
+
+echo; echo "=== 2. 五个目标最终状态（事实判定）==="
+for P in "$CODE/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b" "$CODE/chip-mllm" "$CODE/LLaVA" "$CODE/LLaVA-OneVision-2" "$CODE/circuitvision-encoder"; do
+  if [ -e "$P" ]; then echo "   ⚠️ STILL : $P"; else echo "   ✅ GONE  : ${P#$CODE/}"; fi
+done
+
+echo; echo "=== 3. 留证包 ==="
+ls -lh "$CODE"/_ARCHIVE_*.tgz "$CODE"/hell/LLaVA-OneVision-1.5/_ARCHIVE_*.tgz 2>/dev/null | cut -c1-118
+
+echo; echo "=== 4. df 现状（对比基线 Used 180365G / Avail 31604G @09:35）==="
+df -BG /nas_train | tail -1
+df -hT /nas_train | tail -1
+
+echo; echo "=== 5. code/ 顶层（前 20）==="
+ls -1 "$CODE" 2>/dev/null | head -20 | sed 's/^/   /'
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 36**（合并删除，**✅ 已执行 09:57:17 exit=0**）为 ```text。
+
+## RUN_ID 36 — 🗑 **合并删除：LLaVA-1.5 的 1.16T + 4 个旧实验目录**（✅ 已执行 → 5 项 GONE，见 RUN_ID 37 核验）
 
 **用户已批准（2026-10-04）**：
 1. **方案 B** —— 全删 `code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b`（6×198G ≈ **1.16 TB**）
@@ -39,7 +77,7 @@
 
 **设计要点**：① **合并成一个块**（避免 35/36 互相抢占"第一个 bash 块"）② **幂等**（已删的自动跳过）③ **每步都有界**（`timeout`；P3 只扫几百 MB 的 git 副本，**绝不扫 8 TiB 的 `code/`**）④ 删前**打印身份证据**（顶层/`.git`/`.py` 计数/mtime）并**把小体积文本与 <300MB 的 `.git` 打包留证**。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 D=/nas_train/app.e0031982; CODE=$D/code
 LV=$CODE/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b
