@@ -47,6 +47,13 @@
 
 
 
+## 📌 人工裁决记录（2026-10-04 · 供推进 agent 遵守）
+
+- **RAG recall 端口已修复**：`.env` L117 `RAG_RECALL_URL` 已由 `http://localhost:9012/recall`（无服务）改为 `http://localhost:9006/recall`（健康召回 PID 3820519，`kb/.recall_api.port=9006`）。**改动需重启 MCP 后才生效。**
+- **重启时机（重要）**：`wo_retrieval`（检索 OFF）不受影响、照常跑完 5 轮；**切 `full` 之前**在轮次边界执行一次 `bash scripts/stop.sh && bash scripts/start.sh` 让 9006 生效（严禁在 running 中重启）。
+- **rag 需重跑**：`rag` 的 5 轮（68.2±7.4%）是在向量召回失效、降级 BM25-only 下测得；为与 `full`（真语义检索）可比，**重跑 rag ×5 后再跑 full ×5**。顺序：wo_retrieval 收口 → 重启 MCP（9006 生效）→ rag ×5 → full ×5（`pure_llm` 已跑完、跳过）。
+- 背景：`api_recall()` 连错端口失败 → 返回 `[]` → `search_apis` 退化为 BM25；修复后向量语义检索恢复。
+
 ## 消融计划总览
 
 ### Phase 1: 组件消融（4 配置，各 5 轮）
