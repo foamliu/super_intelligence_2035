@@ -4122,3 +4122,98 @@ whag0pgpuap29
 
 === DONE（后台仍在删；下轮读 /tmp/_clean36.log + /tmp/_clean36.done）===
 ```
+
+---
+
+## RUN_ID 37 · 2026-10-04 10:21:29 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+D=/nas_train/app.e0031982; CODE=$D/code
+
+echo; echo "=== 1. 后台删除任务日志（全文）==="
+cat /tmp/_clean36.log 2>/dev/null | sed 's/^/   /'
+echo "   done 标记 = $([ -f /tmp/_clean36.done ] && cat /tmp/_clean36.done || echo 'NO（可能仍在跑）')"
+echo "   rm 进程还在吗: $(pgrep -fc 'rm -rf /nas_train/app.e0031982/code' 2>/dev/null || echo 0)"
+
+echo; echo "=== 2. 五个目标最终状态（事实判定）==="
+for P in "$CODE/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b" "$CODE/chip-mllm" "$CODE/LLaVA" "$CODE/LLaVA-OneVision-2" "$CODE/circuitvision-encoder"; do
+  if [ -e "$P" ]; then echo "   ⚠️ STILL : $P"; else echo "   ✅ GONE  : ${P#$CODE/}"; fi
+done
+
+echo; echo "=== 3. 留证包 ==="
+ls -lh "$CODE"/_ARCHIVE_*.tgz "$CODE"/hell/LLaVA-OneVision-1.5/_ARCHIVE_*.tgz 2>/dev/null | cut -c1-118
+
+echo; echo "=== 4. df 现状（对比基线 Used 180365G / Avail 31604G @09:35）==="
+df -BG /nas_train | tail -1
+df -hT /nas_train | tail -1
+
+echo; echo "=== 5. code/ 顶层（前 20）==="
+ls -1 "$CODE" 2>/dev/null | head -20 | sed 's/^/   /'
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 10:21:29
+
+=== 1. 后台删除任务日志（全文）===
+   [09:57:25] rm -rf /nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b
+   [09:57:25] done: GONE
+   [09:57:25] rm -rf /nas_train/app.e0031982/code/chip-mllm
+   [09:57:30] done: GONE
+   [09:57:30] rm -rf /nas_train/app.e0031982/code/LLaVA
+   [09:57:32] done: GONE
+   [09:57:32] rm -rf /nas_train/app.e0031982/code/LLaVA-OneVision-2
+   [09:57:35] done: GONE
+   [09:57:35] rm -rf /nas_train/app.e0031982/code/circuitvision-encoder
+   [09:57:35] done: GONE
+   done 标记 = ALLDONE
+   rm 进程还在吗: 0
+0
+
+=== 2. 五个目标最终状态（事实判定）===
+   ✅ GONE  : hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b
+   ✅ GONE  : chip-mllm
+   ✅ GONE  : LLaVA
+   ✅ GONE  : LLaVA-OneVision-2
+   ✅ GONE  : circuitvision-encoder
+
+=== 3. 留证包 ===
+-rw-r----- 1 app.e0031982 app.adm  12M Oct  4 09:57 /nas_train/app.e0031982/code/_ARCHIVE_chip-mllm.tgz
+-rw-r----- 1 app.e0031982 app.adm 6.3M Oct  4 09:57 /nas_train/app.e0031982/code/_ARCHIVE_circuitvision-encoder.tgz
+-rw-r----- 1 app.e0031982 app.adm  20K Oct  4 09:57 /nas_train/app.e0031982/code/_ARCHIVE_LLaVA-OneVision-2.tgz
+-rw-r----- 1 app.e0031982 app.adm  12M Oct  4 09:57 /nas_train/app.e0031982/code/_ARCHIVE_LLaVA.tgz
+-rw-r----- 1 app.e0031982 app.adm  161 Oct  4 09:57 /nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/_ARCHIVE_sta
+
+=== 4. df 现状（对比基线 Used 180365G / Avail 31604G @09:35）===
+10.239.23.31:/vol_CTE0_data01   211968G 176713G    35256G  84% /nas_train
+10.239.23.31:/vol_CTE0_data01 nfs   207T  173T   35T  84% /nas_train
+
+=== 5. code/ 顶层（前 20）===
+   apex
+   _ARCHIVE_chip-mllm.tgz
+   _ARCHIVE_circuitvision-encoder.tgz
+   _ARCHIVE_LLaVA-OneVision-2.tgz
+   _ARCHIVE_LLaVA.tgz
+   AReaL
+   backup
+   BaiZe-ISEDA2027
+   benchmarks
+   claude-code-main
+   cline-langfuse.md
+   DataFlow
+   EDA-Eval-Framework
+   eda_fastmcp
+   emotion
+   EvolvingLMMs-Lab
+   flash-attention
+   hell
+   langfuse
+   LLaVA-OneVision-1.5
+
+=== DONE ===
+```
