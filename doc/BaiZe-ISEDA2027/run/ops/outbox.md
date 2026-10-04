@@ -6495,3 +6495,231 @@ MEMORY_VISION.md is ~26KB (under 32KB limit). Let me update the status header an
 === DONE (.12) ===
 === relay block done ===
 ```
+
+---
+
+## RUN_ID 63 · 2026-10-04 21:41:50 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== RUN_ID 63 · 只读 · BaiZe 四线静默排查 $(date '+%F %T') ==="; hostname; whoami
+
+echo; echo "=== [A] .12 · vision/data（ssh 只读）==="
+timeout 300 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-185
+export PATH="$HOME/.bun/bin:$PATH"
+hostname; date '+%F %T'
+W=/nas_train/app.e0031982/code/super_intelligence_2035; R=$W/doc/BaiZe-ISEDA2027/run
+echo "--- A1. loop 进程 ---"; pgrep -af 'baize_vision_loop.sh|baize_data_loop.sh' | cut -c1-95
+echo "--- A2. vision loop log 末 16 行 ---"; tail -16 /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-165
+echo "   vision Forbidden=$(grep -c 'error:.*Forbidden' /tmp/baize_vision_loop.log 2>/dev/null)  data Forbidden=$(grep -c 'error:.*Forbidden' /tmp/baize_data_loop.log 2>/dev/null)"
+echo "   vision log mtime=$(stat -c '%y' /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-19)"
+echo "--- A3. GPU ---"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null
+echo "--- A4. 训练/评测进程 ---"; pgrep -af 'r9_train|r11_run|r8_eval_in1k|torch.distributed.run' | cut -c1-145
+echo "--- A5. AIMv2 train.log 末 3 行 + ckpt ---"
+tail -3 /nas_train/app.e0031982/datasets/baize-vision/out/R11L_aimv2_w512/train.log 2>/dev/null | cut -c1-165
+ls -l --time-style=+%F_%T /nas_train/app.e0031982/datasets/baize-vision/out/R11L_aimv2_w512/*.pt 2>/dev/null | cut -c1-115
+echo "--- A6. R11-F 是否起跑 ---"; ls -l --time-style=+%F_%T "$R/vision/r11_run_datasource.sh" 2>/dev/null | cut -c1-110
+tail -8 /tmp/r11_datasource.log 2>/dev/null | cut -c1-165
+echo "--- A7. MEMORY_VISION 状态头 ---"; head -4 "$R/MEMORY_VISION.md" | cut -c1-150
+echo "--- A8. 本地 git ---"; cd "$W" && git log --oneline -3 2>/dev/null | cut -c1-115; git status -sb 2>/dev/null | head -3 | cut -c1-110
+echo "=== DONE(.12) ==="
+EOS12
+
+echo; echo "=== [B] .29 · pretrain/harness（本机只读）==="
+W=/nas_train/app.e0031982/code/super_intelligence_2035; R=$W/doc/BaiZe-ISEDA2027/run
+echo "--- B1. loop 进程 ---"; pgrep -af 'baize_pretrain_loop.sh|baize_harness_loop.sh' | cut -c1-95
+echo "--- B2. pretrain loop log 末 12 行 ---"; tail -12 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-160
+echo "   pretrain Forbidden=$(grep -c 'error:.*Forbidden' /tmp/baize_pretrain_loop.log 2>/dev/null)  harness Forbidden=$(grep -c 'error:.*Forbidden' /tmp/baize_harness_loop.log 2>/dev/null)"
+echo "--- B3. GPU ---"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null
+echo "--- B4. P-9.7 进程/进度 ---"; pgrep -af 'r9_train|pretrain_launcher|torch.distributed.run' | cut -c1-130
+tail -3 /tmp/p97_a1_steady.log 2>/dev/null | cut -c1-160
+echo "--- B5. relay ---"; pgrep -af 'ops_relay.sh' | cut -c1-85; echo "   last_run_id=$(cat "$R/ops/.last_run_id" 2>/dev/null)"
+echo "--- B6. 本地 git ---"; cd "$W" && git log --oneline -3 2>/dev/null | cut -c1-115; git status -sb 2>/dev/null | head -3 | cut -c1-110
+echo "=== relay block done ==="
+```
+
+**输出**
+```
+=== RUN_ID 63 · 只读 · BaiZe 四线静默排查 2026-10-04 21:41:50 ===
+whag0pgpuap29
+app.e0031982
+
+=== [A] .12 · vision/data（ssh 只读）===
+whag0pgpuap12
+2026-10-04 21:41:51
+--- A1. loop 进程 ---
+1815982 bash baize_vision_loop.sh
+1827417 bash baize_data_loop.sh
+--- A2. vision loop log 末 16 行 ---
+[36m[run_commands][0m sleep 25 && tail -6 /tmp/r11f_datasource.log 2>/dev/null && echo '---' && date '+%H:%M:%S'
+   [90m⎿ [0m[32mok[0m
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+      at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+      at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+
+[2m[abort] aborted by another client[0m
+
+[loop] 2026-10-04 21:38:53 cline returned (exit 0), checking git push ...
+[loop] 2026-10-04 21:38:53 WAITING=1（异步任务 running）→ sleep 1800s
+   vision Forbidden=0  data Forbidden=0
+   vision log mtime=2026-10-04 21:38:53
+--- A3. GPU ---
+0, 3901 MiB, 66 %
+1, 4 MiB, 0 %
+2, 4 MiB, 0 %
+3, 4 MiB, 0 %
+4, 4 MiB, 0 %
+5, 4 MiB, 0 %
+6, 4 MiB, 0 %
+7, 4 MiB, 0 %
+--- A4. 训练/评测进程 ---
+2640649 bash r11_run_datasource.sh 30000 6
+3220027 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python r8_eval_in1k.py --ckpts /nas_train/app.e0031982/datasets/baize-vision/out/R11F_g
+--- A5. AIMv2 train.log 末 3 行 + ckpt ---
+[saved] /nas_train/app.e0031982/datasets/baize-vision/out/R11L_aimv2_w512/vision_step30000.pt (fused=False)
+[done] total=7076.1s steps=30000 steady_image_s=5971.4 final_loss=3.5554 fused=False
+[saved] /nas_train/app.e0031982/datasets/baize-vision/out/R11L_aimv2_w512/vision.pt (fused=False)
+-rw-r----- 1 app.e0031982 app.adm 507199671 2026-10-04_20:06:20 /nas_train/app.e0031982/datasets/baize-vision/out/R
+-rw-r----- 1 app.e0031982 app.adm 507208911 2026-10-04_18:48:12 /nas_train/app.e0031982/datasets/baize-vision/out/R
+-rw-r----- 1 app.e0031982 app.adm 507208911 2026-10-04_19:26:48 /nas_train/app.e0031982/datasets/baize-vision/out/R
+-rw-r----- 1 app.e0031982 app.adm 507208911 2026-10-04_20:06:19 /nas_train/app.e0031982/datasets/baize-vision/out/R
+--- A6. R11-F 是否起跑 ---
+-rwxr-x--- 1 app.e0031982 app.adm 5946 2026-10-04_20:21:12 /nas_train/app.e0031982/code/super_intelligence_203
+--- A7. MEMORY_VISION 状态头 ---
+# MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
+
+WAITING: 1
+
+--- A8. 本地 git ---
+ba8b3a0 data: 唤醒107 白名单巡检(l1_en_hq 1293/6006 gpic 2466/8001) + 滚动迁99/100/101
+5a3f047 pretrain: P-9.7 A1 steady-state poll iter820/1100 @21:22 (~249K tok/s, ETA ~22:40)
+0c80f82 vision: R11-F Arm A 巡检 step16350/30000 ≈54.5% 健康无坍缩
+## main...origin/main [ahead 16]
+ M doc/BaiZe-ISEDA2027/daily-memories/2026-10-04.md
+ M doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md
+=== DONE(.12) ===
+
+=== [B] .29 · pretrain/harness（本机只读）===
+--- B1. loop 进程 ---
+1391466 bash baize_pretrain_loop.sh
+1784375 bash baize_harness_loop.sh
+3525474 node /home/app.e0031982/.local/bin/cline -c /nas_train/app.e0031982/code/super_intellig
+3525481 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline -c /nas_tra
+--- B2. pretrain loop log 末 12 行 ---
+      at cZ (/$bunfs/root/chunk-nd6m62hc.js:26:48389)
+      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at BY (/$bunfs/root/chunk-nd6m62hc.js:26:48090)
+      at cZ (/$bunfs/root/chunk-nd6m62hc.js:26:48389)
+      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)
+
+[loop] 2026-10-04 21:26:00 cline returned (exit 0), checking git push ...
+[push] 2026-10-04 21:26:00 push interval reached, syncing ...
+[push] fetch FAILED (network?) - skip this cycle.
+[loop] 2026-10-04 21:26:00 WAITING=1（异步任务 running）→ sleep 1800s
+   pretrain Forbidden=0  harness Forbidden=0
+--- B3. GPU ---
+0, 54565 MiB, 99 %
+1, 54581 MiB, 97 %
+2, 54675 MiB, 100 %
+3, 54553 MiB, 100 %
+4, 54487 MiB, 98 %
+5, 54357 MiB, 100 %
+6, 54515 MiB, 83 %
+7, 53987 MiB, 100 %
+--- B4. P-9.7 进程/进度 ---
+3585055 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnod
+3591120 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3591121 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3591122 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3591123 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3591124 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3591125 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3591126 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3591127 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630812 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630846 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630847 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630848 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630873 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630901 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630903 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630910 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630911 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630918 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630935 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630936 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630937 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630938 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630939 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630940 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630941 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630942 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630957 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630959 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630962 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630964 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630965 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630966 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630967 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630968 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630969 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630970 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630971 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630973 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630974 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630975 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630976 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630977 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630978 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630979 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630980 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630981 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630988 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3630997 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631006 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631009 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631014 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631015 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631016 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631017 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631028 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631033 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631063 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631066 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631067 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631168 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631180 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631221 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631227 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631249 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631254 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631255 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631257 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631272 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631362 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631388 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631426 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+3631432 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u pretrain_launcher.py --arch mamba2 --name p97_a1_steady --dir 
+--- B5. relay ---
+762856 bash ops_relay.sh
+2489749 bash ops_relay.sh
+3525474 node /home/app.e0031982/.local/bin/cline -c /nas_train/app.e0031982/code/supe
+3525481 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline -
+   last_run_id=62
+--- B6. 本地 git ---
+ba8b3a0 data: 唤醒107 白名单巡检(l1_en_hq 1293/6006 gpic 2466/8001) + 滚动迁99/100/101
+5a3f047 pretrain: P-9.7 A1 steady-state poll iter820/1100 @21:22 (~249K tok/s, ETA ~22:40)
+0c80f82 vision: R11-F Arm A 巡检 step16350/30000 ≈54.5% 健康无坍缩
+## main...origin/main [ahead 16]
+ M doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md
+ M doc/BaiZe-ISEDA2027/run/daily-memories-harness/2026-10-04.md
+=== relay block done ===
+```
