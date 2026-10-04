@@ -6854,3 +6854,143 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 65 · 2026-10-05 07:20:14 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+D=/nas_train/app.e0031982/code/eda_fastmcp
+
+echo; echo "=== 1. 监听与进程（复核）==="
+(ss -ltnp 2>/dev/null || netstat -ltnp 2>/dev/null) | grep ':8090' | cut -c1-140 | sed 's/^/   /'
+pgrep -af 'eda_fastmcp|main.py' | cut -c1-150 | sed 's/^/   /'
+
+echo; echo "=== 2. ✅ 正确探针 A：只要【响应头】（SSE 会立刻给 200）==="
+echo "   -- GET /sse 响应头 --"; timeout 5 curl -sS -m 4 -D - -o /dev/null http://127.0.0.1:8090/sse 2>&1 | head -8 | sed 's/^/      /'
+echo "   -- GET / 响应头 --";   timeout 5 curl -sS -m 4 -D - -o /dev/null http://127.0.0.1:8090/ 2>&1 | head -8 | sed 's/^/      /'
+
+echo; echo "=== 3. ✅ 正确探针 B：抓 SSE 首帧（MCP 会先推 endpoint 事件）==="
+timeout 5 curl -sN -m 4 http://127.0.0.1:8090/sse 2>&1 | head -6 | sed 's/^/      /'
+
+echo; echo "=== 4. 从 .12 验证可达性（TCP + 响应头）==="
+timeout 15 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'echo -n "   .12 TCP->.29:8090 : "; timeout 5 bash -c "cat < /dev/null > /dev/tcp/10.239.2.29/8090" 2>/dev/null && echo OK || echo FAIL; echo "   .12 GET /sse 头:"; timeout 6 curl -sS -m 5 -D - -o /dev/null http://10.239.2.29:8090/sse 2>&1 | head -4 | sed "s/^/      /"' 2>&1 | cut -c1-170
+
+echo; echo "=== 5. 接入信息：README / 工具名 ==="
+echo "   -- README 前 40 行 --"; head -40 "$D/README.md" 2>/dev/null | cut -c1-150 | sed 's/^/      /'
+echo "   -- 含 cimi 的文件（有界）--"; timeout 20 grep -rIl -i 'cimi' "$D" --include='*.py' --include='*.md' --include='*.json' 2>/dev/null | head -8 | sed 's/^/      /'
+echo "   -- 工具名（tools/ 或 main.py 里的注册，有界）--"; timeout 20 grep -rhoE '(cimi_search|cimi_fetch|"[a-z_]+_search"|"[a-z_]+_fetch")' "$D/main.py" "$D/server" "$D/skills" 2>/dev/null | sort -u | head -20 | sed 's/^/      /'
+echo "   -- .env 里与 MCP/端口/URL 相关的键（值已屏蔽）--"; grep -nE '^(EDA_MCP|MCP_|HOST|PORT|URL)' "$D/.env" 2>/dev/null | sed 's/=.*/=<masked>/' | sed 's/^/      /'
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-05 07:20:14
+
+=== 1. 监听与进程（复核）===
+   LISTEN 0      2048         0.0.0.0:8090       0.0.0.0:*    users:(("python",pid=111692,fd=3))                                               
+   111692 /nas_train/app.e0031982/code/eda_fastmcp/venv/bin/python /nas_train/app.e0031982/code/eda_fastmcp/main.py
+
+=== 2. ✅ 正确探针 A：只要【响应头】（SSE 会立刻给 200）===
+   -- GET /sse 响应头 --
+      HTTP/1.1 200 OK
+      date: Sun, 04 Oct 2026 23:20:14 GMT
+      server: uvicorn
+      cache-control: no-store
+      connection: keep-alive
+      x-accel-buffering: no
+      content-type: text/event-stream; charset=utf-8
+      Transfer-Encoding: chunked
+   -- GET / 响应头 --
+      HTTP/1.1 404 Not Found
+      date: Sun, 04 Oct 2026 23:20:18 GMT
+      server: uvicorn
+      content-length: 9
+      content-type: text/plain; charset=utf-8
+      
+
+=== 3. ✅ 正确探针 B：抓 SSE 首帧（MCP 会先推 endpoint 事件）===
+      event: endpoint
+      data: /messages/?session_id=e2252802aeb340d2917e955880167892
+      
+
+=== 4. 从 .12 验证可达性（TCP + 响应头）===
+   .12 TCP->.29:8090 : OK
+   .12 GET /sse 头:
+      HTTP/1.1 200 OK
+      date: Sun, 04 Oct 2026 23:20:23 GMT
+      server: uvicorn
+      cache-control: no-store
+
+=== 5. 接入信息：README / 工具名 ===
+   -- README 前 40 行 --
+      # EDA FastMCP — LLM Agent for EDA Code Generation
+      
+      ## 项目简介
+      
+      EDA FastMCP 是一个 MCP (Model Context Protocol) 服务器，为 AI Agent（Cline/zhulong CLI）提供 EDA API 检索、文档查阅、代码执行�
+      
+      | 语言 | 平台 / 方言 | 用途 |
+      |------|------------|------|
+      | **pyAether** | Empyrean Aether（Python + SWIG，华大九天平台） | 主评测语言 |
+      | **SKILL** | Cadence Virtuoso Lisp 方言 | 电路/版图编程 |
+      | **Tcl** | Synopsys Custom WaveView ACE | 波形操作命令 |
+      | **Innovus** | Cadence Innovus（P&R） | API 文档检索（暂无 benchmark） |
+      
+      Agent 通过 MCP 工具检索 API 文档、生成代码、在远程沙箱执行并获取反馈，形成"检索—查阅—执行—修正"闭环；同
+      
+      ## 环境要求
+      
+      - Python 3.10（`~/miniforge3/envs/py310_env`，见 `CLAUDE.md` / `requirements.txt`；仓库内 `pyproject.toml` 声明 `>=3.13`、`.python-version` 
+      - Cline CLI（`~/.local/bin/cline`，v3.0+）
+      - 远程沙箱服务（`10.129.32.75`，4 个隔离端口 `8650/8651/8652/8654`，按 `lang` 字段分发 pyAether / SKILL / Tcl 运行时）
+      - 评测框架（路径由 `.env` 变量指定）：
+        - pyAether: `EVAL_FW_DIR`
+        - SKILL: `EVAL_FW_DIR_SKILL`
+        - Tcl: `EVAL_FW_DIR_TCL`
+      
+      ## 快速开始
+      
+      ### 1. 配置
+      
+      所有配置在 `.env` 文件中。关键变量（以当前 `.env` 为准）：
+      
+      ```bash
+      EDA_MCP_PORT=18889                    # MCP server 端口
+      SANDBOX_HOST=10.129.32.75             # 远程沙箱主机
+      SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:...t0002997_2,8652:...t0002997_3,8654:...t0002997_4  # 4 个隔离端口 + workdir
+      RAG_RECALL_URL=http://localhost:9009/recall   # API 文档向量召回（4 collection，按 lang 路由）
+      MEMORY_VECTOR_URL=http://localhost:9010       # Memory Bank 向量召回
+      CLI_AGENT=cline                       # CLI 执行器（cline / zhulong）
+      EDA_VALIDATOR_EVOLVE=true             # validator 自进化写入开关（-e 链，pyAether 专属）
+      EDA_RUNCODE_GUARDRAILS=false          # run_code 后置护栏（Python AST 检查，默认关闭）
+   -- 含 cimi 的文件（有界）--
+      /nas_train/app.e0031982/code/eda_fastmcp/README.md
+      /nas_train/app.e0031982/code/eda_fastmcp/main.py
+      /nas_train/app.e0031982/code/eda_fastmcp/scripts/set_ablation.py
+      /nas_train/app.e0031982/code/eda_fastmcp/tools/web_search/__init__.py
+      /nas_train/app.e0031982/code/eda_fastmcp/tools/web_search/cimi_fetch.py
+      /nas_train/app.e0031982/code/eda_fastmcp/tools/web_search/cimi_search.py
+      /nas_train/app.e0031982/code/eda_fastmcp/venv/lib/python3.10/site-packages/multidict/_multidict_py.py
+   -- 工具名（tools/ 或 main.py 里的注册，有界）--
+      "cimi_fetch"
+      cimi_fetch
+      "cimi_search"
+      cimi_search
+   -- .env 里与 MCP/端口/URL 相关的键（值已屏蔽）--
+      40:EDA_MCP_PORT=<masked>
+      42:EDA_MCP_HOST=<masked>
+      44:EDA_MCP_TRANSPORT=<masked>
+      47:EDA_MCP_TELEMETRY_ENABLED=<masked>
+      50:EDA_MCP_SIGNOZ_ENDPOINT=<masked>
+      52:MCP_SERVICE_NAME=<masked>
+      54:MCP_SERVICE_VERSION=<masked>
+      235:EDA_MCP_TOOLS_DISABLED=<masked>
+
+=== DONE ===
+```
