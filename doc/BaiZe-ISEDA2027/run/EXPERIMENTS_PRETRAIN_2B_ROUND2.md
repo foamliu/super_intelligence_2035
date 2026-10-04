@@ -605,3 +605,28 @@ python -m lm_eval --model hf \
   - `[08:53:52] iteration 30/60 ... 35236.2ms`
   - `[08:59:39] iteration 40/60 ... 34694.0ms | Step Time 34.69s GPU 290.3`
   - `[09:05:21] iteration 50/60 ... 34139.1ms | Step Time 34.14s GPU 295.0`
+
+**🩺 中间发现（2026-10-04 ~09:42，config ② 收尾）—— ⭐⭐ TP2·MBS=4 落地、不 OOM，且 s/iter 降至 ~20.7（≈TP1·MBS2），FP8 交叉点的钥匙到手**：
+
+| 配置 | TP | SP | MBS | 稳态 s/iter | tok/s | GPU util (TFLOP/s/GPU) | 峰值显存 (max/8) |
+|:--|:--|:--|:--|--:|--:|--:|--:|
+| P-9.1 基线 | 1 | off | 2 | **19.3** | **218K** | **519** | 56865 MiB |
+| ① TP2·MBS2 | 2 | off | 2 | 34.1 | 123K | ~290 | 34265 MiB |
+| **② TP2·MBS4** | 2 | off | **4** | **~20.7** | **~200K** | **~482** | **55657 MiB ✅ 不 OOM** |
+
+- **✅ MBS=4 在 TP2·DP4 下落地**（峰值 55657 MiB < 56865 MiB 的 TP1·MBS2，**比 TP1 下 MBS=4 的 81087 MiB OOM 省了 ~25GB**）→ **M = MBS×seq = 4×4096 = 16384，正好到 FP8 交叉点（M≳16K）**。这是 P-9.1 结论（TP1 下 MBS≥4 OOM）的**破局**。
+- **s/iter 20.7s → ~200K tok/s（482 TFLOP/s/GPU）**：**只比 TP1·MBS2 基线（218K）慢 ~8%**，但 GEMM 的 M 翻倍。**机制印证**：MBS 2→4 把 M=8192→16384，摊薄了 TP2 每层 allreduce（见 ① 的 34.1s），并让每卡 GEMM 矩形更"厚"→ 单卡效率从 ① 的 290 跳到 482 TFLOP/s/GPU（~49% 峰值）。
+- **P-8 决策分叉成形**：
+  - **A. TP1·DP8·MBS2**：218K tok/s（bf16），但 M=8192 < 16K → **FP8 无收益**；
+  - **B. TP2·DP4·MBS4**：~200K tok/s（bf16），M=16384 = **FP8 交叉点**。若 P-9.4 FP8 复评在此 M 下给出 `s>1`（运维预期 → 1.34 饱和区）→ **B·FP8 ≈ 260K tok/s，反超 A**。
+  - → **P-9.4（FP8 复评）有了具体载体**：在 **TP2·MBS4（M=16384）** 下做 bf16 vs FP8 端到端对照。等 ③/④（SP on）收尾后定稿。
+- 原始输出（config ②，`/tmp/baize_p9_tp2_mbs4.log`）：
+  - `[09:19:43] iteration 20/60 ... 20880.1ms | Step Time 20.88s GPU 482.3 TFLOP/s/GPU`
+  - `[09:23:09] iteration 30/60 ... 20601.9ms`
+  - `[09:26:36] iteration 40/60 ... 20713.0ms`
+  - `[09:30:08] iteration 50/60 ... 21222.1ms`
+  - `[09:33:45] iteration 60/60 ... 21689.2ms | peak_gpu_mem 55657 MiB | rc=0`
+
+**🩺 中间观察（2026-10-04 ~09:42，config ③ TP2·SP·MBS2 起跑 iter10）**：
+- `[09:41:13] iteration 10/60 ... 38419.5ms | Step Time 38.42s GPU 262.1 TFLOP/s/GPU`（首 10 步含编译/预热）。
+- SP on 在 TP2·MBS2 下**无加速迹象**（262 vs ① 的 290 TFLOP/s/GPU，但尚早、含预热，等稳态 40+ 步再判）。③/④ 预计 ~11:00 收尾。
