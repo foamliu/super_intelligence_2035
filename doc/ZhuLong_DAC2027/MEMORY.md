@@ -163,6 +163,7 @@ error: error: unknown option '-b'
 11. **🔴 `-b` / `-k` / `-P` 是 cline CLI 的敏感参数**：`-b` 非法（会中断）；正确是 `-P openai-compatible` + `-k <key>`（见 `zhulong_loop.sh`）。凡 loop 变更后先在服务器 `cline ... ; echo $?` 冒烟。
 12. **🟡 pgrep 正则双重转义会漏报**：预置探针里 `'zhulong_loop\\\\.sh'` 在 bash ERE 下变成"要求字面反斜杠" → **匹配不到真实进程**（RUN_ID 1 就漏报了 loop）。写 `pgrep -af 'zhulong_loop'` 更稳。
 13. **🟡 `MEMORY_*.md` 的 `WAITING` 只有顶部行被 loop 读取**：表格里的 `WAITING=1` 与顶部 `WAITING: 0` 不一致时，**以顶部为准**（会误判成"无阻塞"而高频空转）。
+14. **🔴 ops relay 块内禁止「无 `timeout` 的命令」和「`du -L`/跟随符号链接」**：2026-10-04 **RUN_ID 4 疑似卡死中继** —— 块里用了 `df -h <symlink>`（**未** `timeout`）+ `du -sh -L`（跟随到 `/nasdata` 大树）→ `timeout` 只杀 leader、子进程占住管道 → 中继读不到 EOF、`.last_run_id` 停摆（**同 BaiZe §7 教训**）。**铁律：relay 块里<u>每条</u>命令都要 `timeout`；一律 `du -x` 不跟 symlink；重活丢后台 + 落盘 + `.done`。**
 
 ---
 

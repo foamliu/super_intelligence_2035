@@ -24,12 +24,37 @@
 
 ---
 
-## RUN_ID 4 — 🔎 确认「我方 home 是否真有可回收空间」（symlink / 真实体积 / 输出路径）
+## RUN_ID 4（**轻量重发**）— 确认 home symlink（**全部命令带 timeout、不跟 symlink**）
+
+**背景**：首版 RUN_ID 4 用 `du -sh -L` + 未 `timeout` 的 `df` → **疑似卡死中继**（见 MEMORY §7 教训）。本版每条命令都 `timeout` 包裹、不跟随 symlink。
+
+```bash
+# RUN_ID 4 (light) — 每条命令带 timeout；不用 du -L
+H="/home/app.e0031982"
+echo "===== TIME ====="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "===== /home ====="; timeout 15 df -BG /home | tail -1
+echo "===== ls -la HOME（看 symlink '->'）====="; timeout 15 ls -la "$H" 2>/dev/null | cut -c1-170
+echo "===== realpath（不调 df）====="
+for d in .cache .cline .npm .local .bun .vscode-server eda_code_eval; do
+  p="$H/$d"
+  if [ -e "$p" ] || [ -L "$p" ]; then printf "%-16s -> %s\n" "$d" "$(timeout 8 readlink -f "$p" 2>/dev/null)"; fi
+done
+echo "===== HOME 同文件系统体积（du -x，不跟 symlink）====="; timeout 30 du -x -sh "$H" 2>/dev/null
+echo "===== eda_code_eval 目录类型 ====="; timeout 10 ls -ld "$H/eda_code_eval" 2>/dev/null | cut -c1-170
+echo "===== /home top15（du -x）====="; timeout 40 du -x -d1 -h /home 2>/dev/null | sort -h | tail -15
+echo "===== DONE ====="
+```
+
+> ⛔ 下方为 heavy 版（**已作废**，触发了卡死）。
+
+---
+
+## RUN_ID 4 — 🔎 确认「我方 home 是否真有可回收空间」（heavy · 已作废）
 
 **背景**：RUN_ID 3 显示 `/home/app.e0031982` 同文件系统仅 **3.8M**、各缓存目录 `du -x` 报 **0** → 疑似**符号链接到 `/nasdata`**（`du` 默认不跟随 symlink）。本块确认并定位评测写入路径。
 
-```bash
-# RUN_ID 4 — 只读
+```text
+# RUN_ID 4 (heavy DISABLED) — 只读
 H="/home/app.e0031982"; GP="/nasdata/app.e0031982/code/eda_fastmcp"
 echo "===== 0. TIME ====="; date '+%F %T'; hostname
 echo "===== 1. /home 大盘 ====="; df -BG /home | tail -1
