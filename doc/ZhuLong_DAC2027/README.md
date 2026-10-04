@@ -28,6 +28,20 @@
 | L1–L4 | 知识层级；**L4 必须"被读到"而非"被回忆到"** | §4 全篇 |
 | ICL-type autonomous agent | 无显式后验、靠 in-context learning 维持信念状态的自主 agent | `3_design.tex` §Overall Architecture 首段定义 |
 
+### 0.2 运维（operator）层（2026-10-04 新增）
+
+本项目除各 **agent 线**（在 `run/`）外，另有一套**外部运维（operator）层**，参照 `doc/BaiZe-ISEDA2027/` 的同名机制。**两者不要混**：
+
+| 层 | 路径 | 说明 |
+|---|---|---|
+| **运维主记忆** | **项目根** `MEMORY.md` | 运维「醒来先读」：SOP / 通讯协议 / 在途任务 / 待拍板 / 铁律 / 关键事实 / 已知坑 / 流水。**不属于任何 agent 线** |
+| **运维日流水** | **项目根** `daily-memories/<YYYY-MM-DD>.md` | 记录「用户指令 → 处置 → commit → agent 回报」。⚠️ **不要**与 `run/daily-memories/`（各 agent 线流水）混 |
+| agent 线记忆 | `run/MEMORY_ZHULONG.md`（正式线）· `run/MEMORY*.md`（legacy，只读） | 由推进 agent 维护 |
+| agent 线流水 | `run/daily-memories/` | 由推进 agent 维护 |
+| 「谁在跑」总表 | `run/AGENTS.md` | **唯一权威**的活跃线 / legacy 线 / ops relay 清单 |
+
+**运维的两条下达通道**：① 任务书 `run/ZHULONG_TASK.md` 的 `## 🔧 运维指令区（OPERATOR NOTES）`（改文件 + git push）；② ops 中继 `run/ops/inbox.md`（RUN_ID 机制）。**查看**走 `git pull` 读 `run/MEMORY_ZHULONG.md` / `run/daily-memories/` / `run/ops/outbox.md`。
+
 ---
 
 ## 1. 本任务要交付什么
