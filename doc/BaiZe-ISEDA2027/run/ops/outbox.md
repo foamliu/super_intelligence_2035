@@ -6147,3 +6147,113 @@ whag0pgpuap12
 === DONE (.12) ===
 === relay block done ===
 ```
+
+---
+
+## RUN_ID 60 · 2026-10-04 18:15:44 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+echo; echo "=== [.12] glm-5.2 配对复测 + 逐线重启 ==="
+timeout 520 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+export PATH="$HOME/.bun/bin:$PATH"
+hostname; date '+%F %T'
+W=/nas_train/app.e0031982/code/super_intelligence_2035
+R=$W/doc/BaiZe-ISEDA2027/run
+B=/nas_train/app.e0031982; H=$HOME; C=/home/app.e0031982/.bun/bin/cline
+KEYS="$W/doc/keys.txt"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+. "$R/llm_rotate.sh"; llm_parse_candidates "$KEYS" >/dev/null
+PY() { "${PYBIN:-python3}" -c "import json,sys;p=sys.argv[1];b=sys.argv[2];d=json.load(open(p,encoding='utf-8'));d['openAiBaseUrl']=b;json.dump(d,open(p,'w',encoding='utf-8'),ensure_ascii=False,indent=2)" "$1" "$2"; }
+
+echo; echo "--- A. loop 的 llm state + glm-5.2 的 key/base ---"
+for L in vision data; do echo "   $L state idx = $(cat /tmp/baize_${L}_llm_idx 2>/dev/null)"; done
+GK=$("$PYBIN" -c "import json;print([x for x in json.load(open('$LLM_CAND_JSON')) if x['model']=='glm-5.2'][0]['key'])" 2>/dev/null)
+GB=$("$PYBIN" -c "import json;print([x for x in json.load(open('$LLM_CAND_JSON')) if x['model']=='glm-5.2'][0]['base'])" 2>/dev/null)
+echo "   glm-5.2 key=${GK:0:8}.. base=$GB"
+
+echo; echo "--- B. 把 glm base 写进隔离目录并复核 ---"
+for n in vision data; do
+  D="$B/.cline_$n"; PY "$D/globalState.json" "$GB"
+  echo "   [$n] base = $(sed -n 's/.*\"openAiBaseUrl\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p' "$D/globalState.json" | head -1)"
+done
+
+echo; echo "--- C. smoke（glm-5.2 配对；PASS 判定）---"
+PASS=1
+for n in vision data; do
+  D="$B/.cline_$n"
+  OUT=$(env $P timeout 90 "$C" --data-dir "$D" -c /tmp -m glm-5.2 -k "$GK" -P openai-compatible --auto-approve true -t 60 "reply with exactly OK" < /dev/null 2>&1 | tr -d '\r' | tr '\n' ' ' | cut -c1-170)
+  printf "   %-7s => %s\n" "$n" "$OUT"
+  echo "$OUT" | grep -q 'OK' || PASS=0
+  echo "$OUT" | grep -qi 'error' && PASS=0
+done
+echo "   PASS=$PASS"
+
+echo; echo "--- D. 逐线安全重启（仅 PASS=1）---"
+if [ "$PASS" = 1 ]; then
+  for L in vision data; do
+    LP=$(pgrep -f "bash baize_${L}_loop.sh" 2>/dev/null | head -1); CL=0
+    [ -n "$LP" ] && CL=$(pgrep -P "$LP" -f 'bun' 2>/dev/null | wc -l)
+    echo "   [$L] loop_pid=${LP:-none} cline_children=$CL"
+    if [ "$CL" -gt 0 ]; then echo "   [$L] cline 活动中 → 跳过"; continue; fi
+    pkill -f "baize_${L}_loop.sh"; sleep 4
+    cd "$R"; setsid env $P bash "baize_${L}_loop.sh" > "/tmp/baize_${L}_loop.log" 2>&1 < /dev/null &
+    echo "   [$L] 已重启"
+  done
+  echo; echo "--- E. 40s 后验证 ---"; sleep 40
+  for L in vision data; do
+    echo "   [$L] loop=$(pgrep -fc "baize_${L}_loop.sh" 2>/dev/null || echo 0)  Forbidden=$(grep -c Forbidden /tmp/baize_${L}_loop.log 2>/dev/null)"
+    tail -3 "/tmp/baize_${L}_loop.log" 2>/dev/null | tr '\n' ' ' | cut -c1-150 | sed 's/^/        /'; echo
+  done
+  echo "   cline cmdline: $(pgrep -af 'bun.*cline' 2>/dev/null | cut -c1-120 | head -3)"
+else
+  echo "   smoke 未 PASS → 不重启，保持现状"
+fi
+echo; echo "=== DONE (.12) ==="
+EOS12
+echo "=== relay block done ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 18:15:44
+
+=== [.12] glm-5.2 配对复测 + 逐线重启 ===
+whag0pgpuap12
+2026-10-04 18:15:45
+
+--- A. loop 的 llm state + glm-5.2 的 key/base ---
+   vision state idx = 
+   data state idx = 
+   glm-5.2 key=02_088EE.. base=http://agi-gateway.cxmt.com/cloud/v1
+
+--- B. 把 glm base 写进隔离目录并复核 ---
+   [vision] base = http://agi-gateway.cxmt.com/cloud/v1
+   [data] base = http://agi-gateway.cxmt.com/cloud/v1
+
+--- C. smoke（glm-5.2 配对；PASS 判定）---
+   vision  => OK Warning: AI SDK Warning System: To turn off warning logging, set the AI_SDK_LOG_WARNINGS global to false.       at emitWarning (/nas_train/app.e0031982/harness/cline/n
+   data    => OK Warning: AI SDK Warning System: To turn off warning logging, set the AI_SDK_LOG_WARNINGS global to false.       at emitWarning (/nas_train/app.e0031982/harness/cline/n
+   PASS=1
+
+--- D. 逐线安全重启（仅 PASS=1）---
+   [vision] loop_pid=none cline_children=0
+   [vision] 已重启
+   [data] loop_pid=none cline_children=0
+   [data] 已重启
+
+--- E. 40s 后验证 ---
+   [vision] loop=1  Forbidden=1
+        [31merror:[0m Forbidden [loop] 2026-10-04 18:16:02 cline returned (exit 0), checking git push ... [loop] 2026-10-04 18:16:02 WAITING=1（异步任�
+
+   [data] loop=1  Forbidden=1
+        fatal: unable to access 'https://github.com/foamliu/super_intelligence_2035.git/': Failed to connect to github.com port 443 after 5 ms: Network is unr
+
+   cline cmdline: 2877399 bun /home/app.e0031982/.bun/bin/cline --id 1790841049934_g0m3m
+
+=== DONE (.12) ===
+=== relay block done ===
+```
