@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 33 -->
+<!-- RUN_ID: 34 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,57 @@
 
 ---
 
-## RUN_ID 33 — 🔬 **下钻 1.2T 的 LLaVA ckpt 目录 + 全盘找同类**（**只读**）（**本块最新，优先执行**）
+## RUN_ID 34 — 🗑 **执行删除：`stage_1.5_mid_training_llava_ov_14b`（≈1.16 TB，用户已批准方案 B）**（**本块最新，优先执行**）
+
+**用户已批准（2026-10-04）**：**方案 B —— 全删 `stage_1.5_mid_training_llava_ov_14b`**（6 个 `iter_*` × 198 G ≈ **1.16 TB**，mtime 全为 2026-03-09/10）。
+**沿用 D-CLEAN-3 的安全流程**（那次删 974 G 的 `servers/` 零事故）：
+**P1 无进程占用 → P2 无近期活动 → P3 无脚本引用**；**任一不过 → 停手报告**。
+**额外保险**：删前把 **≈23 MB 的文本产物**（5 个 `run_*.log` + `latest_checkpointed_iteration.txt` + `tensorboard/` + `dataloader/`）打成 `<父目录>/_ARCHIVE_stage1.5_mid_14b_logs.tgz` —— **代价极小，但保住实验溯源**。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+D=/nas_train/app.e0031982
+T=$D/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b
+KEEP=$D/code/hell/LLaVA-OneVision-1.5/_ARCHIVE_stage1.5_mid_14b_logs.tgz
+
+echo; echo "=== 1. P1：无进程占用 ==="
+fuser -v "$T" 2>&1 | head -6; echo "   ↑ 应为空（仅可能有 Stale file handle 警告）"
+pgrep -af 'LLaVA-OneVision|stage_1.5' | grep -v grep | cut -c1-110 || echo "   (无相关进程)"
+
+echo; echo "=== 2. P2：无近期活动（7 天内应为空）==="
+find "$T" -newermt '-7 days' -print 2>/dev/null | head -10
+echo "   -- 最新 3 个 mtime --"
+find "$T" -maxdepth 2 -printf '%TY-%Tm-%Td %TH:%TM  %f\n' 2>/dev/null | sort -r | head -3
+
+echo; echo "=== 3. P3：无脚本引用 ==="
+grep -rln 'stage_1.5_mid_training_llava_ov_14b' "$D/code" --include='*.sh' --include='*.py' 2>/dev/null | head -10
+echo "   ↑ 应为空"
+
+echo; echo "=== 4. 删前记录 ==="
+df -BG /nas_train | tail -1
+timeout 150 du -sh "$T" 2>/dev/null
+
+echo; echo "=== 5. 打包 ≈23MB 日志留证 ==="
+( cd "$T" 2>/dev/null && tar czf "$KEEP" *.log latest_checkpointed_iteration.txt tensorboard dataloader 2>/dev/null ) \
+  && echo "   -> $KEEP  ($(du -h "$KEEP" 2>/dev/null | cut -f1))" || echo "   (tar 失败 → 不阻塞删除)"
+cd /tmp
+
+echo; echo "=== 6. 🗑 执行删除（方案 B）==="
+rm -rf "$T"
+sleep 3
+[ -d "$T" ] && echo "   !!! STILL EXISTS —— 停手报告" || echo "   GONE ✅"
+
+echo; echo "=== 7. 删后核验 ==="
+df -BG /nas_train | tail -1
+echo "-- 父目录现状 --"; ls -1 "$D/code/hell/LLaVA-OneVision-1.5" 2>/dev/null | head -12
+echo "-- 留证包 --"; ls -lh "$KEEP" 2>/dev/null | cut -c1-110
+
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 33**（下钻 1.2T，**✅ 已执行 09:43:03**）为 ```text。
+
+## RUN_ID 33 — 🔬 **下钻 1.2T 的 LLaVA ckpt 目录 + 全盘找同类**（✅ 已执行 → 6×198G，见 RUN_ID 34）
 
 **RUN_ID 32 战果**：定位到 `/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5`，其中
 ⭐ **`stage_1.5_mid_training_llava_ov_14b` = `1.2T`**（其余兄弟目录仅 40M / 268K，都是源码与日志）。
@@ -44,7 +94,7 @@
 
 🚫 **只读**：不删、不移、不改。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 D=/nas_train/app.e0031982
 LV=$D/code/hell/LLaVA-OneVision-1.5
