@@ -7346,3 +7346,104 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 69 · 2026-10-05 07:35:32 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+C=/home/app.e0031982/.bun/bin/cline; B=/nas_train/app.e0031982
+
+echo; echo "=== [.12] 看/补 shared MCP 配置 → 真跑 cimi_search ==="
+timeout 560 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+hostname; date '+%F %T'
+export PATH="$HOME/.bun/bin:$PATH"
+B=/nas_train/app.e0031982; H=$HOME; C=/home/app.e0031982/.bun/bin/cline
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+CFG='{"mcpServers":{"pyAether_MCP_server":{"url":"http://10.239.2.29:8090/sse","type":"sse","disabled":false,"autoApprove":["search_apis","get_api_details","run_pyAether_code_tool","cimi_search","cimi_fetch"]}}}'
+
+echo; echo "--- 1. .12 的 shared MCP 配置 ---"
+S="$H/.cline/data/settings/cline_mcp_settings.json"
+if [ -f "$S" ]; then echo "   存在 $(stat -c %s "$S")B : $(tr -d '\n' < "$S" | cut -c1-160)"; else echo "   不存在"; fi
+
+echo; echo "--- 2. 空/缺则备份并写入同一条目 ---"
+if [ -s "$S" ] && grep -q 'pyAether_MCP_server' "$S"; then
+  echo "   ✅ shared 已有 MCP 条目 → 不改"
+else
+  mkdir -p "$(dirname "$S")"
+  [ -f "$S" ] && cp -a "$S" "$S.bak.$(date +%Y%m%d-%H%M%S)" && echo "   已备份原 shared 文件"
+  printf '%s' "$CFG" > "$S"
+  echo "   写入后 $(stat -c %s "$S")B : $(tr -d '\n' < "$S" | cut -c1-160)"
+fi
+echo "   -- cline config mcp 复核（应与 .29 一致：pyAether_MCP_server [sse]）--"
+timeout 40 "$C" --data-dir "$B/.cline_data" config mcp 2>&1 | head -8 | cut -c1-150 | sed 's/^/      /'
+
+echo; echo "--- 3. .12 上真跑 cimi_search（llm_pick 真实配对）---"
+D="$B/.cline_data"
+LLM_DATA_DIR="$D"; . "$R/llm_rotate.sh"
+ST=/tmp/baize_data_llm_idx
+if llm_pick "$ST" /nas_train/app.e0031982/code/super_intelligence_2035/doc/keys.txt; then
+  echo "   picked model=$LLM_MODEL key=${LLM_KEY:0:8}.. base=$LLM_BASE"
+else
+  echo "   !! llm_pick 无可用候选"
+fi
+PP="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+env $PP timeout 280 "$C" --data-dir "$D" -c /tmp -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible --auto-approve true -t 240 \
+  "Call the MCP tool 'cimi_search' (server pyAether_MCP_server) to search: masked autoencoder MAE. Then answer <=4 lines: (1) tool available yes/no (2) 2 result titles (3) their URLs (4) exact error if it failed." \
+  < /dev/null > /tmp/cimi_smoke_12.log 2>&1; rc=$?
+echo "   rc=$rc"; tail -20 /tmp/cimi_smoke_12.log | cut -c1-170 | sed 's/^/      /'
+echo; echo "=== DONE (.12) ==="
+EOS12
+echo "=== relay block done ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-05 07:35:32
+
+=== [.12] 看/补 shared MCP 配置 → 真跑 cimi_search ===
+whag0pgpuap12
+2026-10-05 07:35:33
+
+--- 1. .12 的 shared MCP 配置 ---
+   存在 22B : {  "mcpServers": {}}
+
+--- 2. 空/缺则备份并写入同一条目 ---
+   已备份原 shared 文件
+   写入后 206B : {"mcpServers":{"pyAether_MCP_server":{"url":"http://10.239.2.29:8090/sse","type":"sse","disabled":false,"autoApprove":["search_apis","get_api_details","run_pyAe
+   -- cline config mcp 复核（应与 .29 一致：pyAether_MCP_server [sse]）--
+      Configured MCP servers (/home/app.e0031982/.cline/data/settings/cline_mcp_settings.json):
+        pyAether_MCP_server [sse]
+
+--- 3. .12 上真跑 cimi_search（llm_pick 真实配对）---
+[llmrot] 2026-10-05 07:35:37 优先选中 glm-5.2 #4 @ http://agi-gateway.cxmt.com/cloud/v1 (probe=200)
+   picked model=glm-5.2 key=02_088EE.. base=http://agi-gateway.cxmt.com/cloud/v1
+   rc=0
+      The tool call succeeded. Here's the summary:
+      
+      1. **Tool available:** Yes
+      2. **Result titles:**
+         - Masked Autoencoders (MAE)
+         - Evaluating the Robustness of Foundation Models for Satellite Imagery
+      3. **URLs:**
+         - https://docs.nvidia.com/tao/tao-toolkit/latest/text/cv_finetuning/pytorch/self_supervised_learning/mae.html
+         - http://xplorestaging.ieee.org/ielx8/6287639/10820123/11039825.pdf?arnumber=11039825
+      4. **Error:** None (call returned successfully with no errors).
+      DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+            at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+            at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+            at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+      
+      DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+            at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+            at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+            at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+      
+
+=== DONE (.12) ===
+=== relay block done ===
+```
