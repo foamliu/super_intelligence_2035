@@ -3955,3 +3955,70 @@ LLaVA-OneVision-1.5
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 34 · 2026-10-04 09:46:13 · host=`whag0pgpuap29` · exit=124
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+D=/nas_train/app.e0031982
+T=$D/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b
+KEEP=$D/code/hell/LLaVA-OneVision-1.5/_ARCHIVE_stage1.5_mid_14b_logs.tgz
+
+echo; echo "=== 1. P1：无进程占用 ==="
+fuser -v "$T" 2>&1 | head -6; echo "   ↑ 应为空（仅可能有 Stale file handle 警告）"
+pgrep -af 'LLaVA-OneVision|stage_1.5' | grep -v grep | cut -c1-110 || echo "   (无相关进程)"
+
+echo; echo "=== 2. P2：无近期活动（7 天内应为空）==="
+find "$T" -newermt '-7 days' -print 2>/dev/null | head -10
+echo "   -- 最新 3 个 mtime --"
+find "$T" -maxdepth 2 -printf '%TY-%Tm-%Td %TH:%TM  %f\n' 2>/dev/null | sort -r | head -3
+
+echo; echo "=== 3. P3：无脚本引用 ==="
+grep -rln 'stage_1.5_mid_training_llava_ov_14b' "$D/code" --include='*.sh' --include='*.py' 2>/dev/null | head -10
+echo "   ↑ 应为空"
+
+echo; echo "=== 4. 删前记录 ==="
+df -BG /nas_train | tail -1
+timeout 150 du -sh "$T" 2>/dev/null
+
+echo; echo "=== 5. 打包 ≈23MB 日志留证 ==="
+( cd "$T" 2>/dev/null && tar czf "$KEEP" *.log latest_checkpointed_iteration.txt tensorboard dataloader 2>/dev/null ) \
+  && echo "   -> $KEEP  ($(du -h "$KEEP" 2>/dev/null | cut -f1))" || echo "   (tar 失败 → 不阻塞删除)"
+cd /tmp
+
+echo; echo "=== 6. 🗑 执行删除（方案 B）==="
+rm -rf "$T"
+sleep 3
+[ -d "$T" ] && echo "   !!! STILL EXISTS —— 停手报告" || echo "   GONE ✅"
+
+echo; echo "=== 7. 删后核验 ==="
+df -BG /nas_train | tail -1
+echo "-- 父目录现状 --"; ls -1 "$D/code/hell/LLaVA-OneVision-1.5" 2>/dev/null | head -12
+echo "-- 留证包 --"; ls -lh "$KEEP" 2>/dev/null | cut -c1-110
+
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 09:46:13
+
+=== 1. P1：无进程占用 ===
+Cannot stat file /proc/465698/fd/182: Stale file handle
+   ↑ 应为空（仅可能有 Stale file handle 警告）
+465698 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /nas_train/ap
+
+=== 2. P2：无近期活动（7 天内应为空）===
+   -- 最新 3 个 mtime --
+2026-03-11 08:00  run_2026-03-11_07:44:38_tp2_pp2_seqlen32768_mbs1_gbs16_20000steps.log
+2026-03-11 08:00  events.out.tfevents.1773186302.whag0pgpuap29.984864.0
+2026-03-11 07:45  tensorboard
+
+=== 3. P3：无脚本引用 ===
+[relay] ⚠️ 命令块超时（>600s），已被 timeout 终止
+```
