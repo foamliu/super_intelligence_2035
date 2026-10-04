@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 65 -->
+<!-- RUN_ID: 66 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,13 +31,60 @@
 
 ---
 
-## RUN_ID 65 — 🔍 **正确探针：`eda_fastmcp` MCP 在 `.29:8090` 是否真的可用 + 怎么连 + 工具名**（**本块最新，优先执行**）
+## RUN_ID 66 — 🔍 **只读：`cline_mcp_settings.json` 现状 + EDA MCP 接入示例 + cline 从哪读 MCP 配置**（**本块最新，优先执行**）
+
+> **背景**：RUN_ID 65 已证实 `.29:8090` 的 `eda_fastmcp` MCP **在跑、两机可达、工具名 = `cimi_search`/`cimi_fetch`**。现在要把它**接到各线的 cline**上（data agent 报「MCP 未注册」）。本块先摸清 4 件事，再决定怎么写。
+> **本块只读**：🚫 不启停进程、🚫 不改任何配置（密钥一律**脱敏**）。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME; B=/nas_train/app.e0031982; C=/home/app.e0031982/.bun/bin/cline
+
+echo; echo "=== 1. settings/ 目录清单（共享 + 各隔离目录）==="
+ls -1 "$H/.cline/data/settings" 2>/dev/null | sed 's/^/   [shared] /'
+for n in pretrain harness vision data; do echo "   [.cline_$n/settings] $(ls -1 "$B/.cline_$n/settings" 2>/dev/null | tr '\n' ' ')"; done
+
+echo; echo "=== 2. 共享 cline_mcp_settings.json 现状（密钥脱敏）==="
+S="$H/.cline/data/settings/cline_mcp_settings.json"
+echo "   存在=$([ -f "$S" ] && echo YES || echo NO)  大小=$(stat -c %s "$S" 2>/dev/null)B"
+sed -E 's/((apiKey|apikey|token|secret|password|Authorization|key)"[[:space:]]*:[[:space:]]*")[^"]*/\1<masked>/g' "$S" 2>/dev/null | head -50 | cut -c1-170 | sed 's/^/      /'
+echo "   -- 已注册的 server 名 + 类型/目标 --"
+python3 -c "import json;d=json.load(open('$S',encoding='utf-8'));s=d.get('mcpServers',d);print('     servers =',list(s.keys()));[print('       -',k,'| type=',v.get('type') or v.get('transport'),'| url/cmd=',v.get('url') or v.get('command')) for k,v in s.items()]" 2>&1 | head -25
+echo "   -- 文件里是否提到 8090 / cimi --"
+grep -n -i -e '8090' -e 'cimi' "$S" 2>/dev/null | cut -c1-150 | sed 's/^/      /' || echo "      (无)"
+
+echo; echo "=== 3. 各隔离目录是否已有 MCP 设置文件 ==="
+for n in pretrain harness vision data; do
+  f="$B/.cline_$n/settings/cline_mcp_settings.json"
+  echo "   [.cline_$n] $([ -f "$f" ] && echo "存在 $(stat -c %s "$f")B" || echo '不存在')"
+done
+
+echo; echo "=== 4. 全局：8090 / cimi 出现在哪些 cline 配置里（有界）==="
+timeout 25 grep -rIl -e '8090' -e 'cimi' "$H/.cline" "$B"/.cline_*/settings 2>/dev/null | head -12 | sed 's/^/   /' || echo "   (无命中)"
+
+echo; echo "=== 5. eda_fastmcp 官方「客户端接入示例」（找 mcpServers / cline_mcp_settings）==="
+timeout 25 grep -rn -i -e 'mcpServers' -e 'cline_mcp_settings' -e '\.cline' "$B/code/eda_fastmcp/README.md" "$B/code/eda_fastmcp/CLAUDE.md" "$B/code/eda_fastmcp/docs" 2>/dev/null | head -20 | cut -c1-170 | sed 's/^/   /' || echo "   (无命中)"
+echo "   -- README 里 40–80 行（常见接入段落）--"; sed -n '40,80p' "$B/code/eda_fastmcp/README.md" 2>/dev/null | cut -c1-160 | sed 's/^/      /'
+
+echo; echo "=== 6. cline CLI：是否支持 MCP / 读哪个文件 ==="
+"$C" --help 2>&1 | grep -i -E 'mcp|data-dir|--config' | head -14 | cut -c1-140 | sed 's/^/   /'
+echo "   -- 在 cline 安装物里搜 'cline_mcp_settings' 的解析位置（有界）--"
+timeout 30 grep -rIl 'cline_mcp_settings' /home/app.e0031982/.bun /nas_train/app.e0031982/harness/cline 2>/dev/null | head -6 | sed 's/^/   /' || echo "   (无命中/超时)"
+
+echo; echo "=== 7. 旁证：harness 的 cline 当初怎么挂 MCP（gw_proxy / harness 目录）==="
+timeout 20 grep -rIl -e 'mcpServers' -e 'cline_mcp_settings' "$B/harness_work" 2>/dev/null | head -6 | sed 's/^/   /' || echo "   (无命中)"
+echo; echo "=== DONE ==="
+```
+
+> ⛔ 已降级 RUN_ID 65（07:20:14 exit=0 → **服务 200/SSE 握手正常、`.12` 可达、工具名确认**）为 text。
+
+## RUN_ID 65 — 🔍 **正确探针：`eda_fastmcp` MCP 在 `.29:8090` 是否真的可用 + 怎么连 + 工具名**（✅ 已执行 → **`/sse` 200 + `event: endpoint`、`.12` 可达、`cimi_search`/`cimi_fetch` 确认**）
 
 > **RUN_ID 64 已确认**：服务**在跑**（`pid=111692` = `.../eda_fastmcp/venv/bin/python main.py`），**监听 `0.0.0.0:8090`**（→ `.12` 可达），`.env` 已有 `EDA_MCP_PORT=8090`，`scripts/start.sh` 存在 → **无需启动**。
 > ⚠️ **但上一轮的 `/sse` 探测是空输出 —— 那是我的探针错**：SSE 是**长连接**，`curl -w '%{http_code}'` 只在**传输结束**时打印，被 `timeout` 杀掉就什么都不输出。**本块用正确方式**（只取响应头 / 抓 SSE 首帧）。
 > **本块只读**，🚫 不启停进程、不改文件。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 D=/nas_train/app.e0031982/code/eda_fastmcp
 
