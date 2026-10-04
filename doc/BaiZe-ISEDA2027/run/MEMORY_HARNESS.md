@@ -5,13 +5,26 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A pilot batch v2 running (15/30 instances scored) + SWEBENCH_COMPARE.html updated to 17 instances
+PHASE:        H-A pilot batch v2 running (15/30 instances scored, sympy-11870 quota retry ~15min remaining)
 已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A 15/30 scored (15 pilot + 2 smoke)
-当前动作:     R56: relay healthy skip (10th) + batch v2 progress check (15/30 scored, sympy-11870 quota retry) + SWEBENCH_COMPARE.html updated to 17 inst
-下一步:       等 batch v2 跑完 30/30 → 汇总 pilot_results.json → 更新 SWEBENCH_COMPARE.html 最终版 → 考虑 quota 优化策略
-阻塞:         无（relay 健康、batch alive wchan=do_select、github 可达；quota 5h 窗口致 11039+ 空 patch 但非阻塞）
+当前动作:     R57: relay healthy skip (11th) + batch v2 progress check (15/30 scored, sympy-11870 cline-patched quota retry ETA ~04:27)
+下一步:       等 batch v2 quota 恢复续跑 sympy-11870+ → 跑完 30/30 → 汇总 pilot_results.json → 更新 SWEBENCH_COMPARE.html 最终版
+阻塞:         无（relay 健康、batch alive wchan=do_select S sleeping、github 可达；quota 5h 窗口致 sympy-11870 暂停 ~15min 后自动恢复）
 ERROR_COUNT:  0
 ```
+
+## 🆕 第五十七轮速览（2026-10-05 04:12）
+
+- ✅ **ops 中继复核（响应运维 2026-10-04 第 2 条，第 11 次）→ 健康，跳过重启**。① relay `2489749 1 302263 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、etimes≈3.50d）；② `cat ops/.last_run_id`=`63`（无新单，62+63 已执行）；③ `grep -c 'RUN_ID 62' ops/outbox.md`=`1`（62 已执行）；④ log 末行 `[relay] RUN_ID=63 executed, exit=0`；⑤ **⭐ `timeout 30 git fetch origin` → exit=0**（github 持续可达）；⑥ 无 index.lock（仅 1 个 NFS temp `.nfs*` 无害）；⑦ `pstree`=`bash---sleep`（正常）。**判据**：git fetch exit=0 + .last_run_id=63 → **跳过重启**。✅ URGENT 完成。
+- ✅ **无新运维指令**：git log 顶部 `6f0a1cf`(pretrain) / `2127db3`(data) / `1567190`(vision) / `b064f1b`(harness R56) —— 无新 harness 指令。
+- 📊 **batch v2 进度**（PID 4045197，etimes≈17201s≈4.8h，stat=S wchan=do_select=sleeping in quota wait）：**15/30 完整评分**（django 10924~11742 全部已评分，当前 instance 16/30 sympy__sympy-11870 cline-patched quota retry 3606s）。
+  - **quota 等待 ETA**：log 末次写入 03:26:56（cline-patched quota retry 2/3 开始），3606s ≈ 60min → **ETA ~04:27**（距当前 ~04:12 还有 ~15min）。batch 进程 alive（wchan=do_select，无子进程=在 time.sleep 中）。
+  - **pilot_results.json 已产出**（65KB，15 entries）：Aggregate resolve = **codex 2/15 (13%), cline 1/15 (7%), opencode 1/15 (7%), claude-code 1/15 (7%)**。
+  - **逐 instance 详**：11001=4/4 全 resolve 🎉（F2P 2/2 P2P 118/118）；10924=codex only resolve（F2P 1/1 P2P 1/1）；11099=0/4 但 F2P 1/3（部分通过）；11019=0/4 F2P 0/16（极难 instance）；11039~11742=0/4 F2P 0/1~0/2（quota 窗口耗尽致空 patch）。
+  - **Quota-OK resolve rate（fair metric）**：codex 2/2 (100%), cline 1/3 (33%), opencode 1/1 (100%), claude-code 1/1 (100%)。
+  - **predictions 文件**：/dev/shm 已有 61 个 predictions_*.json（15 django × 4 = 60 + sympy-11870 cline-patched 1 个 127B 空 patch）；/dev/shm tmpfs 文件可能被清理但 eval 结果已固化在 pilot_results.json。
+- ⏭ **下一步**：① 让 batch v2 在 ~04:27 quota 恢复后自动续跑 sympy-11870（cline-patched retry → codex → opencode → claude-code）→ 剩余 14 instances × 4 harnesses → ② 跑完 30/30 后最终汇总 → ③ 更新 SWEBENCH_COMPARE.html 最终版。保持 `WAITING=1`。
+
 
 ## 🆕 第五十六轮速览（2026-10-05 03:30）
 
