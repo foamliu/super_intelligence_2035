@@ -7173,3 +7173,82 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 67 · 2026-10-05 07:29:48 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+B=/nas_train/app.e0031982; H=$HOME; C=/home/app.e0031982/.bun/bin/cline
+SH="$H/.cline/data/settings/cline_mcp_settings.json"
+CFG='{"mcpServers":{"pyAether_MCP_server":{"url":"http://10.239.2.29:8090/sse","type":"sse","disabled":false,"autoApprove":["search_apis","get_api_details","run_pyAether_code_tool","cimi_search","cimi_fetch"]}}}'
+
+echo; echo "=== 1. 改前现状 ==="
+for n in shared pretrain harness vision data; do
+  if [ "$n" = shared ]; then f="$SH"; else f="$B/.cline_$n/settings/cline_mcp_settings.json"; fi
+  if [ -f "$f" ]; then echo "   [$n] $(stat -c %s "$f")B : $(tr -d '\n' < "$f" | cut -c1-110)"; else echo "   [$n] NONE"; fi
+done
+
+echo; echo "=== 2. 修复 vision / data（先备份，再写入）==="
+for n in vision data; do
+  f="$B/.cline_$n/settings/cline_mcp_settings.json"
+  mkdir -p "$B/.cline_$n/settings"
+  [ -f "$f" ] && cp -a "$f" "$f.bak.$(date +%Y%m%d-%H%M%S)" && echo "   [$n] 已备份原文件 → $(ls -1 "$f".bak.* 2>/dev/null | tail -1)"
+  printf '%s' "$CFG" > "$f"
+  echo "   [$n] 写入后 $(stat -c %s "$f")B : $(tr -d '\n' < "$f" | cut -c1-170)"
+done
+
+echo; echo "=== 3. cline 是否已看到 MCP（mcp 子命令）==="
+for n in vision data; do
+  echo "   -- .cline_$n --"; timeout 45 "$C" --data-dir "$B/.cline_$n" mcp list 2>&1 | head -14 | cut -c1-150 | sed 's/^/      /'
+done
+
+echo; echo "=== 4. ⭐ 真跑一次 cimi_search（headless cline + .cline_data 隔离配置）==="
+export PATH="$HOME/.bun/bin:$PATH"
+D="$B/.cline_data"
+K=$(python3 -c "import json;print(json.load(open('$D/secrets.json'))['openAiApiKey'])" 2>/dev/null | tr -d '\r\n')
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+env $P timeout 260 "$C" --data-dir "$D" -c /tmp -m glm-5.2 -k "$K" -P openai-compatible --auto-approve true -t 220 \
+  "Use the MCP tool 'cimi_search' from server 'pyAether_MCP_server' to search the web for: masked autoencoder MAE vision pretraining. Then reply in at most 5 lines: (1) tool available? yes/no; (2) first 2 result titles; (3) their URLs; (4) if unavailable or errored, paste the exact error." \
+  < /dev/null > /tmp/cimi_smoke.log 2>&1; rc=$?
+echo "   rc=$rc"; tail -30 /tmp/cimi_smoke.log | cut -c1-170 | sed 's/^/      /'
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-05 07:29:48
+
+=== 1. 改前现状 ===
+   [shared] 265B : {  "mcpServers": {    "pyAether_MCP_server": {      "url": "http://10.239.2.29:8090/sse",      "type": "sse", 
+   [pretrain] 265B : {  "mcpServers": {    "pyAether_MCP_server": {      "url": "http://10.239.2.29:8090/sse",      "type": "sse", 
+   [harness] 265B : {  "mcpServers": {    "pyAether_MCP_server": {      "url": "http://10.239.2.29:8090/sse",      "type": "sse", 
+   [vision] 22B : {  "mcpServers": {}}
+   [data] 22B : {  "mcpServers": {}}
+
+=== 2. 修复 vision / data（先备份，再写入）===
+   [vision] 已备份原文件 → /nas_train/app.e0031982/.cline_vision/settings/cline_mcp_settings.json.bak.20261005-072948
+   [vision] 写入后 206B : {"mcpServers":{"pyAether_MCP_server":{"url":"http://10.239.2.29:8090/sse","type":"sse","disabled":false,"autoApprove":["search_apis","get_api_details","run_pyAether_code_
+   [data] 已备份原文件 → /nas_train/app.e0031982/.cline_data/settings/cline_mcp_settings.json.bak.20261005-072948
+   [data] 写入后 206B : {"mcpServers":{"pyAether_MCP_server":{"url":"http://10.239.2.29:8090/sse","type":"sse","disabled":false,"autoApprove":["search_apis","get_api_details","run_pyAether_code_
+
+=== 3. cline 是否已看到 MCP（mcp 子命令）===
+   -- .cline_vision --
+      MCP wizard requires a TTY. Use cline config mcp to list servers.
+      [31merror:[0m Unknown command or unquoted prompt: mcp list
+      Prompt text must be passed as a single quoted argument, for example: cline "fix the tests". Use "cline --help" to see available commands and flags.
+   -- .cline_data --
+      MCP wizard requires a TTY. Use cline config mcp to list servers.
+      [31merror:[0m Unknown command or unquoted prompt: mcp list
+      Prompt text must be passed as a single quoted argument, for example: cline "fix the tests". Use "cline --help" to see available commands and flags.
+
+=== 4. ⭐ 真跑一次 cimi_search（headless cline + .cline_data 隔离配置）===
+   rc=1
+      [31merror:[0m Forbidden
+
+=== DONE ===
+```
