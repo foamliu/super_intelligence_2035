@@ -6,8 +6,8 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ · R11-L2 ✅ · caption-weight ✅ · R13 ✅ · R11-E ✅ · 臂⑥ AIMv2 ✅ 翻盘**；**R11-F 🟢 Arm A ✅(lp@30k=5.53%) · Arm B ✅(lp@30k=6.17%) · Arm C 训练中**（GPIC short+medium, `r11_overnight_chain.sh` PID 4032740 ppid=1 后台守护）；**⚠️ r11f_continue.sh + r11fgh_chain.sh 均遭 NFS Stale file handle 崩溃**（B 完后未接 C）→ 已用 **/tmp NFS-resilient 合并链**修复（C→E→D→R11-G(108k)→R11-H(纯AR) 全串） |
-| WAITING | 1（**语义=R11 overnight chain 训练运行中 → 30min 轮询**；Arm C @23:38 起训 ~40min + eval ~13min；C→E→D 总 ~3h；接 R11-G(~3.5h)→R11-H(~1.4h)；下次唤醒回收各臂 lp + §15/Q1/Q2/Q3 判定 + G/H 拟合） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ · R11-L2 ✅ · caption-weight ✅ · R13 ✅ · R11-E ✅ · 臂⑥ AIMv2 ✅ 翻盘**；**R11-F 🟢 Arm A ✅(lp@30k=5.53%) · Arm B ✅(lp@30k=6.17%) · Arm C 训练中 @step≈16700/30000**（GPIC short+medium, `/tmp/r11_overnight_chain.sh` PID 4032740 ppid=1 后台守护，健康：C1≈0.39 C2_gap≈+0.094 steady≈6400 img/s 无坍缩）；**⚠️ r11f_continue.sh + r11fgh_chain.sh 均遭 NFS Stale file handle 崩溃**（B 完后未接 C）→ 已用 **/tmp NFS-resilient 合并链**修复（C→E→D→R11-G(108k)→R11-H(纯AR) 全串） |
+| WAITING | 1（**语义=R11 overnight chain 训练运行中 → 30min 轮询**；Arm C @00:12 step16700，~18min 训完 + eval ~13min → ~00:43 完；C→E→D 总 ~3h；接 R11-G(~3.5h)→R11-H(~1.4h)；下次唤醒回收各臂 lp + §15/Q1/Q2/Q3 判定 + G/H 拟合） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10 + R11-L/②③④ + R11-L2 LoRA + R11-L caption-weight + R11-E GPIC（8.65 GPU·h）+ **臂⑥ AIMv2（✅ 7076s≈1.97h×8卡≈15.7 GPU·h）+ AIMv2 4-ckpt eval（~13min×1卡≈0.22 GPU·h）** + **R11-F 🟢 进行中**（Arm A GPIC short 30k@~80ms→~40min×8卡；5 臂串行总 ~5–6h×8 卡 ≈ 40–48 GPU·h） |
 | 更新 | **2026-10-04 23:38（NFS 崩溃修复 + overnight chain 启动，Arm C 训练中）** · 2026-10-04 22:56（R11-G/H 代码+脚本+链 ✅ 启动） · 2026-10-04 22:12（R11-F Arm A ✅ + Arm B 续跑起） · 2026-10-04 20:30（AIMv2 ✅ 翻盘） |
