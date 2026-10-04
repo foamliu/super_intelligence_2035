@@ -630,3 +630,24 @@ python -m lm_eval --model hf \
 **🩺 中间观察（2026-10-04 ~09:42，config ③ TP2·SP·MBS2 起跑 iter10）**：
 - `[09:41:13] iteration 10/60 ... 38419.5ms | Step Time 38.42s GPU 262.1 TFLOP/s/GPU`（首 10 步含编译/预热）。
 - SP on 在 TP2·MBS2 下**无加速迹象**（262 vs ① 的 290 TFLOP/s/GPU，但尚早、含预热，等稳态 40+ 步再判）。③/④ 预计 ~11:00 收尾。
+
+**✅ config ③ 收尾（2026-10-04 ~10:11，第 60 次唤醒）—— SP on 对 MBS=2 无收益（s/iter 反而 +4.7%）**：
+
+| 配置 | TP | SP | MBS | 稳态 s/iter | tok/s | GPU util (TFLOP/s/GPU) | 峰值显存 (max/8) |
+|:--|:--|:--|:--|--:|--:|--:|--:|
+| P-9.1 基线 | 1 | off | 2 | **19.3** | **218K** | **519** | 56865 MiB |
+| ① TP2·MBS2 | 2 | off | 2 | 34.1 | 123K | ~290 | **36391 MiB** |
+| ② TP2·MBS4 | 2 | off | 4 | ~20.7 | ~200K | ~482 | 55657 MiB ✅ |
+| **③ TP2·SP·MBS2** | 2 | **on** | 2 | **~35.7** | **~117K** | ~272 | **34839 MiB** |
+
+- **SP on（③ vs ①，MBS=2 同点）**：s/iter 34.1→35.7（**+4.7% 变慢**），峰值显存 36391→34839（**仅省 ~4.3% / 1.5GB**）。→ **SP 对 MBS=2 无吞吐收益**，反而略有损耗；显存收益也微乎其微（TP2·MBS2 本就不吃紧）。
+- **口径更正**：config ① 峰值显存此前写 34265 MiB（早期 nvidia-smi 抽读）→ **以扫描脚本 per-config 自跟踪 max-over-8-GPU 为准 = 36391 MiB**（②=55657、③=34839 同口径）。
+- **对 P-8 的含义不变**：SP 定位为「帮 MBS=4 进一步省激活显存」的**最后手段**，其价值看 config ④（TP2·SP·MBS4）能否在 ② 基础上再减显存/再提 MBS；若 ④ 也如 ③ 般无加速 → SP 对 P-8 **不推荐**，维持 **TP2·DP4·SP-off·MBS4（~200K，M=16384）** 作 FP8 载体。
+- 原始输出（config ③，`/tmp/baize_p9_tp2sp_mbs2.log`，SUM `peak_gpu_mem_MiB=34839 rc=0`）：
+  - `[09:58:57] iteration 40/60 ... 35308.2ms | Step Time 35.31s GPU 272.6 TFLOP/s/GPU`
+  - `[10:04:56] iteration 50/60 ... 35921.0ms`
+  - `[10:10:53] iteration 60/60 ... 35697.2ms | rc=0`（结束 10:11:23）
+
+**✅ P-9.4 前置已就绪（2026-10-04 ~10:16 核实环境，第 60 次）—— transformer_engine 版本确认**：
+- `torch 2.8.0+cu128` / `CUDA 12.8` / `transformer_engine 2.12.0+5671fd36` / `megatron-core 0.16.1` / `mamba-ssm 2.2.6.post3` —— **与任务书预期的 TE 2.12.0 / torch 2.8.0+cu128 一致**（`python -c "import torch, transformer_engine; ..."` 贴原文，`from importlib.metadata import version`）。
+- P-4R 微基准 `scripts/p4r_fp8_gemm_bench.py`（TE Linear fwd+bwd，E4M3/E5M2 vs bf16，`MS=[2048,4096,8192]`）**已具备**，P-9.4 将**复用并扩展 `M ∈ {4096,8192,16384,32768,65536}`**（用 `(MBS,seq)` 组合命中，生产载体 = **TP2·MBS4 → M=16384**），再在 TP2·MBS4 下做 **bf16 vs FP8 端到端对照**。
