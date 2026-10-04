@@ -9,3 +9,265 @@
 _（尚无执行结果。等待 `ops/inbox.md` 的 RUN_ID 1 被执行。）_
 
 ---
+
+---
+
+## RUN_ID 1 · 2026-10-04 16:53:58 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# GIT_ROOT: 自动检测仓库根目录（36.15 → /nasdata/；2.12 → /nas_train/）
+_GIT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo '/nasdata/app.e0031982/code/super_intelligence_2035')"
+echo "=========== 0. HOST/TIME ==========="; hostname; date '+%F %T'; id
+echo "   GIT_ROOT=$_GIT_ROOT"
+echo
+echo "=========== 1. DISK (关键路径 + /home) ==========="
+echo "-- /home --"; df -BG /home 2>/dev/null | tail -1
+# 以下路径根据实际服务器挂载点自动探测
+for mp in /nasdata /nas_train /nas_inference; do
+  [ -d "$mp" ] && echo "-- $mp --" && df -BG "$mp" 2>/dev/null | tail -1
+done
+echo "-- /tmp --"; df -BG /tmp 2>/dev/null | tail -1
+echo
+echo "=========== 2. SHARD 端口（四路） ==========="
+for port in 8664 8665 8653 8669; do
+  if timeout 3 bash -c "echo >/dev/tcp/127.0.0.1/$port" 2>/dev/null; then
+    echo "   port $port : ✅ OPEN"
+  else
+    echo "   port $port : ❌ CLOSED / UNREACHABLE"
+  fi
+done
+echo
+echo "=========== 3. EDA LICENSE（run_code 可用性） ==========="
+# 自动检测 eda_fastmcp 位置
+CODE_BASE=""
+for cand in /nasdata/app.e0031982/code/eda_fastmcp /nas_train/app.e0031982/code/eda_fastmcp; do
+  [ -d "$cand" ] && { CODE_BASE="$cand"; break; }
+done
+if [ -n "$CODE_BASE" ]; then
+  echo "   eda_fastmcp 目录存在: $CODE_BASE"
+  ls -1 "$CODE_BASE" 2>/dev/null | head -10 | sed 's/^/     /'
+  for f in run_code run_code.sh; do
+    if [ -f "$CODE_BASE/$f" ]; then
+      echo "   $f 文件存在"
+    fi
+  done
+  if [ ! -f "$CODE_BASE/run_code" ] && [ ! -f "$CODE_BASE/run_code.sh" ]; then
+    echo "   ⚠️ run_code/run_code.sh 均未找到，检查实际入口"
+    ls -1 "$CODE_BASE"/*run* 2>/dev/null | sed 's/^/     /'
+    echo "   ❌ 无 run_code 入口"
+  fi
+else
+  echo "   ❌ eda_fastmcp 目录不存在（在两台服务器上均未找到）"
+fi
+echo
+echo "=========== 4. RUNNING PROCESSES ==========="
+echo "-- zhulong loops --"
+pgrep -af 'zhulong_loop\\.sh|zhulong_ops_relay' || echo "   (no zhulong processes)"
+echo "-- other loops (Baize / data) --"
+pgrep -af 'baize.*loop\\.sh|ops_relay\\.sh' || echo "   (no other loop processes)"
+echo "-- eda/eval --"
+pgrep -af 'eda_fastmcp|run_code|sandbox|eval' || echo "   (no eda/eval processes)"
+echo
+echo "=========== 4b. ZHULONG LOOP / RELAY 日志尾 ==========="
+echo "-- tail /tmp/zhulong_loop.log --"
+tail -n 8 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-140 || echo "   (no /tmp/zhulong_loop.log)"
+echo "-- tail /tmp/zhulong_ops_relay.log --"
+tail -n 8 /tmp/zhulong_ops_relay.log 2>/dev/null | cut -c1-140 || echo "   (no /tmp/zhulong_ops_relay.log)"
+echo
+echo "=========== 4c. EDA_FASTMCP .env 关键 flag + git ==========="
+if [ -n "$CODE_BASE" ] && [ -f "$CODE_BASE/.env" ]; then
+  grep -iE 'OMEGA|READBACK|PHI|ABLATION|DISABLE|BUDGET|RECALL|PORT' "$CODE_BASE/.env" 2>/dev/null | cut -c1-140 | sed 's/^/     /'
+  echo "   -- eda_fastmcp git --"
+  ( cd "$CODE_BASE" && git status -sb 2>/dev/null | head -3 && git log --oneline -3 2>/dev/null ) | sed 's/^/     /'
+else
+  echo "   (no .env / CODE_BASE not found)"
+fi
+echo
+echo "=========== 5. GIT STATUS ==========="
+cd "$_GIT_ROOT" && git status -sb | head -8
+echo "-- last 3 commits --"
+git log --oneline -3
+echo
+echo "=========== 6. ZHULONG RUN DIR ==========="
+ls -la "$_GIT_ROOT/doc/ZhuLong_DAC2027/run/" 2>/dev/null | head -25
+echo
+echo "=========== 7. CPU / MEM / GPU ==========="
+lscpu 2>/dev/null | grep -E '^Model name|^CPU\\(s\\):|^Socket' || true
+free -g 2>/dev/null | head -2
+nvidia-smi --query-gpu=index,name,utilization.gpu,memory.used,memory.total --format=csv,noheader 2>/dev/null | head -2 || echo "   (nvidia-smi not available)"
+echo
+echo "=========== DONE ==========="
+```
+
+**输出**
+```
+=========== 0. HOST/TIME ===========
+hfeg0tedaap02
+2026-10-04 16:53:58
+uid=9013(app.e0031982) gid=6002(app.adm) groups=6002(app.adm)
+   GIT_ROOT=/nasdata/app.e0031982/code/super_intelligence_2035
+
+=========== 1. DISK (关键路径 + /home) ===========
+-- /home --
+/dev/mapper/vgroot-lv_home      394G  371G        6G  99% /home
+-- /nasdata --
+10.251.9.180:/g0tedaap      527G  151G      377G  29% /nasdata
+-- /tmp --
+/dev/mapper/vgroot-lv_tmp       49G   25G       22G  54% /tmp
+
+=========== 2. SHARD 端口（四路） ===========
+   port 8664 : ✅ OPEN
+   port 8665 : ✅ OPEN
+   port 8653 : ✅ OPEN
+   port 8669 : ✅ OPEN
+
+=========== 3. EDA LICENSE（run_code 可用性） ===========
+   eda_fastmcp 目录存在: /nasdata/app.e0031982/code/eda_fastmcp
+     CLAUDE.md
+     cleanup_tmp_gt.sh
+     daily-memories
+     Dockerfile
+     docs
+     kb
+     logs
+     main.py
+     memory_bank
+     MEMORY.md
+   ⚠️ run_code/run_code.sh 均未找到，检查实际入口
+     /nasdata/app.e0031982/code/eda_fastmcp/run_monday_eval.sh
+     /nasdata/app.e0031982/code/eda_fastmcp/run_monday.sh
+   ❌ 无 run_code 入口
+
+=========== 4. RUNNING PROCESSES ===========
+-- zhulong loops --
+1071337 bash zhulong_ops_relay.sh
+1071692 tail -f /tmp/zhulong_ops_relay.log
+1239220 bash zhulong_ops_relay.sh
+-- other loops (Baize / data) --
+   (no other loop processes)
+-- eda/eval --
+21179 /home/app.e0030884/bin/bun /home/app.e0030884/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.js
+28673 /home/app.t0002949/.local/bin/bun --inspect=127.0.0.1:0 --enable-source-maps -e const createJiti = require("/home/app.t0002949/T0002949/zhulong/node_modules/.bun/jiti@2.7.0/node_modules/jiti/lib/jiti.cjs"); const jiti = createJiti("/home/app.t0002949/T0002949/zhulong/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", { cache: false, requireCache: false, esmResolve: true, interopDefault: false }); Promise.resolve(jiti.import("/home/app.t0002949/T0002949/zhulong/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", {})).catch((error) => {   console.error(error);   process.exitCode = 1; });
+31531 /home/app.vendor.ai.ruide01/node/lib/node_modules/bun/bin/bun.exe -e const createJiti = require("/home/app.vendor.ai.ruide01/sjp/eda_platform/node_modules/.bun/jiti@2.7.0/node_modules/jiti/lib/jiti.cjs"); const jiti = createJiti("/home/app.vendor.ai.ruide01/sjp/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", { cache: false, requireCache: false, esmResolve: true, interopDefault: false }); Promise.resolve(jiti.import("/home/app.vendor.ai.ruide01/sjp/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", {})).catch((error) => {   console.error(error);   process.exitCode = 1; });
+36970 /home/app.vendor.ai.ruide01/node/lib/node_modules/bun/bin/bun.exe -e const createJiti = require("/home/app.vendor.ai.ruide01/sjp/eda_platform/node_modules/.bun/jiti@2.7.0/node_modules/jiti/lib/jiti.cjs"); const jiti = createJiti("/home/app.vendor.ai.ruide01/sjp/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", { cache: false, requireCache: false, esmResolve: true, interopDefault: false }); Promise.resolve(jiti.import("/home/app.vendor.ai.ruide01/sjp/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", {})).catch((error) => {   console.error(error);   process.exitCode = 1; });
+407751 /home/app.e0041392/sandbox_fastmcp/.venv/bin/python /home/app.e0041392/sandbox_fastmcp/main.py
+409936 /home/app.vendor.ai.ruide01/node/lib/node_modules/bun/bin/bun.exe -e const createJiti = require("/home/app.vendor.ai.ruide01/sjp/eda_platform/node_modules/.bun/jiti@2.7.0/node_modules/jiti/lib/jiti.cjs"); const jiti = createJiti("/home/app.vendor.ai.ruide01/sjp/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", { cache: false, requireCache: false, esmResolve: true, interopDefault: false }); Promise.resolve(jiti.import("/home/app.vendor.ai.ruide01/sjp/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", {})).catch((error) => {   console.error(error);   process.exitCode = 1; });
+490382 /home/app.t0002596/miniforge3/envs/py310_env/bin/python /home/app.t0002596/devops/eda_fastmcp/main.py
+502036 python /home/app.t0002147/mcp_0917/eda_fastmcp/main.py
+574820 /home/app.vendor.ai.ruide01/node/lib/node_modules/bun/bin/bun.exe -e const createJiti = require("/home/app.vendor.ai.ruide01/sjp/eda_platform/node_modules/.bun/jiti@2.7.0/node_modules/jiti/lib/jiti.cjs"); const jiti = createJiti("/home/app.vendor.ai.ruide01/sjp/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", { cache: false, requireCache: false, esmResolve: true, interopDefault: false }); Promise.resolve(jiti.import("/home/app.vendor.ai.ruide01/sjp/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", {})).catch((error) => {   console.error(error);   process.exitCode = 1; });
+633507 /home/app.vendor.ai.ruide01/node/lib/node_modules/bun/bin/bun.exe -e const createJiti = require("/home/app.vendor.ai.ruide01/eda_platform/node_modules/.bun/jiti@2.7.0/node_modules/jiti/lib/jiti.cjs"); const jiti = createJiti("/home/app.vendor.ai.ruide01/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", { cache: false, requireCache: false, esmResolve: true, interopDefault: false }); Promise.resolve(jiti.import("/home/app.vendor.ai.ruide01/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", {})).catch((error) => {   console.error(error);   process.exitCode = 1; });
+691966 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python /nasdata/app.e0031982/code/eda_fastmcp/main.py
+1136643 /home/app.e0023936/miniforge3/envs/py310_env/bin/python /home/app.t0002643/devops/eda_fastmcp/main.py
+1260545 /home/app.e0017912/.local/node/lib/node_modules/bun/bin/bun.exe -e const createJiti = require("/home/app.e0017912/zl_dev1/eda_platform/node_modules/.bun/jiti@2.7.0/node_modules/jiti/lib/jiti.cjs"); const jiti = createJiti("/home/app.e0017912/zl_dev1/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", { cache: false, requireCache: false, esmResolve: true, interopDefault: false }); Promise.resolve(jiti.import("/home/app.e0017912/zl_dev1/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", {})).catch((error) => {   console.error(error);   process.exitCode = 1; });
+1265152 /home/app.e0017912/.local/node/lib/node_modules/bun/bin/bun.exe -e const createJiti = require("/home/app.e0017912/zl_dev1/eda_platform/node_modules/.bun/jiti@2.7.0/node_modules/jiti/lib/jiti.cjs"); const jiti = createJiti("/home/app.e0017912/zl_dev1/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", { cache: false, requireCache: false, esmResolve: true, interopDefault: false }); Promise.resolve(jiti.import("/home/app.e0017912/zl_dev1/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", {})).catch((error) => {   console.error(error);   process.exitCode = 1; });
+1591827 /usr/bin/node -e const createJiti = require("/home/app.e0017912/zl_dev/eda_platform/node_modules/.bun/jiti@2.7.0/node_modules/jiti/lib/jiti.cjs"); const jiti = createJiti("/home/app.e0017912/zl_dev/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", { cache: false, requireCache: false, esmResolve: true, interopDefault: false }); Promise.resolve(jiti.import("/home/app.e0017912/zl_dev/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", {})).catch((error) => {   console.error(error);   process.exitCode = 1; });
+1629574 /usr/bin/node -e const createJiti = require("/home/app.e0017912/zl_dev/eda_platform/node_modules/.bun/jiti@2.7.0/node_modules/jiti/lib/jiti.cjs"); const jiti = createJiti("/home/app.e0017912/zl_dev/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", { cache: false, requireCache: false, esmResolve: true, interopDefault: false }); Promise.resolve(jiti.import("/home/app.e0017912/zl_dev/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", {})).catch((error) => {   console.error(error);   process.exitCode = 1; });
+1680200 /home/app.t0002965/eda_fastmcp/.venv/bin/python /home/app.t0002965/eda_fastmcp/main.py
+1684985 /usr/bin/node -e const createJiti = require("/home/app.e0017912/zl_dev/eda_platform/node_modules/.bun/jiti@2.7.0/node_modules/jiti/lib/jiti.cjs"); const jiti = createJiti("/home/app.e0017912/zl_dev/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", { cache: false, requireCache: false, esmResolve: true, interopDefault: false }); Promise.resolve(jiti.import("/home/app.e0017912/zl_dev/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", {})).catch((error) => {   console.error(error);   process.exitCode = 1; });
+1771968 /usr/bin/node -e const createJiti = require("/home/app.e0017912/zl_dev/eda_platform/node_modules/.bun/jiti@2.7.0/node_modules/jiti/lib/jiti.cjs"); const jiti = createJiti("/home/app.e0017912/zl_dev/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", { cache: false, requireCache: false, esmResolve: true, interopDefault: false }); Promise.resolve(jiti.import("/home/app.e0017912/zl_dev/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", {})).catch((error) => {   console.error(error);   process.exitCode = 1; });
+1777403 /usr/bin/node -e const createJiti = require("/home/app.e0017912/zl_dev/eda_platform/node_modules/.bun/jiti@2.7.0/node_modules/jiti/lib/jiti.cjs"); const jiti = createJiti("/home/app.e0017912/zl_dev/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", { cache: false, requireCache: false, esmResolve: true, interopDefault: false }); Promise.resolve(jiti.import("/home/app.e0017912/zl_dev/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", {})).catch((error) => {   console.error(error);   process.exitCode = 1; });
+2135871 /bin/bash -c source /home/app.e0030209/.claude/shell-snapshots/snapshot-bash-1772583573099-yv16rh.sh && shopt -u extglob 2>/dev/null || true && eval 'export https_proxy=http://172.19.92.23:13128 && export http_proxy=http://172.19.92.23:13128 && source .venv/bin/activate && nohup python -m ops_agent.mcp.telemetry_api --host 0.0.0.0 --port 8080 > /home/app.e0030209/yc/product_ops_agent/logs/api.log 2>&1 & echo $! > /home/app.e0030209/yc/product_ops_agent/.pids/api.pid sleep 3 echo "API PID: $(cat /home/app.e0030209/yc/product_ops_agent/.pids/api.pid)" ps -p $(cat /home/app.e0030209/yc/product_ops_agent/.pids/api.pid) && echo "API service running" || echo "API service failed"' < /dev/null && pwd -P >| /tmp/claude-4699-cwd
+2425434 python /home/app.t0002147/zhulong_mcp_self_evolution/eda_fastmcp/main.py
+2691602 /home/app.e0023936/miniforge3/envs/py310_env/bin/python /home/app.e0023936/devops/2026-07-05/eda_fastmcp/main.py
+2825718 tmux new -s eda_fastmcp_ser
+2873402 python /home/app.t0002147/eda_fastmcp_tcl/eda_fastmcp/tcl_kb/eda_api_recall.py
+3001278 bash /home/app.t0002965/eda_code_eval/watch_sandbox.sh
+3278615 /home/app.e0023936/miniforge3/envs/py310_env/bin/python /home/app.e0023936/devops/eda_aether_sandbox/main.py
+3511262 python /nasdata/app.t0002997/app.t0002997/proj/eda_fastmcp/main.py
+3562386 /home/app.e0042624/.local/node/lib/node_modules/bun/bin/bun.exe --inspect=127.0.0.1:0 --enable-source-maps -e const createJiti = require("/home/app.e0042624/eda_platform/node_modules/.bun/jiti@2.7.0/node_modules/jiti/lib/jiti.cjs"); const jiti = createJiti("/home/app.e0042624/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", { cache: false, requireCache: false, esmResolve: true, interopDefault: false }); Promise.resolve(jiti.import("/home/app.e0042624/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", {})).catch((error) => {   console.error(error);   process.exitCode = 1; });
+3565132 /home/app.e0042624/.local/node/lib/node_modules/bun/bin/bun.exe -e const createJiti = require("/home/app.e0042624/eda_platform/node_modules/.bun/jiti@2.7.0/node_modules/jiti/lib/jiti.cjs"); const jiti = createJiti("/home/app.e0042624/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", { cache: false, requireCache: false, esmResolve: true, interopDefault: false }); Promise.resolve(jiti.import("/home/app.e0042624/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", {})).catch((error) => {   console.error(error);   process.exitCode = 1; });
+3565861 /home/app.e0042624/.local/node/lib/node_modules/bun/bin/bun.exe --inspect=127.0.0.1:0 --enable-source-maps -e const createJiti = require("/home/app.e0042624/eda_platform/node_modules/.bun/jiti@2.7.0/node_modules/jiti/lib/jiti.cjs"); const jiti = createJiti("/home/app.e0042624/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", { cache: false, requireCache: false, esmResolve: true, interopDefault: false }); Promise.resolve(jiti.import("/home/app.e0042624/eda_platform/sdk/packages/core/src/extensions/plugin/plugin-sandbox-bootstrap.ts", {})).catch((error) => {   console.error(error);   process.exitCode = 1; });
+3596122 python3 -u server/sandbox_server/proxy_server.py
+3820519 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python -m uvicorn eda_api_recall:app --host 0.0.0.0 --port 9006 --log-level info
+4166747 /bin/bash -l -c cd /home/app.t0002638/eda_fastmcp && EDA_MCP_PORT=8661 nohup /home/app.e0023936/miniforge3/envs/py310_env/bin/python main.py > /tmp/eda_mcp_server.log 2>&1 & echo "Started with PID $!" sleep 3 ss -tlnp | grep 8661
+
+=========== 4b. ZHULONG LOOP / RELAY 日志尾 ===========
+-- tail /tmp/zhulong_loop.log --
+[loop] 2026-10-04 16:52:19 wake up, invoking cline ...
+[31merror:[0m error: unknown option '-b'
+[loop] 2026-10-04 16:52:19 cline returned (exit 0), checking git sync ...
+[loop] 2026-10-04 16:52:19 WAITING=0 (no blocker) → sleep 60s
+[loop] 2026-10-04 16:53:19 wake up, invoking cline ...
+[31merror:[0m error: unknown option '-b'
+[loop] 2026-10-04 16:53:20 cline returned (exit 0), checking git sync ...
+[loop] 2026-10-04 16:53:20 WAITING=0 (no blocker) → sleep 60s
+-- tail /tmp/zhulong_ops_relay.log --
+[zhulong-relay] 2026-10-04 15:20:25 started. repo=/nasdata/app.e0031982/code/super_intelligence_2035  poll=20s  fetch_every=3x
+
+=========== 4c. EDA_FASTMCP .env 关键 flag + git ===========
+     # EDA_MCP_PORT=19999 
+     EDA_MCP_PORT=${EDA_MCP_PORT:=18890}
+     EDA_MCP_TRANSPORT=sse
+     # 格式: http://<host>:<port>/v1/traces
+     # PROXY_PORTS=8664,8665,8653,8669
+     PROXY_PORTS=8650,8651,8652,8654
+     SANDBOX_PORT_HTTP=8655
+     SANDBOX_PORT_TCP=8668
+     # 格式: port:workdir,port:workdir,... (workdir 须用绝对路径)
+     # 空/不设 → 回退单端口(SANDBOX_HOST:SANDBOX_PORT_HTTP / SANDBOX_WORKDIR, 行同旧版)
+     # 启动: ./scripts/start_recall_api.sh  停止: ./scripts/stop_recall_api.sh
+     RAG_RECALL_URL=http://localhost:9006/recall
+     # RAG_RECALL_URL=http://localhost:9002/recall
+     # RAG_RECALL_URL=http://10.252.32.15:9001/recall
+     RAG_RECALL_TIMEOUT=25
+     RAG_RECALL_URL_LOCAL=http://localhost:9010/recall
+     # EDA_MCP_TOOLS_DISABLED = 当前被禁用的 MCP 工具（逗号分隔）
+     EDA_MCP_TOOLS_DISABLED=clean_workdir,probe_pyAether_code,cimi_search,cimi_fetch,vqa,query_memory_bank,get_api_details,search_apis,search_api
+     # 各 run_cline_script*.sh 读取自己对应的变量并 export 为 EDA_PROMPT_TEMPLATE，
+     # S2 Φ 轴消融: 预算/滞后(由 scripts/set_s2_phi.py 维护; 改后须重启 MCP)
+     EDA_PHI_BUDGET=0
+     EDA_PHI_LAGGED=0
+     EDA_OMEGA_FIDELITY=high
+     EDA_RUNCODE_READBACK=full
+   -- eda_fastmcp git --
+     ## master...origin/master
+      M .env
+     ?? cleanup_tmp_gt.sh
+     cb5c402c feat(ablation): S1 保真度轴 + S2 Φ 轴消融（hook/handler/检索降保真 + 元数据）
+     5bdf4e87 refactor: 防泄题 hook 升级为白名单 + workspace 沙箱
+     b2eda64e feat: 新增 PreToolUse 防泄题 hook（黑名单拦截 benchmark 答案/判题）
+
+=========== 5. GIT STATUS ===========
+## main...origin/main
+?? doc/ZhuLong_DAC2027/run/.nfs00000000244eea8300001304
+-- last 3 commits --
+354d4dc zhulong-ops: dispatch RUN_ID 1 (36.15 environment survey, +loop/relay log tails + .env flags)
+866f465 ops-relay: result @ 2026-10-04 16:51:25
+19b2fe7 data: wake99 patrol l1_en_hq 916/6006 gpic 2260/8001 progressing; roll wake90 to daily archive (MEMORY<=32KB)
+
+=========== 6. ZHULONG RUN DIR ===========
+total 620
+drwxr-x--- 6 app.e0031982 app.adm   4096 Oct  4 16:46 .
+drwxr-x--- 7 app.e0031982 app.adm   4096 Oct  4 16:46 ..
+-rw-r----- 1 app.e0031982 app.adm   5213 Oct  4 14:25 ablation_run_conductor_serial.sh
+-rw-r----- 1 app.e0031982 app.adm   1440 Oct  4 14:25 ablation_run_loop_1shot.sh
+-rw-r----- 1 app.e0031982 app.adm   1605 Oct  4 14:25 ablation_run_loop_component_s2_full.sh
+-rw-r----- 1 app.e0031982 app.adm   1449 Oct  4 14:25 ablation_run_loop_model_1shot.sh
+-rw-r----- 1 app.e0031982 app.adm   2051 Oct  4 14:25 ablation_run_loop_model_full.sh
+-rw-r----- 1 app.e0031982 app.adm   1467 Oct  4 14:25 ablation_run_loop_s1_1shot.sh
+-rw-r----- 1 app.e0031982 app.adm   1461 Oct  4 14:25 ablation_run_loop_s1_full.sh
+-rw-r----- 1 app.e0031982 app.adm   1443 Oct  4 14:25 ablation_run_loop_s2_1shot.sh
+-rw-r----- 1 app.e0031982 app.adm   1397 Oct  4 14:25 ablation_run_loop.sh
+-rw-r----- 1 app.e0031982 app.adm   6070 Oct  4 14:25 ablation_run_task_1shot.md
+-rw-r----- 1 app.e0031982 app.adm  10921 Oct  4 14:45 ablation_run_task_component_s2_full.md
+-rw-r----- 1 app.e0031982 app.adm   5938 Oct  4 14:25 ablation_run_task.md
+-rw-r----- 1 app.e0031982 app.adm   6465 Oct  4 14:25 ablation_run_task_model_1shot.md
+-rw-r----- 1 app.e0031982 app.adm   6349 Oct  4 14:25 ablation_run_task_model_full.md
+-rw-r----- 1 app.e0031982 app.adm   7127 Oct  4 14:25 ablation_run_task_s1_1shot.md
+-rw-r----- 1 app.e0031982 app.adm   7014 Oct  4 14:25 ablation_run_task_s1_full.md
+-rw-r----- 1 app.e0031982 app.adm  11646 Oct  4 14:25 ablation_run_task_s2_1shot.md
+-rw-r----- 1 app.e0031982 app.adm  11609 Oct  4 14:25 ablation_s2_phi_1shot_report.html
+-rw-r----- 1 app.e0031982 app.adm   4181 Oct  4 16:46 AGENTS.md
+-rw-r----- 1 app.e0031982 app.adm   6802 Oct  4 14:25 benchmark_parallel_guide.md
+drwxr-x--- 2 app.e0031982 app.adm   4096 Oct  4 14:45 daily-memories
+-rw-r----- 1 app.e0031982 app.adm  15491 Oct  4 14:25 eda_fastmcp_commit_prep_report.html
+
+=========== 7. CPU / MEM / GPU ===========
+Model name:                           INTEL(R) XEON(R) PLATINUM 8562Y+
+Socket(s):                            2
+               total        used        free      shared  buff/cache   available
+Mem:            1007         190         206           0         621         816
+
+=========== DONE ===========
+```
