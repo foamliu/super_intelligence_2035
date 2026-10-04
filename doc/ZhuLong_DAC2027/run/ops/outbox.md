@@ -797,3 +797,58 @@ hfeg0tedaap02
 1739884 timeout 10 pgrep -af zhulong_ops_relay.sh
 ===== DONE =====
 ```
+
+---
+
+## RUN_ID 7 · 2026-10-04 21:46:39 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 7 — diagnose "error: Forbidden" (read-only, no agent call)
+REPO=/nasdata/app.e0031982/code/super_intelligence_2035
+CWD="$REPO/doc/ZhuLong_DAC2027/run"
+K="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
+echo "===== 0. TIME ====="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "===== 1. loop log tail (last 16) ====="; timeout 10 tail -n 16 /tmp/zhulong_loop.log | cut -c1-160
+echo "===== 2. script cline line (104-113) ====="; timeout 10 sed -n '104,113p' "$CWD/zhulong_loop.sh" | cut -c1-160
+echo "===== 3. proxy / OPENAI env ====="; env | grep -iE 'proxy|OPENAI|API_TYPE' | cut -c1-140
+echo "===== 4. cline settings files ====="; timeout 20 find ~/.cline -maxdepth 3 -name 'settings*' 2>/dev/null | head
+for f in $(timeout 20 find ~/.cline -maxdepth 3 -name 'settings*' 2>/dev/null); do echo "-- $f --"; timeout 10 grep -iE 'url|baseurl|base_url|provider|"model"' "$f" | head -20 | cut -c1-160; done
+echo "===== 5. cline version ====="; timeout 20 cline --version 2>&1 | head -3
+echo "===== 6. curl gateway /models (WITH current env) ====="; timeout 20 curl -sS -m 15 -o /dev/null -w "HTTP=%{http_code}\n" -H "Authorization: Bearer $K" "http://agi-gateway.cxmt.com/cloud/v1/models" 2>&1 | cut -c1-160
+echo "===== 7. curl gateway /models (WITHOUT proxy) ====="; timeout 20 env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY curl -sS -m 15 -o /dev/null -w "HTTP=%{http_code}\n" -H "Authorization: Bearer $K" "http://agi-gateway.cxmt.com/cloud/v1/models" 2>&1 | cut -c1-160
+echo "===== DONE ====="
+```
+
+**输出**
+```
+===== 0. TIME =====
+2026-10-04 21:46:39
+hfeg0tedaap02
+===== 1. loop log tail (last 16) =====
+[loop] 2026-10-04 21:45:31 wake up, invoking cline ...
+[31merror:[0m Forbidden
+[loop] 2026-10-04 21:45:32 cline returned (exit 0), checking git sync ...
+[loop] 2026-10-04 21:45:32 WAITING=1 (eval running / infra not ready) → sleep 1800s
+===== 2. script cline line (104-113) =====
+while true; do
+    echo "[loop] $(date '+%F %T') wake up, invoking cline ..."
+    if [[ -f "$TASK_MD" ]]; then
+        prompt="$(< "$TASK_MD")"
+        # 🚫 剥掉代理环境变量（内网网关 agi-gateway.cxmt.com 不该走外网代理，否则 `error: Forbidden`）。
+        #    ⚠️ 只作用于本行 cline；loop 自身 / git push 仍保留 proxy（外网仍需代理）。
+        env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
+            -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
+          cline -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+        echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git sync ..."
+===== 3. proxy / OPENAI env =====
+https_proxy=http://172.19.92.23:13128
+===== 4. cline settings files =====
+===== 5. cline version =====
+3.0.51
+===== 6. curl gateway /models (WITH current env) =====
+HTTP=200
+===== 7. curl gateway /models (WITHOUT proxy) =====
+HTTP=200
+===== DONE =====
+```
