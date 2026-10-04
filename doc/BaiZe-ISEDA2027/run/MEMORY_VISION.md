@@ -1,16 +1,16 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ 四臂全兑现 · R11-L2 ✅ 完成（未翻盘、冻结文本塔最优）· R11-L caption-weight 三点消融 ✅ 全完成（0.5/1.0/2.0 全≈随机 → caption 监督本身与 IN-1k 正交、假设 B 坐实）**；臂⑤ GenLIP 🚫 跳过（已坐实）/ 臂⑥ AIMv2 🟢 **运维已批准·训练中**（step ≈5950/30000 ≈20%，无坍缩 C1 0.31–0.40 / C2_gap +0.11~+0.12 / C4=OK，ETA ~19:48） / R13 ✅ 完成（官方 OV2 L/14@224 IN-1k frozen-trunk lp=79.81% vs 自研 7.99%） / **R11-E ✅ 完成（GPIC short 同 N 两点：@5.12M=6.01%[+2.58] / @10.24M=5.69%[+0.24] → 裁定「未抬高/无显著差异」，先发优势但不抬 ceiling）** |
-| WAITING | 0（**语义=训练 running**：臂⑥ AIMv2 🟢 运维已批准（用户 2026-10-04 拍板「Approve & start AIMv2 now」），S3 全量 30k 步 @18:07:56 起跑，step ≈5950/30000 进行中、无坍缩、ETA ~19:48；下次唤醒回收 [done]+4-ckpt IN-1k lp → §14.4 预注册裁定 + 公平表 + git push） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ 四臂全兑现 · R11-L2 ✅ 完成（未翻盘、冻结文本塔最优）· R11-L caption-weight 三点消融 ✅ 全完成（0.5/1.0/2.0 全≈随机 → caption 监督本身与 IN-1k 正交、假设 B 坐实）**；臂⑤ GenLIP 🚫 跳过（已坐实）/ 臂⑥ AIMv2 🟢 **运维已批准·训练中**（step ≈8300/30000 ≈28%，无坍缩 PROBE@8100 C1=0.3500/C2_gap+0.1164/C4=OK，ETA ~19:50；eval 训完自动跑） / R13 ✅ 完成（官方 OV2 L/14@224 IN-1k frozen-trunk lp=79.81% vs 自研 7.99%） / **R11-E ✅ 完成（GPIC short 同 N 两点：@5.12M=6.01%[+2.58] / @10.24M=5.69%[+0.24] → 裁定「未抬高/无显著差异」，先发优势但不抬 ceiling）** |
+| WAITING | 1（**语义=训练 running → 30min 轮询省 token**，与本线 R11-E 训练期 WAITING=1 一致；臂⑥ AIMv2 🟢 运维已批准（用户 2026-10-04 拍板「Approve & start AIMv2 now」），S3 全量 30k 步 @18:07:56 起跑，step ≈8300/30000 进行中、无坍缩 PROBE@8100 C1=0.3500/C2_gap+0.1164/C4=OK、ETA ~19:50；`r11_run_aimv2.sh` 训完自动回收 4-ckpt(step10k/20k/30k/final) IN-1k lp → 下次唤醒回收 `[done]`+lp → §14.4 预注册裁定 + 公平表 + git push） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡）+ arm④ CoCa（1.92h×8 卡）+ R11-L2 LoRA（2.09h×8 卡 ≈16.7 GPU·h）+ R11-L caption-weight 消融（✅ 2 点：7261.3s+7440.6s ≈ 2.02h+2.07h×8 卡 ≈ 32.7 GPU·h）+ R11-E GPIC（30k 步 3892.7s≈1.08h×8 卡 ≈ 8.65 GPU·h）+ **臂⑥ AIMv2（🟢 进行中：30k 步 @~210ms/iter ≈ 1.75h×8 卡 ≈ 14 GPU·h，tower 126.8M + predictor 0.66M）** |
-| 更新 | **2026-10-04 18:32（臂⑥ AIMv2 🟢 训练中 step ≈5950/30000 ≈20%、无坍缩 C1 0.31–0.40/C2_gap +0.11~+0.12/C4=OK、ETA ~19:48；⚠️ 已确认 `/tmp/r11_aimv2.log` 里的 NCCL「Broken pipe / TCPStore shut down too early」= `ProcessGroupNCCL::HeartbeatMonitor::runLoop` 后台线程**非致命噪声**——主训练线程持续推进 step 5450→5950、8 卡 71–92% util，非崩溃，勿误杀；首 ckpt @step10000 ~25min 后；WAITING=0）** · 2026-10-04 18:24（S1 实现+S2 冒烟 ✅ PASS → S3 全量 @18:07:56 起跑） · 2026-10-04 13:01（R13 ✅ 完成：官方 OV2 L/14@224 IN-1k frozen-trunk lp=79.81% [对照自研最佳 7.99%·渐近 25.1%] → 补结论边界「数据少非塔烂」） · 2026-10-04 11:22（R11-E ✅ 收尾：训 exit 0 + 4-ckpt IN-1k lp 回收；裁定「未抬高」） |
+| 更新 | **2026-10-04 18:39（臂⑥ AIMv2 🟢 训练中 step ≈8300/30000 ≈28%、无坍缩 PROBE@8100 C1=0.3500/C2_gap+0.1164/C4=OK、ETA ~19:50；首 ckpt @step10000 ~6min 后；eval 训完自动跑）** · 2026-10-04 18:32（臂⑥ AIMv2 🟢 训练中 step ≈5950/30000 ≈20%、无坍缩 C1 0.31–0.40/C2_gap +0.11~+0.12/C4=OK、ETA ~19:48；⚠️ 已确认 `/tmp/r11_aimv2.log` 里的 NCCL「Broken pipe / TCPStore shut down too early」= `ProcessGroupNCCL::HeartbeatMonitor::runLoop` 后台线程**非致命噪声**——主训练线程持续推进 step 5450→5950、8 卡 71–92% util，非崩溃，勿误杀；首 ckpt @step10000 ~25min 后；WAITING=0）** · 2026-10-04 18:24（S1 实现+S2 冒烟 ✅ PASS → S3 全量 @18:07:56 起跑） · 2026-10-04 13:01（R13 ✅ 完成：官方 OV2 L/14@224 IN-1k frozen-trunk lp=79.81% [对照自研最佳 7.99%·渐近 25.1%] → 补结论边界「数据少非塔烂」） · 2026-10-04 11:22（R11-E ✅ 收尾：训 exit 0 + 4-ckpt IN-1k lp 回收；裁定「未抬高」） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -118,12 +118,12 @@ WAITING: 0
 
 - **S1 实现 ✅**：`models.py` 新增 `PatchPredictor`（0.66M，Linear→LN→GELU→Linear，从零实现；norm_pix 目标参考 OpenVision `src/losses/common.py:mae_loss` Apache-2.0，未抄 Apple ml-aim Sample Code）；`r9_train.py` 新增 `--loss aimv2 --mask-ratio 0.6 --patch-loss-weight 1.0`。
 - **S2 冒烟 ✅**（18:06，30 步 PASS）：`[predictor] patch_dim=768 width=512 trainable=0.66M`；loss=contrast+1.0×patch_mse 校验通过；patch_mse 1.0→0.71（稠密项在学）；contrast ≈5.9（≈ln512 无坍缩）；`[done] total=7.7s steady_image_s=4870.4`。
-- **S3 全量 🟢 进行中**（18:07:56 起，`.12` 8×H100，step ≈5950/30000 @18:32 ≈20%）：
+- **S3 全量 🟢 进行中**（18:07:56 起，`.12` 8×H100，step ≈8300/30000 @18:39 ≈28%）：
   - `[params] tower=openvision2 total=126.8M` + `[predictor] trainable=0.66M mask_ratio=0.6`。
-  - 健康（无坍缩）：PROBE C1 0.31–0.40 / C2_gap +0.116~+0.124 / C4=OK（step 300/600/…/5400/5700 全 OK，最近 PROBE@5700 C1=0.3984 gap=+0.1171）。
+  - 健康（无坍缩）：PROBE C1 0.31–0.40 / C2_gap +0.116~+0.124 / C4=OK（step 300/600/…/5400/5700/8100 全 OK，最近 PROBE@8100 C1=0.3500 C2_gap=+0.1164 C4=OK）。
   - loss_ema 7.02→3.56；contrast ~3.45（InfoNCE 在学，scale 10→54）；patch_mse 0.59→0.27（稠密项在学）。
-  - 吞吐 ~2200–2900 img/s（~175–235 ms/iter）→ ETA 30k 步 **~19:48**；首 ckpt @step10000（~25min 后）。
-  - ⚠️ **运维判读提示（重要）**：`/tmp/r11_aimv2.log`（nohup/stderr，含 8 rank 交错）中反复出现的 `sendBytes failed ... Broken pipe` / `TCPStore server has shut down too early` / `Failed to check the "should dump" flag` 全部来自 `c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop` **后台诊断线程**，**非致命**——主训练线程（见 `out/R11L_aimv2_w512/train.log`，权威进度）持续 step 5450→5950 推进、8 卡 nvidia-smi 71–92% util / 16.5GB。**勿据此误判为崩溃、勿 kill 进程**。判训练是否活着以 `train.log` 是否新增 `[step` 行 + `nvidia-smi` util 为准。
+  - 吞吐 ~2200–3100 img/s（~165–235 ms/iter）→ ETA 30k 步 **~19:50**；首 ckpt @step10000（~6min 后 @~18:45）；eval 训完自动跑（`r11_run_aimv2.sh:65-78`）。
+  - ⚠️ **运维判读提示（重要）**：`/tmp/r11_aimv2.log`（nohup/stderr，含 8 rank 交错）中反复出现的 `sendBytes failed ... Broken pipe` / `TCPStore server has shut down too early` / `Failed to check the "should dump" flag` 全部来自 `c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop` **后台诊断线程**，**非致命**——主训练线程（见 `out/R11L_aimv2_w512/train.log`，权威进度）持续 step 7350→8300 推进、8 卡 nvidia-smi 7/8 卡 100% util / 16.5GB。**勿据此误判为崩溃、勿 kill 进程**。判训练是否活着以 `train.log` 是否新增 `[step` 行 + `nvidia-smi` util 为准。
   - ⬜ 待回填：`[done] total=… steady_image_s=… final_loss=…` + 4-ckpt（step10k/20k/30k/final）IN-1k frozen-trunk lp + §14.4 预注册裁定 + 公平表。
 - **预注册判据（§14.4）**：lp ≥ 基线+1.5 @两点(5.12M,10.24M) → 翻盘 → 起 ⑥-B/λ 扫；lp ≤ 基线−1.5 → 更差；其余 → 假说证伪（负结果照实写）。
 - ⚠️ **C2 限定**：本臂=AIMv2-**style** 自研改编（InfoNCE + masked patch 重建），**非官方 AIMv2 复现**（官方=纯 AR 无对比项 + 无公开 loss 代码）→ 结论只对我们 recipe 成立。
