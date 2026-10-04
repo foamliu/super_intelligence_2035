@@ -16,7 +16,7 @@ Usage:
 Honesty: blocked when GitHub/PyPI unreachable. Reports blocker, skips instance.
 """
 from __future__ import annotations
-import argparse, json, os, shutil, subprocess, sys, time
+import argparse, json, os, re, shutil, subprocess, sys, time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -34,6 +34,27 @@ HARNESSES = ["cline-patched", "codex", "opencode", "claude-code"]
 TIMEOUT_RUN = 1800
 TIMEOUT_EVAL = 1800
 PROXY = "http://172.19.92.25:13128"
+INTER_RUN_DELAY = 10  # seconds between harness runs (spread quota usage)
+MAX_QUOTA_RETRIES = 3  # max retries per harness on quota exhaustion
+
+
+def detect_quota_error(output: str) -> int | None:
+    """Parse '请等待X分钟Y秒后重试' / '请等待Y秒后重试' from harness output.
+
+    Returns wait_seconds (int) or None if no quota error found.
+    Also detects English variants like 'Too Many Requests'.
+    """
+    # Chinese: 本次Token额度已用完，请等待23分钟22秒后重试
+    m = re.search(r"请等待(\d+)分钟(\d+)秒", output)
+    if m:
+        return int(m.group(1)) * 60 + int(m.group(2)) + 60  # +60s buffer
+    m = re.search(r"请等待(\d+)秒", output)
+    if m:
+        return int(m.group(1)) + 60
+    # English: Too Many Requests (without specific wait time)
+    if "Too Many Requests" in output or "429" in output:
+        return 300  # default 5min wait
+    return None
 
 
 def run(cmd, cwd=None, timeout=300, env=None):
@@ -130,15 +151,32 @@ def setup_rootfs(instance, rootfs_path):
 
 
 def run_harness(harness, instance_json, workdir, predictions_out):
+    """Run a single harness with token-quota backoff retry.
+
+    If the harness output contains '本次Token额度已用完' / '请等待X分钟Y秒后重试',
+    sleep for the specified time + buffer, then retry (up to MAX_QUOTA_RETRIES).
+    """
     cmd = [sys.executable, str(HERE / "run_single.py"),
            "--harness", harness, "--instance-json", str(instance_json),
            "--workdir", str(workdir), "--timeout", str(TIMEOUT_RUN),
            "--out-predictions", str(predictions_out)]
-    t0 = time.time()
-    out, rc = run(cmd, timeout=TIMEOUT_RUN + 120)
-    wall = time.time() - t0
-    return rc == 0, {"harness": harness, "returncode": rc, "wall_s": round(wall, 1),
-                     "predictions_file": str(predictions_out), "stdout_tail": out[-500:]}
+    for attempt in range(1, MAX_QUOTA_RETRIES + 1):
+        t0 = time.time()
+        out, rc = run(cmd, timeout=TIMEOUT_RUN + 120)
+        wall = time.time() - t0
+        # Check for token quota exhaustion
+        wait = detect_quota_error(out)
+        if wait and attempt < MAX_QUOTA_RETRIES:
+            print(f"  [QUOTA] {harness}: token quota exhausted, waiting {wait}s before retry {attempt+1}/{MAX_QUOTA_RETRIES}...")
+            time.sleep(wait)
+            continue
+        return rc == 0, {"harness": harness, "returncode": rc, "wall_s": round(wall, 1),
+                         "predictions_file": str(predictions_out), "stdout_tail": out[-500:],
+                         "quota_retry": attempt if attempt > 1 else None}
+    # All retries exhausted
+    return False, {"harness": harness, "returncode": rc, "wall_s": round(wall, 1),
+                   "predictions_file": str(predictions_out), "stdout_tail": out[-500:],
+                   "quota_exhausted": True}
 
 
 def eval_instance(instance_id, predictions_file, rootfs_path, run_id):
@@ -154,15 +192,23 @@ def eval_instance(instance_id, predictions_file, rootfs_path, run_id):
     if report_jsons:
         try:
             report = json.loads(report_jsons[0].read_text())
-            result.update(resolved=report.get("resolved", False),
-                          f2p=report.get("fail_to_pass", {}),
-                          p2p=report.get("pass_to_pass", {}))
+            # report.json is nested: {"<instance_id>": {"resolved": bool, ...}}
+            inst_report = report.get(instance_id, report) if isinstance(report, dict) else {}
+            result["resolved"] = inst_report.get("resolved", False)
+            result["patch_applied"] = inst_report.get("patch_successfully_applied", False)
+            ts = inst_report.get("tests_status", {})
+            f2p = ts.get("FAIL_TO_PASS", {})
+            p2p = ts.get("PASS_TO_PASS", {})
+            result["f2p_pass"] = len(f2p.get("success", []))
+            result["f2p_total"] = len(f2p.get("success", [])) + len(f2p.get("failure", []))
+            result["p2p_pass"] = len(p2p.get("success", []))
+            result["p2p_total"] = len(p2p.get("success", [])) + len(p2p.get("failure", []))
         except Exception as e:
             result["report_error"] = str(e)
     return rc == 0, result
 
 
-def process_instance(instance_id, do_setup=True, do_run=True, do_eval=True):
+def process_instance(instance_id, do_setup=True, do_run=True, do_eval=True, eval_only=False):
     inst_json = INSTANCES_DIR / f"{instance_id}.json"
     if not inst_json.exists():
         return {"instance_id": instance_id, "error": "instance JSON not found"}
@@ -172,6 +218,21 @@ def process_instance(instance_id, do_setup=True, do_run=True, do_eval=True):
     workdir = WORKDIRS / instance["repo"].replace("/", "_")
     # Use shared template rootfs (not per-instance copy) for eval
     rootfs_path = ROOTFS_TEMPLATES.get(instance["repo"], ROOTFS_DIR / instance_id)
+    if eval_only:
+        # Eval-only mode: skip setup/run, just re-evaluate existing predictions
+        harness_results = {}
+        for harness in HARNESSES:
+            pred_file = WORKDIRS / f"predictions_{harness.replace('-', '_')}_{instance_id}.json"
+            if not pred_file.exists() or pred_file.stat().st_size < 50:
+                print(f"  [SKIP] {harness} on {instance_id}: no predictions file")
+                harness_results[harness] = {"harness": harness, "eval": {"skipped": "no predictions"}}
+                continue
+            run_id = f"R1_PILOT_{harness.replace('-', '_').upper()}_{instance_id.replace('-', '_')}"
+            print(f"  [EVAL] {harness} on {instance_id} ...")
+            eok, eres = eval_instance(instance_id, pred_file, rootfs_path, run_id)
+            harness_results[harness] = {"harness": harness, "predictions_file": str(pred_file), "eval": eres}
+        results["harnesses"] = harness_results
+        return results
     if do_setup:
         print(f"\n{'='*60}\n[SETUP] {instance_id}")
         ok, msg = git_clone_or_fetch(instance["repo"], instance["base_commit"], workdir)
@@ -186,14 +247,23 @@ def process_instance(instance_id, do_setup=True, do_run=True, do_eval=True):
             return results
     if do_run:
         harness_results = {}
-        for harness in HARNESSES:
+        for i, harness in enumerate(HARNESSES):
+            if i > 0:
+                print(f"  [DELAY] {INTER_RUN_DELAY}s between runs...")
+                time.sleep(INTER_RUN_DELAY)
             print(f"\n[RUN] {harness} on {instance_id} ...")
             pred_file = WORKDIRS / f"predictions_{harness.replace('-', '_')}_{instance_id}.json"
             ok, hres = run_harness(harness, inst_json, workdir, pred_file)
-            if do_eval and ok:
-                run_id = f"R1_PILOT_{harness.replace('-', '_').upper()}_{instance_id.replace('-', '_')}"
-                eok, eres = eval_instance(instance_id, pred_file, rootfs_path, run_id)
-                hres["eval"] = eres
+            # Run eval if predictions file has content (not just rc==0,
+            # because some harnesses produce patches even with rc=1)
+            if do_eval:
+                has_patch = pred_file.exists() and pred_file.stat().st_size > 50
+                if has_patch:
+                    run_id = f"R1_PILOT_{harness.replace('-', '_').upper()}_{instance_id.replace('-', '_')}"
+                    eok, eres = eval_instance(instance_id, pred_file, rootfs_path, run_id)
+                    hres["eval"] = eres
+                else:
+                    hres["eval"] = {"skipped": "no patch produced"}
             harness_results[harness] = hres
         results["harnesses"] = harness_results
     return results
@@ -205,6 +275,10 @@ def main():
     ap.add_argument("--all-prepared", action="store_true")
     ap.add_argument("--setup-only", action="store_true")
     ap.add_argument("--run-only", action="store_true")
+    ap.add_argument("--eval-only", action="store_true",
+                    help="Skip setup/run, just re-evaluate existing predictions")
+    ap.add_argument("--resume", action="store_true",
+                    help="Skip instances already in out-summary with all 4 harnesses evaluated")
     ap.add_argument("--out-summary", default=None)
     args = ap.parse_args()
     if args.all_prepared:
@@ -213,15 +287,47 @@ def main():
         instance_ids = args.instances
     else:
         ap.error("Must specify --instances or --all-prepared")
-    do_setup = not args.run_only
-    do_run = not args.setup_only
+
+    summary_path = Path(args.out_summary or HARNESS_WORK / "pilot_results.json")
+    eval_only = args.eval_only
+    do_setup = not args.run_only and not eval_only
+    do_run = not args.setup_only and not eval_only
     do_eval = not args.setup_only
-    print(f"Pilot batch: {len(instance_ids)} instances, setup={do_setup}, run={do_run}")
+    print(f"Pilot batch: {len(instance_ids)} instances, setup={do_setup}, run={do_run}, eval={do_eval}, eval_only={eval_only}")
+
+    # Resume: load existing results and skip/update completed instances
     all_results = []
-    for iid in instance_ids:
-        res = process_instance(iid, do_setup, do_run, do_eval)
-        all_results.append(res)
-        summary_path = Path(args.out_summary or HARNESS_WORK / "pilot_results.json")
+    existing_map = {}  # instance_id -> index in all_results
+    skip_ids = set()
+    if (args.resume or eval_only) and summary_path.exists():
+        try:
+            all_results = json.loads(summary_path.read_text())
+            for idx, res in enumerate(all_results):
+                existing_map[res["instance_id"]] = idx
+                if args.resume:
+                    hs = res.get("harnesses", {})
+                    if len(hs) >= len(HARNESSES):
+                        all_evald = all(
+                            h.get("eval", {}).get("resolved") is not None
+                            or h.get("eval", {}).get("skipped")
+                            for h in hs.values()
+                        )
+                        if all_evald:
+                            skip_ids.add(res["instance_id"])
+            if args.resume:
+                print(f"  [RESUME] Skipping {len(skip_ids)} already-completed instances")
+        except Exception as e:
+            print(f"  [RESUME] Could not load existing results: {e}")
+
+    pending = [iid for iid in instance_ids if iid not in skip_ids]
+    print(f"  Pending: {len(pending)} instances")
+
+    for iid in pending:
+        res = process_instance(iid, do_setup, do_run, do_eval, eval_only=eval_only)
+        if iid in existing_map:
+            all_results[existing_map[iid]] = res  # update existing entry
+        else:
+            all_results.append(res)
         summary_path.write_text(json.dumps(all_results, indent=2, default=str))
     print(f"\n{'='*80}\nPILOT SUMMARY\n{'='*80}")
     for res in all_results:
