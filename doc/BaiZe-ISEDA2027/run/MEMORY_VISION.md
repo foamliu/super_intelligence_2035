@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ 四臂全兑现 · R11-L2 ✅ · caption-weight ✅ · R13 ✅ · R11-E ✅ · 臂⑥ AIMv2 ✅ 翻盘**（lp 11.39→11.14→12.08% vs 基线 3.43→5.45→6.08%，+5.69~7.96pp ≥+1.5 → **25.1% 渐近局部推翻**）；**R11-F 🟢 运行中 Arm A（GPIC short）step 16350/30000 ≈54.5%**（loss≈3.86↓，img/s≈6400，C1=0.37/C2_gap+0.085，~80ms/iter→Arm A 训练 ETA ~21:20 + eval ~13min；5 臂串行 A→B→C→E→D 总 ~5–6h；wrapper `r11f_eval_and_launch.sh` 已自动接管） |
-| WAITING | 1（**语义=R11-F 5 臂串行训练中 → 30min 轮询**；Arm A GPIC short step16350/30000 @~80ms/iter→训练 ETA ~21:20，随后自动 4-ckpt eval；下次唤醒回收各臂 lp + 进度 + §15 判定） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ 四臂全兑现 · R11-L2 ✅ · caption-weight ✅ · R13 ✅ · R11-E ✅ · 臂⑥ AIMv2 ✅ 翻盘**（lp 11.39→11.14→12.08% vs 基线 3.43→5.45→6.08%，+5.69~7.96pp ≥+1.5 → **25.1% 渐近局部推翻**）；**R11-F 🟢 Arm A ✅ done（lp@30k=5.53%）· Arm B（GPIC medium）训练中 step ~50/30000（22:12 起）**；wrapper 因 NFS `Stale file handle` 崩溃 → 已用 `r11f_continue.sh` 续跑 B/C/E/D（`setsid` 后台） |
+| WAITING | 1（**语义=R11-F 续跑中 → 30min 轮询**；Arm B GPIC medium 30k@~80ms→~40min 训 + ~13min eval；B→C→E→D 4 臂串行总 ~4–5h；下次唤醒回收各臂 lp + 进度 + §15 判定） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10 + R11-L/②③④ + R11-L2 LoRA + R11-L caption-weight + R11-E GPIC（8.65 GPU·h）+ **臂⑥ AIMv2（✅ 7076s≈1.97h×8卡≈15.7 GPU·h）+ AIMv2 4-ckpt eval（~13min×1卡≈0.22 GPU·h）** + **R11-F 🟢 进行中**（Arm A GPIC short 30k@~80ms→~40min×8卡；5 臂串行总 ~5–6h×8 卡 ≈ 40–48 GPU·h） |
-| 更新 | **2026-10-04 21:01（R11-F Arm A 巡检 step16350）** · 2026-10-04 20:30（AIMv2 ✅ 翻盘 + R11-F Arm A 起跑） · 2026-10-04 19:25（R11-F 代码准备 ✅） · 2026-10-04 18:39（AIMv2 step ≈8300） · 2026-10-04 13:01（R13 ✅） · 2026-10-04 11:22（R11-E ✅） |
+| 更新 | **2026-10-04 22:12（R11-F Arm A ✅ + wrapper 崩溃修复 + Arm B 续跑起）** · 2026-10-04 21:01（R11-F Arm A 巡检 step16350） · 2026-10-04 20:30（AIMv2 ✅ 翻盘 + R11-F Arm A 起跑） · 2026-10-04 19:25（R11-F 代码准备 ✅） · 2026-10-04 13:01（R13 ✅） · 2026-10-04 11:22（R11-E ✅） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -130,18 +130,21 @@ WAITING: 1
 - ⚠️ **C2 限定**：AIMv2-**style** 自研改编，**非官方 AIMv2 复现** → 结论只对我们 recipe 成立。
 - 证据：`out/R11L_aimv2_w512/train.log`（训练）；`/tmp/r11_aimv2_eval.log`（eval，exit 0）。已回填 `EXPERIMENTS_VISION_ROUND11.md §14.4–§14.5`。
 
-## R11-F 数据源横向对比 · 🟢 运行中（2026-10-04 20:25 起）
+## R11-F 数据源横向对比 · 🟢 Arm A ✅ + Arm B 训练中（2026-10-04 22:12）
 
 > 运维指令 2026-10-04（六）批准：GPIC short/medium/short+medium(90%) vs en500k vs CC12M，固定 30k 步 / w512 / InfoNCE / IN-1k lp。预注册见 `EXPERIMENTS_VISION_ROUND11.md §15`。
 
 - ✅ **代码改动全完成 + 冒烟验证**（上一 cycle）：data.py caption_type + r9_train.py --caption-type + r11_run_datasource.sh 5 臂 + §15 预注册。
 - ✅ **冻结 tar 快照**：GPIC 现有 **2424 tar**（R11-E 时 1973，下载仍在增长）→ `/tmp/r11f_gpic_snapshot.txt`（A/B/C 三臂共用）。
-- 🟢 **R11-F 已启动**（20:25:29，wrapper `r11f_eval_and_launch.sh` 自动接管）：
-  - **Arm A（GPIC short）运行中**（巡检 21:01）：step **16350/30000（≈54.5%）**，loss≈3.86↓（loss_ema 3.93，loss_early 5.88），img/s≈6400，**无坍缩**（PROBE step16200：C1=0.37 / C2_diag=0.15 / C2_off=0.067 / C2_gap=+0.085 / C4=OK），~80ms/iter → 剩余 ~13650 步 ≈ **18min → Arm A 训练 ETA ~21:20**，随后自动 4-ckpt IN-1k eval（~13min）。
-  - 5 臂串行顺序：A(GPIC short)→B(GPIC medium)→C(short+medium)→E(CC12M)→D(en500k)，总 ~5–6h（GPIC 臂 ~40min 训 + ~13min eval；wds 臂 ~1.9h 训 + eval）。
-  - 日志：`/tmp/r11f_datasource.log`；wrapper：`/tmp/r11f_wrapper.log`。
-  - ✅ **一致性核验待 Arm A eval 后做**：Arm A = R11-E 同臂（GPIC short），lp 应与 R11-E 落盘值对得上（环境/口径稳）。
-- ⬜ 待回填：5 臂 × {`[done]` + 4-ckpt lp} + 公平表 + Q1/Q2/Q3/D 裁定（§15.3）。
+- ✅ **Arm A（GPIC short）完成**（20:25–21:44）：30k 步 3914s，steady 6296 img/s，final_loss=3.6461，无坍缩（C1=0.41/C2_gap=+0.087）。
+  - IN-1k lp @ step{10k,20k,30k} = **3.97% / 4.95% / 5.53%**；zs @step30k = 1.97%。
+  - ⚠️ **一致性交叉验证未完全对齐**：R11-E（1973 tar/旧 data.py）step10k=6.01% → Δ−2.04pp（超 ±1.5 带归因 tar 数不同→分片顺序不同 + data.py 改动）；step20k/30k 收敛到带内。**R11-F 内部臂间可比性不受影响**（同脚本/快照/data.py）。
+- ⚠️ **Wrapper 崩溃**：`r11_run_datasource.sh` 在 Arm A 后遭 NFS `Stale file handle`（bash 读 NFS 脚本文件瞬态失败）→ exit 2，B/C/E/D 未执行。
+- ✅ **修复**：新建 `vision/r11f_continue.sh`（仅 B/C/E/D，复用同一快照），`setsid` 后台启动。
+- 🟢 **Arm B（GPIC medium）训练中**（22:12 起，step ~50/30000）：8 卡 GPU 71–85% util，loss=5.42（启动）。
+  - 4 臂串行 B→C→E→D，总 ~4–5h（GPIC 臂 ~40min 训 + ~13min eval；wds 臂 ~1.9h 训 + eval）。
+  - 日志：`/tmp/r11f_datasource.log`（续跑追加）；wrapper 续跑：`/tmp/r11f_continue_wrapper.log`。
+- ⬜ 待回填：臂 B/C/E/D × {`[done]` + 4-ckpt lp} + 公平表耗时列 + Q1/Q2/Q3/D 裁定（§15.3）。
 
 
 ## 历史条目已滚动归档（2026-10-03）

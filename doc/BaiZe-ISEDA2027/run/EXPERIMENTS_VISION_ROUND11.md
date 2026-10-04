@@ -661,13 +661,62 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 
 ### 15.4 公平性（§3 口径）
 
-| 臂 | 参数量 | 每步耗时 | 备注 |
-|:--|:--|:--|:--|
-| A–E | 126.78M（= 基线 w512，无 decoder） | 待实测 | 只变数据；耗时差异仅来自数据加载 |
+| 臂 | 参数量 | 每步耗时 | steady img/s | total 训练时间 | 备注 |
+|:--|--:|--:|--:|--:|:--|
+| A（GPIC short） | 126.78M | ~80 ms/iter | 6296 | 3914s（≈65min） | 2424 tar / 303 shards/rank |
+| B（GPIC medium） | 126.78M | 待实测 | — | — | 同快照 2424 tar |
+| C（GPIC short+medium） | 126.78M | 待实测 | — | — | 同快照 2424 tar |
+| E（CC12M pure） | 126.78M | 待实测 | — | — | 1100 tar（wds） |
+| D（en500k） | 126.78M | 待实测 | — | — | 25 tar（wds，~30 epochs 重复轮） |
+
+> 只变数据；耗时差异仅来自数据加载。所有臂同 w512 / depth30 / patch16 / InfoNCE / 冻结 CLIP-768 / seed 1234 / bs64×8=512 / 30k 步。
 
 ### 15.5 命令与进度（回填区）
 
-- 脚本：`vision/r11_run_datasource.sh`（5 臂串行 A→B→C→E→D）；日志 `/tmp/r11f_datasource.log`；输出 `R11F_{gpic_short,gpic_medium,gpic_shortmedium,cc12m,en500k}_w512`。
-- **auto-launcher**：`r11f_auto_launch.sh`（等 AIMv2 完 → 手动跑 AIMv2 eval → 等 GPU 空 → 自动起 R11-F）。
-- ⬜ 待回填：5 臂 × {`[done]` + 4-ckpt lp} + 公平表耗时列 + Q1/Q2/Q3/D 裁定。
+- 脚本：`vision/r11_run_datasource.sh`（5 臂串行 A→B→C→E→D）；续跑脚本 `vision/r11f_continue.sh`（臂 B/C/E/D）；日志 `/tmp/r11f_datasource.log`；输出 `R11F_{gpic_short,gpic_medium,gpic_shortmedium,cc12m,en500k}_w512`。
+- **auto-launcher**：`r11f_eval_and_launch.sh`（等 AIMv2 eval 完 → 等 GPU 空 → 自动起 R11-F）。
+- **冻结 tar 快照**：`/tmp/r11f_gpic_snapshot.txt` = **2424 tar**（A/B/C 三臂共用；R11-E 时 1973 tar）。
+
+#### Arm A（GPIC short）✅ 完成（2026-10-04 20:25–21:44）
+
+| ckpt | N | lp top-1 | zs top-1 | zs top-5 |
+|:--|--:|--:|--:|--:|
+| step10000 | 5.12M | **3.97%** | 1.33% | 5.03% |
+| step20000 | 10.24M | **4.95%** | 2.10% | 7.14% |
+| step30000 | 15.36M | **5.53%** | 1.97% | 6.98% |
+| vision.pt | 15.36M | **5.53%** | 1.97% | 6.98% |
+
+- 训练：3914.2s（≈65min），steady 6296 img/s，final_loss=3.6461，~80ms/iter。
+- 无坍缩：PROBE step30000 C1=0.4095 / C2_gap=+0.0871 / C4=OK。
+- 证据：`/tmp/r11f_datasource.log`（`[done] total=3914.2s` + `[R8-IN1K] DONE`）；ckpt `/nas_train/app.e0031982/datasets/baize-vision/out/R11F_gpic_short_w512/`。
+
+#### ⚠️ 一致性交叉验证（Arm A vs R11-E，**未完全对齐**）
+
+| 对照点 | R11-F Arm A（2424 tar，新 caption_type 参数） | R11-E（1973 tar，旧 data.py） | Δ |
+|:--|--:|--:|--:|
+| step10k lp | 3.97% | 6.01% | **−2.04** |
+| step20k lp | 4.95% | 5.69% | −0.74 |
+| step30k lp | 5.53% | 5.73% | −0.20 |
+
+- **差异归因**：① tar 数不同（2424 vs 1973 → shards/rank 303 vs ~247 → webdataset 分片顺序不同 → 同 seed 下样本见序不同）；② data.py 经 R11-F 代码改动（commit `f2c89d2`）新增 `caption_type` 参数，过滤路径可能与旧版有细微差异。
+- step10k 差异 **−2.04pp 超出 ±1.5pp 噪声带** → **环境/口径未完全稳定**，但 step20k/30k 收敛到 ±0.74/0.20（带内）→ **渐近趋势一致**。
+- 📌 **对 Q1/Q2/Q3 裁定的影响**：R11-F 内部 A/B/C/E/D 五臂**在同一脚本、同一快照、同一 data.py 下运行** → **臂间可比性不受影响**；仅「与 R11-E 跨实验的绝对值对照」存在偏差，已在表中如实标注。
+
+#### ⚠️ Wrapper 崩溃与续跑（2026-10-04 21:44–22:12）
+
+- `r11f_eval_and_launch.sh` 调用 `r11_run_datasource.sh`，Arm A 完成后 bash 读 NFS 上的脚本文件时遭遇 **`Stale file handle`**（NFS 瞬态错误）→ 脚本 exit 2，臂 B/C/E/D 未执行。
+- **修复**：新建 `vision/r11f_continue.sh`（仅跑 B/C/E/D，复用同一 `/tmp/r11f_gpic_snapshot.txt` 快照），`setsid` 后台启动 → Arm B（GPIC medium）已于 22:12 起跑（8 卡 GPU 71–85% util）。
+- 续跑日志追加到同一 `/tmp/r11f_datasource.log`。
+
+#### 进度
+
+| 臂 | 状态 | lp @step30k |
+|:--|:--|--:|
+| A（GPIC short） | ✅ done | 5.53% |
+| B（GPIC medium） | 🟢 训练中（22:12 起） | — |
+| C（GPIC short+medium） | ⬜ 排队 | — |
+| E（CC12M pure） | ⬜ 排队 | — |
+| D（en500k） | ⬜ 排队 | — |
+
+- ⬜ 待回填：臂 B/C/E/D × {`[done]` + 4-ckpt lp} + 公平表耗时列 + Q1/Q2/Q3/D 裁定（§15.3）。
 - **对本项目的影响**：R9 的 25.1% 渐近**不被数据臂改动推翻**；GPIC 的价值仅在「低预算快速启动」，本项目数据瓶颈是**总量/多样性**（本地 ≈118M 上限 vs 619 亿缺口），非 caption 质量 → R6/R7「正式训练切 GPIC short」与 R9/R10 scaling 口径**维持不变**。证据：`/tmp/r11_gpic.log`（训练 metrics + eval 段 786-797 行）。
