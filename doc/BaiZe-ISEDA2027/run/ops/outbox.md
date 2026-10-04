@@ -4678,3 +4678,78 @@ lrwxrwxrwx 1 app.e0031982 app.adm 54 Sep  8 09:20 /home/app.e0031982/.bun/bin/cl
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 42 · 2026-10-04 12:00:52 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME; B="$H/.bashrc"; TS=$(date +%Y%m%d-%H%M%S)
+
+echo; echo "=== 1. 现状 ==="
+echo "   HF_HOME=${HF_HOME:-<empty>}"; echo "   HF_HUB_CACHE=${HF_HUB_CACHE:-<empty>}"; echo "   HF_DATASETS_CACHE=${HF_DATASETS_CACHE:-<empty>}"
+grep -nE 'HF_HOME|HF_HUB_CACHE|HF_DATASETS_CACHE' "$B" 2>/dev/null | sed 's/^/   /'
+ls -ld "$H/.cache/huggingface" 2>/dev/null | cut -c1-110 || echo "   (~/.cache/huggingface 不存在)"
+
+echo; echo "=== 2. 备份 + 补 3 行 export（幂等）==="
+cp -a "$B" "$B.bak.$TS" && echo "   backed up -> $B.bak.$TS"
+if grep -q 'HF_HUB_CACHE' "$B" 2>/dev/null; then
+  echo "   已有 HF_HUB_CACHE 行 → 跳过追加"
+else
+  printf '\n# [2026-10-04 ops] 钉死 HF 缓存位置，避免再落到 /home（仅 196G）\nexport HF_HOME=/nas_train/app.e0031982/.cache\nexport HF_HUB_CACHE=/nas_train/app.e0031982/.cache/hub\nexport HF_DATASETS_CACHE=/nas_train/app.e0031982/hf_cache\n' >> "$B" && echo "   已追加 3 行 export"
+fi
+bash -n "$B" && echo "   bash -n : OK"
+grep -nE '^export HF_' "$B" | sed 's/^/   /'
+
+echo; echo "=== 3. ⭐ 软链兜底（不依赖 env 是否加载）==="
+mkdir -p /nas_train/app.e0031982/.cache/huggingface
+if [ -e "$H/.cache/huggingface" ] && [ ! -L "$H/.cache/huggingface" ]; then
+  echo "   ⚠️ 已是实体目录 → 不覆盖，跳过 symlink"
+else
+  ln -sfn /nas_train/app.e0031982/.cache/huggingface "$H/.cache/huggingface" && echo "   ✅ symlink 已建"
+fi
+ls -ld "$H/.cache/huggingface" 2>/dev/null | cut -c1-125
+
+echo; echo "=== 4. 核验 ==="
+echo -n "   写入测试: "; if touch "$H/.cache/huggingface/.ops_write_test" 2>/dev/null; then
+  echo "OK → 实际落在 $(readlink -f "$H/.cache/huggingface")"; rm -f "$H/.cache/huggingface/.ops_write_test"; else echo "FAIL"; fi
+echo -n "   /home 现状: "; df -BG /home | tail -1
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 12:00:52
+
+=== 1. 现状 ===
+   HF_HOME=/nas_train/app.e0031982/.cache
+   HF_HUB_CACHE=<empty>
+   HF_DATASETS_CACHE=/nas_train/app.e0031982/hf_cache
+   136:export HF_HOME=/nas_train/app.e0031982/.cache
+   175:export HF_DATASETS_CACHE=/nas_train/app.e0031982/hf_cache
+
+=== 2. 备份 + 补 3 行 export（幂等）===
+   backed up -> /home/app.e0031982/.bashrc.bak.20261004-120052
+   已追加 3 行 export
+   bash -n : OK
+   136:export HF_HOME=/nas_train/app.e0031982/.cache
+   137:export HF_HUB_ENABLE_HF_TRANSFER=1
+   175:export HF_DATASETS_CACHE=/nas_train/app.e0031982/hf_cache
+   185:export HF_HOME=/nas_train/app.e0031982/.cache
+   186:export HF_HUB_CACHE=/nas_train/app.e0031982/.cache/hub
+   187:export HF_DATASETS_CACHE=/nas_train/app.e0031982/hf_cache
+
+=== 3. ⭐ 软链兜底（不依赖 env 是否加载）===
+   ✅ symlink 已建
+lrwxrwxrwx 1 app.e0031982 app.adm 42 Oct  4 12:00 /home/app.e0031982/.cache/huggingface -> /nas_train/app.e0031982/.cache/hug
+
+=== 4. 核验 ===
+   写入测试: OK → 实际落在 /nas_train/app.e0031982/.cache/huggingface
+   /home 现状: /dev/mapper/vgroot-lv_home      196G   50G      137G  27% /home
+
+=== DONE ===
+```
