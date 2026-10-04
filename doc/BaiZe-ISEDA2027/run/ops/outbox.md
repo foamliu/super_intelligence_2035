@@ -5452,3 +5452,116 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 52 · 2026-10-04 17:53:19 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME; B=/nas_train/app.e0031982; SRC="$H/.cline/data"; D="$B/.cline_pretrain"
+CB=/home/app.e0031982/.bun/bin/cline
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "=== 1. cline --help（关键 flag）==="
+"$CB" --help 2>&1 | grep -iE 'data-dir|config|provider|api.key|^ *-c|^ *-k|^ *-m|^ *-t' | head -30 | cut -c1-140
+
+echo; echo "=== 2. 共享 data 目录结构 + provider/base 位置 ==="
+ls -1 "$SRC" 2>/dev/null | sed 's/^/   /'
+echo "   -- settings/ --"; ls -1 "$SRC/settings" 2>/dev/null | head -20 | sed 's/^/     /'
+echo "   -- 含 baseUrl 的文件（有界）--"
+timeout 20 grep -rIl 'aseUrl' "$SRC/settings" "$SRC"/*.json 2>/dev/null | head -8 | sed 's/^/     /'
+echo "   -- globalState.json 字段名（仅列名）--"
+python3 -c "import json;d=json.load(open('$SRC/globalState.json'));[print('     ',k) for k in d if any(s in k.lower() for s in ('url','provider','model','api'))]" 2>/dev/null | head -20
+echo "   openAiBaseUrl 现值 = $(sed -n 's/.*\"openAiBaseUrl\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p' "$SRC/globalState.json" | head -1)"
+
+echo; echo "=== 3. 对照 smoke：不带 --data-dir（预期 OK）==="
+cd /tmp
+K=$(python3 -c "import json;print(json.load(open('$SRC/secrets.json'))['openAiApiKey'])" 2>/dev/null | tr -d '\r\n')
+R0=$(env $P timeout 90 "$CB" -c /tmp -m glm-5.2 -k "$K" -P openai-compatible --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tr -d '\r' | tr '\n' ' ')
+printf '   [no data-dir] => %s\n' "${R0:0:300}"
+
+echo; echo "=== 4. 问题 smoke：带 --data-dir（打印完整错误）==="
+R1=$(env $P timeout 90 "$CB" --data-dir "$D" -c /tmp -m glm-5.2 -k "$K" -P openai-compatible --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tr -d '\r' | tr '\n' ' ')
+printf '   [--data-dir %s] => %s\n' "$D" "${R1:0:400}"
+
+echo; echo "=== 5. <D>/ 内容 vs 共享 ==="
+echo "   <D>/           = $(ls -1 "$D" 2>/dev/null | tr '\n' ' ')"
+echo "   ~/.cline/data/ = $(ls -1 "$SRC" 2>/dev/null | tr '\n' ' ')"
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 17:53:19
+
+=== 1. cline --help（关键 flag）===
+  -c, --cwd <path>              Working directory
+                                medium; omitted leaves provider default.
+  -P, --provider <id>           Provider id (default: cline)
+  -k, --key <api-key>           API key override for this run
+  -m, --model <model-id>        Model to use for the session with the selected
+                                provider
+  -t, --timeout <seconds>       Optional timeout in seconds (default: 0 for no
+  --config <path>               Configuration directory (default: ~/.cline)
+  --data-dir <path>             Use isolated local state at this directory path
+  auth [options] [provider]     Authenticate a provider and configure what model
+  config [options]              Show current configuration
+  doctor                        Diagnose and fix configuration issues
+
+=== 2. 共享 data 目录结构 + provider/base 位置 ===
+   cache
+   db
+   globalState.json
+   globalState.json.bak2.20261004-172409
+   globalState.json.llmrot.bak
+   locks
+   logs
+   secrets.json
+   secrets.json.bak.20261004-072820
+   secrets.json.bak.20261004-172409
+   sessions
+   settings
+   state
+   tasks
+   workspaces
+   -- settings/ --
+     cline_mcp_settings.json
+     cli-notices.json
+     global-settings.json
+     models.json
+     providers.json
+   -- 含 baseUrl 的文件（有界）--
+     /home/app.e0031982/.cline/data/settings/models.json
+     /home/app.e0031982/.cline/data/settings/providers.json
+     /home/app.e0031982/.cline/data/globalState.json
+   -- globalState.json 字段名（仅列名）--
+      actModeApiProvider
+      planModeApiProvider
+      actModeOpenAiModelId
+      planModeOpenAiModelId
+      openAiBaseUrl
+      azureApiVersion
+      planModeOpenRouterModelId
+      planModeFireworksModelId
+      actModeOpenRouterModelId
+      actModeOpenAiModelInfo
+      actModeFireworksModelId
+      planActSeparateModelsSetting
+   openAiBaseUrl 现值 = http://agi-gateway.cxmt.com/cloud/v1
+
+=== 3. 对照 smoke：不带 --data-dir（预期 OK）===
+   [no data-dir] => OK 
+
+=== 4. 问题 smoke：带 --data-dir（打印完整错误）===
+   [--data-dir /nas_train/app.e0031982/.cline_pretrain] => [31merror:[0m Cannot connect to API: Unable to connect. Is the computer able to access the url?: Unable to connect. Is the computer able to access the url? (ConnectionRefused) 
+
+=== 5. <D>/ 内容 vs 共享 ===
+   <D>/           = cache db globalState.json logs secrets.json sessions settings 
+   ~/.cline/data/ = cache db globalState.json globalState.json.bak2.20261004-172409 globalState.json.llmrot.bak locks logs secrets.json secrets.json.bak.20261004-072820 secrets.json.bak.20261004-172409 sessions settings state tasks workspaces 
+
+=== DONE ===
+```
