@@ -1699,3 +1699,96 @@ ABL_omega_low_r2     130/158 pass (82.3%)
 
 == DONE ==
 ```
+
+---
+
+## RUN_ID 14 · 2026-10-04 22:20:02 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 14 — takeover due diligence (read-only)
+D=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
+M=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+echo "== 0. TIME =="; timeout 10 date '+%F %T'
+echo "== 1. legacy conductor log tail =="; timeout 10 tail -n 15 /tmp/ablation_conductor.log 2>&1 | cut -c1-160
+echo "== 2. legacy component loop log tail =="; timeout 10 tail -n 15 /tmp/ablation_loop_component_s2_full.log 2>&1 | cut -c1-160
+echo "== 3. zhulong-related procs =="; timeout 10 pgrep -af 'ZhuLong_DAC2027' | head -20 | cut -c1-160
+echo "== 4. eda_fastmcp .env key arm lines =="; timeout 10 grep -nE 'EDA_MCP_TOOLS_DISABLED|EDA_OMEGA_FIDELITY|EDA_RUNCODE_READBACK|EDA_PHI_BUDGET|EDA_PHI_LAGGED|RAG_RECALL_URL' /nasdata/app.e0031982/code/eda_fastmcp/.env 2>/dev/null | cut -c1-200
+echo "== 5. MCP / eval infra procs =="; timeout 10 pgrep -af 'eda_fastmcp|run_cline_script|8090' | head -15 | cut -c1-160
+echo "== 6. our merged line: procs + WAITING =="; timeout 10 pgrep -af 'zhulong_loop|zhulong_ops_relay|-m glm-5.2' | head -10 | cut -c1-150; timeout 10 sed -n '1,3p' "$M/MEMORY_ZHULONG.md" 2>&1
+echo "== 7. our merged agent daily-memory tail =="; timeout 10 tail -n 8 "$M/daily-memories/2026-10-04.md" 2>&1 | cut -c1-160
+echo "== DONE =="
+```
+
+**输出**
+```
+== 0. TIME ==
+2026-10-04 22:20:02
+== 1. legacy conductor log tail ==
+[loop] 2026-10-04 20:01:04 wake up, invoking cline ...
+[31merror:[0m Forbidden
+[loop] 2026-10-04 20:01:05 cline returned (exit 0), sleep 1800s ...
+[loop] 2026-10-04 20:31:05 wake up, invoking cline ...
+[31merror:[0m Forbidden
+[loop] 2026-10-04 20:31:06 cline returned (exit 0), sleep 1800s ...
+[loop] 2026-10-04 21:01:06 wake up, invoking cline ...
+[31merror:[0m Forbidden
+[loop] 2026-10-04 21:01:07 cline returned (exit 0), sleep 1800s ...
+[loop] 2026-10-04 21:31:07 wake up, invoking cline ...
+[31merror:[0m Forbidden
+[loop] 2026-10-04 21:31:08 cline returned (exit 0), sleep 1800s ...
+[loop] 2026-10-04 22:01:08 wake up, invoking cline ...
+[31merror:[0m Forbidden
+[loop] 2026-10-04 22:01:09 cline returned (exit 0), sleep 1800s ...
+== 2. legacy component loop log tail ==
+tail: cannot open '/tmp/ablation_loop_component_s2_full.log' for reading: No such file or directory
+== 3. zhulong-related procs ==
+1755841 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+1806287 timeout 10 pgrep -af ZhuLong_DAC2027
+2455466 bash /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/ablation_run_loop_component_s2_full.sh
+== 4. eda_fastmcp .env key arm lines ==
+117:RAG_RECALL_URL=http://localhost:9006/recall
+119:# RAG_RECALL_URL=http://localhost:9002/recall
+121:# RAG_RECALL_URL=http://10.252.32.15:9001/recall
+129:RAG_RECALL_URL_LOCAL=http://localhost:9010/recall
+212:# EDA_MCP_TOOLS_DISABLED = 当前被禁用的 MCP 工具（逗号分隔）
+226:EDA_MCP_TOOLS_DISABLED=clean_workdir,probe_pyAether_code,cimi_search,cimi_fetch,vqa,query_memory_bank,get_api_details,search_apis,search_apis_by_keyword
+259:EDA_PHI_BUDGET=0
+260:EDA_PHI_LAGGED=0
+263:EDA_OMEGA_FIDELITY=high
+264:EDA_RUNCODE_READBACK=full
+== 5. MCP / eval infra procs ==
+490382 /home/app.t0002596/miniforge3/envs/py310_env/bin/python /home/app.t0002596/devops/eda_fastmcp/main.py
+691966 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python /nasdata/app.e0031982/code/eda_fastmcp/main.py
+1136643 /home/app.e0023936/miniforge3/envs/py310_env/bin/python /home/app.t0002643/devops/eda_fastmcp/main.py
+1680200 /home/app.t0002965/eda_fastmcp/.venv/bin/python /home/app.t0002965/eda_fastmcp/main.py
+1742441 python /home/app.t0002147/mcp_0917/eda_fastmcp/main.py
+1806294 timeout 10 pgrep -af eda_fastmcp|run_cline_script|8090
+2425434 python /home/app.t0002147/zhulong_mcp_self_evolution/eda_fastmcp/main.py
+2691602 /home/app.e0023936/miniforge3/envs/py310_env/bin/python /home/app.e0023936/devops/2026-07-05/eda_fastmcp/main.py
+2825718 tmux new -s eda_fastmcp_ser
+2873402 python /home/app.t0002147/eda_fastmcp_tcl/eda_fastmcp/tcl_kb/eda_api_recall.py
+3511262 python /nasdata/app.t0002997/app.t0002997/proj/eda_fastmcp/main.py
+3820519 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python -m uvicorn eda_api_recall:app --host 0.0.0.0 --port 9006 --log-level info
+4166747 /bin/bash -l -c cd /home/app.t0002638/eda_fastmcp && EDA_MCP_PORT=8661 nohup /home/app.e0023936/miniforge3/envs/py310_env/bin/python main.py > /tmp/eda_
+== 6. our merged line: procs + WAITING ==
+1069705 tail -f /tmp/zhulong_loop.log
+1071337 bash zhulong_ops_relay.sh
+1071692 tail -f /tmp/zhulong_ops_relay.log
+1755841 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+1806276 bash zhulong_ops_relay.sh
+1806300 timeout 10 pgrep -af zhulong_loop|zhulong_ops_relay|-m glm-5.2
+# MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态（合并版）
+
+WAITING: 1
+== 7. our merged agent daily-memory tail ==
+- 连续 3 周期阻断（历史 3~5 周期复通先例），退出等待下轮唤醒（复通后优先 pgrep→grep 打分）。若连续 ≥4 周期仍未复�
+## 2026-10-04 · 时刻不可得（date 被禁 + run_commands 被拦）[running] ⚠️ 检查受阻（沙箱阻断第 4 周期 / wo_retrieval r1 阶段）
+
+- 恢复：PHASE=running / STAGE=component / CONFIG=wo_retrieval / ROUND=1（r1 运行中，batch 2026_1004_122050 / 编排 PID 692552，log=/tmp/ABL_wo_retriev
+- 前置校验：记忆流水最后 3 条无未处理 ❌ EVAL_FAILED / ⚠️ 评测失败（最新为「第 3 周期 ⚠️ 检查受阻」+「12:20 ✅ 切 w
+- 本轮唤醒复测（沙箱阻断连续第 4 周期）：`run_commands` 全量被拦；`read_files` 读 `/tmp/ABL_wo_retrieval_r1.log`、`/proc/loadavg` 被�
+- 无法执行步骤 A（`pgrep -f '^bash scripts/run_cline_script'`）检查 wo_retrieval r1 是否结束、无法 grep 打分（Pass@1）。未推进、未改
+- 🚨 连续 4 周期阻断（符合「≥4 周期建议人工介入」阈值），正式建议人工介入恢复沙箱后再继续 wo_retrieval r1 打分。�
+== DONE ==
+```
