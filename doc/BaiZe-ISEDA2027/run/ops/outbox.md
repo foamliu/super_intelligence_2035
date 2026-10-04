@@ -3518,3 +3518,126 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 31 · 2026-10-04 09:31:50 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+D=/nas_train/app.e0031982
+
+echo; echo "=== 1. 大盘 df ==="
+df -hT /nas_train /nas_inference /nas_user /data 2>/dev/null
+echo "-- /nas_train 精确到 G --"; df -BG /nas_train 2>/dev/null | tail -1
+
+echo; echo "=== 2. sudo 免密可用性（不涉任何口令）==="
+if sudo -n true 2>/dev/null; then echo "   sudo -n = OK（免密）→ 可扫他人目录"; else echo "   sudo -n = 需密码 → 非交互不可用（他人目录盘点交 data 线按 D-CLEAN-4 走）"; fi
+
+echo; echo "=== 3. /nas_train 顶层（名称 + mtime + owner）==="
+ls -1 /nas_train 2>/dev/null | head -30
+echo "-- 顶层 mtime/owner --"
+for p in /nas_train/*/; do printf '   %-40s %s  %s\n' "$p" "$(stat -c '%y' "$p" 2>/dev/null | cut -c1-16)" "$(stat -c '%U' "$p" 2>/dev/null)"; done | head -25
+
+echo; echo "=== 4. ⭐ 本用户一级子目录大小（有界 300s；先落盘再排序）==="
+timeout 300 du -sh --max-depth=1 "$D"/* 2>/dev/null > /tmp/_du1.txt; echo "   (du exit=$?)"
+sort -hr /tmp/_du1.txt 2>/dev/null | head -25
+echo "   -- 本用户目录总量 --"
+timeout 60 du -sh "$D" 2>/dev/null
+
+echo; echo "=== 5. 已知大项单独确认（各自带 timeout）==="
+for p in "$D/datasets" "$D/code" "$D/outputs" "$D/models" "$D/hf_cache" "$D/nohup.out"; do
+  [ -e "$p" ] && { printf '   %-30s ' "${p#$D/}"; timeout 90 du -sh "$p" 2>/dev/null | awk '{print $1}'; }
+done
+
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 09:31:50
+
+=== 1. 大盘 df ===
+Filesystem                    Type  Size  Used Avail Use% Mounted on
+10.239.23.31:/vol_CTE0_data01 nfs   207T  177T   31T  86% /nas_train
+10.239.23.32:/vol_CTE0_data03 nfs    45T   27T   19T  60% /nas_inference
+10.239.23.32:/vol_CTE0_data02 nfs   108T   80T   29T  74% /nas_user
+/dev/mapper/vgdata-lv_data    xfs   7.0T  510G  6.5T   8% /data
+-- /nas_train 精确到 G --
+10.239.23.31:/vol_CTE0_data01   211968G 180365G    31604G  86% /nas_train
+
+=== 2. sudo 免密可用性（不涉任何口令）===
+   sudo -n = 需密码 → 非交互不可用（他人目录盘点交 data 线按 D-CLEAN-4 走）
+
+=== 3. /nas_train 顶层（名称 + mtime + owner）===
+0000010421
+0000010789
+1111
+aistudio_admin
+aistudio_nas
+app.e0013625
+app.e0013911
+app.e0016372
+app.e0020597
+app.e0021019
+app.e0025692
+app.e0027673
+app.e0030209
+app.e0030265
+app.e0030758
+app.e0031982
+app.e0041332
+app.t0002465
+app.t0002931
+app.t0002965
+bakup
+bakup_20
+du.sh
+E0025692
+E0029611
+E0029930
+kangyi
+mps_workspace
+root
+tc
+-- 顶层 mtime/owner --
+   /nas_train/0000010421/                   2025-09-10 14:10  root
+   /nas_train/0000010789/                   2025-09-09 08:40  root
+   /nas_train/1111/                         2025-10-15 10:27  root
+   /nas_train/aistudio_admin/               2025-09-04 18:20  root
+   /nas_train/aistudio_nas/                 2026-04-07 09:58  root
+   /nas_train/app.e0013625/                 2025-06-18 19:07  app.e0013625
+   /nas_train/app.e0013911/                 2026-09-29 09:09  UNKNOWN
+   /nas_train/app.e0016372/                 2026-07-15 20:43  app.e0016372
+   /nas_train/app.e0020597/                 2026-09-07 19:45  app.e0020597
+   /nas_train/app.e0021019/                 2026-08-26 11:18  app.e0021019
+   /nas_train/app.e0025692/                 2026-02-14 09:01  app.e0025692
+   /nas_train/app.e0027673/                 2026-07-13 13:06  app.e0027673
+   /nas_train/app.e0030209/                 2026-03-11 16:12  app.e0030209
+   /nas_train/app.e0030265/                 2026-09-22 19:42  app.e0030265
+   /nas_train/app.e0030758/                 2026-08-08 12:36  app.e0030758
+   /nas_train/app.e0031982/                 2026-10-03 12:00  app.e0031982
+   /nas_train/app.e0041332/                 2026-06-26 17:16  app.t0002965
+   /nas_train/app.t0002465/                 2026-07-17 10:29  UNKNOWN
+   /nas_train/app.t0002931/                 2026-10-03 11:26  UNKNOWN
+   /nas_train/app.t0002965/                 2026-09-29 16:10  UNKNOWN
+   /nas_train/bakup/                        2025-11-21 13:31  root
+   /nas_train/bakup_20/                     2025-11-21 13:34  root
+   /nas_train/E0025692/                     2025-09-09 19:42  root
+   /nas_train/E0029611/                     2025-09-10 13:41  root
+   /nas_train/E0029930/                     2025-09-10 10:48  root
+
+=== 4. ⭐ 本用户一级子目录大小（有界 300s；先落盘再排序）===
+   (du exit=1)
+   -- 本用户目录总量 --
+
+=== 5. 已知大项单独确认（各自带 timeout）===
+   datasets                          code                              outputs                        6.7G
+   models                         452G
+   hf_cache                       20G
+
+=== DONE ===
+```
