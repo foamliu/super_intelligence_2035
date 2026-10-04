@@ -5,13 +5,20 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A pilot batch v2 running (15/30 scored, sympy-11870 actively running post-quota-retry)
+PHASE:        H-A pilot batch v2 running (15/30 scored, batch advanced to django-11283 region w/ active unshare children)
 已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A 15/30 scored (15 pilot + 2 smoke)
-当前动作:     R58: relay healthy skip (12th) + batch v2 progress check (15/30 scored, sympy-11870 quota retry completed, actively running with child processes)
-下一步:       等 batch v2 跑完剩余 15/30 instances → 汇总 pilot_results.json → 更新 SWEBENCH_COMPARE.html 最终版
-阻塞:         无（relay 健康、batch alive wchan=do_poll with active unshare→bash→python children、github 可达）
+当前动作:     R59: relay healthy skip (13th) + batch v2 progress check (batch log advanced to django-11283, active unshare→bash→python children, 15/30 results flushed so far)
+下一步:       等 batch v2 跑完剩余 instances → 刷新 pilot_results.json → 30/30 → 更新 SWEBENCH_COMPARE.html 最终版
+阻塞:         无（relay 健康、batch alive w/ active unshare children、github 可达、.last_run_id=63）
 ERROR_COUNT:  0
 ```
+
+## 🆕 第五十九轮速览（2026-10-05 06:10）
+
+- ✅ **ops 中继复核（响应运维 2026-10-04 第 2 条，第 13 次）→ 健康，跳过重启**。① relay `2489749 1 306632 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、wchan=do_wai、etimes≈3.55d、pstree=`bash---sleep`）；② `cat ops/.last_run_id`=`63`（62+63 已执行，无新单）；③ `grep -c 'RUN_ID 62' ops/outbox.md`=`1`（62 已执行）；④ log 末行 `[relay] RUN_ID=63 executed, exit=0`；⑤ **⭐ `timeout 30 git fetch origin` → exit=0**（github 持续可达）；⑥ 无 index.lock（仅 1 个 NFS temp `.nfs*` 无害）；⑦ ⚠️ `pgrep -f 'bash ops_relay.sh'` 误匹配本 cline agent 进程（cmdline 含该串），以 `ps -eo|grep` 的 `2489749 ppid=1` 为准。**判据**：outbox 含 RUN_ID 62 + relay 健康 → **跳过重启**。✅ URGENT 完成。原始输出已存档至 `daily-memories-harness/2026-10-05.md`。
+- ✅ **无新运维指令**：git log 顶部 `d3dfb68`(vision)/`c57f5d9`(data)/`08ee542`(pretrain)/`2fc6379`(harness R58) —— 无新 harness 指令。task file 仍 `4d1c276`。
+- 📊 **batch v2 进度**（PID 4045197，etimes≈21439s≈5.95h，stat=S）：pilot_results.json 仍 15 entries（03:25 写入未刷新），但 **batch log 已推进**至 `django__django-11283`（SETUP），说明 sympy-11870 quota retry 已完成并跑完后续 sympy，现回 django 批次。活跃子进程 `python3(4045197)---python3(4187954)-+-unshare(15392)---bash(15413)---python(19107)---python(19121)`。Aggregate resolve（15 inst）= codex 2/15 (13%)、cline 1/15 (7%)、opencode 1/15 (7%)、claude-code 1/15 (7%)。
+- ⏭ **下一步**：让 batch v2 继续跑到 30/30 → 刷新 pilot_results.json → 最终汇总 → 更新 SWEBENCH_COMPARE.html 最终版。保持 `WAITING=1`。
 
 ## 🆕 第五十八轮速览（2026-10-05 04:47）
 
