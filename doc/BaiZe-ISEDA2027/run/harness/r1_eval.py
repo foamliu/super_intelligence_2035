@@ -166,7 +166,8 @@ SANDYBOXES = {"native": NativeSandbox, "unshare": UnshareSandbox}
 # Instance runner (mirrors run_evaluation.run_instance, sans docker)
 # ---------------------------------------------------------------------------
 def r1_run_instance(test_spec, pred, rootfs: Path, sandbox_cls, timeout: int,
-                    inst_log_dir: Path, skip_patch: bool = False):
+                    inst_log_dir: Path, skip_patch: bool = False,
+                    base_commit: str = ""):
     """Run one instance and return the report dict (mirrors run_instance)."""
     instance_id = test_spec.instance_id
     inst_log_dir.mkdir(parents=True, exist_ok=True)
@@ -180,11 +181,26 @@ def r1_run_instance(test_spec, pred, rootfs: Path, sandbox_cls, timeout: int,
         dst.parent.mkdir(parents=True, exist_ok=True)
         dst.write_text(patch)
 
+        # Reset the REUSED rootfs testbed to a clean base before applying.  The
+        # official docker harness gets a fresh container per instance, but R1
+        # reuses one rootfs dir across runs (and across harnesses in the 300x5
+        # sweep) -- a previous run's applied patch + `git apply --reject`
+        # `.rej` files + `--3way` `UU` merge state leak into the next run and
+        # make its patch spuriously fail to apply (observed 2026-10-04: codex's
+        # applied patch + .rej/.UU residue made opencode's patch report
+        # patch_successfully_applied=false until the testbed was reset; after
+        # reset, opencode resolved=true).  A plain `git checkout -- .` is NOT
+        # enough -- it refuses on `UU` unmerged paths -- so force `reset --hard`
+        # back to base_commit and drop stray files.
+        base = base_commit or getattr(test_spec, "base_commit", None)
+        reset_cmd = f"git reset --hard {base}" if base else "git reset --hard HEAD"
+        sb.run(f"{reset_cmd} ; git clean -fdq", workdir=CONTAINER_WORKDIR)
+
         applied = False
         last_out = ""
         for attempt, git_apply_cmd in enumerate(GIT_APPLY_CMDS):
             if attempt:
-                sb.run("git checkout -- . ; git clean -fd", workdir=CONTAINER_WORKDIR)
+                sb.run("git reset --hard HEAD ; git clean -fdq", workdir=CONTAINER_WORKDIR)
             out, code, _, _ = sb.run(
                 f"{git_apply_cmd} {PATCH_FILE}", workdir=CONTAINER_WORKDIR
             )
@@ -288,6 +304,7 @@ def main():
         timeout=args.timeout,
         inst_log_dir=inst_log_dir,
         skip_patch=args.skip_patch,
+        base_commit=row.get("base_commit", ""),
     )
     print(json.dumps(report, indent=2))
 

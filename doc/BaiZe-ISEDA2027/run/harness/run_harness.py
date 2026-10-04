@@ -35,6 +35,10 @@ from pathlib import Path
 
 GATEWAY = os.environ.get("OPENAI_API_URL", "http://agi-gateway.cxmt.com/v1")
 UNIFIED_MODEL = "deepseek-v4-flash"
+OPENCODE_MODEL = "gw/deepseek-v4-flash"  # provider/model per ~/.config/opencode/opencode.json
+# Dummy key handed to harnesses that route through the local gw_proxy (the proxy
+# injects the real gateway key upstream).  See harness_work/gw_proxy.py.
+DUMMY_KEY = "dummy-key-for-proxy"
 CLINE_BIN = shutil.which("cline") or "/home/app.e0031982/.bun/bin/cline"
 CLINE_SECRETS = Path.home() / ".cline" / "data" / "secrets.json"
 
@@ -70,21 +74,24 @@ class DriverResult:
     wall_s: float = 0.0
 
 
-def _run(cmd: list[str], cwd: Path, timeout: int) -> DriverResult:
+def _run(cmd: list[str], cwd: Path, timeout: int, env: dict | None = None) -> DriverResult:
     """Run a harness subprocess; capture stdout/stderr; return wall + code."""
     import time
     t0 = time.time()
+    e = dict(os.environ)
+    if env:
+        e.update(env)
     try:
         p = subprocess.run(
-            cmd, cwd=str(cwd), capture_output=True, text=True, timeout=timeout
+            cmd, cwd=str(cwd), capture_output=True, text=True, timeout=timeout, env=e
         )
         return DriverResult(
             stdout=p.stdout, stderr=p.stderr, returncode=p.returncode,
             wall_s=time.time() - t0,
         )
-    except subprocess.TimeoutExpired as e:
+    except subprocess.TimeoutExpired as ex:
         return DriverResult(
-            stdout=e.stdout or "", stderr=e.stderr or "",
+            stdout=ex.stdout or "", stderr=ex.stderr or "",
             returncode=-1, timed_out=True, wall_s=time.time() - t0,
         )
 
@@ -148,10 +155,14 @@ class ClineDriver:
 
 
 class CodexDriver:
-    """codex CLI (`codex exec`) — codex-rs Rust binary, NOT built on this host.
+    """codex CLI (`codex exec`) — pinned to 0.94.0 (last `wire_api="chat"` release).
 
-    Headless surface (codex-rs/exec + codex-rs/codex): `codex exec --json`
-    runs non-interactively.  Requires `cargo build -p codex` first.
+    2026-10-04: codex >=0.95 dropped `wire_api="chat"` (Responses API only), and
+    the gateway only speaks /v1/chat/completions with roles system/user/assistant.
+    So we pin the vendored `@openai/codex@0.94.0` binary (see `harness_work/`) and
+    route it through the local `gw_proxy` (127.0.0.1:9090) which rewrites
+    `developer`->`system` and injects the real gateway key.  `--sandbox
+    workspace-write` lets the agent edit the repo without interactive approvals.
     """
 
     name = "codex"
@@ -163,20 +174,26 @@ class CodexDriver:
         cmd = [
             "codex", "exec", "--cd", str(workdir),
             "--model", UNIFIED_MODEL,
+            "--sandbox", "workspace-write",
+            "--skip-git-repo-check",
             "--json",
             instance["problem_statement"],
         ]
-        r = _run(cmd, workdir, timeout)
+        # codex reads OPENAI_API_KEY for its provider; gw_proxy overrides the real
+        # key upstream, so a dummy non-empty value here is sufficient.
+        r = _run(cmd, workdir, timeout, env={"OPENAI_API_KEY": DUMMY_KEY})
         r.harness = self.name
         r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
         return r
 
 
 class OpencodeDriver:
-    """opencode — bun TS monorepo, NOT built here.  Headless via SDK/CLI.
+    """opencode — v1.18.27 single binary (built under harness_work/builds/opencode).
 
-    Entry point `packages/opencode/src/index.ts` (bun); non-interactive via
-    the JS SDK.  Requires `bun install` + build.
+    Headless via `opencode run --dir <workdir> [--format json]`.  Provider/model
+    come from `~/.config/opencode/opencode.json` (`gw/deepseek-v4-flash` ->
+    @ai-sdk/openai-compatible @ gw_proxy).  `--auto` approves the agent's tool
+    calls non-interactively.
     """
 
     name = "opencode"
@@ -187,8 +204,9 @@ class OpencodeDriver:
     def run(self, instance: dict, workdir: Path, timeout: int = 3600) -> DriverResult:
         cmd = [
             "opencode", "run",
-            "--cwd", str(workdir),
-            "--model", UNIFIED_MODEL,
+            "--dir", str(workdir),
+            "--model", OPENCODE_MODEL,
+            "--auto",
             instance["problem_statement"],
         ]
         r = _run(cmd, workdir, timeout)
