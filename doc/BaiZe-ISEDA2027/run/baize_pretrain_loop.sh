@@ -16,13 +16,21 @@ REL="doc/BaiZe-ISEDA2027/run"   # 本任务在仓库中的相对目录（只提�
 
 MODEL="glm-5.2"                     # 编排模型（deepseek-v4-pro-fp4 额度已耗尽）
 
+# 🔒 2026-10-04 运维（RUN_ID 50–53）：本线专用 cline 隔离配置目录
+#   背景：.29 上 pretrain 与 harness 共用一份 ~/.cline/data/globalState.json，
+#         harness 把它改成自己的 gw_proxy(127.0.0.1:9090) → pretrain 的 cline 被指到本地代理
+#         → `error: Forbidden`（10-03 22:10~10-04 08:01 静默停摆事故）。
+#   隔离目录已由 ops 建好并 smoke 通过：含 globalState.json + secrets.json + settings/
+#         （base=http://agi-gateway.cxmt.com/cloud/v1）。详见 run/ops/outbox.md RUN_ID 50–53。
+DATA_DIR="/nas_train/app.e0031982/.cline_pretrain"
+
 # 🔑 2026-10-04 运维定稿（RUN_ID 26 四路矩阵实证）：**必须给 cline 显式传 `-k <有效key>`**
 #   V0 原样 / V1 剥KEY+URL+TYPE / V2 剥proxy+KEY+URL+TYPE  → 全 `error: Forbidden`
 #   V3 = 剥 proxy+KEY+URL+TYPE **且 `-k <secrets 里的有效 key>`** → **OK** ✅
 #   （同一把 key 用 curl 打 /v1/chat/completions = 200；`.12` 上同命令不带 -k 也能跑，
 #     但 `.29` 不行 → 以 V3 为准。）
 #   key 运行时从 secrets.json 现读，**不落仓库**；secrets.json 由运维用有效 key 维护。
-CLINE_KEY="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/secrets.json" 2>/dev/null | head -1)"
+CLINE_KEY="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$DATA_DIR/secrets.json" 2>/dev/null | head -1)"
 # 若 secrets.json 读不到，fallback 到 glm-5.2 硬编码 key
 [ -z "$CLINE_KEY" ] && CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
 
@@ -91,7 +99,7 @@ while true; do
         #   ⚠️ 只作用于本行：loop 自身/`git push` 仍保留 proxy（外网仍需代理）。
         env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
             -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
-          cline -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+          cline --data-dir "$DATA_DIR" -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
         echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git push ..."
     else
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"

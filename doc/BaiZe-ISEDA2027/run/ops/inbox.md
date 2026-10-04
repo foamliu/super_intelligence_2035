@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 53 -->
+<!-- RUN_ID: 54 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,57 @@
 
 ---
 
-## RUN_ID 53 — ✅ **修根因：补播 `settings/` 到隔离目录并重测 smoke**（承接 RUN_ID 52）（**本块最新，优先执行**）
+## RUN_ID 54 — 🔌 **把 pretrain loop 切到隔离 `--data-dir` 并安全重启**（承接 RUN_ID 53）（**本块最新，优先执行**）
+
+> **RUN_ID 53 结果（17:54:43 exit=0）**：✅ **4 条线 smoke 全回 `OK`**，且各 `<D>/settings/providers.json` 的 base 均为 `http://agi-gateway.cxmt.com/cloud/v1` → **隔离目录机制已验证可用**。
+> ⇒ 最后一步（防复发关键）：**让线 loop 真正用上自己的隔离目录**（否则它们仍读写共享 `~/.cline/data`，harness 照样能改坏 pretrain）。
+> 本轮**只切 pretrain**（.29 上出事故的那条；最小改动、先验证）。
+
+**改了什么（已随本 commit 一起 push 到仓库）**：`run/baize_pretrain_loop.sh`
+- 新增 `DATA_DIR=/nas_train/app.e0031982/.cline_pretrain`
+- `CLINE_KEY` 改从 `$DATA_DIR/secrets.json` 读
+- cline 调用加 `--data-dir "$DATA_DIR"`
+
+**本块做什么（自保护：有 pretrain cline 在跑就绝不动）**
+1. 确认磁盘上的新脚本已含 `--data-dir`
+2. 探测是否有**旧 pretrain cline**（= 不带 `--data-dir` 的 `bun … cline`）
+3. **仅当无** → `pkill` 旧 loop → 干净环境 `setsid` 重启 → 验 `Forbidden==0` + cline 已连
+4. 🚫 不动 harness/vision/data（harness 那轮还需同步改 `llm_rotate.sh`）
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME; B=/nas_train/app.e0031982
+WK=$B/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "=== 1. 磁盘上的新脚本是否已带 --data-dir ==="
+grep -nE '^DATA_DIR=' "$RUN/baize_pretrain_loop.sh" | cut -c1-150
+grep -n -- '--data-dir "\$DATA_DIR"' "$RUN/baize_pretrain_loop.sh" | cut -c1-150
+
+echo; echo "=== 2. 是否有旧 pretrain cline 在跑（不带 --data-dir 的 bun cline）==="
+pgrep -af 'bun.*cline' 2>/dev/null | grep -v -- '--data-dir' | grep -v grep | cut -c1-110 | sed 's/^/     /'
+ACT=$(pgrep -af 'bun.*cline' 2>/dev/null | grep -v -- '--data-dir' | grep -v grep | wc -l)
+echo "     计数 = $ACT"
+
+if [ "${ACT:-0}" -gt 0 ]; then
+  echo; echo "   ⏸ 有旧 pretrain cline 在跑 → 本轮不重启（避免打断进行中的 agent / 双 agent）。下轮再试。"
+else
+  echo; echo "=== 3. 停旧 loop + 用新脚本干净重启 ==="
+  pkill -f 'baize_pretrain_loop.sh'; sleep 6
+  echo "     残留 loop = $(pgrep -fc 'baize_pretrain_loop.sh' 2>/dev/null || echo 0)"
+  cd "$RUN"
+  setsid env $P bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+  sleep 45
+  echo -n "     Forbidden 计数（应为 0）= "; grep -c 'Forbidden' /tmp/baize_pretrain_loop.log 2>/dev/null
+  echo "     日志尾："; tail -6 /tmp/baize_pretrain_loop.log | cut -c1-160
+  echo -n "     cline 在跑吗: "; pgrep -af 'bun.*cline' | head -2 | cut -c1-120
+fi
+echo; echo "=== DONE ==="
+```
+
+> ⛔ 已降级 RUN_ID 53（17:54:43 exit=0，smoke 全 OK，见 RUN_ID 54）为 text。
+
+## RUN_ID 53 — ✅ **修根因：补播 `settings/` 到隔离目录并重测 smoke**（✅ 已执行 → **4 线 smoke 全 OK**；下一步 RUN_ID 54 接线 loop）
 
 > **RUN_ID 52 定位（17:53:19 exit=0）**：
 > ① `-c/--cwd` = **工作目录**（不是配置）；`--config` = 配置目录（默认 `~/.cline`）；`--data-dir` = 隔离 local state。
@@ -44,7 +94,7 @@
 2. 4 条线逐个 smoke → 必须回 **OK**
 3. 复核各 `<D>/settings` 的 base 与共享一致
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 H=$HOME; B=/nas_train/app.e0031982; SRC="$H/.cline/data"
 CX=/home/app.e0031982/.bun/bin/cline
