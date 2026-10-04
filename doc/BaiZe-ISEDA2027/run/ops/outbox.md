@@ -3274,3 +3274,89 @@ Let[0m[2m me do[0m[2m these checks[0m[2m in parallel[0m[2m.[0m
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 28 · 2026-10-04 08:06:28 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+
+echo; echo "=== 1. [.29] rc 文件里的相关设置（masked）==="
+for f in "$HOME/.bashrc" "$HOME/.bash_profile" "$HOME/.profile" "$HOME/.bash_aliases" "$HOME/.bash_login"; do
+  [ -f "$f" ] || continue
+  echo "-- $f (mtime $(stat -c %y "$f" | cut -c1-19)) --"
+  grep -inE 'proxy|OPENAI|API_TYPE|ANTHROPIC|no_proxy' "$f" 2>/dev/null \
+    | sed -E 's/(=|")[A-Za-z0-9_]{6}[A-Za-z0-9_.-]*/\1<MASKED>/g' | cut -c1-150 | head -12
+done
+
+echo; echo "=== 2. [.29] 系统级 /etc/profile.d 与 /etc/environment ==="
+grep -rinE 'proxy|OPENAI|API_TYPE' /etc/profile.d/ /etc/environment /etc/profile 2>/dev/null \
+  | sed -E 's/(=|")[A-Za-z0-9_]{6}[A-Za-z0-9_.-]*/\1<MASKED>/g' | cut -c1-140 | head -12
+
+echo; echo "=== 3. [.29] proxy 是否在外网可达上必需（关键！）==="
+echo -n "   github WITHOUT proxy : "; timeout 25 env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY \
+  git ls-remote --heads https://github.com/openai/openai-python.git HEAD >/dev/null 2>&1 && echo OK || echo FAIL
+echo -n "   github WITH proxy    : "; timeout 25 git ls-remote --heads https://github.com/openai/openai-python.git HEAD >/dev/null 2>&1 && echo OK || echo FAIL
+echo -n "   gateway WITHOUT proxy: "; timeout 15 env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY curl -s -o /dev/null -w '%{http_code}' http://agi-gateway.cxmt.com/v1/models; echo
+echo -n "   gateway WITH proxy   : "; timeout 15 curl -s -o /dev/null -w '%{http_code}' http://agi-gateway.cxmt.com/v1/models; echo
+echo "   no_proxy 现值: [${no_proxy:-<empty>}] / [${NO_PROXY:-<empty>}]"
+echo "   https_proxy 现值: $(echo "${https_proxy:-<empty>}" | cut -c1-20)"
+
+echo; echo "=== 4. [.12] 对照：它的 rc 里有什么 ==="
+timeout 30 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 '
+for f in $HOME/.bashrc $HOME/.bash_profile $HOME/.profile; do
+  [ -f "$f" ] || continue
+  echo "-- $f --"; grep -inE "proxy|OPENAI|API_TYPE|no_proxy" "$f" 2>/dev/null | sed -E "s/(=|\")[A-Za-z0-9_]{6}[A-Za-z0-9_.-]*/\1<MASKED>/g" | cut -c1-130 | head -8
+done
+echo "   .12 env: https_proxy=[${https_proxy:-<empty>}] OPENAI_API_KEY len=${#OPENAI_API_KEY}"' 2>&1 | cut -c1-155
+
+echo; echo "=== 5. 当前 loop 状态（不动）==="
+pgrep -af 'bash baize_(pretrain|harness)_loop\.sh' | cut -c1-90
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 08:06:28
+
+=== 1. [.29] rc 文件里的相关设置（masked）===
+-- /home/app.e0031982/.bashrc (mtime 2026-09-24 16:58:07) --
+139:# export https_proxy="http://172.19.92.23:13128"
+140:export https_proxy="http://172.19.92.25:13128"
+169:export API_TYPE=<MASKED>
+170:export OPENAI_API_KEY=<MASKED>
+171:export OPENAI_API_URL=http://agi-gateway.cxmt.com/v1
+-- /home/app.e0031982/.profile (mtime 2022-01-07 00:23:33) --
+
+=== 2. [.29] 系统级 /etc/profile.d 与 /etc/environment ===
+
+=== 3. [.29] proxy 是否在外网可达上必需（关键！）===
+   github WITHOUT proxy : FAIL
+   github WITH proxy    : OK
+   gateway WITHOUT proxy: 200
+   gateway WITH proxy   : 200
+   no_proxy 现值: [<empty>] / [<empty>]
+   https_proxy 现值: http://172.19.92.25:
+
+=== 4. [.12] 对照：它的 rc 里有什么 ===
+-- /home/app.e0031982/.bashrc --
+140:# export https_proxy="http://172.19.92.23:13128"
+141:# export http_proxy=http://172.19.92.23:13128
+142:export https_proxy=http://172.19.92.25:13128
+143:# export http_proxy=http://172.19.92.25:13128  # disabled: proxy DNS cannot resolve internal agi-gateway.cxmt.com
+178:export API_TYPE=<MASKED>
+179:export OPENAI_API_KEY=<MASKED>
+180:export OPENAI_API_URL=http://agi-gateway.cxmt.com/v1
+-- /home/app.e0031982/.profile --
+   .12 env: https_proxy=[<empty>] OPENAI_API_KEY len=0
+
+=== 5. 当前 loop 状态（不动）===
+357386 bash baize_pretrain_loop.sh
+357876 bash baize_harness_loop.sh
+
+=== DONE ===
+```
