@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 51 -->
+<!-- RUN_ID: 52 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,56 @@
 
 ---
 
-## RUN_ID 51 — 🔧 **纠正 `--data-dir` 布局并重测 smoke（上一轮放错目录）**（承接 RUN_ID 50）（**本块最新，优先执行**）
+## RUN_ID 52 — 🔬 **诊断：`--data-dir` 下 cline 为何连不上 API（带对照，只读）**（承接 RUN_ID 51）（**本块最新，优先执行**）
+
+> **RUN_ID 51 结果（17:49:27 exit=0）**：布局已纠正到 `<D>/`（且 cline 已在 `<D>/` 下自行建出 `cache db logs sessions settings`），**但 4 条线 smoke 仍全 `error: Cannot connect to API`**。
+> ⇒ 失败**不是**目录层级问题，而是**隔离后的配置缺东西**（或 `--data-dir` 语义另有讲究）。
+> ⚠️ 已知**不带 `--data-dir` 的同款命令可正常工作**（pretrain 的 loop 正在跑）⇒ 本轮做**带/不带对照** + 摸清共享目录里 provider/base 究竟存哪。
+
+**做什么（只读诊断，不改任何配置、不删任何东西）**
+1. `cline --help` 里 `-c / --config / --data-dir / provider / key` 相关行
+2. 共享 `~/.cline/data` 结构 + `globalState.json` 关键字段（`openAiBaseUrl` / `apiProvider` / model）+ `settings/` 中含 baseUrl 的文件
+3. **对照 smoke**：`不带 --data-dir`（预期 OK）
+4. **问题 smoke**：`--data-dir <D>`（打印**完整**错误，含 URL）
+5. `<D>/` 内容 vs 共享（看缺了哪些）
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME; B=/nas_train/app.e0031982; SRC="$H/.cline/data"; D="$B/.cline_pretrain"
+CB=/home/app.e0031982/.bun/bin/cline
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "=== 1. cline --help（关键 flag）==="
+"$CB" --help 2>&1 | grep -iE 'data-dir|config|provider|api.key|^ *-c|^ *-k|^ *-m|^ *-t' | head -30 | cut -c1-140
+
+echo; echo "=== 2. 共享 data 目录结构 + provider/base 位置 ==="
+ls -1 "$SRC" 2>/dev/null | sed 's/^/   /'
+echo "   -- settings/ --"; ls -1 "$SRC/settings" 2>/dev/null | head -20 | sed 's/^/     /'
+echo "   -- 含 baseUrl 的文件（有界）--"
+timeout 20 grep -rIl 'aseUrl' "$SRC/settings" "$SRC"/*.json 2>/dev/null | head -8 | sed 's/^/     /'
+echo "   -- globalState.json 字段名（仅列名）--"
+python3 -c "import json;d=json.load(open('$SRC/globalState.json'));[print('     ',k) for k in d if any(s in k.lower() for s in ('url','provider','model','api'))]" 2>/dev/null | head -20
+echo "   openAiBaseUrl 现值 = $(sed -n 's/.*\"openAiBaseUrl\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p' "$SRC/globalState.json" | head -1)"
+
+echo; echo "=== 3. 对照 smoke：不带 --data-dir（预期 OK）==="
+cd /tmp
+K=$(python3 -c "import json;print(json.load(open('$SRC/secrets.json'))['openAiApiKey'])" 2>/dev/null | tr -d '\r\n')
+R0=$(env $P timeout 90 "$CB" -c /tmp -m glm-5.2 -k "$K" -P openai-compatible --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tr -d '\r' | tr '\n' ' ')
+printf '   [no data-dir] => %s\n' "${R0:0:300}"
+
+echo; echo "=== 4. 问题 smoke：带 --data-dir（打印完整错误）==="
+R1=$(env $P timeout 90 "$CB" --data-dir "$D" -c /tmp -m glm-5.2 -k "$K" -P openai-compatible --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tr -d '\r' | tr '\n' ' ')
+printf '   [--data-dir %s] => %s\n' "$D" "${R1:0:400}"
+
+echo; echo "=== 5. <D>/ 内容 vs 共享 ==="
+echo "   <D>/           = $(ls -1 "$D" 2>/dev/null | tr '\n' ' ')"
+echo "   ~/.cline/data/ = $(ls -1 "$SRC" 2>/dev/null | tr '\n' ' ')"
+echo; echo "=== DONE ==="
+```
+
+> ⛔ 已降级 RUN_ID 51（17:49:27 exit=0，布局已对、但仍连不上，见 RUN_ID 52）为 text。
+
+## RUN_ID 51 — 🔧 **纠正 `--data-dir` 布局并重测 smoke（上一轮放错目录）**（✅ 已执行 → ⚠️ **仍连不上，见 RUN_ID 52**）
 
 > **RUN_ID 50 的实测结论（17:46:41 exit=0）**：`cline --help` → **`--data-dir <path>` = 隔离的 local state 目录，默认 `~/.cline/data`** ⇒ **配置文件应直接在 `<D>/` 下**（harness 实证：`--data-dir .../cline_harness_data`，其 `globalState.json` 就在该目录里）。
 > ⚠️ **上一轮把配置放到了 `<D>/data/`（多了一层）** → cline 找不到 `globalState.json` → 4 条线 smoke **全 `error: Cannot connect to API`**（注意：**不是 Forbidden**，说明是 base 缺失、不是凭据问题）。
@@ -42,7 +91,7 @@
 2. 4 条线逐个 smoke：`cline --data-dir <D> -c /tmp -m glm-5.2 -k <key> -P openai-compatible …` → 必须回 **OK**
 3. 🚫 **仍不改任何 loop 脚本**（下一步单独做、单独验）
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 H=$HOME; B=/nas_train/app.e0031982
 CL=/home/app.e0031982/.bun/bin/cline
