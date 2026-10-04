@@ -5018,3 +5018,74 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 46 · 2026-10-04 17:09:33 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035
+RUN=$WK/doc/BaiZe-ISEDA2027/run
+G="$HOME/.cline/data/globalState.json"
+
+echo; echo "=== 1. 恢复 openAiBaseUrl = .../cloud/v1（已知可用）==="
+echo -n "   当前 = "; sed -n 's/.*"openAiBaseUrl"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$G" | head -1
+if [ -f "$G.llmrot.bak" ]; then cp -a "$G.llmrot.bak" "$G" && echo "   已用 .llmrot.bak 还原"; else
+  python3 - "$G" 'http://agi-gateway.cxmt.com/cloud/v1' <<'PY' 2>/dev/null
+import json, sys
+p, base = sys.argv[1], sys.argv[2]
+d = json.load(open(p, encoding='utf-8')); d['openAiBaseUrl'] = base
+json.dump(d, open(p, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+PY
+  echo "   (无 bak，已直接改回)"
+fi
+echo -n "   现在 = "; sed -n 's/.*"openAiBaseUrl"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$G" | head -1
+
+echo; echo "=== 2. 回滚 pretrain loop 到打补丁前（b75ff3b~1）==="
+git -C "$WK" checkout b75ff3b~1 -- doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh && echo "   已回滚"
+echo -n "   回滚后 llm_pick 出现次数（应为 0）= "; grep -c 'llm_pick' "$RUN/baize_pretrain_loop.sh"
+echo -n "   bash -n: "; bash -n "$RUN/baize_pretrain_loop.sh" 2>/dev/null && echo OK || echo FAIL
+
+echo; echo "=== 3. 重启 + 验证（要看到真实 cline 会话，不是 10s Forbidden）==="
+pkill -f 'baize_pretrain_loop.sh'; sleep 5
+cd "$RUN"
+setsid bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+sleep 50
+echo "   -- 进程 --"; pgrep -af 'bash baize_pretrain_loop.sh' | cut -c1-110
+echo "   -- 日志尾 --"; tail -8 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-160
+echo -n "   -- 是否仍有 Forbidden（应为 0）-- "; grep -c 'Forbidden' /tmp/baize_pretrain_loop.log 2>/dev/null
+echo "   -- cline 是否在跑 --"; pgrep -af 'bun.*cline' | cut -c1-95 | head -2 || echo "   (无)"
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 17:09:33
+
+=== 1. 恢复 openAiBaseUrl = .../cloud/v1（已知可用）===
+   当前 = http://agi-gateway.cxmt.com/v1
+   已用 .llmrot.bak 还原
+   现在 = http://agi-gateway.cxmt.com/cloud/v1
+
+=== 2. 回滚 pretrain loop 到打补丁前（b75ff3b~1）===
+   已回滚
+   回滚后 llm_pick 出现次数（应为 0）= 0
+   bash -n: OK
+
+=== 3. 重启 + 验证（要看到真实 cline 会话，不是 10s Forbidden）===
+   -- 进程 --
+2153391 bash baize_pretrain_loop.sh
+   -- 日志尾 --
+[loop] 2026-10-04 17:09:38 wake up, invoking cline ...
+[31merror:[0m Forbidden
+[loop] 2026-10-04 17:09:49 cline returned (exit 0), checking git push ...
+[loop] 2026-10-04 17:09:49 WAITING=1（异步任务 running）→ sleep 1800s
+   -- 是否仍有 Forbidden（应为 0）-- 1
+   -- cline 是否在跑 --
+
+=== DONE ===
+```
