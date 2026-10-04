@@ -5,13 +5,31 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A pilot batch v2 running (30 instances × 4 harnesses) + SWEBENCH_COMPARE.html updated to 7 instances
-已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A 7/30 scored (5 eval + 2 smoke)
-当前动作:     R53: relay healthy skip (7th) + SWEBENCH_COMPARE.html updated with 5 pilot instances + batch v2 alive on inst 7/30
+PHASE:        H-A pilot batch v2 running (30 instances × 4 harnesses) + SWEBENCH_COMPARE.html updated to 12 instances
+已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A 12/30 scored (10 eval + 2 smoke)
+当前动作:     R54: relay healthy skip (8th) + SWEBENCH_COMPARE.html updated to 12 instances (2 smoke + 10 pilot) + batch v2 alive on inst 11/30
 下一步:       等 batch v2 跑完 → 汇总 → 更新 SWEBENCH_COMPARE.html 最终结果 → 考虑 quota 优化策略
-阻塞:         无（relay 健康、batch alive wchan=do_poll、github 可达；quota 5h 窗口致 11039+ 空 patch 但非阻塞）
+阻塞:         无（relay 健康、batch alive wchan=do_select、github 可达；quota 5h 窗口致 11039+ 空 patch 但非阻塞）
 ERROR_COUNT:  0
 ```
+
+## 🆕 第五十四轮速览（2026-10-05 02:01）
+
+- ✅ **ops 中继复核（响应运维 2026-10-04 第 2 条，第 8 次）→ 健康，跳过重启**。① relay `2489749 1 294577 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、etimes≈3.41d）；② `cat ops/.last_run_id`=`63`（无新单）；③ **⭐ `timeout 30 git fetch origin` → exit=0**（github 持续可达）；④ 无 index.lock；⑤ `pstree`=`bash---sleep`（正常）。**判据**：git fetch exit=0 → **跳过重启**。✅ URGENT 完成。
+- ✅ **无新运维指令**：task file 最近仍 `4d1c276`，无新批次。
+- 📊 **batch v2 进度**（PID 4045197，etimes≈9476s≈2.6h，wchan=do_select=running subprocess）：**10/30 已评分**（10924~11422），当前 **instance 11/30**（django__django-11564）。
+  - **完整 eval 结果（10 pilot instances × 4 harnesses）**：
+    - `11001`=**4/4 全 resolve** 🎉（F2P 2/2 P2P 118/118）
+    - `10924`=**codex only** resolve（cline 7826B broke P2P 0/1；codex 3174B ✅）
+    - `11019`=0/4（cline 8276B patch 0/16 F2P 极难；其余 0B）
+    - `11039`~`11422`=**全 0/4**（ALL 4 harnesses 0B patch = quota exhaustion）
+    - `11099`=0/4 but **F2P 1/3**（1 test passes at base_commit without patch）
+  - **Patch size 分析**：仅 3/10 instances 有 real patch（10924: cline 7826B+codex 3174B；11001: all 4 real；11019: cline 8276B only）。11039+ ALL 0B。
+  - **Quota 故障模式分类**：cline-patched=API 显式 quota 拒绝（7/10 hit）；codex=0B 无显式错误但 "failed to refresh models"（2 real patches then 0B）；opencode=API quota 拒绝（8/10 hit）；claude-code=0B silent failure 2-4s wall time（1 real patch only）。
+  - **Aggregate（12 inst: 2 smoke+10 pilot）**：codex 3/12 (25%), cline/opencode/claude-code 各 2/12 (17%)。**Quota-OK resolve rate**：codex 2/2 (100%), opencode 1/1 (100%), claude-code 1/1 (100%), cline-patched 1/3 (33%)。
+- ✅ **SWEBENCH_COMPARE.html 更新**：从 7 instances → **12 instances**（2 smoke + 10 pilot）。8 节自包含 HTML（28KB）：Key Findings (8条) · Methodology · Smoke Results · Pilot Batch Results (10 inst 表 + quota 标注) · Failure Mode Analysis (3 表：quota/patch quality/difficulty) · Combined Summary · Reproduction · Caveats。新增 patch size 数据 + wall time + quota 故障模式分类。
+- ⏭ **下一步**：① 让 batch v2 继续后台跑（当前 11/30，quota 窗口 5h 后重置可能带来新 real patch）→ ② 跑完后最终汇总 → ③ 更新 SWEBENCH_COMPARE.html 最终版。保持 `WAITING=1`。
+
 
 ## 🆕 第五十三轮速览（2026-10-05 01:15）
 
@@ -29,16 +47,7 @@ ERROR_COUNT:  0
 
 ## 🆕 第五十一轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-05.md`（结论不改：relay 健康 skip 第 5 次 + batch v2 2/30 scored 11001=4/4 全 resolve + instance 3/30 11019 opencode quota retry）
 
-## 🆕 第五十二轮速览（2026-10-05 00:39）
-
-- ✅ **ops 中继复核（响应运维 2026-10-04 第 2 条「RUN_ID 62 有单不收」第 6 次）→ 健康，跳过重启**。① relay `2489749 1 289564 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、wchan=do_wait、etimes≈3.35d）；② `cat ops/.last_run_id`=`63`（RUN_ID 62+63 均已执行）；③ `grep -c 'RUN_ID 62' ops/outbox.md`=`1`；④ log 末行 `[relay] RUN_ID=63 executed, exit=0`（42~63 全 exit=0）；⑤ **⭐ `timeout 30 git fetch origin` → exit=0**（github 持续可达）；⑥ 无 index.lock，git status 仅 `.nfs*` + 其它 agent 文件；⑦ `pgrep -f 'bash ops_relay.sh'` 误匹配 node/cline 进程（PID 372905），真 relay=2489749（ps -p 确认 wchan=do_wait）。**判据**：outbox 已含 RUN_ID 62 + git fetch exit=0 → **跳过重启**。✅ URGENT 项完成。
-- ✅ **无新运维指令**：`git log --oneline -5 origin/main -- BAIZE_HARNESS_TASK.md` 最近仍 `4d1c276`（relay-rescue 块替换，已处理），无新批次。
-- 📊 **H-A pilot batch v2 进度核查**（PID 4045197 alive，wchan=`do_poll`，log 5min 前更新）：
-  - **4/8 instances 完整评分**：`10924`（codex resolved=True，其余 3 False）+ `11001`（**4/4 全 resolved=True** 🎉 F2P 2/2 P2P 118/118）+ `11019`（4/4 全 False，F2P 0/16 难题）+ `11039`（4/4 全 False，F2P 0/1）。
-  - **当前 instance 5/30**（`11049`）：cline+codex eval 已完成（均 resolved=False，F2P 0/1 `test_invalid_string` 仍失败，P2P 8/8 全通过）；opencode quota retry 完成（predictions 132B），claude-code/eval 进行中。
-  - **11049-11179 JSON 显示 rc=1 NO_EVAL**：为预创建占位条目，尚未回填实际 run/eval 数据。
-  - **瓶颈**：opencode quota 5h 滑动窗口 → 300s×2 retry/instance ≈ 10min 浪费/instance。quota 充足时（11001）管道全通。
-- ⏭ **下一步**：① 让 batch v2 继续后台跑 → ② 跑完后汇总 `pilot_results.json` → ③ 更新 `SWEBENCH_COMPARE.html`。保持 `WAITING=1`。
+## 🆕 第五十二轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-05.md`（结论不改：relay 健康 skip 第 6 次 + batch v2 4/8 scored 11001=4/4 resolve + 11049 进行中）
 
 ## 🆕 第四十九轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-04.md`（结论不改：pilot 30×4 批量启动、git_clone_or_fetch 重写、/dev/shm workdir 修复 NFS 竞态）
 
