@@ -47,7 +47,7 @@ WAITING: 0
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
 | **pretrain** | ✅ **P-5b 已跑完（10-04 01:37，final ckpt `iter_0004771` 落盘）** → **P-6②**（6 ckpt「能力 vs token」）→ **P-9**（空窗跑 MBS/精度/seq/profiling）→ P-8 暂缓 | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` | 🔴 曾被 cline 凭据事故**阻塞 ~9h**（GPU 空转 6h）→ **07:29 已修复复工** |
-| **vision** | ✅ R9/R10/R14/E1 + **R11-L 四臂全兑现（无一翻盘）** → 🟢 **R11-L2 文本塔解冻（LoRA）已批准 = 下一优先级**（见 `BAIZE_VISION_TASK.md`「运维指令 · 2026-10-03（三）」）→ 之后 **`caption-loss-weight` 三点消融** | `run/EXPERIMENTS_VISION_ROUND11.md` · `VISION_OFFICIAL_REPOS_SURVEY.md` | ✅ **GPU 空**，等唤醒接令 |
+| **vision** | ✅ R9/R10/R14/E1 + R11-L 四臂 + R11-L2 + caption-weight 三点 + **R11-E(GPIC short, 裁定「未抬高」)** + **R13(官方 OV2 79.81%)** 全完成 → 🟢 **R11-F 数据源横比已下发**（见 `BAIZE_VISION_TASK.md`「运维指令 · 2026-10-04（六）」）；臂⑥ AIMv2 ⏸ | `run/EXPERIMENTS_VISION_ROUND11.md` · `VISION_OFFICIAL_REPOS_SURVEY.md` | 🔄 **已切 `.cline_vision` 隔离目录**，待唤醒接 **R11-F** |
 | **data** | 下载巡检 —— 🆕 **白名单锁定 = `l1_en_hq` + `zh` + GPIC**；🔴 **立即停 `en_v1_4`**；D-CLEAN 系列 ✅ 全完成（累计回收 **≈1.31 TiB**） | `run/DISK_CLEANUP_INVENTORY.md` · `DATA_MIX_RECIPE.md` | 🔄 **唤醒 75**，等唤醒接令 |
 | **harness** | ✅ **R1 无 docker 沙箱路线跑通**（django + sympy **双绿**）· **步3 适配层 + R32 5 drivers 已交付** → **步4：300 × 5 全量按序跑** | `run/harness/SWEBENCH_LITE_FEASIBILITY.md` · `r1_eval.py` | 🔄 待实跑 |
 
@@ -184,6 +184,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **2026-10-04（晚 · vision 数据源横比）** —— 用户指令「把几个数据源**横着比**一下，**GPIC 至少 short 和 medium（合计 90%）**，跟 **en500k、CC12M** 一起比」→ 下发 **`run/BAIZE_VISION_TASK.md`「运维指令 · 2026-10-04（六）」= R11-F**：5 臂（GPIC `short` / `medium` / **`short+medium`(≈90%)** / en500k / CC12M）× **固定 30k 步** × w512/InfoNCE/**IN-1k lp**；**预注册判据** Q1（medium vs short）/ Q2（数据源）/ Q3（90% 合并），**en500k 单列**（in-domain + ~30 epochs）；成本 ≈8–10h（5 臂串行）；需最小代码改动（`vision/data.py` 加 `caption_type`、`r9_train.py` 加 `--caption-type`、新 `r11_run_datasource.sh`）。**依据**：R4 实测 GPIC `short`=20 tok/0%、**`medium`=46 tok/仅 0.1% 截断**、`long`=157 tok/100% 截断；原 R7 只比过 3 个**数据源**（R@1/3000 步），**caption 粒度轴从未做**。已同步更新 §0 速览 + §3 队列（新增第 9 行）。
 
 - **2026-10-04（🔴 重大事故 + 定位 + 修复，耗时 ~1.5h 的 18 轮 ops 探查）** —— **`.29` 的 pretrain + harness 静默停摆 ≈9 小时（10-03 22:10 → 10-04 08:01）**：
   - **现象**：两线文件零变更；`/tmp/baize_*_loop.log` 每周期只有 **`error: Forbidden` + `cline returned (exit 0)`**（pretrain 18 / harness 37 次）→ loop 当成功 → **完全静默**；同期 `.12` 的 vision/data 整夜正常。

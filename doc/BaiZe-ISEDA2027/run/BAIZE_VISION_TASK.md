@@ -5,15 +5,77 @@
 
 ### 0. 🎯 当前状态速览（**每次唤醒先看这里**）
 
-| 项 | 值（**2026-10-03 23:30 运维更新**） |
+| 项 | 值（**2026-10-04 晚 运维更新**） |
 |:--|:--|
-| **GPU 状态** | ⭕ **空闲** —— R11-L 四臂已全部收尾；`WAITING=1` 语义 = **待运维拍板（非训练 running）** |
+| **GPU 状态** | 🟢 **空闲** —— R9/R10/R11-L/L2/caption-weight/R11-E/R13 全部收尾；`WAITING=1` = 待接 **R11-F**（**已批准**，见「运维指令 · 2026-10-04（六）」） |
 | **已完成** | ✅ **R9**（scaling，渐近 **25.1%**）· ✅ **R10**（M 轴补齐，**w384 7.99% = 全部宽度最高**，5 点拟合 R²=0.960）· ✅ **R14**（官方仓库调研）· ✅ **E1**（GPIC 全量 ≈**100.3M** 实测）· ✅ **R11-L 四臂**（①基线 / ②SigLIP / ③LocalLoss / ④**CoCa**）**全兑现、无一翻盘** |
-| **🔜 下一步（✅ 已批准）** | ⭐ **R13 = OpenVision2 官方权重单臂对照**（官方 p14/d24 结构塔）—— 见下方「运维指令 · 2026-10-04（五）」；R11-E 已完成（✅ 裁定「未抬高」） |
-| **可立即开跑（不占卡）** | 🟢 **R11-E 已批准、即刻执行**（GPU）；纯 CPU 项（R14 / E1）均已完成 |
+| **🔜 下一步（✅ 已批准）** | ⭐ **R11-F 数据源横向对比** —— GPIC `short` / `medium` / **`short+medium`(≈90%)** vs **en500k** vs **CC12M**（固定 30k 步 / IN-1k lp）—— 见下方「运维指令 · 2026-10-04（六）」；R11-E / R13 已完成 |
+| **可立即开跑** | 🟢 **R11-F 已批准、即刻执行**（GPU，5 臂串行 ≈8–10h）；纯 CPU 项（R14 / E1 / C1·C2 修正）均已完成 |
 | **🚫 已裁定不做** | **臂⑤ GenLIP**（跳过 → 改用 `caption-loss-weight` 三点消融替代）· **R12 iGVLM / TuringViT**（已取消：无官方仓库） |
 | **⏸ 暂缓（不得主动起训练）** | **臂⑥ AIMv2**（⚠️ **运维倾向不做**：四轴已转到底 + 需 3–5 臂纯自研；真要投 GPU 更该投「数据量用满后重跑 scaling」）—— 未经明确批准不得起跑 |
 | **叙事** | ✅ **锁定 A = 从零训练**（不改用预训练权重） |
+
+### 🆕 运维指令 · 2026-10-04（六）：**R11-F 数据源横向对比 —— GPIC `short`/`medium`/`short+medium`(90%) vs en500k vs CC12M**（⭐ 高优先 · **已批准**）
+
+> **用户拍板（2026-10-04）**：「把几个数据源**横着比**一下；**GPIC 至少试试 `short` 和 `medium`（合计 90%）**，跟 **en500k**、**CC12M** 一起比。」
+> **动机**：R7 只比过「数据源」（en500k / GPIC-short / CC12M），且口径是 **R@1 + 3000 步**；**GPIC 内部的 caption 粒度轴（tag/short/medium/long）从未做过**。而 R4 已实测（`DATA_RESEARCH.md` Q2(2)，5 tar/53,637 图）：
+> `tag` 11 tok / 0% 截断 · **`short` 20 tok / 0% 截断** · **`medium` 46 tok / 仅 0.1% 截断（max 80）** · `long` 157 tok / **100% 截断**。
+> ⇒ **`medium` 是唯一「更长但仍在 77 安全区」的档**，必须与 `short` 对比；`tag` 可顺带、**`long` 🚫 不提供**（100% 截断会重蹈 LLaVA 覆辙）。
+
+**① 任务规格（控变量：**只变数据源 / caption 粒度**；其余与 R9 阶段一 / R11-L 臂① 完全一致）**
+
+| # | 项 | 值 |
+|:--|:--|:--|
+| 1 | 塔 | OpenVision2 **w512（126.78M）**，depth30 / patch16 / 224² |
+| 2 | 文本塔 | **冻结 CLIP-768**（`openai/clip-vit-large-patch14-336`），context 77 |
+| 3 | 目标函数 | **InfoNCE**（`--loss clip`，512 负样本） |
+| 4 | 优化器 / schedule | AdamW lr **3e-3** / warmup 20 / seed 1234 / bf16 / bs64×8 = 512 |
+| 5 | 步数（**固定预算**） | **30k 步 = N 15.36M 样本**；对照点 step{10k,20k,30k} = N{5.12,10.24,15.36}M |
+| 6 | 评测 | **IN-1k frozen-trunk lp**（`r8_eval_in1k.py`，附 zs），**同 R8–R11 口径**（自切分 val50000/probe49970） |
+| 7 | 执行 | **5 臂串行**，8 卡 TP1/DP8（`torch.distributed.run --nproc_per_node=8`） |
+
+**数据臂（5）**
+
+| 序 | 臂 | 数据 | 路径 / 过滤 | 盘上规模(约) | 备注 |
+|:--|:--|:--|:--|:--|:--|
+| 1 | **A** | **GPIC `short`** | `/nas_inference/app.e0031982/datasets/stanford-vision-lab/gpic/train/*.tar`，`caption_type=='short'` | ≈13M | 与 R11-E 同臂 → 做**一致性交叉验证**（对得上 = 环境/口径稳） |
+| 2 | **B** | **GPIC `medium`** | 同上，`caption_type=='medium'` | ≈13M | 🆕 **主问题 Q1** |
+| 3 | **C** | **GPIC `short+medium`** | 同上，两档合并（≈**90%**） | ≈26M | 🆕 **主问题 Q3**（用户点名的「合计 90%」） |
+| 4 | **D** | **en500k** | `/nas_train/app.e0031982/datasets/baize-vision/en500k/*.tar`（`--data-source wds`） | **0.5M** | ⚠️ **仅 0.5M 唯一对 → 30k 步 ≈ 30 epochs（重复轮）**；且 = LLaVA `imagenet/EN` → **对 IN-1k 是 in-domain（R8.2 红线）** |
+| 5 | **E** | **CC12M** | `/nas_train/app.e0031982/datasets/conceptual-captions-12m-webdataset/data/*.tar`（`wds`） | ≈11M | **纯 CC12M**（🚫 **不含 Amshaker** —— 与 R11-E 基线的「CC12M+Amshaker 18.5M」区分开） |
+
+> ⚙️ **需要的最小代码改动**（agent 自做；🚫 不改上游仓库）：
+> ① `vision/data.py::build_gpic_loader` 增 `caption_type` 参数（支持 `short` / `medium` / `short+medium`；`long` **不提供**）；
+> ② `vision/r9_train.py` 增 `--caption-type`（默认 `short`，仅 `--data-source gpic` 生效）；
+> ③ 新建 `vision/r11_run_datasource.sh`（5 臂串行 + 每臂自动 4-ckpt IN-1k lp）；
+> ⚠️ GPIC 各臂必须用**同一冻结 tar 快照**（记录 tar 数；下载仍在增长）以保证 A/B/C 可比。
+
+**② 🔒 预注册判据（先定后测，🚫 不许事后改）**
+
+> 噪声带（`ROUND10 §1.5`）：同 (N,M) 跨 run 方差 ≈ **0.5–1.1 pp** → 阈值取 **±1.5 pp**。
+> **主指标 = IN-1k frozen-trunk lp @ step30k**（附 step10k/20k 轨迹）。
+
+| # | 问题 | 比较 | 裁定 |
+|:--|:--|:--|:--|
+| **Q1** | caption 更长是否有益 | **B(medium) vs A(short)** | `medium−short ≥ +1.5` → **更长 caption 有益**；`≤ −1.5` → **更差**；其余 → **无显著差异** |
+| **Q2** | 固定预算下哪个数据源最好 | **A / B / E** 三者之比 | 最高者领先次高 **≥ +1.5** → **该源显著更好**；否则 → **无显著差异** |
+| **Q3** | 「90% 全用」是否更好 | **C(short+medium) vs A(short)** | `≥ +1.5` → **合并有益**；否则 → **无显著差异** |
+| **D** | en500k | **单列** | ⚠️ **in-domain（IN-1k 同域）+ ~30 epochs 重复轮** → **单列一张表、标「in-domain / 不可比」**，🚫 **不并入 A/B/C/E 排名**（沿用 R8.2 红线） |
+
+**③ 📌 报告要求（铁律）**
+- **公平表**必须含：**参数量 + 训练 token + 每步耗时 + 各臂 unique 对数 + epochs/coverage**；
+- **如实标注**：en500k 的重复轮与 in-domain 污染；GPIC 各臂的 **tar 快照数**；`long` 档为何不用（100% 截断）；
+- **负结果照实写**（负结果有价值）；结论贴 **命令 + 原始输出 + 路径**；
+- 产出：`run/EXPERIMENTS_VISION_ROUND11.md` 新增 **§14**（或单开 `EXPERIMENTS_VISION_ROUND12.md`）。
+
+**④ 成本 / 顺序 / 约束**
+- **≈5 臂 ×（GPIC ≈1.1h | wds ≈1.9h）≈ 8–10h 墙钟**（8 卡串行，≈ **16 GPU·h/臂**）；
+- **执行顺序：A → B → C → E → D**（先答 Q1/Q3，最后跑需特别标注的 D）；
+- 🚫 **不改 R8–R11 已落盘结论**；🛑 若 GPIC 尚未整理成可训练子集 → 先做数据准备（**如实报耗时**）；
+- ⚠️ 本线现运行在 **`.cline_vision` 隔离目录**（运维已切）；重 I/O 请避让 data 线下载。
+
+> ✅ **本区块生效即视为已批准** —— vision 线下次唤醒**直接开跑 R11-F**，无需再等。
+> 📌 完成后本线仍未做项 = **臂⑥ AIMv2（⏸ 暂缓）**。
 
 ### 🆕 运维指令 · 2026-10-03（三）：**批准 R11-L2 为下一优先级 + 队列裁定**
 
@@ -127,6 +189,7 @@
 | **6** | **R13 官方 vs 自研对照** | GPU · 轻 | ✅ **已批准** | ✅ **完成**（2026-10-04：官方 OV2 L/14@224 同口径 IN-1k lp=79.81% vs 自研 7.99%，补结论边界） |
 | **7** | **臂⑥ AIMv2 式（patch + text 双 AR）** | GPU · 重 | **R11-L2 结果** | ⏸ **暂缓** |
 | **8** | ~~**R12 iGVLM 指令条件化**~~ | — | — | ❌ **已取消**（**无官方仓库** → 不值得自研） |
+| **9** | 🆕 **R11-F 数据源横向对比（含 GPIC caption 粒度轴）** | GPU | — | 🟢 **已批准 · 立即执行**（GPIC `short`/`medium`/`short+medium`(90%) vs en500k vs CC12M；见「运维指令 · 2026-10-04（六）」） |
 
 > **已合并（不再单列）**：**「R11-L3 读 OpenVision 官方代码」→ 并入 R14**；**「R11-D 的先验证 GPIC tar」→ 并入 E1/C1**。
 
