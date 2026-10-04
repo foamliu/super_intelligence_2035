@@ -878,3 +878,67 @@ python -m lm_eval --model hf \
 | P-9.6②: FP8 s=1.21–1.24（未达微基准 1.31） | ✅ FP8 MFU 32.7% vs peak → 通信拖累，GEMM 压缩被通信吃掉部分 |
 | P-9.4: M=16384 FP8 不转正（s≤1.01） | ✅ M 小→GEMM 访存受限→FP8 压缩 GEMM 的绝对时间少→通信占比更高→更难转正 |
 > 📌 **命令**：`CUDA_DEVICE_MAX_CONNECTIONS=1 $PY/torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=29923 pretrain_launcher.py --arch mamba2 --tensor-parallel 4 --sequence-parallel --seq-length 8192 --global-batch-size 512 --micro-batch-size 8 --precision bf16_with_fp8_delayed_scaling_mixed --train-iters 60 --save-interval 0 ...`（完整脚本见 `run/baize_p96b_fp8_e2e.sh`）
+
+### P-9.7 A1 稳态吞吐确认 ✅ 完成（2026-10-04 22:39:20 END，第 80 次唤醒）—— ⭐ 249K 确认可信：last-100 均值 249,040 tok/s ≥ 240K 阈值
+
+> 脚本 `run/baize_p97_a1_steady.sh`，SUM=`/tmp/baize_p97_a1_steady.sum`，LOG=`/tmp/baize_p97_a1_steady.log`。
+> **动机**：P-9.6 短测 A1（TP1·DP8·MBS2·seq4096·bf16）= 249K tok/s，但 P-9.1 早测同配置只有 218K（差 14%，疑早测有争用）→ 必须 ≥1000 步长跑确认稳态。
+
+**配置**：TP1 · DP8 · MBS2 · seq4096 · GBS1024 · bf16_mixed（= P-9.1 胜出点 A1），**1100 步**，`--save-interval 0`（不存 ckpt），seed 1234，WSD lr=1e-3 warmup10 decay10。M = MBS×seq = 8192；token/step = GBS×seq = 4,194,304 = 4.19M。启动 17:29:39，8 卡独占（pre-flight 争用核查 GPU 全空）。
+
+**last-100 步稳态（iters 1000–1100，脚本 SUM 自带分析，7 个 10-iter 采样点 1010/1030/…/1090）**：
+
+| 指标 | 值 |
+|:--|--:|
+| 数据点数 | 7 |
+| avg ms/iter | **16,841.9** |
+| min ms/iter | 16,751.1（→ max tok/s 250,390） |
+| max ms/iter | 16,931.1（→ min tok/s 247,728） |
+| **avg tok/s** | **249,040** |
+| TFLOP/s/GPU（末段） | ~597–601 |
+| 峰值显存 | 54,675 MiB（@GPU2，max over 8） |
+| rc | 0（22:39:20 END） |
+
+**训练健康**：loss 11.11（iter10）→ 2.52（iter1070）健康下降；grad norm 稳定；**skip=0 / nan=0 全程**（全日志 `number of skipped` 无 >0 值）；loss scale 1.0 稳定。8 worker PID 3591120–27 单实例无争用（nvidia-smi compute-apps 仅这 8 个）。
+
+**🔒 预注册判据裁定**：
+
+| 稳态 tok/s | 裁定 |
+|:--|:--|
+| **≥ 240K** | ✅ **确认 249K 可信** → P-8 按 A1 定（吞吐优先） |
+| 218K – 240K | ⚠️ 取实测稳态值，注明短测不可用 |
+| < 218K | ❌ 短测有系统偏差 → 以长跑为准 |
+
+→ **实测 249,040 tok/s ≥ 240K → ✅ 裁定：确认 A1（TP1·DP8·MBS2·seq4096·bf16）249K 稳态吞吐可信**。P-9.1 早测 218K 的 14% 缺口确属「早测争用」所致（长跑稳态回到 249K）。**P-8 吞吐基线按 A1 = 249K tok/s 定**（吞吐优先维度）。
+
+**与 P-9.6② 的关系（P-8 双维度决策）**：
+- **吞吐维度**：A1 bf16 249K > 候选A TP4·FP8 235K（-6%）> ④ TP2·bf16 210K。
+- **长上下文 + FP8 维度**：候选A（TP4·SP·MBS8·seq8192·FP8·MAX_CONN=1）给长上下文（seq8192）+ FP8 转正（s=1.24），代价是吞吐比 A1 慢 6%。
+- **P-9.8（进行中）** 将用 1000 步长跑关闭「FP8 长程 loss 一致性」风险，给出精度维度的最终裁定（四判据全过→FP8 可用于 P-8；任一不过→P-8 定 bf16）。
+
+> 📌 **命令**：`$PY/torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=29937 pretrain_launcher.py --arch mamba2 --name p97_a1_steady --tensor-parallel 1 --seq-length 4096 --global-batch-size 1024 --micro-batch-size 2 --precision bf16_mixed --train-iters 1100 --save-interval 0 --lr 1e-3 --min-lr 1e-5 --lr-warmup-iters 10 --lr-decay-iters 10 --lr-decay-style WSD --seed 1234 ...`（完整脚本见 `run/baize_p97_a1_steady.sh`）。
+
+### P-9.8 bf16 vs FP8 长程一致性 A/B 🚀 running（2026-10-04 22:39:58 启动，第 80 次唤醒）—— 长杆 ~11h，吃满夜间窗口
+
+> 脚本 `run/baize_p98_fp8_consistency.sh`，SUM=`/tmp/baize_p98_consistency.log`。
+> **目的**：关闭 P-9.6② 自标风险「60 步短测 loss 持平 ≠ 长跑收敛一致」；P-8 推荐候选A 正是 FP8 → 不关此风险上 P-8 会踩雷。
+> **载体** = P-9.6② FP8 转正点：**TP4 · SP-on · MBS8 · seq8192（M=65536）· GBS=512**（守 §P-9.0 ≈4.19M tok/步 不变量）。
+> **控变量**：只变精度。两臂共同 `CUDA_DEVICE_MAX_CONNECTIONS=1` · seed1234 · WSD lr=1e-3 warmup10 decay10 · `--save-interval 0`（不存 ckpt）。
+> - **臂 A（对照）= bf16_mixed**（MAX_CONN=1，全新基线；点8 的 22.16s 是默认连接）→ 1000 步 ≈ 6.2h
+> - **臂 B（待测）= FP8 `bf16_with_fp8_delayed_scaling_mixed`**（MAX_CONN=1，P-9.6② 实测 17.76s/iter s=1.24）→ 1000 步 ≈ 5.0h
+> - **合计 ≈ 11.2h**（22:40 启 → 预计 ~10:00 次日完；⚠️ 略超 ~10h 夜间窗口 → 窗口纪律：若 08:30 未跑完则截到已完成步数、如实报告）。
+
+**打点**：每 100 步记 loss/grad-norm/nan/skipped（从既有 iteration 行抽取 iter 100…1000）；末段报 last-100 s/iter/tok/s/峰值显存/TFLOP/s/GPU。
+
+**🔒 预注册判据（四条全过才「FP8 长程与 bf16 一致」）**：
+
+| # | 指标 | 阈值 |
+|:--|:--|:--|
+| 1 | 同 step loss 相对差（末段 100 步均值） | ≤ 1% |
+| 2 | nan / skipped | = 0（两臂全程） |
+| 3 | grad-norm 漂移（末段 vs 首段中位/分位） | ≤ 10% |
+| 4 | 每 100 步 loss 曲线最大偏离 | ≤ 2% |
+
+**裁定**：四条全过 → 「FP8 长程可用于 P-8」（候选A 保持 FP8）；任一不过 → 「P-8 定 bf16」（除非运维另批）。
+
+**状态**：22:39:58 启动，臂 A（bf16）torchrun 已起，8 卡 96–100% util / ~68.4GB/GPU（M=65536 显存高于 P-9.7 的 54GB，符合预期），pre-flight 争用核查 GPU 全空。**结果待后续唤醒解析**（臂 A ETA ~05:00，臂 B ETA ~10:00）。
