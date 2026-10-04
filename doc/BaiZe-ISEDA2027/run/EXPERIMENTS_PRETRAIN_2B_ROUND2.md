@@ -789,8 +789,9 @@ python -m lm_eval --model hf \
 3. **吞吐随 M 单调下降**：249K（M=8192）→ 210K（M=16384）→ 189K（M=65536）。→ **运维预判「最优点大概率是抬 seq+SP on」被证伪**：抬 seq 需要 TP2/TP4 换显存，TP 通信开销正好吃掉 seq 抬升本可带来的长上下文收益（净吞吐反降）。
 4. **FP8 交叉点 M≈30–32K 在本硬件上不可达（bf16 口径）** → P-9.6② 只能在**唯一落地**的 M=65536 配置（TP4·SP·MBS8·seq8192）上测 FP8，看「M 大 + FP8」能否把 189K 拉回、甚至超过 seq4096 的 bf16。
 
-### P-9.6② FP8 e2e A/B 🚀 running（2026-10-04 14:07:02 启动）
+### P-9.6② FP8 e2e A/B 🚀 running（2026-10-04 14:15:37 重启）
 
 > 脚本 `run/baize_p96b_fp8_e2e.sh`，SUM=`/tmp/baize_p96b_fp8_e2e.log`。载体 = 唯一可达 M≥32768 配置 **TP4·SP·MBS8·seq8192（M=65536）**，`--precision bf16_with_fp8_delayed_scaling_mixed`，60 步 × 2 点。
 > **A/B**：`B` = 默认连接（复现 P-9.4 的 SP amax allreduce 叠加是否仍在 M=65536 拖累）；`A` = `CUDA_DEVICE_MAX_CONNECTIONS=1`（隔离 amax+SP allreduce 叠加）。
-> **bf16 基线 = 点8 22.16s/iter（~189K tok/s）**；**判据（预注册）**：`s = t_bf16 / t_fp8 > 1.05` → FP8 转正 → 写入 P-8 建议；`≤1.05` → 不转正 → **定稿 bf16，把「不转正」作正式结论入库**。ETA ~15:00。
+> **bf16 基线 = 点8 22.16s/iter（~189K tok/s）**；**判据（预注册）**：`s = t_bf16 / t_fp8 > 1.05` → FP8 转正 → 写入 P-8 建议；`≤1.05` → 不转正 → **定稿 bf16，把「不转正」作正式结论入库**。ETA ~15:05。
+> ⚠️ **14:07 首启曾卡死 → 14:15:37 重启（已修根因）**：点8 同款的**尾部存 ckpt**（save state_dict gather 需 ~2× 激活峰值显存）触发 `unhandled cuda error` → NCCL 死锁挂死。🛠 **修法**：脚本 `--save-interval 99999` → **`--save-interval 0`**（bridge `pretrain.py:122` 的 `save_interval != 0`、`train.py:924` 的真值判断均短路 → 0 即彻底关保存，从根上消除收尾 save-OOM）；A/B 的 env 前缀改为**字面量** `CUDA_DEVICE_MAX_CONNECTIONS=1 "${TC[@]}"`（bash 变量展开不会被识别为赋值前缀，字面量才行）。重启后 B→A 两次 run_one，无 save 应 rc=0 干净收尾。
