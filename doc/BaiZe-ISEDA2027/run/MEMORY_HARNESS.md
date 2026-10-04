@@ -6,10 +6,10 @@ WAITING: 1
 
 ```
 PHASE:        H-A pilot batch v2 running (30 instances × 4 harnesses)
-已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A 10924 评分完成
-当前动作:     batch v2 (PID 4045197) --resume 跑 29 remaining instances，已修复 swebench+eval 解析+token quota backoff
-下一步:       等批量跑完 → 汇总 pilot_results.json → 更新 SWEBENCH_COMPARE.html
-阻塞:         无（github 代理可达、swebench 已装、token quota 已重置）
+已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A 2/30 scored (5 resolved)
+当前动作:     batch v2 (PID 4045197) on instance 3/30 (11019), opencode quota retry 中；11001=4/4 resolve 🎉
+下一步:       等批量跑完 → 汇总 pilot_results.json → 更新 SWEBENCH_COMPARE.html 多实例结果
+阻塞:         无（github 可达、swebench 已装、batch 已 detach 存活；opencode quota 5h 窗口致慢但非阻塞）
 ERROR_COUNT:  0
 ```
 
@@ -24,19 +24,20 @@ ERROR_COUNT:  0
 - ✅ **H-A pilot batch v2 已启动**（PID 4045197）：`run_pilot_batch.py --all-prepared --resume`，跳过 10924（已评分），跑 29 remaining instances。token quota 已重置（cline-patched on 11001 运行 97+ 秒未失败，上轮 15-21s 即 quota 耗尽）。日志 `pilot_batch_v2.log`，结果 `pilot_results.json`。
 - ⏭ **下一步**：① 等 batch v2 跑完（~10-20h，受 token quota 5h 滑动窗口约束）→ ② 汇总 `pilot_results.json` → ③ 更新 `SWEBENCH_COMPARE.html` 多实例结果。保持 `WAITING=1`。
 
+## 🆕 第五十一轮速览（2026-10-05 00:05）
+
+- ✅ **ops 中继复核（响应运维 2026-10-04 第 2 条，第 5 次）→ 健康，跳过重启**。① relay `2489749 1 287437 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、etimes≈3.32d）；② `cat ops/.last_run_id`=`63`（RUN_ID 62 已执行，较上轮不变=无新单）；③ `grep -c 'RUN_ID 6[0-9]' ops/outbox.md`=`7`；④ **⭐ `timeout 30 git fetch origin` → exit=0**（github 网络持续可达）；⑤ 无 index.lock。**判据**：git fetch exit=0 + .last_run_id 在涨/已到 63 → **跳过重启**。✅ URGENT 项完成。
+- ✅ **无新运维指令**：`git log --oneline -5 origin/main -- BAIZE_HARNESS_TASK.md` 最近仍 `4d1c276`（relay-rescue 块替换，已处理），无新批次。
+- 📊 **H-A pilot batch v2 进度核查**（PID 4045197，已 detach：parent=`/tmp/launch_pilot_batch_v2.sh` ppid=1，跨 loop 存活 ✅）：
+  - **2/30 instances 完整评分**：`django__django-10924`（codex resolved=True 🎉，其余 3 harness False）+ `django__django-11001`（**4/4 全 resolved=True** 🎉🎉🎉 cline/codex/opencode/claude-code 全通过 F2P 2/2 P2P 118/118）。
+  - **当前在 instance 3/30**（`django__django-11019`），opencode 触发 token quota 耗尽 → 300s×2 retry 中（wchan=`do_select`=正在跑 subprocess，非死锁）。
+  - **瓶颈**：opencode quota 5h 滑动窗口 → 每个 quota-fail harness 浪费 ~600s。11001 跑通时 4 harness 都快（quota 充足时管道完全可用）。
+  - `pilot_results.json`（8 entries 预创建，2 已填 eval）位于 `/nas_train/app.e0031982/harness_work/`，日志 `pilot_batch_v2.log`。
+- ⏭ **下一步**：① 让 batch v2 继续后台跑（~10-20h，受 quota 约束）→ ② 跑完后汇总 `pilot_results.json` → ③ 更新 `harness/SWEBENCH_COMPARE.html` 多实例结果表。保持 `WAITING=1`。
+
 ## 🆕 第四十九轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-04.md`（结论不改：pilot 30×4 批量启动、git_clone_or_fetch 重写、/dev/shm workdir 修复 NFS 竞态）
 
-## 🆕 第四十八轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-04.md`（结论不改：github 代理可达、prefetch 完成、pilot 扩量解锁）
-
-## 🆕 第四十七轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-04.md`（结论不改：relay RUN_ID 62 健康 skip、pilot 扩量受 github 直连不通阻塞）
-
-
-## 🆕 第四十六/四十四轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-04.md`（结论不改：relay RUN_ID 62 健康 skip）
-
-## 🆕 第四十五轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-04.md`（结论不改：relay 健康 skip、codex/claude-code × sympy-11400 评分完成、SWEBENCH_COMPARE.html 创建）
-
-
-## 🆕 第四十三轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-04.md`（结论不改：relay 健康 skip、cline 配置根因修复、run_harness_direct 创建、cline×sympy-11400 resolved=False F2P 1/2）
+## 🆕 第四十三~四十八轮速览 —— 均已滚动归档至 `daily-memories-harness/2026-10-04.md`（结论不改：relay 多轮健康 skip · github 代理可达 · cline/codex/opencode/claude-code 端到端打通 · SWEBENCH_COMPARE.html 创建）
 
 ## 🆕 第四十一/四十二轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-04.md`（结论不改：4/5 django resolve、claude-code 打通最后一里、driver 落地）
 ## 🆕 第四十轮速览（2026-10-04）
@@ -134,5 +135,7 @@ PHASE:        R1_step4_pilot_2instances（✅ 4/5 harness 已在 2 instances 评
 - 2026-10-04 20:00 —— **第四十六轮（⏱ 响应运维第 2 条「RUN_ID 62 有单不收」→ RUN_ID 62 已执行，健康跳过重启）**：relay 复核（原始输出）：`ps -eo pid,ppid,etimes,stat,args | grep ops_relay.sh | grep -v grep` → `2489749 1 272813 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、etimes≈3.16d）；`cat ops/.last_run_id`=`62`（较上轮 61 前进 1 → **RUN_ID 62 已跑**）；`grep -c 'RUN_ID 62' ops/outbox.md`=`1`（已入 outbox）；`tail -20 /tmp/baize_ops_relay.log` → RUN_ID 42~62 均 `exit=0`（末行 `[relay] RUN_ID=62 executed, exit=0, appended to outbox.`）；`timeout 30 git fetch origin` → exit=128（`Failed to connect to github.com port 443: Network is unreachable`）；无 index.lock，git status 仅 `.nfs*` NFS 临时文件（非阻塞）；`pgrep -f 'bash ops_relay.sh'` 误匹配 node/cline 进程（PID 1703394=`node(1703394)-+-.cline(1703402)`），真 relay=2489749。**判据**：outbox 已含 RUN_ID 62 → 按「中继已跑但 push 失败 → 🚫 不要重启，等网络」处理 → **跳过重启**（🚫 红线：不 pkill 健康 relay、不动 GPU pretrain P-9.2、不删数据）。✅ URGENT 项完成。`git fetch` Network unreachable（github 瞬断），无新指令可拉。⏭ 扩到 20-30 django+sympy instances pilot。保持 `WAITING=1`。
 
 - 2026-10-04 22:38 —— **第四十九轮（🎉 H-A pilot 30×4 批量评测启动 + git_clone_or_fetch 重写 + /dev/shm workdir 修复 NFS 竞态）**：relay 复核 RUN_ID 63 健康 skip（`.last_run_id`=63、4 线全活）。**30/30 base_commits 全就绪**（`fetch_missing2.log`：`Total: 30 ok, 0 missing`）。**run_pilot_batch.py 关键修复**：① `git_clone_or_fetch()` 重写：`git init` + `git remote add` + `git fetch --depth=1 origin <base_commit>`（不再 `git clone --no-checkout` 全量克隆 ~1GB django repo）；② **WORKDIRS → `/dev/shm/harness_work/workdirs`**（tmpfs，解决 NFS `tmp_pack` 竞态 `fatal: could not open '.git/objects/pack/tmp_pack_*'`）；③ fetch 失败时仍尝试 `git checkout`（NFS 容错）；④ 共享 workdir per repo（`django_django`/`sympy_sympy`，60MB 浅克隆）。批量启动：`PYTHONUNBUFFERED=1 python3 run_pilot_batch.py --all-prepared --out-summary pilot_results.json`（PID 599229），日志 `pilot_batch.log`。首条：`[SETUP] django__django-10924` OK → `[RUN] cline-patched` 正在跑。预计 ~10-20h（120 runs 顺序）。保持 `WAITING=1`。
+
+- 2026-10-05 00:05 —— **第五十一轮（✅ relay 健康 skip + 📊 batch v2 进度核查：2/30 scored，11001=4/4 全 resolve 🎉）**：relay `2489749 1 287437 Ss`（ppid=1）、`.last_run_id`=`63`、**`git fetch origin` exit=0**（github 持续可达）、无 index.lock → **跳过重启**。无新运维指令（task file 最近仍 `4d1c276`）。**batch v2**（PID 4045197，已 detach ppid=1 跨 loop 存活）：2/30 完整评分——`10924`（codex resolved=True，其余 False）+ `11001`（**4/4 全 resolved=True** cline/codex/opencode/claude-code F2P 2/2 P2P 118/118 🎉）；当前 instance 3/30（11019）opencode quota retry 中（wchan=do_select=跑 subprocess 非死锁）。瓶颈=opencode quota 5h 窗口（quota 充足时如 11001 管道全通）。⏭ 让 batch 继续后台跑 → 汇总 → 更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
 
 - 2026-10-04 23:25 —— **第五十轮（⏱ ops 中继 RUN_ID 62 第 4 次复核 → 网络已恢复 + 🔧🔧🔧 三大修复 + 🎉 codex×10924 resolved=True + batch v2 启动）**：**relay 复核**：`2489749 1 284330 Ss bash ops_relay.sh`（ppid=1 真守护）、`.last_run_id`=`63`、outbox 含 RUN_ID 62、**`git fetch origin` exit=0**（github 网络已恢复！上几轮 exit=128）、pstree=`bash---sleep` → **跳过重启**。✅ URGENT 完成。**三大修复**：① `pip install --proxy http://172.19.92.25:13128 swebench` → swebench-5.0.2 安装成功（此前 `ModuleNotFoundError: No module named 'swebench'` 导致所有 eval 失败）；② `eval_instance()` report.json 解析修复（嵌套结构 `{"<instance_id>": {"resolved":...}}` → 原代码顶层查找永远返回 False → 修复为 `report.get(instance_id, report).get("resolved")` + F2P/P2P 计数）；③ `detect_quota_error()` + `run_harness()` quota backoff（解析"请等待X分钟Y秒后重试"→sleep+retry，max 3 次）+ inter-run delay 10s + `--eval-only`/`--resume` 模式。**首战结果**：codex×django__django-10924 = **resolved=True**（F2P 1/1, P2P 1/1, patch 3174B）🎉 pilot 首个 resolved！cline-patched×10924 = resolved=False（F2P 0/1, P2P 0/1, patch 7826B 应用了但未修复且 broke P2P）。**batch v2 启动**（PID 4045197）：`run_pilot_batch.py --all-prepared --resume`，跳过 10924，跑 29 remaining。token quota 已重置（cline-patched on 11001 运行 97+ 秒未失败）。MEMORY 滚动归档 R45/R48/R49 至 daily-memories-harness/2026-10-04.md。保持 `WAITING=1`。
