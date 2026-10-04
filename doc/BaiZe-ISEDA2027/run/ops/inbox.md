@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 34 -->
+<!-- RUN_ID: 35 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,14 +31,68 @@
 
 ---
 
-## RUN_ID 34 — 🗑 **执行删除：`stage_1.5_mid_training_llava_ov_14b`（≈1.16 TB，用户已批准方案 B）**（**本块最新，优先执行**）
+## RUN_ID 35 — 🗑 **删除 LLaVA ckpt（**有界版**，兜底 RUN_ID 34）**（**已获用户批准：方案 B**）（**本块最新，优先执行**）
+
+**为何再来一版**：RUN_ID 34 里的 **P3 `grep -rln … "$D/code"` 会遍历 8 TiB 的 `code/`** → **大概率卡到 relay 的 600s 超时**（=我的设计失误）。本版把**每一步都加了超时**，且 **P3 只扫共享 git 副本**（`super_intelligence_2035`，几百 MB），不再扫 8 TiB。
+
+**目标**：`/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b`（6 × 198 G ≈ **1.16 TB**，mtime 2026-03）。
+**若 RUN_ID 34 已经删掉** → 本版会显示 `GONE`，直接跳过（幂等）。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+D=/nas_train/app.e0031982
+T=$D/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b
+KEEP=$D/code/hell/LLaVA-OneVision-1.5/_ARCHIVE_stage1.5_mid_14b_logs.tgz
+command -v timeout >/dev/null || echo "   ⚠️ 无 timeout 命令（继续）"
+
+echo; echo "=== 1. 幂等检查 ==="
+if [ ! -d "$T" ]; then echo "   ✅ 已不存在（RUN_ID 34 可能已删）→ 直接跳到核验"; else echo "   存在，继续流程"; fi
+
+if [ -d "$T" ]; then
+  echo; echo "=== 2. P1 无进程占用（有界 30s）==="
+  timeout 30 fuser -v "$T" 2>&1 | head -6; echo "   ↑ 应空"
+  pgrep -af 'LLaVA-OneVision|stage_1.5' | grep -v grep | cut -c1-100 || echo "   (无相关进程)"
+
+  echo; echo "=== 3. P2 无近期活动（有界 60s，7 天内应空）==="
+  timeout 60 find "$T" -newermt '-7 days' -print 2>/dev/null | head -5
+
+  echo; echo "=== 4. P3 无脚本引用（**有界 90s，只扫 git 副本**）==="
+  timeout 90 grep -rl 'stage_1.5_mid_training_llava_ov_14b' \
+    "$D/code/super_intelligence_2035" --include='*.sh' --include='*.py' --exclude-dir=.git 2>/dev/null | head -5
+  echo "   ↑ 应空"
+
+  echo; echo "=== 5. 删前记录（有界 150s）==="
+  df -BG /nas_train | tail -1
+  timeout 150 du -sh "$T" 2>/dev/null || echo "   (du 超时，用已知值 ≈1.16T)"
+
+  echo; echo "=== 6. 打包 ≈23MB 日志留证 ==="
+  ( cd "$T" && tar czf "$KEEP" *.log latest_checkpointed_iteration.txt tensorboard dataloader 2>/dev/null ) \
+    && echo "   -> $(du -h "$KEEP" 2>/dev/null | cut -f1) $KEEP" || echo "   (tar 失败/或文件已不在 → 不阻塞)"
+  cd /tmp
+
+  echo; echo "=== 7. 🗑 删除（方案 B，用户已批准）==="
+  rm -rf "$T"
+  sleep 3
+  [ -d "$T" ] && echo "   !!! STILL EXISTS" || echo "   GONE ✅"
+fi
+
+echo; echo "=== 8. 删后核验 ==="
+df -BG /nas_train | tail -1
+ls -1 "$D/code/hell/LLaVA-OneVision-1.5" 2>/dev/null | head -12
+ls -lh "$KEEP" 2>/dev/null | cut -c1-105
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 34**（无界版，**⚠️ 疑因 P3 grep 扫 8TiB 而卡/超时**）为 ```text。
+
+## RUN_ID 34 — 🗑 **执行删除：`stage_1.5_mid_training_llava_ov_14b`**（⚠️ 无界 grep 设计失误，见 RUN_ID 35 兜底）
 
 **用户已批准（2026-10-04）**：**方案 B —— 全删 `stage_1.5_mid_training_llava_ov_14b`**（6 个 `iter_*` × 198 G ≈ **1.16 TB**，mtime 全为 2026-03-09/10）。
 **沿用 D-CLEAN-3 的安全流程**（那次删 974 G 的 `servers/` 零事故）：
 **P1 无进程占用 → P2 无近期活动 → P3 无脚本引用**；**任一不过 → 停手报告**。
 **额外保险**：删前把 **≈23 MB 的文本产物**（5 个 `run_*.log` + `latest_checkpointed_iteration.txt` + `tensorboard/` + `dataloader/`）打成 `<父目录>/_ARCHIVE_stage1.5_mid_14b_logs.tgz` —— **代价极小，但保住实验溯源**。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 D=/nas_train/app.e0031982
 T=$D/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b
