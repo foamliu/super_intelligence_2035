@@ -3641,3 +3641,187 @@ tc
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 32 · 2026-10-04 09:39:04 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+D=/nas_train/app.e0031982
+
+echo; echo "=== 1. 清理上一轮残留并启动后台盘点（nice -n 19）==="
+pkill -f 'du -sh /nas_train/app.e0031982' 2>/dev/null
+rm -f /tmp/_du_full.txt /tmp/_du_full.done
+setsid bash -c "nice -n 19 du -sh $D/* > /tmp/_du_full.txt 2>/dev/null; echo done > /tmp/_du_full.done" </dev/null >/dev/null 2>&1 &
+sleep 6
+echo "   已启动；当前已有 $(wc -l < /tmp/_du_full.txt 2>/dev/null) 行；done 标记 = $([ -f /tmp/_du_full.done ] && echo YES || echo NO)"
+pgrep -af 'du -sh /nas_train/app.e0031982' | cut -c1-90
+
+echo; echo "=== 2. 本用户 top-level 名称（对照用）==="
+ls -1 "$D" 2>/dev/null | head -40
+
+echo; echo "=== 3. 目前读到的（随进度增长）==="
+sort -hr /tmp/_du_full.txt 2>/dev/null | head -20
+
+echo; echo "=== 4. 快速可见的大项（各自 60s，已知能出结果的）==="
+for p in models outputs hf_cache; do printf '   %-12s ' "$p"; timeout 60 du -sh "$D/$p" 2>/dev/null | awk '{print $1}'; done
+
+echo; echo "=== 5. code 目录下（BaiZe 相关，已知有 nemo_experiments）==="
+timeout 60 du -sh "$D/code/BaiZe-ISEDA2027/nemo_experiments" 2>/dev/null
+ls -1 "$D/code" 2>/dev/null | head -15
+
+echo; echo "=== 6. ⭐ LLaVA-OneVision-1.5 的 4B 检查点（用户点名：绝大部分可删）==="
+LV=$(ls -d "$D"/LLaVA-OneVision-1.5 "$D"/*/LLaVA-OneVision-1.5 "$D"/*/*/LLaVA-OneVision-1.5 2>/dev/null | head -1)
+echo "   定位 = ${LV:-<未找到，下面列出候选>}"
+if [ -z "$LV" ]; then
+  find "$D" -maxdepth 4 -type d -iname '*OneVision*' 2>/dev/null | head -10
+else
+  echo "   -- 顶层 --"; ls -1 "$LV" 2>/dev/null | head -25
+  echo "   -- 疑似 ckpt 目录（名字含 ckpt/checkpoint/output/save/4B，只列名，不 du）--"
+  find "$LV" -maxdepth 4 -type d \( -iname '*ckpt*' -o -iname '*checkpoint*' -o -iname '*output*' -o -iname '*save*' -o -iname '*4b*' \) 2>/dev/null | head -40
+  echo "   -- 后台低优先级量它们的大小（边跑边写 /tmp/_du_llava.txt）--"
+  rm -f /tmp/_du_llava.txt /tmp/_du_llava.done
+  setsid bash -c "nice -n 19 du -sh $LV/* > /tmp/_du_llava.txt 2>/dev/null; echo done > /tmp/_du_llava.done" </dev/null >/dev/null 2>&1 &
+  sleep 5
+  echo "      行数=$(wc -l < /tmp/_du_llava.txt 2>/dev/null)  done=$([ -f /tmp/_du_llava.done ] && echo YES || echo NO)"
+  sort -hr /tmp/_du_llava.txt 2>/dev/null | head -20
+fi
+echo; echo "=== DONE（两个后台盘点仍在跑；下轮读 /tmp/_du_full.txt 与 /tmp/_du_llava.txt）==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 09:39:04
+
+=== 1. 清理上一轮残留并启动后台盘点（nice -n 19）===
+   已启动；当前已有 2 行；done 标记 = NO
+3286821 bash -c nice -n 19 du -sh /nas_train/app.e0031982/* > /tmp/_du_full.txt 2>/dev/nul
+3286863 du -sh /nas_train/app.e0031982/agents /nas_train/app.e0031982/author.txt /nas_trai
+
+=== 2. 本用户 top-level 名称（对照用）===
+agents
+author.txt
+cache
+chip_expert
+cline
+code
+core
+datasets
+download
+Downloads
+harness
+harness_work
+hello.py
+hf_cache
+load_model_arch.py
+midtraining_checksums_partial.txt
+midtraining_filelist_20260316_1610.txt
+miniforge3
+models
+omegaconf_230
+outputs
+patent
+results
+simple_hello.py
+submissions
+test_nccl.py
+torch_train
+utils
+web_search
+照片3.jpg
+绘制烛龙.jpg
+
+=== 3. 目前读到的（随进度增长）===
+16K	/nas_train/app.e0031982/author.txt
+4.0K	/nas_train/app.e0031982/agents
+
+=== 4. 快速可见的大项（各自 60s，已知能出结果的）===
+   models       452G
+   outputs      6.7G
+   hf_cache     20G
+
+=== 5. code 目录下（BaiZe 相关，已知有 nemo_experiments）===
+280G	/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments
+apex
+AReaL
+backup
+BaiZe-ISEDA2027
+benchmarks
+chip-mllm
+circuitvision-encoder
+claude-code-main
+cline-langfuse.md
+DataFlow
+EDA-Eval-Framework
+eda_fastmcp
+emotion
+EvolvingLMMs-Lab
+flash-attention
+
+=== 6. ⭐ LLaVA-OneVision-1.5 的 4B 检查点（用户点名：绝大部分可删）===
+   定位 = /nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5
+   -- 顶层 --
+32b-mid_10.239.2.10.log
+32b-mid_10.239.2.11.log
+32b-mid_10.239.2.22.log
+32b-mid_10.239.2.24.log
+aiak_megatron
+aiak_training_llm
+AIAK_Training_LLM.egg-info
+asset
+check_multi_node_setup.sh
+configs
+dockerfile
+docs
+ds
+examples
+examples_offline_packing
+kill_gpu_processes.sh
+launch_pretrain_gpu_occupancy.sh
+LICENSE
+monitor_training.sh
+nohup.out
+README.md
+requirements.txt
+scripts
+setup.cfg
+setup.py
+   -- 疑似 ckpt 目录（名字含 ckpt/checkpoint/output/save/4B，只列名，不 du）--
+/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/.git/objects/4b
+/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/aiak_megatron/megatron/core/dist_checkpointing
+/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/aiak_megatron/tests/unit_tests/dist_checkpointing
+/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/aiak_megatron/tools/checkpoint
+/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/examples/qwen2_5_vl/checkpoint_convert
+/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/tools/convert_checkpoint
+/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/tools/convert_checkpoint/config/llava-ov-1.5-14b
+/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/tools/convert_checkpoint/config/llava-ov-1.5-4b
+/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b
+   -- 后台低优先级量它们的大小（边跑边写 /tmp/_du_llava.txt）--
+      行数=36  done=YES
+1.2T	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b
+40M	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_32b
+24M	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/aiak_megatron
+3.5M	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/tools
+3.4M	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/nohup.out
+3.0M	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/aiak_training_llm
+1.5M	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/asset
+1.2M	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/examples_offline_packing
+1.1M	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/examples
+936K	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/ds
+268K	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_32b_single
+208K	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/32b-mid_10.239.2.10.log
+176K	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/32b-mid_10.239.2.24.log
+176K	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/32b-mid_10.239.2.22.log
+160K	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/32b-mid_10.239.2.11.log
+148K	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/scripts
+100K	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/AIAK_Training_LLM.egg-info
+36K	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/tasks
+36K	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/configs
+32K	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/README.md
+
+=== DONE（两个后台盘点仍在跑；下轮读 /tmp/_du_full.txt 与 /tmp/_du_llava.txt）===
+```
