@@ -114,6 +114,7 @@ error: error: unknown option '-b'
 - [ ] **处置顺序**：`/home` → 定起始点 → 修 `WAITING` → 重启 loop → 开跑。
 - [ ] **36.15 旧 agent 冲突**：旧线（S1 / 组件）与新合并线**不能并发**；何时、如何停旧启新？
 - [x] ✅ **启动 ops 中继** —— 已在 36.15 运行且健康（RUN_ID 1–8 全 `exit=0`）；运维已可用它远程探查/下发命令。
+- [ ] 🔴 **接管 legacy 组件线（standalone 非 git `/nasdata/app.e0031982/code/ZhuLong_DAC2027`）**：两进程（组件 loop `2455466` + conductor `1381975`）**均已空转**（沙箱阻断 / `Forbidden`，详见 §9）。方案：① 停两进程；② harvest（`pure_llm×5` / `wo_retrieval r1=74.1%` 保留，`rag×5` 重跑）；③ 由合并线续跑余下臂。**待拍板。**
 - [ ] **Phase B 模型 key 是否仍有效**（`glm-5.2` / `deepseek-v4-flash` / `kimi-k2.6-cloud` / `doubao-seed-2.0-pro-cloud`，见任务书 §6）——启动 Phase B 前须核。
 - [ ] **RAG recall 端口错配**（`.env` 9012 死 / 9006 健康 = `chroma_db_v20260522`）是否修？——现为 r1/r2 的既存降级条件（BM25-only fallback）。**投稿前须闭环或如实披露**。
 - [ ] **`tab:omega` 的 (H)/(H+E)/(L)**：锚点复用规则下 (H)/(F) 由 `C1.full` 复用；`(H+E)` 已定**不做**；`(L)` 由 `omega_low` 提供——确认无遗漏。
@@ -181,6 +182,12 @@ error: error: unknown option '-b'
 
 ## 9. 流水（倒序）
 
+- **2026-10-04（22:1x 侦察 + 接管尽调：查明"另一个 agent"= legacy 组件线，两进程均已空转）** —— 用户告知另有 agent 在 `/nasdata/app.e0031982/code/ZhuLong_DAC2027` 跑任务，要求观摩、理解、准备接管。经 ops 中继 **RUN_ID 10–14** 只读侦察：
+  - **身份**：**legacy 组件线**（旧「Phase 1 组件消融 + Phase 2 S2 Φ」5-run 线），跑在**独立、非 git** 的项目副本 `/nasdata/app.e0031982/code/ZhuLong_DAC2027`（与 git 仓库 `super_intelligence_2035/doc/ZhuLong_DAC2027` 平行）。
+  - **两个 driver 都空转**：① `ablation_run_loop_component_s2_full.sh`（PID 2455466，`MODEL=deepseek-v4-pro-fp4`，30min/轮）—— 其 cline 会话**连续 ≥4 周期被沙箱阻断**（`run_commands`→ACCESS RESTRICTED），无法推进；② `ablation_run_conductor_serial.sh`（PID 1381975，**已跑 3.3 天**）—— 日志每 30min `error: Forbidden`，**3.3 天零产出**。
+  - **已产出的真实数据（接管应 harvest）**：`pure_llm ×5 = 10.5±1.9%`、`rag ×5 = 68.2±7.4%`（**BM25 降级态，需重跑**）、`wo_retrieval r1 = 74.1%`（117/158，10-04 14:40 已跑完，但 agent 被阻断读不到）；另有 1-shot：full 84.8 / k10 75.3 / k3 69.0 / k1 60.8 / lagged 80.4·84.2 / omega_low r2 82.3。
+  - **冲突**：两线共用同一评测 infra（eda_fastmcp + MCP 8090 + `.env`），**不能并发跑 eval**；合并线（git、glm-5.2 编排）本就设计为**取代** legacy 线。
+  - **接管方案（待拍板）**：停 legacy 两进程 → harvest 有效数据 → 由合并线续跑余下臂。
 - **2026-10-04（19:0x–21:54 运维亲自经 ops 中继打通整条链路：中继正常 + loop 修复 + agent 终被唤醒）** ——
   - ✅ **中继"恢复正常"**（此前"RUN_ID 4 卡死"系**误判**）：亲手实测 `run/ops/outbox.md` RUN_ID 1–8 **全部 `exit=0`**；RUN_ID 4 heavy 其实 **17:05:57 就跑完**，只是 `push` 反复失败在重试。**反思**：把"push 失败"错当成"卡死"，并据错误判断写了"抢救中继"指令。
   - 🔴 **发现 loop 静默失效（比 `-b` 更深一层）**：RUN_ID 5/6 实测 —— 运行中的 loop 是**旧版**（`error: unknown option '-b'`，累计 **352** 次，cline 从未真正运行）→ RUN_ID 6 重启 loop 后 `-b` 消除，但**新 loop 改报 `error: Forbidden`**。
