@@ -861,9 +861,11 @@ python -m lm_eval --model hf \
 
 4. **seq 对 MFU 的影响**：TP1·MBS2·seq2048（P-9.3）= 141K tok/s → MFU ≈ 34%（vs seq4096 的 60.6%）。seq 减半使每 token 的 GEMM M 减半 → 访存受限 → MFU 暴跌。**印证 P-9.3 结论：seq↓ 每 token 更慢（r=1.75）**。
 
-#### Level-3：torch.profiler top kernels（待跑）
+#### Level-3：torch.profiler top kernels（🚧 running，2026-10-04 ~16:53，第 70 次唤醒）
 
-- **计划**：在 TP1·MBS2·seq4096（bf16 速度最优配置）上跑 20–50 步 `torch.profiler`（`profile_memory=True, record_shapes=True, with_stack=True`），取 top-20 kernels + 时间占比 + 显存峰值。
+- **载体/配置**：bf16 速度最优 = **TP1·DP8·MBS2·seq4096**（P-9.3 实测 249K tok/s），50 步，profile 窗口 **[10,40)** 仅 rank 0，`profile_memory=True / record_shapes=True / with_stack=True`。
+- **实现**：新 `code/BaiZe-ISEDA2027/pretrain_profile_launcher.py`（monkey-patch bridge `initialize_pytorch_profiler` → 自定义 `on_trace_ready` 把 `key_averages` 文本表写 `/tmp/baize_p95_keyavg.txt`，**不写 chrome trace**）。脚本 `run/baize_p95_prof.sh`（峰值显存由 nvidia-smi 后台采样）。
+- **状态**：16:53 起跑健康（8 卡 ~98% util / ~52GB；config dump 已见 `profiling.use_pytorch_profiler=true/profile_ranks=[0]/step[10,40)/record_shapes=true`）。KEYAVG 将在 step~40 由 on_trace_ready 落盘，ETA ~17:10。**结果待下轮唤醒解析**。
 - **预期**：验证 NCCL 是否仍为 #1 瓶颈（P-4 GBS=8 口径下 41.7%）；量化 SSM scan / mamba custom kernel / LayerNorm / elementwise 占比。
 - **产出**：本节追加 top-kernels 表 + 与 P-4 的交叉印证。
 
