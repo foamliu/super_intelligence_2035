@@ -167,6 +167,13 @@ WAITING: 0
   - 抄别的机器的脚本（BaiZe 的 `deepseek-v4-pro-fp4` 属于 `agi-gateway.cxmt.com`）会直接失败。
   - ⚠️ **别名陷阱**：`deepseek-v4-flash` 在官方兼容层会被别名成 `deepseek-flash`（本机实测 200），**但它不是官方 ID**，别写它。
   - ✅ **新线/换机第一步**：`curl -s https://api.deepseek.com/models -H "Authorization: Bearer <key>"` 看规范 ID。
+- 🔴 **⚠️ 巡检铁律：`fetch` 没成功，就不许下"没进展"的结论（2026-10-04 我犯过）**：
+  - **症状**：`git fetch` 超时 → 本地 `origin/main` 陈旧 → 我据此断言"两条线停摆、进度 0"，**完全错**（实际整夜在跑）。
+  - **正确做法**：
+    1. **先确认 `git ls-remote --heads origin main` 能通**（轻量，秒回）；取回远端 tip hash 与本地 `origin/main` 比对；
+    2. **fetch 慢就后台跑 + 轮询**（`Start-Process git -ArgumentList 'fetch','origin','main'`），**不要用 30s 超时判死**；
+    3. **fetch 失败时，只报"本地可见的部分 + 明确标注不可知"**，🚫 不写"没在做"。
+  - **背景**：本机到 GitHub 的完整 fetch 可能需 **2–3 分钟**（BaiZe 四条线提交频繁）；`ls-remote` 快但 `fetch` 慢，**别把后者当断网**。
 - ⚠️ **`.29` 与 `.12` 的 `/tmp` 不共享**；若 worker 跨机，诊断日志必须**指明机器**。
 - ⚠️ **`MEMORY_*.md` 每次唤醒被全文读进上下文** → 越大越烧 token；超 32KB 必须滚动归档。
 - ⚠️ **任务书全文 = 每次唤醒的 prompt**（loop 里 `prompt="$(< TASK_MD)"`）→ 任务书要**精简**，历史移入归档文件、不进 prompt。
@@ -301,7 +308,17 @@ WAITING: 0
 - **2026-10-03（news worker 首交付）** —— agent 完成 **T1–T4**（`c326ba8`）+ **首轮 smoke 16 条**（`3fcd854`）+ 记忆回写（`bdc20db`），已转**常态采集**（`WAITING=1`）。
   亮点：**真跑实测**（给报错原文）、**建了免 key MCP**、报告**自包含**、**360 无日期就拒收**（守"字段缺一不可"）。
   待用户拍板：**是否补正规 API key**（免 key 抓取脆弱/合规灰区）。待核：**MCP 是否已装进运行机 cline**。
-- **2026-10-03（产物目录加 README 契约）** —— 巡检发现 `news/archive/` `news/analysis/` `news/policy/` `research/video/` **四个产物目录全空**
+- **2026-10-04（⚠️ 我的严重误判 + 更正）** —— 我据**陈旧本地缓存**（`git fetch` 超时失败）断言"两条线自 20:02 停摆、进度 0"。
+  - **真相**：`fetch` 完成后发现两条线**整夜在跑**，有大量提交 —— news `440475f`（**L1 全链 1296 天 / 605311 条语料 / 25032 事件 + EXPLORE 重生成**）；research 第九~十四轮 + **第 3 批 A/B 交付**（`video/SHORTLIST.md` + **3 份口播稿** + `TOP_K_takeaways.json`）。
+  - **根因**：**`fetch` 超时 → 本地 ref 陈旧 → 我把"看不到"当成"没发生"**。
+  - **教训（已记入 §7 已知坑）**：**状态巡检必须以"fetch 成功"为前提**；**fetch 失败时只能说"不可知"，不许下"没进展"的结论**；fetch 慢要**后台跑 + 轮询**，不要用超时判死。
+- **2026-10-04（验收：news N1/N3 + research 第 3 批）** ——
+  - **N1 语料**：`chinanews` **605,323 条**（EDA 时）→ **806,493 条 / 1627 天**（PROGRESS 06:45，**仍在续抓**）；新华网 403/405 **如实记录、不绕**；**"新华网未通 → 由代理源覆盖 + 不冒充"** 完全照办；分年条数 + shard 大小 + sha256 齐全。
+  - **N3-1 EDA**：**真实计数**（年度 134821/172998/165122/132382 + 月度分布）+ 口径声明（描述性、不预测）+ 语料可回溯 `url`。
+  - **N3-3 EVENTS.csv**：**6800 行**，字段含 `actor/action_type/level/domain/force/**noise_risk**/matched_trigger/source/title/url` —— **带噪声风险标注 + 可核验链接**。
+  - **N4 EXPLORE**：`EXPLORE.md`(222) + `explore.csv`(2340) + **"语料·事件轴对齐修复(AUC 去伪) + BH-FDR + 效果量门槛"**（**主动做了去伪与多重比较校正**）。
+  - **research 第 3 批**：`SHORTLIST.md` **17 条候选 + TOP-3 选定 + 主动提"起自己栏目名"**；**3 份口播稿**（结构完整、445 字、**明确"自绘/自生成、严禁用原作或论文原图"**）。
+  - **结论**：**红线守住了**（不冒称、不抓正文、不编造、非因果、多重比较校正、不盗图）。
   → **git 不跟踪空目录**（clone 后目录消失，agent 易写错路径）→ 已加 **5 份契约**：
   `news/README.md`（**三类产出口径分开**：① 日报 ≤72h 计入 / ② archive / ③ analysis+policy **不计入**）·
   `news/archive/README.md`（`<source>-<年>.jsonl.gz` 5 字段 · `PROGRESS.md` · `INDEX_FILES.md` · 不抓正文/不冒充）·
