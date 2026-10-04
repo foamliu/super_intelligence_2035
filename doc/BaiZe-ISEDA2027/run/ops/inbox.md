@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 68 -->
+<!-- RUN_ID: 69 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,14 +31,70 @@
 
 ---
 
-## RUN_ID 68 — 🔧 **用 loop 的真实配对重跑 `cimi_search` smoke（RUN_ID 67 的 Forbidden 是我用错 key）**（**本块最新，优先执行**）
+## RUN_ID 69 — 🔧 **[.12] 补/验 EDA MCP 共享配置 + 真跑 `cimi_search`（data/vision 实际所在机）**（**本块最新，优先执行**）
+
+> **RUN_ID 68 结果（07:32:07）**：🎉 **`.29` 上 `cimi_search` 真跑成功**（`rc=0`，返回真实搜索结果，MCP 服务能出网）⇒ **MCP 全链路通**。
+> ⚠️ **但发现关键细节**：`cline config mcp` 输出显示它读的是 **`/home/app.e0031982/.cline/data/settings/cline_mcp_settings.json`（共享路径）** —— **`--data-dir` 不改变 MCP 配置的读取位置**。而 **`.12` 的共享 `~/.cline/data` 是独立于 `.29` 的本地目录**（不是 NFS），且当初我正是从 `.12` 的 settings 重播的（那份 **MCP 为空**）⇒ **`.12` 上很可能仍是空的**。
+> **本块（经 ssh 到 `.12`）**：① 看 `.12` 的 shared MCP 配置 ② **空/缺 → 备份并写入同一条目** ③ `cline config mcp` 复核 ④ **`.12` 上真跑 `cimi_search`**（llm_pick 真实配对）。
+> 🚫 只动 `.12` 的 shared MCP 设置文件（**先备份**）；不碰服务、不动其它配置。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+C=/home/app.e0031982/.bun/bin/cline; B=/nas_train/app.e0031982
+
+echo; echo "=== [.12] 看/补 shared MCP 配置 → 真跑 cimi_search ==="
+timeout 560 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+hostname; date '+%F %T'
+export PATH="$HOME/.bun/bin:$PATH"
+B=/nas_train/app.e0031982; H=$HOME; C=/home/app.e0031982/.bun/bin/cline
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+CFG='{"mcpServers":{"pyAether_MCP_server":{"url":"http://10.239.2.29:8090/sse","type":"sse","disabled":false,"autoApprove":["search_apis","get_api_details","run_pyAether_code_tool","cimi_search","cimi_fetch"]}}}'
+
+echo; echo "--- 1. .12 的 shared MCP 配置 ---"
+S="$H/.cline/data/settings/cline_mcp_settings.json"
+if [ -f "$S" ]; then echo "   存在 $(stat -c %s "$S")B : $(tr -d '\n' < "$S" | cut -c1-160)"; else echo "   不存在"; fi
+
+echo; echo "--- 2. 空/缺则备份并写入同一条目 ---"
+if [ -s "$S" ] && grep -q 'pyAether_MCP_server' "$S"; then
+  echo "   ✅ shared 已有 MCP 条目 → 不改"
+else
+  mkdir -p "$(dirname "$S")"
+  [ -f "$S" ] && cp -a "$S" "$S.bak.$(date +%Y%m%d-%H%M%S)" && echo "   已备份原 shared 文件"
+  printf '%s' "$CFG" > "$S"
+  echo "   写入后 $(stat -c %s "$S")B : $(tr -d '\n' < "$S" | cut -c1-160)"
+fi
+echo "   -- cline config mcp 复核（应与 .29 一致：pyAether_MCP_server [sse]）--"
+timeout 40 "$C" --data-dir "$B/.cline_data" config mcp 2>&1 | head -8 | cut -c1-150 | sed 's/^/      /'
+
+echo; echo "--- 3. .12 上真跑 cimi_search（llm_pick 真实配对）---"
+D="$B/.cline_data"
+LLM_DATA_DIR="$D"; . "$R/llm_rotate.sh"
+ST=/tmp/baize_data_llm_idx
+if llm_pick "$ST" /nas_train/app.e0031982/code/super_intelligence_2035/doc/keys.txt; then
+  echo "   picked model=$LLM_MODEL key=${LLM_KEY:0:8}.. base=$LLM_BASE"
+else
+  echo "   !! llm_pick 无可用候选"
+fi
+PP="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+env $PP timeout 280 "$C" --data-dir "$D" -c /tmp -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible --auto-approve true -t 240 \
+  "Call the MCP tool 'cimi_search' (server pyAether_MCP_server) to search: masked autoencoder MAE. Then answer <=4 lines: (1) tool available yes/no (2) 2 result titles (3) their URLs (4) exact error if it failed." \
+  < /dev/null > /tmp/cimi_smoke_12.log 2>&1; rc=$?
+echo "   rc=$rc"; tail -20 /tmp/cimi_smoke_12.log | cut -c1-170 | sed 's/^/      /'
+echo; echo "=== DONE (.12) ==="
+EOS12
+echo "=== relay block done ==="
+```
+
+> ⛔ 已降级 RUN_ID 68（07:32:07 exit=0 → **`.29` 上 `cimi_search` 真跑成功 rc=0**；并发现 `--data-dir` 不影响 MCP 配置读取路径）为 text。
+
+## RUN_ID 68 — 🔧 **用 loop 的真实配对重跑 `cimi_search` smoke**（✅ 已执行 → 🎉 **`.29` 上 MCP 全链路跑通**）
 
 > **RUN_ID 67 结果（07:29:48）**：✅ **修复成功** —— `.cline_vision` / `.cline_data` 的 `cline_mcp_settings.json` 由 **22B 空** → **206B**（含 `pyAether_MCP_server` + `cimi_search`/`cimi_fetch`），原文件已备份。
 > ⚠️ 但两处需要修正：① `cline mcp list` **不是有效子命令** → 正解是 **`cline config mcp`**；② **smoke 报 `Forbidden`** —— 那是**我用错 key**（拿了 `.cline_data/secrets.json` 里 `.12` 那把，配 `glm-5.2` 不被授权，**与 RUN_ID 56 同一个坑**）。正确做法 = **复现 loop 的真实 (model, key, base) 配对**（`llm_pick` 选出的）。
 > **本块**：① `cline config mcp` 复核两个隔离目录**能看到 server** ② `llm_pick` 取真实配对（**base 直接写进 `.cline_data`**，与 loop 行为一致）③ 用真实配对**重跑 `cimi_search`** ④ 报告（含 MCP 服务能否出网）。
 > 🚫 只动 `.cline_data`（它就是 data 线的隔离目录）；不动 vision/pretrain/harness；不碰 8090 服务本身。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 B=/nas_train/app.e0031982; H=$HOME; C=/home/app.e0031982/.bun/bin/cline
 R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
