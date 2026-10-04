@@ -1046,3 +1046,78 @@ drwxr-x--- 2 app.e0031982 app.adm   4096 Oct  4 14:45 daily-memories
 5be7be1 zhulong-ops-relay: result @ 2026-10-04 21:54:07
 ===== DONE =====
 ```
+
+---
+
+## RUN_ID 10 · 2026-10-04 22:13:39 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 10 — read-only recon of the OTHER agent dir
+D=/nasdata/app.e0031982/code/ZhuLong_DAC2027
+echo "===== 0. TIME ====="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "===== 1. exists? ====="; timeout 10 ls -ld "$D" 2>&1 | cut -c1-160
+echo "===== 2. top-level listing ====="; timeout 15 ls -la "$D" 2>&1 | head -40 | cut -c1-160
+echo "===== 3. is it a git repo? ====="
+timeout 15 git -C "$D" rev-parse --show-toplevel 2>&1 | head -1 | cut -c1-160
+timeout 15 git -C "$D" log --oneline -8 2>&1 | cut -c1-160
+timeout 15 git -C "$D" status -sb 2>&1 | head -12 | cut -c1-160
+echo "===== 4. processes referencing ZhuLong_DAC2027 ====="; timeout 10 pgrep -af 'ZhuLong_DAC2027' | head -20 | cut -c1-160
+echo "===== 5. dirs (maxdepth 2) ====="; timeout 20 find "$D" -maxdepth 2 -type d 2>/dev/null | head -40 | cut -c1-160
+echo "===== 6. recently modified files (<24h, maxdepth 3) ====="; timeout 25 find "$D" -maxdepth 3 -type f -mmin -1440 2>/dev/null | head -40 | cut -c1-160
+echo "===== 7. md / sh files at top ====="; timeout 15 ls -la "$D"/*.md "$D"/*.sh 2>/dev/null | head -30 | cut -c1-160
+echo "===== DONE ====="
+```
+
+**输出**
+```
+===== 0. TIME =====
+2026-10-04 22:13:39
+hfeg0tedaap02
+===== 1. exists? =====
+drwxr-xr-x 6 app.e0031982 app.adm 4096 Sep 28 15:22 /nasdata/app.e0031982/code/ZhuLong_DAC2027
+===== 2. top-level listing =====
+total 84
+drwxr-xr-x  6 app.e0031982 app.adm  4096 Sep 28 15:22 .
+drwxr-x--- 12 app.e0031982 app.adm  4096 Oct  4 14:22 ..
+-rw-r-----  1 app.e0031982 app.adm 20684 Sep 28 15:23 experiment_plan_report.html
+drwxr-xr-x  4 app.e0031982 app.adm  4096 Sep 28 12:55 Grounding
+-rw-r--r--  1 app.e0031982 app.adm 26687 Sep 28 14:49 README.md
+drwxr-x---  5 app.e0031982 app.adm  4096 Oct  4 13:26 run
+drwxr-xr-x  4 app.e0031982 app.adm  4096 Sep 28 12:55 ZhuLong_ASPDAC2027
+drwxr-xr-x  4 app.e0031982 app.adm  4096 Sep 28 12:55 ZhuLong_DAC2027
+===== 3. is it a git repo? =====
+fatal: not a git repository (or any parent up to mount point /)
+fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+===== 4. processes referencing ZhuLong_DAC2027 =====
+1755841 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+1793726 timeout 10 pgrep -af ZhuLong_DAC2027
+2455466 bash /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/ablation_run_loop_component_s2_full.sh
+===== 5. dirs (maxdepth 2) =====
+/nasdata/app.e0031982/code/ZhuLong_DAC2027
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/Grounding
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/Grounding/figures
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/Grounding/ICML2028
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/ZhuLong_ASPDAC2027
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/ZhuLong_ASPDAC2027/ASPDAC2027
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/ZhuLong_ASPDAC2027/figures
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/ZhuLong_DAC2027
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/ZhuLong_DAC2027/DAC2027
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/ZhuLong_DAC2027/figures
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/run/daily-memories
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/run/eval
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/run/experiments
+===== 6. recently modified files (<24h, maxdepth 3) =====
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/run/daily-memories/2026-10-03.md
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/run/daily-memories/2026-10-04.md
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/run/ablation_run_task_component_s2_full.md
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/run/MEMORY_component_full.md
+/nasdata/app.e0031982/code/ZhuLong_DAC2027/run/report_10_04.html
+===== 7. md / sh files at top =====
+-rw-r--r-- 1 app.e0031982 app.adm 26687 Sep 28 14:49 /nasdata/app.e0031982/code/ZhuLong_DAC2027/README.md
+===== DONE =====
+```
