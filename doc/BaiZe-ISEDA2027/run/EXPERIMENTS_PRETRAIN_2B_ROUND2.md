@@ -581,7 +581,7 @@ python -m lm_eval --model hf \
 2. **MBS=4 / 8 均 OOM**（~79 GiB 逼近 80 GiB 上限）。→ TP1·DP8 下 MBS 上限 = **2**。
 3. ⭐ **对 FP8（P-9.4）的关键含义**：`M = MBS × seq`。MBS=2 × seq4096 = M≈8192，**仍 < 交叉点 16K**；要进 FP8 收益区需 MBS≥4（M≈16384），但 TP1 下 MBS=4 OOM → **只能靠 TP2（P-9.2）或抬 seq（P-9.3）把 M 抬进 16K**。这直接印证运维「MBS 与 FP8 是同一件事」。
 
-### P-9.2 TP/SP 扫描 🚀 运行中（2026-10-04 08:35 启动）
+### P-9.2 TP/SP 扫描 ✅ 完成（2026-10-04 08:35 启动 → 10:32 全 4 点 rc=0）
 
 > **目的**：TP2·DP4 把每卡 weight+optimizer 减半 → 能否让 MBS=4 落地（从而 M=16384 进 FP8 交叉点）？**SP on/off** 对通信/显存的影响。
 > **配置**（每点只动一个变量，60 步 bf16 短测）：① TP2·MBS=2 ② TP2·MBS=4 ③ TP2·SP·MBS=2 ④ TP2·SP·MBS=4；**基准** = P-9.1 TP1·DP8 MBS=2（218K tok/s）。
@@ -648,6 +648,60 @@ python -m lm_eval --model hf \
   - `[10:04:56] iteration 50/60 ... 35921.0ms`
   - `[10:10:53] iteration 60/60 ... 35697.2ms | rc=0`（结束 10:11:23）
 
+**✅ config ④ 收尾 · P-9.2 完整扫描定稿（2026-10-04 ~10:51，第 61 次唤醒）—— ⭐ SP on 在 MBS=4 下反向收益（+6% 加速 + 省 ~4.6GB），④ 成为 bf16 最优 FP8 载体**：
+
+| 配置 | TP | SP | MBS | 稳态 s/iter | tok/s | GPU util (TFLOP/s/GPU) | 峰值显存 (max/8) |
+|:--|:--|:--|:--|--:|--:|--:|--:|
+| P-9.1 基线 | 1 | off | 2 | **19.3** | **218K** | **519** | 56865 MiB |
+| ① TP2·MBS2 | 2 | off | 2 | 34.1 | 123K | ~290 | 36391 MiB |
+| ② TP2·MBS4 | 2 | off | 4 | ~21.2 | ~198K | ~482 | 55657 MiB ✅ |
+| ③ TP2·SP·MBS2 | 2 | on | 2 | ~35.7 | ~117K | ~272 | 34839 MiB |
+| **④ TP2·SP·MBS4** | 2 | **on** | **4** | **~20.0** | **~210K** | **~503** | **51021 MiB ✅** |
+
+- **⭐⭐ SP on 在 MBS=4 下反向（vs ③ 在 MBS=2 下 +4.7% 变慢）**：④ vs ②（同为 MBS=4）—— s/iter **21.2 → 20.0（~6% 加速）**，峰值显存 **55657 → 51021（省 ~4.6GB）**。机制：MBS=4 时激活/层归一化/序列内 elementwise 占比升高，SP 把 LayerNorm/Dropout 切到 TP 两卡分摊，既减显存又减该部分时延；MBS=2 时这些项占比小、SP 的 allreduce 代价反而盖过收益。
+- **④ = bf16 下「够到 FP8 交叉点」的最优配置**：~210K tok/s（20.0s/iter）+ GPU util ~503 TFLOP/s/GPU，**只比 TP1·MBS2 基线（218K）慢 ~4%**，但 **M=MBS×seq=4×4096=16384 = FP8 交叉点**（① 的 M=8192 无 FP8 收益）。
+- **P-8 决策分叉（更新）**：
+  - **A. TP1·DP8·MBS2**：218K tok/s（bf16），M=8192 → FP8 无收益；
+  - **B. TP2·DP4·SP-on·MBS4**：~210K tok/s（bf16），M=16384 = FP8 交叉点。若 P-9.4 在此 M 下端到端 FP8 `s>1`（运维预期 s→1.34 饱和区）→ **B·FP8 ≈ 210K×1.3 ≈ 273K，明确反超 A（218K）**。
+- → **P-9.4 FP8 复评载体 = TP2·MBS4**（端到端 bf16 vs FP8 对照时，SP on 为当前最优，但需先确认 FP8 与 SP 的兼容性；若 FP8+SP 有冲突则回落 SP-off ②）。
+- 原始输出（config ④，`/tmp/baize_p9_tp2sp_mbs4.log`，SUM `peak_gpu_mem_MiB=51021 rc=0`）：
+  - `[10:22:24] iteration 30/60 ... 20239.2ms | Step Time 20.24s GPU 497.6 TFLOP/s/GPU`
+  - `[10:25:43] iteration 40/60 ... 19926.5ms | Step Time 19.93s GPU 505.4`
+  - `[10:29:03] iteration 50/60 ... 20020.3ms | Step Time 20.02s GPU 503.0`
+  - `[10:32:24] iteration 60/60 ... 20069.1ms | Step Time 20.07s GPU 501.8 | rc=0`（结束 10:32:53）
+
+**✅ P-9.2 定稿小结（全部 rc=0，无 OOM 无 NaN）**：TP2 自身（①~123K）明显慢于 TP1（218K），但**唯一价值 = 让 MBS=4 落地**；MBS=4 落地后（②④ ~200–210K）吞吐回升到接近 TP1 基线，且 **M=16384 进 FP8 交叉点**。**SP on 只对 MBS=4 有收益（④ vs ② +6%/+省 4.6GB），对 MBS=2 无收益（③ vs ① -4.7%）**。→ **P-8 bf16 备选 = TP2·DP4·SP-on·MBS4（~210K）** 或 **TP1·DP8·MBS2（218K）**，最终由 P-9.4（FP8 能否在 M=16384 转正）裁决。
+
 **✅ P-9.4 前置已就绪（2026-10-04 ~10:16 核实环境，第 60 次）—— transformer_engine 版本确认**：
 - `torch 2.8.0+cu128` / `CUDA 12.8` / `transformer_engine 2.12.0+5671fd36` / `megatron-core 0.16.1` / `mamba-ssm 2.2.6.post3` —— **与任务书预期的 TE 2.12.0 / torch 2.8.0+cu128 一致**（`python -c "import torch, transformer_engine; ..."` 贴原文，`from importlib.metadata import version`）。
 - P-4R 微基准 `scripts/p4r_fp8_gemm_bench.py`（TE Linear fwd+bwd，E4M3/E5M2 vs bf16，`MS=[2048,4096,8192]`）**已具备**，P-9.4 将**复用并扩展 `M ∈ {4096,8192,16384,32768,65536}`**（用 `(MBS,seq)` 组合命中，生产载体 = **TP2·MBS4 → M=16384**），再在 TP2·MBS4 下做 **bf16 vs FP8 端到端对照**。
+
+### P-9.4 微基准：s(M) 曲线与交叉点（✅ 已完成，2026-10-04 ~10:57，第 61 次唤醒）
+
+> **方法**：扩展 P-4R 的 TE Linear（delayed-scaling FP8，E4M3 fwd / E5M2 bwd，master weights bf16）fwd+bwd 微基准，`M ∈ {4096,8192,16384,32768,65536}` × 6 个生产形状（`ffn_up_gate 2048×8192` / `ffn_down 8192×2048` / `attn_qkv 2048×3072` / `attn_out 2048×2048` / `mamba_in_proj 2048×10304` / `mamba_out_proj 4096×2048`）。脚本 `scripts/p9_4_fp8_gemm_scan.py`，1 卡，输出 `/tmp/baize_p94_bench.log`。`s = t_bf16 / t_fp8`。
+
+**每个形状的 s(M)（fwd+bwd 单算子，ms：bf16 / fp8）**：
+
+| 形状 | M=4096 | M=8192 | M=16384 | M=32768 | M=65536 |
+|:--|--:|--:|--:|--:|--:|
+| ffn_up_gate (2048→8192) | 0.94 | 1.21 | 1.28 | 1.32 | 1.32 |
+| ffn_down (8192→2048) | 0.63 | 0.56 | 1.10 | 1.30 | 1.34 |
+| attn_qkv (2048→3072) | 0.43 | 0.56 | 0.55 | 1.01 | 1.32 |
+| attn_out (2048→2048) | 0.47 | 0.64 | 0.61 | 0.61 | 1.20 |
+| mamba_in_proj (2048→10304) | 0.58 | 0.79 | 1.27 | 1.33 | 1.34 |
+| mamba_out_proj (4096→2048) | 0.44 | 0.52 | 0.58 | 1.29 | 1.36 |
+| **均值（未加权）** | **0.58** | **0.71** | **0.90** | **1.14** | **1.31** |
+
+**关键结论（⭐⭐ 对运维「M≳16K 交叉点」的核实与修正）**：
+1. **大 GEMM（FFN/SSM 投影，K·N ≥ 8M）**：确实在 **M≈16K 就转正**（ffn_down 1.10、mamba_in_proj 1.27、ffn_up_gate 1.28 @16384），到 M=32K 饱和 ~1.3。→ **运维的方向判断对「大 GEMM」成立**。
+2. **小 GEMM（attention 投影，N=2048/3072）**：FP8 的 cast/amax 开销占比大，**要 M≳32K 才转正**（attn_qkv 在 32768 才 1.01、attn_out 在 65536 才 1.20、mamba_out_proj 在 16384 仍 0.58）。
+3. **未加权均值在 M=16384 仍是 0.90（倒挂 ~10%）**，交叉点在 **M≈30–32K**（非 16K）。→ **在「bf16 最优可达配置」（TP2·MBS4 → M=16384）下，按形状均值 FP8 仍未转正**。
+4. ⚠️ **但这是「未加权」均值**：真实模型按 FLOP/执行时间加权，**大 GEMM（FFN/SSM，FLOP 占比高）已 s>1**，小 GEMM（attention）虽倒挂但 FLOP 占比小 → **端到端加权结果可能落在 s≈1 附近（略正或略负）**。→ **必须靠端到端对照裁决**（见下）。
+
+### P-9.4 端到端 bf16 vs FP8 🚀 running（2026-10-04 10:58 启动）
+
+> **FP8 配方已确认激活**（`--precision bf16_with_fp8_delayed_scaling_mixed` → recipe 落地为 `fp8: hybrid` / `fp8_recipe: delayed` / `fp8_param: true` / `fp8_wgrad: true` / `fp8_amax_history_len: 1024`，与 Xmodel-2.5 的 delayed-scaling 同款；原始输出见 `/tmp/baize_p94_fp8_tp2_mbs4.log`）。
+> **对照设计**（同 MBS=4、同步数 60、TP2，跨 SP 两档）：
+>   - A. `p94_fp8_tp2_mbs4`（SP-off）→ vs ② bf16 = 21.2s / ~198K tok/s
+>   - B. `p94_fp8_tp2sp_mbs4`（SP-on）→ vs ④ bf16 = 20.0s / ~210K tok/s
+> 脚本 `run/baize_p94_fp8_e2e.sh`，SUM=`/tmp/baize_p94_fp8_e2e.log`。**结果待下轮回收。**
