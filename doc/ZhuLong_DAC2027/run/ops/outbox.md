@@ -1399,3 +1399,152 @@ done
 > `tab:phi-bound`(unbounded ≡ full)、`tab:llm-comparison`(DeepSeek-V4-Pro 主基座)。
 ===== DONE =====
 ```
+
+---
+
+## RUN_ID 12 · 2026-10-04 22:16:50 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 12 — legacy component loop internals + live progress (read-only)
+D=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
+echo "===== 0. TIME ====="; timeout 10 date '+%F %T'
+echo "===== 1. component loop script (FULL) ====="; timeout 10 cat "$D/ablation_run_loop_component_s2_full.sh" 2>&1 | cut -c1-200
+echo "===== 2. related live procs ====="; timeout 10 pgrep -af 'ablation_run_loop|run_cline_script|ablation_run_conductor' | head -20 | cut -c1-160
+echo "===== 3. eval PID 692552 alive? ====="; timeout 10 ps -o pid=,ppid=,etimes=,args= -p 692552 2>&1 | cut -c1-160
+echo "===== 4. wo_retrieval r1 log tail ====="; timeout 10 tail -n 18 /tmp/ABL_wo_retrieval_r1.log 2>&1 | cut -c1-180
+echo "===== 5. MEMORY_component_full.md status head ====="; timeout 10 sed -n '1,20p' "$D/MEMORY_component_full.md" 2>&1 | cut -c1-200
+echo "===== 6. MEMORY_component_full.md operation-log tail ====="; timeout 10 tail -n 24 "$D/MEMORY_component_full.md" 2>&1 | cut -c1-200
+echo "===== 7. /tmp ABL + loop logs ====="; timeout 10 ls -la /tmp/ABL_*.log /tmp/*loop*.log 2>&1 | head -20 | cut -c1-160
+echo "===== DONE ====="
+```
+
+**输出**
+```
+===== 0. TIME =====
+2026-10-04 22:16:50
+===== 1. component loop script (FULL) =====
+#!/bin/bash
+# 组件消融(Phase 1: pure_llm/rag/wo_retrieval/full) + S2 Φ 轴(Phase 2: k10/k3/k1/lagged) 5-run 完整版循环。
+# 同一 MEMORY_component_full.md 自驱 Phase 1→Phase 2 过渡（见 ablation_run_task_component_s2_full.md）。
+# 启动方式（脱离进程组，防工具超时误杀）:
+#   setsid bash /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/ablation_run_loop_component_s2_full.sh > /tmp/ablation_loop_component_s2_full.log 2>&1 < /dev/null &
+set -u
+
+TASK_MD="/nasdata/app.e0031982/code/ZhuLong_DAC2027/run/ablation_run_task_component_s2_full.md"
+MEMORY_MD="/nasdata/app.e0031982/code/ZhuLong_DAC2027/run/MEMORY_component_full.md"
+CWD="/nasdata/app.e0031982/code/ZhuLong_DAC2027/run"
+MODEL="deepseek-v4-pro-fp4"
+INTERVAL=1800          # 30 分钟醒来一次
+CLINE_TIMEOUT=5400     # 单次 cline 最多 90 分钟（含打分）
+
+while true; do
+    # 检查是否已完成（agent 会在 MEMORY_component_full.md 中写 PHASE=done_all）
+    if [[ -f "$MEMORY_MD" ]] && grep -q 'PHASE=done_all' "$MEMORY_MD" 2>/dev/null; then
+        echo "[loop] $(date '+%F %T') PHASE=done_all detected, loop exiting."
+        break
+    fi
+
+    echo "[loop] $(date '+%F %T') wake up, invoking cline ..."
+    if [[ -f "$TASK_MD" ]]; then
+        prompt="$(< "$TASK_MD")"
+        cline -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+        echo "[loop] $(date '+%F %T') cline returned (exit $?), sleep ${INTERVAL}s ..."
+    else
+        echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD, sleep ${INTERVAL}s ..."
+    fi
+    sleep "$INTERVAL"
+done
+===== 2. related live procs =====
+1381975 bash ablation_run_conductor_serial.sh
+1799945 timeout 10 pgrep -af ablation_run_loop|run_cline_script|ablation_run_conductor
+2455466 bash /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/ablation_run_loop_component_s2_full.sh
+===== 3. eval PID 692552 alive? =====
+===== 4. wo_retrieval r1 log tail =====
+  1004: 117/158 pass (74.1%) | generated: 128 ok, 25 fail
+
+Done!
+[0;32m[SUCCESS][0m [Step 7.1] 评估完成 (execution_results.jsonl 已产)
+[0;34m[INFO][0m [Step 8] 跳过 Memory Bank 更新 (自进化未开启)
+[0;34m[INFO][0m [Step 8.5] 跳过 Skill 蒸馏 (自进化未开启)
+[0;34m[INFO][0m [Step 8.55] 跳过 Skill 质量门禁 (自进化未开启)
+[0;34m[INFO][0m [Step 8.6] 跳过 Rules 蒸馏 (自进化未开启)
+[0;34m[INFO][0m [Step 8.65] 跳过 Rule 修剪 (自进化未开启)
+[0;34m[INFO][0m [Step 8.7] 跳过 Skill 修剪 (自进化未开启)
+[0;34m[INFO][0m [Step 8.9] 跳过 L1 语义合并 (自进化未开启)
+[0;34m[INFO][0m [Step 8.92] 跳过 L1 突触修剪 (自进化未开启)
+[0;34m[INFO][0m [Step 8.95] 跳过 validator 规则挖掘 (自进化未开启)
+[0;34m[INFO][0m =============================================
+[0;34m[INFO][0m 生成代码文件:   code_generation_2026_1004_122050.jsonl
+[0;34m[INFO][0m 原始数据集名:   EDA-Eval-PyAether-v20260311.jsonl
+[0;34m[INFO][0m 输出目录:       /home/app.e0031982/eda_code_eval/2026_1004_122050
+[0;34m[INFO][0m =============================================
+===== 5. MEMORY_component_full.md status head =====
+# MEMORY_component_full.md — EDA 组件消融 (Phase 1) + S2 Φ 轴 (Phase 2) 运行时状态
+
+> 本文件由 agent 维护（不提交 git）。每步唤醒：读本文件 + daily-memories/$(date +%F).md → 判断 → 执行 → 更新本文件 + 追加当日流水 → 退出。
+
+---
+
+## 当前状态（最新）
+
+| 字段 | 值 |
+|:---|:---|
+| PHASE | running |
+| STAGE | component |
+| CONFIG | wo_retrieval |
+| ROUND | 1（r1 运行中） |
+| ERROR_COUNT | 0 |
+
+- 当前运行轮次 batch：`2026_1004_122050`，编排进程 PID `692552`（`bash scripts/run_cline_script.sh -p 8 -n`），8 worker / 全量 158 题。
+- log：`/tmp/ABL_wo_retrieval_r1.log`
+- 基座：`MODEL=deepseek-v4-pro-fp4`，协议 `-p 8 -n`（8 并发 + 禁 Memory Bank 注入）。
+- 反作弊 PreToolUse hook 全程启用、冻结（canary 已验证）。
+===== 6. MEMORY_component_full.md operation-log tail =====
+  - C1 `run_commands` → DENY（"tool 'run_commands' not allowed"）✓
+  - C2 `read_files` 读 `/etc/passwd` → DENY（"outside workspace"）✓
+  - C3 `read_files` 读 ws 内 → ALLOW `{}` ✓
+  - C4 `mcp__search_apis` → ALLOW `{}` ✓
+  → 反作弊 hook 白名单判定正确，拒绝原因可辨识。
+- 步骤 0.2 跨轴污染复位：S1 残留 `EDA_RUNCODE_READBACK=none` 已用 `set_s1_fidelity.py full_default` 复位为 Ω=high + readback=full（串行，避免 .env 竞态）。
+- 步骤 0.3 切 `set_ablation.py pure_llm`（核心 4 全关）；stop.sh → start.sh；MCP PID 2460201；app.log「Tool visibility config」：get_api_details/search_apis/search_apis_by_keyword/run
+- 步骤 0.4 启动 pure_llm r1：`EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework PYTHON=.../venv/bin/python setsid bash scripts/run_cline_script.sh -p 8 -n`；batch=2026_1003_145245，编�
+- PHASE→running、STAGE=component、CONFIG=pure_llm、ROUND=1、ERROR_COUNT=0。
+- 退出等待下轮唤醒：按步骤 A `pgrep -f '^bash scripts/run_cline_script'` → 无输出后 grep `pass (xx.x%)` 取 Pass@1。
+## 2026-10-03 · 时刻不可得（date 被禁 + run_commands 被拦）[running] ⚠️ 检查受阻（沙箱阻断）
+
+- 恢复：PHASE=running / STAGE=component / CONFIG=pure_llm / ROUND=1（r1 运行中，batch 2026_1003_145245 / 编排 PID 2461526）/ ERROR_COUNT=0。
+- 本轮唤醒复测：`run_commands` 全量被拦（`pwd`、`pwd && ls -la`、`date +%F` 均被工具内部替换为固定 "ACCESS RESTRICTED: outside the sandbox workspace or not allowed..." 回显�
+- 无法执行步骤 A 的 `pgrep -f '^bash scripts/run_cline_script'` 检查 pure_llm r1（batch 2026_1003_145245 / PID 2461526）是否结束、无法 grep 打分（Pass@1）。
+- 未推进、未改成绩/看板；保持 PHASE=running / STAGE=component / CONFIG=pure_llm / ROUND=1 / ERROR_COUNT=0。
+- 退出等待下轮唤醒（run_commands 复通后优先按步骤 A 执行 pgrep→grep 打分）。
+## 2026-10-03 · 时刻不可得（date 被禁 + run_commands 被拦）[running] ⚠️ 检查受阻（沙箱阻断第 2 个唤醒周期 / pure_llm r1 阶段）
+
+- 恢复：PHASE=running / STAGE=component / CONFIG=pure_llm / ROUND=1（r1 运行中，batch 2026_1003_145245 / 编排 PID 2461526）/ ERROR_COUNT=0（新任务首轮，尚无成绩）。
+- 本轮唤醒复测：`run_commands` 全量被拦（`date +%F && echo TEST_OK`、`pwd && ls -la`、`ls -la`、`pwd` 均被工具内部替换为固定 "ACCESS RESTRICTED: outside the sandbox workspace
+- 无法执行步骤 A 的 `pgrep -f '^bash scripts/run_cline_script'` 检查 pure_llm r1（batch 2026_1003_145245 / PID 2461526）是否结束、无法 grep 打分（Pass@1）。
+- 未推进、未改成绩/看板；保持 PHASE=running / STAGE=component / CONFIG=pure_llm / ROUND=1 / ERROR_COUNT=0。
+- 连续 2 周期阻断（对齐历史 3~5 周期复通先例）；退出等待下轮唤醒（run_commands 复通后优先按步骤 A 执行 pgrep→grep 打分）。若后续唤醒仍无 shell 能力
+===== 7. /tmp ABL + loop logs =====
+-rw-r----- 1 app.e0031982 app.adm   526740 Sep 15 22:49 /tmp/ablation_loop.log
+-rw-r----- 1 app.e0031982 app.adm  6000757 Sep 29 15:41 /tmp/ablation_loop_s2_1shot.log
+-rw-r----- 1 app.e0031982 app.adm   405699 Sep 28 22:03 /tmp/ABL_canary_k1.log
+-rw-r----- 1 app.e0031982 app.adm     5897 Sep 15 18:36 /tmp/ABL_eval_pure_llm_r1.log
+-rw-r----- 1 app.e0031982 app.adm 23403971 Sep 28 11:36 /tmp/ABL_full_r1.log
+-rw-r----- 1 app.e0031982 app.adm 24338927 Sep 29 00:16 /tmp/ABL_k10_r1.log
+-rw-r----- 1 app.e0031982 app.adm 23679190 Sep 29 05:17 /tmp/ABL_k1_r1.log
+-rw-r----- 1 app.e0031982 app.adm 24681570 Sep 29 02:48 /tmp/ABL_k3_r1.log
+-rw-r----- 1 app.e0031982 app.adm   148763 Sep 29 11:01 /tmp/ABL_lagged_canary.log
+-rw-r----- 1 app.e0031982 app.adm 30486570 Sep 29 08:50 /tmp/ABL_lagged_r1.log
+-rw-r----- 1 app.e0031982 app.adm 32915372 Sep 29 14:06 /tmp/ABL_lagged_r2.log
+-rw-r----- 1 app.e0031982 app.adm     5846 Sep 29 21:24 /tmp/ABL_omega_low_r1_eval.log
+-rw-r----- 1 app.e0031982 app.adm  1310720 Sep 29 18:18 /tmp/ABL_omega_low_r1_failed_attempt1.log
+-rw-r----- 1 app.e0031982 app.adm 27306429 Sep 29 21:07 /tmp/ABL_omega_low_r1.log
+-rw-r----- 1 app.e0031982 app.adm 25374923 Sep 30 01:04 /tmp/ABL_omega_low_r2.log
+-rw-r----- 1 app.e0031982 app.adm 24852887 Oct  1 19:42 /tmp/ABL_omega_low_r3.log
+-rw-r----- 1 app.e0031982 app.adm 25886146 Oct  1 23:59 /tmp/ABL_omega_low_r4.log
+-rw-r----- 1 app.e0031982 app.adm 23159180 Oct  2 02:40 /tmp/ABL_omega_low_r5.log
+-rw-r----- 1 app.e0031982 app.adm     5604 Sep 23 21:03 /tmp/ABL_pure_llm_r1_eval.log
+-rw-r----- 1 app.e0031982 app.adm 28664559 Oct  3 16:29 /tmp/ABL_pure_llm_r1.log
+===== DONE =====
+```
