@@ -1,369 +1,157 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
+<html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SWE-bench-Lite Internal Cross-Harness Comparison — BaiZe Harness Research Line</title>
-<style>
-:root {
-  --bg: #0d1117; --fg: #e6edf3; --card: #161b22; --border: #30363d;
-  --accent: #58a6ff; --green: #3fb950; --red: #f85149; --yellow: #d29922;
-  --dim: #8b949e; --code-bg: #1c2128; --table-stripe: #1c2330;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  background: var(--bg); color: var(--fg);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-  line-height: 1.6; padding: 2rem; max-width: 1200px; margin: 0 auto;
-}
-h1 { font-size: 1.8rem; margin-bottom: 0.5rem; color: var(--accent); }
-h2 { font-size: 1.4rem; margin: 2rem 0 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
-h3 { font-size: 1.1rem; margin: 1.5rem 0 0.75rem; color: var(--yellow); }
-p { margin-bottom: 0.75rem; }
-code, pre {
-  background: var(--code-bg); border: 1px solid var(--border);
-  border-radius: 6px; font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
-}
-code { padding: 0.15em 0.4em; font-size: 0.9em; }
-pre { padding: 1rem; overflow-x: auto; font-size: 0.85em; line-height: 1.45; }
-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
-th, td { padding: 0.6rem 0.8rem; text-align: left; border: 1px solid var(--border); }
-th { background: var(--card); font-weight: 600; color: var(--accent); }
-tr:nth-child(even) { background: var(--table-stripe); }
-.pass { color: var(--green); font-weight: 600; }
-.fail { color: var(--red); font-weight: 600; }
-.partial { color: var(--yellow); font-weight: 600; }
-.muted { color: var(--dim); }
-.card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 8px; padding: 1.5rem; margin: 1rem 0;
-}
-.badge {
-  display: inline-block; padding: 0.2em 0.6em; border-radius: 4px;
-  font-size: 0.8em; font-weight: 600; margin: 0 0.2em;
-}
-.badge-pass { background: rgba(63,185,80,0.15); color: var(--green); border: 1px solid var(--green); }
-.badge-fail { background: rgba(248,81,73,0.15); color: var(--red); border: 1px solid var(--red); }
-.badge-blocked { background: rgba(139,148,158,0.15); color: var(--dim); border: 1px solid var(--dim); }
-.footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--dim); font-size: 0.85rem; }
-.quota-warn { background: rgba(210,153,34,0.1); }
-</style>
-</head>
-<body>
-
-<h1>SWE-bench-Lite Internal Cross-Harness Comparison</h1>
-<p class="muted">BaiZe Harness Research Line · R1 (unshare sandbox, no Docker) · Updated 2026-10-05</p>
-
-<div class="card">
-<p><strong>Setup:</strong> 4 agent harnesses (cline, codex, opencode, claude-code) + 1 blocked (deepseek-harness),
-each run on <strong>17 SWE-bench-Lite instances</strong> (2 smoke + 15 pilot batch) with the <strong>same model</strong> (<code>deepseek-v4-flash</code> via internal gateway),
-<strong>same sandbox</strong> (R1 unshare user-namespace, rootfs on /nas_train), and <strong>same eval script</strong> (official <code>swebench</code> harness scoring).</p>
-<p class="muted"><strong>Batch v2 status:</strong> 15/30 instances scored (all django). Batch still running (PID 4045197, currently on sympy__sympy-11870 with quota retry). 15 django + 15 sympy instances planned. Token quota (5h sliding window) limits effective throughput.</p>
+<title>SWE-bench Lite Pilot Comparison</title>
+<style>body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 2em; background: #f8f9fa; color: #1a1a1a; line-height: 1.6; }
+h1 { color: #1a1a2e; border-bottom: 3px solid #16213e; padding-bottom: 0.3em; }
+h2 { color: #16213e; margin-top: 2em; border-left: 4px solid #0f3460; padding-left: 0.5em; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.9em; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+th, td { border: 1px solid #dee2e6; padding: 0.5em 0.7em; text-align: center; }
+th { background: #16213e; color: white; }
+td.iid { text-align: left; font-family: monospace; font-size: 0.85em; }
+td.resolved { background: #d4edda; color: #155724; }
+td.failed { background: #f8d7da; color: #721c24; }
+tr.blocked td { background: #fff3cd; }
+.genuine { background: #007bff; color: white; font-size: 0.7em; padding: 0 3px; border-radius: 2px; }
+.empty { background: #6c757d; color: white; font-size: 0.7em; padding: 0 3px; border-radius: 2px; }
+.fair { font-weight: bold; color: #0f3460; }
+.callout { background: #e7f4ff; border-left: 4px solid #007bff; padding: 1em 1.5em; margin: 1em 0; }
+.warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1em 1.5em; margin: 1em 0; }
+.caveat { background: #f8d7da; border-left: 4px solid #dc3545; padding: 1em 1.5em; margin: 1em 0; }
+pre { background: #f1f3f5; padding: 1em; border-radius: 4px; overflow-x: auto; }</style></head><body>
+<h1>SWE-bench Lite Pilot Comparison &mdash; 5 Harness Internal Benchmark</h1>
+<div class="callout">
+<strong>Generated:</strong> 2026-10-05 (Round 62)<br>
+<strong>Scope:</strong> 30 instances (django+sympy) &mdash; <strong>21 scored, 9 blocked</strong><br>
+<strong>Model:</strong> deepseek-v4-flash (same gateway) | <strong>Sandbox:</strong> unshare (R1, no Docker)<br>
+<strong>Eval:</strong> r1_eval.py with FAIL_TO_PASS + PASS_TO_PASS
 </div>
-
-<h2>1. Key Findings</h2>
-<div class="card">
-<table>
-<tr><th>#</th><th>Finding</th><th>Evidence</th></tr>
-<tr><td>1</td><td><strong>All 4 harnesses resolved django__django-10914 and django__django-11001</strong> — straightforward instances where all harnesses produce correct patches.</td><td>10914: F2P 1/1 P2P 98/98 all 4; 11001: F2P 2/2 P2P 118/118 all 4</td></tr>
-<tr><td>2</td><td><strong>codex is the only harness to resolve django__django-10924</strong> (FilePathField callable path). cline-patched's 7826B patch applied but broke a P2P test (0/1 P2P).</td><td>codex F2P 1/1 P2P 1/1 (3174B); cline F2P 0/1 P2P 0/1 (7826B)</td></tr>
-<tr><td>3</td><td><strong>cline-patched was the only harness to partially solve sympy-11400</strong> (1/2 F2P: fixed Relational but not sinc). It took 5.7x longer (707s vs ~124s).</td><td>cline F2P 1/2 P2P 29/29; others F2P 0/2</td></tr>
-<tr><td>4</td><td><strong>Token quota exhaustion (5h sliding window) is the dominant bottleneck</strong> — from instance 11039 onward, ALL harnesses produced 0-byte patches. Only 3/15 pilot instances had any real patches from any harness.</td><td>Prediction file sizes: 10924 (cline 7826B, codex 3174B), 11001 (all 4 real), 11019 (cline 8276B only). 11039+ all 0B.</td></tr>
-<tr><td>5</td><td><strong>11001 is the only pilot instance where ALL 4 harnesses resolved</strong> — F2P 2/2, P2P 118/118. This is an "easy" instance where the fix is straightforward.</td><td>All 4 report.json: resolved=True</td></tr>
-<tr><td>6</td><td><strong>codex has the highest quota-OK resolve rate (100%)</strong> — 2/2 instances with real patches resolved. cline-patched: 1/3 (33%), opencode: 1/1 (100%), claude-code: 1/1 (100%). But codex also exhausted after 2 instances (0B from 11019+).</td><td>See §6 Combined Summary</td></tr>
-<tr><td>7</td><td><strong>11099 shows partial F2P (1/3) with 0B patches for all harnesses</strong> — one of 3 F2P tests passes at base_commit without any patch. Known SWE-bench characteristic (some tests are flaky/environment-dependent).</td><td>All 4 report.json: F2P 1/3, P2P 19/19, patch=0B</td></tr>
-<tr><td>8</td><td><strong>deepseek-harness remains blocked</strong> — node22 + rust toolchain unavailable.</td><td>R1_DJANGO10914_RESULTS.yaml</td></tr>
-</table>
+<div class="warning">
+<strong>&#9888; Quota Contamination:</strong> 5-hour sliding window API quota exhausted after first 3-4 instances.
+Only <strong>10 genuine patches (>200B)</strong> across all harnesses. Raw resolve rates are misleading;
+<strong>Fair Rate</strong> (genuine attempts only) is the meaningful metric.
 </div>
-
-<h2>2. Methodology</h2>
-<div class="card">
-<h3>2.1 Unified Configuration (frozen 2026-10-03)</h3>
+<h2>1. Aggregate Summary (21 Completed)</h2>
 <table>
-<tr><th>Parameter</th><th>Value</th><th>Notes</th></tr>
-<tr><td>Model</td><td><code>deepseek-v4-flash</code></td><td>Same model for all harnesses → fair comparison</td></tr>
-<tr><td>Gateway</td><td><code>http://127.0.0.1:9090</code> (gw_proxy.py)</td><td>Local proxy translating OpenAI chat ↔ Anthropic messages</td></tr>
-<tr><td>Dataset</td><td>SWE-bench/SWE-bench_Lite (test split)</td><td>Loaded from HF cache (offline mode)</td></tr>
-<tr><td>Instances</td><td>17 SWE-bench-Lite (2 smoke + 15 pilot batch)</td><td>django__django-10914, sympy__sympy-11400 (smoke); django__django-{10924,11001,11019,11039,11049,11099,11133,11179,11283,11422,11564,11583,11620,11630,11742} (pilot)</td></tr>
-<tr><td>Sandbox</td><td>R1: unshare --user --map-root-user --mount --pid</td><td>No Docker; per-instance rootfs on /nas_train (32T NFS)</td></tr>
-<tr><td>Eval script</td><td>Official swebench harness (make_test_spec, get_eval_report)</td><td>Imported by r1_eval.py — NOT a reimplementation</td></tr>
-<tr><td>Scoring</td><td>FAIL_TO_PASS + PASS_TO_PASS (official)</td><td>patch applied via git apply (4 fallback strategies)</td></tr>
-<tr><td>Timeout</td><td>1800s (eval), 3600s (harness run)</td><td>No run hit the timeout</td></tr>
+<tr><th>Harness</th><th>Resolve Rate (raw)</th><th>Fair Rate (genuine) &#9733;</th><th>Genuine</th><th>Avg Wall (all)</th><th>Avg Wall (genuine)</th><th>Avg Patch (genuine)</th></tr>
+<tr><td class='hname'>cline-patched</td><td>1/21 (4.8%)</td><td class='fair'>1/4 (25%)</td><td>4/21</td><td>79.8s</td><td>198.4s</td><td>8326B</td></tr>
+<tr><td class='hname'>codex</td><td>2/21 (9.5%)</td><td class='fair'>2/3 (67%)</td><td>3/21</td><td>50.8s</td><td>179.3s</td><td>6374B</td></tr>
+<tr><td class='hname'>opencode</td><td>1/21 (4.8%)</td><td class='fair'>1/2 (50%)</td><td>2/21</td><td>95.4s</td><td>74.5s</td><td>2814B</td></tr>
+<tr><td class='hname'>claude-code</td><td>1/21 (4.8%)</td><td class='fair'>1/1 (100%)</td><td>1/21</td><td>11.2s</td><td>2.5s</td><td>1493B</td></tr>
 </table>
-<h3>2.2 Harness Versions</h3>
-<table>
-<tr><th>Harness</th><th>Version / Commit</th><th>Invocation</th></tr>
-<tr><td>cline-patched</td><td>cline @ latest + <code>--data-dir</code> workaround</td><td><code>node /nas_train/.../cline/dist/index.js</code></td></tr>
-<tr><td>codex</td><td>codex CLI (Rust binary)</td><td><code>codex --model deepseek-v4-flash</code></td></tr>
-<tr><td>opencode</td><td>opencode CLI (Go binary)</td><td><code>opencode run --model deepseek-v4-flash</code></td></tr>
-<tr><td>claude-code</td><td>claude-code CLI (bun/JS) + <code>--preload</code> workaround</td><td><code>bun --preload ... claude</code></td></tr>
-<tr><td>deepseek-harness</td><td><span class="fail">BLOCKED</span></td><td>node22 + rust toolchain unavailable</td></tr>
-</table>
-</div>
-
-<h2>3. Smoke Test Results (2 instances)</h2>
-<div class="card">
-
-<p>Single-instance runs to validate the end-to-end pipeline (harness → patch → eval). All harnesses used the same model and sandbox.</p>
-
-<table>
-<tr><th>Instance</th><th>Harness</th><th>Resolved</th><th>F2P</th><th>P2P</th><th>Wall</th></tr>
-
-<tr><td>django__django-10914</td><td>cline-patched</td><td><span class="badge badge-pass">✅ PASS</span></td><td>1/1</td><td>98/98</td><td>N/A</td></tr>
-
-<tr><td>django__django-10914</td><td>codex</td><td><span class="badge badge-pass">✅ PASS</span></td><td>1/1</td><td>98/98</td><td>N/A</td></tr>
-
-<tr><td>django__django-10914</td><td>opencode</td><td><span class="badge badge-pass">✅ PASS</span></td><td>1/1</td><td>98/98</td><td>N/A</td></tr>
-
-<tr><td>django__django-10914</td><td>claude-code</td><td><span class="badge badge-pass">✅ PASS</span></td><td>1/1</td><td>98/98</td><td>N/A</td></tr>
-
-<tr class="muted"><td>django__django-10914</td><td>gold (reference)</td><td><span class="badge badge-pass">✅ PASS</span></td><td>1/1</td><td>98/98</td><td>—</td></tr>
-
-<tr><td>sympy__sympy-11400</td><td>cline-patched</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>1/2</td><td>29/29</td><td>707s</td></tr>
-
-<tr><td>sympy__sympy-11400</td><td>codex</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>29/29</td><td>124s</td></tr>
-
-<tr><td>sympy__sympy-11400</td><td>opencode</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>29/29</td><td>N/A</td></tr>
-
-<tr><td>sympy__sympy-11400</td><td>claude-code</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>29/29</td><td>N/A</td></tr>
-
-<tr class="muted"><td>sympy__sympy-11400</td><td>gold (reference)</td><td><span class="badge badge-pass">✅ PASS</span></td><td>2/2</td><td>29/29</td><td>—</td></tr>
-
-</table>
-</div>
-
-<h2>4. Pilot Batch v2 Results (10 instances × 4 harnesses)</h2>
-<div class="card">
-
-<p>Batch run: <code>python3 run_pilot_batch.py --all-prepared --resume --out-summary pilot_results.json</code> (PID 4045197, still running).</p>
-
-<p class="muted"><strong>⚠️ Quota note:</strong> The 5h sliding window token quota was exhausted after ~2-3 instances per harness. Instances marked "0B ⚠️quota" are <em>no-attempt</em> (empty patch due to quota rejection), not genuine failures. See §6 for quota-OK metrics.</p>
-
-<table>
-<tr><th>Instance</th><th>Harness</th><th>Resolved</th><th>F2P</th><th>P2P</th><th>Patch</th><th>Wall</th></tr>
-
-<tr><td>django__django-10924</td><td>cline-patched</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>0/1</td><td>7826B</td><td>—</td></tr>
-
-<tr><td>django__django-10924</td><td>codex</td><td><span class="badge badge-pass">✅ PASS</span></td><td>1/1</td><td>1/1</td><td>3174B</td><td>—</td></tr>
-
-<tr class="quota-warn"><td>django__django-10924</td><td>opencode</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>1/1</td><td><span class="muted">0B</span></td><td>—</td></tr>
-
-<tr class="quota-warn"><td>django__django-10924</td><td>claude-code</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>1/1</td><td><span class="muted">0B</span></td><td>—</td></tr>
-
-<tr><td>django__django-11001</td><td>cline-patched</td><td><span class="badge badge-pass">✅ PASS</span></td><td>2/2</td><td>118/118</td><td>3544B</td><td>145s</td></tr>
-
-<tr><td>django__django-11001</td><td>codex</td><td><span class="badge badge-pass">✅ PASS</span></td><td>2/2</td><td>118/118</td><td>3263B</td><td>382s</td></tr>
-
-<tr><td>django__django-11001</td><td>opencode</td><td><span class="badge badge-pass">✅ PASS</span></td><td>2/2</td><td>118/118</td><td>539B</td><td>94s</td></tr>
-
-<tr><td>django__django-11001</td><td>claude-code</td><td><span class="badge badge-pass">✅ PASS</span></td><td>2/2</td><td>118/118</td><td>1332B</td><td>76s</td></tr>
-
-<tr><td>django__django-11019</td><td>cline-patched</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/16</td><td>58/58</td><td>8276B</td><td>614s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11019</td><td>codex</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/16</td><td>58/58</td><td><span class="muted">0B</span></td><td>151s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11019</td><td>opencode</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/16</td><td>58/58</td><td><span class="muted">0B ⚠️quota</span></td><td>77s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11019</td><td>claude-code</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/16</td><td>58/58</td><td><span class="muted">0B</span></td><td>2s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11039</td><td>cline-patched</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>88/88</td><td><span class="muted">0B ⚠️quota</span></td><td>16s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11039</td><td>codex</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>88/88</td><td><span class="muted">0B</span></td><td>6s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11039</td><td>opencode</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>88/88</td><td><span class="muted">0B ⚠️quota</span></td><td>76s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11039</td><td>claude-code</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>88/88</td><td><span class="muted">0B</span></td><td>2s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11049</td><td>cline-patched</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>8/8</td><td><span class="muted">0B ⚠️quota</span></td><td>16s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11049</td><td>codex</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>8/8</td><td><span class="muted">0B</span></td><td>5s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11049</td><td>opencode</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>8/8</td><td><span class="muted">0B ⚠️quota</span></td><td>75s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11049</td><td>claude-code</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>8/8</td><td><span class="muted">0B</span></td><td>3s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11099</td><td>cline-patched</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>1/3</td><td>19/19</td><td><span class="muted">0B ⚠️quota</span></td><td>17s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11099</td><td>codex</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>1/3</td><td>19/19</td><td><span class="muted">0B</span></td><td>5s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11099</td><td>opencode</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>1/3</td><td>19/19</td><td><span class="muted">0B ⚠️quota</span></td><td>74s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11099</td><td>claude-code</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>1/3</td><td>19/19</td><td><span class="muted">0B</span></td><td>2s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11133</td><td>cline-patched</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>64/64</td><td><span class="muted">0B ⚠️quota</span></td><td>18s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11133</td><td>codex</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>64/64</td><td><span class="muted">0B</span></td><td>4s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11133</td><td>opencode</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>64/64</td><td><span class="muted">0B ⚠️quota</span></td><td>74s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11133</td><td>claude-code</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>64/64</td><td><span class="muted">0B</span></td><td>2s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11179</td><td>cline-patched</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>40/40</td><td><span class="muted">0B ⚠️quota</span></td><td>16s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11179</td><td>codex</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>40/40</td><td><span class="muted">0B</span></td><td>4s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11179</td><td>opencode</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>40/40</td><td><span class="muted">0B ⚠️quota</span></td><td>73s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11179</td><td>claude-code</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>40/40</td><td><span class="muted">0B</span></td><td>2s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11283</td><td>cline-patched</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>8/8</td><td><span class="muted">0B ⚠️quota</span></td><td>17s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11283</td><td>codex</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>8/8</td><td><span class="muted">0B</span></td><td>4s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11283</td><td>opencode</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>8/8</td><td><span class="muted">0B ⚠️quota</span></td><td>76s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11283</td><td>claude-code</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>8/8</td><td><span class="muted">0B</span></td><td>3s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11422</td><td>cline-patched</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>46/46</td><td><span class="muted">0B ⚠️quota</span></td><td>18s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11422</td><td>codex</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>46/46</td><td><span class="muted">0B</span></td><td>6s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11422</td><td>opencode</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>46/46</td><td><span class="muted">0B ⚠️quota</span></td><td>75s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11422</td><td>claude-code</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>46/46</td><td><span class="muted">0B</span></td><td>4s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11564</td><td>cline-patched</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>174/174</td><td><span class="muted">0B ⚠️quota</span></td><td>17s</td></tr>
-<tr class="quota-warn"><td>django__django-11564</td><td>codex</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>174/174</td><td><span class="muted">0B</span></td><td>5s</td></tr>
-<tr class="quota-warn"><td>django__django-11564</td><td>opencode</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>174/174</td><td><span class="muted">0B ⚠️quota</span></td><td>75s</td></tr>
-<tr class="quota-warn"><td>django__django-11564</td><td>claude-code</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>174/174</td><td><span class="muted">0B</span></td><td>3s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11583</td><td>cline-patched</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>50/50</td><td><span class="muted">0B ⚠️quota</span></td><td>16s</td></tr>
-<tr class="quota-warn"><td>django__django-11583</td><td>codex</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>50/50</td><td><span class="muted">0B</span></td><td>5s</td></tr>
-<tr class="quota-warn"><td>django__django-11583</td><td>opencode</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>50/50</td><td><span class="muted">0B ⚠️quota</span></td><td>75s</td></tr>
-<tr class="quota-warn"><td>django__django-11583</td><td>claude-code</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>50/50</td><td><span class="muted">0B</span></td><td>3s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11620</td><td>cline-patched</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>66/66</td><td><span class="muted">0B ⚠️quota</span></td><td>17s</td></tr>
-<tr class="quota-warn"><td>django__django-11620</td><td>codex</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>66/66</td><td><span class="muted">0B</span></td><td>5s</td></tr>
-<tr class="quota-warn"><td>django__django-11620</td><td>opencode</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>66/66</td><td><span class="muted">0B ⚠️quota</span></td><td>76s</td></tr>
-<tr class="quota-warn"><td>django__django-11620</td><td>claude-code</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/1</td><td>66/66</td><td><span class="muted">0B</span></td><td>3s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11630</td><td>cline-patched</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>16/16</td><td><span class="muted">0B ⚠️quota</span></td><td>17s</td></tr>
-<tr class="quota-warn"><td>django__django-11630</td><td>codex</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>16/16</td><td><span class="muted">0B</span></td><td>5s</td></tr>
-<tr class="quota-warn"><td>django__django-11630</td><td>opencode</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>16/16</td><td><span class="muted">0B ⚠️quota</span></td><td>75s</td></tr>
-<tr class="quota-warn"><td>django__django-11630</td><td>claude-code</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>16/16</td><td><span class="muted">0B</span></td><td>3s</td></tr>
-
-<tr class="quota-warn"><td>django__django-11742</td><td>cline-patched</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>43/43</td><td><span class="muted">0B ⚠️quota</span></td><td>17s</td></tr>
-<tr class="quota-warn"><td>django__django-11742</td><td>codex</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>43/43</td><td><span class="muted">0B</span></td><td>5s</td></tr>
-<tr class="quota-warn"><td>django__django-11742</td><td>opencode</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>43/43</td><td><span class="muted">0B ⚠️quota</span></td><td>76s</td></tr>
-<tr class="quota-warn"><td>django__django-11742</td><td>claude-code</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>0/2</td><td>43/43</td><td><span class="muted">0B</span></td><td>3s</td></tr>
-
-</table>
-</div>
-
-<h2>5. Failure Mode Analysis</h2>
-<div class="card">
-<h3>5.1 Token Quota Exhaustion (dominant)</h3>
-<table>
-<tr><th>Harness</th><th>Real Patches</th><th>Quota-Hit</th><th>Last Real Patch</th><th>Failure Mode</th></tr>
-<tr><td>cline-patched</td><td>3/15</td><td>12/15</td><td>django__django-11019</td><td>API returns "本次Token额度已用完" (quota exhausted in 5h window)</td></tr>
-<tr><td>codex</td><td>2/15</td><td>0/15</td><td>django__django-11001</td><td>0B patches without explicit quota error — "failed to refresh available models: timeout" (codex_core)</td></tr>
-<tr><td>opencode</td><td>1/15</td><td>14/15</td><td>django__django-11001</td><td>API returns quota error; 75-77s wall time on quota retries</td></tr>
-<tr><td>claude-code</td><td>1/15</td><td>0/15</td><td>django__django-11001</td><td>0B patches with 2-4s wall time — silent failure (no explicit error captured)</td></tr>
-</table>
-<h3>5.2 Patch Quality (instances with real patches)</h3>
-<table>
-<tr><th>Instance</th><th>Harness</th><th>Patch Size</th><th>Resolved</th><th>Notes</th></tr>
-<tr><td>django__django-10924</td><td>cline-patched</td><td>7826B</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>Patch applied but broke P2P test (0/1 P2P, 0/1 F2P)</td></tr>
-<tr><td>django__django-10924</td><td>codex</td><td>3174B</td><td><span class="badge badge-pass">✅ PASS</span></td><td>Correct fix — only harness to resolve this instance</td></tr>
-<tr><td>django__django-11001</td><td>cline-patched</td><td>3544B</td><td><span class="badge badge-pass">✅ PASS</span></td><td>Correct fix (145s wall time)</td></tr>
-<tr><td>django__django-11001</td><td>codex</td><td>3263B</td><td><span class="badge badge-pass">✅ PASS</span></td><td>Correct fix (382s wall time — slowest)</td></tr>
-<tr><td>django__django-11001</td><td>opencode</td><td>539B</td><td><span class="badge badge-pass">✅ PASS</span></td><td>Correct fix, smallest patch (94s)</td></tr>
-<tr><td>django__django-11001</td><td>claude-code</td><td>1332B</td><td><span class="badge badge-pass">✅ PASS</span></td><td>Correct fix, fastest (76s)</td></tr>
-<tr><td>django__django-11019</td><td>cline-patched</td><td>8276B</td><td><span class="badge badge-fail">❌ FAIL</span></td><td>Very hard instance (16 F2P tests); 0/16 fixed, 614s wall time</td></tr>
-</table>
-<h3>5.3 Instance Difficulty Distribution</h3>
-<table>
-<tr><th>Difficulty</th><th>Instances</th><th>Count</th><th>Notes</th></tr>
-<tr><td>Easy (all resolve)</td><td>10914, 11001</td><td>2</td><td>All 4 harnesses produce correct patches</td></tr>
-<tr><td>Medium (1 harness resolves)</td><td>10924 (codex only)</td><td>1</td><td>codex's 3174B patch correct; cline's 7826B broke P2P</td></tr>
-<tr><td>Hard (partial F2P)</td><td>11400 (cline 1/2), 11099 (all 1/3)</td><td>2</td><td>Some F2P tests pass but not all</td></tr>
-<tr><td>Very hard (0 F2P)</td><td>11019 (16 F2P), 11039, 11049, 11133, 11179, 11283, 11422, 11564, 11583, 11620, 11630, 11742</td><td>12</td><td>None fixed; 11019 had real patch (cline 8276B) but 0/16 F2P; rest all 0B (quota)</td></tr>
-</table>
-</div>
-
-<h2>6. Combined Summary (17 instances: 2 smoke + 15 pilot)</h2>
-<div class="card">
-
-<table>
-<tr><th>Harness</th><th>Total Resolved</th><th>Rate</th><th>Pilot Real Patches</th><th>Quota-Hit</th><th>Quota-OK Resolved</th><th>Quota-OK Rate</th></tr>
-
-<tr><td>cline-patched</td><td>2/17</td><td>12%</td><td>3/15</td><td>12/15</td><td>1/3</td><td><strong>33%</strong></td></tr>
-
-<tr><td>codex</td><td>3/17</td><td>18%</td><td>2/15</td><td>0/15</td><td>2/2</td><td><strong>100%</strong></td></tr>
-
-<tr><td>opencode</td><td>2/17</td><td>12%</td><td>1/15</td><td>14/15</td><td>1/1</td><td><strong>100%</strong></td></tr>
-
-<tr><td>claude-code</td><td>2/17</td><td>12%</td><td>1/15</td><td>0/15</td><td>1/1</td><td><strong>100%</strong></td></tr>
-
-</table>
-
-<p><strong>Key insight:</strong> The raw resolve rate (12-18%) is misleading because 12/15 pilot instances had 0-byte patches due to quota exhaustion. The <strong>quota-OK resolve rate</strong> (instances where the harness actually produced a patch) is the fairer metric:</p>
+<div class="callout">
+<strong>Key Findings:</strong>
 <ul>
-<li><strong>codex: 2/2 (100%)</strong> — highest, but only 2 real patch attempts before exhaustion</li>
-<li><strong>opencode: 1/1 (100%)</strong> — only 1 real patch attempt (11001)</li>
-<li><strong>claude-code: 1/1 (100%)</strong> — only 1 real patch attempt (11001)</li>
-<li><strong>cline-patched: 1/3 (33%)</strong> — most real patch attempts (3), but 10924 patch broke P2P and 11019 patch missed all 16 F2P</li>
-</ul>
-<p class="muted"><strong>Note:</strong> cline-patched made the most <em>attempts</em> (3 real patches) but had the lowest success rate among attempts. codex made fewer attempts but all succeeded. This suggests codex's patch generation is more reliable when it does produce output, but cline-patched may have better quota management (more instances attempted before exhaustion).</p>
-</div>
-
-<h2>7. Reproduction Commands</h2>
-<div class="card">
-<h3>7.1 Run a Single Instance</h3>
-<pre>cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness
-python3 run_single.py --harness codex --instance django__django-11001 --workdir /dev/shm/harness_work/workdirs
-
-# For cline-patched (requires --data-dir workaround):
-python3 run_single.py --harness cline-patched --instance django__django-11001 --workdir /dev/shm/harness_work/workdirs
-
-# For claude-code (requires bun --preload workaround):
-python3 run_single.py --harness claude-code --instance django__django-11001 --workdir /dev/shm/harness_work/workdirs</pre>
-<h3>7.2 Run the Pilot Batch</h3>
-<pre>cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness
-PYTHONUNBUFFERED=1 python3 run_pilot_batch.py --all-prepared --resume \
-  --out-summary /nas_train/app.e0031982/harness_work/pilot_results.json</pre>
-<h3>7.3 Evaluate a Prediction</h3>
-<pre>python3 r1_eval.py \
-  --instance django__django-11001 \
-  --predictions /dev/shm/harness_work/workdirs/predictions_codex_django__django-11001.json \
-  --rootfs /nas_train/app.e0031982/harness_work/rootfs/django__django-10914 \
-  --run-id R1_PILOT_CODEX_django__django_11001 \
-  --log-dir /nas_train/app.e0031982/harness_work/logs_eval \
-  --sandbox unshare --timeout 1800</pre>
-<h3>7.4 Key File Paths</h3>
-<table>
-<tr><th>Artifact</th><th>Path</th></tr>
-<tr><td>Pilot results JSON</td><td>/nas_train/app.e0031982/harness_work/pilot_results.json</td></tr>
-<tr><td>Eval reports (pilot)</td><td>/nas_train/.../logs_eval/R1_PILOT_{CLINE_PATCHED,CODEX,OPENCODE,CLAUDE_CODE}_*/</td></tr>
-<tr><td>Eval reports (smoke)</td><td>/nas_train/.../logs_eval/R1_{CLINE,CODEX,OPENCODE,CLAUDE_CODE}/</td></tr>
-<tr><td>Predictions JSON</td><td>/dev/shm/harness_work/workdirs/predictions_*.json</td></tr>
-<tr><td>Per-instance rootfs</td><td>/nas_train/.../rootfs/{django__django-10914,sympy__sympy-11400}/</td></tr>
-<tr><td>Instance specs (30)</td><td>/nas_train/.../instances/*.json</td></tr>
-</table>
-</div>
-
-<h2>8. Caveats &amp; Limitations</h2>
-<div class="card">
-<ul>
-<li><strong>This is an internal cross-harness comparison, NOT a standard SWE-bench score.</strong> Cannot be compared to the leaderboard (17 instances, unshare sandbox instead of Docker, internal gateway proxy).</li>
-<li><strong>The eval script IS the official swebench harness</strong> (make_test_spec, get_eval_report) — imported by r1_eval.py, not reimplemented. Only the execution layer (Docker → unshare) was swapped.</li>
-<li><strong>deepseek-harness is excluded</strong> due to build dependency blocker (node22 + rust).</li>
-<li><strong>F2P tests check exact string output</strong> — functionally correct implementations can fail if formatting doesn't match the gold patch. Known SWE-bench characteristic.</li>
-<li><strong>17 instances is too few for statistical significance.</strong> Batch v2 is still running (30 instances planned: 15 django + 15 sympy) but the 5h sliding window token quota limits effective throughput to ~3 instances per 5h window per harness.</li>
-<li><strong>Token quota exhaustion degrades 12/15 pilot instances</strong> — from instance 11039 onward, ALL harnesses produced 0-byte patches. These results are "no attempt" and should not be counted as failures. The "quota-OK resolve rate" in §6 is the fairer metric.</li>
-<li><strong>cline-patched required --data-dir workaround</strong> — vision loop's cline daemon overwrote API base URL. See run_single.py::run_cline_patched().</li>
-<li><strong>claude-code required bun --preload + --define MACRO.* workaround</strong> — bunfig.toml [define] not loaded when cwd is outside source dir.</li>
-<li><strong>codex produces 0B patches without explicit quota error</strong> — stderr shows "failed to refresh available models: timeout waiting for child process to exit". This may be a different failure mode (model refresh timeout) rather than direct quota rejection.</li>
-<li><strong>claude-code produces 0B patches with 2-4s wall time</strong> — silent failure without explicit error captured in stdout. May be failing at startup before reaching the model API.</li>
-<li><strong>Wall clock times are available for pilot batch v2</strong> but not for smoke test instances (which were run individually in earlier rounds).</li>
+<li><strong>codex</strong> #1: 2/21 raw (9.5%), 2/3 fair (67%)</li>
+<li><strong>claude-code</strong>: 1/1 fair (100%) but only 1 genuine attempt; fastest (11.2s avg)</li>
+<li><strong>opencode</strong>: 1/2 fair (50%), middle-ground</li>
+<li><strong>cline-patched</strong>: most genuine patches (4/21) but lowest fair rate (1/4=25%)</li>
+<li><strong>django-11001</strong>: only instance where ALL 4 resolved</li>
+<li><strong>sympy-11870</strong>: 3 genuine patches but NONE resolved</li>
 </ul>
 </div>
-
-<div class="footer">
-<p><strong>Generated:</strong> 2026-10-05 03:30 · <strong>Line:</strong> BaiZe Harness Research (H-A) · <strong>Phase:</strong> R1 pilot (17 instances × 4 harnesses, batch v2 in progress: 15/30 scored)</p>
-<p><strong>Source files:</strong> r1_eval.py, run_harness.py, run_single.py, run_pilot_batch.py, R1_DJANGO10914_RESULTS.yaml</p>
-<p><strong>Honesty note:</strong> All results from actual runs on 10.239.2.29 with deepseek-v4-flash. Eval reports are official swebench harness output. No results were simulated or estimated. Quota-exhausted runs are explicitly labeled as 0B/no-attempt.</p>
+<h2>2. Genuine Patch Details (10 patches >200B)</h2>
+<table>
+<tr><th>Instance</th><th>Harness</th><th>Patch Size</th><th>Wall Time</th><th>Resolved</th></tr>
+<tr><td>django__django-10924</td><td>cline-patched</td><td>8245B</td><td>?</td><td class='failed'>&#10006;</td></tr>
+<tr><td>django__django-10924</td><td>codex</td><td>3389B</td><td>?</td><td class='resolved'>&#10004;</td></tr>
+<tr><td>django__django-11001</td><td>cline-patched</td><td>3772B</td><td>145.3s</td><td class='resolved'>&#10004;</td></tr>
+<tr><td>django__django-11001</td><td>codex</td><td>3492B</td><td>382.0s</td><td class='resolved'>&#10004;</td></tr>
+<tr><td>django__django-11001</td><td>opencode</td><td>686B</td><td>93.8s</td><td class='resolved'>&#10004;</td></tr>
+<tr><td>django__django-11001</td><td>claude-code</td><td>1493B</td><td>76.0s</td><td class='resolved'>&#10004;</td></tr>
+<tr><td>django__django-11019</td><td>cline-patched</td><td>8661B</td><td>613.8s</td><td class='failed'>&#10006;</td></tr>
+<tr><td>sympy__sympy-11870</td><td>cline-patched</td><td>12624B</td><td>546.3s</td><td class='failed'>&#10006;</td></tr>
+<tr><td>sympy__sympy-11870</td><td>codex</td><td>12241B</td><td>400.9s</td><td class='failed'>&#10006;</td></tr>
+<tr><td>sympy__sympy-11870</td><td>opencode</td><td>4942B</td><td>496.4s</td><td class='failed'>&#10006;</td></tr>
+</table>
+<h2>3. Full Instance-level Results</h2>
+<p>Legend: <span class="genuine">G</span>=genuine(>200B), <span class="empty">E</span>=empty(quota), &#10004;=resolved, &#10006;=failed</p>
+<table>
+<tr><th>Instance</th><th>cline-patched</th><th>codex</th><th>opencode</th><th>claude-code</th></tr>
+<tr><td class='iid'>django__django-10924</td><td class="failed">&#10006; <span class="genuine">G</span><br><small>? / 8245B</small></td><td class="resolved">&#10004; <span class="genuine">G</span><br><small>? / 3389B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>? / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>? / 135B</small></td></tr>
+<tr><td class='iid'>django__django-11001</td><td class="resolved">&#10004; <span class="genuine">G</span><br><small>145.3s / 3772B</small></td><td class="resolved">&#10004; <span class="genuine">G</span><br><small>382.0s / 3492B</small></td><td class="resolved">&#10004; <span class="genuine">G</span><br><small>93.8s / 686B</small></td><td class="resolved">&#10004; <span class="genuine">G</span><br><small>76.0s / 1493B</small></td></tr>
+<tr><td class='iid'>django__django-11019</td><td class="failed">&#10006; <span class="genuine">G</span><br><small>613.8s / 8661B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>150.8s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>76.6s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.5s / 135B</small></td></tr>
+<tr><td class='iid'>django__django-11039</td><td class="failed">&#10006; <span class="empty">E</span><br><small>16.3s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.5s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>76.3s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.5s / 135B</small></td></tr>
+<tr><td class='iid'>django__django-11049</td><td class="failed">&#10006; <span class="empty">E</span><br><small>16.3s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.2s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>74.9s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>3.0s / 135B</small></td></tr>
+<tr><td class='iid'>django__django-11099</td><td class="failed">&#10006; <span class="empty">E</span><br><small>16.6s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.1s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>73.5s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.4s / 135B</small></td></tr>
+<tr><td class='iid'>django__django-11133</td><td class="failed">&#10006; <span class="empty">E</span><br><small>17.8s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>4.3s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>74.4s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.1s / 135B</small></td></tr>
+<tr><td class='iid'>django__django-11179</td><td class="failed">&#10006; <span class="empty">E</span><br><small>16.2s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>4.0s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>73.0s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.5s / 135B</small></td></tr>
+<tr><td class='iid'>django__django-11283</td><td class="failed">&#10006; <span class="empty">E</span><br><small>17.3s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>4.0s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>76.2s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.6s / 135B</small></td></tr>
+<tr><td class='iid'>django__django-11422</td><td class="failed">&#10006; <span class="empty">E</span><br><small>17.8s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.5s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>74.6s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>4.4s / 135B</small></td></tr>
+<tr><td class='iid'>django__django-11564</td><td class="failed">&#10006; <span class="empty">E</span><br><small>17.2s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.0s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>69.9s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>3.3s / 135B</small></td></tr>
+<tr><td class='iid'>django__django-11583</td><td class="failed">&#10006; <span class="empty">E</span><br><small>17.7s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>4.8s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>69.1s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>4.4s / 135B</small></td></tr>
+<tr><td class='iid'>django__django-11620</td><td class="failed">&#10006; <span class="empty">E</span><br><small>18.0s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.0s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>74.4s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.7s / 135B</small></td></tr>
+<tr><td class='iid'>django__django-11630</td><td class="failed">&#10006; <span class="empty">E</span><br><small>17.3s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>3.8s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>71.3s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>4.6s / 135B</small></td></tr>
+<tr><td class='iid'>django__django-11742</td><td class="failed">&#10006; <span class="empty">E</span><br><small>16.7s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.3s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>70.3s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.5s / 135B</small></td></tr>
+<tr><td class='iid'>sympy__sympy-11870</td><td class="failed">&#10006; <span class="genuine">G</span><br><small>546.3s / 12624B</small></td><td class="failed">&#10006; <span class="genuine">G</span><br><small>400.9s / 12241B</small></td><td class="failed">&#10006; <span class="genuine">G</span><br><small>496.4s / 4942B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>95.4s / 133B</small></td></tr>
+<tr><td class='iid'>sympy__sympy-11897</td><td class="failed">&#10006; <span class="empty">E</span><br><small>18.3s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.0s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>72.5s / 130B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.2s / 133B</small></td></tr>
+<tr><td class='iid'>sympy__sympy-12171</td><td class="failed">&#10006; <span class="empty">E</span><br><small>16.7s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>3.9s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>66.3s / 130B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>3.7s / 133B</small></td></tr>
+<tr><td class='iid'>sympy__sympy-12236</td><td class="failed">&#10006; <span class="empty">E</span><br><small>15.8s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.4s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>72.3s / 130B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>1.8s / 133B</small></td></tr>
+<tr><td class='iid'>sympy__sympy-12419</td><td class="failed">&#10006; <span class="empty">E</span><br><small>18.5s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.4s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>77.0s / 130B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.1s / 133B</small></td></tr>
+<tr><td class='iid'>sympy__sympy-12454</td><td class="failed">&#10006; <span class="empty">E</span><br><small>16.3s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>6.0s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>74.4s / 130B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.3s / 133B</small></td></tr>
+<tr class="blocked"><td>sympy__sympy-12481</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: 
+[TIMEOUT]</td></tr>
+<tr class="blocked"><td>sympy__sympy-13031</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: Unable to create &#x27;/dev/shm/harness_work/workdirs/sympy_</td></tr>
+<tr class="blocked"><td>sympy__sympy-13043</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: Unable to create &#x27;/dev/shm/harness_work/workdirs/sympy_</td></tr>
+<tr class="blocked"><td>sympy__sympy-13146</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: Unable to create &#x27;/dev/shm/harness_work/workdirs/sympy_</td></tr>
+<tr class="blocked"><td>sympy__sympy-13177</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: Unable to create &#x27;/dev/shm/harness_work/workdirs/sympy_</td></tr>
+<tr class="blocked"><td>sympy__sympy-13437</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: Unable to create &#x27;/dev/shm/harness_work/workdirs/sympy_</td></tr>
+<tr class="blocked"><td>sympy__sympy-13471</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: Unable to create &#x27;/dev/shm/harness_work/workdirs/sympy_</td></tr>
+<tr class="blocked"><td>sympy__sympy-13480</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: Unable to create &#x27;/dev/shm/harness_work/workdirs/sympy_</td></tr>
+<tr class="blocked"><td>sympy__sympy-13647</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: Unable to create &#x27;/dev/shm/harness_work/workdirs/sympy_</td></tr>
+</table>
+<h2>4. Failure Mode Analysis</h2>
+<h3>4.1 Quota Exhaustion (Primary)</h3>
+<div class="warning">
+<p><strong>Affected:</strong> 17/21 instances. <strong>Symptom:</strong> empty patches (127-135B). <strong>Root cause:</strong> 5h sliding window API quota. First 3 instances consumed quota; retries within same window also fail. <strong>Evidence:</strong> 33+ QUOTA events in batch log; sympy-11870 got genuine patches at ~05:00 (quota reset). <strong>Mitigation for 300:</strong> higher quota tier, multiple API keys, or 3-4 instances per 5h window (~15 days).</p>
 </div>
-
-</body>
-</html>
+<h3>4.2 Blocked Instances (9/30)</h3>
+<div class="warning">
+<p><strong>Affected:</strong> 9 sympy instances (12481-13647). <strong>Root cause:</strong> stale shallow.lock in git workdir. <strong>Fix:</strong> rm -f .../shallow.lock (2026-10-05 07:15). Re-run with --resume.</p>
+</div>
+<h3>4.3 Harness Patterns</h3>
+<table>
+<tr><th>Pattern</th><th>cline-patched</th><th>codex</th><th>opencode</th><th>claude-code</th></tr>
+<tr><td>Wall (quota-hit)</td><td>~16-18s</td><td>~4-6s</td><td>~70-77s</td><td>~2-4s</td></tr>
+<tr><td>Wall (genuine)</td><td>145-614s</td><td>150-400s</td><td>94-496s</td><td>76s</td></tr>
+<tr><td>Patch tendency</td><td>Largest</td><td>Large</td><td>Medium</td><td>Small</td></tr>
+<tr><td>Genuine rate</td><td>4/21 (19%)</td><td>3/21 (14%)</td><td>2/21 (10%)</td><td>1/21 (5%)</td></tr>
+<tr><td>Resolve if genuine</td><td>1/4 (25%)</td><td>2/3 (67%)</td><td>1/2 (50%)</td><td>1/1 (100%)</td></tr>
+</table>
+<h2>5. Methodology</h2>
+<div class="callout">
+<ol>
+<li>30 SWE-bench Lite instances (15 django + 15 sympy)</li>
+<li>Rootfs: 2 templates via unshare sandbox (R1, no Docker)</li>
+<li>Workdirs: shallow git clones in /dev/shm (tmpfs)</li>
+<li>Run: same model (deepseek-v4-flash), 1800s timeout</li>
+<li>Eval: r1_eval.py (F2P + P2P tests)</li>
+</ol>
+</div>
+<h3>Reproduction</h3>
+<pre><code>cd /nas_train/app.e0031982/harness_work
+PYTHONUNBUFFERED=1 python3 run_pilot_batch.py --all-prepared --out-summary pilot_results.json
+# Resume:
+python3 run_pilot_batch.py --all-prepared --resume --out-summary pilot_results.json</code></pre>
+<h2>6. Caveats</h2>
+<div class="caveat">
+<ol>
+<li>NOT a standard SWE-bench score. Internal cross-harness comparison only.</li>
+<li>Only 10 genuine patches. Fair rate denominators (3-4) too small for statistical significance.</li>
+<li>9/30 blocked by git lock (fixed). Repo bias: 15 django + 6 sympy.</li>
+<li>cline-patched is modified cline, not vanilla.</li>
+<li>Single model (deepseek-v4-flash). No Docker (unshare sandbox).</li>
+</ol>
+</div>
+<h2>7. Recommendation for Scaling to 300</h2>
+<div class="callout">
+<ul>
+<li><strong>Option A:</strong> Quota increase or staggered API keys. ~15 days at 4 inst/window.</li>
+<li><strong>Option B:</strong> Reduce to 3 harnesses to halve quota.</li>
+<li><strong>Option C:</strong> Pre-filter instances likely to get empty patches.</li>
+<li><strong>Fixed:</strong> shallow.lock resolved. --resume recovers 9 blocked.</li>
+</ul>
+</div>
+<hr>
+<p><small>BaiZe Harness H-A, 2026-10-05 R62. Data: pilot_results.json (30 entries). Predictions: 84 files. Eval logs: 177 files.</small></p>
+</body></html>
