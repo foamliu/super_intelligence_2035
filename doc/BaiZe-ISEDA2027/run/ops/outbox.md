@@ -5634,3 +5634,67 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 54 · 2026-10-04 17:57:11 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME; B=/nas_train/app.e0031982
+WK=$B/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "=== 1. 磁盘上的新脚本是否已带 --data-dir ==="
+grep -nE '^DATA_DIR=' "$RUN/baize_pretrain_loop.sh" | cut -c1-150
+grep -n -- '--data-dir "\$DATA_DIR"' "$RUN/baize_pretrain_loop.sh" | cut -c1-150
+
+echo; echo "=== 2. 是否有旧 pretrain cline 在跑（不带 --data-dir 的 bun cline）==="
+pgrep -af 'bun.*cline' 2>/dev/null | grep -v -- '--data-dir' | grep -v grep | cut -c1-110 | sed 's/^/     /'
+ACT=$(pgrep -af 'bun.*cline' 2>/dev/null | grep -v -- '--data-dir' | grep -v grep | wc -l)
+echo "     计数 = $ACT"
+
+if [ "${ACT:-0}" -gt 0 ]; then
+  echo; echo "   ⏸ 有旧 pretrain cline 在跑 → 本轮不重启（避免打断进行中的 agent / 双 agent）。下轮再试。"
+else
+  echo; echo "=== 3. 停旧 loop + 用新脚本干净重启 ==="
+  pkill -f 'baize_pretrain_loop.sh'; sleep 6
+  echo "     残留 loop = $(pgrep -fc 'baize_pretrain_loop.sh' 2>/dev/null || echo 0)"
+  cd "$RUN"
+  setsid env $P bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+  sleep 45
+  echo -n "     Forbidden 计数（应为 0）= "; grep -c 'Forbidden' /tmp/baize_pretrain_loop.log 2>/dev/null
+  echo "     日志尾："; tail -6 /tmp/baize_pretrain_loop.log | cut -c1-160
+  echo -n "     cline 在跑吗: "; pgrep -af 'bun.*cline' | head -2 | cut -c1-120
+fi
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 17:57:11
+
+=== 1. 磁盘上的新脚本是否已带 --data-dir ===
+25:DATA_DIR="/nas_train/app.e0031982/.cline_pretrain"
+102:          cline --data-dir "$DATA_DIR" -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt
+
+=== 2. 是否有旧 pretrain cline 在跑（不带 --data-dir 的 bun cline）===
+     计数 = 0
+
+=== 3. 停旧 loop + 用新脚本干净重启 ===
+     残留 loop = 0
+0
+     Forbidden 计数（应为 0）= 0
+     日志尾：
+[0m[2m   Actually[0m[2m let[0m[2m me re[0m[2mcompute.[0m[2m The "[0m[2melapsed time per iteration[0m[2m ([0m[2mms)" at[0m[2m iteration[0m[2m
+[0m[2m   tok[0m[2m/s = 4[0m[2m,194,[0m[2m304 / 16[0m[2m.727 =[0m[2m 250[0m[2m,7[0m[2m49[0m[2m ≈ **[0m[2m251K tok[0m[2m/s**
+[0m[2m   
+   This is[0m[2m already ≥[0m[2m240K! But[0m[2m the task says[0m[2m to take the **[0m[2mlast 100 steps[0m[2m steady[0m[2m-state mean**.[0m[2m 
+[0m[2m   
+   So[0m[2m P[0m[2m-9.7[0m[2m is running[0m[2m healthy and[0m[2m progressing[0m[2m well. ETA[0m[2m ~22[0m[2m:40[0m
+     cline 在跑吗: 
+=== DONE ===
+```
