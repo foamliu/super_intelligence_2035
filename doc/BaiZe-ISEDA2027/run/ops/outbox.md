@@ -4359,3 +4359,135 @@ Filesystem                 Type  Size  Used Avail Use% Mounted on
 
 === DONE（后台 du 仍在跑；下轮读 /tmp/_duhome.txt + /tmp/_duhome.done）===
 ```
+
+---
+
+## RUN_ID 39 · 2026-10-04 11:35:05 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME
+
+echo; echo "=== 1. 完整 HOME 一级清单（32 项，已跑完）==="
+echo "   done=$([ -f /tmp/_duhome.done ] && echo YES || echo NO)  行数=$(wc -l < /tmp/_duhome.txt 2>/dev/null)"
+sort -hr /tmp/_duhome.txt 2>/dev/null | head -32 | sed 's/^/   /'
+
+echo; echo "=== 2. ⭐ 下钻 ~/.cache（后台低优先级，边跑边写）==="
+rm -f /tmp/_ducache.txt /tmp/_ducache.done
+setsid bash -c "nice -n 19 du -sh $H/.cache/* $H/.cache/.[!.]* > /tmp/_ducache.txt 2>/dev/null; echo done > /tmp/_ducache.done" </dev/null >/dev/null 2>&1 &
+sleep 12
+echo "   行数=$(wc -l < /tmp/_ducache.txt 2>/dev/null)  done=$([ -f /tmp/_ducache.done ] && echo YES || echo NO)"
+sort -hr /tmp/_ducache.txt 2>/dev/null | head -20 | sed 's/^/   /'
+
+echo; echo "=== 3. 常见可清缓存点名（各自 20s 有界）==="
+for p in "$H/.cache/huggingface" "$H/.cache/pip" "$H/.cache/torch" "$H/.cache/nvidia" "$H/.cache/uv" "$H/.cache/bun" "$H/.cache/ms-playwright" "$H/.cache/cline"; do
+  [ -e "$p" ] && { printf '   %-28s ' "${p#$H/}"; timeout 20 du -sh "$p" 2>/dev/null | cut -f1; }
+done
+
+echo; echo "=== 4. HF 缓存细节（是否可安全重建）==="
+if [ -d "$H/.cache/huggingface" ]; then
+  echo -n "   hub/blobs 条目数 = "; timeout 25 find "$H/.cache/huggingface/hub" -maxdepth 2 -name 'blobs' -type d 2>/dev/null | wc -l
+  echo "   -- hub 一级（前 8，仅名字）--"; ls -1 "$H/.cache/huggingface/hub" 2>/dev/null | head -8 | sed 's/^/     /'
+  echo -n "   最新 mtime = "; timeout 15 find "$H/.cache/huggingface" -maxdepth 3 -printf '%TY-%Tm-%Td %TH:%TM\n' 2>/dev/null | sort -r | head -1
+fi
+echo -n "   HF_HOME=${HF_HOME:-<empty>}  HF_DATASETS_CACHE=${HF_DATASETS_CACHE:-<empty>}  HF_HUB_CACHE=${HF_HUB_CACHE:-<empty>}"; echo
+
+echo; echo "=== 5. 顺带：.bun / .npm / .cline 的可清部分 ==="
+for p in "$H/.bun/install/cache" "$H/.npm/_cacache" "$H/.cline/data/sessions" "$H/.cline/data/tasks" "$H/.local/share"; do
+  [ -e "$p" ] && { printf '   %-32s ' "${p#$H/}"; timeout 25 du -sh "$p" 2>/dev/null | cut -f1; }
+done
+echo; echo "=== DONE（后台仍在跑；下轮读 /tmp/_ducache.txt）==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 11:35:05
+
+=== 1. 完整 HOME 一级清单（32 项，已跑完）===
+   done=YES  行数=32
+   107G	/home/app.e0031982/.cache
+   13G	/home/app.e0031982/.bun
+   5.6G	/home/app.e0031982/.cline
+   3.8G	/home/app.e0031982/.local
+   2.3G	/home/app.e0031982/.npm
+   1.6G	/home/app.e0031982/.npm-global
+   725M	/home/app.e0031982/.vscode-server
+   299M	/home/app.e0031982/.triton
+   53M	/home/app.e0031982/chip-mllm
+   1.3M	/home/app.e0031982/.codex
+   136K	/home/app.e0031982/.config
+   36K	/home/app.e0031982/.nv
+   24K	/home/app.e0031982/.ssh
+   16K	/home/app.e0031982/.copilot
+   16K	/home/app.e0031982/.conda
+   16K	/home/app.e0031982/Cline
+   12K	/home/app.e0031982/.modelscope
+   8.0K	/home/app.e0031982/.pip
+   8.0K	/home/app.e0031982/.keras
+   8.0K	/home/app.e0031982/.bashrc.bak.20261004-081247
+   8.0K	/home/app.e0031982/.bashrc
+   4.0K	/home/app.e0031982/.wget-hsts
+   4.0K	/home/app.e0031982/.swanlab
+   4.0K	/home/app.e0031982/.python_history
+   4.0K	/home/app.e0031982/.profile
+   4.0K	/home/app.e0031982/.npmrc
+   4.0K	/home/app.e0031982/.lesshst
+   4.0K	/home/app.e0031982/.git-credentials
+   4.0K	/home/app.e0031982/.gitconfig
+   4.0K	/home/app.e0031982/.condarc
+   4.0K	/home/app.e0031982/.bash_logout
+   4.0K	/home/app.e0031982/.bash_history
+
+=== 2. ⭐ 下钻 ~/.cache（后台低优先级，边跑边写）===
+   行数=18  done=YES
+   78G	/home/app.e0031982/.cache/huggingface
+   15G	/home/app.e0031982/.cache/uv
+   14G	/home/app.e0031982/.cache/pip
+   1.5G	/home/app.e0031982/.cache/vllm
+   259M	/home/app.e0031982/.cache/modelscope
+   48M	/home/app.e0031982/.cache/torch_extensions
+   12M	/home/app.e0031982/.cache/flashinfer
+   2.0M	/home/app.e0031982/.cache/areal
+   1.4M	/home/app.e0031982/.cache/swanlab
+   376K	/home/app.e0031982/.cache/tvm-ffi
+   204K	/home/app.e0031982/.cache/torch
+   40K	/home/app.e0031982/.cache/matplotlib
+   12K	/home/app.e0031982/.cache/Microsoft
+   8.0K	/home/app.e0031982/.cache/opencode
+   8.0K	/home/app.e0031982/.cache/conda
+   4.0K	/home/app.e0031982/.cache/node-gyp
+   4.0K	/home/app.e0031982/.cache/biome
+   0	/home/app.e0031982/.cache/motd.legal-displayed
+
+=== 3. 常见可清缓存点名（各自 20s 有界）===
+   .cache/huggingface           78G
+   .cache/pip                   14G
+   .cache/torch                 204K
+   .cache/uv                    15G
+
+=== 4. HF 缓存细节（是否可安全重建）===
+   hub/blobs 条目数 = 20
+   -- hub 一级（前 8，仅名字）--
+     datasets--AI4Math--MathVista
+     datasets--BLINK-Benchmark--BLINK
+     datasets--echo840--OCRBench
+     datasets--foamliu--coco
+     datasets--HuggingFaceM4--FineVision
+     datasets--ILSVRC--imagenet-1k
+     datasets--kakaobrain--coyo-700m
+     datasets--kdexd--red_caps
+   最新 mtime = 2026-09-05 15:44
+   HF_HOME=/nas_train/app.e0031982/.cache  HF_DATASETS_CACHE=/nas_train/app.e0031982/hf_cache  HF_HUB_CACHE=<empty>
+
+=== 5. 顺带：.bun / .npm / .cline 的可清部分 ===
+   .bun/install/cache               13G
+   .npm/_cacache                    1.9G
+   .cline/data/sessions             597M
+   .cline/data/tasks                912M
+   .local/share                     3.8G
+
+=== DONE（后台仍在跑；下轮读 /tmp/_ducache.txt）===
+```
