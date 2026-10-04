@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 12 -->
+<!-- RUN_ID: 13 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,32 @@
 
 ---
 
+## RUN_ID 13 — 📊 legacy 线：已完成的实测成绩 + conductor + 产出批次（接管清点）
+
+**背景**：为接管清点——查明 legacy 线**到底已跑出哪些有效成绩**、另一进程 `ablation_run_conductor_serial.sh` 是干嘛的、以及评测产出批次。**只读**。
+
+```bash
+# RUN_ID 13 — legacy line: exact completed results + conductor + outputs (read-only)
+D=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
+echo "== 0. TIME =="; timeout 10 date '+%F %T'
+echo "== 1. legacy MEMORY score/dashboard/PHASE =="; timeout 10 grep -nE 'mean|±|pure_llm|rag|wo_retrieval|phi_|done_all|PHASE|CONFIG' "$D/MEMORY_component_full.md" | head -45 | cut -c1-200
+echo "== 2. conductor script head =="; timeout 10 sed -n '1,28p' "$D/ablation_run_conductor_serial.sh" 2>&1 | cut -c1-180
+echo "== 3. conductor proc args =="; timeout 10 ps -o pid=,ppid=,etimes=,args= -p 1381975 2>&1 | cut -c1-200
+echo "== 4. eval output batches =="; timeout 25 ls -lt /nasdata/app.e0031982/eda_code_eval 2>/dev/null | head -25 | cut -c1-140
+echo "== 5. wo_retrieval r1 final result =="; timeout 10 grep -E 'pass \(|Pass@1|评估完成' /tmp/ABL_wo_retrieval_r1.log 2>/dev/null | tail -6 | cut -c1-180
+echo "== 6. old one-shot r1 results =="; for f in ABL_full_r1 ABL_k10_r1 ABL_k3_r1 ABL_k1_r1 ABL_lagged_r1 ABL_lagged_r2 ABL_omega_low_r1 ABL_omega_low_r2; do printf '%-20s ' "$f"; timeout 8 grep -oE '[0-9]+/158 pass \([0-9.]+%\)' "/tmp/$f.log" 2>/dev/null | tail -1; echo; done
+echo "== DONE =="
+```
+
+---
+
 ## RUN_ID 12 — 🧩 legacy 组件线 loop 内部 + 实时进度（为接管做底）
 
 **背景**：RUN_ID 10/11 查明「另一个 agent」= **legacy 组件线**（`ablation_run_loop_component_s2_full.sh`，跑在**非 git** 独立副本 `/nasdata/app.e0031982/code/ZhuLong_DAC2027`），其日报显示**连续 ≥4 周期被 agent 沙箱阻断**（`run_commands`→ACCESS RESTRICTED）。本块读它的 **loop 全脚本 + 进程 + r1 日志 + MEMORY 现状**。
 
-```bash
+> ⛔ **已作废**（已执行于 22:16:50）——降级为 text，让位给 RUN_ID 13。
+
+```text
 # RUN_ID 12 — legacy component loop internals + live progress (read-only)
 D=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
 echo "===== 0. TIME ====="; timeout 10 date '+%F %T'
