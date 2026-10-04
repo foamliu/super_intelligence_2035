@@ -98,6 +98,28 @@ bash r8_run.sh 3000
 - 📌 **科学结论（如实；🚫 不外推到 18.5M+）**：GPIC `short` 有**显著低 N 先发优势**（@5.12M +2.58 > 1.5 阈值且 > 噪声带上界 1.1），但**不抬高 ceiling**——@10.24M 优势收敛到 +0.24，@15.36M（>唯一对、数据重复）反略低于基线（5.73% vs 6.08%）。→「**数据质量加速早期；数据总量/多样性决定上限**」。R9 的 25.1% 渐近**不被数据臂改动推翻**。
 - ⚖️ **公平性（§13.4）**：参数量同 126.78M、训练 token 同 0；30k 步耗时 GPIC **3892.7s / steady 5918.6 img/s** ≈ **0.56× 基线**（~6948s / 2939 img/s，吞吐 ≈2.0×）→ 对照在同 N 下，不改变「不抬高 ceiling」结论。
 
+## ⭐ R13 OpenVision2 官方权重单臂对照（✅ 完成，2026-10-04 · ⚠️ 协议不同 → 单列表、不并入排名）
+
+> 运维指令 2026-10-04（五）批准：R11-E 后**只做 OV2 官方权重 + 官方 p14/d24 结构塔**单臂对照。
+> 它回答「**上限低是因数据少、不是因我们塔写得烂**」（补结论边界），**不是**抬上限。
+> ⚠️ 官方权重 = **大尺度预训练** ViT-L/14；我们从零 ~118M 样本 —— **协议不同，严禁并入上方 R4–R8 from-scratch 排名**。
+
+| 项 | 值 |
+|:--|:--|
+| 对象 | OpenVision2 官方权重 `UCSC-VLAA/openvision2-vit-large-patch14-224-vision-only`（Apache-2.0） |
+| 官方结构 | patch14 / d24 / w1024 / h16(head_width64) / **GELU** MLP / no_ln_pre / pool=**avg**（256 patch token 均值，**不含 CLS**）/ final_ln_after_pool / 1024×1024 proj |
+| 参数量 | **304.23 M**（load ✅：294 keys、strict=True 全对上，无 visual./state_dict/module. 前缀） |
+| 评测口径 | IN-1k 自切分 val50/class + probe50/class（`r8_eval_in1k.load_in1k_split(max_files=40)`，与 R8/R9/R10/R11 **完全相同**）；frozen-trunk lp = Linear(1024→1000) · AdamW · full-batch · 100 ep · seed0 |
+| IN-1k top-1 | zs **N/A**（官方塔生成式 1024-dim、无 CLIP 对齐 readout，与冻结 CLIP-L/336 768-dim 文本空间不对齐 → CLIP 余弦 zs 按构造≈随机）；**frozen-trunk lp = 79.81%** |
+| 每样本编码耗时 | **0.57 ms/img = 1766.5 img/s**（H100-80G · bs128 · bf16 · 峰值显存 2.70GB） |
+| 训练耗时 | **n/a**（纯评测，不训、不重训） |
+
+- **对照（from-scratch 排名，勿并列）**：我们从零最佳 lp = **7.99%**（w384@15.36M，R10-③）；官方同口径 lp = **79.81%** → **+71.8 点**。
+- 📌 **结论边界（如实标注）**：官方 OpenVision2 L/14（大尺度预训练）同口径 IN-1k frozen-trunk lp = **79.81%**；我们从零对比学习（冻结 CLIP 文本塔 + InfoNCE，~118M 上限）峰值 **7.99%**、渐近外推 25.1% —— **差约一个数量级**。
+  → 判据坐实：**瓶颈在「数据量 + 目标函数」（从零对比学习不够数/不够稠密），不是「我们 tower 写得烂」**（同一族 p14/d24 GELU ViT，官方权重即 79.81%）。
+  → **不抬上限**：它是官方协议参照点，不改 from-scratch 排名与「25.1% 渐近 / 20% 需 619 亿样本」的 scaling 结论。
+- 🔑 **结构差异备注（可复用）**：官方 OV2 = **avg-pool（256 patch token、不含 CLS）+ final_ln_after_pool + 1024×1024 proj**；我们自研 OpenVision2 = **CLS readout（patch16/d30）**。差异 =「我们自研改编」的又一证据（`VISION_OFFICIAL_REPOS_SURVEY.md §10.4`）。
+- 证据：`/tmp/r13_official.log`（exit 0）+ `/tmp/r13_ov2/bench.log`（1766.5 img/s）+ `/tmp/r13_ov2/smoke2.log`（load 成功）；脚本 `run/vision/r13_eval_official.py` + `r13_run_official.sh`；权重 `/nas_train/app.e0031982/datasets/baize-vision/r13_official/open_clip_pytorch_model.bin`（1.217GB）。
 ---
 
 ## 胜出结论（S0+S1+S2+S3 汇总 · ⚠️ R1/R2 旧读数，已因坍缩/lr 伪影作废，仅作历史）

@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ 四臂全兑现 · R11-L2 ✅ 完成（未翻盘、冻结文本塔最优）· R11-L caption-weight 三点消融 ✅ 全完成（0.5/1.0/2.0 全≈随机 → caption 监督本身与 IN-1k 正交、假设 B 坐实）**；臂⑤ GenLIP 🚫 跳过（已坐实）/ 臂⑥ AIMv2 ⏸ 暂缓 / R13 ⏸ 只做 OV2 单臂 / **R11-E ✅ 完成（GPIC short 同 N 两点：@5.12M=6.01%[+2.58] / @10.24M=5.69%[+0.24] → 裁定「未抬高/无显著差异」，先发优势但不抬 ceiling）** |
-| WAITING | 1（**语义=待运维拍板（非训练 running）**：R11-E ✅ 全收尾——训 exit 0（3892.7s/5918.6 img/s/final_loss 3.7010）+ 4-ckpt IN-1k lp 已回收；**无剩余已批准训练**（R13 须单独批 / 臂⑥ AIMv2 ⏸ / R11-L·L2·caption-weight 全 done）。置 1 令 loop 30 分钟轮询省 token） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ 四臂全兑现 · R11-L2 ✅ 完成（未翻盘、冻结文本塔最优）· R11-L caption-weight 三点消融 ✅ 全完成（0.5/1.0/2.0 全≈随机 → caption 监督本身与 IN-1k 正交、假设 B 坐实）**；臂⑤ GenLIP 🚫 跳过（已坐实）/ 臂⑥ AIMv2 ⏸ 暂缓 / R13 ✅ 完成（官方 OV2 L/14@224 IN-1k frozen-trunk lp=79.81% vs 自研 7.99%） / **R11-E ✅ 完成（GPIC short 同 N 两点：@5.12M=6.01%[+2.58] / @10.24M=5.69%[+0.24] → 裁定「未抬高/无显著差异」，先发优势但不抬 ceiling）** |
+| WAITING | 1（**语义=待运维拍板（非训练 running）**：R11-E ✅ 全收尾——训 exit 0（3892.7s/5918.6 img/s/final_loss 3.7010）+ 4-ckpt IN-1k lp 已回收；**无剩余已批准训练**（R13 ✅ 完成 / 臂⑥ AIMv2 ⏸ / R11-L·L2·caption-weight 全 done）。置 1 令 loop 30 分钟轮询省 token） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡）+ arm④ CoCa（1.92h×8 卡）+ R11-L2 LoRA（2.09h×8 卡 ≈16.7 GPU·h）+ R11-L caption-weight 消融（✅ 2 点：7261.3s+7440.6s ≈ 2.02h+2.07h×8 卡 ≈ 32.7 GPU·h）+ R11-E GPIC（30k 步 3892.7s≈1.08h×8 卡 ≈ **8.65 GPU·h**，steady 5918.6 img/s ≈2.0× 基线吞吐） |
-| 更新 | 2026-10-04 11:22（R11-E ✅ 收尾：训 exit 0（30k 步 3892.7s/5918.6 img/s/final_loss 3.7010，全程无坍缩 C1 0.33–0.40/C2_gap+0.087~+0.095/C4 OK）+ 4-ckpt IN-1k lp 回收；裁定「未抬高」——GPIC @5.12M=6.01%（+2.58）/@10.24M=5.69%（+0.24）→ 先发优势但 ceiling 不抬；§13.6–13.8 + EXPERIMENTS_VISION 顶部 + daily 日志已回填，随后 git push） |
+| 更新 | **2026-10-04 13:01（R13 ✅ 完成：官方 OV2 L/14@224 IN-1k frozen-trunk lp=79.81% [对照自研最佳 7.99%·渐近 25.1%] → 补结论边界「数据少非塔烂」）** · 2026-10-04 11:22（R11-E ✅ 收尾：训 exit 0（30k 步 3892.7s/5918.6 img/s/final_loss 3.7010，全程无坍缩 C1 0.33–0.40/C2_gap+0.087~+0.095/C4 OK）+ 4-ckpt IN-1k lp 回收；裁定「未抬高」——GPIC @5.12M=6.01%（+2.58）/@10.24M=5.69%（+0.24）→ 先发优势但 ceiling 不抬；§13.6–13.8 + EXPERIMENTS_VISION 顶部 + daily 日志已回填，随后 git push） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -99,6 +99,17 @@ WAITING: 1
 - ✅ **IN-1k lp（11:19:14 ALL DONE）**：@5.12M=**6.01%**、@10.24M=**5.69%**、@15.36M=**5.73%**（final 同）；zs top1=1.91/2.22/2.01%。基线段（CC12M+Amshaker）= 3.43/5.45/6.08%。
 - ⚖️ **预注册裁定（§13.3）**：@5.12M +2.58（≥4.93 ✓）/ @10.24M +0.24（±1.5 内 ✗）→ 两点交叉 → **「未抬高 / 无显著差异」**。
 - 📌 **结论**：GPIC `short` **低 N 先发优势显著（+2.58）但不抬 ceiling**；数据质量加速早期、数据总量/多样性决定上限。R9 25.1% 渐近不被数据臂改动推翻。公平性：同 126.78M/0 token，30k 步 3892.7s ≈0.56× 基线（吞吐 5918.6≈2.0×）。证据 `/tmp/r11_gpic.log`。
+
+## ⭐ R13 OpenVision2 官方权重单臂对照（✅ 完成，2026-10-04 13:01）
+
+> 运维指令 2026-10-04（五）批准：加载官方 OV2 权重 + 官方 p14/d24 结构塔，同口径 IN-1k 评测（zs + frozen-trunk lp），**纯评测、不训**。补结论边界（数据少非塔烂），不抬上限。
+
+- ✅ **加载成功**：`UCSC-VLAA/openvision2-vit-large-patch14-224-vision-only`（Apache-2.0），294 keys strict=True 全对上；官方结构 = patch14/d24/w1024/h16/**GELU**/no_ln_pre/pool=**avg（256 patch，不含 CLS）**/final_ln_after_pool/1024×1024 proj；params=**304.23M**；pooled=1024。⚠️ 我们自研塔=patch16/d30（`models.py`），官方结构用 patched open_clip `_build_vision_tower` 另建塔（`r13_eval_official.py`）。
+- ✅ **IN-1k**（自切分 val50000/probe49970，`r8_eval_in1k.load_in1k_split` 与 R8–R11 一致）：**frozen-trunk lp top-1 = 79.81%**；zs = **N/A**（生成式 1024-dim，无 CLIP 对齐 readout，与冻结 CLIP-L/336 768-dim 不对齐）。
+- ✅ **每样本耗时**：0.57 ms/img = **1766.5 img/s**（H100-80G/bs128/bf16/峰值 2.70GB，`/tmp/r13_ov2/bench.log`）；训练 n/a（不训）。
+- 📌 **结论边界**：官方同族 GELU ViT 同口径即 79.81%，我们从零对比学习（冻结 CLIP 文本塔 + InfoNCE、~118M）峰值 **7.99%**（渐近 25.1%）→ **+71.8 点**。判据坐实：**瓶颈在数据量+目标函数，非「塔写得烂」**；**不抬上限**（不改 from-scratch 排名 / scaling 结论）。
+- ⚠️ **协议不同**：官方=大尺度预训练，我们=from-scratch → R13 **单列表、不并入排名**（EXPERIMENTS_VISION.md 顶部 R13 节）。
+- 证据：`/tmp/r13_official.log`（exit 0）、`/tmp/r13_ov2/smoke2.log`、`/tmp/r13_ov2/bench.log`；权重 `/nas_train/app.e0031982/datasets/baize-vision/r13_official/open_clip_pytorch_model.bin`（1.217GB）。
 
 ## 历史条目已滚动归档（2026-10-03）
 
