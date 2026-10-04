@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 57 -->
+<!-- RUN_ID: 58 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,88 @@
 
 ---
 
-## RUN_ID 57 — 🔬→🔧 **用 loop 同款 `llm_pick` 的 key 重验隔离目录 + 逐线重启（.12）**（承接 RUN_ID 56）（**本块最新，优先执行**）
+## RUN_ID 58 — 🔬 **干净复测隔离目录（修掉上轮嵌套 heredoc bug）+ 条件重启（.12）**（承接 RUN_ID 57）（**本块最新，优先执行**）
+
+> **RUN_ID 57 结果（18:08:49 exit=0）**：`llm_pick` 选中 **#0 deepseek-v4-flash @ `…/v1`（probe=200）**，key=`02_088EE…`；
+> ⚠️ 但**上一轮脚本里嵌套了 `<<'PY'` heredoc，把后面的 D/E 段吞掉了**（输出只到 control 就结束）⇒ **判定不可信**（base 可能没写成功 → 才显示 Forbidden）。
+> ⇒ 本轮**改用 `python -c` 单行写 base（无嵌套 heredoc）**重测，并且**只有 smoke 全 OK 才重启**（条件保护）。
+
+**本块做什么（`.29` 经 `ssh 10.239.2.12`）**
+1. `llm_pick`（`LLM_DATA_DIR=/tmp/_none`，不写真实配置）取 `LLM_MODEL/LLM_KEY/LLM_BASE` + `llm_probe` 复核 200
+2. 用**单行 python** 把该 base 写进 `.cline_vision`/`.cline_data`，**复核写入后的 base**
+3. smoke 两个隔离目录（打印全文）→ 判定 `PASS`
+4. **仅当 PASS=1** 才**逐线**自保护重启；否则**不重启**并保留现场；验 `Forbidden==0`
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+echo; echo "=== [.12] 干净复测 + 条件重启 ==="
+timeout 520 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+export PATH="$HOME/.bun/bin:$PATH"
+hostname; date '+%F %T'; echo "  bun=$(command -v bun)"
+W=/nas_train/app.e0031982/code/super_intelligence_2035
+R=$W/doc/BaiZe-ISEDA2027/run
+B=/nas_train/app.e0031982; H=$HOME; SRC="$H/.cline/data"; C=/home/app.e0031982/.bun/bin/cline
+KEYS="$W/doc/keys.txt"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+PY() { "${PYBIN:-python3}" -c "import json,sys;p=sys.argv[1];b=sys.argv[2];d=json.load(open(p,encoding='utf-8'));d['openAiBaseUrl']=b;json.dump(d,open(p,'w',encoding='utf-8'),ensure_ascii=False,indent=2)" "$1" "$2"; }
+
+echo; echo "--- A. llm_pick 取 .12 可用候选 ---"
+LLM_DATA_DIR=/tmp/_none; . "$R/llm_rotate.sh"
+ST=/tmp/_pick3; rm -f "$ST"
+if llm_pick "$ST" "$KEYS"; then
+  echo "  picked model=$LLM_MODEL key=${LLM_KEY:0:8}.. base=$LLM_BASE"
+  echo -n "  probe 复核 = "; llm_probe "$LLM_MODEL" "$LLM_KEY" "$LLM_BASE"; echo
+else echo "  !! 无候选"; fi
+
+echo; echo "--- B. 写 picked base 进隔离目录并复核 ---"
+if [ -n "${LLM_MODEL:-}" ]; then
+  for n in vision data; do
+    D="$B/.cline_$n"; PY "$D/globalState.json" "$LLM_BASE"
+    echo "  [$n] base now = $(sed -n 's/.*\"openAiBaseUrl\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p' "$D/globalState.json" | head -1)"
+  done
+fi
+
+echo; echo "--- C. smoke（PASS 判定）---"
+PASS=1
+if [ -n "${LLM_MODEL:-}" ]; then
+  for n in vision data; do
+    D="$B/.cline_$n"
+    OUT=$(env $P timeout 90 "$C" --data-dir "$D" -c /tmp -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tr -d '\r' | tr '\n' ' ' | cut -c1-170)
+    printf "  %-7s => %s\n" "$n" "$OUT"
+    echo "$OUT" | grep -q 'OK' || PASS=0
+    echo "$OUT" | grep -qi 'error' && PASS=0
+  done
+else PASS=0; fi
+echo "  PASS=$PASS"
+
+echo; echo "--- D. 逐线安全重启（仅 PASS=1）---"
+if [ "$PASS" = 1 ]; then
+  for L in vision data; do
+    LP=$(pgrep -f "bash baize_${L}_loop.sh" 2>/dev/null | head -1); CL=0
+    [ -n "$LP" ] && CL=$(pgrep -P "$LP" -f 'bun' 2>/dev/null | wc -l)
+    echo "  [$L] loop_pid=${LP:-none} cline_children=$CL"
+    if [ "$CL" -gt 0 ]; then echo "  [$L] cline 活动中 → 跳过"; continue; fi
+    pkill -f "baize_${L}_loop.sh"; sleep 4
+    cd "$R"; setsid env $P bash "baize_${L}_loop.sh" > "/tmp/baize_${L}_loop.log" 2>&1 < /dev/null &
+    echo "  [$L] 已重启"
+  done
+  echo; echo "--- E. 40s 后验证 ---"; sleep 40
+  for L in vision data; do
+    echo "  [$L] loop=$(pgrep -fc "baize_${L}_loop.sh" 2>/dev/null || echo 0)  Forbidden=$(grep -c Forbidden /tmp/baize_${L}_loop.log 2>/dev/null)"
+    tail -3 "/tmp/baize_${L}_loop.log" 2>/dev/null | tr '\n' ' ' | cut -c1-150 | sed 's/^/       /'; echo
+  done
+  echo "  cline cmdline: $(pgrep -af 'bun.*cline' 2>/dev/null | cut -c1-110 | head -3)"
+else
+  echo "  smoke 未 PASS → 保持现状不重启（旧 loop 仍在跑）"
+fi
+echo; echo "=== DONE (.12) ==="
+EOS12
+echo "=== relay block done ==="
+```
+
+> ⛔ 已降级 RUN_ID 57（18:08:49 exit=0，脚本里嵌套 heredoc 吞掉后续段 → 判定不可信）为 text。
+
+## RUN_ID 57 — 🔬→🔧 **用 loop 同款 `llm_pick` 的 key 重验隔离目录 + 逐线重启（.12）**（✅ 已执行 → **嵌套 heredoc bug，判定不可信**，见 RUN_ID 58）
 
 > **RUN_ID 56 结果（18:06:31 exit=0）**：✅ PATH 修好（`bun=/home/app.e0031982/.bun/bin/bun`）；⚠️ 但 smoke 由「连不上」变为 **`error: Forbidden`**。
 > **根因判断**：vision/data 的 loop 其实**不用 `secrets.json` 的 key**，而是每轮用 **`llm_pick` 从 `doc/keys.txt` 选** key/model 并写 base —— 我上一轮 smoke 用错了 key（`secrets.json` 那把对 `glm-5.2` 在 .12 上不被授权 → 403）。
@@ -43,7 +124,7 @@
 3. 把该 base 写进两个隔离目录，**用该 key/model** smoke 隔离目录 + 一条**不带 `--data-dir` 的对照**
 4. 若 OK → **逐线**自保护重启；验 `Forbidden==0`
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 echo; echo "=== [.12] Forbidden 诊断 + llm_pick key 验证 + 逐线重启 ==="
 timeout 520 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
