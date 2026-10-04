@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 61 -->
+<!-- RUN_ID: 62 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,45 @@
 
 ---
 
-## RUN_ID 61 — 🔧 **`llm_pick` 加「优先 glm-5.2」+ 重启 vision/data 恢复（.12）**（承接 RUN_ID 60）（**本块最新，优先执行**）
+## RUN_ID 62 — 🔍 **巡检：vision 是否接手 R11-F（只读）**（承接 RUN_ID 61）（**本块最新，优先执行**）
+
+> **背景**：运维已下发 **R11-F 数据源横比**（`BAIZE_VISION_TASK.md`「运维指令 · 2026-10-04（六）」，**已批准**，commit `848796e`）：GPIC `short`/`medium`/`short+medium`(90%) vs en500k vs CC12M。
+> **本块只读**确认 `.12` 上：① 任务书已含（六）；② `MEMORY_VISION.md` 状态；③ vision loop / 训练进程；④ 代码改动（`data.py` caption_type、`r9_train.py --caption-type`）与新 runner 是否落地。🚫 **不改任何东西**。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+echo; echo "=== [.12] R11-F 接手巡检（只读）==="
+timeout 220 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+export PATH="$HOME/.bun/bin:$PATH"
+hostname; date '+%F %T'
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+
+echo; echo "--- 1. task book 是否已含 R11-F（指令六）---"
+grep -n '2026-10-04（六）\|R11-F' "$R/BAIZE_VISION_TASK.md" | head -4 | cut -c1-140
+
+echo; echo "--- 2. MEMORY_VISION 状态头 ---"
+head -6 "$R/MEMORY_VISION.md" | cut -c1-150
+grep -n 'R11-F\|R11F\|datasource\|caption' "$R/MEMORY_VISION.md" | head -5 | cut -c1-140
+
+echo; echo "--- 3. vision loop / 训练进程 ---"
+pgrep -af 'baize_vision_loop.sh' | cut -c1-110
+pgrep -af 'r9_train|r11_run|torch.distributed.run|r8_eval_in1k' | cut -c1-140
+echo "--- vision loop log 末 12 行 ---"
+tail -12 /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-150
+
+echo; echo "--- 4. 代码改动 / 新 runner 是否落地 ---"
+ls -l "$R/vision/r11_run_datasource.sh" "$R/vision/r11_run_gpic.sh" 2>/dev/null | cut -c1-120
+grep -n 'caption_type' "$R/vision/data.py" | head -3 | cut -c1-120
+grep -n 'caption-type' "$R/vision/r9_train.py" | head -3 | cut -c1-120
+
+echo; echo "=== DONE (.12) ==="
+EOS12
+echo "=== relay block done ==="
+```
+
+> ⛔ 已降级 RUN_ID 61（18:18:51 exit=0，vision/data 已切隔离目录 + `Forbidden=0`）为 text。
+
+## RUN_ID 61 — 🔧 **`llm_pick` 加「优先 glm-5.2」+ 重启 vision/data 恢复（.12）**（✅ 已执行 → **vision/data `--data-dir` 生效、`Forbidden=0`、model=glm-5.2**）
 
 > **RUN_ID 60 结果（18:15:44 exit=0）**：✅✅ **隔离目录 smoke 全 OK**（`vision => OK`、`data => OK`，`PASS=1`）—— 用**正确配对 `glm-5.2 @ /cloud/v1` + `--data-dir`** 完全通过！
 > ⚠️ 但重启后的 loop **Forbidden**：其 `llm_pick` 的 state 为空 → 从 #0 选到 **`deepseek-v4-flash @ /v1`**（**curl 200 但 cline 403**）→ 把 base 写成 `/v1` → Forbidden。
@@ -45,7 +83,7 @@
 3. **逐线重启** vision/data（修掉上轮 guard 的 `bash ` 前缀 bug，改用 `pgrep -f "baize_${L}_loop.sh"`）
 4. 验 `Forbidden==0` 且日志模型 = `glm-5.2`
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 echo; echo "=== [.12] 优先 glm-5.2 + 重启 vision/data 恢复 ==="
 timeout 520 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
