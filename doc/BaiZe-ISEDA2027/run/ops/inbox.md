@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 38 -->
+<!-- RUN_ID: 39 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,14 +31,60 @@
 
 ---
 
-## RUN_ID 38 — 🏠 **`/home` 大盘排查（重点本用户 `$HOME`）**（**只读**）（**本块最新，优先执行**）
+## RUN_ID 39 — 🔬 **下钻 `~/.cache`（107 G 主因）+ 读完整 HOME 清单**（**只读**）（**本块最新，优先执行**）
+
+**RUN_ID 38 战果（2026-10-04 11:32:46）**：
+- `/home` = **196 G / 已用 171 G / **92%**（仅剩 16 G）**；**inode 仅用 8%** → **是体积问题，不是小文件**；`/` 分区健康（384G/13G/4%）
+- 本用户 `$HOME` 一级（后台 du 已完成，32 项）：⭐ **`~/.cache` = 107 G** · `.bun` 13 G · `.cline` 5.6 G · `.local` 3.8 G · `.npm` 2.3 G
+
+**本轮目标**：把 `~/.cache` 拆开看（谁是 107 G），并把完整 32 项清单读出来 → 给出**可清理/不可清理**判据。
+🚫 **只读**；🚫 每条命令都有界；重活丢后台。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME
+
+echo; echo "=== 1. 完整 HOME 一级清单（32 项，已跑完）==="
+echo "   done=$([ -f /tmp/_duhome.done ] && echo YES || echo NO)  行数=$(wc -l < /tmp/_duhome.txt 2>/dev/null)"
+sort -hr /tmp/_duhome.txt 2>/dev/null | head -32 | sed 's/^/   /'
+
+echo; echo "=== 2. ⭐ 下钻 ~/.cache（后台低优先级，边跑边写）==="
+rm -f /tmp/_ducache.txt /tmp/_ducache.done
+setsid bash -c "nice -n 19 du -sh $H/.cache/* $H/.cache/.[!.]* > /tmp/_ducache.txt 2>/dev/null; echo done > /tmp/_ducache.done" </dev/null >/dev/null 2>&1 &
+sleep 12
+echo "   行数=$(wc -l < /tmp/_ducache.txt 2>/dev/null)  done=$([ -f /tmp/_ducache.done ] && echo YES || echo NO)"
+sort -hr /tmp/_ducache.txt 2>/dev/null | head -20 | sed 's/^/   /'
+
+echo; echo "=== 3. 常见可清缓存点名（各自 20s 有界）==="
+for p in "$H/.cache/huggingface" "$H/.cache/pip" "$H/.cache/torch" "$H/.cache/nvidia" "$H/.cache/uv" "$H/.cache/bun" "$H/.cache/ms-playwright" "$H/.cache/cline"; do
+  [ -e "$p" ] && { printf '   %-28s ' "${p#$H/}"; timeout 20 du -sh "$p" 2>/dev/null | cut -f1; }
+done
+
+echo; echo "=== 4. HF 缓存细节（是否可安全重建）==="
+if [ -d "$H/.cache/huggingface" ]; then
+  echo -n "   hub/blobs 条目数 = "; timeout 25 find "$H/.cache/huggingface/hub" -maxdepth 2 -name 'blobs' -type d 2>/dev/null | wc -l
+  echo "   -- hub 一级（前 8，仅名字）--"; ls -1 "$H/.cache/huggingface/hub" 2>/dev/null | head -8 | sed 's/^/     /'
+  echo -n "   最新 mtime = "; timeout 15 find "$H/.cache/huggingface" -maxdepth 3 -printf '%TY-%Tm-%Td %TH:%TM\n' 2>/dev/null | sort -r | head -1
+fi
+echo -n "   HF_HOME=${HF_HOME:-<empty>}  HF_DATASETS_CACHE=${HF_DATASETS_CACHE:-<empty>}  HF_HUB_CACHE=${HF_HUB_CACHE:-<empty>}"; echo
+
+echo; echo "=== 5. 顺带：.bun / .npm / .cline 的可清部分 ==="
+for p in "$H/.bun/install/cache" "$H/.npm/_cacache" "$H/.cline/data/sessions" "$H/.cline/data/tasks" "$H/.local/share"; do
+  [ -e "$p" ] && { printf '   %-32s ' "${p#$H/}"; timeout 25 du -sh "$p" 2>/dev/null | cut -f1; }
+done
+echo; echo "=== DONE（后台仍在跑；下轮读 /tmp/_ducache.txt）==="
+```
+
+> ⛔ **已降级 RUN_ID 38**（`/home` 大盘，**✅ 已执行 11:32:59** → 定位 `~/.cache` 107 G）为 ```text。
+
+## RUN_ID 38 — 🏠 **`/home` 大盘排查**（✅ 已执行 → `~/.cache` 107 G 是主因，见 RUN_ID 39）
 
 **用户指令（2026-10-04）**：`.29` 的 **`/home` 占用已超 90%** → 查有哪些大头的占用、可否清理，**先从我自己的目录 `/home/app.e0031982` 开始排查**。
 
 **设计要点（吸取 RUN_ID 34 卡死中继的教训）**：🚫 **每条命令都要 `timeout`**；🚫 **绝不对大目录做全树 `grep/find`**；重活（`du`）**丢后台 `setsid nice -n 19`** + 边跑边落盘 + `.done` 标记 → **本块秒回**，结果由下一轮读。
 🚫 **只读**：不删、不移、不改。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 H=$HOME
 
