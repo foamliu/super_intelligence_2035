@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 48 -->
+<!-- RUN_ID: 49 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,118 @@
 
 ---
 
-## RUN_ID 48 — 🎯 **修复：用【干净环境】重启 pretrain（今早验证过的配方：`env -u …` 前缀）**（**本块最新，优先执行**）
+## RUN_ID 49 — 🔬→🔧 **重测 8 个候选 + 自动选胜者并修好 pretrain（key/model/base 一并对齐）**（**已授权**）（**本块最新，优先执行**）
+
+**前置结论（RUN_ID 48）**：env 毒化**已坐实并已消除**（新 loop 已无 `OPENAI_API_KEY`/`OPENAI_API_URL`），**但 cline 仍 `Forbidden`** ⇒ 剩 **第二个因素**，最可能是 **`secrets.json` 里 glm-5.2 那把 key 也在 16:57 之后耗尽了**（16:54 时 curl 还是 200）。
+
+**本块 = 一次做完**：
+1. **重测全部 8 个候选**（curl `/chat/completions` @ 各自 base）→ 当前谁可用
+2. **预注册选胜者规则**：优先 `glm-5.2`；否则取**第一个 200 且 base 为 `/cloud/v1`** 的候选（保持 base 不变、改动最小）
+3. **若选出胜者** → ① 备份并把**它的 key 写入 `~/.cline/data/secrets.json`** ② 若胜者不是 glm-5.2，则把 loop 里 `MODEL="glm-5.2"` 改成胜者 ③ 确保 `globalState.openAiBaseUrl` == 胜者 base ④ **用 `env -u …` 干净环境重启 pretrain** ⑤ 验证 `Forbidden == 0` 且日志是**真实 cline 推理**
+4. **若无可用候选** → 只报告（不重启）
+
+🚫 **只动 pretrain**。key 一律脱敏（len/prefix）。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
+S="$HOME/.cline/data/secrets.json"; G="$HOME/.cline/data/globalState.json"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "=== 1. 当前 secrets.json 的 key 打 glm-5.2 ==="
+KS="$(python3 -c "import json;print(json.load(open('$S'))['openAiApiKey'])" 2>/dev/null | tr -d '\r\n')"
+echo "   len=${#KS} pfx=${KS:0:8}"
+echo -n "   -> "; timeout 20 curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $KS" -H 'Content-Type: application/json' \
+  -d '{"model":"glm-5.2","messages":[{"role":"user","content":"hi"}],"max_tokens":2}' http://agi-gateway.cxmt.com/cloud/v1/chat/completions
+
+echo; echo "=== 2. 重测全部候选（keys.txt）==="
+python3 - "$WK/doc/keys.txt" > /tmp/_cand.json <<'PY'
+import sys, json, pathlib
+blocks, cur = [], {}
+for raw in pathlib.Path(sys.argv[1]).read_text(encoding='utf-8', errors='replace').split('\n'):
+    s = raw.strip()
+    if not s:
+        if cur.get('model'): blocks.append(cur)
+        cur = {}
+        continue
+    for lab, k in (('模型名字','model'), ('API Key','key'), ('Base Url (OpenAI)','oai')):
+        if lab in s:
+            cur[k] = s.split('：',1)[-1].strip() if '：' in s else s.split(':',1)[-1].strip()
+            break
+if cur.get('model'): blocks.append(cur)
+seen, out = set(), []
+for b in blocks:
+    m = b.get('model','')
+    if m in seen or not b.get('key') or not b.get('oai'): continue
+    seen.add(m)
+    if 'asr' in m.lower() or 'seedream' in m.lower(): continue
+    out.append({'model': m, 'key': b['key'], 'base': b['oai']})
+json.dump(out, sys.stdout, ensure_ascii=False)
+PY
+python3 - <<'PY' 2>&1 | cut -c1-140
+import json, pathlib, subprocess
+c = json.loads(pathlib.Path('/tmp/_cand.json').read_text(encoding='utf-8'))
+ok = []
+for x in c:
+    body = json.dumps({'model': x['model'], 'messages': [{'role':'user','content':'hi'}], 'max_tokens':2})
+    r = subprocess.run(['curl','-s','-o','/dev/null','-w','%{http_code}','--max-time','20',
+                        '-H','Authorization: Bearer '+x['key'],'-H','Content-Type: application/json',
+                        '-d',body, x['base']+'/chat/completions'], capture_output=True, text=True)
+    code = (r.stdout or '').strip()
+    print('   %-30s %-40s -> %s' % (x['model'], x['base'], code))
+    if code == '200': ok.append(x)
+pathlib.Path('/tmp/_ok.json').write_text(json.dumps(ok, ensure_ascii=False), encoding='utf-8')
+print('   ⇒ 200 的候选数 = %d' % len(ok))
+PY
+
+echo; echo "=== 3. 选胜者（优先 glm-5.2；否则第一个 /cloud/v1 的 200）==="
+W=$(python3 - <<'PY' 2>/dev/null
+import json, pathlib
+ok = json.loads(pathlib.Path('/tmp/_ok.json').read_text(encoding='utf-8'))
+w = next((x for x in ok if x['model'] == 'glm-5.2'), None) or next((x for x in ok if x['base'].endswith('/cloud/v1')), None)
+print('%s\t%s\t%s' % (w['model'], w['key'], w['base']) if w else 'NONE')
+PY
+)
+WM="$(echo "$W" | cut -f1)"; WK2="$(echo "$W" | cut -f2)"; WB="$(echo "$W" | cut -f3)"
+echo "   胜者 = ${WM:-<无>} @ ${WB:-}"
+
+if [ "$WM" != "NONE" ] && [ -n "$WM" ]; then
+  echo; echo "=== 4. 应用修复 ==="
+  cp -a "$S" "$S.bak.$(date +%Y%m%d-%H%M%S)" && echo "   已备份 secrets.json"
+  python3 - "$S" "$WK2" <<'PY'
+import json, sys
+json.dump({'openAiApiKey': sys.argv[2]}, open(sys.argv[1], 'w', encoding='utf-8'))
+PY
+  echo -n "   写入复核: "; python3 -c "import json,os;k=json.load(open(os.path.expanduser('~/.cline/data/secrets.json')))['openAiApiKey'];print('len',len(k),'pfx',k[:8])"
+  if [ "$WM" != "glm-5.2" ]; then
+    sed -i "s/^MODEL=\"glm-5.2\"/MODEL=\"$WM\"/" "$RUN/baize_pretrain_loop.sh" && echo "   已把 loop 的 MODEL 改为 $WM"
+  fi
+  echo "   globalState.openAiBaseUrl 现值 = $(sed -n 's/.*\"openAiBaseUrl\"[[:space:]]*:[[:space:]]*\"\([^"]*\)\".*/\1/p' "$G" | head -1)（期望 $WB）"
+  if [ "$(sed -n 's/.*\"openAiBaseUrl\"[[:space:]]*:[[:space:]]*\"\([^"]*\)\".*/\1/p' "$G" | head -1)" != "$WB" ]; then
+    cp -a "$G" "$G.bak2.$(date +%Y%m%d-%H%M%S)"
+    python3 - "$G" "$WB" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1], encoding='utf-8')); d['openAiBaseUrl'] = sys.argv[2]
+json.dump(d, open(sys.argv[1], 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+PY
+    echo "   已将 base 改为 $WB"
+  fi
+  echo; echo "=== 5. 干净环境重启 pretrain + 验证 ==="
+  pkill -f 'baize_pretrain_loop.sh'; sleep 5
+  cd "$RUN"; setsid env $P bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+  sleep 45
+  echo -n "   Forbidden 计数（应为 0）= "; grep -c 'Forbidden' /tmp/baize_pretrain_loop.log 2>/dev/null
+  echo "   日志尾："; tail -8 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-160
+  echo -n "   cline 在跑吗: "; pgrep -af 'bun.*cline' | cut -c1-90 | head -2 || echo "(暂无)"
+else
+  echo; echo "   ⛔ 无任何 200 候选 → 不重启，等运维处理（可能整网关/额度故障）"
+fi
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 48**（干净环境重启，**✅ 已执行 17:17:47 exit=0**：env 毒化已消除，**但 cline 仍 Forbidden**）为 ```text。
+
+## RUN_ID 48 — 🎯 **用干净环境重启 pretrain**（✅ 已执行 → env 已干净 ✅，**但仍 Forbidden** ⇒ 第二因素，见 RUN_ID 49）
 
 **用户指出的根因（2026-10-04 ~16:xx）**：**他手动启动 pretrain loop 时 `unset` 了 `OPENAI_API_KEY`** → 那份 loop 是干净的（16:57 还在正常提交）。
 **而我在 17:06 / 17:09 用【裸 `setsid`】重启** → **继承了 relay 的环境**，其中就有 **`OPENAI_API_KEY=01_549…`（已失效的旧 key）** 与 `OPENAI_API_URL` ⇒ **cline 被这个环境毒化**。
@@ -44,7 +155,7 @@
 
 🚫 **只动 pretrain**；其它 3 条 loop 不碰。key 全脱敏。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 WK=/nas_train/app.e0031982/code/super_intelligence_2035
 RUN=$WK/doc/BaiZe-ISEDA2027/run
