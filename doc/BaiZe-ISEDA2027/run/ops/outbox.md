@@ -4022,3 +4022,103 @@ Cannot stat file /proc/465698/fd/182: Stale file handle
 === 3. P3：无脚本引用 ===
 [relay] ⚠️ 命令块超时（>600s），已被 timeout 终止
 ```
+
+---
+
+## RUN_ID 36 · 2026-10-04 09:57:17 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+D=/nas_train/app.e0031982; CODE=$D/code
+LV=$CODE/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b
+T1=$CODE/chip-mllm; T2=$CODE/LLaVA; T3=$CODE/LLaVA-OneVision-2; T4=$CODE/circuitvision-encoder
+DFB=$(df -BG /nas_train | tail -1 | awk '{print $3}'); echo "   删前 Used = $DFB"
+
+echo; echo "=== 1. 身份证据 + P1（有界、不做重遍历）==="
+for P in $LV $T1 $T2 $T3 $T4; do
+  if [ -d "$P" ]; then
+    printf '   %-52s mtime=%s .git=%s P1=' "${P#$CODE/}" "$(stat -c %y "$P" | cut -c1-16)" "$([ -d "$P/.git" ] && echo Y || echo n)"
+    timeout 20 fuser -v "$P" 2>&1 | head -1 | tr -d '\n'; echo " (空=好)"
+  else echo "   ${P#$CODE/} : ✅ 不存在/已删"; fi
+done
+echo -n "   P3（一次有界 grep，只扫几百 MB 的 git 副本）: "
+timeout 90 grep -rlE 'stage_1.5_mid_training_llava_ov_14b|chip-mllm|circuitvision-encoder|LLaVA-OneVision-2' "$CODE/super_intelligence_2035" --include='*.sh' --include='*.py' --exclude-dir=.git 2>/dev/null | head -5
+echo "   ↑ 应空"
+echo "   P2：上述 mtime 均 ≤2026-07-31（>65 天未动）→ 满足"
+
+echo; echo "=== 2. 留证（顶层小文本 + <300MB 的 .git）==="
+for P in $LV $T1 $T2 $T3 $T4; do
+  [ -d "$P" ] || continue
+  N=$(basename "$P"); K="$(dirname "$P")/_ARCHIVE_${N}.tgz"; F=""
+  GS=$(du -sm "$P/.git" 2>/dev/null | cut -f1); [ -n "$GS" ] && [ "$GS" -lt 300 ] && F=".git"
+  ( cd "$P" && tar czf "$K" $F *.md *.txt *.json *.yaml *.yml *.sh *.py 2>/dev/null )
+  if [ -f "$K" ]; then echo "   $N -> $(du -h "$K" | cut -f1)"; else echo "   $N -> (无小文件，跳过)"; fi
+done
+
+echo; echo "=== 3. 🗑 启动【后台顺序】删除 ==="
+rm -f /tmp/_clean36.log /tmp/_clean36.done
+setsid nice -n 19 bash -c 'for P in "$@"; do echo "[$(date "+%T")] rm -rf $P"; rm -rf "$P"; echo "[$(date "+%T")] done: $([ -d "$P" ] && echo STILL || echo GONE)"; done; echo ALLDONE > /tmp/_clean36.done' _ "$LV" "$T1" "$T2" "$T3" "$T4" > /tmp/_clean36.log 2>&1 &
+sleep 8
+echo "   -- 进度（后台顺序删，1.16T 那个先来）--"; head -10 /tmp/_clean36.log 2>/dev/null | sed 's/^/     /'
+echo "   -- df 即时 --"; df -BG /nas_train | tail -1
+echo "   -- code/ 现状 --"; ls -1 "$CODE" 2>/dev/null | head -18 | sed 's/^/     /'
+echo; echo "=== DONE（后台仍在删；下轮读 /tmp/_clean36.log + /tmp/_clean36.done）==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 09:57:17
+   删前 Used = 180372G
+
+=== 1. 身份证据 + P1（有界、不做重遍历）===
+   hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b mtime=2026-03-11 07:44 .git=n P1=Cannot stat file /proc/465698/fd/182: Stale file handle (空=好)
+   chip-mllm                                            mtime=2026-01-07 15:59 .git=Y P1=Cannot stat file /proc/465698/fd/182: Stale file handle (空=好)
+   LLaVA                                                mtime=2026-02-25 12:04 .git=Y P1=Cannot stat file /proc/465698/fd/182: Stale file handle (空=好)
+   LLaVA-OneVision-2                                    mtime=2026-07-31 14:29 .git=Y P1=Cannot stat file /proc/465698/fd/182: Stale file handle (空=好)
+   circuitvision-encoder                                mtime=2026-01-20 10:33 .git=Y P1=Cannot stat file /proc/465698/fd/182: Stale file handle (空=好)
+   P3（一次有界 grep，只扫几百 MB 的 git 副本）:    ↑ 应空
+   P2：上述 mtime 均 ≤2026-07-31（>65 天未动）→ 满足
+
+=== 2. 留证（顶层小文本 + <300MB 的 .git）===
+   stage_1.5_mid_training_llava_ov_14b -> 16K
+   chip-mllm -> 12M
+   LLaVA -> 12M
+   LLaVA-OneVision-2 -> 32K
+   circuitvision-encoder -> 6.3M
+
+=== 3. 🗑 启动【后台顺序】删除 ===
+   -- 进度（后台顺序删，1.16T 那个先来）--
+     [09:57:25] rm -rf /nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b
+     [09:57:25] done: GONE
+     [09:57:25] rm -rf /nas_train/app.e0031982/code/chip-mllm
+     [09:57:30] done: GONE
+     [09:57:30] rm -rf /nas_train/app.e0031982/code/LLaVA
+     [09:57:32] done: GONE
+     [09:57:32] rm -rf /nas_train/app.e0031982/code/LLaVA-OneVision-2
+   -- df 即时 --
+10.239.23.31:/vol_CTE0_data01   211968G 180372G    31597G  86% /nas_train
+   -- code/ 现状 --
+     apex
+     _ARCHIVE_chip-mllm.tgz
+     _ARCHIVE_circuitvision-encoder.tgz
+     _ARCHIVE_LLaVA-OneVision-2.tgz
+     _ARCHIVE_LLaVA.tgz
+     AReaL
+     backup
+     BaiZe-ISEDA2027
+     benchmarks
+     circuitvision-encoder
+     claude-code-main
+     cline-langfuse.md
+     DataFlow
+     EDA-Eval-Framework
+     eda_fastmcp
+     emotion
+     EvolvingLMMs-Lab
+     flash-attention
+
+=== DONE（后台仍在删；下轮读 /tmp/_clean36.log + /tmp/_clean36.done）===
+```
