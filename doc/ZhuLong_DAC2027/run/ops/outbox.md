@@ -1838,3 +1838,91 @@ ls: cannot access '/nas_train/app.e0031982/.cline_data': No such file or directo
 ls: cannot access '/home/app.e0031982/.cline_eval': No such file or directory
 == DONE ==
 ```
+
+---
+
+## RUN_ID 16 · 2026-10-04 22:47:46 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 16 — prep for isolation (read-only)
+GP=/nasdata/app.e0031982/code/eda_fastmcp
+echo "== 0. TIME =="; timeout 10 date '+%F %T'
+echo "== 1. cline --help (data/hook/config) =="; timeout 25 cline --help 2>&1 | grep -iE 'data|hook|dir|config|auth' | head -25 | cut -c1-160
+echo "== 2. cline_hooks source dir =="; timeout 10 ls -la "$GP/scripts/cline_hooks/" 2>&1 | head -20 | cut -c1-160
+echo "== 3. who installs ~/.cline/hooks =="; timeout 20 grep -rnE 'cline/hooks|hooks' "$GP/scripts" 2>/dev/null | head -25 | cut -c1-190
+echo "== 4. ~/.cline/data contents (config to copy) =="; timeout 10 ls -la ~/.cline/data/ 2>&1 | head -22 | cut -c1-140
+echo "== 5. --data-dir usage in our repo =="; timeout 20 grep -rnE -- '--data-dir' /nasdata/app.e0031982/code/super_intelligence_2035/doc 2>/dev/null | head -10 | cut -c1-190
+echo "== 6. ~/.cline/data/settings =="; timeout 10 ls -la ~/.cline/data/settings/ 2>&1 | head -15 | cut -c1-140
+echo "== DONE =="
+```
+
+**输出**
+```
+== 0. TIME ==
+2026-10-04 22:47:46
+== 1. cline --help (data/hook/config) ==
+  -c, --cwd <path>              Working directory
+  --config <path>               Configuration directory (default: ~/.cline)
+  --data-dir <path>             Use isolated local state at this directory path
+                                (default: ~/.cline/data)
+  --hooks-dir <path>            Directory path to additional hooks for runtime
+                                hook injection (default: ~/.cline/hooks)
+  auth [options] [provider]     Authenticate a provider and configure what model
+  config [options]              Show current configuration
+  doctor                        Diagnose and fix configuration issues
+  hook                          Handle a hook payload from stdin
+== 2. cline_hooks source dir ==
+total 24
+drwxr-x--- 3 app.e0031982 app.adm  4096 Sep 24 10:11 .
+drwxr-x--- 6 app.e0031982 app.adm  4096 Sep 29 15:48 ..
+-rwxr-xr-x 1 app.e0031982 app.adm 10242 Sep 28 21:43 PreToolUse
+drwxr-x--- 2 app.e0031982 app.adm  4096 Sep 28 22:07 __pycache__
+== 3. who installs ~/.cline/hooks ==
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:121:# 部署 denylist hook 到 Cline 默认 hooks 目录 (~/.cline/hooks)。
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:122:# cline 3.0.51 的 hook 发现跟随 --config（默认 ~/.cline），即 <config-dir>/hooks；
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:123:# --hooks-dir 只设置 CLINE_HOOKS_DIR 环境变量、不被 resolveHooksConfigSearchPaths
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:124:# 消费，故必须部署到 ~/.cline/hooks/ 才能生效。源码放 scripts/cline_hooks/ 版本受控。
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:125:seed_cline_hooks() {
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:126:    local src="${SCRIPT_DIR}/cline_hooks/PreToolUse"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:131:    local dst="${HOME}/.cline/hooks/PreToolUse"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:135:    print_info "已部署沙盒 hook 到 ${HOME}/.cline/hooks/"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:138:seed_cline_hooks
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:366:rm -f "${HOME}/.cline/hooks/PreToolUse"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:367:print_info "已移除沙盒 hook (${HOME}/.cline/hooks/PreToolUse)"
+== 4. ~/.cline/data contents (config to copy) ==
+total 308
+drwxr-x---   10 app.e0031982 app.adm   4096 Oct  4 12:21 .
+drwxr-x---    4 app.e0031982 app.adm   4096 Sep 22 16:09 ..
+drwx------    2 app.e0031982 app.adm   4096 Jul 29 13:50 cache
+drwxr-x---    2 app.e0031982 app.adm   4096 Oct  4 15:00 db
+-rw-r--r--    1 app.e0031982 app.adm   2914 Sep 29 18:48 globalState.json
+drwxr-x---    2 app.e0031982 app.adm   4096 Jul 29 08:29 logs
+-rw-r-----    1 app.e0031982 app.adm     96 Sep  1 17:23 secrets.json
+drwxr-x---   28 app.e0031982 app.adm   4096 Oct  4 22:31 sessions
+drwxr-x---    2 app.e0031982 app.adm   4096 Oct  4 22:31 settings
+drwxr-x---    2 app.e0031982 app.adm   4096 Sep  1 17:24 state
+drwxr-x--- 1738 app.e0031982 app.adm 135168 Sep  1 17:23 tasks
+drwxr-x--- 1648 app.e0031982 app.adm 131072 Sep 29 13:48 workspaces
+== 5. --data-dir usage in our repo ==
+/nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/MEMORY.md:90:- 🚫 **不得让多条线共用一份可变配置目录**（cline 已按线 `--data-dir` 隔离）——
+/nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/MEMORY.md:159:  - **修法**：**按线隔离 `--data-dir`** —— `/nas_train/app.e0031982/.cline_{pretrain,harness,v
+/nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/MEMORY.md:160:  - **三个坑（都已解决）**：① **`--data-dir` 指向的是 data 目录本身**（文件放 `<D
+/nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/daily-memories/2026-10-04.md:202:  - RUN_ID 50/51/52/53：查明 `--data-dir` = **data 目录本身**（文件在 `<D>/
+/nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/report_10_04.html:52:  <div class="sub">🔒 <b>晚间头条：挖出「9 小时静默事故」的深层真凶 —— 4
+/nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/report_10_04.html:71:    <li><b>晚间：第二层根因浮出 —— 4 条线共用一份 cline 配置</b>。<code>.29
+/nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/report_10_04.html:72:    <li><b>隔离机制踩到的三个坑（全部解决）</b>：① <code>--data-dir</code> 指�
+/nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/report_10_04.html:81:  <div class="kpi"><div class="v">4 / 4</div><div class="l">各线 cline 配置已<b>隔离</b>（
+/nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/report_10_04.html:197:🔒 <b>晚间的第二层真因（更根本）</b>：<code>.29</code> 上 <b>pretrain 与 harnes
+/nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/report_10_04.html:483:      <li>新增基础设施：<b>4 条线独立 cline 配置</b>（<code>--data-dir</code>）+ <
+== 6. ~/.cline/data/settings ==
+total 24
+drwxr-x---  2 app.e0031982 app.adm 4096 Oct  4 22:31 .
+drwxr-x--- 10 app.e0031982 app.adm 4096 Oct  4 12:21 ..
+-rw-r-----  1 app.e0031982 app.adm  266 Oct  4 22:31 cline_mcp_settings.json
+-rw-r-----  1 app.e0031982 app.adm   60 Jul 29 13:50 cli-notices.json
+-rw-r-----  1 app.e0031982 app.adm   83 Sep 29 10:37 global-settings.json
+-rw-r-----  1 app.e0031982 app.adm  863 Sep 15 14:57 models.json
+-rw-------  1 app.e0031982 app.adm  768 Oct  4 22:31 providers.json
+== DONE ==
+```
