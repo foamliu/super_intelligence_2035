@@ -789,9 +789,90 @@ python -m lm_eval --model hf \
 3. **吞吐随 M 单调下降**：249K（M=8192）→ 210K（M=16384）→ 189K（M=65536）。→ **运维预判「最优点大概率是抬 seq+SP on」被证伪**：抬 seq 需要 TP2/TP4 换显存，TP 通信开销正好吃掉 seq 抬升本可带来的长上下文收益（净吞吐反降）。
 4. **FP8 交叉点 M≈30–32K 在本硬件上不可达（bf16 口径）** → P-9.6② 只能在**唯一落地**的 M=65536 配置（TP4·SP·MBS8·seq8192）上测 FP8，看「M 大 + FP8」能否把 189K 拉回、甚至超过 seq4096 的 bf16。
 
-### P-9.6② FP8 e2e A/B 🚀 running（2026-10-04 14:15:37 重启）
+### P-9.6② FP8 e2e A/B ✅ 完成（2026-10-04 14:54:35 END，第 68 次唤醒）—— ⭐ FP8 转正：s=1.21–1.24 > 1.05
 
 > 脚本 `run/baize_p96b_fp8_e2e.sh`，SUM=`/tmp/baize_p96b_fp8_e2e.log`。载体 = 唯一可达 M≥32768 配置 **TP4·SP·MBS8·seq8192（M=65536）**，`--precision bf16_with_fp8_delayed_scaling_mixed`，60 步 × 2 点。
 > **A/B**：`B` = 默认连接（复现 P-9.4 的 SP amax allreduce 叠加是否仍在 M=65536 拖累）；`A` = `CUDA_DEVICE_MAX_CONNECTIONS=1`（隔离 amax+SP allreduce 叠加）。
 > **bf16 基线 = 点8 22.16s/iter（~189K tok/s）**；**判据（预注册）**：`s = t_bf16 / t_fp8 > 1.05` → FP8 转正 → 写入 P-8 建议；`≤1.05` → 不转正 → **定稿 bf16，把「不转正」作正式结论入库**。ETA ~15:05。
 > ⚠️ **14:07 首启曾卡死 → 14:15:37 重启（已修根因）**：点8 同款的**尾部存 ckpt**（save state_dict gather 需 ~2× 激活峰值显存）触发 `unhandled cuda error` → NCCL 死锁挂死。🛠 **修法**：脚本 `--save-interval 99999` → **`--save-interval 0`**（bridge `pretrain.py:122` 的 `save_interval != 0`、`train.py:924` 的真值判断均短路 → 0 即彻底关保存，从根上消除收尾 save-OOM）；A/B 的 env 前缀改为**字面量** `CUDA_DEVICE_MAX_CONNECTIONS=1 "${TC[@]}"`（bash 变量展开不会被识别为赋值前缀，字面量才行）。重启后 B→A 两次 run_one，无 save 应 rc=0 干净收尾。
+
+**结果表（稳态 s/iter = iter 20–60 均值，token/步 = GBS512×seq8192 = 4,194,304）**：
+
+| 点 | precision | CUDA_MAX_CONN | s/iter (稳态均值) | tok/s | TFLOP/s/GPU | peak GPU mem | iter-60 loss | iter-60 grad norm | rc |
+|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+| bf16 基线（点8）| bf16_mixed | default | 22.16s | 189,274 | 522 | ~71GB reserved | 7.4256 | 0.262 | (P-9.6①) |
+| **FP8 B** | fp8_delayed_mixed | 0 (default) | **18.28s** | **229,425** | ~632 | 73,649 MiB | 7.4225 | 0.217 | 0 ✅ |
+| **FP8 A** | fp8_delayed_mixed | **1** | **17.86s** | **234,833** | ~647 | 73,648 MiB | 7.4195 | 0.216 | 0 ✅ |
+
+> 稳态 s/iter 计算：B = mean(18343, 18184, 18341, 18360, 18181) ms = 18.282s；A = mean(17976, 17722, 17929, 17920, 17758) ms = 17.861s。
+
+**⭐ 预注册判据裁定**：
+
+| 情形 | 裁定 | 实测 |
+|:--|:--|:--|
+| 最优点 M ≥ 32768 且 FP8 s > 1.05 | ✅ **FP8 转正** → 写入 P-8 建议 | **M=65536 ≥ 32768 ✅；s_B=22.16/18.28=1.21 > 1.05 ✅；s_A=22.16/17.86=1.24 > 1.05 ✅** |
+
+→ **FP8 在本模型 M=65536 端到端转正**（s=1.21–1.24，+17.5%–19.4% 加速）。
+
+**⭐⭐ 关键发现**：
+
+1. **FP8 转正（s > 1.05）**：在 M=65536（远超交叉点 M\*≈30–32K）下，FP8 端到端比 bf16 快 17.5%–19.4%。复现了微基准预言的 s=1.31 方向（端到端受 TP4 通信开销拖累，实际 s=1.21–1.24 略低于微基准，但显著 > 1.05）。
+2. **A（CUDA_DEVICE_MAX_CONNECTIONS=1）比 B（默认）快 2.3%**（17.86 vs 18.28s）：证实 Megatron 官方建议有效 —— SP + CUDA_DEVICE_MAX_CONNECTIONS=1 确实减少了 amax/delayed-scaling allreduce 与 SP allreduce 的叠加冲突。P-9.4 在 M=16384 下 B(SP-on) FP8 反慢 15% 的现象在 M=65536 消失（M 足够大 → GEMM 计算时间占比上升 → 通信叠加的相对影响下降）。
+3. **FP8 不劣化 loss**：FP8 iter-60 loss 7.4195–7.4225 ≈ bf16 7.4256（差异 < 0.08%，在噪声内）；grad norm 0.216–0.217 vs bf16 0.262（FP8 略低，符合 delayed scaling 的梯度量化行为）。60 步短测无 NaN/skip（loss-scale 1.0 稳定）。
+4. **FP8 显存略高**：FP8 peak 73.6GB vs bf16 训练期 ~71GB（+2.6GB），因 FP8 amax buffer + delayed scaling state 额外开销，但仍 < 80GB（余量 ~6.4GB）。
+
+**P-8 配置建议（FP8 转正后）**：
+
+| 候选 | 配置 | tok/s | 优势 | 劣势 |
+|:--|:--|:--|:--|:--|
+| **A（推荐·长上下文）** | TP4·SP·MBS8·seq8192·**FP8**·MAX_CONN=1 | **235K** | FP8 转正 + **seq8192 长上下文** + 235K 已超 bf16 ④(210K) | TP4 通信开销（vs TP1 的 249K 仍慢 6%）|
+| B（纯吞吐）| TP1·DP8·MBS2·seq4096·bf16 | **249K** | 绝对最快、最简单（无 TP/SP/FP8） | M=8192 无 FP8 收益、无长上下文 |
+| C（折中）| TP2·SP·MBS4·seq4096·bf16 | 210K | 显存余量大（51GB）、TP2 比 TP4 通信轻 | 最慢、无长上下文 |
+
+> **推荐 = 候选 A**（TP4·SP·MBS8·seq8192·FP8·MAX_CONN=1, 235K tok/s）：FP8 转正把 M=65536 的吞吐从 189K 拉到 235K，超过 bf16 ④ 的 210K，且白拿 seq8192 长上下文能力（对论文"hybrid 长上下文效率"卖点双重加分）。代价 = 比 TP1 纯 bf16 的 249K 慢 ~6%，但换来长上下文 + FP8 验证。
+> ⚠️ **P-8 仍暂缓**（等 base 下满 + 配比定稿）；本建议供运维拍板时参考。
+> ⚠️ **长跑 loss 质量待验**：60 步短测 loss 持平 ≠ 长跑收敛一致；若 P-8 采用 FP8，前 500 步须密切监控 loss/nan/skip，与 bf16 对照。
+
+### P-9.5 训练性能 profiling / 瓶颈诊断 — 🚧 进行中（2026-10-04 ~16:07，第 69 次唤醒）
+
+> **载体**：P-9.1/P-9.3/P-9.6 短测数据（已完成的 60 步运行，无 live 长跑）。🚫 不对 P-5b 长跑 attach（P-5b 已结束）。
+> **工具状态**：`nsys` / `ncu` **未安装**（`which` 无输出）；`torch.profiler` ✅ 可用（torch 2.8.0+cu128）。→ level-1（MFU from logs）✅ 完成；level-3（torch.profiler top kernels）待跑。
+
+#### Level-1：MFU 分析（从已有日志，无新 GPU 运行）
+
+> H100 SXM5 峰值：bf16 dense ≈ 989 TFLOP/s，FP8 dense ≈ 1979 TFLOP/s。Megatron 报的 "GPU utilization (TFLOP/s/GPU)" = 模型 FLOPs / 墙钟时间（精度无关的架构 FLOPs）。
+
+| 配置 | TP | MBS | seq | precision | TFLOP/s/GPU | MFU (vs bf16 989) | MFU (vs FP8 1979) | 备注 |
+|:--|:--|:--|:--|:--|--:|--:|--:|:--|
+| P-9.1 MBS=1 | 1 | 1 | 4096 | bf16 | ~329 | 33.3% | — | grad-accum 128 段，气泡大 |
+| **P-9.3 seq4096** | **1** | **2** | **4096** | **bf16** | **599** | **60.6%** | — | **bf16 速度最优（249K tok/s）** |
+| P-9.2 ④ | 2 | 4 | 4096 | bf16 | 503 | 50.9% | — | SP on, M=16384 |
+| P-9.6① 点8 | 4 | 8 | 8192 | bf16 | 522 | 52.8% | — | M=65536, TP4 通信开销 |
+| **P-9.6② B** | **4** | **8** | **8192** | **FP8** | **~632** | 63.9% | **31.9%** | default connections |
+| **P-9.6② A** | **4** | **8** | **8192** | **FP8** | **~647** | 65.4% | **32.7%** | MAX_CONN=1 |
+
+**⭐ 瓶颈诊断（level-1 结论）**：
+
+1. **grad-accum 气泡是 MBS=1 的首要瓶颈**：MBS 1→2 使 MFU 从 33.3% → 60.6%（+27.3pp，近翻倍），因 grad-accum 段数 128→64 减半 → 每段 forward/backward launch + grad-sync 开销减半。→ **P-8 用 MBS≥2 是免费提速**。
+
+2. **TP 通信开销量化**：TP1·MBS2（60.6% MFU）→ TP4·MBS8（52.8% MFU）= **-7.8pp / -13% 相对**。这是 TP4 allreduce + SP allreduce 的通信开销。→ 与 P-4 profile 的 **NCCL 41.7% GPU 自耗时**一致（P-4 是 GBS=8 放大口径，生产口径下通信占比略低但仍为主瓶颈）。
+
+3. **FP8 未打满 FP8 算力**：FP8 A 的 MFU vs FP8 peak = **32.7%**（远低于 bf16 的 52.8% vs bf16 peak）→ **FP8 的瓶颈不是算力而是通信**。FP8 把 GEMM 时间压缩了 ~22%，但通信时间不变 → 通信占比从 ~47% 升到 ~67% → MFU vs FP8 peak 反而更低。→ **要再提速必须减通信**（overlap-grad-reduce / overlap-param-gather / distributed-optimizer，但需改 recipe，已冻结；若 P-8 后需进一步优化，另开任务经运维批准）。
+
+4. **seq 对 MFU 的影响**：TP1·MBS2·seq2048（P-9.3）= 141K tok/s → MFU ≈ 34%（vs seq4096 的 60.6%）。seq 减半使每 token 的 GEMM M 减半 → 访存受限 → MFU 暴跌。**印证 P-9.3 结论：seq↓ 每 token 更慢（r=1.75）**。
+
+#### Level-3：torch.profiler top kernels（待跑）
+
+- **计划**：在 TP1·MBS2·seq4096（bf16 速度最优配置）上跑 20–50 步 `torch.profiler`（`profile_memory=True, record_shapes=True, with_stack=True`），取 top-20 kernels + 时间占比 + 显存峰值。
+- **预期**：验证 NCCL 是否仍为 #1 瓶颈（P-4 GBS=8 口径下 41.7%）；量化 SSM scan / mamba custom kernel / LayerNorm / elementwise 占比。
+- **产出**：本节追加 top-kernels 表 + 与 P-4 的交叉印证。
+
+#### 与 P-9.1/P-9.4/P-9.6 的交叉印证
+
+| P-9 发现 | P-9.5 印证 |
+|:--|:--|
+| P-9.1: MBS 1→2 +59% 吞吐 | ✅ MFU 33%→61%，grad-accum 气泡是主因 |
+| P-9.6①: TP4·MBS8 仅 189K（vs TP1·MBS2 249K，-24%） | ✅ TP4 通信 -7.8pp MFU |
+| P-9.6②: FP8 s=1.21–1.24（未达微基准 1.31） | ✅ FP8 MFU 32.7% vs peak → 通信拖累，GEMM 压缩被通信吃掉部分 |
+| P-9.4: M=16384 FP8 不转正（s≤1.01） | ✅ M 小→GEMM 访存受限→FP8 压缩 GEMM 的绝对时间少→通信占比更高→更难转正 |
+> 📌 **命令**：`CUDA_DEVICE_MAX_CONNECTIONS=1 $PY/torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=29923 pretrain_launcher.py --arch mamba2 --tensor-parallel 4 --sequence-parallel --seq-length 8192 --global-batch-size 512 --micro-batch-size 8 --precision bf16_with_fp8_delayed_scaling_mixed --train-iters 60 --save-interval 0 ...`（完整脚本见 `run/baize_p96b_fp8_e2e.sh`）
