@@ -6994,3 +6994,182 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 66 · 2026-10-05 07:26:23 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME; B=/nas_train/app.e0031982; C=/home/app.e0031982/.bun/bin/cline
+
+echo; echo "=== 1. settings/ 目录清单（共享 + 各隔离目录）==="
+ls -1 "$H/.cline/data/settings" 2>/dev/null | sed 's/^/   [shared] /'
+for n in pretrain harness vision data; do echo "   [.cline_$n/settings] $(ls -1 "$B/.cline_$n/settings" 2>/dev/null | tr '\n' ' ')"; done
+
+echo; echo "=== 2. 共享 cline_mcp_settings.json 现状（密钥脱敏）==="
+S="$H/.cline/data/settings/cline_mcp_settings.json"
+echo "   存在=$([ -f "$S" ] && echo YES || echo NO)  大小=$(stat -c %s "$S" 2>/dev/null)B"
+sed -E 's/((apiKey|apikey|token|secret|password|Authorization|key)"[[:space:]]*:[[:space:]]*")[^"]*/\1<masked>/g' "$S" 2>/dev/null | head -50 | cut -c1-170 | sed 's/^/      /'
+echo "   -- 已注册的 server 名 + 类型/目标 --"
+python3 -c "import json;d=json.load(open('$S',encoding='utf-8'));s=d.get('mcpServers',d);print('     servers =',list(s.keys()));[print('       -',k,'| type=',v.get('type') or v.get('transport'),'| url/cmd=',v.get('url') or v.get('command')) for k,v in s.items()]" 2>&1 | head -25
+echo "   -- 文件里是否提到 8090 / cimi --"
+grep -n -i -e '8090' -e 'cimi' "$S" 2>/dev/null | cut -c1-150 | sed 's/^/      /' || echo "      (无)"
+
+echo; echo "=== 3. 各隔离目录是否已有 MCP 设置文件 ==="
+for n in pretrain harness vision data; do
+  f="$B/.cline_$n/settings/cline_mcp_settings.json"
+  echo "   [.cline_$n] $([ -f "$f" ] && echo "存在 $(stat -c %s "$f")B" || echo '不存在')"
+done
+
+echo; echo "=== 4. 全局：8090 / cimi 出现在哪些 cline 配置里（有界）==="
+timeout 25 grep -rIl -e '8090' -e 'cimi' "$H/.cline" "$B"/.cline_*/settings 2>/dev/null | head -12 | sed 's/^/   /' || echo "   (无命中)"
+
+echo; echo "=== 5. eda_fastmcp 官方「客户端接入示例」（找 mcpServers / cline_mcp_settings）==="
+timeout 25 grep -rn -i -e 'mcpServers' -e 'cline_mcp_settings' -e '\.cline' "$B/code/eda_fastmcp/README.md" "$B/code/eda_fastmcp/CLAUDE.md" "$B/code/eda_fastmcp/docs" 2>/dev/null | head -20 | cut -c1-170 | sed 's/^/   /' || echo "   (无命中)"
+echo "   -- README 里 40–80 行（常见接入段落）--"; sed -n '40,80p' "$B/code/eda_fastmcp/README.md" 2>/dev/null | cut -c1-160 | sed 's/^/      /'
+
+echo; echo "=== 6. cline CLI：是否支持 MCP / 读哪个文件 ==="
+"$C" --help 2>&1 | grep -i -E 'mcp|data-dir|--config' | head -14 | cut -c1-140 | sed 's/^/   /'
+echo "   -- 在 cline 安装物里搜 'cline_mcp_settings' 的解析位置（有界）--"
+timeout 30 grep -rIl 'cline_mcp_settings' /home/app.e0031982/.bun /nas_train/app.e0031982/harness/cline 2>/dev/null | head -6 | sed 's/^/   /' || echo "   (无命中/超时)"
+
+echo; echo "=== 7. 旁证：harness 的 cline 当初怎么挂 MCP（gw_proxy / harness 目录）==="
+timeout 20 grep -rIl -e 'mcpServers' -e 'cline_mcp_settings' "$B/harness_work" 2>/dev/null | head -6 | sed 's/^/   /' || echo "   (无命中)"
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-05 07:26:23
+
+=== 1. settings/ 目录清单（共享 + 各隔离目录）===
+   [shared] cline_mcp_settings.json
+   [shared] cli-notices.json
+   [shared] global-settings.json
+   [shared] models.json
+   [shared] providers.json
+   [.cline_pretrain/settings] cline_mcp_settings.json cli-notices.json global-settings.json models.json providers.json 
+   [.cline_harness/settings] cline_mcp_settings.json cli-notices.json global-settings.json models.json providers.json 
+   [.cline_vision/settings] cline_mcp_settings.json cli-notices.json global-settings.json models.json providers.json 
+   [.cline_data/settings] cline_mcp_settings.json cli-notices.json global-settings.json models.json providers.json 
+
+=== 2. 共享 cline_mcp_settings.json 现状（密钥脱敏）===
+   存在=YES  大小=265B
+      {
+        "mcpServers": {
+          "pyAether_MCP_server": {
+            "url": "http://10.239.2.29:8090/sse",
+            "type": "sse",
+            "disabled": false,
+            "autoApprove": [
+              "search_apis",
+              "get_api_details",
+              "run_pyAether_code_tool"
+            ]
+          }
+        }
+      }
+   -- 已注册的 server 名 + 类型/目标 --
+     servers = ['pyAether_MCP_server']
+       - pyAether_MCP_server | type= sse | url/cmd= http://10.239.2.29:8090/sse
+   -- 文件里是否提到 8090 / cimi --
+      4:      "url": "http://10.239.2.29:8090/sse",
+
+=== 3. 各隔离目录是否已有 MCP 设置文件 ===
+   [.cline_pretrain] 存在 265B
+   [.cline_harness] 存在 265B
+   [.cline_vision] 存在 22B
+   [.cline_data] 存在 22B
+
+=== 4. 全局：8090 / cimi 出现在哪些 cline 配置里（有界）===
+   /home/app.e0031982/.cline/data/state/taskHistory.json
+   /home/app.e0031982/.cline/data/state/taskHistory.json.tmp.1776383634527.r41olw.json
+   /home/app.e0031982/.cline/data/state/taskHistory.json.tmp.1782898647375.kyl2q.json
+   /home/app.e0031982/.cline/data/logs/hooks.jsonl
+   /home/app.e0031982/.cline/data/logs/hub-daemon.log
+   /home/app.e0031982/.cline/data/logs/cline.log
+   /home/app.e0031982/.cline/data/sessions/1790776068574_mzk14/1790776068574_mzk14.messages.json
+   /home/app.e0031982/.cline/data/sessions/1790764659966_xj5hp/1790764659966_xj5hp.json
+   /home/app.e0031982/.cline/data/sessions/1790764659966_xj5hp/1790764659966_xj5hp.messages.json
+   /home/app.e0031982/.cline/data/sessions/1790789227457_zwrsb/1790789227457_zwrsb.json
+   /home/app.e0031982/.cline/data/sessions/1790789227457_zwrsb/1790789227457_zwrsb.messages.json
+   /home/app.e0031982/.cline/data/sessions/1790687308091_ucqac/1790687308091_ucqac.json
+
+=== 5. eda_fastmcp 官方「客户端接入示例」（找 mcpServers / cline_mcp_settings）===
+   /nas_train/app.e0031982/code/eda_fastmcp/README.md:79:Cline 通过 `~/.cline/data/settings/cline_mcp_settings.json` 连接 MCP server：
+   /nas_train/app.e0031982/code/eda_fastmcp/README.md:83:  "mcpServers": {
+   /nas_train/app.e0031982/code/eda_fastmcp/README.md:93:模型配置在 `~/.cline/data/settings/providers.json`（model id + apiKey + baseUrl）。`.env` 里有各模型配
+   /nas_train/app.e0031982/code/eda_fastmcp/README.md:171:| 蒸馏 Skills | `~/.cline/skills/eda-*/SKILL.md`（origin: auto_distilled） | 高频 L1 升级为 Skill |
+   /nas_train/app.e0031982/code/eda_fastmcp/README.md:386:改 `~/.cline/data/settings/providers.json` 的 `model` / `apiKey` / `baseUrl` 字段。`.env` 里有各模型的�
+   /nas_train/app.e0031982/code/eda_fastmcp/README.md:394:检查 `~/.cline/data/settings/cline_mcp_settings.json` 的 URL 是否指向正确的 MCP server 地址，`autoAppr
+   /nas_train/app.e0031982/code/eda_fastmcp/CLAUDE.md:73:    │                       zhulong reads from ~/.cline/skills/ (auto-distilled + the 4 hand-written copied out)
+   /nas_train/app.e0031982/code/eda_fastmcp/CLAUDE.md:110:| **Skills** | `skills/eda-*/SKILL.md` (repo, version-controlled) → copied to `~/.cline/skills/` for Cline auto-d
+   /nas_train/app.e0031982/code/eda_fastmcp/CLAUDE.md:112:**Hand-written vs auto-distilled.** Hand-written: 4 Skills (`eda-api-search-strategy`, `eda-command-family-selectio
+   /nas_train/app.e0031982/code/eda_fastmcp/docs/anti_leak_whitelist_ws.html:153:    直接 <code>cp -f</code>，确保每次评测都用最新的 hook 源码覆盖 <code>~/
+   /nas_train/app.e0031982/code/eda_fastmcp/docs/anti_leak_whitelist_ws.html:167:    <code>rm -f "${HOME}/.cline/hooks/PreToolUse"</code>，避免 hook 常驻影响宿主其
+   /nas_train/app.e0031982/code/eda_fastmcp/docs/anti_leak_whitelist_ws.html:227:  强制 <code>cp -f</code> 覆盖 <code>~/.cline/hooks/PreToolUse</code>，生成结束后 
+   /nas_train/app.e0031982/code/eda_fastmcp/docs/anti_leak_whitelist_ws.html:228:  <strong>不要手动把 hook 常驻在 <code>~/.cline/hooks/</code></strong>，否则会�
+   /nas_train/app.e0031982/code/eda_fastmcp/docs/anti_leak_whitelist_ws.html:229:  会话（本开发会话也在 <code>~/.cline</code> 下，hook 部署期间自己的 <cod
+   /nas_train/app.e0031982/code/eda_fastmcp/docs/anti_leak_whitelist_ws.html:250:  <strong>6. cline 需连上 API</strong>：串行（<code>PARALLEL=1</code>）直接复用 
+   /nas_train/app.e0031982/code/eda_fastmcp/docs/anti_leak_whitelist_ws.html:262:  <li>确认生成结束后 <code>~/.cline/hooks/PreToolUse</code> 被移除（目录为空�
+   /nas_train/app.e0031982/code/eda_fastmcp/docs/human_baseline_assets/README.md:35:`~/.cline/skills/` and `~/Cline/Rules/`, neither under git). As of 2026-08-04
+   /nas_train/app.e0031982/code/eda_fastmcp/docs/human_baseline_assets/README.md:45:and disk failure on `~/.cline/skills/`). The redundant copies that used to live
+   /nas_train/app.e0031982/code/eda_fastmcp/docs/human_baseline_assets/README.md:64:# needed; if the live ~/.cline/skills/ copies are wanted too, copy from the repo:
+   /nas_train/app.e0031982/code/eda_fastmcp/docs/human_baseline_assets/README.md:67:  mkdir -p ~/.cline/skills/$s
+   -- README 里 40–80 行（常见接入段落）--
+      EDA_RUNCODE_GUARDRAILS=false          # run_code 后置护栏（Python AST 检查，默认关闭）
+      ```
+      
+      ### 2. 启动服务
+      
+      每次使用前需启动 3 个服务（顺序：recall → memory → MCP）：
+      
+      ```bash
+      # (1) API 文档向量召回服务（启动脚本从 9002 起自动探测空闲端口，当前 .env 指向 9009）
+      # 数据库: kb/chroma_db_v20260522，含 4 个 collection（按 lang 路由）:
+      #   api_descriptions (pyAether) / skill_descriptions (skill)
+      #   waveview_description (tcl) / innovus_description (innovus)
+      # 数据源: docs/API_INFO_MERGED_V3.json + docs/api_patch.json (pyAether)
+      #         docs/skill_data/*.json (SKILL)
+      #         docs/wv_ace_API_INFO.json (Tcl) + docs/innovus_API_INFO.json (Innovus)
+      # 嵌入模型: Octen-Embedding-4B（路径见 start_recall_api.sh 的 MODEL_PATH）
+      ./scripts/start_recall_api.sh
+      # 启动后按脚本打印的端口同步 .env 的 RAG_RECALL_URL
+      # 健康检查: curl http://localhost:<port>/health
+      
+      # (2) Memory Bank 自进化召回服务（自进化 / query_memory_bank 时需要）
+      ./scripts/start_recall_local.sh
+      
+      # (3) MCP Server
+      ./scripts/start.sh
+      # 访问地址: http://<本机IP>:18889/sse（EDA_MCP_PORT）
+      # 健康检查: curl http://localhost:18889/health
+      ```
+      
+      停止服务：
+      
+      ```bash
+      ./scripts/stop_recall_api.sh
+      ./scripts/stop_recall_local.sh
+      ./scripts/stop.sh
+      ```
+      
+      ### 3. Cline CLI 配置
+      
+      Cline 通过 `~/.cline/data/settings/cline_mcp_settings.json` 连接 MCP server：
+      
+
+=== 6. cline CLI：是否支持 MCP / 读哪个文件 ===
+     --config <path>               Configuration directory (default: ~/.cline)
+     --data-dir <path>             Use isolated local state at this directory path
+     mcp                           Manage MCP servers
+   -- 在 cline 安装物里搜 'cline_mcp_settings' 的解析位置（有界）--
+
+=== 7. 旁证：harness 的 cline 当初怎么挂 MCP（gw_proxy / harness 目录）===
+
+=== DONE ===
+```
