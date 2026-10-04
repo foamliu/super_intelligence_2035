@@ -1926,3 +1926,81 @@ drwxr-x--- 10 app.e0031982 app.adm 4096 Oct  4 12:21 ..
 -rw-------  1 app.e0031982 app.adm  768 Oct  4 22:31 providers.json
 == DONE ==
 ```
+
+---
+
+## RUN_ID 17 · 2026-10-04 22:49:52 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 17 — build isolated --config dir + verify hooks/env (bounded)
+K=02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23
+BASE=http://agi-gateway.cxmt.com/cloud/v1
+ISO=/nasdata/app.e0031982/.cline_zhulong
+echo "== 0. TIME =="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "== 1. create isolated config dir + auth (--config) =="
+mkdir -p "$ISO/hooks"
+timeout 90 cline --config "$ISO" auth -p openai -k "$K" -b "$BASE" -m "glm-5.2" 2>&1 | tail -4 | cut -c1-170
+echo "== 2. isolated dir layout =="; timeout 10 find "$ISO" -maxdepth 2 2>&1 | head -25 | cut -c1-150
+echo "== 3. isolated auth present? =="; timeout 10 grep -rho '"openAiBaseUrl"[^,]*' "$ISO" 2>/dev/null | head -3
+echo "== 4. install distinguishable canary hooks =="
+rm -f ~/.cline/hooks/PreToolUse "$ISO/hooks/PreToolUse"
+printf '#!/bin/bash\necho "DEFAULT_DIR_READ" >> /tmp/zhulong_hook_probe.log\nexit 0\n' > ~/.cline/hooks/PreToolUse; chmod +x ~/.cline/hooks/PreToolUse
+printf '#!/bin/bash\necho "ISO_DIR_READ" >> /tmp/zhulong_hook_probe.log\nexit 0\n' > "$ISO/hooks/PreToolUse"; chmod +x "$ISO/hooks/PreToolUse"
+rm -f /tmp/zhulong_hook_probe.log
+echo "== 5. SMOKE: cline --config ISO, ask for printenv =="
+cd /tmp
+timeout 200 env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
+  cline --config "$ISO" -c /tmp --auto-approve true -m glm-5.2 -k "$K" -P openai-compatible -t 180 \
+  "Run exactly one shell command and return its raw output: printenv | grep -iE 'CLINE|HOOK' ; echo END" < /dev/null 2>&1 | tail -22 | cut -c1-180
+echo "== 6. probe (which hooks dir read) =="; timeout 10 cat /tmp/zhulong_hook_probe.log 2>&1 | head; echo "(end-probe)"
+echo "== 7. cleanup canary =="; rm -f ~/.cline/hooks/PreToolUse "$ISO/hooks/PreToolUse"; timeout 10 ls -la ~/.cline/hooks/ | head -4 | cut -c1-140
+echo "== DONE =="
+```
+
+**输出**
+```
+== 0. TIME ==
+2026-10-04 22:49:52
+hfeg0tedaap02
+== 1. create isolated config dir + auth (--config) ==
+[32mProvider configured:[0m [36mopenai-compatible[0m (glm-5.2)
+== 2. isolated dir layout ==
+/nasdata/app.e0031982/.cline_zhulong
+/nasdata/app.e0031982/.cline_zhulong/hooks
+/nasdata/app.e0031982/.cline_zhulong/data
+/nasdata/app.e0031982/.cline_zhulong/data/settings
+== 3. isolated auth present? ==
+== 4. install distinguishable canary hooks ==
+== 5. SMOKE: cline --config ISO, ask for printenv ==
+Raw output:
+
+```
+CLINE_CONNECTOR_CLI_LAUNCH={"launcher":"/nasdata/app.e0031982/.local/bin/cline","connectArgsPrefix":["connect"],"cwd":"/tmp"}
+END
+```
+
+One environment variable matched the pattern `CLINE|HOOK` (case-insensitive):
+
+- **`CLINE_CONNECTOR_CLI_LAUNCH`** — a JSON blob describing the Cline connector CLI launcher: `{"launcher":"/nasdata/app.e0031982/.local/bin/cline","connectArgsPrefix":["connect"
+
+No `HOOK`-related variables were set. The trailing `END` marker is present as requested.
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+== 6. probe (which hooks dir read) ==
+ISO_DIR_READ
+(end-probe)
+== 7. cleanup canary ==
+total 8
+drwxr-x--- 2 app.e0031982 app.adm 4096 Oct  4  2026 .
+drwxr-x--- 4 app.e0031982 app.adm 4096 Sep 22 16:09 ..
+== DONE ==
+```
