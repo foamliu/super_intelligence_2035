@@ -4217,3 +4217,145 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 38 · 2026-10-04 11:32:46 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME
+
+echo; echo "=== 1. /home 大盘（容量 + inode 双看）==="
+df -hT /home 2>/dev/null
+df -BG /home 2>/dev/null | tail -1
+echo -n "   inode: "; df -i /home 2>/dev/null | tail -1
+echo "   -- 顺带看根分区（/home 可能不是独立挂载）--"; df -hT / 2>/dev/null | tail -1
+
+echo; echo "=== 2. /home 顶层（mtime + owner）==="
+ls -1 /home 2>/dev/null | head -20 | sed 's/^/   /'
+for d in /home/*/; do printf '   %-32s %s  %s\n' "$d" "$(stat -c %y "$d" 2>/dev/null | cut -c1-16)" "$(stat -c %U "$d" 2>/dev/null)"; done | head -12
+
+echo; echo "=== 3. ⭐ 本用户 HOME 一级（含隐藏项；后台低优先级，边跑边写）==="
+rm -f /tmp/_duhome.txt /tmp/_duhome.done
+setsid bash -c "nice -n 19 du -sh $H/* $H/.[!.]* > /tmp/_duhome.txt 2>/dev/null; echo done > /tmp/_duhome.done" </dev/null >/dev/null 2>&1 &
+sleep 10
+echo "   行数=$(wc -l < /tmp/_duhome.txt 2>/dev/null)  done=$([ -f /tmp/_duhome.done ] && echo YES || echo NO)"
+sort -hr /tmp/_duhome.txt 2>/dev/null | head -25
+
+echo; echo "=== 4. 已知高危嫌疑点（各自 20s 有界）==="
+for p in "$H/.cache" "$H/.bun" "$H/.cline" "$H/.local"; do
+  if [ -e "$p" ]; then printf '   %-16s ' "${p#$H/}"; timeout 20 du -sh "$p" 2>/dev/null | cut -f1 || echo "(超时→看后台结果)"; fi
+done
+
+echo; echo "=== 5. ⭐ cline 会话数（大目录风险）==="
+echo -n "   .cline/data/sessions 条目数 = "; timeout 25 find "$H/.cline/data/sessions" -maxdepth 1 -mindepth 1 2>/dev/null | wc -l
+echo -n "   .cline/data/tasks   条目数 = "; timeout 25 find "$H/.cline/data/tasks" -maxdepth 1 -mindepth 1 2>/dev/null | wc -l
+echo -n "   .bun/install/cache 存在= "; [ -d "$H/.bun/install/cache" ] && echo YES || echo no
+echo -n "   miniforge3/pkgs    存在= "; [ -d "$H/miniforge3/pkgs" ] && echo YES || echo no
+
+echo; echo "=== 6. 其它常见占用 ==="
+for p in "$H/.vscode-server" "$H/.conda" "$H/harness_work" "$H/.npm" "$H/.cache/pip" "$H/.cache/huggingface"; do
+  [ -e "$p" ] && { printf '   %-26s ' "${p#$H/}"; timeout 20 du -sh "$p" 2>/dev/null | cut -f1; }
+done
+echo; echo "=== DONE（后台 du 仍在跑；下轮读 /tmp/_duhome.txt + /tmp/_duhome.done）==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 11:32:46
+
+=== 1. /home 大盘（容量 + inode 双看）===
+Filesystem                 Type  Size  Used Avail Use% Mounted on
+/dev/mapper/vgroot-lv_home ext4  196G  171G   16G  92% /home
+/dev/mapper/vgroot-lv_home      196G  171G       16G  92% /home
+   inode: /dev/mapper/vgroot-lv_home 13107200 1008189 12099011    8% /home
+   -- 顺带看根分区（/home 可能不是独立挂载）--
+/dev/mapper/vgroot-lv_root ext4  384G   13G  352G   4% /
+
+=== 2. /home 顶层（mtime + owner）===
+   app.e0013625
+   app.e0016372
+   app.e0016421
+   app.e0019919
+   app.e0020597
+   app.e0020613
+   app.e0021019
+   app.e0021059
+   app.e0022971
+   app.e0025692
+   app.e0026822
+   app.e0027673
+   app.e0030209
+   app.e0030265
+   app.e0030758
+   app.e0031982
+   app.t0002310
+   app.t0002373
+   app.t0002965
+   lost+found
+   /home/app.e0013625/              2025-06-23 23:57  app.e0013625
+   /home/app.e0016372/              2026-10-01 09:01  app.e0016372
+   /home/app.e0016421/              2025-07-04 14:41  app.e0016421
+   /home/app.e0019919/              2025-06-23 23:57  app.e0019919
+   /home/app.e0020597/              2026-09-22 09:40  app.e0020597
+   /home/app.e0020613/              2025-06-23 23:57  app.e0020613
+   /home/app.e0021019/              2025-09-03 17:26  app.e0021019
+   /home/app.e0021059/              2025-06-26 10:40  app.e0021059
+   /home/app.e0022971/              2026-06-12 13:40  app.e0022971
+   /home/app.e0025692/              2025-06-25 11:49  app.e0025692
+   /home/app.e0026822/              2025-07-25 11:37  app.e0026822
+   /home/app.e0027673/              2025-10-24 13:43  app.e0027673
+
+=== 3. ⭐ 本用户 HOME 一级（含隐藏项；后台低优先级，边跑边写）===
+   行数=32  done=YES
+107G	/home/app.e0031982/.cache
+13G	/home/app.e0031982/.bun
+5.6G	/home/app.e0031982/.cline
+3.8G	/home/app.e0031982/.local
+2.3G	/home/app.e0031982/.npm
+1.6G	/home/app.e0031982/.npm-global
+725M	/home/app.e0031982/.vscode-server
+299M	/home/app.e0031982/.triton
+53M	/home/app.e0031982/chip-mllm
+1.3M	/home/app.e0031982/.codex
+136K	/home/app.e0031982/.config
+36K	/home/app.e0031982/.nv
+24K	/home/app.e0031982/.ssh
+16K	/home/app.e0031982/.copilot
+16K	/home/app.e0031982/.conda
+16K	/home/app.e0031982/Cline
+12K	/home/app.e0031982/.modelscope
+8.0K	/home/app.e0031982/.pip
+8.0K	/home/app.e0031982/.keras
+8.0K	/home/app.e0031982/.bashrc.bak.20261004-081247
+8.0K	/home/app.e0031982/.bashrc
+4.0K	/home/app.e0031982/.wget-hsts
+4.0K	/home/app.e0031982/.swanlab
+4.0K	/home/app.e0031982/.python_history
+4.0K	/home/app.e0031982/.profile
+
+=== 4. 已知高危嫌疑点（各自 20s 有界）===
+   .cache           107G
+   .bun             13G
+   .cline           5.6G
+   .local           3.8G
+
+=== 5. ⭐ cline 会话数（大目录风险）===
+   .cline/data/sessions 条目数 = 3212
+   .cline/data/tasks   条目数 = 1215
+   .bun/install/cache 存在= YES
+   miniforge3/pkgs    存在= no
+
+=== 6. 其它常见占用 ===
+   .vscode-server             725M
+   .conda                     16K
+   .npm                       2.3G
+   .cache/pip                 14G
+   .cache/huggingface         78G
+
+=== DONE（后台 du 仍在跑；下轮读 /tmp/_duhome.txt + /tmp/_duhome.done）===
+```
