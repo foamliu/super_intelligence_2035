@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 49 -->
+<!-- RUN_ID: 50 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,59 @@
 
 ---
 
-## RUN_ID 49 — 🔬→🔧 **重测 8 个候选 + 自动选胜者并修好 pretrain（key/model/base 一并对齐）**（**已授权**）（**本块最新，优先执行**）
+## RUN_ID 50 — 🏗 **为 4 条线建独立 cline 配置目录（`--data-dir`）+ 逐个 smoke 验证**（**已获批准**）（**本块最新，优先执行**）
+
+**动机（RUN_ID 49 定位的真凶）**：`.29` 上 pretrain 与 harness **共用一份 `~/.cline/data/globalState.json`**，而 harness 把它改成了自己的 `gw_proxy`（`http://127.0.0.1:9090/v1`）→ **pretrain 的 cline 被指到本地代理 → `Forbidden`**。⇒ **必须给每条线独立配置**（cline 支持 `--data-dir`，harness 已在用）。
+
+**本块只建目录 + 验证机制**（🚫 **暂不改 loop 脚本** —— 那一步单独做、单独验）。
+
+1. **摸清 `--data-dir` 的目录布局**（看 harness 已在用的那份，确认是 `<D>/data/globalState.json` 还是 `<D>/globalState.json`）
+2. 为 `pretrain / harness / vision / data` 各建 `/nas_train/app.e0031982/.cline_<line>/`，**播种**当前**可用**的配置（base=`/cloud/v1` + glm-5.2 key），`secrets.json` chmod 600
+3. **逐个 smoke**：`cline --data-dir <D> -c /tmp -m glm-5.2 -k <该目录的 key> -P openai-compatible …` → 必须 **OK**（不是 Forbidden）
+4. 报告（key 脱敏）
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME; B=/nas_train/app.e0031982
+C=/home/app.e0031982/.bun/bin/cline
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "=== 1. --data-dir 的语义与布局 ==="
+"$C" --help 2>&1 | grep -i -B1 -A2 'data-dir' | head -8 | cut -c1-140
+echo "   -- harness 已在用的那份长什么样 --"
+find /nas_train/app.e0031982/harness_work -maxdepth 4 -name 'globalState.json' 2>/dev/null | head -3 | sed 's/^/     /'
+for d in /nas_train/app.e0031982/harness_work/*/ /nas_train/app.e0031982/harness_work/*/*/; do
+  [ -d "$d/data" ] && { echo "     ★ 布局 = <D>/data/  （例 $d）"; ls -1 "$d/data" 2>/dev/null | head -5 | sed 's/^/         /'; break; }
+done
+
+echo; echo "=== 2. 逐线建独立 data-dir + 播种配置 ==="
+SRC="$H/.cline/data"
+echo "   源 base = $(sed -n 's/.*\"openAiBaseUrl\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p' "$SRC/globalState.json" | head -1)"
+for n in pretrain harness vision data; do
+  D="$B/.cline_$n"; mkdir -p "$D/data"
+  cp -a "$SRC/globalState.json" "$D/data/globalState.json" 2>/dev/null
+  cp -a "$SRC/secrets.json"     "$D/data/secrets.json"     2>/dev/null
+  chmod 600 "$D/data/secrets.json" 2>/dev/null
+  echo "   $D/data/ -> $(ls -1 "$D/data" 2>/dev/null | tr '\n' ' ')"
+done
+
+echo; echo "=== 3. 逐个 smoke（必须 OK）==="
+cd /tmp
+for n in pretrain harness vision data; do
+  D="$B/.cline_$n"
+  K=$(python3 -c "import json;print(json.load(open('$D/data/secrets.json'))['openAiApiKey'])" 2>/dev/null | tr -d '\r\n')
+  R=$(env $P timeout 60 "$C" --data-dir "$D" -c /tmp -m glm-5.2 -k "$K" -P openai-compatible --auto-approve true -t 45 "reply with exactly OK" 2>&1 | head -2 | tr -d '\r' | tr '\n' ' ')
+  printf '   %-9s (key len %s) => %s\n' "$n" "${#K}" "${R:0:120}"
+done
+
+echo; echo "=== 4. 共享配置（现状）—— 仍在 pretrain 手里，值应正常 ==="
+echo "   ~/.cline/data/globalState.json base = $(sed -n 's/.*\"openAiBaseUrl\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p' "$SRC/globalState.json" | head -1)"
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 49**（自愈修复，**✅ 已执行 17:23:57 exit=0** → **真凶 = `openAiBaseUrl` 被 harness 改成 `127.0.0.1:9090`（gw_proxy）**；修复后 **Forbidden=0、cline 已在推理**）为 ```text。
+
+## RUN_ID 49 — 🔬→🔧 **重测候选 + 自动选胜者并修好 pretrain**（✅ 已执行 → **已修好**；真凶见 RUN_ID 50）
 
 **前置结论（RUN_ID 48）**：env 毒化**已坐实并已消除**（新 loop 已无 `OPENAI_API_KEY`/`OPENAI_API_URL`），**但 cline 仍 `Forbidden`** ⇒ 剩 **第二个因素**，最可能是 **`secrets.json` 里 glm-5.2 那把 key 也在 16:57 之后耗尽了**（16:54 时 curl 还是 200）。
 
@@ -43,7 +95,7 @@
 
 🚫 **只动 pretrain**。key 一律脱敏（len/prefix）。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 WK=/nas_train/app.e0031982/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
 S="$HOME/.cline/data/secrets.json"; G="$HOME/.cline/data/globalState.json"
