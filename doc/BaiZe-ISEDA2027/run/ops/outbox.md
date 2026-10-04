@@ -6061,3 +6061,89 @@ whag0pgpuap12
   data    => [31merror:[0m Forbidden 
 === relay block done ===
 ```
+
+---
+
+## RUN_ID 59 · 2026-10-04 18:13:27 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+echo; echo "=== [.12] 只读诊断：cline 能力 + loop 现状 ==="
+timeout 120 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+export PATH="$HOME/.bun/bin:$PATH"
+hostname; date '+%F %T'
+C=/home/app.e0031982/.bun/bin/cline
+echo; echo "--- 1. cline 版本 + --data-dir 支持 ---"
+"$C" --version 2>&1 | head -2
+"$C" --help 2>&1 | grep -i -A1 'data-dir\|--config' | head -8 | cut -c1-140
+echo; echo "--- 2. 共享 globalState 关键字段 ---"
+python3 -c "import json,pathlib;d=json.load(open(str(pathlib.Path.home())+'/.cline/data/globalState.json'));[print('   ',k,'=',repr(d.get(k))) for k in ('actModeApiProvider','actModeOpenAiModelId','planModeOpenAiModelId','openAiBaseUrl')]" 2>&1 | cut -c1-160
+echo; echo "--- 3. 两个 loop log 末尾 ---"
+for L in vision data; do echo "   # $L ($(stat -c %y /tmp/baize_${L}_loop.log 2>/dev/null | cut -c1-19))"; tail -12 "/tmp/baize_${L}_loop.log" 2>/dev/null | cut -c1-150 | sed 's/^/     /'; done
+echo; echo "--- 4. 当前 cline 进程 / loop pid ---"
+pgrep -af 'bun.*cline' 2>/dev/null | cut -c1-150 | head -4
+echo "   loops: $(pgrep -af 'baize_.*_loop.sh' 2>/dev/null | cut -c1-110)"
+echo; echo "=== DONE (.12) ==="
+EOS12
+echo "=== relay block done ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 18:13:27
+
+=== [.12] 只读诊断：cline 能力 + loop 现状 ===
+whag0pgpuap12
+2026-10-04 18:13:28
+
+--- 1. cline 版本 + --data-dir 支持 ---
+3.0.51
+  --config <path>               Configuration directory (default: ~/.cline)
+  --data-dir <path>             Use isolated local state at this directory path
+                                (default: ~/.cline/data)
+
+--- 2. 共享 globalState 关键字段 ---
+    actModeApiProvider = 'openai'
+    actModeOpenAiModelId = 'deepseek-v4-pro-fp4'
+    planModeOpenAiModelId = 'deepseek-v4-pro-fp4'
+    openAiBaseUrl = 'http://agi-gateway.cxmt.com/cloud/v1'
+
+--- 3. 两个 loop log 末尾 ---
+   # vision (2026-10-04 18:11:24)
+     DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' i
+           at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+           at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+           at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+     
+     DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' i
+           at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+           at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+           at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+     
+     [loop] 2026-10-04 18:11:24 cline returned (exit 0), checking git push ...
+     [loop] 2026-10-04 18:11:24 WAITING=1（异步任务 running）→ sleep 1800s
+   # data (2026-10-04 17:58:28)
+     DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' i
+           at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+           at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+           at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+     
+     DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' i
+           at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+           at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+           at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+     
+     [loop] 2026-10-04 17:58:28 cline returned (exit 0), checking git sync ...
+     [loop] 2026-10-04 17:58:28 WAITING=1 (async task running) → sleep 1800s
+
+--- 4. 当前 cline 进程 / loop pid ---
+2877399 bun /home/app.e0031982/.bun/bin/cline --id 1790841049934_g0m3m
+   loops: 383021 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_vision_loop.sh
+393860 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_data_loop.sh
+
+=== DONE (.12) ===
+=== relay block done ===
+```
