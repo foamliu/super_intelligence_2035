@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 14 -->
+<!-- RUN_ID: 15 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,32 @@
 
 ---
 
+## RUN_ID 15 — 🪝 确认防作弊 hook 落点 + 评测脚本是否设 `--data-dir`（定隔离方案）
+
+**背景**：用户澄清"沙箱阻断"实为**防作弊 PreToolUse hook 污染**（hook 拷进 `~/.cline/hooks`，评测对象与编排 agent 共用 `~/.cline`）。本块**只读**确认：① hook 落在哪（`~/.cline/hooks`？`~/.cline/data/hooks`？）；② 评测脚本 `run_cline_script.sh` 是否给评测对象设了 `--data-dir`（决定隔离放"编排侧"还是"评测侧"）；③ 是否有现成的隔离目录可照抄。
+
+```bash
+# RUN_ID 15 — locate anti-cheat hook + how eval sets cline config (read-only)
+GP=/nasdata/app.e0031982/code/eda_fastmcp
+echo "== 0. TIME =="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "== 1. ~/.cline top + hooks dirs =="; timeout 10 ls -la ~/.cline/ 2>&1 | head -18 | cut -c1-150
+echo "-- ~/.cline/hooks --"; timeout 10 ls -la ~/.cline/hooks/ 2>&1 | head -12 | cut -c1-150
+echo "-- ~/.cline/data/hooks --"; timeout 10 ls -la ~/.cline/data/hooks/ 2>&1 | head -12 | cut -c1-150
+echo "== 2. run_cline_script: hook / data-dir / .cline refs =="; timeout 15 grep -nE 'hook|Hook|--data-dir|data-dir|data_dir|CLINE_|\\.cline' "$GP/scripts/run_cline_script.sh" 2>/dev/null | head -30 | cut -c1-190
+echo "== 3. hook files on disk (eda_fastmcp) =="; timeout 15 find "$GP" -maxdepth 3 -iname '*hook*' 2>/dev/null | head -20 | cut -c1-160
+echo "== 4. isolate dirs that already exist =="; timeout 10 ls -ld /nasdata/app.e0031982/.cline_data /nas_train/app.e0031982/.cline_data /home/app.e0031982/.cline_eval 2>&1 | cut -c1-150
+echo "== DONE =="
+```
+
+---
+
 ## RUN_ID 14 — 🧭 接管尽调：legacy 两进程是否还在动？当前臂？我方合并线状态？
 
 **背景**：接管前最后确认——① legacy conductor（PID 1381975，已 3.3 天）与组件 loop（2455466）是否还在有效推进；② 评测 infra（MCP/eval）当前占用；③ 当前 `.env` 臂；④ 我方合并线 agent 现状。**只读**。
 
-```bash
+> ⛔ **已作废**（已执行于 22:20:02）——降级为 text，让位给 RUN_ID 15。
+
+```text
 # RUN_ID 14 — takeover due diligence (read-only)
 D=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
 M=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
