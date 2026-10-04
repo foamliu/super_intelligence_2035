@@ -4836,3 +4836,112 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 44 · 2026-10-04 16:54:38 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+K=$R/doc/keys.txt
+
+echo; echo "=== 1. python3 解析候选（排除 asr/seedream）==="
+python3 - "$K" <<'PY' 2>&1 | cut -c1-190
+import sys, json, pathlib
+p = pathlib.Path(sys.argv[1])
+blocks, cur = [], {}
+for raw in p.read_text(encoding='utf-8', errors='replace').split('\n'):
+    s = raw.strip()
+    if not s:
+        if cur.get('model'): blocks.append(cur); cur = {}
+        continue
+    for lab, key in (('模型名字','model'), ('API Key','key'), ('Base Url (OpenAI)','oai'), ('Base Url (Anthropic)','ant')):
+        if lab in s:
+            cur[key] = s.split('：', 1)[-1].strip() if '：' in s else s.split(':', 1)[-1].strip()
+            break
+if cur.get('model'): blocks.append(cur)
+seen, out = set(), []
+for b in blocks:
+    m = b.get('model','')
+    if m in seen: continue
+    seen.add(m)
+    if 'asr' in m.lower() or 'seedream' in m.lower():
+        print('   [排除-非chat] %s' % m); continue
+    out.append(b)
+    print('   [候选] %-30s keylen=%-4s base=%s' % (m, len(b.get('key','')), b.get('oai','')))
+pathlib.Path('/tmp/_llm_cand.json').write_text(json.dumps(out, ensure_ascii=False), encoding='utf-8')
+print('   -> 候选数 = %d（已写 /tmp/_llm_cand.json）' % len(out))
+PY
+
+echo; echo "=== 2. 逐个 curl /chat/completions（200=可用）==="
+[ -f /tmp/_llm_cand.json ] && python3 - <<'PY' 2>&1 | cut -c1-175
+import json, subprocess, pathlib
+cands = json.loads(pathlib.Path('/tmp/_llm_cand.json').read_text(encoding='utf-8'))
+for c in cands:
+    m, k, b = c.get('model'), c.get('key'), c.get('oai')
+    body = json.dumps({'model': m, 'messages': [{'role': 'user', 'content': 'hi'}], 'max_tokens': 2})
+    try:
+        r = subprocess.run(['curl','-s','-o','/dev/null','-w','%{http_code}','--max-time','20',
+                            '-H','Authorization: Bearer '+k,'-H','Content-Type: application/json',
+                            '-d',body, b+'/chat/completions'], capture_output=True, text=True, timeout=25)
+        code = (r.stdout or '').strip()
+    except Exception as e:
+        code = 'ERR:'+type(e).__name__
+    print('   %-30s %-40s -> %s' % (m, b, code))
+PY
+
+echo; echo "=== 3. 同一模型 × 两个 base（判 base 是否必须匹配）==="
+python3 - <<'PY' 2>&1 | cut -c1-175
+import json, subprocess, pathlib
+cands = json.loads(pathlib.Path('/tmp/_llm_cand.json').read_text(encoding='utf-8'))
+c = next((x for x in cands if x.get('model') == 'deepseek-v4-flash'), None)
+if not c:
+    print('   (未找到 deepseek-v4-flash)')
+else:
+    for b in ('http://agi-gateway.cxmt.com/v1', 'http://agi-gateway.cxmt.com/cloud/v1'):
+        body = json.dumps({'model': 'deepseek-v4-flash', 'messages': [{'role': 'user', 'content': 'hi'}], 'max_tokens': 2})
+        r = subprocess.run(['curl','-s','-o','/dev/null','-w','%{http_code}','--max-time','20',
+                            '-H','Authorization: Bearer '+c['key'],'-H','Content-Type: application/json',
+                            '-d',body, b+'/chat/completions'], capture_output=True, text=True)
+        print('   flash @ %-42s -> %s' % (b, (r.stdout or '').strip()))
+PY
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 16:54:38
+
+=== 1. python3 解析候选（排除 asr/seedream）===
+   [候选] deepseek-v4-flash              keylen=72   base=http://agi-gateway.cxmt.com/v1
+   [候选] deepseek-v4-pro-fp4            keylen=72   base=http://agi-gateway.cxmt.com/v1
+   [候选] deepseek-v4-pro-cloud          keylen=72   base=http://agi-gateway.cxmt.com/cloud/v1
+   [候选] kimi-k2.6-cloud                keylen=72   base=http://agi-gateway.cxmt.com/cloud/v1
+   [候选] glm-5.2                        keylen=72   base=http://agi-gateway.cxmt.com/cloud/v1
+   [候选] doubao-seed-2.0-pro-cloud      keylen=72   base=http://agi-gateway.cxmt.com/cloud/v1
+   [候选] doubao-seed-2.0-mini-cloud     keylen=72   base=http://agi-gateway.cxmt.com/cloud/v1
+   [候选] doubao-seed-2.0-lite-cloud     keylen=72   base=http://agi-gateway.cxmt.com/cloud/v1
+   [排除-非chat] doubao-asr-realtime
+   [排除-非chat] doubao-seedream-5.0-lite-cloud
+   -> 候选数 = 8（已写 /tmp/_llm_cand.json）
+
+=== 2. 逐个 curl /chat/completions（200=可用）===
+   deepseek-v4-flash              http://agi-gateway.cxmt.com/v1           -> 200
+   deepseek-v4-pro-fp4            http://agi-gateway.cxmt.com/v1           -> 429
+   deepseek-v4-pro-cloud          http://agi-gateway.cxmt.com/cloud/v1     -> 200
+   kimi-k2.6-cloud                http://agi-gateway.cxmt.com/cloud/v1     -> 200
+   glm-5.2                        http://agi-gateway.cxmt.com/cloud/v1     -> 200
+   doubao-seed-2.0-pro-cloud      http://agi-gateway.cxmt.com/cloud/v1     -> 200
+   doubao-seed-2.0-mini-cloud     http://agi-gateway.cxmt.com/cloud/v1     -> 200
+   doubao-seed-2.0-lite-cloud     http://agi-gateway.cxmt.com/cloud/v1     -> 200
+
+=== 3. 同一模型 × 两个 base（判 base 是否必须匹配）===
+   flash @ http://agi-gateway.cxmt.com/v1             -> 200
+   flash @ http://agi-gateway.cxmt.com/cloud/v1       -> 403
+
+=== DONE ===
+```
