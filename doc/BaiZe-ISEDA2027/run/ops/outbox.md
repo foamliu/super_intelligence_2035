@@ -5698,3 +5698,108 @@ whag0pgpuap29
      cline 在跑吗: 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 55 · 2026-10-04 18:04:17 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+echo; echo "=== [.12] 校验脚本 / 重播隔离目录 / smoke / 自保护重启 / 验证 ==="
+timeout 520 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+hostname; date '+%F %T'
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+B=/nas_train/app.e0031982; H=$HOME; SRC="$H/.cline/data"; C=/home/app.e0031982/.bun/bin/cline
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "--- 1. 新脚本是否已带隔离参数 ---"
+for f in baize_vision_loop.sh baize_data_loop.sh llm_rotate.sh; do
+  echo "  # $f"; grep -nE "^DATA_DIR=|LLM_DATA_DIR|--data-dir" "$R/$f" | head -5 | cut -c1-140
+done
+
+echo; echo "--- 2. 用 .12 本机共享配置重播 .cline_vision / .cline_data ---"
+echo "  源 base = $(sed -n 's/.*"openAiBaseUrl"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$SRC/globalState.json" | head -1)"
+for n in vision data; do
+  D="$B/.cline_$n"; mkdir -p "$D"
+  cp -a "$SRC/globalState.json" "$SRC/secrets.json" "$D/" 2>/dev/null
+  rm -rf "$D/settings"; cp -a "$SRC/settings" "$D/settings" 2>/dev/null
+  chmod 600 "$D/secrets.json" 2>/dev/null
+  echo "  $D/ -> $(ls -1 "$D" 2>/dev/null | tr '\n' ' ')"
+done
+
+echo; echo "--- 3. smoke 两个隔离目录（应回 OK）---"
+cd /tmp
+for n in vision data; do
+  D="$B/.cline_$n"
+  K=$(python3 -c "import json;print(json.load(open('$D/secrets.json'))['openAiApiKey'])" 2>/dev/null | tr -d '\r\n')
+  OUT=$(env $P timeout 90 "$C" --data-dir "$D" -c /tmp -m glm-5.2 -k "$K" -P openai-compatible --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tr -d '\r' | tr '\n' ' ' | cut -c1-140)
+  printf "  %-7s (key len %s) => %s\n" "$n" "${#K}" "$OUT"
+done
+
+echo; echo "--- 4. 自保护重启 vision / data ---"
+OLD=$(pgrep -af 'bun.*cline' 2>/dev/null | grep -v -- '--data-dir' | grep -v grep | wc -l)
+echo "  旧 cline(无 --data-dir) 计数 = $OLD"
+if [ "$OLD" -gt 0 ]; then
+  echo "  ⏸ 有活动 cline → 本轮不重启（下轮再试）"
+else
+  for L in vision data; do
+    pkill -f "baize_${L}_loop.sh"; sleep 4
+    cd "$R"
+    setsid env $P bash "baize_${L}_loop.sh" > "/tmp/baize_${L}_loop.log" 2>&1 < /dev/null &
+    echo "  [$L] 重启 loop=$(pgrep -fc "baize_${L}_loop.sh" 2>/dev/null || echo 0)"
+  done
+  echo; echo "--- 5. 45s 后验证 ---"
+  sleep 45
+  for L in vision data; do
+    echo "  [$L] Forbidden=$(grep -c Forbidden /tmp/baize_${L}_loop.log 2>/dev/null)"
+    tail -3 "/tmp/baize_${L}_loop.log" 2>/dev/null | tr '\n' ' ' | cut -c1-150 | sed 's/^/       /'
+    echo
+  done
+  echo "  cline: $(pgrep -af 'bun.*cline' 2>/dev/null | cut -c1-100 | head -3)"
+fi
+echo; echo "=== DONE (.12) ==="
+EOS12
+echo "=== relay block done ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 18:04:17
+
+=== [.12] 校验脚本 / 重播隔离目录 / smoke / 自保护重启 / 验证 ===
+whag0pgpuap12
+2026-10-04 18:04:18
+
+--- 1. 新脚本是否已带隔离参数 ---
+  # baize_vision_loop.sh
+23:DATA_DIR="/nas_train/app.e0031982/.cline_vision"
+24:LLM_DATA_DIR="$DATA_DIR"            # 让 llm_rotate.sh 把 openAiBaseUrl 写进【本线隔离目录】
+77:          cline --data-dir "$DATA_DIR" -c "$CWD" --auto-approve true -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible -t "$CLINE_TIMEOU
+  # baize_data_loop.sh
+30:DATA_DIR="/nas_train/app.e0031982/.cline_data"
+31:LLM_DATA_DIR="$DATA_DIR"            # 让 llm_rotate.sh 把 openAiBaseUrl 写进【本线隔离目录】
+120:          cline --data-dir "$DATA_DIR" -c "$CWD" --auto-approve true -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible -t "$CLINE_TIMEO
+  # llm_rotate.sh
+66:# 🔒 2026-10-04 运维（RUN_ID 55）：目标目录可用 LLM_DATA_DIR 覆盖——
+67:#   各线 loop 设 LLM_DATA_DIR=<本线隔离目录>（如 /nas_train/app.e0031982/.cline_vision）后，
+71:    local D="${LLM_DATA_DIR:-$HOME/.cline/data}"
+
+--- 2. 用 .12 本机共享配置重播 .cline_vision / .cline_data ---
+  源 base = http://agi-gateway.cxmt.com/cloud/v1
+  /nas_train/app.e0031982/.cline_vision/ -> cache db globalState.json logs secrets.json sessions settings 
+  /nas_train/app.e0031982/.cline_data/ -> cache db globalState.json logs secrets.json sessions settings 
+
+--- 3. smoke 两个隔离目录（应回 OK）---
+  vision  (key len 72) => /usr/bin/env: ‘bun’: No such file or directory 
+  data    (key len 72) => /usr/bin/env: ‘bun’: No such file or directory 
+
+--- 4. 自保护重启 vision / data ---
+  旧 cline(无 --data-dir) 计数 = 2
+  ⏸ 有活动 cline → 本轮不重启（下轮再试）
+
+=== DONE (.12) ===
+=== relay block done ===
+```
