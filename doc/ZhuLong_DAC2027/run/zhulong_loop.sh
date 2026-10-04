@@ -36,7 +36,6 @@ MODEL="glm-5.2"
 
 # 🔑 glm-5.2 key（编排模型；deepseek-v4-pro-fp4 额度已耗尽，改用 glm-5.2）
 CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
-CLINE_BASE="http://agi-gateway.cxmt.com/cloud/v1"
 
 CLINE_TIMEOUT=2700              # 单次编排 cline 最多 45 分钟（读态+打分+切臂+启动，足够）
 PUSH_INTERVAL=18000             # 每 5 小时兜底同步一次
@@ -110,7 +109,7 @@ while true; do
         #    ⚠️ 只作用于本行 cline；loop 自身 / git push 仍保留 proxy（外网仍需代理）。
         env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
             -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
-          cline -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -b "$CLINE_BASE" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+          cline -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
         echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git sync ..."
     else
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"
