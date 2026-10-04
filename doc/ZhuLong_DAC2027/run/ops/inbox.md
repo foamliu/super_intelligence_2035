@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 15 -->
+<!-- RUN_ID: 16 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,32 @@
 
 ---
 
+## RUN_ID 16 — 🧪 隔离前置侦察：`--data-dir` 语义 + hook 安装点 + 要拷的配置
+
+**决策（用户 22:4x）**：隔离走 **A（编排侧）**；停 legacy 两进程；合并线从 **`C1.wo_retrieval R2`** 续跑（复用 legacy 数据）。落地前先搞清：① `cline --data-dir` 改的是哪层（base=`~/.cline` 还是 data=`~/.cline/data`）；② hook 是**哪段脚本**拷进 `~/.cline/hooks` 的；③ 隔离目录要拷哪些配置（auth）。
+
+```bash
+# RUN_ID 16 — prep for isolation (read-only)
+GP=/nasdata/app.e0031982/code/eda_fastmcp
+echo "== 0. TIME =="; timeout 10 date '+%F %T'
+echo "== 1. cline --help (data/hook/config) =="; timeout 25 cline --help 2>&1 | grep -iE 'data|hook|dir|config|auth' | head -25 | cut -c1-160
+echo "== 2. cline_hooks source dir =="; timeout 10 ls -la "$GP/scripts/cline_hooks/" 2>&1 | head -20 | cut -c1-160
+echo "== 3. who installs ~/.cline/hooks =="; timeout 20 grep -rnE 'cline/hooks|hooks' "$GP/scripts" 2>/dev/null | head -25 | cut -c1-190
+echo "== 4. ~/.cline/data contents (config to copy) =="; timeout 10 ls -la ~/.cline/data/ 2>&1 | head -22 | cut -c1-140
+echo "== 5. --data-dir usage in our repo =="; timeout 20 grep -rnE -- '--data-dir' /nasdata/app.e0031982/code/super_intelligence_2035/doc 2>/dev/null | head -10 | cut -c1-190
+echo "== 6. ~/.cline/data/settings =="; timeout 10 ls -la ~/.cline/data/settings/ 2>&1 | head -15 | cut -c1-140
+echo "== DONE =="
+```
+
+---
+
 ## RUN_ID 15 — 🪝 确认防作弊 hook 落点 + 评测脚本是否设 `--data-dir`（定隔离方案）
 
 **背景**：用户澄清"沙箱阻断"实为**防作弊 PreToolUse hook 污染**（hook 拷进 `~/.cline/hooks`，评测对象与编排 agent 共用 `~/.cline`）。本块**只读**确认：① hook 落在哪（`~/.cline/hooks`？`~/.cline/data/hooks`？）；② 评测脚本 `run_cline_script.sh` 是否给评测对象设了 `--data-dir`（决定隔离放"编排侧"还是"评测侧"）；③ 是否有现成的隔离目录可照抄。
 
-```bash
+> ⛔ **已作废**（已执行于 22:41:33）——降级为 text，让位给 RUN_ID 16。
+
+```text
 # RUN_ID 15 — locate anti-cheat hook + how eval sets cline config (read-only)
 GP=/nasdata/app.e0031982/code/eda_fastmcp
 echo "== 0. TIME =="; timeout 10 date '+%F %T'; timeout 10 hostname
