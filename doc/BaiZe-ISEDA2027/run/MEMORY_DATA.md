@@ -10,10 +10,10 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.5/§0.6/§0.7 推进中 · 🔴白名单锁定(只下 l1_en_hq+zh+GPIC；en_v1_4 已停) · l1_en_hq 974/6006 · zh 171/256(冻结待续) · gpic train 2287/8001+test 128✓ · D-CLEAN-4 复扫(§8)+⭐LLaVA-4B ckpt 专项(§9)已完成待拍板
+PHASE:        §0.5/§0.6/§0.7 推进中 · 🔴白名单锁定(只下 l1_en_hq+zh+GPIC；en_v1_4 已停) · l1_en_hq 1031/6006(进入第2快照 CC-MAIN-2025-33) · zh 171/256(冻结待续) · gpic train 2314/8001+test 128✓ · D-CLEAN-4 复扫(§8)+⭐LLaVA-4B ckpt 专项(§9)已完成待拍板
 已完成:       §0.3 8源/§0.4 R2视觉/§0.6 配方/§0.7 停85M·复用·ETA；SFT-2605 下满一致；D-CLEAN 盘点/-2 ≈341G/-3 servers ≈972G/-4 复扫(§8)+⭐LLaVA-4B ckpt 专项(§9)·367 iter≈22 TiB 可回收
-当前动作:     唤醒100 巡检(白名单4项)：l1_en_hq 974/6006(+58 vs 唤醒99)、gpic train 2287/8001(+27) 真推进(mtime 17:16 秒级落盘)；en 2048✓满/zh 171/256 冻结(随 l1 后串行)/en_v1_4 停保留(488·40G)；无僵死无需重启；task.md mtime 09:39 未变、无新指令
-下一步:       下轮判 retry-loop(3076502)+gpic(2426795) 真推进(僵死即 kill+重启)→ l1_en_hq(剩5032件~367GB)+zh(剩85件~108GB) 下满即报运维；D-CLEAN-4 候选(LLaVA≈22T/FineVision 4.3T/hell 1.24T/跨用户 3.4T)等运维拍板
+当前动作:     唤醒101 巡检(白名单4项)：l1_en_hq 1031/6006(+57 vs 唤醒100，已进第2快照 CC-MAIN-2025-33 part-0031)、gpic train 2314/8001(+27，mtime 17:54 秒级落盘) 真推进；en 2048✓满/zh 171/256 冻结(随 l1 后串行)/en_v1_4 停保留(488·40G)；无僵死无需重启；task.md mtime 09:39 未变、无新指令
+下一步:       下轮判 retry-loop(3076502)+gpic(2426795) 真推进(僵死即 kill+重启)→ l1_en_hq(剩4975件~363GB)+zh(剩85件~108GB) 下满即报运维；D-CLEAN-4 候选(LLaVA≈22T/FineVision 4.3T/hell 1.24T/跨用户 3.4T)等运维拍板
 阻塞:         无硬阻塞；⚠️ l1_en_hq 速率偏慢(小文件+CDN，非僵死)；磁盘 /nas_train 84%(Avail 35T)；🟡 D-CLEAN-4 候选全部等运维拍板(只盘点不删除)
 ERROR_COUNT:  0
 ```
@@ -139,6 +139,9 @@ ERROR_COUNT:  0
 
 - 2026-10-04 —— 唤醒 100（白名单 4 项巡检，无假活、无重启）：复核 `BAIZE_DATA_TASK.md` mtime **09:39 未变**（无新增指令/无索取/无 STOP；D-CLEAN-4 §8+§9 已完成提交、等运维拍板；⭐LLaVA-4B ckpt §9 ≈22TiB 候选仍 in-place）。🔵 base retry-loop **3076502**+hf **3076519**（etime ~12.2h）真推进：**l1_en_hq = 974/6006**（CC-MAIN-2025-30 part-0975-of-1000 在途、~73MB/件；上轮 916@16:40→974@17:17 = +58 件/~37min ≈ **~1.9MB/s**；实测近 1min 落盘 part-0974 mtime 17:16:59 秒级、进程存活 → **非僵死不重启**；⚠️ 速率偏慢疑 73MB 小文件连接开销+CDN 慢；当前仍在 CC-MAIN-2025-30 首个快照(974/1000)，6 快照共 6006 件）。🔵 zh **171/256**、0 .incomplete（冻结，最后 mtime 04:59 part-171，随 l1_en_hq 后串行续）。🔵 gpic **2426795**（etime ~47h）真推进：train **2287/8001** + test 128/128✓、1 .incomplete（在途正常）（上轮 2260→2287 = +27 件/~37min ≈ **~19.5MB/s**；gpic_train_02286.tar mtime 17:16:38）。🔴 en_v1_4 无进程（✅ 已停）；LLaVA 85M 停无进程。✅ en 2048/2048 满；✅ SFT-2605 1504/1504 intact；✅ servers GONE。磁盘：/nas_train 173T/207T(84%、Avail **35T**)、/nas_inference 61%(18T)、/nas_user 74%(29T)、/data 4%（均够）。ETA：l1_en_hq 剩 5032 件≈367GB @~1.9MB/s ≈ **~2.2 天**（偏慢）/乐观 11–16h；zh 剩 85 件≈108GB ≈3h；gpic 剩 5714 件≈9.1TiB @~19.5MB/s ≈ **~5.6 天** → base 族就绪(l1_en_hq+zh) ≈2.7 天(偏慢)/~1 天(乐观)。⚠️ gpic 进程 2426795 命令行仍暴露 HF token（建议运维轮换）。git：fetch/push 至 github 不可达(Network unreachable)，本地 commit 照常。📉 MEMORY ≈31.4KB+本条 ≈≤32KB 无需滚动。下一步 = 下轮判 retry-loop+gpic 真推进（僵死即 kill+重启）→ l1_en_hq+zh 下满即「MiniCPM5 base 族就绪」报运维 → gpic 续下至 8001 tar。
 
+
+
+- 2026-10-04 —— 唤醒 101（白名单 4 项巡检，无假活、无重启）：复核 `BAIZE_DATA_TASK.md` mtime **09:39 未变**（无新增指令/无索取/无 STOP；D-CLEAN-4 §8+§9 已完成、等运维拍板；⭐LLaVA-4B ckpt §9 ≈22TiB 候选仍 in-place）。🔵 base retry-loop **3076502**+hf **3076519**（etime ~12.8h，stat Sl/Ss 活）真推进：**l1_en_hq = 1031/6006**（✅ 已完成第 1 快照 CC-MAIN-2025-30(1000 件)、进入第 2 快照 CC-MAIN-2025-33 part-0031-of-1000 在途、~73MB/件；上轮 974@17:17→1031@17:54 = +57 件/~37min ≈ **~1.9MB/s**；log 17:54 实时下载 part-0032、mtime 17:54:09 秒级、进程存活 → **非僵死不重启**；⚠️ 速率偏慢疑 73MB 小文件连接开销+CDN 慢；6 快照共 6006 件）。🔵 zh **171/256**、0 .incomplete（冻结，最后 mtime 04:59 part-171，随 l1_en_hq 后串行续）。🔵 gpic **2426795**（etime ~47.7h，stat Sl 活）真推进：train **2314/8001** + test 128/128✓、0 .incomplete（上轮 2287→2314 = +27 件/~37min ≈ **~19.5MB/s**；gpic_train_02313.tar mtime 17:54:02 秒级）。🔴 en_v1_4 无进程（✅ 已停，488 parquet≈40G 保留）；LLaVA 85M 停无进程。✅ en 2048/2048 满；✅ SFT-2605 1504/1504 intact；✅ servers GONE。磁盘：/nas_train 173T/207T(84%、Avail **35T**)、/nas_inference 61%(18T)、/nas_user 74%(29T)、/data 4%（均够）。ETA：l1_en_hq 剩 4975 件≈363GB @~1.9MB/s ≈ **~2.2 天**（偏慢）/乐观 11–16h；zh 剩 85 件≈108GB ≈3h；gpic 剩 5687 件≈9.1TiB @~19.5MB/s ≈ **~5.6 天** → base 族就绪(l1_en_hq+zh) ≈2.3 天(偏慢)/~1 天(乐观)。⚠️ gpic 进程 2426795 命令行仍暴露 HF token（建议运维轮换）。git：fetch/push 至 github 不可达(Network unreachable)，本地 commit 照常。📉 MEMORY ≈29.3KB+本条 ≈≤32KB 无需滚动。下一步 = 下轮判 retry-loop+gpic 真推进（僵死即 kill+重启）→ l1_en_hq+zh 下满即「MiniCPM5 base 族就绪」报运维 → gpic 续下至 8001 tar。
 
 
 ## 关键路径速查（供恢复）
