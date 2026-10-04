@@ -270,10 +270,14 @@ B:  glm-5.2 → deepseek-v4-flash → kimi-k2.6-cloud → doubao-seed-2.0-pro-cl
 <p>详细用法见 <code>run/ops/README.md</code>。</p>
 
 <h3>6.2 启动命令（服务器侧，一次）</h3>
-<div class="callout warn">
-  <b>路径前缀：</b>以下以 2.12 开发机路径 <code>/nas_train/</code> 为例。36.15 服务器上启动时请将 <code>/nas_train/</code> 替换为 <code>/nasdata/</code>。
-</div>
+
+<p><b>2.12 开发机：</b></p>
 <pre class="cmd"><code>cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+git pull --rebase
+setsid bash zhulong_ops_relay.sh > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &</code></pre>
+
+<p><b>36.15 服务器（最终运行目标）：</b></p>
+<pre class="cmd"><code>cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
 git pull --rebase
 setsid bash zhulong_ops_relay.sh > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &</code></pre>
 
