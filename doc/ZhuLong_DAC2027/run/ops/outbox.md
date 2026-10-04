@@ -1121,3 +1121,281 @@ Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
 -rw-r--r-- 1 app.e0031982 app.adm 26687 Sep 28 14:49 /nasdata/app.e0031982/code/ZhuLong_DAC2027/README.md
 ===== DONE =====
 ```
+
+---
+
+## RUN_ID 11 · 2026-10-04 22:15:45 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 11 — read the OTHER (legacy component) agent's docs & loop
+D=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
+echo "===== 0. TIME ====="; timeout 10 date '+%F %T'
+echo "===== 1. ls run/ ====="; timeout 15 ls -la "$D" 2>&1 | head -40 | cut -c1-160
+echo "===== 2. component loop script (head 45) ====="; timeout 10 sed -n '1,45p' "$D/ablation_run_loop_component_s2_full.sh" 2>&1 | cut -c1-180
+echo "===== 3. MEMORY_component_full.md (head 55) ====="; timeout 10 sed -n '1,55p' "$D/MEMORY_component_full.md" 2>&1 | cut -c1-200
+echo "===== 4. daily-memories/2026-10-04.md (tail 55) ====="; timeout 10 tail -n 55 "$D/daily-memories/2026-10-04.md" 2>&1 | cut -c1-200
+echo "===== 5. taskbook (head 70) ====="; timeout 10 sed -n '1,70p' "$D/ablation_run_task_component_s2_full.md" 2>&1 | cut -c1-200
+echo "===== DONE ====="
+```
+
+**输出**
+```
+===== 0. TIME =====
+2026-10-04 22:15:45
+===== 1. ls run/ =====
+total 564
+drwxr-x--- 5 app.e0031982 app.adm   4096 Oct  4 13:26 .
+drwxr-xr-x 6 app.e0031982 app.adm   4096 Sep 28 15:22 ..
+-rw-r--r-- 1 app.e0031982 app.adm   5213 Sep 29 15:59 ablation_run_conductor_serial.sh
+-rw-r----- 1 app.e0031982 app.adm   1440 Sep 28 14:49 ablation_run_loop_1shot.sh
+-rw-r----- 1 app.e0031982 app.adm   1605 Sep 29 15:49 ablation_run_loop_component_s2_full.sh
+-rw-r----- 1 app.e0031982 app.adm   1449 Sep 28 14:49 ablation_run_loop_model_1shot.sh
+-rw-r----- 1 app.e0031982 app.adm   2051 Sep 29 15:49 ablation_run_loop_model_full.sh
+-rw-r----- 1 app.e0031982 app.adm   1467 Sep 28 14:49 ablation_run_loop_s1_1shot.sh
+-rw-r----- 1 app.e0031982 app.adm   1461 Sep 29 15:49 ablation_run_loop_s1_full.sh
+-rwxr-x--- 1 app.e0031982 app.adm   1443 Sep 28 16:47 ablation_run_loop_s2_1shot.sh
+-rwxr-x--- 1 app.e0031982 app.adm   1397 Sep 28 14:49 ablation_run_loop.sh
+-rw-r----- 1 app.e0031982 app.adm   6070 Sep 28 14:49 ablation_run_task_1shot.md
+-rw-r--r-- 1 app.e0031982 app.adm  10921 Oct  4 14:31 ablation_run_task_component_s2_full.md
+-rw-r----- 1 app.e0031982 app.adm   5938 Sep 28 14:49 ablation_run_task.md
+-rw-r----- 1 app.e0031982 app.adm   6465 Sep 28 14:49 ablation_run_task_model_1shot.md
+-rw-r----- 1 app.e0031982 app.adm   6349 Sep 29 15:54 ablation_run_task_model_full.md
+-rw-r----- 1 app.e0031982 app.adm   7127 Sep 28 14:49 ablation_run_task_s1_1shot.md
+-rw-r----- 1 app.e0031982 app.adm   7014 Sep 29 15:54 ablation_run_task_s1_full.md
+-rw-r----- 1 app.e0031982 app.adm  11646 Sep 28 17:14 ablation_run_task_s2_1shot.md
+-rw-r----- 1 app.e0031982 app.adm  11609 Sep 29 14:54 ablation_s2_phi_1shot_report.html
+-rw-r----- 1 app.e0031982 app.adm   6802 Sep 21 16:20 benchmark_parallel_guide.md
+drwxr-x--- 2 app.e0031982 app.adm   4096 Oct  4 00:35 daily-memories
+-rw-r----- 1 app.e0031982 app.adm  15491 Sep 30 09:27 eda_fastmcp_commit_prep_report.html
+-rw-r----- 1 app.e0031982 app.adm  12167 Sep 30 09:32 eda_fastmcp_commit_report.html
+drwxr-x--- 2 app.e0031982 app.adm   4096 Sep 28 14:49 eval
+drwxr-x--- 2 app.e0031982 app.adm   4096 Sep 28 14:49 experiments
+-rw-r--r-- 1 app.e0031982 app.adm   6705 Sep 29 15:58 holiday_plan_930_1007.md
+-rw-r----- 1 app.e0031982 app.adm  16868 Sep 30 09:07 holiday_progress_report.html
+-rw-r----- 1 app.e0031982 app.adm  17713 Oct  1 15:55 holiday_run_report.html
+-rw-r----- 1 app.e0031982 app.adm  62133 Oct  4 14:32 MEMORY_component_full.md
+-rw-r----- 1 app.e0031982 app.adm  33486 Sep 26 15:07 MEMORY.md
+-rw-r----- 1 app.e0031982 app.adm 159473 Oct  3 14:19 MEMORY_s1_full.md
+-rw-r----- 1 app.e0031982 app.adm  38348 Sep 29 15:10 MEMORY_s2_1shot.md
+-rw-r----- 1 app.e0031982 app.adm    400 Oct  1 19:45 _probe.sh
+-rw-r----- 1 app.e0031982 app.adm  11075 Oct  4 13:26 report_10_04.html
+-rw-r----- 1 app.e0031982 app.adm    517 Oct  1 20:20 _s1_check_r3.sh
+-rw-r----- 1 app.e0031982 app.adm    132 Sep 30 04:51 .s1_probe.sh
+===== 2. component loop script (head 45) =====
+#!/bin/bash
+# 组件消融(Phase 1: pure_llm/rag/wo_retrieval/full) + S2 Φ 轴(Phase 2: k10/k3/k1/lagged) 5-run 完整版循环。
+# 同一 MEMORY_component_full.md 自驱 Phase 1→Phase 2 过渡（见 ablation_run_task_component_s2_full.md）。
+# 启动方式（脱离进程组，防工具超时误杀）:
+#   setsid bash /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/ablation_run_loop_component_s2_full.sh > /tmp/ablation_loop_component_s2_full.log 2>&1 < /dev/null &
+set -u
+
+TASK_MD="/nasdata/app.e0031982/code/ZhuLong_DAC2027/run/ablation_run_task_component_s2_full.md"
+MEMORY_MD="/nasdata/app.e0031982/code/ZhuLong_DAC2027/run/MEMORY_component_full.md"
+CWD="/nasdata/app.e0031982/code/ZhuLong_DAC2027/run"
+MODEL="deepseek-v4-pro-fp4"
+INTERVAL=1800          # 30 分钟醒来一次
+CLINE_TIMEOUT=5400     # 单次 cline 最多 90 分钟（含打分）
+
+while true; do
+    # 检查是否已完成（agent 会在 MEMORY_component_full.md 中写 PHASE=done_all）
+    if [[ -f "$MEMORY_MD" ]] && grep -q 'PHASE=done_all' "$MEMORY_MD" 2>/dev/null; then
+        echo "[loop] $(date '+%F %T') PHASE=done_all detected, loop exiting."
+        break
+    fi
+
+    echo "[loop] $(date '+%F %T') wake up, invoking cline ..."
+    if [[ -f "$TASK_MD" ]]; then
+        prompt="$(< "$TASK_MD")"
+        cline -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+        echo "[loop] $(date '+%F %T') cline returned (exit $?), sleep ${INTERVAL}s ..."
+    else
+        echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD, sleep ${INTERVAL}s ..."
+    fi
+    sleep "$INTERVAL"
+done
+===== 3. MEMORY_component_full.md (head 55) =====
+# MEMORY_component_full.md — EDA 组件消融 (Phase 1) + S2 Φ 轴 (Phase 2) 运行时状态
+
+> 本文件由 agent 维护（不提交 git）。每步唤醒：读本文件 + daily-memories/$(date +%F).md → 判断 → 执行 → 更新本文件 + 追加当日流水 → 退出。
+
+---
+
+## 当前状态（最新）
+
+| 字段 | 值 |
+|:---|:---|
+| PHASE | running |
+| STAGE | component |
+| CONFIG | wo_retrieval |
+| ROUND | 1（r1 运行中） |
+| ERROR_COUNT | 0 |
+
+- 当前运行轮次 batch：`2026_1004_122050`，编排进程 PID `692552`（`bash scripts/run_cline_script.sh -p 8 -n`），8 worker / 全量 158 题。
+- log：`/tmp/ABL_wo_retrieval_r1.log`
+- 基座：`MODEL=deepseek-v4-pro-fp4`，协议 `-p 8 -n`（8 并发 + 禁 Memory Bank 注入）。
+- 反作弊 PreToolUse hook 全程启用、冻结（canary 已验证）。
+
+---
+
+## 关键环境事实（本轮已固化，勿改）
+
+- 评测代码根目录 `BASE_DIR=/nasdata/app.e0031982/code/eda_fastmcp`
+- MCP 服务端口 `0.0.0.0:8090`（当前 PID 3608530）
+- 启动一轮必须带 env 修复（task 书未写，S1 已验证）：
+  `EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python`
+- `.env` 中 `EVAL_FW_DIR` 默认指向不存在的 `/home/app.t0002997/proj/...`，必须覆盖，否则 run_eval 配不上 batch。
+- **跨轴污染修复**：S1 收口时 `.env` 残留 `EDA_RUNCODE_READBACK=none`。Phase 1 的 wo_retrieval / full 需要 run_code 全回读，且 full 是锚点（tab:ablation-harness F=full readbac
+- `.env` 最终关键行：
+  - L226 `EDA_MCP_TOOLS_DISABLED=clean_workdir,probe_pyAether_code,cimi_search,cimi_fetch,vqa,query_memory_bank,run_code`（rag：检索 3 件套 ON、run_code OFF）
+  - L259 `EDA_PHI_BUDGET=0` / L260 `EDA_PHI_LAGGED=0`（S2 前保持中性）
+  - L263 `EDA_OMEGA_FIDELITY=high` / L264 `EDA_RUNCODE_READBACK=full`
+- ✅ **RAG recall 端口错配（已人工裁决并修复 2026-10-04）**：`.env` L117 `RAG_RECALL_URL` 已由 `http://localhost:9012/recall`（9012 无进程监听，app.log 自 09-24 起大量 `Co
+- Phase 2 前置依赖（切 phi_k10 前校验，见 MEMORY_s2_1shot.md）：
+  - `scripts/set_s2_phi.py` 已存在（探路期实现）。
+  - lagged trace_key 修复：需 `grep 'ctx.session' main.py` 核对是否仍存在（`_trace_key_from_ctx()` 用 SSE session 对象身份作 dict 键）。
+
+---
+
+## 成绩记录
+
+### Phase 1 组件消融（N=5 mean±std）
+
+| 配置 | N=5 mean±std | 各轮原始值 |
+|:---|---:|:---|
+| pure_llm | 10.5 ± 1.9% | [8.2, 9.5, 10.1, 11.4, 13.3] |
+| rag | 68.2 ± 7.4% | [71.5, 70.3, 75.3, 68.4, 55.7] |
+| wo_retrieval | — | — |
+| full | — | — |
+
+### Phase 2 S2 Φ 轴（N=5 mean±std / Converged / Mean read-backs）
+
+===== 4. daily-memories/2026-10-04.md (tail 55) =====
+- 恢复：PHASE=running / STAGE=component / CONFIG=rag / ROUND=4（r4 运行中，batch 2026_1004_090528 / 编排 PID 317076，log=/tmp/ABL_rag_r4.log）/ ERROR_COUNT=0（r1=71.5%、r2=70.3%、r3=75.
+- 前置校验：记忆流水最后 3 条无未处理 ❌ EVAL_FAILED（最新「第 2 周期 ⚠️ 检查受阻 / rag r4」+「第 1 周期 ⚠️ 检查受阻 / rag r4」+「09:06 ✅ rag r3=75.3% 
+- 沙箱阻断连续第 3 周期：`run_commands` 全量被拦（`date +%F`/`pwd`/`ls -la`/`pgrep -af 'run_cline_script'` 均被替换为固定 "ACCESS RESTRICTED..." echo 回显）；`read_files` 读
+- 无法执行步骤 A（`pgrep -f '^bash scripts/run_cline_script'`）检查 rag r4 是否结束、无法 grep 打分（Pass@1）。未推进、未改成绩/看板；保持 PHASE=running / CONFIG=rag
+- 连续 3 周期阻断（历史 3~5 周期复通先例），退出等待下轮唤醒（复通后优先 pgrep→grep 打分）；若下轮（第 4 周期）仍未复通，建议人工介入恢复沙�
+## 2026-10-04 11:16 CST [running] ✅ rag r4=68.4% + 启动 r5
+
+- 沙箱复通（run_commands / read_files / grep 均正常）。步骤 A：`pgrep -f '^bash scripts/run_cline_script'` → 无编排进程，`ps -p 317076` DEAD → rag r4 已结束。
+- 打分：`grep pass` → `PASS_RATE: 0.6835` / `108/158 pass (68.4%)`（generated: 138 ok, 19 fail, 0 exec_err）→ r4=68.4% 成功。
+- ROUND 4→5，启动 rag r5：`EVAL_FW_DIR=.../EDA-Eval-Framework PYTHON=.../venv/bin/python setsid bash scripts/run_cline_script.sh -p 8 -n`，batch=2026_1004_111533，编排 PID 555988（8 worker�
+- rag 累计：r1=71.5%、r2=70.3%、r3=75.3%、r4=68.4%。
+- 保持 PHASE=running / STAGE=component / CONFIG=rag / ROUND=5 / ERROR_COUNT=0。退出等待下轮唤醒（pgrep 无输出后 grep `pass (xx.x%)` 取 rag r5；r5 为 rag 最后一轮，收口后算 
+## 2026-10-04 · 时刻不可得（date 被禁 + run_commands 被拦）[running] ⚠️ 检查受阻（沙箱阻断第 1 周期 / rag r5 阶段）
+
+- 恢复：PHASE=running / STAGE=component / CONFIG=rag / ROUND=5（r5 运行中，batch 2026_1004_111533 / 编排 PID 555988，log=/tmp/ABL_rag_r5.log）/ ERROR_COUNT=0（r1=71.5%、r2=70.3%、r3=75.
+- 前置校验：最后 3 条无未处理 ❌ EVAL_FAILED / ⚠️ 评测失败（最新「11:16 ✅ rag r4=68.4% + 启动 r5」）；⚠️ 属「检查受阻」而非评测失败，无需重试。
+- 沙箱阻断第 1 周期：`run_commands` 全量被拦（pwd / date 均被替换为固定 "ACCESS RESTRICTED..." echo 回显）；`read_files` 读 `/tmp/ABL_rag_r5.log` 被改写为 /dev/null；工�
+- 无法执行步骤 A（`pgrep -f '^bash scripts/run_cline_script'`）检查 rag r5 是否结束、无法 grep 打分（Pass@1）。未推进、未改成绩/看板；保持 PHASE=running / CONFIG=rag
+- 连续 1 周期阻断（历史 3~5 周期复通先例），退出等待下轮唤醒（复通后优先 pgrep→grep 打分）。
+## 2026-10-04 12:20 CST [running] ✅ rag r5=55.7% → rag 收口 68.2±7.4% + 切 wo_retrieval + 启动 r1
+
+- 沙箱复通。步骤 A：pgrep 无编排进程、PID 555988 DEAD → rag r5 已结束。
+- 打分：PASS_RATE: 0.5570 / 88/158 pass (55.7%) → r5=55.7% 成功。
+- rag N=5 收口：r1=71.5、r2=70.3、r3=75.3、r4=68.4、r5=55.7 → mean=68.2 ± 7.4%。
+- 步骤 B：切 wo_retrieval（检索 OFF + run_code ON），MCP PID 691966，visibility 核对正确。
+- 启动 wo_retrieval r1：batch=2026_1004_122050，PID 692552，8 worker，全量 158 题。
+- 保持 PHASE=running / CONFIG=wo_retrieval / ROUND=1 / ERROR_COUNT=0。
+## 2026-10-04 · 时刻不可得（date 被禁 + run_commands 被拦）[running] ⚠️ 检查受阻（沙箱阻断第 1 周期 / wo_retrieval r1 阶段）
+
+- 恢复：PHASE=running / STAGE=component / CONFIG=wo_retrieval / ROUND=1（r1 运行中 batch 2026_1004_122050 / PID 692552，log=/tmp/ABL_wo_retrieval_r1.log）/ ERROR_COUNT=0（wo_retrieval r1 首
+- 前置校验：最后 3 条无未处理 ❌ EVAL_FAILED / ⚠️ 评测失败（最新「12:20 ✅ rag r5=55.7% → 切 wo_retrieval + 启动 r1」）；⚠️ 属「检查受阻」而非评测失�
+- 本轮唤醒复测（沙箱阻断第 1 周期）：`run_commands` 全量被拦（date/ls/pgrep/ps 均被替换为固定 "ACCESS RESTRICTED...echo" 回显）；`read_files` 读 `/tmp/ABL_wo_retrieval
+- 无法执行步骤 A（`pgrep -f '^bash scripts/run_cline_script'`）检查 wo_retrieval r1 是否结束、无法 grep 打分（Pass@1）。未推进、未改成绩/看板；保持 PHASE=running / C
+- 连续 1 周期阻断（历史 3~5 周期复通先例），退出等待下轮唤醒（复通后优先 pgrep→grep 打分）。若连续 ≥4 周期仍未复通，建议人工介入恢复沙箱。
+## 2026-10-04 · 时刻不可得（date 被禁 + run_commands 被拦）[running] ⚠️ 检查受阻（沙箱阻断第 2 周期 / wo_retrieval r1 阶段）
+
+- 恢复：PHASE=running / STAGE=component / CONFIG=wo_retrieval / ROUND=1（r1 运行中，batch 2026_1004_122050 / 编排 PID 692552，log=/tmp/ABL_wo_retrieval_r1.log）/ ERROR_COUNT=0（wo_retriev
+- 前置校验：记忆流水最后 3 条无未处理 ❌ EVAL_FAILED / ⚠️ 评测失败（最新「第 1 周期 ⚠️ 检查受阻」+「12:20 ✅ 切 wo_retrieval + 启动 r1」）；⚠️ 属�
+- 本轮唤醒复测（沙箱阻断连续第 2 周期）：`run_commands` 全量被拦（`pwd`/`date +%F`/`pgrep -af run_cline_script` 均被替换为固定 "ACCESS RESTRICTED...echo" 回显）；`rea
+- 无法执行步骤 A（`pgrep -f '^bash scripts/run_cline_script'`）检查 wo_retrieval r1 是否结束、无法 grep 打分（Pass@1）。未推进、未改成绩/看板；保持 PHASE=running / C
+- 连续 2 周期阻断（历史 3~5 周期复通先例），退出等待下轮唤醒（复通后优先 pgrep→grep 打分）。若连续 ≥4 周期仍未复通，建议人工介入恢复沙箱。
+## 2026-10-04 · 时刻不可得（date 被禁 + run_commands 被拦）[running] ⚠️ 检查受阻（沙箱阻断第 3 周期 / wo_retrieval r1 阶段）
+
+- 恢复：PHASE=running / STAGE=component / CONFIG=wo_retrieval / ROUND=1（r1 运行中，batch 2026_1004_122050 / 编排 PID 692552，log=/tmp/ABL_wo_retrieval_r1.log）/ ERROR_COUNT=0（wo_retriev
+- 前置校验：记忆流水最后 3 条无未处理 ❌ EVAL_FAILED / ⚠️ 评测失败（最新「第 2 周期 ⚠️ 检查受阻」+「12:20 ✅ 切 wo_retrieval + 启动 r1」）；⚠️ 属�
+- 本轮唤醒复测（沙箱阻断连续第 3 周期）：`run_commands` 全量被拦（`pwd && ls -la`、`pgrep -af run_cline_script; echo EXIT=$?; date +%F_%T` 均被工具内部替换为固定 "AC
+- 无法执行步骤 A（`pgrep -f '^bash scripts/run_cline_script'`）检查 wo_retrieval r1 是否结束、无法 grep 打分（Pass@1）。未推进、未改成绩/看板；保持 PHASE=running / C
+- 连续 3 周期阻断（历史 3~5 周期复通先例），退出等待下轮唤醒（复通后优先 pgrep→grep 打分）。若连续 ≥4 周期仍未复通，建议人工介入恢复沙箱。
+## 2026-10-04 · 时刻不可得（date 被禁 + run_commands 被拦）[running] ⚠️ 检查受阻（沙箱阻断第 4 周期 / wo_retrieval r1 阶段）
+
+- 恢复：PHASE=running / STAGE=component / CONFIG=wo_retrieval / ROUND=1（r1 运行中，batch 2026_1004_122050 / 编排 PID 692552，log=/tmp/ABL_wo_retrieval_r1.log）/ ERROR_COUNT=0（wo_retriev
+- 前置校验：记忆流水最后 3 条无未处理 ❌ EVAL_FAILED / ⚠️ 评测失败（最新为「第 3 周期 ⚠️ 检查受阻」+「12:20 ✅ 切 wo_retrieval + 启动 r1」）；无需�
+- 本轮唤醒复测（沙箱阻断连续第 4 周期）：`run_commands` 全量被拦；`read_files` 读 `/tmp/ABL_wo_retrieval_r1.log`、`/proc/loadavg` 被改写为 `/dev/null`；`search_codebase` 
+- 无法执行步骤 A（`pgrep -f '^bash scripts/run_cline_script'`）检查 wo_retrieval r1 是否结束、无法 grep 打分（Pass@1）。未推进、未改成绩/看板；保持 PHASE=running / C
+- 🚨 连续 4 周期阻断（符合「≥4 周期建议人工介入」阈值），正式建议人工介入恢复沙箱后再继续 wo_retrieval r1 打分。退出等待下轮唤醒。
+===== 5. taskbook (head 70) =====
+# EDA 组件消融 + S2 Φ 轴完整 5-run 自动推进任务书
+
+> ⚠️ 本文件为只读指令文件，agent **禁止修改**本文件。所有运行时状态写入 `MEMORY_component_full.md` 和 `daily-memories/`。
+
+你是推进 EDA 组件消融（Phase 1）与 S2 Φ 轴（Phase 2）的自动化 agent。每次被唤醒，**只做一步**：
+读 `MEMORY_component_full.md` 恢复当前状态 → 读 `daily-memories/$(date +%F).md` 恢复当日上下文 → 判断下一步 → 执行 → 更新 `MEMORY_component_full.md` 和当日流水 →
+
+不要 sleep/等待（外层循环脚本负责间隔）。执行 shell 命令直接调用工具，不要调用任何 MCP 工具。
+
+---
+
+## 记忆管理（agent 按此流程维护）
+
+- `MEMORY_component_full.md` — 持久运行时状态文件，由 agent 维护（不提交 git）
+  - 内容：当前状态（PHASE/STAGE/CONFIG/ROUND/ERROR_COUNT）、执行看板、成绩记录、操作流水
+  - 启动时读取恢复上下文，操作后写入更新
+- `daily-memories/` — 每日操作日志目录（不提交 git）
+  - 文件：`daily-memories/$(date +%F).md`，每天一个文件
+  - 每次操作后追加一条带时间戳的记录到当日文件
+
+### 启动恢复流程
+
+```
+1. 读取 MEMORY_component_full.md → 获取 STAGE/CONFIG/ROUND/PHASE/ERROR_COUNT、看板、成绩、流水
+2. 读取 daily-memories/$(date +%F).md（如存在）→ 获取当日操作上下文
+3. 根据 PHASE 执行推进逻辑
+```
+
+### 操作完成写入流程
+
+```
+1. 更新 MEMORY_component_full.md 中的：当前状态、执行看板、成绩记录、操作流水
+2. 追加一条记录到 daily-memories/$(date +%F).md
+```
+
+
+## 背景（固定，不要改动）
+
+- 评测代码根目录: `BASE_DIR=/nasdata/app.e0031982/code/eda_fastmcp`
+- 论文目录: `/nasdata/app.e0031982/code/ZhuLong_DAC2027`
+- 基座: `MODEL=deepseek-v4-pro-fp4`（主基座；已配置好，不要动 cline auth / models.json / providers.json）
+- 评测协议: 完整 5-run，Pass@1 报告 **mean ± std**（5 轮）；每轮 `-p 8 -n`（8 并发 + 禁 Memory Bank 注入）
+- `cimi_search` / `cimi_fetch` / `vqa` 永远关闭，不要碰
+- w/o Self-Exploration / w/o Sandbox 暂不做，不要碰
+- 检索策略（向量 vs grep）与索引构建消融已删除，不跑
+- **反作弊 PreToolUse hook 全程启用、所有臂完全一致（冻结变量，不是消融对象）**
+
+
+
+## 📌 人工裁决记录（2026-10-04 · 供推进 agent 遵守）
+
+- **RAG recall 端口已修复**：`.env` L117 `RAG_RECALL_URL` 已由 `http://localhost:9012/recall`（无服务）改为 `http://localhost:9006/recall`（健康召回 PID 3820519，`kb/.recall_api.p
+- **重启时机（重要）**：`wo_retrieval`（检索 OFF）不受影响、照常跑完 5 轮；**切 `full` 之前**在轮次边界执行一次 `bash scripts/stop.sh && bash scripts/start.sh` 让 
+- **rag 需重跑**：`rag` 的 5 轮（68.2±7.4%）是在向量召回失效、降级 BM25-only 下测得；为与 `full`（真语义检索）可比，**重跑 rag ×5 后再跑 full ×5**。顺序�
+- 背景：`api_recall()` 连错端口失败 → 返回 `[]` → `search_apis` 退化为 BM25；修复后向量语义检索恢复。
+
+## 消融计划总览
+
+### Phase 1: 组件消融（4 配置，各 5 轮）
+
+| 序号 | 配置 | 说明 | 轮数 |
+|:---:|:---|---:|---:|
+| 1 | `pure_llm` | 核心 4 工具全关（裸 LLM） | 5 |
+| 2 | `rag` | 检索 3 件套开、run_code 关 | 5 |
+| 3 | `wo_retrieval` | 检索 3 件套关、run_code 开 | 5 |
+| 4 | `full` | 检索开 + sandbox 开（主系统默认，锚点） | 5 |
+
+> `full` 是本轮**锚点配置**：一次 5-run 同时喂饱 5 张表的锚点行——
+> `tab:main-ablation`(full)、`tab:omega`(H)、`tab:ablation-harness`(F)、
+> `tab:phi-bound`(unbounded ≡ full)、`tab:llm-comparison`(DeepSeek-V4-Pro 主基座)。
+===== DONE =====
+```
