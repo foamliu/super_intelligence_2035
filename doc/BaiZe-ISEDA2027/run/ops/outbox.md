@@ -5156,3 +5156,151 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 49 · 2026-10-04 17:23:57 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run
+S="$HOME/.cline/data/secrets.json"; G="$HOME/.cline/data/globalState.json"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "=== 1. 当前 secrets.json 的 key 打 glm-5.2 ==="
+KS="$(python3 -c "import json;print(json.load(open('$S'))['openAiApiKey'])" 2>/dev/null | tr -d '\r\n')"
+echo "   len=${#KS} pfx=${KS:0:8}"
+echo -n "   -> "; timeout 20 curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $KS" -H 'Content-Type: application/json' \
+  -d '{"model":"glm-5.2","messages":[{"role":"user","content":"hi"}],"max_tokens":2}' http://agi-gateway.cxmt.com/cloud/v1/chat/completions
+
+echo; echo "=== 2. 重测全部候选（keys.txt）==="
+python3 - "$WK/doc/keys.txt" > /tmp/_cand.json <<'PY'
+import sys, json, pathlib
+blocks, cur = [], {}
+for raw in pathlib.Path(sys.argv[1]).read_text(encoding='utf-8', errors='replace').split('\n'):
+    s = raw.strip()
+    if not s:
+        if cur.get('model'): blocks.append(cur)
+        cur = {}
+        continue
+    for lab, k in (('模型名字','model'), ('API Key','key'), ('Base Url (OpenAI)','oai')):
+        if lab in s:
+            cur[k] = s.split('：',1)[-1].strip() if '：' in s else s.split(':',1)[-1].strip()
+            break
+if cur.get('model'): blocks.append(cur)
+seen, out = set(), []
+for b in blocks:
+    m = b.get('model','')
+    if m in seen or not b.get('key') or not b.get('oai'): continue
+    seen.add(m)
+    if 'asr' in m.lower() or 'seedream' in m.lower(): continue
+    out.append({'model': m, 'key': b['key'], 'base': b['oai']})
+json.dump(out, sys.stdout, ensure_ascii=False)
+PY
+python3 - <<'PY' 2>&1 | cut -c1-140
+import json, pathlib, subprocess
+c = json.loads(pathlib.Path('/tmp/_cand.json').read_text(encoding='utf-8'))
+ok = []
+for x in c:
+    body = json.dumps({'model': x['model'], 'messages': [{'role':'user','content':'hi'}], 'max_tokens':2})
+    r = subprocess.run(['curl','-s','-o','/dev/null','-w','%{http_code}','--max-time','20',
+                        '-H','Authorization: Bearer '+x['key'],'-H','Content-Type: application/json',
+                        '-d',body, x['base']+'/chat/completions'], capture_output=True, text=True)
+    code = (r.stdout or '').strip()
+    print('   %-30s %-40s -> %s' % (x['model'], x['base'], code))
+    if code == '200': ok.append(x)
+pathlib.Path('/tmp/_ok.json').write_text(json.dumps(ok, ensure_ascii=False), encoding='utf-8')
+print('   ⇒ 200 的候选数 = %d' % len(ok))
+PY
+
+echo; echo "=== 3. 选胜者（优先 glm-5.2；否则第一个 /cloud/v1 的 200）==="
+W=$(python3 - <<'PY' 2>/dev/null
+import json, pathlib
+ok = json.loads(pathlib.Path('/tmp/_ok.json').read_text(encoding='utf-8'))
+w = next((x for x in ok if x['model'] == 'glm-5.2'), None) or next((x for x in ok if x['base'].endswith('/cloud/v1')), None)
+print('%s\t%s\t%s' % (w['model'], w['key'], w['base']) if w else 'NONE')
+PY
+)
+WM="$(echo "$W" | cut -f1)"; WK2="$(echo "$W" | cut -f2)"; WB="$(echo "$W" | cut -f3)"
+echo "   胜者 = ${WM:-<无>} @ ${WB:-}"
+
+if [ "$WM" != "NONE" ] && [ -n "$WM" ]; then
+  echo; echo "=== 4. 应用修复 ==="
+  cp -a "$S" "$S.bak.$(date +%Y%m%d-%H%M%S)" && echo "   已备份 secrets.json"
+  python3 - "$S" "$WK2" <<'PY'
+import json, sys
+json.dump({'openAiApiKey': sys.argv[2]}, open(sys.argv[1], 'w', encoding='utf-8'))
+PY
+  echo -n "   写入复核: "; python3 -c "import json,os;k=json.load(open(os.path.expanduser('~/.cline/data/secrets.json')))['openAiApiKey'];print('len',len(k),'pfx',k[:8])"
+  if [ "$WM" != "glm-5.2" ]; then
+    sed -i "s/^MODEL=\"glm-5.2\"/MODEL=\"$WM\"/" "$RUN/baize_pretrain_loop.sh" && echo "   已把 loop 的 MODEL 改为 $WM"
+  fi
+  echo "   globalState.openAiBaseUrl 现值 = $(sed -n 's/.*\"openAiBaseUrl\"[[:space:]]*:[[:space:]]*\"\([^"]*\)\".*/\1/p' "$G" | head -1)（期望 $WB）"
+  if [ "$(sed -n 's/.*\"openAiBaseUrl\"[[:space:]]*:[[:space:]]*\"\([^"]*\)\".*/\1/p' "$G" | head -1)" != "$WB" ]; then
+    cp -a "$G" "$G.bak2.$(date +%Y%m%d-%H%M%S)"
+    python3 - "$G" "$WB" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1], encoding='utf-8')); d['openAiBaseUrl'] = sys.argv[2]
+json.dump(d, open(sys.argv[1], 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+PY
+    echo "   已将 base 改为 $WB"
+  fi
+  echo; echo "=== 5. 干净环境重启 pretrain + 验证 ==="
+  pkill -f 'baize_pretrain_loop.sh'; sleep 5
+  cd "$RUN"; setsid env $P bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+  sleep 45
+  echo -n "   Forbidden 计数（应为 0）= "; grep -c 'Forbidden' /tmp/baize_pretrain_loop.log 2>/dev/null
+  echo "   日志尾："; tail -8 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-160
+  echo -n "   cline 在跑吗: "; pgrep -af 'bun.*cline' | cut -c1-90 | head -2 || echo "(暂无)"
+else
+  echo; echo "   ⛔ 无任何 200 候选 → 不重启，等运维处理（可能整网关/额度故障）"
+fi
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 17:23:57
+
+=== 1. 当前 secrets.json 的 key 打 glm-5.2 ===
+   len=72 pfx=02_088EE
+   -> 403
+
+=== 2. 重测全部候选（keys.txt）===
+   deepseek-v4-flash              http://agi-gateway.cxmt.com/v1           -> 200
+   deepseek-v4-pro-fp4            http://agi-gateway.cxmt.com/v1           -> 200
+   deepseek-v4-pro-cloud          http://agi-gateway.cxmt.com/cloud/v1     -> 200
+   kimi-k2.6-cloud                http://agi-gateway.cxmt.com/cloud/v1     -> 200
+   glm-5.2                        http://agi-gateway.cxmt.com/cloud/v1     -> 200
+   doubao-seed-2.0-pro-cloud      http://agi-gateway.cxmt.com/cloud/v1     -> 200
+   doubao-seed-2.0-mini-cloud     http://agi-gateway.cxmt.com/cloud/v1     -> 200
+   doubao-seed-2.0-lite-cloud     http://agi-gateway.cxmt.com/cloud/v1     -> 200
+   ⇒ 200 的候选数 = 8
+
+=== 3. 选胜者（优先 glm-5.2；否则第一个 /cloud/v1 的 200）===
+   胜者 = glm-5.2 @ http://agi-gateway.cxmt.com/cloud/v1
+
+=== 4. 应用修复 ===
+   已备份 secrets.json
+   写入复核: len 72 pfx 02_088EE
+   globalState.openAiBaseUrl 现值 = http://127.0.0.1:9090/v1（期望 http://agi-gateway.cxmt.com/cloud/v1）
+   已将 base 改为 http://agi-gateway.cxmt.com/cloud/v1
+
+=== 5. 干净环境重启 pretrain + 验证 ===
+   Forbidden 计数（应为 0）= 0
+   日志尾：
+- **P[0m[2m-9.7[0m[2m** ([0m[2mNEW[0m[2m,[0m[2m ⭐ 高优先):[0m[2m A1[0m[2m 稳态吞吐确认[0m[2m ≥1000 steps[0m[2m - "[0m[2m排在 
+- P-[0m[2m9.5 profiling[0m[2m -[0m[2m was[0m[2m running but crashed
+[0m[2m- P-6[0m[2m② → P-[0m[2m8
+
+So P[0m[2m-9.7[0m[2m is now[0m[2m the highest priority task[0m[2m![0m[2m It should[0m[2m run[0m[2m BEFORE[0m[2m P-9.[0m[2m5 ([0m[2mwhich cra
+
+P[0m[2m-9.7[0m[2m requirements:
+- Config[0m[2m: A1 =[0m[2m `[0m
+   cline 在跑吗: 2652941 bun /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/harness_w
+
+=== DONE ===
+```
