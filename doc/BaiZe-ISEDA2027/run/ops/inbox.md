@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 31 -->
+<!-- RUN_ID: 32 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,47 @@
 
 ---
 
-## RUN_ID 31 — 🧹 **`/nas_train` 大盘盘点（有界、只读）—— 重点本用户目录**（**本块最新，优先执行**）
+## RUN_ID 32 — 🧹 **改用【后台低优先级】补全本用户目录盘点**（**只读**）（**本块最新，优先执行**）
+
+**RUN_ID 31 缺陷（我的问题）**：`timeout 300 du -sh --max-depth=1 …` + `timeout 90` 单点 → **`datasets` / `code` 没量完就被 kill（无输出）**；且 `-s` 与 `--max-depth` 混用会告警。**已确认的只有**：`models 452G` · `hf_cache 20G` · `outputs 6.7G`。
+
+**本轮改法（避免超时）**：把全量一级盘点**放到后台低优先级**跑 → 结果**边跑边写** `/tmp/_du_full.txt` → 完成时写 `/tmp/_du_full.done`；本块**不等待**，只报告进度。
+
+**已知大盘（RUN_ID 31）**：`/nas_train` **211.9 TB 总 / 180.4 TB 已用 / 31.6 TB 可用（86%）**；`/nas_inference` 60% · `/nas_user` 74% · `/data` 8%。
+**sudo**：`sudo -n` = **需密码** → 非交互不可用 ⇒ **他人目录盘点走 data 线 D-CLEAN-4**（本块只做本用户）。
+
+🚫 **只读**：不删、不移、不改。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+D=/nas_train/app.e0031982
+
+echo; echo "=== 1. 清理上一轮残留并启动后台盘点（nice -n 19）==="
+pkill -f 'du -sh /nas_train/app.e0031982' 2>/dev/null
+rm -f /tmp/_du_full.txt /tmp/_du_full.done
+setsid bash -c "nice -n 19 du -sh $D/* > /tmp/_du_full.txt 2>/dev/null; echo done > /tmp/_du_full.done" </dev/null >/dev/null 2>&1 &
+sleep 6
+echo "   已启动；当前已有 $(wc -l < /tmp/_du_full.txt 2>/dev/null) 行；done 标记 = $([ -f /tmp/_du_full.done ] && echo YES || echo NO)"
+pgrep -af 'du -sh /nas_train/app.e0031982' | cut -c1-90
+
+echo; echo "=== 2. 本用户 top-level 名称（对照用）==="
+ls -1 "$D" 2>/dev/null | head -40
+
+echo; echo "=== 3. 目前读到的（随进度增长）==="
+sort -hr /tmp/_du_full.txt 2>/dev/null | head -20
+
+echo; echo "=== 4. 快速可见的大项（各自 60s，已知能出结果的）==="
+for p in models outputs hf_cache; do printf '   %-12s ' "$p"; timeout 60 du -sh "$D/$p" 2>/dev/null | awk '{print $1}'; done
+
+echo; echo "=== 5. code 目录下（BaiZe 相关，已知有 nemo_experiments）==="
+timeout 60 du -sh "$D/code/BaiZe-ISEDA2027/nemo_experiments" 2>/dev/null
+ls -1 "$D/code" 2>/dev/null | head -15
+echo; echo "=== DONE（盘点仍在后台跑，下轮读 /tmp/_du_full.txt）==="
+```
+
+> ⛔ **已降级 RUN_ID 31**（大盘盘点 v1，**✅ 已执行 09:35:53**，**暴露我 du 超时缺陷**）为 ```text。
+
+## RUN_ID 31 — 🧹 **`/nas_train` 大盘盘点（有界、只读）—— 重点本用户目录**（✅ 已执行，见 RUN_ID 32 补全）
 
 **用户指令（2026-10-04）**：`/nas_train` 需要清理 → **用 sudo 看各目录大小，找可删除的大目录，着重 `/nas_train/app.e0031982`**。
 **本块 = 先给一份能立刻看的盘点**（我只在 relay 上做**本用户**部分；**他人目录需 sudo**，避开口令处理，交给 data 线按 D-CLEAN-4 走）。
@@ -39,7 +79,7 @@
 ⚠️ **纪律**：🚫 **绝不整树 `du`**（`/nas_train` 175 TB）；**每条 `du` 都带 `timeout`**；**结果先落 `/tmp` 再排序**（否则被 kill 时 `sort` 缓冲会导致零输出）。
 🚫 只读 —— 不删、不移、不改。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 D=/nas_train/app.e0031982
 
