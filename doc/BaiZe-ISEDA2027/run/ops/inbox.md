@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 42 -->
+<!-- RUN_ID: 43 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,57 @@
 
 ---
 
-## RUN_ID 42 — 🔧 **根治：钉住 HF 缓存位置（`.bashrc` 三行 export + `~/.cache/huggingface` 软链到 `/nas_train`）**（**已获批准**）（**本块最新，优先执行**）
+## RUN_ID 43 — 🔍 **摸清 cline 的 base URL 怎么切 + 逐个验证 `doc/keys.txt` 的 8 个 LLM key**（**只读**）（**本块最新，优先执行**）
+
+**背景（用户 2026-10-04 指令）**：要把「**额度/鉴权体检 + 自动换 key**」做进 **4 条 loop**（因为额度耗尽时 agent 自己也动不了）。`doc/keys.txt` 有 10 项，其中 **8 个是 chat/coding LLM**（排除 `doubao-asr-realtime` = ASR、`doubao-seedream-5.0-lite-cloud` = 文生图）。
+**要做的事**：loop 在调用 cline 前**探一次**当前模型；失败则**自动切到下一个候选**。⚠️ 但**候选的 base URL 分两类**（`/v1` vs `/cloud/v1`），而 **`-b` 是无效 flag**（15:37 已修）→ **必须先搞清 cline 到底从哪里读 base URL**。
+
+**本块要回答（只读）**
+1. **cline 源码里 base URL 的来源**（grep `baseURL`/`BASE_URL`/`openAiBaseUrl`/`openai-compatible`）
+2. **当前 `globalState.json` 的 `openAiBaseUrl` / `actModeOpenAiModelId`** —— 看 15:45 那次是怎么改成 `/cloud/v1` 的
+3. **8 个 LLM 逐一 `curl /chat/completions`** —— 哪些 key 当前有效（200）
+4. 是否有 **`OPENAI_BASE_URL` / `OPENAI_API_URL` 之类 env** 被 cline 读取
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+K=$R/doc/keys.txt
+[ -f "$K" ] && echo "   keys.txt OK ($(wc -l < "$K") 行)" || { echo "   !!! keys.txt 缺失: $K"; find /nas_train/app.e0031982 -maxdepth 4 -name 'keys.txt' 2>/dev/null | head -3; }
+
+echo; echo "=== 1. cline 源码里 base URL 的来源 ==="
+for cs in "$HOME/.bun/install/global/node_modules/@cline/cli/src/index.ts" "$HOME/.bun/install/global/node_modules/@cline/cli/dist/index.js"; do
+  [ -f "$cs" ] || continue
+  echo "   -- $(basename "$cs") ($(stat -c%s "$cs") B) --"
+  timeout 60 grep -nE 'baseURL|base_url|BASE_URL|openAiBaseUrl|openai-compatible|OPENAI_API_URL' "$cs" 2>/dev/null | head -14 | cut -c1-175
+done
+
+echo; echo "=== 2. 当前 cline 配置（base / model / provider）==="
+G="$HOME/.cline/data/globalState.json"
+sed -n 's/.*"openAiBaseUrl"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/   openAiBaseUrl   = \1/p' "$G" 2>/dev/null
+sed -n 's/.*"actModeOpenAiModelId"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/   actModeModelId  = \1/p' "$G" 2>/dev/null
+sed -n 's/.*"actModeApiProvider"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/   actModeProvider = \1/p' "$G" 2>/dev/null
+sed -n 's/.*"planModeApiProvider"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/   planModeProvider= \1/p' "$G" 2>/dev/null
+
+echo; echo "=== 3. 8 个 chat LLM 逐个 curl（200=key 有效；排除 asr/seedream）==="
+awk -F'：' '
+  /模型名字/ {m=$2; gsub(/[ \t\r]/,"",m)}
+  /API Key/  {k=$2; gsub(/[ \t\r]/,"",k)}
+  /Base Url \(OpenAI\)/ {b=$2; gsub(/[ \t\r]/,"",b); if (m!="" && k!="" && b!="") {print m"|"k"|"b"; m="";k="";b=""}}
+' "$K" 2>/dev/null | sort -u | while IFS='|' read -r m k b; do
+  case "$m" in *asr*|*seedream*) printf '   [跳过-非chat] %s\n' "$m"; continue;; esac
+  code=$(timeout 20 curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $k" -H 'Content-Type: application/json' \
+    -d "{\"model\":\"$m\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}],\"max_tokens\":2}" "$b/chat/completions" 2>/dev/null)
+  printf '   %-30s %-40s -> %s\n' "$m" "$b" "$code"
+done
+
+echo; echo "=== 4. 相关 env（脱敏）==="
+python3 -c "import os;[print('  ',k,'len',len(v),'pfx',v[:14]) for k,v in sorted(os.environ.items()) if any(t in k.upper() for t in ('OPENAI','CLINE','ANTHROPIC'))]" 2>/dev/null || env | grep -iE 'openai|cline|anthropic' | sed -E 's/=(.{0,14}).*/= \1.../' | cut -c1-90
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 42**（HF 缓存根治，**✅ 已执行 12:00:52 exit=0** → 写入测试 OK）为 ```text。
+
+## RUN_ID 42 — 🔧 **根治：钉住 HF 缓存位置**（✅ 已执行 → 软链生效、写入测试 OK）
 
 **背景**：`/home` 仅 196 G，而这次清掉的 78 G 正是 **HF 默认缓存落到 `~/.cache/huggingface`** 造成的（`HF_HOME` 后来才改到 `/nas_train`，且 `HF_HUB_CACHE` **为空**）。**两层加固**：
 1. **`.bashrc` 显式钉死**：`HF_HOME` + **`HF_HUB_CACHE`（原本为空）** + `HF_DATASETS_CACHE` 全部指向 `/nas_train`
@@ -39,7 +89,7 @@
 
 **安全**：备份 `.bashrc` · **幂等**（已有的不重复加）· `bash -n` 语法自检 · 若 `~/.cache/huggingface` 已是**实体目录则跳过 symlink 不覆盖** · 写测试验证。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 H=$HOME; B="$H/.bashrc"; TS=$(date +%Y%m%d-%H%M%S)
 
