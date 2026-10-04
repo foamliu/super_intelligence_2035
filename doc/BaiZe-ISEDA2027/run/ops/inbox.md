@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 58 -->
+<!-- RUN_ID: 59 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,43 @@
 
 ---
 
-## RUN_ID 58 — 🔬 **干净复测隔离目录（修掉上轮嵌套 heredoc bug）+ 条件重启（.12）**（承接 RUN_ID 57）（**本块最新，优先执行**）
+## RUN_ID 59 — 🔬 **只读诊断：.12 的 cline 是否支持 `--data-dir` + 两个 loop 真实现状**（承接 RUN_ID 58）（**本块最新，优先执行**）
+
+> **RUN_ID 58 结果（18:11:08 exit=0）**：base 已**正确写为 `/v1` 并复核**（vision/data 都是），`probe=200`；**但 smoke 仍 `Forbidden`**。
+> ⚠️ **本块先修我自己的脚本 bug**：smoke 里的 `cline` **没加 `< /dev/null`**，把 ssh 的 heredoc 剩余脚本当 stdin 吃掉了（RUN_ID 55 因 cline 没启动才没吃、56/57/58 一启动就吃 → 后续段消失）。**下面所有 cline 调用一律 `< /dev/null`**。
+> 🔑 **新怀疑**：**`.12` 的 cline 可能不支持 `--data-dir`**（被静默忽略 → 回落共享目录 base=`/cloud/v1` + `-m flash` → **403 Forbidden**）。故本轮先**只读核实**。
+
+**本块做什么（只读，不改任何东西）**
+1. `.12` 的 `cline --version` + `--help` 里 `--data-dir` 是否存在
+2. 共享 `globalState.json` 的 provider/model/base（对照）
+3. `tail` 两个 loop 日志（看它们真实用的是哪个 model/base、有无 Forbidden）
+4. 当前 cline 进程 cmdline + 两个 loop pid
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+echo; echo "=== [.12] 只读诊断：cline 能力 + loop 现状 ==="
+timeout 120 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+export PATH="$HOME/.bun/bin:$PATH"
+hostname; date '+%F %T'
+C=/home/app.e0031982/.bun/bin/cline
+echo; echo "--- 1. cline 版本 + --data-dir 支持 ---"
+"$C" --version 2>&1 | head -2
+"$C" --help 2>&1 | grep -i -A1 'data-dir\|--config' | head -8 | cut -c1-140
+echo; echo "--- 2. 共享 globalState 关键字段 ---"
+python3 -c "import json,pathlib;d=json.load(open(str(pathlib.Path.home())+'/.cline/data/globalState.json'));[print('   ',k,'=',repr(d.get(k))) for k in ('actModeApiProvider','actModeOpenAiModelId','planModeOpenAiModelId','openAiBaseUrl')]" 2>&1 | cut -c1-160
+echo; echo "--- 3. 两个 loop log 末尾 ---"
+for L in vision data; do echo "   # $L ($(stat -c %y /tmp/baize_${L}_loop.log 2>/dev/null | cut -c1-19))"; tail -12 "/tmp/baize_${L}_loop.log" 2>/dev/null | cut -c1-150 | sed 's/^/     /'; done
+echo; echo "--- 4. 当前 cline 进程 / loop pid ---"
+pgrep -af 'bun.*cline' 2>/dev/null | cut -c1-150 | head -4
+echo "   loops: $(pgrep -af 'baize_.*_loop.sh' 2>/dev/null | cut -c1-110)"
+echo; echo "=== DONE (.12) ==="
+EOS12
+echo "=== relay block done ==="
+```
+
+> ⛔ 已降级 RUN_ID 58（18:11:08 exit=0，base 写对但仍 Forbidden；脚本被 cline 吃 stdin 截断）为 text。
+
+## RUN_ID 58 — 🔬 **干净复测隔离目录 + 条件重启（.12）**（✅ 已执行 → **base 已写对仍 Forbidden；clime 吃 stdin 截断**，见 RUN_ID 59）
 
 > **RUN_ID 57 结果（18:08:49 exit=0）**：`llm_pick` 选中 **#0 deepseek-v4-flash @ `…/v1`（probe=200）**，key=`02_088EE…`；
 > ⚠️ 但**上一轮脚本里嵌套了 `<<'PY'` heredoc，把后面的 D/E 段吞掉了**（输出只到 control 就结束）⇒ **判定不可信**（base 可能没写成功 → 才显示 Forbidden）。
@@ -43,7 +79,7 @@
 3. smoke 两个隔离目录（打印全文）→ 判定 `PASS`
 4. **仅当 PASS=1** 才**逐线**自保护重启；否则**不重启**并保留现场；验 `Forbidden==0`
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 echo; echo "=== [.12] 干净复测 + 条件重启 ==="
 timeout 520 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
