@@ -233,7 +233,16 @@ def main():
                          'reconstruction (MAE norm_pix_loss). 0 disables the dense term.')
     ap.add_argument('--patch-loss-weight', type=float, default=1.0,
                     help='R11-L arm6: weight of masked-patch reconstruction MSE '
-                         '(total = InfoNCE + patch_loss_weight * mse).')
+                         '(total = contrast_weight*InfoNCE + patch_loss_weight * mse).')
+    ap.add_argument('--contrast-weight', type=float, default=1.0,
+                    help='R11-H arm6-B (pure AR): weight of InfoNCE contrast term in '
+                         'aimv2 loss. 1.0 = ⑥-A (InfoNCE+MSE); 0.0 = pure masked-patch '
+                         'reconstruction, text tower NOT in gradient graph (official AIMv2 route).')
+    ap.add_argument('--c2-collapse-guard', type=int, default=1,
+                    help='R11-H: whether the C2_gap<=0.005 auto-fuse guard is active. '
+                         '1=on (default, contrastive arms); 0=off for pure-AR (C2_gap measures '
+                         'cross-modal alignment which is N/A without a contrastive objective; '
+                         'C1 feature-collapse + C4 loss-decreasing guards REMAIN active).')
     ap.add_argument('--text-finetune', choices=['frozen', 'lora'], default='frozen',
                     help='R11-L2: frozen=CLIP-768 text tower frozen (baseline); '
                          'lora=zero-init LoRA on q+v proj (lightweight unfreeze)')
@@ -430,7 +439,9 @@ def main():
                        'caption_loss_weight': args.caption_loss_weight if args.loss == 'coca' else None,
                        'decoder_depth': args.decoder_depth if args.loss == 'coca' else None,
                        'mask_ratio': args.mask_ratio if args.loss == 'aimv2' else None,
-                       'patch_loss_weight': args.patch_loss_weight if args.loss == 'aimv2' else None},
+                       'patch_loss_weight': args.patch_loss_weight if args.loss == 'aimv2' else None,
+                        'contrast_weight': args.contrast_weight if args.loss == 'aimv2' else None,
+                        'c2_collapse_guard': args.c2_collapse_guard if args.loss == 'aimv2' else None},
             'final_loss': loss_ema,
             'params_total': param_count(vision.module),
             'params_active': active_param_count(vision.module),
@@ -487,9 +498,6 @@ def main():
                 cap_i = cap_loss.item()
             elif args.loss == 'aimv2':
                 pooled, patches = vision(imgs, return_patch=True)
-                If = torch.nn.functional.normalize(pooled, dim=-1)
-                Tf = torch.nn.functional.normalize(text(txts), dim=-1)
-                contrastive = loss_fn(If, Tf, logit_scale.exp(), None)
                 # masked patch reconstruction (MAE norm_pix_loss; Apache-2.0 ref)
                 B, N, _W = patches.shape
                 target = mae_norm_pix_target(imgs, args.patch)      # (B,N,patch_dim)
@@ -497,8 +505,16 @@ def main():
                 pred = predictor(patches[mrand])                    # (n_masked, patch_dim)
                 tgt = target[mrand]                                 # (n_masked, patch_dim)
                 patch_loss = torch.mean((pred.float() - tgt.float()) ** 2)
-                cur_loss = contrastive + args.patch_loss_weight * patch_loss
-                contr_i = contrastive.item()
+                if args.contrast_weight > 0:
+                    If = torch.nn.functional.normalize(pooled, dim=-1)
+                    Tf = torch.nn.functional.normalize(text(txts), dim=-1)
+                    contrastive = loss_fn(If, Tf, logit_scale.exp(), None)
+                    cur_loss = args.contrast_weight * contrastive + args.patch_loss_weight * patch_loss
+                    contr_i = contrastive.item()
+                else:
+                    # R11-H (arm 6-B): pure AR, NO contrast term -> text tower NOT in graph
+                    cur_loss = args.patch_loss_weight * patch_loss
+                    contr_i = 0.0
                 cap_i = patch_loss.item()          # reuse cap_i slot -> logged as patch_mse
             else:
                 If = torch.nn.functional.normalize(vision(imgs), dim=-1)
@@ -554,7 +570,7 @@ def main():
             # R5.2 fusing thresholds
             if c1 > 0.95:
                 fused, fuse_reason = True, f'C1 collapse (offdiag={c1:.4f}>0.95)@step{step}'
-            elif gap <= 0.005:
+            elif args.c2_collapse_guard and gap <= 0.005:
                 fused, fuse_reason = True, f'C2 no-gap (gap={gap:+.4f}~0)@step{step}'
             elif not c4_ok:
                 fused, fuse_reason = True, f'C4 loss-not-decreasing (ema={loss_ema:.4f} vs early={loss_early:.4f})@step{step}'
