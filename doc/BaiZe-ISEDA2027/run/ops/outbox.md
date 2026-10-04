@@ -7447,3 +7447,90 @@ whag0pgpuap12
 === DONE (.12) ===
 === relay block done ===
 ```
+
+---
+
+## RUN_ID 70 · 2026-10-05 07:58:41 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+B=/nas_train/app.e0031982; H=$HOME; C=/home/app.e0031982/.bun/bin/cline
+W=/nas_train/app.e0031982/code/super_intelligence_2035; R=$W/doc/BaiZe-ISEDA2027/run; KEYS=$W/doc/keys.txt
+export PATH="$H/.bun/bin:$PATH"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+CFG='{"mcpServers":{"pyAether_MCP_server":{"url":"http://10.239.2.29:8090/sse","type":"sse","disabled":false,"autoApprove":["search_apis","get_api_details","run_pyAether_code_tool","cimi_search","cimi_fetch"]}}}'
+
+echo; echo "=== 1. .29 共享 MCP 配置：补 cimi 到 autoApprove ==="
+S="$H/.cline/data/settings/cline_mcp_settings.json"
+echo "   改前 $(stat -c %s "$S" 2>/dev/null)B : $(tr -d '\n' < "$S" 2>/dev/null | cut -c1-170)"
+if grep -q 'cimi_search' "$S" 2>/dev/null; then echo "   ✅ 已含 cimi_search → 不改"; else
+  cp -a "$S" "$S.bak.$(date +%Y%m%d-%H%M%S)" && echo "   已备份"; printf '%s' "$CFG" > "$S"; echo "   写入后 $(stat -c %s "$S")B"
+fi
+
+smoke () {
+  local D="$1" TAG="$2"
+  LLM_DATA_DIR="$D"; . "$R/llm_rotate.sh"
+  if llm_pick "/tmp/baize_${TAG}_llm_idx" "$KEYS"; then echo "   [$TAG] picked $LLM_MODEL key=${LLM_KEY:0:8}.. base=$LLM_BASE"; else echo "   [$TAG] !! 无候选"; return; fi
+  env $P timeout 200 "$C" --data-dir "$D" -c /tmp -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible --auto-approve true -t 150 \
+    "Call the MCP tool cimi_search (server pyAether_MCP_server) with query 'mamba2 state space'. Reply <=3 lines: (1) tool available yes/no (2) first result title (3) exact error if failed." \
+    < /dev/null > "/tmp/cimi_${TAG}.log" 2>&1
+  local rc=$?
+  echo "   [$TAG] rc=$rc => $(grep -a -iE 'tool available|error' "/tmp/cimi_${TAG}.log" | tail -2 | tr '\n' ' ' | cut -c1-170)"
+}
+
+echo; echo "=== 2. 逐线 smoke（.29：pretrain / harness）==="
+smoke "$B/.cline_pretrain" pretrain
+smoke "$B/.cline_harness" harness
+
+echo; echo "=== 3. 逐线 smoke（.12：vision，经 ssh）==="
+timeout 300 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+export PATH="$HOME/.bun/bin:$PATH"
+B=/nas_train/app.e0031982; W=$B/code/super_intelligence_2035; R=$W/doc/BaiZe-ISEDA2027/run; KEYS=$W/doc/keys.txt
+C=/home/app.e0031982/.bun/bin/cline; D="$B/.cline_vision"
+PP="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+LLM_DATA_DIR="$D"; . "$R/llm_rotate.sh"
+if llm_pick /tmp/baize_vision_llm_idx "$KEYS"; then echo "   [vision] picked $LLM_MODEL key=${LLM_KEY:0:8}.. base=$LLM_BASE"; else echo "   [vision] !! 无候选"; fi
+env $PP timeout 200 "$C" --data-dir "$D" -c /tmp -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible --auto-approve true -t 150 \
+  "Call the MCP tool cimi_search (server pyAether_MCP_server) with query 'mamba2 state space'. Reply <=3 lines: (1) tool available yes/no (2) first result title (3) exact error if failed." \
+  < /dev/null > /tmp/cimi_vision.log 2>&1
+echo "   [vision] rc=$? => $(grep -a -iE 'tool available|error' /tmp/cimi_vision.log | tail -2 | tr '\n' ' ' | cut -c1-170)"
+EOS12
+
+echo; echo "=== 4. 四线 cline config mcp 复核 ==="
+for n in pretrain harness vision data; do echo "   [.cline_$n] $("$C" --data-dir "$B/.cline_$n" config mcp 2>&1 | sed -n '2,3p' | tr '\n' ' ' | cut -c1-120)"; done
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-05 07:58:41
+
+=== 1. .29 共享 MCP 配置：补 cimi 到 autoApprove ===
+   改前 265B : {  "mcpServers": {    "pyAether_MCP_server": {      "url": "http://10.239.2.29:8090/sse",      "type": "sse",      "disabled": false,      "autoApprove": [        "search
+   已备份
+   写入后 206B
+
+=== 2. 逐线 smoke（.29：pretrain / harness）===
+[llmrot] 2026-10-05 07:58:42 优先选中 glm-5.2 #4 @ http://agi-gateway.cxmt.com/cloud/v1 (probe=200)
+   [pretrain] picked glm-5.2 key=02_088EE.. base=http://agi-gateway.cxmt.com/cloud/v1
+   [pretrain] rc=0 => (1) Tool available: yes (3) No error — call succeeded. 
+[llmrot] 2026-10-05 07:58:56 优先选中 glm-5.2 #4 @ http://agi-gateway.cxmt.com/cloud/v1 (probe=200)
+   [harness] picked glm-5.2 key=02_088EE.. base=http://agi-gateway.cxmt.com/cloud/v1
+   [harness] rc=0 => Tool available: yes (no error) 
+
+=== 3. 逐线 smoke（.12：vision，经 ssh）===
+[llmrot] 2026-10-05 07:59:05 优先选中 glm-5.2 #4 @ http://agi-gateway.cxmt.com/cloud/v1 (probe=200)
+   [vision] picked glm-5.2 key=02_088EE.. base=http://agi-gateway.cxmt.com/cloud/v1
+   [vision] rc=0 => 1. Tool available: yes 3. No error 
+
+=== 4. 四线 cline config mcp 复核 ===
+   [.cline_pretrain]   pyAether_MCP_server [sse] 
+   [.cline_harness]   pyAether_MCP_server [sse] 
+   [.cline_vision]   pyAether_MCP_server [sse] 
+   [.cline_data]   pyAether_MCP_server [sse] 
+
+=== DONE ===
+```
