@@ -66,7 +66,24 @@ for p in models outputs hf_cache; do printf '   %-12s ' "$p"; timeout 60 du -sh 
 echo; echo "=== 5. code 目录下（BaiZe 相关，已知有 nemo_experiments）==="
 timeout 60 du -sh "$D/code/BaiZe-ISEDA2027/nemo_experiments" 2>/dev/null
 ls -1 "$D/code" 2>/dev/null | head -15
-echo; echo "=== DONE（盘点仍在后台跑，下轮读 /tmp/_du_full.txt）==="
+
+echo; echo "=== 6. ⭐ LLaVA-OneVision-1.5 的 4B 检查点（用户点名：绝大部分可删）==="
+LV=$(ls -d "$D"/LLaVA-OneVision-1.5 "$D"/*/LLaVA-OneVision-1.5 "$D"/*/*/LLaVA-OneVision-1.5 2>/dev/null | head -1)
+echo "   定位 = ${LV:-<未找到，下面列出候选>}"
+if [ -z "$LV" ]; then
+  find "$D" -maxdepth 4 -type d -iname '*OneVision*' 2>/dev/null | head -10
+else
+  echo "   -- 顶层 --"; ls -1 "$LV" 2>/dev/null | head -25
+  echo "   -- 疑似 ckpt 目录（名字含 ckpt/checkpoint/output/save/4B，只列名，不 du）--"
+  find "$LV" -maxdepth 4 -type d \( -iname '*ckpt*' -o -iname '*checkpoint*' -o -iname '*output*' -o -iname '*save*' -o -iname '*4b*' \) 2>/dev/null | head -40
+  echo "   -- 后台低优先级量它们的大小（边跑边写 /tmp/_du_llava.txt）--"
+  rm -f /tmp/_du_llava.txt /tmp/_du_llava.done
+  setsid bash -c "nice -n 19 du -sh $LV/* > /tmp/_du_llava.txt 2>/dev/null; echo done > /tmp/_du_llava.done" </dev/null >/dev/null 2>&1 &
+  sleep 5
+  echo "      行数=$(wc -l < /tmp/_du_llava.txt 2>/dev/null)  done=$([ -f /tmp/_du_llava.done ] && echo YES || echo NO)"
+  sort -hr /tmp/_du_llava.txt 2>/dev/null | head -20
+fi
+echo; echo "=== DONE（两个后台盘点仍在跑；下轮读 /tmp/_du_full.txt 与 /tmp/_du_llava.txt）==="
 ```
 
 > ⛔ **已降级 RUN_ID 31**（大盘盘点 v1，**✅ 已执行 09:35:53**，**暴露我 du 超时缺陷**）为 ```text。
