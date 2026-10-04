@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 30 -->
+<!-- RUN_ID: 31 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,47 @@
 
 ---
 
-## RUN_ID 30 — 🩺 **复查：复工是否稳固 + loop 的 git 网络/push 是否正常**（**只读**）（**本块最新，优先执行**）
+## RUN_ID 31 — 🧹 **`/nas_train` 大盘盘点（有界、只读）—— 重点本用户目录**（**本块最新，优先执行**）
+
+**用户指令（2026-10-04）**：`/nas_train` 需要清理 → **用 sudo 看各目录大小，找可删除的大目录，着重 `/nas_train/app.e0031982`**。
+**本块 = 先给一份能立刻看的盘点**（我只在 relay 上做**本用户**部分；**他人目录需 sudo**，避开口令处理，交给 data 线按 D-CLEAN-4 走）。
+
+⚠️ **纪律**：🚫 **绝不整树 `du`**（`/nas_train` 175 TB）；**每条 `du` 都带 `timeout`**；**结果先落 `/tmp` 再排序**（否则被 kill 时 `sort` 缓冲会导致零输出）。
+🚫 只读 —— 不删、不移、不改。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+D=/nas_train/app.e0031982
+
+echo; echo "=== 1. 大盘 df ==="
+df -hT /nas_train /nas_inference /nas_user /data 2>/dev/null
+echo "-- /nas_train 精确到 G --"; df -BG /nas_train 2>/dev/null | tail -1
+
+echo; echo "=== 2. sudo 免密可用性（不涉任何口令）==="
+if sudo -n true 2>/dev/null; then echo "   sudo -n = OK（免密）→ 可扫他人目录"; else echo "   sudo -n = 需密码 → 非交互不可用（他人目录盘点交 data 线按 D-CLEAN-4 走）"; fi
+
+echo; echo "=== 3. /nas_train 顶层（名称 + mtime + owner）==="
+ls -1 /nas_train 2>/dev/null | head -30
+echo "-- 顶层 mtime/owner --"
+for p in /nas_train/*/; do printf '   %-40s %s  %s\n' "$p" "$(stat -c '%y' "$p" 2>/dev/null | cut -c1-16)" "$(stat -c '%U' "$p" 2>/dev/null)"; done | head -25
+
+echo; echo "=== 4. ⭐ 本用户一级子目录大小（有界 300s；先落盘再排序）==="
+timeout 300 du -sh --max-depth=1 "$D"/* 2>/dev/null > /tmp/_du1.txt; echo "   (du exit=$?)"
+sort -hr /tmp/_du1.txt 2>/dev/null | head -25
+echo "   -- 本用户目录总量 --"
+timeout 60 du -sh "$D" 2>/dev/null
+
+echo; echo "=== 5. 已知大项单独确认（各自带 timeout）==="
+for p in "$D/datasets" "$D/code" "$D/outputs" "$D/models" "$D/hf_cache" "$D/nohup.out"; do
+  [ -e "$p" ] && { printf '   %-30s ' "${p#$D/}"; timeout 90 du -sh "$p" 2>/dev/null | awk '{print $1}'; }
+done
+
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 30**（复工/网络复查，**✅ 已执行 09:23:14**）为 ```text。
+
+## RUN_ID 30 — 🩺 **复查：复工是否稳固 + loop 的 git 网络/push 是否正常**（✅ 已执行，本块不再运行）
 
 **为何查**：pretrain 第 57/58 次巡检两度记录 **「`git fetch origin` 报 `Failed to connect to github.com:443`（remote=https、无 proxy env）」** → 若属实，**成果会卡在本地推不出去**（历史上曾因"只 push 不 pull"丢过同步）。同时例行复查**修复是否稳固**（`Forbidden` 是否仍为 0）。
 
@@ -42,7 +82,7 @@
 4. **回归检查**：`error:.*Forbidden` 计数（应为 0）
 5. GPU + P-9.2 进程
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 WK=/nas_train/app.e0031982/code/super_intelligence_2035
 
