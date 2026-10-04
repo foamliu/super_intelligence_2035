@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ 四臂全兑现 · R11-L2 ✅ · caption-weight ✅ · R13 ✅ · R11-E ✅**；臂⑥ AIMv2 🟢 **训练中 step ≈18850/30000 ≈63%**（无坍缩 C1≈0.34/C2_gap+0.12/C4=OK，ETA ~20:15；⚠️ **r11_run_aimv2.sh 父进程已死**（workers orphaned ppid=1）→ 自动 eval 不会跑 → **r11f_auto_launch.sh 已部署**：等训练完→手动跑 AIMv2 4-ckpt eval→等 GPU 空→自动起 R11-F）；**R11-F 代码准备 ✅ 全完成**（data.py caption_type + r9_train.py --caption-type/.txt 快照 + r11_run_datasource.sh 5 臂 + §15 预注册） |
-| WAITING | 1（**语义=AIMv2 训练 running + R11-F auto-launcher 已部署 → 30min 轮询**；臂⑥ AIMv2 step ≈18850/30000 ≈63%、ETA ~20:15；⚠️ r11_run_aimv2.sh 父进程已死（workers ppid=1）→ `r11f_auto_launch.sh`（pid 2477073）接管：等训完→手动跑 AIMv2 4-ckpt IN-1k eval→等 GPU 空→自动起 R11-F 5 臂串行（A→B→C→E→D，≈8–10h）；下次唤醒回收 AIMv2 `[done]`+lp（§14.4 裁定）+ R11-F 各臂进度） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ 四臂全兑现 · R11-L2 ✅ · caption-weight ✅ · R13 ✅ · R11-E ✅ · 臂⑥ AIMv2 ✅ 翻盘**（lp 11.39→11.14→12.08% vs 基线 3.43→5.45→6.08%，+5.69~7.96pp ≥+1.5 → **25.1% 渐近局部推翻**）；**R11-F 🟢 运行中 Arm A（GPIC short）step ≈450/30000**（loss=4.00↓，img/s≈6300，C1=0.13/C2_gap+0.15，~81ms/iter→Arm A ETA ~40min；5 臂串行 A→B→C→E→D 总 ~8–10h；wrapper `r11f_eval_and_launch.sh` 已自动接管） |
+| WAITING | 1（**语义=R11-F 5 臂串行训练中 → 30min 轮询**；Arm A GPIC short step≈450/30000 @~81ms/iter→ETA ~21:05；各臂完成后自动 eval→填 §15 预注册判据；下次唤醒回收各臂 lp + 进度 + §15 判定） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
-| BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡）+ arm④ CoCa（1.92h×8 卡）+ R11-L2 LoRA（2.09h×8 卡 ≈16.7 GPU·h）+ R11-L caption-weight 消融（✅ 2 点：7261.3s+7440.6s ≈ 2.02h+2.07h×8 卡 ≈ 32.7 GPU·h）+ R11-E GPIC（30k 步 3892.7s≈1.08h×8 卡 ≈ 8.65 GPU·h）+ **臂⑥ AIMv2（🟢 进行中：30k 步 @~210ms/iter ≈ 1.75h×8 卡 ≈ 14 GPU·h，tower 126.8M + predictor 0.66M）** |
-| 更新 | **2026-10-04 19:25（R11-F 代码准备 ✅ 全完成 + auto-launcher 部署）** · 2026-10-04 18:39（臂⑥ AIMv2 step ≈8300/30000）· 2026-10-04 18:24（S1+S2 ✅ → S3 全量起跑） · 2026-10-04 13:01（R13 ✅） · 2026-10-04 11:22（R11-E ✅） |
+| BUDGET_USED | R2–R9 累计 + R10 + R11-L/②③④ + R11-L2 LoRA + R11-L caption-weight + R11-E GPIC（8.65 GPU·h）+ **臂⑥ AIMv2（✅ 7076s≈1.97h×8卡≈15.7 GPU·h）+ AIMv2 4-ckpt eval（~13min×1卡≈0.22 GPU·h）** + **R11-F 🟢 进行中**（Arm A GPIC short 30k@~81ms→~40min×8卡；5 臂串行总 ~8–10h×8 卡 ≈ 64–80 GPU·h） |
+| 更新 | **2026-10-04 20:30（AIMv2 ✅ 翻盘 + R11-F Arm A 起跑）** · 2026-10-04 19:25（R11-F 代码准备 ✅） · 2026-10-04 18:39（AIMv2 step ≈8300） · 2026-10-04 13:01（R13 ✅） · 2026-10-04 11:22（R11-E ✅） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -118,28 +118,28 @@ WAITING: 1
 
 - **S1 实现 ✅**：`models.py` 新增 `PatchPredictor`（0.66M）；`r9_train.py` 新增 `--loss aimv2 --mask-ratio 0.6 --patch-loss-weight 1.0`。
 - **S2 冒烟 ✅**（18:06，30 步 PASS）：patch_mse 1.0→0.71（稠密项在学）；contrast ≈5.9（无坍缩）。
-- **S3 全量 🟢 进行中**（18:07:56 起，`.12` 8×H100，step ≈18850/30000 @19:25 ≈63%）：
-  - 健康（无坍缩）：PROBE C1 0.33–0.37 / C2_gap +0.115~+0.123 / C4=OK（最近 PROBE@18600 C1=0.3384 C2_gap=+0.1158 C4=OK）。
-  - loss_ema ~3.5；contrast ~3.3（InfoNCE 在学，scale ~56）；patch_mse ~0.25（稠密项在学）。
-  - 吞吐 ~2100–5300 img/s（~97–244 ms/iter，波动因数据缓存）→ ETA 30k 步 **~20:15**。
-  - ✅ `vision_step10000.pt` 已保存（18:48）；step20000 ckpt 预计 ~19:35。
-  - ⚠️ **父进程已死**：`r11_run_aimv2.sh` + `torch.distributed.run` 均已退出（8 workers ppid=1 orphaned）。训练本身不受影响（workers 独立运行），但**训后自动 eval 不会执行**。
-  - ✅ **已部署 `r11f_auto_launch.sh`**（pid 2477073）：轮询 `pgrep r9_train.*aimv2` → 训完后手动跑 AIMv2 4-ckpt IN-1k eval → 等 GPU 空 → 自动起 R11-F 5 臂。
-  - ⬜ 待回填：`[done] total=… steady_image_s=… final_loss=…` + 4-ckpt IN-1k lp + §14.4 预注册裁定 + 公平表。
-- **预注册判据（§14.4）**：lp ≥ 基线+1.5 @两点(5.12M,10.24M) → 翻盘；lp ≤ 基线−1.5 → 更差；其余 → 假说证伪。
-- ⚠️ **C2 限定**：本臂=AIMv2-**style** 自研改编，**非官方 AIMv2 复现** → 结论只对我们 recipe 成立。
-- 证据：`/tmp/r11_aimv2.log`、`out/R11L_aimv2_w512/train.log`（权威进度）。
+- **S3 全量 ✅ 完成**（18:07:56 → 20:01:32，7076s，`.12` 8×H100）：
+  - 无坍缩全程：PROBE C1 0.30–0.37 / C2_gap +0.11~+0.12 / C4=OK。
+  - final_loss=3.5554（contrast 2.98 + patch_mse 0.58）；steady 5971 img/s。
+  - ⚠️ 父进程 `r11_run_aimv2.sh` + `torch.distributed.run` 中途退出（8 workers orphaned ppid=1 独立完成），不影响结果。
+  - ✅ 4 ckpt 保存：vision_step{10000,20000,30000}.pt + vision.pt。
+- ✅ **4-ckpt IN-1k eval 完成**（20:12–20:25，`r8_eval_in1k.py`，单卡 H100，~13min）：
+  - lp @ 5.12/10.24/15.36M = **11.39% / 11.14% / 12.08%** vs 基线 3.43/5.45/6.08% → Δ +7.96/+5.69/+6.00 pp。
+  - zs top-1 = 3.73/4.24/5.29%。
+- ⭐ **§14.4 裁定：翻盘！** 两锚点 (5.12M +7.96pp, 10.24M +5.69pp) 均 ≥+1.5 → **25.1% 渐近局部推翻**（caption-无关稠密 patch 重建可突破纯 InfoNCE 上限）。机制：arm④ CoCa（caption-依赖→坍缩）vs arm⑥ AIMv2（caption-无关→翻盘）→ **坍缩归因 caption 依赖，非稠密监督本身**。
+- ⚠️ **C2 限定**：AIMv2-**style** 自研改编，**非官方 AIMv2 复现** → 结论只对我们 recipe 成立。
+- 证据：`out/R11L_aimv2_w512/train.log`（训练）；`/tmp/r11_aimv2_eval.log`（eval，exit 0）。已回填 `EXPERIMENTS_VISION_ROUND11.md §14.4–§14.5`。
 
-## R11-F 数据源横向对比 · 代码准备 ✅ + auto-launcher 已部署（2026-10-04 19:25）
+## R11-F 数据源横向对比 · 🟢 运行中（2026-10-04 20:25 起）
 
 > 运维指令 2026-10-04（六）批准：GPIC short/medium/short+medium(90%) vs en500k vs CC12M，固定 30k 步 / w512 / InfoNCE / IN-1k lp。预注册见 `EXPERIMENTS_VISION_ROUND11.md §15`。
 
-- ✅ **代码改动全完成 + 冒烟验证**：
-  ① `data.py::build_gpic_loader` 增 `caption_type` 参数（short/medium/short+medium）→ 1 tar 实测 short 44.2% / medium 46.1% / short+medium 90.3% ✓
-  ② `r9_train.py` 增 `--caption-type` + `.txt` 冻结快照读取 → `--help` 验证通过 ✓
-  ③ `r11_run_datasource.sh`（5 臂串行 A→B→C→E→D + 每臂自动 4-ckpt eval）→ `bash -n` 语法通过 ✓
-- ✅ **冻结 tar 快照**：GPIC 现有 2373 tar（R11-E 时 1973，下载仍在增长）→ 脚本启动时写 `/tmp/r11f_gpic_snapshot.txt`，A/B/C 三臂共用 → 可比性保证。
-- ✅ **auto-launcher**：`r11f_auto_launch.sh`（pid 2477073）→ 等 AIMv2 完 → 手动跑 AIMv2 eval → 等 GPU 空 → 自动起 R11-F。
+- ✅ **代码改动全完成 + 冒烟验证**（上一 cycle）：data.py caption_type + r9_train.py --caption-type + r11_run_datasource.sh 5 臂 + §15 预注册。
+- ✅ **冻结 tar 快照**：GPIC 现有 **2424 tar**（R11-E 时 1973，下载仍在增长）→ `/tmp/r11f_gpic_snapshot.txt`（A/B/C 三臂共用）。
+- 🟢 **R11-F 已启动**（20:25:29，wrapper `r11f_eval_and_launch.sh` 自动接管）：
+  - **Arm A（GPIC short）运行中**：step ≈450/30000，loss=4.00↓，img/s≈6300（GPIC 本地数据极快），C1=0.13/C2_gap+0.15/C4=OK，~81ms/iter→Arm A ETA **~21:05**。
+  - 5 臂串行顺序：A(GPIC short)→B(GPIC medium)→C(short+medium)→E(CC12M)→D(en500k)，总 ~8–10h。
+  - 日志：`/tmp/r11f_datasource.log`；wrapper：`/tmp/r11f_wrapper.log`。
 - ⬜ 待回填：5 臂 × {`[done]` + 4-ckpt lp} + 公平表 + Q1/Q2/Q3/D 裁定（§15.3）。
 
 

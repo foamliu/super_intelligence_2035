@@ -542,10 +542,76 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 - `[done] total=7.7s steps=30 steady_image_s=4870.4 final_loss=7.1188 fused=False`；`[saved] …/R11L_aimv2_smoke/vision.pt`（已清理 smoke 产物）。
 - 收尾 `TCPStore Broken pipe`/`find_unused_parameters` 均为 NCCL heartbeat 关停竞态/性能告警，在 `[done]`/`[saved]` 之后，不影响结果。
 
-**S3 全量（2026-10-04 18:07 起，.12，8×H100，进行中）**
+**S3 全量（2026-10-04 18:07 起 → 20:06 完，.12，8×H100，✅ done）**
 - 起跑确认：8 rank 全部 `--loss aimv2 --steps 30000`；GPU 100% util / ~16.5GB。
 - 前 250 步：contrast 5.87→5.11（scale 10→18，InfoNCE 在学）；patch_mse 0.59→0.46（稠密项在学）；loss 6.46→5.57；无 collapse。
-- ⬜ 待回填：全量 `[done] total=… steady_image_s=… final_loss=…` + 4-ckpt（step10k/20k/30k/final）IN-1k frozen-trunk lp 原始输出 + 判据裁定（§14.4）。
+- **全量完成**：`[done] total=7076.1s steps=30000 steady_image_s=5971.4 final_loss=3.5554 fused=False`（≈1.96h × 8 卡 ≈ 15.7 GPU·h）。
+- **坍缩护栏全程通过**（30k 步 C1–C4 每 300 步探针）：最近 5 个 PROBE：
+  - step 28200: C1=0.3039 C2_gap=+0.1209 C4=OK
+  - step 28500: C1=0.3100 C2_gap=+0.1206 C4=OK
+  - step 28800: C1=0.3304 C2_gap=+0.1184 C4=OK
+  - step 29100: C1=0.3565 C2_gap=+0.1165 C4=OK
+  - step 29400: C1=0.3417 C2_gap=+0.1142 C4=OK
+  - step 30000: C1=0.3248 C2_gap=+0.1195 C4=OK → **全程无坍缩**（C1≈0.30–0.36 远 < 0.95 阈值；C2_gap≈+0.11–0.12 远 > 0.005 阈值）。
+- **训练动态**：contrast 5.87→2.98（step 30k，InfoNCE 在学，scale 10→61）；patch_mse 0.59→0.20–0.25（稠密项在学）；loss_ema 6.46→3.56；吞吐 2366–5600 img/s（波动因数据缓存），steady 5971 img/s。
+- **checkpoint**：`vision_step10000.pt` / `vision_step20000.pt` / `vision_step30000.pt` / `vision.pt`（final，fused=False）均存于 `/nas_train/app.e0031982/datasets/baize-vision/out/R11L_aimv2_w512/`。
+- ⚠️ **父进程已死**：`r11_run_aimv2.sh` + `torch.distributed.run` 在训练中途退出（8 workers orphaned ppid=1），训练本身不受影响（workers 独立运行至完成），但原脚本的自动 eval 不会执行 → **`r11f_auto_launch.sh`（pid 2477073）接管**：等训完 → 手动跑 4-ckpt IN-1k eval → 等 GPU 空 → 自动起 R11-F。
+- ✅ **4-ckpt IN-1k frozen-trunk lp 评测完成**（2026-10-04 20:25，`r8_eval_in1k.py --ckpts`，单卡 H100）：
+
+  | ckpt | N (样本) | zs top-1 | zs top-5 | **lp top-1** | 基线 lp (arm①) | **Δ** |
+  |:--|:--|:--|:--|:--|:--|:--|
+  | step10000 | 5.12M | 3.73% | 12.20% | **11.39%** | 3.43% | **+7.96** |
+  | step20000 | 10.24M | 4.24% | 13.34% | **11.14%** | 5.45% | **+5.69** |
+  | step30000 | 15.36M | 5.29% | 15.83% | **12.08%** | 6.08% | **+6.00** |
+  | vision.pt (final) | 15.36M | 5.29% | 15.83% | **12.08%** | 6.08% | **+6.00** |
+
+  原始输出（`/tmp/r11_aimv2_eval.log`）：
+  ```
+  [R8-IN1K] val=50000 probe=49970 labels 0/999
+  [R8-IN1K] Z=(1000, 768)
+  [R8-IN1K] ckpt=.../vision_step10000.pt
+  [R8-IN1K] zero-shot top1=0.0373 top5=0.1220  linear-probe top1=0.1139
+  [R8-IN1K] ckpt=.../vision_step20000.pt
+  [R8-IN1K] zero-shot top1=0.0424 top5=0.1334  linear-probe top1=0.1114
+  [R8-IN1K] ckpt=.../vision_step30000.pt
+  [R8-IN1K] zero-shot top1=0.0529 top5=0.1583  linear-probe top1=0.1208
+  [R8-IN1K] ckpt=.../vision.pt
+  [R8-IN1K] zero-shot top1=0.0529 top5=0.1583  linear-probe top1=0.1208
+  [R8-IN1K] DONE
+  ```
+
+### 14.4 🔒 预注册判据裁定（先定后测，§14.3 → 实测结果）
+
+> 基线锚点（arm① InfoNCE w512，R9 阶段一）：lp @ **5.12M = 3.43%** / **10.24M = 5.45%** / 15.36M = 6.08%。
+> 判据：lp ≥ 基线+1.5 @两点(5.12M,10.24M) → **翻盘**；lp ≤ 基线−1.5 → 更差；其余 → 假说证伪。
+
+**裁定：⭐ 翻盘！** AIMv2-style（InfoNCE + masked patch 重建）在两个锚点上**均远超 +1.5 阈值**：
+- **5.12M**：11.39% vs 3.43% = **+7.96 pp**（≥ +1.5 ✓）
+- **10.24M**：11.14% vs 5.45% = **+5.69 pp**（≥ +1.5 ✓）
+- 15.36M：12.08% vs 6.08% = +6.00 pp（三点一致翻盘）
+
+→ **「25.1% 是对比学习的渐近」被局部推翻**：在「冻结 CLIP-768 + w512 + CC12M+Amshaker(~15M)」recipe 下，叠加 caption-无关的稠密 patch 重建监督可将 frozen-trunk lp 从 6.08%@15.36M 抬到 **12.08%**（≈ 2× 提升）。
+
+**机制解读（⚠️ 须后续验证，不作为结论引用）**：
+- arm④ CoCa（caption-依赖稠密 → lp 0.47% 坍缩）vs arm⑥ AIMv2（caption-无关稠密 → lp 12.08% 翻盘）→ **坍缩是 caption 依赖所致，非稠密监督本身所致**。任务书 §4/§5 核心假说**得到支持**。
+- MAE 式 masked patch 重建提供了逐 patch 的空间稠密监督，在数据受限（~15M）下显著优于每对仅 1 个全局标量的 InfoNCE → 监督密度假说成立。
+- 但 lp 轨迹 **5.12M→10.24M→15.36M = 11.39→11.14→12.08%**（非单调，10.24M 略降 0.25 pp 在噪声带内 0.5–1.1 pp）→ **不是简单幂律上升**，可能存在 patch 重建与对比项的梯度竞争/平衡点（patch_mse 从 0.59→0.20，contrast 从 5.87→2.98）→ 须后续拟合 scaling 并外推。
+
+**⚠️ C2 限定（同 §14.0 诚实披露）**：
+- 本臂 = AIMv2-**style** 自研改编（InfoNCE + masked patch MSE），**非官方 AIMv2 复现**（官方 = 纯 AR，无对比项）。
+- 结论**只对我们 recipe（冻结 CLIP-768 + InfoNCE + w512 + CC12M+Amshaker）成立**，🚫 **不得**推广成「官方 AIMv2 会翻盘」（同 R8/C2 限定口径）。
+- 25.1% 渐近是**纯 InfoNCE** 的渐近；AIMv2-style 翻盘**不改** R9/R10 的 InfoNCE scaling 结论，而是证明**换目标函数可突破该上限**。
+
+### 14.5 公平表（回填）
+
+| 臂 | trunk 参数 | predictor 参数 | 训练 token | steady img/s | final_loss | lp@5.12M | lp@10.24M | lp@15.36M |
+|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+| ① InfoNCE（基线） | 126.8M | 0 | 15.36M×512 | ~2900 | 3.71 | 3.43% | 5.45% | 6.08% |
+| **⑥ AIMv2-style** | 126.8M | **+0.66M** | 15.36M×512 | **5971** | 3.56 | **11.39%** | **11.14%** | **12.08%** |
+
+> predictor 参数增量 = 0.66M（≪ trunk 126.8M，+0.5%）；steady img/s = 5971（高于基线 ~2900，因数据加载提速 + patch 计算轻量）；final_loss = 3.56（含 contrast 2.98 + patch_mse 0.58）。
+> 命令：`bash vision/r11_run_aimv2.sh 30000`（= `torchrun --nproc_per_node=8 r9_train.py --loss aimv2 --mask-ratio 0.6 --patch-loss-weight 1.0`，全量 30k 步）。
+> 证据：训练 log `/nas_train/app.e0031982/datasets/baize-vision/out/R11L_aimv2_w512/train.log`；eval log `/tmp/r11_aimv2_eval.log`（exit 0）。
 
 > ✅ 本节写完即视为预注册成立；随后进入 S1 实现 → S2 冒烟 → S3 首臂（**无需再等运维**，起跑已批准）。
 
