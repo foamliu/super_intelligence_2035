@@ -3360,3 +3360,87 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 29 · 2026-10-04 08:12:47 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+B="$HOME/.bashrc"; TS=$(date +%Y%m%d-%H%M%S)
+
+echo; echo "=== 1. 备份 .bashrc ==="
+cp -a "$B" "$B.bak.$TS" && echo "   backed up -> $B.bak.$TS"
+echo "   改前 165-175 行（masked）:"
+sed -n '165,175p' "$B" | sed -E 's/(=|")[A-Za-z0-9_]{6}[A-Za-z0-9_.-]*/\1<MASKED>/g' | cut -c1-130
+
+echo; echo "=== 2. 原地注释 export OPENAI_API_KEY（原值保留）==="
+sed -i -E 's|^([[:space:]]*)export[[:space:]]+OPENAI_API_KEY=|\1# [2026-10-04 ops] export OPENAI_API_KEY=|' "$B"
+echo "   改后 165-175 行（masked）:"
+sed -n '165,175p' "$B" | sed -E 's/(=|")[A-Za-z0-9_]{6}[A-Za-z0-9_.-]*/\1<MASKED>/g' | cut -c1-130
+
+echo; echo "=== 3. 自检 ==="
+bash -n "$B" && echo "   bash -n : OK"
+echo -n "   已注释的 OPENAI_API_KEY 行数 = "; grep -c '^[[:space:]]*#[[:space:]]*\[2026-10-04 ops\][[:space:]]*export OPENAI_API_KEY=' "$B"
+echo -n "   仍生效的 OPENAI_API_KEY 行数 = "; grep -c '^[[:space:]]*export[[:space:]]+OPENAI_API_KEY=' "$B"
+
+echo; echo "=== 4. 确认其余未被动（masked）==="
+grep -nE '^[[:space:]]*(export[[:space:]]+)?(https_proxy|http_proxy|API_TYPE|OPENAI_API_URL)' "$B" | sed -E 's/(=|")[A-Za-z0-9_]{6}[A-Za-z0-9_.-]*/\1<MASKED>/g' | cut -c1-135
+
+echo; echo "=== 5. 两条 loop 仍在跑（本次不动进程）==="
+pgrep -af 'bash baize_(pretrain|harness)_loop\.sh' | cut -c1-92
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 08:12:47
+
+=== 1. 备份 .bashrc ===
+   backed up -> /home/app.e0031982/.bashrc.bak.20261004-081247
+   改前 165-175 行（masked）:
+export PATH="$HOME/.local/bin:$PATH"
+
+ulimit -n 65536
+
+export API_TYPE=<MASKED>
+export OPENAI_API_KEY=<MASKED>
+export OPENAI_API_URL=http://agi-gateway.cxmt.com/v1
+export MODEL_VERSION=<MASKED>
+export LMMS_EVAL_USE_CACHE=True
+
+export HF_DATASETS_CACHE=/nas_train/app.e0031982/hf_cache
+
+=== 2. 原地注释 export OPENAI_API_KEY（原值保留）===
+   改后 165-175 行（masked）:
+export PATH="$HOME/.local/bin:$PATH"
+
+ulimit -n 65536
+
+export API_TYPE=<MASKED>
+# [2026-10-04 ops] export OPENAI_API_KEY=<MASKED>
+export OPENAI_API_URL=http://agi-gateway.cxmt.com/v1
+export MODEL_VERSION=<MASKED>
+export LMMS_EVAL_USE_CACHE=True
+
+export HF_DATASETS_CACHE=/nas_train/app.e0031982/hf_cache
+
+=== 3. 自检 ===
+   bash -n : OK
+   已注释的 OPENAI_API_KEY 行数 = 1
+   仍生效的 OPENAI_API_KEY 行数 = 0
+
+=== 4. 确认其余未被动（masked）===
+140:export https_proxy="http://172.19.92.25:13128"
+169:export API_TYPE=<MASKED>
+171:export OPENAI_API_URL=http://agi-gateway.cxmt.com/v1
+
+=== 5. 两条 loop 仍在跑（本次不动进程）===
+357386 bash baize_pretrain_loop.sh
+357876 bash baize_harness_loop.sh
+
+=== DONE ===
+```
