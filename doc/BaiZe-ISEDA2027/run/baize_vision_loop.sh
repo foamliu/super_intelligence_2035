@@ -14,7 +14,12 @@ CWD="$SCRIPT_DIR"
 # git 仓库根目录（run/ 的上级 super_intelligence_2035）
 GIT_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo '/nas_train/app.e0031982/code/super_intelligence_2035')"
 
-MODEL="deepseek-v4-pro-fp4"      # 换成你用于工程任务的模型
+MODEL="glm-5.2"                     # 编排模型（deepseek-v4-pro-fp4 额度已耗尽）
+
+# 🔑 glm-5.2 key
+CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
+CLINE_BASE="http://agi-gateway.cxmt.com/cloud/v1"
+
 CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟
 PUSH_INTERVAL=18000             # 每 5 小时 git push 一次（4~6 小时间隔内）
 SLEEP_BUSY=60                   # 无阻塞任务时的唤醒间隔：约 1 分钟（连续推进，不空耗假期）
@@ -50,7 +55,9 @@ while true; do
     echo "[loop] $(date '+%F %T') wake up, invoking cline ..."
     if [[ -f "$TASK_MD" ]]; then
         prompt="$(< "$TASK_MD")"
-        cline -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+        env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
+            -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
+          cline -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -b "$CLINE_BASE" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
         echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git push ..."
     else
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"
