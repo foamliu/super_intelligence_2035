@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 0 -->
+<!-- RUN_ID: 1 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -81,6 +81,21 @@ echo "-- other loops (Baize / data) --"
 pgrep -af 'baize.*loop\\.sh|ops_relay\\.sh' || echo "   (no other loop processes)"
 echo "-- eda/eval --"
 pgrep -af 'eda_fastmcp|run_code|sandbox|eval' || echo "   (no eda/eval processes)"
+echo
+echo "=========== 4b. ZHULONG LOOP / RELAY 日志尾 ==========="
+echo "-- tail /tmp/zhulong_loop.log --"
+tail -n 8 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-140 || echo "   (no /tmp/zhulong_loop.log)"
+echo "-- tail /tmp/zhulong_ops_relay.log --"
+tail -n 8 /tmp/zhulong_ops_relay.log 2>/dev/null | cut -c1-140 || echo "   (no /tmp/zhulong_ops_relay.log)"
+echo
+echo "=========== 4c. EDA_FASTMCP .env 关键 flag + git ==========="
+if [ -n "$CODE_BASE" ] && [ -f "$CODE_BASE/.env" ]; then
+  grep -iE 'OMEGA|READBACK|PHI|ABLATION|DISABLE|BUDGET|RECALL|PORT' "$CODE_BASE/.env" 2>/dev/null | cut -c1-140 | sed 's/^/     /'
+  echo "   -- eda_fastmcp git --"
+  ( cd "$CODE_BASE" && git status -sb 2>/dev/null | head -3 && git log --oneline -3 2>/dev/null ) | sed 's/^/     /'
+else
+  echo "   (no .env / CODE_BASE not found)"
+fi
 echo
 echo "=========== 5. GIT STATUS ==========="
 cd "$_GIT_ROOT" && git status -sb | head -8
