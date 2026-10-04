@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 54 -->
+<!-- RUN_ID: 55 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,80 @@
 
 ---
 
-## RUN_ID 54 — 🔌 **把 pretrain loop 切到隔离 `--data-dir` 并安全重启**（承接 RUN_ID 53）（**本块最新，优先执行**）
+## RUN_ID 55 — 🔌 **把 vision / data 两条线切到各自 `.cline_<line>`（经 ssh .12）**（承接 RUN_ID 54）（**本块最新，优先执行**）
+
+> **本轮目标**：vision（.12）+ data（.12）切到隔离目录；**harness 不动**（用户指定）。
+> **改了什么（已随本 commit push 到仓库）**：
+> - `run/llm_rotate.sh`：`llm_apply_base()` 改用 `D="${LLM_DATA_DIR:-$HOME/.cline/data}"` —— **未设时行为不变 → harness 不受影响**。
+> - `run/baize_vision_loop.sh` / `run/baize_data_loop.sh`：新增 `DATA_DIR=/nas_train/app.e0031982/.cline_vision`（resp. `.cline_data`）+ `LLM_DATA_DIR="$DATA_DIR"`；cline 调用加 `--data-dir "$DATA_DIR"`。
+> **本块做什么（`.29` 经 `ssh 10.239.2.12` 一次性做完，自保护）**：
+> 1. 校验 .12 上脚本已含隔离参数（loop 的 `--data-dir` + `llm_rotate.sh` 的 `LLM_DATA_DIR`）
+> 2. 用 **.12 本机**共享配置重播 `.cline_vision` / `.cline_data`（保证 base/key 与 .12 一致）
+> 3. 在 .12 上 smoke 两个隔离目录 → **必须 OK**
+> 4. **仅当 .12 无活动旧 cline（不带 `--data-dir`）** 才重启 vision/data loop；然后验 `Forbidden==0`
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+echo; echo "=== [.12] 校验脚本 / 重播隔离目录 / smoke / 自保护重启 / 验证 ==="
+timeout 520 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+hostname; date '+%F %T'
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+B=/nas_train/app.e0031982; H=$HOME; SRC="$H/.cline/data"; C=/home/app.e0031982/.bun/bin/cline
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "--- 1. 新脚本是否已带隔离参数 ---"
+for f in baize_vision_loop.sh baize_data_loop.sh llm_rotate.sh; do
+  echo "  # $f"; grep -nE "^DATA_DIR=|LLM_DATA_DIR|--data-dir" "$R/$f" | head -5 | cut -c1-140
+done
+
+echo; echo "--- 2. 用 .12 本机共享配置重播 .cline_vision / .cline_data ---"
+echo "  源 base = $(sed -n 's/.*"openAiBaseUrl"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$SRC/globalState.json" | head -1)"
+for n in vision data; do
+  D="$B/.cline_$n"; mkdir -p "$D"
+  cp -a "$SRC/globalState.json" "$SRC/secrets.json" "$D/" 2>/dev/null
+  rm -rf "$D/settings"; cp -a "$SRC/settings" "$D/settings" 2>/dev/null
+  chmod 600 "$D/secrets.json" 2>/dev/null
+  echo "  $D/ -> $(ls -1 "$D" 2>/dev/null | tr '\n' ' ')"
+done
+
+echo; echo "--- 3. smoke 两个隔离目录（应回 OK）---"
+cd /tmp
+for n in vision data; do
+  D="$B/.cline_$n"
+  K=$(python3 -c "import json;print(json.load(open('$D/secrets.json'))['openAiApiKey'])" 2>/dev/null | tr -d '\r\n')
+  OUT=$(env $P timeout 90 "$C" --data-dir "$D" -c /tmp -m glm-5.2 -k "$K" -P openai-compatible --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tr -d '\r' | tr '\n' ' ' | cut -c1-140)
+  printf "  %-7s (key len %s) => %s\n" "$n" "${#K}" "$OUT"
+done
+
+echo; echo "--- 4. 自保护重启 vision / data ---"
+OLD=$(pgrep -af 'bun.*cline' 2>/dev/null | grep -v -- '--data-dir' | grep -v grep | wc -l)
+echo "  旧 cline(无 --data-dir) 计数 = $OLD"
+if [ "$OLD" -gt 0 ]; then
+  echo "  ⏸ 有活动 cline → 本轮不重启（下轮再试）"
+else
+  for L in vision data; do
+    pkill -f "baize_${L}_loop.sh"; sleep 4
+    cd "$R"
+    setsid env $P bash "baize_${L}_loop.sh" > "/tmp/baize_${L}_loop.log" 2>&1 < /dev/null &
+    echo "  [$L] 重启 loop=$(pgrep -fc "baize_${L}_loop.sh" 2>/dev/null || echo 0)"
+  done
+  echo; echo "--- 5. 45s 后验证 ---"
+  sleep 45
+  for L in vision data; do
+    echo "  [$L] Forbidden=$(grep -c Forbidden /tmp/baize_${L}_loop.log 2>/dev/null)"
+    tail -3 "/tmp/baize_${L}_loop.log" 2>/dev/null | tr '\n' ' ' | cut -c1-150 | sed 's/^/       /'
+    echo
+  done
+  echo "  cline: $(pgrep -af 'bun.*cline' 2>/dev/null | cut -c1-100 | head -3)"
+fi
+echo; echo "=== DONE (.12) ==="
+EOS12
+echo "=== relay block done ==="
+```
+
+> ⛔ 已降级 RUN_ID 54（17:57:11 exit=0，pretrain 已切隔离目录且 Forbidden=0，见 RUN_ID 55）为 text。
+
+## RUN_ID 54 — 🔌 **把 pretrain loop 切到隔离 `--data-dir` 并安全重启**（✅ 已执行 → **pretrain Forbidden=0、cline 已连**；下一步 RUN_ID 55 切 vision/data）
 
 > **RUN_ID 53 结果（17:54:43 exit=0）**：✅ **4 条线 smoke 全回 `OK`**，且各 `<D>/settings/providers.json` 的 base 均为 `http://agi-gateway.cxmt.com/cloud/v1` → **隔离目录机制已验证可用**。
 > ⇒ 最后一步（防复发关键）：**让线 loop 真正用上自己的隔离目录**（否则它们仍读写共享 `~/.cline/data`，harness 照样能改坏 pretrain）。
@@ -48,7 +121,7 @@
 3. **仅当无** → `pkill` 旧 loop → 干净环境 `setsid` 重启 → 验 `Forbidden==0` + cline 已连
 4. 🚫 不动 harness/vision/data（harness 那轮还需同步改 `llm_rotate.sh`）
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 H=$HOME; B=/nas_train/app.e0031982
 WK=$B/code/super_intelligence_2035; RUN=$WK/doc/BaiZe-ISEDA2027/run

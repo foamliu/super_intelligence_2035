@@ -24,6 +24,12 @@ REL="doc/BaiZe-ISEDA2027/run"
 
 MODEL="glm-5.2"                     # 编排模型（deepseek-v4-pro-fp4 额度已耗尽）
 
+# 🔒 2026-10-04 运维（RUN_ID 55）：本线专用 cline 隔离配置目录
+#   背景：多条线共用 ~/.cline/data/globalState.json，谁改了 openAiBaseUrl 就会影响别人。
+#   隔离目录已由 ops 建好：含 globalState.json + secrets.json + settings/（base=agi-gateway …/cloud/v1）。
+DATA_DIR="/nas_train/app.e0031982/.cline_data"
+LLM_DATA_DIR="$DATA_DIR"            # 让 llm_rotate.sh 把 openAiBaseUrl 写进【本线隔离目录】
+
 # 🔑 glm-5.2 key（编排模型；deepseek-v4-pro-fp4 额度已耗尽，改用 glm-5.2）
 CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
 
@@ -111,7 +117,7 @@ while true; do
           if llm_pick "$LLM_STATE" "$KEYS_TXT"; then
         env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
             -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
-          cline -c "$CWD" --auto-approve true -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+          cline --data-dir "$DATA_DIR" -c "$CWD" --auto-approve true -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
           else
             echo "[loop] $(date '+%F %T') !!! 无可用 LLM 候选 → 跳过本轮 cline"
           fi

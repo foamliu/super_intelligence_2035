@@ -63,8 +63,13 @@ llm_probe() {
 }
 
 # 把 base 写进 cline 配置（仅在与当前值不同时改；首次改动前备份一次）
+# 🔒 2026-10-04 运维（RUN_ID 55）：目标目录可用 LLM_DATA_DIR 覆盖——
+#   各线 loop 设 LLM_DATA_DIR=<本线隔离目录>（如 /nas_train/app.e0031982/.cline_vision）后，
+#   base 就写进【隔离目录】的 globalState.json，不再动共享 ~/.cline/data；
+#   未设时行为不变（默认仍写共享目录，harness 线即如此）。
 llm_apply_base() {
-    local G="$HOME/.cline/data/globalState.json" cur
+    local D="${LLM_DATA_DIR:-$HOME/.cline/data}"
+    local G="$D/globalState.json" cur
     [ -f "$G" ] || return 0
     cur="$(sed -n 's/.*"openAiBaseUrl"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$G" 2>/dev/null | head -1)"
     [ "$cur" = "$1" ] && return 0
