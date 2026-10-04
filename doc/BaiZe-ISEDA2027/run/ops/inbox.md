@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 29 -->
+<!-- RUN_ID: 30 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,53 @@
 
 ---
 
-## RUN_ID 29 — ✂️ **注释 `.29` 的 `~/.bashrc` 里的 `OPENAI_API_KEY`（已获批准）**（**本块最新，优先执行**）
+## RUN_ID 30 — 🩺 **复查：复工是否稳固 + loop 的 git 网络/push 是否正常**（**只读**）（**本块最新，优先执行**）
+
+**为何查**：pretrain 第 57/58 次巡检两度记录 **「`git fetch origin` 报 `Failed to connect to github.com:443`（remote=https、无 proxy env）」** → 若属实，**成果会卡在本地推不出去**（历史上曾因"只 push 不 pull"丢过同步）。同时例行复查**修复是否稳固**（`Forbidden` 是否仍为 0）。
+
+**本块 5 查（全只读，不动任何进程）**：
+1. 两条 loop 的**进程 env** 里有没有 `https_proxy`（**push 依赖它**）与 `OPENAI_API_KEY`（应为**空**，因已注释 rc 且 cline 行 `-u`）
+2. 共享副本**有没有未推送的本地提交**（`origin/main..HEAD`）
+3. **连通性**：`git ls-remote` / `github:443` / 网关直连
+4. **回归检查**：`error:.*Forbidden` 计数（应为 0）
+5. GPU + P-9.2 进程
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035
+
+echo; echo "=== 1. 两条 loop 进程 env（masked）==="
+for n in pretrain harness; do
+  P=$(pgrep -f "bash baize_${n}_loop.sh" | head -1); printf '   %-9s pid=%-9s ' "$n" "${P:-none}"
+  if [ -n "$P" ]; then
+    tr '\0' '\n' < "/proc/$P/environ" 2>/dev/null | grep -iE '^(https_proxy|http_proxy|no_proxy|all_proxy)=' | cut -c1-42 | tr '\n' ' '
+    echo -n " | OPENAI_API_KEY="
+    tr '\0' '\n' < "/proc/$P/environ" 2>/dev/null | grep -c '^OPENAI_API_KEY='
+  else echo "(no pid)"; fi
+done
+
+echo; echo "=== 2. 共享副本：未推送的本地提交 ==="
+echo -n "   计数 = "; git -C "$WK" rev-list --count origin/main..HEAD 2>/dev/null || echo "(?)"
+git -C "$WK" log --oneline origin/main..HEAD 2>/dev/null | head -8 | cut -c1-110
+echo "   -- 本地 HEAD --"; git -C "$WK" log --oneline -1 2>/dev/null | cut -c1-110
+
+echo; echo "=== 3. 连通性 ==="
+echo -n "   git ls-remote origin : "; timeout 25 git -C "$WK" ls-remote --heads origin main >/dev/null 2>&1 && echo OK || echo FAIL
+echo -n "   github.com:443 (tcp) : "; timeout 12 bash -c 'exec 3<>/dev/tcp/github.com/443' 2>/dev/null && echo OPEN || echo UNREACHABLE
+
+echo; echo "=== 4. 回归检查：error:.*Forbidden（应为 0）==="
+grep -c 'error:.*Forbidden' /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log 2>/dev/null
+echo "   -- loop 是否仍在跑 --"; pgrep -af 'bash baize_(pretrain|harness)_loop\.sh' | cut -c1-88
+
+echo; echo "=== 5. GPU + P-9.2 ==="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -3
+pgrep -af 'p9_tpsp|baize_p9' | head -3 | cut -c1-110
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 29**（改 `.29` 的 `.bashrc`，**✅ 已执行 08:12:47**）为 ```text。
+
+## RUN_ID 29 — ✂️ **注释 `.29` 的 `~/.bashrc` 里的 `OPENAI_API_KEY`**（✅ 已执行，本块不再运行）
 
 **用户决定（2026-10-04）**：**只注释 `OPENAI_API_KEY`（原值保留为注记）**；**`https_proxy` 不动**（实测 GitHub 没它就 FAIL）；同时已把 harness 的 driver 改成读 `secrets.json`。
 
@@ -44,7 +90,7 @@
 
 > ⚠️ 注：改 `.bashrc` **不影响已在运行的 loop**（进程 env 在启动时已固化），属"防未来"；loop 侧的 V3 配方（剥 proxy + 显式 `-k`）**保持不变**。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 B="$HOME/.bashrc"; TS=$(date +%Y%m%d-%H%M%S)
 
