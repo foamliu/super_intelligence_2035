@@ -550,3 +550,134 @@ n#
 
 ===== DONE =====
 ```
+
+---
+
+## RUN_ID 4 · 2026-10-04 17:05:57 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 4 — 只读
+H="/home/app.e0031982"; GP="/nasdata/app.e0031982/code/eda_fastmcp"
+echo "===== 0. TIME ====="; date '+%F %T'; hostname
+echo "===== 1. /home 大盘 ====="; df -BG /home | tail -1
+
+echo; echo "===== 2. HOME 一级（ls -la，看 symlink '->'）====="
+ls -la "$H" 2>/dev/null | cut -c1-170
+
+echo; echo "===== 3. 关键目录 realpath + 所在文件系统 ====="
+for d in .cache .cline .npm .local .bun .vscode-server .config eda_code_eval; do
+  p="$H/$d"
+  if [ -e "$p" ] || [ -L "$p" ]; then
+    printf "%-16s -> %-52s fs:%s\n" "$d" "$(readlink -f "$p" 2>/dev/null)" "$(df -h "$p" 2>/dev/null | tail -1 | awk '{print $1}')"
+  fi
+done
+
+echo; echo "===== 4. HOME 真实体积（follow symlinks，有界）====="
+timeout 90 du -sh -L "$H" 2>/dev/null
+echo -n "   eda_code_eval 真实体积: "; timeout 60 du -sh -L "$H/eda_code_eval" 2>/dev/null | cut -f1
+
+echo; echo "===== 5. /home 各用户 top20（有界）====="
+timeout 60 du -x -d1 -h /home 2>/dev/null | sort -h | tail -20
+
+echo; echo "===== 6. 评测输出目录在脚本里怎么设的 ====="
+grep -rnE 'eda_code_eval|OUTPUT_DIR|EVAL_OUT|HOME|/home/app' "$GP/scripts/run_cline_script.sh" "$GP/scripts/common.sh" 2>/dev/null | cut -c1-160 | head -20
+
+echo; echo "===== 7. 我方 home 内大文件（follow，>100M，限深度 4）====="
+timeout 60 find "$H/" -maxdepth 4 -type f -size +100M -printf '%s\t%p\n' 2>/dev/null | sort -nr | head -15 | awk '{printf "   %.2fG\t%s\n", $1/1073741824, $2}'
+
+echo; echo "===== DONE ====="
+```
+
+**输出**
+```
+===== 0. TIME =====
+2026-10-04 17:05:57
+hfeg0tedaap02
+===== 1. /home 大盘 =====
+/dev/mapper/vgroot-lv_home      394G  371G        6G  99% /home
+
+===== 2. HOME 一级（ls -la，看 symlink '->'）=====
+total 76
+drwxr-x--- 11 app.e0031982 app.adm 4096 Oct  4 14:25 .
+drwxr-xr-x 67 root         root    4096 Sep 22 16:50 ..
+-rw-r-----  1 app.e0031982 app.adm  527 Oct  4 15:15 .bash_history
+-rw-r--r--  1 app.e0031982 app.adm  220 Mar 31  2024 .bash_logout
+-rw-r--r--  1 app.e0031982 app.adm 4499 Oct  4 14:25 .bashrc
+lrwxrwxrwx  1 app.e0031982 app.adm   28 Sep 30 08:47 .cache -> /nasdata/app.e0031982/.cache
+lrwxrwxrwx  1 app.e0031982 app.adm   28 Sep 30 08:48 .cline -> /nasdata/app.e0031982/.cline
+drwxr-xr-x  4 app.e0031982 app.adm 4096 Sep 29 16:16 Cline
+-rw-r-----  1 app.e0031982 app.adm  166 Aug 11 09:53 .condarc
+drwx------  5 app.e0031982 app.adm 4096 Sep 29 13:36 .config
+drwx------  3 app.e0031982 app.adm 4096 Sep 29 13:38 .copilot
+lrwxrwxrwx  1 app.e0031982 app.adm   35 Sep 30 08:48 eda_code_eval -> /nasdata/app.e0031982/eda_code_eval
+drwxr-x---  3 app.e0031982 app.adm 4096 Sep 15 15:13 .eda_mcp
+-rw-r-----  1 app.e0031982 app.adm   51 Sep  4 14:17 .gitconfig
+-rw-------  1 app.e0031982 app.adm   20 Sep 29 11:08 .lesshst
+lrwxrwxrwx  1 app.e0031982 app.adm   28 Sep 30 08:53 .local -> /nasdata/app.e0031982/.local
+drwxr-x---  2 app.e0031982 app.adm 4096 Sep 23 23:04 logs
+drwxr-x---  2 app.e0031982 app.adm 4096 Sep 22 07:24 mcp_tmp
+-rw-r-----  1 app.e0031982 app.adm    0 Aug  4 15:16 n#
+lrwxrwxrwx  1 app.e0031982 app.adm   26 Sep 30 08:52 .npm -> /nasdata/app.e0031982/.npm
+drwxr-x---  6 app.e0031982 app.adm 4096 Jul 28 17:37 .nvm
+drwxr-x---  2 app.e0031982 app.adm 4096 Aug  7 08:49 .pip
+-rw-r--r--  1 app.e0031982 app.adm  807 Mar 31  2024 .profile
+drwx------  2 app.e0031982 app.adm 4096 Oct  4 13:53 .ssh
+lrwxrwxrwx  1 app.e0031982 app.adm   36 Sep 30 08:53 .vscode-server -> /nasdata/app.e0031982/.vscode-server
+
+===== 3. 关键目录 realpath + 所在文件系统 =====
+.cache           -> /nasdata/app.e0031982/.cache                         fs:10.251.9.180:/g0tedaap
+.cline           -> /nasdata/app.e0031982/.cline                         fs:10.251.9.180:/g0tedaap
+.npm             -> /nasdata/app.e0031982/.npm                           fs:10.251.9.180:/g0tedaap
+.local           -> /nasdata/app.e0031982/.local                         fs:10.251.9.180:/g0tedaap
+.vscode-server   -> /nasdata/app.e0031982/.vscode-server                 fs:10.251.9.180:/g0tedaap
+.config          -> /home/app.e0031982/.config                           fs:/dev/mapper/vgroot-lv_home
+eda_code_eval    -> /nasdata/app.e0031982/eda_code_eval                  fs:10.251.9.180:/g0tedaap
+
+===== 4. HOME 真实体积（follow symlinks，有界）=====
+   eda_code_eval 真实体积: 5.7G
+
+===== 5. /home 各用户 top20（有界）=====
+4.3G	/home/app.e0030884
+4.5G	/home/app.vendor.aix.huib01
+5.1G	/home/app.t0002596
+5.2G	/home/app.e0027465
+6.1G	/home/app.e0040224
+7.2G	/home/app.e0019946
+7.3G	/home/app.t0002987
+8.4G	/home/app.e0014566
+8.6G	/home/app.e0017912
+9.1G	/home/app.e0042624
+9.1G	/home/app.t0002965
+14G	/home/app.e0026456
+15G	/home/app.e0044587
+16G	/home/app.e0030544
+16G	/home/app.e0041392
+16G	/home/app.t0002147
+24G	/home/app.vendor.ai.ruide01
+41G	/home/app.e0025768
+71G	/home/app.e0023936
+299G	/home
+
+===== 6. 评测输出目录在脚本里怎么设的 =====
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:40:readonly EVAL_ROOT_DIR="$HOME/eda_code_eval"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:51:# 任务输入目录（由 Step 2 写入 ~/eda_code_eval/<batch_id>/full_tasks/；--tasks 
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:173:        BENCHMARK_FILE="${HOME}${BENCHMARK_FILE:1}"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:193:    local memory_base="${HOME}/Cline/Memory"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:308:    CLI_OUTPUT_DIR="${EVAL_ROOT_DIR}/${BATCH_ID}/code"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:310:    if [[ ! -d "$CLI_OUTPUT_DIR" ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:311:        print_error "输出目录不存在: $CLI_OUTPUT_DIR"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:315:    export CLI_OUTPUT_DIR
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:328:    run_python_script "$FORMAT_OUTPUT_SCRIPT" "--input_dir=$CLI_OUTPUT_DIR" "--output_fil
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:418:        trace_src="$HOME/.cline/data/tasks"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:499:        local sessions_dir="$HOME/.cline/data/sessions"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:633:    run_python_script "scripts/sediment/evaluate_skills.py" "--skills-dir=$HOME/.cline/sk
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:644:    run_python_script "scripts/sediment/evaluate_skills.py" "--skills-dir=$HOME/.cline/sk
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:751:    if [[ -d "${HOME}/Cline/Memory/L0_raw/task_artifacts" ]] && \
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:752:       [[ -n "$(ls -A "${HOME}/Cline/Memory/L0_raw/task_artifacts/" 2>/dev/null)" ]]; the
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/common.sh:86:    # local py="${PYTHON:-/home/app.t0002596/miniforge3/envs/py310_env/bin/python}"
+
+===== 7. 我方 home 内大文件（follow，>100M，限深度 4）=====
+
+===== DONE =====
+```
