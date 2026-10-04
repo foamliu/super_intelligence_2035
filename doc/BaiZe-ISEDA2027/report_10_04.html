@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 工作汇报 · 2026-10-04</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr;} }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#0d5c22; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6a4a00; }
+  .danger { background:#fff0f0; border:1px solid #ffc9c9; border-left:4px solid var(--bad); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#8a1c1c; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe 工作汇报 · 2026-10-04</h1>
+  <div class="sub">🔴→✅ <b>`.29` 两条线静默 9 小时事故</b>：定位（<b>cline 必须显式 <code>-k</code></b>）+ 修复 + 源头加固 ·
+     🔑 <b>P-5b 完成（20B，final loss 1.9141）</b> → <b>P-9.1 吞吐扫描在跑</b> ·
+     vision <b>R11-L2 ✅ 未翻盘</b> + <b>caption 三点消融（全 ≈ 随机）</b> ·
+     data <b>白名单已执行</b> · harness <b>R34 镜像打通</b></div>
+  <div class="meta">
+    <span>📅 2026-10-04</span>
+    <span>📝 <code>foamliu/super_intelligence_2035</code> @ <code>main</code></span>
+    <span>📈 当日提交 <b>≈72</b>（截至 08:15；10-03 全天 235）</span>
+    <span>🎯 投稿截止 ≈ 2027-02-01（余 <b>≈120 天</b>）</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <strong>今天的主线：一次「没有报错的故障」被揪出来并修掉 —— 而它差点让 8 卡白烧一整天。</strong>
+  <ol style="margin:10px 0 0">
+    <li><b>发现</b>：`.29` 的 pretrain / harness <b>整整 9 小时零产出</b>，日志里却只有 <code>error: Forbidden</code> + <b><code>exit 0</code></b> → loop 判定“成功”、继续睡 = <b>完全静默</b>。</li>
+    <li><b>定位（18 轮 ops 远程探查，全程留痕于 <code>run/ops/outbox.md</code>）</b>：逐条否证 额度 / proxy / 环境变量 / 模型名 / 配置 / 版本，最后用 <b>四路 env 矩阵</b> 收敛 → <b>真凶 = `.29` 的 cline 必须显式 <code>-k &lt;key&gt;</code></b>。</li>
+    <li><b>修复</b>：两条 loop 改为 <code>剥 proxy + 剥 OPENAI_* + -k "$CLINE_KEY"</code>（key 运行时现读、<b>不落仓库</b>）→ <b>08:01 复工</b>，两条线立刻产出真实工作。</li>
+    <li><b>源头加固</b>：`.29` 的 <code>~/.bashrc</code> 里那把<b>已吊销的</b> <code>OPENAI_API_KEY</code> 已注释（原值保留为注记）；<b><code>https_proxy</code> 保留不动</b>（实测 GitHub 离了它就不通）。</li>
+  </ol>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi"><div class="v">1.9141</div><div class="l">P-5b <b>20B 长跑完成</b>（final loss · 01:37 落盘 @4771）</div></div>
+  <div class="kpi"><div class="v">9h → 0</div><div class="l">静默停摆已修复（08:01 复工，两条线均产出）</div></div>
+  <div class="kpi"><div class="v">P-9.1 跑中</div><div class="l">MBS 吞吐扫描 · ~137K tok/s · 8 卡 80%+</div></div>
+  <div class="kpi"><div class="v">全≈随机</div><div class="l">vision caption 权重 3 点消融（0.47 / 0.61 / 0.60%）</div></div>
+</div>
+
+<div class="toc">
+  <strong>目录</strong>
+  <ol>
+    <li><a href="#s1">🔴 头条：`.29` 静默 9 小时事故（定位 → 修复）</a></li>
+    <li><a href="#s2">四条线状态一览</a></li>
+    <li><a href="#s3">pretrain：P-5b 完成 + P-9.1</a></li>
+    <li><a href="#s4">vision：R11-L2 + caption 权重消融</a></li>
+    <li><a href="#s5">data：下载白名单锁定</a></li>
+    <li><a href="#s6">harness：R31–R34</a></li>
+    <li><a href="#s7">关键数字</a></li>
+    <li><a href="#s8">需要你决策 / 注意</a></li>
+    <li><a href="#s9">运维基础设施：零 token 的 ops relay</a></li>
+    <li><a href="#s10">诚实条款：我犯的错与更正</a></li>
+  </ol>
+</div>
+
+<h2 class="sec" id="s1"><span class="no">1</span>🔴 头条：`.29` 静默 9 小时事故（定位 → 修复）</h2>
+
+<div class="danger">
+  <b>症状：一个「不报错的故障」。</b> `.29` 上的 pretrain / harness 两条线，从 <b>10-03 22:10 到 10-04 08:01</b> 整整 <b>9 小时零文件产出</b>；而 <code>/tmp/baize_*_loop.log</code> 每个周期只打印一行
+  <code>error: Forbidden</code>，紧接着 <code>[loop] … cline returned (exit 0)</code> —— <b>loop 把它当成“成功”</b>，继续睡 30 分钟再来一次。
+  同一时段 <code>.12</code> 上的 vision / data <b>整夜正常</b>，所以从仓库表面完全看不出异常（只是“没动静”）。
+</div>
+
+<h3>1.1 时间线（关键锚点）</h3>
+<table>
+  <tr><th>时间</th><th>事件</th><th>证据</th></tr>
+  <tr><td>10-03 22:07 / 22:12</td><td>pretrain 最后一次成功提交；harness 的 cline smoke <b>还是成功的</b></td><td><code>git log</code> · <code>MEMORY_HARNESS.md</code></td></tr>
+  <tr><td>10-03 22:10 →</td><td><b>开始全程 <code>Forbidden</code></b>（pretrain 18 次 / harness 37 次）</td><td><code>grep -c Forbidden /tmp/baize_*_loop.log</code></td></tr>
+  <tr><td><b>10-04 01:37</b></td><td>⭐ <b>P-5b 其实跑完了</b>——<code>successfully saved checkpoint from iteration 4771</code>，但因为 loop 静默，<b>无人记录</b></td><td><code>/tmp/baize_p5b.log</code></td></tr>
+  <tr><td>01:37 → 08:01</td><td>🔴 <b>8×H100 空转 ≈ 6.4 小时</b>（P-9 / P-6② 全被卡住）</td><td><code>nvidia-smi</code>（0% / 0 MiB）</td></tr>
+  <tr><td>07:13 → 08:01</td><td>18 轮 ops 远程探查 → 定位 → 修复 → 复工</td><td><code>run/ops/outbox.md</code>（RUN_ID 9→29）</td></tr>
+</table>
+
+<h3>1.2 逐条否证（每轮只打掉一类假设）</h3>
+<table>
+  <tr><th>假设</th><th>否证依据</th></tr>
+  <tr><td>cline Token 额度耗尽</td><td>报错是 <code>Forbidden</code>（鉴权），不是额度文案</td></tr>
+  <tr><td><code>https_proxy</code> 单独致命</td><td>实测「直连网关 200 / 走代理 503」，但 <b>剥掉 proxy 后仍 Forbidden</b></td></tr>
+  <tr><td><code>OPENAI_API_URL</code> / <code>API_TYPE</code> 单独</td><td>剥掉后仍 Forbidden</td></tr>
+  <tr><td>模型名不对</td><td><code>.12</code> 用<b>同名模型</b>正常</td></tr>
+  <tr><td><code>globalState.json</code> 坏了</td><td>两台机的 provider / modelId / baseUrl <b>字段一致</b></td></tr>
+  <tr><td>cline 被自动升级</td><td>两台 <b>CLI 都是 3.0.51</b>、同装于 <b>2026-09-08</b>（<code>globalState</code> 里的 4.1.21/4.0.8 是 <b>VSCode 扩展</b>版本，与 CLI 无关）</td></tr>
+  <tr><td><code>eda_fastmcp/.env</code> 里的 key 可用</td><td><b>全部 403</b>（GLM / deepseek / doubao / kimi / qwen / t2i 一个都不能用）</td></tr>
+  <tr><td>cline 客户端坏了</td><td><code>.12</code> 上跑<b>完全相同的命令</b> → <code>[thinking] … → OK</code> ✅</td></tr>
+</table>
+
+<h3>1.3 四路 env 矩阵 → 收敛（决定性证据）</h3>
+<table>
+  <tr><th>组</th><th>环境</th><th>结果</th></tr>
+  <tr><td>V0</td><td>原样</td><td><span class="badge b-no">Forbidden</span></td></tr>
+  <tr><td>V1</td><td>剥 <code>OPENAI_API_KEY</code> + <code>OPENAI_API_URL</code> + <code>API_TYPE</code></td><td><span class="badge b-no">Forbidden</span></td></tr>
+  <tr><td>V2</td><td>V1 <b>+ 剥所有 <code>*_proxy</code></b></td><td><span class="badge b-no">Forbidden</span></td></tr>
+  <tr><td><b>V3</b></td><td><b>V2 + 显式 <code>-k &lt;secrets 里的有效 key&gt;</code></b></td><td><span class="badge b-ok">OK ✅</span></td></tr>
+</table>
+<div class="ok-box">
+  <b>结论：`.29` 的 cline 必须显式传 <code>-k</code>。</b>
+  叠加的第二个故障：loop 继承的 <code>OPENAI_API_KEY=01_549…</code> 是一把 <b>已吊销</b>的旧 key，<b>会覆盖</b> <code>secrets.json</code> 里的有效 key（<code>02_088…</code>，curl 实测 <b>200</b>）。
+  <br>⚠️ <b>诚实限定</b>：机制未 100% 解释（<code>.12</code> 不带 <code>-k</code> 也一直能跑）→ 因此以 <b>可复现的 V3</b> 定稿，并在记忆里如实标注「未完全解释」。
+</div>
+
+<h3>1.4 修复（已生效）</h3>
+<pre><code># 两条 loop 顶部（两条线通用；key 运行时现读，不落仓库）
+CLINE_KEY="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
+              "$HOME/.cline/data/secrets.json" | head -1)"
+
+# cline 调用行
+env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
+    -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
+    -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
+  cline -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -t "$CLINE_TIMEOUT" "$prompt"</code></pre>
+
+<p><b>校验（08:01）</b>：前置 V3 复核 = <span class="badge b-ok">OK</span> → 重启 → <code>grep -c 'error:.*Forbidden'</code> = <b>0</b> → 两个 <code>bun cline</code> 均在正常推理 → GPU 上 P-9 <b>未受影响</b>（80%+）。</p>
+
+<h3>1.5 源头加固（RUN_ID 28–29）</h3>
+<table>
+  <tr><th>项</th><th>处理</th><th>理由</th></tr>
+  <tr><td><code>~/.bashrc:170</code> <code>OPENAI_API_KEY</code></td><td><b>原地注释</b>（原值保留为注记；备份 <code>~/.bashrc.bak.20261004-081247</code>）</td><td>它是<b>已吊销</b>的 key，会覆盖 <code>secrets.json</code> → 单一真源改为 <code>secrets.json</code></td></tr>
+  <tr><td><code>~/.bashrc:140</code> <code>https_proxy</code></td><td><b>保留不动</b> 🔴</td><td>实测 <code>git ls-remote github</code>：<b>无 proxy = FAIL / 有 proxy = OK</b> —— 删了 loop 的 push 全废</td></tr>
+  <tr><td><code>:169</code> <code>API_TYPE</code> / <code>:171</code> <code>OPENAI_API_URL</code></td><td>保留</td><td>实测剥掉它们<b>不足以</b>修复（V2 仍红）</td></tr>
+  <tr><td><code>run/harness/run_harness.py</code></td><td>新增 <code>resolve_cline_key()</code>：env 优先、<b>否则回退读 <code>secrets.json</code></b>；并<b>纠正了写反的注释</b></td><td>env 里没有 key 时 <code>available()</code> 不再误判 <code>False</code></td></tr>
+</table>
+<div class="note">
+  ⭐ <b>现成范本</b>：<code>.12</code> 的 <code>~/.bashrc:143</code> 早就注释着
+  <code># disabled: proxy DNS cannot resolve internal agi-gateway.cxmt.com</code> —— 即「内网网关不能走代理」。<b>`.29` 从没做过这一步。</b>
+</div>
+
+<h2 class="sec" id="s2"><span class="no">2</span>四条线状态一览</h2>
+<table>
+  <tr><th>线</th><th>主机</th><th>状态</th><th>当前在做什么</th><th>关键数字</th></tr>
+  <tr>
+    <td><b>pretrain</b></td><td><code>.29</code></td><td><span class="badge b-ok">✅ 复工并推进</span></td>
+    <td><b>P-9.1</b> MBS 吞吐扫描（P-5b 已收尾）</td>
+    <td>P-5b <b>20B 完成 · loss 1.9141</b> · P-9.1 <b>~137K tok/s</b></td>
+  </tr>
+  <tr>
+    <td><b>vision</b></td><td><code>.12</code></td><td><span class="badge b-warn">⏸ 待你拍板</span></td>
+    <td>所有已批准 GPU 项<b>全部完成</b>，GPU 已空</td>
+    <td>R11-L2 ✅ 未翻盘 · caption 3 点 <b>0.47/0.61/0.60%</b></td>
+  </tr>
+  <tr>
+    <td><b>data</b></td><td><code>.12</code></td><td><span class="badge b-ok">🔄 下载中</span></td>
+    <td>白名单 3 项（<code>l1_en_hq</code> 优先）</td>
+    <td><code>l1_en_hq</code> <b>231/6006</b> · <code>zh</code> <b>171/256</b> · <code>gpic</code> <b>1877/8001</b></td>
+  </tr>
+  <tr>
+    <td><b>harness</b></td><td><code>.29</code></td><td><span class="badge b-ok">🔄 复工并推进</span></td>
+    <td><b>R34</b>：打通 npm/bun 镜像以 build 那 4 个 harness</td>
+    <td>R1 沙箱<b>双绿</b>（django+sympy）· 步3 驱动已交付</td>
+  </tr>
+</table>
+<p class="note">⚠️ <b>两条 `.29` 线与两条 `.12` 线的差异，本身就是这次事故的画像</b>：同一把 key、同一份代码、同一套任务书，<b>只有 `.29` 全挂</b> —— 因为差异在 <b>宿主环境</b>（`~/.bashrc` 里多一把失效 key）。</p>
+
+<h2 class="sec" id="s3"><span class="no">3</span>pretrain：P-5b 完成 + P-9.1</h2>
+
+<h3>3.1 ✅ P-5b 20B 长跑：完成（01:37）</h3>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>规模 / 步数</td><td><b>20B token</b> · <code>4771</code> 步（GBS 1024 × seq 4094 ≈ 4.192M tok/步）</td></tr>
+  <tr><td><b>final loss</b></td><td><b>1.9141</b>（decay 退火尾段收尾，<code>iter_0004771</code> 已落盘）</td></tr>
+  <tr><td>loss-vs-tokens 曲线</td><td>655M <b>5.367</b> → 1.3B <b>3.988</b> → 2.6B <b>2.9246</b> → 5.2B <b>2.3605</b> → 10.5B <b>2.1189</b> → 20B <b>1.9141</b></td></tr>
+  <tr><td>健康度</td><td><code>skip=0</code> / <code>nan=0</code> · grad norm 0.115–0.201 · 8×H100 各 ≈39 GB</td></tr>
+  <tr><td>产出</td><td><b>6 个 ckpt</b> → 供 <b>P-6②「能力 vs token」</b> lm_eval 曲线</td></tr>
+</table>
+<div class="danger">
+  ⚠️ <b>它是在 01:37 完成的，但直到 08:01 才被发现</b> —— 因为 loop 静默（见 §1）。<b>这 6.4 小时的 GPU 空转，是这次故障最实在的代价。</b>
+</div>
+
+<h3>3.2 🔄 P-9.1：MBS 吞吐扫描（在跑）</h3>
+<ul>
+  <li><b>目标</b>：把「MBS 太小」与「FP8 拿不到收益」<b>当成同一个问题</b>解决 —— 机制是 <b>FP8 要 <code>M ≳ 16K</code> 才转正，而 <code>M ≈ MBS × seq</code></b>。</li>
+  <li><b>实测</b>：<code>MBS=1</code> · <code>iter 40/60</code> · <b>~30.5 s/iter</b> · <b>~137K tok/s</b>（与 P-5b 同量级 → 基准可信）。</li>
+  <li>⚠️ <b>口径限制（已记录）</b>：<code>launcher</code> <b>只暴露 MBS / TP / SP / seq-length / precision</b> 五类开关 → recompute / 通信重叠 / dataloader / attn-backend <b>需改 recipe，暂冻结</b>；<b>NCCL（P-4 占 41.7%）</b> 是最大的待批杠杆。</li>
+  <li><b>排期</b>：P-5b（✅）→ <b>P-9（跑中）</b> → P-6②（能力-vs-token）→ P-8 正式训练（暂缓，等 base 下满 + 配比定稿）。</li>
+</ul>
+
+<h2 class="sec" id="s4"><span class="no">4</span>vision：R11-L2 + caption 权重消融</h2>
+
+<h3>4.1 R11-L 家族：<b>五臂全部未翻盘</b></h3>
+<table>
+  <tr><th>臂</th><th>是什么</th><th>IN-1k lp（@5.12/10.24/15.36M）</th><th>判定</th></tr>
+  <tr><td>① 基线</td><td>OpenVision2 w512 + 冻结 CLIP-768 + InfoNCE</td><td><b>3.43 / 5.45 / 6.08%</b></td><td>参照</td></tr>
+  <tr><td>② SigLIP</td><td>换 sigmoid 对比损失</td><td>2.19 / 3.13 / 4.36%</td><td><span class="badge b-no">未翻盘</span></td></tr>
+  <tr><td>③ LocalLoss</td><td>只算本地行（仍是 512 池）</td><td>1.81 / 3.60 / 4.33%</td><td><span class="badge b-no">未翻盘</span></td></tr>
+  <tr><td>④ CoCa</td><td>对比 + caption 自回归（<b>首个稠密监督臂</b>）</td><td>0.29 / 0.37 / <b>0.47%</b>（≈随机）</td><td><span class="badge b-no">未翻盘</span>（trunk 被打回随机）</td></tr>
+  <tr><td><b>R11-L2</b></td><td><b>文本塔解冻（LoRA/Adapter）</b>—— 我批准为下一优先级</td><td>—</td><td><span class="badge b-no">未翻盘</span> → <b>冻结文本塔仍最优</b></td></tr>
+</table>
+<p>R11-L2 耗时 <b>2.09 h × 8 卡 ≈ 16.7 GPU·h</b>。含义：<b>「文本塔冻结锁死上限」这个假说被否掉</b> —— 在当前数据规模下，解冻文本塔并不带来收益。</p>
+
+<h3>4.2 caption 权重三点消融：假设 B 坐实</h3>
+<table>
+  <tr><th><code>--caption-loss-weight</code></th><th>lp @N=15.36M</th><th>zs</th><th>结论</th></tr>
+  <tr><td>2.0（= arm④ CoCa）</td><td><b>0.47%</b></td><td>—</td><td rowspan="3" style="vertical-align:middle">
+    <b>三点全 ≈ 随机（&lt;1%），且无单调关系</b><br>
+    → 不是「weight=2.0 把 trunk 压死」<br>
+    → <b>是 caption 监督本身与 IN-1k 正交</b><br>
+    <span class="badge b-ok">假设 B 成立</span>
+  </td></tr>
+  <tr><td>1.0</td><td><b>0.61%</b></td><td>—</td></tr>
+  <tr><td>0.5</td><td><b>0.60%</b></td><td>0.55 / 0.51 / 0.68%</td></tr>
+</table>
+<p>两点合计 <b>≈32.7 GPU·h</b>。这条负结果<b>很有价值</b>：它把「稠密监督翻盘」这条路的<b>唯一便宜分支</b>也证否了 —— 剩下的只有最贵的 AIMv2 式 patch 预测（⏸ 暂缓）。</p>
+
+<h3>4.3 本线的叙事已经收敛</h3>
+<div class="ok-box">
+  从零路线 + <b>冻结文本塔</b> + <b>对比学习</b> + <b>w512 小塔</b> = 当前配置下的最优解；
+  上限由 <b>数据量</b>（本地 ≈118M 唯一对 vs AIMv2 的 ≈120 亿）决定，<b>不是架构</b>。
+  R9 幂律渐近 <b>25.1%</b>（R²≈0.94）就是这条路的诚实天花板。
+</div>
+
+<h2 class="sec" id="s5"><span class="no">5</span>data：下载白名单锁定</h2>
+
+<h3>5.1 白名单（用户 10-03 拍板：「就 MiniCPM5 的数据 + GPIC，不要再节外生枝」）</h3>
+<table>
+  <tr><th>项</th><th>规模</th><th>状态</th><th>说明</th></tr>
+  <tr><td><code>ultrafineweb_en</code></td><td>1 T tok</td><td><span class="badge b-ok">✅ 已下满</span></td><td>P-8 的 S 段主体已够</td></tr>
+  <tr><td><code>ultrafineweb_en_v1_4</code></td><td>6.7 TB</td><td><span class="badge b-no">🔴 已停</span></td><td>@1.8 MB/s ≈ <b>43 天</b>、非 P-8 必需、且阻塞后两项 → <b>已停，488 分片保留不删</b></td></tr>
+  <tr><td><code>ultrafineweb_l1_en_hq</code></td><td>478 GB</td><td><span class="badge b-info">🔄 优先下</span></td><td><b>231 / 6006</b> @~1.8 MB/s</td></tr>
+  <tr><td><code>ultrafineweb_zh</code></td><td>324 GB</td><td><span class="badge b-info">🔄 排队</span></td><td><b>171 / 256</b></td></tr>
+  <tr><td><b>GPIC</b></td><td>—</td><td><span class="badge b-info">🔄 继续</span></td><td>train <b>1877 / 8001</b> + test 128 ✓</td></tr>
+</table>
+<p>🚫 <b>白名单外一律不下载、不调研、不推荐</b>（含 <code>UltraX-Preview</code>）→ 配比实验的 <b>S1 轴（base vs UltraX）相应降级为「仅 base」</b>，已在任务书如实记录。</p>
+
+<h3>5.2 风险与进度</h3>
+<ul>
+  <li>⚠️ <b><code>l1_en_hq</code> 速度偏慢</b>（~1.8 MB/s；小文件 74MB/件 + CDN 端点慢，<b>已证非僵死</b>）→ 剩 ≈426 GB + <code>zh</code> ≈107 GB，<b>ETA ≈2.9 天</b>（<b>超出 1–2 天预估</b>）。</li>
+  <li>✅ 磁盘 <code>/nas_train</code> <b>86%</b>（Avail 31T）；<b>D-CLEAN 系列累计回收 ≈1.31 TiB</b>（含 <code>servers/</code> 972 G）。</li>
+  <li>⚠️ 半夜 <b>base 进程崩过一次</b>（CDN <code>ConnectionError</code> @ zh-part-172）→ 已重启 <code>retry-loop</code> 并<b>反转为先拉 l1_en_hq</b>（符合优先级）。</li>
+</ul>
+
+<h2 class="sec" id="s6"><span class="no">6</span>harness：R31–R34</h2>
+<table>
+  <tr><th>轮次</th><th>成果</th><th>状态</th></tr>
+  <tr><td><b>R30</b></td><td><code>r1_eval.py</code> 端到端跑通 → 官方 <code>get_eval_report</code> 返回 <code>resolved: true</code>（<code>django__django-10914</code>）</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td><b>R31</b></td><td><code>sympy__sympy-11400</code> 同样 <code>resolved: true</code> → <b>跨 repo 模板验证（django + sympy 双绿）</b></td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td><b>R32</b></td><td><code>run_harness.py</code>（<b>5 个 Driver</b>）+ <b>cline headless 全链路 smoke 跑通</b>；定位 <code>-k</code> 必传 gotcha</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td><b>R34</b></td><td><b>npm/bun 镜像口子打通</b>（腾讯镜像 + 代理）+ node-gyp headers 镜像 → 开始 build opencode</td><td><span class="badge b-info">🔄 进行中</span></td></tr>
+</table>
+<div class="note">
+  <b>路线已定型：无 docker</b> —— <code>unshare --user --map-root-user --mount --pid --fork</code> 用户命名空间 chroot 沙箱（rootfs 落 <code>/nas_train</code>），绕开 <code>docker pull</code> 不通的死局。
+  <br>⚠️ <b>已知风险敞口</b>：沙箱内挂不了 <code>/dev</code> <code>/proc</code> <code>/sys</code>（<code>/dev</code> 只能用普通文件桩）→ 是 scale 到 300 条时最需要盯的点。
+  <br>⏭ <b>下一步</b>：步3 收尾（真实 instance 端到端产 <code>model_patch</code> → 复用 <code>r1_eval.py</code> 评分）→ 步4 顺序跑 <b>300 × 5</b>。
+</div>
+
+<h2 class="sec" id="s7"><span class="no">7</span>关键数字</h2>
+<div class="grid2">
+  <div class="card">
+    <h3 style="margin-top:0">预训练（Stage i）</h3>
+    <ul>
+      <li><b>P-5b：20B token 完成</b>，final loss <b>1.9141</b></li>
+      <li>吞吐 <b>~137–147K tok/s</b>（P-5b / P-9.1 同量级）</li>
+      <li>胜出配置：LR 1e-3 · WSD · warmup 238 / decay 477 · <b>seq 4094</b> · bf16</li>
+      <li>每步 <b>≈4M token</b> 不变量（4096↔1024 / 8192↔512）</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">视觉（Stage iii）</h3>
+    <ul>
+      <li>胜出架构：<b>OpenVision2 w512（126.8M）</b></li>
+      <li>数据 scaling：幂律渐近 <b>25.1%</b>（R²≈0.94）</li>
+      <li>塔宽：<b>越小越好</b>（w512 6.10% &gt; w768 3.63% &gt; w1024 1.03%）</li>
+      <li>M 轴：<b>w384 lp 7.99% 为全部宽度最高，无饱和点</b></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">数据 / 磁盘</h3>
+    <ul>
+      <li><b>D-CLEAN 累计回收 ≈1.31 TiB</b>（含 <code>servers/</code> 972 G）</li>
+      <li><code>/nas_train</code> <b>86%</b>（Avail 31T）·<code>/nas_inference</code> 剩 20T</li>
+      <li>base-en <b>2048/2048 下满（1 T tok）</b></li>
+      <li>GPU 侧 <b>GPIC 全量 ≈100.3M</b> 唯一对（E1 实测）</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">运维侧</h3>
+    <ul>
+      <li>当日提交 <b>≈72</b>（10-03 全天 235）</li>
+      <li>本次事故探查 <b>18 轮 ops 命令（RUN_ID 9→29）</b></li>
+      <li>记忆体量：<code>MEMORY.md</code> <b>27.2KB</b>（≤32KB ✅）</li>
+      <li>任务书瘦身：<b>4 份 237KB → 115KB（-52%）</b></li>
+    </ul>
+  </div>
+</div>
+
+<h2 class="sec" id="s8"><span class="no">8</span>需要你决策 / 注意</h2>
+<table>
+  <tr><th>#</th><th>事项</th><th>状态 / 我的建议</th></tr>
+  <tr>
+    <td>1</td>
+    <td><b>vision 下一项做什么</b>（GPU 已空，所有已批准项都做完了）</td>
+    <td><span class="badge b-warn">等你拍板</span> 候选：<b>R13</b>（OV2 官方权重单臂对照，须单独批）· <b>臂⑥ AIMv2</b>（3–5 臂 + 1–2 天自研，最贵）· <b>R11-E</b>（等 GPIC <code>short</code> ≥18.5M）。<br>📌 我的建议：<b>先 R13</b>（0.5–1 臂、便宜、能补「结论边界」），AIMv2 继续压后。</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><b><code>l1_en_hq</code> 下载偏慢</b>（ETA ≈2.9 天，超出你给的 1–2 天预估）</td>
+    <td><span class="badge b-warn">需知悉</span> 已证<b>非僵死</b>（CDN 端点慢 + 74MB/件小文件）。要么接受 ≈3 天，要么允许换源/加并发。</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td><b>harness 全量跑受 key 5h 滑动窗口约束</b></td>
+    <td><span class="badge b-info">已按此排期</span> ≤4 并发 + 跨 harness 串行；实测 <code>.29</code> 与 <code>.12</code> 共用 key。</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td><b>论文（ISEDA2027）</b></td>
+    <td><span class="badge b-ok">冻结中（按你的指示）</span> §6 整节重写已入库（<code>afa2624</code>），<b>等实验结果再一次性回填</b> 4 项润色。</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td><b>轮换 cline key 时的纪律</b></td>
+    <td><span class="badge b-ok">已固化</span> 只需更新两台机的 <code>~/.cline/data/secrets.json</code>（<code>.bashrc</code> 里已无 key）→ 但仍<b>必须两台都更新</b>。</td>
+  </tr>
+</table>
+
+<h2 class="sec" id="s9"><span class="no">9</span>运维基础设施：零 token 的 ops relay（今天立了大功）</h2>
+<div class="ok-box">
+  <b>ops relay 是一条「纯 bash、零 token、~20s 轮询」的远程命令通道</b>（Windows 侧 → git → 服务器执行 → 结果写回 <code>run/ops/outbox.md</code>）。
+  它今天的价值被彻底验证：<b>18 轮探查 + 3 次修复动作，全部通过它完成，没有消耗一个 agent token、没有打扰任何正在干活的线。</b>
+</div>
+<ul>
+  <li><b>用法铁律（已记入记忆）</b>：① 命令块必须放在文件<b>最前面</b>（中继只执行<b>第一个</b> <code>```bash</code> 块）② 旧块降级为 <code>```text</code> ③ <code>RUN_ID</code> 每次 +1。</li>
+  <li><b>安全检查已内建</b>：本次全部命令<b>只读优先</b>；所有「写」动作（改 secrets / 改 loop / 改 rc）都<b>先备份</b>并在下一轮验证。</li>
+  <li><b>教训</b>：<code>grep -c Forbidden</code> 会<b>数到 agent 的散文</b>（假阳性）→ 精确探针是 <code>grep -c 'error:.*Forbidden'</code>；且 <code>/proc/&lt;pid&gt;/environ</code> <b>只反映 exec 时的初始环境</b>，不能用来验证脚本里的 <code>export</code>。</li>
+</ul>
+
+<h2 class="sec" id="s10"><span class="no">10</span>诚实条款：我犯的错与更正</h2>
+<table>
+  <tr><th>#</th><th>我犯了什么</th><th>后果 / 更正</th></tr>
+  <tr><td>1</td><td>一度断言「key 被轮换、只更新了 <code>.12</code>」</td><td><b>错的</b>（curl 实测 200）。已在 <code>MEMORY.md</code> <b>更正为真因</b>：<code>.29</code> 的 cline 必须显式 <code>-k</code>。</td></tr>
+  <tr><td>2</td><td>写 env 矩阵时<b>漏剥 proxy</b></td><td>三组全红 → 误判「key 失效」，<b>白绕 3 轮</b>。教训：<b>每次只改一个变量</b>。</td></tr>
+  <tr><td>3</td><td>在 loop 里用 <code>python3 -c</code> 取 key</td><td>relay 非交互 shell <b>PATH 无 python3</b> → 静默退回 stale key。改用 <code>sed</code> 解决。</td></tr>
+  <tr><td>4</td><td>为「修 driver」把<b>能跑的版本改坏</b></td><td>制造了一次回归（07:39–07:42）。现已<b>回退到实证配方 + 单独修 driver</b>。</td></tr>
+  <tr><td>5</td><td>脱敏 <code>sed</code> 写错</td><td>RUN_ID 11 把一把<b>（已失效的）</b> <code>OPENAI_API_KEY</code> 明文写进了 <code>outbox.md</code>。<b>风险很低但仍是失误</b>；后续所有输出均改用 <code>&lt;MASKED&gt;</code>。</td></tr>
+</table>
+<div class="note">
+  <b>这次事故留下的两条最有价值的经验</b>：<br>
+  ① <b><code>exit 0</code> ≠ 成功</b> —— cline 在鉴权失败时也返回 0，loop 一律当成功 → 必须靠 <code>grep -c 'error:.*Forbidden'</code> 这类<b>主动探针</b>兜底。<br>
+  ② <b>多机部署的凭据必须同步轮换</b> —— 一半的线因为「只有一台更新过」而静默死亡 9 小时。
+</div>
+
+<p style="text-align:center;margin:30px 0 0;color:var(--muted);font-size:13px">— 报告完 —</p>
+
+<footer>
+  <p>本报告由<b>运维</b>（外部指挥 4 条 agent 线）生成 · 数据来源：各线 <code>run/MEMORY_*.md</code> · <code>run/EXPERIMENTS_*.md</code> · <code>run/ops/outbox.md</code> · <code>git log</code>。</p>
+  <p>⚠️ 所有数字均可在仓库中溯源；凡未能取证的一律标注「待实测 / 假设」。<b>本日最值得记住的一句：<code>exit 0</code> ≠ 成功。</b></p>
+</footer>
+
+
+
+
+
+
+</div>
+</body>
+</html>
