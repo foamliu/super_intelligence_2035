@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 5 -->
+<!-- RUN_ID: 6 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,36 @@
 
 ---
 
+## RUN_ID 6 — 🔧 重启 `zhulong_loop.sh`（清掉旧版 `-b`，让 agent 真正被唤醒）——**本次首要**
+
+**背景**：RUN_ID 5（21:43:20）实测 —— 中继健康（RUN_ID 1–5 全 `exit=0`）；但 **loop 仍是旧版**，`/tmp/zhulong_loop.log` 每次唤醒都 `error: unknown option '-b'`（累计 **352** 次），**cline 从未运行 → agent 从未被唤醒**。磁盘脚本已是新版（无 `-b`）→ **重启进程即修复**。本块：先确认脚本已新，再 `pkill` + `setsid` 重启 loop，最后复核进程与日志。
+
+```bash
+# RUN_ID 6 — restart zhulong_loop to clear stale -b (agent never woke)
+REPO=/nasdata/app.e0031982/code/super_intelligence_2035
+LD="$REPO/doc/ZhuLong_DAC2027/run/zhulong_loop.sh"
+echo "===== 0. TIME ====="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "===== 1. before: loop proc ====="; timeout 10 pgrep -af zhulong_loop.sh | cut -c1-140
+echo "===== 2. loop script line112 (should be -P openai-compatible, NO -b) ====="; timeout 10 sed -n '112p' "$LD" | cut -c1-160
+echo "===== 3. restart loop ====="
+pkill -f zhulong_loop.sh; sleep 3
+setsid bash "$LD" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+sleep 4
+echo "===== 4. after: loop proc ====="; timeout 10 pgrep -af zhulong_loop.sh | cut -c1-140
+echo "===== 5. loop log tail ====="; timeout 10 tail -n 8 /tmp/zhulong_loop.log | cut -c1-160
+echo "===== 6. relay still alive ====="; timeout 10 pgrep -af zhulong_ops_relay.sh | cut -c1-140
+echo "===== DONE ====="
+```
+
+---
+
 ## RUN_ID 5 — 🩺 只读健康探针：中继 / loop 是否活着（**本次首要**）
 
 **背景**：RUN_ID 4（heavy）已由中继于 **17:05:57 成功执行并回推**（`.last_run_id=4`）→ 中继看似已恢复。本块**只读**确认三件事：① `zhulong_ops_relay.sh` / `zhulong_loop.sh` 进程是否在；② loop 是否仍在报非法 `-b`（静默失效，见 MEMORY §7-10）；③ loop 日志里 `cline returned` 计数（判断 agent 是否真被唤醒）。**全部命令带 `timeout`、不跟 symlink。**
 
-```bash
+> ⛔ **已作废**（已执行于 21:43:20）——降级为 text，让位给 RUN_ID 6。
+
+```text
 # RUN_ID 5 — read-only relay/loop health probe
 echo "===== TIME ====="; timeout 10 date '+%F %T'; timeout 10 hostname
 echo "===== 1. processes ====="
