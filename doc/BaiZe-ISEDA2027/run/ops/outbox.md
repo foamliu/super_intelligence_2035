@@ -5383,3 +5383,72 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 51 · 2026-10-04 17:49:27 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME; B=/nas_train/app.e0031982
+CL=/home/app.e0031982/.bun/bin/cline
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+SRC="$H/.cline/data"
+
+echo; echo "=== 1. 以 harness 现成用法为准，复核 --data-dir 布局 ==="
+echo "   harness 目录内容: $(ls -1 /nas_train/app.e0031982/harness_work/cline_harness_data 2>/dev/null | tr '\n' ' ')"
+echo "   => --data-dir 指向【data 目录本身】；文件在 <D>/ 下，非 <D>/data/"
+
+echo; echo "=== 2. 纠正布局：配置放到 <D>/ 根 ==="
+for n in pretrain harness vision data; do
+  D="$B/.cline_$n"
+  rm -rf "$D/data" 2>/dev/null
+  mkdir -p "$D"
+  cp -a "$SRC/globalState.json" "$D/globalState.json" 2>/dev/null
+  cp -a "$SRC/secrets.json"     "$D/secrets.json"     2>/dev/null
+  chmod 600 "$D/secrets.json" 2>/dev/null
+  echo "   $D/ -> $(ls -1 "$D" 2>/dev/null | tr '\n' ' ')"
+done
+
+echo; echo "=== 3. 逐个 smoke（必须回 OK）==="
+cd /tmp
+for n in pretrain harness vision data; do
+  D="$B/.cline_$n"
+  K=$(python3 -c "import json;print(json.load(open('$D/secrets.json'))['openAiApiKey'])" 2>/dev/null | tr -d '\r\n')
+  R=$(env $P timeout 90 "$CL" --data-dir "$D" -c /tmp -m glm-5.2 -k "$K" -P openai-compatible --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tr -d '\r' | tr '\n' ' ' | cut -c1-160)
+  printf '   %-9s (key len %s) => %s\n' "$n" "${#K}" "$R"
+done
+
+echo; echo "=== 4. 共享配置现状（应仍正常）==="
+echo "   ~/.cline/data/globalState.json base = $(sed -n 's/.*\"openAiBaseUrl\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p' "$SRC/globalState.json" | head -1)"
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 17:49:27
+
+=== 1. 以 harness 现成用法为准，复核 --data-dir 布局 ===
+   harness 目录内容: cache db globalState.json logs secrets.json sessions settings 
+   => --data-dir 指向【data 目录本身】；文件在 <D>/ 下，非 <D>/data/
+
+=== 2. 纠正布局：配置放到 <D>/ 根 ===
+   /nas_train/app.e0031982/.cline_pretrain/ -> cache db globalState.json logs secrets.json sessions settings 
+   /nas_train/app.e0031982/.cline_harness/ -> cache db globalState.json logs secrets.json sessions settings 
+   /nas_train/app.e0031982/.cline_vision/ -> cache db globalState.json logs secrets.json sessions settings 
+   /nas_train/app.e0031982/.cline_data/ -> cache db globalState.json logs secrets.json sessions settings 
+
+=== 3. 逐个 smoke（必须回 OK）===
+   pretrain  (key len 72) => [31merror:[0m Cannot connect to API: Unable to connect. Is the computer able to access the url?: Unable to connect. Is the computer able to access the url? (C
+   harness   (key len 72) => [31merror:[0m Cannot connect to API: Unable to connect. Is the computer able to access the url?: Unable to connect. Is the computer able to access the url? (C
+   vision    (key len 72) => [31merror:[0m Cannot connect to API: Unable to connect. Is the computer able to access the url?: Unable to connect. Is the computer able to access the url? (C
+   data      (key len 72) => [31merror:[0m Cannot connect to API: Unable to connect. Is the computer able to access the url?: Unable to connect. Is the computer able to access the url? (C
+
+=== 4. 共享配置现状（应仍正常）===
+   ~/.cline/data/globalState.json base = http://agi-gateway.cxmt.com/cloud/v1
+
+=== DONE ===
+```
