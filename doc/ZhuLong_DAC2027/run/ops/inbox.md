@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 18 -->
+<!-- RUN_ID: 19 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,36 @@
 
 ---
 
+## RUN_ID 19 — ♻️ 重试接管（**块内无任何 git 命令**！中继自己的 git_sync 已做 pull）
+
+**背景**：RUN_ID 18 疑似**卡住中继**——块内 `git pull --rebase --autostash` 的网络子进程**继承了 stdout 管道**，`timeout` 只杀 leader → 中继读不到 EOF（**BaiZe §7 同型坑**）。本版**去掉所有 git 命令**（中继主循环的 `git_sync` 会自己 pull），只做幂等的「停 legacy + 重启 loop」。
+
+```bash
+# RUN_ID 19 — RETRY takeover (NO git commands in block)
+REPO=/nasdata/app.e0031982/code/super_intelligence_2035
+LD="$REPO/doc/ZhuLong_DAC2027/run/zhulong_loop.sh"
+echo "== 0. TIME =="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "== 1. legacy procs =="; timeout 10 pgrep -af 'ablation_run_loop|ablation_run_conductor' | cut -c1-150; echo "(end)"
+echo "== 2. stop legacy (idempotent) =="; pkill -f ablation_run_loop_component_s2_full.sh; pkill -f ablation_run_conductor_serial.sh; sleep 3
+timeout 10 pgrep -af 'ablation_run_loop|ablation_run_conductor' | cut -c1-150; echo "(end2)"
+echo "== 3. loop script has --config count =="; timeout 10 grep -c 'CLINE_CONFIG_DIR' "$LD"
+echo "== 4. restart merged loop =="; pkill -f zhulong_loop.sh; sleep 3; setsid bash "$LD" > /tmp/zhulong_loop.log 2>&1 < /dev/null & sleep 10
+echo "== 5. loop proc + log =="; timeout 10 pgrep -af zhulong_loop.sh | cut -c1-140; timeout 10 tail -n 10 /tmp/zhulong_loop.log | cut -c1-170
+echo "== 6. relay alive =="; timeout 10 pgrep -af zhulong_ops_relay.sh | cut -c1-140
+echo "== DONE =="
+```
+
+> ⚠️ **纪律（本次教训，已入 MEMORY）**：relay 块内**禁止 `git pull`/`git fetch`** —— 中继主循环的 `git_sync` 已负责同步；块内再 pull 会因网络子进程持有 stdout 而**卡死中继**。
+
+---
+
 ## RUN_ID 18 — 🚀 执行接管：停 legacy 两进程 + pull + 重启合并线 loop（带隔离 `--config`）
 
 **决策**：用户批准。停 `ablation_run_loop_component_s2_full.sh`（组件线）+ `ablation_run_conductor_serial.sh`（conductor）；合并线从 `C1.wo_retrieval R2` 续跑。隔离已验证（RUN_ID 17）。
 
-```bash
+> ⛔ **已作废**（块内含 `git pull`，疑似卡死中继）——降级为 text，让位给 RUN_ID 19。
+
+```text
 # RUN_ID 18 — TAKEOVER: stop legacy, pull, restart merged loop (isolated --config)
 REPO=/nasdata/app.e0031982/code/super_intelligence_2035
 LD="$REPO/doc/ZhuLong_DAC2027/run/zhulong_loop.sh"

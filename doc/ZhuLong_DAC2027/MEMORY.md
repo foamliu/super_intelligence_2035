@@ -171,6 +171,8 @@ error: error: unknown option '-b'
 
 16. **🔴 防作弊 hook 会误伤编排 agent（`~/.cline` 配置目录污染）**：评测对象是 cline；评测前脚本把 **PreToolUse hook 拷进 `~/.cline/hooks`**（评测结束删除），用于**禁止评测对象调用 `run_commands`**。若启动任务时**未指定独立 `--data-dir`**，则**评测对象 cline 与编排 agent（zhulong loop 的 cline）共用 `~/.cline`** → 编排 agent 在整轮评测（**3–4h**）内也被同一 hook 拦 `run_commands`（表现 = `ACCESS RESTRICTED`）。编排 loop 每 30min 唤醒 → 一轮评测内会连续被拦 **6–8 次**，**这是当前设计的正常现象，不是故障、也不是"沙箱"**。**根治**：给**编排 agent** 单独的 `--data-dir`（照 BaiZe `baize_data_loop.sh` 的隔离 `DATA_DIR` 做法），或在**评测时**给评测对象指定独立配置目录 —— 使两者 hooks/配置互不可见。**接管动作应包含此项。**（**RUN_ID 15 实测**：hook 目录 = `~/.cline/hooks`，与 `~/.cline/data` **平级**——不在 data 下；当前为**空**、mtime 14:39 → 已随 14:40 评测结束移除 → **此刻无评测在跑**；hook 源 = `eda_fastmcp/scripts/cline_hooks/`；`run_cline_script.sh` 未显式引用 hook/`--data-dir`；**尚无任何隔离配置目录**。⚠️ 另记：RUN_ID 8 的 `cline auth` 改的是**共享 `~/.cline`** → 对**其它共用该目录的线**（legacy 组件 loop）有连带影响——正是「共享配置目录」之害。）
 
+17. **🔴 relay 块内禁止 `git pull`/`git fetch`**（2026-10-04 RUN_ID 18 教训）：中继主循环的 `git_sync()` 已负责 `fetch + pull --rebase`；块内**再放 `git pull`** → 其网络子进程继承 stdout 管道，`timeout` 只杀 leader → 中继读不到 EOF、`.last_run_id` 停摆（**与 §7-14 同型**）。**接管/重启类块只做幂等动作**（`pkill` / `setsid`），**不要碰 git**。
+
 ---
 
 ## 8. 记忆维护规程（对我自己）
