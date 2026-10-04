@@ -271,3 +271,169 @@ Mem:            1007         190         206           0         621         816
 
 =========== DONE ===========
 ```
+
+---
+
+## RUN_ID 2 · 2026-10-04 16:57:07 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 2 — 只读诊断
+_GIT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo '/nasdata/app.e0031982/code/super_intelligence_2035')"
+RUN_DIR="$_GIT_ROOT/doc/ZhuLong_DAC2027/run"
+GP="/nasdata/app.e0031982/code/eda_fastmcp"
+
+echo "===== 0. TIME ====="; date '+%F %T'; hostname
+
+echo; echo "===== 1. loop / relay 进程（含 ppid）====="
+ps -eo pid=,ppid=,etimes=,args= | grep -E 'zhulong_loop|zhulong_ops_relay' | grep -v grep | cut -c1-160
+
+echo; echo "===== 2. loop 脚本实际 cline 调用行 ====="
+grep -nE 'cline |CLINE_KEY=|MODEL=' "$RUN_DIR/zhulong_loop.sh" 2>/dev/null | cut -c1-160
+
+echo; echo "===== 3. MEMORY_ZHULONG 顶部 WAITING ====="
+grep -nE '^WAITING:' "$RUN_DIR/MEMORY_ZHULONG.md" 2>/dev/null | head -3
+
+echo; echo "===== 4. /home 大头（有界 du）====="
+df -BG /home | tail -1
+timeout 45 du -x -d1 -h /home 2>/dev/null | sort -h | tail -15
+
+echo; echo "===== 5. run_code 入口在哪 ====="
+echo "-- eda_fastmcp 根 --"; ls -1 "$GP" 2>/dev/null | head -20
+echo "-- scripts/ --"; ls -1 "$GP/scripts" 2>/dev/null | head -25
+echo "-- grep run_code 定义文件 --"
+timeout 30 grep -rln 'def run_code\|run_code(' "$GP" --include=*.py 2>/dev/null | head -8
+
+echo; echo "===== 6. 端口口径（.env vs ss 监听）====="
+grep -nE 'PROXY_PORTS|SANDBOX_PORT|EDA_MCP_PORT' "$GP/.env" 2>/dev/null | cut -c1-120
+echo "-- ss tlnp 相关端口 --"
+ss -tlnp 2>/dev/null | grep -oE ':(8650|8651|8652|8653|8654|8655|8664|8665|8668|8669|18890|9006)\b' | sort -u | tr '\n' ' '; echo
+
+echo; echo "===== 7. loop 日志体检 ====="
+echo -n "unknown option 次数: "; grep -c 'unknown option' /tmp/zhulong_loop.log 2>/dev/null || echo 0
+echo -n "Forbidden 次数: "; grep -c 'Forbidden' /tmp/zhulong_loop.log 2>/dev/null || echo 0
+tail -n 4 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-140
+
+echo; echo "===== DONE ====="
+```
+
+**输出**
+```
+===== 0. TIME =====
+2026-10-04 16:57:07
+hfeg0tedaap02
+
+===== 1. loop / relay 进程（含 ppid）=====
+1069304       1    5848 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+1069705  953319    5839 tail -f /tmp/zhulong_loop.log
+1071337       1    5802 bash zhulong_ops_relay.sh
+1071692  981989    5793 tail -f /tmp/zhulong_ops_relay.log
+1245242 1071337       0 bash zhulong_ops_relay.sh
+
+===== 2. loop 脚本实际 cline 调用行 =====
+3:# 让 cline 读任务书连续推进，并每约 PUSH_INTERVAL 秒兜底做一次 git 同步 + commit + push。
+32:#   本 loop 的 `-m "$MODEL"` 只负责读 MEMORY / pgrep / 打分 / 切臂 / cline auth。
+33:#   被评测的求解 agent 由任务书内 `cline auth -m <MODEL_ID>` 切换（见 ablation_run_task_model_full.md），
+35:MODEL="glm-5.2"
+38:CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
+40:CLINE_TIMEOUT=2700              # 单次编排 cline 最多 45 分钟（读态+打分+切臂+启动，足够）
+105:    echo "[loop] $(date '+%F %T') wake up, invoking cline ..."
+112:          cline -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+113:        echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git sync ..."
+
+===== 3. MEMORY_ZHULONG 顶部 WAITING =====
+3:WAITING: 0
+
+===== 4. /home 大头（有界 du）=====
+/dev/mapper/vgroot-lv_home      394G  371G        6G  99% /home
+7.2G	/home/app.e0019946
+7.3G	/home/app.t0002987
+8.4G	/home/app.e0014566
+8.6G	/home/app.e0017912
+9.1G	/home/app.e0042624
+9.1G	/home/app.t0002965
+14G	/home/app.e0026456
+15G	/home/app.e0044587
+16G	/home/app.e0030544
+16G	/home/app.e0041392
+16G	/home/app.t0002147
+24G	/home/app.vendor.ai.ruide01
+41G	/home/app.e0025768
+71G	/home/app.e0023936
+299G	/home
+
+===== 5. run_code 入口在哪 =====
+-- eda_fastmcp 根 --
+CLAUDE.md
+cleanup_tmp_gt.sh
+daily-memories
+Dockerfile
+docs
+kb
+logs
+main.py
+memory_bank
+MEMORY.md
+monday_eval.log
+prompts
+pyAether-eval
+__pycache__
+pyproject.toml
+README.md
+requirements.txt
+Rules
+run_monday_eval.sh
+run_monday.sh
+-- scripts/ --
+clean_sandbox.sh
+cline_hooks
+common.sh
+dev
+merge_retry_results.sh
+__pycache__
+README.md
+reset_memory_bank.sh
+run_cline_script.sh
+run_cline_script_skill.sh
+run_cline_script_tcl.sh
+run_cli.sh
+run_eval.py
+run_pipeline.sh
+sediment
+set_ablation.py
+set_s1_fidelity.py
+set_s2_phi.py
+start_recall_api.sh
+start_recall_local.sh
+start.sh
+stop_recall_api.sh
+stop_recall_local.sh
+stop.sh
+trace_phi_meta.py
+-- grep run_code 定义文件 --
+/nasdata/app.e0031982/code/eda_fastmcp/main.py
+/nasdata/app.e0031982/code/eda_fastmcp/server/sandbox_server/exec_code.py
+/nasdata/app.e0031982/code/eda_fastmcp/tools/run_code.py
+
+===== 6. 端口口径（.env vs ss 监听）=====
+30:# EDA_MCP_PORT=19999 
+31:EDA_MCP_PORT=${EDA_MCP_PORT:=18890}
+58:# PROXY_PORTS=8664,8665,8653,8669
+59:PROXY_PORTS=8650,8651,8652,8654
+62:SANDBOX_PORT_HTTP=8655
+65:SANDBOX_PORT_TCP=8668
+81:# 空/不设 → 回退单端口(SANDBOX_HOST:SANDBOX_PORT_HTTP / SANDBOX_WORKDIR, 行同旧版)
+-- ss tlnp 相关端口 --
+:18890 :8652 :8653 :8655 :8664 :8665 :8668 :8669 :9006 
+
+===== 7. loop 日志体检 =====
+unknown option 次数: 69
+Forbidden 次数: 0
+0
+[loop] 2026-10-04 16:57:22 wake up, invoking cline ...
+[31merror:[0m error: unknown option '-b'
+[loop] 2026-10-04 16:57:22 cline returned (exit 0), checking git sync ...
+[loop] 2026-10-04 16:57:22 WAITING=0 (no blocker) → sleep 60s
+
+===== DONE =====
+```
