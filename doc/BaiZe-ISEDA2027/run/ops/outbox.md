@@ -6346,3 +6346,152 @@ whag0pgpuap12
 === DONE (.12) ===
 === relay block done ===
 ```
+
+---
+
+## RUN_ID 62 · 2026-10-04 19:27:15 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+echo; echo "=== [.12] R11-F 接手巡检（只读）==="
+timeout 220 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+export PATH="$HOME/.bun/bin:$PATH"
+hostname; date '+%F %T'
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+
+echo; echo "--- 1. task book 是否已含 R11-F（指令六）---"
+grep -n '2026-10-04（六）\|R11-F' "$R/BAIZE_VISION_TASK.md" | head -4 | cut -c1-140
+
+echo; echo "--- 2. MEMORY_VISION 状态头 ---"
+head -6 "$R/MEMORY_VISION.md" | cut -c1-150
+grep -n 'R11-F\|R11F\|datasource\|caption' "$R/MEMORY_VISION.md" | head -5 | cut -c1-140
+
+echo; echo "--- 3. vision loop / 训练进程 ---"
+pgrep -af 'baize_vision_loop.sh' | cut -c1-110
+pgrep -af 'r9_train|r11_run|torch.distributed.run|r8_eval_in1k' | cut -c1-140
+echo "--- vision loop log 末 12 行 ---"
+tail -12 /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-150
+
+echo; echo "--- 4. 代码改动 / 新 runner 是否落地 ---"
+ls -l "$R/vision/r11_run_datasource.sh" "$R/vision/r11_run_gpic.sh" 2>/dev/null | cut -c1-120
+grep -n 'caption_type' "$R/vision/data.py" | head -3 | cut -c1-120
+grep -n 'caption-type' "$R/vision/r9_train.py" | head -3 | cut -c1-120
+
+echo; echo "=== DONE (.12) ==="
+EOS12
+echo "=== relay block done ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 19:27:15
+
+=== [.12] R11-F 接手巡检（只读）===
+whag0pgpuap12
+2026-10-04 19:27:16
+
+--- 1. task book 是否已含 R11-F（指令六）---
+10:| **GPU 状态** | 🟢 **空闲** —— R9/R10/R11-L/L2/caption-weight/R11-E/R13 全部收尾；`WAITING=1` = 待接 **R11-F**（**已�
+12:| **🔜 下一步（✅ 已批准）** | ⭐ **R11-F 数据源横向对比** —— GPIC `short` / `medium` / **`short+medium`(≈90%)**
+13:| **可立即开跑** | 🟢 **R11-F 已批准、即刻执行**（GPU，5 臂串行 ≈8–10h）；纯 CPU 项（R14 / E1 / C1·C2 修�
+18:### 🆕 运维指令 · 2026-10-04（六）：**R11-F 数据源横向对比 —— GPIC `short`/`medium`/`short+medium`(90%) vs en500k v
+
+--- 2. MEMORY_VISION 状态头 ---
+# MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
+
+WAITING: 1
+
+## 状态头
+
+9:| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ 四臂全兑现 · R11-L2 ✅ 完成（未翻盘、冻结文本塔最优）· R11-L
+12:| BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP
+39:- ✅ 两个 ⭐⭐⭐ 仓库源码普查完成（上一 cycle）：**OpenVision**（JAX/TPU，官方 ViT-L/16 = w1024/d24/h16；文本 =
+41:  - **OpenVision2 权重 = ✅ 已放出且真带 caption decoder**：HF `UCSC-VLAA/openvision2-vit-{so400m,large,huge,giant}-patch14-{22
+49:- `caption_type` mix：short **45.0%** / medium 45.1% / long 9.0% / tag 1.0% → **可训练 short 子类：全量 ≈45M / 已下 ≈6.8
+
+--- 3. vision loop / 训练进程 ---
+1815982 bash baize_vision_loop.sh
+1011047 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1011048 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1011052 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1011055 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1011056 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1011057 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1011060 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1011062 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1035853 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1035854 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1035855 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1035856 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1035857 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1035858 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1035859 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1035865 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1035923 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1035926 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1035931 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1035934 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1035936 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1035961 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1035998 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036088 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036089 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036090 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036091 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036092 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036093 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036094 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036178 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036183 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036184 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036185 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036186 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036187 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036188 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036193 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036196 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036213 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036215 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036216 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036217 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036221 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036223 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036243 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036245 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036258 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036259 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1036290 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1047251 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1047285 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1047327 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1047356 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1047431 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1047458 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -u r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --r
+1732691 bun /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_vision -c /nas_train/app.e0031982/code/super_intelli
+--- vision loop log 末 12 行 ---
+-[0m[2m ⚠️ r[0m[2m11_run_aim[0m[2mv2.sh parent[0m[2m process D[0m[2mIED (workers[0m[2m orphaned p[0m[2mpid=1)[0m[2m → auto-eval
+- R11[0m[2m-F code prep[0m[2m ✅ done[0m[2m (data.py +[0m[2m r9_train.py[0m[2m + r11_run[0m[2m_datasource.sh +[0m[2m §15 pre-registrat
+- Auto[0m[2m-launcher will[0m[2m:[0m[2m wait AIM[0m[2mv2 done[0m[2m → run AIM[0m[2mv2 eval →[0m[2m wait[0m[2m GPU free → launch
+
+Let[0m[2m me make[0m[2m the[0m[2m edits. I'll[0m[2m update lines[0m[2m 9[0m[2m, 10,[0m[2m and 13,[0m[2m and add a brief[0m[2m R[0m
+
+Actually[0m[2m, to[0m[2m keep it[0m[2m simple and avoid matching[0m[2m very[0m[2m long strings[0m[2m, let me just[0m[2m update the key[
+
+Let me[0m[2m also update the AIM[0m[2mv2 section ([0m[2mline[0m[2m 114-130[0m[2m) to note[0m[2m the orphan[0m[2med process[0m[2m +[0m
+
+[0m[2mLet me do[0m[2m these edits carefully[0m[2m.[0m
+MEMORY_VISION.md is ~26KB (under 32KB limit). Let me update the status header and AIMv2 section to reflect: AIMv2 at step ~18850, parent script died (
+
+--- 4. 代码改动 / 新 runner 是否落地 ---
+-rwxr-xr-x 1 app.e0031982 app.adm 5946 Oct  4 19:19 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA
+-rw-r----- 1 app.e0031982 app.adm 4230 Oct  4 09:58 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA
+65:    """GPIC loader (no re-packing). Reads GPIC tar = `{key}.json` (caption/caption_type)
+66:    + `{key}.jpg|png`, keeps only `caption_type == 'short'` pairs (0% 77-truncation)."""
+78:        if meta.get('caption_type') != 'short':
+
+=== DONE (.12) ===
+=== relay block done ===
+```
