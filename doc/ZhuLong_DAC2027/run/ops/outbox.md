@@ -1792,3 +1792,49 @@ WAITING: 1
 - 🚨 连续 4 周期阻断（符合「≥4 周期建议人工介入」阈值），正式建议人工介入恢复沙箱后再继续 wo_retrieval r1 打分。�
 == DONE ==
 ```
+
+---
+
+## RUN_ID 15 · 2026-10-04 22:41:33 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 15 — locate anti-cheat hook + how eval sets cline config (read-only)
+GP=/nasdata/app.e0031982/code/eda_fastmcp
+echo "== 0. TIME =="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "== 1. ~/.cline top + hooks dirs =="; timeout 10 ls -la ~/.cline/ 2>&1 | head -18 | cut -c1-150
+echo "-- ~/.cline/hooks --"; timeout 10 ls -la ~/.cline/hooks/ 2>&1 | head -12 | cut -c1-150
+echo "-- ~/.cline/data/hooks --"; timeout 10 ls -la ~/.cline/data/hooks/ 2>&1 | head -12 | cut -c1-150
+echo "== 2. run_cline_script: hook / data-dir / .cline refs =="; timeout 15 grep -nE 'hook|Hook|--data-dir|data-dir|data_dir|CLINE_|\\.cline' "$GP/scripts/run_cline_script.sh" 2>/dev/null | head -30 | cut -c1-190
+echo "== 3. hook files on disk (eda_fastmcp) =="; timeout 15 find "$GP" -maxdepth 3 -iname '*hook*' 2>/dev/null | head -20 | cut -c1-160
+echo "== 4. isolate dirs that already exist =="; timeout 10 ls -ld /nasdata/app.e0031982/.cline_data /nas_train/app.e0031982/.cline_data /home/app.e0031982/.cline_eval 2>&1 | cut -c1-150
+echo "== DONE =="
+```
+
+**输出**
+```
+== 0. TIME ==
+2026-10-04 22:41:33
+hfeg0tedaap02
+== 1. ~/.cline top + hooks dirs ==
+total 16
+drwxr-x---  4 app.e0031982 app.adm 4096 Sep 22 16:09 .
+drwxr-x--- 15 app.e0031982 app.adm 4096 Sep 30 08:53 ..
+drwxr-x--- 10 app.e0031982 app.adm 4096 Oct  4 12:21 data
+drwxr-x---  2 app.e0031982 app.adm 4096 Oct  4 14:39 hooks
+-- ~/.cline/hooks --
+total 8
+drwxr-x--- 2 app.e0031982 app.adm 4096 Oct  4 14:39 .
+drwxr-x--- 4 app.e0031982 app.adm 4096 Sep 22 16:09 ..
+-- ~/.cline/data/hooks --
+ls: cannot access '/home/app.e0031982/.cline/data/hooks/': No such file or directory
+== 2. run_cline_script: hook / data-dir / .cline refs ==
+== 3. hook files on disk (eda_fastmcp) ==
+/nasdata/app.e0031982/code/eda_fastmcp/.git/hooks
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/cline_hooks
+== 4. isolate dirs that already exist ==
+ls: cannot access '/nasdata/app.e0031982/.cline_data': No such file or directory
+ls: cannot access '/nas_train/app.e0031982/.cline_data': No such file or directory
+ls: cannot access '/home/app.e0031982/.cline_eval': No such file or directory
+== DONE ==
+```
