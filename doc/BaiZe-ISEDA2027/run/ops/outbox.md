@@ -7252,3 +7252,97 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 68 · 2026-10-05 07:32:07 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+B=/nas_train/app.e0031982; H=$HOME; C=/home/app.e0031982/.bun/bin/cline
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+export PATH="$H/.bun/bin:$PATH"
+
+echo; echo "=== 1. cline config mcp（正确子命令）看两个隔离目录 ==="
+for n in vision data; do
+  echo "   -- .cline_$n --"
+  timeout 45 "$C" --data-dir "$B/.cline_$n" config mcp 2>&1 | head -20 | cut -c1-150 | sed 's/^/      /'
+done
+
+echo; echo "=== 2. 用 llm_pick 取【真实配对】（base 写进 .cline_data，与 loop 一致）==="
+D="$B/.cline_data"
+LLM_DATA_DIR="$D"; . "$R/llm_rotate.sh"
+ST=/tmp/baize_data_llm_idx
+if llm_pick "$ST" /nas_train/app.e0031982/code/super_intelligence_2035/doc/keys.txt; then
+  echo "   picked model=$LLM_MODEL key=${LLM_KEY:0:8}.. base=$LLM_BASE"
+else
+  echo "   !! llm_pick 无可用候选"
+fi
+echo "   .cline_data/globalState.json base = $(sed -n 's/.*"openAiBaseUrl"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$D/globalState.json" | head -1)"
+
+echo; echo "=== 3. ⭐ 真跑 cimi_search（真实配对 + MCP 配置）==="
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+env $P timeout 280 "$C" --data-dir "$D" -c /tmp -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible --auto-approve true -t 240 \
+  "You have an MCP tool named 'cimi_search' (server pyAether_MCP_server). Call it to search the web for: masked autoencoder MAE. Then answer in <=5 lines: (1) tool available yes/no; (2) 2 result titles; (3) their URLs; (4) if it failed, paste the exact error text." \
+  < /dev/null > /tmp/cimi_smoke2.log 2>&1; rc=$?
+echo "   rc=$rc"; tail -32 /tmp/cimi_smoke2.log | cut -c1-170 | sed 's/^/      /'
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-05 07:32:07
+
+=== 1. cline config mcp（正确子命令）看两个隔离目录 ===
+   -- .cline_vision --
+      Configured MCP servers (/home/app.e0031982/.cline/data/settings/cline_mcp_settings.json):
+        pyAether_MCP_server [sse]
+   -- .cline_data --
+      Configured MCP servers (/home/app.e0031982/.cline/data/settings/cline_mcp_settings.json):
+        pyAether_MCP_server [sse]
+
+=== 2. 用 llm_pick 取【真实配对】（base 写进 .cline_data，与 loop 一致）===
+[llmrot] 2026-10-05 07:32:12 优先选中 glm-5.2 #4 @ http://agi-gateway.cxmt.com/cloud/v1 (probe=200)
+   picked model=glm-5.2 key=02_088EE.. base=http://agi-gateway.cxmt.com/cloud/v1
+   .cline_data/globalState.json base = http://agi-gateway.cxmt.com/cloud/v1
+
+=== 3. ⭐ 真跑 cimi_search（真实配对 + MCP 配置）===
+   rc=0
+      [2m[thinking] [0m[2mThe[0m[2m user wants me to[0m[2m call the cimi[0m[2m_search tool and[0m[2m report back[0m[2m.[0m
+      [36m[pyAether_MCP_server__cimi_search][0m {"query":"masked autoencoder MAE","top_k":5}
+      Warning: AI SDK Warning System: To turn off warning logging, set the AI_SDK_LOG_WARNINGS global to false.
+            at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+            at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:626:5)
+            at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+      
+      DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+            at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+            at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+            at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+      
+      DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+            at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+            at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+            at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+      
+         [90m⎿ [0m[2m{"content":[{"type":"text","text":"{\n  \"Response\": {\n    \"RequestId\": \"183722d3-b7e4-4954-...[0m
+      (1) Tool available: **Yes**
+      (2) Two result titles: "Masked Autoencoders (MAE)" and "RESEARCH ARTICLE Evaluating the Robustness of Foundation Models for Satellite Imagery"
+      (3) URLs: https://docs.nvidia.com/tao/tao-toolkit/latest/text/cv_finetuning/pytorch/self_supervised_learning/mae.html and http://xplorestaging.ieee.org/ielx8/6287639/1082
+      (4) Did not fail — no error text.
+      DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+            at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+            at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+            at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+      
+      DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+            at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+            at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+            at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+      
+
+=== DONE ===
+```
