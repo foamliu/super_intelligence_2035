@@ -22,7 +22,11 @@ CWD="$SCRIPT_DIR"
 GIT_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo '/nas_train/app.e0031982/code/super_intelligence_2035')"
 REL="doc/BaiZe-ISEDA2027/run"
 
-MODEL="deepseek-v4-pro-fp4"      # 工程任务模型
+MODEL="glm-5.2"                     # 编排模型（deepseek-v4-pro-fp4 额度已耗尽）
+
+# 🔑 glm-5.2 key（编排模型；deepseek-v4-pro-fp4 额度已耗尽，改用 glm-5.2）
+CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
+
 CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟
 PUSH_INTERVAL=18000             # 每 5 小时兜底同步一次
 SLEEP_BUSY=60                   # 无阻塞时的唤醒间隔
@@ -92,7 +96,11 @@ while true; do
     echo "[loop] $(date '+%F %T') wake up, invoking cline ..."
     if [[ -f "$TASK_MD" ]]; then
         prompt="$(< "$TASK_MD")"
-        cline -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+        # 🚫 剥掉代理环境变量（内网网关 agi-gateway.cxmt.com 不该走外网代理，否则 `error: Forbidden`）。
+        #    ⚠️ 只作用于本行 cline；loop 自身 / git push 仍保留 proxy（外网仍需代理）。
+        env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
+            -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
+          cline -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
         echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git sync ..."
     else
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"

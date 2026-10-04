@@ -413,42 +413,71 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
 <h3>9.1 ⚠️ 编排模型切换：deepseek-v4-pro-fp4 → glm-5.2</h3>
 
 <div class="danger">
-  <b>起因：</b>vision 与 pretrain 两 agent 使用的编排模型 <code>deepseek-v4-pro-fp4</code> token 额度已于 2026-10-04 耗尽，API 返回 <code>Forbidden</code> 错误。经运维确认两线均受影响。
+  <b>起因：</b>所有四条 agent 线使用的编排模型 <code>deepseek-v4-pro-fp4</code> token 额度已于 2026-10-04 耗尽，API 返回 <code>Forbidden</code> 错误。
 </div>
 
-<p><b>解决方案：</b>两个 loop 脚本中的编排模型统一切换为 <code>glm-5.2</code>，API key 已在仓库中硬编码更新：</p>
+<p><b>解决方案：</b>四条 loop 脚本中的编排模型统一切换为 <code>glm-5.2</code>，对应 API key 已在仓库中硬编码更新。<br>
+<small>⚠️ 同时修复了 cline 调用行中的三个关键差异：① <code>-P openai-compatible</code> 显式指定 provider（缺少时 <code>baseUrl</code> 不含 <code>/cloud/v1</code> 会导致 <code>Forbidden</code>）；② <code>env -u *_PROXY</code> 剥离代理环境变量；③ <code>-k &lt;key&gt;</code> 显式传 key（.29 上必需）。</small></p>
 
 <table>
-  <tr><th>Loop 脚本</th><th>旧模型</th><th>新模型</th><th>API Key</th></tr>
+  <tr><th>Loop 脚本</th><th>主机</th><th>旧模型</th><th>新模型</th><th>API Key</th></tr>
   <tr>
-    <td><code>baize_vision_loop.sh</code></td>
+    <td><code>baize_pretrain_loop.sh</code></td><td><code>.29</code></td>
     <td><code>deepseek-v4-pro-fp4</code></td>
-    <td rowspan="2"><code>glm-5.2</code></td>
-    <td rowspan="2"><code>02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23</code></td>
+    <td rowspan="4"><code>glm-5.2</code></td>
+    <td rowspan="4"><code>02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23</code></td>
   </tr>
   <tr>
-    <td><code>baize_pretrain_loop.sh</code></td>
+    <td><code>baize_harness_loop.sh</code></td><td><code>.29</code></td>
+    <td><code>deepseek-v4-pro-fp4</code></td>
+  </tr>
+  <tr>
+    <td><code>baize_vision_loop.sh</code></td><td><code>.12</code></td>
+    <td><code>deepseek-v4-pro-fp4</code></td>
+  </tr>
+  <tr>
+    <td><code>baize_data_loop.sh</code></td><td><code>.12</code></td>
     <td><code>deepseek-v4-pro-fp4</code></td>
   </tr>
 </table>
 
-<p><b>在 36.15 服务器上重启两个 loop：</b></p>
+<h3>9.2 重启命令（复制即用）</h3>
+
+<p><b>在 <code>.29</code> 上重启 pretrain + harness loop：</b></p>
 <pre class="cmd"><code><span class="cm"># 停止旧 loop</span>
-pkill -f baize_vision_loop.sh
 pkill -f baize_pretrain_loop.sh
+pkill -f baize_harness_loop.sh
 
 <span class="cm"># 拉取最新代码</span>
-cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+git pull --rebase
+
+<span class="cm"># 重启 pretrain loop</span>
+setsid bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+
+<span class="cm"># 重启 harness loop</span>
+setsid bash baize_harness_loop.sh > /tmp/baize_harness_loop.log 2>&1 < /dev/null &
+
+<span class="cm"># 确认启动</span>
+sleep 2 && pgrep -af 'baize_(pretrain|harness)_loop'</code></pre>
+
+<p><b>在 <code>.12</code>（本机）上重启 vision + data loop：</b></p>
+<pre class="cmd"><code><span class="cm"># 停止旧 loop</span>
+pkill -f baize_vision_loop.sh
+pkill -f baize_data_loop.sh
+
+<span class="cm"># 拉取最新代码</span>
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
 git pull --rebase
 
 <span class="cm"># 重启 vision loop</span>
 setsid bash baize_vision_loop.sh > /tmp/baize_vision_loop.log 2>&1 < /dev/null &
 
-<span class="cm"># 重启 pretrain loop</span>
-setsid bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+<span class="cm"># 重启 data loop</span>
+setsid bash baize_data_loop.sh > /tmp/baize_data_loop.log 2>&1 < /dev/null &
 
 <span class="cm"># 确认启动</span>
-sleep 2 && head -3 /tmp/baize_vision_loop.log /tmp/baize_pretrain_loop.log</code></pre>
+sleep 2 && pgrep -af 'baize_(vision|data)_loop'</code></pre>
 
 
 
