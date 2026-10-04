@@ -169,6 +169,8 @@ error: error: unknown option '-b'
 
 15. **🔴 cline `error: Forbidden` = `openAiBaseUrl` 与模型不匹配**：2026-10-04 RUN_ID 7/8 —— 36.15 的 cline `globalState.json` 里 `openAiBaseUrl=http://agi-gateway.cxmt.com/v1`，而 **glm-5.2 必须用 `/cloud/v1`**（`/v1` → `Forbidden`）。且 loop 只传 `-k/-P`、**不提供 base URL**，必须靠 cline 配置（`cline auth -b ...`，或 BaiZe 那种隔离 `--data-dir`）。**修法**：`cline auth -p openai -k <key> -b http://agi-gateway.cxmt.com/cloud/v1 -m glm-5.2` → 重启 loop。**对照** `baize_data_loop.sh` §46（flash@/v1=200 但 @/cloud/v1=403）。
 
+16. **🔴 防作弊 hook 会误伤编排 agent（`~/.cline` 配置目录污染）**：评测对象是 cline；评测前脚本把 **PreToolUse hook 拷进 `~/.cline/hooks`**（评测结束删除），用于**禁止评测对象调用 `run_commands`**。若启动任务时**未指定独立 `--data-dir`**，则**评测对象 cline 与编排 agent（zhulong loop 的 cline）共用 `~/.cline`** → 编排 agent 在整轮评测（**3–4h**）内也被同一 hook 拦 `run_commands`（表现 = `ACCESS RESTRICTED`）。编排 loop 每 30min 唤醒 → 一轮评测内会连续被拦 **6–8 次**，**这是当前设计的正常现象，不是故障、也不是"沙箱"**。**根治**：给**编排 agent** 单独的 `--data-dir`（照 BaiZe `baize_data_loop.sh` 的隔离 `DATA_DIR` 做法），或在**评测时**给评测对象指定独立配置目录 —— 使两者 hooks/配置互不可见。**接管动作应包含此项。**
+
 ---
 
 ## 8. 记忆维护规程（对我自己）
@@ -187,6 +189,7 @@ error: error: unknown option '-b'
   - **两个 driver 都空转**：① `ablation_run_loop_component_s2_full.sh`（PID 2455466，`MODEL=deepseek-v4-pro-fp4`，30min/轮）—— 其 cline 会话**连续 ≥4 周期被沙箱阻断**（`run_commands`→ACCESS RESTRICTED），无法推进；② `ablation_run_conductor_serial.sh`（PID 1381975，**已跑 3.3 天**）—— 日志每 30min `error: Forbidden`，**3.3 天零产出**。
   - **已产出的真实数据（接管应 harvest）**：`pure_llm ×5 = 10.5±1.9%`、`rag ×5 = 68.2±7.4%`（**BM25 降级态，需重跑**）、`wo_retrieval r1 = 74.1%`（117/158，10-04 14:40 已跑完，但 agent 被阻断读不到）；另有 1-shot：full 84.8 / k10 75.3 / k3 69.0 / k1 60.8 / lagged 80.4·84.2 / omega_low r2 82.3。
   - **冲突**：两线共用同一评测 infra（eda_fastmcp + MCP 8090 + `.env`），**不能并发跑 eval**；合并线（git、glm-5.2 编排）本就设计为**取代** legacy 线。
+  - ⚠️ **更正（用户 22:2x 澄清）**：上面说的"沙箱阻断"**实为防作弊 PreToolUse hook 污染** —— 评测前脚本把 hook 拷进 `~/.cline/hooks`（禁 `run_commands`），而编排 agent 与评测对象**共用 `~/.cline`**（启动时未指定独立 `--data-dir`）→ 整轮评测（3–4h）内编排 agent 每 30min 唤醒都被拦。**非故障、是当前设计已知现象**；根治见 §7-16。→ **接管方案须补一项：给合并线编排 agent 独立 `--data-dir`，与评测对象的 `~/.cline` 隔离。**
   - **接管方案（待拍板）**：停 legacy 两进程 → harvest 有效数据 → 由合并线续跑余下臂。
 - **2026-10-04（19:0x–21:54 运维亲自经 ops 中继打通整条链路：中继正常 + loop 修复 + agent 终被唤醒）** ——
   - ✅ **中继"恢复正常"**（此前"RUN_ID 4 卡死"系**误判**）：亲手实测 `run/ops/outbox.md` RUN_ID 1–8 **全部 `exit=0`**；RUN_ID 4 heavy 其实 **17:05:57 就跑完**，只是 `push` 反复失败在重试。**反思**：把"push 失败"错当成"卡死"，并据错误判断写了"抢救中继"指令。
