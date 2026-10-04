@@ -264,19 +264,6 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   ⚠️ B 的倒挂疑为 <b>FP8 amax/delayed-scaling allreduce 与 SP allreduce 叠加冲突</b> → 在 P-9.6② 用 <code>CUDA_DEVICE_MAX_CONNECTIONS=1</code> 做 A/B 隔离。
 </div>
 
-<h2 class="sec" id="s4"><span class="no">4</span>vision：R11-L2 + caption 权重消融</h2>
-
-<h3>4.1 R11-L 家族：<b>五臂全部未翻盘</b></h3>
-<table>
-  <tr><th>臂</th><th>是什么</th><th>IN-1k lp（@5.12/10.24/15.36M）</th><th>判定</th></tr>
-  <tr><td>① 基线</td><td>OpenVision2 w512 + 冻结 CLIP-768 + InfoNCE</td><td><b>3.43 / 5.45 / 6.08%</b></td><td>参照</td></tr>
-  <tr><td>② SigLIP</td><td>换 sigmoid 对比损失</td><td>2.19 / 3.13 / 4.36%</td><td><span class="badge b-no">未翻盘</span></td></tr>
-  <tr><td>③ LocalLoss</td><td>只算本地行（仍是 512 池）</td><td>1.81 / 3.60 / 4.33%</td><td><span class="badge b-no">未翻盘</span></td></tr>
-  <tr><td>④ CoCa</td><td>对比 + caption 自回归（<b>首个稠密监督臂</b>）</td><td>0.29 / 0.37 / <b>0.47%</b>（≈随机）</td><td><span class="badge b-no">未翻盘</span>（trunk 被打回随机）</td></tr>
-  <tr><td><b>R11-L2</b></td><td><b>文本塔解冻（LoRA/Adapter）</b>—— 我批准为下一优先级</td><td>—</td><td><span class="badge b-no">未翻盘</span> → <b>冻结文本塔仍最优</b></td></tr>
-</table>
-<p>R11-L2 耗时 <b>2.09 h × 8 卡 ≈ 16.7 GPU·h</b>。含义：<b>「文本塔冻结锁死上限」这个假说被否掉</b> —— 在当前数据规模下，解冻文本塔并不带来收益。</p>
-
 <h3>3.6 ⭐ P-9.6：两步法（运维最高优先指令）—— <b>① 速度最优仍是 seq4096 · ② FP8 @ M=65536 首次转正 🎉</b></h3>
 <p><b>背景</b>：P-9.4 的「M=16384 不转正」被质疑为「未给 FP8 公平机会」（交叉点 M≈30–32K）。运维指定两步法：① 先在 bf16 下找到<b>「训练速度最优」配置（M≥32768）</b>→ ② 在该点测 FP8（判据 s &gt; 1.05）。</p>
 
@@ -310,7 +297,7 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <tr><td><b>B</b></td><td><b>FP8</b></td><td><b>0</b></td><td><b>~18.30s</b>（60 步均值）</td><td><b>~229K</b></td><td>73.6 GB</td><td><span class="badge b-ok"><b>s≈1.21</b></span></td></tr>
   <tr><td><b>A</b></td><td><b>FP8</b></td><td><b>1</b></td><td><b>~17.86s</b>（60 步均值）</td><td><b>~235K</b></td><td>73.6 GB</td><td><span class="badge b-ok"><b>s≈1.24</b></span></td></tr>
 </table>
-<div class="ok-box" style="border-left-color:#cf222e; background:#fff0f0;">
+<div class="ok-box">
   🎉 <b>FP8 转正！</b>判据 s&gt;1.05，两个点均大幅超过（B s=1.21、A s=1.24）。<b>A <code>CUDA_DEVICE_MAX_CONNECTIONS=1</code> 确有额外 ~2.4% 收益</b>（验证了 P-9.4 的 SP amax allreduce 叠加拖累假说）。<br>
   <b>关键意义</b>：<b>这是本模型第一次在端到端训练中观测到 FP8 正收益</b>。此前 P-9.4（M=16384）FP8 持平甚至倒挂，根源确实是 <b>「M 太小，没给 FP8 公平机会」</b>。在 M=65536 下 FP8 交出 s=1.24 → <b>bf16 吞吐 189K × 1.24 ≈ 234K tok/s，非常接近当前 bf16 最优的 249K</b>。<br>
   ⚠️ 但该配置（TP4·SP·MBS8·seq8192）的 <b>bf16 基线 189K 本就远低于最优 249K</b>，FP8 后的 234K 追到 ~94% —— 仍未超越。<b>TP 开销是瓶颈，不是精度</b>。
@@ -324,6 +311,19 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <tr><td><b>B. FP8·seq8192</b></td><td>TP4·DP2·SP·MBS8</td><td>189K（bf16）</td><td><b>~234K</b>（FP8, s=1.24）</td><td>65536</td><td><span class="badge b-warn">⚠️ 比 A1 仍慢 6%</span></td></tr>
 </table>
 <p>⇒ <b>bf16 seq4096 仍是绝对速度最优</b>（249K）；FP8 在 M=65536 翻倍但 TP4 通信开销让净吞吐只到 234K。若 P-8 正式训练追求<b>吞吐第一</b> → <b>A1（TP1·DP8·MBS2·bf16）</b>；若需要 <b>长上下文（seq8192）</b>→ 可接受 ~6% 吞吐损失选 B（FP8 更有性价比，因 bf16 基线只有 189K）。<b>等待 P-5b recipe 调优（P-9.5 profiling）与数据配比（base 下满）后再定 P-8</b>。</p>
+
+<h2 class="sec" id="s4"><span class="no">4</span>vision：R11-L2 + caption 权重消融</h2>
+
+<h3>4.1 R11-L 家族：<b>五臂全部未翻盘</b></h3>
+<table>
+  <tr><th>臂</th><th>是什么</th><th>IN-1k lp（@5.12/10.24/15.36M）</th><th>判定</th></tr>
+  <tr><td>① 基线</td><td>OpenVision2 w512 + 冻结 CLIP-768 + InfoNCE</td><td><b>3.43 / 5.45 / 6.08%</b></td><td>参照</td></tr>
+  <tr><td>② SigLIP</td><td>换 sigmoid 对比损失</td><td>2.19 / 3.13 / 4.36%</td><td><span class="badge b-no">未翻盘</span></td></tr>
+  <tr><td>③ LocalLoss</td><td>只算本地行（仍是 512 池）</td><td>1.81 / 3.60 / 4.33%</td><td><span class="badge b-no">未翻盘</span></td></tr>
+  <tr><td>④ CoCa</td><td>对比 + caption 自回归（<b>首个稠密监督臂</b>）</td><td>0.29 / 0.37 / <b>0.47%</b>（≈随机）</td><td><span class="badge b-no">未翻盘</span>（trunk 被打回随机）</td></tr>
+  <tr><td><b>R11-L2</b></td><td><b>文本塔解冻（LoRA/Adapter）</b>—— 我批准为下一优先级</td><td>—</td><td><span class="badge b-no">未翻盘</span> → <b>冻结文本塔仍最优</b></td></tr>
+</table>
+<p>R11-L2 耗时 <b>2.09 h × 8 卡 ≈ 16.7 GPU·h</b>。含义：<b>「文本塔冻结锁死上限」这个假说被否掉</b> —— 在当前数据规模下，解冻文本塔并不带来收益。</p>
 
 <h3>4.2 caption 权重三点消融：假设 B 坐实</h3>
 <table>
