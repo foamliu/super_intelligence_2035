@@ -53,16 +53,55 @@ WAITING: 0
 | 旧 S1 保真度线（legacy） | `run/ablation_run_task_s1_full.md` · `run/MEMORY_s1_full.md` | 10-03 曾活动 | ⬜ **只读历史**；与合并线**待衔接**（旧 5-run：`omega_low` r1=81.6 / r2=82.3，r3 infra 作废） |
 | 旧组件线（legacy） | `run/ablation_run_task_component_s2_full.md` · `run/MEMORY_component_full.md` | 10-04 曾活动 | ⬜ **只读历史**；可能**仍在服务器上跑**（`pure_llm`→`rag`→`wo_retrieval`），**待与 36.15 旧 agent 冲突一并处置** |
 | 旧 S2 1-shot 探路线 | `run/ablation_run_task_s2_1shot.md` · `run/MEMORY_s2_1shot.md` | 已出探路值 | ⬜ 只读历史 |
-| **ops 中继** | `run/zhulong_ops_relay.sh` · `run/ops/` | ❌ **未启动** | `outbox.md` 空、`.last_run_id=0`；RUN_ID 1（环境摸底）已预置，**待服务器 `setsid` 启动** |
+| **ops 中继** | `run/zhulong_ops_relay.sh` · `run/ops/` | 🟢 **在跑**（36.15，自 15:20） | ⚠️ **疑似两个进程**（PID `1071337` / `1239220`，待查 ppid）；**RUN_ID 1 已执行**（16:53，结果见 `outbox.md`） |
 
 > ⚠️ **三处口径需要运维收敛**：① 合并线是否从 `S1.omega_low ROUND=1` 起跑，还是延续旧 S1（`ROUND=3`，复用 r1/r2）？② 36.15「旧 agent」与合并线的切换方式；③ 10-04 报告记「环境冻结」但任务书记「冻结令已解除」——**以任务书为准，冻结解除**（见 §9 流水）。
+
+### 3.1 🆕 36.15 环境摸底结果（**RUN_ID 1，2026-10-04 16:53，host=`hfeg0tedaap02`**）
+
+> 证据留痕：`run/ops/outbox.md`（RUN_ID 1）。**结论：infra 未就绪，且 zhulong_loop 存在静默失效。**
+
+| 项 | 实测 | 判定 |
+|:--|:--|:--|
+| **host / user / GIT_ROOT** | `hfeg0tedaap02` · uid `app.e0031982` · `/nasdata/app.e0031982/code/super_intelligence_2035` | ✅ |
+| **`/home`** | **394G 总 / 371G 用 / 6G 可用 / 99%** | 🔴 **FAIL**（infra 要求 ≥ ~8G）——**旧 S1 停摆的老根因复现** |
+| `/nasdata` | 527G / 151G / 377G / **29%** | ✅ 宽裕 |
+| `/tmp` | 49G / 25G 可用 / 54% | ✅ |
+| **shard 端口 8664/8665/8653/8669** | 四个全 ✅ OPEN | ✅（但见下 `.env` PROXY_PORTS 口径不符） |
+| **eda_fastmcp** | `/nasdata/app.e0031982/code/eda_fastmcp` 存在（含 `main.py` / `venv` / `kb` / `logs` / `memory_bank`） | ✅ 代码在 |
+| **`run_code` 入口** | ⚠️ 根目录**未找到** `run_code`/`run_code.sh`（只有 `run_monday_eval.sh` / `run_monday.sh`） | ⚠️ **待确认**（可能是 MCP 工具而非独立脚本 → 需用真实 `run_code` 调用验） |
+| **进程：zhulong_loop** | pgrep 未列出，但 `/tmp/zhulong_loop.log` 每 60s 在唤醒 → **在跑**（pgrep 正则 `zhulong_loop\\.sh` 双重转义写错，漏报） | 🟠 在跑但**静默失效**（见下） |
+| **进程：zhulong_ops_relay** | **两个** PID `1071337` 与 `1239220`（+ 一个 `tail -f`） | ⚠️ **待查 ppid**（一个可能是子进程，也可能真重复 → 会重复执行 RUN_ID） |
+| **`.env` 当前臂** | `EDA_OMEGA_FIDELITY=high` · `EDA_RUNCODE_READBACK=full` · `EDA_PHI_BUDGET=0` · `EDA_PHI_LAGGED=0` · **`EDA_MCP_TOOLS_DISABLED` 含 `get_api_details,search_apis,search_api…`（检索关）** | 🔴 反映**上一个臂 = `wo_retrieval`（检索 OFF + run_code ON）**，`.env` 已被改（git ` M .env`） |
+| **`.env` 端口** | `PROXY_PORTS=8650,8651,8652,8654`（注释里示例才是 8664,8665,8653,8669） | ⚠️ 与任务书口径不符，**待核**（实际用的代理端口是 8650-8654？） |
+| **机器负载** | `/home` 下**多个其他用户**在跑 `eda_platform` / `eda_fastmcp` / sandbox bootstrap（`app.e0030884`/`t0002949`/`t0002638`/`e0042624`/`vendor.ai.ruide01`…） | ⚠️ **高共享**，重 I/O 需避让 |
+
+**🔴 关键结论 —— zhulong_loop 静默失效（与 BaiZe 的 `Forbidden+exit0` 同类）**：
+
+```
+[loop] 2026-10-04 16:53:19 wake up, invoking cline ...
+error: error: unknown option '-b'
+[loop] 2026-10-04 16:53:20 cline returned (exit 0), checking git sync ...
+[loop] 2026-10-04 16:53:20 WAITING=0 (no blocker) → sleep 60s
+```
+
+- 36.15 上**正在跑的 `zhulong_loop.sh` 是旧版**，cline 调用里带**非法的 `-b`** → **cline 根本没运行**（`unknown option '-b'` 后直接 `exit 0`）→ **agent 从未被唤醒、任务书零推进**，却被 loop 当成成功。**当前"已启动"实为"空转"。**
+- 仓库版本早已修复（`c3d52e9` 删 `-b`、`81d6869` 改 `-P openai-compatible`）→ **需在 36.15 `git pull` 后重启 loop**（bash 增量读脚本，改运行中的脚本无效）。
+- 另：`MEMORY_ZHULONG.md` 顶部 `WAITING: 0`（loop 读这行）与状态表 `WAITING=1` 不一致 → loop 按"无阻塞"每 **60s** 空转（应 `1` → 30min）。**两处都要修。**
+
+> 处置建议（待拍板）：**① 先清 `/home`（目标回到 ≥8G，参考 BaiZe `.29` 回收思路）→ ② 修 `MEMORY_ZHULONG.md` 顶部 `WAITING: 1` → ③ `git pull` + 重启 `zhulong_loop.sh`（用新版无 `-b`）→ ④ 查 relay 是否真重复（ppid）→ ⑤ 再定起始点启动合并线。**
+
 
 ---
 
 ## 4. 待拍板 / 我欠的答复
 
 - [ ] **起始点**：合并线从 `S1.omega_low ROUND=1` 起，还是延续旧 S1（`CONFIG=omega_low, ROUND=3`，把 r1=81.6 / r2=82.3 写进成绩表、不重跑）？——**须运维在任务书指令区填实**。
-- [ ] **infra 三项前置校验是否恢复**：`/home` ≥ ~8G · 端口 `8664/8665/8653/8669` 全 OPEN · `run_code` 可执行（license 可用）。→ 用 **ops RUN_ID 1 摸底**确认。
+- [x] **infra 三项前置校验 → 🔴 未通过**（RUN_ID 1 实测）：① `/home` **99% / 仅 6G 可用 → FAIL**；② 四端口 ✅ OPEN；③ `run_code` 入口**未在根目录找到 → 待确认**。
+- [ ] 🔴 **清 `/home`**（≥8G 才可能开跑；旧 S1 停摆老根因）——用什么目录回收、是否动别的用户目录，**待拍板**。
+- [ ] 🔴 **重启 `zhulong_loop.sh`**（现版静默失效：cline 带非法 `-b`，agent 从未被唤醒）——须先在 36.15 `git pull`。
+- [ ] ⚠️ **relay 疑似重复**（PID `1071337` / `1239220`）→ 查 `ppid`；⚠️ **`MEMORY_ZHULONG.md` 顶部 `WAITING` 0/1 不一致**（loop 读顶部那行）→ 修为 `1`。
+- [ ] ⚠️ **`.env` `PROXY_PORTS=8650-8654`** 与任务书口径 `8664/8665/8653/8669` 不符 → 核实哪个才对。
 - [ ] **36.15 旧 agent 冲突**：旧线（S1 / 组件）与新合并线**不能并发**；何时、如何停旧启新？
 - [ ] **启动 ops 中继**（服务器侧 `setsid bash zhulong_ops_relay.sh`）——启动后我才能远程探查/下发命令。
 - [ ] **Phase B 模型 key 是否仍有效**（`glm-5.2` / `deepseek-v4-flash` / `kimi-k2.6-cloud` / `doubao-seed-2.0-pro-cloud`，见任务书 §6）——启动 Phase B 前须核。
@@ -93,7 +132,8 @@ WAITING: 0
 - **路径（两台服务器独立挂载）**：36.15（最终目标）前缀 `/nasdata/`，`BASE_DIR=/nasdata/app.e0031982/code/eda_fastmcp`；2.12（开发机）前缀 `/nas_train/`。旧 task book 里 `/nasdata/` 路径在 36.15 上**仍有效**。
 - **repo**：`git@github.com:foamliu/super_intelligence_2035.git`，分支 `main`；仓库根在共享工作副本。
 - **编排模型** = `glm-5.2`（`deepseek-v4-pro-fp4` 额度已耗尽，故换）；key 见 `run/zhulong_loop.sh`（**不在本文件重复明文**）。
-- **四 shard 端口**：`8664 / 8665 / 8653 / 8669`。
+- **四 shard 端口**：`8664 / 8665 / 8653 / 8669`（⚠️ 但 36.15 `.env` 实际写的是 `PROXY_PORTS=8650,8651,8652,8654` —— **待核**）。
+- **36.15 = `hfeg0tedaap02`**（uid `app.e0031982`）；**`/home` 是独立 LV、极易满**（2026-10-04 实测 **99% / 6G 可用**）→ **开跑前必查 `/home`**。
 - **锚点复用（跑一次多处引用，禁止重跑）**：`C1.full ×5` = `tab:main-ablation`(full) + `tab:omega`(H) + `tab:ablation-harness`(F) + `tab:phi-bound`(unbounded) + `tab:llm-comparison`(主基座)。
 - **不做**：`wo_sandbox` / `wo_selfexpl`（main-ablation 两行暂缓）· `(H+E)` 档 · `phi_unbounded`（≡ full）· 主基座模型消融臂（≡ full）。
 
@@ -110,6 +150,10 @@ WAITING: 0
 7. **🟡 `.env` 并发截断**：切臂脚本串行 `&&`，严禁并发。
 8. **🟡 git fetch 在高峰期 >30s**：PowerShell 会把 git stderr 当异常 → 用 `cmd /c "... > log 2>&1"` + **后台重试循环**。
 9. **🟡 共享工作副本**：多线共用 `super_intelligence_2035`；陌生未提交改动**可能是别的任务在途文件**，🚫 不要 clean/stash/reset。
+10. **🔴 loop 版本陈旧 → 静默失效**：36.15 在跑的 `zhulong_loop.sh` 曾带**非法 `-b`** → `error: unknown option '-b'` + `exit 0` → **cline 从未运行、agent 零唤醒**。**`grep -c \"unknown option\\|Forbidden\\|error:\" /tmp/zhulong_loop.log` 应作为日常体检首项**；改脚本后**必须重启 loop**（bash 增量读，改运行中的脚本无效）。
+11. **🔴 `-b` / `-k` / `-P` 是 cline CLI 的敏感参数**：`-b` 非法（会中断）；正确是 `-P openai-compatible` + `-k <key>`（见 `zhulong_loop.sh`）。凡 loop 变更后先在服务器 `cline ... ; echo $?` 冒烟。
+12. **🟡 pgrep 正则双重转义会漏报**：预置探针里 `'zhulong_loop\\\\.sh'` 在 bash ERE 下变成"要求字面反斜杠" → **匹配不到真实进程**（RUN_ID 1 就漏报了 loop）。写 `pgrep -af 'zhulong_loop'` 更稳。
+13. **🟡 `MEMORY_*.md` 的 `WAITING` 只有顶部行被 loop 读取**：表格里的 `WAITING=1` 与顶部 `WAITING: 0` 不一致时，**以顶部为准**（会误判成"无阻塞"而高频空转）。
 
 ---
 
@@ -124,5 +168,10 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
+- **2026-10-04（RUN_ID 1 环境摸底 → 发现两处致命问题）** —— 经 ops 中继在 36.15（`hfeg0tedaap02`）跑环境摸底，结果见 §3.1 / `run/ops/outbox.md`：
+  - 🔴 **`/home` 99%（仅 6G 可用）→ infra 前置校验 FAIL**（旧 S1 停摆老根因复现）。
+  - 🔴 **`zhulong_loop.sh` 静默失效**：在跑的版本 cline 带非法 `-b` → `unknown option '-b'` + `exit 0` → **agent 从未被唤醒**（"已启动"实为"空转"）。
+  - ⚠️ relay 疑似两个进程；`MEMORY_ZHULONG.md` 顶部 `WAITING: 0` 与表 `1` 不一致（loop 读顶部 → 60s 空转）；`.env` `PROXY_PORTS=8650-8654` 与任务书口径不符；四端口 8664/8665/8653/8669 实测 OPEN。
+  - 处置建议见 §3.1 末尾（清 `/home` → 修 `WAITING` → `git pull`+重启 loop → 查 relay → 定起始点）。
 - **2026-10-04** —— **建立 ZhuLong 运维（operator）层**（对齐 BaiZe）：新建 `doc/ZhuLong_DAC2027/MEMORY.md`（本文件）+ `doc/ZhuLong_DAC2027/daily-memories/`，并在 `run/AGENTS.md` 登记「谁在跑」总表、在 `README.md` 补 `§0.2 运维层`。背景：此前运维侧**没有记忆**，多线（合并线 + 3 条 legacy）状态散落在任务书/报告/各 `MEMORY*.md` 里，易数错。
 - **2026-10-04（agent 线侧，供我参考）** —— 建立**合并任务书 + 单 loop + ops 中继**：`run/ZHULONG_TASK.md`（4 阶段 15 臂 75 轮）· `run/zhulong_loop.sh` · `run/zhulong_ops_relay.sh` + `run/ops/`。任务书记「冻结令已解除、编排模型切 `glm-5.2`」；旧报告 `report_10_04.html` 仍记「环境冻结中（36.15 旧 agent 冲突）」——**以任务书为准**，冲突待 §4 拍板处置。
