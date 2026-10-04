@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 37 -->
+<!-- RUN_ID: 38 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,55 @@
 
 ---
 
-## RUN_ID 37 — ✅ **核验 5 项删除的最终状态 + 实际回收量**（**只读**）（**本块最新，优先执行**）
+## RUN_ID 38 — 🏠 **`/home` 大盘排查（重点本用户 `$HOME`）**（**只读**）（**本块最新，优先执行**）
+
+**用户指令（2026-10-04）**：`.29` 的 **`/home` 占用已超 90%** → 查有哪些大头的占用、可否清理，**先从我自己的目录 `/home/app.e0031982` 开始排查**。
+
+**设计要点（吸取 RUN_ID 34 卡死中继的教训）**：🚫 **每条命令都要 `timeout`**；🚫 **绝不对大目录做全树 `grep/find`**；重活（`du`）**丢后台 `setsid nice -n 19`** + 边跑边落盘 + `.done` 标记 → **本块秒回**，结果由下一轮读。
+🚫 **只读**：不删、不移、不改。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME
+
+echo; echo "=== 1. /home 大盘（容量 + inode 双看）==="
+df -hT /home 2>/dev/null
+df -BG /home 2>/dev/null | tail -1
+echo -n "   inode: "; df -i /home 2>/dev/null | tail -1
+echo "   -- 顺带看根分区（/home 可能不是独立挂载）--"; df -hT / 2>/dev/null | tail -1
+
+echo; echo "=== 2. /home 顶层（mtime + owner）==="
+ls -1 /home 2>/dev/null | head -20 | sed 's/^/   /'
+for d in /home/*/; do printf '   %-32s %s  %s\n' "$d" "$(stat -c %y "$d" 2>/dev/null | cut -c1-16)" "$(stat -c %U "$d" 2>/dev/null)"; done | head -12
+
+echo; echo "=== 3. ⭐ 本用户 HOME 一级（含隐藏项；后台低优先级，边跑边写）==="
+rm -f /tmp/_duhome.txt /tmp/_duhome.done
+setsid bash -c "nice -n 19 du -sh $H/* $H/.[!.]* > /tmp/_duhome.txt 2>/dev/null; echo done > /tmp/_duhome.done" </dev/null >/dev/null 2>&1 &
+sleep 10
+echo "   行数=$(wc -l < /tmp/_duhome.txt 2>/dev/null)  done=$([ -f /tmp/_duhome.done ] && echo YES || echo NO)"
+sort -hr /tmp/_duhome.txt 2>/dev/null | head -25
+
+echo; echo "=== 4. 已知高危嫌疑点（各自 20s 有界）==="
+for p in "$H/.cache" "$H/.bun" "$H/.cline" "$H/.local"; do
+  if [ -e "$p" ]; then printf '   %-16s ' "${p#$H/}"; timeout 20 du -sh "$p" 2>/dev/null | cut -f1 || echo "(超时→看后台结果)"; fi
+done
+
+echo; echo "=== 5. ⭐ cline 会话数（大目录风险）==="
+echo -n "   .cline/data/sessions 条目数 = "; timeout 25 find "$H/.cline/data/sessions" -maxdepth 1 -mindepth 1 2>/dev/null | wc -l
+echo -n "   .cline/data/tasks   条目数 = "; timeout 25 find "$H/.cline/data/tasks" -maxdepth 1 -mindepth 1 2>/dev/null | wc -l
+echo -n "   .bun/install/cache 存在= "; [ -d "$H/.bun/install/cache" ] && echo YES || echo no
+echo -n "   miniforge3/pkgs    存在= "; [ -d "$H/miniforge3/pkgs" ] && echo YES || echo no
+
+echo; echo "=== 6. 其它常见占用 ==="
+for p in "$H/.vscode-server" "$H/.conda" "$H/harness_work" "$H/.npm" "$H/.cache/pip" "$H/.cache/huggingface"; do
+  [ -e "$p" ] && { printf '   %-26s ' "${p#$H/}"; timeout 20 du -sh "$p" 2>/dev/null | cut -f1; }
+done
+echo; echo "=== DONE（后台 du 仍在跑；下轮读 /tmp/_duhome.txt + /tmp/_duhome.done）==="
+```
+
+> ⛔ **已降级 RUN_ID 37**（核验删除，**✅ 已执行 10:21:29**）为 ```text。
+
+## RUN_ID 37 — ✅ **核验 5 项删除的最终状态 + 实际回收量**（✅ 已执行 → 5 项 GONE / ≈3.65 TB）
 
 **RUN_ID 36 已执行（✅ 09:57:17 exit=0）**，日志显示 5 个目标**全部 `GONE`**，但**速度不合常理**（1.16 T 在 1 秒内"消失"）→ **极可能是 RUN_ID 34 在超时前已经把 `rm -rf` 跑了**（34 的 exit=124 = 超时）。本块**核实**：
 1. 后台任务 `/tmp/_clean36.log` **全文** + `/tmp/_clean36.done`
@@ -41,7 +89,7 @@
 
 🚫 **只读**。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 D=/nas_train/app.e0031982; CODE=$D/code
 
