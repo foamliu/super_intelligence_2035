@@ -1548,3 +1548,154 @@ Done!
 -rw-r----- 1 app.e0031982 app.adm 28664559 Oct  3 16:29 /tmp/ABL_pure_llm_r1.log
 ===== DONE =====
 ```
+
+---
+
+## RUN_ID 13 · 2026-10-04 22:17:55 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 13 — legacy line: exact completed results + conductor + outputs (read-only)
+D=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
+echo "== 0. TIME =="; timeout 10 date '+%F %T'
+echo "== 1. legacy MEMORY score/dashboard/PHASE =="; timeout 10 grep -nE 'mean|±|pure_llm|rag|wo_retrieval|phi_|done_all|PHASE|CONFIG' "$D/MEMORY_component_full.md" | head -45 | cut -c1-200
+echo "== 2. conductor script head =="; timeout 10 sed -n '1,28p' "$D/ablation_run_conductor_serial.sh" 2>&1 | cut -c1-180
+echo "== 3. conductor proc args =="; timeout 10 ps -o pid=,ppid=,etimes=,args= -p 1381975 2>&1 | cut -c1-200
+echo "== 4. eval output batches =="; timeout 25 ls -lt /nasdata/app.e0031982/eda_code_eval 2>/dev/null | head -25 | cut -c1-140
+echo "== 5. wo_retrieval r1 final result =="; timeout 10 grep -E 'pass \(|Pass@1|评估完成' /tmp/ABL_wo_retrieval_r1.log 2>/dev/null | tail -6 | cut -c1-180
+echo "== 6. old one-shot r1 results =="; for f in ABL_full_r1 ABL_k10_r1 ABL_k3_r1 ABL_k1_r1 ABL_lagged_r1 ABL_lagged_r2 ABL_omega_low_r1 ABL_omega_low_r2; do printf '%-20s ' "$f"; timeout 8 grep -oE '[0-9]+/158 pass \([0-9.]+%\)' "/tmp/$f.log" 2>/dev/null | tail -1; echo; done
+echo "== DONE =="
+```
+
+**输出**
+```
+== 0. TIME ==
+2026-10-04 22:17:55
+== 1. legacy MEMORY score/dashboard/PHASE ==
+11:| PHASE | running |
+13:| CONFIG | wo_retrieval |
+18:- log：`/tmp/ABL_wo_retrieval_r1.log`
+31:- **跨轴污染修复**：S1 收口时 `.env` 残留 `EDA_RUNCODE_READBACK=none`。Phase 1 的 wo_retrieval / full 需要 run_code 全回读，且 full 是锚点（tab:ablation-harness F=full read
+33:  - L226 `EDA_MCP_TOOLS_DISABLED=clean_workdir,probe_pyAether_code,cimi_search,cimi_fetch,vqa,query_memory_bank,run_code`（rag：检索 3 件套 ON、run_code OFF）
+36:- ✅ **RAG recall 端口错配（已人工裁决并修复 2026-10-04）**：`.env` L117 `RAG_RECALL_URL` 已由 `http://localhost:9012/recall`（9012 无进程监听，app.log 自 09-24 起大量 
+37:- Phase 2 前置依赖（切 phi_k10 前校验，见 MEMORY_s2_1shot.md）：
+45:### Phase 1 组件消融（N=5 mean±std）
+47:| 配置 | N=5 mean±std | 各轮原始值 |
+49:| pure_llm | 10.5 ± 1.9% | [8.2, 9.5, 10.1, 11.4, 13.3] |
+50:| rag | 68.2 ± 7.4% | [71.5, 70.3, 75.3, 68.4, 55.7] |
+51:| wo_retrieval | — | — |
+54:### Phase 2 S2 Φ 轴（N=5 mean±std / Converged / Mean read-backs）
+56:| 臂 | N=5 mean±std | Converged | Mean read-backs | 各轮 |
+58:| phi_k10 | — | — | — | — |
+59:| phi_k3 | — | — | — | — |
+60:| phi_k1 | — | — | — | — |
+61:| phi_lagged | — | — | — | — |
+71:| pure_llm | 1-5/5 | ✅ 完成（10.5 ± 1.9%） |
+72:| rag | 1-5/5 | ✅ 完成（68.2 ± 7.4%） |
+73:| wo_retrieval | 1-5/5 | 🔵 r1 运行中 |
+80:| phi_k10 | 1-5/5 | ⬜ |
+81:| phi_k3 | 1-5/5 | ⬜ |
+82:| phi_k1 | 1-5/5 | ⬜ |
+83:| phi_lagged | 1-5/5 | ⬜ |
+91:- 人工裁决（非评测失败，不改 PHASE/ROUND/ERROR_COUNT）：`.env` L117 `RAG_RECALL_URL` 由 9012（无服务）改为 9006（健康召回 PID 3820519，实测 POST /recall 返回语义�
+92:- 未重启 MCP（PID 691966 不变，wo_retrieval r1 编排 PID 692552 未受影响）。
+93:- 生效时机：切 `full` 前在轮次边界 `bash scripts/stop.sh && bash scripts/start.sh` 重启 MCP；rag 建议按真语义检索态重跑 5 轮（wo_retrieval 收口 → 重启 MCP → rag 
+94:- 当前状态不变：PHASE=running / STAGE=component / CONFIG=wo_retrieval / ROUND=1 / ERROR_COUNT=0。
+96:## 2026-10-04 · 时刻不可得（date 被禁 + run_commands 被拦）[running] ⚠️ 检查受阻（沙箱阻断第 4 周期 / wo_retrieval r1 阶段）
+98:- 恢复：PHASE=running / STAGE=component / CONFIG=wo_retrieval / ROUND=1（r1 运行中，batch 2026_1004_122050 / 编排 PID 692552，log=/tmp/ABL_wo_retrieval_r1.log）/ ERROR_COUNT=0（wo_retr
+99:- 前置校验：记忆流水最后 3 条无未处理 ❌ EVAL_FAILED / ⚠️ 评测失败（最新为「第 3 周期 ⚠️ 检查受阻」+「12:20 ✅ 切 wo_retrieval + 启动 r1」）；⚠�
+100:- 本轮唤醒复测（沙箱阻断连续第 4 周期）：`run_commands` 全量被拦（`pwd`、`pgrep -f run_cline_script`、`echo probe_inside_workspace`、`ls -la <工作区>` 均被工具内�
+101:- 无法执行步骤 A（`pgrep -f '^bash scripts/run_cline_script'`）检查 wo_retrieval r1 是否结束、无法 grep 打分（Pass@1）。未推进、未改成绩/看板；保持 PHASE=running
+102:- 🚨 连续 4 周期阻断（对齐历史 3~4 周期复通先例上限），正式建议人工介入恢复沙箱后再继续 wo_retrieval r1 打分。退出等待下轮唤醒。
+103:## 2026-10-04 · 时刻不可得（date 被禁 + run_commands 被拦）[running] ⚠️ 检查受阻（沙箱阻断第 3 周期 / wo_retrieval r1 阶段）
+105:- 恢复：PHASE=running / STAGE=component / CONFIG=wo_retrieval / ROUND=1（r1 运行中，batch 2026_1004_122050 / 编排 PID 692552，log=/tmp/ABL_wo_retrieval_r1.log）/ ERROR_COUNT=0（wo_ret
+106:- 前置校验：记忆流水最后 3 条无未处理 ❌ EVAL_FAILED / ⚠️ 评测失败（最新「第 2 周期 ⚠️ 检查受阻」+「12:20 ✅ 切 wo_retrieval + 启动 r1」）；⚠️ 
+107:- 本轮唤醒复测（沙箱阻断连续第 3 周期）：`run_commands` 全量被拦（`pwd && ls -la`、`pgrep -af run_cline_script; echo EXIT=$?; date +%F_%T` 均被工具内部替换为固定
+108:- 无法执行步骤 A（`pgrep -f '^bash scripts/run_cline_script'`）检查 wo_retrieval r1 是否结束、无法 grep 打分（Pass@1）。未推进、未改成绩/看板；保持 PHASE=running
+111:## 2026-10-04 · 时刻不可得（date 被禁 + run_commands 被拦）[running] ⚠️ 检查受阻（沙箱阻断第 2 周期 / wo_retrieval r1 阶段）
+113:- 恢复：PHASE=running / STAGE=component / CONFIG=wo_retrieval / ROUND=1（r1 运行中，batch 2026_1004_122050 / 编排 PID 692552，log=/tmp/ABL_wo_retrieval_r1.log）/ ERROR_COUNT=0（wo_ret
+114:- 前置校验：记忆流水最后 3 条无未处理 ❌ EVAL_FAILED / ⚠️ 评测失败（最新「第 1 周期 ⚠️ 检查受阻 / wo_retrieval r1」+「12:20 ✅ rag r5=55.7% → 切 wo_re
+115:- 本轮唤醒复测（沙箱阻断连续第 2 周期）：`run_commands` 全量被拦（`pwd`/`date +%F`/`pgrep -af run_cline_script` 均被工具内部替换为固定 "ACCESS RESTRICTED...echo" 
+116:- 无法执行步骤 A（`pgrep -f '^bash scripts/run_cline_script'`）检查 wo_retrieval r1 是否结束、无法 grep 打分（Pass@1）。未推进、未改成绩/看板；保持 PHASE=running
+== 2. conductor script head ==
+#!/bin/bash
+# 十一假期串行执行总控脚本（单机版）
+# 按 README §8 建议顺序：S1 保真度 → 组件消融 → S2 Φ → 模型消融
+# 每个阶段串行，阶段内 loop 自驱 8 并发。
+#
+# ⚡ 关于「沙箱阻断」的预期行为：
+#    loop 每 30min 唤醒 agent → agent 执行 pgrep 检查：
+#      - eval cline 活跃 → pgrep 有输出 → 反作弊 PreToolUse 拦截 run_commands（ACCESS RESTRICTED）
+#        → agent 判定「还在跑」，什么都不做退出。这是正确的，不是故障。
+#      - eval 结束 → pgrep 无输出 → 工具恢复可用 → agent 打分、推进。
+#    所以「run_commands 被禁」恰恰说明 eval 进程正常运作中，无需任何人工干预。
+#
+# 启动方式（脱离进程组）:
+#   setsid bash /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/ablation_run_conductor_serial.sh > /tmp/ablation_conductor.log 2>&1 < /dev/null &
+set -euo pipefail
+
+BASE="/nasdata/app.e0031982/code/ZhuLong_DAC2027/run"
+CONDUCTOR_LOG="/tmp/ablation_conductor.log"
+
+log() {
+    echo "[conductor] $(date '+%F %T') $*"
+}
+
+require() {
+    local f="$1"
+    if [[ ! -f "$BASE/$f" ]]; then
+        log "❌ 缺失依赖文件: $BASE/$f —— 已停止(不空跑)。"
+        exit 1
+== 3. conductor proc args ==
+1381975       1  282289 bash ablation_run_conductor_serial.sh
+== 4. eval output batches ==
+total 18404
+drwxr-x--- 8 app.e0031982 app.adm   4096 Oct  4 14:40 2026_1004_122050
+-rw-r----- 1 app.e0031982 app.adm 325495 Oct  4 14:40 completed_code_generation_2026_1004_122050.jsonl
+-rw-r----- 1 app.e0031982 app.adm 320659 Oct  4 14:40 code_generation_2026_1004_122050.jsonl
+drwxr-x--- 8 app.e0031982 app.adm   4096 Oct  4 12:07 2026_1004_111533
+-rw-r----- 1 app.e0031982 app.adm 225722 Oct  4 12:07 completed_code_generation_2026_1004_111533.jsonl
+-rw-r----- 1 app.e0031982 app.adm 219268 Oct  4 12:07 code_generation_2026_1004_111533.jsonl
+drwxr-x--- 8 app.e0031982 app.adm   4096 Oct  4 10:52 2026_1004_090528
+-rw-r----- 1 app.e0031982 app.adm 352809 Oct  4 10:52 completed_code_generation_2026_1004_090528.jsonl
+-rw-r----- 1 app.e0031982 app.adm 348368 Oct  4 10:52 code_generation_2026_1004_090528.jsonl
+drwxr-x--- 8 app.e0031982 app.adm   4096 Oct  4 08:49 2026_1004_072705
+-rw-r----- 1 app.e0031982 app.adm 408344 Oct  4 08:49 completed_code_generation_2026_1004_072705.jsonl
+-rw-r----- 1 app.e0031982 app.adm 404746 Oct  4 08:49 code_generation_2026_1004_072705.jsonl
+drwxr-x--- 8 app.e0031982 app.adm   4096 Oct  4 05:41 2026_1004_051919
+-rw-r----- 1 app.e0031982 app.adm 122454 Oct  4 05:41 completed_code_generation_2026_1004_051919.jsonl
+-rw-r----- 1 app.e0031982 app.adm 113215 Oct  4 05:41 code_generation_2026_1004_051919.jsonl
+drwxr-x--- 8 app.e0031982 app.adm   4096 Oct  4 04:48 2026_1004_031309
+-rw-r----- 1 app.e0031982 app.adm 366449 Oct  4 04:48 completed_code_generation_2026_1004_031309.jsonl
+-rw-r----- 1 app.e0031982 app.adm 362347 Oct  4 04:48 code_generation_2026_1004_031309.jsonl
+drwxr-x--- 8 app.e0031982 app.adm   4096 Oct  4 02:36 2026_1004_010657
+-rw-r----- 1 app.e0031982 app.adm 383365 Oct  4 02:36 completed_code_generation_2026_1004_010657.jsonl
+-rw-r----- 1 app.e0031982 app.adm 379319 Oct  4 02:36 code_generation_2026_1004_010657.jsonl
+drwxr-x--- 8 app.e0031982 app.adm   4096 Oct  4 01:04 2026_1003_232757
+-rw-r----- 1 app.e0031982 app.adm 304949 Oct  4 01:04 completed_code_generation_2026_1003_232757.jsonl
+-rw-r----- 1 app.e0031982 app.adm 299223 Oct  4 01:04 code_generation_2026_1003_232757.jsonl
+== 5. wo_retrieval r1 final result ==
+[0m[2mrun_[0m[2mLayout'[0m[2m but the[0m[2m view name[0m[2m takes[0m[2mcommands [0m[2m I passed[0m[2m `lib[0m[2m='tmp[0m[2m_test_l[0m[2m all checks[0m[2m pa
+[0m[2m- `[0m[2mCrt[0m[2m = ([0m[2mEllipse[0m[2m`, `[0m[2mcell,[0m[2m lib,[0m[2m view)[0m[2m — WR[0m[2mtfLabel[0m[2m` =[0m[2m emy[0m[2mdbC[0m[2mrtLabel
+[0m[2m. `[0m[2mdbC[0m[2m1.[0m[2m `[0m[2mdbC[0m[2mrtRect[0m[2m others,[0m[2m(c[0m[2mrtLabel[0m[2m` [0m[2m-positive.[0m[2m的 align[0m[2m The assert[0m[2m
+  ✅ 1004: 117/158 pass (74.1%) | generated: 128 ok, 25 fail, 0 exec_err
+  1004: 117/158 pass (74.1%) | generated: 128 ok, 25 fail
+[0;32m[SUCCESS][0m [Step 7.1] 评估完成 (execution_results.jsonl 已产)
+== 6. old one-shot r1 results ==
+ABL_full_r1          134/158 pass (84.8%)
+
+ABL_k10_r1           119/158 pass (75.3%)
+
+ABL_k3_r1            109/158 pass (69.0%)
+
+ABL_k1_r1            96/158 pass (60.8%)
+
+ABL_lagged_r1        127/158 pass (80.4%)
+
+ABL_lagged_r2        133/158 pass (84.2%)
+
+ABL_omega_low_r1     
+ABL_omega_low_r2     130/158 pass (82.3%)
+
+== DONE ==
+```
