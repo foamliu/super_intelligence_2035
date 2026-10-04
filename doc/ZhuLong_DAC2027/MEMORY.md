@@ -178,6 +178,11 @@ error: error: unknown option '-b'
 
 ## 9. 流水（倒序）
 
+- **2026-10-04（运维不在场 → 经任务书派 agent 抢救中继）** —— 用户告知**无法登录服务器**（不在公司），但 ZhuLong agent 应仍可被任务书驱动 → 指令我**把中继救回来**。
+  - 落地：在 `run/ZHULONG_TASK.md` 运维指令区**置顶**新增 **`### 🚨 运维指令 · 2026-10-04（二）【本次唤醒的首要动作】抢救 ops 中继`**（`18587bf`）：
+    ① `pkill -f zhulong_ops_relay.sh` + `pkill -f 'du -sh -L'` → ② `git pull` + `setsid bash zhulong_ops_relay.sh` 重启 → ③ 在 `MEMORY_ZHULONG.md` 流水回报；**明确授权 agent 本次可动中继进程**（突破既有"agent 不要碰 ops/"），但**不许改 `ops/` 文件**。
+    另附**可选**：重启 `zhulong_loop.sh` 以清 `-b`（谨慎，会中断其自身会话）。
+  - ⚠️ **前提风险**：该指令只有**agent 真的被唤醒**才生效。而 RUN_ID 2 证据显示**运行中的 loop 仍报 `-b`**（旧脚本被 bash 整段缓存）→ 若它一直没吃到新版脚本，则 **task book 改动会一直躺着**，仍需**人工重启 loop**（唯一能远程解卡的手段 = 中继/loop 重启，而我们已无中继）。**观察点**：中继恢复后 `outbox.md` 应出现 RUN_ID 4（轻量版）结果。
 - **2026-10-04（RUN_ID 3 我方 home 盘点 → 结论：清不出空间；RUN_ID 4 重块卡死中继）** ——
   - ✅ **RUN_ID 3（17:01）**：`/home/app.e0031982` 同文件系统**仅 3.8M**；`.cache`/`.cline`/`.npm`/`.local`/`.vscode-server` 的 `du -x` 全 **0**、`eda_code_eval`（87 批次）也是 **0** → **疑似 symlink 到 `/nasdata`**。→ **自己 home 清不出 ≥8G**，`/home` 满纯属别的用户。
   - ⚠️ **RUN_ID 4（17:03）我写的重块卡死中继**（`du -sh -L` 跟随 symlink + 未 `timeout` 的 `df`）→ 已**重写为轻量版**（`a450ead`）+ heavy 版降级 `text`；坑入 §7-14。**恢复**：等 `du -L` 结束，或 `pkill -f zhulong_ops_relay.sh` 后重启（会自动补跑轻量 RUN_ID 4）。
