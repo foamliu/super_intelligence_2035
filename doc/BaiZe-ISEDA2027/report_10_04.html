@@ -416,16 +416,15 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <b>起因：</b>vision 与 pretrain 两 agent 使用的编排模型 <code>deepseek-v4-pro-fp4</code> token 额度已于 2026-10-04 耗尽，API 返回 <code>Forbidden</code> 错误。经运维确认两线均受影响。
 </div>
 
-<p><b>解决方案：</b>两个 loop 脚本中的编排模型统一切换为 <code>glm-5.2</code>，API key 与 base URL 已在仓库中硬编码更新：</p>
+<p><b>解决方案：</b>两个 loop 脚本中的编排模型统一切换为 <code>glm-5.2</code>，API key 已在仓库中硬编码更新：</p>
 
 <table>
-  <tr><th>Loop 脚本</th><th>旧模型</th><th>新模型</th><th>API Key</th><th>Base URL</th></tr>
+  <tr><th>Loop 脚本</th><th>旧模型</th><th>新模型</th><th>API Key</th></tr>
   <tr>
     <td><code>baize_vision_loop.sh</code></td>
     <td><code>deepseek-v4-pro-fp4</code></td>
     <td rowspan="2"><code>glm-5.2</code></td>
     <td rowspan="2"><code>02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23</code></td>
-    <td rowspan="2"><code>http://agi-gateway.cxmt.com/cloud/v1</code></td>
   </tr>
   <tr>
     <td><code>baize_pretrain_loop.sh</code></td>
