@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 45 -->
+<!-- RUN_ID: 46 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,56 @@
 
 ---
 
-## RUN_ID 45 — 🚀 **阶段1：重启 pretrain loop（让额度体检/自动轮换生效）+ 就地验证**（**已获批准**）（**本块最新，优先执行**）
+## RUN_ID 46 — 🚑 **回滚 pretrain loop（保命）+ 恢复已知可用的 base**（**优先执行**）（**本块最新，优先执行**）
+
+**问题（RUN_ID 45 暴露）**：新 helper 的探针（curl 200）与 **cline 实际能否用不等价** —— 选中 `deepseek-v4-flash @ /v1` 后 **cline 仍 `error: Forbidden`**；且 base 已被自动从 **`/cloud/v1`（原来可用）** 改成 `/v1` → **pretrain 线被我搞坏了**。
+
+**本轮动作（3 步）**：
+1. **把 `openAiBaseUrl` 恢复为已知可用的 `…/cloud/v1`**（`.llmrot.bak` 已存在，优先用它还原；否则直接改回）
+2. **把 pretrain loop 脚本回滚到打补丁前的版本**（`b75ff3b~1`，即**已验证可用**的那版）
+3. 重启 + 验证（**必须出现真实的 cline 会话**，而不是 10 秒 `Forbidden`）
+
+🚫 只动 pretrain；不动其它 3 条 loop（它们**仍是旧的可用脚本**，未受影响）。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035
+RUN=$WK/doc/BaiZe-ISEDA2027/run
+G="$HOME/.cline/data/globalState.json"
+
+echo; echo "=== 1. 恢复 openAiBaseUrl = .../cloud/v1（已知可用）==="
+echo -n "   当前 = "; sed -n 's/.*"openAiBaseUrl"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$G" | head -1
+if [ -f "$G.llmrot.bak" ]; then cp -a "$G.llmrot.bak" "$G" && echo "   已用 .llmrot.bak 还原"; else
+  python3 - "$G" 'http://agi-gateway.cxmt.com/cloud/v1' <<'PY' 2>/dev/null
+import json, sys
+p, base = sys.argv[1], sys.argv[2]
+d = json.load(open(p, encoding='utf-8')); d['openAiBaseUrl'] = base
+json.dump(d, open(p, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+PY
+  echo "   (无 bak，已直接改回)"
+fi
+echo -n "   现在 = "; sed -n 's/.*"openAiBaseUrl"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$G" | head -1
+
+echo; echo "=== 2. 回滚 pretrain loop 到打补丁前（b75ff3b~1）==="
+git -C "$WK" checkout b75ff3b~1 -- doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh && echo "   已回滚"
+echo -n "   回滚后 llm_pick 出现次数（应为 0）= "; grep -c 'llm_pick' "$RUN/baize_pretrain_loop.sh"
+echo -n "   bash -n: "; bash -n "$RUN/baize_pretrain_loop.sh" 2>/dev/null && echo OK || echo FAIL
+
+echo; echo "=== 3. 重启 + 验证（要看到真实 cline 会话，不是 10s Forbidden）==="
+pkill -f 'baize_pretrain_loop.sh'; sleep 5
+cd "$RUN"
+setsid bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+sleep 50
+echo "   -- 进程 --"; pgrep -af 'bash baize_pretrain_loop.sh' | cut -c1-110
+echo "   -- 日志尾 --"; tail -8 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-160
+echo -n "   -- 是否仍有 Forbidden（应为 0）-- "; grep -c 'Forbidden' /tmp/baize_pretrain_loop.log 2>/dev/null
+echo "   -- cline 是否在跑 --"; pgrep -af 'bun.*cline' | cut -c1-95 | head -2 || echo "   (无)"
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 45**（阶段1 重启 pretrain，**✅ 已执行 17:06:34 exit=0**，**结果：helper 正常但 cline 仍 Forbidden → 已回滚**）为 ```text。
+
+## RUN_ID 45 — 🚀 **阶段1：重启 pretrain loop**（✅ 已执行 → ⚠️ helper 工作但「curl 200 ≠ cline 可用」，见 RUN_ID 46 回滚）
 
 **背景**：`b75ff3b` 已把「额度/鉴权体检 + 自动轮换」写进 4 条 loop（helper `run/llm_rotate.sh`）。但**跑着的仍是旧进程** → 必须重启才生效。
 **本轮 = 分阶段的第一步：只重启 pretrain**，验证 `[llmrot]` 生效、cline 正常起来、`openAiBaseUrl` 被正确设置；**确认无误后再重启其余 3 条**（阶段2）。
@@ -39,7 +88,7 @@
 🚫 **本块只动 pretrain**；不动 harness / vision / data；不动训练。
 ⚠️ 若重启后 **45 秒内进程不在或日志报错** → 立即回退：`git -C $WK checkout HEAD~1 -- doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh` 并重启（脚本里已写）。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 WK=/nas_train/app.e0031982/code/super_intelligence_2035
 RUN=$WK/doc/BaiZe-ISEDA2027/run
