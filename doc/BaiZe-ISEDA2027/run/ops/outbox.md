@@ -4491,3 +4491,87 @@ whag0pgpuap29
 
 === DONE（后台仍在跑；下轮读 /tmp/_ducache.txt）===
 ```
+
+---
+
+## RUN_ID 40 · 2026-10-04 11:38:30 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME
+echo "   删前: $(df -BG /home | tail -1)"
+
+echo; echo "=== 1. P1 无进程占用（fuser 全部带 timeout）==="
+for p in "$H/.cache/uv" "$H/.cache/pip" "$H/.bun/install/cache" "$H/.npm/_cacache" "$H/.cache/vllm" "$H/.triton" "$H/.cache/huggingface"; do
+  printf '   %-28s ' "${p#$H/}"; timeout 10 fuser "$p" 2>&1 | head -1 | tr -d '\n'; echo " (空=好)"
+done
+echo -n "   活跃的 pip/uv/bun 进程: "; pgrep -af 'pip |uv pip|bun ' 2>/dev/null | grep -v grep | head -3 | tr '\n' ' '; echo
+
+echo; echo "=== 2. 留证清单（KB 级文本）==="
+M="$H/_ARCHIVE_home_cache_manifest_$(date +%Y%m%d-%H%M%S).txt"
+{ echo "# /home 缓存清理清单  $(date '+%F %T')  (用户批准: A+B 档)";
+  du -sh "$H/.cache/uv" "$H/.cache/pip" "$H/.bun/install/cache" "$H/.npm/_cacache" "$H/.cache/vllm" "$H/.triton" "$H/.cache/huggingface" 2>/dev/null;
+  echo "# HF hub 内的数据集（将被删）:"; ls -1 "$H/.cache/huggingface/hub" 2>/dev/null | sed 's/^/  /'; } > "$M" 2>/dev/null
+echo "   -> $(basename "$M")  ($(wc -l < "$M" 2>/dev/null) 行)"; head -10 "$M" 2>/dev/null | sed 's/^/     /'
+
+echo; echo "=== 3. 🗑 启动【后台顺序】删除 ==="
+rm -f /tmp/_cleanhome.log /tmp/_cleanhome.done
+setsid nice -n 19 bash -c 'for P in "$@"; do echo "[$(date "+%T")] rm -rf $P"; rm -rf "$P"; echo "[$(date "+%T")] done: $([ -e "$P" ] && echo STILL || echo GONE)"; done; echo ALLDONE > /tmp/_cleanhome.done' _ \
+  "$H/.cache/uv" "$H/.cache/pip" "$H/.bun/install/cache" "$H/.npm/_cacache" "$H/.cache/vllm" "$H/.triton" "$H/.cache/huggingface" > /tmp/_cleanhome.log 2>&1 &
+sleep 10
+echo "   -- 进度 --"; head -16 /tmp/_cleanhome.log 2>/dev/null | sed 's/^/     /'
+echo "   -- df 即时（NFS 无关，ext4 本地盘应立即反映）--"; df -BG /home | tail -1
+echo "   -- 关键：cline 本体必须还在 ==="; ls -l "$H/.bun/bin/cline" 2>/dev/null | cut -c1-90; ls -d "$H/.bun/install/global/node_modules/@cline" 2>/dev/null | cut -c1-110
+echo; echo "=== DONE（后台仍在删；下轮读 /tmp/_cleanhome.log + .done + df 核验）==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 11:38:30
+   删前: /dev/mapper/vgroot-lv_home      196G  171G       16G  92% /home
+
+=== 1. P1 无进程占用（fuser 全部带 timeout）===
+   .cache/uv                    Cannot stat file /proc/465698/fd/182: Stale file handle (空=好)
+   .cache/pip                   Cannot stat file /proc/465698/fd/182: Stale file handle (空=好)
+   .bun/install/cache           Cannot stat file /proc/465698/fd/182: Stale file handle (空=好)
+   .npm/_cacache                Cannot stat file /proc/465698/fd/182: Stale file handle (空=好)
+   .cache/vllm                  Cannot stat file /proc/465698/fd/182: Stale file handle (空=好)
+   .triton                      Cannot stat file /proc/465698/fd/182: Stale file handle (空=好)
+   .cache/huggingface           Cannot stat file /proc/465698/fd/182: Stale file handle (空=好)
+   活跃的 pip/uv/bun 进程: 
+
+=== 2. 留证清单（KB 级文本）===
+   -> _ARCHIVE_home_cache_manifest_20261004-113836.txt  (45 行)
+     # /home 缓存清理清单  2026-10-04 11:38:36  (用户批准: A+B 档)
+     15G	/home/app.e0031982/.cache/uv
+     14G	/home/app.e0031982/.cache/pip
+     13G	/home/app.e0031982/.bun/install/cache
+     1.9G	/home/app.e0031982/.npm/_cacache
+     1.5G	/home/app.e0031982/.cache/vllm
+     299M	/home/app.e0031982/.triton
+     78G	/home/app.e0031982/.cache/huggingface
+     # HF hub 内的数据集（将被删）:
+       datasets--AI4Math--MathVista
+
+=== 3. 🗑 启动【后台顺序】删除 ===
+   -- 进度 --
+     [11:38:37] rm -rf /home/app.e0031982/.cache/uv
+     [11:38:39] done: GONE
+     [11:38:39] rm -rf /home/app.e0031982/.cache/pip
+     [11:38:39] done: GONE
+     [11:38:39] rm -rf /home/app.e0031982/.bun/install/cache
+     [11:38:47] done: GONE
+     [11:38:47] rm -rf /home/app.e0031982/.npm/_cacache
+     [11:38:47] done: GONE
+     [11:38:47] rm -rf /home/app.e0031982/.cache/vllm
+   -- df 即时（NFS 无关，ext4 本地盘应立即反映）--
+/dev/mapper/vgroot-lv_home      196G  128G       59G  69% /home
+   -- 关键：cline 本体必须还在 ===
+lrwxrwxrwx 1 app.e0031982 app.adm 54 Sep  8 09:20 /home/app.e0031982/.bun/bin/cline -> ../
+/home/app.e0031982/.bun/install/global/node_modules/@cline
+
+=== DONE（后台仍在删；下轮读 /tmp/_cleanhome.log + .done + df 核验）===
+```
