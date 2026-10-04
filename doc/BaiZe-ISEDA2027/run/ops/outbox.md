@@ -6257,3 +6257,92 @@ whag0pgpuap12
 === DONE (.12) ===
 === relay block done ===
 ```
+
+---
+
+## RUN_ID 61 · 2026-10-04 18:18:51 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+echo; echo "=== [.12] 优先 glm-5.2 + 重启 vision/data 恢复 ==="
+timeout 520 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+export PATH="$HOME/.bun/bin:$PATH"
+hostname; date '+%F %T'
+W=/nas_train/app.e0031982/code/super_intelligence_2035
+R=$W/doc/BaiZe-ISEDA2027/run
+B=/nas_train/app.e0031982; H=$HOME
+KEYS="$W/doc/keys.txt"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "--- A. llm_rotate.sh 是否已含 glm-5.2 优先 ---"
+grep -n '优先 glm-5.2\|优先选中 glm-5.2' "$R/llm_rotate.sh" | head -3 | cut -c1-140
+
+echo; echo "--- B. 预演 llm_pick（LLM_DATA_DIR 指向空目录，不写真实配置）---"
+LLM_DATA_DIR=/tmp/_none; . "$R/llm_rotate.sh"
+ST=/tmp/_p61; rm -f "$ST"
+if llm_pick "$ST" "$KEYS"; then echo "   picked model=$LLM_MODEL key=${LLM_KEY:0:8}.. base=$LLM_BASE"; else echo "   !! 无候选"; fi
+
+echo; echo "--- C. 逐线重启 vision / data ---"
+for L in vision data; do
+  LP=$(pgrep -f "baize_${L}_loop.sh" 2>/dev/null | head -1); CL=0
+  [ -n "$LP" ] && CL=$(pgrep -P "$LP" -f 'bun' 2>/dev/null | wc -l)
+  echo "   [$L] loop_pid=${LP:-none} cline_children=$CL"
+  if [ "$CL" -gt 0 ]; then echo "   [$L] cline 活动中 → 跳过"; continue; fi
+  pkill -f "baize_${L}_loop.sh"; sleep 4
+  cd "$R"; setsid env $P bash "baize_${L}_loop.sh" > "/tmp/baize_${L}_loop.log" 2>&1 < /dev/null &
+  echo "   [$L] 已重启"
+done
+
+echo; echo "--- D. 50s 后验证 ---"; sleep 50
+for L in vision data; do
+  echo "   [$L] loop=$(pgrep -fc "baize_${L}_loop.sh" 2>/dev/null || echo 0)  Forbidden=$(grep -c Forbidden /tmp/baize_${L}_loop.log 2>/dev/null)"
+  echo "        model=$(grep -o 'openai-compatible.chat / [A-Za-z0-9._-]*' /tmp/baize_${L}_loop.log 2>/dev/null | tail -1)"
+  tail -3 "/tmp/baize_${L}_loop.log" 2>/dev/null | tr '\n' ' ' | cut -c1-140 | sed 's/^/        /'; echo
+done
+echo "   cline cmdline: $(pgrep -af 'bun.*cline' 2>/dev/null | cut -c1-120 | head -3)"
+echo; echo "=== DONE (.12) ==="
+EOS12
+echo "=== relay block done ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 18:18:51
+
+=== [.12] 优先 glm-5.2 + 重启 vision/data 恢复 ===
+whag0pgpuap12
+2026-10-04 18:18:52
+
+--- A. llm_rotate.sh 是否已含 glm-5.2 优先 ---
+96:    # 🔑 2026-10-04 运维（RUN_ID 61）：**优先 glm-5.2**（RUN_ID 49 定稿规则）。
+113:            echo "[llmrot] $(date '+%F %T') 优先选中 glm-5.2 #$gidx @ ${LLM_BASE} (probe=200)"
+
+--- B. 预演 llm_pick（LLM_DATA_DIR 指向空目录，不写真实配置）---
+[llmrot] 2026-10-04 18:18:53 优先选中 glm-5.2 #4 @ http://agi-gateway.cxmt.com/cloud/v1 (probe=200)
+   picked model=glm-5.2 key=02_088EE.. base=http://agi-gateway.cxmt.com/cloud/v1
+
+--- C. 逐线重启 vision / data ---
+   [vision] loop_pid=1604114 cline_children=0
+   [vision] 已重启
+   [data] loop_pid=1604525 cline_children=0
+   [data] 已重启
+
+--- D. 50s 后验证 ---
+   [vision] loop=1  Forbidden=0
+        model=openai-compatible.chat / glm-5.2
+           -[0m[2m R10 ✅[0m[2m (M-axis[0m[2m scaling[0m[2m)    - R[0m[2m14 ✅ ([0m[2mofficial repo survey) [0m
+
+   [data] loop=2  Forbidden=0
+        model=openai-compatible.chat / glm-5.2
+        Let[0m[2m me check if[0m[2m there are new operator[0m[2m instructions by[0m[2m pulling.[0m[2m But[0m[2m actually[0m[2m, the ta
+
+   cline cmdline: 1816089 bun /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_vision -c /nas_train/app.e003198
+1828282 bun /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/
+2877399 bun /home/app.e0031982/.bun/bin/cline --id 1790841049934_g0m3m
+
+=== DONE (.12) ===
+=== relay block done ===
+```
