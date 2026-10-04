@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 10 -->
+<!-- RUN_ID: 11 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,31 @@
 
 ---
 
+## RUN_ID 11 — 📖 读「另一个 agent」（legacy 组件线）的任务书 / MEMORY / 日报 / loop
+
+**背景**：RUN_ID 10 查明「另一个 agent」= **legacy 组件线**，进程 `2455466 bash …/code/ZhuLong_DAC2027/run/ablation_run_loop_component_s2_full.sh`，跑在**独立（非 git）项目副本** `/nasdata/app.e0031982/code/ZhuLong_DAC2027/` 里。本块**只读**读它的 4 份关键文件，理解其工作与进度，为接管做准备。
+
+```bash
+# RUN_ID 11 — read the OTHER (legacy component) agent's docs & loop
+D=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
+echo "===== 0. TIME ====="; timeout 10 date '+%F %T'
+echo "===== 1. ls run/ ====="; timeout 15 ls -la "$D" 2>&1 | head -40 | cut -c1-160
+echo "===== 2. component loop script (head 45) ====="; timeout 10 sed -n '1,45p' "$D/ablation_run_loop_component_s2_full.sh" 2>&1 | cut -c1-180
+echo "===== 3. MEMORY_component_full.md (head 55) ====="; timeout 10 sed -n '1,55p' "$D/MEMORY_component_full.md" 2>&1 | cut -c1-200
+echo "===== 4. daily-memories/2026-10-04.md (tail 55) ====="; timeout 10 tail -n 55 "$D/daily-memories/2026-10-04.md" 2>&1 | cut -c1-200
+echo "===== 5. taskbook (head 70) ====="; timeout 10 sed -n '1,70p' "$D/ablation_run_task_component_s2_full.md" 2>&1 | cut -c1-200
+echo "===== DONE ====="
+```
+
+---
+
 ## RUN_ID 10 — 🔎 只读侦察：另一个 agent 的目录 `/nasdata/app.e0031982/code/ZhuLong_DAC2027`
 
 **背景**：用户告知**另有一个 agent 在跑任务**，地址 `=` `/nasdata/app.e0031982/code/ZhuLong_DAC2027`（**不是**本合并线所在的 `super_intelligence_2035/doc/ZhuLong_DAC2027`）。目标：**观摩 & 理解它的工作，为接管做准备**。本块**只读**：目录结构、是否 git 仓库、进程、最近改动、文档/脚本清单。
 
-```bash
+> ⛔ **已作废**（已执行于 22:13:39）——降级为 text，让位给 RUN_ID 11。
+
+```text
 # RUN_ID 10 — read-only recon of the OTHER agent dir
 D=/nasdata/app.e0031982/code/ZhuLong_DAC2027
 echo "===== 0. TIME ====="; timeout 10 date '+%F %T'; timeout 10 hostname
