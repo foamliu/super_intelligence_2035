@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 40 -->
+<!-- RUN_ID: 41 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,49 @@
 
 ---
 
-## RUN_ID 40 — 🗑 **清理 `/home` 缓存（A+B 档 ≈124 G，用户已批准）**（**本块最新，优先执行**）
+## RUN_ID 41 — ✅ **核验 `/home` 清理收尾 + 确认工具链未受损**（**只读**）（**本块最新，优先执行**）
+
+**RUN_ID 40 已执行（✅ 11:38:30 exit=0）**：A 档缓存已删、**`/home` 即时 92% → 69%**（171G → 128G used）；B 档 `~/.cache/huggingface`（78 G）**是最后一个目标，仍在后台删**。
+**本块核验**：① 后台日志全文 + `.done`；② 七个目标逐个 `[ -e ]`；③ **最终 `df`（基线 92% / 171G / 16G）**；④ ⚠️ **关键：cline / codex / opencode 本体必须仍在**；⑤ HOME 一级现状。
+
+🚫 **只读**。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME
+
+echo; echo "=== 1. 后台清理日志（全文）==="
+cat /tmp/_cleanhome.log 2>/dev/null | sed 's/^/   /'
+echo "   done 标记 = $([ -f /tmp/_cleanhome.done ] && cat /tmp/_cleanhome.done || echo 'NO（仍在跑）')"
+echo -n "   rm 进程数 = "; pgrep -fc 'rm -rf /home/app.e0031982' 2>/dev/null || echo 0
+
+echo; echo "=== 2. 七个目标最终状态 ==="
+for p in "$H/.cache/uv" "$H/.cache/pip" "$H/.bun/install/cache" "$H/.npm/_cacache" "$H/.cache/vllm" "$H/.triton" "$H/.cache/huggingface"; do
+  if [ -e "$p" ]; then echo "   ⚠️ STILL : ${p#$H/}"; else echo "   ✅ GONE  : ${p#$H/}"; fi
+done
+
+echo; echo "=== 3. /home 最终 df（基线 196G/171G used/16G avail/92%）==="
+df -BG /home | tail -1
+df -hT /home | tail -1
+
+echo; echo "=== 4. ⚠️ 关键：cline / codex / opencode 本体必须仍在 ==="
+ls -l "$H/.bun/bin/cline" 2>/dev/null | cut -c1-95
+ls -d "$H/.bun/install/global/node_modules/@cline" 2>/dev/null | cut -c1-115
+for b in "$H/.local/bin/codex" "$H/.local/bin/opencode"; do [ -x "$b" ] && echo "   OK  $b" || echo "   (无) $b"; done
+echo -n "   which: "; command -v cline 2>/dev/null; command -v codex 2>/dev/null; command -v opencode 2>/dev/null
+
+echo; echo "=== 5. HOME 一级现状（前 12）==="
+rm -f /tmp/_duhome2.txt /tmp/_duhome2.done
+setsid bash -c "nice -n 19 du -sh $H/* $H/.[!.]* > /tmp/_duhome2.txt 2>/dev/null; echo done > /tmp/_duhome2.done" </dev/null >/dev/null 2>&1 &
+sleep 14
+echo "   行数=$(wc -l < /tmp/_duhome2.txt 2>/dev/null) done=$([ -f /tmp/_duhome2.done ] && echo YES || echo NO)"
+sort -hr /tmp/_duhome2.txt 2>/dev/null | head -12 | sed 's/^/   /'
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 40**（清理 `/home` 缓存，**✅ 已执行 11:38:30 exit=0** → 92%→69%，HF 待收尾）为 ```text。
+
+## RUN_ID 40 — 🗑 **清理 `/home` 缓存（A+B 档 ≈124 G）**（✅ 已执行 → 92%→69%，见 RUN_ID 41 核验）
 
 **用户已批准（2026-10-04）**：**A 档（零风险缓存 ≈46 G）+ B 档（HF 旧 datasets 缓存 78 G）**，预期 `/home` **92% → ≈29%**。
 
@@ -42,7 +84,7 @@
 
 **安全要点**：① **P1 无进程占用**（`fuser` **一律带 `timeout`** ←上次卡中继的教训）；② **留证**：先把「删什么 + 各多大 + HF hub 里 20 个数据集名」写成文本清单（KB 级）；③ **删除放后台 `setsid nice -n 19`** 顺序执行 + 日志 + `.done` 标记 → **本块秒回**；④ 只删这 7 个**缓存目录**，🚫 不碰 `.bun/install/global`（cline 本体）、`.local`、`.cline`、任何配置与密钥。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 H=$HOME
 echo "   删前: $(df -BG /home | tail -1)"
