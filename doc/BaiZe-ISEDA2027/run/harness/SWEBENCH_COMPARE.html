@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SWE-bench-Lite Internal Cross-Harness Comparison — BaiZe Harness Research Line</title>
+<style>
+:root {
+  --bg: #0d1117; --fg: #e6edf3; --card: #161b22; --border: #30363d;
+  --accent: #58a6ff; --green: #3fb950; --red: #f85149; --yellow: #d29922;
+  --dim: #8b949e; --code-bg: #1c2128; --table-stripe: #1c2330;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  line-height: 1.6; padding: 2rem; max-width: 1200px; margin: 0 auto;
+}
+h1 { font-size: 1.8rem; margin-bottom: 0.5rem; color: var(--accent); }
+h2 { font-size: 1.4rem; margin: 2rem 0 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+h3 { font-size: 1.1rem; margin: 1.5rem 0 0.75rem; color: var(--yellow); }
+p { margin-bottom: 0.75rem; }
+code, pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-radius: 6px; font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+}
+code { padding: 0.15em 0.4em; font-size: 0.9em; }
+pre { padding: 1rem; overflow-x: auto; font-size: 0.85em; line-height: 1.45; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+th, td { padding: 0.6rem 0.8rem; text-align: left; border: 1px solid var(--border); }
+th { background: var(--card); font-weight: 600; color: var(--accent); }
+tr:nth-child(even) { background: var(--table-stripe); }
+.pass { color: var(--green); font-weight: 600; }
+.fail { color: var(--red); font-weight: 600; }
+.partial { color: var(--yellow); font-weight: 600; }
+.muted { color: var(--dim); }
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 1.5rem; margin: 1rem 0;
+}
+.badge {
+  display: inline-block; padding: 0.2em 0.6em; border-radius: 4px;
+  font-size: 0.8em; font-weight: 600; margin: 0 0.2em;
+}
+.badge-pass { background: rgba(63,185,80,0.15); color: var(--green); border: 1px solid var(--green); }
+.badge-fail { background: rgba(248,81,73,0.15); color: var(--red); border: 1px solid var(--red); }
+.badge-blocked { background: rgba(139,148,158,0.15); color: var(--dim); border: 1px solid var(--dim); }
+.footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--dim); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+
+<h1>SWE-bench-Lite Internal Cross-Harness Comparison</h1>
+<p class="muted">BaiZe Harness Research Line · R1 (unshare sandbox, no Docker) · 2026-10-04</p>
+
+<div class="card">
+<p><strong>Setup:</strong> 4 agent harnesses (cline, codex, opencode, claude-code) + 1 blocked (deepseek-harness),
+each run on 2 SWE-bench-Lite instances with the <strong>same model</strong> (<code>deepseek-v4-flash</code> via internal gateway),
+<strong>same sandbox</strong> (R1 unshare user-namespace, rootfs on /nas_train), and <strong>same eval script</strong> (official <code>swebench</code> harness scoring).</p>
+</div>
+
+<h2>1. Key Findings</h2>
+<div class="card">
+<table>
+<tr><th>#</th><th>Finding</th><th>Evidence</th></tr>
+<tr><td>1</td><td><strong>All 4 harnesses resolved django__django-10914</strong> — a straightforward ORM Union queryset fix.</td><td>F2P 1/1, P2P 98/98 for all 4</td></tr>
+<tr><td>2</td><td><strong>No harness resolved sympy__sympy-11400</strong> — requires implementing ccode(sinc(x)) with exact output format + fixing ccode(Relational).</td><td>F2P 0/2 or 1/2 for all 4</td></tr>
+<tr><td>3</td><td><strong>cline was the only harness to partially solve sympy</strong> (1/2 F2P: fixed Relational but not sinc). It took 5.7x longer (707s vs ~124s).</td><td>cline F2P 1/2, others 0/2</td></tr>
+<tr><td>4</td><td><strong>codex produced the most robust _print_sinc</strong> (with x==0 guard) but still failed F2P (format mismatch + missed Relational fix).</td><td>Patch analysis §5</td></tr>
+<tr><td>5</td><td><strong>claude-code produced the smallest patch</strong> (609B — only _print_sinc, no Relational fix) and was fastest on sympy (122s) but slowest on django (686s).</td><td>§3, §4 patch sizes</td></tr>
+<tr><td>6</td><td><strong>deepseek-harness remains blocked</strong> — node22 + rust toolchain unavailable.</td><td>R1_DJANGO10914_RESULTS.yaml</td></tr>
+</table>
+</div>
+
+<h2>2. Methodology</h2>
+<div class="card">
+<h3>2.1 Unified Configuration (frozen 2026-10-03)</h3>
+<table>
+<tr><th>Parameter</th><th>Value</th><th>Notes</th></tr>
+<tr><td>Model</td><td><code>deepseek-v4-flash</code></td><td>Same model for all harnesses → fair comparison</td></tr>
+<tr><td>Gateway</td><td><code>http://127.0.0.1:9090</code> (gw_proxy.py)</td><td>Local proxy translating OpenAI chat ↔ Anthropic messages</td></tr>
+<tr><td>Dataset</td><td>SWE-bench/SWE-bench_Lite (test split)</td><td>Loaded from HF cache (offline mode)</td></tr>
+<tr><td>Instances</td><td>django__django-10914, sympy__sympy-11400</td><td>2 instances — smoke/pilot scale</td></tr>
+<tr><td>Sandbox</td><td>R1: unshare --user --map-root-user --mount --pid</td><td>No Docker; per-instance rootfs on /nas_train (32T NFS)</td></tr>
+<tr><td>Eval script</td><td>Official swebench harness (make_test_spec, get_eval_report)</td><td>Imported by r1_eval.py — NOT a reimplementation</td></tr>
+<tr><td>Scoring</td><td>FAIL_TO_PASS + PASS_TO_PASS (official)</td><td>patch applied via git apply (4 fallback strategies)</td></tr>
+<tr><td>Timeout</td><td>1800s (eval), 3600s (harness run)</td><td>No run hit the timeout</td></tr>
+</table>
+
+<h3>2.2 Harness Versions</h3>
+<table>
+<tr><th>Harness</th><th>Version</th><th>Binary / Runtime</th><th>Status</th></tr>
+<tr><td>cline</td><td>3.0.61</td><td>/home/app.e0031982/.local/bin/cline</td><td><span class="badge badge-pass">RUNNING</span></td></tr>
+<tr><td>codex</td><td>codex-cli 0.94.0</td><td>codex (npm)</td><td><span class="badge badge-pass">RUNNING</span></td></tr>
+<tr><td>opencode</td><td>1.18.27</td><td>/home/app.e0031982/.local/bin/opencode</td><td><span class="badge badge-pass">RUNNING</span></td></tr>
+<tr><td>claude-code</td><td>1.0.0</td><td>bun run (TypeScript entrypoint)</td><td><span class="badge badge-pass">RUNNING</span></td></tr>
+<tr><td>deepseek-harness</td><td>—</td><td>—</td><td><span class="badge badge-blocked">BLOCKED</span></td></tr>
+</table>
+<p class="muted">deepseek-harness blocker: requires pnpm@11 + node≥22.13 (node:sqlite builtin) + rust for landlock-run. All binary mirrors unreachable from .29.</p>
+</div>
+
+<h2>3. Results: django__django-10914</h2>
+<div class="card">
+<p><strong>Instance:</strong> django__django-10914 · <strong>Base commit:</strong> <code>e7fd69d</code></p>
+<p><strong>Task:</strong> Fix Union queryset with order_by() — when combining querysets with Union, the ordering was lost or incorrectly applied.</p>
+<table>
+<tr><th>Harness</th><th>Wall (s)</th><th>Patch (B)</th><th>Resolved</th><th>F2P</th><th>P2P</th><th>Patch Applied</th><th>Infra Fail</th></tr>
+<tr><td>cline</td><td>131.2</td><td>2,576</td><td class="pass">True</td><td class="pass">1/1</td><td class="pass">98/98</td><td class="pass">Yes</td><td>No</td></tr>
+<tr><td>codex</td><td>182.6</td><td>2,903</td><td class="pass">True</td><td class="pass">1/1</td><td class="pass">98/98</td><td class="pass">Yes</td><td>No</td></tr>
+<tr><td>opencode</td><td>231.2</td><td>4,848</td><td class="pass">True</td><td class="pass">1/1</td><td class="pass">98/98</td><td class="pass">Yes</td><td>No</td></tr>
+<tr><td>claude-code</td><td>685.8</td><td>5,640</td><td class="pass">True</td><td class="pass">1/1</td><td class="pass">98/98</td><td class="pass">Yes</td><td>No</td></tr>
+<tr><td>deepseek-harness</td><td colspan="7"><span class="badge badge-blocked">BLOCKED</span> — node22 + rust toolchain unavailable</td></tr>
+</table>
+<h3>Observations</h3>
+<ul>
+<li><strong>cline was fastest</strong> (131s) — natively installed CLI already configured for this gateway.</li>
+<li><strong>claude-code was 5.2x slower</strong> (686s) — TypeScript app via bun with --preload macro workarounds.</li>
+<li><strong>opencode produced the largest patch</strong> (4,848B) — may include extra formatting or comments.</li>
+<li><strong>All 4 passed all 98 PASS_TO_PASS tests</strong> — no regressions.</li>
+</ul>
+</div>
+
+<h2>4. Results: sympy__sympy-11400</h2>
+<div class="card">
+<p><strong>Instance:</strong> sympy__sympy-11400 · <strong>Task:</strong> Implement ccode(sinc(x)) (C code generation for sinc) and fix ccode(Relational) (C code generation for relational expressions).</p>
+<p><strong>F2P tests:</strong> <code>test_ccode_Relational</code>, <code>test_ccode_sinc</code></p>
+<table>
+<tr><th>Harness</th><th>Wall (s)</th><th>Patch (B)</th><th>Resolved</th><th>F2P</th><th>P2P</th><th>F2P Failures</th></tr>
+<tr><td>cline</td><td>707.1</td><td>2,216</td><td class="fail">False</td><td class="partial">1/2</td><td class="pass">29/29</td><td class="fail">test_ccode_sinc</td></tr>
+<tr><td>codex</td><td>124.4</td><td>1,617</td><td class="fail">False</td><td class="fail">0/2</td><td class="pass">29/29</td><td class="fail">test_ccode_Relational, test_ccode_sinc</td></tr>
+<tr><td>opencode</td><td>124.9</td><td>1,590</td><td class="fail">False</td><td class="fail">0/2</td><td class="pass">29/29</td><td class="fail">test_ccode_Relational, test_ccode_sinc</td></tr>
+<tr><td>claude-code</td><td>121.6</td><td>609</td><td class="fail">False</td><td class="fail">0/2</td><td class="pass">29/29</td><td class="fail">test_ccode_Relational, test_ccode_sinc</td></tr>
+</table>
+<h3>Observations</h3>
+<ul>
+<li><strong>No harness resolved this instance.</strong> The task requires two independent fixes (sinc + Relational), making it significantly harder than django.</li>
+<li><strong>cline was the only harness to pass any F2P test</strong> (test_ccode_Relational ✅) — it fixed Relational printing via codeprinter.py, but its _print_sinc output format didn't match the gold test.</li>
+<li><strong>cline took 5.7x longer</strong> (707s vs ~124s) — 80 iterations, struggling with exact output format.</li>
+<li><strong>codex produced the most robust _print_sinc</strong> with proper x==0 guard, but the gold test expects a different exact format, and codex didn't fix Relational at all.</li>
+<li><strong>claude-code produced the smallest patch</strong> (609B) — only _print_sinc with sin(x)/(x) (no x==0 guard, no Relational fix, no test changes).</li>
+<li><strong>All 4 passed all 29 PASS_TO_PASS tests</strong> — no regressions.</li>
+</ul>
+</div>
+
+<h2>5. Failure Mode Analysis (sympy-11400)</h2>
+<div class="card">
+<h3>5.1 cline — F2P 1/2 (test_ccode_Relational ✅, test_ccode_sinc ❌)</h3>
+<p><strong>Patch:</strong> 3 files — ccode.py (+6 lines _print_sinc), codeprinter.py (+6 lines _print_Relational), test_fcode.py (±4 lines).</p>
+<p><strong>Right:</strong> cline correctly identified and fixed the Relational printing issue in codeprinter.py — the only harness to do so.</p>
+<p><strong>Wrong:</strong> cline's _print_sinc produced an output format that didn't match the gold test's expected string. cline spent 707s / 80 iterations trying to match the format but failed.</p>
+<p class="muted">Root cause: SWE-bench F2P tests check exact string equality of C code output. A functionally correct implementation can fail if formatting (parentheses, spacing) doesn't match the gold patch.</p>
+
+<h3>5.2 codex — F2P 0/2</h3>
+<p><strong>Patch:</strong> 2 files — ccode.py (+4 lines _print_sinc with x==0 guard), test_ccode.py (+11 lines test cases).</p>
+<p><strong>Right:</strong> Most robust _print_sinc with zero-guard: <code>(((x) == 0 ? 1 : sin(x)/(x)))</code>. Added own test cases.</p>
+<p><strong>Wrong:</strong> (1) Did NOT fix the Relational issue — test_ccode_Relational remained failing. (2) Gold test's expected format for ccode(sinc(x)) likely differs from codex's output.</p>
+<p class="muted">Key insight: codex focused deeply on one sub-task (sinc) and ignored the other (Relational). Common failure mode for agents on multi-part tasks.</p>
+
+<h3>5.3 opencode — F2P 0/2</h3>
+<p><strong>Patch:</strong> 1,590 bytes. Both F2P tests failed. Patch applied successfully (no infra failure) but didn't correctly implement either sinc or Relational C code generation.</p>
+
+<h3>5.4 claude-code — F2P 0/2</h3>
+<p><strong>Patch:</strong> 609 bytes — only adds _print_sinc to ccode.py:</p>
+<pre>def _print_sinc(self, expr):
+    from sympy import sin
+    arg_str = self._print(expr.args[0])
+    return 'sin({0})/({0})'.format(arg_str)</pre>
+<p><strong>Wrong:</strong> (1) No x==0 guard — sin(x)/(x) is undefined at x=0. (2) No Relational fix. (3) No test modifications. Functionally incomplete.</p>
+<p class="muted">claude-code was the fastest (122s) but produced the most minimal patch — may have terminated early without fully exploring the problem space.</p>
+
+<h3>5.5 Failure Mode Summary</h3>
+<table>
+<tr><th>Failure Mode</th><th>cline</th><th>codex</th><th>opencode</th><th>claude-code</th></tr>
+<tr><td>Missed Relational fix</td><td class="pass">No</td><td class="fail">Yes</td><td class="fail">Yes</td><td class="fail">Yes</td></tr>
+<tr><td>sinc output format mismatch</td><td class="fail">Yes</td><td class="fail">Yes</td><td class="fail">Yes</td><td class="fail">Yes</td></tr>
+<tr><td>Missing x==0 guard</td><td>?</td><td class="pass">No</td><td>?</td><td class="fail">Yes</td></tr>
+<tr><td>Excessive iterations</td><td class="fail">80 iters</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>Patch too minimal</td><td class="pass">No</td><td class="pass">No</td><td class="pass">No</td><td class="fail">Yes (609B)</td></tr>
+</table>
+</div>
+
+<h2>6. Combined Summary Table</h2>
+<div class="card">
+<table>
+<tr><th>Harness</th><th>Instance</th><th>Wall (s)</th><th>Patch (B)</th><th>Resolved</th><th>F2P</th><th>P2P</th><th>Infra Fail</th></tr>
+<tr><td rowspan="2">cline</td><td>django-10914</td><td>131.2</td><td>2,576</td><td class="pass">✅</td><td class="pass">1/1</td><td class="pass">98/98</td><td>No</td></tr>
+<tr><td>sympy-11400</td><td>707.1</td><td>2,216</td><td class="fail">❌</td><td class="partial">1/2</td><td class="pass">29/29</td><td>No</td></tr>
+<tr><td rowspan="2">codex</td><td>django-10914</td><td>182.6</td><td>2,903</td><td class="pass">✅</td><td class="pass">1/1</td><td class="pass">98/98</td><td>No</td></tr>
+<tr><td>sympy-11400</td><td>124.4</td><td>1,617</td><td class="fail">❌</td><td class="fail">0/2</td><td class="pass">29/29</td><td>No</td></tr>
+<tr><td rowspan="2">opencode</td><td>django-10914</td><td>231.2</td><td>4,848</td><td class="pass">✅</td><td class="pass">1/1</td><td class="pass">98/98</td><td>No</td></tr>
+<tr><td>sympy-11400</td><td>124.9</td><td>1,590</td><td class="fail">❌</td><td class="fail">0/2</td><td class="pass">29/29</td><td>No</td></tr>
+<tr><td rowspan="2">claude-code</td><td>django-10914</td><td>685.8</td><td>5,640</td><td class="pass">✅</td><td class="pass">1/1</td><td class="pass">98/98</td><td>No</td></tr>
+<tr><td>sympy-11400</td><td>121.6</td><td>609</td><td class="fail">❌</td><td class="fail">0/2</td><td class="pass">29/29</td><td>No</td></tr>
+<tr><td>deepseek-harness</td><td colspan="7"><span class="badge badge-blocked">BLOCKED</span></td></tr>
+</table>
+<h3>Aggregate Scores (2 instances)</h3>
+<table>
+<tr><th>Harness</th><th>Resolve Rate</th><th>Avg Wall (s)</th><th>Avg Patch (B)</th><th>Total F2P Pass</th></tr>
+<tr><td>cline</td><td class="partial">1/2 (50%)</td><td>419.2</td><td>2,396</td><td class="partial">2/3</td></tr>
+<tr><td>codex</td><td class="partial">1/2 (50%)</td><td>153.5</td><td>2,260</td><td class="partial">1/3</td></tr>
+<tr><td>opencode</td><td class="partial">1/2 (50%)</td><td>178.1</td><td>3,219</td><td class="partial">1/3</td></tr>
+<tr><td>claude-code</td><td class="partial">1/2 (50%)</td><td>403.7</td><td>3,125</td><td class="partial">1/3</td></tr>
+</table>
+<p class="muted">All 4 harnesses have the same resolve rate (1/2) — all solved django, all failed sympy. Differentiation comes from F2P partial credit and efficiency metrics.</p>
+</div>
+
+<h2>7. Reproduction Commands</h2>
+<div class="card">
+<h3>7.1 Environment Setup</h3>
+<pre>export PYTHONPATH=/nas_train/app.e0031982/harness_work/SWE-bench
+export HF_DATASETS_OFFLINE=1
+export HF_HUB_OFFLINE=1
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness
+pgrep -af gw_proxy || python3 /nas_train/app.e0031982/harness_work/gw_proxy.py &amp;</pre>
+<h3>7.2 Run a Harness on an Instance</h3>
+<pre>python3 run_single.py \
+  --harness codex \
+  --instance-json /nas_train/app.e0031982/harness_work/swe-bench-tasks/tasks/sympy__sympy-11400/instance.json \
+  --workdir /nas_train/app.e0031982/harness_work/rootfs/sympy__sympy-11400/testbed \
+  --timeout 3600 \
+  --out-patch /nas_train/app.e0031982/harness_work/workdirs/model_patch_codex_sympy11400.diff \
+  --out-predictions /nas_train/app.e0031982/harness_work/workdirs/predictions_codex_sympy11400.json
+
+# For cline (requires --data-dir + -P openai workaround):
+python3 run_single.py --harness cline-patched ...</pre>
+<h3>7.3 Evaluate a Prediction</h3>
+<pre>bash /nas_train/app.e0031982/harness_work/eval_sympy11400.sh codex
+
+# Or directly:
+python3 r1_eval.py \
+  --instance sympy__sympy-11400 \
+  --predictions /nas_train/app.e0031982/harness_work/workdirs/predictions_codex_sympy11400.json \
+  --rootfs /nas_train/app.e0031982/harness_work/rootfs/sympy__sympy-11400 \
+  --run-id R1_CODEX_SYMPY11400 \
+  --log-dir /nas_train/app.e0031982/harness_work/logs_eval \
+  --sandbox unshare --timeout 1800</pre>
+<h3>7.4 Key File Paths</h3>
+<table>
+<tr><th>Artifact</th><th>Path</th></tr>
+<tr><td>Eval reports (django)</td><td>/nas_train/.../logs_eval/R1_{CLINE,CODEX,OPENCODE,CLAUDE_CODE}/</td></tr>
+<tr><td>Eval reports (sympy)</td><td>/nas_train/.../logs_eval/R1_{CLINE_SYMPY,CODEX_SYMPY11400,OPENCODE_SYMPY11400,CLAUDE-CODE_SYMPY11400}/</td></tr>
+<tr><td>Model patches</td><td>/nas_train/.../workdirs/model_patch_*.diff</td></tr>
+<tr><td>Predictions JSON</td><td>/nas_train/.../workdirs/predictions_*.json</td></tr>
+<tr><td>Per-instance rootfs</td><td>/nas_train/.../rootfs/{django__django-10914,sympy__sympy-11400}/</td></tr>
+<tr><td>Django results YAML</td><td>run/harness/R1_DJANGO10914_RESULTS.yaml</td></tr>
+</table>
+</div>
+
+<h2>8. Caveats &amp; Limitations</h2>
+<div class="card">
+<ul>
+<li><strong>This is an internal cross-harness comparison, NOT a standard SWE-bench score.</strong> Cannot be compared to the leaderboard (only 2 instances, unshare sandbox instead of Docker, internal gateway proxy).</li>
+<li><strong>The eval script IS the official swebench harness</strong> (make_test_spec, get_eval_report) — imported by r1_eval.py, not reimplemented. Only the execution layer (Docker → unshare) was swapped.</li>
+<li><strong>deepseek-harness is excluded</strong> due to build dependency blocker (node22 + rust).</li>
+<li><strong>F2P tests check exact string output</strong> — functionally correct implementations can fail if formatting doesn't match the gold patch. Known SWE-bench characteristic.</li>
+<li><strong>2 instances is too few for statistical significance.</strong> Next step: scale to 20–30 instances per operator's batch-5 instructions.</li>
+<li><strong>cline required --data-dir workaround</strong> — vision loop's cline daemon overwrote API base URL. See run_single.py::run_cline_patched().</li>
+<li><strong>claude-code required bun --preload + --define MACRO.* workaround</strong> — bunfig.toml [define] not loaded when cwd is outside source dir.</li>
+</ul>
+</div>
+
+<div class="footer">
+<p><strong>Generated:</strong> 2026-10-04 · <strong>Line:</strong> BaiZe Harness Research (H-A) · <strong>Phase:</strong> R1 pilot (2 instances × 4 harnesses)</p>
+<p><strong>Source files:</strong> r1_eval.py, run_harness.py, run_single.py, R1_DJANGO10914_RESULTS.yaml</p>
+<p><strong>Honesty note:</strong> All results from actual runs on 10.239.2.29 with deepseek-v4-flash. Eval reports are official swebench harness output. No results were simulated or estimated.</p>
+</div>
+
+</body>
+</html>

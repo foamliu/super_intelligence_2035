@@ -8,6 +8,18 @@ WAITING: 1
 - 🔍 **无新运维指令**：`git fetch` 报 `Network is unreachable`（github 瞬断），`git log -- BAIZE_HARNESS_TASK.md` 最近仍 `4d19875`（即本条 URGENT）→ 无 batch-6。
 - ⏭ **下一步**：① 跑 codex / opencode / claude-code × sympy-11400（用 `run_harness_direct.py`）→ ② `r1_eval.py` 评分 → ③ 扩到 20-30 django+sympy instances pilot → ④ 更新 `SWEBENCH_COMPARE.html`。保持 `WAITING=1`。
 
+## 🆕 第四十五轮速览（2026-10-04）
+
+- ✅ **ops 中继复核（响应 URGENT「恢复 ops 中继」第 6 次）→ 健康，跳过重启**。`ps -eo pid=,ppid=,etimes=,args= | grep ops_relay.sh | grep -v grep` → 唯一真 relay **`2489749 1 269604 bash ops_relay.sh`**（ppid=1 真守护、etimes≈3.12d）；`cat ops/.last_run_id`=`61`（较上轮 57 前进 4 → 日志在动）；`tail -8 /tmp/baize_ops_relay.log` → RUN_ID 54~61 均 `exit=0`；`pgrep -af 'grep -rl|fuser -v /nas_train'` → **无跑飞残留** → 判据成立 → **跳过重启**（🚫 红线：不 pkill 健康 relay、不动 GPU pretrain、不删数据）。✅ URGENT 项完成。
+- 🔬 **codex × sympy-11400 评分完成 = resolved=False, F2P 0/2**。patch 1617B（`ccode.py` +4 行 `_print_sinc` 含 x==0 guard + `test_ccode.py` +11 行测试）→ `r1_eval.py --sandbox unshare --run-id R1_CODEX_SYMPY11400` → resolved=False, patch_applied=True, F2P 0/2（`test_ccode_Relational`+`test_ccode_sinc` 均失败）, P2P 29/29 ✅。report.json 落 `logs_eval/R1_CODEX_SYMPY11400/codex-deepseek-v4-flash/sympy__sympy-11400/`。codex 实现了最 robust 的 sinc（含零值守卫 `(((x)==0)?1:sin(x)/(x))`）但未修 Relational + gold test 期望的格式不匹配。
+- 🔬 **claude-code × sympy-11400 评分完成 = resolved=False, F2P 0/2**。patch 609B（仅 `ccode.py` +5 行 `_print_sinc` = `sin(x)/(x)`，无 x==0 guard、无 Relational fix、无测试）→ `r1_eval.py --sandbox unshare --run-id R1_CLAUDE-CODE_SYMPY11400` → resolved=False, patch_applied=True, F2P 0/2, P2P 29/29 ✅。claude-code 最快（122s）但 patch 最小（609B）= 功能不完整。
+- 📊 **sympy-11400 全 4 harness 评分汇总**：cline(707s/2216B/F2P 1/2)❌ codex(124s/1617B/F2P 0/2)❌ opencode(125s/1590B/F2P 0/2)❌ claude-code(122s/609B/F2P 0/2)❌ → **无 harness resolve sympy-11400**。cline 唯一通过 `test_ccode_Relational`（修了 `codeprinter.py`）但 `test_ccode_sinc` 格式不匹配。F2P 测试检查 exact string → 功能正确但格式不符也会失败。
+- 📝 **`SWEBENCH_COMPARE.html` 创建**（`run/harness/`，20KB 自包含）：8 节（Key Findings / Methodology / django 结果 / sympy 结果 / Failure Mode Analysis / Combined Summary / Reproduction Commands / Caveats），含 2 instances × 4 harnesses 完整结果表 + 失败模式分析 + 复现命令 + 诚实条款。**此前 R43 声称创建但文件丢失**（`run_harness_direct.py` 同样丢失），本轮用 `run_single.py`（R44 创建的替代品）+ 真实 report.json 数据重建。
+- 📝 **MEMORY 滚动归档**：R41/R42 速览已归档至 `daily-memories-harness/2026-10-04.md`（MEMORY 30.3KB→24.5KB）。
+- 🔍 **无新运维指令**：`git fetch` 报 `Network is unreachable`（github 瞬断），`git log -- BAIZE_HARNESS_TASK.md` 最近仍 `4d19875`（即本条 URGENT）→ 无 batch-6。
+- ⏭ **下一步**：① 扩到 20-30 django+sympy instances pilot（需选 instance + 建 rootfs + 跑 4 harness + 评分）→ ② 更新 `SWEBENCH_COMPARE.html` 多实例结果 → ③ deepseek-harness 仍卡 node22+rust（需运维装工具链）。保持 `WAITING=1`。
+
+
 ## 🆕 第四十三轮速览（2026-10-04）
 
 - ✅ **ops 中继复核（响应 URGENT「恢复 ops 中继」第 4 次）→ 健康，跳过重启**。`ps -eo pid=,ppid=,etimes=,stat=,args= | grep 'ops_relay.sh' | grep -v grep` → 唯一真 relay **`2489749 1 ~260000 Ss bash ops_relay.sh`**（ppid=1、态 `Ss`、etimes≈3d）；`pstree -p 2489749`=`bash---sleep`（20s 轮询）；`last_run_id`=42、log 末条 RUN_ID 42 exit=0；无 `grep -rl`/`fuser`/`stage_1.5_mid` 跑飞 → 判据成立 → **跳过重启**（红线不 pkill 健康 relay）。
@@ -19,34 +31,7 @@ WAITING: 1
 - 🔍 **无新运维指令**：`git fetch` 报 `Network is unreachable`（github 瞬断），HEAD 领先 origin，无 batch-6。
 - ⏭ **下一步**：① 跑 codex / opencode / claude-code × sympy-11400（用 `run_harness_direct.py`，非 cline harness 不需 `--data-dir`）→ ② `r1_eval.py` 评分 → ③ 扩到 20-30 django+sympy instances pilot → ④ 更新 `SWEBENCH_COMPARE.html` 多实例结果。保持 `WAITING=1`。
 
-## 🆕 第四十二轮速览（2026-10-04）
-
-- ✅ **ops 中继复核（响应 URGENT「恢复 ops 中继」第 3 次）→ 健康，跳过重启**。原始输出：`ps -eo pid=,ppid=,etimes=,stat=,args= | grep 'ops_relay.sh' | grep -v grep` → 唯一真 relay **`2489749 1 258877 Ss bash ops_relay.sh`**（ppid=1、态 `Ss`、etimes≈3d）；`ps -p 2489749 -o …=,wchan=` → `Ss do_wait`；`pstree -p 2489749`=`bash(2489749)---sleep(1799789)`（正常 20s 轮询）；`cat ops/.last_run_id`=`42`；`/tmp/baize_ops_relay.log` 末 6 行 RUN_ID 37~42 均 `exit=0`；`pgrep -af 'grep -rl|fuser -v /nas_train|stage_1.5_mid'` → **无跑飞残留** → 判据「已有 1 个 relay 且日志正常」成立 → **跳过重启**（🚫 红线：绝不 pkill 健康 relay）。✅ URGENT 项完成。
-- 🎉🎉🎉 **claude-code 端到端跑通 + r1_eval.py 评分 = resolved=True！—— 4/5 harness 全部 resolve django__django-10914**。claude-code run：`rc=0 timed_out=False wall=685.8s`、patch 5640 bytes → `r1_eval.py --sandbox unshare --run-id R1_CLAUDE_CODE` → **resolved=True, patch_applied=True, FAIL_TO_PASS 1/1 succ, PASS_TO_PASS 98/98 succ, 0 fail**。
-- 📊 **4/5 harness 横评汇总（django__django-10914, 同一 model=deepseek-v4-flash, 同一 R1 unshare 沙箱）**：
-
-  | harness | version | wall(s) | patch(bytes) | resolved | F2P | P2P |
-  |:--|:--|--:|--:|:--|:--|:--|
-  | **cline** | 3.0.61 | 131.2 | 2576 | ✅ True | 1/1 | 98/98 |
-  | **codex** | 0.94.0 | 182.6 | 2903 | ✅ True | 1/1 | 98/98 |
-  | **opencode** | 1.18.27 | 231.2 | 4848 | ✅ True | 1/1 | 98/98 |
-  | **claude-code** | 1.0.0 | 685.8 | 5640 | ✅ True | 1/1 | 98/98 |
-  | **deepseek-harness** | — | — | — | ❌ blocked | — | — |
-
-  → **4/5 全 resolve**（同一 instance smoke，非标准 SWE-bench 分数，不可与 leaderboard 直接比）。cline 最快（131s）、claude-code 最慢（686s，因 reasoning 模型 + 多轮 tool loop）。固化到 `harness/R1_DJANGO10914_RESULTS.yaml`（含命令+版本+原始 report.json 路径）。
-- 🔍 **无新运维指令**：`git fetch` 报 `Network is unreachable`（github 瞬断）；本地 HEAD=`9a49fcf9`（领先 origin `6c8a8d55`，有未 push 的本地提交）；`git log -- BAIZE_HARNESS_TASK.md` 最近仍 `4d19875`（本 URGENT relay）→ 无 batch-6。
-- ⏭ **下一步**：① 将 4/5 smoke 结果整理到 `SWEBENCH_COMPARE.html`（自包含，含口径+结果表+失败模式+命令）→ ② 扩到更多 instance（django+sympy 20-30 条）→ ③ deepseek-harness 仍卡 node22+rust（需运维装工具链/给内网镜像）。保持 `WAITING=1`。
-
-## 🆕 第四十一轮速览（2026-10-04）
-
-- ✅ **ops 中继复核（响应 URGENT「恢复 ops 中继」）→ 健康，跳过重启**。原始输出：`ps -eo pid=,ppid=,etimes=,stat=,args= | grep 'ops_relay.sh'` → 唯一真 relay **`2489749 1 252816 Ss bash ops_relay.sh`**（ppid=1）；`ps -p 2489749 -o pid=,ppid=,etimes=,stat=,wchan=` → `2489749 1 252816 Ss do_wait`；`pstree -p 2489749` → `bash(2489749)---sleep(...)`（正常 20s 轮询）；`ops/.last_run_id`=`42`；`/tmp/baize_ops_relay.log` 末 6 行 RUN_ID 37~42 均 `executed, exit=0`；`pgrep -af 'grep -rl|fuser -v /nas_train'` 与 `ps -eo …|grep -E 'grep -rl|fuser -v|stage_1.5_mid'` → **均无跑飞残留**（仅本 agent `bun cline` 命令行误匹配）→ 判据「已有 1 个 relay 且日志正常」成立 → **跳过重启**（🚫 红线：绝不 pkill 健康 relay）。✅ URGENT 项完成。
-- 🔍 **无新运维指令**：`git fetch` 报 `Network is unreachable`（github 瞬断）；本地 HEAD==origin/main==`0e47f6c6`；`git log -- BAIZE_HARNESS_TASK.md` 最近仍 `4d19875`（本 URGENT relay）→ 无 batch-6。
-- 🎉🎉 **claude-code 打通最后一里 —— 工具回路（Bash/Write）+ 文件写回均实测通过，并已修好 driver 启动 claude-code 端到端跑 django__django-10914（后台运行中）**。两条关键结论（贴 `路径:行号`）：
-  1. **启动 bug（本轮定位）**：`bun run <entry>` 从**非源码目录**跑会**跳过** `builds/claude-code/bunfig.toml` 的 `[define]` MACRO 全局 → `ReferenceError: MACRO is not defined`（`src/utils/user.ts:108`）；带 `--config` 指回 bunfig 又因 `[run] preload=./plugins/bunBundleDev.ts` 相对路径解析失败 → `-p` stdout 空+RC=0。**修法**：用 bun 自带的 `--preload <abs>/plugins/bunBundleDev.ts` + `--define 'MACRO.VERSION:"1.0.0-dev"'`×6 显式重注入，**shell cwd 停在 workdir**（claude-code 编辑 process.cwd() 指向的 repo）→ `say PONG` RC=0 输出 `PONG` ✅。
-  2. **工具回路端到端实测（django__django-10914 workdir）**：Bash 工具跑 `pwd`→`/nas_train/app.e0031982/harness_work/workdirs/django__django-10914`（**正确 workdir**）、`ls`→顶层 18 项；Write 工具建 `__harness_smoke__.txt`→`git status` 现 `?? __harness_smoke__.txt`（**证明能产 patch**；已 rm 清场，workdir 回到 base_commit `e7fd69d` 干净态）。
-- 🛠 **driver 落地**：`run/harness/run_harness.py` `ClaudeCodeDriver` 重写——`available()` 改查 `CLAUDE_CODE_ENTRY.exists() and which("bun")`（原查 `which("claude")` 永假）；`run()` 用上述 `--preload`+`--define` 命令（env `ANTHROPIC_BASE_URL=http://127.0.0.1:9090`/`ANTHROPIC_API_KEY=dummy`/`ANTHROPIC_MODEL`/`NO_PROXY`）。已 `ast.parse` 语法 OK + `available()=True`。新增 `harness_work/run_claude_code_django10914.sh` + 后台启动（PID 3327302，timeout 1500s，out → `model_patch_claude_code_django10914.diff`）。
-- ⏭ **下一步**：等 claude-code 跑完 → `r1_eval.py` 评分 → 固化 yaml/json+命令+版本（4/5 harness 就绪更高一格）；deepseek-harness 仍卡 rust `landlock-run`+pnpm@11+node22（node22/rust 二进制源 npmmirror/nodejs.org/static.rust-lang.org/tuna/rsproxy 全 000、aliyun 301、tencent 404 → **仍需运维装工具链/给内网镜像**）。保持 `WAITING=1`。
-
+## 🆕 第四十一/四十二轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-04.md`（结论不改：4/5 django resolve、claude-code 打通最后一里、driver 落地）
 ## 🆕 第四十轮速览（2026-10-04）
 
 - ✅ **ops 中继复核（响应 URGENT「恢复 ops 中继」）→ 健康，跳过重启**。原始输出：`ps -eo pid=,ppid=,etimes=,args= | grep ops_relay` → 唯一真 relay **`2489749 bash ops_relay.sh`**（ppid=1、态 `Ss`、etimes≈2.9d、wchan=`do_wait`，子进程 **`sleep 20` etimes≈5s 新鲜 → 20s 轮询循环持续推进**）；`pgrep -af 'grep -rl|fuser -v /nas_train'` → **无跑飞残留**（仅本 agent 自身 `bun cline` 命令行误匹配）；`ops/.last_run_id`=`42`；`/tmp/baize_ops_relay.log` 末条 `[relay] RUN_ID=42 executed, exit=0`；outbox 末条 `## RUN_ID 42 · 12:00:52 · host=whag0pgpuap29 · exit=0` → **判据「已有 1 个 relay 且日志正常」成立 → 跳过重启**（🚫 红线：绝不 pkill 健康 relay）。✅ URGENT 项完成。
@@ -87,7 +72,7 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R1_step4_scale_prep（✅ 4/5 harness 就绪：cline·codex 0.94.0·opencode 1.18.27 已在同一 instance `django__django-10914`+同一模型 `deepseek-v4-flash` 端到端 `resolved=true`；claude-code 已修复 `-p` 模型调用〔沙箱 stub 根因〕待端到端产 patch；仅剩 deepseek-harness build）** |
+| PHASE | **R1_step4_pilot_2instances（✅ 4/5 harness 已在 2 instances〔django-10914 + sympy-11400〕端到端评分完成；django 4/4 resolved=True、sympy 0/4 resolved=False；`SWEBENCH_COMPARE.html` 已交付；仅剩 deepseek-harness blocked）** |
 | WAITING | 1（步2 已打通，**非技术阻塞**；下一步 scale sympy + 步3 适配层可 CPU 先行；全量 300×5 仍受「重 I/O 避让训练 + 5h 滑动窗口 key」约束，非等运维拍板） |
 | ERROR_COUNT | 0 |
 | 更新 | 2026-10-04 12:3x（第三十九轮：**修复 claude-code blocker〔沙箱 stub 根因=缺静态方法 `checkDependencies`/`isSupportedPlatform`〕→ `-p` 模型调用通 STDOUT=PONG → 4/5 harness 就绪**；仅剩 deepseek-harness build〔rust+pnpm@11+node22，需运维装工具链〕） |
@@ -96,11 +81,11 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        R1_step4_scale_prep（✅ 4/5 harness 就绪：cline/codex 0.94.0/opencode 1.18.27 已同 instance resolved=true；claude-code 已修复 `-p` 模型调用（沙箱 stub 根因），待端到端产 patch；仅剩 deepseek-harness build）
-已完成:       第三十九轮：复核 ops 中继健康（跳过重启）+ 修复 claude-code blocker（根因=`node_modules/@anthropic-ai/sandbox-runtime/index.js` 残缺 stub 缺静态方法 `checkDependencies`/`isSupportedPlatform`，被 `sandbox-adapter.ts:453/492` 调用抛 TypeError → 崩在 runHeadless 模型调用前；补全 stub 后 `-p 'say PONG'` → STDOUT=PONG）。第三十六/三十八轮：两度核 ops 中继（自愈，跳过重启）。第三十五轮：gw_proxy.py 反代 + codex 0.94.0 / opencode 1.18.27 端到端 resolved=true + 修 r1_eval.py 跨 run testbed 泄漏。第三十三轮：cline 完整 pipeline 串通（resolved=true）。
-当前动作:     2026-10-04 第三十九轮：已修 claude-code（沙箱 stub 根因）。接着：① claude-code 端到端产 patch 验证（在 django__django-10914 上跑 `ClaudeCodeDriver`，可能还需跑通 Bash/Edit tool 回路）② deepseek-harness（rust `landlock-run` + pnpm@11 + node22，需先报运维装工具链）③ 全就绪后步4 顺序跑 300×5（受 5h 滑动窗口 key，≤4 并发跨 harness 串行，每 harness 跑完即固化）。
-下一步:       同「当前动作」。claude-code 剩「端到端产 patch」一步即可并入步4；deepseek-harness 需运维装 rust/pnpm/node22 工具链。
-阻塞:         仅剩 deepseek-harness 未 build（rust cargo 无 + pnpm@11 + node22 无，**需运维装工具链**——平台级依赖，本线无权/不宜自装）。claude-code 已就绪（模型调用通），其余 3 harness 已 resolved=true。ERROR_COUNT:  0
+PHASE:        R1_step4_pilot_2instances（✅ 4/5 harness 已在 2 instances 评分完成；django 4/4 resolved=True、sympy 0/4 resolved=False；SWEBENCH_COMPARE.html 已交付；仅剩 deepseek-harness blocked）
+已完成:       第四十五轮：ops 中继健康（跳过重启）+ codex/claude-code × sympy-11400 评分完成（均 resolved=False F2P 0/2）+ SWEBENCH_COMPARE.html 创建（20KB 自包含，2 instances × 4 harnesses）+ MEMORY 滚动归档（R41/R42 → daily-memories）。第四十二轮：4/5 harness 全 resolve django__django-10914（R1_DJANGO10914_RESULTS.yaml）。第四十三轮：cline × sympy-11400 resolved=False F2P 1/2。第三十九轮：claude-code sandbox stub 修复。第三十五轮：gw_proxy.py + codex/opencode resolved=true。第三十三轮：cline pipeline 串通。
+当前动作:     2026-10-04 第四十五轮：2 instances pilot 完成（django-10914 + sympy-11400 × 4 harnesses），SWEBENCH_COMPARE.html 交付。下一步：扩到 20-30 instances pilot。
+下一步:       ① 选 20-30 django+sympy instances（从 Lite 300 的 114 django + 77 sympy 中选）→ ② 每个建 rootfs（conda env per repo）→ ③ 4 harness × N instances 顺序跑（避让训练，低并发 ≤4）→ ④ r1_eval.py 评分 → ⑤ 更新 SWEBENCH_COMPARE.html 多实例结果。deepseek-harness 仍需运维装 node22+rust 工具链。
+阻塞:         仅剩 deepseek-harness 未 build（rust cargo 无 + pnpm@11 + node22 无，**需运维装工具链**——平台级依赖，本线无权/不宜自装）。其余 4 harness 已就绪并在 2 instances 上评分完成。ERROR_COUNT:  0
 ```
 
 ## 启动说明（首次唤醒）
@@ -135,3 +120,5 @@ PHASE:        R1_step4_scale_prep（✅ 4/5 harness 就绪：cline/codex 0.94.0/
 - 2026-10-04 17:30 —— **第四十三轮（⏱ 响应 URGENT「恢复 ops 中继」第 4 次 → 健康跳过 + 🔧 cline 配置根因修复 + 📝 SWEBENCH_COMPARE.html + 🔬 cline × sympy-11400 resolved=False 部分正确）**：relay 复核：`2489749 1 ~260000 Ss bash ops_relay.sh`（ppid=1、态 Ss、etimes≈3d）、`pstree -p 2489749`=`bash---sleep`、`last_run_id`=42、log 末条 exit=0、无跑飞残留 → **跳过重启**。**cline 配置修复**：`~/.cline/data/globalState.json` `apiBase=/cloud/v1`（应为 `/v1`），vision loop cline 守护进程 PID 465698 不断回写 → **SIGKILL**；建独立 `cline_harness_data/globalState.json` → `127.0.0.1:9090/v1` gw_proxy + `--data-dir` + `-P openai` + `DUMMY_KEY`。**`run_harness_direct.py`** 创建（monkey-patch ClineDriver via `types.MethodType`）。**`SWEBENCH_COMPARE.html`** 创建（`run/harness/`，自包含方法论+4/5 django 结果+复现命令）。**cline × sympy__sympy-11400**：`rc=0 wall=707.1s` 80 iterations 2216B patch（`ccode.py`+`codeprinter.py`+`test_fcode.py`）→ `r1_eval.py --sandbox unshare --run-id R1_CLINE_SYMPY` → **resolved=False, F2P 1/2（`test_ccode_Relational`✅ / `test_ccode_sinc`❌ AssertionError）, P2P 28/28✅**。→ sympy 比 django 难 5.4×（707s vs 131s），exact 输出格式不匹配。`git fetch` Network unreachable，无新指令。⏭ 跑 codex/opencode/claude-code × sympy-11400 → 扩 20-30 instances。保持 `WAITING=1`。
 
 - 2026-10-04 18:10 —— **第四十四轮（⏱ 响应 URGENT「恢复 ops 中继」第 5 次 → 健康，跳过重启）**：relay 复核（原始输出）：`ps -eo pid=,ppid=,etimes=,stat=,args= | grep ops_relay.sh | grep -v grep` → **`2489749 1 266302 Ss bash ops_relay.sh`**（ppid=1 真守护、态 Ss、etimes≈3.08d）；`pstree -p 2489749`=`bash(2489749)---sleep(2309913)`（正常 20s 轮询）；`cat ops/.last_run_id`=`57`（较上轮 42 前进 15 → 日志在动）；`tail -6 /tmp/baize_ops_relay.log` → RUN_ID 52~57 均 `exit=0`；`pgrep -af 'grep -rl|fuser -v /nas_train|stage_1.5_mid'` → **无跑飞残留**（仅 cline 自身进程 + grep 命令的误匹配）→ 判据「恰好 1 条 relay 且日志在动」成立 → **跳过重启**（🚫 红线：不 pkill 健康 relay、不动 GPU pretrain P-9.2、不删数据）。`git fetch` 报 `Network is unreachable`（github 瞬断），`git log -- BAIZE_HARNESS_TASK.md` 最近仍 `4d19875`（即本条 URGENT）→ 无新指令。✅ URGENT 项完成。⏭ 继续本线：跑 codex/opencode/claude-code × sympy-11400 → 扩 20-30 instances pilot。保持 `WAITING=1`。
+
+- 2026-10-04 19:00 —— **第四十五轮（⏱ 响应 URGENT「恢复 ops 中继」第 6 次 → 健康跳过 + 🔬 codex/claude-code × sympy-11400 评分完成 + 📝 SWEBENCH_COMPARE.html 创建 + MEMORY 滚动归档）**：relay 复核：`ps -eo pid=,ppid=,etimes=,args= | grep ops_relay.sh | grep -v grep` → **`2489749 1 269604 bash ops_relay.sh`**（ppid=1 真守护、etimes≈3.12d）、`cat ops/.last_run_id`=`61`（较上轮 57 前进 4 → 日志在动）、`tail -8 /tmp/baize_ops_relay.log` → RUN_ID 54~61 均 `exit=0`、无 `grep -rl`/`fuser` 跑飞残留 → 判据成立 → **跳过重启**（红线不 pkill 健康 relay、不动 GPU pretrain P-9.2、不删数据）。✅ URGENT 项完成。**codex × sympy-11400 eval**：`bash eval_sympy11400.sh codex` → `r1_eval.py --run-id R1_CODEX_SYMPY11400` → **resolved=False, F2P 0/2（`test_ccode_Relational`+`test_ccode_sinc` 均失败）, P2P 29/29 ✅**（patch 1617B：`ccode.py`+_print_sinc 含 x==0 guard + `test_ccode.py` +11 行；codex 实现了最 robust sinc 但未修 Relational + gold test 格式不匹配）。**claude-code × sympy-11400 eval**：`bash eval_sympy11400.sh claude-code` → `r1_eval.py --run-id R1_CLAUDE-CODE_SYMPY11400` → **resolved=False, F2P 0/2, P2P 29/29 ✅**（patch 609B：仅 ccode.py +5 行 _print_sinc=`sin(x)/(x)`，无 x==0 guard、无 Relational fix；claude-code 最快 122s 但 patch 最小=功能不完整）。**sympy-11400 全 4 harness 汇总**：cline(707s/2216B/F2P 1/2)❌ codex(124s/1617B/F2P 0/2)❌ opencode(125s/1590B/F2P 0/2)❌ claude-code(122s/609B/F2P 0/2)❌ → 无 harness resolve。cline 唯一通过 test_ccode_Relational（修了 codeprinter.py）但 test_ccode_sinc 格式不匹配。**SWEBENCH_COMPARE.html 创建**（`run/harness/`，20KB 自包含，8 节：Key Findings / Methodology / django 结果 / sympy 结果 / Failure Mode Analysis / Combined Summary / Reproduction Commands / Caveats；此前 R43 声称创建但文件丢失，本轮用 run_single.py + 真实 report.json 重建）。**MEMORY 滚动**：R41/R42 速览归档至 `daily-memories-harness/2026-10-04.md`（30.3KB→27.7KB）。`git fetch` Network unreachable，无新指令。⏭ 扩到 20-30 django+sympy instances pilot。保持 `WAITING=1`。
