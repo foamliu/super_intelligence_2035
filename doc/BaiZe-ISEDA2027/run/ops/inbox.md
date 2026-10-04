@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 67 -->
+<!-- RUN_ID: 68 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,13 +31,54 @@
 
 ---
 
-## RUN_ID 67 — 🔧 **修复：把 EDA MCP 补回 vision/data 的隔离配置 + 真跑一次 `cimi_search` 验证**（**本块最新，优先执行**）
+## RUN_ID 68 — 🔧 **用 loop 的真实配对重跑 `cimi_search` smoke（RUN_ID 67 的 Forbidden 是我用错 key）**（**本块最新，优先执行**）
+
+> **RUN_ID 67 结果（07:29:48）**：✅ **修复成功** —— `.cline_vision` / `.cline_data` 的 `cline_mcp_settings.json` 由 **22B 空** → **206B**（含 `pyAether_MCP_server` + `cimi_search`/`cimi_fetch`），原文件已备份。
+> ⚠️ 但两处需要修正：① `cline mcp list` **不是有效子命令** → 正解是 **`cline config mcp`**；② **smoke 报 `Forbidden`** —— 那是**我用错 key**（拿了 `.cline_data/secrets.json` 里 `.12` 那把，配 `glm-5.2` 不被授权，**与 RUN_ID 56 同一个坑**）。正确做法 = **复现 loop 的真实 (model, key, base) 配对**（`llm_pick` 选出的）。
+> **本块**：① `cline config mcp` 复核两个隔离目录**能看到 server** ② `llm_pick` 取真实配对（**base 直接写进 `.cline_data`**，与 loop 行为一致）③ 用真实配对**重跑 `cimi_search`** ④ 报告（含 MCP 服务能否出网）。
+> 🚫 只动 `.cline_data`（它就是 data 线的隔离目录）；不动 vision/pretrain/harness；不碰 8090 服务本身。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+B=/nas_train/app.e0031982; H=$HOME; C=/home/app.e0031982/.bun/bin/cline
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+export PATH="$H/.bun/bin:$PATH"
+
+echo; echo "=== 1. cline config mcp（正确子命令）看两个隔离目录 ==="
+for n in vision data; do
+  echo "   -- .cline_$n --"
+  timeout 45 "$C" --data-dir "$B/.cline_$n" config mcp 2>&1 | head -20 | cut -c1-150 | sed 's/^/      /'
+done
+
+echo; echo "=== 2. 用 llm_pick 取【真实配对】（base 写进 .cline_data，与 loop 一致）==="
+D="$B/.cline_data"
+LLM_DATA_DIR="$D"; . "$R/llm_rotate.sh"
+ST=/tmp/baize_data_llm_idx
+if llm_pick "$ST" /nas_train/app.e0031982/code/super_intelligence_2035/doc/keys.txt; then
+  echo "   picked model=$LLM_MODEL key=${LLM_KEY:0:8}.. base=$LLM_BASE"
+else
+  echo "   !! llm_pick 无可用候选"
+fi
+echo "   .cline_data/globalState.json base = $(sed -n 's/.*"openAiBaseUrl"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$D/globalState.json" | head -1)"
+
+echo; echo "=== 3. ⭐ 真跑 cimi_search（真实配对 + MCP 配置）==="
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+env $P timeout 280 "$C" --data-dir "$D" -c /tmp -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible --auto-approve true -t 240 \
+  "You have an MCP tool named 'cimi_search' (server pyAether_MCP_server). Call it to search the web for: masked autoencoder MAE. Then answer in <=5 lines: (1) tool available yes/no; (2) 2 result titles; (3) their URLs; (4) if it failed, paste the exact error text." \
+  < /dev/null > /tmp/cimi_smoke2.log 2>&1; rc=$?
+echo "   rc=$rc"; tail -32 /tmp/cimi_smoke2.log | cut -c1-170 | sed 's/^/      /'
+echo; echo "=== DONE ==="
+```
+
+> ⛔ 已降级 RUN_ID 67（07:29:48 exit=0 → **MCP 配置已修回 206B**；但 smoke 因**我用错 key** 报 Forbidden）为 text。
+
+## RUN_ID 67 — 🔧 **修复：把 EDA MCP 补回 vision/data 的隔离配置 + 真跑一次 `cimi_search` 验证**（✅ 已执行 → **配置已修（22B→206B）**；smoke Forbidden = 我用错 key）
 
 > **RUN_ID 66 定位（07:26:23）**：共享 `cline_mcp_settings.json` **已注册 `pyAether_MCP_server`**（`url=http://10.239.2.29:8090/sse`, `type=sse`，265 B）；`.cline_pretrain`/`.cline_harness` 同（265 B）。⚠️ **但 `.cline_vision`/`.cline_data` 只有 22 B（空 `mcpServers`）** —— 根因是 **RUN_ID 55 从 `.12` 的 `settings/` 重播时把 MCP 注册覆盖成空** ⇒ 这就是 data agent 报「MCP 未注册」的原因。
 > **本块**：① 备份后把**同一条 MCP 条目**写进 vision/data 的隔离配置（**并把 `cimi_search`/`cimi_fetch` 加进 `autoApprove`**）② `cline mcp list` 复核 ③ **真跑一次 `cimi_search`**（headless cline + `.cline_data` 隔离配置）——**这一步也会顺带验证 MCP 服务自身能否出网**（早前 `api.bocha.cn` 曾被 SSL 阻断，需实测）。
 > 🚫 只动 `.cline_vision` / `.cline_data` 两个 settings 文件（**先备份**）；**不改** pretrain/harness；**不碰 8090 服务本身**。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 B=/nas_train/app.e0031982; H=$HOME; C=/home/app.e0031982/.bun/bin/cline
 SH="$H/.cline/data/settings/cline_mcp_settings.json"
