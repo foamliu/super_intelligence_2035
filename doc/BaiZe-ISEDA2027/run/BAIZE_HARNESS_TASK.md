@@ -9,35 +9,57 @@
 
 > 本节由**外部运维**通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停**。
 > **agent 禁止修改本节**。本节为「无」时，按下方默认顺序自主推进。
-### 🚨 运维指令 · 2026-10-04（**最高优先 · 紧急但轻量 ≈30 秒：请帮忙恢复 ops 中继**）
+### 🆕 运维指令 · 2026-10-04（**第 2 条 · ops 中继「有单不收」排查+挽救**）⭐ 最高优先（**已作废上方旧的「≈30 秒 rescue」块**）
 
-> **为什么找你**：`run/ops/ops_relay.sh` 是**外部运维唯一的远程通道**（运维**无法 SSH**，只能靠 `.29` 上的 agent）。它现在被一个**跑飞的进程卡住**了。
-> **耗时 ≈30 秒** · **不占 GPU** · **不改任何 recipe** · **不删任何数据**。⏱ **本条优先于其它一切**。
-> 📌 同一条指令也发给了 pretrain 线 —— **谁先醒谁做，另一个看到 `pgrep` 已有 1 个 relay 就跳过**。
+> **现象（外部运维实测）**：**RUN_ID 62** 已 push ≈20 分钟，中继**既没执行也没回收**；而 RUN_ID **50→61** 都在 **1–2 分钟**内完成 ⇒ 疑似 ①中继卡死，或 ②**`.29`↔github 的 `git fetch` 失败**（本会话日志多次出现 `github: Network is unreachable`）。
+> **为什么找你**：中继在 **`.29`**，和你同机。**不占 GPU · 不改 recipe · 不删数据 · 只动中继**。
+> ⏱ **本条优先于其它一切**（它是运维唯一的远程通道）。
 
-**执行并贴【原始输出】**：
+**① 先只读诊断（贴【原始输出】，**不要**先重启）**
 
 ```bash
-pgrep -af 'ops_relay.sh' | cut -c1-120
-pgrep -af 'grep -rl|fuser -v /nas_train' | cut -c1-120    # 跑飞的残留
-pkill -f 'grep -rl .*stage_1.5_mid_training' 2>/dev/null  # 杀不到就跳过
-pkill -f 'fuser -v /nas_train' 2>/dev/null
-sleep 2
-pkill -f ops_relay.sh 2>/dev/null
-sleep 2
 cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
-git pull --rebase
-setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &
-sleep 6
-pgrep -af ops_relay.sh | cut -c1-120      # 必须恰好 1 条
-tail -6 /tmp/baize_ops_relay.log
+echo "--- relay 进程（真 relay 判据 = ppid=1；fork 出的子 shell 不算）---"
+ps -eo pid,ppid,etimes,stat,args | grep 'ops_relay.sh' | grep -v grep | cut -c1-150
+echo "--- .last_run_id（若仍=61 说明 RUN_ID 62 没跑）---"; cat ops/.last_run_id
+echo "--- outbox 是否已含 RUN_ID 62（=跑了但 push 失败）---"; grep -c 'RUN_ID 62' ops/outbox.md
+echo "--- relay 日志末 20 行 ---"; tail -20 /tmp/baize_ops_relay.log 2>/dev/null
+echo "--- ⭐ github 可达性（最关键的一条）---"; timeout 30 git fetch origin; echo "git fetch exit=$?"
+echo "--- 共享工作副本是否卡住中继（残留 index.lock / 脏索引）---"
+ls -l ../.git/index.lock 2>/dev/null || echo "   no index.lock"; git status -s | head -15
+echo "--- relay 主循环在正常 sleep 还是卡在 syscall ---"
+RP=$(pgrep -f 'bash ops_relay.sh' | head -1); echo "relay pid=${RP:-none}"
+[ -n "$RP" ] && { ps -o pid=,stat=,wchan=,etimes= -p "$RP"; pstree -p "$RP" 2>/dev/null | head -3; }
 ```
 
-**判据**：`pgrep -af ops_relay.sh` **恰好 1 条** 且日志有轮询行。**若已有 1 个 relay 在跑且日志在动 → 无需重启，如实记录后跳过。**
+**② 判据 → 决策**
 
-**🚫 红线**：不要 `pkill` 你自己的 loop、不要动 GPU 上的 pretrain 训练（P-9.2）、**不要删任何数据**（中继恢复后会自动接手磁盘清理，你无需参与）。
+| 诊断结果 | 结论 | 动作 |
+|:--|:--|:--|
+| `git fetch` **exit≠0**（network unreachable） | **根因=网络**，与中继无关 | 🚫 **不要重启**（重启也没用）；如实记录，等网络恢复会自动补跑 |
+| `outbox.md` 已含 `RUN_ID 62` | 中继**已跑但 push 失败** | 🚫 **不要重启**；等网络 |
+| relay 进程**消失**，或日志**停更 >5min**，或 `wchan` **卡在非 `do_wait`/sleep** | **中继卡死** | ✅ 走 ③ 挽救 |
+| relay 在跑、日志在动、`.last_run_id` 在涨 | **健康** | 🚫 **不要动**；记录后跳过 |
 
-**回报**：原始输出写入 `MEMORY_HARNESS.md` 底部流水一行，然后继续本线工作。
+**③ 仅当判定「中继卡死」才执行挽救**
+
+```bash
+cp -a /tmp/baize_ops_relay.log /tmp/baize_ops_relay.log.bak.$(date +%Y%m%d-%H%M%S) 2>/dev/null
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+git pull --rebase --autostash 2>&1 | tail -3      # 先把共享副本同步到最新（若网络可达）
+pkill -f ops_relay.sh; sleep 3
+setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &
+sleep 60
+echo -n "relay 进程数（必须=1）: "; pgrep -fc ops_relay.sh
+tail -8 /tmp/baize_ops_relay.log
+echo -n ".last_run_id（应变 62）: "; cat ops/.last_run_id
+git log --oneline -2                               # 应出现 'ops-relay: result'
+```
+
+**🚫 红线**：**不要 pkill 一个健康的中继**（日志在动/`.last_run_id` 在涨）；不要动 GPU 上的训练；不要删数据；**不要改 `ops_relay.sh` 的逻辑**（那步运维单独做）。
+
+**④ 回报**：把①（必要时③）的**原始输出**写入 `MEMORY_HARNESS.md` 底部 + `daily-memories-harness/2026-10-04.md`，然后继续本线工作。
+> 📌 若你**能 `git pull` 读到本指令**，说明网络已恢复 —— 那么**你的这次 pull 本身就会把 RUN_ID 62 带给中继**（中继读的是同一份工作副本的 `ops/inbox.md`）→ 中继应会在 ~20s 内自动执行、`.last_run_id` 变 62。届时只需确认即可。
 
 
 ### 🆕 运维指令 · 2026-10-03（**优先于下方表格**）
