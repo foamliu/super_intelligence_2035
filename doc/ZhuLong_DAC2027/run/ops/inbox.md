@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 13 -->
+<!-- RUN_ID: 14 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,34 @@
 
 ---
 
+## RUN_ID 14 — 🧭 接管尽调：legacy 两进程是否还在动？当前臂？我方合并线状态？
+
+**背景**：接管前最后确认——① legacy conductor（PID 1381975，已 3.3 天）与组件 loop（2455466）是否还在有效推进；② 评测 infra（MCP/eval）当前占用；③ 当前 `.env` 臂；④ 我方合并线 agent 现状。**只读**。
+
+```bash
+# RUN_ID 14 — takeover due diligence (read-only)
+D=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
+M=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+echo "== 0. TIME =="; timeout 10 date '+%F %T'
+echo "== 1. legacy conductor log tail =="; timeout 10 tail -n 15 /tmp/ablation_conductor.log 2>&1 | cut -c1-160
+echo "== 2. legacy component loop log tail =="; timeout 10 tail -n 15 /tmp/ablation_loop_component_s2_full.log 2>&1 | cut -c1-160
+echo "== 3. zhulong-related procs =="; timeout 10 pgrep -af 'ZhuLong_DAC2027' | head -20 | cut -c1-160
+echo "== 4. eda_fastmcp .env key arm lines =="; timeout 10 grep -nE 'EDA_MCP_TOOLS_DISABLED|EDA_OMEGA_FIDELITY|EDA_RUNCODE_READBACK|EDA_PHI_BUDGET|EDA_PHI_LAGGED|RAG_RECALL_URL' /nasdata/app.e0031982/code/eda_fastmcp/.env 2>/dev/null | cut -c1-200
+echo "== 5. MCP / eval infra procs =="; timeout 10 pgrep -af 'eda_fastmcp|run_cline_script|8090' | head -15 | cut -c1-160
+echo "== 6. our merged line: procs + WAITING =="; timeout 10 pgrep -af 'zhulong_loop|zhulong_ops_relay|-m glm-5.2' | head -10 | cut -c1-150; timeout 10 sed -n '1,3p' "$M/MEMORY_ZHULONG.md" 2>&1
+echo "== 7. our merged agent daily-memory tail =="; timeout 10 tail -n 8 "$M/daily-memories/2026-10-04.md" 2>&1 | cut -c1-160
+echo "== DONE =="
+```
+
+---
+
 ## RUN_ID 13 — 📊 legacy 线：已完成的实测成绩 + conductor + 产出批次（接管清点）
 
 **背景**：为接管清点——查明 legacy 线**到底已跑出哪些有效成绩**、另一进程 `ablation_run_conductor_serial.sh` 是干嘛的、以及评测产出批次。**只读**。
 
-```bash
+> ⛔ **已作废**（已执行于 22:17:55）——降级为 text，让位给 RUN_ID 14。
+
+```text
 # RUN_ID 13 — legacy line: exact completed results + conductor + outputs (read-only)
 D=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
 echo "== 0. TIME =="; timeout 10 date '+%F %T'
