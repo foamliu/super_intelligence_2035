@@ -48,7 +48,7 @@ WAITING: 0
 |:--|:--|:--|:--|
 | **pretrain** | ✅ P-5b(20B) + P-9.1–9.6①② + **P-9.7 A1 稳态**（~249K tok/s，ETA ~22:39 定稿）→ ⭐ **P-9.8 bf16 vs FP8 长程一致性 A/B（各 1000 步）已批准** → P-9.5 复跑 → P-6② → P-8 暂缓 | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` | 🟢 **`.cline_pretrain` 隔离目录**；凌晨空窗已排（P-9.5 → **P-9.8** → P-6②） |
 | **vision** | ✅ R9/R10/R14/E1 + R11-L 四臂 + R11-L2 + caption-weight + **R11-E(未抬高)** + **R13(官方 OV2 79.81%)** 全完成 → ⭐ **臂⑥ AIMv2 翻盘**（lp 12.08% vs 基线 6.08%，**+6pp → 25.1% 渐近局部推翻**）→ 🔄 **R11-F 数据源横比运行中** → 🟢 **R11-G(AIMv2 长跑重拟合 scaling) + R11-H(⑥-B 纯 AR) 已批准**（见 `BAIZE_VISION_TASK.md`「运维指令 · 2026-10-04（七）」） | `run/EXPERIMENTS_VISION_ROUND11.md` · `VISION_OFFICIAL_REPOS_SURVEY.md` | 🔄 **`.cline_vision` 隔离目录**；凌晨空窗 ≈4–5h 已排满 |
-| **data** | 下载巡检 —— 🆕 **白名单锁定 = `l1_en_hq` + `zh` + GPIC**；🔴 已停 `en_v1_4`；D-CLEAN 系列 ✅ 全完成（累计回收 **≈4.96 TiB**） | `run/DISK_CLEANUP_INVENTORY.md` · `DATA_MIX_RECIPE.md` | 🔄 **唤醒 107**：`l1_en_hq` 1293/6006 · `gpic` 2466/8001 |
+| **data** | 下载巡检（白名单 = `l1_en_hq` + `zh` + GPIC；D-CLEAN ✅ 全完成）+ ⭐ **附加任务：BaiZe 论文「idea 文献调研」→ HTML 报告（明早 08:30 前）** | `run/DISK_CLEANUP_INVENTORY.md` · **`LIT_IDEAS_2026-10-04.html`** | 🔄 唤醒 107 巡检中；**调研任务已下发**（用其独有 MCP `cimi-search`+`cimi-fetch`） |
 | **harness** | ✅ **4/5 harness 端到端 `resolved=true`**（cline / codex / opencode / **claude-code**）→ **步4：300 × 5 全量按序跑** | `run/harness/SWEBENCH_LITE_FEASIBILITY.md` · `r1_eval.py` | ⚠️ **H-A pilot 扩容受阻**（github 网络瞬断，base_commit shallow clone 缺）；deepseek-harness 缺工具链 |
 
 > ✅ **vision 叙事已决（2026-10-03 用户）：走 A = 保持「从零训练」**（"A 本身也是为了学习"）。
@@ -178,6 +178,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **2026-10-04（深夜 · 论文定位 + 文献调研下发）** —— 用户给出**论文定位与商业命题**：① 第 1 读者 = **公司领导 + 约 1400 位 DE**（目的是**技术影响力**，投中 ISEDA 是加分）；② 核心命题 = **ZhuLong 让 1400 DE 用上 EDA agent → token 成本急剧上涨 → ≈2027 H2 BaiZe「救场」分档承接流量（达到 DeepSeek-Flash 的 70–80% 指标，成本 ~1/100）**；③ 前沿+经典平衡；④「录用率」次要；⑤ 不必刻意逐条对照现有结果。**关键澄清**：data agent 有**我没有**的 MCP 工具 **`cimi-search` / `cimi-fetch`** → 「集群能不能上网」的可行性问题解决，调研交它做。→ 下发 **`BAIZE_DATA_TASK.md` 顶部「附加任务 · 最高优先」**：7 个方向（**方向 0 = 成本/服务经济性（蒸馏·级联·路由·推理成本口径）为最高优先**；1 SLM 预训练 / 2 LLM 后训练 / 3 vision encoder / 4 MLLM 训练 / 5 MLLM 后训练 / 6 论文质量横切）、**证据规则**（一手优先、可核验标识、二手须标"未核"）、**交付** = 自包含 `LIT_IDEAS_2026-10-04.html`（TL;DR + 主表 8 列 + 三档 + 「成本救场」专章 + 参考清单；按可行性×潜力排序 + TOP-10），**明早 08:30 前**；完不成交「已完成 + 缺口」。巡检 4 项并行照做。
 
 - **2026-10-04（深夜 · 本文件维护）** —— MEMORY.md 一度达 **31.8KB**（逼近上限）→ 按 §8 规程**滚动归档**：把 **2026-10-03 的 §4 已完成项 + §9 流水**原文迁入 `daily-memories/2026-10-03.md`「从 MEMORY.md 滚动归档」（A 节 / B 节）；同时把本轮新认知写进 **§4**（P-8 拍板 / **AIMv2 翻盘 ⇒ 论文·scaling 改写** / D-CLEAN-4 / deepseek-harness / 并行会话）、**§5**（不得共用可变配置目录 · relay 有界）、**§6**（cline 隔离目录）、**§7**（共用 `~/.cline/data` 的真因与 3 坑 · smoke 必带 `< /dev/null` · 必须复现真实 (model,base) 配对 · RUN_ID 头标 · **`origin` 落后 ≠ 停摆** · 并行会话 · Windows 工具坑）。**现 29.7KB ≤ 32KB ✅**。
 
