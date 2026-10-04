@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 16 -->
+<!-- RUN_ID: 17 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,45 @@
 
 ---
 
+## RUN_ID 17 — 🧪 落地隔离 A（编排侧 `--config`）+ 验证（hooks 是否隔离 / 是否 env 泄漏）
+
+**依据**：RUN_ID 16 实测 `cline --config <dir>` = 配置目录（默认 `~/.cline`），且 **hook 发现跟随 `--config`**（`<config-dir>/hooks`）；`--hooks-dir` 无效。**决策**：给合并线编排 agent 用 `--config /nasdata/app.e0031982/.cline_zhulong`。本块：建隔离目录 + 写入 auth + 用**可分辨 canary hook** 验证 ① 编排读的是 `<ISO>/hooks` 而非 `~/.cline/hooks`；② `--config` **不**把 `CLINE_*` 泄漏给子进程（否则会破坏评测对象的防作弊 hook）。
+
+```bash
+# RUN_ID 17 — build isolated --config dir + verify hooks/env (bounded)
+K=02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23
+BASE=http://agi-gateway.cxmt.com/cloud/v1
+ISO=/nasdata/app.e0031982/.cline_zhulong
+echo "== 0. TIME =="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "== 1. create isolated config dir + auth (--config) =="
+mkdir -p "$ISO/hooks"
+timeout 90 cline --config "$ISO" auth -p openai -k "$K" -b "$BASE" -m "glm-5.2" 2>&1 | tail -4 | cut -c1-170
+echo "== 2. isolated dir layout =="; timeout 10 find "$ISO" -maxdepth 2 2>&1 | head -25 | cut -c1-150
+echo "== 3. isolated auth present? =="; timeout 10 grep -rho '"openAiBaseUrl"[^,]*' "$ISO" 2>/dev/null | head -3
+echo "== 4. install distinguishable canary hooks =="
+rm -f ~/.cline/hooks/PreToolUse "$ISO/hooks/PreToolUse"
+printf '#!/bin/bash\necho "DEFAULT_DIR_READ" >> /tmp/zhulong_hook_probe.log\nexit 0\n' > ~/.cline/hooks/PreToolUse; chmod +x ~/.cline/hooks/PreToolUse
+printf '#!/bin/bash\necho "ISO_DIR_READ" >> /tmp/zhulong_hook_probe.log\nexit 0\n' > "$ISO/hooks/PreToolUse"; chmod +x "$ISO/hooks/PreToolUse"
+rm -f /tmp/zhulong_hook_probe.log
+echo "== 5. SMOKE: cline --config ISO, ask for printenv =="
+cd /tmp
+timeout 200 env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
+  cline --config "$ISO" -c /tmp --auto-approve true -m glm-5.2 -k "$K" -P openai-compatible -t 180 \
+  "Run exactly one shell command and return its raw output: printenv | grep -iE 'CLINE|HOOK' ; echo END" < /dev/null 2>&1 | tail -22 | cut -c1-180
+echo "== 6. probe (which hooks dir read) =="; timeout 10 cat /tmp/zhulong_hook_probe.log 2>&1 | head; echo "(end-probe)"
+echo "== 7. cleanup canary =="; rm -f ~/.cline/hooks/PreToolUse "$ISO/hooks/PreToolUse"; timeout 10 ls -la ~/.cline/hooks/ | head -4 | cut -c1-140
+echo "== DONE =="
+```
+
+---
+
 ## RUN_ID 16 — 🧪 隔离前置侦察：`--data-dir` 语义 + hook 安装点 + 要拷的配置
 
 **决策（用户 22:4x）**：隔离走 **A（编排侧）**；停 legacy 两进程；合并线从 **`C1.wo_retrieval R2`** 续跑（复用 legacy 数据）。落地前先搞清：① `cline --data-dir` 改的是哪层（base=`~/.cline` 还是 data=`~/.cline/data`）；② hook 是**哪段脚本**拷进 `~/.cline/hooks` 的；③ 隔离目录要拷哪些配置（auth）。
 
-```bash
+> ⛔ **已作废**（已执行于 22:47:46）——降级为 text，让位给 RUN_ID 17。
+
+```text
 # RUN_ID 16 — prep for isolation (read-only)
 GP=/nasdata/app.e0031982/code/eda_fastmcp
 echo "== 0. TIME =="; timeout 10 date '+%F %T'
