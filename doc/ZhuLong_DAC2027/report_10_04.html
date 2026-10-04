@@ -185,12 +185,9 @@
   </ol>
 </div>
 
-<h3>3.1 启动 loop（登入机器后执行）</h3>
-<div class="callout warn">
-  <b>路径前缀说明：</b>本报告以下命令以当前 2.12 开发机路径 <code>/nas_train/</code> 为例；<b>最终在 36.15 服务器上运行时，请将 <code>/nas_train/</code> 替换为 <code>/nasdata/</code></b>。或使用 git-root 相对路径 <code>$(git rev-parse --show-toplevel)/doc/ZhuLong_DAC2027/run/zhulong_loop.sh</code> 自动适配。
-</div>
+<h3>3.1 启动 loop（36.15 服务器，登入后执行）</h3>
 <pre class="cmd"><code><span class="cm"># 脱离进程组启动，防工具超时误杀；不占用终端</span>
-setsid bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh \
+setsid bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh \
   &gt; /tmp/zhulong_loop.log 2&gt;&amp;1 &lt; /dev/null &amp;</code></pre>
 
 <h3>3.2 启动后 3 秒确认</h3>
@@ -211,8 +208,6 @@ tail -f /tmp/zhulong_loop.log
 
 <span class="cm"># 看当前状态</span>
 head -30 /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md</code></pre>
-
-<p class="small muted">注：以上命令中的 <code>/nasdata/</code> 需根据实际运行环境替换；当前 2.12 开发机用 <code>/nas_train/</code>。</p>
 
 <!-- 4. 状态机速查 -->
 <h2><span class="sec-no">4</span>状态机说明</h2>
