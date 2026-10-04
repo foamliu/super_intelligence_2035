@@ -47,7 +47,7 @@ WAITING: 0
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
 | **pretrain** | ✅ **P-5b 已跑完（10-04 01:37，final ckpt `iter_0004771` 落盘）** → **P-6②**（6 ckpt「能力 vs token」）→ **P-9**（空窗跑 MBS/精度/seq/profiling）→ P-8 暂缓 | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` | 🔴 曾被 cline 凭据事故**阻塞 ~9h**（GPU 空转 6h）→ **07:29 已修复复工** |
-| **vision** | ✅ R9/R10/R14/E1 + R11-L 四臂 + R11-L2 + caption-weight 三点 + **R11-E(GPIC short, 裁定「未抬高」)** + **R13(官方 OV2 79.81%)** 全完成 → 🟢 **R11-F 数据源横比已下发**（见 `BAIZE_VISION_TASK.md`「运维指令 · 2026-10-04（六）」）；臂⑥ AIMv2 ⏸ | `run/EXPERIMENTS_VISION_ROUND11.md` · `VISION_OFFICIAL_REPOS_SURVEY.md` | 🔄 **已切 `.cline_vision` 隔离目录**，待唤醒接 **R11-F** |
+| **vision** | ✅ R9/R10/R14/E1 + R11-L 四臂 + R11-L2 + caption-weight + **R11-E(未抬高)** + **R13(官方 OV2 79.81%)** 全完成 → ⭐ **臂⑥ AIMv2 翻盘**（lp 12.08% vs 基线 6.08%，**+6pp → 25.1% 渐近局部推翻**）→ 🔄 **R11-F 数据源横比运行中** → 🟢 **R11-G(AIMv2 长跑重拟合 scaling) + R11-H(⑥-B 纯 AR) 已批准**（见 `BAIZE_VISION_TASK.md`「运维指令 · 2026-10-04（七）」） | `run/EXPERIMENTS_VISION_ROUND11.md` · `VISION_OFFICIAL_REPOS_SURVEY.md` | 🔄 **`.cline_vision` 隔离目录**；凌晨空窗 ≈4–5h 已排满 |
 | **data** | 下载巡检 —— 🆕 **白名单锁定 = `l1_en_hq` + `zh` + GPIC**；🔴 **立即停 `en_v1_4`**；D-CLEAN 系列 ✅ 全完成（累计回收 **≈1.31 TiB**） | `run/DISK_CLEANUP_INVENTORY.md` · `DATA_MIX_RECIPE.md` | 🔄 **唤醒 75**，等唤醒接令 |
 | **harness** | ✅ **R1 无 docker 沙箱路线跑通**（django + sympy **双绿**）· **步3 适配层 + R32 5 drivers 已交付** → **步4：300 × 5 全量按序跑** | `run/harness/SWEBENCH_LITE_FEASIBILITY.md` · `r1_eval.py` | 🔄 待实跑 |
 
@@ -184,6 +184,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **2026-10-04（深夜 · vision 双批准）** —— ① **臂⑥ AIMv2 翻盘**（用户先前批准，20:01 训完 / 20:25 eval 完）：IN-1k lp **11.39 / 11.14 / 12.08%** vs 基线 3.43/5.45/6.08% → Δ **+7.96 / +5.69 / +6.00 pp**，两点均 ≥ +1.5 → **`§14.3` 预注册裁定「翻盘」→ R9 的 25.1% 渐近被局部推翻**；机制 = 坍缩归因 **caption 依赖**（arm④ CoCa 0.47% vs ⑥-A 12.08%），非稠密监督本身。② 用户选定「**凌晨 6h 窗口**」方案 → 下发 **`BAIZE_VISION_TASK.md`「运维指令 · 2026-10-04（七）」**：**R11-G = AIMv2 长跑（108k 步，对齐 R9 阶段二）→ 重拟合 scaling 并外推**（≈3.5h）+ **R11-H = 臂⑥-B 纯 AR（去对比项）**（≈1.4h）→ 合计 ≈4–5h，**由 auto-launcher 串在 R11-F 之后自动接力**（R11-F 5 臂预计 ~02:30–03:00 结束）。两臂均含预注册判据 + 公平表 + C2 限定要求。同步更新 §0 速览 + §3 队列（+第 10/11 行）。
 
 - **2026-10-04（晚 · vision 数据源横比）** —— 用户指令「把几个数据源**横着比**一下，**GPIC 至少 short 和 medium（合计 90%）**，跟 **en500k、CC12M** 一起比」→ 下发 **`run/BAIZE_VISION_TASK.md`「运维指令 · 2026-10-04（六）」= R11-F**：5 臂（GPIC `short` / `medium` / **`short+medium`(≈90%)** / en500k / CC12M）× **固定 30k 步** × w512/InfoNCE/**IN-1k lp**；**预注册判据** Q1（medium vs short）/ Q2（数据源）/ Q3（90% 合并），**en500k 单列**（in-domain + ~30 epochs）；成本 ≈8–10h（5 臂串行）；需最小代码改动（`vision/data.py` 加 `caption_type`、`r9_train.py` 加 `--caption-type`、新 `r11_run_datasource.sh`）。**依据**：R4 实测 GPIC `short`=20 tok/0%、**`medium`=46 tok/仅 0.1% 截断**、`long`=157 tok/100% 截断；原 R7 只比过 3 个**数据源**（R@1/3000 步），**caption 粒度轴从未做**。已同步更新 §0 速览 + §3 队列（新增第 9 行）。
 
