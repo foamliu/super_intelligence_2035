@@ -410,6 +410,49 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <li><b>教训</b>：<code>grep -c Forbidden</code> 会<b>数到 agent 的散文</b>（假阳性）→ 精确探针是 <code>grep -c 'error:.*Forbidden'</code>；且 <code>/proc/&lt;pid&gt;/environ</code> <b>只反映 exec 时的初始环境</b>，不能用来验证脚本里的 <code>export</code>。</li>
 </ul>
 
+<h3>9.1 ⚠️ 编排模型切换：deepseek-v4-pro-fp4 → glm-5.2</h3>
+
+<div class="danger">
+  <b>起因：</b>vision 与 pretrain 两 agent 使用的编排模型 <code>deepseek-v4-pro-fp4</code> token 额度已于 2026-10-04 耗尽，API 返回 <code>Forbidden</code> 错误。经运维确认两线均受影响。
+</div>
+
+<p><b>解决方案：</b>两个 loop 脚本中的编排模型统一切换为 <code>glm-5.2</code>，API key 与 base URL 已在仓库中硬编码更新：</p>
+
+<table>
+  <tr><th>Loop 脚本</th><th>旧模型</th><th>新模型</th><th>API Key</th><th>Base URL</th></tr>
+  <tr>
+    <td><code>baize_vision_loop.sh</code></td>
+    <td><code>deepseek-v4-pro-fp4</code></td>
+    <td rowspan="2"><code>glm-5.2</code></td>
+    <td rowspan="2"><code>02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23</code></td>
+    <td rowspan="2"><code>http://agi-gateway.cxmt.com/cloud/v1</code></td>
+  </tr>
+  <tr>
+    <td><code>baize_pretrain_loop.sh</code></td>
+    <td><code>deepseek-v4-pro-fp4</code></td>
+  </tr>
+</table>
+
+<p><b>在 36.15 服务器上重启两个 loop：</b></p>
+<pre class="cmd"><code><span class="cm"># 停止旧 loop</span>
+pkill -f baize_vision_loop.sh
+pkill -f baize_pretrain_loop.sh
+
+<span class="cm"># 拉取最新代码</span>
+cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+git pull --rebase
+
+<span class="cm"># 重启 vision loop</span>
+setsid bash baize_vision_loop.sh > /tmp/baize_vision_loop.log 2>&1 < /dev/null &
+
+<span class="cm"># 重启 pretrain loop</span>
+setsid bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+
+<span class="cm"># 确认启动</span>
+sleep 2 && head -3 /tmp/baize_vision_loop.log /tmp/baize_pretrain_loop.log</code></pre>
+
+
+
 <h2 class="sec" id="s10"><span class="no">10</span>诚实条款：我犯的错与更正</h2>
 <table>
   <tr><th>#</th><th>我犯了什么</th><th>后果 / 更正</th></tr>
