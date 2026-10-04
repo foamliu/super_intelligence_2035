@@ -5089,3 +5089,70 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 48 · 2026-10-04 17:17:47 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035
+RUN=$WK/doc/BaiZe-ISEDA2027/run
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "=== 1. 取证：relay 的 env vs 当前 loop 的 env（脱敏）==="
+echo "   -- 本 relay 进程（即 RUN_ID 48 执行者）--"
+python3 -c "import os;[print('     ',k,'len',len(v),'pfx',v[:8]) for k,v in sorted(os.environ.items()) if k.startswith('OPENAI')]" 2>/dev/null || echo "     (python3 不可用)"
+echo "   -- 当前 pretrain loop 进程 --"
+LP=$(pgrep -f 'bash baize_pretrain_loop.sh' | head -1)
+if [ -n "$LP" ]; then tr '\0' '\n' < "/proc/$LP/environ" 2>/dev/null | grep '^OPENAI' | sed -E 's/=(.{0,8}).*/= \1.../' | sed 's/^/     /' || echo "     (无 OPENAI_* —— 干净)"; else echo "     (loop 未在跑)"; fi
+
+echo; echo "=== 2. ⭐ 用【干净环境】重启 pretrain（照抄今早 RUN_ID 27 的配方）==="
+pkill -f 'baize_pretrain_loop.sh'; sleep 5
+pgrep -af 'baize_pretrain_loop.sh' | cut -c1-90 || echo "   已停止"
+cd "$RUN"
+setsid env $P bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+sleep 45
+
+echo; echo "=== 3. 验证 ==="
+echo "   -- 进程 --"; pgrep -af 'bash baize_pretrain_loop.sh' | cut -c1-110
+echo "   -- 新 loop 的 env（应无 OPENAI_*）--"
+LP=$(pgrep -f 'bash baize_pretrain_loop.sh' | head -1)
+[ -n "$LP" ] && { tr '\0' '\n' < "/proc/$LP/environ" 2>/dev/null | grep '^OPENAI' | sed 's/^/     /' || echo "     ✅ 无 OPENAI_*（干净）"; }
+echo -n "   -- Forbidden 计数（应为 0）= "; grep -c 'Forbidden' /tmp/baize_pretrain_loop.log 2>/dev/null
+echo "   -- 日志尾 --"; tail -8 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-160
+echo -n "   -- cline 是否在跑 -- "; pgrep -af 'bun.*cline' | cut -c1-95 | head -2 || echo "(暂无，属正常：可能在两条唤醒之间)"
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 17:17:48
+
+=== 1. 取证：relay 的 env vs 当前 loop 的 env（脱敏）===
+   -- 本 relay 进程（即 RUN_ID 48 执行者）--
+      OPENAI_API_KEY len 45 pfx 01_54973
+      OPENAI_API_URL len 30 pfx http://a
+   -- 当前 pretrain loop 进程 --
+     OPENAI_API_KEY= 01_54973...
+     OPENAI_API_URL= http://a...
+
+=== 2. ⭐ 用【干净环境】重启 pretrain（照抄今早 RUN_ID 27 的配方）===
+
+=== 3. 验证 ===
+   -- 进程 --
+2742387 bash baize_pretrain_loop.sh
+   -- 新 loop 的 env（应无 OPENAI_*）--
+   -- Forbidden 计数（应为 0）= 1
+   -- 日志尾 --
+[loop] 2026-10-04 17:17:53 wake up, invoking cline ...
+[31merror:[0m Forbidden
+[loop] 2026-10-04 17:18:01 cline returned (exit 0), checking git push ...
+[loop] 2026-10-04 17:18:01 WAITING=1（异步任务 running）→ sleep 1800s
+   -- cline 是否在跑 -- 2652941 bun /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/harness_work/c
+
+=== DONE ===
+```
