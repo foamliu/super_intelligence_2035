@@ -39,9 +39,15 @@ def build_loader(shard_list, batch_size: int, tokenizer, size: int = 224,
                  drop_last: bool = True):
     """`shard_list` is an explicit list of tar paths (already rank-sliced)."""
     tf = get_train_transform(size) if train else get_val_transform(size)
+    # empty_check=False: datasets with few shards (e.g. en500k = 25 tars) would
+    # otherwise raise "No samples found in dataset; perhaps you have fewer shards
+    # than workers" because some dataloader workers receive 0 shards. Disabling the
+    # startup check lets those workers simply yield nothing (R11-F Arm D fix,
+    # 2026-10-05). Safe for large-shard datasets (no behaviour change).
     dataset = (
         wds.WebDataset(shard_list, nodesplitter=_no_split,
-                       shardshuffle=(200 if shuffle else 0))
+                       shardshuffle=(200 if shuffle else 0),
+                       empty_check=False)
         .shuffle(2000 if shuffle else 0)
         .decode('pil', handler=wds.ignore_and_continue)
         .to_tuple('png;jpg;img', 'txt')

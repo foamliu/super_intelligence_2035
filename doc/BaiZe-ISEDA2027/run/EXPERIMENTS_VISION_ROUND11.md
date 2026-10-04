@@ -663,11 +663,11 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 
 | 臂 | 参数量 | 每步耗时 | steady img/s | total 训练时间 | 备注 |
 |:--|--:|--:|--:|--:|:--|
-| A（GPIC short） | 126.78M | ~80 ms/iter | 6296 | 3914s（≈65min） | 2424 tar / 303 shards/rank |
-| B（GPIC medium） | 126.78M | 待实测 | — | — | 同快照 2424 tar |
-| C（GPIC short+medium） | 126.78M | 待实测 | — | — | 同快照 2424 tar |
-| E（CC12M pure） | 126.78M | 待实测 | — | — | 1100 tar（wds） |
-| D（en500k） | 126.78M | 待实测 | — | — | 25 tar（wds，~30 epochs 重复轮） |
+| A（GPIC short） | 126.78M | ~81 ms/iter | 6296 | 3914s（≈65min） | 2424 tar / 303 shards/rank |
+| B（GPIC medium） | 126.78M | ~83 ms/iter | 6186 | 3951s（≈66min） | 同快照 2424 tar |
+| C（GPIC short+medium） | 126.78M | ~86 ms/iter | 5984 | 3586s（≈60min） | 同快照 2424 tar |
+| E（CC12M pure） | 126.78M | ❌ 未训 | — | — | 1100 tar（wds）；端口碰撞失败，待重跑 |
+| D（en500k） | 126.78M | ❌ 未训 | — | — | 25 tar（wds）；shard<worker 失败，待重跑（empty_check=False 已修） |
 
 > 只变数据；耗时差异仅来自数据加载。所有臂同 w512 / depth30 / patch16 / InfoNCE / 冻结 CLIP-768 / seed 1234 / bs64×8=512 / 30k 步。
 
@@ -713,10 +713,88 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 | 臂 | 状态 | lp @step30k |
 |:--|:--|--:|
 | A（GPIC short） | ✅ done | 5.53% |
-| B（GPIC medium） | 🟢 训练中（22:12 起） | — |
-| C（GPIC short+medium） | ⬜ 排队 | — |
-| E（CC12M pure） | ⬜ 排队 | — |
-| D（en500k） | ⬜ 排队 | — |
+| B（GPIC medium） | ✅ done | 6.17% |
+| C（GPIC short+medium） | ✅ done | 5.92% |
+| E（CC12M pure） | ❌ 端口碰撞失败，待重跑 | — |
+| D（en500k） | ❌ shard<worker 失败，待重跑（已修） | — |
 
-- ⬜ 待回填：臂 B/C/E/D × {`[done]` + 4-ckpt lp} + 公平表耗时列 + Q1/Q2/Q3/D 裁定（§15.3）。
+- ✅ **Q1/Q3 已裁定**（§15.6）：均「无显著差异」。Q2（含 E）悬置待 E 重跑。
+- ⬜ 待回填：Arm E 重跑（稳健端口）+ Arm D 重跑（empty_check=False 已修）→ 补 Q2；R11-G 11 点 lp → 幂律/对数线性拟合 vs InfoNCE 25.1%；R11-H 4 点 lp → 翻盘是否依赖对比项。
+
+#### Arm B（GPIC medium）✅ 完成（2026-10-04 22:12–23:31）
+
+| ckpt | N | lp top-1 | zs top-1 | zs top-5 |
+|:--|--:|--:|--:|--:|
+| step10000 | 5.12M | **4.24%** | 1.47% | 5.49% |
+| step20000 | 10.24M | **4.40%** | 1.86% | 6.51% |
+| step30000 | 15.36M | **6.17%** | 1.74% | 6.45% |
+| vision.pt | 15.36M | **6.17%** | 1.74% | 6.45% |
+
+- 训练：3951.3s（≈66min），steady 6186 img/s（≈82.8 ms/iter），final_loss=3.1006。
+- 无坍缩：PROBE step30000 C1=0.36 / C2_gap=+0.088 / C4=OK。
+- 证据：`/tmp/r11f_datasource.log:1538-1557`（`[done] total=3951.3s` + `[R8-IN1K] DONE`）；ckpt `R11F_gpic_medium_w512/`。
+
+#### Arm C（GPIC short+medium ≈90%）✅ 完成（2026-10-04 23:37 – 10-05 00:50）
+
+| ckpt | N | lp top-1 | zs top-1 | zs top-5 |
+|:--|--:|--:|--:|--:|
+| step10000 | 5.12M | **4.90%** | 1.81% | 6.25% |
+| step20000 | 10.24M | **6.23%** | 2.25% | 7.63% |
+| step30000 | 15.36M | **5.92%** | 2.15% | 7.35% |
+| vision.pt | 15.36M | **5.92%** | 2.15% | 7.35% |
+
+- 训练：3586.2s（≈60min），steady 5983.6 img/s（≈85.6 ms/iter），final_loss=3.4861。
+- 无坍缩：PROBE step30000 C1=0.3681 / C2_gap=+0.0888 / C4=OK；全程 C1 0.36–0.40 / C2_gap +0.087~+0.091。
+- 证据：`/tmp/r11f_datasource.log:2302-2321`（`[done] total=3586.2s` + `[R8-IN1K] DONE`）；ckpt `R11F_gpic_shortmedium_w512/`。
+
+#### Arm E（CC12M pure）❌ 失败（2026-10-05 00:50:53–55，未训练）
+
+- **失败原因**：`torch.distributed.DistNetworkError: ... port: 30000 ... EADDRINUSE, address already in use`。
+- **根因**：overnight chain 的 `run_arm_f` 用 `--master_port=$((29400 + RANDOM % 1000))`，本次 RANDOM 恰取到使端口 = 30000（29400+600），而该端口仍被前一进程占用（TIME_WAIT / 未释放）→ rendezvous 立即失败，**2 秒内 exit 1，无任何训练**。
+- ⚠️ **纯工程问题（端口碰撞），非数据/科学问题**。CC12M 有 1100 tar，数据本身无问题。**需重跑**（用更稳健的端口选择，见 §15.7）。
+- 证据：`/tmp/r11f_datasource.log:2323-2366`。
+
+#### Arm D（en500k）❌ 失败（2026-10-05 00:50:55–51:27，未训练）
+
+- **失败原因**：`ValueError: No samples found in dataset; perhaps you have fewer shards than workers. Turn off using empty_check=False in the WebDataset constructor.`
+- **根因**：en500k 仅 **25 tar**，8 rank × 6 dataloader worker = 48 worker → 部分 worker 分到 0 shard → webdataset 默认 `empty_check=True` 在启动期即抛错。
+- **修复**：已在 `vision/data.py::build_loader` 的 `wds.WebDataset(...)` 构造中加 `empty_check=False`（2026-10-05，`py_compile` ✅）。分到 0 shard 的 worker 将不产出数据，其余正常 → 对大数据集无行为变化。
+- ⚠️ en500k 本就 **in-domain（= LLaVA imagenet/EN）+ ~30 epochs 重复轮** → 即便重跑成功也**单列、标「不可比」、不并入 A/B/C/E 排名**（R8.2 红线）。
+- 证据：`/tmp/r11f_datasource.log:2392-2699`（`shards=4/rank total_shards=25` + empty_check ValueError）。
+
+### 15.6 🔒 预注册裁定（Q1/Q2/Q3/D，**先定后测**）
+
+> 噪声带 ±1.5 pp（ROUND10 §1.5）。主指标 = IN-1k frozen-trunk lp @ step30k（附 10k/20k 轨迹）。
+
+**lp 汇总（@step{10k,20k,30k}）**
+
+| 臂 | 数据 | @5.12M | @10.24M | @15.36M |
+|:--|:--|--:|--:|--:|
+| **A** | GPIC short | 3.97 | 4.95 | 5.53 |
+| **B** | GPIC medium | 4.24 | 4.40 | 6.17 |
+| **C** | GPIC short+medium(90%) | 4.90 | 6.23 | 5.92 |
+| **E** | CC12M pure | ❌ port 碰撞未训 | — | — |
+| **D** | en500k | ❌ shard 不足未训 | — | — |
+
+**裁定**
+
+| # | 问题 | 比较 | Δ @ {10k,20k,30k} | 裁定 |
+|:--|:--|:--|--:|:--|
+| **Q1** | caption 更长是否有益 | **B(medium) − A(short)** | +0.27 / −0.55 / +0.64 | **无显著差异**（三点全在 ±1.5 带内；30k 点 medium 略高 +0.64 但未达阈值） |
+| **Q3** | 「90% 全用」是否更好 | **C(short+medium) − A(short)** | +0.93 / +1.28 / +0.39 | **无显著差异**（三点全在 ±1.5 带内；20k 点 +1.28 接近但未达阈值，30k 反回 +0.39） |
+| **Q2** | 哪个数据源最好 | **A / B / E** 三者之比 | E 未训 → 仅 A vs B：@30k +0.64 | **暂无显著差异**（A vs B 带内）；**E 待重跑后补判** |
+| **D** | en500k | **单列** | 未训 | ❌ 工程失败待重跑；即便成功仍 **in-domain / 不可比 / 不并入排名** |
+
+**结论（基于现有 A/B/C 三点）**：
+- **Q1**：在 30k 步 / 15.36M 样本预算下，**GPIC medium 相对 short 无显著增益**（Δ 全在噪声带内）。caption 从 20 tok → 46 tok 的更长信息**未被冻结 CLIP-768 文本塔 + InfoNCE 在此预算内转化为可测的 lp 提升**。
+- **Q3**：**「90% 全用（short+medium）」相对 short 亦无显著增益**（C 在 20k 点一度 +1.28 接近阈值，但 30k 回落到 +0.39）→ 合并不成立「数据量×2 即更好」的简单外推（与 R9「数据受限区间加宽数据边际为正」不矛盾——此处是同 N 预算下两个 caption 档的合并，N 未变）。
+- **Q2/E**：CC12M pure 臂因端口碰撞未训，**裁定悬置**，待重跑后补 A/B/E 三者比较。
+- ⚠️ **C2 限定**：三点均在噪声带边缘（Q3 @20k = +1.28 接近 1.5），**不排除更大 N / 更长步数下出现分离**；本结论严格限定在「30k 步 / 15.36M / 冻结 CLIP-768 / InfoNCE」口径。
+
+### 15.7 待重跑（GPU 占用中，排到 R11-G/H 之后）
+
+- **Arm E（CC12M pure）**：重跑脚本需用**稳健端口**（避免 `29400+RANDOM%1000` 碰撞 30000）—— 改为固定高位端口（如 31337）或加 EADDRINUSE 重试。≈1.9h × 8 卡。
+- **Arm D（en500k）**：`data.py` 已加 `empty_check=False`（✅），重跑即可。≈1.9h × 8 卡。仍单列、标 in-domain / 不可比。
+- **顺序**：R11-G（运行中，ETA ~06:45）→ R11-H（~1.4h）→ **Arm E 重跑 → Arm D 重跑**（用满早间空窗）。next wake 在 GPU 空后启动。
+
 - **对本项目的影响**：R9 的 25.1% 渐近**不被数据臂改动推翻**；GPIC 的价值仅在「低预算快速启动」，本项目数据瓶颈是**总量/多样性**（本地 ≈118M 上限 vs 619 亿缺口），非 caption 质量 → R6/R7「正式训练切 GPIC short」与 R9/R10 scaling 口径**维持不变**。证据：`/tmp/r11_gpic.log`（训练 metrics + eval 段 786-797 行）。
