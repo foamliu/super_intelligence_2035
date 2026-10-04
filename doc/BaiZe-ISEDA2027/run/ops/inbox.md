@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 62 -->
+<!-- RUN_ID: 63 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,57 @@
 
 ---
 
-## RUN_ID 62 — 🔍 **巡检：vision 是否接手 R11-F（只读）**（承接 RUN_ID 61）（**本块最新，优先执行**）
+## RUN_ID 63 — 🩺 **只读巡检：BaiZe 四线「19:30 后集体静默」排查（.12 + .29）**（**本块最新，优先执行**）
+
+> **背景**：2026-10-04 21:37 实拉 `origin/main`，发现 **BaiZe 四条线在 ~19:00–19:27 后全部无新提交** —— vision 最后 `b4c5c80`@**18:44**、data @19:06、pretrain @19:09、ops-relay @19:27；之后仅 `zhulong`（**另一个项目** ZhuLong-DAC2027）@20:20。
+> vision loop 为 `WAITING=1`（30min 轮询）+ cline≤25min → **正常应每 ~30–55min 一次提交** → 疑似 `.12`/`.29` **再次静默停摆**（同日早上刚发生 ~9h 事故，根因=cline 凭据/Forbidden）。
+> **本块🚫纯只读**：不启停任何进程、不改任何文件、不删数据。目的 = 钉死 21:37 真状态：① loop 是否存活 ② 是否 `Forbidden`/额度耗尽 ③ GPU 是**在跑**还是**空转**（区分"只是没推"vs"真停摆"）④ AIMv2 是否收尾/评测 ⑤ R11-F 是否起跑 ⑥ 本地是否有未推送提交。
+
+```bash
+echo "=== RUN_ID 63 · 只读 · BaiZe 四线静默排查 $(date '+%F %T') ==="; hostname; whoami
+
+echo; echo "=== [A] .12 · vision/data（ssh 只读）==="
+timeout 300 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-185
+export PATH="$HOME/.bun/bin:$PATH"
+hostname; date '+%F %T'
+W=/nas_train/app.e0031982/code/super_intelligence_2035; R=$W/doc/BaiZe-ISEDA2027/run
+echo "--- A1. loop 进程 ---"; pgrep -af 'baize_vision_loop.sh|baize_data_loop.sh' | cut -c1-95
+echo "--- A2. vision loop log 末 16 行 ---"; tail -16 /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-165
+echo "   vision Forbidden=$(grep -c 'error:.*Forbidden' /tmp/baize_vision_loop.log 2>/dev/null)  data Forbidden=$(grep -c 'error:.*Forbidden' /tmp/baize_data_loop.log 2>/dev/null)"
+echo "   vision log mtime=$(stat -c '%y' /tmp/baize_vision_loop.log 2>/dev/null | cut -c1-19)"
+echo "--- A3. GPU ---"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null
+echo "--- A4. 训练/评测进程 ---"; pgrep -af 'r9_train|r11_run|r8_eval_in1k|torch.distributed.run' | cut -c1-145
+echo "--- A5. AIMv2 train.log 末 3 行 + ckpt ---"
+tail -3 /nas_train/app.e0031982/datasets/baize-vision/out/R11L_aimv2_w512/train.log 2>/dev/null | cut -c1-165
+ls -l --time-style=+%F_%T /nas_train/app.e0031982/datasets/baize-vision/out/R11L_aimv2_w512/*.pt 2>/dev/null | cut -c1-115
+echo "--- A6. R11-F 是否起跑 ---"; ls -l --time-style=+%F_%T "$R/vision/r11_run_datasource.sh" 2>/dev/null | cut -c1-110
+tail -8 /tmp/r11_datasource.log 2>/dev/null | cut -c1-165
+echo "--- A7. MEMORY_VISION 状态头 ---"; head -4 "$R/MEMORY_VISION.md" | cut -c1-150
+echo "--- A8. 本地 git ---"; cd "$W" && git log --oneline -3 2>/dev/null | cut -c1-115; git status -sb 2>/dev/null | head -3 | cut -c1-110
+echo "=== DONE(.12) ==="
+EOS12
+
+echo; echo "=== [B] .29 · pretrain/harness（本机只读）==="
+W=/nas_train/app.e0031982/code/super_intelligence_2035; R=$W/doc/BaiZe-ISEDA2027/run
+echo "--- B1. loop 进程 ---"; pgrep -af 'baize_pretrain_loop.sh|baize_harness_loop.sh' | cut -c1-95
+echo "--- B2. pretrain loop log 末 12 行 ---"; tail -12 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-160
+echo "   pretrain Forbidden=$(grep -c 'error:.*Forbidden' /tmp/baize_pretrain_loop.log 2>/dev/null)  harness Forbidden=$(grep -c 'error:.*Forbidden' /tmp/baize_harness_loop.log 2>/dev/null)"
+echo "--- B3. GPU ---"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null
+echo "--- B4. P-9.7 进程/进度 ---"; pgrep -af 'r9_train|pretrain_launcher|torch.distributed.run' | cut -c1-130
+tail -3 /tmp/p97_a1_steady.log 2>/dev/null | cut -c1-160
+echo "--- B5. relay ---"; pgrep -af 'ops_relay.sh' | cut -c1-85; echo "   last_run_id=$(cat "$R/ops/.last_run_id" 2>/dev/null)"
+echo "--- B6. 本地 git ---"; cd "$W" && git log --oneline -3 2>/dev/null | cut -c1-115; git status -sb 2>/dev/null | head -3 | cut -c1-110
+echo "=== relay block done ==="
+```
+
+> ⛔ RUN_ID 62 已降级为 text（仅确认任务书含 R11-F 该项、未判训练/AIMv2/R11-F 实际状态）。
+
+## RUN_ID 62 — 🔍 **巡检：vision 是否接手 R11-F（只读）**（承接 RUN_ID 61）（⛔ **已降级为 text**）
 
 > **背景**：运维已下发 **R11-F 数据源横比**（`BAIZE_VISION_TASK.md`「运维指令 · 2026-10-04（六）」，**已批准**，commit `848796e`）：GPIC `short`/`medium`/`short+medium`(90%) vs en500k vs CC12M。
 > **本块只读**确认 `.12` 上：① 任务书已含（六）；② `MEMORY_VISION.md` 状态；③ vision loop / 训练进程；④ 代码改动（`data.py` caption_type、`r9_train.py --caption-type`）与新 runner 是否落地。🚫 **不改任何东西**。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 echo; echo "=== [.12] R11-F 接手巡检（只读）==="
 timeout 220 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
