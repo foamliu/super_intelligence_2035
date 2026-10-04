@@ -33,6 +33,14 @@ SLEEP_WAIT=1800                 # 有异步阻塞任务(训练 running)时的唤
 MEMORY="$SCRIPT_DIR/MEMORY_PRETRAIN_2B.md"
 LAST_PUSH="/tmp/baize_pretrain_last_push"
 
+# 🔑 额度/鉴权体检 + 自动轮换（2026-10-04 用户指令）：额度耗尽时 agent 自己在任务书里也动不了 → 必须在 loop 里。
+#   候选来自 doc/keys.txt（10 项 → 取 8 个 chat/coding LLM，排除 ASR/文生图）；
+#   探针 = curl /chat/completions（200 可用 / 429 额度耗尽 / 403 base 不匹配）——现场实测见 run/ops/outbox.md RUN_ID 43/44。
+#   ⚠️ base 必须与模型匹配（flash@/v1=200 但 flash@/cloud/v1=403）→ llm_pick 会自动改写 cline 的 openAiBaseUrl（首次改动前备份 .llmrot.bak）。
+KEYS_TXT="$GIT_ROOT/doc/keys.txt"
+LLM_STATE="/tmp/baize_pretrain_llm_idx"
+[ -f "$SCRIPT_DIR/llm_rotate.sh" ] && . "$SCRIPT_DIR/llm_rotate.sh"
+
 git_push_if_needed() {
     local now last
     now=$(date +%s)
@@ -89,9 +97,15 @@ while true; do
         #   否则网关返回 `error: Forbidden`，而 cline 仍 exit 0 → loop 静默空转（.29 曾因此瞎跑 ~9h，
         #   10-04 07:15 ops 探查定位；.12 于 2026-09-29 遇过同样问题，unset http_proxy 即解决）。
         #   ⚠️ 只作用于本行：loop 自身/`git push` 仍保留 proxy（外网仍需代理）。
+          # 🔑 额度/鉴权体检 + 自动轮换（候选 = doc/keys.txt 的 8 个 chat LLM；200 可用 / 429 额度耗尽 / 403 base 不匹配）
+          #    全挂 → 跳过本轮（不静默空转）；选中项的 base 会自动写进 cline 的 openAiBaseUrl
+          if llm_pick "$LLM_STATE" "$KEYS_TXT"; then
         env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
             -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
-          cline -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+          cline -c "$CWD" --auto-approve true -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+          else
+            echo "[loop] $(date '+%F %T') !!! 无可用 LLM 候选 → 跳过本轮 cline"
+          fi
         echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git push ..."
     else
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"
