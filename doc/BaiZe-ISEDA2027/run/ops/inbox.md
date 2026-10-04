@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 60 -->
+<!-- RUN_ID: 61 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,66 @@
 
 ---
 
-## RUN_ID 60 — ✅ **用 loop 真实配对 `glm-5.2 @ /cloud/v1` 验证隔离目录 + 逐线重启（.12）**（承接 RUN_ID 59）（**本块最新，优先执行**）
+## RUN_ID 61 — 🔧 **`llm_pick` 加「优先 glm-5.2」+ 重启 vision/data 恢复（.12）**（承接 RUN_ID 60）（**本块最新，优先执行**）
+
+> **RUN_ID 60 结果（18:15:44 exit=0）**：✅✅ **隔离目录 smoke 全 OK**（`vision => OK`、`data => OK`，`PASS=1`）—— 用**正确配对 `glm-5.2 @ /cloud/v1` + `--data-dir`** 完全通过！
+> ⚠️ 但重启后的 loop **Forbidden**：其 `llm_pick` 的 state 为空 → 从 #0 选到 **`deepseek-v4-flash @ /v1`**（**curl 200 但 cline 403**）→ 把 base 写成 `/v1` → Forbidden。
+> ⇒ **根因 = `llm_pick` 会选中「curl 可用但 cline 不可用」的候选**。修法 = 给 `llm_rotate.sh` 的 `llm_pick` 加 **「优先 glm-5.2」**（RUN_ID 49 就定过此规则）。
+
+**改了什么（随本 commit push）**：`run/llm_rotate.sh` → `llm_pick()` 在环状探测**之前**先试 `glm-5.2`（probe=200 即选中）；失败才回落原环状逻辑。**harness 运行中的实例不受文件改动影响**（未重启）。
+
+**本块做什么（`.29` 经 `ssh 10.239.2.12`）**
+1. 校验 `.12` 上 `llm_rotate.sh` 已含「优先 glm-5.2」
+2. 预演 `llm_pick` 现在会选谁（应 = glm-5.2）
+3. **逐线重启** vision/data（修掉上轮 guard 的 `bash ` 前缀 bug，改用 `pgrep -f "baize_${L}_loop.sh"`）
+4. 验 `Forbidden==0` 且日志模型 = `glm-5.2`
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+echo; echo "=== [.12] 优先 glm-5.2 + 重启 vision/data 恢复 ==="
+timeout 520 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+export PATH="$HOME/.bun/bin:$PATH"
+hostname; date '+%F %T'
+W=/nas_train/app.e0031982/code/super_intelligence_2035
+R=$W/doc/BaiZe-ISEDA2027/run
+B=/nas_train/app.e0031982; H=$HOME
+KEYS="$W/doc/keys.txt"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "--- A. llm_rotate.sh 是否已含 glm-5.2 优先 ---"
+grep -n '优先 glm-5.2\|优先选中 glm-5.2' "$R/llm_rotate.sh" | head -3 | cut -c1-140
+
+echo; echo "--- B. 预演 llm_pick（LLM_DATA_DIR 指向空目录，不写真实配置）---"
+LLM_DATA_DIR=/tmp/_none; . "$R/llm_rotate.sh"
+ST=/tmp/_p61; rm -f "$ST"
+if llm_pick "$ST" "$KEYS"; then echo "   picked model=$LLM_MODEL key=${LLM_KEY:0:8}.. base=$LLM_BASE"; else echo "   !! 无候选"; fi
+
+echo; echo "--- C. 逐线重启 vision / data ---"
+for L in vision data; do
+  LP=$(pgrep -f "baize_${L}_loop.sh" 2>/dev/null | head -1); CL=0
+  [ -n "$LP" ] && CL=$(pgrep -P "$LP" -f 'bun' 2>/dev/null | wc -l)
+  echo "   [$L] loop_pid=${LP:-none} cline_children=$CL"
+  if [ "$CL" -gt 0 ]; then echo "   [$L] cline 活动中 → 跳过"; continue; fi
+  pkill -f "baize_${L}_loop.sh"; sleep 4
+  cd "$R"; setsid env $P bash "baize_${L}_loop.sh" > "/tmp/baize_${L}_loop.log" 2>&1 < /dev/null &
+  echo "   [$L] 已重启"
+done
+
+echo; echo "--- D. 50s 后验证 ---"; sleep 50
+for L in vision data; do
+  echo "   [$L] loop=$(pgrep -fc "baize_${L}_loop.sh" 2>/dev/null || echo 0)  Forbidden=$(grep -c Forbidden /tmp/baize_${L}_loop.log 2>/dev/null)"
+  echo "        model=$(grep -o 'openai-compatible.chat / [A-Za-z0-9._-]*' /tmp/baize_${L}_loop.log 2>/dev/null | tail -1)"
+  tail -3 "/tmp/baize_${L}_loop.log" 2>/dev/null | tr '\n' ' ' | cut -c1-140 | sed 's/^/        /'; echo
+done
+echo "   cline cmdline: $(pgrep -af 'bun.*cline' 2>/dev/null | cut -c1-120 | head -3)"
+echo; echo "=== DONE (.12) ==="
+EOS12
+echo "=== relay block done ==="
+```
+
+> ⛔ 已降级 RUN_ID 60（18:15:44 exit=0，**隔离 smoke 全 OK**；但 loop 因 llm_pick 选中 flash 而 Forbidden）为 text。
+
+## RUN_ID 60 — ✅ **用 loop 真实配对 `glm-5.2 @ /cloud/v1` 验证隔离目录 + 逐线重启**（✅ 已执行 → **隔离 smoke 全 OK**；loop 因 llm_pick 选中 flash 而 Forbidden，见 RUN_ID 61）
 
 > **RUN_ID 59 定位（18:13:28 exit=0）**：
 > ① `.12` 的 cline = **3.0.51**，`--help` **有 `--data-dir`** → **不是版本问题**；
@@ -45,7 +104,7 @@
 3. smoke：`-m glm-5.2 -k <glm key> --data-dir <D> < /dev/null` → 判定 `PASS`
 4. **仅当 PASS=1** 才**逐线**自保护重启（PATH 含 bun）；验 `Forbidden==0`
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 echo; echo "=== [.12] glm-5.2 配对复测 + 逐线重启 ==="
 timeout 520 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190

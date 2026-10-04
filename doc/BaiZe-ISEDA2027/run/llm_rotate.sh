@@ -92,6 +92,29 @@ llm_pick() {
     local n idx i j code
     n="$("$PYBIN" -c "import json;print(len(json.load(open('$LLM_CAND_JSON'))))" 2>/dev/null)"
     [ -n "$n" ] && [ "$n" -gt 0 ] || return 1
+
+    # 🔑 2026-10-04 运维（RUN_ID 61）：**优先 glm-5.2**（RUN_ID 49 定稿规则）。
+    #   原因：某些候选（如 deepseek-v4-flash @ /v1）**curl 探针 200，但 cline 实际用会 403 Forbidden**
+    #   → 环状探测可能选中它并把 base 写成 /v1，导致 loop 静默 Forbidden（.12 vision/data 刚因此中招）。
+    #   glm-5.2 @ http://agi-gateway.cxmt.com/cloud/v1 实测 cline 可用。
+    local gidx
+    gidx="$("$PYBIN" -c "import json;c=json.load(open('$LLM_CAND_JSON'));print(next((i for i,x in enumerate(c) if x['model']=='glm-5.2'),-1))" 2>/dev/null)"
+    if [ -n "${gidx:-}" ] && [ "${gidx:--1}" -ge 0 ]; then
+        eval "$("$PYBIN" -c "
+import json
+c = json.load(open('$LLM_CAND_JSON'))[$gidx]
+print(\"LLM_MODEL='%s'\" % c['model'])
+print(\"LLM_KEY='%s'\" % c['key'])
+print(\"LLM_BASE='%s'\" % c['base'])
+" 2>/dev/null)"
+        if [ -n "$LLM_MODEL" ] && [ "$(llm_probe "$LLM_MODEL" "$LLM_KEY" "$LLM_BASE")" = "200" ]; then
+            echo "$gidx" > "$1" 2>/dev/null
+            llm_apply_base "$LLM_BASE"
+            echo "[llmrot] $(date '+%F %T') 优先选中 glm-5.2 #$gidx @ ${LLM_BASE} (probe=200)"
+            return 0
+        fi
+    fi
+
     idx="$(cat "$1" 2>/dev/null)"; case "$idx" in ''|*[!0-9]*) idx=0 ;; esac
     for i in $(seq 0 $((n - 1))); do
         j=$(( (idx + i) % n ))
