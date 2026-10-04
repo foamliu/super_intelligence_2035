@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 9 -->
+<!-- RUN_ID: 10 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,36 @@
 
 ---
 
+## RUN_ID 10 — 🔎 只读侦察：另一个 agent 的目录 `/nasdata/app.e0031982/code/ZhuLong_DAC2027`
+
+**背景**：用户告知**另有一个 agent 在跑任务**，地址 `=` `/nasdata/app.e0031982/code/ZhuLong_DAC2027`（**不是**本合并线所在的 `super_intelligence_2035/doc/ZhuLong_DAC2027`）。目标：**观摩 & 理解它的工作，为接管做准备**。本块**只读**：目录结构、是否 git 仓库、进程、最近改动、文档/脚本清单。
+
+```bash
+# RUN_ID 10 — read-only recon of the OTHER agent dir
+D=/nasdata/app.e0031982/code/ZhuLong_DAC2027
+echo "===== 0. TIME ====="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "===== 1. exists? ====="; timeout 10 ls -ld "$D" 2>&1 | cut -c1-160
+echo "===== 2. top-level listing ====="; timeout 15 ls -la "$D" 2>&1 | head -40 | cut -c1-160
+echo "===== 3. is it a git repo? ====="
+timeout 15 git -C "$D" rev-parse --show-toplevel 2>&1 | head -1 | cut -c1-160
+timeout 15 git -C "$D" log --oneline -8 2>&1 | cut -c1-160
+timeout 15 git -C "$D" status -sb 2>&1 | head -12 | cut -c1-160
+echo "===== 4. processes referencing ZhuLong_DAC2027 ====="; timeout 10 pgrep -af 'ZhuLong_DAC2027' | head -20 | cut -c1-160
+echo "===== 5. dirs (maxdepth 2) ====="; timeout 20 find "$D" -maxdepth 2 -type d 2>/dev/null | head -40 | cut -c1-160
+echo "===== 6. recently modified files (<24h, maxdepth 3) ====="; timeout 25 find "$D" -maxdepth 3 -type f -mmin -1440 2>/dev/null | head -40 | cut -c1-160
+echo "===== 7. md / sh files at top ====="; timeout 15 ls -la "$D"/*.md "$D"/*.sh 2>/dev/null | head -30 | cut -c1-160
+echo "===== DONE ====="
+```
+
+---
+
 ## RUN_ID 9 — 🟢 唤醒后快照：agent 首轮在做什么？
 
 **背景**：RUN_ID 8 已把 `openAiBaseUrl` 修成 `/cloud/v1` 并重启 loop，**agent 首次被唤醒**（loop 日志出现真实推理）。本块**只读**快照：loop/cline 进程、loop 日志、`MEMORY_ZHULONG.md` 现状、`run/` 最新文件、agent 日报、git 状态。
 
-```bash
+> ⛔ **已作废**（已执行于 21:56:15）——降级为 text，让位给 RUN_ID 10。
+
+```text
 # RUN_ID 9 — post-wake snapshot (read-only)
 REPO=/nasdata/app.e0031982/code/super_intelligence_2035
 CWD="$REPO/doc/ZhuLong_DAC2027/run"
