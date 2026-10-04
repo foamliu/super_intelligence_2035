@@ -46,10 +46,10 @@ WAITING: 0
 
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
-| **pretrain** | ✅ **P-5b 已跑完（10-04 01:37，final ckpt `iter_0004771` 落盘）** → **P-6②**（6 ckpt「能力 vs token」）→ **P-9**（空窗跑 MBS/精度/seq/profiling）→ P-8 暂缓 | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` | 🔴 曾被 cline 凭据事故**阻塞 ~9h**（GPU 空转 6h）→ **07:29 已修复复工** |
+| **pretrain** | ✅ P-5b(20B) + P-9.1–9.6①② + **P-9.7 A1 稳态**（~249K tok/s，ETA ~22:39 定稿）→ ⭐ **P-9.8 bf16 vs FP8 长程一致性 A/B（各 1000 步）已批准** → P-9.5 复跑 → P-6② → P-8 暂缓 | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` | 🟢 **`.cline_pretrain` 隔离目录**；凌晨空窗已排（P-9.5 → **P-9.8** → P-6②） |
 | **vision** | ✅ R9/R10/R14/E1 + R11-L 四臂 + R11-L2 + caption-weight + **R11-E(未抬高)** + **R13(官方 OV2 79.81%)** 全完成 → ⭐ **臂⑥ AIMv2 翻盘**（lp 12.08% vs 基线 6.08%，**+6pp → 25.1% 渐近局部推翻**）→ 🔄 **R11-F 数据源横比运行中** → 🟢 **R11-G(AIMv2 长跑重拟合 scaling) + R11-H(⑥-B 纯 AR) 已批准**（见 `BAIZE_VISION_TASK.md`「运维指令 · 2026-10-04（七）」） | `run/EXPERIMENTS_VISION_ROUND11.md` · `VISION_OFFICIAL_REPOS_SURVEY.md` | 🔄 **`.cline_vision` 隔离目录**；凌晨空窗 ≈4–5h 已排满 |
-| **data** | 下载巡检 —— 🆕 **白名单锁定 = `l1_en_hq` + `zh` + GPIC**；🔴 **立即停 `en_v1_4`**；D-CLEAN 系列 ✅ 全完成（累计回收 **≈1.31 TiB**） | `run/DISK_CLEANUP_INVENTORY.md` · `DATA_MIX_RECIPE.md` | 🔄 **唤醒 75**，等唤醒接令 |
-| **harness** | ✅ **R1 无 docker 沙箱路线跑通**（django + sympy **双绿**）· **步3 适配层 + R32 5 drivers 已交付** → **步4：300 × 5 全量按序跑** | `run/harness/SWEBENCH_LITE_FEASIBILITY.md` · `r1_eval.py` | 🔄 待实跑 |
+| **data** | 下载巡检 —— 🆕 **白名单锁定 = `l1_en_hq` + `zh` + GPIC**；🔴 已停 `en_v1_4`；D-CLEAN 系列 ✅ 全完成（累计回收 **≈4.96 TiB**） | `run/DISK_CLEANUP_INVENTORY.md` · `DATA_MIX_RECIPE.md` | 🔄 **唤醒 107**：`l1_en_hq` 1293/6006 · `gpic` 2466/8001 |
+| **harness** | ✅ **4/5 harness 端到端 `resolved=true`**（cline / codex / opencode / **claude-code**）→ **步4：300 × 5 全量按序跑** | `run/harness/SWEBENCH_LITE_FEASIBILITY.md` · `r1_eval.py` | ⚠️ **H-A pilot 扩容受阻**（github 网络瞬断，base_commit shallow clone 缺）；deepseek-harness 缺工具链 |
 
 > ✅ **vision 叙事已决（2026-10-03 用户）：走 A = 保持「从零训练」**（"A 本身也是为了学习"）。
 > → R9 的 **~25.1% 渐近 = 从零路线的如实上限**（负结果有价值）；**loss 轴 R11 = 主线**；**架构轴非主要杠杆**。
@@ -184,6 +184,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **2026-10-04（深夜 · pretrain 填卡）** —— 用户指出「pretrain 也有凌晨 GPU 空闲」→ 先核 **pretrain 自己的规划**（`MEMORY_PRETRAIN_2B.md`「下一步」）：**P-9.7 定稿（~22:39）→ P-9.5 复跑（修 `torch.profiler`）→ P-6②（能力 vs token scaling + 外推，决定 P-8 token 预算）→ P-8 暂缓**（前置未齐：base 下满 ~2.7 天 + 配比 §0.6）。我补的填卡项：**P-9.8 = bf16 vs FP8 长程一致性 A/B（各 1000 步）**，依据是 **P-9.6② 自己标注的风险**「60 步短测 loss 持平 ≠ 长跑收敛一致，若 P-8 用 FP8 前 500 步须与 bf16 对照」而 **P-8 推荐候选A 正是 FP8**。用户选定「**队列照跑 + 追加 P-9.8**」→ 下发 **`BAIZE_PRETRAIN_2B_TASK.md`「运维指令 · 2026-10-04（P-9.8）」**（载体 TP4·SP·MBS8·seq8192=FP8 转正点；两臂各 1000 步 / GBS512；**四条预注册判据**：同步 loss 差 ≤1% · nan/skip=0 · grad-norm 漂移 ≤10% · 逐 100 步最大偏离 ≤2%；四条全过才「FP8 可用于 P-8」；**08:30 硬截断**纪律）；顺序定为 **P-9.7 → P-9.5 → P-9.8（长杆先跑）→ P-6②**。同步更新 P-9 分节索引（+P-9.7/P-9.8）+ 优先级覆盖行。
 
 - **2026-10-04（深夜 · vision 双批准）** —— ① **臂⑥ AIMv2 翻盘**（用户先前批准，20:01 训完 / 20:25 eval 完）：IN-1k lp **11.39 / 11.14 / 12.08%** vs 基线 3.43/5.45/6.08% → Δ **+7.96 / +5.69 / +6.00 pp**，两点均 ≥ +1.5 → **`§14.3` 预注册裁定「翻盘」→ R9 的 25.1% 渐近被局部推翻**；机制 = 坍缩归因 **caption 依赖**（arm④ CoCa 0.47% vs ⑥-A 12.08%），非稠密监督本身。② 用户选定「**凌晨 6h 窗口**」方案 → 下发 **`BAIZE_VISION_TASK.md`「运维指令 · 2026-10-04（七）」**：**R11-G = AIMv2 长跑（108k 步，对齐 R9 阶段二）→ 重拟合 scaling 并外推**（≈3.5h）+ **R11-H = 臂⑥-B 纯 AR（去对比项）**（≈1.4h）→ 合计 ≈4–5h，**由 auto-launcher 串在 R11-F 之后自动接力**（R11-F 5 臂预计 ~02:30–03:00 结束）。两臂均含预注册判据 + 公平表 + C2 限定要求。同步更新 §0 速览 + §3 队列（+第 10/11 行）。
 
