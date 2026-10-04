@@ -704,4 +704,18 @@ python -m lm_eval --model hf \
 > **对照设计**（同 MBS=4、同步数 60、TP2，跨 SP 两档）：
 >   - A. `p94_fp8_tp2_mbs4`（SP-off）→ vs ② bf16 = 21.2s / ~198K tok/s
 >   - B. `p94_fp8_tp2sp_mbs4`（SP-on）→ vs ④ bf16 = 20.0s / ~210K tok/s
+
+**🩺 中间发现（2026-10-04 ~11:39，第 62 次唤醒）—— ⭐⭐ config A（SP-off）FP8 端到端收尾：FP8 几乎零收益（s≈1.01），未复现 +30%**：
+
+| 对照 | bf16 s/iter | FP8 s/iter | FP8 GPU util | FP8 峰值显存 | **端到端 s = t_bf16/t_fp8** |
+|:--|:--|:--|:--|:--|:--|
+| **A. TP2·SP-off·MBS4**（vs ②） | **21.2s** | **~21.0s** | 479.3 TFLOP/s/GPU | **50721 MiB** | **~1.01（+~1%，等价持平）** |
+| **B. TP2·SP-on·MBS4**（vs ④） | **20.0s** | ~23.0s（iter40/60，running） | ~435–440 TFLOP/s/GPU | ~45947 MiB | ~0.87（**反变慢 ~+15%**，待收官） |
+
+- **config A 原始输出**（`/tmp/baize_p94_fp8_tp2_mbs4.log`，60 步 rc=0，loss 7.352→ grad norm 0.262，无 NaN/skip）：
+  `Step Time : 21.01s GPU utilization: 479.3TFLOP/s/GPU`，peak_gpu_mem_MiB=50721。
+- **⭐⭐ 结论（初步，待 B 收官确认）**：**FP8 在 M=16384（TP2·MBS4）下端到端不转正** ——
+  A（SP-off）21.0s vs bf16 ② 21.2s = **+~1%（噪声级）**；B（SP-on）反而 ~23.0s vs bf16 ④ 20.0s = **~+15% 变慢**（疑似 FP8 的 amax/delayed-scaling allreduce 与 SP 的 allreduce 叠加冲突，且 SP 下 `CUDA_DEVICE_MAX_CONNECTIONS=1` 建议未设置）。
+  → **未复现 Xmodel-2.5 的 +30%**。这与 P-9.4 微基准一致（交叉点 M≈30–32K 而非 16K；M=16384 未加权 s=0.90 倒挂）——**本模型在「bf16 可达最大 M」下 FP8 不可行**。
+- **诚实记录（P-9.4 铁律）**：不迎合运维「s→1.34 饱和区」预期 —— **本模型/本口径下 FP8 不转正**，P-8 应**维持 bf16**，最优配置回到 **④ TP2·DP4·SP-on·MBS4（~210K）** 或 **P-9.1 的 TP1·DP8·MBS2（218K）**（后者无 FP8 收益、但吞吐更高、显存 57GB 更省）。
 > 脚本 `run/baize_p94_fp8_e2e.sh`，SUM=`/tmp/baize_p94_fp8_e2e.log`。**结果待下轮回收。**
