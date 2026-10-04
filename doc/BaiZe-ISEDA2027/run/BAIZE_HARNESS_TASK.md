@@ -9,6 +9,37 @@
 
 > 本节由**外部运维**通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停**。
 > **agent 禁止修改本节**。本节为「无」时，按下方默认顺序自主推进。
+### 🚨 运维指令 · 2026-10-04（**最高优先 · 紧急但轻量 ≈30 秒：请帮忙恢复 ops 中继**）
+
+> **为什么找你**：`run/ops/ops_relay.sh` 是**外部运维唯一的远程通道**（运维**无法 SSH**，只能靠 `.29` 上的 agent）。它现在被一个**跑飞的进程卡住**了。
+> **耗时 ≈30 秒** · **不占 GPU** · **不改任何 recipe** · **不删任何数据**。⏱ **本条优先于其它一切**。
+> 📌 同一条指令也发给了 pretrain 线 —— **谁先醒谁做，另一个看到 `pgrep` 已有 1 个 relay 就跳过**。
+
+**执行并贴【原始输出】**：
+
+```bash
+pgrep -af 'ops_relay.sh' | cut -c1-120
+pgrep -af 'grep -rl|fuser -v /nas_train' | cut -c1-120    # 跑飞的残留
+pkill -f 'grep -rl .*stage_1.5_mid_training' 2>/dev/null  # 杀不到就跳过
+pkill -f 'fuser -v /nas_train' 2>/dev/null
+sleep 2
+pkill -f ops_relay.sh 2>/dev/null
+sleep 2
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+git pull --rebase
+setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &
+sleep 6
+pgrep -af ops_relay.sh | cut -c1-120      # 必须恰好 1 条
+tail -6 /tmp/baize_ops_relay.log
+```
+
+**判据**：`pgrep -af ops_relay.sh` **恰好 1 条** 且日志有轮询行。**若已有 1 个 relay 在跑且日志在动 → 无需重启，如实记录后跳过。**
+
+**🚫 红线**：不要 `pkill` 你自己的 loop、不要动 GPU 上的 pretrain 训练（P-9.2）、**不要删任何数据**（中继恢复后会自动接手磁盘清理，你无需参与）。
+
+**回报**：原始输出写入 `MEMORY_HARNESS.md` 底部流水一行，然后继续本线工作。
+
+
 ### 🆕 运维指令 · 2026-10-03（**优先于下方表格**）
 
 **① 🔓 Docker 阻塞解除 —— 运维确认 `app.e0031982` 在 `sudo` 组，并提供 sudo 口令。** 执行：

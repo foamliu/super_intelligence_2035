@@ -3,6 +3,48 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_PRETRAIN_2B.md` / `daily-memories/` / `EXPERIMENTS_*`）。本节为「无」时按下方 Round 2 默认顺序推进。
 
+### 🚨 运维指令 · 2026-10-04（**最高优先 · 紧急但轻量 ≈30 秒：请帮忙恢复 ops 中继**）
+
+> **为什么找你**：`run/ops/ops_relay.sh` 是**外部运维唯一的远程通道**（运维**无法 SSH 登录**，只能靠你）。它现在被一个**跑飞的进程卡住**了（`.last_run_id` 停住、不再产出）。
+> **耗时**：≈ **30 秒** · **不占 GPU** · **不改任何训练 recipe** · **不删任何数据**。
+> ⏱ **本条优先于 P-9**（但它只需半分钟，做完立刻回到 P-9.2）。
+
+**请依次执行，并贴【原始输出】**：
+
+```bash
+# 1) 现状
+pgrep -af 'ops_relay.sh' | cut -c1-120
+echo '--- 跑飞的残留（ops 的 grep / fuser）---'
+pgrep -af 'grep -rl|fuser -v /nas_train' | cut -c1-120
+
+# 2) 杀掉跑飞的残留（杀不到就跳过，无副作用）
+pkill -f 'grep -rl .*stage_1.5_mid_training' 2>/dev/null
+pkill -f 'fuser -v /nas_train' 2>/dev/null
+sleep 2
+
+# 3) 重启中继（先 pull 再起；setsid 脱离进程组防工具超时误杀）
+pkill -f ops_relay.sh 2>/dev/null
+sleep 2
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+git pull --rebase
+setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &
+sleep 6
+
+# 4) 校验 —— 必须【恰好 1 个】relay
+pgrep -af ops_relay.sh | cut -c1-120
+echo '--- relay 日志尾 ---'; tail -6 /tmp/baize_ops_relay.log
+```
+
+**判据（验收）**：`pgrep -af ops_relay.sh` **恰好 1 条**，且 `/tmp/baize_ops_relay.log` 出现轮询行（如 `poll…`/`run …`）。
+
+**🚫 三条红线（务必遵守）**：
+1. **不要** `pkill` 你自己（`baize_pretrain_loop.sh`）、也不要动 harness 的 loop；
+2. **不要**动 GPU 上正在跑的 **P-9.2**（`baize_p9_tpsp_scan.sh`）；
+3. **不要删任何数据** —— 中继恢复后**它会自动接手**待执行的磁盘清理（RUN_ID 36），**你完全不需要做删除动作**。
+
+**回报**：把上述 4 步的**原始输出**（可 `cut -c1-140`）写进 `MEMORY_PRETRAIN_2B.md` 的**底部流水一行**，然后**继续 P-9.2 巡检**。若中继仍起不来，同上格式报告失败点即可。
+
+
 ### 🆕 运维指令 · 2026-10-03（新增 **P-9**，**排在 P-5b 之后、P-6② 之前** —— ⏱ **尽早跑，🚫 不得后置到 P-6② 之后**）
 
 > 🚫 **铁律不变**：**绝不打断正在跑的 P-5b**（改 MBS/精度会使该 long-run recipe 失效、loss 曲线断裂）。
