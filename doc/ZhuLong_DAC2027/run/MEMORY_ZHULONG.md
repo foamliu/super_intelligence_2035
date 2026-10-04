@@ -14,7 +14,7 @@ WAITING: 1
 | PHASE | `init`（待运维确认 infra / 起始点后由 agent 置 running）|
 | WAITING | 1（语义 = 待运维拍板 infra/起始点，非 eval running）|
 | ERROR_COUNT | 0 |
-| BASE_DIR | `/nas_train/app.e0031982/code/eda_fastmcp`（⚠️ 已迁移，旧 `/nasdata/...` 作废）|
+| BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
 | 基座 | `deepseek-v4-pro-fp4`（编排 + 主 backbone；只有 STAGE=B 换被评测模型）|
 
 ## 执行看板（15 臂 × 5 轮）

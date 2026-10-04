@@ -71,9 +71,9 @@
 <!-- 0. 冻结令 -->
 <div class="callout freeze">
   <b>⛔ 环境冻结中 — loop 尚未启动</b><br>
-  运维正在配置环境（EDA license / 沙箱端口 / 磁盘空间 / API key）。在冻结解除前：
+  冻结原因：36.15 服务器上已有旧 agent（<code>/nasdata/app.e0031982/code/ZhuLong_DAC2027/</code>）在跑任务，新 agent（<code>/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/</code>）启动会造成冲突，必须收集信息后找到妥当切换方法。在冻结解除前：
   <ul class="tight" style="margin-top:6px">
-    <li>评价脚本路径已迁移至 <code>/nas_train/app.e0031982/code/eda_fastmcp</code>（旧 <code>/nasdata/</code> 路径作废）</li>
+    <li><b>两台服务器独立挂载</b>：当前 2.12 开发机路径前缀为 <code>/nas_train/</code>；最终运行目标 36.15 服务器路径前缀为 <code>/nasdata/</code>。二者互不关联，并非迁移关系</li>
     <li>四个 shard 端口（8664/8665/8653/8669）待修复验证</li>
     <li><code>/home</code> 磁盘待清理至 ≥8G 可用</li>
     <li>模型消融 API key 待核实有效期</li>
@@ -186,6 +186,9 @@
 </div>
 
 <h3>3.1 启动 loop（登入机器后执行）</h3>
+<div class="callout warn">
+  <b>路径前缀说明：</b>本报告以下命令以当前 2.12 开发机路径 <code>/nas_train/</code> 为例；<b>最终在 36.15 服务器上运行时，请将 <code>/nas_train/</code> 替换为 <code>/nasdata/</code></b>。或使用 git-root 相对路径 <code>$(git rev-parse --show-toplevel)/doc/ZhuLong_DAC2027/run/zhulong_loop.sh</code> 自动适配。
+</div>
 <pre class="cmd"><code><span class="cm"># 脱离进程组启动，防工具超时误杀；不占用终端</span>
 setsid bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh \
   &gt; /tmp/zhulong_loop.log 2&gt;&amp;1 &lt; /dev/null &amp;</code></pre>
@@ -207,7 +210,9 @@ pkill -f 'run_cline_script'
 tail -f /tmp/zhulong_loop.log
 
 <span class="cm"># 看当前状态</span>
-head -30 /nas_train/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md</code></pre>
+head -30 /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md</code></pre>
+
+<p class="small muted">注：以上命令中的 <code>/nasdata/</code> 需根据实际运行环境替换；当前 2.12 开发机用 <code>/nas_train/</code>。</p>
 
 <!-- 4. 状态机速查 -->
 <h2><span class="sec-no">4</span>状态机说明</h2>
@@ -237,29 +242,68 @@ B:  glm-5.2 → deepseek-v4-flash → kimi-k2.6-cloud → doubao-seed-2.0-pro-cl
   <tr><td><code>ZHULONG_TASK.md</code></td><td><code>doc/ZhuLong_DAC2027/run/</code></td><td>~15KB</td><td>合并任务书（运维指令区 + 4 阶段状态机 + 推进逻辑 + 规格归档）</td></tr>
   <tr><td><code>zhulong_loop.sh</code></td><td><code>doc/ZhuLong_DAC2027/run/</code></td><td>~6KB</td><td>自动推进循环（自适应唤醒、git 兜底同步）</td></tr>
   <tr><td><code>MEMORY_ZHULONG.md</code></td><td><code>doc/ZhuLong_DAC2027/run/</code></td><td>~2KB</td><td>运行时状态（WAITING 标志 + 执行看板 + 成绩记录 + 操作流水）</td></tr>
-  <tr><td><code>report_10_04.html</code></td><td><code>doc/ZhuLong_DAC2027/</code></td><td>本文件</td><td>本报告（含启动指令）</td></tr>
+  <tr><td><code>report_10_04.html</code></td><td><code>doc/ZhuLong_DAC2027/</code></td><td>本文件</td><td>本报告（含启动指令 / ops 中继说明）</td></tr>
+  <tr><td><code>zhulong_ops_relay.sh</code></td><td><code>doc/ZhuLong_DAC2027/run/</code></td><td>~7KB</td><td>ops 中继剧本（纯 bash，零 token，~20s 轮询）</td></tr>
+  <tr><td><code>ops/README.md</code></td><td><code>doc/ZhuLong_DAC2027/run/ops/</code></td><td>—</td><td>ops 通道说明（使用方法、启动/停止命令）</td></tr>
+  <tr><td><code>ops/inbox.md</code></td><td><code>doc/ZhuLong_DAC2027/run/ops/</code></td><td>~4KB</td><td>运维下发命令（第一个块：环境摸底）</td></tr>
+  <tr><td><code>ops/outbox.md</code></td><td><code>doc/ZhuLong_DAC2027/run/ops/</code></td><td>空</td><td>中继回收的执行结果（只增不改）</td></tr>
   <tr><td class="muted" colspan="4">以下旧文件保留，只读历史参考</td></tr>
   <tr><td><code>ablation_run_task_{s1,component_s2,model}_full.md</code></td><td><code>doc/ZhuLong_DAC2027/run/</code></td><td>—</td><td>旧逐臂详细规格（已不再使用）</td></tr>
   <tr><td><code>ablation_run_conductor_serial.sh</code></td><td><code>doc/ZhuLong_DAC2027/run/</code></td><td>—</td><td>旧总控（已不再使用）</td></tr>
   <tr><td><code>holiday_run_report.html</code></td><td><code>doc/ZhuLong_DAC2027/run/</code></td><td>—</td><td>旧报告（已不再使用）</td></tr>
 </table>
 
-<!-- 6. 风险备忘 -->
-<h2><span class="sec-no">6</span>风险备忘</h2>
+<!-- 6. OPS 中继通道 -->
+<h2><span class="sec-no">6</span>OPS 中继通道</h2>
+
+<p>仿照 BaiZe 的 <code>doc/BaiZe-ISEDA2027/run/ops/</code> 在 ZhuLong 目录新增独立 ops 通道。用于运维通过 git 下发 shell 命令、回收执行结果，无需等待 45min cline 编排唤醒。</p>
+
+<div class="callout warn">
+  <b>相互独立：</b>本通道 <code>doc/ZhuLong_DAC2027/run/ops/</code> 与 BaiZe 的 <code>doc/BaiZe-ISEDA2027/run/ops/</code> 各有各的 relay 进程、inbox/outbox、与 last_run_id，互不干扰。
+</div>
+
+<h3>6.1 使用方法（运维侧）</h3>
+<pre class="cmd"><code><span class="cm"># ① 编辑 inbox.md，写 ```bash 命令块，RUN_ID+1</span>
+<span class="cm"># ② git push</span>
+<span class="cm"># ③ 等 ~1min → git pull → 读 outbox.md 末尾</span></code></pre>
+
+<p>详细用法见 <code>run/ops/README.md</code>。</p>
+
+<h3>6.2 启动命令（服务器侧，一次）</h3>
+<div class="callout warn">
+  <b>路径前缀：</b>以下以 2.12 开发机路径 <code>/nas_train/</code> 为例。36.15 服务器上启动时请将 <code>/nas_train/</code> 替换为 <code>/nasdata/</code>。
+</div>
+<pre class="cmd"><code>cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+git pull --rebase
+setsid bash zhulong_ops_relay.sh > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &</code></pre>
+
+<div class="grid">
+  <div class="kv"><b>停止</b><span><code>pkill -f zhulong_ops_relay.sh</code></span></div>
+  <div class="kv"><b>日志</b><span><code>/tmp/zhulong_ops_relay.log</code></span></div>
+  <div class="kv"><b>轮询间隔</b><span>~20s 本地 / ~60s 远端 fetch</span></div>
+  <div class="kv"><b>单块超时</b><span>600s，超时被终止</span></div>
+</div>
+
+<h3>6.3 预置命令：RUN_ID 1 — 环境摸底</h3>
+<p>包含：磁盘（<code>/home</code> / <code>/nas_train</code> / <code>/tmp</code>）· 四 shard 端口 <code>8664/8665/8653/8669</code>· EDA license（<code>run_code</code> 可用性）· 运行进程（zhulong / Baize loop）· git 状态· CPU/内存/GPU。</p>
+<p>中继启动后约 1 分钟即可通过 <code>git pull → tail ops/outbox.md</code> 拿到环境实况。</p>
+
+<!-- 7. 风险备忘 -->
+<h2><span class="sec-no">7</span>风险备忘</h2>
 
 <div class="grid">
   <div class="kv"><b>infra 停摆（已发生）</b><span>旧 S1 r3 因磁盘满 + license 耗尽 + 端口宕两次作废。新方案加入 infra 三项前置校验 + WAITING=1 自恢复机制。</span></div>
   <div class="kv"><b>API key 过期</b><span>Phase B 模型消融的 4 个 key 取自 <code>ablation_run_task_model_full.md</code>，启动前须核实有效期。</span></div>
-  <div class="kv"><b>环境迁移断连</b><span>评测代码从 <code>/nasdata/</code> 迁至 <code>/nas_train/</code>，旧 task book 路径全部作废。已统一改写为 <code>BASE_DIR</code> + <code>PAPER</code> + <code>GIT_ROOT</code> 三变量。</span></div>
+  <div class="kv"><b>36.15 旧 agent 冲突</b><span>36.15 上已有旧 agent（<code>/nasdata/app.e0031982/code/ZhuLong_DAC2027/</code>）在跑，新 agent 不能并发启动。须先收集旧 agent 进度，找到妥当切换方法后再解冻。</span></div>
   <div class="kv"><b>.env 并发截断</b><span>禁止并发执行改写 <code>.env</code> 的脚本；切臂命令必须串行 <code>&&</code> 链。</span></div>
   <div class="kv"><b>S2 Φ 语义</b><span>预算约束的是能执行的次数，不是提交时间；严禁逼迫/提示提前提交。k 臂记 <code>Converged (%)</code> + <code>Mean read-backs</code>；lagged 臂核 <code>reported_call_index</code> 差 ==1。</span></div>
-  <div class="kv"><b>记忆体积控制</b><span><code>MEMORY_ZHULONG.md</code> 上限 ≤32KB，超了滚动到 <code>daily-memories/</code>。</span></div>
+  <div class="kv"><b>ops 中继冲突</b><span>ZhuLong ops 与 BaiZe ops 各用独立 relay 进程、独立 inbox/outbox、独立 last_run_id，互不干扰。但 git push 时为避免互相覆盖，各自只 add 自己的 ops/ 文件。</span></div>
 </div>
 
 <footer>
   <b>权威依据：</b><code>doc/ZhuLong_DAC2027/README.md</code> §2（实验设置）· §4.1（口径）· §5（表）· §6（数字填写）· §8（消融顺序）· §9（取舍项）。<br>
   <b>6 表 [TBD]：</b><code>tab:selfdoc-cost</code> 6 · <code>tab:main-ablation</code> 7 · <code>tab:omega</code> 6 · <code>tab:ablation-harness</code> 9 · <code>tab:phi-bound</code> 14 · <code>tab:llm-comparison</code> 14 = <b>56 个</b>。<br>
-  本报告生成于 <b>2026-10-04 14:38 CST</b> · 环境冻结中 · 等待运维解除。
+  本报告生成于 <b>2026-10-04 14:38 CST</b> · 环境冻结中（36.15 旧 agent 冲突） · 等待运维解除。
 </footer>
 
 </div>

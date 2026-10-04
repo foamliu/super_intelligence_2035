@@ -1,15 +1,15 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
-## 🚨⚠️ 环境设置未完成 —— 冻结令：agent 看到本任务书必须立刻沉睡 ⚠️🚨
+## 🚨⚠️ 冻结令：36.15 旧 agent 冲突，新 agent 必须立刻沉睡 ⚠️🚨
 
-> **当前环境尚未配置完成，本任务书处于「冻结」状态。**
+> **36.15 服务器上已有旧 agent（`/nasdata/app.e0031982/code/ZhuLong_DAC2027/`）在跑任务，新 agent 启动会造成冲突。本任务书处于「冻结」状态。**
 >
 > **每次唤醒读到本段，必须立刻沉睡，禁止做任何事：**
 > 1. **不要执行**任何评测 / 切臂 / 启动 / 打分 / canary 动作（不碰 `eda_fastmcp`、不 `cline auth`、不跑任何命令）。
 > 2. 确认 `MEMORY_ZHULONG.md` 顶部 `WAITING:` 为 **1**（若不是 1，改成 1）。
 > 3. **立刻退出**，不写任何日志、不做任何推进、不启动训练/评测。
 >
-> **环境配置好后，运维会修改本任务书、删掉这段冻结令**；那时才恢复下方正常推进流程。
+> **运维收集旧 agent 进度并找到妥当切换方法后，会修改本任务书、删掉这段冻结令**；那时才恢复下方正常推进流程。
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
@@ -19,25 +19,28 @@
 
 | 项 | 值（**2026-10-04 运维更新**）|
 |:--|:--|
-| **环境** | ⚠️ **已迁移**：评测代码旧 `/nasdata/.../eda_fastmcp` → 新 **`/nas_train/app.e0031982/code/eda_fastmcp`**；论文仓库 → **`/nas_train/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027`** |
+| **环境** | ⚠️ **两服务器独立挂载**：当前 2.12 开发机路径前缀为 <code>/nas_train/</code>；最终运行目标 36.15 路径前缀为 <code>/nasdata/</code>。评测代码 <code>eda_fastmcp</code> 在 36.15 上位于 <code>/nasdata/app.e0031982/code/eda_fastmcp</code>（未迁移）。旧 task book 中 <code>/nasdata/</code> 开头的路径仍然有效。 |
 | **当前阶段** | ⭕ **待运维确认 infra / 起始点**（见下方「运维指令 · 2026-10-04」） |
 | **已完成（探路 1-shot）** | ✅ 组件 `pure_llm` 11.4% / `rag` 70.3% / `wo_retrieval` 81.6% / `full` 84.8%；✅ S2 Φ `k10` 75.3% / `k3` 69.0% / `k1` 60.8% / `lagged` 84.2%（r2 修复后 98.1% 满分） |
 | **旧 5-run 进行到哪** | ⏸ 旧 S1（`omega_low`）r1=81.6 / r2=82.3 ✅；r3 因 **infra 作废**（license 耗尽 + shard0/1 端口 8664/8665 宕 + `/home` 磁盘 <8G）自 9/30 停摆至今 |
 | **🚫 不做** | `wo_sandbox` / `wo_selfexpl`（tab:main-ablation 这两行暂缓）· `(H+E)` 档 · `phi_unbounded`（≡ full 锚点）· 主基座 `deepseek-v4-pro-fp4` 的模型消融臂（≡ full×5 锚点，不重跑） |
 | **叙事** | 一顿合并：S1 → 组件 → S2 Φ → 模型，「单任务书 + 单循环」串行 75 轮全量 mean±std，回填 6 表 56 个 `[TBD]` |
 
-### 🆕 运维指令 · 2026-10-04：环境迁移 + 合并执行方式
+### 🆕 运维指令 · 2026-10-04：环境迁移 + 合并执行方式 + ops 中继独立
 
 > 本次把 4 个 phase（S1 保真度 / 组件 / S2 Φ / 模型）**合并进本单一任务书 + 单一 loop**，不再按 `ablation_run_conductor_serial.sh` 拆 3 个 task book + 4 个 loop。**执行顺序不变**（README §8）：S1 → 组件 → S2 Φ → 模型。
 
-1. **环境（agent 必须用下表值，旧 task book 里的 `/nasdata/...` 全部作废）**：
-   - `BASE_DIR=/nas_train/app.e0031982/code/eda_fastmcp`
-   - `PAPER=/nas_train/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/ZhuLong_DAC2027`（唯一可改 LaTeX 树）
-   - `GIT_ROOT=/nas_train/app.e0031982/code/super_intelligence_2035`
+1. **环境（agent 最终跑在 36.15 服务器，必须用下表 `/nasdata/` 路径）**：
+   - `BASE_DIR=/nasdata/app.e0031982/code/eda_fastmcp`
+   - `PAPER=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/ZhuLong_DAC2027`（唯一可改 LaTeX 树）
+   - `GIT_ROOT=/nasdata/app.e0031982/code/super_intelligence_2035`
+   - **注意**：当前 2.12 开发机路径前缀为 `/nas_train/`（与 36.15 的 `/nasdata/` 独立挂载，互不关联）。旧 task book 中的 `/nasdata/` 路径在 36.15 上仍然有效，并非迁移关系。
 2. **infra 前置校验（PHASE=init 首次启动前必做，不满足则 `WAITING=1` 原地等）**：
    - `df -h /home` 可用 **≥ ~8G**；四 shard 端口 **8664/8665/8653/8669 全 OPEN**；`run_code` 可正常执行（license 可用）。
    - 旧停摆根因即此三项，**没恢复就别开跑，跑出来也作废**。
 3. **起始状态（运维在此填实）**：默认 `PHASE=init`，从 `STAGE=S1, CONFIG=omega_low, ROUND=1` 开始；若要延续旧 S1 进度，改填 `CONFIG=omega_low, ROUND=3`，并把 r1=81.6 / r2=82.3 写进 MEMORY 成绩表，r1/r2 不重跑。
+4. **ops 中继通道已就绪**：`run/zhulong_ops_relay.sh` + `run/ops/{inbox,outbox,README}.md`。运维通过 git 下发 shell 命令（~20s 轮询），与 BaiZe ops 相互独立。启动命令见 `run/ops/README.md` 或本报告 §6。
+   - ⚠️ 只有本区（运维指令区）的 ops 提及是写给人看的。**agent 不要碰 ops/ 目录**（中继专供运维下发命令，agent 写 MEMORY 和日常记录即可）。
 
 ### 🆕 运维指令（后续按需追加）
 

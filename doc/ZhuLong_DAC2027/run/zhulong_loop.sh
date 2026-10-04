@@ -20,7 +20,7 @@ set -u
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TASK_MD="$SCRIPT_DIR/ZHULONG_TASK.md"
 CWD="$SCRIPT_DIR"
-GIT_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo '/nas_train/app.e0031982/code/super_intelligence_2035')"
+GIT_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo '/nasdata/app.e0031982/code/super_intelligence_2035')"
 RUN_REL="doc/ZhuLong_DAC2027/run"                      # 编排文件：MEMORY / daily-memories / 自建脚本
 PAPER_REL="doc/ZhuLong_DAC2027/ZhuLong_DAC2027"        # 论文权威树：最终回填 [TBD] 的地方
 

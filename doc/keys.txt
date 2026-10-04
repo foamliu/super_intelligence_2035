@@ -1,0 +1,58 @@
+
+模型名字：deepseek-v4-flash
+API Key：02_088EE9051AAE4BF0ABFC7130331BF697_c43c1f4a-03c6-4148-b722-f4c8604c78d3
+Base Url (OpenAI)：http://agi-gateway.cxmt.com/v1
+Base Url (Anthropic)：http://agi-gateway.cxmt.com/anthropic
+
+模型名字：deepseek-v4-pro-fp4
+API Key：02_088EE9051AAE4BF0ABFC7130331BF697_9eed3da1-b039-4d96-a18a-d0769b01baae
+Base Url (OpenAI)：http://agi-gateway.cxmt.com/v1
+
+模型名字：deepseek-v4-pro-cloud
+API Key：02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e
+Base Url (OpenAI)：http://agi-gateway.cxmt.com/cloud/v1
+
+
+模型名字：kimi-k2.6-cloud
+API Key：02_088EE9051AAE4BF0ABFC7130331BF697_80a707b0-4402-4c19-88d1-a3d4ebbf9a9f
+Base Url (OpenAI)：http://agi-gateway.cxmt.com/cloud/v1
+Base Url (Anthropic)：hhttp://agi-gateway.cxmt.com/cloud/anthropic/v1
+
+
+模型名字：glm-5.2
+API Key：02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23
+Base Url (OpenAI)：http://agi-gateway.cxmt.com/cloud/v1
+Base Url (Anthropic)：http://agi-gateway.cxmt.com/cloud/anthropic/v1
+
+
+模型名字：doubao-seed-2.0-pro-cloud
+API Key：02_088EE9051AAE4BF0ABFC7130331BF697_3dd97aea-258e-4a53-a290-4f1425cdc15f
+Base Url (OpenAI)：http://agi-gateway.cxmt.com/cloud/v1
+Base Url (Anthropic)：http://agi-gateway.cxmt.com/cloud/anthropic
+
+模型名字：doubao-seed-2.0-mini-cloud
+API Key：02_088EE9051AAE4BF0ABFC7130331BF697_caa8bffa-b976-47f5-acc3-4141f6c5b90f
+Base Url (OpenAI)：http://agi-gateway.cxmt.com/cloud/v1
+Base Url (Anthropic)：http://agi-gateway.cxmt.com/cloud/anthropic/v1
+
+模型名字：doubao-seed-2.0-lite-cloud
+API Key：02_088EE9051AAE4BF0ABFC7130331BF697_78b81092-7e90-436e-aa8a-5ab8510567fe
+Base Url (OpenAI)：http://agi-gateway.cxmt.com/cloud/v1
+Base Url (Anthropic)：http://agi-gateway.cxmt.com/cloud/anthropic/v1
+
+模型名字：doubao-asr-realtime
+API Key：02_088EE9051AAE4BF0ABFC7130331BF697_f47a8e26-abfa-44c6-b374-2da39b34374e
+Base Url (OpenAI)：http://agi-gateway.cxmt.com/sauc/bigmodel_async
+
+模型名字：doubao-seedream-5.0-lite-cloud
+API Key：02_088EE9051AAE4BF0ABFC7130331BF697_5591ae9f-c046-4168-aa29-77c230d941b5
+Base Url (OpenAI)：http://agi-gateway.cxmt.com/cloud/v1
+
+
+工具名字：cimi-search
+调用地址：http://agi-gateway.cxmt.com/agi/tool/cimi_search
+API Key: cimi-search_NTQ5NzMmMjAyNjA5MDcxNDQ2MzkmMDg4RUU5MDUxQUFFNEJGMEFCRkM3MTMwMzMxQkY2OTc
+
+工具名字：cimi-fetch
+调用地址：http://agi-gateway.cxmt.com/agi/tool/cimi_fetch
+API Key: cimi-fetch_NTQ5NzMmMjAyNjA5MDcxNDQ2NDAmMDg4RUU5MDUxQUFFNEJGMEFCRkM3MTMwMzMxQkY2OTc
