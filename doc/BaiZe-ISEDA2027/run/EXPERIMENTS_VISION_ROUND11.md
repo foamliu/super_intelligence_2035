@@ -429,4 +429,123 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 - **GPIC short 有显著先发优势、但不抬高 ceiling**：@5.12M 领先基线 **+2.58 点**（> 阈值 1.5 且 > 噪声带上界 1.1）；@10.24M 优势收敛到 **+0.24**（噪声带 0.5–1.1 内）；@15.36M（补充、>唯一对）反略低于基线（**5.73% vs 6.08%**，−0.35，噪声带内）。
 - **机制（如实标注为推断）**：GPIC `short`（20 tok 精选 caption）单样本质量更高 → **早期收敛更快**；但其唯一对 ≈11M 在 N≈10M 处近乎耗尽 → lp 平台化在 ~5.7%；基线 CC12M+Amshaker 的 18.5M 唯一多样性继续把 lp 抬到 6.08%@15.36M。→ 「**数据质量加速早期；数据总量/多样性决定 ceiling**」。
 - **公平性（§13.4 回填）**：GPIC 吞吐 5918.6 img/s ≈ **2.0×** 基线（~2939）→ 30k 步仅 3892.7s（≈0.56× 基线的 ~6948s）。对照在**同 N（样本预算）**下，故不改变「不抬高 ceiling」；若按**同 GPU·h** 比，GPIC 的低 N 先发优势会被进一步放大。
+
+---
+
+## 14. 臂⑥ AIMv2 式（patch 预测 + InfoNCE）· 预注册 + 执行（2026-10-04 · **运维已批准起跑**）
+
+> 批准依据：运维 2026-10-04 用户拍板「Approve & start AIMv2 now」（本线 §3 队列第 7 项解除 ⏸）。
+> 铁律：**判据先定后测（本节先写完再起训练）**；**不许闭门造车**（目标函数须贴官方源码 `路径:行号`，不得凭二手描述）；**公平性**（加解码器的臂必报「参数量 + 训练 token + 每步耗时」）；**负结果照实写**。
+
+### 14.0 定位与依据（科学问题 + 官方源码取证）
+
+- **科学问题**：本线稠密监督臂（④ CoCa = InfoNCE+caption AR、§12 caption-weight 0.5/1.0/2.0 三点）**全部坍缩到随机**（lp 0.39–0.61%，§12.5 裁定「caption 监督本身与 IN-1k frozen-trunk 特征正交」）。任务书 §4/§5 的核心假说：**AIMv2 式「patch 预测」是唯一不依赖 caption 丰富度的稠密监督** → 在我们短 caption + ~15M 数据规模下**可能翻盘**（≠ caption 路线）。臂⑥ = 该假说的**决定性测试**。
+- **对照设计（控变量，平行于 arm④）**：
+  | 臂 | 目标函数 | 稠密项 | 稠密项是否依赖 caption | 已知结果 |
+  |:--|:--|:--|:--|:--|
+  | ① 基线 | InfoNCE | 无 | — | lp 3.43/5.45/6.08% @ 5.12/10.24/15.36M（R9）|
+  | ④ CoCa | InfoNCE + caption AR | caption token CE | **是**（短 caption） | lp ≈ 0.47%（坍缩）|
+  | **⑥-A（本臂）** | **InfoNCE + masked patch 重建** | **patch 像素 MSE** | **否**（纯视觉） | **待测** |
+  → 三臂结构同形（对比 + 一个稠密项），**唯一变量 = 稠密项是否 caption 依赖** → 直接回答「坍缩是 caption 依赖所致，还是稠密监督本身所致」。
+
+- **官方源码取证（不许闭门造车；clone `/tmp/mlaim_survey` @ `a018ae32`，GitHub 不可达故读本地 clone）**：
+  - **AIMv2 视觉编码器结构**（`/tmp/mlaim_survey/aim-v2/aim/v2/torch/models.py:30-86`）：`patch_size=14`、`embed_dim=1024`(L)、`num_blocks=24`、`num_heads=8`、`mlp_hidden_dim=2816`、`norm_layer=RMSNorm`、`ffn_target=SwiGLUFFN`、`cls_token=False`、`pos_embed_type='absolute'`、`head=nn.Identity()`(默认)。
+  - **前向 = preprocessor → trunk(x, mask=mask) → head(x)**（`/tmp/mlaim_survey/aim-v2/aim/v2/mixins.py:16-25`）→ **trunk 接受 `mask`**（即视觉侧有掩码）；默认 `head=Identity` → 预训练的 patch 预测头**不在推理仓库内**（仓库只放模型接口，`VISION_OFFICIAL_REPOS_SURVEY.md §2.1`：「patch+text AR 的具体损失/采样/掩码率 不在仓库中，只能读论文 §方法」）。
+  - **AIMv2 文本编码器**（`/tmp/mlaim_survey/aim-v2/aim/v2/torch/models.py:89-108` + `layers.py:30-65`）：`vocab_size=49408`、`eos_token_id=49407`、`max_context_length=77`、**EOS-token 池化**（`ExtractEOS`）→ **与我们的冻结 CLIP-768 文本塔（同 CLIP 词表/77 上下文）天然对齐**。
+  - **LICENSE**（`VISION_OFFICIAL_REPOS_SURVEY.md §2.6`，已逐字读 `/tmp/mlaim_survey/LICENSE`）：**Apple Sample Code License**，🔴 **不可把其代码逐字 COPY 进我们拟开源仓库**。→ 本臂**从零实现**，仅以官方结构/前向作「对位参考」，不抄代码。
+  - **patch 重建实现的 license-clean 参考**：OpenVision `src/losses/common.py:327` `mae_loss`（`norm_pix_loss=True`，**Apache-2.0**，`VISION_OFFICIAL_REPOS_SURVEY.md §1.1/§1.6` 可照抄/改）→ 本臂的「归一化 patch 像素 + MSE」按此实现（合法引用 Apache-2.0）。
+
+- **⚠️ 诚实披露（C2 式限定，先写明）**：
+  1. 本环境**无法访问 arxiv**（`fetch_web_content` 连接 arxiv.org 失败；`git ls-remote github.com` → `Network is unreachable`）→ **AIMv2 论文 §方法（arXiv:2411.14402）的具体掩码率/损失权重/序列布局无法逐字取证**。
+  2. 故本臂是 **「AIMv2 式」自研改编（masked patch 重建 + InfoNCE），非官方 AIMv2 目标函数的复现**。所有结论**只能表述为「我们 recipe（冻结 CLIP-768 + InfoNCE + w512 + CC12M+Amshaker）下、我们 AIMv2-style 改编版的结果」**，🚫 **不得**推广成「官方 AIMv2 会/不会翻盘」（同 R8/C2 限定口径，`EXPERIMENTS_VISION.md:21`）。
+  3. 官方 AIMv2 是**纯自回归**（vision AR + text AR，无对比项）；本臂**保留 InfoNCE 对比项**（为控变量对照 arm①/④，且保 frozen-trunk 评测口径不变）→ **本臂 ≠ 官方 AIMv2**，而是「在对比基线上叠加 patch 稠密监督」的最小受控测试。纯 AR（去对比项）列为 ⑥-B 候选，**仅在 ⑥-A 出信号时再起**。
+
+### 14.1 臂定义（控变量：**只变「是否叠加 patch 重建稠密项」**）
+
+| # | 项 | 值 |
+|:--|:--|:--|
+| 1 | 塔 | **OpenVision2 w512**（126.8M，`models.py:168`；与 arm①/④ 同塔）|
+| 2 | 文本塔 | **冻结 CLIP-768**（`r9_train.py:68`；与基线同；AIMv2 官方文本侧=CLIP 词表/77，对齐）|
+| 3 | 数据 | **CC12M + Amshaker**（≈18.5M 对，**已在盘上**；与 R9/arm①/④ 同，不换数据臂）|
+| 4 | 步数 / bs | **30k 步 / bs64×8=512**（与 arm①/④ 同；对照点 N=5.12M@10k / 10.24M@20k / 15.36M@30k）|
+| 5 | 优化器 / lr / warmup / seed | AdamW / 3e-3 / 20 / 1234（与基线同，`r9_train.py:180-182`）|
+| 6 | 对比项 | **InfoNCE**（`ClipLoss(local_loss=False)`，与 arm① 同）|
+| 7 | **稠密项（本臂唯一新增）** | **masked patch 像素重建 MSE**（`norm_pix_loss`，MAE/OpenVision `mae_loss` 式）|
+| 8 | 评测 | **IN-1k frozen-trunk lp**（`r8_eval_in1k.py`，与 R8–R11 全线同口径）+ C1–C4 探针 |
+| 9 | 掩码率 | **mask = 0.6**（随机 patch 掩码；官方值不可取→本臂自选，依据：MAE 0.75 / OpenVision2 keep0.35→mask0.65 / BEiT 0.4 均在 0.4–0.75，取中 0.6）|
+| 10 | 重建项权重 λ | **λ = 1.0**（contrastive + 1.0×patch_mse；对照 arm④ caption_weight=2.0；若出信号再做 λ 扫描）|
+| 11 | 掩码策略 | **「encoder 见全 patch + 在随机掩码位预测」**（不删 token、不加 mask token）→ **trunk 前向与基线完全一致**（保 frozen-trunk 评测口径不变，梯度经 patch 特征回传做稠密监督）|
+
+### 14.2 实现方案（从零；不抄 Apple 代码）
+
+- **patch 预测头**（新增 `models.py::PatchPredictor`）：`Linear(width→width) → LayerNorm → GELU → Linear(width→patch_dim)`，`patch_dim = patch²·3 = 16²·3 = 768`。仅在**掩码位**施加（取掩码位 patch 特征 → 预测该位归一化像素）。参数量 ≈ width·width + width + width·768 ≈ 512² + 512 + 512·768 ≈ **0.66M**（远 < arm④ CoCa decoder）。
+- **重建 target**（MAE `norm_pix_loss`）：从 `imgs`(B,3,H,W) 反归一化（×STD+MEAN）→ unfold 成 (B,N,patch²·3) → 每 patch 逐通道减均值/除标准差（per-patch normalize）→ 仅取掩码位作 target。
+- **loss**：`total = InfoNCE(pooled, Tf) + λ · MSE(pred[mask], target[mask])`。`pooled, patches = vision(imgs, return_patch=True)`（`models.py:179` 已支持；arm④ CoCa 路径 `r9_train.py:415` 同款）。
+- **训练循环**：在 `r9_train.py` 增 `--loss aimv2` 分支（仿 `--loss coca` 的 decoder-DDP 模式：predictor 作为独立 DDP 模块，`find_unused_parameters=True`）。C1–C4 探针照常（pooled 特征做 C1/C2，保坍缩判据不变）。
+- **数据**：复用 `build_loader`（`data.py:37`，非 coca 路径，tokenize 而非 tokenize_cap——patch 重建不需 caption token mask，但对比项仍需文本 token，故用普通 `tokenize`）。
+
+### 14.3 🔒 预注册判据（先定后测，🚫 不许事后改；平行 §13.3/§12.2）
+
+- **基线锚点**（arm① InfoNCE w512，R9 阶段一）：lp @ **5.12M = 3.43%** / **10.24M = 5.45%** / 15.36M = 6.08%。
+- **噪声带**：同塔同 recipe 跨臂 lp 抖动经验上界 ≈ **±1.1 点**（R9/R10/R11 多臂实测）；判据阈值取 **±1.5 点**（>噪声带，与 §13.3/§12.2 一致）。
+- **裁定（按 @5.12M 与 @10.24M 两点，先定后测）**：
+
+| ⑥-A lp 相对 arm① 基线 | 裁定 |
+|:--|:--|
+| 两点**均 ≥ +1.5** | 「**patch 稠密监督翻盘**」→ 对本臂重拟合 scaling 并外推；列 ⑥-B（纯 AR 去对比项）/ λ 扫描为后续 |
+| 两点**均 ≤ −1.5** | 「**patch 稠密更差**」（如实写；机制：重建梯度干扰对比表征）|
+| 其余（含 ±1.5 内、或交叉、或坍缩到随机 <1%） | 「**未翻盘 / 无显著差异**」→ 假说「caption-无关稠密能翻盘」**在我们 recipe 下证伪**（负结果有价值）；⑥-B/λ 扫描**不再起** |
+- **坍缩护栏**：训练中 C1>0.95 / C2_gap≤0.005 / C4 loss 不降 → 自动中止（`r9_train.py:471-476`，与全线同）；若中止 → 记 `fuse_reason`，裁定按「未翻盘（坍缩）」。
+
+### 14.4 公平性（§3 口径：参数量 + 训练 token + 每步耗时）
+
+- **trunk 参数**：126.8M（与 arm①/④ 同，不变）。
+- **新增 predictor 参数**：≈0.66M（仅掩码位预测头；**必报**）。
+- **训练 token**：30k 步 × 512 样本 = **15.36M 样本**（与 arm①/④ 同 N；文本 token = 15.36M × 77）。
+- **每步耗时 / 吞吐**：起跑后 `log_every=50` 报 `ms/iter` 与 `image/s`（与全线同；预期略低于 arm①，因多一次 patch unfold+MSE）。
+- **公平表**（收尾回填）：列 `臂 / trunk 参数 / predictor 参数 / 训练 token / steady img/s / final_loss / lp@5.12/10.24/15.36M`。
+
+### 14.5 成本与分阶段
+
+| 阶段 | 内容 | 成本 | 触发条件 |
+|:--|:--|:--|:--|
+| **S1 实现** | `PatchPredictor` + `--loss aimv2` 分支 + `r11_run_aimv2.sh` | 纯 CPU/几小时 | 现在 |
+| **S2 冒烟** | 30 步 @ `.12` 验证：params / 无坍缩 / 吞吐 / loss 两项分开报 | <1 GPU·h | S1 完成 |
+| **S3 首臂 ⑥-A** | 30k 步 w512 + 4-ckpt IN-1k lp | ≈1 臂 ≈ 16 GPU·h | S2 通过 |
+| S4（条件） | λ 扫描 {0.5,2.0} 或 ⑥-B 纯 AR | 1–3 臂 | **仅 S3 翻盘才起** |
+
+→ **首臂 ⑥-A = 1 臂**（非 §10.2 估的 3–5 臂；3–5 臂是「纯 AR 全套自研」的 worst case）。**一次成概率**：实现风险中等（复用 return_patch/coca 框架），科学结果**先定后测、不预设**。
+
+### 14.6 命令与进度（回填区）
+
+- 脚本：`vision/r11_run_aimv2.sh`（仿 `r11_run_coca.sh` / `r11_run_capweight.sh`）；日志 `/tmp/r11_aimv2.log`；输出 `R11L_aimv2_w512`（`/nas_train/app.e0031982/datasets/baize-vision/out/R11L_aimv2_w512`）。
+- 证据要求：起跑命令 + `[params]` 行 + 冒烟 `[done]` 行 + 全量 `[done] total=… steady_image_s=… final_loss=…` + 4-ckpt IN-1k lp 原始输出 + 路径（铁律）。
+
+**S1 实现（2026-10-04，done）**
+- `vision/models.py`：新增 `PatchPredictor`（Linear(w→w)→LN→GELU→Linear(w→768)，fc2 `N(0,0.02)`/bias 0），置于 `CoCaDecoder` 与 `get_vision_tower` 之间。从零实现；`mae_norm_pix_loss` 目标参考 OpenVision `src/losses/common.py`（Apache-2.0），未抄 Apple ml-aim（Apple Sample Code License）。
+- `vision/r9_train.py`：① `--loss` 增加 `aimv2`；② 新增 `--mask-ratio`(0.6)/`--patch-loss-weight`(1.0)；③ `mae_norm_pix_target(imgs,patch)` 工具（反 CLIP 归一化→fold→逐 patch 标准化）；④ 构 `PatchPredictor` 为独立 DDP 模块（`find_unused_parameters=True`，仿 CoCa decoder），其参数并入 `opt_params`；⑤ forward `elif aimv2`：`vision(imgs,return_patch=True)`→InfoNCE(pooled)+`predictor(patches[mask])` MSE（fp32）；trunk forward **不变**（全 patch 可见、无 mask token）→ frozen-trunk lp 可比；⑥ ckpt config 增 `mask_ratio`/`patch_loss_weight`；⑦ 日志 `contrast=`/`patch_mse=`。C1–C4 collapse guards 原样保留。
+- 单测：`PatchPredictor(w=512,patch_dim=768)`=0.6577M params；`mae_norm_pix_target(randn(8,3,224,224),16)`→(8,196,768) mean≈0 std≈0.999（逐 patch 标准化正确）；`--help` 列出 `aimv2`/`mask-ratio`/`patch-loss-weight`。
+- 起跑命令（首臂 ⑥-A，与 arm①/④ 同 recipe，仅稠密项不同）：
+  ```
+  bash vision/r11_run_aimv2.sh 30000   # = torchrun --nproc_per_node=8 r9_train.py
+    --tower openvision2 --width 512 --depth 30 --steps 30000 --resolution 224 --patch 16
+    --batch-size 64 --lr 3e-3 --warmup 20 --seed 1234
+    --loss aimv2 --mask-ratio 0.6 --patch-loss-weight 1.0
+    --data <CC12M+Amshaker> --data-source wds --output-dir R11L_aimv2_w512
+    --log-every 50 --probe-every 300 --probe-n 128 --num-workers 6 --eval-data <eval5k>
+  ```
+
+**S2 冒烟（2026-10-04 18:06，.12，8×H100 全空，done · PASS）**
+- `[predictor] patch_dim=768 width=512 trainable=0.66M total=0.66M mask_ratio=0.6 patch_loss_weight=1.0`
+- `[step 10/30] loss=6.8501 contrast=5.9666 patch_mse=0.8835`；`[step 20/30] loss=6.6076 contrast=5.8667 patch_mse=0.7409`；`[step 30/30] loss=6.6244 contrast=5.9144 patch_mse=0.7100`
+  - loss=contrast+1.0×patch_mse 校验通过（6.85≈5.97+0.88）；patch_mse 从≈1.0（norm_pix 目标 std≈1、predictor 近零初始化）下降到 0.71→稠密项在学；contrast 稳定≈5.9（≈ln512，无 collapse）；无 nan/inf。
+- `[done] total=7.7s steps=30 steady_image_s=4870.4 final_loss=7.1188 fused=False`；`[saved] …/R11L_aimv2_smoke/vision.pt`（已清理 smoke 产物）。
+- 收尾 `TCPStore Broken pipe`/`find_unused_parameters` 均为 NCCL heartbeat 关停竞态/性能告警，在 `[done]`/`[saved]` 之后，不影响结果。
+
+**S3 全量（2026-10-04 18:07 起，.12，8×H100，进行中）**
+- 起跑确认：8 rank 全部 `--loss aimv2 --steps 30000`；GPU 100% util / ~16.5GB。
+- 前 250 步：contrast 5.87→5.11（scale 10→18，InfoNCE 在学）；patch_mse 0.59→0.46（稠密项在学）；loss 6.46→5.57；无 collapse。
+- ⬜ 待回填：全量 `[done] total=… steady_image_s=… final_loss=…` + 4-ckpt（step10k/20k/30k/final）IN-1k frozen-trunk lp 原始输出 + 判据裁定（§14.4）。
+
+> ✅ 本节写完即视为预注册成立；随后进入 S1 实现 → S2 冒烟 → S3 首臂（**无需再等运维**，起跑已批准）。
 - **对本项目的影响**：R9 的 25.1% 渐近**不被数据臂改动推翻**；GPIC 的价值仅在「低预算快速启动」，本项目数据瓶颈是**总量/多样性**（本地 ≈118M 上限 vs 619 亿缺口），非 caption 质量 → R6/R7「正式训练切 GPIC short」与 R9/R10 scaling 口径**维持不变**。证据：`/tmp/r11_gpic.log`（训练 metrics + eval 段 786-797 行）。

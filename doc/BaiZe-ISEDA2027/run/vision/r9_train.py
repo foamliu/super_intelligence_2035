@@ -28,7 +28,7 @@ from torch import nn
 from torch.nn.parallel import DistributedDataParallel as DDP
 
 import models
-from models import get_vision_tower, param_count, active_param_count, CoCaDecoder
+from models import get_vision_tower, param_count, active_param_count, CoCaDecoder, PatchPredictor
 
 EMBED = 768
 CLIP_PATH = '/nas_train/app.e0031982/models/openai/clip-vit-large-patch14-336'
@@ -151,6 +151,29 @@ def coca_caption_loss(logits, labels, mask):
     return loss, float(denom.item())
 
 
+def mae_norm_pix_target(imgs, patch_size):
+    """MAE norm_pix_loss target (OpenVision src/losses/common.py:mae_loss, Apache-2.0).
+
+    imgs: (B,3,H,W) normalised with CLIP MEAN/STD. Returns (B, N, patch**2*3)
+    per-patch normalised pixels: un-normalise to [0,1], fold into patches, then
+    subtract the per-patch mean / divide the per-patch std over the full patch
+    vector (standard MAE norm_pix_loss). N = (H//patch)**2.
+    """
+    from data import MEAN, STD
+    mean = torch.tensor(MEAN, device=imgs.device, dtype=imgs.dtype).view(1, 3, 1, 1)
+    std = torch.tensor(STD, device=imgs.device, dtype=imgs.dtype).view(1, 3, 1, 1)
+    raw = imgs * std + mean                       # (B,3,H,W) in [0,1]
+    B, C, H, W = raw.shape
+    p = patch_size
+    assert H % p == 0 and W % p == 0, f'image {H}x{W} not divisible by patch {p}'
+    g = H // p
+    raw = raw.reshape(B, C, g, p, g, p)           # (B,C,g,p,g,p)
+    raw = raw.permute(0, 2, 4, 1, 3, 5).reshape(B, g * g, C * p * p)  # (B,N,C*p*p)
+    mean_pp = raw.mean(dim=-1, keepdim=True)
+    std_pp = raw.std(dim=-1, keepdim=True).clamp(min=1e-6)
+    return (raw - mean_pp) / std_pp               # (B,N,patch_dim)
+
+
 def get_vision(name, resolution, patch, device,
                width=None, depth=None, heads=None, mlp_dim=None):
     v = get_vision_tower(name, width=width, depth=depth, heads=heads, mlp_dim=mlp_dim)
@@ -179,7 +202,7 @@ def main():
     ap.add_argument('--steps', type=int, default=3000)
     ap.add_argument('--lr', type=float, default=3e-3)
     ap.add_argument('--warmup', type=int, default=20)
-    ap.add_argument('--loss', choices=['clip', 'siglip', 'localloss', 'coca'], default='clip',
+    ap.add_argument('--loss', choices=['clip', 'siglip', 'localloss', 'coca', 'aimv2'], default='clip',
                     help='clip=InfoNCE (R9/R10 baseline); siglip=SigLIP bidirectional sigmoid (R11-L arm2); '
                          'localloss=InfoNCE local_loss=True per-rank pool (R11-L arm3); '
                          'coca=InfoNCE contrastive + autoregressive caption CE (R11-L arm4)')
@@ -200,6 +223,12 @@ def main():
                     help='CoCa caption-CE weight (OpenVision coca_caption_loss_weight=2)')
     ap.add_argument('--decoder-depth', type=int, default=4,
                     help='CoCa caption decoder layers (dim=768 heads=12, cross-attn to patches)')
+    ap.add_argument('--mask-ratio', type=float, default=0.6,
+                    help='R11-L arm6 (AIMv2-style): fraction of patches masked for pixel '
+                         'reconstruction (MAE norm_pix_loss). 0 disables the dense term.')
+    ap.add_argument('--patch-loss-weight', type=float, default=1.0,
+                    help='R11-L arm6: weight of masked-patch reconstruction MSE '
+                         '(total = InfoNCE + patch_loss_weight * mse).')
     ap.add_argument('--text-finetune', choices=['frozen', 'lora'], default='frozen',
                     help='R11-L2: frozen=CLIP-768 text tower frozen (baseline); '
                          'lora=zero-init LoRA on q+v proj (lightweight unfreeze)')
@@ -209,8 +238,10 @@ def main():
                     help='LoRA parameter-group lr (separate from vision lr=3e-3)')
     args = ap.parse_args()
 
-    _OBJ = {'clip': 'InfoNCE', 'siglip': 'SigLIP', 'localloss': 'LocalLoss', 'coca': 'CoCa'}[args.loss]
-    _LOSS_KEY = {'clip': 'clip_infonce', 'siglip': 'siglip', 'localloss': 'clip_local', 'coca': 'coca'}[args.loss]
+    _OBJ = {'clip': 'InfoNCE', 'siglip': 'SigLIP', 'localloss': 'LocalLoss', 'coca': 'CoCa',
+            'aimv2': 'AIMv2-style(MIM+InfoNCE)'}[args.loss]
+    _LOSS_KEY = {'clip': 'clip_infonce', 'siglip': 'siglip', 'localloss': 'clip_local',
+                 'coca': 'coca', 'aimv2': 'aimv2_mim'}[args.loss]
 
     rank = int(os.environ['RANK'])
     world_size = int(os.environ['WORLD_SIZE'])
@@ -279,11 +310,28 @@ def main():
                   f'vocab={tok_emb.num_embeddings} caption_weight={args.caption_loss_weight}',
                   flush=True)
 
+    # ---- AIMv2-style patch predictor (R11-L arm6): InfoNCE + masked patch recon ---- #
+    predictor = None
+    if args.loss == 'aimv2':
+        _vis_w = args.width if args.width is not None else 1024
+        _patch_dim = (args.patch ** 2) * 3
+        pred_mod = PatchPredictor(width=_vis_w, patch_dim=_patch_dim).to(device)
+        predictor = DDP(pred_mod, device_ids=[rank], find_unused_parameters=True)
+        dec_trainable = sum(p.numel() for p in pred_mod.parameters() if p.requires_grad)
+        dec_total = param_count(pred_mod)
+        if is_main:
+            print(f'[predictor] patch_dim={_patch_dim} width={_vis_w} '
+                  f'trainable={dec_trainable/1e6:.2f}M total={dec_total/1e6:.2f}M '
+                  f'mask_ratio={args.mask_ratio} patch_loss_weight={args.patch_loss_weight}',
+                  flush=True)
+
     opt_params = list(vision.parameters()) + [logit_scale]
     if logit_bias is not None:
         opt_params.append(logit_bias)
     if decoder is not None:
         opt_params += list(decoder.parameters())
+    if predictor is not None:
+        opt_params += list(predictor.parameters())
     opt_groups = [{'params': opt_params}]
     if text_trainable:
         opt_groups.append({'params': text.trainable_params(),
@@ -366,7 +414,9 @@ def main():
                        'width': args.width, 'depth': args.depth,
                        'heads': args.heads, 'mlp_dim': args.mlp_dim,
                        'caption_loss_weight': args.caption_loss_weight if args.loss == 'coca' else None,
-                       'decoder_depth': args.decoder_depth if args.loss == 'coca' else None},
+                       'decoder_depth': args.decoder_depth if args.loss == 'coca' else None,
+                       'mask_ratio': args.mask_ratio if args.loss == 'aimv2' else None,
+                       'patch_loss_weight': args.patch_loss_weight if args.loss == 'aimv2' else None},
             'final_loss': loss_ema,
             'params_total': param_count(vision.module),
             'params_active': active_param_count(vision.module),
@@ -421,6 +471,21 @@ def main():
                 cur_loss = contrastive + args.caption_loss_weight * cap_loss
                 contr_i = contrastive.item()
                 cap_i = cap_loss.item()
+            elif args.loss == 'aimv2':
+                pooled, patches = vision(imgs, return_patch=True)
+                If = torch.nn.functional.normalize(pooled, dim=-1)
+                Tf = torch.nn.functional.normalize(text(txts), dim=-1)
+                contrastive = loss_fn(If, Tf, logit_scale.exp(), None)
+                # masked patch reconstruction (MAE norm_pix_loss; Apache-2.0 ref)
+                B, N, _W = patches.shape
+                target = mae_norm_pix_target(imgs, args.patch)      # (B,N,patch_dim)
+                mrand = torch.rand(B, N, device=device) < args.mask_ratio
+                pred = predictor(patches[mrand])                    # (n_masked, patch_dim)
+                tgt = target[mrand]                                 # (n_masked, patch_dim)
+                patch_loss = torch.mean((pred.float() - tgt.float()) ** 2)
+                cur_loss = contrastive + args.patch_loss_weight * patch_loss
+                contr_i = contrastive.item()
+                cap_i = patch_loss.item()          # reuse cap_i slot -> logged as patch_mse
             else:
                 If = torch.nn.functional.normalize(vision(imgs), dim=-1)
                 Tf = torch.nn.functional.normalize(text(txts), dim=-1)
@@ -443,7 +508,12 @@ def main():
             avg_dt = float(np.mean(roll[-args.log_every:]))
             imgs_per_sec = args.batch_size * world_size / avg_dt
             bias_s = f' bias={logit_bias.item():.3f}' if logit_bias is not None else ''
-            cap_s = f' contrast={contr_i:.4f} caption={cap_i:.4f}' if args.loss == 'coca' else ''
+            if args.loss == 'coca':
+                cap_s = f' contrast={contr_i:.4f} caption={cap_i:.4f}'
+            elif args.loss == 'aimv2':
+                cap_s = f' contrast={contr_i:.4f} patch_mse={cap_i:.4f}'
+            else:
+                cap_s = ''
             log(f'[step {step}/{args.steps}] loss={li:.4f}{cap_s} scale={logit_scale.exp().item():.3f}{bias_s} '
                 f'ms/iter={avg_dt*1000:.1f} image/s={imgs_per_sec:.1f} lr={lr_at(step):.2e}')
 

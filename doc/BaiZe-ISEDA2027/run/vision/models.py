@@ -475,6 +475,41 @@ class CoCaDecoder(nn.Module):
         return self.head(self.norm(x))
 
 
+class PatchPredictor(nn.Module):
+    """R11-L arm6 (AIMv2-style): masked-patch pixel predictor head.
+
+    Maps a patch feature (width-dim) to the normalised raw pixels of that patch
+    (patch_dim = patch**2 * 3). MAE-style two-layer decoder
+    (Linear -> LayerNorm -> GELU -> Linear), applied only at masked positions.
+
+    Reference for the norm_pix target: OpenVision ``src/losses/common.py:mae_loss``
+    (``norm_pix_loss=True``, Apache-2.0). Implemented from scratch -- Apple ml-aim
+    ships no loss code and is Apple Sample Code License, so nothing is copied from it.
+
+    The vision *trunk* forward is unchanged (all patches seen, no token drop and no
+    mask token), so frozen-trunk linear-probe eval stays directly comparable to the
+    InfoNCE baseline (arm1); the dense reconstruction gradient reaches the trunk only
+    through the patch features.
+    """
+
+    def __init__(self, width: int, patch_dim: int, hidden: int = None):
+        super().__init__()
+        hidden = hidden if hidden is not None else width
+        self.fc1 = nn.Linear(width, hidden, bias=True)
+        self.norm = LayerNorm(hidden)
+        self.act = nn.GELU()
+        self.fc2 = nn.Linear(hidden, patch_dim, bias=True)
+        nn.init.normal_(self.fc2.weight, std=0.02)
+        nn.init.zeros_(self.fc2.bias)
+
+    def forward(self, x):
+        # x: (M, width) patch features at masked positions -> (M, patch_dim)
+        x = self.fc1(x)
+        x = self.norm(x)
+        x = self.act(x)
+        return self.fc2(x)
+
+
 def get_vision_tower(name: str, width: int = None, depth: int = None,
                      heads: int = None, mlp_dim: int = None) -> nn.Module:
     """Construct a vision tower. `width/depth/heads/mlp_dim` are scale overrides

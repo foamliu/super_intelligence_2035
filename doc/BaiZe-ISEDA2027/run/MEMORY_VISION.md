@@ -1,16 +1,16 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ 四臂全兑现 · R11-L2 ✅ 完成（未翻盘、冻结文本塔最优）· R11-L caption-weight 三点消融 ✅ 全完成（0.5/1.0/2.0 全≈随机 → caption 监督本身与 IN-1k 正交、假设 B 坐实）**；臂⑤ GenLIP 🚫 跳过（已坐实）/ 臂⑥ AIMv2 ⏸ 暂缓 / R13 ✅ 完成（官方 OV2 L/14@224 IN-1k frozen-trunk lp=79.81% vs 自研 7.99%） / **R11-E ✅ 完成（GPIC short 同 N 两点：@5.12M=6.01%[+2.58] / @10.24M=5.69%[+0.24] → 裁定「未抬高/无显著差异」，先发优势但不抬 ceiling）** |
-| WAITING | 1（**语义=待运维拍板（非训练 running）**：R11-E ✅ 全收尾——训 exit 0（3892.7s/5918.6 img/s/final_loss 3.7010）+ 4-ckpt IN-1k lp 已回收；**无剩余已批准训练**（R13 ✅ 完成 / 臂⑥ AIMv2 ⏸ / R11-L·L2·caption-weight 全 done）。置 1 令 loop 30 分钟轮询省 token） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ 四臂全兑现 · R11-L2 ✅ 完成（未翻盘、冻结文本塔最优）· R11-L caption-weight 三点消融 ✅ 全完成（0.5/1.0/2.0 全≈随机 → caption 监督本身与 IN-1k 正交、假设 B 坐实）**；臂⑤ GenLIP 🚫 跳过（已坐实）/ 臂⑥ AIMv2 🟢 **运维已批准·训练中**（step 3900/30000，无坍缩 C1 0.31–0.38 / C2_gap +0.11 / C4 OK） / R13 ✅ 完成（官方 OV2 L/14@224 IN-1k frozen-trunk lp=79.81% vs 自研 7.99%） / **R11-E ✅ 完成（GPIC short 同 N 两点：@5.12M=6.01%[+2.58] / @10.24M=5.69%[+0.24] → 裁定「未抬高/无显著差异」，先发优势但不抬 ceiling）** |
+| WAITING | 0（**语义=训练 running**：臂⑥ AIMv2 🟢 运维已批准（用户 2026-10-04 拍板「Approve & start AIMv2 now」），S3 全量 30k 步 @18:07:56 起跑，step 3900/30000 进行中、无坍缩；下次唤醒回收 [done]+4-ckpt IN-1k lp → §14.4 预注册裁定 + 公平表 + git push） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
-| BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡）+ arm④ CoCa（1.92h×8 卡）+ R11-L2 LoRA（2.09h×8 卡 ≈16.7 GPU·h）+ R11-L caption-weight 消融（✅ 2 点：7261.3s+7440.6s ≈ 2.02h+2.07h×8 卡 ≈ 32.7 GPU·h）+ R11-E GPIC（30k 步 3892.7s≈1.08h×8 卡 ≈ **8.65 GPU·h**，steady 5918.6 img/s ≈2.0× 基线吞吐） |
-| 更新 | **2026-10-04 13:01（R13 ✅ 完成：官方 OV2 L/14@224 IN-1k frozen-trunk lp=79.81% [对照自研最佳 7.99%·渐近 25.1%] → 补结论边界「数据少非塔烂」）** · 2026-10-04 11:22（R11-E ✅ 收尾：训 exit 0（30k 步 3892.7s/5918.6 img/s/final_loss 3.7010，全程无坍缩 C1 0.33–0.40/C2_gap+0.087~+0.095/C4 OK）+ 4-ckpt IN-1k lp 回收；裁定「未抬高」——GPIC @5.12M=6.01%（+2.58）/@10.24M=5.69%（+0.24）→ 先发优势但 ceiling 不抬；§13.6–13.8 + EXPERIMENTS_VISION 顶部 + daily 日志已回填，随后 git push） |
+| BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡）+ arm④ CoCa（1.92h×8 卡）+ R11-L2 LoRA（2.09h×8 卡 ≈16.7 GPU·h）+ R11-L caption-weight 消融（✅ 2 点：7261.3s+7440.6s ≈ 2.02h+2.07h×8 卡 ≈ 32.7 GPU·h）+ R11-E GPIC（30k 步 3892.7s≈1.08h×8 卡 ≈ 8.65 GPU·h）+ **臂⑥ AIMv2（🟢 进行中：30k 步 @~210ms/iter ≈ 1.75h×8 卡 ≈ 14 GPU·h，tower 126.8M + predictor 0.66M）** |
+| 更新 | **2026-10-04 18:24（臂⑥ AIMv2 🟢 运维已批准·训练中 step 3900/30000，无坍缩 C1 0.31–0.38/C2_gap +0.11/C4 OK；S1 实现+S2 冒烟 ✅ PASS → S3 全量 @18:07:56 起跑；WAITING=0）** · 2026-10-04 13:01（R13 ✅ 完成：官方 OV2 L/14@224 IN-1k frozen-trunk lp=79.81% [对照自研最佳 7.99%·渐近 25.1%] → 补结论边界「数据少非塔烂」） · 2026-10-04 11:22（R11-E ✅ 收尾：训 exit 0 + 4-ckpt IN-1k lp 回收；裁定「未抬高」） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -110,6 +110,24 @@ WAITING: 1
 - 📌 **结论边界**：官方同族 GELU ViT 同口径即 79.81%，我们从零对比学习（冻结 CLIP 文本塔 + InfoNCE、~118M）峰值 **7.99%**（渐近 25.1%）→ **+71.8 点**。判据坐实：**瓶颈在数据量+目标函数，非「塔写得烂」**；**不抬上限**（不改 from-scratch 排名 / scaling 结论）。
 - ⚠️ **协议不同**：官方=大尺度预训练，我们=from-scratch → R13 **单列表、不并入排名**（EXPERIMENTS_VISION.md 顶部 R13 节）。
 - 证据：`/tmp/r13_official.log`（exit 0）、`/tmp/r13_ov2/smoke2.log`、`/tmp/r13_ov2/bench.log`；权重 `/nas_train/app.e0031982/datasets/baize-vision/r13_official/open_clip_pytorch_model.bin`（1.217GB）。
+
+## ⭐ 臂⑥ AIMv2 式（patch 预测 + InfoNCE）· 🟢 训练中（2026-10-04 18:24）
+
+> 运维 2026-10-04 用户拍板「Approve & start AIMv2 now」（本线 §3 队列第 7 项解除 ⏸）。预注册见 `EXPERIMENTS_VISION_ROUND11.md §14`（先定后测）。
+> 科学问题：caption-无关的稠密监督（MAE 式 masked patch 像素重建）能否翻盘 25.1% 渐近？—— 对照 arm④ CoCa（caption-依赖稠密 → 坍缩随机 0.47%）。
+
+- **S1 实现 ✅**：`models.py` 新增 `PatchPredictor`（0.66M，Linear→LN→GELU→Linear，从零实现；norm_pix 目标参考 OpenVision `src/losses/common.py:mae_loss` Apache-2.0，未抄 Apple ml-aim Sample Code）；`r9_train.py` 新增 `--loss aimv2 --mask-ratio 0.6 --patch-loss-weight 1.0`。
+- **S2 冒烟 ✅**（18:06，30 步 PASS）：`[predictor] patch_dim=768 width=512 trainable=0.66M`；loss=contrast+1.0×patch_mse 校验通过；patch_mse 1.0→0.71（稠密项在学）；contrast ≈5.9（≈ln512 无坍缩）；`[done] total=7.7s steady_image_s=4870.4`。
+- **S3 全量 🟢 进行中**（18:07:56 起，`.12` 8×H100，step 3900/30000 @18:24）：
+  - `[params] tower=openvision2 total=126.8M` + `[predictor] trainable=0.66M mask_ratio=0.6`。
+  - 健康（无坍缩）：PROBE C1 0.31–0.38 / C2_gap +0.112~+0.122 / C4=OK（step 3000/3300/3600/3900 全 OK）。
+  - loss_ema 7.02→3.87；contrast ~3.66（InfoNCE 在学，scale 45→50）；patch_mse ~0.29（稠密项在学，1.0→0.29）。
+  - 吞吐 ~2200–2700 img/s（~210 ms/iter）→ ETA 30k 步 ~19:53。
+  - ⬜ 待回填：`[done] total=… steady_image_s=… final_loss=…` + 4-ckpt（step10k/20k/30k/final）IN-1k frozen-trunk lp + §14.4 预注册裁定 + 公平表。
+- **预注册判据（§14.4）**：lp ≥ 基线+1.5 @两点(5.12M,10.24M) → 翻盘 → 起 ⑥-B/λ 扫；lp ≤ 基线−1.5 → 更差；其余 → 假说证伪（负结果照实写）。
+- ⚠️ **C2 限定**：本臂=AIMv2-**style** 自研改编（InfoNCE + masked patch 重建），**非官方 AIMv2 复现**（官方=纯 AR 无对比项 + 无公开 loss 代码）→ 结论只对我们 recipe 成立。
+- 证据：`/tmp/r11_aimv2.log`（进行中）、`/tmp/r11_aimv2_smoke.log`；输出 `R11L_aimv2_w512`。
+
 
 ## 历史条目已滚动归档（2026-10-03）
 
