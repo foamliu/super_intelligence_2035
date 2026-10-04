@@ -921,3 +921,128 @@ I'll start by reading the current state from the memory file and today's daily m
 1756308 timeout 10 pgrep -af zhulong_loop.sh
 ===== DONE =====
 ```
+
+---
+
+## RUN_ID 9 · 2026-10-04 21:56:15 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 9 — post-wake snapshot (read-only)
+REPO=/nasdata/app.e0031982/code/super_intelligence_2035
+CWD="$REPO/doc/ZhuLong_DAC2027/run"
+echo "===== 0. TIME ====="; timeout 10 date '+%F %T'
+echo "===== 1. procs (loop + cline) ====="; timeout 10 pgrep -af 'zhulong_loop.sh|cline ' | cut -c1-140
+echo "===== 2. loop log tail (last 30) ====="; timeout 10 tail -n 30 /tmp/zhulong_loop.log | cut -c1-160
+echo "===== 3. MEMORY_ZHULONG (mtime + head) ====="; timeout 10 ls -la "$CWD/MEMORY_ZHULONG.md"; timeout 10 sed -n '1,5p' "$CWD/MEMORY_ZHULONG.md"
+echo "===== 4. newest files in run/ ====="; timeout 10 ls -lat "$CWD" | head -12
+echo "===== 5. agent daily-memory tail ====="; timeout 10 tail -n 15 "$CWD/daily-memories/2026-10-04.md" 2>/dev/null | cut -c1-160
+echo "===== 6. repo git status / log ====="; timeout 20 git -C "$REPO" status -sb | head -8; timeout 20 git -C "$REPO" log --oneline -3
+echo "===== DONE ====="
+```
+
+**输出**
+```
+===== 0. TIME =====
+2026-10-04 21:56:15
+===== 1. procs (loop + cline) =====
+245597 /home/app.e0030544/.npm-global/lib/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /home/app.e0030544/project
+264846 node /home/app.e0023936/.npm-global/bin/cline config
+545406 node /home/app.t0002147/.npm-global/bin/cline --id 1790041981481_aealn
+545417 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --id 1790041981481_aealn
+1034782 cline --id 1790839444034_lwj2y
+1753953 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framewor
+1753961 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/44
+1755841 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+1755848 cline -c /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run --auto-approve true -m glm-5.2 -k 02_088EE9051AA
+1756031 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framewor
+1756039 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/44
+1756348 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framewor
+1756356 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/44
+1757282 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framewor
+1757290 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/44
+1757640 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framewor
+1757648 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/44
+1757961 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framewor
+1757969 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/44
+1758675 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framewor
+1758685 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/44
+1759257 node /home/app.t0002147/.npm-global/bin/cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/444/EDA-Eval-Framewor
+1759265 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --auto-approve true --timeout 2500 --data-dir /home/app.t0002147/44
+1760618 timeout 10 pgrep -af zhulong_loop.sh|cline 
+3088197 /root/node-v22/lib/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /root --host 127.0.0.1 --port 25463 --pathname /hub
+===== 2. loop log tail (last 30) =====
+[36m[run_commands][0m echo '--- 4. run_code entry exists? ---'; ls -la /nasdata/app.e0031982/code/eda_fastmcp/run_code 2>/dev/null | cut -c...
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at SX (/$bunfs/root/chunk-mbnfmz12.js:24:45839)
+      at uZ (/$bunfs/root/chunk-mbnfmz12.js:24:46138)
+      at transform (/$bunfs/root/chunk-mbnfmz12.js:42:42571)
+
+   [90m⎿ [0m[2m--- 4. run_code entry exists? --- --- eda_fastmcp top entries --- CLAUDE.md c... (+1 more)[0m
+[2m[thinking] [0m[2mInteresting[0m[2m findings:
+1.[0m[2m `run_code`[0m[2m entry[0m[2m:[0m[2m `ls run[0m[2m_code` and `[0m[2mls run_code.sh[0m[2m` returned nothing ([0m[2mno such[0m[2m file).
+
+2. Our[0m[2m /[0m[2mhome usage[0m[2m is only 3[0m[2m.8M (`[0m[2mdu[0m[2m -[0m[2msh /home/app[0m[2m.e003198[0m[2m2` = [0m[2m3.8M[0m[2m). So
+
+[0m[2m3. The symlink[0m[2m check command[0m[2m timed out ([0m[2mprobably[0m[2m because `du -[0m[2msh /nasdata[0m[2m/app.e[0m[2m0031982[0m[2m/c
+
+[0m[2mSo[0m[2m the picture[0m[2m is[0m[2m clear:
+- /[0m[2mhome:[0m[2m 99% full[0m[2m, 6G[0m[2m available, below[0m[2m 8G threshold[0m[2m. But our own[0m[2m usage is only [0m[2m3.8M[0m[2m on /
+- Our[0m[2m artifacts land[0m[2m on /nasdata[0m[2m (381G[0m[2m available[0m[2m).
+[0m[2m- shard[0m[2m ports all[0m[2m OPEN[0m[2m ✅
+- run[0m[2m_code: need to[0m[2m verify via actual[0m[2m MCP run[0m[2m_code call[0m[2m.
+
+Let[0m[2m me do the[0m[2m actual[0m[2m run_code probe[0m[2m now[0m[2m to[0m[2m confirm E[0m[2mDA license is available[0m[2m. This is the[0m[2m
+
+Let[0m[2m me run[0m[2m a minimal py[0m[2mA[0m[2mether run[0m[2m_code to[0m[2m confirm[0m[2m. A[0m[2m simple[0m[2m computation[0m[2m.
+
+[0m[2mActually[0m[2m wait[0m[2m — the task[0m[2m book[0m[2m says "shell[0m[2m 命令直接[0m[2m调用工具，不要[0m[2m调用任何 MCP[0
+===== 3. MEMORY_ZHULONG (mtime + head) =====
+-rw-r----- 1 app.e0031982 app.adm 2127 Oct  4 21:44 /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md
+# MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态（合并版）
+
+WAITING: 1
+
+> 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
+===== 4. newest files in run/ =====
+total 616
+drwxr-x--- 6 app.e0031982 app.adm   4096 Oct  4 21:56 .
+drwxr-x--- 2 app.e0031982 app.adm   4096 Oct  4 21:56 ops
+drwxr-x--- 7 app.e0031982 app.adm   4096 Oct  4 21:55 ..
+-rw-r----- 1 app.e0031982 app.adm  19851 Oct  4 21:44 ZHULONG_TASK.md
+-rw-r----- 1 app.e0031982 app.adm   2127 Oct  4 21:44 MEMORY_ZHULONG.md
+-rw-r----- 1 app.e0031982 app.adm   4181 Oct  4 16:46 AGENTS.md
+-rwxr-x--- 1 app.e0031982 app.adm   6065 Oct  4 15:45 zhulong_loop.sh
+-rwxr-x--- 1 app.e0031982 app.adm   7156 Oct  4 15:16 zhulong_ops_relay.sh
+-rw-r----- 1 app.e0031982 app.adm  11075 Oct  4 14:45 report_10_04.html
+drwxr-x--- 2 app.e0031982 app.adm   4096 Oct  4 14:45 daily-memories
+-rw-r----- 1 app.e0031982 app.adm  10921 Oct  4 14:45 ablation_run_task_component_s2_full.md
+===== 5. agent daily-memory tail =====
+- 连续 2 周期阻断（历史 3~5 周期复通先例），退出等待下轮唤醒（复通后优先 pgrep→grep 打分）。若连续 ≥4 周期仍未复�
+## 2026-10-04 · 时刻不可得（date 被禁 + run_commands 被拦）[running] ⚠️ 检查受阻（沙箱阻断第 3 周期 / wo_retrieval r1 阶段）
+
+- 恢复：PHASE=running / STAGE=component / CONFIG=wo_retrieval / ROUND=1（r1 运行中，batch 2026_1004_122050 / 编排 PID 692552，log=/tmp/ABL_wo_retriev
+- 前置校验：记忆流水最后 3 条无未处理 ❌ EVAL_FAILED / ⚠️ 评测失败（最新「第 2 周期 ⚠️ 检查受阻」+「12:20 ✅ 切 wo_r
+- 本轮唤醒复测（沙箱阻断连续第 3 周期）：`run_commands` 全量被拦（`pwd && ls -la`、`pgrep -af run_cline_script; echo EXIT=$?; date +%F_%
+- 无法执行步骤 A（`pgrep -f '^bash scripts/run_cline_script'`）检查 wo_retrieval r1 是否结束、无法 grep 打分（Pass@1）。未推进、未改
+- 连续 3 周期阻断（历史 3~5 周期复通先例），退出等待下轮唤醒（复通后优先 pgrep→grep 打分）。若连续 ≥4 周期仍未复�
+## 2026-10-04 · 时刻不可得（date 被禁 + run_commands 被拦）[running] ⚠️ 检查受阻（沙箱阻断第 4 周期 / wo_retrieval r1 阶段）
+
+- 恢复：PHASE=running / STAGE=component / CONFIG=wo_retrieval / ROUND=1（r1 运行中，batch 2026_1004_122050 / 编排 PID 692552，log=/tmp/ABL_wo_retriev
+- 前置校验：记忆流水最后 3 条无未处理 ❌ EVAL_FAILED / ⚠️ 评测失败（最新为「第 3 周期 ⚠️ 检查受阻」+「12:20 ✅ 切 w
+- 本轮唤醒复测（沙箱阻断连续第 4 周期）：`run_commands` 全量被拦；`read_files` 读 `/tmp/ABL_wo_retrieval_r1.log`、`/proc/loadavg` 被�
+- 无法执行步骤 A（`pgrep -f '^bash scripts/run_cline_script'`）检查 wo_retrieval r1 是否结束、无法 grep 打分（Pass@1）。未推进、未改
+- 🚨 连续 4 周期阻断（符合「≥4 周期建议人工介入」阈值），正式建议人工介入恢复沙箱后再继续 wo_retrieval r1 打分。�
+===== 6. repo git status / log =====
+## main...origin/main
+ D doc/ZhuLong_DAC2027/run/.nfs00000000244eea8300001304
+2633c51 zhulong-ops: dispatch RUN_ID 9 post-wake snapshot
+0ee84fe zhulong-ops: record RUN_ID 5-8 (relay healthy, loop -b+Forbidden fixed, agent awake)
+5be7be1 zhulong-ops-relay: result @ 2026-10-04 21:54:07
+===== DONE =====
+```
