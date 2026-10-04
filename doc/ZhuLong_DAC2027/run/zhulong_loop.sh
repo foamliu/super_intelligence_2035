@@ -37,6 +37,13 @@ MODEL="glm-5.2"
 # 🔑 glm-5.2 key（编排模型；deepseek-v4-pro-fp4 额度已耗尽，改用 glm-5.2）
 CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
 
+# 🔒 本线独立 cline 配置目录（2026-10-04 运维）：隔离"编排 agent"与"评测对象 cline"的 hooks/config。
+#   背景：评测对象是 cline；评测前 run_cli.sh 把防作弊 PreToolUse hook 装到 ~/.cline/hooks/（评测结束删）。
+#   若编排 agent 也用默认 ~/.cline，则整轮评测(3-4h)内它每 30min 唤醒都被同一 hook 拦 run_commands。
+#   cline 3.0.51 的 hook 发现**跟随 --config**（默认 ~/.cline）；--hooks-dir 无效；故给本线独立 --config。
+#   RUN_ID 17 实测：编排只读 <config>/hooks（ISO_DIR_READ）、无 env 泄漏给子进程（评测 hook 完好）。
+CLINE_CONFIG_DIR="/nasdata/app.e0031982/.cline_zhulong"
+
 CLINE_TIMEOUT=2700              # 单次编排 cline 最多 45 分钟（读态+打分+切臂+启动，足够）
 PUSH_INTERVAL=18000             # 每 5 小时兜底同步一次
 SLEEP_BUSY=60                   # 无阻塞时的唤醒间隔
@@ -109,7 +116,7 @@ while true; do
         #    ⚠️ 只作用于本行 cline；loop 自身 / git push 仍保留 proxy（外网仍需代理）。
         env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
             -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
-          cline -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+          cline --config "$CLINE_CONFIG_DIR" -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
         echo "[loop] $(date '+%F %T') cline returned (exit $?), checking git sync ..."
     else
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"

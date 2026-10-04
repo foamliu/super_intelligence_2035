@@ -8,11 +8,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:--|:--|
-| STAGE | `S1`（`S1` 保真度 → `C1` 组件 → `C2` S2Φ → `B` 模型）|
-| CONFIG | `omega_low` |
-| ROUND | 1 |
-| PHASE | `init`（待运维确认 infra / 起始点后由 agent 置 running）|
-| WAITING | 1（语义 = 待运维拍板 infra/起始点，非 eval running）|
+| STAGE | `C1`（组件；S1 段跳过，见任务书运维指令（四））|
+| CONFIG | `wo_retrieval` |
+| ROUND | 2（r1=74.1% 复用 legacy；从 r2 续跑）|
+| PHASE | `running`（运维已填实起始点 2026-10-04）|
+| WAITING | 1（语义 = eval 跑着 / 等 infra 就绪；非"待拍板"）|
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
 | 基座 | `glm-5.2`（编排模型；deepseek-v4-pro-fp4 额度已耗尽故更换）|
