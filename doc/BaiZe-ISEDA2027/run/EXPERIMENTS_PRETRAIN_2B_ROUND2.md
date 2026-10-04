@@ -758,3 +758,39 @@ python -m lm_eval --model hf \
 | 10 | 4096 | 1024 | 2 | on | 4 | 16384 | ④ 基线（已测 210K/51021 MiB）|
 
 > **脚本 `run/baize_p96_tpsp_seq_scan.sh` 已写（第 64 次唤醒，点 1–8）**，SUM=`/tmp/baize_p96_tpsp_seq_scan.log`。**待当前 P-9.3 seq scan 结束后启动**（勿打断 running 的 seq scan）。可剪枝：点 1/2 峰值 >72G 或 OOM → 跳 3/4、5/6；点 1 吞吐已优于 210K → 优先扩 seq（3/4）。
+
+### P-9.6① bf16 最优搜索 ✅ 完成（2026-10-04 14:05:20 END，第 66 次唤醒）—— ⭐ 8 点全测：抬 M≥32768 全 OOM 或更慢，速度最优仍是 seq4096
+
+> 脚本 `run/baize_p96_tpsp_seq_scan.sh`，SUM=`/tmp/baize_p96_tpsp_seq_scan.log`。每点 60 步 bf16、守 GBS×seq≈4.19M、不存 ckpt。
+
+**结果表（8 点，M=MBS×seq）**：
+
+| 序 | seq | GBS | TP | SP | MBS | M | 结果 | peak | 判定 |
+|:--|--:|--:|:--|:--|--:|--:|:--|--:|:--|
+| 1 | 8192 | 512 | 2 | on | 4 | 32768 | ❌ 训练期 OOM | 81057 | 抬 seq 轴在 TP2 放不下 |
+| 2 | 8192 | 512 | 2 | off | 4 | 32768 | ❌ 训练期 OOM | 80353 | 同上（SP off 也 OOM）|
+| 3 | 16384 | 256 | 2 | on | 4 | 65536 | ❌ 训练期 OOM | 81057 | 更远更放不下 |
+| 4 | 16384 | 256 | 2 | off | 4 | 65536 | ❌ 训练期 OOM | 80829 | 同上 |
+| 5 | 4096 | 1024 | 2 | on | 8 | 32768 | ❌ 训练期 OOM | 81053 | MBS 轴在 TP2 也 OOM |
+| 6 | 4096 | 1024 | 2 | off | 8 | 32768 | ❌ 训练期 OOM | 81043 | 同上 |
+| 7 | 4096 | 1024 | 2 | on | 16 | 65536 | ❌ 训练期 OOM | 81079 | 上探（如期 OOM）|
+| 8 | 8192 | 512 | 4 | on | 8 | 65536 | ✅ **训练成功 60/60**（仅尾部存 ckpt OOM）| 81081* | 唯一 M≥32768 落地 |
+
+> `*` 点 8 的 peak 81081 MiB 是**存 ckpt 瞬间**（save gather 触发 unhandled cuda error）；**训练期真实峰值 = max allocated 66.4GB / max reserved ~71GB**（from rank0-3 after-10-iters 报告），**不超 80GB**。
+
+**⭐ 点 8（TP4·SP·MBS8·seq8192, M=65536）训练细节**：iteration 60/60 lm loss 7.43、grad norm 0.262、skip=0/nan=0；**Step Time 22.16s/iter → ~189K tok/s（GBS512×seq8192=4.19M/步）、522 TFLOP/s/GPU**；「after training is done」存 ckpt 时 gather_object 触发 `RuntimeError: NCCL Error 1: unhandled cuda error`（save 内存超 79GB 上限）。→ 处置：SIGTERM 清掉 save-OOM 后挂死 28min 的 torchrun（占 ~79GB、0% util）。
+
+**⭐⭐ 结论（诚实、铁律，不迎合「seq 轴」预判）**：
+
+1. **bf16 速度最优 = seq4096**：`TP1·DP8·MBS2 = 249K tok/s`（P-9.3，峰值 56807 MiB）或 `④ TP2·SP·MBS4 = 210K`（P-9.2，峰值 51021 MiB）。二者 M=8192/16384，均 **< 32768**。
+2. **抬 M≥32768 的两条杠杆在本硬件（8×H100 80GB）上走不通**：
+   - **抬 seq（8192/16384）**：TP1 OOM（P-9.3）、TP2 OOM（点1-4）——激活 >80GB 放不下。
+   - **抬 MBS（8/16）**：TP2 OOM（点5-7）；TP4 才放得下（点8），但 **TP4 通信开销吃到只剩 189K，仍慢于 seq4096 的 249K**。
+3. **吞吐随 M 单调下降**：249K（M=8192）→ 210K（M=16384）→ 189K（M=65536）。→ **运维预判「最优点大概率是抬 seq+SP on」被证伪**：抬 seq 需要 TP2/TP4 换显存，TP 通信开销正好吃掉 seq 抬升本可带来的长上下文收益（净吞吐反降）。
+4. **FP8 交叉点 M≈30–32K 在本硬件上不可达（bf16 口径）** → P-9.6② 只能在**唯一落地**的 M=65536 配置（TP4·SP·MBS8·seq8192）上测 FP8，看「M 大 + FP8」能否把 189K 拉回、甚至超过 seq4096 的 bf16。
+
+### P-9.6② FP8 e2e A/B 🚀 running（2026-10-04 14:07:02 启动）
+
+> 脚本 `run/baize_p96b_fp8_e2e.sh`，SUM=`/tmp/baize_p96b_fp8_e2e.log`。载体 = 唯一可达 M≥32768 配置 **TP4·SP·MBS8·seq8192（M=65536）**，`--precision bf16_with_fp8_delayed_scaling_mixed`，60 步 × 2 点。
+> **A/B**：`B` = 默认连接（复现 P-9.4 的 SP amax allreduce 叠加是否仍在 M=65536 拖累）；`A` = `CUDA_DEVICE_MAX_CONNECTIONS=1`（隔离 amax+SP allreduce 叠加）。
+> **bf16 基线 = 点8 22.16s/iter（~189K tok/s）**；**判据（预注册）**：`s = t_bf16 / t_fp8 > 1.05` → FP8 转正 → 写入 P-8 建议；`≤1.05` → 不转正 → **定稿 bf16，把「不转正」作正式结论入库**。ETA ~15:00。
