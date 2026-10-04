@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 19 -->
+<!-- RUN_ID: 20 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,38 @@
 
 ---
 
+## RUN_ID 20 — 🚑 补救：**把 legacy 组件 loop 拉回来**（若已停）；不要动合并线 loop
+
+**背景**：运维失误（RUN_ID 18 把 legacy 的 `pkill` 与 `git pull` 放同一块）→ 中继可能卡住、legacy 可能已被停。**本轮唯一目标 = 让 legacy 回到运行态**（幂等：只在没跑时拉起）。用户在家、要 3 天后才能登机 → 这是"通道一恢复即自动复活"的保险。
+
+```bash
+# RUN_ID 20 — REVIVE legacy component loop (idempotent); leave merged loop alone
+D=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
+LD="$D/ablation_run_loop_component_s2_full.sh"
+echo "== 0. TIME =="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "== 1. legacy loop running? =="; timeout 10 pgrep -af 'ablation_run_loop_component_s2_full' | cut -c1-140; echo "(end)"
+echo "== 2. start if absent =="
+if ! pgrep -f ablation_run_loop_component_s2_full.sh >/dev/null 2>&1; then
+  cd "$D"; setsid bash "$LD" > /tmp/ablation_loop_component_s2_full.log 2>&1 < /dev/null & sleep 4
+  echo "   (re)started."
+else echo "   already running, skip."; fi
+echo "== 3. verify =="; timeout 10 pgrep -af 'ablation_run_loop_component_s2_full' | cut -c1-140; echo "(end2)"
+echo "== 4. relay alive? =="; timeout 10 pgrep -af zhulong_ops_relay.sh | cut -c1-140
+echo "== 5. merged loop (leave as-is) =="; timeout 10 pgrep -af zhulong_loop.sh | cut -c1-140
+echo "== DONE =="
+```
+
+> ⚠️ 本块**只复活 legacy**，**不重启合并线 loop、不停任何东西**。接管（停 legacy + 换新 loop）**暂缓**，等用户重新拍板。
+
+---
+
 ## RUN_ID 19 — ♻️ 重试接管（**块内无任何 git 命令**！中继自己的 git_sync 已做 pull）
 
 **背景**：RUN_ID 18 疑似**卡住中继**——块内 `git pull --rebase --autostash` 的网络子进程**继承了 stdout 管道**，`timeout` 只杀 leader → 中继读不到 EOF（**BaiZe §7 同型坑**）。本版**去掉所有 git 命令**（中继主循环的 `git_sync` 会自己 pull），只做幂等的「停 legacy + 重启 loop」。
 
-```bash
+> ⛔ **已作废**（被 RUN_ID 20 取代：暂缓接管、先复活 legacy）——降级为 text。
+
+```text
 # RUN_ID 19 — RETRY takeover (NO git commands in block)
 REPO=/nasdata/app.e0031982/code/super_intelligence_2035
 LD="$REPO/doc/ZhuLong_DAC2027/run/zhulong_loop.sh"
