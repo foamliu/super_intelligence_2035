@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 7 -->
+<!-- RUN_ID: 8 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,37 @@
 
 ---
 
+## RUN_ID 8 — 🔑 修 `error: Forbidden`：给 glm-5.2 写 cline 的 base URL（`cline auth`）+ 重启 loop
+
+**根因（RUN_ID 7 + 对照 BaiZe 可用 loop）**：新 loop 已能调用 cline，但报 `error: Forbidden`；而 `curl -H "Authorization: Bearer <key>" http://agi-gateway.cxmt.com/cloud/v1/models` = **HTTP 200**（key 有效、网关可达）。`~/.cline` 下**查不到 settings/globalState 的 base URL 配置** → cline 只拿到 `-k/-P`、**不知道网关地址** → 打到默认端点被 `Forbidden`。BaiZe 的可用 loop 之所以正常，是因为其 cline 配置里 `openAiBaseUrl=agi-gateway …/cloud/v1`（见 `baize_data_loop.sh` §27–46：**base 必须与模型匹配**，glm-5.2 → `/cloud/v1`）。仓库文档给出的正确写法 = **`cline auth -p openai -k <key> -b <base> -m <model>`**（`ablation_run_task_model_full.md`）。
+
+```bash
+# RUN_ID 8 — set cline base URL for glm-5.2 (fix Forbidden), then restart loop
+REPO=/nasdata/app.e0031982/code/super_intelligence_2035
+LD="$REPO/doc/ZhuLong_DAC2027/run/zhulong_loop.sh"
+K=02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23
+BASE=http://agi-gateway.cxmt.com/cloud/v1
+echo "===== 0. TIME ====="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "===== 1. current cline config ====="; timeout 15 ls -la ~/.cline/data/ 2>/dev/null | head -20
+echo "   openAiBaseUrl now:"; timeout 10 grep -o '"openAiBaseUrl"[^,]*' ~/.cline/data/globalState.json 2>/dev/null | head -2
+echo "===== 2. cline auth (write glm-5.2 base url) ====="
+timeout 60 cline auth -p openai -k "$K" -b "$BASE" -m "glm-5.2" 2>&1 | tail -6 | cut -c1-160
+echo "===== 3. after: openAiBaseUrl ====="; timeout 10 grep -o '"openAiBaseUrl"[^,]*' ~/.cline/data/globalState.json 2>/dev/null | head -2
+echo "===== 4. restart loop ====="; pkill -f zhulong_loop.sh; sleep 3; setsid bash "$LD" > /tmp/zhulong_loop.log 2>&1 < /dev/null & sleep 12
+echo "===== 5. loop log tail (Forbidden gone?) ====="; timeout 10 tail -n 12 /tmp/zhulong_loop.log | cut -c1-160
+echo "===== 6. loop proc ====="; timeout 10 pgrep -af zhulong_loop.sh | cut -c1-140
+echo "===== DONE ====="
+```
+
+---
+
 ## RUN_ID 7 — 🩺 诊断 loop 的 `error: Forbidden`（agent 仍未被唤醒的**真正根因**）
 
 **背景**：RUN_ID 6 重启 loop 成功（非法 `-b` 已消除、脚本第 112 行确认为 `-P openai-compatible`），但**新 loop 每周期报 `error: Forbidden`**（cline 调用被网关拒绝）→ agent 仍无法唤醒。本块**只读**采集：① loop 日志近况；② cline 用的完整命令行；③ proxy / OPENAI 环境；④ `~/.cline` 里的 base URL / provider 配置；⑤ 直接 `curl` 网关确认 key 是否有效。
 
-```bash
+> ⛔ **已作废**（已执行于 21:46:39）——降级为 text，让位给 RUN_ID 8。
+
+```text
 # RUN_ID 7 — diagnose "error: Forbidden" (read-only, no agent call)
 REPO=/nasdata/app.e0031982/code/super_intelligence_2035
 CWD="$REPO/doc/ZhuLong_DAC2027/run"
