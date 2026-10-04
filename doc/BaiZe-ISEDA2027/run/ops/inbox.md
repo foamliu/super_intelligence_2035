@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 46 -->
+<!-- RUN_ID: 48 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,133 @@
 
 ---
 
-## RUN_ID 46 — 🚑 **回滚 pretrain loop（保命）+ 恢复已知可用的 base**（**优先执行**）（**本块最新，优先执行**）
+## RUN_ID 48 — 🎯 **修复：用【干净环境】重启 pretrain（今早验证过的配方：`env -u …` 前缀）**（**本块最新，优先执行**）
+
+**用户指出的根因（2026-10-04 ~16:xx）**：**他手动启动 pretrain loop 时 `unset` 了 `OPENAI_API_KEY`** → 那份 loop 是干净的（16:57 还在正常提交）。
+**而我在 17:06 / 17:09 用【裸 `setsid`】重启** → **继承了 relay 的环境**，其中就有 **`OPENAI_API_KEY=01_549…`（已失效的旧 key）** 与 `OPENAI_API_URL` ⇒ **cline 被这个环境毒化**。
+**今早 RUN_ID 27 之所以能修好，正是因为它用的就是带 `env -u …` 前缀的启动命令**（我这次漏了）。
+
+**本轮动作**
+1. **对比取证**：打印 relay 的 `OPENAI_*` env 与 loop 进程的 env（脱敏）→ 坐实差异
+2. **用干净环境重启 pretrain**：`setsid env -u … bash baize_pretrain_loop.sh &`（**照抄 RUN_ID 27 的配方**）
+3. **验证**：`Forbidden` 计数 = 0，且日志出现**真实 cline 会话**（非 10 秒返回）
+
+🚫 **只动 pretrain**；其它 3 条 loop 不碰。key 全脱敏。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035
+RUN=$WK/doc/BaiZe-ISEDA2027/run
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "=== 1. 取证：relay 的 env vs 当前 loop 的 env（脱敏）==="
+echo "   -- 本 relay 进程（即 RUN_ID 48 执行者）--"
+python3 -c "import os;[print('     ',k,'len',len(v),'pfx',v[:8]) for k,v in sorted(os.environ.items()) if k.startswith('OPENAI')]" 2>/dev/null || echo "     (python3 不可用)"
+echo "   -- 当前 pretrain loop 进程 --"
+LP=$(pgrep -f 'bash baize_pretrain_loop.sh' | head -1)
+if [ -n "$LP" ]; then tr '\0' '\n' < "/proc/$LP/environ" 2>/dev/null | grep '^OPENAI' | sed -E 's/=(.{0,8}).*/= \1.../' | sed 's/^/     /' || echo "     (无 OPENAI_* —— 干净)"; else echo "     (loop 未在跑)"; fi
+
+echo; echo "=== 2. ⭐ 用【干净环境】重启 pretrain（照抄今早 RUN_ID 27 的配方）==="
+pkill -f 'baize_pretrain_loop.sh'; sleep 5
+pgrep -af 'baize_pretrain_loop.sh' | cut -c1-90 || echo "   已停止"
+cd "$RUN"
+setsid env $P bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+sleep 45
+
+echo; echo "=== 3. 验证 ==="
+echo "   -- 进程 --"; pgrep -af 'bash baize_pretrain_loop.sh' | cut -c1-110
+echo "   -- 新 loop 的 env（应无 OPENAI_*）--"
+LP=$(pgrep -f 'bash baize_pretrain_loop.sh' | head -1)
+[ -n "$LP" ] && { tr '\0' '\n' < "/proc/$LP/environ" 2>/dev/null | grep '^OPENAI' | sed 's/^/     /' || echo "     ✅ 无 OPENAI_*（干净）"; }
+echo -n "   -- Forbidden 计数（应为 0）= "; grep -c 'Forbidden' /tmp/baize_pretrain_loop.log 2>/dev/null
+echo "   -- 日志尾 --"; tail -8 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-160
+echo -n "   -- cline 是否在跑 -- "; pgrep -af 'bun.*cline' | cut -c1-95 | head -2 || echo "(暂无，属正常：可能在两条唤醒之间)"
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 47**（key 排查/自动修复，**未执行——被本块取代**：真正的根因是【启动环境】而非 key）为 ```text。
+
+## RUN_ID 47 — 🔬→🔧 **`.29` cline Forbidden 排查 + 自动修复（key 来源）**（⛔ 未执行，已并入 RUN_ID 48）
+
+**背景**：今早的 `.29` `Forbidden` = **V3 三件套**（剥 proxy + 剥 `OPENAI_*` + **显式 `-k`**）解决。**三件套现在都还在**（已核实回滚后脚本 92–94 行）**却仍 `Forbidden`** ⇒ 只剩 **`-k "$CLINE_KEY"` 那把 key 失效**。而 `CLINE_KEY` 来自 **`~/.cline/data/secrets.json`**（今日实测 `doc/keys.txt` 的 glm-5.2 key = **200**）。
+**预注册规则**：若 **`keys.txt` 的 glm key 能让 cline 通** 而 **secrets.json 的 key 不通** → **把 keys.txt 那把写入 secrets.json**（先备份）→ 重启 pretrain 验证。
+
+🚫 **只动 pretrain**；其它 3 条 loop 不碰。key 一律**脱敏**（只打 len/prefix/md5-8）。
+
+```text
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035
+RUN=$WK/doc/BaiZe-ISEDA2027/run
+C=/home/app.e0031982/.bun/bin/cline
+G="$HOME/.cline/data/globalState.json"; S="$HOME/.cline/data/secrets.json"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "=== 1. 两把 key 对比（脱敏）==="
+KS="$(python3 -c "import json;print(json.load(open('$S'))['openAiApiKey'])" 2>/dev/null | tr -d '\r\n')"
+K7="$(python3 - "$WK/doc/keys.txt" <<'PY' | tr -d '\r\n'
+import sys, pathlib
+blocks, cur = [], {}
+for raw in pathlib.Path(sys.argv[1]).read_text(encoding='utf-8', errors='replace').split('\n'):
+    s = raw.strip()
+    if not s:
+        if cur.get('model'): blocks.append(cur)
+        cur = {}
+        continue
+    for lab, k in (('模型名字','model'), ('API Key','key'), ('Base Url (OpenAI)','oai')):
+        if lab in s:
+            cur[k] = s.split('：',1)[-1].strip() if '：' in s else s.split(':',1)[-1].strip()
+            break
+if cur.get('model'): blocks.append(cur)
+for b in blocks:
+    if b.get('model') == 'glm-5.2': print(b.get('key','')); break
+PY
+)"
+echo "   secrets.json key : len=${#KS} pfx=${KS:0:8} md5=$(printf %s "$KS" | md5sum | cut -c1-8)"
+echo "   keys.txt glm key : len=${#K7} pfx=${K7:0:8} md5=$(printf %s "$K7" | md5sum | cut -c1-8)"
+if [ "$KS" = "$K7" ]; then echo "   ⇒ 两把【相同】"; else echo "   ⇒ 两把【不同】"; fi
+
+echo; echo "=== 2. 两把 key 各自 curl（glm-5.2 @ /cloud/v1）==="
+for lbl in "secrets:$KS" "keys7:$K7"; do
+  n="${lbl%%:*}"; k="${lbl#*:}"
+  code=$(timeout 20 curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $k" -H 'Content-Type: application/json' \
+    -d '{"model":"glm-5.2","messages":[{"role":"user","content":"hi"}],"max_tokens":2}' \
+    http://agi-gateway.cxmt.com/cloud/v1/chat/completions 2>/dev/null)
+  echo "   $n -> $code"
+done
+
+echo; echo "=== 3. ⭐ cline 实测（决定性）==="
+cd /tmp
+echo "   globalState.openAiBaseUrl = $(sed -n 's/.*"openAiBaseUrl"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$G" | head -1)"
+A=$(env $P timeout 60 "$C" -c /tmp -m glm-5.2 -k "$K7" -P openai-compatible --auto-approve true -t 45 "reply with exactly OK" 2>&1 | head -3 | tr -d '\r' | tr '\n' ' ')
+echo "   (a) keys.txt key  => ${A:0:150}"
+B=$(env $P timeout 60 "$C" -c /tmp -m glm-5.2 -k "$KS" -P openai-compatible --auto-approve true -t 45 "reply with exactly OK" 2>&1 | head -3 | tr -d '\r' | tr '\n' ' ')
+echo "   (b) secrets  key  => ${B:0:150}"
+
+echo; echo "=== 4. 条件修复（预注册规则）==="
+if echo "$A" | grep -q 'OK' && ! echo "$B" | grep -q 'OK'; then
+  cp -a "$S" "$S.bak.$(date +%Y%m%d-%H%M%S)" && echo "   已备份 secrets.json"
+  python3 - "$S" "$K7" <<'PY'
+import json, sys
+json.dump({'openAiApiKey': sys.argv[2]}, open(sys.argv[1], 'w', encoding='utf-8'))
+PY
+  echo -n "   ✅ 已写入；复核: "; python3 -c "import json,os;k=json.load(open(os.path.expanduser('~/.cline/data/secrets.json')))['openAiApiKey'];print('len',len(k),'pfx',k[:8])"
+  echo "   -- 重启 pretrain 验证 --"
+  pkill -f 'baize_pretrain_loop.sh'; sleep 4
+  cd "$RUN"; setsid bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+  sleep 40
+  echo -n "   Forbidden 计数（应为 0）= "; grep -c 'Forbidden' /tmp/baize_pretrain_loop.log 2>/dev/null
+  echo "   日志尾："; tail -6 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-150
+else
+  echo "   ⏸ 未触发自动修复 —— 人工判断依据："
+  echo "      (a) keys.txt key  => ${A:0:100}"
+  echo "      (b) secrets key   => ${B:0:100}"
+fi
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 46**（回滚，**✅ 已执行 17:09:33 exit=0**：base 已还原 `/cloud/v1`、脚本已回滚、**但仍 Forbidden** → 证明与补丁无关）为 ```text。
+
+## RUN_ID 46 — 🚑 **回滚 pretrain loop + 恢复 base**（✅ 已执行 → ⚠️ **回滚后仍 Forbidden**，见 RUN_ID 47）
 
 **问题（RUN_ID 45 暴露）**：新 helper 的探针（curl 200）与 **cline 实际能否用不等价** —— 选中 `deepseek-v4-flash @ /v1` 后 **cline 仍 `error: Forbidden`**；且 base 已被自动从 **`/cloud/v1`（原来可用）** 改成 `/v1` → **pretrain 线被我搞坏了**。
 
@@ -42,7 +168,7 @@
 
 🚫 只动 pretrain；不动其它 3 条 loop（它们**仍是旧的可用脚本**，未受影响）。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 WK=/nas_train/app.e0031982/code/super_intelligence_2035
 RUN=$WK/doc/BaiZe-ISEDA2027/run
