@@ -5,8 +5,12 @@
 #   无阻塞(0)约 1 分钟续跑，有异步阻塞(1，即一轮 eval 正在跑 / infra 不就绪)约 30 分钟轮询省 token。
 #
 # 启动方式（脱离进程组，防工具超时误杀）:
-#   setsid bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh \
-#     > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+#   当前 2.12 开发机:
+#     setsid bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh \
+#       > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+#   最终 36.15 服务器（将 /nas_train/ 替换为 /nasdata/）:
+#     setsid bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh \
+#       > /tmp/zhulong_loop.log 2>&1 < /dev/null &
 #
 # 停止方式:
 #   pkill -f zhulong_loop.sh

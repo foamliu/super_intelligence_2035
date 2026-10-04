@@ -1,6 +1,6 @@
 # ops/ — 经 git 中继的远程命令通道（ZhuLong DAC2027 版）
 
-> **为什么存在**：Windows 侧运维**无法 SSH** 到 GPU 服务器（`10.239.2.29` / `10.239.2.12`），
+> **为什么存在**：Windows 侧运维**无法 SSH** 到 GPU 服务器（36.15 / 2.12），
 > 只能用 git 与服务器交互。ZhuLong loop 每次唤醒跑 45 分钟 cline 且烧 token，
 > 不适合"跑几条 shell 命令看看环境"这种需求。
 >
@@ -24,6 +24,10 @@
 - 想跑第二批就再写一个块、把 RUN_ID 加到 2（历史命令覆盖掉即可，outbox 保留全部结果）
 
 ## 2. 怎么启动（服务器侧，一次）
+
+<div class="callout warn">
+  <b>路径前缀：</b>以下以 2.12 开发机路径 <code>/nas_train/</code> 为例。36.15 服务器上启动时请将 <code>/nas_train/</code> 替换为 <code>/nasdata/</code>。
+</div>
 
 ```bash
 cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run

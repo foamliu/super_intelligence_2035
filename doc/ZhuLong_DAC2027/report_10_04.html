@@ -285,7 +285,7 @@ setsid bash zhulong_ops_relay.sh > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
 </div>
 
 <h3>6.3 预置命令：RUN_ID 1 — 环境摸底</h3>
-<p>包含：磁盘（<code>/home</code> / <code>/nas_train</code> / <code>/tmp</code>）· 四 shard 端口 <code>8664/8665/8653/8669</code>· EDA license（<code>run_code</code> 可用性）· 运行进程（zhulong / Baize loop）· git 状态· CPU/内存/GPU。</p>
+<p>包含：磁盘（<code>/home</code> / 自动探测挂载点）· 四 shard 端口 <code>8664/8665/8653/8669</code>· EDA license（<code>run_code</code> 可用性）· 运行进程（zhulong / Baize loop）· git 状态· CPU/内存/GPU。命令自动适配 2.12（<code>/nas_train/</code>）与 36.15（<code>/nasdata/</code>）双服务器。</p>
 <p>中继启动后约 1 分钟即可通过 <code>git pull → tail ops/outbox.md</code> 拿到环境实况。</p>
 
 <!-- 7. 风险备忘 -->

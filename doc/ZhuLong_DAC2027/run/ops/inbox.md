@@ -8,7 +8,7 @@
 >
 > ⚠️ **两条纪律**（跟随 BaiZe ops 的教训）：
 > ① 长输出一律加 `cut -c1-140`（`pgrep -af` 会把整份任务书打出来）；
-> ② **绝不整树 `du`** —— `/nas_train` 有 175 TB，全量 `du` 会跑几小时。**只用 `df` + 有界定向 `du`（每条带 `timeout`）**。
+> ② **绝不整树 `du`** —— `/nasdata` / `/nas_train` 有 175+ TB，全量 `du` 会跑几小时。**只用 `df` + 有界定向 `du`（每条带 `timeout`）**。
 >
 > ## 🚨🚨 **中继的真实行为（从 BaiZe ops_relay.sh 继承的规则）**
 > `zhulong_ops_relay.sh` 的 `inbox_cmd_block()` 是：
@@ -29,13 +29,18 @@
 **目标**：确认 ZhuLong 评测所需基础设施就绪，作为运维解除冻结令的前置检查。
 
 ```bash
+# GIT_ROOT: 自动检测仓库根目录（36.15 → /nasdata/；2.12 → /nas_train/）
+_GIT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo '/nasdata/app.e0031982/code/super_intelligence_2035')"
 echo "=========== 0. HOST/TIME ==========="; hostname; date '+%F %T'; id
+echo "   GIT_ROOT=$_GIT_ROOT"
 echo
 echo "=========== 1. DISK (关键路径 + /home) ==========="
 echo "-- /home --"; df -BG /home 2>/dev/null | tail -1
-echo "-- /nas_train --"; df -BG /nas_train 2>/dev/null | tail -1
+# 以下路径根据实际服务器挂载点自动探测
+for mp in /nasdata /nas_train /nas_inference; do
+  [ -d "$mp" ] && echo "-- $mp --" && df -BG "$mp" 2>/dev/null | tail -1
+done
 echo "-- /tmp --"; df -BG /tmp 2>/dev/null | tail -1
-echo "-- /nas_inference --"; df -BG /nas_inference 2>/dev/null | tail -1
 echo
 echo "=========== 2. SHARD 端口（四路） ==========="
 for port in 8664 8665 8653 8669; do
@@ -47,20 +52,26 @@ for port in 8664 8665 8653 8669; do
 done
 echo
 echo "=========== 3. EDA LICENSE（run_code 可用性） ==========="
-CODE_BASE=/nas_train/app.e0031982/code/eda_fastmcp
-if [ -d "$CODE_BASE" ]; then
+# 自动检测 eda_fastmcp 位置
+CODE_BASE=""
+for cand in /nasdata/app.e0031982/code/eda_fastmcp /nas_train/app.e0031982/code/eda_fastmcp; do
+  [ -d "$cand" ] && { CODE_BASE="$cand"; break; }
+done
+if [ -n "$CODE_BASE" ]; then
   echo "   eda_fastmcp 目录存在: $CODE_BASE"
   ls -1 "$CODE_BASE" 2>/dev/null | head -10 | sed 's/^/     /'
-  if [ -f "$CODE_BASE/run_code" ]; then
-    echo "   run_code 文件存在"
-  elif [ -f "$CODE_BASE/run_code.sh" ]; then
-    echo "   run_code.sh 文件存在"
-  else
-    echo "   ⚠️ run_code 未找到，检查实际入口"
-    ls -1 "$CODE_BASE"/*run* 2>/dev/null | sed 's/^/     /' || echo "   ❌ 无 run_code 入口"
+  for f in run_code run_code.sh; do
+    if [ -f "$CODE_BASE/$f" ]; then
+      echo "   $f 文件存在"
+    fi
+  done
+  if [ ! -f "$CODE_BASE/run_code" ] && [ ! -f "$CODE_BASE/run_code.sh" ]; then
+    echo "   ⚠️ run_code/run_code.sh 均未找到，检查实际入口"
+    ls -1 "$CODE_BASE"/*run* 2>/dev/null | sed 's/^/     /'
+    echo "   ❌ 无 run_code 入口"
   fi
 else
-  echo "   ❌ eda_fastmcp 目录不存在！"
+  echo "   ❌ eda_fastmcp 目录不存在（在两台服务器上均未找到）"
 fi
 echo
 echo "=========== 4. RUNNING PROCESSES ==========="
@@ -72,12 +83,12 @@ echo "-- eda/eval --"
 pgrep -af 'eda_fastmcp|run_code|sandbox|eval' || echo "   (no eda/eval processes)"
 echo
 echo "=========== 5. GIT STATUS ==========="
-cd /nas_train/app.e0031982/code/super_intelligence_2035 && git status -sb | head -8
+cd "$_GIT_ROOT" && git status -sb | head -8
 echo "-- last 3 commits --"
 git log --oneline -3
 echo
 echo "=========== 6. ZHULONG RUN DIR ==========="
-ls -la /nas_train/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/ 2>/dev/null | head -25
+ls -la "$_GIT_ROOT/doc/ZhuLong_DAC2027/run/" 2>/dev/null | head -25
 echo
 echo "=========== 7. CPU / MEM / GPU ==========="
 lscpu 2>/dev/null | grep -E '^Model name|^CPU\\(s\\):|^Socket' || true
