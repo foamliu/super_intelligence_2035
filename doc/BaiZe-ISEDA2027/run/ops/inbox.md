@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 32 -->
+<!-- RUN_ID: 33 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,55 @@
 
 ---
 
-## RUN_ID 32 — 🧹 **改用【后台低优先级】补全本用户目录盘点**（**只读**）（**本块最新，优先执行**）
+## RUN_ID 33 — 🔬 **下钻 1.2T 的 LLaVA ckpt 目录 + 全盘找同类**（**只读**）（**本块最新，优先执行**）
+
+**RUN_ID 32 战果**：定位到 `/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5`，其中
+⭐ **`stage_1.5_mid_training_llava_ov_14b` = `1.2T`**（其余兄弟目录仅 40M / 268K，都是源码与日志）。
+
+**本轮目标**：
+1. 读**仍在后台跑**的本用户一级盘点（`/tmp/_du_full.txt`）
+2. **下钻那 1.2T**：列出 `stage_1.5_mid_training_llava_ov_14b/*` 的**二级明细**（→ 看清是哪些 iter/4B ckpt）+ mtime
+3. **全盘找同类**：`find … -iname '*llava*' -o -iname '*onevision*'`（只列名，不下钻）
+4. 看 `code/hell/` 的兄弟目录
+
+🚫 **只读**：不删、不移、不改。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+D=/nas_train/app.e0031982
+LV=$D/code/hell/LLaVA-OneVision-1.5
+
+echo; echo "=== 1. 本用户一级盘点进度（后台）==="
+echo "   行数=$(wc -l < /tmp/_du_full.txt 2>/dev/null)  done=$([ -f /tmp/_du_full.done ] && echo YES || echo NO)"
+sort -hr /tmp/_du_full.txt 2>/dev/null | head -18
+
+echo; echo "=== 2. ⭐ 1.2T 目录的二级明细 ==="
+ST=$LV/stage_1.5_mid_training_llava_ov_14b
+if [ -d "$ST" ]; then
+  echo "   -- 顶层内容 --"; ls -1 "$ST" 2>/dev/null | head -30
+  rm -f /tmp/_du_st.txt /tmp/_du_st.done
+  setsid bash -c "nice -n 19 du -sh $ST/* > /tmp/_du_st.txt 2>/dev/null; echo done > /tmp/_du_st.done" </dev/null >/dev/null 2>&1 &
+  sleep 7
+  echo "   -- 二级大小：行数=$(wc -l < /tmp/_du_st.txt 2>/dev/null) done=$([ -f /tmp/_du_st.done ] && echo YES || echo NO) --"
+  sort -hr /tmp/_du_st.txt 2>/dev/null | head -20
+  echo "   -- 二级 mtime（挑最大几个）--"
+  for p in $(sort -hr /tmp/_du_st.txt 2>/dev/null | head -6 | awk '{print $2}'); do stat -c '      %y  %n' "$p" 2>/dev/null | cut -c1-105; done
+fi
+
+echo; echo "=== 3. 全盘找 LLaVA / OneVision 相关目录（只列名）==="
+find "$D" -maxdepth 4 -type d \( -iname '*llava*' -o -iname '*onevision*' -o -iname '*ov-1.5*' \) 2>/dev/null | grep -v '/\.git/' | head -30
+
+echo; echo "=== 4. code/hell 兄弟目录 ==="
+ls -1 "$D/code/hell" 2>/dev/null | head -20
+
+echo; echo "=== 5. 两个 LLaVA 目录的 mtime ==="
+stat -c '   %y  %n' "$LV/stage_1.5_mid_training_llava_ov_14b" "$LV/stage_1.5_mid_training_llava_ov_32b" 2>/dev/null | cut -c1-105
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 32**（后台盘点 + LLaVA 定位，**✅ 已执行 09:39:16**）为 ```text。
+
+## RUN_ID 32 — 🧹 **改用【后台低优先级】补全本用户目录盘点**（✅ 已执行 → 找到 1.2T 目标，见 RUN_ID 33）
 
 **RUN_ID 31 缺陷（我的问题）**：`timeout 300 du -sh --max-depth=1 …` + `timeout 90` 单点 → **`datasets` / `code` 没量完就被 kill（无输出）**；且 `-s` 与 `--max-depth` 混用会告警。**已确认的只有**：`models 452G` · `hf_cache 20G` · `outputs 6.7G`。
 
@@ -42,7 +90,7 @@
 
 🚫 **只读**：不删、不移、不改。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 D=/nas_train/app.e0031982
 
