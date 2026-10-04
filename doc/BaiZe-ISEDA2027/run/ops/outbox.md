@@ -3444,3 +3444,77 @@ export HF_DATASETS_CACHE=/nas_train/app.e0031982/hf_cache
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 30 · 2026-10-04 09:23:11 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035
+
+echo; echo "=== 1. 两条 loop 进程 env（masked）==="
+for n in pretrain harness; do
+  P=$(pgrep -f "bash baize_${n}_loop.sh" | head -1); printf '   %-9s pid=%-9s ' "$n" "${P:-none}"
+  if [ -n "$P" ]; then
+    tr '\0' '\n' < "/proc/$P/environ" 2>/dev/null | grep -iE '^(https_proxy|http_proxy|no_proxy|all_proxy)=' | cut -c1-42 | tr '\n' ' '
+    echo -n " | OPENAI_API_KEY="
+    tr '\0' '\n' < "/proc/$P/environ" 2>/dev/null | grep -c '^OPENAI_API_KEY='
+  else echo "(no pid)"; fi
+done
+
+echo; echo "=== 2. 共享副本：未推送的本地提交 ==="
+echo -n "   计数 = "; git -C "$WK" rev-list --count origin/main..HEAD 2>/dev/null || echo "(?)"
+git -C "$WK" log --oneline origin/main..HEAD 2>/dev/null | head -8 | cut -c1-110
+echo "   -- 本地 HEAD --"; git -C "$WK" log --oneline -1 2>/dev/null | cut -c1-110
+
+echo; echo "=== 3. 连通性 ==="
+echo -n "   git ls-remote origin : "; timeout 25 git -C "$WK" ls-remote --heads origin main >/dev/null 2>&1 && echo OK || echo FAIL
+echo -n "   github.com:443 (tcp) : "; timeout 12 bash -c 'exec 3<>/dev/tcp/github.com/443' 2>/dev/null && echo OPEN || echo UNREACHABLE
+
+echo; echo "=== 4. 回归检查：error:.*Forbidden（应为 0）==="
+grep -c 'error:.*Forbidden' /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log 2>/dev/null
+echo "   -- loop 是否仍在跑 --"; pgrep -af 'bash baize_(pretrain|harness)_loop\.sh' | cut -c1-88
+
+echo; echo "=== 5. GPU + P-9.2 ==="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -3
+pgrep -af 'p9_tpsp|baize_p9' | head -3 | cut -c1-110
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 09:23:11
+
+=== 1. 两条 loop 进程 env（masked）===
+   pretrain  pid=357386    https_proxy=http://172.19.92.25:13128  | OPENAI_API_KEY=1
+   harness   pid=357876    https_proxy=http://172.19.92.25:13128  | OPENAI_API_KEY=1
+
+=== 2. 共享副本：未推送的本地提交 ===
+   计数 = 0
+   -- 本地 HEAD --
+3a1d83e ops: RUN_ID 30 -- check the pretrain-reported git network failure (github:443 unreachable, no proxy en
+
+=== 3. 连通性 ===
+   git ls-remote origin : OK
+   github.com:443 (tcp) : UNREACHABLE
+
+=== 4. 回归检查：error:.*Forbidden（应为 0）===
+/tmp/baize_pretrain_loop.log:0
+/tmp/baize_harness_loop.log:0
+   -- loop 是否仍在跑 --
+357386 bash baize_pretrain_loop.sh
+357876 bash baize_harness_loop.sh
+
+=== 5. GPU + P-9.2 ===
+0, 100 %, 53417 MiB
+1, 100 %, 53513 MiB
+2, 100 %, 53479 MiB
+1314443 bash baize_p9_tpsp_scan.sh
+2878512 bash baize_p9_tpsp_scan.sh
+
+=== DONE ===
+```
