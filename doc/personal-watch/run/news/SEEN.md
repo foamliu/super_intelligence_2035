@@ -92,3 +92,11 @@
 | 2026-10-03 | 史上最大 IPO 冲刺感恩节前挂牌，消息称 Anthropic 寻求最早 11 月中旬上市 | IT之家 | news | https://www.ithome.com/1/009/237.htm |
 | 2026-10-03 | 连败 6 场遭强制执行 寒武纪前高管无端再提天价索赔 谁最受伤？ | 雷峰网 | analysis | https://www.leiphone.com/category/industrynews/kf23Cq1EQJfpwbcX.html |
 | 2026-10-03 | 苹果 homeOS 前瞻：整合 iOS / iPadOS / watchOS 特性，主打 Siri AI 交互 | IT之家 | analysis | https://www.ithome.com/1/009/380.htm |
+| 2026-10-04 | OpenAI safety leader quits, warning AI company's culture is 'broken' | The Guardian | news | https://www.theguardian.com/technology/2026/oct/03/openai-safety-leader-quits-warning-ai-companys-culture-is-broken |
+| 2026-10-04 | Anthropic's super bug-hunting model Mythos is hardcore good at math as latest vuln under attack shows | The Register | news | https://www.theregister.com/security/2026/10/03/anthropics-super-bug-hunting-model-mythos-is-hardcore-good-at-math-as-latest-vuln-under-attack-shows/5300933 |
+| 2026-10-04 | Anthropic's answer to Dots and Muse is inside Claude | The New Stack | news | https://thenewstack.io/claude-answer-to-dots-muse/ |
+| 2026-10-04 | Anthropic tried to persuade Pope that AI could be conscious being | The Telegraph | news | https://www.telegraph.co.uk/business/2026/10/02/anthropic-lobbied-pope-to-argue-ai-conscious-being/ |
+| 2026-10-04 | openJiuwen X-Router 自演进模型路由技术首发，昇腾亲和，Agent 越跑越省 | 量子位 | news | https://www.qbitai.com/2026/10/500098.html |
+| 2026-10-04 | Jev 估值 100 亿美元！创始人 Diogo Almeida 回答一切 | 量子位 | news | https://www.qbitai.com/2026/10/500148.html |
+| 2026-10-04 | （更新：埃隆·马斯克确认谈判）传台积电探索与 Terafab 合作事宜 | IT之家 | news | https://www.ithome.com/1/009/413.htm |
+| 2026-10-04 | 再创佳绩！爱奇艺《灵魂摆渡》“浮生梦”系列 AIGC 网络故事片分账票房破千万 | 雷峰网 | news | https://www.leiphone.com/category/industrynews/yHRIGngfk28TJvIw.html |
