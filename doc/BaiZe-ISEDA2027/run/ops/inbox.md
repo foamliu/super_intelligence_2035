@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 59 -->
+<!-- RUN_ID: 60 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,85 @@
 
 ---
 
-## RUN_ID 59 — 🔬 **只读诊断：.12 的 cline 是否支持 `--data-dir` + 两个 loop 真实现状**（承接 RUN_ID 58）（**本块最新，优先执行**）
+## RUN_ID 60 — ✅ **用 loop 真实配对 `glm-5.2 @ /cloud/v1` 验证隔离目录 + 逐线重启（.12）**（承接 RUN_ID 59）（**本块最新，优先执行**）
+
+> **RUN_ID 59 定位（18:13:28 exit=0）**：
+> ① `.12` 的 cline = **3.0.51**，`--help` **有 `--data-dir`** → **不是版本问题**；
+> ② **两个 loop 日志实锤它们用的是 `glm-5.2`**（`AI SDK Warning (openai-compatible.chat / glm-5.2)`），此时共享 base=`/cloud/v1`（匹配）；
+> ③ ⇒ **我前几轮 smoke 用的是 `flash @ /v1`（新建 state 选 #0）——`flash@/v1` 是 curl 200 但 cline 不可用**，所以我一直在测**错误的 (model,base) 配对**。
+> ⇒ 本轮**用 loop 的真实配对 `glm-5.2 @ /cloud/v1`**（key 从 `doc/keys.txt` 取）重验；**所有 cline 调用一律 `< /dev/null`**（修掉上轮吃 stdin 的 bug）。
+
+**本块做什么（`.29` 经 `ssh 10.239.2.12`）**
+1. 读两个 loop 的 llm state 文件 + 从 `keys.txt` 取 `glm-5.2` 的 key/base
+2. 把 `glm-5.2` 的 base 写进两个隔离目录并复核
+3. smoke：`-m glm-5.2 -k <glm key> --data-dir <D> < /dev/null` → 判定 `PASS`
+4. **仅当 PASS=1** 才**逐线**自保护重启（PATH 含 bun）；验 `Forbidden==0`
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+echo; echo "=== [.12] glm-5.2 配对复测 + 逐线重启 ==="
+timeout 520 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+export PATH="$HOME/.bun/bin:$PATH"
+hostname; date '+%F %T'
+W=/nas_train/app.e0031982/code/super_intelligence_2035
+R=$W/doc/BaiZe-ISEDA2027/run
+B=/nas_train/app.e0031982; H=$HOME; C=/home/app.e0031982/.bun/bin/cline
+KEYS="$W/doc/keys.txt"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+. "$R/llm_rotate.sh"; llm_parse_candidates "$KEYS" >/dev/null
+PY() { "${PYBIN:-python3}" -c "import json,sys;p=sys.argv[1];b=sys.argv[2];d=json.load(open(p,encoding='utf-8'));d['openAiBaseUrl']=b;json.dump(d,open(p,'w',encoding='utf-8'),ensure_ascii=False,indent=2)" "$1" "$2"; }
+
+echo; echo "--- A. loop 的 llm state + glm-5.2 的 key/base ---"
+for L in vision data; do echo "   $L state idx = $(cat /tmp/baize_${L}_llm_idx 2>/dev/null)"; done
+GK=$("$PYBIN" -c "import json;print([x for x in json.load(open('$LLM_CAND_JSON')) if x['model']=='glm-5.2'][0]['key'])" 2>/dev/null)
+GB=$("$PYBIN" -c "import json;print([x for x in json.load(open('$LLM_CAND_JSON')) if x['model']=='glm-5.2'][0]['base'])" 2>/dev/null)
+echo "   glm-5.2 key=${GK:0:8}.. base=$GB"
+
+echo; echo "--- B. 把 glm base 写进隔离目录并复核 ---"
+for n in vision data; do
+  D="$B/.cline_$n"; PY "$D/globalState.json" "$GB"
+  echo "   [$n] base = $(sed -n 's/.*\"openAiBaseUrl\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p' "$D/globalState.json" | head -1)"
+done
+
+echo; echo "--- C. smoke（glm-5.2 配对；PASS 判定）---"
+PASS=1
+for n in vision data; do
+  D="$B/.cline_$n"
+  OUT=$(env $P timeout 90 "$C" --data-dir "$D" -c /tmp -m glm-5.2 -k "$GK" -P openai-compatible --auto-approve true -t 60 "reply with exactly OK" < /dev/null 2>&1 | tr -d '\r' | tr '\n' ' ' | cut -c1-170)
+  printf "   %-7s => %s\n" "$n" "$OUT"
+  echo "$OUT" | grep -q 'OK' || PASS=0
+  echo "$OUT" | grep -qi 'error' && PASS=0
+done
+echo "   PASS=$PASS"
+
+echo; echo "--- D. 逐线安全重启（仅 PASS=1）---"
+if [ "$PASS" = 1 ]; then
+  for L in vision data; do
+    LP=$(pgrep -f "bash baize_${L}_loop.sh" 2>/dev/null | head -1); CL=0
+    [ -n "$LP" ] && CL=$(pgrep -P "$LP" -f 'bun' 2>/dev/null | wc -l)
+    echo "   [$L] loop_pid=${LP:-none} cline_children=$CL"
+    if [ "$CL" -gt 0 ]; then echo "   [$L] cline 活动中 → 跳过"; continue; fi
+    pkill -f "baize_${L}_loop.sh"; sleep 4
+    cd "$R"; setsid env $P bash "baize_${L}_loop.sh" > "/tmp/baize_${L}_loop.log" 2>&1 < /dev/null &
+    echo "   [$L] 已重启"
+  done
+  echo; echo "--- E. 40s 后验证 ---"; sleep 40
+  for L in vision data; do
+    echo "   [$L] loop=$(pgrep -fc "baize_${L}_loop.sh" 2>/dev/null || echo 0)  Forbidden=$(grep -c Forbidden /tmp/baize_${L}_loop.log 2>/dev/null)"
+    tail -3 "/tmp/baize_${L}_loop.log" 2>/dev/null | tr '\n' ' ' | cut -c1-150 | sed 's/^/        /'; echo
+  done
+  echo "   cline cmdline: $(pgrep -af 'bun.*cline' 2>/dev/null | cut -c1-120 | head -3)"
+else
+  echo "   smoke 未 PASS → 不重启，保持现状"
+fi
+echo; echo "=== DONE (.12) ==="
+EOS12
+echo "=== relay block done ==="
+```
+
+> ⛔ 已降级 RUN_ID 59（18:13:28 exit=0，诊断完成 → cline 3.0.51 支持 `--data-dir`；loop 实为 `glm-5.2`）为 text。
+
+## RUN_ID 59 — 🔬 **只读诊断：.12 的 cline 是否支持 `--data-dir` + loop 真实现状**（✅ 已执行 → **支持；loop 配对是 `glm-5.2 @ /cloud/v1`**，见 RUN_ID 60）
 
 > **RUN_ID 58 结果（18:11:08 exit=0）**：base 已**正确写为 `/v1` 并复核**（vision/data 都是），`probe=200`；**但 smoke 仍 `Forbidden`**。
 > ⚠️ **本块先修我自己的脚本 bug**：smoke 里的 `cline` **没加 `< /dev/null`**，把 ssh 的 heredoc 剩余脚本当 stdin 吃掉了（RUN_ID 55 因 cline 没启动才没吃、56/57/58 一启动就吃 → 后续段消失）。**下面所有 cline 调用一律 `< /dev/null`**。
@@ -43,7 +121,7 @@
 3. `tail` 两个 loop 日志（看它们真实用的是哪个 model/base、有无 Forbidden）
 4. 当前 cline 进程 cmdline + 两个 loop pid
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 echo; echo "=== [.12] 只读诊断：cline 能力 + loop 现状 ==="
 timeout 120 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
