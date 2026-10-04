@@ -2,20 +2,17 @@
 
 WAITING: 1
 
-## 🆕 第四十七轮速览（2026-10-04）
+## 🆕 第四十八轮速览（2026-10-04）
 
-- ✅ **ops 中继复核（响应运维 2026-10-04 第 2 条「RUN_ID 62 有单不收」第 2 次）→ RUN_ID 62 已执行，健康跳过重启**。诊断原始输出：① relay `2489749 1 275390 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、etimes≈3.19d）；② `cat ops/.last_run_id`=`62`；③ `grep -c 'RUN_ID 62' ops/outbox.md`=`1`；④ log 末行 `[relay] RUN_ID=62 executed, exit=0`（42~62 全 exit=0）；⑤ `git fetch` exit=128（github Network unreachable）；⑥ 无 index.lock，git status 仅 `.nfs*` NFS 临时文件；⑦ `pgrep -f` 误匹配 node/cline 进程（PID 613301），真 relay=2489749。**判据**：outbox 已含 RUN_ID 62 + git fetch 失败 → 按「中继已跑但 push 失败 → 🚫 不要重启，等网络」处理 → **跳过重启**（红线不 pkill 健康 relay、不动 GPU pretrain、不删数据）。✅ URGENT 项完成。
-- 🚫 **H-A pilot 扩量受阻（github 网络瞬断）**：`instances/` 已备 30 条 instance JSON（15 django + 15 sympy），但所有 base_commit 在本地 shallow clone 中 **MISSING**（django/sympy rootfs 均为 `--depth=1` 单 commit 浅克隆）→ 需 `git fetch --depth=1 origin <base_commit>` 从 github 取 → **github 不可达 → 扩量阻塞**。诚实记录：网络恢复后 `run_pilot_batch.py --all-prepared` 即可自动续跑。
-- ⏭ **下一步**：① 等 github 网络恢复 → `run_pilot_batch.py --all-prepared`（30 instances × 4 harness）→ ② 更新 `SWEBENCH_COMPARE.html` 多实例结果 → ③ deepseek-harness 仍卡 node22+rust。保持 `WAITING=1`。
+- ✅ **ops 中继复核（响应运维 2026-10-04 第 2 条「RUN_ID 62 有单不收」第 3 次）→ RUN_ID 62 已执行，健康跳过重启**。诊断原始输出：① relay `2489749 1 277836 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、etimes≈3.21d、wchan=do_wait）；② `cat ops/.last_run_id`=`62`；③ `grep -c 'RUN_ID 62' ops/outbox.md`=`1`；④ log 末行 `[relay] RUN_ID=62 executed, exit=0, appended to outbox.`（42~62 全 exit=0）；⑤ `timeout 30 git fetch origin` → exit=128（`Failed to connect to github.com port 443: Network is unreachable`）；⑥ 无 index.lock，git status 仅 `.nfs*` NFS 临时文件；⑦ `pstree -p 2489749`=`bash---sleep`（正常 20s 轮询）。**判据**：outbox 已含 RUN_ID 62 + git fetch exit≠0 → 按「中继已跑但 push 失败 → 🚫 不要重启」+「根因=网络 → 🚫 不要重启」双重判据 → **跳过重启**。✅ URGENT 项完成。
+- 🎉🎉 **关键突破：github 可通过代理 `172.19.92.25:13128` 访问**！此前多轮报告"github 不可达"是**直连不通**，但**代理可达**。`env https_proxy=http://172.19.92.25:13128 git fetch origin` → exit=0。已设：① rootfs repos 的 `git config http.proxy`；② `git config --global http.https://github.com/.proxy`（仅代理 github.com，relay 也受益）。
+- 🔄 **H-A pilot 扩量解锁中**：`prefetch_commits.sh` 后台运行（PID 4160258），向 django/sympy rootfs repos 逐条 `git fetch --depth=1 origin <base_commit>`。已确认 django-10924/11001/11019/11039 base_commit 可用。等 prefetch 完毕 → `run_pilot_batch.py --all-prepared`。
+- ⏭ **下一步**：① 等 prefetch 完成 → 启动 `run_pilot_batch.py --all-prepared`（后台长跑）→ ② 每跑完 1 instance 即固化 → ③ 更新 `SWEBENCH_COMPARE.html`。保持 `WAITING=1`。
+
+## 🆕 第四十七轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-04.md`（结论不改：relay RUN_ID 62 健康 skip、pilot 扩量受 github 直连不通阻塞）
 
 
-## 🆕 第四十六轮速览（2026-10-04）
-
-- ✅ **ops 中继复核（响应运维 2026-10-04 第 2 条「RUN_ID 62 有单不收」）→ RUN_ID 62 已执行，健康跳过重启**。诊断原始输出：① relay `2489749 1 272813 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、etimes≈3.16d）；② `cat ops/.last_run_id`=`62`（**RUN_ID 62 已跑**）；③ `grep -c 'RUN_ID 62' ops/outbox.md`=`1`；④ log 末行 `[relay] RUN_ID=62 executed, exit=0`（42~62 全 exit=0）；⑤ `git fetch` exit=128（github Network unreachable）；⑥ 无 index.lock，git status 仅 `.nfs*` 临时文件；⑦ `pgrep -f` 误匹配 node/cline 进程（PID 1703394），真 relay=2489749。**判据**：outbox 已含 RUN_ID 62 → 按「中继已跑但 push 失败 → 🚫 不要重启，等网络」处理 → **跳过重启**（红线不 pkill 健康 relay、不动 GPU pretrain、不删数据）。✅ URGENT 项完成。
-- 🔍 **`git fetch` 网络瞬断**：`github.com port 443 Network is unreachable` → 网络问题，与中继无关。
-- ⏭ **下一步**：① 扩到 20-30 django+sympy instances pilot → ② 更新 `SWEBENCH_COMPARE.html` → ③ deepseek-harness 仍卡 node22+rust。保持 `WAITING=1`。
-
-## 🆕 第四十四轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-04.md`（结论不改：relay 健康 skip、无新指令）
+## 🆕 第四十六/四十四轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-04.md`（结论不改：relay RUN_ID 62 健康 skip）
 
 ## 🆕 第四十五轮速览（2026-10-04）
 
