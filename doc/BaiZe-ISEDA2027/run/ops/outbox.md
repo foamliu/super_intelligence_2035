@@ -4945,3 +4945,76 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 45 · 2026-10-04 17:06:34 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035
+RUN=$WK/doc/BaiZe-ISEDA2027/run
+
+echo; echo "=== 1. 取最新脚本 + 静态检查 ==="
+git -C "$WK" fetch origin --quiet 2>/dev/null
+git -C "$WK" checkout origin/main -- doc/BaiZe-ISEDA2027/run/llm_rotate.sh doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh \
+    doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh doc/BaiZe-ISEDA2027/run/baize_vision_loop.sh doc/BaiZe-ISEDA2027/run/baize_data_loop.sh && echo "   checked out"
+ls -l "$RUN/llm_rotate.sh" | cut -c1-95
+echo -n "   pretrain 里 llm_pick 出现次数 = "; grep -c 'llm_pick' "$RUN/baize_pretrain_loop.sh"
+echo -n "   llm_rotate.sh 里的 CR 行数（应为 0）= "; awk '/\r/{n++} END{print n+0}' "$RUN/llm_rotate.sh"
+echo -n "   bash -n: "; if bash -n "$RUN/llm_rotate.sh" 2>/dev/null && bash -n "$RUN/baize_pretrain_loop.sh" 2>/dev/null; then echo OK; else echo FAIL; fi
+
+echo; echo "=== 2. 阶段1：只重启 pretrain ==="
+ps -eo pid=,etimes=,args= 2>/dev/null | grep 'baize_pretrain_loop.sh' | grep -v grep | cut -c1-95
+pkill -f 'baize_pretrain_loop.sh'; sleep 5
+pgrep -af 'baize_pretrain_loop.sh' | cut -c1-95 || echo "   旧进程已停止"
+cd "$RUN"
+setsid bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+sleep 45
+echo "   -- 进程 --"; pgrep -af 'bash baize_pretrain_loop.sh' | cut -c1-115
+echo "   -- 日志尾（期望出现 [llmrot] 选中 #N … probe=200）--"; tail -12 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-165
+echo "   -- 有无语法/命令错误 --"; grep -nE 'syntax error|command not found|No such file' /tmp/baize_pretrain_loop.log 2>/dev/null | head -4 | cut -c1-140
+echo "   -- cline 起没起来 --"; pgrep -af 'bun.*cline' | cut -c1-100 | head -2 || echo "   (暂无 cline 进程)"
+
+echo; echo "=== 3. 体检结果核对 ==="
+echo -n "   globalState.openAiBaseUrl = "; sed -n 's/.*"openAiBaseUrl"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/globalState.json" 2>/dev/null | head -1
+echo -n "   .llmrot.bak 备份是否已生成 = "; [ -f "$HOME/.cline/data/globalState.json.llmrot.bak" ] && echo YES || echo "no（未发生 base 变更，正常）"
+echo -n "   轮换状态文件 = "; cat /tmp/baize_pretrain_llm_idx 2>/dev/null || echo "(未写)"
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 17:06:34
+
+=== 1. 取最新脚本 + 静态检查 ===
+   checked out
+-rw-r----- 1 app.e0031982 app.adm 5182 Oct  4 17:01 /nas_train/app.e0031982/code/super_intellig
+   pretrain 里 llm_pick 出现次数 = 2
+   llm_rotate.sh 里的 CR 行数（应为 0）= 0
+   bash -n: OK
+
+=== 2. 阶段1：只重启 pretrain ===
+1784374    3636 bash baize_pretrain_loop.sh
+   -- 进程 --
+1929168 bash baize_pretrain_loop.sh
+   -- 日志尾（期望出现 [llmrot] 选中 #N … probe=200）--
+[loop] 2026-10-04 17:06:40 wake up, invoking cline ...
+[llmrot] 2026-10-04 17:06:40 openAiBaseUrl: http://agi-gateway.cxmt.com/cloud/v1 -> http://agi-gateway.cxmt.com/v1
+[llmrot] 2026-10-04 17:06:40 选中 #0 deepseek-v4-flash @ http://agi-gateway.cxmt.com/v1 (probe=200)
+[31merror:[0m Forbidden
+[loop] 2026-10-04 17:06:50 cline returned (exit 0), checking git push ...
+[loop] 2026-10-04 17:06:50 WAITING=1（异步任务 running）→ sleep 1800s
+   -- 有无语法/命令错误 --
+   -- cline 起没起来 --
+
+=== 3. 体检结果核对 ===
+   globalState.openAiBaseUrl = http://agi-gateway.cxmt.com/v1
+   .llmrot.bak 备份是否已生成 = YES
+   轮换状态文件 = 0
+
+=== DONE ===
+```
