@@ -144,13 +144,21 @@ WAITING: 0
   `error: 本次Token额度已用完，请等待16分钟6秒后重试` —— **但 cline 仍返回 `exit 0`** →
   **loop 分辨不出失败，只睡 30min 再试** → 表现为**"静默变慢"**（不是挂了）。4 线**共用同一 cline 模型**时会互相抢额度。
   → 排查入口：`/tmp/baize_*_loop.log`（**注意：`.29` 上只有 pretrain/harness；vision/data 在 `.12`，其日志不在 .29**）。
-- 🔴🔴 **cline 凭据被轮换 → 全 loop 静默停摆（2026-10-04 实发 ~9h，迄今最隐蔽的一次）**：
-  - **现象**：`.29` 的 pretrain/harness **~9 小时零产出**（文件一个没改），而 `/tmp/baize_*_loop.log` 每个 30min 周期只打印 **`error: Forbidden`**，紧接着 **`cline returned (exit 0)`** → **loop 判定"成功"**、继续睡 → **完全静默**（pretrain 18 次 / harness 37 次）。同段 `.12` 的 vision/data **整夜正常**。
-  - **根因**：**`.29` 的 cline 凭据失效** —— env `OPENAI_API_KEY` → 网关 `chat/completions` **403**；`~/.cline/data/secrets.json` 里的 key **也 403**；而 **`.12` 的 secrets key → 200**（两者 prefix6 都是 `02_088` 但**值不同**）→ **key 在 10-03 22:12 之后被轮换，只更新了 `.12`**。（harness 10-03 22:12 用 `-k $OPENAI_API_KEY` 的 smoke **还是成功的** → 时间线严丝合缝。）
-  - **已排除（均实测）**：❌ proxy（虽然 `直连 200 / 走代理 503`）· ❌ `OPENAI_API_URL`/`API_TYPE` · ❌ 模型名 · ❌ `globalState.json`（与 `.12` **完全一致**）· ❌ token 额度。
-  - **可复用排查法（ops relay 只读块）**：① `pgrep -af 'baize_.*_loop.sh'` ② `tail /tmp/baize_*_loop.log` + **`grep -c Forbidden`**（**首选探针**）③ `nvidia-smi` 看 GPU 是否空转 ④ **多把 key 分别 `curl /v1/chat/completions`** ⑤ 用有效 key 跑 cline smoke。
-  - **修法（2026-10-04 已执行 ✅）**：备份 `.29` secrets → **把 `.12` 的 key 经 stdin 管道写入 `.29`**（key 不回显）→ loop 的 cline 调用行加 **`env -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE -u *_PROXY`**（防失效 env key 覆盖 secrets）→ **重启两条 loop** → 验证 `Forbidden=0` 且 cline 真在推理。
-  - ⚠️ **复发预防**：**轮换 cline key 时必须同时更新 `.12` 与 `.29` 两台**；并把 `grep -c Forbidden /tmp/baize_*_loop.log` 纳入日常体检。
+- 🔴🔴 **`.29` 的 cline 必须显式 `-k <key>`（2026-10-04 实战定位，~9h 停摆的真凶；含我自己的 4 次误修）**：
+  - **现象**：`.29` 的 pretrain/harness 每个唤醒周期只打印 **`error: Forbidden`** + `cline returned (exit 0)` → loop 当成功、继续睡 → **完全静默**（pretrain 18 次 / harness 37 次）；同段 `.12` 的 vision/data 整夜正常。
+  - **四路矩阵实证（RUN_ID 26，唯一可信依据）**：
+    | 组 | env | 结果 |
+    |:--|:--|:--|
+    | V0 | 原样 | ❌ Forbidden |
+    | V1 | 剥 `OPENAI_API_KEY+OPENAI_API_URL+API_TYPE` | ❌ |
+    | V2 | V1 **+ 剥所有 `*_proxy`** | ❌ |
+    | **V3** | **V2 + 显式 `-k <secrets 里的有效 key>`** | ✅ **OK** |
+  - **叠加的两个故障**：① loop 继承的 `OPENAI_API_KEY=01_549…` 是**已吊销**的旧 key，**会覆盖** secrets.json 的有效 key（`02_088…`）→ 22:10–07:28 全程 Forbidden；② **即便**换掉/剥掉它，`.29` 的 cline **仍需显式 `-k`**（⚠️ **机制未完全解释**：07:28 那版不带 `-k` 也曾成功 11 分钟；而 `.12` 不带 `-k` 一直能跑）→ 故 **以 V3 为定稿**。
+  - **已排除（都实测过）**：proxy 单独（`直连 200 / 走代理 503`，但剥掉不够）· `OPENAI_API_URL/API_TYPE` 单独 · 模型名 · `globalState.json`（`.29`/`.12` 字段一致）· **cline CLI 版本**（两台都是 **3.0.51**、安装于 2026-09-08；globalState 里的 4.1.21/4.0.8 是 VSCode 扩展版本，无关）· token 额度 · `.env` 里那几把 `*_API_KEY`（curl 全 **403**，不可用）。
+  - **定稿修法**：两条 loop 顶部 `CLINE_KEY="$(sed -n 's/.*"openAiApiKey"…/\1/p' "$HOME/.cline/data/secrets.json")"`，cline 行 = `env -u <所有 *_proxy> -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE cline … -k "$CLINE_KEY" …`。**key 不落仓库**。
+  - **可复用排查法（ops relay 只读块）**：① `pgrep -af 'baize_.*_loop.sh'` ② `grep -c 'error:.*Forbidden' /tmp/baize_*_loop.log`（**精确探针**；`grep -c Forbidden` 会数到 agent 散文，**假阳性**）③ `nvidia-smi` 看 GPU 是否空转 ④ **多把 key 分别 `curl /v1/chat/completions`** ⑤ **env 矩阵 smoke**（**必须逐一控制变量**）。
+  - ⚠️ **我的两次次生错误（务必引以为戒）**：**(a)** 用 `python3 -c` 在 loop 里取 key → relay 的非交互 shell **PATH 里没有 python3** → 静默取不到、退回 stale key；**(b)** 写 env 矩阵时**漏剥 proxy** → 三组全红、得出"key 失效"的错误结论，白绕 3 轮。→ **每次只改一个变量，并在同一块里验证该变量确实生效**。
+  - ⚠️ **复发预防**：轮换 cline key 时**必须同时更新 `.12` 与 `.29`**；日常体检跑 `grep -c 'error:.*Forbidden' /tmp/baize_*_loop.log`。
 - ⚠️ **`.29` 与 `.12` 的 `/tmp` 不共享** → 诊断 loop 日志必须**指明机器**；而**共享工作副本在 NFS**，所以**跨机能看到"别的线未提交的在途文件"**（这正是判断"某线是否在干活"的好办法）。
 - ⚠️ **`ops_relay.sh` 的「多副本」是误判（2026-10-03 更正）**：`ps | grep ops_relay` 会看到 **2 行**，但其中一行是 relay **执行命令块时 fork 的子 shell**（`ppid` = 真 relay、`etimes≈0`）。→ **判别看 `ppid`**；**唯一真 relay 的 `ppid=1`**。🚫 **绝不要"把两个都杀掉"**（会切断远程通讯）。详见 `run/AGENTS.md` §3.5(1)。
 - 💡 **诊断教训**：`baize_p5b_train.log` **只在 START/END 写**；**逐迭代日志是 `/tmp/baize_p5b.log`**（我 tail 错了文件，下次注意）。
@@ -168,12 +176,14 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
-- **2026-10-04（🔴 重大事故 + 修复）** —— **`.29` 的 pretrain + harness 静默停摆 ≈9 小时（10-03 22:10 → 10-04 07:29）**：
-  - **现象**：两线文件零变更；`/tmp/baize_*_loop.log` 每 30min 周期只有 **`error: Forbidden` + `cline returned (exit 0)`**（pretrain 18 次 / harness 37 次）→ loop 当成功、继续睡 = **完全静默**；同期 `.12` 的 vision/data **整夜正常**。
-  - **探查**（ops relay RUN_ID 9→14，全只读）：① 两 loop 进程**活着** ② **P-5b 已于 01:37 跑完**（`saved checkpoint from iteration 4771`）→ **8×H100 空转 ~6h** ③ 逐条否证 proxy / `OPENAI_*` / `API_TYPE` / 模型名 / `globalState` / 额度 ④ **`curl /v1/chat/completions` 带 `.29` 的 key → `403`**
-  - **根因（RUN_ID 14 一锤定音）**：**`.29` 的 cline 凭据被轮换吊销，只更新了 `.12`** —— `.12` key → **200** + cline smoke **OK**；`.29` 的 env key 与 secrets key **都 403**（prefix6 同为 `02_088` 但**值不同**）。
-  - **修复（RUN_ID 15，用户批准）**：备份 `.29` secrets → **把 `.12` 的 key 经 stdin 管道写入 `.29`**（不回显）→ loop 的 cline 行补 **`-u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE -u *_PROXY`** → **重启两条 loop** → 校验 **`Forbidden=0`** 且两个 `bun cline` 正在推理 ✅ → **两线复工**（pretrain 自查发现训练已结束、直奔 P-6②；harness 直奔步3 收尾）。
-  - 详见 `daily-memories/2026-10-04.md`；**坑已入 §7**（含复发预防：**轮换 key 必须同时更新 `.12` 与 `.29`**）。
+- **2026-10-04（🔴 重大事故 + 定位 + 修复，耗时 ~1.5h 的 18 轮 ops 探查）** —— **`.29` 的 pretrain + harness 静默停摆 ≈9 小时（10-03 22:10 → 10-04 08:01）**：
+  - **现象**：两线文件零变更；`/tmp/baize_*_loop.log` 每周期只有 **`error: Forbidden` + `cline returned (exit 0)`**（pretrain 18 / harness 37 次）→ loop 当成功 → **完全静默**；同期 `.12` 的 vision/data 整夜正常。
+  - **顺手捞回来的事实**：**P-5b 其实 01:37 就跑完了**（final ckpt `iter_0004771`），因 loop 静默而**未被记录**，随后 **P-9.1 已在 GPU 上跑起来**（8 卡 80%+）。复工后 pretrain 首条提交 = **`beea3f1` P-5b 完成(20B final loss 1.9141) + P-9.1 MBS 吞吐扫描启动**。
+  - **定位过程（ops relay RUN_ID 9→27，全部留痕在 `run/ops/outbox.md`）**：逐条否证 token 额度 · proxy 单独 · `OPENAI_*`/`API_TYPE` 单独 · 模型名 · `globalState.json` · **cline CLI 版本（两台都是 3.0.51）** · `.env` 里的 key（curl 全 403）；最后用 **四路 env 矩阵**收敛到 **V3**。
+  - **真凶**：**`.29` 的 cline 必须显式 `-k <有效key>`**（V0/V1/V2 全 Forbidden，唯 V3 = V2 + `-k` 通过）；叠加故障 = loop 继承的 `OPENAI_API_KEY=01_549…`（**已吊销**）会覆盖 secrets.json 的有效 key。⚠️ 机制未完全解释（`.12` 不带 `-k` 也能跑），故以**可复现的 V3** 定稿。
+  - **修复（RUN_ID 15/27，用户批准）**：把 `.12` 的有效 key 写入 `.29` secrets（凭据经管道、不回显）→ 两条 loop 改为 **`env -u <所有*_proxy> -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE cline … -k "$CLINE_KEY"`**（`CLINE_KEY` 启动时从 secrets.json 现读）→ 重启 → **前置 V3 复核 + `error:.*Forbidden == 0` 校验通过** ✅ 两线复工、均在正常推理。
+  - **我自己犯的错（已写入 §7 引以为戒）**：① 用 `python3 -c` 在 loop 里取 key → relay 非交互 shell 无 python3 → 静默退回 stale key；② env 矩阵**漏剥 proxy** → 三组全红、误判"key 失效"，白绕 3 轮；③ 一度把"修 driver"的改动引入，反而改坏了能跑的版本。
+  - 详见 `daily-memories/2026-10-04.md`；**坑已入 §7**。
 - **2026-10-03（晚 · 三项拍板，全部落地）** —— 用户下达三条指令：
   - **① 📄 论文冻结**：**「论文不动，等实验结果」** → `afa2624`（§6 重写）+ 已推送即为**定稿态**；4 项润色（abstract scaling / seeds n=5 / §2 视觉线 / `tab:visobj` 区分）**暂缓**，等结果后一次性回填。
   - **② 🟢 vision 按 agent 建议执行** → **commit `84d7990`**：**R11-L2 文本塔解冻（LoRA/Adapter）已批准 = 下一优先级、立即执行**（必须重跑 R4 坍缩判据 C1–C4）；臂⑤ GenLIP **跳过**（→ 改 `caption-loss-weight` {0.5,1.0,2.0} 三点消融）；臂⑥ AIMv2 **暂缓**；**R13 仍须单独批**（批准后只做 OV2 单臂）；**R11-E 等 GPIC `short` ≥18.5M**。同步**修掉陈旧 §0 速览**（原还写"在跑 R10-③"）+ 重写 §3 队列（8 行）。
