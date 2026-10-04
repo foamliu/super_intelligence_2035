@@ -5963,3 +5963,101 @@ whag0pgpuap12
   control => [31merror:[0m Forbidden 
 === relay block done ===
 ```
+
+---
+
+## RUN_ID 58 · 2026-10-04 18:11:08 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+echo; echo "=== [.12] 干净复测 + 条件重启 ==="
+timeout 520 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+export PATH="$HOME/.bun/bin:$PATH"
+hostname; date '+%F %T'; echo "  bun=$(command -v bun)"
+W=/nas_train/app.e0031982/code/super_intelligence_2035
+R=$W/doc/BaiZe-ISEDA2027/run
+B=/nas_train/app.e0031982; H=$HOME; SRC="$H/.cline/data"; C=/home/app.e0031982/.bun/bin/cline
+KEYS="$W/doc/keys.txt"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+PY() { "${PYBIN:-python3}" -c "import json,sys;p=sys.argv[1];b=sys.argv[2];d=json.load(open(p,encoding='utf-8'));d['openAiBaseUrl']=b;json.dump(d,open(p,'w',encoding='utf-8'),ensure_ascii=False,indent=2)" "$1" "$2"; }
+
+echo; echo "--- A. llm_pick 取 .12 可用候选 ---"
+LLM_DATA_DIR=/tmp/_none; . "$R/llm_rotate.sh"
+ST=/tmp/_pick3; rm -f "$ST"
+if llm_pick "$ST" "$KEYS"; then
+  echo "  picked model=$LLM_MODEL key=${LLM_KEY:0:8}.. base=$LLM_BASE"
+  echo -n "  probe 复核 = "; llm_probe "$LLM_MODEL" "$LLM_KEY" "$LLM_BASE"; echo
+else echo "  !! 无候选"; fi
+
+echo; echo "--- B. 写 picked base 进隔离目录并复核 ---"
+if [ -n "${LLM_MODEL:-}" ]; then
+  for n in vision data; do
+    D="$B/.cline_$n"; PY "$D/globalState.json" "$LLM_BASE"
+    echo "  [$n] base now = $(sed -n 's/.*\"openAiBaseUrl\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p' "$D/globalState.json" | head -1)"
+  done
+fi
+
+echo; echo "--- C. smoke（PASS 判定）---"
+PASS=1
+if [ -n "${LLM_MODEL:-}" ]; then
+  for n in vision data; do
+    D="$B/.cline_$n"
+    OUT=$(env $P timeout 90 "$C" --data-dir "$D" -c /tmp -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tr -d '\r' | tr '\n' ' ' | cut -c1-170)
+    printf "  %-7s => %s\n" "$n" "$OUT"
+    echo "$OUT" | grep -q 'OK' || PASS=0
+    echo "$OUT" | grep -qi 'error' && PASS=0
+  done
+else PASS=0; fi
+echo "  PASS=$PASS"
+
+echo; echo "--- D. 逐线安全重启（仅 PASS=1）---"
+if [ "$PASS" = 1 ]; then
+  for L in vision data; do
+    LP=$(pgrep -f "bash baize_${L}_loop.sh" 2>/dev/null | head -1); CL=0
+    [ -n "$LP" ] && CL=$(pgrep -P "$LP" -f 'bun' 2>/dev/null | wc -l)
+    echo "  [$L] loop_pid=${LP:-none} cline_children=$CL"
+    if [ "$CL" -gt 0 ]; then echo "  [$L] cline 活动中 → 跳过"; continue; fi
+    pkill -f "baize_${L}_loop.sh"; sleep 4
+    cd "$R"; setsid env $P bash "baize_${L}_loop.sh" > "/tmp/baize_${L}_loop.log" 2>&1 < /dev/null &
+    echo "  [$L] 已重启"
+  done
+  echo; echo "--- E. 40s 后验证 ---"; sleep 40
+  for L in vision data; do
+    echo "  [$L] loop=$(pgrep -fc "baize_${L}_loop.sh" 2>/dev/null || echo 0)  Forbidden=$(grep -c Forbidden /tmp/baize_${L}_loop.log 2>/dev/null)"
+    tail -3 "/tmp/baize_${L}_loop.log" 2>/dev/null | tr '\n' ' ' | cut -c1-150 | sed 's/^/       /'; echo
+  done
+  echo "  cline cmdline: $(pgrep -af 'bun.*cline' 2>/dev/null | cut -c1-110 | head -3)"
+else
+  echo "  smoke 未 PASS → 保持现状不重启（旧 loop 仍在跑）"
+fi
+echo; echo "=== DONE (.12) ==="
+EOS12
+echo "=== relay block done ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 18:11:08
+
+=== [.12] 干净复测 + 条件重启 ===
+whag0pgpuap12
+2026-10-04 18:11:09
+  bun=/home/app.e0031982/.bun/bin/bun
+
+--- A. llm_pick 取 .12 可用候选 ---
+[llmrot] 2026-10-04 18:11:09 选中 #0 deepseek-v4-flash @ http://agi-gateway.cxmt.com/v1 (probe=200)
+  picked model=deepseek-v4-flash key=02_088EE.. base=http://agi-gateway.cxmt.com/v1
+  probe 复核 = 200
+
+--- B. 写 picked base 进隔离目录并复核 ---
+  [vision] base now = http://agi-gateway.cxmt.com/v1
+  [data] base now = http://agi-gateway.cxmt.com/v1
+
+--- C. smoke（PASS 判定）---
+  vision  => [31merror:[0m Forbidden 
+  data    => [31merror:[0m Forbidden 
+=== relay block done ===
+```
