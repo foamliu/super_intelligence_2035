@@ -66,7 +66,7 @@ WAITING: 0
 - [ ] **data：D-CLEAN-4 候选等拍板**（**只盘点不删除**）—— 本用户：`datasets/FineVision` **4.32T**（最大单点）· `HuggingFaceFW` 1.24T · CC12M 1.13T（⚠️ 是 vision 数据臂之一）· `chip_expert`+`models` 0.92T；跨用户：`wangcongtao` 2.42T + `app.e0025692` 0.95T（**需 sudo/owner**）。
 - [ ] **harness：`deepseek-harness` 缺工具链**（node ≥22.13 + rust；镜像全 000/301/404）→ **需内网镜像或装工具链**；另 **H-A pilot 扩容被 github 网络瞬时中断挡住**（base_commit 在 shallow clone 中缺失）。
 - [ ] 💬 **另一「运维会话」在并行活动**（2026-10-04 深夜发现：origin 上出现**我没写过的 RUN_ID 63 诊断记录**）→ **需与用户确认是否统一到单一会话**，以免重复下发/互相覆盖。
-> 📦 **下列「当日已完成（[x]）」条目已原文滚动归档 → `daily-memories/2026-10-03.md`「从 MEMORY.md 滚动归档」§A**：D-CLEAN-2/-3 与回收量核实 · harness R1 沙箱路线 · GPIC E1 实测 + C1 口径 · H-A′ 放行 · docker 系降末选 · sudo 口令 · `ops_relay` 「2 副本」误判结案 · 论文冻结 · vision 队列裁定 · data 白名单锁定。**（查旧决策请去该归档，勿再塞回本文件。）**
+> 📦 **下列「当日已完成（[x]）」条目已原文滚动归档 → `daily-memories/2026-10-03.md`「从 MEMORY.md 滚动归档」A 节**：D-CLEAN-2/-3 与回收量核实 · harness R1 沙箱路线 · GPIC E1 实测 + C1 口径 · H-A′ 放行 · docker 系降末选 · sudo 口令 · `ops_relay` 「2 副本」误判结案 · 论文冻结 · vision 队列裁定 · data 白名单锁定。**（查旧决策请去该归档，勿再塞回本文件。）**
 - [ ] ⛔ **loop 优化：暂不做（用户 2026-10-03 决定）** —— `SLEEP_WAIT 1800→3600` 与「训练未完成就跳过 cline 调用」的前置检查，**都需在公司重启 loop**（假期内做不了），且 1800→3600 **会让反应变慢**。→ **待回公司后择机**。
 - [ ] 🚩 **R9 的「本地 53M 上限」是 `r9_scaling.py` 的假设常量（default=53），非实测** → 按 GPIC 采样应为 **≈103M**；**必须用真实 cap 重算所有 "×N 缺口"**（已在 vision 任务书下达「口径修正」）。
 - [ ] 🚩 **R8 的 6 架构是「自研 from-scratch 等参改编」，非官方实现** → 「SSM 坍缩」不得推广为对官方架构的否定；要下"前沿行不行"的结论需做 **R13（官方 vs 自研 对照）**。
@@ -179,7 +179,7 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
-- **2026-10-04（深夜 · 本文件维护）** —— MEMORY.md 一度达 **31.8KB**（逼近上限）→ 按 §8 规程**滚动归档**：把 **2026-10-03 的 §4 已完成项 + §9 流水**原文迁入 `daily-memories/2026-10-03.md`「从 MEMORY.md 滚动归档」（§A / §B）；同时把本轮新认知写进 **§4**（P-8 拍板 / **AIMv2 翻盘 ⇒ 论文·scaling 改写** / D-CLEAN-4 / deepseek-harness / 并行会话）、**§5**（不得共用可变配置目录 · relay 有界）、**§6**（cline 隔离目录）、**§7**（共用 `~/.cline/data` 的真因与 3 坑 · smoke 必带 `< /dev/null` · 必须复现真实 (model,base) 配对 · RUN_ID 头标 · **`origin` 落后 ≠ 停摆** · 并行会话 · Windows 工具坑）。**现 29.7KB ≤ 32KB ✅**。
+- **2026-10-04（深夜 · 本文件维护）** —— MEMORY.md 一度达 **31.8KB**（逼近上限）→ 按 §8 规程**滚动归档**：把 **2026-10-03 的 §4 已完成项 + §9 流水**原文迁入 `daily-memories/2026-10-03.md`「从 MEMORY.md 滚动归档」（A 节 / B 节）；同时把本轮新认知写进 **§4**（P-8 拍板 / **AIMv2 翻盘 ⇒ 论文·scaling 改写** / D-CLEAN-4 / deepseek-harness / 并行会话）、**§5**（不得共用可变配置目录 · relay 有界）、**§6**（cline 隔离目录）、**§7**（共用 `~/.cline/data` 的真因与 3 坑 · smoke 必带 `< /dev/null` · 必须复现真实 (model,base) 配对 · RUN_ID 头标 · **`origin` 落后 ≠ 停摆** · 并行会话 · Windows 工具坑）。**现 29.7KB ≤ 32KB ✅**。
 
 - **2026-10-04（深夜 · pretrain 填卡）** —— 用户指出「pretrain 也有凌晨 GPU 空闲」→ 先核 **pretrain 自己的规划**（`MEMORY_PRETRAIN_2B.md`「下一步」）：**P-9.7 定稿（~22:39）→ P-9.5 复跑（修 `torch.profiler`）→ P-6②（能力 vs token scaling + 外推，决定 P-8 token 预算）→ P-8 暂缓**（前置未齐：base 下满 ~2.7 天 + 配比 §0.6）。我补的填卡项：**P-9.8 = bf16 vs FP8 长程一致性 A/B（各 1000 步）**，依据是 **P-9.6② 自己标注的风险**「60 步短测 loss 持平 ≠ 长跑收敛一致，若 P-8 用 FP8 前 500 步须与 bf16 对照」而 **P-8 推荐候选A 正是 FP8**。用户选定「**队列照跑 + 追加 P-9.8**」→ 下发 **`BAIZE_PRETRAIN_2B_TASK.md`「运维指令 · 2026-10-04（P-9.8）」**（载体 TP4·SP·MBS8·seq8192=FP8 转正点；两臂各 1000 步 / GBS512；**四条预注册判据**：同步 loss 差 ≤1% · nan/skip=0 · grad-norm 漂移 ≤10% · 逐 100 步最大偏离 ≤2%；四条全过才「FP8 可用于 P-8」；**08:30 硬截断**纪律）；顺序定为 **P-9.7 → P-9.5 → P-9.8（长杆先跑）→ P-6②**。同步更新 P-9 分节索引（+P-9.7/P-9.8）+ 优先级覆盖行。
 
@@ -195,4 +195,4 @@ WAITING: 0
   - **修复（RUN_ID 15/27，用户批准）**：把 `.12` 的有效 key 写入 `.29` secrets（凭据经管道、不回显）→ 两条 loop 改为 **`env -u <所有*_proxy> -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE cline … -k "$CLINE_KEY"`**（`CLINE_KEY` 启动时从 secrets.json 现读）→ 重启 → **前置 V3 复核 + `error:.*Forbidden == 0` 校验通过** ✅ 两线复工、均在正常推理。
   - **我自己犯的错（已写入 §7 引以为戒）**：① 用 `python3 -c` 在 loop 里取 key → relay 非交互 shell 无 python3 → 静默退回 stale key；② env 矩阵**漏剥 proxy** → 三组全红、误判"key 失效"，白绕 3 轮；③ 一度把"修 driver"的改动引入，反而改坏了能跑的版本。
   - 详见 `daily-memories/2026-10-04.md`；**坑已入 §7**。
-- **2026-10-03（共 3 条）** —— 已原文滚动归档 → `daily-memories/2026-10-03.md`「从 MEMORY.md 滚动归档」**§B**：① **三项拍板**（论文冻结 / vision 队列裁定 = R11-L2 批准 / data 白名单锁定 + docker 降末选）② **建记忆机制**（迁到项目根 + 滚动规程）③ **论文陈旧性审计 + §6 整节重写**（渐近 25.1% 诚实负结果；`afa2624`）。
+- **2026-10-03（共 3 条）** —— 已原文滚动归档 → `daily-memories/2026-10-03.md`「从 MEMORY.md 滚动归档」**B 节**：① **三项拍板**（论文冻结 / vision 队列裁定 = R11-L2 批准 / data 白名单锁定 + docker 降末选）② **建记忆机制**（迁到项目根 + 滚动规程）③ **论文陈旧性审计 + §6 整节重写**（渐近 25.1% 诚实负结果；`afa2624`）。
