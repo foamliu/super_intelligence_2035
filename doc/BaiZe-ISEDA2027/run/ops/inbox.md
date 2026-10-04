@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 66 -->
+<!-- RUN_ID: 67 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,12 +31,58 @@
 
 ---
 
-## RUN_ID 66 — 🔍 **只读：`cline_mcp_settings.json` 现状 + EDA MCP 接入示例 + cline 从哪读 MCP 配置**（**本块最新，优先执行**）
+## RUN_ID 67 — 🔧 **修复：把 EDA MCP 补回 vision/data 的隔离配置 + 真跑一次 `cimi_search` 验证**（**本块最新，优先执行**）
+
+> **RUN_ID 66 定位（07:26:23）**：共享 `cline_mcp_settings.json` **已注册 `pyAether_MCP_server`**（`url=http://10.239.2.29:8090/sse`, `type=sse`，265 B）；`.cline_pretrain`/`.cline_harness` 同（265 B）。⚠️ **但 `.cline_vision`/`.cline_data` 只有 22 B（空 `mcpServers`）** —— 根因是 **RUN_ID 55 从 `.12` 的 `settings/` 重播时把 MCP 注册覆盖成空** ⇒ 这就是 data agent 报「MCP 未注册」的原因。
+> **本块**：① 备份后把**同一条 MCP 条目**写进 vision/data 的隔离配置（**并把 `cimi_search`/`cimi_fetch` 加进 `autoApprove`**）② `cline mcp list` 复核 ③ **真跑一次 `cimi_search`**（headless cline + `.cline_data` 隔离配置）——**这一步也会顺带验证 MCP 服务自身能否出网**（早前 `api.bocha.cn` 曾被 SSL 阻断，需实测）。
+> 🚫 只动 `.cline_vision` / `.cline_data` 两个 settings 文件（**先备份**）；**不改** pretrain/harness；**不碰 8090 服务本身**。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+B=/nas_train/app.e0031982; H=$HOME; C=/home/app.e0031982/.bun/bin/cline
+SH="$H/.cline/data/settings/cline_mcp_settings.json"
+CFG='{"mcpServers":{"pyAether_MCP_server":{"url":"http://10.239.2.29:8090/sse","type":"sse","disabled":false,"autoApprove":["search_apis","get_api_details","run_pyAether_code_tool","cimi_search","cimi_fetch"]}}}'
+
+echo; echo "=== 1. 改前现状 ==="
+for n in shared pretrain harness vision data; do
+  if [ "$n" = shared ]; then f="$SH"; else f="$B/.cline_$n/settings/cline_mcp_settings.json"; fi
+  if [ -f "$f" ]; then echo "   [$n] $(stat -c %s "$f")B : $(tr -d '\n' < "$f" | cut -c1-110)"; else echo "   [$n] NONE"; fi
+done
+
+echo; echo "=== 2. 修复 vision / data（先备份，再写入）==="
+for n in vision data; do
+  f="$B/.cline_$n/settings/cline_mcp_settings.json"
+  mkdir -p "$B/.cline_$n/settings"
+  [ -f "$f" ] && cp -a "$f" "$f.bak.$(date +%Y%m%d-%H%M%S)" && echo "   [$n] 已备份原文件 → $(ls -1 "$f".bak.* 2>/dev/null | tail -1)"
+  printf '%s' "$CFG" > "$f"
+  echo "   [$n] 写入后 $(stat -c %s "$f")B : $(tr -d '\n' < "$f" | cut -c1-170)"
+done
+
+echo; echo "=== 3. cline 是否已看到 MCP（mcp 子命令）==="
+for n in vision data; do
+  echo "   -- .cline_$n --"; timeout 45 "$C" --data-dir "$B/.cline_$n" mcp list 2>&1 | head -14 | cut -c1-150 | sed 's/^/      /'
+done
+
+echo; echo "=== 4. ⭐ 真跑一次 cimi_search（headless cline + .cline_data 隔离配置）==="
+export PATH="$HOME/.bun/bin:$PATH"
+D="$B/.cline_data"
+K=$(python3 -c "import json;print(json.load(open('$D/secrets.json'))['openAiApiKey'])" 2>/dev/null | tr -d '\r\n')
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+env $P timeout 260 "$C" --data-dir "$D" -c /tmp -m glm-5.2 -k "$K" -P openai-compatible --auto-approve true -t 220 \
+  "Use the MCP tool 'cimi_search' from server 'pyAether_MCP_server' to search the web for: masked autoencoder MAE vision pretraining. Then reply in at most 5 lines: (1) tool available? yes/no; (2) first 2 result titles; (3) their URLs; (4) if unavailable or errored, paste the exact error." \
+  < /dev/null > /tmp/cimi_smoke.log 2>&1; rc=$?
+echo "   rc=$rc"; tail -30 /tmp/cimi_smoke.log | cut -c1-170 | sed 's/^/      /'
+echo; echo "=== DONE ==="
+```
+
+> ⛔ 已降级 RUN_ID 66（07:26:23 exit=0 → **定位：vision/data 的 MCP 配置被重播覆盖成 22B 空文件**）为 text。
+
+## RUN_ID 66 — 🔍 **只读：`cline_mcp_settings.json` 现状 + EDA MCP 接入示例 + cline 从哪读 MCP 配置**（✅ 已执行 → **根因 = `.cline_vision`/`.cline_data` 的 MCP 配置被覆盖成空**）
 
 > **背景**：RUN_ID 65 已证实 `.29:8090` 的 `eda_fastmcp` MCP **在跑、两机可达、工具名 = `cimi_search`/`cimi_fetch`**。现在要把它**接到各线的 cline**上（data agent 报「MCP 未注册」）。本块先摸清 4 件事，再决定怎么写。
 > **本块只读**：🚫 不启停进程、🚫 不改任何配置（密钥一律**脱敏**）。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 H=$HOME; B=/nas_train/app.e0031982; C=/home/app.e0031982/.bun/bin/cline
 
