@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 17 -->
+<!-- RUN_ID: 18 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,36 @@
 
 ---
 
+## RUN_ID 18 — 🚀 执行接管：停 legacy 两进程 + pull + 重启合并线 loop（带隔离 `--config`）
+
+**决策**：用户批准。停 `ablation_run_loop_component_s2_full.sh`（组件线）+ `ablation_run_conductor_serial.sh`（conductor）；合并线从 `C1.wo_retrieval R2` 续跑。隔离已验证（RUN_ID 17）。
+
+```bash
+# RUN_ID 18 — TAKEOVER: stop legacy, pull, restart merged loop (isolated --config)
+REPO=/nasdata/app.e0031982/code/super_intelligence_2035
+LD="$REPO/doc/ZhuLong_DAC2027/run/zhulong_loop.sh"
+echo "== 0. TIME =="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "== 1. BEFORE procs =="; timeout 10 pgrep -af 'ablation_run_loop|ablation_run_conductor|zhulong_loop' | cut -c1-160
+echo "== 2. stop legacy procs =="
+pkill -f ablation_run_loop_component_s2_full.sh; pkill -f ablation_run_conductor_serial.sh; sleep 3
+echo "== 3. verify legacy gone (expect empty) =="; timeout 10 pgrep -af 'ablation_run_loop|ablation_run_conductor' | cut -c1-160; echo "(end-legacy)"
+echo "== 4. pull repo =="; timeout 90 git -C "$REPO" pull --rebase --autostash 2>&1 | tail -4 | cut -c1-160
+echo "== 5. loop script has --config? =="; timeout 10 grep -n 'CLINE_CONFIG_DIR' "$LD" | cut -c1-160
+echo "== 6. restart merged loop =="; pkill -f zhulong_loop.sh; sleep 3; setsid bash "$LD" > /tmp/zhulong_loop.log 2>&1 < /dev/null & sleep 12
+echo "== 7. AFTER: loop proc + log tail =="; timeout 10 pgrep -af zhulong_loop.sh | cut -c1-140; timeout 10 tail -n 12 /tmp/zhulong_loop.log | cut -c1-170
+echo "== 8. relay alive =="; timeout 10 pgrep -af zhulong_ops_relay.sh | cut -c1-140
+echo "== DONE =="
+```
+
+---
+
 ## RUN_ID 17 — 🧪 落地隔离 A（编排侧 `--config`）+ 验证（hooks 是否隔离 / 是否 env 泄漏）
 
 **依据**：RUN_ID 16 实测 `cline --config <dir>` = 配置目录（默认 `~/.cline`），且 **hook 发现跟随 `--config`**（`<config-dir>/hooks`）；`--hooks-dir` 无效。**决策**：给合并线编排 agent 用 `--config /nasdata/app.e0031982/.cline_zhulong`。本块：建隔离目录 + 写入 auth + 用**可分辨 canary hook** 验证 ① 编排读的是 `<ISO>/hooks` 而非 `~/.cline/hooks`；② `--config` **不**把 `CLINE_*` 泄漏给子进程（否则会破坏评测对象的防作弊 hook）。
 
-```bash
+> ⛔ **已作废**（已执行于 22:49:52，隔离已验证）——降级为 text，让位给 RUN_ID 18。
+
+```text
 # RUN_ID 17 — build isolated --config dir + verify hooks/env (bounded)
 K=02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23
 BASE=http://agi-gateway.cxmt.com/cloud/v1
