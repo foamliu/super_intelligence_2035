@@ -178,6 +178,10 @@ error: error: unknown option '-b'
 
 ## 9. 流水（倒序）
 
+- **2026-10-04（RUN_ID 3 我方 home 盘点 → 结论：清不出空间；RUN_ID 4 重块卡死中继）** ——
+  - ✅ **RUN_ID 3（17:01）**：`/home/app.e0031982` 同文件系统**仅 3.8M**；`.cache`/`.cline`/`.npm`/`.local`/`.vscode-server` 的 `du -x` 全 **0**、`eda_code_eval`（87 批次）也是 **0** → **疑似 symlink 到 `/nasdata`**。→ **自己 home 清不出 ≥8G**，`/home` 满纯属别的用户。
+  - ⚠️ **RUN_ID 4（17:03）我写的重块卡死中继**（`du -sh -L` 跟随 symlink + 未 `timeout` 的 `df`）→ 已**重写为轻量版**（`a450ead`）+ heavy 版降级 `text`；坑入 §7-14。**恢复**：等 `du -L` 结束，或 `pkill -f zhulong_ops_relay.sh` 后重启（会自动补跑轻量 RUN_ID 4）。
+  - 待拍板收敛为：`/home` 选项 (b)/(c) + 起始点。
 - **2026-10-04（RUN_ID 2 聚焦诊断 → 收敛为"唯一硬阻塞 = `/home`"）** —— 经 ops 中继跑只读诊断（`outbox.md` RUN_ID 2，16:57，exit=0）：
   - ✅ **loop 确实在跑**（PID `1069304`，ppid=1，etimes≈97min）；**磁盘上的 `zhulong_loop.sh` 已是新版**（112 行 `-P openai-compatible`，**无 `-b`**）→ **运行进程没吃到新脚本 → 重启即修复**（loop 日志 16:57 仍在报 `-b`，`unknown option` 计数 **69**、`Forbidden` 0）。
   - ✅ **relay 不是副本**：`1245242`（ppid=`1071337`、etimes=0）= 真 relay fork 的**子进程**（同 BaiZe §3.5 结论）。
