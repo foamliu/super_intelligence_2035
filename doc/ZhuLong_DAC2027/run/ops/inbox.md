@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 2 -->
+<!-- RUN_ID: 3 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,59 @@
 
 ---
 
-## RUN_ID 2 — 🩺 36.15 聚焦诊断（loop 真伪 / relay 副本 / `/home` 大头 / `run_code` 入口 / 端口口径）
+## RUN_ID 3 — 🧹 只读盘点 `/home/app.e0031982` 可回收空间（**先看，不删**）
+
+**目标**：找出我们自己 home 里可安全回收的缓存/产物，判断能否把 `/home` 从 6G 解放到 ≥8G。**只读，不删任何东西。**
+
+```bash
+# RUN_ID 3 — 只读盘点（不删除）
+H="/home/app.e0031982"
+echo "===== 0. TIME ====="; date '+%F %T'; hostname
+echo "===== 1. /home 大盘 ====="; df -BG /home | tail -1
+
+echo; echo "===== 2. $H 一级（体积，有界 du）====="
+timeout 60 du -x -d1 -h "$H" 2>/dev/null | sort -h | tail -25
+
+echo; echo "===== 3. 常见缓存/会话目录体积 ====="
+for d in .cache .cline .bun .npm .local .npm-global .vscode-server .triton .config .nv .conda; do
+  [ -e "$H/$d" ] && timeout 25 du -x -sh "$H/$d" 2>/dev/null
+done
+
+echo; echo "===== 4. .cache 下二级 ====="
+[ -d "$H/.cache" ] && timeout 40 du -x -d1 -h "$H/.cache" 2>/dev/null | sort -h | tail -15
+
+echo; echo "===== 5. eda_code_eval 评测产物 ====="
+if [ -d "$H/eda_code_eval" ]; then
+  echo -n "   批次数: "; ls -1 "$H/eda_code_eval" 2>/dev/null | wc -l
+  echo -n "   总大小: "; timeout 45 du -x -sh "$H/eda_code_eval" 2>/dev/null | cut -f1
+  echo "   -- 最新 8 个批次 --"; ls -1t "$H/eda_code_eval" 2>/dev/null | head -8
+  echo "   -- 最旧 8 个批次 --"; ls -1t "$H/eda_code_eval" 2>/dev/null | tail -8
+  echo "   -- 按批次大小 top10 --"; timeout 40 du -x -d1 -h "$H/eda_code_eval" 2>/dev/null | sort -h | tail -10
+else
+  echo "   (无 $H/eda_code_eval)"
+fi
+
+echo; echo "===== 6. 其它可能产物区 + HOME 一级清单 ====="
+for d in eda_platform zhulong runs experiments .ena_feature_cache .hf_cache hf_cache; do
+  [ -e "$H/$d" ] && echo "   存在: $d ($(timeout 20 du -x -sh "$H/$d" 2>/dev/null | cut -f1))"
+done
+echo "   -- ls -1 $H --"; ls -1 "$H" 2>/dev/null | head -40
+
+echo; echo "===== 7. 大文件 top15（>100M）====="
+timeout 60 find "$H" -xdev -type f -size +100M -printf '%s\t%p\n' 2>/dev/null | sort -nr | head -15 | awk '{printf "   %.2fG\t%s\n", $1/1073741824, $2}'
+
+echo; echo "===== DONE ====="
+```
+
+> ⛔ RUN_ID 2 已降级为 ```text（见下）。
+
+---
+
+## RUN_ID 2 — 🩺 36.15 聚焦诊断（历史，已执行）
 
 **目标**：为「清 `/home` + 重启 loop + 定起始点」提供判据。**只读**。
 
-```bash
+```text
 # RUN_ID 2 — 只读诊断
 _GIT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo '/nasdata/app.e0031982/code/super_intelligence_2035')"
 RUN_DIR="$_GIT_ROOT/doc/ZhuLong_DAC2027/run"
