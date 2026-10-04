@@ -749,3 +749,51 @@ cline returned    : 352
 WAITING: 0
 ===== DONE =====
 ```
+
+---
+
+## RUN_ID 6 · 2026-10-04 21:45:27 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 6 — restart zhulong_loop to clear stale -b (agent never woke)
+REPO=/nasdata/app.e0031982/code/super_intelligence_2035
+LD="$REPO/doc/ZhuLong_DAC2027/run/zhulong_loop.sh"
+echo "===== 0. TIME ====="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "===== 1. before: loop proc ====="; timeout 10 pgrep -af zhulong_loop.sh | cut -c1-140
+echo "===== 2. loop script line112 (should be -P openai-compatible, NO -b) ====="; timeout 10 sed -n '112p' "$LD" | cut -c1-160
+echo "===== 3. restart loop ====="
+pkill -f zhulong_loop.sh; sleep 3
+setsid bash "$LD" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+sleep 4
+echo "===== 4. after: loop proc ====="; timeout 10 pgrep -af zhulong_loop.sh | cut -c1-140
+echo "===== 5. loop log tail ====="; timeout 10 tail -n 8 /tmp/zhulong_loop.log | cut -c1-160
+echo "===== 6. relay still alive ====="; timeout 10 pgrep -af zhulong_ops_relay.sh | cut -c1-140
+echo "===== DONE ====="
+```
+
+**输出**
+```
+===== 0. TIME =====
+2026-10-04 21:45:27
+hfeg0tedaap02
+===== 1. before: loop proc =====
+1069304 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+1739566 timeout 10 pgrep -af zhulong_loop.sh
+===== 2. loop script line112 (should be -P openai-compatible, NO -b) =====
+          cline -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+===== 3. restart loop =====
+===== 4. after: loop proc =====
+1739594 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+1739878 timeout 10 pgrep -af zhulong_loop.sh
+===== 5. loop log tail =====
+[loop] 2026-10-04 21:45:31 wake up, invoking cline ...
+[31merror:[0m Forbidden
+[loop] 2026-10-04 21:45:32 cline returned (exit 0), checking git sync ...
+[loop] 2026-10-04 21:45:32 WAITING=1 (eval running / infra not ready) → sleep 1800s
+===== 6. relay still alive =====
+1071337 bash zhulong_ops_relay.sh
+1739559 bash zhulong_ops_relay.sh
+1739884 timeout 10 pgrep -af zhulong_ops_relay.sh
+===== DONE =====
+```
