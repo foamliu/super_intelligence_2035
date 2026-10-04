@@ -74,9 +74,9 @@
 
 <div class="kpi-row">
   <div class="kpi"><div class="v">+59%</div><div class="l">P-9.1：MBS 1→2 提速（138K→<b>218K tok/s</b>；MBS≥4 OOM）</div></div>
-  <div class="kpi"><div class="v">M=16384</div><div class="l">P-9.2：<b>TP2·MBS4 落地</b> → 命中 <b>FP8 交叉点</b>（~200K tok/s）</div></div>
-  <div class="kpi"><div class="v">≈3.65 TB</div><div class="l">磁盘回收（<code>/nas_train</code> 86%→<b>84%</b>，5 个旧实验目录）</div></div>
-  <div class="kpi"><div class="v">3 / 5</div><div class="l">harness 端到端 <b>resolved=true</b>（cline·codex·opencode）</div></div>
+  <div class="kpi"><div class="v">249K</div><div class="l">P-9.3：<b>seq4096 速度最优</b>（TP1·MBS2，全系最高）</div></div>
+  <div class="kpi"><div class="v">s=1.24</div><div class="l">⭐ P-9.6②：<b>FP8 首次转正</b> @ M=65536（TP4·SP·MBS8·seq8192）</div></div>
+  <div class="kpi"><div class="v">4 / 5</div><div class="l">harness 端到端 <b>resolved=true</b>（<b>claude-code 已打通</b>）</div></div>
 </div>
 
 <div class="toc">
@@ -84,7 +84,7 @@
   <ol>
     <li><a href="#s1">🔴 头条：<code>.29</code> 静默 9 小时事故（定位 → 修复）</a></li>
     <li><a href="#s2">四条线状态一览</a></li>
-    <li><a href="#s3">pretrain：P-5b 完成 + P-9.1</a></li>
+    <li><a href="#s3">pretrain：P-5b ✅ + P-9 全系收官 ⭐ P-9.6② FP8 首次转正</a></li>
     <li><a href="#s4">vision：R11-L2 + caption 权重消融</a></li>
     <li><a href="#s5">data：下载白名单锁定</a></li>
     <li><a href="#s6">harness：R31–R34</a></li>
@@ -172,28 +172,28 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <tr><th>线</th><th>主机</th><th>状态</th><th>当前在做什么</th><th>关键数字</th></tr>
   <tr>
     <td><b>pretrain</b></td><td><code>.29</code></td><td><span class="badge b-ok">✅ 推进中（P-9）</span></td>
-    <td><b>P-9.2</b> TP/SP 扫描（④ 收尾中）→ 随后 <b>P-9.3</b>（seq 多点）· <b>P-9.4</b>（FP8 复评）</td>
-    <td>MBS 1→2 <b>+59%</b>（218K）· ⭐ <b>TP2·MBS4 → M=16384（FP8 交叉点）</b></td>
+    <td><b>P-9.6 全收官</b>（① bf16 最优搜索 ✅ + ② FP8 e2e ✅ 转正）→ 随后 P-9.5 profiling · P-6② · 定 P-8</td>
+    <td>bf16 最优 <b>seq4096=249K</b> · ⭐ <b>P-9.6② FP8 @ M=65536 s≈1.24 🎉 首次转正</b></td>
   </tr>
   <tr>
     <td><b>vision</b></td><td><code>.12</code></td><td><span class="badge b-ok">🚀 R11-E 已开跑</span></td>
-    <td><b>R11-E</b>：GPIC <code>short</code> 30k 步 · 同 N 两点对照（5.12M / 10.24M）</td>
-    <td>R11-L2 ✅ 未翻盘 · caption 3 点 <b>0.47/0.61/0.60%</b></td>
+    <td><b>所有已批准实验完成</b>（R11-E ✅ · R13 ✅ · R11-L家族全 ✅）</td>
+    <td>R11-E ✅ GPIC short 同 N <b>未抬高 ceiling</b> · R13 ✅ 官方 OV2 lp=79.81% vs 自研 7.99% · ⏸ AIMv2 暂缓</td>
   </tr>
   <tr>
     <td><b>data</b></td><td><code>.12</code></td><td><span class="badge b-ok">🔄 下载中</span></td>
-    <td>白名单 3 项（<code>l1_en_hq</code> 优先）· D-CLEAN-4 盘点已交付</td>
-    <td><code>l1_en_hq</code> <b>≈325+/6000</b> · <code>zh</code> <b>171/256</b> · <code>gpic</code> <b>≈1926+/8001</b></td>
+    <td>白名单 3 项（<code>l1_en_hq</code> 优先）· D-CLEAN-4 ✅ 已交付</td>
+    <td><code>l1_en_hq</code> <b>≈866/6006</b> · <code>zh</code> <b>171/256</b> · <code>gpic</code> <b>≈2234/8001</b></td>
   </tr>
   <tr>
     <td><b>harness</b></td><td><code>.29</code></td><td><span class="badge b-ok">✅ 3/5 端到端打通</span></td>
-    <td><b>R35</b>：3/5 harness 同 instance <code>resolved=true</code> → 剩 2 个 build</td>
-    <td>cline · <b>codex 0.94.0</b> · <b>opencode 1.18.27</b> 均 resolved</td>
+    <td><b>R35–R36</b>：4/5 harness <code>resolved=true</code> → 剩 deepseek-harness（缺工具链）</td>
+    <td>cline · codex · opencode · <b>claude-code ✅</b> · ⏳ deepseek-harness</td>
   </tr>
 </table>
 <p class="note">⚠️ <b>两条 <code>.29</code> 线与两条 <code>.12</code> 线的差异，本身就是这次事故的画像</b>：同一把 key、同一份代码、同一套任务书，<b>只有 <code>.29</code> 全挂</b> —— 因为差异在 <b>宿主环境</b>（<code>~/.bashrc</code> 里多一把失效 key）。</p>
 
-<h2 class="sec" id="s3"><span class="no">3</span>pretrain：P-5b 完成 + P-9.1</h2>
+<h2 class="sec" id="s3"><span class="no">3</span>pretrain：P-5b ✅ + P-9 全系收官 ⭐ P-9.6② FP8 首次转正</h2>
 
 <h3>3.1 ✅ P-5b 20B 长跑：完成（01:37）</h3>
 <table>
@@ -237,21 +237,32 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <li><b>③ SP on 对 MBS=2 <u>无收益</u></b>：s/iter 34.1→35.7（<b>+4.7% 变慢</b>），显存仅省 4.3%（1.5 GB）→ 若 ④ 同样无加速则 <b>SP 不推荐</b>。</li>
 </ul>
 
-<h3>3.4 ⭐ P-8 决策分叉（成形）</h3>
+<h3>3.4 ✅ P-9.3：seq 多点扫描（13:08 完成）—— <b>seq4096=249K 最优，抬 seq 在 TP1 OOM</b></h3>
+<p><b>问题</b>（运维提）：抬 seq 能否同时得到长上下文 + 过 FP8 交叉点？<b>口径</b>：TP1·DP8·MBS2·bf16，seq ∈ {2048,4096,8192,16384}，GBS 成比例缩放维持 4.19M tok/步，各 60 步短测。</p>
 <table>
-  <tr><th>方案</th><th>配置</th><th>bf16 吞吐</th><th>M</th><th>FP8 前景</th></tr>
-  <tr><td><b>A</b></td><td>TP1·DP8·MBS2</td><td><b>218K tok/s</b></td><td>8192</td><td><span class="badge b-no">M&lt;16K → 无收益</span></td></tr>
-  <tr><td><b>B</b></td><td><b>TP2·DP4·MBS4</b></td><td>~200K tok/s（-8%）</td><td><b>16384</b></td><td><span class="badge b-ok">命中交叉点</span> → 若 FP8 给出 s&gt;1（预期 ~1.34 饱和区）⇒ <b>B·FP8 ≈ 260K，反超 A</b></td></tr>
+  <tr><th>seq</th><th>GBS</th><th>M</th><th>稳态 s/iter</th><th>tok/s</th><th>峰值显存</th><th>OOM?</th></tr>
+  <tr><td>2048</td><td>2048</td><td>4096</td><td>~29.4</td><td><b>~141K</b></td><td>41.5 GiB</td><td>否</td></tr>
+  <tr><td>4096</td><td>1024</td><td>8192</td><td><b>~16.9</b></td><td><b>~249K</b> ⭐</td><td>56.8 GiB</td><td>否</td></tr>
+  <tr><td>8192</td><td>512</td><td>16384</td><td>—</td><td>—</td><td>81+ GiB</td><td><span class="badge b-no">✅ OOM</span></td></tr>
+  <tr><td>16384</td><td>256</td><td>32768</td><td>—</td><td>—</td><td>81+ GiB</td><td><span class="badge b-no">✅ OOM</span></td></tr>
 </table>
-<p>⇒ <b>P-9.4（FP8 复评）有了具体载体</b>：在 <b>TP2·MBS4（M=16384）</b> 下做 <b>bf16 vs FP8 端到端对照</b>。这直接印证了运维的机制判断 ——「<b>MBS 与 FP8 是同一件事</b>」。</p>
-
-<h3>3.5 🔧 P-9.4 前置已就绪（10:16 核实）</h3>
-<ul>
-  <li>环境核实：<code>torch 2.8.0+cu128</code> / <code>CUDA 12.8</code> / <b><code>transformer_engine 2.12.0+5671fd36</code></b> / <code>megatron-core 0.16.1</code> / <code>mamba-ssm 2.2.6.post3</code>（与预期一致）。</li>
-  <li>P-4R 微基准脚本（TE Linear fwd+bwd，E4M3/E5M2 vs bf16）已具备，将<b>扩展到 <code>M ∈ {4096, 8192, 16384, 32768, 65536}</code></b>（用 (MBS,seq) 组合命中），生产载体 = TP2·MBS4。</li>
-  <li>⚠️ <b>口径限制</b>：<code>launcher</code> 只暴露 <b>MBS / TP / SP / seq-length / precision</b> 五类开关 → recompute / 通信重叠 / dataloader / attn-backend <b>需改 recipe，暂冻结</b>；<b>NCCL（P-4 占 41.7%）</b> 是最大的待批杠杆。</li>
-  <li><b>排期</b>：P-9.1 ✅ → P-9.2（③✅ / ④收尾中）→ <b>P-9.3（seq 多点）</b> → <b>P-9.4（FP8 复评 · 关键）</b> → P-9.5（profiling）→ P-6②（能力-vs-token）→ P-8。</li>
-</ul>
+<div class="ok-box">
+  <b>结论</b>：<b>seq4096=249K tok/s 为本轮所有配置中的绝对最优</b>（好于 P-9.1 早测的 218K，疑早测有争用）。seq 减半（2048）每样本效率更差（141K，-43%）；seq 翻倍（8192+）在 TP1 全 OOM → 要抬 seq 得靠 TP2/TP4 换显存。<br>
+  ⭐ <b>关键含义</b>：<b>seq=4096 + MBS=2 → M=8192 仍 &lt; FP8 交叉点</b>。要测 FP8 优势，必须把 M 抬到 ≥32768，这只能靠 TP2/TP4 或 MBS≥4 实现。
+</div>
+<h3>3.5 ✅ P-9.4：FP8 端到端（M=16384）—— <b>FP8 不转正</b></h3>
+<p><b>口径</b>：TP2·DP4·MBS4·seq4096（M=16384），60 步，bf16 vs FP8（<code>bf16_with_fp8_delayed_scaling_mixed</code>）。A/B：SP-off vs SP-on。</p>
+<table>
+  <tr><th>Config</th><th>TP</th><th>SP</th><th>MBS</th><th>M</th><th>精度</th><th>s/iter</th><th>tok/s</th><th>峰值显存</th><th><b>s = t_bf16/t_fp8</b></th></tr>
+  <tr><td>② 基线</td><td>2</td><td>off</td><td>4</td><td>16384</td><td>bf16</td><td>~21.2s</td><td>~198K</td><td>55.7 GiB</td><td rowspan="2" style="vertical-align:middle"><span class="badge b-warn">s≈1.01 → <b>持平</b></span></td></tr>
+  <tr><td>② FP8 A</td><td>2</td><td>off</td><td>4</td><td>16384</td><td>FP8</td><td>~21.0s</td><td>~200K</td><td>50.7 GiB</td></tr>
+  <tr><td>④ 基线</td><td>2</td><td><b>on</b></td><td>4</td><td>16384</td><td>bf16</td><td>~20.0s</td><td>~210K</td><td>51.0 GiB</td><td rowspan="2" style="vertical-align:middle"><span class="badge b-no">s≈0.86 → <b>倒挂</b></span></td></tr>
+  <tr><td>④ FP8 B</td><td>2</td><td><b>on</b></td><td>4</td><td>16384</td><td>FP8</td><td>~23.2s</td><td>~181K</td><td>48.0 GiB</td></tr>
+</table>
+<div class="danger">
+  <b>裁决（铁律·诚实记录）</b>：FP8 在本模型 <b>M=16384</b>（bf16 可达最大 M）端到端 <b>不转正</b> —— A（SP-off）s≈1.01 持平、B（SP-on）s≈0.86 反慢。<b>未复现 Xmodel-2.5 的 +30%</b>，与微基准一致（交叉点 M≈30–32K，非 16K）。<br>
+  ⚠️ B 的倒挂疑为 <b>FP8 amax/delayed-scaling allreduce 与 SP allreduce 叠加冲突</b> → 在 P-9.6② 用 <code>CUDA_DEVICE_MAX_CONNECTIONS=1</code> 做 A/B 隔离。
+</div>
 
 <h2 class="sec" id="s4"><span class="no">4</span>vision：R11-L2 + caption 权重消融</h2>
 
@@ -265,6 +276,54 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <tr><td><b>R11-L2</b></td><td><b>文本塔解冻（LoRA/Adapter）</b>—— 我批准为下一优先级</td><td>—</td><td><span class="badge b-no">未翻盘</span> → <b>冻结文本塔仍最优</b></td></tr>
 </table>
 <p>R11-L2 耗时 <b>2.09 h × 8 卡 ≈ 16.7 GPU·h</b>。含义：<b>「文本塔冻结锁死上限」这个假说被否掉</b> —— 在当前数据规模下，解冻文本塔并不带来收益。</p>
+
+<h3>3.6 ⭐ P-9.6：两步法（运维最高优先指令）—— <b>① 速度最优仍是 seq4096 · ② FP8 @ M=65536 首次转正 🎉</b></h3>
+<p><b>背景</b>：P-9.4 的「M=16384 不转正」被质疑为「未给 FP8 公平机会」（交叉点 M≈30–32K）。运维指定两步法：① 先在 bf16 下找到<b>「训练速度最优」配置（M≥32768）</b>→ ② 在该点测 FP8（判据 s &gt; 1.05）。</p>
+
+<h4>3.6.1 ✅ P-9.6①：bf16 速度最优搜索（14:05 收官）—— <b>M 越大吞吐越低</b></h4>
+<p><b>脚本</b> <code>baize_p96_tpsp_seq_scan.sh</code>：8 点 bf16，M=MBS×seq ∈ {32768, 65536}，每点 60 步。</p>
+<table>
+  <tr><th>序</th><th>seq</th><th>TP</th><th>SP</th><th>MBS</th><th>M</th><th>结果</th><th>peak</th><th>tok/s</th></tr>
+  <tr><td>1</td><td>8192</td><td>2</td><td>on</td><td>4</td><td>32768</td><td><span class="badge b-no">OOM</span></td><td>81057</td><td>—</td></tr>
+  <tr><td>2</td><td>8192</td><td>2</td><td>off</td><td>4</td><td>32768</td><td><span class="badge b-no">OOM</span></td><td>80353</td><td>—</td></tr>
+  <tr><td>3</td><td>16384</td><td>2</td><td>on</td><td>4</td><td>65536</td><td><span class="badge b-no">OOM</span></td><td>81057</td><td>—</td></tr>
+  <tr><td>4</td><td>16384</td><td>2</td><td>off</td><td>4</td><td>65536</td><td><span class="badge b-no">OOM</span></td><td>80829</td><td>—</td></tr>
+  <tr><td>5</td><td>4096</td><td>2</td><td>on</td><td>8</td><td>32768</td><td><span class="badge b-no">OOM</span></td><td>81053</td><td>—</td></tr>
+  <tr><td>6</td><td>4096</td><td>2</td><td>off</td><td>8</td><td>32768</td><td><span class="badge b-no">OOM</span></td><td>81043</td><td>—</td></tr>
+  <tr><td>7</td><td>4096</td><td>2</td><td>on</td><td>16</td><td>65536</td><td><span class="badge b-no">OOM</span></td><td>81079</td><td>—</td></tr>
+  <tr><td><b>8</b></td><td><b>8192</b></td><td><b>4</b></td><td><b>on</b></td><td><b>8</b></td><td><b>65536</b></td><td><span class="badge b-ok">✅ 60/60</span></td><td>~71GB*</td><td><b>~189K</b></td></tr>
+</table>
+<p><small>* 点 8 训练期真实峰值 ≈71 GB（max reserved），仅尾部存 ckpt 时 OOM（save gather 触达 ~79GB → unhandled cuda error，已用 <code>--save-interval 0</code> 修复）。</small></p>
+<div class="ok-box">
+  <b>⭐⭐ 结论（诚实记录，不迎合「seq 轴」预判）</b>：<br>
+  <b>① bf16 速度最优 = seq4096</b>（TP1·MBS2=<b>249K</b> / ④ TP2·SP·MBS4=<b>210K</b>）—— 二者 M=8192/16384，均 <b>&lt; 32768</b>。<br>
+  <b>② 抬 M≥32768 在 8×H100 80GB 上走不通</b>：抬 seq（8192/16384）在 TP1/TP2 全 OOM；抬 MBS（8/16）在 TP2 OOM；TP4 放得下但通信吃吞吐只剩 <b>189K</b>。<br>
+  <b>③ 吞吐随 M 单调下降</b>：249K（M=8192）→ 210K（M=16384）→ 189K（M=65536）。<br>
+  ⭐ <b>运维「seq 轴」预判被证伪</b> —— 抬 seq 需要 TP 换显存，但 TP 通信开销正好吃掉 seq 抬升的收益。
+</div>
+
+<h4>3.6.2 🎉 P-9.6②：FP8 端到端 A/B（14:54 收官）—— <b>s=1.21–1.24，FP8 首次转正！</b></h4>
+<p><b>载体</b> = 唯一可达 M≥32768 的配置：<b>TP4·SP·MBS8·seq8192（M=65536）</b>。<b>A/B</b>：B = 默认连接（复现 SP amax allreduce 叠加拖累）、A = <code>CUDA_DEVICE_MAX_CONNECTIONS=1</code>（隔离）。<b>bf16 基线</b> = 点 8 的 22.16s/iter ≈189K tok/s。<b>判据（预注册）</b>：s = t_bf16 / t_fp8 &gt; 1.05 才转正。</p>
+<table>
+  <tr><th>点</th><th>精度</th><th>CUDA_DEVICE_MAX_CONNECTIONS</th><th>s/iter（last 5 均值）</th><th>tok/s</th><th>峰值显存</th><th><b>s = 22.16/t_fp8</b></th></tr>
+  <tr><td>bf16 基线</td><td>bf16</td><td>0</td><td>22.16s</td><td>~189K</td><td>~71 GB</td><td>—</td></tr>
+  <tr><td><b>B</b></td><td><b>FP8</b></td><td><b>0</b></td><td><b>~18.30s</b>（60 步均值）</td><td><b>~229K</b></td><td>73.6 GB</td><td><span class="badge b-ok"><b>s≈1.21</b></span></td></tr>
+  <tr><td><b>A</b></td><td><b>FP8</b></td><td><b>1</b></td><td><b>~17.86s</b>（60 步均值）</td><td><b>~235K</b></td><td>73.6 GB</td><td><span class="badge b-ok"><b>s≈1.24</b></span></td></tr>
+</table>
+<div class="ok-box" style="border-left-color:#cf222e; background:#fff0f0;">
+  🎉 <b>FP8 转正！</b>判据 s&gt;1.05，两个点均大幅超过（B s=1.21、A s=1.24）。<b>A <code>CUDA_DEVICE_MAX_CONNECTIONS=1</code> 确有额外 ~2.4% 收益</b>（验证了 P-9.4 的 SP amax allreduce 叠加拖累假说）。<br>
+  <b>关键意义</b>：<b>这是本模型第一次在端到端训练中观测到 FP8 正收益</b>。此前 P-9.4（M=16384）FP8 持平甚至倒挂，根源确实是 <b>「M 太小，没给 FP8 公平机会」</b>。在 M=65536 下 FP8 交出 s=1.24 → <b>bf16 吞吐 189K × 1.24 ≈ 234K tok/s，非常接近当前 bf16 最优的 249K</b>。<br>
+  ⚠️ 但该配置（TP4·SP·MBS8·seq8192）的 <b>bf16 基线 189K 本就远低于最优 249K</b>，FP8 后的 234K 追到 ~94% —— 仍未超越。<b>TP 开销是瓶颈，不是精度</b>。
+</div>
+
+<h4>3.6.3 📋 P-8 决策更新</h4>
+<table>
+  <tr><th>方案</th><th>配置</th><th>bf16 tok/s</th><th>FP8 tok/s</th><th>M</th><th>推荐?</th></tr>
+  <tr><td><b>A1. bf16·seq4096</b></td><td>TP1·DP8·MBS2</td><td><b>249K</b></td><td>—</td><td>8192</td><td><span class="badge b-ok">🏆 速度最优</span></td></tr>
+  <tr><td><b>A2. bf16·seq4096</b></td><td>TP2·DP4·SP·MBS4</td><td><b>210K</b></td><td>—</td><td>16384</td><td><span class="badge b-ok">✅ 候选</span></td></tr>
+  <tr><td><b>B. FP8·seq8192</b></td><td>TP4·DP2·SP·MBS8</td><td>189K（bf16）</td><td><b>~234K</b>（FP8, s=1.24）</td><td>65536</td><td><span class="badge b-warn">⚠️ 比 A1 仍慢 6%</span></td></tr>
+</table>
+<p>⇒ <b>bf16 seq4096 仍是绝对速度最优</b>（249K）；FP8 在 M=65536 翻倍但 TP4 通信开销让净吞吐只到 234K。若 P-8 正式训练追求<b>吞吐第一</b> → <b>A1（TP1·DP8·MBS2·bf16）</b>；若需要 <b>长上下文（seq8192）</b>→ 可接受 ~6% 吞吐损失选 B（FP8 更有性价比，因 bf16 基线只有 189K）。<b>等待 P-5b recipe 调优（P-9.5 profiling）与数据配比（base 下满）后再定 P-8</b>。</p>
 
 <h3>4.2 caption 权重三点消融：假设 B 坐实</h3>
 <table>
@@ -294,17 +353,17 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <tr><th>项</th><th>规模</th><th>状态</th><th>说明</th></tr>
   <tr><td><code>ultrafineweb_en</code></td><td>1 T tok</td><td><span class="badge b-ok">✅ 已下满</span></td><td>P-8 的 S 段主体已够</td></tr>
   <tr><td><code>ultrafineweb_en_v1_4</code></td><td>6.7 TB</td><td><span class="badge b-no">🔴 已停</span></td><td>@1.8 MB/s ≈ <b>43 天</b>、非 P-8 必需、且阻塞后两项 → <b>已停，488 分片保留不删</b></td></tr>
-  <tr><td><code>ultrafineweb_l1_en_hq</code></td><td>478 GB</td><td><span class="badge b-info">🔄 优先下</span></td><td><b>231 / 6006</b> @~1.8 MB/s</td></tr>
+  <tr><td><code>ultrafineweb_l1_en_hq</code></td><td>478 GB</td><td><span class="badge b-info">🔄 优先下</span></td><td><b>866 / 6006</b> @~1.5 MB/s（连续推进，非僵死）</td></tr>
   <tr><td><code>ultrafineweb_zh</code></td><td>324 GB</td><td><span class="badge b-info">🔄 排队</span></td><td><b>171 / 256</b></td></tr>
-  <tr><td><b>GPIC</b></td><td>—</td><td><span class="badge b-info">🔄 继续</span></td><td>train <b>1877 / 8001</b> + test 128 ✓</td></tr>
+  <tr><td><b>GPIC</b></td><td>—</td><td><span class="badge b-info">🔄 继续</span></td><td>train <b>2234 / 8001</b> + test 128 ✓</td></tr>
 </table>
 <p>🚫 <b>白名单外一律不下载、不调研、不推荐</b>（含 <code>UltraX-Preview</code>）→ 配比实验的 <b>S1 轴（base vs UltraX）相应降级为「仅 base」</b>，已在任务书如实记录。</p>
 
 <h3>5.2 风险与进度</h3>
 <ul>
-  <li>⚠️ <b><code>l1_en_hq</code> 速度偏慢</b>（~1.8 MB/s；小文件 74MB/件 + CDN 端点慢，<b>已证非僵死</b>）→ 剩 ≈426 GB + <code>zh</code> ≈107 GB，<b>ETA ≈2.9 天</b>（<b>超出 1–2 天预估</b>）。</li>
-  <li>✅ 磁盘 <code>/nas_train</code> <b>86%</b>（Avail 31T）；<b>D-CLEAN 系列累计回收 ≈1.31 TiB</b>（含 <code>servers/</code> 972 G）。</li>
-  <li>⚠️ 半夜 <b>base 进程崩过一次</b>（CDN <code>ConnectionError</code> @ zh-part-172）→ 已重启 <code>retry-loop</code> 并<b>反转为先拉 l1_en_hq</b>（符合优先级）。</li>
+  <li>⚠️ <b><code>l1_en_hq</code> 速度偏慢</b>（~1.5 MB/s；小文件 74MB/件 + CDN 端点慢，<b>已证非僵死</b>）→ 剩 ≈380 GB + <code>zh</code> ≈107 GB，<b>ETA ≈2.9 天</b>（偏慢）；路径更正：实际落盘 <code>/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb</code>。</li>
+  <li>✅ 磁盘 <code>/nas_train</code> <b>84%</b>（Avail 35T）；<b>D-CLEAN 系列累计回收 ≈4.96 TiB</b>（含 <code>servers/</code> 972 G）。</li>
+  <li>🔄 base retry-loop 真推进（l1_en_hq 866/6006 + gpic 2234/8001），非僵死不重启。</li>
 </ul>
 
 <h2 class="sec" id="s6"><span class="no">6</span>harness：R31–R34</h2>
@@ -320,7 +379,7 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <b>路线已定型：无 docker</b> —— <code>unshare --user --map-root-user --mount --pid --fork</code> 用户命名空间 chroot 沙箱（rootfs 落 <code>/nas_train</code>），绕开 <code>docker pull</code> 不通的死局。
   <br>⚠️ <b>已知风险敞口</b>：沙箱内挂不了 <code>/dev</code> <code>/proc</code> <code>/sys</code>（<code>/dev</code> 只能用普通文件桩）→ 是 scale 到 300 条时最需要盯的点。
   <br>🔧 <b>网关两坑（已解）</b>：① <b>codex ≥0.95 删掉了 <code>wire_api="chat"</code></b>（网关 vLLM 0.28 无 <code>/v1/responses</code>）→ 锁 <b>codex 0.94.0</b>；② <b>网关只认 system/user/assistant</b>，而 OpenAI SDK 对 reasoning 模型发 <code>role:developer</code> → 422 → 由 <code>gw_proxy.py</code> 改写解决。
-  <br>⏭ <b>剩 2 个 build</b>：<code>claude-code</code>（Anthropic Messages API，需 Messages→chat 翻译）· <code>deepseek-harness</code>（rust + pnpm@11 + node ^22，本机 cargo/pnpm absent）→ 之后就绪可跑 <b>300 × 5</b>。
+  <br>⏭ <b>剩 1 个 build</b>：<b><code>deepseek-harness</code></b>（rust + pnpm@11 + node≥22.13，本机 node 20.18.1 缺 <code>node:sqlite</code>；cargo/pnpm/node22 所有镜像全 000/301/404 → <b>需运维装工具链或给内网镜像</b>）。<b>claude-code ✅ 已打通（4/5 就绪）</b>。之后就绪可跑 <b>300 × 5</b>。
 </div>
 
 <h2 class="sec" id="s7"><span class="no">7</span>关键数字</h2>
@@ -329,8 +388,9 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
     <h3 style="margin-top:0">预训练（Stage i）</h3>
     <ul>
       <li><b>P-5b：20B token 完成</b>，final loss <b>1.9141</b></li>
-      <li><b>P-9.1</b>：MBS 1→2 <b>+59%</b>（138K→<b>218K tok/s</b>）；MBS≥4 OOM</li>
-      <li>⭐ <b>P-9.2</b>：<b>TP2·MBS4 = ~200K tok/s 且不 OOM</b> → <b>M=16384</b>（FP8 交叉点）</li>
+      <li><b>P-9.3 seq4096 = 249K tok/s</b>（全系最高速度最优）</li>
+      <li><b>P-9.2</b>：TP2·MBS4=200K · ④ TP2·SP·MBS4=210K</li>
+      <li>⭐ <b>P-9.6② FP8 @ M=65536：s=1.24 🎉 转正</b>（A: CUDA_DEVICE_MAX_CONNECTIONS=1）</li>
       <li>胜出配置：LR 1e-3 · WSD · warmup 238 / decay 477 · bf16</li>
       <li>每步 <b>≈4M token</b> 不变量（4096↔1024 / 8192↔512）</li>
     </ul>
@@ -347,16 +407,16 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <div class="card">
     <h3 style="margin-top:0">数据 / 磁盘</h3>
     <ul>
+      <li><b>l1_en_hq ≈866/6006</b> · <b>zh 171/256</b> · <b>gpic ≈2234/8001</b> 推进中</li>
       <li>💾 <b>本日回收 ≈3.65 TB</b>（5 个旧实验目录）→ <code>/nas_train</code> <b>86% → 84%</b></li>
       <li><b>累计回收 ≈4.96 TiB</b>（含 D-CLEAN-3 的 <code>servers/</code> 972 G）</li>
-      <li>base-en <b>2048/2048 下满（1 T tok）</b> · GPIC 全量 <b>≈100.3M</b> 唯一对（E1 实测）</li>
       <li>⚠️ 仍待拍板：<code>datasets/FineVision</code> <b>4.32 TiB</b>（最大单点，8.5 月未动）</li>
     </ul>
   </div>
   <div class="card">
     <h3 style="margin-top:0">运维侧</h3>
     <ul>
-      <li>当日提交 <b>≈72</b>（10-03 全天 235）</li>
+      <li>当日提交 <b>≈105</b>（截至 10:33，含 9a49fcf data 推送）</li>
       <li>本次事故探查 <b>18 轮 ops 命令（RUN_ID 9→29）</b></li>
       <li>记忆体量：<code>MEMORY.md</code> <b>27.2KB</b>（≤32KB ✅）</li>
       <li>任务书瘦身：<b>4 份 237KB → 115KB（-52%）</b></li>
@@ -369,18 +429,18 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY \
   <tr><th>#</th><th>事项</th><th>状态 / 我的建议</th></tr>
   <tr>
     <td>1</td>
-    <td><b>vision 下一项做什么</b>（R11-E 正在跑，之后 GPU 又空）</td>
-    <td><span class="badge b-warn">R11-E 跑完后定</span> 候选：<b>R13</b>（OV2 官方权重单臂对照，须单独批）· <b>臂⑥ AIMv2</b>（3–5 臂 + 1–2 天自研，最贵）。<br>📌 R11-E 结果出来后我再给你建议。</td>
+    <td><b>vision 已全部完成</b>（R11-E ✅ 所有批准实验 done；R13 ✅ OV2 官方对照 79.81% vs 自研 7.99%）</td>
+    <td><span class="badge b-ok">✅ 所有已批准实验完成</span> <b>GPU 闲置，等下一批指令</b>。剩臂⑥ AIMv2 ⏸ 暂缓。📌 <a href="#s4">见 §4</a>。</td>
   </tr>
   <tr>
     <td>2</td>
-    <td><b><code>l1_en_hq</code> 下载偏慢</b>（~1.75 MB/s，ETA ≈2.9 天，超出你给的 1–2 天预估）</td>
-    <td><span class="badge b-warn">需知悉</span> 已证<b>非僵死</b>（CDN 端点慢 + 74MB/件小文件）。要么接受 ≈3 天，要么允许换源/加并发。</td>
+    <td><b><code>l1_en_hq</code> 下载偏慢</b>（~1.5 MB/s，ETA ≈2.9 天）</td>
+    <td><span class="badge b-warn">需知悉</span> 已证<b>非僵死</b>，进度 <b>866/6006</b>。GPIC <b>2234/8001</b> 正常。路径更正：落盘 <code>/nas_train/…/Ultra-FineWeb</code>（非 <code>/nas_inference</code>）。</td>
   </tr>
   <tr>
     <td>3</td>
-    <td><b>harness 步4（300×5）还差 2 个 harness</b></td>
-    <td><span class="badge b-info">3/5 已就绪</span> 剩 <code>claude-code</code>（需 Messages→chat 翻译反代）· <code>deepseek-harness</code>（需 rust + pnpm + node22，<b>共享训练机装工具链</b>需你批）。</td>
+    <td><b>harness 步4（300×5）还差 1 个 harness</b></td>
+    <td><span class="badge b-info">4/5 已就绪</span> <b>claude-code ✅ 已打通</b>（沙箱 stub + Messages→chat 翻译反代）。剩 <code>deepseek-harness</code>（rust + pnpm@11 + node≥22.13，<b>所有镜像全 000/301/404，需你给内网镜像或装工具链</b>）。</td>
   </tr>
   <tr>
     <td>4</td>
