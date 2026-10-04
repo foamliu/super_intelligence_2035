@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 11 -->
+<!-- RUN_ID: 12 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,33 @@
 
 ---
 
+## RUN_ID 12 — 🧩 legacy 组件线 loop 内部 + 实时进度（为接管做底）
+
+**背景**：RUN_ID 10/11 查明「另一个 agent」= **legacy 组件线**（`ablation_run_loop_component_s2_full.sh`，跑在**非 git** 独立副本 `/nasdata/app.e0031982/code/ZhuLong_DAC2027`），其日报显示**连续 ≥4 周期被 agent 沙箱阻断**（`run_commands`→ACCESS RESTRICTED）。本块读它的 **loop 全脚本 + 进程 + r1 日志 + MEMORY 现状**。
+
+```bash
+# RUN_ID 12 — legacy component loop internals + live progress (read-only)
+D=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
+echo "===== 0. TIME ====="; timeout 10 date '+%F %T'
+echo "===== 1. component loop script (FULL) ====="; timeout 10 cat "$D/ablation_run_loop_component_s2_full.sh" 2>&1 | cut -c1-200
+echo "===== 2. related live procs ====="; timeout 10 pgrep -af 'ablation_run_loop|run_cline_script|ablation_run_conductor' | head -20 | cut -c1-160
+echo "===== 3. eval PID 692552 alive? ====="; timeout 10 ps -o pid=,ppid=,etimes=,args= -p 692552 2>&1 | cut -c1-160
+echo "===== 4. wo_retrieval r1 log tail ====="; timeout 10 tail -n 18 /tmp/ABL_wo_retrieval_r1.log 2>&1 | cut -c1-180
+echo "===== 5. MEMORY_component_full.md status head ====="; timeout 10 sed -n '1,20p' "$D/MEMORY_component_full.md" 2>&1 | cut -c1-200
+echo "===== 6. MEMORY_component_full.md operation-log tail ====="; timeout 10 tail -n 24 "$D/MEMORY_component_full.md" 2>&1 | cut -c1-200
+echo "===== 7. /tmp ABL + loop logs ====="; timeout 10 ls -la /tmp/ABL_*.log /tmp/*loop*.log 2>&1 | head -20 | cut -c1-160
+echo "===== DONE ====="
+```
+
+---
+
 ## RUN_ID 11 — 📖 读「另一个 agent」（legacy 组件线）的任务书 / MEMORY / 日报 / loop
 
 **背景**：RUN_ID 10 查明「另一个 agent」= **legacy 组件线**，进程 `2455466 bash …/code/ZhuLong_DAC2027/run/ablation_run_loop_component_s2_full.sh`，跑在**独立（非 git）项目副本** `/nasdata/app.e0031982/code/ZhuLong_DAC2027/` 里。本块**只读**读它的 4 份关键文件，理解其工作与进度，为接管做准备。
 
-```bash
+> ⛔ **已作废**（已执行于 22:15:45）——降级为 text，让位给 RUN_ID 12。
+
+```text
 # RUN_ID 11 — read the OTHER (legacy component) agent's docs & loop
 D=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
 echo "===== 0. TIME ====="; timeout 10 date '+%F %T'
