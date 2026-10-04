@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 6 -->
+<!-- RUN_ID: 7 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,36 @@
 
 ---
 
+## RUN_ID 7 — 🩺 诊断 loop 的 `error: Forbidden`（agent 仍未被唤醒的**真正根因**）
+
+**背景**：RUN_ID 6 重启 loop 成功（非法 `-b` 已消除、脚本第 112 行确认为 `-P openai-compatible`），但**新 loop 每周期报 `error: Forbidden`**（cline 调用被网关拒绝）→ agent 仍无法唤醒。本块**只读**采集：① loop 日志近况；② cline 用的完整命令行；③ proxy / OPENAI 环境；④ `~/.cline` 里的 base URL / provider 配置；⑤ 直接 `curl` 网关确认 key 是否有效。
+
+```bash
+# RUN_ID 7 — diagnose "error: Forbidden" (read-only, no agent call)
+REPO=/nasdata/app.e0031982/code/super_intelligence_2035
+CWD="$REPO/doc/ZhuLong_DAC2027/run"
+K="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
+echo "===== 0. TIME ====="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "===== 1. loop log tail (last 16) ====="; timeout 10 tail -n 16 /tmp/zhulong_loop.log | cut -c1-160
+echo "===== 2. script cline line (104-113) ====="; timeout 10 sed -n '104,113p' "$CWD/zhulong_loop.sh" | cut -c1-160
+echo "===== 3. proxy / OPENAI env ====="; env | grep -iE 'proxy|OPENAI|API_TYPE' | cut -c1-140
+echo "===== 4. cline settings files ====="; timeout 20 find ~/.cline -maxdepth 3 -name 'settings*' 2>/dev/null | head
+for f in $(timeout 20 find ~/.cline -maxdepth 3 -name 'settings*' 2>/dev/null); do echo "-- $f --"; timeout 10 grep -iE 'url|baseurl|base_url|provider|"model"' "$f" | head -20 | cut -c1-160; done
+echo "===== 5. cline version ====="; timeout 20 cline --version 2>&1 | head -3
+echo "===== 6. curl gateway /models (WITH current env) ====="; timeout 20 curl -sS -m 15 -o /dev/null -w "HTTP=%{http_code}\n" -H "Authorization: Bearer $K" "http://agi-gateway.cxmt.com/cloud/v1/models" 2>&1 | cut -c1-160
+echo "===== 7. curl gateway /models (WITHOUT proxy) ====="; timeout 20 env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY curl -sS -m 15 -o /dev/null -w "HTTP=%{http_code}\n" -H "Authorization: Bearer $K" "http://agi-gateway.cxmt.com/cloud/v1/models" 2>&1 | cut -c1-160
+echo "===== DONE ====="
+```
+
+---
+
 ## RUN_ID 6 — 🔧 重启 `zhulong_loop.sh`（清掉旧版 `-b`，让 agent 真正被唤醒）——**本次首要**
 
 **背景**：RUN_ID 5（21:43:20）实测 —— 中继健康（RUN_ID 1–5 全 `exit=0`）；但 **loop 仍是旧版**，`/tmp/zhulong_loop.log` 每次唤醒都 `error: unknown option '-b'`（累计 **352** 次），**cline 从未运行 → agent 从未被唤醒**。磁盘脚本已是新版（无 `-b`）→ **重启进程即修复**。本块：先确认脚本已新，再 `pkill` + `setsid` 重启 loop，最后复核进程与日志。
 
-```bash
+> ⛔ **已作废**（已执行于 21:45:27，loop 已重启）——降级为 text，让位给 RUN_ID 7。
+
+```text
 # RUN_ID 6 — restart zhulong_loop to clear stale -b (agent never woke)
 REPO=/nasdata/app.e0031982/code/super_intelligence_2035
 LD="$REPO/doc/ZhuLong_DAC2027/run/zhulong_loop.sh"
