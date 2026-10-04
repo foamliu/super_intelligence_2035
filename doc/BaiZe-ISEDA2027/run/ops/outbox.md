@@ -3825,3 +3825,133 @@ setup.py
 
 === DONE（两个后台盘点仍在跑；下轮读 /tmp/_du_full.txt 与 /tmp/_du_llava.txt）===
 ```
+
+---
+
+## RUN_ID 33 · 2026-10-04 09:41:23 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+D=/nas_train/app.e0031982
+LV=$D/code/hell/LLaVA-OneVision-1.5
+
+echo; echo "=== 1. 本用户一级盘点进度（后台）==="
+echo "   行数=$(wc -l < /tmp/_du_full.txt 2>/dev/null)  done=$([ -f /tmp/_du_full.done ] && echo YES || echo NO)"
+sort -hr /tmp/_du_full.txt 2>/dev/null | head -18
+
+echo; echo "=== 2. ⭐ 1.2T 目录的二级明细 ==="
+ST=$LV/stage_1.5_mid_training_llava_ov_14b
+if [ -d "$ST" ]; then
+  echo "   -- 顶层内容 --"; ls -1 "$ST" 2>/dev/null | head -30
+  rm -f /tmp/_du_st.txt /tmp/_du_st.done
+  setsid bash -c "nice -n 19 du -sh $ST/* > /tmp/_du_st.txt 2>/dev/null; echo done > /tmp/_du_st.done" </dev/null >/dev/null 2>&1 &
+  sleep 7
+  echo "   -- 二级大小：行数=$(wc -l < /tmp/_du_st.txt 2>/dev/null) done=$([ -f /tmp/_du_st.done ] && echo YES || echo NO) --"
+  sort -hr /tmp/_du_st.txt 2>/dev/null | head -20
+  echo "   -- 二级 mtime（挑最大几个）--"
+  for p in $(sort -hr /tmp/_du_st.txt 2>/dev/null | head -6 | awk '{print $2}'); do stat -c '      %y  %n' "$p" 2>/dev/null | cut -c1-105; done
+fi
+
+echo; echo "=== 3. 全盘找 LLaVA / OneVision 相关目录（只列名）==="
+find "$D" -maxdepth 4 -type d \( -iname '*llava*' -o -iname '*onevision*' -o -iname '*ov-1.5*' \) 2>/dev/null | grep -v '/\.git/' | head -30
+
+echo; echo "=== 4. code/hell 兄弟目录 ==="
+ls -1 "$D/code/hell" 2>/dev/null | head -20
+
+echo; echo "=== 5. 两个 LLaVA 目录的 mtime ==="
+stat -c '   %y  %n' "$LV/stage_1.5_mid_training_llava_ov_14b" "$LV/stage_1.5_mid_training_llava_ov_32b" 2>/dev/null | cut -c1-105
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 09:41:23
+
+=== 1. 本用户一级盘点进度（后台）===
+   行数=2  done=NO
+16K	/nas_train/app.e0031982/author.txt
+4.0K	/nas_train/app.e0031982/agents
+
+=== 2. ⭐ 1.2T 目录的二级明细 ===
+   -- 顶层内容 --
+dataloader
+iter_0002000
+iter_0004000
+iter_0006000
+iter_0008000
+iter_0010000
+iter_0012000
+latest_checkpointed_iteration.txt
+run_2026-03-09_14:58:32_tp1_pp1_seqlen32768_mbs1_gbs16_20000steps.log
+run_2026-03-09_18:23:28_tp2_pp2_seqlen32768_mbs1_gbs16_20000steps.log
+run_2026-03-10_14:08:35_tp2_pp2_seqlen32768_mbs1_gbs16_20000steps.log
+run_2026-03-10_14:28:56_tp2_pp2_seqlen32768_mbs1_gbs16_20000steps.log
+run_2026-03-11_07:44:38_tp2_pp2_seqlen32768_mbs1_gbs16_20000steps.log
+tensorboard
+   -- 二级大小：行数=14 done=YES --
+198G	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b/iter_0012000
+198G	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b/iter_0010000
+198G	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b/iter_0008000
+198G	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b/iter_0006000
+198G	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b/iter_0004000
+198G	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b/iter_0002000
+17M	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b/tensorboard
+5.9M	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b/run_2026-03-09_18:23:28_tp2_pp2_seqlen32768_mbs1_gbs16_20000steps.log
+3.9M	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b/dataloader
+2.5M	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b/run_2026-03-10_14:28:56_tp2_pp2_seqlen32768_mbs1_gbs16_20000steps.log
+864K	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b/run_2026-03-10_14:08:35_tp2_pp2_seqlen32768_mbs1_gbs16_20000steps.log
+416K	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b/run_2026-03-11_07:44:38_tp2_pp2_seqlen32768_mbs1_gbs16_20000steps.log
+80K	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b/run_2026-03-09_14:58:32_tp1_pp1_seqlen32768_mbs1_gbs16_20000steps.log
+16K	/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b/latest_checkpointed_iteration.txt
+   -- 二级 mtime（挑最大几个）--
+      2026-03-10 11:30:22.954388570 +0800  /nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.
+      2026-03-10 08:39:18.675192290 +0800  /nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.
+      2026-03-10 05:47:39.616138568 +0800  /nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.
+      2026-03-10 02:55:46.917752387 +0800  /nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.
+      2026-03-10 00:04:18.407112590 +0800  /nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.
+      2026-03-09 21:13:02.431412360 +0800  /nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.
+
+=== 3. 全盘找 LLaVA / OneVision 相关目录（只列名）===
+/nas_train/app.e0031982/datasets/LLaVA-CC3M-Pretrain-595K
+/nas_train/app.e0031982/datasets/FineVision/LLaVA_Instruct_150K
+/nas_train/app.e0031982/datasets/FineVision/allava_laion
+/nas_train/app.e0031982/datasets/FineVision/allava_vflan
+/nas_train/app.e0031982/datasets/FineVision/infographic_vqa_llava_format
+/nas_train/app.e0031982/datasets/FineVision/llavar_gpt4_20k
+/nas_train/app.e0031982/datasets/FineVision/sharegpt4v(llava)
+/nas_train/app.e0031982/datasets/LLaVA-Instruct-150K
+/nas_train/app.e0031982/datasets/LLaVA-Pretrain
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Instruct-Data
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Instruct-Data/allava
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Instruct-Data/allava_instruct_laion4v
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Instruct-Data/allava_instruct_vflan4v
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Instruct-Data/llava_cot_100k
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Instruct-Data/llava_instruct
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Instruct-Data/llava_wild
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Instruct-Data/llavar
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-558K-Webdataset
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-NeXT-780k-webdataset
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-Webdataset-Quick-Start-3M
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Instruct-Data-webdataset
+/nas_train/app.e0031982/datasets/mvp-lab/llava_conversion_work
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-RL-Data
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M-packed-webdataset
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Instruct-Data-MultiMixQA-opt46
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-NeXT-780k-plus-Instruct-opt46-webdataset
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Instruct-Data-packed-webdataset
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-OneVision-1.5-Instruct-Data-MultiMixQA-opt47
+/nas_train/app.e0031982/datasets/mvp-lab/LLaVA-NeXT-780k-plus-Instruct-opt47-webdataset
+
+=== 4. code/hell 兄弟目录 ===
+LLaVA-OneVision-1.5
+
+=== 5. 两个 LLaVA 目录的 mtime ===
+   2026-03-11 07:44:38.069535930 +0800  /nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_m
+   2026-03-10 19:25:07.317367820 +0800  /nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_m
+
+=== DONE ===
+```
