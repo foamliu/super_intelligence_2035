@@ -61,9 +61,13 @@ def build_loader(shard_list, batch_size: int, tokenizer, size: int = 224,
 
 def build_gpic_loader(shard_list, batch_size: int, tokenizer, size: int = 224,
                       num_workers: int = 6, shuffle: bool = True, train: bool = True,
-                      drop_last: bool = True):
+                      drop_last: bool = True, caption_type='short'):
     """GPIC loader (no re-packing). Reads GPIC tar = `{key}.json` (caption/caption_type)
-    + `{key}.jpg|png`, keeps only `caption_type == 'short'` pairs (0% 77-truncation)."""
+    + `{key}.jpg|png`, keeps only pairs whose caption_type matches `caption_type`
+    ('short' / 'medium' / 'short+medium'; 'long' NOT supported — 100% 77-truncation).
+
+    R11-F (2026-10-04): caption_type param added so GPIC arms A/B/C can select
+    short / medium / short+medium from the SAME frozen tar snapshot."""
     import json as _json
     from PIL import Image as _Image
     from webdataset import ignore_and_continue
@@ -75,7 +79,11 @@ def build_gpic_loader(shard_list, batch_size: int, tokenizer, size: int = 224,
             meta = _json.loads(sample.get('json') or b'{}')
         except Exception:
             return None
-        if meta.get('caption_type') != 'short':
+        _ct = meta.get('caption_type')
+        if caption_type == 'short+medium':
+            if _ct not in ('short', 'medium'):
+                return None
+        elif _ct != caption_type:
             return None
         cap = (meta.get('caption') or '').strip()
         raw = sample.get('jpg') or sample.get('png') or sample.get('img')

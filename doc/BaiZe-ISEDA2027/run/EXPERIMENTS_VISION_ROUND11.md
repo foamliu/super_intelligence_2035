@@ -548,4 +548,60 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 - ⬜ 待回填：全量 `[done] total=… steady_image_s=… final_loss=…` + 4-ckpt（step10k/20k/30k/final）IN-1k frozen-trunk lp 原始输出 + 判据裁定（§14.4）。
 
 > ✅ 本节写完即视为预注册成立；随后进入 S1 实现 → S2 冒烟 → S3 首臂（**无需再等运维**，起跑已批准）。
+
+---
+
+## 15. R11-F 数据源横向对比（GPIC short/medium/short+medium vs en500k vs CC12M）· 预注册 + 执行（2026-10-04 · **运维已批准**）
+
+> **批准依据**：运维指令 2026-10-04（六）—— 用户拍板「把几个数据源横着比；GPIC 至少试 short 和 medium（合计 90%），跟 en500k、CC12M 一起比」。
+> **动机**：R7 只比过「数据源」（en500k / GPIC-short / CC12M），口径 = R@1 + 3000 步；**GPIC 内部 caption 粒度轴（tag/short/medium/long）从未做过**。R4 已实测：`short` 20 tok / 0% 截断 · `medium` 46 tok / 仅 0.1% 截断 → **medium 是唯一「更长但仍在 77 安全区」的档**；`long` 100% 截断 → 🚫 不提供。
+> **科学问题**：① caption 更长是否有益（Q1）？② 固定预算下哪个数据源最好（Q2）？③ 「90% 全用」是否更好（Q3）？
+
+### 15.1 臂定义（控变量：**只变数据源 / caption 粒度**；其余与 R9 阶段一 / R11-L 臂① 完全一致）
+
+| # | 项 | 值 |
+|:--|:--|:--|
+| 1 | 塔 | OpenVision2 **w512（126.78M）**，depth30 / patch16 / 224² |
+| 2 | 文本塔 | **冻结 CLIP-768**（`openai/clip-vit-large-patch14-336`），context 77 |
+| 3 | 目标函数 | **InfoNCE**（`--loss clip`，512 负样本） |
+| 4 | 优化器 / schedule | AdamW lr **3e-3** / warmup 20 / seed 1234 / bf16 / bs64×8 = 512 |
+| 5 | 步数（**固定预算**） | **30k 步 = N 15.36M 样本**；对照点 step{10k,20k,30k} = N{5.12,10.24,15.36}M |
+| 6 | 评测 | **IN-1k frozen-trunk lp**（`r8_eval_in1k.py`，附 zs），同 R8–R11 口径 |
+| 7 | 执行 | **5 臂串行**，8 卡 TP1/DP8，`.12` |
+
+### 15.2 数据臂（5）
+
+| 序 | 臂 | 数据 | 路径 / 过滤 | 盘上规模(约) | 备注 |
+|:--|:--|:--|:--|:--|:--|
+| 1 | **A** | **GPIC `short`** | `gpic/train/*.tar`，`caption_type=='short'` | ≈13M | 与 R11-E 同臂 → 一致性交叉验证 |
+| 2 | **B** | **GPIC `medium`** | 同上，`caption_type=='medium'` | ≈13M | 🆕 **Q1** |
+| 3 | **C** | **GPIC `short+medium`** | 同上，两档合并（≈**90%**） | ≈26M | 🆕 **Q3** |
+| 4 | **E** | **CC12M** | `conceptual-captions-12m-webdataset/data/*.tar`（`wds`） | ≈11M | 纯 CC12M（不含 Amshaker） |
+| 5 | **D** | **en500k** | `baize-vision/en500k/*.tar`（`wds`） | **0.5M** | ⚠️ in-domain + ~30 epochs 重复 → 单列不排名 |
+
+> ⚠️ **冻结 tar 快照**：GPIC 下载仍在增长（R11-E 时 1973 → 现已 2373 tar）。A/B/C 三臂共用 `/tmp/r11f_gpic_snapshot.txt`（脚本启动时生成）。
+> ⚙️ **代码改动**（✅ 已完成 + 冒烟验证）：① `data.py::build_gpic_loader` 增 `caption_type` 参数（1 tar 实测 short 44.2% / medium 46.1% / short+medium 90.3%）；② `r9_train.py` 增 `--caption-type` + `.txt` 快照读取（`--help` 通过）；③ `r11_run_datasource.sh`（5 臂串行 + 自动 4-ckpt eval，`bash -n` 通过）。
+
+### 15.3 🔒 预注册判据（先定后测，🚫 不许事后改）
+
+> 噪声带：同 (N,M) 跨 run 方差 ≈ 0.5–1.1 pp → 阈值 **±1.5 pp**。主指标 = IN-1k frozen-trunk lp @ step30k。
+
+| # | 问题 | 比较 | 裁定 |
+|:--|:--|:--|:--|
+| **Q1** | caption 更长是否有益 | **B(medium) vs A(short)** | `medium−short ≥ +1.5` → 有益；`≤ −1.5` → 更差；其余 → 无显著差异 |
+| **Q2** | 哪个数据源最好 | **A / B / E** 三者之比 | 最高者领先次高 ≥ +1.5 → 显著更好；否则 → 无显著差异 |
+| **Q3** | 「90% 全用」是否更好 | **C vs A** | `≥ +1.5` → 合并有益；否则 → 无显著差异 |
+| **D** | en500k | **单列** | ⚠️ in-domain + ~30 epochs → 单列、标「不可比」、不并入排名 |
+
+### 15.4 公平性（§3 口径）
+
+| 臂 | 参数量 | 每步耗时 | 备注 |
+|:--|:--|:--|:--|
+| A–E | 126.78M（= 基线 w512，无 decoder） | 待实测 | 只变数据；耗时差异仅来自数据加载 |
+
+### 15.5 命令与进度（回填区）
+
+- 脚本：`vision/r11_run_datasource.sh`（5 臂串行 A→B→C→E→D）；日志 `/tmp/r11f_datasource.log`；输出 `R11F_{gpic_short,gpic_medium,gpic_shortmedium,cc12m,en500k}_w512`。
+- **auto-launcher**：`r11f_auto_launch.sh`（等 AIMv2 完 → 手动跑 AIMv2 eval → 等 GPU 空 → 自动起 R11-F）。
+- ⬜ 待回填：5 臂 × {`[done]` + 4-ckpt lp} + 公平表耗时列 + Q1/Q2/Q3/D 裁定。
 - **对本项目的影响**：R9 的 25.1% 渐近**不被数据臂改动推翻**；GPIC 的价值仅在「低预算快速启动」，本项目数据瓶颈是**总量/多样性**（本地 ≈118M 上限 vs 619 亿缺口），非 caption 质量 → R6/R7「正式训练切 GPIC short」与 R9/R10 scaling 口径**维持不变**。证据：`/tmp/r11_gpic.log`（训练 metrics + eval 段 786-797 行）。

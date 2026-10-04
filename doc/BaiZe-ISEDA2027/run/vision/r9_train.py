@@ -209,7 +209,12 @@ def main():
     ap.add_argument('--data', required=True,
                     help='tar shard glob(s), comma-separated for multi-source (e.g. CC12M,Amshaker)')
     ap.add_argument('--data-source', default='wds', choices=['wds', 'gpic'],
-                    help='wds=webdataset .txt captions (en500k/CC12M); gpic=GPIC tar .json captions (short only)')
+                    help='wds=webdataset .txt captions (en500k/CC12M); gpic=GPIC tar .json captions')
+    ap.add_argument('--caption-type', default='short',
+                    choices=['short', 'medium', 'short+medium'],
+                    help='GPIC caption_type filter (only --data-source gpic); '
+                         'long not supported (100%% 77-truncation). '
+                         'short+medium keeps both (~90%% of GPIC pairs).')
     ap.add_argument('--eval-data', default='/nas_train/app.e0031982/datasets/baize-vision/eval5k/*.tar')
     ap.add_argument('--output-dir', required=True)
     ap.add_argument('--seed', type=int, default=1234)
@@ -351,13 +356,20 @@ def main():
     _globs = [g.strip() for g in args.data.split(',') if g.strip()]
     all_shards = []
     for _g in _globs:
-        all_shards.extend(sorted(glob.glob(_g)))
+        if _g.endswith('.txt') and os.path.isfile(_g):
+            # frozen tar snapshot list (R11-F: ensures GPIC arms A/B/C use the
+            # same set of tars even while download adds files between arms).
+            with open(_g) as _f:
+                all_shards.extend([ln.strip() for ln in _f if ln.strip()])
+        else:
+            all_shards.extend(sorted(glob.glob(_g)))
     all_shards = sorted(set(all_shards))
     my_shards = all_shards[rank::world_size]
     _tok = text.tokenize_cap if args.loss == 'coca' else text.tokenize
     if args.data_source == 'gpic':
         loader = D.build_gpic_loader(my_shards, args.batch_size, _tok,
-                                     size=args.resolution, num_workers=args.num_workers)
+                                     size=args.resolution, num_workers=args.num_workers,
+                                     caption_type=args.caption_type)
     else:
         loader = D.build_loader(my_shards, args.batch_size, _tok,
                                 size=args.resolution, num_workers=args.num_workers)
@@ -376,7 +388,9 @@ def main():
         f'world={world_size} steps={args.steps} res={args.resolution} patch={args.patch} '
         f"seed={args.seed} shards={len(my_shards)}/rank objective={_OBJ} "
         f'text={args.text_finetune}-CLIP-768(r={args.lora_rank},a={args.lora_alpha},lr={args.lora_lr}) '
-        f'negatives={args.batch_size*world_size}')
+        f'negatives={args.batch_size*world_size} '
+        f'data_source={args.data_source} caption_type={args.caption_type} '
+        f'total_shards={len(all_shards)}')
 
 # ---- fixed probe batch (rank 0): precompute once; text is FROZEN so T is constant ----
     if is_main:
