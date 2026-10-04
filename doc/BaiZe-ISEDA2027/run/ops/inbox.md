@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 41 -->
+<!-- RUN_ID: 42 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,14 +31,59 @@
 
 ---
 
-## RUN_ID 41 — ✅ **核验 `/home` 清理收尾 + 确认工具链未受损**（**只读**）（**本块最新，优先执行**）
+## RUN_ID 42 — 🔧 **根治：钉住 HF 缓存位置（`.bashrc` 三行 export + `~/.cache/huggingface` 软链到 `/nas_train`）**（**已获批准**）（**本块最新，优先执行**）
+
+**背景**：`/home` 仅 196 G，而这次清掉的 78 G 正是 **HF 默认缓存落到 `~/.cache/huggingface`** 造成的（`HF_HOME` 后来才改到 `/nas_train`，且 `HF_HUB_CACHE` **为空**）。**两层加固**：
+1. **`.bashrc` 显式钉死**：`HF_HOME` + **`HF_HUB_CACHE`（原本为空）** + `HF_DATASETS_CACHE` 全部指向 `/nas_train`
+2. ⭐ **软链兜底**：把 `~/.cache/huggingface` 做成 → `/nas_train/app.e0031982/.cache/huggingface` 的 **symlink** —— **即使进程没加载 `.bashrc`（非交互 ssh / minimal env），默认路径也会落到 `/nas_train`** → **从此不可能再撑爆 `/home`**
+
+**安全**：备份 `.bashrc` · **幂等**（已有的不重复加）· `bash -n` 语法自检 · 若 `~/.cache/huggingface` 已是**实体目录则跳过 symlink 不覆盖** · 写测试验证。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME; B="$H/.bashrc"; TS=$(date +%Y%m%d-%H%M%S)
+
+echo; echo "=== 1. 现状 ==="
+echo "   HF_HOME=${HF_HOME:-<empty>}"; echo "   HF_HUB_CACHE=${HF_HUB_CACHE:-<empty>}"; echo "   HF_DATASETS_CACHE=${HF_DATASETS_CACHE:-<empty>}"
+grep -nE 'HF_HOME|HF_HUB_CACHE|HF_DATASETS_CACHE' "$B" 2>/dev/null | sed 's/^/   /'
+ls -ld "$H/.cache/huggingface" 2>/dev/null | cut -c1-110 || echo "   (~/.cache/huggingface 不存在)"
+
+echo; echo "=== 2. 备份 + 补 3 行 export（幂等）==="
+cp -a "$B" "$B.bak.$TS" && echo "   backed up -> $B.bak.$TS"
+if grep -q 'HF_HUB_CACHE' "$B" 2>/dev/null; then
+  echo "   已有 HF_HUB_CACHE 行 → 跳过追加"
+else
+  printf '\n# [2026-10-04 ops] 钉死 HF 缓存位置，避免再落到 /home（仅 196G）\nexport HF_HOME=/nas_train/app.e0031982/.cache\nexport HF_HUB_CACHE=/nas_train/app.e0031982/.cache/hub\nexport HF_DATASETS_CACHE=/nas_train/app.e0031982/hf_cache\n' >> "$B" && echo "   已追加 3 行 export"
+fi
+bash -n "$B" && echo "   bash -n : OK"
+grep -nE '^export HF_' "$B" | sed 's/^/   /'
+
+echo; echo "=== 3. ⭐ 软链兜底（不依赖 env 是否加载）==="
+mkdir -p /nas_train/app.e0031982/.cache/huggingface
+if [ -e "$H/.cache/huggingface" ] && [ ! -L "$H/.cache/huggingface" ]; then
+  echo "   ⚠️ 已是实体目录 → 不覆盖，跳过 symlink"
+else
+  ln -sfn /nas_train/app.e0031982/.cache/huggingface "$H/.cache/huggingface" && echo "   ✅ symlink 已建"
+fi
+ls -ld "$H/.cache/huggingface" 2>/dev/null | cut -c1-125
+
+echo; echo "=== 4. 核验 ==="
+echo -n "   写入测试: "; if touch "$H/.cache/huggingface/.ops_write_test" 2>/dev/null; then
+  echo "OK → 实际落在 $(readlink -f "$H/.cache/huggingface")"; rm -f "$H/.cache/huggingface/.ops_write_test"; else echo "FAIL"; fi
+echo -n "   /home 现状: "; df -BG /home | tail -1
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 41**（核验 `/home` 清理，**✅ 已执行 11:40:56 exit=0** → **92%→27%**）为 ```text。
+
+## RUN_ID 41 — ✅ **核验 `/home` 清理收尾 + 确认工具链未受损**（✅ 已执行 → 7 项 GONE / ≈121 GB 回收）
 
 **RUN_ID 40 已执行（✅ 11:38:30 exit=0）**：A 档缓存已删、**`/home` 即时 92% → 69%**（171G → 128G used）；B 档 `~/.cache/huggingface`（78 G）**是最后一个目标，仍在后台删**。
 **本块核验**：① 后台日志全文 + `.done`；② 七个目标逐个 `[ -e ]`；③ **最终 `df`（基线 92% / 171G / 16G）**；④ ⚠️ **关键：cline / codex / opencode 本体必须仍在**；⑤ HOME 一级现状。
 
 🚫 **只读**。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 H=$HOME
 
