@@ -5565,3 +5565,72 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 53 · 2026-10-04 17:54:43 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME; B=/nas_train/app.e0031982; SRC="$H/.cline/data"
+CX=/home/app.e0031982/.bun/bin/cline
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "=== 1. 重播：settings/ + globalState.json + secrets.json ==="
+for n in pretrain harness vision data; do
+  D="$B/.cline_$n"; mkdir -p "$D"
+  cp -a "$SRC/globalState.json" "$SRC/secrets.json" "$D/" 2>/dev/null
+  rm -rf "$D/settings"; cp -a "$SRC/settings" "$D/settings" 2>/dev/null
+  chmod 600 "$D/secrets.json" 2>/dev/null
+  echo "   $D/ -> $(ls -1 "$D" 2>/dev/null | tr '\n' ' ')"
+  echo "     settings/ -> $(ls -1 "$D/settings" 2>/dev/null | tr '\n' ' ')"
+done
+
+echo; echo "=== 2. 逐个 smoke（必须回 OK）==="
+cd /tmp
+for n in pretrain harness vision data; do
+  D="$B/.cline_$n"
+  K=$(python3 -c "import json;print(json.load(open('$D/secrets.json'))['openAiApiKey'])" 2>/dev/null | tr -d '\r\n')
+  R=$(env $P timeout 90 "$CX" --data-dir "$D" -c /tmp -m glm-5.2 -k "$K" -P openai-compatible --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tr -d '\r' | tr '\n' ' ' | cut -c1-170)
+  printf '   %-9s (key len %s) => %s\n' "$n" "${#K}" "$R"
+done
+
+echo; echo "=== 3. 复核各 <D>/settings 的 base ==="
+for n in pretrain harness vision data; do
+  D="$B/.cline_$n"
+  echo "   $n providers.json: $(grep -ho '\"baseUrl\"[[:space:]]*:[[:space:]]*\"[^\"]*\"' "$D/settings/providers.json" 2>/dev/null | head -2 | tr '\n' ' ')"
+done
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 17:54:43
+
+=== 1. 重播：settings/ + globalState.json + secrets.json ===
+   /nas_train/app.e0031982/.cline_pretrain/ -> cache db globalState.json logs secrets.json sessions settings 
+     settings/ -> cline_mcp_settings.json cli-notices.json global-settings.json models.json providers.json 
+   /nas_train/app.e0031982/.cline_harness/ -> cache db globalState.json logs secrets.json sessions settings 
+     settings/ -> cline_mcp_settings.json cli-notices.json global-settings.json models.json providers.json 
+   /nas_train/app.e0031982/.cline_vision/ -> cache db globalState.json logs secrets.json sessions settings 
+     settings/ -> cline_mcp_settings.json cli-notices.json global-settings.json models.json providers.json 
+   /nas_train/app.e0031982/.cline_data/ -> cache db globalState.json logs secrets.json sessions settings 
+     settings/ -> cline_mcp_settings.json cli-notices.json global-settings.json models.json providers.json 
+
+=== 2. 逐个 smoke（必须回 OK）===
+   pretrain  (key len 72) => OK Warning: AI SDK Warning System: To turn off warning logging, set the AI_SDK_LOG_WARNINGS global to false.       at emitWarning (/nas_train/app.e0031982/harness/cline/n
+   harness   (key len 72) => OK Warning: AI SDK Warning System: To turn off warning logging, set the AI_SDK_LOG_WARNINGS global to false.       at emitWarning (/nas_train/app.e0031982/harness/cline/n
+   vision    (key len 72) => OK Warning: AI SDK Warning System: To turn off warning logging, set the AI_SDK_LOG_WARNINGS global to false.       at emitWarning (/nas_train/app.e0031982/harness/cline/n
+   data      (key len 72) => OK Warning: AI SDK Warning System: To turn off warning logging, set the AI_SDK_LOG_WARNINGS global to false.       at emitWarning (/nas_train/app.e0031982/harness/cline/n
+
+=== 3. 复核各 <D>/settings 的 base ===
+   pretrain providers.json: "baseUrl": "http://agi-gateway.cxmt.com/cloud/v1" 
+   harness providers.json: "baseUrl": "http://agi-gateway.cxmt.com/cloud/v1" 
+   vision providers.json: "baseUrl": "http://agi-gateway.cxmt.com/cloud/v1" 
+   data providers.json: "baseUrl": "http://agi-gateway.cxmt.com/cloud/v1" 
+
+=== DONE ===
+```
