@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ 四臂全兑现 · R11-L2 ✅ 完成（未翻盘、冻结文本塔最优）· R11-L caption-weight 三点消融 ✅ 全完成（0.5/1.0/2.0 全≈随机 → caption 监督本身与 IN-1k 正交、假设 B 坐实）**；臂⑤ GenLIP 🚫 跳过（已坐实）/ 臂⑥ AIMv2 ⏸ 暂缓 / R13 ⏸ 只做 OV2 单臂 / R11-E ⏸ 等数据 |
-| WAITING | 1（**语义=待运维拍板（非训练 running）**：所有已批准/可批准 GPU 项全部完成——R11-L 四臂 + R11-L2 LoRA + caption-weight {0.5,1.0} 消融（2.0=arm④）均已训完+评测完、GPU 已空。后续 臂⑥ AIMv2 ⏸ / R13 ⏸（须单独批准、只做 OV2 单臂）/ R11-E ⏸（等 GPIC short ≥18.5M）均**未经批准、不主动起训练**。置 1 长睡省 token，等运维在任务书勾选下一项） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ 四臂全兑现 · R11-L2 ✅ 完成（未翻盘、冻结文本塔最优）· R11-L caption-weight 三点消融 ✅ 全完成（0.5/1.0/2.0 全≈随机 → caption 监督本身与 IN-1k 正交、假设 B 坐实）**；臂⑤ GenLIP 🚫 跳过（已坐实）/ 臂⑥ AIMv2 ⏸ 暂缓 / R13 ⏸ 只做 OV2 单臂 / **R11-E ▶ 训练中（GPIC short ≈10.9M，同 N 两点对照）** |
+| WAITING | 1（**语义=训练 running**：R11-E GPIC 数据轴 30k 步在 `.12` 全 8 卡（`/tmp/r11_gpic.log`，ETA ~1.5–2h，脚本自动回收 4 ckpt IN-1k lp）。置 1 令 loop 30 分钟轮询省 token） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
-| BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡）+ arm④ CoCa（1.92h×8 卡）+ R11-L2 LoRA（2.09h×8 卡 ≈16.7 GPU·h）+ R11-L caption-weight 消融（✅ 2 点：7261.3s+7440.6s ≈ 2.02h+2.07h×8 卡 ≈ 32.7 GPU·h） |
-| 更新 | 2026-10-04 07:00（收尾：caption-weight 三点消融全完成——lp@15.36M = weight2.0(arm④) 0.47% / 1.0 0.61% / 0.5 0.60%，全≈随机、无单调 → **假设 B 成立：caption 监督本身与 IN-1k 正交**；weight1.0 done total=7440.6s steady=2796.3img/s no collapse C4=OK；§12.5 + §5 状态 + EXPERIMENTS_VISION 顶部已回填；GPU 已空，待运维拍板下一项） |
+| BUDGET_USED | R2–R9 累计 + R10（R10-① IN-1k ~1 GPU·h；R10-③ w384+w640 各 30k 步 ≈2×1.98h×8 卡）+ R11-L arm② SigLIP（1.96h×8 卡）+ arm③ LocalLoss（1.97h×8 卡）+ arm④ CoCa（1.92h×8 卡）+ R11-L2 LoRA（2.09h×8 卡 ≈16.7 GPU·h）+ R11-L caption-weight 消融（✅ 2 点：7261.3s+7440.6s ≈ 2.02h+2.07h×8 卡 ≈ 32.7 GPU·h）+ R11-E GPIC（30k 步，训练中，待实测） |
+| 更新 | 2026-10-04 07:00（收尾：caption-weight 三点消融全完成——lp@15.36M = weight2.0(arm④) 0.47% / 1.0 0.61% / 0.5 0.60%，全≈随机、无单调 → **假设 B 成立：caption 监督本身与 IN-1k 正交**；weight1.0 done total=7440.6s steady=2796.3img/s no collapse C4=OK；§12.5 + §5 状态 + EXPERIMENTS_VISION 顶部已回填；R11-E ▶ 训练中（预注册见 EXPERIMENTS_VISION_ROUND11.md §13，`/tmp/r11_gpic.log`）） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -86,6 +86,14 @@ WAITING: 1
 - ✅ **weight1.0 训完+评测完（06:54 ALL DONE，exit 0）**：`[done] total=7440.6s steps=30000 steady_image_s=2796.3 final_loss=11.3492`；末点探针 C1=0.3217 / C2_gap=+0.0729 / C4=OK；全程无坍缩。IN-1k lp @{10k,20k,30k,final} = **0.39 / 0.34 / 0.61 / 0.61%**（zs 0.43/0.48/0.62/0.62%、top5 2.00/2.08/2.78/2.78%）。证据 `/tmp/r11_capweight.log:1543-1551`。
 - 📌 **三点裁定（§12.5）**：lp@15.36M = w2.0(arm④) 0.47 / w1.0 0.61 / w0.5 0.60%，全 ≈ 随机、无单调 → **假设 B：caption 监督本身与 IN-1k frozen-trunk 特征正交（非 weight 压死）** → 臂⑤ GenLIP 跳过坐实；AIMv2（唯一 caption-无关稠密）仍 ⏸ 待运维。
 
+## R11-E GPIC 数据轴（🟢 训练中，2026-10-04 10:00）
+
+> 批准依据：运维指令 2026-10-04（四）——「10.9M 同 N 两点」版，即刻执行。只变数据臂：基线 CC12M+Amshaker（`wds`）→ GPIC `short`（`gpic`，`caption_type=='short'` 过滤）；塔 w512(126.8M)/InfoNCE/30k 步/bs512/IN-1k lp 全固定。对照点 N=5.12M(step10k)、10.24M(step20k)，基线 lp **3.43% / 5.45%**。预注册裁定见 `EXPERIMENTS_VISION_ROUND11.md §13.3`。
+
+- 预注册已写入 `EXPERIMENTS_VISION_ROUND11.md §13`（先定后测）；脚本 `r11_run_gpic.sh`（`r9_train.py --loss clip --data-source gpic`）。
+- ✅ 冒烟（30 步 @09:57）exit 0：`[params] total=126.8M`、`shards=247/rank`（1973 tar ÷ 8）、`steady_image_s=6189.3`、无坍缩 → gpic 路径可用。
+- 🚀 全量已启动（10:00:54，`.12` 全 8 卡）：`steps=30000`、`GPIC train tar count=1973`（下载仍在继续）；输出 `R11E_gpic_w512`、日志 `/tmp/r11_gpic.log`。ETA ~1.5–2h + 自动回收 4 ckpt IN-1k lp（step10k/20k/30k+final）。
+- ⚠️ 可比区间：GPIC short ≈10.9M 唯一对（1973 tar × ≈5.6k/tar）→ 只对 N≤10.24M 裁定；step30k（N=15.36M > 10.9M）进入数据重复轮、仅作补充。
 ## 历史条目已滚动归档（2026-10-03）
 
 - 更早的全部巡检/流水（R1–R9 完整过程，live MEMORY 原 95.7KB）已滚动归档至 `daily-memories-vision/2026-10-03.md`（追加「滚动归档快照」）+ 各日期 daily 文件（2026-09-30 / 10-01 / 10-02）。live MEMORY 已压至 ≤32KB。
