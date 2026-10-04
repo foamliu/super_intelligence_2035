@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 39 -->
+<!-- RUN_ID: 40 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,49 @@
 
 ---
 
-## RUN_ID 39 — 🔬 **下钻 `~/.cache`（107 G 主因）+ 读完整 HOME 清单**（**只读**）（**本块最新，优先执行**）
+## RUN_ID 40 — 🗑 **清理 `/home` 缓存（A+B 档 ≈124 G，用户已批准）**（**本块最新，优先执行**）
+
+**用户已批准（2026-10-04）**：**A 档（零风险缓存 ≈46 G）+ B 档（HF 旧 datasets 缓存 78 G）**，预期 `/home` **92% → ≈29%**。
+
+| 档 | 目标 | 大小 |
+|:--|:--|--:|
+| **A** | `~/.cache/uv` · `~/.cache/pip` · `~/.bun/install/cache` · `~/.npm/_cacache` · `~/.cache/vllm` · `~/.triton` | ≈46 G |
+| **B** | `~/.cache/huggingface`（20 个旧 `datasets--*`，mtime 2026-09-05） | **78 G** |
+
+**安全要点**：① **P1 无进程占用**（`fuser` **一律带 `timeout`** ←上次卡中继的教训）；② **留证**：先把「删什么 + 各多大 + HF hub 里 20 个数据集名」写成文本清单（KB 级）；③ **删除放后台 `setsid nice -n 19`** 顺序执行 + 日志 + `.done` 标记 → **本块秒回**；④ 只删这 7 个**缓存目录**，🚫 不碰 `.bun/install/global`（cline 本体）、`.local`、`.cline`、任何配置与密钥。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME
+echo "   删前: $(df -BG /home | tail -1)"
+
+echo; echo "=== 1. P1 无进程占用（fuser 全部带 timeout）==="
+for p in "$H/.cache/uv" "$H/.cache/pip" "$H/.bun/install/cache" "$H/.npm/_cacache" "$H/.cache/vllm" "$H/.triton" "$H/.cache/huggingface"; do
+  printf '   %-28s ' "${p#$H/}"; timeout 10 fuser "$p" 2>&1 | head -1 | tr -d '\n'; echo " (空=好)"
+done
+echo -n "   活跃的 pip/uv/bun 进程: "; pgrep -af 'pip |uv pip|bun ' 2>/dev/null | grep -v grep | head -3 | tr '\n' ' '; echo
+
+echo; echo "=== 2. 留证清单（KB 级文本）==="
+M="$H/_ARCHIVE_home_cache_manifest_$(date +%Y%m%d-%H%M%S).txt"
+{ echo "# /home 缓存清理清单  $(date '+%F %T')  (用户批准: A+B 档)";
+  du -sh "$H/.cache/uv" "$H/.cache/pip" "$H/.bun/install/cache" "$H/.npm/_cacache" "$H/.cache/vllm" "$H/.triton" "$H/.cache/huggingface" 2>/dev/null;
+  echo "# HF hub 内的数据集（将被删）:"; ls -1 "$H/.cache/huggingface/hub" 2>/dev/null | sed 's/^/  /'; } > "$M" 2>/dev/null
+echo "   -> $(basename "$M")  ($(wc -l < "$M" 2>/dev/null) 行)"; head -10 "$M" 2>/dev/null | sed 's/^/     /'
+
+echo; echo "=== 3. 🗑 启动【后台顺序】删除 ==="
+rm -f /tmp/_cleanhome.log /tmp/_cleanhome.done
+setsid nice -n 19 bash -c 'for P in "$@"; do echo "[$(date "+%T")] rm -rf $P"; rm -rf "$P"; echo "[$(date "+%T")] done: $([ -e "$P" ] && echo STILL || echo GONE)"; done; echo ALLDONE > /tmp/_cleanhome.done' _ \
+  "$H/.cache/uv" "$H/.cache/pip" "$H/.bun/install/cache" "$H/.npm/_cacache" "$H/.cache/vllm" "$H/.triton" "$H/.cache/huggingface" > /tmp/_cleanhome.log 2>&1 &
+sleep 10
+echo "   -- 进度 --"; head -16 /tmp/_cleanhome.log 2>/dev/null | sed 's/^/     /'
+echo "   -- df 即时（NFS 无关，ext4 本地盘应立即反映）--"; df -BG /home | tail -1
+echo "   -- 关键：cline 本体必须还在 ==="; ls -l "$H/.bun/bin/cline" 2>/dev/null | cut -c1-90; ls -d "$H/.bun/install/global/node_modules/@cline" 2>/dev/null | cut -c1-110
+echo; echo "=== DONE（后台仍在删；下轮读 /tmp/_cleanhome.log + .done + df 核验）==="
+```
+
+> ⛔ **已降级 RUN_ID 39**（下钻 `~/.cache`，**✅ 已执行 11:35:19 exit=0**）为 ```text。
+
+## RUN_ID 39 — 🔬 **下钻 `~/.cache`（107 G 主因）+ 读完整 HOME 清单**（✅ 已执行 → HF 78G / uv 15G / pip 14G）
 
 **RUN_ID 38 战果（2026-10-04 11:32:46）**：
 - `/home` = **196 G / 已用 171 G / **92%**（仅剩 16 G）**；**inode 仅用 8%** → **是体积问题，不是小文件**；`/` 分区健康（384G/13G/4%）
@@ -40,7 +82,7 @@
 **本轮目标**：把 `~/.cache` 拆开看（谁是 107 G），并把完整 32 项清单读出来 → 给出**可清理/不可清理**判据。
 🚫 **只读**；🚫 每条命令都有界；重活丢后台。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 H=$HOME
 
