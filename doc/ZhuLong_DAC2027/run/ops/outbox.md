@@ -681,3 +681,71 @@ eda_code_eval    -> /nasdata/app.e0031982/eda_code_eval                  fs:10.2
 
 ===== DONE =====
 ```
+
+---
+
+## RUN_ID 5 · 2026-10-04 21:43:20 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 5 — read-only relay/loop health probe
+echo "===== TIME ====="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "===== 1. processes ====="
+echo "-- relay --"; timeout 10 pgrep -af zhulong_ops_relay.sh | cut -c1-140
+echo "-- loop  --"; timeout 10 pgrep -af zhulong_loop.sh | cut -c1-140
+echo "===== 2. relay log tail ====="; timeout 10 tail -n 8 /tmp/zhulong_ops_relay.log 2>/dev/null | cut -c1-140
+echo "===== 3. loop log tail =====";  timeout 10 tail -n 14 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-140
+echo "===== 4. loop log health counts ====="
+echo -n "unknown option -b : "; timeout 20 grep -c "unknown option '-b'" /tmp/zhulong_loop.log 2>/dev/null
+echo -n "Forbidden         : "; timeout 20 grep -c "Forbidden"                /tmp/zhulong_loop.log 2>/dev/null
+echo -n "cline returned    : "; timeout 20 grep -c "cline returned"          /tmp/zhulong_loop.log 2>/dev/null
+echo "===== 5. /home =====";  timeout 15 df -BG /home | tail -1
+echo "===== 6. MEMORY_ZHULONG WAITING (line1) ====="; timeout 10 grep -m1 "^WAITING" /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md
+echo "===== DONE ====="
+```
+
+**输出**
+```
+===== TIME =====
+2026-10-04 21:43:20
+hfeg0tedaap02
+===== 1. processes =====
+-- relay --
+1071337 bash zhulong_ops_relay.sh
+1735926 bash zhulong_ops_relay.sh
+1735933 timeout 10 pgrep -af zhulong_ops_relay.sh
+-- loop  --
+1069304 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+1735938 timeout 10 pgrep -af zhulong_loop.sh
+===== 2. relay log tail =====
+[zhulong-relay] 2026-10-04 15:20:25 started. repo=/nasdata/app.e0031982/code/super_intelligence_2035  poll=20s  fetch_every=3x
+[zhulong-relay] RUN_ID=1 executed, exit=0, appended to outbox.
+[zhulong-relay] RUN_ID=2 executed, exit=0, appended to outbox.
+[zhulong-relay] RUN_ID=3 executed, exit=0, appended to outbox.
+[zhulong-relay] RUN_ID=4 executed, exit=0, appended to outbox.
+[zhulong-relay] push FAILED (will retry next cycle)
+===== 3. loop log tail =====
+[loop] 2026-10-04 21:40:09 cline returned (exit 0), checking git sync ...
+[loop] 2026-10-04 21:40:09 WAITING=0 (no blocker) → sleep 60s
+[loop] 2026-10-04 21:41:09 wake up, invoking cline ...
+[31merror:[0m error: unknown option '-b'
+[loop] 2026-10-04 21:41:09 cline returned (exit 0), checking git sync ...
+[loop] 2026-10-04 21:41:09 WAITING=0 (no blocker) → sleep 60s
+[loop] 2026-10-04 21:42:09 wake up, invoking cline ...
+[31merror:[0m error: unknown option '-b'
+[loop] 2026-10-04 21:42:10 cline returned (exit 0), checking git sync ...
+[loop] 2026-10-04 21:42:10 WAITING=0 (no blocker) → sleep 60s
+[loop] 2026-10-04 21:43:10 wake up, invoking cline ...
+[31merror:[0m error: unknown option '-b'
+[loop] 2026-10-04 21:43:10 cline returned (exit 0), checking git sync ...
+[loop] 2026-10-04 21:43:10 WAITING=0 (no blocker) → sleep 60s
+===== 4. loop log health counts =====
+unknown option -b : 352
+Forbidden         : 0
+cline returned    : 352
+===== 5. /home =====
+/dev/mapper/vgroot-lv_home      394G  371G        6G  99% /home
+===== 6. MEMORY_ZHULONG WAITING (line1) =====
+WAITING: 0
+===== DONE =====
+```
