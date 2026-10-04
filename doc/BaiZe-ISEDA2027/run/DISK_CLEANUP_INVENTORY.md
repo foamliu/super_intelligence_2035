@@ -237,3 +237,111 @@ $ grep -rn 'app.e0031982/servers' /nas_train/app.e0031982/code/super_intelligenc
 | **合计** | **≈1.31 TiB** |
 
 > **一句话结论（D-CLEAN-3）**：`servers/`（974G，LLaVA-V1.5-Qwen3-4B 旧消融 ckpt）已删除，三项前置检查全过、外部数据集 symlink 目标不受影响；`df` 净回收 **≈972 GB**，`/nas_train` 使用率 **86%→85%**。`nemo_experiments` R2 ckpt 按运维令保留。
+
+---
+
+## 8. D-CLEAN-4 · 2026-10-04 大盘复扫（**只盘点、不删除**，sudo 视角）
+
+> 触发：运维指令 2026-10-04「`/nas_train` 需要清理，用 sudo 盘点各目录大小，找可删除大目录，重点 `/nas_train/app.e0031982`」。
+> 🔒 本轮只产出清单，**未经批准不得 `rm`/`mv`**；🚫 绝不整树 `du`（只 `df` + 有界定向 `du`，每条带 `timeout`）；口令/密钥绝不打印。
+
+### 8.1 大盘（`df` 实测）
+
+| 挂载 | 总 | 已用 | 可用 | 使用率 |
+|:--|--:|--:|--:|--:|
+| `/nas_train` | 207 T | 177 T | **31 T** | **86 %** |
+| `/nas_inference` | 45 T | 27 T | 19 T | 60 % |
+| `/nas_user` | 108 T | 80 T | 29 T | 74 % |
+| `/data` | 7.0 T | 285 G | 6.8 T | 4 % |
+
+`df -BG /nas_train`：Used **180365G** / Avail **31604G**（86%）。→ 重点仍是 `/nas_train`。
+
+### 8.2 sudo 可用性
+
+- `sudo -n true` → `sudo: a password is required`（**非免密**）。
+- ⚠️ 本线任务书/记忆无明文 sudo 口令，纪律规定「口令绝不打印」→ **本轮未使用 sudo**。
+- 后果：`root` 及他用户权限收紧目录（`bakup*`/`root`/`kangyi`/`tc`/`app.e0030209`/`app.e0030758` 等）只能读顶层、无法测实大小，表中已标「不可读」；精确 cross-user 大小需运维提供 sudo 或 owner 各自报账。
+
+### 8.3 顶层 `/nas_train/*/`（mtime + owner）
+
+| 目录 | owner | mtime | 大小(实测) | 疑似用途 |
+|:--|:--|:--|--:|:--|
+| `wangcongtao` | app.e0020613 | 2026-01-13 | **2.42 TiB** | 未知（~264 天未动） |
+| `app.e0025692` | app.e0025692 | 2026-02-14 | **946 GiB** | 未知（~232 天未动） |
+| `tmguo` | root | 2026-09-24 | 177 GiB | 近期（~10 天），暂不列 |
+| `app.e0041332` | app.e0027605 | 2026-06-26 | 1.3 GiB | 未知 |
+| `app.e0013625` | app.e0013625 | 2025-06-18 | 161 MiB | 未知 |
+| `kangyi`/`tc`/`app.e0030209`/`app.e0030758` | 各 owner | ≤2026-03 | 不可读 | 需 sudo |
+| root 系列（`bakup`/`bakup_20`/`root`/`test`/`E002*` 等 12 项） | root | ≤2026-04 | 不可读 | 需 sudo |
+
+### 8.4 重点 · 本用户 `/nas_train/app.e0031982` 一级目录（`du -h --max-depth=1`，逐项带 timeout）
+
+> `rc=124` = 单项 `timeout` 超时（含 26T 级大目录），用二级钻取补（见 8.5）；单位 du `-sx`=1KiB 块已转人类可读。
+
+| 路径 | 大小 | mtime | 安全等级 | 判据/建议 |
+|:--|--:|:--|:--|:--|
+| `datasets/`（钻取见 8.5） | **≈37 TiB** | 2026-10-03 | 🔀 混合 | 大头 `mvp-lab` 26T（🔴保留）；🟡=FineVision/HuggingFaceFW/conceptual-captions |
+| `chip_expert/` | **468 GiB** | 2026-06-17 | 🟡 需确认 | 4× `chipexpert-cn` 快照（3×136G+1×62G，root-owned），~110 天未动 |
+| `code/`（钻取见 8.5） | **≈8 TiB** | 2026-10-04 | 🔀 混合 | 🔴 repo/BaiZe-ISEDA2027/eda_fastmcp；🟡 hell/chip-mllm/LLaVA/LLaVA-OneVision-2/circuitvision |
+| `models/` | **452 GiB** | 2026-09-29 | 🟡 需确认 | 多用途权重（Qwen 191G、lmms-lab 42G、Mistral 双 28G、apple 28G…），需 vision 线确认在用项 |
+| `miniforge3/` | ~1.5 G | 2025-11-26 | 🔴 不可动 | conda 环境（py310 等），训练/下载脚本依赖 |
+| `harness_work/` | ≈5.9 GiB | 2026-10-04 | 🔴 不可动 | harness agent 活跃区（rootfs 3.2G/conda_pkgs 1.6G/swe-bench 389M） |
+| `harness/` | ≈2 GiB | 2026-09-15 | 🔴 不可动 | harness 源码分析区 |
+| `hf_cache/` | 19.8 GiB | 2026-10-03 | 🟡 需确认 | hf 缓存（真 blob 可能已在别处，纯缓存可清） |
+| `outputs/` | 6.6 GiB | 2026-01-28 | 🟡 需确认 | 训练输出残留 |
+| `download/` | 2.3 GiB | 2026-07-28 | 🟡 需确认 | 下载中转残留 |
+| `cache/` | 小（几 G） | 2026-08-03 | 🟡 需确认 | `85M_packing`+`instruct_packing`（各 3 子目录，du 超时待精确） |
+| `.vscode-server/` | 461 MiB | 2026-01-27 | 🟢 可清 | VS Code server（部分权限拒绝，实际更小） |
+| `.cache/` | 284 MiB | 2026-09-11 | 🟢 可清 | 用户缓存 |
+| `Downloads/` | 208 MiB | 2026-08-07 | 🟢 可清 | 下载目录 |
+| 散文件 | ~0.5 G | — | 🟢 可清 | `stanford-corenlp-*.zip` 388M(与解压目录重复)、旧清单/个人图 |
+| `agents`/`core`/`utils`/`.tmp`/`results`/`submissions`/`torch_train`/`web_search`/`patent`/`omegaconf_230` | ~0 | — | 🟢/🔴 | 空或极小；`results/submissions` 属训练侧勿轻动 |
+
+### 8.5 二级钻取（**前 10 大**下钻）
+
+**`datasets/*`（🔀 混合）**
+
+| 子目录 | 大小 | mtime | 等级 | 说明 |
+|:--|--:|:--|:--|:--|
+| `mvp-lab/`（LLaVA 85M 26T + 全家桶） | **≈26 TiB** | 2026-09-15 | 🔴 不可动 | 运维已令「保留已下内容」 |
+| `FineVision/`（188 子集） | **4.32 TiB** | 2026-01-14 | 🟡 需确认 | 方案 §1.1 标「可选补充源」，~8.5 月未动 |
+| `openbmb/Ultra-FineWeb`（base） | **2.74 TiB** | 2026-10-04 | 🔴 不可动 | 下载中（en 2048 满 + l1_en_hq + zh） |
+| `HuggingFaceFW/` | **1.24 TiB** | 2026-02-04 | 🟡 需确认 | 文本语料（疑与 Ultra-FineWeb 重叠） |
+| `conceptual-captions-12m-webdataset/` | **1.13 TiB** | 2025-12-22 | 🟡 需确认 | 图文对（CC12M） |
+| `baize-vision/`（en500k/eval5k） | 244 GiB | 2026-09-30 | 🔴 不可动 | vision 派生，红线 |
+| `imagenet-1k/` | 155 GiB | 2026-01-05 | 🟡 需确认 | 视觉分类 |
+| `lmms-lab/` | 136 GiB | 2026-02-12 | 🟡 需确认 | LLaVA 系 |
+| `LLaVA-Instruct-150K/` | 91 GiB | 2026-01-28 | 🟡 需确认 | LLaVA SFT |
+| `vg`/`textvqa`/`coco`/`gqa`/`ocr_vqa`/`LLaVA-Pretrain`/`LLaVA-CC3M`/`red_caps`/`MMMU`/`stanford-corenlp` | ~几十 G | 2025-12~2026-01 | 🟡/🟢 | 小件（部分 du 超时未精确） |
+
+**`code/*`（🔀 混合）**
+
+| 子目录 | 大小 | mtime | 等级 | 说明 |
+|:--|--:|:--|:--|:--|
+| `hell/LLaVA-OneVision-1.5/` | **1.24 TiB** | 2026-03-11 | 🟡 需确认 | 旧 LLaVA-OneVision-1.5 训练目录（疑与顶层 `LLaVA-OneVision-1.5` 重复） |
+| `chip-mllm/` | **896 GiB** | 2026-01-07 | 🟡 需确认 | 芯片多模态 LLM 代码/ckpt，~9 月未动 |
+| `LLaVA/` | **716 GiB** | 2026-02-25 | 🟡 需确认 | LLaVA 训练 ckpt |
+| `LLaVA-OneVision-2/` | **650 GiB** | 2026-07-31 | 🟡 需确认 | ~65 天未动 |
+| `BaiZe-ISEDA2027/` | **421 GiB** | 2026-10-04 | 🔴 不可动 | **pretrain 训练工作区**：`nemo_experiments` 280G(P-5b live+P-9 扫描)+`data` 85G(.bin/.idx)+`output` 22G+`.git` 28G |
+| `circuitvision-encoder/` | **244 GiB** | 2026-01-20 | 🟡 需确认 | 视觉编码器代码/ckpt |
+| `LLaVA-OneVision-1.5/`（顶层，108 子目录） | 未测(超时) | 2026-09-25 | 🔀 | 大目录，需 owner 定性（9 月有改动） |
+| `LLaVA-OneVision-1.5-RL/` | 29 GiB | 2026-08-06 | 🟡 | RL 数据/代码 |
+| `flash-attention/` | 8.9 GiB | 2026-08-13 | 🟡 | 库源码(可再 clone) |
+| `backup/` | 8.2 GiB | 2026-01-26 | 🟡 | 备份 |
+| `eda_fastmcp/` | 2.1 GiB | 2026-09-30 | 🔴 不可动 | 含 EDA-Eval-PyAether 红线隔离区 |
+| `super_intelligence_2035/` | 596 MiB | 2026-10-03 | 🔴 不可动 | 共享 git 仓库（active workspace） |
+| 其余（`short_drama`/`lmms-eval`/`ms-swift`/`OneVision-Encoder`/`OpenVision*`/`vllm`/`TransformerEngine`/`Megatron-Bridge`…） | 未全测 | 2025-12~2026-09 | 🟡 | 旧实验/库，待二次下钻 |
+
+### 8.6 可回收合计（**分档，均需运维/owner 拍板后才可动**）
+
+| 档 | 项 | 合计 |
+|:--|:--|--:|
+| 🟢 明确可清 | stanford zip 388M + 散文件/旧清单/个人图 + `.cache` + `.vscode-server` | **≈0.6 GiB** |
+| 🟡 需确认（本用户，不含🔴） | FineVision 4.32T + hell 1.24T + HuggingFaceFW 1.24T + conceptual-captions 1.13T + chip-mllm 0.90T + LLaVA 0.72T + LLaVA-OneVision-2 0.65T + chip_expert 0.47T + models 0.45T + circuitvision-encoder 0.24T | **≈11.4 TiB** |
+| 🟡 需确认（跨用户，需 owner/运维） | wangcongtao 2.42T + app.e0025692 946G + app.e0041332 1.3G + app.e0013625 0.2G | **≈3.4 TiB** |
+| 🔴 不可动 | mvp-lab 26T + base 2.74T + BaiZe-ISEDA2027 421G + eda_fastmcp/baize-vision/repo/harness/miniforge3 | — |
+
+> **一句话结论（D-CLEAN-4）**：本轮**未删任何东西**（只盘点）。**最大新增可回收候选**：① `datasets/FineVision` **4.32 TiB**（可选补充源、~8.5 月未动）；② `code/hell/LLaVA-OneVision-1.5` **1.24 TiB**（旧训练目录，疑与顶层 LLaVA-OneVision-1.5 重复）；③ 跨用户 `wangcongtao` **2.42 TiB** / `app.e0025692` **946 GiB**（~8 月未动）。
+> 🔴 红线确认未越界：base/gpic 下载、`BaiZe-ISEDA2027`（P-5b/P-9 live）、`eda_fastmcp`、`baize-vision`、`super_intelligence_2035` repo、harness 工作区、miniforge3 均标为不可动。
+> ⚠️ `sudo` 不可用（需密码）→ 跨用户 `root`/权限收紧目录无法测实，需运维提供 sudo 或 owner 各自报账。
+> 💡 **建议**：运维先拍板 `FineVision` / `hell` / `chip_expert` / 跨用户 `wangcongtao`+`app.e0025692` 这 5 项（合计可回 **≈9.5 TiB**），其余多为 vision 线历史资产需 owner 二次确认。
