@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 64 -->
+<!-- RUN_ID: 65 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,14 +31,48 @@
 
 ---
 
-## RUN_ID 64 — 🔌 **确认/启动 `eda_fastmcp` 的 SSE MCP（`.29:8090`，含 `cimi_search`+`cimi_fetch`）+ 双机验证**（**本块最新，优先执行**）
+## RUN_ID 65 — 🔍 **正确探针：`eda_fastmcp` MCP 在 `.29:8090` 是否真的可用 + 怎么连 + 工具名**（**本块最新，优先执行**）
+
+> **RUN_ID 64 已确认**：服务**在跑**（`pid=111692` = `.../eda_fastmcp/venv/bin/python main.py`），**监听 `0.0.0.0:8090`**（→ `.12` 可达），`.env` 已有 `EDA_MCP_PORT=8090`，`scripts/start.sh` 存在 → **无需启动**。
+> ⚠️ **但上一轮的 `/sse` 探测是空输出 —— 那是我的探针错**：SSE 是**长连接**，`curl -w '%{http_code}'` 只在**传输结束**时打印，被 `timeout` 杀掉就什么都不输出。**本块用正确方式**（只取响应头 / 抓 SSE 首帧）。
+> **本块只读**，🚫 不启停进程、不改文件。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+D=/nas_train/app.e0031982/code/eda_fastmcp
+
+echo; echo "=== 1. 监听与进程（复核）==="
+(ss -ltnp 2>/dev/null || netstat -ltnp 2>/dev/null) | grep ':8090' | cut -c1-140 | sed 's/^/   /'
+pgrep -af 'eda_fastmcp|main.py' | cut -c1-150 | sed 's/^/   /'
+
+echo; echo "=== 2. ✅ 正确探针 A：只要【响应头】（SSE 会立刻给 200）==="
+echo "   -- GET /sse 响应头 --"; timeout 5 curl -sS -m 4 -D - -o /dev/null http://127.0.0.1:8090/sse 2>&1 | head -8 | sed 's/^/      /'
+echo "   -- GET / 响应头 --";   timeout 5 curl -sS -m 4 -D - -o /dev/null http://127.0.0.1:8090/ 2>&1 | head -8 | sed 's/^/      /'
+
+echo; echo "=== 3. ✅ 正确探针 B：抓 SSE 首帧（MCP 会先推 endpoint 事件）==="
+timeout 5 curl -sN -m 4 http://127.0.0.1:8090/sse 2>&1 | head -6 | sed 's/^/      /'
+
+echo; echo "=== 4. 从 .12 验证可达性（TCP + 响应头）==="
+timeout 15 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'echo -n "   .12 TCP->.29:8090 : "; timeout 5 bash -c "cat < /dev/null > /dev/tcp/10.239.2.29/8090" 2>/dev/null && echo OK || echo FAIL; echo "   .12 GET /sse 头:"; timeout 6 curl -sS -m 5 -D - -o /dev/null http://10.239.2.29:8090/sse 2>&1 | head -4 | sed "s/^/      /"' 2>&1 | cut -c1-170
+
+echo; echo "=== 5. 接入信息：README / 工具名 ==="
+echo "   -- README 前 40 行 --"; head -40 "$D/README.md" 2>/dev/null | cut -c1-150 | sed 's/^/      /'
+echo "   -- 含 cimi 的文件（有界）--"; timeout 20 grep -rIl -i 'cimi' "$D" --include='*.py' --include='*.md' --include='*.json' 2>/dev/null | head -8 | sed 's/^/      /'
+echo "   -- 工具名（tools/ 或 main.py 里的注册，有界）--"; timeout 20 grep -rhoE '(cimi_search|cimi_fetch|"[a-z_]+_search"|"[a-z_]+_fetch")' "$D/main.py" "$D/server" "$D/skills" 2>/dev/null | sort -u | head -20 | sed 's/^/      /'
+echo "   -- .env 里与 MCP/端口/URL 相关的键（值已屏蔽）--"; grep -nE '^(EDA_MCP|MCP_|HOST|PORT|URL)' "$D/.env" 2>/dev/null | sed 's/=.*/=<masked>/' | sed 's/^/      /'
+echo; echo "=== DONE ==="
+```
+
+> ⛔ 已降级 RUN_ID 64（07:17:42 exit=0，确认服务已在跑、监听 0.0.0.0:8090）为 text。
+
+## RUN_ID 64 — 🔌 **确认/启动 `eda_fastmcp` 的 SSE MCP（`.29:8090`，含 `cimi_search`+`cimi_fetch`）+ 双机验证**（✅ 已执行 → **服务已在跑、绑 `0.0.0.0:8090`**）
 
 > **用户指令（2026-10-05）**：`.29` 的 **8090 端口**有一个 **SSE MCP 服务**，里边是 **`cimi_search` + `cimi_fetch`**；**若没在跑就自己启动**：目录 `/nas_train/app.e0031982/code/eda_fastmcp`，`bash scripts/start.sh`，`.env` 里 `EDA_MCP_PORT=8090`。**跑通后 `.29` 与 `.12` 可共用**（与 ops 中继同机，所以由中继来确认最合适）。
 > **为什么重要**：昨晚 data agent 交的 `LIT_IDEAS_2026-10-04.html` 里 **15 条 arXiv 只有「本地 bib 核验」、没做在线核验** —— 根因是服务器侧 `cimi-search` 命令不存在 / 底层 `api.bocha.cn` SSL 被防火墙截断。**这个 MCP 服务就是那条缺失的在线检索能力**（`.12` 的 data/vision 也都能用）。
 > **本块三件事**：① **只读确认**（目录/start.sh/.env/8090 是否在听）② **未跑则启动**（`EDA_MCP_PORT=8090` + 后台 + 日志）③ **双机验证**（`.29` 本机 + 从 `.12` 访问）。
 > 🚫 **红线**：**不要碰 9090**（那是 harness 的 `gw_proxy`）· **不改 `eda_fastmcp` 的业务代码**（只确保端口与启动）· **`.env` 里任何密钥不得回显**（只以「含/不含该键」形式报告）· 该目录属 `🔴不可动` 清单，**不要删/移**。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 D=/nas_train/app.e0031982/code/eda_fastmcp
 
