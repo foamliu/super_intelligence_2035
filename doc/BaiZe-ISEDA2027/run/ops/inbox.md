@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 55 -->
+<!-- RUN_ID: 56 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,67 @@
 
 ---
 
-## RUN_ID 55 — 🔌 **把 vision / data 两条线切到各自 `.cline_<line>`（经 ssh .12）**（承接 RUN_ID 54）（**本块最新，优先执行**）
+## RUN_ID 56 — 🔧 **补 PATH 后重测 smoke + 逐线安全重启 vision/data（.12）**（承接 RUN_ID 55）（**本块最新，优先执行**）
+
+> **RUN_ID 55 结果（18:04:17 exit=0）**：
+> ✅ 脚本已在 `.12` 更新（`baize_vision_loop.sh` L23/77、`baize_data_loop.sh` L30/120 带 `--data-dir`；`llm_rotate.sh` L71 带 `LLM_DATA_DIR`）；
+> ✅ `.cline_vision` / `.cline_data` 已用 **.12 本机**共享配置重播（源 base = `http://agi-gateway.cxmt.com/cloud/v1`）；
+> ⚠️ **smoke 失败原因 = ssh 非交互 shell 的 PATH 没有 `bun`**（`/usr/bin/env: 'bun': No such file or directory`）→ 并非配置问题，**需显式补 PATH**；
+> ⏸ 自保护生效（当时旧 cline 计数=2）→ 本轮未重启。
+
+**本块做什么（`.29` 经 `ssh 10.239.2.12`）**
+1. **先 `export PATH="$HOME/.bun/bin:$PATH"`**（smoke 与重启后的 loop 都需要）→ 重测两个隔离目录 smoke，应回 **OK**
+2. **逐线**自保护重启（按**本线 loop 的 cline 子进程**判定 → vision/data 可分别处理，谁空闲先切谁）
+3. 重启后用带 PATH 的干净环境，避免新 loop 的 `cline` 又找不到 `bun`
+4. 验 `Forbidden==0`
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+echo; echo "=== [.12] PATH 修正 smoke + 逐线安全重启 ==="
+timeout 520 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+export PATH="$HOME/.bun/bin:$PATH"
+hostname; date '+%F %T'; echo "  bun=$(command -v bun)"
+R=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+B=/nas_train/app.e0031982; H=$HOME; SRC="$H/.cline/data"; C=/home/app.e0031982/.bun/bin/cline
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "--- 1. smoke（PATH 修正后，应回 OK）---"
+cd /tmp
+for n in vision data; do
+  D="$B/.cline_$n"
+  K=$(python3 -c "import json;print(json.load(open('$D/secrets.json'))['openAiApiKey'])" 2>/dev/null | tr -d '\r\n')
+  OUT=$(env $P timeout 90 "$C" --data-dir "$D" -c /tmp -m glm-5.2 -k "$K" -P openai-compatible --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tr -d '\r' | tr '\n' ' ' | cut -c1-130)
+  printf "  %-7s (key len %s) => %s\n" "$n" "${#K}" "$OUT"
+done
+
+echo; echo "--- 2. 逐线自保护重启（按本线 loop 的 cline 子进程判定）---"
+for L in vision data; do
+  LP=$(pgrep -f "bash baize_${L}_loop.sh" 2>/dev/null | head -1)
+  if [ -z "$LP" ]; then echo "  [$L] loop 未在跑 → 直接启动"; CL=0
+  else CL=$(pgrep -P "$LP" -f 'bun' 2>/dev/null | wc -l); echo "  [$L] loop pid=$LP cline 子进程=$CL"; fi
+  if [ "$CL" -gt 0 ]; then echo "  [$L] 本线 cline 活动中 → 跳过（下轮再试）"; continue; fi
+  pkill -f "baize_${L}_loop.sh"; sleep 4
+  cd "$R"
+  setsid env $P bash "baize_${L}_loop.sh" > "/tmp/baize_${L}_loop.log" 2>&1 < /dev/null &
+  echo "  [$L] 已重启（PATH 已含 bun）"
+done
+
+echo; echo "--- 3. 40s 后验证 ---"
+sleep 40
+for L in vision data; do
+  echo "  [$L] loop=$(pgrep -fc "baize_${L}_loop.sh" 2>/dev/null || echo 0)  Forbidden=$(grep -c Forbidden /tmp/baize_${L}_loop.log 2>/dev/null)"
+  tail -3 "/tmp/baize_${L}_loop.log" 2>/dev/null | tr '\n' ' ' | cut -c1-140 | sed 's/^/       /'
+  echo
+done
+echo "  cline cmdline: $(pgrep -af 'bun.*cline' 2>/dev/null | cut -c1-120 | head -3)"
+echo; echo "=== DONE (.12) ==="
+EOS12
+echo "=== relay block done ==="
+```
+
+> ⛔ 已降级 RUN_ID 55（18:04:17 exit=0，脚本已切、目录已重播；smoke 因 PATH 缺 bun 失败 → 见 RUN_ID 56）为 text。
+
+## RUN_ID 55 — 🔌 **把 vision / data 两条线切到各自 `.cline_<line>`（经 ssh .12）**（✅ 已执行 → 脚本已切、目录已重播；**smoke 需补 PATH**，见 RUN_ID 56）
 
 > **本轮目标**：vision（.12）+ data（.12）切到隔离目录；**harness 不动**（用户指定）。
 > **改了什么（已随本 commit push 到仓库）**：
@@ -43,7 +103,7 @@
 > 3. 在 .12 上 smoke 两个隔离目录 → **必须 OK**
 > 4. **仅当 .12 无活动旧 cline（不带 `--data-dir`）** 才重启 vision/data loop；然后验 `Forbidden==0`
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 echo; echo "=== [.12] 校验脚本 / 重播隔离目录 / smoke / 自保护重启 / 验证 ==="
 timeout 520 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
