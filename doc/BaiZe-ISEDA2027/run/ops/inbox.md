@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 52 -->
+<!-- RUN_ID: 53 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,55 @@
 
 ---
 
-## RUN_ID 52 — 🔬 **诊断：`--data-dir` 下 cline 为何连不上 API（带对照，只读）**（承接 RUN_ID 51）（**本块最新，优先执行**）
+## RUN_ID 53 — ✅ **修根因：补播 `settings/` 到隔离目录并重测 smoke**（承接 RUN_ID 52）（**本块最新，优先执行**）
+
+> **RUN_ID 52 定位（17:53:19 exit=0）**：
+> ① `-c/--cwd` = **工作目录**（不是配置）；`--config` = 配置目录（默认 `~/.cline`）；`--data-dir` = 隔离 local state。
+> ② **对照：不带 `--data-dir` → `OK`** ✅；**带 `--data-dir` → `Cannot connect to API … (ConnectionRefused)`**。
+> ③ 共享 `~/.cline/data` 里 **provider/base 不只在 `globalState.json`，还在 `settings/`**：`settings/providers.json`、`settings/models.json`（均含 baseUrl）+ `global-settings.json` / `cli-notices.json` / `cline_mcp_settings.json`。
+> ⇒ **根因 = 之前只播种了 `globalState.json` + `secrets.json`，漏了 `settings/`** → 隔离目录无 provider 配置 → cline 回落到默认 base（localhost）→ `ConnectionRefused`（这也解释了为何报错**不是 Forbidden**）。
+
+**做什么**
+1. 对每条线重播：`globalState.json` + `secrets.json` + **整个 `settings/`**（覆盖旧的空 settings）
+2. 4 条线逐个 smoke → 必须回 **OK**
+3. 复核各 `<D>/settings` 的 base 与共享一致
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME; B=/nas_train/app.e0031982; SRC="$H/.cline/data"
+CX=/home/app.e0031982/.bun/bin/cline
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "=== 1. 重播：settings/ + globalState.json + secrets.json ==="
+for n in pretrain harness vision data; do
+  D="$B/.cline_$n"; mkdir -p "$D"
+  cp -a "$SRC/globalState.json" "$SRC/secrets.json" "$D/" 2>/dev/null
+  rm -rf "$D/settings"; cp -a "$SRC/settings" "$D/settings" 2>/dev/null
+  chmod 600 "$D/secrets.json" 2>/dev/null
+  echo "   $D/ -> $(ls -1 "$D" 2>/dev/null | tr '\n' ' ')"
+  echo "     settings/ -> $(ls -1 "$D/settings" 2>/dev/null | tr '\n' ' ')"
+done
+
+echo; echo "=== 2. 逐个 smoke（必须回 OK）==="
+cd /tmp
+for n in pretrain harness vision data; do
+  D="$B/.cline_$n"
+  K=$(python3 -c "import json;print(json.load(open('$D/secrets.json'))['openAiApiKey'])" 2>/dev/null | tr -d '\r\n')
+  R=$(env $P timeout 90 "$CX" --data-dir "$D" -c /tmp -m glm-5.2 -k "$K" -P openai-compatible --auto-approve true -t 60 "reply with exactly OK" 2>&1 | tr -d '\r' | tr '\n' ' ' | cut -c1-170)
+  printf '   %-9s (key len %s) => %s\n' "$n" "${#K}" "$R"
+done
+
+echo; echo "=== 3. 复核各 <D>/settings 的 base ==="
+for n in pretrain harness vision data; do
+  D="$B/.cline_$n"
+  echo "   $n providers.json: $(grep -ho '\"baseUrl\"[[:space:]]*:[[:space:]]*\"[^\"]*\"' "$D/settings/providers.json" 2>/dev/null | head -2 | tr '\n' ' ')"
+done
+echo; echo "=== DONE ==="
+```
+
+> ⛔ 已降级 RUN_ID 52（17:53:19 exit=0，诊断完成，见 RUN_ID 53）为 text。
+
+## RUN_ID 52 — 🔬 **诊断：`--data-dir` 下 cline 为何连不上 API（带对照，只读）**（✅ 已执行 → **根因 = 漏播 `settings/`**，见 RUN_ID 53）
 
 > **RUN_ID 51 结果（17:49:27 exit=0）**：布局已纠正到 `<D>/`（且 cline 已在 `<D>/` 下自行建出 `cache db logs sessions settings`），**但 4 条线 smoke 仍全 `error: Cannot connect to API`**。
 > ⇒ 失败**不是**目录层级问题，而是**隔离后的配置缺东西**（或 `--data-dir` 语义另有讲究）。
@@ -44,7 +92,7 @@
 4. **问题 smoke**：`--data-dir <D>`（打印**完整**错误，含 URL）
 5. `<D>/` 内容 vs 共享（看缺了哪些）
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 H=$HOME; B=/nas_train/app.e0031982; SRC="$H/.cline/data"; D="$B/.cline_pretrain"
 CB=/home/app.e0031982/.bun/bin/cline
