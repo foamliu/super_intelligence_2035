@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 35 -->
+<!-- RUN_ID: 36 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,14 +31,62 @@
 
 ---
 
-## RUN_ID 35 — 🗑 **删除 LLaVA ckpt（**有界版**，兜底 RUN_ID 34）**（**已获用户批准：方案 B**）（**本块最新，优先执行**）
+## RUN_ID 36 — 🗑 **合并删除：LLaVA-1.5 的 1.16T + 4 个旧实验目录（≈2.5T）**（**均获用户批准**）（**本块最新，优先执行**）
+
+**用户已批准（2026-10-04）**：
+1. **方案 B** —— 全删 `code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b`（6×198G ≈ **1.16 TB**）
+2. **新批** —— 删 `code/chip-mllm`(896G) · `code/LLaVA`(716G) · `code/LLaVA-OneVision-2`(650G) · `code/circuitvision-encoder`(244G)，**≈2.5 TiB**
+
+**设计要点**：① **合并成一个块**（避免 35/36 互相抢占"第一个 bash 块"）② **幂等**（已删的自动跳过）③ **每步都有界**（`timeout`；P3 只扫几百 MB 的 git 副本，**绝不扫 8 TiB 的 `code/`**）④ 删前**打印身份证据**（顶层/`.git`/`.py` 计数/mtime）并**把小体积文本与 <300MB 的 `.git` 打包留证**。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+D=/nas_train/app.e0031982; CODE=$D/code
+LV=$CODE/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b
+T1=$CODE/chip-mllm; T2=$CODE/LLaVA; T3=$CODE/LLaVA-OneVision-2; T4=$CODE/circuitvision-encoder
+DFB=$(df -BG /nas_train | tail -1 | awk '{print $3}'); echo "   删前 Used = $DFB"
+
+echo; echo "=== 1. 身份证据 + P1（有界、不做重遍历）==="
+for P in $LV $T1 $T2 $T3 $T4; do
+  if [ -d "$P" ]; then
+    printf '   %-52s mtime=%s .git=%s P1=' "${P#$CODE/}" "$(stat -c %y "$P" | cut -c1-16)" "$([ -d "$P/.git" ] && echo Y || echo n)"
+    timeout 20 fuser -v "$P" 2>&1 | head -1 | tr -d '\n'; echo " (空=好)"
+  else echo "   ${P#$CODE/} : ✅ 不存在/已删"; fi
+done
+echo -n "   P3（一次有界 grep，只扫几百 MB 的 git 副本）: "
+timeout 90 grep -rlE 'stage_1.5_mid_training_llava_ov_14b|chip-mllm|circuitvision-encoder|LLaVA-OneVision-2' "$CODE/super_intelligence_2035" --include='*.sh' --include='*.py' --exclude-dir=.git 2>/dev/null | head -5
+echo "   ↑ 应空"
+echo "   P2：上述 mtime 均 ≤2026-07-31（>65 天未动）→ 满足"
+
+echo; echo "=== 2. 留证（顶层小文本 + <300MB 的 .git）==="
+for P in $LV $T1 $T2 $T3 $T4; do
+  [ -d "$P" ] || continue
+  N=$(basename "$P"); K="$(dirname "$P")/_ARCHIVE_${N}.tgz"; F=""
+  GS=$(du -sm "$P/.git" 2>/dev/null | cut -f1); [ -n "$GS" ] && [ "$GS" -lt 300 ] && F=".git"
+  ( cd "$P" && tar czf "$K" $F *.md *.txt *.json *.yaml *.yml *.sh *.py 2>/dev/null )
+  if [ -f "$K" ]; then echo "   $N -> $(du -h "$K" | cut -f1)"; else echo "   $N -> (无小文件，跳过)"; fi
+done
+
+echo; echo "=== 3. 🗑 启动【后台顺序】删除 ==="
+rm -f /tmp/_clean36.log /tmp/_clean36.done
+setsid nice -n 19 bash -c 'for P in "$@"; do echo "[$(date "+%T")] rm -rf $P"; rm -rf "$P"; echo "[$(date "+%T")] done: $([ -d "$P" ] && echo STILL || echo GONE)"; done; echo ALLDONE > /tmp/_clean36.done' _ "$LV" "$T1" "$T2" "$T3" "$T4" > /tmp/_clean36.log 2>&1 &
+sleep 8
+echo "   -- 进度（后台顺序删，1.16T 那个先来）--"; head -10 /tmp/_clean36.log 2>/dev/null | sed 's/^/     /'
+echo "   -- df 即时 --"; df -BG /nas_train | tail -1
+echo "   -- code/ 现状 --"; ls -1 "$CODE" 2>/dev/null | head -18 | sed 's/^/     /'
+echo; echo "=== DONE（后台仍在删；下轮读 /tmp/_clean36.log + /tmp/_clean36.done）==="
+```
+
+> ⛔ **已降级 RUN_ID 35**（有界删除，未执行——被本块合并取代）为 ```text。
+
+## RUN_ID 35 — 🗑 **删除 LLaVA ckpt（有界版）**（⛔ 未执行，已并入 RUN_ID 36）
 
 **为何再来一版**：RUN_ID 34 里的 **P3 `grep -rln … "$D/code"` 会遍历 8 TiB 的 `code/`** → **大概率卡到 relay 的 600s 超时**（=我的设计失误）。本版把**每一步都加了超时**，且 **P3 只扫共享 git 副本**（`super_intelligence_2035`，几百 MB），不再扫 8 TiB。
 
 **目标**：`/nas_train/app.e0031982/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b`（6 × 198 G ≈ **1.16 TB**，mtime 2026-03）。
 **若 RUN_ID 34 已经删掉** → 本版会显示 `GONE`，直接跳过（幂等）。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 D=/nas_train/app.e0031982
 T=$D/code/hell/LLaVA-OneVision-1.5/stage_1.5_mid_training_llava_ov_14b
