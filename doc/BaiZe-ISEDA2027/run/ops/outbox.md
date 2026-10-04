@@ -4575,3 +4575,106 @@ lrwxrwxrwx 1 app.e0031982 app.adm 54 Sep  8 09:20 /home/app.e0031982/.bun/bin/cl
 
 === DONE（后台仍在删；下轮读 /tmp/_cleanhome.log + .done + df 核验）===
 ```
+
+---
+
+## RUN_ID 41 · 2026-10-04 11:40:56 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME
+
+echo; echo "=== 1. 后台清理日志（全文）==="
+cat /tmp/_cleanhome.log 2>/dev/null | sed 's/^/   /'
+echo "   done 标记 = $([ -f /tmp/_cleanhome.done ] && cat /tmp/_cleanhome.done || echo 'NO（仍在跑）')"
+echo -n "   rm 进程数 = "; pgrep -fc 'rm -rf /home/app.e0031982' 2>/dev/null || echo 0
+
+echo; echo "=== 2. 七个目标最终状态 ==="
+for p in "$H/.cache/uv" "$H/.cache/pip" "$H/.bun/install/cache" "$H/.npm/_cacache" "$H/.cache/vllm" "$H/.triton" "$H/.cache/huggingface"; do
+  if [ -e "$p" ]; then echo "   ⚠️ STILL : ${p#$H/}"; else echo "   ✅ GONE  : ${p#$H/}"; fi
+done
+
+echo; echo "=== 3. /home 最终 df（基线 196G/171G used/16G avail/92%）==="
+df -BG /home | tail -1
+df -hT /home | tail -1
+
+echo; echo "=== 4. ⚠️ 关键：cline / codex / opencode 本体必须仍在 ==="
+ls -l "$H/.bun/bin/cline" 2>/dev/null | cut -c1-95
+ls -d "$H/.bun/install/global/node_modules/@cline" 2>/dev/null | cut -c1-115
+for b in "$H/.local/bin/codex" "$H/.local/bin/opencode"; do [ -x "$b" ] && echo "   OK  $b" || echo "   (无) $b"; done
+echo -n "   which: "; command -v cline 2>/dev/null; command -v codex 2>/dev/null; command -v opencode 2>/dev/null
+
+echo; echo "=== 5. HOME 一级现状（前 12）==="
+rm -f /tmp/_duhome2.txt /tmp/_duhome2.done
+setsid bash -c "nice -n 19 du -sh $H/* $H/.[!.]* > /tmp/_duhome2.txt 2>/dev/null; echo done > /tmp/_duhome2.done" </dev/null >/dev/null 2>&1 &
+sleep 14
+echo "   行数=$(wc -l < /tmp/_duhome2.txt 2>/dev/null) done=$([ -f /tmp/_duhome2.done ] && echo YES || echo NO)"
+sort -hr /tmp/_duhome2.txt 2>/dev/null | head -12 | sed 's/^/   /'
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 11:40:56
+
+=== 1. 后台清理日志（全文）===
+   [11:38:37] rm -rf /home/app.e0031982/.cache/uv
+   [11:38:39] done: GONE
+   [11:38:39] rm -rf /home/app.e0031982/.cache/pip
+   [11:38:39] done: GONE
+   [11:38:39] rm -rf /home/app.e0031982/.bun/install/cache
+   [11:38:47] done: GONE
+   [11:38:47] rm -rf /home/app.e0031982/.npm/_cacache
+   [11:38:47] done: GONE
+   [11:38:47] rm -rf /home/app.e0031982/.cache/vllm
+   [11:38:47] done: GONE
+   [11:38:47] rm -rf /home/app.e0031982/.triton
+   [11:38:48] done: GONE
+   [11:38:48] rm -rf /home/app.e0031982/.cache/huggingface
+   [11:38:48] done: GONE
+   done 标记 = ALLDONE
+   rm 进程数 = 0
+0
+
+=== 2. 七个目标最终状态 ===
+   ✅ GONE  : .cache/uv
+   ✅ GONE  : .cache/pip
+   ✅ GONE  : .bun/install/cache
+   ✅ GONE  : .npm/_cacache
+   ✅ GONE  : .cache/vllm
+   ✅ GONE  : .triton
+   ✅ GONE  : .cache/huggingface
+
+=== 3. /home 最终 df（基线 196G/171G used/16G avail/92%）===
+/dev/mapper/vgroot-lv_home      196G   50G      137G  27% /home
+/dev/mapper/vgroot-lv_home ext4  196G   50G  137G  27% /home
+
+=== 4. ⚠️ 关键：cline / codex / opencode 本体必须仍在 ===
+lrwxrwxrwx 1 app.e0031982 app.adm 54 Sep  8 09:20 /home/app.e0031982/.bun/bin/cline -> ../insta
+/home/app.e0031982/.bun/install/global/node_modules/@cline
+   OK  /home/app.e0031982/.local/bin/codex
+   OK  /home/app.e0031982/.local/bin/opencode
+   which: /home/app.e0031982/.bun/bin/cline
+/home/app.e0031982/.local/bin/codex
+/home/app.e0031982/.local/bin/opencode
+
+=== 5. HOME 一级现状（前 12）===
+   行数=32 done=YES
+   5.6G	/home/app.e0031982/.cline
+   3.8G	/home/app.e0031982/.local
+   1.6G	/home/app.e0031982/.npm-global
+   725M	/home/app.e0031982/.vscode-server
+   427M	/home/app.e0031982/.npm
+   322M	/home/app.e0031982/.cache
+   89M	/home/app.e0031982/.bun
+   53M	/home/app.e0031982/chip-mllm
+   1.3M	/home/app.e0031982/.codex
+   136K	/home/app.e0031982/.config
+   36K	/home/app.e0031982/.nv
+   24K	/home/app.e0031982/.ssh
+
+=== DONE ===
+```
