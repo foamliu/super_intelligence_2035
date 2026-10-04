@@ -5,13 +5,26 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A pilot batch v2 running (13/30 instances processed, 12 fully scored) + SWEBENCH_COMPARE.html at 12 instances
-已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A 12/30 scored (10 eval + 2 smoke)
-当前动作:     R55: relay healthy skip (9th) + batch v2 progress check (12/30 scored, instance 13/30 in progress)
-下一步:       等 batch v2 跑完 → 汇总 pilot_results.json → 更新 SWEBENCH_COMPARE.html 最终结果 → 考虑 quota 优化策略
+PHASE:        H-A pilot batch v2 running (15/30 instances scored) + SWEBENCH_COMPARE.html updated to 17 instances
+已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A 15/30 scored (15 pilot + 2 smoke)
+当前动作:     R56: relay healthy skip (10th) + batch v2 progress check (15/30 scored, sympy-11870 quota retry) + SWEBENCH_COMPARE.html updated to 17 inst
+下一步:       等 batch v2 跑完 30/30 → 汇总 pilot_results.json → 更新 SWEBENCH_COMPARE.html 最终版 → 考虑 quota 优化策略
 阻塞:         无（relay 健康、batch alive wchan=do_select、github 可达；quota 5h 窗口致 11039+ 空 patch 但非阻塞）
 ERROR_COUNT:  0
 ```
+
+## 🆕 第五十六轮速览（2026-10-05 03:30）
+
+- ✅ **ops 中继复核（响应运维 2026-10-04 第 2 条，第 10 次）→ 健康，跳过重启**。① relay `2489749 1 299734 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、etimes≈3.47d）；② `cat ops/.last_run_id`=`63`（无新单，62+63 已执行）；③ `grep -c 'RUN_ID 62' ops/outbox.md`=`1`（62 已执行）；④ log 末行 `[relay] RUN_ID=63 executed, exit=0`；⑤ **⭐ `timeout 30 git fetch origin` → exit=0**（github 持续可达）；⑥ 无 index.lock（仅 1 个 NFS temp `.nfs*` 无害）；⑦ `pstree`=`bash---sleep`（正常）。**判据**：git fetch exit=0 + .last_run_id=63 → **跳过重启**。✅ URGENT 完成。
+- ✅ **无新运维指令**：task file 仍 `4d1c276`，无新批次。
+- 📊 **batch v2 进度**（PID 4045197，etimes≈14744s≈4.1h，wchan=do_select=running subprocess）：**15/30 完整评分**（django 10924~11742，当前 instance 16/30 sympy__sympy-11870 cline-patched quota retry 3606s）。
+  - **pilot_results.json 已产出**（65KB，15 entries）：Aggregate resolve = codex 2/15 (13%), cline 1/15 (7%), opencode 1/15 (7%), claude-code 1/15 (7%)。
+  - **Patch size 确认 quota 瓶颈**：10924(cline 7826B+codex 3174B)、11001(全 4 real)、11019(cline 8276B only) 有 real patch；**11039~11742 全 0B 空 patch**（5h 窗口耗尽）。
+  - **Quota-OK resolve rate（fair metric）**：codex 2/2 (100%), cline 1/3 (33%), opencode 1/1 (100%), claude-code 1/1 (100%)。
+  - **11001=4/4 全 resolve 🎉**（F2P 2/2, P2P 118/118）；10924=codex only resolve；11019=all 0/16 F2P（hard instance, cline 有 real patch 但 16 个 F2P 全失败）。
+- ✅ **SWEBENCH_COMPARE.html 更新**：12→17 instances（2 smoke + 15 pilot），10/30→15/30 scored，新增 5 instance rows（11564~11742），更新 failure mode table（3/10→3/15 等）、combined summary、caveats、footer。
+- ⏭ **下一步**：① 让 batch v2 继续后台跑（sympy-11870 quota retry 中，剩余 ~14 instances × 4 harnesses）→ ② 跑完 30/30 后最终汇总 → ③ 更新 SWEBENCH_COMPARE.html 最终版。保持 `WAITING=1`。
+
 
 ## 🆕 第五十五轮速览（2026-10-05 02:49）
 
