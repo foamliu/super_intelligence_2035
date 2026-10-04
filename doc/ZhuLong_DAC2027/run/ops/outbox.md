@@ -852,3 +852,72 @@ HTTP=200
 HTTP=200
 ===== DONE =====
 ```
+
+---
+
+## RUN_ID 8 · 2026-10-04 21:53:51 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 8 — set cline base URL for glm-5.2 (fix Forbidden), then restart loop
+REPO=/nasdata/app.e0031982/code/super_intelligence_2035
+LD="$REPO/doc/ZhuLong_DAC2027/run/zhulong_loop.sh"
+K=02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23
+BASE=http://agi-gateway.cxmt.com/cloud/v1
+echo "===== 0. TIME ====="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "===== 1. current cline config ====="; timeout 15 ls -la ~/.cline/data/ 2>/dev/null | head -20
+echo "   openAiBaseUrl now:"; timeout 10 grep -o '"openAiBaseUrl"[^,]*' ~/.cline/data/globalState.json 2>/dev/null | head -2
+echo "===== 2. cline auth (write glm-5.2 base url) ====="
+timeout 60 cline auth -p openai -k "$K" -b "$BASE" -m "glm-5.2" 2>&1 | tail -6 | cut -c1-160
+echo "===== 3. after: openAiBaseUrl ====="; timeout 10 grep -o '"openAiBaseUrl"[^,]*' ~/.cline/data/globalState.json 2>/dev/null | head -2
+echo "===== 4. restart loop ====="; pkill -f zhulong_loop.sh; sleep 3; setsid bash "$LD" > /tmp/zhulong_loop.log 2>&1 < /dev/null & sleep 12
+echo "===== 5. loop log tail (Forbidden gone?) ====="; timeout 10 tail -n 12 /tmp/zhulong_loop.log | cut -c1-160
+echo "===== 6. loop proc ====="; timeout 10 pgrep -af zhulong_loop.sh | cut -c1-140
+echo "===== DONE ====="
+```
+
+**输出**
+```
+===== 0. TIME =====
+2026-10-04 21:53:51
+hfeg0tedaap02
+===== 1. current cline config =====
+total 308
+drwxr-x---   10 app.e0031982 app.adm   4096 Oct  4 12:21 .
+drwxr-x---    4 app.e0031982 app.adm   4096 Sep 22 16:09 ..
+drwx------    2 app.e0031982 app.adm   4096 Jul 29 13:50 cache
+drwxr-x---    2 app.e0031982 app.adm   4096 Oct  4 15:00 db
+-rw-r--r--    1 app.e0031982 app.adm   2914 Sep 29 18:48 globalState.json
+drwxr-x---    2 app.e0031982 app.adm   4096 Jul 29 08:29 logs
+-rw-r-----    1 app.e0031982 app.adm     96 Sep  1 17:23 secrets.json
+drwxr-x---   24 app.e0031982 app.adm   4096 Oct  4 21:45 sessions
+drwxr-x---    2 app.e0031982 app.adm   4096 Oct  4 21:45 settings
+drwxr-x---    2 app.e0031982 app.adm   4096 Sep  1 17:24 state
+drwxr-x--- 1738 app.e0031982 app.adm 135168 Sep  1 17:23 tasks
+drwxr-x--- 1648 app.e0031982 app.adm 131072 Sep 29 13:48 workspaces
+   openAiBaseUrl now:
+"openAiBaseUrl": "http://agi-gateway.cxmt.com/v1"
+===== 2. cline auth (write glm-5.2 base url) =====
+[32mProvider configured:[0m [36mopenai-compatible[0m (glm-5.2)
+===== 3. after: openAiBaseUrl =====
+"openAiBaseUrl": "http://agi-gateway.cxmt.com/v1"
+===== 4. restart loop =====
+===== 5. loop log tail (Forbidden gone?) =====
+6. Exit[0m[2m immediately
+
+The operator[0m[2m notes section says I[0m[2m should jump directly[0m[2m to §7 conventional[0m[2m flow. Let me[0m[2m first[0m[2m read[0m[2m the m
+
+Let[0m[2m me start by reading[0m[2m the key files to[0m[2m understand where[0m[2m things[0m[2m stand.
+
+[0m[2mThe current[0m[2m working directory is `/[0m[2mnasdata/app.e[0m[2m0031982[0m[2m/code/super_int[0m[2melligence_2035[0m[2m/doc/ZhuLong[0m[2m
+
+Let me read[0m[2m the memory[0m[2m file and check[0m[2m the daily[0m[2m memories[0m[2m. Also[0m[2m need[0m[2m to check infra[0m[2m.
+
+[0m[2mLet me batch[0m[2m these[0m[2m reads.[0m
+I'll start by reading the current state from the memory file and today's daily memory, plus checking the run directory structure — all in parallel.
+===== 6. loop proc =====
+1755841 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+1755848 cline -c /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run --auto-approve true -m glm-5.2 -k 02_088EE9051AA
+1756308 timeout 10 pgrep -af zhulong_loop.sh
+===== DONE =====
+```
