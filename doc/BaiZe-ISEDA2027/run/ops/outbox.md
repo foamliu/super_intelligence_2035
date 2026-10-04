@@ -5304,3 +5304,82 @@ P[0m[2m-9.7[0m[2m requirements:
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 50 · 2026-10-04 17:46:41 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+H=$HOME; B=/nas_train/app.e0031982
+C=/home/app.e0031982/.bun/bin/cline
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+
+echo; echo "=== 1. --data-dir 的语义与布局 ==="
+"$C" --help 2>&1 | grep -i -B1 -A2 'data-dir' | head -8 | cut -c1-140
+echo "   -- harness 已在用的那份长什么样 --"
+find /nas_train/app.e0031982/harness_work -maxdepth 4 -name 'globalState.json' 2>/dev/null | head -3 | sed 's/^/     /'
+for d in /nas_train/app.e0031982/harness_work/*/ /nas_train/app.e0031982/harness_work/*/*/; do
+  [ -d "$d/data" ] && { echo "     ★ 布局 = <D>/data/  （例 $d）"; ls -1 "$d/data" 2>/dev/null | head -5 | sed 's/^/         /'; break; }
+done
+
+echo; echo "=== 2. 逐线建独立 data-dir + 播种配置 ==="
+SRC="$H/.cline/data"
+echo "   源 base = $(sed -n 's/.*\"openAiBaseUrl\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p' "$SRC/globalState.json" | head -1)"
+for n in pretrain harness vision data; do
+  D="$B/.cline_$n"; mkdir -p "$D/data"
+  cp -a "$SRC/globalState.json" "$D/data/globalState.json" 2>/dev/null
+  cp -a "$SRC/secrets.json"     "$D/data/secrets.json"     2>/dev/null
+  chmod 600 "$D/data/secrets.json" 2>/dev/null
+  echo "   $D/data/ -> $(ls -1 "$D/data" 2>/dev/null | tr '\n' ' ')"
+done
+
+echo; echo "=== 3. 逐个 smoke（必须 OK）==="
+cd /tmp
+for n in pretrain harness vision data; do
+  D="$B/.cline_$n"
+  K=$(python3 -c "import json;print(json.load(open('$D/data/secrets.json'))['openAiApiKey'])" 2>/dev/null | tr -d '\r\n')
+  R=$(env $P timeout 60 "$C" --data-dir "$D" -c /tmp -m glm-5.2 -k "$K" -P openai-compatible --auto-approve true -t 45 "reply with exactly OK" 2>&1 | head -2 | tr -d '\r' | tr '\n' ' ')
+  printf '   %-9s (key len %s) => %s\n' "$n" "${#K}" "${R:0:120}"
+done
+
+echo; echo "=== 4. 共享配置（现状）—— 仍在 pretrain 手里，值应正常 ==="
+echo "   ~/.cline/data/globalState.json base = $(sed -n 's/.*\"openAiBaseUrl\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p' "$SRC/globalState.json" | head -1)"
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 17:46:41
+
+=== 1. --data-dir 的语义与布局 ===
+  --config <path>               Configuration directory (default: ~/.cline)
+  --data-dir <path>             Use isolated local state at this directory path
+                                (default: ~/.cline/data)
+  --hooks-dir <path>            Directory path to additional hooks for runtime
+   -- harness 已在用的那份长什么样 --
+     /nas_train/app.e0031982/harness_work/cline_harness_data/globalState.json
+     ★ 布局 = <D>/data/  （例 /nas_train/app.e0031982/harness_work/swe-bench-tasks/dockerfile_gen/）
+         __init__.py
+
+=== 2. 逐线建独立 data-dir + 播种配置 ===
+   源 base = http://agi-gateway.cxmt.com/cloud/v1
+   /nas_train/app.e0031982/.cline_pretrain/data/ -> globalState.json secrets.json 
+   /nas_train/app.e0031982/.cline_harness/data/ -> globalState.json secrets.json 
+   /nas_train/app.e0031982/.cline_vision/data/ -> globalState.json secrets.json 
+   /nas_train/app.e0031982/.cline_data/data/ -> globalState.json secrets.json 
+
+=== 3. 逐个 smoke（必须 OK）===
+   pretrain  (key len 72) => [31merror:[0m Cannot connect to API: Unable to connect. Is the computer able to access the url?: Unable to connect. Is
+   harness   (key len 72) => [31merror:[0m Cannot connect to API: Unable to connect. Is the computer able to access the url?: Unable to connect. Is
+   vision    (key len 72) => [31merror:[0m Cannot connect to API: Unable to connect. Is the computer able to access the url?: Unable to connect. Is
+   data      (key len 72) => [31merror:[0m Cannot connect to API: Unable to connect. Is the computer able to access the url?: Unable to connect. Is
+
+=== 4. 共享配置（现状）—— 仍在 pretrain 手里，值应正常 ===
+   ~/.cline/data/globalState.json base = http://agi-gateway.cxmt.com/cloud/v1
+
+=== DONE ===
+```
