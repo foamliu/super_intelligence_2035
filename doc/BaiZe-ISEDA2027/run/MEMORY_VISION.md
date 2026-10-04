@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ · R11-L2 ✅ · caption-weight ✅ · R13 ✅ · R11-E ✅ · 臂⑥ AIMv2 ✅ 翻盘**；**R11-F：Arm A ✅(5.53) · B ✅(6.17) · C ✅(5.92) · E ❌端口碰撞未训 · D ❌shard<worker未训**（Q1/Q3=无显著差异，Q2悬置待E重跑，§15.6已落盘）；**R11-G 🔄 运行中** step≈7300/108000 @00:55（C1≈0.40/C2_gap+0.11/C4=OK，~210ms/iter→ETA~06:45≈6h **超4h护栏**）→ 链自动接 R11-H（`/tmp/r11_overnight_chain.sh` PID 4032740 ppid=1） |
-| WAITING | 1（**语义=R11-G 108k 训练运行中 → 30min 轮询**；step≈7300/108000 @00:55，健康无坍缩，ETA~06:45（≈6h，**超运维§七 4h 护栏→R11-H 应顺延，但链无护栏会自动接，已flag待运维定**）；下次唤醒：若G训完→回收11点lp+幂律/对数线性拟合R²+渐近a vs InfoNCE 25.1%；GPU空后→Arm E重跑(稳健端口)+Arm D重跑(empty_check=False已修)补Q2） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ · R11-L2 ✅ · caption-weight ✅ · R13 ✅ · R11-E ✅ · 臂⑥ AIMv2 ✅ 翻盘**；**R11-F：Arm A ✅(5.53) · B ✅(6.17) · C ✅(5.92) · E ❌端口碰撞未训 · D ❌shard<worker未训**（Q1/Q3=无显著差异，Q2悬置待E重跑，§15.6已落盘）；**R11-G 🔄 运行中** step≈26050/108000 @02:32（24%，C1≈0.34/C2_gap+0.12/C4=OK/scale≈63 健康，~200ms/iter→ETA~07:15≈6h **超4h护栏**），2 ckpt 已存(step10k@01:30/step20k@02:10)→ 链自动接 R11-H（`/tmp/r11_overnight_chain.sh` PID 4032740 ppid=1） |
+| WAITING | 1（**语义=R11-G 108k 训练运行中 → 30min 轮询**；step≈26050/108000 @02:32，健康无坍缩(C1≈0.34/C2_gap+0.12/C4=OK/loss_ema~3.0-3.4/scale≈63)，ETA~07:15（≈6h，**超运维§七 4h 护栏→R11-H 应顺延，但链无护栏会自动接，已flag待运维定；无争用任务实际可接受**）；下次唤醒：若G训完→回收11点lp+幂律/对数线性拟合R²+渐近a vs InfoNCE 25.1%；GPU空后→Arm E重跑(稳健端口)+Arm D重跑(empty_check=False已修)补Q2） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10 + R11-L/②③④ + R11-L2 LoRA + R11-L caption-weight + R11-E GPIC（8.65 GPU·h）+ **臂⑥ AIMv2（✅ 7076s≈1.97h×8卡≈15.7 GPU·h）+ AIMv2 4-ckpt eval（~13min×1卡≈0.22 GPU·h）** + **R11-F 🟢 进行中**（Arm A GPIC short 30k@~80ms→~40min×8卡；5 臂串行总 ~5–6h×8 卡 ≈ 40–48 GPU·h） |
-| 更新 | **2026-10-05 00:55（R11-F A/B/C✅落盘+Q1/Q3裁定+E/D失败诊断+data.py修empty_check+R11-G巡检）** · 2026-10-05 00:46（Arm C 训完+eval中） · 2026-10-04 23:38（NFS崩溃修复+overnight chain启动） · 2026-10-04 22:56（R11-G/H代码+脚本+链✅） · 2026-10-04 20:30（AIMv2 ✅ 翻盘） |
+| 更新 | **2026-10-05 02:32（R11-G 巡检：step26050/108000=24% 健康，2 ckpt 已存，ETA~07:15，无坍缩，链正常）** · 2026-10-05 00:55（R11-F A/B/C✅落盘+Q1/Q3裁定+E/D失败诊断+data.py修empty_check+R11-G巡检） · 2026-10-05 00:46（Arm C 训完+eval中） · 2026-10-04 23:38（NFS崩溃修复+overnight chain启动） · 2026-10-04 22:56（R11-G/H代码+脚本+链✅） · 2026-10-04 20:30（AIMv2 ✅ 翻盘） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -153,7 +153,7 @@ WAITING: 1
   - `py_compile` ✅；`--help` ✅ 确认两新 arg 注册；ckpt config 增 `contrast_weight`/`c2_collapse_guard` 可追溯。
 - ✅ **脚本**：`r11g_run_aimv2_long.sh`（108k 步，save-every 10000 → 11 ckpt + 自动 IN-1k eval）、`r11h_run_pure_ar.sh`（30k 步，contrast=0 c2guard=0 + 4-ckpt eval）；`bash -n` ✅。
 - ⚠️ **旧链 `r11fgh_chain.sh` 已退出**（NFS Stale file handle 崩溃后未恢复）→ **已由 `/tmp/r11_overnight_chain.sh` 接管**：该合并链在 R11-F Arms C/E/D 完成后**自动**接 R11-G → R11-H，无需人工干预。
-- 🔄 **R11-G 运行中**（00:51:27 起，PID 1019839 torchrun）：step≈7300/108000 @00:55（6.8%），健康无坍缩（C1≈0.40 / C2_gap≈+0.11 / C4=OK / scale≈57 健康 / loss_ema 3.7→3.24 递减 / contrast≈3.0 / patch_mse≈0.24）；~210ms/iter → ETA **~06:45（≈6h）**。⚠️ **超运维§七 4h 护栏** → R11-H 按约束应顺延到下一空窗，但 overnight chain **无 4h 护栏会自动接 R11-H**；已 flag，**待运维拍板是否干预**（若不干预，R11-H ~06:45–08:00 跑完，无争用任务，实际可接受）。
+- 🔄 **R11-G 运行中**（00:51:27 起，PID 1019839 torchrun，ppid=4032740 链）：step≈26050/108000 @02:32（**24.1%**），健康无坍缩（C1≈0.33-0.36 / C2_gap≈+0.12 / C4=OK / scale≈63 健康 / loss_ema ~3.0-3.4 / contrast≈3.0 / patch_mse≈0.21）；~200ms/iter → ETA **~07:15（≈6h）**。✅ 2 ckpt 已存盘（step10000@01:30 · step20000@02:10，各 507MB）；save-every 10000 → 共 11 点(step10k..100k+final)；eval 在**训完**后批量跑（r11g 脚本 collect all step*.pt → `r8_eval_in1k.py --ckpts`）。⚠️ **超运维§七 4h 护栏** → R11-H 按约束应顺延到下一空窗，但 overnight chain **无 4h 护栏会自动接 R11-H**；已 flag，**待运维拍板是否干预**（若不干预，R11-H ~07:15–08:30 跑完，无争用任务，实际可接受）。
 - ⬜ 待回填：R11-G 11 点 lp（save-every 10k）→ 幂律/对数线性拟合 R²+渐近 a vs InfoNCE 25.1%；R11-H 4 点 lp vs ⑥-A/基线 → 翻盘是否依赖对比项裁定（§14.3）。
 
 
