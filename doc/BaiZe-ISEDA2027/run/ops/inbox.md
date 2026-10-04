@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 44 -->
+<!-- RUN_ID: 45 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,7 +31,50 @@
 
 ---
 
-## RUN_ID 44 — 🔑 **用 python3 重做候选验证（awk 多字节分隔符失败）**（**只读**）（**本块最新，优先执行**）
+## RUN_ID 45 — 🚀 **阶段1：重启 pretrain loop（让额度体检/自动轮换生效）+ 就地验证**（**已获批准**）（**本块最新，优先执行**）
+
+**背景**：`b75ff3b` 已把「额度/鉴权体检 + 自动轮换」写进 4 条 loop（helper `run/llm_rotate.sh`）。但**跑着的仍是旧进程** → 必须重启才生效。
+**本轮 = 分阶段的第一步：只重启 pretrain**，验证 `[llmrot]` 生效、cline 正常起来、`openAiBaseUrl` 被正确设置；**确认无误后再重启其余 3 条**（阶段2）。
+
+🚫 **本块只动 pretrain**；不动 harness / vision / data；不动训练。
+⚠️ 若重启后 **45 秒内进程不在或日志报错** → 立即回退：`git -C $WK checkout HEAD~1 -- doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh` 并重启（脚本里已写）。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+WK=/nas_train/app.e0031982/code/super_intelligence_2035
+RUN=$WK/doc/BaiZe-ISEDA2027/run
+
+echo; echo "=== 1. 取最新脚本 + 静态检查 ==="
+git -C "$WK" fetch origin --quiet 2>/dev/null
+git -C "$WK" checkout origin/main -- doc/BaiZe-ISEDA2027/run/llm_rotate.sh doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh \
+    doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh doc/BaiZe-ISEDA2027/run/baize_vision_loop.sh doc/BaiZe-ISEDA2027/run/baize_data_loop.sh && echo "   checked out"
+ls -l "$RUN/llm_rotate.sh" | cut -c1-95
+echo -n "   pretrain 里 llm_pick 出现次数 = "; grep -c 'llm_pick' "$RUN/baize_pretrain_loop.sh"
+echo -n "   llm_rotate.sh 里的 CR 行数（应为 0）= "; awk '/\r/{n++} END{print n+0}' "$RUN/llm_rotate.sh"
+echo -n "   bash -n: "; if bash -n "$RUN/llm_rotate.sh" 2>/dev/null && bash -n "$RUN/baize_pretrain_loop.sh" 2>/dev/null; then echo OK; else echo FAIL; fi
+
+echo; echo "=== 2. 阶段1：只重启 pretrain ==="
+ps -eo pid=,etimes=,args= 2>/dev/null | grep 'baize_pretrain_loop.sh' | grep -v grep | cut -c1-95
+pkill -f 'baize_pretrain_loop.sh'; sleep 5
+pgrep -af 'baize_pretrain_loop.sh' | cut -c1-95 || echo "   旧进程已停止"
+cd "$RUN"
+setsid bash baize_pretrain_loop.sh > /tmp/baize_pretrain_loop.log 2>&1 < /dev/null &
+sleep 45
+echo "   -- 进程 --"; pgrep -af 'bash baize_pretrain_loop.sh' | cut -c1-115
+echo "   -- 日志尾（期望出现 [llmrot] 选中 #N … probe=200）--"; tail -12 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-165
+echo "   -- 有无语法/命令错误 --"; grep -nE 'syntax error|command not found|No such file' /tmp/baize_pretrain_loop.log 2>/dev/null | head -4 | cut -c1-140
+echo "   -- cline 起没起来 --"; pgrep -af 'bun.*cline' | cut -c1-100 | head -2 || echo "   (暂无 cline 进程)"
+
+echo; echo "=== 3. 体检结果核对 ==="
+echo -n "   globalState.openAiBaseUrl = "; sed -n 's/.*"openAiBaseUrl"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.cline/data/globalState.json" 2>/dev/null | head -1
+echo -n "   .llmrot.bak 备份是否已生成 = "; [ -f "$HOME/.cline/data/globalState.json.llmrot.bak" ] && echo YES || echo "no（未发生 base 变更，正常）"
+echo -n "   轮换状态文件 = "; cat /tmp/baize_pretrain_llm_idx 2>/dev/null || echo "(未写)"
+echo; echo "=== DONE ==="
+```
+
+> ⛔ **已降级 RUN_ID 44**（候选验证，**✅ 已执行 16:54:38 exit=0** → 7/8 可用 + **base 必须匹配**）为 ```text。
+
+## RUN_ID 44 — 🔑 **python3 重做候选验证**（✅ 已执行 → **429=额度耗尽实锤**；`flash@/v1=200` 但 `@/cloud/v1=403`）
 
 **RUN_ID 43 战果**：
 - ✅ **cline 的 LLM base URL = 配置项 `openAiBaseUrl`**（源码 17729 行）；env `CLINE_API_BASE_URL` 是 **Cline 平台自身 API**（`mcpBaseUrl`），**不是** provider base
@@ -40,7 +83,7 @@
 
 **本轮（只读）**：① 用 python3 解析 `doc/keys.txt` 得 8 个 chat LLM；② **逐个 curl `/chat/completions`**；③ **并对 `deepseek-v4-flash` 额外测 `/v1` 与 `/cloud/v1` 两个 base** —— 判定「base 是否必须与模型匹配」。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 R=/nas_train/app.e0031982/code/super_intelligence_2035
 K=$R/doc/keys.txt
