@@ -4753,3 +4753,86 @@ lrwxrwxrwx 1 app.e0031982 app.adm 42 Oct  4 12:00 /home/app.e0031982/.cache/hugg
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 43 · 2026-10-04 16:51:25 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+K=$R/doc/keys.txt
+[ -f "$K" ] && echo "   keys.txt OK ($(wc -l < "$K") 行)" || { echo "   !!! keys.txt 缺失: $K"; find /nas_train/app.e0031982 -maxdepth 4 -name 'keys.txt' 2>/dev/null | head -3; }
+
+echo; echo "=== 1. cline 源码里 base URL 的来源 ==="
+for cs in "$HOME/.bun/install/global/node_modules/@cline/cli/src/index.ts" "$HOME/.bun/install/global/node_modules/@cline/cli/dist/index.js"; do
+  [ -f "$cs" ] || continue
+  echo "   -- $(basename "$cs") ($(stat -c%s "$cs") B) --"
+  timeout 60 grep -nE 'baseURL|base_url|BASE_URL|openAiBaseUrl|openai-compatible|OPENAI_API_URL' "$cs" 2>/dev/null | head -14 | cut -c1-175
+done
+
+echo; echo "=== 2. 当前 cline 配置（base / model / provider）==="
+G="$HOME/.cline/data/globalState.json"
+sed -n 's/.*"openAiBaseUrl"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/   openAiBaseUrl   = \1/p' "$G" 2>/dev/null
+sed -n 's/.*"actModeOpenAiModelId"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/   actModeModelId  = \1/p' "$G" 2>/dev/null
+sed -n 's/.*"actModeApiProvider"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/   actModeProvider = \1/p' "$G" 2>/dev/null
+sed -n 's/.*"planModeApiProvider"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/   planModeProvider= \1/p' "$G" 2>/dev/null
+
+echo; echo "=== 3. 8 个 chat LLM 逐个 curl（200=key 有效；排除 asr/seedream）==="
+awk -F'：' '
+  /模型名字/ {m=$2; gsub(/[ \t\r]/,"",m)}
+  /API Key/  {k=$2; gsub(/[ \t\r]/,"",k)}
+  /Base Url \(OpenAI\)/ {b=$2; gsub(/[ \t\r]/,"",b); if (m!="" && k!="" && b!="") {print m"|"k"|"b"; m="";k="";b=""}}
+' "$K" 2>/dev/null | sort -u | while IFS='|' read -r m k b; do
+  case "$m" in *asr*|*seedream*) printf '   [跳过-非chat] %s\n' "$m"; continue;; esac
+  code=$(timeout 20 curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $k" -H 'Content-Type: application/json' \
+    -d "{\"model\":\"$m\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}],\"max_tokens\":2}" "$b/chat/completions" 2>/dev/null)
+  printf '   %-30s %-40s -> %s\n' "$m" "$b" "$code"
+done
+
+echo; echo "=== 4. 相关 env（脱敏）==="
+python3 -c "import os;[print('  ',k,'len',len(v),'pfx',v[:14]) for k,v in sorted(os.environ.items()) if any(t in k.upper() for t in ('OPENAI','CLINE','ANTHROPIC'))]" 2>/dev/null || env | grep -iE 'openai|cline|anthropic' | sed -E 's/=(.{0,14}).*/= \1.../' | cut -c1-90
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-04 16:51:25
+   keys.txt OK (58 行)
+
+=== 1. cline 源码里 base URL 的来源 ===
+   -- index.ts (3206 B) --
+   -- index.js (28196283 B) --
+17729:    openAiBaseUrl: exports_external.string().optional(),
+17909:    "openai-compatible",
+18062:  if (env.CLINE_API_BASE_URL) {
+18065:      apiBaseUrl: env.CLINE_API_BASE_URL,
+18066:      mcpBaseUrl: `${env.CLINE_API_BASE_URL}/v1/mcp`
+24472:  if (n.CLINE_API_BASE_URL)
+24473:    r = { ...r, apiBaseUrl: n.CLINE_API_BASE_URL, mcpBaseUrl: `${n.CLINE_API_BASE_URL}/v1/mcp` };
+30344:  pl = u.object({ models: u.array(al).optional(), openAiBaseUrl: u.string().optional(), openAiHeaders: u.record(u.string(), u.string()).optional(), azureApiVersion: u.st
+30441:  bN = w$.enum(["anthropic", "ai-sdk", "ai-sdk-community", "openai", "openai-compatible", "openai-r1", "gemini", "bedrock", "custom", "fetch", "vertex"]);
+152318:    "@ai-sdk/openai-compatible": "openai-compatible",
+152667:    BUILT_IN_PROVIDER2["OPENAI_COMPATIBLE"] = "openai-compatible";
+152715:    openai: "openai-compatible" /* OPENAI_COMPATIBLE */,
+152769:      family: "openai-compatible",
+152789:      family: "openai-compatible",
+
+=== 2. 当前 cline 配置（base / model / provider）===
+   openAiBaseUrl   = http://agi-gateway.cxmt.com/cloud/v1
+   actModeModelId  = deepseek-v4-flash
+   actModeProvider = openai
+   planModeProvider= openai
+
+=== 3. 8 个 chat LLM 逐个 curl（200=key 有效；排除 asr/seedream）===
+
+=== 4. 相关 env（脱敏）===
+   CLINE_TELEMETRY_DISABLED len 1 pfx 1
+   OPENAI_API_KEY len 45 pfx 01_54973_25823
+   OPENAI_API_URL len 30 pfx http://agi-gat
+
+=== DONE ===
+```
