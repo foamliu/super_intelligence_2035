@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 69 -->
+<!-- RUN_ID: 70 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,14 +31,71 @@
 
 ---
 
-## RUN_ID 69 — 🔧 **[.12] 补/验 EDA MCP 共享配置 + 真跑 `cimi_search`（data/vision 实际所在机）**（**本块最新，优先执行**）
+## RUN_ID 70 — ✅ **把 web search 扩到其余三线：补 `.29` autoApprove + 逐线真跑 `cimi_search` 验证**（**本块最新，优先执行**）
+
+> **背景（RUN_ID 66/68/69）**：MCP 配置走**共享路径** `~/.cline/data/settings/cline_mcp_settings.json`（**不随 `--data-dir` 变**）。⇒ **`.29` 侧本来就有**（pretrain/harness 可用）；**`.12` 侧我刚修好**（22 B → 206 B，vision/data 可用）。**所以四线理论上全都有了** —— 本块负责**补齐差异 + 逐线实测**。
+> **本块**：① **`.29` 共享配置的 `autoApprove` 补上 `cimi_search`/`cimi_fetch`**（与 `.12` 一致；原文件先备份）② 三线各真跑一次 `cimi_search`：**pretrain（`.cline_pretrain`）/ harness（`.cline_harness`）在 `.29`；vision（`.cline_vision`）在 `.12`** ③ 四线 `cline config mcp` 复核。
+> 🚫 只改 `.29` 共享 MCP 配置文件（先备份）；不碰服务、不动下载白名单、不改 loop。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+B=/nas_train/app.e0031982; H=$HOME; C=/home/app.e0031982/.bun/bin/cline
+W=/nas_train/app.e0031982/code/super_intelligence_2035; R=$W/doc/BaiZe-ISEDA2027/run; KEYS=$W/doc/keys.txt
+export PATH="$H/.bun/bin:$PATH"
+P="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+CFG='{"mcpServers":{"pyAether_MCP_server":{"url":"http://10.239.2.29:8090/sse","type":"sse","disabled":false,"autoApprove":["search_apis","get_api_details","run_pyAether_code_tool","cimi_search","cimi_fetch"]}}}'
+
+echo; echo "=== 1. .29 共享 MCP 配置：补 cimi 到 autoApprove ==="
+S="$H/.cline/data/settings/cline_mcp_settings.json"
+echo "   改前 $(stat -c %s "$S" 2>/dev/null)B : $(tr -d '\n' < "$S" 2>/dev/null | cut -c1-170)"
+if grep -q 'cimi_search' "$S" 2>/dev/null; then echo "   ✅ 已含 cimi_search → 不改"; else
+  cp -a "$S" "$S.bak.$(date +%Y%m%d-%H%M%S)" && echo "   已备份"; printf '%s' "$CFG" > "$S"; echo "   写入后 $(stat -c %s "$S")B"
+fi
+
+smoke () {
+  local D="$1" TAG="$2"
+  LLM_DATA_DIR="$D"; . "$R/llm_rotate.sh"
+  if llm_pick "/tmp/baize_${TAG}_llm_idx" "$KEYS"; then echo "   [$TAG] picked $LLM_MODEL key=${LLM_KEY:0:8}.. base=$LLM_BASE"; else echo "   [$TAG] !! 无候选"; return; fi
+  env $P timeout 200 "$C" --data-dir "$D" -c /tmp -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible --auto-approve true -t 150 \
+    "Call the MCP tool cimi_search (server pyAether_MCP_server) with query 'mamba2 state space'. Reply <=3 lines: (1) tool available yes/no (2) first result title (3) exact error if failed." \
+    < /dev/null > "/tmp/cimi_${TAG}.log" 2>&1
+  local rc=$?
+  echo "   [$TAG] rc=$rc => $(grep -a -iE 'tool available|error' "/tmp/cimi_${TAG}.log" | tail -2 | tr '\n' ' ' | cut -c1-170)"
+}
+
+echo; echo "=== 2. 逐线 smoke（.29：pretrain / harness）==="
+smoke "$B/.cline_pretrain" pretrain
+smoke "$B/.cline_harness" harness
+
+echo; echo "=== 3. 逐线 smoke（.12：vision，经 ssh）==="
+timeout 300 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-190
+export PATH="$HOME/.bun/bin:$PATH"
+B=/nas_train/app.e0031982; W=$B/code/super_intelligence_2035; R=$W/doc/BaiZe-ISEDA2027/run; KEYS=$W/doc/keys.txt
+C=/home/app.e0031982/.bun/bin/cline; D="$B/.cline_vision"
+PP="-u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE"
+LLM_DATA_DIR="$D"; . "$R/llm_rotate.sh"
+if llm_pick /tmp/baize_vision_llm_idx "$KEYS"; then echo "   [vision] picked $LLM_MODEL key=${LLM_KEY:0:8}.. base=$LLM_BASE"; else echo "   [vision] !! 无候选"; fi
+env $PP timeout 200 "$C" --data-dir "$D" -c /tmp -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible --auto-approve true -t 150 \
+  "Call the MCP tool cimi_search (server pyAether_MCP_server) with query 'mamba2 state space'. Reply <=3 lines: (1) tool available yes/no (2) first result title (3) exact error if failed." \
+  < /dev/null > /tmp/cimi_vision.log 2>&1
+echo "   [vision] rc=$? => $(grep -a -iE 'tool available|error' /tmp/cimi_vision.log | tail -2 | tr '\n' ' ' | cut -c1-170)"
+EOS12
+
+echo; echo "=== 4. 四线 cline config mcp 复核 ==="
+for n in pretrain harness vision data; do echo "   [.cline_$n] $("$C" --data-dir "$B/.cline_$n" config mcp 2>&1 | sed -n '2,3p' | tr '\n' ' ' | cut -c1-120)"; done
+echo; echo "=== DONE ==="
+```
+
+> ⛔ 已降级 RUN_ID 69（07:35:32 exit=0 → **`.12` shared 补全 + `.12` 真跑 `cimi_search` rc=0**）为 text。
+
+## RUN_ID 69 — 🔧 **[.12] 补/验 EDA MCP 共享配置 + 真跑 `cimi_search`**（✅ 已执行 → **`.12` 也跑通 rc=0**）
 
 > **RUN_ID 68 结果（07:32:07）**：🎉 **`.29` 上 `cimi_search` 真跑成功**（`rc=0`，返回真实搜索结果，MCP 服务能出网）⇒ **MCP 全链路通**。
 > ⚠️ **但发现关键细节**：`cline config mcp` 输出显示它读的是 **`/home/app.e0031982/.cline/data/settings/cline_mcp_settings.json`（共享路径）** —— **`--data-dir` 不改变 MCP 配置的读取位置**。而 **`.12` 的共享 `~/.cline/data` 是独立于 `.29` 的本地目录**（不是 NFS），且当初我正是从 `.12` 的 settings 重播的（那份 **MCP 为空**）⇒ **`.12` 上很可能仍是空的**。
 > **本块（经 ssh 到 `.12`）**：① 看 `.12` 的 shared MCP 配置 ② **空/缺 → 备份并写入同一条目** ③ `cline config mcp` 复核 ④ **`.12` 上真跑 `cimi_search`**（llm_pick 真实配对）。
 > 🚫 只动 `.12` 的 shared MCP 设置文件（**先备份**）；不碰服务、不动其它配置。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 C=/home/app.e0031982/.bun/bin/cline; B=/nas_train/app.e0031982
 
