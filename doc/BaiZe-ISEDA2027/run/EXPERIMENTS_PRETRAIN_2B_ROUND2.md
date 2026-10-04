@@ -551,3 +551,38 @@ python -m lm_eval --model hf \
 证实 20k 步早期快照已学到可用的常识/知识能力；ARC-Challenge 21.6% / OpenBookQA 16.6% 仍是 STEM 弱项（符合 20k 步早期预期）。
 这些数字用于对齐 Xmodel-2 Table 2 的 8 集口径。**遗留**：PiQA acc(0.6023) vs acc_norm(0.5860) 存在 lm-eval 已知的 2 选归一化差异，暂按 harness 默认 acc_norm 计 Avg。
 5. **「GBS×LR 是否右移」怎么写**（P-5a ✅ 已定稿）：GBS ∈ {8,64,256,1024} 四横切面 loss 均随 LR 单调升、谷底统一 1e-3，**最优 LR 不随 batch 右移**，GBS=1024 生产口径推荐 LR=1e-3（可直接迁移，无需 sqrt/linear batch-scaling）。建议 §4 补一句：*"A GBS×LR sweep (GBS ∈ {8,64,256,1024}, matched to 164M tokens) shows loss is monotone in LR at every batch size with optimum LR=1e-3, so the LR found at GBS=8 transfers directly to production GBS=1024 without batch rescaling."*
+
+## P-9　吞吐/显存基准（MBS / FP8 复评 / 瓶颈诊断）—— 🚀 运行中（2026-10-04 起）
+
+> **运维 2026-10-03 指令**：P-5b 空窗后**尽早**跑 P-9（⏱ 🚫 不得后置到 P-6② 之后）。三问：
+> ① MBS 1→2+ 能否提速？② FP8 在正确口径（**按 M 扫**而非按 seq）下能否转正？③ 瓶颈诊断（P-4 profile 里 NCCL 占 41.7%）。
+> **口径不变量（P-9.0）**：seq=4096 / GBS=1024（每步 4.19M token）/ TP1·DP8 / bf16 / seed1234 / 8×H100（`.29`）。
+> **铁律**：不改 P-5b recipe、不回训；结论只供 P-8 配置参考。前序**非 GPU 预研**（TE 2.12.0+5671fd36 / torch 2.8.0+cu128 / CUDA 12.8；launcher 仅暴露 `--micro-batch-size`/`--tensor-parallel`/`--sequence-parallel`/`--seq-length`/`--precision` 5 flag，B/C/E/F 无 flag、recipe 硬编码 overlap 全 ON）已落地（见 MEMORY #37）。
+
+### P-9.1 MBS 吞吐/显存扫描 ✅ 完成（2026-10-04 ~08:33）
+
+**口径**：seq=4096 / GBS=1024 / TP1·DP8 / bf16 / seed1234；MBS ∈ {1,2,4,8} 各 60 步短测（`--save-interval 99999` 不存 ckpt）；脚本 `run/baize_p9_mbs_scan.sh`，SUM=`/tmp/baize_p9_mbs_scan.log`（后台每 2s 采样峰值显存）。
+
+**结果表**：
+
+| MBS | rc | 稳态 s/iter | tok/s（4.19M/步） | 峰值显存(GPU max) | OOM? |
+|:--|:--:|--:|--:|--:|:--:|
+| 1 | 0 | ~30.4 | ~138K | 41353 MiB（≈40 GiB） | 否 |
+| 2 | 0 | ~19.3 | **~218K** | 56865 MiB（≈55 GiB） | 否 |
+| 4 | 1 | — | — | 81087 MiB（≈79 GiB） | ✅ OOM（rank 3） |
+| 8 | 1 | — | — | 81059 MiB（≈79 GiB） | ✅ OOM（rank 1） |
+
+**原始输出（稳态 s/iter，ms/iter）**：
+- MBS=1：`iteration 40 ... elapsed time per iteration (ms): 30497.4` → `iter 50: 30204.5` → `iter 60: 30588.4`（首步 43.59s = 编译+预热，已剔）。
+- MBS=2：`iter 40: 18818.0` → `iter 50: 19401.6`（同帧 `GPU utilization: 519.0 TFLOP/s/GPU`）→ `iter 60: 19252.4`。
+
+**结论（问题①）**：
+1. **MBS 1→2 提速 ≈ +59%**（30.4s → 19.3s/iter；138K → 218K tok/s），峰值显存仅 40→55 GiB（80 GiB 内余量仍够）→ **MBS=2 是最大可行 + 推荐值**。运维「MBS 太小、显存余量过半」**证实**。
+2. **MBS=4 / 8 均 OOM**（~79 GiB 逼近 80 GiB 上限）。→ TP1·DP8 下 MBS 上限 = **2**。
+3. ⭐ **对 FP8（P-9.4）的关键含义**：`M = MBS × seq`。MBS=2 × seq4096 = M≈8192，**仍 < 交叉点 16K**；要进 FP8 收益区需 MBS≥4（M≈16384），但 TP1 下 MBS=4 OOM → **只能靠 TP2（P-9.2）或抬 seq（P-9.3）把 M 抬进 16K**。这直接印证运维「MBS 与 FP8 是同一件事」。
+
+### P-9.2 TP/SP 扫描 🚀 运行中（2026-10-04 08:35 启动）
+
+> **目的**：TP2·DP4 把每卡 weight+optimizer 减半 → 能否让 MBS=4 落地（从而 M=16384 进 FP8 交叉点）？**SP on/off** 对通信/显存的影响。
+> **配置**（每点只动一个变量，60 步 bf16 短测）：① TP2·MBS=2 ② TP2·MBS=4 ③ TP2·SP·MBS=2 ④ TP2·SP·MBS=4；**基准** = P-9.1 TP1·DP8 MBS=2（218K tok/s）。
+> 脚本 `run/baize_p9_tpsp_scan.sh`（`--tensor-parallel 2 [--sequence-parallel]`），SUM=`/tmp/baize_p9_tpsp_scan.log`。**结果待下轮回收。**
