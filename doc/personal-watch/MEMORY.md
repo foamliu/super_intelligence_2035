@@ -348,4 +348,15 @@ WAITING: 0
   - **重要提醒**：**`setsid ... &` 不是开机自启** → **实例重启会杀掉两条 loop**（必须手动拉起或配 systemd）。
   - **新建 `run/DEPLOY_CHECKLIST.md`**：新机 bring-up · **cline 配置不在仓库需重建**（`openAiBaseUrl` 在 `~/.cline/data/globalState.json`）· **2 核加固**（swap / **两条 loop 错峰** / 抓取 `nice -ionice` 降优先级 / OOM 排查）· systemd 自启模板 · 启动停止验证命令。
   - 🚨 **安全发现**：**`doc/keys.txt` 被 git 跟踪**（含 8 个 LLM Key + ASR + 文生图，提交 `56fae84`）且**不在 `.gitignore`** → 建议 `.gitignore` + `git rm --cached` + **轮换 Key**。
+- **2026-10-05（用户要求"给观察哨也做个 ops 中继" → 已建）** ——
+  - **动机**：loop 停了/撞额度/OOM 时，`git log` 上"什么都看不到"；中继**纯 bash、零 token、不依赖 cline**，**loop 停着也能远程运维**。
+  - **新建** `run/ops_relay.sh`（照抄 BaiZe `ops_relay.sh` 设计）· `run/ops/{inbox.md,outbox.md,.last_run_id,README.md}`。
+  - ✅ **修掉 BaiZe 的已知坑**：那边「**只执行第一个 ```bash 块**」→ 新命令**静默失效**；
+    本版**支持多段 `## RUN_ID N` 历史共存，总执行 RUN_ID 最大那一段** → **老块不用删/降级**。
+  - ➕ **新增 3 条拦截**（针对共享工作副本 + 中继自身）：`git clean -fdx` · `git reset --hard` · **杀 `ops_relay`**。
+  - 🚫 **停止纪律**：只可 `pkill -f watch_ops_relay.sh`（**别** `pkill -f ops_relay.sh` → 会误杀 **BaiZe 的中继**）。
+  - **已内置 `RUN_ID 1` = 诊断块**：进程 / loop 日志 / **OOM（dmesg）** / 资源 / CPU top5 / cline base / git 状态 ——
+    **用户一启中继，结果就自动进 `outbox.md`，我 pull 即可定性**。
+  - 登记：`run/README.md §2.2` · `README.md §4` · `AGENTS.md`。
+  - ⚠️ **安全**：中继本质是**远程代码执行通道** → **仓库须 private**；与 `keys.txt` 入仓叠加**风险放大** → **务必轮换 Key**。
 

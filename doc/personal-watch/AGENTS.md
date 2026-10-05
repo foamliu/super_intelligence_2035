@@ -16,6 +16,11 @@
 > 🚫 **用户已定（2026-10-03）：暂不新增智能体。** 新职能**一律并入既有线**。
 > 例：原 **archive（历史回溯）线已并入 news**（职能 = `news/archive/` + `news/analysis/`），脚手架已删除。
 >
+> 🔌 **运维通道（2026-10-05 新增）**：**ops 中继 `run/ops_relay.sh`**（纯 bash、零 token）——
+> supervisor 写 `run/ops/inbox.md` → 中继执行 → 结果进 `run/ops/outbox.md`。
+> ⭐ **loop 停/撞额度/OOM 时的唯一远程运维手段**（见 `run/ops/README.md`）。
+> ⚠️ 停止只可用 `pkill -f watch_ops_relay.sh`（**别** `pkill -f ops_relay.sh`，会误杀 BaiZe 的中继）。
+>
 > 🎯 **两条线的长期目的**：**news → 三层「解耦」**：**L1 政治信号预警（核心）** / **L2 与股价的关联（探索性·非因果）** / **L3 算法交易（❄️ 冻结）**（见 `WATCH_NEWS_TASK.md` §0.0.0–§0.0.2）；
 > **research → ① 借鉴 BaiZe/ZhuLong ② 《两分钟论文》科普视频**（见 `WATCH_RESEARCH_TASK.md` §0）。
 

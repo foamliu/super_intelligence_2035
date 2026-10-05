@@ -77,6 +77,31 @@ pkill -f 'watch_research_loop.sh'
 
 ---
 
+## 2.2 启动 **ops 中继**（⭐ 强烈建议：loop 停了也能远程运维）
+
+> **为什么**：worker loop 一旦**停了 / 撞额度 / OOM**，`git log` 上"什么都看不到"。
+> 中继是**纯 bash、零 token、不依赖 cline**，**loop 停着也能执行诊断与运维命令**。
+
+```bash
+cd <仓库根>/doc/personal-watch/run
+git pull --rebase --autostash
+setsid bash ops_relay.sh > /tmp/watch_ops_relay.log 2>&1 < /dev/null &
+pgrep -af 'watch_ops_relay.sh'      # 应恰好 1 个
+tail -5 /tmp/watch_ops_relay.log    # [relay] started ...
+```
+
+**用法**：supervisor 在 `run/ops/inbox.md` 新增 `## RUN_ID N` + 一个 ```bash 块 → push；
+中继执行后把结果 append 到 `run/ops/outbox.md` → push；supervisor `pull` 即读到。
+（**已内置 RUN_ID 1 = 诊断块**：进程 / 日志 / **OOM** / 资源 / cline base / git 状态。）
+
+**停止**：`pkill -f watch_ops_relay.sh`
+> ⚠️ **不要** `pkill -f ops_relay.sh` —— 会**顺带杀掉 BaiZe 的中继**（本机另一条运维信道）。
+> 🚫 **绝不要把中继当"可随意杀"的进程** —— 它是唯一的远程通道。
+
+详见 `ops/README.md`（含**我们相对 BaiZe 版的修复**：多段 RUN_ID 共存、新增 `git clean -fdx` / `git reset --hard` / 杀中继 的拦截）。
+
+---
+
 ## 2.5 常用调参（都在 `watch_news_loop.sh` 顶部）
 
 | 变量 | 默认 | 作用 / 备注 |

@@ -92,7 +92,11 @@ doc/personal-watch/
     ├── watch_research_loop.sh     # research 循环脚本
     ├── MEMORY_RESEARCH.md         # research 运行时状态（含 WAITING）
     ├── daily-memories-research/   # research 每日流水
-    └── research/                  # research 产物（<date>.md + SEEN.md + INDEX.md + papers.jsonl + TOP_K.* + ARXIV_API.md + pdf/）
+    ├── research/                  # research 产物（<date>.md + SEEN.md + INDEX.md + papers.jsonl + TOP_K.* + ARXIV_API.md + video/ + pdf/）
+    ├── ops_relay.sh               # ⭐ ops 中继（纯 bash、零 token 的命令通道；loop 停着也能运维）
+    ├── ops/                       #   中继的 inbox.md（下发）/ outbox.md（结果）/ .last_run_id
+    ├── DEPLOY_CHECKLIST.md        # 新机 bring-up · cline 配置重建 · 2 核加固 · systemd 自启
+    └── LLM_ROTATE_INTEGRATION.md  # 额度/鉴权自动轮换接入方案（复用 BaiZe 的 llm_rotate.sh）
 ```
 
 ---
