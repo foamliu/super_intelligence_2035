@@ -43,6 +43,7 @@
 | 2026-10-05 09:2x | 运维（外部） | — | — | 建立本账本：静态分区 GPU0–1=pretrain / GPU2–7=data | ✅ 生效 |
 | 2026-10-05 10:26 | data | — | — | 可行性核查：GPU2-7 ❌ 不空——P-9.9（tensorwise FP8,PID 4044534）占满 8 卡，ETA ~15:00。P-9.8 armB 已完(~09:49)，pretrain 随即启 P-9.9。不 kill，等 P-9.9 完。base 分词已启动（4 进程 CPU，不占 GPU）。 | ⏳ 等待 P-9.9 完成 |
 | 2026-10-05 12:24 | data | — | — | 第 127 次唤醒：P-9.9 仍占满 8 卡（PID 4044610-17, etime~2h30m, ETA ~15:15）。CPU-only 备料全速推进：base 分词 4 进程（~49GB .bin, 无 .idx）+ ✅ SFT-2605 转换完成（12/12 parquet, 30GB）+ ✅ SFT-2605 分词已启动（PID 2013590, 4 进程, 12:31 起）。GPU2-7 仍需等 P-9.9 ~15:15 完成。 | ⏳ 等待 P-9.9 完成 |
+| 2026-10-05 13:07 | data | — | — | 第 128 次唤醒：P-9.9 仍占满 8 卡（PID 4044610-17, 100% util, ETA ~15:15, 剩约 2h）。CPU-only 备料进展：base 分词 4 进程（~61GB .bin, 无 .idx, 仍在跑 ~2.7h）；SFT 分词诊断：s3✅完成(521M tok), s0/s2 进行中, **s1❌失败**(no_think_Code.parquet 损坏→🔄重转换中 76%, PID 503949 on .12)；下载 l1_en_hq 2554/6006。GPU2-7 仍需等 P-9.9 ~15:15 完成。 | ⏳ 等待 P-9.9 完成 |
 
 ---
 
@@ -55,3 +56,4 @@
 | 2026-10-05 11:48 | data 第 126 次唤醒：P-9.9 tensorwise FP8 仍占满 8 卡（PID 4044610-17, iter 240/1000, ETA ~15:12）。data 侧 CPU-only 工作并行推进：base 分词 4 进程（PID 1809483/85/87/89, ~31.5GB .bin, 无 .idx=未完）+ SFT-2605 全量转换已启动（PID 3223333, 2/12 parquet 子集已出）。**GPU2-7 仍需等 P-9.9 ~15:12 完成。** |
 | 2026-10-05 11:22 | pretrain 第 101 次唤醒：P-9.9 tensorwise FP8 健康 @iter 240/1000（24%，ETA **~15:12**），仍占满 8 卡。CPU-only 三方对比分析（bf16/delayed/tensorwise）：前 240 步轨迹一致（唯一变量=FP8 recipe），tensorwise s=1.158(+15.8%)。spike 区(660–780)检验 T1 待 ~13:30。**data GPU2–7 仍需等 P-9.9 ~15:12 完成。** |
 | 2026-10-05 12:24 | data 第 127 次唤醒：P-9.9 tensorwise FP8 仍占满 8 卡（PID 4044610-17, etime~2h30m, ETA ~15:15）。data 侧 CPU-only 备料全速推进：① base 分词 4 进程（PID 1809483/85/87/89, ~49GB .bin, 无 .idx=未完）；② ✅ SFT-2605 转换完成（12/12 parquet, 30GB）；③ ✅ SFT-2605 分词已启动（PID 2013590, 4 进程, 12:31 起, 4 .bin 已出 ~80MB each）。**GPU2-7 仍需等 P-9.9 ~15:15 完成。** |
+| 2026-10-05 13:07 | data 第 128 次唤醒：P-9.9 tensorwise FP8 仍占满 8 卡（PID 4044610-17, 100% util, ETA ~15:15, 剩约 2h）。data 侧 CPU-only 备料进展：① base 分词 4 进程（~61GB .bin, 无 .idx, 仍在跑 ~2.7h）；② SFT 分词诊断：s3✅完成(521M tok), s0/s2 进行中, **s1❌失败**(no_think_Code.parquet 损坏→🔄重转换中 76%, PID 503949 on .12)；③ 下载 l1_en_hq 2554/6006。**GPU2-7 仍需等 P-9.9 ~15:15 完成。** |
