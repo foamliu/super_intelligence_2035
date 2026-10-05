@@ -137,3 +137,4 @@
 | 2026-10-05 | 从看风景到玩科技 AI催生浙江文旅消费新场景 | 中新网 | news | https://www.chinanews.com.cn/sh/2026/10-05/10708128.shtml |
 | 2026-10-05 | 丘成桐新论文致谢了GPT和Claude | 量子位 | feature | https://www.qbitai.com/2026/10/499991.html |
 | 2026-10-05 | 圆刚推出 AI 降噪麦克风 A113，工作温度范围达 -25℃ 至 +60℃ | IT之家 | feature | https://www.ithome.com/1/009/811.htm |
+| 2026-10-05 | 索尼向 Meta 转让 419 项 XR 专利，或缩减相关硬件业务 | IT之家 | news | https://www.ithome.com/1/009/831.htm |

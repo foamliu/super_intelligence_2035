@@ -53,6 +53,9 @@ RULE_THETA = 1.0                       # **预注册固定阈值**（1.0 = 近�
 SIMPLE_THETA = 0.8                     # §4.1 单信号/组合规则阈值（预注册）
 FIT_THETAS = [0.0, 0.5, 0.8, 1.0, 1.2, 1.5, 2.0, 3.0]   # 拟合阈值变体的候选（仅作对照）
 STEP = 30                              # 拟合变体的 walk-forward 步长（天）
+# §4.3 补充准则（**预注册固定目标**，不试到好看为止）：固定召回率目标下的 precision
+#   —— 因 §4.0 已证「F1 调阈」退化（θ→0 恒正），改用「保 recall 前提下的 precision」。
+PREC_RECALLS = [0.5, 0.75]             # 召回率目标 R（在训练段选「仍达 R 的最大阈值」→ 测试段测 precision）
 BOOTSTRAP_N = 2000                     # 正确率置信区间（自助法）
 SEED = 20351003
 
@@ -418,6 +421,35 @@ def main() -> int:
                 fit_th.append(best)
             if fit_th:
                 fit_stats.append((typ, H, sum(1 for t in fit_th if t == 0.0), len(fit_th)))
+            # ── §4.3 固定召回率下的 precision（walk-forward，避免 F1 退化）──────
+            #   每个训练段选「仍能达到 recall ≥ R 的**最大阈值**」（保 recall 下 precision 最优），
+            #   在**测试段**累计 TP/FP → precision@R = ΣTP / Σ(TP+FP)；同段基准率作基线。
+            pr_stats = {}
+            for R in PREC_RECALLS:
+                tp_tot = fp_tot = pos_tot = tot_tot = 0
+                for bs in range(WARMUP, N, STEP):
+                    tr = [i for i in valid if i < bs]
+                    te = [i for i in valid if bs <= i < min(bs + STEP, N)]
+                    if not tr or not te:
+                        continue
+                    chosen = 0.0        # 默认恒正（保 recall=1）
+                    for th in sorted(FIT_THETAS, reverse=True):
+                        pv = [1 if s_norm[i] >= th else 0 for i in tr]
+                        if prf(pv, [y[i] for i in tr])[4] >= R:   # rec >= R
+                            chosen = th
+                            break
+                    for i in te:
+                        tot_tot += 1
+                        if y[i] == 1:
+                            pos_tot += 1
+                        if s_norm[i] >= chosen:
+                            if y[i] == 1:
+                                tp_tot += 1
+                            else:
+                                fp_tot += 1
+                denom = tp_tot + fp_tot
+                base_te = (pos_tot / tot_tot) if tot_tot else 0.0
+                pr_stats[R] = ((tp_tot / denom) if denom else None, denom, base_te)
             # §4.1 组合（描述性，全样本）
             med_cmt = sorted(s_comment[i] for i in valid)[len(valid) // 2] if valid else 0
             comb_pred = [1 if (s_norm[i] >= SIMPLE_THETA and s_comment[i] >= med_cmt) else 0 for i in valid]
@@ -431,6 +463,7 @@ def main() -> int:
                 "n_pred": tp + fp, "lead_med": lead_med,
                 "maj_prec": mprec, "maj_rec": mrec, "maj": maj,
                 "comb_prec": comb_prec, "simple_prec": simple_prec, "simple_rec": simple_rec,
+                "pr": pr_stats,
             }
             bins = [("<0.5", lambda v: v < 0.5), ("0.5–1.0", lambda v: 0.5 <= v < 1.0),
                     ("1.0–1.5", lambda v: 1.0 <= v < 1.5), ("≥1.5", lambda v: v >= 1.5)]
@@ -577,6 +610,44 @@ def main() -> int:
         "本文**不事后换族、不反复换窗**（§0.0.2 数据窥探红线）。")
     at()
 
+    # §4.3 固定召回率下的 precision（补充准则）
+    add("### 4.3 补充准则：**固定召回率下的 precision**（walk-forward）")
+    at()
+    add("> 动机：§4.0 已证「训练段 F1 最优」调阈在本设置**退化**（θ→0 恒正）。故另设一个**预注册固定目标**：")
+    add(f"> 召回率目标 `R ∈ {{{', '.join(map(str, PREC_RECALLS))}}}`；每个 walk-forward 训练段选"
+        "「**仍能达到 recall ≥ R 的最大阈值**」"
+        "（= 保 recall 前提下 precision 最优），在**测试段**累计 TP/FP → "
+        "`precision@R = ΣTP / Σ(TP+FP)`。")
+    add("> **基线** = 同测试段**基准率**（= 恒正规则的 precision，即「不做区分」的精度）。"
+        "`N_pred` = 测试段被预测为正的天数。")
+    add("> ⚠️ 本表**只对预注册的 R 报告**，**不反复调 R 直到好看**（§0.0.2 数据窥探红线）；"
+        "**未胜出即如实写**。")
+    at()
+    add("| 类型 | 层级 | Δ | 基准率(测试) | precision@R=0.5 | N_pred | ΔP@0.5 | precision@R=0.75 | N_pred | ΔP@0.75 |")
+    add("|:--|:--|--:|--:|--:|--:|--:|--:|--:|--:|")
+    for c in cats:
+        typ = c["id"]
+        for H in HORIZONS:
+            r = results.get((typ, H))
+            if not r:
+                continue
+            pr = r.get("pr", {})
+            cells = []
+            base_te = 0.0
+            for R in PREC_RECALLS:
+                p, nn, bt = pr.get(R, (None, 0, 0.0))
+                base_te = bt
+                if p is None:
+                    cells += ["—", str(nn), "—"]
+                else:
+                    cells += [f"{p:.2f}", str(nn), f"{p - bt:+.2f}"]
+            add(f"| {typ} {c['name']} | {r['tier']} | {H} | {base_te:.2f} | " + " | ".join(cells) + " |")
+    at()
+    add("> 🔑 **读法**：`ΔP@R > 0` 才算**相对基线有增益**；`ΔP ≤ 0` 如实视为**未胜出**。"
+        "注意——此处的 `precision` 是**在测试段无条件预测法下的整体精度**，"
+        "**仅刻画「保 recall 时 precision 能否超过基准率」**，🚫 不构成可交易/可操作宣称。")
+    at()
+
     # §5 频率分层结论
     add("## 5. 频率分层结论（**由实测得出**）")
     at()
@@ -623,7 +694,7 @@ def main() -> int:
     add("- ⚠️ **测试窗重叠**：Δ=90 时相邻测试日标签窗**重叠** → precision/recall 的**有效性受影响**（已给 N）。")
     add("- ✅ **多重比较已校正（BH-FDR）**：单族 = 全部 `类型×Δ` 格（见 §4.2）；⚠️ **只对本族负责**（换族会改变结论）。")
     add("- ⚠️ **信号仍浅**：仅「归一化节奏 + 评论体密度」；**措辞强度/新词/版面**（见 `SIGNALS.md`）**尚未纳入**。")
-    add("- **下一步**：① 用**更合适的阈值准则**（固定召回率下的 precision）替代 F1 调参；"
+    add("- **下一步**：① ✅ **已做** —— 用「**固定召回率下的 precision**」替代 F1 调参（见 **§4.3**）；"
         "② 纳入措辞/新词信号（`SIGNALS.md`）并**系统评估组合规则**；③ 扩充语料源（按源分列）；"
         "④ 按 **G2′** 做**连续多周稳定运行**记录（预警有基线 + 报提前期 + 覆盖主要动作类型）。")
     at()

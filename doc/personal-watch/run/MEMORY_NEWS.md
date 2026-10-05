@@ -13,9 +13,9 @@ WAITING: 1
 ```
 PHASE:        常态采集（T1–T10 ✅）+ **L1/N3 收口（G1 全过）+ L2/N4 探索性（G2 全过）**（L1 焦点 · L2 探索性 · L3 冻结）
 已完成:       T1–T10 ✅ · 首~十六轮常态 ✅ · **N1 抓取器 + 语料〔全库完抓〕2,492,230 条 / 11 片 2016–2026（游标 `2015-12-31`，倒序已收尾至 `2016-01-01`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（75,610 条，对 15:10 全量快照）· N3-4 预警方案 · L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md，8 行）**
-当前动作:     **N1 第 7 轮抓取完成（2016-08-05→2016-01-01，语料收尾）+ 链跑完成（15:10，`STABILITY_LOG` 第 8 行）+ 第十六轮常态采集（news +0）+ 提交第 7 轮产物**；⚠️ **体积红线善后**：ops RUN_ID 5 已 `git rm --cached` 11 分片（工作区文件被 relay rebase 误删 → 已从 `~/archive_data_backup/` **恢复**）+ 建 `news/policy/.gitignore` 并 `git rm --cached EVENTS.csv`
-下一步:       ① 提交本线产物（**不含任何 ≥5MB 文件**）；② **G2′④ 累积**：按周期跑 `cycle_run.py --with-l2` 追加台账（连续天数截至今日 = 1）；③ L1 稳定性 / 组合规则；④ L3（N5）**冻结**
-本轮新增:     **第十六轮常态采集 news +0（当日累计 22；`cn_news` 30 条均假期/民生/时政，量子位/中新网候选已在账去重）**；N1 第 7 轮产物提交（`EVENTS.csv` 75,610 条 / sha `9909e4cddcf525a8`，`STABILITY_LOG` 第 8 行）；**红线善后：11 分片恢复至工作区（gitignored，不入 git）+ `EVENTS.csv` 移出索引**；累计 **news 91 / 非新闻 41**
+当前动作:     **本唤醒：L1 预警准则加固（`early_warning.py` 新增 §4.3「固定召回率下的 precision」walk-forward，替代已退化的 F1 调参）+ 第十七轮常态采集（news +1：IT之家《索尼向 Meta 转让 419 项 XR 专利》）**；上轮：N1 第 7 轮抓取收尾（语料 2,492,230 条 / 11 片，游标 `2015-12-31`）+ 链跑（15:10，`STABILITY_LOG` 第 8 行）+ 第十六轮 news +0；⚠️ **并发护栏**：本轮发现旧超时命令的 python 子进程残留 → 已 `kill` 去重（避免双写 EARLY_WARNING.md）
+下一步:       ① 提交本线产物（**不含任何 ≥5MB 文件**）；② **G2′④ 累积**：按周期跑 `cycle_run.py --with-l2` 追加台账（连续天数截至今日 = 1）；③ L1 稳定性 / 组合规则（**下一步②：纳入措辞/新词信号 `SIGNALS.md`**）；④ L3（N5）**冻结**
+本轮新增:     **L1：`early_warning.py` 新增 §4.3「固定召回率下的 precision」（`PREC_RECALLS=[0.5,0.75]`；walk-forward 训练段选「仍达 recall≥R 的最大阈值」、测试段测 precision，基线 = 同段基准率）→ 重跑链，`EARLY_WARNING.md` **359 行**（45 格 ΔP 多数 >0，例 A1 外事 Δ=90：precision@R0.5 **0.72** vs 基准 0.58）**；第十七轮常态 news **+1**（当日 23）；累计 **news 92 / 非新闻 41**
 阻塞:         无（新华网长期 403/405 → 兜底源 `chinanews`；⚠️ **无 bypy → 网盘不可用** → ≥5MB 一律「本地保留 + 清单登记 + 如实标『未上云』」；⚠️ **东财日K 运行机 TLS 被重置** → 历史日线走腾讯 `ifzq`；⚠️ **停后台抓取须杀 python 子进程**；⚠️ **等抓取勿用 `pgrep -f <脚本名>`** → 用 `kill -0 <pid>`；⚠️ **ops relay 的 `git pull --rebase` 会删掉被 untrack 的工作区分片** → 须从 `~/archive_data_backup/` 恢复）
 ERROR_COUNT:  4（历史：模型名白睡一轮，已修；并发双抓重复，已修；watcher `pgrep -f` 自匹配死锁，已修；**relay rebase 删工作区分片 → 已恢复**）
 ```
@@ -135,13 +135,21 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **L2 产物（探索性 · 非因果）**：`news/policy/`（`L2_PREREG.md` / **`EXPLORE.md` + `explore.csv`**）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-05 13:15 CST` 第十一轮 ~ `2026-10-05 15:5x CST` 第十六轮
-- **累计收录**：`132` 条（**news 91**〔第一~十六轮；当日 22〕+ 非新闻 41〔仅存 `SEEN.md`〕）
+- **上次采集窗口**：`2026-10-05 13:15 CST` 第十一轮 ~ `2026-10-05 16:1x CST` 第十七轮
+- **累计收录**：`133` 条（**news 92**〔第一~十七轮；当日 23〕+ 非新闻 41〔仅存 `SEEN.md`〕）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-05（本唤醒 ~16:12）** —— 🆕 **L1 预警准则加固：新增 §4.3「固定召回率下的 precision」（walk-forward）+ 第十七轮常态采集（news +1）**。
+  - **动机**：§4.0 已实测「训练段 F1 最优」调阈在本设置**退化**（θ→0 恒正、无区分力）→ 改用**预注册的固定召回率目标**：`R ∈ {0.5, 0.75}`。
+  - **实现（`news/policy/early_warning.py`）**：新增 `PREC_RECALLS=[0.5, 0.75]`；每个 walk-forward 训练段选「**仍能达到 recall ≥ R 的最大阈值**」（保 recall 下 precision 最优），在**测试段**累计 `TP/FP` → `precision@R=ΣTP/Σ(TP+FP)`；**基线** = 同测试段基准率（恒正）= `ΔP@R` 对照。**只对预注册 R 报告、不反复调 R**（§0.0.2）。
+  - **产物（重跑 L1 链，`EARLY_WARNING.md` 359 行）**：§4.3 表 45 格，`ΔP@R` **多数 >0**（例 A1 外事 Δ=90 → precision@R0.5 **0.72** vs 基准 0.58，**+0.14**；A7 监管 Δ=30 → **0.43** vs 0.26，**+0.17**）；少数格 `ΔP≤0`（A9/A14 Δ=90 等）**如实保留为「未胜出」**。§6 下一步① 标注「✅ 已做」。
+  - **第十七轮常态采集（news +1，当日 22→23）**：唯一 §0.1 新真新闻 = IT之家《**索尼向 Meta 转让 419 项 XR 专利，或缩减相关硬件业务**》（USPTO 10-05 披露）→ 落 `news/2026-10-05.md` + `SEEN.md` + `INDEX.md`（当日 23 / 累计 news 92）。
+  - **拒收/去重**：`cn_news` 40 条均假期/民生/时政 → 不收；量子位头部 10 条**均已在账**；IT之家其余为消费电子/游戏；`search_news`(HN) 8 条除 1 条 thebulletin 分析外均 opinion/超窗 → 不收。⚠️ 联合国中文源仍 **404**。
+  - **⚠️ 并发护栏（本唤醒教训）**：上一超时命令的 `python early_warning.py` 子进程**残留续跑** → 与 nohup 新进程**并发双写** `EARLY_WARNING.md`；已 `kill -TERM` 去重留单进程。**今后长任务须显式 `timeout` + 结束后 `pgrep -af <脚本>` 确认无残留**。
+  - **未做**：G2′④ 连续天数累积（需 ≥20h 间隔真实重跑；本轮间隔不足 → 未推进）。
 - **2026-10-05** —— 🆕 **N1 第 6 轮抓取产物提交（进 2016，语料 → 2,267,862 / 11 片）+ 第十五轮常态 news +4 + 启动第 7 轮抓取（收尾 2016）**。
   - **N1 第 6 轮抓取**（上轮起，`--max-seconds`）：游标 `2017-10-30 → 2016-08-05`；**新建 `chinanews-2016.jsonl.gz`（120,293 条 / 5.42 MB）**；语料 **1,952,411 → 2,267,862 条（+315,451）/ 11 片（2016–2026）**；0 失败，`--index` 已重生成（各片均 <20 MB → 入 git）。
   - **全链（14:47，对上轮快照）**：`cycle_run.py --with-l2` → `EVENTS 71,201`（17.08 MB）、`q<0.05=42`、效果量门槛 `26`；`STABILITY_LOG.md` **第 7 行**。（⚠️ 该链对齐 3698 天快照，**略落后**当前 3711 天 → 第 7 轮后统一重跑。）
@@ -174,28 +182,7 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
   - **文档同步**：`MEMORY_NEWS.md` 快照/运维问答/流水；`news/policy/README.md` §4。
   - **未做**：L3 冻结。判据复核：无因果措辞、低频单列、非投资建议。
 
-- **2026-10-05** —— 🆕 **N1 续抓（新增 2021 片 + 补全 2022）+ 全链重跑 + 修复并发双抓重复**。
-  - **N1 续抓**：`fetch_archive.py --max-seconds 300`（≥2s/req）→ 游标 `2022-04-20 → 2021-11-12`；**新建 `chinanews-2021.jsonl.gz`**（28,886 条）+ **补全 2022 全年**（161,166 → 238,861 条）；语料 **806,509 → 913,074 条 / 6 片**（2021–2026）。
-  - **🐞 并发双抓 bug（本线操作失误）**：停上一轮抓取时 `kill -INT <wrapper-pid>` **只命中 bash wrapper、未命中 python 子进程** → 旧抓未停，我又起新抓 → **两进程同写同一 shard**，产生 **74,527 行重复**。
-    - **修复**：跑既有 **`fetch_archive.py --repair`**（按 `url` 去重 + 修 URL，幂等，18s）→ 去重后六片**唯一 url = 913,074**，`gzip -t` 全通过、0 坏行；`--stats`/`--index` 重生成（`INDEX_FILES.md` 6 片，均 <20 MB）。
-    - **教训**：**停后台抓取要杀 python 子进程**（`pkill -f 'python3 news/archive/fetch_archive.py'`）；**同一 shard 严禁并发写**。
-  - **全链重跑对齐全语料**：`cycle_run.py`（纯 L1 链）→ `eda.py`(n=913074, days=1788) → `taxonomy.py` → `signals.py` → `extract_events.py`（**34,569 事件**，`EVENTS.csv` **8.39 MB**，sha `11b168a45e7e48bc`）→ `early_warning.py`（45 格 `q<0.05` **34**、效果量门槛 **15**）。
-  - **本轮末再抓 240s**（**单进程**，`fetch_archive.py --max-seconds 240`，启动后核对 **pid 唯一**）→ 游标 `2021-11-12 → 2021-07-14`，**+71,224 条 → 984,298 条**（`--stats` 唯一计 **984,295**）；`--index` 已重生成。
-    - ⚠️ 注：本轮的 L1 产物（**EVENTS 34,569**）对齐的是 **913,074 快照**；抓够后需**再重跑链**对齐。
-  - **G2′④ 台账**：`STABILITY_LOG.md` 追加第 3 行 `2026-10-05 12:49 | 1788 | 913074 | 34569 | 34 | 15 | 11b168a45e7e48bc | … | not-requested`。
-  - **L2/N4**：`explore_l2.py` 重生成 `EXPLORE.md`（事件数 → 34,569；`explore.csv` 预期**字节不变**——价格窗自 2023-06 起，2021-22 事件不入 L2）。
-  - **文档同步**：`news/policy/README.md` §4/§4.1 更新（语料/事件数/门槛数）。
-  - **未做**：**常态采集**（news 日报 0 条，专注 N1 + 修 bug）；L3 冻结。判据复核：无因果措辞、低频单列、非投资建议。
-- **2026-10-05** —— 🆕 **恢复 27h 停摆后首轮：L1 链对齐全语料 + 建 G2′④ 运行台账 + 修复 numpy 缺失**。
-  - **核对（发现产物 stale）**：`news/archive` 已 **1627 天 / 806,509 条 / 5 片**（2022–2026，游标 `2022-04-20`），而 L1 产物停在 605,311 条那版 → 全链重跑。
-  - **L1 链全量重跑**：`eda.py`(n=806509,days=1627) → `taxonomy.py`(15 类) → `signals.py`(128 行) → `extract_events.py`（**31,398 事件**，CN 22,904；`EVENTS.csv` 7.26 MB，sha `9fd3a9670f0a1dde`）→ `early_warning.py`（283 行）。
-    - `EARLY_WARNING.md` §4.2：**45 格** → `q<0.05` **32**；过**效果量门槛** **10**；反向格（AUC<0.5）如实列出。口径**未改**（θ=1.0 / BH-FDR / walk-forward），差异纯由语料变长引起。
-  - **🆕 交付（G2′④ 证据）**：`news/policy/cycle_run.py`（纯 stdlib，按序重跑 L1 链；`--with-l2` 带 L2；`--record` 只记当前态）+ `news/policy/STABILITY_LOG.md`（每次运行自动追加一行可核验摘要）。**首行**：2026-10-05 12:35 ｜ 1627 天 / 806,509 条 ｜ 事件 31,398 ｜ q<0.05=32 ｜ 门槛=10 ｜ L2=ok。（自检修复：`--record` 回退解析 `EDA.md` 的中文格式 → 复测记 `days=1627 recs=806509`）
-  - **🐞 环境修复**：运行机缺 **numpy/scipy**（且无 pip/sudo）→ `explore_l2.py` 报 `ModuleNotFoundError`；用 `get-pip.py --break-system-packages` + **Tuna 镜像**装 **numpy 2.5.3 / scipy 1.18.1**（用户级 `~/.local`）→ **L2 复跑成功**。
-  - **L2/N4 重生成**：`EXPLORE.md` 事件数 → **31,398**（可对齐 23,105）；`explore.csv` **sha 不变**（价格窗 2023-06 起，2022 事件不入 L2，**属预期**）。
-  - **文档同步**：`news/policy/README.md` §4/§4.1 更新；`INDEX_FILES.md` EVENTS.csv 行更新。
-  - **未做**：**N1 续抓**（下一轮 `fetch_archive.py --max-seconds …`）、**常态采集**（news 日报 0 条）、L3 冻结。判据复核：无因果措辞、低频单列、非投资建议。
-- （更早流水：**2026-10-03 各轮 / 2026-10-04 各轮**（L1/N3 收口、N4/L2、L1 链重跑+轴对齐）→ 已归档 `daily-memories-news/2026-10-03.md` · `daily-memories-news/2026-10-04.md`；第三~九轮 / 第二轮 / 首轮 smoke / 前期任务 T1–T4 / 建线 / 首轮空转 亦在其中）
+- （更早流水：**2026-10-05 早期**（恢复 27h 停摆首轮 · N1 2021/2022 续抓）→ 已归档 `daily-memories-news/2026-10-05.md`；**2026-10-03 各轮 / 2026-10-04 各轮**（L1/N3 收口、N4/L2、L1 链重跑+轴对齐）→ `daily-memories-news/2026-10-03.md` · `daily-memories-news/2026-10-04.md`；第三~九轮 / 第二轮 / 首轮 smoke / 前期任务 T1–T4 / 建线 / 首轮空转 亦在其中）
 
 ---
 
