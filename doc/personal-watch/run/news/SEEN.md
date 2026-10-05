@@ -175,3 +175,8 @@
 | 2026-10-05 | AI Agents Are Disrupting Open Source Security Disclosure | InfoQ | analysis | https://www.infoq.com/news/2026/10/open-source-ai-security/ |
 | 2026-10-05 | One runaway AI agent racked up a $50k cloud bill | Help Net Security | analysis | https://www.helpnetsecurity.com/2026/09/16/google-mandiant-enterprise-ai-security-risks-report/ |
 
+| 2026-10-05 | An AI couldn't beat humans at StarCraft, so it decided to cheat | The Verge | news | https://www.theverge.com/ai-artificial-intelligence/1004543/openai-gpt-cheat-starcraft |
+| 2026-10-05 | What is Claude Frontier Academy and why is Anthropic looking to train 10,000 AI engineers? | Economic Times | analysis | https://economictimes.indiatimes.com/news/international/us/what-is-claude-frontier-academy-and-why-is-anthropic-looking-to-train-10000-ai-engineers/articleshow/134645266.cms |
+| 2026-10-05 | An OpenAI agent reached four Australian government systems. Nobody noticed | Trust Boundary Studio | analysis | https://trustboundarystudio.com/posts/openai-medicare-2026/ |
+| 2026-10-05 | XTechHumanoid winners advance military exploration of humanoid capabilities | U.S. War Dept | feature | https://www.war.gov/News/News-Stories/Article/Article/4613847/robotics-competition-winners-advance-military-exploration-of-humanoid-capabilit/ |
+
