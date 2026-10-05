@@ -108,7 +108,58 @@
   <b>⚠️ decode 基准 caveat（已用 torch.profiler 定位根因）</b>：MiniCPM5 的 decode 偏低（2.21 tok/s ≈ 452ms/token）<b>并非「KV-cache 未命中」</b>，而是 <b>mcore 直驱（无 CUDA-graph / flashinfer）下 TE fused-attention 的逐层 CPU launch 开销</b>。profiler 证据：单步 <code>Self CPU ≈ 620ms</code>（其中 <code>FusedAttnFunc</code> 42 层 × ~13.8ms = 579ms，占 93.4%），而 <code>Self CUDA 仅 4.05ms</code> —— 即 <b>CPU-bound、非 GPU-bound</b>（纯 GPU 计算上界 ≈ 250 tok/s）。Mamba2 仅 4 个 attention 层 + 其余为 SSM/MLP（SSM 以 O(1) 循环状态逐 token 解码、CPU 开销极低），故 decode 仍比 MiniCPM5 快 ~10×。<b>两架构用同一代码路径测量，相对结论可信</b>；MiniCPM5 绝对 decode 数如需生产级数值，应改用 SGLang / CUDA-graph，本报告为 mcore 直驱的下界参考。
 </div>
 
-<h2 class="sec"><span class="no">5</span>综合结论</h2>
+<h2 class="sec"><span class="no">5</span>P-9.10 自定义推理 Benchmark（2026-10-05）</h2>
+<p>在 HF checkpoint 上直接对比 hybrid (2.22B, 24 Mamba2 + 4 Attention + 28 MLP) vs dense (2.51B, 42 Attention)，GPU=A100 80GB bf16，context∈{4K,16K,64K,128K}×batch∈{1,8}，<code>logits_to_keep=1</code>。</p>
+
+<h3>5.1 Prefill 吞吐 (tok/s)</h3>
+<table class="data">
+  <tr><th>ctx</th><th>bs=1 hybrid</th><th>bs=1 dense</th><th>speedup</th><th>bs=8 hybrid</th><th>bs=8 dense</th><th>speedup</th></tr>
+  <tr><td>4K</td><td>79,189</td><td>21,191</td><td class="win">3.7×</td><td>113,821</td><td>45,104</td><td class="win">2.5×</td></tr>
+  <tr><td>16K</td><td>105,997</td><td>17,665</td><td class="win">6.0×</td><td>104,217</td><td>18,186</td><td class="win">5.7×</td></tr>
+  <tr><td>64K</td><td>83,476</td><td>5,425</td><td class="win">15.4×</td><td>84,791</td><td>5,467</td><td class="win">15.5×</td></tr>
+  <tr><td>128K</td><td>64,868</td><td>2,792</td><td class="win">23.2×</td><td>65,789</td><td>OOM</td><td class="win">∞</td></tr>
+</table>
+<p><b>H1 ✅</b>：hybrid prefill 全面碾压 dense，随 ctx 增长优势放大（4K: 3.7× → 128K: 23×），SSM O(n) vs attention O(n²)。</p>
+
+<h3>5.2 Peak VRAM (GB)</h3>
+<table class="data">
+  <tr><th>ctx</th><th>bs=1 hybrid</th><th>bs=1 dense</th><th>ratio</th><th>bs=8 hybrid</th><th>bs=8 dense</th><th>ratio</th></tr>
+  <tr><td>4K</td><td>4.75</td><td>5.37</td><td>0.89×</td><td>6.67</td><td>7.56</td><td>0.88×</td></tr>
+  <tr><td>16K</td><td>5.56</td><td>6.44</td><td>0.86×</td><td>13.18</td><td>16.02</td><td>0.82×</td></tr>
+  <tr><td>64K</td><td>8.82</td><td>20.00</td><td class="win">0.44×</td><td>21.85</td><td>65.04</td><td class="win">0.34×</td></tr>
+  <tr><td>128K</td><td>13.16</td><td>60.64</td><td class="win">0.22×</td><td>21.85</td><td>OOM</td><td class="win">∞</td></tr>
+</table>
+<p><b>H3 ✅（修正 P-9.10② H3❌）</b>：使用 SDPA + <code>logits_to_keep=1</code> 后，hybrid VRAM 优势明确。128K×1: 13 vs 61 GB（4.6× 节省）。</p>
+
+<h3>5.3 State / KV cache (MB)</h3>
+<table class="data">
+  <tr><th>ctx</th><th>bs=1 hybrid</th><th>bs=1 dense</th><th>ratio</th><th>bs=8 hybrid</th><th>bs=8 dense</th><th>ratio</th></tr>
+  <tr><td>4K</td><td>85</td><td>176</td><td>0.48×</td><td>677</td><td>1,409</td><td>0.48×</td></tr>
+  <tr><td>16K</td><td>185</td><td>705</td><td>0.26×</td><td>1,483</td><td>5,637</td><td>0.26×</td></tr>
+  <tr><td>64K</td><td>588</td><td>2,819</td><td>0.21×</td><td>4,704</td><td>22,549</td><td>0.21×</td></tr>
+  <tr><td>128K</td><td>1,125</td><td>5,637</td><td class="win">0.20×</td><td>8,999</td><td>45,094</td><td class="win">0.20×</td></tr>
+</table>
+<p><b>H4 ✅</b>：hybrid mamba SSM state 是常数（不随 ctx 增长），仅 4 层 attention KV 线性增长。dense 42 层 KV 全线性增长。</p>
+
+<h3>5.4 Decode (tok/s, ctx≤16K)</h3>
+<table class="data">
+  <tr><th>ctx</th><th>bs=1 hybrid</th><th>bs=1 dense</th><th>bs=8 hybrid</th><th>bs=8 dense</th></tr>
+  <tr><td>4K</td><td>27.2</td><td class="win">31.4</td><td>229.9</td><td class="win">284.5</td></tr>
+  <tr><td>16K</td><td>29.7</td><td class="win">48.4</td><td>233.9</td><td class="win">380.6</td></tr>
+</table>
+<p><b>H2 ❌</b>：dense decode 更快（transformers KV cache 优化 + Mamba2 step() Python 开销）。</p>
+
+<h3>5.5 假说裁定</h3>
+<table class="data">
+  <tr><th>假说</th><th>P-9.10② eager</th><th>P-9.10③ 自定义</th><th>最终</th></tr>
+  <tr><td>H1 prefill</td><td>✅</td><td class="win">✅ 3.7×–23×</td><td>✅</td></tr>
+  <tr><td>H2 decode</td><td>❌</td><td>❌</td><td>❌</td></tr>
+  <tr><td>H3 VRAM</td><td>❌</td><td class="win">✅ 0.22×–0.44×</td><td>✅ (③修正②)</td></tr>
+  <tr><td>H4 state</td><td>✅</td><td class="win">✅ 0.20×–0.48×</td><td>✅</td></tr>
+</table>
+<p><b>结论</b>：hybrid 在 prefill 吞吐（H1）和 VRAM/state 效率（H3/H4）全面优于 dense，优势随 ctx 放大。decode（H2）dense 更优但 hybrid 绝对值可用（230 tok/s@bs=8）。</p>
+
+<h2 class="sec"><span class="no">6</span>综合结论</h2>
 <ul>
   <li><b>质量/效率</b>：Mamba2-hybrid 以更少参数达到更低 loss，loss-per-parameter 明显占优（2 项：loss + 推理速度）。</li>
   <li><b>吞吐</b>：MiniCPM5-2B 训练吞吐快 ~24%（SSM 前向/反向计算密集是 Mamba2 的软肋）。</li>
@@ -117,7 +168,7 @@
   <li><b>局限</b>：仅 1000 步早期收敛（loss ~4.7，远未收敛），且 MiniCPM5 decode 需复核；建议择胜出架构跑更长步数 + 用 SGLang 复核 decode 后定稿。</li>
 </ul>
 
-<h2 class="sec"><span class="no">6</span>可复现命令</h2>
+<h2 class="sec"><span class="no">7</span>可复现命令</h2>
 <pre><code># 环境（两节点通用，NFS 共享）
 export PYTHONPATH=/nas_train/app.e0031982/omegaconf_230:$PYTHONPATH
 conda activate py310

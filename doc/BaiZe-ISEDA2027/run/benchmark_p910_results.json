@@ -1,0 +1,205 @@
+{
+  "experiment": "P-9.10",
+  "description": "Custom inference benchmark: hybrid vs dense",
+  "gpu": "NVIDIA A100 80GB",
+  "contexts": [
+    4096,
+    16384,
+    65536,
+    131072
+  ],
+  "batches": [
+    1,
+    8
+  ],
+  "decode_tokens": 32,
+  "results": [
+    {
+      "model": "hybrid",
+      "ctx": 4096,
+      "batch": 1,
+      "prefill_s": 0.0517,
+      "prefill_tok_s": 79189.0,
+      "decode_tok_s": 27.2,
+      "tpot_ms": 36.78,
+      "peak_vram_gb": 4.75,
+      "mamba_state_mb": 51.12,
+      "attn_kv_mb": 33.55,
+      "total_state_mb": 84.67
+    },
+    {
+      "model": "hybrid",
+      "ctx": 4096,
+      "batch": 8,
+      "prefill_s": 0.2879,
+      "prefill_tok_s": 113821.2,
+      "decode_tok_s": 229.9,
+      "tpot_ms": 4.35,
+      "peak_vram_gb": 6.67,
+      "mamba_state_mb": 408.94,
+      "attn_kv_mb": 268.44,
+      "total_state_mb": 677.38
+    },
+    {
+      "model": "hybrid",
+      "ctx": 16384,
+      "batch": 1,
+      "prefill_s": 0.1546,
+      "prefill_tok_s": 105997.2,
+      "decode_tok_s": 29.7,
+      "tpot_ms": 33.7,
+      "peak_vram_gb": 5.56,
+      "mamba_state_mb": 51.12,
+      "attn_kv_mb": 134.22,
+      "total_state_mb": 185.34
+    },
+    {
+      "model": "hybrid",
+      "ctx": 16384,
+      "batch": 8,
+      "prefill_s": 1.2577,
+      "prefill_tok_s": 104216.9,
+      "decode_tok_s": 233.9,
+      "tpot_ms": 4.28,
+      "peak_vram_gb": 13.18,
+      "mamba_state_mb": 408.94,
+      "attn_kv_mb": 1073.74,
+      "total_state_mb": 1482.69
+    },
+    {
+      "model": "hybrid",
+      "ctx": 65536,
+      "batch": 1,
+      "prefill_s": 0.7851,
+      "prefill_tok_s": 83476.4,
+      "decode_tok_s": null,
+      "tpot_ms": null,
+      "peak_vram_gb": 8.82,
+      "mamba_state_mb": 51.12,
+      "attn_kv_mb": 536.87,
+      "total_state_mb": 587.99
+    },
+    {
+      "model": "hybrid",
+      "ctx": 65536,
+      "batch": 8,
+      "prefill_s": 6.1833,
+      "prefill_tok_s": 84790.5,
+      "decode_tok_s": null,
+      "tpot_ms": null,
+      "peak_vram_gb": 21.85,
+      "mamba_state_mb": 408.94,
+      "attn_kv_mb": 4294.97,
+      "total_state_mb": 4703.91
+    },
+    {
+      "model": "hybrid",
+      "ctx": 131072,
+      "batch": 1,
+      "prefill_s": 2.0206,
+      "prefill_tok_s": 64868.2,
+      "decode_tok_s": null,
+      "tpot_ms": null,
+      "peak_vram_gb": 13.16,
+      "mamba_state_mb": 51.12,
+      "attn_kv_mb": 1073.74,
+      "total_state_mb": 1124.86
+    },
+    {
+      "model": "hybrid",
+      "ctx": 131072,
+      "batch": 8,
+      "prefill_s": 15.9384,
+      "prefill_tok_s": 65789.1,
+      "decode_tok_s": null,
+      "tpot_ms": null,
+      "peak_vram_gb": 21.85,
+      "mamba_state_mb": 408.94,
+      "attn_kv_mb": 8589.93,
+      "total_state_mb": 8998.88
+    },
+    {
+      "model": "dense",
+      "ctx": 4096,
+      "batch": 1,
+      "prefill_s": 0.1933,
+      "prefill_tok_s": 21191.4,
+      "decode_tok_s": 31.4,
+      "tpot_ms": 31.88,
+      "peak_vram_gb": 5.37,
+      "kv_cache_mb": 176.16
+    },
+    {
+      "model": "dense",
+      "ctx": 4096,
+      "batch": 8,
+      "prefill_s": 0.7265,
+      "prefill_tok_s": 45104.3,
+      "decode_tok_s": 284.5,
+      "tpot_ms": 3.52,
+      "peak_vram_gb": 7.56,
+      "kv_cache_mb": 1409.29
+    },
+    {
+      "model": "dense",
+      "ctx": 16384,
+      "batch": 1,
+      "prefill_s": 0.9275,
+      "prefill_tok_s": 17665.5,
+      "decode_tok_s": 48.4,
+      "tpot_ms": 20.66,
+      "peak_vram_gb": 6.44,
+      "kv_cache_mb": 704.64
+    },
+    {
+      "model": "dense",
+      "ctx": 16384,
+      "batch": 8,
+      "prefill_s": 7.2072,
+      "prefill_tok_s": 18186.2,
+      "decode_tok_s": 380.6,
+      "tpot_ms": 2.63,
+      "peak_vram_gb": 16.02,
+      "kv_cache_mb": 5637.14
+    },
+    {
+      "model": "dense",
+      "ctx": 65536,
+      "batch": 1,
+      "prefill_s": 12.0813,
+      "prefill_tok_s": 5424.6,
+      "decode_tok_s": null,
+      "tpot_ms": null,
+      "peak_vram_gb": 20.0,
+      "kv_cache_mb": 2818.57
+    },
+    {
+      "model": "dense",
+      "ctx": 65536,
+      "batch": 8,
+      "prefill_s": 95.9059,
+      "prefill_tok_s": 5466.7,
+      "decode_tok_s": null,
+      "tpot_ms": null,
+      "peak_vram_gb": 65.04,
+      "kv_cache_mb": 22548.58
+    },
+    {
+      "model": "dense",
+      "ctx": 131072,
+      "batch": 1,
+      "prefill_s": 46.9424,
+      "prefill_tok_s": 2792.2,
+      "decode_tok_s": null,
+      "tpot_ms": null,
+      "peak_vram_gb": 60.64,
+      "kv_cache_mb": 5637.14
+    },
+    {
+      "model": "dense",
+      "ctx": 131072,
+      "batch": 8,
+      "error": "OOM"
+    }
+  ]
+}

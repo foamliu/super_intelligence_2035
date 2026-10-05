@@ -1691,4 +1691,73 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 
 > ⚠️ **诚实条款**：P-9.10 ② 的 eager 下界结论（H1✅H2❌H3❌H4✅）**仍然有效**——它是 mcore eager 栈的实测，不是错误。本节只是更正「sglang 装不上」这一**前置判断**：sglang **可以装/已有**，只是需要先做 HF 转换才能起服。生产栈上界**尚未测**，待补。
 
+### P-9.10 ③ — Custom inference benchmark: hybrid vs dense（2026-10-05 晚，第 110 次唤醒）
+
+> **背景**：vllm/sglang 均因 ABI mismatch / `std::bad_alloc` 无法启动 → 改用**自定义推理 benchmark**（`benchmark_p910.py`），直接对比 hybrid vs dense HF checkpoint。
+> - Hybrid: `mamba_ssm.Mamba2`（py310 env）构建 56 层（24 Mamba2 + 4 Attention + 28 MLP），2.22B params
+> - Dense: `transformers.AutoModelForCausalLM`（LlamaForCausalLM，42 attention 层），2.51B params
+> - GPU: NVIDIA A100 80GB，bf16，`logits_to_keep=1`（只算末 token logits 省 VRAM）
+
+#### A. Prefill throughput（tok/s）
+
+| ctx\batch | bs=1 hybrid | bs=1 dense | bs=1 speedup | bs=8 hybrid | bs=8 dense | bs=8 speedup |
+|---:|---:|---:|---:|---:|---:|---:|
+| 4K | 79,189 | 21,191 | **3.7×** | 113,821 | 45,104 | **2.5×** |
+| 16K | 105,997 | 17,665 | **6.0×** | 104,217 | 18,186 | **5.7×** |
+| 64K | 83,476 | 5,425 | **15.4×** | 84,791 | 5,467 | **15.5×** |
+| 128K | 64,868 | 2,792 | **23.2×** | 65,789 | **OOM** | **∞** |
+
+> **H1 ✅ 强确认**：hybrid prefill 吞吐在所有 ctx×batch 组合中远超 dense。随 ctx 增长，dense attention 的 O(n²) 计算使吞吐急剧下降（4K→128K: 21K→2.8K，7.6× 恶化），而 hybrid 仅缓降（79K→65K，1.2× 恶化）——**SSM 的 O(n) 复杂度优势在长 ctx 下愈发显著**。
+
+#### B. Decode throughput（tok/s, decode_tokens=32, ctx≤16K only）
+
+| ctx\batch | bs=1 hybrid | bs=1 dense | bs=8 hybrid | bs=8 dense |
+|---:|---:|---:|---:|---:|
+| 4K | 27.2 | 31.4 | 229.9 | 284.5 |
+| 16K | 29.7 | 48.4 | 233.9 | 380.6 |
+
+> **H2 ❌**：hybrid decode 慢于 dense。原因：① Mamba2 `step()` 方法有 Python per-token 开销；② dense 的 attention decode 只需 1 token × cached KV，transformers KV cache 已高度优化。**这与 P-9.10 ② eager 下界结论一致（H2❌）**。
+
+#### C. Peak VRAM（GB）
+
+| ctx\batch | bs=1 hybrid | bs=1 dense | ratio | bs=8 hybrid | bs=8 dense | ratio |
+|---:|---:|---:|---:|---:|---:|---:|
+| 4K | 4.75 | 5.37 | 0.89× | 6.67 | 7.56 | 0.88× |
+| 16K | 5.56 | 6.44 | 0.86× | 13.18 | 16.02 | 0.82× |
+| 64K | 8.82 | 20.00 | **0.44×** | 21.85 | 65.04 | **0.34×** |
+| 128K | 13.16 | 60.64 | **0.22×** | 21.85 | **OOM** | **∞** |
+
+> **H3 ✅ 强确认**（修正 P-9.10 ② eager 下界的 H3❌）：hybrid VRAM 在长 ctx 下远低于 dense。64K×1: 8.8 vs 20.0 GB（2.3× 节省），128K×1: 13.2 vs 60.6 GB（4.6× 节省），128K×8: dense 直接 OOM。
+> **修正原因**：P-9.10 ② eager 下界在 mcore 栈测出 H3❌，可能因 mcore eager 的 attention 实现未使用 SDPA/flash attention，导致 VRAM 膨胀。本 benchmark 使用 HF `attn_implementation="sdpa"` + `logits_to_keep=1`，更接近生产栈行为。
+
+#### D. State / KV cache size（MB, analytical）
+
+| ctx\batch | bs=1 hybrid (mamba+attn) | bs=1 dense (KV only) | ratio | bs=8 hybrid | bs=8 dense | ratio |
+|---:|---:|---:|---:|---:|---:|---:|
+| 4K | 85 | 176 | 0.48× | 677 | 1,409 | 0.48× |
+| 16K | 185 | 705 | 0.26× | 1,483 | 5,637 | 0.26× |
+| 64K | 588 | 2,819 | 0.21× | 4,704 | 22,549 | 0.21× |
+| 128K | 1,125 | 5,637 | **0.20×** | 8,999 | **45,094** | **0.20×** |
+
+> **H4 ✅**：hybrid 的 state 大小远小于 dense 的 KV cache。hybrid 的 mamba SSM state 是**常数**（不随 ctx 增长），只有 4 层 attention 的 KV cache 随 ctx 线性增长。dense 的 42 层 KV cache 随 ctx 线性增长，在 128K×8 达 45 GB。
+
+#### E. 假说裁定总结
+
+| 假说 | P-9.10 ② eager 下界 | P-9.10 ③ 自定义 benchmark | 最终 |
+|:--|:--|:--|:--|
+| H1: hybrid prefill > dense | ✅ | ✅ **强确认**（3.7×–23×） | ✅ |
+| H2: hybrid decode > dense | ❌ | ❌（dense 快 1.2×–1.6×） | ❌ |
+| H3: hybrid VRAM < dense | ❌ | ✅ **强确认**（0.22×–0.44×） | ✅（③ 修正 ②） |
+| H4: hybrid state < dense | ✅ | ✅ **强确认**（0.20×–0.48×） | ✅ |
+
+> **结论**：hybrid 架构在 **prefill 吞吐**（H1）和 **VRAM/state 效率**（H3/H4）上全面优于 dense，且优势随 ctx 增长而放大。decode 速度（H2）dense 更优，但 hybrid 的 decode 绝对值仍可用（batch=8: 230 tok/s），且可通过 CUDA-graph / fused kernel 优化。
+> **H3 修正**：P-9.10 ② eager 下界的 H3❌ 被 ③ 推翻——使用 SDPA attention + `logits_to_keep=1` 后，hybrid VRAM 优势明确。
+
+#### F. 数据文件
+
+- 原始 JSON: `benchmark_p910_results.json`（16 条记录，8 hybrid + 8 dense）
+- benchmark 脚本: `benchmark_p910.py`
+- hybrid checkpoint: `hf_checkpoints/p3_hybrid/`（2.22B params, nemotron_h 架构）
+- dense checkpoint: `hf_checkpoints/p3_dense/`（2.51B params, LlamaForCausalLM）
+
 - **下一步**：P-9.9 到 1000（~15:15）→ 取末段 loss 判 T4（确认 FAIL）→ 合成 P-9.9 最终结论 → **释放 8 卡 → P-9.10 实测（GPU0–1）+ data 配比（GPU2–7）并行启动**。
