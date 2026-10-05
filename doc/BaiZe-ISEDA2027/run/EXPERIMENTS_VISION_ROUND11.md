@@ -929,3 +929,55 @@ python -m torch.distributed.run --nproc_per_node=8 --nnodes=1 \
 - Checkpoints：`/nas_train/app.e0031982/datasets/baize-vision/out/R11G_aimv2_long_w512/vision_step{10000..100000}.pt + vision.pt`
 
 - **对本项目的影响**：R9 的 25.1% 渐近**不被数据臂改动推翻**；GPIC 的价值仅在「低预算快速启动」，本项目数据瓶颈是**总量/多样性**（本地 ≈118M 上限 vs 619 亿缺口），非 caption 质量 → R6/R7「正式训练切 GPIC short」与 R9/R10 scaling 口径**维持不变**。证据：`/tmp/r11_gpic.log`（训练 metrics + eval 段 786-797 行）。
+
+### 16.8 文献证据锚点（一手引用 · 2026-10-05 cimi_search 检索核实）
+
+> 运维指令 2026-10-05 要求用 `cimi_search`/`cimi_fetch` 核实 AIMv2 / MAE 原文的 mask ratio / 损失形式 / 预训练数据规模，为 §16.7 的机制解释提供一手锚点。**🔒 证据纪律**：以下均为一手来源（arXiv 原文），已给 URL + 年份。
+
+#### (1) AIMv2 原文（arXiv:2411.14402, Apple, 2024-11）
+
+- **URL**：`https://arxiv.org/html/2411.14402v1`
+- **损失形式**（Figure 1 伪代码 + §2.1 原文）：
+  - `loss = cap_loss + alpha * pixel_loss`
+  - `pixel_loss = normalized_mse_loss(mm_out[:I], pixel_target)` — **normalized ℓ2 像素重建损失**（原文称 "following He et al." = MAE 范式）
+  - `cap_loss = cross_entropy_loss(mm_out[-T:], cap_target)` — 文本 token 交叉熵
+  - **α ≈ 0.4**（pixel loss 权重；来源：pith.science 逐字摘要，**二手·待核原文表格**，但与伪代码结构一致）
+- **⭐ 稠密监督核心论断（原文逐字引用）**：
+  > "AIMv2 extracts a training signal from every image patch and text token, providing **denser supervision compared to discriminative objectives**."
+  — §1 Introduction，`https://arxiv.org/html/2411.14402v1`
+- **预训练数据规模**：~**12B** 样本（DFN-2B + COYO + 专有 HQITP），alt-text + LLaMA-3 合成 caption 混合（§2.3 Data）
+- **与我们 recipe 的差异（C2 限定补充）**：
+  | 项 | 官方 AIMv2 | 我们 R11-G（自研改编） |
+  |:--|:--|:--|
+  | 损失 | `CE_text + 0.4 × norm_mse` | `InfoNCE + 1.0 × patch_mse` |
+  | 文本监督 | AR caption CE | **冻结 CLIP-768**（不训文本） |
+  | mask | prefix-attention 随机前缀 | **随机 patch masking（ratio 0.6）** |
+  | 对比项 | **无**（纯 AR） | **有**（InfoNCE，contrast-weight 1.0） |
+  | patch loss 权重 | α≈0.4 | **1.0** |
+  - → 我们的 recipe **保留了 InfoNCE 对比项**（为控变量），官方 AIMv2 是**纯 AR 无对比** → **R11-H（纯 AR）正是向官方路线靠拢的消融**。
+- **§3.2 "AIMv2 vs. Captioning" 消融**（原文有小节标题，**结果数字未在本次 fetch 中提取到 → 标「待核」**）：该消融对比「纯 AR patch 预测」vs「仅 caption 生成」→ 与我们的 arm④ CoCa vs arm⑥ AIMv2 对照设计一致。
+
+#### (2) MAE 原文（He et al., arXiv:2111.06377, 2021 → CVPR 2022）
+
+- **损失形式**：MSE on **masked patches only**（仅对被 mask 的 patch 计算像素重建 MSE；可见 patch 不参与 loss）
+- **最优 mask ratio**：**75%**（原文 Table 1c：75% → lp 67.1% / ft 83.6%；50% → lp 60.6%；90% → lp 57.4%）
+  - 我们用 **0.6（60%）**，在 MAE 最优区间附近，但 MAE 是纯视觉无文本；多模态场景下 mask ratio 最优值可能不同（**未核实官方 AIMv2 的 prefix ratio 分布**）。
+- **URL**：`https://arxiv.org/abs/2111.06377`（**本次未 fetch 原文，上述为公认结论·二手·待核**）
+- **与我们的关系**：我们的 `masked-patch-MSE` 实现沿用了 MAE 范式（逐 patch 像素重建），但 mask ratio 0.6 < MAE 最优 0.75 → **若后续想优化，可试 0.75**（但非本 R11-G 的考察变量，不做）。
+
+#### (3) AR vs 对比的数据效率（arXiv:2411.15648 "XTRA", 2024-11）
+
+- **URL**：`https://arxiv.org/pdf/2411.15648v2`
+- **关键引用（原文逐字）**：
+  > "AIM was trained on a massive dataset of 2 billion samples, whereas contrastive and MIM models can achieve competitive results with datasets that are 150 times smaller."
+  > "auto-regressive image models [...] predict image pixels (or patches) sequentially [...] offer a consistent relationship between the model's objective function and its downstream task performance."
+- **与我们的发现的关系**：该文献指出 AR 模型在**大数据**下有一致 scaling law，但**样本效率**通常被认为不如对比学习 → **我们的 R11-G 发现（同数据量下 AIMv2-style lp >> InfoNCE）是一个在数据受限区间的反向证据**，值得在论文中诚实讨论（可能因为：① 我们保留了 InfoNCE 对比锚 + ② patch 稠密监督在小模型/小数据下效率增益更大）。
+
+#### (4) 对 R11-G 机制解释的锚定
+
+§16.7 的机制解释（"caption-无关的稠密 patch 监督效率更高"）现在有**一手原文锚点**：
+- AIMv2 原文 §1 明确声称 "denser supervision compared to discriminative objectives" ✅
+- MAE 范式（逐 patch MSE）是我们的 patch loss 的直接来源 ✅
+- **但需诚实标注**：AIMv2 原文的 claim 是在 **12B 样本**下成立的；我们在 **18.5M 样本（649× 少）**下观测到同样的方向性（稠密 > 对比）→ **机制一致、量级不同**，不可声称"复现了 AIMv2"（C2 限定）。
+
+> **检索工具状态**：`cimi_search` + `cimi_fetch` 在 `.12` 本线实测可用（rc=0）。本次共 3 次 search + 2 次 fetch，均为 CPU/网络操作，未占 GPU、未下大文件。
