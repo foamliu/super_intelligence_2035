@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ · R11-L2 ✅ · caption-weight ✅ · R13 ✅ · R11-E ✅ · 臂⑥ AIMv2 ✅ 翻盘**；**R11-F：Arm A ✅(5.53) · B ✅(6.17) · C ✅(5.92) · E ❌端口碰撞未训 · D ❌shard<worker未训**（Q1/Q3=无显著差异，Q2悬置待E重跑，§15.6已落盘）；**R11-G 🔄 运行中** step≈103800/108000 @07:36（**96.1%**，健康无坍缩 C1≈0.38/C2_gap+0.132/C4=OK/loss_ema≈2.26(仍递减)/scale≈73/fused=False，~210ms/iter~2400img/s）→ 链自动接 eval(11ckpt)→R11-H（`/tmp/r11_overnight_chain.sh` PID 4032740 ppid=1 健康）；**10 ckpt 已存**(step10k@01:30..100k@07:22)，final@108k~07:52；ETA train~07:52(~15min)→eval~08:25→R11-H~09:45；✅ **r11g_scaling.py 已建**（幂律+对数线性拟合+预注册判据，已验 InfoNCE 基线复现 a=0.251 R²=0.94）|
-| WAITING | 1（**语义=R11-G 108k 训练运行中 → 30min 轮询**；step≈103800/108000 @07:36（**96.1%**），健康无坍缩(C1≈0.38/C2_gap+0.132/C4=OK/loss_ema≈2.26递减/scale≈73/fused=False)，**10 ckpt 已存**(10k..100k)，final@108k~07:52，剩余≈4.2k步×~0.21s≈15min→ETA train~07:52（链自动 eval 11ckpt~35min→~08:25，再自动起 R11-H 30k~1.2h+eval~15min→~09:45 ALL DONE）；✅r11g_scaling.py已建待用；下次唤醒：若G eval完→跑 r11g_scaling.py 回收11点lp+幂律/对数线性拟合R²+渐近a vs InfoNCE 25.1%+写§14结论；GPU空后→Arm E重跑(稳健端口)+Arm D重跑(empty_check=False已修)补Q2） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ · R11-L2 ✅ · caption-weight ✅ · R13 ✅ · R11-E ✅ · 臂⑥ AIMv2 ✅ 翻盘 · ⭐ R11-G ✅ 完成（108k步，11点lp全单调递增，lp@55.3M=19.76% vs InfoNCE 7.40% Δ+12.36pp，幂律R²=0.91，裁定POSITIVE「换目标函数可抬高渐近上限」，§16已落盘）**；R11-F：Arm A/B/C ✅ · E/D ❌待重跑；**R11-H 🔄 运行中** step≈900/30000 @08:16（纯AR contrast=0.0，patch_mse 0.60→0.30递减，C1=0.74/C2_gap≈0(纯AR预期)/C4=OK，~200ms/iter）→ ETA train~09:50→eval~10:05（链PID 4032740健康）|
+| WAITING | 1（**语义=R11-H 纯 AR 30k 训练运行中 → 30min 轮询**；step≈900/30000 @08:16，纯AR（contrast=0.0/patch_mse only），patch_mse 0.60→0.30递减，C1=0.74(高但<0.95阈值)/C2_gap≈0(纯AR无对比→对齐≈0是预期)/C4=OK/loss_ema=0.33；ETA train~09:50（剩余~29k步×~0.2s≈1.6h）→eval 4ckpt~15min→~10:05 ALL DONE；下次唤醒：若H eval完→写§17(R11-H 4点lp vs ⑥-A 11.39/11.14/12.08% + 基线 3.43/5.45/6.08% → 翻盘是否依赖对比项裁定)；GPU空后→Arm E重跑(稳健端口)+Arm D重跑(empty_check=False已修)补Q2） |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10 + R11-L/②③④ + R11-L2 LoRA + R11-L caption-weight + R11-E GPIC（8.65 GPU·h）+ **臂⑥ AIMv2（✅ 7076s≈1.97h×8卡≈15.7 GPU·h）+ AIMv2 4-ckpt eval（~13min×1卡≈0.22 GPU·h）** + **R11-F 🟢 进行中**（Arm A GPIC short 30k@~80ms→~40min×8卡；5 臂串行总 ~5–6h×8 卡 ≈ 40–48 GPU·h） |
-| 更新 | **2026-10-05 07:36（R11-G 巡检：step103800/108000=96.1% 健康，10 ckpt 已存(10k..100k@07:22)，final@108k~07:52，ETA train~07:52→eval~08:25→R11-H~09:45，无坍缩(C1 0.38/C2_gap+0.132/C4=OK/loss_ema 2.26递减/scale 73/fused=False)，链正常(PID 4032740 ppid=1)，8卡util 100%(7/8)，~210ms/iter~2400img/s；✅r11g_scaling.py已建待用)）** · 2026-10-05 06:58（step93650=86.7%） · 2026-10-05 06:25（step85400=79%） · 2026-10-05 05:53（step77300=71.6%） · 2026-10-05 05:18（step68250=63.2%） · 2026-10-05 04:11（step51400=47.6%） · 2026-10-05 03:38（step42850=40%） · 2026-10-05 03:06（step34800=32%） · 2026-10-05 02:32（step26050=24%） · 2026-10-05 00:55（R11-F A/B/C✅落盘+Q1/Q3裁定+E/D失败诊断+data.py修empty_check） · 2026-10-04 23:38（NFS崩溃修复+overnight chain启动） |
+| 更新 | **2026-10-05 08:16（R11-G ✅完成+§16落盘：108k步exit0，11ckpt lp全单调递增 11.50→19.76%，Δ+7.5→+12.4pp vs InfoNCE，幂律R²=0.91裁定POSITIVE；R11-H 🔄运行中 step900/30000纯AR contrast=0 patch_mse递减 C4=OK）** · 2026-10-05 07:36（R11-G巡检 step103800=96.1%） · 2026-10-05 06:58（step93650=86.7%） · 2026-10-05 06:25（step85400=79%） · 2026-10-05 05:53（step77300=71.6%） · 2026-10-05 05:18（step68250=63.2%） · 2026-10-05 04:11（step51400=47.6%） · 2026-10-05 03:38（step42850=40%） · 2026-10-05 03:06（step34800=32%） · 2026-10-05 02:32（step26050=24%） · 2026-10-05 00:55（R11-F A/B/C✅落盘+Q1/Q3裁定+E/D失败诊断+data.py修empty_check） · 2026-10-04 23:38（NFS崩溃修复+overnight chain启动） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -143,18 +143,25 @@ WAITING: 1
 - ⚠️ NFS Stale file handle 双崩溃（原 datasource 脚本 + r11f_continue）→ 已由 `/tmp/r11_overnight_chain.sh`（NFS-resilient，PID 4032740 ppid=1）接管 C→E→D→G→H 全链。
 - ⬜ 待重跑（GPU 占用中，R11-G/H 后）：Arm E（稳健端口）+ Arm D（empty_check=False 已修）→ 补 Q2。
 
-## R11-G + R11-H 代码 ✅ 已建 · 链已由 overnight chain 接管（2026-10-04 23:38）
+## ⭐ R11-G ✅ 完成（108k 步，2026-10-05 00:51–07:54 训练 + 08:11 eval ALL DONE）
 
-> 运维指令 2026-10-04（七）批准：R11-F → R11-G → R11-H 自动串链。预注册见 `EXPERIMENTS_VISION_ROUND11.md §14`（R11-G 复用 §14.3 翻盘条款）。
+> 运维指令 2026-10-04（七）批准。预注册见 `EXPERIMENTS_VISION_ROUND11.md §14` + §16（已落盘）。链 `/tmp/r11_overnight_chain.sh`（PID 4032740）自动串 R11-F→G→H。
 
-- ✅ **代码改动（`r9_train.py`）**：新增 `--contrast-weight`（默认 1.0）+ `--c2-collapse-guard`（默认 1）。
-  - `--contrast-weight 0.0` = R11-H 纯 AR：跳过 InfoNCE + 文本塔 forward（文本塔不参与梯度），`total = patch_loss_weight × masked-patch-MSE`。
-  - `--c2-collapse-guard 0` = R11-H 关闭 C2_gap≤0.005 自动熔断（**科学理由**：纯 AR 无对比目标→对齐≈0 是预期非坍缩；C1 特征坍缩 + C4 loss 递减护栏**仍生效**）。
-  - `py_compile` ✅；`--help` ✅ 确认两新 arg 注册；ckpt config 增 `contrast_weight`/`c2_collapse_guard` 可追溯。
-- ✅ **脚本**：`r11g_run_aimv2_long.sh`（108k 步，save-every 10000 → 11 ckpt + 自动 IN-1k eval）、`r11h_run_pure_ar.sh`（30k 步，contrast=0 c2guard=0 + 4-ckpt eval）；`bash -n` ✅。
-- ⚠️ **旧链 `r11fgh_chain.sh` 已退出**（NFS Stale file handle 崩溃后未恢复）→ **已由 `/tmp/r11_overnight_chain.sh` 接管**：该合并链在 R11-F Arms C/E/D 完成后**自动**接 R11-G → R11-H，无需人工干预。
-- 🔄 **R11-G 运行中**（00:51:27 起，PID 1019839 torchrun，ppid=4032740 链）：step≈93650/108000 @06:58（**86.7%**），健康无坍缩（C1≈0.42 / C2_gap≈+0.126 / C4=OK / scale≈77 / loss_ema≈2.0(递减) / contrast≈1.9 / patch_mse≈0.14 / fused=False）；~39min/10k → ETA **~07:49（≈50min剩余）**。✅ **9 ckpt 已存盘**（step10k@01:30..90k@06:43，各 507MB）；save-every 10000 → 共 11 点(step10k..100k+final)；eval 在**训完**后批量跑（chain 脚本 collect all step*.pt → `r8_eval_in1k.py --ckpts`）。✅ 8 卡活跃（util 74-100%）。⚠️ **超运维§七 4h 护栏** → overnight chain **无 4h 护栏会自动接 R11-H**；已 flag 待运维定（若不干预，R11-H ~08:55–10:30 跑完，无争用任务，实际可接受）。✅ **r11g_scaling.py 已建**（`vision/r11g_scaling.py`）：幂律 `a−b·N^−c` + 对数线性拟合 + 单调性检查 + 预注册判据自动裁定；已验证 InfoNCE 基线复现 `a=0.251, R²=0.94`（与 R9 已知值一致）；训完 eval 后直接 `python r11g_scaling.py` 即可。
-- ⬜ 待回填：R11-G 11 点 lp（save-every 10k）→ 幂律/对数线性拟合 R²+渐近 a vs InfoNCE 25.1%；R11-H 4 点 lp vs ⑥-A/基线 → 翻盘是否依赖对比项裁定（§14.3）。
+- ✅ **训练**（exit 0）：108k 步，25320.6s，steady 2485.5 img/s，final_loss=2.4169，全程无坍缩（C1 0.34–0.40 / C2_gap +0.12~+0.14 / C4=OK）。
+- ✅ **11-ckpt IN-1k eval**（08:11 ALL DONE）：**11 点 lp 全单调递增** 11.50→12.73→13.48→14.23→15.33→15.52→16.67→17.53→18.41→18.84→**19.76%**（@55.3M）；Δ vs InfoNCE +7.5→+12.4 pp（**随 N 扩大而增大**）。
+- ✅ **Scaling 拟合**（`r11g_scaling.py`）：幂律 `1.000−1.665·N^(−0.040)` R²=**0.9078**；对数线性 `−0.4286+0.0793·log10(N)` R²=0.9155（斜率 2× InfoNCE 0.0398）；单调 n_neg=0/10。
+- ⭐ **裁定 POSITIVE**：R²≥0.90 ✅、a>>25.1% ✅、单调 ✅ → 「换目标函数(AIMv2-style)可抬高渐近上限」。
+- ⚠️ **诚实披露**：`a=100%` 是 curve_fit 上界伪迹（c=0.040 → 饱和 >2× 慢于 InfoNCE c=0.090 → 55.3M 内无饱和信号 → a 不受约束）。可辩护结论：**InfoNCE 25.1% 渐近已被观测值超越**（19.76%@55.3M 仍在攀升），真实渐近 >>25.1% 但精确值需 >>55.3M 样本。C2 限定：AIMv2-style 自研改编，非官方复现。
+- 详见 `EXPERIMENTS_VISION_ROUND11.md §16`。证据：`/tmp/r11g_aimv2_long.log`、`/tmp/r11g_scaling_analysis.txt`、`/tmp/r11g_scaling_points.csv`。
+
+## R11-H 🔄 运行中 — 臂⑥-B 纯 AR（去对比项，2026-10-05 08:11 起）
+
+> 预注册见 BAIZE_VISION_TASK.md「运维指令 2026-10-04（七）」。唯一变化：在 ⑥-A 基础上去掉 InfoNCE（`--contrast-weight 0.0 --c2-collapse-guard 0`），`total = masked-patch-MSE only`。30k 步。
+
+- 🔄 **运行中**（08:11:29 起，PID 3676660 torchrun，ppid=4032740 链）：step≈900/30000 @08:16，纯 AR（contrast=0.0000），patch_mse 0.60→0.30 递减，C1=0.74(高但<0.95)/C2_gap≈0(纯AR预期)/C4=OK/loss_ema=0.33。
+- ETA train~09:50（~1.6h）→ eval 4ckpt ~15min → ~10:05 ALL DONE。
+- ⬜ 待回填：R11-H 4 点 lp（step{10k,20k,30k}+final）vs ⑥-A（11.39/11.14/12.08%）+ 基线（3.43/5.45/6.08%）→ 翻盘是否依赖对比项裁定（§17）。
+- ✅ 代码改动（`r9_train.py`）：`--contrast-weight 0.0` 跳过 InfoNCE+文本塔 forward；`--c2-collapse-guard 0` 关闭 C2 熔断（科学理由：纯 AR 无对比→对齐≈0 是预期）。
 
 
 ## 历史条目已滚动归档（2026-10-03）
