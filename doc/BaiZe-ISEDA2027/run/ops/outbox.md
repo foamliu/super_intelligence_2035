@@ -7534,3 +7534,81 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 71 · 2026-10-05 09:14:19 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+W=/nas_train/app.e0031982/code/super_intelligence_2035; KEYS=$W/doc/keys.txt; RUN=$W/doc/BaiZe-ISEDA2027/run
+LLM_DATA_DIR=/tmp/_none; . "$RUN/llm_rotate.sh"
+llm_parse_candidates "$KEYS" >/dev/null
+CJ="$LLM_CAND_JSON"
+
+echo; echo "=== 1. 候选清单（keys.txt 的 chat LLM；key 脱敏）==="
+python3 -c "import json;[print('   #%d %-28s %-40s key=%s..'%(i,c['model'],c['base'],c['key'][:8])) for i,c in enumerate(json.load(open('$CJ')))]" 2>&1
+
+echo; echo "=== 2. 逐候选探针：http 码 + tool_calls 是否返回 ==="
+echo "   (MODEL / BASE / HTTP / TOOL_CALLS / ERR)"
+python3 -c "
+import json
+for c in json.load(open('$CJ')):
+    print(c['model']+chr(9)+c['base']+chr(9)+c['key'])
+" | while IFS=$'\t' read -r M B K; do
+  code=$(timeout 30 curl -s -o /tmp/_pr.json -w '%{http_code}' -H "Authorization: Bearer $K" -H 'Content-Type: application/json' \
+    -d "{\"model\":\"$M\",\"messages\":[{\"role\":\"user\",\"content\":\"Call the get_value tool with x=42, then stop.\"}],\"tools\":[{\"type\":\"function\",\"function\":{\"name\":\"get_value\",\"description\":\"return a value\",\"parameters\":{\"type\":\"object\",\"properties\":{\"x\":{\"type\":\"string\"}},\"required\":[\"x\"]}}}],\"tool_choice\":\"auto\",\"max_tokens\":80}" \
+    "$B/chat/completions")
+  tc=$(grep -c 'tool_calls' /tmp/_pr.json 2>/dev/null)
+  err=$(python3 -c "import json;d=json.load(open('/tmp/_pr.json'));e=d.get('error') if isinstance(d,dict) else None;print((str(e)[:60]) if e else (d.get('choices')[0].get('finish_reason','') if isinstance(d,dict) and d.get('choices') else ''))" 2>/dev/null)
+  printf '   %-28s %-40s http=%-4s tool_calls=%-3s %s\n' "$M" "$B" "${code:-?}" "${tc:-0}" "$err"
+done
+
+echo; echo "=== 3. 现状佐证：harness 侧的额度痕迹 + 当前用的模型 ==="
+echo "   harness 用的模型: $(grep -oE '\-m +[A-Za-z0-9._-]+' /tmp/baize_harness_loop.log 2>/dev/null | tail -1)"
+echo "   额度/429 痕迹（末 3 条）:"; timeout 15 grep -o -i -e '本次Token额度[^"]*' -e '429' /tmp/baize_harness_loop.log 2>/dev/null | tail -3 | sed 's/^/      /'
+echo "   harness MEMORY 里的 quota 结论:"; timeout 10 grep -o -i -e 'quota[^|]*' "$RUN/MEMORY_HARNESS.md" 2>/dev/null | head -3 | cut -c1-140 | sed 's/^/      /'
+echo; echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-05 09:14:19
+
+=== 1. 候选清单（keys.txt 的 chat LLM；key 脱敏）===
+   #0 deepseek-v4-flash            http://agi-gateway.cxmt.com/v1           key=02_088EE..
+   #1 deepseek-v4-pro-fp4          http://agi-gateway.cxmt.com/v1           key=02_088EE..
+   #2 deepseek-v4-pro-cloud        http://agi-gateway.cxmt.com/cloud/v1     key=02_088EE..
+   #3 kimi-k2.6-cloud              http://agi-gateway.cxmt.com/cloud/v1     key=02_088EE..
+   #4 glm-5.2                      http://agi-gateway.cxmt.com/cloud/v1     key=02_088EE..
+   #5 doubao-seed-2.0-pro-cloud    http://agi-gateway.cxmt.com/cloud/v1     key=02_088EE..
+   #6 doubao-seed-2.0-mini-cloud   http://agi-gateway.cxmt.com/cloud/v1     key=02_088EE..
+   #7 doubao-seed-2.0-lite-cloud   http://agi-gateway.cxmt.com/cloud/v1     key=02_088EE..
+
+=== 2. 逐候选探针：http 码 + tool_calls 是否返回 ===
+   (MODEL / BASE / HTTP / TOOL_CALLS / ERR)
+   deepseek-v4-flash            http://agi-gateway.cxmt.com/v1           http=200  tool_calls=1   tool_calls
+   deepseek-v4-pro-fp4          http://agi-gateway.cxmt.com/v1           http=200  tool_calls=1   tool_calls
+   deepseek-v4-pro-cloud        http://agi-gateway.cxmt.com/cloud/v1     http=200  tool_calls=1   tool_calls
+   kimi-k2.6-cloud              http://agi-gateway.cxmt.com/cloud/v1     http=200  tool_calls=1   tool_calls
+   glm-5.2                      http://agi-gateway.cxmt.com/cloud/v1     http=200  tool_calls=1   tool_calls
+   doubao-seed-2.0-pro-cloud    http://agi-gateway.cxmt.com/cloud/v1     http=200  tool_calls=1   tool_calls
+   doubao-seed-2.0-mini-cloud   http://agi-gateway.cxmt.com/cloud/v1     http=200  tool_calls=1   tool_calls
+   doubao-seed-2.0-lite-cloud   http://agi-gateway.cxmt.com/cloud/v1     http=200  tool_calls=1   tool_calls
+
+=== 3. 现状佐证：harness 侧的额度痕迹 + 当前用的模型 ===
+   harness 用的模型: -m json.tool
+   额度/429 痕迹（末 3 条）:
+      本次Token额度已[0m[2m用完
+      本次Token额度[0m[2m已用完，[0m[2m请等待2小时[0m[2m37分钟43[0m[2m秒后重试[0m[2m
+      429
+   harness MEMORY 里的 quota 结论:
+      quota blocked, PID 3100576 waiting ~33min retry) → relay healthy (.last_run_id=70)
+      quota wait) + cimi_search SWE-bench官方口径核实 + HTML regenerated
+      quota 重置(~5h window, 预计~13:00) → resume3 完成 8 inst → 更新 SWEBENCH_COMPARE.html(30/30) → 报运维扩 300 决策
+
+=== DONE ===
+```
