@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ · R11-L2 ✅ · caption-weight ✅ · R13 ✅ · R11-E ✅ · 臂⑥ AIMv2 ✅ 翻盘 · ⭐ R11-G ✅（§16+§16.8文献锚点）· ✅ R11-H §17 已落盘**（裁定：「翻盘依赖对比项」——纯AR lp 5.28/6.13/6.23% vs ⑥-A 11.39/11.14/12.08%，@10.24M 已≤基线+1.5 → Row3）；**R11-F E+D 🔄 重跑中**（Arm E CC12M pure step≈6700/30000@10:35=22%，守护PID 861557→765556，port 29555；E→D 自动链；日志 `/tmp/r11f_ed_rerun.log`）|
-| WAITING | 1（**语义=R11-F Arm E（CC12M pure）训练运行中 → 30min 轮询**；step≈6700/30000@10:35=22%，无坍缩 C1=0.25/C4=OK；ETA ~1.5h 训完 + 4-ckpt eval ~15min → Arm D(en500k) 自动接起 port 29556 ~1.9h+eval；下次唤醒：若 E eval 完 → 补 §15.6 Q2（A/B/C/E 四源排名）；若 D 完 → 补 D 单列表；**R11-H §17 已写完** → 无待写）|
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ · R11-L2 ✅ · caption-weight ✅ · R13 ✅ · R11-E ✅ · 臂⑥ AIMv2 ✅ 翻盘 · ⭐ R11-G ✅（§16+§16.8文献锚点）· ✅ R11-H §17 已落盘**（裁定：「翻盘依赖对比项」）；**R11-F A/B/C/E ✅ 完成+Q2 已裁定**（§15.6：主指标@30k 三源无显著差异，@20k CC12M pure 显著领先）；**Arm D(en500k) 🔄 运行中** step≈1400/30000@11:50=5%，port 29556，守护 PID 861557→765556|
+| WAITING | 1（**语义=R11-F Arm D（en500k）训练运行中 → 30min 轮询**；step≈1400/30000@11:50=5%，C1=0.30/C4=OK；ETA ~1h 训完 + 4-ckpt eval ~13min → **R11-F 全部 5 臂即告完成**；下次唤醒：若 D 完 → 补 §15.6 D 单列表（in-domain/不可比/不并入排名）；**Q2 已裁定、§15.6 已更新** → 无其他待写）|
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10 + R11-L/②③④ + R11-L2 LoRA + R11-L caption-weight + R11-E GPIC（8.65 GPU·h）+ **臂⑥ AIMv2（✅ 7076s≈1.97h×8卡≈15.7 GPU·h）+ AIMv2 4-ckpt eval（~13min×1卡≈0.22 GPU·h）** + **R11-F 🟢 进行中**（Arm A GPIC short 30k@~80ms→~40min×8卡；5 臂串行总 ~5–6h×8 卡 ≈ 40–48 GPU·h） |
-| 更新 | **2026-10-05 11:17（E step22600/30000=75%；MAE mask 75% ✅cimi_fetch 一手确认 abstract 逐字；§16.8+MEMORY 已更新）** · 2026-10-05 10:35（R11-H ✅完成+§17落盘；E+D重跑中 Arm E step6700=22%） · 2026-10-05 10:02（R11-H巡检 step27900=93%） · 2026-10-05 09:28（R11-H step19250=64%） · 2026-10-05 08:51（R11-H step9900=33%；cimi_search→§16.8锚点） · 2026-10-05 08:16（R11-G ✅完成+§16落盘） · *[R11-G中间巡检9条已归档 daily-memories-vision/2026-10-05.md]* · 2026-10-05 00:55（R11-F A/B/C✅+E/D失败诊断） · 2026-10-04 23:38（NFS崩溃修复+chain启动） |
+| 更新 | **2026-10-05 11:50（Arm E ✅完成+eval：lp{5.18,6.51,6.75}%；§15.4/15.5/15.6/15.7 已更新；Q2 已裁定：主指标无显著差异、@20k E显著领先；Arm D 🔄 step1400/30k=5%）** · 2026-10-05 11:17（E step22600=75%；MAE mask 75% ✅cimi_fetch） · 2026-10-05 10:35（R11-H ✅完成+§17落盘；E+D重跑中 Arm E step6700=22%） · 2026-10-05 10:02（R11-H巡检 step27900=93%） · 2026-10-05 08:51（R11-H step9900=33%；cimi_search→§16.8锚点） · 2026-10-05 08:16（R11-G ✅完成+§16落盘） · *[R11-G中间巡检9条已归档 daily-memories-vision/2026-10-05.md]* · 2026-10-05 00:55（R11-F A/B/C✅+E/D失败诊断） · 2026-10-04 23:38（NFS崩溃修复+chain启动） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -145,15 +145,12 @@ WAITING: 1
 - ⚠️ **诚实披露**：`a=100%` 是 curve_fit 上界伪迹（c=0.040 → 饱和 >2× 慢于 InfoNCE c=0.090 → 55.3M 内无饱和信号 → a 不受约束）。可辩护结论：**InfoNCE 25.1% 渐近已被观测值超越**（19.76%@55.3M 仍在攀升），真实渐近 >>25.1% 但精确值需 >>55.3M 样本。C2 限定：AIMv2-style 自研改编，非官方复现。
 - 详见 `EXPERIMENTS_VISION_ROUND11.md §16`。证据：`/tmp/r11g_aimv2_long.log`、`/tmp/r11g_scaling_analysis.txt`、`/tmp/r11g_scaling_points.csv`。
 
-## R11-H 🔄 运行中 — 臂⑥-B 纯 AR（去对比项，2026-10-05 08:11 起）
+## R11-H ✅ 完成 — 臂⑥-B 纯 AR（去对比项，2026-10-05 08:11–10:35）
 
-> 预注册见 BAIZE_VISION_TASK.md「运维指令 2026-10-04（七）」。唯一变化：在 ⑥-A 基础上去掉 InfoNCE（`--contrast-weight 0.0 --c2-collapse-guard 0`），`total = masked-patch-MSE only`。30k 步。**这是向官方 AIMv2（纯 AR 无对比）靠拢的消融**（§16.8 已核实官方 AIMv2 = 纯 AR 无对比项）。
+> 预注册见 BAIZE_VISION_TASK.md「运维指令 2026-10-04（七）」。唯一变化：在 ⑥-A 基础上去掉 InfoNCE（`--contrast-weight 0.0 --c2-collapse-guard 0`），`total = masked-patch-MSE only`。30k 步。
 
-- 🔄 **运行中**（08:11:29 起，PID 3676660 torchrun，ppid=4032740 链）：step≈19250/30000 @09:28（64%），纯 AR（contrast=0.0000），patch_mse 0.86→0.06 递减，C1=0.29(<0.95)/C2_gap≈0(纯AR预期)/C4=OK/loss_ema=0.07。
-- ETA train~10:04（~36min）→ eval 4ckpt ~15min → ~10:19 ALL DONE。
-- ✅ **E+D 重跑已自动接管**：`/tmp/r11_ed_wait_and_launch.sh`（PID 861557，ppid=1 守护）每 60s 检测链 PID 4032740 → 退出后自动起 `/tmp/r11_ed_rerun.sh`（Arm E port=29555 固定避碰撞 → Arm D port=29556 empty_check=False 已修）→ 合计 ~3.5h 补 Q2/D 单列。
-- ⬜ 待回填：R11-H 4 点 lp（step{10k,20k,30k}+final）vs ⑥-A（11.39/11.14/12.08%）+ 基线（3.43/5.45/6.08%）→ 翻盘是否依赖对比项裁定（§17）。
-- ✅ 代码改动（`r9_train.py`）：`--contrast-weight 0.0` 跳过 InfoNCE+文本塔 forward；`--c2-collapse-guard 0` 关闭 C2 熔断（科学理由：纯 AR 无对比→对齐≈0 是预期）。
+- ✅ **完成+§17 已落盘**：纯 AR lp @ {10k,20k,30k} = {5.28, 6.13, 6.23}% vs ⑥-A {11.39, 11.14, 12.08}% → @10.24M 已 ≤ 基线+1.5 → **裁定 Row3：「翻盘依赖对比项」**（详见 `EXPERIMENTS_VISION_ROUND11.md §17`）。
+- ✅ **E+D 重跑已自动接管**：`/tmp/r11_ed_wait_and_launch.sh`（PID 861557）→ `/tmp/r11_ed_rerun.sh`（PID 765556）。Arm E ✅ 完成（11:47）；Arm D 🔄 运行中（step≈1400/30k）。
 
 ## ⭐ §16.8 文献证据锚点已落盘（2026-10-05 08:51，cimi_search 首次使用）
 

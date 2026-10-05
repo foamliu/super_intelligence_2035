@@ -666,7 +666,7 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 | A（GPIC short） | 126.78M | ~81 ms/iter | 6296 | 3914s（≈65min） | 2424 tar / 303 shards/rank |
 | B（GPIC medium） | 126.78M | ~83 ms/iter | 6186 | 3951s（≈66min） | 同快照 2424 tar |
 | C（GPIC short+medium） | 126.78M | ~86 ms/iter | 5984 | 3586s（≈60min） | 同快照 2424 tar |
-| E（CC12M pure） | 126.78M | ❌ 未训 | — | — | 1100 tar（wds）；端口碰撞失败，待重跑 |
+| E（CC12M pure） | 126.78M | ~95 ms/iter | 5975 | 4193s（≈70min） | 1100 tar（wds）；138 shards/rank |
 | D（en500k） | 126.78M | ❌ 未训 | — | — | 25 tar（wds）；shard<worker 失败，待重跑（empty_check=False 已修） |
 
 > 只变数据；耗时差异仅来自数据加载。所有臂同 w512 / depth30 / patch16 / InfoNCE / 冻结 CLIP-768 / seed 1234 / bs64×8=512 / 30k 步。
@@ -747,12 +747,21 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 - 无坍缩：PROBE step30000 C1=0.3681 / C2_gap=+0.0888 / C4=OK；全程 C1 0.36–0.40 / C2_gap +0.087~+0.091。
 - 证据：`/tmp/r11f_datasource.log:2302-2321`（`[done] total=3586.2s` + `[R8-IN1K] DONE`）；ckpt `R11F_gpic_shortmedium_w512/`。
 
-#### Arm E（CC12M pure）❌ 失败（2026-10-05 00:50:53–55，未训练）
+#### Arm E（CC12M pure）✅ 完成（重跑 2026-10-05 10:24–11:47）
 
-- **失败原因**：`torch.distributed.DistNetworkError: ... port: 30000 ... EADDRINUSE, address already in use`。
-- **根因**：overnight chain 的 `run_arm_f` 用 `--master_port=$((29400 + RANDOM % 1000))`，本次 RANDOM 恰取到使端口 = 30000（29400+600），而该端口仍被前一进程占用（TIME_WAIT / 未释放）→ rendezvous 立即失败，**2 秒内 exit 1，无任何训练**。
-- ⚠️ **纯工程问题（端口碰撞），非数据/科学问题**。CC12M 有 1100 tar，数据本身无问题。**需重跑**（用更稳健的端口选择，见 §15.7）。
-- 证据：`/tmp/r11f_datasource.log:2323-2366`。
+- **首跑失败**（2026-10-05 00:50）：`EADDRINUSE port 30000`（RANDOM 端口碰撞，纯工程问题，2s 内 exit 1 无训练）→ 见 §15.7 重跑。
+- **重跑成功**（port 29555 固定）：30k 步 / 4192.8s（≈70min）/ steady 5975 img/s / 1100 tar（138 shards/rank）/ C1=0.28 C4=OK（无坍缩）/ final_loss=4.223。
+- **IN-1k frozen-trunk lp eval**（`r8_eval_in1k.py`，4 ckpt）：
+
+| ckpt | lp top1 | zs top1 | zs top5 |
+|:--|--:|--:|--:|
+| step 10000 (N=5.12M) | **5.18%** | 1.97% | 7.20% |
+| step 20000 (N=10.24M) | **6.51%** | 2.71% | 9.49% |
+| step 30000 (N=15.36M) | **6.75%** | 2.80% | 9.86% |
+| final (vision.pt) | **6.75%** | 2.80% | 9.86% |
+
+- 命令：`torch.distributed.run --nproc_per_node=8 --master_port=29555 r9_train.py --tower openvision2 --width 512 --depth 30 --steps 30000 --loss clip --data .../conceptual-captions-12m-webdataset/data/*.tar --data-source wds ...`
+- 证据：`/tmp/r11f_ed_rerun.log:764-780`（eval 原始输出）；`R11F_cc12m_w512/train.log`。
 
 #### Arm D（en500k）❌ 失败（2026-10-05 00:50:55–51:27，未训练）
 
@@ -773,8 +782,8 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 | **A** | GPIC short | 3.97 | 4.95 | 5.53 |
 | **B** | GPIC medium | 4.24 | 4.40 | 6.17 |
 | **C** | GPIC short+medium(90%) | 4.90 | 6.23 | 5.92 |
-| **E** | CC12M pure | ❌ port 碰撞未训 | — | — |
-| **D** | en500k | ❌ shard 不足未训 | — | — |
+| **E** | CC12M pure | 5.18 | 6.51 | 6.75 |
+| **D** | en500k | 🔄 重跑中 | — | — |
 
 **裁定**
 
@@ -782,22 +791,22 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 |:--|:--|:--|--:|:--|
 | **Q1** | caption 更长是否有益 | **B(medium) − A(short)** | +0.27 / −0.55 / +0.64 | **无显著差异**（三点全在 ±1.5 带内；30k 点 medium 略高 +0.64 但未达阈值） |
 | **Q3** | 「90% 全用」是否更好 | **C(short+medium) − A(short)** | +0.93 / +1.28 / +0.39 | **无显著差异**（三点全在 ±1.5 带内；20k 点 +1.28 接近但未达阈值，30k 反回 +0.39） |
-| **Q2** | 哪个数据源最好 | **A / B / E** 三者之比 | E 未训 → 仅 A vs B：@30k +0.64 | **暂无显著差异**（A vs B 带内）；**E 待重跑后补判** |
-| **D** | en500k | **单列** | 未训 | ❌ 工程失败待重跑；即便成功仍 **in-domain / 不可比 / 不并入排名** |
+| **Q2** | 哪个数据源最好 | **A / B / E** 三者之比 | @30k: E(6.75)−B(6.17)=+0.58, E−A(5.53)=+1.22, B−A=+0.64；@20k: E(6.51)−A(4.95)=**+1.56**, E−B(4.40)=**+2.11** | **主指标(@30k)无显著差异**（E 最高但领先次高 B 仅 +0.58 < 1.5）；**但 @20k E 显著领先 A/B**（+1.56/+2.11 ≥1.5）→ **CC12M pure 在 10.24M 处样本效率更高，但优势在 15.36M 被 GPIC 追平** |
+| **D** | en500k | **单列** | 🔄 重跑中 | 即便成功仍 **in-domain / 不可比 / 不并入排名**（R8.2 红线） |
 
 **结论（基于现有 A/B/C 三点）**：
 - **Q1**：在 30k 步 / 15.36M 样本预算下，**GPIC medium 相对 short 无显著增益**（Δ 全在噪声带内）。caption 从 20 tok → 46 tok 的更长信息**未被冻结 CLIP-768 文本塔 + InfoNCE 在此预算内转化为可测的 lp 提升**。
 - **Q3**：**「90% 全用（short+medium）」相对 short 亦无显著增益**（C 在 20k 点一度 +1.28 接近阈值，但 30k 回落到 +0.39）→ 合并不成立「数据量×2 即更好」的简单外推（与 R9「数据受限区间加宽数据边际为正」不矛盾——此处是同 N 预算下两个 caption 档的合并，N 未变）。
-- **Q2/E**：CC12M pure 臂因端口碰撞未训，**裁定悬置**，待重跑后补 A/B/E 三者比较。
+- **Q2/E**：CC12M pure（E）在**主指标 @30k** 下为三源最高（6.75%），但领先次高 B（medium 6.17%）仅 +0.58 < 1.5 → **主指标无显著差异**。然而 E 在**@20k 显著领先** A（+1.56）和 B（+2.11）→ **CC12M pure 在 ~10M 样本处样本效率更高**（更早收敛），但 GPIC 在 15.36M 追平 → 三个数据源在 30k 步预算下**渐近性能无显著差异**。
 - ⚠️ **C2 限定**：三点均在噪声带边缘（Q3 @20k = +1.28 接近 1.5），**不排除更大 N / 更长步数下出现分离**；本结论严格限定在「30k 步 / 15.36M / 冻结 CLIP-768 / InfoNCE」口径。
 
-### 15.7 E+D 重跑（🔄 进行中，2026-10-05）
+### 15.7 E+D 重跑（Arm E ✅ 完成 · Arm D 🔄 运行中，2026-10-05）
 
 - R11-G ✅ 完成、R11-H ✅ 完成（§17 落盘）→ **E+D 重跑已由守护脚本自动接管**。
 - **守护脚本**：`/tmp/r11_ed_wait_and_launch.sh`（PID 861557，ppid=1）→ 派出 `/tmp/r11_ed_rerun.sh`（PID 765556）。
-- **Arm E（CC12M pure）** 🔄 运行中（port 29555，step≈6700/30000 @10:35 ≈22%，无坍缩 C1=0.25 / C4=OK，output `R11F_cc12m_w512`，日志 `/tmp/r11f_ed_rerun.log`）→ ETA ~1.5h + 4-ckpt eval ~15min。
-- **Arm D（en500k）** ⏳ 待 E 完成后自动起（port 29556，`empty_check=False` 已修）→ ETA ~1.9h + eval。仍单列、标 in-domain / 不可比。
-- **E+D 完成后** → 补 §15.6 Q2（A/B/C/E 四源排名）+ D 单列表。
+- **Arm E（CC12M pure）** ✅ 完成（11:47:01 ALL DONE）：30k 步 / 4193s / steady 5975 img/s / lp @ {10k,20k,30k} = {5.18, 6.51, 6.75}% → **Q2 已裁定**（§15.6：主指标无显著差异，@20k E 显著领先）。
+- **Arm D（en500k）** 🔄 运行中（11:47:01 起，port 29556，step≈1400/30000 @11:50 ≈5%，`empty_check=False` 已修，C1=0.30 C4=OK）→ ETA ~1h 训完 + 4-ckpt eval ~13min。仍单列、标 in-domain / 不可比。
+- **D 完成后** → 补 D 单列表（§15.6 D 行）；**R11-F 全部 5 臂即告完成**。
 
 ---
 
