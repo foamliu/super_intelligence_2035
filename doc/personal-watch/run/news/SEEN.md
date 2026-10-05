@@ -195,4 +195,19 @@
 | 2026-10-06 | AI glasses face their first major government crackdown | Ars Technica | news | https://arstechnica.com/ai/2026/10/ai-glasses-face-their-first-major-government-crackdown/ |
 | 2026-10-06 | Can 'super intelligence' and a non-binding safety pact solve AI's image problem? | TechCrunch | discussion | https://techcrunch.com/2026/10/04/can-super-intelligence-and-a-non-binding-safety-pact-solve-ais-image-problem/ |
 | 2026-10-06 | Lola Vision Systems is trying to make it easier to run AI models on chips | TechCrunch | feature | https://techcrunch.com/2026/10/05/lola-vision-systems-is-trying-to-make-it-easier-to-run-ai-models-on-chips/ |
+| 2026-10-06 | HackerRank's AI interviewer offers a glimpse into what job interviews could become | TechCrunch | news | https://techcrunch.com/2026/10/05/hackerranks-ai-interviewer-offers-a-glimpse-into-what-job-interviews-could-become/ |
+| 2026-10-06 | SoftBank's Masayoshi Son has rare cautionary note on AI safety | The Japan Times | news | https://www.japantimes.co.jp/business/2026/10/05/companies/softbank-son-ai-risks/ |
+| 2026-10-06 | Sam Altman says 'some bad things' will happen but AI is totally worth it | The Verge | news | https://www.theverge.com/ai-artificial-intelligence/1004811/openai-altman-bad-things-ai-tradeoff |
+| 2026-10-06 | OpenAI launches visual ads that appear alongside image generation results | TechCrunch | news | https://techcrunch.com/2026/10/05/openai-launches-visual-ads-that-appear-alongside-image-generation-results/ |
+| 2026-10-06 | Open or closed AI? How founders are choosing what to build on at TechCrunch Disrupt 2026 | TechCrunch | discussion | https://techcrunch.com/2026/10/05/open-or-closed-ai-how-founders-are-choosing-what-to-build-on-at-techcrunch-disrupt-2026/ |
+| 2026-10-06 | Hackers steal 8 million citizens' records from Danish government database | TechCrunch | news | https://techcrunch.com/2026/10/05/hackers-steal-8-million-citizens-records-from-danish-government-database/ |
+| 2026-10-06 | AI vs. Human Songwriter | The New York Times | feature | https://www.nytimes.com/2026/10/03/arts/music/human-songwriting-ai-songwriting.html |
+| 2026-10-06 | No Signs of AI in the Productivity Data | Apollo (newsletter) | analysis | https://view.e.apollo.com/ |
+| 2026-10-06 | AI Backers Sound the Alarm About Safety | Bloomberg (newsletter) | analysis | https://www.bloomberg.com/news/newsletters/2026-10-04/ai-backers-sound-the-alarm-about-safety |
+| 2026-10-06 | AI doesn't need 'superintelligence' or evil intent to start a nuclear war | The Bulletin | analysis | https://thebulletin.org/2026/10/ai-doesnt-need-superintelligence-or-evil-intent-to-start-a-nuclear-war/ |
+| 2026-10-06 | A Warning for Frontier AI Model Governance | Lawfare | analysis | https://www.lawfaremedia.org/article/a-warning-for-frontier-ai-model-governance |
+| 2026-10-06 | Humanoid robots won't surprise us when they arrive | philipotoole.com (blog) | analysis | https://philipotoole.com/humanoid-robots-wont-surprise-us-when-they-appear/ |
+| 2026-10-06 | Destroying all of humanity is hard work, even for a superintelligence | nibblestew (blog) | analysis | https://nibblestew.blogspot.com/2026/10/destroying-all-of-humanity-is-hard-work.html |
+| 2026-10-06 | China accounts for 77.9% of global humanoid robot shipments in H1, IDC says | TechNode | news | https://technode.com/2026/09/29/china-accounts-for-77-9-of-global-humanoid-robot-shipments-in-h1-idc-says/ |
+| 2026-10-06 | XTechHumanoid winners advance military exploration of humanoid capabilities | war.gov (官方) | news | https://www.war.gov/News/News-Stories/Article/Article/4613847/robotics-competition-winners-advance-military-exploration-of-humanoid-capabilit/ |
 
