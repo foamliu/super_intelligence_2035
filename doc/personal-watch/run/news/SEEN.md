@@ -237,4 +237,6 @@
 | 2026-10-06 | 白宫新设人工智能工作组将起草AI风险评估报告 | 网易（转华尔街日报） | news | https://m.163.com/dy/article/L8CVBMBK05566WVY.html |
 | 2026-10-06 | 国务院印发“人工智能+”行动意见：6大行动+8项支撑定调AI国策 | lmnt.cn（聚合） | analysis | http://www.lmnt.cn/news/110040 |
 | 2026-10-06 | 全球AI监管地图：各国都在管什么？ | AI 实战派（博客） | analysis | https://guijiagi.com/posts/2026-10-04-ai-regulation-global/ |
+| 2026-10-06 | Instinct brings its AI agent to group chats, even for friends without an account | TechCrunch | news | https://techcrunch.com/2026/10/05/instinct-brings-its-ai-agent-to-group-chats-even-for-friends-without-an-account/ |
+| 2026-10-06 | The Dangerous Myths Behind AI Agent Hacks | Financial Times（Yoshua Bengio） | opinion | https://www.ft.com/content/7afaf77b-b027-4a0f-8d53-5e88e7d6f5e4 |
 
