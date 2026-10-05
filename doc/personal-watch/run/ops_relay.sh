@@ -103,6 +103,23 @@ git_sync() {
 }
 git_publish() {
     cd "$GIT_ROOT" || return 0
+    # ⚠️ 先同步再提交/推送：本仓库与 4 条 BaiZe 线**共享同一个远端**，不先 rebase 必被拒（BaiZe 提交极频繁）
+    if ! timeout 120 git fetch origin >/dev/null 2>&1; then
+        echo "[relay] ⚠️ fetch FAILED（网络？）→ 本轮不发布，下轮重试"
+        return 0
+    fi
+    local counts behind
+    counts="$(git rev-list --left-right --count origin/main...HEAD 2>/dev/null || echo '0 0')"
+    behind="$(echo "$counts" | awk '{print $1}')"
+    if [ "${behind:-0}" -gt 0 ]; then
+        if git pull --rebase --autostash origin main >/dev/null 2>&1; then
+            echo "[relay] pull --rebase OK (behind=${behind})"
+        else
+            git rebase --abort >/dev/null 2>&1 || true
+            echo "[relay] ⚠️ pull --rebase FAILED（冲突？）→ 本轮不发布，下轮重试"
+            return 0
+        fi
+    fi
     if ! git add -- "$REL/ops/outbox.md" "$REL/ops/inbox.md" "$REL/ops/.last_run_id" 2>/tmp/_watch_relay_git.err; then
         echo "[relay] ⚠️ git add FAILED: $(tail -2 /tmp/_watch_relay_git.err 2>/dev/null | tr '\n' ' ')"
         return 0
