@@ -89,7 +89,7 @@ def main():
         print(f"[run_single] wrote patch -> {args.out_patch}")
 
     if args.out_predictions:
-        model_name = args.model_name or f"{res.harness}-deepseek-v4-flash"
+        model_name = args.model_name or f"{res.harness}-{os.environ.get('HARNESS_MODEL', 'kimi-k2.6-cloud')}"
         pred = {"instance_id": inst["instance_id"],
                 "model_name_or_path": model_name, "model_patch": patch}
         Path(args.out_predictions).write_text(json.dumps([pred], indent=2))

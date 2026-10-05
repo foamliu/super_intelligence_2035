@@ -33,9 +33,9 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
-GATEWAY = os.environ.get("OPENAI_API_URL", "http://agi-gateway.cxmt.com/v1")
-UNIFIED_MODEL = "deepseek-v4-flash"
-OPENCODE_MODEL = "gw/deepseek-v4-flash"  # provider/model per ~/.config/opencode/opencode.json
+GATEWAY = os.environ.get("OPENAI_API_URL", "http://agi-gateway.cxmt.com/cloud/v1")
+UNIFIED_MODEL = os.environ.get("HARNESS_MODEL", "kimi-k2.6-cloud")
+OPENCODE_MODEL = f"gw/{UNIFIED_MODEL}"  # provider/model per ~/.config/opencode/opencode.json
 # Dummy key handed to harnesses that route through the local gw_proxy (the proxy
 # injects the real gateway key upstream).  See harness_work/gw_proxy.py.
 DUMMY_KEY = "dummy-key-for-proxy"
