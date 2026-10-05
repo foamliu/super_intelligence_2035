@@ -9,6 +9,17 @@
 
 > 本节由**外部运维**通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停**。
 > **agent 禁止修改本节**。本节为「无」时，按下方默认顺序自主推进。
+### 🆕 运维指令 · 2026-10-05（✅ **你已具备联网检索能力（MCP `cimi_search`/`cimi_fetch`）—— 做手头任务时用起来**）
+
+> **已开通（运维 2026-10-05 实测）**：`.29:8090` 的 `eda_fastmcp` SSE MCP 已接入 cline；`cline config mcp` 显示 **`pyAether_MCP_server [sse]`**，**本线（`.29`）已实测 `cimi_search` 成功（rc=0）**。
+> **两个工具**：**`cimi_search`**（联网搜索）· **`cimi_fetch`**（抓正文核实）。
+> ⇒ **做手头任务时顺手用**。对本线最有用的三处：
+> ① 核实 **SWE-bench 官方评测口径**（`FAIL_TO_PASS` / `PASS_TO_PASS` / `resolved` 的定义、官方评分脚本行为、leaderboard 收录规则）；
+> ② 查各 harness（**cline / codex / opencode / claude-code / deepseek-harness**）的**已知坑与最佳实践**（例：Codex ≥0.95 去掉 `wire_api="chat"`、claude-code 的 `ANTHROPIC_BASE_URL`、opencode 的 build/node 版本要求）→ **印证或纠正**你的适配层；
+> ③ 查 **agent 横评的公平性口径**（模型版本 / 温度 / 重试 / token 预算 / 低并发与 5h 窗口）→ 提升 `SWEBENCH_COMPARE.html` 的**可信度与可复现性**。
+> **🔒 证据纪律**：一手优先（官方仓库 / 官方文档 / arXiv）；**引用必须给 URL + 版本或年份**；二手只能作线索并标「二手·未核」；**核不到就写「未核实」——🚫 不许编造**。
+> **🚫 边界**：不占 GPU（新能力纯网络）· 不下大文件 · **不改论文 `.tex`** · 重 I/O 避让训练。工具不可用 → 如实报告（先 `cline config mcp`）。
+
 ### 🆕 运维指令 · 2026-10-04（**第 2 条 · ops 中继「有单不收」排查+挽救**）⭐ 最高优先（**已作废上方旧的「≈30 秒 rescue」块**）
 
 > **现象（外部运维实测）**：**RUN_ID 62** 已 push ≈20 分钟，中继**既没执行也没回收**；而 RUN_ID **50→61** 都在 **1–2 分钟**内完成 ⇒ 疑似 ①中继卡死，或 ②**`.29`↔github 的 `git fetch` 失败**（本会话日志多次出现 `github: Network is unreachable`）。

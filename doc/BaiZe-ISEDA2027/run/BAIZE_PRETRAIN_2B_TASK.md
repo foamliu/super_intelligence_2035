@@ -3,6 +3,16 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_PRETRAIN_2B.md` / `daily-memories/` / `EXPERIMENTS_*`）。本节为「无」时按下方 Round 2 默认顺序推进。
 
+### 🆕 运维指令 · 2026-10-05（✅ **你已具备联网检索能力（MCP `cimi_search`/`cimi_fetch`）—— 做手头任务时用起来**）
+
+> **已开通（运维 2026-10-05 实测）**：`.29:8090` 的 `eda_fastmcp` SSE MCP 已接入 cline；`cline config mcp` 显示 **`pyAether_MCP_server [sse]`**，**本线已实测 `cimi_search` 成功（rc=0）**。
+> **两个工具**：**`cimi_search`**（联网搜索 → 标题 + 摘要 + URL）· **`cimi_fetch`**（抓网页正文 → 用来核实数字）。
+> ⇒ **做手头任务时顺手用，不为它专门开一轮**。对本线最有用的两处：
+> ① **核实关键论文的原始数字**（Chinchilla 20:1 · μP/Tensor Programs V · **Data Mixing Laws** · WSD · Mamba-2 · FP8）→ 作为 **P-8 决策**与「**reduced-horizon proxy search**」支柱的**文献锚点**；
+> ② 查 **Megatron-Core / transformer_engine / mamba-ssm** 的**已知问题与官方建议**（例：尾存 ckpt 的 `save_state_dict_async_plan` gather OOM、`CUDA_DEVICE_MAX_CONNECTIONS=1`）→ 印证你 P-9.6 的实测。
+> **🔒 证据纪律**：一手优先（论文原文 / arXiv / 官方仓库 / 官方榜单）；**引用必须给 URL + 年份**；二手博客只能作线索并标「二手·未核」；**核不到就写「未核实」——🚫 不许凭记忆编数字**。
+> **🚫 边界**：不改下载白名单 · 不占 GPU · 不下大文件（`cimi_fetch` 只取网页正文）· **不改论文 `.tex`（论文仍冻结中）**。若工具不可用 → 先 `cline config mcp` 看 `pyAether_MCP_server [sse]` 是否在，**如实报告**。
+
 ### 🆕 运维指令 · 2026-10-04（**P-9.8：bf16 vs FP8 长程一致性 A/B（≥1000 步）—— 填满凌晨空窗**）⭐ 高优先 · **已批准**
 
 > **用户拍板（2026-10-04 深夜）**：「**队列照跑（P-9.5 → P-6②）+ 追加 P-9.8**」。
