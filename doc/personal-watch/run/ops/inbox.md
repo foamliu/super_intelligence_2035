@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（supervisor 编辑，中继只读执行）
 
-<!-- RUN_ID: 5 -->
+<!-- RUN_ID: 6 -->
 
 > **用法**：在下面**新增一段** `## RUN_ID N`（N 递增）+ **一个 ```bash 块** → `git push`。
 > 中继（`ops_relay.sh`）轮询发现 **RUN_ID 变大** → 执行 → 结果 append 到 `ops/outbox.md` → push。
@@ -13,6 +13,41 @@
 > ② 🚫 **绝不整树 `du`**（大目录会跑很久）—— 只用 `df` + 有界定向 `du`（每条带 `timeout`）；
 > ③ 单块总超时 **600s**，输出超 **20000 字符**会被截断；
 > ④ 危险模式（`rm -rf /`、`mkfs`、**`git clean -fdx`**、**`git reset --hard`**、**杀 ops_relay**）会被**拒绝**。
+
+## RUN_ID 6 — 🩺 **存活体检**：确认 **中继 + 两条 loop** 都在（**只读**）
+
+**背景（supervisor 2026-10-05 22:4x）**：
+- 两条 loop 能从 git 提交/心跳看出在跑；但 **中继只在 `RUN_ID` 变大时才动作 → 平时完全静默**，
+  **无法从 git 判断它是否还活着**；且历次诊断（RUN_ID 1/2）**从未 `pgrep` 过中继**。
+- ⚠️ **命名不一致**：启动文档写 `bash ops_relay.sh`，而停止/检查写 `watch_ops_relay.sh`（见 `ops/README.md` §3、`AGENTS.md`）
+  → 直接 `pgrep watch_ops_relay.sh` 可能是**假阴性**。本块**两种名字 + 按脚本路径**都查。
+
+> ⭐ **本段一旦被执行并回帖，本身就证明「中继活着」**（否则 `outbox.md` 不会新增本段结果）。
+
+```bash
+set -u
+echo "=== 0. 基本 ==="
+hostname; date '+%F %T %Z'; uptime
+echo
+echo "=== 1. ⭐ watch/ops 相关进程（中继两种命名 + 两条 loop）==="
+pgrep -af 'watch_ops_relay|ops_relay|watch_(news|research)_loop' | cut -c1-160 || echo "(未匹配到任何进程)"
+echo
+echo "=== 1b. 兜底：按脚本路径找（防 cmdline 名字对不上）==="
+ps -eo pid,etime,args | grep -E 'ops_relay\.sh|watch_.*_loop\.sh' | grep -v grep | cut -c1-160 || echo "(无)"
+echo
+echo "=== 2. 中继日志尾部（应有 [relay] … started / nothing to commit）==="
+tail -8 /tmp/watch_ops_relay.log 2>/dev/null | cut -c1-160 || echo "(无 /tmp/watch_ops_relay.log)"
+echo
+echo "=== 3. 两条 loop 日志尾部（各 2 行）==="
+for f in /tmp/watch_news_loop.log /tmp/watch_research_loop.log; do echo "--- $f ---"; tail -2 "$f" 2>/dev/null | cut -c1-160 || echo "(无)"; done
+echo
+echo "=== 4. 中继游标 / inbox 最高 RUN_ID（应为 6）==="
+echo -n "last_run_id = "; cat ~/super_intelligence_2035/doc/personal-watch/run/ops/.last_run_id 2>/dev/null || echo "?"
+grep -oE 'RUN_ID[[:space:]]*[0-9]+' ~/super_intelligence_2035/doc/personal-watch/run/ops/inbox.md 2>/dev/null | sort -t' ' -k2 -n | tail -3
+```
+
+**预期**：① 进程段出现 **news + research + 中继** 共 3 行；② 中继日志有 `[relay] … started` 与最近的 `[relay] nothing to commit.` / `RUN_ID=n executed`；
+③ 两条 loop 日志尾部有 `[loop] … sleep …` 心跳。→ 全部命中即证明**三条通道同机存活**。
 
 ## RUN_ID 5 — 🛑 **止损**：把语料分片移出 git 索引（**保留本地文件**，`git rm --cached`）
 
