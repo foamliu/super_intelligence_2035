@@ -493,5 +493,104 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-11870",
+    "repo": "sympy/sympy",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 589.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-11870.json",
+      "stdout_tail": "d): Deprecated: \"providerOptions key 'openai-compatible'\". Use 'openaiCompatible' instead.\n      at BY (/$bunfs/root/chunk-nd6m62hc.js:26:48090)\n      at cZ (/$bunfs/root/chunk-nd6m62hc.js:26:48389)\n      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)\n\n\n[run_single] model_patch: 12124 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-11870.json\n[run_single] cleanup: git reset --hard 5c2e1f96a7ff562d4a778f4ca9ffc9c81557197e\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 58,
+        "p2p_total": 58
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-11897",
+    "repo": "sympy/sympy",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 598.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-11897.json",
+      "stdout_tail": "ud): Deprecated: \"providerOptions key 'openai-compatible'\". Use 'openaiCompatible' instead.\n      at BY (/$bunfs/root/chunk-nd6m62hc.js:26:48090)\n      at cZ (/$bunfs/root/chunk-nd6m62hc.js:26:48389)\n      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)\n\n\n[run_single] model_patch: 8166 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-11897.json\n[run_single] cleanup: git reset --hard e2918c1205c47345eb73c9be68b14c0f15fdeb17\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 95,
+        "p2p_total": 95
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-12171",
+    "repo": "sympy/sympy",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 353.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-12171.json",
+      "stdout_tail": "ud): Deprecated: \"providerOptions key 'openai-compatible'\". Use 'openaiCompatible' instead.\n      at BY (/$bunfs/root/chunk-nd6m62hc.js:26:48090)\n      at cZ (/$bunfs/root/chunk-nd6m62hc.js:26:48389)\n      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)\n\n\n[run_single] model_patch: 1725 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-12171.json\n[run_single] cleanup: git reset --hard ca6ef27272be31c9dc3753ede9232c39df9a75d8\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 8,
+        "p2p_total": 8
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]
