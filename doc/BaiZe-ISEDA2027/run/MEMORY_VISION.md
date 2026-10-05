@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **R12 训练+eval 完成**（120k 步, final_loss=2.1565, steady_img_s=5240.3, total=22637.7s≈6.3h）→ **lp@120k=17.57%, zs=8.37%**（lp@10k=11.15%→120k=17.57% 单调上升）· 🚀 **3-epoch 续跑训练中**（step 120k→344k, 当前 ~120250, ~4800 img/s, ETA ~05:50 10-06）· ✅ 两份 HTML 报告已完成 · ✅ 论文 §6 已改完 · ✅ VISION_NEXT_DIRECTIONS.md 已交付 · 🔧 **修了 2 个 bug**（r9_train.py `log()` 未定义 + watcher `grep -c\|\|echo 0` 双行）· ⚠️ 续跑 eval watcher PID 3879043 alive（等训练完自动 eval 所有 ckpt） |
-| WAITING | 1（**3-epoch 续跑训练进行中** · step ~120250/344k · ~4800 img/s · ETA ~05:50 10-06 训完 → eval watcher 自动收 24+ ckpt 跑 IN-1k lp/zs → 待回填 §19 scaling + §18.5 公平表）|
+| PHASE | ✅ **R12 训练+eval 完成**（120k 步, lp@120k=17.57%）· 🚀 **3-epoch 续跑训练中**（step ~138,300/344k, ~40% done, loss~1.7, throughput 降至 ~2600-3400 img/s 因 NFS 争用, ETA ~10:00 10-06）· ✅ 两份 HTML 报告已验证完成 · ✅ 论文 §6 已改完(commit 6207fe1a) · ✅ VISION_NEXT_DIRECTIONS.md 已交付 · ⚠️ 续跑 eval watcher PID 3879043 alive |
+| WAITING | 1（**3-epoch 续跑训练进行中** · step ~138,300/344k · ~2900 img/s(NFS争用) · ETA ~10:00 10-06 训完 → eval watcher 自动收 24+ ckpt 跑 IN-1k lp/zs → 待回填 §19 scaling + §18.5 公平表）|
 | ERROR_COUNT | 2（① R9 w512 首跑 crash：损坏 jpg → data.py 修复 ② 续跑首试 crash：r9_train.py `log()` 在定义前被 resume 块调用 → 改为 `print()` 修复） |
 | BUDGET_USED | R2–R12 累计 + **R12 完成**（6.3h×8卡≈50.4 GPU·h）+ **3-epoch 续跑进行中**（~6h×8卡≈48 GPU·h 预估, 总 ≈176 GPU·h） |
-| 更新 | **2026-10-05 23:42（R12 120k步训完+eval完: lp@120k=17.57% zs=8.37%. ⚠️R12 lp@61.4M=17.57% < R11-G lp@55.3M=19.76%——全量数据(GPIC all+CC12M+Amshaker 58.8M)反而低于纯CC12M+Amshaker(18.5M×3), 疑GPIC medium/long/tag caption稀释信号. 3-epoch续跑已起(step120k→344k, ~4800 img/s, ETA~05:50). 修2 bug: ①r9_train.py:370 log()→print()(resume块在log定义前) ②r12_continue_watcher.sh:24 grep -c\|\|echo 0→grep -c+${N:-0}(双0导致[:integer]报错). 续跑eval watcher(3879043)alive. WAITING=1[续跑训练中,loop勿唤醒]**· *[更早见 daily-memories-vision/2026-10-05.md]* |
+| 更新 | **2026-10-06 00:20（巡检: 3-epoch续跑训练中 step~138,300/344k(~40%), loss~1.7稳定, throughput降至~2600-3400 img/s因NFS争用(GPIC下载). 7/8 GPU 100%. NCCL heartbeat broken-pipe警告非致命(训练step仍正常log). ckpt已存到step130000. eval watcher(3879043)alive. 所有CPU/写作交付物已验证完成: ①report_vision_lp_eval.html(296行) ②report_vision_aimv2_impl.html(349行) ③VISION_NEXT_DIRECTIONS.md(4方向) ④论文§6(commit 6207fe1a). WAITING=1[续跑训练中,loop勿唤醒]**· *[更早见 daily-memories-vision/2026-10-05.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -191,8 +191,8 @@ WAITING: 1
 - **配方不变**：AIMv2, w512, 冻结 CLIP-768, bs64×8=512, seed 1234, bf16, save-every 10k。
 - **resume**：`vision.pt` (step 120k, loss=2.1565) → `[resume] OK: resuming at step=120000 → will train to step=344000 (224000 new steps)`。
 - ⚠️ **predictor 随机重启**：R12 ckpt 未存 predictor state → `[resume] WARNING: no predictor state in ckpt`。patch-MSE 会在 ~1-2k 步内 re-warm（InfoNCE 梯度不受影响）。
-- **进度**：step ~120250/344k, ~4800 img/s (ms/iter ~104), loss ~2.4 (contrast ~2.3 + patch_mse ~0.15, predictor re-warming 中)。
-- **ETA**：224000 新步 × ~110ms ≈ **6.9h** → 训完 ~**06:30 10-06**。
+- **进度**（00:20 巡检）：step ~138,300/344k（~40% done, 已跑 ~18,300 新步），loss ~1.7 稳定（contrast ~1.5 + patch_mse ~0.14, predictor 已 re-warm）。throughput 从 ~5000 降至 ~2600-3400 img/s（ms/iter ~170-200）因 NFS 争用（data 线 GPIC 下载）。7/8 GPU 100%（GPU5 瞬时 0% 为迭代间隙）。NCCL heartbeat broken-pipe 警告非致命（训练 step 仍正常 log）。
+- **ETA**（按当前 ~2900 img/s）：剩余 ~205,700 步 × ~175ms ≈ **10.0h** → 训完 ~**10:20 10-06**（原估 ~06:30 因 NFS 争用推迟）。
 - **采点**：save-every 10k → ckpt 130k/140k/.../340k/344k + R12 已有 10k-120k = **≥24 点**。Epoch 对齐：120k≈1.05ep · 170k≈1.5ep · 230k≈2.0ep · 285k≈2.5ep · 340k≈3.0ep。
 - **eval watcher**：`r12_continue_eval_watcher.sh`（PID 3879043 alive）— 等训练完自动收 ALL ckpts 跑 IN-1k lp/zs → 回填 §19 scaling。
 - 🔧 **修了 2 个 bug**：① `r9_train.py:370` resume 块调 `log()` 但 `log` 在 line 445 才定义 → `UnboundLocalError` → 改为 `print(..., flush=True)`（py_compile 过）；② `r12_continue_watcher.sh:24` `grep -c python || echo 0` 当 0 match 时输出 `0\n0` 双行 → `[: integer expression expected` → 改为 `grep -c python` + `N=${N:-0}`（bash -n 过）。
