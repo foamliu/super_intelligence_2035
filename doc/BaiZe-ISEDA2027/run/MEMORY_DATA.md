@@ -10,11 +10,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.5/§0.6/§0.7 推进中 · 🔴白名单锁定(只下 l1_en_hq+zh+GPIC；en_v1_4 已停) · l1_en_hq 2288/6006(CC-MAIN-2025-30满✓+CC-MAIN-2025-33满✓+CC-MAIN-2025-38 288/1000推进中 part289 mtime秒级) · zh 171/256(冻结待续·HF树序l1_en_hq先于zh) · gpic train 3010/8001+test 128✓(pid 144981 ~18.6MB/s) · ⭐⭐LIT_IDEAS_2026-10-05.html 完成(52 entries/34 from 2024-2026/62% turnover/0 unverified) · D-CLEAN-4(§8+§9)已完成待拍板
-已完成:       §0.3 8源/§0.4 R2视觉/§0.6 配方/§0.7 停85M·复用·ETA；SFT-2605 下满一致；D-CLEAN 盘点/-2 ≈341G/-3 servers ≈972G/-4 复扫+⭐LLaVA-4B ckpt(367 iter≈22 TiB)；⭐⭐LIT_IDEAS_2026-10-05.html(41KB/389行/discovery-driven/52 entries/0 unverified) · ⭐LIT_IDEAS_2026-10-04.html(78KB/608行) · ✅DeepSeek-Flash定价一手核验 · ✅RouteLLM核验(2406.18665) · ✅Nemotron-H核验 · ✅Chinchilla核验 · ✅"Better Harnesses"(2607.08938: SLM 89.7%@4%cost)
-当前动作:     唤醒123 白名单4项巡检(无假活/无重启)：l1_en_hq 2288/6006(+115 vs 唤醒122@07:30、CC-MAIN-2025-38 288件推进中 part289 mtime秒级、~1.49MB/s 5351MB/60min)；gpic train 3010/8001(+65、pid 144981活、~18.6MB/s 66984MB/60min)；en 2048✓满/zh 171/256 冻结(HF树序l1_en_hq先·zh后l1_en_hq续)/en_v1_4 停保留(488)；retry-loop 3076502+child 3076519 活(Ss/Sl)；无僵死无需重启；task.md mtime 08:29(无新指令)
-下一步:       下轮判 retry-loop(3076502)+gpic(144981) 真推进(僵死即 kill+重启)→ l1_en_hq(剩3718件~260GB ETA~2天)+zh(剩85件~100GB ETA~0.8天后) 下满即报运维「base族就绪」；gpic(剩4991件~7.3TB ETA~4.5天)；D-CLEAN-4 候选等运维拍板
-阻塞:         无硬阻塞；⚠️ l1_en_hq 速率偏慢(小文件+CDN，非僵死)；磁盘 /nas_train 84%(Avail 35T)；🚫 curl github不可达(但cimi-search MCP通道独立可达); 🟡 D-CLEAN-4 候选全部等运维拍板(只盘点不删除)
+PHASE:        §0.6-B 配比实验可行性核查完成→等GPU2-7(P-9.9占满8卡ETA~15:00) · base分词已启动(.29 4进程并行) · 白名单4项巡检正常 · ⭐⭐LIT_IDEAS_2026-10-05.html 完成 · D-CLEAN-4 待拍板
+已完成:       §0.3 8源/§0.4 R2视觉/§0.6 配方/§0.7 停85M·复用·ETA；SFT-2605 下满一致；D-CLEAN 盘点/-2 ≈341G/-3 servers ≈972G/-4 复扫+⭐LLaVA-4B ckpt(367 iter≈22 TiB)；⭐⭐LIT_IDEAS_2026-10-05.html(52 entries/0 unverified) · ✅配比实验可行性核查(scripts/data/env全核验) · ✅baize_mix_tokenize_base.sh+baize_mix_train_template.sh 已创建
+当前动作:     唤醒124 配比实验可行性核查+base分词启动+下载巡检：①GPU2-7核查→❌P-9.9(tensorwise FP8,PID 4044534)占满8卡ETA~15:00,不kill(铁律)；②可行性核查✅：scripts(baize_p5b_train.sh/pretrain_launcher.py/preprocess_data.py)✓、data(.29上 p5b_l3 16片20.6B✓/anneal_code✓/anneal_math2✓/tokenizer_eod✓/base parquet 2048✓但未分词→正在分词/SFT-2605 jsonl未分词)✓、env(PYTHONPATH=omegaconf_230/py310✓/ssh免密✓)✓；③base分词已启动(.29 setsid,4进程PID 1809483/85/87/89,48 parquet→4 shards~21B token,~10:32起)；④下载巡检：l1_en_hq 2345/6006(+57,15件<10min活跃)、zh 171/256(冻结)、gpic 3041(+31,pid 144981活)、en 2048✓满
+下一步:       下轮判 P-9.9是否完(~15:00)→GPU2-7空即起Stable段S0a臂(base:code:math=88:8:4,6卡TP1/DP6,5000步)→base分词完成即就绪；并行判base分词4进程完成→汇总token数→填DATA_MIX_RECIPE.md实测；下载续推(l1_en_hq ETA~2天/zh~0.8天/gpic~4.5天)
+阻塞:         ⏳ GPU2-7被P-9.9占满(ETA~15:00,非P-9.8——P-9.8已完,P-9.9是pretrain新启的tensorwise FP8 1000步跑)；⚠️ l1_en_hq速率偏慢(非僵死)；磁盘/nas_train 84%(Avail 35T)；🟡 D-CLEAN-4候选等运维拍板
 ERROR_COUNT:  0
 ```
 
@@ -108,13 +108,50 @@ ERROR_COUNT:  0
 - **✅ ISEDA 投稿要求已确认**（cimi-fetch 抓取 eda2.com/iseda/sub.html）：Regular Full Paper **4–6 页**。⚠️ BaiZe 论文当前 7 页 → **需压缩 1 页**。
 - **✅ 7 篇 2026 新工作已补**（此前完全空白）：arXiv 2607.08938（CMU, SLM 89.7%@4%cost, cimi-fetch 正文一手核验）/ 2512.15943 / 2604.19299 / 2604.23577 / 2606.27457 / 2609.01532 / 2602.22495。详见 §4 成本专章 + §7 参考清单。
 - **git**：本轮已 `git add` 该 HTML + 本记忆 + 当日日志并**本地提交**；`git push` 因 `Network is unreachable` 失败，待网络恢复后同步远端。
+- **⭐⭐ LIT_IDEAS_2026-10-05.html（重做版）已产出**（唤醒 124 前）：**52 entries / 34 from 2024-2026 / 62% turnover vs 10-04 版 / 0 unverified**，用 cimi_search+cimi_fetch 从一开始就联网 discovery-driven。旧版 10-04 保留作对照。
+
+### ⑨ 🔴 配比实验可行性核查（2026-10-05 运维分卡指令 · §0.6-B）— ✅ 可行性核查完成，⏳ 等 GPU2-7
+
+> 运维 2026-10-05 批准：`.29` GPU2-7（6 卡）归 data 跑配比实验，与 pretrain 推理评测并行。**起跑前置 = 先等 P-9.8 armB(FP8) 跑完**。
+
+**① GPU2-7 核查（10:26 实测原文）**：
+```
+ssh 10.239.2.29 'nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv'
+→ 8 个 python 进程各 ~72GB，PID 4044610-4044617
+ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilization.gpu --format=csv'
+→ 8 卡各 100% util / ~72GB used
+```
+**结论**：❌ **GPU2-7 当前不空** —— P-9.8 armB 已于 ~09:49 完成，但 pretrain 随即启动 **P-9.9**（tensorwise FP8 1000 步跑，PID 4044534，~10:02 起，**占满 8 卡**，ETA ~15:00）。**不 kill（铁律）**，等 P-9.9 完。
+
+**② 脚本/recipe 核查（✅ 全部就位）**：
+- `run/baize_p5b_train.sh`：8 卡 TP1/DP8 模板（GBS=1024/seq=4094/WSD/bf16）—— **已复制为** `run/baize_mix_train_template.sh`（改为 6 卡 TP1/DP6，CUDA_VISIBLE_DEVICES=2,3,4,5,6,7）
+- `code/BaiZe-ISEDA2027/pretrain_launcher.py`：✅ 支持 `--train-data-path` blend `[w, prefix, w2, prefix2, ...]`
+- `code/BaiZe-ISEDA2027/mamba2_hybrid_2b/preprocess_data.py`：✅ parquet→.bin/.idx（需 `*.snappy.parquet` 后缀；base 文件名是 `*.parquet`→已用软链加 `.snappy` 后缀解决）
+
+**③ 训练数据 .bin/.idx 核查（.29 上）**：
+| 源 | 状态 | 路径 | token 估 |
+|:--|:--|:--|--:|
+| `p5b_l3` (L3 web) | ✅ 16 片 | `data/p5b_l3/p5b_l3_train_s{0..15}.bin` | ~20.6B |
+| `anneal_code` | ✅ | `data/anneal_code.bin` (345M) | ~180M |
+| `anneal_math2` | ✅ | `data/anneal_math2.bin` (1.7G) | ~860M |
+| `ultrafineweb_l3_qa_700m` | ✅ | `data/ultrafineweb_l3_qa_700m.bin` (2.97G) | ~1.5B |
+| `tokenizer_eod` | ✅ | `data/tokenizer_eod` | — |
+| **base (ultrafineweb_en)** | 🔜 **分词中** | `data/mix_base/mix_base_train_s{0..3}` | ~21B（48 parquet→4 shard，4 进程并行 @ 10:32 起） |
+| **SFT-2605** | ❌ 未分词 | `/nas_inference/.../UltraData-SFT-2605/data/` (1504 jsonl, 298G) | 需写 jsonl→text 转换器（chat 格式，preprocess_data.py 只认 parquet content 列） |
+| **SFT-Agent-2609** | ❌ 未分词 | `/nas_inference/.../UltraData-SFT-Agent-2609/` (50 shard, 51G) | 同上 |
+
+**④ 环境（✅）**：`PYTHONPATH=/nas_train/app.e0031982/omegaconf_230`；python=`/nas_train/app.e0031982/miniforge3/envs/py310/bin`；tokenizer=`/nas_train/app.e0031982/models/DeepSeek-V4.1-Flash`；ssh .29 免密 ✅。
+
+**⑤ 已创建脚本**：`run/baize_mix_tokenize_base.sh`（base 分词，已启动）+ `run/baize_mix_train_template.sh`（6 卡训练模板，待 GPU 就绪）。
+
+**⑥ 下一步**：base 分词完成（ETA ~1-2h）→ 汇总 token 数 → P-9.9 完成（~15:00）→ GPU2-7 空 → 起 Stable 段 S0a 臂（base:code:math=88:8:4, 5000 步）→ ckpt→HF→lm_eval Table 2（8 集）。
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R research ✅ + R2 LLM 侧 ✅（8 源满填 / base vs L3 重叠 0% / P-8 86:10:4）+ R2 视觉侧 ✅（§0.4：本地 bytes 图文对实测 / 13 HF 候选 / 前 3 推荐）+ phase5 isolation v0.3 + phase1/2 脚本就绪；§0.5/§0.6/§0.7 推进中（§0.6 配方✅ / §0.7 停85M·复用·ETA✅ / SFT-2605 下满一致✅）** |
-| WAITING | 1（下载中：白名单锁定——retry-loop 3076502+hf 3076519 先拉 l1_en_hq(2173/6006)+zh(171/256 待续)；gpic 144981(父 download_it_pairs.sh 3525273 自动续命) train 2945/8001+test 128✓；en 2048/2048 满；en_v1_4 已停(488 保留)；LLaVA 85M 停无进程；D-CLEAN-4 done（只盘点，Avail 35T/84%）；⭐LIT_IDEAS HTML 全量升级完成✅(15条arXiv核验+DeepSeek-Flash定价+ISEDA页数+7篇2026新工作)；重 I/O 推迟） |
+| WAITING | 1（配比实验⏳等GPU2-7——P-9.9(tensorwise FP8,PID 4044534)占满8卡ETA~15:00,不kill；base分词已启动.29 4进程PID 1809483/85/87/89 ETA~1-2h；下载中：白名单锁定——retry-loop 3076502+hf 3076519 先拉 l1_en_hq(2345/6006)+zh(171/256 待续)；gpic 144981 train 3041/8001+test 128✓；en 2048/2048 满；en_v1_4 已停(488 保留)；⭐⭐LIT_IDEAS_2026-10-05.html 完成(52 entries/0 unverified)；D-CLEAN-4 done 待拍板） |
 | ERROR_COUNT | 0 |
 | 节点 | `10.239.2.12`（主机 `whag0pgpuap12`；NFS：`/nas_inference` 只读源，`/nas_train` 产出） |
 | 更新 | 2026-10-05 |
@@ -151,11 +188,12 @@ ERROR_COUNT:  0
 - 2026-10-05 —— 唤醒 116（已滚动归档至 daily-memories-data/2026-10-05.md）
 - 2026-10-05 —— 唤醒 117（已滚动归档至 daily-memories-data/2026-10-05.md）
 - 2026-10-05 —— 唤醒 118（已滚动归档至 daily-memories-data/2026-10-05.md）
-- 2026-10-05 —— 唤醒 119（白名单 4 项巡检，无假活、无重启，网络仍断）：复核 `BAIZE_DATA_TASK.md` mtime **23:09 未变**（无新指令/无索取/无 STOP；⭐LIT_IDEAS HTML 已产出验收通过；D-CLEAN-4 §8+§9 已完成、等运维拍板）。🔵 base retry-loop **3076502**+hf **3076519**（etime ~25.2h，stat Ss/Sl 活）真推进：**l1_en_hq = 2006/6006**（✅ CC-MAIN-2025-30(1000件)满、✅ CC-MAIN-2025-33(1000件)满@06:13 part-1000、🆕 CC-MAIN-2025-38 新启动 6 件 part-0006@06:17 秒级；上轮 1958@05:38→2006@06:17 = +48 件/~39min ≈ **~1.6MB/s**；~78MB/件；非僵死不重启；0 .incomplete）。🔵 zh **171/256**、0 .incomplete（冻结，最后 mtime 10-04 04:59 part-171，随 l1_en_hq 后串行续）。🔵 gpic **144981**（etime ~11.4h，stat Sl 活；父 `download_it_pairs.sh` 3525273 etime~3.6d 活）真推进：train **2853/8001** + test 128/128✓、0 .incomplete（上轮 2826@05:39→2853@06:16 = +27 件/~37min ≈ **~19MB/s**；gpic_train_02853.tar mtime 06:16 秒级；~1.58GB/tar）。🔴 en_v1_4 无进程（✅ 已停，488 parquet≈40G 保留）；LLaVA 85M 停无进程。✅ en 2048/2048 满（/nas_train 复用副本）；✅ SFT-2605 1504/1504 intact；✅ servers GONE。磁盘：/nas_train 173T/207T(84%、Avail **35T**)、/nas_inference 63%(17T)、/nas_user 74%(29T)、/data 4%（均够）。🚫 网络：curl arxiv/hf **http=000** + fetch_web_content **Unable to connect**→31 条⚠️LIT_IDEAS 未在线核验仍无法补验（⚠️ HF CDN 可达故 hf download 正常，仅通用 Web 隔离；环境性非疏漏）。ETA：l1_en_hq 剩 ~4000 件≈312GB @~1.6MB/s ≈ **~2.1 天**（偏慢）/乐观 11–16h；zh 剩 85 件≈108GB ≈3h；gpic 剩 5148 件≈8.2TiB @~19MB/s ≈ **~5.0 天** → base 族就绪(l1_en_hq+zh) ≈2.1 天(偏慢)/~1 天(乐观)。⚠️ gpic 进程 144981 命令行仍暴露 HF token（建议运维轮换）。git：fetch/push github 不可达(Network unreachable)，本地 commit 照常。📉 MEMORY 32114B→滚动迁唤醒113+114→daily-memories-data/2026-10-05.md 后加 119 ≤32KB。下一步 = 下轮判 retry-loop+gpic 真推进（僵死即 kill+重启）→ l1_en_hq+zh 下满即「MiniCPM5 base 族就绪」报运维 → gpic 续下至 8001 tar；网络恢复后补验 LIT_IDEAS 31 条。
-- 2026-10-05 —— 唤醒 120（白名单 4 项巡检，无假活、无重启，网络仍断）：复核 `BAIZE_DATA_TASK.md` mtime **23:09 未变**（无新指令/无索取/无 STOP；⭐LIT_IDEAS HTML 已产出验收通过；D-CLEAN-4 §8+§9 已完成、等运维拍板）。🔵 base retry-loop **3076502**+hf **3076519**（etime ~26h，stat Ss/Sl 活）真推进：**l1_en_hq = 2057/6006**（✅ CC-MAIN-2025-30(1000件)满、✅ CC-MAIN-2025-33(1000件)满、🆕 CC-MAIN-2025-38 推进中 57 件 part mtime 06:56 秒级；上轮 2006@06:17→2057@06:56 = +51 件/~39min ≈ **~1.7MB/s**；~78MB/件；非僵死不重启；0 .incomplete）。🔵 zh **171/256**、0 .incomplete（冻结，最后 mtime 10-04 04:59 part-171，随 l1_en_hq 后串行续）。🔵 gpic **144981**（etime ~12h，stat Sl 活；父 `download_it_pairs.sh` 3525273 etime~3.6d 活）真推进：train **2883/8001** + test 128/128✓、1 .incomplete（在途正常）（上轮 2853@06:16→2883@06:56 = +30 件/~40min ≈ **~21MB/s**；gpic_train_02882.tar mtime 06:56 秒级；~1.58GB/tar）。🔴 en_v1_4 无进程（✅ 已停，488 parquet≈40G 保留）；LLaVA 85M 停无进程。✅ en 2048/2048 满（/nas_train 复用副本）；✅ SFT-2605 1504/1504 intact；✅ servers GONE。磁盘：/nas_train 173T/207T(84%、Avail **35T**)、/nas_inference 63%(17T)、/nas_user 74%(29T)、/data 4%（均够）。🚫 网络：curl arxiv/hf/github **http=000** + fetch_web_content **Unable to connect**→31 条⚠️LIT_IDEAS 未在线核验仍无法补验（⚠️ HF CDN 可达故 hf download 正常，仅通用 Web 隔离；环境性非疏漏）。ETA：l1_en_hq 剩 3949 件≈308GB @~1.7MB/s ≈ **~2.1 天**（偏慢）/乐观 11–16h；zh 剩 85 件≈108GB ≈3h；gpic 剩 5118 件≈8.1TiB @~21MB/s ≈ **~4.5 天** → base 族就绪(l1_en_hq+zh) ≈2.1 天(偏慢)/~1 天(乐观)。⚠️ gpic 进程 144981 命令行仍暴露 HF token（建议运维轮换）。git：fetch/push github 不可达(Network unreachable)，本地 commit 照常。📉 MEMORY ~30KB→滚动迁唤醒115→daily-memories-data/2026-10-05.md 后加 120 ≤32KB。下一步 = 下轮判 retry-loop+gpic 真推进（僵死即 kill+重启）→ l1_en_hq+zh 下满即「MiniCPM5 base 族就绪」报运维 → gpic 续下至 8001 tar；网络恢复后补验 LIT_IDEAS 31 条。
+- 2026-10-05 —— 唤醒 119（已滚动归档至 daily-memories-data/2026-10-05.md）
+- 2026-10-05 —— 唤醒 120（已滚动归档至 daily-memories-data/2026-10-05.md）
 - 2026-10-05 —— 唤醒 121（已滚动归档至 daily-memories-data/2026-10-05.md）
 - 2026-10-05 —— 唤醒 122（已滚动归档至 daily-memories-data/2026-10-05.md）
 - 2026-10-05 —— 唤醒 123（白名单4项巡检·无假活/无重启/无新指令）：复核 `BAIZE_DATA_TASK.md` mtime **08:29 未变**（无新指令/无索取/无 STOP；⭐⭐LIT_IDEAS_2026-10-05.html 已完成验收；D-CLEAN-4 §8+§9 等运维拍板）。🔵 base retry-loop **3076502**+child hf **3076519**（etime ~28.8h，stat Ss/Sl 活）真推进：**l1_en_hq = 2288/6006**（✅ CC-MAIN-2025-30(1000)满、✅ CC-MAIN-2025-33(1000)满、🆕 CC-MAIN-2025-38 推进中 288/1000 part-0289 mtime 09:51 秒级；上轮 2173@07:30→2288@09:55 = +115 件/~2.4h ≈ **~1.49MB/s** 5351MB/60min；~70MB/件；非僵死不重启；0 .incomplete）。🔵 zh **171/256**、0 .incomplete（冻结——HF repo 树序 l1_en_hq 字母序先于 zh → 下载先跑 l1_en_hq 全量后再续 zh 剩余 85 件；符合运维优先级 GPIC>l1_en_hq>zh）。🔵 gpic **144981**（etime ~15h，stat Sl 活；父 `download_it_pairs.sh` 3525273 活）真推进：train **3010/8001** + test 128/128✓、44 new/60min（上轮 2945@07:30→3010@09:55 = +65 件/~2.4h ≈ **~18.6MB/s** 66984MB/60min；4.4TB；~1.46GB/tar）。🔴 en_v1_4 无进程（✅ 已停，488 parquet≈40G 保留）；LLaVA 85M 停无进程。✅ en 2048/2048 满；✅ SFT-2605 1504/1504 intact；✅ servers GONE。磁盘 /nas_train 84%(Avail 35T) 够。ETA：l1_en_hq 剩 3718 件≈260GB @~1.49MB/s ≈ **~2.0 天**；zh 剩 85 件≈100GB @~1.49MB/s ≈ **~0.8 天**(l1_en_hq 后串行)；gpic 剩 4991 件≈7.3TB @~18.6MB/s ≈ **~4.5 天** → base 族就绪(l1_en_hq+zh) ≈ **~2.8 天**。git fetch/push github 不可达(Network unreachable)，ahead 2 本地 commit 照常。下一步 = 下轮判 retry-loop+gpic 真推进 → l1_en_hq+zh 下满即报运维「base族就绪」→ gpic 续下至 8001 tar。
+- 2026-10-05 —— 唤醒 124（⭐配比实验可行性核查+base分词启动+下载巡检）：**配比实验（§0.6-B）可行性核查 ✅ 完成**（运维 2026-10-05 分卡指令：.29 GPU2-7 归 data）。① **GPU2-7 核查**（10:26 ssh .29 nvidia-smi 原文贴入 MEMORY ⑨）：❌ **不空**——P-9.8 armB 已于 ~09:49 完成，但 pretrain 随即启动 **P-9.9**（tensorwise FP8 1000 步跑，PID 4044534，~10:02 起，**占满 8 卡**各 100% util/~72GB，ETA ~15:00）；**不 kill（铁律）**，等 P-9.9 完。② **脚本核查 ✅**：baize_p5b_train.sh（8卡模板）→ **已复制为 baize_mix_train_template.sh**（改 6 卡 TP1/DP6，CUDA_VISIBLE_DEVICES=2,3,4,5,6,7，5000 步，GBS=1024/seq=4094/WSD/bf16）；pretrain_launcher.py ✅ 支持 blend；preprocess_data.py ✅（需 *.snappy.parquet 后缀→已用软链解决）。③ **数据核查**（.29 上）：p5b_l3 16 片 20.6B✓/anneal_code 180M✓/anneal_math2 860M✓/tokenizer_eod✓/**base 未分词→已启动分词**/SFT-2605 jsonl 未分词（需写转换器）。④ **环境 ✅**：PYTHONPATH=omegaconf_230/py310/ssh 免密。⑤ **base 分词已启动**（.29 setsid，4 进程 PID 1809483/85/87/89，48 parquet→4 shards ~21B token，~10:32 起，ETA ~1-2h；用 4 进程而非 8 以降低 I/O 避让 P-9.9）。⑥ **下载巡检**：l1_en_hq 2345/6006（+57,15 件<10min 活跃）、zh 171/256（冻结）、gpic 3041（+31,pid 144981 活）、en 2048✓满；retry-loop 3076502+hf 3076519 活（Ss/Sl）；无僵死不重启。⑦ **脚本创建**：baize_mix_tokenize_base.sh + baize_mix_train_template.sh（bash -n 通过）。git fetch/push github 仍不可达，本地 commit 照常。下一步 = 下轮判 P-9.9 完(~15:00)→GPU2-7 空→base 分词完→起 Stable S0a 臂(88:8:4)→lm_eval Table 2；下载续推。
 
 
 
