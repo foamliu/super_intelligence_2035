@@ -240,7 +240,7 @@ $ grep -rn 'app.e0031982/servers' /nas_train/app.e0031982/code/super_intelligenc
 
 ---
 
-## 8. D-CLEAN-4 · 2026-10-04 大盘复扫（**只盘点、不删除**，sudo 视角）
+## 8. D-CLEAN-4 · 2026-10-04 大盘复扫（**只盘点、不删除**，sudo 视角）— ✅ **已裁定 · 保留不动**（运维 2026-10-05 晚）
 
 > 触发：运维指令 2026-10-04「`/nas_train` 需要清理，用 sudo 盘点各目录大小，找可删除大目录，重点 `/nas_train/app.e0031982`」。
 > 🔒 本轮只产出清单，**未经批准不得 `rm`/`mv`**；🚫 绝不整树 `du`（只 `df` + 有界定向 `du`，每条带 `timeout`）；口令/密钥绝不打印。
@@ -342,6 +342,7 @@ $ grep -rn 'app.e0031982/servers' /nas_train/app.e0031982/code/super_intelligenc
 | 🔴 不可动 | mvp-lab 26T + base 2.74T + BaiZe-ISEDA2027 421G + eda_fastmcp/baize-vision/repo/harness/miniforge3 | — |
 
 > **一句话结论（D-CLEAN-4）**：本轮**未删任何东西**（只盘点）。**最大新增可回收候选**：① `datasets/FineVision` **4.32 TiB**（可选补充源、~8.5 月未动）；② `code/hell/LLaVA-OneVision-1.5` **1.24 TiB**（旧训练目录，疑与顶层 LLaVA-OneVision-1.5 重复）；③ 跨用户 `wangcongtao` **2.42 TiB** / `app.e0025692` **946 GiB**（~8 月未动）。
+> ✅ **运维裁定（2026-10-05 晚）**：「D-CLEAN-4 …… 剩下的保留不动」→ **D-CLEAN-4 终止**：不再删除、也不再盘点；此前「待拍板」**作废**。上方所有候选**均保留不动**。
 > 🔴 红线确认未越界：base/gpic 下载、`BaiZe-ISEDA2027`（P-5b/P-9 live）、`eda_fastmcp`、`baize-vision`、`super_intelligence_2035` repo、harness 工作区、miniforge3 均标为不可动。
 > ⚠️ `sudo` 不可用（需密码）→ 跨用户 `root`/权限收紧目录无法测实，需运维提供 sudo 或 owner 各自报账。
 > 💡 **建议**：运维先拍板 `FineVision` / `hell` / `chip_expert` / 跨用户 `wangcongtao`+`app.e0025692` 这 5 项（合计可回 **≈9.5 TiB**），其余多为 vision 线历史资产需 owner 二次确认。
