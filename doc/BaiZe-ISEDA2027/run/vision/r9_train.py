@@ -367,7 +367,7 @@ def main():
     _resumed_loss = None
     if args.resume:
         if is_main:
-            log(f'[resume] loading checkpoint: {args.resume}')
+            print(f'[resume] loading checkpoint: {args.resume}', flush=True)
         ckpt = torch.load(args.resume, map_location='cpu')
         # sanity: loss config + tower must match (prevent silent recipe change)
         _ck_loss = ckpt['config'].get('loss')
@@ -387,11 +387,12 @@ def main():
         if predictor is not None and ckpt.get('predictor') is not None:
             predictor.module.load_state_dict(ckpt['predictor'], strict=True)
             if is_main:
-                log('[resume] predictor state loaded from ckpt')
+                print('[resume] predictor state loaded from ckpt', flush=True)
         elif predictor is not None:
             if is_main:
-                log('[resume] WARNING: no predictor state in ckpt — predictor keeps random init '
-                    '(re-warms in ~1-2k steps; InfoNCE gradient unaffected, only patch-MSE transient)')
+                print('[resume] WARNING: no predictor state in ckpt — predictor keeps random init '
+                      '(re-warms in ~1-2k steps; InfoNCE gradient unaffected, only patch-MSE transient)',
+                      flush=True)
         # load decoder if present (CoCa)
         if decoder is not None and ckpt.get('decoder') is not None:
             decoder.module.load_state_dict(ckpt['decoder'], strict=True)
@@ -400,8 +401,8 @@ def main():
         if start_step >= args.steps:
             raise ValueError(f'[resume] ckpt step={start_step} >= --steps={args.steps} — nothing to do')
         if is_main:
-            log(f'[resume] OK: resuming at step={start_step} → will train to step={args.steps} '
-                f'({args.steps - start_step} new steps). resumed_loss={_resumed_loss}')
+            print(f'[resume] OK: resuming at step={start_step} → will train to step={args.steps} '
+                  f'({args.steps - start_step} new steps). resumed_loss={_resumed_loss}', flush=True)
 
     def lr_at(s):
         w = args.warmup

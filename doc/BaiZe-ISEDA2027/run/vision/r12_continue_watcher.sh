@@ -21,7 +21,8 @@ log "===== R12 continue watcher START ====="
 # Phase 1: Wait for R12 training ranks to exit
 log "Phase 1: waiting for R12 training ranks (r9_train.py) to exit..."
 while true; do
-    N=$(ps -eo pid=,args= 2>/dev/null | grep 'r9_train.py' | grep -v 'cline' | grep -v grep | grep -c python || echo 0)
+    N=$(ps -eo pid=,args= 2>/dev/null | grep 'r9_train.py' | grep -v 'cline' | grep -v grep | grep -c python)
+    N=${N:-0}
     if [ "$N" -eq 0 ]; then
         log "Phase 1 done: all R12 training ranks exited."
         break
@@ -34,7 +35,8 @@ done
 # Phase 2: Wait for R12 eval watcher to exit
 log "Phase 2: waiting for R12 eval watcher (r12_eval_watcher.sh) to exit..."
 while true; do
-    EW=$(ps -eo pid=,args= 2>/dev/null | grep 'r12_eval_watcher' | grep -v grep | grep -c bash || echo 0)
+    EW=$(ps -eo pid=,args= 2>/dev/null | grep 'r12_eval_watcher' | grep -v grep | grep -c bash)
+    EW=${EW:-0}
     if [ "$EW" -eq 0 ]; then
         log "Phase 2 done: R12 eval watcher exited."
         break
