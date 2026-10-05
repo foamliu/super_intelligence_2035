@@ -3,19 +3,31 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_PRETRAIN_2B.md` / `daily-memories/` / `EXPERIMENTS_*`）。本节为「无」时按下方 Round 2 默认顺序推进。
 
-### 🆕 运维指令 · 2026-10-05（深夜 · ✅ **sglang 可用 → 用 `.29` GPU0–1 起 sglang 做「mcore vs sglang」推理对比**）· 高优先 · **已批准**
+### 🆕 运维指令 · 2026-10-05（深夜 · ✅ **sglang 可用 → 用 `.29` GPU0–1 做「BaiZe（Mamba2-hybrid 2B） vs MiniCPM5-2B」推理对比（框架 = sglang）**）· 高优先 · **已批准**
 
 > **用户拍板（2026-10-05 深夜）**：「既然 sglang ✅ 可用，那可以用 `.29` **GPU0–1 空**进行对比测试（**推理延迟、吞吐量、显存占用**等）。」
+> ⚠️ **口径更正（运维 2026-10-05 深夜）**：本项**不是「mcore vs sglang」的栈对比** —— 而是 **sglang 作为（同一个）推理框架，对比两个架构**：**BaiZe = Mamba2-hybrid 2.220B** ⚔ **MiniCPM5-2B = dense GPT 2.512B**。
 
-**目标**：把 P-9.10 的推理对比从「mcore eager 下界」升级为 **mcore vs sglang 双栈对比**，补齐「**生产栈上界**」（P-9.10② 因 CUDA graph 与 `StaticInferenceContext` 不兼容，只能给下界）。
+**目标**：用**生产推理栈 sglang** 复测/量化**项目核心论点** —— **Mamba2-hybrid（BaiZe）相对 MiniCPM5-2B 在长上下文下的推理优势**（Round 1 S3 曾在 mcore 上量到 decode **10.3×**，但那是**旧 ckpt（已删）+ 非生产栈**，须在 sglang 上重新量一遍并标注口径）。
 
-**① 前置（真正的坑）**：mcore distcp ckpt → **HF(`nemotron_h`)** 转换（`p3_dense/iter_0005000` + `p3_hybrid/iter_0005000`，已核验在位）；转换脚本/权重映射若需新写，**隔离在独立目录，🚫 不动共享 `py310`**。
+**① 对象（两个已核验在位的 ckpt，均在 `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/`）**
 
-**② 测试矩阵（与 P-9.10② 对齐，便于并列）**：context ∈ {4K,16K,64K,128K} × batch ∈ {1,8}（**OOM 就如实记 OOM，🚫 不许偷偷降 context**），gen_len=64。**两栈同格**。
+| 模型 | = | ckpt | 参数 |
+|:--|:--|:--|:--|
+| **BaiZe（本项目）** | Mamba2-hybrid | **`p3_hybrid/iter_0005000`** | 2.220B |
+| **对照** | MiniCPM5-2B（dense GPT） | **`p3_dense/iter_0005000`** | 2.512B |
 
-**③ 采集指标（每格）**：**TTFT · prefill 吞吐(tok/s) · decode 吞吐(tok/s) · 端到端延迟 · 峰值显存**；与 P-9.10② 的 eager 下界 + H1–H4 并列成一张表。
+- **前置（真正的坑）**：两者都要 **mcore distcp → HF**：hybrid → **`nemotron_h`**（sglang 原生支持）；dense → `gpt`/`minicpm` 兼容结构。**手写权重映射**，脚本隔离在独立目录，🚫 不动共享 `py310`。
+- ⚠️ **口径标注**：P-3 = 5000 步 / 123M token（与已删的 S3=1000 步/24.6M 不同）⇒ **旧 10.3× 与本轮数字不得直接相减**，两者并列、各标栈与权重。
 
-**④ 关键问题**：**sglang 上界能否翻正 H2**（hybrid 的 O(n) 优势是否随 ctx 增长而显现）？—— 这正是 eager 下界测不出、而生产栈能回答的。另复测 H3（per-token KV/cache）。
+**② 测试矩阵（同一 sglang、两模型逐格对齐）**：context ∈ {4K,16K,64K,128K}（可加 256K）× batch ∈ {1,8}（**OOM 就如实记 OOM，🚫 不许偷偷降 context**），gen_len=64。
+
+**③ 采集指标（每格）**：**TTFT · prefill 吞吐(tok/s) · decode 吞吐(tok/s) · 端到端延迟 · 峰值显存**；**逐格算 hybrid vs dense 的比值**；并与 P-9.10② 的 **mcore eager 下界**并列成一张表（标注框架差异）。
+
+**④ 关键问题**
+- **decode 优势是否随 ctx 增长**（SSM O(n) vs attn O(n²)）？—— Round 1 在 mcore 上量到 ~10.3×，**sglang 生产栈下是多少**？（P-9.10② eager 下因 launch 开销只量到 ~1.6× 恒定、H2 未翻正 ⇒ **生产栈正是用来验证/翻正这一点**）
+- **显存**：hybrid 的 SSM state 恒定、attn KV 随 ctx 线性 ⇒ 长 ctx 显存优势多大？
+- prefill 长 ctx 加速比。
 
 **⑤ 边界与铁律**
 - **只用 `.29` GPU0–1**（GPU2–7 是 data 配比实验）；🚫 **不 kill data 进程**；要更多卡按 `run/GPU29_ALLOC.md`「申请区」走。
@@ -23,9 +35,9 @@
 - sglang 起服**必须用 `vllm` conda env**（已在位：sglang 0.5.9 + vllm 0.14.1 + flashinfer 0.6.3 + lm_eval 0.4.13），🚫 不碰共享 `py310`。
 - 外网命令**显式带 proxy**。
 
-**⑥ 产出**：`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` P-9.10 节新增「③ sglang 生产栈上界」子节（**命令 + 原始输出 + 表**）；注明与 eager 下界的差异与原因。
+**⑥ 产出**：`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 新增「**P-9.11 · sglang 生产栈 —— BaiZe(Mamba2-hybrid 2B) vs MiniCPM5-2B 推理对比**」节（**命令 + 原始输出 + 逐格表 + 每格比值** + 与 Round-1 mcore 数字并列并标口径）。
 
-> ✅ 本块生效即视为已批准；**P-9.10②（eager 下界）已完成**，本块为「补上界」的续测，**不阻塞** P-6② / P-8。
+> ✅ 本块生效即视为已批准；**P-9.10②（eager 下界）已完成**，本块为「生产栈复测架构对比」，**不阻塞** P-6② / P-8。
 
 ### 🆕 运维指令 · 2026-10-05（晚 · ① `sglang` 改用 **conda 环境**从头装（先查 `.12` 现成的 sglang/vllm env）② 「外网命令带 proxy」口径同步 ③ 环境隔离纪律）· 高优先
 
