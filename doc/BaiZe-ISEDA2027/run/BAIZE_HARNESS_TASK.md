@@ -11,37 +11,26 @@
 
 > 本节由**外部运维**通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停**。
 > **agent 禁止修改本节**。本节为「无」时，按下方默认顺序自主推进。
-### 🚨 运维指令 · 2026-10-05（深夜3 · **合规红线：公司禁止 Claude Code —— 立即暂停并彻底关闭其遥测外发**）· **最高优先（合规 > 进度）**
+### 🆕 运维口径 · 2026-10-05（深夜4 · **Claude Code 合规口径定案：关掉遥测即可继续用 —— 无需暂停 / 无需 egress 拦截 / 无需审计**）· 高优先
 
-> **用户（2026-10-05 深夜）**：「**我们公司内是禁止 claude code 的。谁使用 claude code，公司会列名单给个人和领导发邮件。**发现的机制我猜可能是因为 **claude code 有遥测机制，向 Anthropic 服务器发数据**，从而被发现。⇒ **harness agent 需要通过配置甚至改代码的方式，关闭这些遥测外发的尝试。**」
+> **用户裁定（2026-10-05 深夜，最新）**：
+> ①「**关掉遥测后可以用，有问题我负责。**因为我们公司**网络出口是有严格防火墙的，它的信息出不去**。」
+> ②「**不需要审计报告。**」
+> （背景：此前用户提过「公司禁止 Claude Code、用者会被列名单通报领导」，疑因遥测外发 Anthropic ⇒ **现口径明确为「关掉遥测即可继续用」**。）
 
-**🔴 立即执行（顺序不许颠倒）**
-1. **先停（第一步，立刻）**：**暂停一切 claude-code 相关的运行/评测**（含在跑的实例 + 队列里的 `claude-code×300`），**并把 `claude-code` 从「当前可自动跑的 harness」里摘出**。🚫 **在第 3 步验证通过前，不许再起任何 claude-code 进程**。
-2. **配置层关闭**（⚠️ **键名必须用 `cimi_search`/`cimi_fetch` 查官方文档 + 二进制/源码核实，不许凭记忆**）：
-   - 常见候选（**逐个核实后再用**）：`DISABLE_TELEMETRY=1` · `DISABLE_ERROR_REPORTING=1` · `DISABLE_AUTOUPDATER=1` · `DISABLE_BUG_COMMAND=1` · `DISABLE_NON_ESSENTIAL_MODEL_CALLS=1` · `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1` · `DO_NOT_TRACK=1` · OTel 关断（`OTEL_METRICS_EXPORTER=none` / `OTEL_LOGS_EXPORTER=none` / `OTEL_TRACES_EXPORTER=none`）。
-   - **写进 `settings.json` 的 `env`**（项目级 + `~/.claude/settings.json`），**不依赖调用方 shell**。
-3. **网络层兜底（最关键 —— 配置再全也可能漏网）**：
-   - **egress 拦截**：把 `api.anthropic.com` · `statsig.anthropic.com` · `sentry.io` · `*.sentry.io` · `*.statsig.com` · OTel 出口等**指向 `127.0.0.1`**（`/etc/hosts` 或沙箱 rootfs 内），**或在 proxy 层 DENY**（需 sudo 就先如实报告，别硬来）。
-   - ⚠️ **本线现状提醒**：claude-code 推理走的是**内网网关**（`ANTHROPIC_BASE_URL`），**但遥测未必同样走内网** —— 可能直连公网 ⇒ **必须有网络层拦截**。
-4. **实测取证（铁律：命令 + 原始输出 + 路径）**：
-   - 起**最小冒烟**（不跑评测），**同时抓 egress**：`ss -tnp` / `lsof -i` / `tcpdump`，或把 `HTTPS_PROXY` 指到**只放行内网网关、其余 DENY** 的代理，看还有无对外连接尝试；
-   - 记录「**改前 vs 改后**」的对外连接数（这是「已关闭」的唯一证据）。
-5. **产出**：`run/harness/CLAUDE_CODE_TELEMETRY_AUDIT.md`（+ 可选 HTML）：**机制清单（端点 / 触发时机）· 关闭手段（env / settings / hosts / 代理）· 改前改后实测证据 · 残留风险**。引用官方文档**必须给 URL + 版本**。
-6. **顺带自查**（次要，别跑偏）：其它 harness（codex / opencode / deepseek）**是否也有遥测外发** —— 同一套手法核一遍，有就一并关。
+**✅ 要做的事（就一件，做到位）**
+1. **关闭 Claude Code 的遥测外发尝试** —— **通过配置，必要时改代码**（用户原话「通过配置甚至改代码的方式」）：
+   - **配置层**：写入 **`settings.json` 的 `env` 块**（项目级 + `~/.claude/settings.json`），**不依赖调用方 shell**。候选（⚠️ **键名用 `cimi_search`/`cimi_fetch` 查官方文档核实，别凭记忆**）：`DISABLE_TELEMETRY=1` · `DISABLE_ERROR_REPORTING=1` · `DISABLE_AUTOUPDATER=1` · `DISABLE_BUG_COMMAND=1` · `DISABLE_NON_ESSENTIAL_MODEL_CALLS=1` · `DO_NOT_TRACK=1` · OTel 关断（`CLAUDE_CODE_ENABLE_TELEMETRY=0` / `OTEL_*_EXPORTER=none`）。
+   - **代码/包装层**（若某些外发是硬编码、配置关不掉）：在**我们自己的 harness 适配层/包装脚本**里关掉（例：起 `claude` 时强制注入上述 env；或把其外发目标导向 `127.0.0.1` 的本地 stub）。🚫 **不改上游二进制分发**；🚫 不动共享 `py310`。
+2. **claude-code 横评恢复正常**：**不用暂停、不用从列表摘出、不用 egress 拦截**（公司出口防火墙已是兜底）；`claude-code` 照常参与 `×30 / ×300`。
+3. **不需要审计报告**（用户明确）—— 但请在 `MEMORY_HARNESS.md` **记一行**：「已按 X / Y / Z 关闭遥测；依据 = 官方文档 <URL>；claude-code 恢复横评」，便于日后追溯。
 
-**🚫 纪律**
-- **不确定就先停**：宁可少跑一个 harness，也不能触发合规问题。
-- 🚫 **不许**在缺 egress 拦截的情况下跑 claude-code；🚫 **不许**把「改了配置」当成「已关闭」—— **必须实测**。
-- 若**确实关不掉**（硬编码遥测 / 无法拦截）⇒ **如实报告，并建议把 claude-code 从横评移除**（「5 harness」→ **4 harness**）。**这一条要运维/用户拍板，不许自行决定。**
-- 其余 harness（cline / codex / opencode / deepseek）**不受影响，照常推进**（codex×30 收尾 + 扩 300 继续）。
+**🔎 运维已先查到的起点（二手摘要，键名仍请按官方文档复核）**
+- **官方文档**：<https://code.claude.com/docs/en/env-vars>（设置途径 = shell env 或 **`settings.json` 的 `env` 块**；`env` 块**每次运行都生效**）。
+- ⚠️ **关键**：Claude Code 有**两套独立遥测** —— **`DISABLE_TELEMETRY` 只管 Statsig 一侧**；**`CLAUDE_CODE_ENABLE_TELEMETRY` 管 OTel 一侧**；**两者正交**（设了前者 ≠ 关掉后者）。
+- **Anthropic issue #47558**：会连 **Statsig** 上报 latency/reliability/usage（官方称不含代码/路径），opt-out = `DISABLE_TELEMETRY`。
 
-**🔎 运维已先查到的起点（⚠️ 均为二手摘要，键名仍须你按官方文档 + 二进制源码复核）**
-- **官方文档**：<https://code.claude.com/docs/en/env-vars> —— 设置途径 = **shell env** 或 **`settings.json` 的 `env` 块**（`env` 块的值**每次运行都生效**，与启动方式无关；`~/.claude/settings.json` = 你本人全局 · `.claude/settings.json` = 项目级）。
-- ⚠️ **关键认知**：Claude Code 有**两套互相独立的遥测** —— **`DISABLE_TELEMETRY` 只管 Statsig 一侧**；**`CLAUDE_CODE_ENABLE_TELEMETRY` 管 OTel 一侧**；**两者正交，设了前者 ≠ 关掉后者**（来源：`viablesys/library → claude-code-telemetry.md` 摘要，**二手**）。
-- **Anthropic issue #47558**：Claude Code 会连 **Statsig** 上报 latency / reliability / usage（官方称**不含代码与文件路径**）；opt-out = **`DISABLE_TELEMETRY`**。
-- ⇒ 必须**同时**处理四类：**① Statsig**（`DISABLE_TELEMETRY`）· **② 错误上报 / Sentry**（键名待核，疑为 `DISABLE_ERROR_REPORTING`）· **③ OTel**（`CLAUDE_CODE_ENABLE_TELEMETRY` + `OTEL_*` exporters）· **④ 自动更新 / 其它非必要流量**（键名待核）。**每一类都要在官方文档里找到对应行**，找不到就在报告里写「未找到官方开关 → 用网络层拦截兜底」。
-
-> ✅ 本块生效即视为已批准（**合规优先于进度**）。**第 1–4 步做完并把审计文档交回**后，再谈是否恢复 claude-code 横评。
+> ✅ 本块生效即视为已批准；**合规口径已由用户明确（关遥测即可用）** —— 做完第 1 步、记一行即可恢复 claude-code 横评。
 
 
 ### 🆕 运维指令 · 2026-10-05（深夜 · ✅ **授权自装 deepseek-harness 工具链（node≥22.13 + rust）**；codex×30 后按序扩 300）· 高优先 · **已批准**

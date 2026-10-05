@@ -72,7 +72,7 @@ WAITING: 0
 - [ ] ⭐ **vision 全量数据跑 AIMv2（待 vision 回报估算）**：用户令「用全部现有数据（GPIC 41% + CC12M + Amshaker）跑当前最佳配方 AIMv2」；**先答「要多久 / 是否 >1 epoch」**（运维粗估 1 epoch ≈6.6h、2 epoch ≈13h，待 vision 实测精算）。
 - [ ] ⭐ **pretrain 四件（2026-10-05 深夜2 下发，最高优先；⭐ 用户追加「P-6② 早点做」⇒ 顺序已改）**：**先 ②③（P-5b 8 集常识评测 + P-6②，同一评测管线，合并跑、分别出 HTML，用 `.29` GPU0–1，P-5b 从未在 8 集上评过、此前仅 P-6 第 1 步 Avg 0.4395）** → **① sglang 上界补测**（CPU 部分 HF 转换 `nemotron_h` + ABI/`std::bad_alloc` 排查 + **必须用 `cimi_search`** 并行推进；转换好后起的 GPU 补测）→ **④ P-9.5 profiler 排查复跑 → HTML**。
 - [ ] **data / vision 各出 HTML（2026-10-05 深夜2 下发）**：⑤ `report_data_mix_s0a.html`（Stable S0a 是什么 + 现况，纯 CPU 写作、不扰训练）；⑥ vision 两份 `report_vision_lp_eval.html` + `report_vision_aimv2_impl.html`（纯 CPU 写作、不扰 R12）。
-- [ ] 🚨 **合规红线（2026-10-05 深夜3，最高优先）**：**公司禁止 Claude Code**（用了会被列名单通报领导），疑因**遥测外发 Anthropic**。⇒ harness **必须**：**① 先停 claude-code（含 ×300）+ 从可跑列表摘出 → ② 配置关闭遥测（env/settings，键名须官方文档核实）→ ③ 网络层 egress 拦截（hosts/proxy DENY api.anthropic.com · statsig · sentry）→ ④ 实测取证（改前/改后对外连接数）→ ⑤ 交 `run/harness/CLAUDE_CODE_TELEMETRY_AUDIT.md`**。若关不掉 ⇒ 报告 + 建议横评「5→4 harness」，**需用户拍板**。**合规优先于进度。**
+- [x] ✅ **Claude Code 合规口径已定案（2026-10-05 深夜4 用户）**：**关掉遥测即可继续用**（**用户负责**；理由 = **公司网络出口有严格防火墙，信息出不去**）；**不需要审计报告**。⇒ harness 只做：**配置（必要时改代码）关闭遥测 → `MEMORY_HARNESS.md` 记一行 → claude-code 照常参与 ×30/×300**；**不暂停、不从列表摘出、不要求 egress 拦截 / 不交审计报告**。（此前「先停 + 拦截 + 审计」版本**作废**。）
 - [ ] ⭐ **AIMv2 提速（待 vision 归因实测）**：用户问「能否加速 / 显卡满否 / 能否加 MBS」—— 运维读数：**显存未满（同配方 ≈22.7–30 / 81.6 GB）**但**同配方吞吐波动大（R11-G 2485 ↔ ⑥-A 5971 img/s）⇒ 疑数据/IO 受限**；已下发「bs{64,128,256}×≥200 步 + `nvidia-smi dmon`」归因实测。**判据：util≲70% 或 ms/iter 不随 MBS 变 ⇒ 数据受限（改数据管线、保持 bs=512 以保 scaling 可比）；util≈100% 且 img/s 随 MBS 升 ⇒ 算力受限（可加 MBS，但须标注 global batch 变化）**。⭐ **用户 2026-10-05 晚拍板：本提速项 = 下一批「全量数据训练」的硬性前置 —— 先优化速度、把实测 img/s 提上去，再跑 ≈59.5M 对全量；估算用提速后 img/s。**
 - [ ] 💬 **另一「运维会话」在并行活动**（2026-10-04 深夜发现：origin 上出现**我没写过的 RUN_ID 63 诊断记录**）→ **需与用户确认是否统一到单一会话**，以免重复下发/互相覆盖。
 > 📦 **下列「当日已完成（[x]）」条目已原文滚动归档 → `daily-memories/2026-10-03.md`「从 MEMORY.md 滚动归档」A 节**：D-CLEAN-2/-3 与回收量核实 · harness R1 沙箱路线 · GPIC E1 实测 + C1 口径 · H-A′ 放行 · docker 系降末选 · sudo 口令 · `ops_relay` 「2 副本」误判结案 · 论文冻结 · vision 队列裁定 · data 白名单锁定。**（查旧决策请去该归档，勿再塞回本文件。）**
@@ -189,6 +189,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **2026-10-05（深夜4 · Claude Code 合规口径定案：关遥测即可用，用户负责）** —— 继「深夜3 先停+拦截+审计」之后，用户**当晚改口径**：「**关掉遥测后可以用，有问题我负责**（**公司网络出口有严格防火墙，信息出不去**）；**不需要审计报告**」。⇒ 已**重写** `BAIZE_HARNESS_TASK.md` 顶部块为「**关遥测即可继续用**」：只做 **① 配置（+必要时代码包装层）关闭遥测**（`settings.json` 的 `env` 块；候选 `DISABLE_TELEMETRY`/`DISABLE_ERROR_REPORTING`/OTel 关断等，**键名须官方文档核实**）→ **② `MEMORY_HARNESS.md` 记一行**（关了哪些 + 依据 URL）→ **③ claude-code 照常参与 `×30/×300`**；**不暂停、不摘出、不做 egress 拦截、不交审计报告**。附运维先查到的起点（官方 env-vars 文档 + 「两套独立遥测：`DISABLE_TELEMETRY`=Statsig / `CLAUDE_CODE_ENABLE_TELEMETRY`=OTel」+ issue #47558，**均标二手待复核**）。
 
 - **🚨 2026-10-05（深夜3 · 合规红线：公司禁止 Claude Code → 已下发「先停 + 关遥测 + egress 拦截 + 实测」）** —— 用户：「**公司内禁止 claude code**，谁用会被**列名单给个人和领导发邮件**」；推测机制 = **claude code 有遥测外发 Anthropic**。⇒ 已下发 **`BAIZE_HARNESS_TASK.md` 顶部最高优先（合规 > 进度）**：**① 先停** claude-code（含在跑实例 + 队列 `claude-code×300`）并从「可自动跑」列表摘出；**② 配置关闭**（env/settings：`DISABLE_TELEMETRY` 等，**键名须 `cimi_search` 查官方文档核实**）；**③ 网络层兜底**（hosts/代理 DENY `api.anthropic.com`·`statsig`·`sentry.io` 等 —— 提醒：**推理走内网网关 ≠ 遥测也走内网**）；**④ 实测取证**（改前/改后对外连接数）；**⑤ 交 `run/harness/CLAUDE_CODE_TELEMETRY_AUDIT.md`**。**关不掉 ⇒ 报告 + 建议横评「5→4 harness」，需用户拍板。** 其余 harness 照常。
 
