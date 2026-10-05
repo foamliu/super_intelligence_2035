@@ -162,4 +162,10 @@
 | 2026-10-05 | People really hate AI, so why can't they get enough? | MIT Technology Review | analysis | https://www.technologyreview.com/2026/10/05/1145682/people-really-hate-ai-so-why-cant-they-get-enough/ |
 | 2026-10-05 | All the AI agents that can live in your text messages | TechCrunch | feature | https://techcrunch.com/2026/10/03/all-the-ai-agents-that-can-live-in-your-text-messages/ |
 | 2026-10-05 | What do you want from AI? | Anthropic | analysis | https://www.anthropic.com/research/your-thoughts-on-ai |
+| 2026-10-05 | Accept 'bad things' in return for benefits of AI, says Sam Altman | The Guardian | news | https://www.theguardian.com/technology/2026/oct/05/sam-altman-open-ai-chatgpt-benefits-risks |
+| 2026-10-05 | Will A.I. Still Take Our Jobs? | The New Yorker | opinion | https://www.newyorker.com/culture/open-questions/will-ai-still-take-our-jobs |
+| 2026-10-05 | I Quit OpenAI Because Its Culture Is Broken | The Atlantic | opinion | https://www.theatlantic.com/technology/2026/10/openai-safety-team-resignation/688881/ |
+| 2026-10-05 | AI Backers Sound the Alarm About Safety | Bloomberg | analysis | https://www.bloomberg.com/news/newsletters/2026-10-04/ai-backers-sound-the-alarm-about-safety |
+| 2026-10-05 | AI doesn't need 'superintelligence' or evil intent to start a nuclear war | The Bulletin of the Atomic Scientists | analysis | https://thebulletin.org/2026/10/ai-doesnt-need-superintelligence-or-evil-intent-to-start-a-nuclear-war/ |
+| 2026-10-05 | A Warning for Frontier AI Model Governance | Lawfare | analysis | https://www.lawfaremedia.org/article/a-warning-for-frontier-ai-model-governance |
 

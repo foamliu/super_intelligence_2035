@@ -12,10 +12,10 @@ WAITING: 1
 
 ```
 PHASE:        常态采集（T1–T10 ✅）+ **L1/N3 收口（G1 全过）+ L2/N4 探索性（G2 全过）**（L1 焦点 · L2 探索性 · L3 冻结）
-已完成:       T1–T10 ✅ · 首~二十四轮常态 ✅ · **N1 抓取器 + 语料〔全库完抓〕2,492,230 条 / 11 片 2016–2026（游标 `2015-12-31`，倒序已收尾至 `2016-01-01`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（75,610 条，对 15:10 全量快照）· N3-4 预警方案 · L1 预警准则加固（`early_warning.py` §4.3 固定召回率 precision + **§4.4 措辞强度 tone 信号**，`EARLY_WARNING.md` 424 行）· L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md，9 行）+ **G2′④ 连续性自报（`compute_streak`：连续 7 自然日 · ≥20h · 同天计 1 · record-only 不计入）**
-当前动作:     **本唤醒：第二十四轮常态采集（news **+2**：TechCrunch《Sanders introduces bill to ban the federal government from using Flock》10-02 · TechCrunch《Can Safeworld convince people that gen AI robots won't hurt them?》10-05；两条均 fetch 核验为报道体）；**上轮**：第二十三轮 +3（BleepingComputer Anthropic 语音数据 · DW Anthropic-disinfo · Axios Altman）
+已完成:       T1–T10 ✅ · 首~二十五轮常态 ✅ · **N1 抓取器 + 语料〔全库完抓〕2,492,230 条 / 11 片 2016–2026（游标 `2015-12-31`，倒序已收尾至 `2016-01-01`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（75,610 条，对 15:10 全量快照）· N3-4 预警方案 · L1 预警准则加固（`early_warning.py` §4.3 固定召回率 precision + **§4.4 措辞强度 tone 信号**，`EARLY_WARNING.md` 424 行）· L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md，9 行）+ **G2′④ 连续性自报（`compute_streak`：连续 7 自然日 · ≥20h · 同天计 1 · record-only 不计入）**
+当前动作:     **本唤醒：第二十五轮常态采集（news **+1**：The Guardian《Accept 'bad things' in return for benefits of AI, says Sam Altman》10-05；⚠️ 本机 Guardian 不可达〔`Errno 101`〕→ 仅凭标题+链接+HN 日期核验）；**上轮**：第二十四轮 +2（TechCrunch Sanders Flock 法案 · Safeworld 种子轮）
 下一步:       ① 提交本线产物（**不含任何 ≥5MB 文件**）；② **G2′④ 累积**：**隔日（≥20h，约 2026-10-06 ≥11:10）**跑真实重跑（`cycle_run.py --with-l2`，**不带 `--record`**）追加台账（**台账自报：连续 1 天 / 目标 7 天，未达标**）；③ L1 稳定性 / 下一个候选文本信号 = **新词首发 / 版面**（§4.4 措辞组合**未胜出**，如实保留）；④ L3（N5）**冻结**
-本轮新增:     **第二十四轮常态 news **+2**（中文 0 / 英文 2；当日 31→**33**）**：**TechCrunch《Sanders introduces bill to ban the federal government from using Flock》**（10-02，Connie Loizos；参议员 Sanders 提《Ban Flock Act》禁联邦机构使用 ALPR / Flock 数据，AOC+Merkley 联署，**仅提案未成法**）· **TechCrunch《Can Safeworld convince people that gen AI robots won't hurt them?》**（10-05，Tim Fernholz；CMU Safe AI 实验室主任 Ding Zhao 创办 **Safeworld** 出隐身 + **超 1200 万美元种子轮**，做生成式 AI 机器人安全仿真评测）。上一轮（r23）三条（BleepingComputer Anthropic 语音数据 · DW Anthropic-disinfo · Axios Altman）见流水。`cn_news` 40 条均假期/民生/时政（无 AI 新增，DeepZang 已在账）；**联合国中文源仍 404**；TechCrunch《All the AI agents…text messages》核验为 **roundup 综述 → 拒收**、MIT Tech Review《People really hate AI…》核验为**第一人称分析 → 拒收**、Anthropic《What do you want from AI?》核验为**研究公告 + 超窗（09-29）→ 拒收**；FT 两篇本机 fetch 超时 → 无法核验不收。累计 **news 102 / 非新闻 53**
+本轮新增:     **第二十五轮常态 news **+1**（中文 0 / 英文 1；当日 33→**34**）**：**The Guardian《Accept 'bad things' in return for benefits of AI, says Sam Altman》**（10-05；OpenAI CEO Sam Altman 称社会应「**接受一些坏事**」以换取 AI 益处；⚠️ **本机 Guardian `Errno 101` 不可达** → 仅凭**标题 + 链接 + HN 日期**核验，如实标注）。`cn_news` 60 条均假期/民生/时政（唯一 AI = DeepZang 已在账）→ 不收；**联合国中文源仍 404**；量子位（诺奖非 AI）/IT之家/钛媒体/爱范儿/雷峰网头部均已在账或非清单；TechCrunch / Ars / WIRED 头部（已在账 / 非 AI / 评测导购）→ 不收；HN 新增候选 **Bloomberg（newsletter）/ The New Yorker（专栏）/ The Bulletin / Lawfare（analysis）/ The Atlantic（随笔）** 均判**非新闻 → 拒收**（存 `SEEN.md`）；Forbes SpaceXAI rebrand 与在账同事件 → 去重；FT《Altman legal risks》本机不可达 → 不收。**计数口径对账（如实）**：`SEEN.md` 的 `news` 行含「同事件去重跳过」条（如 `ithome/009/852`）→ **SEEN `news` 行数 ≠ 摘要 news 数**，本线以**摘要实际收录**为准（当日 **34** / 累计 **103**）。累计 **news 103 / 非新闻 58**
 阻塞:         无（新华网长期 403/405 → 兜底源 `chinanews`；⚠️ **无 bypy → 网盘不可用** → ≥5MB 一律「本地保留 + 清单登记 + 如实标『未上云』」；⚠️ **东财日K 运行机 TLS 被重置** → 历史日线走腾讯 `ifzq`；⚠️ **停后台抓取须杀 python 子进程**；⚠️ **等抓取勿用 `pgrep -f <脚本名>`** → 用 `kill -0 <pid>`；⚠️ **ops relay 的 `git pull --rebase` 会删掉被 untrack 的工作区分片** → 须从 `~/archive_data_backup/` 恢复）
 ERROR_COUNT:  4（历史：模型名白睡一轮，已修；并发双抓重复，已修；watcher `pgrep -f` 自匹配死锁，已修；**relay rebase 删工作区分片 → 已恢复**）
 ```
@@ -97,12 +97,20 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **L2 产物（探索性 · 非因果）**：`news/policy/`（`L2_PREREG.md` / **`EXPLORE.md` + `explore.csv`**）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-05 13:15 CST` 第十一轮 ~ `2026-10-05 20:26 CST` 第二十四轮
-- **累计收录**：`155` 条（**news 102**〔第一~二十四轮；当日 33〕+ 非新闻 53〔仅存 `SEEN.md`〕）
+- **上次采集窗口**：`2026-10-05 20:26 CST` 第二十四轮 ~ `2026-10-05 21:05 CST` 第二十五轮
+- **累计收录**：`161` 条（**news 103**〔第一~二十五轮；当日 34〕+ 非新闻 58〔仅存 `SEEN.md`〕）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
+- **2026-10-05（本唤醒 ~21:05）** —— 🆕 **第二十五轮常态采集：news +1（英文 1 / 中文 0）**。
+  - **① The Guardian《Accept 'bad things' in return for benefits of AI, says Sam Altman》**（2026-10-05）：据 The Guardian 报道，OpenAI CEO **Sam Altman** 表示社会应当「**接受（AI 带来的）一些坏事**」以换取 AI 的**益处**。⚠️ **本机 The Guardian 原文不可达**（`Errno 101` 网络不可达 / `curl` 超时）→ 仅凭**标题 + 链接 + HN 日期**（HN date 2026-10-05；URL 路径 `/2026/oct/05/`）核验，**正文细节未取得，如实标注**。→ 关注清单第 5 类「公司与人物动态」/ 第 4 类「AI 与社会」（承接在账 Axios《Altman: Ascribing religion to models a "safety issue"》10-03）。
+  - **源盘点（如实）**：`cn_news` **60 条均国庆假期 / 民生 / 时政 / 体育 / 天气 / 文旅**（唯一 AI = DeepZang `10708223`，已在账）→ **不收**；**联合国中文源仍 `HTTP 404`**；量子位头部《诺奖颁给光遗传学》（`501720`，非 AI）、其余均已在账 → 去重；IT之家（三星 S27 / 恋与深空 / 铁路抢票 / GTA6…）、钛媒体、爱范儿、雷峰网头部**均已在账或非清单** → 去重 / 不收；TechCrunch（Sanders Flock / Safeworld / 其余已在账）、Ars（键盘科普 / 考古 / 野生动物，非 AI）、WIRED（评测导购，非新闻）→ 不收。
+  - **`search_news`(HN)**：查询 `AI` / `AI safety` / `superintelligence` / `Anthropic OpenAI` / `OpenAI` / `AI regulation` / `AI jobs` / `AI model release` / `AI governance` —— 新增候选 **Bloomberg《AI Backers Sound the Alarm About Safety》（newsletter）/ The New Yorker《Will A.I. Still Take Our Jobs?》（专栏）/ The Bulletin《AI doesn't need 'superintelligence'…nuclear war》（analysis）/ Lawfare《A Warning for Frontier AI Model Governance》（analysis）/ The Atlantic《I Quit OpenAI…》（随笔）** 均判**非新闻 → 拒收**（存 `SEEN.md`）；Forbes《SpaceXAI rebrand》与在账 钛媒体 `8159476` **同事件** → 去重；NBC《Trump calls for self-regulation》（10-01）**超 72h 窗** → 拒收。
+  - **FT（Financial Times）**：《Legal risks pile up for Altman as OpenAI uncovers hacks》（10-05）**本机 `curl` 超时（不可达）** → 无法核验正文/日期，**本轮不收**（如实，未静默当「无新增」）。
+  - **计数口径对账（如实）**：`SEEN.md` 中标 `news` 的行**含「同事件去重跳过」条**（如 `ithome/1/009/852.htm`）→ **SEEN 的 `news` 行数 ≠ 当日摘要 news 数**；本线以**摘要实际收录**为 INDEX/累计口径（当日 **34** / 累计 **103**）。
+  - **G2′④**：本轮距上次真实重跑（15:10）约 **5.9h <20h** → **不做真实重跑、不刷台账连续性**；连续性自报维持 **已连续 1 天 / 目标 7 天 · ⚠️ 未达标**（下一窗具备 ≥20h 间隔的真实重跑约在 **2026-10-06 ≥11:10**）。
+  - **判据复核**：✅ 每条带 `标题+来源+发布日期+链接` · ✅ 非新闻单列（仅存 `SEEN.md`）· ✅「我们的观察」标注 · ✅ 无因果措辞 · ✅ 非投资建议 · ✅ **L3（N5）冻结**（未产出任何策略/仓位/择时）。
 
 - **2026-10-05（本唤醒 ~20:26）** —— 🆕 **第二十四轮常态采集：news +2（英文 2 / 中文 0）**。
   - **① TechCrunch《Sanders introduces bill to ban the federal government from using Flock》**（2026-10-02，Connie Loizos）：参议员 **Bernie Sanders** 于 10-02 提出《**Ban Flock Act**》，**禁止联邦机构使用自动车牌识别（ALPR）系统或接入地方/私营车牌数据**；覆盖所有 ALPR（未点名 Flock），仅对收费与国会今后批准（留存限 48h）设例外；州/地方不禁用将失去五个联邦部门拨款，公民可起诉、州检察长可执法。AOC + Jeff Merkley 联署；Flock 逾 12 万台摄像头、月处理逾 200 亿次读取。**仅提案未成法**（如实标注）。→ 关注清单第 3 类「政策与治理」。
@@ -138,25 +146,7 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
   - **判据复核**：✅ 每条带 `标题+来源+发布日期+链接` · ✅ 非新闻单列（仅存 `SEEN.md`）· ✅ 无因果措辞 · ✅ 非投资建议 · ✅ **L3（N5）冻结**。
   - **未做**：真实重跑（距上次 15:10 **<20h** → **不刷连续性**）。
 
-
-- **2026-10-05（本唤醒 ~17:55）** —— 🆕 **第二十轮常态采集：news +1（英文 1 / 中文 0）**。
-  - **① TechCrunch《Federal judge calls Flock 'indiscriminate mass surveillance'》**（2026-10-03）：TechCrunch 报道，一名联邦法官裁定，某县治安官副手在**未取得搜查令**的情况下使用 AI 车牌识别/监控系统 **Flock** 搜索一名女性的车牌，**侵犯其第四修正案权利**；法官将 Flock 定性为「**无差别的大规模监控**」。→ 关注清单第 4 类「AI 与社会（伦理 / 公民权利 / 公众态度）」。
-  - **源盘点（如实）**：`cn_news` 30 条均**国庆假期 / 民生 / 时政**（横店入境游、悉尼持刀、缅北电诈、四川高铁、2026 诺贝尔生理学奖、南部战区正告菲方……）→ 非关注清单 → **不收**；量子位头部 8 条**均已在账**；IT之家《高通与华为逻辑折叠芯片专利授权》（`009/852`）与在账《华为×高通广泛专利许可协议》（`009/806`）**疑同事件** → 去重跳过；《阿里千问 AI 耳夹式耳机》（`009/846`）判**消费电子** → 不收；**钛媒体新增 2 条 analysis**（纳指/A股硬科技 `8159517`、快手视频 Agent `8159522`）仅存 `SEEN.md`；爱范儿《OpenAI 元老离职信》**同 Guardian 在账事件** → 去重；`search_news`(HN) 8 条均 **opinion / blog / 超窗** → 不收。
-  - **源健康度（如实记录）**：The Register `headlines.atom` → **ParseError**；**Guardian `technology/rss` → 本机构网络不可达**（`Errno 101`，**判源失败，未静默当「无新增」**）；Ars / WIRED feed `200` 但当日头条**非 AI** → 不收；中新网 / 央视网 / 量子位 / IT之家 / 爱范儿 / 雷峰网 / 钛媒体 / TechCrunch feed 均 **200**。GDELT 未用（省额度）。
-  - **G2′④**：本轮距上次真实重跑（15:10）**仅 ~2.8h（<20h）** → **不刷台账**；连续天数仍 = **1 天**（目标 7 天，**未达标**，如实写）。
-  - **文档同步**：`news/2026-10-05.md`（第二十轮段）· `news/SEEN.md`（+1 news / +2 非新闻）· `news/INDEX.md`（当日 26 / 累计 news 95 · 非新闻 47）· `MEMORY_NEWS.md`（快照 + 本流水 + 滚动归档）· 日流水心跳行 `[17:55]`。
-  - **判据复核**：✅ 每条带 `标题+来源+发布日期+链接` · ✅ 非新闻单列（仅存 `SEEN.md`）· ✅「我们的观察」标注 · ✅ 无因果措辞 · ✅ 非投资建议 · ✅ **L3（N5）冻结**（未产出任何策略/仓位/择时）。
-
-
-- **2026-10-05（本唤醒 ~17:25）** —— 🆕 **第十九轮常态采集：news +2（英文 1 / 中文 1）**。
-  - **① TechCrunch《Trump unveils his new Super Intelligence Force》**（2026-10-04）：特朗普 10-04 在 Truth Social 宣布组建「**超级智能部队**」（Super Intelligence Force），据 WSJ 由国家情报总监 **Jay Clayton** 任主席（FTC 主席 Ferguson、国防部 Emil Michael、OPM Kupor 任副主席），负责协调联邦政府确保美国在「超级智能」领先，章程要求 **120 天**内提交风险/机遇报告（承接 9 月「AI→SI」行政令叙事）。
-  - **② 钛媒体《马斯克为 AI 改名：SpaceXAI 将更名 SpaceXSI》**（2026-10-05）：马斯克 **10-04** 在 X 上确认将 **SpaceXAI → SpaceXSI**（「AI」换「SI」），称「SpaceX 是一家超级智能公司」；⚠️ 文中为「钛度号」作者专栏（含分析），**核心新闻点 = 马斯克 X 表态**；截至报道官方**未公布生效时间**。
-  - **源盘点（如实）**：**新试 `tmtpost.com/rss` = 活源**（带 pubDate、当日更新）；`cn_news` 40 条均假期/民生/时政 → 不收；量子位头部 10 条**均已在账**；IT之家头部为消费电子/汽车/游戏 → 不收（鸿海营收仍判非清单）；雷峰网头部软文/文体/法律 → 不收；The Register `headlines.atom` 与机器之心 `jiqizhixin.com/rss` 均 **ParseError**；HN 8 条均 opinion/超窗 → 不收；联合国中文源仍 **404**。非新闻 4 条（钛媒体 analysis）**仅存 `SEEN.md`**。
-  - **文档同步**：`news/2026-10-05.md`（第十九轮段）· `news/SEEN.md`（+2 news / +4 非新闻）· `news/INDEX.md`（当日 25 / 累计 news 94 · 非新闻 45）· `MEMORY_NEWS.md`（快照 3 行 + 累计 + 本流水）· 日流水心跳行 `[17:25]`。
-  - **判据复核**：✅ 每条带 `标题+来源+发布日期+链接` · ✅ 非新闻单列（仅存 `SEEN.md`，不入摘要）· ✅ 「我们的观察」措辞明确标注 · ✅ 无因果措辞 · ✅ 非投资建议 · ✅ **L3（N5）冻结**（未产出任何策略/仓位/择时）。
-  - **未做**：G2′④ 连续天数累积（需**隔日 ≥20h** 的真实重跑；本轮与上轮间隔不足 → **不刷台账**，连续天数仍 = **1**，如实标 **未达标**）。
-
-- （更早流水：**2026-10-05 16:12 第十六~十七轮**（L1 §4.3 固定召回率 precision 加固 + IT之家索尼×Meta 专利）→ 已归档 `daily-memories-news/2026-10-05.md`；**2026-10-05 早期**（恢复 27h 停摆首轮 · N1 2021/2022 续抓）· **N1 第 3/4/5/6 轮抓取（2020→2019→2017/2018→2016）+ 第十一~十五轮常态采集 + 全链重跑** → 已归档 `daily-memories-news/2026-10-05.md`；**2026-10-03 各轮 / 2026-10-04 各轮**（L1/N3 收口、N4/L2、L1 链重跑+轴对齐）→ `daily-memories-news/2026-10-03.md` · `daily-memories-news/2026-10-04.md`；第三~九轮 / 第二轮 / 首轮 smoke / 前期任务 T1–T4 / 建线 / 首轮空转 亦在其中）
+- （更早流水：**2026-10-05 17:25/17:55 第十九~二十轮**（TechCrunch 超级智能部队 · 钛媒体 SpaceXSI · TechCrunch 联邦法官裁定 Flock；已归档 `daily-memories-news/2026-10-05.md`）· **2026-10-05 16:12 第十六~十七轮**（L1 §4.3 固定召回率 precision 加固 + IT之家索尼×Meta 专利）→ 已归档 `daily-memories-news/2026-10-05.md`；**2026-10-05 早期**（恢复 27h 停摆首轮 · N1 2021/2022 续抓）· **N1 第 3/4/5/6 轮抓取（2020→2019→2017/2018→2016）+ 第十一~十五轮常态采集 + 全链重跑** → 已归档 `daily-memories-news/2026-10-05.md`；**2026-10-03 各轮 / 2026-10-04 各轮**（L1/N3 收口、N4/L2、L1 链重跑+轴对齐）→ `daily-memories-news/2026-10-03.md` · `daily-memories-news/2026-10-04.md`；第三~九轮 / 第二轮 / 首轮 smoke / 前期任务 T1–T4 / 建线 / 首轮空转 亦在其中）
 
 ---
 
