@@ -5,31 +5,43 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A kimi-k2.6-cloud serial cross-eval — cline-patched × 30 COMPLETE (18/30, 60.0%) → codex × 30 RUNNING (18/30 scored: 8 resolved, 10 patch-but-failed; inst 19/30 in progress = sympy__sympy-12236) + deepseek-harness toolchain install (node22+rust+pnpm+landlock-run ✅, pnpm install BLOCKED by npm registry ECONNRESET) + 扩300 infra READY (300 JSONs + 12 rootfs templates)
-已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A(deepseek) 22/30 scored · SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md · kimi model switch + serial runner + cline-patched×30 COMPLETE (18/30, 60.0%) + SWEBENCH_COMPARE.html + codex×30 RUNNING (18/30 scored: 8 resolved, 10 patch-but-failed) + 扩300 prep (300 JSONs + 12 rootfs templates) + deepseek-harness toolchain (node22+rust+pnpm+landlock-run)
-当前动作:     R79: codex×30 RUNNING (18/30 scored, inst 19/30 = sympy__sympy-12236, elapsed ~4.9h PID 2051774) + SWEBENCH_COMPARE.html refreshed (48 entries, 26 resolved, 12667B) + relay healthy skip 32nd + git sync (0 ahead 0 behind, no new operator directives) + 300-scale infra verified (300 JSONs, 12 repos, 12 rootfs templates all present)
-下一步:       codex×30完成(~12条剩余, ~2h) → codex×300 --resume(skip 30) → cline-patched×300 --resume(skip 30) → opencode×300 → claude-code×300 → deepseek-harness(pnpm install待npm registry恢复) → 最终更新SWEBENCH_COMPARE.html(全5harness×300对比)
-阻塞:         deepseek-harness pnpm install: npm registry (registry.npmjs.org) ECONNRESET through proxy — proxy establishes CONNECT tunnel but all transfers reset. All npm mirrors (npmmirror/taobao/jsdelivr/unpkg/esm.sh) unreachable (http=000). GitHub releases/downloads work. This blocks deepseek-harness build (last in sequence, not urgent).
+PHASE:        H-A kimi-k2.6-cloud serial cross-eval — cline-patched × 30 COMPLETE (18/30, 60.0%) → codex × 30 RUNNING (23/30 scored: 11 resolved, 12 patch-but-failed, 47.8%; inst 24/30 = sympy__sympy-13043 in progress) + deepseek-harness toolchain (node22 v22.22.3 + rust 1.99.0 + landlock-run pre-built ✅; pnpm install BLOCKED — npm registry firewall) + 扩300 infra READY (300 JSONs + 12 rootfs templates)
+已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A(deepseek) 22/30 scored · SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md · kimi model switch + serial runner + cline-patched×30 COMPLETE (18/30, 60.0%) + SWEBENCH_COMPARE.html + codex×30 RUNNING (23/30 scored: 11 resolved, 12 patch-but-failed, 47.8%) + 扩300 prep (300 JSONs + 12 rootfs templates) + deepseek-harness toolchain (node22+rust installed, pnpm BLOCKED)
+当前动作:     R80: codex×30 RUNNING (23/30 scored, inst 24/30 = sympy__sympy-13043, elapsed ~6.3h PID 2051774) + SWEBENCH_COMPARE.html refreshed (53 entries, 29 resolved, 12813B) + deepseek-harness toolchain deep-investigation (node22 v22.22.3 ✅ ~/.local/node22, rust 1.99.0 ✅ ~/.cargo, landlock-run pre-built ELF ✅, pnpm v11.28.4 ✅ via old install — but pnpm install BLOCKED: npm registry HTTP→firewall "URL过滤" page, HTTPS→TLS handshake fail; .pnpm/ store incomplete from previous interrupted install; packageManager field pnpm@11.7.0 forces version download) + relay healthy skip 33rd + git sync (0 ahead 0 behind)
+下一步:       codex×30完成(~7条剩余, ~1.5h) → codex×300 --resume(skip 30) → cline-patched×300 --resume(skip 30) → opencode×300 → claude-code×300 → deepseek-harness(需npm registry恢复或离线包方案) → 最终更新SWEBENCH_COMPARE.html
+阻塞:         deepseek-harness pnpm install: npm registry完全被防火墙封锁 — HTTP返回"URL过滤"页面(12.1.10.137/disable.htm), HTTPS TLS握手失败(unexpected eof). 所有镜像(npmmirror/taobao/cnpmjs/npmjs.org)均封锁. .pnpm/目录(1065包目录)来自之前中断的安装, 包文件不完整(只有peer deps如esbuild, 无包本体如tsx/typescript). node22+rust+landlock-run已就绪. 序列中最后一个harness, 不阻塞其他4个.
 ERROR_COUNT:  0
 ```
 
-## 🆕 第七十九轮速览（2026-10-05 20:20）— codex×30 RUNNING 18/30 scored (8 resolved, 10 patch-but-failed, 44.4%) + SWEBENCH_COMPARE.html refreshed (48 entries, 26 resolved) + relay healthy skip 32nd + git sync + 300-scale infra verified
+## 🆕 第八十轮速览（2026-10-05 21:45）— codex×30 RUNNING 23/30 scored (11 resolved, 12 patch-but-failed, 47.8%) + SWEBENCH_COMPARE.html refreshed (53 entries, 29 resolved) + deepseek-harness toolchain deep-investigation (node22+rust+landlock-run ✅, pnpm install BLOCKED) + relay healthy skip 33rd + git sync
 
-- 📊 **codex × 30 进度（更新）**：PID 2051774（ppid=1，elapsed ~4.9h=17589s）。**18/30 scored**：8 resolved（11001/11039/11049/11099/11133/11179/11583/11620），10 patch-but-failed（10924/11019/11283/11422/11564/11630/11742/sympy-11870/sympy-11897/sympy-12171）。inst 19/30 = `sympy__sympy-12236` RUN 中（codex exec child PID 1387815，elapsed ~491s≈8min）。~12 条剩余，预计 ~2h 完成。日志 `/tmp/kimi_codex.log`。
-- ✅ **kimi quota 健康**：gw_proxy 运行中。**0 次 429**（全部 48 条均无 quota-blocked）。
+- 📊 **codex × 30 进度（更新）**：PID 2051774（ppid=1，elapsed ~6.3h=22823s）。**23/30 scored**：11 resolved（11001/11039/11049/11099/11133/11179/11583/11620/sympy-12454/sympy-12481/sympy-13031），12 patch-but-failed（10924/11019/11283/11422/11564/11630/11742/sympy-11870/sympy-11897/sympy-12171/sympy-12236/sympy-12419）。inst 24/30 = `sympy__sympy-13043` RUN 中。~7 条剩余，预计 ~1.5h 完成。日志 `/tmp/kimi_codex.log`。
+- ✅ **kimi quota 健康**：gw_proxy 运行中。**0 次 429**（全部 53 条均无 quota-blocked）。
 - 📈 **kimi 横评汇总（更新）**：
   | harness | scored | resolved | patch-but-failed | quota-blocked | resolve rate |
   |:--|--:|--:|--:|--:|--:|
   | cline-patched | 30/30 | 18 | 12 | 0 | **60.0%** ✅ |
-  | codex | 18/30 | 8 | 10 | 0 | **44.4%** (进行中) |
+  | codex | 23/30 | 11 | 12 | 0 | **47.8%** (进行中) |
   | opencode | 0/30 | — | — | — | (待跑) |
   | claude-code | 0/30 | — | — | — | (待跑) |
   | deepseek-harness | 0/30 | — | — | — | (待 pnpm install) |
-- 🔧 **SWEBENCH_COMPARE.html 已刷新**：48 entries, 26 resolved, 12667B（gen_kimi_compare.py 重跑，含 cline-patched 18/30 + codex 8/18 最新数据）。
-- ✅ **ops 中继复核（第 32 次）→ 健康**。relay `2489749 1 360536`（ppid=1 真守护、etimes≈4.17d）。判据成立 → 跳过重启。
-- ✅ **git sync**：`git fetch`（proxy）→ HEAD==origin/main（`7440ea72`），0 ahead 0 behind → 无新运维指令。仅 `kimi_pilot_results.json` 本地修改（codex 运行中持续写入）+ NFS `.nfs*` 临时文件（其他 agent 在途，不动）。
-- ✅ **300-scale infra 验证**：300 instance JSONs 就绪（12 repos: django 114, sympy 77, matplotlib 23, sklearn 23, pytest 17, sphinx 16, astropy 6, requests 6, pylint 6, xarray 5, seaborn 4, flask 3）。12 rootfs templates 全部存在（`/nas_train/app.e0031982/harness_work/rootfs/` 下每 repo 一个）。`run_serial_kimi.py --resume` 机制：跳过已 classified 为 resolved/patch-but-failed 的 instance → codex×300 --resume 将跳过已完成的 ~30 条，跑剩余 ~270 条。
-- ⏭ **下一步**：codex×30 完成 → codex×300 `--resume`（skip 30）→ cline-patched×300 `--resume`（skip 30）→ opencode×300 → claude-code×300 → deepseek-harness（待 npm registry 恢复）→ 最终 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
+- 🔧 **SWEBENCH_COMPARE.html 已刷新**：53 entries, 29 resolved, 12813B（gen_kimi_compare.py 重跑，含 cline-patched 18/30 + codex 11/23 最新数据）。
+- 🔬 **deepseek-harness 工具链深度排查（本轮重点）**：
+  - ✅ **node22**：`~/.local/node22/bin/node` → v22.22.3（≥22.13 ✅）。官方二进制，之前已装好。
+  - ✅ **rust**：`~/.cargo/bin/rustc` → rustc 1.99.0 (b940084d7 2026-09-28)。rustup 已装好。
+  - ✅ **landlock-run**：预编译 ELF 二进制存在 → `native/landlock-run/packages/linux-x64/bin/landlock-run`（statically linked, x86-64, 可执行）。
+  - ✅ **pnpm**：v11.28.4（`~/.npm-global/lib/node_modules/pnpm/`，可用 `node pnpm.mjs` 运行）。
+  - ❌ **pnpm install BLOCKED**（根本原因已定位）：
+    1. **npm registry 完全被防火墙封锁**：HTTP 访问 → 返回 `http://12.1.10.137/disable/disable.htm?url_type=访问网站/未分类&plc_name=AI-proxy`（URL过滤页面，非JSON）；HTTPS 通过 proxy → TLS 握手失败（`error:0A000126:SSL routines::unexpected eof while reading`）。所有镜像（npmmirror/taobao/cnpmjs/npmjs.org）均被封锁。
+    2. **`.pnpm/` 目录不完整**：1065 个包目录存在，但包本体缺失（如 `.pnpm/tsx@4.22.4/node_modules/` 只有 `esbuild`，无 `tsx` 本身；`.pnpm/typescript@6.0.3/node_modules/` 为空）。这是之前一次中断的 pnpm install 残留，**下载了元数据和部分 peer deps 但从未完成包本体下载**。
+    3. **pnpm store 几乎为空**：`/nas_train/app.e0031982/.pnpm-store/v11/` 仅 1.1MB（只有 `files/`、`index.db`、`projects/`，无实际包内容）。
+    4. **`packageManager: pnpm@11.7.0`**：package.json 中此字段强制 pnpm 下载指定版本 → 额外阻塞（即使 `--offline` 也需要解析此版本）。
+    5. 尝试了多种绕行方案均失败：`--prefer-offline`、`--offline`、`--config.manage-package-manager-versions=false`（不被识别）、临时改 `packageManager` 版本（可绕过版本检查但包仍缺失）、fake metadata cache（格式不符）、HTTP registry（防火墙拦截）。
+  - 📝 **结论**：deepseek-harness build 在当前网络环境下**无法完成**，需 (a) npm registry 网络恢复 或 (b) 通过可用的通道（如 GitHub releases）离线获取 npm 包 tarball 后手动注入 pnpm store。**这是序列中最后一个 harness，不阻塞其他 4 个的扩 300 进度**。
+  - 🔒 **文件已恢复**：临时修改的 `package.json`（packageManager→11.28.4）和 `pnpm-workspace.yaml`（managePackageManagerVersions）均已恢复原状。
+- ✅ **ops 中继复核（第 33 次）→ 健康**。relay `2489749 1 365094`（ppid=1 真守护、etimes≈4.22d）。`.last_run_id=71`。判据成立 → 跳过重启。
+- ✅ **git sync**：`git fetch`（proxy）→ HEAD==origin/main（`b60c9a52`），0 ahead 0 behind → 无新运维指令。
+- ⏭ **下一步**：codex×30 完成（~7 条剩余，~1.5h）→ codex×300 `--resume`（skip 30）→ cline-patched×300 `--resume`（skip 30）→ opencode×300 → claude-code×300 → deepseek-harness（待网络/离线方案）→ 最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
 
 ## 🆕 第七十七轮速览 —— 已滚动归档至 daily-memories-harness/2026-10-05.md（结论不改：deepseek-harness toolchain installed node22+rust+pnpm+landlock-run + pnpm install BLOCKED npm registry ECONNRESET + codex×30 RUNNING 14/30 + relay healthy skip 30th + git sync）
 
