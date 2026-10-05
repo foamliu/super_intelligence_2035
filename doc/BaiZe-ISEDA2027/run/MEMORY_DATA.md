@@ -10,11 +10,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验备料→✅base分词完成(22.05B tok)·✅SFT s2/s3完成·SFT s0进行中+s1干净重启(冲突修复)·等GPU2-7(P-9.9 iter~880/1000 ETA~15:15)·白名单4项巡检正常·LIT_IDEAS_2026-10-05.html完成·D-CLEAN-4待拍板
-已完成:       §0.3 8源/§0.4 R2视觉/§0.6 配方/§0.7 停85M·复用·ETA；SFT-2605下满一致；D-CLEAN 盘点/-2/-3/-4；LIT_IDEAS_2026-10-05.html · ✅配比实验可行性核查 · ✅baize_mix_tokenize_base.sh+train_template.sh · ✅convert_sft_to_parquet.py · ✅SFT-2605全量转换(12/12 parquet,30GB) · ✅baize_mix_tokenize_sft.sh · ✅base分词完成(4/4 shard,22.05B tok,14:09) · ✅SFT分词s2完成(3.58B tok)/s3完成(521M tok) · ✅s1冲突修复(双进程写同一文件→kill+clean+干净重启PID 2868155)
-当前动作:     唤醒130(14:40) base分词✅完成+SFT分词进度+s1冲突修复+下载巡检：①base分词✅完成(22.05B tok,s0=5.51B/s1=5.52B/s2=5.51B/s3=5.51B,4 shard .bin 21G+.idx 130M+.json,14:09)；②SFT分词:s0进行中(.bin 16G,PID 2013637,no_think_Math 13.2G最大集)/s2✅完成(3.58B tok,14:29)/s3✅完成(521M tok)/s1✅干净重启(PID 2868155,发现双进程冲突→kill 1287021/1287033+4046447→rm corrupted .bin→单进程干净重启,.bin 44M起步)；③P-9.9 iter~880/1000 ETA~15:15仍占8卡；④下载:l1_en_hq 2675/6006(+56,CC-MAIN-2025-38 part676/1000),zh 171/256(冻结),gpic 3219files/4.9T(pid 144981活),en 2048✓
-下一步:       下轮判P-9.9完(~15:15)→GPU2-7空→起Stable S0a臂(88:8:4,5000步)→lm_eval Table2；判s0完成+s1完成→4 shard齐全→Decay段备料；填DATA_MIX_RECIPE.md(base 22.05B+SFT token汇总)；SFT-Agent-2609转换待启动；下载续推
-阻塞:         ⏳ GPU2-7被P-9.9占满(iter~880/1000,ETA~15:15)；⏳ SFT s0仍在跑(no_think_Math最大集)+s1刚重启；⚠️ zh下载冻结171/256；磁盘/nas_train 84%；🟡 D-CLEAN-4候选等运维拍板
+PHASE:        §0.6-B 配比实验 → 🚀 Stable S0a 臂已启动(PID 1995742, GPU2-7, 5000步, base:code:math=88:8:4)·SFT s0/s1仍分词中(Decay段备料)·白名单4项巡检正常·LIT_IDEAS_2026-10-05.html完成·D-CLEAN-4待拍板
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT-2605下满一致；D-CLEAN-1/2/3/4；LIT_IDEAS_2026-10-05.html；✅base分词(22.05B tok)；✅SFT分词s2(3.58B)+s3(521M)；✅baize_mix_stable_s0a.sh；🚀Stable S0a臂运行中
+当前动作:     唤醒131(15:25) P-9.9✅完成→GPU2-7全空→🚀起Stable S0a臂：① 首试GBS=1024→❌AssertionError(1024%6≠0)→修GBS=1020(6×170,-0.4%)→✅启动成功(PID 1995742/1995914/1998724-738,6 workers DP6)；② GPU2-7 ~39GB 33-81%util 首步计算中(15:30)；③ BLEND=22×4base+8code+4math=88:8:4；④ SFT分词s0(.bin22.3G仍跑)/s1(.bin6.1G仍跑)未完成→Decay段待备料；⑤ 下载l1_en_hq 2744/6006(+69)/zh 171(冻结)/gpic 10170files/4.9T/en 2048✓
+下一步:       下轮查S0a首步log→估s/iter→算ETA→等5000步完→ckpt→HF→lm_eval Table2(8集)；判SFT s0/s1完成→4 shard齐全→Decay段备料+起Decay臂；填DATA_MIX_RECIPE.md；下载续推
+阻塞:         ⏳ S0a训练中(5000步,ETA待首步log确定)；⏳ SFT s0/s1分词未完(Decay段阻塞)；⚠️ zh下载冻结171/256；磁盘/nas_train 84%；🟡 D-CLEAN-4候选等运维拍板
 ```
 
 ## 运维问答
@@ -150,7 +150,7 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R research ✅ + R2 LLM 侧 ✅（8 源满填 / base vs L3 重叠 0% / P-8 86:10:4）+ R2 视觉侧 ✅（§0.4：本地 bytes 图文对实测 / 13 HF 候选 / 前 3 推荐）+ phase5 isolation v0.3 + phase1/2 脚本就绪；§0.5/§0.6/§0.7 推进中（§0.6 配方✅ / §0.7 停85M·复用·ETA✅ / SFT-2605 下满一致✅）** |
-| WAITING | 1（配比实验⏳等GPU2-7——P-9.9(tensorwise FP8,PID 4044534) iter~880/1000 ETA~15:15,不kill；✅base分词完成(22.05B tok,4 shard)；SFT分词s0进行中+s1✅干净重启(PID 2868155,冲突修复)+s2✅完成(3.58B)+s3✅完成(521M)；下载中：白名单锁定——retry-loop 3076502+hf 3076519 拉l1_en_hq(2675/6006)+zh(171/256冻结)；gpic 144981活；en 2048/2048满；⭐⭐LIT_IDEAS_2026-10-05.html完成(52entries/0unverified)；D-CLEAN-4待拍板） |
+| WAITING | 1（🚀Stable S0a臂运行中(PID 1995742, GPU2-7, 5000步, GBS=1020, base:code:math=88:8:4, ~39GB 33-81%util 首步计算中)；SFT分词s0/s1仍跑(.bin 22.3G/6.1G)；下载l1_en_hq 2744/6006+zh 171冻结+gpic 10170files/4.9T+en 2048✓；LIT_IDEAS_2026-10-05.html✅完成；D-CLEAN-4待拍板） |
 | ERROR_COUNT | 0 |
 | 节点 | `10.239.2.12`（主机 `whag0pgpuap12`；NFS：`/nas_inference` 只读源，`/nas_train` 产出） |
 | 更新 | 2026-10-05 |
@@ -199,6 +199,7 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 - 2026-10-05 —— 唤醒 128（已滚动归档至 daily-memories-data/2026-10-05.md）
 - 2026-10-05 —— 唤醒129（✅s1重启+base分词~91%+P-9.9 iter740/1000+下载巡检）：① GPU2-7（13:52）→❌ P-9.9 iter 740/1000 ETA~15:15 不 kill。② base 分词 ~84GB ~91% 无.idx。③ SFT s0/s2 进行中/s3✅/s1✅重启(PID 4046447)。④ 下载 l1_en_hq 2619/6006。（详情已归档）
 - 2026-10-05 —— 唤醒130（✅base分词完成22.05B tok+✅SFT s2完成3.58B+🔧s1冲突修复+下载巡检）：① GPU2-7（14:40）→❌ P-9.9 iter~880/1000（ETA~15:15, PID 4044534/4044610-17, 8×97-100% util ~72GB/卡）仍占满 8 卡，不 kill（铁律）。② ⭐ **base 分词 ✅ 完成**（14:09）：4/4 shard 全部产出 .bin(21G)+.idx(130M)+.json；**TOTAL = 22,052,346,121 tokens ≈ 22.05B**（s0=5,509,269,274 / s1=5,521,925,629 / s2=5,511,726,067 / s3=5,509,425,151；各 ~6.79M docs）；路径 `data/mix_base/mix_base_train_s{0..3}`。③ **SFT 分词**：**s2 ✅ 完成** — 3,581,032,676 tokens / 4,848,241 docs（.bin 14G + .idx 93M + .json, 14:29）；**s3 ✅ 完成** — 521,181,350 tokens / 1,399,828 docs（12:50）；**s0 进行中** — .bin 16G, PID 2013637 stat Rl etime 2h09m, no_think_Math 13.2G 最大集, 无 .idx/.json；**s1 🔧 冲突修复** — 发现**两个进程同时写同一 .bin**（PID 1287021/1287033 from 13:17 + PID 4046447 from 13:55，均写 `mix_sft_train_s1`）→ **kill 全部** → rm corrupted .bin → **干净单进程重启**（PID 2868155, /tmp/mix_sft_s1_clean/, .bin 44M 起步, log=/tmp/mix_sft_tok_s1_clean.log）。④ 下载巡检：l1_en_hq **2675/6006**（+56, CC-MAIN-2025-30=1000 + CC-MAIN-2025-33=1000 + CC-MAIN-2025-38=675, actively downloading part-676/1000, 0 incomplete）、zh **171/256**（冻结 202G, retry-loop PID 3076502 活, 低优先级等 l1_en_hq 完）、gpic **3219 files / 4.9T**（pid 144981 活）、en **2048✓**满。⑤ 磁盘 /nas_train 84%。⑥ BAIZE_DATA_TASK.md mtime 13:51（=git pull 带来的, 无新运维指令/无索取/无 STOP）。⑦ git fetch/push github 仍不可达（proxy 未带）, 本地 commit。下一步 = 下轮判 P-9.9 完(~15:15)→GPU2-7 空→起 Stable S0a 臂(88:8:4, 5000步)→lm_eval Table 2；判 s0+s1 完成→4 SFT shard 齐全→Decay 段备料；填 DATA_MIX_RECIPE.md（base 22.05B + SFT token 汇总）；SFT-Agent-2609 转换待启动；下载续推。
+- 2026-10-05 —— 唤醒131（🚀Stable S0a臂启动+SFT分词进度+下载巡检）：① P-9.9 ✅完成(15:15, rc=0, iter1000/1000)→**8卡全释放**（nvidia-smi --query-compute-apps=空, GPU0-7 all 4MiB 0%util）。② ⭐ **Stable S0a 臂 🚀 已启动**（15:25）：首试 GBS=1024→❌AssertionError(1024%(1×6)=2≠0, DP6需GBS整除6)→修正 **GBS=1020**(6×170, -0.4%基线, 报告将注明)→✅启动成功。PID 1995742(bash)/1995914(torchrun)/1998724-738(6 workers, DP6, CUDA_VISIBLE_DEVICES=2,3,4,5,6,7)。BLEND=22×4base+8code+4math=**88:8:4**(4 base shards×22=88, code 8, math 4, total=100)。口径：TP1/DP6/seq=4094/mb=1/GBS=1020/5000步/bf16_mixed/seed1234/WSD(warmup250/decay0=纯stable)。GPU2-7 ~39GB 33-81%util（15:30, 首步Mamba2 CUDA kernel编译+forward/backward进行中, ~5min无iteration log=正常）。脚本 `run/baize_mix_stable_s0a.sh`。③ **SFT 分词**：s0 仍跑（.bin 22.3G, PID 2013637, no_think_Math 13.2G源, 无.idx/.json）、s1 仍跑（.bin 6.1G, PID 2868155, 干净重启后, 无.idx/.json）、s2✅(3.58B tok)、s3✅(521M tok)→Decay段需4 shard齐全, 待s0/s1完。④ 下载巡检：l1_en_hq **2744/6006**（+69, /nas_train/.../Ultra-FineWeb/data/ultrafineweb_l1_en_hq/, retry-loop PID 3076502+hf PID 3076519活）、zh **171/256**（冻结, 低优先级）、gpic **10170 files / 4.9T**（PID 144981活）、en **2048✓**。⑤ 磁盘 /nas_train 84%。⑥ GPU29_ALLOC.md 已更新（申请区+流水）。⑦ BAIZE_DATA_TASK.md mtime 13:51（无新指令）。下一步 = 下轮查S0a首步log→估s/iter→算ETA→等5000步完→ckpt→HF→lm_eval Table2(8集)；判SFT s0/s1完→Decay段备料；填DATA_MIX_RECIPE.md；下载续推。
 
 
 
