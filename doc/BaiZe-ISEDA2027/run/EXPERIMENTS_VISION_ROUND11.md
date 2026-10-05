@@ -1033,6 +1033,22 @@ python -m torch.distributed.run --nproc_per_node=8 --nnodes=1 \
 - MAE 范式（逐 patch MSE）是我们的 patch loss 的直接来源 ✅
 - **但需诚实标注**：AIMv2 原文的 claim 是在 **12B 样本**下成立的；我们在 **18.5M 样本（649× 少）**下观测到同样的方向性（稠密 > 对比）→ **机制一致、量级不同**，不可声称"复现了 AIMv2"（C2 限定）。
 
+#### (5) 「密集监督在数据受限下的收益」补充检索（2026-10-05 13:45，cimi_search）
+
+> 运维指令 2026-10-05 point ② 要求找「密集监督在数据受限下的收益」的一手证据。已用 `cimi_search` 检索 "dense supervision benefits data-limited regime masked image modeling vs contrastive learning sample efficiency"（CPU/网络，未占 GPU）。
+
+- **检索结果概要**：
+  - **「Dense Supervision Mechanism」概念综述**（emergentmind.com, 2026-06，**二手·未核**）：将「密集监督」定义为「在中间表示的多层（空间/时间/通道/patch）施加显式监督信号，以克服稀疏监督问题」。关键论断（二手）：「**accelerates convergence, improves generalization**」「**Gradient Dispersion and Feature Utilization: By supervising intermediate or fine-grained representations, the mechanism encourages the network to utilize its capacity across the full input, mitigating overfitting to the most salient regions**」→ 与我们 R11-G 的发现（同数据量下 AIMv2-style lp >> InfoNCE）方向一致。
+    - URL：`https://www.emergentmind.com/topics/dense-supervision-mechanism`（二手 AI 百科，仅作概念线索，非一手引用）
+  - **IOMM（CVPR 2026, Sun et al.）**：讨论视觉生成中 sparse vs dense supervision 的 tradeoff —— 指出 dense supervision（自条件完整图像表示）可能导致「trivial identity mapping」，而 sparse text supervision 迫使模型学习 compositional understanding → **但该论文针对的是图像生成（text-to-image），非视觉表征学习**，与我们 R11-G 的表征学习场景**方向相反**，仅作「dense vs sparse 在不同任务下有不同最优」的旁证。
+    - URL：`https://openaccess.thecvf.com/content/CVPR2026/papers/Sun_Rethinking_UMM_Visual_Generation_Masked_Modeling_for_Efficient_Image-Only_Pre-training_CVPR_2026_paper.pdf`
+- **⭐ 对 point ② 的结论**：**最直接的一手证据已在 (1)(3) 中**：
+  - AIMv2 §1 逐字："denser supervision compared to discriminative objectives" ✅（一手）
+  - XTRA 逐字："contrastive and MIM models can achieve competitive results with datasets that are **150 times smaller**" ✅（一手）—— **这正是「密集监督在数据受限下有收益」的一手文献锚点**。
+  - 本次补充检索的 emergentmind 概念综述为**二手**，仅提供「密集监督 → 加速收敛 + 改善泛化」的**概念框架**（与 XTRA 的实证锚点互补）。
+  - `cimi_fetch` 对 emergentmind 页面返回 502 Bad Gateway → 正文未逐字核实，**仅以 search snippet 为线索**，标「二手·未核」。
+- **诚实标注**：我们 R11-G 自身的结果（AIMv2-style lp@55.3M=19.76% 仍在攀升，远超 InfoNCE 渐近 25.1% 的同点值）**本身就是「密集监督在数据受限下有收益」的一手实验证据**——文献锚点是用来给这个发现提供**机制解释的外部支撑**，而非替代实验本身。
+
 ---
 
 ## 17. R11-H — 臂⑥-B：纯 AR（去对比项）30k 步（✅ 完成，2026-10-05）

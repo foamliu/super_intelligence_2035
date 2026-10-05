@@ -1,16 +1,16 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
 | PHASE | **R11-F/G/H 链 ✅ 全部完成**（A/B/C/E/D 五臂 + §15.6 Q1/Q2/Q3 裁定 + §15.7 落盘 + §16 R11-G + §17 R11-H + §16.8 文献锚点）· GPU 全空闲 · ⏸ 无已批准的待跑训练（剩「GPIC 到齐后重跑 scaling」须运维另批）|
-| WAITING | 0（**R11-F Arm D ✅ 13:30 完成**：lp @ {10k,20k,30k}={3.86,6.34,6.65}%，in-domain/单列不排名；§15.6 D 行已回填、§15.7 已更新；R11-F/G/H 链全部收尾，GPU 全空闲）|
+| WAITING | 1（**R11-F/G/H 链全部完成 · GPU 全空闲 · 无已批准的待跑训练**——剩「GPIC 到齐后重跑 scaling」须运维另批；本唤醒补做了 §16.8(5) 文献检索「密集监督在数据受限下的收益」并落盘；设 WAITING=1 省 token，待运维新指令或批准下一任务）|
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10 + R11-L/②③④ + R11-L2 LoRA + R11-L caption-weight + R11-E GPIC（8.65 GPU·h）+ **臂⑥ AIMv2（✅ 7076s≈1.97h×8卡≈15.7 GPU·h）+ AIMv2 4-ckpt eval（~13min×1卡≈0.22 GPU·h）** + **R11-F 🟢 进行中**（Arm A GPIC short 30k@~80ms→~40min×8卡；5 臂串行总 ~5–6h×8 卡 ≈ 40–48 GPU·h） |
-| 更新 | **2026-10-05 13:40（R11-F Arm D ✅ 完成+§15.6/§15.7 落盘**：lp{3.86,6.34,6.65}%，in-domain/单列不排名；R11-F/G/H 链全部收尾，GPU 全空闲，WAITING=0）· 2026-10-05 12:35（cimi_search 文献核实：SigLIP2 mask=50% 已核→§16.8(3b) 落盘；MAE 75% 正文二次确认；Arm D 🔄 step14900/30k=50%） · 2026-10-05 11:50（Arm E ✅完成+eval：lp{5.18,6.51,6.75}%；§15.4/15.5/15.6/15.7 已更新；Q2 已裁定：主指标无显著差异、@20k E显著领先；Arm D 🔄 step1400/30k=5%） · 2026-10-05 11:17（E step22600=75%；MAE mask 75% ✅cimi_fetch） · 2026-10-05 10:35（R11-H ✅完成+§17落盘；E+D重跑中 Arm E step6700=22%） · 2026-10-05 10:02（R11-H巡检 step27900=93%） · 2026-10-05 08:51（R11-H step9900=33%；cimi_search→§16.8锚点） · 2026-10-05 08:16（R11-G ✅完成+§16落盘） · *[R11-G中间巡检9条已归档 daily-memories-vision/2026-10-05.md]* · 2026-10-05 00:55（R11-F A/B/C✅+E/D失败诊断） · 2026-10-04 23:38（NFS崩溃修复+chain启动） |
+| 更新 | **2026-10-05 13:45（唤醒巡检：R11-F/G/H 全部完成 · GPU 全空闲 · §16.8(5) 文献检索「密集监督在数据受限下的收益」补做并落盘 · WAITING=1 待运维新指令）**· 2026-10-05 13:40（R11-F Arm D ✅ 完成+§15.6/§15.7 落盘**：lp{3.86,6.34,6.65}%，in-domain/单列不排名；R11-F/G/H 链全部收尾，GPU 全空闲，WAITING=0）· 2026-10-05 12:35（cimi_search 文献核实：SigLIP2 mask=50% 已核→§16.8(3b) 落盘；MAE 75% 正文二次确认；Arm D 🔄 step14900/30k=50%） · 2026-10-05 11:50（Arm E ✅完成+eval：lp{5.18,6.51,6.75}%；§15.4/15.5/15.6/15.7 已更新；Q2 已裁定：主指标无显著差异、@20k E显著领先；Arm D 🔄 step1400/30k=5%） · 2026-10-05 11:17（E step22600=75%；MAE mask 75% ✅cimi_fetch） · 2026-10-05 10:35（R11-H ✅完成+§17落盘；E+D重跑中 Arm E step6700=22%） · 2026-10-05 10:02（R11-H巡检 step27900=93%） · 2026-10-05 08:51（R11-H step9900=33%；cimi_search→§16.8锚点） · 2026-10-05 08:16（R11-G ✅完成+§16落盘） · *[R11-G中间巡检9条已归档 daily-memories-vision/2026-10-05.md]* · 2026-10-05 00:55（R11-F A/B/C✅+E/D失败诊断） · 2026-10-04 23:38（NFS崩溃修复+chain启动） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -179,6 +179,7 @@ WAITING: 0
   - ✅ **已核实（2026-10-05 12:35 cimi_search）**：masked prediction = **50% patch 替换为 mask token**（TIPS feature-matching，非像素 MSE）；自蒸馏 1 teacher + 8 students；辅助损失在训练 80% 时引入；数据 WebLI 10B 图/12B alt-text。详见 `EXPERIMENTS_VISION_ROUND11.md §16.8(3b)`。
 
 - **证据纪律**：以上 URL + 年份已给；OpenVision2 abstract 逐字引用已核实；SigLIP2 mask ratio/loss 形式 ✅已核实（50% patch，TIPS feature-matching）；MAE 75% ✅已从 abstract+正文两处确认；AIMv2 denser-supervision ✅已从 ar5iv 确认。
+- **§16.8(5) 补充**（2026-10-05 13:45 cimi_search）：检索「密集监督在数据受限下的收益」→ 最直接一手证据已在 (1) AIMv2「denser supervision」+ (3) XTRA「150× smaller datasets」中；新检索到的 emergentmind「Dense Supervision Mechanism」概念综述为**二手·未核**（cimi_fetch 502），仅作概念框架补充。详见 `EXPERIMENTS_VISION_ROUND11.md §16.8(5)`。
 
 
 ## 历史条目已滚动归档（2026-10-03）
