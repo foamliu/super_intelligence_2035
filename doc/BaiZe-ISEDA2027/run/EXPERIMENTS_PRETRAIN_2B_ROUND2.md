@@ -1761,3 +1761,52 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 - dense checkpoint: `hf_checkpoints/p3_dense/`（2.51B params, LlamaForCausalLM）
 
 - **下一步**：P-9.9 到 1000（~15:15）→ 取末段 loss 判 T4（确认 FAIL）→ 合成 P-9.9 最终结论 → **释放 8 卡 → P-9.10 实测（GPU0–1）+ data 配比（GPU2–7）并行启动**。
+---
+
+## P-5b 8-Set Eval + P-6② Token Scaling Law —— 🚧 进行中（2026-10-05 ~21:20）
+
+> **目的**：用 P-5b 6 个里程碑 checkpoint（655M~20B token）跑 lm_eval 8 集零样本，画出 capability-vs-tokens scaling 曲线，外推到 50/55/60% Avg 目标，定 P-8 token 预算。
+> 对齐 Xmodel-2 Table 2 的 8 集：ARC-Challenge/ARC-Easy/BoolQ/HellaSwag/OpenBookQA/PiQA/SciQ/Winogrande（zero-shot, raw accuracy + Avg）。
+
+### 转换：mcore distcp → HF nemotron_h ✅
+
+- 脚本：`run/baize_p6_ckpt_to_hf.py`（mcore torch_dist → HF NemotronH，323 keys, 2.220B params）
+- 6 个里程碑 ckpt 全部转换完成：
+  | iter | tokens | ckpt dir | HF dir |
+  |:--|--:|:--|:--|
+  | 156 | 655M | `iter_0000156` | `hf_iter_0156` |
+  | 312 | 1.3B | `iter_0000312` | `hf_iter_0312` |
+  | 624 | 2.6B | `iter_0000624` | `hf_iter_0624` |
+  | 1248 | 5.2B | `iter_0001248` | `hf_iter_1248` |
+  | 2496 | 10.5B | `iter_0002496` | `hf_iter_2496` |
+  | 4771 | 20B | `iter_0004771` | `hf_iter_4771` |
+- 环境：`py310` conda env + `PYTHONPATH=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/p6_tf5`（transformers 5.x with nemotron_h support）
+- 参数守恒验证通过（323 HF keys, 2,220,268,032 params = 2.220B，逐位一致）
+
+### 评测：lm_eval 8 集 zero-shot（🚧 后台运行中）
+
+- 脚本：`run/p5b_lmeval_all.sh`（6 ckpts × 8 tasks = 48 runs, 2 task 并行 GPU0/1）
+- 命令模板：`HF_DATASETS_OFFLINE=1 HF_HUB_OFFLINE=1 PYTHONPATH=.../p6_tf5 python -m lm_eval --model hf --model_args 'pretrained=.../hf_iter_XXXX,dtype=bfloat16' --tasks <task> --num_fewshot 0 --batch_size 8`
+- 8 datasets 全部本地缓存（P-6 第 1 步已下载）
+- 进度（截至 2026-10-05 21:27）：
+  - iter_0156: 6/8 done（hellaswag 25.56%, arc_easy 28.87%, boolq 37.83%, arc_challenge 23.04%, sciq 25.10%, piqa 50.82%; winogrande+openbookqa 在跑）
+  - iter_0312~4771: 待跑
+- 日志：`/tmp/p5b_lmeval_full.log`
+- 结果 JSON：`nemo_experiments/p5b/lm_eval_results/iter_XXXX/<task>/results_*.json`
+
+### 报告生成 ✅（脚本就绪，待全量结果）
+
+- 脚本：`run/p5b_collect_and_report.py` ✅ syntax OK + smoke test passed
+- 产出（已用部分数据生成初版，全量后重跑）：
+  1. `doc/BaiZe-ISEDA2027/report_pretrain_p5b_8sets.html` — 8 集结果表 + Avg vs tokens scaling curve（SVG）+ 7 个 1B 参考模型对比
+  2. `doc/BaiZe-ISEDA2027/report_pretrain_p6b_scaling.html` — log-linear + power-law fit + 50/55/60% 目标外推 + P-8 GPU-days 估算
+- 参考模型（Table 2 对标）：TinyLLaMA1.1(55.24%), Llama-3.2-1B(57.70%), OpenELM-1.1B(56.95%), MiniCPM-1.2B(59.45%), Xmodel-2-1.2B(61.79%), Qwen2.5-1.5B(63.14%), Phi-1.5-1.3B(65.68%)
+- P-6① baseline（20K步 ckpt, ~82B token）：Avg = 43.95% @ 655M token-equivalent（已记入 P-6 第 1 步）
+
+### 下一步
+
+1. 等 48 runs 全部完成（~1-2h）
+2. 重跑 `p5b_collect_and_report.py` 生成最终 HTML
+3. 更新 EXPERIMENTS 本节 + MEMORY → git push
+4. ②③：sglang 上界补测（HF 转换 p3_hybrid/iter_0005000 → sglang A/B vs p3_dense/iter_0005000）
+5. ④：P-9.5 profiler rerun

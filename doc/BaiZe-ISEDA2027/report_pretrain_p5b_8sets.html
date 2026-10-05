@@ -1,0 +1,397 @@
+<!DOCTYPE html><html><head><meta charset='UTF-8'><title>P-5b 8-Set Eval</title>
+<style>body{background:#0d1117;color:#c9d1d9;font-family:monospace;margin:0;padding:20px;max-width:1200px}h1{color:#58a6ff;border-bottom:1px solid #30363d;padding-bottom:10px}h2{color:#79c0ff;margin-top:30px}h3{color:#79c0ff}table{border-collapse:collapse;width:100%;margin:10px 0}th,td{border:1px solid #30363d;padding:6px 10px;text-align:center}th{background:#161b22;color:#58a6ff}.best{color:#3fb950;font-weight:bold}.warn{color:#f85149}.meta{color:#8b949e;font-size:12px;margin:5px 0}.cmd{background:#161b22;padding:10px;border-radius:5px;overflow-x:auto;color:#8b949e;font-size:12px;border:1px solid #30363d}.conclusion{background:#161b22;padding:15px;border-radius:5px;border-left:3px solid #f0883e;margin:15px 0}</style></head><body>
+<h1>P-5b: 8-Set Common-Sense Zero-Shot Evaluation + Data Scaling</h1>
+<div class='meta'>BaiZe (Mamba2-hybrid 2.22B) | lm-eval 0.4.13 | zero-shot | 2026-10-05<br>Conversion: mcore distcp → HF nemotron_h (323 keys, 2.220B params) | GPU: .29 GPU0-1</div>
+<h2>1. Conversion + Evaluation Pipeline</h2>
+<div class='cmd'>PYTHONPATH=.../omegaconf_230 python baize_p6_ckpt_to_hf.py --ckpt .../iter_0000XXXX --tokenizer .../tokenizer_eod --out .../hf_iter_XXXX<br><br>HF_DATASETS_OFFLINE=1 PYTHONPATH=.../p6_tf5 python -m lm_eval --model hf --model_args 'pretrained=.../hf_iter_XXXX,dtype=bfloat16' --tasks &lt;task&gt; --num_fewshot 0 --batch_size 8</div>
+<div class='meta'>8 tasks: ARC-C, ARC-E, BoolQ, HellaSwag, OBQA, PiQA, SciQ, Winogrande. Avg = acc_norm for MC tasks, acc for BoolQ/Winogrande. TriviaQA excluded (not in Table 2).</div>
+<h2>2. Full Results (harness-standard Avg)</h2>
+<table><tr><th>Tokens</th><th>Iter</th>
+<th>ARC-Challenge</th>
+<th>ARC-Easy</th>
+<th>BoolQ</th>
+<th>HellaSwag</th>
+<th>OpenBookQA</th>
+<th>PiQA</th>
+<th>SciQ</th>
+<th>Winogrande</th>
+<th><b>Avg</b></th></tr>
+<tr><td>655M</td><td>156</td>
+<td>23.04%</td>
+<td>28.87%</td>
+<td>37.83%</td>
+<td>25.56%</td>
+<td class='warn'>—</td>
+<td>50.82%</td>
+<td>25.10%</td>
+<td class='warn'>—</td>
+<td class='best'>31.87%</td></tr>
+<tr><td>1.3B</td><td>312</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td></tr>
+<tr><td>2.6B</td><td>624</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td></tr>
+<tr><td>5.2B</td><td>1248</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td></tr>
+<tr><td>10.5B</td><td>2496</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td></tr>
+<tr><td>20B</td><td>4771</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td></tr>
+</table>
+<h2>3. Raw Accuracy (acc)</h2><table><tr><th>Tokens</th>
+<th>ARC-Challenge</th>
+<th>ARC-Easy</th>
+<th>BoolQ</th>
+<th>HellaSwag</th>
+<th>OpenBookQA</th>
+<th>PiQA</th>
+<th>SciQ</th>
+<th>Winogrande</th>
+<th>raw Avg</th></tr>
+<tr><td>655M</td>
+<td>17.66%</td>
+<td>27.90%</td>
+<td>37.83%</td>
+<td>25.88%</td>
+<td class='warn'>—</td>
+<td>53.54%</td>
+<td>22.60%</td>
+<td class='warn'>—</td>
+<td>30.90%</td></tr>
+<tr><td>1.3B</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td></tr>
+<tr><td>2.6B</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td></tr>
+<tr><td>5.2B</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td></tr>
+<tr><td>10.5B</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td></tr>
+<tr><td>20B</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td>
+<td class='warn'>—</td></tr>
+</table>
+<h2>4. Data Scaling Curve</h2>
+<svg width="800" height="500" xmlns="http://www.w3.org/2000/svg" style="font-family:monospace;font-size:11px">
+<rect x="0" y="0" width="800" height="500" fill="#1a1a2e"/>
+<line x1="80.0" y1="440" x2="80.0" y2="445" stroke="#666"/>
+<text x="80.0" y="460" fill="#aaa" text-anchor="middle">100M</text>
+<line x1="80.0" y1="20" x2="80.0" y2="440" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="306.7" y1="440" x2="306.7" y2="445" stroke="#666"/>
+<text x="306.7" y="460" fill="#aaa" text-anchor="middle">1B</text>
+<line x1="306.7" y1="20" x2="306.7" y2="440" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="533.3" y1="440" x2="533.3" y2="445" stroke="#666"/>
+<text x="533.3" y="460" fill="#aaa" text-anchor="middle">10B</text>
+<line x1="533.3" y1="20" x2="533.3" y2="440" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="760.0" y1="440" x2="760.0" y2="445" stroke="#666"/>
+<text x="760.0" y="460" fill="#aaa" text-anchor="middle">100B</text>
+<line x1="760.0" y1="20" x2="760.0" y2="440" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="75" y1="440.0" x2="80" y2="440.0" stroke="#666"/>
+<text x="70" y="444.0" fill="#aaa" text-anchor="end">0.0%</text>
+<line x1="75" y1="360.0" x2="80" y2="360.0" stroke="#666"/>
+<text x="70" y="364.0" fill="#aaa" text-anchor="end">14.4%</text>
+<line x1="75" y1="280.0" x2="80" y2="280.0" stroke="#666"/>
+<text x="70" y="284.0" fill="#aaa" text-anchor="end">28.9%</text>
+<line x1="75" y1="200.0" x2="80" y2="200.0" stroke="#666"/>
+<text x="70" y="204.0" fill="#aaa" text-anchor="end">43.3%</text>
+<line x1="75" y1="120.0" x2="80" y2="120.0" stroke="#666"/>
+<text x="70" y="124.0" fill="#aaa" text-anchor="end">57.8%</text>
+<line x1="75" y1="40.0" x2="80" y2="40.0" stroke="#666"/>
+<text x="70" y="44.0" fill="#aaa" text-anchor="end">72.2%</text>
+<text x="400.0" y="490" fill="#ccc" text-anchor="middle">Training Tokens (log)</text>
+<text x="20" y="250.0" fill="#ccc" text-anchor="middle" transform="rotate(-90,20,250.0)">Avg Accuracy (%)</text>
+<line x1="80" y1="134.2" x2="760" y2="134.2" stroke="#e74c3c" stroke-dasharray="4,4" opacity="0.6"/>
+<text x="765" y="138.2" fill="#e74c3c" font-size="10">TinyLLaMA1.1-1.1B(55.2%)</text>
+<line x1="80" y1="120.5" x2="760" y2="120.5" stroke="#f39c12" stroke-dasharray="4,4" opacity="0.6"/>
+<text x="765" y="124.5" fill="#f39c12" font-size="10">Llama-3.2-1B(57.7%)</text>
+<line x1="80" y1="124.7" x2="760" y2="124.7" stroke="#9b59b6" stroke-dasharray="4,4" opacity="0.6"/>
+<text x="765" y="128.7" fill="#9b59b6" font-size="10">OpenELM-1.1B(57.0%)</text>
+<line x1="80" y1="110.9" x2="760" y2="110.9" stroke="#1abc9c" stroke-dasharray="4,4" opacity="0.6"/>
+<text x="765" y="114.9" fill="#1abc9c" font-size="10">MiniCPM-1.2B(59.5%)</text>
+<line x1="80" y1="97.9" x2="760" y2="97.9" stroke="#3498db" stroke-dasharray="4,4" opacity="0.6"/>
+<text x="765" y="101.9" fill="#3498db" font-size="10">Xmodel-2-1.2B(61.8%)</text>
+<line x1="80" y1="90.4" x2="760" y2="90.4" stroke="#e67e22" stroke-dasharray="4,4" opacity="0.6"/>
+<text x="765" y="94.4" fill="#e67e22" font-size="10">Qwen2.5-1.5B(63.1%)</text>
+<line x1="80" y1="76.4" x2="760" y2="76.4" stroke="#2ecc71" stroke-dasharray="4,4" opacity="0.6"/>
+<text x="765" y="80.4" fill="#2ecc71" font-size="10">Phi-1.5-1.3B(65.7%)</text>
+<circle cx="265.0" cy="263.6" r="4" fill="#00ff88" stroke="#fff"/>
+<text x="271.0" y="255.6" fill="#fff" font-size="10">655M</text>
+<text x="400.0" y="15" fill="#fff" text-anchor="middle" font-size="13" font-weight="bold">Common-Sense Avg vs Training Tokens</text>
+</svg>
+<h2>5. Per-Task Scaling</h2>
+<h3>ARC-Challenge</h3>
+<svg width="700" height="350" xmlns="http://www.w3.org/2000/svg" style="font-family:monospace;font-size:11px">
+<rect x="0" y="0" width="700" height="350" fill="#1a1a2e"/>
+<line x1="80.0" y1="290" x2="80.0" y2="295" stroke="#666"/>
+<text x="80.0" y="310" fill="#aaa" text-anchor="middle">100M</text>
+<line x1="80.0" y1="20" x2="80.0" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="273.3" y1="290" x2="273.3" y2="295" stroke="#666"/>
+<text x="273.3" y="310" fill="#aaa" text-anchor="middle">1B</text>
+<line x1="273.3" y1="20" x2="273.3" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="466.7" y1="290" x2="466.7" y2="295" stroke="#666"/>
+<text x="466.7" y="310" fill="#aaa" text-anchor="middle">10B</text>
+<line x1="466.7" y1="20" x2="466.7" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="660.0" y1="290" x2="660.0" y2="295" stroke="#666"/>
+<text x="660.0" y="310" fill="#aaa" text-anchor="middle">100B</text>
+<line x1="660.0" y1="20" x2="660.0" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="75" y1="290.0" x2="80" y2="290.0" stroke="#666"/>
+<text x="70" y="294.0" fill="#aaa" text-anchor="end">0.0%</text>
+<line x1="75" y1="240.0" x2="80" y2="240.0" stroke="#666"/>
+<text x="70" y="244.0" fill="#aaa" text-anchor="end">14.0%</text>
+<line x1="75" y1="190.0" x2="80" y2="190.0" stroke="#666"/>
+<text x="70" y="194.0" fill="#aaa" text-anchor="end">28.0%</text>
+<line x1="75" y1="140.0" x2="80" y2="140.0" stroke="#666"/>
+<text x="70" y="144.0" fill="#aaa" text-anchor="end">42.0%</text>
+<line x1="75" y1="90.0" x2="80" y2="90.0" stroke="#666"/>
+<text x="70" y="94.0" fill="#aaa" text-anchor="end">56.0%</text>
+<line x1="75" y1="40.0" x2="80" y2="40.0" stroke="#666"/>
+<text x="70" y="44.0" fill="#aaa" text-anchor="end">70.0%</text>
+<text x="350.0" y="340" fill="#ccc" text-anchor="middle">Training Tokens (log)</text>
+<text x="20" y="175.0" fill="#ccc" text-anchor="middle" transform="rotate(-90,20,175.0)">acc_norm (%)</text>
+<circle cx="237.8" cy="207.7" r="4" fill="#00ff88" stroke="#fff"/>
+<text x="243.8" y="199.7" fill="#fff" font-size="10">655M</text>
+<text x="350.0" y="15" fill="#fff" text-anchor="middle" font-size="13" font-weight="bold">ARC-Challenge vs Tokens</text>
+</svg>
+<h3>ARC-Easy</h3>
+<svg width="700" height="350" xmlns="http://www.w3.org/2000/svg" style="font-family:monospace;font-size:11px">
+<rect x="0" y="0" width="700" height="350" fill="#1a1a2e"/>
+<line x1="80.0" y1="290" x2="80.0" y2="295" stroke="#666"/>
+<text x="80.0" y="310" fill="#aaa" text-anchor="middle">100M</text>
+<line x1="80.0" y1="20" x2="80.0" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="273.3" y1="290" x2="273.3" y2="295" stroke="#666"/>
+<text x="273.3" y="310" fill="#aaa" text-anchor="middle">1B</text>
+<line x1="273.3" y1="20" x2="273.3" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="466.7" y1="290" x2="466.7" y2="295" stroke="#666"/>
+<text x="466.7" y="310" fill="#aaa" text-anchor="middle">10B</text>
+<line x1="466.7" y1="20" x2="466.7" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="660.0" y1="290" x2="660.0" y2="295" stroke="#666"/>
+<text x="660.0" y="310" fill="#aaa" text-anchor="middle">100B</text>
+<line x1="660.0" y1="20" x2="660.0" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="75" y1="290.0" x2="80" y2="290.0" stroke="#666"/>
+<text x="70" y="294.0" fill="#aaa" text-anchor="end">0.0%</text>
+<line x1="75" y1="240.0" x2="80" y2="240.0" stroke="#666"/>
+<text x="70" y="244.0" fill="#aaa" text-anchor="end">14.0%</text>
+<line x1="75" y1="190.0" x2="80" y2="190.0" stroke="#666"/>
+<text x="70" y="194.0" fill="#aaa" text-anchor="end">28.0%</text>
+<line x1="75" y1="140.0" x2="80" y2="140.0" stroke="#666"/>
+<text x="70" y="144.0" fill="#aaa" text-anchor="end">42.0%</text>
+<line x1="75" y1="90.0" x2="80" y2="90.0" stroke="#666"/>
+<text x="70" y="94.0" fill="#aaa" text-anchor="end">56.0%</text>
+<line x1="75" y1="40.0" x2="80" y2="40.0" stroke="#666"/>
+<text x="70" y="44.0" fill="#aaa" text-anchor="end">70.0%</text>
+<text x="350.0" y="340" fill="#ccc" text-anchor="middle">Training Tokens (log)</text>
+<text x="20" y="175.0" fill="#ccc" text-anchor="middle" transform="rotate(-90,20,175.0)">acc_norm (%)</text>
+<circle cx="237.8" cy="186.9" r="4" fill="#00ff88" stroke="#fff"/>
+<text x="243.8" y="178.9" fill="#fff" font-size="10">655M</text>
+<text x="350.0" y="15" fill="#fff" text-anchor="middle" font-size="13" font-weight="bold">ARC-Easy vs Tokens</text>
+</svg>
+<h3>BoolQ</h3>
+<svg width="700" height="350" xmlns="http://www.w3.org/2000/svg" style="font-family:monospace;font-size:11px">
+<rect x="0" y="0" width="700" height="350" fill="#1a1a2e"/>
+<line x1="80.0" y1="290" x2="80.0" y2="295" stroke="#666"/>
+<text x="80.0" y="310" fill="#aaa" text-anchor="middle">100M</text>
+<line x1="80.0" y1="20" x2="80.0" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="273.3" y1="290" x2="273.3" y2="295" stroke="#666"/>
+<text x="273.3" y="310" fill="#aaa" text-anchor="middle">1B</text>
+<line x1="273.3" y1="20" x2="273.3" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="466.7" y1="290" x2="466.7" y2="295" stroke="#666"/>
+<text x="466.7" y="310" fill="#aaa" text-anchor="middle">10B</text>
+<line x1="466.7" y1="20" x2="466.7" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="660.0" y1="290" x2="660.0" y2="295" stroke="#666"/>
+<text x="660.0" y="310" fill="#aaa" text-anchor="middle">100B</text>
+<line x1="660.0" y1="20" x2="660.0" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="75" y1="290.0" x2="80" y2="290.0" stroke="#666"/>
+<text x="70" y="294.0" fill="#aaa" text-anchor="end">0.0%</text>
+<line x1="75" y1="240.0" x2="80" y2="240.0" stroke="#666"/>
+<text x="70" y="244.0" fill="#aaa" text-anchor="end">14.0%</text>
+<line x1="75" y1="190.0" x2="80" y2="190.0" stroke="#666"/>
+<text x="70" y="194.0" fill="#aaa" text-anchor="end">28.0%</text>
+<line x1="75" y1="140.0" x2="80" y2="140.0" stroke="#666"/>
+<text x="70" y="144.0" fill="#aaa" text-anchor="end">42.0%</text>
+<line x1="75" y1="90.0" x2="80" y2="90.0" stroke="#666"/>
+<text x="70" y="94.0" fill="#aaa" text-anchor="end">56.0%</text>
+<line x1="75" y1="40.0" x2="80" y2="40.0" stroke="#666"/>
+<text x="70" y="44.0" fill="#aaa" text-anchor="end">70.0%</text>
+<text x="350.0" y="340" fill="#ccc" text-anchor="middle">Training Tokens (log)</text>
+<text x="20" y="175.0" fill="#ccc" text-anchor="middle" transform="rotate(-90,20,175.0)">acc (%)</text>
+<circle cx="237.8" cy="154.9" r="4" fill="#00ff88" stroke="#fff"/>
+<text x="243.8" y="146.9" fill="#fff" font-size="10">655M</text>
+<text x="350.0" y="15" fill="#fff" text-anchor="middle" font-size="13" font-weight="bold">BoolQ vs Tokens</text>
+</svg>
+<h3>HellaSwag</h3>
+<svg width="700" height="350" xmlns="http://www.w3.org/2000/svg" style="font-family:monospace;font-size:11px">
+<rect x="0" y="0" width="700" height="350" fill="#1a1a2e"/>
+<line x1="80.0" y1="290" x2="80.0" y2="295" stroke="#666"/>
+<text x="80.0" y="310" fill="#aaa" text-anchor="middle">100M</text>
+<line x1="80.0" y1="20" x2="80.0" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="273.3" y1="290" x2="273.3" y2="295" stroke="#666"/>
+<text x="273.3" y="310" fill="#aaa" text-anchor="middle">1B</text>
+<line x1="273.3" y1="20" x2="273.3" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="466.7" y1="290" x2="466.7" y2="295" stroke="#666"/>
+<text x="466.7" y="310" fill="#aaa" text-anchor="middle">10B</text>
+<line x1="466.7" y1="20" x2="466.7" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="660.0" y1="290" x2="660.0" y2="295" stroke="#666"/>
+<text x="660.0" y="310" fill="#aaa" text-anchor="middle">100B</text>
+<line x1="660.0" y1="20" x2="660.0" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="75" y1="290.0" x2="80" y2="290.0" stroke="#666"/>
+<text x="70" y="294.0" fill="#aaa" text-anchor="end">0.0%</text>
+<line x1="75" y1="240.0" x2="80" y2="240.0" stroke="#666"/>
+<text x="70" y="244.0" fill="#aaa" text-anchor="end">14.0%</text>
+<line x1="75" y1="190.0" x2="80" y2="190.0" stroke="#666"/>
+<text x="70" y="194.0" fill="#aaa" text-anchor="end">28.0%</text>
+<line x1="75" y1="140.0" x2="80" y2="140.0" stroke="#666"/>
+<text x="70" y="144.0" fill="#aaa" text-anchor="end">42.0%</text>
+<line x1="75" y1="90.0" x2="80" y2="90.0" stroke="#666"/>
+<text x="70" y="94.0" fill="#aaa" text-anchor="end">56.0%</text>
+<line x1="75" y1="40.0" x2="80" y2="40.0" stroke="#666"/>
+<text x="70" y="44.0" fill="#aaa" text-anchor="end">70.0%</text>
+<text x="350.0" y="340" fill="#ccc" text-anchor="middle">Training Tokens (log)</text>
+<text x="20" y="175.0" fill="#ccc" text-anchor="middle" transform="rotate(-90,20,175.0)">acc_norm (%)</text>
+<circle cx="237.8" cy="198.7" r="4" fill="#00ff88" stroke="#fff"/>
+<text x="243.8" y="190.7" fill="#fff" font-size="10">655M</text>
+<text x="350.0" y="15" fill="#fff" text-anchor="middle" font-size="13" font-weight="bold">HellaSwag vs Tokens</text>
+</svg>
+<h3>PiQA</h3>
+<svg width="700" height="350" xmlns="http://www.w3.org/2000/svg" style="font-family:monospace;font-size:11px">
+<rect x="0" y="0" width="700" height="350" fill="#1a1a2e"/>
+<line x1="80.0" y1="290" x2="80.0" y2="295" stroke="#666"/>
+<text x="80.0" y="310" fill="#aaa" text-anchor="middle">100M</text>
+<line x1="80.0" y1="20" x2="80.0" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="273.3" y1="290" x2="273.3" y2="295" stroke="#666"/>
+<text x="273.3" y="310" fill="#aaa" text-anchor="middle">1B</text>
+<line x1="273.3" y1="20" x2="273.3" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="466.7" y1="290" x2="466.7" y2="295" stroke="#666"/>
+<text x="466.7" y="310" fill="#aaa" text-anchor="middle">10B</text>
+<line x1="466.7" y1="20" x2="466.7" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="660.0" y1="290" x2="660.0" y2="295" stroke="#666"/>
+<text x="660.0" y="310" fill="#aaa" text-anchor="middle">100B</text>
+<line x1="660.0" y1="20" x2="660.0" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="75" y1="290.0" x2="80" y2="290.0" stroke="#666"/>
+<text x="70" y="294.0" fill="#aaa" text-anchor="end">0.0%</text>
+<line x1="75" y1="240.0" x2="80" y2="240.0" stroke="#666"/>
+<text x="70" y="244.0" fill="#aaa" text-anchor="end">14.0%</text>
+<line x1="75" y1="190.0" x2="80" y2="190.0" stroke="#666"/>
+<text x="70" y="194.0" fill="#aaa" text-anchor="end">28.0%</text>
+<line x1="75" y1="140.0" x2="80" y2="140.0" stroke="#666"/>
+<text x="70" y="144.0" fill="#aaa" text-anchor="end">42.0%</text>
+<line x1="75" y1="90.0" x2="80" y2="90.0" stroke="#666"/>
+<text x="70" y="94.0" fill="#aaa" text-anchor="end">56.0%</text>
+<line x1="75" y1="40.0" x2="80" y2="40.0" stroke="#666"/>
+<text x="70" y="44.0" fill="#aaa" text-anchor="end">70.0%</text>
+<text x="350.0" y="340" fill="#ccc" text-anchor="middle">Training Tokens (log)</text>
+<text x="20" y="175.0" fill="#ccc" text-anchor="middle" transform="rotate(-90,20,175.0)">acc_norm (%)</text>
+<circle cx="237.8" cy="108.5" r="4" fill="#00ff88" stroke="#fff"/>
+<text x="243.8" y="100.5" fill="#fff" font-size="10">655M</text>
+<text x="350.0" y="15" fill="#fff" text-anchor="middle" font-size="13" font-weight="bold">PiQA vs Tokens</text>
+</svg>
+<h3>SciQ</h3>
+<svg width="700" height="350" xmlns="http://www.w3.org/2000/svg" style="font-family:monospace;font-size:11px">
+<rect x="0" y="0" width="700" height="350" fill="#1a1a2e"/>
+<line x1="80.0" y1="290" x2="80.0" y2="295" stroke="#666"/>
+<text x="80.0" y="310" fill="#aaa" text-anchor="middle">100M</text>
+<line x1="80.0" y1="20" x2="80.0" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="273.3" y1="290" x2="273.3" y2="295" stroke="#666"/>
+<text x="273.3" y="310" fill="#aaa" text-anchor="middle">1B</text>
+<line x1="273.3" y1="20" x2="273.3" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="466.7" y1="290" x2="466.7" y2="295" stroke="#666"/>
+<text x="466.7" y="310" fill="#aaa" text-anchor="middle">10B</text>
+<line x1="466.7" y1="20" x2="466.7" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="660.0" y1="290" x2="660.0" y2="295" stroke="#666"/>
+<text x="660.0" y="310" fill="#aaa" text-anchor="middle">100B</text>
+<line x1="660.0" y1="20" x2="660.0" y2="290" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="75" y1="290.0" x2="80" y2="290.0" stroke="#666"/>
+<text x="70" y="294.0" fill="#aaa" text-anchor="end">0.0%</text>
+<line x1="75" y1="240.0" x2="80" y2="240.0" stroke="#666"/>
+<text x="70" y="244.0" fill="#aaa" text-anchor="end">14.0%</text>
+<line x1="75" y1="190.0" x2="80" y2="190.0" stroke="#666"/>
+<text x="70" y="194.0" fill="#aaa" text-anchor="end">28.0%</text>
+<line x1="75" y1="140.0" x2="80" y2="140.0" stroke="#666"/>
+<text x="70" y="144.0" fill="#aaa" text-anchor="end">42.0%</text>
+<line x1="75" y1="90.0" x2="80" y2="90.0" stroke="#666"/>
+<text x="70" y="94.0" fill="#aaa" text-anchor="end">56.0%</text>
+<line x1="75" y1="40.0" x2="80" y2="40.0" stroke="#666"/>
+<text x="70" y="44.0" fill="#aaa" text-anchor="end">70.0%</text>
+<text x="350.0" y="340" fill="#ccc" text-anchor="middle">Training Tokens (log)</text>
+<text x="20" y="175.0" fill="#ccc" text-anchor="middle" transform="rotate(-90,20,175.0)">acc_norm (%)</text>
+<circle cx="237.8" cy="200.4" r="4" fill="#00ff88" stroke="#fff"/>
+<text x="243.8" y="192.4" fill="#fff" font-size="10">655M</text>
+<text x="350.0" y="15" fill="#fff" text-anchor="middle" font-size="13" font-weight="bold">SciQ vs Tokens</text>
+</svg>
+</body></html>

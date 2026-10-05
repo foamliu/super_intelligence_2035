@@ -1,0 +1,23 @@
+<!DOCTYPE html><html><head><meta charset='UTF-8'><title>P-6② Scaling</title>
+<style>body{background:#0d1117;color:#c9d1d9;font-family:monospace;margin:0;padding:20px;max-width:1200px}h1{color:#58a6ff;border-bottom:1px solid #30363d;padding-bottom:10px}h2{color:#79c0ff;margin-top:30px}h3{color:#79c0ff}table{border-collapse:collapse;width:100%;margin:10px 0}th,td{border:1px solid #30363d;padding:6px 10px;text-align:center}th{background:#161b22;color:#58a6ff}.best{color:#3fb950;font-weight:bold}.warn{color:#f85149}.meta{color:#8b949e;font-size:12px;margin:5px 0}.cmd{background:#161b22;padding:10px;border-radius:5px;overflow-x:auto;color:#8b949e;font-size:12px;border:1px solid #30363d}.conclusion{background:#161b22;padding:15px;border-radius:5px;border-left:3px solid #f0883e;margin:15px 0}</style></head><body>
+<h1>P-6②: Capability vs Token Scaling Law + Extrapolation</h1>
+<div class='meta'>BaiZe (Mamba2-hybrid 2.22B) | 6 milestones: 655M → 20B tokens | 2026-10-05</div>
+<h2>1. Purpose</h2>
+<p>Trace how common-sense reasoning scales with training tokens using 6 P-5b milestone checkpoints. Extrapolate to estimate token budget for target accuracy → inform P-8 decision.</p>
+<h2>2. Input Checkpoints</h2>
+<table><tr><th>Iter</th><th>Tokens</th><th>Label</th></tr>
+<tr><td>156</td><td>0.655B</td><td>655M</td></tr>
+<tr><td>312</td><td>1.31B</td><td>1.3B</td></tr>
+<tr><td>624</td><td>2.62B</td><td>2.6B</td></tr>
+<tr><td>1248</td><td>5.24B</td><td>5.2B</td></tr>
+<tr><td>2496</td><td>10.48B</td><td>10.5B</td></tr>
+<tr><td>4771</td><td>20.05B</td><td>20B</td></tr>
+</table>
+<h2>3. Pre-Registered Criteria</h2><ul><li><b>Primary</b>: Clear power-law/log trend in Avg vs tokens?</li><li><b>Targets</b>: 50% (weakest 1B), 55% (TinyLLaMA), 60% (above Xmodel-2)</li><li><b>Fit</b>: acc = a − b·N^(−c) or acc = a + b·log10(N); report R²</li><li><b>Caveat</b>: ≤6 points, steep-rise → high uncertainty</li></ul>
+<h2>4. Scaling Curve + Fit</h2>
+<p class='warn'>Insufficient data.</p>
+<h2>5. Conclusion for P-8 Token Budget</h2><div class='conclusion'>
+<p>Will be updated when eval completes.</p>
+</div>
+<h2>6. Uncertainty</h2><div class='meta'>⚠️ ≤6 points in steep-rise → high uncertainty. Power-law and log-linear may diverge. Treat as order-of-magnitude guidelines. P-8 run = true out-of-sample test.</div>
+</body></html>
