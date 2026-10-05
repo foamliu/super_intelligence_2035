@@ -5,13 +5,27 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A kimi-k2.6-cloud serial cross-eval — cline-patched × 30 COMPLETE (18/30 resolved, 60.0%) → codex × 30 RUNNING (inst 1/30 in progress)
-已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A(deepseek) 22/30 scored · SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md · kimi model switch + serial runner + cline-patched×30 COMPLETE (18/30 resolved, 60.0%, 12 patch-but-failed, 0 quota-blocked) + SWEBENCH_COMPARE.html regenerated (12150B, 30 entries)
-当前动作:     R73: cline-patched×30 COMPLETE (18/30 resolved=60.0%, 12 patch-but-failed, 0 quota-blocked, total 4.0h, avg 479s/inst) → codex×30 LAUNCHED (PID 2051774, inst 1/30 django-10924 running) + gw_proxy(kimi)运行中 + quota健康(0×429) + relay健康skip第26次 + SWEBENCH_COMPARE.html regenerated(12150B,30entries) + git fetch OK (1 ahead 0 behind)
-下一步:       codex×30完成(~4-5h) → opencode×30 → claude-code×30 → (deepseek×30) → 最终更新SWEBENCH_COMPARE.html(全5harness对比)
+PHASE:        H-A kimi-k2.6-cloud serial cross-eval — cline-patched × 30 COMPLETE (18/30 resolved, 60.0%) → codex × 30 RUNNING (2/30 scored: 1 resolved, 1 patch-but-failed; inst 3/30 in progress)
+已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A(deepseek) 22/30 scored · SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md · kimi model switch + serial runner + cline-patched×30 COMPLETE (18/30 resolved, 60.0%, 12 patch-but-failed, 0 quota-blocked) + SWEBENCH_COMPARE.html regenerated (12150B, 30 entries) + codex×30 RUNNING (2/30 scored)
+当前动作:     R74: codex×30 RUNNING (PID 2051774, 2/30 scored: 10924=patch-but-failed, 11001=resolved, inst 3/30 django-11019 running, elapsed 0.6h) + gw_proxy(kimi)健康(0×429, ~6.1h) + relay健康skip第27次(2489749 ppid=1 etimes≈4d) + .last_run_id=71(无新指令) + git fetch OK (2 ahead 0 behind) + MEMORY 27KB
+下一步:       codex×30完成(~5h) → opencode×30 → claude-code×30 → (deepseek×30) → 最终更新SWEBENCH_COMPARE.html(全5harness对比)
 阻塞:         无（kimi quota 未撞墙，codex串行运行中）
 ERROR_COUNT:  0
 ```
+
+## 🆕 第七十四轮速览（2026-10-05 16:02）— codex×30 RUNNING (2/30 scored: 1 resolved, 1 patch-but-failed) + relay 健康 skip 第 27 次 + 无新指令
+
+- ✅ **ops 中继复核（第 27 次）→ 健康，跳过重启**。relay `2489749 1 344946 Ss`（ppid=1、etimes≈4.0d）；`.last_run_id`=71（持平 → 无新运维指令）；`git fetch`（带 proxy）exit=0；`git rev-list --left-right --count HEAD...origin/main`=`2 0`（本地 2 ahead=未 push 提交，远端 0 ahead=无新指令）。
+- 📊 **codex × 30 进度**：PID 2051774（ppid=1，elapsed 0.6h）。**2/30 scored**：`django__django-10924`=patch-but-failed、`django__django-11001`=resolved。inst 3/30（`django__django-11019`）RUN 中（codex child PID 2980723，workdir=/dev/shm/.../django_django）。
+- ✅ **kimi quota 健康**：gw_proxy PID 3175038 运行中（etimes≈22089s≈6.1h）。**0 次 429**，**0 次 quota 事件**。
+- 📈 **kimi 横评汇总（更新）**：
+  | harness | scored | resolved | patch-but-failed | quota-blocked | resolve rate |
+  |:--|--:|--:|--:|--:|--:|
+  | cline-patched | 30/30 | 18 | 12 | 0 | 60.0% |
+  | codex | 2/30 | 1 | 1 | 0 | 50.0% (早期) |
+  | deepseek-v4-flash | 22/30 | 0 | 5 | 17 | 0% (旧口径) |
+- ⏱ **时间估算**：codex 2 条≈0.6h→~18min/inst→剩余 28 条≈8.4h→全部 4 harness×30≈30h（~1.3 天）。
+- ⏭ **下一步**：codex×30 后台继续 → 完成后启动 opencode×30 → 依次 claude-code → 最终更新 SWEBENCH_COMPARE.html（全 5 harness 对比）。保持 `WAITING=1`。
 
 ## 🆕 第七十三轮速览（2026-10-05 15:27）— 🎉 cline-patched×30 COMPLETE: 18/30 resolved (60.0%) + codex×30 LAUNCHED + SWEBENCH_COMPARE.html regenerated (12150B, 30 entries)
 
