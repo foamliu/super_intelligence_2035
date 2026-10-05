@@ -272,6 +272,25 @@ class ClaudeCodeDriver:
             "ANTHROPIC_MODEL": UNIFIED_MODEL,
             "NO_PROXY": "127.0.0.1,localhost",
             "no_proxy": "127.0.0.1,localhost",
+            # --- Telemetry shutdown (2026-10-05, operator directive) ---
+            # Two independent telemetry systems, both must be off:
+            #  (A) Statsig operational telemetry  -> DISABLE_TELEMETRY / umbrella
+            #  (B) OpenTelemetry (OTel) export     -> CLAUDE_CODE_ENABLE_TELEMETRY=0 + OTEL_*_EXPORTER=none
+            # Refs: https://code.claude.com/docs/en/env-vars
+            #       https://code.claude.com/docs/en/monitoring-usage
+            # CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC is the umbrella switch
+            # (equiv to DISABLE_AUTOUPDATER+DISABLE_BUG_COMMAND+DISABLE_ERROR_REPORTING+DISABLE_TELEMETRY).
+            # Individual vars kept as belt-and-suspenders.
+            "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+            "DISABLE_TELEMETRY": "1",
+            "DISABLE_ERROR_REPORTING": "1",
+            "DISABLE_AUTOUPDATER": "1",
+            "DISABLE_BUG_COMMAND": "1",
+            "DISABLE_NON_ESSENTIAL_MODEL_CALLS": "1",
+            "DO_NOT_TRACK": "1",
+            "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
+            "OTEL_METRICS_EXPORTER": "none",
+            "OTEL_LOGS_EXPORTER": "none",
         }
         r = _run(cmd, workdir, timeout, env=env)
         r.harness = self.name
