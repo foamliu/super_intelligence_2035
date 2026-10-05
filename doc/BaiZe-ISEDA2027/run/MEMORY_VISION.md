@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ · R11-L2 ✅ · caption-weight ✅ · R13 ✅ · R11-E ✅ · 臂⑥ AIMv2 ✅ 翻盘 · ⭐ R11-G ✅ 完成（§16+§16.8文献锚点已落盘）**；R11-F：Arm A/B/C ✅ · E/D ❌待重跑；**R11-H 🔄 运行中** step≈9900/30000 @08:51（33%，纯AR contrast=0.0，patch_mse 0.86→0.11，C1=0.52/C2_gap≈0(纯AR预期)/C4=OK，~210ms/iter）→ ETA train~10:01→eval~10:16（链PID 4032740健康）|
-| WAITING | 1（**语义=R11-H 纯 AR 30k 训练运行中 → 30min 轮询**；step≈9900/30000 @08:51，纯AR（contrast=0.0/patch_mse only），patch_mse 0.86→0.11递减，C1=0.52(<0.95)/C2_gap≈0(纯AR预期)/C4=OK/loss_ema=0.11；ETA train~10:01（剩余~20k步×~0.21s≈70min）→eval 4ckpt~15min→~10:16 ALL DONE；下次唤醒：若H eval完→写§17(R11-H 4点lp vs ⑥-A 11.39/11.14/12.08% + 基线 3.43/5.45/6.08% → 翻盘是否依赖对比项裁定)；GPU空后→Arm E重跑(稳健端口)+Arm D重跑(empty_check=False已修)补Q2） |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ · R11-L2 ✅ · caption-weight ✅ · R13 ✅ · R11-E ✅ · 臂⑥ AIMv2 ✅ 翻盘 · ⭐ R11-G ✅ 完成（§16+§16.8文献锚点已落盘）**；R11-F：Arm A/B/C ✅ · E/D ❌待重跑；**R11-H 🔄 运行中** step≈19250/30000 @09:28（64%，纯AR contrast=0.0，patch_mse 0.86→0.06，C1=0.29/C2_gap≈0(纯AR预期)/C4=OK，~200ms/iter）→ ETA train~10:04→eval~10:19（链PID 4032740健康）；**E+D重跑脚本已就绪** `/tmp/r11_ed_wait_and_launch.sh`（PID 861557 守护，等链退出后自动起E→D）|
+| WAITING | 1（**语义=R11-H 纯 AR 30k 训练运行中 → 30min 轮询**；step≈19250/30000 @09:28，纯AR（contrast=0.0/patch_mse only），patch_mse 0.86→0.06递减，C1=0.29(<0.95)/C2_gap≈0(纯AR预期)/C4=OK/loss_ema=0.07；ETA train~10:04（剩余~10.8k步×~0.20s≈36min）→eval 4ckpt~15min→~10:19 ALL DONE；下次唤醒：若H eval完→写§17(R11-H 4点lp vs ⑥-A 11.39/11.14/12.08% + 基线 3.43/5.45/6.08% → 翻盘是否依赖对比项裁定)；**E+D重跑已由守护脚本自动接管**（`/tmp/r11_ed_wait_and_launch.sh` PID 861557 等链退出→自动起E(port 29555)→D(port 29556)，日志`/tmp/r11f_ed_rerun.log`）→ H+ED全部完成后→写§15补Q2+§17 |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10 + R11-L/②③④ + R11-L2 LoRA + R11-L caption-weight + R11-E GPIC（8.65 GPU·h）+ **臂⑥ AIMv2（✅ 7076s≈1.97h×8卡≈15.7 GPU·h）+ AIMv2 4-ckpt eval（~13min×1卡≈0.22 GPU·h）** + **R11-F 🟢 进行中**（Arm A GPIC short 30k@~80ms→~40min×8卡；5 臂串行总 ~5–6h×8 卡 ≈ 40–48 GPU·h） |
-| 更新 | **2026-10-05 08:51（R11-H巡检 step9900/30000=33% C1=0.52 C4=OK 纯AR健康；cimi_search文献检索→§16.8已落盘：AIMv2原文"denser supervision"逐字引用+MAE mask ratio+AR数据效率对比）** · 2026-10-05 08:16（R11-G ✅完成+§16落盘） · 2026-10-05 07:36（R11-G巡检 step103800=96.1%） · 2026-10-05 06:58（step93650=86.7%） · 2026-10-05 06:25（step85400=79%） · 2026-10-05 05:53（step77300=71.6%） · 2026-10-05 05:18（step68250=63.2%） · 2026-10-05 04:11（step51400=47.6%） · 2026-10-05 03:38（step42850=40%） · 2026-10-05 03:06（step34800=32%） · 2026-10-05 02:32（step26050=24%） · 2026-10-05 00:55（R11-F A/B/C✅落盘+Q1/Q3裁定+E/D失败诊断+data.py修empty_check） · 2026-10-04 23:38（NFS崩溃修复+overnight chain启动） |
+| 更新 | **2026-10-05 09:28（R11-H巡检 step19250/30000=64% C1=0.29 C4=OK 纯AR健康；E+D重跑脚本+守护已就绪PID 861557）** · 2026-10-05 08:51（R11-H巡检 step9900/30000=33% C1=0.52 C4=OK 纯AR健康；cimi_search文献检索→§16.8已落盘：AIMv2原文"denser supervision"逐字引用+MAE mask ratio+AR数据效率对比） · 2026-10-05 08:16（R11-G ✅完成+§16落盘） · 2026-10-05 07:36（R11-G巡检 step103800=96.1%） · 2026-10-05 06:58（step93650=86.7%） · 2026-10-05 06:25（step85400=79%） · 2026-10-05 05:53（step77300=71.6%） · 2026-10-05 05:18（step68250=63.2%） · 2026-10-05 04:11（step51400=47.6%） · 2026-10-05 03:38（step42850=40%） · 2026-10-05 03:06（step34800=32%） · 2026-10-05 02:32（step26050=24%） · 2026-10-05 00:55（R11-F A/B/C✅落盘+Q1/Q3裁定+E/D失败诊断+data.py修empty_check） · 2026-10-04 23:38（NFS崩溃修复+overnight chain启动） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -158,8 +158,9 @@ WAITING: 1
 
 > 预注册见 BAIZE_VISION_TASK.md「运维指令 2026-10-04（七）」。唯一变化：在 ⑥-A 基础上去掉 InfoNCE（`--contrast-weight 0.0 --c2-collapse-guard 0`），`total = masked-patch-MSE only`。30k 步。**这是向官方 AIMv2（纯 AR 无对比）靠拢的消融**（§16.8 已核实官方 AIMv2 = 纯 AR 无对比项）。
 
-- 🔄 **运行中**（08:11:29 起，PID 3676660 torchrun，ppid=4032740 链）：step≈9900/30000 @08:51（33%），纯 AR（contrast=0.0000），patch_mse 0.86→0.11 递减，C1=0.52(<0.95)/C2_gap≈0(纯AR预期)/C4=OK/loss_ema=0.11。
-- ETA train~10:01（~70min）→ eval 4ckpt ~15min → ~10:16 ALL DONE。
+- 🔄 **运行中**（08:11:29 起，PID 3676660 torchrun，ppid=4032740 链）：step≈19250/30000 @09:28（64%），纯 AR（contrast=0.0000），patch_mse 0.86→0.06 递减，C1=0.29(<0.95)/C2_gap≈0(纯AR预期)/C4=OK/loss_ema=0.07。
+- ETA train~10:04（~36min）→ eval 4ckpt ~15min → ~10:19 ALL DONE。
+- ✅ **E+D 重跑已自动接管**：`/tmp/r11_ed_wait_and_launch.sh`（PID 861557，ppid=1 守护）每 60s 检测链 PID 4032740 → 退出后自动起 `/tmp/r11_ed_rerun.sh`（Arm E port=29555 固定避碰撞 → Arm D port=29556 empty_check=False 已修）→ 合计 ~3.5h 补 Q2/D 单列。
 - ⬜ 待回填：R11-H 4 点 lp（step{10k,20k,30k}+final）vs ⑥-A（11.39/11.14/12.08%）+ 基线（3.43/5.45/6.08%）→ 翻盘是否依赖对比项裁定（§17）。
 - ✅ 代码改动（`r9_train.py`）：`--contrast-weight 0.0` 跳过 InfoNCE+文本塔 forward；`--c2-collapse-guard 0` 关闭 C2 熔断（科学理由：纯 AR 无对比→对齐≈0 是预期）。
 
