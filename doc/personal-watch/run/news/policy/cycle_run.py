@@ -61,8 +61,14 @@ def run_step(name: str) -> tuple[int, str]:
 
 
 def parse_corpus(eda_text: str) -> tuple[str, str]:
-    """从 eda.py 输出取 (条数, 天数)。"""
+    """从 eda 输出 / EDA.md 取 (条数, 天数)。兼容两种格式：
+       * `eda.py` stdout：`n=806509, days=1627, ...`
+       * `EDA.md` §0   ：`条目总数：**806509** ｜ 覆盖天数：**1627** ｜ ...`
+    """
     m = re.search(r"n=(\d+),\s*days=(\d+)", eda_text)
+    if m:
+        return (m.group(1), m.group(2))
+    m = re.search(r"条目总数：\*\*(\d+)\*\*.*?覆盖天数：\*\*(\d+)\*\*", eda_text)
     return (m.group(1), m.group(2)) if m else ("?", "?")
 
 

@@ -130,7 +130,7 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
   - **核对（发现产物 stale）**：`news/archive` 已 **1627 天 / 806,509 条 / 5 片**（2022–2026，游标 `2022-04-20`），而 L1 产物停在 605,311 条那版 → 全链重跑。
   - **L1 链全量重跑**：`eda.py`(n=806509,days=1627) → `taxonomy.py`(15 类) → `signals.py`(128 行) → `extract_events.py`（**31,398 事件**，CN 22,904；`EVENTS.csv` 7.26 MB，sha `9fd3a9670f0a1dde`）→ `early_warning.py`（283 行）。
     - `EARLY_WARNING.md` §4.2：**45 格** → `q<0.05` **32**；过**效果量门槛** **10**；反向格（AUC<0.5）如实列出。口径**未改**（θ=1.0 / BH-FDR / walk-forward），差异纯由语料变长引起。
-  - **🆕 交付（G2′④ 证据）**：`news/policy/cycle_run.py`（纯 stdlib，按序重跑 L1 链；`--with-l2` 带 L2；`--record` 只记当前态）+ `news/policy/STABILITY_LOG.md`（每次运行自动追加一行可核验摘要）。**首行**：2026-10-05 12:35 ｜ 1627 天 / 806,509 条 ｜ 事件 31,398 ｜ q<0.05=32 ｜ 门槛=10 ｜ L2=ok。
+  - **🆕 交付（G2′④ 证据）**：`news/policy/cycle_run.py`（纯 stdlib，按序重跑 L1 链；`--with-l2` 带 L2；`--record` 只记当前态）+ `news/policy/STABILITY_LOG.md`（每次运行自动追加一行可核验摘要）。**首行**：2026-10-05 12:35 ｜ 1627 天 / 806,509 条 ｜ 事件 31,398 ｜ q<0.05=32 ｜ 门槛=10 ｜ L2=ok。（自检修复：`--record` 回退解析 `EDA.md` 的中文格式 → 复测记 `days=1627 recs=806509`）
   - **🐞 环境修复**：运行机缺 **numpy/scipy**（且无 pip/sudo）→ `explore_l2.py` 报 `ModuleNotFoundError`；用 `get-pip.py --break-system-packages` + **Tuna 镜像**装 **numpy 2.5.3 / scipy 1.18.1**（用户级 `~/.local`）→ **L2 复跑成功**。
   - **L2/N4 重生成**：`EXPLORE.md` 事件数 → **31,398**（可对齐 23,105）；`explore.csv` **sha 不变**（价格窗 2023-06 起，2022 事件不入 L2，**属预期**）。
   - **文档同步**：`news/policy/README.md` §4/§4.1 更新；`INDEX_FILES.md` EVENTS.csv 行更新。
