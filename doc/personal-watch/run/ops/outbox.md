@@ -109,3 +109,125 @@ Filesystem      Size  Used Avail Use% Mounted on
 ?? doc/personal-watch/run/daily-memories-news/2026-10-05.md
 ?? doc/personal-watch/run/news/policy/cycle_run.py
 ```
+
+---
+
+## RUN_ID 2 · 2026-10-05 14:40:24 · host=`VM-0-6-ubuntu` · exit=0
+
+**命令**
+```bash
+echo "=== 0. 基本信息 ==="
+hostname; date '+%F %T %Z'; uptime
+echo
+echo "=== 1. loop 进程（应为各 1 个）==="
+pgrep -af 'watch_(news|research)_loop.sh' | cut -c1-140 || echo "(没有 watch_*_loop.sh 在跑)"
+echo
+echo "=== 2. loop 日志尾部（找 额度已用完 / 403 / 429）==="
+for f in /tmp/watch_news_loop.log /tmp/watch_research_loop.log; do
+  echo "--- $f ---"; tail -20 "$f" 2>/dev/null | cut -c1-200 || echo "(无此日志)"
+done
+echo
+echo "=== 3. ⭐OOM 痕迹（2G 机器的头号嫌疑）==="
+(dmesg -T 2>/dev/null || sudo -n dmesg -T 2>/dev/null) | grep -iE 'oom|killed process' | tail -15 || echo "(读不到 dmesg 或无 OOM 记录)"
+echo
+echo "=== 4. 资源 ==="
+free -m; echo; df -h / /home 2>/dev/null | head -5
+echo
+echo "=== 5. CPU top5 ==="
+ps -eo pid,pcpu,pmem,etime,args --sort=-pcpu 2>/dev/null | head -6 | cut -c1-140
+echo
+echo "=== 6. cline base（只看 base，不打 key）==="
+grep -o '"openAiBaseUrl"[^,}]*' ~/.cline/data/globalState.json 2>/dev/null || echo "(无 globalState.json)"
+echo
+echo "=== 7. git 状态 ==="
+cd ~/super_intelligence_2035 2>/dev/null && git log --oneline -3 && echo '--- dirty ---' && git status --short | head -10
+```
+
+**输出**
+```
+=== 0. 基本信息 ===
+VM-0-6-ubuntu
+2026-10-05 14:40:24 CST
+ 14:40:24 up  5:30,  4 users,  load average: 0.09, 0.09, 0.15
+
+=== 1. loop 进程（应为各 1 个）===
+98701 bash watch_news_loop.sh
+108954 bash watch_research_loop.sh
+
+=== 2. loop 日志尾部（找 额度已用完 / 403 / 429）===
+--- /tmp/watch_news_loop.log ---
+- `MEMORY_NEWS.md`：滚动归档两段旧文（`2026-10-03`/`2026-10-04.md`）后 **31,967 B → 27,588 B**（≤32 KB 达标）；更新进度快照（第 5 轮完成态 + 第 6 轮启动 + pid）�
+- `daily-memories-news/2026-10-05.md`：追加心跳 `[14:30] wake …` + 第 5 轮完整轮次记录（含 pid/日志）
+- `news/policy/README.md` §4 同步（语料 / EVENTS 63,398 / q<0.05=44、门槛=19 / 最高 AUC `A13 Δ=30` 0.740 / STABILITY_LOG 6 行）
+
+**3. 提交与推送**
+- 提交第 5 轮 N1 产物（EVENTS 63,398 等 22 个本线文件，含新增 `chinanews-2017/2018.jsonl.gz` 分片）→ `2009a94`
+- 补提 pid 记录 → `7b93644`，均已 `push origin main` ✅
+
+**4. 启动 N1 第 6 轮**
+- 后台抓取（倒序 `2017-10-30 → 2016-01-01`，`fetch pid 160525`/`python 160527`）+ watcher（`pid 160526`，按 `kill -0` 判定，抓完自动 `--index` + `cycle_run.py --with-l2`，日志 
+- 已确认在跑：`next_day 2017-10-26 / done_days 3264 / recs 1,954,543`
+
+## 校验结果
+- 本线工作区**无未提交文件**（git 干净）
+- 抓取进程唯一（1 个 python）、watcher 按 pid 等待（避开了历史 `pgrep -f` 自匹配死锁）
+- `MEMORY_NEWS.md` 27,588 B < 32 KB；`WAITING:` 仅顶部出现一次
+
+下一轮唤醒时：等第 6 轮抓取 + 链跑完，核对 `STABILITY_LOG.md` 第 7 行与产物，并继续常态新闻采集。
+[loop] 2026-10-05 14:25:31 cline returned (exit 0); log=/tmp/watch_news_cline_last.log
+[loop] 2026-10-05 14:25:31 WAITING=1 (no pending follow-up) → sleep 1800s
+--- /tmp/watch_research_loop.log ---
+- 原因：**UTC 仍为周一**，arXiv **周一公告尚未刷新**（最近批次仍 `2026-10-02`，与第十五~十七轮同批去重），**0 新增属正常，非「无数据」**。实际日期�
+
+### 3. 落盘（只 add 本线文件）
+- `research/2026-10-05.md`（追加「第十八轮」章节 + R1′ 表）
+- `research/ARXIV_API.md`（新增 **§9.20**；并修正插入顺序为 9.17→9.18→9.19→9.20）
+- `research/INDEX.md`（＋🗓 第十八轮行）、`research/SEEN.md`（＋第十八轮备注，无新行）
+- `research/papers.jsonl`（不变，本轮 0 收录）；累计仍 **收录 91 / 候选 487 / 累计抓取 578**
+- `MEMORY_RESEARCH.md`（快照 + 状态头 + 流水更新；**32604 B ≤ 32KB**；`WAITING: 1` 仍仅顶部 1 处）
+- `daily-memories-research/2026-10-05.md`（💓 心跳行 + 第十八轮记录）
+
+### 4. 复核第 3 批 A/B 交付
+TOP-K（`takeaway`/`action` 20 条）+ `TAKEAWAYS.md`（5 条）+ 视频线（`SHORTLIST.md` 17 / `scripts/` 3）**已交付未变**；无新增 → 不重跑（诚实标注）。📧 邮件职能**�
+
+### 5. 回归 & 提交
+- `test_arxiv_fetch.py` **49/49 PASS** · `test_top_k.py` **25/25 PASS**（离线）。
+- commit `22fa5e4` → **已 push**（`af30d1f..22fa5e4 main -> main`）；`git status` 本线工作树 clean，未卷入 news 线在途文件（未用 `git add -A`）。
+
+**下一步建议**：留意 **周一 20:00 ET（= 周二 UTC 00:00）后公告刷新**，下轮预计会有新增；视频 **V3（生成）仍待用户确认运行机工具链**后再动。
+[loop] 2026-10-05 14:35:11 cline returned (exit 0); log=/tmp/watch_research_cline_last.log
+[loop] 2026-10-05 14:35:11 WAITING=1 (no pending follow-up) → sleep 1800s
+
+=== 3. ⭐OOM 痕迹（2G 机器的头号嫌疑）===
+
+=== 4. 资源 ===
+               total        used        free      shared  buff/cache   available
+Mem:            3723        1383        1240           2        1384        2340
+Swap:           1987           2        1985
+
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda2        69G  7.4G   59G  12% /
+/dev/vda2        69G  7.4G   59G  12% /
+
+=== 5. CPU top5 ===
+    PID %CPU %MEM     ELAPSED COMMAND
+ 170503 98.7 13.4       00:03 /usr/bin/python3 /home/liuyang/super_intelligence_2035/doc/personal-watch/run/news/policy/eda.py
+  13993  1.5  9.9    05:10:12 /home/liuyang/.nvm/versions/node/v24.21.0/lib/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /home/liu
+   7493  1.2  1.9    05:28:57 /usr/local/qcloud/YunJing/YDEyes/YDService
+   6375  1.0  0.7    05:30:11 barad_agent
+ 170502  0.9  0.4       00:03 python3 news/policy/cycle_run.py --with-l2
+
+=== 6. cline base（只看 base，不打 key）===
+(无 globalState.json)
+
+=== 7. git 状态 ===
+1c1f3f3 ops: RUN_ID 2 诊断块 — 追因 research 线为何缺席 + loop 保活机制排查(cron/systemd/screen/自启/进程树/脚本守护逻辑)，并记录 RUN_ID 1 结论(非OOM/非资源; 只有 news 在跑; 机器 09:10 左右重启过)
+5eaaa72 personal-watch/news: 🚨 台账诚信处置 — ① G2'④ 改为可达成且可核验(连续7自然日/每天>=1次真实重跑/间隔>=20h; record-only不计入; 未达标要如实写) ② §4 新增铁律⑨台账诚信+⑩指标未达标如实写(禁补造/回填/模拟/改口径/刷台账); 并记录诊断结论(非OOM/非资源)
+f8bfbb5 personal-watch/ops_relay: 修根因 — git_publish 推送前先 fetch+pull --rebase（仓库与 4 条 BaiZe 线共享远端，不 rebase 必被拒），否则中继结果永远推不上来
+--- dirty ---
+ M doc/personal-watch/run/news/archive/.progress.json
+ M doc/personal-watch/run/news/archive/INDEX_FILES.md
+ M doc/personal-watch/run/news/archive/PROGRESS.md
+ M doc/personal-watch/run/news/archive/chinanews-2017.jsonl.gz
+?? doc/personal-watch/run/news/archive/chinanews-2016.jsonl.gz
+```
