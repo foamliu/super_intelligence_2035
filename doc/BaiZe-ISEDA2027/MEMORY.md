@@ -187,6 +187,8 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
+- **2026-10-05（深夜 · 🧹 任务书瘦身 —— 4 本活跃任务书 236.6 → 104.5 KB（-56%））** —— 用户问「任务书是不是变大了」→ 实测：**pretrain 71.9 / data 71.6 / harness 49.3 / vision 43.8 KB = 236.6 KB**（≈ **10-03 瘦身后 114.1 KB 的 2.07×**，**回到瘦身前 237 KB 的水平**）；**主因 = `## 🔧 运维指令区` 只 prepend、从不归档** —— 累计 **46 个 `### 运维*` 块**（data 13 / harness 13 / pretrain 11 / vision 9），pretrain 的运维区 ~65 KB ≈ **全书 90%**。⇒ 照 10-03 老办法瘦身：① **把「已执行完 / 已作废」的运维块 + 「已完成轮次正文」原文移入新建的 `run/ARCHIVE_OPERATOR_{PRETRAIN,DATA,HARNESS,VISION}.md`**；② 各书顶部加「📦 历史运维指令已归档」指针；③ 保留 **状态速览 / 最新活跃块 / 常驻规则（proxy 口径·环境隔离·记忆维护规程·git 规则）/ 当前队列与待跑规格**。**结果**：pretrain **71.9→29.1** · data **71.6→35.6** · harness **49.3→24.1** · vision **43.8→15.7** KB（合计 **236.6→104.5 KB，-56%**）；归档共 ≈133 KB（**原文未改、结论不动**）。**纪律**：归档不改变任何结论；agent **需要时再去读归档**，不要读进上下文。（另：`WATCH_NEWS_TASK.md` 63.7 KB 待同日处理，属另一套 `personal-watch` 线。）
+
 - **2026-10-05（深夜 · 用户五条：vision 续跑 3 epoch + 自提方向 / data 现状问询 / harness 自装工具链 / pretrain sglang 对比）** —— 已**下发 3 条运维指令** + 回答 data 问询：
   - **① vision（`BAIZE_VISION_TASK.md` 顶部新块）**：**R12 后从 final ckpt 续训到 ≈3 epoch（≈344k 步 / N≈176M）**，**epoch=1/2/3 必测（建议每 0.5 epoch 一点，≥6 点）** IN-1k lp；用幂律 `a−b·N^−c` + 对数线性**重拟合 scaling**，与 **R9 的 InfoNCE 25.1%** 并列 → **刷新「数据无限外推上限」**；预注册：R²≥0.90 且 a>25.1% 才判正面；**先报估算再起跑**；回填论文 §6.3。**② 同块**：**授权 vision agent 自提 ≥3 个下一步方向**（每个给动机/成本/判据/产出/风险）→ 交 `run/VISION_NEXT_DIRECTIONS.md`（仅建议，未批不起跑）。
   - **② harness（`BAIZE_HARNESS_TASK.md` 顶部新块）**：**授权自装 deepseek-harness 工具链**（node≥22.13 官方二进制走 proxy 解到 `~/.local/node22`；rust 用 rustup + tuna/rsproxy 镜像；全不通如实报 http_code）→ 装好并入第 5 个 harness；重申 codex×30 后顺序（codex×300→cline×300→opencode×300→claude-code×300→deepseek→刷新 `SWEBENCH_COMPARE.html`）。
