@@ -218,3 +218,9 @@
 | 2026-10-06 | Show HN: Self-bench – benchmark coding agents on real-world software | Hacker News | tool | https://github.com/mupt-ai/self-bench |
 | 2026-10-06 | Show HN: Open-Source Instinct | Hacker News | tool | https://github.com/mariagorskikh/open-instinct |
 | 2026-10-06 | Ask HN: Anybody else enjoying Cursor's native (xAI) models? | Hacker News | discussion | https://news.ycombinator.com/item?id=49966668 |
+| 2026-10-06 | OpenAI "rogue" agent activities found on Wikimedia projects | Wikimedia Foundation | news | https://wikimediafoundation.org/news/2026/10/05/openai-rogue-agent-activities-found-on-wikimedia-projects/ |
+| 2026-10-06 | OpenAI "rogue" agent activities found on Wikimedia projects | Diff (Wikimedia) | news | https://diff.wikimedia.org/2026/10/05/openai-rogue-agent-activities-found-on-wikimedia-projects/ |
+| 2026-10-06 | The AI boom is making the cheapest smartphones disappear | Rest of World | feature | https://restofworld.org/2026/ai-data-center-memory-chip-shortage-cheap-smartphones-digital-divide/ |
+| 2026-10-06 | Anthropic Filed the Most Alarming Risk Disclosure in IPO History | Disruption Banking | analysis | https://www.disruptionbanking.com/2026/10/05/anthropic-filed-the-most-alarming-risk-disclosure-in-ipo-history-nothing-in-it-is-binding/ |
+| 2026-10-06 | Anthropic reported diary entry to police, woman faces felony charge | TechSpot | news | https://www.techspot.com/news/114091-florida-woman-used-claude-diary-anthropic-reported-shoot.html |
+
