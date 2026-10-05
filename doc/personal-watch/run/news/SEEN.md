@@ -119,3 +119,15 @@
 | 2026-10-05 | GPT-6 要“吃掉”3D 公司？这家公司不到 2 年 ARR 翻百倍，破 1 亿美元 | 量子位 | feature | https://www.qbitai.com/2026/10/501451.html |
 | 2026-10-05 | AI 算力硬合作，马斯克还是更相信中国制造 | 量子位 | analysis | https://www.qbitai.com/2026/10/501605.html |
 | 2026-10-05 | AI 生成的跨游戏混搭模组兴起，资深制作者集体表达不满 | IT之家 | feature | https://www.ithome.com/1/009/779.htm |
+| 2026-10-05 | Google froze its open source bug bounty program due to a 'significant rise' in AI submissions | TechCrunch | news | https://techcrunch.com/2026/10/04/google-froze-its-open-source-bug-bounty-program-due-to-a-significant-rise-in-ai-submissions/ |
+| 2026-10-05 | A Flaw in ChatGPT's Mac App Could Have Let Hackers Grab Sensitive Data | WIRED | news | https://www.wired.com/story/a-flaw-in-chatgpts-mac-app-could-have-let-hackers-grab-sensitive-data/ |
+| 2026-10-05 | 隐私担忧发酵：荷兰大型眼镜连锁 Hans Anders 暂停销售 Meta 雷朋智能眼镜 | IT之家 | news | https://www.ithome.com/1/009/798.htm |
+| 2026-10-05 | Muse Creates Detailed Profiles of All Your Friends and Family | WIRED | news | https://www.wired.com/story/muse-creates-detailed-profiles-of-all-your-friends-and-family/ |
+| 2026-10-05 | AI Is Making a Mess of Nurses' Schedules. They Say It's a Safety Issue | WIRED | news | https://www.wired.com/story/ai-making-mess-of-nurses-schedules-they-say-its-a-safety-issue/ |
+| 2026-10-05 | 施耐德电气宣布以 226 亿美元收购 PTC，拓展人工智能业务 | IT之家 | news | https://www.ithome.com/1/009/805.htm |
+| 2026-10-05 | Rapidus 宣布成立协作开放快速生态系统 | IT之家 | news | https://www.ithome.com/1/009/804.htm |
+| 2026-10-05 | Meta wants your next gadget to be Muse-infused | TechCrunch | news | https://techcrunch.com/2026/10/02/meta-wants-you-to-build-your-own-muse-gadget/ |
+| 2026-10-05 | Can 'super intelligence' and a non-binding safety pact solve AI's image problem? | TechCrunch | analysis | https://techcrunch.com/2026/10/04/can-super-intelligence-and-a-non-binding-safety-pact-solve-ais-image-problem/ |
+| 2026-10-05 | These AI Experts Want to Do High-Stakes Research Out in the Open | WIRED | feature | https://www.wired.com/story/trillium-labs-wants-to-do-high-risk-ai-research-in-the-open/ |
+| 2026-10-05 | Trump's Crazy AI Rebrand Was a Loyalty Test for Tech Execs—and It Worked | WIRED | analysis | https://www.wired.com/story/trumps-crazy-ai-rebrand-was-a-loyalty-test-for-tech-execs-and-it-worked/ |
+| 2026-10-05 | AI办公进入「上下文战争」，百度如何出牌？ | 雷峰网 | feature | https://www.leiphone.com/category/industrynews/7q7ZyMuKeWjc1uGz.html |
