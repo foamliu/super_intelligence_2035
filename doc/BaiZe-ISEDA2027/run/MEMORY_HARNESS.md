@@ -5,13 +5,28 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A kimi-k2.6-cloud serial cross-eval — cline-patched × 30 COMPLETE (18/30 resolved, 60.0%) → codex × 30 RUNNING (2/30 scored: 1 resolved, 1 patch-but-failed; inst 3/30 in progress)
-已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A(deepseek) 22/30 scored · SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md · kimi model switch + serial runner + cline-patched×30 COMPLETE (18/30 resolved, 60.0%, 12 patch-but-failed, 0 quota-blocked) + SWEBENCH_COMPARE.html regenerated (12150B, 30 entries) + codex×30 RUNNING (2/30 scored)
-当前动作:     R74: codex×30 RUNNING (PID 2051774, 2/30 scored: 10924=patch-but-failed, 11001=resolved, inst 3/30 django-11019 running, elapsed 0.6h) + gw_proxy(kimi)健康(0×429, ~6.1h) + relay健康skip第27次(2489749 ppid=1 etimes≈4d) + .last_run_id=71(无新指令) + git fetch OK (2 ahead 0 behind) + MEMORY 27KB
-下一步:       codex×30完成(~5h) → opencode×30 → claude-code×30 → (deepseek×30) → 最终更新SWEBENCH_COMPARE.html(全5harness对比)
-阻塞:         无（kimi quota 未撞墙，codex串行运行中）
+PHASE:        H-A kimi-k2.6-cloud serial cross-eval — cline-patched × 30 COMPLETE (18/30, 60.0%) → codex × 30 RUNNING (9/30 scored: 6 resolved, 3 patch-but-failed; inst 10/30 in progress) + 扩300 infra READY (300 JSONs + 12/12 rootfs templates)
+已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A(deepseek) 22/30 scored · SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md · kimi model switch + serial runner + cline-patched×30 COMPLETE (18/30, 60.0%) + SWEBENCH_COMPARE.html + codex×30 RUNNING (9/30 scored: 6 resolved, 3 patch-but-failed) + 扩300 prep (300 JSONs + rootfs)
+当前动作:     R75: codex×30 RUNNING (PID 2051774, 9/30 scored: 6 resolved 3 patch-but-failed, inst 10/30 django-11422, elapsed ~2.1h) + 扩300 prep (300 instance JSONs ready, rootfs for seaborn+flask being copied from psf template) + gw_proxy(kimi)健康(0×429, ~7.6h) + relay健康skip第28次(2489749 ppid=1 etimes≈4.05d) + .last_run_id=71(无新指令) + git sync(0 0) + MEMORY 29KB
+下一步:       codex×30完成(~7h) → codex×300 --resume (扩到300, skip 30 done) → cline-patched×300 --resume → opencode×300 → claude-code×300 → 最终更新SWEBENCH_COMPARE.html(全5harness×300对比)
+阻塞:         无（kimi quota 未撞墙，codex串行运行中，扩300 infra 准备中）
 ERROR_COUNT:  0
 ```
+
+## 🆕 第七十五轮速览（2026-10-05 17:30）— codex×30 RUNNING (9/30 scored: 6 resolved, 3 patch-but-failed) + 扩300 infra 准备 + relay 健康 skip 第 28 次 + git sync
+
+- ✅ **ops 中继复核（第 28 次）→ 健康，跳过重启**。relay `2489749 1 350295 Ss`（ppid=1、etimes≈4.05d）；`.last_run_id`=71（持平 → 无新运维指令）；`git fetch`（带 proxy）exit=0；`git rev-list --left-right --count HEAD...origin/main`=`0 0`（本地与远端同步）。
+- 📊 **codex × 30 进度**：PID 2051774（ppid=1，elapsed ~2.1h）。**9/30 scored**：6 resolved（11001/11039/11049/11099/11133/11179），3 patch-but-failed（10924/11019/11283）。inst 10/30（`django__django-11422`）RUN 中（codex child PID 472277，workdir=/dev/shm/.../django_django）。
+- ✅ **kimi quota 健康**：gw_proxy PID 3175038 运行中（etimes≈27438s≈7.6h）。**0 次 429**，**0 次 quota 事件**。
+- 📈 **kimi 横评汇总（更新）**：
+  | harness | scored | resolved | patch-but-failed | quota-blocked | resolve rate |
+  |:--|--:|--:|--:|--:|--:|
+  | cline-patched | 30/30 | 18 | 12 | 0 | 60.0% |
+  | codex | 9/30 | 6 | 3 | 0 | 66.7% (进行中) |
+  | deepseek-v4-flash | 22/30 | 0 | 5 | 17 | 0% (旧口径) |
+- 🆕 **扩 300 基础设施准备**（运维指令「先扩 kimi」）：① **300/300 SWE-bench Lite instance JSONs 全部就绪**（`/nas_train/app.e0031982/harness_work/instances/`，12 repos：django 114 / sympy 77 / sklearn 23 / matplotlib 23 / pytest 17 / sphinx 16 / astropy 6 / pylint 6 / psf-requests 6 / pydata-xarray 5 / seaborn 4 / flask 3）；② **rootfs templates 12/12 repos ALL READY** ✅ — 从 psf__requests-1963 rootfs（Python 3.9.20 testbed env）复制创建 mwaskom__seaborn-2848 和 pallets__flask-4045 rootfs，testbed git origin 已分别指向 `github.com/mwaskom/seaborn.git` 和 `github.com/pallets/flask.git`；r1_eval.py 的 `git reset --hard <base_commit> ; git clean -fdq` 会在 eval 时自动 fetch+checkout 正确 repo 内容。
+- ⏱ **时间估算**：codex 9 条≈2.1h→~14min/inst→剩余 21 条≈4.9h→codex×30 全部完成≈7h。扩 300 后：270 remaining × ~14min ≈ 63h/harness → 5 harness × 300 ≈ 315h（~13天）。
+- ⏭ **下一步**：① 等 rootfs copy 完成 → 替换 testbed + git clone seaborn/flask → 补全 12/12 rootfs；② codex×30 完成后 → codex×300 `--all-prepared --resume`（skip 30 done, run 270 remaining）；③ 依次 cline-patched×300 → opencode×300 → claude-code×300。保持 `WAITING=1`。
 
 ## 🆕 第七十四轮速览（2026-10-05 16:02）— codex×30 RUNNING (2/30 scored: 1 resolved, 1 patch-but-failed) + relay 健康 skip 第 27 次 + 无新指令
 

@@ -21,8 +21,18 @@ LOGS_EVAL = HARNESS_WORK / "logs_eval"
 SUMMARY_PATH = HERE / "kimi_pilot_results.json"
 
 ROOTFS_TEMPLATES = {
-    "django/django": ROOTFS_DIR / "django__django-10914",
-    "sympy/sympy": ROOTFS_DIR / "sympy__sympy-11400",
+    "django/django":              ROOTFS_DIR / "django__django-10914",
+    "sympy/sympy":                ROOTFS_DIR / "sympy__sympy-11400",
+    "matplotlib/matplotlib":      ROOTFS_DIR / "matplotlib__matplotlib-18869",
+    "scikit-learn/scikit-learn":  ROOTFS_DIR / "scikit-learn__scikit-learn-10297",
+    "pytest-dev/pytest":          ROOTFS_DIR / "pytest-dev__pytest-11143",
+    "sphinx-doc/sphinx":          ROOTFS_DIR / "sphinx-doc__sphinx-10325",
+    "astropy/astropy":            ROOTFS_DIR / "astropy__astropy-12907",
+    "psf/requests":               ROOTFS_DIR / "psf__requests-1963",
+    "pylint-dev/pylint":          ROOTFS_DIR / "pylint-dev__pylint-5859",
+    "pydata/xarray":              ROOTFS_DIR / "pydata__xarray-3364",
+    "mwaskom/seaborn":            ROOTFS_DIR / "mwaskom__seaborn-2848",
+    "pallets/flask":              ROOTFS_DIR / "pallets__flask-4045",
 }
 ALL_HARNESSES = ["cline-patched", "codex", "opencode", "claude-code"]
 TIMEOUT_RUN = 1800
