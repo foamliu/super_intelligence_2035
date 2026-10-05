@@ -10,7 +10,7 @@ WAITING: 1
 | WAITING | 1（**语义=R11-F Arm E（CC12M pure）训练运行中 → 30min 轮询**；step≈6700/30000@10:35=22%，无坍缩 C1=0.25/C4=OK；ETA ~1.5h 训完 + 4-ckpt eval ~15min → Arm D(en500k) 自动接起 port 29556 ~1.9h+eval；下次唤醒：若 E eval 完 → 补 §15.6 Q2（A/B/C/E 四源排名）；若 D 完 → 补 D 单列表；**R11-H §17 已写完** → 无待写）|
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10 + R11-L/②③④ + R11-L2 LoRA + R11-L caption-weight + R11-E GPIC（8.65 GPU·h）+ **臂⑥ AIMv2（✅ 7076s≈1.97h×8卡≈15.7 GPU·h）+ AIMv2 4-ckpt eval（~13min×1卡≈0.22 GPU·h）** + **R11-F 🟢 进行中**（Arm A GPIC short 30k@~80ms→~40min×8卡；5 臂串行总 ~5–6h×8 卡 ≈ 40–48 GPU·h） |
-| 更新 | **2026-10-05 10:35（R11-H ✅完成+§17落盘：裁定「翻盘依赖对比项」；E+D重跑中 Arm E step6700/30000=22%；cimi_search→MAE lp<对比 lp 文献锚点）** · 2026-10-05 10:02（R11-H巡检 step27900=93%） · 2026-10-05 09:28（R11-H step19250=64%） · 2026-10-05 08:51（R11-H step9900=33%；cimi_search→§16.8锚点） · 2026-10-05 08:16（R11-G ✅完成+§16落盘） · *[R11-G中间巡检9条已归档 daily-memories-vision/2026-10-05.md]* · 2026-10-05 00:55（R11-F A/B/C✅+E/D失败诊断） · 2026-10-04 23:38（NFS崩溃修复+chain启动） |
+| 更新 | **2026-10-05 11:17（E step22600/30000=75%；MAE mask 75% ✅cimi_fetch 一手确认 abstract 逐字；§16.8+MEMORY 已更新）** · 2026-10-05 10:35（R11-H ✅完成+§17落盘；E+D重跑中 Arm E step6700=22%） · 2026-10-05 10:02（R11-H巡检 step27900=93%） · 2026-10-05 09:28（R11-H step19250=64%） · 2026-10-05 08:51（R11-H step9900=33%；cimi_search→§16.8锚点） · 2026-10-05 08:16（R11-G ✅完成+§16落盘） · *[R11-G中间巡检9条已归档 daily-memories-vision/2026-10-05.md]* · 2026-10-05 00:55（R11-F A/B/C✅+E/D失败诊断） · 2026-10-04 23:38（NFS崩溃修复+chain启动） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
