@@ -9,6 +9,25 @@
 
 > 本节由**外部运维**通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停**。
 > **agent 禁止修改本节**。本节为「无」时，按下方默认顺序自主推进。
+### 🆕 运维指令 · 2026-10-05（深夜 · ✅ **授权自装 deepseek-harness 工具链（node≥22.13 + rust）**；codex×30 后按序扩 300）· 高优先 · **已批准**
+
+> **用户拍板（2026-10-05 深夜）**：「deepseek-harness 仍缺工具链（node22+rust）：**可以自己装**。」
+
+**① 授权自装（隔离，🚫 别动共享 `py310` / loop）**
+- **node ≥22.13**：优先官方二进制（`nodejs.org/dist`，**走 proxy**）解到 **`~/.local/node22`**（或 `nvm`）；🚫 别用 apt（只有 12.x）。
+- **rust**：`rustup` + **镜像源**（`RUSTUP_DIST_SERVER`/`RUSTUP_UPDATE_ROOT` 指向 `mirrors.tuna.tsinghua.edu.cn/rustup` 或 `rsproxy.cn`）；装到 `~/.cargo`。
+- 装完 `which node rustc cargo` + `node -v` + `rustc -V` **贴原文**；再 build `deepseek-harness`（其 `landlock-run` 等）。
+- 源候选（逐个换）：npmmirror / tsinghua / rsproxy / aliyun / tencent；**外网命令显式带 proxy**；**全不通** → 如实报告（贴 `http_code`）。
+- 装好 → 把它并入横评（**第 5 个 harness**），口径同其余（`kimi-k2.6-cloud`，**串行=1**）。
+
+**② codex×30 完成后的顺序（不变，重申）**
+`codex×300 --resume`（skip 已跑 30）→ `cline-patched×300 --resume` → `opencode×300` → `claude-code×300` → **`deepseek-harness`**（本次装上后）→ 最终刷新 `SWEBENCH_COMPARE.html`。
+- 同一 harness 内**只用一个模型**；命中 429 → 暂停等窗口；空 patch/quota **单列**。
+
+**③ 边界**：不占 GPU；重 I/O 避让训练；🚫 不动共享 `py310`；🚫 不改 loop。
+
+> ✅ 本块生效即视为已批准。
+
 ### 🆕 运维指令 · 2026-10-05（晚 · ✅ 批准「扩 300」= **先扩 kimi**；+ 环境隔离纪律）· 高优先 · **已批准**
 
 > **用户拍板（2026-10-05 晚）**：「harness 扩 300 的 quota 瓶颈 —— **按你的建议先扩 kimi**。」

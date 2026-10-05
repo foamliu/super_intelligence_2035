@@ -3,6 +3,30 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_PRETRAIN_2B.md` / `daily-memories/` / `EXPERIMENTS_*`）。本节为「无」时按下方 Round 2 默认顺序推进。
 
+### 🆕 运维指令 · 2026-10-05（深夜 · ✅ **sglang 可用 → 用 `.29` GPU0–1 起 sglang 做「mcore vs sglang」推理对比**）· 高优先 · **已批准**
+
+> **用户拍板（2026-10-05 深夜）**：「既然 sglang ✅ 可用，那可以用 `.29` **GPU0–1 空**进行对比测试（**推理延迟、吞吐量、显存占用**等）。」
+
+**目标**：把 P-9.10 的推理对比从「mcore eager 下界」升级为 **mcore vs sglang 双栈对比**，补齐「**生产栈上界**」（P-9.10② 因 CUDA graph 与 `StaticInferenceContext` 不兼容，只能给下界）。
+
+**① 前置（真正的坑）**：mcore distcp ckpt → **HF(`nemotron_h`)** 转换（`p3_dense/iter_0005000` + `p3_hybrid/iter_0005000`，已核验在位）；转换脚本/权重映射若需新写，**隔离在独立目录，🚫 不动共享 `py310`**。
+
+**② 测试矩阵（与 P-9.10② 对齐，便于并列）**：context ∈ {4K,16K,64K,128K} × batch ∈ {1,8}（**OOM 就如实记 OOM，🚫 不许偷偷降 context**），gen_len=64。**两栈同格**。
+
+**③ 采集指标（每格）**：**TTFT · prefill 吞吐(tok/s) · decode 吞吐(tok/s) · 端到端延迟 · 峰值显存**；与 P-9.10② 的 eager 下界 + H1–H4 并列成一张表。
+
+**④ 关键问题**：**sglang 上界能否翻正 H2**（hybrid 的 O(n) 优势是否随 ctx 增长而显现）？—— 这正是 eager 下界测不出、而生产栈能回答的。另复测 H3（per-token KV/cache）。
+
+**⑤ 边界与铁律**
+- **只用 `.29` GPU0–1**（GPU2–7 是 data 配比实验）；🚫 **不 kill data 进程**；要更多卡按 `run/GPU29_ALLOC.md`「申请区」走。
+- **不改 P-5b recipe / 不回训 / 不存新训练 ckpt**；🚫 **绝不 kill watchdog loop**。
+- sglang 起服**必须用 `vllm` conda env**（已在位：sglang 0.5.9 + vllm 0.14.1 + flashinfer 0.6.3 + lm_eval 0.4.13），🚫 不碰共享 `py310`。
+- 外网命令**显式带 proxy**。
+
+**⑥ 产出**：`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` P-9.10 节新增「③ sglang 生产栈上界」子节（**命令 + 原始输出 + 表**）；注明与 eager 下界的差异与原因。
+
+> ✅ 本块生效即视为已批准；**P-9.10②（eager 下界）已完成**，本块为「补上界」的续测，**不阻塞** P-6② / P-8。
+
 ### 🆕 运维指令 · 2026-10-05（晚 · ① `sglang` 改用 **conda 环境**从头装（先查 `.12` 现成的 sglang/vllm env）② 「外网命令带 proxy」口径同步 ③ 环境隔离纪律）· 高优先
 
 > **用户拍板（2026-10-05 晚）**：「**P-9.10 与 sglang A/B：我在 `2.12` 已经装过 sglang 的**，你可以看看有没有 conda 环境叫 `sglang` 或 `vllm` 的。**如果没有，自己新开个 conda 环境，叫 `sglang`，从头装一下**，记得设置 `https_proxy` 和国内的（比如阿里腾讯）pip 源，**可以装的**。」
