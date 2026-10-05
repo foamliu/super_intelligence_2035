@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **🚀 R12 全量数据 AIMv2 训练中**（120k 步, step≈40100/120k=33.4%, 16:43 起跑, 前段~5300 img/s→后段~2300 img/s[NFS争用持续], ETA ~22:00-23:30 + eval ~1h）· ✅ **论文 §6 已改完** · ✅ **GPU 归因实测已完成** · ⚠️ **父脚本+torchrun 已退出**（ranks orphaned ppid=1，已知模式同 R11-L arm⑥）→ **eval watcher 已启动**（`r12_eval_watcher.sh` PID 3282690 setsid） |
-| WAITING | 1（**R12 训练进行中** · step 40100/120k=33.4% · ~2300 img/s（NFS争用降速）· ETA ~22:00-23:30 训完 + eval watcher 自动接续 ~1h · 待训完→eval→回填 §18.5 公平表 + scaling 曲线）|
+| PHASE | **🚀 R12 全量数据 AIMv2 训练中**（120k 步, step≈49400/120k=41.2%, 16:43 起跑, 吞吐已恢复~5000-5600 img/s, ETA ~21:00 训完 + eval ~1.3h）· ✅ **论文 §6 已改完** · ✅ **GPU 归因实测已完成** · ✅ **续跑 3-epoch 已预注册+脚本就绪+watcher 已启动**（`r12_continue_watcher.sh` setsid, 等 R12+eval 完成后自动起 `r12_continue_3epoch.sh --steps 344000`）· ✅ **VISION_NEXT_DIRECTIONS.md 已交付（4 个方向，仅建议）** · ⚠️ 父脚本+torchrun 已退出（ranks orphaned ppid=1）→ eval watcher PID 3282690 alive |
+| WAITING | 1（**R12 训练进行中** · step 49400/120k=41.2% · ~5000-5600 img/s（已恢复）· ETA ~21:00 训完 + eval watcher ~1.3h → 续跑 watcher 自动接续 3-epoch (~8-12h) → 自动 eval → 待回填 §19 scaling + §18.5 公平表）|
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10 + R11-L/②③④ + R11-L2 LoRA + R11-L caption-weight + R11-E GPIC + 臂⑥ AIMv2 + R11-F + R11-G + R11-H + **R12 进行中**（~1.7h×8卡≈13.6 GPU·h 已用，总 ≈78 GPU·h） |
-| 更新 | **2026-10-05 18:27（R12 step 40100/120k=33.4% 健康 loss=2.74↓ C2_gap=+0.114 C4=OK; 吞吐前段~5300→后段(step39k+)持续降至~2300 img/s[NFS与data线GPIC下载争用未缓解]; ckpt 10k/20k/30k/40k已存; eval watcher PID 3282690 alive; ETA ~22:00-23:30训完+eval~1h; WAITING=1）**· *[更早见 daily-memories-vision/2026-10-05.md]* |
+| 更新 | **2026-10-05 19:05（R12 step 49400/120k=41.2% 健康 loss=2.40↓ C2_gap=+0.112 C4=OK; 吞吐已恢复~5000-5600 img/s[NFS争用缓解]; ckpt 10k/20k/30k/40k已存; ✅ r9_train.py 已加 --resume(py_compile过); ✅ r12_continue_3epoch.sh + r12_continue_watcher.sh 就绪(bash -n过); ✅ 续跑 watcher 已 setsid 启动(等R12+eval完→自动起3-epoch续跑到344k); ✅ VISION_NEXT_DIRECTIONS.md 已交付(4方向); ✅ §19预注册+估算已落盘; ETA ~21:00训完+eval~1.3h→续跑~8-12h; WAITING=1）**· *[更早见 daily-memories-vision/2026-10-05.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -169,6 +169,7 @@ WAITING: 1
 - ⚠️ **父脚本+torchrun 已退出**（已知模式，同 R11-L arm⑥）：`r12_run_fulldata_aimv2.sh` + `torch.distributed.run` 进程已不在，8 rank 进程 ppid=1 孤儿独立完成训练。**r12 脚本的自动 eval 链不会触发** → 已起 **eval watcher** `r12_eval_watcher.sh`（PID 3282690, etimes 2363s, alive, setsid 独立会话, 日志 `/tmp/r12_eval_watcher.log`）：每 5min 轮询 rank 进程，退出后自动收 ckpt 跑 `r8_eval_in1k.py`。
 - **ETA**（修正，按 ~2300 img/s 降速）：剩余 ~80k 步 × ~220ms ≈ **4.9h** → 训完 ~23:18；若 NFS 争用缓解恢复至 ~5000 → ~2.5h → ~20:53。**最可能 ~22:00-23:30 训完** + eval watcher ~1h ≈ **ALL DONE ~23:00-00:30**。
 - **后续**：✅ 论文 §6 已改完（§6.3 + 4 bib, diff 见 §18.7）。待训完→eval watcher 自动收 12+ ckpt 跑 IN-1k lp/zs → 回填 §18.5 公平表（每步耗时/steady img/s/总墙钟/GPU·h）+ scaling 曲线（与 R11-G 55.3M 对照，看全量 58.8M @61.4M 是否延续幂律 R²=0.91）。
+- **✅ 续跑 3-epoch 已就绪（2026-10-05 19:05）**：运维深夜指令 ① 批准 R12 训完后续跑到 3 epoch。已做：① `r9_train.py` 加 `--resume`（py_compile 过）；② 新建 `r12_continue_3epoch.sh`（--resume vision.pt --steps 344000, bash -n 过）；③ 新建 `r12_continue_watcher.sh`（轮询等 R12+eval 完→自动起续跑, bash -n 过）；④ 续跑 watcher 已 `setsid` 启动；⑤ §19 预注册+估算已落盘（~8-12h 墙钟, ~64 GPU·h）；⑥ `VISION_NEXT_DIRECTIONS.md` 已交付（4 方向, 指令 ②）。**整条链自动执行，无需再等唤醒。**
 - 脚本：`r12_run_fulldata_aimv2.sh 120000 6`（已退出）；eval watcher `r12_eval_watcher.sh`（PID 3282690 alive）；日志 `/tmp/r12_fulldata_aimv2.log` + `/nas_train/.../R12_fulldata_aimv2_w512/train.log`；输出 `R12_fulldata_aimv2_w512`。
 
 ## 历史条目已滚动归档（2026-10-03）

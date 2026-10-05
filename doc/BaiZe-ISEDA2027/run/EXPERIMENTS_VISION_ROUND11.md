@@ -1354,3 +1354,84 @@ shards: GPIC=3307 CC12M=1100 Amshaker=2250 total=6657 (833/rank)
 **验证**：`pdflatex + bibtex + pdflatex×2` 全通过，8 页 PDF，无 undefined citation/reference（仅 3 条 font warning `OT1/ptm/m/scit`，与改动无关）。
 
 **🚫 未改**：§6.1 Architecture Selection、§6.4 Configuration and Ablations、Table `tab:visarch`/`tab:visscale`/`tab:visres`/`tab:visobj` 原文不动。
+
+---
+
+## §19 R12 续跑 3-epoch — 预注册 + 时长估算 + 代码改动（2026-10-05 19:05，R12 训练进行中）
+
+> **运维指令 2026-10-05（深夜）①**：「R12 结束后安排续跑到 3 个 epoch，在 epoch=1/2/3 时分别评测对比，做 scaling law 的计算，刷新原来的数据无限外推上限（25.1%）」。
+> ✅ 已批准：「R12 训完 + eval 后，按序执行 ①（续跑 3 epoch）并交 ②（方向建议），无需再等唤醒」。
+> ② 方向建议已交付：`run/VISION_NEXT_DIRECTIONS.md`（4 个候选方向，仅建议未批不得起跑）。
+
+### 19.1 预注册判据（先定后测，🚫 不许事后改）
+
+| 项 | 值 |
+|:--|:--|
+| **起点** | R12 final ckpt（`vision.pt` @ step 120000 ≈ 1.05 epoch, N≈61.4M） |
+| **终点** | step 344000 ≈ 3 epoch（N≈176M）；`--resume vision.pt --steps 344000` |
+| **口径（全不变）** | AIMv2-style（InfoNCE + 1.0×patch-MSE）· w512 · 冻结 CLIP-768 · bs64×8=512 · seed1234 · bf16 · `.12` 8 卡 · `--save-every 10000` |
+| **数据（全不变）** | GPIC(all types 41.8M) + CC12M(11M) + Amshaker(6M) = ≈58.8M 对（同 R12） |
+| **采点** | R12 已有 ckpt 10k/20k/.../120k（≈epoch 0.09~1.05）+ 续跑新增 130k/140k/.../340k（≈epoch 1.13~2.96）+ final 344k（≈3.0ep）≈ **≥35 点**（含 epoch 1.0/1.5/2.0/2.5/3.0 附近点） |
+| **评测** | `r8_eval_in1k.py` 对**所有** ckpt 跑 IN-1k frozen-trunk lp（同 R8–R12 口径） |
+| **scaling 计算** | 与 R11-G 同法：幂律 `a−b·N^−c` + 对数线性 `α+β·log10(N)`，报 R² + 渐近 a，与 R9 InfoNCE 25.1% 并列 |
+
+**裁定标准**：
+
+| 结果 | 裁定 |
+|:--|:--|
+| R² ≥ 0.90 **且** 渐近 a 显著 > 25.1% | 「**换目标函数(AIMv2-style)抬高渐近上限**」→ 正面结论，回填论文 §6.3 |
+| R² < 0.90 **或** 轨迹非单调 | 「**非简单幂律，需更多点/更长跑**」→ 如实写，🚫 不得强行外推 |
+| 3-epoch 末 lp 仍单调解攀升 | 「**176M 内无饱和信号**」→ 渐近 >>25.1% 但精确值需 >>176M |
+| 3-epoch 末 lp 趋平（< +0.5pp/epoch） | 「**接近饱和**」→ 报实测渐近区间 |
+
+> 噪声带（ROUND10 §1.5）：同 (N,M) 跨 run 方差 ≈ 0.5–1.1 pp → 阈值 ±1.5 pp。
+> **C2 限定**：AIMv2-style 自研改编，非官方复现；结论只对我们 recipe 成立。
+
+### 19.2 时长 / epoch 估算（先报估算再起跑，铁律）
+
+**R12 实测吞吐量**（2026-10-05，本日全量数据同配方）：
+| 时段 | step 范围 | steady img/s | 备注 |
+|:--|:--|:--|:--|
+| 200-step test (warm cache) | 0–200 | **4993** | 理想上限 |
+| R12 前段 | 50–39050 | ~5000–5400 | NFS 无争用时 |
+| R12 中段（NFS 争用） | 39100–49000 | ~2200–2500 | data 线 GPIC 下载争用 |
+| R12 当前（已恢复） | 49000+ | ~5000–5600 | NFS 争用缓解 |
+
+**续跑估算**（120k → 344k = 224,000 新步 = 114.7M 新样本 ≈ 1.95 epoch）：
+
+| 场景 | steady img/s | 训练墙钟 | 每 epoch | GPU·h (训练) | + eval ~3.5h | 总墙钟 |
+|:--|--:|--:|--:|--:|--:|--:|
+| **最佳**（无 NFS 争用） | 5400 | **5.9h** | 3.0h | 47 | 3.5h | **9.4h** |
+| **最可能**（混合） | 4000 | **8.0h** | 4.1h | 64 | 3.5h | **11.5h** |
+| **最差**（NFS 争用持续） | 2500 | **12.7h** | 6.5h | 102 | 3.5h | **16.2h** |
+
+> **结论**：续跑 3-epoch **大概率 ~8–12h 墙钟**（~64 GPU·h 训练 + ~28 GPU·h eval），一夜可跑完。
+> **>1 epoch？是** —— 续跑从 ~1.05 epoch 到 ~3.0 epoch = 再跑 ~1.95 epoch。
+> 估算依据：R12 实测吞吐量范围（2500–5600 img/s），取三档场景。
+
+### 19.3 代码改动（agent 自做，🚫 不改上游仓库）
+
+| 文件 | 改动 | 验证 |
+|:--|:--|:--|
+| `vision/r9_train.py` | ① 新增 `--resume PATH` 参数（加载 vision + logit_scale + predictor/decoder state，设置 step = ckpt step，训练续到 `--steps`）；② `save_ckpt` 新增保存 `predictor`/`decoder` state_dict（供未来 resume）；③ 训练循环 `step = start_step`（从 0 → 从 ckpt step）；④ resume 时 C4 loss-decreasing guard 禁用（C1/C2 feature-collapse guards 仍活跃）；⑤ resume 时 sanity check：loss config + tower 必须匹配 | ✅ `py_compile` 通过 |
+| `vision/r12_continue_3epoch.sh` | 新建：`--resume <R12 vision.pt> --steps 344000`，同 R12 配方/data/save-every 10000，训完自动 eval 所有 ckpt | ✅ `bash -n` 通过 |
+| `vision/r12_continue_watcher.sh` | 新建：轮询等 R12 ranks 退出 → 等 eval watcher 退出 → GPU 空闲检查 → 自动起续跑 | ✅ `bash -n` 通过 |
+| `VISION_NEXT_DIRECTIONS.md` | 新建：4 个候选下一步方向（仅建议，未批不起跑） | ✅ 已写入 |
+
+**⚠️ resume 已知限制**（诚实披露）：
+- R12 的 ckpt（10k..120k）是**旧代码**保存的，**不含 predictor state**（save_ckpt 之前没存 predictor）。续跑 resume 时 predictor **重置为随机初始化** → patch-MSE 有 ~1–2k 步 re-warm 瞬态（InfoNCE 梯度不受影响，仅 dense 项短暂噪声）。续跑**新增的** ckpt（130k+）会包含 predictor state（新代码），未来可 resume。
+- AdamW optimizer state **不保存/不加载** → momentum/variance 重启 → ~几百步 re-warm 瞬态。
+- C4 loss-decreasing guard **禁用**（loss history 在 resume 时无意义）；C1 feature-collapse + C2 cross-modal-gap guards **仍活跃**。
+
+### 19.4 自动化链
+
+```
+R12 training (进行中, ~21:00 训完)
+  → r12_eval_watcher.sh (PID 3282690, 自动 eval ~13 ckpts, ~1.3h)
+    → r12_continue_watcher.sh (已 setsid 启动, 轮询等前两项完成)
+      → r12_continue_3epoch.sh (自动起续跑, --resume vision.pt --steps 344000)
+        → 训完自动 eval 所有 ckpt (~35 点, ~3.5h)
+          → scaling 拟合 + 回填 §19 结果 + 论文 §6.3
+```
+
+> 续跑 watcher 启动后**无需再等唤醒**——整条链自动执行。下次唤醒只需读结果回填。

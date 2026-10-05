@@ -228,6 +228,12 @@ def main():
     ap.add_argument('--num-workers', type=int, default=2)
     ap.add_argument('--save-every', type=int, default=10000,
                     help='save a checkpoint every N steps (0 = only final)')
+    ap.add_argument('--resume', default=None,
+                    help='path to checkpoint .pt to resume from. Loads vision + logit_scale '
+                         '(+ predictor/decoder if present in ckpt) and sets the step counter to '
+                         'the ckpt step, so training continues to --steps. Optimizer state is '
+                         'NOT saved/loaded (AdamW restarts — minor transient). C4 loss-decreasing '
+                         'guard is disabled on resume (C1/C2 feature-collapse guards remain active).')
     ap.add_argument('--caption-loss-weight', type=float, default=2.0,
                     help='CoCa caption-CE weight (OpenVision coca_caption_loss_weight=2)')
     ap.add_argument('--decoder-depth', type=int, default=4,
@@ -356,6 +362,47 @@ def main():
                            'lr': args.lora_lr, 'weight_decay': 0.0})
     opt = torch.optim.AdamW(opt_groups, lr=args.lr, betas=(0.9, 0.95), eps=1e-6)
 
+    # ---- Resume from checkpoint (R12 续跑: continue training beyond the original --steps) ---- #
+    start_step = 0
+    _resumed_loss = None
+    if args.resume:
+        if is_main:
+            log(f'[resume] loading checkpoint: {args.resume}')
+        ckpt = torch.load(args.resume, map_location='cpu')
+        # sanity: loss config + tower must match (prevent silent recipe change)
+        _ck_loss = ckpt['config'].get('loss')
+        _ck_tower = ckpt['config'].get('tower')
+        if _ck_loss != _LOSS_KEY:
+            raise ValueError(f'[resume] LOSS mismatch: ckpt="{_ck_loss}" vs current="{_LOSS_KEY}" — '
+                             f'refusing to resume with a different objective')
+        if _ck_tower != args.tower:
+            raise ValueError(f'[resume] TOWER mismatch: ckpt="{_ck_tower}" vs current="{args.tower}" — '
+                             f'refusing to resume with a different architecture')
+        # load vision tower
+        vision.module.load_state_dict(ckpt['vision'], strict=True)
+        logit_scale.data.copy_(ckpt['logit_scale'].to(device))
+        if ckpt.get('logit_bias') is not None and logit_bias is not None:
+            logit_bias.data.copy_(ckpt['logit_bias'].to(device))
+        # load predictor if present (AIMv2-style); warn if missing (random re-init, re-warms fast)
+        if predictor is not None and ckpt.get('predictor') is not None:
+            predictor.module.load_state_dict(ckpt['predictor'], strict=True)
+            if is_main:
+                log('[resume] predictor state loaded from ckpt')
+        elif predictor is not None:
+            if is_main:
+                log('[resume] WARNING: no predictor state in ckpt — predictor keeps random init '
+                    '(re-warms in ~1-2k steps; InfoNCE gradient unaffected, only patch-MSE transient)')
+        # load decoder if present (CoCa)
+        if decoder is not None and ckpt.get('decoder') is not None:
+            decoder.module.load_state_dict(ckpt['decoder'], strict=True)
+        start_step = int(ckpt['config'].get('steps', 0))
+        _resumed_loss = ckpt.get('final_loss')
+        if start_step >= args.steps:
+            raise ValueError(f'[resume] ckpt step={start_step} >= --steps={args.steps} — nothing to do')
+        if is_main:
+            log(f'[resume] OK: resuming at step={start_step} → will train to step={args.steps} '
+                f'({args.steps - start_step} new steps). resumed_loss={_resumed_loss}')
+
     def lr_at(s):
         w = args.warmup
         return args.lr * (s / max(1, w)) if s < w else args.lr
@@ -422,8 +469,8 @@ def main():
         log(f'[probe-setup] n={len(pr)} wall={time.time()-t0p:.0f}s text_trainable={text_trainable}')
 
     roll = []          # per-step wall times (training forward/backward)
-    loss_ema = None
-    loss_early = None
+    loss_ema = _resumed_loss     # None if fresh start; ckpt final_loss if resuming
+    loss_early = None            # C4 disabled on resume (loss history reset; C1/C2 remain active)
     fused = False
     fuse_reason = None
 
@@ -434,6 +481,8 @@ def main():
             'vision': dict(vision.module.state_dict()),
             'logit_scale': logit_scale.detach().cpu(),
             'logit_bias': logit_bias.detach().cpu() if logit_bias is not None else None,
+            'predictor': (dict(predictor.module.state_dict()) if predictor is not None else None),
+            'decoder': (dict(decoder.module.state_dict()) if decoder is not None else None),
             'config': {'tower': args.tower, 'resolution': args.resolution,
                        'patch': args.patch, 'steps': step,
                        'loss': _LOSS_KEY,
@@ -468,7 +517,7 @@ def main():
         log(f'[saved] {os.path.join(args.output_dir, fname)} (fused={fused})')
 
     t_start = time.time()
-    step = 0
+    step = start_step
     while step < args.steps:
         for gi, g in enumerate(opt.param_groups):
             if text_trainable and gi == len(opt.param_groups) - 1:
