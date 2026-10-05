@@ -2852,5 +2852,116 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-13265",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 1800.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13265.json",
+      "stdout_tail": " wall=1800.0s ==\n[stderr tail] ...b'2026-10-05T21:04:11.654210Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13265.json\n[run_single] cleanup: git reset --hard b2b0711b555fa292751763c2df4fe577c396f265\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 4,
+        "p2p_pass": 119,
+        "p2p_total": 119
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-13315",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 1282.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13315.json",
+      "stdout_tail": "e wall=1281.5s ==\n[stderr tail] ...2026-10-05T21:36:42.145326Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 3975 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13315.json\n[run_single] cleanup: git reset --hard 36bc47069ce071e80c8129500de3b8664d2058a7\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 146,
+        "p2p_total": 146
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-13321",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 153.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13321.json",
+      "stdout_tail": "se wall=153.0s ==\n[stderr tail] ...2026-10-05T22:00:28.843775Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 1442 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-13321.json\n[run_single] cleanup: git reset --hard 35b03788b0607c1f8d2b64e4fa9e1669b0907ea4\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 337,
+        "f2p_total": 355,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-13401",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git fetch failed: \n[TIMEOUT]"
+    },
+    "blocked": "git fetch failed: \n[TIMEOUT]",
+    "classification": "blocked"
   }
 ]
