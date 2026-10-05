@@ -1151,3 +1151,94 @@ python -m lm_eval --model hf \
 - Master weights FP32，optimizer states BF16，activation checkpoints FP8
 - 结果：≤0.25% relative loss error vs BF16 at 671B params
 - 来源：https://aiwiki.ai/wiki/deepseek_v3 + https://yudonglee.me/deepseek-v3-explained（二手博客，已交叉核实）
+
+---
+
+### P-9.10 hybrid vs dense「生产级推理栈 + 长上下文」对比评测 —— ① 栈对齐 + ckpt 核验 + 文献核实（**CPU-only 预研，2026-10-05 ~10:50，第 100 次唤醒**）
+
+> **运维 2026-10-05 批准（⭐ 高优先）**。本项只用 2 卡（GPU0–1），与 data 分卡并行。
+> **起跑前置**：等 P-9.8 armB 跑完 → ✅ 已完（~09:49，运维修订 4/4 PASS）。**但 P-9.9 tensorwise FP8 1000 步跑现占满 8 卡（PID 4044610–17，iter 130/1000 @10:46，ETA ~15:13）→ P-9.10 推理实测仍被阻塞**。
+> **本唤醒只做不占 GPU 的预研（步骤①）**：装栈 / 核验 ckpt / 文献核实。实测矩阵（步骤②）待 P-9.9 释放 GPU0–1 后启动。
+
+#### ①-1 栈对齐 —— `sglang` 安装尝试（确切报错）
+
+```
+$ /nas_train/app.e0031982/miniforge3/envs/py310/bin/pip install sglang
+Looking in indexes: https://mirrors.aliyun.com/pypi/simple/
+WARNING: Retrying ... after connection broken by 'NewConnectionError:
+  <pip._vendor.urllib3.connection.HTTPSConnection object>: Failed to establish
+  a new connection: [Errno 101] Network is unreachable'): /pypi/simple/sglang/
+... (4 retries)
+ERROR: Could not find a version that satisfies the requirement sglang (from versions: none)
+ERROR: No matching distribution found for sglang
+```
+
+- **`pip install --no-index sglang`** → 同样 `No matching distribution`（无本地 wheel 缓存）。
+- **`python -c 'import sglang'`** → `ModuleNotFoundError: No module named 'sglang'`（未装）。
+- **根因**：本机（`.29`）**pip 镜像网络不可达**（`Errno 101 Network is unreachable`，连不上 `mirrors.aliyun.com`）—— 这次死在**网络层**（上次记的 `cuda-tile` 是依赖层，本次连依赖都还没解析到）。
+- **结论**：**`sglang` 在本机不可安装**（无外网 pip 通道）。⏳ 若运维能提供离线 wheel 或开通镜像白名单可重试。
+- **Fallback（本次采用）**：**mcore 直驱 + CUDA graph（或 `torch.compile`）** —— 直接打掉逐层 launch 开销（S3 已定位 dense decode 偏慢根因 = TE fused-attention 逐层 CPU launch，Self CPU≈620ms vs Self CUDA 4ms）。
+- **栈优先级落点**：本次只能到 **`mcore + CUDA-graph`**（若 torch.compile/CUDA-graph 在 mcore StaticInferenceContext 下可行）或退回 **`mcore 直驱（下界）`**。**栈名将出现在结论标题里**；只到下界时额外给 CPU/GPU 分解推出 GPU-only 上界。
+
+#### ①-2 ckpt 核验 —— ⚠️ S3 原始权重已丢失
+
+**任务书指定路径**：`code/BaiZe-ISEDA2027/nemo_experiments/{minicpm5,mamba2}_2b_1000step/checkpoints/iter_0001000`
+
+**核验结果**：
+- ❌ **`nemo_experiments/minicpm5_2b_1000step/` 不存在**
+- ❌ **`nemo_experiments/mamba2_2b_1000step/` 不存在**
+- ✅ S3 日志（`/tmp/BAIZE2B_{minicpm5,mamba2}_final.log`）确认 S3 当时确实从这两个路径 **@iteration 1000** 加载：
+  `loading distributed checkpoint from .../nemo_experiments/mamba2_2b_1000step/checkpoints at iteration 1000`
+  → **即 S3 的 10.3× decode 数字所用的权重现已删除**（疑为早期省盘清理）。
+- S2 架构轮训练输出在 `output/S2-01`（MiniCPM5）/ `output/S2-02`（Mamba2），但**仅存 `iter_0000080` 冒烟 ckpt**（1000 步正式 ckpt 同样不在）。
+
+**可用替代 ckpt（同架构，⚠️ 非 S3 原始权重）**：
+
+| ckpt | 架构 | 训练 | 大小 | 路径 |
+|:--|:--|:--|:--|:--|
+| `p3_dense/iter_0005000` | MiniCPM5-2B（dense，42L，2 KV heads） | Round2 P-3，5000 步 | 4.7G | `nemo_experiments/p3_dense/checkpoints/iter_0005000` |
+| `p3_hybrid/iter_0005000` | Mamba2-hybrid 2B（56L，4 attn+52 SSM） | Round2 P-3，5000 步 | 4.2G | `nemo_experiments/p3_hybrid/checkpoints/iter_0005000` |
+| `p7_dense/iter_0000330` / `p7_hybrid/iter_0000330` | 同上 | P-7，仅 330 步 | — | `nemo_experiments/p7_{dense,hybrid}/checkpoints/iter_0000330` |
+
+**替代方案**：用 **`p3_dense/iter_0005000` + `p3_hybrid/iter_0005000`** —— 同一对架构、P-3 控变量下同步训练 5000 步、可直接成对比较。
+**⚠️ 必须标注**：① 这**不是** S3 的 1000 步权重 → 与旧 10.3× **不可直接数值比较**（训练量 5×、数据/GBS 不同）；② 仅作「同架构对、同栈、变 context」的**结构性**对比（H1–H4 仍可检验，但与 S3 旧数的绝对差需注明口径切换）。🚫 不许换权重还不标注（遵诚实条款）。
+**待运维确认**：是否接受此替代，或能否恢复/重训 S2 1000 步权重。
+
+#### ①-3 文献核实（`cimi_search`，2026-10-05）—— 两个口径
+
+**口径① Nemotron-H / hybrid-SSM 长上下文 decode 公开数据**（为 H1/H2 背书）：
+
+| 模型 | 长上下文吞吐 | 对照 | 倍率 |
+|:--|:--|:--|:--|
+| Nemotron-H 8B | 65,536 context | vs Qwen-7B / Llama-8B | **1.8× / 3.0×** |
+| Nemotron-Nano-9B | 8K/16K reasoning | vs Qwen3-8B | **3–6×** |
+| N-H-56B-Base | 14.0k tok/s/GPU | vs Qwen-2.5-72B(5.8k)/Llama-3.1-70B(5.0k) | 2.4× / 2.8× |
+| N-H-47B-Base | 17.2k tok/s/GPU | 同上 | 2.9× / 3.4× |
+
+- **来源**：NVIDIA et al., 20 Aug 2025（Nemotron-H 官方报告）；经 emergentmind.com 摘要（**二手·已交叉核实**，cimi_fetch 该页 502 未能取全文 → 标「二手」）。
+- **Nano-9B 128K 上下文仅需 19.66 GiB**（含 KV cache + vision head，A10G）—— 直接印证 H3「hybrid 长上下文内存不爆炸」。
+- ⚠️ 口径不可严格比（Nemotron-H 8B/9B vs 我们 2B；其 attn 层占比与 ours 不同）→ 只作**量级参照**。
+
+**口径② GQA KV 字节-per-token 公式**（为 H3 背书，**一手技术参考**）：
+
+```
+KV bytes/token = 2 × n_layers × n_kv_heads × d_head × dtype_bytes
+```
+- "2" = keys + values；GQA 下 `n_kv_heads = g`（组数，非全 query heads）。
+- 例：LLaMA-2-70B FP16（80L, g=8, d_head=128）→ 2×80×8×128×2 = 327,680 B ≈ 320 KB/token。
+- **来源**：distributed-training-book（ttsugriy.github.io，authority 0，一手技术）+ engineersofai.com（authority 1）。
+
+**套用到我们的两个模型（bf16, dtype_bytes=2）**：
+
+| 模型 | attn 层数 | n_kv_heads | d_head | KV bytes/token（attn 部分） | 4K→128K 增长 |
+|:--|--:|--:|--:|--:|:--|
+| MiniCPM5-2B（dense） | 42 | 2 | 128 | 2×42×2×128×2 = **43,008 B ≈ 42 KB** | **32×（线性，纯 attn）** |
+| Mamba2-hybrid 2B | **4**（attn）+ 52 SSM | 2 | 128 | 2×**4**×2×128×2 = **4,096 B ≈ 4 KB**（attn）+ **SSM 常数态** | attn 部分 32×，**但 SSM 态不随 context 增长 → 总增长远 <32×** |
+
+- **H3 机制印证**：dense 的 KV 随 context 线性增长（42KB→42KB×32=1.34GB @128K，单层集）；hybrid 只有 4 层 attn 有增长 KV（4KB→128KB @128K），其余 52 层 SSM 是**常数 recurrent state**（与 context 无关）→ hybrid 4K→128K 总内存增长主要由 SSM 常数态主导，**预计 ≪ dense 的 32×**。
+- ⚠️ SSM state 的确切字节数需在实测时从 `torch.cuda.memory_allocated` 量出（公式只覆盖 attn KV）→ H3 的「hybrid ≤1.3× / dense ≥4× / 差距 ≥3×」阈值以实测为准。
+
+#### 本唤醒小结与下一步
+- **P-9.9** 健康 @iter 130/1000（loss 11.18→5.99，nan=0/skip=0，s/iter≈18.5s，peak 72684 MiB，TFLOP≈623，ETA ~15:13）。
+- **P-9.10 ① 预研完成**：sglang ❌ 不可装（网络不可达，确切报错已记）→ fallback mcore+CUDA-graph；S3 原始 ckpt ❌ 已丢失 → 替代 p3_dense/p3_hybrid iter_0005000（⚠️ 需标注口径切换，待运维确认）；文献两口径 ✅ 已核实（Nemotron-H 1.8–6× 长上下文 decode + KV 公式 2×n_layers×n_kv_heads×d_head×dtype_bytes）。
+- **下一步**：① 等 P-9.9 ~15:13 释放 GPU0–1 → ② 启 P-9.10 实测矩阵（p3_dense vs p3_hybrid，context∈{4K,16K,64K,128K}，batch∈{1,8}，mcore+CUDA-graph 栈，每格≥3 次取中位 + 方差 + 缓存/状态字节增长曲线）→ ③ 按 H1–H4 预注册判据裁定。data 同步可拿 GPU2–7 跑配比。
