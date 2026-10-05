@@ -2004,3 +2004,50 @@ drwxr-x--- 2 app.e0031982 app.adm 4096 Oct  4  2026 .
 drwxr-x--- 4 app.e0031982 app.adm 4096 Sep 22 16:09 ..
 == DONE ==
 ```
+
+---
+
+## RUN_ID 20 · 2026-10-05 11:04:10 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 20 — REVIVE legacy component loop (idempotent); leave merged loop alone
+D=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
+LD="$D/ablation_run_loop_component_s2_full.sh"
+echo "== 0. TIME =="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "== 1. legacy loop running? =="; timeout 10 pgrep -af 'ablation_run_loop_component_s2_full' | cut -c1-140; echo "(end)"
+echo "== 2. start if absent =="
+if ! pgrep -f ablation_run_loop_component_s2_full.sh >/dev/null 2>&1; then
+  cd "$D"; setsid bash "$LD" > /tmp/ablation_loop_component_s2_full.log 2>&1 < /dev/null & sleep 4
+  echo "   (re)started."
+else echo "   already running, skip."; fi
+echo "== 3. verify =="; timeout 10 pgrep -af 'ablation_run_loop_component_s2_full' | cut -c1-140; echo "(end2)"
+echo "== 4. relay alive? =="; timeout 10 pgrep -af zhulong_ops_relay.sh | cut -c1-140
+echo "== 5. merged loop (leave as-is) =="; timeout 10 pgrep -af zhulong_loop.sh | cut -c1-140
+echo "== DONE =="
+```
+
+**输出**
+```
+== 0. TIME ==
+2026-10-05 11:04:10
+hfeg0tedaap02
+== 1. legacy loop running? ==
+2455466 bash /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/ablation_run_loop_component_s2_full.sh
+3170135 timeout 10 pgrep -af ablation_run_loop_component_s2_full
+(end)
+== 2. start if absent ==
+   already running, skip.
+== 3. verify ==
+2455466 bash /nasdata/app.e0031982/code/ZhuLong_DAC2027/run/ablation_run_loop_component_s2_full.sh
+3170140 timeout 10 pgrep -af ablation_run_loop_component_s2_full
+(end2)
+== 4. relay alive? ==
+1071337 bash zhulong_ops_relay.sh
+3170128 bash zhulong_ops_relay.sh
+3170143 timeout 10 pgrep -af zhulong_ops_relay.sh
+== 5. merged loop (leave as-is) ==
+1755841 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+3170146 timeout 10 pgrep -af zhulong_loop.sh
+== DONE ==
+```
