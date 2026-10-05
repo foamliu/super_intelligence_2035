@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 工作汇报 · 2026-10-05</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  h4 { font-size:14.5px; margin:16px 0 6px; color:var(--primary); }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr;} }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#0d5c22; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6a4a00; }
+  .danger { background:#fff0f0; border:1px solid #ffc9c9; border-left:4px solid var(--bad); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#8a1c1c; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe 工作汇报 · 2026-10-05（第一份 · 早 08:10）</h1>
+  <div class="sub">⭐ <b>昨夜最大的科学结果：臂⑥ AIMv2「翻盘」</b>（IN-1k lp <b>12.08%</b> vs 基线 6.08%，<b>+6 pp</b>）→ <b>25.1% 渐近被局部推翻</b>，已据此排上 <b>R11-G（108k 长跑重拟合 scaling）+ R11-H（⑥-B 纯 AR）</b> ·
+     🔧 <b>四条线全部打通「联网检索」</b>（<code>cimi_search</code>/<code>cimi_fetch</code>，四线逐一实测 rc=0）→ 当天见效：<b>data 用它把 15 条 arXiv 全部在线核验完</b> ·
+     pretrain <b>P-9.8（bf16 vs FP8 长程一致性）</b> 跑中：6 个逐 100 步 loss 对照<b>全 ≤1%</b>、<b>FP8 快 19.5%</b> ·
+     harness <b>H-A pilot 30/30 完成</b>（21 评分 + 9 受阻已修）</div>
+  <div class="meta">
+    <span>📅 2026-10-05</span>
+    <span>📝 <code>foamliu/super_intelligence_2035</code> @ <code>main</code> · <code>1f79219</code></span>
+    <span>📈 当日提交 <b>70</b>（截至 08:10）</span>
+    <span>🎯 投稿截止 ≈ 2027-02-01（余 <b>≈119 天</b>）</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <strong>今天（凌晨到早上）的主线：把「昨夜那个翻盘」变成可发表的证据链，同时把四条线的「联网能力」修通。</strong>
+  <ol style="margin:10px 0 0">
+    <li><b>科学结果</b>：臂⑥ <b>AIMv2 翻盘</b>（lp 12.08% vs 6.08%）—— 这是本项目第一次出现<b>能突破「25.1% 渐近」的目标函数</b>；机制上把坍缩归因到 <b>caption 依赖</b>（arm④ CoCa 0.47% vs arm⑥ 12.08%）。</li>
+    <li><b>证据链</b>：马上排了 <b>R11-G</b>（把 AIMv2 拉到 108k 步、对齐 R9 阶段二 → <b>重拟合 scaling + 外推</b>）与 <b>R11-H</b>（去掉对比项的 <b>⑥-B 纯 AR</b>）；<b>R11-G 已跑到 96.1%</b>，且 <code>r11g_scaling.py</code> 已就绪（已复现 InfoNCE 基线 <code>a=0.251 / R²=0.94</code>）。</li>
+    <li><b>基础设施</b>：<b>修好了「联网检索」</b> —— <code>.29:8090</code> 的 <code>eda_fastmcp</code> SSE MCP 本来就在跑，病根是 <b><code>.12</code> 的共享 MCP 配置为空</b>（此前重播被覆盖）；修复后 <b>四线逐一实测 <code>cimi_search</code> 成功</b>，并把这能力写进四份任务书。</li>
+    <li><b>立刻见效</b>：data agent 用新能力在 ~3 小时内把 <code>LIT_IDEAS_2026-10-04.html</code> 的 <b>15 条 arXiv 全部在线核验</b>（12 通过 + 3 条 ID 更正）→ <b>0 条未核验</b>。</li>
+  </ol>
+</div>
+
+
+<div class="kpi-row">
+  <div class="kpi"><div class="v">+6.0 pp</div><div class="l">⭐ 臂⑥ AIMv2 翻盘（lp 12.08% vs 6.08%）</div></div>
+  <div class="kpi"><div class="v">4 / 4</div><div class="l">四条线全部可用 <code>cimi_search</code>（联网检索）</div></div>
+  <div class="kpi"><div class="v">96.1%</div><div class="l">R11-G（AIMv2 108k 长跑）进度，ETA ~07:52</div></div>
+  <div class="kpi"><div class="v">s=1.195</div><div class="l">P-9.8：FP8 长程比 bf16 快 <b>19.5%</b>（loss 差 ≤0.95%）</div></div>
+</div>
+
+<div class="toc">
+  <strong>目录</strong>
+  <ol>
+    <li><a href="#s1">⭐ 头条：臂⑥ AIMv2 翻盘 → 25.1% 渐近被局部推翻</a></li>
+    <li><a href="#s2">四条线状态一览</a></li>
+    <li><a href="#s3">pretrain：P-9.7 定稿 + P-9.8（bf16 vs FP8 长程一致性）</a></li>
+    <li><a href="#s4">vision：R11-F 结果 + R11-G（108k）在跑 + R11-H 排队</a></li>
+    <li><a href="#s5">data：LIT_IDEAS 交付 + 15 条 arXiv 在线核验完成 + 下载进度</a></li>
+    <li><a href="#s6">harness：H-A pilot 30/30 + SWEBENCH_COMPARE + quota 瓶颈</a></li>
+    <li><a href="#s7">🔧 运维基础设施：EDA MCP 四线打通（RUN_ID 64→70）</a></li>
+    <li><a href="#s8">关键数字</a></li>
+    <li><a href="#s9">需要你决策 / 注意</a></li>
+    <li><a href="#s10">诚实条款：我这轮犯的错与更正</a></li>
+  </ol>
+
+<h2 class="sec" id="s1"><span class="no">1</span>⭐ 头条：臂⑥ AIMv2 翻盘 → 25.1% 渐近被局部推翻</h2>
+
+<div class="ok-box">
+  <b>这是本项目第一次出现「能突破 25.1% 渐近」的目标函数。</b> 此前 R9/R10 已把<b>数据轴</b>（加量）、<b>塔宽轴</b>（更小更优）、<b>损失轴</b>（SigLIP / LocalLoss / CoCa 全部未翻盘）逐一证到头，论文里那句「<b>25.1% 是从零路线的诚实天花板</b>」现在<b>需要改写</b>（<b>论文仍冻结，等 R11-G/H 数据齐了一次性回填</b>）。
+</div>
+
+<h3>1.1 结果（10-04 20:01 训完 / 20:25 评测完）</h3>
+<table>
+  <tr><th>臂</th><th>目标函数</th><th>lp @5.12M</th><th>lp @10.24M</th><th>lp @15.36M</th><th>判定</th></tr>
+  <tr><td>① 基线</td><td>InfoNCE（每对 1 个全局标量）</td><td>3.43%</td><td>5.45%</td><td>6.08%</td><td>参照</td></tr>
+  <tr><td>④ CoCa</td><td>对比 + <b>caption 自回归</b>（稠密但<b>依赖 caption</b>）</td><td>0.29%</td><td>0.37%</td><td>0.47%</td><td><span class="badge b-no">坍缩（≈随机）</span></td></tr>
+  <tr><td><b>⑥ AIMv2</b></td><td>对比 + <b>masked patch 重建</b>（稠密且<b>与 caption 无关</b>）</td><td><b>11.39%</b></td><td><b>11.14%</b></td><td><b>12.08%</b></td><td><span class="badge b-ok">翻盘</span></td></tr>
+  <tr><td colspan="3"><b>Δ（⑥ vs ①）</b></td><td colspan="2"><b>+7.96 / +5.69 / +6.00 pp</b>（判据：两点均 ≥ +1.5）</td><td><span class="badge b-ok">§14.3 预注册裁定：翻盘</span></td></tr>
+</table>
+
+<h3>1.2 机制解读（顺带给出了「坍缩的归因」）</h3>
+<ul>
+  <li><b>坍缩不是「稠密监督」的错，而是「caption 依赖」的错</b>：arm④ CoCa（稠密 + 依赖 caption）坍缩到 0.47%；arm⑥ AIMv2（稠密 + 不依赖 caption）翻盘到 12.08%。</li>
+  <li>合理机制：MAE 式 masked patch 重建提供<b>逐 patch 的空间稠密监督</b>，在数据受限（~15M 对）下显著优于 InfoNCE 的「每对 1 个全局标量」。</li>
+  <li>⚠️ <b>诚实限定（C2）</b>：本臂是 <b>AIMv2-style 自研改编</b>（InfoNCE + masked patch MSE，<code>PatchPredictor</code> 仅 +0.66M），<b>非官方复现</b>（官方是纯 AR、无对比项）；结论<b>只对我们 recipe 成立</b>。</li>
+</ul>
+
+<h3>1.3 已排上的后续（昨夜下发「运维指令 · 2026-10-04（七）」）</h3>
+<table>
+  <tr><th>项</th><th>内容</th><th>预注册判据</th><th>状态</th></tr>
+  <tr><td><b>R11-G</b></td><td>AIMv2 目标<b>长跑 108k 步</b>（对齐 R9 阶段二）→ <b>重拟合 scaling 并外推</b></td><td>同 R9 双拟合：<b>R²≥0.90 且渐近 a 显著 &gt; 25.1%</b> → 「换目标函数可抬高上限」；否则如实写「非幂律」</td><td><span class="badge b-info">🔄 96.1%</span></td></tr>
+  <tr><td><b>R11-H</b></td><td><b>⑥-B 纯 AR（去掉 InfoNCE 对比项）</b> → 检验翻盘是否依赖对比项</td><td>以 ⑥-A 为对照（11.39/11.14/12.08%）：不依赖 / 部分依赖 / 依赖</td><td><span class="badge b-warn">排队（G 后自动接）</span></td></tr>
+</table>
+
+</div>
+
+
+<h2 class="sec" id="s2"><span class="no">2</span>四条线状态一览</h2>
+<table>
+  <tr><th>线</th><th>机器</th><th>状态</th><th>当前在做什么</th><th>关键数字</th></tr>
+  <tr>
+    <td><b>pretrain</b></td><td><code>.29</code></td><td><span class="badge b-info">🔄 P-9.8 跑中</span></td>
+    <td>P-9.7 ✅ 定稿 → <b>P-9.8（bf16 vs FP8 长程一致性 A/B，各 1000 步）</b>：armA ✅ / <b>armB 60%</b>；⚠️ <b>08:30 窗口纪律</b>（截到已完成步数给暂定结论）</td>
+    <td>armA <b>195K tok/s</b>（21.50s/iter）· armB <b>233K tok/s</b>（17.99s）· <b>s=1.195</b> · loss 差 <b>≤0.95%</b> · FP8 省 ~5.6GB/卡</td>
+  </tr>
+  <tr>
+    <td><b>vision</b></td><td><code>.12</code></td><td><span class="badge b-info">🔄 R11-G 96.1%</span></td>
+    <td>R11-F ✅ 出结果（A/B/C）· <b>R11-G（AIMv2 108k 长跑）96.1%</b> → 自动 eval 11 ckpt → 自动接 <b>R11-H</b></td>
+    <td>R11-F lp：A(GPIC short) <b>5.53%</b> / B(medium) <b>6.17%</b> / C(short+medium) <b>5.92%</b> · R11-G 10 ckpt 已存、无坍缩</td>
+  </tr>
+  <tr>
+    <td><b>data</b></td><td><code>.12</code></td><td><span class="badge b-ok">✅ 双任务推进</span></td>
+    <td>下载巡检（白名单 4 项）+ <b><code>LIT_IDEAS</code> 文献调研（已交付 + <b>15 条 arXiv 在线核验完成</b>）</b>；D-CLEAN-4 候选等你拍板</td>
+    <td><code>l1_en_hq</code> <b>2123/6006</b> · <code>gpic</code> <b>2917/8001</b> · <code>zh</code> 171/256（冻结）· LIT_IDEAS <b>68KB / 52 verified + 0 unverified</b></td>
+  </tr>
+  <tr>
+    <td><b>harness</b></td><td><code>.29</code></td><td><span class="badge b-ok">✅ pilot 30/30 完成</span></td>
+    <td><b>H-A pilot 完成（21 评分 + 9 受阻→已修 lock）</b> → <code>SWEBENCH_COMPARE.html</code> final → <b>等你决定是否扩 300</b></td>
+    <td>21 inst 已评分 · <b>公平口径 codex 2/3=67% 领先</b> · ⚠️ quota 5h 窗口致 <b>17/21 空 patch</b></td>
+  </tr>
+</table>
+<div class="note">
+  🛠 <b>本轮（10-05 凌晨–早）跨线做的最重要一件事 = 打通「联网检索」</b>（见 <a href="#s7">§7</a>）：<code>.29:8090</code> 的 <code>eda_fastmcp</code> SSE MCP 暴露 <b><code>cimi_search</code> / <code>cimi_fetch</code></b>，已修复并<b>四线逐一实测通过</b>；四份任务书也都加了「有这能力、做手头任务时用起来」的提示。
+</div>
+
+
+<h2 class="sec" id="s3"><span class="no">3</span>pretrain：P-9.7 定稿 + P-9.8（bf16 vs FP8 长程一致性）</h2>
+
+<h3>3.1 ✅ P-9.7「A1 稳态吞吐」定稿 —— 249K tok/s 可信</h3>
+<p>配置固定为 A1（<code>TP1·DP8·MBS2·seq4096·bf16</code>）跑 ≥1000 步、取 <b>last-100 步稳态均值</b>。预注册判据是「≥240K → 确认 249K 可信」⇒ <b>达标</b>：稳态 <b>~249K tok/s</b>（16.85s/iter，TFLOP/s/GPU≈597，peak 54675 MiB）。<br>
+⇒ <b>P-8 的吞吐预期可按 A1（seq4096）定</b>；也顺带确认了「P-9.6 的 60 步短测 249K 在长跑下站得住」。</p>
+
+<h3>3.2 🔄 P-9.8：bf16 vs FP8 <b>长程（各 1000 步）一致性</b> A/B</h3>
+<p><b>为什么要做</b>：P-9.6② 自己标注过一条风险 —— 「60 步短测 loss 持平 ≠ 长跑收敛一致；若 P-8 采用 FP8，前 500 步须与 bf16 对照」，而 <b>P-8 的推荐候选A 正是 FP8</b>。⇒ 关掉这个风险才敢让 P-8 用 FP8。</p>
+<table>
+  <tr><th>臂</th><th>精度</th><th>配置</th><th>状态</th><th>s/iter</th><th>tok/s</th><th>峰值显存</th></tr>
+  <tr><td><b>A</b>（对照）</td><td>bf16</td><td rowspan="2"><code>TP4·SP·MBS8·seq8192</code>（M=65536）· GBS512 · <code>MAX_CONN=1</code> · seed1234 · 不存 ckpt</td><td><span class="badge b-ok">✅ 1000 步完成</span></td><td>21.50s</td><td><b>195K</b></td><td>79298 MiB</td></tr>
+  <tr><td><b>B</b>（待测）</td><td>FP8</td><td><span class="badge b-info">🔄 60%（iter 600）</span></td><td>17.99s</td><td><b>233K</b></td><td>73648 MiB</td></tr>
+</table>
+<p><b>速度：s = 21.50 / 17.99 = <span style="color:var(--ok)">1.195</span>（FP8 快 19.5%）</b>，TFLOP/s/GPU 641 vs 537（+19%），<b>FP8 还省 ~5.6 GB/卡</b>。</p>
+
+<h4>逐 100 步 loss 对照（6 个数据点，全部通过判据 #1 ≤1%）</h4>
+<table>
+  <tr><th>step</th><th>100</th><th>200</th><th>300</th><th>400</th><th>500</th><th>600</th></tr>
+  <tr><td>bf16（A）</td><td>6.3985</td><td>5.4136</td><td>4.8021</td><td>4.2481</td><td>3.7949</td><td>3.3965</td></tr>
+  <tr><td>FP8（B）</td><td>6.4227</td><td>5.4340</td><td>4.8045</td><td>4.2670</td><td>3.8045</td><td>3.4288</td></tr>
+  <tr><td><b>相对差</b></td><td>0.38%</td><td>0.38%</td><td>0.05%</td><td>0.45%</td><td>0.25%</td><td><b>0.95%</b></td></tr>
+</table>
+<table>
+  <tr><th>判据（预注册）</th><th>阈值</th><th>当前</th></tr>
+  <tr><td>#1 同步 loss 相对差</td><td>≤ 1%</td><td><span class="badge b-ok">✅ 0.05–0.95%</span></td></tr>
+  <tr><td>#2 nan / skipped</td><td>= 0</td><td><span class="badge b-ok">✅ 0 / 0（全程 61 个 log 点）</span></td></tr>
+  <tr><td>#3 grad-norm 漂移</td><td>≤ 10%</td><td><span class="badge b-warn">⚠️ MIXED（总体中位 6.8% ✅ / 分段 2-of-5 超 10%）</span></td></tr>
+  <tr><td>#4 逐 100 步 loss 最大偏离</td><td>≤ 2%</td><td><span class="badge b-ok">✅ max 0.95%</span></td></tr>
+</table>
+<div class="note">
+  ⏱ <b>08:30 窗口纪律</b>：按预注册，若届时未跑满 1000 步 → <b>截到已完成步数、给暂定结论</b>（届时约 iter 730）；full 1000 的 ETA 约 <b>09:49</b>。
+  ⚠️ <b>armB 首次跑失败过</b>：原因是 <b>harness 的 sympy 评测污染</b>（同机 CPU/IO 争用）→ 已 env 修复后重跑（这也是我们此前预警过的同机争用，见 <a href="#s9">§9</a>）。
+  📌 <b>判据 #3 需要你定口径</b>：per-100 步快照噪声大（单步 grad-norm 波动 2–3× 属正常），per-10 步分段中位总体 6.8% 通过、但 5 段里有 2 段超 10%。
+</div>
+
+
+<h2 class="sec" id="s4"><span class="no">4</span>vision：R11-F 结果 + R11-G（108k）在跑 + R11-H 排队</h2>
+
+<h3>4.1 ✅ R11-F 数据源横向对比 —— 三个臂出结果，两个臂工程性失败</h3>
+<table>
+  <tr><th>臂</th><th>数据</th><th>lp @15.36M</th><th>状态</th></tr>
+  <tr><td>A</td><td>GPIC <code>short</code></td><td><b>5.53%</b></td><td><span class="badge b-ok">✅ 完成</span></td></tr>
+  <tr><td>B</td><td>GPIC <code>medium</code></td><td><b>6.17%</b></td><td><span class="badge b-ok">✅ 完成</span>（4.24 / 4.40 / <b>6.17</b> @5.12/10.24/15.36M）</td></tr>
+  <tr><td>C</td><td>GPIC <code>short+medium</code>（≈90%）</td><td><b>5.92%</b></td><td><span class="badge b-ok">✅ 完成</span>（4.90 / 6.23 / <b>5.92</b>）</td></tr>
+  <tr><td>E</td><td>CC12M（纯）</td><td>—</td><td><span class="badge b-no">❌ 端口碰撞（EADDRINUSE）未训，待重跑</span></td></tr>
+  <tr><td>D</td><td>en500k</td><td>—</td><td><span class="badge b-no">❌ shard &lt; worker（25 tar / 48 worker）未训，已修 <code>empty_check=False</code> 待重跑</span></td></tr>
+</table>
+<table>
+  <tr><th>问题</th><th>比较</th><th>裁定（§15.6 预注册）</th></tr>
+  <tr><td><b>Q1</b> caption 更长是否有益</td><td>B(medium 6.17%) − A(short 5.53%) = <b>+0.64</b></td><td><span class="badge b-warn">无显著差异</span>（&lt; +1.5）</td></tr>
+  <tr><td><b>Q3</b> 「90% 全用」是否更好</td><td>C(5.92%) − A(5.53%) = <b>+0.39</b></td><td><span class="badge b-warn">无显著差异</span></td></tr>
+  <tr><td><b>Q2</b> 固定预算下哪个数据源最好</td><td>需含 <b>E(CC12M 纯)</b></td><td><span class="badge b-info">⏳ 悬置，待 E 重跑</span></td></tr>
+</table>
+<div class="note">
+  ⚠️ 两处失败<b>都是纯工程问题，不是数据/科学问题</b>：① <b>E</b> = overnight chain 取随机端口恰好撞上 30000（前一进程未释放）→ 2 秒内 exit 1，<b>未训练</b>；② <b>D</b> = en500k 只有 <b>25 tar</b>，而 8 rank × 6 worker = 48 worker → 部分 worker 分到 0 shard，webdataset 默认 <code>empty_check=True</code> 启动即抛错 → 已在 <code>vision/data.py::build_loader</code> 加 <code>empty_check=False</code>（<code>py_compile</code> ✅）。<br>
+  📌 另：<b>D(en500k) 本就 in-domain（= LLaVA imagenet/EN）+ ~30 epochs 重复轮</b> → 即便重跑成功也<b>单列、标「不可比」、不并入 A/B/C/E 排名</b>（R8.2 红线）。
+</div>
+
+<h3>4.2 🔄 R11-G：AIMv2 目标长跑 108k 步（重拟合 scaling 用）</h3>
+<p>载体 = AIMv2-style 目标（InfoNCE + masked patch MSE，与 ⑥-A 同款），只把 <b>步数 30k → 108k</b>（= 55.3M 样本，<b>对齐 R9 阶段二</b>），采点 step{10k…100k}+final，各跑 IN-1k lp。</p>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>进度</td><td><b>step 103800 / 108000 = 96.1%</b>（07:36）→ final @108k <b>~07:52</b> → eval 11 ckpt <b>~08:25</b> → <b>自动接 R11-H ~09:45</b></td></tr>
+  <tr><td>健康度</td><td>无坍缩：C1≈0.38 / C2_gap +0.132 / C4=OK / loss_ema ≈2.26（仍递减）/ scale≈73；~210ms/iter ≈2400 img/s；8 卡 100% util</td></tr>
+  <tr><td>ckpt</td><td><b>10 个已存</b>（step10k @01:30 … step100k @07:22）</td></tr>
+  <tr><td>链</td><td><code>/tmp/r11_overnight_chain.sh</code>（PID 4032740，<b>ppid=1</b> 健康）→ 训完自动 eval → 自动起 R11-H</td></tr>
+  <tr><td>拟合脚本</td><td>✅ <code>r11g_scaling.py</code> 已建（幂律 + 对数线性 + 预注册判据）；<b>已用 InfoNCE 基线验过</b>：复现 <b>a=0.251 / R²=0.94</b></td></tr>
+</table>
+<div class="ok-box">
+  📌 下一步（vision 线下次唤醒）：G 的 eval 收齐 11 点 lp → 跑 <code>r11g_scaling.py</code> → 得 <b>AIMv2 的幂律/对数线性拟合 R² 与渐近 a</b>，与 InfoNCE 的 25.1% 并列对照 → 写 §14 结论。GPU 空后 <b>重跑 Arm E / Arm D</b> 补 Q2。
+</div>
+
+
+<h2 class="sec" id="s5"><span class="no">5</span>data：LIT_IDEAS 交付 + 15 条 arXiv 在线核验完成 + 下载进度</h2>
+
+<h3>5.1 ⭐ 论文文献调研（`LIT_IDEAS_2026-10-04.html`）—— 已交付并<b>完成在线核验</b></h3>
+<table>
+  <tr><th>项</th><th>结果</th></tr>
+  <tr><td>交付</td><td>10-04 <b>00:10</b> 落盘（<code>d440bc6</code>）：<b>68 KB / 575 行 / 自包含无 CDN</b>，<b>7 个方向共 50 条 idea</b></td></tr>
+  <tr><td>结构</td><td>TL;DR(10) · 主表(8 列) · 三档(立即可做 16 / 需小实验 / 需长期) · <b>专章「成本救场」</b> · TOP-10 · 7 方向详述 · 参考清单 · <b>缺口清单</b></td></tr>
+  <tr><td>⚠️ 首轮局限</td><td>交付时<b>服务器侧无法在线检索</b> → 当时是「<b>37 条本地 .bib 一手核验 + 15 条 ⚠️未在线核验</b>」</td></tr>
+  <tr><td>🟢 在线核验</td><td>MCP 修好后（10-05 07:48，唤醒 121）用 <code>cimi-search</code> <b>把 15 条 arXiv 全部核验完</b>：<b>12 条通过 + 3 条 ID 更正</b> → HTML 已更新为 <b>52 verified / 0 unverified</b></td></tr>
+</table>
+<p><b>首批 6 条 TL;DR（均为零成本、直击「技术影响力」目标）</b>：① 把「混合架构 → 长会话服务成本（只有 4/56 层带 session-growing KV）」写成论文核心卖点；② 引 Xmodel-2 的「decay 段 = 带 SFT 的退火（64%）」作 P-8 配方锚点；③ 引 <b>Data Mixing Laws</b> 为「小规模配比搜索可迁移」的法理；④ 引 <b>μP / Tensor Programs V</b> 为超参迁移第二条法理；⑤ 引 <b>Chinchilla</b> 并主动交代「655M token = 下限的 1.5%」；⑥ 补 §2 缺失的<b>视觉编码器一线</b>。</p>
+
+<h3>5.2 下载巡检（白名单 4 项）</h3>
+<table>
+  <tr><th>项</th><th>进度</th><th>说明</th></tr>
+  <tr><td><code>l1_en_hq</code></td><td><b>2123 / 6006</b></td><td>CC-MAIN-2025-30 ✓ 满 + CC-MAIN-2025-33 ✓ 满 + <b>CC-MAIN-2025-38 推进中</b>（~1.7 MB/s，非僵死）</td></tr>
+  <tr><td><code>gpic</code></td><td><b>2917 / 8001</b></td><td>test 128 ✓；~21 MB/s 真推进（pid 144981）</td></tr>
+  <tr><td><code>zh</code></td><td>171 / 256</td><td>冻结待续（随 <code>l1_en_hq</code> 后串行）</td></tr>
+  <tr><td><code>en</code></td><td>2048 / 2048 ✓</td><td>已满</td></tr>
+</table>
+<div class="note">
+  ⚠️ <b>一个有意思的发现</b>：data 线报 <code>curl github</code> 仍不可达，但 <b><code>cimi-search</code> 的 MCP 通道独立可达</b> ⇒ 说明「上网」不是全有全无，而是<b>按目的地/路径</b>有别。
+  🟡 <b>等你拍板</b>：<b>D-CLEAN-4 候选</b>（本用户 <code>FineVision</code> 4.32T / <code>HuggingFaceFW</code> 1.24T / CC12M 1.13T / <code>chip_expert</code>+<code>models</code> 0.92T；跨用户 3.3T）—— 目前<b>只盘点不删除</b>。
+</div>
+
+
+<h2 class="sec" id="s6"><span class="no">6</span>harness：H-A pilot 30/30 完成 + SWEBENCH_COMPARE + quota 瓶颈</h2>
+
+<h3>6.1 ✅ H-A pilot（30 instances × 5 harness）—— 30/30 收口</h3>
+<table>
+  <tr><th>项</th><th>结果</th></tr>
+  <tr><td>规模</td><td><b>30 / 30 完成</b>：<b>21 已评分</b> + <b>9 受阻</b>（stale <code>.git/*.lock</code> 导致 shallow clone 递归失败）→ <b>lock 清理 bug 已修</b>（<code>4069f07</code>），9 条可 <code>--resume</code></td></tr>
+  <tr><td>产物</td><td><code>SWEBENCH_COMPARE.html</code>（<b>19 KB，21 inst，自包含</b>）· <code>pilot_results.json</code> · <code>gen_swebench_compare.py</code>（可复算）</td></tr>
+  <tr><td><b>公平口径</b></td><td>同 instance / 同模型下 <b>codex 2/3 = 67% 领先</b>（此前按「空 patch」算是不公平的，已改成只计有效提交）</td></tr>
+  <tr><td>4/5 harness</td><td>cline · codex · opencode · <b>claude-code</b> 均已端到端打通；仅 <b>deepseek-harness</b> 缺工具链（node ≥22.13 + rust，镜像全 000/301/404）</td></tr>
+</table>
+
+<div class="danger">
+  🔴 <b>扩 300 的主要障碍 = quota 瓶颈，不是工程</b>：cline 的 <b>5 小时滑动窗口额度</b>导致 <b>17/21 条拿到空 patch</b>（模型根本没输出代码）。按当前节奏，300 条 × 5 harness 约需 <b>~15 天</b>（按 4 inst/window 估）。
+  ⇒ <b>需要你决定</b>：① 接受长周期开跑；② 换/加 key 提额度；③ 先只跑 1–2 个 harness × 300 条。
+</div>
+
+<h3>6.2 🔄 进行中</h3>
+<ul>
+  <li><b>9 blocked 的 resume</b> 已启动（lock 已修，但 quota 仍耗到 ~10:00 才能继续）。</li>
+  <li>本轮 16 次中继健康复核（<b>全部「健康 → 跳过重启」</b>，未误杀）。</li>
+</ul>
+
+
+<h2 class="sec" id="s7"><span class="no">7</span>🔧 运维基础设施：EDA MCP 四线打通（RUN_ID 64→70）</h2>
+
+<div class="ok-box">
+  <b>一句话</b>：把「四条线的联网检索能力」修通了 —— 服务本来就在跑，<b>病根是客户端的 MCP 配置丢了</b>。修完<b>四线逐一实测可用</b>，并<b>当天就产生收益</b>（data 用它核验完 15 条 arXiv）。
+</div>
+
+<h3>7.1 服务本身（无需启动）</h3>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>位置 / 进程</td><td><code>/nas_train/app.e0031982/code/eda_fastmcp</code> · <code>pid=111692</code>（<code>venv/bin/python main.py</code>）</td></tr>
+  <tr><td>监听</td><td><b><code>0.0.0.0:8090</code></b>（⇒ <code>.12</code> 可跨机访问）· <code>.env</code> 已有 <code>EDA_MCP_PORT=8090</code></td></tr>
+  <tr><td>协议 / 握手</td><td><code>GET /sse</code> → <b>HTTP 200</b> + <code>text/event-stream</code>；首帧 <code>event: endpoint</code> → <code>/messages/?session_id=…</code>（标准 MCP SSE）</td></tr>
+  <tr><td>工具</td><td><code>tools/web_search/</code> 下 <b><code>cimi_search.py</code> + <code>cimi_fetch.py</code></b>，注册名 <b><code>cimi_search</code> / <code>cimi_fetch</code></b>（另含 pyAether 的 <code>search_apis</code>/<code>get_api_details</code>/<code>run_pyAether_code_tool</code>）</td></tr>
+  <tr><td>它是什么</td><td><code>EDA FastMCP</code>：给 Cline/zhulong CLI 用的 MCP 服务器（EDA API 检索 / 文档查阅 / <b>代码执行</b>；远程沙箱 <code>10.129.32.75</code>、RAG 召回 <code>:9009</code>、Memory <code>:9010</code>）—— 即 <b>ZhuLong 那套「检索—查阅—执行—修正」闭环的底座</b></td></tr>
+</table>
+
+<h3>7.2 病根与修复</h3>
+<table>
+  <tr><th>#</th><th>发现</th><th>处理</th></tr>
+  <tr><td>1</td><td><b><code>.12</code> 的共享 <code>~/.cline/data/settings/cline_mcp_settings.json</code> 只有 22 B（空 <code>mcpServers</code>）</b> ← 此前 RUN_ID 55 从 <code>.12</code> 重播 settings 时覆盖所致</td><td><b>备份后写入 206 B</b>（含 <code>pyAether_MCP_server [sse]</code>，`url=http://10.239.2.29:8090/sse`）</td></tr>
+  <tr><td>2</td><td><code>.cline_vision</code> / <code>.cline_data</code> 也是 22 B 空</td><td>同样补回 206 B（并把 <code>cimi_search</code>/<code>cimi_fetch</code> 加进 <code>autoApprove</code>）</td></tr>
+  <tr><td>3</td><td><code>.29</code> 的共享配置是 265 B（<b>本来就有</b>，但 <code>autoApprove</code> 未含 cimi 工具）</td><td>备份后统一为 206 B（补上 cimi 工具）</td></tr>
+  <tr><td>4</td><td>🔑 <b>关键认知</b>：<code>--data-dir</code> <b>不改变 MCP 配置的读取路径</b> —— cline 固定读<b>共享</b>的 <code>~/.cline/data/settings/</code>，且 <code>.29</code>/<code>.12</code> <b>各自本地一份</b>（不是 NFS）⇒ <b>修 MCP 必须两台都修</b></td><td>已写入 <code>MEMORY.md §7</code></td></tr>
+</table>
+
+<h3>7.3 验证（四线逐一实测，全部 <code>rc=0</code>）</h3>
+<table>
+  <tr><th>线</th><th>机器</th><th>smoke 结果</th><th><code>cline config mcp</code></th></tr>
+  <tr><td>pretrain</td><td><code>.29</code></td><td><span class="badge b-ok">✅ Tool available: yes · No error</span></td><td><code>pyAether_MCP_server [sse]</code></td></tr>
+  <tr><td>harness</td><td><code>.29</code></td><td><span class="badge b-ok">✅ Tool available: yes</span></td><td><code>pyAether_MCP_server [sse]</code></td></tr>
+  <tr><td>vision</td><td><code>.12</code></td><td><span class="badge b-ok">✅ Tool available: yes</span></td><td><code>pyAether_MCP_server [sse]</code></td></tr>
+  <tr><td>data</td><td><code>.12</code></td><td><span class="badge b-ok">✅ rc=0（RUN_ID 69）</span></td><td><code>pyAether_MCP_server [sse]</code></td></tr>
+</table>
+<p>实测细节：cline 实际发出了 <code>[pyAether_MCP_server__cimi_search] {"query":"masked autoencoder MAE","top_k":5}</code>，并拿回<b>真实检索结果</b>（"Masked Autoencoders (MAE)" + IEEE 论文 + 可点 URL）⇒ <b>MCP 服务自身能出网</b>（此前记录的 <code>api.bocha.cn</code> SSL 阻断已不复现）。</p>
+
+<h3>7.4 已下发</h3>
+<ul>
+  <li><b>data</b>：顶部新块 → 用 MCP 把 <code>LIT_IDEAS</code> 升级为「全部一手核验」（<b>已完成</b>）。</li>
+  <li><b>pretrain / vision / harness</b>：任务书新增「<b>你已具备联网检索能力 —— 做手头任务时用起来</b>」提示（各配 3 条本线专属用法 + 证据纪律 + 边界：不改论文 / 不占 GPU / 不下大文件）。</li>
+</ul>
+
+
+<h2 class="sec" id="s8"><span class="no">8</span>关键数字</h2>
+<div class="grid2">
+  <div class="card">
+    <h3 style="margin-top:0">视觉（Stage iii）</h3>
+    <ul>
+      <li>⭐ <b>臂⑥ AIMv2 翻盘</b>：lp <b>12.08%</b> vs 基线 6.08%（<b>+6.00 pp</b>）</li>
+      <li>坍缩归因：<b>caption 依赖</b>（CoCa 0.47% vs AIMv2 12.08%）</li>
+      <li>R11-F：A 5.53 / B 6.17 / C 5.92%（<b>Q1/Q3 无显著差异</b>）</li>
+      <li>R11-G：108k 步 <b>96.1%</b>，10 ckpt 已存，无坍缩</li>
+      <li>基线 scaling（InfoNCE）：<code>a=0.251 / R²=0.94</code></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">预训练（Stage i）</h3>
+    <ul>
+      <li>P-5b：20B token，final loss <b>1.9141</b></li>
+      <li>P-9.7：A1 稳态 <b>~249K tok/s</b>（≥240K 判据达标）</li>
+      <li>P-9.8：armA(bf16) <b>195K</b> / armB(FP8) <b>233K</b> → <b>s=1.195</b></li>
+      <li>FP8 长程 loss 差 <b>≤0.95%</b>、nan/skip=0、省 ~5.6GB/卡</li>
+      <li>P-8 候选A：<code>TP4·SP·MBS8·seq8192·FP8·MAX_CONN=1</code></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">数据 / 磁盘</h3>
+    <ul>
+      <li><code>l1_en_hq</code> <b>2123/6006</b> · <code>gpic</code> <b>2917/8001</b> · <code>zh</code> 171/256（冻结）</li>
+      <li><code>/nas_train</code> <b>84%</b>（Avail ~35T）</li>
+      <li>D-CLEAN 系列累计回收 <b>≈4.96 TiB</b>；D-CLEAN-4 候选待拍板</li>
+      <li>LIT_IDEAS：<b>68 KB / 50 ideas / 52 verified / 0 unverified</b></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">harness / 运维</h3>
+    <ul>
+      <li>H-A pilot <b>30/30</b>（21 评分 + 9 已修待 resume）</li>
+      <li>公平口径：<b>codex 2/3 = 67% 领先</b></li>
+      <li>4/5 harness 端到端打通（仅 deepseek-harness 缺工具链）</li>
+      <li>当日提交 <b>70</b>；ops <code>.last_run_id=70</code>（RUN_ID 63–70 全 exit=0）</li>
+      <li>🔧 <b>四线联网检索已打通</b>（`cimi_search`/`cimi_fetch`）</li>
+    </ul>
+  </div>
+</div>
+
+<h2 class="sec" id="s9"><span class="no">9</span>需要你决策 / 注意</h2>
+<table>
+  <tr><th>#</th><th>事项</th><th>我的建议</th></tr>
+  <tr>
+    <td>1</td>
+    <td><b>P-9.8 判据 #3（grad-norm 漂移）口径</b>：总体中位 <b>6.8%</b> 通过，但 5 个分段里有 <b>2 段超 10%</b>（分段 3.6–13.9%）</td>
+    <td><span class="badge b-warn">需你定</span> 我倾向：<b>以「loss 几乎完全一致（≤0.95%）」为主要一致性证据</b>，grad-norm 只作辅助（单步波动 2–3× 属正常）→ 即判 <b>#3「不构成否决」</b>；若你要求严格，则 #3 判不通过、P-8 定 bf16。</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><b>harness 扩 300 的 quota 瓶颈</b>：5h 窗口致 <b>17/21 空 patch</b>，按 4 inst/window 估 <b>~15 天</b></td>
+    <td><span class="badge b-info">需你定</span> 三选一：① 接受长周期开跑；② 换/加 key 提额度；③ 先 1–2 个 harness × 300 条。</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td><b>同机争用已经咬人一次</b>：P-9.8 armB 首跑被 <b>harness 的 sympy 评测</b>搞挂</td>
+    <td><span class="badge b-warn">建议</span> 给 harness 加一条避让纪律（例：<b>重量评测避开 pretrain 的训练窗口</b>，或并发压到 ≤1）。要我发吗？</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td><b>vision 的 Arm E / Arm D 待重跑</b>（端口碰撞 / shard&lt;worker 已修）才能补 Q2</td>
+    <td><span class="badge b-ok">已就绪</span> GPU 空后自动/下次唤醒重跑，无需你动作。</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td><b>论文改写</b>（AIMv2 翻盘 ⇒ §6 的「25.1% 天花板」要改）</td>
+    <td><span class="badge b-info">按你指示：暂不改</span> 等 <b>R11-G 的 scaling 拟合 + R11-H</b> 出数后，与其余 3 项润色一次性回填。</td>
+  </tr>
+</table>
+
+
+<h2 class="sec" id="s10"><span class="no">10</span>诚实条款：我这轮犯的错与更正</h2>
+<table>
+  <tr><th>#</th><th>我犯了什么</th><th>后果 / 更正</th></tr>
+  <tr><td>1</td><td><b>SSE 探针方法错</b>：用 <code>curl -w '%{http_code}'</code> 探 <code>/sse</code></td><td>SSE 是<b>长连接</b>，该参数只在<b>传输结束</b>时打印 → 被 <code>timeout</code> 杀掉后<b>空输出</b> → 我一度以为「服务不可用」。<b>更正</b>：只取响应头（<code>curl -D - -o /dev/null</code>）或抓首帧（<code>curl -sN</code>）。已入 <code>MEMORY.md §7</code>。</td></tr>
+  <tr><td>2</td><td><b>用错 cline 子命令</b>：<code>cline mcp list</code></td><td>不是有效子命令（报 Unknown command）。<b>正解 = <code>cline config mcp</code></b>。已入 <code>§7</code>。</td></tr>
+  <tr><td>3</td><td><b>smoke 用错 (model, base, key) 配对</b>：拿 <code>.cline_data/secrets.json</code> 里 <code>.12</code> 那把 key 配 <code>glm-5.2</code></td><td>报 <code>Forbidden</code>，与 <b>RUN_ID 56 是同一个坑</b>。<b>更正</b>：一律复现 loop 的真实配对（<code>llm_pick</code> 选出的 model/key/base）。</td></tr>
+  <tr><td>4</td><td><b>早前误判</b>「<code>cimi-search</code>/<code>cimi-fetch</code> 在此环境<b>从未可用</b>」</td><td>半对半错：MCP <b>服务一直在跑</b>，缺的是<b>客户端的 MCP 配置</b>；而且其中一部分是<b>我自己</b>在 RUN_ID 55 重播 settings 时覆盖成空的。<b>教训（新增纪律）</b>：<b>迁移/覆盖配置前先 diff 关键项</b>（MCP、provider、secrets），别只看目标文件的字节数。</td></tr>
+  <tr><td>5</td><td><b>编辑日志时误删了两行既有内容</b>（MEMORY §6 的 cline 隔离目录行、MEMORY §7 的诊断教训行）</td><td>已当轮发现并补回。教训：<b>用 old_text 替换时，new_text 必须包含被保留的原句</b>。</td></tr>
+</table>
+<div class="note">
+  <b>本轮最有价值的两条经验</b>：<br>
+  ① <b>「有配置 ≠ 能用」</b> —— 必须<b>逐条 smoke</b>（我们这次是「四线逐一真跑」才发现并修通的）。<br>
+  ② <b>基础设施改动要看副作用</b> —— 为治 A（凭据污染）做的隔离，反倒把 B（MCP 配置）弄丢了；<b>改配置类动作要留备份 + 事后逐项核对清单</b>。
+</div>
+
+<p style="text-align:center;margin:30px 0 0;color:var(--muted);font-size:13px">— 报告完 —</p>
+
+<footer>
+  <p>本报告由<b>运维</b>（外部指挥 4 条 agent 线）生成 · 数据来源：各线 <code>run/MEMORY_*.md</code> · <code>run/EXPERIMENTS_*.md</code> · <code>run/ops/outbox.md</code> · <code>git log</code>。</p>
+  <p>⚠️ 所有数字均可在仓库中溯源；凡未能取证的一律标注「待实测 / 假设」。<b>本日最值得记住的一句：四线都能上网了 —— 但「有配置 ≠ 能用」，只能靠跑一遍证明。</b></p>
+</footer>
+
+</div>
+</body>
+</html>
+
