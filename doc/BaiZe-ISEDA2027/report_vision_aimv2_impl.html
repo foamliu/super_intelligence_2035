@@ -161,24 +161,28 @@
 <p>文本塔输出经 L2 归一化后与视觉 <code>pooled</code>（也 L2 归一化）做 InfoNCE。<b>文本塔不参与 patch-MSE 项</b>（patch 重建只读视觉 patch 特征 + 像素目标）。</p>
 
 <h2>5. 前向计算与目标函数（<code>--loss aimv2</code>）</h2>
-<p>代码：<code>run/vision/r9_train.py:556–575</code>。这是 AIMv2-style 的核心前向分支。</p>
-<h3>5.1 前向分支 (L556–575)</h3>
-<pre><code><span class="ln">556</span>            elif args.loss == 'aimv2':
-<span class="ln">557</span>                pooled, patches = vision(imgs, return_patch=True)
-<span class="ln">558</span>                # masked patch reconstruction (MAE norm_pix_loss; Apache-2.0 ref)
-<span class="ln">559</span>                B, N, _W = patches.shape
-<span class="ln">560</span>                target = mae_norm_pix_target(imgs, args.patch)      # (B,N,patch_dim)
-<span class="ln">561</span>                mrand = torch.rand(B, N, device=device) < args.mask_ratio
-<span class="ln">562</span>                pred = predictor(patches[mrand])                    # (n_masked, patch_dim)
-<span class="ln">563</span>                tgt = target[mrand]                                 # (n_masked, patch_dim)
-<span class="ln">564</span>                patch_loss = torch.mean((pred.float() - tgt.float()) ** 2)
-<span class="ln">565</span>                if args.contrast_weight > 0:
-<span class="ln">566</span>                    If = torch.nn.functional.normalize(pooled, dim=-1)
-<span class="ln">567</span>                    Tf = torch.nn.functional.normalize(text(txts), dim=-1)
-<span class="ln">568</span>                    contrastive = loss_fn(If, Tf, logit_scale.exp(), None)
-<span class="ln">569</span>                    cur_loss = args.contrast_weight * contrastive + args.patch_loss_weight * patch_loss
-<span class="ln">571</span>                else:  # R11-H (arm 6-B): pure AR, NO contrast term
-<span class="ln">573</span>                    cur_loss = args.patch_loss_weight * patch_loss</code></pre>
+<p>代码：<code>run/vision/r9_train.py:557–576</code>。这是 AIMv2-style 的核心前向分支。</p>
+<h3>5.1 前向分支 (L557–576)</h3>
+<pre><code><span class="ln">557</span>            elif args.loss == 'aimv2':
+<span class="ln">558</span>                pooled, patches = vision(imgs, return_patch=True)
+<span class="ln">559</span>                # masked patch reconstruction (MAE norm_pix_loss; Apache-2.0 ref)
+<span class="ln">560</span>                B, N, _W = patches.shape
+<span class="ln">561</span>                target = mae_norm_pix_target(imgs, args.patch)      # (B,N,patch_dim)
+<span class="ln">562</span>                mrand = torch.rand(B, N, device=device) < args.mask_ratio
+<span class="ln">563</span>                pred = predictor(patches[mrand])                    # (n_masked, patch_dim)
+<span class="ln">564</span>                tgt = target[mrand]                                 # (n_masked, patch_dim)
+<span class="ln">565</span>                patch_loss = torch.mean((pred.float() - tgt.float()) ** 2)
+<span class="ln">566</span>                if args.contrast_weight > 0:
+<span class="ln">567</span>                    If = torch.nn.functional.normalize(pooled, dim=-1)
+<span class="ln">568</span>                    Tf = torch.nn.functional.normalize(text(txts), dim=-1)
+<span class="ln">569</span>                    contrastive = loss_fn(If, Tf, logit_scale.exp(), None)
+<span class="ln">570</span>                    cur_loss = args.contrast_weight * contrastive + args.patch_loss_weight * patch_loss
+<span class="ln">571</span>                    contr_i = contrastive.item()
+<span class="ln">572</span>                else:
+<span class="ln">573</span>                    # R11-H (arm 6-B): pure AR, NO contrast term -> text tower NOT in graph
+<span class="ln">574</span>                    cur_loss = args.patch_loss_weight * patch_loss
+<span class="ln">575</span>                    contr_i = 0.0
+<span class="ln">576</span>                cap_i = patch_loss.item()          # reuse cap_i slot -> logged as patch_mse</code></pre>
 <div class="callout callout-key">
 <p><b>总损失</b>：<code>loss = contrast_weight × InfoNCE(pooled, text) + patch_loss_weight × MSE(predictor(patches[mask]), target[mask])</code></p>
 <table>
@@ -314,7 +318,7 @@
 <tr><td>ReadoutHead</td><td><code>models.py:156-164</code></td><td>mean-pool → LN → Linear(512→768)</td></tr>
 <tr><td>PatchPredictor</td><td><code>models.py:478-510</code></td><td>Linear→LN→GELU→Linear, 0.66M</td></tr>
 <tr><td>mae_norm_pix_target</td><td><code>r9_train.py:154-174</code></td><td>反 CLIP norm → fold patch → 逐 patch 标准化</td></tr>
-<tr><td>aimv2 loss 分支</td><td><code>r9_train.py:556-575</code></td><td>pooled,patches = vision(..,return_patch=True)</td></tr>
+<tr><td>aimv2 loss 分支</td><td><code>r9_train.py:557-576</code></td><td>pooled,patches = vision(..,return_patch=True)</td></tr>
 <tr><td>PatchPredictor 构建</td><td><code>r9_train.py:337-350</code></td><td>DDP(find_unused_parameters=True)</td></tr>
 <tr><td>FrozenClipText</td><td><code>r9_train.py:68-95</code></td><td>冻结 CLIP-768 text tower</td></tr>
 <tr><td>CLIP_PATH</td><td><code>r9_train.py:34</code></td><td>openai/clip-vit-large-patch14-336</td></tr>
