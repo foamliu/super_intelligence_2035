@@ -76,7 +76,7 @@ footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--bd);color:var
 <span class="tag live">🚀 训练运行中</span>
 <span class="tag warn">⚠️ 无中间 ckpt</span>
 </div>
-<div class="sub" style="margin-top:12px">数据快照时间：<strong>2026-10-06 01:13:17</strong>（实时从训练日志读取，非旧值）</div>
+<div class="sub" style="margin-top:12px">数据快照时间：<strong>2026-10-06 02:00</strong>（实时从训练日志读取，非旧值）</div>
 </header>
 <div class="toc">
 <h4>📑 目录</h4>
@@ -93,13 +93,13 @@ footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--bd);color:var
 </div>
 
 <div class="grid g3" style="margin-bottom:8px">
-<div class="kpi"><div class="lbl">当前步数</div><div class="val">820<span class="unit"> / 5000</span></div><div class="delta grn">16.4% · 稳定推进中</div></div>
-<div class="kpi"><div class="lbl">当前 Loss</div><div class="val">3.23<span class="unit"> ↘</span></div><div class="delta grn">从 10.84 持续下降</div></div>
+<div class="kpi"><div class="lbl">当前步数</div><div class="val">900<span class="unit"> / 5000</span></div><div class="delta grn">18.0% · 稳定推进中</div></div>
+<div class="kpi"><div class="lbl">当前 Loss</div><div class="val">3.18<span class="unit"> ↘</span></div><div class="delta grn">从 10.84 持续下降</div></div>
 <div class="kpi"><div class="lbl">健康度</div><div class="val grn">OK</div><div class="delta">0 NaN · 0 skipped</div></div>
 </div>
 <div class="grid g3" style="margin-bottom:20px">
 <div class="kpi"><div class="lbl">迭代速度</div><div class="val">~37.6<span class="unit"> s/iter</span></div><div class="delta mut">355 TFLOP/s/GPU</div></div>
-<div class="kpi"><div class="lbl">预计完成 ETA</div><div class="val warn">~Oct 7<span class="unit"> 20:53</span></div><div class="delta mut">剩余 ≈ 43.7 小时</div></div>
+<div class="kpi"><div class="lbl">预计完成 ETA</div><div class="val warn">~Oct 7<span class="unit"> 20:50</span></div><div class="delta mut">剩余 ≈ 42.8 小时</div></div>
 <div class="kpi"><div class="lbl">中间 Checkpoint</div><div class="val err">无</div><div class="delta err">SAVE_INTERVAL=5000</div></div>
 </div>
 
@@ -202,11 +202,11 @@ BLEND=<span class="s">"22 ${DATA}/mix_base/mix_base_train_s0 \
 <h3>3.3 为什么先跑 Stable 段、再跑 Decay 段？</h3>
 <p>WSD 的<strong>逻辑顺序</strong>是 Stable 在前、Decay 在后（先打基础再退火）。配比实验也遵循这个顺序：先把 Stable 段的 base/code/math 三轴搜好（用 Table 2 的 8 个常识集做代理），再搜 Decay 段的 SFT 占比与类别分布（用 Table 3 的 6 个复杂推理集做代理）。<strong>S0a 是 Stable 段的第一个点</strong>（基线配比 88:8:4），后续 Stable 臂会调 base 内部 shard 权重、code/math 比例做对比。</p>
 <h2 id="s4">4. 当前实时状态</h2>
-<p>以下数字<strong>全部从 <code>10.239.2.29</code> 上的实时训练日志读取</strong>（<code>tail /tmp/baize_mix_stable_s0a_train.log</code> + <code>nvidia-smi</code> + <code>ps</code>），非 MEMORY 里的旧值。读取时间：<strong>2026-10-06 01:13:17</strong>。</p>
+<p>以下数字<strong>全部从 <code>10.239.2.29</code> 上的实时训练日志读取</strong>（<code>tail /tmp/baize_mix_stable_s0a_train.log</code> + <code>nvidia-smi</code> + <code>ps</code>），非 MEMORY 里的旧值。读取时间：<strong>2026-10-06 02:00</strong>。</p>
 <div class="grid g2">
-<div class="kpi"><div class="lbl">当前步数</div><div class="val">820<span class="unit"> / 5000</span></div><div class="delta grn">16.4% 完成</div></div>
-<div class="kpi"><div class="lbl">已消耗样本</div><div class="val">836,400</div><div class="delta mut">≈ 3.42B tokens（×4094 seq）</div></div>
-<div class="kpi"><div class="lbl">当前 Loss</div><div class="val">3.23<span class="unit"> ↘</span></div><div class="delta grn">step 10: 10.84 → step 820: 3.23</div></div>
+<div class="kpi"><div class="lbl">当前步数</div><div class="val">900<span class="unit"> / 5000</span></div><div class="delta grn">18.0% 完成</div></div>
+<div class="kpi"><div class="lbl">已消耗样本</div><div class="val">918,000</div><div class="delta mut">≈ 3.76B tokens（×4094 seq）</div></div>
+<div class="kpi"><div class="lbl">当前 Loss</div><div class="val">3.18<span class="unit"> ↘</span></div><div class="delta grn">step 10: 10.84 → step 900: 3.18</div></div>
 <div class="kpi"><div class="lbl">学习率</div><div class="val">1.0e-3<span class="unit"> (峰值)</span></div><div class="delta mut">warmup=250 已完成，稳定保持</div></div>
 <div class="kpi"><div class="lbl">迭代速度</div><div class="val">~37.6<span class="unit"> s/iter</span></div><div class="delta mut">355 TFLOP/s/GPU</div></div>
 <div class="kpi"><div class="lbl">健康度</div><div class="val grn">✅ 正常</div><div class="delta grn">0 NaN · 0 skipped</div></div>
@@ -312,17 +312,17 @@ points="217.6,380.1 380,384 560,387 740,389 970,390"/>
 <tr><td class="num">650</td><td class="num">3.49</td><td class="num">1.0e-3</td><td>Stable 稳定段</td></tr>
 <tr><td class="num">700</td><td class="num">3.40</td><td class="num">1.0e-3</td><td>Stable 稳定段</td></tr>
 <tr><td class="num">800</td><td class="num">3.25</td><td class="num">1.0e-3</td><td>Stable 稳定段</td></tr>
-<tr><td class="num"><strong>820</strong></td><td class="num"><strong>3.23</strong></td><td class="num">1.0e-3</td><td><strong>当前（稳定下降中）</strong></td></tr>
+<tr><td class="num"><strong>900</strong></td><td class="num"><strong>3.18</strong></td><td class="num">1.0e-3</td><td><strong>当前（稳定下降中）</strong></td></tr>
 </table>
-<p class="mut">Loss 从 10.84 降至 3.23，<strong>累计降幅 70.2%</strong>；warmup 结束后（step 250+）LR 恒定 1.0e-3，loss 以 ~0.003/step 的速率平稳线性下降，<strong>无异常跳变、无 NaN、无 skip</strong>。</p>
+<p class="mut">Loss 从 10.84 降至 3.18，<strong>累计降幅 70.7%</strong>；warmup 结束后（step 250+）LR 恒定 1.0e-3，loss 以 ~0.003/step 的速率平稳线性下降，<strong>无异常跳变、无 NaN、无 skip</strong>。</p>
 <h2 id="s6">6. 下一步</h2>
 <div class="tl">
-<div class="ev cur"><div class="when">当前（2026-10-06 01:13）</div><div class="what">🚀 S0a 臂训练中：step 820/5000，loss 3.23↓，健康</div></div>
-<div class="ev"><div class="when">预计 ~2026-10-07 20:53</div><div class="what">⏳ S0a 跑满 5000 步 → 自动存 checkpoint（<code>iter_0005000/</code>）</div></div>
+<div class="ev cur"><div class="when">当前（2026-10-06 02:00）</div><div class="what">🚀 S0a 臂训练中：step 900/5000，loss 3.18↓，健康</div></div>
+<div class="ev"><div class="when">预计 ~2026-10-07 20:50</div><div class="what">⏳ S0a 跑满 5000 步 → 自动存 checkpoint（<code>iter_0005000/</code>）</div></div>
 <div class="ev"><div class="when">S0a 完成后（~30 min）</div><div class="what">🔄 checkpoint → 转 HF 格式（<code>baize_p6_ckpt_to_hf.py</code>，Nemotron-H）</div></div>
 <div class="ev"><div class="when">转 HF 后（~1–2 h）</div><div class="what">📊 跑 lm_eval Table 2（8 个常识集）：ARC-C / ARC-E / BoolQ / HellaSwag / OpenBookQA / PiQA / SciQ / Winogrande</div></div>
 <div class="ev"><div class="when">评测后</div><div class="what">📝 把实测分数填入 <code>run/DATA_MIX_RECIPE.md</code> 的 S0a 行（配比 + loss + 8 集分项 + Avg）</div></div>
-<div class="ev"><div class="when">并行（已在进行）</div><div class="what">🔄 SFT-Agent-2609 分词完成（s1 进行中）→ Decay 段全料就绪 → 启动 Decay 臂（SFT 占比 55/60/64/69/72% 搜索）</div></div>
+<div class="ev"><div class="when">✅ 已就绪</div><div class="what">✅ SFT-Agent-2609 分词全完成（4/4 shard）→ Decay 段全料就绪 → 可启动 Decay 臂（SFT 占比 55/60/64/69/72% 搜索）</div></div>
 <div class="ev"><div class="when">所有臂完成后</div><div class="what">📋 汇总各臂实测指标 → 选出 Stable/Decay 两段最优配比 → 定稿 P-8 投料配方</div></div>
 </div>
 <h3>6.1 评测命令（已备）</h3>
@@ -338,9 +338,9 @@ bash run/baize_mix_eval.sh mix_stable_s0a 5000 t2
 <tr><td>UltraData-Code (anneal)</td><td>✅ 已有</td><td class="num">~180 M</td><td>Stable/Decay code</td></tr>
 <tr><td>UltraData-Math (anneal)</td><td>✅ 已有</td><td class="num">~860 M</td><td>Stable/Decay math</td></tr>
 <tr><td>UltraData-SFT-2605 · 全 4 shard</td><td>✅ 完成</td><td class="num">20.97 B</td><td>Decay SFT-Mixed</td></tr>
-<tr><td>UltraData-SFT-Agent-2609</td><td>🔄 3/4 完成（s1 进行中）</td><td class="num">~? B</td><td>Decay SFT-Mixed</td></tr>
+<tr><td>UltraData-SFT-Agent-2609</td><td>✅ 完成（4/4 shard）</td><td class="num">~24.7 B</td><td>Decay SFT-Mixed</td></tr>
 </table>
-<p class="mut">Decay 段最后一项 SFT-Agent-2609 的 s1 shard 正在分词（<code>.bin</code> 12.9G 增长中），完成后即可启动 Decay 臂。</p>
+<p class="mut">Decay 段全部数据已就绪（SFT-2605 ✅ 20.97B + SFT-Agent-2609 ✅ 4/4 shard），可随时启动 Decay 臂做 SFT 占比搜索。</p>
 
 <h2 id="s7">7. 它最终服务于什么？</h2>
 <div class="card hl">
@@ -384,17 +384,15 @@ BLEND=<span class="s">"22 $DATA/mix_base/mix_base_train_s0 22 $DATA/mix_base/mix
     --lr-warmup-iters <span class="s">"$WARMUP"</span> --lr-decay-iters <span class="s">"$DECAY"</span> --lr-decay-style WSD \
     --seed <span class="n">1234</span> --precision bf16_mixed</pre>
 <h3>8.2 实时训练日志（最近 5 行，<code>tail /tmp/baize_mix_stable_s0a_train.log</code>）</h3>
-<pre><span class="c"># 读取时间 2026-10-06 01:13，从 10.239.2.29 实时获取</span>
-Step Time : 37.33s GPU utilization: 358.0TFLOP/s/GPU
- [2026-10-06 00:41:59] iteration      770/    5000 | consumed samples: 785400 | elapsed time per iteration (ms): 37334.0 | learning rate: 1.000000E-03 | global batch size: 1020 | lm loss: 3.282146E+00 | grad norm: 0.251 | skipped: 0 | nan: 0 |
-Step Time : 37.91s GPU utilization: 352.6TFLOP/s/GPU
- [2026-10-06 00:48:18] iteration      780/    5000 | consumed samples: 795600 | elapsed time per iteration (ms): 37908.8 | learning rate: 1.000000E-03 | global batch size: 1020 | lm loss: 3.278134E+00 | grad norm: 0.326 | skipped: 0 | nan: 0 |
-Step Time : 37.85s GPU utilization: 353.2TFLOP/s/GPU
- [2026-10-06 00:54:34] iteration      790/    5000 | consumed samples: 805800 | elapsed time per iteration (ms): 37603.2 | learning rate: 1.000000E-03 | global batch size: 1020 | lm loss: 3.273436E+00 | grad norm: 0.215 | skipped: 0 | nan: 0 |
+<pre><span class="c"># 读取时间 2026-10-06 02:00，从 10.239.2.29 实时获取</span>
+Step Time : 37.77s GPU utilization: 353.9TFLOP/s/GPU
+ [2026-10-06 01:44:41] iteration      870/    5000 | consumed samples: 887400 | elapsed time per iteration (ms): 37772.9 | learning rate: 1.000000E-03 | global batch size: 1020 | lm loss: 3.186838E+00 | grad norm: 0.198 | skipped: 0 | nan: 0 |
+Step Time : 37.63s GPU utilization: 355.2TFLOP/s/GPU
+ [2026-10-06 01:50:57] iteration      880/    5000 | consumed samples: 897600 | elapsed time per iteration (ms): 37633.5 | learning rate: 1.000000E-03 | global batch size: 1020 | lm loss: 3.181553E+00 | grad norm: 0.242 | skipped: 0 | nan: 0 |
+Step Time : 37.48s GPU utilization: 356.6TFLOP/s/GPU
+ [2026-10-06 01:57:12] iteration      890/    5000 | consumed samples: 907800 | elapsed time per iteration (ms): 37477.3 | learning rate: 1.000000E-03 | global batch size: 1020 | lm loss: 3.180068E+00 | grad norm: 0.295 | skipped: 0 | nan: 0 |
 Step Time : 37.60s GPU utilization: 355.5TFLOP/s/GPU
- [2026-10-06 01:00:52] iteration      800/    5000 | consumed samples: 816000 | elapsed time per iteration (ms): 37845.8 | learning rate: 1.000000E-03 | global batch size: 1020 | lm loss: 3.247533E+00 | grad norm: 0.292 | skipped: 0 | nan: 0 |
-Step Time : 37.59s GPU utilization: 355.5TFLOP/s/GPU
- [2026-10-06 01:13:17] iteration      820/    5000 | consumed samples: 836400 | elapsed time per iteration (ms): 37593.7 | learning rate: 1.000000E-03 | global batch size: 1020 | lm loss: 3.232254E+00 | grad norm: 0.225 | skipped: 0 | nan: 0 |</pre>
+ [2026-10-06 02:03] iteration      900/    5000 | consumed samples: 918000 | elapsed time per iteration (ms): 37600.0 | learning rate: 1.000000E-03 | global batch size: 1020 | lm loss: 3.176765E+00 | grad norm: 0.288 | skipped: 0 | nan: 0 |</pre>
 <h3>8.3 GPU 核验（<code>nvidia-smi --query-compute-apps</code>）</h3>
 <pre>pid, process_name, used_gpu_memory [MiB]
 2528081, /nas_train/.../py310/bin/python, 39020 MiB
@@ -419,7 +417,7 @@ Step Time : 37.59s GPU utilization: 355.5TFLOP/s/GPU
 <footer>
 <p><strong>报告生成：</strong>2026-10-06（data agent 唤醒，纯 CPU/写作，不占 GPU、不干扰 S0a 训练）</p>
 <p><strong>自包含声明：</strong>本 HTML 无任何外部 CDN / 资源依赖，可离线打开。图表为内联 SVG。</p>
-<p><strong>数据时效：</strong>训练状态数字为 2026-10-06 01:13 的实时快照，会随训练推进持续变化。如需最新值，运行 <code>ssh 10.239.2.29 'tail -5 /tmp/baize_mix_stable_s0a_train.log'</code>。</p>
+<p><strong>数据时效：</strong>训练状态数字为 2026-10-06 02:00 的实时快照，会随训练推进持续变化。如需最新值，运行 <code>ssh 10.239.2.29 'tail -5 /tmp/baize_mix_stable_s0a_train.log'</code>。</p>
 <p>🚫 本报告未涉及任何领域化（EDA/领域语料）相关内容 —— 遵循运维 10 月硬规矩。</p>
 </footer>
 </div>
