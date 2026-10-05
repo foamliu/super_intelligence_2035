@@ -10,9 +10,9 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验 → 🚀 Stable S0a 臂运行中(step 260/5000, loss 4.88, ~38s/iter, warmup完LR达峰, ETA ~Oct7 21:00)·loss稳定下降·✅✅SFT-2605全4shard完成(20.97B tok)!·🔄SFT-Agent-2609分词中(s2✅s3✅ s0/s1进行中, 2/4 done)·baize_mix_eval.sh已备·白名单4项巡检正常·D-CLEAN-4已裁定保留不动
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT-2605下满一致；D-CLEAN-1/2/3/4(已裁定保留不动)；LIT_IDEAS_2026-10-05.html；✅base分词(22.05B tok)；✅✅SFT-2605全4shard分词(20.97B tok,79G)；✅baize_mix_eval.sh；🚀Stable S0a臂运行中(step260/5000,健康)；🔄SFT-Agent-2609分词中(s2✅s3✅,s0/s1进行中)
-当前动作:     唤醒137(19:23) S0a训练监控+Agent-2609分词进度(s2✅s3✅)+下载巡检+内存滚动+git proxy同步：① ⭐ S0a健康推进step260/5000 loss4.88(warmup完LR=1.0e-3达峰,0NaN/0skip)~38s/iter GPU2-7 6卡50-76%util~39GB ETA=(5000-260)×38≈50.2h→~Oct7 21:00；② 🔄 SFT-Agent-2609分词: s2✅(1.23G,19:06)+s3✅(2.6G,19:16)+s0🟡(3.3G增长中,PID166419)+s1🟡(3.5G增长中,PID166424)→2/4完成；③ 下载l1_en_hq 3057/6006(+52)/zh 171(冻结)/gpic 3556tars(+29)/en 2048✓；④ ✅git fetch via proxy成功(与origin/main同步)；⑤ 📉内存滚动33.5KB→≤32KB(唤醒129-134归档)
+PHASE:        §0.6-B 配比实验 → 🚀 Stable S0a 臂运行中(step 330/5000, loss 4.36, ~37.6s/iter, LR达峰, ETA ~Oct7 21:00)·loss稳定下降·✅✅SFT-2605全4shard完成(20.97B tok)!·🔄SFT-Agent-2609分词中(s2✅s3✅ s0 7.8G/s1 7.7G进行中, 2/4 done)·baize_mix_eval.sh已备·白名单4项巡检正常·D-CLEAN-4已裁定保留不动
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT-2605下满一致；D-CLEAN-1/2/3/4(已裁定保留不动)；LIT_IDEAS_2026-10-05.html；✅base分词(22.05B tok)；✅✅SFT-2605全4shard分词(20.97B tok,79G)；✅baize_mix_eval.sh；🚀Stable S0a臂运行中(step330/5000,健康)；🔄SFT-Agent-2609分词中(s2✅s3✅,s0/s1进行中)
+当前动作:     唤醒138(20:02) S0a训练监控+Agent-2609分词进度+下载巡检+git proxy同步：① ⭐ S0a健康推进step330/5000 loss4.36(LR=1.0e-3达峰,0NaN/0skip)~37.6s/iter GPU2-7 6卡31-85%util~39GB ETA=(5000-330)×37.6≈48.7h→~Oct7 21:00；② 🔄 SFT-Agent-2609分词: s2✅(1.23G)+s3✅(2.6G)+s0🟡(7.8G.bin增长中,PID166419)+s1🟡(7.7G.bin增长中,PID166424)→2/4完成；③ 下载l1_en_hq 3106/6006(+49)/zh 171(冻结)/gpic 3457tars/en 2048✓；④ ✅git fetch via proxy成功
 下一步:       ⏳等S0a 5000步完(~Oct7 21:00)→ckpt→HF→lm_eval Table2(8集)；判Agent-2609 s0/s1分词完→Decay段全备料(SFT-2605✅20.97B+Agent✅)→起Decay臂；填DATA_MIX_RECIPE.md实测值；下载续推
 阻塞:         ⏳ S0a训练中(5000步,ETA~Oct7 21:00,SAVE_INTERVAL=5000无中间ckpt)；🔄 SFT-Agent-2609分词进行中(s0/s1,Decay段最后一项)；⚠️ zh下载冻结171/256；磁盘/nas_train 84%(34T free)；✅ D-CLEAN-4已裁定·保留不动
 ```
@@ -149,8 +149,8 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **§0.6-B 配比实验 🚀 进行中：Stable S0a 臂运行(step260/5000, loss4.88, warmup完LR达峰, ETA~Oct7 21:00)；§0.5/§0.6/§0.7 方案定稿✅；base分词22.05B✅；✅✅SFT-2605全4shard分词完成(20.97B tok,79G)；🔄SFT-Agent-2609分词中(s2✅s3✅,s0/s1进行中)；baize_mix_eval.sh✅；LIT_IDEAS_2026-10-05.html✅；SFT-2605下满一致✅；D-CLEAN-1/2/3/4✅** |
-| WAITING | 1（🚀Stable S0a臂运行中(step260/5000, PID 2528081, GPU2-7, ~38s/iter, ETA~Oct7 21:00)；✅SFT-2605全4shard完成(20.97B)；🔄SFT-Agent-2609分词中(s2✅s3✅,s0/s1进行中)；下载l1_en_hq 3057/6006+zh 171冻结+gpic 3556tars+en 2048✓；baize_mix_eval.sh✅已备） |
+| PHASE | **§0.6-B 配比实验 🚀 进行中：Stable S0a 臂运行(step330/5000, loss4.36, LR达峰, ETA~Oct7 21:00)；§0.5/§0.6/§0.7 方案定稿✅；base分词22.05B✅；✅✅SFT-2605全4shard分词完成(20.97B tok,79G)；🔄SFT-Agent-2609分词中(s2✅s3✅,s0 7.8G/s1 7.7G进行中)；baize_mix_eval.sh✅；LIT_IDEAS_2026-10-05.html✅；SFT-2605下满一致✅；D-CLEAN-1/2/3/4✅** |
+| WAITING | 1（🚀Stable S0a臂运行中(step330/5000, PID 2528081, GPU2-7, ~37.6s/iter, ETA~Oct7 21:00)；✅SFT-2605全4shard完成(20.97B)；🔄SFT-Agent-2609分词中(s2✅s3✅,s0/s1进行中)；下载l1_en_hq 3106/6006+zh 171冻结+gpic 3457tars+en 2048✓；baize_mix_eval.sh✅已备） |
 | ERROR_COUNT | 0 |
 | 节点 | `10.239.2.12`（主机 `whag0pgpuap12`；NFS：`/nas_inference` 只读源，`/nas_train` 产出） |
 | 更新 | 2026-10-05 |
@@ -203,6 +203,7 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 - 2026-10-05 —— 唤醒135~136（S0a step145→200/5000+✅✅SFT-2605全4shard完成20.97B tok!+🔄Agent-2609分词启动+git pull proxy同步）（详情已归档）
 - 2026-10-05 —— 唤醒137（19:23 S0a step260/5000 loss4.88 warmup完LR达峰+Agent-2609 s2✅s3✅ s0/s1进行中+下载l1_en_hq 3057+gpic 3556+内存滚动33.5KB→≤32KB+git proxy同步）：① ⭐ **S0a健康推进**：step260/5000, loss 4.88（稳定下降 9.55@20→7.16@60→5.45@200→4.88@260, warmup完LR=1.0e-3达峰, 0NaN/0skipped），~38s/iter, GPU2-7 6卡50-76%util ~39GB。**ETA=(5000-260)×38≈50.2h→~Oct7 21:00**。PID 2528081-2528090, TB events mtime 19:23(活跃)。② **🔄 SFT-Agent-2609分词进度**：s2✅(1.23G.bin+.idx+.json, 19:06) + s3✅(2.6G.bin+.idx+.json, 19:16) + s0🟡(3.3G.bin增长中, PID 166419) + s1🟡(3.5G.bin增长中, PID 166424)。→ **2/4 shard完成, s0/s1仍跑**。③ **下载巡检**：l1_en_hq **3057/6006**(+52, retry-loop PID 3076502活)、zh **171/256**(冻结)、gpic **3556 tars**(+29, PID 144981活)、en **2048✓**。④ ✅ **git fetch via proxy成功**(与origin/main同步,无behind/ahead)。BAIZE_DATA_TASK.md无新指令(mtime未变)。⑤ 📉 **内存滚动**：MEMORY_DATA.md 33.5KB→目标≤32KB, 唤醒129-134详情已归档至 daily-memories-data/2026-10-05.md。⑥ GPU0-1 on .29空闲(4MiB,0%util)。磁盘 /nas_train 84%(34T free) /nas_inference 65%。下一步=⏳等S0a完(~Oct7 21:00)→ckpt→HF→lm_eval Table2(8集)；判Agent-2609 s0/s1完→Decay段全备料(SFT-2605✅+Agent✅)→起Decay臂；填DATA_MIX_RECIPE.md实测值；下载续推。
 
+ - 2026-10-05 —— 唤醒138（20:02 S0a step330/5000 loss4.36+Agent-2609 s0 7.8G/s1 7.7G进行中+下载l1_en_hq 3106+git proxy同步+D-CLEAN-4定案确认已更新）：① ⭐ **S0a健康推进**：step330/5000, loss 4.36（稳定下降 5.98@140→4.88@260→4.36@330, LR=1.0e-3达峰, 0NaN/0skipped），~37.6s/iter, GPU2-7 6卡31-85%util ~39GB。**ETA=(5000-330)×37.6≈48.7h→~Oct7 21:00**。PID 2528081-2528090(restart@16:32, 被 P-9.10 benchmark端口冲突kill后重启, /tmp/restart_mix_stable_s0a.sh)。② **🔄 SFT-Agent-2609分词**：s2✅(1.23G)+s3✅(2.6G)+s0🟡(7.8G.bin增长中, PID166419, ~67min)+s1🟡(7.7G.bin增长中, PID166424, ~67min)→2/4完成, s0/s1无.idx(未完)。③ 下载l1_en_hq **3106/6006**(+49, retry-loop PID 3076502活)、zh **171/256**(冻结)、gpic **3457 tars**(PID 144981活)、en **2048✓**。④ ✅ **git fetch via proxy成功**(与origin/main同步)。⑤ **D-CLEAN-4定案**：BAIZE_DATA_TASK.md顶部新指令块确认「保留不动」→ MEMORY_DATA.md/DISK_CLEANUP_INVENTORY.md状态均已更新为「已裁定·保留不动」✅。环境隔离纪律+代理口径已读知。GPU0-1 on .29空闲(pretrain P-9.10已完成)。磁盘/nas_train 84%(34T free)。MEMORY_DATA.md=26.2KB(≤32KB✓)。下一步=⏳等S0a完(~Oct7 21:00)→ckpt→HF→lm_eval Table2(8集)；判Agent-2609 s0/s1完→Decay段全备料→起Decay臂；填DATA_MIX_RECIPE.md实测值；下载续推。
 
 
 
