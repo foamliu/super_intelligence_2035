@@ -707,3 +707,138 @@ RUN_ID 5
 RUN_ID 5
 RUN_ID 6
 ```
+
+---
+
+## RUN_ID 7 · 2026-10-05 23:04:12 · host=`VM-0-6-ubuntu` · exit=0
+
+**命令**
+```bash
+set -u
+cd ~/super_intelligence_2035 || exit 1
+R=doc/personal-watch/run
+echo "=== 0. 基本 ==="
+hostname; date '+%F %T %Z'; uptime
+echo
+echo "=== 1. 中继单实例核验（应恰好 1 行）==="
+pgrep -af 'watch_ops_relay|ops_relay' | cut -c1-160 || echo "(⚠️ 未匹配到中继)"
+echo "--- pidfile（🆕 新代码才有；无 = 仍在跑旧代码）---"
+if [ -f /tmp/watch_ops_relay.pid ]; then echo "pidfile = $(cat /tmp/watch_ops_relay.pid)"; else echo "⚠️ 无 /tmp/watch_ops_relay.pid"; fi
+echo "--- 日志尾部（新代码启动行含 pid=/pidfile=）---"
+tail -10 /tmp/watch_ops_relay.log 2>/dev/null | cut -c1-160 || echo "(无日志)"
+echo
+echo "=== 2. 三条通道进程（etime 看存活时长）==="
+ps -eo pid,etime,args | grep -E 'ops_relay\.sh|watch_.*_loop\.sh' | grep -v grep | cut -c1-150 || echo "(无)"
+echo
+echo "=== 3. 🔎 追查「瞬时第 3 实例 349841」来源 ==="
+echo "--- crontab（用户）---"; crontab -l 2>/dev/null | grep -n -i -E 'relay|watch|cline' || echo "(无相关)"
+echo "--- /etc/cron.d 与 /etc/crontab ---"; ls /etc/cron.d/ 2>/dev/null; grep -rn -i 'relay' /etc/cron.d/ /etc/crontab 2>/dev/null | head -5 || echo "(无)"
+echo "--- systemd 单元 ---"; ls /etc/systemd/system/ 2>/dev/null | grep -i -E 'relay|watch|cline' || echo "(无相关 unit)"
+echo "--- 当前中继的父进程链 ---"
+RP="$(pgrep -f 'watch_ops_relay' | head -1)"
+if [ -n "${RP:-}" ]; then p="$RP"; for i in 1 2 3; do L="$(ps -o pid=,ppid=,args= -p "$p" 2>/dev/null)"; [ -z "$L" ] && break; echo "$L" | cut -c1-150; p="$(ps -o ppid= -p "$p" 2>/dev/null | tr -d ' ')"; [ -z "$p" ] && break; [ "$p" = "1" ] && { echo "(已到 init/1)"; break; }; done; fi
+echo "--- ~/.bash_history 里出现 ops_relay 的行（找手工/脚本拉起）---"
+grep -n -E 'ops_relay' ~/.bash_history 2>/dev/null | tail -8 | cut -c1-140 || echo "(读不到 history)"
+echo
+echo "=== 4. 📦 补跑 RUN_ID 4：网盘工具链 + 语料 sha256 manifest（只读）==="
+cd $R/news/archive 2>/dev/null || { echo "(archive 目录不存在)"; exit 0; }
+echo "--- 网盘工具可用性 ---"
+for t in bypy BaiduPCS-Go bwp rclone; do printf '%-14s ' "$t"; if command -v "$t" >/dev/null 2>&1; then echo "OK $(command -v $t)"; else echo "NO 未安装"; fi; done
+python3 -c "import bypy" 2>/dev/null && echo "bypy(python) OK" || echo "bypy(python) NO"
+echo "--- 11 分片：sha256(前16) · 字节 · 文件名 ---"
+for f in chinanews-*.jsonl.gz; do [ -f "$f" ] && printf '%s  %10s  %s\n' "$(sha256sum "$f" | cut -c1-16)" "$(stat -c%s "$f")" "$f"; done
+echo "--- 仓库外备份（RUN_ID 5 做的）---"
+ls -la ~/archive_data_backup/ 2>/dev/null | head -14 || echo "(无备份目录)"
+echo
+echo "=== 5. 收尾 ==="
+echo "inbox 最高 RUN_ID 附近："; grep -oE 'RUN_ID[[:space:]]*[0-9]+' ~/super_intelligence_2035/$R/ops/inbox.md 2>/dev/null | sort -u | tail -3
+git log --oneline -2 | cut -c1-120
+```
+
+**输出**
+```
+=== 0. 基本 ===
+VM-0-6-ubuntu
+2026-10-05 23:04:12 CST
+ 23:04:12 up 13:54,  4 users,  load average: 0.02, 0.10, 0.08
+
+=== 1. 中继单实例核验（应恰好 1 行）===
+353526 watch_ops_relay.sh ops_relay.sh
+362107 watch_ops_relay.sh ops_relay.sh
+--- pidfile（🆕 新代码才有；无 = 仍在跑旧代码）---
+pidfile = 353526
+--- 日志尾部（新代码启动行含 pid=/pidfile=）---
+[relay] 2026-10-05 22:50:51 started. pid=353526 repo=/home/liuyang/super_intelligence_2035  poll=20s  fetch_every=3x  pidfile=/tmp/watch_ops_relay.pid
+
+=== 2. 三条通道进程（etime 看存活时长）===
+  98701    10:37:36 bash watch_news_loop.sh
+ 108954    10:22:36 bash watch_research_loop.sh
+ 353526       13:21 watch_ops_relay.sh ops_relay.sh
+ 362107       00:00 watch_ops_relay.sh ops_relay.sh
+
+=== 3. 🔎 追查「瞬时第 3 实例 349841」来源 ===
+--- crontab（用户）---
+(无相关)
+--- /etc/cron.d 与 /etc/crontab ---
+e2scrub_all
+sgagenttask
+sysstat
+yunjing
+--- systemd 单元 ---
+(无相关 unit)
+--- 当前中继的父进程链 ---
+ 353526       1 watch_ops_relay.sh ops_relay.sh
+(已到 init/1)
+--- ~/.bash_history 里出现 ops_relay 的行（找手工/脚本拉起）---
+73:pgrep -af 'bash ops_relay.sh' || echo "✅ 中继已全停"
+75:rm -f /tmp/watch_ops_relay.pid
+77:setsid bash -c 'exec -a watch_ops_relay.sh bash ops_relay.sh' > /tmp/watch_ops_relay.log 2>&1 < /dev/null &
+80:pgrep -af 'watch_ops_relay.sh'
+81:cat /tmp/watch_ops_relay.pid
+82:tail -3 /tmp/watch_ops_relay.log
+84:sleep 15; pgrep -af 'bash ops_relay.sh'
+85:pgrep -af 'ops_relay|watch_ops_relay'
+
+=== 4. 📦 补跑 RUN_ID 4：网盘工具链 + 语料 sha256 manifest（只读）===
+--- 网盘工具可用性 ---
+bypy           NO 未安装
+BaiduPCS-Go    NO 未安装
+bwp            NO 未安装
+rclone         NO 未安装
+bypy(python) NO
+--- 11 分片：sha256(前16) · 字节 · 文件名 ---
+5e4316c8e86bcf39    15556999  chinanews-2016.jsonl.gz
+7c2192c20b1325d3    10616975  chinanews-2017.jsonl.gz
+884d152f939f79c2    11145051  chinanews-2018.jsonl.gz
+c377c24cf16ac6d1    12265872  chinanews-2019.jsonl.gz
+540a0461972e7471    12228659  chinanews-2020.jsonl.gz
+1f66859b3689b2eb     9707401  chinanews-2021.jsonl.gz
+8f1adb132794ff8c    10319596  chinanews-2022.jsonl.gz
+698b5f91c1cfd3bd     7660242  chinanews-2023.jsonl.gz
+5951aa3bb8e3569c     7449410  chinanews-2024.jsonl.gz
+2063bad195cfe184     7130667  chinanews-2025.jsonl.gz
+93dfc3c2cc26f9a6     5779016  chinanews-2026.jsonl.gz
+--- 仓库外备份（RUN_ID 5 做的）---
+total 107312
+drwxrwxr-x  2 liuyang liuyang     4096 Oct  5 15:31 .
+drwxr-x--- 10 liuyang liuyang     4096 Oct  5 22:39 ..
+-rw-rw-r--  1 liuyang liuyang 15556999 Oct  5 15:31 chinanews-2016.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang 10616975 Oct  5 15:31 chinanews-2017.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang 11145051 Oct  5 15:31 chinanews-2018.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang 12265872 Oct  5 15:31 chinanews-2019.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang 12228659 Oct  5 15:31 chinanews-2020.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang  9707401 Oct  5 15:31 chinanews-2021.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang 10319596 Oct  5 15:31 chinanews-2022.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang  7660242 Oct  5 15:31 chinanews-2023.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang  7449410 Oct  5 15:31 chinanews-2024.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang  7130667 Oct  5 15:31 chinanews-2025.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang  5779016 Oct  5 15:31 chinanews-2026.jsonl.gz
+
+=== 5. 收尾 ===
+inbox 最高 RUN_ID 附近：
+RUN_ID 5
+RUN_ID 6
+RUN_ID 7
+c15a31b personal-watch/ops: RUN_ID 7 — 单实例核验(看 pidfile/新代码生效) + 追查瞬时第3实例来源(cro
+557f597 vision: two HTML reports (lp-eval + AIMv2-impl) + MEMORY/daily update
+```
