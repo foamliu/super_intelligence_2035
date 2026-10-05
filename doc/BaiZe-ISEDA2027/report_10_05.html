@@ -50,7 +50,7 @@
 
 <header class="hero">
   <h1>BaiZe 工作汇报 · 2026-10-05（第四份 · 深夜 ~19:00 刷新）</h1>
-  <div class="sub">🌙 <b>深夜新增</b>：🚀 <b>vision R12「全量数据 AIMv2」训练中</b>（GPIC+CC12M+Amshaker ≈ <b>58.8M 对</b>，120k 步，16:43 起跑，~5400 img/s，<b>ETA ~20:00 + eval ~1h</b>）· ✅ <b>论文 §6 已改写完成</b>（新增 §6.3「Breaking the Contrastive Ceiling」+ 4 条 bib，pdflatex 通过）· ✅ <b>P-9.10 ②（eager 下界）COMPLETE</b>（H1✅ decode 1.6× / H4✅ prefill 128K 3.6×）· ⭐ <b>P-9.10 ① 翻案：sglang ✅ 可用</b>（藏在 <code>vllm</code> conda env，第 109 次更正）· harness <b>codex 13/30 scored（8 resolved）</b> · data <b>S0a step145/5000 健康</b> + SFT s0 ✅ 9.56B tok · 🌙 <b>用户深夜 5 条已全部落地</b><br>
+  <div class="sub">🌙 <b>深夜新增</b>：🚀 <b>vision R12「全量数据 AIMv2」训练中</b>（GPIC+CC12M+Amshaker ≈ <b>58.8M 对</b>，120k 步，16:43 起跑；⚠️ 18:27 吞吐被 NFS 争用拖到 ~2300 img/s，<b>ETA 修订 ~22:00–23:30 + eval ~1h</b>）· ✅ <b>论文 §6 已改写完成</b>（新增 §6.3「Breaking the Contrastive Ceiling」+ 4 条 bib，pdflatex 通过）· ✅ <b>P-9.10 ②（eager 下界）COMPLETE</b>（H1✅ decode 1.6× / H4✅ prefill 128K 3.6×）· ⭐ <b>P-9.10 ① 翻案：sglang ✅ 可用</b>（藏在 <code>vllm</code> conda env，第 109 次更正）· harness <b>codex 13/30 scored（8 resolved）</b> · data <b>S0a step145/5000 健康</b> + SFT s0 ✅ 9.56B tok · 🌙 <b>用户深夜 5 条已全部落地</b><br>
      🌆 <b>傍晚</b>：⭐ <b>P-9.9 收官 → 8 卡交接完成</b> —— <b>P-9.9 tensorwise FP8 ✅ COMPLETE</b>（15:15:40，iter 1000/1000）→ 裁定 <b>tensorwise 劣于 delayed</b>（t−bf16 = <b>+5.13% persistent</b>）⇒ <b>P-8 沿用 delayed FP8</b> · <b>P-9.10 ① sglang 装不上</b>（cuda-tile 仅 nvidia 源 SSL EOF）⇒ 栈落 <code>mcore + CUDA-graph</code> ·
      🚀 <b>分卡并行起跑</b>：<b>GPU2–7 = data Stable S0a 配比臂</b>（15:25 已启动，5000 步）· <b>GPU0–1 = pretrain P-9.10 ②</b>（待启）·
      harness <b>cline-patched ×30 ✅ COMPLETE：18/30 resolved（60.0%）· 0 quota-blocked</b> → <b>codex ×30 已启动</b>（inst 1/30）<br>
@@ -68,7 +68,7 @@
 <div class="verdict">
   <strong>本份（深夜）增量：vision 从「空闲」切到「全量数据训练」并把论文 §6 改完；pretrain 的 sglang 从「装不上」翻案为「✅ 可用」；用户深夜 5 条指令全部落地。</strong>
   <ol style="margin:10px 0 0">
-    <li><b>🚀 vision R12 —— 用全部现有数据跑 AIMv2</b>：数据 = GPIC(<code>all</code>, 41.8M) + CC12M(11.0M) + Amshaker(5.95M) ≈ <b>58.8M 唯一对</b>；<b>120k 步（≈1.05 epoch）</b>，16:43 起跑，step≈6850/120k，~5400 img/s、loss 3.17↓、无坍缩 → <b>ETA ~20:00 训完 + eval ~1h ≈ 21:00 ALL DONE</b>。GPU 归因实测（dmon SM≈73%）= <b>混合型</b>（compute 为主 + 偶发 IO starvation）。</li>
+    <li><b>🚀 vision R12 —— 用全部现有数据跑 AIMv2</b>：数据 = GPIC(<code>all</code>, 41.8M) + CC12M(11.0M) + Amshaker(5.95M) ≈ <b>58.8M 唯一对</b>；<b>120k 步（≈1.05 epoch）</b>，16:43 起跑，step≈6850/120k，~5400 img/s、loss 3.17↓、无坍缩 → <b>ETA 修订 ~22:00–23:30 训完 + eval ~1h</b>（⚠️ 18:27 吞吐从 ~5300 被 NFS 争用拖到 ~2300 img/s，归因见 <a href="#s13">§13</a>）。GPU 归因实测（dmon SM≈73%）= <b>混合型</b>（compute 为主 + 偶发 IO starvation）。</li>
     <li><b>✅ 论文 §6 改写完成</b>：新增 <b>§6.3 Breaking the Contrastive Ceiling with Dense Supervision</b>（含四臂因果分解）+ <code>reference.bib</code> 增 4 条（AIMv2/MAE/SigLIP2/OpenVision2）；<code>pdflatex+bibtex</code> 全通过、8 页、无 undefined citation。🚫 未动 §6.1/§6.4 与既有表。</li>
     <li><b>✅ P-9.10 ②（eager 下界）COMPLETE</b>：dense vs hybrid，ctx{4K,16K,64K,128K}×bs{1,8}×3 reps → <b>H1✅ decode 1.6× 恒定 · H2❌（不随 ctx 增长）· H3❌（per-token cache 5.1× 更低但框架有 O(n) 开销）· H4✅ prefill 128K 3.6×</b> ⇒ 论文<b>保守表述</b>（最强证据 = prefill 128K）。⚠️ CUDA graph 与 mcore <code>StaticInferenceContext</code> 不兼容 → 只有下界，<b>上界待 sglang</b>。</li>
     <li><b>⭐ P-9.10 ① 翻案：sglang ✅ 可用</b>（第 109 次更正）：此前「装不上（cuda-tile SSL EOF）」<b>作废</b> —— 实为<b>没查现成 conda env</b>；共享 NFS 上的 <code>vllm</code> env = <b>sglang 0.5.9 + vllm 0.14.1 + flashinfer 0.6.3 + lm_eval 0.4.13</b>，<b>原生支持 <code>nemotron_h</code></b>。⇒ 栈优先级恢复 <b>SGLang &gt; mcore</b>。</li>
@@ -88,7 +88,7 @@
 
 
 <div class="kpi-row">
-  <div class="kpi"><div class="v">58.8M</div><div class="l">vision <b>R12 全量数据 AIMv2</b>（120k 步 ≈1.05 epoch，训练中）</div></div>
+  <div class="kpi"><div class="v">58.8M</div><div class="l">vision <b>R12 全量数据 AIMv2</b>（120k 步 ≈1.05 epoch；⚠️ NFS 争用 → ETA ~22:00–23:30）</div></div>
   <div class="kpi"><div class="v">§6.3</div><div class="l">论文<b>新增「打破对比上限」节</b>（+4 bib，pdflatex 通过）</div></div>
   <div class="kpi"><div class="v">H1✅ H4✅</div><div class="l">P-9.10② eager 下界（prefill 128K <b>3.6×</b> / decode <b>1.6×</b>）</div></div>
   <div class="kpi"><div class="v">sglang ✅</div><div class="l">P-9.10① <b>翻案</b>：藏在 <code>vllm</code> env（第 109 次更正）</div></div>
@@ -110,6 +110,7 @@
     <li><a href="#s10">诚实条款：我这轮犯的错与更正</a></li>
     <li><a href="#s11">🔌 跨线网络口径定案（下午）：外网命令必须显式带 proxy</a></li>
     <li><a href="#s12">🌙 深夜增量：用户 5 条指令 → 3 条新指令已下发</a></li>
+    <li><a href="#s13">🔍 归因：vision「提速」把一直存在的 IO 争用<u>暴露</u>了</a></li>
   </ol>
 
 <h2 class="sec" id="s1"><span class="no">1</span>⭐ 头条：臂⑥ AIMv2 翻盘 → 25.1% 渐近被局部推翻</h2>
@@ -325,7 +326,8 @@
   <tr><th>项</th><th>值</th></tr>
   <tr><td>数据</td><td>GPIC <code>all</code>(41.8M) + CC12M(11.0M) + Amshaker(5.95M) = <b>≈58.8M 唯一对</b>（<code>--data-source mixed --caption-type all</code>）</td></tr>
   <tr><td>配方 / 规模</td><td>AIMv2-style（InfoNCE + 1.0×patch-MSE）· w512 · 冻结 CLIP-768 · <b>120k 步（≈1.05 epoch, 61.4M 样本）</b> · save-every 10k</td></tr>
-  <tr><td>进度（16:59）</td><td>step <b>6850/120k（5.7%）</b> · loss 3.17↓ · C1≈0.33 / C2_gap +0.125 / C4=OK（无坍缩）· <b>~5400 img/s</b> · ETA <b>~20:00 + eval ~1h</b></td></tr>
+  <tr><td>进度（16:59）</td><td>step <b>6850/120k（5.7%）</b> · loss 3.17↓ · C1≈0.33 / C2_gap +0.125 / C4=OK（无坍缩）· <b>~5400 img/s</b></td></tr>
+  <tr><td>进度（18:27）</td><td>step <b>40100/120k（33.4%）</b> 健康；⚠️ <b>吞吐 5300 → ~2300 img/s</b>（NFS 争用，见 <a href="#s13">§13</a>）· ckpt 10k/20k/30k/40k 已存 · <b>ETA ~22:00–23:30 训完 + ~1h eval</b></td></tr>
   <tr><td>GPU 归因实测</td><td><code>dmon</code> SM util <b>≈73%</b>（47–91%）、显存 20% ⇒ <b>混合型</b>（compute 为主 + 数据偶发 starvation）；vs R11-G <b>2.2× 提速</b>主因 = 更多 shard 多样性 + GPIC 小 tar 轮换快</td></tr>
   <tr><td>✅ 论文 §6 改写</td><td>新增 <b>§6.3 Breaking the Contrastive Ceiling with Dense Supervision</b>（<code>\label{sec:vis-dense}</code>，含四臂因果分解表）+ 4 bib；<code>pdflatex+bibtex</code> 通过、8 页、无 undefined citation；🚫 未动 §6.1/§6.4 与 <code>tab:visarch/visscale/visres/visobj</code></td></tr>
   <tr><td>🌙 后续（已批）</td><td>R12 final → <b>续训到 ≈3 epoch（≈344k 步 / N≈176M）</b>，epoch 1/2/3 各评测（建议每 0.5 epoch 一点，≥6 点）→ <b>重拟合 scaling，刷新 R9 的 InfoNCE 25.1% 上限</b>；并 <b>自提 ≥3 个下一步方向</b>（交 <code>run/VISION_NEXT_DIRECTIONS.md</code>）</td></tr>
@@ -639,11 +641,41 @@ https_proxy=$P http_proxy=$P curl -sS -m 10 -D - -o /dev/null https://mirrors.al
   📌 <b>「Stable S0a（5000 步）」一句话释义</b>：<b>Stable</b> = WSD 的<b>稳定段</b>（配比搜索第一段，另一段是 Decay 退火段）；<b>S0a</b> = Stable 段<b>第 0 组的 a 臂</b>，配比 = <b>base:code:math = 88:8:4</b>；<b>5000 步</b> = <b>短地平线代理训练</b>（6 卡 TP1/DP6、seq=4094、GBS=1020、mb=1、bf16、seed1234）—— 用小规模短跑比 loss/代理指标选最优配比（依据 Xmodel-2「小模型配比可迁移大模型」）。
 </div>
 
+<h2 class="sec" id="s13"><span class="no">13</span>🔍 归因：vision「提速」把<u>一直存在</u>的 IO 争用「暴露」了（不是"今天才有争用"）</h2>
+
+<div class="ok-box">
+  <b>问题</b>：vision 与 data 长期共用同一块共享 NFS + 同一台 <code>.12</code>，IO 争用<b>不是今天才有</b>；那<b>为什么今天影响这么大？是 R12 的配方优化"造成"的吗？</b><br>
+  <b>结论</b>：<b>不是"造成"，是"暴露 + 放大"</b> —— 优化让 vision 从「自己饿自己」变成「和大家抢同一口锅」。
+</div>
+
+<h3>13.1 争用是老问题（有据）</h3>
+<p><code>EXPERIMENTS_VISION_ROUND11.md §18.2b</code>（vision agent 今日 16:59 自记）：<b>R11-G（旧配方，只读 CC12M+Amshaker，108k 步）step50 ~4153 → step108000 ~2538 img/s（<u>2× 减速，NFS cold read + GPIC 下载争用</u>）</b>。⇒ 10-04 夜里就存在。</p>
+
+<h3>13.2 三个"放大器"（今天才"咬人"的原因）</h3>
+<table>
+  <tr><th>#</th><th>机制</th><th>证据</th></tr>
+  <tr><td>①</td><td><b>提速把 vision 推到共享 IO 天花板</b>（核心）—— R11-G 稳态 <b>2485</b>（瓶颈在 vision 自身：3350 shard 太少 → data starvation）；R12 靠「更多 shard（6659）+ GPIC 小 tar 轮换快」把稳态抬到 <b>~5400（2.2×）</b> ⇒ <b>吃数据快 2.2 倍 = 对共享 IO 的敏感度同步放大 ≈2.2 倍</b>。以前 vision 慢、外部 IO 有余量，争用被"内耗"掩盖。</td><td>§18.2b L1249–1252</td></tr>
+  <tr><td>②</td><td><b>R12 把 GPIC 加进混合（新耦合）</b>：R11-G 只读<b>静态</b> CC12M+Amshaker；<b>R12 读的 GPIC 正是 data 线此刻在写的数据集</b>（仍 <code>+155 tar/唤醒</code>）→ 从"读静态数据"变成"<b>读写同一批正在被下载的文件</b>"。</td><td><code>r12_run_fulldata_aimv2.sh</code> · data 唤醒 135</td></tr>
+  <tr><td>③</td><td><b>data 线今天的 IO 更重</b>：GPIC ~21 MB/s + <code>l1_en_hq</code> + <b>SFT 分词</b>（今日新起、s1 仍在跑）全压在<b>同一台 <code>.12</code></b> 的 NFS 客户端上 —— 而 vision R12 也在 <code>.12</code>。</td><td>data 唤醒 135</td></tr>
+</table>
+
+<h3>13.3 诚实条款：确切触发点<u>未完全隔离</u></h3>
+<div class="note">
+  <b>反例</b>：<b>R11-E（10:00，GPIC short）稳态 5918</b>、<b>R11-F Arm A/B/C 5984–6296 img/s</b> —— 这些<b>也是在 GPIC 下载进行中</b>跑出来的，甚至比 R11-G 还快 ⇒ 「读 GPIC + 下载并行」<b>本身不必然致命</b>。<br>
+  而 R12 是 16:43 先跑 5400（正常）→ 18:27 掉到 <b>2300</b> ⇒ <b>更可能是 17:00–18:27 之间 <code>.12</code> 上又多了一份重 IO</b>（SFT 分词 s1 / l1 下载提速 / 下载速率上冲），<b>而非配方本身</b>。<b>确切触发点待下次唤醒贴 <code>iostat</code>/<code>dmon</code> 钉死。</b>
+</div>
+
+<h3>13.4 一句话 + 决策</h3>
+<div class="ok-box">
+  <b>优化没有"制造"争用，它结束了 vision 对争用的"免疫力"</b> —— 瓶颈从「vision 自己的数据管线」搬到了「vision ⇄ data 的共享磁盘/网络」。
+</div>
+<p>🟢 <b>用户裁定（2026-10-05 深夜）：<u>不限速</u> —— 趁假期尽快把数据下完</b>。⇒ vision 侧接受吞吐波动：R12 现 ~2300 img/s、<b>ETA ~22:00–23:30 训完 + ~1h eval</b>；<b>3-epoch 续跑</b>（+224.5k 步 = +114.9M 样本）按吞吐估：<b>@2300 → ~13.9h；@5000 → ~6.4h</b> ⇒ <b>预计 10-06 上午 9 点 ~ 下午 3 点半之间收（最可能 ~13:00）</b>。</p>
+
 <p style="text-align:center;margin:30px 0 0;color:var(--muted);font-size:13px">— 报告完 —</p>
 
 <footer>
   <p>本报告由<b>运维</b>（外部指挥 <b>6 条 agent 线</b>：pretrain / vision / data / harness + 观察哨 news / research）生成 · <b>第四份刷新于 2026-10-05 ~19:00</b> · 数据来源：各线 <code>run/MEMORY_*.md</code> · <code>run/EXPERIMENTS_*.md</code> · <code>run/GPU29_ALLOC.md</code> · <code>run/ops/outbox.md</code> · <code>git log</code>。</p>
-  <p>⚠️ 所有数字均可在仓库中溯源；凡未能取证的一律标注「待实测 / 假设」。<b>本日最值得记住的一句（深夜版）：AIMv2 翻盘改写了「25.1% 天花板」，而 R12（全量 58.8M）+ 3-epoch 续跑要把它推到哪 —— 是今天留下的最大悬念。</b></p>
+  <p>⚠️ 所有数字均可在仓库中溯源；凡未能取证的一律标注「待实测 / 假设」。<b>本日两条最值得记住的：① AIMv2 翻盘改写了「25.1% 天花板」，R12（全量 58.8M）+ 3-epoch 续跑要把它推到哪 —— 今天留下的最大悬念；② vision 提速 2.2× 后第一次撞上"共享 IO 天花板"（<a href="#s13">§13</a>）—— 结论是<u>不限速</u>、假期优先把数据下完。</b></p>
   <p>⚠️ 所有数字均可在仓库中溯源；凡未能取证的一律标注「待实测 / 假设」。<b>本日最值得记住的一句（傍晚版）：P-9.9 收官后 8 卡一分二（GPU0–1 评测 / GPU2–7 配比）—— 卡是稀缺资源，交接靠账本 <code>GPU29_ALLOC.md</code>，谁都不许 kill 对方进程。</b></p>
 </footer>
 
