@@ -35,6 +35,12 @@
 - 若**确实关不掉**（硬编码遥测 / 无法拦截）⇒ **如实报告，并建议把 claude-code 从横评移除**（「5 harness」→ **4 harness**）。**这一条要运维/用户拍板，不许自行决定。**
 - 其余 harness（cline / codex / opencode / deepseek）**不受影响，照常推进**（codex×30 收尾 + 扩 300 继续）。
 
+**🔎 运维已先查到的起点（⚠️ 均为二手摘要，键名仍须你按官方文档 + 二进制源码复核）**
+- **官方文档**：<https://code.claude.com/docs/en/env-vars> —— 设置途径 = **shell env** 或 **`settings.json` 的 `env` 块**（`env` 块的值**每次运行都生效**，与启动方式无关；`~/.claude/settings.json` = 你本人全局 · `.claude/settings.json` = 项目级）。
+- ⚠️ **关键认知**：Claude Code 有**两套互相独立的遥测** —— **`DISABLE_TELEMETRY` 只管 Statsig 一侧**；**`CLAUDE_CODE_ENABLE_TELEMETRY` 管 OTel 一侧**；**两者正交，设了前者 ≠ 关掉后者**（来源：`viablesys/library → claude-code-telemetry.md` 摘要，**二手**）。
+- **Anthropic issue #47558**：Claude Code 会连 **Statsig** 上报 latency / reliability / usage（官方称**不含代码与文件路径**）；opt-out = **`DISABLE_TELEMETRY`**。
+- ⇒ 必须**同时**处理四类：**① Statsig**（`DISABLE_TELEMETRY`）· **② 错误上报 / Sentry**（键名待核，疑为 `DISABLE_ERROR_REPORTING`）· **③ OTel**（`CLAUDE_CODE_ENABLE_TELEMETRY` + `OTEL_*` exporters）· **④ 自动更新 / 其它非必要流量**（键名待核）。**每一类都要在官方文档里找到对应行**，找不到就在报告里写「未找到官方开关 → 用网络层拦截兜底」。
+
 > ✅ 本块生效即视为已批准（**合规优先于进度**）。**第 1–4 步做完并把审计文档交回**后，再谈是否恢复 claude-code 横评。
 
 
