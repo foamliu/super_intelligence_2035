@@ -1,0 +1,13 @@
+# 📦 体积红线（2026-10-05）：本目录语料分片普遍 6–12 MB（≥5MB）→ **一律不入 git**
+#    改走百度云盘；清单登记在 INDEX_FILES.md（网盘路径 / 字节数 / sha256 / 存放位置）
+#    规则出处：WATCH_NEWS_TASK.md §4-11 · news/archive/README.md §5
+#
+# ⚠️ 仅拦新文件；已跟踪的 chinanews-2016~2025.jsonl.gz 需 git rm --cached 才移出索引
+*.jsonl.gz
+*.gz
+*.zip
+*.tar.gz
+
+# 抓取中间产物
+fetch_raw/
+*.part

@@ -1,0 +1,56 @@
+# ============================================================================
+# 体积红线（2026-10-05 · 用户明令）：
+#   任何单个文件 ≥ 5 MB 一律不得用 GitHub 传输 → 走百度云盘（bypy / BaiduPCS-Go）
+#   详见 WATCH_NEWS_TASK.md §4-11 与 WATCH_RESEARCH_TASK.md §4-9
+#
+# ⚠️ 本文件只能拦住「尚未入库」的新文件；
+#    已被 git 跟踪的大文件需 `git rm --cached` 才移出索引（见 ops 指令）。
+# ⚠️ 提交前自查：git check-ignore -v <file>   应命中本文件。
+# ============================================================================
+
+# —— 数据分片 / 归档（news/archive 分片普遍 6–12 MB）——
+*.jsonl.gz
+*.ndjson.gz
+*.gz
+*.bz2
+*.xz
+*.zst
+
+# —— 压缩包 ——
+*.zip
+*.7z
+*.rar
+*.tar
+*.tgz
+*.tar.gz
+
+# —— 文档 / 报告（含用户投递的 docx）——
+*.pdf
+*.docx
+*.pptx
+*.xlsx
+
+# —— 音视频（research/video 线）——
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.avi
+*.wav
+*.mp3
+*.flac
+*.m4a
+
+# —— 模型权重 / 张量（不得进仓库）——
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.onnx
+*.bin
+*.h5
+*.gguf
+
+# —— 大体积原始抓取中间件（保留小 json，丢弃超大 json）——
+research/raw/*.large.json
+news/archive/fetch_raw/

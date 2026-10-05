@@ -1,0 +1,22 @@
+# 📦 体积红线（2026-10-05）：单个文件 ≥5MB 一律不入 git → 走百度云盘
+#    规则出处：WATCH_RESEARCH_TASK.md §4-9
+#    本线现状：raw/*.json 最大 2.55 MB（<5MB，**保留在 git**）
+#
+# —— PDF 线（R5）：单个论文 PDF 极易超 5MB → **一律不进 git**，只存链接 + 网盘路径 ——
+pdf/
+*.pdf
+
+# —— 音视频（视频线）——
+*.mp4
+*.mov
+*.mkv
+*.wav
+*.mp3
+*.flac
+
+# —— 压缩包 / 模型 ——
+*.zip
+*.tar.gz
+*.safetensors
+*.gguf
+*.bin
