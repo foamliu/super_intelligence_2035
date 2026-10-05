@@ -231,3 +231,160 @@ f8bfbb5 personal-watch/ops_relay: 修根因 — git_publish 推送前先 fetch+p
  M doc/personal-watch/run/news/archive/chinanews-2017.jsonl.gz
 ?? doc/personal-watch/run/news/archive/chinanews-2016.jsonl.gz
 ```
+
+---
+
+## RUN_ID 3 · 2026-10-05 15:28:08 · host=`VM-0-6-ubuntu` · exit=0
+
+**命令**
+```bash
+echo "=== 0. 基本信息 ==="
+hostname; date '+%F %T %Z'
+cd ~/super_intelligence_2035 2>/dev/null || exit 1
+echo
+echo "=== 1. ⭐ 语料文件体积（重点）==="
+ls -lh doc/personal-watch/run/news/archive/*.jsonl* 2>/dev/null | cut -c1-140 || echo "(无 jsonl 语料)"
+echo '--- 精确字节数（便于判断能否进 git）---'
+du -b doc/personal-watch/run/news/archive/*.jsonl* 2>/dev/null | sort -rn | head -10
+echo
+echo "=== 2. 整个 news/archive 目录占用 ==="
+du -sh doc/personal-watch/run/news/archive 2>/dev/null
+du -sh doc/personal-watch/run/news 2>/dev/null
+echo
+echo "=== 3. 是否已被 git 跟踪（关键！）==="
+git ls-files -s doc/personal-watch/run/news/archive/ | cut -c1-140
+echo
+echo "=== 4. ⭐ 历史污染程度（该文件在 git 历史里累计占多少）==="
+for f in doc/personal-watch/run/news/archive/chinanews-2016.jsonl.gz doc/personal-watch/run/news/archive/chinanews-2017.jsonl.gz doc/personal-watch/run/news/archive/chinanews-2018.jsonl.gz; do
+  echo "--- $f ---"
+  git log --oneline -- "$f" 2>/dev/null | head -5 | cut -c1-120
+done
+echo '--- 仓库 .git 实际体积 ---'
+du -sh .git 2>/dev/null
+echo
+echo "=== 5. 是否已 push 到远端（污染是否传出去了）==="
+git log --oneline -5 -- doc/personal-watch/run/news/archive/ | cut -c1-140
+echo '--- 远端是否已含该文件 ---'
+git cat-file -e origin/main:doc/personal-watch/run/news/archive/chinanews-2017.jsonl.gz 2>/dev/null && echo "⚠️ 远端已含 2017 语料（已污染）" || echo "✅ 远端不含 2017 语料"
+echo
+echo "=== 6. 是否有 .gitignore / .gitattributes 规则 ==="
+for f in .gitignore .gitattributes doc/personal-watch/run/news/archive/.gitignore doc/personal-watch/run/news/.gitignore; do
+  echo "--- $f ---"; cat "$f" 2>/dev/null | cut -c1-140 || echo "(不存在)"
+done
+echo
+echo "=== 7. 每轮抓取是否会持续生成新分片（判断增长趋势）==="
+ls -la doc/personal-watch/run/news/archive/ 2>/dev/null | grep -E 'jsonl|progress|PROGRESS' | cut -c1-140
+```
+
+**输出**
+```
+=== 0. 基本信息 ===
+VM-0-6-ubuntu
+2026-10-05 15:28:08 CST
+
+=== 1. ⭐ 语料文件体积（重点）===
+-rw-rw-r-- 1 liuyang liuyang  15M Oct  5 15:28 doc/personal-watch/run/news/archive/chinanews-2016.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang  11M Oct  5 14:53 doc/personal-watch/run/news/archive/chinanews-2017.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang  11M Oct  5 13:58 doc/personal-watch/run/news/archive/chinanews-2018.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang  12M Oct  5 13:46 doc/personal-watch/run/news/archive/chinanews-2019.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang  12M Oct  5 13:43 doc/personal-watch/run/news/archive/chinanews-2020.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang 9.3M Oct  5 13:22 doc/personal-watch/run/news/archive/chinanews-2021.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang 9.9M Oct  5 12:46 doc/personal-watch/run/news/archive/chinanews-2022.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang 7.4M Oct  5 12:46 doc/personal-watch/run/news/archive/chinanews-2023.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang 7.2M Oct  5 12:46 doc/personal-watch/run/news/archive/chinanews-2024.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang 6.9M Oct  5 12:46 doc/personal-watch/run/news/archive/chinanews-2025.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang 5.6M Oct  5 12:46 doc/personal-watch/run/news/archive/chinanews-2026.jsonl.gz
+--- 精确字节数（便于判断能否进 git）---
+15556999	doc/personal-watch/run/news/archive/chinanews-2016.jsonl.gz
+12265872	doc/personal-watch/run/news/archive/chinanews-2019.jsonl.gz
+12228659	doc/personal-watch/run/news/archive/chinanews-2020.jsonl.gz
+11145051	doc/personal-watch/run/news/archive/chinanews-2018.jsonl.gz
+10616975	doc/personal-watch/run/news/archive/chinanews-2017.jsonl.gz
+10319596	doc/personal-watch/run/news/archive/chinanews-2022.jsonl.gz
+9707401	doc/personal-watch/run/news/archive/chinanews-2021.jsonl.gz
+7660242	doc/personal-watch/run/news/archive/chinanews-2023.jsonl.gz
+7449410	doc/personal-watch/run/news/archive/chinanews-2024.jsonl.gz
+7130667	doc/personal-watch/run/news/archive/chinanews-2025.jsonl.gz
+
+=== 2. 整个 news/archive 目录占用 ===
+105M	doc/personal-watch/run/news/archive
+124M	doc/personal-watch/run/news
+
+=== 3. 是否已被 git 跟踪（关键！）===
+100644 c7861e05262d29e1af1d64fc1d54c2bb8fa02c0f 0	doc/personal-watch/run/news/archive/.gitignore
+100644 2374326527ac2c16f965360c31284734f70ab244 0	doc/personal-watch/run/news/archive/.progress.json
+100644 e5b8dee487a69001e700993f16f12f2188724143 0	doc/personal-watch/run/news/archive/INDEX_FILES.md
+100644 ae9123c4e5808704cec18e5de7431051716595fc 0	doc/personal-watch/run/news/archive/PROGRESS.md
+100644 0f849e7d2db14cb66783b6490458eb73daaed759 0	doc/personal-watch/run/news/archive/README.md
+100644 db49562036054b3f64cfe074c2f8de072f9721fd 0	doc/personal-watch/run/news/archive/chinanews-2016.jsonl.gz
+100644 995e32ce026b602d51d2e43f086fce9fbe593ecd 0	doc/personal-watch/run/news/archive/chinanews-2017.jsonl.gz
+100644 811974a26f677c52108e08747c219c69e83b8b4d 0	doc/personal-watch/run/news/archive/chinanews-2018.jsonl.gz
+100644 9cb1fb1e964294f20773f356a124fac9b2244317 0	doc/personal-watch/run/news/archive/chinanews-2019.jsonl.gz
+100644 cfd2ddf8d8b78334d373f7ddfec3f0976f15a286 0	doc/personal-watch/run/news/archive/chinanews-2020.jsonl.gz
+100644 aa25e37aba7ca4f938f44b52c2715e425786ca24 0	doc/personal-watch/run/news/archive/chinanews-2021.jsonl.gz
+100644 bdafbb69a08e724bd78c5825f2b457910310302e 0	doc/personal-watch/run/news/archive/chinanews-2022.jsonl.gz
+100644 ab5d41a800876415f38eef7f85c2ca29548c5cd3 0	doc/personal-watch/run/news/archive/chinanews-2023.jsonl.gz
+100644 a33a1a17b598241662357535c824a81df52e0161 0	doc/personal-watch/run/news/archive/chinanews-2024.jsonl.gz
+100644 a55d024ff0dfdaed8ac00eaef50add648016d778 0	doc/personal-watch/run/news/archive/chinanews-2025.jsonl.gz
+100644 42c88594c9075d92497ff5a10e05b029c4f026ea 0	doc/personal-watch/run/news/archive/chinanews-2026.jsonl.gz
+100644 b32c2c4d8bc40db58dceebf64000c4cab899ca6d 0	doc/personal-watch/run/news/archive/fetch_archive.py
+
+=== 4. ⭐ 历史污染程度（该文件在 git 历史里累计占多少）===
+--- doc/personal-watch/run/news/archive/chinanews-2016.jsonl.gz ---
+b139a9e news 2026-10-05: N1 r6 语料→2,267,862/11片(2016起) + 第十五轮 news +4(华为×高通专利·台达×�
+--- doc/personal-watch/run/news/archive/chinanews-2017.jsonl.gz ---
+b139a9e news 2026-10-05: N1 r6 语料→2,267,862/11片(2016起) + 第十五轮 news +4(华为×高通专利·台达×�
+2009a94 news 2026-10-05 第5轮: N1 语料→1,952,411条/10片(进2017-2018); 全链重跑 EVENTS 63,398(q<0.05=44,门�
+--- doc/personal-watch/run/news/archive/chinanews-2018.jsonl.gz ---
+2009a94 news 2026-10-05 第5轮: N1 语料→1,952,411条/10片(进2017-2018); 全链重跑 EVENTS 63,398(q<0.05=44,门�
+--- 仓库 .git 实际体积 ---
+592M	.git
+
+=== 5. 是否已 push 到远端（污染是否传出去了）===
+ecbc9c0 perf(guard): 体积红线(用户明令) — 单个文件>=5MB 一律不入 git, 改走百度云盘; 旧口径'>20MB'作废(漏掉了
+b139a9e news 2026-10-05: N1 r6 语料→2,267,862/11片(2016起) + 第十五轮 news +4(华为×高通专利·台达×英伟达Hyperion·机
+2009a94 news 2026-10-05 第5轮: N1 语料→1,952,411条/10片(进2017-2018); 全链重跑 EVENTS 63,398(q<0.05=44,门槛19); 第十四轮�
+e4712e9 news 2026-10-05 第十三轮10条 + N1语料1645640条/8片 全链重跑(EVENTS 54485,门槛18,STABILITY 第5行)
+177f640 news: N1 续抓进 2020 -> 游标 2020-04-19 (1,288,020 条/7 片); 全链重跑 EVENTS 44,782 (q<0.05=39, 门槛=14); 修 watcher p
+--- 远端是否已含该文件 ---
+⚠️ 远端已含 2017 语料（已污染）
+
+=== 6. 是否有 .gitignore / .gitattributes 规则 ===
+--- .gitignore ---
+__pycache__/
+*.pyc
+*.pyo
+*~
+.DS_Store
+--- .gitattributes ---
+--- doc/personal-watch/run/news/archive/.gitignore ---
+# 📦 体积红线（2026-10-05）：本目录语料分片普遍 6–12 MB（≥5MB）→ **一律不入 git**
+#    改走百度云盘；清单登记在 INDEX_FILES.md（网盘路径 / 字节数 / sha256 / 存放位置）
+#    规则出处：WATCH_NEWS_TASK.md §4-11 · news/archive/README.md §5
+#
+# ⚠️ 仅拦新文件；已跟踪的 chinanews-2016~2025.jsonl.gz 需 git rm --cached 才移出索引
+*.jsonl.gz
+*.gz
+*.zip
+*.tar.gz
+
+# 抓取中间产物
+fetch_raw/
+*.part
+--- doc/personal-watch/run/news/.gitignore ---
+
+=== 7. 每轮抓取是否会持续生成新分片（判断增长趋势）===
+-rw-rw-r-- 1 liuyang liuyang 15556999 Oct  5 15:28 chinanews-2016.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang 10616975 Oct  5 14:53 chinanews-2017.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang 11145051 Oct  5 13:58 chinanews-2018.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang 12265872 Oct  5 13:46 chinanews-2019.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang 12228659 Oct  5 13:43 chinanews-2020.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang  9707401 Oct  5 13:22 chinanews-2021.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang 10319596 Oct  5 12:46 chinanews-2022.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang  7660242 Oct  5 12:46 chinanews-2023.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang  7449410 Oct  5 12:46 chinanews-2024.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang  7130667 Oct  5 12:46 chinanews-2025.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang  5779016 Oct  5 12:46 chinanews-2026.jsonl.gz
+-rw-rw-r-- 1 liuyang liuyang      463 Oct  5 15:28 .progress.json
+-rw-rw-r-- 1 liuyang liuyang     2180 Oct  5 15:28 PROGRESS.md
+```
