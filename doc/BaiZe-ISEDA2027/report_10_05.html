@@ -75,6 +75,8 @@
     <li><b>🌙 用户深夜 5 条 → 3 条新指令已下发</b>（见 <a href="#s12">§12</a>）：① vision <b>R12 后续跑到 3 epoch</b>（逐 epoch 评测 + 重拟合 scaling 刷新 25.1%）+ <b>自提 ≥3 个下一步方向</b>；② harness <b>授权自装 node22+rust</b> 打通第 5 个 harness；③ <b>用 <code>.29</code> GPU0–1 起 sglang 做 mcore vs sglang 推理对比</b>。另：data 现状 + <b>Stable S0a 释义</b>已当面回答。</li>
   </ol>
 </div>
+  <div class="verdict" style="border-left-color:var(--muted)">
+  <strong>🌆 傍晚增量（留档）：</strong>
   <ol style="margin:10px 0 0">
     <li><b>⭐ P-9.9 收官（15:15:40）</b>：tensorwise FP8 跑满 1000 步 → <b>T1 / T1′ / T4 FAIL</b>（t−bf16 = <b>+5.13%</b> 且 <b>persistent</b>，非 spike）+ T2/T3 PASS ⇒ <b>裁定 tensorwise 劣于 delayed → P-8 沿用 delayed FP8</b>。三臂末态 loss：bf16 2.5429 / delayed 2.5477（+0.19%）/ tensorwise 2.6734（+5.13%）。</li>
     <li><b>🔌 P-9.10 ① sglang A/B 结论</b>：运维更正成立 —— <b>带 proxy 时 aliyun=200</b>，但 <code>cuda-tile</code> 只挂在 <code>pypi.nvidia.com</code>、经代理 <b>SSL EOF</b> ⇒ <b>sglang 装不上</b> ⇒ 栈落 <b><code>mcore + CUDA-graph</code></b>。替代 ckpt <code>p3_dense</code>(4.7G) / <code>p3_hybrid</code>(4.2G) ✅ 已核验 + 运维批准。</li>
