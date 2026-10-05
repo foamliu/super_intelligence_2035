@@ -255,4 +255,5 @@
 | 2026-10-06 | Pentagon stops using Anthropic AI tools after blacklisting company, BBC told | BBC（经 HN） | news(未核验) | https://www.bbc.co.uk/news/articles/c5j9x9pr0240o |
 | 2026-10-06 | OpenAI will start watermarking ChatGPT's text in the EU | TechCrunch | news(同事件) | https://techcrunch.com/2026/10/05/openai-will-start-watermarking-chatgpts-text-in-the-eu/ |
 | 2026-10-06 | Wikipedia operator says OpenAI's 'rogue' bots may be linked to a May outage | The Verge | news(同事件) | https://www.theverge.com/news/1004929/wikipedia-openai-rogue-bots-wikimedia-foundation-outage |
+| 2026-10-06 | Two Room-Temperature Antiferromagnetic Semiconductor Candidates (Opus 5.5 agents) | Vals AI（公司研究博客） | analysis | https://www.vals.ai/blogs/room-temperature-magnetic-semiconductors |
 
