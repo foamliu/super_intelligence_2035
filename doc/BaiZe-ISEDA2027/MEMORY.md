@@ -49,7 +49,7 @@ WAITING: 0
 | **pretrain** | ✅ P-5b(20B) + P-9.1–9.6①② + **P-9.7 A1 稳态**（~249K tok/s，ETA ~22:39 定稿）→ ⭐ **P-9.8 bf16 vs FP8 长程一致性 A/B（各 1000 步）已批准** → P-9.5 复跑 → P-6② → P-8 暂缓 | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` | 🟢 **`.cline_pretrain` 隔离目录**；凌晨空窗已排（P-9.5 → **P-9.8** → P-6②） |
 | **vision** | ✅ R9/R10/R14/E1 + R11-L 四臂 + R11-L2 + caption-weight + **R11-E(未抬高)** + **R13(官方 OV2 79.81%)** 全完成 → ⭐ **臂⑥ AIMv2 翻盘**（lp 12.08% vs 基线 6.08%，**+6pp → 25.1% 渐近局部推翻**）→ 🔄 **R11-F 数据源横比运行中** → 🟢 **R11-G(AIMv2 长跑重拟合 scaling) + R11-H(⑥-B 纯 AR) 已批准**（见 `BAIZE_VISION_TASK.md`「运维指令 · 2026-10-04（七）」） | `run/EXPERIMENTS_VISION_ROUND11.md` · `VISION_OFFICIAL_REPOS_SURVEY.md` | 🔄 **`.cline_vision` 隔离目录**；凌晨空窗 ≈4–5h 已排满 |
 | **data** | 下载巡检（白名单 = `l1_en_hq` + `zh` + GPIC；D-CLEAN ✅）· **文献调研：`LIT_IDEAS_2026-10-04.html` 已交付 + 15 条 arXiv 在线核验完成 → 🔁 已下发「用 web search 重做一遍」（产出新文件 `LIT_IDEAS_2026-10-05.html`）** | `run/DISK_CLEANUP_INVENTORY.md` · **`LIT_IDEAS_2026-10-0{4,5}.html`** | 🟢 MCP 已通；**重做调研已下发**（旧版降级为「参考/对照物」） |
-| **harness** | ✅ **4/5 harness 端到端 `resolved=true`**（cline / codex / opencode / **claude-code**）→ **步4：300 × 5 全量按序跑** | `run/harness/SWEBENCH_LITE_FEASIBILITY.md` · `r1_eval.py` | ⚠️ **H-A pilot 扩容受阻**（github 网络瞬断，base_commit shallow clone 缺）；deepseek-harness 缺工具链 |
+| **harness** | ✅ **4/5 harness 端到端打通**（cline/codex/opencode/claude-code）· **H-A pilot 30/30 完成**（21 评分 + 9 受阻→lock 已修）· `SWEBENCH_COMPARE.html` final（公平口径 **codex 2/3=67% 领先**）→ 🔄 **已批「换冷门模型（kimi/豆包）+ 严格串行」以绕开 quota 墙并重跑 21 条** | `run/harness/SWEBENCH_LITE_FEASIBILITY.md` · `SWEBENCH_COMPARE.html` | 🟡 **quota（5h 窗口）是扩 300 的主要障碍**；deepseek-harness 仍缺工具链 |
 
 > ✅ **vision 叙事已决（2026-10-03 用户）：走 A = 保持「从零训练」**（"A 本身也是为了学习"）。
 > → R9 的 **~25.1% 渐近 = 从零路线的如实上限**（负结果有价值）；**loss 轴 R11 = 主线**；**架构轴非主要杠杆**。
@@ -180,6 +180,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **2026-10-05（早 · 🔄 harness 横评「换冷门模型 + 串行」已批）** —— 用户提议：横评卡在 **quota（5h 滑动窗口 → 21 条里 17 条空 patch）** → **统一换一把冷门 key/模型（kimi / 豆包）**、**一条一条串行跑不并行**。**RUN_ID 71 实测**：`doc/keys.txt` 的 **8 个候选全部 `http=200` 且返回 `tool_calls`** ⇒ 技术上可行（且佐证了 quota 墙：harness 日志有 `本次Token额度已用完，请等待2小时37分钟43秒后重试`）。**我的判断**：那 ~15 天主要是**等配额**不是算（1500×2–4min ≈ 50–100h）⇒ 配额让开则**串行 ≈2–4 天**。→ 下发 **`BAIZE_HARNESS_TASK.md` 顶部批准块**：① 模型 = **首选 `kimi-k2.6-cloud`**、429 时回落 `doubao-seed-2.0-pro/mini/lite-cloud`；（🚫 不用 `deepseek-v4-flash`、🚫 不用 4 线自己在跑的 `glm-5.2`；**同轮只用一个模型，换模型必须重跑**）② **并发=1 严格串行**、一个 harness 跑完 30 条再换下一个；③ **quota 纪律**：命中 429/额度即**暂停等窗口**、**空 patch/quota 失败单列不计入失败率**、报告给 `resolved / patch-but-failed / quota-blocked` 三列；④ **先用新模型重跑原 21 条**验证，再定是否 300×5 全量。
 
 - **2026-10-05（早 · 🔁 文献调研「用 web search 重做」）** —— 用户判断：**那份 `LIT_IDEAS` 是在「没有 web search」前提下用模型知识 + 本地 bib 做的 → 若一开始能联网，找到的很可能不是这 15 篇** → 要求**重做一遍**，现有结果**只作参考**。已下发 **`BAIZE_DATA_TASK.md` 顶部新块**：① **发现驱动**（先 `cimi_search` 检索建候选池 → 再 `cimi_fetch` 读原文抓做法/超参/数字）；② **必须补 2024–2026 前沿**（上一版完全空白）；③ 每条**从一开始**带 `URL + 年份 + 会议`，正文级数字须 `cimi_fetch` 核过；④ **产出新文件 `LIT_IDEAS_2026-10-05.html`**（旧文件保留）+ **新增 `§0 与 10-04 版的差异`**（新增/替换/更正/剔除）；⑤ **预注册判据**：**≥60% 条目与上一版不同**、**0 条未在线核验**、**2024–2026 条目 ≥15 条**。约束不变（不占 GPU / 不下大文件 / 白名单不变），可分多唤醒推进。
 
