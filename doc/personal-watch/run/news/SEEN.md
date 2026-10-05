@@ -147,3 +147,8 @@
 | 2026-10-05 | Federal judge calls Flock 'indiscriminate mass surveillance' | TechCrunch | news | https://techcrunch.com/2026/10/03/federal-judge-calls-flock-indiscriminate-mass-surveillance/ |
 | 2026-10-05 | 纳指历史新高，恒生科技却创了一年新低，A股硬科技企业正在排队去港交所募资 | 钛媒体 | analysis | https://www.tmtpost.com/8159517.html |
 | 2026-10-05 | 快手的视频 Agent，会不会来晚了？ | 钛媒体 | analysis | https://www.tmtpost.com/8159522.html |
+| 2026-10-05 | 高通与华为达成逻辑折叠芯片技术相关专利授权，韬定律加速出海 | IT之家 | news | https://www.ithome.com/1/009/852.htm |
+| 2026-10-05 | 这个国庆，第一批机器人员工已经上岗 | 钛媒体 | feature | https://www.tmtpost.com/8159586.html |
+| 2026-10-05 | 全球IPO市场透视：融资盛宴与破发寒流并存的第三季 | 钛媒体 | analysis | https://www.tmtpost.com/8159361.html |
+| 2026-10-05 | 定价逻辑变了，估值方法也变了，安全溢价如何重写关键矿产？ | 钛媒体 | analysis | https://www.tmtpost.com/8150494.html |
+

@@ -12,10 +12,10 @@ WAITING: 1
 
 ```
 PHASE:        常态采集（T1–T10 ✅）+ **L1/N3 收口（G1 全过）+ L2/N4 探索性（G2 全过）**（L1 焦点 · L2 探索性 · L3 冻结）
-已完成:       T1–T10 ✅ · 首~二十轮常态 ✅ · **N1 抓取器 + 语料〔全库完抓〕2,492,230 条 / 11 片 2016–2026（游标 `2015-12-31`，倒序已收尾至 `2016-01-01`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（75,610 条，对 15:10 全量快照）· N3-4 预警方案 · L1 预警准则加固（`early_warning.py` §4.3 固定召回率 precision + **§4.4 措辞强度 tone 信号**，`EARLY_WARNING.md` 424 行）· L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md，8 行）**
-当前动作:     **本唤醒：第二十轮常态采集（news **+1**：TechCrunch《Federal judge calls Flock 'indiscriminate mass surveillance'》10-03）；**上轮**：第十九轮 +2（TechCrunch 美国「超级智能部队」· 钛媒体 马斯克 SpaceXAI→SpaceXSI）
-下一步:       ① 提交本线产物（**不含任何 ≥5MB 文件**）；② **G2′④ 累积**：**隔日（≥20h）**跑真实重跑（`cycle_run.py --with-l2`，**不带 `--record`**）追加台账（连续天数截至今日 = 1，目标 7，**未达标**）；③ L1 稳定性 / 下一个候选文本信号 = **新词首发 / 版面**（§4.4 措辞组合**未胜出**，如实保留）；④ L3（N5）**冻结**
-本轮新增:     **第二十轮常态 news **+1**（英文 1；当日 25→**26**）**：**TechCrunch《Federal judge calls Flock 'indiscriminate mass surveillance'》**（10-03，联邦法官裁定无搜查令用 AI 车牌监控 Flock 侵犯第四修正案）；钛媒体新增 2 条 analysis 仅存 `SEEN.md`。累计 **news 95 / 非新闻 47**
+已完成:       T1–T10 ✅ · 首~二十一轮常态 ✅ · **N1 抓取器 + 语料〔全库完抓〕2,492,230 条 / 11 片 2016–2026（游标 `2015-12-31`，倒序已收尾至 `2016-01-01`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（75,610 条，对 15:10 全量快照）· N3-4 预警方案 · L1 预警准则加固（`early_warning.py` §4.3 固定召回率 precision + **§4.4 措辞强度 tone 信号**，`EARLY_WARNING.md` 424 行）· L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md，8 行）+ **G2′④ 连续性自报（`compute_streak`：连续 7 自然日 · ≥20h · 同天计 1 · record-only 不计入）**
+当前动作:     **本唤醒：第二十一轮常态采集（news **+0**，国庆源薄、如实）+ 补 G2′④ 台账缺口（`cycle_run.py` 新增「已连续 X 天 / 目标 7 天」自报行）；**上轮**：第二十轮 +1（TechCrunch Flock 联邦法官裁定 AI 车牌监控）
+下一步:       ① 提交本线产物（**不含任何 ≥5MB 文件**）；② **G2′④ 累积**：**隔日（≥20h）**跑真实重跑（`cycle_run.py --with-l2`，**不带 `--record`**）追加台账（**台账自报：连续 1 天 / 目标 7 天，未达标**）；③ L1 稳定性 / 下一个候选文本信号 = **新词首发 / 版面**（§4.4 措辞组合**未胜出**，如实保留）；④ L3（N5）**冻结**
+本轮新增:     **第二十一轮常态 news **+0**（英文 0 / 中文 0；当日维持 **26**）**：国庆假期中文权威源 AI 类真新闻稀缺；**央视网 tech 13 条真条目被 `pubDate≤72h` 丢弃**（含《生成式AI用户规模突破7亿人》超龄 142h）；钛媒体新增 1 feature + 2 analysis 仅存 `SEEN.md`；IT之家《高通×华为逻辑折叠芯片专利授权》与在账同事件 → 去重。累计 **news 95 / 非新闻 50**
 阻塞:         无（新华网长期 403/405 → 兜底源 `chinanews`；⚠️ **无 bypy → 网盘不可用** → ≥5MB 一律「本地保留 + 清单登记 + 如实标『未上云』」；⚠️ **东财日K 运行机 TLS 被重置** → 历史日线走腾讯 `ifzq`；⚠️ **停后台抓取须杀 python 子进程**；⚠️ **等抓取勿用 `pgrep -f <脚本名>`** → 用 `kill -0 <pid>`；⚠️ **ops relay 的 `git pull --rebase` 会删掉被 untrack 的工作区分片** → 须从 `~/archive_data_backup/` 恢复）
 ERROR_COUNT:  4（历史：模型名白睡一轮，已修；并发双抓重复，已修；watcher `pgrep -f` 自匹配死锁，已修；**relay rebase 删工作区分片 → 已恢复**）
 ```
@@ -141,6 +141,14 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
+
+- **2026-10-05（本唤醒 ~18:45）** —— 🎯 **补 G2′④ 台账缺口（`cycle_run.py` 新增「连续性自报」行）+ 第二十一轮常态采集（news +0，如实）**。
+  - **动机**：任务书 §0.0.2 **G2′④ 2026-10-05 修订口径**要求台账**必须自报「已连续 X 天 / 目标 7 天」**，而原 `STABILITY_LOG.md` 无此字段（只有逐行记录）。
+  - **实现（`news/policy/cycle_run.py`）**：新增 `_iter_rows / _is_real / compute_streak / update_streak_line` —— 按**修订口径**（连续 7 **自然日**、每日 ≥1 次**真实重跑**、相邻 **≥20h**、**同天多次只计 1 天**、`record-only` **不计入**）**由台账真实行自动推算**；每次运行**重写文末**「G2′④ 连续性自报」行（🚫 不补造、不手填）。`--record` 跑通：`strk=1/7`（现全部真实行同为 2026-10-05 → 计 1 天）。表头口径同步更新（「连续 N 周」→「连续 7 自然日」）。
+  - **第二十一轮常态采集（news +0）**：`cn_news`（中新网×3 + 央视网 news/tech）命中均假期/民生/时政 → 不收；**央视网 tech 13 条真条目被 `pubDate≤72h` 丢弃**（含《生成式AI用户规模突破7亿人》超龄 142h）；**联合国中文源仍 `HTTP 404`**；量子位头部均已在账；IT之家《高通×华为逻辑折叠芯片专利授权》与在账 `009/806` **同事件** → 去重；钛媒体新增 1 feature + 2 analysis 仅存 `SEEN.md`；TechCrunch《Google 冻结漏洞赏金》已在账；The Register atom 仍 ParseError。当日维持 **26**（累计 news 95 / 非新闻 50）。
+  - **判据复核**：✅ 每条带 `标题+来源+发布日期+链接` · ✅ 非新闻单列（仅存 `SEEN.md`）· ✅ 无因果措辞 · ✅ 非投资建议 · ✅ **L3（N5）冻结**。
+  - **未做**：真实重跑（距上次 15:10 **<20h** → **不刷连续性**）。
+
 
 - **2026-10-05（本唤醒 ~17:55）** —— 🆕 **第二十轮常态采集：news +1（英文 1 / 中文 0）**。
   - **① TechCrunch《Federal judge calls Flock 'indiscriminate mass surveillance'》**（2026-10-03）：TechCrunch 报道，一名联邦法官裁定，某县治安官副手在**未取得搜查令**的情况下使用 AI 车牌识别/监控系统 **Flock** 搜索一名女性的车牌，**侵犯其第四修正案权利**；法官将 Flock 定性为「**无差别的大规模监控**」。→ 关注清单第 4 类「AI 与社会（伦理 / 公民权利 / 公众态度）」。

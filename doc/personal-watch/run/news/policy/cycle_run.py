@@ -3,7 +3,8 @@
 """
 news/policy/cycle_run.py — L1 链「按周期运行」编排 + 稳定运行台账（G2′ ④）
 ==========================================================================
-任务书 §0.0.2 **G2′ ④ = 「连续 N 周稳定运行」（按周期跑预警并与基线对比）**。
+任务书 §0.0.2 **G2′ ④ = 「连续 7 个自然日稳定运行」**（2026-10-05 修订口径：每日 ≥1 次
+**真实重跑**、相邻 **≥20h**、同天多次只计 1 天、record-only 不计入；见下方 `compute_streak`）。
 本脚本把 L1 链的**固定顺序**（EDA → TAXONOMY → SIGNALS → EVENTS → EARLY_WARNING）封成
 **一条命令**，每次运行把**可核验的摘要**（语料规模 / 事件数 / FDR 显著格 / 效果量门槛格 / 产物 sha）
 **追加**到 `STABILITY_LOG.md` —— 由此形成**可 git 追溯的运行台账**（"连续运行"的证据）。
@@ -87,6 +88,73 @@ def parse_ew(path: str) -> tuple[str, str]:
     return (q.group(1) if q else "?", gate.group(1) if gate else "?")
 
 
+def _iter_rows():
+    """解析 STABILITY_LOG.md 的表格行 → [(datetime, note), ...]。"""
+    if not os.path.exists(LOG_MD):
+        return []
+    out = []
+    for line in open(LOG_MD, encoding="utf-8"):
+        if not line.startswith("| 202"):
+            continue
+        cols = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cols) < 10:
+            continue
+        try:
+            dt = datetime.strptime(cols[0], "%Y-%m-%d %H:%M")
+        except ValueError:
+            continue
+        out.append((dt, cols[-1]))
+    return out
+
+
+def _is_real(note: str) -> bool:
+    """真实有效重跑 = 非 record-only 且链步骤无错（备注不含 `rc`）。"""
+    return ("record-only" not in note) and ("rc" not in note)
+
+
+def compute_streak() -> tuple[int, str]:
+    """按任务书 §0.0.2 G2′ ④ 修订口径算连续性：
+
+    * 连续 **7 个自然日**，每天 ≥1 次**真实重跑**；
+    * **同一天多次只计 1 天**；
+    * **相邻两次真实重跑间隔 ≥ 20h**（按「前一日最后一次 → 次日第一次」判）；
+    * `record-only（补记/自检）` 行**不计入**连续性。
+    返回 (已连续天数, 说明)。🚫 只由**台账真实行**推算，不补造。
+    """
+    rows = _iter_rows()
+    real = [dt for dt, note in rows if _is_real(note)]
+    if not real:
+        return 0, "尚无真实重跑行"
+    dates = sorted({dt.date() for dt in real}, reverse=True)
+    streak = 1
+    for i in range(1, len(dates)):
+        newer, older = dates[i - 1], dates[i]
+        if (newer - older).days != 1:
+            break
+        older_last = max(dt for dt in real if dt.date() == older)
+        newer_first = min(dt for dt in real if dt.date() == newer)
+        if (newer_first - older_last).total_seconds() >= 20 * 3600:
+            streak += 1
+        else:
+            break
+    return streak, ""
+
+
+def update_streak_line() -> None:
+    """重写台账末尾的「G2′④ 连续性自报」行（由台账真实行推算）。"""
+    streak, why = compute_streak()
+    verdict = "✅ 达标" if streak >= 7 else "⚠️ 未达标"
+    line = (f"**G2′④ 连续性自报**：已连续 **{streak} 天 / 目标 7 天** —— {verdict}"
+            f"（口径：连续 7 个自然日、每日 ≥1 次真实重跑且相邻 ≥20h；"
+            f"同天多次只计 1 天；record-only 不计入）。"
+            + (f" {why}" if why else ""))
+    txt = open(LOG_MD, encoding="utf-8").read() if os.path.exists(LOG_MD) else ""
+    kept = [l for l in txt.split("\n") if not l.startswith("**G2′④ 连续性自报**")]
+    txt = "\n".join(kept).rstrip("\n") + "\n\n" + line + "\n"
+    with open(LOG_MD, "w", encoding="utf-8") as f:
+        f.write(txt)
+
+
 def record_row(note: str, corpus: tuple[str, str], events: str, ew: tuple[str, str],
                l2_state: str) -> None:
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -95,11 +163,13 @@ def record_row(note: str, corpus: tuple[str, str], events: str, ew: tuple[str, s
            f"`{sha16(EVENTS_CSV)}` | `{sha16(EXPLORE_CSV)}` | {l2_state} | {note} |\n")
     header = ("# STABILITY_LOG — L1 链「按周期运行」台账（G2′ ④）\n\n"
               "> 由 `news/policy/cycle_run.py` **自动追加**。**每次运行 = 一行**；"
-              "**连续多行 = 「连续 N 周稳定运行」的证据**（可 git 追溯）。\n"
+              "**连续多天 = G2′ ④「连续 7 个自然日稳定运行」的证据**（可 git 追溯）。\n"
               "> 🚫 不改任何结论；数字**由当次实测解析**（解析不到写 `?`，不猜）。\n"
               "> **列**：语料天/条 = 事件库所用语料；事件数 = `EVENTS.csv` 行数；"
               "**q<0.05 格 / 效果量门槛格** = `EARLY_WARNING.md` §4.2（分母恒 45）；"
-              "sha = 产物前 16 位（复现核对）；L2 = `explore_l2.py` 状态。\n\n"
+              "sha = 产物前 16 位（复现核对）；L2 = `explore_l2.py` 状态。\n"
+              "> **连续性口径（2026-10-05 修订）**：连续 **7 个自然日**、每日 ≥1 次**真实重跑**且相邻 **≥20h**；"
+              "**同天多次只计 1 天**；`record-only(补记/自检)` **不计入**。文末「连续性自报」行由真实行自动推算。\n\n"
               "| 时间 | 语料天 | 语料条 | 事件数 | q<0.05 格 | 效果量门槛格 | EVENTS.sha16 | explore.sha16 | L2 | 备注 |\n"
               "|:--|--:|--:|--:|--:|--:|:--|:--|:--|:--|\n")
     if not os.path.exists(LOG_MD):
@@ -107,8 +177,10 @@ def record_row(note: str, corpus: tuple[str, str], events: str, ew: tuple[str, s
             f.write(header)
     with open(LOG_MD, "a", encoding="utf-8") as f:
         f.write(row)
+    update_streak_line()
+    streak, _ = compute_streak()
     print(f"[cycle] logged: days={days} recs={recs} events={events} "
-          f"q<0.05={ew[0]} gate={ew[1]} l2={l2_state}")
+          f"q<0.05={ew[0]} gate={ew[1]} l2={l2_state} streak={streak}/7")
 
 
 def main() -> int:
