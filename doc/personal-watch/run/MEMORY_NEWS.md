@@ -12,10 +12,10 @@ WAITING: 1
 
 ```
 PHASE:        常态采集（T1–T10 ✅）+ **L1/N3 收口（G1 全过）+ L2/N4 探索性（G2 全过）**（L1 焦点 · L2 探索性 · L3 冻结）
-已完成:       T1–T10 ✅ · 首~十八轮常态 ✅ · **N1 抓取器 + 语料〔全库完抓〕2,492,230 条 / 11 片 2016–2026（游标 `2015-12-31`，倒序已收尾至 `2016-01-01`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（75,610 条，对 15:10 全量快照）· N3-4 预警方案 · L1 预警准则加固（`early_warning.py` §4.3 固定召回率 precision + **§4.4 措辞强度 tone 信号**，`EARLY_WARNING.md` 424 行）· L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md，8 行）**
-当前动作:     **本唤醒：第十九轮常态采集（news **+2**：TechCrunch《Trump unveils his new Super Intelligence Force》10-04 · 钛媒体《马斯克为 AI 改名：SpaceXAI 将更名 SpaceXSI》10-05；**新试「钛媒体 feed」= 活源**）；**上轮**：L1 预警准则加固（`early_warning.py` 新增 §4.4 措辞强度 tone 信号）+ 第十八轮 news +0
+已完成:       T1–T10 ✅ · 首~二十轮常态 ✅ · **N1 抓取器 + 语料〔全库完抓〕2,492,230 条 / 11 片 2016–2026（游标 `2015-12-31`，倒序已收尾至 `2016-01-01`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（75,610 条，对 15:10 全量快照）· N3-4 预警方案 · L1 预警准则加固（`early_warning.py` §4.3 固定召回率 precision + **§4.4 措辞强度 tone 信号**，`EARLY_WARNING.md` 424 行）· L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md，8 行）**
+当前动作:     **本唤醒：第二十轮常态采集（news **+1**：TechCrunch《Federal judge calls Flock 'indiscriminate mass surveillance'》10-03）；**上轮**：第十九轮 +2（TechCrunch 美国「超级智能部队」· 钛媒体 马斯克 SpaceXAI→SpaceXSI）
 下一步:       ① 提交本线产物（**不含任何 ≥5MB 文件**）；② **G2′④ 累积**：**隔日（≥20h）**跑真实重跑（`cycle_run.py --with-l2`，**不带 `--record`**）追加台账（连续天数截至今日 = 1，目标 7，**未达标**）；③ L1 稳定性 / 下一个候选文本信号 = **新词首发 / 版面**（§4.4 措辞组合**未胜出**，如实保留）；④ L3（N5）**冻结**
-本轮新增:     **第十九轮常态 news **+2**（英文 1 / 中文 1；当日 23→**25**）**：① **TechCrunch《Trump unveils his new Super Intelligence Force》**（10-04，美国组建「超级智能部队」，WSJ 称 Jay Clayton 任主席 / 120 天报告）② **钛媒体《马斯克为 AI 改名：SpaceXAI 将更名 SpaceXSI》**（10-05，马斯克 X 表态，SI 改名叙事企业化）。⚠️ 新试 **钛媒体 feed 为活源**；非新闻 4 条（钛媒体 analysis）仅存 `SEEN.md`。累计 **news 94 / 非新闻 45**
+本轮新增:     **第二十轮常态 news **+1**（英文 1；当日 25→**26**）**：**TechCrunch《Federal judge calls Flock 'indiscriminate mass surveillance'》**（10-03，联邦法官裁定无搜查令用 AI 车牌监控 Flock 侵犯第四修正案）；钛媒体新增 2 条 analysis 仅存 `SEEN.md`。累计 **news 95 / 非新闻 47**
 阻塞:         无（新华网长期 403/405 → 兜底源 `chinanews`；⚠️ **无 bypy → 网盘不可用** → ≥5MB 一律「本地保留 + 清单登记 + 如实标『未上云』」；⚠️ **东财日K 运行机 TLS 被重置** → 历史日线走腾讯 `ifzq`；⚠️ **停后台抓取须杀 python 子进程**；⚠️ **等抓取勿用 `pgrep -f <脚本名>`** → 用 `kill -0 <pid>`；⚠️ **ops relay 的 `git pull --rebase` 会删掉被 untrack 的工作区分片** → 须从 `~/archive_data_backup/` 恢复）
 ERROR_COUNT:  4（历史：模型名白睡一轮，已修；并发双抓重复，已修；watcher `pgrep -f` 自匹配死锁，已修；**relay rebase 删工作区分片 → 已恢复**）
 ```
@@ -135,12 +135,21 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **L2 产物（探索性 · 非因果）**：`news/policy/`（`L2_PREREG.md` / **`EXPLORE.md` + `explore.csv`**）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-05 13:15 CST` 第十一轮 ~ `2026-10-05 17:25 CST` 第十九轮
-- **累计收录**：`139` 条（**news 94**〔第一~十九轮；当日 25〕+ 非新闻 45〔仅存 `SEEN.md`〕）
+- **上次采集窗口**：`2026-10-05 13:15 CST` 第十一轮 ~ `2026-10-05 17:55 CST` 第二十轮
+- **累计收录**：`142` 条（**news 95**〔第一~二十轮；当日 26〕+ 非新闻 47〔仅存 `SEEN.md`〕）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
+
+- **2026-10-05（本唤醒 ~17:55）** —— 🆕 **第二十轮常态采集：news +1（英文 1 / 中文 0）**。
+  - **① TechCrunch《Federal judge calls Flock 'indiscriminate mass surveillance'》**（2026-10-03）：TechCrunch 报道，一名联邦法官裁定，某县治安官副手在**未取得搜查令**的情况下使用 AI 车牌识别/监控系统 **Flock** 搜索一名女性的车牌，**侵犯其第四修正案权利**；法官将 Flock 定性为「**无差别的大规模监控**」。→ 关注清单第 4 类「AI 与社会（伦理 / 公民权利 / 公众态度）」。
+  - **源盘点（如实）**：`cn_news` 30 条均**国庆假期 / 民生 / 时政**（横店入境游、悉尼持刀、缅北电诈、四川高铁、2026 诺贝尔生理学奖、南部战区正告菲方……）→ 非关注清单 → **不收**；量子位头部 8 条**均已在账**；IT之家《高通与华为逻辑折叠芯片专利授权》（`009/852`）与在账《华为×高通广泛专利许可协议》（`009/806`）**疑同事件** → 去重跳过；《阿里千问 AI 耳夹式耳机》（`009/846`）判**消费电子** → 不收；**钛媒体新增 2 条 analysis**（纳指/A股硬科技 `8159517`、快手视频 Agent `8159522`）仅存 `SEEN.md`；爱范儿《OpenAI 元老离职信》**同 Guardian 在账事件** → 去重；`search_news`(HN) 8 条均 **opinion / blog / 超窗** → 不收。
+  - **源健康度（如实记录）**：The Register `headlines.atom` → **ParseError**；**Guardian `technology/rss` → 本机构网络不可达**（`Errno 101`，**判源失败，未静默当「无新增」**）；Ars / WIRED feed `200` 但当日头条**非 AI** → 不收；中新网 / 央视网 / 量子位 / IT之家 / 爱范儿 / 雷峰网 / 钛媒体 / TechCrunch feed 均 **200**。GDELT 未用（省额度）。
+  - **G2′④**：本轮距上次真实重跑（15:10）**仅 ~2.8h（<20h）** → **不刷台账**；连续天数仍 = **1 天**（目标 7 天，**未达标**，如实写）。
+  - **文档同步**：`news/2026-10-05.md`（第二十轮段）· `news/SEEN.md`（+1 news / +2 非新闻）· `news/INDEX.md`（当日 26 / 累计 news 95 · 非新闻 47）· `MEMORY_NEWS.md`（快照 + 本流水 + 滚动归档）· 日流水心跳行 `[17:55]`。
+  - **判据复核**：✅ 每条带 `标题+来源+发布日期+链接` · ✅ 非新闻单列（仅存 `SEEN.md`）· ✅「我们的观察」标注 · ✅ 无因果措辞 · ✅ 非投资建议 · ✅ **L3（N5）冻结**（未产出任何策略/仓位/择时）。
+
 
 - **2026-10-05（本唤醒 ~17:25）** —— 🆕 **第十九轮常态采集：news +2（英文 1 / 中文 1）**。
   - **① TechCrunch《Trump unveils his new Super Intelligence Force》**（2026-10-04）：特朗普 10-04 在 Truth Social 宣布组建「**超级智能部队**」（Super Intelligence Force），据 WSJ 由国家情报总监 **Jay Clayton** 任主席（FTC 主席 Ferguson、国防部 Emil Michael、OPM Kupor 任副主席），负责协调联邦政府确保美国在「超级智能」领先，章程要求 **120 天**内提交风险/机遇报告（承接 9 月「AI→SI」行政令叙事）。
@@ -158,39 +167,8 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
   - **拒收/去重**：`cn_news` 40 条均假期/民生/时政 → 不收；量子位头部 10 条**均已在账**；IT之家其余为消费电子/游戏；`search_news`(HN) 8 条除 1 条 thebulletin 分析外均 opinion/超窗 → 不收。⚠️ 联合国中文源仍 **404**。
   - **⚠️ 并发护栏（本唤醒教训）**：上一超时命令的 `python early_warning.py` 子进程**残留续跑** → 与 nohup 新进程**并发双写** `EARLY_WARNING.md`；已 `kill -TERM` 去重留单进程。**今后长任务须显式 `timeout` + 结束后 `pgrep -af <脚本>` 确认无残留**。
   - **未做**：G2′④ 连续天数累积（需 ≥20h 间隔真实重跑；本轮间隔不足 → 未推进）。
-- **2026-10-05** —— 🆕 **N1 第 6 轮抓取产物提交（进 2016，语料 → 2,267,862 / 11 片）+ 第十五轮常态 news +4 + 启动第 7 轮抓取（收尾 2016）**。
-  - **N1 第 6 轮抓取**（上轮起，`--max-seconds`）：游标 `2017-10-30 → 2016-08-05`；**新建 `chinanews-2016.jsonl.gz`（120,293 条 / 5.42 MB）**；语料 **1,952,411 → 2,267,862 条（+315,451）/ 11 片（2016–2026）**；0 失败，`--index` 已重生成（各片均 <20 MB → 入 git）。
-  - **全链（14:47，对上轮快照）**：`cycle_run.py --with-l2` → `EVENTS 71,201`（17.08 MB）、`q<0.05=42`、效果量门槛 `26`；`STABILITY_LOG.md` **第 7 行**。（⚠️ 该链对齐 3698 天快照，**略落后**当前 3711 天 → 第 7 轮后统一重跑。）
-  - **第十五轮常态 news +4**（当日累计 18→**22**；中文 4 / 英文 0）：IT之家《华为×高通广泛专利许可协议（含 AI/计算/网络）》· IT之家《台达基于英伟达 Hyperion 开发下一代自动驾驶》· 中新网《机器人在北京上"幼儿园"》· 中新网《AI 催生浙江文旅消费新场景》。**中新网本轮首次取到 AI 相关条目**（此前数轮假期无）。非新闻 2（丘成桐致谢 GPT/Claude、圆刚 AI 麦克风）仅存 `SEEN.md`。
-  - **启动第 7 轮抓取**：`fetch_archive.py --max-seconds 1500`（14:56，目标 `2016-08-05 → 2016-01-01`，wrapper pid 181035 / python 181037）+ watcher（pid 181064，**按 `kill -0 181035` 判定** → 抓完自动 `--index` + `cycle_run.py --with-l2`，日志 `/tmp/n1_chain_r7.log`）。
-  - **源健康度（如实记录）**：The Register `headlines.atom` → ParseError；TechCrunch `feed` 正常；`search_news`(HN) 均旧条目/Show HN → 未用；GDELT 未用（省额度）。
-  - **G2′④**：连续天数截至今日 = **1 天**（目标 7 天，**未达标**，如实写）。
-  - **未做**：第 7 轮链跑（等抓取完）；L3（N5）冻结。
 
-- **2026-10-05** —— 🆕 **N1 第 5 轮抓取完成（进 2017/2018，语料 → 1,952,411 条 / 10 片）+ 全链重跑（EVENTS 63,398）+ 第十四轮常态 news +8**。
-  - **N1 语料**：1,645,640 → **1,952,411 条（+306,771）**；片数 8 → **10**（新增 **2018 全年** + **2017-10~12**）；游标 `2019-01-24` → **`2017-10-30`**（倒序，向 2016-01-01 推进）；0 失败。
-  - **全链重跑**（14:07）：`EVENTS.csv` 54,485 → **63,398**（15.27 MB，sha `973a20f394987462`）；`EARLY_WARNING.md` 45 格 `q<0.05` 40→**44**、效果量门槛 18→**19**；`STABILITY_LOG.md` **第 6 行**（14:07）。
-  - **第十四轮常态 news +8**（当日累计 18）：中文 3（IT之家：施耐德 226 亿美元收购 PTC · Rapidus 开放生态 · Hans Anders 停售 Meta 雷朋眼镜）/ 英文 5（TechCrunch：Google 冻结开源漏洞赏金 · Meta Muse 硬件；WIRED：ChatGPT Mac 漏洞 · Muse 亲友画像 · AI 排班安全）。非新闻 4（analysis/feature）仅存 `SEEN.md`。**中文权威源**（中新网/央视/联合国）国庆假期内容全为社会民生，无 AI 类 → 按 §0.1 不收；⚠️ 联合国·中文源 **404**、The Register/Guardian 判源失败（如实记录）。
-  - **下一步**：第 6 轮抓取（`2017-10-30 → 2016-01-01`）+ watcher 已在跑 → 待完成后核对 `STABILITY_LOG.md` 第 7 行与产物。
-  - **未做**：L3（N5）冻结。
-- **2026-10-05** —— 🆕 **N1 续抓进 2019（+357,620 条 / 8 片）+ 全链重跑 + 第十二/十三轮常态 news +2**。
-  - **后台 N1 抓取（第 4 轮）**：`fetch_archive.py --max-seconds 900`（13:26 起、13:43 止）→ 游标 `2020-04-19 → 2019-01-24`，**新建 `chinanews-2019.jsonl.gz`（11.46 MB / 259,019 行）**；累计 **1,645,640 条 / 2809 天 / 8 片（2019–2026）**；`--index` 重生成 `archive/INDEX_FILES.md`（8 片，均 <20 MB → 入 git）。
-  - **全链重跑对齐全语料**（后台 watcher，**pid 137395 → kill -0 等待**，抓完自动跑）：`cycle_run.py --with-l2` → `eda.py`(n=1,645,643, days=2809) → `taxonomy.py` → `signals.py` → `extract_events.py`（**54,485 事件**，`EVENTS.csv` **13.19 MB**，sha `6deffc1918f167ef`）→ `early_warning.py`（45 格 `q<0.05` **40**、效果量门槛 **18**，最高 `A15 Δ=90` AUC **0.791**）→ `explore_l2.py`（ok；事件 **54,485**、可对齐 **23,105** 条 = 42.4%；`explore.csv` sha **不变**属预期——价格窗自 2023-06 起，2019–2022 事件不入 L2）。
-  - **G2′④ 台账**：`STABILITY_LOG.md` 追加**第 5 行（13:45）** `days=2809 recs=1645643 events=54485 q<0.05=40 gate=18`。
-  - **常态采集（第十二/十三轮）**：**news +2** → 当日累计 **10 条**（中文 8 / 英文 2）；`INDEX.md` 累计 **news 79 / 非新闻 35**。第十二轮补漏 **量子位《Hinton 首篇 RSI 论文》**；第十三轮 **IT之家《JEDEC 首份全行业硅光子可靠性标准 JESD264》**。⚠️ 联合国新闻·中文源仍 **404**（如实记录）；`web_search`(CN-Bing) 本轮召回差（词典/导航页）、GDELT 结果未及读取（如实记录，未用）。
-  - **文档同步**：`MEMORY_NEWS.md` 快照/流水；`news/policy/README.md` §4；`news/2026-10-05.md` / `INDEX.md` / `SEEN.md`。
-  - **未做**：L3 冻结。判据复核：无因果措辞、低频单列、非投资建议。
-
-- **2026-10-05** —— 🆕 **N1 续抓进 2020（+303,722 条 / 7 片）+ 全链重算 + 修复 watcher `pgrep -f` 死锁 + 第十一轮常态 news 8 条**。
-  - **后台 N1 抓取（第 3 轮）**：`fetch_archive.py --max-seconds 900`（12:59 起、13:14 止）→ 游标 `2021-07-14 → 2020-04-19`，**新建 `chinanews-2020.jsonl.gz`（183,772 条）**；累计 **1,288,020 条 / 2358 天 / 7 片（2020–2026）**，`--index` 重生成 `archive/INDEX_FILES.md`（各片均 <20 MB）。
-  - **🐞 修复 watcher `pgrep -f` 自匹配死锁**：等待条件 `while pgrep -f "python3 .../fetch_archive.py"` **命中自身 bash cmdline** → 永不退出 / 链不启动；`kill -TERM 124251 124250` 后**改为人工跑链**（详见运维问答第 3 轮）。
-  - **全链重跑对齐全语料**：`cycle_run.py --with-l2`（13:15→13:19）→ `eda.py`(n=1,288,023, days=2358) → `taxonomy.py` → `signals.py` → `extract_events.py`（**44,782 事件**，`EVENTS.csv` **10.90 MB**，sha `afdc41346dd1bae7`）→ `early_warning.py`（45 格 `q<0.05` **39**、效果量门槛 **14**）→ `explore_l2.py`（ok；`explore.csv` sha **不变**属预期）。
-  - **G2′④ 台账**：`STABILITY_LOG.md` 追加**第 4 行（13:19）**；「连续 N 周」仍靠**逐周累积**。
-  - **常态采集（第十一轮）**：`news/2026-10-05.md` **news 8 条（中文 6 / 英文 2）**；`SEEN.md` +8 news / +5 非新闻；`INDEX.md` 累计 **news 77 / 非新闻 31**。⚠️ **联合国新闻·中文源本轮 404**（如实记录）；GDELT 限频未用。
-  - **文档同步**：`MEMORY_NEWS.md` 快照/运维问答/流水；`news/policy/README.md` §4。
-  - **未做**：L3 冻结。判据复核：无因果措辞、低频单列、非投资建议。
-
-- （更早流水：**2026-10-05 早期**（恢复 27h 停摆首轮 · N1 2021/2022 续抓）→ 已归档 `daily-memories-news/2026-10-05.md`；**2026-10-03 各轮 / 2026-10-04 各轮**（L1/N3 收口、N4/L2、L1 链重跑+轴对齐）→ `daily-memories-news/2026-10-03.md` · `daily-memories-news/2026-10-04.md`；第三~九轮 / 第二轮 / 首轮 smoke / 前期任务 T1–T4 / 建线 / 首轮空转 亦在其中）
+- （更早流水：**2026-10-05 早期**（恢复 27h 停摆首轮 · N1 2021/2022 续抓）· **N1 第 3/4/5/6 轮抓取（2020→2019→2017/2018→2016）+ 第十一~十五轮常态采集 + 全链重跑** → 已归档 `daily-memories-news/2026-10-05.md`；**2026-10-03 各轮 / 2026-10-04 各轮**（L1/N3 收口、N4/L2、L1 链重跑+轴对齐）→ `daily-memories-news/2026-10-03.md` · `daily-memories-news/2026-10-04.md`；第三~九轮 / 第二轮 / 首轮 smoke / 前期任务 T1–T4 / 建线 / 首轮空转 亦在其中）
 
 ---
 

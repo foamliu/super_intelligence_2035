@@ -143,4 +143,8 @@
 | 2026-10-05 | AI面试官，放过打工人吧 | 钛媒体 | opinion | https://www.tmtpost.com/8159479.html |
 | 2026-10-05 | 机房紧缺，资本反而开始“挑剔”数据中心？ | 钛媒体 | analysis | https://www.tmtpost.com/8159481.html |
 | 2026-10-05 | AI耳机蓄势，芯片厂商待发 | 钛媒体 | analysis | https://www.tmtpost.com/8159480.html |
+| 2026-10-05 | Federal judge calls Flock 'indiscriminate mass surveillance' | TechCrunch | news | https://techcrunch.com/2026/10/03/federal-judge-calls-flock-indiscriminate-mass-surveillance/ |
+| 2026-10-05 | 纳指历史新高，恒生科技却创了一年新低，A股硬科技企业正在排队去港交所募资 | 钛媒体 | analysis | https://www.tmtpost.com/8159517.html |
+| 2026-10-05 | 快手的视频 Agent，会不会来晚了？ | 钛媒体 | analysis | https://www.tmtpost.com/8159522.html |
+
 | 2026-10-05 | 硅谷AI，正在开源 | 钛媒体 | analysis | https://www.tmtpost.com/8159477.html |
