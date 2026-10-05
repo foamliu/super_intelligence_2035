@@ -49,8 +49,9 @@
 <div class="wrap">
 
 <header class="hero">
-  <h1>BaiZe 工作汇报 · 2026-10-05（第三份 · 晚 16:10 刷新）</h1>
-  <div class="sub">🌆 <b>傍晚新增</b>：⭐ <b>P-9.9 收官 → 8 卡交接完成</b> —— <b>P-9.9 tensorwise FP8 ✅ COMPLETE</b>（15:15:40，iter 1000/1000）→ 裁定 <b>tensorwise 劣于 delayed</b>（t−bf16 = <b>+5.13% persistent</b>）⇒ <b>P-8 沿用 delayed FP8</b> · <b>P-9.10 ① sglang 装不上</b>（cuda-tile 仅 nvidia 源 SSL EOF）⇒ 栈落 <code>mcore + CUDA-graph</code> ·
+  <h1>BaiZe 工作汇报 · 2026-10-05（第四份 · 深夜 ~19:00 刷新）</h1>
+  <div class="sub">🌙 <b>深夜新增</b>：🚀 <b>vision R12「全量数据 AIMv2」训练中</b>（GPIC+CC12M+Amshaker ≈ <b>58.8M 对</b>，120k 步，16:43 起跑，~5400 img/s，<b>ETA ~20:00 + eval ~1h</b>）· ✅ <b>论文 §6 已改写完成</b>（新增 §6.3「Breaking the Contrastive Ceiling」+ 4 条 bib，pdflatex 通过）· ✅ <b>P-9.10 ②（eager 下界）COMPLETE</b>（H1✅ decode 1.6× / H4✅ prefill 128K 3.6×）· ⭐ <b>P-9.10 ① 翻案：sglang ✅ 可用</b>（藏在 <code>vllm</code> conda env，第 109 次更正）· harness <b>codex 13/30 scored（8 resolved）</b> · data <b>S0a step145/5000 健康</b> + SFT s0 ✅ 9.56B tok · 🌙 <b>用户深夜 5 条已全部落地</b><br>
+     🌆 <b>傍晚</b>：⭐ <b>P-9.9 收官 → 8 卡交接完成</b> —— <b>P-9.9 tensorwise FP8 ✅ COMPLETE</b>（15:15:40，iter 1000/1000）→ 裁定 <b>tensorwise 劣于 delayed</b>（t−bf16 = <b>+5.13% persistent</b>）⇒ <b>P-8 沿用 delayed FP8</b> · <b>P-9.10 ① sglang 装不上</b>（cuda-tile 仅 nvidia 源 SSL EOF）⇒ 栈落 <code>mcore + CUDA-graph</code> ·
      🚀 <b>分卡并行起跑</b>：<b>GPU2–7 = data Stable S0a 配比臂</b>（15:25 已启动，5000 步）· <b>GPU0–1 = pretrain P-9.10 ②</b>（待启）·
      harness <b>cline-patched ×30 ✅ COMPLETE：18/30 resolved（60.0%）· 0 quota-blocked</b> → <b>codex ×30 已启动</b>（inst 1/30）<br>
      🕑 <b>下午（上一份）</b>：🧭 跨线「外网连不上」真因定案（loop 故意剥 <code>*_PROXY</code> ⇒ 外网命令必须显式带 proxy）·
@@ -58,14 +59,22 @@
      🔧 <b>四线打通 MCP 联网检索</b>（data 当天核验完 15 条 arXiv）· pretrain <b>P-9.8</b> 判据 4/4 PASS</div>
   <div class="meta">
     <span>📅 2026-10-05</span>
-    <span>📝 <code>foamliu/super_intelligence_2035</code> @ <code>main</code> · <code>ca928a1</code></span>
-    <span>📈 当日提交 <b>176</b>（截至 16:09）</span>
+    <span>📝 <code>foamliu/super_intelligence_2035</code> @ <code>main</code> · <code>5634ba9</code></span>
+    <span>📈 当日提交 <b>206</b>（截至 ~19:00）</span>
     <span>🎯 投稿截止 ≈ 2027-02-01（余 <b>≈119 天</b>）</span>
   </div>
 </header>
 
 <div class="verdict">
-  <strong>本份（傍晚）增量：P-9.9 收官并交出 8 卡 → pretrain/data 分卡并行起跑；harness 换 kimi 后 cline-patched 30 条跑完（60%）。</strong>
+  <strong>本份（深夜）增量：vision 从「空闲」切到「全量数据训练」并把论文 §6 改完；pretrain 的 sglang 从「装不上」翻案为「✅ 可用」；用户深夜 5 条指令全部落地。</strong>
+  <ol style="margin:10px 0 0">
+    <li><b>🚀 vision R12 —— 用全部现有数据跑 AIMv2</b>：数据 = GPIC(<code>all</code>, 41.8M) + CC12M(11.0M) + Amshaker(5.95M) ≈ <b>58.8M 唯一对</b>；<b>120k 步（≈1.05 epoch）</b>，16:43 起跑，step≈6850/120k，~5400 img/s、loss 3.17↓、无坍缩 → <b>ETA ~20:00 训完 + eval ~1h ≈ 21:00 ALL DONE</b>。GPU 归因实测（dmon SM≈73%）= <b>混合型</b>（compute 为主 + 偶发 IO starvation）。</li>
+    <li><b>✅ 论文 §6 改写完成</b>：新增 <b>§6.3 Breaking the Contrastive Ceiling with Dense Supervision</b>（含四臂因果分解）+ <code>reference.bib</code> 增 4 条（AIMv2/MAE/SigLIP2/OpenVision2）；<code>pdflatex+bibtex</code> 全通过、8 页、无 undefined citation。🚫 未动 §6.1/§6.4 与既有表。</li>
+    <li><b>✅ P-9.10 ②（eager 下界）COMPLETE</b>：dense vs hybrid，ctx{4K,16K,64K,128K}×bs{1,8}×3 reps → <b>H1✅ decode 1.6× 恒定 · H2❌（不随 ctx 增长）· H3❌（per-token cache 5.1× 更低但框架有 O(n) 开销）· H4✅ prefill 128K 3.6×</b> ⇒ 论文<b>保守表述</b>（最强证据 = prefill 128K）。⚠️ CUDA graph 与 mcore <code>StaticInferenceContext</code> 不兼容 → 只有下界，<b>上界待 sglang</b>。</li>
+    <li><b>⭐ P-9.10 ① 翻案：sglang ✅ 可用</b>（第 109 次更正）：此前「装不上（cuda-tile SSL EOF）」<b>作废</b> —— 实为<b>没查现成 conda env</b>；共享 NFS 上的 <code>vllm</code> env = <b>sglang 0.5.9 + vllm 0.14.1 + flashinfer 0.6.3 + lm_eval 0.4.13</b>，<b>原生支持 <code>nemotron_h</code></b>。⇒ 栈优先级恢复 <b>SGLang &gt; mcore</b>。</li>
+    <li><b>🌙 用户深夜 5 条 → 3 条新指令已下发</b>（见 <a href="#s12">§12</a>）：① vision <b>R12 后续跑到 3 epoch</b>（逐 epoch 评测 + 重拟合 scaling 刷新 25.1%）+ <b>自提 ≥3 个下一步方向</b>；② harness <b>授权自装 node22+rust</b> 打通第 5 个 harness；③ <b>用 <code>.29</code> GPU0–1 起 sglang 做 mcore vs sglang 推理对比</b>。另：data 现状 + <b>Stable S0a 释义</b>已当面回答。</li>
+  </ol>
+</div>
   <ol style="margin:10px 0 0">
     <li><b>⭐ P-9.9 收官（15:15:40）</b>：tensorwise FP8 跑满 1000 步 → <b>T1 / T1′ / T4 FAIL</b>（t−bf16 = <b>+5.13%</b> 且 <b>persistent</b>，非 spike）+ T2/T3 PASS ⇒ <b>裁定 tensorwise 劣于 delayed → P-8 沿用 delayed FP8</b>。三臂末态 loss：bf16 2.5429 / delayed 2.5477（+0.19%）/ tensorwise 2.6734（+5.13%）。</li>
     <li><b>🔌 P-9.10 ① sglang A/B 结论</b>：运维更正成立 —— <b>带 proxy 时 aliyun=200</b>，但 <code>cuda-tile</code> 只挂在 <code>pypi.nvidia.com</code>、经代理 <b>SSL EOF</b> ⇒ <b>sglang 装不上</b> ⇒ 栈落 <b><code>mcore + CUDA-graph</code></b>。替代 ckpt <code>p3_dense</code>(4.7G) / <code>p3_hybrid</code>(4.2G) ✅ 已核验 + 运维批准。</li>
@@ -77,10 +86,11 @@
 
 
 <div class="kpi-row">
-  <div class="kpi"><div class="v">18 / 30</div><div class="l">harness <b>cline-patched 60.0%</b>（<b>0 quota 阻塞</b>）→ codex×30 起跑</div></div>
-  <div class="kpi"><div class="v">15:15</div><div class="l">P-9.9 ✅ 收官 → <b>8 卡交接</b>：GPU2–7 data S0a / GPU0–1 P-9.10</div></div>
-  <div class="kpi"><div class="v">+5.13%</div><div class="l">P-9.9 tensorwise t−bf16（persistent）⇒ <b>P-8 沿用 delayed FP8</b></div></div>
-  <div class="kpi"><div class="v">19.76%</div><div class="l">vision R11-G AIMv2 lp@55.3M（基线 7.40%，<b>翻盘随 N 扩大</b>）</div></div>
+  <div class="kpi"><div class="v">58.8M</div><div class="l">vision <b>R12 全量数据 AIMv2</b>（120k 步 ≈1.05 epoch，训练中）</div></div>
+  <div class="kpi"><div class="v">§6.3</div><div class="l">论文<b>新增「打破对比上限」节</b>（+4 bib，pdflatex 通过）</div></div>
+  <div class="kpi"><div class="v">H1✅ H4✅</div><div class="l">P-9.10② eager 下界（prefill 128K <b>3.6×</b> / decode <b>1.6×</b>）</div></div>
+  <div class="kpi"><div class="v">sglang ✅</div><div class="l">P-9.10① <b>翻案</b>：藏在 <code>vllm</code> env（第 109 次更正）</div></div>
+  <div class="kpi"><div class="v">13 / 30</div><div class="l">harness <b>codex</b>（8 resolved = 61.5%）；HTML 43 条/26 resolved</div></div>
 </div>
 
 <div class="toc">
@@ -88,8 +98,8 @@
   <ol>
     <li><a href="#s1">⭐ 头条：臂⑥ AIMv2 翻盘 → 25.1% 渐近被局部推翻</a></li>
     <li><a href="#s2">四条线状态一览</a></li>
-    <li><a href="#s3">pretrain：P-9.9 收官（tensorwise FAIL）→ 8 卡交接 → P-9.10 ② 待启</a></li>
-    <li><a href="#s4">vision：R11-F/G/H 全部收尾（R11-G 长跑 R²=0.91 · R11-H 依赖对比项）</a></li>
+    <li><a href="#s3">pretrain：P-9.9 收官 → 8 卡交接 → P-9.10 ② COMPLETE · ⭐ sglang 翻案可用</a></li>
+    <li><a href="#s4">vision：R11-F/G/H 收尾 → 🚀 R12 全量数据 AIMv2（训练中）+ 论文 §6 已改写</a></li>
     <li><a href="#s5">data：Stable S0a 配比臂启动 + base 分词 22.05B + 下载进度</a></li>
     <li><a href="#s6">harness：cline-patched ×30（60%）+ codex ×30 起跑 + quota 对比</a></li>
     <li><a href="#s7">🔧 运维基础设施：EDA MCP 四线打通（RUN_ID 64→70）</a></li>
@@ -97,6 +107,7 @@
     <li><a href="#s9">需要你决策 / 注意</a></li>
     <li><a href="#s10">诚实条款：我这轮犯的错与更正</a></li>
     <li><a href="#s11">🔌 跨线网络口径定案（下午）：外网命令必须显式带 proxy</a></li>
+    <li><a href="#s12">🌙 深夜增量：用户 5 条指令 → 3 条新指令已下发</a></li>
   </ol>
 
 <h2 class="sec" id="s1"><span class="no">1</span>⭐ 头条：臂⑥ AIMv2 翻盘 → 25.1% 渐近被局部推翻</h2>
@@ -162,7 +173,7 @@
 </div>
 
 
-<h2 class="sec" id="s3"><span class="no">3</span>pretrain：P-9.9 收官（<b>tensorwise FAIL</b>）→ 8 卡交接 → P-9.10 ② 待启</h2>
+<h2 class="sec" id="s3"><span class="no">3</span>pretrain：P-9.9 收官（<b>tensorwise FAIL</b>）→ 8 卡交接 → <b>P-9.10 ② COMPLETE</b> · ⭐ <b>sglang 翻案可用</b></h2>
 
 <h3>3.1 ✅ P-9.7「A1 稳态吞吐」定稿 —— 249K tok/s 可信</h3>
 <p>配置固定为 A1（<code>TP1·DP8·MBS2·seq4096·bf16</code>）跑 ≥1000 步、取 <b>last-100 步稳态均值</b>。预注册判据是「≥240K → 确认 249K 可信」⇒ <b>达标</b>：稳态 <b>~249K tok/s</b>（16.85s/iter，TFLOP/s/GPU≈597，peak 54675 MiB）。<br>
@@ -222,8 +233,12 @@
   ⏭ <b>下一步</b>：8 卡已全部释放（<code>nvidia-smi --query-compute-apps</code> = 空）→ <b>GPU0–1 起 P-9.10 ② 实测矩阵</b>（<code>mcore + CUDA-graph</code>；p3_dense vs p3_hybrid；context∈{4K,16K,64K,128K} × batch∈{1,8}，每格 ≥3 次取中位；按 H1–H4 裁定）· <b>GPU2–7 交 data 起配比 S0a</b>——<b>两者同时开跑</b>。
 </div>
 
-<h3>3.5 ✅ P-9.10 ① 的 sglang A/B 结论：<b>装不上（cuda-tile 仅 nvidia 源 SSL EOF）⇒ 栈落 <code>mcore + CUDA-graph</code></b></h3>
-<p>运维 13:34 的更正（<code>1cde8cd</code>）<b>被实测证实是对的</b>：加代理后 <code>mirrors.aliyun.com</code> = <b>200</b>（此前 <code>Errno 101</code> 只是<b>那次 shell 没带 <code>https_proxy</code></b>）；但安装仍卡在 <code>cuda-tile</code> —— 它<b>只在 <code>pypi.nvidia.com</code> 有</b>，而该源经代理 <b>SSL EOF（000）</b> ⇒ <code>metadata-generation-failed</code>，隔离落点 <code>sglang_libs</code> 为空。</p>
+<h3>3.5 ⚠️→✅ P-9.10 ①【17:52 已更正】sglang：从「装不上」→ <b>✅ 可用</b>（<code>vllm</code> conda env，第 109 次更正）</h3>
+<div class="ok-box">
+  ⭐ <b>翻案（重要）</b>：本节原结论「<code>cuda-tile</code> SSL EOF ⇒ sglang 装不上 ⇒ 栈落 <code>mcore+CUDA-graph</code>」<b>已于 17:52 更正作废</b>。真因<b>不是网络/依赖，而是「没查现成 conda env」</b>：<code>conda env list</code> 命中共享 NFS 上的 <b><code>vllm</code> env</b>（<code>/nas_train/app.e0031982/miniforge3/envs/vllm</code>，<code>.12</code>/<code>.29</code> 通用）—— <b>sglang 0.5.9 · vllm 0.14.1 · torch 2.8.0+cu128（CUDA available=True）· flashinfer 0.6.3 · transformers 4.57.1 · lm_eval 0.4.13（本次新装）</b>，且 <b>sglang 原生支持 <code>nemotron_h</code></b>（<code>sglang.srt.models</code> 含 <code>nemotron_h</code>/<code>nemotron_h_mtp</code>…）+ mamba flags（<code>--mamba-ssm-dtype</code> / <code>--mamba-full-memory-ratio</code> / <code>--mamba-backend</code>）。⇒ 栈优先级<b>恢复 <code>SGLang</code> &gt; <code>mcore+CUDA-graph</code> &gt; <code>mcore 直驱</code></b>；「生产栈上界」补测已作为深夜指令下发（见 <a href="#s12">§12</a>）。<br>
+  📌 <b>教训（已入库）</b>：报「装不上」前先 <code>conda env list</code> 查现成环境 —— 第 107 次与本次<b>两轮都栽在「没看已有环境」</b>。
+</div>
+<p><b>（原 A/B 过程留档）</b>运维 13:34 的更正（<code>1cde8cd</code>）<b>本身是对的</b>：加代理后 <code>mirrors.aliyun.com</code> = <b>200</b>（此前 <code>Errno 101</code> 只是<b>那次 shell 没带 <code>https_proxy</code></b>）；当时的失败点是 <code>cuda-tile</code> 只在 <code>pypi.nvidia.com</code>、经代理 <b>SSL EOF</b> ⇒ <code>metadata-generation-failed</code>。⇒ <b>但「装不上」这个结论已被证明是「没走现成 env」的误判。</b></p>
 <table>
   <tr><th>项</th><th>内容</th></tr>
   <tr><td>替代 ckpt</td><td>✅ <b>已核验 + 已批准</b>：<code>p3_dense/iter_0005000</code>(4.7G) / <code>p3_hybrid/iter_0005000</code>(4.2G)，@<code>code/BaiZe-ISEDA2027/nemo_experiments/</code>；⚠️ 口径标注：S3=1000 步/24.6M tok（已删）→ P-3=5000 步/123M tok，<b>旧 10.3× 不可直接相减</b></td></tr>
@@ -233,7 +248,19 @@
 </table>
 
 
-<h2 class="sec" id="s4"><span class="no">4</span>vision：R11-F/G/H 链<b>全部收尾</b>（AIMv2 翻盘 · Q1–Q3 裁定 · WAITING=1）</h2>
+<h3>3.6 ✅【深夜】P-9.10 ②（eager 下界）COMPLETE —— H1✅ H2❌ H3❌ H4✅</h3>
+<table>
+  <tr><th>假设</th><th>内容</th><th>裁定</th></tr>
+  <tr><td><b>H1</b></td><td>hybrid decode 吞吐 &gt; dense</td><td><span class="badge b-ok">✅ decode <b>1.58–1.62×</b> 恒定</span></td></tr>
+  <tr><td><b>H2</b></td><td>优势随 ctx 增长</td><td><span class="badge b-no">❌ ratio 非单调（128K 回降）</span> → eager launch 开销掩盖 O(n)</td></tr>
+  <tr><td><b>H3</b></td><td>per-token KV/cache 显著更小</td><td><span class="badge b-no">❌ hybrid cache 18.2× 但 per-token 仅 5.1× 更低</span>（方向对、框架有 O(n) 开销）</td></tr>
+  <tr><td><b>H4</b></td><td>prefill 长 ctx 更快</td><td><span class="badge b-ok">✅ prefill 128K <b>3.6×</b>（SSM O(n) vs attn O(n²)）</span></td></tr>
+</table>
+<div class="note">
+  配置：dense=GPU0 / hybrid=GPU1；ctx∈{4K,16K,64K,128K}×bs∈{1,8}，gen_len=64，prefill_iters=5，<b>repeats=3</b>，eager（TS=<code>20261005_165017</code>）。64K-b8 / 128K-b8 双方 <b>OOM</b>（如实记）。⚠️ <b>CUDA graph 与 mcore <code>StaticInferenceContext</code> 根本不兼容</b> ⇒ 只能给<b>下界</b>；<b>「生产栈上界」待 sglang 复测</b>（深夜已下发）。→ 裁定 <b>H1✅ H2❌</b> ⇒ 论文<b>保守表述</b>（最强证据 = prefill 128K 3.6×）。
+</div>
+
+<h2 class="sec" id="s4"><span class="no">4</span>vision：R11-F/G/H 链<b>全部收尾</b> → 🚀 <b>R12 全量数据 AIMv2（训练中）+ 论文 §6 已改写</b></h2>
 
 <h3>4.1 ✅ R11-F 数据源横向对比 —— 五臂全部完成（A/B/C/E/D，E+D 已重跑修复）</h3>
 <table>
@@ -284,12 +311,23 @@
   <tr><th>项</th><th>结果</th></tr>
   <tr><td><b>Arm E（CC12M 纯）</b> / <b>Arm D（en500k）</b></td><td><span class="badge b-ok">✅ 11:47 / 13:30 完成</span>（端口碰撞 / <code>empty_check</code> 修复后重跑）；E 6.75%@30k；D 3.86/6.34/6.65%（in-domain，单列不排名）</td></tr>
   <tr><td>链状态</td><td><b>R11-F / R11-G / R11-H 全部收尾</b>；<b>§15.6（Q1/Q2/Q3）+ §15.7 + §16（R11-G）+ §17（R11-H）已全部落盘</b>；§16.8 文献锚点用 <code>cimi_search</code> 核验（SigLIP2 <code>mask=50%</code>、MAE 75%）</td></tr>
-  <tr><td>GPU</td><td><b>WAITING=1</b>、vision 侧无在跑任务、<b>GPU 全空闲</b>；⏸ <b>无已批准的待跑训练</b>（剩「<b>GPIC 到齐后重跑 scaling</b>」须<b>运维另批卡</b>）</td></tr>
+  <tr><td>GPU（深夜更新）</td><td>🚀 <b>R12 全量数据 AIMv2 训练中</b>（<code>.12</code> 8 卡，16:43 起，120k 步，~5400 img/s，ETA ~20:00 + eval ~1h）；🌙 <b>深夜新批：R12 后续跑到 ≈3 epoch + 逐 epoch 重拟合 scaling（刷新 25.1%）+ 自提 ≥3 方向</b>（见 <a href="#s12">§12</a>）</td></tr>
 </table>
 <div class="note">
   ⚠️ <b>排程提醒</b>：<code>.29</code> 的 8 卡 15:15 起<b>已排满</b>（GPU0–1 = pretrain P-9.10，GPU2–7 = data 配比 S0a）⇒ <b>vision 若要插新实验，得等配比跑完或另批卡</b>（已列入 <a href="#s9">§9</a> 决策项）。GPIC 目前下载 <b>3229/8000 ≈40%</b>，尚不满足「到齐重跑」条件。
 </div>
 
+
+<h3>4.5 🚀【深夜】R12 —— 用全部现有数据跑 AIMv2（16:43 起跑）+ 论文 §6 已改写</h3>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>数据</td><td>GPIC <code>all</code>(41.8M) + CC12M(11.0M) + Amshaker(5.95M) = <b>≈58.8M 唯一对</b>（<code>--data-source mixed --caption-type all</code>）</td></tr>
+  <tr><td>配方 / 规模</td><td>AIMv2-style（InfoNCE + 1.0×patch-MSE）· w512 · 冻结 CLIP-768 · <b>120k 步（≈1.05 epoch, 61.4M 样本）</b> · save-every 10k</td></tr>
+  <tr><td>进度（16:59）</td><td>step <b>6850/120k（5.7%）</b> · loss 3.17↓ · C1≈0.33 / C2_gap +0.125 / C4=OK（无坍缩）· <b>~5400 img/s</b> · ETA <b>~20:00 + eval ~1h</b></td></tr>
+  <tr><td>GPU 归因实测</td><td><code>dmon</code> SM util <b>≈73%</b>（47–91%）、显存 20% ⇒ <b>混合型</b>（compute 为主 + 数据偶发 starvation）；vs R11-G <b>2.2× 提速</b>主因 = 更多 shard 多样性 + GPIC 小 tar 轮换快</td></tr>
+  <tr><td>✅ 论文 §6 改写</td><td>新增 <b>§6.3 Breaking the Contrastive Ceiling with Dense Supervision</b>（<code>\label{sec:vis-dense}</code>，含四臂因果分解表）+ 4 bib；<code>pdflatex+bibtex</code> 通过、8 页、无 undefined citation；🚫 未动 §6.1/§6.4 与 <code>tab:visarch/visscale/visres/visobj</code></td></tr>
+  <tr><td>🌙 后续（已批）</td><td>R12 final → <b>续训到 ≈3 epoch（≈344k 步 / N≈176M）</b>，epoch 1/2/3 各评测（建议每 0.5 epoch 一点，≥6 点）→ <b>重拟合 scaling，刷新 R9 的 InfoNCE 25.1% 上限</b>；并 <b>自提 ≥3 个下一步方向</b>（交 <code>run/VISION_NEXT_DIRECTIONS.md</code>）</td></tr>
+</table>
 
 <h2 class="sec" id="s5"><span class="no">5</span>data：Stable S0a 配比臂 <b>🚀 已启动（GPU2–7）</b> + base 分词 ✅ 22.05B tok</h2>
 
@@ -330,6 +368,15 @@
 </table>
 
 
+<h3>5.4 【深夜】data 唤醒 135（18:08）—— S0a 健康推进 + SFT s0 ✅</h3>
+<table>
+  <tr><th>项</th><th>状态</th></tr>
+  <tr><td>S0a 配比臂</td><td><span class="badge b-ok">🟢 健康</span> <b>step 145/5000</b> · loss <b>5.90</b>（稳定下降、0 NaN）· ~40.1 s/iter · GPU2–7 52–100% util ~39GB · <b>ETA ~10-08 00:00</b>（SAVE_INTERVAL=5000 仅末尾存 ckpt）</td></tr>
+  <tr><td>SFT 分词</td><td>✅ <b>s0 完成（9.56B tok）</b> · 🟡 s1 仍跑（~26.5G .bin 增长）· ✅ s2(3.58B) / s3(521M)；<b>Decay 段备料待 s1 完</b></td></tr>
+  <tr><td>下载（白名单）</td><td><code>l1_en_hq</code> <b>2959/6006</b>（+47）· <code>gpic</code> <b>3499</b> tar（≈44%，+155）· <code>en</code> 2048 ✓ · <code>zh</code> 171（<b>冻结</b>）· <code>en_v1_4</code> 🔴 已停 · <b>UltraX 白名单外未下载</b></td></tr>
+  <tr><td>D-CLEAN-4</td><td><span class="badge b-ok">✅ 已裁定 · 保留不动</span>（不再删/不再盘点，「待拍板」作废）</td></tr>
+</table>
+
 <h2 class="sec" id="s6"><span class="no">6</span>harness：cline-patched ×30 ✅ <b>60.0%</b> → codex ×30 起跑（kimi 串行）</h2>
 
 <h3>6.1 ✅ H-A pilot（30 instances × 5 harness）—— 30/30 收口</h3>
@@ -368,6 +415,15 @@
 </table>
 <p>🧭 <b>对「扩 300」的直接含义</b>：<b>kimi 完全不撞 quota</b>（30 条 0×429），而 deepseek 被 5h 窗口挡掉 <b>17/22</b> ⇒ <b>要扩就先扩 kimi</b>（见 <a href="#s9">§9</a> 第 2 项）。工期按 ~8 min/inst 估，<b>4 harness × 30 ≈ 22h（~1 天）</b>。</p>
 
+
+<h3>6.4 【深夜】R76 —— codex ×30 推进中（13/30 scored：8 resolved）+ HTML 重生成</h3>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>codex ×30</td><td><b>13/30 scored</b>（<b>8 resolved = 61.5%</b> + 5 patch-but-failed）；inst 14/30 进行中；PID 2051774，elapsed ~2.8h</td></tr>
+  <tr><td>对比报告</td><td><code>run/harness/SWEBENCH_COMPARE.html</code> 已重生成：<b>43 entries / 26 resolved</b>（12528 B）；配套 <code>kimi_pilot_results.json</code></td></tr>
+  <tr><td>扩 300</td><td>infra 就绪（300 JSONs + 12/12 rootfs templates）；🌙 <b>授权自装 node≥22.13 + rust</b> 以打通第 5 个 harness（deepseek-harness）→ 见 <a href="#s12">§12</a></td></tr>
+  <tr><td>健康度</td><td>gw_proxy(kimi) 健康（0×429，~8.3h）· relay 健康跳过第 29 次（2489749 ppid=1，etimes≈4.09d）· <code>.last_run_id=71</code>（无新指令）· 无阻塞</td></tr>
+</table>
 
 <h2 class="sec" id="s7"><span class="no">7</span>🔧 运维基础设施（1）：EDA MCP 四线打通「联网检索」（RUN_ID 64→70）</h2>
 
@@ -418,6 +474,7 @@
     <ul>
       <li>⭐ <b>臂⑥ AIMv2 翻盘</b>：lp <b>12.08%</b> vs 基线 6.08%（<b>+6.00 pp</b>）</li>
       <li><b>R11-G 长跑 108k</b>：lp@55.3M <b>19.76%</b> vs 基线 7.40%（Δ 随 N 增大 +7.5→+12.4 pp）· 幂律 <b>R²=0.91</b> ⇒ <b>25.1% 上限被超越</b></li>
+      <li>🚀 <b>R12 全量数据 AIMv2</b>（58.8M 对，120k 步，训练中，ETA ~20:00）→ 🌙 <b>后续跑到 3 epoch + 重拟合 scaling</b>（刷新 25.1%）</li>
       <li><b>R11-H 纯 AR</b>：lp 6.23%@15.36M（+0.15）⇒ <b>翻盘依赖对比项</b>（因果四臂：①6.08 / ④0.47 / ⑥-B 6.23 / ⑥-A 12.08）</li>
       <li>R11-F：A 5.53 / B 6.17 / C 5.92 / <b>E 6.75%@30k</b> / D 6.65%（单列）；Q1/Q3 无显著差异 · Q2 已裁定</li>
       <li>基线 scaling（InfoNCE）：<code>a=0.251 / R²=0.94</code></li>
@@ -430,7 +487,7 @@
       <li>P-9.7：A1 稳态 <b>~249K tok/s</b>（≥240K 判据达标）</li>
       <li>P-9.8：armA 195K / armB 233K → <b>s=1.195</b> → 裁定 <b>4/4 PASS</b>（<code>937c25f</code>）</li>
       <li>P-9.9：tensorwise FP8 ✅ COMPLETE → <b>T1/T1′/T4 FAIL（+5.13% persistent）</b> ⇒ <b>P-8 沿用 delayed FP8</b>（delayed s=1.194 &gt; tensorwise 1.159）</li>
-      <li>P-9.10 ①：sglang <b>装不上</b>（cuda-tile SSL EOF）⇒ 栈=<code>mcore+CUDA-graph</code>；② 实测矩阵待启（GPU0–1）</li>
+      <li>P-9.10 ① <b>翻案：sglang ✅ 可用</b>（<code>vllm</code> env，第 109 次更正）⇒ 栈恢复 <code>SGLang</code>；② <b>eager 下界 COMPLETE</b>（H1✅/H4✅）；🌙 生产栈上界待 sglang 补测（GPU0–1）</li>
       <li>P-8 候选A：<code>TP4·SP·MBS8·seq8192·FP8(delayed)·MAX_CONN=1</code></li>
     </ul>
   </div>
@@ -447,7 +504,7 @@
     <h3 style="margin-top:0">harness / 运维</h3>
     <ul>
       <li>⭐ <b>cline-patched ×30 = 18/30 resolved（60.0%）</b> · 12 patch-but-failed · <b>0 quota-blocked</b>（4.0h）</li>
-      <li><b>codex ×30 运行中</b>（PID 2051774）→ opencode → claude-code → 全 5 harness 对比</li>
+      <li><b>codex ×30：13/30 scored（8 resolved = 61.5%）</b>；HTML 43 条/26 resolved；🌙 授权自装 node22+rust → 第 5 个 harness</li>
       <li>4/5 harness 端到端打通（仅 deepseek-harness 缺工具链）</li>
       <li>当日提交 <b>176</b>（截至 16:09）；ops relay 健康（<code>.last_run_id=71</code>，全 exit=0）</li>
       <li>🔧 联网两条路：MCP 检索 ✅ 四线可用 · <b>直连外网须显式带 proxy</b>（口径见 §11）</li>
@@ -475,8 +532,8 @@
   </tr>
   <tr>
     <td>4</td>
-    <td><b>vision 已空闲</b> —— R11-F/G/H 链全部收尾，<b>WAITING=1、GPU 全空闲</b>（Arm E/D 已重跑完成，Q1–Q3 已裁定）</td>
-    <td><span class="badge b-warn">新的需要你定</span> <b>「GPIC 到齐后重跑 scaling」要另批 GPU</b>（现 GPIC ≈40%，未到齐）：① 等配比跑完再排 ② 压缩 P-9.10 窗口 ③ 先不动。我倾向 ①。</td>
+    <td><b>vision（深夜已推进）</b> —— R12 全量数据 AIMv2 <b>训练中</b>（ETA ~20:00）；<b>R12 后续跑到 3 epoch + 逐 epoch 重拟合 scaling（刷新 25.1%）已批</b>，并让 agent <b>自提 ≥3 方向</b>（见 <a href="#s12">§12</a>）</td>
+    <td><span class="badge b-ok">✅ 已按你第 1/2 条落地</span> 仅剩：3 epoch 的 <b>墙钟 / GPU·h 估算</b>待 agent 回报（其后自动开跑，无需再等你）。</td>
   </tr>
   <tr>
     <td>5</td>
@@ -567,10 +624,24 @@ https_proxy=$P http_proxy=$P curl -sS -m 10 -D - -o /dev/null https://mirrors.al
 </table>
 <p>📌 <b>为什么必须写进任务书</b>：各线的自检习惯里最容易出现的就是「<b>网络不通 ⇒ 换个安装姿势再试</b>」；把「<b>先看 env 里有没有 proxy</b>」写在最上面，能省掉成小时的无效试错（<b>今天 <code>sglang</code> 就差点因此被永久放弃</b>）。</p>
 
+<h2 class="sec" id="s12"><span class="no">12</span>🌙 深夜增量：用户 5 条指令 → 已下发 3 条运维指令 + 1 条当面答复</h2>
+<table>
+  <tr><th>#</th><th>用户指令</th><th>处置</th></tr>
+  <tr><td>1</td><td><b>vision：R12 后续跑到 3 个 epoch，epoch=1/2/3 分别评测对比（可多点），做 scaling law，刷新 25.1% 上限</b></td><td>✅ 已写入 <code>BAIZE_VISION_TASK.md</code> 顶部新块：续训到 <b>≈3 epoch（≈344k 步 / N≈176M）</b>；<b>epoch 1/2/3 必测 + 建议每 0.5 epoch 一点（≥6 点）</b> 跑 IN-1k lp；重拟合幂律+对数线性，与 <b>InfoNCE 25.1%</b> 并列；预注册 R²≥0.90 且 a&gt;25.1%；<b>先报估算再起跑</b>；回填论文 §6.3</td></tr>
+  <tr><td>2</td><td><b>让 vision agent 自己建议下一步方向（≥3 个）</b></td><td>✅ 同块第 ②：授权自提 ≥3 方向（每个给动机/成本/判据/产出/风险）→ 交 <code>run/VISION_NEXT_DIRECTIONS.md</code>（仅建议，未批不起跑）</td></tr>
+  <tr><td>3</td><td><b>data：GPIC / Ultra-FineWeb / UltraX 下载 + 配比实验 + 「Stable S0a」释义</b></td><td>✅ <b>运维当面答复</b>（见下方 note）：GPIC 3499/8001；Ultra-FineWeb = en✅满 / l1_en_hq 2959/6006 / zh 171(冻结) / en_v1_4 已停；<b>UltraX = 白名单外·未下载</b>；配比=§0.6-B Stable/Decay 两段；<b>Stable S0a = Stable 段第 0 组 a 臂，配比 base:code:math=88:8:4，5000 步=短地平线代理训练</b></td></tr>
+  <tr><td>4</td><td><b>harness：codex×30 后安排 + 报告路径 + 授权自装 node22+rust</b></td><td>✅ 报告 = <code>run/harness/SWEBENCH_COMPARE.html</code>；codex×30 后顺序 = <code>codex×300→cline-patched×300→opencode×300→claude-code×300→deepseek</code>；✅ 已写入 <code>BAIZE_HARNESS_TASK.md</code> 顶部新块<b>授权自装</b>（node 官方二进制走 proxy + rust rustup 镜像，隔离不动共享 env）</td></tr>
+  <tr><td>5</td><td><b>pretrain：sglang ✅ 可用 ⇒ 用 <code>.29</code> GPU0–1 做对比测试（延迟/吞吐/显存）</b></td><td>✅ 已写入 <code>BAIZE_PRETRAIN_2B_TASK.md</code> 顶部新块：<b>mcore vs sglang 双栈</b>，矩阵对齐 P-9.10②，采集 TTFT/prefill/decode 吞吐/延迟/峰值显存；<b>关键 = 能否翻正 H2</b>；前置 = mcore distcp→HF(<code>nemotron_h</code>)</td></tr>
+</table>
+<div class="note">
+  📌 <b>「Stable S0a（5000 步）」一句话释义</b>：<b>Stable</b> = WSD 的<b>稳定段</b>（配比搜索第一段，另一段是 Decay 退火段）；<b>S0a</b> = Stable 段<b>第 0 组的 a 臂</b>，配比 = <b>base:code:math = 88:8:4</b>；<b>5000 步</b> = <b>短地平线代理训练</b>（6 卡 TP1/DP6、seq=4094、GBS=1020、mb=1、bf16、seed1234）—— 用小规模短跑比 loss/代理指标选最优配比（依据 Xmodel-2「小模型配比可迁移大模型」）。
+</div>
+
 <p style="text-align:center;margin:30px 0 0;color:var(--muted);font-size:13px">— 报告完 —</p>
 
 <footer>
-  <p>本报告由<b>运维</b>（外部指挥 4 条 agent 线）生成 · <b>第三份刷新于 2026-10-05 16:10</b> · 数据来源：各线 <code>run/MEMORY_*.md</code> · <code>run/EXPERIMENTS_*.md</code> · <code>run/GPU29_ALLOC.md</code> · <code>run/ops/outbox.md</code> · <code>git log</code>。</p>
+  <p>本报告由<b>运维</b>（外部指挥 <b>6 条 agent 线</b>：pretrain / vision / data / harness + 观察哨 news / research）生成 · <b>第四份刷新于 2026-10-05 ~19:00</b> · 数据来源：各线 <code>run/MEMORY_*.md</code> · <code>run/EXPERIMENTS_*.md</code> · <code>run/GPU29_ALLOC.md</code> · <code>run/ops/outbox.md</code> · <code>git log</code>。</p>
+  <p>⚠️ 所有数字均可在仓库中溯源；凡未能取证的一律标注「待实测 / 假设」。<b>本日最值得记住的一句（深夜版）：AIMv2 翻盘改写了「25.1% 天花板」，而 R12（全量 58.8M）+ 3-epoch 续跑要把它推到哪 —— 是今天留下的最大悬念。</b></p>
   <p>⚠️ 所有数字均可在仓库中溯源；凡未能取证的一律标注「待实测 / 假设」。<b>本日最值得记住的一句（傍晚版）：P-9.9 收官后 8 卡一分二（GPU0–1 评测 / GPU2–7 配比）—— 卡是稀缺资源，交接靠账本 <code>GPU29_ALLOC.md</code>，谁都不许 kill 对方进程。</b></p>
 </footer>
 
