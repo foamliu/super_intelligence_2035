@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BaiZe · Stable S0a 数据配比实验报告</title>
+<title>BaiZe · Stable S0a 数据配比实验报告（已废弃方法 · 目标尺寸单臂 · 非实验）</title>
 <style>
 :root{--bg:#0f1117;--card:#181b24;--card2:#1f232e;--bd:#2a2f3d;--tx:#e6e8ee;--mut:#9aa0b0;--acc:#4fc3f7;--acc2:#66bb6a;--warn:#ffb74d;--err:#ef5350;--pur:#ab47bc;--grn:#26a69a}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -66,8 +66,17 @@ footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--bd);color:var
 </head>
 <body>
 <div class="wrap">
+
+<div class="callout err" style="border-width:2px">
+<p style="font-size:16px"><strong>🚫 运维订正（2026-10-06，用户复核）—— 本页 <span class="err">不是配比实验</span>，且 <span class="err">不构成任何配比结论</span>。</strong></p>
+<p>· <strong>事实</strong>：本页记录的是 <strong>1 个未验证先验点</strong>（<code>base:code:math = 88:8:4</code>，来自 Round 1 经验，非搜索所得）在 <strong>2.220B 目标尺寸模型</strong>上的 <strong>1 次短跑（单臂 / 单 seed / 无中间 ckpt）</strong>。全程<strong>没有任何第 2 个配比被跑过</strong> ⇒ <strong>无对照、无排序、无不确定性</strong>；故 §1.1「做实验而不是拍脑袋」的标题与 §3「工作假设配比」表 <strong>名实不符</strong>，§6/§7 中「<strong>选出最优配比</strong>」的表述<strong>予以作废</strong>（单臂下不可能成立）。</p>
+<p>· <strong>成本</strong>：≈<strong>312 GPU·h / 臂</strong>（原估 0.5–1 GPU·h，偏 <strong>~50×</strong>）。截至 2026-10-06 07:43 已烧 <strong>≈98 GPU·h</strong>（16.3 h × 6 卡）⇒ <strong>≈ 一个完整搜索日预算（144 GPU·h）的 68%</strong>，等价于 <strong>≈200 个应做而未做的 trial</strong>。</p>
+<p>· <strong>改道（唯一有效方案）</strong>：<strong>小代理模型（~50–150M 同族 mamba2-hybrid，规模按「24h 跑 200–400 trial」反推）+ Optuna 贝叶斯优化（TPE + MedianPruner）+ 每卡独立 trial（TP1/DP1，6 并行）+ GBS 8–16 + seq 2048</strong>；<strong>Day1 搜 Stable / Day2 搜 Decay</strong>。指令见 <code>run/BAIZE_DATA_TASK.md</code> 顶部（2026-10-06）。<strong>先验点 88:8:4 与 SFT=64% 将作为候选点之一被 study 强制检验</strong>，并用 Δloss 如实回答「直觉 vs 实验」。</p>
+<p>· <strong>本页处置</strong>：<strong>保留为历史取证 · 不再更新</strong>（S0a 已按指令 kill，≈1350 步作废，如实记流水）。下文正文中的「运行中 / 进度 / ETA」数字仅为该<strong>已废弃跑</strong>的历史快照，<strong>不得作为成果引用</strong>。</p>
+</div>
+
 <header>
-<h1>📊 BaiZe · Stable S0a 数据配比实验报告</h1>
+<h1>📊 BaiZe · Stable S0a 数据配比实验报告<span style="color:var(--err);font-size:15px;display:block;margin-top:6px">（已废弃方法 · 目标尺寸单臂 · 非实验）</span></h1>
 <div class="sub">WSD 双阶段预训练的 Stable 段基线臂 — 运行状态与设计说明</div>
 <div class="meta">
 <span class="tag">§0.6-B · P-8 数据配方</span>
