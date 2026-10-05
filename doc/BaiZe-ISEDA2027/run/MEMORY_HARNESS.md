@@ -20,15 +20,15 @@ ERROR_COUNT:  0
   - ✅ **rust 1.99.0** → `~/.cargo/`（rustup-init 从 `mirrors.tuna.tsinghua.edu.cn/rustup/` 下载 21MB，stable minimal profile）。
   - ✅ **pnpm v11.7.0** → `~/.local/pnpm/pnpm`（146MB standalone binary，从 GitHub releases `pnpm-linux-x64.tar.gz` 下载 49MB；GitHub API `api.github.com` 可达，`release-assets.githubusercontent.com` 可达）。
   - ✅ **landlock-run** → 从 `native/landlock-run/packages/entry/src/main.c`（**C11 非 Rust**）用 `gcc -static -O2` 编译 → 888K ELF 64-bit static binary → 放入 `packages/linux-x64/bin/landlock-run`。`--probe` → "landlock: partially enforced (older ABI)" exit=0 ✅。
-  - ❌ **pnpm install BLOCKED**：`registry.npmjs.org` — proxy 可建立 CONNECT 隧道（`HTTP/1.1 200 Connection established`）但**所有传输 ECONNRESET**。pnpm install 启动（268 workspace projects, 1327 lockfile entries, lockfile up to date）但**每个包下载均 ECONNRESET**（20 retries, 500ms-3s 间隔）。后台运行中 PID 939971。所有 npm 镜像均不可达：`registry.npmmirror.com`=000, `registry.npm.taobao.org`=000, `unpkg.com`=000, `esm.sh`=000, `cdn.jsdelivr.net`=000, `registry.npmjs.org`=000(curl)/ECONNRESET(pnpm)。`mirrors.aliyun.com/npm/`=404（路径不存在）。GitHub repo `deepseek-harness/deepseek-harness` = Not Found（无预构建 release）。
-  - 📝 **结论**：node/rust/pnpm/landlock-run 工具链已就绪；**deepseek-harness JS 依赖安装被 npm registry 不可达阻塞**。deepseek-harness 是横评最后一个 harness（序列：codex×300 → cline-patched×300 → opencode×300 → claude-code×300 → deepseek-harness），**不阻塞当前主线**。
-- 📊 **codex × 30 进度**：PID 2051774（ppid=1，elapsed ~3.7h=13247s）。**14/30 scored**：8 resolved（11001/11039/11049/11099/11133/11179/11583/11620），6 patch-but-failed（10924/11019/11283/11422/11564/11630）。inst 15/30（`django__django-11742`）RUN 中。
+  - ❌ **pnpm install BLOCKED — 代理策略级封锁（非网络故障）**：proxy (`172.19.92.25:13128` Squid) **有意封锁 npm registry**。证据：① HTTPS → proxy 建立 CONNECT 隧道（`200 Connection established`）但传输即 ECONNRESET（pnpm 17438 次 ECONNRESET, 0 packages downloaded in 371s, 已 kill）；② HTTP → proxy 返回 **302 重定向到封锁页** `http://12.1.10.137/disable/disable.htm?url_type=网络协议/HTTP_HEAD&plc_name=AI-proxy`（body=`<h2>Moved</h2>` 14bytes）；③ `Cache-Status: proxy.ai.srv;fwd=miss;detail=mismatch` 确认代理拦截。所有 npm 域名均被封：`registry.npmjs.org`/`registry.npmmirror.com`/`registry.npm.taobao.org`/`unpkg.com`/`esm.sh`/`cdn.jsdelivr.net`。GitHub（`api.github.com`/`release-assets.githubusercontent.com`）和 aliyun node mirror **不受影响**。
+  - 📝 **结论**：node/rust/pnpm/landlock-run 工具链已就绪；**deepseek-harness JS 依赖安装被代理策略级封锁阻塞**（需运维白名单 npm registry 或提供替代网络/预构建 node_modules tarball）。deepseek-harness 是横评最后一个 harness（序列：codex×300 → cline-patched×300 → opencode×300 → claude-code×300 → deepseek-harness），**不阻塞当前主线**。
+- 📊 **codex × 30 进度**：PID 2051774（ppid=1，elapsed ~3.8h=13607s）。**15/30 scored**：8 resolved（11001/11039/11049/11099/11133/11179/11583/11620），7 patch-but-failed（10924/11019/11283/11422/11564/11630/11742）。inst 16/30 RUN 中。
 - ✅ **kimi quota 健康**：gw_proxy 运行中（etimes≈32201s≈8.9h）。**0 次 429**。
 - 📈 **kimi 横评汇总（更新）**：
   | harness | scored | resolved | patch-but-failed | quota-blocked | resolve rate |
   |:--|--:|--:|--:|--:|--:|
   | cline-patched | 30/30 | 18 | 12 | 0 | 60.0% |
-  | codex | 14/30 | 8 | 6 | 0 | 57.1% (进行中) |
+  | codex | 15/30 | 8 | 7 | 0 | 53.3% (进行中) |
   | deepseek-v4-flash | 22/30 | 0 | 5 | 17 | 0% (旧口径) |
 - 🔧 **SWEBENCH_COMPARE.html 已更新**：44 entries, 26 resolved, 12556B。
 - ✅ **ops 中继复核（第 30 次）→ 健康**。relay `2489749 1 355058 Ss`（ppid=1、wchan=do_wai）；`.last_run_id`=71；日志 RUN_ID 62–71 均 exit=0。
