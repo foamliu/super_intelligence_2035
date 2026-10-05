@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（supervisor 编辑，中继只读执行）
 
-<!-- RUN_ID: 6 -->
+<!-- RUN_ID: 7 -->
 
 > **用法**：在下面**新增一段** `## RUN_ID N`（N 递增）+ **一个 ```bash 块** → `git push`。
 > 中继（`ops_relay.sh`）轮询发现 **RUN_ID 变大** → 执行 → 结果 append 到 `ops/outbox.md` → push。
@@ -13,6 +13,58 @@
 > ② 🚫 **绝不整树 `du`**（大目录会跑很久）—— 只用 `df` + 有界定向 `du`（每条带 `timeout`）；
 > ③ 单块总超时 **600s**，输出超 **20000 字符**会被截断；
 > ④ 危险模式（`rm -rf /`、`mkfs`、**`git clean -fdx`**、**`git reset --hard`**、**杀 ops_relay**）会被**拒绝**。
+
+## RUN_ID 7 — 🩺 **单实例核验** + 🔎 **追查瞬时第 3 实例** + 📦 **补跑被跳过的 RUN_ID 4**（**全只读**）
+
+**背景（supervisor 2026-10-05 ~23:2x）**：
+- 用户已把中继切到**单实例新代码**：`pgrep` 只剩 **`353526 watch_ops_relay.sh ops_relay.sh`**（= `exec -a watch_ops_relay.sh` 起，✅ 符合新文档）。
+- 待办 ①：**核验新代码真的生效**（pidfile + 日志里应有 `pid=`/`pidfile=`）；②：**RUN_ID 4（网盘工具链 + sha256 manifest）当年被"只跑最大"跳过**，现补上；③：**查清 22:45 那个瞬时第 3 实例 `349841` 从哪来**。
+- ⚠️ 本块**全只读**（不 rm / 不写 git / 不 kill）。
+
+```bash
+set -u
+cd ~/super_intelligence_2035 || exit 1
+R=doc/personal-watch/run
+echo "=== 0. 基本 ==="
+hostname; date '+%F %T %Z'; uptime
+echo
+echo "=== 1. 中继单实例核验（应恰好 1 行）==="
+pgrep -af 'watch_ops_relay|ops_relay' | cut -c1-160 || echo "(⚠️ 未匹配到中继)"
+echo "--- pidfile（🆕 新代码才有；无 = 仍在跑旧代码）---"
+if [ -f /tmp/watch_ops_relay.pid ]; then echo "pidfile = $(cat /tmp/watch_ops_relay.pid)"; else echo "⚠️ 无 /tmp/watch_ops_relay.pid"; fi
+echo "--- 日志尾部（新代码启动行含 pid=/pidfile=）---"
+tail -10 /tmp/watch_ops_relay.log 2>/dev/null | cut -c1-160 || echo "(无日志)"
+echo
+echo "=== 2. 三条通道进程（etime 看存活时长）==="
+ps -eo pid,etime,args | grep -E 'ops_relay\.sh|watch_.*_loop\.sh' | grep -v grep | cut -c1-150 || echo "(无)"
+echo
+echo "=== 3. 🔎 追查「瞬时第 3 实例 349841」来源 ==="
+echo "--- crontab（用户）---"; crontab -l 2>/dev/null | grep -n -i -E 'relay|watch|cline' || echo "(无相关)"
+echo "--- /etc/cron.d 与 /etc/crontab ---"; ls /etc/cron.d/ 2>/dev/null; grep -rn -i 'relay' /etc/cron.d/ /etc/crontab 2>/dev/null | head -5 || echo "(无)"
+echo "--- systemd 单元 ---"; ls /etc/systemd/system/ 2>/dev/null | grep -i -E 'relay|watch|cline' || echo "(无相关 unit)"
+echo "--- 当前中继的父进程链 ---"
+RP="$(pgrep -f 'watch_ops_relay' | head -1)"
+if [ -n "${RP:-}" ]; then p="$RP"; for i in 1 2 3; do L="$(ps -o pid=,ppid=,args= -p "$p" 2>/dev/null)"; [ -z "$L" ] && break; echo "$L" | cut -c1-150; p="$(ps -o ppid= -p "$p" 2>/dev/null | tr -d ' ')"; [ -z "$p" ] && break; [ "$p" = "1" ] && { echo "(已到 init/1)"; break; }; done; fi
+echo "--- ~/.bash_history 里出现 ops_relay 的行（找手工/脚本拉起）---"
+grep -n -E 'ops_relay' ~/.bash_history 2>/dev/null | tail -8 | cut -c1-140 || echo "(读不到 history)"
+echo
+echo "=== 4. 📦 补跑 RUN_ID 4：网盘工具链 + 语料 sha256 manifest（只读）==="
+cd $R/news/archive 2>/dev/null || { echo "(archive 目录不存在)"; exit 0; }
+echo "--- 网盘工具可用性 ---"
+for t in bypy BaiduPCS-Go bwp rclone; do printf '%-14s ' "$t"; if command -v "$t" >/dev/null 2>&1; then echo "OK $(command -v $t)"; else echo "NO 未安装"; fi; done
+python3 -c "import bypy" 2>/dev/null && echo "bypy(python) OK" || echo "bypy(python) NO"
+echo "--- 11 分片：sha256(前16) · 字节 · 文件名 ---"
+for f in chinanews-*.jsonl.gz; do [ -f "$f" ] && printf '%s  %10s  %s\n' "$(sha256sum "$f" | cut -c1-16)" "$(stat -c%s "$f")" "$f"; done
+echo "--- 仓库外备份（RUN_ID 5 做的）---"
+ls -la ~/archive_data_backup/ 2>/dev/null | head -14 || echo "(无备份目录)"
+echo
+echo "=== 5. 收尾 ==="
+echo "inbox 最高 RUN_ID 附近："; grep -oE 'RUN_ID[[:space:]]*[0-9]+' ~/super_intelligence_2035/$R/ops/inbox.md 2>/dev/null | sort -u | tail -3
+git log --oneline -2 | cut -c1-120
+```
+
+**预期**：① 中继**恰好 1 行** + pidfile 存在且与进程 PID 一致（证明**新代码在跑**）；
+② 父进程链/crontab/systemd 里找到（或排除）**第 3 实例的拉起者**；③ 网盘工具可用性 + 11 分片 sha256/字节清单（**迁移备料**）。
 
 ## RUN_ID 6 — 🩺 **存活体检**：确认 **中继 + 两条 loop** 都在（**只读**）
 
