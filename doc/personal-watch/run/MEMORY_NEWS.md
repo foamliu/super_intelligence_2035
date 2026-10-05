@@ -12,12 +12,12 @@ WAITING: 0
 
 ```
 PHASE:        常态采集（T1–T10 ✅）+ **L1/N3 收口（G1 全过）+ L2/N4 探索性（G2 全过）**（L1 焦点 · L2 探索性 · L3 冻结）
-已完成:       T1–T10 ✅ · 首~九轮常态 ✅ · **N1 抓取器 + 语料（1907 天 / 984,295 条 / 6 片 2021–2026，游标 `2021-07-14`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（34,569 条，对齐 913,074 语料快照）· N3-4 预警方案 · L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md）**
-当前动作:     **N1 续抓**（`2022-04-20 → 2021-07-14`：新增 **`chinanews-2021`** 片 + **补全 2022 全年**；本轮末再加抓 240s，语料 **913,074 → 984,298 条**）→ **全链重跑对齐全语料**（EDA→TAXONOMY→SIGNALS→**EVENTS 34,569**→EARLY_WARNING 45 格 `q<0.05`=**34**、门槛=**15**）；🐞 **修复并发双抓的重复条目**（`fetch_archive.py --repair` 去重 → 全库唯一）。
-下一步:       ① **N1 续抓**（`fetch_archive.py --max-seconds …`，倒序 `2021-07-14 → 2016-01-01`）→ 抓够再重跑链并记台账；② **G2′④ 累积**：按周期 `python3 news/policy/cycle_run.py --with-l2` 追加 `STABILITY_LOG.md`；③ L1 稳定性 / 组合规则 + 纳入 SIGNALS 措辞信号；④ L3（N5）**冻结**
-本轮新增:     **N1 语料 806,509 → 913,074 条（+106,565；6 片）**；全链重算：`EVENTS.csv` 31,398 → **34,569**（8.39 MB，sha `11b168a45e7e48bc`）；`EARLY_WARNING.md` 45 格 `q<0.05` 32→**34**、效果量门槛 10→**15**；**`STABILITY_LOG.md` 新增 1 行（12:49）**；🐞 **去重 74,527 行重复**（见运维问答）；**news 日报 0 条**（本轮专注 N1 + 修 bug）
-阻塞:         无（新华网长期 403/405 → 兜底源 `chinanews`；⚠️ **东财日K 运行机 TLS 被重置** → 历史日线走腾讯 `ifzq`；⚠️ **停后台抓取须杀 python 子进程**——杀 wrapper shell 不停抓，易致**并发双抓重复**；⚠️ `--stats`/`--index` 勿与抓取并发）
-ERROR_COUNT:  2（历史：模型名 `deepseek-v4-pro-fp4` 白睡一轮，已修；**本轮：并发双抓 → 重复条目**（`kill` 只命中 wrapper 未命中 python 子进程），已 `fetch_archive.py --repair` 去重修复；曾缺 numpy/scipy 已装）
+已完成:       T1–T10 ✅ · 首~十一轮常态 ✅ · **N1 抓取器 + 语料（2358 天 / 1,288,020 条 / 7 片 2020–2026，游标 `2020-04-19`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（44,782 条）· N3-4 预警方案 · L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md，4 行）**
+当前动作:     **N1 续抓 900s**（`2021-07-14 → 2020-04-19`：新建 `chinanews-2020` 片，183,772 条）→ 全链重跑对齐全语料（EDA→TAXONOMY→SIGNALS→**EVENTS 44,782**→EARLY_WARNING 45 格 `q<0.05`=**39**、门槛=**14**）；🐞 **修复 watcher `pgrep -f` 自匹配死锁**（等待条件命中自身命令行 → 永不退出）；**并补做第十一轮常态采集（news 8 条）**
+下一步:       ① **N1 续抓**（`fetch_archive.py --max-seconds …`，倒序 `2020-04-19 → 2016-01-01`）→ 抓够再重跑链并记台账；② **G2′④ 累积**：按周期 `python3 news/policy/cycle_run.py --with-l2` 追加 `STABILITY_LOG.md`；③ L1 稳定性 / 组合规则 + 纳入 SIGNALS 措辞信号；④ L3（N5）**冻结**
+本轮新增:     **N1 语料 984,298 → 1,288,020 条（+303,722；7 片，新增 2020 片）**；全链重算：`EVENTS.csv` 34,569 → **44,782**（10.90 MB，sha `afdc41346dd1bae7`）；`EARLY_WARNING.md` 45 格 `q<0.05` 34→**39**、效果量门槛 15→**14**；**`STABILITY_LOG.md` 新增第 4 行（13:19）**；**news 日报 8 条（中文 6 / 英文 2）**；🐞 修 2 个 bug（见运维问答）
+阻塞:         无（新华网长期 403/405 → 兜底源 `chinanews`；⚠️ **东财日K 运行机 TLS 被重置** → 历史日线走腾讯 `ifzq`；⚠️ **停后台抓取须杀 python 子进程**；⚠️ **`pgrep -f <脚本名>` 会自匹配 wrapper 命令行** → 勿用该写法做等待条件）
+ERROR_COUNT:  3（历史：模型名白睡一轮，已修；并发双抓重复，已修；**本轮：watcher `pgrep -f` 自匹配死锁 → 已 kill 并改人工跑链**）
 ```
 
 **选定方案（prep_api 结论）**
@@ -82,6 +82,13 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
   - **G2′④ 台账**：`cycle_run.py`（本轮未带 `--with-l2`）追加第 3 行 **`2026-10-05 12:49 | 1788 | 913074 | 34569 | 34 | 15 | 11b168a45e7e48bc`**（L2 记 `not-requested`，因 `explore.csv` 不受 2021-22 事件影响 → 无需重跑）。**「连续 N 周」仍需逐周累积。**
   - **教训（已写进本节与流水）**：**停后台抓取要杀 python 子进程**（`pkill -f 'python3 news/archive/fetch_archive.py'`，或 `kill $(pgrep -f 'python3 news/archive/fetch_archive.py')`），**别只杀 wrapper**；**同一 shard 严禁并发写**。
 
+- **Q（本线主动小结 · 2026-10-05 第3轮）：为何后台 watcher 挂了 10 分钟没动静？G2′④ 台账与全链是多少？**
+  **A（本线 2026-10-05 实测）：**
+  - **① 🐞 watcher `pgrep -f` 自匹配死锁（本线操作失误）**：上一轮把「等 fetch 结束再跑链」写成 detached `bash -c 'while pgrep -f "python3 news/archive/fetch_archive.py" >/dev/null; do sleep 5; done; …'`。`pgrep -f` 匹配**整条命令行**，而**该 bash 自身 cmdline 就含这个字符串** → **永远匹配到自己** → 循环**永不退出**、链**永不启动**（fetch 12:59 起跑、13:14 `[done] total=1288020` 已结束，watcher 仍在睡）。
+  - **② 处置**：`kill -TERM 124251 124250` 停掉死锁 watcher → 手动 `fetch_archive.py --index` → `nohup python3 news/policy/cycle_run.py --with-l2`（13:15 起、13:19 完）。
+  - **③ 全链实测**：`days=2358 recs=1288023 → EVENTS 44782 → q<0.05=39 gate=14 l2=ok`；`STABILITY_LOG.md` 第 4 行 `2026-10-05 13:19 | 2358 | 1288023 | 44782 | 39 | 14 | `afdc41346dd1bae7` | `90f357ff8a8be943` | ok`。`EVENTS.csv` **10.90 MB（<20 MB → 入 git）**；`explore.csv` sha **不变**（价格窗 2023-06 起 → 2020/21 事件不入 L2，属预期）。
+  - **教训（已进快照/阻塞行）**：**勿用 `pgrep -f <脚本名>` 做「等某进程结束」的条件**（会自匹配 wrapper cmdline）；**按 pid 判定**（`kill -0 <pid>` / `wait <pid>`），或 `pgrep -f` 时**排除自身**（加 `-a` 过滤 PID / 用 `-x`）。
+
 - **Q（本线主动小结 · 2026-10-04）：为何 `EARLY_WARNING.md` §4.2 的预警结论比上一版「收敛」了很多？是不是调低了标准？**
   **A（本线 2026-10-04 实测）：不是调标准，是修掉一个真 bug —— 上一版结论本身是错的。** 两件事：
   **① 语料/事件**轴**不对齐（主因）**：N1 语料已扩到 **1296 天（2023-03-18~2026-10-03）**，但 `EVENTS.csv` 只覆盖 **2024-04-13 起**；旧脚本评估轴取**语料全程** → 前 ~380 天「有信号列、但**标签恒为 0**」→ 伪造海量全零负样本 → **AUC 被系统性抬高**（旧版好几个格 AUC 冲到 0.9+，是假的）。已加**轴对齐护栏**：评估窗口 = 语料范围 ∩ 事件日期范围。
@@ -122,17 +129,26 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **线**：news（新闻采集）
 - **任务书**：`WATCH_NEWS_TASK.md`（只读）
 - **产物**：`news/<YYYY-MM-DD>.md`（当日摘要）· `news/SEEN.md`（去重台账）· `news/INDEX.md`（索引）
-- **N1 语料库**：`news/archive/chinanews-<年>.jsonl.gz`（只 5 字段；**仅取 标题+日期+来源+链接，不抓正文**）；现 **1907 天 / 984,295 条 / 6 片**（**2021-07-14 ~ 2026-10-03**；游标 `2021-07-14` → `2016-01-01`）
+- **N1 语料库**：`news/archive/chinanews-<年>.jsonl.gz`（只 5 字段；**仅取 标题+日期+来源+链接，不抓正文**）；现 **2358 天 / 1,288,020 条 / 7 片**（**2020-04-19 ~ 2026-10-03**；游标 `2020-04-19` → `2016-01-01`）
 - **L1 产物**：`news/policy/`（`EDA.md` / `TAXONOMY.md` / `SIGNALS.md` / `EVENTS.csv` / `EARLY_WARNING.md` / **`cycle_run.py` + `STABILITY_LOG.md`（G2′④ 运行台账）**）
 - **L2 产物（探索性 · 非因果）**：`news/policy/`（`L2_PREREG.md` / **`EXPLORE.md` + `explore.csv`**）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-03` 第八轮常态（11:10 UTC）~ `2026-10-03` 第九轮常态（11:55 UTC）
-- **累计收录**：`87` 条（**news 61**〔第一轮 3 + 第二轮 6 + 第三轮 6 + 第四轮 15 + 第五轮 5 + 第六轮 9 + 第七轮 6 + 第八轮 4 + 第九轮 7〕+ 非新闻 26〔仅存 `SEEN.md`〕）
+- **上次采集窗口**：`2026-10-04 06:50 CST` 第十轮 ~ `2026-10-05 13:15 CST` 第十一轮
+- **累计收录**：`108` 条（**news 77**〔第一~九轮 61 + 第十轮 8 + 第十一轮 8〕+ 非新闻 31〔仅存 `SEEN.md`〕）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
+
+- **2026-10-05** —— 🆕 **N1 续抓进 2020（+303,722 条 / 7 片）+ 全链重算 + 修复 watcher `pgrep -f` 死锁 + 第十一轮常态 news 8 条**。
+  - **后台 N1 抓取（第 3 轮）**：`fetch_archive.py --max-seconds 900`（12:59 起、13:14 止）→ 游标 `2021-07-14 → 2020-04-19`，**新建 `chinanews-2020.jsonl.gz`（183,772 条）**；累计 **1,288,020 条 / 2358 天 / 7 片（2020–2026）**，`--index` 重生成 `archive/INDEX_FILES.md`（各片均 <20 MB）。
+  - **🐞 修复 watcher `pgrep -f` 自匹配死锁**：等待条件 `while pgrep -f "python3 .../fetch_archive.py"` **命中自身 bash cmdline** → 永不退出 / 链不启动；`kill -TERM 124251 124250` 后**改为人工跑链**（详见运维问答第 3 轮）。
+  - **全链重跑对齐全语料**：`cycle_run.py --with-l2`（13:15→13:19）→ `eda.py`(n=1,288,023, days=2358) → `taxonomy.py` → `signals.py` → `extract_events.py`（**44,782 事件**，`EVENTS.csv` **10.90 MB**，sha `afdc41346dd1bae7`）→ `early_warning.py`（45 格 `q<0.05` **39**、效果量门槛 **14**）→ `explore_l2.py`（ok；`explore.csv` sha **不变**属预期）。
+  - **G2′④ 台账**：`STABILITY_LOG.md` 追加**第 4 行（13:19）**；「连续 N 周」仍靠**逐周累积**。
+  - **常态采集（第十一轮）**：`news/2026-10-05.md` **news 8 条（中文 6 / 英文 2）**；`SEEN.md` +8 news / +5 非新闻；`INDEX.md` 累计 **news 77 / 非新闻 31**。⚠️ **联合国新闻·中文源本轮 404**（如实记录）；GDELT 限频未用。
+  - **文档同步**：`MEMORY_NEWS.md` 快照/运维问答/流水；`news/policy/README.md` §4。
+  - **未做**：L3 冻结。判据复核：无因果措辞、低频单列、非投资建议。
 
 - **2026-10-05** —— 🆕 **N1 续抓（新增 2021 片 + 补全 2022）+ 全链重跑 + 修复并发双抓重复**。
   - **N1 续抓**：`fetch_archive.py --max-seconds 300`（≥2s/req）→ 游标 `2022-04-20 → 2021-11-12`；**新建 `chinanews-2021.jsonl.gz`**（28,886 条）+ **补全 2022 全年**（161,166 → 238,861 条）；语料 **806,509 → 913,074 条 / 6 片**（2021–2026）。

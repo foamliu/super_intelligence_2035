@@ -100,3 +100,16 @@
 | 2026-10-04 | Jev 估值 100 亿美元！创始人 Diogo Almeida 回答一切 | 量子位 | news | https://www.qbitai.com/2026/10/500148.html |
 | 2026-10-04 | （更新：埃隆·马斯克确认谈判）传台积电探索与 Terafab 合作事宜 | IT之家 | news | https://www.ithome.com/1/009/413.htm |
 | 2026-10-04 | 再创佳绩！爱奇艺《灵魂摆渡》“浮生梦”系列 AIGC 网络故事片分账票房破千万 | 雷峰网 | news | https://www.leiphone.com/category/industrynews/yHRIGngfk28TJvIw.html |
+| 2026-10-05 | OpenAI 承诺「限时 28 天没新功能就重置」，网友：只想要 Opus | 量子位 | news | https://www.qbitai.com/2026/10/501700.html |
+| 2026-10-05 | Linux 7.3-rc6 发布：Torvalds 称进入“AI 新常态”，稳定版预计 10 月中旬发布 | IT之家 | news | https://www.ithome.com/1/009/781.htm |
+| 2026-10-05 | 美国佛州一女子把 AI 当“日记本”用，Claude 识别到枪击威胁后上报给 Anthropic 人工审核并报警 | IT之家 | news | https://www.ithome.com/1/009/795.htm |
+| 2026-10-05 | 特朗普宣布成立超级智能工作组，谋求维持美国技术领先地位 | IT之家 | news | https://www.ithome.com/1/009/792.htm |
+| 2026-10-05 | Anthropic 前研究员将出席纽约 AI 听证会作证，曾警告 AI 或毁灭人类 | IT之家 | news | https://www.ithome.com/1/009/769.htm |
+| 2026-10-05 | Court Tosses Sentence After A.I. Video of Victim 'Forgiving' His Killer | The New York Times | news | https://www.nytimes.com/2026/10/04/us/manslaughter-conviction-overturned-ai-video-statement.html |
+| 2026-10-05 | The AI industry is booming. Women are getting left behind | The Guardian | news | https://www.theguardian.com/technology/2026/oct/04/women-ai-jobs-inequality |
+| 2026-10-05 | DeepSeek 扩招！弹性计算团队大量 HC，尤其需要资深工程师 | 量子位 | news | https://www.qbitai.com/2026/10/501381.html |
+| 2026-10-05 | OpenAI 元老的一封离职信，揭开了奥特曼最不想承认的真相 | 爱范儿 | opinion | https://www.ifanr.com/1682922 |
+| 2026-10-05 | Calling AI 'other intelligence' better describes the advent of a new lifeform | ABC News | analysis | https://www.abc.net.au/news/2026-10-05/is-artificial-intelligence-a-new-lifeform/107226762 |
+| 2026-10-05 | My New Course at UT Austin: AI Alignment Theory | Scott Aaronson (blog) | analysis | https://scottaaronson.blog/?p=10125 |
+| 2026-10-05 | Show HN: Recursant, the agent-aware model router built for hybrid workloads | Hacker News (Show HN) | tool | https://github.com/ajensenwaud/recursant/ |
+| 2026-10-05 | Show HN: Moching – AI desktop agent with 219 built-in tools (Rust) | Hacker News (Show HN) | tool | https://github.com/moching-ai-dev/moching |
