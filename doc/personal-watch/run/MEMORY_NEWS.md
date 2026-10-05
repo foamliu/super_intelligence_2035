@@ -12,10 +12,10 @@ WAITING: 1
 
 ```
 PHASE:        常态采集（T1–T10 ✅）+ **L1/N3 收口（G1 全过）+ L2/N4 探索性（G2 全过）**（L1 焦点 · L2 探索性 · L3 冻结）
-已完成:       T1–T10 ✅ · 首~十六轮常态 ✅ · **N1 抓取器 + 语料〔全库完抓〕2,492,230 条 / 11 片 2016–2026（游标 `2015-12-31`，倒序已收尾至 `2016-01-01`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（75,610 条，对 15:10 全量快照）· N3-4 预警方案 · L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md，8 行）**
-当前动作:     **本唤醒：L1 预警准则加固（`early_warning.py` 新增 §4.3「固定召回率下的 precision」walk-forward，替代已退化的 F1 调参）+ 第十七轮常态采集（news +1：IT之家《索尼向 Meta 转让 419 项 XR 专利》）**；上轮：N1 第 7 轮抓取收尾（语料 2,492,230 条 / 11 片，游标 `2015-12-31`）+ 链跑（15:10，`STABILITY_LOG` 第 8 行）+ 第十六轮 news +0；⚠️ **并发护栏**：本轮发现旧超时命令的 python 子进程残留 → 已 `kill` 去重（避免双写 EARLY_WARNING.md）
-下一步:       ① 提交本线产物（**不含任何 ≥5MB 文件**）；② **G2′④ 累积**：按周期跑 `cycle_run.py --with-l2` 追加台账（连续天数截至今日 = 1）；③ L1 稳定性 / 组合规则（**下一步②：纳入措辞/新词信号 `SIGNALS.md`**）；④ L3（N5）**冻结**
-本轮新增:     **L1：`early_warning.py` 新增 §4.3「固定召回率下的 precision」（`PREC_RECALLS=[0.5,0.75]`；walk-forward 训练段选「仍达 recall≥R 的最大阈值」、测试段测 precision，基线 = 同段基准率）→ 重跑链，`EARLY_WARNING.md` **359 行**（45 格 ΔP 多数 >0，例 A1 外事 Δ=90：precision@R0.5 **0.72** vs 基准 0.58）**；第十七轮常态 news **+1**（当日 23）；累计 **news 92 / 非新闻 41**
+已完成:       T1–T10 ✅ · 首~十八轮常态 ✅ · **N1 抓取器 + 语料〔全库完抓〕2,492,230 条 / 11 片 2016–2026（游标 `2015-12-31`，倒序已收尾至 `2016-01-01`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（75,610 条，对 15:10 全量快照）· N3-4 预警方案 · L1 预警准则加固（`early_warning.py` §4.3 固定召回率 precision + **§4.4 措辞强度 tone 信号**，`EARLY_WARNING.md` 424 行）· L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md，8 行）**
+当前动作:     **本唤醒：L1 预警准则加固（`early_warning.py` 新增 §4.4「措辞强度（tone）信号：单独 + 与节奏组合」——词表取自 `SIGNALS.md` §1，`tone_pos` = 强词占比高于 as-of 扩展中位数；walk-forward 口径预注册）→ 重跑链 + 第十八轮常态采集（news **+0**，国庆假期源薄）**；上轮：§4.3「固定召回率下的 precision」+ 第十七轮 news +1
+下一步:       ① 提交本线产物（**不含任何 ≥5MB 文件**）；② **G2′④ 累积**：按周期跑 `cycle_run.py --with-l2` 追加台账（连续天数截至今日 = 1）；③ L1 稳定性 / **下一个候选文本信号 = 新词首发 / 版面**（§4.4 措辞组合**未胜出**，如实保留）；④ L3（N5）**冻结**
+本轮新增:     **L1：`early_warning.py` 新增 §4.4 措辞强度（tone）信号**（`TONE_STRONG/TONE_WEAK` 词表；`s_tone` = 过去 7 天强词占比（Laplace）+ `tone_pos` = 高于 as-of 扩展中位数；组合 = `s_norm≥0.8` 且 `tone_pos`）→ 重跑链，`EARLY_WARNING.md` **424 行**（§4.4 45 格：组合 **改善 21 / 退化 24**，平均 Δ = **-0.000** → **如实判「未胜出」**）**；第十八轮常态 news **+0**（当日仍 23）；累计 **news 92 / 非新闻 41**
 阻塞:         无（新华网长期 403/405 → 兜底源 `chinanews`；⚠️ **无 bypy → 网盘不可用** → ≥5MB 一律「本地保留 + 清单登记 + 如实标『未上云』」；⚠️ **东财日K 运行机 TLS 被重置** → 历史日线走腾讯 `ifzq`；⚠️ **停后台抓取须杀 python 子进程**；⚠️ **等抓取勿用 `pgrep -f <脚本名>`** → 用 `kill -0 <pid>`；⚠️ **ops relay 的 `git pull --rebase` 会删掉被 untrack 的工作区分片** → 须从 `~/archive_data_backup/` 恢复）
 ERROR_COUNT:  4（历史：模型名白睡一轮，已修；并发双抓重复，已修；watcher `pgrep -f` 自匹配死锁，已修；**relay rebase 删工作区分片 → 已恢复**）
 ```

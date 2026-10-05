@@ -37,6 +37,7 @@ import gzip
 import json
 import math
 import os
+import bisect
 from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta
 
@@ -63,10 +64,23 @@ COMMENTARY_MARKERS = ["评论", "社论", "时评", "钟声", "任仲平", "仲�
                       "国际锐评", "钧声", "玉渊谭天", "新华时评",
                       "央视快评", "央视评论", "人民日报评论员", "新华社评论员"]
 
+# ── §4.4 措辞强度（tone）信号 —— 来自 `SIGNALS.md` §1 词表（**预注册，不试到好看为止**）──
+#   维度：推进力度（强/弱）· 时机紧迫（急/缓）· 态势语气（硬/软）。
+#   信号定义（先写死）：`s_tone(t)` = 过去 TRAIL 天「强词条数」占「强词+弱词条数」之比（Laplace 平滑）；
+#   `tone_pos(t)` = 1 ⟺ `s_tone(t)` **高于其 as-of 扩展中位数**（=「措辞比历史更偏强」，无前视）。
+#   组合规则：`s_norm ≥ SIMPLE_THETA` **且** `tone_pos` —— 用于检验「节奏 + 措辞」是否优于「仅节奏」。
+TONE_STRONG = ["大力推进", "强力推进", "加快推进", "全力推进",
+               "立即", "马上", "抓紧", "尽快",
+               "坚决", "严厉", "从严", "铁腕", "零容忍"]
+TONE_WEAK = ["稳妥推进", "稳步推进", "扎实推进", "有序推进",
+             "适时", "择机", "择时", "稳妥有序",
+             "稳妥", "审慎", "有序"]
+
 
 def load_corpus():
-    """读语料（只 5 字段）→ (corpus_by_date, comment_by_date)。"""
+    """读语料（只 5 字段）→ (corpus, comment, tone_strong, tone_weak) by date。"""
     corpus, comment = Counter(), Counter()
+    tone_strong, tone_weak = Counter(), Counter()
     for fn in sorted(glob.glob(os.path.join(ARCHIVE, "*-*.jsonl.gz"))):
         try:
             with gzip.open(fn, "rt", encoding="utf-8") as f:
@@ -85,9 +99,13 @@ def load_corpus():
                     t = o.get("title", "") or ""
                     if any(m in t for m in COMMENTARY_MARKERS):
                         comment[d] += 1
+                    if any(w in t for w in TONE_STRONG):
+                        tone_strong[d] += 1
+                    if any(w in t for w in TONE_WEAK):
+                        tone_weak[d] += 1
         except Exception as e:  # noqa: BLE001
             print(f"[ew] truncated read on {fn} ({e}); using partial")
-    return corpus, comment
+    return corpus, comment, tone_strong, tone_weak
 
 
 def load_events():
@@ -251,7 +269,7 @@ def bh_fdr(pvals):
 
 
 def main() -> int:
-    corpus_by_date, comment_by_date = load_corpus()
+    corpus_by_date, comment_by_date, tone_s_by_date, tone_w_by_date = load_corpus()
     by_type_date, cn_by_type, total_ev = load_events()
     cats, TIER_HIGH, TIER_MID = load_categories()
 
@@ -271,6 +289,23 @@ def main() -> int:
 
     comment_arr = series_over_axis(comment_by_date, axis)
     s_comment = trailing_sums(comment_arr, TRAIL)
+
+    # ── §4.4 措辞强度（tone）信号序列（as-of，无前视）──────────────────────────
+    tone_s_arr = series_over_axis(tone_s_by_date, axis)
+    tone_w_arr = series_over_axis(tone_w_by_date, axis)
+    s_tone_strong = trailing_sums(tone_s_arr, TRAIL)
+    s_tone_weak = trailing_sums(tone_w_arr, TRAIL)
+    # 强词占比（Laplace 平滑；强/弱词皆 0 → 0.5 中性）
+    s_tone = [(s_tone_strong[i] + 0.5) / (s_tone_strong[i] + s_tone_weak[i] + 1.0)
+              for i in range(N)]
+    # tone_pos = 1 ⟺ 当前强词占比 > as-of 扩展中位数（「措辞比历史更偏强」，无前视）
+    tone_pos = [0] * N
+    _seen: list[float] = []
+    for i in range(N):
+        bisect.insort(_seen, s_tone[i])
+        m = len(_seen)
+        med = _seen[m // 2] if m % 2 else (_seen[m // 2 - 1] + _seen[m // 2]) / 2
+        tone_pos[i] = 1 if s_tone[i] > med else 0
 
     L: list[str] = []
     at = lambda: L.append("")  # noqa: E731
@@ -307,6 +342,8 @@ def main() -> int:
     add(f"  1. `s_norm(t)` = 该类型**过去 {TRAIL} 天**（含当日）条数 ÷ (截至 t 扩展日均 × {TRAIL})"
         f"（**1.0 = 与长期平均持平**）；")
     add(f"  2. `s_comment(t)` = 语料**过去 {TRAIL} 天**评论体（社论/时评/评论…）条数（观察/组合用）。")
+    add(f"  3. `s_tone(t)` = 语料**过去 {TRAIL} 天**强措辞条数 ÷（强词+弱词+1）"
+        f"（Laplace 平滑；词表见 `SIGNALS.md` §1）；`tone_pos` = 高于其 as-of 扩展中位数（§4.4）。")
     add(f"- **规则（预注册，固定）**：`预测为正 ⟺ s_norm(t) ≥ {RULE_THETA}`"
         f"——**无拟合参数 → 天然不存在前视**（这是最严格的无泄漏形式）。")
     add(f"- **评估起点**：第 `{WARMUP}` 天（等扩展均值稳定）→ 之后**全部为样本外**。")
@@ -456,6 +493,11 @@ def main() -> int:
             comb_prec = prf(comb_pred, labs)[3]
             simple_pred = [1 if s_norm[i] >= SIMPLE_THETA else 0 for i in valid]
             simple_prec, simple_rec = prf(simple_pred, labs)[3:5]
+            # §4.4 措辞强度：单独 + 与 s_norm 组合（描述性，全样本）
+            tone_prec = prf([tone_pos[i] for i in valid], labs)[3]
+            tone_auc = auc_score([s_tone[i] for i in valid], labs)
+            combo_t_prec = prf([1 if (s_norm[i] >= SIMPLE_THETA and tone_pos[i]) else 0
+                                for i in valid], labs)[3]
             results[(typ, H)] = {
                 "tier": tier, "n_test": n_test, "base": base,
                 "prec": prec, "rec": rec, "f1": f1, "auc": auc, "ci": (lo, hi),
@@ -463,6 +505,7 @@ def main() -> int:
                 "n_pred": tp + fp, "lead_med": lead_med,
                 "maj_prec": mprec, "maj_rec": mrec, "maj": maj,
                 "comb_prec": comb_prec, "simple_prec": simple_prec, "simple_rec": simple_rec,
+                "tone_prec": tone_prec, "tone_auc": tone_auc, "combo_t_prec": combo_t_prec,
                 "pr": pr_stats,
             }
             bins = [("<0.5", lambda v: v < 0.5), ("0.5–1.0", lambda v: 0.5 <= v < 1.0),
@@ -648,6 +691,52 @@ def main() -> int:
         "**仅刻画「保 recall 时 precision 能否超过基准率」**，🚫 不构成可交易/可操作宣称。")
     at()
 
+    # §4.4 措辞强度（tone）信号：单独 + 组合
+    add("### 4.4 措辞强度（tone）信号：单独 + 与节奏组合")
+    at()
+    add("> 动机（§6 原下一步②）：§4.1 的「节奏 + 评论体」未显示稳定增益 → 换用**更强文本信号**：")
+    add("> **措辞强度**（词表来自 `SIGNALS.md` §1：推进力度强/弱 · 时机急/缓 · 语气硬/软）。")
+    add(f"> `s_tone(t)` = 过去 {TRAIL} 天强词条数 ÷（强词+弱词+1）（Laplace 平滑）；")
+    add("> `tone_pos(t)` = 1 ⟺ `s_tone` **高于其 as-of 扩展中位数**（= 措辞比历史更偏强，**无前视**）；")
+    add(f"> **组合** = `s_norm ≥ {SIMPLE_THETA}` **且** `tone_pos`。")
+    add("> ⚠️ 词表/阈值/组合式**先写死再跑**（§0.0.2）；本表为**全样本描述性 precision**、**未作多重比较校正** →")
+    add("> 仅作「**是否值得进入严格 walk-forward 评估**」的探索性判断；**未胜出 / 反向格如实保留**。")
+    at()
+    add("| 类型 | 层级 | Δ | 单信号 P(节奏) | +措辞组合 P | Δ(组合−单信号) | 措辞单独 P | 措辞 AUC |")
+    add("|:--|:--|--:|--:|--:|--:|--:|--:|")
+    _dp_sum = 0.0
+    _dp_pos = _dp_neg = _n_used = 0
+    for c in cats:
+        typ = c["id"]
+        for H in HORIZONS:
+            r = results.get((typ, H))
+            if not r:
+                continue
+            ta = f"{r['tone_auc']:.3f}" if r["tone_auc"] is not None else "—"
+            dp = r["combo_t_prec"] - r["simple_prec"]
+            if r["tier"] != "低频":
+                _dp_sum += dp
+                _n_used += 1
+                if dp > 1e-9:
+                    _dp_pos += 1
+                elif dp < -1e-9:
+                    _dp_neg += 1
+            add(f"| {typ} {c['name']} | {r['tier']} | {H} | {r['simple_prec']:.2f} | "
+                f"{r['combo_t_prec']:.2f} | {dp:+.2f} | {r['tone_prec']:.2f} | {ta} |")
+    at()
+    mean_dp = (_dp_sum / _n_used) if _n_used else 0.0
+    add(f"> 🔑 **汇总（仅非低频格，n={_n_used}）**：组合相对单信号 **改善 {_dp_pos} 格 / 退化 {_dp_neg} 格 / 持平 "
+        f"{_n_used - _dp_pos - _dp_neg} 格**；**平均 Δ = {mean_dp:+.3f}**。")
+    if mean_dp > 0.005 and _dp_pos > _dp_neg:
+        add("> ⚠️ 组合在**描述性均值上有微弱正向**，但格数增益**不压倒性** → 仅记为**探索性候选**，")
+        add("> **尚不足以宣称可预警**（未校正、全样本）。")
+    else:
+        add("> ✅ **诚实结论**：**措辞组合未显示稳定增益**（平均 Δ 不显著为正 / 退化格不罕见）→")
+        add("> 如实保留为「**未胜出**」（负面结果可接受，§0.0.2）。")
+    add("> ⚠️ **口径提醒**：措辞词表为**全局**（非按动作类型定制）；`tone_pos` 用 as-of 中位数 → 天然约 50% 为正，")
+    add("> 故 **`P` 的绝对水平不可跨类型比较**，只作**组合 vs 单信号**的**同格**对照。")
+    at()
+
     # §5 频率分层结论
     add("## 5. 频率分层结论（**由实测得出**）")
     at()
@@ -683,7 +772,9 @@ def main() -> int:
     add("> 2. **但须防过度声称（见 §4.2）**：MW 显著只说明「**非随机**」；该信号本质是**活动聚簇 / 持续性**，"
         "**🚫 不是「预测新起点」**；**未胜出 / 反向（AUC<0.5）格如实保留**，不粉饰；")
     add("> 3. **越长的时间窗（Δ=90）信号越弱**（噪声累积），**预警的可用提前量主要在 Δ=7~30**；")
-    add("> 4. **「组合信号」（节奏+评论体）未显示稳定增益**（见 §4.1，组合 P ≈ 单信号 P）→ 需更强的文本信号（措辞/新词，见 `SIGNALS.md`）。")
+    add("> 4. **组合信号未显示稳定增益**：「节奏+评论体」（§4.1）与「节奏+**措辞强度**」（§4.4）**均未稳定胜出**"
+        f"（组合 P ≈ 单信号 P；§4.4 平均 Δ={mean_dp:+.3f}、改善 {_dp_pos} 格 / 退化 {_dp_neg} 格）→ "
+        "**下一个候选文本信号**：**新词首发 / 版面**（见 `SIGNALS.md`），或**按源分列**后重估（§6）。")
     at()
 
     # §6 局限
@@ -693,9 +784,10 @@ def main() -> int:
     add("- ⚠️ **事件抽取噪声**：`EVENTS.csv` precision≈80%（标题规则）→ 假阳性抬高基准率。")
     add("- ⚠️ **测试窗重叠**：Δ=90 时相邻测试日标签窗**重叠** → precision/recall 的**有效性受影响**（已给 N）。")
     add("- ✅ **多重比较已校正（BH-FDR）**：单族 = 全部 `类型×Δ` 格（见 §4.2）；⚠️ **只对本族负责**（换族会改变结论）。")
-    add("- ⚠️ **信号仍浅**：仅「归一化节奏 + 评论体密度」；**措辞强度/新词/版面**（见 `SIGNALS.md`）**尚未纳入**。")
+    add("- ⚠️ **信号仍浅**：「归一化节奏 + 评论体密度 + 措辞强度」已纳入；**新词首发/版面**（见 `SIGNALS.md`）**尚未纳入**。")
     add("- **下一步**：① ✅ **已做** —— 用「**固定召回率下的 precision**」替代 F1 调参（见 **§4.3**）；"
-        "② 纳入措辞/新词信号（`SIGNALS.md`）并**系统评估组合规则**；③ 扩充语料源（按源分列）；"
+        "② ✅ **已做** —— 纳入**措辞强度信号**并与节奏做组合评估（见 **§4.4**；结论如实：未显示稳定增益）；"
+        "③ 扩充语料源（按源分列）；"
         "④ 按 **G2′** 做**连续多周稳定运行**记录（预警有基线 + 报提前期 + 覆盖主要动作类型）。")
     at()
 
