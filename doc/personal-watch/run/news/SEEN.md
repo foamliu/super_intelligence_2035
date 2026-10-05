@@ -154,3 +154,7 @@
 | 2026-10-05 | Norway to propose temporary ban on AI glasses in some public places | Reuters | news | https://www.reuters.com/technology/norway-propose-temporary-ban-ai-glasses-some-public-places-2026-10-05/ |
 | 2026-10-05 | 中国首个藏语大语言模型 DeepZang 迭代推进会在呼和浩特召开 | 中新网 | news | https://www.chinanews.com.cn/sh/2026/10-05/10708223.shtml |
 
+| 2026-10-05 | Anthropic asks Claude users to share voice data for AI model training | BleepingComputer | news | https://www.bleepingcomputer.com/news/artificial-intelligence/anthropic-asks-claude-users-to-share-voice-data-for-ai-model-training/ |
+| 2026-10-05 | Is Russia using AI for disinformation in the Central African Republic and elsewhere? | DW | news | https://www.dw.com/en/anthropic-report-is-russia-using-ai-for-disinformation-in-the-central-african-republic-and-elsewhere/a-79476947 |
+| 2026-10-05 | OpenAI's Altman: Ascribing religion to models a "safety issue" | Axios | news | https://www.axios.com/2026/10/03/openai-anthropic-altman-amodei-religious-force-models |
+
