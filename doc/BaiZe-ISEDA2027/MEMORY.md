@@ -62,9 +62,14 @@ WAITING: 0
 
 - [ ] **P-9 结果** → 定 **P-8 的 seq(4096/8192) / MBS / 精度(bf16/FP8)**（含 16384 是否 OOM 的长上下文边界）。
 - [ ] ⭐ **P-8 配置拍板**（等 **P-9.7 定稿 + P-9.8 长程一致性 + P-6② token 预算**三件齐 → 再定）。现有建议 = **候选A `TP4·SP·MBS8·seq8192·FP8·MAX_CONN=1`（235K tok/s）**；⚠️ 前置未齐（base 下满 ~2.7 天 + 配比 §0.6 未做）→ 🚫 **不得顺手启动 P-8**。
-- [ ] ⭐ **AIMv2 翻盘 ⇒ 论文 / scaling 结论必须改写**（2026-10-04 新增）：`6_vision_encoder.tex`/§6 现在写的是「**25.1% 是从零路线的诚实天花板**」，而 **R11-G/⑥-B 结果**要改成「**换 caption-无关的稠密目标可突破该上限**」。**等 R11-G（108k 重拟合）+ R11-H（⑥-B 纯 AR）出数后与其余 3 项润色一次性回填**。
-- [ ] **data：D-CLEAN-4 候选等拍板**（**只盘点不删除**）—— 本用户：`datasets/FineVision` **4.32T**（最大单点）· `HuggingFaceFW` 1.24T · CC12M 1.13T（⚠️ 是 vision 数据臂之一）· `chip_expert`+`models` 0.92T；跨用户：`wangcongtao` 2.42T + `app.e0025692` 0.95T（**需 sudo/owner**）。
+- [x] ✅ **AIMv2 翻盘 ⇒ 论文 / scaling 改写已授权 vision agent 自做**（2026-10-05 晚 用户）：R11-G/H 已出数（**R²=0.91 / lp@55.3M 19.76% vs 基线 7.40%**；纯 AR 无翻盘 ⇒ **依赖对比项**）→ 已下发 vision：**在「全部现有数据跑 AIMv2」训练起跑并稳态后，自行改 §6**（把「25.1% 是诚实天花板」改为「**换 caption-无关的稠密目标 + 保留对比项可突破该上限**」），可用 `cimi_search` 补一手引用；**论文仅该结论段解冻**。
+- [x] ✅ **D-CLEAN-4 已裁定：保留不动**（2026-10-05 晚 用户）—— **不再删除、不再盘点**；此前「待拍板」**作废**。红线照旧（EDA-Eval 隔离区 / base·gpic 下载 / L3·code·math / SFT / GPIC / en500k·eval5k 不可动）。
 - [ ] **harness：`deepseek-harness` 缺工具链**（node ≥22.13 + rust；镜像全 000/301/404）→ **需内网镜像或装工具链**；另 **H-A pilot 扩容被 github 网络瞬时中断挡住**（base_commit 在 shallow clone 中缺失）。
+- [x] ✅ **harness 扩 300：批准 = 先扩 kimi**（2026-10-05 晚 用户）—— `kimi-k2.6-cloud`（0 quota 阻塞）、串行并发=1、三列报告、同 harness 不混模型；`deepseek-harness` 工具链仍待解决。
+- [x] ✅ **P-9.10 sglang：改用 conda 环境从头装**（2026-10-05 晚 用户）—— 先查 `.12`（用户说装过）/`.29` 是否有 `sglang`/`vllm` conda env，没有就 `conda create -n sglang` + 显式 `https_proxy` + 阿里/腾讯源；装不上不阻塞（栈仍 `mcore+CUDA-graph`）。
+- [x] ✅ **环境隔离纪律**（2026-10-05 晚 用户）：训练/长跑=共享 `py310`；`sglang` 托管大模型=`sglang` conda env；harness 大量装包=另起新 conda env（治「同机争用」）。
+- [x] ✅ **「外网命令带 proxy」口径已同步四线**（2026-10-05 晚 用户）：data/harness 原有 → 本轮补 **pretrain / vision**。
+- [ ] ⭐ **vision 全量数据跑 AIMv2（待 vision 回报估算）**：用户令「用全部现有数据（GPIC 41% + CC12M + Amshaker）跑当前最佳配方 AIMv2」；**先答「要多久 / 是否 >1 epoch」**（运维粗估 1 epoch ≈6.6h、2 epoch ≈13h，待 vision 实测精算）。
 - [ ] 💬 **另一「运维会话」在并行活动**（2026-10-04 深夜发现：origin 上出现**我没写过的 RUN_ID 63 诊断记录**）→ **需与用户确认是否统一到单一会话**，以免重复下发/互相覆盖。
 > 📦 **下列「当日已完成（[x]）」条目已原文滚动归档 → `daily-memories/2026-10-03.md`「从 MEMORY.md 滚动归档」A 节**：D-CLEAN-2/-3 与回收量核实 · harness R1 沙箱路线 · GPIC E1 实测 + C1 口径 · H-A′ 放行 · docker 系降末选 · sudo 口令 · `ops_relay` 「2 副本」误判结案 · 论文冻结 · vision 队列裁定 · data 白名单锁定。**（查旧决策请去该归档，勿再塞回本文件。）**
 - [ ] ⛔ **loop 优化：暂不做（用户 2026-10-03 决定）** —— `SLEEP_WAIT 1800→3600` 与「训练未完成就跳过 cline 调用」的前置检查，**都需在公司重启 loop**（假期内做不了），且 1800→3600 **会让反应变慢**。→ **待回公司后择机**。
@@ -180,6 +185,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **2026-10-05（晚 · 用户七条裁定：harness 扩 kimi / vision 全量跑 AIMv2 + 自改论文 / sglang 走 conda / proxy 口径全同步 / 环境隔离 / D-CLEAN-4 保留）** —— 用户一次给 7 条，已**全部写入对应四线任务书运维指令区** + 更新本文件 §4/§9：**①** harness 扩 300 **按我建议先扩 kimi**（`BAIZE_HARNESS_TASK.md`：kimi、串行=1、三列表、30→300、不混模型）。**②** vision 已空闲 ⇒ **用全部现有数据（GPIC ≈41% + CC12M + Amshaker）跑当前最佳配方 AIMv2**，**先回答「要多久 / 是否 >1 epoch」**（我粗估：R11-G 稳态 2485 img/s、总量 ≈59M 对 ⇒ **1 epoch ≈6.6h / 2 epoch ≈13h**，要求 vision 用实测 img/s 精算）。**③** **论文 §6 改写授权 vision agent 自做**（起完训练后、可用 `cimi_search` 补引用）—— 论文仅该结论段解冻。**④** **P-9.10 的 sglang 改用 conda 环境从头装**：先查 `.12`（用户说装过）与 `.29` 的 `sglang`/`vllm` env，没有则 `conda create -n sglang` + 显式 `https_proxy` + 阿里/腾讯 pip 源；装不上不阻塞。**⑤** **「外网命令带 proxy」口径同步 pretrain / vision**（data/harness 原有）。**⑥** **环境隔离纪律**（治同机争用）：训练=共享 `py310`；sglang=sglang conda env；harness 大量装包=新 conda env。**⑦** **D-CLEAN-4 定案：保留不动**（不再删/不再盘点，「待拍板」作废）。
 
 - **2026-10-05（早 · FP8 裁定修订 + 定价口径改为 FLOPs）** —— 用户两条指令：**①**「**DeepSeek-V3 已认定 FP8 可用，这是无法翻盘的** ⇒ 需要给 FP8 更多机会证明自己」；**③**「定价可能不太好比（BaiZe-2B 的『价格』是多少？）⇒ **似乎可以对比推理的 FLOPS**」。→ **①已下发** `BAIZE_PRETRAIN_2B_TASK.md` 顶部新块：**#4 判据改为「持续性」**（≤100 步内回落到 ≤1% 记为 `spike-then-recovered`、**不计 FAIL**；只有连续 ≥100 步 >2% 或持续恶化才 FAIL）⇒ **本次 armB 改判「FP8 可用于 P-8」**（P-8 前 500 步仍监控；**spike 原样保留不抹**）；新增 **P-9.9**：换 seed 4321 复现 / 拉长 ≥2000 步 / **查并试 fine-grained FP8 recipe**（V3 用 128×128 块缩放，我们用 delayed-per-tensor，**数值更弱**，很可能就是 spike 来源）→ 用 `cimi_search` 读 V3 论文 FP8 章节做一手引用。**②论文不急**（不动）。**③** 我在运维侧做了 FLOPs 推导（见当日日报/对话）：**BaiZe-2B ≈ 4.4 GFLOPs/token（2.22B×2）vs V3 级 ≈ 74 GFLOPs/token（37B active×2）⇒ ≈1/17**；同理 **每 token 权重字节 ≈ 2.2GB vs 37GB（FP8）⇒ 也 ≈1/17** ⇒ **「1/100 成本」需要额外的 ~6× 来自部署/利用率/硬件档位假设**，**建议论文改用「FLOPs/token + 显存带宽 + 实测吞吐」三可比量**而非 $/Mtok 牌价。
 

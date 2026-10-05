@@ -3,6 +3,42 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_PRETRAIN_2B.md` / `daily-memories/` / `EXPERIMENTS_*`）。本节为「无」时按下方 Round 2 默认顺序推进。
 
+### 🆕 运维指令 · 2026-10-05（晚 · ① `sglang` 改用 **conda 环境**从头装（先查 `.12` 现成的 sglang/vllm env）② 「外网命令带 proxy」口径同步 ③ 环境隔离纪律）· 高优先
+
+> **用户拍板（2026-10-05 晚）**：「**P-9.10 与 sglang A/B：我在 `2.12` 已经装过 sglang 的**，你可以看看有没有 conda 环境叫 `sglang` 或 `vllm` 的。**如果没有，自己新开个 conda 环境，叫 `sglang`，从头装一下**，记得设置 `https_proxy` 和国内的（比如阿里腾讯）pip 源，**可以装的**。」
+
+**① 先查现成 conda 环境（`.12` 为主，`.29` 也查）**
+```bash
+conda env list | grep -Ei 'sglang|vllm'          # 两台机都查（.12 是用户说装过的那台）
+# 命中后在该 env 里验证：
+conda run -n sglang python -c "import sglang, torch; print(sglang.__version__, torch.__version__, torch.cuda.is_available())"
+```
+- 找到**版本/依赖可用**的 env ⇒ **直接复用**（记清 env 名 + 版本 + `conda env list` 原文）。
+- ⚠️ `.12` 的 env 是**本机 conda**（若两机不共享 conda 路径则不能直接给 `.29` 用）⇒ 若 P-9.10 在 `.29` 跑，**在 `.29` 上另建同名 env 或确认 conda 路径共享**；两机都要给出核验原文。
+
+**② 没有就新建 `sglang` 环境从头装（显式带 proxy + 国内源）**
+```bash
+export http_proxy=http://172.19.92.25:13128 https_proxy=http://172.19.92.25:13128
+conda create -y -n sglang python=3.10
+conda run -n sglang python -m pip install -U pip -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+conda run -n sglang python -m pip install sglang \
+  -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com \
+  --extra-index-url https://pypi.tuna.tsinghua.edu.cn/simple      # 阿里不通换腾讯 https://mirrors.cloud.tencent.com/pypi/simple
+```
+- 🚫 **绝不在共享 `py310` 里装**（隔离在 `sglang` env 内）；🚫 不要 `--no-deps`。
+- 记录**确切输出**（成功 → `sglang --version` + `import` 通过；失败 → 贴原始报错）。
+- 若 `cuda-tile`（仅 `pypi.nvidia.com`）仍 SSL EOF ⇒ 试国内镜像的同名/nvidia wheel 或 conda 源；**仍失败**才回落到已定的 **`mcore + CUDA-graph`**，✅ **不阻塞 P-9.10 ②**（到点照起；sglang 只为「抬上界」）。
+
+**③ 「外网命令带 proxy」口径同步到本线（与 data / harness / vision 一致）**
+- 你的 shell 被 loop 剥了 `*_PROXY`（内网网关鉴权用，**不能改**）⇒ 凡访问外网的那条命令**自己显式带**：`P=http://172.19.92.25:13128`；`https_proxy=$P http_proxy=$P <cmd>`；pip 加 `--proxy $P` + 国内索引。
+- 🔑 **`Errno 101 / http 000` = shell 没带 proxy，不是集群禁网/镜像被墙**（本轮 sglang A/B 已实测证实：带 proxy → 阿里云 200）。
+
+**④ 环境隔离纪律（治「同机争用」—— 用户裁定）**
+- **训练/长跑 = 共享 `py310`**（不动）；**`sglang` 托管大模型 = `sglang` conda env**；**harness 大量装包 = 另起新 conda env**。三者互不污染。
+
+> ✅ 本块生效即视为已批准。**时序不变**：P-9.10 ② 照常在 GPU0–1 起；P-9.9 已收官（tensorwise FAIL → **P-8 沿用 delayed FP8**）。
+
+
 ### 🆕 运维答复 · 2026-10-05（**替代 ckpt ✅ 批准 / `sglang` ⚠️ 运维更正：先查 `https_proxy`，限时 30 分钟复测**）· **接下方 P-9.10 块**
 
 > 收到第 100 次唤醒的「待运维确认」，逐条答复。**起跑时序不变**：P-9.9 约占到 **~15:15** → 之后 pretrain 拿 **GPU0–1** 起 P-9.10 实测、data 拿 **GPU2–7** 起配比，**同时开跑**。
