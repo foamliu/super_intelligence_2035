@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（supervisor 编辑，中继只读执行）
 
-<!-- RUN_ID: 4 -->
+<!-- RUN_ID: 5 -->
 
 > **用法**：在下面**新增一段** `## RUN_ID N`（N 递增）+ **一个 ```bash 块** → `git push`。
 > 中继（`ops_relay.sh`）轮询发现 **RUN_ID 变大** → 执行 → 结果 append 到 `ops/outbox.md` → push。
@@ -13,6 +13,63 @@
 > ② 🚫 **绝不整树 `du`**（大目录会跑很久）—— 只用 `df` + 有界定向 `du`（每条带 `timeout`）；
 > ③ 单块总超时 **600s**，输出超 **20000 字符**会被截断；
 > ④ 危险模式（`rm -rf /`、`mkfs`、**`git clean -fdx`**、**`git reset --hard`**、**杀 ops_relay**）会被**拒绝**。
+
+## RUN_ID 5 — 🛑 **止损**：把语料分片移出 git 索引（**保留本地文件**，`git rm --cached`）
+
+**为什么必须马上做**（依据 RUN_ID 3 实测）：
+- `.git` = **592 MB**（GitHub 软上限 ~1GB）；**gz 无 delta → 每轮更新分片 = 整份 blob 重新入库 ≈ +110MB/轮**；
+- 11 个分片（2016–2026，5.78–15.56 MB）**全部被 git 跟踪**；`.gitignore` 对**已跟踪文件无效** → **不 `rm --cached` 就永远拦不住**。
+
+⚠️ **本块只在「腾讯这台」执行**（它 `rm --cached` 后**工作区文件保留**；换别的克隆执行会让工作区文件被删）。
+⚠️ **不删任何数据**：历史 blob 仍在 `.git` 里（可 `git cat-file` 取回），工作区文件原样保留。
+
+```bash
+set -u
+cd ~/super_intelligence_2035 || exit 1
+echo "=== 0. 先决条件 ==="
+hostname; date '+%F %T %Z'
+echo "当前 .git 体积：$(du -sh .git | cut -f1)"
+echo "分片数量：$(ls doc/personal-watch/run/news/archive/*.jsonl.gz 2>/dev/null | wc -l)"
+echo
+echo "=== 1. 🛡 双保险：把分片复制到仓库之外（~/archive_data_backup/）==="
+mkdir -p ~/archive_data_backup
+cp -f doc/personal-watch/run/news/archive/*.jsonl.gz ~/archive_data_backup/ 2>/dev/null
+echo "备份目录内容："
+ls -la ~/archive_data_backup/ | head -15
+echo "备份合计：$(du -sh ~/archive_data_backup 2>/dev/null | cut -f1)"
+echo
+echo "=== 2. 🛑 从 git 索引移除（--cached = 保留工作区文件）==="
+git rm --cached -q doc/personal-watch/run/news/archive/*.jsonl.gz 2>&1 | head -15 || true
+echo "--- 移除后 git 索引里还剩什么（应只剩 py/README/PROGRESS/INDEX）---"
+git ls-files doc/personal-watch/run/news/archive/ | cut -c1-140
+echo
+echo "=== 3. ⭐ 关键校验：工作区文件必须还在（应为 11）==="
+ls doc/personal-watch/run/news/archive/*.jsonl.gz 2>/dev/null | wc -l
+du -sh doc/personal-watch/run/news/archive 2>/dev/null
+echo '--- 且应显示为「被 .gitignore 忽略」而非「待提交」---'
+git status --short -- doc/personal-watch/run/news/archive/ | head -8
+git check-ignore --no-index -v doc/personal-watch/run/news/archive/chinanews-2016.jsonl.gz 2>/dev/null || echo "(2016 未命中 .gitignore ⚠️)"
+echo
+echo "=== 4. 提交（含 .gitignore 与红线文档）==="
+git add -- doc/personal-watch/run/news/archive/.gitignore 2>/dev/null || true
+git add -u -- doc/personal-watch/run/news/archive/ 2>/dev/null || true
+git commit -m "ops: 止损 — news/archive 11 个语料分片移出 git 索引（git rm --cached，保留本地文件）；.git 已 592MB 且每轮+110MB（gz 无 delta）；体积红线>=5MB 改走百度云盘" 2>&1 | tail -5
+echo
+echo "=== 5. 推送（先 rebase，避免与 agent/BaiZe 冲突被拒）==="
+git pull --rebase --autostash 2>&1 | tail -4
+git push 2>&1 | tail -4
+echo
+echo "=== 6. 结果核对 ==="
+echo "提交后 .git 体积：$(du -sh .git | cut -f1)  （⚠️ 历史仍在，不会变小；重点是「不再增长」）"
+git log --oneline -3 | cut -c1-140
+echo "--- 远端是否还跟踪分片（应为空）---"
+git ls-tree -r --name-only origin/main -- doc/personal-watch/run/news/archive/ 2>/dev/null | grep -E 'jsonl\.gz' || echo "✅ 远端已不跟踪分片"
+echo "--- 工作区分片仍应为 11 ---"
+ls doc/personal-watch/run/news/archive/*.jsonl.gz 2>/dev/null | wc -l
+```
+
+**预期结果**：`git ls-files` **不再列 gz** · **工作区仍 11 个文件**（抓取不受影响）· 推送后**远端不再跟踪 gz** ·
+**下轮起 agent 抓取更新分片将不再产生 git 提交** → **每轮 +110MB 的出血停止** ✅
 
 ## RUN_ID 4 — 🔍 为「语料迁出 git → 百度云盘」做前置体检（**只读 + 只生成清单，不删不移**）
 
