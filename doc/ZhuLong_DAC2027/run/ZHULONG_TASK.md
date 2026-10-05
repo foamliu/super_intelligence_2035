@@ -17,6 +17,27 @@
 | **🔄 试验次序** | **已调换：Phase B（大模型消融）→ C1（组件）→ C2（S2Φ）→ S1（保真度）**。因 `deepseek-v4-pro-fp4` 额度 403 阻塞 C1，先跑 Phase B（4 模型均使用独立 key/endpoint，不受 pro-fp4 限制）|
 | **叙事** | 一顿合并：**B → C1 → C2 → S1**，「单任务书 + 单循环」串行 75 轮全量 mean±std，回填 6 表 56 个 `[TBD]` |
 
+### 🆕 运维指令 · 2026-10-05（八）— 🚑【优先】请你排查并恢复 ops 中继
+
+**背景**：36.15 的 `zhulong_ops_relay.sh` **自 11:04（RUN_ID 20）后不再响应**（`inbox.md` 已置 `RUN_ID 21`，1 小时+ 未执行）；而 **GitHub 通道本身是通的**（运维与本机都能 `git fetch`）。→ 大概率**中继进程已死/卡住**（很可能是启动时没带 `setsid`，随 ssh 会话断开被带走）。**运维无法登录 36.15，故请你（agent）代为排查并恢复——这是本轮优先动作（先于 Phase B 推进）。**
+
+**步骤**：
+1. 查活：`pgrep -af zhulong_ops_relay.sh | cut -c1-140`；记下 `/tmp/zhulong_ops_relay.log` 尾 20 行、`run/ops/.last_run_id`。
+2. 测网：`cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run && git pull --rebase --autostash; timeout 60 git fetch origin && echo FETCH_OK || echo FETCH_FAIL`。
+3. 若中继**不在**（或 `FETCH_OK` 但中继不动），**用带 `setsid` 的姿势重启**：
+   ```bash
+   cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+   pkill -f zhulong_ops_relay.sh; sleep 2
+   setsid bash zhulong_ops_relay.sh > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
+   sleep 3
+   pgrep -af zhulong_ops_relay.sh | cut -c1-140
+   tail -n 8 /tmp/zhulong_ops_relay.log
+   ```
+4. 复核：`ops/.last_run_id` 应在 1–2 分钟内**变为 21**（中继补跑 `RUN_ID 21`）。
+5. **回报**：把以上输出写进 `MEMORY_ZHULONG.md` 操作流水（含新 PID / 时间戳）。
+
+**红线**：① 不改 `ops/` 里的文件内容；② 不动 legacy（`/nasdata/app.e0031982/code/ZhuLong_DAC2027/`）；③ 重启中继**必须带 `setsid` + stdio 重定向**，否则会再随会话断开而死。
+
 ### 🆕 运维指令 · 2026-10-05（七）— 🧩 评测侧也隔离 config dir（合并线 ↔ legacy 各干各的）
 
 > **目标**：合并线跑 eval 时，防作弊 hook 只影响**它自己的评测对象**，**不再落进共享的 `~/.cline/hooks`** → legacy 的编排 agent 不被误伤 → **两条线可真正并跑**。
