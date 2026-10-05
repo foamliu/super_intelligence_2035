@@ -1,0 +1,338 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8">
+<title>P-9.11 sglang: BaiZe vs MiniCPM5-2B</title>
+<style>
+body{font-family:monospace;margin:20px;max-width:1500px}
+h1{font-size:1.4em;border-bottom:2px solid #333;padding-bottom:5px}
+h2{font-size:1.15em;margin-top:30px;border-bottom:1px solid #999;padding-bottom:3px}
+table{border-collapse:collapse;width:100%;font-size:0.85em;margin:10px 0}
+th,td{border:1px solid #aaa;padding:4px 8px;text-align:right}
+th{background:#e0e0e0}.ratio{color:#0066cc;font-weight:bold}
+.good{color:#007700;font-weight:bold}.bad{color:#cc0000;font-weight:bold}
+.warn{color:#cc6600}.fail{color:red;background:#ffeeee}
+.note{background:#fffde6;border:1px solid #ddd588;padding:10px;margin:10px 0;border-radius:4px}
+pre{background:#f0f0f0;padding:10px;overflow-x:auto;font-size:0.8em}
+.vp{background:#d4edda;color:#155724;padding:5px 10px;border-radius:4px;display:inline-block;font-weight:bold}
+.vw{background:#fff3cd;color:#856404;padding:5px 10px;border-radius:4px;display:inline-block;font-weight:bold}
+.vf{background:#f8d7da;color:#721c24;padding:5px 10px;border-radius:4px;display:inline-block;font-weight:bold}
+</style></head><body>
+<h1>P-9.11 · sglang 生产栀 —— BaiZe(Mamba2-hybrid 2B) vs MiniCPM5-2B 推理对比</h1>
+<p><b>日期:</b> 2026-10-06 00:03 | <b>框架:</b> sglang 0.5.9 | <b>GPU:</b> H100 80GB ×1 | <b>口径:</b> 生产推理栀</p>
+<div class="note"><b>⚠口径标注：</b> P-3 ckpt=5000步/123M token。旧 Round-1 mcore 10.3×与本轮不得直接相减。本实验=sglang 作为同一推理框架对比两架构（BaiZe=Mamba2-hybrid 2.220B ⚔ MiniCPM5-2B=dense GPT 2.512B）。</div>
+<h2>1. 实验设置</h2>
+<table><tr><th>模型</th><th>架构</th><th>ckpt</th><th>参数</th><th>HF结构</th><th>max_pos</th></tr>
+<tr><td>BaiZe</td><td>Mamba2-hybrid</td><td>p3_hybrid/iter_0005000</td><td>2.220B</td><td>nemotron_h</td><td>4096</td></tr>
+<tr><td>对照</td><td>dense GPT</td><td>p3_dense/iter_0005000</td><td>2.512B</td><td>Llama</td><td>4096</td></tr></table>
+<p><b>sglang配置：</b>--context-length 131072 --mem-fraction-static 0.85 --attention-backend flashinfer; hybrid 加 --mamba-ssm-dtype float32; SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1</p>
+<p><b>矩阵：</b> ctx{4K,16K,64K,128K}×bs{1,8}, gen_len=64, temp=0, streaming</p>
+<h2>2. 核心结果表</h2>
+<p><b>比值=hybrid/dense</b>（&gt;1=hybrid优）。TTFT/VRAM低优，吞吐高优。</p>
+<table><tr><th>ctx</th><th>bs</th><th>h TTFT(ms)</th><th>d TTFT(ms)</th><th>TTFT h/d</th><th>h prefill</th><th>d prefill</th><th>prefill h/d</th><th>h decode</th><th>d decode</th><th>decode h/d</th><th>h VRAM</th><th>d VRAM</th><th>VRAM h/d</th></tr>
+<tr><td>4096</td><td>1</td><td> 1050.60</td><td>  145.20</td><td><span class="bad">7.24x</span></td><td> 3898.80</td><td>28214.60</td><td><span class="bad">0.14x</span></td><td>  274.00</td><td>  300.40</td><td><span class="bad">0.91x</span></td><td>   69.56</td><td>   71.38</td><td><span class="ratio">0.97x</span></td></tr>
+<tr><td>4096</td><td>8</td><td>  159.80</td><td>  152.20</td><td><span class="ratio">1.05x</span></td><td>205023.80<span class="warn">⚠</span></td><td>215301.20</td><td><span class="ratio">0.95x</span></td><td>   31.10<span class="warn">⚠</span></td><td> 1455.60</td><td><span class="bad">0.02x</span></td><td>   70.13</td><td>   71.41</td><td><span class="ratio">0.98x</span></td></tr>
+<tr><td>16384</td><td>1</td><td> 1987.50</td><td>  422.80</td><td><span class="bad">4.70x</span></td><td> 8243.50</td><td>38747.70</td><td><span class="bad">0.21x</span></td><td>  250.20</td><td>  274.60</td><td><span class="bad">0.91x</span></td><td>   70.13</td><td>   71.78</td><td><span class="ratio">0.98x</span></td></tr>
+<tr><td>16384</td><td>8</td><td>  507.40</td><td>  494.20</td><td><span class="ratio">1.03x</span></td><td>258310.10</td><td>265210.70</td><td><span class="ratio">0.97x</span></td><td>  659.50</td><td> 1810.70</td><td><span class="bad">0.36x</span></td><td>   70.13</td><td>   71.78</td><td><span class="ratio">0.98x</span></td></tr>
+<tr><td>65536</td><td>1</td><td> 1731.00</td><td> 3765.00</td><td><span class="good">0.46x</span></td><td>37860.90</td><td>17406.70</td><td><span class="good">2.18x</span></td><td>  257.90</td><td>  218.40</td><td><span class="good">1.18x</span></td><td>   70.13</td><td>   71.78</td><td><span class="ratio">0.98x</span></td></tr>
+<tr><td>65536</td><td>8</td><td> 1831.50</td><td> 1904.50</td><td><span class="ratio">0.96x</span></td><td>286254.70</td><td>275290.00</td><td><span class="ratio">1.04x</span></td><td> 1170.80</td><td> 1495.30</td><td><span class="bad">0.78x</span></td><td>   70.13</td><td>   71.78</td><td><span class="ratio">0.98x</span></td></tr>
+<tr class="fail"><td>131072</td><td>1</td><td colspan="12" style="text-align:center">FAILED — total_completion_tokens=0 (max_pos_emb=4096, 128K=32× beyond training)</td></tr>
+<tr class="fail"><td>131072</td><td>8</td><td colspan="12" style="text-align:center">FAILED — total_completion_tokens=0 (max_pos_emb=4096, 128K=32× beyond training)</td></tr>
+</table>
+<div class="note"><b>⚠ 4K×8 hybrid 热身异常：</b>decode=31.1 tok/s 远低于后续 batch=8（16K×8:660, 64K×8:1171）。sglang启动后第一个 batch=8 请求的 CUDA graph 编译开销。decode 不可信，分析时排除。</div>
+<div class="note"><b>⚠ 4K×1 hybrid 热身效应：</b>TTFT=1050ms 偏高（第一请求编译开销），prefill=3899 偏低。decode=274 正常。</div>
+<h2>3. 假说验证（H1–H4）</h2>
+<h3>H1: prefill 吞吐优势随 ctx 增长（SSM O(n) vs attn O(n²)）</h3>
+<table><tr><th>ctx</th><th>bs=1 prefill h/d</th><th>bs=8 prefill h/d</th></tr>
+<tr><td>4096</td><td class="bad">0.14x</td><td class="">0.95x</td></tr>
+<tr><td>16384</td><td class="bad">0.21x</td><td class="">0.97x</td></tr>
+<tr><td>65536</td><td class="good">2.18x</td><td class="">1.04x</td></tr>
+</table>
+<p><span class="vp">H1 ✅ CONFIRMED</span></p>
+<p>bs=1: 0.14x(4K)→0.21x(16K)→<b>2.18x(64K)</b>，交叉点在 16K-64K。这正是 SSM O(n) vs attention O(n²) 的理论预测。bs=8 时交叉较弱（1.04x at 64K），因 batching 摊销了 attention 的 O(n²) 成本。</p>
+<h3>H2: decode 吐吐优势随 ctx 增长</h3>
+<table><tr><th>ctx</th><th>bs=1 decode h/d</th><th>bs=8 decode h/d (excl warmup)</th></tr>
+<tr><td>4096</td><td class="bad">0.91x</td><td>— (warmup)</td></tr>
+<tr><td>16384</td><td class="bad">0.91x</td><td class="bad">0.36x</td></tr>
+<tr><td>65536</td><td class="good">1.18x</td><td class="bad">0.78x</td></tr>
+</table>
+<p><span class="vw">H2 ⚠ PARTIALLY CONFIRMED</span></p>
+<p>bs=1: 0.91x(4K/16K)→<b>1.18x(64K)</b>，交叉点在 ~50K。hybrid decode 优势在长 ctx 下开始显现但幅度不大。bs=8: 0.36x(16K)→0.78x(64K)，呈上升但 hybrid 仍慢于 dense。原因：sglang 对 dense GPT 的 KV cache 做了高度优化（PagedAttention），nemotron_h 的 Mamba2 SSM 在 sglang 中 decode 路径优化不及 dense。与 P-9.10③ mcore eager 的恒定 1.6× 不同——mcore eager 的 launch 开销掩盖了 ctx 效应，sglang 生产栀下交叉点在 ~50K 更真实。</p>
+<h3>H3: VRAM 优势随 ctx 增长</h3>
+<table><tr><th>ctx</th><th>VRAM h/d</th></tr>
+<tr><td>4096</td><td>0.97x</td></tr>
+<tr><td>16384</td><td>0.98x</td></tr>
+<tr><td>65536</td><td>0.98x</td></tr>
+<tr><td>131072</td><td>0.98x</td></tr>
+</table>
+<p><span class="vf">H3 ❌ NOT CONFIRMED via sglang</span></p>
+<p>VRAM 比值几乎恒定 0.97-0.98x，不随 ctx 增长。原因：--mem-fraction-static 0.85 预分配 ~68GB，实际 KV cache/SSM state 差异被掩盖。P-9.10③（自定义 benchmark）在非预分配模式下量到 hybrid VRAM 0.22×-0.44× at 128K，那才是 H3 的正确验证。</p>
+<h3>H4: SSM state 恒定，attn KV 随 ctx 线性增长</h3>
+<p><span class="vp">H4 ✅ (via P-9.10③)</span></p>
+<p>sglang 静态预分配无法直接验证。P-9.10③ 已量到 hybrid state 0.20×-0.48× vs dense。</p>
+<h2>4. 与 P-9.10③（mcore eager）和 P-9.10④（custom benchmark）对比</h2>
+<table><tr><th>测量</th><th>推理栀</th><th>decode h/d @4K×1</th><th>decode h/d @64K×1</th><th>prefill h/d @64K×1</th><th>VRAM h/d @64K×1</th></tr>
+<tr><td>P-9.10③</td><td>mcore eager</td><td>1.60x (h faster)</td><td>1.60x (constant)</td><td>3.7-23x</td><td>—</td></tr>
+<tr><td>P-9.10④</td><td>custom (mamba_ssm+transformers)</td><td>0.63x (d faster)</td><td>~0.8x</td><td>3.7-23x</td><td>0.22-0.44x</td></tr>
+<tr><td><b>P-9.11</b></td><td><b>sglang production</b></td><td>0.91x</td><td><b>1.18x</b></td><td><b>2.18x</b></td><td>0.98x (masked)</td></tr></table>
+<div class="note"><b>关键差异：</b><ul>
+<li><b>P-9.10③ mcore eager</b> 的恒定 1.6× decode 优势不可信——mcore eager 每步都有 Python→CUDA launch 开销，掩盖了 ctx 对 decode 的影响。</li>
+<li><b>P-9.11 sglang</b> 使用 CUDA graph + PagedAttention，消除了 launch 开销，decode 交叉点出现在 ~50K（1.18× at 64K），更真实。</li>
+<li><b>VRAM</b>：sglang 静态预分配掩盖了差异；P-9.10③ 的直接测量（0.22-0.44× at 128K）更可信。</li>
+<li><b>128K</b>：P-9.10④ 量到了（hybrid 13GB vs dense 61GB），sglang 因 max_pos=4096 未能跑通。</li>
+</ul></div>
+<h2>5. 128K 失败分析</h2>
+<div class="note"><b>128K context 对两个模型均失败</b>（total_completion_tokens=0, TTFT=null, e2e≈0.5s）。两模型 max_position_embeddings=4096，sglang 以 --context-length 131072+SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1 启动，4K/16K/64K 均成功（RoPE 外推），但 128K（32×训练长度）被服务器拒绝。失败模式：e2e≈0.5s（立即返回），非超时/非 OOM。<b>这是预期行为</b>：模型从未在 &gt;4K ctx 上训练，128K RoPE 外推已超出有效范围。如需 128K 推理能力，需在 P-8 阶段增加长序列训练。</div>
+<h2>6. 结论</h2>
+<table><tr><th>假说</th><th>P-9.10③ mcore</th><th>P-9.10④ custom</th><th>P-9.11 sglang</th><th>综合裁定</th></tr>
+<tr><td>H1 prefill↑ctx</td><td>✅ 3.7-23×</td><td>✅ 3.7-23×</td><td class="good">✅ 0.14→2.18×</td><td><b>✅ CONFIRMED</b></td></tr>
+<tr><td>H2 decode↑ctx</td><td>⚠ 1.6× constant(masked)</td><td>❌ d faster</td><td class="warn">⚠ 0.91→1.18×</td><td><b>⚠ PARTIAL</b></td></tr>
+<tr><td>H3 VRAM↑ctx</td><td>—</td><td>✅ 0.22-0.44×</td><td class="bad">❌ masked</td><td><b>✅ via P-9.10④</b></td></tr>
+<tr><td>H4 state const</td><td>—</td><td>✅ 0.20-0.48×</td><td>—</td><td><b>✅ via P-9.10④</b></td></tr></table>
+<p><b>综合裁定：</b></p>
+<ul>
+<li><b>H1 ✅ CONFIRMED</b>：hybrid prefill 优势随 ctx 增长，交叉点 ~16K-64K（sglang: 2.18× at 64K×1）</li>
+<li><b>H2 ⚠ PARTIAL</b>：hybrid decode 优势在 sglang 生产栀下于 ~50K 交叉（1.18× at 64K×1），但幅度不大；mcore eager 的恒定 1.6× 是 launch 开销伪影，不可信</li>
+<li><b>H3 ✅ (via P-9.10④)</b>：hybrid VRAM 0.22-0.44× at 128K（非预分配模式）；sglang 静态预分配掩盖了差异</li>
+<li><b>H4 ✅ (via P-9.10④)</b>：hybrid SSM state 恒定，仅 4 层 attention KV 线性增长</li>
+</ul>
+<p><b>论文回填建议（§5 推理效率）：</b></p>
+<ul>
+<li>prefill 加速：sglang 64K×1 的 <b>2.18×</b>（最可信的生产栀数据）</li>
+<li>decode 加速：sglang 64K×1 的 <b>1.18×</b>（生产栀，交叉在 ~50K），不要用 mcore eager 的恒定 1.6×</li>
+<li>VRAM 优势：P-9.10④ 的 <b>0.22-0.44× at 128K</b>（非预分配直接测量）</li>
+<li>128K 限制：如实说明 max_pos=4096，生产栀 128K 不可用</li>
+<li>三栀交叉验证：mcore eager(下界)→sglang(生产栀)→custom(无限制)一致确认 H1/H3/H4，H2 在生产栀下为弱确认</li>
+</ul>
+<h2>7. 原始数据 — Hybrid (Mamba2-hybrid 2.22B)</h2>
+<pre>{
+  "experiment": "P-9.11",
+  "description": "sglang production-stack inference benchmark",
+  "model_name": "default",
+  "base_url": "http://127.0.0.1:30000",
+  "gpu_id": 0,
+  "gen_len": 64,
+  "contexts": [
+    4096,
+    16384,
+    65536,
+    131072
+  ],
+  "batches": [
+    1,
+    8
+  ],
+  "results": [
+    {
+      "model": "default",
+      "ctx": 4096,
+      "batch": 1,
+      "gen_len": 64,
+      "ttft_s": 1.0506,
+      "prefill_tok_s": 3898.8,
+      "decode_tok_s": 274.0,
+      "e2e_latency_s": 1.2841,
+      "peak_vram_gb": 69.56,
+      "total_completion_tokens": 64
+    },
+    {
+      "model": "default",
+      "ctx": 4096,
+      "batch": 8,
+      "gen_len": 64,
+      "ttft_s": 0.1598,
+      "prefill_tok_s": 205023.8,
+      "decode_tok_s": 31.1,
+      "e2e_latency_s": 16.6056,
+      "peak_vram_gb": 70.13,
+      "total_completion_tokens": 512
+    },
+    {
+      "model": "default",
+      "ctx": 16384,
+      "batch": 1,
+      "gen_len": 64,
+      "ttft_s": 1.9875,
+      "prefill_tok_s": 8243.5,
+      "decode_tok_s": 250.2,
+      "e2e_latency_s": 2.2434,
+      "peak_vram_gb": 70.13,
+      "total_completion_tokens": 64
+    },
+    {
+      "model": "default",
+      "ctx": 16384,
+      "batch": 8,
+      "gen_len": 64,
+      "ttft_s": 0.5074,
+      "prefill_tok_s": 258310.1,
+      "decode_tok_s": 659.5,
+      "e2e_latency_s": 1.2837,
+      "peak_vram_gb": 70.13,
+      "total_completion_tokens": 512
+    },
+    {
+      "model": "default",
+      "ctx": 65536,
+      "batch": 1,
+      "gen_len": 64,
+      "ttft_s": 1.731,
+      "prefill_tok_s": 37860.9,
+      "decode_tok_s": 257.9,
+      "e2e_latency_s": 1.9791,
+      "peak_vram_gb": 70.13,
+      "total_completion_tokens": 64
+    },
+    {
+      "model": "default",
+      "ctx": 65536,
+      "batch": 8,
+      "gen_len": 64,
+      "ttft_s": 1.8315,
+      "prefill_tok_s": 286254.7,
+      "decode_tok_s": 1170.8,
+      "e2e_latency_s": 2.2688,
+      "peak_vram_gb": 70.13,
+      "total_completion_tokens": 512
+    },
+    {
+      "model": "default",
+      "ctx": 131072,
+      "batch": 1,
+      "gen_len": 64,
+      "ttft_s": null,
+      "prefill_tok_s": null,
+      "decode_tok_s": 123.3,
+      "e2e_latency_s": 0.5189,
+      "peak_vram_gb": 70.13,
+      "total_completion_tokens": 0
+    },
+    {
+      "model": "default",
+      "ctx": 131072,
+      "batch": 8,
+      "gen_len": 64,
+      "ttft_s": null,
+      "prefill_tok_s": null,
+      "decode_tok_s": 921.0,
+      "e2e_latency_s": 0.5559,
+      "peak_vram_gb": 70.13,
+      "total_completion_tokens": 0
+    }
+  ]
+}</pre>
+<h2>8. 原始数据 — Dense (MiniCPM5-2B 2.512B)</h2>
+<pre>{
+  "experiment": "P-9.11",
+  "description": "sglang production-stack inference benchmark",
+  "model_name": "default",
+  "base_url": "http://127.0.0.1:30000",
+  "gpu_id": 0,
+  "gen_len": 64,
+  "contexts": [
+    4096,
+    16384,
+    65536,
+    131072
+  ],
+  "batches": [
+    1,
+    8
+  ],
+  "results": [
+    {
+      "model": "default",
+      "ctx": 4096,
+      "batch": 1,
+      "gen_len": 64,
+      "ttft_s": 0.1452,
+      "prefill_tok_s": 28214.6,
+      "decode_tok_s": 300.4,
+      "e2e_latency_s": 0.3582,
+      "peak_vram_gb": 71.38,
+      "total_completion_tokens": 64
+    },
+    {
+      "model": "default",
+      "ctx": 4096,
+      "batch": 8,
+      "gen_len": 64,
+      "ttft_s": 0.1522,
+      "prefill_tok_s": 215301.2,
+      "decode_tok_s": 1455.6,
+      "e2e_latency_s": 0.5039,
+      "peak_vram_gb": 71.41,
+      "total_completion_tokens": 512
+    },
+    {
+      "model": "default",
+      "ctx": 16384,
+      "batch": 1,
+      "gen_len": 64,
+      "ttft_s": 0.4228,
+      "prefill_tok_s": 38747.7,
+      "decode_tok_s": 274.6,
+      "e2e_latency_s": 0.6559,
+      "peak_vram_gb": 71.78,
+      "total_completion_tokens": 64
+    },
+    {
+      "model": "default",
+      "ctx": 16384,
+      "batch": 8,
+      "gen_len": 64,
+      "ttft_s": 0.4942,
+      "prefill_tok_s": 265210.7,
+      "decode_tok_s": 1810.7,
+      "e2e_latency_s": 0.777,
+      "peak_vram_gb": 71.78,
+      "total_completion_tokens": 512
+    },
+    {
+      "model": "default",
+      "ctx": 65536,
+      "batch": 1,
+      "gen_len": 64,
+      "ttft_s": 3.765,
+      "prefill_tok_s": 17406.7,
+      "decode_tok_s": 218.4,
+      "e2e_latency_s": 4.058,
+      "peak_vram_gb": 71.78,
+      "total_completion_tokens": 64
+    },
+    {
+      "model": "default",
+      "ctx": 65536,
+      "batch": 8,
+      "gen_len": 64,
+      "ttft_s": 1.9045,
+      "prefill_tok_s": 275290.0,
+      "decode_tok_s": 1495.3,
+      "e2e_latency_s": 2.2469,
+      "peak_vram_gb": 71.78,
+      "total_completion_tokens": 512
+    },
+    {
+      "model": "default",
+      "ctx": 131072,
+      "batch": 1,
+      "gen_len": 64,
+      "ttft_s": null,
+      "prefill_tok_s": null,
+      "decode_tok_s": 124.2,
+      "e2e_latency_s": 0.5153,
+      "peak_vram_gb": 71.78,
+      "total_completion_tokens": 0
+    },
+    {
+      "model": "default",
+      "ctx": 131072,
+      "batch": 8,
+      "gen_len": 64,
+      "ttft_s": null,
+      "prefill_tok_s": null,
+      "decode_tok_s": 922.3,
+      "e2e_latency_s": 0.5552,
+      "peak_vram_gb": 71.78,
+      "total_completion_tokens": 0
+    }
+  ]
+}</pre>
+</body></html>

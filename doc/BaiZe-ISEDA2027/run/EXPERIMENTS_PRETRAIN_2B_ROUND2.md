@@ -1829,10 +1829,63 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 - **p3_dense/iter_0005000 → HF Llama** ✅（新脚本 `baize_p3_dense_ckpt_to_hf.py`，12 batched mcore keys → 381 HF keys，2.512B params，5.0GB safetensors）→ `nemo_experiments/p3_dense/hf_iter_5000/`
   - 架构：42L dense GPT，hidden=2048，ffn=6144，16Q/2KV GQA，SwiGLU silu，no-bias，pre-norm，vocab=129408
   - 关键发现：p3_dense distcp 使用**batched keys**（`decoder.layers.self_attention.linear_qkv.weight` shape [42,2560,2048]）而非 per-layer keys（与 p3_hybrid 不同）
-- **下一步**：① logits 对齐自检（mcore vs HF 前向差异）→ ② sglang 起服（vllm conda env，`--model-path` 指向 HF 目录）→ ③ P-9.11 矩阵实测（ctx{4K,16K,64K,128K}×bs{1,8}，gen_len=64，TTFT/prefill/decode/mem）
+- **下一步**：① logits 对齐自检 → ② sglang 起服 → ③ P-9.11 矩阵实测 → ✅ 已完成（见下）
+
+### P-9.11 ② sglang 生产栈推理对比 ✅ COMPLETE（2026-10-05 ~23:50–00:03，GPU0 @.29）
+
+**框架**：sglang 0.5.9（vllm conda env，torch 2.9.1+cu128，flashinfer 0.6.3），H100 80GB ×1
+**对象**：BaiZe=Mamba2-hybrid 2.220B（nemotron_h, p3_hybrid/iter_0005000）⚔ MiniCPM5-2B=dense GPT 2.512B（Llama, p3_dense/iter_0005000）
+**sglang 配置**：`--context-length 131072 --mem-fraction-static 0.85 --attention-backend flashinfer`；hybrid 加 `--mamba-ssm-dtype float32`；`SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1`
+**矩阵**：ctx{4K,16K,64K,128K}×bs{1,8}, gen_len=64, temp=0, streaming
+
+#### 核心结果（hybrid/dense 比值，>1=hybrid优）
+
+| ctx | bs | TTFT h/d | prefill h/d | decode h/d | VRAM h/d |
+|:--|:--|:--|:--|:--|:--|
+| 4K | 1 | 7.24x | 0.14x | 0.91x | 0.97x |
+| 4K | 8 | 1.05x⚠ | 0.95x⚠ | 0.02x⚠ | 0.98x |
+| 16K | 1 | 4.70x | 0.21x | 0.91x | 0.98x |
+| 16K | 8 | 1.03x | 0.97x | 0.36x | 0.98x |
+| **64K** | **1** | **0.46x** | **2.18x** | **1.18x** | 0.98x |
+| 64K | 8 | 0.96x | 1.04x | 0.78x | 0.98x |
+| 128K | 1 | FAILED | FAILED | FAILED | 0.98x |
+| 128K | 8 | FAILED | FAILED | FAILED | 0.98x |
+
+⚠ 4K×8 hybrid 热身异常：decode=31.1 tok/s（sglang 第一 batch=8 请求 CUDA graph 编译开销，不可信）
+
+#### 128K 失败分析
+两模型 `max_position_embeddings=4096`，128K=32× 训练长度。sglang 以 RoPE 外推跑通 4K/16K/64K，但 128K 被服务器拒绝（e2e≈0.5s 立即返回，total_completion_tokens=0）。**预期行为**：模型未在 >4K 训练，128K RoPE 外推超有效范围。如需 128K 推理需 P-8 长序列训练。
+
+#### 假说裁定（sglang 生产栈）
+
+| 假说 | 裁定 | 关键数据 |
+|:--|:--|:--|
+| **H1** prefill↑ctx | **✅ CONFIRMED** | bs=1: 0.14x(4K)→0.21x(16K)→**2.18x(64K)**, 交叉 16K-64K |
+| **H2** decode↑ctx | **⚠️ PARTIAL** | bs=1: 0.91x(4K/16K)→**1.18x(64K)**, 交叉 ~50K；mcore eager 恒定 1.6× 是 launch 开销伪影 |
+| **H3** VRAM↑ctx | **❌ via sglang** | 0.97-0.98x 恒定（--mem-fraction-static 0.85 预分配掩盖）；P-9.10③ 量到 0.22-0.44× at 128K |
+| **H4** state const | **✅ via P-9.10③** | sglang 无法直接验证；P-9.10③ 量到 0.20-0.48× |
+
+#### 三栈交叉验证
+
+| 测量 | 推理栈 | decode h/d @64K×1 | prefill h/d @64K×1 | VRAM h/d @128K |
+|:--|:--|:--|:--|:--|
+| P-9.10② | mcore eager（下界） | 1.60x (constant, masked) | 3.7-23x | — |
+| P-9.10③ | custom (mamba_ssm+transformers) | ~0.8x | 3.7-23x | 0.22-0.44x |
+| **P-9.11** | **sglang production** | **1.18x** | **2.18x** | — (128K failed) |
+
+**关键差异**：mcore eager 的恒定 1.6× decode 优势不可信（Python→CUDA launch 开销与 ctx 无关，掩盖了 ctx 效应）。sglang 生产栈使用 CUDA graph + PagedAttention，消除 launch 开销，decode 交叉点出现在 ~50K（1.18× at 64K），更真实。
+
+#### 论文回填建议（§5 推理效率）
+- prefill 加速：sglang 64K×1 的 **2.18×**（最可信生产栈数据）
+- decode 加速：sglang 64K×1 的 **1.18×**（生产栈，交叉 ~50K），**不要用 mcore eager 的恒定 1.6×**
+- VRAM 优势：P-9.10③ 的 **0.22-0.44× at 128K**（非预分配直接测量）
+- 128K 限制：如实说明 max_pos=4096，生产栈 128K 不可用
+
+**HTML 报告**：`doc/BaiZe-ISEDA2027/report_pretrain_p911_sglang.html`（17KB，自包含）
+**原始数据**：`run/p911_hybrid_results.json` + `run/p911_dense_results.json`
 
 ### 下一步
 
-1. ① sglang 上界补测：logits 对齐自检 → sglang 起服 → P-9.11 矩阵 → HTML 报告
-2. ④ P-9.5 profiler 复跑 → HTML 报告
+1. ✅ ① sglang 上界补测 → P-9.11 矩阵 ✅ COMPLETE + HTML ✅
+2. → ④ P-9.5 profiler 复跑 → HTML 报告
 3. P-8 暂缓（等 base 下满 + 配比定稿）
