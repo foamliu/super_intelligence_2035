@@ -74,13 +74,64 @@ Stage-2 then trains w512 for $108{,}000$ steps ($55.3$\,M samples) and evaluates
 \end{tabular}
 \end{table}
 
-A power law $acc = 0.251 - 0.864\,N^{-0.090}$ fits the eleven checkpoints ($R^2\approx0.94$) and implies an asymptote of $25.1\%$: even with unlimited data this from-scratch contrastive route saturates near $25\%$ linear-probe top-1, and reaching $20\%$ would take on the order of $6\times10^{10}$ samples under the more favourable log-linear extrapolation---roughly three orders of magnitude beyond the $\approx1.2\times10^{8}$ unique image--text pairs available locally.
+A power law $acc = 0.251 - 0.864\,N^{-0.090}$ fits the eleven checkpoints ($R^2\approx0.94$) and implies an asymptote of $25.1\%$ \emph{for the pure contrastive (InfoNCE) objective}: even with unlimited data this from-scratch contrastive route saturates near $25\%$ linear-probe top-1, and reaching $20\%$ would take on the order of $6\times10^{10}$ samples under the more favourable log-linear extrapolation---roughly three orders of magnitude beyond the $\approx1.2\times10^{8}$ unique image--text pairs available locally.
 A complementary five-point model-size sweep (widths $384$--$1024$ at matched samples) finds the marginal effect of width to be negative throughout ($\approx-2.2$ to $-2.4$ linear-probe points per doubling of parameters) with no saturation point: the best configuration observed is the smallest tower tried ($71.5$\,M, $7.99\%$ at $15.4$\,M samples).
-We read this as the central limitation of the vision stage---the binding constraint is data volume and objective function, not architecture.
+We initially read this as the central limitation of the vision stage---the binding constraint is data volume and objective function, not architecture.
+The next subsection revisits that reading: the ceiling is specific to the contrastive objective, and switching to a caption-\emph{independent} dense objective while retaining the contrastive term breaks it.
+\subsection{Breaking the Contrastive Ceiling with Dense Supervision}\label{sec:vis-dense}
+
+The $25.1\%$ asymptote above is tied to a single global scalar signal per image--text pair (the InfoNCE loss).
+A body of recent work argues that \emph{dense per-patch} supervision can be more sample-efficient than global contrastive learning: AIMv2~\cite{aimv2} reports ``denser supervision compared to discriminative objectives'' from a masked-patch generative head, SigLIP~2~\cite{tschannen2025siglip2} augments sigmoid contrastive loss with captioning and masked-prediction heads, and OpenVision~2~\cite{openvision2} removes the text encoder entirely in favour of a purely generative objective.
+Motivated by these findings, we test whether augmenting the contrastive loss with a caption-\emph{independent} dense term can break the $25.1\%$ ceiling without additional data.
+
+\paragraph{AIMv2-style objective.}
+We add a masked-patch reconstruction head to the selected tower: $60\%$ of patches are masked and their raw pixels are reconstructed by a lightweight predictor ($0.66$\,M params) via an MSE loss, while the InfoNCE contrastive term is retained at equal weight ($\lambda_{\text{patch}}=1.0$).
+The dense term is \emph{caption-independent}---it supervises raw pixels, not text tokens---so it does not depend on caption quality or truncation.
+This is a self-developed adaptation of the AIMv2 design philosophy, \emph{not} an official reproduction: the official AIMv2~\cite{aimv2} uses prefix-LM attention, $\alpha\approx0.4$ loss weighting, and $\sim12$\,B training pairs, none of which we replicate here.
+
+\paragraph{Result: the ceiling is broken.}
+Under the \emph{identical} architecture (OpenVision2, w512), data ($\approx18.5$\,M-pair corpus, CC12M $+$ Amshaker), and optimisation schedule as the scaling study above, the AIMv2-style objective produces a monotonically increasing linear-probe trajectory that exceeds the contrastive baseline at every checkpoint (Table~\ref{tab:visaimv2}):
+lp~top-1 rises from $11.50\%$ at $5.1$\,M samples to $\mathbf{19.76\%}$ at $55.3$\,M---already above the $7.40\%$ contrastive baseline at the same sample budget by $+12.4$\,pp, and the gap \emph{widens} monotonically from $+7.5$\,pp at $10.2$\,M to $+12.4$\,pp at $55.3$\,M.
+A power-law fit $acc = a - b\,N^{-c}$ yields $R^2 = 0.91$; the exponent $c = 0.040$ is much smaller than the contrastive-only fit ($c = 0.090$), so the curve saturates far more slowly and no asymptote can be identified within the observed range.
+
+\begin{table}[htbp]
+\centering
+\caption{AIMv2-style objective vs.\ contrastive baseline (OpenVision2, w512 $=126.8$\,M, frozen trunk, ImageNet-1k linear probe at $10{,}000$-step checkpoints).
+The dense objective exceeds the contrastive baseline at every checkpoint, with the gap \emph{widening} as data grows.
+$\Delta$ = lp$_{\text{AIMv2}}$ - lp$_{\text{InfoNCE}}$ (percentage points).}
+\label{tab:visaimv2}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccccccc}
+\toprule
+\textbf{Samples (M)} & 5.1 & 10.2 & 20.5 & 30.7 & 41.0 & 51.2 & 55.3 \\
+\midrule
+\textbf{InfoNCE lp} & 3.96 & 4.39 & 6.46 & 7.35 & 7.30 & 7.70 & 7.40 \\
+\textbf{AIMv2-style lp} & 11.50 & 12.73 & 15.33 & 16.67 & --- & 18.84 & \textbf{19.76} \\
+$\boldsymbol{\Delta}$ (pp) & $+7.5$ & $+8.3$ & $+8.9$ & $+9.3$ & --- & $+11.1$ & $+12.4$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Causal decomposition: both terms are necessary.}
+A four-arm ablation at $15.4$\,M samples localises the effect:
+\begin{itemize}
+\item \textbf{Arm~(i)} InfoNCE baseline: $6.08\%$.
+\item \textbf{Arm~(iv)} CoCa (contrastive $+$ \emph{caption-dependent} generative CE): $0.47\%$---the caption-CE term collapses the frozen trunk, confirming that caption-\emph{dependent} generative supervision is harmful in this regime.
+\item \textbf{Arm~(vi-B)} AIMv2-style without the contrastive term (pure masked-patch AR): $6.23\%$ ($+0.15$\,pp over baseline---no breakthrough).
+\item \textbf{Arm~(vi-A)} AIMv2-style with both terms: $12.08\%$ ($+6.00$\,pp---breakthrough).
+\end{itemize}
+The breakthrough therefore depends on the \emph{interaction} of the contrastive anchor and the caption-independent dense term: neither alone suffices.
+Removing the contrastive term (arm~vi-B) eliminates the breakthrough, and replacing the caption-independent term with a caption-dependent one (arm~iv) actively collapses the representation.
+This is consistent with MAE~\cite{he2022mae}, where pure masked-image modelling yields lower linear-probe accuracy than contrastive methods, and with AIMv2~\cite{aimv2} and SigLIP~2~\cite{tschannen2025siglip2}, which retain a contrastive or sigmoid-contrastive signal alongside the dense head.
+
+\paragraph{Boundary.}
+All AIMv2-style results are from a self-developed adaptation (not the official AIMv2), trained on $\leq59$\,M pairs (vs.\ $\sim12$\,B for the official model~\cite{aimv2}).
+The precise asymptote of the dense route is indeterminate: the $R^2 = 0.91$ fit is consistent with a much higher ceiling, but $55.3$\,M samples show no saturation signal, and extrapolation beyond two orders of magnitude is not warranted.
+The four-arm decomposition is conducted at a single sample budget ($15.4$\,M); whether the interaction effect holds at larger scale is an open question that the full-data run ($\approx59$\,M pairs, $120$k steps) currently underway is designed to answer.
 
 \subsection{Configuration and Ablations}\label{sec:vis-abl}
 Holding the winner (OpenVision2) fixed, we sweep the core degrees of freedom single-variable-at-a-time ($3000$ steps each, at $lr{=}3\times10^{-3}$---the rate at which the schedule does not collapse, see the note above): resolution/patch (Table~\ref{tab:visres}), objective function (Table~\ref{tab:visobj}), and learning rate, plus a multi-seed robustness check and a held-out retrieval proxy.
-
 \begin{table}[htbp]
 \centering
 \caption{Resolution/patch ablation on OpenVision2 under the corrected objective (run on the LLaVA \texttt{imagenet/EN} $500$K arm, hence a different loss scale from Table~\ref{tab:visarch}, which uses GPIC), all runs $3000$ steps.

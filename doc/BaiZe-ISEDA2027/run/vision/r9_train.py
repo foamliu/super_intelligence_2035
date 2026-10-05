@@ -208,13 +208,17 @@ def main():
                          'coca=InfoNCE contrastive + autoregressive caption CE (R11-L arm4)')
     ap.add_argument('--data', required=True,
                     help='tar shard glob(s), comma-separated for multi-source (e.g. CC12M,Amshaker)')
-    ap.add_argument('--data-source', default='wds', choices=['wds', 'gpic'],
-                    help='wds=webdataset .txt captions (en500k/CC12M); gpic=GPIC tar .json captions')
+    ap.add_argument('--data-source', default='wds', choices=['wds', 'gpic', 'mixed'],
+                    help='wds=webdataset .txt captions (en500k/CC12M); '
+                         'gpic=GPIC tar .json captions; '
+                         'mixed=both GPIC+CC12M+Amshaker in one shard list (R12)')
     ap.add_argument('--caption-type', default='short',
-                    choices=['short', 'medium', 'short+medium'],
-                    help='GPIC caption_type filter (only --data-source gpic); '
-                         'long not supported (100%% 77-truncation). '
-                         'short+medium keeps both (~90%% of GPIC pairs).')
+                    choices=['short', 'medium', 'short+medium', 'all'],
+                    help='GPIC caption_type filter (only --data-source gpic/mixed); '
+                         'long not supported for gpic (100%% 77-truncation). '
+                         'short+medium keeps both (~90%% of GPIC pairs). '
+                         'all = no filtering (accept all GPIC types incl. long; '
+                         'mixed mode only).')
     ap.add_argument('--eval-data', default='/nas_train/app.e0031982/datasets/baize-vision/eval5k/*.tar')
     ap.add_argument('--output-dir', required=True)
     ap.add_argument('--seed', type=int, default=1234)
@@ -379,6 +383,10 @@ def main():
         loader = D.build_gpic_loader(my_shards, args.batch_size, _tok,
                                      size=args.resolution, num_workers=args.num_workers,
                                      caption_type=args.caption_type)
+    elif args.data_source == 'mixed':
+        loader = D.build_mixed_loader(my_shards, args.batch_size, _tok,
+                                      size=args.resolution, num_workers=args.num_workers,
+                                      gpic_caption_type=args.caption_type)
     else:
         loader = D.build_loader(my_shards, args.batch_size, _tok,
                                 size=args.resolution, num_workers=args.num_workers)

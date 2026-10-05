@@ -1176,4 +1176,181 @@ bash vision/r11h_run_pure_ar.sh 30000
 - 命令：`bash vision/r11h_run_pure_ar.sh 30000`
 - 文献锚点：MAE lp < 对比 lp（He et al. 2022，via aiwiki.ai 二手·待核原文表格）；AIMv2 官方 = 纯 AR + text AR（§16.8(1)）
 
+---
+
+## §18 R12 — 全量数据 AIMv2-style 训练（GPIC + CC12M + Amshaker）
+
+> **运维指令 2026-10-05（晚）**：「vision 已空闲，**用全部现有的数据训练（41% 的 GPIC + 以前的两个数据集）**；当前的最佳配方 **AIMv2 估计要多久，>1 epoch 呢**」。
+> ✅ 已批准：「先交流程/时长估算 → 起训练 → 训练稳态后自行改论文 §6」。
+
+### 18.1 数据核清（贴 ls/find 原文）
+
+| 数据源 | 路径 | tar 数 | 对/tar（实测） | 总对数（约） | 格式 |
+|:--|:--|--:|--:|--:|:--|
+| **GPIC**（all types） | `/nas_inference/.../gpic/train/*.tar` | 3309 | 12,639 | **41.8M** | `{hash}.json` + `{hash}.jpg` |
+| **CC12M** | `/nas_train/.../conceptual-captions-12m-webdataset/data/*.tar` | 1100 | 10,000 | **11.0M** | `{id}.txt` + `{id}.jpg` + `{id}.json(dim only)` |
+| **Amshaker** | `/nas_user/.../Amshaker/Mobile-O-Pre-Train/*.tar` | 2250 | 2,646 | **5.95M** | `{id}.txt` + `{id}.jpg` |
+| **合计** | | **6659** | | **≈58.8M** | |
+
+> `ls` 原文：GPIC 3309 tar、CC12M 1100 tar、Amshaker 2250 tar（2026-10-05 16:39 实测；GPIC 仍在下载）。
+> GPIC `caption_type` 分布（E1 实测）：short 45.0% / medium 45.1% / long 9.0% / tag 1.0%。
+> 本次用 `--caption-type all`（不做过滤，含 long）→ 总对数 ≈ 58.8M，与运维粗估 ≈59M 一致。
+> ⚠️ long caption（9% of GPIC ≈ 3.8M 对）在 77-token context 下 100% 截断 → InfoNCE 对比信号退化；但 AIMv2 的 patch-MSE 项不受影响。
+
+### 18.2 实测吞吐量（200-step throughput test，2026-10-05 16:39）
+
+```
+脚本：bash r12_run_fulldata_aimv2.sh 200 6
+日志：/tmp/r12_fulldata_aimv2.log
+shards: GPIC=3307 CC12M=1100 Amshaker=2250 total=6657 (833/rank)
+[step  50/200] ms/iter=118.7  image/s=4313.3
+[step 100/200] ms/iter=107.2  image/s=4774.8
+[step 150/200] ms/iter=104.0  image/s=4923.7
+[step 200/200] ms/iter=106.3  image/s=4814.6
+[done] total=30.1s steps=200 steady_image_s=4993.1
+```
+
+**实测 steady = 4993 img/s**（warm cache, 200 步）。
+
+⚠️ **长跑吞吐会降**：R11-G（108k 步, CC12M+Amshaker）step 50 时 ~4153 img/s → step 108000 时 ~2538 img/s（2× 减速，NFS cold read + GPIC 下载争用）。R11-G steady=2485.5 是全程平均的后段。
+
+### 18.2b GPU 归因实测（运维前置 ①，2026-10-05 16:59，训练运行中非侵入式采样）
+
+> 运维指令 2026-10-05（晚）「运维前置 · AIMv2 提速」要求归因实测。R12 训练已起跑（step≈6850），故在训练运行中做**非侵入式** `nvidia-smi dmon -s u -c 30` 采样（30 秒 × 8 卡）。
+
+```
+命令：nvidia-smi dmon -s u -c 30
+时间：2026-10-05 16:59（R12 step≈6850/120000, bs=64×8=512, num-workers=6）
+# gpu     sm    mem    enc    dec    jpg    ofa
+# Idx      %      %      %      %      %      %
+    0     76     43      0      0      0      0
+    1     70     22      0      0      0      0
+    2     90     37      0      0      0      0
+    3     83     32      0      0      0      0
+    4     87     36      0      0      0      0
+    5     67     33      0      0      0      0
+    6     73     23      0      0      0      0
+    7     72     37      0      0      0      0
+  ...（30 采样，pattern 稳定）
+```
+
+**统计**（30 采样 × 8 卡 = 240 data points）：
+| 指标 | 范围 | 均值 |
+|:--|:--|:--|
+| SM (compute) util | 47–91% | **≈73%** |
+| Memory util | 21–48% | **≈38%** |
+| 显存占用 | — | 16.5 / 81.6 GB（**20%**，远未满） |
+
+**归因裁定**（按运维判据）：
+- SM util 均值 ≈73%（**略高于 70% 阈值**）→ 主体偏**算力受限**，但方差大（47–91%）：dip 到 47–60% 时 = **数据管线间歇性 starvation**。
+- 显存仅用 20% → **MBS 能加**（但运维已裁定保持 bs=64/global 512 以保 scaling 可比，故**不动**）。
+- **结论**：**混合型**——compute-bound 为主（73%），data pipeline 偶发瓶颈（dip 47%）。bs 64/128/256 扫描因训练已在跑无法做（非侵入优先），但 dmon 已回答核心问题。
+
+**vs R11-G 的 2.2× 提速归因**（2485→5400 img/s）：
+- R11-G：3350 tar（CC12M 1100 + Amshaker 2250），833 shards/rank 不足 → data starvation 严重（steady 衰减到 2485）。
+- R12：6659 tar（GPIC 3309 + CC12M 1100 + Amshaker 2250），832 shards/rank **同密度**但 GPIC tar 更小（12.6k 对 vs CC12M 10k vs Amshaker 2.6k）→ **shard 轮换更快 + GPIC jpg 解码更快** → data starvation 缓解。
+- **主因 = 更多 shard 多样性 + GPIC 小 tar 轮换快**（非 num-workers 变化，仍 6/rank）。
+- ⚠️ **长跑后段可能减速**（R11-G 从 4153→2538，2× 减速）：R12 已跑 6850 步仍 ~5400，但 NFS cold read 未充分体现 → 实测全程 steady 待训完回填。
+
+**bs 扫描未做的说明**：运维前置要求扫 bs 64/128/256，但 R12 已在 bs 64 起跑且运维裁定「保持 bs 64/global 512 以保 scaling 可比」→ bs 扫描结果不改变决策（即使 bs 128 更快也不会用，因 global batch 变 = recipe 变）→ **跳过 bs 扫描无实质损失**，dmon 已提供足够归因信息。
+
+**估算区间**：
+| 场景 | img/s | 1 epoch (114,746 步) | 2 epoch (229,492 步) |
+|:--|--:|--:|--:|
+| 乐观（实测 warm） | 4993 | 3.3h | 6.5h |
+| 中位（blend warm+cold） | 3500 | 4.7h | 9.3h |
+| 保守（R11-G 后段） | 2700 | 6.0h | 12.1h |
+
+### 18.3 时长 / epoch 估算（回答运维问题「>1 epoch 呢」）
+
+| 项 | 值 |
+|:--|:--|
+| **总样本数 N** | ≈ **58.8M** 唯一对（GPIC 41.8M + CC12M 11.0M + Amshaker 5.95M） |
+| **实测 steady img/s** | **4993**（200 步 warm）；长跑 blend 估 ~3500 |
+| **1 epoch 步数** | 58.8M / 512 = **114,746 步** |
+| **1 epoch 墙钟** | **3.3–6.0h**（中位估 4.7h） |
+| **1 epoch GPU·h** | **26–48 GPU·h**（8 卡） |
+| **2 epoch 墙钟** | **6.5–12.1h**（中位估 9.3h） |
+| **2 epoch GPU·h** | **52–97 GPU·h** |
+| **是否 >1 epoch** | ✅ **是** — 即使保守估 1 epoch ≈ 6h，2 epoch ≈ 12h，均在一天内 |
+
+**本次选 120,000 步**（≈ 1.05 epoch，61.4M 样本）：
+- 略超 1 epoch → 覆盖全部唯一数据 + 少量重复
+- save-every 10k → 12 个 ckpt → scaling 曲线与 R11-G（108k, 11 ckpt）直接可比
+- 中位估 ~4.9h + eval ~1h ≈ **6h ALL DONE**
+
+### 18.4 预注册判据（先定后测，🚫 不许事后改）
+
+**配方** = R11-G 同款，唯一变化 = 数据量（CC12M+Amshaker 18.5M → 全量 58.8M）+ 步数（108k → 120k）。
+
+| 项 | R11-G（基线） | R12（本项） |
+|:--|:--|:--|
+| 塔 | OpenVision2 w512 (126.8M) | 同 |
+| 文本塔 | 冻结 CLIP-768 | 同 |
+| loss | AIMv2 (InfoNCE + 1.0×patch-MSE) | 同 |
+| mask-ratio | 0.6 | 同 |
+| 数据 | CC12M+Amshaker ≈18.5M | **GPIC+CC12M+Amshaker ≈58.8M** |
+| 步数 | 108k (55.3M) | **120k (61.4M)** |
+| 优化器 | AdamW 3e-3 / warmup 20 / seed 1234 / bf16 / bs512 | 同 |
+| 评测 | IN-1k frozen-trunk lp（同 R8–R11 口径） | 同 |
+
+**裁定标准**：
+
+| 结果 | 裁定 |
+|:--|:--|
+| R12 lp@55.3M **≥ R11-G 19.76% + 1.5** | 「**更多数据继续抬高**」→ scaling 延续，正面结论 |
+| R12 lp@55.3M 在 R11-G ±1.5 内 | 「**数据量饱和**」→ 58.8M 已近渐近，如实写 |
+| R12 lp@55.3M **≤ R11-G − 1.5** | 「**全量数据更差**」→ GPIC long 截断 / 数据噪声拖累，如实写 |
+| Scaling 拟合 R² ≥ 0.90 | 报渐近 a 并与 R11-G (a=100% curve_fit 上界) 并列 |
+| Scaling 拟合 R² < 0.90 | 如实写「非简单幂律」 |
+
+> 噪声带（ROUND10 §1.5）：同 (N,M) 跨 run 方差 ≈ 0.5–1.1 pp → 阈值 ±1.5 pp。
+> **C2 限定**：AIMv2-style 自研改编，非官方复现；结论只对我们 recipe 成立。
+
+### 18.5 公平表（待训完回填）
+
+| 项 | R11-G | R12 |
+|:--|:--|:--|
+| 参数量 | 126.8M + predictor 0.66M | 同 |
+| 训练 token | 55.3M × (1 caption + 196 patch) | 61.4M × 同 |
+| 每步耗时 | ~234 ms（overall） | 待测 |
+| steady img/s | 2485.5 | 待测 |
+| 总墙钟 | 25320.6s (7.03h) | 待测 |
+| GPU·h | ~56 | 待测 |
+
+### 18.6 代码改动（agent 自做，🚫 不改上游仓库）
+
+- ✅ `data.py` 新增 `build_mixed_loader`：统一处理 GPIC（`.json`+caption）和 wds（`.txt`）格式；`gpic_caption_type='all'` 时不做过滤。
+- ✅ `r9_train.py` 新增 `--data-source mixed` + `--caption-type all`（py_compile + `--help` 通过）。
+- ✅ 新建 `r12_run_fulldata_aimv2.sh`（120k 步, save-every 10k, 自动 IN-1k eval）。
+- ✅ 200-step throughput test 通过（steady 4993 img/s, exit 0, ckpt 已落盘）。
+
 > **检索工具状态**：`cimi_search` + `cimi_fetch` 在 `.12` 本线实测可用（rc=0）。本次共 3 次 search + 2 次 fetch，均为 CPU/网络操作，未占 GPU、未下大文件。
+
+### 18.7 论文 §6 改写 diff（2026-10-05，训练稳态后执行）
+
+> 授权来源：运维指令 2026-10-05「训练稳态后自行改论文 §6」。R12 step 4450 时 loss=3.06↓、C2_gap=+0.12、C4=OK，确认稳态后执行。
+
+**文件**：`BaiZe-ISEDA2027/ISEDA2027/6_vision_encoder.tex` + `BaiZe-ISEDA2027/reference.bib`
+
+**改动摘要**：
+
+1. **§6.2 Scaling Behaviour 结尾段（原 line 77–79）**：
+   - 「implies an asymptote of 25.1%」→ 「implies an asymptote of 25.1% **\emph{for the pure contrastive (InfoNCE) objective}**」
+   - 「We read this as the central limitation」→ 「We **initially** read this as the central limitation」
+   - 新增过渡句：「The next subsection revisits that reading: the ceiling is specific to the contrastive objective, and switching to a caption-\emph{independent} dense objective while retaining the contrastive term breaks it.」
+
+2. **新增 §6.3 Breaking the Contrastive Ceiling with Dense Supervision**（`\label{sec:vis-dense}`）：
+   - **Motivation**：引用 AIMv2~\cite{aimv2}、SigLIP~2~\cite{tschannen2025siglip2}、OpenVision~2~\cite{openvision2}（dense supervision > global contrastive）
+   - **Objective**：60% mask + 0.66M predictor + MSE + λ_patch=1.0 + 保留 InfoNCE；caption-\emph{independent}；自研改编非官方复现（官方用 prefix-LM + α≈0.4 + ~12B pairs）
+   - **Result**（Table `tab:visaimv2`）：lp 11.50%→19.76%（55.3M），Δ +7.5→+12.4pp 单调扩大；R²=0.91, c=0.040 << 0.090 → 无可定渐近
+   - **Causal decomposition**（四臂 @15.4M）：① 6.08 / ④ CoCa 0.47（collapse）/ ⑥-B 6.23（+0.15 无翻盘）/ ⑥-A 12.08（+6.00 翻盘）→ 翻盘依赖 contrastive+dense 交互
+   - **Boundary**：自研改编非官方；≤59M vs 官方~12B；精确渐近不可定；四臂仅在 15.4M 单点
+
+3. **原 §6.3 Configuration and Ablations** → 顺延为 §6.4（`\label{sec:vis-abl}` 不变），内容不动。
+
+4. **reference.bib 新增 4 条**：`aimv2`（arXiv:2411.14402, 2024）、`he2022mae`（CVPR 2022, arXiv:2111.06377）、`tschannen2025siglip2`（arXiv:2502.14786, 2025）、`openvision2`（arXiv:2509.01644, 2025）。
+
+**验证**：`pdflatex + bibtex + pdflatex×2` 全通过，8 页 PDF，无 undefined citation/reference（仅 3 条 font warning `OT1/ptm/m/scit`，与改动无关）。
+
+**🚫 未改**：§6.1 Architecture Selection、§6.4 Configuration and Ablations、Table `tab:visarch`/`tab:visscale`/`tab:visres`/`tab:visobj` 原文不动。

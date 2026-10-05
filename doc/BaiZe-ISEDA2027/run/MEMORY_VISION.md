@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R11-F/G/H 链 ✅ 全部完成**（A/B/C/E/D 五臂 + §15.6 Q1/Q2/Q3 裁定 + §15.7 落盘 + §16 R11-G + §17 R11-H + §16.8 文献锚点）· GPU 全空闲 · ⏸ 无已批准的待跑训练（剩「GPIC 到齐后重跑 scaling」须运维另批）|
-| WAITING | 1（**R11-F/G/H 链全部完成 · GPU 全空闲 · 无已批准的待跑训练**——剩「GPIC 到齐后重跑 scaling」须运维另批；本唤醒补做了 §16.8(5) 文献检索「密集监督在数据受限下的收益」并落盘；设 WAITING=1 省 token，待运维新指令或批准下一任务）|
+| PHASE | **🚀 R12 全量数据 AIMv2 训练中**（120k 步, GPIC+CC12M+Amshaker ≈58.8M, 16:43 起跑, step≈6850/120k=5.7%, ~5400 img/s, ETA ~20:00 + eval ~1h）· ✅ **论文 §6 已改完** · ✅ **GPU 归因实测已完成**（dmon: SM util ≈73% 混合型, 详见 §18.2b） |
+| WAITING | 1（**R12 训练进行中** · step 6850/120k · ~5400 img/s · ETA ~3h + eval ~1h · 论文 §6 已改完 · 待训完自动 eval → 回填 §18.5 公平表 + scaling 曲线）|
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
-| BUDGET_USED | R2–R9 累计 + R10 + R11-L/②③④ + R11-L2 LoRA + R11-L caption-weight + R11-E GPIC（8.65 GPU·h）+ **臂⑥ AIMv2（✅ 7076s≈1.97h×8卡≈15.7 GPU·h）+ AIMv2 4-ckpt eval（~13min×1卡≈0.22 GPU·h）** + **R11-F ✅ 完成**（5 臂 ≈ 40–48 GPU·h）+ **R11-G ✅**（108k 步 ≈ 50 GPU·h）+ **R11-H ✅**（30k 步 ≈ 15.8 GPU·h） |
-| 更新 | **2026-10-05 15:58（唤醒巡检：R11-F/G/H 全部完成 · GPU 全空闲(8卡0%) · GPIC 下载 3277/8001 tar≈41%→⏸「GPIC到齐后重跑scaling」条件未达 · git fetch 不可达·ops inbox 空·无新指令 · WAITING=1）**· 2026-10-05 14:30（同上巡检：3229 tar） · 2026-10-05 13:45（§16.8(5) 文献检索补做并落盘） · 2026-10-05 13:40（R11-F Arm D ✅ lp{3.86,6.34,6.65}%；链全部收尾 GPU 空闲）· 2026-10-05 12:35（SigLIP2 mask=50%✅核；MAE 75%✅；Arm D step14900/30k） · 2026-10-05 11:50（Arm E ✅ lp{5.18,6.51,6.75}%；Q2 裁定无显著差异） · 2026-10-05 10:35（R11-H ✅+§17落盘） · 2026-10-05 08:16（R11-G ✅+§16落盘） · *[R11-G/F 中间巡检已归档 daily-memories-vision/2026-10-05.md]* |
+| BUDGET_USED | R2–R9 累计 + R10 + R11-L/②③④ + R11-L2 LoRA + R11-L caption-weight + R11-E GPIC + 臂⑥ AIMv2 + R11-F + R11-G + R11-H + **R12 进行中**（~3h×8卡≈24 GPU·h 已用，总 ≈88 GPU·h） |
+| 更新 | **2026-10-05 16:59（R12 step 6850/120k 健康 loss=3.17 C2_gap=+0.125 C4=OK ~5400 img/s; GPU 归因 dmon SM≈73% 混合型; ETA ~20:00 + eval ~1h; WAITING=1 省token）**· *[更早见 daily-memories-vision/2026-10-05.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -181,6 +181,18 @@ WAITING: 1
 - **证据纪律**：以上 URL + 年份已给；OpenVision2 abstract 逐字引用已核实；SigLIP2 mask ratio/loss 形式 ✅已核实（50% patch，TIPS feature-matching）；MAE 75% ✅已从 abstract+正文两处确认；AIMv2 denser-supervision ✅已从 ar5iv 确认。
 - **§16.8(5) 补充**（2026-10-05 13:45 cimi_search）：检索「密集监督在数据受限下的收益」→ 最直接一手证据已在 (1) AIMv2「denser supervision」+ (3) XTRA「150× smaller datasets」中；新检索到的 emergentmind「Dense Supervision Mechanism」概念综述为**二手·未核**（cimi_fetch 502），仅作概念框架补充。详见 `EXPERIMENTS_VISION_ROUND11.md §16.8(5)`。
 
+
+## 🚀 R12 全量数据 AIMv2 训练中（2026-10-05 16:43 起跑）
+
+> 运维指令 2026-10-05（晚）批准。§18 预注册+估算+归因已落盘 `EXPERIMENTS_VISION_ROUND11.md`。
+
+- **数据**：GPIC 3322 tar（all types, 41.8M）+ CC12M 1100 tar（11.0M）+ Amshaker 2250 tar（5.95M）= **≈58.8M**。`--data-source mixed --caption-type all`。
+- **配方** = R11-G 同款：AIMv2 (InfoNCE + 1.0×patch-MSE), w512, 冻结 CLIP-768, 120k 步, save-every 10k。
+- **GPU 归因**（§18.2b）：dmon SM util ≈73%（47–91%），显存 20% → **混合型**（compute 为主 + data 偶发 starvation）。vs R11-G 2.2× 提速主因 = 更多 shard 多样性 + GPIC 小 tar 轮换快。保持 bs 64/global 512（scaling 可比）。
+- **进度**：step 6850/120k=5.7%, loss=3.17↓, PROBE C1≈0.33/C2_gap=+0.125/C4=OK（无坍缩）, ~5400 img/s。
+- **ETA**：~3h（~20:00）+ eval ~1h ≈ **ALL DONE ~21:00**。r12 脚本自动 eval 12 ckpts。
+- **后续**：✅ 论文 §6 已改完（§6.3 + 4 bib, diff 见 §18.7）。待训完回填 §18.5 公平表 + scaling 曲线。
+- 脚本：`r12_run_fulldata_aimv2.sh 120000 6`；日志 `/tmp/r12_fulldata_aimv2.log`；输出 `R12_fulldata_aimv2_w512`。
 
 ## 历史条目已滚动归档（2026-10-03）
 

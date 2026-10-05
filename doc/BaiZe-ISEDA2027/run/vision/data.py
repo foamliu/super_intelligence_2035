@@ -65,6 +65,93 @@ def build_loader(shard_list, batch_size: int, tokenizer, size: int = 224,
     return loader
 
 
+def build_mixed_loader(shard_list, batch_size: int, tokenizer, size: int = 224,
+                       num_workers: int = 6, shuffle: bool = True, train: bool = True,
+                       drop_last: bool = True, gpic_caption_type='all'):
+    """Mixed-source loader: handles BOTH GPIC-format and wds-format tars in one
+    shard list.
+
+    Format detection (per-sample, raw bytes — no wds .decode()):
+    - Samples with 'txt'  → wds path: use txt as caption (CC12M, Amshaker).
+    - Samples with 'json' but NO 'txt' → GPIC path: parse JSON, extract 'caption'
+      field.  (CC12M tars also have .json but it only has {width,height} — we
+      never reach it because CC12M samples have 'txt'.)
+
+    gpic_caption_type:
+      'all'          → no filtering (accept all GPIC caption_types incl. long).
+      'short'/'medium'/'short+medium' → filter GPIC pairs by caption_type.
+      (Only affects GPIC samples; wds samples always pass.)
+
+    R12 (2026-10-05): added for full-data AIMv2 run (GPIC + CC12M + Amshaker).
+    """
+    import json as _json
+    from PIL import Image as _Image
+    from webdataset import ignore_and_continue
+
+    tf = get_train_transform(size) if train else get_val_transform(size)
+
+    def mixed_decode(sample):
+        # 1) Try 'txt' (CC12M, Amshaker) — raw bytes
+        raw_txt = sample.get('txt')
+        cap = None
+        if raw_txt:
+            try:
+                cap = raw_txt.decode('utf-8', errors='ignore').strip()
+            except Exception:
+                cap = None
+
+        # 2) If no txt, try 'json' (GPIC) — parse and extract caption
+        if not cap:
+            raw_json = sample.get('json')
+            if raw_json:
+                try:
+                    meta = _json.loads(raw_json)
+                except Exception:
+                    return None
+                cap = (meta.get('caption') or '').strip()
+                # Optional GPIC caption_type filtering
+                if gpic_caption_type != 'all' and meta.get('caption_type'):
+                    _ct = meta.get('caption_type')
+                    if gpic_caption_type == 'short+medium':
+                        if _ct not in ('short', 'medium'):
+                            return None
+                    elif _ct != gpic_caption_type:
+                        return None
+            else:
+                return None  # neither txt nor json → unusable
+
+        if not cap:
+            return None
+
+        raw = sample.get('jpg') or sample.get('png') or sample.get('img')
+        if not raw:
+            return None
+        try:
+            img = _Image.open(io.BytesIO(raw)).convert('RGB')
+        except Exception:
+            return None
+        return tf(img), cap
+
+    dataset = (
+        wds.WebDataset(shard_list, nodesplitter=_no_split,
+                       shardshuffle=(200 if shuffle else 0),
+                       handler=ignore_and_continue)
+        .shuffle(2000 if shuffle else 0)
+        .map(mixed_decode, handler=ignore_and_continue)
+        .select(lambda s: s is not None)
+    )
+
+    def collate(batch):
+        imgs = torch.stack([b[0] for b in batch])
+        caps = [b[1] for b in batch]
+        texts = tokenizer(caps)
+        return imgs, texts
+
+    loader = wds.WebLoader(dataset, batch_size=batch_size, num_workers=num_workers,
+                           collate_fn=collate, drop_last=drop_last)
+    return loader
+
+
 def build_gpic_loader(shard_list, batch_size: int, tokenizer, size: int = 224,
                       num_workers: int = 6, shuffle: bool = True, train: bool = True,
                       drop_last: bool = True, caption_type='short'):
