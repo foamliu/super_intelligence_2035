@@ -1601,4 +1601,94 @@ CUDA_VISIBLE_DEVICES=0 torchrun --nnodes=1 --nproc_per_node=1 \
   - **delayed** d−bf16% 峰 +5.11%@710，**60 步后回落到 ≤1%@770**（+0.86%），此后持续 ≤1.3%（770–860）→ **delayed 的 spike 是瞬态 amax lag，≤100 步自愈** → ✅ **P-9.8 运维修订 #4 spike-then-recovered 成立**。
   - 🔄 **更正第 105 次结论**：上次写「两种 recipe 都有 spike → per-tensor FP8 固有现象」**是过早判断**（仅看到 740）——扩到 860 后 **delayed 回落、tensorwise 不回落**，两者是**不同现象**。
 - ⭐ **P-9.9 裁定（T1 FAIL → 提前裁定）**：**tensorwise（current scaling）数值保真度劣于 delayed → P-8 沿用 delayed FP8**（P-9.8 已 4/4 PASS，spike 瞬时且自愈）。T4 大概率也 FAIL（t−d%@860=+6.27%），但不改变裁定。
+
+
+---
+
+### P-9.10 ① revisited — sglang ✅ 可用（existing `vllm` conda env）（2026-10-05 晚，第 109 次唤醒，CPU/网络 only）
+
+> **运维指令 2026-10-05（晚·①）**：「P-9.10 与 sglang A/B：我在 `2.12` 已经装过 sglang 的，你可以看看有没有 conda 环境叫 `sglang` 或 `vllm` 的。如果没有，自己新开个 conda 环境，叫 `sglang`，从头装一下。」
+> **本节更正第 107 次的 P-9.10 ① 结论**：「sglang 装不上（cuda-tile 仅 nvidia 源 SSL EOF）」——**根因不是网络/依赖问题，而是没查现成 conda env**。
+
+#### A. 现成 conda env 查证（`conda env list`）
+
+```
+# conda environments:
+#
+base                   /nas_train/app.e0031982/miniforge3
+evalscope              /nas_train/app.e0031982/miniforge3/envs/evalscope
+ov_encoder             /nas_train/app.e0031982/miniforge3/envs/ov_encoder
+py310                * /nas_train/app.e0031982/miniforge3/envs/py310
+vllm                   /nas_train/app.e0031982/miniforge3/envs/vllm    ← ⭐ 命中
+vtp                    /nas_train/app.e0031982/miniforge3/envs/vtp
+```
+
+- `.12` SSH 查证（同 NFS 共享 conda 路径）：`ls /nas_train/app.e0031982/miniforge3/envs/` → **同样有 `vllm`**（两机共享同一 NFS conda 路径，env 可直接互用）。
+- **结论**：找到版本/依赖可用的 env ⇒ **直接复用 `vllm` env**（运维指令 ①「找到 ⇒ 直接复用」），无需新建 `sglang` env。
+
+#### B. `vllm` env 版本核验（原始输出）
+
+| 组件 | 版本 | 核验命令 | 结果 |
+|:--|:--|:--|:--|
+| Python | 3.12.11 | `conda run -n vllm python -c "import sys; print(sys.version)"` | ✅ |
+| **sglang** | **0.5.9** | `conda run -n vllm python -c "import sglang; print(sglang.__version__)"` | ✅ |
+| vllm | 0.14.1 | `conda run -n vllm python -c "import vllm; print(vllm.__version__)"` | ✅ |
+| torch | 2.8.0+cu128 | `conda run -n vllm python -c "import torch; print(torch.__version__, torch.cuda.is_available(), torch.version.cuda)"` | ✅ CUDA available=True, CUDA 12.8 |
+| flashinfer | 0.6.3 | `pip list` | ✅（flashinfer-python + flashinfer-cubin） |
+| transformers | 4.57.1 | `pip list` | ✅ |
+| **lm_eval** | **0.4.13** | `conda run -n vllm python -c "import lm_eval; print(lm_eval.__version__)"` | ✅ **本次新装**（proxy+aliyun） |
+
+#### C. sglang `nemotron_h` 支持 + mamba flags 核验
+
+```python
+# sglang.srt.models 中含 nemotron_h 的模块：
+conda run -n vllm python -c "import sglang.srt.models as m; import pkgutil; print([x.name for x in pkgutil.iter_modules(m.__path__) if 'nemotron' in x.name.lower() or 'mamba' in x.name.lower() or 'hybrid' in x.name.lower()])"
+→ ['granitemoehybrid', 'jet_nemotron', 'nano_nemotron_vl', 'nemotron_h', 'nemotron_h_mtp', 'nemotron_nas']
+```
+
+```
+# sglang launch_server --help 中的 mamba 相关 flags：
+  --max-mamba-cache-size MAX_MAMBA_CACHE_SIZE
+  --mamba-ssm-dtype {float32,bfloat16,float16}
+  --mamba-full-memory-ratio MAMBA_FULL_MEMORY_RATIO
+  --mamba-scheduler-strategy {auto,no_buffer,extra_buffer}
+  --mamba-track-interval MAMBA_TRACK_INTERVAL
+  --mamba-backend {triton,flashinfer}
+```
+
+⇒ **sglang 0.5.9 原生支持 `nemotron_h` 架构** + **mamba SSM flags**（`--mamba-ssm-dtype float32` / `--mamba-full-memory-ratio` / `--mamba-backend {triton,flashinfer}`）—— 正是任务书「执行路径」所要求的。
+
+#### D. lm_eval 安装（vllm env 内，proxy + 阿里云源）
+
+```bash
+export http_proxy=http://172.19.92.25:13128 https_proxy=http://172.19.92.25:13128
+conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
+  lm_eval -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+# → 成功，lm_eval 0.4.13（多数依赖已满足，仅装少量缺失包）
+```
+
+- ✅ 运维更正正确：**aliyun 镜像带 proxy 可用**（200）—— 之前「装不上」的 cuda-tile 问题在此 env **不存在**（vllm env 已预装 torch 2.8.0+cu128 + flashinfer，不依赖 pypi.nvidia.com 的 cuda-tile）。
+- 🚫 **未碰共享 `py310` env**（环境隔离纪律遵守）。
+
+#### E. 更正总结 + 待办
+
+| 项 | 旧结论（第 107 次） | 更正后（第 109 次） |
+|:--|:--|:--|
+| sglang 可用性 | ❌ 装不上（cuda-tile SSL EOF） | ✅ **可用**（`vllm` conda env，sglang 0.5.9 + nemotron_h + flashinfer 0.6.3） |
+| 栈优先级 | SGLang ❌ → mcore+CUDA-graph ❌(不兼容) → mcore(eager) 下界 | **SGLang ✅ 可用** → 待 HF 转换后起服复测 = **生产栈上界** |
+| P-9.10 ② 栈名 | mcore-直驱(eager) 下界 | 仍有效（eager 下界已测）；**sglang 上界待补测** |
+
+**待办（下一步，不阻塞当前队列）**：
+1. **mcore distcp → HF（nemotron_h）格式转换**：p3_hybrid/iter_0005000（12 distcp）→ HF safetensors（nemotron_h config + DeepSeek tokenizer）。这是任务书标注的「真正的坑」（无现成 bridge，需手写权重映射）。
+2. **sglang 起服 + 复测 P-9.10 矩阵**（生产栈上界）：`python -m sglang.launch_server --model-path <hf> --port 30000 --mamba-ssm-dtype float32 --mamba-full-memory-ratio <按需>` → 重跑 context∈{4K,16K,64K,128K}×batch∈{1,8} → 得到 **H2 在生产栈下是否翻正**（eager 下界 H2❌ 可能因 CPU launch 开销掩盖 O(n) attention 优势）。
+3. **P-6② lm_eval**：vllm env 已有 sglang + lm_eval 0.4.13 → 可用 `local-completions` 直连 sglang 服务跑 8 集零样本（先验证 `/v1/completions` echo+logprobs 支持）。
+
+**环境隔离纪律（遵运维 ④）**：
+- 训练/长跑 = 共享 `py310`（不动）
+- **sglang 托管大模型 = `vllm` conda env**（sglang 0.5.9 + vllm 0.14.1 + flashinfer，Python 3.12）
+- harness 大量装包 = 另起新 conda env
+- 三者互不污染 ✅
+
+> ⚠️ **诚实条款**：P-9.10 ② 的 eager 下界结论（H1✅H2❌H3❌H4✅）**仍然有效**——它是 mcore eager 栈的实测，不是错误。本节只是更正「sglang 装不上」这一**前置判断**：sglang **可以装/已有**，只是需要先做 HF 转换才能起服。生产栈上界**尚未测**，待补。
+
 - **下一步**：P-9.9 到 1000（~15:15）→ 取末段 loss 判 T4（确认 FAIL）→ 合成 P-9.9 最终结论 → **释放 8 卡 → P-9.10 实测（GPU0–1）+ data 配比（GPU2–7）并行启动**。
