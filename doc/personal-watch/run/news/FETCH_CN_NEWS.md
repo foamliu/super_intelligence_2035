@@ -2,6 +2,8 @@
 
 > 交付物位置：`news/mcp_web_search_free.py`（并入原免 key MCP 模块，**新增** `fetch_cn_news()` / `cn_news_report()` + MCP 工具 `cn_news` + CLI `--cn-news`）。
 > 目的（第 6 批运维指令 T10）：把**已实测的中文「活/死源」名单固化成统一入口**，避免每轮现拼；**CLI 直调是一等公民**（当前 MCP 未装进 cline）。
+>
+> 🆕 **第 10 批 A 线更新**：`web-search` / `web-search-free` **已装进 cline**（详见 `news/MCP_INSTALL.md`）。但**新增的 `mcp_ddgs` 免费搜索后端 8/8 被墙、本机不可用** → **日常取数仍以本文件 `cn_news` + 官方 RSS 为一等公民**；`fetch_cn_news()` 的调用方式与口径**不变**。
 > 相关：`news/API_COMPARISON.md`（源调研）、`news/2026-10-03.md`（第三轮中文真新闻）、`WATCH_NEWS_TASK.md`（§0.1 判据 + T8/T9/T10）。
 
 ---

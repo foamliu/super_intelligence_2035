@@ -22,6 +22,10 @@
 | `cline_mcp_config.json` | MCP 配置片段 |
 | `FETCH_CN_NEWS.md` | `fetch_cn_news()` 用法与自测记录 |
 | `API_COMPARISON.html` / `.md` | 免 key API 选型对比（自包含报告） |
+| `MCP_INSTALL.md` | **MCP 装进 cline 的实操记录**（`web-search` / `web-search-free`）+ ddgs 逐引擎实测（第 10 批 A 线） |
+| `dongfang/report.html` | **《衍射+东方时事解读音频》获取与转写 调研报告**（自包含 HTML，第 10 批 B 线主交付） |
+| `dongfang/METHODS.md` | 上述调研的**底稿**（原始证据 / 命令 / 踩坑） |
+| `dongfang/transcripts/` | 音频转写产物目录（**本批仅建目录、无内容**，见报告 §5.3） |
 
 ## 3. 红线（🚫）
 
@@ -32,4 +36,6 @@
 5. ⚠️ **大文件（`archive/` 分片、index、原始 JSON）**：**单个文件 ≥ 5 MB 一律不入 git**（**旧口径 >20MB 已作废**，见 `WATCH_NEWS_TASK.md` §4-11），
    **改走百度云盘**，并把 **网盘路径 / 提取码 / sha256** 记入 `INDEX_FILES.md`。
 
-> 📖 完整规则见 `../WATCH_NEWS_TASK.md`（**§0.0.0 解耦 / §0.0.1 预测目标 / §0.0.2 阶段门 / §0.1 新闻判据 / 第 7~9 批**）。
+6. ⚠️ **`dongfang/` 属另一类**（第 10 批 B 线调研／后续音频转写）：**不计入 §0.1 真新闻计数**；音频**绝不入 git**（远超 5 MB）→ 只留本地/网盘 + `INDEX_FILES.md` 登记；**不绕付费墙**、**仅个人使用不公开传播**（详见 `dongfang/report.html` §6）。
+
+> 📖 完整规则见 `../WATCH_NEWS_TASK.md`（**§0.0.0 解耦 / §0.0.1 预测目标 / §0.0.2 阶段门 / §0.1 新闻判据 / 第 7~10 批**）。
