@@ -5,13 +5,24 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A pilot 30/30 resume running (9 blocked sympy instances re-running, PID 4113953) → relay healthy (.last_run_id=70)
-已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A 21/30 scored + 9 resuming (quota reset, setsid+no_proxy)
-当前动作:     R63: relay healthy skip (17th, .last_run_id=70 far past 62) + 9 blocked instances resume launched (PID 4113953, sympy-12481 already in RUN phase)
-下一步:       等 resume 完成(~72min) → 更新 SWEBENCH_COMPARE.html → 报运维扩 300 决策（运维第5批已放行全量300，quota瓶颈~15天at 4 inst/window）
-阻塞:         无（relay 健康、.last_run_id=70、github 可达、quota 8/8 keys=200 已重置）
+PHASE:        H-A pilot 22/30 scored + 8 resuming (quota blocked, PID 3100576 waiting ~33min retry) → relay healthy (.last_run_id=70)
+已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A 22/30 scored + 8 resuming · SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md (cimi_search核实)
+当前动作:     R64: relay healthy skip (18th) + 8 blocked: local git fetch from rootfs template (no network) + resume3 launched (PID 3100576, quota wait) + cimi_search SWE-bench官方口径核实 + HTML regenerated
+下一步:       等 quota 重置(~5h window, 预计~13:00) → resume3 完成 8 inst → 更新 SWEBENCH_COMPARE.html(30/30) → 报运维扩 300 决策
+阻塞:         quota 耗尽（5h 滑动窗口，resume3 在等待重试 1999s）
 ERROR_COUNT:  0
 ```
+
+## 🆕 第六十四轮速览（2026-10-05 08:50）
+
+- ✅ **ops 中继复核（响应运维 2026-10-04 第 2 条，第 18 次）→ 健康，跳过重启**。① relay `2489749 1 318839 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、etimes≈3.69d）；② `cat ops/.last_run_id`=`70`（远超 62）；③ `grep -c 'RUN_ID 62' ops/outbox.md`=`1`；④ log 末行 `[relay] RUN_ID=70 executed, exit=0`；⑤ **⭐ `git fetch origin` → exit=0**（github 可达）；⑥ 无 index.lock。**判据**：outbox 含 RUN_ID 62 + relay 健康 → **跳过重启**。✅ URGENT 完成。
+- ✅ **无新运维指令**：`git rev-list --left-right --count HEAD...origin/main` = `0 0`（完全同步）。
+- 📊 **R63 resume 结果**：PID 4113953 已完成 — **3/9 scored**（sympy-12419/12454/12481，全 4 harness resolved=False），**7/9 blocked**（sympy-13031~13647，github `Network is unreachable`）。pilot_results.json: **22 scored + 8 blocked**。Aggregate(22 inst): codex 2/22 (9.1%), cline/opencode/claude-code 各 1/22 (4.5%)。仅 django-11001 全 4 harness resolve，django-10924 仅 codex resolve。
+- 🔧 **8 blocked instances 修复**：github.com 直连不可达（timeout=124），代理极慢。但 **rootfs template（sympy-11400/testbed）已有全部 8 个 base_commit**（`git cat-file -t` 全返回 `commit`）→ **从 rootfs template 本地 fetch 到 workdir**（`git fetch --depth=1 <local_path> <commit>`，无需网络）→ 全 8 个 commit 在 workdir 可用。
+- 🚀 **resume3 已启动**（PID 3100576）：不用 no_proxy 覆盖（让脚本默认代理），SETUP 成功（git fetch 失败但 checkout 回退成功），但 RUN 阶段 **quota 耗尽**（cline-patched on sympy-13031 → `waiting 1999s before retry 2/3`）。5h 滑动窗口预计 ~13:00 重置。
+- 📡 **cimi_search SWE-bench 官方口径核实**（响应运维 2026-10-05 指令）：① `cimi_search` 搜 "SWE-bench official evaluation FAIL_TO_PASS PASS_TO_PASS resolved" + "SWE-bench Verified leaderboard 2025 submission" + "coding agent benchmark fairness criteria" + harness best practices；② `cimi_fetch` 抓取 `raw.githubusercontent.com/SWE-bench/SWE-bench/main/README.md` + `docs/guides/evaluation.md` 原文。**核实结论**：F2P/P2P/resolved 定义一致 ✅；评分脚本行为已核实 ✅；leaderboard 2025-11-18 起仅学术+开源 ✅；patch 三级容错 vs 我们单级 ⚠️；公平性口径基本满足 ✅。
+- 📝 **产出**：`harness/SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md`（6.2KB，6 节，一手证据+URL）；`harness/SWEBENCH_COMPARE.html` 已用 22/30 数据重新生成（19.4KB）。
+- ⏭ **下一步**：等 quota 重置 → resume3 自动完成 8 inst → 重新生成 HTML(30/30) → 报运维扩 300 决策。保持 `WAITING=1`。
 
 ## 🆕 第六十三轮速览（2026-10-05 08:05）
 
@@ -23,20 +34,7 @@ ERROR_COUNT:  0
 - 🚀 **9 blocked instances resume 已启动**（PID 4113953）：`setsid` + `no_proxy=".cxmt.com,github.com,127.0.0.1,localhost"` 绕过慢速代理直连 github。日志 `/tmp/pilot_batch_resume.log`：21 skipped + 9 pending，首条 `sympy__sympy-12481` 已过 SETUP + cline-patched RUN，正在 delay 等下一个 harness。预计 ~72min（9 inst × 4 harness × ~120s + 10s delay）。
 - ⏭ **下一步**：等 resume 完成 → `gen_swebench_compare.py` 更新 SWEBENCH_COMPARE.html（30 inst 全量）→ 报运维扩 300 决策。保持 `WAITING=1`。
 
-## 🆕 第六十二轮速览（2026-10-05 07:15）
-
-- ✅ **ops 中继复核（响应运维 2026-10-04 第 2 条，第 16 次）→ 健康，跳过重启**。① relay `2489749 1 313102 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、wchan=do_wai、etimes≈3.6d、pstree=`bash---sleep`）；② `cat ops/.last_run_id`=`63`（62+63 已执行，无新单）；③ `grep -c 'RUN_ID 62' ops/outbox.md`=`1`；④ log 末行 `[relay] RUN_ID=63 executed, exit=0`；⑤ **⭐ `timeout 30 git fetch origin` → exit=0**（github 持续可达）；⑥ 无 index.lock（git status 仅 `M MEMORY_VISION.md`+`?? vision/r11g_scaling.py` 它线在途文件）。**判据**：outbox 含 RUN_ID 62 + relay 健康 → **跳过重启**。✅ URGENT 完成。
-- ✅ **无新运维指令**：`git rev-list --left-right --count HEAD...origin/main` = `1 0`（本地领先 1，无新远端指令）。task file 仍 `4d1c276`。
-- 🎉 **batch v2 已完成 30/30**（PID 4045197 已退出）：**21 scored + 9 blocked**。pilot_results.json 在 `/nas_train/app.e0031982/harness_work/pilot_results.json`（97KB，30 entries，mtime 07:09）。9 blocked 全为 sympy（12481-13647），根因=stale `shallow.lock` in `/dev/shm/harness_work/workdirs/sympy_sympy/.git/` → **已修复**（`rm -f .../shallow.lock`）。
-- 📊 **最终 aggregate（21 inst）**：
-  - **Raw resolve rate**：codex 2/21 (9.5%)、cline 1/21 (4.8%)、opencode 1/21 (4.8%)、claude-code 1/21 (4.8%)
-  - **Fair rate（仅 genuine patches >200B）**：codex 2/3 (67%)、claude-code 1/1 (100%)、opencode 1/2 (50%)、cline 1/4 (25%)
-  - **Genuine patches**：cline 4/21、codex 3/21、opencode 2/21、claude-code 1/21（共 10 个，集中于 django-10924/11001/11019 + sympy-11870）
-  - **django-11001** = 唯一 4/4 全 resolve；**django-10924** = 仅 codex resolve；**sympy-11870** = 3 genuine 但 0 resolve
-  - **Quota 瓶颈**：5h 滑动窗口致 17/21 instance 全空 patch（127-135B）
-- 📄 **SWEBENCH_COMPARE.html 更新**（19KB，自包含）：7 节（Aggregate Summary / Genuine Details / Full Results / Failure Modes / Methodology / Caveats / Scaling Recommendation）。用 `gen_swebench_compare.py` 从 pilot_results.json + prediction files 自动生成。
-- 📄 **pilot_results.json 已复制到 `harness/`**（97KB，入库备查）。
-- ⏭ **下一步**：报运维决定是否扩 300（quota 瓶颈需解决：~15 天 at 4 inst/window，或需 quota 提升/多 key）；9 blocked inst 可 `--resume` 恢复（lock 已修，但 quota ~10:00 才重置）。保持 `WAITING=1`。
+## 🆕 第六十二轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-05.md`（结论不改：relay 健康 skip 第 16 次 + batch v2 21/30 scored + aggregate codex 2/21=9.5% leads + fair rate codex 2/3=67% + django-11001=4/4 全 resolve）
 
 ## 🆕 第六十一轮速览 —— 已滚动归档至 `daily-memories-harness/2026-10-05.md`（结论不改：relay 健康 skip 第 15 次 + batch v2 19/30 scored + aggregate codex 2/19=11% leads）
 

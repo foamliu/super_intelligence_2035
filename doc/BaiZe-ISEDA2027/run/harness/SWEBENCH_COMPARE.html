@@ -22,7 +22,7 @@ pre { background: #f1f3f5; padding: 1em; border-radius: 4px; overflow-x: auto; }
 <h1>SWE-bench Lite Pilot Comparison &mdash; 5 Harness Internal Benchmark</h1>
 <div class="callout">
 <strong>Generated:</strong> 2026-10-05 (Round 62)<br>
-<strong>Scope:</strong> 30 instances (django+sympy) &mdash; <strong>21 scored, 9 blocked</strong><br>
+<strong>Scope:</strong> 30 instances (django+sympy) &mdash; <strong>22 scored, 8 blocked</strong><br>
 <strong>Model:</strong> deepseek-v4-flash (same gateway) | <strong>Sandbox:</strong> unshare (R1, no Docker)<br>
 <strong>Eval:</strong> r1_eval.py with FAIL_TO_PASS + PASS_TO_PASS
 </div>
@@ -34,10 +34,10 @@ Only <strong>10 genuine patches (>200B)</strong> across all harnesses. Raw resol
 <h2>1. Aggregate Summary (21 Completed)</h2>
 <table>
 <tr><th>Harness</th><th>Resolve Rate (raw)</th><th>Fair Rate (genuine) &#9733;</th><th>Genuine</th><th>Avg Wall (all)</th><th>Avg Wall (genuine)</th><th>Avg Patch (genuine)</th></tr>
-<tr><td class='hname'>cline-patched</td><td>1/21 (4.8%)</td><td class='fair'>1/4 (25%)</td><td>4/21</td><td>79.8s</td><td>198.4s</td><td>8326B</td></tr>
-<tr><td class='hname'>codex</td><td>2/21 (9.5%)</td><td class='fair'>2/3 (67%)</td><td>3/21</td><td>50.8s</td><td>179.3s</td><td>6374B</td></tr>
-<tr><td class='hname'>opencode</td><td>1/21 (4.8%)</td><td class='fair'>1/2 (50%)</td><td>2/21</td><td>95.4s</td><td>74.5s</td><td>2814B</td></tr>
-<tr><td class='hname'>claude-code</td><td>1/21 (4.8%)</td><td class='fair'>1/1 (100%)</td><td>1/21</td><td>11.2s</td><td>2.5s</td><td>1493B</td></tr>
+<tr><td class='hname'>cline-patched</td><td>1/22 (4.5%)</td><td class='fair'>1/4 (25%)</td><td>4/22</td><td>76.8s</td><td>198.4s</td><td>8326B</td></tr>
+<tr><td class='hname'>codex</td><td>2/22 (9.1%)</td><td class='fair'>2/3 (67%)</td><td>3/22</td><td>48.7s</td><td>179.3s</td><td>6374B</td></tr>
+<tr><td class='hname'>opencode</td><td>1/22 (4.5%)</td><td class='fair'>1/2 (50%)</td><td>2/22</td><td>94.3s</td><td>74.5s</td><td>2814B</td></tr>
+<tr><td class='hname'>claude-code</td><td>1/22 (4.5%)</td><td class='fair'>1/1 (100%)</td><td>1/22</td><td>10.7s</td><td>2.5s</td><td>1493B</td></tr>
 </table>
 <div class="callout">
 <strong>Key Findings:</strong>
@@ -89,16 +89,15 @@ Only <strong>10 genuine patches (>200B)</strong> across all harnesses. Raw resol
 <tr><td class='iid'>sympy__sympy-12236</td><td class="failed">&#10006; <span class="empty">E</span><br><small>15.8s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.4s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>72.3s / 130B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>1.8s / 133B</small></td></tr>
 <tr><td class='iid'>sympy__sympy-12419</td><td class="failed">&#10006; <span class="empty">E</span><br><small>18.5s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.4s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>77.0s / 130B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.1s / 133B</small></td></tr>
 <tr><td class='iid'>sympy__sympy-12454</td><td class="failed">&#10006; <span class="empty">E</span><br><small>16.3s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>6.0s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>74.4s / 130B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.3s / 133B</small></td></tr>
-<tr class="blocked"><td>sympy__sympy-12481</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: 
-[TIMEOUT]</td></tr>
-<tr class="blocked"><td>sympy__sympy-13031</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: Unable to create &#x27;/dev/shm/harness_work/workdirs/sympy_</td></tr>
-<tr class="blocked"><td>sympy__sympy-13043</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: Unable to create &#x27;/dev/shm/harness_work/workdirs/sympy_</td></tr>
-<tr class="blocked"><td>sympy__sympy-13146</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: Unable to create &#x27;/dev/shm/harness_work/workdirs/sympy_</td></tr>
-<tr class="blocked"><td>sympy__sympy-13177</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: Unable to create &#x27;/dev/shm/harness_work/workdirs/sympy_</td></tr>
-<tr class="blocked"><td>sympy__sympy-13437</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: Unable to create &#x27;/dev/shm/harness_work/workdirs/sympy_</td></tr>
-<tr class="blocked"><td>sympy__sympy-13471</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: Unable to create &#x27;/dev/shm/harness_work/workdirs/sympy_</td></tr>
-<tr class="blocked"><td>sympy__sympy-13480</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: Unable to create &#x27;/dev/shm/harness_work/workdirs/sympy_</td></tr>
-<tr class="blocked"><td>sympy__sympy-13647</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: Unable to create &#x27;/dev/shm/harness_work/workdirs/sympy_</td></tr>
+<tr><td class='iid'>sympy__sympy-12481</td><td class="failed">&#10006; <span class="empty">E</span><br><small>16.7s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.4s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>72.8s / 130B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.1s / 133B</small></td></tr>
+<tr class="blocked"><td>sympy__sympy-13031</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: unable to access &#x27;https://github.com/sympy/sympy/&#x27;: Fai</td></tr>
+<tr class="blocked"><td>sympy__sympy-13043</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: unable to access &#x27;https://github.com/sympy/sympy/&#x27;: Fai</td></tr>
+<tr class="blocked"><td>sympy__sympy-13146</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: unable to access &#x27;https://github.com/sympy/sympy/&#x27;: Fai</td></tr>
+<tr class="blocked"><td>sympy__sympy-13177</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: unable to access &#x27;https://github.com/sympy/sympy/&#x27;: Fai</td></tr>
+<tr class="blocked"><td>sympy__sympy-13437</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: unable to access &#x27;https://github.com/sympy/sympy/&#x27;: Fai</td></tr>
+<tr class="blocked"><td>sympy__sympy-13471</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: unable to access &#x27;https://github.com/sympy/sympy/&#x27;: Fai</td></tr>
+<tr class="blocked"><td>sympy__sympy-13480</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: unable to access &#x27;https://github.com/sympy/sympy/&#x27;: Fai</td></tr>
+<tr class="blocked"><td>sympy__sympy-13647</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: unable to access &#x27;https://github.com/sympy/sympy/&#x27;: Fai</td></tr>
 </table>
 <h2>4. Failure Mode Analysis</h2>
 <h3>4.1 Quota Exhaustion (Primary)</h3>
