@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（supervisor 编辑，中继只读执行）
 
-<!-- RUN_ID: 3 -->
+<!-- RUN_ID: 4 -->
 
 > **用法**：在下面**新增一段** `## RUN_ID N`（N 递增）+ **一个 ```bash 块** → `git push`。
 > 中继（`ops_relay.sh`）轮询发现 **RUN_ID 变大** → 执行 → 结果 append 到 `ops/outbox.md` → push。
@@ -13,6 +13,67 @@
 > ② 🚫 **绝不整树 `du`**（大目录会跑很久）—— 只用 `df` + 有界定向 `du`（每条带 `timeout`）；
 > ③ 单块总超时 **600s**，输出超 **20000 字符**会被截断；
 > ④ 危险模式（`rm -rf /`、`mkfs`、**`git clean -fdx`**、**`git reset --hard`**、**杀 ops_relay**）会被**拒绝**。
+
+## RUN_ID 4 — 🔍 为「语料迁出 git → 百度云盘」做前置体检（**只读 + 只生成清单，不删不移**）
+
+**背景**：用户明令 **单个文件 ≥5MB 一律不得用 GitHub 传输，改走百度云盘**。
+`news/archive/` 现存 **11 个分片（2016–2026）≈ 96 MB，最小 5.51 MB → 全部超标**，且**已被 git 跟踪**（历史里也有）。
+- ⚠️ **本块绝不执行 `git rm --cached`**（那会让别的克隆 pull 时**删掉本地语料**）—— 迁移必须**先有网盘备份**，由 supervisor 确认后再下发 RUN_ID 5。
+- 本块只做两件事：**① 探明网盘工具链是否可用 ② 生成权威 manifest（字节数 + sha256 + 路径）**。
+
+```bash
+echo "=== 0. 基本信息 ==="
+hostname; date '+%F %T %Z'
+cd ~/super_intelligence_2035 2>/dev/null || exit 1
+echo
+echo "=== 1. ⭐ 超标文件全量清单（≥5MB，递归，排除 .git）==="
+find . -path ./.git -prune -o -type f -size +5M -print 2>/dev/null | head -60 | while read -r f; do
+  printf '%s\t%s\n' "$(du -b "$f" | cut -f1)" "$f"
+done | sort -rn
+echo '--- 合计体积 ---'
+find . -path ./.git -prune -o -type f -size +5M -print0 2>/dev/null | xargs -0 du -cb 2>/dev/null | tail -1
+echo
+echo "=== 2. 其中已被 git 跟踪的（这些才是"历史污染源"）==="
+git ls-files -z | while IFS= read -r -d '' f; do
+  if [ "$(stat -c%s "$f" 2>/dev/null || echo 0)" -ge 5242880 ]; then
+    printf '%s\t%s\n' "$(du -b "$f" | cut -f1)" "$f"
+  fi
+done | sort -rn | head -40
+echo
+echo "=== 3. ⭐ 百度云盘工具链可用性 ==="
+echo '--- (a) bypy ---'
+command -v bypy && bypy --version 2>&1 | head -3
+python3 -c "import bypy; print('bypy module OK', bypy.__version__ if hasattr(bypy,'__version__') else '')" 2>&1 | head -3
+ls -la ~/.bypy 2>/dev/null | head -5 || echo "(~/.bypy 不存在 → 未授权)"
+echo '--- (b) BaiduPCS-Go ---'
+command -v BaiduPCS-Go || command -v baidupcs || command -v bpcs || echo "(未安装)"
+ls -la ~/.config/BaiduPCS-Go 2>/dev/null | head -5 || echo "(无 BaiduPCS-Go 配置)"
+echo '--- (c) 其他候选 ---'
+for t in rclone aliyun ossutil coscmd; do command -v "$t" >/dev/null && echo "found: $t ($(command -v $t))"; done
+echo '--- (d) pip 能否装 bypy（先看 pip 是否就绪，不实际安装）---'
+python3 -m pip --version 2>&1 | head -2 || echo "(无 pip)"
+echo
+echo "=== 4. 生成权威 manifest（字节数 + sha256）—— 供网盘上传后核对 ==="
+mkdir -p /tmp/watch_manifest
+OUT=/tmp/watch_manifest/archive_manifest.tsv
+: > "$OUT"
+for f in doc/personal-watch/run/news/archive/*.jsonl.gz; do
+  [ -e "$f" ] || continue
+  printf '%s\t%s\t%s\n' "$(du -b "$f" | cut -f1)" "$(sha256sum "$f" | cut -c1-16)" "$f" >> "$OUT"
+done
+cat "$OUT"
+echo "manifest 已写入 $OUT （共 $(wc -l < "$OUT") 行）"
+echo
+echo "=== 5. 仓库体积现状（评估"历史污染"规模）==="
+du -sh .git 2>/dev/null
+git count-objects -vH 2>/dev/null | head -8
+echo
+echo "=== 6. 本轮 .gitignore 是否已生效（新的大文件应被拦）==="
+git check-ignore --no-index -v doc/personal-watch/run/news/archive/chinanews-2099.jsonl.gz 2>/dev/null || echo "⚠️ 未命中（.gitignore 未生效）"
+git check-ignore --no-index -v doc/personal-watch/run/news/archive/chinanews-2016.jsonl.gz 2>/dev/null || echo "(2016 未命中)"
+echo '--- 未跟踪的大文件（?? 且 >5MB → 已被 .gitignore 拦住才对）---'
+git status --short | head -15
+```
 
 ---
 ## RUN_ID 3 — 🚨 紧急体检：**语料体积**（禁止 GB 级数据进 GitHub！）
