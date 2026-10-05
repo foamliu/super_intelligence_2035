@@ -128,8 +128,16 @@
 <p><code>curl -L</code> 实测：<b>HTTP 302 无限重定向</b>（<code>Maximum (50) redirects followed</code>）→ 必须<b>有登录态（cookie/token）</b>才进入播放。</p>
 <p>小鹅通机制（<span class="badge b-warn">据文档</span>，未逐字段验证）：登录后播放器向后端请求<b>带签名的音频地址</b>（通常 <code>…m4a</code> 或 m3u8），<b>签名有时效</b> → 会员<b>本人在自己设备上</b>理论上可观察到该地址。<b>🔒 本线不实现、不提供任何"抓签名接口"的代码</b>（=不绕付费墙）。</p>
 
-<h3>路径 C —— 播客 / RSS <span class="badge b-warn">待验证</span></h3>
-<p>本轮<b>未发现</b>该音频的官方播客/RSS 上架（喜马拉雅 / 小宇宙 / Apple Podcasts <b>未核实到</b>）。<b>「若上架 → 可合法直下」是最优解</b>（公开 RSS 属授权分发）。→ 请用户在<b>自己</b>的订阅 App 搜一次确认（§8 P7）。</p>
+<h3>路径 C —— 播客 / RSS <span class="badge b-ok">已实测</span></h3>
+<p><b>2026-10-06 核验结论：未发现公开 RSS/播客</b>，<b>「公开 RSS 直下」这条最优合规路径 ❌ 不可用</b>。多平台实测如下：</p>
+<table>
+  <tr><th>平台</th><th>核验（本机）</th><th>结果</th><th>判定</th></tr>
+  <tr><td><b>Apple Podcasts</b></td><td><code>itunes.apple.com/search?media=podcast&amp;country=CN&amp;term=…</code>（关键词 东方时事解读 / 衍射 / 衍射传媒）</td><td>命中 1 / 5 / 0 条，<b>全部无关</b>（美文阅读、物理类）→ 无 <code>feedUrl</code> 指向本节目</td><td>❌ 无</td></tr>
+  <tr><td><b>蜻蜓FM</b></td><td><code>www.qtfm.cn/search/?keyword=东方时事解读</code>（跟随 302）</td><td>结果 <b>0 条</b>含「东方时事」→ 2019 旧「节目全集」页<b>已失效/下架</b></td><td>❌ 无</td></tr>
+  <tr><td><b>喜马拉雅</b></td><td><code>www.ximalaya.com/revision/search/main?kw=…&amp;core=all</code></td><td><code>{"reason":"risk invalid","riskLevel":5}</code> → 关键词<b>风控拦截</b></td><td>⚠️ 不确定</td></tr>
+  <tr><td><b>小宇宙</b></td><td><code>api.xiaoyuzhoufm.com/v1/search</code> / <code>www.xiaoyuzhoufm.com/search?q=…</code></td><td>API <b>HTTP 401</b>（需鉴权）；web <b>HTTP 404</b>（SPA 无服务端检索）</td><td>⚠️ 不确定</td></tr>
+</table>
+<p class="note">→ 该音频是<b>付费、App 内（微信服务号「衍射传媒」/ 小鹅通 H5）在线流</b>的商品，与「公开 RSS 属授权分发」相悖 ⇒ <b>本线不用 RSS 路线</b>。<b>P7 关闭</b>；若用户<b>在自己登录的 App 内</b>能搜到可订阅源请告知，否则获取路径回到 <b>P2(b)</b>（用户主动提供登录态导出物）或 <b>P2(c)</b>（暂不实施）。</p>
 
 <h2 class="sec" id="s4"><span class="no">4</span>微信登录凭证 <span class="badge b-warn">覆盖报告点 3</span></h2>
 <ul>
@@ -246,7 +254,7 @@ asr: faster-whisper small / int8 / cpu
   <tr><td>P4</td><td><b>音频存放位置</b></td><td>体积红线</td><td>(a) 本机 ~/archive_data_backup/ (b) 网盘（本机当前无 bypy，需先解决）</td></tr>
   <tr><td>P5</td><td><b>文字稿粒度</b></td><td>体积 vs 可用</td><td>(a) 全文分片 (b) 摘要 + 关键句 (c) 全文仅本地、git 只存摘要</td></tr>
   <tr><td>P6</td><td><b>更新时段 / 频次</b></td><td>定时任务</td><td>实测为每日 5 期；请确认几点更新</td></tr>
-  <tr><td>P7</td><td><b>是否上 RSS 核验</b></td><td>最优合规路径</td><td>请在微信 / 小宇宙 / 喜马 搜一次并告知结果</td></tr>
+  <tr><td>P7</td><td><b>是否上 RSS 核验</b></td><td>最优合规路径</td><td><b>已由本线代为核验（2026-10-06）→ 未发现公开 RSS/播客，P7 关闭</b>；若用户在<b>自己登录的 App</b> 内搜到可订阅源请告知，否则转 P2(b)/(c)</td></tr>
 </table>
 
 <h2 class="sec"><span class="no">附</span>原始证据索引（可复现）</h2>
@@ -258,11 +266,15 @@ asr: faster-whisper small / int8 / cpu
   <tr><td>小鹅通 H5</td><td><code>curl -L '…xet.pomoho.com/p/course/audio/a_…'</code></td><td>302 循环（需登录态）</td></tr>
   <tr><td>本机 ASR</td><td><code>python3 /tmp/asr_probe2.py</code></td><td><code>RTF=0.024 peakRSS=258MB</code></td></tr>
   <tr><td>免 root ffmpeg</td><td><code>pip install imageio-ffmpeg</code></td><td>自带静态 <code>ffmpeg 7.0.2</code></td></tr>
+  <tr><td>P7 · Apple Podcasts</td><td><code>curl -G itunes.apple.com/search --data-urlencode term=东方时事解读 -d media=podcast -d country=CN</code></td><td><code>resultCount=1</code>（无关）；衍射→5 条全物理类；衍射传媒→0 → 无本节目 feed</td></tr>
+  <tr><td>P7 · 蜻蜓FM</td><td><code>curl -sSL -G www.qtfm.cn/search/ --data-urlencode keyword=东方时事解读</code></td><td>HTTP 200 · 43,429 B · 0 条含「东方时事」</td></tr>
+  <tr><td>P7 · 喜马拉雅</td><td><code>curl -G www.ximalaya.com/revision/search/main -d kw=东方时事解读 -d core=all</code></td><td><code>{"reason":"risk invalid","riskLevel":5}</code> → 风控</td></tr>
+  <tr><td>P7 · 小宇宙</td><td><code>curl -X POST api.xiaoyuzhoufm.com/v1/search -d '{"keyword":"东方时事解读"}'</code></td><td>HTTP 401（鉴权）；<code>/search?q=…</code> → HTTP 404</td></tr>
 </table>
 
 <footer>
   <p><b>证据级别图例</b>：<span class="badge b-ok">已实测</span> 本机当场执行并留原始输出 · <span class="badge b-warn">据文档/待验证</span> 来自通用文档或尚需核实 · 本报告全程区分二者，<b>未编造任何接口 / 期号 / 字段</b>。</p>
-  <p>news 线 · 第 10 批 B · 2026-10-05 · 只调研不实施 · 配套底稿：<code>news/dongfang/METHODS.md</code></p>
+  <p>news 线 · 第 10 批 B · 2026-10-05 · 只调研不实施 · 配套底稿：<code>news/dongfang/METHODS.md</code> · <b>2026-10-06 追加 P7 公开-RSS 核验 → 未发现</b></p>
 </footer>
 
 </div>
