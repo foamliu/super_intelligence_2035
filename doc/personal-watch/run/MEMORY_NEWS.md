@@ -12,10 +12,10 @@ WAITING: 1
 
 ```
 PHASE:        常态采集（T1–T10 ✅）+ **L1/N3 收口（G1 全过）+ L2/N4 探索性（G2 全过）**（L1 焦点 · L2 探索性 · L3 冻结）
-已完成:       T1–T10 ✅ · 首~二十五轮常态 ✅ · **N1 抓取器 + 语料〔全库完抓〕2,492,230 条 / 11 片 2016–2026（游标 `2015-12-31`，倒序已收尾至 `2016-01-01`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（75,610 条，对 15:10 全量快照）· N3-4 预警方案 · L1 预警准则加固（`early_warning.py` §4.3 固定召回率 precision + **§4.4 措辞强度 tone 信号**，`EARLY_WARNING.md` 424 行）· L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md，9 行）+ **G2′④ 连续性自报（`compute_streak`：连续 7 自然日 · ≥20h · 同天计 1 · record-only 不计入）**
-当前动作:     **本唤醒：第二十五轮常态采集（news **+1**：The Guardian《Accept 'bad things' in return for benefits of AI, says Sam Altman》10-05；⚠️ 本机 Guardian 不可达〔`Errno 101`〕→ 仅凭标题+链接+HN 日期核验）；**上轮**：第二十四轮 +2（TechCrunch Sanders Flock 法案 · Safeworld 种子轮）
+已完成:       T1–T10 ✅ · 首~二十六轮常态 ✅ · **N1 抓取器 + 语料〔全库完抓〕2,492,230 条 / 11 片 2016–2026（游标 `2015-12-31`，倒序已收尾至 `2016-01-01`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（75,610 条，对 15:10 全量快照）· N3-4 预警方案 · L1 预警准则加固（`early_warning.py` §4.3 固定召回率 precision + **§4.4 措辞强度 tone 信号**，`EARLY_WARNING.md` 424 行）· L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md，9 行）+ **G2′④ 连续性自报（`compute_streak`：连续 7 自然日 · ≥20h · 同天计 1 · record-only 不计入）**
+当前动作:     **本唤醒：第二十六轮常态采集（news **+2**：The Independent《Humanoid robots destroy themselves after being decommissioned》10-02 · BleepingComputer《OpenAI will show visual ads in ChatGPT while you generate images》10-05）；**上轮**：第二十五轮 +1（The Guardian Altman「接受一些坏事」）
 下一步:       ① 提交本线产物（**不含任何 ≥5MB 文件**）；② **G2′④ 累积**：**隔日（≥20h，约 2026-10-06 ≥11:10）**跑真实重跑（`cycle_run.py --with-l2`，**不带 `--record`**）追加台账（**台账自报：连续 1 天 / 目标 7 天，未达标**）；③ L1 稳定性 / 下一个候选文本信号 = **新词首发 / 版面**（§4.4 措辞组合**未胜出**，如实保留）；④ L3（N5）**冻结**
-本轮新增:     **第二十五轮常态 news **+1**（中文 0 / 英文 1；当日 33→**34**）**：**The Guardian《Accept 'bad things' in return for benefits of AI, says Sam Altman》**（10-05；OpenAI CEO Sam Altman 称社会应「**接受一些坏事**」以换取 AI 益处；⚠️ **本机 Guardian `Errno 101` 不可达** → 仅凭**标题 + 链接 + HN 日期**核验，如实标注）。`cn_news` 60 条均假期/民生/时政（唯一 AI = DeepZang 已在账）→ 不收；**联合国中文源仍 404**；量子位（诺奖非 AI）/IT之家/钛媒体/爱范儿/雷峰网头部均已在账或非清单；TechCrunch / Ars / WIRED 头部（已在账 / 非 AI / 评测导购）→ 不收；HN 新增候选 **Bloomberg（newsletter）/ The New Yorker（专栏）/ The Bulletin / Lawfare（analysis）/ The Atlantic（随笔）** 均判**非新闻 → 拒收**（存 `SEEN.md`）；Forbes SpaceXAI rebrand 与在账同事件 → 去重；FT《Altman legal risks》本机不可达 → 不收。**计数口径对账（如实）**：`SEEN.md` 的 `news` 行含「同事件去重跳过」条（如 `ithome/009/852`）→ **SEEN `news` 行数 ≠ 摘要 news 数**，本线以**摘要实际收录**为准（当日 **34** / 累计 **103**）。累计 **news 103 / 非新闻 58**
+本轮新增:     **第二十六轮常态 news **+2**（中文 0 / 英文 2；当日 34→**36**）**：**The Independent《Humanoid robots destroy themselves after being decommissioned》**（10-02，Figure 将 F.02 人形机器人熔毁退役；`datePublished` 实测 `2026-10-02T16:08:14Z`，在窗）· **BleepingComputer《OpenAI will show visual ads in ChatGPT while you generate images》**（10-05，ChatGPT 图像生成中展示视觉广告；⚠️ **本机原文 `HTTP 403`** → 仅凭**标题 + 链接 + HN 日期**核验，如实标注）。`cn_news` 40 条均假期/民生/时政（AI 关键词**零命中**）→ 不收；**联合国中文源仍 404**；量子位（诺奖非 AI）/IT之家/钛媒体/爱范儿/雷峰网头部均已在账或非清单 → 去重；TechCrunch / Ars / WIRED 头部（已在账 / 非 AI / 评测导购）→ 不收；HN 新增候选多为 feature/超窗（**InfoQ 405 不可核验**、**WSJ feature**、**helpnetsecurity 超窗**）→ 拒收（存 `SEEN.md`）；Figure 官方源（09-30 超窗）登记为**源出**。**计数口径对账（如实）**：`SEEN.md` 的 `news` 行含「同事件去重跳过 / 源出登记」条 → **SEEN `news` 行数 ≠ 摘要 news 数**，本线以**摘要实际收录**为准（当日 **36** / 累计 **105**）。累计 **news 105 / 非新闻 61**
 阻塞:         无（新华网长期 403/405 → 兜底源 `chinanews`；⚠️ **无 bypy → 网盘不可用** → ≥5MB 一律「本地保留 + 清单登记 + 如实标『未上云』」；⚠️ **东财日K 运行机 TLS 被重置** → 历史日线走腾讯 `ifzq`；⚠️ **停后台抓取须杀 python 子进程**；⚠️ **等抓取勿用 `pgrep -f <脚本名>`** → 用 `kill -0 <pid>`；⚠️ **ops relay 的 `git pull --rebase` 会删掉被 untrack 的工作区分片** → 须从 `~/archive_data_backup/` 恢复）
 ERROR_COUNT:  4（历史：模型名白睡一轮，已修；并发双抓重复，已修；watcher `pgrep -f` 自匹配死锁，已修；**relay rebase 删工作区分片 → 已恢复**）
 ```
@@ -97,12 +97,23 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **L2 产物（探索性 · 非因果）**：`news/policy/`（`L2_PREREG.md` / **`EXPLORE.md` + `explore.csv`**）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-05 20:26 CST` 第二十四轮 ~ `2026-10-05 21:05 CST` 第二十五轮
-- **累计收录**：`161` 条（**news 103**〔第一~二十五轮；当日 34〕+ 非新闻 58〔仅存 `SEEN.md`〕）
+- **上次采集窗口**：`2026-10-05 21:05 CST` 第二十五轮 ~ `2026-10-05 21:37 CST` 第二十六轮
+- **累计收录**：`166` 条（**news 105**〔第一~二十六轮；当日 36〕+ 非新闻 61〔仅存 `SEEN.md`〕）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
+- **2026-10-05（本唤醒 ~21:37）** —— 🆕 **第二十六轮常态采集：news +2（英文 2 / 中文 0）**。
+  - **① The Independent《Humanoid robots destroy themselves after being decommissioned》**（2026-10-02）：AI 机器人初创公司 **Figure** 将其两年前推出的人形机器人 **F.02** 以「跳入熔炉（molten steel）」的方式销毁；创始人兼 CEO **Brett Adcock** 在 X 发文称其「deserves a proper sendoff」并征询建议，最多点赞者为影星 **Arnold Schwarzenegger**（「You should melt them」）。据报因电池安全与设备成本，美墨多家铸造厂拒收，最终运至芬兰 Imatra 处理。`datePublished` 实测 `2026-10-02T16:08:14Z`（在 72h 窗内）。→ 关注清单第 6 类「与本书相关（自主系统 / 技术与人）」/ 第 1 类。
+  - **② BleepingComputer《OpenAI will show visual ads in ChatGPT while you generate images》**（2026-10-05）：OpenAI 将在 **ChatGPT 图像生成过程中展示「视觉广告」**（头部实验室**变现路径**动向）。⚠️ **本机 BleepingComputer 原文 `HTTP 403`**（历史一致，站点拦截）→ 仅凭**标题 + 链接 + HN 日期**核验，**正文细节未取得，如实标注**。→ 关注清单第 5 类「公司与人物动态」。
+  - **源盘点（如实）**：`cn_news` **40 条均国庆假期 / 民生 / 时政 / 体育 / 天气 / 文旅**（AI 关键词**零命中**）→ **不收**；**联合国中文源仍 `HTTP 404`**；量子位头部《刚颁给光遗传学（诺奖）》（非 AI）、其余（Hinton RSI / OpenAI / 马斯克算力 / DeepSeek…）均已在账 → 去重；IT之家（宝马纯电 M3 / GTA6 / 拱北海关…）、爱范儿（离职信 `1682922` / 视频榜 `1682888` / Gemini 4 `1682765` 超窗同事件）、雷峰网、钛媒体头部**均已在账或非清单** → 去重 / 不收。
+  - **`search_news`(HN)**：查询 `AI` / `AI safety` / `superintelligence` / `Anthropic` / `OpenAI` / `AI regulation` / `AI model release` / `AI governance` / `AI agent` / `robotics humanoid` —— 新增候选 **WSJ《Spending on AI…Budget》（feature）/ The Guardian《OpenAI safety leader quits…》（10-03 已在账）/ helpnetsecurity《One runaway AI agent…》（原文 09-16 超窗）/ InfoQ《AI Agents Are Disrupting…》（本机 `405` 不可核验）** → **拒收**（存 `SEEN.md`）；TechSpot《Florida woman used Claude as a diary…》与在账 IT之家 `009/795` **同事件** → 去重；`ailately/substack/medium/Show HN` 等为 blog / 论坛帖 → 不收。
+  - **Figure 官方源**（`figure.ai/news/f-02-decommission`）：本机 `HTTP 200` 可核验，页面**自述 `September 30, 2026`**（**超 72h 窗**）→ 不作为当期新闻收录，但**登记 `SEEN.md`** 作为在账 The Independent 报道的**源出**（同一事件）。
+  - **计数口径对账（如实）**：`SEEN.md` 中标 `news` 的行**含「同事件去重跳过 / 源出登记」条** → **SEEN 的 `news` 行数 ≠ 当日摘要 news 数**；本线以**摘要实际收录**为 INDEX/累计口径（当日 **36** / 累计 **105**）。
+  - **G2′④**：本轮距上次真实重跑（15:10）约 **6.4h <20h** → **不做真实重跑、不刷台账连续性**；连续性自报维持 **已连续 1 天 / 目标 7 天 · ⚠️ 未达标**（下一窗具备 ≥20h 间隔的真实重跑约在 **2026-10-06 ≥11:10**）。
+  - **判据复核**：✅ 每条带 `标题+来源+发布日期+链接` · ✅ 非新闻单列（仅存 `SEEN.md`）· ✅「我们的观察」标注 · ✅ 无因果措辞 · ✅ 非投资建议 · ✅ **L3（N5）冻结**（未产出任何策略/仓位/择时）。
+
+
 - **2026-10-05（本唤醒 ~21:05）** —— 🆕 **第二十五轮常态采集：news +1（英文 1 / 中文 0）**。
   - **① The Guardian《Accept 'bad things' in return for benefits of AI, says Sam Altman》**（2026-10-05）：据 The Guardian 报道，OpenAI CEO **Sam Altman** 表示社会应当「**接受（AI 带来的）一些坏事**」以换取 AI 的**益处**。⚠️ **本机 The Guardian 原文不可达**（`Errno 101` 网络不可达 / `curl` 超时）→ 仅凭**标题 + 链接 + HN 日期**（HN date 2026-10-05；URL 路径 `/2026/oct/05/`）核验，**正文细节未取得，如实标注**。→ 关注清单第 5 类「公司与人物动态」/ 第 4 类「AI 与社会」（承接在账 Axios《Altman: Ascribing religion to models a "safety issue"》10-03）。
   - **源盘点（如实）**：`cn_news` **60 条均国庆假期 / 民生 / 时政 / 体育 / 天气 / 文旅**（唯一 AI = DeepZang `10708223`，已在账）→ **不收**；**联合国中文源仍 `HTTP 404`**；量子位头部《诺奖颁给光遗传学》（`501720`，非 AI）、其余均已在账 → 去重；IT之家（三星 S27 / 恋与深空 / 铁路抢票 / GTA6…）、钛媒体、爱范儿、雷峰网头部**均已在账或非清单** → 去重 / 不收；TechCrunch（Sanders Flock / Safeworld / 其余已在账）、Ars（键盘科普 / 考古 / 野生动物，非 AI）、WIRED（评测导购，非新闻）→ 不收。

@@ -168,4 +168,10 @@
 | 2026-10-05 | AI Backers Sound the Alarm About Safety | Bloomberg | analysis | https://www.bloomberg.com/news/newsletters/2026-10-04/ai-backers-sound-the-alarm-about-safety |
 | 2026-10-05 | AI doesn't need 'superintelligence' or evil intent to start a nuclear war | The Bulletin of the Atomic Scientists | analysis | https://thebulletin.org/2026/10/ai-doesnt-need-superintelligence-or-evil-intent-to-start-a-nuclear-war/ |
 | 2026-10-05 | A Warning for Frontier AI Model Governance | Lawfare | analysis | https://www.lawfaremedia.org/article/a-warning-for-frontier-ai-model-governance |
+| 2026-10-05 | Humanoid robots destroy themselves after being decommissioned | The Independent | news | https://www.the-independent.com/tech/robot-suicide-humanoid-death-figure-b3060486.html |
+| 2026-10-05 | OpenAI will show visual ads in ChatGPT while you generate images | BleepingComputer | news | https://www.bleepingcomputer.com/news/artificial-intelligence/openai-will-show-visual-ads-in-chatgpt-while-you-generate-images/ |
+| 2026-10-05 | F.02 Decommission | Figure (官方 newsroom) | news | https://www.figure.ai/news/f-02-decommission |
+| 2026-10-05 | Spending on AI Is Becoming Almost Impossible for Businesses to Budget | The Wall Street Journal | feature | https://www.wsj.com/tech/personal-tech/ai-token-spending-businesses-431ee94a |
+| 2026-10-05 | AI Agents Are Disrupting Open Source Security Disclosure | InfoQ | analysis | https://www.infoq.com/news/2026/10/open-source-ai-security/ |
+| 2026-10-05 | One runaway AI agent racked up a $50k cloud bill | Help Net Security | analysis | https://www.helpnetsecurity.com/2026/09/16/google-mandiant-enterprise-ai-security-risks-report/ |
 
