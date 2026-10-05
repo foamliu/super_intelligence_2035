@@ -26,10 +26,14 @@ git pull --rebase --autostash
 # ⭐ 必须用 exec -a 起：否则 cmdline 只有 "bash ops_relay.sh"（与 BaiZe 撞名，且 pkill -f watch_ops_relay.sh 匹配不到）
 setsid bash -c 'exec -a watch_ops_relay.sh bash ops_relay.sh' > /tmp/watch_ops_relay.log 2>&1 < /dev/null &
 
-pgrep -af 'watch_ops_relay.sh'        # 应恰好 1 个
-tail -5 /tmp/watch_ops_relay.log      # 看 [relay] started
+cat /tmp/watch_ops_relay.pid          # ⭐ 数实例**以 pidfile 为准**（最可靠）
+ps -o pid,etime,args -p "$(cat /tmp/watch_ops_relay.pid)"   # 确认它还在
+tail -5 /tmp/watch_ops_relay.log      # 看 [relay] started（首行含 pid= / pidfile=）
 ```
 **停止**（两种都行）：`pkill -f watch_ops_relay.sh` 或 `kill "$(cat /tmp/watch_ops_relay.pid)"`
+> ⚠️ **不要用 `pgrep -af <脚本名>` 去"数实例"** —— bash 的 `$(...)` fork 子 shell **不 exec、沿用父进程 argv**，
+> 会被 `pgrep/ps` 误当成"新实例"（`etime 00:00` 的幽灵）。2026-10-05 我就因此**误报过"出现第三个中继"**。
+> 判定实例数请以 **pidfile** 或 `ps -o pid,etime` 中 **etime 较大者**为准。
 > 🛡 **单实例锁**：脚本用 `/tmp/watch_ops_relay.pid` 防重复启动（**发现已在跑则新实例自动退出**）——
 > 修复 2026-10-05 实测的「**两个中继并存 → 同一 RUN_ID 被跑两遍、提交两遍**」。
 > ⚠️ **不要** `pkill -f ops_relay.sh` —— 裸 cmdline 会**连带匹配到 BaiZe 的中继**。
