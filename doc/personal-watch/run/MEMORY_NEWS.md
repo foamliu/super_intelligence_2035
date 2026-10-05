@@ -12,10 +12,10 @@ WAITING: 1
 
 ```
 PHASE:        常态采集（T1–T10 ✅）+ **L1/N3 收口（G1 全过）+ L2/N4 探索性（G2 全过）**（L1 焦点 · L2 探索性 · L3 冻结）
-已完成:       T1–T10 ✅ · 首~二十三轮常态 ✅ · **N1 抓取器 + 语料〔全库完抓〕2,492,230 条 / 11 片 2016–2026（游标 `2015-12-31`，倒序已收尾至 `2016-01-01`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（75,610 条，对 15:10 全量快照）· N3-4 预警方案 · L1 预警准则加固（`early_warning.py` §4.3 固定召回率 precision + **§4.4 措辞强度 tone 信号**，`EARLY_WARNING.md` 424 行）· L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md，9 行）+ **G2′④ 连续性自报（`compute_streak`：连续 7 自然日 · ≥20h · 同天计 1 · record-only 不计入）**
-当前动作:     **本唤醒：第二十三轮常态采集（news **+3**：BleepingComputer Anthropic 请 Claude 用户分享**语音数据**训练模型 · DW 报道 Anthropic 报告「俄罗斯或在 CAR 等借 AI 散布虚假信息」· Axios Altman 称「把宗教投射到模型上」是**安全问题**；三条原文本机不可达 → 标题+链接+HN 日期核验）；**上轮**：第二十二轮 +2（Reuters 挪威禁 AI 眼镜 · 中新网 DeepZang 藏语大模型）
+已完成:       T1–T10 ✅ · 首~二十四轮常态 ✅ · **N1 抓取器 + 语料〔全库完抓〕2,492,230 条 / 11 片 2016–2026（游标 `2015-12-31`，倒序已收尾至 `2016-01-01`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（75,610 条，对 15:10 全量快照）· N3-4 预警方案 · L1 预警准则加固（`early_warning.py` §4.3 固定召回率 precision + **§4.4 措辞强度 tone 信号**，`EARLY_WARNING.md` 424 行）· L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md，9 行）+ **G2′④ 连续性自报（`compute_streak`：连续 7 自然日 · ≥20h · 同天计 1 · record-only 不计入）**
+当前动作:     **本唤醒：第二十四轮常态采集（news **+2**：TechCrunch《Sanders introduces bill to ban the federal government from using Flock》10-02 · TechCrunch《Can Safeworld convince people that gen AI robots won't hurt them?》10-05；两条均 fetch 核验为报道体）；**上轮**：第二十三轮 +3（BleepingComputer Anthropic 语音数据 · DW Anthropic-disinfo · Axios Altman）
 下一步:       ① 提交本线产物（**不含任何 ≥5MB 文件**）；② **G2′④ 累积**：**隔日（≥20h，约 2026-10-06 ≥11:10）**跑真实重跑（`cycle_run.py --with-l2`，**不带 `--record`**）追加台账（**台账自报：连续 1 天 / 目标 7 天，未达标**）；③ L1 稳定性 / 下一个候选文本信号 = **新词首发 / 版面**（§4.4 措辞组合**未胜出**，如实保留）；④ L3（N5）**冻结**
-本轮新增:     **第二十三轮常态 news **+3**（中文 0 / 英文 3；当日 28→**31**）**：**BleepingComputer《Anthropic asks Claude users to share voice data for AI model training》**（10-04）· **DW《Is Russia using AI for disinformation in the Central African Republic and elsewhere?》**（10-04，援引 Anthropic 报告）· **Axios《OpenAI's Altman: Ascribing religion to models a "safety issue"》**（10-03）。三条原文本机均不可达（BleepingComputer `403` / Axios·DW `fetch` 超时）→ **仅凭标题+链接+HN 日期核验**并显式标注。`cn_news` 30 条均假期/民生/时政（无 AI 新增）；**央视网 tech 真条目仍被 `pubDate≤72h` 丢弃**；**WIRED「乡村数据中心税收」经 fetch 核验为周专栏（非新闻）→ 拒收**、**Flock 摄像头文核验超窗（09-15）→ 拒收**。累计 **news 100 / 非新闻 50**
+本轮新增:     **第二十四轮常态 news **+2**（中文 0 / 英文 2；当日 31→**33**）**：**TechCrunch《Sanders introduces bill to ban the federal government from using Flock》**（10-02，Connie Loizos；参议员 Sanders 提《Ban Flock Act》禁联邦机构使用 ALPR / Flock 数据，AOC+Merkley 联署，**仅提案未成法**）· **TechCrunch《Can Safeworld convince people that gen AI robots won't hurt them?》**（10-05，Tim Fernholz；CMU Safe AI 实验室主任 Ding Zhao 创办 **Safeworld** 出隐身 + **超 1200 万美元种子轮**，做生成式 AI 机器人安全仿真评测）。上一轮（r23）三条（BleepingComputer Anthropic 语音数据 · DW Anthropic-disinfo · Axios Altman）见流水。`cn_news` 40 条均假期/民生/时政（无 AI 新增，DeepZang 已在账）；**联合国中文源仍 404**；TechCrunch《All the AI agents…text messages》核验为 **roundup 综述 → 拒收**、MIT Tech Review《People really hate AI…》核验为**第一人称分析 → 拒收**、Anthropic《What do you want from AI?》核验为**研究公告 + 超窗（09-29）→ 拒收**；FT 两篇本机 fetch 超时 → 无法核验不收。累计 **news 102 / 非新闻 53**
 阻塞:         无（新华网长期 403/405 → 兜底源 `chinanews`；⚠️ **无 bypy → 网盘不可用** → ≥5MB 一律「本地保留 + 清单登记 + 如实标『未上云』」；⚠️ **东财日K 运行机 TLS 被重置** → 历史日线走腾讯 `ifzq`；⚠️ **停后台抓取须杀 python 子进程**；⚠️ **等抓取勿用 `pgrep -f <脚本名>`** → 用 `kill -0 <pid>`；⚠️ **ops relay 的 `git pull --rebase` 会删掉被 untrack 的工作区分片** → 须从 `~/archive_data_backup/` 恢复）
 ERROR_COUNT:  4（历史：模型名白睡一轮，已修；并发双抓重复，已修；watcher `pgrep -f` 自匹配死锁，已修；**relay rebase 删工作区分片 → 已恢复**）
 ```
@@ -97,12 +97,21 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **L2 产物（探索性 · 非因果）**：`news/policy/`（`L2_PREREG.md` / **`EXPLORE.md` + `explore.csv`**）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-05 13:15 CST` 第十一轮 ~ `2026-10-05 19:50 CST` 第二十三轮
-- **累计收录**：`150` 条（**news 100**〔第一~二十三轮；当日 31〕+ 非新闻 50〔仅存 `SEEN.md`〕）
+- **上次采集窗口**：`2026-10-05 13:15 CST` 第十一轮 ~ `2026-10-05 20:26 CST` 第二十四轮
+- **累计收录**：`155` 条（**news 102**〔第一~二十四轮；当日 33〕+ 非新闻 53〔仅存 `SEEN.md`〕）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
+
+- **2026-10-05（本唤醒 ~20:26）** —— 🆕 **第二十四轮常态采集：news +2（英文 2 / 中文 0）**。
+  - **① TechCrunch《Sanders introduces bill to ban the federal government from using Flock》**（2026-10-02，Connie Loizos）：参议员 **Bernie Sanders** 于 10-02 提出《**Ban Flock Act**》，**禁止联邦机构使用自动车牌识别（ALPR）系统或接入地方/私营车牌数据**；覆盖所有 ALPR（未点名 Flock），仅对收费与国会今后批准（留存限 48h）设例外；州/地方不禁用将失去五个联邦部门拨款，公民可起诉、州检察长可执法。AOC + Jeff Merkley 联署；Flock 逾 12 万台摄像头、月处理逾 200 亿次读取。**仅提案未成法**（如实标注）。→ 关注清单第 3 类「政策与治理」。
+  - **② TechCrunch《Can Safeworld convince people that gen AI robots won't hurt them?》**（2026-10-05，Tim Fernholz）：**CMU Safe AI 实验室主任 Dr. Ding Zhao** 等创办 **Safeworld** **出隐身（emerging from stealth）**，获 **超 1200 万美元种子轮**（Shine Capital、a16z Speedrun 领投）；做「**把控制权交给生成式 AI 模型的机器人**」的**安全评测**：在仿真（Genesis/MuJoCo）中放入机器人真实软件 + 逼真人类模型、批量跑上万种人机交互场景。→ 关注清单第 1/2 类「前沿模型与能力 / AI 安全与对齐」。
+  - **源盘点（如实）**：`cn_news` 40 条均**国庆假期/民生/时政/体育/天气**（汽车供应链、广州南站、四川红色旅游、巴凯银行香港牌照、魔方赛、网球中网、南部战区正告菲方、内蒙 3.1 级地震、AG600 北疆驻防、丽江直飞清州、悉尼持刀）→ 不收（唯一 AI = **DeepZang `10708223` 已在账**）；**联合国中文源仍 `HTTP 404`**（判源失败）；量子位头部诺奖（非 AI）+ 其余已在账；IT之家 10 条为消费电子/游戏/社会 → 不收；钛媒体/爱范儿/雷峰网头部均已在账或非清单；**TechCrunch《All the AI agents…text messages》经 fetch 核验为 roundup 综述 → 拒收**、**MIT Tech Review《People really hate AI…》核验为第一人称分析 → 拒收**、**Anthropic《What do you want from AI?》核验为研究公告 + 超窗（09-29）→ 拒收**；**FT 两篇本机 fetch 两次均超时 → 无法核验，不收**（如实记录）；The Register atom 仍 ParseError、Guardian tech RSS 仍不可达。
+  - **G2′④**：本轮距上次真实重跑（15:10）约 **5.3h <20h** → **不做真实重跑、不刷台账连续性**；自报维持 **已连续 1 天 / 目标 7 天 · ⚠️ 未达标**（下一窗具备 ≥20h 间隔约在 **2026-10-06 ≥11:10**）。
+  - **文档同步**：`news/2026-10-05.md`（第二十四轮段）· `news/SEEN.md`（+2 news / +3 非新闻）· `news/INDEX.md`（当日 31→**33** / 累计 news 100→**102** · 非新闻 50→**53**）· `MEMORY_NEWS.md`（快照 + 本流水）· 日流水心跳行 `[20:26]`。
+  - **判据复核**：✅ 每条带 `标题+来源+发布日期+链接` · ✅ 非新闻单列（仅存 `SEEN.md`）· ✅「我们的观察」标注 · ✅ 无因果措辞 · ✅ 非投资建议 · ✅ **L3（N5）冻结**（未产出任何策略/仓位/择时）。
+
 
 - **2026-10-05（本唤醒 ~19:50）** —— 🆕 **第二十三轮常态采集：news +3（英文 3 / 中文 0）**。
   - **① BleepingComputer《Anthropic asks Claude users to share voice data for AI model training》**（2026-10-04）：安全/科技媒体 BleepingComputer 报道，Anthropic 请求其 Claude 用户分享**语音数据**用于 AI 模型训练（头部实验室数据获取策略 / 用户隐私边界）。→ 关注清单第 5 类「公司与人物动态」。

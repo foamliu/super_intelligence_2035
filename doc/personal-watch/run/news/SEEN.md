@@ -157,4 +157,9 @@
 | 2026-10-05 | Anthropic asks Claude users to share voice data for AI model training | BleepingComputer | news | https://www.bleepingcomputer.com/news/artificial-intelligence/anthropic-asks-claude-users-to-share-voice-data-for-ai-model-training/ |
 | 2026-10-05 | Is Russia using AI for disinformation in the Central African Republic and elsewhere? | DW | news | https://www.dw.com/en/anthropic-report-is-russia-using-ai-for-disinformation-in-the-central-african-republic-and-elsewhere/a-79476947 |
 | 2026-10-05 | OpenAI's Altman: Ascribing religion to models a "safety issue" | Axios | news | https://www.axios.com/2026/10/03/openai-anthropic-altman-amodei-religious-force-models |
+| 2026-10-05 | Sanders introduces bill to ban the federal government from using Flock | TechCrunch | news | https://techcrunch.com/2026/10/02/sanders-introduces-bill-to-ban-the-federal-government-from-using-flock/ |
+| 2026-10-05 | Can Safeworld convince people that gen AI robots won't hurt them? | TechCrunch | news | https://techcrunch.com/2026/10/05/can-safeworld-convince-people-that-gen-ai-robots-wont-hurt-them/ |
+| 2026-10-05 | People really hate AI, so why can't they get enough? | MIT Technology Review | analysis | https://www.technologyreview.com/2026/10/05/1145682/people-really-hate-ai-so-why-cant-they-get-enough/ |
+| 2026-10-05 | All the AI agents that can live in your text messages | TechCrunch | feature | https://techcrunch.com/2026/10/03/all-the-ai-agents-that-can-live-in-your-text-messages/ |
+| 2026-10-05 | What do you want from AI? | Anthropic | analysis | https://www.anthropic.com/research/your-thoughts-on-ai |
 
