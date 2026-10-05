@@ -239,4 +239,13 @@
 | 2026-10-06 | 全球AI监管地图：各国都在管什么？ | AI 实战派（博客） | analysis | https://guijiagi.com/posts/2026-10-04-ai-regulation-global/ |
 | 2026-10-06 | Instinct brings its AI agent to group chats, even for friends without an account | TechCrunch | news | https://techcrunch.com/2026/10/05/instinct-brings-its-ai-agent-to-group-chats-even-for-friends-without-an-account/ |
 | 2026-10-06 | The Dangerous Myths Behind AI Agent Hacks | Financial Times（Yoshua Bengio） | opinion | https://www.ft.com/content/7afaf77b-b027-4a0f-8d53-5e88e7d6f5e4 |
+| 2026-10-06 | Reflection debuts Beam, an open-weight AI model to rival Chinese models at lower compute cost | TechCrunch | news | https://techcrunch.com/2026/10/05/reflection-debuts-beam-a-open-weight-ai-model-to-rival-chinese-models-at-lower-compute-cost/ |
+| 2026-10-06 | After Factory's public spat with Khosla, Menlo proudly invests | TechCrunch | news | https://techcrunch.com/2026/10/05/after-factorys-public-spat-with-khosla-menlo-proudly-invests/ |
+| 2026-10-06 | Reflection AI unveils an open-source Western answer to Chinese labs | Semafor（经 HN） | news | https://www.semafor.com/article/10/05/2026/reflection-ai-unveils-an-open-source-answer-to-chinese-labs |
+| 2026-10-06 | Beam: Reflection's 501B open-weight model | Reflection AI（官方博客，经 HN） | tool | https://reflection.ai/blog/introducing-beam |
+| 2026-10-06 | All the drama around AI's takeover of mathematics | The Verge | feature | https://www.theverge.com/ai-artificial-intelligence/1004933/ai-math-openai-breakthrough-solution |
+| 2026-10-06 | AI nonprofit will spend $10M on journalism | Semafor（经 HN） | news | https://www.semafor.com/article/10/04/2026/ai-nonprofit-will-spend-10-million-on-journalism |
+| 2026-10-06 | AI Companies Are Parasites | coryd.dev（经 HN） | opinion | https://www.coryd.dev/posts/2026/ai-companies-are-parasites |
+| 2026-10-06 | Toshiba plans to double HDD capacity for AI data centers by FY2027 | Nikkei Asia（经 HN） | news | https://asia.nikkei.com/business/electronics/toshiba-to-double-hard-disk-drive-supply-to-fill-ai-chip-memory-gap |
+| 2026-10-06 | Command-line tool quickly removes Apple Intelligence from macOS 27 | Ars Technica | tool | https://arstechnica.com/apple/2026/10/command-line-tool-quickly-removes-apple-intelligence-from-macos-27/ |
 
