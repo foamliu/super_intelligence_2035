@@ -1242,3 +1242,81 @@ KV bytes/token = 2 × n_layers × n_kv_heads × d_head × dtype_bytes
 - **P-9.9** 健康 @iter 130/1000（loss 11.18→5.99，nan=0/skip=0，s/iter≈18.5s，peak 72684 MiB，TFLOP≈623，ETA ~15:13）。
 - **P-9.10 ① 预研完成**：sglang ❌ 不可装（网络不可达，确切报错已记）→ fallback mcore+CUDA-graph；S3 原始 ckpt ❌ 已丢失 → 替代 p3_dense/p3_hybrid iter_0005000（⚠️ 需标注口径切换，待运维确认）；文献两口径 ✅ 已核实（Nemotron-H 1.8–6× 长上下文 decode + KV 公式 2×n_layers×n_kv_heads×d_head×dtype_bytes）。
 - **下一步**：① 等 P-9.9 ~15:13 释放 GPU0–1 → ② 启 P-9.10 实测矩阵（p3_dense vs p3_hybrid，context∈{4K,16K,64K,128K}，batch∈{1,8}，mcore+CUDA-graph 栈，每格≥3 次取中位 + 方差 + 缓存/状态字节增长曲线）→ ③ 按 H1–H4 预注册判据裁定。data 同步可拿 GPU2–7 跑配比。
+
+---
+
+### P-9.9 健康巡检 + delayed vs tensorwise 早期轨迹对比（2026-10-05 ~11:22，第 101 次唤醒，CPU-only 分析）
+
+> **P-9.9 tensorwise FP8 1000 步跑**（`bf16_with_fp8_current_scaling_mixed`，current per-tensor scaling，替代 delayed amax lag）现 @iter 240/1000（24%），**健康**：
+> loss 11.18→5.18 健康下降，grad-norm 0.34–4.88，**nan=0/skip=0 全程 ✅**，s/iter≈18.55s（226K tok/s），TFLOP≈622，peak 72684 MiB，8 worker PID 4044610–17 单实例无争用。ETA (1000−240)×18.55s≈3.9h→**~15:12**。
+> ⚠️ 仍占满 8 卡 → P-9.10 实测仍被阻塞；data GPU2–7 仍需等。
+
+#### A. Spike 参考基线 —— P-9.8 bf16 vs delayed FP8 @ spike 区（iter 660–780）
+
+> 这是 P-9.9 要检验的核心：**tensorwise 是否避免 delayed 在 iter 660–780 的 spike**。先把 delayed 的 spike 曲线定量化作为参照。
+
+| iter | bf16 (armA) | delayed FP8 (armB) | rel diff (FP8−bf16)/bf16 |
+|----:|-----------:|------------------:|------------------------:|
+| 660 | 3.2038 | 3.2558 | **+1.62%** |
+| 670 | 3.1601 | 3.2189 | +1.86% |
+| 680 | 3.1141 | 3.1887 | +2.39% |
+| 690 | 3.0489 | 3.1802 | +4.31% |
+| 700 | 2.9877 | 3.1181 | +4.36% |
+| **710** | **2.9381** | **3.0882** | **+5.11%** ← **spike peak** |
+| 720 | 2.9045 | 3.0175 | +3.89% |
+| 730 | 2.8697 | 2.9564 | +3.02% |
+| 740 | 2.8466 | 2.9064 | +2.10% |
+| 750 | 2.8344 | 2.8766 | +1.49% |
+| 760 | 2.8053 | 2.8507 | +1.62% |
+| 770 | 2.7939 | 2.8180 | **+0.86%** ← **恢复 ≤1%** |
+| 780 | 2.7697 | 2.8053 | +1.29% |
+
+- **spike 形态**：iter 660 起从 +1.6% 爬升 → iter 710 峰值 +5.11% → iter 770 回落 ≤1%（持续 ~110 步，峰值 5.11%）。
+- **运维修订裁定**（commit 937c25f）：#4 改持续性判据 → spike-then-recovered=PASS → 4/4 PASS。
+- **P-9.9 检验目标**：tensorwise（current scaling，无 delayed amax lag）在同区是否**不出现**这个 spike。
+
+#### B. 三方早期轨迹对比（iter 10–250）—— bf16 vs delayed vs tensorwise
+
+> P-9.9 目前只到 iter 240，spike 区（660+）尚未到达。先比较**前 240 步**确认三者轨迹一致（验证唯一变量是 FP8 recipe）。
+
+| iter | bf16 | delayed FP8 | tensorwise FP8 | d−bf16% | t−bf16% | t−d% |
+|----:|-----:|-----------:|--------------:|--------:|--------:|-----:|
+| 10 | 11.173 | 11.207 | 11.179 | +0.31% | +0.06% | −0.25% |
+| 50 | 7.567 | 7.564 | 7.567 | −0.04% | +0.00% | +0.04% |
+| 100 | 6.398 | 6.423 | 6.403 | +0.38% | +0.07% | −0.31% |
+| 150 | 5.758 | 5.764 | 5.766 | +0.10% | +0.13% | +0.03% |
+| 200 | 5.414 | 5.434 | 5.418 | +0.38% | +0.07% | −0.30% |
+| 240 | 5.191 | 5.193 | 5.182 | +0.05% | −0.16% | −0.22% |
+
+- **三方前 240 步轨迹高度一致**（|rel diff| ≤ 0.78%），确认唯一变量是 FP8 recipe（delayed vs current/tensorwise scaling）。
+- **tensorwise vs bf16**（|t−bf16%| ≤ 0.72%）**比 delayed vs bf16**（|d−bf16%| ≤ 0.71%）**至少同等接近**——早期无劣化迹象。
+- ⏳ **关键检验待定**：spike 区（iter 660–780）需 P-9.9 到达（ETA ~13:30–13:50）；若 tensorwise 在该区 **|rel diff| ≤ 1%**（无 spike）→ 判「**delayed amax lag 是 spike 根因，current scaling 消除之**」；若 **spike 复现** → 判「**spike 非 amax lag 所致，是 FP8 per-tensor 口径的固有现象**」。
+
+#### C. 速度对比（三种精度，TP4·SP·MBS8·seq8192·M=65536·MAX_CONN=1）
+
+| 精度 | avg s/iter | tok/s | s (vs bf16) | vs bf16 |
+|:--|--:|--:|--:|--:|
+| bf16 (armA) | 21.48s | 195.2K | 1.000 | baseline |
+| delayed FP8 (armB) | 17.99s | 233.1K | **1.194** | **+19.4%** |
+| tensorwise FP8 (P-9.9) | 18.55s | 226.1K | **1.158** | **+15.8%** |
+
+- tensorwise 比 delayed **慢 ~3.1%**（current scaling 每步需额外算当前 amax，vs delayed 复用上一步 amax），但**仍比 bf16 快 15.8%**。
+- **结论**：若 tensorwise 能消除 spike（数值更安全）且 s=1.158 仍 >1.05 → **是比 delayed 更优的 FP8 选择**（数值安全 + 仍有 15.8% 加速）。
+
+#### D. P-9.9 判定框架（预注册，先定后测 🚫 不许事后改）
+
+| # | 检验项 | 判据 | 状态 |
+|:--|:--|:--|:--|
+| **T1** | tensorwise 在 spike 区（660–780）\|rel diff vs bf16\| 最大值 | **≤ 1%** → spike 消除 | ⏳ 待 P-9.9 到 660+（~13:30） |
+| **T2** | tensorwise 全程 nan/skip | **= 0** | ✅ 已确认（iter 240，全程 0） |
+| **T3** | tensorwise s (vs bf16) | **> 1.05** → 仍有加速收益 | ✅ 已确认 s=1.158 > 1.05 |
+| **T4** | tensorwise 末段 loss vs delayed 末段 loss 相对差 | **≤ 1%** → 收敛一致 | ⏳ 待 P-9.9 到 1000（~15:12） |
+
+**裁定**：**T1+T2+T3+T4 全过** → 「**current/tensorwise scaling 消除 delayed spike + 仍有 15.8% 加速 → 推荐 P-8 用 `bf16_with_fp8_current_scaling_mixed`**」；**T1 不过**（spike 复现）→ 「**spike 是 per-tensor FP8 固有现象（非 amax lag）→ P-8 沿用 delayed（已 4/4 PASS）**」。
+
+#### 本唤醒小结
+- P-9.9 健康 @iter 240/1000，ETA ~15:12。
+- 三方早期轨迹确认唯一变量 = FP8 recipe（前 240 步 \|rel diff\| ≤ 0.78%）。
+- 速度：tensorwise s=1.158（+15.8%），略慢于 delayed s=1.194（+19.4%）但仍 >1.05。
+- **关键检验 T1（spike 区）待 ~13:30**；T4（末段收敛）待 ~15:12。
+- **下一步**：30min 轮询 → P-9.9 到 iter 660 后提取 spike 区数据判 T1 → P-9.9 完成(~15:12)判 T4 → 合成 P-9.9 结论 → 释放 8 卡 → P-9.10 实测 + data 配比。
