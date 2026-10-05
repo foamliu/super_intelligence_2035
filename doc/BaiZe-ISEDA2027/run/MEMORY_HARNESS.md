@@ -5,13 +5,45 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A kimi-k2.6-cloud serial cross-eval RUNNING — cline-patched × 30: 13/30 scored (10 resolved, 3 patch-but-failed, 0 quota-blocked), instance 14/30 in progress (PID 2291128)
-已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A(deepseek) 22/30 scored · SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md · kimi model switch + serial runner + kimi 13/30 scored (10 resolved, 76.9% resolve rate) + SWEBENCH_COMPARE.html updated (8465B)
-当前动作:     R69: kimi-k2.6-cloud 串行横评监控 — cline-patched×30 后台运行中(13/30 scored: 10 resolved, 3 patch-but-failed, 0 quota-blocked; inst 14/30 django-11630 running) + gw_proxy(kimi)运行中 + quota健康(0×429) + relay健康skip + SWEBENCH_COMPARE.html regenerated(8465B)
-下一步:       cline-patched×30完成(~2h) → codex×30 → opencode×30 → claude-code×30 → deepseek×30 → 最终更新SWEBENCH_COMPARE.html
-阻塞:         无（kimi quota 未撞墙，串行运行中，~10min/inst avg）
+PHASE:        H-A kimi-k2.6-cloud serial cross-eval RUNNING — cline-patched × 30: 15/30 scored (10 resolved, 5 patch-but-failed, 0 quota-blocked), instance 16/30 in progress (sympy-11870 eval)
+已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A(deepseek) 22/30 scored · SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md · kimi model switch + serial runner + kimi 15/30 scored (10 resolved, 66.7% resolve rate) + SWEBENCH_COMPARE.html updated (8902B)
+当前动作:     R70: kimi-k2.6-cloud 串行横评监控 — cline-patched×30 后台运行中(15/30 scored: 10 resolved, 5 patch-but-failed, 0 quota-blocked; inst 16/30 sympy-11870 eval running) + gw_proxy(kimi)运行中 + quota健康(0×429) + relay健康skip第23次 + SWEBENCH_COMPARE.html regenerated(8902B)
+下一步:       cline-patched×30完成(~3h) → codex×30 → opencode×30 → claude-code×30 → deepseek×30 → 最终更新SWEBENCH_COMPARE.html
+阻塞:         无（kimi quota 未撞墙，串行运行中，~12min/inst avg）
 ERROR_COUNT:  0
 ```
+
+## 🆕 第七十轮速览（2026-10-05 13:39）— kimi 串行横评监控 · 15/30 scored: 10 resolved ✅ (66.7%) + SWEBENCH_COMPARE.html regenerated (8902B)
+
+- ✅ **ops 中继复核（第 23 次）→ 健康，跳过重启**。relay `2489749 1 334251 Ss`（ppid=1、etimes≈3.87d）；`.last_run_id`=71（持平 → 无新运维指令）；`git fetch` exit=0；`git rev-list --left-right --count HEAD...origin/main`=`1 0`（HEAD 1 ahead=其它 agent 未 push 提交，origin 0 ahead=**无新指令**）。
+- 📊 **kimi 串行横评进度**：cline-patched × 30 后台运行中（PID 2291128，etimes≈10817s≈180min）。**15/30 scored**：
+  - [1] django-10924 → **resolved** ✅ (wall=383s)
+  - [2] django-11001 → **resolved** ✅ (wall=901s)
+  - [3] django-11019 → **patch-but-failed** ❌ (wall=1800s=timeout, patch=0B)
+  - [4] django-11039 → **resolved** ✅ (wall=741s)
+  - [5] django-11049 → **resolved** ✅ (wall=270s)
+  - [6] django-11099 → **resolved** ✅ (wall=153s)
+  - [7] django-11133 → **resolved** ✅ (wall=481s)
+  - [8] django-11179 → **resolved** ✅ (wall=303s)
+  - [9] django-11283 → **patch-but-failed** ❌ (wall=581s, F2P 0/1, P2P 0/8)
+  - [10] django-11422 → **resolved** ✅ (wall=279s)
+  - [11] django-11564 → **patch-but-failed** ❌ (wall=509s, F2P 0/2, P2P 174/174)
+  - [12] django-11583 → **resolved** ✅ (wall=152s)
+  - [13] django-11620 → **resolved** ✅ (wall=458s)
+  - [14] django-11630 → **patch-but-failed** ❌ (wall=1800s=timeout, patch=0B)
+  - [15] django-11742 → **patch-but-failed** ❌ (wall=303s, F2P 0/2, P2P 43/43)
+  - [16] sympy-11870 → **eval 运行中**（r1_eval PID 2344733）
+  - `kimi_pilot_results.json` 已有 15 entries（即时固化 ✅）
+- ✅ **kimi quota 健康**：gw_proxy PID 3175038 运行中（etimes≈13431s≈3.7h）。**0 次 429**，**0 次 quota 事件**。
+- 📈 **kimi vs deepseek 对比**：
+  | 模型 | scored | resolved | patch-but-failed | quota-blocked | resolve rate |
+  |:--|--:|--:|--:|--:|--:|
+  | deepseek-v4-flash | 22/30 | 0 | 5 | 17 | 0% |
+  | **kimi-k2.6-cloud** | **15/30** | **10** | **5** | **0** | **66.7%** |
+  → **kimi quota 完全不挡**（0 quota-blocked），resolve rate 66.7% 远超 deepseek 0%。
+- 🔧 **SWEBENCH_COMPARE.html 已更新**：`gen_kimi_compare.py` 从 `kimi_pilot_results.json` 生成单模型 kimi 报告（15 entries, 10 resolved）。8902B 自包含。
+- ⏱ **时间估算**：15 条 ≈180min → ~12min/inst avg → cline-patched 剩余 15 条 ≈ 3h → 4 harness × 30 ≈ 22h（~1 天）。
+- ⏭ **下一步**：cline-patched×30 继续后台跑 → 完成后启动 codex×30 → 依次 opencode/claude-code/deepseek → 全部完成后最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
 
 ## 🆕 第六十九轮速览（2026-10-05 13:15）— kimi 串行横评监控 · 13/30 scored: 10 resolved ✅ (76.9%) + SWEBENCH_COMPARE.html regenerated
 
@@ -115,26 +147,6 @@ ERROR_COUNT:  0
 > 外部运维在 `BAIZE_HARNESS_TASK.md` 的「运维指令区」提问时，答案写在这里。
 
 （暂无）
-
-## 状态头
-
-| 字段 | 值 |
-|:---|:---|
-| PHASE | **R1_step4_pilot_2instances（✅ 4/5 harness 已在 2 instances〔django-10914 + sympy-11400〕端到端评分完成；django 4/4 resolved=True、sympy 0/4 resolved=False；`SWEBENCH_COMPARE.html` 已交付；仅剩 deepseek-harness blocked）** |
-| WAITING | 1（步2 已打通，**非技术阻塞**；下一步 scale sympy + 步3 适配层可 CPU 先行；全量 300×5 仍受「重 I/O 避让训练 + 5h 滑动窗口 key」约束，非等运维拍板） |
-| ERROR_COUNT | 0 |
-| 更新 | 2026-10-04 12:3x（第三十九轮：**修复 claude-code blocker〔沙箱 stub 根因=缺静态方法 `checkDependencies`/`isSupportedPlatform`〕→ `-p` 模型调用通 STDOUT=PONG → 4/5 harness 就绪**；仅剩 deepseek-harness build〔rust+pnpm@11+node22，需运维装工具链〕） |
-| 产出 | ✅ H-B 5 份源码 HTML · ✅ `MERGE_OVERLAP_ANALYSIS.md` · ✅ `SWEBENCH_FEASIBILITY.md` · ✅ H-C survey v2 · ✅ H-D 矩阵 + 机会点 · ✅ `CLINE_IMPROVEMENTS_TOP5.html` · ✅ `SWEBENCH_LITE_FEASIBILITY.md` · ✅ `R1_ADAPTER_DESIGN.md` · ✅ `r1_eval.py`（**端到端跑通**，UnshareSandbox mount 序列 + `PATCH_FILE=/patch.diff` 修正已入库） · ✅ **step-2 可复现脚本**（`harness_work/{sandbox_test*.sh, run_eval_sandbox.sh, env_django10914_tsinghua.yml}`，不入库） · ✅ **step-3 官方打分 report.json**（`harness_work/logs_eval/R1_SMOKE/gold/django__django-10914/`，不入库） |
-
-## 📊 进度快照（**每次唤醒必须更新**）
-
-```
-PHASE:        R1_step4_pilot_2instances（✅ 4/5 harness 已在 2 instances 评分完成；django 4/4 resolved=True、sympy 0/4 resolved=False；SWEBENCH_COMPARE.html 已交付；仅剩 deepseek-harness blocked）
-已完成:       第四十五轮：ops 中继健康（跳过重启）+ codex/claude-code × sympy-11400 评分完成（均 resolved=False F2P 0/2）+ SWEBENCH_COMPARE.html 创建（20KB 自包含，2 instances × 4 harnesses）+ MEMORY 滚动归档（R41/R42 → daily-memories）。第四十二轮：4/5 harness 全 resolve django__django-10914（R1_DJANGO10914_RESULTS.yaml）。第四十三轮：cline × sympy-11400 resolved=False F2P 1/2。第三十九轮：claude-code sandbox stub 修复。第三十五轮：gw_proxy.py + codex/opencode resolved=true。第三十三轮：cline pipeline 串通。
-当前动作:     2026-10-04 第四十五轮：2 instances pilot 完成（django-10914 + sympy-11400 × 4 harnesses），SWEBENCH_COMPARE.html 交付。下一步：扩到 20-30 instances pilot。
-下一步:       ① 选 20-30 django+sympy instances（从 Lite 300 的 114 django + 77 sympy 中选）→ ② 每个建 rootfs（conda env per repo）→ ③ 4 harness × N instances 顺序跑（避让训练，低并发 ≤4）→ ④ r1_eval.py 评分 → ⑤ 更新 SWEBENCH_COMPARE.html 多实例结果。deepseek-harness 仍需运维装 node22+rust 工具链。
-阻塞:         仅剩 deepseek-harness 未 build（rust cargo 无 + pnpm@11 + node22 无，**需运维装工具链**——平台级依赖，本线无权/不宜自装）。其余 4 harness 已就绪并在 2 instances 上评分完成。ERROR_COUNT:  0
-```
 
 ## 启动说明（首次唤醒）
 
