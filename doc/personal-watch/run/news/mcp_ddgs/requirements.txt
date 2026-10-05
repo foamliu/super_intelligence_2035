@@ -1,0 +1,12 @@
+# 免 key 搜索 MCP —— 依赖清单
+# （= supervisor（Windows 侧 cline）**现用**的 web-search MCP 的依赖；实测版本见下）
+#
+# 安装（国内慢可加镜像 -i https://pypi.tuna.tsinghua.edu.cn/simple）：
+#   python3 -m pip install -r requirements.txt
+
+mcp>=1.0            # FastMCP（stdio 服务器框架）
+ddgs>=9.16.0        # 多引擎搜索 + 网页正文提取（supervisor 机实测 9.16.0）
+
+# fetch_page 的 HTML 回退路径才需要（可选，但建议装）
+beautifulsoup4
+lxml

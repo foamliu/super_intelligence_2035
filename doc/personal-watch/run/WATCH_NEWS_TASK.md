@@ -16,18 +16,34 @@
 
 > **来源**：用户 2026-10-05 直接指派。**L1 常态采集与 G2′④ 连续性累积照常并行、不得中断。**
 
-#### A. 给 cline 装「免费 web search MCP」（还 T5 的历史欠账）
+#### A. 给 cline 装「免费 web search MCP」= **照抄 supervisor 现用的那一套**（用户 2026-10-05 指定）
 
-- **现状**：`news/mcp_web_search_free.py`（3 工具 `web_search` / `search_news` / `rss_latest`）**早已交付且 stdio 全链路实测通过**，但**从未装进 cline** → 至今全靠 **CLI 直调**绕过。
-- **目标**：把它**真正注册进 cline**，让**每次唤醒**能直接调用这些工具。
-- ⚠️ **前置事实（2026-10-05 实测）**：新运行机（腾讯 `VM-0-6-ubuntu`）的 cline 配置**布局与旧机不同**（`~/.cline/data/globalState.json` **不存在**）→ **第一步必须先探明该机 cline 的配置目录与 MCP 配置文件名/格式**。
-- **步骤（顺序执行，每步留证据）**：
-  1. **定位配置**：`ls -la ~/.cline/ 2>/dev/null`；`find ~ -maxdepth 6 -iname '*mcp*' 2>/dev/null`；`cline --help`（看有无 `mcp` 子命令）；记下 cline 版本。
-  2. **写配置**（**先备份**原文件）：server 用 `python3` 启动 `mcp_web_search_free.py`（**stdio**），路径用**仓库绝对路径** `~/super_intelligence_2035/doc/personal-watch/run/news/mcp_web_search_free.py`。
-  3. **实测（关键，不许跳）**：以配置生效的方式重开 cline → 工具列表出现 `web_search`/`search_news`/`rss_latest` → **真跑一次**、拿回**带 URL 的结果**；把原始证据贴进 `news/MCP_INSTALL.md`。
-  4. **装不上就如实写**（报错原文 + 原因），并给**等效替代**（如把 CLI 直调封成 `news/search.sh` wrapper）。🚫 不许"假装成功"。
-- **产物**：新建 **`news/MCP_INSTALL.md`**（安装记录 + 实测证据 + 复现命令）；同步 `news/README.md`、`news/FETCH_CN_NEWS.md`。
-- **红线**：**全程免 key**；配置文件里 🚫 **不得出现任何 key/token**；只改**本线** cline 配置，🚫 不动别的线（BaiZe）的配置。
+> **用户原话**：「你现在就有一个 web search 工具吧，效果似乎还不错，可以让 news agent **按照你现有的工具来配置**。」
+> → **不要再另造轮子**：直接复刻 **supervisor（Windows 侧 cline）正在用**的 `web-search` MCP。
+
+**已由 supervisor vendor 进仓库（同一份代码，非重写）**：
+| 文件 | 说明 |
+|:--|:--|
+| `run/news/mcp_ddgs/web_search_mcp_server.py` | **就是 supervisor 现用的服务器**（`E:\code\stem_fest\mcp_server\web_search_mcp_server.py` 的原样副本） |
+| `run/news/mcp_ddgs/web_search_selftest.py` | **离线**自检（不联网也能跑）→ 先跑它证明"装对了" |
+| `run/news/mcp_ddgs/requirements.txt` | 依赖清单 |
+| `run/news/mcp_ddgs/README.md` | **安装 / 注册 / 逐引擎实测 / 排错**（**先读它**） |
+
+- **它是什么**：FastMCP **stdio** 服务器、**全免 key**；6 个工具 —— `web_search` · `search_news` · `search_images` · `wiki_lookup` · `fetch_page`（正文，可分页）· `search_status`（自检，`live_probe=True` 会真发一次搜索）。
+- **依赖**：`mcp`（FastMCP）+ **`ddgs`（supervisor 机实测 9.16.0）**；可选 `beautifulsoup4` + `lxml`。
+- **环境变量（可选）**：`WEB_SEARCH_DEFAULT_REGION=cn-zh` · `WEB_SEARCH_DEFAULT_BACKEND=auto` · `WEB_SEARCH_MAX_RESULTS=8`。
+
+**步骤（顺序执行，每步留证据）**：
+1. **装依赖 + 离线自检**：`python3 -m pip install -r news/mcp_ddgs/requirements.txt`（国内慢加 `-i https://pypi.tuna.tsinghua.edu.cn/simple`）→ `python3 news/mcp_ddgs/web_search_selftest.py`（应**全 PASS**）。
+2. **定位该机 cline 配置**（⚠️ 新机布局与旧机不同，`~/.cline/data/globalState.json` **不存在**）：`ls -la ~/.cline/ 2>/dev/null`；`find ~ -maxdepth 6 -iname '*mcp*' 2>/dev/null`；`cline --help`；记 cline 版本。
+3. **注册进 cline**（**先备份**配置）：`command=python3`，`args` = **仓库绝对路径**的 `web_search_mcp_server.py`；`env` 如上；`timeout=120`。（JSON 样例见 `mcp_ddgs/README.md` §3。）
+4. ⭐ **逐引擎实测（本步决定可用性 —— 腾讯机在中国网络，海外引擎可能不可达）**：`ddgs` 回退序 = `auto → duckduckgo → brave → bing → google → mojeek → yahoo → startpage`；先 `search_status(live_probe=True)`，再写个 3 行脚本**逐个 backend 试**，做成 **实测表**（每个引擎：成功/失败 + 报错）。**`bing` 最可能可用**。
+5. **配置生效后真跑一次**：工具列表出现 6 个工具 → 各跑一次 `web_search` / `fetch_page`，拿回**带 URL 的结果**，原始证据贴进 `news/MCP_INSTALL.md`。
+6. **与本线既有 `mcp_web_search_free.py`（CN-Bing + 360）互补**：哪套通就用哪套；**两套都注册**也行 → 双后端。
+7. **装不上 / 某引擎不通 → 如实写**（报错原文 + 原因 + 替代）。🚫 不许"假装成功"。
+
+- **产物**：新建 **`news/MCP_INSTALL.md`**（安装记录 + **逐引擎实测表** + 复现命令）；同步 `news/README.md`、`news/FETCH_CN_NEWS.md`。
+- **红线**：**全程免 key**；配置里 🚫 **不得出现任何 key/token**；只改**本线** cline 配置，🚫 不动别的线（BaiZe）的配置；🚫 **不要改 vendor 的 `web_search_mcp_server.py`**（改了会与 supervisor 现用版分叉 → 要改先问）。
 
 #### B. 「东方时事解读音频」→ 文字稿：**先出调研 HTML 报告**（本批**只调研、不实施日更**）
 
