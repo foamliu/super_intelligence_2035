@@ -11,10 +11,10 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-已完成:       R1 打通 arXiv API（HTTPS/Atom → research/ARXIV_API.md）；R2 固化检索策略（queries.json）；R3/R4 首轮采集（抓取 214 → 收录 34 + 候选 180）；R1′ 取源复验；R2′ published-first + 周末自动放宽；第二~十四轮增量（15/15 ok，第三~十四轮均 0 新增）；**运维第 2 批**：`arxiv_fetch.py` 增 `comment`/`journal_ref` → ≤30d 全量重扫（候选池 1118）→ 新建 `top_k.py`（rel/q 双维 + HN 热度）→ `TOP_K.md`/`TOP_K.jsonl`（TOP-20）+ `test_top_k.py` 20/20；**运维第 3 批**：`top_k.py` 增 `--takeaways-json`（人工 `takeaway`/`action` 注入，不打分）→ `TOP_K_takeaways.json`（20 条）→ 相关面放宽「存储/芯片」重排（**#1 DeepSeek-V4.1-Flash**）→ `TAKEAWAYS.md`（≤5 条）→ `test_top_k.py` **25/25**；**视频线** `video/SHORTLIST.md`（17 条）+ `video/scripts/`（3 份口播稿）；**第十五轮**（**UTC 跨入 2026-10-05 周一**，**新建当日日报**）**工作日公告恢复 → +171 新增**（15/15 ok，精选收录 30；第 3 批 A/B **已交付未变**）；**第十六轮**（**UTC 周一 05:2x · 同批去重复核**）**0 新增**（15/15 ok）；**第十七轮**（**UTC 周一 05:5x · 同批去重复核**）**0 新增**（15/15 ok）；**第十八轮**（**UTC 周一 06:3x · 同批去重复核**）**0 新增**（15/15 ok）；**第十九轮**（**UTC 周一 07:0x · 同批去重复核**）**0 新增**（**14/15 ok / 1 FAIL（429）**，⚠️ `export.arxiv.org` 间歇性不可达但脚本重试成功）；**第二十轮**（**UTC 周一 07:5x · 同批去重复核**）**0 新增**（**15/15 ok 无重试**，第 19 轮 FAIL **已恢复**）；**第二十一轮**（**UTC 周一 08:2x · 同批去重复核**）**0 新增**（15/15 ok 无重试）；**第二十二轮**（**UTC 周一 09:0x · 同批去重复核**）**0 新增**（15/15 ok 无重试）；**第二十三轮**（**UTC 周一 09:3x · 同批去重复核**）**0 新增**（15/15 ok 无重试）；**第二十四轮**（**UTC 周一 10:1x · 同批去重复核**）**0 新增**（15/15 ok 无重试）；**第二十五轮**（**UTC 周一 10:4x · 同批去重复核**）**0 新增**（15/15 ok 无重试）；**第二十六轮**（**UTC 周一 11:1x · 同批去重复核**）**0 新增**（15/15 ok 无重试；本轮唤醒时达 ~32KB → 按 §5 将**第十二~十四轮**流水滚动归档至 `daily-memories-research/2026-10-04.md`）；**第二十七轮**（**UTC 周一 11:4x · 同批去重复核**）**0 新增**（15/15 ok 无重试 attempts=1）；**第二十八轮**（**UTC 周一 12:2x · 同批去重复核**）**0 新增**（15/15 ok 无重试 attempts=1）
-当前动作:     第二十八轮常态增量（**本轮实时取数**）：`--probe`(R1′) + `--fetch` 增量（**kept 0 / dropped 600（435 already-in-SEEN + 165 stale）**，**15/15 ok 无重试（attempts=1）**，**UTC 周一公告尚未刷新**，最近批次仍 `2026-10-02`）→ 日报 `research/2026-10-05.md` 追加「第二十八轮」+ INDEX/SEEN/papers.jsonl(不变)/ARXIV_API(§9.30) + 本记忆 + 心跳补记（第二十七/二十八轮）；并复核第 3 批 A/B 交付仍有效
+已完成:       R1 打通 arXiv API（HTTPS/Atom → research/ARXIV_API.md）；R2 固化检索策略（queries.json）；R3/R4 首轮采集（抓取 214 → 收录 34 + 候选 180）；R1′ 取源复验；R2′ published-first + 周末自动放宽；第二~十四轮增量（15/15 ok，第三~十四轮均 0 新增）；**运维第 2 批**：`arxiv_fetch.py` 增 `comment`/`journal_ref` → ≤30d 全量重扫（候选池 1118）→ 新建 `top_k.py`（rel/q 双维 + HN 热度）→ `TOP_K.md`/`TOP_K.jsonl`（TOP-20）+ `test_top_k.py` 20/20；**运维第 3 批**：`top_k.py` 增 `--takeaways-json`（人工 `takeaway`/`action` 注入，不打分）→ `TOP_K_takeaways.json`（20 条）→ 相关面放宽「存储/芯片」重排（**#1 DeepSeek-V4.1-Flash**）→ `TAKEAWAYS.md`（≤5 条）→ `test_top_k.py` **25/25**；**视频线** `video/SHORTLIST.md`（17 条）+ `video/scripts/`（3 份口播稿）；**第十五轮**（**UTC 跨入 2026-10-05 周一**，**新建当日日报**）**工作日公告恢复 → +171 新增**（15/15 ok，精选收录 30；第 3 批 A/B **已交付未变**）；**第十六轮**（**UTC 周一 05:2x · 同批去重复核**）**0 新增**（15/15 ok）；**第十七轮**（**UTC 周一 05:5x · 同批去重复核**）**0 新增**（15/15 ok）；**第十八轮**（**UTC 周一 06:3x · 同批去重复核**）**0 新增**（15/15 ok）；**第十九轮**（**UTC 周一 07:0x · 同批去重复核**）**0 新增**（**14/15 ok / 1 FAIL（429）**，⚠️ `export.arxiv.org` 间歇性不可达但脚本重试成功）；**第二十轮**（**UTC 周一 07:5x · 同批去重复核**）**0 新增**（**15/15 ok 无重试**，第 19 轮 FAIL **已恢复**）；**第二十一轮**（**UTC 周一 08:2x · 同批去重复核**）**0 新增**（15/15 ok 无重试）；**第二十二轮**（**UTC 周一 09:0x · 同批去重复核**）**0 新增**（15/15 ok 无重试）；**第二十三轮**（**UTC 周一 09:3x · 同批去重复核**）**0 新增**（15/15 ok 无重试）；**第二十四轮**（**UTC 周一 10:1x · 同批去重复核**）**0 新增**（15/15 ok 无重试）；**第二十五轮**（**UTC 周一 10:4x · 同批去重复核**）**0 新增**（15/15 ok 无重试）；**第二十六轮**（**UTC 周一 11:1x · 同批去重复核**）**0 新增**（15/15 ok 无重试；本轮唤醒时达 ~32KB → 按 §5 将**第十二~十四轮**流水滚动归档至 `daily-memories-research/2026-10-04.md`）；**第二十七轮**（**UTC 周一 11:4x · 同批去重复核**）**0 新增**（15/15 ok 无重试 attempts=1）；**第二十八轮**（**UTC 周一 12:2x · 同批去重复核**）**0 新增**（15/15 ok 无重试 attempts=1）；**第二十九轮**（**UTC 周一 12:5x · 同批去重复核**）**0 新增**（**15/15 ok attempts=1 无重试**）
+当前动作:     第二十九轮常态增量（**本轮实时取数**）：`--probe`(R1′) + `--fetch` 增量（**kept 0 / dropped 600（435 already-in-SEEN + 165 stale）**，**15/15 ok 无重试（attempts=1）**，**UTC 周一公告尚未刷新**，最近批次仍 `2026-10-02`）→ 日报 `research/2026-10-05.md` 追加「第二十九轮」+ INDEX/SEEN/papers.jsonl(不变)/ARXIV_API(§9.31) + 本记忆 + 心跳补记（第二十九轮）；并复核第 3 批 A/B 交付仍有效
 下一步:       ① 常态采集按 SOP 增量（先读 SEEN.md 去重、定窗口；**留意周一 20:00 ET 后公告刷新，下轮预计有新增**）；② TOP-K 可按需重跑（`--w1/--w2/--top/--takeaways-json` 可调）；③ **视频 V3（生成）待用户确认运行机工具链后再动**；④ **邮件职能待用户批准后才可启动**（现仅登记）；⑤ ✅ `MEMORY_RESEARCH.md` **~30KB**（≤32KB 上限内），后续每轮续写即可
-本轮新增:     0 篇采集（**UTC 周一公告尚未刷新**，最近批次仍 `2026-10-02`，与第十五~二十七轮同批去重）；R1′ 复验（arXiv ✅ / HF ❌ / RSS 有内容）+ 第二十八轮 **15/15 ok 无重试（attempts=1）**（kept 0 / dropped 600）；本轮 `export.arxiv.org` 无重试
+本轮新增:     0 篇采集（**UTC 周一公告尚未刷新**，最近批次仍 `2026-10-02`，与第十五~二十八轮同批去重）；R1′ 复验（arXiv ✅ / HF ❌ / RSS 有内容）+ 第二十九轮 **15/15 ok 无重试（attempts=1）**（kept 0 / dropped 600）；本轮 `export.arxiv.org` 无重试
 阻塞:         无（HF Daily Papers 本机不可达 → 社区热度**改用 HN Algolia 替代并注明**，不伪造 hf_daily；**视频 V3 待工具链确认**）
 ERROR_COUNT:  1（历史：第八轮唤醒 **cline 超时中断** `run timed out after 1500s`，已补记落盘；第十九轮 1 个查询 `llm-long-context` **HTTP 429 重试耗尽 FAIL**（脚本级已如实记录、**非唤醒级错误**，**第二十轮已恢复**，故 ERROR_COUNT 仍为 1；**第二十三~二十六轮 15/15 ok 无重试**）；回归 test_arxiv_fetch 49/49 + test_top_k 25/25 PASS）
 ```
@@ -47,13 +47,22 @@ ERROR_COUNT:  1（历史：第八轮唤醒 **cline 超时中断** `run timed out
 - **日流水**：`daily-memories-research/<YYYY-MM-DD>.md`
 - **关注领域**：LLM · SLM · 多模态 · agent harness（+ 邻域，见任务书 §1）
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-05`（**第二十八轮**；窗口 **≤120h**（`window_mode=weekend_batch`）；实际批次 `2026-10-02`（最近公告批次，与第十五~二十七轮同批）；本轮 **+0 新增**（**15/15 ok 无重试 attempts=1**））
+- **上次采集窗口**：`2026-10-05`（**第二十九轮**；窗口 **≤120h**（`window_mode=weekend_batch`）；实际批次 `2026-10-02`（最近公告批次，与第十五~二十八轮同批）；本轮 **+0 新增**（**15/15 ok 无重试 attempts=1**））
 - **TOP-K 窗口（第 2 批专用，第 3 批沿用）**：`2026-09-03 ~ 2026-10-01`（**≤30d / 720h**，`window_mode=override`；候选池 **1118** 篇 → TOP-20）
-- **累计收录**：`91` 篇（另候选 487 篇，仅存 `SEEN.md` 防重；**二十八轮**累计抓取 578 条 —— 第三~第十四轮新增均 **0**（周末未公告），**第十五轮 +171**，**第十六~二十八轮 +0**（UTC 周一公告尚未刷新，同批去重复核；第十九轮 1 查询 429 已如实记录、**第二十轮已恢复**））
+- **累计收录**：`91` 篇（另候选 487 篇，仅存 `SEEN.md` 防重；**二十九轮**累计抓取 578 条 —— 第三~第十四轮新增均 **0**（周末未公告），**第十五轮 +171**，**第十六~二十九轮 +0**（UTC 周一公告尚未刷新，同批去重复核；第十九轮 1 查询 429 已如实记录、**第二十轮已恢复**））
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
+- **2026-10-05（UTC 周一）** —— **第二十九轮（常态增量 · 同批去重复核）→ 0 新增（本轮实时取数）**。
+  - **R1′（取源复验）**：`--probe --config research/queries.json`（`generated=2026-10-05T12:57:20.114546+00:00`）→ **arXiv ✅ `200`+`atom+xml`（最新 `2026-10-02T17:59:14Z`，`totalResults=626530`）** / **HF ❌ `Network is unreachable`** / **RSS cs.CL/CV/LG ✅ `items=185/191/456`（工作日有内容）**。证据 → `research/raw/2026-10-05-probe-r29.json`。
+  - **增量采集**：`--fetch --seen research/SEEN.md`（`weekend_batch`，120h，`generated=2026-10-05T12:59:15.067970+00:00`）→ **15/15 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600（435 already in SEEN + 165 stale >120h）** → **0 新增**（**UTC 周一 12:5x**，**周一公告尚未刷新**，最近批次仍 `2026-10-02`，与第十五~二十八轮同批）。证据 → `research/raw/2026-10-05-fetch-r29.json`。
+  - **第 3 批 A/B 复核**：TOP-K（`takeaway`/`action` 20 条）+ `TAKEAWAYS.md`（5 条）+ 视频线（`SHORTLIST.md` 17 / `scripts/` 3）**已交付未变**；**无新增 → 不重跑**（诚实标注）。
+  - **心跳**：`daily-memories-research/2026-10-05.md` 顶部新增 **第二十九轮** 心跳行。
+  - **落盘**：日报 `research/2026-10-05.md` 追加「第二十九轮」；`INDEX.md`（累计仍 **收录 91 / 候选 487 / 累计抓取 578** + 2026-10-05 表格 cell 改「第十六~二十九轮」+ 头部「第十六~二十九轮 +0 / 二十九楼」+ 🗓 第二十九轮行）；`SEEN.md` 追加第二十九轮备注；`papers.jsonl`（**不变**）；`ARXIV_API.md` 新增 **§9.31**。
+  - **回归测试**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
+
+
 - **2026-10-05（UTC 周一）** —— **第二十八轮（常态增量 · 同批去重复核）→ 0 新增（本轮实时取数）**。
   - **R1′（取源复验）**：`--probe --config research/queries.json`（`generated=2026-10-05T12:23:15.449932+00:00`）→ **arXiv ✅ `200`+`atom+xml`（最新 `2026-10-02T17:59:14Z`，`totalResults=626530`）** / **HF ❌ `Network is unreachable`** / **RSS cs.CL/CV/LG ✅ `items=185/191/456`（工作日有内容）**。证据 → `research/raw/2026-10-05-probe-r28.json`。
   - **增量采集**：`--fetch --seen research/SEEN.md`（`weekend_batch`，120h，`generated=2026-10-05T12:23:10.983556+00:00`）→ **15/15 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600（435 already in SEEN + 165 stale >120h）** → **0 新增**（**UTC 周一 12:2x**，**周一公告尚未刷新**，最近批次仍 `2026-10-02`，与第十五~二十七轮同批）。证据 → `research/raw/2026-10-05-fetch-r28.json`。
@@ -135,22 +144,8 @@ ERROR_COUNT:  1（历史：第八轮唤醒 **cline 超时中断** `run timed out
   - **落盘**：日报追加「第十九轮」；`INDEX.md`（累计仍 **收录 91 / 候选 487 / 累计抓取 578** + 🗓 第十九轮行）；`SEEN.md` 追加第十九轮备注；`papers.jsonl`（**不变**）；`ARXIV_API.md` 新增 **§9.21**（并清理 §9.20 末尾重复行）。
 
 
-- **2026-10-05（UTC 周一）** —— **第十八轮（常态增量 · 同批去重复核）→ 0 新增（本轮实时取数）**。
-  - **R1′（取源复验）**：`--probe --config research/queries.json`（`generated=2026-10-05T06:30:08.641040+00:00`）→ **arXiv ✅ `200`+`atom+xml`（最新 `2026-10-02T17:59:14Z`，`totalResults=626530`）** / **HF ❌ `Network is unreachable`** / **RSS cs.CL/CV/LG ✅ `items=185/191/456`（工作日有内容）**。证据 → `research/raw/2026-10-05-probe-r18.json`。
-  - **增量采集**：`--fetch --seen research/SEEN.md`（`weekend_batch`，120h，`generated=2026-10-05T06:32:07.982659+00:00`）→ **15/15 `ok`**（无重试），**kept 0 / dropped 600（435 already in SEEN + 165 stale >120h）** → **0 新增**（**UTC 周一 06:3x**，**周一公告尚未刷新**，最近批次仍 `2026-10-02`，与第十五~十七轮同批）。证据 → `research/raw/2026-10-05-fetch-r18.json`。
-  - **第 3 批 A/B 复核**：TOP-K（`takeaway`/`action` 20 条）+ `TAKEAWAYS.md`（5 条）+ 视频线（`SHORTLIST.md` 17 / `scripts/` 3）**已交付未变**；**无新增 → 不重跑**（诚实标注）。
-  - **落盘**：日报追加「第十八轮」章节；`INDEX.md`（累计仍 **收录 91 / 候选 487 / 累计抓取 578** + 🗓 第十八轮行）；`SEEN.md` 追加第十八轮备注；`papers.jsonl`（**不变**）；`ARXIV_API.md` 新增 **§9.20**。
-  - **回归测试**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）。
-
-- **2026-10-05（UTC 周一）** —— **第十五轮（常态增量 · UTC 跨入 10-05、新建当日日报）→ 工作日公告恢复，+171 新增（本轮实时取数）**。
-  - **R1′（取源复验）**：`--probe --config research/queries.json`（`generated=2026-10-05T04:42:20Z`）→ **arXiv ✅ `200`+`atom+xml`（最新 `2026-10-02T17:59:14Z`，`totalResults=626530`）** / **HF ❌ `Network is unreachable`** / **RSS cs.CL/CV/LG ✅ `items=185/191/456`（工作日有内容）**。证据 → `research/raw/2026-10-05-probe-r15.json`。
-  - **增量采集**：`--fetch --seen research/SEEN.md`（`weekend_batch`，120h，`generated=2026-10-05T04:44:08Z`）→ **15/15 `ok`**（无重试），**kept 171 / dropped 416（404 already in SEEN + 其余 stale）** → **+171 新增**（**UTC 周一**，arXiv 工作日公告恢复，已刷新到 `2026-10-02` 提交批）。证据 → `research/raw/2026-10-05-fetch-r15.json`。
-  - **采集/整理**：**精选收录 30 篇**（LLM 9 / SLM 1 / 多模态 7 / agent harness 9 / 邻域 4）逐条中文摘要 → `research/2026-10-05.md` + `papers.jsonl`（累计 91）；**候选 141 篇** → `SEEN.md`（累计 578 = 收录 91 / 候选 487）。
-  - **口径（新建当日日报）**：**UTC 由 10-04 跨入 10-05（周一）** → 按「日报日期 = UTC 日期」**新建 `research/2026-10-05.md`**（承接 `2026-10-04.md` 第十四轮）；`INDEX.md` 新增 row + 🗓 第十五轮；`SEEN.md` 插入 171 行 + 备注；`ARXIV_API.md` 新增 **§9.17**。
-  - **第 3 批 A/B 复核**：TOP-K（`takeaway`/`action` 20 条）+ `TAKEAWAYS.md`（5 条）+ 视频线（`SHORTLIST.md` 17 / `scripts/` 3）**已交付未变**；本轮有新增论文，**TOP-K 是否重跑待 supervisor 决定**（本轮未擅自重跑）。
-  - **回归测试**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）。
-
 - **2026-10-03 ~ 10-04** —— **第八~十四轮及更早（第六/七轮、运维第 2/3 批、建线首轮 + 第二~五轮）→ 详细条目已按 §3 滚动归档**：
+  - 第十五/十八轮 → **`daily-memories-research/2026-10-05.md`**（**2026-10-05 第二十九轮唤醒时**触发 ≤32KB 上限滚动；第十五轮 **+171**，第十八轮 **0 新增**，R1′ arXiv ✅ / HF ❌ / RSS 有内容）；
   - 第十二/十三/十四轮 → **`daily-memories-research/2026-10-04.md`**（**2026-10-05 第二十六轮唤醒时**触发 ≤32KB 上限滚动；各轮结论均为 **0 新增**，R1′ arXiv ✅ / HF ❌ / RSS 周末空）；
   - 第十六/十七轮 → **`daily-memories-research/2026-10-05.md`**（**2026-10-05 第二十七轮唤醒时**触发上限滚动；各轮结论均为 **0 新增**，R1′ arXiv ✅ / HF ❌ / RSS 有内容）；
   - 第八/九轮 + 第十/十一轮 → `daily-memories-research/2026-10-03.md`「归档 · MEMORY 滚动（2026-10-05 第二十三轮唤醒时执行）」（**2026-10-05 第二十三轮唤醒时**触发 ≤32KB 上限滚动）；
