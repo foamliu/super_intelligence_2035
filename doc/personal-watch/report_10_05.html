@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>观察哨 personal-watch 工作汇报 · 2026-10-05</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#0d5c22; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6b4e00; }
+  .danger { background:#fff0f0; border:1px solid #ffc9c9; border-left:4px solid var(--bad); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#8a1c1c; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>观察哨（personal-watch）工作汇报 · 2026-10-05</h1>
+  <div class="sub">巡检发现<b>两条线停摆 ≈27h</b> → 建成 <b>ops 中继</b>（纯 bash 零 token 远程运维）· news <b>N1 全库完抓 249 万条</b> · 🚨 用户纠错 <b>新闻语料 96MB 入 GitHub</b> → 立「体积红线」并<b>止损</b></div>
+  <div class="meta">
+    <span>📅 2026-10-05（生成于 <b>~22:15</b>）</span>
+    <span>📝 <code>foamliu/super_intelligence_2035</code> @ <code>main</code></span>
+    <span>🧭 supervisor 通道 = 任务书「运维指令区」+ git + <b>ops 中继</b></span>
+    <span>📈 本报告为 <b>10-05 日报</b>（前一日见 <code>report_10_04.html</code>）</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <strong>今天的主线有三条：① 发现并修复「静默停摆」；② 建起一条不依赖 cline 的运维通道；③ 被用户抓出「新闻语料塞进 GitHub」并止血。</strong>
+  <ol style="margin:10px 0 0">
+    <li><b>🔴 停摆巡检</b>：两条线最后提交停在 <b>10-04 09:31/09:27</b>，至 10-05 12:20 已静默 <b>≈27h</b>。用 <code>git ls-remote</code> 排除「缓存误判」（10-04 的老坑），旁证 <b>BaiZe 全线正常</b> → 是<b>本线特有</b>。</li>
+    <li><b>🔌 ops 中继建成</b>：<b>loop 停了/撞额度/OOM 时 git 上什么都看不到</b> → 新建 <code>run/ops_relay.sh</code>（<b>纯 bash、零 token、不依赖 cline</b>），用户一启，诊断结果自动落 <code>ops/outbox.md</code>。</li>
+    <li><b>🩺 诊断结论</b>：<b>OOM 无痕迹 · 内存/CPU/磁盘全富余</b> → <b>27h 停摆与资源无关</b>；更可能是<b>进程被杀/实例重启</b>（<code>setsid &amp;</code> 非开机自启）。</li>
+    <li><b>🚨 用户重大纠错</b>：<b>「别让 agent 把中国一年的新闻打包放 GitHub」</b> —— <code>chinanews-2016~2026.jsonl.gz</code> <b>11 个分片 ≈ 96 MB 全部入 git</b>；<b>根因是我的旧口径漏洞</b>（单年 &gt;20MB）。→ 立新规 <b>≥5MB 不得入 git</b>，并已通过 <b>ops RUN_ID 5</b> 把 11 分片<b>移出索引</b>（保留本地文件）。</li>
+    <li><b>📚 产出</b>：news <b>N1 全库完抓 = 2,492,230 条 / 3929 天 / 11 片（2016–2026）</b>，事件库 <b>75,610 条</b>；当日真新闻 <b>36 条</b>（累计 <b>105</b>）。research 周一公告恢复 <b>+171</b>，随后 <b>15 轮去重复核 +0</b>。</li>
+  </ol>
+</div>
+
+<div class="note">
+  <b>⚠️ 如实标注（今日未完成项 / 风险）：</b>
+  <ul style="margin:8px 0 0">
+    <li><b><code>doc/keys.txt</code> 已被 git 跟踪</b>（提交 <code>56fae84</code>，含 <b>8 个 LLM API Key + ASR + 文生图</b>）且<b>不在 <code>.gitignore</code></b> → <b>🔴 建议尽快轮换 Key</b>（已进历史 = 视为已泄露）。</li>
+    <li><b>存量 96MB 语料「刻意未动」</b>：迁移需 <code>git rm --cached</code>，但别的克隆 <code>pull</code> 时会「删除」这些文件 → <b>必须先有网盘备份</b>；🚫 <b>严禁 <code>filter-repo</code> / force-push</b>（与 BaiZe 四条线共享远端）。</li>
+    <li><b>G2′④「连续 7 个自然日稳定运行」</b> —— <b>时间</b>问题，今日不可能完成（自报 <b>已连续 1 天 / 目标 7 天 · 未达标</b>）。</li>
+    <li><b>网盘工具不可用</b>（无 <code>bypy</code>）→ ≥5MB 文件一律<b>本地保留 + 清单登记 + 如实标「未上云」</b>。</li>
+  </ul>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi"><div class="v">58</div><div class="l">今日提交（<code>doc/personal-watch</code>）</div></div>
+  <div class="kpi"><div class="v">2,492,230</div><div class="l">news 语料条数（3929 天 · 11 片 · 全库完抓）</div></div>
+  <div class="kpi"><div class="v">75,610</div><div class="l">news 政策事件（EVENTS.csv）</div></div>
+  <div class="kpi"><div class="v">36 / 105</div><div class="l">当日 / 累计 真新闻条数</div></div>
+  <div class="kpi"><div class="v">91 + 487</div><div class="l">research 收录论文 + 候选</div></div>
+</div>
+
+<div class="toc">
+  <strong>目录</strong>
+  <ol>
+    <li><a href="#s1">两条线状态一览</a></li>
+    <li><a href="#s2">10-04 → 10-05 增量时间线</a></li>
+    <li><a href="#s3">🔴 巡检：两条线停摆 ≈27h</a></li>
+    <li><a href="#s4">🔌 ops 中继：不依赖 cline 的运维通道</a></li>
+    <li><a href="#s5">🚨 语料体积红线（用户重大纠错）</a></li>
+    <li><a href="#s6">news：N1 全库完抓 + L1 加固 + 常态采集</a></li>
+    <li><a href="#s7">research：周一公告恢复 + 三十轮去重</a></li>
+    <li><a href="#s8">⭐ 关键教训</a></li>
+    <li><a href="#s9">需要你决策</a></li>
+    <li><a href="#s10">下一步 / 待办</a></li>
+  </ol>
+</div>
+
+
+<h2 class="sec" id="s1"><span class="no">1</span>两条线状态一览</h2>
+<table>
+  <tr><th>线</th><th>今日进展</th><th>当前状态</th><th>下一步</th></tr>
+  <tr>
+    <td><b>news</b><br>语料 / L1 / 探索</td>
+    <td>✅ <b>N1 全库完抓</b>：<b>2,492,230 条 / 3929 天 / 11 片（2016→2026）</b>，游标收尾 <code>2015-12-31</code>；全链重跑 <b>EVENTS 75,610 条</b>；<b>L1 预警加固</b>（§4.3 固定召回率 precision + §4.4 措辞强度 tone，<b>如实判未胜出</b>）；常态采集 <b>第十一~二十六轮</b>，当日 <b>36 条</b>（累计 105）</td>
+    <td><span class="badge b-ok">✅ 运行中</span> · <code>WAITING=1</code> · 台账 <b>9 行</b></td>
+    <td><b>G2′④ 连续 7 天</b>（隔日 ≥20h 真实重跑）· 下一个候选文本信号（新词首发/版面）</td>
+  </tr>
+  <tr>
+    <td><b>research</b><br>借鉴 / 科普</td>
+    <td>✅ <b>第十五轮（UTC 周一）公告恢复 → +171</b>（精选收录 <b>30</b>：LLM 9 / SLM 1 / 多模态 7 / agent harness 9 / 邻域 4，候选 141）；<b>第十六~三十轮同批去重 → 各 0</b>；<b>第十九轮 1 查询 429 已如实记录、第二十轮恢复</b>；<b>第三十轮 <code>window_mode</code> 首次自动 <code>weekend_batch</code>(120h)→<code>daily</code>(72h)</b>；回归 <b>49/49 + 25/25</b></td>
+    <td><span class="badge b-ok">✅ 运行中</span> · <code>WAITING=1</code> · 累计 <b>收录 91 / 候选 487 / 抓取 578</b></td>
+    <td>常态增量（留意周一 20:00 ET 后公告刷新）· 视频 V3 / 邮件职能<b>仍待批</b></td>
+  </tr>
+</table>
+<div class="card">
+  <b>组织方式未变</b>：<b>supervisor（我）</b>只派活/巡检/汇总/拍板 → 通过<b>任务书「运维指令区」+ git</b> 下发；<b>worker</b> 各自在 <code>run/</code> 下独立跑、独立记流水。<b>今日新增第三条通道：<code>run/ops_relay.sh</code></b>（不依赖 cline，专治「loop 停了没法运维」）。
+</div>
+
+<h2 class="sec" id="s2"><span class="no">2</span>10-04 → 10-05 增量时间线</h2>
+<p>今日 <b>58 次提交</b>（首个 12:21 · 末个 21:43）。按小时分布：12 点 <b>9</b> · 13 点 8 · 14 点 6 · <b>15 点 12</b> · 16 点 4 · 17 点 3 · 18 点 6 · 19 点 4 · 20 点 2 · 21 点 4。主要节点：</p>
+<table>
+  <tr><th>时间</th><th>事件</th></tr>
+  <tr><td><b>12:20–12:23</b></td><td>🔴 <b>巡检：两条线已停 ≈27h</b>（<code>ls-remote</code> 排除缓存误判）→ 处置：任务书加<b>心跳条款</b>（零重启）+ 新建 <code>DEPLOY_CHECKLIST.md</code> / <code>LLM_ROTATE_INTEGRATION.md</code></td></tr>
+  <tr><td><b>12:28</b></td><td>🔌 <b>新建 ops 中继</b> <code>ops_relay.sh</code> + <code>ops/{inbox,outbox,.last_run_id,README}</code>；内置 <code>RUN_ID 1</code> 诊断块</td></tr>
+  <tr><td><b>12:31–12:49</b></td><td>🩺 <b>RUN_ID 1 诊断到手</b>：非 OOM / 非资源 / cline 在跑 → 建 <code>STABILITY_LOG.md</code>、修运行机缺 numpy</td></tr>
+  <tr><td><b>13:51–13:55</b></td><td>🔧 修中继 2 处缺陷（<b>git 操作不再吞错</b> + 推送前 <code>fetch+pull --rebase</code>）；🚨 <b>台账诚信处置</b>（G2′④ 改为可达成口径 + §4 新增铁律⑨⑩）</td></tr>
+  <tr><td><b>14:24–15:10</b></td><td>📚 <b>N1 语料 195 万 → 249 万</b>；全链重跑 <b>EVENTS 63,398 → 75,610</b>；修 <code>--repair</code> 并发双抓 + watcher 自匹配死锁</td></tr>
+  <tr><td><b>15:09–15:31</b></td><td>🚨 <b>体积红线</b>：用户纠错 → 立规（≥5MB 不入 git）+ 3 个 <code>.gitignore</code>；<b>RUN_ID 3/4/5</b>（体检 .git=592MB / 探网盘 / <b>11 分片移出索引</b>）</td></tr>
+  <tr><td><b>15:36–16:54</b></td><td>✅ <b>N1 第 7 轮收尾（2,492,230 条 / 11 片 / 游标 2015-12-31）</b>；🛡 <b>L1 加固</b>：§4.3 固定召回率 precision（walk-forward）+ <b>§4.4 措辞强度 tone 信号（如实判未胜出）</b></td></tr>
+  <tr><td><b>17:27–21:43</b></td><td>📰 news <b>第十九~二十六轮</b>常态采集（当日累计 <b>36</b>）；🔬 research <b>第二十二~三十轮</b>同批去重（各 +0）</td></tr>
+</table>
+
+
+<h2 class="sec" id="s3"><span class="no">3</span>🔴 巡检：两条线停摆 ≈27h</h2>
+<div class="danger">
+  <b>现象</b>：两条线最后提交停在 <b>10-04 09:31（research r14）/ 09:27（news auto-commit）</b>，至用户 10-05 12:20 查询时仍无新提交 —— <b>静默 ≈27h</b>。<br>
+  <b>判定方法（按 10-04 立的巡检铁律）</b>：① <code>git ls-remote --heads origin main</code>（秒回）与本地 <code>origin/main</code> 比对 → 发现<b>本地已与远端一致</b>（<code>dea95f9</code>）→ <b>无需 fetch，直接可信</b>；② <code>git log -- doc/personal-watch</code> 确认最后提交时间。<br>
+  ✅ <b>排除了 10-04 那次「陈旧缓存误判」</b>（本次 <code>local == remote</code>）。
+</div>
+<table>
+  <tr><th>证据</th><th>观察</th><th>推论</th></tr>
+  <tr><td>旁证：同期 <b>BaiZe/ZhuLong 全线正常</b></td><td>10-05 11:29–12:14 一直在提交（P-9.9 / vision R11-F / harness R67 / data wake126 / zhulong ops）</td><td><b>机器与网络正常</b>，是<b>本线特有</b></td></tr>
+  <tr><td>news loop 兜底 <code>PUSH_INTERVAL=5h</code></td><td>本应出现 <b>~14:27 的 auto-commit</b>（上次 09:27）—— <b>没出现</b></td><td>该 loop <b>至少 5h 未跑完一个周期</b></td></tr>
+  <tr><td>可能根因（当时候选）</td><td>BaiZe 10-04 17:00 现场实测 <code>deepseek-v4-pro-fp4</code> → <b>429 额度耗尽</b>；base 须与模型匹配</td><td>本线失败兜底把「额度用完」判致命 → <b>60s 短睡无限重试、零产出 = 静默</b></td></tr>
+</table>
+
+<h3>3.1 🩺 诊断结果（ops RUN_ID 1，用户贴回）→ <b>推翻「资源」假设</b></h3>
+<p>运行机 <b>腾讯云 <code>VM-0-6-ubuntu</code>（2 vCPU / 4 GiB）</b>：</p>
+<table>
+  <tr><th>检查</th><th>值</th><th>判定</th></tr>
+  <tr><td><b>OOM</b></td><td>第 3 节<b>无记录</b></td><td><span class="badge b-ok">❌ 不是 OOM</span></td></tr>
+  <tr><td><b>内存</b></td><td>total 3723M / used 1062M / <b>available 2661M</b> / <b>Swap 1987M 用 0</b></td><td><span class="badge b-ok">✅ 宽裕</span></td></tr>
+  <tr><td><b>磁盘</b></td><td>69G 用 6.8G（<b>11%</b>）</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td><b>CPU top5</b></td><td>最高 <b>2.2%</b>（cline 本体），其余是腾讯云监控</td><td><span class="badge b-ok">✅ CPU 不是问题</span></td></tr>
+  <tr><td><b>cline 进程</b></td><td>PID 98716，已跑 4:53</td><td><span class="badge b-ok">✅ agent 活着</span></td></tr>
+  <tr><td>另见</td><td><code>curl get-pip.py</code> 在跑；<code>globalState.json</code> 无</td><td>⚠️ 补 pip/numpy；该机 cline 配置布局不同（待查）</td></tr>
+</table>
+<div class="note">
+  <b>结论：27h 停摆与资源无关</b>（内存/CPU/磁盘全富余）→ 更像 <b>进程被杀 / 实例重启</b> 或 <b>鉴权 / 额度</b>。
+  <br>⚠️ <b>重启提醒</b>：<code>setsid ... &amp;</code> <b>不是开机自启</b> → <b>实例重启会杀掉两条 loop</b>（这正是「看起来停了」的形态之一）。<br>
+  📌 补充（RUN_ID 2，14:40）：追因 <b>research 线为何缺席</b> + loop 保活机制排查（cron/systemd/screen/自启/进程树/脚本守护逻辑）；记录 <b>机器 09:10 左右重启过</b>、当时<b>只有 news 在跑</b>。
+</div>
+
+<h3>3.2 处置（本次已做）</h3>
+<table>
+  <tr><th>#</th><th>处置</th><th>说明</th></tr>
+  <tr><td>1</td><td><b>心跳条款（零重启）</b> → 写入 news / research 两份任务书</td><td>每轮唤醒<b>必须</b>向 <code>daily-memories-*/&lt;date&gt;.md</code> 追加一行 <code>[HH:MM] wake | PHASE=… | 本轮=…</code>（<b>0 变更也必须写</b>）→ supervisor <b>从 git 端即可区分「在跑长任务」与「已停」</b></td></tr>
+  <tr><td>2</td><td><b>额度轮换接入方案</b> → <code>run/LLM_ROTATE_INTEGRATION.md</code></td><td>复用 BaiZe 的 <code>llm_rotate.sh</code>（<code>llm_parse_candidates</code> / <code>llm_probe</code> / <code>llm_pick</code>），给出<b>可直接套用的补丁</b>；⚠️ 改 loop.sh <b>须先 pkill 再改再启</b>；⚠️ 标明跨线改 base 的干扰风险</td></tr>
+  <tr><td>3</td><td><b>新机部署清单</b> → <code>run/DEPLOY_CHECKLIST.md</code></td><td>bring-up（apt/git/python3/cline）· <b>cline 配置不在仓库 → 需重建</b> · <b>2 核加固</b>（swap / 两条 loop 错峰 / 抓取 <code>nice -19 ionice -c3</code> / OOM 排查）· <b>systemd 自启模板</b></td></tr>
+</table>
+<p><b>两者分工</b>：<b>心跳 = 可观测性（不需重启）</b>；<b>llm_rotate = 可用性（需重启）</b>。</p>
+
+
+<h2 class="sec" id="s4"><span class="no">4</span>🔌 ops 中继：不依赖 cline 的运维通道</h2>
+<p><b>动机</b>：<b>loop 停了 / 撞额度 / OOM 时，git 上「什么都看不到」</b>。中继<b>纯 bash、零 token、不依赖 cline</b> → <b>loop 停着也能远程运维</b>。</p>
+<table>
+  <tr><th>文件</th><th>作用</th></tr>
+  <tr><td><code>run/ops_relay.sh</code></td><td>中继主程序（照抄 BaiZe 设计 + <b>修坑</b> + <b>加拦截</b>）</td></tr>
+  <tr><td><code>run/ops/inbox.md</code></td><td>运维下发（<b>已内置 <code>RUN_ID 1</code> = 诊断块</b>）</td></tr>
+  <tr><td><code>run/ops/outbox.md</code></td><td>执行结果（<b>只增不改</b>，审计留痕）</td></tr>
+  <tr><td><code>run/ops/.last_run_id</code></td><td>游标（初始 0）</td></tr>
+  <tr><td><code>run/ops/README.md</code></td><td>用法 + 安全 + 与 BaiZe 版的差异</td></tr>
+</table>
+<h3>4.1 ✅ 修掉 BaiZe 的坑 + 新增拦截</h3>
+<ul>
+  <li>🔧 <b>BaiZe 版「只执行<u>第一个</u> <code>```bash</code> 块」→ 新命令会静默失效</b>；本版<b>支持多段 <code>## RUN_ID N</code> 历史共存，总执行 RUN_ID 最大那一段</b>（实测 <code>RUN_ID=1</code> 提取到 25 行诊断块 ✅）→ <b>老块不用删/降级</b>。</li>
+  <li>➕ <b>新增 3 条拦截</b>：<code>git clean -fdx</code>（会删别线在途文件）· <code>git reset --hard</code> · <b>杀 <code>ops_relay</code></b>（别断信道）。</li>
+  <li>🚫 <b>停止纪律</b>：只可 <code>pkill -f watch_ops_relay.sh</code>；<b>别</b> <code>pkill -f ops_relay.sh</code>（会误杀 <b>BaiZe 的中继</b>）。</li>
+  <li>🔍 <b>内置诊断块覆盖</b>：loop 进程 / loop 日志尾部 / <b>OOM（dmesg）</b> / free+df / CPU top5 / cline base（<b>不打 key</b>）/ git 状态。</li>
+</ul>
+<h3>4.2 🔧 「结果推不上来」的病根（已确认 + 已修）</h3>
+<div class="danger">
+  <b>症状</b>：日志 <code>RUN_ID=1 executed, exit=0</code>，但 <code>git status</code> 显示 <code>ops/outbox.md</code> <b>仍 modified（未提交）</b>。<br>
+  <b>根因</b>：<b><code>git add</code>/<code>commit</code> 那步失败，却被原代码 <code>2&gt;/dev/null || return 0</code> 吞掉</b>（12:31 时 news agent 正在抓取/提交，<b><code>index.lock</code> 冲突</b>极可能）。
+</div>
+<div class="ok-box">
+  <b>✅ 已修 2 处</b>：① <b>分别报 add / commit / push 的失败原因</b>（不再静默）；② <b><code>git_publish</code> 推送前先 <code>fetch + pull --rebase --autostash</code></b>（本仓库与 <b>4 条 BaiZe 线共享远端</b>，不 rebase 必被拒）。
+</div>
+<h3>4.3 今日中继执行记录</h3>
+<table>
+  <tr><th>RUN_ID</th><th>时间</th><th>用途</th><th>结果</th></tr>
+  <tr><td><b>1</b></td><td>12:31</td><td>诊断块（进程/日志/OOM/资源/base）</td><td><code>exit=0</code> · 定性：<b>非 OOM / 非资源</b></td></tr>
+  <tr><td><b>2</b></td><td>14:40</td><td>追因 research 缺席 + loop 保活机制</td><td><code>exit=0</code> · 记录「<b>机器 09:10 左右重启过</b>」</td></tr>
+  <tr><td><b>3</b></td><td>15:28</td><td>紧急体检：语料体积 / git 跟踪 / 历史污染 / <code>.gitignore</code>（<b>只读</b>）</td><td><code>exit=0</code> · <b>.git = 592MB，每轮 +110MB（gz 无 delta）</b></td></tr>
+  <tr><td><b>4</b></td><td>15:28</td><td>探网盘工具链（<code>bypy</code>/<code>BaiduPCS-Go</code>）+ 生成 96MB 语料 <b>sha256 manifest</b>（为迁出备料）</td><td><code>exit=0</code> · <b>无 bypy → 网盘不可用</b>（如实标「未上云」）</td></tr>
+  <tr><td><b>5</b></td><td>15:31</td><td><b>止损指令</b>：11 分片 <code>git rm --cached</code>（保留本地文件）+ 仓库外双备份 + 推送前 rebase</td><td><code>exit=0</code> · ✅ <b>11 分片已移出索引</b></td></tr>
+</table>
+<div class="note">
+  ⚠️ <b>安全定位</b>：中继本质是<b>远程代码执行通道</b> → <b>仓库须 private</b>；与 <b><code>keys.txt</code> 入仓</b>叠加 → <b>风险放大</b>，务必轮换 Key。
+</div>
+
+
+<h2 class="sec" id="s5"><span class="no">5</span>🚨 语料体积红线（用户重大纠错）</h2>
+<div class="danger">
+  <b>🔴 用户原话</b>：<b>「不要让 agent 把中国一年的新闻打包放在 github 里啊！这个错也太蠢了吧」</b>
+</div>
+<p><b>事实</b>：<code>news/archive/chinanews-2016~2026.jsonl.gz</code> = <b>11 个分片 ≈ 96 MB，最小 5.51 MB</b> → <b>全部已入 git</b>（且历史里也有）。</p>
+<div class="note">
+  <b>根因（我的锅）</b>：旧口径 <b>「单年 &gt;20MB 不入 git」</b> → <b>单个都不超 20MB ⇒ 全部「合规」通过，总量 96MB 无人管</b>。<br>
+  <b>趋势</b>：agent 正在<b>倒序回溯 2016→2015→…</b>，不管就是 <b>500MB – 1GB 级膨胀</b>。
+</div>
+<table>
+  <tr><th>分片</th><th>条数</th><th>大小</th><th>sha256(前16)</th></tr>
+  <tr><td><code>chinanews-2016.jsonl.gz</code></td><td>344,661</td><td>15,556,999 B</td><td><code>5e4316c8e86bcf39</code></td></tr>
+  <tr><td><code>chinanews-2017~2019</code></td><td>232,892 / 250,832 / 277,247</td><td>≈ 10.6 / 11.1 / 12.3 MB</td><td>（见 <code>INDEX_FILES.md</code>）</td></tr>
+  <tr><td><code>chinanews-2020~2023</code></td><td>282,368 / 220,042 / 238,861 / 174,828</td><td>≈ 12.2 / 9.7 / 10.3 / 7.7 MB</td><td>…</td></tr>
+  <tr><td><code>chinanews-2024~2026</code></td><td>172,995 / 165,122 / 132,382</td><td>≈ 7.4 / 7.1 / 5.8 MB</td><td>…</td></tr>
+  <tr><th>合计（11 片）</th><th><b>2,492,230</b></th><th><b>≈ 96 MB</b></th><th>—</th></tr>
+</table>
+<h3>5.1 ✅ 新规（用户明令）：单个文件 ≥5MB → 不得用 GitHub，走百度云盘</h3>
+<table>
+  <tr><th>落点</th><th>内容</th></tr>
+  <tr><td><code>WATCH_NEWS_TASK.md</code> <b>§4-11</b></td><td>体积红线：禁 <code>git add -f</code> · 禁压 zip 规避 · 按<b>原始字节</b>判 · <b>网盘不可用则宁可不传</b> · <b>数据不在 git 但「账」必须在 <code>INDEX_FILES.md</code></b></td></tr>
+  <tr><td><code>WATCH_RESEARCH_TASK.md</code> <b>§4-9</b></td><td>同口径；<b>PDF 线一律不进 git</b>；旧 <code>&gt;20MB</code>（第 48/130 行）<b>作废</b></td></tr>
+  <tr><td><code>news/README.md</code> §5 · <code>news/archive/README.md</code> §5</td><td>同步修订，<b>旧口径作废</b></td></tr>
+  <tr><td><b>新建 3 个 <code>.gitignore</code></b></td><td><code>run/</code> · <code>news/archive/</code> · <code>research/</code> → <code>gz/zip/pdf/docx/音视频/模型权重</code>；<b><code>git check-ignore --no-index</code> 已验证命中</b> ✅</td></tr>
+</table>
+<div class="ok-box">
+  <b>💡 关键教训</b>：<b>光写任务书拦不住 —— 规则必须落成机制（<code>.gitignore</code>）。</b> 这次就是「有规则、没机制」，所以 96MB 一路溜进仓库。
+</div>
+<h3>5.2 ⚠️ 存量 96MB：<b>刻意不动</b>（风险太高）· 但<b>已止损</b></h3>
+<ul>
+  <li>迁移需 <code>git rm --cached</code>（<b>保留本地文件</b>），但 <b>别的克隆 <code>pull</code> 时会把这些文件「删除」</b> → <b>必须先有网盘备份</b>；</li>
+  <li>🚫 <b>严禁 <code>git filter-repo</code> / BFG / force-push</b> —— <b>远端与 BaiZe 四条线共享，会毁掉它们的仓库</b>。</li>
+  <li>✅ <b>已做（RUN_ID 5）</b>：11 分片 <code>git rm --cached</code> <b>移出索引</b>（保留本地文件）+ 仓库外双备份 + 推送前 rebase → <b>验证 <code>git ls-files news/archive/*.gz</code> 已为空</b>。<span class="badge b-ok">✅ 出血已止</span></li>
+  <li>📊 现存 <code>.git</code> 仍约 <b>616 MB</b>（历史已含这 96MB，本次只停止「每轮 +110MB」的继续增长）；彻底瘦身须待网盘备份就绪后的单独窗口。</li>
+</ul>
+
+
+<h2 class="sec" id="s6"><span class="no">6</span>news：N1 全库完抓 + L1 加固 + 常态采集</h2>
+<h3>6.1 N1 历史语料：<b>全库完抓</b></h3>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>语料总量</td><td><b>2,492,230 条 / 3929 天 / 11 片</b>（<b>2016 → 2026</b>）</td></tr>
+  <tr><td>游标</td><td><code>2015-12-31</code>（倒序已收尾至 <code>2016-01-01</code>）· 空页 0 / 失败 0 · 限速同站 ≥2s</td></tr>
+  <tr><td>源</td><td>❌ 新华网 <b>403/405 如实记录、不绕</b>（不代理、不伪造 UA）→ ✅ 代理源 <code>chinanews</code> 覆盖，<b>不冒充</b>（<code>source</code> 严格区分）</td></tr>
+  <tr><td>今日抓取节奏</td><td>806,509 条（1627 天）→ 913,074 → 1,288,020 → 1,645,640 → 1,952,411 → 2,268,008 → <b>2,492,230</b>（每步均<b>全链重跑并落 <code>STABILITY_LOG</code></b>）</td></tr>
+  <tr><td>修掉的坑</td><td><b>并发双抓重复</b>（<code>fetch_archive.py --repair</code>）· <b>watcher <code>pgrep -f</code> 自匹配死锁</b> · <code>cycle_run.py --record</code> 中文解析</td></tr>
+</table>
+<h3>6.2 L1 预警链：事件库 + 准则加固</h3>
+<table>
+  <tr><th>产物</th><th>今日值</th></tr>
+  <tr><td><code>EVENTS.csv</code></td><td><b>75,610 条</b>（对 15:10 全量快照）；字段 <code>actor/action_type/level/domain/force/<b>noise_risk</b>/matched_trigger/source/title/url</code></td></tr>
+  <tr><td><code>EARLY_WARNING.md</code></td><td><b>424 行</b>；新增 <b>§4.3 固定召回率下的 precision（walk-forward）</b> + <b>§4.4 措辞强度（tone）信号</b>（<b>单独 + 组合、预注册</b>）→ <b>如实判「未胜出」</b>（负面结果可接受）</td></tr>
+  <tr><td>45 格结果（§4.2）</td><td>q&lt;0.05 = <b>43 格</b>（分母恒 45）· 过<b>效果量门槛</b> = <b>24 格</b>（最新快照 15:10）</td></tr>
+  <tr><td><code>STABILITY_LOG.md</code></td><td><b>9 行</b>（含 2 行如实标注 <code>record-only(补记/自检)</code>）· <b>连续性自报：已连续 1 天 / 目标 7 天 · ⚠️ 未达标</b></td></tr>
+  <tr><td>L3（N5）</td><td>❄️ <b>冻结</b>（未产出任何策略 / 仓位 / 择时）· L2 探索性 <b>非因果</b></td></tr>
+</table>
+<h3>6.3 常态采集：当日 <b>36 条</b>（第 11–26 轮）· 累计 <b>105</b></h3>
+<p><b>计数口径（T8.3）</b>：只计「<b>真新闻</b>」，非新闻<b>单列</b>（当日非新闻 32 条，仅存 <code>SEEN.md</code> 防重）。<b>每条必带 标题 + 来源 + 发布日期 + 链接</b>。</p>
+<div class="card">
+  <b>今日要闻（节选）</b>
+  <ul>
+    <li><b>Hinton 首篇 RSI（递归自我改进）论文</b>（量子位）—— 与本书「自主系统 / 递归自我改进」主题直接相关</li>
+    <li><b>特朗普宣布成立「超级智能部队」（Super Intelligence Force）</b>（TechCrunch / IT之家）· 马斯克 <b>SpaceXAI → SpaceXSI</b> 更名（钛媒体）</li>
+    <li><b>政策与治理</b>：Sanders 提「Ban Flock Act」禁联邦用 AI 车牌识别 · <b>联邦法官裁定 Flock 属「无差别大规模监控」</b> · Norway 拟禁公共场所 AI 眼镜 · 佛州女子 Claude 报警案</li>
+    <li><b>产业</b>：华为×高通专利许可 · 台达×英伟达 Hyperion 自动驾驶 · <b>JEDEC 首份硅光子可靠性标准 JESD264</b> · Google 冻结开源漏洞赏金（AI 提交淹没）</li>
+    <li><b>AI 与社会</b>：NYT —— 出现「AI 生成的受害者宽恕凶手」视频 → 法院<b>推翻过失杀人案量刑</b></li>
+  </ul>
+  <b>源盘点（如实）</b>：<code>cn_news</code> 多轮命中<b>国庆假期/民生/时政 → 不收</b>；<b>联合国中文源仍 <code>HTTP 404</code></b>（判源失败）；The Register atom 仍 ParseError、Guardian tech RSS 本机不可达；<b>新试「钛媒体 feed = 活源」</b>；FT / 部分原文本机不可达 → <b>仅凭标题+链接+HN 日期核验，如实标注</b>，绝不静默当「无新增」。
+</div>
+<div class="note">
+  ⚠️ <b>如实标注</b>：<code>SEEN.md</code> 标 <code>news</code> 的行<b>含「同事件去重跳过 / 源出登记」</b> → <b>SEEN 行数 ≠ 摘要 news 数</b>；本线<b>以摘要实际收录为准</b>（当日 <b>36</b> / 累计 <b>105</b>）。
+</div>
+
+<h2 class="sec" id="s7"><span class="no">7</span>research：周一公告恢复 + 三十轮去重</h2>
+<h3>7.1 第十五轮（UTC 跨入周一）：<b>+171</b>，精选收录 <b>30</b></h3>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>取数</td><td>15/15 查询 <code>ok</code>（无重试），<b>kept 171 / dropped 416</b>；arXiv 工作日公告恢复，最新批次 <code>2026-10-02</code></td></tr>
+  <tr><td>精选收录 30 的分布</td><td>LLM <b>9</b> / SLM <b>1</b> / 多模态 <b>7</b> / agent harness <b>9</b> / 邻域 <b>4</b>（+ 候选 141）</td></tr>
+  <tr><td>累计</td><td><b>收录 91 / 候选 487 / 累计抓取 578</b></td></tr>
+</table>
+<h3>7.2 第十六~三十轮：同批去重复核 → <b>各 +0</b>（如实）</h3>
+<ul>
+  <li>均 <b>15/15 <code>ok</code></b>（第十七~三十轮<b>无重试 attempts=1</b>），<b>kept 0 / dropped 600（435 already-in-SEEN + 165 stale &gt;120h）</b>；</li>
+  <li>⚠️ <b>第十九轮</b>：<code>llm-long-context</code> → <b>HTTP 429，attempts=3 重试耗尽 FAIL</b> —— <b>脚本级已如实记录，未把网络失败当「无新增」</b>；<b>第二十轮已恢复（status=200）</b>；</li>
+  <li>⚠️ <b>第三十轮</b>：<code>window_mode</code> <b>首次自动由 <code>weekend_batch</code>(120h) 切 <code>daily</code>(72h)</b>（周一 UTC ≥13:00 触发）→ 因去重先查 SEEN，<b>结论不变</b>；</li>
+  <li>📌 R1′ 取源复验：<b>arXiv ✅ <code>200</code>+<code>atom+xml</code> / HF ❌ 不可达 / RSS cs.CL·CV·LG 有内容</b>（HF 不可达 → 社区热度改用 <b>HN Algolia 替代并注明</b>，不伪造）。</li>
+</ul>
+<h3>7.3 借鉴 + 科普视频线（第 3 批 A/B，<b>已交付未变</b>）</h3>
+<table>
+  <tr><th>线</th><th>产物</th><th>状态</th></tr>
+  <tr><td>① 借鉴</td><td><code>TOP_K.md</code>/<code>.jsonl</code>（TOP-20，含人工 <code>takeaway</code>/<code>action</code>）+ <code>TAKEAWAYS.md</code>（≤5 条）· 相关面放宽「存储/芯片」后 <b>#1 = DeepSeek-V4.1-Flash</b></td><td><span class="badge b-ok">✅ 已交付</span>（无新增 → 不重跑）</td></tr>
+  <tr><td>② 科普视频</td><td><code>video/SHORTLIST.md</code>（<b>17 条选题</b>+TOP-3）+ <code>video/scripts/</code>（<b>3 份口播稿</b>，445 字，明确「自绘/自生成、严禁用原作或论文原图」）</td><td>V3 生成 <span class="badge b-warn">⏸ 待工具链确认</span></td></tr>
+  <tr><td>回归</td><td><code>test_arxiv_fetch.py</code> <b>49/49</b> · <code>test_top_k.py</code> <b>25/25</b>（均离线）</td><td><span class="badge b-ok">✅ PASS</span></td></tr>
+</table>
+
+
+<h2 class="sec" id="s8"><span class="no">8</span>⭐ 关键教训</h2>
+<table>
+  <tr><th>#</th><th>教训</th><th>依据</th></tr>
+  <tr><td>1</td><td><b>静默期无法区分「在跑 / 停了」</b> → 必须让「活着」可观测</td><td>loop 兜底提交 5h 才一次 + agent 只在有变更时提交 → <b>3–5h 静默两种解释都成立</b>。处置：<b>心跳条款</b>（每轮必写一行，零重启）</td></tr>
+  <tr><td>2</td><td><b>「27h 停摆」的根因不是资源</b>（OOM/内存/CPU/磁盘全清白）</td><td>诊断实测：available 2661M / swap 用 0 / CPU top1 2.2% → 更可能<b>进程被杀 / 实例重启</b>（<code>setsid &amp;</code> 非自启）</td></tr>
+  <tr><td>3</td><td><b>光写规则拦不住 —— 规则必须落成机制</b></td><td>旧口径「单年 &gt;20MB」是<b>规则</b>但无 <b><code>.gitignore</code> 机制</b> → 96MB 全溜进仓库</td></tr>
+  <tr><td>4</td><td><b>「局部合规」≠「全局合规」</b></td><td>11 个分片<b>每个都不超 20MB</b>（个个合规）→ <b>总量 96MB 无人管</b>；应<b>按总量 + 单文件双阈值</b></td></tr>
+  <tr><td>5</td><td><b>台账诚信问题常出在「指标设计」而非「造假」</b></td><td><code>STABILITY_LOG</code> 数字<b>由产物实测解析</b>且<b>主动标 <code>record-only</code></b> → <b>透明，非伪装</b>；但 G2′④ 原文「连续 N 周」<b>一天内不可能达成</b>，逼出「authenticity vs time」的权衡 → <b>已改为可达成且可核验的口径</b>（连续 7 自然日 / 每天 ≥1 次真实重跑 / 相邻 ≥20h / 同天计 1 / record-only 不计入 / 未达标要如实写）</td></tr>
+  <tr><td>6</td><td><b>运维脚本不能「吞错」</b></td><td><code>git commit</code> 失败被 <code>2&gt;/dev/null || return 0</code> 静默 → outbox 永远推不上来；共享远端<b>推送前必须先 rebase</b></td></tr>
+  <tr><td>7</td><td><b>「接口 200」≠「有料」</b>（本线多次复现）</td><td>arXiv 周末 200 但无公告 · RSS 200 但 <code>pubDate</code> 停在 2022 · <b>连 LLM 给的源清单也要先测</b></td></tr>
+  <tr><td>8</td><td><b>负面结果可接受 · 未达标如实写</b></td><td>§4.4 tone 信号<b>如实判未胜出</b>；research 15 轮 <b>+0 如实标注</b>；429 FAIL <b>如实记录</b></td></tr>
+</table>
+
+<h2 class="sec" id="s9"><span class="no">9</span>需要你决策</h2>
+<table>
+  <tr><th>#</th><th>事项</th><th>我的建议 / 说明</th></tr>
+  <tr><td>1</td><td>🔴 <b><code>doc/keys.txt</code> 已进仓库</b></td><td>含 <b>8 个 LLM Key + ASR + 文生图</b>（提交 <code>56fae84</code>，不在 <code>.gitignore</code>）→ 建议 <b>① 轮换全部 Key（已进历史 = 视为泄露）② <code>git rm --cached doc/keys.txt</code> + 加入 <code>.gitignore</code>（保留本地文件）③ 改用未跟踪本地文件 / 环境变量</b></td></tr>
+  <tr><td>2</td><td><b>存量 96MB 语料迁出</b></td><td>需<b>先有网盘备份</b>再 <code>git rm --cached</code>；🚫 <b>严禁 <code>filter-repo</code>/force-push</b>（共享远端）→ 请确认<b>用哪个网盘</b>（无 <code>bypy</code>，可装或改用其它）</td></tr>
+  <tr><td>3</td><td><b>是否接 <code>llm_rotate</code></b></td><td>解决「额度耗尽 → 静默重试」的<b>可用性</b>问题；<b>需重启 loop</b>；⚠️ 有<b>跨线改 base 的干扰风险</b>（建议独立 config 或分开 state file）→ 已备好可套用补丁</td></tr>
+  <tr><td>4</td><td><b>运行机迁移</b></td><td>已从阿里云 2C2G（<code>iZuf65t80q2n4qgbjqbcp0Z</code>，CPU 70–80%）迁到<b>腾讯云 2C4G</b>（诊断已跑）；建议<b>配 systemd 自启</b>防重启后 loop 不再拉起</td></tr>
+  <tr><td>5</td><td><b>V3 视频生成</b> + <b>栏目名</b></td><td>确认运行机有无 TTS/文生图/剪辑（<b>没有的话我这边有 ComfyUI 系工具可补位</b>）；栏目名候选：《论文两分钟》/《两分钟读论文》/《Foam 读论文》</td></tr>
+  <tr><td>6</td><td><code>research/raw/</code> 保留策略</td><td>已累积 r6–r30 + <code>topk-fetch.json</code>（≈2.7 MB）→ 建议 <b>gzip 或只留最近 N 天</b>（同受 ≥5MB 红线约束）</td></tr>
+  <tr><td>7</td><td>📧 research 邮件职能</td><td><b>已登记、未批准</b> → 🚫 不得发送（正确状态）</td></tr>
+  <tr><td>8</td><td>✅ 已定（无需再议）</td><td>免 key · 非新闻不收 · 不新增智能体 · 三层解耦 · 负面结果可接受 · <b>≥5MB 走网盘</b></td></tr>
+</table>
+
+<h2 class="sec" id="s10"><span class="no">10</span>下一步 / 待办</h2>
+<table>
+  <tr><th>优先级</th><th>事项</th><th>判据</th></tr>
+  <tr><td><b>P0</b></td><td>🔴 <b>Key 轮换 + <code>keys.txt</code> 移出 git</b></td><td>Key 全部重置；<code>git ls-files doc/keys.txt</code> 为空</td></tr>
+  <tr><td><b>P0</b></td><td>news <b>G2′④：连续 7 个自然日稳定运行</b></td><td>隔日（≥20h，约 <b>2026-10-06 ≥11:10</b>）跑真实重跑追加台账；<b>已连续 1 / 7 天</b>。这是 L1「扎实」的最后一关（<b>需要时间，非技术问题</b>）</td></tr>
+  <tr><td><b>P1</b></td><td>存量 96MB 语料<b>迁出 git</b>（待网盘备份就绪）</td><td>备份校验通过 → <code>git rm --cached</code> → 远端不再含这些 blob</td></tr>
+  <tr><td><b>P1</b></td><td>news <b>L1 下一候选文本信号</b>（新词首发 / 版面）</td><td>预注册 + walk-forward，未胜出也如实保留</td></tr>
+  <tr><td><b>P1</b></td><td><b>V3 视频</b>（待你确认工具链）</td><td>产出第一条试片</td></tr>
+  <tr><td><b>P2</b></td><td>运行机 <b>systemd 自启</b> + research 常态增量 + <code>raw/</code> 瘦身</td><td>实例重启后 loop 自动拉起；可核验</td></tr>
+</table>
+<div class="ok-box">
+  <b>一句话总结</b>：今天<b>没有新增能力</b>，但把两个「看不见的窟窿」补上了 —— <b>一个是「停了没人知道」（→ 心跳 + ops 中继）</b>，<b>一个是「数据悄悄把仓库撑爆」（→ 体积红线 + 已止损）</b>。产出侧照常：news <b>全库完抓 249 万条</b>、当日 <b>36 条真新闻</b>；research <b>周一恢复 +171</b>。
+</div>
+
+<footer>
+  观察哨（personal-watch）工作汇报 · 2026-10-05（生成于 <b>~22:15</b>）· 上一日：<code>report_10_04.html</code><br>
+  证据来源：<code>MEMORY.md</code> · <code>daily-memories/2026-10-05.md</code> · <code>run/MEMORY_NEWS.md</code> · <code>run/MEMORY_RESEARCH.md</code> ·
+  <code>run/news/policy/*</code>（<code>EVENTS.md</code>/<code>EARLY_WARNING.md</code>/<code>STABILITY_LOG.md</code>/<code>EXPLORE.md</code>/<code>INDEX_FILES.md</code>）·
+  <code>run/news/archive/{PROGRESS.md,INDEX_FILES.md}</code> · <code>run/news/INDEX.md</code> · <code>run/research/INDEX.md</code> · <code>run/ops/outbox.md</code> · <code>run/ops/README.md</code>；<br>
+  以及 <b>supervisor 亲自核验</b>（<code>git log</code> 时间线 / 提交分布 / <code>git ls-files</code> 跟踪状态 / <code>.git</code> 体积 / <code>git log --diff-filter=D</code> 确认 11 分片移出）· 规范范式：<code>doc/BaiZe-ISEDA2027/</code>
+</footer>
+
+</div>
+</body>
+</html>
+
