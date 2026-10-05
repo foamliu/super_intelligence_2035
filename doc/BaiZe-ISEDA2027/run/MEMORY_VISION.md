@@ -6,32 +6,23 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ · R11-L2 ✅ · caption-weight ✅ · R13 ✅ · R11-E ✅ · 臂⑥ AIMv2 ✅ 翻盘 · ⭐ R11-G ✅ 完成（§16+§16.8文献锚点已落盘）**；R11-F：Arm A/B/C ✅ · E/D ❌待重跑；**R11-H 🔄 运行中** step≈19250/30000 @09:28（64%，纯AR contrast=0.0，patch_mse 0.86→0.06，C1=0.29/C2_gap≈0(纯AR预期)/C4=OK，~200ms/iter）→ ETA train~10:04→eval~10:19（链PID 4032740健康）；**E+D重跑脚本已就绪** `/tmp/r11_ed_wait_and_launch.sh`（PID 861557 守护，等链退出后自动起E→D）|
-| WAITING | 1（**语义=R11-H 纯 AR 30k 训练运行中 → 30min 轮询**；step≈19250/30000 @09:28，纯AR（contrast=0.0/patch_mse only），patch_mse 0.86→0.06递减，C1=0.29(<0.95)/C2_gap≈0(纯AR预期)/C4=OK/loss_ema=0.07；ETA train~10:04（剩余~10.8k步×~0.20s≈36min）→eval 4ckpt~15min→~10:19 ALL DONE；下次唤醒：若H eval完→写§17(R11-H 4点lp vs ⑥-A 11.39/11.14/12.08% + 基线 3.43/5.45/6.08% → 翻盘是否依赖对比项裁定)；**E+D重跑已由守护脚本自动接管**（`/tmp/r11_ed_wait_and_launch.sh` PID 861557 等链退出→自动起E(port 29555)→D(port 29556)，日志`/tmp/r11f_ed_rerun.log`）→ H+ED全部完成后→写§15补Q2+§17 |
+| PHASE | **R10_done · R14 ✅ · E1 ✅ · R11-L ✅ · R11-L2 ✅ · caption-weight ✅ · R13 ✅ · R11-E ✅ · 臂⑥ AIMv2 ✅ 翻盘 · ⭐ R11-G ✅ 完成（§16+§16.8文献锚点已落盘）**；R11-F：Arm A/B/C ✅ · E/D ❌待重跑；**R11-H 🔄 运行中** step≈27900/30000 @10:02（93%，纯AR contrast=0.0，patch_mse 0.86→0.06，C1=0.27/C2_gap≈0(纯AR预期)/C4=OK，~190ms/iter）→ ETA train~10:09→eval~10:24（链PID 4032740健康）；**E+D重跑脚本已就绪** `/tmp/r11_ed_wait_and_launch.sh`（PID 861557 守护，等链退出后自动起E→D）|
+| WAITING | 1（**语义=R11-H 纯 AR 30k 训练运行中 → 30min 轮询**；step≈27900/30000 @10:02=93%，纯AR（contrast=0.0/patch_mse only），patch_mse 0.86→0.06递减，C1=0.27(<0.95)/C2_gap≈0(纯AR预期)/C4=OK/loss_ema=0.06；ETA train~10:09（剩余~2.1k步×~0.19s≈7min）→eval 4ckpt~15min→~10:24 ALL DONE；下次唤醒：若H eval完→写§17(R11-H 4点lp vs ⑥-A 11.39/11.14/12.08% + 基线 3.43/5.45/6.08% → 翻盘是否依赖对比项裁定)；**E+D重跑已由守护脚本自动接管**（`/tmp/r11_ed_wait_and_launch.sh` PID 861557 等链退出→自动起E(port 29555)→D(port 29556)，日志`/tmp/r11f_ed_rerun.log`）→ H+ED全部完成后→写§15补Q2+§17 |
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10 + R11-L/②③④ + R11-L2 LoRA + R11-L caption-weight + R11-E GPIC（8.65 GPU·h）+ **臂⑥ AIMv2（✅ 7076s≈1.97h×8卡≈15.7 GPU·h）+ AIMv2 4-ckpt eval（~13min×1卡≈0.22 GPU·h）** + **R11-F 🟢 进行中**（Arm A GPIC short 30k@~80ms→~40min×8卡；5 臂串行总 ~5–6h×8 卡 ≈ 40–48 GPU·h） |
-| 更新 | **2026-10-05 09:28（R11-H巡检 step19250/30000=64% C1=0.29 C4=OK 纯AR健康；E+D重跑脚本+守护已就绪PID 861557）** · 2026-10-05 08:51（R11-H巡检 step9900/30000=33% C1=0.52 C4=OK 纯AR健康；cimi_search文献检索→§16.8已落盘：AIMv2原文"denser supervision"逐字引用+MAE mask ratio+AR数据效率对比） · 2026-10-05 08:16（R11-G ✅完成+§16落盘） · 2026-10-05 07:36（R11-G巡检 step103800=96.1%） · 2026-10-05 06:58（step93650=86.7%） · 2026-10-05 06:25（step85400=79%） · 2026-10-05 05:53（step77300=71.6%） · 2026-10-05 05:18（step68250=63.2%） · 2026-10-05 04:11（step51400=47.6%） · 2026-10-05 03:38（step42850=40%） · 2026-10-05 03:06（step34800=32%） · 2026-10-05 02:32（step26050=24%） · 2026-10-05 00:55（R11-F A/B/C✅落盘+Q1/Q3裁定+E/D失败诊断+data.py修empty_check） · 2026-10-04 23:38（NFS崩溃修复+overnight chain启动） |
+| 更新 | **2026-10-05 10:02（R11-H巡检 step27900/30000=93% C1=0.27 C4=OK 纯AR健康 ETA~10:24；cimi_search→SigLIP2+OpenVision2文献锚点已落盘§16.8）** · 2026-10-05 09:28（R11-H step19250=64% C1=0.29 纯AR健康；E+D守护就绪PID 861557） · 2026-10-05 08:51（R11-H step9900=33%；cimi_search→§16.8 AIMv2+MAE+XTRA锚点） · 2026-10-05 08:16（R11-G ✅完成+§16落盘） · *[R11-G中间巡检 step26050~103800 共9条已滚动归档至 daily-memories-vision/2026-10-05.md]* · 2026-10-05 00:55（R11-F A/B/C✅落盘+Q1/Q3裁定+E/D失败诊断+data.py修empty_check） · 2026-10-04 23:38（NFS崩溃修复+overnight chain启动） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
-## R9 完成（converged）结论速查（2026-10-03，权威详见 EXPERIMENTS_VISION_ROUND9.md）
+## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
 
-- **阶段一缩塔先导**（OpenVision2 × width{512,768,1024} × 30k，同 recipe/数据/batch512）：IN-1k lp = **6.10% / 3.63% / 1.03%**（zs 2.74/1.91/1.02）→ **塔越小每样本效率越高** → 选 **w512（126.8M）**。
-- **阶段二**（w512 × 108k 步 = 55.3M 样本）：无坍缩（C1≈0.36 / C2_gap≈+0.10 / loss_ema 5.99→3.71，steady 2904 img/s）；IN-1k lp 峰值 **7.70%**@51.2M，zs top-1 3.59% / top-5 11.47%。
-- **scaling 拟合**（11 点 R²≈0.94）：幂律 acc=0.251−0.864·N^−0.090（渐近 **25.1%**）；对数线性 acc=−0.229+0.0398·log10(N)。外推 20% 需 619 亿（对数）/ 41 万亿（幂律）样本 → **本地 ≈118M 唯一对上限（C1 修正）够不到 20%+**。
-- **结论**：瓶颈在数据量与目标函数（AIMv2 ≈120 亿对，我们 649× 少），非架构。详见 EXPERIMENTS_VISION_ROUND9.md §4–§5。
+- 阶段一：w512/w768/w1024 lp = 6.10/3.63/1.03% → 选 **w512（126.8M）**。阶段二：w512×108k=55.3M，lp 峰值 7.70%@51.2M。
+- **scaling 拟合**（11 点 R²≈0.94）：幂律 `acc=0.251−0.864·N^−0.090`（渐近 **25.1%**）；外推 20% 需 41 万亿样本 → **本地 ≈118M 上限够不到**。
+- **结论**：瓶颈在数据量与目标函数（AIMv2 ≈120 亿对 vs 我们 649× 少），非架构。
 
-## R10（2026-10-03）：补全 M 轴的 scaling law
+## R10 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND10.md）
 
-> 运维指出 R9 只扫了数据侧 N（固定 w512），M 轴没做；R10 复用阶段一已落盘三档塔宽 ckpt 补 M 轴，拟合 (N,M) 二维 scaling law。
-
-- ✅ **R10-① 回收 12 点 IN-1k 完成**：3 塔 × step{10k,20k,30k}，`r10_eval_stage1.sh` → `r8_eval_in1k.py --ckpts`（exit 0）。lp(w512/w768/w1024 @N=5.12/10.24/15.36M)：3.43/5.45/**6.08**%、1.14/2.03/**3.63**%、0.67/0.99/**0.93**%（证据 `/tmp/r10_stage1_in1k.log`）。
-- ✅ **R10-② 2D 拟合完成（3 点 M 轴）**：`r10_scaling2d.py`，19 点 → 带交互 R²=0.980：`acc=-1.737+0.333·log10(N)+0.185·log10(M)-0.036·log10(N)·log10(M)`；M 边际效应**全区间为负** ≈ **−2.2 lp pp/参数翻倍**（无交互 c=−0.070，R²=0.975）。→ 数据受限区间**加宽塔是负收益**。
-- ✅ **R10-③ 完成（`denseM ALL DONE @13:00:30`，exit 0）**：`r10_run_denseM.sh` 训 w384(71.49M)+w640(197.80M) 各 30k 步（同数据/recipe）+ 自动回收 8 ckpt IN-1k。结果 lp（@N=5.12/10.24/15.36M）：**w384 = 5.77/6.92/7.99%**、**w640 = 1.66/1.99/3.62%**；w384 吞吐 6583 img/s（w640 2418）、final_loss 3.7769（w640 4.3485）。
-- ✅ **5 点 M 重拟合完成**：带交互 R²=0.960 `acc=-1.452+0.298·log10(N)+0.150·log10(M)-0.0318·log10(N)·log10(M)`；M 边际 ≈ **−2.2~−2.4 lp pp/参数翻倍**；最优 M 仍在观测下界（71.5M）之下 → **无饱和点、更小塔持续更优**。**w384@15.36M=7.99% 为全部宽度最高**。
-- **铁律**：不重跑阶段一训练；每条结论贴证据（命令 + 原始输出 + 路径）；不许猜。
-
-### 🕐 R10-③ 等待已结束（收尾 4 步已执行完毕）
-- **结果**：5-M 拟合 R²=0.960（§2.3）+ 最优 N/M（§2.4）+ denseM 8 点表（§3）+ 结论（§4）均已回填 `EXPERIMENTS_VISION_ROUND10.md`；`EXPERIMENTS_VISION.md` 顶部 R10 节 + 本状态头已更新，随后 push。
+- 2D 拟合（19 点 R²=0.980）：M 边际效应**全区间为负** ≈ −2.2 lp pp/参数翻倍 → 数据受限区间**加宽塔是负收益**。
+- **w384@15.36M=7.99% 为全部宽度最高**；最优 M 仍在观测下界（71.5M）之下 → 无饱和点、更小塔持续更优。
 
 ## R14 官方仓库调研（✅ 全部完成，2026-10-03）
 
@@ -171,6 +162,26 @@ WAITING: 1
 - **MAE**（arXiv:2111.06377）：最优 mask 75%，我们用 0.6（二手·待核原文表格）
 - **XTRA**（arXiv:2411.15648）：AR 模型大数据下 scaling 一致但样本效率常被认为不如对比 → 我们 R11-G 是数据受限区间的反向证据
 - **C2 限定补充**：官方 AIMv2 纯 AR 无对比、α=0.4、prefix-attention；我们保留 InfoNCE、α=1.0、随机 mask → R11-H（纯 AR）正是向官方靠拢的消融
+
+### §16.8 续 — SigLIP2 + OpenVision2 文献锚点（2026-10-05 10:02，cimi_search + cimi_fetch）
+
+> 运维指令 2026-10-05 要求核实 SigLIP2 / OpenVision2 原文。已完成 2 次 search + 1 次 fetch（CPU/网络，未占 GPU）：
+
+- **OpenVision2**（arXiv:2509.01644, 2025-09-01, UCSC-VLAA, https://arxiv.org/abs/2509.01644）：
+  - ⭐ **核心做法 = 去掉文本塔 + 去掉对比损失 → 纯生成（captioning-only）**，跟随 CapPa / AIMv2。
+  - 原文逐字（abstract）：*"we remove the text encoder (and therefore the contrastive loss), retaining only the captioning loss as a purely generative training signal"*
+  - 效率收益：ViT-L/14 训练时间 83h→57h（1.5×），显存 24.5GB→13.8GB（1.8×），batch 2k→8k；可扩到 >1B 参数。
+  - 数据：Recap-DataComp-1B v2（LLaMA-3 长合成 caption）。
+  - 🔗 **与 R11-H 直接对位**：R11-H 测的正是「去对比项 → 纯 patch AR」；OpenVision2 官方路线 = 纯生成无对比。若 R11-H 翻盘成立 → 与官方 OpenVision2 的「generative-only 可行」结论一致 → §17 机制解释有一手锚点。
+  - ⚠️ **差异**：OpenVision2 用 captioning loss（文本 token 级 AR）；我们 R11-H 用 masked-patch-MSE（像素级 patch 重建）→ 监督通道不同，但「去对比项」的核心消融逻辑一致。
+
+- **SigLIP2**（arXiv:2502.14786, 2025-02-20, Google DeepMind, https://arxiv.org/abs/2502.14786, CC BY 4.0）：
+  - 在 sigmoid loss 基础上**统一加入**：captioning-based pretraining + 自监督（self-distillation + masked prediction）+ online data curation。
+  - 改进：zero-shot / retrieval / VLM transfer 全规模优于 SigLIP；**显著改善 localization + dense prediction**。
+  - 🔗 **与 R11-L loss 轴对位**：SigLIP2 = 「对比 + 生成 + 自监督」多目标统一 recipe → 印证「密集监督（masked prediction）与对比学习互补」的行业趋势 → 给 R11-L 四臂（InfoNCE/SigLIP/LocalLoss/CoCa 均未翻盘）的负结果提供「官方已转向多目标融合」的语境。
+  - ⚠️ **未核实**：具体 mask ratio / loss weight 比例（HTML 转换失败，未抓到表格）—— 标「未核实」。
+
+- **证据纪律**：以上 URL + 年份已给；OpenVision2 abstract 逐字引用已核实；SigLIP2 具体 hyperparameter 标「未核实」（不编造）。
 
 
 ## 历史条目已滚动归档（2026-10-03）
