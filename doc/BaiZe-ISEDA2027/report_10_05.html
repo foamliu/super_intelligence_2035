@@ -49,7 +49,7 @@
 <div class="wrap">
 
 <header class="hero">
-  <h1>BaiZe 工作汇报 · 2026-10-05（第四份 · 深夜 ~19:00 刷新）</h1>
+  <h1>BaiZe 工作汇报 · 2026-10-05（第五份 · 深夜 ~21:00 刷新 · 数据/进度同步）</h1>
   <div class="sub">🌙 <b>深夜新增</b>：🚀 <b>vision R12「全量数据 AIMv2」训练中</b>（GPIC+CC12M+Amshaker ≈ <b>58.8M 对</b>，120k 步，16:43 起跑；⚠️ 18:27 吞吐被 NFS 争用拖到 ~2300 img/s，<b>ETA 修订 ~22:00–23:30 + eval ~1h</b>；🔧 <b>提速实测 ≈2.2×</b>（2485→~5400 img/s，<b>非调参</b>，归因见 <a href="#s14">§14</a>）· ✅ <b>论文 §6 已改写完成</b>（新增 §6.3「Breaking the Contrastive Ceiling」+ 4 条 bib，pdflatex 通过）· ✅ <b>P-9.10 ②（eager 下界）COMPLETE</b>（H1✅ decode 1.6× / H4✅ prefill 128K 3.6×）· ⭐ <b>P-9.10 ① 翻案：sglang ✅ 可用</b>（藏在 <code>vllm</code> conda env，第 109 次更正）· harness <b>codex 13/30 scored（8 resolved）</b> · data <b>S0a step145/5000 健康</b> + SFT s0 ✅ 9.56B tok · 🌙 <b>用户深夜 5 条已全部落地</b><br>
      🌆 <b>傍晚</b>：⭐ <b>P-9.9 收官 → 8 卡交接完成</b> —— <b>P-9.9 tensorwise FP8 ✅ COMPLETE</b>（15:15:40，iter 1000/1000）→ 裁定 <b>tensorwise 劣于 delayed</b>（t−bf16 = <b>+5.13% persistent</b>）⇒ <b>P-8 沿用 delayed FP8</b> · <b>P-9.10 ① sglang 装不上</b>（cuda-tile 仅 nvidia 源 SSL EOF）⇒ 栈落 <code>mcore + CUDA-graph</code> ·
      🚀 <b>分卡并行起跑</b>：<b>GPU2–7 = data Stable S0a 配比臂</b>（15:25 已启动，5000 步）· <b>GPU0–1 = pretrain P-9.10 ②</b>（待启）·
@@ -104,7 +104,7 @@
     <li><a href="#s3">pretrain：P-9.9 收官 → 8 卡交接 → P-9.10 ② COMPLETE · ⭐ sglang 翻案可用</a></li>
     <li><a href="#s4">vision：R11-F/G/H 收尾 → 🚀 R12 全量数据 AIMv2（训练中）+ 论文 §6 已改写</a></li>
     <li><a href="#s5">data：Stable S0a 配比臂启动 + base 分词 22.05B + 下载进度</a></li>
-    <li><a href="#s6">harness：cline-patched ×30（60%）+ codex ×30 起跑 + quota 对比</a></li>
+    <li><a href="#s6">harness：cline-patched ×30（60%）+ codex ×30（18/30）+ SWEBENCH_COMPARE 刷新节奏</a></li>
     <li><a href="#s7">🔧 运维基础设施：EDA MCP 四线打通（RUN_ID 64→70）</a></li>
     <li><a href="#s8">关键数字</a></li>
     <li><a href="#s9">需要你决策 / 注意</a></li>
@@ -350,14 +350,14 @@
 <h3>5.2 下载巡检（白名单 4 项）</h3>
 <table>
   <tr><th>项</th><th>进度</th><th>说明</th></tr>
-  <tr><td><code>l1_en_hq</code></td><td><b>2744 / 6006</b></td><td>稳定推进（较午间 +190；~1.7 MB/s，非僵死）</td></tr>
-  <tr><td><code>gpic</code></td><td>下载中</td><td>~21 MB/s 真推进（pid 144981）；<b>已下 ≈40.5M 对 / ~4.9T</b></td></tr>
-  <tr><td><code>zh</code></td><td>171 / 256</td><td><b>冻结</b>（随 <code>l1_en_hq</code> 后串行）</td></tr>
+  <tr><td><code>l1_en_hq</code></td><td><b>3157 / 6006（52.6%）</b></td><td>🔄 在跑（较 20:02 +51，≈1.2 文件/分；带宽与 gpic 共享）</td></tr>
+  <tr><td><code>gpic</code></td><td><b>3486 / 8000（43.6%）</b></td><td>🔄 在跑（test 128/128 ✓；≈0.7 tar/分，~21 MB/s）</td></tr>
+  <tr><td><code>zh</code></td><td>171 / 256（66.8%）</td><td><b>⛔ 冻结</b>（随 <code>l1_en_hq</code> 后串行）</td></tr>
   <tr><td><code>en</code></td><td>2048 / 2048 ✓</td><td>已满</td></tr>
 </table>
 <div class="note">
   ⚠️ <b>一个有意思的发现</b>：data 线报 <code>curl github</code> 仍不可达，但 <b><code>cimi-search</code> 的 MCP 通道独立可达</b> ⇒ 说明「上网」不是全有全无，而是<b>按目的地/路径</b>有别。
-  🟡 <b>等你拍板</b>：<b>D-CLEAN-4 候选</b>（本用户 <code>FineVision</code> 4.32T / <code>HuggingFaceFW</code> 1.24T / CC12M 1.13T / <code>chip_expert</code>+<code>models</code> 0.92T；跨用户 3.3T）—— 目前<b>只盘点不删除</b>。
+  🟢 <b>D-CLEAN-4 已裁定：保留不动</b>（2026-10-05 晚 用户）—— 不再删除、不再盘点；红线项（EDA-Eval 隔离区 / base·gpic / L3·code·math / SFT / GPIC / en500k·eval5k）照旧不可动。
   🧭 另外：data 线那句「<code>curl github</code> 不可达但 <code>cimi-search</code> 可达」，<b>下午已给出确定解释</b>（<a href="#s11">§11</a>）：<b>不是全有全无，而是「门口不同」</b> —— MCP 走内网 gateway，直连外网要走代理。
 </div>
 
@@ -383,7 +383,17 @@
   <tr><td>D-CLEAN-4</td><td><span class="badge b-ok">✅ 已裁定 · 保留不动</span>（不再删/不再盘点，「待拍板」作废）</td></tr>
 </table>
 
-<h2 class="sec" id="s6"><span class="no">6</span>harness：cline-patched ×30 ✅ <b>60.0%</b> → codex ×30 起跑（kimi 串行）</h2>
+<h3>5.5 【深夜2 · 唤醒 139 @20:45】下载进度：真正在跑的是「两个」（<code>l1_en_hq</code> + <code>gpic</code>）</h3>
+<table>
+  <tr><th>数据集</th><th>进度</th><th>状态</th></tr>
+  <tr><td><code>l1_en_hq</code>（Ultra-FineWeb base）</td><td><b>3157 / 6006 = 52.6%</b></td><td>🔄 在跑（+51/43min ≈ 1.2 文件/分）</td></tr>
+  <tr><td><code>gpic</code>（train）</td><td><b>3486 / 8000 = 43.6%</b></td><td>🔄 在跑（test <b>128/128 ✓</b>；≈0.7 tar/分，~21 MB/s）</td></tr>
+  <tr><td><code>zh</code></td><td>171 / 256 = 66.8%</td><td>⛔ <b>冻结</b>（随 <code>l1_en_hq</code> 后串行）</td></tr>
+  <tr><td><code>en</code></td><td>2048 / 2048</td><td>✅ 已满</td></tr>
+</table>
+<p>⇒ <b>真正在动的两个 = <code>l1_en_hq</code> + <code>gpic</code></b>。粗略外推（带宽共享、速率波动，仅供参考）：<code>l1_en_hq</code> 剩 2849 文件 ÷ ~1.2/分 ≈ <b>~40h（≈1.7 天）</b>；<code>gpic</code> 剩 4514 tar ÷ ~0.7/分 ≈ <b>~4–5 天</b>（高峰更快）。优先级 <b>GPIC &gt; <code>l1_en_hq</code> &gt; <code>zh</code></b>；用户已定「<b>不限速、趁假期尽快下完</b>」；磁盘 <code>/nas_train</code> <b>84%（剩 ~34T）</b>。</p>
+
+<h2 class="sec" id="s6"><span class="no">6</span>harness：cline-patched ×30 ✅ <b>60.0%</b> → codex ×30（<b>18/30</b>）· <code>SWEBENCH_COMPARE.html</code> <b>需继续刷新</b></h2>
 
 <h3>6.1 ✅ H-A pilot（30 instances × 5 harness）—— 30/30 收口</h3>
 <table>
@@ -422,13 +432,14 @@
 <p>🧭 <b>对「扩 300」的直接含义</b>：<b>kimi 完全不撞 quota</b>（30 条 0×429），而 deepseek 被 5h 窗口挡掉 <b>17/22</b> ⇒ <b>要扩就先扩 kimi</b>（见 <a href="#s9">§9</a> 第 2 项）。工期按 ~8 min/inst 估，<b>4 harness × 30 ≈ 22h（~1 天）</b>。</p>
 
 
-<h3>6.4 【深夜】R76 —— codex ×30 推进中（13/30 scored：8 resolved）+ HTML 重生成</h3>
+<h3>6.4 【深夜2】R79（20:23）—— codex ×30 推进中（<b>18/30 scored：8 resolved</b>）+ <code>SWEBENCH_COMPARE.html</code> 已刷新</h3>
 <table>
   <tr><th>项</th><th>值</th></tr>
-  <tr><td>codex ×30</td><td><b>13/30 scored</b>（<b>8 resolved = 61.5%</b> + 5 patch-but-failed）；inst 14/30 进行中；PID 2051774，elapsed ~2.8h</td></tr>
-  <tr><td>对比报告</td><td><code>run/harness/SWEBENCH_COMPARE.html</code> 已重生成：<b>43 entries / 26 resolved</b>（12528 B）；配套 <code>kimi_pilot_results.json</code></td></tr>
-  <tr><td>扩 300</td><td>infra 就绪（300 JSONs + 12/12 rootfs templates）；🌙 <b>授权自装 node≥22.13 + rust</b> 以打通第 5 个 harness（deepseek-harness）→ 见 <a href="#s12">§12</a></td></tr>
-  <tr><td>健康度</td><td>gw_proxy(kimi) 健康（0×429，~8.3h）· relay 健康跳过第 29 次（2489749 ppid=1，etimes≈4.09d）· <code>.last_run_id=71</code>（无新指令）· 无阻塞</td></tr>
+  <tr><td>codex ×30</td><td><b>18/30 scored</b>（<b>8 resolved = 44.4%</b> + 10 patch-but-failed）；inst 19/30 = <code>sympy-12236</code> 运行中；PID 2051774，elapsed ~4.9h，剩 ~12 条 ≈ <b>~2h</b></td></tr>
+  <tr><td>对比报告</td><td><code>run/harness/SWEBENCH_COMPARE.html</code> 已重生成：<b>48 entries / 26 resolved</b>（12777 B，20:45 写入）；配套 <code>kimi_pilot_results.json</code></td></tr>
+  <tr><td>⚠️ 刷新节奏<br>（是否还需更新）</td><td><b>需要</b>。现值 = <b>cline-patched 30 + codex 前 18</b>（<b>不含 codex 剩余 ~12 条，也不含 opencode / claude-code / deepseek</b>）⇒ <b>codex×30 一完（~2h）必须再刷一次</b>；随后 <b>codex×300（--resume skip 30）→ cline-patched×300 → opencode×300 → claude-code×300</b> 逐批刷新；<b>终版 = 5 harness × 300 全量对比</b></td></tr>
+  <tr><td>扩 300 / 阻塞</td><td>infra 就绪（<b>300 JSONs</b> + <b>12/12 rootfs templates</b>）；🌙 已授权自装 node≥22.13 + rust 打通第 5 个 harness（deepseek-harness）—— 但 <b><code>pnpm install</code> 被 npm registry（ECONNRESET）挡</b>（各镜像全 000），<b>排在最后、不紧急</b></td></tr>
+  <tr><td>健康度</td><td>gw_proxy(kimi) 健康 · <b>0×429</b>（48 条全无 quota 阻塞）· relay 健康跳过第 32 次（2489749 ppid=1，etimes≈4.17d）· <code>.last_run_id=71</code>（无新指令）</td></tr>
 </table>
 
 <h2 class="sec" id="s7"><span class="no">7</span>🔧 运维基础设施（1）：EDA MCP 四线打通「联网检索」（RUN_ID 64→70）</h2>
@@ -500,19 +511,19 @@
   <div class="card">
     <h3 style="margin-top:0">数据 / 磁盘</h3>
     <ul>
-      <li>🚀 <b>Stable S0a 臂运行中</b>（GPU2–7，DP6/5000 步，<code>88:8:4</code>，GBS=1020）</li>
-      <li>base 分词 ✅ <b>22.05B tok / 4 shard</b>；SFT s2 3.58B ✅ / s3 521M ✅ / s0·s1 进行中</li>
-      <li><code>l1_en_hq</code> <b>2744/6006</b> · <code>gpic</code> 下载中（≈40%）· <code>en</code> ✓ 满 · <code>zh</code> 171/256（冻结）· <code>/nas_train</code> <b>84%</b></li>
-      <li>D-CLEAN 系列累计回收 <b>≈4.96 TiB</b>；D-CLEAN-4 候选待拍板 · LIT_IDEAS <b>0 unverified</b></li>
+      <li>🚀 <b>Stable S0a 臂运行中</b>（GPU2–7，DP6/5000 步，<code>88:8:4</code>，GBS=1020）· <b>step 390/5000</b>，~37.8 s/iter，<b>ETA ~10-07 21:00</b></li>
+      <li>base 分词 ✅ <b>22.05B tok / 4 shard</b>；SFT-2605 ✅ 20.97B tok；SFT-Agent-2609 <b>s0✅ / s2✅ / s3✅（3/4）</b>，s1 进行中</li>
+      <li>在跑下载两个：<code>l1_en_hq</code> <b>3157/6006（52.6%）</b> · <code>gpic</code> <b>3486/8000（43.6%）</b> · <code>en</code> ✓ 满 · <code>zh</code> 171（冻结）· <code>/nas_train</code> 84%</li>
+      <li>D-CLEAN 系列累计回收 <b>≈4.96 TiB</b>；<b>D-CLEAN-4 已裁定·保留不动</b> · LIT_IDEAS <b>0 unverified</b></li>
     </ul>
   </div>
   <div class="card">
     <h3 style="margin-top:0">harness / 运维</h3>
     <ul>
       <li>⭐ <b>cline-patched ×30 = 18/30 resolved（60.0%）</b> · 12 patch-but-failed · <b>0 quota-blocked</b>（4.0h）</li>
-      <li><b>codex ×30：13/30 scored（8 resolved = 61.5%）</b>；HTML 43 条/26 resolved；🌙 授权自装 node22+rust → 第 5 个 harness</li>
-      <li>4/5 harness 端到端打通（仅 deepseek-harness 缺工具链）</li>
-      <li>当日提交 <b>176</b>（截至 16:09）；ops relay 健康（<code>.last_run_id=71</code>，全 exit=0）</li>
+      <li><b>codex ×30：18/30 scored（8 resolved = 44.4%）</b>；<code>SWEBENCH_COMPARE.html</code> <b>48 条 / 26 resolved</b>（<b>进行中版</b> —— codex 一完须再刷；终版 = <b>5 harness × 300</b>）</li>
+      <li>4/5 harness 端到端打通（deepseek-harness 工具链已装，<code>pnpm install</code> 被 npm registry ECONNRESET 挡，排最后）</li>
+      <li>当日提交 <b>≈210</b>（截至 ~21:00）；ops relay 健康（<code>.last_run_id=71</code>，全 exit=0）</li>
       <li>🔧 联网两条路：MCP 检索 ✅ 四线可用 · <b>直连外网须显式带 proxy</b>（口径见 §11）</li>
     </ul>
   </div>
