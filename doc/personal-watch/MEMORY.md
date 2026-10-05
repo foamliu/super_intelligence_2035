@@ -343,4 +343,9 @@ WAITING: 0
      给出**可直接套用的 patch**；标明 **改 loop.sh 须先 pkill 再改再启**、**跨线改 base 的干扰风险**。
   3. **分工**：**心跳 = 可观测性（不需重启）**；**llm_rotate = 可用性（需重启）**。
 - **待用户**：运行机 `pgrep -af 'watch_.*_loop.sh'` + `tail -30 /tmp/watch_{news,research}_loop.log` → 贴回来定性（429 / 403）。
+- **2026-10-05（用户提供机器信息 → 根因判断修正 + 部署清单）** —— 用户告知：阿里云实例 **`iZuf65t80q2n4qgbjqbcp0Z`（华东2上海，2 vCPU / 2 GiB，Ubuntu 22.04）CPU 70–80%，正在重启**；并**已在腾讯云新租 2 核 4G**。
+  - **关键修正**：**2 核 2G 跑 `cline`(Node)+两条 loop+60 万条逐日抓取 → CPU 打满 / 内存极易 OOM** 很可能是 27h 静默的**更根本原因**（不只是 LLM 额度）。→ 排查 `dmesg -T | grep -i -E 'oom|killed process'`。
+  - **重要提醒**：**`setsid ... &` 不是开机自启** → **实例重启会杀掉两条 loop**（必须手动拉起或配 systemd）。
+  - **新建 `run/DEPLOY_CHECKLIST.md`**：新机 bring-up · **cline 配置不在仓库需重建**（`openAiBaseUrl` 在 `~/.cline/data/globalState.json`）· **2 核加固**（swap / **两条 loop 错峰** / 抓取 `nice -ionice` 降优先级 / OOM 排查）· systemd 自启模板 · 启动停止验证命令。
+  - 🚨 **安全发现**：**`doc/keys.txt` 被 git 跟踪**（含 8 个 LLM Key + ASR + 文生图，提交 `56fae84`）且**不在 `.gitignore`** → 建议 `.gitignore` + `git rm --cached` + **轮换 Key**。
 
