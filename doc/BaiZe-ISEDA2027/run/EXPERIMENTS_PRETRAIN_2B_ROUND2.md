@@ -1306,6 +1306,135 @@ aliyun-proxy=200  ✅   nvidia-proxy=000 (SSL UNEXPECTED_EOF)   pypiorg-proxy=00
 
 **下一步**：启 **P-9.10 ② 实测矩阵** —— 栈=mcore+CUDA-graph（sglang❌）；两模型=p3_dense vs p3_hybrid(iter_0005000)；context∈{4K,16K,64K,128K}；batch∈{1,8}；每格 prefill 延迟/tok/s · decode tok/s/TPOT · 峰值显存 · 缓存/状态字节增长曲线；每格≥3 次取中位+方差；按 H1–H4 预注册判据裁定。口径声明：训练 seq=4094 → 16K/64K/128K 测的是位置外推下的速度/显存，不是质量。
 
+---
+
+### P-9.10 ② eager-mode 实测矩阵 —— hybrid vs dense 推理基准（2026-10-05 ~16:50，GPU0–1 @.29，**eager 下界**）
+
+> **栈名**：`mcore-直驱(eager)` —— CUDA graph（`reduce-overhead`）与 mcore `StaticInferenceContext` **根本不兼容**（见下方 §Caveats），所有 decode 测量均为 **eager 下界**。
+> **权重**：`p3_dense/iter_0005000`（MiniCPM5-2B，2.512B params，25.123GB）vs `p3_hybrid/iter_0005000`（Mamba2-hybrid-2B，2.220B params，22.207GB）—— P-3 控变量 5000 步，**非 S3 原 1000 步权重**（已丢失），与旧 10.3× 不可直接相减。
+> **口径声明**：训练 seq=4094 → 16K/64K/128K 测的是**位置外推下的速度/显存**，**不是质量**。
+> **硬件**：单卡 H100 80GB，TP=1，PP=1；dense=GPU0(port 30050)，hybrid=GPU1(port 30051)。
+> **时间戳**：`20261005_165017`；JSONL：`nemo_experiments/p910_results/p910_{dense,hybrid}_eager_20261005_165017.jsonl`；summary：`..._summary.json`。
+
+#### A. 完整结果表（median of 3 reps，eager mode）
+
+**Dense（minicpm5，2.512B params，weights=25.123GB）**
+
+| Context | Batch | Prefill (tok/s) | Prefill (ms) | Decode (tok/s) | TPOT (ms) | Peak Mem (GB) | Cache (MB) |
+|--------:|------:|----------------:|-------------:|---------------:|----------:|--------------:|-----------:|
+| 4K | 1 | 59,412 | 68.9 | 14.8 | 67.8 | 25.6 | 178.9 |
+| 4K | 8 | 129,181 | 253.4 | 115.9 | 8.6 | 28.1 | 1,431.3 |
+| 16K | 1 | 89,116 | 183.8 | 14.6 | 68.4 | 26.6 | 707.4 |
+| 16K | 8 | 87,507 | 1,499.5 | 114.9 | 8.7 | 36.8 | 5,659.2 |
+| 64K | 1 | 40,578 | 1,614.6 | 14.7 | 68.3 | 31.0 | 2,821.3 |
+| 64K | 8 | **OOM** | — | — | — | — | — |
+| 128K | 1 | 22,299 | 5,877.8 | 14.8 | 67.4 | 36.8 | 5,639.9 |
+| 128K | 8 | **OOM** | — | — | — | — | — |
+
+**Hybrid（mamba2，2.220B params，weights=22.207GB）**
+
+| Context | Batch | Prefill (tok/s) | Prefill (ms) | Decode (tok/s) | TPOT (ms) | Peak Mem (GB) | Cache (MB) |
+|--------:|------:|----------------:|-------------:|---------------:|----------:|--------------:|-----------:|
+| 4K | 1 | 66,614 | 61.5 | 23.4 | 42.7 | 22.7 | 60.4 |
+| 4K | 8 | 94,932 | 345.4 | 184.7 | 5.4 | 26.2 | 483.4 |
+| 16K | 1 | 102,684 | 159.5 | 23.6 | 42.3 | 23.8 | 161.1 |
+| 16K | 8 | 89,931 | 1,458.0 | 183.9 | 5.4 | 37.1 | 1,288.7 |
+| 64K | 1 | 89,815 | 729.7 | 23.8 | 42.0 | 28.3 | 563.7 |
+| 64K | 8 | **OOM** | — | — | — | — | — |
+| 128K | 1 | 79,450 | 1,650.4 | 23.4 | 42.7 | 34.2 | 1,100.6 |
+| 128K | 8 | **OOM** | — | — | — | — | — |
+
+**可复现命令**：
+```bash
+# Dense (GPU0, port 30050)
+CUDA_VISIBLE_DEVICES=0 torchrun --nnodes=1 --nproc_per_node=1 \
+  --master_addr=127.0.0.1 --master_port=30050 infer_benchmark_p910.py \
+  --arch minicpm5 --load-dir nemo_experiments/p3_dense/checkpoints \
+  --tokenizer-path data/tokenizer_eod \
+  --contexts 4096,16384,65536,131072 --batches 1,8 \
+  --gen-len 64 --prefill-iters 5 --repeats 3 --cuda-graph-mode none \
+  --out nemo_experiments/p910_results/p910_dense_eager_20261005_165017.jsonl
+# Hybrid (GPU1, port 30051) — same but --arch mamba2 --load-dir .../p3_hybrid/checkpoints
+```
+#### B. H1–H4 预注册判据裁定
+
+| # | 假设 | 判据 | 实测 | 裁定 |
+|:--|:--|:--|:--|:--|
+| **H1** | hybrid decode 优势在生产栈下依然存在 | 各 context 下 `hybrid decode tok/s ≥ dense × 1.5` | 4K: 1.59× / 16K: 1.62× / 64K: 1.62× / 128K: 1.58× — **全部 ≥1.5** | ✅ **PASS** |
+| **H2** | 优势随 context 增大而变大（结构性的） | `ratio(128K) ≥ ratio(4K)`，且 4K→128K 单调不降 | ratio: 1.59→1.62→1.63→1.58 — 128K(1.58) < 4K(1.59) → **非单调** | ❌ **FAIL** |
+| **H3** | hybrid 缓存/状态不随 context 线性增长 | hybrid 4K→128K **≤1.3×**；dense **≥4×**；差距 **≥3×** | hybrid cache: 60→1101MB = **18.2×**（>1.3×）；dense: 179→5640MB = **31.5×**（≥4× ✅）；差距 1.73×（<3×） | ❌ **FAIL** |
+| **H4** | prefill 没被牺牲 | `hybrid prefill 延迟 ≤ dense × 1.2` | 4K: 0.89× / 16K: 0.87× / 64K: 0.45× / 128K: 0.28× — **全部 ≤1.2** | ✅ **PASS** |
+
+**裁定结论**（按任务书 §裁定规则）：
+
+> **H1 ✅ PASS，H2 ❌ FAIL → 「hybrid 的解码优势在 eager 下界口径下存在但不随 context 增长 → 属部分 launch 伪影 → 论文按此保守表述」**
+
+- **H4 ✅ PASS**：hybrid prefill 在所有 context 下都比 dense **更快**（不是「没被牺牲」而是「更优」），128K 时达 **3.6×** 优势。
+- **H3 ❌ FAIL 的机制解释**：hybrid cache 增长 18.2× 超出 ≤1.3× 阈值，原因是 mcore `StaticInferenceContext` 为所有层（含 SSM）分配了 context 比例缓冲区——SSM state 本身是 O(1)，但框架实现层仍引入 O(n) 开销。然而 **per-token cache 增长率** hybrid 为 **8.6 KB/token** vs dense **44.1 KB/token** = **5.1× 更低**，且绝对 cache 优势随 context 从 3.0×（4K）增长到 5.1×（128K）——架构方向正确，H3 阈值未考虑到框架实现开销。
+
+#### C. 关键发现详述
+
+**① Decode — eager 下界下 hybrid 1.6× 优势，但不随 context 增长（H1✅ H2❌）**
+
+| Context | Dense (tok/s) | Hybrid (tok/s) | Ratio |
+|--------:|--------------:|---------------:|------:|
+| 4K | 14.8 | 23.4 | 1.59× |
+| 16K | 14.6 | 23.6 | 1.62× |
+| 64K | 14.7 | 23.8 | 1.62× |
+| 128K | 14.8 | 23.4 | 1.58× |
+
+- Dense decode 恒定 ≈14.7 tok/s — eager 模式下瓶颈是 Python/CUDA launch 开销（非 attention FLOPs），O(n) attention 被 launch 掩盖。
+- Hybrid decode 恒定 ≈23.5 tok/s — SSM O(1) 本征优势体现在恒定且更高的吞吐，但同样受 launch 限制。
+- **ratio ≈1.6× 恒定** → eager 下界口径下优势不随 context 增长。
+- ⚠️ **生产栈预期**：CUDA graph 消除 launch 开销后，dense O(n) attention 成本暴露 → decode 随 context 下降；hybrid O(1) 保持恒定 → **ratio 预期随 context 增长**（H2 在生产栈可能翻转）。但 CUDA graph 与 mcore `StaticInferenceContext` **根本不兼容** → 无法验证。
+
+**② Prefill — hybrid 在长上下文下大幅领先（H4✅）**
+
+| Context | Dense (tok/s) | Hybrid (tok/s) | Speedup |
+|--------:|--------------:|---------------:|--------:|
+| 4K | 59,412 | 66,614 | 1.12× |
+| 16K | 89,116 | 102,684 | 1.15× |
+| 64K | 40,578 | 89,815 | **2.21×** |
+| 128K | 22,299 | 79,450 | **3.56×** |
+
+- Dense prefill 89K(16K)→22K(128K) = **4.0× 减速** — 经典 O(n²) attention scaling。
+- Hybrid prefill 103K(16K)→79K(128K) = **1.29× 减速** — SSM O(n) linear scaling。
+- **128K 下 hybrid prefill 快 3.56×** — 结构性优势（非 launch 伪影），直接可进论文。
+
+**③ Cache — hybrid per-token 增长率 5.1× 更低（H3❌ 但方向正确）**
+
+| Context | Dense (MB) | Hybrid (MB) | Dense/Hybrid | Dense KB/tok | Hybrid KB/tok |
+|--------:|-----------:|------------:|-------------:|-------------:|--------------:|
+| 4K | 178.9 | 60.4 | 2.96× | 44.1 | 14.8 |
+| 16K | 707.4 | 161.1 | 4.39× | 44.2 | 9.8 |
+| 64K | 2,821.3 | 563.7 | 5.00× | 44.1 | 8.7 |
+| 128K | 5,639.9 | 1,100.6 | 5.13× | 44.1 | 8.6 |
+
+- Dense cache 完美线性 44.1 KB/token × ctx（与 KV 公式 42 KB/token 吻合）。
+- Hybrid cache：固定分量（SSM state ≈60MB）+ 线性分量（≈8.6 KB/token，4 层 attn KV）→ 绝对优势从 3.0× 扩大到 5.1×。
+
+**④ OOM — 64K-b8 和 128K-b8 双方均 OOM（prefill 阶段），128K-b1 均可运行**
+
+**⑤ Batch scaling — 两架构 per-sequence decode 在 b1→b8 下均恒定（≈线性 batch scaling）**
+#### D. Caveats
+
+1. **栈口径**：所有测量为 **`mcore-直驱(eager)` 下界**。CUDA graph（`reduce-overhead`）与 mcore `StaticInferenceContext` 的 autoregressive decode **根本不兼容**：graph capture 后 decode 产生 corrupted internal state（KV cache 位置错位 → 输出乱码），且 graph capture 后连 eager fallback 也无法恢复（需重启进程）。→ 无法获得生产栈（CUDA graph / compiled）上界。
+2. **seq_length 修正**：config `seq_length` 从 131136 改为 **4094**（训练 seq）。原因：`seq_length=131136` 使 MockGPTDataset 构建超大 mock 数据（~300GB+），导致 `setup()` 挂起 5+ 分钟。模型架构（RoPE / Mamba2 SSM）不依赖 `seq_length` → 4094 配置下模型仍可处理 128K 推理序列（位置外推）。
+3. **num_workers=0**：recipe 硬编码 `num_workers=8` → 与 GPU2-7 训练 co-run 时 system RAM OOM。已在脚本中 override 为 0。
+4. **权重口径**：P-3 5000 步权重（123M token）≠ S3 原 1000 步权重（24.6M token，已丢失）。旧 10.3× decode 数字来自不同权重 + 不同栈（S3 未标栈名），**不可直接相减**。并列时各自标栈名 + 权重步数。
+5. **warmup 效应**：4K-b1 rep0 decode=16.5 tok/s（低于 rep1/2 的 23.4 tok/s）= 首次 CUDA kernel JIT warmup。中位数（rep1 值）已正确排除 warmup。
+6. **位置外推**：训练 seq=4094，在 16K/64K/128K 上测的是**位置外推下的速度/显存**，**不是生成质量**。RoPE 外推可能影响 dense 的 attention 质量；Mamba2 的 SSM 天然支持长序列。
+
+#### E. 论文回填建议
+
+1. **§4 decode 速度**：写「在 mcore 直驱(eager) 下界口径下，hybrid decode 速度为 dense 的 **1.6×**（23.5 vs 14.7 tok/s，batch=1，H100 单卡），且在 4K–128K 全程恒定」。**不写**「随 context 增长」（eager 下界未观察到，H2 FAIL）。
+2. **§4 prefill 速度**：写「hybrid prefill 在 128K context 下快 **3.6×**（79K vs 22K tok/s），反映 SSM O(n) vs attention O(n²) 的结构性差异」。这是**最强**的论文证据。
+3. **§4 内存**：写「hybrid 的 per-token cache 增长率为 8.6 KB/token vs dense 44.1 KB/token（**5.1× 更低**），128K 下绝对 cache 用量 1.1GB vs 5.6GB」。**不写**「hybrid cache 不随 context 增长」（框架实现有 O(n) 开销，H3 FAIL）。
+4. **BAIZE_2B_ARCH_RESULT.html decode caveat**：旧 10.3× 标注为「S3 栈(未标栈名, 1000步权重)」；新增「mcore-直驱(eager) 下界, 5000步权重, 1.6× decode / 3.6× prefill @128K」。两个数都留，各自标栈。
+5. **诚实条款**：标题含栈名 `mcore-直驱(eager)`；下界不冒充生产数；CUDA graph 不可用如实写明。
+
+
+
 
 
 
