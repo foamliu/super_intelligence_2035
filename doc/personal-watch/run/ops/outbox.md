@@ -630,3 +630,80 @@ d5d7dab ops: 止损 — news/archive 11 个语料分片移出 git 索引（git r
 --- 工作区分片仍应为 11 ---
 0
 ```
+
+---
+
+## RUN_ID 6 · 2026-10-05 22:45:49 · host=`VM-0-6-ubuntu` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== 0. 基本 ==="
+hostname; date '+%F %T %Z'; uptime
+echo
+echo "=== 1. ⭐ watch/ops 相关进程（中继两种命名 + 两条 loop）==="
+pgrep -af 'watch_ops_relay|ops_relay|watch_(news|research)_loop' | cut -c1-160 || echo "(未匹配到任何进程)"
+echo
+echo "=== 1b. 兜底：按脚本路径找（防 cmdline 名字对不上）==="
+ps -eo pid,etime,args | grep -E 'ops_relay\.sh|watch_.*_loop\.sh' | grep -v grep | cut -c1-160 || echo "(无)"
+echo
+echo "=== 2. 中继日志尾部（应有 [relay] … started / nothing to commit）==="
+tail -8 /tmp/watch_ops_relay.log 2>/dev/null | cut -c1-160 || echo "(无 /tmp/watch_ops_relay.log)"
+echo
+echo "=== 3. 两条 loop 日志尾部（各 2 行）==="
+for f in /tmp/watch_news_loop.log /tmp/watch_research_loop.log; do echo "--- $f ---"; tail -2 "$f" 2>/dev/null | cut -c1-160 || echo "(无)"; done
+echo
+echo "=== 4. 中继游标 / inbox 最高 RUN_ID（应为 6）==="
+echo -n "last_run_id = "; cat ~/super_intelligence_2035/doc/personal-watch/run/ops/.last_run_id 2>/dev/null || echo "?"
+grep -oE 'RUN_ID[[:space:]]*[0-9]+' ~/super_intelligence_2035/doc/personal-watch/run/ops/inbox.md 2>/dev/null | sort -t' ' -k2 -n | tail -3
+```
+
+**输出**
+```
+=== 0. 基本 ===
+VM-0-6-ubuntu
+2026-10-05 22:45:49 CST
+ 22:45:49 up 13:36,  5 users,  load average: 0.04, 0.01, 0.00
+
+=== 1. ⭐ watch/ops 相关进程（中继两种命名 + 两条 loop）===
+98701 bash watch_news_loop.sh
+102214 bash ops_relay.sh
+108954 bash watch_research_loop.sh
+173361 bash ops_relay.sh
+349162 node /home/liuyang/.nvm/versions/node/v24.21.0/bin/cline -c /home/liuyang/super_intelligence_2035/doc/personal-watch/run --auto-approve true -m deepseek-
+349171 /home/liuyang/.nvm/versions/node/v24.21.0/lib/node_modules/cline/bin/.cline -c /home/liuyang/super_intelligence_2035/doc/personal-watch/run --auto-approv
+349841 bash ops_relay.sh
+
+=== 1b. 兜底：按脚本路径找（防 cmdline 名字对不上）===
+  98701    10:19:13 bash watch_news_loop.sh
+ 102214    10:14:24 bash ops_relay.sh
+ 108954    10:04:13 bash watch_research_loop.sh
+ 173361    08:01:03 bash ops_relay.sh
+ 349162       00:48 node /home/liuyang/.nvm/versions/node/v24.21.0/bin/cline -c /home/liuyang/super_intelligence_2035/doc/personal-watch/run --auto-approve true
+ 349171       00:48 /home/liuyang/.nvm/versions/node/v24.21.0/lib/node_modules/cline/bin/.cline -c /home/liuyang/super_intelligence_2035/doc/personal-watch/run 
+ 349841       00:00 bash ops_relay.sh
+
+=== 2. 中继日志尾部（应有 [relay] … started / nothing to commit）===
+[main afdba6d] watch-ops-relay: result @ 2026-10-05 15:28:12
+ 2 files changed, 158 insertions(+), 1 deletion(-)
+[relay] ✅ committed + pushed.
+[relay] RUN_ID=5 executed, exit=0, appended to outbox.
+[relay] RUN_ID=5 executed, exit=0, appended to outbox.
+[main e82c574] watch-ops-relay: result @ 2026-10-05 15:31:51
+ 1 file changed, 117 insertions(+)
+[relay] ✅ committed + pushed.
+
+=== 3. 两条 loop 日志尾部（各 2 行）===
+--- /tmp/watch_news_loop.log ---
+[loop] 2026-10-05 22:19:10 cline returned (exit 0); log=/tmp/watch_news_cline_last.log
+[loop] 2026-10-05 22:19:10 WAITING=1 (no pending follow-up) → sleep 1800s
+--- /tmp/watch_research_loop.log ---
+[0m[2mLet[0m[2m me[0m[2m poll[0m[2m probe[0m[2m.[0m
+[36m[run_commands][0m sleep 28 && cat /tmp/probe_r32.log 2>/dev/null | tail -5; echo '---'; ls -la /home/liuyang/super_intelligence_2035/do...
+
+=== 4. 中继游标 / inbox 最高 RUN_ID（应为 6）===
+last_run_id = 5
+RUN_ID 5
+RUN_ID 5
+RUN_ID 6
+```
