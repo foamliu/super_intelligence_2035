@@ -249,3 +249,8 @@
 | 2026-10-06 | Toshiba plans to double HDD capacity for AI data centers by FY2027 | Nikkei Asia（经 HN） | news | https://asia.nikkei.com/business/electronics/toshiba-to-double-hard-disk-drive-supply-to-fill-ai-chip-memory-gap |
 | 2026-10-06 | Command-line tool quickly removes Apple Intelligence from macOS 27 | Ars Technica | tool | https://arstechnica.com/apple/2026/10/command-line-tool-quickly-removes-apple-intelligence-from-macos-27/ |
 
+
+| 2026-10-06 | Etched fields funding offers at $40B+ valuation, sources say | TechCrunch | news | https://techcrunch.com/2026/10/05/etched-fields-funding-offers-at-40b-valuation-sources-say/ |
+| 2026-10-06 | Nolla Health will now use AI to review face scans and write acne prescriptions in Utah | The Verge | news | https://www.theverge.com/ai-artificial-intelligence/1005075/nolla-health-acne-ai-prescriptions |
+| 2026-10-06 | Pentagon stops using Anthropic AI tools after blacklisting company, BBC told | BBC（经 HN） | news(未核验) | https://www.bbc.co.uk/news/articles/c5j9x9pr0240o |
+
