@@ -1,3 +1,4 @@
+
 # ARXIV_API.md — arXiv API 打通记录（R1）
 
 > 任务书 `WATCH_RESEARCH_TASK.md` **R1** 产物。要求：**给实测证据**（命令 + 原始输出 ≥3 条，含
@@ -301,4 +302,17 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
   - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml` + `items=0` → ⚠️ **周末/未公告**。
 - **增量取数** `--fetch --seen research/SEEN.md`（`window_mode=weekend_batch`，窗口 **120h**，`generated=2026-10-03T22:28:52Z`）：**15/15 查询 `ok`**（无重试），**kept 0 / dropped 600**；其中 **404 条 = `already in SEEN`**，其余 **196 条 = `stale > 120h`**。证据 `research/raw/2026-10-03-fetch-r13.json`。
 - **结论**：**UTC 仍为 `2026-10-03`（周六）**、**本地已跨入 `10-04`（周日）凌晨**，arXiv **周末不发公告**，最近批次仍为 **2026-10-01** → **0 新增属正常**（**非「无数据」**），按 R2′ 已在日报**如实标注实际日期区间**（`2026-09-28 ~ 2026-10-01`）。
+
+### 9.17 第十五轮（UTC 跨入 2026-10-05 周一 · 新建当日日报）：工作日公告恢复 → **+171 篇**（**本轮实时取数**）
+
+- **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-05T04:42:20Z`，证据 `research/raw/2026-10-05-probe-r15.json`）：
+  - **arXiv API**：`HTTP 200` + `application/atom+xml`，最新 `published=2026-10-02T17:59:14Z`（`totalResults=626530`，样本 `2610.03717 / 2610.03716 / 2610.03715`）→ ✅ **可达**；
+  - **HF Daily Papers**：`Network is unreachable` → ❌ 不可达（**如实记录，不伪造 `hf_daily` 标记**）；
+  - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml` + `items=185 / 191 / 456` → ✅ **工作日已有内容**（不再为周末空 feed）。
+- **增量取数** `--fetch --seen research/SEEN.md`（`window_mode=weekend_batch`，窗口 **120h**，`generated=2026-10-05T04:44:08Z`）：**15/15 查询 `ok`**（无重试），**kept 171 / dropped 416**；其中 **404 条 = `already in SEEN`**，其余 **= `stale > 120h`**。各查询命中（kept）：`sweep-cs-5cats` 40 · `llm-large-language-model` 36 · `mm-vision-language` 36 · `nb-alignment` 16 · `mm-multimodal` 11 · `agent-csma-multiagent` 10 · `slm-on-device` 6 · `llm-long-context` 4 · `mm-csmm` 4 · `agent-harness-title` 4 · `agent-tool-use` 2 · `slm-small-language-model` 1 · `nb-retrieval-augmented` 1 · `llm-scaling-law` 0 · `agent-swe-bench` 0。证据 `research/raw/2026-10-05-fetch-r15.json`。
+- **口径（新建当日日报）**：**UTC 由 `2026-10-04` 跨入 `2026-10-05`（周一）**；arXiv **工作日公告恢复**（已刷新到 **`2026-10-02`** 提交批）→ **本轮不再为 0**，实际日期区间按 R2′ 标注为 **`2026-09-30 ~ 2026-10-02`**。按本线既定口径（**日报日期 = UTC 日期**）**新建 `research/2026-10-05.md`**，承接 `research/2026-10-04.md`（第十四轮）。
+- **采集/整理**：**精选收录 30 篇**（LLM 9 / SLM 1 / 多模态 7 / agent harness 9 / 邻域 4）逐条中文摘要 → `research/2026-10-05.md` + `papers.jsonl`（累计 91）；**候选 141 篇** → `SEEN.md`（累计 578 = 收录 91 / 候选 487）。
+- **第 3 批 A/B 复核**：TOP-K（`takeaway`/`action` 20 条）+ `TAKEAWAYS.md`（5 条）+ 视频线（`SHORTLIST.md` 17 / `scripts/` 3）**已交付未变**；本轮有新增论文，**TOP-K 是否重跑留待 supervisor 决定**（命令见 §7）。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
+
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。

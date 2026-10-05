@@ -11,10 +11,10 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-已完成:       R1 打通 arXiv API（HTTPS/Atom → research/ARXIV_API.md）；R2 固化检索策略（queries.json）；R3/R4 首轮采集（抓取 214 → 收录 34 + 候选 180）；R1′ 取源复验；R2′ published-first + 周末自动放宽；第二~十四轮增量（15/15 ok，第三~十四轮均 0 新增）；**运维第 2 批**：`arxiv_fetch.py` 增 `comment`/`journal_ref` → ≤30d 全量重扫（候选池 1118）→ 新建 `top_k.py`（rel/q 双维 + HN 热度）→ `TOP_K.md`/`TOP_K.jsonl`（TOP-20）+ `test_top_k.py` 20/20；**运维第 3 批**：`top_k.py` 增 `--takeaways-json`（人工 `takeaway`/`action` 注入，不打分）→ `TOP_K_takeaways.json`（20 条）→ 相关面放宽「存储/芯片」重排（**#1 DeepSeek-V4.1-Flash**）→ `TAKEAWAYS.md`（≤5 条）→ `test_top_k.py` **25/25**；**视频线** `video/SHORTLIST.md`（17 条）+ `video/scripts/`（3 份口播稿）；**第十三轮**（周日凌晨）→ **第十四轮**（**UTC 跨入 2026-10-04 周日**，**新建当日日报**）均 **0 新增**（15/15 ok；第 3 批 A/B **已交付未变**）
-当前动作:     第十四轮常态增量（**本轮实时取数**）：`--probe`(R1′) + `--fetch` 增量（**0 新增**，周末未公告，15/15 ok）→ **新建当日日报 `research/2026-10-04.md`** + INDEX/SEEN/ARXIV_API(§9.16) + 本记忆；并复核第 3 批 A/B 交付仍有效
-下一步:       ① 常态采集按 SOP 增量（先读 SEEN.md 去重、定窗口）；② TOP-K 可按需重跑（`--w1/--w2/--top/--takeaways-json` 可调）；③ **视频 V3（生成）待用户确认运行机工具链后再动**；④ **邮件职能待用户批准后才可启动**（现仅登记）
-本轮新增:     0 篇采集（周末未公告）；R1′ 复验（arXiv ✅ / HF ❌ / RSS 空）+ 第十四轮 **15/15 ok**（kept 0 / dropped 600 = 404 already-in-SEEN + 196 stale）
+已完成:       R1 打通 arXiv API（HTTPS/Atom → research/ARXIV_API.md）；R2 固化检索策略（queries.json）；R3/R4 首轮采集（抓取 214 → 收录 34 + 候选 180）；R1′ 取源复验；R2′ published-first + 周末自动放宽；第二~十四轮增量（15/15 ok，第三~十四轮均 0 新增）；**运维第 2 批**：`arxiv_fetch.py` 增 `comment`/`journal_ref` → ≤30d 全量重扫（候选池 1118）→ 新建 `top_k.py`（rel/q 双维 + HN 热度）→ `TOP_K.md`/`TOP_K.jsonl`（TOP-20）+ `test_top_k.py` 20/20；**运维第 3 批**：`top_k.py` 增 `--takeaways-json`（人工 `takeaway`/`action` 注入，不打分）→ `TOP_K_takeaways.json`（20 条）→ 相关面放宽「存储/芯片」重排（**#1 DeepSeek-V4.1-Flash**）→ `TAKEAWAYS.md`（≤5 条）→ `test_top_k.py` **25/25**；**视频线** `video/SHORTLIST.md`（17 条）+ `video/scripts/`（3 份口播稿）；**第十三轮**（周日凌晨）→ **第十四轮**（UTC 跨入 2026-10-04 周日）均 **0 新增**；**第十五轮**（**UTC 跨入 2026-10-05 周一**，**新建当日日报**）**工作日公告恢复 → +171 新增**（15/15 ok，精选收录 30；第 3 批 A/B **已交付未变**）
+当前动作:     第十五轮常态增量（**本轮实时取数**）：`--probe`(R1′) + `--fetch` 增量（**+171**，工作日公告恢复，15/15 ok）→ **新建当日日报 `research/2026-10-05.md`**（精选收录 30）+ INDEX/SEEN/papers.jsonl/ARXIV_API(§9.17) + 本记忆；并复核第 3 批 A/B 交付仍有效
+下一步:       ① 常态采集按 SOP 增量（先读 SEEN.md 去重、定窗口）；② TOP-K 可按需重跑（`--w1/--w2/--top/--takeaways-json` 可调；本轮有新增、是否重跑待 supervisor 决定）；③ **视频 V3（生成）待用户确认运行机工具链后再动**；④ **邮件职能待用户批准后才可启动**（现仅登记）
+本轮新增:     171 篇采集（工作日公告恢复，最新批次 2026-10-02；精选收录 30）；R1′ 复验（arXiv ✅ / HF ❌ / RSS 有内容）+ 第十五轮 **15/15 ok**（kept 171 / dropped 416 = 404 already-in-SEEN + 其余 stale）
 阻塞:         无（HF Daily Papers 本机不可达 → 社区热度**改用 HN Algolia 替代并注明**，不伪造 hf_daily；**视频 V3 待工具链确认**）
 ERROR_COUNT:  1（历史：第八轮唤醒 **cline 超时中断** `run timed out after 1500s`，已补记落盘；本轮无新错误；回归 test_arxiv_fetch 49/49 + test_top_k 25/25 PASS）
 ```
@@ -47,13 +47,21 @@ ERROR_COUNT:  1（历史：第八轮唤醒 **cline 超时中断** `run timed out
 - **日流水**：`daily-memories-research/<YYYY-MM-DD>.md`
 - **关注领域**：LLM · SLM · 多模态 · agent harness（+ 邻域，见任务书 §1）
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-04`（第十四轮；窗口 **≤120h**（周末，`window_mode=weekend_batch`）；实际批次 `2026-09-28 ~ 2026-10-01`，本轮 **0 新增**）
+- **上次采集窗口**：`2026-10-05`（第十五轮；窗口 **≤120h**（`window_mode=weekend_batch`）；实际批次 `2026-09-30 ~ 2026-10-02`，本轮 **+171 新增**（精选收录 30））
 - **TOP-K 窗口（第 2 批专用，第 3 批沿用）**：`2026-09-03 ~ 2026-10-01`（**≤30d / 720h**，`window_mode=override`；候选池 **1118** 篇 → TOP-20）
-- **累计收录**：`61` 篇（另候选 346 篇，仅存 `SEEN.md` 防重；**十四轮**累计抓取 407 条 —— 第三~第十四轮新增均 **0**）
+- **累计收录**：`91` 篇（另候选 487 篇，仅存 `SEEN.md` 防重；**十五轮**累计抓取 578 条 —— 第三~第十四轮新增均 **0**（周末未公告），**第十五轮 +171**）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
+
+- **2026-10-05（UTC 周一）** —— **第十五轮（常态增量 · UTC 跨入 10-05、新建当日日报）→ 工作日公告恢复，+171 新增（本轮实时取数）**。
+  - **R1′（取源复验）**：`--probe --config research/queries.json`（`generated=2026-10-05T04:42:20Z`）→ **arXiv ✅ `200`+`atom+xml`（最新 `2026-10-02T17:59:14Z`，`totalResults=626530`）** / **HF ❌ `Network is unreachable`** / **RSS cs.CL/CV/LG ✅ `items=185/191/456`（工作日有内容）**。证据 → `research/raw/2026-10-05-probe-r15.json`。
+  - **增量采集**：`--fetch --seen research/SEEN.md`（`weekend_batch`，120h，`generated=2026-10-05T04:44:08Z`）→ **15/15 `ok`**（无重试），**kept 171 / dropped 416（404 already in SEEN + 其余 stale）** → **+171 新增**（**UTC 周一**，arXiv 工作日公告恢复，已刷新到 `2026-10-02` 提交批）。证据 → `research/raw/2026-10-05-fetch-r15.json`。
+  - **采集/整理**：**精选收录 30 篇**（LLM 9 / SLM 1 / 多模态 7 / agent harness 9 / 邻域 4）逐条中文摘要 → `research/2026-10-05.md` + `papers.jsonl`（累计 91）；**候选 141 篇** → `SEEN.md`（累计 578 = 收录 91 / 候选 487）。
+  - **口径（新建当日日报）**：**UTC 由 10-04 跨入 10-05（周一）** → 按「日报日期 = UTC 日期」**新建 `research/2026-10-05.md`**（承接 `2026-10-04.md` 第十四轮）；`INDEX.md` 新增 row + 🗓 第十五轮；`SEEN.md` 插入 171 行 + 备注；`ARXIV_API.md` 新增 **§9.17**。
+  - **第 3 批 A/B 复核**：TOP-K（`takeaway`/`action` 20 条）+ `TAKEAWAYS.md`（5 条）+ 视频线（`SHORTLIST.md` 17 / `scripts/` 3）**已交付未变**；本轮有新增论文，**TOP-K 是否重跑待 supervisor 决定**（本轮未擅自重跑）。
+  - **回归测试**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）。
 
 - **2026-10-04（UTC 周日）** —— **第十四轮（常态增量 · UTC 跨入 10-04、新建当日日报）→ 0 新增（本轮实时取数）**。
   - **R1′（取源复验）**：`--probe --config research/queries.json`（`generated=2026-10-04T01:28:21Z`）→ **arXiv ✅ `200`+`atom+xml`（最新 `2026-10-01T17:59:59Z`，`totalResults=625914`）** / **HF ❌ `Network is unreachable`** / **RSS cs.CL/CV/LG ⚠️ `items=0`（周末/未公告）**。证据 → `research/raw/2026-10-04-probe-r14.json`。
