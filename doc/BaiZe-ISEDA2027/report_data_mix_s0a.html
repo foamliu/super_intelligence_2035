@@ -76,7 +76,7 @@ footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--bd);color:var
 <span class="tag live">🚀 训练运行中</span>
 <span class="tag warn">⚠️ 无中间 ckpt</span>
 </div>
-<div class="sub" style="margin-top:12px">数据快照时间：<strong>2026-10-06 04:08</strong>（实时从训练日志读取，非旧值）</div>
+<div class="sub" style="margin-top:12px">数据快照时间：<strong>2026-10-06 04:52</strong>（实时从训练日志读取，非旧值）</div>
 </header>
 <div class="toc">
 <h4>📑 目录</h4>
@@ -93,13 +93,13 @@ footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--bd);color:var
 </div>
 
 <div class="grid g3" style="margin-bottom:8px">
-<div class="kpi"><div class="lbl">当前步数</div><div class="val">1100<span class="unit"> / 5000</span></div><div class="delta grn">22.0% · 稳定推进中</div></div>
-<div class="kpi"><div class="lbl">当前 Loss</div><div class="val">3.05<span class="unit"> ↘</span></div><div class="delta grn">从 10.84 持续下降</div></div>
+<div class="kpi"><div class="lbl">当前步数</div><div class="val">1170<span class="unit"> / 5000</span></div><div class="delta grn">23.4% · 稳定推进中</div></div>
+<div class="kpi"><div class="lbl">当前 Loss</div><div class="val">3.02<span class="unit"> ↘</span></div><div class="delta grn">从 10.84 持续下降</div></div>
 <div class="kpi"><div class="lbl">健康度</div><div class="val grn">OK</div><div class="delta">0 NaN · 0 skipped</div></div>
 </div>
 <div class="grid g3" style="margin-bottom:20px">
-<div class="kpi"><div class="lbl">迭代速度</div><div class="val">~37.5<span class="unit"> s/iter</span></div><div class="delta mut">357 TFLOP/s/GPU</div></div>
-<div class="kpi"><div class="lbl">预计完成 ETA</div><div class="val warn">~Oct 7<span class="unit"> 20:45</span></div><div class="delta mut">剩余 ≈ 40.6 小时</div></div>
+<div class="kpi"><div class="lbl">迭代速度</div><div class="val">~37.8<span class="unit"> s/iter</span></div><div class="delta mut">354 TFLOP/s/GPU</div></div>
+<div class="kpi"><div class="lbl">预计完成 ETA</div><div class="val warn">~Oct 7<span class="unit"> 21:00</span></div><div class="delta mut">剩余 ≈ 40.2 小时</div></div>
 <div class="kpi"><div class="lbl">中间 Checkpoint</div><div class="val err">无</div><div class="delta err">SAVE_INTERVAL=5000</div></div>
 </div>
 
@@ -202,13 +202,13 @@ BLEND=<span class="s">"22 ${DATA}/mix_base/mix_base_train_s0 \
 <h3>3.3 为什么先跑 Stable 段、再跑 Decay 段？</h3>
 <p>WSD 的<strong>逻辑顺序</strong>是 Stable 在前、Decay 在后（先打基础再退火）。配比实验也遵循这个顺序：先把 Stable 段的 base/code/math 三轴搜好（用 Table 2 的 8 个常识集做代理），再搜 Decay 段的 SFT 占比与类别分布（用 Table 3 的 6 个复杂推理集做代理）。<strong>S0a 是 Stable 段的第一个点</strong>（基线配比 88:8:4），后续 Stable 臂会调 base 内部 shard 权重、code/math 比例做对比。</p>
 <h2 id="s4">4. 当前实时状态</h2>
-<p>以下数字<strong>全部从 <code>10.239.2.29</code> 上的实时训练日志读取</strong>（<code>tail /tmp/baize_mix_stable_s0a_train.log</code> + <code>nvidia-smi</code> + <code>ps</code>），非 MEMORY 里的旧值。读取时间：<strong>2026-10-06 04:08</strong>。</p>
+<p>以下数字<strong>全部从 <code>10.239.2.29</code> 上的实时训练日志读取</strong>（<code>tail /tmp/baize_mix_stable_s0a_train.log</code> + <code>nvidia-smi</code> + <code>ps</code>），非 MEMORY 里的旧值。读取时间：<strong>2026-10-06 04:52</strong>。</p>
 <div class="grid g2">
-<div class="kpi"><div class="lbl">当前步数</div><div class="val">1100<span class="unit"> / 5000</span></div><div class="delta grn">22.0% 完成</div></div>
-<div class="kpi"><div class="lbl">已消耗样本</div><div class="val">1,122,000</div><div class="delta mut">≈ 4.60B tokens（×4094 seq）</div></div>
-<div class="kpi"><div class="lbl">当前 Loss</div><div class="val">3.05<span class="unit"> ↘</span></div><div class="delta grn">step 10: 10.84 → step 1100: 3.05</div></div>
+<div class="kpi"><div class="lbl">当前步数</div><div class="val">1170<span class="unit"> / 5000</span></div><div class="delta grn">23.4% 完成</div></div>
+<div class="kpi"><div class="lbl">已消耗样本</div><div class="val">1,193,400</div><div class="delta mut">≈ 4.89B tokens（×4094 seq）</div></div>
+<div class="kpi"><div class="lbl">当前 Loss</div><div class="val">3.02<span class="unit"> ↘</span></div><div class="delta grn">step 10: 10.84 → step 1170: 3.02</div></div>
 <div class="kpi"><div class="lbl">学习率</div><div class="val">1.0e-3<span class="unit"> (峰值)</span></div><div class="delta mut">warmup=250 已完成，稳定保持</div></div>
-<div class="kpi"><div class="lbl">迭代速度</div><div class="val">~37.5<span class="unit"> s/iter</span></div><div class="delta mut">357 TFLOP/s/GPU</div></div>
+<div class="kpi"><div class="lbl">迭代速度</div><div class="val">~37.8<span class="unit"> s/iter</span></div><div class="delta mut">354 TFLOP/s/GPU</div></div>
 <div class="kpi"><div class="lbl">健康度</div><div class="val grn">✅ 正常</div><div class="delta grn">0 NaN · 0 skipped</div></div>
 </div>
 <h3>4.1 GPU 占用（.29 实时 nvidia-smi）</h3>
@@ -229,7 +229,7 @@ BLEND=<span class="s">"22 ${DATA}/mix_base/mix_base_train_s0 \
 <tr><th>项</th><th>值</th></tr>
 <tr><td>主进程 PID</td><td>2525319（torchrun）→ 6 workers 2528081–2528090（<code>pretrain_launcher.py --arch mamba2 --name mix_stable_s0a</code>）</td></tr>
 <tr><td>启动方式</td><td><code>torchrun --nproc_per_node=6</code>（2026-10-05 16:31 restart 起）</td></tr>
-<tr><td>已运行时长</td><td><strong>11:37:00</strong>（约 11 小时 37 分钟，etimes≈41820s）</td></tr>
+<tr><td>已运行时长</td><td><strong>12:21:00</strong>（约 12 小时 21 分钟，etimes≈44500s）</td></tr>
 <tr><td>实验目录</td><td><code>/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/mix_stable_s0a/</code></td></tr>
 <tr><td>Checkpoint 目录</td><td><code>.../mix_stable_s0a/checkpoints/</code> — <strong class="err">当前为空（无中间 ckpt）</strong></td></tr>
 <tr><td>TensorBoard 日志</td><td><code>.../mix_stable_s0a/tb_logs/</code></td></tr>
@@ -240,12 +240,12 @@ BLEND=<span class="s">"22 ${DATA}/mix_base/mix_base_train_s0 \
 </div>
 <h3>4.3 ETA 计算</h3>
 <div class="card">
-<pre><span class="c"># 实时计算（2026-10-06 04:08）</span>
-当前步数   = 1100 / 5000
-剩余步数   = 5000 - 1100 = <span class="n">3900</span> 步
-实测速度   = ~37.5 s/iter（最近 20 步平均）
-剩余时间   = 3900 × 37.5 = <span class="n">146,250 s ≈ 40.6 小时</span>
-ETA        = 2026-10-06 04:08 + 40.6h ≈ <span class="n">2026-10-07 20:45</span>
+<pre><span class="c"># 实时计算（2026-10-06 04:52）</span>
+当前步数   = 1170 / 5000
+剩余步数   = 5000 - 1170 = <span class="n">3830</span> 步
+实测速度   = ~37.8 s/iter（最近 20 步平均）
+剩余时间   = 3830 × 37.8 = <span class="n">144,774 s ≈ 40.2 小时</span>
+ETA        = 2026-10-06 04:52 + 40.2h ≈ <span class="n">2026-10-07 21:00</span>
 
 总训练量   = 5000 步 × GBS 1020 × seq 4094 ≈ <span class="n">20.9 B tokens</span>
 总 GPU·时  = 6 GPU × 52 h = <span class="n">312 GPU·h</span></pre>
@@ -276,19 +276,19 @@ ETA        = 2026-10-06 04:08 + 40.6h ≈ <span class="n">2026-10-07 20:45</span
 <rect x="70" y="50" width="45" height="340" fill="#4fc3f7" opacity="0.06"/>
 <text x="92" y="65" fill="#4fc3f7" font-size="10" text-anchor="middle">warmup</text>
 <text x="92" y="78" fill="#4fc3f7" font-size="10" text-anchor="middle">250步</text>
-<line x1="268.0" y1="50" x2="268.0" y2="390" stroke="#ffb74d" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.7"/>
-<text x="268.0" y="45" fill="#ffb74d" font-size="10" text-anchor="middle">step 1100 (当前)</text>
+<line x1="280.6" y1="50" x2="280.6" y2="390" stroke="#ffb74d" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.7"/>
+<text x="280.6" y="45" fill="#ffb74d" font-size="10" text-anchor="middle">step 1170 (当前)</text>
 <text x="960" y="45" fill="#ef5350" font-size="10" text-anchor="end">step 5000 (目标)</text>
 <polyline fill="none" stroke="#4fc3f7" stroke-width="2" stroke-linejoin="round"
-points="71.8,56.8 73.6,111.5 75.4,146.5 77.2,184.1 79.0,200.4 80.8,211.5 82.6,221.9 84.4,229.0 86.2,236.7 88.0,243.5 89.8,249.1 91.6,255.1 93.4,259.0 95.2,263.2 97.0,266.2 98.8,270.2 100.6,275.0 102.4,278.5 104.2,282.6 106.0,285.8 107.8,290.1 109.6,295.6 111.4,299.1 113.2,302.6 115.0,307.9 116.8,310.2 118.6,314.0 120.4,318.8 122.2,321.4 124.0,323.8 125.8,327.8 127.6,329.8 129.4,332.1 131.2,335.4 133.0,336.8 134.8,339.0 136.6,341.0 138.4,341.9 140.2,344.6 142.0,346.0 143.8,347.3 145.6,348.9 147.4,349.3 149.2,351.6 151.0,352.5 152.8,353.7 154.6,355.1 156.4,356.0 158.2,357.2 160.0,358.0 161.8,358.8 163.6,359.8 165.4,360.5 167.2,361.7 169.0,362.4 170.8,363.4 172.6,364.2 174.4,365.0 176.2,365.4 178.0,365.9 179.8,367.1 181.6,367.0 183.4,368.2 185.2,368.8 187.0,369.1 188.8,370.3 190.6,370.5 192.4,371.3 194.2,372.0 196.0,373.0 197.8,373.3 199.6,374.2 201.4,375.0 203.2,376.2 205.0,376.5 206.8,377.1 208.6,378.0 210.4,378.2 212.2,378.4 214.0,379.5 215.8,379.4 219.4,380.5 221.2,380.9 223.0,381.3 224.8,381.7 226.6,382.0 228.4,382.2 230.2,382.3 232.0,382.4 233.8,383.4 235.6,383.7 237.4,383.6 239.2,383.7 241.0,384.2 242.8,384.9 244.6,385.1 246.4,385.0 248.2,389.4 250.0,389.5 251.8,389.9 253.6,390.0 255.4,390.4 257.2,390.7 259.0,390.5 260.8,390.4 262.6,390.2 264.4,390.0 266.2,389.8 268.0,389.6"/>
+points="71.8,56.8 73.6,111.5 75.4,146.5 77.2,184.1 79.0,200.4 80.8,211.5 82.6,221.9 84.4,229.0 86.2,236.7 88.0,243.5 89.8,249.1 91.6,255.1 93.4,259.0 95.2,263.2 97.0,266.2 98.8,270.2 100.6,275.0 102.4,278.5 104.2,282.6 106.0,285.8 107.8,290.1 109.6,295.6 111.4,299.1 113.2,302.6 115.0,307.9 116.8,310.2 118.6,314.0 120.4,318.8 122.2,321.4 124.0,323.8 125.8,327.8 127.6,329.8 129.4,332.1 131.2,335.4 133.0,336.8 134.8,339.0 136.6,341.0 138.4,341.9 140.2,344.6 142.0,346.0 143.8,347.3 145.6,348.9 147.4,349.3 149.2,351.6 151.0,352.5 152.8,353.7 154.6,355.1 156.4,356.0 158.2,357.2 160.0,358.0 161.8,358.8 163.6,359.8 165.4,360.5 167.2,361.7 169.0,362.4 170.8,363.4 172.6,364.2 174.4,365.0 176.2,365.4 178.0,365.9 179.8,367.1 181.6,367.0 183.4,368.2 185.2,368.8 187.0,369.1 188.8,370.3 190.6,370.5 192.4,371.3 194.2,372.0 196.0,373.0 197.8,373.3 199.6,374.2 201.4,375.0 203.2,376.2 205.0,376.5 206.8,377.1 208.6,378.0 210.4,378.2 212.2,378.4 214.0,379.5 215.8,379.4 217.6,380.1 219.4,380.3 221.2,380.8 223.0,381.2 224.8,381.2 226.6,382.1 228.4,382.3 230.2,382.3 232.0,382.5 233.8,383.4 235.6,383.7 237.4,383.6 239.2,383.7 241.0,384.2 242.8,384.8 244.6,385.1 246.4,385.0 248.2,385.4 250.0,385.5 251.8,385.9 253.6,386.0 255.4,386.4 257.2,386.7 259.0,386.8 260.8,386.8 262.6,387.1 264.4,387.4 266.2,387.7 268.0,387.8 269.8,387.9 271.6,388.2 273.4,388.3 275.2,388.6 277.0,388.7 278.8,388.9 280.6,389.3"/>
 <circle cx="71.8" cy="56.8" r="3" fill="#66bb6a"/>
 <text x="78" y="60" fill="#66bb6a" font-size="10">10.84 (step10)</text>
 <circle cx="115.0" cy="307.9" r="3" fill="#4fc3f7"/>
 <text x="120" y="302" fill="#4fc3f7" font-size="10">4.93 (step250, LR达峰)</text>
-<circle cx="268.0" cy="389.6" r="4" fill="#ffb74d" stroke="#fff" stroke-width="1"/>
-<text x="273" y="384" fill="#ffb74d" font-size="11" font-weight="bold">3.05 (step1100, 当前)</text>
+<circle cx="280.6" cy="389.3" r="4" fill="#ffb74d" stroke="#fff" stroke-width="1"/>
+<text x="285" y="384" fill="#ffb74d" font-size="11" font-weight="bold">3.02 (step1170, 当前)</text>
 <polyline fill="none" stroke="#66bb6a" stroke-width="1.5" stroke-dasharray="5,5" opacity="0.6"
-points="268.0,389.6 380,391 560,392 740,393 970,394"/>
+points="280.6,389.3 380,390 560,391 740,392 970,393"/>
 <text x="850" y="365" fill="#66bb6a" font-size="10" opacity="0.8">趋势外推（非实测）</text>
 </svg>
 <div class="legend">
@@ -315,13 +315,14 @@ points="268.0,389.6 380,391 560,392 740,393 970,394"/>
 <tr><td class="num">900</td><td class="num">3.18</td><td class="num">1.0e-3</td><td>Stable 稳定段</td></tr>
 <tr><td class="num">1000</td><td class="num">3.11</td><td class="num">1.0e-3</td><td>Stable 稳定段</td></tr>
 <tr><td class="num">1040</td><td class="num">3.08</td><td class="num">1.0e-3</td><td>Stable 稳定段</td></tr>
-<tr><td class="num"><strong>1100</strong></td><td class="num"><strong>3.05</strong></td><td class="num">1.0e-3</td><td><strong>当前（稳定下降中）</strong></td></tr>
+<tr><td class="num">1100</td><td class="num">3.05</td><td class="num">1.0e-3</td><td>Stable 稳定段</td></tr>
+<tr><td class="num"><strong>1170</strong></td><td class="num"><strong>3.02</strong></td><td class="num">1.0e-3</td><td><strong>当前（稳定下降中）</strong></td></tr>
 </table>
-<p class="mut">Loss 从 10.84 降至 3.05，<strong>累计降幅 71.9%</strong>；warmup 结束后（step 250+）LR 恒定 1.0e-3，loss 以 ~0.003/step 的速率平稳线性下降，<strong>无异常跳变、无 NaN、无 skip</strong>。</p>
+<p class="mut">Loss 从 10.84 降至 3.02，<strong>累计降幅 72.2%</strong>；warmup 结束后（step 250+）LR 恒定 1.0e-3，loss 以 ~0.003/step 的速率平稳线性下降，<strong>无异常跳变、无 NaN、无 skip</strong>。</p>
 <h2 id="s6">6. 下一步</h2>
 <div class="tl">
-<div class="ev cur"><div class="when">当前（2026-10-06 04:08）</div><div class="what">🚀 S0a 臂训练中：step 1100/5000，loss 3.05↓，健康</div></div>
-<div class="ev"><div class="when">预计 ~2026-10-07 20:45</div><div class="what">⏳ S0a 跑满 5000 步 → 自动存 checkpoint（<code>iter_0005000/</code>）</div></div>
+<div class="ev cur"><div class="when">当前（2026-10-06 04:52）</div><div class="what">🚀 S0a 臂训练中：step 1170/5000，loss 3.02↓，健康</div></div>
+<div class="ev"><div class="when">预计 ~2026-10-07 21:00</div><div class="what">⏳ S0a 跑满 5000 步 → 自动存 checkpoint（<code>iter_0005000/</code>）</div></div>
 <div class="ev"><div class="when">S0a 完成后（~30 min）</div><div class="what">🔄 checkpoint → 转 HF 格式（<code>baize_p6_ckpt_to_hf.py</code>，Nemotron-H）</div></div>
 <div class="ev"><div class="when">转 HF 后（~1–2 h）</div><div class="what">📊 跑 lm_eval Table 2（8 个常识集）：ARC-C / ARC-E / BoolQ / HellaSwag / OpenBookQA / PiQA / SciQ / Winogrande</div></div>
 <div class="ev"><div class="when">评测后</div><div class="what">📝 把实测分数填入 <code>run/DATA_MIX_RECIPE.md</code> 的 S0a 行（配比 + loss + 8 集分项 + Avg）</div></div>
@@ -387,17 +388,17 @@ BLEND=<span class="s">"22 $DATA/mix_base/mix_base_train_s0 22 $DATA/mix_base/mix
     --lr-warmup-iters <span class="s">"$WARMUP"</span> --lr-decay-iters <span class="s">"$DECAY"</span> --lr-decay-style WSD \
     --seed <span class="n">1234</span> --precision bf16_mixed</pre>
 <h3>8.2 实时训练日志（最近 5 行，<code>tail /tmp/baize_mix_stable_s0a_train.log</code>）</h3>
-<pre><span class="c"># 读取时间 2026-10-06 04:08，从 10.239.2.29 实时获取</span>
-Step Time : 37.75s GPU utilization: 354.1TFLOP/s/GPU
- [2026-10-06 03:43:26] iteration     1060/    5000 | consumed samples: 1081200 | elapsed time per iteration (ms): 37748.5 | learning rate: 1.000000E-03 | global batch size:  1020 | lm loss: 3.074663E+00 | grad norm: 0.218 | skipped: 0 | nan: 0 |
-Step Time : 37.28s GPU utilization: 358.5TFLOP/s/GPU
- [2026-10-06 03:49:39] iteration     1070/    5000 | consumed samples: 1091400 | elapsed time per iteration (ms): 37284.2 | learning rate: 1.000000E-03 | global batch size:  1020 | lm loss: 3.068436E+00 | grad norm: 0.249 | skipped: 0 | nan: 0 |
-Step Time : 37.11s GPU utilization: 360.2TFLOP/s/GPU
- [2026-10-06 03:55:50] iteration     1080/    5000 | consumed samples: 1101600 | elapsed time per iteration (ms): 37110.6 | learning rate: 1.000000E-03 | global batch size:  1020 | lm loss: 3.061978E+00 | grad norm: 0.212 | skipped: 0 | nan: 0 |
-Step Time : 37.34s GPU utilization: 358.0TFLOP/s/GPU
- [2026-10-06 04:02:03] iteration     1090/    5000 | consumed samples: 1111800 | elapsed time per iteration (ms): 37335.6 | learning rate: 1.000000E-03 | global batch size:  1020 | lm loss: 3.054244E+00 | grad norm: 0.257 | skipped: 0 | nan: 0 |
-Step Time : 38.12s GPU utilization: 350.6TFLOP/s/GPU
- [2026-10-06 04:08:24] iteration     1100/    5000 | consumed samples: 1122000 | elapsed time per iteration (ms): 38123.5 | learning rate: 1.000000E-03 | global batch size:  1020 | lm loss: 3.052822E+00 | grad norm: 0.265 | skipped: 0 | nan: 0 |</pre>
+<pre><span class="c"># 读取时间 2026-10-06 04:52，从 10.239.2.29 实时获取</span>
+Step Time : 37.70s GPU utilization: 354.5TFLOP/s/GPU
+ [2026-10-06 04:27:24] iteration     1130/    5000 | consumed samples: 1152600 | elapsed time per iteration (ms): 37699.8 | learning rate: 1.000000E-03 | global batch size:  1020 | lm loss: 3.040014E+00 | grad norm: 0.229 | skipped: 0 | nan: 0 |
+Step Time : 38.21s GPU utilization: 349.9TFLOP/s/GPU
+ [2026-10-06 04:33:46] iteration     1140/    5000 | consumed samples: 1162800 | elapsed time per iteration (ms): 38205.3 | learning rate: 1.000000E-03 | global batch size:  1020 | lm loss: 3.033938E+00 | grad norm: 0.182 | skipped: 0 | nan: 0 |
+Step Time : 37.80s GPU utilization: 353.6TFLOP/s/GPU
+ [2026-10-06 04:40:04] iteration     1150/    5000 | consumed samples: 1173000 | elapsed time per iteration (ms): 37797.4 | learning rate: 1.000000E-03 | global batch size:  1020 | lm loss: 3.031505E+00 | grad norm: 0.267 | skipped: 0 | nan: 0 |
+Step Time : 37.66s GPU utilization: 354.9TFLOP/s/GPU
+ [2026-10-06 04:46:20] iteration     1160/    5000 | consumed samples: 1183200 | elapsed time per iteration (ms): 37661.3 | learning rate: 1.000000E-03 | global batch size:  1020 | lm loss: 3.025863E+00 | grad norm: 0.218 | skipped: 0 | nan: 0 |
+Step Time : 38.11s GPU utilization: 350.7TFLOP/s/GPU
+ [2026-10-06 04:52:42] iteration     1170/    5000 | consumed samples: 1193400 | elapsed time per iteration (ms): 38108.3 | learning rate: 1.000000E-03 | global batch size:  1020 | lm loss: 3.017256E+00 | grad norm: 0.240 | skipped: 0 | nan: 0 |</pre>
 <h3>8.3 GPU 核验（<code>nvidia-smi --query-compute-apps</code>）</h3>
 <pre>pid, process_name, used_gpu_memory [MiB]
 2528081, /nas_train/.../py310/bin/python, 39020 MiB
@@ -422,7 +423,7 @@ Step Time : 38.12s GPU utilization: 350.6TFLOP/s/GPU
 <footer>
 <p><strong>报告生成：</strong>2026-10-06（data agent 唤醒，纯 CPU/写作，不占 GPU、不干扰 S0a 训练）</p>
 <p><strong>自包含声明：</strong>本 HTML 无任何外部 CDN / 资源依赖，可离线打开。图表为内联 SVG。</p>
-<p><strong>数据时效：</strong>训练状态数字为 2026-10-06 04:08 的实时快照，会随训练推进持续变化。如需最新值，运行 <code>ssh 10.239.2.29 'tail -5 /tmp/baize_mix_stable_s0a_train.log'</code>。</p>
+<p><strong>数据时效：</strong>训练状态数字为 2026-10-06 04:52 的实时快照，会随训练推进持续变化。如需最新值，运行 <code>ssh 10.239.2.29 'tail -5 /tmp/baize_mix_stable_s0a_train.log'</code>。</p>
 <p>🚫 本报告未涉及任何领域化（EDA/领域语料）相关内容 —— 遵循运维 10 月硬规矩。</p>
 </footer>
 </div>
