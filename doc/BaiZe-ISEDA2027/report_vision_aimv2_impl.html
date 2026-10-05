@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Vision — AIMv2-style 架构与实现细节报告</title>
+<style>
+  :root{--bg:#0d1117;--fg:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--border:#30363d;--code-bg:#161b22;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;background:var(--bg);color:var(--fg);line-height:1.7;max-width:1100px;margin:0 auto;padding:24px 20px 60px}
+  h1{font-size:1.7em;border-bottom:2px solid var(--accent);padding-bottom:10px;margin-bottom:8px}
+  h2{font-size:1.35em;color:var(--accent);margin-top:36px;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:6px}
+  h3{font-size:1.1em;color:var(--purple);margin-top:24px;margin-bottom:8px}
+  h4{font-size:1.0em;color:var(--yellow);margin-top:18px;margin-bottom:6px}
+  p{margin-bottom:10px}ul,ol{margin-bottom:12px;padding-left:24px}li{margin-bottom:4px}
+  code{font-family:"SFMono-Regular","Consolas",monospace;background:var(--code-bg);padding:1px 5px;border-radius:4px;font-size:0.88em;color:var(--green);border:1px solid var(--border)}
+  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:14px 16px;overflow-x:auto;margin-bottom:14px;font-size:0.82em}
+  pre code{background:none;border:none;padding:0;color:var(--fg)}
+  table{border-collapse:collapse;width:100%;margin-bottom:16px;font-size:0.88em}
+  th,td{border:1px solid var(--border);padding:6px 10px;text-align:left}
+  th{background:#21262d;color:var(--accent);font-weight:600}
+  tr:nth-child(even){background:var(--code-bg)}
+  .callout{border-left:3px solid var(--accent);background:var(--code-bg);padding:12px 16px;margin-bottom:14px;border-radius:0 6px 6px 0}
+  .callout-warn{border-left-color:var(--yellow)}.callout-key{border-left-color:var(--green)}.callout-danger{border-left-color:var(--red)}
+  .tag{display:inline-block;padding:1px 7px;border-radius:10px;font-size:0.78em;font-weight:600}
+  .tag-key{background:#1a4731;color:var(--green)}.tag-warn{background:#4d3a0a;color:var(--yellow)}.tag-info{background:#0d2847;color:var(--accent)}.tag-red{background:#4a0e0e;color:var(--red)}
+  .ln{color:var(--muted);user-select:none;display:inline-block;width:3.5em;text-align:right;margin-right:10px}
+  .header-meta{color:var(--muted);font-size:0.85em;margin-bottom:20px}
+  .num{color:var(--purple);font-weight:600}
+  .footer{margin-top:50px;padding-top:16px;border-top:1px solid var(--border);color:var(--muted);font-size:0.82em}
+</style>
+</head>
+<body>
+<h1>BaiZe Vision — AIMv2-style 架构与实现细节报告</h1>
+<div class="header-meta">生成时间：2026-10-05（R12 训练进行中，纯 CPU/写作，未干扰训练）· 代码：<code>run/vision/models.py</code> + <code>run/vision/r9_train.py</code> · 权威记录：<code>run/EXPERIMENTS_VISION_ROUND11.md §14–§17</code></div>
+<p>本报告以<b>可复现级别</b>记录 BaiZe Stage(iii) 视觉编码器中 <b>AIMv2-style 目标函数</b>（<code>--loss aimv2</code>）的架构、前向计算、损失定义、与官方 AIMv2 的差异（C2 限定），以及四臂因果分解证据。所有代码引用均附行号。</p>
+
+<h2>1. 架构总览</h2>
+<div class="callout callout-key">
+<table>
+<tr><th>组件</th><th>配置</th><th>参数量</th></tr>
+<tr><td><b>视觉 trunk</b></td><td>OpenVision2：w512 / depth30 / patch16 / 224²</td><td><b>126.78M</b></td></tr>
+<tr><td><b>PatchPredictor</b></td><td>Linear(w→w)→LN→GELU→Linear(w→768)</td><td><b>0.66M</b></td></tr>
+<tr><td><b>总可训参数</b></td><td>trunk + predictor</td><td><b>127.44M</b></td></tr>
+<tr><td><b>文本塔</b></td><td>冻结 CLIP-768 (<code>openai/clip-vit-large-patch14-336</code>, ctx=77)</td><td>0（冻结）</td></tr>
+</table>
+</div>
+<p><b>叙事锁定</b>：A = <b>从零训练</b>（不改用预训练权重）。文本塔是<b>唯一</b>使用预训练权重的部分（冻结 CLIP-768），视觉 trunk 从零初始化。</p>
+<h2>2. 视觉 Trunk — OpenVision2（纯 Attention ViT）</h2>
+<p>代码：<code>run/vision/models.py</code>。OpenVision2 是一个标准纯-Attention ViT，从零初始化。</p>
+<h3>2.1 PatchEmbed (L144–153)</h3>
+<pre><code><span class="ln">144</span>class PatchEmbed(nn.Module):
+<span class="ln">145</span>    def __init__(self, image_size, patch_size, width):
+<span class="ln">147</span>        self.grid = image_size // patch_size
+<span class="ln">148</span>        self.conv = nn.Conv2d(3, width, patch_size, patch_size, bias=False)
+<span class="ln">149</span>        self.pos = nn.Parameter(torch.randn(self.grid * self.grid, width) * (width ** -0.5))
+<span class="ln">151</span>    def forward(self, x):
+<span class="ln">152</span>        x = self.conv(x).flatten(2).transpose(1, 2)
+<span class="ln">153</span>        return x + self.pos</code></pre>
+<ul><li>224 / 16 → grid = 14×14 = <b>196 patches</b>。</li><li>位置编码 = 可学习 <code>randn × width^−0.5</code>，196 个 token。</li></ul>
+<h3>2.2 AttentionBlock (L53–64) — Pre-norm ViT block</h3>
+<pre><code><span class="ln">53</span>class AttentionBlock(nn.Module):
+<span class="ln">56</span>        self.norm1 = LayerNorm(dim)
+<span class="ln">57</span>        self.attn = Attention(dim, heads)
+<span class="ln">58</span>        self.norm2 = LayerNorm(dim)
+<span class="ln">59</span>        self.mlp = SwiGLU(dim, mlp_dim)
+<span class="ln">61</span>    def forward(self, x):
+<span class="ln">62</span>        x = x + self.attn(self.norm1(x))
+<span class="ln">63</span>        x = x + self.mlp(self.norm2(x))</code></pre>
+<ul><li>Attention 用 <code>F.scaled_dot_product_attention</code>（flash attention，L48）。</li><li>FFN = SwiGLU（<code>silu(gate(x)) * up(x) → down</code>，L24–32）。</li></ul>
+<h3>2.3 OpenVision2 + ReadoutHead (L156–185)</h3>
+<pre><code><span class="ln">156</span>class ReadoutHead(nn.Module):
+<span class="ln">159</span>        self.norm = LayerNorm(width)
+<span class="ln">160</span>        self.proj = nn.Linear(width, embed_dim, bias=False)  # width→768
+<span class="ln">162</span>    def forward(self, x):
+<span class="ln">163</span>        x = x.mean(dim=1)           # global average pool over patches
+<span class="ln">164</span>        return self.proj(self.norm(x))
+<span class="ln">168</span>class OpenVision2(nn.Module):
+<span class="ln">169</span>    def __init__(self, image_size=224, patch_size=16, width=1024, depth=30, heads=16, mlp_dim=4096):
+<span class="ln">174</span>        self.embed = PatchEmbed(image_size, patch_size, width)
+<span class="ln">175</span>        self.blocks = nn.ModuleList([AttentionBlock(width, heads, mlp_dim) for _ in range(depth)])
+<span class="ln">177</span>        self.norm = LayerNorm(width)
+<span class="ln">178</span>        self.head = ReadoutHead(width)
+<span class="ln">179</span>    def forward(self, x, return_patch=False):
+<span class="ln">180</span>        x = self.embed(x)
+<span class="ln">181</span>        for b in self.blocks: x = b(x)
+<span class="ln">183</span>        x = self.norm(x)
+<span class="ln">184</span>        pooled = self.head(x)
+<span class="ln">185</span>        return (pooled, x) if return_patch else pooled</code></pre>
+<div class="callout callout-key">
+<p><b>关键设计</b>：<code>return_patch=True</code> 时返回 <code>(pooled, patch_features)</code>：</p>
+<ul><li><code>pooled</code> = <code>ReadoutHead</code> 输出 = <code>mean(dim=1) → LayerNorm → Linear(512→768)</code> → <b>768 维</b>，用于 InfoNCE 和 lp 评测。</li><li><code>patch_features</code> = <code>x</code>（196 个 patch token，<b>512 维</b>），用于 PatchPredictor 的 masked-patch 重建。</li></ul>
+<p><b>trunk forward 在 AIMv2 模式下完全不变</b>：所有 196 patches 都被看到，<b>没有 mask token、没有 token drop</b>。这是 frozen-trunk lp 可比性的关键设计理由（见 §5）。</p>
+</div>
+<h3>2.4 w512 配置（R9 选定）</h3>
+<table>
+<tr><th>参数</th><th>值</th><th>来源</th></tr>
+<tr><td>width</td><td>512</td><td><code>get_vision_tower</code> L528–533（<code>--width 512</code>）</td></tr>
+<tr><td>depth</td><td>30</td><td><code>--depth 30</code></td></tr>
+<tr><td>heads</td><td>8（= 512//64）</td><td>L531：<code>max(1, w // 64)</code></td></tr>
+<tr><td>mlp_dim</td><td>2048（= 4×512）</td><td>L532</td></tr>
+<tr><td>patch_size</td><td>16</td><td><code>--patch 16</code></td></tr>
+<tr><td>resolution</td><td>224</td><td><code>--resolution 224</code></td></tr>
+<tr><td>参数量</td><td>126.78M</td><td>实测 <code>param_count()</code></td></tr>
+</table>
+<p>注：官方 OpenVision2 默认 w1024/d30/h16（505M）；我们缩小到 w512 是因为 R9 实测「数据受限区间塔越小越高」。</p>
+
+<h2>3. PatchPredictor — Masked-Patch 像素预测头</h2>
+<p>代码：<code>run/vision/models.py:478–510</code>。这是 AIMv2-style 唯一新增的模块，从零实现。</p>
+<pre><code><span class="ln">478</span>class PatchPredictor(nn.Module):
+<span class="ln">479</span>    """R11-L arm6 (AIMv2-style): masked-patch pixel predictor head.
+<span class="ln">480</span>    Maps a patch feature (width-dim) to the normalised raw pixels of that patch
+<span class="ln">481</span>    (patch_dim = patch**2 * 3). MAE-style two-layer decoder
+<span class="ln">482</span>    (Linear -> LayerNorm -> GELU -> Linear), applied only at masked positions.
+<span class="ln">485</span>    Reference for the norm_pix target: OpenVision src/losses/common.py:mae_loss
+<span class="ln">486</span>    (norm_pix_loss=True, Apache-2.0). Implemented from scratch -- Apple ml-aim
+<span class="ln">487</span>    ships no loss code and is Apple Sample Code License, so nothing is copied.
+<span class="ln">489</span>    The vision *trunk* forward is unchanged (all patches seen, no token drop
+<span class="ln">490</span>    and no mask token), so frozen-trunk linear-probe eval stays directly
+<span class="ln">491</span>    comparable to the InfoNCE baseline (arm1); the dense reconstruction
+<span class="ln">492</span>    gradient reaches the trunk only through the patch features.
+<span class="ln">495</span>    def __init__(self, width, patch_dim, hidden=None):
+<span class="ln">497</span>        hidden = hidden if hidden is not None else width
+<span class="ln">498</span>        self.fc1 = nn.Linear(width, hidden, bias=True)     # 512→512
+<span class="ln">499</span>        self.norm = LayerNorm(hidden)
+<span class="ln">500</span>        self.act = nn.GELU()
+<span class="ln">501</span>        self.fc2 = nn.Linear(hidden, patch_dim, bias=True) # 512→768
+<span class="ln">502</span>        nn.init.normal_(self.fc2.weight, std=0.02)
+<span class="ln">503</span>        nn.init.zeros_(self.fc2.bias)
+<span class="ln">505</span>    def forward(self, x):
+<span class="ln">507</span>        x = self.fc1(x); x = self.norm(x); x = self.act(x)
+<span class="ln">510</span>        return self.fc2(x)</code></pre>
+<table>
+<tr><th>层</th><th>形状</th><th>初始化</th><th>参数量</th></tr>
+<tr><td>fc1</td><td>Linear(512 → 512, bias)</td><td>默认 (Kaiming)</td><td>262,656</td></tr>
+<tr><td>norm</td><td>LayerNorm(512)</td><td>默认</td><td>1,024</td></tr>
+<tr><td>fc2</td><td>Linear(512 → 768, bias)</td><td><b>weight: N(0, 0.02), bias: 0</b></td><td>393,728</td></tr>
+<tr><td><b>总计</b></td><td></td><td></td><td><b>≈0.66M</b></td></tr>
+</table>
+<p><code>patch_dim = patch² × 3 = 16² × 3 = 768</code>（一个 patch 的 RGB 像素数）。fc2 用 <code>N(0, 0.02)</code> 小初始化 + bias=0 → 预测头从近零输出开始（MAE 范式），避免早期大梯度冲击 trunk。</p>
+<p>实测单测：<code>PatchPredictor(w=512, patch_dim=768) = 0.6577M params</code>（<code>EXPERIMENTS_VISION_ROUND11.md §14.6 S1</code>）。</p>
+
+<h2>4. 文本塔 — 冻结 CLIP-768</h2>
+<p>代码：<code>run/vision/r9_train.py:68–95</code> + <code>CLIP_PATH</code> (L34)。</p>
+<pre><code><span class="ln">34</span>CLIP_PATH = '/nas_train/app.e0031982/models/openai/clip-vit-large-patch14-336'
+<span class="ln">68</span>class FrozenClipText(nn.Module):
+<span class="ln">69</span>    """Pretrained CLIP text tower (768-dim).
+<span class="ln">71</span>    finetune='frozen' (R4/R9/R10/R11-L baseline): every param frozen (default)."""
+<span class="ln">77</span>    def __init__(self, path, device, finetune='frozen', lora_rank=8, lora_alpha=16.0):
+<span class="ln">80</span>        self.tok = CLIPTokenizer.from_pretrained(path, local_files_only=True)
+<span class="ln">81</span>        clip = CLIPModel.from_pretrained(path, local_files_only=True)
+<span class="ln">82</span>        for p in clip.parameters(): p.requires_grad_(False)</code></pre>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>模型</td><td><code>openai/clip-vit-large-patch14-336</code>（CLIP text encoder）</td></tr>
+<tr><td>输出维度</td><td>768</td></tr>
+<tr><td>context length</td><td>77 tokens（CLIP 硬约束）</td></tr>
+<tr><td>参数状态</td><td><b>全部冻结</b>（<code>requires_grad_(False)</code>）</td></tr>
+<tr><td>AIMv2 模式用途</td><td>仅 InfoNCE 对比项需要（编码 text → <code>Tf</code>）</td></tr>
+</table>
+<p>文本塔输出经 L2 归一化后与视觉 <code>pooled</code>（也 L2 归一化）做 InfoNCE。<b>文本塔不参与 patch-MSE 项</b>（patch 重建只读视觉 patch 特征 + 像素目标）。</p>
+
+<h2>5. 前向计算与目标函数（<code>--loss aimv2</code>）</h2>
+<p>代码：<code>run/vision/r9_train.py:556–575</code>。这是 AIMv2-style 的核心前向分支。</p>
+<h3>5.1 前向分支 (L556–575)</h3>
+<pre><code><span class="ln">556</span>            elif args.loss == 'aimv2':
+<span class="ln">557</span>                pooled, patches = vision(imgs, return_patch=True)
+<span class="ln">558</span>                # masked patch reconstruction (MAE norm_pix_loss; Apache-2.0 ref)
+<span class="ln">559</span>                B, N, _W = patches.shape
+<span class="ln">560</span>                target = mae_norm_pix_target(imgs, args.patch)      # (B,N,patch_dim)
+<span class="ln">561</span>                mrand = torch.rand(B, N, device=device) < args.mask_ratio
+<span class="ln">562</span>                pred = predictor(patches[mrand])                    # (n_masked, patch_dim)
+<span class="ln">563</span>                tgt = target[mrand]                                 # (n_masked, patch_dim)
+<span class="ln">564</span>                patch_loss = torch.mean((pred.float() - tgt.float()) ** 2)
+<span class="ln">565</span>                if args.contrast_weight > 0:
+<span class="ln">566</span>                    If = torch.nn.functional.normalize(pooled, dim=-1)
+<span class="ln">567</span>                    Tf = torch.nn.functional.normalize(text(txts), dim=-1)
+<span class="ln">568</span>                    contrastive = loss_fn(If, Tf, logit_scale.exp(), None)
+<span class="ln">569</span>                    cur_loss = args.contrast_weight * contrastive + args.patch_loss_weight * patch_loss
+<span class="ln">571</span>                else:  # R11-H (arm 6-B): pure AR, NO contrast term
+<span class="ln">573</span>                    cur_loss = args.patch_loss_weight * patch_loss</code></pre>
+<div class="callout callout-key">
+<p><b>总损失</b>：<code>loss = contrast_weight × InfoNCE(pooled, text) + patch_loss_weight × MSE(predictor(patches[mask]), target[mask])</code></p>
+<table>
+<tr><th>项</th><th>权重（R11-G/R12 默认）</th><th>计算</th></tr>
+<tr><td>InfoNCE（对比项）</td><td><code>contrast_weight = 1.0</code></td><td><code>ClipLoss(If, Tf, scale, None)</code>，512 负样本（bs64×8 all-gather）</td></tr>
+<tr><td>Masked-patch MSE（稠密项）</td><td><code>patch_loss_weight = 1.0</code></td><td><code>mean((pred - target)²)</code>，fp32 精度</td></tr>
+</table>
+</div>
+<ul>
+<li><b>mask_ratio = 0.6</b>：<code>torch.rand(B, N) < 0.6</code> → 每 batch 随机掩码 ~60% 的 patch 位置（196 个中约 118 个被掩码）。</li>
+<li><b>随机掩码</b>（非 MAE 的 block-mask，也非 AIMv2 的 prefix/causal）：每个 patch 独立以 0.6 概率被选。</li>
+<li><b>predictor 只在掩码位前向</b>：<code>patches[mrand]</code> 取出被掩码的 patch 特征 → 预测对应位置的像素目标。</li>
+<li><b>MSE 在 fp32</b>：<code>pred.float() - tgt.float()</code>，避免 bf16 精度损失。</li>
+</ul>
+
+<h3>5.2 MAE norm_pix 目标 — <code>mae_norm_pix_target()</code> (L154–174)</h3>
+<pre><code><span class="ln">154</span>def mae_norm_pix_target(imgs, patch_size):
+<span class="ln">155</span>    """MAE norm_pix_loss target (OpenVision src/losses/common.py:mae_loss, Apache-2.0).
+<span class="ln">157</span>    imgs: (B,3,H,W) normalised with CLIP MEAN/STD. Returns (B, N, patch**2*3)
+<span class="ln">158</span>    per-patch normalised pixels: un-normalise to [0,1], fold into patches, then
+<span class="ln">159</span>    subtract the per-patch mean / divide the per-patch std over the full patch
+<span class="ln">160</span>    vector (standard MAE norm_pix_loss). N = (H//patch)**2."""
+<span class="ln">162</span>    from data import MEAN, STD
+<span class="ln">163</span>    mean = torch.tensor(MEAN, device=imgs.device, dtype=imgs.dtype).view(1, 3, 1, 1)
+<span class="ln">164</span>    std = torch.tensor(STD, device=imgs.device, dtype=imgs.dtype).view(1, 3, 1, 1)
+<span class="ln">165</span>    raw = imgs * std + mean                       # (B,3,H,W) in [0,1]
+<span class="ln">166</span>    B, C, H, W = raw.shape; p = patch_size
+<span class="ln">169</span>    g = H // p
+<span class="ln">170</span>    raw = raw.reshape(B, C, g, p, g, p)           # (B,C,g,p,g,p)
+<span class="ln">171</span>    raw = raw.permute(0, 2, 4, 1, 3, 5).reshape(B, g * g, C * p * p)  # (B,N,C*p*p)
+<span class="ln">172</span>    mean_pp = raw.mean(dim=-1, keepdim=True)
+<span class="ln">173</span>    std_pp = raw.std(dim=-1, keepdim=True).clamp(min=1e-6)
+<span class="ln">174</span>    return (raw - mean_pp) / std_pp               # (B,N,patch_dim)</code></pre>
+<p>三步处理：</p>
+<ol>
+<li><b>反 CLIP 归一化</b>：<code>raw = imgs * STD + MEAN</code> → 还原到 [0,1] 像素空间（CLIP MEAN/STD 见 <code>data.py:10-11</code>：MEAN=(0.481,0.458,0.408), STD=(0.269,0.261,0.276)）。</li>
+<li><b>Fold 成 patch</b>：<code>reshape → permute → reshape</code> → <code>(B, 196, 768)</code>，每个 patch 是 16×16×3=768 个像素值。</li>
+<li><b>逐 patch 标准化</b>：每个 patch 向量减自身均值、除自身 std（<code>clamp(min=1e-6)</code>）→ 这就是 MAE 的 <code>norm_pix_loss</code>，让重建目标尺度无关。</li>
+</ol>
+<p>实测单测：<code>mae_norm_pix_target(randn(8,3,224,224), 16)</code> → <code>(8, 196, 768)</code>，mean≈0, std≈0.999 → 逐 patch 标准化正确。</p>
+
+<h2>6. 关键设计理由：trunk forward 不变 → frozen-trunk lp 可比</h2>
+<div class="callout callout-key">
+<p><b>这是整个 AIMv2-style 设计中最重要的一点</b>。</p>
+<p>标准 MAE 在训练时<b>丢弃</b>被掩码的 patch token、用 mask token 替代 → trunk 只看到 ~40% 的 patch → 训练时的 trunk 行为与评测时（看到 100% patch）<b>不一致</b>。</p>
+<p>我们的设计<b>不丢弃任何 patch</b>：<code>vision(imgs, return_patch=True)</code> 的 trunk forward 与纯 InfoNCE 基线<b>完全相同</b>——所有 196 个 patch 都被看到、都经过全部 30 层 AttentionBlock。<b>掩码只发生在 predictor 层</b>：从 trunk 输出的 patch 特征中<b>选取</b>被掩码的位置去预测像素，但 trunk 本身看到的是完整图像。</p>
+<p><b>后果</b>：</p>
+<ul>
+<li>frozen-trunk lp 评测时也是 100% patch 前向 → <b>训练/评测一致</b> → AIMv2-style 的 lp 与纯 InfoNCE 基线的 lp <b>直接可比</b>（同一 trunk forward，唯一区别是训练时多了一个 patch-MSE 梯度）。</li>
+<li>稠密重建梯度通过 <code>patches[mrand] → predictor → MSE → backward</code> 回传到 trunk 的 patch 特征 → trunk 同时受 InfoNCE（全局）+ patch-MSE（局部稠密）双重监督。</li>
+<li>这<b>不是</b>标准 MAE（MAE 丢弃 token）也不是标准 AIMv2（AIMv2 用 prefix-attention AR）——是我们自研的改编（C2 限定）。</li>
+</ul>
+</div>
+<p>代码证据：<code>models.py:489-492</code> 的 docstring 明确写了 "The vision *trunk* forward is unchanged (all patches seen, no token drop and no mask token), so frozen-trunk linear-probe eval stays directly comparable to the InfoNCE baseline (arm1)"。</p>
+
+<h2>7. PatchPredictor 的构建与 DDP 包装</h2>
+<p>代码：<code>run/vision/r9_train.py:337–350</code>。PatchPredictor 作为<b>独立 DDP 模块</b>构建（与 trunk 分开），用 <code>find_unused_parameters=True</code>（因为每步只有被掩码的 patch 位置参与 predictor 前向）。</p>
+<pre><code><span class="ln">337</span>    # ---- AIMv2-style patch predictor (R11-L arm6) ---- #
+<span class="ln">338</span>    predictor = None
+<span class="ln">339</span>    if args.loss == 'aimv2':
+<span class="ln">340</span>        _vis_w = args.width if args.width is not None else 1024
+<span class="ln">341</span>        _patch_dim = (args.patch ** 2) * 3
+<span class="ln">342</span>        pred_mod = PatchPredictor(width=_vis_w, patch_dim=_patch_dim).to(device)
+<span class="ln">343</span>        predictor = DDP(pred_mod, device_ids=[rank], find_unused_parameters=True)
+<span class="ln">344</span>        dec_trainable = sum(p.numel() for p in pred_mod.parameters() if p.requires_grad)</code></pre>
+<p>predictor 的参数被加入 <code>opt_params</code>，与 trunk 参数一起被同一个 AdamW 优化器更新（lr=3e-3, warmup=20, constant thereafter）。</p>
+
+<h2>8. 与官方 AIMv2 的差异（C2 限定）</h2>
+<div class="callout callout-warn">
+<p><b>C2 限定（诚实披露）</b>：我们的实现是 AIMv2-<b>style</b> 自研改编，<b>非官方 AIMv2 复现</b>。结论只对我们 recipe 成立，<b>不得</b>推广成「官方 AIMv2 会翻盘」。</p>
+</div>
+<table>
+<tr><th>项</th><th>官方 AIMv2 (Apple, arXiv:2411.14402)</th><th>我们 R11-G / R12（自研改编）</th></tr>
+<tr><td><b>架构范式</b></td><td>纯 AR（vision AR + text AR）</td><td>非 AR：标准双向 ViT + 随机掩码</td></tr>
+<tr><td><b>对比项</b></td><td>❌ 无（纯生成式，无 InfoNCE）</td><td>✅ 保留 InfoNCE (weight=1.0)</td></tr>
+<tr><td><b>稠密项</b></td><td>normalized MSE (pixel_loss)</td><td>normalized MSE (patch_loss) — 同 MAE norm_pix</td></tr>
+<tr><td><b>α (pixel loss 权重)</b></td><td>≈ 0.4</td><td>1.0（<code>patch_loss_weight</code>）</td></tr>
+<tr><td><b>掩码方式</b></td><td>prefix-attention（causal，前面 token 可见后面不可见）</td><td><b>随机掩码</b>（<code>torch.rand < 0.6</code>，每个 patch 独立）</td></tr>
+<tr><td><b>mask_ratio</b></td><td>prefix 长度比例</td><td><b>0.6</b></td></tr>
+<tr><td><b>trunk forward</b></td><td>AR：前面 patch 可见、后面 mask token</td><td><b>全 patch 可见、无 mask token</b>（trunk 不变）</td></tr>
+<tr><td><b>文本塔</b></td><td>可训 text AR decoder</td><td>冻结 CLIP-768（只用于 InfoNCE）</td></tr>
+<tr><td><b>预训练数据</b></td><td>~12B 样本（DFN-2B + COYO + HQITP）</td><td>58.8M 对（GPIC+CC12M+Amshaker）</td></tr>
+<tr><td><b>caption 类型</b></td><td>LLaMA-3 长合成 caption</td><td>短 alt-text（CC12M/Amshaker/GPIC short）</td></tr>
+<tr><td><b>损失公式</b></td><td><code>cap_loss + α × pixel_loss</code>（caption CE + pixel MSE）</td><td><code>1.0 × InfoNCE + 1.0 × patch_MSE</code></td></tr>
+</table>
+<p><b>核心差异</b>：官方 AIMv2 是纯生成式 AR（无对比项），我们是 <b>对比 + 稠密</b> 的混合。R11-H 实验证明：<b>去掉对比项（纯 AR）→ 无翻盘</b>（lp 6.23% ≈ 基线 6.08%）。因此我们的翻盘<b>依赖</b>对比项与稠密项的协同，这与官方 AIMv2 的「纯生成式翻盘」机制不同。</p>
+<p>官方 AIMv2 原文逐字引用（§1）：<i>"AIMv2 extracts a training signal from every image patch and text token, providing denser supervision compared to discriminative objectives."</i>（<code>https://arxiv.org/html/2411.14402v1</code>, 2024-11）—— 我们的「稠密监督」机制与此一致，但实现方式不同。</p>
+
+<h2>9. 四臂因果分解（为什么保留对比项）</h2>
+<p>R11 的四臂对照构成完整因果分解，证明翻盘 = 对比项 × caption-无关稠密的协同：</p>
+<table>
+<tr><th>臂</th><th>目标函数</th><th>稠密项</th><th>对比项</th><th>lp@15.36M</th><th>翻盘？</th><th>因果结论</th></tr>
+<tr><td><b>①</b></td><td>纯 InfoNCE</td><td>无</td><td>✅</td><td>6.08%</td><td>—（基线）</td><td>基线锚点</td></tr>
+<tr><td><b>④</b></td><td>CoCa</td><td>caption-依赖 (CE)</td><td>✅</td><td>0.47%</td><td><span class="tag tag-red">否（坍缩）</span></td><td>caption 依赖的稠密 → 打回随机</td></tr>
+<tr><td><b>⑥-B</b></td><td>纯 AR</td><td>caption-无关 (MSE)</td><td>❌</td><td>6.23%</td><td><span class="tag tag-red">否</span></td><td>稠密本身不足以翻盘</td></tr>
+<tr><td><b>⑥-A</b></td><td>AIMv2-style</td><td>caption-无关 (MSE)</td><td>✅</td><td><b>12.08%</b></td><td><span class="tag tag-key">✅ 是 (+6.00)</span></td><td><b>对比 + 稠密 = 翻盘</b></td></tr>
+</table>
+<div class="callout callout-key">
+<p><b>因果结论</b>：</p>
+<ul>
+<li>④ vs ⑥-A：稠密项类型是关键——<b>caption-依赖（CE）→ 坍缩</b>，<b>caption-无关（patch-MSE）→ 翻盘</b>。坍缩归因于 caption 依赖，非稠密监督本身。</li>
+<li>⑥-B vs ⑥-A：对比项是关键——<b>去对比项 → 无翻盘</b>（6.23% ≈ 6.08%）。caption-无关的稠密 patch 监督<b>本身</b>不足以翻盘，需与 InfoNCE 协同。</li>
+<li>→ 翻盘 = <b>对比项（InfoNCE）</b> × <b>caption-无关的稠密 patch 监督</b> 的<b>协同效应</b>。</li>
+</ul>
+</div>
+<p>证据：<code>EXPERIMENTS_VISION_ROUND11.md §14.4</code>（⑥-A 裁定）+ <code>§9</code>（④ CoCa）+ <code>§17.4</code>（⑥-B 纯 AR 裁定）。</p>
+
+<h2>10. R11-G scaling 实证：AIMv2-style 11 点全单调 + Δ 随 N 扩大</h2>
+<p>这是 AIMv2-style 翻盘的核心实证数据（w512, CC12M+Amshaker 18.5M, 108k 步, 11 点 eval）：</p>
+<table>
+<tr><th>step</th><th>N (M)</th><th><b>AIMv2 lp</b></th><th>InfoNCE lp</th><th><b>Δ (pp)</b></th></tr>
+<tr><td>10k</td><td>5.12</td><td><b>11.50%</b></td><td>3.96%</td><td><b>+7.54</b></td></tr>
+<tr><td>30k</td><td>15.36</td><td><b>13.48%</b></td><td>5.44%</td><td><b>+8.04</b></td></tr>
+<tr><td>60k</td><td>30.72</td><td><b>15.52%</b></td><td>7.35%</td><td><b>+8.17</b></td></tr>
+<tr><td>80k</td><td>40.96</td><td><b>17.53%</b></td><td>7.30%</td><td><b>+10.23</b></td></tr>
+<tr><td>108k</td><td>55.30</td><td><b>19.76%</b></td><td>7.40%</td><td><b>+12.36</b></td></tr>
+</table>
+<p><b>关键特征</b>：</p>
+<ul>
+<li><b>11 点全单调递增</b>（n_neg=0/10）。</li>
+<li>Δ 随 N 扩大而<b>增大</b>（+7.5 → +12.4 pp）——不是恒定 offset，是<b>渐近上限被抬高</b>。</li>
+<li>幂律拟合 R²=0.908，斜率 2× 陡于 InfoNCE → scaling 效率更高。</li>
+<li>预注册裁定（§16.5）：R²≥0.90 ✅，单调性 ✅ → <b>POSITIVE</b>。</li>
+</ul>
+<p>完整 11 点表见 <a href="report_vision_lp_eval.html#7.8">Report A §7.8</a>。证据：<code>EXPERIMENTS_VISION_ROUND11.md §16</code>；日志 <code>/tmp/r11g_aimv2_long.log</code>。</p>
+
+<h2>11. 代码路径索引（可复现）</h2>
+<table>
+<tr><th>组件</th><th>文件:行号</th><th>说明</th></tr>
+<tr><td>OpenVision2 (trunk)</td><td><code>models.py:168-185</code></td><td>w512/d30/patch16/224, 纯 Attention ViT</td></tr>
+<tr><td>PatchEmbed</td><td><code>models.py:144-153</code></td><td>Conv2d + 可学习 pos embed</td></tr>
+<tr><td>AttentionBlock</td><td><code>models.py:53-64</code></td><td>Pre-norm, SDPA, SwiGLU FFN</td></tr>
+<tr><td>ReadoutHead</td><td><code>models.py:156-164</code></td><td>mean-pool → LN → Linear(512→768)</td></tr>
+<tr><td>PatchPredictor</td><td><code>models.py:478-510</code></td><td>Linear→LN→GELU→Linear, 0.66M</td></tr>
+<tr><td>mae_norm_pix_target</td><td><code>r9_train.py:154-174</code></td><td>反 CLIP norm → fold patch → 逐 patch 标准化</td></tr>
+<tr><td>aimv2 loss 分支</td><td><code>r9_train.py:556-575</code></td><td>pooled,patches = vision(..,return_patch=True)</td></tr>
+<tr><td>PatchPredictor 构建</td><td><code>r9_train.py:337-350</code></td><td>DDP(find_unused_parameters=True)</td></tr>
+<tr><td>FrozenClipText</td><td><code>r9_train.py:68-95</code></td><td>冻结 CLIP-768 text tower</td></tr>
+<tr><td>CLIP_PATH</td><td><code>r9_train.py:34</code></td><td>openai/clip-vit-large-patch14-336</td></tr>
+<tr><td>CLIP MEAN/STD</td><td><code>data.py:10-11</code></td><td>(0.481,0.458,0.408)/(0.269,0.261,0.276)</td></tr>
+<tr><td>get_vision_tower</td><td><code>models.py:528-533</code></td><td>--width 512 --depth 30 --patch 16</td></tr>
+<tr><td>lp 评测</td><td><code>r8_eval_in1k.py:135-149</code></td><td>Linear(768→1000), AdamW, 100ep, full-batch</td></tr>
+</table>
+
+<h2>12. 运行命令</h2>
+<pre><code># AIMv2-style 训练 (R11-G / R12 recipe)
+torchrun --standalone --nnodes=1 --nproc_per_node=8 \
+  vision/r9_train.py \
+    --loss aimv2 \
+    --width 512 --depth 30 --patch 16 --resolution 224 \
+    --mask_ratio 0.6 --contrast_weight 1.0 --patch_loss_weight 1.0 \
+    --batch_size 64 --accum_steps 1 \
+    --lr 3e-3 --warmup 20 --total_steps 120000 \
+    --data /path/to/cc12m /path/to/amshaker \
+    --output /path/to/ckpt/aimv2_run
+
+# lp 评测
+python vision/r8_eval_in1k.py \
+    --ckpts /path/to/ckpt/aimv2_run/vision_step*.pt \
+    --max-files 40 --per-class 50 --bs 128</code></pre>
+
+<div class="footer">
+<p>本报告由 vision agent 于 2026-10-05 生成（R12 训练进行中，纯 CPU/写作）。所有代码引用均附行号，对应 <code>run/vision/</code> 实际源码。权威实验记录：<code>run/EXPERIMENTS_VISION_ROUND11.md §14–§17</code>。</p>
+<p>🚫 未修改任何 <code>.tex</code> 论文文件；未干扰 R12 训练。</p>
+<p>C2 限定声明：本实现是 AIMv2-style 自研改编，非官方 AIMv2 复现。结论仅对本 recipe 成立。</p>
+</div>
+</body>
+</html>

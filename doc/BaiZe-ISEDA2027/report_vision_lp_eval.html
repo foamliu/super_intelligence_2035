@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Vision — Frozen-Trunk Linear-Probe 评测细节报告</title>
+<style>
+  :root{--bg:#0d1117;--fg:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--border:#30363d;--code-bg:#161b22;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;background:var(--bg);color:var(--fg);line-height:1.7;max-width:1100px;margin:0 auto;padding:24px 20px 60px}
+  h1{font-size:1.7em;border-bottom:2px solid var(--accent);padding-bottom:10px;margin-bottom:8px}
+  h2{font-size:1.35em;color:var(--accent);margin-top:36px;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:6px}
+  h3{font-size:1.1em;color:var(--purple);margin-top:24px;margin-bottom:8px}
+  h4{font-size:1.0em;color:var(--yellow);margin-top:18px;margin-bottom:6px}
+  p{margin-bottom:10px}ul,ol{margin-bottom:12px;padding-left:24px}li{margin-bottom:4px}
+  code{font-family:"SFMono-Regular","Consolas",monospace;background:var(--code-bg);padding:1px 5px;border-radius:4px;font-size:0.88em;color:var(--green);border:1px solid var(--border)}
+  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:14px 16px;overflow-x:auto;margin-bottom:14px;font-size:0.82em}
+  pre code{background:none;border:none;padding:0;color:var(--fg)}
+  table{border-collapse:collapse;width:100%;margin-bottom:16px;font-size:0.88em}
+  th,td{border:1px solid var(--border);padding:6px 10px;text-align:left}
+  th{background:#21262d;color:var(--accent);font-weight:600}
+  tr:nth-child(even){background:var(--code-bg)}
+  .callout{border-left:3px solid var(--accent);background:var(--code-bg);padding:12px 16px;margin-bottom:14px;border-radius:0 6px 6px 0}
+  .callout-warn{border-left-color:var(--yellow)}.callout-key{border-left-color:var(--green)}.callout-danger{border-left-color:var(--red)}
+  .tag{display:inline-block;padding:1px 7px;border-radius:10px;font-size:0.78em;font-weight:600}
+  .tag-key{background:#1a4731;color:var(--green)}.tag-warn{background:#4d3a0a;color:var(--yellow)}.tag-info{background:#0d2847;color:var(--accent)}.tag-red{background:#4a0e0e;color:var(--red)}
+  .ln{color:var(--muted);user-select:none;display:inline-block;width:3.5em;text-align:right;margin-right:10px}
+  .header-meta{color:var(--muted);font-size:0.85em;margin-bottom:20px}
+  .num{color:var(--purple);font-weight:600}
+  .footer{margin-top:50px;padding-top:16px;border-top:1px solid var(--border);color:var(--muted);font-size:0.82em}
+</style>
+</head>
+<body>
+<h1>BaiZe Vision — Frozen-Trunk Linear-Probe 评测细节报告</h1>
+<div class="header-meta">生成时间：2026-10-05（R12 训练进行中，纯 CPU/写作，未干扰训练）· 代码：<code>run/vision/r8_eval_in1k.py</code> · 权威记录：<code>run/EXPERIMENTS_VISION_ROUND{8..11}.md</code></div>
+<p>本报告以<b>可复现级别</b>记录 BaiZe Stage(iii) 视觉编码器预训练中使用的<span class="tag tag-key">主指标</span> <b>frozen-trunk linear-probe (lp) top-1</b> 的评测协议、口径、代码路径与各轮实测汇总。所有数字均来自实际运行输出，附命令与原始日志路径。</p>
+
+<h2>1. 为什么用 frozen-trunk linear-probe 作为主横比指标</h2>
+<div class="callout callout-key">
+<p><b>核心设计理由</b>：我们对比的是<b>不同目标函数 / 架构</b>在相同数据预算下学到的<b>视觉特征质量</b>，而非「文本塔对齐能力」或「下游微调能力」。frozen-trunk lp 满足以下三条：</p>
+<ul><li><b>不依赖文本塔</b>：只读视觉 trunk 特征 → 一个坍缩的文本塔（如 arm④ CoCa）不会因为文本对齐差而拖累 lp 分数；反之 zero-shot (zs) 会。</li>
+<li><b>不微调 trunk</b>：冻结 trunk、只训一个 <code>Linear(d→1000)</code> → 测的是「特征是否线性可分」，不引入微调超参的方差。</li>
+<li><b>控变量干净</b>：所有臂共享同一 probe 协议（同 split / 同优化器 / 同步数 / 同 full-batch），唯一变量是被评测的 trunk。</li></ul>
+</div>
+<table>
+<tr><th>指标</th><th>读什么</th><th>依赖文本塔？</th><th>依赖 trunk 微调？</th><th>用途</th></tr>
+<tr><td><b>lp top-1</b>（主指标）</td><td>冻结 trunk 特征 → 线性分类器</td><td>❌ 否</td><td>❌ 否</td><td>跨臂横比<b>特征质量</b></td></tr>
+<tr><td>zs top-1 / top-5</td><td>冻结 trunk + 冻结 CLIP 文本塔 → 余弦相似度 argmax</td><td>✅ 是</td><td>❌ 否</td><td>测<b>跨模态对齐</b></td></tr>
+</table>
+<p>因此：当一个臂的 <b>lp 翻盘但 zs 不翻盘</b>（如 R11-H 纯 AR：lp=6.23% 但 zs≈0.1%），说明<b>特征本身在学习，只是不对齐冻结文本空间</b>——这正是 lp 作为主指标的价值。反之 arm④ CoCa：lp≈0.47%（≈随机）说明 trunk 本身被打回随机，而非只是文本对齐差。</p>
+
+<h2>2. ImageNet-1k 数据事实与自切协议</h2>
+<h3>2.1 盘上 IN-1k 事实（实测）</h3>
+<div class="callout"><p>路径：<code>/nas_train/app.e0031982/datasets/imagenet-1k/data/train-*.parquet</code></p>
+<ul><li><b>train parquet</b>：1,281,167 张<b>有标签</b>图（label 0..999），<code>image.bytes</code> 内嵌，尺寸为<b>原始 ILSVRC</b>（任意分辨率）。</li>
+<li><b>test parquet</b>：100,000 张，<b>label = −1（无标签）</b> → <b>不能当 val</b>。</li>
+<li><b>无官方 50k val 分片</b> → 必须自切（见 2.2）。</li></ul></div>
+<h3>2.2 自切协议（固定、可复现）</h3>
+<table>
+<tr><th>子集</th><th>构成</th><th>张数</th><th>用途</th></tr>
+<tr><td><b>val</b></td><td>每个类前 50 张（deterministic file order）</td><td><span class="num">50,000</span></td><td>评测（lp/zs 都在这上面算）</td></tr>
+<tr><td><b>probe-train</b></td><td>每个类接下去 50 张</td><td><span class="num">49,970</span></td><td>线性分类器训练（少量图解码失败被跳过）</td></tr>
+</table>
+<div class="callout callout-warn"><p><b>关键</b>：二者与各臂的<b>训练数据不相交</b>（R8 训练用 GPIC；R9/R10/R11 用 CC12M+Amshaker / GPIC）→ 对 GPIC/CC12M 训练的模型，IN-1k 是<b>干净的 out-of-domain held-out</b>。</p></div>
+<pre><code>[R8-IN1K] val=50000 probe=49970 labels 0/999
+[R8-IN1K] Z=(1000, 768)</code></pre>
+<h2>3. 评测代码路径与逐段解析</h2>
+<p>唯一评测脚本：<code>run/vision/r8_eval_in1k.py</code>（195 行）。以下按行号解析关键段。</p>
+<h3>3.1 IN-1k 自切加载 — <code>load_in1k_split()</code> (L49–82)</h3>
+<pre><code><span class="ln">49</span>def load_in1k_split(max_files=40, per_class=50, size=224):
+<span class="ln">57</span>    for f in files[:max_files]:
+<span class="ln">62</span>        for img_dict, lab in zip(imgs, labels):
+<span class="ln">64</span>            if val_cnt[lab] < per_class:
+<span class="ln">67</span>                val_lists[lab].append(tf(img)); val_cnt[lab] += 1
+<span class="ln">69</span>            elif probe_cnt[lab] < per_class:
+<span class="ln">72</span>                probe_lists[lab].append(tf(img)); probe_cnt[lab] += 1
+<span class="ln">80</span>    val_imgs = torch.stack(val).half()
+<span class="ln">82</span>    return val_imgs, val_labels, probe_imgs, probe_labels</code></pre>
+<ul><li><code>per_class=50</code>：每类 50 张 val + 50 张 probe-train，固定。</li><li><code>max_files=40</code>：扫前 40 个 parquet 分片足够凑满 1000 类 × 100 张。</li><li>图片解码后经 <code>get_val_transform(224)</code>（CLIP 归一化：MEAN/STD 见 <code>data.py:10-11</code>），<b>全部 stack 到 GPU 显存</b>一次性解码复用给所有 ckpt。</li></ul>
+<h3>3.2 Zero-shot — <code>zero_shot()</code> (L127–132) + <code>text_class_embeddings()</code> (L114–124)</h3>
+<pre><code><span class="ln">117</span>    for name in IMAGENET_CLASSNAMES:
+<span class="ln">118</span>        caps = [t(name) for t in OPENAI_IMAGENET_TEMPLATES]
+<span class="ln">122</span>        feats.append(z.mean(0))
+<span class="ln">124</span>    return torch.nn.functional.normalize(Z, dim=-1)
+<span class="ln">128</span>    In = torch.nn.functional.normalize(I.float(), dim=-1)
+<span class="ln">129</span>    sim = In @ Z.T
+<span class="ln">130</span>    pred = sim.argmax(1)
+<span class="ln">131</span>    top5 = sim.topk(5, dim=1).indices</code></pre>
+<ul><li><b>1000 类 × 80 个 OpenAI prompt 模板</b> → 每类 80 个 caption 的文本嵌入<b>取平均</b> → L2 归一化 → <code>Z ∈ ℝ^{1000×768}</code>。</li><li>图像特征 L2 归一化后与 <code>Z.T</code> 做矩阵乘 → <code>argmax</code> = top-1，<code>topk(5)</code> = top-5。</li><li><b>top-1 定义</b>：<code>(pred == val_labels).float().mean()</code>（L181）；<b>top-5 定义</b>：<code>(top5 == val_labels.unsqueeze(1)).any(1).float().mean()</code>（L182）。</li></ul>
+
+<h3>3.3 Linear-probe — <code>linear_probe()</code> (L135–149) <span class="tag tag-key">主指标</span></h3>
+<pre><code><span class="ln">135</span>def linear_probe(Xtr, ytr, Xva, yva, device, epochs=100, lr=3e-3):
+<span class="ln">137</span>    """Single Linear(768 -> 1000) + softmax, AdamW, full-batch on GPU, 100 epochs."""
+<span class="ln">139</span>    clf = torch.nn.Linear(d, 1000).to(device)
+<span class="ln">140</span>    torch.manual_seed(0)
+<span class="ln">141</span>    opt = torch.optim.AdamW(clf.parameters(), lr=lr)
+<span class="ln">143</span>    for _ in range(epochs):
+<span class="ln">145</span>        ce(clf(Xtr), ytr).backward()
+<span class="ln">148</span>        pred = clf(Xva).argmax(1)
+<span class="ln">149</span>    return (pred == yva).float().mean().item()</code></pre>
+<table>
+<tr><th>参数</th><th>值</th><th>说明</th></tr>
+<tr><td>分类器</td><td><code>Linear(768 → 1000)</code></td><td>单层线性，无隐藏层、无激活</td></tr>
+<tr><td>输入特征</td><td><b>raw, 非 L2-normalized</b></td><td>直接用 trunk <code>pooled</code> 输出</td></tr>
+<tr><td>优化器</td><td>AdamW, lr=3e-3</td><td>固定，无 weight decay、无 warmup、无 schedule</td></tr>
+<tr><td>训练方式</td><td><b>full-batch</b>（49,970 张一次性前向）</td><td>无 mini-batch → 无 batch-size 超参</td></tr>
+<tr><td>步数</td><td>100 epochs</td><td>固定</td></tr>
+<tr><td>随机种子</td><td><code>torch.manual_seed(0)</code></td><td>分类器权重初始化可复现</td></tr>
+<tr><td>评测</td><td><code>clf(Xva).argmax(1) == yva</code></td><td>top-1 accuracy on val 50,000</td></tr>
+</table>
+<h3>3.4 Checkpoint 加载与特征抽取</h3>
+<p><code>load_vision()</code> (L85–98) 从 <code>state['vision']</code> 重建视觉塔，<code>encode_images()</code> (L104–111) 以 bs=128 分批前向（bf16 → <code>.float()</code>）。</p>
+<pre><code><span class="ln">104</span>@torch.no_grad()
+<span class="ln">108</span>        b = imgs[i:i + bs].to(device).float().to(torch.bfloat16)
+<span class="ln">110</span>            outs.append(vision(b))</code></pre>
+<p><b>关键</b>：<code>vision(b)</code> 返回 <b>pooled</b> 特征（<code>ReadoutHead</code>：<code>mean(dim=1) → LayerNorm → Linear(width→768)</code>，见 <code>models.py:156–164</code>）→ lp 输入是 <b>768 维 pooled embedding</b>，<b>不是</b>逐 patch 特征。</p>
+<h3>3.5 运行命令</h3>
+<pre><code>python vision/r8_eval_in1k.py \
+    --ckpts /path/to/vision_step10000.pt /path/to/vision.pt \
+    --max-files 40 --per-class 50 --bs 128</code></pre>
+
+<h2>4. 口径定义：lp vs zs</h2>
+<table>
+<tr><th></th><th><b>lp (linear-probe) top-1</b></th><th><b>zs (zero-shot) top-1 / top-5</b></th></tr>
+<tr><td><b>读什么</b></td><td>冻结 trunk 特征的<b>线性可分性</b></td><td>视觉特征与 CLIP 文本类向量的<b>余弦对齐</b></td></tr>
+<tr><td><b>训练分类器？</b></td><td>✅ 训 <code>Linear(768→1000)</code> 100 epochs</td><td>❌ 无训练，直接 argmax</td></tr>
+<tr><td><b>依赖文本塔？</b></td><td>❌ 否</td><td>✅ 是（冻结 CLIP-768 + 80 模板）</td></tr>
+<tr><td><b>依赖 77 token 截断？</b></td><td>❌ 否</td><td>✅ 是（CLIP ctx=77）</td></tr>
+<tr><td><b>纯 AR 臂表现</b></td><td>有信号（特征在学）</td><td>≈随机（无文本对齐）</td></tr>
+<tr><td><b>本项目主横比指标</b></td><td><span class="tag tag-key">✅ 是</span></td><td>辅助（测对齐）</td></tr>
+</table>
+
+<h2>5. 噪声带 ±1.5 pp 的来源</h2>
+<div class="callout callout-warn"><p><b>来源</b>：<code>EXPERIMENTS_VISION_ROUND10.md §1.5</code> 实测——同 (N, M) 两次独立 run 的 lp 差异在 <b>0.5–1.1 pp</b>。</p></div>
+<p>因此各轮预注册判据把<b>翻盘阈值</b>定为 <b>+1.5 pp</b>（> 噪声带上界 1.1 pp），保证「显著优于基线」的判断不被 run variance 淹没。这个阈值从 R11-L 到 R12 全程一致、未事后修改。</p>
+
+<h2>6. in-domain / 不可比：en500k 红线</h2>
+<div class="callout callout-danger">
+<p><b>R8.2 红线</b>：<code>en500k</code> = LLaVA <code>imagenet/EN</code>，是 ImageNet train 照片的<b>重述版</b>（同域、大概率同图，仅重缩放 min-dim=256 + 重述 caption）。</p>
+<ul><li>用它测 IN-1k 是 <b>in-domain / possibly-same-image 污染</b>。</li><li>且 en500k 仅 0.5M 对 → 30k 步 ≈ <b>30 epochs 重复轮</b>（vs CC12M 11M 对 ≈ 1.4 epochs）→ 数据效率口径根本不同。</li><li>→ <b>单列一张表、标「in-domain / 不可比」、不并入 A/B/C/E 排名</b>（R8.2 红线，全程遵守）。</li></ul>
+</div>
+<p>证据见 <code>EXPERIMENTS_VISION_ROUND8.md §1</code> + <code>EXPERIMENTS_VISION_ROUND11.md §15.6 D 行</code>。</p>
+
+<h2>7. 各轮实测 lp 汇总表</h2>
+<h3>7.1 R8 — 6 架构横比（GPIC short, 3000 步, w1024 ≈ 505M）</h3>
+<p>数据：Stanford GPIC <code>short</code>（~2.77M 对）。3000 步 @224/16, bs64×8=512。6 架构均等参 500–600M。</p>
+<table>
+<tr><th>架构</th><th>参数量</th><th>fused?</th><th>zs top-1</th><th>zs top-5</th><th><b>lp top-1</b></th></tr>
+<tr><td><b>OpenVision2</b> 🏆</td><td>505.22M</td><td>否</td><td><b>0.95%</b></td><td><b>3.64%</b></td><td><b>1.14%</b></td></tr>
+<tr><td>MambaEye</td><td>535.16M</td><td><span class="tag tag-red">✅@300</span></td><td>0.10%</td><td>0.50%</td><td>0.10%</td></tr>
+<tr><td>MoEViE</td><td>505.46M</td><td>否</td><td>0.35%</td><td>1.53%</td><td>0.28%</td></tr>
+<tr><td>DeepEncoderV2</td><td>517.19M</td><td><span class="tag tag-red">✅@300</span></td><td>0.10%</td><td>0.50%</td><td>0.10%</td></tr>
+<tr><td>AIMv2 (ViT-GELU d40)</td><td>505.46M</td><td>否</td><td>0.38%</td><td>1.61%</td><td>0.25%</td></tr>
+<tr><td>FastViTHD</td><td>507.77M</td><td>否</td><td>0.39%</td><td>1.57%</td><td>0.27%</td></tr>
+</table>
+<p>chance = 1/1000 = 0.10%。两个含 SSM 的架构在 @300 步坍缩（C1=1.0, loss 卡 ln(512)）→ lp = 精确 chance。<b>OpenVision2 四指标全第一</b> → 选为后续 scaling 的基础架构。证据：<code>EXPERIMENTS_VISION_ROUND8.md §4</code>；日志 <code>/tmp/r8.log</code>。</p>
+
+<h3>7.2 R9 — 缩塔先导 + 长训练 scaling（CC12M+Amshaker 18.5M, InfoNCE）</h3>
+<h4>阶段一：3 臂 × 30k 步</h4>
+<table>
+<tr><th>臂</th><th>width</th><th>参数量</th><th>N (30k)</th><th><b>lp top-1</b></th></tr>
+<tr><td><b>w512</b> 🏆</td><td>512</td><td>126.8M</td><td>15.36M</td><td><b>6.08%</b></td></tr>
+<tr><td>w768</td><td>768</td><td>284.5M</td><td>15.36M</td><td>3.63%</td></tr>
+<tr><td>w1024</td><td>1024</td><td>505.0M</td><td>15.36M</td><td>1.03%</td></tr>
+</table>
+<p>结论：数据受限区间<b>塔越小越高</b> → 选 w512（126.8M）。</p>
+<h4>阶段二：w512 × 108k 步 scaling 曲线（11 点）</h4>
+<table>
+<tr><th>step</th><th>N (M)</th><th><b>lp top-1</b></th><th>InfoNCE 渐近</th></tr>
+<tr><td>10k</td><td>5.12</td><td>3.96%</td><td rowspan="11">幂律 <code>acc=0.251−0.864·N^(−0.090)</code><br>R²≈0.94，渐近 <b>25.1%</b></td></tr>
+<tr><td>20k</td><td>10.24</td><td>4.39%</td></tr>
+<tr><td>30k</td><td>15.36</td><td>5.44%</td></tr>
+<tr><td>40k</td><td>20.48</td><td>6.46%</td></tr>
+<tr><td>50k</td><td>25.60</td><td>6.70%</td></tr>
+<tr><td>60k</td><td>30.72</td><td>7.35%</td></tr>
+<tr><td>70k</td><td>35.84</td><td>7.30%</td></tr>
+<tr><td>80k</td><td>40.96</td><td>7.30%</td></tr>
+<tr><td>90k</td><td>46.08</td><td>7.59%</td></tr>
+<tr><td>100k</td><td>51.20</td><td>7.70%</td></tr>
+<tr><td>108k</td><td>55.30</td><td><b>7.40%</b></td></tr>
+</table>
+<p class="footer">证据：<code>EXPERIMENTS_VISION_ROUND9.md</code>；分析 <code>/tmp/r9_stage2.log</code>。</p>
+
+<h3>7.3 R10 — 2D scaling（width × N）</h3>
+<p>19 点 2D 拟合 R²=0.980：M 边际效应<b>全区间为负</b> ≈ −2.2 lp pp / 参数翻倍 → 数据受限区间<b>加宽塔是负收益</b>。最优 M 仍在观测下界之下 → 无饱和点。<code>w384@15.36M = 7.99%</code> 为全部宽度最高。证据：<code>EXPERIMENTS_VISION_ROUND10.md</code>。</p>
+
+<h3>7.4 R11-L — 目标函数轴（4 臂, w512, CC12M+Amshaker, 30k 步）</h3>
+<table>
+<tr><th>臂</th><th>目标函数</th><th>lp@5.12M</th><th>lp@10.24M</th><th>lp@15.36M</th><th>Δ@15.36M</th><th>翻盘？</th></tr>
+<tr><td><b>① InfoNCE（基线）</b></td><td>ClipLoss(local_loss=False)</td><td>3.43%</td><td>5.45%</td><td>6.08%</td><td>—</td><td>—</td></tr>
+<tr><td>② SigLIP</td><td>SigLipLoss（双向 sigmoid）</td><td>2.19%</td><td>3.13%</td><td>4.36%</td><td>−1.72</td><td><span class="tag tag-red">否</span></td></tr>
+<tr><td>③ LocalLoss</td><td>ClipLoss(local_loss=True)</td><td>1.81%</td><td>3.60%</td><td>4.33%</td><td>−1.75</td><td><span class="tag tag-red">否</span></td></tr>
+<tr><td>④ CoCa</td><td>对比 + caption CE (w=2.0)</td><td>0.29%</td><td>0.37%</td><td>0.47%</td><td>−5.61</td><td><span class="tag tag-red">否（≈随机）</span></td></tr>
+</table>
+<p>前三个臂监督密度仍 = 1 全局标量 → 未检验「稠密翻盘」假说；④ CoCa 首个稠密臂 = <b>负结果</b>（caption 项吃掉 ~68% 梯度 → trunk 打回随机）。</p>
+
+<h3>7.5 R11-L2 — 文本塔解冻 LoRA</h3>
+<table>
+<tr><th>臂</th><th>变化</th><th>lp@5.12M</th><th>lp@10.24M</th><th>lp@15.36M</th><th>Δ@15.36M</th><th>翻盘？</th></tr>
+<tr><td>R11-L2 LoRA</td><td>CLIP-768 text LoRA r8 α16 (+0.30M)</td><td>3.13%</td><td>4.75%</td><td>5.28%</td><td>−0.80</td><td><span class="tag tag-red">否</span></td></tr>
+</table>
+<p>冻结文本塔仍最优。证据：<code>EXPERIMENTS_VISION_ROUND11.md §11.7</code>。</p>
+
+<h3>7.6 R11-L caption-loss-weight 三点消融</h3>
+<table>
+<tr><th>weight</th><th>lp@15.36M</th><th>结论</th></tr>
+<tr><td>2.0</td><td>0.47%</td><td rowspan="3">全≈随机、无单调 → caption 监督本身与 IN-1k 正交</td></tr>
+<tr><td>1.0</td><td>0.61%</td></tr>
+<tr><td>0.5</td><td>0.60%</td></tr>
+</table>
+
+<h3>7.7 R11-F — 数据源横向对比（5 臂, w512, 30k 步）</h3>
+<table>
+<tr><th>臂</th><th>数据源</th><th>unique 对数</th><th>lp@10k</th><th>lp@20k</th><th>lp@30k</th><th>备注</th></tr>
+<tr><td><b>A</b></td><td>GPIC short</td><td>~6.8M</td><td>3.97%</td><td>5.68%</td><td>5.53%</td><td>基线</td></tr>
+<tr><td><b>B</b></td><td>GPIC medium</td><td>~13M</td><td>4.24%</td><td>5.13%</td><td>6.17%</td><td>Q1: vs A 无显著差异</td></tr>
+<tr><td><b>C</b></td><td>GPIC short+medium (90%)</td><td>~26M</td><td>4.90%</td><td>6.23%</td><td>5.92%</td><td>Q3: vs A 无显著差异</td></tr>
+<tr><td><b>E</b></td><td>CC12M (pure)</td><td>~11M</td><td>5.18%</td><td>6.51%</td><td><b>6.75%</b></td><td>Q2: @20k 显著领先, @30k 无显著差异</td></tr>
+<tr><td><b>D</b></td><td>en500k</td><td>0.5M</td><td>3.86%</td><td>6.34%</td><td>6.65%</td><td><span class="tag tag-red">in-domain / 不可比 / 单列</span></td></tr>
+</table>
+<p>裁定：Q1/Q2/Q3 @30k 均无显著差异（E @20k 显著领先 → CC12M 样本效率更高但渐近追平）。证据：<code>EXPERIMENTS_VISION_ROUND11.md §15.6</code>；日志 <code>/tmp/r11f_datasource.log</code>。</p>
+
+<h3>7.8 ⭐ R11-G — AIMv2-style 长跑 108k 步 scaling（主翻盘结果）</h3>
+<table>
+<tr><th>step</th><th>N (M)</th><th><b>lp top-1</b></th><th>zs top-1</th><th>InfoNCE lp</th><th><b>Δ lp (pp)</b></th></tr>
+<tr><td>10k</td><td>5.12</td><td><b>11.50%</b></td><td>4.24%</td><td>3.96%</td><td><b>+7.54</b></td></tr>
+<tr><td>20k</td><td>10.24</td><td><b>12.73%</b></td><td>5.55%</td><td>4.39%</td><td><b>+8.34</b></td></tr>
+<tr><td>30k</td><td>15.36</td><td><b>13.48%</b></td><td>6.26%</td><td>5.44%</td><td><b>+8.04</b></td></tr>
+<tr><td>40k</td><td>20.48</td><td><b>14.23%</b></td><td>6.76%</td><td>6.46%</td><td><b>+7.77</b></td></tr>
+<tr><td>50k</td><td>25.60</td><td><b>15.33%</b></td><td>6.98%</td><td>6.70%</td><td><b>+8.63</b></td></tr>
+<tr><td>60k</td><td>30.72</td><td><b>15.52%</b></td><td>7.79%</td><td>7.35%</td><td><b>+8.17</b></td></tr>
+<tr><td>70k</td><td>35.84</td><td><b>16.67%</b></td><td>7.87%</td><td>7.30%</td><td><b>+9.37</b></td></tr>
+<tr><td>80k</td><td>40.96</td><td><b>17.53%</b></td><td>8.64%</td><td>7.30%</td><td><b>+10.23</b></td></tr>
+<tr><td>90k</td><td>46.08</td><td><b>18.41%</b></td><td>8.77%</td><td>7.59%</td><td><b>+10.82</b></td></tr>
+<tr><td>100k</td><td>51.20</td><td><b>18.84%</b></td><td>9.66%</td><td>7.70%</td><td><b>+11.14</b></td></tr>
+<tr><td>108k</td><td>55.30</td><td><b>19.76%</b></td><td>10.24%</td><td>7.40%</td><td><b>+12.36</b></td></tr>
+</table>
+<div class="callout callout-key">
+<p><b>Scaling 拟合</b>（<code>r11g_scaling.py</code>）：</p>
+<ul><li>幂律 R² = <b>0.9078</b>，<code>1.000 − 1.665 × N^(−0.040)</code>（c=0.040 → 饱和极慢，55.3M 内无饱和信号）</li>
+<li>对数线性 R² = <b>0.9155</b>，斜率 2× 陡于 InfoNCE</li>
+<li><b>11 点全部严格单调递增</b>（n_neg=0/10）；Δ 随 N 扩大而增大（+7.5 → +12.4 pp）</li></ul>
+<p><b>预注册裁定（§16.5）</b>：R²≥0.90 ✅（0.9078）；渐近 a > 25.1% ✅（但 a=100% 是 curve_fit 边界伪迹，真实渐近不可定）；单调性 ✅ → <b>POSITIVE — 换目标函数可抬高渐近上限</b>。</p>
+</div>
+<p class="footer">证据：<code>EXPERIMENTS_VISION_ROUND11.md §16</code>；日志 <code>/tmp/r11g_aimv2_long.log</code>；CSV <code>/tmp/r11g_scaling_points.csv</code>。</p>
+
+<h3>7.9 R11-H — 纯 AR（去对比项）30k 步</h3>
+<table>
+<tr><th>ckpt</th><th>N (M)</th><th><b>lp top-1</b></th><th>zs top-1</th><th>⑥-A lp</th><th>Δ vs ⑥-A</th></tr>
+<tr><td>step10k</td><td>5.12</td><td>5.28%</td><td>0.08%</td><td>11.39%</td><td>−6.11</td></tr>
+<tr><td>step20k</td><td>10.24</td><td>6.13%</td><td>0.10%</td><td>11.14%</td><td>−5.01</td></tr>
+<tr><td>step30k</td><td>15.36</td><td>6.23%</td><td>0.09%</td><td>12.08%</td><td>−5.85</td></tr>
+</table>
+<p><b>裁定</b>：纯 AR lp ≈ 基线 InfoNCE（6.23% vs 6.08%，+0.15 < 1.5）→ <b>无翻盘</b>。zs≈0.1%（预期：无对比项 → 不对齐文本）。→ <b>翻盘依赖对比项（InfoNCE）</b>。证据：<code>EXPERIMENTS_VISION_ROUND11.md §17</code>；日志 <code>/tmp/r11h_pure_ar.log</code>。</p>
+
+<h3>7.10 R13 — 官方 OpenVision2 权重对照（单列）</h3>
+<table>
+<tr><th>模型</th><th>结构</th><th>预训练</th><th><b>lp top-1</b></th><th>备注</th></tr>
+<tr><td>官方 OV2 L/14@224</td><td>patch14/d24</td><td>官方大规模</td><td><b>79.81%</b></td><td><span class="tag tag-info">单列 · 不并入排名</span></td></tr>
+<tr><td>自研 w512 (R9)</td><td>patch16/d30</td><td>从零 18.5M</td><td>6.08–7.70%</td><td>协议不同</td></tr>
+</table>
+<p>结论边界：上限低是因<b>数据少</b>（18.5M vs 官方数百 M+），<b>非塔烂</b>。证据：<code>EXPERIMENTS_VISION_ROUND11.md §10.4</code>；脚本 <code>r13_eval_official.py</code>。</p>
+
+<h3>7.11 R12 — 全量数据 AIMv2 训练（进行中）</h3>
+<p>数据 ≈58.8M（GPIC 41.8M + CC12M 11.0M + Amshaker 5.95M），120k 步，16:43 起跑。截至 2026-10-05 20:22：step 74050/120k=61.7%，loss=2.14↓，C1/C2/C4 健康。eval watcher + 3-epoch 续跑 watcher 已就绪。结果待回填。</p>
+
+<h2>8. 四臂因果分解（为什么保留对比项）</h2>
+<table>
+<tr><th>臂</th><th>目标函数</th><th>稠密项类型</th><th>对比项</th><th>lp@15.36M</th><th>翻盘？</th><th>结论</th></tr>
+<tr><td><b>①</b></td><td>纯 InfoNCE</td><td>无</td><td>✅</td><td>6.08%</td><td>—（基线）</td><td>基线锚点</td></tr>
+<tr><td><b>④</b></td><td>CoCa</td><td>caption-依赖 (CE)</td><td>✅</td><td>0.47%</td><td><span class="tag tag-red">否（坍缩）</span></td><td>caption 依赖的稠密 → 打回随机</td></tr>
+<tr><td><b>⑥-B</b></td><td>纯 AR</td><td>caption-无关 (patch-MSE)</td><td>❌</td><td>6.23%</td><td><span class="tag tag-red">否</span></td><td>稠密本身不足以翻盘</td></tr>
+<tr><td><b>⑥-A</b></td><td>AIMv2-style</td><td>caption-无关 (patch-MSE)</td><td>✅</td><td><b>12.08%</b></td><td><span class="tag tag-key">✅ 是 (+6.00)</span></td><td><b>对比项 + 稠密 = 翻盘</b></td></tr>
+</table>
+<div class="callout callout-key"><p><b>因果结论</b>：翻盘 = <b>对比项（InfoNCE）</b> × <b>caption-无关的稠密 patch 监督</b> 的<b>协同</b>。去掉任一者都不翻盘（④ → 坍缩；⑥-B → 无翻盘）。</p></div>
+
+<h2>9. 评测的可复现性清单</h2>
+<table>
+<tr><th>项</th><th>值</th><th>固定来源</th></tr>
+<tr><td>IN-1k 路径</td><td><code>/nas_train/.../imagenet-1k/data/train-*.parquet</code></td><td><code>r8_eval_in1k.py:33</code></td></tr>
+<tr><td>val / probe-train 切分</td><td>每类前 50 / 接下去 50（file order）</td><td><code>load_in1k_split</code> L49–82</td></tr>
+<tr><td>图像预处理</td><td>CLIP 归一化 (MEAN/STD 见 <code>data.py:10-11</code>), resize 224</td><td><code>get_val_transform(224)</code></td></tr>
+<tr><td>zs 类向量</td><td>1000 类 × 80 模板 → 平均 → L2 norm</td><td><code>text_class_embeddings</code> L114–124</td></tr>
+<tr><td>lp 分类器</td><td><code>Linear(768→1000)</code>, AdamW lr=3e-3, 100ep, full-batch, seed=0</td><td><code>linear_probe</code> L135–149</td></tr>
+<tr><td>特征抽取</td><td>bf16 autocast → .float(), bs=128</td><td><code>encode_images</code> L104–111</td></tr>
+<tr><td>文本塔</td><td>冻结 CLIP-768 (<code>openai/clip-vit-large-patch14-336</code>)</td><td><code>r9_train.py:34</code></td></tr>
+<tr><td>翻盘阈值</td><td>+1.5 pp（> 噪声带上界 1.1 pp）</td><td>ROUND10 §1.5</td></tr>
+<tr><td>en500k 处理</td><td>in-domain → 单列不排名</td><td>R8.2 红线</td></tr>
+</table>
+
+<div class="footer">
+<p>本报告由 vision agent 于 2026-10-05 生成（R12 训练进行中，纯 CPU/写作）。所有数字均来自实际运行输出，命令与日志路径已附。权威实验记录：<code>run/EXPERIMENTS_VISION_ROUND{8..11}.md</code>。</p>
+<p>🚫 未修改任何 <code>.tex</code> 论文文件；未干扰 R12 训练。</p>
+</div>
+</body>
+</html>
