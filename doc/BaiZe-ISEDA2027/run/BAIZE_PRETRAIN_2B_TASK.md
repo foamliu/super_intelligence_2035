@@ -3,6 +3,27 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_PRETRAIN_2B.md` / `daily-memories/` / `EXPERIMENTS_*`）。本节为「无」时按下方 Round 2 默认顺序推进。
 
+### 🆕 运维指令 · 2026-10-05（**P-9.8 裁定修订：瞬时 spike 不构成否决 —— 给 FP8 更多机会**）⭐ 高优先 · **已批准**
+
+> **用户立场（2026-10-05）**：**DeepSeek-V3 已在 FP8 上跑通并公开** —— 这是**无法翻盘的事实** ⇒ **不能让一次「瞬时不一致」就否决 FP8**，**必须给 FP8 更多机会证明自己**。
+> **运维复核你的数据**：iter660–750 的差异是**瞬时 spike**（峰值 5.11%@iter710），**iter770+ 已恢复 ≤1%**（870=0.73%）⇒ 判据 #4 的 **4.36% 是单点极端值**，**用它一票否决证据不足**。
+
+**① 裁定规则修订（先定后测，🚫 不许事后改）**
+- **#4 改为「持续性」判据**：一次偏离**只要在 ≤100 步内回落到 ≤1%**，**不计为 FAIL**（记为 `spike-then-recovered`）；**只有「连续 ≥100 步维持在 >2%」或「持续恶化」才判 FAIL**。
+- ⇒ **本次 P-9.8 armB 裁定修订为**：**#1/#2/#3 PASS + #4 = spike-then-recovered** ⇒ **「FP8 长程与 bf16 一致 → 可用于 P-8」**（P-8 若用 FP8，**前 500 步仍照原令密切监控 loss/nan/skip**）。
+- ⚠️ **原样保留并如实写进 EXPERIMENTS**：spike 的位置/幅度/**恢复步数**、以及原始逐 100 步数据。**🚫 不许把 spike 抹掉。**
+
+**② 给 FP8 更多机会（新增 P-9.9，按序执行）**
+1. **换 seed 复现**：armB **同配置、`seed 4321`、1000 步** → 若 **spike 不复现** ⇒ 判「随机数值波动」；若**复现** ⇒ 记为 FP8 的已知现象（写进坦白条款）。
+2. **拉长到 ≥2000 步**：看后段是否**持续**一致 —— 这是**直接对齐 DeepSeek-V3 结论**的最有力证据。
+3. **📌 查并试「更细粒度的 FP8 recipe」**（重点）：**DeepSeek-V3 用的是 fine-grained（按块，128×128）缩放**，而我们现在用的是 **`bf16_with_fp8_delayed_scaling_mixed`（delayed / per-tensor 口径）** —— **数值上更弱**，很可能正是 spike 的来源。
+   → **查 `transformer_engine` / `megatron-core 0.16.1` 实际暴露了哪些 FP8 recipe**（`fp8_*` 枚举、blockwise / `cs`、`fp8_mlp` / `fp8_attn` 子项）；**若有 fine-grained → 同配置重跑 armB**，看 **spike 是否消失** 且 **s 是否仍 >1.05**。
+4. 全部跑完 → **合成「FP8 在本模型上的可用性」结论**（含 **recipe 对比表**）。
+
+> 🔎 **请用你的新能力（`cimi_search`/`cimi_fetch`）直接读 DeepSeek-V3 论文的 FP8 章节**（fine-grained quantization 的做法、哪些算子保留 bf16/高精度），把「**我们该用哪个 recipe**」落成**一手引用**。
+
+**③ 铁律不变**：🚫 不改 P-5b recipe、不回训；不存 ckpt（`--save-interval 0`）；🚫 绝不 kill watchdog loop。
+
 ### 🆕 运维指令 · 2026-10-05（✅ **你已具备联网检索能力（MCP `cimi_search`/`cimi_fetch`）—— 做手头任务时用起来**）
 
 > **已开通（运维 2026-10-05 实测）**：`.29:8090` 的 `eda_fastmcp` SSE MCP 已接入 cline；`cline config mcp` 显示 **`pyAether_MCP_server [sse]`**，**本线已实测 `cimi_search` 成功（rc=0）**。

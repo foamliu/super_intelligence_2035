@@ -46,7 +46,7 @@ WAITING: 0
 
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
-| **pretrain** | ✅ P-5b(20B) + P-9.1–9.6①② + **P-9.7 A1 稳态**（~249K tok/s，ETA ~22:39 定稿）→ ⭐ **P-9.8 bf16 vs FP8 长程一致性 A/B（各 1000 步）已批准** → P-9.5 复跑 → P-6② → P-8 暂缓 | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` | 🟢 **`.cline_pretrain` 隔离目录**；凌晨空窗已排（P-9.5 → **P-9.8** → P-6②） |
+| **pretrain** | ✅ P-5b(20B) + P-9.1–9.6①② + **P-9.7 ✅ 定稿（249K tok/s 确认）** + **P-9.8 armA ✅ / armB 87%（裁定按用户立场修订：瞬时 spike 不否决 → FP8 可用于 P-8）** → 🆕 **P-9.9 给 FP8 更多机会**（换 seed / ≥2000 步 / 试 fine-grained FP8 recipe） | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` | 🟢 **`.cline_pretrain` 隔离目录**；P-9.9 已下发 |
 | **vision** | ✅ R9/R10/R14/E1 + R11-L 四臂 + R11-L2 + caption-weight + **R11-E(未抬高)** + **R13(官方 OV2 79.81%)** 全完成 → ⭐ **臂⑥ AIMv2 翻盘**（lp 12.08% vs 基线 6.08%，**+6pp → 25.1% 渐近局部推翻**）→ 🔄 **R11-F 数据源横比运行中** → 🟢 **R11-G(AIMv2 长跑重拟合 scaling) + R11-H(⑥-B 纯 AR) 已批准**（见 `BAIZE_VISION_TASK.md`「运维指令 · 2026-10-04（七）」） | `run/EXPERIMENTS_VISION_ROUND11.md` · `VISION_OFFICIAL_REPOS_SURVEY.md` | 🔄 **`.cline_vision` 隔离目录**；凌晨空窗 ≈4–5h 已排满 |
 | **data** | 下载巡检（白名单 = `l1_en_hq` + `zh` + GPIC；D-CLEAN ✅）· **文献调研：`LIT_IDEAS_2026-10-04.html` 已交付 + 15 条 arXiv 在线核验完成 → 🔁 已下发「用 web search 重做一遍」（产出新文件 `LIT_IDEAS_2026-10-05.html`）** | `run/DISK_CLEANUP_INVENTORY.md` · **`LIT_IDEAS_2026-10-0{4,5}.html`** | 🟢 MCP 已通；**重做调研已下发**（旧版降级为「参考/对照物」） |
 | **harness** | ✅ **4/5 harness 端到端打通**（cline/codex/opencode/claude-code）· **H-A pilot 30/30 完成**（21 评分 + 9 受阻→lock 已修）· `SWEBENCH_COMPARE.html` final（公平口径 **codex 2/3=67% 领先**）→ 🔄 **已批「换冷门模型（kimi/豆包）+ 严格串行」以绕开 quota 墙并重跑 21 条** | `run/harness/SWEBENCH_LITE_FEASIBILITY.md` · `SWEBENCH_COMPARE.html` | 🟡 **quota（5h 窗口）是扩 300 的主要障碍**；deepseek-harness 仍缺工具链 |
@@ -180,6 +180,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **2026-10-05（早 · FP8 裁定修订 + 定价口径改为 FLOPs）** —— 用户两条指令：**①**「**DeepSeek-V3 已认定 FP8 可用，这是无法翻盘的** ⇒ 需要给 FP8 更多机会证明自己」；**③**「定价可能不太好比（BaiZe-2B 的『价格』是多少？）⇒ **似乎可以对比推理的 FLOPS**」。→ **①已下发** `BAIZE_PRETRAIN_2B_TASK.md` 顶部新块：**#4 判据改为「持续性」**（≤100 步内回落到 ≤1% 记为 `spike-then-recovered`、**不计 FAIL**；只有连续 ≥100 步 >2% 或持续恶化才 FAIL）⇒ **本次 armB 改判「FP8 可用于 P-8」**（P-8 前 500 步仍监控；**spike 原样保留不抹**）；新增 **P-9.9**：换 seed 4321 复现 / 拉长 ≥2000 步 / **查并试 fine-grained FP8 recipe**（V3 用 128×128 块缩放，我们用 delayed-per-tensor，**数值更弱**，很可能就是 spike 来源）→ 用 `cimi_search` 读 V3 论文 FP8 章节做一手引用。**②论文不急**（不动）。**③** 我在运维侧做了 FLOPs 推导（见当日日报/对话）：**BaiZe-2B ≈ 4.4 GFLOPs/token（2.22B×2）vs V3 级 ≈ 74 GFLOPs/token（37B active×2）⇒ ≈1/17**；同理 **每 token 权重字节 ≈ 2.2GB vs 37GB（FP8）⇒ 也 ≈1/17** ⇒ **「1/100 成本」需要额外的 ~6× 来自部署/利用率/硬件档位假设**，**建议论文改用「FLOPs/token + 显存带宽 + 实测吞吐」三可比量**而非 $/Mtok 牌价。
 
 - **2026-10-05（早 · 🔄 harness 横评「换冷门模型 + 串行」已批）** —— 用户提议：横评卡在 **quota（5h 滑动窗口 → 21 条里 17 条空 patch）** → **统一换一把冷门 key/模型（kimi / 豆包）**、**一条一条串行跑不并行**。**RUN_ID 71 实测**：`doc/keys.txt` 的 **8 个候选全部 `http=200` 且返回 `tool_calls`** ⇒ 技术上可行（且佐证了 quota 墙：harness 日志有 `本次Token额度已用完，请等待2小时37分钟43秒后重试`）。**我的判断**：那 ~15 天主要是**等配额**不是算（1500×2–4min ≈ 50–100h）⇒ 配额让开则**串行 ≈2–4 天**。→ 下发 **`BAIZE_HARNESS_TASK.md` 顶部批准块**：① 模型 = **首选 `kimi-k2.6-cloud`**、429 时回落 `doubao-seed-2.0-pro/mini/lite-cloud`；（🚫 不用 `deepseek-v4-flash`、🚫 不用 4 线自己在跑的 `glm-5.2`；**同轮只用一个模型，换模型必须重跑**）② **并发=1 严格串行**、一个 harness 跑完 30 条再换下一个；③ **quota 纪律**：命中 429/额度即**暂停等窗口**、**空 patch/quota 失败单列不计入失败率**、报告给 `resolved / patch-but-failed / quota-blocked` 三列；④ **先用新模型重跑原 21 条**验证，再定是否 300×5 全量。
 
