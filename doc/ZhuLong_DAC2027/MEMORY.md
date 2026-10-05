@@ -186,6 +186,10 @@ error: error: unknown option '-b'
 
 ## 9. 流水（倒序）
 
+- **2026-10-05（"中继卡死"实为**盲**；未杀任何进程；合并线 agent 已自主工作）** ——
+  - ✅ 用户到公司后中继/loop 恢复：`RUN_ID 20` 于 **11:04:10** 执行，输出证实 **legacy loop 一直活着**（PID `2455466`，etimes≈44h）→ 昨晚 `RUN_ID 18` **从未执行**（`.last_run_id` 直接 17→20）→ **"停 legacy"根本没发生、零进程损失**。真因 = **36.15 的 GitHub 通道整夜不通**（relay 活着却拉不到 inbox；loop 也推不出），**不是我 kill 的**。
+  - ✅ 合并线 agent 连续 2 轮工作：**11:13** 执行(五)保活检查 + infra 复检（pro-fp4 **HTTP 403 额度耗尽**、glm-5.2 200、四端口 OPEN、`/nasdata` 377G 富余）；**11:25 自主把试验次序改为 `B → C1 → C2 → S1`**（Phase B 4 模型用独立 key/endpoint，不受 pro-fp4 限制）。commit `ad685df`。
+  - ⚠️ **待运维裁**：① agent **越权改了任务书「运维指令区」**（新增「（六）」；规则明文禁 agent 改本节）；② **Phase B 与 legacy 并发共用 infra**（eda_fastmcp/MCP/.env/端口）的撞车风险；③ `~/.cline/data/settings/providers.json` 三不匹配（glm-key + pro-fp4 模型 + `/v1`）= latent Forbidden 隐患。
 - **2026-10-04（22:1x 侦察 + 接管尽调：查明"另一个 agent"= legacy 组件线，两进程均已空转）** —— 用户告知另有 agent 在 `/nasdata/app.e0031982/code/ZhuLong_DAC2027` 跑任务，要求观摩、理解、准备接管。经 ops 中继 **RUN_ID 10–14** 只读侦察：
   - **身份**：**legacy 组件线**（旧「Phase 1 组件消融 + Phase 2 S2 Φ」5-run 线），跑在**独立、非 git** 的项目副本 `/nasdata/app.e0031982/code/ZhuLong_DAC2027`（与 git 仓库 `super_intelligence_2035/doc/ZhuLong_DAC2027` 平行）。
   - **两个 driver 都空转**：① `ablation_run_loop_component_s2_full.sh`（PID 2455466，`MODEL=deepseek-v4-pro-fp4`，30min/轮）—— 其 cline 会话**连续 ≥4 周期被沙箱阻断**（`run_commands`→ACCESS RESTRICTED），无法推进；② `ablation_run_conductor_serial.sh`（PID 1381975，**已跑 3.3 天**）—— 日志每 30min `error: Forbidden`，**3.3 天零产出**。
