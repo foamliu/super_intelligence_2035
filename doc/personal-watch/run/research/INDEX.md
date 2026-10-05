@@ -71,3 +71,5 @@
 
 
 
+> 🗓 **第四十六轮常态增量（UTC 2026-10-05 周一，第四十五轮后 ~34min · 同批去重复核）**：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600**（**435 already in SEEN** + **165 stale > 72h**）→ **0 新增**（**UTC 周一公告尚未刷新**，最近批次仍 `2026-10-02`，与第十五~四十五轮同批）；`window_mode=daily`(72h，第三十轮起自动回落)，因去重先查 SEEN，结论不变；R1′ arXiv ✅ / HF ❌ / RSS 有内容，本轮 `--probe` / `--fetch` **均无重试（attempts=1）**；`raw/2026-10-05-{probe,fetch}-r46.json`；口径 `ARXIV_API.md` §9.48。
+
