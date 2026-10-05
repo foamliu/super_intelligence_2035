@@ -62,6 +62,8 @@
 > 🗓 **第四十三轮常态增量（UTC 2026-10-05 周一，第四十二轮后 ~33min · 同批去重复核）**：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600**（**435 already in SEEN** + **165 stale > 72h**）→ **0 新增**（**UTC 周一公告尚未刷新**，最近批次仍 `2026-10-02`，与第十五~四十二轮同批）；`window_mode=daily`(72h，第三十轮起自动回落)，因去重先查 SEEN，结论不变；R1′ arXiv ✅ / HF ❌ / RSS 有内容，本轮 `--probe` / `--fetch` **均无重试（attempts=1）**；`raw/2026-10-05-{probe,fetch}-r43.json`；口径 `ARXIV_API.md` §9.45。
 
 > 🗓 **第四十四轮常态增量（UTC 2026-10-05 周一，第四十三轮后 ~33min · 同批去重复核）**：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600**（**435 already in SEEN** + **165 stale > 72h**）→ **0 新增**（**UTC 周一公告尚未刷新**，最近批次仍 `2026-10-02`，与第十五~四十三轮同批）；`window_mode=daily`(72h，第三十轮起自动回落)，因去重先查 SEEN，结论不变；R1′ arXiv ✅ / HF ❌ / RSS 有内容，本轮 `--probe` / `--fetch` **均无重试（attempts=1）**；`raw/2026-10-05-{probe,fetch}-r44.json`；口径 `ARXIV_API.md` §9.46。
+> 🗓 **第四十五轮常态增量（UTC 2026-10-05 周一，第四十四轮后 ~33min · 同批去重复核）**：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600**（**435 already in SEEN** + **165 stale > 72h**）→ **0 新增**（**UTC 周一公告尚未刷新**，最近批次仍 `2026-10-02`，与第十五~四十四轮同批）；`window_mode=daily`(72h，第三十轮起自动回落)，因去重先查 SEEN，结论不变；R1′ arXiv ✅ / HF ❌ / RSS 有内容，本轮 `--probe` / `--fetch` **均无重试（attempts=1）**；`raw/2026-10-05-{probe,fetch}-r45.json`；口径 `ARXIV_API.md` §9.47。
+
 
 
 
