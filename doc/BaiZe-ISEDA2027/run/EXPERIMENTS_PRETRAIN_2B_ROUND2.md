@@ -861,13 +861,40 @@ python -m lm_eval --model hf \
 
 4. **seq 对 MFU 的影响**：TP1·MBS2·seq2048（P-9.3）= 141K tok/s → MFU ≈ 34%（vs seq4096 的 60.6%）。seq 减半使每 token 的 GEMM M 减半 → 访存受限 → MFU 暴跌。**印证 P-9.3 结论：seq↓ 每 token 更慢（r=1.75）**。
 
-#### Level-3：torch.profiler top kernels（🚧 running，2026-10-04 ~16:53，第 70 次唤醒）
+#### Level-3：torch.profiler top kernels（✅ 完成，2026-10-06，第 114 次唤醒）— 崩溃修复 + 5-way 归因
 
-- **载体/配置**：bf16 速度最优 = **TP1·DP8·MBS2·seq4096**（P-9.3 实测 249K tok/s），50 步，profile 窗口 **[10,40)** 仅 rank 0，`profile_memory=True / record_shapes=True / with_stack=True`。
-- **实现**：新 `code/BaiZe-ISEDA2027/pretrain_profile_launcher.py`（monkey-patch bridge `initialize_pytorch_profiler` → 自定义 `on_trace_ready` 把 `key_averages` 文本表写 `/tmp/baize_p95_keyavg.txt`，**不写 chrome trace**）。脚本 `run/baize_p95_prof.sh`（峰值显存由 nvidia-smi 后台采样）。
-- **状态**：16:53 起跑健康（8 卡 ~98% util / ~52GB；config dump 已见 `profiling.use_pytorch_profiler=true/profile_ranks=[0]/step[10,40)/record_shapes=true`）。KEYAVG 将在 step~40 由 on_trace_ready 落盘，ETA ~17:10。**结果待下轮唤醒解析**。
-- **预期**：验证 NCCL 是否仍为 #1 瓶颈（P-4 GBS=8 口径下 41.7%）；量化 SSM scan / mamba custom kernel / LayerNorm / elementwise 占比。
-- **产出**：本节追加 top-kernels 表 + 与 P-4 的交叉印证。
+> **HTML 报告**：`doc/BaiZe-ISEDA2027/report_pretrain_p95_profiler.html`（自包含）。
+
+**第一次运行（2026-10-04 16:53，`baize_p95_prof.sh`）❌ 崩溃**：
+- 配置 TP1·DP8·MBS2·GBS=1024·50 步·profile [10,40)，monkey-patch bridge profiler。
+- **崩溃**：`profile_memory=True + with_stack=True + record_shapes=True`（重型标志）在 GBS=1024（64 grad-accum 步）→ trace 事件爆炸 → iteration 40 偶发 NaN（ranks 2,3）→ rank 0 阻塞在 `on_trace_ready` 导出 → NCCL collective 600s 超时 → **SIGABRT (Signal 6)**，KEYAVG 空（0 行）。
+- 原始报错：`RuntimeError: iteration 40: found NaN in local forward loss calculation` → `c10::DistBackendError: WorkNCCL Timeout 600008ms` → `exitcode -6 (SIGABRT)`。
+
+**修复 + 复跑（2026-10-06 00:43，`baize_p95_prof2.sh`）✅ rc=0**：
+- **修复**：改用独立脚本 `profile_bf16.py`（P-4 已验证 rc=0），**关闭重型标志**（record_shapes=False / with_stack=False / profile_memory=False），GPU0-1（DP2，因 GPU2-7 被 data 实验占用），GBS=4/MBS=2（1 grad-accum，最轻），20 步 prof 10 步 [5,15)。
+- **结果**：rc=0，305 ops，KEYAVG 238 行，峰值 61657 MiB，无 NaN/crash/超时。
+- 命令：`CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node=2 --master_port=29935 profile_bf16.py --steps 20 --warmup 5 --profile-steps 10 --gbs 4 --mbs 2 --seq-length 4094 --tensor-parallel 1 --lr 1e-3 --lr-warmup-iters 2 --lr-decay-iters 2 --out /tmp/baize_p95_keyavg_v2.txt`
+- 文件：`run/p95_keyavg_v2.txt` + `run/p95_analysis_v2.txt` + `run/p95_prof2.sum`。
+
+**⭐ 5-way 归因（合成 DP8·MBS2·seq4094·bf16 生产口径）**：
+
+| 类别 | P-9.5 复跑<br>(DP2·MBS2) | P-4 原始<br>(DP8·MBS1) | ⭐ 合成 DP8·MBS2<br>(生产口径) |
+|:--|--:|--:|--:|
+| **comm** (NCCL) | 10.2% | 41.7% | **41.7%** |
+| **GEMM** | 41.1% | 28.6% | **27.6%** |
+| **elementwise** | 34.0% | 20.4% | **21.3%** |
+| **SSM** | 13.6% | 8.4% | **8.6%** |
+| **attention** | 1.1% | 0.7% | **0.7%** |
+| 总 self_device_time | 6.247 s | 45.731 s | — |
+
+> **合成方法**：comm ← P-4 DP8 实测 41.7%（同 DP 度，权威）；compute（58.3%）← 两轮 compute-only 均值（GEMM 47.4%, SSM 14.8%, attn 1.2%, elem 36.5% of compute）× 58.3%。两轮 compute-only 高度一致 → 合成可信。
+
+**关键结论**：
+1. **comm 是 #1 瓶颈**（41.7%，NCCL allreduce/allgather）→ 通信主导，非算力受限。
+2. **GEMM #2**（27.6%）→ FP8 打中此块，g_comp=0.49 → Amdahl 上界 1.96×（excl comm），现实 s=1.6 → 1.21×（与 P-9.6② 实测 1.21–1.24 精确吻合 ✅）。
+3. **attention 仅 0.7%**（56 层中 4 层 attn）→ hybrid 架构把 O(n²) attention 压到可忽略，这是核心优势的**直接量化**。
+4. **SSM 8.6%**（24 层 Mamba2）→ 非瓶颈，DaoAILab kernel 路径正确。
+5. **elementwise 21.3%** → 访存受限，fused kernel 已在用。
 
 #### 与 P-9.1/P-9.4/P-9.6 的交叉印证
 

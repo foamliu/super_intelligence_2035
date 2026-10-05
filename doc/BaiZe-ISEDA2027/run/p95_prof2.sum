@@ -1,0 +1,29 @@
+===== P-9.5 torch.profiler RE-RUN START @ 2026-10-06 00:43:49 config=TP1·DP2·MBS2·seq4094·bf16 GPU0-1 iters=20 prof=[5,15) =====
+  FIX: light flags (record_shapes=False/with_stack=False/profile_memory=False)
+  CRASH-ROOT: heavy flags + NaN@iter40 + NCCL timeout -> SIGABRT (first run)
+  rc=0 peak_gpu_mem_MiB=61657 (max over GPU 0,1)
+  ✅ rc=0
+  --- key_averages head (self_device_time_total) ---
+# BaiZe R2 P-4 BF16 profile (p95_prof_v2)
+# GBS=4 MBS=2 seq=4094 TP=1 DP=2 bf16
+# warmup=5 profile_steps=10 num_microbatches=1
+
+=== key_averages sorted by self_device_time_total (CUDA) ===
+operator                                                      self_cuda_us      cuda_us    count
+record_param_comms                                                635681.7     635681.7     1510
+ncclDevKernel_ReduceScatter_Sum_f32_RING_LL(ncclDevKernelArgsStorage<4096ul>)      526082.0     526082.0      370
+nccl:reduce_scatter_tensor_coalesced                              526082.0     526082.0      370
+_LayerNormLinearBackward                                          458280.9     511922.5      560
+MambaSplitConv1dScanCombinedFnBackward                            332097.1     433905.3      240
+_LinearBackward                                                   316645.9     316645.9      560
+nvjet_tst_128x256_64x4_2x1_v_bz_coopA_NTN                         314148.7     314148.7      850
+nvjet_tst_128x256_64x4_2x1_v_bz_coopA_NNN                         282171.6     282171.6      610
+_LayerNormLinear                                                  222969.0     222984.8      560
+aten::copy_                                                       169009.5     169232.5     5940
+aten::mm                                                          156401.0     156401.0       30
+nvjet_tst_256x144_64x4_2x1_v_bz_coopA_NNT                         154674.5     154674.5      520
+_Linear                                                           149282.4     149625.4      560
+nvjet_tst_128x256_64x4_2x1_v_bz_coopA_TNN                         148760.5     148760.5      560
+  --- keyavg line count ---
+238 /tmp/baize_p95_keyavg_v2.txt
+===== P-9.5 torch.profiler RE-RUN END @ 2026-10-06 00:46:34 rc=0 =====
