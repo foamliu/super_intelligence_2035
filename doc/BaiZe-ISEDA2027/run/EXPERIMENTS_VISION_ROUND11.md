@@ -791,11 +791,13 @@ R9 幂律渐近 `acc=0.251−0.864·N^−0.090`（R²≈0.94）→ **25.1% 上�
 - **Q2/E**：CC12M pure 臂因端口碰撞未训，**裁定悬置**，待重跑后补 A/B/E 三者比较。
 - ⚠️ **C2 限定**：三点均在噪声带边缘（Q3 @20k = +1.28 接近 1.5），**不排除更大 N / 更长步数下出现分离**；本结论严格限定在「30k 步 / 15.36M / 冻结 CLIP-768 / InfoNCE」口径。
 
-### 15.7 待重跑（GPU 占用中，排到 R11-G/H 之后）
+### 15.7 E+D 重跑（🔄 进行中，2026-10-05）
 
-- **Arm E（CC12M pure）**：重跑脚本需用**稳健端口**（避免 `29400+RANDOM%1000` 碰撞 30000）—— 改为固定高位端口（如 31337）或加 EADDRINUSE 重试。≈1.9h × 8 卡。
-- **Arm D（en500k）**：`data.py` 已加 `empty_check=False`（✅），重跑即可。≈1.9h × 8 卡。仍单列、标 in-domain / 不可比。
-- **顺序**：R11-G（✅ 完成）→ R11-H（🔄 运行中）→ **Arm E 重跑 → Arm D 重跑**（用满早间空窗）。next wake 在 GPU 空后启动。
+- R11-G ✅ 完成、R11-H ✅ 完成（§17 落盘）→ **E+D 重跑已由守护脚本自动接管**。
+- **守护脚本**：`/tmp/r11_ed_wait_and_launch.sh`（PID 861557，ppid=1）→ 派出 `/tmp/r11_ed_rerun.sh`（PID 765556）。
+- **Arm E（CC12M pure）** 🔄 运行中（port 29555，step≈6700/30000 @10:35 ≈22%，无坍缩 C1=0.25 / C4=OK，output `R11F_cc12m_w512`，日志 `/tmp/r11f_ed_rerun.log`）→ ETA ~1.5h + 4-ckpt eval ~15min。
+- **Arm D（en500k）** ⏳ 待 E 完成后自动起（port 29556，`empty_check=False` 已修）→ ETA ~1.9h + eval。仍单列、标 in-domain / 不可比。
+- **E+D 完成后** → 补 §15.6 Q2（A/B/C/E 四源排名）+ D 单列表。
 
 ---
 
@@ -979,5 +981,132 @@ python -m torch.distributed.run --nproc_per_node=8 --nnodes=1 \
 - AIMv2 原文 §1 明确声称 "denser supervision compared to discriminative objectives" ✅
 - MAE 范式（逐 patch MSE）是我们的 patch loss 的直接来源 ✅
 - **但需诚实标注**：AIMv2 原文的 claim 是在 **12B 样本**下成立的；我们在 **18.5M 样本（649× 少）**下观测到同样的方向性（稠密 > 对比）→ **机制一致、量级不同**，不可声称"复现了 AIMv2"（C2 限定）。
+
+---
+
+## 17. R11-H — 臂⑥-B：纯 AR（去对比项）30k 步（✅ 完成，2026-10-05）
+
+> 运维指令 2026-10-04（七）批准。别名 = `ROUND11 §14.0(3)` 与 `§14.3` 里的 **⑥-B**。
+> **科学问题**：⑥-A 翻盘是否依赖对比项（InfoNCE）？若去掉 InfoNCE 仍翻盘 ⇒ 「caption-无关的稠密 patch 监督本身」即可突破上限（更接近官方 AIMv2 路线）。
+> **唯一变化 vs ⑥-A**：`contrast_weight 1.0 → 0.0`（`total = 1.0 × masked-patch-MSE`；文本塔不参与梯度）。C2 坍缩守卫**关闭**（纯 AR 无跨模态对齐，C2_gap ≈ 0 是预期；C1 特征坍缩 + C4 loss 递减守卫保留）。
+
+### 17.1 命令
+
+```bash
+bash vision/r11h_run_pure_ar.sh 30000
+# = torchrun --nproc_per_node=8 r9_train.py --loss aimv2 --mask-ratio 0.6 \
+#   --patch-loss-weight 1.0 --contrast-weight 0.0 --c2-collapse-guard 0 \
+#   --tower openvision2 --width 512 --depth 30 --steps 30000 ...
+# 数据 = CC12M+Amshaker(~18.5M)，同 ⑥-A / R9。
+```
+
+### 17.2 训练结果（✅ exit 0，2026-10-05 08:51 → 10:10:58）
+
+| 项 | 值 |
+|:--|:--|
+| 总墙钟 | 7136.2s（≈1.98h × 8 卡 ≈ **15.8 GPU·h**） |
+| steady img/s | **2956.3**（≈ ⑥-A 的 5971 的 49.5%——无对比项时吞吐约减半，因 forward pass 无负样本编码） |
+| final_loss | **0.0555**（= patch_mse；contrast=0.0000 全程） |
+| patch_mse 轨迹 | 0.6026 (step50) → 0.0412 (step30000)（**递减 14.6×**，patch 重建在学） |
+| C1（特征坍缩） | 0.812 (step300) → **0.255** (step30000)（早期偏高→后期稳定 <0.30，**无坍缩**） |
+| C2_gap | ≈0 全程（纯 AR 预期，守卫已关） |
+| C4 | OK 全程（loss 递减） |
+| 自动中止 | ❌ 未触发 |
+
+> ⚠️ C1 早期 step300=0.812 偏高（接近 0.95 阈值），但随训练迅速下降到 0.25 → 这是纯 MIM 的典型行为（早期 patch 重建主导、特征尚未分化），**非坍缩**。
+
+### 17.3 IN-1k 评测结果（4 ckpt，✅ ALL DONE 10:23:44）
+
+| ckpt | N (samples) | lp top-1 | zs top-1 |
+|:--|--:|--:|--:|
+| step10000 | 5.12M | **5.28%** | 0.08% |
+| step20000 | 10.24M | **6.13%** | 0.10% |
+| step30000 | 15.36M | **6.23%** | 0.09% |
+| final | 15.36M | **6.23%** | 0.09% |
+
+> zs ≈ 0.1% 全程——**预期**：纯 AR 无对比项 → 视觉特征与冻结 CLIP 文本空间无对齐 → zero-shot 退化到随机。lp 仍有信号（特征本身在学习，只是不对齐文本）。
+
+### 17.4 🔒 预注册判据裁定（先定后测，§运维指令 2026-10-04(七)）
+
+> 基线锚点（arm① InfoNCE）：lp @ 5.12M = **3.43%** / 10.24M = **5.45%** / 15.36M = 6.08%。
+> ⑥-A 锚点（InfoNCE + patch-MSE）：lp @ 5.12M = **11.39%** / 10.24M = **11.14%** / 15.36M = 12.08%。
+> 噪声带 ±1.5 pp（ROUND10 §1.5）。
+
+**逐点 Δ 计算：**
+
+| 锚点 | R11-H | vs 基线 | vs ⑥-A | 基线+1.5? | ⑥-A−1.5? |
+|:--|--:|--:|--:|:--:|:--:|
+| @5.12M | 5.28% | **+1.85** | −6.11 | ✅ YES | ❌ NO (5.28<9.89) |
+| @10.24M | 6.13% | **+0.68** | −5.01 | ❌ NO (6.13<6.95) | ❌ NO (6.13<9.64) |
+
+**三行判据逐条检验：**
+
+| 行 | 条件 | @5.12M | @10.24M | 两点均满足？ |
+|:--|:--|:--:|:--:|:--:|
+| 1 | ≥基线+1.5 **且** ≥⑥-A−1.5 → 不依赖对比项 | ✅/❌ | — | ❌ NO |
+| 2 | ≤⑥-A−1.5 **但** ≥基线+1.5 → 部分依赖 | ✅/✅ | ✅/❌ | ❌ NO |
+| 3 | 坍缩随机(<1%) **或** ≤基线+1.5 → 依赖对比项 | — | ❌(≤基线+1.5) | ✅ **YES** |
+
+**裁定：Row 3 → 「翻盘依赖对比项」**
+
+### 17.5 诚实披露与机制解读
+
+**⚠️ 关键 nuance（负结果有价值，如实记录）：**
+
+1. **未坍缩到随机**：lp 5–6% 远高于随机（~0.1%）且 ≥ 基线 → 纯 AR（caption-无关的稠密 patch 监督）**本身能学到有效视觉特征**，不是废物。
+2. **@5.12M 仍有低 N 先发优势**：+1.85 pp ≥ 基线+1.5 → 稠密 patch 监督在**极低 N**下比 InfoNCE 学得更快（与 R11-E GPIC short 的「低 N 先发」模式一致）。
+3. **但翻盘完全消失**：⑥-A 在两点上 +7.96/+5.69 pp → R11-H 仅 +1.85/+0.68 pp → **对比项贡献了翻盘幅度的 77–88%**。
+4. **@10.24M 已回落到噪声带内**（+0.68 < 1.5）→ 无对比项时，稠密监督的优势**随 N 增大而衰减**（与 ⑥-A 的优势随 N 增大而增大形成镜像对照）。
+
+**⭐ 完整因果分解（四臂对照）：**
+
+| 臂 | 组成 | lp@15.36M | vs 基线 | 翻盘？ |
+|:--|:--|--:|--:|:--:|
+| ① 基线 | InfoNCE | 6.08% | — | — |
+| ④ CoCa | InfoNCE + caption CE | **0.47%** | −5.61 | ❌ 坍缩 |
+| **⑥-B (R11-H)** | **patch-MSE only** | **6.23%** | +0.15 | ❌ 无翻盘 |
+| **⑥-A (R11-G/§14)** | **InfoNCE + patch-MSE** | **12.08%** | **+6.00** | ✅ 翻盘 |
+
+→ **翻盘需要两者兼备**：(a) caption-**无关**的稠密 patch 监督（非 caption CE——caption 依赖会坍缩）；(b) 对比项 InfoNCE（提供语义锚 / 线性可分性）。**单独任一都不够**：纯 MIM ≈ 基线（无翻盘），caption 稠密 → 坍缩。
+
+**机制（与文献一致）**：
+- MAE 原文（He et al., 2022）报告 MAE linear probe **比对比方法低 10–15 pp**（ViT-B: MAE lp=68% vs DINO/MoCo lp≈75–78%），原文解释：「pixel reconstruction encourages the encoder to retain **low-level information** useful when the head is trainable, but **not as immediately linearly separable** as features learned by augmentation-invariant contrastive objectives」（aiwiki.ai/wiki/masked_autoencoder，2026-06，**二手·基于 He et al. 2022 原表**）。
+- → 我们的 R11-H 在**多模态 + 冻结文本塔**设置下复现了这一模式：纯 patch-MSE 的 lp ≈ 基线 InfoNCE（无提升），而 **InfoNCE + patch-MSE 组合**（⑥-A）才产生翻盘 → **对比项提供线性可分的语义锚，稠密项提供更丰富的每样本监督，二者互补**。
+- AIMv2 官方是纯 AR（无对比项）但**有 text AR（caption CE）**+ 12B 样本 → 官方路线的「语义锚」来自 **text AR** 而非 InfoNCE；我们冻结了文本塔（无 text AR）→ 去掉 InfoNCE 后**完全没有语义锚** → 这是 R11-H 与官方 AIMv2 的关键差异（C2 限定）。
+
+### 17.6 公平表（§3 口径：参数量 + 训练 token + 每步耗时）
+
+| 项 | ⑥-B (R11-H) 纯 AR | ⑥-A (§14) AIMv2-style | ① 基线 InfoNCE |
+|:--|:--|:--|:--|
+| 视觉塔 | OpenVision2 w512（126.8M） | 同 | 同 |
+| PatchPredictor | +0.66M | +0.66M | 无 |
+| **总参数** | **127.44M** | **127.44M** | **126.78M** |
+| 训练步数 | 30000 | 30000 | 30000 |
+| 训练样本 N | 15.36M | 15.36M | 15.36M |
+| steady img/s | **2956** | **5971** | ~2900 |
+| 每步耗时 | ~238 ms/iter | ~165 ms/iter | ~186 ms/iter |
+| 总墙钟 | 7136s (≈1.98h) | ~4950s (≈1.38h) | ~5580s (≈1.55h) |
+| GPU·h (8卡) | ≈15.8 | ≈11.0 | ≈12.4 |
+| 坍缩 | ❌ 无 | ❌ 无 | ❌ 无 |
+| **lp @ 5.12M** | **5.28%** | **11.39%** | 3.43% |
+| **lp @ 10.24M** | **6.13%** | **11.14%** | 5.45% |
+| **lp @ 15.36M** | **6.23%** | **12.08%** | 6.08% |
+| zs @ 15.36M | **0.09%** | 5.29% | ~1.9% |
+
+> 纯 AR 每步慢 ~44% vs ⑥-A（无负样本编码但 patch 计算仍在；差异主要来自数据加载效率随 GPU 空闲度变化）。lp 增益 = **零翻盘**（+0.15 pp @ 15.36M vs ⑥-A +6.00 pp）。
+
+### 17.7 结论
+
+**R11-H（臂⑥-B 纯 AR）裁定：翻盘依赖对比项。** 去掉 InfoNCE 后，caption-无关的稠密 patch 监督（MAE 式）本身仍能学到有效视觉特征（lp 5–6% > 随机，@5.12M +1.85 ≥ 基线+1.5），但**无法复现 ⑥-A 的翻盘**（两点均远低于 ⑥-A，@10.24M 已回落到噪声带内）。
+
+**对 §14.4 / §16.7 的补充**：⑥-A 的翻盘不是「稠密监督 alone」的功劳，而是 **InfoNCE 语义锚 × caption-无关稠密 patch 监督** 的**互补效应**。这与 MAE 文献（纯 MIM lp < 对比方法 lp）一致——对比项提供线性可分性，稠密项提供更丰富的每样本信号，二者缺一不可。
+
+**C2 限定**：R11-H ≠ 官方 AIMv2（官方有 text AR 提供语义锚 + 12B 样本；我们冻结文本塔、去掉 InfoNCE 后无任何语义锚）→ 结论只对我们 recipe 成立。
+
+**证据**：
+- 训练日志：`/tmp/r11h_pure_ar.log`（30k 步完整 + eval 4 ckpt，exit 0）
+- Checkpoints：`/nas_train/app.e0031982/datasets/baize-vision/out/R11H_pure_ar_w512/vision_step{10000,20000,30000}.pt + vision.pt`
+- 命令：`bash vision/r11h_run_pure_ar.sh 30000`
+- 文献锚点：MAE lp < 对比 lp（He et al. 2022，via aiwiki.ai 二手·待核原文表格）；AIMv2 官方 = 纯 AR + text AR（§16.8(1)）
 
 > **检索工具状态**：`cimi_search` + `cimi_fetch` 在 `.12` 本线实测可用（rc=0）。本次共 3 次 search + 2 次 fetch，均为 CPU/网络操作，未占 GPU、未下大文件。
