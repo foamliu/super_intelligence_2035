@@ -515,3 +515,16 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
 
 
+
+### 9.35 第三十三轮（UTC 2026-10-05 周一 · 同批去重复核）：周一公告仍未刷新 → **0 新增**（**本轮实时取数**；⚠️ 首次 `--probe` 遇间歇性网络停滞，重试后取得真实数据）
+
+- **⚠️ 网络异常（如实记录，非端点故障）**：第三十三轮首启 `--probe` 时，Python `requests` 侧对 `export.arxiv.org`（`199.232.163.42:443`）出现**TCP 已建立（`ESTAB`）但响应停滞**（进程 `S` 态、`/proc/<pid>/wchan=do_poll`，`ss` 可见 `Recv-Q>0` 的少量滞读字节），且**未在 30s 读超时内抛出**；外层 `timeout` 兜底终止。同一时刻 `curl` 对**同端点同参数**请求**正常返回**（`HTTP 200` + `application/atom+xml`，`time=1.4s`），且 `python3 -c "import arxiv_fetch; arxiv_fetch.query_arxiv('cat:cs.CL',max_results=3)"` **1.7s 完成** → 判定为**间歇性网络抖动**（**非** API 故障、**非** 脚本逻辑错）。经**外层重试**（probe 第 1 次尝试 ~2min 内成功；fetch 第 1 次尝试即成功）取得真实数据，`probe-r33.json` / `fetch-r33.json` **均为真实响应**。
+- **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-05T15:28:59.654771+00:00`，证据 `research/raw/2026-10-05-probe-r33.json`）：
+  - **arXiv API**：`HTTP 200` + `application/atom+xml`，最新 `published=2026-10-02T17:59:14Z`（`totalResults=626530`，样本 `2610.03717 / 2610.03716 / 2610.03715`）→ ✅ **可达**（本轮无重试）；
+  - **HF Daily Papers**：`Network is unreachable` → ❌ 不可达（**如实记录，不伪造 `hf_daily` 标记**）；
+  - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml` + `items=185 / 191 / 456` → ✅ **工作日已有内容**。
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=daily`，窗口 72h**，`generated=2026-10-05T15:30:59.584544+00:00`）：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600**；其中 **435 条 = `already in SEEN`**，其余 **165 条 = `stale > 72h`**。证据 `research/raw/2026-10-05-fetch-r33.json`。
+- **结论**：**UTC 仍为 `2026-10-05`（周一）**；arXiv 公告批次仍为 **`2026-10-02`**（**周一公告尚未刷新**，通常于周一 20:00 ET 之后才出）→ **0 新增属正常**（**非「无数据」**）；实际日期区间按 R2′ 标注为 **`2026-10-02`（最近公告批次）**。`window_mode=daily`（72h）为第三十轮起的自动口径回落，非人工覆盖。
+- **第 3 批 A/B 复核**：TOP-K（含 `takeaway`/`action` 20 条）+ `TAKEAWAYS.md`（5 条）+ 视频线（`SHORTLIST.md` 17 / `scripts/` 3）**已交付未变**；**无新增 → 不重跑**。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
+
