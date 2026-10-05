@@ -17,7 +17,23 @@
 | **🔄 试验次序** | **已调换：Phase B（大模型消融）→ C1（组件）→ C2（S2Φ）→ S1（保真度）**。因 `deepseek-v4-pro-fp4` 额度 403 阻塞 C1，先跑 Phase B（4 模型均使用独立 key/endpoint，不受 pro-fp4 限制）|
 | **叙事** | 一顿合并：**B → C1 → C2 → S1**，「单任务书 + 单循环」串行 75 轮全量 mean±std，回填 6 表 56 个 `[TBD]` |
 
-### 🆕 运维指令 · 2026-10-05（六）— 🔄 试验次序调换：先跑 Phase B（大模型消融）
+### 🆕 运维指令 · 2026-10-05（七）— 🧩 评测侧也隔离 config dir（合并线 ↔ legacy 各干各的）
+
+> **目标**：合并线跑 eval 时，防作弊 hook 只影响**它自己的评测对象**，**不再落进共享的 `~/.cline/hooks`** → legacy 的编排 agent 不被误伤 → **两条线可真正并跑**。
+
+**运维正在落地**：给 `run_cli.sh` 增加 `CLINE_CONFIG_DIR` 支持（hook 装到 `$CLINE_CONFIG_DIR/hooks/`，默认仍 `$HOME/.cline` → legacy 行为不变）；并建 `/nasdata/app.e0031982/.cline_eval_zhulong`。
+
+**落地后，你（agent）的动作**：**起 eval 前** `export CLINE_CONFIG_DIR=/nasdata/app.e0031982/.cline_eval_zhulong`；**合并线评测模型的 `cline auth` 也要写这个目录**（即 `cline --config "$CLINE_CONFIG_DIR" auth …`）。
+
+**红线**：① **不要**给**编排 agent 自己**设 `CLINE_CONFIG_DIR`（编排仍用 `--config /nasdata/app.e0031982/.cline_zhulong`）；② **不要**碰 `~/.cline`（legacy 仍用它）。
+
+**落地前**：（五）·5 仍然有效 —— **起 eval 前先确认 legacy 不在 mid-eval**。
+
+### 🆕 运维指令 · 2026-10-05（六）— 🔄 试验次序调换：先跑 Phase B（大模型消融）【运维追认】
+
+> **来源**：**用户在 36.15 现场下发的安排**（2026-10-05）。此前该条由 agent 代记于本区，现由**运维正式追认并接管署名**——**本区今后只由运维修改，agent 不得再改本节**。
+>
+> **生效范围**：**取代（四）的「从 `C1.wo_retrieval R2` 起跑」**（见下第 3 点）；与（五）「legacy 保活」不冲突。
 
 **背景**：`deepseek-v4-pro-fp4` 额度 HTTP 403 阻塞 C1/wo_retrieval 无法推进，而 Phase B 的 4 个模型（glm-5.2 / deepseek-v4-flash / kimi-k2.6-cloud / doubao-seed-2.0-pro-cloud）均使用独立 key/endpoint，完全不受 pro-fp4 限制。→ **将 Phase B 提到最前**。
 
@@ -27,7 +43,7 @@
 1. Phase B 使用 **full 配置**（检索开 + sandbox 开），不切 `set_ablation`。每个模型仅需 `cline auth` 切换 key/model。
 2. 从 Phase B 切到 C1.pure_llm 时，必须先执行 `scripts/set_ablation.py pure_llm` + `stop.sh && start.sh`。
 3. **（四）中 `C1.wo_retrieval R2` 起始点暂缓**，标记为 ⏸（暂停），待 Phase B 完成 + pro-fp4 恢复后重试。
-4. legacy 组件 loop（PID 2455466）保持运行，不干扰。
+4. legacy 组件 loop（PID 2455466）保持运行，不干扰。**并跑前提**：见（七）——**合并线的 eval 与 legacy 的 eval 需各自独立 cline 配置目录**，隔离落地前，起 eval 前先确认 legacy 不在 mid-eval。
 5. Phase B 推进逻辑按 `ablation_run_task_model_full.md` §推进逻辑：每个模型跑 5 轮 → 从 glm-5.2 开始，依次 deepseek-v4-flash → kimi-k2.6-cloud → doubao-seed-2.0-pro-cloud → 完成后切 C1。
 
 
