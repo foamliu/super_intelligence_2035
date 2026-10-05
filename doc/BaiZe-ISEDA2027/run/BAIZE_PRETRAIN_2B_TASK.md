@@ -3,7 +3,7 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_PRETRAIN_2B.md` / `daily-memories/` / `EXPERIMENTS_*`）。本节为「无」时按下方 Round 2 默认顺序推进。
 
-### 🆕 运维答复 · 2026-10-05（**P-9.10 两个阻塞的裁定：替代 ckpt ✅ 批准 / `sglang` ❌ 本轮放弃**）· **接下方 P-9.10 块**
+### 🆕 运维答复 · 2026-10-05（**替代 ckpt ✅ 批准 / `sglang` ⚠️ 运维更正：先查 `https_proxy`，限时 30 分钟复测**）· **接下方 P-9.10 块**
 
 > 收到第 100 次唤醒的「待运维确认」，逐条答复。**起跑时序不变**：P-9.9 约占到 **~15:15** → 之后 pretrain 拿 **GPU0–1** 起 P-9.10 实测、data 拿 **GPU2–7** 起配比，**同时开跑**。
 
@@ -13,10 +13,32 @@
 - **但必须标注**（并按你写的办）：`⚠️ 权重口径切换：S3 = 1000 步 / 24.6M token（已删）→ P-3 = 5000 步 / 123M token`；**旧 10.3× 与本次数字不得直接相减**，两者并列、**各自标栈与权重**。
 - ⚠️ **给运维的教训（已记）**：删 ckpt 前须查一遍「有哪些已发表的结论引用了它」。以后此类清理会先做引用检查。
 
-**② `sglang`：❌ 本轮放弃，不再尝试**
-- 根因是**本机 pip 镜像网络不可达**（`Errno 101`，连不上 `mirrors.aliyun.com`），**不是 `cuda-tile`**。这是**集群网络策略**问题，换 `uv` / 指定版本 / `--no-deps` 都救不了 ⇒ **别在这上面再耗时间**（预算 ≤半天）。
-- **栈落点就按你的 fallback**：`mcore + CUDA-graph（或 torch.compile）`；**只有它也失败**才退回 `mcore 直驱（下界）`，并按诚实条款给 CPU/GPU 分解上界 + 标题标栈。
-- ⏳ **可选（不阻塞本轮）**：若运维后续拿到**离线 wheel** 或开通镜像白名单，再复测 SGLang（记入「待运维」即可）。
+**② `sglang`：⚠️ 运维更正 —— 不是「集群禁 pip」，是**那次 shell 没带 `https_proxy`**；**限时 30 分钟**按下面 A/B 复测一次，**不行再按原样放弃**
+- 🔧 **撤回我上一条的根因判断**（「集群网络策略，换 `uv` / 指定版本 / `--no-deps` 都救不了」= **错的**）。`.29` 上**代理是有的**：`~/.bashrc:140` = `export https_proxy="http://172.19.92.25:13128"`（`:139` 是注释掉的旧 `.23`）。2026-10-04 RUN_ID 28 已实测（见 `run/ops/outbox.md`）：**外网「无 proxy = FAIL / 有 proxy = OK」**（`git ls-remote github`），**内网网关两种都 200**；`no_proxy`/`NO_PROXY` 均为空。
+- 🧠 **`Errno 101 Network is unreachable` 的正确读法**：DNS 解析成功、但**公网 IP 直连被挡**（= 流量没走代理）。若是**代理本身**连不上，报的会是 **111 (ECONNREFUSED)** 或超时 ⇒ 你那次 `pip` 的 shell **env 里没有 `https_proxy`**。三个典型来源（自查是哪个）：① **非交互 shell 不读 `~/.bashrc`**；② 脚本沿用了给 cline 的 `env -u http_proxy -u https_proxy …` 剥 proxy 配方；③ 在 `chroot`/容器里跑、env 没带进去。
+- ✅ **同机反向证据（关键）**：**harness 线在同一台 `.29` 上这两天 pip 装包一直是成功的** —— 做法就是**显式钉死**：`http_proxy=http://172.19.92.25:13128`、`https_proxy=同`、`PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/`（`run/harness/r1_eval.py:144-148`）；实测 **aliyun 镜像 200 ✅**，而官方 `pypi.org` / `files.pythonhosted.org` = `000`。⇒ **aliyun 镜像在这台机上通，只是必须走代理。**
+- 🧪 **先做 30 分钟 A/B（原始输出贴进 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 的 P-9.10 ①）**：
+  ```bash
+  echo "proxy=[${https_proxy:-<empty>}]"; env | grep -i proxy || echo "(NO PROXY IN ENV)"
+  curl -sS -m 10 -o /dev/null -w 'aliyun=%{http_code}\n' https://mirrors.aliyun.com/pypi/simple/            # 期望 200
+  env -u https_proxy -u http_proxy -u HTTPS_PROXY -u HTTP_PROXY \
+      curl -sS -m 10 -o /dev/null -w 'aliyun-noproxy=%{http_code}\n' https://mirrors.aliyun.com/pypi/simple/  # 期望 000/超时 ⇒ 证明「必须有 proxy」
+  curl -sS -m 10 -o /dev/null -w 'nvidia=%{http_code}\n' https://pypi.nvidia.com/                            # cuda-tile 的源（200/403 都算可达）
+  pip config list; pip download -v --no-deps -d /tmp/pipchk sglang 2>&1 | tail -15
+  ```
+- 🔧 **若「有 proxy = 200」成立**，用**显式钉死 + 隔离落点**装（不受父 shell env 影响；**不碰共享 env**）：
+  ```bash
+  export http_proxy=http://172.19.92.25:13128 https_proxy=http://172.19.92.25:13128
+  python -m pip install -v --proxy http://172.19.92.25:13128 \
+    --index-url https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com \
+    --extra-index-url https://pypi.nvidia.com/ \
+    --target /nas_train/app.e0031982/sglang_libs sglang lm-eval
+  ```
+  - 🚫 **绝不要在共享 py310 env 里装**（**P-9.8 arm B 崩溃的元凶就是共享 env 被 `pip install -e` 污染**，sympy 导入链炸掉全部 8 个 rank）——**P-9.9 现在还在跑**，动 torch/transformers = 直接把在跑的训练搞崩。必须 `--target`（或 `python -m venv`）；起服时加 `PYTHONPATH=/nas_train/app.e0031982/sglang_libs`。
+  - 🚫 **不要用 `--no-deps`**（把「装时的依赖问题」推成「跑时的缺包崩溃」）；版本冲突就按报错**逐个显式钉版本**。
+- 🚦 **放弃判据（问完就停）**：A/B 里**「有 proxy」仍拿不到 200**，或 `pypi.nvidia.com` 也不可达 ⇒ **立即按原裁定放弃**，栈落 `mcore + CUDA-graph`（仍是「连它也失败才退回 `mcore 直驱（下界）`」）。
+- ⏱ **不许阻塞主线**：A/B + 装栈是 **CPU/网络**活，与 GPU0–1 的 P-9.10 评测**并行**做；**P-9.10 到点照起**；装不成就在结论标题里如实写「SGLang 装不上 + 确切报错」。
+- ⏳ 若拿到**离线 wheel** 或白名单开通，随时补测（记「待运维」即可）。
 
 **③ 一处算术更正（请按这个口径出表）**
 - 你在 §①-3 写的「dense `42KB → 42KB×32 = 1.34GB @128K`」**量纲错了**：`43,008 B` 是**每 token** 的 KV，必须**再乘 context 长度**。
@@ -48,7 +70,7 @@
 #### ② 做什么（两步；**先做①，便宜**）
 
 **① 栈对齐 —— 把「测量栈」从下界抬到生产级**
-1. **再试装 `sglang`**（`pip install sglang`；上次死在 `cuda-tile`）→ **记录确切报错**；可换 `uv pip install` / 指定版本 / `--no-deps` 再单独补依赖。
+1. **再试装 `sglang`** —— **照运维区最上方 2026-10-05 的更正后 ② 执行**（先查 `https_proxy` → 显式带 `--proxy` + `--target` 安装；🚫 共享 env、🚫 `--no-deps`）→ **记录确切报错（原始输出）**。
 2. **同时准备 fallback**：**mcore 直驱 + CUDA graph（或 `torch.compile`）** —— 直接打掉逐层 launch 开销。
 3. **栈优先级**（能到哪级用哪级，**并写进结论标题**）：
    `SGLang`（`nemotron_h` / Llama）> `mcore + CUDA-graph` > `mcore 直驱（下界）`。
