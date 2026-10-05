@@ -5,41 +5,35 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A kimi-k2.6-cloud serial cross-eval RUNNING — cline-patched × 30: 22/30 scored (14 resolved, 8 patch-but-failed, 0 quota-blocked), instance 23/30 in progress (sympy-13031 run)
-已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A(deepseek) 22/30 scored · SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md · kimi model switch + serial runner + kimi 22/30 scored (14 resolved, 63.6% resolve rate) + SWEBENCH_COMPARE.html regenerated (10422B)
-当前动作:     R72: kimi-k2.6-cloud 串行横评监控 — cline-patched×30 后台运行中(22/30 scored: 14 resolved, 8 patch-but-failed, 0 quota-blocked; inst 23/30 sympy-13031 run running) + gw_proxy(kimi)运行中 + quota健康(0×429) + relay健康skip第25次 + SWEBENCH_COMPARE.html regenerated(10422B,22entries)
-下一步:       cline-patched×30完成(~1.5h,8条剩余) → codex×30 → opencode×30 → claude-code×30 → deepseek×30 → 最终更新SWEBENCH_COMPARE.html
-阻塞:         无（kimi quota 未撞墙，串行运行中，~11min/inst avg）
+PHASE:        H-A kimi-k2.6-cloud serial cross-eval — cline-patched × 30 COMPLETE (18/30 resolved, 60.0%) → codex × 30 RUNNING (inst 1/30 in progress)
+已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A(deepseek) 22/30 scored · SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md · kimi model switch + serial runner + cline-patched×30 COMPLETE (18/30 resolved, 60.0%, 12 patch-but-failed, 0 quota-blocked) + SWEBENCH_COMPARE.html regenerated (12150B, 30 entries)
+当前动作:     R73: cline-patched×30 COMPLETE (18/30 resolved=60.0%, 12 patch-but-failed, 0 quota-blocked, total 4.0h, avg 479s/inst) → codex×30 LAUNCHED (PID 2051774, inst 1/30 django-10924 running) + gw_proxy(kimi)运行中 + quota健康(0×429) + relay健康skip第26次 + SWEBENCH_COMPARE.html regenerated(12150B,30entries) + git fetch OK (1 ahead 0 behind)
+下一步:       codex×30完成(~4-5h) → opencode×30 → claude-code×30 → (deepseek×30) → 最终更新SWEBENCH_COMPARE.html(全5harness对比)
+阻塞:         无（kimi quota 未撞墙，codex串行运行中）
 ERROR_COUNT:  0
 ```
 
-## 🆕 第七十二轮速览（2026-10-05 14:50）— kimi 串行横评监控 · 22/30 scored: 14 resolved ✅ (63.6%) + sympy 后4条全resolved + SWEBENCH_COMPARE.html regenerated (10422B)
+## 🆕 第七十三轮速览（2026-10-05 15:27）— 🎉 cline-patched×30 COMPLETE: 18/30 resolved (60.0%) + codex×30 LAUNCHED + SWEBENCH_COMPARE.html regenerated (12150B, 30 entries)
 
-- ✅ **ops 中继复核（第 25 次）→ 健康，跳过重启**。relay `2489749 1 340604 Ss`（ppid=1、etimes≈3.94d）；`.last_run_id`=71（持平 → 无新运维指令）；`git fetch` exit=0；`git rev-list --left-right --count HEAD...origin/main`=`0 0`（完全同步，无新指令）。relay 日志 RUN_ID 69~71 均 `exit=0`。
-- 📊 **kimi 串行横评进度**：cline-patched × 30 后台运行中（PID 2291128，etimes≈15005s≈250min）。**22/30 scored**：
-  - [1–15] django 15 条：10 resolved, 5 patch-but-failed（同 R71）
-  - [16] sympy-11870 → **patch-but-failed** ❌ (F2P 0/1, P2P 58/58, wall=589s)
-  - [17] sympy-11897 → **patch-but-failed** ❌ (F2P 0/1, P2P 95/95, wall=598s)
-  - [18] sympy-12171 → **patch-but-failed** ❌ (F2P 0/1, P2P 8/8, wall=353s)
-  - [19] sympy-12236 → **resolved** ✅ (F2P 1/1, P2P 133/133, wall=975s) ← 首个 sympy resolve！
-  - [20] sympy-12419 → **resolved** ✅ (F2P 1/1, P2P 25/25, wall=634s)
-  - [21] sympy-12454 → **resolved** ✅ (F2P 2/2, P2P 134/134, wall=219s)
-  - [22] sympy-12481 → **resolved** ✅ (F2P 1/1, P2P 7/7, wall=196s)
-  - [23] sympy-13031 → **RUN 运行中**（cline child PID 3257196，workdir=sympy_sympy）
-  - `kimi_pilot_results.json` 已有 22 entries（即时固化 ✅）
-  - 🎉 **sympy 后 4 条全 resolved**（12236/12419/12454/12481）→ sympy 不是不可解，前 3 条（11870/11897/12171）难度更高
-- ✅ **kimi quota 健康**：gw_proxy PID 3175038 运行中（etimes≈17762s≈4.9h）。**0 次 429**，**0 次 quota 事件**。
-- 📈 **kimi vs deepseek 对比**：
+- ✅ **ops 中继复核（第 26 次）→ 健康，跳过重启**。relay `2489749 1 342823 Ss`（ppid=1、etimes≈3.97d）；`.last_run_id`=71（持平 → 无新运维指令）；`git fetch`（带 proxy）exit=0；`git rev-list --left-right --count HEAD...origin/main`=`1 0`（本地 1 ahead，远端无新指令）。relay 日志 RUN_ID 69~71 均 `exit=0`。
+- 🎉 **cline-patched × 30 COMPLETE**：`run_serial_kimi.py --harness cline-patched` 全 30 条跑完。`/tmp/kimi_cline_patched.log` SUMMARY：**18/30 resolved (60.0%)**，**12/30 patch-but-failed (40.0%)**，**0 quota-blocked**。
+  - **django 15 条**：10 resolved (10924/11001/11039/11049/11099/11133/11179/11422/11583/11620)，5 patch-but-failed (11019/11283/11564/11630/11742)
+  - **sympy 15 条**：8 resolved (12236/12419/12454/12481/13031/13471/13480/13647)，7 patch-but-failed (11870/11897/12171/13043/13146/13177/13437)
+  - **总耗时 4.0h**（avg 479s/inst，min=93s max=1800s=timeout）
+  - `kimi_pilot_results.json` 30 entries 全部固化 ✅（即时 JSON 写盘，`classification` 字段齐全）
+- 📈 **kimi vs deepseek 对比（更新）**：
   | 模型 | scored | resolved | patch-but-failed | quota-blocked | resolve rate |
   |:--|--:|--:|--:|--:|--:|
   | deepseek-v4-flash | 22/30 | 0 | 5 | 17 | 0% |
-  | **kimi-k2.6-cloud** | **22/30** | **14** | **8** | **0** | **63.6%** |
-  → **kimi quota 完全不挡**（0 quota-blocked），resolve rate 63.6% 远超 deepseek 0%。django-only 10/15=66.7%，sympy 4/7=57.1%。
-- 🔧 **SWEBENCH_COMPARE.html 已更新**：`gen_kimi_compare.py` 从 `kimi_pilot_results.json` 生成单模型 kimi 报告（22 entries, 14 resolved）。10422B 自包含。
-- ⏱ **时间估算**：22 条 ≈250min → ~11min/inst avg → cline-patched 剩余 8 条 ≈ 1.5h → 4 harness × 30 ≈ 22h（~1 天）。
-- ⏭ **下一步**：cline-patched×30 继续后台跑 → 完成后启动 codex×30 → 依次 opencode/claude-code/deepseek → 全部完成后最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
+  | **kimi-k2.6-cloud** | **30/30** | **18** | **12** | **0** | **60.0%** |
+  → **kimi quota 完全不挡**（0 quota-blocked），resolve rate 60.0%。django-only 10/15=66.7%，sympy 8/15=53.3%。
+- 🚀 **codex × 30 LAUNCHED**：`PYTHONUNBUFFERED=1 HARNESS_MODEL=kimi-k2.6-cloud setsid python3 run_serial_kimi.py --harness codex --all-prepared --resume > /tmp/kimi_codex.log 2>&1`（PID 2051774, ppid=1）。inst 1/30 django__django-10924 正在 RUN。codex binary `/home/app.e0031982/.local/bin/codex`（pinned 0.94.0）。
+- ✅ **kimi quota 健康**：gw_proxy PID 3175038 运行中（etimes≈19990s≈5.5h）。**0 次 429**，**0 次 quota 事件**。
+- 🔧 **SWEBENCH_COMPARE.html 已更新**：`gen_kimi_compare.py` 从 `kimi_pilot_results.json` 生成单模型 kimi 报告（30 entries, 18 resolved）。12150B 自包含。
+- ⏱ **时间估算**：codex×30 预计 ~4-5h（同 cline-patched 量级）→ opencode×30 → claude-code×30 → 全部完成 ~12-15h → 最终更新 SWEBENCH_COMPARE.html（全 5 harness 对比）。
+- ⏭ **下一步**：codex×30 后台跑 → 完成后启动 opencode×30 → 依次 claude-code → 最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
 
-## 🆕 第七十一轮速览 —— 已滚动归档至 daily-memories-harness/2026-10-05.md（结论不改：relay 健康 skip 第 24 次 + kimi 18/30 scored: 10 resolved (55.6%) + sympy 前 3 条全 patch-but-failed + SWEBENCH_COMPARE.html regenerated (9550B)）
+## 🆕 第七十二轮速览 —— 已滚动归档至 daily-memories-harness/2026-10-05.md（结论不改：relay 健康 skip 第 25 次 + kimi 22/30 scored: 14 resolved (63.6%) + sympy 后4条全resolved + SWEBENCH_COMPARE.html regenerated (10422B)）
 
 ## 🆕 第七十轮速览 —— 已滚动归档至 daily-memories-harness/2026-10-05.md（结论不改：relay 健康 skip 第 23 次 + kimi 15/30 scored: 10 resolved (66.7%) + SWEBENCH_COMPARE.html regenerated (8902B)）
 
