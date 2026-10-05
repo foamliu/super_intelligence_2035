@@ -264,4 +264,10 @@
 | 2026-10-06 | Fixer, financier, spymaster: UAE’s Sheikh Tahnoon setting sights on AI dominance | The Guardian（interactive，经 HN） | feature | https://www.theguardian.com/news/ng-interactive/2026/oct/01/fixer-financier-spymaster-how-the-uaes-sheikh-tahnoon-is-setting-his-sights-on-ai-dominance |
 | 2026-10-06 | Anthropic removes support for local Claude Cowork sessions | Anthropic（帮助中心，经 HN） | tool | https://support.claude.com/en/articles/15520349-use-claude-cowork-on-web-desktop-and-mobile |
 | 2026-10-06 | MCP for agent-to-agent comms may be the riskiest protocol you've never heard of | Ars Technica | news | https://arstechnica.com/security/2026/10/vulnerability-in-agents-from-google-and-others-exposes-structural-flaw-in-mcp/ |
+| 2026-10-06 | Testing AI on Real-World Tasks | Vals AI（产品落地页，经 HN） | tool | https://www.vals.ai/home |
+| 2026-10-06 | Building self-improving agent loops | Oodle AI（公司博客，经 HN） | analysis | https://blog.oodle.ai/self-improving-agent-loops/ |
+| 2026-10-06 | Three AI models, same prompt, before and after a testing tool | Buoy（公司博客，经 HN） | analysis | https://buoy.gg/blog/ai-models-before-and-after-buoy |
+| 2026-10-06 | Give Your AI Agent a Domain-Specific Language | Modeloptic（公司博客，经 HN） | analysis | https://www.modeloptic.com/blog/give-your-ai-agent-a-dsl |
+| 2026-10-06 | Nova Sprint. Coordinate AI sprints across multiple models and harnesses | GitHub（经 HN） | tool | https://github.com/mas-bandwidth/nova-sprint |
+| 2026-10-06 | Pi Durable: What It Is and Why It Matters for Agent Apps | MindStudio（公司博客，经 HN） | analysis | https://www.mindstudio.ai/blog/pi-durable-long-running-agents |
 
