@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZhuLong (DAC 2027) · 日报 + 中继/loop 修复手册 · 2026-10-05</title>
+<style>
+  :root{--bg:#f4f6fa;--card:#fff;--ink:#1a2233;--muted:#5b6779;--line:#e3e8f0;--accent:#2456e6;--accent-soft:#eef3ff;
+    --done-bg:#e7f6ec;--done-fg:#157a3c;--todo-bg:#fff4e0;--todo-fg:#a05a00;--wait-bg:#fdeceb;--wait-fg:#b3271e;
+    --info-bg:#e9f3fb;--info-fg:#1a5f9c}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;font-size:15px}
+  .wrap{max-width:1060px;margin:0 auto;padding:32px 20px 72px}
+  header.hero{background:linear-gradient(135deg,#3a1420 0%,#2456e6 100%);color:#fff;border-radius:14px;padding:30px 32px;margin-bottom:26px}
+  header.hero h1{margin:0 0 8px;font-size:25px}
+  header.hero p{margin:2px 0;opacity:.92;font-size:14px}
+  header.hero .tag{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);padding:2px 10px;border-radius:20px;font-size:12px;margin-top:10px}
+  h2{font-size:19px;margin:38px 0 6px;padding-left:11px;border-left:4px solid var(--accent)}
+  h2 .sec-no{color:var(--accent);margin-right:6px;font-weight:700}
+  h3{font-size:16px;margin:22px 0 8px;color:#22304d}
+  p{margin:8px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:14px 0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:14px 0}
+  .kv{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .kv b{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:4px}
+  code{font-family:Consolas,Menlo,monospace;background:#f0f2f7;border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:13px;color:#8a2be2}
+  pre.cmd{background:#0f172a;color:#e2e8f0;padding:14px 16px;border-radius:8px;font-size:13px;line-height:1.75;overflow-x:auto;margin:10px 0}
+  pre.cmd code{background:none;border:none;color:inherit;padding:0;font-size:13px}
+  pre.cmd .cm{color:#7d8ca3}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px;background:#fff}
+  th,td{border:1px solid var(--line);padding:8px 9px;text-align:left;vertical-align:top}
+  th{background:#f7f9fc;font-weight:600;color:#22304d;white-space:nowrap}
+  tr:nth-child(even) td{background:#fbfcfe}
+  .badge{display:inline-block;border-radius:20px;padding:1px 9px;font-size:12px;font-weight:600;white-space:nowrap}
+  .b-todo{background:var(--todo-bg);color:var(--todo-fg)}
+  .b-wait{background:var(--wait-bg);color:var(--wait-fg)}
+  .b-info{background:var(--info-bg);color:var(--info-fg)}
+  .callout{border-left:4px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0}
+  .callout.warn{border-left-color:#e0a306;background:#fff8e6}
+  .callout.danger{border-left-color:#d1342c;background:#fdeceb}
+  .callout.ok{border-left-color:#1a7f37;background:#eafaf0}
+  footer{margin-top:44px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>ZhuLong (DAC 2027) · 日报 + 中继 / loop 修复手册</h1>
+  <p>2026-10-05 · 面向 36.15 现场救援（照着敲即可）</p>
+  <p style="color:#dde4f0">author: 外部运维 · 通道 = git（本机不能 SSH 36.15）</p>
+  <span class="tag">⚠️ ops 中继卡死 · 合并线 loop 静默 · legacy 状态未知 · 数据零损失</span>
+</header>
+
+<div class="callout danger">
+  <b>一句话现状（2026-10-05 10:21）</b>：<br>
+  36.15 整夜零动作 —— <code>ops/.last_run_id</code> 停在 <b>17</b>，inbox 的 <code>RUN_ID 20</code> 从未执行；今天 ZhuLong <b>零提交</b>。而同仓库 BaiZe 各线今晨 08:38–10:11 一直正常提交 → <b>GitHub 本身没问题，卡的是 36.15 这一侧</b>（中继卡死 或 36.15 出网不通）。
+</div>
+
+<!-- 现场诊断 -->
+<h2><span class="sec-no">1</span>先跑这几条：现场诊断（判状态）</h2>
+<pre class="cmd"><code>R=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+
+<span class="cm"># 1) 谁还在跑？</span>
+pgrep -af 'zhulong_ops_relay|zhulong_loop|ablation_run_loop|ablation_run_conductor' | cut -c1-160
+
+<span class="cm"># 2) 中继走到哪了？（线上应为 20；若本地仍 17 说明没拉到/没执行）</span>
+cat $R/ops/.last_run_id
+tail -n 25 /tmp/zhulong_ops_relay.log
+ls -l $R/ops/inbox.md
+
+<span class="cm"># 3) 有没有“持有管道”的 git 子进程（卡死中继的元凶）</span>
+ps -eo pid,ppid,etimes,args | grep -E 'git .*pull|git fetch|git-remote' | grep -v grep | cut -c1-160
+
+<span class="cm"># 4) 合并线 loop 日志尾</span>
+tail -n 20 /tmp/zhulong_loop.log</code></pre>
+
+<div class="callout">
+  <b>读法</b>：
+  <ul>
+    <li><code>ps …git …pull</code> <b>有输出</b> → 中继确实卡死（走 §2-A）。</li>
+    <li>中继进程在、但日志很久不动、inbox 已 push 却不执行 → 多半是 <b>36.15 出网/GitHub 不通</b>；先测 <code>timeout 15 git -C $R ls-remote origin &gt;/dev/null &amp;&amp; echo NET_OK || echo NET_FAIL</code>。</li>
+    <li>loop 日志仍 <code>error: Forbidden</code> → 走 §2-B 末尾“重建隔离授权”。</li>
+  </ul>
+</div>
+
+<!-- 修复步骤 -->
+<h2><span class="sec-no">2</span>修复步骤（核心 · 复制粘贴即可）</h2>
+
+<h3>§2-A 救 ops 中继（卡死 → 重启）</h3>
+<p><b>根因</b>：昨晚运维把 <code>git pull</code> 写进了中继命令块 → git 的网络子进程继承了 stdout 管道，<code>timeout</code> 只杀 leader、子进程仍持有管道 → 中继读不到 EOF、<code>.last_run_id</code> 停摆（同 BaiZe §7 老坑）。</p>
+<pre class="cmd"><code>R=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+
+<span class="cm"># 1) 杀掉卡死的中继 + 残留的 git 子进程（关键：连 git 子进程一起清）</span>
+pkill -f zhulong_ops_relay.sh
+pkill -f 'git .*pull'
+pkill -f 'git fetch'
+pkill -f 'git-remote-https'
+sleep 3
+ps -eo pid,ppid,args | grep -E 'zhulong_ops_relay|git .*pull|git fetch' | grep -v grep | cut -c1-160   <span class="cm"># 期望：无输出</span>
+
+<span class="cm"># 2) 在工作副本里（块外！）同步一次 —— 这一步绝不能放进 relay 块</span>
+cd $R &amp;&amp; git pull --rebase --autostash
+
+<span class="cm"># 3) 重启中继</span>
+setsid bash $R/zhulong_ops_relay.sh &gt; /tmp/zhulong_ops_relay.log 2&gt;&amp;1 &lt; /dev/null &amp;
+sleep 3
+pgrep -af zhulong_ops_relay.sh | cut -c1-160      <span class="cm"># 期望：新的 bash zhulong_ops_relay.sh（ppid=1）</span>
+tail -n 8 /tmp/zhulong_ops_relay.log</code></pre>
+<div class="callout ok"><b>中继一恢复，它会自动发现 <code>inbox.md</code> 的 RUN_ID 20 并执行</b>——那条就是「幂等复活 legacy 组件 loop」。所以救活中继，legacy 会自动回来。</div>
+
+<h3>§2-B 救 / 重启 zhulong loop（合并线）</h3>
+<pre class="cmd"><code>R=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+ISO=/nasdata/app.e0031982/.cline_zhulong
+
+<span class="cm"># 1) 确认隔离配置目录还在（含 data/ 授权 + hooks/）</span>
+ls -l $ISO $ISO/data $ISO/hooks 2&gt;&amp;1 | head -20
+
+<span class="cm"># 2) 停旧 loop</span>
+pkill -f zhulong_loop.sh; sleep 3
+
+<span class="cm"># 3) 用新脚本重启（已内置 --config "$ISO" 隔离）</span>
+setsid bash $R/zhulong_loop.sh &gt; /tmp/zhulong_loop.log 2&gt;&amp;1 &lt; /dev/null &amp;
+sleep 12
+
+<span class="cm"># 4) 复核：应出现 “wake up, invoking cline ...”，且不再有 error:</span>
+tail -n 15 /tmp/zhulong_loop.log
+pgrep -af 'cline.*glm-5.2' | cut -c1-140</code></pre>
+
+<p><b>若仍报 <code>error: Forbidden</code></b> → 重建隔离目录里的 cline 授权：</p>
+<pre class="cmd"><code>ISO=/nasdata/app.e0031982/.cline_zhulong
+K=02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23
+mkdir -p $ISO/hooks
+cline --config $ISO auth -p openai -k $K -b http://agi-gateway.cxmt.com/cloud/v1 -m glm-5.2
+<span class="cm"># 期望：Provider configured: openai-compatible (glm-5.2)</span></code></pre>
+
+<!-- 复活 legacy -->
+<h2><span class="sec-no">3</span>复活 legacy 组件线（若中继还没跑 RUN_ID 20）</h2>
+<pre class="cmd"><code>D=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
+if ! pgrep -f ablation_run_loop_component_s2_full.sh &gt;/dev/null; then
+  cd $D; setsid bash ablation_run_loop_component_s2_full.sh &gt; /tmp/ablation_loop_component_s2_full.log 2&gt;&amp;1 &lt; /dev/null &amp;
+fi
+pgrep -af 'ablation_run_loop|ablation_run_conductor' | cut -c1-150</code></pre>
+<div class="callout warn">
+  <b>注意</b>：legacy 与合并线共用同一套评测 infra（eda_fastmcp / MCP :8090 / <code>.env</code> / shard 端口），<b>不能同时跑 eval</b>。当前策略（任务书（五））：<b>以保住 legacy 产出为先，合并线暂缓接管</b>。等两线状态明确后，再由运维重新拍板“停谁/继续谁”。
+</div>
+
+<!-- 复盘 -->
+<h2><span class="sec-no">4</span>事故复盘（我该负的责 + 防复发）</h2>
+<div class="grid">
+  <div class="kv"><b>直接原因</b><span>RUN_ID 18 把 <code>pkill legacy</code> 与 <code>git pull</code> 放进<b>同一个 relay 块</b> → git 网络子进程持有 stdout → 中继读不到 EOF 卡死；顺带把 legacy 的启停也一起失联。</span></div>
+  <div class="kv"><b>为什么整夜没自愈</b><span>36.15 的 GitHub 通道整夜无动作（对照 BaiZe 在 .12/.29 一直正常提交）—— 要么中继卡死，要么 36.15 出网断。</span></div>
+  <div class="kv"><b>已固化到记忆</b><span>MEMORY §7-17：<b>relay 块内禁止任何 git 命令</b>；接管/重启类块只做幂等动作；「停生产进程」与「动中继」绝不同块。</span></div>
+  <div class="kv"><b>防复发清单</b><span>① 块内无 git；② 每次只改一个变量；③ 改完立刻用一条无害探针验证通道；④ 停/启生产进程单独成块、幂等可重入；⑤ 变更前先确认在飞任务为空。</span></div>
+</div>
+
+<!-- 速查 -->
+<h2><span class="sec-no">5</span>关键事实速查</h2>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>中继脚本 / 日志</td><td><code>…/run/zhulong_ops_relay.sh</code> · <code>/tmp/zhulong_ops_relay.log</code>（启动见 §2-A）</td></tr>
+  <tr><td>合并线 loop / 日志</td><td><code>…/run/zhulong_loop.sh</code> · <code>/tmp/zhulong_loop.log</code></td></tr>
+  <tr><td>编排模型</td><td><code>glm-5.2</code> @ <code>http://agi-gateway.cxmt.com/cloud/v1</code>（key 见 loop 脚本）</td></tr>
+  <tr><td>隔离配置目录</td><td><code>/nasdata/app.e0031982/.cline_zhulong</code>（<code>data/</code> 授权 + <code>hooks/</code>；loop 已带 <code>--config</code>）</td></tr>
+  <tr><td>防作弊 hook</td><td><code>~/.cline/hooks/PreToolUse</code>（评测前装、结束删；只作用于评测对象 cline）</td></tr>
+  <tr><td>legacy 目录（非 git）</td><td><code>/nasdata/app.e0031982/code/ZhuLong_DAC2027/</code></td></tr>
+  <tr><td>legacy loop</td><td><code>…/run/ablation_run_loop_component_s2_full.sh</code>（conductor: <code>ablation_run_conductor_serial.sh</code>）</td></tr>
+  <tr><td>评测 infra</td><td><code>eda_fastmcp</code> · MCP :8090 · recall :9006 · shard :8664/8665/8653/8669</td></tr>
+  <tr><td>论文树（回填处）</td><td><code>…/super_intelligence_2035/doc/ZhuLong_DAC2027/ZhuLong_DAC2027/</code>（56 个 <code>[TBD]</code>）</td></tr>
+</table>
+
+<!-- 数据保全 -->
+<h2><span class="sec-no">6</span>数据保全：零损失</h2>
+<div class="card">
+  <p>所有已产出的成绩都在磁盘上，没丢一个数字：</p>
+  <ul>
+    <li><b>legacy 成绩</b>：<code>/tmp/ABL_wo_retrieval_r1.log</code>（<b>74.1%</b>, 117/158）、<code>ABL_full_r1</code> 84.8、<code>ABL_k10_r1</code> 75.3、<code>ABL_k3_r1</code> 69.0、<code>ABL_k1_r1</code> 60.8、<code>ABL_lagged_r1/r2</code> 80.4/84.2、<code>ABL_omega_low_r2</code> 82.3</li>
+    <li><b>评测产出批次</b>：<code>/nasdata/app.e0031982/eda_code_eval/</code>（各 <code>2026_10_xx_xxxxxx</code> 目录 + <code>execution_results.jsonl</code>）</li>
+    <li><b>状态 / 流水</b>：<code>…/code/ZhuLong_DAC2027/run/MEMORY_component_full.md</code> + <code>daily-memories/</code></li>
+  </ul>
+  <p>且昨晚 <b>无在跑 eval</b>（wo_retrieval r1 已于 14:40 结束）→ 没有任何半成品被腰斩、没有正在跑的作业被 kill。legacy loop 只是脚本，<b>“停” = 暂停，不是“没了”</b>。</p>
+</div>
+
+<footer>
+  生成：外部运维 · 2026-10-05 · 通道 = git（不能 SSH 36.15）<br>
+  先跑 §1 判断状态，再按 §2 修；§3 用于 legacy 复活。相关记忆：<code>MEMORY.md</code> §4 / §7-16 / §7-17 / §9；任务书运维指令区（三）(四)(五)。
+</footer>
+
+</div>
+</body>
+</html>
