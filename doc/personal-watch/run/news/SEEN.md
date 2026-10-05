@@ -188,3 +188,11 @@
 | 2026-10-05 | An open-source tool lets you delete 12GB of Apple Intelligence data on macOS | The Verge | tool | https://www.theverge.com/ai-artificial-intelligence/1004672/mac-delete-apple-intelligence-ai-tool |
 | 2026-10-05 | Sen. Adam Schiff on AI regulation, free speech, and impeaching Trump one more time | The Verge | discussion | https://www.theverge.com/podcast/1004286/senator-adam-schiff-ai-trump-regulation-corruption |
 | 2026-10-05 | Our minds aren't equipped to handle AI | The Verge | opinion | https://www.theverge.com/ai-artificial-intelligence/1003794/ai-education-computational-model-thought |
+
+| 2026-10-06 | OpenAI 将在欧盟为 ChatGPT 和 Codex 文本输出添加隐形水印 | IT之家 | news | https://www.ithome.com/1/009/903.htm |
+| 2026-10-06 | Our approach to EU text provenance rules | OpenAI (官方) | news | https://openai.com/index/eu-text-provenance/ |
+| 2026-10-06 | OpenAI 将在 ChatGPT 中推出全新图片广告形式，不会影响生成结果 | IT之家 | news | https://www.ithome.com/1/009/901.htm |
+| 2026-10-06 | AI glasses face their first major government crackdown | Ars Technica | news | https://arstechnica.com/ai/2026/10/ai-glasses-face-their-first-major-government-crackdown/ |
+| 2026-10-06 | Can 'super intelligence' and a non-binding safety pact solve AI's image problem? | TechCrunch | discussion | https://techcrunch.com/2026/10/04/can-super-intelligence-and-a-non-binding-safety-pact-solve-ais-image-problem/ |
+| 2026-10-06 | Lola Vision Systems is trying to make it easier to run AI models on chips | TechCrunch | feature | https://techcrunch.com/2026/10/05/lola-vision-systems-is-trying-to-make-it-easier-to-run-ai-models-on-chips/ |
+
