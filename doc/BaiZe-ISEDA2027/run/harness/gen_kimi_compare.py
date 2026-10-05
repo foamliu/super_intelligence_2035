@@ -29,13 +29,14 @@ def main():
         resolved = sum(1 for e in entries if e["classification"] == "resolved")
         pbf = sum(1 for e in entries if e["classification"] == "patch-but-failed")
         qb = sum(1 for e in entries if e["classification"] == "quota-blocked")
+        blk = sum(1 for e in entries if e["classification"] == "blocked")
         scored = resolved + pbf
         total_planned = 300
-        walls = [e["harness_result"]["wall_s"] for e in entries if "wall_s" in e.get("harness_result", {})]
+        walls = [e.get("harness_result", {}).get("wall_s") for e in entries if "wall_s" in e.get("harness_result", {})]
         avg_wall = f"{sum(walls)/len(walls):.0f}s" if walls else "N/A"
         resolve_rate = f"{resolved}/{scored} ({100*resolved/scored:.0f}%)" if scored > 0 else "N/A"
         stats[h] = {
-            "scored": scored, "resolved": resolved, "pbf": pbf, "qb": qb,
+            "scored": scored, "resolved": resolved, "pbf": pbf, "qb": qb, "blk": blk,
             "remaining": total_planned - len(entries),
             "resolve_rate": resolve_rate, "avg_wall": avg_wall,
             "in_progress": len(entries) < total_planned,
@@ -52,14 +53,16 @@ def main():
                 continue
             e = matching[0]
             cls = e["classification"]
-            wall = e["harness_result"].get("wall_s", "?")
+            wall = e.get("harness_result", {}).get("wall_s", "—")
             wall_str = f"{wall:.0f}s" if isinstance(wall, (int, float)) else str(wall)
             if cls == "resolved":
                 icon = "&#10004;"; cell_cls = "resolved"
             elif cls == "patch-but-failed":
                 icon = "&#10006;"; cell_cls = "failed"
-            else:
+            elif cls == "quota-blocked":
                 icon = "&#9728;"; cell_cls = "blocked"
+            else:  # "blocked" = infrastructure failure (git fetch timeout etc.)
+                icon = "&#9888;"; cell_cls = "infblocked"
             cells.append(f'<td class="{cell_cls}">{icon}<br><small>{wall_str}</small></td>')
         rows_detail.append(f"<tr><td class='iid'>{html.escape(iid)}</td>{''.join(cells)}</tr>")
 
@@ -69,7 +72,7 @@ def main():
         status = "🔄 in progress" if s["in_progress"] else "✅ done"
         summary_rows.append(
             f"<tr><td class='hname'>{h}</td>"
-            f"<td>{s['resolved']}</td><td>{s['pbf']}</td><td>{s['qb']}</td>"
+            f"<td>{s['resolved']}</td><td>{s['pbf']}</td><td>{s['qb']}</td><td>{s['blk']}</td>"
             f"<td>{s['resolve_rate']}</td><td>{s['avg_wall']}</td><td>{status}</td></tr>")
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -94,6 +97,7 @@ td.hname {{ font-weight: bold; }}
 td.resolved {{ background: #d4edda; color: #155724; text-align: center; }}
 td.failed {{ background: #f8d7da; color: #721c24; text-align: center; }}
 td.blocked {{ background: #fff3cd; color: #856404; text-align: center; }}
+td.infblocked {{ background: #fce4ec; color: #880e4f; text-align: center; }}
 td.pending {{ text-align: center; color: #ccc; }}
 .callout {{ background: #e8f4fd; border-left: 4px solid #0984e3; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }}
 .caveat {{ background: #f8f9fa; border: 1px solid #dee2e6; padding: 15px; margin: 15px 0; border-radius: 8px; }}
@@ -115,7 +119,7 @@ pre {{ background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; o
 </div>
 <h2>1. Summary by Harness</h2>
 <table>
-<tr><th>Harness</th><th>Resolved</th><th>Patch-but-failed</th><th>Quota-blocked</th><th>Resolve Rate (of scored)</th><th>Avg Wall</th><th>Status</th></tr>
+<tr><th>Harness</th><th>Resolved</th><th>Patch-but-failed</th><th>Quota-blocked</th><th>Blocked (infra)</th><th>Resolve Rate (of scored)</th><th>Avg Wall</th><th>Status</th></tr>
 {summary_joined}
 </table>
 <div class="callout">
@@ -123,7 +127,7 @@ pre {{ background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; o
 <p><strong>vs deepseek-v4-flash (previous):</strong> 0% resolve rate (0/22 scored) — {MODEL} shows dramatic improvement with zero quota blocks.</p>
 </div>
 <h2>2. Instance-level Detail</h2>
-<p>Legend: &#10004;=resolved, &#10006;=patch-but-failed, &#9728;=quota-blocked, — = not yet run</p>
+<p>Legend: &#10004;=resolved, &#10006;=patch-but-failed, &#9728;=quota-blocked, &#9888;=infra-blocked (git/rootfs failure), — = not yet run</p>
 <table>
 <tr><th>Instance</th><th>cline-patched</th><th>codex</th><th>opencode</th><th>claude-code</th><th>deepseek</th></tr>
 {rows_joined if rows_joined else '<tr><td colspan="6">No data yet</td></tr>'}

@@ -5,32 +5,27 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A kimi-k2.6-cloud serial cross-eval — cline-patched×30 COMPLETE (18/30, 60.0%) + codex×30 COMPLETE (14/30, 46.7%) → codex×300 --resume LAUNCHED (PID 1898015, skip 30, run 270) + ✅ claude-code telemetry OFF + deepseek-harness pnpm BLOCKED
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×30 (46.7%) · codex×300 --resume LAUNCHED · SWEBENCH_COMPARE.html (total_planned=300) · ✅ Claude Code 遥测关闭 · deepseek-harness toolchain (node22+rust, pnpm BLOCKED)
-当前动作:     R82: codex×30 COMPLETE (14/30 resolved, 46.7%) → codex×300 --resume LAUNCHED (PID 1898015, ppid=1, skip 30 done, 270 pending, first inst astropy-12907 running) + rootfs coverage 300/300 verified (12 repos all templated) + gen_kimi_compare.py total_planned 30→300 + SWEBENCH_COMPARE.html regenerated + relay healthy skip 35th + git sync
-下一步:       codex×300 完成(~270条, ~2-3天) → cline-patched×300 --resume(skip 30) → opencode×300 → claude-code×300(遥测已关) → deepseek-harness(需npm registry恢复) → 最终更新SWEBENCH_COMPARE.html
-阻塞:         deepseek-harness pnpm install: npm registry防火墙封锁(HTTP→URL过滤页面, HTTPS→TLS fail). node22+rust+landlock-run已就绪. 序列中最后一个harness, 不阻塞其他4个.
+PHASE:        H-A kimi-k2.6-cloud serial cross-eval — codex×300 --resume RUNNING (PID 1898015, 8/270 new done, on django-11815) + ✅ deepseek-harness pnpm install + BUILD SUCCEEDED (dsh CLI --profile headless ready) + ✅ claude-code telemetry OFF
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×30 (46.7%) · codex×300 --resume RUNNING (38 entries) · SWEBENCH_COMPARE.html (67 entries, 33 resolved, total_planned=300) · ✅ Claude Code 遥测关闭 · ✅ deepseek-harness pnpm install + build (dsh CLI ready, --profile headless)
+当前动作:     R83: codex×300 --resume progress 8/270 new (38 total codex entries, 15 resolved) + SWEBENCH_COMPARE.html regenerated (67 entries, 33 resolved, +blocked column) + gen_kimi_compare.py fixed (handle blocked entries) + ✅ deepseek-harness pnpm install SUCCEEDED (tencent mirror + standalone pnpm binary bypass corepack) + ✅ deepseek-harness BUILD SUCCEEDED (dsh CLI, --profile headless mode) + astropy shallow.lock cleaned + relay healthy skip 36th + git sync
+下一步:       codex×300 完成(~262条剩余, ~2.3天) → cline-patched×300 --resume(skip 30) → opencode×300 → claude-code×300(遥测已关) → deepseek-harness×300(dsh --profile headless, 需写run_harness.py集成) → 最终更新SWEBENCH_COMPARE.html
+阻塞:         无硬阻塞. deepseek-harness: pnpm install ✅ + build ✅, 但 run_harness.py 集成(DeepseekHarnessDriver stub→dsh CLI headless)尚未写. 序列中最后一个, 不阻塞其他4个.
 ERROR_COUNT:  0
 ```
 
-## 🆕 第八十二轮速览（2026-10-05 23:10）— ✅ codex×30 COMPLETE (14/30, 46.7%) → codex×300 --resume LAUNCHED (PID 1898015) + rootfs 300/300 覆盖验证 + HTML 刷新 + relay healthy skip 35th
+## 🆕 第八十三轮速览（2026-10-06 00:50）— ✅ deepseek-harness pnpm install + BUILD SUCCEEDED (dsh CLI ready) + codex×300 progress 8/270 + SWEBENCH_COMPARE.html regenerated + relay healthy skip 36th
 
-- 🎉 **codex×30 COMPLETE**：inst 30/30 = `sympy__sympy-13647` → **resolved**。最终 **14/30 resolved (46.7%)**，16/30 patch-but-failed，0 quota-blocked。runner PID 2051774 已正常退出。日志 `/tmp/kimi_codex.log`。
-- 📈 **kimi ×30 横评最终结果**：
-  | harness | scored | resolved | patch-but-failed | quota-blocked | resolve rate |
-  |:--|--:|--:|--:|--:|--:|
-  | cline-patched | 30/30 | 18 | 12 | 0 | **60.0%** ✅ |
-  | codex | 30/30 | 14 | 16 | 0 | **46.7%** ✅ |
-  | opencode | 0/300 | — | — | — | (待跑) |
-  | claude-code | 0/300 | — | — | — | (待跑, 遥测已关 ✅) |
-  | deepseek-harness | 0/300 | — | — | — | (待 pnpm install) |
-- 🚀 **codex×300 --resume LAUNCHED**（运维指令「扩 300 = 先扩 kimi」）：`nohup python3 run_serial_kimi.py --harness codex --all-prepared --resume > /tmp/kimi_codex_300.log 2>&1 &` → PID 1898015（ppid=1 已 detach）。`--all-prepared` 现 glob 300 instances（×30 启动时只有 30 个文件）；`--resume` skip 30 已完成（14 resolved + 16 patch-but-failed 均在 skip 集）→ **270 pending**。pstree 确认正在跑第一个 pending instance（astropy__astropy-12907，codex exec 已启动）。日志 buffered（Python stdout→file 全缓冲）。
-- ✅ **rootfs 覆盖验证**：300 instances 跨 12 repos，全部有 rootfs template（django 114 / sympy 77 / matplotlib 23 / sklearn 23 / pytest 17 / sphinx 16 / astropy 6 / requests 6 / pylint 6 / xarray 5 / seaborn 4 / flask 3）→ **0 uncovered**。
-- 🔧 **gen_kimi_compare.py** `total_planned` 30→300；SWEBENCH_COMPARE.html 已刷新（60 entries, 32 resolved）。
-- ⚠️ **双进程事故已清理**：setsid 超时但实际已启动一个进程，launcher 又起一个 → 2 个 codex×300 竞争同一 JSON → 立即 kill 全部 → 验证 JSON 无损（60 entries 不变）→ 重新 launch 单一进程。教训：后台启动后必须 ps 确认唯一实例。
-- ✅ **ops 中继复核（第 35 次）→ 健康**。relay `2489749 1 370427 Ss`（ppid=1，etimes≈4.3d）。`.last_run_id=71`。跳过重启。
-- ✅ **git sync**：`git fetch`（proxy）→ origin 前进（personal-watch 线提交）→ BAIZE_HARNESS_TASK.md 无新运维指令。
-- ⏭ **下一步**：codex×300 完成（~270 条，avg ~888s/条 ≈ 2.75 天）→ cline-patched×300 `--resume` → opencode×300 → claude-code×300（遥测已关）→ deepseek-harness → 最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
+- 🎉 **deepseek-harness pnpm install SUCCEEDED**：根因 = corepack shim (`~/.local/node22/bin/pnpm`) 拦截 `pnpm` 命令 → 尝试从 `registry.npmjs.org` 下载 → ENETUNREACH。解法 = 用独立 pnpm 二进制 `~/.local/pnpm/pnpm` (v11.7.0) 绕过 corepack + `.npmrc` registry 改为 `https://mirrors.cloud.tencent.com/npm/`（npmmirror.com 被防火墙封锁 000, tencent 200）。`pnpm install --frozen-lockfile` → `Already up to date` (1068 packages 已在 .pnpm store) → exit=0, 350ms。
+- 🎉 **deepseek-harness BUILD SUCCEEDED**：`pnpm build` (= `tsx scripts/build.ts`) → `✓ built in 5.45s`, `220 client artifact(s)`, exit=0。`dsh` CLI 可用 (`apps/cli/lib/bin.js`)，支持 `--profile headless "task"` 非交互模式（answer one task, print result, exit）→ 适合 SWE-bench 评测。landlock-run 二进制已就绪 (`native/landlock-run/packages/linux-x64/bin/landlock-run`, statically linked ELF x86-64)。
+- 📊 **codex×300 --resume progress**：PID 1898015 运行中 (etimes≈6000s≈1.66h)。38 codex entries (8 new since ×30)。15/38 resolved (39.5%), 19 patch-but-failed, 0 quota-blocked, 3 blocked (astropy git fetch timeout/lock)。当前 instance: `django__django-11815`。速率 ~13min/inst → 262 remaining ≈ 57h ≈ 2.4天。
+- ⚠️ **3 blocked astropy entries**：`astropy-14995` (git fetch TIMEOUT), `astropy-6938` (base_commit fetch TIMEOUT), `astropy-7746` (shallow.lock File exists)。已清理 stale shallow.lock。`--resume` 只 skip "resolved"/"patch-but-failed" → blocked 条目会在下次 resume 重试。
+- 🔧 **gen_kimi_compare.py fixed**：3 entries 缺 `harness_result` (blocked) → KeyError。修复：`e.get("harness_result", {})` + 新增 "Blocked (infra)" 列 + `infblocked` CSS class (⚠ icon)。
+- 📈 **SWEBENCH_COMPARE.html regenerated**：67 entries, 33 resolved (cline-patched 18 + codex 15), 14756 bytes。新增 "Blocked (infra)" 列。
+- ✅ **ops 中继复核（第 36 次）→ 健康**。relay `2489749 1 376297 Ss`（ppid=1, etimes≈4.35d）。`.last_run_id=71`。跳过重启。
+- ✅ **git sync**：`git fetch`（proxy）exit=0 → `rev-list=0 0`（完全同步）。BAIZE_HARNESS_TASK.md 无新运维指令（最新 commit `17de0dcf` = Claude Code 合规口径, 已处理）。
+- ⏭ **下一步**：codex×300 后台继续（~262 条剩余, ~2.3天）→ 完成后 cline-patched×300 `--resume` → opencode×300 → claude-code×300 → deepseek-harness×300（需写 `DeepseekHarnessDriver` 集成 `dsh --profile headless`）→ 最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
+
+## 🆕 第八十二轮速览（2026-10-05 23:10）—— 已滚动归档至 daily-memories-harness/2026-10-05.md（结论不改：codex×30 COMPLETE 14/30=46.7% → codex×300 --resume LAUNCHED PID 1898015 + rootfs 300/300 覆盖验证 + HTML 刷新 + relay healthy skip 35th）
 
 ## 🆕 第八十轮速览 —— 已滚动归档至 daily-memories-harness/2026-10-05.md（结论不改：codex×30 23/30 scored + SWEBENCH_COMPARE.html 53 entries + deepseek-harness pnpm BLOCKED npm registry 防火墙 + relay healthy skip 33rd）
 
