@@ -1,6 +1,6 @@
 # MEMORY_NEWS.md — 观察哨 · **新闻 agent** 运行时记忆
 
-WAITING: 1
+WAITING: 0
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（`watch_news_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配它决定睡眠时长）。
 > 语义（**对齐 BaiZe**：`SLEEP_BUSY=60` / `SLEEP_WAIT=1800`）：`0` = 有近期待办（短睡 **60s** 续跑）；`1` = 无近期待办（常态，睡 **30min** 省 token）。
@@ -11,13 +11,13 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        常态采集（T1–T10 ✅）+ **L1/N3 收口（G1 全过）+ 🆕 L2/N4 探索性（G2 全过）**（L1 焦点 · L2 探索性 · L3 冻结）
-已完成:       T1–T10 ✅ · 首~九轮常态 ✅ · **N1 抓取器 + 语料（1296 天 / 605,311 条）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（25,032 条）· N3-4 预警方案（🆕 语料/事件轴对齐修复 + BH-FDR + 效果量门槛）· L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）**
-当前动作:     **L1 链在扩展语料上重跑 + 🐞 语料/事件轴对齐修复**：N1 扩到 1296 天 → 重跑 EDA→TAXONOMY→SIGNALS→EVENTS→EARLY_WARNING。**修掉一个会污染结论的缺陷**：`early_warning.py` 评估轴原取**语料全程**（含 `EVENTS.csv` 之外的 ~380 天「零事件」区）→ 伪造全零负样本、**虚高 AUC**；已加**轴对齐护栏**（取语料 ∩ 事件日期范围），并把 §4.2 改为**数据驱动 + 效果量门槛**（不再写死结论）。EXPLORE（L2）也随新 `EVENTS.csv` 重生成。
-下一步:       ① **G2′ ④：连续 N 周稳定运行**（按周期跑预警并与基线对比）→ ② L1 稳定性 / 组合规则评估 + 纳入 SIGNALS 措辞信号 → ③ 继续 N1 续抓（**2023-03-17 → 2016-01-01**，倒序）；④ L3（N5）**冻结**
-本轮新增:     **轴对齐修复 + `EARLY_WARNING.md` 重算**（45 格：**34** 原始显著 / **34** 过 BH / **8** 格过**效果量门槛**「q<0.05 且 AUC≥0.60 且非低频」；另 9 格 AUC<0.5 **反向**如实列出）；N1 语料 1194 → **1296 天**（557,197 → **605,311 条**）；事件库 18,232 → **25,032 条**；**EDA/TAXONOMY/SIGNALS/EVENTS/EXPLORE 全一致重生成**；**news 日报 0 条**（本轮专注 L1/L2 重算）
-阻塞:         无（新华网长期 403/405 → 用兜底源 `chinanews`；⚠️ **东财日K 运行机 TLS 被重置不可用** → 历史日线改腾讯 `ifzq` 日K；⚠️ **`--stats`/`--index` 不可与抓取/`--repair` 并发**——实测并发会写坏 index 行 sha，顺序跑即正常）
-ERROR_COUNT:  1（历史：模型名 `deepseek-v4-pro-fp4` 白睡一轮，已修；本轮 0）
+PHASE:        常态采集（T1–T10 ✅）+ **L1/N3 收口（G1 全过）+ L2/N4 探索性（G2 全过）**（L1 焦点 · L2 探索性 · L3 冻结）
+已完成:       T1–T10 ✅ · 首~九轮常态 ✅ · **N1 抓取器 + 语料（1627 天 / 806,509 条 / 5 片 2022–2026）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（31,398 条）· N3-4 预警方案 · L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· 🆕 G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md）**
+当前动作:     **恢复 27h 停摆后首轮**：核对语料（**1627 天 / 806,509 条**，游标 `2022-04-20`）→ **L1 链全量重跑对齐**（EDA→TAXONOMY→SIGNALS→**EVENTS 31,398**→EARLY_WARNING 45 格 `q<0.05`=**32**、门槛=**10**）→ **建 G2′④ 台账**；🐞 修复运行机**缺 numpy/scipy**（Tuna 装 2.5.3 / 1.18.1）。
+下一步:       ① **N1 续抓**（`news/archive/fetch_archive.py --max-seconds …`，倒序 `2022-04-20 → 2016-01-01`）→ 抓完重跑链并记台账；② **G2′④ 累积**：按周期 `python3 news/policy/cycle_run.py --with-l2` 追加 `STABILITY_LOG.md`；③ L1 稳定性 / 组合规则 + 纳入 SIGNALS 措辞信号；④ L3（N5）**冻结**
+本轮新增:     **L1 全链随全语料重算**：EVENTS 25,032 → **31,398**（CN 18,581 → 22,904）；`EARLY_WARNING.md` 45 格 `q<0.05` **32**、效果量门槛 **10**（上版 34/8）；**新增 `cycle_run.py` + `STABILITY_LOG.md`（G2′④ 证据）**；`EXPLORE.md` 事件数更新为 31,398（`explore.csv` **字节不变**——价格窗 2023-06 起，2022 事件不入 L2）；**news 日报 0 条**（本轮专注 L1 + 恢复）
+阻塞:         无（新华网长期 403/405 → 兜底源 `chinanews`；⚠️ **东财日K 运行机 TLS 被重置** → 历史日线走腾讯 `ifzq`；⚠️ `--stats`/`--index` **勿与抓取并发**；⚠️ **运行机曾缺 numpy/scipy 且无 pip/sudo**（新机 bring-up 遗留）→ 已用 get-pip+Tuna 用户级装好）
+ERROR_COUNT:  1（历史：模型名 `deepseek-v4-pro-fp4` 白睡一轮，已修；本轮 0；⚠️ 本轮修复了「运行机缺 numpy → `explore_l2.py` 报错」）
 ```
 
 **选定方案（prep_api 结论）**
@@ -66,6 +66,14 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 
 > supervisor 可在任务书运维指令区「状态索取」写入问题；本区**先答该问题**再干活。
 
+- **Q（本线主动小结 · 2026-10-05）：停摆 27h 恢复后，`news/archive` 语料已到 806,509 条，但 L1 产物还是旧的 —— 处理了吗？G2′④ 有起色吗？**
+  **A（本线 2026-10-05 实测）**：
+  - **已处理（产物对齐全语料）**：`news/archive` **1627 天 / 806,509 条 / 5 片（2022–2026）**，而 L1 产物尚停在 605,311 条那版 → **全链重跑**：`EDA`(n=806509,days=1627) → `TAXONOMY`(15 类) → `SIGNALS` → **`EVENTS.csv` 31,398 条**（CN 22,904；7.26 MB；sha `9fd3a9670f0a1dde`） → `EARLY_WARNING.md`（45 格）。
+  - **`EARLY_WARNING.md` §4.2（全语料）**：`q<0.05` **32/45**；过**效果量门槛**（`q<0.05` 且 `AUC≥0.60` 且非低频）**10/45**；反向（AUC<0.5）如实列出。**口径未变**（预注册 θ=1.0、BH-FDR、walk-forward）—— 数字变化纯由**语料变长**引起。
+  - **G2′④ 起色（本轮交付）**：新增 **`news/policy/cycle_run.py`**（一键按序重跑 L1 链并于 `--with-l2` 时带 L2）+ **`news/policy/STABILITY_LOG.md`**（**每次运行自动追加一行**可核验摘要）→ 这就是"**连续 N 周稳定运行**"的**证据台账**。首行：**2026-10-05 12:35 ｜ 1627 天 / 806,509 条 ｜ 事件 31,398 ｜ q<0.05=32 ｜ 门槛=10 ｜ L2=ok**。**后续按周期跑并累积即可过 G2′④。**
+  - **🐞 环境修复（新机遗留）**：运行机**无 numpy/scipy、无 pip、无 sudo** → `explore_l2.py` 直接 `ModuleNotFoundError`。已用 `get-pip.py`（`--break-system-packages`）+ **Tuna 镜像**用户级装 **numpy 2.5.3 / scipy 1.18.1** → `explore_l2.py` 复跑成功。⚠️ **建议**：新机 bring-up 清单补一条「python 科学栈（numpy/scipy）」。
+  - **口径提示**：`explore.csv` 在扩语料后 **sha 仍为 `90f357ff8a8be943`（字节不变）** —— **属预期**（价格窗自 2023-06 起，**2022 新增事件不入 L2**），已在 `EXPLORE.md`/`README §4` 写明。
+
 - **Q（本线主动小结 · 2026-10-04）：为何 `EARLY_WARNING.md` §4.2 的预警结论比上一版「收敛」了很多？是不是调低了标准？**
   **A（本线 2026-10-04 实测）：不是调标准，是修掉一个真 bug —— 上一版结论本身是错的。** 两件事：
   **① 语料/事件**轴**不对齐（主因）**：N1 语料已扩到 **1296 天（2023-03-18~2026-10-03）**，但 `EVENTS.csv` 只覆盖 **2024-04-13 起**；旧脚本评估轴取**语料全程** → 前 ~380 天「有信号列、但**标签恒为 0**」→ 伪造海量全零负样本 → **AUC 被系统性抬高**（旧版好几个格 AUC 冲到 0.9+，是假的）。已加**轴对齐护栏**：评估窗口 = 语料范围 ∩ 事件日期范围。
@@ -106,8 +114,8 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **线**：news（新闻采集）
 - **任务书**：`WATCH_NEWS_TASK.md`（只读）
 - **产物**：`news/<YYYY-MM-DD>.md`（当日摘要）· `news/SEEN.md`（去重台账）· `news/INDEX.md`（索引）
-- **N1 语料库**：`news/archive/chinanews-<年>.jsonl.gz`（只 5 字段；**仅取 标题+日期+来源+链接，不抓正文**）；现 **1194 天 / 557,197 条**（2023-06-27 ~ 2026-10-03）
-- **L1 产物**：`news/policy/`（`EDA.md` / `TAXONOMY.md` / `SIGNALS.md` / `EVENTS.csv` / `EARLY_WARNING.md`）
+- **N1 语料库**：`news/archive/chinanews-<年>.jsonl.gz`（只 5 字段；**仅取 标题+日期+来源+链接，不抓正文**）；现 **1627 天 / 806,509 条 / 5 片**（**2022-04-21 ~ 2026-10-03**；游标 `2022-04-20` → `2016-01-01`）
+- **L1 产物**：`news/policy/`（`EDA.md` / `TAXONOMY.md` / `SIGNALS.md` / `EVENTS.csv` / `EARLY_WARNING.md` / **`cycle_run.py` + `STABILITY_LOG.md`（G2′④ 运行台账）**）
 - **L2 产物（探索性 · 非因果）**：`news/policy/`（`L2_PREREG.md` / **`EXPLORE.md` + `explore.csv`**）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
@@ -118,6 +126,15 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-05** —— 🆕 **恢复 27h 停摆后首轮：L1 链对齐全语料 + 建 G2′④ 运行台账 + 修复 numpy 缺失**。
+  - **核对（发现产物 stale）**：`news/archive` 已 **1627 天 / 806,509 条 / 5 片**（2022–2026，游标 `2022-04-20`），而 L1 产物停在 605,311 条那版 → 全链重跑。
+  - **L1 链全量重跑**：`eda.py`(n=806509,days=1627) → `taxonomy.py`(15 类) → `signals.py`(128 行) → `extract_events.py`（**31,398 事件**，CN 22,904；`EVENTS.csv` 7.26 MB，sha `9fd3a9670f0a1dde`）→ `early_warning.py`（283 行）。
+    - `EARLY_WARNING.md` §4.2：**45 格** → `q<0.05` **32**；过**效果量门槛** **10**；反向格（AUC<0.5）如实列出。口径**未改**（θ=1.0 / BH-FDR / walk-forward），差异纯由语料变长引起。
+  - **🆕 交付（G2′④ 证据）**：`news/policy/cycle_run.py`（纯 stdlib，按序重跑 L1 链；`--with-l2` 带 L2；`--record` 只记当前态）+ `news/policy/STABILITY_LOG.md`（每次运行自动追加一行可核验摘要）。**首行**：2026-10-05 12:35 ｜ 1627 天 / 806,509 条 ｜ 事件 31,398 ｜ q<0.05=32 ｜ 门槛=10 ｜ L2=ok。
+  - **🐞 环境修复**：运行机缺 **numpy/scipy**（且无 pip/sudo）→ `explore_l2.py` 报 `ModuleNotFoundError`；用 `get-pip.py --break-system-packages` + **Tuna 镜像**装 **numpy 2.5.3 / scipy 1.18.1**（用户级 `~/.local`）→ **L2 复跑成功**。
+  - **L2/N4 重生成**：`EXPLORE.md` 事件数 → **31,398**（可对齐 23,105）；`explore.csv` **sha 不变**（价格窗 2023-06 起，2022 事件不入 L2，**属预期**）。
+  - **文档同步**：`news/policy/README.md` §4/§4.1 更新；`INDEX_FILES.md` EVENTS.csv 行更新。
+  - **未做**：**N1 续抓**（下一轮 `fetch_archive.py --max-seconds …`）、**常态采集**（news 日报 0 条）、L3 冻结。判据复核：无因果措辞、低频单列、非投资建议。
 - **2026-10-04** —— 🆕 **N4（L2 探索性关联分析）交付 + N1 续抓进 2023 年（G2 全过）**。
   - **N4 两产物**：`news/policy/EXPLORE.md` + `news/policy/explore.csv`（生成器 **`news/policy/explore_l2.py`**，新脚本）。
     - **方法**（**预注册** `L2_PREREG.md` §2.2–§2.9，跑前写死）：事件源 `EVENTS.csv`（18,232 条）；价格源 **腾讯 `web.ifzq.gtimg.cn`（qfq 日K）**（东财运行机 TLS 复位→弃）；**板块 13 × 动作类型 15 × 窗口 3**；基准 = **指数调整 + 市场模型**两种；**按事件日聚合**（同日多事件取均值，防重复计数）→ 日级 CAR → `t` 检验 + **自助法 5000 次 95% CI**；**N = 事件日数**；**FDR（BH）按基准分族**校正。
