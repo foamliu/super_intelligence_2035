@@ -978,6 +978,10 @@ python -m torch.distributed.run --nproc_per_node=8 --nnodes=1 \
   > *"Second, we find that masking a high proportion of the input image, e.g., 75%, yields a nontrivial and meaningful self-supervisory task."*
   — Abstract, arXiv:2111.06377v3
   - ⚠️ Table 1c 的具体 lp/ft 数字（75%→lp 67.1%/ft 83.6%）仍为**二手·待核**（本次仅 fetch abstract 页，未提取表格；但 75% 这一核心值已从 abstract 一手确认）。
+  - **✅ 补充核实（2026-10-05 12:35 cimi_search）—— PDF 正文（Figure 5 讨论）亦逐字确认 75% 对 lp 与 ft 均最优**：
+    > *"The optimal ratios are surprisingly high. The ratio of 75% is good for both linear probing and fine-tuning. This behavior is in contrast with BERT, whose typical masking ratio is 15%."*
+    — §"Masking ratio"，arXiv:2111.06377 PDF 正文（cimi_search 返回 arxiv PDF 段落）。
+    → **「75% 对 lp 与 ft 均最优」现从 abstract + 正文两处一手确认**；具体 lp 67.1/ft 83.6 数字仍二手·待核（不影响核心结论）。
 - **与我们的关系**：我们的 `masked-patch-MSE` 实现沿用了 MAE 范式（逐 patch 像素重建），但 mask ratio 0.6 < MAE 最优 0.75 → **若后续想优化，可试 0.75**（但非本 R11-G 的考察变量，不做）。
 
 #### (3) AR vs 对比的数据效率（arXiv:2411.15648 "XTRA", 2024-11）
@@ -987,6 +991,22 @@ python -m torch.distributed.run --nproc_per_node=8 --nnodes=1 \
   > "AIM was trained on a massive dataset of 2 billion samples, whereas contrastive and MIM models can achieve competitive results with datasets that are 150 times smaller."
   > "auto-regressive image models [...] predict image pixels (or patches) sequentially [...] offer a consistent relationship between the model's objective function and its downstream task performance."
 - **与我们的发现的关系**：该文献指出 AR 模型在**大数据**下有一致 scaling law，但**样本效率**通常被认为不如对比学习 → **我们的 R11-G 发现（同数据量下 AIMv2-style lp >> InfoNCE）是一个在数据受限区间的反向证据**，值得在论文中诚实讨论（可能因为：① 我们保留了 InfoNCE 对比锚 + ② patch 稠密监督在小模型/小数据下效率增益更大）。
+
+#### (3b) SigLIP2 原文（arXiv:2502.14786, Google DeepMind, 2025-02）
+
+> 运维指令 2026-10-05 要求核实 SigLIP2 的 mask ratio / loss weight（此前 MEMORY 标「未核实」）。本次 cimi_search 检索到 HuggingFace blog + 极术社区中文综述（均基于原文 §3），已核实关键 hyperparameter。
+
+- **URL**：`https://arxiv.org/abs/2502.14786`（CC BY 4.0）；HuggingFace blog：`https://huggingface.co/blog/siglip2`
+- **✅ mask ratio（已核实）**：masked prediction loss 中**学生模型 50% 的嵌入图像 patch 被替换为 mask tokens**（基于 TIPS 方法），训练学生匹配教师在 mask 位置的特征表示（**feature-level matching，非像素重建 MSE**）。
+  - 自蒸馏：local-to-global consistency loss（SILC 启发），**1 teacher + 8 students**；教师 = 学生过去参数的 EMA。
+  - 这些辅助损失（self-distillation + masked prediction）在**训练完成 80% 时引入**，教师从学生初始化，新增参数（head/mask token）随机初始化。
+- **LocCa decoder**：对未池化视觉表示加 cross-attn transformer decoder（层数 < 文本塔），三任务：图像 caption 生成 + 指代表达式预测 + grounded caption（区域-字幕对经 n-gram + 开放词汇检测自动标注）。
+- **预训练数据**：**WebLI**（10B 图像 / 12B alt-texts，109 种语言，90% 英语）；2048 TPUv5e，FSDP。
+- **核心损失**：保留 SigLIP sigmoid loss（二元分类式图像-文本匹配）+ LocCa captioning decoder + 自蒸馏 + masked prediction → **「对比 + 生成 + 自监督」多目标统一 recipe**。
+- **🔗 与本线 loss 轴的对位**：
+  - SigLIP2 = 行业已转向「对比 + 稠密监督（masked prediction）融合」→ 印证 §16.7「密集监督与对比互补」的机制推断；
+  - **与我们 R11-G 的差异**：SigLIP2 的 masked prediction 是 **feature-matching（学生→教师特征）**，我们是 **pixel-MSE（MAE 范式）**；SigLIP2 mask=50%，我们 mask=60%；SigLIP2 在 10B 数据 + 80% 训练后引入，我们在 18.5M + 全程 → **量级与形式均不同，仅方向性一致**（C2 限定）。
+  - 给 R11-L 四臂（InfoNCE/SigLIP/LocalLoss/CoCa 均未翻盘）的负结果提供「官方已转向多目标融合」的语境：单目标 loss 轴的边际收益 < 多目标统一。
 
 #### (4) 对 R11-G 机制解释的锚定
 

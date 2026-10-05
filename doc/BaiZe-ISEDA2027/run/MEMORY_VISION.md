@@ -10,7 +10,7 @@ WAITING: 1
 | WAITING | 1（**语义=R11-F Arm D（en500k）训练运行中 → 30min 轮询**；step≈1400/30000@11:50=5%，C1=0.30/C4=OK；ETA ~1h 训完 + 4-ckpt eval ~13min → **R11-F 全部 5 臂即告完成**；下次唤醒：若 D 完 → 补 §15.6 D 单列表（in-domain/不可比/不并入排名）；**Q2 已裁定、§15.6 已更新** → 无其他待写）|
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
 | BUDGET_USED | R2–R9 累计 + R10 + R11-L/②③④ + R11-L2 LoRA + R11-L caption-weight + R11-E GPIC（8.65 GPU·h）+ **臂⑥ AIMv2（✅ 7076s≈1.97h×8卡≈15.7 GPU·h）+ AIMv2 4-ckpt eval（~13min×1卡≈0.22 GPU·h）** + **R11-F 🟢 进行中**（Arm A GPIC short 30k@~80ms→~40min×8卡；5 臂串行总 ~5–6h×8 卡 ≈ 40–48 GPU·h） |
-| 更新 | **2026-10-05 11:50（Arm E ✅完成+eval：lp{5.18,6.51,6.75}%；§15.4/15.5/15.6/15.7 已更新；Q2 已裁定：主指标无显著差异、@20k E显著领先；Arm D 🔄 step1400/30k=5%）** · 2026-10-05 11:17（E step22600=75%；MAE mask 75% ✅cimi_fetch） · 2026-10-05 10:35（R11-H ✅完成+§17落盘；E+D重跑中 Arm E step6700=22%） · 2026-10-05 10:02（R11-H巡检 step27900=93%） · 2026-10-05 08:51（R11-H step9900=33%；cimi_search→§16.8锚点） · 2026-10-05 08:16（R11-G ✅完成+§16落盘） · *[R11-G中间巡检9条已归档 daily-memories-vision/2026-10-05.md]* · 2026-10-05 00:55（R11-F A/B/C✅+E/D失败诊断） · 2026-10-04 23:38（NFS崩溃修复+chain启动） |
+| 更新 | **2026-10-05 12:35（cimi_search 文献核实：SigLIP2 mask=50% 已核→§16.8(3b) 落盘；MAE 75% 正文二次确认；Arm D 🔄 step14900/30k=50%）** · 2026-10-05 11:50（Arm E ✅完成+eval：lp{5.18,6.51,6.75}%；§15.4/15.5/15.6/15.7 已更新；Q2 已裁定：主指标无显著差异、@20k E显著领先；Arm D 🔄 step1400/30k=5%） · 2026-10-05 11:17（E step22600=75%；MAE mask 75% ✅cimi_fetch） · 2026-10-05 10:35（R11-H ✅完成+§17落盘；E+D重跑中 Arm E step6700=22%） · 2026-10-05 10:02（R11-H巡检 step27900=93%） · 2026-10-05 08:51（R11-H step9900=33%；cimi_search→§16.8锚点） · 2026-10-05 08:16（R11-G ✅完成+§16落盘） · *[R11-G中间巡检9条已归档 daily-memories-vision/2026-10-05.md]* · 2026-10-05 00:55（R11-F A/B/C✅+E/D失败诊断） · 2026-10-04 23:38（NFS崩溃修复+chain启动） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -176,9 +176,9 @@ WAITING: 1
   - 在 sigmoid loss 基础上**统一加入**：captioning-based pretraining + 自监督（self-distillation + masked prediction）+ online data curation。
   - 改进：zero-shot / retrieval / VLM transfer 全规模优于 SigLIP；**显著改善 localization + dense prediction**。
   - 🔗 **与 R11-L loss 轴对位**：SigLIP2 = 「对比 + 生成 + 自监督」多目标统一 recipe → 印证「密集监督（masked prediction）与对比学习互补」的行业趋势 → 给 R11-L 四臂（InfoNCE/SigLIP/LocalLoss/CoCa 均未翻盘）的负结果提供「官方已转向多目标融合」的语境。
-  - ⚠️ **未核实**：具体 mask ratio / loss weight 比例（HTML 转换失败，未抓到表格）—— 标「未核实」。
+  - ✅ **已核实（2026-10-05 12:35 cimi_search）**：masked prediction = **50% patch 替换为 mask token**（TIPS feature-matching，非像素 MSE）；自蒸馏 1 teacher + 8 students；辅助损失在训练 80% 时引入；数据 WebLI 10B 图/12B alt-text。详见 `EXPERIMENTS_VISION_ROUND11.md §16.8(3b)`。
 
-- **证据纪律**：以上 URL + 年份已给；OpenVision2 abstract 逐字引用已核实；SigLIP2 具体 hyperparameter 标「未核实」（不编造）。
+- **证据纪律**：以上 URL + 年份已给；OpenVision2 abstract 逐字引用已核实；SigLIP2 mask ratio/loss 形式 ✅已核实（50% patch，TIPS feature-matching）；MAE 75% ✅已从 abstract+正文两处确认；AIMv2 denser-supervision ✅已从 ar5iv 确认。
 
 
 ## 历史条目已滚动归档（2026-10-03）
