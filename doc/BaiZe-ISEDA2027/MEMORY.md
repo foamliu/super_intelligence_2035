@@ -70,6 +70,8 @@ WAITING: 0
 - [x] ✅ **环境隔离纪律**（2026-10-05 晚 用户）：训练/长跑=共享 `py310`；`sglang` 托管大模型=`sglang` conda env；harness 大量装包=另起新 conda env（治「同机争用」）。
 - [x] ✅ **「外网命令带 proxy」口径已同步四线**（2026-10-05 晚 用户）：data/harness 原有 → 本轮补 **pretrain / vision**。
 - [ ] ⭐ **vision 全量数据跑 AIMv2（待 vision 回报估算）**：用户令「用全部现有数据（GPIC 41% + CC12M + Amshaker）跑当前最佳配方 AIMv2」；**先答「要多久 / 是否 >1 epoch」**（运维粗估 1 epoch ≈6.6h、2 epoch ≈13h，待 vision 实测精算）。
+- [ ] ⭐ **pretrain 四件（2026-10-05 深夜2 下发，最高优先）**：① **sglang 上界补测（第一件事）** —— HF 转换（`nemotron_h`）+ ABI/`std::bad_alloc` 排查 + **必须用 `cimi_search`**；② **P-5b 8 集常识评测 + data scaling → HTML**（P-5b 从未在 8 集上评过，此前仅 P-6 第 1 步 Avg 0.4395）；③ **P-6②（能力 vs token scaling）说明 → HTML**；④ **P-9.5 profiler 排查复跑 → HTML**。
+- [ ] **data / vision 各出 HTML（2026-10-05 深夜2 下发）**：⑤ `report_data_mix_s0a.html`（Stable S0a 是什么 + 现况，纯 CPU 写作、不扰训练）；⑥ vision 两份 `report_vision_lp_eval.html` + `report_vision_aimv2_impl.html`（纯 CPU 写作、不扰 R12）。
 - [ ] ⭐ **AIMv2 提速（待 vision 归因实测）**：用户问「能否加速 / 显卡满否 / 能否加 MBS」—— 运维读数：**显存未满（同配方 ≈22.7–30 / 81.6 GB）**但**同配方吞吐波动大（R11-G 2485 ↔ ⑥-A 5971 img/s）⇒ 疑数据/IO 受限**；已下发「bs{64,128,256}×≥200 步 + `nvidia-smi dmon`」归因实测。**判据：util≲70% 或 ms/iter 不随 MBS 变 ⇒ 数据受限（改数据管线、保持 bs=512 以保 scaling 可比）；util≈100% 且 img/s 随 MBS 升 ⇒ 算力受限（可加 MBS，但须标注 global batch 变化）**。⭐ **用户 2026-10-05 晚拍板：本提速项 = 下一批「全量数据训练」的硬性前置 —— 先优化速度、把实测 img/s 提上去，再跑 ≈59.5M 对全量；估算用提速后 img/s。**
 - [ ] 💬 **另一「运维会话」在并行活动**（2026-10-04 深夜发现：origin 上出现**我没写过的 RUN_ID 63 诊断记录**）→ **需与用户确认是否统一到单一会话**，以免重复下发/互相覆盖。
 > 📦 **下列「当日已完成（[x]）」条目已原文滚动归档 → `daily-memories/2026-10-03.md`「从 MEMORY.md 滚动归档」A 节**：D-CLEAN-2/-3 与回收量核实 · harness R1 沙箱路线 · GPIC E1 实测 + C1 口径 · H-A′ 放行 · docker 系降末选 · sudo 口令 · `ops_relay` 「2 副本」误判结案 · 论文冻结 · vision 队列裁定 · data 白名单锁定。**（查旧决策请去该归档，勿再塞回本文件。）**
@@ -186,6 +188,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **2026-10-05（深夜2 · 用户 6 条 → 已下发三线：sglang 上界必须真跑 / pretrain 三份 HTML / data 与 vision 各 1–2 份 HTML）** —— **①** 澄清「**P-9.10 已完成的不是 sglang**」（② = mcore **eager 下界**、③ = **自定义 benchmark**，因 vllm/sglang 起服报 ABI mismatch / `std::bad_alloc`）⇒ **第一件事：起 sglang 上界补测**，**继续排查（HF 转换 + ABI）**，并**必须用 web search**（`cimi_search`/`cimi_fetch`）查 `nemotron_h` 部署与报错。**②** pretrain 补 **P-5b（20B token，31 ckpt）8 集常识评测 + data scaling** → HTML。**③** **P-6②（能力 vs token scaling）说明** → HTML。**④** **P-9.5 profiler 排查复跑** → HTML。**⑤** **data：Stable S0a 是什么 + 现况** → HTML（`report_data_mix_s0a.html`）。**⑥** **vision：lp 评测细节 + AIMv2 架构实现细节** → **两份** HTML。⇒ 六个交付物已写入 **`BAIZE_PRETRAIN_2B_TASK.md`（最高优先，顺序 ①>②>③>④）/ `BAIZE_DATA_TASK.md` / `BAIZE_VISION_TASK.md`** 顶部；均要求**自包含 HTML + 命令/原始输出/路径**（铁律）。
 
 - **2026-10-05（深夜 · 🧹 任务书瘦身 —— 4 本活跃任务书 236.6 → 104.5 KB（-56%））** —— 用户问「任务书是不是变大了」→ 实测：**pretrain 71.9 / data 71.6 / harness 49.3 / vision 43.8 KB = 236.6 KB**（≈ **10-03 瘦身后 114.1 KB 的 2.07×**，**回到瘦身前 237 KB 的水平**）；**主因 = `## 🔧 运维指令区` 只 prepend、从不归档** —— 累计 **46 个 `### 运维*` 块**（data 13 / harness 13 / pretrain 11 / vision 9），pretrain 的运维区 ~65 KB ≈ **全书 90%**。⇒ 照 10-03 老办法瘦身：① **把「已执行完 / 已作废」的运维块 + 「已完成轮次正文」原文移入新建的 `run/ARCHIVE_OPERATOR_{PRETRAIN,DATA,HARNESS,VISION}.md`**；② 各书顶部加「📦 历史运维指令已归档」指针；③ 保留 **状态速览 / 最新活跃块 / 常驻规则（proxy 口径·环境隔离·记忆维护规程·git 规则）/ 当前队列与待跑规格**。**结果**：pretrain **71.9→29.1** · data **71.6→35.6** · harness **49.3→24.1** · vision **43.8→15.7** KB（合计 **236.6→104.5 KB，-56%**）；归档共 ≈133 KB（**原文未改、结论不动**）。**纪律**：归档不改变任何结论；agent **需要时再去读归档**，不要读进上下文。（另：`WATCH_NEWS_TASK.md` 63.7 KB 待同日处理，属另一套 `personal-watch` 线。）
 

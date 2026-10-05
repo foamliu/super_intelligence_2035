@@ -9,13 +9,36 @@
 
 | 项 | 值（**2026-10-05 晚 运维更新**） |
 |:--|:--|
-| **GPU 状态** | ✅ **全空闲**（`R11-F/G/H` 链全部收尾；`WAITING=1` 省 token） |
+| **GPU 状态** | 🚀 **R12 全量数据 AIMv2 训练中**（`.12` 8 卡，120k 步，16:43 起；吞吐随 NFS 争用波动 ~2300–5600 img/s）· **3-epoch 续跑 watcher 已就绪**（R12+eval 完自动接续）· 另有 **两份 HTML 报告**（纯 CPU/写作）待写 |
 | **已完成** | ✅ R9/R10/R14/E1/R11-L 四臂/R11-L2/caption-weight/R11-E/R13（官方 OV2 **79.81%**）· ⭐ **臂⑥ AIMv2 翻盘**（lp 12.08% vs 6.08%，**+6.00 pp → 25.1% 局部推翻**）· ✅ **R11-F 五臂**（A/B/C/E/D）· ✅ **R11-G**（108k 长跑：lp@55.3M **19.76%** vs 基线 7.40%，幂律 **R²=0.91**）· ✅ **R11-H**（纯 AR **无翻盘** ⇒ 翻盘依赖对比项） |
 | **🔜 下一步（✅ 已批准 · 严格按此顺序）** | 🔒 **①先「AIMv2 提速」**（归因实测 → 数据管线优化，见「运维前置」块）→ **②再用「全部现有数据」（GPIC ≈41% + CC12M + Amshaker ≈59.5M 对）跑 AIMv2**（先交**提速后**的「时长 / epoch」估算）→ **③训练稳态后自改论文 §6**（可用 `cimi_search`，仅该段解冻） |
 | **可立即开跑** | ✅ **① AIMv2 提速（归因实测 + 数据管线优化）** —— `.12` 8 卡已空；**② 全量训练须待 ① 完成**（硬性前置） |
 | **🚫 已裁定不做** | **臂⑤ GenLIP**（→ 用 `caption-loss-weight` 三点消融替代）· **R12 iGVLM / TuringViT**（无官方仓库，取消） |
 | **⏸ 暂缓** | 无 —— 原「GPIC 到齐后重跑 scaling」已被用户**改为「用现有全部数据直接跑」**（见新块）；`R13` 已完成 |
 | **叙事** | ✅ **锁定 A = 从零训练**（不改用预训练权重） |
+
+### 🆕 运维指令 · 2026-10-05（深夜2 · ⑥ **两份 HTML 报告：A. lp 评测细节 · B. AIMv2 架构实现细节**）· 高优先
+
+> **用户 2026-10-05 深夜**：「vision 的 **lp 评测细节**和 **AIMv2 架构实现细节**，**分别写（两个）html 报告**。」
+
+**A. `report_vision_lp_eval.html` —— 「frozen-trunk linear-probe」评测细节**（可复现级别）
+- **协议**：自切 IN-1k `val50000 / probe49970`（与 R8–R13 一致）；**冻结 trunk**、只训一个 `Linear(d→1000)`；优化器 / 步数 / bs / 是否 full-batch；**top-1 / top-5** 定义。
+- **口径**：`lp` vs `zs`（zero-shot）各自怎么算；**为什么 frozen-trunk lp 是我们横比的主指标**；**噪声带 ±1.5 pp** 的来源（ROUND10 §1.5）。
+- **in-domain / 不可比**：`en500k`（= LLaVA imagenet/EN，~30 epochs）**单列不排名**（R8.2 红线）。
+- **代码路径**：`run/vision/r8_eval_in1k.py`（**贴关键行号**）+ ckpt 加载 / 特征抽取方式。
+- **各轮实测 lp 汇总表**（R9 / R10 / R11-F 五臂 / R11-G / R11-H / R12 …）。
+
+**B. `report_vision_aimv2_impl.html` —— AIMv2-style 架构与实现细节**
+- **架构**：OpenVision2 **w512 / depth30 / patch16 / 224²**（126.78M）+ **`PatchPredictor` 0.66M**（`Linear(w→w)→LN→GELU→Linear(w→768)`，fc2 `N(0,0.02)` / bias 0）→ 总 **127.44M**；**文本塔 = 冻结 CLIP-768**（`openai/clip-vit-large-patch14-336`，ctx 77）。
+- **前向 / 目标**：`--loss aimv2` = **InfoNCE(pooled) + 1.0×masked-patch-MSE**；**`mask_ratio=0.6`**；`mae_norm_pix_target`（反 CLIP 归一化 → fold → 逐 patch 标准化）；**trunk forward 不变（全 patch 可见、无 mask token）** ⇒ frozen-trunk lp 可比（**关键设计理由**，务必写清）。
+- **与官方 AIMv2 的差异（C2 限定）**：官方 = **纯 AR（vision AR + text AR）、无对比项、α≈0.4、prefix-attention、~12B 对**；我们保留 InfoNCE、α=1.0、随机 mask、58.8M 对。
+- **代码路径**：`run/vision/models.py` 的 `PatchPredictor` + `r9_train.py` 的 `--loss aimv2` 分支（**贴行号**）。
+- **四臂因果分解**（① 6.08 / ④ CoCa 0.47 / ⑥-B 6.23 / ⑥-A 12.08）作为「为什么保留对比项」的证据。
+
+> 两份都要求：**自包含、无 CDN**，写进 `doc/BaiZe-ISEDA2027/`；**命令 + 原始输出 + 路径**（铁律）；**不改论文 .tex**。
+> ⚠️ **R12 训练仍在跑（`.12` 8 卡）—— 两份报告是纯 CPU/写作，不得干扰 R12**；写作与训练可并行。
+> ✅ 本块生效即视为已批准。
+
 
 ### 🆕 运维指令 · 2026-10-05（深夜 · ① **R12 后「续跑到 3 epoch」+ 逐 epoch 评测 + 重拟合 scaling 刷新 25.1% 上限** ② **自提 ≥3 个下一步方向**）· 高优先 · **已批准**
 

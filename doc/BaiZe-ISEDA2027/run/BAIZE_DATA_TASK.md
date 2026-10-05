@@ -11,6 +11,23 @@
 
 > 本节由**外部运维**通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停**。
 > **agent 禁止修改本节**（只写别的区）。本节为「无」时，按下方默认阶段顺序自主推进。
+### 🆕 运维指令 · 2026-10-05（深夜2 · ⑤ **写一份 HTML 报告讲清「Stable S0a 配比实验是什么 + 现在到哪了」**）· 高优先
+
+> **用户 2026-10-05 深夜**：「**数据配比实验（Stable S0a）是做什么，写个 html 报告**」。
+
+- **报告必须讲清**（面向「领导 / 1400 DE」读者，不是只给本线看）：
+  1. **它是什么**：**§0.6-B「P-8 数据配方」实验** —— 用 **MiniCPM5 / Xmodel-2 的 WSD 双阶段配比**思路，在**小规模代理预算**下搜索 **Stable 段（base 主体）** 与 **Decay 段（L3+Math+Code+SFT = 带 SFT 的退火）** 的最佳配比。
+  2. **Stable S0a 臂具体是什么**：**`base:code:math = 88:8:4`** · **6 卡 DP6** · `seq=4094` · `mb=1` · **`GBS=1020`**（因 DP6 整除，较基线 1024 **−0.4%**，**须标注可比性**）· **5000 步** · bf16 · seed1234 · 脚本 `run/baize_mix_stable_s0a.sh`。
+  3. **为什么这么设计**：搜索空间 = §0.6-B 的 **Stable / Decay 两张表**；每臂跑完用**两套代理指标**：**Table 2 的 8 个**（`ARC-C`/`ARC-E`/`BoolQ`/`HellaSwag`/`OpenBookQA`/`PiQA`/`SciQ`/`Winogrande`）+ **Table 3 的 6 个**（`GSM8K`/`MATH`/`BBH`/`MMLU`/`HumanEval`/`MBPP`）。
+  4. **当前状态（用代码里的实时数，别照抄旧数）**：`step 330/5000`、`~37.6 s/iter`、`ETA ~2026-10-07 21:00`、`loss 4.36↓`、health OK（0 NaN/0 skip）；⚠️ **`SAVE_INTERVAL=5000` → 无中间 ckpt**（如实写风险）。
+  5. **下一步**：5000 步完 → ckpt → HF → `lm_eval` Table 2（8 集）→ 填 `DATA_MIX_RECIPE.md` 实测值；**Decay 臂**待 `SFT-Agent-2609` s0/s1 分词完成。
+  6. **它最终服务于什么**：**P-8（正式预训练）的投料配比** —— 即论文 Stage (i) 的配方依据。
+- **数据来源**：`BAIZE_DATA_TASK.md §0.6-B` · `MEMORY_DATA.md` · `EXPERIMENTS*` · `run/baize_mix_stable_s0a.sh`（**贴命令 + 原始输出 + 路径**，铁律）。
+- **产出**：`report_data_mix_s0a.html`（**自包含、无 CDN**，放 `doc/BaiZe-ISEDA2027/`）。
+
+> ✅ 本块生效即视为已批准；**纯 CPU/写作，不占 GPU、不干扰 S0a 训练**。
+
+
 ### 🆕 运维指令 · 2026-10-05（晚 · ✅ **D-CLEAN-4 定案：保留不动**；+ 环境隔离纪律）
 
 > **用户裁定（2026-10-05 晚）**：「**D-CLEAN-4 …… 不是昨天已经说了，剩下的保留不动嘛**。」

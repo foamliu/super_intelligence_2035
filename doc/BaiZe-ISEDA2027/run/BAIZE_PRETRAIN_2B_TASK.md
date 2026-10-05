@@ -5,6 +5,44 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_PRETRAIN_2B.md` / `daily-memories/` / `EXPERIMENTS_*`）。本节为「无」时按下方 Round 2 默认顺序推进。
 
+### 🆕 运维指令 · 2026-10-05（深夜2 · ① **sglang 上界必须真跑出来（已完成的≠sglang）** ② P-5b 8 集常识评测 + data scaling **HTML** ③ P-6② 说明 **HTML** ④ P-9.5 profiler 复跑 **HTML**）· **最高优先**
+
+> **用户 4 条（2026-10-05 深夜）**：
+> ①「**已经完成的 P-9.10 是用 sglang 对比的吗？**如果 sglang 还是起不来这不应该，**需要继续排查（HF 转换）**，再说 pretrain 有 web search，**有没有用上**？所以**第一件事：起 sglang 上界补测**。」
+> ②「pretrain 还有评测工作没做吧 —— **P-5b 没在常识推理 8 集上评测**，**也没出 data scaling 结果**。**写个 HTML 报告**。」
+> ③「**P-6②（能力 vs token scaling）** … **写个 HTML 报告**。」
+> ④「**P-9.5 profiler 可以排查复跑**，**写个 HTML 报告**。」
+
+#### ① 【第一件事】sglang 上界补测 —— 必须真跑出来（现状 = **没跑到**）
+- **事实澄清**：**P-9.10 已完成的 ②③ 都不是 sglang** —— ② = **mcore eager 下界**（H1✅ decode 1.6× / H2❌ / H3❌ / H4✅）；③ = **自定义 benchmark**（`benchmark_p910.py`，`mamba_ssm`+`transformers`），**因为 vllm/sglang 起服报 ABI mismatch / `std::bad_alloc`**。⇒ **「sglang 生产栈上界」仍是空白**，而它正是用来验证/翻正 **H2（decode 优势是否随 ctx 增长）** 的 ⇒ **必须补。**
+- **🚫 不接受「起不来」了事**，按序排查（每步贴**原始报错**）：
+  1. **读现成 env**：`conda run -n vllm python -c "import sglang, torch, flashinfer; ..."`（sglang 0.5.9 / torch 2.8.0+cu128 / flashinfer 0.6.3；`.29` 与 `.12` 共享 NFS）；
+  2. **ABI mismatch**：打印 `numpy/torch/transformers/flashinfer` 版本组合 + `pip check`；必要时在**独立 env / `--target`** 里重装**互相匹配**的版本（🚫 不碰共享 `py310`）；
+  3. **`std::bad_alloc`**：查 C++/CUDA 库版本、`LD_LIBRARY_PATH`、`libstdc++`，以及 `--mem-fraction-static` / `--max-total-tokens` 等内存参数；
+  4. 🔎 **必须用 web search**（`cimi_search` + `cimi_fetch`，本线可用）：查 **sglang 部署 `nemotron_h` 官方文档/issue**、**「sglang ABI mismatch / std::bad_alloc」已知解法**、**mcore distcp → HF 权重映射**规范。**每条给 URL + 版本/年份**，核不到写「未核实」。
+- **HF 转换（真正的坑）**：`p3_hybrid/iter_0005000` → **`nemotron_h`**；`p3_dense/iter_0005000` → `gpt/minicpm` 兼容。手写映射脚本放**独立目录**；**转换后先做「同输入 logits 对齐」自检**（mcore vs HF 前向差异）再起服务。
+- **跑通后**：按本文件下方既有块「sglang 可用 → GPU0–1 对比」执行（ctx{4K,16K,64K,128K(±256K)} × bs{1,8}，gen_len=64；采 TTFT/prefill/decode/延迟/峰值显存；逐格 hybrid÷dense 比值；与 ② 并列并标框架）。
+- **产出**：`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 新增「**P-9.11 sglang 生产栈对比**」节 + **HTML 报告**（自包含、无 CDN，放 `doc/BaiZe-ISEDA2027/`）。卡：**只用 `.29` GPU0–1**。
+
+#### ② P-5b 的 8 集常识评测 + data scaling → **HTML**
+- **现状**：**P-5b（20B token，final loss 1.9141，31 ckpt）从未在常识推理 8 集评测**；此前只有 **P-6 第 1 步**（Avg **0.4395** @ 20k 步/655M token）。
+- **要做**：复用 `ckpt → HF → lm_eval`，对 **P-5b `final`**（建议加 **6 个里程碑 ckpt** 156/312/624/1248/2496/4771 = 655M…20B token）跑 **8 集零样本**（`ARC-C` `ARC-E` `BoolQ` `HellaSwag` `OpenBookQA` `PiQA` `SciQ` `Winogrande` + Avg）。
+- **data scaling**：据多点画 **(能力, token)** 曲线 + 外推（与 ③ 同源）。
+- **产出 HTML**：`report_pretrain_p5b_8sets.html`（命令 + 原始输出 + 逐集表 + Avg + scaling 曲线）。
+
+#### ③ P-6②（能力 vs token scaling）→ **HTML**
+- **备忘**：**P-6 第 2 步 = 用 P-5b 的 6 个里程碑 ckpt 跑 8 集 lm_eval → (能力, token) 曲线 → 外推，用来定 P-8 的 token 预算**（推荐 100B）；与 ② 是**同一实验的两面**。
+- **产出 HTML**：`report_pretrain_p6b_scaling.html`（目的 / 输入 ckpt / 评测集 / 预注册判据 / 曲线+外推 / 对 P-8 token 预算的结论）。
+
+#### ④ P-9.5（训练性能 profiling / 瓶颈诊断）排查复跑 → **HTML**
+- **背景**：`torch.profiler` **曾崩溃**（`run/baize_p9_seq_scan.sh`；只拿到 level-1 MFU）。**缺失的正是 5-way 归因**（attention/SSM/GEMM/comm/elementwise）。
+- **要做**：**排查崩溃根因**（贴原始报错）→ 修（`timeout` 分步 / 缩小 capture / 手动 `prof.step()` / nsys 兜底）→ **复跑拿 5-way 归因**。
+- **🚫 铁律**：**不对 live 长跑 attach**；只在**短程/离线**进程 profile。
+- **产出 HTML**：`report_pretrain_p95_profiler.html`（崩溃根因 + 修复 + 5-way 表 + 与 P-9 结论印证）。
+
+> ✅ 本块生效即视为已批准。**顺序：① sglang 上界（第一件事）> ② P-5b 8 集 + scaling > ③ P-6② > ④ P-9.5**；②③ 共用一次评测管线（可合并跑，但**分别出 HTML**）。
+
+
 ### 🆕 运维指令 · 2026-10-05（深夜 · ✅ **sglang 可用 → 用 `.29` GPU0–1 做「BaiZe（Mamba2-hybrid 2B） vs MiniCPM5-2B」推理对比（框架 = sglang）**）· 高优先 · **已批准**
 
 > **用户拍板（2026-10-05 深夜）**：「既然 sglang ✅ 可用，那可以用 `.29` **GPU0–1 空**进行对比测试（**推理延迟、吞吐量、显存占用**等）。」
