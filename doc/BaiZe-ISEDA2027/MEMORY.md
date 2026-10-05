@@ -48,7 +48,7 @@ WAITING: 0
 |:--|:--|:--|:--|
 | **pretrain** | ✅ P-5b(20B) + P-9.1–9.6①② + **P-9.7 A1 稳态**（~249K tok/s，ETA ~22:39 定稿）→ ⭐ **P-9.8 bf16 vs FP8 长程一致性 A/B（各 1000 步）已批准** → P-9.5 复跑 → P-6② → P-8 暂缓 | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` | 🟢 **`.cline_pretrain` 隔离目录**；凌晨空窗已排（P-9.5 → **P-9.8** → P-6②） |
 | **vision** | ✅ R9/R10/R14/E1 + R11-L 四臂 + R11-L2 + caption-weight + **R11-E(未抬高)** + **R13(官方 OV2 79.81%)** 全完成 → ⭐ **臂⑥ AIMv2 翻盘**（lp 12.08% vs 基线 6.08%，**+6pp → 25.1% 渐近局部推翻**）→ 🔄 **R11-F 数据源横比运行中** → 🟢 **R11-G(AIMv2 长跑重拟合 scaling) + R11-H(⑥-B 纯 AR) 已批准**（见 `BAIZE_VISION_TASK.md`「运维指令 · 2026-10-04（七）」） | `run/EXPERIMENTS_VISION_ROUND11.md` · `VISION_OFFICIAL_REPOS_SURVEY.md` | 🔄 **`.cline_vision` 隔离目录**；凌晨空窗 ≈4–5h 已排满 |
-| **data** | 下载巡检（白名单 = `l1_en_hq` + `zh` + GPIC；D-CLEAN ✅ 全完成）+ ⭐ **论文文献调研：`LIT_IDEAS_2026-10-04.html` 已交付（50 条/7 方向/成本专章）→ 已下发「在线核验」续任务** | `run/DISK_CLEANUP_INVENTORY.md` · **`LIT_IDEAS_2026-10-04.html`** | 🟢 **MCP（`cimi_search`/`cimi_fetch`）已修复并双机实测可用** → 核验任务已下发 |
+| **data** | 下载巡检（白名单 = `l1_en_hq` + `zh` + GPIC；D-CLEAN ✅）· **文献调研：`LIT_IDEAS_2026-10-04.html` 已交付 + 15 条 arXiv 在线核验完成 → 🔁 已下发「用 web search 重做一遍」（产出新文件 `LIT_IDEAS_2026-10-05.html`）** | `run/DISK_CLEANUP_INVENTORY.md` · **`LIT_IDEAS_2026-10-0{4,5}.html`** | 🟢 MCP 已通；**重做调研已下发**（旧版降级为「参考/对照物」） |
 | **harness** | ✅ **4/5 harness 端到端 `resolved=true`**（cline / codex / opencode / **claude-code**）→ **步4：300 × 5 全量按序跑** | `run/harness/SWEBENCH_LITE_FEASIBILITY.md` · `r1_eval.py` | ⚠️ **H-A pilot 扩容受阻**（github 网络瞬断，base_commit shallow clone 缺）；deepseek-harness 缺工具链 |
 
 > ✅ **vision 叙事已决（2026-10-03 用户）：走 A = 保持「从零训练」**（"A 本身也是为了学习"）。
@@ -180,6 +180,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **2026-10-05（早 · 🔁 文献调研「用 web search 重做」）** —— 用户判断：**那份 `LIT_IDEAS` 是在「没有 web search」前提下用模型知识 + 本地 bib 做的 → 若一开始能联网，找到的很可能不是这 15 篇** → 要求**重做一遍**，现有结果**只作参考**。已下发 **`BAIZE_DATA_TASK.md` 顶部新块**：① **发现驱动**（先 `cimi_search` 检索建候选池 → 再 `cimi_fetch` 读原文抓做法/超参/数字）；② **必须补 2024–2026 前沿**（上一版完全空白）；③ 每条**从一开始**带 `URL + 年份 + 会议`，正文级数字须 `cimi_fetch` 核过；④ **产出新文件 `LIT_IDEAS_2026-10-05.html`**（旧文件保留）+ **新增 `§0 与 10-04 版的差异`**（新增/替换/更正/剔除）；⑤ **预注册判据**：**≥60% 条目与上一版不同**、**0 条未在线核验**、**2024–2026 条目 ≥15 条**。约束不变（不占 GPU / 不下大文件 / 白名单不变），可分多唤醒推进。
 
 - **2026-10-05（早 · 🔧 修好 data agent 的「网络问题」：EDA MCP 全链路打通）** —— 用户指出 `.29:8090` 有 `eda_fastmcp` 的 SSE MCP（含 `cimi_search`/`cimi_fetch`）、与中继同机、跑通后 `.12` 也能共用。**RUN_ID 64→69 一路做完**：④ 服务**本来就在跑**（`pid=111692`、**绑 `0.0.0.0:8090`**、`.env` 已有 `EDA_MCP_PORT=8090`）· ⑤ 用**正确探针**（SSE 长连接不能用 `curl -w http_code`）确认 **`/sse` 200 + `event: endpoint`**、**`.12` TCP/HTTP 均可达**、工具名 **`cimi_search`/`cimi_fetch`** · ⑥ 发现 **`--data-dir` 不改变 MCP 配置读取路径**（cline 固定读共享 `~/.cline/data/settings/cline_mcp_settings.json`），且 **`.cline_vision`/`.cline_data` 是 22B 空**（RUN_ID 55 重播覆盖所致）· ⑦ 修回 **206B**（含 cimi 工具入 autoApprove）· ⑧ **`.29` 真跑 `cimi_search` → `rc=0` 返回真实结果** · ⑨ **`.12` 的共享配置同样为空（22B）→ 备份并补上** → **`.12` 真跑 `cimi_search` → `rc=0`**。⇒ **两机都能用 MCP 搜索**（此前「`api.bocha.cn` SSL 阻断」已不复现）。**顺带三处自查**：SSE 探针方法错（我的锅）· `cline mcp list` 不是有效子命令（正解 `cline config mcp`）· smoke 一度用错 key 报 Forbidden（同 RUN_ID 56 的老坑）。**已下发续任务**：让 data agent 用 MCP 把 `LIT_IDEAS_2026-10-04.html` 的 15 条未核验 + DeepSeek-Flash 定价 + ISEDA 页数 + 2026 最新工作补齐为「全部一手核验」。**随后（RUN_ID 70）把 web search 扩到其余三线**：`.29` 共享配置的 `autoApprove` 补上 `cimi_search`/`cimi_fetch`（265B→206B，已备份）→ **pretrain / harness（`.29`）与 vision（`.12`）各真跑一次 `cimi_search`，均 `rc=0`、Tool available=yes**；四线 `cline config mcp` 全部显示 `pyAether_MCP_server [sse]` ⇒ **四条线都可联网检索了**。
 
