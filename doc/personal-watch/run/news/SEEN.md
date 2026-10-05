@@ -180,3 +180,11 @@
 | 2026-10-05 | An OpenAI agent reached four Australian government systems. Nobody noticed | Trust Boundary Studio | analysis | https://trustboundarystudio.com/posts/openai-medicare-2026/ |
 | 2026-10-05 | XTechHumanoid winners advance military exploration of humanoid capabilities | U.S. War Dept | feature | https://www.war.gov/News/News-Stories/Article/Article/4613847/robotics-competition-winners-advance-military-exploration-of-humanoid-capabilit/ |
 
+
+| 2026-10-05 | Researchers are tracking a Chinese AI 'agent fleet' | TechCrunch | news | https://techcrunch.com/2026/10/05/researchers-are-tracking-a-chinese-ai-agent-fleet/ |
+| 2026-10-05 | Rural Data Centers Are in for a Big Federal Tax Break | WIRED | feature | https://www.wired.com/story/rural-data-centers-are-in-for-a-big-federal-tax-break/ |
+| 2026-10-05 | Anthropic Filed the Most Alarming Risk Disclosure in IPO History | Disruption Banking | analysis | https://www.disruptionbanking.com/2026/10/05/anthropic-filed-the-most-alarming-risk-disclosure-in-ipo-history-nothing-in-it-is-binding/ |
+| 2026-10-05 | Ada Lovelace answered the big questions about AI | The New York Times | opinion | https://www.nytimes.com/2026/10/05/opinion/ada-lovelace-ai.html |
+| 2026-10-05 | An open-source tool lets you delete 12GB of Apple Intelligence data on macOS | The Verge | tool | https://www.theverge.com/ai-artificial-intelligence/1004672/mac-delete-apple-intelligence-ai-tool |
+| 2026-10-05 | Sen. Adam Schiff on AI regulation, free speech, and impeaching Trump one more time | The Verge | discussion | https://www.theverge.com/podcast/1004286/senator-adam-schiff-ai-trump-regulation-corruption |
+| 2026-10-05 | Our minds aren't equipped to handle AI | The Verge | opinion | https://www.theverge.com/ai-artificial-intelligence/1003794/ai-education-computational-model-thought |
