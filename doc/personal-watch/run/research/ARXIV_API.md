@@ -347,4 +347,15 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **第 3 批 A/B 复核**：TOP-K（含 `takeaway`/`action` 20 条）+ `TAKEAWAYS.md`（5 条）+ 视频线（`SHORTLIST.md` 17 / `scripts/` 3）**已交付未变**；**无新增 → 不重跑**。
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
 
+### 9.21 第十九轮（UTC 2026-10-05 周一 · 同批去重复核）：周一公告仍未刷新 → **0 新增**（**本轮实时取数**；**1 查询 429 FAIL 如实记录**）
+
+- **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-05T07:07:30.830574+00:00`，证据 `research/raw/2026-10-05-probe-r19.json`）：
+  - **arXiv API**：`HTTP 200` + `application/atom+xml`，最新 `published=2026-10-02T17:59:14Z`（`totalResults=626530`，样本 `2610.03717 / 2610.03716 / 2610.03715`）→ ✅ **可达**；
+  - **HF Daily Papers**：`Network is unreachable` → ❌ 不可达（**如实记录，不伪造 `hf_daily` 标记**）；
+  - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml` + `items=185 / 191 / 456` → ✅ **工作日已有内容**。
+- **⚠️ 环境观察（如实记录）**：本轮 `export.arxiv.org`（Fastly 边缘，解析到 `199.232.163.42`）**间歇性不可达**——同刻多条裸 `curl -4 -m 12/18/22` 返回 **`http_code=000`（连接/读超时）**，而**同一时间** `arxiv.org` / `rss.arxiv.org` 正常（`200`）；`arxiv_fetch.py`（`requests` + `retries=2` / `backoff 20s`）重试后**成功**。**结论**：算法/脚本有界重试有效；但**一次 `--fetch` 可能因单查询重试而耗时数分钟**（本轮约 6~7 分钟）。**不得**把该网络失败写成「无新增」。
+- **增量取数** `--fetch --seen research/SEEN.md`（`window_mode=weekend_batch`，窗口 **120h**，`generated=2026-10-05T07:10:27.911237+00:00`）：**14/15 查询 `ok` / 1 FAIL**，**kept 0 / dropped 560**；其中 **412 条 = `already in SEEN`**，其余 **148 条 = `stale > 120h`**。证据 `research/raw/2026-10-05-fetch-r19.json`。
+- **🔴 FAIL 明细（新，前几轮为 15/15）**：`llm-long-context` → **`HTTP 429`（`Content-Type=text/html`）`attempts=3`**（重试耗尽）→ 该子查询**本轮未成功、覆盖缺失**；因其余 14 查询 `ok` 且 `kept 0`（含高度重叠的 `sweep-cs-5cats` / `llm-large-language-model`），**0 新增结论不变**，**下轮需（等限速恢复后）补跑 `llm-long-context`**。
+- **结论**：**UTC 仍为 `2026-10-05`（周一）**；arXiv 公告批次仍为 **`2026-10-02`**（**周一公告尚未刷新**，通常于周一 20:00 ET 之后才出）→ **0 新增属正常**（**非「无数据」**）；实际日期区间按 R2′ 标注为 **`2026-10-02`（最近公告批次）**。
+- **第 3 批 A/B 复核**：TOP-K（含 `takeaway`/`action` 20 条）+ `TAKEAWAYS.md`（5 条）+ 视频线（`SHORTLIST.md` 17 / `scripts/` 3）**已交付未变**；**无新增 → 不重跑**。
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
