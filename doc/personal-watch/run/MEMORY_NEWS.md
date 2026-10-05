@@ -13,9 +13,9 @@ WAITING: 1
 ```
 PHASE:        常态采集（T1–T10 ✅）+ **L1/N3 收口（G1 全过）+ L2/N4 探索性（G2 全过）**（L1 焦点 · L2 探索性 · L3 冻结）
 已完成:       T1–T10 ✅ · 首~十八轮常态 ✅ · **N1 抓取器 + 语料〔全库完抓〕2,492,230 条 / 11 片 2016–2026（游标 `2015-12-31`，倒序已收尾至 `2016-01-01`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（75,610 条，对 15:10 全量快照）· N3-4 预警方案 · L1 预警准则加固（`early_warning.py` §4.3 固定召回率 precision + **§4.4 措辞强度 tone 信号**，`EARLY_WARNING.md` 424 行）· L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md，8 行）**
-当前动作:     **本唤醒：L1 预警准则加固（`early_warning.py` 新增 §4.4「措辞强度（tone）信号：单独 + 与节奏组合」——词表取自 `SIGNALS.md` §1，`tone_pos` = 强词占比高于 as-of 扩展中位数；walk-forward 口径预注册）→ 重跑链 + 第十八轮常态采集（news **+0**，国庆假期源薄）**；上轮：§4.3「固定召回率下的 precision」+ 第十七轮 news +1
-下一步:       ① 提交本线产物（**不含任何 ≥5MB 文件**）；② **G2′④ 累积**：按周期跑 `cycle_run.py --with-l2` 追加台账（连续天数截至今日 = 1）；③ L1 稳定性 / **下一个候选文本信号 = 新词首发 / 版面**（§4.4 措辞组合**未胜出**，如实保留）；④ L3（N5）**冻结**
-本轮新增:     **L1：`early_warning.py` 新增 §4.4 措辞强度（tone）信号**（`TONE_STRONG/TONE_WEAK` 词表；`s_tone` = 过去 7 天强词占比（Laplace）+ `tone_pos` = 高于 as-of 扩展中位数；组合 = `s_norm≥0.8` 且 `tone_pos`）→ 重跑链，`EARLY_WARNING.md` **424 行**（§4.4 45 格：组合 **改善 21 / 退化 24**，平均 Δ = **-0.000** → **如实判「未胜出」**）**；第十八轮常态 news **+0**（当日仍 23）；累计 **news 92 / 非新闻 41**
+当前动作:     **本唤醒：第十九轮常态采集（news **+2**：TechCrunch《Trump unveils his new Super Intelligence Force》10-04 · 钛媒体《马斯克为 AI 改名：SpaceXAI 将更名 SpaceXSI》10-05；**新试「钛媒体 feed」= 活源**）；**上轮**：L1 预警准则加固（`early_warning.py` 新增 §4.4 措辞强度 tone 信号）+ 第十八轮 news +0
+下一步:       ① 提交本线产物（**不含任何 ≥5MB 文件**）；② **G2′④ 累积**：**隔日（≥20h）**跑真实重跑（`cycle_run.py --with-l2`，**不带 `--record`**）追加台账（连续天数截至今日 = 1，目标 7，**未达标**）；③ L1 稳定性 / 下一个候选文本信号 = **新词首发 / 版面**（§4.4 措辞组合**未胜出**，如实保留）；④ L3（N5）**冻结**
+本轮新增:     **第十九轮常态 news **+2**（英文 1 / 中文 1；当日 23→**25**）**：① **TechCrunch《Trump unveils his new Super Intelligence Force》**（10-04，美国组建「超级智能部队」，WSJ 称 Jay Clayton 任主席 / 120 天报告）② **钛媒体《马斯克为 AI 改名：SpaceXAI 将更名 SpaceXSI》**（10-05，马斯克 X 表态，SI 改名叙事企业化）。⚠️ 新试 **钛媒体 feed 为活源**；非新闻 4 条（钛媒体 analysis）仅存 `SEEN.md`。累计 **news 94 / 非新闻 45**
 阻塞:         无（新华网长期 403/405 → 兜底源 `chinanews`；⚠️ **无 bypy → 网盘不可用** → ≥5MB 一律「本地保留 + 清单登记 + 如实标『未上云』」；⚠️ **东财日K 运行机 TLS 被重置** → 历史日线走腾讯 `ifzq`；⚠️ **停后台抓取须杀 python 子进程**；⚠️ **等抓取勿用 `pgrep -f <脚本名>`** → 用 `kill -0 <pid>`；⚠️ **ops relay 的 `git pull --rebase` 会删掉被 untrack 的工作区分片** → 须从 `~/archive_data_backup/` 恢复）
 ERROR_COUNT:  4（历史：模型名白睡一轮，已修；并发双抓重复，已修；watcher `pgrep -f` 自匹配死锁，已修；**relay rebase 删工作区分片 → 已恢复**）
 ```
@@ -135,12 +135,20 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **L2 产物（探索性 · 非因果）**：`news/policy/`（`L2_PREREG.md` / **`EXPLORE.md` + `explore.csv`**）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-05 13:15 CST` 第十一轮 ~ `2026-10-05 16:1x CST` 第十七轮
-- **累计收录**：`133` 条（**news 92**〔第一~十七轮；当日 23〕+ 非新闻 41〔仅存 `SEEN.md`〕）
+- **上次采集窗口**：`2026-10-05 13:15 CST` 第十一轮 ~ `2026-10-05 17:25 CST` 第十九轮
+- **累计收录**：`139` 条（**news 94**〔第一~十九轮；当日 25〕+ 非新闻 45〔仅存 `SEEN.md`〕）
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
+
+- **2026-10-05（本唤醒 ~17:25）** —— 🆕 **第十九轮常态采集：news +2（英文 1 / 中文 1）**。
+  - **① TechCrunch《Trump unveils his new Super Intelligence Force》**（2026-10-04）：特朗普 10-04 在 Truth Social 宣布组建「**超级智能部队**」（Super Intelligence Force），据 WSJ 由国家情报总监 **Jay Clayton** 任主席（FTC 主席 Ferguson、国防部 Emil Michael、OPM Kupor 任副主席），负责协调联邦政府确保美国在「超级智能」领先，章程要求 **120 天**内提交风险/机遇报告（承接 9 月「AI→SI」行政令叙事）。
+  - **② 钛媒体《马斯克为 AI 改名：SpaceXAI 将更名 SpaceXSI》**（2026-10-05）：马斯克 **10-04** 在 X 上确认将 **SpaceXAI → SpaceXSI**（「AI」换「SI」），称「SpaceX 是一家超级智能公司」；⚠️ 文中为「钛度号」作者专栏（含分析），**核心新闻点 = 马斯克 X 表态**；截至报道官方**未公布生效时间**。
+  - **源盘点（如实）**：**新试 `tmtpost.com/rss` = 活源**（带 pubDate、当日更新）；`cn_news` 40 条均假期/民生/时政 → 不收；量子位头部 10 条**均已在账**；IT之家头部为消费电子/汽车/游戏 → 不收（鸿海营收仍判非清单）；雷峰网头部软文/文体/法律 → 不收；The Register `headlines.atom` 与机器之心 `jiqizhixin.com/rss` 均 **ParseError**；HN 8 条均 opinion/超窗 → 不收；联合国中文源仍 **404**。非新闻 4 条（钛媒体 analysis）**仅存 `SEEN.md`**。
+  - **文档同步**：`news/2026-10-05.md`（第十九轮段）· `news/SEEN.md`（+2 news / +4 非新闻）· `news/INDEX.md`（当日 25 / 累计 news 94 · 非新闻 45）· `MEMORY_NEWS.md`（快照 3 行 + 累计 + 本流水）· 日流水心跳行 `[17:25]`。
+  - **判据复核**：✅ 每条带 `标题+来源+发布日期+链接` · ✅ 非新闻单列（仅存 `SEEN.md`，不入摘要）· ✅ 「我们的观察」措辞明确标注 · ✅ 无因果措辞 · ✅ 非投资建议 · ✅ **L3（N5）冻结**（未产出任何策略/仓位/择时）。
+  - **未做**：G2′④ 连续天数累积（需**隔日 ≥20h** 的真实重跑；本轮与上轮间隔不足 → **不刷台账**，连续天数仍 = **1**，如实标 **未达标**）。
 
 - **2026-10-05（本唤醒 ~16:12）** —— 🆕 **L1 预警准则加固：新增 §4.3「固定召回率下的 precision」（walk-forward）+ 第十七轮常态采集（news +1）**。
   - **动机**：§4.0 已实测「训练段 F1 最优」调阈在本设置**退化**（θ→0 恒正、无区分力）→ 改用**预注册的固定召回率目标**：`R ∈ {0.5, 0.75}`。
