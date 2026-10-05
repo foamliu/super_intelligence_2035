@@ -9,9 +9,9 @@ WAITING: 1
 | 字段 | 值 |
 |:--|:--|
 | STAGE | `B`（大模型消融；**已调换**：因 pro-fp4 额度 403 阻塞 C1，先跑 Phase B）|
-| CONFIG | `glm-5.2` |
+| CONFIG | `deepseek-v4-flash` |
 | ROUND | 1 |
-| PHASE | `running`（B.glm-5.2 r1 运行中；试验次序 B→C1→C2→S1；Phase B 各模型独立 key，不受 pro-fp4 限制）|
+| PHASE | `running`（B.deepseek-v4-flash r1 运行中 PID 1209165 batch 2026_1006_022818（02:28 启动）；B.glm-5.2 5/5 完成 = **83.3±3.1%** [84.2,87.3,84.2,79.1,81.6]；flash 用独立 CLI_DATA_DIR 隔离 `/nasdata/app.e0031982/.cline_dsv4flash_eval/data`（model=deepseek-v4-flash + key c43c1f4a + /v1）；0 Forbidden ✅；deepseek-v4-flash API HTTP 200 ✅；试验次序 B→C1→C2→S1）|
 | WAITING | 1 |
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
@@ -21,8 +21,8 @@ WAITING: 1
 
 | 阶段 | 臂 | 轮次 | 状态 |
 |:--|:--|:-:|:--|
-| B | glm-5.2 | 1-5/5 | â¬ |
-| B | deepseek-v4-flash | 1-5/5 | â¬ |
+| B | glm-5.2 | 5/5 ✅ | **83.3±3.1%** [84.2,87.3,84.2,79.1,81.6]（r5=81.6% 129/158 batch 2026_1005_233928, 0 Forbidden ✅）|
+| B | deepseek-v4-flash | 0/5 r1 | r1 running (PID 1209165, batch 2026_1006_022818, 02:28, 0 Forbidden ✅, flash CLI_DATA_DIR 隔离 .cline_dsv4flash_eval/data, API 200 ✅) |
 | B | kimi-k2.6-cloud | 1-5/5 | â¬ |
 | B | doubao-seed-2.0-pro-cloud | 1-5/5 | â¬ |
 | C1 | pure_llm | 5/5 â | â 10.5Â±1.9%ï¼å¤ç¨ legacyï¼[8.2,9.5,10.1,11.4,13.3]ï¼|
@@ -41,7 +41,7 @@ WAITING: 1
 
 | 臂 | N=5 mean±std | 各轮原始值 |
 |:--|:-:|:--|
-| B.glm-5.2 | [TBD] | [TBD] |
+| B.glm-5.2 | **83.3 ± 3.1%** | [84.2, 87.3, 84.2, 79.1, 81.6] |
 | B.deepseek-v4-flash | [TBD] | [TBD] |
 | B.kimi-k2.6-cloud | [TBD] | [TBD] |
 | B.doubao-seed-2.0-pro-cloud | [TBD] | [TBD] |
@@ -50,6 +50,7 @@ WAITING: 1
 
 ## 操作流水
 
+- [2026-10-06 02:30] [✅ B.glm-5.2 r5 收割 81.6% → 5/5 完成 83.3±3.1% → 切 B.deepseek-v4-flash r1 启动] ① 运维指令(五)优先：legacy 组件 loop PID 2455466 alive ✅（无需拉起）；conductor 未触碰（红线）；zhulong_loop PID 3189240 + ops relay PID 3186967 alive ✅。② §7 步骤 A：pgrep ’^bash scripts/run_cline_script‘→无输出（r5 PID 773433 已结束）→进入打分。③ r5 打分：grep PASS_RATE /tmp/ABL_glm-5.2_r5.log→PASS_RATE=0.8165（129/158 pass=81.6%, generated 150 ok/8 fail/0 exec_err, 0 Forbidden ✅）；batch 2026_1005_233928 正常完成。r5 Pass@1=81.6%。④ 记成绩 + ROUND>5→算 mean±std：[84.2,87.3,84.2,79.1,81.6]→mean=83.3 std=3.1→ **B.glm-5.2=83.3±3.1%**；PHASE=just_finished→步骤 B 切下一臂 B.deepseek-v4-flash。⑤ Gate：curl deepseek-v4-flash API→HTTP 200 ✅（非 403，flash 额度可用）；shard 8664/8665/8653/8669 + 8090 全 OPEN ✅；.env=full config（PHI_BUDGET=0/PHI_LAGGED=0/OMEGA=high/READBACK=full）✅；/nasdata 378G ✅；RAG recall 9006 PID 3820519 ✅。⑥ CLI_DATA_DIR 隔离：cp -a .cline_glm_eval→.cline_dsv4flash_eval，python 重写 providers.json→model=deepseek-v4-flash + key c43c1f4a + /v1 ✅（secrets.json 已含 c43c1f4a、models.json 已注册 flash）；不碰默认 ~/.cline/data（legacy 需 pro-fp4）。⑦ 启动 r1：CLI_DATA_DIR=/nasdata/app.e0031982/.cline_dsv4flash_eval/data EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework PYTHON=.../venv/bin/python setsid bash scripts/run_cline_script.sh -p 8 -n→PID 1209165, batch 2026_1006_022818, 02:28:18, 8 worker/158 题/-n, log=/tmp/ABL_deepseek-v4-flash_r1.log。⑧ 验证：0 Forbidden ✅；AI SDK warning 含 deepseek-v4-flash 确认 flash active；sandbox hook 已部署 ~/.cline/hooks ✅。⑨ 注：git pull --rebase --autostash（ops relay ~60s）反复回退未提交 MEMORY 改动→本轮改用 git commit 固化。状态更新：PHASE=running / STAGE=B / CONFIG=deepseek-v4-flash / ROUND=1 / WAITING=1 / ERROR_COUNT=0。退出等下轮唤醒 harvest r1（pgrep 无输出→grep PASS_RATE /tmp/ABL_deepseek-v4-flash_r1.log 取 r1 Pass@1）。
 - [2026-10-05 12:05] [🚀 B.glm-5.2 r1 启动] **Phase B 首臂 glm-5.2 r1 已启动运行**。前置全部就绪：① **.env 切 full**（`set_ablation.py full` → `EDA_MCP_TOOLS_DISABLED=clean_workdir,probe_pyAether_code,cimi_search,cimi_fetch,vqa,query_memory_bank`；检索 3 件套 + run_code 全 ON；OMEGA=high/PHI_BUDGET=0/PHI_LAGGED=0/READBACK=full 锚点）✅。⚠️ 早先 grep 见旧值是 **run_commands 并行执行假象**（写 set_ablation 与读 grep 同批并发，grep 抢跑先于写落盘），复检 mtime 12:00:12 + 行内容确认写入成功。② **MCP 重启**：`stop.sh && start.sh -p 8090`（串行 &&）→ 旧 PID 691966 停、新 PID **3298357** 监听 **0.0.0.0:8090**，app.log "Tool visibility config: get_api_details/search_apis/search_apis_by_keyword/run_code 全 ON" ✅（MCP 启动慢，64 线程，需 sleep~10s 才 bind，初查 ss 空属正常）。③ **cline auth → glm-5.2**：`-p openai -k 02_...c2759d74... -b http://agi-gateway.cxmt.com/cloud/v1 -m glm-5.2` → providers.json = glm-5.2 ✅（清除 pro-fp4+/v1 403 污染）。④ **canary 通过**：`scripts/cline_hooks/PreToolUse` 干测 4 组（run_commands→DENY / read_files `/etc/passwd`→DENY / read_files ws内+workspaceRoots→ALLOW / mcp__search_apis→ALLOW）✅；且 r1 实跑 log 已见 worker 触发 run_commands 被 hook 拦截 "ACCESS RESTRICTED" → 反作弊 **live 生效** ✅。⑤ **infra**：sandbox 8650/8651/8652/8654 全 OPEN + run_code 探针 200 ✅；RAG recall 端口 9006 alive（PID 3820519，HTTP 405=up）✅。⑥ **启动**：`EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python setsid bash scripts/run_cline_script.sh -p 8 -n`。⚠️ **必记**：`.env` L243 `EVAL_FW_DIR` 默认 `${EVAL_FW_DIR:=/home/app.t0002997/proj/EDA-Eval-Framework_1_pyaether}`（他人路径），必须 env 覆盖为我方 `/nasdata/app.e0031982/code/EDA-Eval-Framework`；`PYTHON` 必须显式设 venv（否则 `ModuleNotFoundError: pydantic`）。batch=**2026_1005_120536**，run_cline_script PID **3308249**，9×run_cli worker，8×cline worker（timeout 2500），全量 158 题，log=`/tmp/ABL_glm-5.2_r1.log`。log 已见 glm-5.2 deprecation warning（model 确认 active）、worker-3 完成 003→009（任务推进中）。**harvest 方式**：`pgrep -f run_cline_script` 无输出后，`grep -Eo 'pass \([0-9.]+%\)' /tmp/ABL_glm-5.2_r1.log | tail -1` 取 r1 Pass@1；或读 batch dir `/home/app.e0031982/eda_code_eval/2026_1005_120536/stats/`。**状态**：PHASE=running / STAGE=B / CONFIG=glm-5.2 / ROUND=1 / WAITING=1 / ERROR_COUNT=0。退出等下轮唤醒 harvest r1。
 
 - [2026-10-05 11:25] [ð 试验次序调换] **Phase B（大模型消融）提到最前**。因  额度 HTTP 403 阻塞 C1/wo_retrieval 无法推进，而 Phase B 的 4 个模型（glm-5.2 / deepseek-v4-flash / kimi-k2.6-cloud / doubao-seed-2.0-pro-cloud）均使用独立 key/endpoint，完全不受 pro-fp4 限制。新顺序：**B â C1 â C2 â S1**。已同步更新：ZHULONG_TASK.md §§ 0/4/5（顺序表+轮转矩阵）、MEMORY_ZHULONG.md 状态头/看板/成绩表。C1/wo_retrieval r2 标记为 â¸（暂停），待 Phase B 完成后 pro-fp4 恢复时重试。legacy 组件 loop 仍在跑（PID 2455466），本轮不干扰。
