@@ -10,11 +10,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验 → 🚀 Stable S0a 臂运行中(step 900/5000, loss 3.18, ~37.6s/iter, LR达峰, ETA ~Oct7 20:50)·loss稳定下降·✅✅SFT-2605全4shard完成(20.97B tok)·✅✅SFT-Agent-2609全4shard完成(4/4 done!)·baize_mix_eval.sh已备·白名单4项巡检正常·D-CLEAN-4已裁定保留不动·✅report_data_mix_s0a.html已更新(实时数据step900)
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT-2605下满一致；D-CLEAN-1/2/3/4(已裁定保留不动)；LIT_IDEAS_2026-10-05.html；✅base分词(22.05B tok)；✅✅SFT-2605全4shard分词(20.97B tok,79G)；✅✅SFT-Agent-2609全4shard分词(4/4 done)；✅baize_mix_eval.sh；✅report_data_mix_s0a.html(实时更新step900)；🚀Stable S0a臂运行中(step900/5000,健康)
-当前动作:     唤醒141(02:00) HTML报告实时更新step900+S0a训练监控+下载巡检+git同步：① ⭐ S0a健康推进step900/5000 loss3.18(10.84@10→4.93@250→3.57@600→3.25@800→3.18@900稳定下降,LR=1.0e-3达峰,0NaN/0skip)~37.6s/iter GPU2-7 6卡35-63%util~39GB ETA=(5000-900)×37.6≈42.8h→~Oct7 20:50；② ✅ report_data_mix_s0a.html已更新(实时step900/loss3.18/ETA Oct7 20:50/SVG追加8数据点/GPU表/日志/里程碑/Decay全料就绪)；③ 下载巡检；④ ✅git fetch via proxy成功
-下一步:       ⏳等S0a 5000步完(~Oct7 20:50)→ckpt→HF→lm_eval Table2(8集)；✅Decay段全料就绪(SFT-2605✅20.97B+Agent-2609✅全4shard)→可起Decay臂(SFT占比55/60/64/69/72%搜索)；填DATA_MIX_RECIPE.md实测值；下载续推
-阻塞:         ⏳ S0a训练中(5000步,ETA~Oct7 20:50,SAVE_INTERVAL=5000无中间ckpt)；⚠️ zh下载冻结171/256；磁盘/nas_train 84%(34T free)；✅ D-CLEAN-4已裁定·保留不动
+PHASE:        §0.6-B 配比实验 → 🚀 Stable S0a 臂运行中(step 1040/5000, loss 3.08, ~37.5s/iter, LR达峰, ETA ~Oct7 20:46)·loss稳定下降·✅✅SFT-2605全4shard完成(20.97B tok)·✅✅SFT-Agent-2609全4shard完成(4/4 done!)·baize_mix_eval.sh已备·白名单4项巡检正常·D-CLEAN-4已裁定保留不动·✅report_data_mix_s0a.html已更新(实时数据step1040)
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT-2605下满一致；D-CLEAN-1/2/3/4(已裁定保留不动)；LIT_IDEAS_2026-10-05.html；✅base分词(22.05B tok)；✅✅SFT-2605全4shard分词(20.97B tok,79G)；✅✅SFT-Agent-2609全4shard分词(4/4 done)；✅baize_mix_eval.sh；✅report_data_mix_s0a.html(实时更新step1040)；🚀Stable S0a臂运行中(step1040/5000,健康)
+当前动作:     唤醒142(03:31) HTML报告实时更新step1040+S0a训练监控+下载巡检+git同步：① ⭐ S0a健康推进step1040/5000 loss3.08(10.84@10→4.93@250→3.57@600→3.25@800→3.18@900→3.11@1000→3.08@1040稳定下降,LR=1.0e-3达峰,0NaN/0skip)~37.5s/iter GPU2-7 6卡39-86%util~39GB ETA=(5000-1040)×37.5≈41.3h→~Oct7 20:46；② ✅ report_data_mix_s0a.html已更新(实时step1040/loss3.08/ETA Oct7 20:46/SVG追加6数据点/GPU表/日志/里程碑/Decay全料就绪)；③ 下载巡检；④ ✅git fetch via proxy成功
+下一步:       ⏳等S0a 5000步完(~Oct7 20:46)→ckpt→HF→lm_eval Table2(8集)；✅Decay段全料就绪(SFT-2605✅20.97B+Agent-2609✅全4shard)→可起Decay臂(SFT占比55/60/64/69/72%搜索)；填DATA_MIX_RECIPE.md实测值；下载续推
+阻塞:         ⏳ S0a训练中(5000步,ETA~Oct7 20:46,SAVE_INTERVAL=5000无中间ckpt)；⚠️ zh下载冻结171/256；磁盘/nas_train 84%(34T free)；✅ D-CLEAN-4已裁定·保留不动
 ```
 
 ## 运维问答
