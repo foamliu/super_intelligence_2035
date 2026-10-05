@@ -2,8 +2,8 @@
 
 > 本文件 = `BAIZE_DATA_TASK.md` §0.6 的交付物。**当前主攻：为 Stage (i) 的 P-8 训练定"用什么数据、什么配比"。**
 > 依据：本地 `doc/BaiZe-ISEDA2027/Xmodel-2/xmodel-2.tex`（下文引行号）＋ MiniCPM5 公开材料。
-> 状态：**方案定稿（含具体百分比 + 实验设计 + 数据就绪清单）**；配比**实验**尚无 GPU（.29 排队中，见 §6）。
-> 更新：2026-10-02。
+> 状态：**方案定稿 + Stable S0a 臂 🚀 运行中（step60/5000, ETA~Oct7 20:00）**。
+> 更新：2026-10-05 16:05（唤醒 132）。
 
 ---
 
@@ -125,3 +125,72 @@ Xmodel-2 原文（`xmodel-2.tex:138,144-146,152-154`）：
 - **污染闸**：base / SFT-2605 落地后一律过 `check_contamination.py`（EDA-Eval 158 任务红线）再投料。
 
 > 🚫 全篇未涉及任何"领域化"（EDA/领域语料）—— 遵循运维 10 月硬规矩，领域化一律留白。
+
+---
+
+## 9. 🚀 实验执行状态（2026-10-05 16:05，唤醒 132）
+
+### 9.1 数据就绪状态（实测）
+
+| 源 | 分词状态 | 路径 | token 数 | 备注 |
+|:--|:--|:--|--:|:--|
+| `Ultra-FineWeb (base)` en | ✅ 4 shard 完成 | `data/mix_base/mix_base_train_s{0..3}` | **22.05B** | s0=5.51B / s1=5.52B / s2=5.51B / s3=5.51B |
+| `UltraData-Code` (anneal) | ✅ 已有 | `data/anneal_code.bin` | ~180M | pretrain Round 1 产出 |
+| `UltraData-Math` (anneal) | ✅ 已有 | `data/anneal_math2.bin` | ~860M | pretrain Round 1 产出 |
+| `UltraData-SFT-2605` shard s2 | ✅ 完成 | `data/mix_sft_tok/mix_sft_train_s2` | **3.58B** | 4.85M docs |
+| `UltraData-SFT-2605` shard s3 | ✅ 完成 | `data/mix_sft_tok/mix_sft_train_s3` | **521M** | 1.40M docs |
+| `UltraData-SFT-2605` shard s0 | 🟡 进行中 | `data/mix_sft_tok/mix_sft_train_s0` | ~?B（.bin 28G） | no_think_Math 13.2G 源, PID 2013637, 3.7h |
+| `UltraData-SFT-2605` shard s1 | 🟡 进行中 | `data/mix_sft_tok/mix_sft_train_s1` | ~?B（.bin 12G） | clean restart, PID 2868155, 1.5h |
+| `UltraData-SFT-Agent-2609` | ❌ 未分词 | `/nas_inference/.../UltraData-SFT-Agent-2609/` | ~?B | 50 shard jsonl / 51 GiB，待 s0/s1 完后启动 |
+
+### 9.2 Stable 段 S0a 臂（基线，🚀 运行中）
+
+| 参数 | 值 |
+|:--|:--|
+| **配比** | base:code:math = **88:8:4**（4 base shards × 22 = 88, code 8, math 4） |
+| **GBS** | 1020（6×170，基线 1024 因 DP6 整除要求调为 1020，-0.4%） |
+| **口径** | 6 卡 · TP1/DP6 · seq=4094 · mb=1 · 5000 步 · bf16_mixed · seed=1234 · WSD(warmup=250, decay=0=纯 stable) |
+| **GPU** | .29 GPU2-7（CUDA_VISIBLE_DEVICES=2,3,4,5,6,7） |
+| **PID** | 1995742 (bash) / 1995914 (torchrun) / 1998724-738 (6 workers) |
+| **脚本** | `run/baize_mix_stable_s0a.sh` |
+| **SAVE_INTERVAL** | 5000（仅在末尾存 ckpt，无中间 ckpt） |
+| **当前进度** | step 60/5000, loss 10.84→7.16（step10→60，稳定下降） |
+| **速率** | ~37.8 s/iter（warmup 后稳定，358 TFLOP/s/GPU） |
+| **ETA** | (5000-60) × 37.8s ≈ **51.9 小时 → ~Oct 7 20:00** |
+| **ckpt 路径** | `nemo_experiments/mix_stable_s0a/checkpoints/iter_0005000/`（训练完后产出） |
+
+### 9.3 ⚠️⚠️ ETA 重大更正（运维请注意）
+
+**原 §6 估算**（2026-10-02）："每组 ~5000 步 × GBS；以 Round 1/2 的 2.2B 8 卡吞吐（~85–90K tok/s 混合）计，每组 ≈ 0.5–1 GPU·h×8 ≈ 可批跑，整轮 ~1–2 天"
+
+**实际**（2026-10-05 实测）：
+- 6 卡（非 8 卡），3B mamba2-hybrid 模型
+- GBS=1020 × seq=4094 = **4.18M tok/step**
+- 5000 步 = **~20.9B tokens**
+- 实测吞吐 ~112K tok/s（6 卡合计）
+- **每臂 = 6 GPU × 52h = 312 GPU·h**（比估算大 **~50×**）
+
+**影响**：按 12+ 臂计 → **总耗 ~24+ 天**，远超"1–2 天"估算。
+
+**建议**（不改 S0a，已运行不 kill）：
+- **方案 A**：保持 S0a 为完整 5000 步基线；**后续臂降至 1000–2000 步**（~10–21h/臂）。任务书明确允许"5000 步短地平线（**或更短**，但所有臂必须一致）"——若后续臂缩短，S0a 也可在 step1000/2000 时另存 ckpt 评测对比（需改 SAVE_INTERVAL，但 S0a 已在跑无法改）。
+- **方案 B**：所有臂均 5000 步，接受 ~24 天总耗。优先跑最关键的 D0 轴（SFT 占比 55/60/64/69/72%，5 臂 × 52h = ~11 天）。
+- **方案 C**：kill S0a，重启所有臂为 1000 步（~10h/臂，12 臂 = ~5 天）。代价 = 已跑 60 步（~38 min）的浪费。
+
+### 9.4 评测管线（✅ 已备）
+
+- **脚本**：`run/baize_mix_eval.sh <arm_name> [iter] [t2|t3|both]`
+- **流程**：ckpt（.distcp 分片）→ `baize_p6_ckpt_to_hf.py`（转 HF Nemotron-H）→ lm_eval
+- **Table 2**（Stable 段用，8 常识集）：`arc_challenge, arc_easy, boolq, hellaswag, openbookqa, piqa, sciq, winogrande`
+- **Table 3**（Decay 段用，6 复杂推理集）：`gsm8k, math, bbh, mmlu, humaneval, mbpp`
+- **GPU**：默认 GPU2-7（训练完后即可评测）
+- **依赖**：PYTHONPATH 前置 `p6_tf5`（transformers 5.17.0 NemotronHForCausalLM）+ `omegaconf_230`；HF_ENDPOINT=hf-mirror.com
+
+### 9.5 下载进度（白名单 4 项）
+
+| 项 | 进度 | 速率 / ETA | PID |
+|:--|:--|:--|:--|
+| `ultrafineweb_en` | **2048/2048 ✅** | 完成 | — |
+| `ultrafineweb_l1_en_hq` | **2795/6006**（46.5%） | ~0.8 MB/s, ETA ~15 天 | 3076502/3076519 |
+| `ultrafineweb_zh` | **171/256**（冻结） | 低优先级，等 l1_en_hq 完 | 3076502 |
+| `gpic` | **3410 tars / 4.9T** | 活跃 | 144981 |
