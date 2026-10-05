@@ -270,4 +270,7 @@
 | 2026-10-06 | Give Your AI Agent a Domain-Specific Language | Modeloptic（公司博客，经 HN） | analysis | https://www.modeloptic.com/blog/give-your-ai-agent-a-dsl |
 | 2026-10-06 | Nova Sprint. Coordinate AI sprints across multiple models and harnesses | GitHub（经 HN） | tool | https://github.com/mas-bandwidth/nova-sprint |
 | 2026-10-06 | Pi Durable: What It Is and Why It Matters for Agent Apps | MindStudio（公司博客，经 HN） | analysis | https://www.mindstudio.ai/blog/pi-durable-long-running-agents |
+| 2026-10-06 | 谷歌有望升级 Call for Me 功能：Gemini 将支持代用户拨打私人亲友电话 | IT之家 | news | https://www.ithome.com/1/009/921.htm |
+| 2026-10-06 | tvOS 27.2 代码显示苹果 Apple TV 4K（第四代）将支持 Siri AI 和 Apple Intelligence | IT之家 | news | https://www.ithome.com/1/009/920.htm |
+| 2026-10-06 | Gemini Call for Me might tell your mom you're running late | The Verge | news(同事件) | https://www.theverge.com/ai-artificial-intelligence/1005177/google-gemini-call-for-me-expansion-rumors |
 
