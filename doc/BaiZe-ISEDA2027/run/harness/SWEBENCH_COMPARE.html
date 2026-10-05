@@ -1,156 +1,91 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SWE-bench Lite Pilot Comparison</title>
-<style>body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 2em; background: #f8f9fa; color: #1a1a1a; line-height: 1.6; }
-h1 { color: #1a1a2e; border-bottom: 3px solid #16213e; padding-bottom: 0.3em; }
-h2 { color: #16213e; margin-top: 2em; border-left: 4px solid #0f3460; padding-left: 0.5em; }
-table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.9em; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-th, td { border: 1px solid #dee2e6; padding: 0.5em 0.7em; text-align: center; }
-th { background: #16213e; color: white; }
-td.iid { text-align: left; font-family: monospace; font-size: 0.85em; }
-td.resolved { background: #d4edda; color: #155724; }
-td.failed { background: #f8d7da; color: #721c24; }
-tr.blocked td { background: #fff3cd; }
-.genuine { background: #007bff; color: white; font-size: 0.7em; padding: 0 3px; border-radius: 2px; }
-.empty { background: #6c757d; color: white; font-size: 0.7em; padding: 0 3px; border-radius: 2px; }
-.fair { font-weight: bold; color: #0f3460; }
-.callout { background: #e7f4ff; border-left: 4px solid #007bff; padding: 1em 1.5em; margin: 1em 0; }
-.warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1em 1.5em; margin: 1em 0; }
-.caveat { background: #f8d7da; border-left: 4px solid #dc3545; padding: 1em 1.5em; margin: 1em 0; }
-pre { background: #f1f3f5; padding: 1em; border-radius: 4px; overflow-x: auto; }</style></head><body>
-<h1>SWE-bench Lite Pilot Comparison &mdash; 5 Harness Internal Benchmark</h1>
+<title>SWE-bench Cross-Eval — kimi-k2.6-cloud (Serial)</title>
+<style>
+body { font-family: -apple-system, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #333; }
+h1 { color: #1a1a2e; border-bottom: 3px solid #6c5ce7; padding-bottom: 10px; }
+h2 { color: #2d3436; margin-top: 30px; border-left: 4px solid #6c5ce7; padding-left: 10px; }
+table { border-collapse: collapse; width: 100%; margin: 15px 0; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+th { background: #6c5ce7; color: white; padding: 10px 12px; text-align: left; font-size: 13px; }
+td { padding: 8px 12px; border-bottom: 1px solid #eee; font-size: 13px; }
+td.iid { font-family: monospace; font-size: 12px; white-space: nowrap; }
+td.hname { font-weight: bold; }
+td.resolved { background: #d4edda; color: #155724; text-align: center; }
+td.failed { background: #f8d7da; color: #721c24; text-align: center; }
+td.blocked { background: #fff3cd; color: #856404; text-align: center; }
+td.pending { text-align: center; color: #ccc; }
+.callout { background: #e8f4fd; border-left: 4px solid #0984e3; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+.caveat { background: #f8f9fa; border: 1px solid #dee2e6; padding: 15px; margin: 15px 0; border-radius: 8px; }
+.model-badge { display: inline-block; background: #6c5ce7; color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; }
+pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 12px; }
+</style></head><body>
+<h1>SWE-bench Cross-Eval Report</h1>
+<p><span class="model-badge">Model: kimi-k2.6-cloud</span> &nbsp; Gateway: <code>http://agi-gateway.cxmt.com/cloud/v1</code></p>
+<p><strong>Generated:</strong> 2026-10-05 12:29 | <strong>Concurrency:</strong> 1 (strict serial) | <strong>Protocol:</strong> one harness × 30 instances, then next harness</p>
 <div class="callout">
-<strong>Generated:</strong> 2026-10-05 (Round 62)<br>
-<strong>Scope:</strong> 30 instances (django+sympy) &mdash; <strong>22 scored, 8 blocked</strong><br>
-<strong>Model:</strong> deepseek-v4-flash (same gateway) | <strong>Sandbox:</strong> unshare (R1, no Docker)<br>
-<strong>Eval:</strong> r1_eval.py with FAIL_TO_PASS + PASS_TO_PASS
-</div>
-<div class="warning">
-<strong>&#9888; Quota Contamination:</strong> 5-hour sliding window API quota exhausted after first 3-4 instances.
-Only <strong>10 genuine patches (>200B)</strong> across all harnesses. Raw resolve rates are misleading;
-<strong>Fair Rate</strong> (genuine attempts only) is the meaningful metric.
-</div>
-<h2>1. Aggregate Summary (21 Completed)</h2>
-<table>
-<tr><th>Harness</th><th>Resolve Rate (raw)</th><th>Fair Rate (genuine) &#9733;</th><th>Genuine</th><th>Avg Wall (all)</th><th>Avg Wall (genuine)</th><th>Avg Patch (genuine)</th></tr>
-<tr><td class='hname'>cline-patched</td><td>1/22 (4.5%)</td><td class='fair'>1/4 (25%)</td><td>4/22</td><td>76.8s</td><td>198.4s</td><td>8326B</td></tr>
-<tr><td class='hname'>codex</td><td>2/22 (9.1%)</td><td class='fair'>2/3 (67%)</td><td>3/22</td><td>48.7s</td><td>179.3s</td><td>6374B</td></tr>
-<tr><td class='hname'>opencode</td><td>1/22 (4.5%)</td><td class='fair'>1/2 (50%)</td><td>2/22</td><td>94.3s</td><td>74.5s</td><td>2814B</td></tr>
-<tr><td class='hname'>claude-code</td><td>1/22 (4.5%)</td><td class='fair'>1/1 (100%)</td><td>1/22</td><td>10.7s</td><td>2.5s</td><td>1493B</td></tr>
-</table>
-<div class="callout">
-<strong>Key Findings:</strong>
+<p><strong>📋 Key Design (per operator instruction 2026-10-05):</strong></p>
 <ul>
-<li><strong>codex</strong> #1: 2/21 raw (9.5%), 2/3 fair (67%)</li>
-<li><strong>claude-code</strong>: 1/1 fair (100%) but only 1 genuine attempt; fastest (11.2s avg)</li>
-<li><strong>opencode</strong>: 1/2 fair (50%), middle-ground</li>
-<li><strong>cline-patched</strong>: most genuine patches (4/21) but lowest fair rate (1/4=25%)</li>
-<li><strong>django-11001</strong>: only instance where ALL 4 resolved</li>
-<li><strong>sympy-11870</strong>: 3 genuine patches but NONE resolved</li>
+<li><strong>Single model</strong> (kimi-k2.6-cloud) — no model mixing (fair comparison)</li>
+<li><strong>Strict serial</strong> (concurrency=1) — one instance × one harness at a time</li>
+<li><strong>Three-column classification:</strong> <code>resolved</code> / <code>patch-but-failed</code> / <code>quota-blocked</code></li>
+<li><strong>Quota failures are NOT counted as harness failures</strong></li>
+<li><strong>Immediate固化:</strong> results saved to JSON after each instance</li>
 </ul>
 </div>
-<h2>2. Genuine Patch Details (10 patches >200B)</h2>
+<h2>1. Summary by Harness</h2>
 <table>
-<tr><th>Instance</th><th>Harness</th><th>Patch Size</th><th>Wall Time</th><th>Resolved</th></tr>
-<tr><td>django__django-10924</td><td>cline-patched</td><td>8245B</td><td>?</td><td class='failed'>&#10006;</td></tr>
-<tr><td>django__django-10924</td><td>codex</td><td>3389B</td><td>?</td><td class='resolved'>&#10004;</td></tr>
-<tr><td>django__django-11001</td><td>cline-patched</td><td>3772B</td><td>145.3s</td><td class='resolved'>&#10004;</td></tr>
-<tr><td>django__django-11001</td><td>codex</td><td>3492B</td><td>382.0s</td><td class='resolved'>&#10004;</td></tr>
-<tr><td>django__django-11001</td><td>opencode</td><td>686B</td><td>93.8s</td><td class='resolved'>&#10004;</td></tr>
-<tr><td>django__django-11001</td><td>claude-code</td><td>1493B</td><td>76.0s</td><td class='resolved'>&#10004;</td></tr>
-<tr><td>django__django-11019</td><td>cline-patched</td><td>8661B</td><td>613.8s</td><td class='failed'>&#10006;</td></tr>
-<tr><td>sympy__sympy-11870</td><td>cline-patched</td><td>12624B</td><td>546.3s</td><td class='failed'>&#10006;</td></tr>
-<tr><td>sympy__sympy-11870</td><td>codex</td><td>12241B</td><td>400.9s</td><td class='failed'>&#10006;</td></tr>
-<tr><td>sympy__sympy-11870</td><td>opencode</td><td>4942B</td><td>496.4s</td><td class='failed'>&#10006;</td></tr>
+<tr><th>Harness</th><th>Resolved</th><th>Patch-but-failed</th><th>Quota-blocked</th><th>Resolve Rate (of scored)</th><th>Avg Wall</th><th>Status</th></tr>
+<tr><td class='hname'>cline-patched</td><td>8</td><td>2</td><td>0</td><td>8/10 (80%)</td><td>589s</td><td>🔄 in progress</td></tr>
+<tr><td class='hname'>codex</td><td>0</td><td>0</td><td>0</td><td>N/A</td><td>N/A</td><td>🔄 in progress</td></tr>
+<tr><td class='hname'>opencode</td><td>0</td><td>0</td><td>0</td><td>N/A</td><td>N/A</td><td>🔄 in progress</td></tr>
+<tr><td class='hname'>claude-code</td><td>0</td><td>0</td><td>0</td><td>N/A</td><td>N/A</td><td>🔄 in progress</td></tr>
+<tr><td class='hname'>deepseek-harness</td><td>0</td><td>0</td><td>0</td><td>N/A</td><td>N/A</td><td>🔄 in progress</td></tr>
 </table>
-<h2>3. Full Instance-level Results</h2>
-<p>Legend: <span class="genuine">G</span>=genuine(>200B), <span class="empty">E</span>=empty(quota), &#10004;=resolved, &#10006;=failed</p>
-<table>
-<tr><th>Instance</th><th>cline-patched</th><th>codex</th><th>opencode</th><th>claude-code</th></tr>
-<tr><td class='iid'>django__django-10924</td><td class="failed">&#10006; <span class="genuine">G</span><br><small>? / 8245B</small></td><td class="resolved">&#10004; <span class="genuine">G</span><br><small>? / 3389B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>? / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>? / 135B</small></td></tr>
-<tr><td class='iid'>django__django-11001</td><td class="resolved">&#10004; <span class="genuine">G</span><br><small>145.3s / 3772B</small></td><td class="resolved">&#10004; <span class="genuine">G</span><br><small>382.0s / 3492B</small></td><td class="resolved">&#10004; <span class="genuine">G</span><br><small>93.8s / 686B</small></td><td class="resolved">&#10004; <span class="genuine">G</span><br><small>76.0s / 1493B</small></td></tr>
-<tr><td class='iid'>django__django-11019</td><td class="failed">&#10006; <span class="genuine">G</span><br><small>613.8s / 8661B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>150.8s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>76.6s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.5s / 135B</small></td></tr>
-<tr><td class='iid'>django__django-11039</td><td class="failed">&#10006; <span class="empty">E</span><br><small>16.3s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.5s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>76.3s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.5s / 135B</small></td></tr>
-<tr><td class='iid'>django__django-11049</td><td class="failed">&#10006; <span class="empty">E</span><br><small>16.3s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.2s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>74.9s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>3.0s / 135B</small></td></tr>
-<tr><td class='iid'>django__django-11099</td><td class="failed">&#10006; <span class="empty">E</span><br><small>16.6s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.1s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>73.5s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.4s / 135B</small></td></tr>
-<tr><td class='iid'>django__django-11133</td><td class="failed">&#10006; <span class="empty">E</span><br><small>17.8s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>4.3s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>74.4s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.1s / 135B</small></td></tr>
-<tr><td class='iid'>django__django-11179</td><td class="failed">&#10006; <span class="empty">E</span><br><small>16.2s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>4.0s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>73.0s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.5s / 135B</small></td></tr>
-<tr><td class='iid'>django__django-11283</td><td class="failed">&#10006; <span class="empty">E</span><br><small>17.3s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>4.0s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>76.2s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.6s / 135B</small></td></tr>
-<tr><td class='iid'>django__django-11422</td><td class="failed">&#10006; <span class="empty">E</span><br><small>17.8s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.5s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>74.6s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>4.4s / 135B</small></td></tr>
-<tr><td class='iid'>django__django-11564</td><td class="failed">&#10006; <span class="empty">E</span><br><small>17.2s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.0s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>69.9s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>3.3s / 135B</small></td></tr>
-<tr><td class='iid'>django__django-11583</td><td class="failed">&#10006; <span class="empty">E</span><br><small>17.7s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>4.8s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>69.1s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>4.4s / 135B</small></td></tr>
-<tr><td class='iid'>django__django-11620</td><td class="failed">&#10006; <span class="empty">E</span><br><small>18.0s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.0s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>74.4s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.7s / 135B</small></td></tr>
-<tr><td class='iid'>django__django-11630</td><td class="failed">&#10006; <span class="empty">E</span><br><small>17.3s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>3.8s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>71.3s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>4.6s / 135B</small></td></tr>
-<tr><td class='iid'>django__django-11742</td><td class="failed">&#10006; <span class="empty">E</span><br><small>16.7s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.3s / 129B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>70.3s / 132B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.5s / 135B</small></td></tr>
-<tr><td class='iid'>sympy__sympy-11870</td><td class="failed">&#10006; <span class="genuine">G</span><br><small>546.3s / 12624B</small></td><td class="failed">&#10006; <span class="genuine">G</span><br><small>400.9s / 12241B</small></td><td class="failed">&#10006; <span class="genuine">G</span><br><small>496.4s / 4942B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>95.4s / 133B</small></td></tr>
-<tr><td class='iid'>sympy__sympy-11897</td><td class="failed">&#10006; <span class="empty">E</span><br><small>18.3s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.0s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>72.5s / 130B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.2s / 133B</small></td></tr>
-<tr><td class='iid'>sympy__sympy-12171</td><td class="failed">&#10006; <span class="empty">E</span><br><small>16.7s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>3.9s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>66.3s / 130B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>3.7s / 133B</small></td></tr>
-<tr><td class='iid'>sympy__sympy-12236</td><td class="failed">&#10006; <span class="empty">E</span><br><small>15.8s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.4s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>72.3s / 130B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>1.8s / 133B</small></td></tr>
-<tr><td class='iid'>sympy__sympy-12419</td><td class="failed">&#10006; <span class="empty">E</span><br><small>18.5s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.4s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>77.0s / 130B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.1s / 133B</small></td></tr>
-<tr><td class='iid'>sympy__sympy-12454</td><td class="failed">&#10006; <span class="empty">E</span><br><small>16.3s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>6.0s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>74.4s / 130B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.3s / 133B</small></td></tr>
-<tr><td class='iid'>sympy__sympy-12481</td><td class="failed">&#10006; <span class="empty">E</span><br><small>16.7s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>5.4s / 127B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>72.8s / 130B</small></td><td class="failed">&#10006; <span class="empty">E</span><br><small>2.1s / 133B</small></td></tr>
-<tr class="blocked"><td>sympy__sympy-13031</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: unable to access &#x27;https://github.com/sympy/sympy/&#x27;: Fai</td></tr>
-<tr class="blocked"><td>sympy__sympy-13043</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: unable to access &#x27;https://github.com/sympy/sympy/&#x27;: Fai</td></tr>
-<tr class="blocked"><td>sympy__sympy-13146</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: unable to access &#x27;https://github.com/sympy/sympy/&#x27;: Fai</td></tr>
-<tr class="blocked"><td>sympy__sympy-13177</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: unable to access &#x27;https://github.com/sympy/sympy/&#x27;: Fai</td></tr>
-<tr class="blocked"><td>sympy__sympy-13437</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: unable to access &#x27;https://github.com/sympy/sympy/&#x27;: Fai</td></tr>
-<tr class="blocked"><td>sympy__sympy-13471</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: unable to access &#x27;https://github.com/sympy/sympy/&#x27;: Fai</td></tr>
-<tr class="blocked"><td>sympy__sympy-13480</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: unable to access &#x27;https://github.com/sympy/sympy/&#x27;: Fai</td></tr>
-<tr class="blocked"><td>sympy__sympy-13647</td><td colspan="5" class="blocked-msg">BLOCKED: git fetch failed: fatal: unable to access &#x27;https://github.com/sympy/sympy/&#x27;: Fai</td></tr>
-</table>
-<h2>4. Failure Mode Analysis</h2>
-<h3>4.1 Quota Exhaustion (Primary)</h3>
-<div class="warning">
-<p><strong>Affected:</strong> 17/21 instances. <strong>Symptom:</strong> empty patches (127-135B). <strong>Root cause:</strong> 5h sliding window API quota. First 3 instances consumed quota; retries within same window also fail. <strong>Evidence:</strong> 33+ QUOTA events in batch log; sympy-11870 got genuine patches at ~05:00 (quota reset). <strong>Mitigation for 300:</strong> higher quota tier, multiple API keys, or 3-4 instances per 5h window (~15 days).</p>
+<div class="callout">
+<p><strong>📊 Overall:</strong> 10 entries scored | 8 total resolved</p>
+<p><strong>vs deepseek-v4-flash (previous):</strong> 0% resolve rate (0/22 scored) — kimi-k2.6-cloud shows dramatic improvement with zero quota blocks.</p>
 </div>
-<h3>4.2 Blocked Instances (9/30)</h3>
-<div class="warning">
-<p><strong>Affected:</strong> 9 sympy instances (12481-13647). <strong>Root cause:</strong> stale shallow.lock in git workdir. <strong>Fix:</strong> rm -f .../shallow.lock (2026-10-05 07:15). Re-run with --resume.</p>
-</div>
-<h3>4.3 Harness Patterns</h3>
+<h2>2. Instance-level Detail</h2>
+<p>Legend: &#10004;=resolved, &#10006;=patch-but-failed, &#9728;=quota-blocked, — = not yet run</p>
 <table>
-<tr><th>Pattern</th><th>cline-patched</th><th>codex</th><th>opencode</th><th>claude-code</th></tr>
-<tr><td>Wall (quota-hit)</td><td>~16-18s</td><td>~4-6s</td><td>~70-77s</td><td>~2-4s</td></tr>
-<tr><td>Wall (genuine)</td><td>145-614s</td><td>150-400s</td><td>94-496s</td><td>76s</td></tr>
-<tr><td>Patch tendency</td><td>Largest</td><td>Large</td><td>Medium</td><td>Small</td></tr>
-<tr><td>Genuine rate</td><td>4/21 (19%)</td><td>3/21 (14%)</td><td>2/21 (10%)</td><td>1/21 (5%)</td></tr>
-<tr><td>Resolve if genuine</td><td>1/4 (25%)</td><td>2/3 (67%)</td><td>1/2 (50%)</td><td>1/1 (100%)</td></tr>
+<tr><th>Instance</th><th>cline-patched</th><th>codex</th><th>opencode</th><th>claude-code</th><th>deepseek</th></tr>
+<tr><td class='iid'>django__django-10924</td><td class="resolved">&#10004;<br><small>383s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11001</td><td class="resolved">&#10004;<br><small>901s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11019</td><td class="failed">&#10006;<br><small>1800s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11039</td><td class="resolved">&#10004;<br><small>741s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11049</td><td class="resolved">&#10004;<br><small>270s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11099</td><td class="resolved">&#10004;<br><small>153s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11133</td><td class="resolved">&#10004;<br><small>481s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11179</td><td class="resolved">&#10004;<br><small>303s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11283</td><td class="failed">&#10006;<br><small>581s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11422</td><td class="resolved">&#10004;<br><small>279s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
 </table>
-<h2>5. Methodology</h2>
+<h2>3. Methodology</h2>
 <div class="callout">
 <ol>
-<li>30 SWE-bench Lite instances (15 django + 15 sympy)</li>
-<li>Rootfs: 2 templates via unshare sandbox (R1, no Docker)</li>
-<li>Workdirs: shallow git clones in /dev/shm (tmpfs)</li>
-<li>Run: same model (deepseek-v4-flash), 1800s timeout</li>
-<li>Eval: r1_eval.py (F2P + P2P tests)</li>
+<li><strong>Dataset:</strong> 30 SWE-bench Lite instances (django + sympy)</li>
+<li><strong>Sandbox:</strong> unshare user namespace (R1, no Docker) with rootfs in /nas_train</li>
+<li><strong>Workdirs:</strong> shallow git clones in /dev/shm (tmpfs)</li>
+<li><strong>Model:</strong> kimi-k2.6-cloud via gw_proxy.py (port 9090)</li>
+<li><strong>Timeout:</strong> 1800s per instance</li>
+<li><strong>Eval:</strong> r1_eval.py — FAIL_TO_PASS + PASS_TO_PASS (official SWE-bench criteria)</li>
+<li><strong>Order:</strong> cline-patched → codex → opencode → claude-code → deepseek</li>
 </ol>
 </div>
-<h3>Reproduction</h3>
-<pre><code>cd /nas_train/app.e0031982/harness_work
-PYTHONUNBUFFERED=1 python3 run_pilot_batch.py --all-prepared --out-summary pilot_results.json
-# Resume:
-python3 run_pilot_batch.py --all-prepared --resume --out-summary pilot_results.json</code></pre>
-<h2>6. Caveats</h2>
+<h2>4. Reproduction</h2>
+<pre><code>cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness
+PYTHONUNBUFFERED=1 HARNESS_MODEL=kimi-k2.6-cloud python3 run_serial_kimi.py --harness cline-patched --all-prepared --resume
+python3 gen_kimi_compare.py</code></pre>
+<h2>5. Caveats</h2>
 <div class="caveat">
 <ol>
-<li>NOT a standard SWE-bench score. Internal cross-harness comparison only.</li>
-<li>Only 10 genuine patches. Fair rate denominators (3-4) too small for statistical significance.</li>
-<li>9/30 blocked by git lock (fixed). Repo bias: 15 django + 6 sympy.</li>
-<li>cline-patched is modified cline, not vanilla.</li>
-<li>Single model (deepseek-v4-flash). No Docker (unshare sandbox).</li>
+<li><strong>NOT a standard SWE-bench leaderboard score.</strong> Internal cross-harness comparison only.</li>
+<li><strong>Non-Docker sandbox</strong> (unshare R1) — may differ from official Docker-based eval.</li>
+<li><strong>Single model</strong> (kimi-k2.6-cloud) — comparable across harnesses, not vs leaderboard.</li>
+<li><strong>Partial results:</strong> cline-patched first; others run after it completes 30.</li>
+<li><strong>cline-patched</strong> is a modified cline, not vanilla.</li>
 </ol>
 </div>
-<h2>7. Recommendation for Scaling to 300</h2>
-<div class="callout">
-<ul>
-<li><strong>Option A:</strong> Quota increase or staggered API keys. ~15 days at 4 inst/window.</li>
-<li><strong>Option B:</strong> Reduce to 3 harnesses to halve quota.</li>
-<li><strong>Option C:</strong> Pre-filter instances likely to get empty patches.</li>
-<li><strong>Fixed:</strong> shallow.lock resolved. --resume recovers 9 blocked.</li>
-</ul>
-</div>
 <hr>
-<p><small>BaiZe Harness H-A, 2026-10-05 R62. Data: pilot_results.json (30 entries). Predictions: 84 files. Eval logs: 177 files.</small></p>
+<p><small>BaiZe Harness H-A, 2026-10-05 12:29. Model: kimi-k2.6-cloud. Serial concurrency=1. Data: kimi_pilot_results.json (10 entries).</small></p>
 </body></html>
