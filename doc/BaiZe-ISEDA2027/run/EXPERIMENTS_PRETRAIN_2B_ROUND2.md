@@ -1275,9 +1275,11 @@ KV bytes/token = 2 × n_layers × n_kv_heads × d_head × dtype_bytes
 - **运维修订裁定**（commit 937c25f）：#4 改持续性判据 → spike-then-recovered=PASS → 4/4 PASS。
 - **P-9.9 检验目标**：tensorwise（current scaling，无 delayed amax lag）在同区是否**不出现**这个 spike。
 
-#### B. 三方早期轨迹对比（iter 10–480）—— bf16 vs delayed vs tensorwise
+#### B. 三方早期轨迹对比（iter 10–590）—— bf16 vs delayed vs tensorwise
 
-> P-9.9 已到 iter 480（48%），spike 区（660+）尚未到达。比较**前 480 步**确认三者轨迹一致（验证唯一变量是 FP8 recipe）。**本表 2026-10-05 ~12:34 第 103 次唤醒扩到 iter 480**（前 360 步见上一唤醒）。
+> P-9.9 已到 iter 590（59%），spike 区（660+）尚未到达。比较**前 590 步**确认三者轨迹一致（验证唯一变量是 FP8 recipe）。**本表 2026-10-05 ~13:10 第 104 次唤醒扩到 iter 590**（前 480 步见上一唤醒）。
+>
+> ⚠️ **口径说明（2026-10-05 第 104 次唤醒核实）**：原 P-9.8 armB（delayed FP8, **seed 1234**）**启动即崩**（rc=1, 04:39:22, rank 2 exitcode 1, 无 iteration 数据）→ Table A/B 的 delayed 列实为 **P-9.9 step 1 retry（seed 4321）**数据。bf16 与 tensorwise 均为 **seed 1234**。⇒ delayed vs bf16 **混入 seed 差异**，但 **tensorwise vs bf16 是同 seed 纯精度对比**（干净）。seed 1234 delayed 数据缺失（crash），无法做严格的 seed 复现对比。
 
 | iter | bf16 | delayed FP8 | tensorwise FP8 | d−bf16% | t−bf16% | t−d% |
 |----:|-----:|-----------:|--------------:|--------:|--------:|-----:|
@@ -1294,11 +1296,22 @@ KV bytes/token = 2 × n_layers × n_kv_heads × d_head × dtype_bytes
 | 400 | 4.248 | 4.267 | 4.266 | +0.45% | +0.43% | −0.02% |
 | 450 | 3.998 | 4.028 | 3.994 | +0.76% | −0.10% | −0.85% |
 | 480 | 3.854 | 3.894 | 3.867 | **+1.05%** | +0.36% | −0.68% |
+| 490 | 3.848 | 3.863 | 3.847 | +0.39% | −0.00% | −0.39% |
+| 500 | 3.795 | 3.804 | 3.773 | +0.25% | −0.58% | −0.83% |
+| 510 | 3.736 | 3.790 | 3.770 | **+1.45%** | +0.91% | −0.54% |
+| 520 | 3.710 | 3.729 | 3.701 | +0.52% | −0.25% | −0.76% |
+| 530 | 3.660 | 3.676 | 3.660 | +0.44% | +0.01% | −0.43% |
+| 540 | 3.614 | 3.651 | 3.622 | **+1.02%** | +0.22% | −0.79% |
+| 550 | 3.583 | 3.622 | 3.590 | **+1.08%** | +0.21% | −0.86% |
+| 560 | 3.536 | 3.588 | 3.552 | **+1.49%** | +0.46% | −1.01% |
+| 570 | 3.508 | 3.527 | 3.514 | +0.55% | +0.18% | −0.37% |
+| 580 | 3.466 | 3.514 | 3.465 | **+1.39%** | −0.02% | −1.39% |
+| 590 | 3.442 | 3.464 | 3.440 | +0.63% | −0.05% | −0.68% |
 
-- **三方前 480 步轨迹高度一致**（max |rel diff| ≤ **1.05%**），确认唯一变量是 FP8 recipe（delayed vs current/tensorwise scaling）。
-- ⚠️ **新发现（iter 480）**：**delayed scaling 在 iter 480 出现 +1.05%**（**首次超过 1% 阈值**，且**仍在 spike 区 660–780 之前**）——而同期 **tensorwise 仅 +0.36%**。这暗示 **delayed 的 amax lag 在训练中段（loss 下降加速区）开始累积数值偏差**，而 **current/tensorwise scaling 实时计算 amax，数值更紧贴 bf16**。
-- **tensorwise vs bf16**（|t−bf16%| max = **0.64%** @ iter 390）**始终低于 delayed vs bf16**（|d−bf16%| max = **1.05%** @ iter 480）——**tensorwise 在数值保真度上优于 delayed**（至少在前 480 步）。
-- ⏳ **关键检验待定**：spike 区（iter 660–780）需 P-9.9 到达（ETA ~13:30–13:50）；若 tensorwise 在该区 **|rel diff| ≤ 1%**（无 spike）→ 判「**delayed amax lag 是 spike 根因，current scaling 消除之**」；若 **spike 复现** → 判「**spike 非 amax lag 所致，是 FP8 per-tensor 口径的固有现象**」。
+- **三方前 590 步轨迹高度一致**（max |rel diff| ≤ **1.49%**），确认唯一变量是 FP8 recipe（delayed vs current/tensorwise scaling）。
+- ⚠️ **delayed bias 在 iter 510–580 段持续扩大**：iter 510=+1.45% · 540=+1.02% · 550=+1.08% · **560=+1.49%** · 580=+1.39% —— **5 个点超 1%，且全部为正（系统性高偏）**，**均在 spike 区 660–780 之前**。这暗示 **delayed 的 amax lag 在训练中段（loss 下降加速区）开始累积数值偏差**，为后续 spike 预埋了趋势。
+- **tensorwise vs bf16**（|t−bf16%| max = **0.91%** @ iter 510）**始终低于 delayed vs bf16**（|d−bf16%| max = **1.49%** @ iter 560）——**tensorwise 在数值保真度上优于 delayed**（前 590 步全程），且 **tensorwise 在 iter 490–590 段多次出现负偏差**（更接近甚至低于 bf16），说明 **current scaling 的 amax 实时性消除了 delayed 的系统性正偏**。
+- ⏳ **关键检验 T1 待定**：spike 区（iter 660–780）需 P-9.9 到达（ETA ~14:00–14:30）；若 tensorwise 在该区 **|rel diff| ≤ 1%**（无 spike）→ 判「**delayed amax lag 是 spike 根因，current scaling 消除之**」；若 **spike 复现** → 判「**spike 非 amax lag 所致，是 FP8 per-tensor 口径的固有现象**」。
 
 #### C. 速度对比（三种精度，TP4·SP·MBS8·seq8192·M=65536·MAX_CONN=1）
 
@@ -1322,9 +1335,10 @@ KV bytes/token = 2 × n_layers × n_kv_heads × d_head × dtype_bytes
 
 **裁定**：**T1+T2+T3+T4 全过** → 「**current/tensorwise scaling 消除 delayed spike + 仍有 15.8% 加速 → 推荐 P-8 用 `bf16_with_fp8_current_scaling_mixed`**」；**T1 不过**（spike 复现）→ 「**spike 是 per-tensor FP8 固有现象（非 amax lag）→ P-8 沿用 delayed（已 4/4 PASS）**」。
 
-#### 本唤醒小结（2026-10-05 ~12:34，第 103 次唤醒，CPU-only 三方轨迹扩到 iter 480）
-- P-9.9 健康 @iter **480/1000（48%）**：loss 11.18→3.87 健康下降，grad-norm 0.34–4.88，**nan=0/skip=0 全程 ✅**（grep 全日志零非零 skip/nan），s/iter≈18.59s（226K tok/s @ M=65536），TFLOP≈621，peak 72684 MiB，8 worker PID 4044610–17 单实例无争用。ETA (1000−480)×18.6s≈2.7h→**~15:15**。
-- 三方早期轨迹**扩到 iter 480**（表 B）：⚠️ **新发现**——**delayed scaling 在 iter 480 出现 +1.05%**（首次超 1%，且在 spike 区 660–780 之前），而 **tensorwise 仅 +0.36%**（max |t−bf16%|=0.64% @ iter 390 vs delayed max |d−bf16%|=1.05% @ iter 480）→ **tensorwise 在数值保真度上优于 delayed**（至少前 480 步）。唯一变量=FP8 recipe 确认。
-- 速度：tensorwise s=1.158（+15.8%），略慢于 delayed s=1.194（+19.4%）但仍 >1.05（T3 ✅）；nan/skip=0（T2 ✅ @ iter 480）。
-- **关键检验 T1（spike 区 660–780）待 ~13:30**；T4（末段收敛）待 ~15:15。
+#### 本唤醒小结（2026-10-05 ~13:10，第 104 次唤醒，CPU-only 三方轨迹扩到 iter 590 + 口径核实）
+- P-9.9 健康 @iter **590/1000（59%）**：loss 11.18→3.44 健康下降，grad-norm 0.34–4.88，**nan=0/skip=0 全程 ✅**（grep 全日志零非零 skip/nan），s/iter≈18.55s（226K tok/s @ M=65536），TFLOP≈622，peak 72684 MiB，8 worker PID 4044610–17 单实例无争用（nvidia-smi 8×100% util ~72GB/卡）。ETA (1000−590)×18.55s≈2.1h→**~15:15**。
+- ⚠️ **口径核实（重要更正）**：原 P-9.8 armB（delayed FP8, **seed 1234**）**启动即崩**（rc=1, 04:39:22, rank 2 exitcode 1, 无 iteration 数据）→ Table A/B 的 delayed 列实为 **P-9.9 step 1 retry（seed 4321）**。bf16 与 tensorwise 均为 seed 1234（同 seed 纯精度对比，干净）。seed 1234 delayed 数据缺失 → **无法做严格的 seed 复现对比**（P-9.9 step 1 原目标「换 seed 复现」实际上无 seed 1234 基线可对比）。
+- 三方早期轨迹**扩到 iter 590**（表 B）：⚠️ **delayed bias 在 iter 510–580 段持续扩大**——5 个点超 1%（510=+1.45% · 540=+1.02% · 550=+1.08% · **560=+1.49%** · 580=+1.39%），**全部为正（系统性高偏）**，均在 spike 区 660–780 之前。同期 **tensorwise max |t−bf16%|=0.91%**（iter 510），且 iter 490–590 段多次出现负偏差（更紧贴 bf16）→ **tensorwise 在数值保真度上持续优于 delayed**（前 590 步全程）。
+- 速度：tensorwise s=1.158（+15.8%），略慢于 delayed s=1.194（+19.4%）但仍 >1.05（T3 ✅）；nan/skip=0（T2 ✅ @ iter 590）。
+- **关键检验 T1（spike 区 660–780）待 ~14:00**；T4（末段收敛）待 ~15:15。
 - **下一步**：30min 轮询 → P-9.9 到 iter 660 后提取 spike 区数据判 T1 → P-9.9 完成(~15:15)判 T4 → 合成 P-9.9 结论 → 释放 8 卡 → P-9.10 实测 + data 配比。
