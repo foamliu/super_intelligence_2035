@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe · Stable S0a 数据配比实验报告</title>
+<style>
+:root{--bg:#0f1117;--card:#181b24;--card2:#1f232e;--bd:#2a2f3d;--tx:#e6e8ee;--mut:#9aa0b0;--acc:#4fc3f7;--acc2:#66bb6a;--warn:#ffb74d;--err:#ef5350;--pur:#ab47bc;--grn:#26a69a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7;font-size:15px;padding:0}
+.wrap{max-width:1080px;margin:0 auto;padding:32px 24px 64px}
+header{border-bottom:1px solid var(--bd);padding-bottom:24px;margin-bottom:28px}
+header h1{font-size:26px;font-weight:700;letter-spacing:-.3px}
+header .sub{color:var(--mut);font-size:14px;margin-top:8px}
+header .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tag{display:inline-block;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:600;border:1px solid var(--bd);background:var(--card2)}
+.tag.live{color:var(--acc2);border-color:#2e7d32;background:#1b2e1b}
+.tag.warn{color:var(--warn);border-color:#e65100;background:#2e2418}
+h2{font-size:20px;font-weight:700;margin:36px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--bd)}
+h3{font-size:16px;font-weight:600;margin:24px 0 10px;color:var(--acc)}
+h4{font-size:14px;font-weight:600;margin:18px 0 8px;color:var(--mut)}
+p{margin:10px 0}
+.mut{color:var(--mut)} .acc{color:var(--acc)} .grn{color:var(--grn)} .warn{color:var(--warn)} .err{color:var(--err)} .pur{color:var(--pur)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:18px 20px;margin:14px 0}
+.card.hl{border-left:3px solid var(--acc)}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.kpi{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:16px 18px}
+.kpi .lbl{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.kpi .val{font-size:28px;font-weight:700;margin-top:4px}
+.kpi .unit{font-size:14px;color:var(--mut);font-weight:400}
+.kpi .delta{font-size:12px;margin-top:4px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--bd)}
+th{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.4px;background:var(--card2)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+code{background:#222632;padding:1px 6px;border-radius:3px;font-family:"SFMono-Regular",Consolas,monospace;font-size:13px;color:var(--acc)}
+pre{background:#11141c;border:1px solid var(--bd);border-radius:8px;padding:14px 16px;overflow-x:auto;margin:12px 0;font-family:"SFMono-Regular",Consolas,monospace;font-size:12.5px;line-height:1.55;color:#c8cdd8}
+pre .c{color:#5b6273} pre .k{color:var(--acc)} pre .s{color:var(--acc2)} pre .n{color:var(--warn)}
+.callout{padding:14px 18px;border-radius:8px;margin:14px 0;border-left:4px solid}
+.callout.info{background:#121a26;border-color:var(--acc)}
+.callout.warn{background:#231d12;border-color:var(--warn)}
+.callout.key{background:#1a1b2e;border-color:var(--pur)}
+.callout.err{background:#231313;border-color:var(--err)}
+.callout p{margin:6px 0}
+.toc{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:16px 20px;margin-bottom:28px}
+.toc h4{margin:0 0 8px;color:var(--acc)}
+.toc ol{padding-left:20px;margin:0} .toc li{margin:4px 0}
+.toc a{color:var(--tx);text-decoration:none;border-bottom:1px dotted var(--bd)}
+.toc a:hover{color:var(--acc)}
+.svgwrap{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:16px;margin:14px 0}
+.svgwrap svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:10px;font-size:12px;color:var(--mut)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px}
+footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--bd);color:var(--mut);font-size:12px}
+.tl{position:relative;padding-left:22px;margin:14px 0}
+.tl::before{content:'';position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--bd)}
+.tl .ev{position:relative;padding:8px 0}
+.tl .ev::before{content:'';position:absolute;left:-22px;top:14px;width:10px;height:10px;border-radius:50%;background:var(--acc);border:2px solid var(--bg)}
+.tl .ev.cur::before{background:var(--warn);box-shadow:0 0 8px var(--warn)}
+.tl .ev .when{color:var(--mut);font-size:12px}
+.tl .ev .what{font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>📊 BaiZe · Stable S0a 数据配比实验报告</h1>
+<div class="sub">WSD 双阶段预训练的 Stable 段基线臂 — 运行状态与设计说明</div>
+<div class="meta">
+<span class="tag">§0.6-B · P-8 数据配方</span>
+<span class="tag">WSD 双阶段</span>
+<span class="tag">MiniCPM5 / Xmodel-2 follow</span>
+<span class="tag live">🚀 训练运行中</span>
+<span class="tag warn">⚠️ 无中间 ckpt</span>
+</div>
+<div class="sub" style="margin-top:12px">数据快照时间：<strong>2026-10-05 23:27:01</strong>（实时从训练日志读取，非旧值）</div>
+</header>
+<div class="toc">
+<h4>📑 目录</h4>
+<ol>
+<li><a href="#s1">这个实验是什么？</a></li>
+<li><a href="#s2">Stable S0a 臂具体是什么？</a></li>
+<li><a href="#s3">为什么这么设计？</a></li>
+<li><a href="#s4">当前实时状态</a></li>
+<li><a href="#s5">Loss 下降曲线（实时）</a></li>
+<li><a href="#s6">下一步</a></li>
+<li><a href="#s7">它最终服务于什么？</a></li>
+<li><a href="#s8">附录：原始命令与输出取证</a></li>
+</ol>
+</div>
+
+<div class="grid g3" style="margin-bottom:8px">
+<div class="kpi"><div class="lbl">当前步数</div><div class="val">650<span class="unit"> / 5000</span></div><div class="delta grn">13.0% · 稳定推进中</div></div>
+<div class="kpi"><div class="lbl">当前 Loss</div><div class="val">3.49<span class="unit"> ↘</span></div><div class="delta grn">从 10.84 持续下降</div></div>
+<div class="kpi"><div class="lbl">健康度</div><div class="val grn">OK</div><div class="delta">0 NaN · 0 skipped</div></div>
+</div>
+<div class="grid g3" style="margin-bottom:20px">
+<div class="kpi"><div class="lbl">迭代速度</div><div class="val">~38<span class="unit"> s/iter</span></div><div class="delta mut">350 TFLOP/s/GPU</div></div>
+<div class="kpi"><div class="lbl">预计完成 ETA</div><div class="val warn">~Oct 7<span class="unit"> 21:00</span></div><div class="delta mut">剩余 ≈ 45.7 小时</div></div>
+<div class="kpi"><div class="lbl">中间 Checkpoint</div><div class="val err">无</div><div class="delta err">SAVE_INTERVAL=5000</div></div>
+</div>
+
+<h2 id="s1">1. 这个实验是什么？</h2>
+<div class="card hl">
+<p><strong>一句话：</strong>这是 BaiZe 论文 <strong>Stage (i) 正式预训练（P-8）</strong>之前的 <strong>「数据投料配比」搜索实验</strong> —— 用 <strong>MiniCPM5 / Xmodel-2 的 WSD（Warmup-Stable-Decay）双阶段配比思路</strong>，在<strong>小规模代理预算</strong>下，搜索 <strong>Stable 段（base 主体）</strong>与 <strong>Decay 段（L3+Math+Code+SFT = 带 SFT 的退火）</strong>的最佳数据配比。</p>
+</div>
+
+<h3>1.1 背景：为什么要「做实验定配比」而不是拍脑袋？</h3>
+<p>BaiZe 的正式预训练采用 <strong>WSD 学习率调度</strong>，数据分两段喂：</p>
+<table>
+<tr><th>阶段</th><th>数据源（工作假设）</th><th>主次</th><th>用途</th></tr>
+<tr><td><strong>Stable（S 段）</strong></td><td><code>Ultra-FineWeb</code>(base) · <code>UltraX-Preview</code> · <code>UltraData-Math</code> · <code>UltraData-Code</code></td><td>以 web 主体为主</td><td>模型主体的「常识打底」</td></tr>
+<tr><td><strong>Decay（D 段）</strong></td><td><code>Ultra-FineWeb-L3</code> · <code>UltraData-Math</code> · <code>UltraData-Code</code> · <strong><code>UltraData-SFT-2605</code></strong> · <strong><code>UltraData-SFT-Agent-2609</code></strong></td><td>适当配比</td><td>带 SFT 数据的退火（提升复杂推理）</td></tr>
+</table>
+<p>配比<strong>不能凭直觉拍</strong>。Xmodel-2 论文（本地 <code>xmodel-2.tex</code>）给了两条关键依据：</p>
+<div class="callout key">
+<p><strong>依据 ①「小模型配比可迁移到大模型」</strong>（<code>xmodel-2.tex:142</code> 引 <code>ye2024datamixinglaws</code>）：在<strong>小模型 / 短跑</strong>上搜出的配比，可以有效迁移到更大模型 → 所以我们用 <strong>2.47B 模型 + 5000 步短跑</strong> 搜配比，<strong>不必在全量上试</strong>，省算力。</p>
+<p><strong>依据 ② Xmodel-2 自己跑了 400+ 次试验</strong>（<code>xmodel-2.tex:144-154</code>）：把搜索空间收敛到<strong>两个问题</strong> —— <span class="pur">① SFT 数据的总体占比（最优落在 60%–69%，实际取 64%）</span>；<span class="pur">② SFT 内部的类别分布（Mathematics / Code / Logic / Knowledge / Commonsense 五类）</span>。结论：SFT 数据是<strong>喂进预训练 decay 段</strong>的，而不是事后再做一遍独立 SFT → <strong>decay 段 = 带 SFT 的退火</strong>，这模糊了 Stage (i)/(ii) 的边界。</p>
+</div>
+
+<h3>1.2 实验整体框架</h3>
+<div class="card">
+<table>
+<tr><th>段</th><th>候选数据源</th><th>代理指标套</th><th>说明</th></tr>
+<tr><td><strong>Stable 段</strong></td><td>base · UltraX-Preview · Math · Code</td><td><strong>Table 2（8 个常识集）</strong><br><span class="mut">ARC-C / ARC-E / BoolQ / HellaSwag / OpenBookQA / PiQA / SciQ / Winogrande</span></td><td>当前主攻：<strong>S0a 臂</strong>（本报告）</td></tr>
+<tr><td><strong>Decay 段</strong></td><td>L3 · Math · Code · SFT-2605 · SFT-Agent-2609</td><td><strong>Table 3（6 个复杂推理集）</strong><br><span class="mut">GSM8K / MATH / BBH / MMLU / HumanEval / MBPP</span></td><td>待 SFT-Agent-2609 分词完成后启动</td></tr>
+</table>
+<p class="mut" style="font-size:13px">出处：<code>xmodel-2.tex:198,207</code>（Table 2）、<code>xmodel-2.tex:73,253,260</code>（Table 3）。</p>
+</div>
+<p>每条臂（一个配比组合）跑完 5000 步 → 存 checkpoint → 转成 HF 格式 → 跑 <code>lm_eval</code> 对应指标套 → 用<strong>实测分数</strong>比较不同配比 → 选出最优配比，作为 <strong>P-8 正式训练的投料配方</strong>。</p>
+<h2 id="s2">2. Stable S0a 臂具体是什么？</h2>
+<p><strong>S0a = Stable 段的第一个（基线）臂</strong>。它用<strong>最朴素的配比</strong>跑出一条基线曲线，后续臂在其基础上调参对比。</p>
+<div class="card hl">
+<h3 style="margin-top:0">S0a 臂参数表（实测自 <code>run/baize_mix_stable_s0a.sh</code>）</h3>
+<table>
+<tr><th>参数</th><th>值</th><th>说明</th></tr>
+<tr><td><strong>数据配比</strong></td><td><strong>base : code : math = 88 : 8 : 4</strong></td><td>4 个 base shard × 22 = 88（base 88%）；code 8%；math 4%；总 100</td></tr>
+<tr><td><strong>GPU</strong></td><td><strong>6 卡 · GPU2-7</strong></td><td><code>CUDA_VISIBLE_DEVICES=2,3,4,5,6,7</code>（.29 上的 H100，data 名下）</td></tr>
+<tr><td><strong>并行策略</strong></td><td>TP1 / DP6</td><td>张量并行=1，数据并行=6（每卡一个 replica）</td></tr>
+<tr><td><strong>序列长度 seq</strong></td><td>4094</td><td>与既有基线对齐</td></tr>
+<tr><td><strong>微批 mb</strong></td><td>1</td><td>micro-batch-size=1</td></tr>
+<tr><td><strong>全局批 GBS</strong></td><td><strong>1020</strong></td><td>6×170=1020（DP6 要求 GBS 能被 6 整除）；<span class="warn">基线为 1024，因整除要求调为 1020，<strong>−0.4%</strong>，须标注可比性</span></td></tr>
+<tr><td><strong>训练步数</strong></td><td>5000</td><td>短地平线（代理实验，非全量训练）</td></tr>
+<tr><td><strong>精度</strong></td><td>bf16_mixed</td><td>bfloat16 混合精度</td></tr>
+<tr><td><strong>随机种子</strong></td><td>1234</td><td>可复现</td></tr>
+<tr><td><strong>学习率调度</strong></td><td>WSD</td><td>warmup=250 步（5%），<strong>decay=0</strong>（纯 Stable 段，不退火）</td></tr>
+<tr><td><strong>LR / Min-LR</strong></td><td>1e-3 / 1e-5</td><td>峰值 1×10⁻³，warmup 线性升至峰后保持</td></tr>
+<tr><td><strong>SAVE_INTERVAL</strong></td><td><span class="err">5000</span></td><td><strong>仅在末尾（step 5000）存一次 checkpoint，无中间 ckpt</strong></td></tr>
+<tr><td><strong>模型架构</strong></td><td>mamba2（Nemotron-H）</td><td>2.47B 参数（transformer layers）</td></tr>
+<tr><td><strong>脚本路径</strong></td><td><code>run/baize_mix_stable_s0a.sh</code></td><td>复制自 pretrain 既有脚本后改配比</td></tr>
+</table>
+</div>
+<div class="callout warn">
+<p><strong>⚠️ 可比性提示（须在最终报告中标注）：</strong>GBS 从基线的 1024 调为 1020（因 DP6 整除要求），差异仅 <strong>−0.4%</strong>。这对短跑代理实验的结论影响可忽略，但<strong>跨臂比较时所有臂必须统一用 GBS=1020</strong>，以保证横向可比。</p>
+</div>
+<h3>2.1 数据 Blend 的实际写法</h3>
+<p>Megatron 用<strong>扁平 weight/prefix</strong>格式指定混合权重（权重是相对值，内部归一化）：</p>
+<pre><span class="c"># 4 base shards × 22 = 88（base 88%）+ code 8 + math 4 → 总 100</span>
+BLEND=<span class="s">"22 ${DATA}/mix_base/mix_base_train_s0 \
+  22 ${DATA}/mix_base/mix_base_train_s1 \
+  22 ${DATA}/mix_base/mix_base_train_s2 \
+  22 ${DATA}/mix_base/mix_base_train_s3 \
+  8 ${DATA}/anneal_code \
+  4 ${DATA}/anneal_math2"</span></pre>
+<p class="mut">其中 <code>${DATA}</code> = <code>/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data</code>。base 分 4 个 shard（s0–s3），每个 ~5.5B tokens，合计 <strong>22.05B tokens</strong>。</p>
+
+<h2 id="s3">3. 为什么这么设计？</h2>
+<h3>3.1 搜索空间来自 §0.6-B 的两张表</h3>
+<div class="grid g2">
+<div class="card">
+<h4>Stable 段工作假设配比</h4>
+<table>
+<tr><th>源</th><th>占比</th><th>备注</th></tr>
+<tr><td>Ultra-FineWeb (base) + UltraX-Preview</td><td>~88%</td><td>web 主体</td></tr>
+<tr><td>UltraData-Code</td><td>~8%</td><td>StarCoder/The Stack 同级</td></tr>
+<tr><td>UltraData-Math</td><td>~4%</td><td>预训练格式数学</td></tr>
+</table>
+<p class="mut" style="font-size:12px">S0a 臂 = 此表的直接落地（base:code:math=88:8:4）。</p>
+</div>
+<div class="card">
+<h4>Decay 段工作假设配比</h4>
+<table>
+<tr><th>源</th><th>占比</th><th>备注</th></tr>
+<tr><td>SFT-2605 + SFT-Agent-2609（SFT-Mixed）</td><td>~64%</td><td>Xmodel-2 最优 60–69%</td></tr>
+<tr><td>Ultra-FineWeb-L3 + Code + Math</td><td>~36%</td><td>L3~24%/Code~8%/Math~4%</td></tr>
+</table>
+<p class="mut" style="font-size:12px">Decay 臂待 SFT 分词完成后启动。</p>
+</div>
+</div>
+<h3>3.2 两套代理指标（跑完每臂后评测）</h3>
+<table>
+<tr><th>段</th><th>指标套</th><th>lm_eval 任务</th><th>出处</th></tr>
+<tr><td><strong>Stable / 常识</strong></td><td>Table 2（8 个 + Avg）</td><td><code>arc_challenge</code> <code>arc_easy</code> <code>boolq</code> <code>hellaswag</code> <code>openbookqa</code> <code>piqa</code> <code>sciq</code> <code>winogrande</code></td><td><code>xmodel-2.tex:198,207</code></td></tr>
+<tr><td><strong>Decay / 复杂推理</strong></td><td>Table 3（6 个 + Avg）</td><td><code>gsm8k</code>(5-shot) <code>math</code>(4-shot) <code>bbh</code>(3-shot) <code>mmlu</code>(0-shot) <code>humaneval</code>(pass@1) <code>mbpp</code>(pass@1)</td><td><code>xmodel-2.tex:73,253,260</code></td></tr>
+</table>
+<div class="callout info">
+<p><strong>评测基建已就绪</strong>：P-6 阶段已把 <code>ckpt → HF → lm_eval</code> 管线打通（详见 <code>MEMORY_PRETRAIN_2B.md</code>）。脚本 <code>run/baize_mix_eval.sh &lt;arm&gt; [iter] [t2|t3|both]</code> 一键完成「转 HF + 跑 lm_eval」。Table 3 的 6 个任务 lm_eval 原生支持，HumanEval/MBPP 开代码执行开关即可，<strong>无需另起 bigcode-harness</strong>。</p>
+</div>
+<h3>3.3 为什么先跑 Stable 段、再跑 Decay 段？</h3>
+<p>WSD 的<strong>逻辑顺序</strong>是 Stable 在前、Decay 在后（先打基础再退火）。配比实验也遵循这个顺序：先把 Stable 段的 base/code/math 三轴搜好（用 Table 2 的 8 个常识集做代理），再搜 Decay 段的 SFT 占比与类别分布（用 Table 3 的 6 个复杂推理集做代理）。<strong>S0a 是 Stable 段的第一个点</strong>（基线配比 88:8:4），后续 Stable 臂会调 base 内部 shard 权重、code/math 比例做对比。</p>
+<h2 id="s4">4. 当前实时状态</h2>
+<p>以下数字<strong>全部从 <code>10.239.2.29</code> 上的实时训练日志读取</strong>（<code>tail /tmp/baize_mix_stable_s0a_train.log</code> + <code>nvidia-smi</code> + <code>ps</code>），非 MEMORY 里的旧值。读取时间：<strong>2026-10-05 23:27:01</strong>。</p>
+<div class="grid g2">
+<div class="kpi"><div class="lbl">当前步数</div><div class="val">650<span class="unit"> / 5000</span></div><div class="delta grn">13.0% 完成</div></div>
+<div class="kpi"><div class="lbl">已消耗样本</div><div class="val">663,000</div><div class="delta mut">≈ 2.72B tokens（×4094 seq）</div></div>
+<div class="kpi"><div class="lbl">当前 Loss</div><div class="val">3.49<span class="unit"> ↘</span></div><div class="delta grn">step 10: 10.84 → step 650: 3.49</div></div>
+<div class="kpi"><div class="lbl">学习率</div><div class="val">1.0e-3<span class="unit"> (峰值)</span></div><div class="delta mut">warmup=250 已完成，稳定保持</div></div>
+<div class="kpi"><div class="lbl">迭代速度</div><div class="val">~37.8<span class="unit"> s/iter</span></div><div class="delta mut">355 TFLOP/s/GPU</div></div>
+<div class="kpi"><div class="lbl">健康度</div><div class="val grn">✅ 正常</div><div class="delta grn">0 NaN · 0 skipped</div></div>
+</div>
+<h3>4.1 GPU 占用（.29 实时 nvidia-smi）</h3>
+<table>
+<tr><th class="num">GPU</th><th>归属</th><th class="num">利用率</th><th class="num">显存</th><th class="num">总显存</th></tr>
+<tr><td class="num">0</td><td>pretrain</td><td class="num">0 %</td><td class="num">0 MiB</td><td class="num">81559 MiB</td></tr>
+<tr><td class="num">1</td><td>pretrain</td><td class="num">0 %</td><td class="num">0 MiB</td><td class="num">81559 MiB</td></tr>
+<tr><td class="num">2</td><td><strong>data (S0a)</strong></td><td class="num">45 %</td><td class="num">39029 MiB</td><td class="num">81559 MiB</td></tr>
+<tr><td class="num">3</td><td><strong>data (S0a)</strong></td><td class="num">87 %</td><td class="num">39189 MiB</td><td class="num">81559 MiB</td></tr>
+<tr><td class="num">4</td><td><strong>data (S0a)</strong></td><td class="num">51 %</td><td class="num">39235 MiB</td><td class="num">81559 MiB</td></tr>
+<tr><td class="num">5</td><td><strong>data (S0a)</strong></td><td class="num">48 %</td><td class="num">39205 MiB</td><td class="num">81559 MiB</td></tr>
+<tr><td class="num">6</td><td><strong>data (S0a)</strong></td><td class="num">67 %</td><td class="num">39233 MiB</td><td class="num">81559 MiB</td></tr>
+<tr><td class="num">7</td><td><strong>data (S0a)</strong></td><td class="num">27 %</td><td class="num">38465 MiB</td><td class="num">81559 MiB</td></tr>
+</table>
+<p class="mut">GPU0-1 空闲（pretrain P-9.10 已完成）；GPU2-7 被 S0a 占用，6 个 worker 各 ~39 GB。GPU6/7 利用率略低（66-67%）属正常波动（数据加载/通信间隙）。</p>
+<h3>4.2 进程信息</h3>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>主进程 PID</td><td>2528081（<code>python -u pretrain_launcher.py --arch mamba2 --name mix_stable_s0a ...</code>）</td></tr>
+<tr><td>启动脚本</td><td><code>/tmp/restart_mix_stable_s0a.sh</code>（PID 2525272）</td></tr>
+<tr><td>已运行时长</td><td><strong>06:56:29</strong>（约 6 小时 56 分钟）</td></tr>
+<tr><td>实验目录</td><td><code>/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/mix_stable_s0a/</code></td></tr>
+<tr><td>Checkpoint 目录</td><td><code>.../mix_stable_s0a/checkpoints/</code> — <strong class="err">当前为空（无中间 ckpt）</strong></td></tr>
+<tr><td>TensorBoard 日志</td><td><code>.../mix_stable_s0a/tb_logs/</code></td></tr>
+</table>
+<div class="callout err">
+<p><strong>⚠️ 风险如实告知：SAVE_INTERVAL=5000，无中间 checkpoint。</strong></p>
+<p>这意味着：<strong>在 step 5000 训练结束之前，没有任何 checkpoint 可用</strong>。如果训练在 step 4000 时因故障（断电 / OOM / NFS 中断）崩溃，<strong>将丢失全部进度，需从 step 0 重跑</strong>。S0a 已在运行中无法动态修改 SAVE_INTERVAL（改脚本不影响已启动的进程）。<strong>建议运维知悉此风险</strong>；后续臂应把 SAVE_INTERVAL 调小（如 1000 或 500），以便中途可恢复。</p>
+</div>
+<h3>4.3 ETA 计算</h3>
+<div class="card">
+<pre><span class="c"># 实时计算（2026-10-05 23:27）</span>
+当前步数   = 650 / 5000
+剩余步数   = 5000 - 650 = <span class="n">4350</span> 步
+实测速度   = ~37.8 s/iter（最近 20 步平均）
+剩余时间   = 4350 × 37.8 = <span class="n">164,430 s ≈ 45.7 小时</span>
+ETA        = 2026-10-05 23:27 + 45.7h ≈ <span class="n">2026-10-07 21:00</span>
+
+总训练量   = 5000 步 × GBS 1020 × seq 4094 ≈ <span class="n">20.9 B tokens</span>
+总 GPU·时  = 6 GPU × 52 h = <span class="n">312 GPU·h</span></pre>
+</div>
+<h2 id="s5">5. Loss 下降曲线（实时）</h2>
+<p>下图由训练日志<strong>逐 10 步</strong>的实际 loss 值绘制（非拟合、非旧数据）。可以清楚看到 warmup 阶段（step 0–250）loss 快速下降，LR 达峰后（step 250+）进入稳定下降通道。</p>
+<div class="svgwrap">
+<svg viewBox="0 0 1000 460" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+<rect x="0" y="0" width="1000" height="460" fill="#11141c" rx="6"/>
+<line x1="70" y1="50" x2="70" y2="390" stroke="#2a2f3d" stroke-width="1"/>
+<line x1="70" y1="390" x2="970" y2="390" stroke="#2a2f3d" stroke-width="1"/>
+<text x="60" y="54" fill="#9aa0b0" font-size="11" text-anchor="end">11</text>
+<text x="60" y="140" fill="#9aa0b0" font-size="11" text-anchor="end">9</text>
+<text x="60" y="226" fill="#9aa0b0" font-size="11" text-anchor="end">7</text>
+<text x="60" y="312" fill="#9aa0b0" font-size="11" text-anchor="end">5</text>
+<text x="60" y="394" fill="#9aa0b0" font-size="11" text-anchor="end">3</text>
+<text x="30" y="220" fill="#9aa0b0" font-size="12" transform="rotate(-90 30 220)" text-anchor="middle">LM Loss</text>
+<text x="70" y="410" fill="#9aa0b0" font-size="11" text-anchor="middle">0</text>
+<text x="250" y="410" fill="#9aa0b0" font-size="11" text-anchor="middle">1000</text>
+<text x="430" y="410" fill="#9aa0b0" font-size="11" text-anchor="middle">2000</text>
+<text x="610" y="410" fill="#9aa0b0" font-size="11" text-anchor="middle">3000</text>
+<text x="790" y="410" fill="#9aa0b0" font-size="11" text-anchor="middle">4000</text>
+<text x="970" y="410" fill="#9aa0b0" font-size="11" text-anchor="middle">5000</text>
+<text x="520" y="438" fill="#9aa0b0" font-size="12" text-anchor="middle">Training Step</text>
+<line x1="70" y1="140" x2="970" y2="140" stroke="#1f232e" stroke-width="1" stroke-dasharray="3,4"/>
+<line x1="70" y1="226" x2="970" y2="226" stroke="#1f232e" stroke-width="1" stroke-dasharray="3,4"/>
+<line x1="70" y1="312" x2="970" y2="312" stroke="#1f232e" stroke-width="1" stroke-dasharray="3,4"/>
+<rect x="70" y="50" width="45" height="340" fill="#4fc3f7" opacity="0.06"/>
+<text x="92" y="65" fill="#4fc3f7" font-size="10" text-anchor="middle">warmup</text>
+<text x="92" y="78" fill="#4fc3f7" font-size="10" text-anchor="middle">250步</text>
+<line x1="187.0" y1="50" x2="187.0" y2="390" stroke="#ffb74d" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.7"/>
+<text x="187.0" y="45" fill="#ffb74d" font-size="10" text-anchor="middle">step 650 (当前)</text>
+<text x="960" y="45" fill="#ef5350" font-size="10" text-anchor="end">step 5000 (目标)</text>
+<polyline fill="none" stroke="#4fc3f7" stroke-width="2" stroke-linejoin="round"
+points="71.8,56.8 73.6,111.6 75.4,138.1 77.2,175.5 79.0,193.3 80.8,202.2 82.6,210.4 84.4,218.4 86.2,223.7 90.0,236.6 91.8,239.6 93.6,243.1 95.4,246.6 97.2,249.4 99.0,252.4 100.8,255.5 102.6,258.8 104.4,261.6 106.2,264.6 108.0,267.3 109.8,269.5 111.6,271.2 113.4,273.4 115.2,275.6 117.0,278.0 118.8,280.2 120.6,282.2 122.4,283.7 124.2,285.0 126.0,286.6 127.8,287.7 129.6,288.6 131.4,289.9 133.2,291.1 135.0,292.0 136.8,292.8 138.6,293.7 140.4,294.2 142.2,294.9 144.0,295.4 145.8,296.1 147.6,296.5 149.4,297.2 151.2,297.5 153.0,297.9 154.8,298.3 156.6,298.7 158.4,299.1 160.2,299.3 162.0,299.7 163.8,300.0 165.6,300.3 167.4,300.6 169.2,300.9 171.0,301.2 172.8,301.5 174.4,301.8 176.2,302.0 178.0,302.2 179.8,302.7 181.6,302.7 183.4,303.3 185.2,303.5 187.0,303.7"/>
+<circle cx="71.8" cy="56.8" r="3" fill="#66bb6a"/>
+<text x="78" y="60" fill="#66bb6a" font-size="10">10.84 (step10)</text>
+<circle cx="115.2" cy="275.6" r="3" fill="#4fc3f7"/>
+<text x="120" y="270" fill="#4fc3f7" font-size="10">4.93 (step250, LR达峰)</text>
+<circle cx="187.0" cy="303.7" r="4" fill="#ffb74d" stroke="#fff" stroke-width="1"/>
+<text x="193" y="300" fill="#ffb74d" font-size="11" font-weight="bold">3.49 (step650, 当前)</text>
+<polyline fill="none" stroke="#66bb6a" stroke-width="1.5" stroke-dasharray="5,5" opacity="0.6"
+points="187.0,303.7 250,323 430,345 610,360 790,370 970,378"/>
+<text x="850" y="365" fill="#66bb6a" font-size="10" opacity="0.8">趋势外推（非实测）</text>
+</svg>
+<div class="legend">
+<span><i style="background:#4fc3f7"></i>实测 Loss</span>
+<span><i style="background:#66bb6a"></i>趋势外推（仅供参考）</span>
+<span><i style="background:#ffb74d"></i>当前进度</span>
+<span><i style="background:#4fc3f7;opacity:.3"></i>warmup 区间（step 0–250）</span>
+</div>
+</div>
+<h4>关键 Loss 里程碑（实测值）</h4>
+<table>
+<tr><th class="num">Step</th><th class="num">Loss</th><th class="num">LR</th><th>阶段</th></tr>
+<tr><td class="num">10</td><td class="num">10.84</td><td class="num">4.0e-5</td><td>warmup 起步</td></tr>
+<tr><td class="num">50</td><td class="num">7.42</td><td class="num">2.0e-4</td><td>warmup 中段</td></tr>
+<tr><td class="num">100</td><td class="num">~6.5</td><td class="num">4.0e-4</td><td>warmup 中段</td></tr>
+<tr><td class="num">250</td><td class="num">4.93</td><td class="num">1.0e-3</td><td><strong>LR 达峰，warmup 结束</strong></td></tr>
+<tr><td class="num">300</td><td class="num">4.56</td><td class="num">1.0e-3</td><td>Stable 稳定段</td></tr>
+<tr><td class="num">400</td><td class="num">4.03</td><td class="num">1.0e-3</td><td>Stable 稳定段</td></tr>
+<tr><td class="num">500</td><td class="num">3.75</td><td class="num">1.0e-3</td><td>Stable 稳定段</td></tr>
+<tr><td class="num">600</td><td class="num">3.57</td><td class="num">1.0e-3</td><td>Stable 稳定段</td></tr>
+<tr><td class="num"><strong>650</strong></td><td class="num"><strong>3.49</strong></td><td class="num">1.0e-3</td><td><strong>当前（稳定下降中）</strong></td></tr>
+</table>
+<p class="mut">Loss 从 10.84 降至 3.49，<strong>累计降幅 67.8%</strong>；warmup 结束后（step 250+）LR 恒定 1.0e-3，loss 以 ~0.003/step 的速率平稳线性下降，<strong>无异常跳变、无 NaN、无 skip</strong>。</p>
+<h2 id="s6">6. 下一步</h2>
+<div class="tl">
+<div class="ev cur"><div class="when">当前（2026-10-05 23:27）</div><div class="what">🚀 S0a 臂训练中：step 650/5000，loss 3.49↓，健康</div></div>
+<div class="ev"><div class="when">预计 ~2026-10-07 21:00</div><div class="what">⏳ S0a 跑满 5000 步 → 自动存 checkpoint（<code>iter_0005000/</code>）</div></div>
+<div class="ev"><div class="when">S0a 完成后（~30 min）</div><div class="what">🔄 checkpoint → 转 HF 格式（<code>baize_p6_ckpt_to_hf.py</code>，Nemotron-H）</div></div>
+<div class="ev"><div class="when">转 HF 后（~1–2 h）</div><div class="what">📊 跑 lm_eval Table 2（8 个常识集）：ARC-C / ARC-E / BoolQ / HellaSwag / OpenBookQA / PiQA / SciQ / Winogrande</div></div>
+<div class="ev"><div class="when">评测后</div><div class="what">📝 把实测分数填入 <code>run/DATA_MIX_RECIPE.md</code> 的 S0a 行（配比 + loss + 8 集分项 + Avg）</div></div>
+<div class="ev"><div class="when">并行（已在进行）</div><div class="what">🔄 SFT-Agent-2609 分词完成（s1 进行中）→ Decay 段全料就绪 → 启动 Decay 臂（SFT 占比 55/60/64/69/72% 搜索）</div></div>
+<div class="ev"><div class="when">所有臂完成后</div><div class="what">📋 汇总各臂实测指标 → 选出 Stable/Decay 两段最优配比 → 定稿 P-8 投料配方</div></div>
+</div>
+<h3>6.1 评测命令（已备）</h3>
+<pre><span class="c"># S0a 训练完后一键评测 Table 2（8 个常识集）</span>
+bash run/baize_mix_eval.sh mix_stable_s0a 5000 t2
+
+<span class="c"># 流程：ckpt(.distcp) → baize_p6_ckpt_to_hf.py(转HF) → lm_eval(8集)</span>
+<span class="c"># 输出：nemo_experiments/mix_stable_s0a/lm_eval_results/</span></pre>
+<h3>6.2 数据就绪状态（Decay 段备料）</h3>
+<table>
+<tr><th>源</th><th>分词状态</th><th class="num">Token 数</th><th>用途</th></tr>
+<tr><td>Ultra-FineWeb (base) en · 4 shard</td><td>✅ 完成</td><td class="num">22.05 B</td><td>Stable 主体（S0a 已用）</td></tr>
+<tr><td>UltraData-Code (anneal)</td><td>✅ 已有</td><td class="num">~180 M</td><td>Stable/Decay code</td></tr>
+<tr><td>UltraData-Math (anneal)</td><td>✅ 已有</td><td class="num">~860 M</td><td>Stable/Decay math</td></tr>
+<tr><td>UltraData-SFT-2605 · 全 4 shard</td><td>✅ 完成</td><td class="num">20.97 B</td><td>Decay SFT-Mixed</td></tr>
+<tr><td>UltraData-SFT-Agent-2609</td><td>🔄 3/4 完成（s1 进行中）</td><td class="num">~? B</td><td>Decay SFT-Mixed</td></tr>
+</table>
+<p class="mut">Decay 段最后一项 SFT-Agent-2609 的 s1 shard 正在分词（<code>.bin</code> 12.9G 增长中），完成后即可启动 Decay 臂。</p>
+
+<h2 id="s7">7. 它最终服务于什么？</h2>
+<div class="card hl">
+<p style="font-size:17px"><strong>Stable S0a 配比实验最终服务于 P-8（正式预训练）的投料配比 —— 即论文 Stage (i) 的配方依据。</strong></p>
+</div>
+<p>BaiZe 论文规划了三个阶段：</p>
+<table>
+<tr><th>Stage</th><th>是什么</th><th>数据配比实验的角色</th></tr>
+<tr><td><strong>Stage (i)</strong></td><td>LLM 主体预训练（WSD）</td><td><strong>配比实验直接服务于此</strong> —— 搜出的 Stable/Decay 配比 = P-8 的投料配方</td></tr>
+<tr><td>Stage (ii)</td><td>领域适配（本季度留白）</td><td>—（10 月不涉及）</td></tr>
+<tr><td>Stage (iii)</td><td>多模态视觉编码器</td><td>—（独立线，由 vision agent 负责）</td></tr>
+</table>
+<div class="callout key">
+<p><strong>核心逻辑链：</strong></p>
+<p><strong>小模型短跑代理实验</strong>（S0a 等，2.47B / 5000 步 / 6 卡）→ <strong>两套代理指标实测</strong>（Table 2 常识 8 集 + Table 3 推理 6 集）→ <strong>选出最优配比</strong>（Stable 的 base:code:math + Decay 的 SFT 占比/类别分布）→ <strong>定稿 P-8 投料配方</strong>（写入 <code>DATA_MIX_RECIPE.md</code>）→ <strong>P-8 正式预训练</strong>（8 卡全量，Stage (i) 主体）→ <strong>论文 Stage (i) 的实验依据</strong>（“我们用 Xmodel-2 的配比搜索方法，在小规模上搜出 XX 配比，迁移到正式训练”）</p>
+</div>
+<p>这套方法论的<strong>法理依据</strong>是 Xmodel-2 引用的 Data Mixing Laws（<code>ye2024datamixinglaws</code>）：<strong>「小模型上的配比实验可以有效迁移到更大模型」</strong> —— 所以我们可以在 2.47B / 5000 步的小规模上搜配比，而不必在 P-8 的全量训练上试错，大幅节省算力。</p>
+<h2 id="s8">8. 附录：原始命令与输出取证</h2>
+<h3>8.1 训练脚本（<code>run/baize_mix_stable_s0a.sh</code>）</h3>
+<pre><span class="k">#!/bin/bash</span>
+<span class="c"># BaiZe 数据配比实验（§0.6-B）— Stable 段 S0a 臂：base:code:math = 88:8:4</span>
+<span class="c"># 口径：6 卡 · TP1/DP6 · seq=4094 · mb=1 · GBS=1020 · 5000 步 · bf16_mixed</span>
+<span class="c"># GPU：CUDA_VISIBLE_DEVICES=2,3,4,5,6,7（GPU2-7，data 名下）</span>
+<span class="k">set</span> -uo pipefail
+BASE=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
+PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin
+<span class="k">export</span> CUDA_VISIBLE_DEVICES=<span class="s">2,3,4,5,6,7</span>
+NAME=<span class="s">"mix_stable_s0a"</span>
+ITERS=<span class="n">5000</span>  WARMUP=<span class="n">250</span>  DECAY=<span class="n">0</span>  LR=<span class="s">"1e-3"</span>  MIN_LR=<span class="s">"1e-5"</span>
+SAVE_INTERVAL=<span class="n">5000</span>  SEQ=<span class="n">4094</span>  GBS=<span class="n">1020</span>  MBS=<span class="n">1</span>  TP=<span class="n">1</span>  NP=<span class="n">6</span>
+<span class="c"># 数据 blend：4 base shards × 22 = 88 + code 8 + math 4</span>
+DATA=<span class="s">"$BASE/data"</span>
+BLEND=<span class="s">"22 $DATA/mix_base/mix_base_train_s0 22 $DATA/mix_base/mix_base_train_s1 "</span>\
+<span class="s">"22 $DATA/mix_base/mix_base_train_s2 22 $DATA/mix_base/mix_base_train_s3 "</span>\
+<span class="s">"8 $DATA/anneal_code 4 $DATA/anneal_math2"</span>
+<span class="s">"$PY/torchrun"</span> --nnodes=1 --nproc_per_node=<span class="s">"$NP"</span> \
+    --master_addr=127.0.0.1 --master_port=<span class="s">29950</span> \
+    pretrain_launcher.py --arch mamba2 --name <span class="s">"$NAME"</span> \
+    --train-iters <span class="s">"$ITERS"</span> --global-batch-size <span class="s">"$GBS"</span> --seq-length <span class="s">"$SEQ"</span> \
+    --save-interval <span class="s">"$SAVE_INTERVAL"</span> --lr <span class="s">"$LR"</span> --min-lr <span class="s">"$MIN_LR"</span> \
+    --lr-warmup-iters <span class="s">"$WARMUP"</span> --lr-decay-iters <span class="s">"$DECAY"</span> --lr-decay-style WSD \
+    --seed <span class="n">1234</span> --precision bf16_mixed</pre>
+<h3>8.2 实时训练日志（最近 5 行，<code>tail /tmp/baize_mix_stable_s0a_train.log</code>）</h3>
+<pre><span class="c"># 读取时间 2026-10-05 23:27，从 10.239.2.29 实时获取</span>
+Step Time : 38.03s GPU utilization: 351.4TFLOP/s/GPU
+ [2026-10-05 23:01:44] iteration      610/    5000 | consumed samples: 622200 | elapsed time per iteration (ms): 37476.8 | learning rate: 1.000000E-03 | global batch size: 1020 | lm loss: 3.539740E+00 | grad norm: 0.310 | skipped: 0 | nan: 0 |
+Step Time : 38.47s GPU utilization: 347.4TFLOP/s/GPU
+ [2026-10-05 23:08:09] iteration      620/    5000 | consumed samples: 632400 | elapsed time per iteration (ms): 38471.5 | lm loss: 3.542184E+00 | grad norm: 0.278 | skipped: 0 | nan: 0 |
+Step Time : 37.79s GPU utilization: 353.7TFLOP/s/GPU
+ [2026-10-05 23:14:29] iteration      630/    5000 | consumed samples: 642600 | lm loss: 3.513072E+00 | grad norm: 0.204 | skipped: 0 | nan: 0 |
+Step Time : 37.38s GPU utilization: 357.5TFLOP/s/GPU
+ [2026-10-05 23:20:47] iteration      640/    5000 | consumed samples: 652800 | lm loss: 3.499746E+00 | grad norm: 0.455 | skipped: 0 | nan: 0 |
+Step Time : 37.38s GPU utilization: 357.5TFLOP/s/GPU
+ [2026-10-05 23:27:01] iteration      650/    5000 | consumed samples: 663000 | elapsed time per iteration (ms): 37383.8 | learning rate: 1.000000E-03 | global batch size: 1020 | lm loss: 3.491409E+00 | grad norm: 0.229 | skipped: 0 | nan: 0 |</pre>
+<h3>8.3 GPU 核验（<code>nvidia-smi --query-compute-apps</code>）</h3>
+<pre>pid, process_name, used_gpu_memory [MiB]
+2528081, /nas_train/.../py310/bin/python, 39020 MiB
+2528083, /nas_train/.../py310/bin/python, 39180 MiB
+2528084, /nas_train/.../py310/bin/python, 39226 MiB
+2528085, /nas_train/.../py310/bin/python, 39196 MiB
+2528088, /nas_train/.../py310/bin/python, 39224 MiB
+2528090, /nas_train/.../py310/bin/python, 38456 MiB
+<span class="c"># 6 个 worker 进程（DP6），各 ~39 GB，全部在 GPU2-7 上</span></pre>
+<h3>8.4 数据来源说明</h3>
+<table>
+<tr><th>数据来源</th><th>路径</th><th>用途</th></tr>
+<tr><td>任务书 §0.6-B</td><td><code>BAIZE_DATA_TASK.md</code></td><td>实验设计依据</td></tr>
+<tr><td>配方文档</td><td><code>run/DATA_MIX_RECIPE.md</code></td><td>工作假设配比表 + 代理指标</td></tr>
+<tr><td>训练脚本</td><td><code>run/baize_mix_stable_s0a.sh</code></td><td>S0a 臂的实际启动参数</td></tr>
+<tr><td>评测脚本</td><td><code>run/baize_mix_eval.sh</code></td><td>ckpt→HF→lm_eval 一键评测</td></tr>
+<tr><td>训练日志（实时）</td><td><code>10.239.2.29:/tmp/baize_mix_stable_s0a_train.log</code></td><td>实时 step/loss/健康度</td></tr>
+<tr><td>Xmodel-2 论文</td><td><code>doc/BaiZe-ISEDA2027/Xmodel-2/xmodel-2.tex</code></td><td>配比搜索方法论依据</td></tr>
+<tr><td>GPU 分配账本</td><td><code>run/GPU29_ALLOC.md</code></td><td>pretrain⇄data 卡协调</td></tr>
+<tr><td>运行时状态</td><td><code>run/MEMORY_DATA.md</code></td><td>进度快照 + 流水</td></tr>
+</table>
+<footer>
+<p><strong>报告生成：</strong>2026-10-05（data agent 唤醒，纯 CPU/写作，不占 GPU、不干扰 S0a 训练）</p>
+<p><strong>自包含声明：</strong>本 HTML 无任何外部 CDN / 资源依赖，可离线打开。图表为内联 SVG。</p>
+<p><strong>数据时效：</strong>训练状态数字为 2026-10-05 23:27 的实时快照，会随训练推进持续变化。如需最新值，运行 <code>ssh 10.239.2.29 'tail -5 /tmp/baize_mix_stable_s0a_train.log'</code>。</p>
+<p>🚫 本报告未涉及任何领域化（EDA/领域语料）相关内容 —— 遵循运维 10 月硬规矩。</p>
+</footer>
+</div>
+</body>
+</html>
