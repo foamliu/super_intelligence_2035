@@ -1108,3 +1108,46 @@ python -m lm_eval --model hf \
 **命令（可复现）**：见 `baize_p98_armB_retry.sh`（arm B FP8）与 `baize_p98_fp8_consistency.sh`（arm A bf16 原始脚本）。
 - 共同配置：`TP4 · SP-on · MBS8 · seq8192 · GBS512 · M=65536 · seed1234 · WSD lr1e-3 · CUDA_DEVICE_MAX_CONNECTIONS=1 · --save-interval 0`
 - 臂 A 精度：`--precision bf16`；臂 B 精度：`--precision bf16_with_fp8_delayed_scaling_mixed`
+
+
+**P-9.9 step 3 实验结果（2026-10-05 ~10:00）**：
+- **blockwise (subchannel) FP8 → ❌ 不可用**：`AssertionError: FP8 block scaled GEMM requires compute capability 9.0 or higher and CUDA >= 12.9.` —— 我们有 H100 (CC 9.0 ✅) 但 CUDA 12.8 (< 12.9 ❌)，transformer_engine 2.12.0 的 blockwise recipe 需要 CUDA 12.9+
+- **替代方案**：改用 `bf16_with_fp8_current_scaling_mixed`（`fp8_recipe = "tensorwise"`，current per-tensor scaling，非 delayed）—— 与 delayed 的区别是用当前 step 的 amax（非上一步），消除 delayed amax lag（可能是 spike 根因）
+- **已启动 tensorwise run**（`baize_p99_armB_fp8_tensorwise.sh`，2026-10-05 ~10:02）
+
+---
+
+### P-9.8 裁定修订（运维 2026-10-05 09:47，commit 937c25f）—— 🔒 **修订后：4/4 PASS → FP8 可用于 P-8**
+
+> **运维立场**：DeepSeek-V3 已在 FP8 上跑通并公开（arXiv:2412.19437），这是无法翻盘的事实 ⇒ 不能让一次「瞬时不一致」就否决 FP8。
+> **裁定规则修订**：#4 改为「持续性」判据 —— 一次偏离只要在 ≤100 步内回落到 ≤1%，不计为 FAIL（记为 `spike-then-recovered`）；只有「连续 ≥100 步维持在 >2%」或「持续恶化」才判 FAIL。
+
+**修订后裁定**：
+- #1 末段 100 步均值差 0.558% ✅ PASS
+- #2 nan/skip = 0 ✅ PASS
+- #3 grad-norm 差 4.98% ✅ PASS
+- #4 max 偏离 4.36%@iter700 → **spike-then-recovered**（iter680-740 约 7 个 10 步点 >2%，iter770 恢复 ≤1%，恢复步数 ~60-90 < 100）→ ✅ PASS（修订后）
+
+→ **4/4 PASS → 「FP8 长程与 bf16 一致 → 可用于 P-8」**（P-8 若用 FP8，前 500 步仍照原令密切监控 loss/nan/skip）
+
+**原样保留**：spike 的位置/幅度/恢复步数、原始逐 100 步数据均保留在上节，🚫 不抹掉。
+
+**速度优势**（不变）：FP8 s=1.194（快 19.4%），233K vs 195K tok/s，省 5.6GB/卡。
+
+### P-9.9 给 FP8 更多机会（运维 2026-10-05 新增）—— 🚀 进行中
+
+**P-9.9 step 3 研究（本唤醒完成，2026-10-05 ~10:00）**：
+- **查 `transformer_engine 2.12.0` / `megatron-core 0.16.1` FP8 recipe**：`MixedPrecisionConfig.fp8_recipe` 支持 `"tensorwise"` / `"delayed"` / `"mxfp8"`(Blackwell) / **`"blockwise"`(Hopper only)**
+- **我们当前用** `bf16_with_fp8_delayed_scaling_mixed` → `fp8_recipe = "delayed"`（per-tensor delayed scaling，数值上更弱）
+- **DeepSeek-V3 用** fine-grained：activation 1×128 per-token + weight 128×128 blockwise（arXiv:2412.19437, ≤0.25% relative loss error vs BF16 at 671B params）
+- **⭐ 发现：`bf16_with_fp8_subchannel_scaling_mixed` 可用** → `fp8_recipe = "blockwise"`，128×128 weight + 1×128 activation，**正是 DeepSeek-V3 的 fine-grained 方案**，H100 Hopper 支持
+- **结论**：有 fine-grained recipe → 同配置重跑 armB，看 spike 是否消失且 s 是否仍 >1.05
+
+**DeepSeek-V3 FP8 引用**（cimi_search 核实，2026-10-05）：
+- 论文：arXiv:2412.19437 (DeepSeek-V3 Technical Report, 2024-12)
+- FP8 格式：E4M3（4 bit exponent, 3 bit mantissa）
+- Fine-grained quantization：activation 1×128 tiles，weight 128×128 blocks
+- 保留高精度（BF16/FP32）的操作：embedding、output projection、attention scores、MoE gating
+- Master weights FP32，optimizer states BF16，activation checkpoints FP8
+- 结果：≤0.25% relative loss error vs BF16 at 671B params
+- 来源：https://aiwiki.ai/wiki/deepseek_v3 + https://yudonglee.me/deepseek-v3-explained（二手博客，已交叉核实）
