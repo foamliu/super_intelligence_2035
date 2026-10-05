@@ -1279,7 +1279,7 @@ KV bytes/token = 2 × n_layers × n_kv_heads × d_head × dtype_bytes
 
 > P-9.9 已到 iter 590（59%），spike 区（660+）尚未到达。比较**前 590 步**确认三者轨迹一致（验证唯一变量是 FP8 recipe）。**本表 2026-10-05 ~13:10 第 104 次唤醒扩到 iter 590**（前 480 步见上一唤醒）。
 >
-> ⚠️ **口径说明（2026-10-05 第 104 次唤醒核实）**：原 P-9.8 armB（delayed FP8, **seed 1234**）**启动即崩**（rc=1, 04:39:22, rank 2 exitcode 1, 无 iteration 数据）→ Table A/B 的 delayed 列实为 **P-9.9 step 1 retry（seed 4321）**数据。bf16 与 tensorwise 均为 **seed 1234**。⇒ delayed vs bf16 **混入 seed 差异**，但 **tensorwise vs bf16 是同 seed 纯精度对比**（干净）。seed 1234 delayed 数据缺失（crash），无法做严格的 seed 复现对比。
+> ✅ **口径说明（2026-10-05 第 105 次唤醒更正）**：**三臂均为 seed 1234**（从三份日志各自 `seed: 1234` 行确认）。第 104 次唤醒写的「delayed 列实为 seed 4321 retry」**是错的**——`baize_p98_armB_retry.sh:57` 明确 `--seed 1234`，日志也打印 `seed: 1234`。原 P-9.8 armB（delayed, seed 1234）首次启动因 harness agent 污染 py310 env（sympy ImportError）而 rc=1 → retry 脚本**仍用 seed 1234**（非换 seed）。⇒ **三方对比全部同 seed 1234、同数据顺序、同配置——唯一变量是 FP8 recipe（bf16 vs delayed vs tensorwise/current）**，**干净可比**。
 
 | iter | bf16 | delayed FP8 | tensorwise FP8 | d−bf16% | t−bf16% | t−d% |
 |----:|-----:|-----------:|--------------:|--------:|--------:|-----:|
@@ -1311,7 +1311,32 @@ KV bytes/token = 2 × n_layers × n_kv_heads × d_head × dtype_bytes
 - **三方前 590 步轨迹高度一致**（max |rel diff| ≤ **1.49%**），确认唯一变量是 FP8 recipe（delayed vs current/tensorwise scaling）。
 - ⚠️ **delayed bias 在 iter 510–580 段持续扩大**：iter 510=+1.45% · 540=+1.02% · 550=+1.08% · **560=+1.49%** · 580=+1.39% —— **5 个点超 1%，且全部为正（系统性高偏）**，**均在 spike 区 660–780 之前**。这暗示 **delayed 的 amax lag 在训练中段（loss 下降加速区）开始累积数值偏差**，为后续 spike 预埋了趋势。
 - **tensorwise vs bf16**（|t−bf16%| max = **0.91%** @ iter 510）**始终低于 delayed vs bf16**（|d−bf16%| max = **1.49%** @ iter 560）——**tensorwise 在数值保真度上优于 delayed**（前 590 步全程），且 **tensorwise 在 iter 490–590 段多次出现负偏差**（更接近甚至低于 bf16），说明 **current scaling 的 amax 实时性消除了 delayed 的系统性正偏**。
-- ⏳ **关键检验 T1 待定**：spike 区（iter 660–780）需 P-9.9 到达（ETA ~14:00–14:30）；若 tensorwise 在该区 **|rel diff| ≤ 1%**（无 spike）→ 判「**delayed amax lag 是 spike 根因，current scaling 消除之**」；若 **spike 复现** → 判「**spike 非 amax lag 所致，是 FP8 per-tensor 口径的固有现象**」。
+- ⏳ **关键检验 T1 待定**：spike 区（iter 660–780）需 P-9.9 到达（ETA ~14:00–14:30）；若 tensorwise 在该区 **|rel diff| ≤ 1%**（无 spike）→ 判「**delayed amax lag 是 spike 根因，current scaling 消除之**」；若 **spike 复现** → 判「**spike 非 amax lag 所致，是 FP8 per-tensor 口径的固有现象****」。
+
+#### B2. 三方 spike 区对比（iter 660–740）—— ⚠️ tensorwise spike **复现且更大**（2026-10-05 ~13:55，第 105 次唤醒）
+
+> P-9.9 已到 iter 740/1000（74%），spike 区（660–780）数据已覆盖 660–740（9 个点）。**三臂均为 seed 1234（口径已更正，见上方），对比干净**。
+
+| iter | bf16 | delayed FP8 | tensorwise FP8 | d−bf16% | t−bf16% | t−d% |
+|----:|-----:|-----------:|--------------:|--------:|--------:|-----:|
+| 660 | 3.204 | 3.256 | 3.224 | +1.62% | +0.64% | −0.97% |
+| 670 | 3.160 | 3.219 | 3.216 | +1.86% | +1.77% | −0.09% |
+| 680 | 3.114 | 3.189 | 3.168 | +2.39% | +1.72% | −0.66% |
+| 690 | 3.049 | 3.180 | 3.152 | +4.31% | +3.38% | −0.89% |
+| 700 | 2.988 | 3.118 | 3.131 | +4.36% | **+4.81%** | +0.42% |
+| 710 | 2.938 | 3.088 | 3.105 | **+5.11%** | **+5.67%** | +0.54% |
+| 720 | 2.905 | 3.018 | 3.095 | +3.89% | **+6.54%** | +2.56% |
+| 730 | 2.870 | 2.956 | 3.088 | +3.02% | **+7.59%** | +4.43% |
+| 740 | 2.847 | 2.906 | 3.033 | +2.10% | **+6.55%** | +4.36% |
+
+**关键发现**：
+1. ⚠️ **tensorwise spike 复现且比 delayed 更大**：tensorwise 峰值 **+7.59%@iter730**（仍在上升至 730，740=+6.55% 刚开始回落），而 delayed 峰值 **+5.11%@iter710**（740 已回落到 +2.10%）。
+2. **tensorwise 峰值更晚、更高、回落更慢**：delayed 从峰（710）到 +2%@740 约 30 步；tensorwise 从峰（730）到 +6.55%@740 仅 10 步，**尚未确认回落到 ≤1%**。
+3. **spike 不是 amax lag 所致**（T1 判定）：两种 per-tensor FP8 recipe（delayed/current）**都出现 spike**，只是峰值/时序不同 → **spike 是 per-tensor FP8 在本模型/本口径下的固有现象**，非 delayed amax lag 独有。
+4. **前段（510–580）tensorwise 优于 delayed 的结论反转**：在 spike 区，tensorwise 偏差**全面超过 delayed**（iter 720+ 起 t−d% 由负转正且持续扩大：720=+2.56% → 740=+4.36%）。
+5. **grad-norm 三方稳定**（0.26–0.76，无发散信号）；nan=0/skip=0 全程 ✅。
+
+> ⏳ **T1 判定**：按预注册判据「spike 区 |rel diff| ≤ 1%」→ **T1 FAIL**（tensorwise max 7.59% >> 1%）。按 P-9.8 运维修订「spike-then-recovered（≤100 步内回落到 ≤1%）」→ **pending**：需看 iter 780–830 是否回落到 ≤1%（delayed 在峰后 ~60 步回落到 ≤1%@770；tensorwise 峰更晚更大，回落可能需到 ~800+）。
 
 #### C. 速度对比（三种精度，TP4·SP·MBS8·seq8192·M=65536·MAX_CONN=1）
 
@@ -1328,7 +1353,7 @@ KV bytes/token = 2 × n_layers × n_kv_heads × d_head × dtype_bytes
 
 | # | 检验项 | 判据 | 状态 |
 |:--|:--|:--|:--|
-| **T1** | tensorwise 在 spike 区（660–780）\|rel diff vs bf16\| 最大值 | **≤ 1%** → spike 消除 | ⏳ 待 P-9.9 到 660+（~13:30） |
+| **T1** | tensorwise 在 spike 区（660–780）\|rel diff vs bf16\| 最大值 | **≤ 1%** → spike 消除 | ⚠️ **FAIL（严格判据）**：max 7.59%@730；spike-then-recovered 判定 **pending**（待 780–830 回落确认） |
 | **T2** | tensorwise 全程 nan/skip | **= 0** | ✅ 已确认（iter 480，全程 0） |
 | **T3** | tensorwise s (vs bf16) | **> 1.05** → 仍有加速收益 | ✅ 已确认 s=1.158 > 1.05 |
 | **T4** | tensorwise 末段 loss vs delayed 末段 loss 相对差 | **≤ 1%** → 收敛一致 | ⏳ 待 P-9.9 到 1000（~15:12） |
@@ -1342,3 +1367,14 @@ KV bytes/token = 2 × n_layers × n_kv_heads × d_head × dtype_bytes
 - 速度：tensorwise s=1.158（+15.8%），略慢于 delayed s=1.194（+19.4%）但仍 >1.05（T3 ✅）；nan/skip=0（T2 ✅ @ iter 590）。
 - **关键检验 T1（spike 区 660–780）待 ~14:00**；T4（末段收敛）待 ~15:15。
 - **下一步**：30min 轮询 → P-9.9 到 iter 660 后提取 spike 区数据判 T1 → P-9.9 完成(~15:15)判 T4 → 合成 P-9.9 结论 → 释放 8 卡 → P-9.10 实测 + data 配比。
+
+#### 本唤醒小结（2026-10-05 ~13:55，第 105 次唤醒，CPU-only spike 区三方对比 + 口径更正）
+- P-9.9 健康 @iter **740/1000（74%）**（13:54:50）：loss 11.18→3.03 健康下降，grad-norm 0.34–0.66，**nan=0/skip=0 全程 ✅**，s/iter≈18.57s（226K tok/s），TFLOP≈621，peak 72684 MiB，8 worker PID 4044610–17 单实例无争用。ETA (1000−740)×18.57s≈1.3h→**~15:15**。
+- ✅ **口径更正（重要）**：第 104 次唤醒写的「delayed 列实为 seed 4321 retry」**是错的**——从 `baize_p98_armB_retry.sh:57`（`--seed 1234`）和三份日志各自的 `seed: 1234` 行确认：**三臂均为 seed 1234**。retry 脚本**没有换 seed**（原 armB 首次崩因是 sympy ImportError，非 seed 问题）。⇒ **三方对比全部同 seed、同数据、同配置，唯一变量是 FP8 recipe**，干净可比。已更正 EXPERIMENTS 表 B 口径说明（line 1282）。
+- ⚠️ **spike 区三方对比（表 B2，iter 660–740）—— tensorwise spike 复现且更大**：
+  - delayed 峰值 **+5.11%@iter710**，740 已回落到 +2.10%，770 回落到 +0.86%（spike-then-recovered ✅）。
+  - tensorwise 峰值 **+7.59%@iter730**（比 delayed 晚 20 步、高 2.48 个点），740=+6.55% **尚未确认回落到 ≤1%**。
+  - **前段（510–580）tensorwise 优于 delayed 的结论在 spike 区反转**：iter 720+ 起 t−d% 由负转正并持续扩大（720=+2.56% → 740=+4.36%）。
+  - **结论**：spike 不是 delayed amax lag 独有——**两种 per-tensor FP8 recipe 都出现 spike**，是 per-tensor FP8 在本模型/本口径下的固有现象。
+- **判定状态**：T2(nan=0)✅ · T3(s=1.158>1.05)✅ · **T1 严格判据 FAIL（max 7.59% >> 1%），spike-then-recovered 判定 pending（待 780–830）** · T4(末段收敛) ⏳ 待 ~15:15。
+- **下一步**：30min 轮询 → P-9.9 到 iter 800+ 提取回落数据判 spike-then-recovered → P-9.9 完成(~15:15)判 T4 → 合成 P-9.9 结论（若 T1 spike-then-recovered + T4 过 → tensorwise 仍可推荐；若持续不回落 → P-8 沿用 delayed 已 4/4 PASS）→ 释放 8 卡 → P-9.10 实测 + data 配比。
