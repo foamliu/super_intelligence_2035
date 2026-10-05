@@ -1243,6 +1243,72 @@ KV bytes/token = 2 × n_layers × n_kv_heads × d_head × dtype_bytes
 - **P-9.10 ① 预研完成**：sglang ❌ 不可装（网络不可达，确切报错已记）→ fallback mcore+CUDA-graph；S3 原始 ckpt ❌ 已丢失 → 替代 p3_dense/p3_hybrid iter_0005000（⚠️ 需标注口径切换，待运维确认）；文献两口径 ✅ 已核实（Nemotron-H 1.8–6× 长上下文 decode + KV 公式 2×n_layers×n_kv_heads×d_head×dtype_bytes）。
 - **下一步**：① 等 P-9.9 ~15:13 释放 GPU0–1 → ② 启 P-9.10 实测矩阵（p3_dense vs p3_hybrid，context∈{4K,16K,64K,128K}，batch∈{1,8}，mcore+CUDA-graph 栈，每格≥3 次取中位 + 方差 + 缓存/状态字节增长曲线）→ ③ 按 H1–H4 预注册判据裁定。data 同步可拿 GPU2–7 跑配比。
 
+### P-9.9 收官 + P-9.10 ① sglang A/B 代理复测 + ckpt 核验（2026-10-05 ~15:16，第 107 次唤醒，CPU/网络 only）
+
+> 运维 2026-10-05 更正后指令：① 替代 ckpt ✅ 批准 `p3_dense/iter_0005000`+`p3_hybrid/iter_0005000`；② sglang 非「禁 pip」而是「shell 没带 https_proxy」→ 30min A/B 复测；③ KV 算术更正（per-token × context）。
+
+#### A. P-9.9 tensorwise FP8 收官（1000 步，rc=0 @15:15:40）
+
+三臂 iter-1000 终态（均 seed 1234 / TP4·SP·MBS8·seq8192·GBS512·M=65536·MAX_CONN=1）：
+
+| 臂 | 精度 | iter1000 loss | nan/skip | s/iter | tok/s | peak MiB | TFLOP/s/GPU |
+|:--|:--|--:|:--|--:|--:|--:|--:|
+| armA（bf16） | bf16 | **2.542851** | 0/0✅ | 21.53 | 195K | 54675 | 538 |
+| armB（delayed FP8） | delayed_scaling_mixed | **2.547733** | 0/0✅ | 18.01 | 233K | 72684 | 642 |
+| P-9.9（tensorwise FP8） | current_scaling_mixed | **2.673365** | 0/0✅ | 18.58 | 226K | 72684 | 621 |
+
+原始输出：armA `/tmp/baize_p98_armA_bf16_tp4sp_mbs8.log` @04:39:00；armB `/tmp/baize_p98_armB_fp8_retry.log` @09:49:26；P-9.9 `/tmp/baize_p99_armB_fp8_tensorwise.log` @15:15:24，END 15:15:40 rc=0 peak=72684。
+
+T4（每 100 步 loss 最大偏离 ≤2%）：`t−bf16%@1000 = (2.673365−2.542851)/2.542851 = +5.13%` → **≫2% → T4 FAIL** ❌。对照 `d−bf16%@1000 = +0.19%` ✅。
+
+P-9.9 四判据：T1(末段 loss 差≤1%) **FAIL**（+6–7% 持续 130+步不回落）；T1'(spike-then-recovered) **FAIL**（persistent divergence 非 spike）；T2(nan=0) PASS；T3(s>1.05, s=1.159) PASS；T4(≤2%) **FAIL**（+5.13%@1000）。
+
+⭐ **P-9.9 最终裁定**：tensorwise（current per-tensor）数值保真度劣于 delayed（T1/T1'/T4 FAIL），delayed 在精度 AND 速度(s=1.194 vs 1.159)双胜 → **P-8 沿用 delayed FP8**。blockwise(128×128) 因 CUDA 12.8<12.9 未测（rc=1 @10:00:45）→ 待 CUDA≥12.9 补测。诚实更正：第 105 次「两 recipe 都有 spike」是过早判断，tensorwise 是持续性偏差非 spike。
+
+#### B. P-9.10 ① sglang A/B 代理复测（运维更正后 30min 限时）
+
+A/B 原始输出 @15:16:39（本 shell 无 proxy）：
+```
+proxy=[<empty>]; (NO PROXY IN ENV)
+aliyun=000 / aliyun-noproxy=000 / nvidia=000   (errno 101 Network unreachable)
+--- WITH explicit proxy http://172.19.92.25:13128 ---
+aliyun-proxy=200  ✅   nvidia-proxy=000 (SSL UNEXPECTED_EOF)   pypiorg-proxy=000 (SSL EOF)
+```
+运维更正**正确**：代理对 aliyun 有效(200)，之前失败=shell 没带 https_proxy。但 pypi.nvidia.com 经代理仍 SSL EOF(000)。
+
+隔离安装（`--target /nas_train/app.e0031982/sglang_libs`，🚫 不碰共享 env）：aliyun 经代理可拉 sglang0.5.21/lm_eval0.4.13/aiohttp/blobfile ✅（代理 CONNECT 间歇 503 但 pip 重试能过），**❌ rc=1 @15:20:39 卡在 `cuda-tile`**（仅 pypi.nvidia.com，经代理 SSL EOF）→ metadata-generation-failed，`sglang_libs/` 空。日志 `/tmp/p910_sglang_install.log`。
+
+🚦 按放弃判据（pypi.nvidia.com 不可达）→ **放弃 sglang，栈 = mcore + CUDA-graph**。标题如实：「SGLang 装不上 + 确切报错（cuda-tile 仅 nvidia 源 SSL EOF）」。⏳ 待离线 wheel / 白名单补测。
+#### C. 替代 ckpt 核验（运维已批准 2026-10-05）
+
+| ckpt | 绝对路径 | 大小 | 核验 |
+|:--|:--|--:|:--|
+| `p3_dense/iter_0005000` | `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/p3_dense/checkpoints/iter_0005000` | **4.7G**（12 distcp） | ✅ 存在 |
+| `p3_hybrid/iter_0005000` | `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/p3_hybrid/checkpoints/iter_0005000` | **4.2G**（12 distcp） | ✅ 存在 |
+
+代码侧 `infer_benchmark.py` / `mamba2_hybrid_2b/` / `minicpm5_2b/` 均 ✅ @ `code/BaiZe-ISEDA2027/`。⚠️ 权重口径切换标注（遵运维）：S3=1000 步/24.6M token(已删) → P-3=**5000 步/123M token**；旧 10.3× 与本次数字不得直接相减，并列各标栈与权重。
+
+#### D. KV 算术更正（遵运维 2026-10-05 ③）
+
+运维更正：`43,008 B` 是**每 token** KV，须再乘 context。正确口径（batch=1，bf16）：
+
+| 项 | 4K | 64K | 128K |
+|:--|--:|--:|--:|
+| dense KV（≈42 KB/token）× ctx | **≈176 MB** | ≈2.8 GB | **≈5.6 GB** |
+| hybrid attn KV（≈4 KB/token）× ctx | **≈16 MB** | ≈256 MB | ≈524 MB |
+| hybrid SSM 态（52 层） | 常数 | 常数 | 常数（实测） |
+
+比例仍 32×(dense) vs 常数(SSM)，H3 方向不变；绝对数以实测为准。⚠️ **batch=8 × 128K 时 dense KV ≈45 GB → 很可能正是 dense OOM 边界** → 矩阵关键观测点（OOM 如实记，🚫 不偷偷降 context）。
+
+#### E. GPU 状态 + 下一步
+
+**P-9.9 已于 15:15:40 结束(rc=0)，8 卡全释放**（`nvidia-smi --query-compute-apps`=空）→ **GPU0–1 可起 P-9.10 实测；GPU2–7 交 data 配比**（已记 `GPU29_ALLOC.md` 流水）。
+
+**下一步**：启 **P-9.10 ② 实测矩阵** —— 栈=mcore+CUDA-graph（sglang❌）；两模型=p3_dense vs p3_hybrid(iter_0005000)；context∈{4K,16K,64K,128K}；batch∈{1,8}；每格 prefill 延迟/tok/s · decode tok/s/TPOT · 峰值显存 · 缓存/状态字节增长曲线；每格≥3 次取中位+方差；按 H1–H4 预注册判据裁定。口径声明：训练 seq=4094 → 16K/64K/128K 测的是位置外推下的速度/显存，不是质量。
+
+
+
+
 ---
 
 ### P-9.9 健康巡检 + delayed vs tensorwise 早期轨迹对比（2026-10-05 ~11:22，第 101 次唤醒，CPU-only 分析）
