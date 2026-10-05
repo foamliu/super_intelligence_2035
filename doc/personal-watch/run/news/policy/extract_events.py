@@ -48,7 +48,8 @@ OUT_CSV = os.path.join(HERE, "EVENTS.csv")
 OUT_MD = os.path.join(HERE, "EVENTS.md")
 AUDIT_CSV = os.path.join(HERE, "EVENTS_AUDIT.csv")
 INDEX_MD = os.path.join(HERE, "INDEX_FILES.md")
-MAX_BYTES = 20 * 1024 * 1024                                 # 体积纪律：>20MB → 按年分片
+MAX_BYTES = 20 * 1024 * 1024                                 # 单文件 >20MB → 按年分片（写入策略）
+GIT_MAX_BYTES = 5 * 1024 * 1024                              # 体积红线(2026-10-05)：≥5MB → 🚫 不入 git
 
 sys.path.insert(0, HERE)
 import taxonomy as tx  # noqa: E402  （复用 N3-1 的类别骨架 + 政经主体标记，保持一致）
@@ -332,14 +333,16 @@ def sha16(path):
 
 def write_index(files):
     L = ["# INDEX_FILES — news/policy 大文件清单", "",
-         "> 由 `extract_events.py` **自动生成**。体积纪律：**单文件 >20 MB → 🚫 不入 git**",
-         "> （本体移 `~/archive_data/`，本表登记路径/行数/大小/sha256）。", "",
-         "| 路径 | 行数 | 大小(B) | sha256(前16) | 入 git |",
+         "> 由 `extract_events.py` **自动生成**。体积纪律（2026-10-05 修订）："
+         "**单文件 ≥ 5 MB → 🚫 不入 git**（旧口径 >20MB 作废）—— 改走网盘。",
+         "> 「存放位置」= `git` 或 `本地/未上云`（无 bypy 时宁可不传；见 `WATCH_NEWS_TASK.md` §4-11）。",
+         "> 本表登记 路径/行数/大小/sha256/存放位置。", "",
+         "| 路径 | 行数 | 大小(B) | sha256(前16) | 存放位置 |",
          "|:--|--:|--:|:--|:--|"]
     for p, rows, size in files:
         rel = os.path.relpath(p, os.path.dirname(HERE))
-        L.append(f"| `{rel}` | {rows} | {size} | `{sha16(p)}` | "
-                 f"{'✅ 是' if size <= MAX_BYTES else '❌ 否（>20MB）'} |")
+        loc = "`git`" if size < GIT_MAX_BYTES else "本地/未上云(≥5MB)"
+        L.append(f"| `{rel}` | {rows} | {size} | `{sha16(p)}` | {loc} |")
     with open(INDEX_MD, "w", encoding="utf-8") as f:
         f.write("\n".join(L) + "\n")
 

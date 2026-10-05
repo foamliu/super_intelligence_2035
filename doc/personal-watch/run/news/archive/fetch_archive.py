@@ -216,19 +216,21 @@ def write_index_files() -> None:
             for _ in f:
                 nline += 1
         rows.append((fn, nline, os.path.getsize(p), sha256_file(p)))
-    big = [r for r in rows if r[2] > 20 * 1024 * 1024]
+    GIT_MAX = 5 * 1024 * 1024   # 体积红线（2026-10-05）：≥5MB → 🚫 不入 git
+    big = [r for r in rows if r[2] >= GIT_MAX]
     lines = ["# INDEX_FILES — 历史语料大文件清单\n",
-             "> 由 `fetch_archive.py --index` **自动生成**。体积纪律：**单文件 >20 MB → 🚫 不入 git**",
-             "> （本体移 `~/archive_data/`，本表登记路径/行数/大小/sha256）。\n",
-             "| 路径 | 行数 | 大小(B) | sha256(前16) | 入 git |",
+             "> 由 `fetch_archive.py --index` **自动生成**。体积纪律（2026-10-05 修订）："
+             "**单文件 ≥ 5 MB → 🚫 不入 git**（旧口径 >20MB 作废）—— 改走网盘。\n",
+             "> 「存放位置」= `git` 或 `本地/未上云`（无 bypy 时宁可不传；见 `WATCH_NEWS_TASK.md` §4-11）。\n",
+             "| 路径 | 行数 | 大小(B) | sha256(前16) | 存放位置 |",
              "|:--|--:|--:|:--|:--|"]
     for fn, nline, size, sha in rows:
-        ingit = "🚫 否(>20MB)" if size > 20 * 1024 * 1024 else "✅ 是"
-        lines.append(f"| `news/archive/{fn}` | {nline} | {size} | `{sha}` | {ingit} |")
+        loc = "`git`" if size < GIT_MAX else "本地/未上云(≥5MB)"
+        lines.append(f"| `news/archive/{fn}` | {nline} | {size} | `{sha}` | {loc} |")
     if not rows:
         lines.append("| _（暂无 shard）_ | 0 | 0 | - | - |")
     if big:
-        lines.append(f"\n> ⚠️ **{len(big)} 个文件 >20MB** → 需移出 git 并在 `.gitignore` 排除。")
+        lines.append(f"\n> ⚠️ **{len(big)} 个文件 ≥5MB** → 按红线**不得入 git**（改走网盘）；存量迁移见 ops 指令。")
     with open(os.path.join(HERE, "INDEX_FILES.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 

@@ -1,8 +1,9 @@
 # INDEX_FILES — news/policy 大文件清单
 
-> 由 `extract_events.py` **自动生成**。体积纪律：**单文件 >20 MB → 🚫 不入 git**
-> （本体移 `~/archive_data/`，本表登记路径/行数/大小/sha256）。
+> 由 `extract_events.py` **自动生成**。体积纪律（2026-10-05 修订）：**单文件 ≥ 5 MB → 🚫 不入 git**（旧口径 >20MB 作废）—— 改走网盘。
+> 「存放位置」= `git` 或 `本地/未上云`（无 bypy 时宁可不传；见 `WATCH_NEWS_TASK.md` §4-11）。
+> 本表登记 路径/行数/大小/sha256/存放位置。
 
-| 路径 | 行数 | 大小(B) | sha256(前16) | 入 git |
+| 路径 | 行数 | 大小(B) | sha256(前16) | 存放位置 |
 |:--|--:|--:|:--|:--|
-| `policy/EVENTS.csv` | 71201 | 17083670 | `bfca0cbe37bec73e` | ✅ 是 |
+| `policy/EVENTS.csv` | 75610 | 18106301 | `9909e4cddcf525a8` | 本地/未上云(≥5MB) |

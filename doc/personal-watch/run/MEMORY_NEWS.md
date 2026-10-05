@@ -12,12 +12,12 @@ WAITING: 1
 
 ```
 PHASE:        常态采集（T1–T10 ✅）+ **L1/N3 收口（G1 全过）+ L2/N4 探索性（G2 全过）**（L1 焦点 · L2 探索性 · L3 冻结）
-已完成:       T1–T10 ✅ · 首~十五轮常态 ✅ · **N1 抓取器 + 语料（2,267,862 条 / 11 片 2016–2026，游标 `2016-08-05`→收尾 2016 中）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（71,201 条，对 14:47 快照）· N3-4 预警方案 · L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md，7 行）**
-当前动作:     **第 6 轮抓取产物提交（语料 1,952,411 → 2,267,862 / 11 片）+ 第十五轮常态 news +4（当日累计 22）+ 启动第 7 轮抓取（14:56，`2016-08-05 → 2016-01-01`，wrapper pid 181035 / python 181037）+ pid watcher（181064，按 `kill -0 181035` 判定 → 抓完自动 `--index` + `cycle_run.py --with-l2`，日志 `/tmp/n1_chain_r7.log`）**
-下一步:       ① 待第 7 轮抓取 + 链跑完，核对 `STABILITY_LOG.md` 第 8 行与产物（全链对齐 2016-01-01 起的全语料）；② **G2′④ 累积**：按周期跑 `cycle_run.py --with-l2` 追加台账（连续天数截至今日 = 1）；③ L1 稳定性 / 组合规则；④ L3（N5）**冻结**
-本轮新增:     **N1 第 6 轮语料 1,952,411 → 2,267,862 条（+315,451；11 片，新增 2016 部分〔倒序至 2016-08-05〕）**；`STABILITY_LOG.md` 第 7 行（14:47：`days=3698 recs=2268008 events=71201 q<0.05=42 gate=26`，**待第 7 轮后重跑对齐**）；**news 日报 +4（第十五轮）= 当日累计 22 条**；累计 **news 91 / 非新闻 41**
-阻塞:         无（新华网长期 403/405 → 兜底源 `chinanews`；⚠️ **东财日K 运行机 TLS 被重置** → 历史日线走腾讯 `ifzq`；⚠️ **停后台抓取须杀 python 子进程**；⚠️ **等抓取勿做 `pgrep -f <脚本名>`** → 用 `kill -0 <pid>`）
-ERROR_COUNT:  3（历史：模型名白睡一轮，已修；并发双抓重复，已修；watcher `pgrep -f` 自匹配死锁，已修 → 改 pid 判定）
+已完成:       T1–T10 ✅ · 首~十六轮常态 ✅ · **N1 抓取器 + 语料〔全库完抓〕2,492,230 条 / 11 片 2016–2026（游标 `2015-12-31`，倒序已收尾至 `2016-01-01`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（75,610 条，对 15:10 全量快照）· N3-4 预警方案 · L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md，8 行）**
+当前动作:     **N1 第 7 轮抓取完成（2016-08-05→2016-01-01，语料收尾）+ 链跑完成（15:10，`STABILITY_LOG` 第 8 行）+ 第十六轮常态采集（news +0）+ 提交第 7 轮产物**；⚠️ **体积红线善后**：ops RUN_ID 5 已 `git rm --cached` 11 分片（工作区文件被 relay rebase 误删 → 已从 `~/archive_data_backup/` **恢复**）+ 建 `news/policy/.gitignore` 并 `git rm --cached EVENTS.csv`
+下一步:       ① 提交本线产物（**不含任何 ≥5MB 文件**）；② **G2′④ 累积**：按周期跑 `cycle_run.py --with-l2` 追加台账（连续天数截至今日 = 1）；③ L1 稳定性 / 组合规则；④ L3（N5）**冻结**
+本轮新增:     **第十六轮常态采集 news +0（当日累计 22；`cn_news` 30 条均假期/民生/时政，量子位/中新网候选已在账去重）**；N1 第 7 轮产物提交（`EVENTS.csv` 75,610 条 / sha `9909e4cddcf525a8`，`STABILITY_LOG` 第 8 行）；**红线善后：11 分片恢复至工作区（gitignored，不入 git）+ `EVENTS.csv` 移出索引**；累计 **news 91 / 非新闻 41**
+阻塞:         无（新华网长期 403/405 → 兜底源 `chinanews`；⚠️ **无 bypy → 网盘不可用** → ≥5MB 一律「本地保留 + 清单登记 + 如实标『未上云』」；⚠️ **东财日K 运行机 TLS 被重置** → 历史日线走腾讯 `ifzq`；⚠️ **停后台抓取须杀 python 子进程**；⚠️ **等抓取勿用 `pgrep -f <脚本名>`** → 用 `kill -0 <pid>`；⚠️ **ops relay 的 `git pull --rebase` 会删掉被 untrack 的工作区分片** → 须从 `~/archive_data_backup/` 恢复）
+ERROR_COUNT:  4（历史：模型名白睡一轮，已修；并发双抓重复，已修；watcher `pgrep -f` 自匹配死锁，已修；**relay rebase 删工作区分片 → 已恢复**）
 ```
 
 **选定方案（prep_api 结论）**
@@ -65,6 +65,15 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 ## 🗣 运维问答（supervisor 提问 → 本线回答）
 
 > supervisor 可在任务书运维指令区「状态索取」写入问题；本区**先答该问题**再干活。
+
+- **Q（本线主动小结 · 2026-10-05 第6轮）：N1 全部抓完了吗？全链对齐了吗？体积红线（≥5MB 不入 git）落实了吗？**
+  **A（本线 2026-10-05 实测）**：
+  - **① N1 全库完抓 ✅**：第 7 轮（14:56→15:10）把游标 `2016-08-05 → 2016-01-01` 走完 → 语料 **2,267,862 → 2,492,230 条**（11 片 2016–2026；游标 `2015-12-31` = 已到终点，**倒序抓取收尾**）。`--stats` / `.progress.json` 一致（`done_days=3929`）。
+  - **② 全链对齐 ✅**：`/tmp/n1_chain_r7.log` 尾 `[chain r7 done] 2026-10-05 15:10:58`；`STABILITY_LOG.md` **第 8 行** `2026-10-05 15:10 | 3914 | 2492429 | 75610 | 43 | 24 | ``9909e4cddcf525a8`` | ``90f357ff8a8be943`` | ok`（`EVENTS.csv` **75,610 条 / 18.11 MB**；`explore.csv` sha 不变属预期）。
+  - **③ 体积红线落实 ✅（用户 §4-11 明令 ≥5MB 不入 git）**：ops RUN_ID 5（`d5d7dab`）已把 11 个分片 `git rm --cached`；本线补做 **`news/policy/.gitignore` + `git rm --cached EVENTS.csv`**（**18.11 MB ≥5MB**）；`fetch_archive.py --index` / `extract_events.py` 的体积口径**由「>20MB」改为「≥5MB」并新增「存放位置」列**；两处 `INDEX_FILES.md` 重生成。⚠️ 实测：`git check-ignore` **对已跟踪文件不命中** → 要命中**必须先 `git rm --cached`**（否则红线自检永远失败）。
+  - **④ 🐞 善后（relay rebase 误删工作区分片）**：ops relay 的 `git pull --rebase` 把**被 untrack 的 11 个分片从工作区删掉**（`outbox` 末「工作区分片仍应为 11 → `0`」），而 RUN_ID 5 **本意是「保留工作区文件」** → 本线已 `cp ~/archive_data_backup/*.jsonl.gz news/archive/` **恢复**（11 片 / 105 MB，sha 与 `PROGRESS.md` 逐条一致）；`.gitignore` 生效（`git status` 无 `??`，提交绝不带 `.gz`）。
+  - **⑤ 无 bypy** → 百度云盘**不可用** → 按红线「**宁可不传**」，≥5MB 一律 **本地保留 + 清单登记 + 如实标『未上云』**（两处 `INDEX_FILES.md` 均标 `本地/未上云(≥5MB)`；第二副本 `~/archive_data_backup/`）。
+  - **⑥ 常态采集**：第十六轮 **+0**（国庆假期中文权威源 AI 类真新闻稀缺；`cn_news` 30 条均假期/民生/时政；量子位 `501700`、中新网 `10708128` 已在账 → 去重）→ 当日累计 **22**；累计 **news 91 / 非新闻 41**。
 
 - **Q（本线主动小结 · 2026-10-05 第4轮）：N1 抓到 2019 了吗？全链对齐全语料了吗？watcher 死锁真修好了吗？**
   **A（本线 2026-10-05 实测）**：
@@ -121,13 +130,13 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **线**：news（新闻采集）
 - **任务书**：`WATCH_NEWS_TASK.md`（只读）
 - **产物**：`news/<YYYY-MM-DD>.md`（当日摘要）· `news/SEEN.md`（去重台账）· `news/INDEX.md`（索引）
-- **N1 语料库**：`news/archive/chinanews-<年>.jsonl.gz`（只 5 字段；**仅取 标题+日期+来源+链接，不抓正文**）；现 **3260 天 / 1,952,411 条 / 10 片**（**2017-10-31 ~ 2026-10-03**；游标 `2017-10-30` → `2016-01-01`）
+- **N1 语料库**：`news/archive/chinanews-<年>.jsonl.gz`（只 5 字段；**仅取 标题+日期+来源+链接，不抓正文**）；现 **2,492,230 条 / 3929 天 / 11 片**（**2016-01-01 ~ 2026-10-03**；游标 `2015-12-31` = **倒序抓取已收尾**）；⚠️ **≥5MB → 不入 git**，清单见 `news/archive/INDEX_FILES.md`
 - **L1 产物**：`news/policy/`（`EDA.md` / `TAXONOMY.md` / `SIGNALS.md` / `EVENTS.csv` / `EARLY_WARNING.md` / **`cycle_run.py` + `STABILITY_LOG.md`（G2′④ 运行台账）**）
 - **L2 产物（探索性 · 非因果）**：`news/policy/`（`L2_PREREG.md` / **`EXPLORE.md` + `explore.csv`**）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-05 13:15 CST` 第十一轮 ~ `2026-10-05 14:30 CST` 第十四轮
-- **累计收录**：`126` 条（**news 87**〔第一~九轮 61 + 第十轮 8 + 第十一轮 8 + 第十二轮 1 + 第十三轮 1 + 第十四轮 8〕+ 非新闻 39〔仅存 `SEEN.md`〕）
+- **上次采集窗口**：`2026-10-05 13:15 CST` 第十一轮 ~ `2026-10-05 15:5x CST` 第十六轮
+- **累计收录**：`132` 条（**news 91**〔第一~十六轮；当日 22〕+ 非新闻 41〔仅存 `SEEN.md`〕）
 
 ---
 
