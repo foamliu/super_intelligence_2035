@@ -5,13 +5,21 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A kimi-k2.6-cloud serial cross-eval — codex×300 --resume RUNNING (PID 1898015, 9/270 new done, on django-11848) + ✅ deepseek-harness pnpm install + BUILD SUCCEEDED (dsh CLI --profile headless ready) + ✅ claude-code telemetry OFF
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×30 (46.7%) · codex×300 --resume RUNNING (39 entries, 16 resolved) · SWEBENCH_COMPARE.html (69 entries, 34 resolved, total_planned=300) · ✅ Claude Code 遥测关闭 · ✅ deepseek-harness pnpm install + build (dsh CLI ready, --profile headless)
-当前动作:     R84: codex×300 --resume progress 9/270 new (39 total codex entries, 16 resolved, 41.0%) + SWEBENCH_COMPARE.html regenerated (69 entries, 34 resolved) + relay healthy skip 37th + git sync (push 00293143)
-下一步:       codex×300 完成(~261条剩余, ~2.3天) → cline-patched×300 --resume(skip 30) → opencode×300 → claude-code×300(遥测已关) → deepseek-harness×300(dsh --profile headless, 需写run_harness.py集成) → 最终更新SWEBENCH_COMPARE.html
+PHASE:        H-A kimi-k2.6-cloud serial cross-eval — codex×300 --resume RUNNING (PID 1898015, 11/270 new done, on django-11910) + ✅ deepseek-harness pnpm install + BUILD SUCCEEDED (dsh CLI --profile headless ready) + ✅ claude-code telemetry OFF
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×30 (46.7%) · codex×300 --resume RUNNING (41 entries, 16 resolved) · SWEBENCH_COMPARE.html (71 entries, 34 resolved, total_planned=300) · ✅ Claude Code 遥测关闭 · ✅ deepseek-harness pnpm install + build (dsh CLI ready, --profile headless)
+当前动作:     R85: codex×300 --resume progress 11/270 new (41 total codex entries, 16 resolved, 39.0%) + SWEBENCH_COMPARE.html regenerated (71 entries, 34 resolved) + relay healthy skip 38th + git sync
+下一步:       codex×300 完成(~259条剩余, ~2.3天) → cline-patched×300 --resume(skip 30) → opencode×300 → claude-code×300(遥测已关) → deepseek-harness×300(dsh --profile headless, 需写run_harness.py集成) → 最终更新SWEBENCH_COMPARE.html
 阻塞:         无硬阻塞. deepseek-harness: pnpm install ✅ + build ✅, 但 run_harness.py 集成(DeepseekHarnessDriver stub→dsh CLI headless)尚未写. 序列中最后一个, 不阻塞其他4个.
 ERROR_COUNT:  0
 ```
+
+## 🆕 第八十五轮速览（2026-10-06 02:05）— codex×300 progress 11/270 (41 total, 16 resolved, 39.0%) + SWEBENCH_COMPARE.html regenerated (71 entries, 34 resolved) + relay healthy skip 38th + git sync
+
+- 📊 **codex×300 --resume progress**：PID 1898015 运行中 (etimes≈10239s≈2.84h)。41 codex entries (11 new since ×30)。16/41 resolved (39.0%), 22 patch-but-failed, 0 quota-blocked, 3 blocked (astropy git fetch timeout/lock)。当前 instance: `django__django-11910` (子进程 PID 268372, etimes≈1124s≈19min)。速率 ~13min/inst → 259 remaining ≈ 56h ≈ 2.3天。
+- 📈 **SWEBENCH_COMPARE.html regenerated**：71 entries, 34 resolved (cline-patched 18 + codex 16), 15632 bytes。gen_kimi_compare.py exit=0。
+- ✅ **ops 中继复核（第 38 次）→ 健康**。relay `2489749 1 381114 Ss`（ppid=1, etimes≈4.41d）。`.last_run_id=71`（与上轮一致, 无新命令）。跳过重启。
+- ✅ **git sync**：`git fetch`（proxy）exit=0 → `rev-list=0 0`（完全同步）。BAIZE_HARNESS_TASK.md 无新运维指令。
+- ⏭ **下一步**：codex×300 后台继续（~259 条剩余, ~2.3天）→ 完成后 cline-patched×300 `--resume` → opencode×300 → claude-code×300 → deepseek-harness×300（需写 `DeepseekHarnessDriver` 集成 `dsh --profile headless`）→ 最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
 
 ## 🆕 第八十四轮速览（2026-10-06 01:29）— codex×300 progress 9/270 (39 total, 16 resolved, 41.0%) + SWEBENCH_COMPARE.html regenerated (69 entries, 34 resolved) + relay healthy skip 37th + git sync
 

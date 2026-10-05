@@ -2220,5 +2220,71 @@
       }
     },
     "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-11848",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 1800.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-11848.json",
+      "stdout_tail": " wall=1800.1s ==\n[stderr tail] ...b'2026-10-05T17:04:01.911073Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-11848.json\n[run_single] cleanup: git reset --hard f0adf3b9b7a19cdee05368ff0c0c2d087f011180\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 43,
+        "p2p_total": 43
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-11905",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 404.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-11905.json",
+      "stdout_tail": "se wall=404.4s ==\n[stderr tail] ...2026-10-05T17:36:00.047790Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 1413 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-11905.json\n[run_single] cleanup: git reset --hard 2f72480fbd27896c986c45193e1603e35c0b19a7\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 2,
+        "p2p_pass": 38,
+        "p2p_total": 38
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]
