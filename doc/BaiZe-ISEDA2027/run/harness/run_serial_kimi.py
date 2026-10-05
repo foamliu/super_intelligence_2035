@@ -125,6 +125,13 @@ def setup_rootfs(instance, rootfs_path):
                 os.unlink(tmp)
             except OSError:
                 pass
+        # Clean stale .lock files left by previous timed-out git fetches
+        # (same pattern as git_clone_or_fetch; prevents "shallow.lock: File exists")
+        for lock in (testbed / ".git").glob("*.lock"):
+            try:
+                lock.unlink()
+            except OSError:
+                pass
         out, rc = run(["git", "fetch", "--depth=1", "origin", base_commit], cwd=testbed, timeout=120)
         if rc != 0:
             return False, f"base_commit fetch failed: {out[:200]}"
