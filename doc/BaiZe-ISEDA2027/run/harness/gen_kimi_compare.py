@@ -30,7 +30,7 @@ def main():
         pbf = sum(1 for e in entries if e["classification"] == "patch-but-failed")
         qb = sum(1 for e in entries if e["classification"] == "quota-blocked")
         scored = resolved + pbf
-        total_planned = 30
+        total_planned = 300
         walls = [e["harness_result"]["wall_s"] for e in entries if "wall_s" in e.get("harness_result", {})]
         avg_wall = f"{sum(walls)/len(walls):.0f}s" if walls else "N/A"
         resolve_rate = f"{resolved}/{scored} ({100*resolved/scored:.0f}%)" if scored > 0 else "N/A"

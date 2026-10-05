@@ -5,32 +5,32 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A kimi-k2.6-cloud serial cross-eval — cline-patched × 30 COMPLETE (18/30, 60.0%) → codex × 30 RUNNING (24/30 scored: 11 resolved, 13 patch-but-failed, 45.8%; inst 25/30 = sympy__sympy-13146 in progress) + ✅ claude-code telemetry OFF (settings.json + driver env) + deepseek-harness pnpm BLOCKED
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×30 RUNNING (24/30) · SWEBENCH_COMPARE.html · ✅ Claude Code 遥测关闭 (settings.json env + ClaudeCodeDriver env) · deepseek-harness toolchain (node22+rust, pnpm BLOCKED)
-当前动作:     R81: ✅ Claude Code 遥测关闭（~/.claude/settings.json env 块 10 vars + run_harness.py ClaudeCodeDriver env 注入；依据=官方文档 code.claude.com/docs/en/env-vars + monitoring-usage）→ claude-code 恢复横评 + codex×30 RUNNING (24/30 scored, inst 25/30 = sympy-13146, elapsed ~7h PID 2051774) + relay healthy skip 34th + git sync
-下一步:       codex×30完成(~6条剩余, ~1.5h) → codex×300 --resume(skip 30) → cline-patched×300 --resume(skip 30) → opencode×300 → claude-code×300(遥测已关) → deepseek-harness(需npm registry恢复) → 最终更新SWEBENCH_COMPARE.html
+PHASE:        H-A kimi-k2.6-cloud serial cross-eval — cline-patched×30 COMPLETE (18/30, 60.0%) + codex×30 COMPLETE (14/30, 46.7%) → codex×300 --resume LAUNCHED (PID 1898015, skip 30, run 270) + ✅ claude-code telemetry OFF + deepseek-harness pnpm BLOCKED
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×30 (46.7%) · codex×300 --resume LAUNCHED · SWEBENCH_COMPARE.html (total_planned=300) · ✅ Claude Code 遥测关闭 · deepseek-harness toolchain (node22+rust, pnpm BLOCKED)
+当前动作:     R82: codex×30 COMPLETE (14/30 resolved, 46.7%) → codex×300 --resume LAUNCHED (PID 1898015, ppid=1, skip 30 done, 270 pending, first inst astropy-12907 running) + rootfs coverage 300/300 verified (12 repos all templated) + gen_kimi_compare.py total_planned 30→300 + SWEBENCH_COMPARE.html regenerated + relay healthy skip 35th + git sync
+下一步:       codex×300 完成(~270条, ~2-3天) → cline-patched×300 --resume(skip 30) → opencode×300 → claude-code×300(遥测已关) → deepseek-harness(需npm registry恢复) → 最终更新SWEBENCH_COMPARE.html
 阻塞:         deepseek-harness pnpm install: npm registry防火墙封锁(HTTP→URL过滤页面, HTTPS→TLS fail). node22+rust+landlock-run已就绪. 序列中最后一个harness, 不阻塞其他4个.
 ERROR_COUNT:  0
 ```
 
-## 🆕 第八十一轮速览（2026-10-05 22:25）— ✅ Claude Code 遥测关闭 + claude-code 恢复横评 + codex×30 RUNNING 24/30 (11 resolved, 13 patch-but-failed, 45.8%) + relay healthy skip 34th + git sync
+## 🆕 第八十二轮速览（2026-10-05 23:10）— ✅ codex×30 COMPLETE (14/30, 46.7%) → codex×300 --resume LAUNCHED (PID 1898015) + rootfs 300/300 覆盖验证 + HTML 刷新 + relay healthy skip 35th
 
-- 🔒 **Claude Code 遥测关闭（运维指令 2026-10-05 深夜4 · 已完成）**：
-  - **已按以下方式关闭遥测**：① `~/.claude/settings.json` 的 `env` 块写入 10 个变量（`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1` 伞形开关 + `DISABLE_TELEMETRY=1` / `DISABLE_ERROR_REPORTING=1` / `DISABLE_AUTOUPDATER=1` / `DISABLE_BUG_COMMAND=1` / `DISABLE_NON_ESSENTIAL_MODEL_CALLS=1` / `DO_NOT_TRACK=1` 关 Statsig 侧 + `CLAUDE_CODE_ENABLE_TELEMETRY=0` / `OTEL_METRICS_EXPORTER=none` / `OTEL_LOGS_EXPORTER=none` 关 OTel 侧）；② `run_harness.py` 的 `ClaudeCodeDriver.run()` env 注入同样 10 个变量（belt-and-suspenders，不依赖 settings.json 被读取）。**依据 = 官方文档** <https://code.claude.com/docs/en/env-vars> + <https://code.claude.com/docs/en/monitoring-usage>（键名经 cimi_fetch 官方文档核实，非凭记忆）。**claude-code 恢复横评**（不用暂停、不用摘出）。
-  - **关键认知（已验证）**：Claude Code 有**两套独立遥测** —— `DISABLE_TELEMETRY` 只管 Statsig 一侧；`CLAUDE_CODE_ENABLE_TELEMETRY` 管 OTel 一侧；两者正交。`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1` 是伞形开关（= 同时设 DISABLE_AUTOUPDATER + DISABLE_BUG_COMMAND + DISABLE_ERROR_REPORTING + DISABLE_TELEMETRY），但仍显式设了各独立变量以防遗漏。OTel 侧默认就是关的（需 `=1` 才开），但显式设 `=0` + exporter=none 以确保。
-  - **验证**：`python3 -c 'import json; json.load(open("...settings.json"))'` → OK（10 keys）；`py_compile run_harness.py` → syntax OK。
-- 📊 **codex × 30 进度（更新）**：PID 2051774（ppid=1，elapsed ~7h=25304s）。**24/30 scored**：11 resolved，13 patch-but-failed（inst 24/30 = sympy-13043 → patch-but-failed）。inst 25/30 = `sympy__sympy-13146` RUN 中。~6 条剩余，预计 ~1.5h 完成。日志 `/tmp/kimi_codex.log`。
-- 📈 **kimi 横评汇总（更新）**：
+- 🎉 **codex×30 COMPLETE**：inst 30/30 = `sympy__sympy-13647` → **resolved**。最终 **14/30 resolved (46.7%)**，16/30 patch-but-failed，0 quota-blocked。runner PID 2051774 已正常退出。日志 `/tmp/kimi_codex.log`。
+- 📈 **kimi ×30 横评最终结果**：
   | harness | scored | resolved | patch-but-failed | quota-blocked | resolve rate |
   |:--|--:|--:|--:|--:|--:|
   | cline-patched | 30/30 | 18 | 12 | 0 | **60.0%** ✅ |
-  | codex | 24/30 | 11 | 13 | 0 | **45.8%** (进行中) |
-  | opencode | 0/30 | — | — | — | (待跑) |
-  | claude-code | 0/30 | — | — | — | (待跑, 遥测已关 ✅) |
-  | deepseek-harness | 0/30 | — | — | — | (待 pnpm install) |
-- ✅ **ops 中继复核（第 34 次）→ 健康**。relay `2489749 1 ...`（ppid=1 真守护）。`.last_run_id=71`。判据成立 → 跳过重启。
-- ✅ **git sync**：`git fetch`（proxy）→ 0 ahead 0 behind → 无新运维指令（本批深夜4指令已在执行中）。
-- ⏭ **下一步**：codex×30 完成（~6 条剩余，~1.5h）→ codex×300 `--resume`（skip 30）→ cline-patched×300 → opencode×300 → **claude-code×300（遥测已关）** → deepseek-harness（待 npm registry 恢复）→ 最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
+  | codex | 30/30 | 14 | 16 | 0 | **46.7%** ✅ |
+  | opencode | 0/300 | — | — | — | (待跑) |
+  | claude-code | 0/300 | — | — | — | (待跑, 遥测已关 ✅) |
+  | deepseek-harness | 0/300 | — | — | — | (待 pnpm install) |
+- 🚀 **codex×300 --resume LAUNCHED**（运维指令「扩 300 = 先扩 kimi」）：`nohup python3 run_serial_kimi.py --harness codex --all-prepared --resume > /tmp/kimi_codex_300.log 2>&1 &` → PID 1898015（ppid=1 已 detach）。`--all-prepared` 现 glob 300 instances（×30 启动时只有 30 个文件）；`--resume` skip 30 已完成（14 resolved + 16 patch-but-failed 均在 skip 集）→ **270 pending**。pstree 确认正在跑第一个 pending instance（astropy__astropy-12907，codex exec 已启动）。日志 buffered（Python stdout→file 全缓冲）。
+- ✅ **rootfs 覆盖验证**：300 instances 跨 12 repos，全部有 rootfs template（django 114 / sympy 77 / matplotlib 23 / sklearn 23 / pytest 17 / sphinx 16 / astropy 6 / requests 6 / pylint 6 / xarray 5 / seaborn 4 / flask 3）→ **0 uncovered**。
+- 🔧 **gen_kimi_compare.py** `total_planned` 30→300；SWEBENCH_COMPARE.html 已刷新（60 entries, 32 resolved）。
+- ⚠️ **双进程事故已清理**：setsid 超时但实际已启动一个进程，launcher 又起一个 → 2 个 codex×300 竞争同一 JSON → 立即 kill 全部 → 验证 JSON 无损（60 entries 不变）→ 重新 launch 单一进程。教训：后台启动后必须 ps 确认唯一实例。
+- ✅ **ops 中继复核（第 35 次）→ 健康**。relay `2489749 1 370427 Ss`（ppid=1，etimes≈4.3d）。`.last_run_id=71`。跳过重启。
+- ✅ **git sync**：`git fetch`（proxy）→ origin 前进（personal-watch 线提交）→ BAIZE_HARNESS_TASK.md 无新运维指令。
+- ⏭ **下一步**：codex×300 完成（~270 条，avg ~888s/条 ≈ 2.75 天）→ cline-patched×300 `--resume` → opencode×300 → claude-code×300（遥测已关）→ deepseek-harness → 最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
 
 ## 🆕 第八十轮速览 —— 已滚动归档至 daily-memories-harness/2026-10-05.md（结论不改：codex×30 23/30 scored + SWEBENCH_COMPARE.html 53 entries + deepseek-harness pnpm BLOCKED npm registry 防火墙 + relay healthy skip 33rd）
 
