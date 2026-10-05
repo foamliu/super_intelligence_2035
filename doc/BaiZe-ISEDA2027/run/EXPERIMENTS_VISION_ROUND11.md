@@ -964,7 +964,11 @@ python -m torch.distributed.run --nproc_per_node=8 --nnodes=1 \
 - **损失形式**：MSE on **masked patches only**（仅对被 mask 的 patch 计算像素重建 MSE；可见 patch 不参与 loss）
 - **最优 mask ratio**：**75%**（原文 Table 1c：75% → lp 67.1% / ft 83.6%；50% → lp 60.6%；90% → lp 57.4%）
   - 我们用 **0.6（60%）**，在 MAE 最优区间附近，但 MAE 是纯视觉无文本；多模态场景下 mask ratio 最优值可能不同（**未核实官方 AIMv2 的 prefix ratio 分布**）。
-- **URL**：`https://arxiv.org/abs/2111.06377`（**本次未 fetch 原文，上述为公认结论·二手·待核**）
+- **URL**：`https://arxiv.org/abs/2111.06377`（He et al., 2021-11 → CVPR 2022, CC BY 4.0）
+- **✅ 已 fetch 原文 abstract（2026-10-05 11:16 cimi_fetch）—— 75% mask ratio 逐字确认**：
+  > *"Second, we find that masking a high proportion of the input image, e.g., 75%, yields a nontrivial and meaningful self-supervisory task."*
+  — Abstract, arXiv:2111.06377v3
+  - ⚠️ Table 1c 的具体 lp/ft 数字（75%→lp 67.1%/ft 83.6%）仍为**二手·待核**（本次仅 fetch abstract 页，未提取表格；但 75% 这一核心值已从 abstract 一手确认）。
 - **与我们的关系**：我们的 `masked-patch-MSE` 实现沿用了 MAE 范式（逐 patch 像素重建），但 mask ratio 0.6 < MAE 最优 0.75 → **若后续想优化，可试 0.75**（但非本 R11-G 的考察变量，不做）。
 
 #### (3) AR vs 对比的数据效率（arXiv:2411.15648 "XTRA", 2024-11）
