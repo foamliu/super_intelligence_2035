@@ -131,3 +131,9 @@
 | 2026-10-05 | These AI Experts Want to Do High-Stakes Research Out in the Open | WIRED | feature | https://www.wired.com/story/trillium-labs-wants-to-do-high-risk-ai-research-in-the-open/ |
 | 2026-10-05 | Trump's Crazy AI Rebrand Was a Loyalty Test for Tech Execs—and It Worked | WIRED | analysis | https://www.wired.com/story/trumps-crazy-ai-rebrand-was-a-loyalty-test-for-tech-execs-and-it-worked/ |
 | 2026-10-05 | AI办公进入「上下文战争」，百度如何出牌？ | 雷峰网 | feature | https://www.leiphone.com/category/industrynews/7q7ZyMuKeWjc1uGz.html |
+| 2026-10-05 | 华为与高通宣布达成广泛专利许可协议，覆盖 5G、AI、计算及网络技术领域 | IT之家 | news | https://www.ithome.com/1/009/806.htm |
+| 2026-10-05 | 台达将基于英伟达 Hyperion 平台开发下一代自动驾驶技术 | IT之家 | news | https://www.ithome.com/1/009/808.htm |
+| 2026-10-05 | 机器人在北京上“幼儿园” | 中新网 | news | https://www.chinanews.com.cn/sh/2026/10-05/10708108.shtml |
+| 2026-10-05 | 从看风景到玩科技 AI催生浙江文旅消费新场景 | 中新网 | news | https://www.chinanews.com.cn/sh/2026/10-05/10708128.shtml |
+| 2026-10-05 | 丘成桐新论文致谢了GPT和Claude | 量子位 | feature | https://www.qbitai.com/2026/10/499991.html |
+| 2026-10-05 | 圆刚推出 AI 降噪麦克风 A113，工作温度范围达 -25℃ 至 +60℃ | IT之家 | feature | https://www.ithome.com/1/009/811.htm |
