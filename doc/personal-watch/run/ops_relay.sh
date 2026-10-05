@@ -103,12 +103,24 @@ git_sync() {
 }
 git_publish() {
     cd "$GIT_ROOT" || return 0
-    git add -- "$REL/ops/outbox.md" "$REL/ops/inbox.md" "$REL/ops/.last_run_id" 2>/dev/null
-    if git diff --cached --quiet; then
+    if ! git add -- "$REL/ops/outbox.md" "$REL/ops/inbox.md" "$REL/ops/.last_run_id" 2>/tmp/_watch_relay_git.err; then
+        echo "[relay] ⚠️ git add FAILED: $(tail -2 /tmp/_watch_relay_git.err 2>/dev/null | tr '\n' ' ')"
         return 0
     fi
-    git commit -m "watch-ops-relay: result @ $(date '+%F %T')" >/dev/null 2>&1 || return 0
-    git push origin main >/dev/null 2>&1 || echo "[relay] push FAILED (will retry next cycle)"
+    if git diff --cached --quiet; then
+        echo "[relay] nothing to commit."
+        return 0
+    fi
+    if ! git commit -m "watch-ops-relay: result @ $(date '+%F %T')" 2>/tmp/_watch_relay_git.err; then
+        echo "[relay] ⚠️ git commit FAILED（常见原因：缺 user.email/user.name，或 index.lock 被占）: $(tail -2 /tmp/_watch_relay_git.err 2>/dev/null | tr '\n' ' ')"
+        return 0
+    fi
+    if git push origin main 2>/tmp/_watch_relay_git.err; then
+        echo "[relay] ✅ committed + pushed."
+    else
+        echo "[relay] ⚠️ git push FAILED: $(tail -2 /tmp/_watch_relay_git.err 2>/dev/null | tr '\n' ' ')（下轮重试）"
+        return 0
+    fi
 }
 
 # ── 执行一次命令块 ────────────────────────────────────────────────────────
