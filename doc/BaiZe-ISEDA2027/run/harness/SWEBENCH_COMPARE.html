@@ -21,7 +21,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 </style></head><body>
 <h1>SWE-bench Cross-Eval Report</h1>
 <p><span class="model-badge">Model: kimi-k2.6-cloud</span> &nbsp; Gateway: <code>http://agi-gateway.cxmt.com/cloud/v1</code></p>
-<p><strong>Generated:</strong> 2026-10-05 12:29 | <strong>Concurrency:</strong> 1 (strict serial) | <strong>Protocol:</strong> one harness × 30 instances, then next harness</p>
+<p><strong>Generated:</strong> 2026-10-05 13:03 | <strong>Concurrency:</strong> 1 (strict serial) | <strong>Protocol:</strong> one harness × 30 instances, then next harness</p>
 <div class="callout">
 <p><strong>📋 Key Design (per operator instruction 2026-10-05):</strong></p>
 <ul>
@@ -35,14 +35,14 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <h2>1. Summary by Harness</h2>
 <table>
 <tr><th>Harness</th><th>Resolved</th><th>Patch-but-failed</th><th>Quota-blocked</th><th>Resolve Rate (of scored)</th><th>Avg Wall</th><th>Status</th></tr>
-<tr><td class='hname'>cline-patched</td><td>8</td><td>2</td><td>0</td><td>8/10 (80%)</td><td>589s</td><td>🔄 in progress</td></tr>
+<tr><td class='hname'>cline-patched</td><td>10</td><td>3</td><td>0</td><td>10/13 (77%)</td><td>539s</td><td>🔄 in progress</td></tr>
 <tr><td class='hname'>codex</td><td>0</td><td>0</td><td>0</td><td>N/A</td><td>N/A</td><td>🔄 in progress</td></tr>
 <tr><td class='hname'>opencode</td><td>0</td><td>0</td><td>0</td><td>N/A</td><td>N/A</td><td>🔄 in progress</td></tr>
 <tr><td class='hname'>claude-code</td><td>0</td><td>0</td><td>0</td><td>N/A</td><td>N/A</td><td>🔄 in progress</td></tr>
 <tr><td class='hname'>deepseek-harness</td><td>0</td><td>0</td><td>0</td><td>N/A</td><td>N/A</td><td>🔄 in progress</td></tr>
 </table>
 <div class="callout">
-<p><strong>📊 Overall:</strong> 10 entries scored | 8 total resolved</p>
+<p><strong>📊 Overall:</strong> 13 entries scored | 10 total resolved</p>
 <p><strong>vs deepseek-v4-flash (previous):</strong> 0% resolve rate (0/22 scored) — kimi-k2.6-cloud shows dramatic improvement with zero quota blocks.</p>
 </div>
 <h2>2. Instance-level Detail</h2>
@@ -59,6 +59,9 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <tr><td class='iid'>django__django-11179</td><td class="resolved">&#10004;<br><small>303s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
 <tr><td class='iid'>django__django-11283</td><td class="failed">&#10006;<br><small>581s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
 <tr><td class='iid'>django__django-11422</td><td class="resolved">&#10004;<br><small>279s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11564</td><td class="failed">&#10006;<br><small>509s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11583</td><td class="resolved">&#10004;<br><small>152s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11620</td><td class="resolved">&#10004;<br><small>458s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
 </table>
 <h2>3. Methodology</h2>
 <div class="callout">
@@ -87,5 +90,5 @@ python3 gen_kimi_compare.py</code></pre>
 </ol>
 </div>
 <hr>
-<p><small>BaiZe Harness H-A, 2026-10-05 12:29. Model: kimi-k2.6-cloud. Serial concurrency=1. Data: kimi_pilot_results.json (10 entries).</small></p>
+<p><small>BaiZe Harness H-A, 2026-10-05 13:03. Model: kimi-k2.6-cloud. Serial concurrency=1. Data: kimi_pilot_results.json (13 entries).</small></p>
 </body></html>
