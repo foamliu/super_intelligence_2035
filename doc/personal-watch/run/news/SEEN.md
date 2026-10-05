@@ -211,3 +211,10 @@
 | 2026-10-06 | China accounts for 77.9% of global humanoid robot shipments in H1, IDC says | TechNode | news | https://technode.com/2026/09/29/china-accounts-for-77-9-of-global-humanoid-robot-shipments-in-h1-idc-says/ |
 | 2026-10-06 | XTechHumanoid winners advance military exploration of humanoid capabilities | war.gov (官方) | news | https://www.war.gov/News/News-Stories/Article/Article/4613847/robotics-competition-winners-advance-military-exploration-of-humanoid-capabilit/ |
 
+| 2026-10-06 | OpenAI PR tells journalist to 'move on' while asking Sam Altman about a ChatGPT user's suicide | The Verge | news | https://www.theverge.com/ai-artificial-intelligence/1004827/openai-sam-altman-vanity-fair-interview-pr |
+| 2026-10-06 | Connecting AI agents to enterprise knowledge | MIT Technology Review | analysis | https://www.technologyreview.com/2026/10/05/1145580/connecting-ai-agents-to-enterprise-knowledge/ |
+| 2026-10-06 | Stop Efforts to Greenlight AI Robocalls Ahead of the Midterms | NCLC | opinion | https://www.nclc.org/stop-efforts-to-greenlight-ai-robocalls-ahead-of-the-midterms/ |
+| 2026-10-06 | AI Just Crossed the Terrifying Line – Now What? [video] | YouTube | analysis | https://www.youtube.com/watch?v=ujkD4SxPKOI |
+| 2026-10-06 | Show HN: Self-bench – benchmark coding agents on real-world software | Hacker News | tool | https://github.com/mupt-ai/self-bench |
+| 2026-10-06 | Show HN: Open-Source Instinct | Hacker News | tool | https://github.com/mariagorskikh/open-instinct |
+| 2026-10-06 | Ask HN: Anybody else enjoying Cursor's native (xAI) models? | Hacker News | discussion | https://news.ycombinator.com/item?id=49966668 |
