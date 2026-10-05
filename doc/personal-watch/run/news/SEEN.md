@@ -224,3 +224,17 @@
 | 2026-10-06 | Anthropic Filed the Most Alarming Risk Disclosure in IPO History | Disruption Banking | analysis | https://www.disruptionbanking.com/2026/10/05/anthropic-filed-the-most-alarming-risk-disclosure-in-ipo-history-nothing-in-it-is-binding/ |
 | 2026-10-06 | Anthropic reported diary entry to police, woman faces felony charge | TechSpot | news | https://www.techspot.com/news/114091-florida-woman-used-claude-diary-anthropic-reported-shoot.html |
 
+| 2026-10-06 | TikTok rolls out an AI shopping assistant and one-click checkout | TechCrunch | news | https://techcrunch.com/2026/10/05/tiktok-rolls-out-an-ai-shopping-assistant-and-one-click-checkout/ |
+| 2026-10-06 | At 19, founder raises $11M for Ghost, maker of a $3,499 computer for personal AI | TechCrunch | news | https://techcrunch.com/2026/10/05/at-19-ghost-founder-raises-11-million-to-build-a-3499-computer-for-your-personal-ai/ |
+| 2026-10-06 | Hot Girl Hotline is like 'Dear Abby' for the AI era | TechCrunch | feature | https://techcrunch.com/2026/10/05/hot-girl-hotline-is-like-dear-abby-for-the-ai-era/ |
+| 2026-10-06 | 5 startups that caught VCs' attention at the latest PearX demo day | TechCrunch | feature | https://techcrunch.com/2026/10/05/5-startups-that-caught-vcs-attention-at-the-latest-pearx-demo-day/ |
+| 2026-10-06 | Lola Vision Systems is trying to make it easier to run AI models on chips | TechCrunch | feature | https://techcrunch.com/2026/10/05/lola-vision-systems-is-trying-to-make-it-easier-to-run-ai-models-on-chips/ |
+| 2026-10-06 | Open or closed AI? How founders are choosing what to build on at TechCrunch Disrupt 2026 | TechCrunch | feature | https://techcrunch.com/2026/10/05/open-or-closed-ai-how-founders-are-choosing-what-to-build-on-at-techcrunch-disrupt-2026/ |
+| 2026-10-06 | 刚刚，诺贝尔奖颁给光遗传学！ | 量子位 | news | https://www.qbitai.com/2026/10/501720.html |
+| 2026-10-06 | 纳指盘中再创历史新高：SpaceX 涨逾 5%，英伟达涨超 1% 再度逼近历史新高 | IT之家 | news | https://www.ithome.com/1/009/904.htm |
+| 2026-10-06 | 香蕉派推出 BPI-CM7 核心板：全志 H618 + LPDDR4 + eMMC | IT之家 | news | https://www.ithome.com/1/009/900.htm |
+| 2026-10-06 | 白宫成立“超级智能”工作组，计划120天拿出AI监管方案 | 腾讯新闻 | news | https://news.qq.com/rain/a/20261004A06B4Z00 |
+| 2026-10-06 | 白宫新设人工智能工作组将起草AI风险评估报告 | 网易（转华尔街日报） | news | https://m.163.com/dy/article/L8CVBMBK05566WVY.html |
+| 2026-10-06 | 国务院印发“人工智能+”行动意见：6大行动+8项支撑定调AI国策 | lmnt.cn（聚合） | analysis | http://www.lmnt.cn/news/110040 |
+| 2026-10-06 | 全球AI监管地图：各国都在管什么？ | AI 实战派（博客） | analysis | https://guijiagi.com/posts/2026-10-04-ai-regulation-global/ |
+
