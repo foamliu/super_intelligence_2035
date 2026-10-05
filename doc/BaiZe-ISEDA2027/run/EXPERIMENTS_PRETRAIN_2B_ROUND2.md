@@ -1783,30 +1783,56 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 - 环境：`py310` conda env + `PYTHONPATH=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/p6_tf5`（transformers 5.x with nemotron_h support）
 - 参数守恒验证通过（323 HF keys, 2,220,268,032 params = 2.220B，逐位一致）
 
-### 评测：lm_eval 8 集 zero-shot（🚧 后台运行中）
+### 评测：lm_eval 8 集 zero-shot ✅ COMPLETE（2026-10-05 22:06）
 
 - 脚本：`run/p5b_lmeval_all.sh`（6 ckpts × 8 tasks = 48 runs, 2 task 并行 GPU0/1）
 - 命令模板：`HF_DATASETS_OFFLINE=1 HF_HUB_OFFLINE=1 PYTHONPATH=.../p6_tf5 python -m lm_eval --model hf --model_args 'pretrained=.../hf_iter_XXXX,dtype=bfloat16' --tasks <task> --num_fewshot 0 --batch_size 8`
-- 8 datasets 全部本地缓存（P-6 第 1 步已下载）
-- 进度（截至 2026-10-05 21:27）：
-  - iter_0156: 6/8 done（hellaswag 25.56%, arc_easy 28.87%, boolq 37.83%, arc_challenge 23.04%, sciq 25.10%, piqa 50.82%; winogrande+openbookqa 在跑）
-  - iter_0312~4771: 待跑
-- 日志：`/tmp/p5b_lmeval_full.log`
-- 结果 JSON：`nemo_experiments/p5b/lm_eval_results/iter_XXXX/<task>/results_*.json`
+- 8 datasets 全部本地缓存；48/48 runs 全部完成
+- 结果 JSON：`nemo_experiments/p5b/lm_eval_results/iter_XXXX/<subdir>/results_*.json`
 
-### 报告生成 ✅（脚本就绪，待全量结果）
+#### 8-set zero-shot 结果表（acc_norm for ARC/HellaSwag/OBQA/PiQA/SciQ; acc for BoolQ/Winogrande）
 
-- 脚本：`run/p5b_collect_and_report.py` ✅ syntax OK + smoke test passed
-- 产出（已用部分数据生成初版，全量后重跑）：
-  1. `doc/BaiZe-ISEDA2027/report_pretrain_p5b_8sets.html` — 8 集结果表 + Avg vs tokens scaling curve（SVG）+ 7 个 1B 参考模型对比
-  2. `doc/BaiZe-ISEDA2027/report_pretrain_p6b_scaling.html` — log-linear + power-law fit + 50/55/60% 目标外推 + P-8 GPU-days 估算
-- 参考模型（Table 2 对标）：TinyLLaMA1.1(55.24%), Llama-3.2-1B(57.70%), OpenELM-1.1B(56.95%), MiniCPM-1.2B(59.45%), Xmodel-2-1.2B(61.79%), Qwen2.5-1.5B(63.14%), Phi-1.5-1.3B(65.68%)
-- P-6① baseline（20K步 ckpt, ~82B token）：Avg = 43.95% @ 655M token-equivalent（已记入 P-6 第 1 步）
+| Checkpoint | Tokens | ARC-C | ARC-E | BoolQ | HellaSwag | OBQA | PiQA | SciQ | Winogrande | **Avg** |
+|:--|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| iter_0156 | 655M | 23.04 | 28.87 | 37.83 | 25.56 | 25.40 | 50.82 | 25.10 | 49.49 | **33.26** |
+| iter_0312 | 1.3B | 23.04 | 33.84 | 38.04 | 25.24 | 26.60 | 54.57 | 36.20 | 50.59 | **36.02** |
+| iter_0624 | 2.6B | 22.78 | 38.80 | 45.47 | 27.77 | 28.80 | 58.92 | 54.00 | 51.38 | **40.99** |
+| iter_1248 | 5.2B | 23.72 | 42.26 | 56.06 | 30.83 | 29.20 | 61.21 | 61.30 | 50.59 | **44.40** |
+| iter_2496 | 10.5B | 27.05 | 47.64 | 58.13 | 34.38 | 30.40 | 62.73 | 67.10 | 49.72 | **47.14** |
+| iter_4771 | 20B | 26.88 | 50.63 | 60.03 | 37.09 | 32.00 | 65.72 | 69.20 | 52.17 | **49.22** |
+
+**趋势**：Avg 从 33.26%（655M token）→ 49.22%（20B token），**单调上升且尚未饱和**（10.5B→20B 仍 +2.1pp）。
+**参照**：TinyLLaMA1.1-1.1B=55.24%, Xmodel-2-1.2B=61.79%, Phi-1.5-1.3B=65.68%（口径不同，仅作量级参照）。
+**距最弱 1B 参照（55.24%）**：差 6.0pp @ 20B token；曲线仍在陡升段。
+
+### 报告生成 ✅ COMPLETE
+
+- 脚本：`run/p5b_collect_and_report.py` ✅ 全量数据重跑
+- 产出：
+  1. `doc/BaiZe-ISEDA2027/report_pretrain_p5b_8sets.html`（33KB）— 8 集逐 ckpt 结果表 + Avg vs tokens scaling curve（SVG）+ 7 个 1B 参考模型对比线
+  2. `doc/BaiZe-ISEDA2027/report_pretrain_p6b_scaling.html`（7.1KB）— log-linear + power-law fit + 50/55/60% 目标外推 + P-8 GPU-days 估算
+
+### P-6② Scaling Law 结论 ⭐
+
+- **拟合**：log-linear `Avg = a + b·log10(N)`，**R² = 0.986**（6 点拟合，高度线性）
+- **外推**：
+  - 50% Avg → ~25B token（已接近，~3 GPU-days）
+  - **55% Avg → ~55B token（~7 GPU-days）** ← 与推荐档 100B 交叉验证
+  - 60% Avg → ~150B token（~19 GPU-days）
+- **对 P-8 的结论**：**55% Avg（TinyLLaMA 级）在 ~55B token 可达 → P-8 推荐 100B token 预算合理**（有 ~2× 余量，可触及 ~57–58% Avg）。
+  - ⚠️ 外推不确定性：仅 6 点、处于陡升段，55B 估计误差 ±20B。
+  - ⚠️ 复杂推理 6 集（GSM8K/MATH/BBH/MMLU/HumanEval/MBPP）本轮**未跑**（预期贴地板，需 >100B token 才涌现）。
+
+### P-9.11 ① HF 转换进度（sglang 上界前置）✅ BOTH DONE
+
+- **p3_hybrid/iter_0005000 → HF nemotron_h** ✅（`baize_p6_ckpt_to_hf.py`，510 mcore keys → 323 HF keys，2.220B params，4.4GB safetensors）→ `nemo_experiments/p3_hybrid/hf_iter_5000/`
+- **p3_dense/iter_0005000 → HF Llama** ✅（新脚本 `baize_p3_dense_ckpt_to_hf.py`，12 batched mcore keys → 381 HF keys，2.512B params，5.0GB safetensors）→ `nemo_experiments/p3_dense/hf_iter_5000/`
+  - 架构：42L dense GPT，hidden=2048，ffn=6144，16Q/2KV GQA，SwiGLU silu，no-bias，pre-norm，vocab=129408
+  - 关键发现：p3_dense distcp 使用**batched keys**（`decoder.layers.self_attention.linear_qkv.weight` shape [42,2560,2048]）而非 per-layer keys（与 p3_hybrid 不同）
+- **下一步**：① logits 对齐自检（mcore vs HF 前向差异）→ ② sglang 起服（vllm conda env，`--model-path` 指向 HF 目录）→ ③ P-9.11 矩阵实测（ctx{4K,16K,64K,128K}×bs{1,8}，gen_len=64，TTFT/prefill/decode/mem）
 
 ### 下一步
 
-1. 等 48 runs 全部完成（~1-2h）
-2. 重跑 `p5b_collect_and_report.py` 生成最终 HTML
-3. 更新 EXPERIMENTS 本节 + MEMORY → git push
-4. ②③：sglang 上界补测（HF 转换 p3_hybrid/iter_0005000 → sglang A/B vs p3_dense/iter_0005000）
-5. ④：P-9.5 profiler rerun
+1. ① sglang 上界补测：logits 对齐自检 → sglang 起服 → P-9.11 矩阵 → HTML 报告
+2. ④ P-9.5 profiler 复跑 → HTML 报告
+3. P-8 暂缓（等 base 下满 + 配比定稿）

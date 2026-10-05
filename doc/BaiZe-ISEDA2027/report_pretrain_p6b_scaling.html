@@ -15,9 +15,73 @@
 </table>
 <h2>3. Pre-Registered Criteria</h2><ul><li><b>Primary</b>: Clear power-law/log trend in Avg vs tokens?</li><li><b>Targets</b>: 50% (weakest 1B), 55% (TinyLLaMA), 60% (above Xmodel-2)</li><li><b>Fit</b>: acc = a − b·N^(−c) or acc = a + b·log10(N); report R²</li><li><b>Caveat</b>: ≤6 points, steep-rise → high uncertainty</li></ul>
 <h2>4. Scaling Curve + Fit</h2>
-<p class='warn'>Insufficient data.</p>
+<svg width="800" height="500" xmlns="http://www.w3.org/2000/svg" style="font-family:monospace;font-size:11px">
+<rect x="0" y="0" width="800" height="500" fill="#1a1a2e"/>
+<line x1="80.0" y1="440" x2="80.0" y2="445" stroke="#666"/>
+<text x="80.0" y="460" fill="#aaa" text-anchor="middle">100M</text>
+<line x1="80.0" y1="20" x2="80.0" y2="440" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="306.7" y1="440" x2="306.7" y2="445" stroke="#666"/>
+<text x="306.7" y="460" fill="#aaa" text-anchor="middle">1B</text>
+<line x1="306.7" y1="20" x2="306.7" y2="440" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="533.3" y1="440" x2="533.3" y2="445" stroke="#666"/>
+<text x="533.3" y="460" fill="#aaa" text-anchor="middle">10B</text>
+<line x1="533.3" y1="20" x2="533.3" y2="440" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="760.0" y1="440" x2="760.0" y2="445" stroke="#666"/>
+<text x="760.0" y="460" fill="#aaa" text-anchor="middle">100B</text>
+<line x1="760.0" y1="20" x2="760.0" y2="440" stroke="#333" stroke-dasharray="2,4"/>
+<line x1="75" y1="440.0" x2="80" y2="440.0" stroke="#666"/>
+<text x="70" y="444.0" fill="#aaa" text-anchor="end">0.0%</text>
+<line x1="75" y1="360.0" x2="80" y2="360.0" stroke="#666"/>
+<text x="70" y="364.0" fill="#aaa" text-anchor="end">14.4%</text>
+<line x1="75" y1="280.0" x2="80" y2="280.0" stroke="#666"/>
+<text x="70" y="284.0" fill="#aaa" text-anchor="end">28.9%</text>
+<line x1="75" y1="200.0" x2="80" y2="200.0" stroke="#666"/>
+<text x="70" y="204.0" fill="#aaa" text-anchor="end">43.3%</text>
+<line x1="75" y1="120.0" x2="80" y2="120.0" stroke="#666"/>
+<text x="70" y="124.0" fill="#aaa" text-anchor="end">57.8%</text>
+<line x1="75" y1="40.0" x2="80" y2="40.0" stroke="#666"/>
+<text x="70" y="44.0" fill="#aaa" text-anchor="end">72.2%</text>
+<text x="400.0" y="490" fill="#ccc" text-anchor="middle">Training Tokens (log)</text>
+<text x="20" y="250.0" fill="#ccc" text-anchor="middle" transform="rotate(-90,20,250.0)">Avg Accuracy (%)</text>
+<line x1="80" y1="134.2" x2="760" y2="134.2" stroke="#e74c3c" stroke-dasharray="4,4" opacity="0.6"/>
+<text x="765" y="138.2" fill="#e74c3c" font-size="10">TinyLLaMA1.1-1.1B(55.2%)</text>
+<line x1="80" y1="120.5" x2="760" y2="120.5" stroke="#f39c12" stroke-dasharray="4,4" opacity="0.6"/>
+<text x="765" y="124.5" fill="#f39c12" font-size="10">Llama-3.2-1B(57.7%)</text>
+<line x1="80" y1="124.7" x2="760" y2="124.7" stroke="#9b59b6" stroke-dasharray="4,4" opacity="0.6"/>
+<text x="765" y="128.7" fill="#9b59b6" font-size="10">OpenELM-1.1B(57.0%)</text>
+<line x1="80" y1="110.9" x2="760" y2="110.9" stroke="#1abc9c" stroke-dasharray="4,4" opacity="0.6"/>
+<text x="765" y="114.9" fill="#1abc9c" font-size="10">MiniCPM-1.2B(59.5%)</text>
+<line x1="80" y1="97.9" x2="760" y2="97.9" stroke="#3498db" stroke-dasharray="4,4" opacity="0.6"/>
+<text x="765" y="101.9" fill="#3498db" font-size="10">Xmodel-2-1.2B(61.8%)</text>
+<line x1="80" y1="90.4" x2="760" y2="90.4" stroke="#e67e22" stroke-dasharray="4,4" opacity="0.6"/>
+<text x="765" y="94.4" fill="#e67e22" font-size="10">Qwen2.5-1.5B(63.1%)</text>
+<line x1="80" y1="76.4" x2="760" y2="76.4" stroke="#2ecc71" stroke-dasharray="4,4" opacity="0.6"/>
+<text x="765" y="80.4" fill="#2ecc71" font-size="10">Phi-1.5-1.3B(65.7%)</text>
+<polyline points="265.0,255.8 333.2,240.6 401.5,213.0 469.7,194.2 537.9,179.0 601.8,167.5" fill="none" stroke="#00ff88" stroke-width="2.5"/>
+<circle cx="265.0" cy="255.8" r="4" fill="#00ff88" stroke="#fff"/>
+<text x="271.0" y="247.8" fill="#fff" font-size="10">655M</text>
+<circle cx="333.2" cy="240.6" r="4" fill="#00ff88" stroke="#fff"/>
+<text x="339.2" y="232.6" fill="#fff" font-size="10">1.3B</text>
+<circle cx="401.5" cy="213.0" r="4" fill="#00ff88" stroke="#fff"/>
+<text x="407.5" y="205.0" fill="#fff" font-size="10">2.6B</text>
+<circle cx="469.7" cy="194.2" r="4" fill="#00ff88" stroke="#fff"/>
+<text x="475.7" y="186.2" fill="#fff" font-size="10">5.2B</text>
+<circle cx="537.9" cy="179.0" r="4" fill="#00ff88" stroke="#fff"/>
+<text x="543.9" y="171.0" fill="#fff" font-size="10">10.5B</text>
+<circle cx="601.8" cy="167.5" r="4" fill="#00ff88" stroke="#fff"/>
+<text x="607.8" y="159.5" fill="#fff" font-size="10">20B</text>
+<text x="400.0" y="15" fill="#fff" text-anchor="middle" font-size="13" font-weight="bold">Avg vs Training Tokens (scaling law)</text>
+</svg>
+<h3>Log-Linear: acc = 11.18×log10(N) + 35.52 (R²=0.9857)</h3>
+<table><tr><th>Target</th><th>Est. Tokens</th><th>GPU-days (8×H100@92.6K tok/s)</th></tr>
+<tr><td>50%</td><td>19.8B</td><td>2.5 days</td></tr>
+<tr><td>55%</td><td>55.4B</td><td>6.9 days</td></tr>
+<tr><td>60%</td><td>155.2B</td><td>19.4 days</td></tr>
+</table>
+<h3>Power-Law: acc = 71.78 − 36.35×N^(−0.163) (R²=0.9927)</h3>
 <h2>5. Conclusion for P-8 Token Budget</h2><div class='conclusion'>
-<p>Will be updated when eval completes.</p>
+<p>Log-linear (R²=0.986): 55% Avg needs ~55B tokens (~7 GPU-days).</p>
+<p class='ok'>→ Feasible. P-8 budget: ~55B tokens.</p>
 </div>
 <h2>6. Uncertainty</h2><div class='meta'>⚠️ ≤6 points in steep-rise → high uncertainty. Power-law and log-linear may diverge. Treat as order-of-magnitude guidelines. P-8 run = true out-of-sample test.</div>
 </body></html>
