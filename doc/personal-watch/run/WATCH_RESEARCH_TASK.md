@@ -163,6 +163,13 @@ ERROR_COUNT:  <n>
 （`watch_research_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配它来决定睡眠时长）。
 **绝不要在正文、快照或流水里再出现以 `WAITING:` 开头的行** —— 否则会误触发长睡。
 
+> 💓 **心跳（2026-10-05 新增，硬性）**：**每轮唤醒必须**向 `daily-memories-research/<YYYY-MM-DD>.md` **追加一行**：
+> ```
+> [HH:MM] wake | PHASE=<当前阶段> | 本轮=<做了什么 / 0 变更>
+> ```
+> **目的**：让 supervisor 从 git 端就能区分「**在跑长任务**」与「**已经停了**」。
+> ⚠️ 即使用户没让做任何事、**本轮 0 变更**，这一行**也必须写**（它是"存活证明"，不是产出）。
+
 **supervisor 巡检方式**：`git pull` 读 `MEMORY_RESEARCH.md` 顶部 + `research/` 下最新日报即可，**不需要登录服务器**。
 
 ---

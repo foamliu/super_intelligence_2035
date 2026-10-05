@@ -326,3 +326,21 @@ WAITING: 0
   `news/policy/README.md`（**L1 五步硬顺序** EDA→TAXONOMY→SIGNALS→EVENTS→EARLY_WARNING · walk-forward + 基线）·
   `research/video/README.md`（`SHORTLIST.md` + `scripts/<arXiv ID>.md` · 350–450 字固定结构 · 不盗图/不夸大）。
 
+
+## 🔴 2026-10-05 巡检：personal-watch 已停 ≈27 小时（附处置）
+
+- **事实**：agents 最后提交 **10-04 09:31 / 09:27**；用户 **10-05 12:20** 查状态时仍无新提交。
+- **判定**（按 §7 巡检铁律）：`ls-remote` 与本地 `origin/main` 一致（`dea95f9`）→ 无需 fetch、直接可信 → 本次**不是**缓存误判。
+- **旁证**：BaiZe/ZhuLong 同期**全线正常**（11:29–12:14 持续提交）→ 机器/网络正常，**是个人线特有**。
+- **机制证据**：news loop 兜底 `PUSH_INTERVAL=5h` → 本应出现 **~14:27 auto-commit**，**未出现** → 该 loop 至少 5h 未跑完一个周期。
+- **根因（高度可能）**：**额度/鉴权**（BaiZe 10-04 17:00 实测：`deepseek-v4-pro-fp4`→**429**、其余 7 个→200；**base 须与模型匹配**，`flash@/v1`=200 但 `@/cloud/v1`=**403**）
+  ＋ 我们 loop 的失败兜底（致命错→**60s 短睡重试**）→ **静默空转、零产出**（不丢东西，但**无观测性**）。
+- ⚠️ **另一推测**：`llm_rotate.sh` 会改写**全局** `~/.cline/data/globalState.json` 的 `openAiBaseUrl` → 两线共用 HOME 时**可能互相改 base**（→ 403）。**须看日志定性**。
+- **本次处置**：
+  1. 💓 **心跳条款（零重启）** 写入两份任务书：每轮唤醒**必须**向 `daily-memories-*/<date>.md` 追加
+     `[HH:MM] wake | PHASE=… | 本轮=…`（**0 变更也必须写**）→ 让 supervisor 能区分"在跑/停了"。
+  2. 🔧 **额度轮换接入方案**：新建 `run/LLM_ROTATE_INTEGRATION.md`（复用 BaiZe `llm_rotate.sh`：`llm_parse_candidates`/`llm_probe`/`llm_pick`），
+     给出**可直接套用的 patch**；标明 **改 loop.sh 须先 pkill 再改再启**、**跨线改 base 的干扰风险**。
+  3. **分工**：**心跳 = 可观测性（不需重启）**；**llm_rotate = 可用性（需重启）**。
+- **待用户**：运行机 `pgrep -af 'watch_.*_loop.sh'` + `tail -30 /tmp/watch_{news,research}_loop.log` → 贴回来定性（429 / 403）。
+
