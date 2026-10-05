@@ -42,13 +42,13 @@ WAITING: 0
 
 ---
 
-## 3. 在途任务（截至 2026-10-04 深夜 ~22:30）
+## 3. 在途任务（截至 2026-10-06）
 
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
 | **pretrain** | ✅ P-5b(20B) + P-9.1–9.6①② + **P-9.7 ✅ 定稿（249K tok/s 确认）** + **P-9.8 armA ✅ / armB 87%（裁定按用户立场修订：瞬时 spike 不否决 → FP8 可用于 P-8）** → 🆕 **P-9.9 给 FP8 更多机会**（换 seed / ≥2000 步 / 试 fine-grained FP8 recipe） | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` | 🟢 **`.cline_pretrain` 隔离目录**；P-9.9 已下发 |
 | **vision** | ✅ R9/R10/R14/E1 + R11-L 四臂 + R11-L2 + caption-weight + **R11-E(未抬高)** + **R13(官方 OV2 79.81%)** 全完成 → ⭐ **臂⑥ AIMv2 翻盘**（lp 12.08% vs 基线 6.08%，**+6pp → 25.1% 渐近局部推翻**）→ 🔄 **R11-F 数据源横比运行中** → 🟢 **R11-G(AIMv2 长跑重拟合 scaling) + R11-H(⑥-B 纯 AR) 已批准**（见 `BAIZE_VISION_TASK.md`「运维指令 · 2026-10-04（七）」） | `run/EXPERIMENTS_VISION_ROUND11.md` · `VISION_OFFICIAL_REPOS_SURVEY.md` | 🔄 **`.cline_vision` 隔离目录**；凌晨空窗 ≈4–5h 已排满 |
-| **data** | 下载巡检（白名单 = `l1_en_hq` + `zh` + GPIC；D-CLEAN ✅）· **文献调研：`LIT_IDEAS_2026-10-04.html` 已交付 + 15 条 arXiv 在线核验完成 → 🔁 已下发「用 web search 重做一遍」（产出新文件 `LIT_IDEAS_2026-10-05.html`）** | `run/DISK_CLEANUP_INVENTORY.md` · **`LIT_IDEAS_2026-10-0{4,5}.html`** | 🟢 MCP 已通；**重做调研已下发**（旧版降级为「参考/对照物」） |
+| **data** | 🔴 **配比实验已改道（2026-10-06 用户裁定）**：**废弃 2.2B 单臂**（S0a 待 kill）→ **小代理模型（~50–150M 同族 mamba2-hybrid，规模按「24h 跑 200–400 trial」反推）+ Optuna 贝叶斯优化（TPE+MedianPruner）+ 每卡独立 trial（TP1/DP1、6 并行）+ GBS 8–16 + seq 2048**；**Day1 搜 Stable / Day2 搜 Decay**（对齐 `ye2024datamixinglaws` / Xmodel-2「400+ 次试验」）· 下载巡检（白名单 = `l1_en_hq` + `zh` + GPIC；D-CLEAN ✅） | **`run/DATA_MIX_RECIPE.md §6`（重写）** · `run/DISK_CLEANUP_INVENTORY.md` · `LIT_IDEAS_2026-10-0{4,5}.html` | 🔴 **最高优先指令已下发**（`BAIZE_DATA_TASK.md` 顶部 · 2026-10-06） |
 | **harness** | ✅ **4/5 harness 端到端打通**（cline/codex/opencode/claude-code）· **H-A pilot 30/30 完成**（21 评分 + 9 受阻→lock 已修）· `SWEBENCH_COMPARE.html` final（公平口径 **codex 2/3=67% 领先**）→ 🔄 **已批「换冷门模型（kimi/豆包）+ 严格串行」以绕开 quota 墙并重跑 21 条** | `run/harness/SWEBENCH_LITE_FEASIBILITY.md` · `SWEBENCH_COMPARE.html` | 🟡 **quota（5h 窗口）是扩 300 的主要障碍**；deepseek-harness 仍缺工具链 |
 
 > ✅ **vision 叙事已决（2026-10-03 用户）：走 A = 保持「从零训练」**（"A 本身也是为了学习"）。
@@ -72,6 +72,7 @@ WAITING: 0
 - [ ] ⭐ **vision 全量数据跑 AIMv2（待 vision 回报估算）**：用户令「用全部现有数据（GPIC 41% + CC12M + Amshaker）跑当前最佳配方 AIMv2」；**先答「要多久 / 是否 >1 epoch」**（运维粗估 1 epoch ≈6.6h、2 epoch ≈13h，待 vision 实测精算）。
 - [ ] ⭐ **pretrain 四件（2026-10-05 深夜2 下发，最高优先；⭐ 用户追加「P-6② 早点做」⇒ 顺序已改）**：**先 ②③（P-5b 8 集常识评测 + P-6②，同一评测管线，合并跑、分别出 HTML，用 `.29` GPU0–1，P-5b 从未在 8 集上评过、此前仅 P-6 第 1 步 Avg 0.4395）** → **① sglang 上界补测**（CPU 部分 HF 转换 `nemotron_h` + ABI/`std::bad_alloc` 排查 + **必须用 `cimi_search`** 并行推进；转换好后起的 GPU 补测）→ **④ P-9.5 profiler 排查复跑 → HTML**。
 - [ ] **data / vision 各出 HTML（2026-10-05 深夜2 下发）**：⑤ `report_data_mix_s0a.html`（Stable S0a 是什么 + 现况，纯 CPU 写作、不扰训练）；⑥ vision 两份 `report_vision_lp_eval.html` + `report_vision_aimv2_impl.html`（纯 CPU 写作、不扰 R12）。
+- [x] ✅ **配比实验改道已裁定（2026-10-06 用户）** —— **2.2B 单臂方案（S0a）作废**（方法学错 + 成本失控：312 GPU·h/臂 vs 原估 0.5–1 GPU·h）；改为 **小代理模型（~50–150M，规模按「24h/6×H100 跑 200–400 trial」反推）+ Optuna 贝叶斯优化 + 每卡独立 trial + GBS 8–16 + seq 2048**；**Day1 Stable / Day2 Decay 各 1 天**。已下发 `BAIZE_DATA_TASK.md` 顶部最高优先块。⇒ **P-8 配比前置的「内容」不变（仍等它），但「形态」从「跑一次全尺寸」变成「两天小模型搜索」。**
 - [x] ✅ **Claude Code 合规口径已定案（2026-10-05 深夜4 用户）**：**关掉遥测即可继续用**（**用户负责**；理由 = **公司网络出口有严格防火墙，信息出不去**）；**不需要审计报告**。⇒ harness 只做：**配置（必要时改代码）关闭遥测 → `MEMORY_HARNESS.md` 记一行 → claude-code 照常参与 ×30/×300**；**不暂停、不从列表摘出、不要求 egress 拦截 / 不交审计报告**。（此前「先停 + 拦截 + 审计」版本**作废**。）
 - [ ] ⭐ **AIMv2 提速（待 vision 归因实测）**：用户问「能否加速 / 显卡满否 / 能否加 MBS」—— 运维读数：**显存未满（同配方 ≈22.7–30 / 81.6 GB）**但**同配方吞吐波动大（R11-G 2485 ↔ ⑥-A 5971 img/s）⇒ 疑数据/IO 受限**；已下发「bs{64,128,256}×≥200 步 + `nvidia-smi dmon`」归因实测。**判据：util≲70% 或 ms/iter 不随 MBS 变 ⇒ 数据受限（改数据管线、保持 bs=512 以保 scaling 可比）；util≈100% 且 img/s 随 MBS 升 ⇒ 算力受限（可加 MBS，但须标注 global batch 变化）**。⭐ **用户 2026-10-05 晚拍板：本提速项 = 下一批「全量数据训练」的硬性前置 —— 先优化速度、把实测 img/s 提上去，再跑 ≈59.5M 对全量；估算用提速后 img/s。**
 - [ ] 💬 **另一「运维会话」在并行活动**（2026-10-04 深夜发现：origin 上出现**我没写过的 RUN_ID 63 诊断记录**）→ **需与用户确认是否统一到单一会话**，以免重复下发/互相覆盖。
@@ -104,6 +105,7 @@ WAITING: 0
 ## 6. 关键路径与事实速查
 
 - **关键路径**：`P-5b → P-9 → P-6② → P-8`（P-8 = Stage(i) 本体，周级墙钟，仍暂缓等 base + 配比）。
+- 🔴 **配比搜索形态已改（2026-10-06）**：**不再用 2.2B 跑单臂**，改 **小代理（~50–150M）× Optuna BO × 6 卡并行 × 1 天/段**（Stable / Decay）；**24h 目标 200–400 trial**。锚点 = `ye2024datamixinglaws` + Xmodel-2 `400+ 次试验`。⇒ **「等配比」的等待时间从「周级」降到「2 天」。**
 - **两条硬口径（2026-10-03 定）**：
   - **seq 统一 4096**（P-8 起）；`4094` 仅存于正在跑的 P-5b。
   - **每步 ≈ 4M token 不变量**：`4096↔GBS1024` · `8192↔512` · `16384↔256` · `2048↔2048`。**总步数 = 总token/4M，与 seq 无关**。
@@ -189,6 +191,12 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **🔴 2026-10-06（配比实验改道：2.2B 单臂方案作废 → 小代理 + Optuna BO，两天出配方）** —— 用户复核 `DATA_MIX_RECIPE.md §6` / `run/baize_mix_stable_s0a.sh` 后裁定**方法学错 + 成本失控**，**即刻改道**，并给出**具体技术路线（他此前用过 Optuna 做贝叶斯优化）**：「**这个代理模型要小到 24 小时（6×H100）就能跑 200–400 实验**；**GBS 也要变小，比如 8–16**；**seq_len 可以考虑更小比如 2048**；**这样每张卡独立跑实验**；**用 1 天时间搜预训练配比，一天时间搜 decay 配比**。」
+  - **诊断（运维核过的三条硬证据）**：① S0a 用的是 `pretrain_launcher.py --arch mamba2` = **与目标 P-8 同尺寸的 `NVIDIAMambaHybridModelProvider2B`（2.220B）** —— 而 `§6` 标题明写「无需全量 2.2B」，**标题与执行自相矛盾**；② **只有 1 条臂 / 1 seed / 无中间 ckpt（`SAVE_INTERVAL=5000`）/ 手挑网格** —— 全仓库 **0 命中** `optuna` / 贝叶斯 / grid / random search；③ **实测 ≈312 GPU·h/臂**（配方原估 0.5–1 GPU·h，**差 ~50×**）→ 按 40 臂 ≈ **12,480 GPU·h ≈ 5.2× P-8 本体（~2,400 GPU·h）**，**搜索比被优化的训练还贵**。
+  - **正解锚点**：`ye2024datamixinglaws`（小尺度配比可迁移）+ **Xmodel-2 `xmodel-2.tex:144-154` 的「400+ 次试验」**——**用户要求的 200–400 试验/24h 正与此对齐**。
+  - **已下发**：**`run/BAIZE_DATA_TASK.md` 顶部最高优先块（2026-10-06）** —— ① **立即 kill S0a**（data 线自己的进程，PID `2528081`–`2528090`、端口 29950）释放 GPU2–7，**~1350 步作废且不许粉饰**；`report_data_mix_s0a.html` 降级为历史；`baize_mix_stable_s0a.sh` 标 `DEPRECATED`。② **硬约束表**：6 卡 · **每卡独立 trial（TP1/DP1，各自 master_port，6 并行）** · GBS 8–16 · seq 2048 · **24h 跑 200–400 trial**（= 0.36–0.72 GPU·h/trial ≈ **单 trial 22–43 min**）· **代理 ~50–150M（≠2.2B）** · **Optuna TPE + MedianPruner** · **Day1 Stable / Day2 Decay**。③ **必须先标定**（1 卡实测 tok/s、s/step → 反推模型规模与步数；**跑不到 200 trial 就继续缩小模型**，不许延长时间）。④ 搜索空间（Stable = `web/code/math` 单纯形；Decay = SFT 占比 + 内部 5 类）。⑤ **objective = 固定 held-out 验证 loss**（防泄）+ 早停 pruning，**只对 top-K 跑 `lm_eval`**。⑥ 交付 = **重写 `DATA_MIX_RECIPE.md §6`**，并**订正其中 2.2B/2.47B/3B 三种尺寸口径**（以 `NVIDIAMambaHybridModelProvider2B`=**2.220B** 为准）。
+  - **同步**：`MEMORY.md §3 data 行 + §4`；`daily-memories/2026-10-06.md`。
 
 - **2026-10-05（深夜4 · Claude Code 合规口径定案：关遥测即可用，用户负责）** —— 继「深夜3 先停+拦截+审计」之后，用户**当晚改口径**：「**关掉遥测后可以用，有问题我负责**（**公司网络出口有严格防火墙，信息出不去**）；**不需要审计报告**」。⇒ 已**重写** `BAIZE_HARNESS_TASK.md` 顶部块为「**关遥测即可继续用**」：只做 **① 配置（+必要时代码包装层）关闭遥测**（`settings.json` 的 `env` 块；候选 `DISABLE_TELEMETRY`/`DISABLE_ERROR_REPORTING`/OTel 关断等，**键名须官方文档核实**）→ **② `MEMORY_HARNESS.md` 记一行**（关了哪些 + 依据 URL）→ **③ claude-code 照常参与 `×30/×300`**；**不暂停、不摘出、不做 egress 拦截、不交审计报告**。附运维先查到的起点（官方 env-vars 文档 + 「两套独立遥测：`DISABLE_TELEMETRY`=Statsig / `CLAUDE_CODE_ENABLE_TELEMETRY`=OTel」+ issue #47558，**均标二手待复核**）。
 
