@@ -256,4 +256,11 @@
 | 2026-10-06 | OpenAI will start watermarking ChatGPT's text in the EU | TechCrunch | news(同事件) | https://techcrunch.com/2026/10/05/openai-will-start-watermarking-chatgpts-text-in-the-eu/ |
 | 2026-10-06 | Wikipedia operator says OpenAI's 'rogue' bots may be linked to a May outage | The Verge | news(同事件) | https://www.theverge.com/news/1004929/wikipedia-openai-rogue-bots-wikimedia-foundation-outage |
 | 2026-10-06 | Two Room-Temperature Antiferromagnetic Semiconductor Candidates (Opus 5.5 agents) | Vals AI（公司研究博客） | analysis | https://www.vals.ai/blogs/room-temperature-magnetic-semiconductors |
+| 2026-10-06 | Wall Street banks launch record $60B chip deal for Broadcom and Anthropic | Financial Times（经 HN） | news(同事件) | https://www.ft.com/content/5b9c8ce3-d07c-46f9-8cea-cbc4e7f8ccca |
+| 2026-10-06 | OpenClaw Completes Security Audit Through OpenAI’s Patch the Planet Initiative | OpenClaw（公司博客，经 HN） | analysis | https://openclaw.ai/blog/openclaw-trail-of-bits-engagement-recap |
+| 2026-10-06 | Exit interviews with defectors from OpenAI, Anthropic, and DeepMind | New York Magazine / Intelligencer（经 HN） | feature | https://nymag.com/intelligencer/article/ai-researchers-quit-openai-anthropic.html |
+| 2026-10-06 | Top Consumer AI Apps | a16z（newsletter，经 HN） | analysis | https://www.a16z.news/p/top-100-consumer-ai-apps-seventh |
+| 2026-10-06 | François Chollet: "OpenAI basically set back progress to AGI by 5 to 10 years" | TechRadar（Quote of the day，经 HN） | opinion | https://www.techradar.com/pro/quote-of-the-day-by-arc-prize-co-founder-francois-chollet-openai-basically-set-back-progress-to-agi-by-five-to-10-years-critiquing-the-industrys-overindulgence-in-large-language-models |
+| 2026-10-06 | Fixer, financier, spymaster: UAE’s Sheikh Tahnoon setting sights on AI dominance | The Guardian（interactive，经 HN） | feature | https://www.theguardian.com/news/ng-interactive/2026/oct/01/fixer-financier-spymaster-how-the-uaes-sheikh-tahnoon-is-setting-his-sights-on-ai-dominance |
+| 2026-10-06 | Anthropic removes support for local Claude Cowork sessions | Anthropic（帮助中心，经 HN） | tool | https://support.claude.com/en/articles/15520349-use-claude-cowork-on-web-desktop-and-mobile |
 
