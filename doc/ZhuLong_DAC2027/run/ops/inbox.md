@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 20 -->
+<!-- RUN_ID: 21 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,38 @@
 
 ---
 
+## RUN_ID 21 — 🔍 只读：评测侧怎么调 cline + 把防作弊 hook 装到哪（为“评测对象也隔离 config dir”定位改动点）
+
+**目标**（用户/运维）：让**合并线的评测对象**也用**独立配置目录**（hook 装到那里），使 `~/.cline` 保持干净 → **合并线与 legacy 彻底互不干扰**。本块**只读**定位：`run_cli.sh` / `run_cline_script.sh` 里 ① cline 的调用点；② hook 的安装/移除点；③ 是否已支持 `--config` / `CLINE_CONFIG_DIR`；④ 评测模型的 auth 在哪设。
+
+```bash
+# RUN_ID 21 — read-only: eval-side cline invocation + hook install (for config-dir isolation)
+GP=/nasdata/app.e0031982/code/eda_fastmcp
+echo "== 0. TIME =="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "== 1. run_cli.sh: hook + cline + config refs =="
+timeout 15 grep -nE 'seed_cline_hooks|cline/hooks|PreToolUse|--config|CLINE_CONFIG_DIR|--data-dir|--hooks-dir' "$GP/scripts/run_cli.sh" 2>/dev/null | head -40 | cut -c1-190
+echo "== 2. run_cli.sh: cline invocation lines =="
+timeout 15 grep -nE '(^|[^-])cline ' "$GP/scripts/run_cli.sh" 2>/dev/null | head -20 | cut -c1-190
+echo "== 3. run_cline_script.sh: cline/config/hook refs =="
+timeout 15 grep -nE 'cline|--config|CLINE_CONFIG_DIR|PreToolUse|hooks|run_cli\.sh' "$GP/scripts/run_cline_script.sh" 2>/dev/null | head -30 | cut -c1-190
+echo "== 4. which scripts mention cline or PreToolUse =="
+timeout 20 grep -rlnE '(^|[^-])cline |PreToolUse' "$GP/scripts" 2>/dev/null | head -20 | cut -c1-160
+echo "== 5. eval auth / model refs =="
+timeout 15 grep -nE 'cline auth|models\.json|providers\.json|openAiBaseUrl|MODEL=|CLINE_MODEL' "$GP/scripts/run_cli.sh" "$GP/scripts/run_cline_script.sh" 2>/dev/null | head -20 | cut -c1-190
+echo "== DONE =="
+```
+
+> ⚠️ 本块**纯只读**（grep/sed），不改任何文件、不动任何进程。
+
+---
+
 ## RUN_ID 20 — 🚑 补救：**把 legacy 组件 loop 拉回来**（若已停）；不要动合并线 loop
 
 **背景**：运维失误（RUN_ID 18 把 legacy 的 `pkill` 与 `git pull` 放同一块）→ 中继可能卡住、legacy 可能已被停。**本轮唯一目标 = 让 legacy 回到运行态**（幂等：只在没跑时拉起）。用户在家、要 3 天后才能登机 → 这是"通道一恢复即自动复活"的保险。
 
-```bash
+> ⛔ **已作废**（已执行于 2026-10-05 11:04:10；legacy 本就活着）——降级为 text。
+
+```text
 # RUN_ID 20 — REVIVE legacy component loop (idempotent); leave merged loop alone
 D=/nasdata/app.e0031982/code/ZhuLong_DAC2027/run
 LD="$D/ablation_run_loop_component_s2_full.sh"
