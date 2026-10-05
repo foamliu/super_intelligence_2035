@@ -253,4 +253,6 @@
 | 2026-10-06 | Etched fields funding offers at $40B+ valuation, sources say | TechCrunch | news | https://techcrunch.com/2026/10/05/etched-fields-funding-offers-at-40b-valuation-sources-say/ |
 | 2026-10-06 | Nolla Health will now use AI to review face scans and write acne prescriptions in Utah | The Verge | news | https://www.theverge.com/ai-artificial-intelligence/1005075/nolla-health-acne-ai-prescriptions |
 | 2026-10-06 | Pentagon stops using Anthropic AI tools after blacklisting company, BBC told | BBC（经 HN） | news(未核验) | https://www.bbc.co.uk/news/articles/c5j9x9pr0240o |
+| 2026-10-06 | OpenAI will start watermarking ChatGPT's text in the EU | TechCrunch | news(同事件) | https://techcrunch.com/2026/10/05/openai-will-start-watermarking-chatgpts-text-in-the-eu/ |
+| 2026-10-06 | Wikipedia operator says OpenAI's 'rogue' bots may be linked to a May outage | The Verge | news(同事件) | https://www.theverge.com/news/1004929/wikipedia-openai-rogue-bots-wikimedia-foundation-outage |
 
