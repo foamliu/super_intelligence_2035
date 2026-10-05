@@ -263,4 +263,5 @@
 | 2026-10-06 | François Chollet: "OpenAI basically set back progress to AGI by 5 to 10 years" | TechRadar（Quote of the day，经 HN） | opinion | https://www.techradar.com/pro/quote-of-the-day-by-arc-prize-co-founder-francois-chollet-openai-basically-set-back-progress-to-agi-by-five-to-10-years-critiquing-the-industrys-overindulgence-in-large-language-models |
 | 2026-10-06 | Fixer, financier, spymaster: UAE’s Sheikh Tahnoon setting sights on AI dominance | The Guardian（interactive，经 HN） | feature | https://www.theguardian.com/news/ng-interactive/2026/oct/01/fixer-financier-spymaster-how-the-uaes-sheikh-tahnoon-is-setting-his-sights-on-ai-dominance |
 | 2026-10-06 | Anthropic removes support for local Claude Cowork sessions | Anthropic（帮助中心，经 HN） | tool | https://support.claude.com/en/articles/15520349-use-claude-cowork-on-web-desktop-and-mobile |
+| 2026-10-06 | MCP for agent-to-agent comms may be the riskiest protocol you've never heard of | Ars Technica | news | https://arstechnica.com/security/2026/10/vulnerability-in-agents-from-google-and-others-exposes-structural-flaw-in-mcp/ |
 
