@@ -12,12 +12,12 @@ WAITING: 0
 
 ```
 PHASE:        常态采集（T1–T10 ✅）+ **L1/N3 收口（G1 全过）+ L2/N4 探索性（G2 全过）**（L1 焦点 · L2 探索性 · L3 冻结）
-已完成:       T1–T10 ✅ · 首~九轮常态 ✅ · **N1 抓取器 + 语料（1627 天 / 806,509 条 / 5 片 2022–2026）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（31,398 条）· N3-4 预警方案 · L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· 🆕 G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md）**
-当前动作:     **恢复 27h 停摆后首轮**：核对语料（**1627 天 / 806,509 条**，游标 `2022-04-20`）→ **L1 链全量重跑对齐**（EDA→TAXONOMY→SIGNALS→**EVENTS 31,398**→EARLY_WARNING 45 格 `q<0.05`=**32**、门槛=**10**）→ **建 G2′④ 台账**；🐞 修复运行机**缺 numpy/scipy**（Tuna 装 2.5.3 / 1.18.1）。
-下一步:       ① **N1 续抓**（`news/archive/fetch_archive.py --max-seconds …`，倒序 `2022-04-20 → 2016-01-01`）→ 抓完重跑链并记台账；② **G2′④ 累积**：按周期 `python3 news/policy/cycle_run.py --with-l2` 追加 `STABILITY_LOG.md`；③ L1 稳定性 / 组合规则 + 纳入 SIGNALS 措辞信号；④ L3（N5）**冻结**
-本轮新增:     **L1 全链随全语料重算**：EVENTS 25,032 → **31,398**（CN 18,581 → 22,904）；`EARLY_WARNING.md` 45 格 `q<0.05` **32**、效果量门槛 **10**（上版 34/8）；**新增 `cycle_run.py` + `STABILITY_LOG.md`（G2′④ 证据）**；`EXPLORE.md` 事件数更新为 31,398（`explore.csv` **字节不变**——价格窗 2023-06 起，2022 事件不入 L2）；**news 日报 0 条**（本轮专注 L1 + 恢复）
-阻塞:         无（新华网长期 403/405 → 兜底源 `chinanews`；⚠️ **东财日K 运行机 TLS 被重置** → 历史日线走腾讯 `ifzq`；⚠️ `--stats`/`--index` **勿与抓取并发**；⚠️ **运行机曾缺 numpy/scipy 且无 pip/sudo**（新机 bring-up 遗留）→ 已用 get-pip+Tuna 用户级装好）
-ERROR_COUNT:  1（历史：模型名 `deepseek-v4-pro-fp4` 白睡一轮，已修；本轮 0；⚠️ 本轮修复了「运行机缺 numpy → `explore_l2.py` 报错」）
+已完成:       T1–T10 ✅ · 首~九轮常态 ✅ · **N1 抓取器 + 语料（1788 天 / 913,074 条 / 6 片 2021–2026）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库（34,569 条）· N3-4 预警方案 · L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md）**
+当前动作:     **N1 续抓**（`2022-04-20 → 2021-11-12`：新增 **`chinanews-2021`** 片 + **补全 2022 全年**）→ **全链重跑对齐全语料**（EDA→TAXONOMY→SIGNALS→**EVENTS 34,569**→EARLY_WARNING 45 格 `q<0.05`=**34**、门槛=**15**）；🐞 **修复并发双抓的重复条目**（`fetch_archive.py --repair` 去重 → 全库 **913,074 唯一 url**）。
+下一步:       ① **N1 续抓**（`news/archive/fetch_archive.py --max-seconds …`，倒序 `2021-11-12 → 2016-01-01`）→ 抓完重跑链并记台账；② **G2′④ 累积**：按周期 `python3 news/policy/cycle_run.py --with-l2` 追加 `STABILITY_LOG.md`；③ L1 稳定性 / 组合规则 + 纳入 SIGNALS 措辞信号；④ L3（N5）**冻结**
+本轮新增:     **N1 语料 806,509 → 913,074 条（+106,565；6 片）**；全链重算：`EVENTS.csv` 31,398 → **34,569**（8.39 MB，sha `11b168a45e7e48bc`）；`EARLY_WARNING.md` 45 格 `q<0.05` 32→**34**、效果量门槛 10→**15**；**`STABILITY_LOG.md` 新增 1 行（12:49）**；🐞 **去重 74,527 行重复**（见运维问答）；**news 日报 0 条**（本轮专注 N1 + 修 bug）
+阻塞:         无（新华网长期 403/405 → 兜底源 `chinanews`；⚠️ **东财日K 运行机 TLS 被重置** → 历史日线走腾讯 `ifzq`；⚠️ **停后台抓取须杀 python 子进程**——杀 wrapper shell 不停抓，易致**并发双抓重复**；⚠️ `--stats`/`--index` 勿与抓取并发）
+ERROR_COUNT:  2（历史：模型名 `deepseek-v4-pro-fp4` 白睡一轮，已修；**本轮：并发双抓 → 重复条目**（`kill` 只命中 wrapper 未命中 python 子进程），已 `fetch_archive.py --repair` 去重修复；曾缺 numpy/scipy 已装）
 ```
 
 **选定方案（prep_api 结论）**
@@ -74,6 +74,14 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
   - **🐞 环境修复（新机遗留）**：运行机**无 numpy/scipy、无 pip、无 sudo** → `explore_l2.py` 直接 `ModuleNotFoundError`。已用 `get-pip.py`（`--break-system-packages`）+ **Tuna 镜像**用户级装 **numpy 2.5.3 / scipy 1.18.1** → `explore_l2.py` 复跑成功。⚠️ **建议**：新机 bring-up 清单补一条「python 科学栈（numpy/scipy）」。
   - **口径提示**：`explore.csv` 在扩语料后 **sha 仍为 `90f357ff8a8be943`（字节不变）** —— **属预期**（价格窗自 2023-06 起，**2022 新增事件不入 L2**），已在 `EXPLORE.md`/`README §4` 写明。
 
+- **Q（本线主动小结 · 2026-10-05 第2轮）：语料为何从 806,509 跳到 913,074？有没有被"注水"？G2′④ 台账动了吗？**
+  **A（本线 2026-10-05 实测）**：**三件事** ——
+  - **① 真实续抓（有效增量）**：`fetch_archive.py` 倒序爬到 **2021-11-12** → **新建 `chinanews-2021.jsonl.gz`** + **补全 2022 全年**（原 2022 只到 `04-21`，现 `01-01~12-31`）。属**真实新增**（✅ 代理源，非新华社）。
+  - **② 🐞 本线操作失误：并发双抓 → 重复条目**。上一轮收尾用 `kill -INT <wrapper-pid>` 停抓，**只杀了 bash wrapper、没杀到 python 子进程** → 旧抓仍在跑；我又起新抓 → **两进程同时写同一 shard**，产生 **74,527 行重复**（2021 片 ~49% 重复、2022 片 ~16%）。
+  - **③ 处置（未新增脚本）**：用既有 **`fetch_archive.py --repair`**（本就 **按 `url` 去重 + 修 URL**，幂等）→ 六片**去重后唯一 url = 913,074**，全片 `gzip -t` 通过、**0 坏行**。清洗后行数 = `--stats` 计数，二者一致。
+  - **G2′④ 台账**：`cycle_run.py`（本轮未带 `--with-l2`）追加第 3 行 **`2026-10-05 12:49 | 1788 | 913074 | 34569 | 34 | 15 | 11b168a45e7e48bc`**（L2 记 `not-requested`，因 `explore.csv` 不受 2021-22 事件影响 → 无需重跑）。**「连续 N 周」仍需逐周累积。**
+  - **教训（已写进本节与流水）**：**停后台抓取要杀 python 子进程**（`pkill -f 'python3 news/archive/fetch_archive.py'`，或 `kill $(pgrep -f 'python3 news/archive/fetch_archive.py')`），**别只杀 wrapper**；**同一 shard 严禁并发写**。
+
 - **Q（本线主动小结 · 2026-10-04）：为何 `EARLY_WARNING.md` §4.2 的预警结论比上一版「收敛」了很多？是不是调低了标准？**
   **A（本线 2026-10-04 实测）：不是调标准，是修掉一个真 bug —— 上一版结论本身是错的。** 两件事：
   **① 语料/事件**轴**不对齐（主因）**：N1 语料已扩到 **1296 天（2023-03-18~2026-10-03）**，但 `EVENTS.csv` 只覆盖 **2024-04-13 起**；旧脚本评估轴取**语料全程** → 前 ~380 天「有信号列、但**标签恒为 0**」→ 伪造海量全零负样本 → **AUC 被系统性抬高**（旧版好几个格 AUC 冲到 0.9+，是假的）。已加**轴对齐护栏**：评估窗口 = 语料范围 ∩ 事件日期范围。
@@ -114,7 +122,7 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **线**：news（新闻采集）
 - **任务书**：`WATCH_NEWS_TASK.md`（只读）
 - **产物**：`news/<YYYY-MM-DD>.md`（当日摘要）· `news/SEEN.md`（去重台账）· `news/INDEX.md`（索引）
-- **N1 语料库**：`news/archive/chinanews-<年>.jsonl.gz`（只 5 字段；**仅取 标题+日期+来源+链接，不抓正文**）；现 **1627 天 / 806,509 条 / 5 片**（**2022-04-21 ~ 2026-10-03**；游标 `2022-04-20` → `2016-01-01`）
+- **N1 语料库**：`news/archive/chinanews-<年>.jsonl.gz`（只 5 字段；**仅取 标题+日期+来源+链接，不抓正文**）；现 **1788 天 / 913,074 条 / 6 片**（**2021-11-12 ~ 2026-10-03**；游标 `2021-11-12` → `2016-01-01`）
 - **L1 产物**：`news/policy/`（`EDA.md` / `TAXONOMY.md` / `SIGNALS.md` / `EVENTS.csv` / `EARLY_WARNING.md` / **`cycle_run.py` + `STABILITY_LOG.md`（G2′④ 运行台账）**）
 - **L2 产物（探索性 · 非因果）**：`news/policy/`（`L2_PREREG.md` / **`EXPLORE.md` + `explore.csv`**）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
@@ -126,6 +134,16 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 
 ## 2. 流水（倒序，保留最近 ~20 条）
 
+- **2026-10-05** —— 🆕 **N1 续抓（新增 2021 片 + 补全 2022）+ 全链重跑 + 修复并发双抓重复**。
+  - **N1 续抓**：`fetch_archive.py --max-seconds 300`（≥2s/req）→ 游标 `2022-04-20 → 2021-11-12`；**新建 `chinanews-2021.jsonl.gz`**（28,886 条）+ **补全 2022 全年**（161,166 → 238,861 条）；语料 **806,509 → 913,074 条 / 6 片**（2021–2026）。
+  - **🐞 并发双抓 bug（本线操作失误）**：停上一轮抓取时 `kill -INT <wrapper-pid>` **只命中 bash wrapper、未命中 python 子进程** → 旧抓未停，我又起新抓 → **两进程同写同一 shard**，产生 **74,527 行重复**。
+    - **修复**：跑既有 **`fetch_archive.py --repair`**（按 `url` 去重 + 修 URL，幂等，18s）→ 去重后六片**唯一 url = 913,074**，`gzip -t` 全通过、0 坏行；`--stats`/`--index` 重生成（`INDEX_FILES.md` 6 片，均 <20 MB）。
+    - **教训**：**停后台抓取要杀 python 子进程**（`pkill -f 'python3 news/archive/fetch_archive.py'`）；**同一 shard 严禁并发写**。
+  - **全链重跑对齐全语料**：`cycle_run.py`（纯 L1 链）→ `eda.py`(n=913074, days=1788) → `taxonomy.py` → `signals.py` → `extract_events.py`（**34,569 事件**，`EVENTS.csv` **8.39 MB**，sha `11b168a45e7e48bc`）→ `early_warning.py`（45 格 `q<0.05` **34**、效果量门槛 **15**）。
+  - **G2′④ 台账**：`STABILITY_LOG.md` 追加第 3 行 `2026-10-05 12:49 | 1788 | 913074 | 34569 | 34 | 15 | 11b168a45e7e48bc | … | not-requested`。
+  - **L2/N4**：`explore_l2.py` 重生成 `EXPLORE.md`（事件数 → 34,569；`explore.csv` 预期**字节不变**——价格窗自 2023-06 起，2021-22 事件不入 L2）。
+  - **文档同步**：`news/policy/README.md` §4/§4.1 更新（语料/事件数/门槛数）。
+  - **未做**：**常态采集**（news 日报 0 条，专注 N1 + 修 bug）；L3 冻结。判据复核：无因果措辞、低频单列、非投资建议。
 - **2026-10-05** —— 🆕 **恢复 27h 停摆后首轮：L1 链对齐全语料 + 建 G2′④ 运行台账 + 修复 numpy 缺失**。
   - **核对（发现产物 stale）**：`news/archive` 已 **1627 天 / 806,509 条 / 5 片**（2022–2026，游标 `2022-04-20`），而 L1 产物停在 605,311 条那版 → 全链重跑。
   - **L1 链全量重跑**：`eda.py`(n=806509,days=1627) → `taxonomy.py`(15 类) → `signals.py`(128 行) → `extract_events.py`（**31,398 事件**，CN 22,904；`EVENTS.csv` 7.26 MB，sha `9fd3a9670f0a1dde`）→ `early_warning.py`（283 行）。
