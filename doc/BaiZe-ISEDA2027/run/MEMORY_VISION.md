@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **🚀 R12 全量数据 AIMv2 训练中**（120k 步, GPIC+CC12M+Amshaker ≈58.8M, 16:43 起跑, step≈6850/120k=5.7%, ~5400 img/s, ETA ~20:00 + eval ~1h）· ✅ **论文 §6 已改完** · ✅ **GPU 归因实测已完成**（dmon: SM util ≈73% 混合型, 详见 §18.2b） |
-| WAITING | 1（**R12 训练进行中** · step 6850/120k · ~5400 img/s · ETA ~3h + eval ~1h · 论文 §6 已改完 · 待训完自动 eval → 回填 §18.5 公平表 + scaling 曲线）|
+| PHASE | **🚀 R12 全量数据 AIMv2 训练中**（120k 步, step≈40100/120k=33.4%, 16:43 起跑, 前段~5300 img/s→后段~2300 img/s[NFS争用持续], ETA ~22:00-23:30 + eval ~1h）· ✅ **论文 §6 已改完** · ✅ **GPU 归因实测已完成** · ⚠️ **父脚本+torchrun 已退出**（ranks orphaned ppid=1，已知模式同 R11-L arm⑥）→ **eval watcher 已启动**（`r12_eval_watcher.sh` PID 3282690 setsid） |
+| WAITING | 1（**R12 训练进行中** · step 40100/120k=33.4% · ~2300 img/s（NFS争用降速）· ETA ~22:00-23:30 训完 + eval watcher 自动接续 ~1h · 待训完→eval→回填 §18.5 公平表 + scaling 曲线）|
 | ERROR_COUNT | 1（R9 阶段一 w512 首跑 @~8900 步 crash：CC12M/Amshaker wds 含损坏 jpg → 已由 data.py `ignore_and_continue` 修复） |
-| BUDGET_USED | R2–R9 累计 + R10 + R11-L/②③④ + R11-L2 LoRA + R11-L caption-weight + R11-E GPIC + 臂⑥ AIMv2 + R11-F + R11-G + R11-H + **R12 进行中**（~3h×8卡≈24 GPU·h 已用，总 ≈88 GPU·h） |
-| 更新 | **2026-10-05 16:59（R12 step 6850/120k 健康 loss=3.17 C2_gap=+0.125 C4=OK ~5400 img/s; GPU 归因 dmon SM≈73% 混合型; ETA ~20:00 + eval ~1h; WAITING=1 省token）**· *[更早见 daily-memories-vision/2026-10-05.md]* |
+| BUDGET_USED | R2–R9 累计 + R10 + R11-L/②③④ + R11-L2 LoRA + R11-L caption-weight + R11-E GPIC + 臂⑥ AIMv2 + R11-F + R11-G + R11-H + **R12 进行中**（~1.7h×8卡≈13.6 GPU·h 已用，总 ≈78 GPU·h） |
+| 更新 | **2026-10-05 18:27（R12 step 40100/120k=33.4% 健康 loss=2.74↓ C2_gap=+0.114 C4=OK; 吞吐前段~5300→后段(step39k+)持续降至~2300 img/s[NFS与data线GPIC下载争用未缓解]; ckpt 10k/20k/30k/40k已存; eval watcher PID 3282690 alive; ETA ~22:00-23:30训完+eval~1h; WAITING=1）**· *[更早见 daily-memories-vision/2026-10-05.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -152,34 +152,9 @@ WAITING: 1
 - ✅ **完成+§17 已落盘**：纯 AR lp @ {10k,20k,30k} = {5.28, 6.13, 6.23}% vs ⑥-A {11.39, 11.14, 12.08}% → @10.24M 已 ≤ 基线+1.5 → **裁定 Row3：「翻盘依赖对比项」**（详见 `EXPERIMENTS_VISION_ROUND11.md §17`）。
 - ✅ **E+D 重跑已自动接管**：`/tmp/r11_ed_wait_and_launch.sh`（PID 861557）→ `/tmp/r11_ed_rerun.sh`（PID 765556）→ **13:30:12 ALL DONE**。Arm E ✅ 完成（11:47）；Arm D ✅ 完成（13:30，lp{3.86,6.34,6.65}%，in-domain/单列不排名）。**R11-F/G/H 链全部收尾，GPU 全空闲**。
 
-## ⭐ §16.8 文献证据锚点已落盘（2026-10-05 08:51，cimi_search 首次使用）
+## §16.8 文献证据锚点（✅ 已落盘，详节已滚动归档）
 
-> 运维指令 2026-10-05 要求用 `cimi_search`/`cimi_fetch` 核实 AIMv2/MAE 原文。已完成 3 次 search + 2 次 fetch（CPU/网络，未占 GPU）：
-- **AIMv2**（arXiv:2411.14402）：损失 `CE_text + α×norm_mse`（α≈0.4），数据 ~12B，**原文逐字："denser supervision compared to discriminative objectives"** → §16.7 机制解释有一手锚点 ✅
-- **MAE**（arXiv:2111.06377）：最优 mask 75%，我们用 0.6（二手·待核原文表格）
-- **XTRA**（arXiv:2411.15648）：AR 模型大数据下 scaling 一致但样本效率常被认为不如对比 → 我们 R11-G 是数据受限区间的反向证据
-- **C2 限定补充**：官方 AIMv2 纯 AR 无对比、α=0.4、prefix-attention；我们保留 InfoNCE、α=1.0、随机 mask → R11-H（纯 AR）正是向官方靠拢的消融
-
-### §16.8 续 — SigLIP2 + OpenVision2 文献锚点（2026-10-05 10:02，cimi_search + cimi_fetch）
-
-> 运维指令 2026-10-05 要求核实 SigLIP2 / OpenVision2 原文。已完成 2 次 search + 1 次 fetch（CPU/网络，未占 GPU）：
-
-- **OpenVision2**（arXiv:2509.01644, 2025-09-01, UCSC-VLAA, https://arxiv.org/abs/2509.01644）：
-  - ⭐ **核心做法 = 去掉文本塔 + 去掉对比损失 → 纯生成（captioning-only）**，跟随 CapPa / AIMv2。
-  - 原文逐字（abstract）：*"we remove the text encoder (and therefore the contrastive loss), retaining only the captioning loss as a purely generative training signal"*
-  - 效率收益：ViT-L/14 训练时间 83h→57h（1.5×），显存 24.5GB→13.8GB（1.8×），batch 2k→8k；可扩到 >1B 参数。
-  - 数据：Recap-DataComp-1B v2（LLaMA-3 长合成 caption）。
-  - 🔗 **与 R11-H 直接对位**：R11-H 测的正是「去对比项 → 纯 patch AR」；OpenVision2 官方路线 = 纯生成无对比。若 R11-H 翻盘成立 → 与官方 OpenVision2 的「generative-only 可行」结论一致 → §17 机制解释有一手锚点。
-  - ⚠️ **差异**：OpenVision2 用 captioning loss（文本 token 级 AR）；我们 R11-H 用 masked-patch-MSE（像素级 patch 重建）→ 监督通道不同，但「去对比项」的核心消融逻辑一致。
-
-- **SigLIP2**（arXiv:2502.14786, 2025-02-20, Google DeepMind, https://arxiv.org/abs/2502.14786, CC BY 4.0）：
-  - 在 sigmoid loss 基础上**统一加入**：captioning-based pretraining + 自监督（self-distillation + masked prediction）+ online data curation。
-  - 改进：zero-shot / retrieval / VLM transfer 全规模优于 SigLIP；**显著改善 localization + dense prediction**。
-  - 🔗 **与 R11-L loss 轴对位**：SigLIP2 = 「对比 + 生成 + 自监督」多目标统一 recipe → 印证「密集监督（masked prediction）与对比学习互补」的行业趋势 → 给 R11-L 四臂（InfoNCE/SigLIP/LocalLoss/CoCa 均未翻盘）的负结果提供「官方已转向多目标融合」的语境。
-  - ✅ **已核实（2026-10-05 12:35 cimi_search）**：masked prediction = **50% patch 替换为 mask token**（TIPS feature-matching，非像素 MSE）；自蒸馏 1 teacher + 8 students；辅助损失在训练 80% 时引入；数据 WebLI 10B 图/12B alt-text。详见 `EXPERIMENTS_VISION_ROUND11.md §16.8(3b)`。
-
-- **证据纪律**：以上 URL + 年份已给；OpenVision2 abstract 逐字引用已核实；SigLIP2 mask ratio/loss 形式 ✅已核实（50% patch，TIPS feature-matching）；MAE 75% ✅已从 abstract+正文两处确认；AIMv2 denser-supervision ✅已从 ar5iv 确认。
-- **§16.8(5) 补充**（2026-10-05 13:45 cimi_search）：检索「密集监督在数据受限下的收益」→ 最直接一手证据已在 (1) AIMv2「denser supervision」+ (3) XTRA「150× smaller datasets」中；新检索到的 emergentmind「Dense Supervision Mechanism」概念综述为**二手·未核**（cimi_fetch 502），仅作概念框架补充。详见 `EXPERIMENTS_VISION_ROUND11.md §16.8(5)`。
+> AIMv2/MAE/XTRA/OpenVision2/SigLIP2 原文已用 cimi_search/fetch 核实（URL+年份见 `EXPERIMENTS_VISION_ROUND11.md §16.8`）。详节已滚动至 `daily-memories-vision/2026-10-05.md`。核心：AIMv2 "denser supervision" ✅、OpenVision2 纯生成无对比 ✅、SigLIP2 多目标融合(50% patch TIPS) ✅、MAE mask 75% ✅。
 
 
 ## 🚀 R12 全量数据 AIMv2 训练中（2026-10-05 16:43 起跑）
@@ -189,10 +164,12 @@ WAITING: 1
 - **数据**：GPIC 3322 tar（all types, 41.8M）+ CC12M 1100 tar（11.0M）+ Amshaker 2250 tar（5.95M）= **≈58.8M**。`--data-source mixed --caption-type all`。
 - **配方** = R11-G 同款：AIMv2 (InfoNCE + 1.0×patch-MSE), w512, 冻结 CLIP-768, 120k 步, save-every 10k。
 - **GPU 归因**（§18.2b）：dmon SM util ≈73%（47–91%），显存 20% → **混合型**（compute 为主 + data 偶发 starvation）。vs R11-G 2.2× 提速主因 = 更多 shard 多样性 + GPIC 小 tar 轮换快。保持 bs 64/global 512（scaling 可比）。
-- **进度**：step 6850/120k=5.7%, loss=3.17↓, PROBE C1≈0.33/C2_gap=+0.125/C4=OK（无坍缩）, ~5400 img/s。
-- **ETA**：~3h（~20:00）+ eval ~1h ≈ **ALL DONE ~21:00**。r12 脚本自动 eval 12 ckpts。
-- **后续**：✅ 论文 §6 已改完（§6.3 + 4 bib, diff 见 §18.7）。待训完回填 §18.5 公平表 + scaling 曲线。
-- 脚本：`r12_run_fulldata_aimv2.sh 120000 6`；日志 `/tmp/r12_fulldata_aimv2.log`；输出 `R12_fulldata_aimv2_w512`。
+- **进度**（18:27 巡检）：step 40100/120k=33.4%, loss=2.74↓（contrast 2.49 + patch_mse 0.25）, PROBE@39600 C1=0.40/C2_gap=+0.114/C4=OK（无坍缩）。ckpt 10k/20k/30k/40k 已存（507MB each）。
+- ⚠️ **吞吐持续降速**：前段（step 50–39050）稳态 ~5000-5400 img/s（ms/iter ~95-100）→ 后段（step 39100+）**持续降至 ~2200-2500 img/s**（ms/iter ~200-250）。**根因 = NFS I/O 争用未缓解**：data 线 `hf download stanford-vision-lab/gpic`（PID 144981, etimes 84679s）仍在写 `/nas_inference`（同 R12 读 GPIC tar 的 NFS server）→ 读写争用。NCCL TCPStore broken-pipe 告警 = 症状，非原因；训练经 NCCL GPU-to-GPU 正常继续。**无法干预**（不能 kill data 线下载；重启训练会丢 33% 进度）。
+- ⚠️ **父脚本+torchrun 已退出**（已知模式，同 R11-L arm⑥）：`r12_run_fulldata_aimv2.sh` + `torch.distributed.run` 进程已不在，8 rank 进程 ppid=1 孤儿独立完成训练。**r12 脚本的自动 eval 链不会触发** → 已起 **eval watcher** `r12_eval_watcher.sh`（PID 3282690, etimes 2363s, alive, setsid 独立会话, 日志 `/tmp/r12_eval_watcher.log`）：每 5min 轮询 rank 进程，退出后自动收 ckpt 跑 `r8_eval_in1k.py`。
+- **ETA**（修正，按 ~2300 img/s 降速）：剩余 ~80k 步 × ~220ms ≈ **4.9h** → 训完 ~23:18；若 NFS 争用缓解恢复至 ~5000 → ~2.5h → ~20:53。**最可能 ~22:00-23:30 训完** + eval watcher ~1h ≈ **ALL DONE ~23:00-00:30**。
+- **后续**：✅ 论文 §6 已改完（§6.3 + 4 bib, diff 见 §18.7）。待训完→eval watcher 自动收 12+ ckpt 跑 IN-1k lp/zs → 回填 §18.5 公平表（每步耗时/steady img/s/总墙钟/GPU·h）+ scaling 曲线（与 R11-G 55.3M 对照，看全量 58.8M @61.4M 是否延续幂律 R²=0.91）。
+- 脚本：`r12_run_fulldata_aimv2.sh 120000 6`（已退出）；eval watcher `r12_eval_watcher.sh`（PID 3282690 alive）；日志 `/tmp/r12_fulldata_aimv2.log` + `/nas_train/.../R12_fulldata_aimv2_w512/train.log`；输出 `R12_fulldata_aimv2_w512`。
 
 ## 历史条目已滚动归档（2026-10-03）
 
