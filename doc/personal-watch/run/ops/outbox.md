@@ -513,3 +513,120 @@ d5d7dab ops: 止损 — news/archive 11 个语料分片移出 git 索引（git r
 --- 工作区分片仍应为 11 ---
 0
 ```
+
+---
+
+## RUN_ID 5 · 2026-10-05 15:31:38 · host=`VM-0-6-ubuntu` · exit=0
+
+**命令**
+```bash
+set -u
+cd ~/super_intelligence_2035 || exit 1
+echo "=== 0. 先决条件 ==="
+hostname; date '+%F %T %Z'
+echo "当前 .git 体积：$(du -sh .git | cut -f1)"
+echo "分片数量：$(ls doc/personal-watch/run/news/archive/*.jsonl.gz 2>/dev/null | wc -l)"
+echo
+echo "=== 1. 🛡 双保险：把分片复制到仓库之外（~/archive_data_backup/）==="
+mkdir -p ~/archive_data_backup
+cp -f doc/personal-watch/run/news/archive/*.jsonl.gz ~/archive_data_backup/ 2>/dev/null
+echo "备份目录内容："
+ls -la ~/archive_data_backup/ | head -15
+echo "备份合计：$(du -sh ~/archive_data_backup 2>/dev/null | cut -f1)"
+echo
+echo "=== 2. 🛑 从 git 索引移除（--cached = 保留工作区文件）==="
+git rm --cached -q doc/personal-watch/run/news/archive/*.jsonl.gz 2>&1 | head -15 || true
+echo "--- 移除后 git 索引里还剩什么（应只剩 py/README/PROGRESS/INDEX）---"
+git ls-files doc/personal-watch/run/news/archive/ | cut -c1-140
+echo
+echo "=== 3. ⭐ 关键校验：工作区文件必须还在（应为 11）==="
+ls doc/personal-watch/run/news/archive/*.jsonl.gz 2>/dev/null | wc -l
+du -sh doc/personal-watch/run/news/archive 2>/dev/null
+echo '--- 且应显示为「被 .gitignore 忽略」而非「待提交」---'
+git status --short -- doc/personal-watch/run/news/archive/ | head -8
+git check-ignore --no-index -v doc/personal-watch/run/news/archive/chinanews-2016.jsonl.gz 2>/dev/null || echo "(2016 未命中 .gitignore ⚠️)"
+echo
+echo "=== 4. 提交（含 .gitignore 与红线文档）==="
+git add -- doc/personal-watch/run/news/archive/.gitignore 2>/dev/null || true
+git add -u -- doc/personal-watch/run/news/archive/ 2>/dev/null || true
+git commit -m "ops: 止损 — news/archive 11 个语料分片移出 git 索引（git rm --cached，保留本地文件）；.git 已 592MB 且每轮+110MB（gz 无 delta）；体积红线>=5MB 改走百度云盘" 2>&1 | tail -5
+echo
+echo "=== 5. 推送（先 rebase，避免与 agent/BaiZe 冲突被拒）==="
+git pull --rebase --autostash 2>&1 | tail -4
+git push 2>&1 | tail -4
+echo
+echo "=== 6. 结果核对 ==="
+echo "提交后 .git 体积：$(du -sh .git | cut -f1)  （⚠️ 历史仍在，不会变小；重点是「不再增长」）"
+git log --oneline -3 | cut -c1-140
+echo "--- 远端是否还跟踪分片（应为空）---"
+git ls-tree -r --name-only origin/main -- doc/personal-watch/run/news/archive/ 2>/dev/null | grep -E 'jsonl\.gz' || echo "✅ 远端已不跟踪分片"
+echo "--- 工作区分片仍应为 11 ---"
+ls doc/personal-watch/run/news/archive/*.jsonl.gz 2>/dev/null | wc -l
+```
+
+**输出**
+```
+=== 0. 先决条件 ===
+VM-0-6-ubuntu
+2026-10-05 15:31:38 CST
+当前 .git 体积：592M
+分片数量：11
+
+=== 1. 🛡 双保险：把分片复制到仓库之外（~/archive_data_backup/）===
+备份目录内容：
+total 107312
+drwxrwxr-x  2 liuyang liuyang     4096 Oct  5 15:31 .
+drwxr-x--- 10 liuyang liuyang     4096 Oct  5 15:31 ..
+-rw-rw-r--  1 liuyang liuyang 15556999 Oct  5 15:31 chinanews-2016.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang 10616975 Oct  5 15:31 chinanews-2017.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang 11145051 Oct  5 15:31 chinanews-2018.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang 12265872 Oct  5 15:31 chinanews-2019.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang 12228659 Oct  5 15:31 chinanews-2020.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang  9707401 Oct  5 15:31 chinanews-2021.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang 10319596 Oct  5 15:31 chinanews-2022.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang  7660242 Oct  5 15:31 chinanews-2023.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang  7449410 Oct  5 15:31 chinanews-2024.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang  7130667 Oct  5 15:31 chinanews-2025.jsonl.gz
+-rw-rw-r--  1 liuyang liuyang  5779016 Oct  5 15:31 chinanews-2026.jsonl.gz
+备份合计：105M
+
+=== 2. 🛑 从 git 索引移除（--cached = 保留工作区文件）===
+fatal: pathspec 'doc/personal-watch/run/news/archive/chinanews-2016.jsonl.gz' did not match any files
+--- 移除后 git 索引里还剩什么（应只剩 py/README/PROGRESS/INDEX）---
+doc/personal-watch/run/news/archive/.gitignore
+doc/personal-watch/run/news/archive/.progress.json
+doc/personal-watch/run/news/archive/INDEX_FILES.md
+doc/personal-watch/run/news/archive/PROGRESS.md
+doc/personal-watch/run/news/archive/README.md
+doc/personal-watch/run/news/archive/fetch_archive.py
+
+=== 3. ⭐ 关键校验：工作区文件必须还在（应为 11）===
+11
+105M	doc/personal-watch/run/news/archive
+--- 且应显示为「被 .gitignore 忽略」而非「待提交」---
+doc/personal-watch/run/news/archive/.gitignore:7:*.gz	doc/personal-watch/run/news/archive/chinanews-2016.jsonl.gz
+
+=== 4. 提交（含 .gitignore 与红线文档）===
+	modified:   doc/personal-watch/run/news/policy/SIGNALS.md
+	modified:   doc/personal-watch/run/news/policy/STABILITY_LOG.md
+	modified:   doc/personal-watch/run/news/policy/TAXONOMY.md
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+=== 5. 推送（先 rebase，避免与 agent/BaiZe 冲突被拒）===
+$ git diff 3da46a4b9719583406f484a62c7c0db72e0c66d3
+output, run
+$ git reset --hard
+to recover.
+Everything up-to-date
+
+=== 6. 结果核对 ===
+提交后 .git 体积：593M  （⚠️ 历史仍在，不会变小；重点是「不再增长」）
+d779055 watch-ops-relay: result @ 2026-10-05 15:31:47
+d5d7dab ops: 止损 — news/archive 11 个语料分片移出 git 索引（git rm --cached，保留本地文件）；.git 已 592MB 且每�
+6b8b4db data: 🚀 Stable S0a arm launched (GPU2-7, 5000 steps, base:code:math=88:8:4, GBS=1020 for DP6)
+--- 远端是否还跟踪分片（应为空）---
+✅ 远端已不跟踪分片
+--- 工作区分片仍应为 11 ---
+0
+```
