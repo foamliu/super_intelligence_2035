@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（supervisor 编辑，中继只读执行）
 
-<!-- RUN_ID: 2 -->
+<!-- RUN_ID: 3 -->
 
 > **用法**：在下面**新增一段** `## RUN_ID N`（N 递增）+ **一个 ```bash 块** → `git push`。
 > 中继（`ops_relay.sh`）轮询发现 **RUN_ID 变大** → 执行 → 结果 append 到 `ops/outbox.md` → push。
@@ -15,6 +15,52 @@
 > ④ 危险模式（`rm -rf /`、`mkfs`、**`git clean -fdx`**、**`git reset --hard`**、**杀 ops_relay**）会被**拒绝**。
 
 ---
+## RUN_ID 3 — 🚨 紧急体检：**语料体积**（禁止 GB 级数据进 GitHub！）
+
+**背景（supervisor 判定为红线事故）**：`git status` 显示
+`news/archive/chinanews-2017.jsonl.gz` **已被 git 跟踪且 modified**，另有 **untracked `chinanews-2016.jsonl.gz`**。
+→ ⚠️ **一年中国新闻语料打包进 git 仓库 = 仓库膨胀 / clone 变慢 / 超 GitHub 硬限（单文件 100MB 会直接拒收）**。
+→ **任务：先量体积与仓库历史占用，判定是否已污染历史**。**本块只读，不做删除**（清理由 supervisor 定夺后下发 RUN_ID 4）。
+
+```bash
+echo "=== 0. 基本信息 ==="
+hostname; date '+%F %T %Z'
+cd ~/super_intelligence_2035 2>/dev/null || exit 1
+echo
+echo "=== 1. ⭐ 语料文件体积（重点）==="
+ls -lh doc/personal-watch/run/news/archive/*.jsonl* 2>/dev/null | cut -c1-140 || echo "(无 jsonl 语料)"
+echo '--- 精确字节数（便于判断能否进 git）---'
+du -b doc/personal-watch/run/news/archive/*.jsonl* 2>/dev/null | sort -rn | head -10
+echo
+echo "=== 2. 整个 news/archive 目录占用 ==="
+du -sh doc/personal-watch/run/news/archive 2>/dev/null
+du -sh doc/personal-watch/run/news 2>/dev/null
+echo
+echo "=== 3. 是否已被 git 跟踪（关键！）==="
+git ls-files -s doc/personal-watch/run/news/archive/ | cut -c1-140
+echo
+echo "=== 4. ⭐ 历史污染程度（该文件在 git 历史里累计占多少）==="
+for f in doc/personal-watch/run/news/archive/chinanews-2016.jsonl.gz doc/personal-watch/run/news/archive/chinanews-2017.jsonl.gz doc/personal-watch/run/news/archive/chinanews-2018.jsonl.gz; do
+  echo "--- $f ---"
+  git log --oneline -- "$f" 2>/dev/null | head -5 | cut -c1-120
+done
+echo '--- 仓库 .git 实际体积 ---'
+du -sh .git 2>/dev/null
+echo
+echo "=== 5. 是否已 push 到远端（污染是否传出去了）==="
+git log --oneline -5 -- doc/personal-watch/run/news/archive/ | cut -c1-140
+echo '--- 远端是否已含该文件 ---'
+git cat-file -e origin/main:doc/personal-watch/run/news/archive/chinanews-2017.jsonl.gz 2>/dev/null && echo "⚠️ 远端已含 2017 语料（已污染）" || echo "✅ 远端不含 2017 语料"
+echo
+echo "=== 6. 是否有 .gitignore / .gitattributes 规则 ==="
+for f in .gitignore .gitattributes doc/personal-watch/run/news/archive/.gitignore doc/personal-watch/run/news/.gitignore; do
+  echo "--- $f ---"; cat "$f" 2>/dev/null | cut -c1-140 || echo "(不存在)"
+done
+echo
+echo "=== 7. 每轮抓取是否会持续生成新分片（判断增长趋势）==="
+ls -la doc/personal-watch/run/news/archive/ 2>/dev/null | grep -E 'jsonl|progress|PROGRESS' | cut -c1-140
+```
+
 
 ## RUN_ID 2 — 🩺 追因：research 线为何缺席？loop 靠什么保活？
 
