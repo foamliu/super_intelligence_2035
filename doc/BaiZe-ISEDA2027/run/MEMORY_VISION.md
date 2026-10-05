@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **R12 训练+eval 完成**（120k 步, lp@120k=17.57%）· 🚀 **3-epoch 续跑训练中**（step ~186,900/344k, ~54.3% done, loss~1.78, throughput ~2600-2700 img/s, ETA ~11:00 10-06）· ✅ 两份 HTML 报告已验证完成 · ✅ 论文 §6 已改完(commit 6207fe1a) · ✅ VISION_NEXT_DIRECTIONS.md 已交付 · ✅ r12_3epoch_scaling.py 已就绪（py_compile 过, dry-run 13点验证 OK）· ⚠️ 续跑 eval watcher PID 3879043 alive |
-| WAITING | 1（**3-epoch 续跑训练进行中** · step ~186,900/344k · ~2650 img/s · ETA ~11:00 10-06 训完 → eval watcher 自动收 ALL ckpts 跑 IN-1k lp/zs → 跑 r12_3epoch_scaling.py → 待回填 §19 scaling + §18.5 公平表）|
+| PHASE | ✅ **R12 训练+eval 完成**（120k 步, lp@120k=17.57%）· 🚀 **3-epoch 续跑训练中**（step ~198,550/344k, ~57.7% done, loss~1.55 稳定, throughput ~2700-3000 img/s 回升, ETA ~10:20 10-06）· ✅ 两份 HTML 报告已验证完成 · ✅ 论文 §6 已改完(commit 6207fe1a) · ✅ VISION_NEXT_DIRECTIONS.md 已交付 · ✅ r12_3epoch_scaling.py 已就绪（py_compile 过, dry-run 13点验证 OK）· ⚠️ 续跑 eval watcher PID 3879043 alive |
+| WAITING | 1（**3-epoch 续跑训练进行中** · step ~198,550/344k · ~2800 img/s · ETA ~10:20 10-06 训完 → eval watcher 自动收 ALL ckpts 跑 IN-1k lp/zs → 跑 r12_3epoch_scaling.py → 待回填 §19 scaling + §18.5 公平表）|
 | ERROR_COUNT | 2（① R9 w512 首跑 crash：损坏 jpg → data.py 修复 ② 续跑首试 crash：r9_train.py `log()` 在定义前被 resume 块调用 → 改为 `print()` 修复） |
 | BUDGET_USED | R2–R12 累计 + **R12 完成**（6.3h×8卡≈50.4 GPU·h）+ **3-epoch 续跑进行中**（~8.5h×8卡≈68 GPU·h 预估, 总 ≈196 GPU·h） |
-| 更新 | **2026-10-06 02:37（巡检: 3-epoch续跑训练中 step~186,900/344k(~54.3%), loss~1.78稳定(contrast~1.66+patch_mse~0.13), throughput~2650img/s(ms/iter~190). 8/8 GPU 60-82%util, 16.5GB/81.5GB. ckpt已存到step180000(18个ckpt:10k-180k). eval watcher(3879043)alive. 新增r12_3epoch_scaling.py(解析+拟合3曲线+预注册判据,dry-run验证OK). 所有CPU/写作交付物已验证: ①report_vision_lp_eval.html(296行) ②report_vision_aimv2_impl.html(353行) ③VISION_NEXT_DIRECTIONS.md(4方向) ④论文§6(commit 6207fe1a). ETA~11:00 10-06. WAITING=1[续跑训练中,loop勿唤醒]**· *[更早见 daily-memories-vision/2026-10-05.md]* |
+| 更新 | **2026-10-06 03:16（巡检: 3-epoch续跑训练中 step~198,550/344k(~57.7%), loss~1.55稳定(contrast~1.40+patch_mse~0.14), throughput~2800img/s(ms/iter~174, NFS争用缓解回升). 8/8 GPU 68-84%util, 16.5GB/81.5GB. ckpt已存到step190000(20个ckpt:10k-190k+vision.pt). eval watcher(3879043)alive. NCCL heartbeat broken-pipe警告非致命(训练step正常推进). HEAD=origin/main无新运维指令. 所有CPU/写作交付物已验证: ①report_vision_lp_eval.html(296行) ②report_vision_aimv2_impl.html(353行) ③VISION_NEXT_DIRECTIONS.md(4方向) ④论文§6.3(commit 6207fe1a, 新增 subsection "Breaking the Contrastive Ceiling with Dense Supervision"). ETA~10:20 10-06. WAITING=1[续跑训练中,loop勿唤醒]**· *[更早见 daily-memories-vision/2026-10-05.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
