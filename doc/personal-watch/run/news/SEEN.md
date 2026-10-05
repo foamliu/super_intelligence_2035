@@ -113,3 +113,9 @@
 | 2026-10-05 | My New Course at UT Austin: AI Alignment Theory | Scott Aaronson (blog) | analysis | https://scottaaronson.blog/?p=10125 |
 | 2026-10-05 | Show HN: Recursant, the agent-aware model router built for hybrid workloads | Hacker News (Show HN) | tool | https://github.com/ajensenwaud/recursant/ |
 | 2026-10-05 | Show HN: Moching – AI desktop agent with 219 built-in tools (Rust) | Hacker News (Show HN) | tool | https://github.com/moching-ai-dev/moching |
+| 2026-10-05 | 刚刚，Hinton 发了首篇 RSI 论文 | 量子位 | news | https://www.qbitai.com/2026/10/501705.html |
+| 2026-10-05 | JEDEC 发布首份全行业硅光子学（SiPh）可靠性标准 JESD264 | IT之家 | news | https://www.ithome.com/1/009/775.htm |
+| 2026-10-05 | 最火 AI 岗位 FDE：月薪 5 万，都干这些… | 量子位 | feature | https://www.qbitai.com/2026/10/501506.html |
+| 2026-10-05 | GPT-6 要“吃掉”3D 公司？这家公司不到 2 年 ARR 翻百倍，破 1 亿美元 | 量子位 | feature | https://www.qbitai.com/2026/10/501451.html |
+| 2026-10-05 | AI 算力硬合作，马斯克还是更相信中国制造 | 量子位 | analysis | https://www.qbitai.com/2026/10/501605.html |
+| 2026-10-05 | AI 生成的跨游戏混搭模组兴起，资深制作者集体表达不满 | IT之家 | feature | https://www.ithome.com/1/009/779.htm |

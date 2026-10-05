@@ -5,7 +5,8 @@
 
 | 路径 | 行数 | 大小(B) | sha256(前16) | 入 git |
 |:--|--:|--:|:--|:--|
-| `news/archive/chinanews-2020.jsonl.gz` | 183781 | 8150177 | `70d5a1c18a109081` | ✅ 是 |
+| `news/archive/chinanews-2019.jsonl.gz` | 259019 | 11462232 | `8b86ae825f28d45f` | ✅ 是 |
+| `news/archive/chinanews-2020.jsonl.gz` | 282382 | 12228659 | `540a0461972e7471` | ✅ 是 |
 | `news/archive/chinanews-2021.jsonl.gz` | 220054 | 9707401 | `1f66859b3689b2eb` | ✅ 是 |
 | `news/archive/chinanews-2022.jsonl.gz` | 238861 | 10319596 | `8f1adb132794ff8c` | ✅ 是 |
 | `news/archive/chinanews-2023.jsonl.gz` | 174828 | 7660242 | `698b5f91c1cfd3bd` | ✅ 是 |
