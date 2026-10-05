@@ -151,4 +151,6 @@
 | 2026-10-05 | 这个国庆，第一批机器人员工已经上岗 | 钛媒体 | feature | https://www.tmtpost.com/8159586.html |
 | 2026-10-05 | 全球IPO市场透视：融资盛宴与破发寒流并存的第三季 | 钛媒体 | analysis | https://www.tmtpost.com/8159361.html |
 | 2026-10-05 | 定价逻辑变了，估值方法也变了，安全溢价如何重写关键矿产？ | 钛媒体 | analysis | https://www.tmtpost.com/8150494.html |
+| 2026-10-05 | Norway to propose temporary ban on AI glasses in some public places | Reuters | news | https://www.reuters.com/technology/norway-propose-temporary-ban-ai-glasses-some-public-places-2026-10-05/ |
+| 2026-10-05 | 中国首个藏语大语言模型 DeepZang 迭代推进会在呼和浩特召开 | 中新网 | news | https://www.chinanews.com.cn/sh/2026/10-05/10708223.shtml |
 
