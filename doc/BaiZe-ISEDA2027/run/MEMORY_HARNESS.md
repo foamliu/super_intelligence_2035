@@ -5,30 +5,31 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A kimi-k2.6-cloud serial cross-eval — cline-patched × 30 COMPLETE (18/30, 60.0%) → codex × 30 RUNNING (16/30 scored: 8 resolved, 8 patch-but-failed; inst 17/30 in progress = sympy__sympy-11897) + deepseek-harness toolchain install (node22+rust+pnpm+landlock-run ✅, pnpm install BLOCKED by npm registry ECONNRESET) + 扩300 infra READY
-已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A(deepseek) 22/30 scored · SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md · kimi model switch + serial runner + cline-patched×30 COMPLETE (18/30, 60.0%) + SWEBENCH_COMPARE.html + codex×30 RUNNING (16/30 scored: 8 resolved, 8 patch-but-failed) + 扩300 prep (300 JSONs + rootfs) + deepseek-harness toolchain (node22+rust+pnpm+landlock-run)
-当前动作:     R78: codex×30 RUNNING (16/30 scored, inst 17/30 = sympy__sympy-11897, elapsed ~4.3h PID 2051774) + SWEBENCH_COMPARE.html refreshed (46 entries, 26 resolved, 12611B) + relay healthy skip 31st (RUN_ID 71 exit=0) + git sync (0 ahead 0 behind, no new operator directives)
-下一步:       codex×30完成(~2-3h, ~14条剩余) → codex×300 --resume → cline-patched×300 --resume → opencode×300 → claude-code×300 → deepseek-harness(pnpm install待npm registry恢复) → 最终更新SWEBENCH_COMPARE.html(全5harness×300对比)
+PHASE:        H-A kimi-k2.6-cloud serial cross-eval — cline-patched × 30 COMPLETE (18/30, 60.0%) → codex × 30 RUNNING (18/30 scored: 8 resolved, 10 patch-but-failed; inst 19/30 in progress = sympy__sympy-12236) + deepseek-harness toolchain install (node22+rust+pnpm+landlock-run ✅, pnpm install BLOCKED by npm registry ECONNRESET) + 扩300 infra READY (300 JSONs + 12 rootfs templates)
+已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A(deepseek) 22/30 scored · SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md · kimi model switch + serial runner + cline-patched×30 COMPLETE (18/30, 60.0%) + SWEBENCH_COMPARE.html + codex×30 RUNNING (18/30 scored: 8 resolved, 10 patch-but-failed) + 扩300 prep (300 JSONs + 12 rootfs templates) + deepseek-harness toolchain (node22+rust+pnpm+landlock-run)
+当前动作:     R79: codex×30 RUNNING (18/30 scored, inst 19/30 = sympy__sympy-12236, elapsed ~4.9h PID 2051774) + SWEBENCH_COMPARE.html refreshed (48 entries, 26 resolved, 12667B) + relay healthy skip 32nd + git sync (0 ahead 0 behind, no new operator directives) + 300-scale infra verified (300 JSONs, 12 repos, 12 rootfs templates all present)
+下一步:       codex×30完成(~12条剩余, ~2h) → codex×300 --resume(skip 30) → cline-patched×300 --resume(skip 30) → opencode×300 → claude-code×300 → deepseek-harness(pnpm install待npm registry恢复) → 最终更新SWEBENCH_COMPARE.html(全5harness×300对比)
 阻塞:         deepseek-harness pnpm install: npm registry (registry.npmjs.org) ECONNRESET through proxy — proxy establishes CONNECT tunnel but all transfers reset. All npm mirrors (npmmirror/taobao/jsdelivr/unpkg/esm.sh) unreachable (http=000). GitHub releases/downloads work. This blocks deepseek-harness build (last in sequence, not urgent).
 ERROR_COUNT:  0
 ```
 
-## 🆕 第七十八轮速览（2026-10-05 19:45）— codex×30 RUNNING 16/30 scored (8 resolved, 8 patch-but-failed, 50.0%) + SWEBENCH_COMPARE.html refreshed (46 entries, 26 resolved) + relay healthy skip 31st + git sync
+## 🆕 第七十九轮速览（2026-10-05 20:20）— codex×30 RUNNING 18/30 scored (8 resolved, 10 patch-but-failed, 44.4%) + SWEBENCH_COMPARE.html refreshed (48 entries, 26 resolved) + relay healthy skip 32nd + git sync + 300-scale infra verified
 
-- 📊 **codex × 30 进度（更新）**：PID 2051774（ppid=1，elapsed ~4.3h=15499s）。**16/30 scored**：8 resolved（11001/11039/11049/11099/11133/11179/11583/11620），8 patch-but-failed（10924/11019/11283/11422/11564/11630/11742/sympy-11870）。inst 17/30 = `sympy__sympy-11897` RUN 中（codex exec child PID 2812883，elapsed ~708s≈12min）。~14 条剩余，预计 ~2-3h 完成。
-- ✅ **kimi quota 健康**：gw_proxy 运行中。**0 次 429**（全部 46 条均无 quota-blocked）。
+- 📊 **codex × 30 进度（更新）**：PID 2051774（ppid=1，elapsed ~4.9h=17589s）。**18/30 scored**：8 resolved（11001/11039/11049/11099/11133/11179/11583/11620），10 patch-but-failed（10924/11019/11283/11422/11564/11630/11742/sympy-11870/sympy-11897/sympy-12171）。inst 19/30 = `sympy__sympy-12236` RUN 中（codex exec child PID 1387815，elapsed ~491s≈8min）。~12 条剩余，预计 ~2h 完成。日志 `/tmp/kimi_codex.log`。
+- ✅ **kimi quota 健康**：gw_proxy 运行中。**0 次 429**（全部 48 条均无 quota-blocked）。
 - 📈 **kimi 横评汇总（更新）**：
   | harness | scored | resolved | patch-but-failed | quota-blocked | resolve rate |
   |:--|--:|--:|--:|--:|--:|
   | cline-patched | 30/30 | 18 | 12 | 0 | **60.0%** ✅ |
-  | codex | 16/30 | 8 | 8 | 0 | **50.0%** (进行中) |
+  | codex | 18/30 | 8 | 10 | 0 | **44.4%** (进行中) |
   | opencode | 0/30 | — | — | — | (待跑) |
   | claude-code | 0/30 | — | — | — | (待跑) |
   | deepseek-harness | 0/30 | — | — | — | (待 pnpm install) |
-- 🔧 **SWEBENCH_COMPARE.html 已刷新**：46 entries, 26 resolved, 12611B（gen_kimi_compare.py 重跑，含 cline-patched 18/30 + codex 8/16 最新数据）。
-- ✅ **ops 中继复核（第 31 次）→ 健康**。relay `2489749 1 358403`（ppid=1 真守护、etimes≈4.1d）；`.last_run_id`=71；日志 RUN_ID 66–71 均 exit=0。判据成立 → 跳过重启。
-- ✅ **git sync**：`git fetch`（proxy）→ HEAD==origin/main（`38186f03`），0 ahead 0 behind → 无新运维指令。仅 `kimi_pilot_results.json` 本地修改（codex 运行中持续写入）+ NFS `.nfs*` 临时文件（其他 agent 在途，不动）。
-- ⏭ **下一步**：codex×30 完成 → codex×300 `--resume` → cline-patched×300 → opencode×300 → claude-code×300 → deepseek-harness（待 npm registry 恢复）→ 最终 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
+- 🔧 **SWEBENCH_COMPARE.html 已刷新**：48 entries, 26 resolved, 12667B（gen_kimi_compare.py 重跑，含 cline-patched 18/30 + codex 8/18 最新数据）。
+- ✅ **ops 中继复核（第 32 次）→ 健康**。relay `2489749 1 360536`（ppid=1 真守护、etimes≈4.17d）。判据成立 → 跳过重启。
+- ✅ **git sync**：`git fetch`（proxy）→ HEAD==origin/main（`7440ea72`），0 ahead 0 behind → 无新运维指令。仅 `kimi_pilot_results.json` 本地修改（codex 运行中持续写入）+ NFS `.nfs*` 临时文件（其他 agent 在途，不动）。
+- ✅ **300-scale infra 验证**：300 instance JSONs 就绪（12 repos: django 114, sympy 77, matplotlib 23, sklearn 23, pytest 17, sphinx 16, astropy 6, requests 6, pylint 6, xarray 5, seaborn 4, flask 3）。12 rootfs templates 全部存在（`/nas_train/app.e0031982/harness_work/rootfs/` 下每 repo 一个）。`run_serial_kimi.py --resume` 机制：跳过已 classified 为 resolved/patch-but-failed 的 instance → codex×300 --resume 将跳过已完成的 ~30 条，跑剩余 ~270 条。
+- ⏭ **下一步**：codex×30 完成 → codex×300 `--resume`（skip 30）→ cline-patched×300 `--resume`（skip 30）→ opencode×300 → claude-code×300 → deepseek-harness（待 npm registry 恢复）→ 最终 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
 
 ## 🆕 第七十七轮速览 —— 已滚动归档至 daily-memories-harness/2026-10-05.md（结论不改：deepseek-harness toolchain installed node22+rust+pnpm+landlock-run + pnpm install BLOCKED npm registry ECONNRESET + codex×30 RUNNING 14/30 + relay healthy skip 30th + git sync）
 
