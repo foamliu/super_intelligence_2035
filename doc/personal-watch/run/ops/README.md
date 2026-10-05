@@ -23,13 +23,16 @@ supervisor：git pull → 读 ops/outbox.md
 ```bash
 cd ~/super_intelligence_2035/doc/personal-watch/run
 git pull --rebase --autostash
-setsid bash ops_relay.sh > /tmp/watch_ops_relay.log 2>&1 < /dev/null &
+# ⭐ 必须用 exec -a 起：否则 cmdline 只有 "bash ops_relay.sh"（与 BaiZe 撞名，且 pkill -f watch_ops_relay.sh 匹配不到）
+setsid bash -c 'exec -a watch_ops_relay.sh bash ops_relay.sh' > /tmp/watch_ops_relay.log 2>&1 < /dev/null &
 
-pgrep -af 'watch_ops_relay.sh'      # 应恰好 1 个
-tail -5 /tmp/watch_ops_relay.log     # 看 [relay] started
+pgrep -af 'watch_ops_relay.sh'        # 应恰好 1 个
+tail -5 /tmp/watch_ops_relay.log      # 看 [relay] started
 ```
-**停止**：`pkill -f watch_ops_relay.sh`
-> ⚠️ **不要** `pkill -f ops_relay.sh` —— 那会**顺带杀掉 BaiZe 的中继**（本机的另一条运维信道）。
+**停止**（两种都行）：`pkill -f watch_ops_relay.sh` 或 `kill "$(cat /tmp/watch_ops_relay.pid)"`
+> 🛡 **单实例锁**：脚本用 `/tmp/watch_ops_relay.pid` 防重复启动（**发现已在跑则新实例自动退出**）——
+> 修复 2026-10-05 实测的「**两个中继并存 → 同一 RUN_ID 被跑两遍、提交两遍**」。
+> ⚠️ **不要** `pkill -f ops_relay.sh` —— 裸 cmdline 会**连带匹配到 BaiZe 的中继**。
 
 > 🚫 **绝不要杀中继来"重启它"之外的任何目的** —— 它是你唯一的远程通道（BaiZe 那边有"绝不 kill watchdog"的教训）。
 
@@ -37,7 +40,9 @@ tail -5 /tmp/watch_ops_relay.log     # 看 [relay] started
 
 | 项 | BaiZe 版 | 本版 |
 |:--|:--|:--|
-| **命令块解析** | ⚠️ **只执行文件里第一个 ```bash 块** → 新命令**静默失效**（他们踩过） | ✅ **支持多段 `## RUN_ID N` 历史共存，总执行 RUN_ID 最大那一段** → **老块不用删/降级** |
+| **命令块解析** | ⚠️ **只执行文件里第一个 ```bash 块** → 新命令**静默失效**（他们踩过） | ✅ **支持多段 `## RUN_ID N` 共存**，把 `> .last_run_id` 的块**按升序全部执行** —— 既修 BaiZe「漏末尾」，也修本版早期「只跑最大 → **静默跳过中间块**」（RUN_ID 4 即因此丢失） |
+| **单实例** | 无 | ✅ **`/tmp/watch_ops_relay.pid` 单实例锁**（防「两实例并存 → 同一 RUN_ID 跑两遍 + 提交两遍」） |
+| **进程可辨识** | — | ✅ 启动用 `exec -a watch_ops_relay.sh` → `pgrep/-pkill -f` **又准、又不误伤同名 cmdline** |
 | **危险模式** | `rm -rf /`·`mkfs`·`dd`·fork bomb | ＋**`git clean -fdx`**（会删掉别线在途文件）· **`git reset --hard`** · **杀 `ops_relay`**（别断信道） |
 | 提交范围 | 只 add `ops/` | 只 add `ops/`（`outbox.md`/`inbox.md`/`.last_run_id`） |
 

@@ -19,7 +19,9 @@
 > 🔌 **运维通道（2026-10-05 新增）**：**ops 中继 `run/ops_relay.sh`**（纯 bash、零 token）——
 > supervisor 写 `run/ops/inbox.md` → 中继执行 → 结果进 `run/ops/outbox.md`。
 > ⭐ **loop 停/撞额度/OOM 时的唯一远程运维手段**（见 `run/ops/README.md`）。
-> ⚠️ 停止只可用 `pkill -f watch_ops_relay.sh`（**别** `pkill -f ops_relay.sh`，会误杀 BaiZe 的中继）。
+> ⚠️ **启动必须** `setsid bash -c 'exec -a watch_ops_relay.sh bash ops_relay.sh' …`（否则 cmdline 只有 `bash ops_relay.sh`）；
+> 停止只可用 `pkill -f watch_ops_relay.sh` 或 `kill "$(cat /tmp/watch_ops_relay.pid)"`（**别** `pkill -f ops_relay.sh`，会误杀 BaiZe 的中继）。
+> 🛡 已加**单实例锁** `/tmp/watch_ops_relay.pid`（防双实例重复执行）；已修「只跑最大 RUN_ID → 静默跳过中间块」→ 现**按升序执行所有 pending 块**。
 >
 > 🎯 **两条线的长期目的**：**news → 三层「解耦」**：**L1 政治信号预警（核心）** / **L2 与股价的关联（探索性·非因果）** / **L3 算法交易（❄️ 冻结）**（见 `WATCH_NEWS_TASK.md` §0.0.0–§0.0.2）；
 > **research → ① 借鉴 BaiZe/ZhuLong ② 《两分钟论文》科普视频**（见 `WATCH_RESEARCH_TASK.md` §0）。

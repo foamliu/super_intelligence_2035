@@ -17,10 +17,14 @@
 #   - 危险模式拦截只是「防手滑」，**不是安全边界**
 #   - ⚠️ 与 `doc/keys.txt` 入仓（见 DEPLOY_CHECKLIST.md §6）叠加时风险放大 → 请轮换 Key
 #
-# 启动：
-#   setsid bash <repo>/doc/personal-watch/run/ops_relay.sh > /tmp/watch_ops_relay.log 2>&1 < /dev/null &
-# 停止：
-#   pkill -f watch_ops_relay.sh        # ⚠️ 别用 pkill -f ops_relay.sh（会误伤 BaiZe 的中继）
+# 启动（⭐ 用 exec -a 起，让进程名**唯一**为 watch_ops_relay.sh —— 这样 pkill -f 又准、又不会误伤同名 cmdline）：
+#   cd <repo>/doc/personal-watch/run
+#   setsid bash -c 'exec -a watch_ops_relay.sh bash ops_relay.sh' > /tmp/watch_ops_relay.log 2>&1 < /dev/null &
+# 停止（两种都可；PID 法最稳）：
+#   pkill -f watch_ops_relay.sh
+#   kill "$(cat /tmp/watch_ops_relay.pid)"
+# ⚠️ 别用 pkill -f ops_relay.sh（BaiZe 的中继 cmdline 也叫它 → 会误伤）
+# ⚠️ 单实例保护：脚本用 /tmp/watch_ops_relay.pid 防重复启动（发现已在跑就自动退出）
 # ═══════════════════════════════════════════════════════════════════════════
 set -u
 
@@ -31,6 +35,7 @@ OPS="$SCRIPT_DIR/ops"
 INBOX="$OPS/inbox.md"
 OUTBOX="$OPS/outbox.md"
 STATE="$OPS/.last_run_id"
+PIDFILE="/tmp/watch_ops_relay.pid"     # ⭐ 单实例锁：防「两个中继并存 → 同一 RUN_ID 被跑两遍」
 
 POLL=20                # 本地轮询间隔（秒）
 FETCH_EVERY=3          # 每 N 次轮询做一次 git fetch（=> 默认 ~60s 拉一次远端）
@@ -39,25 +44,40 @@ MAX_OUT_CHARS=20000    # 单次输出截断上限（字符）
 
 mkdir -p "$OPS"
 
+# ── ⭐ 单实例保护（修「两个中继并存 → 同一 RUN_ID 被执行两遍 + 提交两遍」）──
+if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE" 2>/dev/null)" 2>/dev/null; then
+    echo "[relay] ⚠️ 检测到已在运行（pid=$(cat "$PIDFILE" 2>/dev/null)）→ 本实例退出，避免双实例重复执行。"
+    echo "[relay]    如需强制重启：kill \"\$(cat $PIDFILE)\"，然后再启动。"
+    exit 0
+fi
+echo $$ > "$PIDFILE"
+trap 'rm -f "$PIDFILE"' EXIT INT TERM
+
 # ── 从 inbox.md 提取 RUN_ID 与命令块 ──────────────────────────────────────
 # ✅ **已修 BaiZe 的已知坑**：不再"只取第一个 ```bash 块"（那会让新命令静默失效）。
-#    现在支持**多段 `## RUN_ID N` 历史共存**，总是执行 **RUN_ID 最大**的那一段的 bash 块。
+# ✅ **已修本版自身的坑**：不再"只执行 RUN_ID 最大那一段"（那会**静默跳过中间块** —— RUN_ID 4 就是这样丢的）。
+#    现在支持**多段 `## RUN_ID N` 历史共存**，并把 `> last_run_id` 的块**按升序全部执行**。
 inbox_run_id() {
     [ -f "$INBOX" ] || { echo 0; return; }
     { sed -n 's/^##[[:space:]]*RUN_ID[[:space:]]*\([0-9]\+\).*/\1/p' "$INBOX"
       sed -n 's/.*RUN_ID:[[:space:]]*\([0-9]\+\).*/\1/p'            "$INBOX"; } | sort -n | tail -1
 }
-inbox_cmd_block() {
+# ⭐ 列出 inbox 里**所有** RUN_ID（升序去重）
+inbox_run_ids() {
     [ -f "$INBOX" ] || return 0
-    awk '
+    { sed -n 's/^##[[:space:]]*RUN_ID[[:space:]]*\([0-9]\+\).*/\1/p' "$INBOX"
+      sed -n 's/.*RUN_ID:[[:space:]]*\([0-9]\+\).*/\1/p'            "$INBOX"; } | sort -n -u
+}
+# ⭐ 取**指定** RUN_ID 的 ```bash 块
+inbox_cmd_block_for() {
+    local want="$1"
+    [ -f "$INBOX" ] || return 0
+    awk -v want="$want" '
         /^##[[:space:]]*RUN_ID[[:space:]]*[0-9]+/ { rid=$3+0; next }
         /^```bash/ { inblk=1; blk=""; next }
         /^```/     { if (inblk) { blocks[rid]=blk; inblk=0 } next }
         inblk      { blk = blk $0 "\n" }
-        END {
-            best=0; for (r in blocks) if (r+0>best) best=r+0
-            if (best>0) printf "%s", blocks[best]
-        }
+        END { if (want in blocks) printf "%s", blocks[want] }
     ' "$INBOX"
 }
 last_run_id() {
@@ -143,7 +163,7 @@ git_publish() {
 # ── 执行一次命令块 ────────────────────────────────────────────────────────
 run_once() {
     local rid="$1"
-    local block; block="$(inbox_cmd_block)"
+    local block; block="$(inbox_cmd_block_for "$rid")"
     [ -n "$block" ] || { echo "[relay] RUN_ID=$rid 但命令块为空，跳过"; return; }
 
     local ts host out rc guard
@@ -193,16 +213,20 @@ run_once() {
 }
 
 # ── 主循环 ────────────────────────────────────────────────────────────────
-echo "[relay] $(date '+%F %T') started. repo=$GIT_ROOT  poll=${POLL}s  fetch_every=${FETCH_EVERY}x"
+echo "[relay] $(date '+%F %T') started. pid=$$ repo=$GIT_ROOT  poll=${POLL}s  fetch_every=${FETCH_EVERY}x  pidfile=$PIDFILE"
 i=0
 while true; do
     i=$((i + 1))
     if [ $((i % FETCH_EVERY)) -eq 1 ]; then
         git_sync
     fi
-    rid="$(inbox_run_id)"
-    if [ "${rid:-0}" -gt "$(last_run_id)" ]; then
-        run_once "$rid"
-    fi
+    # ⭐ 把**所有** `> last_run_id` 的块按升序依次执行（修掉"只跑最大 → 静默跳过中间块"的坑）
+    last="$(last_run_id)"
+    for rid in $(inbox_run_ids); do
+        if [ "${rid:-0}" -gt "${last:-0}" ]; then
+            run_once "$rid"
+            last="$rid"
+        fi
+    done
     sleep "$POLL"
 done
