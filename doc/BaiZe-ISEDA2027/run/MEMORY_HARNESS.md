@@ -5,30 +5,37 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A kimi-k2.6-cloud serial cross-eval — cline-patched × 30 COMPLETE (18/30, 60.0%) → codex × 30 RUNNING (13/30 scored: 8 resolved, 5 patch-but-failed; inst 14/30 in progress) + 扩300 infra READY (300 JSONs + 12/12 rootfs templates)
-已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A(deepseek) 22/30 scored · SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md · kimi model switch + serial runner + cline-patched×30 COMPLETE (18/30, 60.0%) + SWEBENCH_COMPARE.html + codex×30 RUNNING (13/30 scored: 8 resolved, 5 patch-but-failed) + 扩300 prep (300 JSONs + rootfs)
-当前动作:     R76: codex×30 RUNNING (PID 2051774, 13/30 scored: 8 resolved 5 patch-but-failed, inst 14/30 django-11630, elapsed ~2.8h) + SWEBENCH_COMPARE.html regenerated (43 entries, 26 resolved, 12528B) + gw_proxy(kimi)健康(0×429, ~8.3h) + relay健康skip第29次(2489749 ppid=1 etimes≈4.09d) + .last_run_id=71(无新指令) + git sync(0 0) + MEMORY rolling(R73/R74归档)
-下一步:       codex×30完成(~3.7h, ~17条剩余×13min) → codex×300 --resume (扩到300, skip 30 done) → cline-patched×300 --resume → opencode×300 → claude-code×300 → 最终更新SWEBENCH_COMPARE.html(全5harness×300对比)
-阻塞:         无（kimi quota 未撞墙，codex串行运行中，扩300 infra 已就绪）
+PHASE:        H-A kimi-k2.6-cloud serial cross-eval — cline-patched × 30 COMPLETE (18/30, 60.0%) → codex × 30 RUNNING (14/30 scored: 8 resolved, 6 patch-but-failed; inst 15/30 in progress) + deepseek-harness toolchain install (node22+rust+pnpm+landlock-run ✅, pnpm install BLOCKED by npm registry ECONNRESET) + 扩300 infra READY
+已完成:       H-B 5×源码分析 HTML · H-D 对比矩阵+改进机会 · H-C 评测调研 · H-A(deepseek) 22/30 scored · SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md · kimi model switch + serial runner + cline-patched×30 COMPLETE (18/30, 60.0%) + SWEBENCH_COMPARE.html + codex×30 RUNNING (14/30 scored: 8 resolved, 6 patch-but-failed) + 扩300 prep (300 JSONs + rootfs) + deepseek-harness toolchain (node22+rust+pnpm+landlock-run)
+当前动作:     R77: deepseek-harness toolchain installed (node v22.22.3 ~/.local/node22, rust 1.99.0 ~/.cargo, pnpm 11.7.0 ~/.local/pnpm, landlock-run compiled from main.c gcc -static 888K) + pnpm install running in bg (PID 939971, ECONNRESET on all npm registry requests — proxy CONNECT OK but transfer reset) + codex×30 RUNNING (14/30 scored, inst 15/30, elapsed ~3.7h) + SWEBENCH_COMPARE.html updated (44 entries, 26 resolved, 12556B) + relay healthy skip 30th + git sync (pulled 1 commit, 0 ahead 0 behind)
+下一步:       codex×30完成(~3h, ~16条剩余) → codex×300 --resume → cline-patched×300 --resume → opencode×300 → claude-code×300 → deepseek-harness(pnpm install待npm registry恢复) → 最终更新SWEBENCH_COMPARE.html(全5harness×300对比)
+阻塞:         deepseek-harness pnpm install: npm registry (registry.npmjs.org) ECONNRESET through proxy — proxy establishes CONNECT tunnel but all transfers reset. All npm mirrors (npmmirror/taobao/jsdelivr/unpkg/esm.sh) unreachable (http=000). GitHub releases/downloads work. This blocks deepseek-harness build (last in sequence, not urgent).
 ERROR_COUNT:  0
 ```
 
-## 🆕 第七十六轮速览（2026-10-05 18:15）— codex×30 RUNNING (13/30 scored: 8 resolved, 5 patch-but-failed) + SWEBENCH_COMPARE.html regenerated (43 entries, 26 resolved) + relay 健康 skip 第 29 次 + git sync + MEMORY rolling
+## 🆕 第七十七轮速览（2026-10-05 19:05）— deepseek-harness toolchain installed (node22+rust+pnpm+landlock-run) + pnpm install BLOCKED (npm registry ECONNRESET) + codex×30 RUNNING (14/30) + relay healthy skip 30th
 
-- ✅ **ops 中继复核（第 29 次）→ 健康，跳过重启**。relay `2489749 1 352894 Ss`（ppid=1、etimes≈4.09d）；`.last_run_id`=71（持平 → 无新运维指令）；`git fetch`（带 proxy `172.19.92.25:13128`）exit=0；`git rev-list --left-right --count HEAD...origin/main`=`0 0`（完全同步）。
-- 📊 **codex × 30 进度**：PID 2051774（ppid=1，elapsed ~2.8h=10113s）。**13/30 scored**：8 resolved（11001/11039/11049/11099/11133/11179/11583/11620），5 patch-but-failed（10924/11019/11283/11422/11564）。inst 14/30（`django__django-11630`）RUN 中（codex child PID 1039030，workdir=/dev/shm/.../django_django）。从 `/tmp/kimi_codex.log` 确认每条 `=> ... | codex | resolved|patch-but-failed`。
-- ✅ **kimi quota 健康**：gw_proxy PID 3175038 运行中（etimes≈30037s≈8.3h）。**0 次 429**，**0 次 quota 事件**。
+- 🔧 **deepseek-harness 工具链安装（运维 2026-10-05 深夜授权自装）**：
+  - ✅ **node v22.22.3** → `~/.local/node22/`（从 `mirrors.aliyun.com/nodejs-release/` 下载 30MB tar.xz，满足 deepseek-harness `engines: ^22.19.0 || >=24.0.0`）。
+  - ✅ **rust 1.99.0** → `~/.cargo/`（rustup-init 从 `mirrors.tuna.tsinghua.edu.cn/rustup/` 下载 21MB，stable minimal profile）。
+  - ✅ **pnpm v11.7.0** → `~/.local/pnpm/pnpm`（146MB standalone binary，从 GitHub releases `pnpm-linux-x64.tar.gz` 下载 49MB；GitHub API `api.github.com` 可达，`release-assets.githubusercontent.com` 可达）。
+  - ✅ **landlock-run** → 从 `native/landlock-run/packages/entry/src/main.c`（**C11 非 Rust**）用 `gcc -static -O2` 编译 → 888K ELF 64-bit static binary → 放入 `packages/linux-x64/bin/landlock-run`。`--probe` → "landlock: partially enforced (older ABI)" exit=0 ✅。
+  - ❌ **pnpm install BLOCKED**：`registry.npmjs.org` — proxy 可建立 CONNECT 隧道（`HTTP/1.1 200 Connection established`）但**所有传输 ECONNRESET**。pnpm install 启动（268 workspace projects, 1327 lockfile entries, lockfile up to date）但**每个包下载均 ECONNRESET**（20 retries, 500ms-3s 间隔）。后台运行中 PID 939971。所有 npm 镜像均不可达：`registry.npmmirror.com`=000, `registry.npm.taobao.org`=000, `unpkg.com`=000, `esm.sh`=000, `cdn.jsdelivr.net`=000, `registry.npmjs.org`=000(curl)/ECONNRESET(pnpm)。`mirrors.aliyun.com/npm/`=404（路径不存在）。GitHub repo `deepseek-harness/deepseek-harness` = Not Found（无预构建 release）。
+  - 📝 **结论**：node/rust/pnpm/landlock-run 工具链已就绪；**deepseek-harness JS 依赖安装被 npm registry 不可达阻塞**。deepseek-harness 是横评最后一个 harness（序列：codex×300 → cline-patched×300 → opencode×300 → claude-code×300 → deepseek-harness），**不阻塞当前主线**。
+- 📊 **codex × 30 进度**：PID 2051774（ppid=1，elapsed ~3.7h=13247s）。**14/30 scored**：8 resolved（11001/11039/11049/11099/11133/11179/11583/11620），6 patch-but-failed（10924/11019/11283/11422/11564/11630）。inst 15/30（`django__django-11742`）RUN 中。
+- ✅ **kimi quota 健康**：gw_proxy 运行中（etimes≈32201s≈8.9h）。**0 次 429**。
 - 📈 **kimi 横评汇总（更新）**：
   | harness | scored | resolved | patch-but-failed | quota-blocked | resolve rate |
   |:--|--:|--:|--:|--:|--:|
   | cline-patched | 30/30 | 18 | 12 | 0 | 60.0% |
-  | codex | 13/30 | 8 | 5 | 0 | 61.5% (进行中) |
+  | codex | 14/30 | 8 | 6 | 0 | 57.1% (进行中) |
   | deepseek-v4-flash | 22/30 | 0 | 5 | 17 | 0% (旧口径) |
-- 🔧 **SWEBENCH_COMPARE.html 已更新**：`gen_kimi_compare.py` 从 `kimi_pilot_results.json`（43 entries）重新生成 → 12528B 自包含 HTML，26 total resolved。显示 cline-patched 完整 + codex 进行中 + 三列分类（resolved / patch-but-failed / quota-blocked）。
-- 🆕 **扩 300 infra 已就绪**：① **300/300 SWE-bench Lite instance JSONs** 全部在 `/nas_train/app.e0031982/harness_work/instances/`（12 repos）；② **rootfs templates 12/12 repos ALL READY** ✅（含新建 seaborn + flask rootfs）。
-- ⏱ **时间估算**：codex 13 条≈2.8h→~13min/inst→剩余 17 条≈3.7h→codex×30 全部完成≈6.5h。扩 300 后：270 remaining × ~13min ≈ 58h/harness → 5 harness × 300 ≈ 290h（~12天）。
-- 📉 **MEMORY 滚动归档**：R73/R74 速览块归档至 `daily-memories-harness/2026-10-05.md`（原文不改），MEMORY 31.6KB→~28KB（回到 32KB 上限内）。
-- ⏭ **下一步**：codex×30 完成后 → codex×300 `--all-prepared --resume`（skip 30 done, run 270 remaining）→ cline-patched×300 `--resume` → opencode×300 → claude-code×300 → 最终更新 SWEBENCH_COMPARE.html（全 5 harness × 300 对比）。保持 `WAITING=1`。
+- 🔧 **SWEBENCH_COMPARE.html 已更新**：44 entries, 26 resolved, 12556B。
+- ✅ **ops 中继复核（第 30 次）→ 健康**。relay `2489749 1 355058 Ss`（ppid=1、wchan=do_wai）；`.last_run_id`=71；日志 RUN_ID 62–71 均 exit=0。
+- ✅ **git sync**：`git fetch`（proxy）→ 1 commit behind → `git pull --rebase --autostash` → fast-forward（其他 agent 的 news/report/pretrain 更新，无新 harness 指令）→ `0 0`。
+- ⏭ **下一步**：codex×30 完成 → codex×300 `--resume` → cline-patched×300 → opencode×300 → claude-code×300 → deepseek-harness（待 npm registry 恢复）→ 最终 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
+
+## 🆕 第七十六轮速览 —— 已滚动归档至 daily-memories-harness/2026-10-05.md（结论不改：codex×30 RUNNING 13/30 scored + relay 健康 skip 第 29 次 + git sync + MEMORY rolling）
 
 ## 🆕 第七十四轮速览 —— 已滚动归档至 daily-memories-harness/2026-10-05.md（结论不改：codex×30 RUNNING 2/30 scored + relay 健康 skip 第 27 次 + 无新指令）
 
