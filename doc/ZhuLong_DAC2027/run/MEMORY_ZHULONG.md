@@ -10,8 +10,8 @@ WAITING: 1
 |:--|:--|
 | STAGE | `B`（大模型消融；**已调换**：因 pro-fp4 额度 403 阻塞 C1，先跑 Phase B）|
 | CONFIG | `deepseek-v4-flash` |
-| ROUND | 3 |
-| PHASE | `running`（B.deepseek-v4-flash r3 运行中 PID 1415328 batch 2026_1006_034557（03:45 启动）；r1=9.5% + r2=10.1% 已收割 [15/158 & 16/158 pass, 0 Forbidden ✅]；B.glm-5.2 5/5 完成 = **83.3±3.1%** [84.2,87.3,84.2,79.1,81.6]；flash 用独立 CLI_DATA_DIR 隔离 `/nasdata/app.e0031982/.cline_dsv4flash_eval/data`（model=deepseek-v4-flash + key c43c1f4a + /v1）；0 Forbidden ✅；deepseek-v4-flash API HTTP 200 ✅；试验次序 B→C1→C2→S1）|
+| ROUND | 5 |
+| PHASE | `running`（B.deepseek-v4-flash r5 运行中 PID 1615537 batch 2026_1006_045811（04:58 启动）；r1=9.5% + r2=10.1% + r3=19.0% + r4=7.6% 已收割 [15/158 & 16/158 & 30/158 & 12/158 pass, 0 Forbidden ✅]；B.glm-5.2 5/5 完成 = **83.3±3.1%** [84.2,87.3,84.2,79.1,81.6]；flash 用独立 CLI_DATA_DIR 隔离 `/nasdata/app.e0031982/.cline_dsv4flash_eval/data`（model=deepseek-v4-flash + key c43c1f4a + /v1）；0 Forbidden ✅；deepseek-v4-flash API HTTP 200 ✅；试验次序 B→C1→C2→S1）|
 | WAITING | 1 |
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
@@ -22,7 +22,7 @@ WAITING: 1
 | 阶段 | 臂 | 轮次 | 状态 |
 |:--|:--|:-:|:--|
 | B | glm-5.2 | 5/5 ✅ | **83.3±3.1%** [84.2,87.3,84.2,79.1,81.6]（r5=81.6% 129/158 batch 2026_1005_233928, 0 Forbidden ✅）|
-| B | deepseek-v4-flash | 2/5 r3 | r1=9.5% ✅ (15/158, batch 2026_1006_022818); r2=10.1% ✅ (16/158, generated 16ok/142fail/0exec_err, 0 Forbidden, batch 2026_1006_031227); r3 running (PID 1415328, batch 2026_1006_034557, 03:45, flash CLI_DATA_DIR 隔离, API 200 ✅) |
+| B | deepseek-v4-flash | 4/5 r5 | r1=9.5% ✅ (15/158, batch 2026_1006_022818); r2=10.1% ✅ (16/158, batch 2026_1006_031227); r3=19.0% ✅ (30/158, batch 2026_1006_034557); r4=7.6% ✅ (12/158, 15ok/143fail/0exec_err, 0 Forbidden, batch 2026_1006_042140); r5 running (PID 1615537, batch 2026_1006_045811, 04:58, flash CLI_DATA_DIR 隔离) |
 | B | kimi-k2.6-cloud | 1-5/5 | â¬ |
 | B | doubao-seed-2.0-pro-cloud | 1-5/5 | â¬ |
 | C1 | pure_llm | 5/5 â | â 10.5Â±1.9%ï¼å¤ç¨ legacyï¼[8.2,9.5,10.1,11.4,13.3]ï¼|
@@ -42,13 +42,18 @@ WAITING: 1
 | 臂 | N=5 mean±std | 各轮原始值 |
 |:--|:-:|:--|
 | B.glm-5.2 | **83.3 ± 3.1%** | [84.2, 87.3, 84.2, 79.1, 81.6] |
-| B.deepseek-v4-flash | [TBD] | r1=9.5%（15/158, batch 2026_1006_022818）；r2=10.1%（16/158, 16 ok gen/142 fail/0 exec_err, 0 Forbidden ✅, batch 2026_1006_031227）|
+| B.deepseek-v4-flash | [TBD] | r1=9.5%（15/158, batch 2026_1006_022818）；r2=10.1%（16/158, batch 2026_1006_031227）；r3=19.0%（30/158, 30 ok/128 fail/0 exec_err, 0 Forbidden ✅, batch 2026_1006_034557）；r4=7.6%（12/158, 15 ok/143 fail/0 exec_err, 0 Forbidden ✅, batch 2026_1006_042140）|
 | B.kimi-k2.6-cloud | [TBD] | [TBD] |
 | B.doubao-seed-2.0-pro-cloud | [TBD] | [TBD] |
 | C1.pure_llm | 10.5 ± 1.9% | [8.2, 9.5, 10.1, 11.4, 13.3]（复用 legacy）|
 | C1.wo_retrieval | r1=74.1（r2 infra 作废；pro-fp4 403→待 Phase B 完成后重试）| [74.1]（r1 复用 legacy；r2 0/158 Forbidden 作废）|
 
 ## 操作流水
+
+- [2026-10-06 04:56] [✅ B.deepseek-v4-flash r4 收割 7.6% → r5 启动] ① 运维指令(五)优先：legacy 组件 loop PID 2455466 alive ✅（无需拉起）；conductor 未触碰（红线）；zhulong_loop PID 3189240 + ops relay PID 3186967 alive ✅。② §7 步骤 A：pgrep '^bash scripts/run_cline_script'→无输出（r4 PID 1512071 已结束，log mtime 04:36）→进入打分。③ r4 打分：grep PASS_RATE /tmp/ABL_deepseek-v4-flash_r4.log→PASS_RATE=0.0759（12/158 pass=7.6%, generated 15 ok/143 fail/0 exec_err, 0 Forbidden ✅）；batch 2026_1006_042140 正常完成；tail 见 [SUCCESS] 评估完成 + 合并 15 条结果。④ 失败模式诊断：r4=7.6% 较 r3=19.0% 回落→弱模型方差大（重排任务顺序+全新 context），**非 infra 作废**（0 Forbidden/0「无可执行脚本」/0 license/端口全 OPEN/[SUCCESS]）。⑤ 记成绩 r4=7.6%，ROUND 4→5（≤5→启 r5）。⑥ Gate 复检：flash CLI_DATA_DIR settings/providers.json=deepseek-v4-flash+key c43c1f4a+/v1 ✅；.env=full config（EDA_MCP_TOOLS_DISABLED 不含 run_code/search_apis；OMEGA=high/PHI=0/LAGGED=0）✅；MCP 8090 + RAG 9006 alive ✅；shard 8664/8665/8653/8669 全 OPEN ✅；/nasdata 376G ✅。⑦ 启动 r5：CLI_DATA_DIR=/nasdata/app.e0031982/.cline_dsv4flash_eval/data EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python setsid bash scripts/run_cline_script.sh -p 8 -n→PID 1615537, batch 2026_1006_045811, 04:58:11, 8 worker/158题/-n, log=/tmp/ABL_deepseek-v4-flash_r5.log。⑧ 验证：log 98KB 活跃写入✅；deprecation warning 含 deepseek-v4-flash ✅；0 Forbidden ✅；pgrep 确认 PID 1615537 alive✅。状态更新：PHASE=running / STAGE=B / CONFIG=deepseek-v4-flash / ROUND=5 / WAITING=1 / ERROR_COUNT=0。退出等下轮唤醒 harvest r5（pgrep 无输出→grep PASS_RATE /tmp/ABL_deepseek-v4-flash_r5.log 取 r5 Pass@1 → 算 B.deepseek-v4-flash mean±std → PHASE=just_finished → 切 B.kimi-k2.6-cloud）。
+
+
+- [2026-10-06 04:21] [✅ B.deepseek-v4-flash r3 收割 19.0% → r4 启动] ① 运维指令(五)优先：legacy 组件 loop PID 2455466 alive ✅（无需拉起）；conductor 未触碰（红线）；zhulong_loop PID 3189240 + ops relay PID 3186967 alive ✅。② §7 步骤 A：pgrep '^bash scripts/run_cline_script'→无输出（r3 PID 1415328 已结束）→进入打分。③ r3 打分：grep PASS_RATE /tmp/ABL_deepseek-v4-flash_r3.log→PASS_RATE=0.1899（30/158 pass=19.0%, generated 30 ok/128 fail/0 exec_err, 0 Forbidden ✅）；batch 2026_1006_034557 正常完成；tail 见 [SUCCESS] 评估完成 + 合并 30 条结果。④ 失败模式诊断：r3=19.0% 较 r1=9.5%/r2=10.1% 显著上升→弱模型方差大（重排任务顺序+全新 context 影响 borderline 任务通过率），**非 infra 作废**（0 Forbidden/0「无可执行脚本」/0 license/端口全 OPEN/[SUCCESS]）。⑤ 记成绩 r3=19.0%，ROUND 3→4（≤5→启 r4）。⑥ Gate 复检：flash CLI_DATA_DIR providers.json=model=deepseek-v4-flash+key c43c1f4a+/v1 ✅；.env=full config（EDA_MCP_TOOLS_DISABLED 不含 run_code/search_apis）✅；MCP PID 3298357@8090 + RAG PID 3820519@9006 alive ✅；shard 8664/8665/8653/8669 全 OPEN ✅；/nasdata 377G ✅。⑦ 启动 r4：CLI_DATA_DIR=/nasdata/app.e0031982/.cline_dsv4flash_eval/data EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python setsid bash scripts/run_cline_script.sh -p 8 -n→PID 1512071, batch 2026_1006_042140, 04:21:40, 8 worker/158题/-n, log=/tmp/ABL_deepseek-v4-flash_r4.log。⑧ 验证：log 337KB 活跃写入✅；deprecation warning 含 deepseek-v4-flash 200次✅；0 Forbidden ✅；pgrep 确认 PID 1512071 alive✅。状态更新：PHASE=running / STAGE=B / CONFIG=deepseek-v4-flash / ROUND=4 / WAITING=1 / ERROR_COUNT=0。退出等下轮唤醒 harvest r4（pgrep 无输出→grep PASS_RATE /tmp/ABL_deepseek-v4-flash_r4.log 取 r4 Pass@1）。
 
 - [2026-10-06 03:45] [✅ B.deepseek-v4-flash r2 收割 10.1% → r3 启动] ① 运维指令(五)优先：legacy 组件 loop PID 2455466 alive ✅（无需拉起）；conductor 未触碰（红线）；zhulong_loop PID 3189240 + ops relay PID 3186967 alive ✅。② §7 步骤 A：pgrep '^bash scripts/run_cline_script'→无输出（r2 PID 1324617 已结束）→进入打分。③ r2 打分：grep PASS_RATE /tmp/ABL_deepseek-v4-flash_r2.log→PASS_RATE=0.1013（16/158 pass=10.1%, generated 16 ok/142 fail/0 exec_err, 0 Forbidden ✅）；batch 2026_1006_031227 正常完成；tail 见 [SUCCESS] 评估完成 + 合并 16 条结果。④ 失败模式诊断：与 r1=9.5% 一致→flash 弱模型真实表现（142/158 未生成有效代码），**非 infra 作废**（0 Forbidden/无「无可执行脚本」/无 license 耗尽）。⑤ 记成绩 r2=10.1%，ROUND 2→3（≤5→启 r3）。⑥ Gate 复检：flash CLI_DATA_DIR providers.json=model=deepseek-v4-flash+key c43c1f4a+/v1 ✅；.env=full config ✅；/nasdata 378G ✅；shard 8664/8665/8653/8669 全 OPEN ✅。⑦ 启动 r3：CLI_DATA_DIR=/nasdata/app.e0031982/.cline_dsv4flash_eval/data EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python setsid bash scripts/run_cline_script.sh -p 8 -n→PID 1415328, batch 2026_1006_034557, 03:45:57, 8 worker/158题/-n, log=/tmp/ABL_deepseek-v4-flash_r3.log。⑧ 验证：deprecation warning 含 deepseek-v4-flash 100次✅；0 Forbidden ✅；pgrep 确认 PID 1415328 alive✅。状态更新：PHASE=running / STAGE=B / CONFIG=deepseek-v4-flash / ROUND=3 / WAITING=1 / ERROR_COUNT=0。退出等下轮唤醒 harvest r3（pgrep 无输出→grep PASS_RATE /tmp/ABL_deepseek-v4-flash_r3.log 取 r3 Pass@1）。
 
