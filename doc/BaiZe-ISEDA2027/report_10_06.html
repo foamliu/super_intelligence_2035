@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 工作汇报 · 2026-10-06</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  h4 { font-size:14.5px; margin:16px 0 6px; color:var(--primary); }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr;} }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#0d5c22; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6a4a00; }
+  .danger { background:#fff0f0; border:1px solid #ffc9c9; border-left:4px solid var(--bad); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#8a1c1c; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe 工作汇报 · 2026-10-06</h1>
+  <div class="sub">治理责任下放（归档 + 推送）· ZhuLong 复活 · pretrain「NCCL 证伪 + 提速令」· data「目标函数更正」· vision「R12b 全量数据」</div>
+  <div class="meta">
+    <span>📅 2026-10-06（CST）</span>
+    <span>🕐 截至 ~14:55</span>
+    <span>📄 第 6 份日报</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <b>一句话</b>：今天真正的变化不在实验数字，而在 <b>治理机制</b>——<b>「归档任务书」与「每轮唤醒自己 commit+push」的责任正式下放到各线 agent</b>（覆盖全部 <b>7 条线</b>），并当场被三件事实检验：<b>ZhuLong 复活</b>（中继/loop 长期"哑火"→ 修复并推进 Phase B）、<b>pretrain 的「NCCL 假设被证伪」</b>、<b>data 的「目标函数更正（loss → 评测均分）」</b>。
+  <br><br>
+  <span class="badge b-ok">✅ 4 条 BaiZe 线 + ZhuLong + personal-watch 2 线 全部在跑</span>
+  <span class="badge b-warn">⚠️ 今天我也犯了 2 个错，已修复并留痕（见 §10）</span>
+</div>
+
+<nav class="toc">
+  <b>目录</b>
+  <ol>
+    <li><a href="#s1">⭐ 头条 A：治理责任下放（归档 + 推送 → 各线 agent）</a></li>
+    <li><a href="#s2">⭐ 头条 B：ZhuLong 复活（中继 + loop）</a></li>
+    <li><a href="#s3">四条线状态一览</a></li>
+    <li><a href="#s4">pretrain：NCCL 证伪 + 空窗提案裁决 + 提速令</a></li>
+    <li><a href="#s5">vision：R12 → 3-epoch → R12b 全量数据 + 论文 §6</a></li>
+    <li><a href="#s6">data：配比改道 + 目标函数更正（loss → 均分）</a></li>
+    <li><a href="#s7">harness：codex×300（58 → 172/300）</a></li>
+    <li><a href="#s8">ZhuLong 与 personal-watch</a></li>
+    <li><a href="#s9">关键数字</a></li>
+    <li><a href="#s10">诚实条款：我这轮犯的错与修复</a></li>
+    <li><a href="#s11">需要你决策 / 注意</a></li>
+  </ol>
+</nav>
+
+<h2 class="sec" id="s1"><span class="no">1</span>⭐ 头条 A：治理责任下放 —— 「归档任务书」「每轮推送」都归各线 agent 自己</h2>
+
+<h3>1.1 触发与裁定</h3>
+<p>运维在 pretrain 心跳里照例报「TASK=39.6KB，建议运维归档」→ 用户指出：</p>
+<div class="note">「<b>运维归档任务书不是长久之计</b>。现在 MEMORY 是谁负责归档的，不是 agent 自己嘛？那既然可以归档 MEMORY，<b>当然也可以滚动归档任务书</b>。」</div>
+<p><b>根因（运维核实的条文矛盾）</b>：原「体积维护规程」写死「<b>归档动作由运维在中继块执行</b>」、收尾铁律又写「<b>🚫 不要自己归档（BAIZE_*_TASK.md 你只读）</b>」⇒ <b>agent 被明文禁止</b> ⇒ 必然反弹（10-05 瘦身一次，10-06 又回到 data 79.8KB / pretrain 41.4KB / news 72.4KB）。</p>
+
+<h3>1.2 已下发的三条命令（覆盖 7 条线）</h3>
+<table>
+<tr><th>#</th><th>内容</th><th>覆盖</th></tr>
+<tr><td>①</td><td><b>【agent 归档 MEMORY + 任务书】</b>：判据 两者均 ≤32KB（红线 40KB）；做法 = 只把「已闭合」内容<b>原文</b>搬入归档文件 + 留 <b>1 行指针</b>；<b>不改编号/标题、不新增/不改写任何指令</b>；护栏 = 搬前 <code>git pull --rebase --autostash</code>、<b>只搬「最新活跃块之下」</b>的已闭合块、冲突保留双方</td><td>BaiZe 4 本任务书 + <code>run/AGENTS.md §6</code> + 根 <code>MEMORY.md §8</code>；personal-watch 2 本 + <code>AGENTS.md §5</code>；ZhuLong <code>ZHULONG_TASK.md §10</code></td></tr>
+<tr><td>②</td><td><b>【每轮唤醒必须自己 commit+push】</b>（不许依赖 loop 兜底；心跳文件 <b>&gt;60min 无新提交 = 判死</b>）</td><td><b>补齐缺口</b>：personal-watch news / research + ZhuLong（BaiZe 4 线原本已有「收尾铁律」）</td></tr>
+<tr><td>③</td><td><b>personal-watch 两 loop 的兜底推送 <code>PUSH_INTERVAL</code> 5h → 30min</b>（18000→1800）并重启生效</td><td><code>watch_news_loop.sh</code> / <code>watch_research_loop.sh</code>（经其 ops 中继 RUN_ID 8/9，已核验进程与日志）</td></tr>
+</table>
+
+<h3>1.3 统一后的收尾口径（7 线一致）</h3>
+<pre><code>1) 写心跳（MEMORY 快照 + 本轮流水）   2) 写日报（当天文件必须建）
+3) git pull --rebase --autostash → git add -- &lt;本线文件&gt;（🚫 不 add -A）→ commit（带线名前缀）→ push（🚫 不等兜底）
+4) git status -sb 自检（无 ahead/behind）</code></pre>
+
+<h3>1.4 当天就见效（自归档实测）</h3>
+<div class="kpi-row">
+  <div class="kpi"><div class="v">33.1→23.6</div><div class="l">pretrain TASK (KB)</div></div>
+  <div class="kpi"><div class="v">79.8→31.6</div><div class="l">data TASK (KB)</div></div>
+  <div class="kpi"><div class="v">31→9</div><div class="l">vision MEMORY (KB)</div></div>
+  <div class="kpi"><div class="v">41.8→31.6</div><div class="l">news TASK (KB)</div></div>
+  <div class="kpi"><div class="v">33.8→29.8</div><div class="l">harness TASK (KB)</div></div>
+</div>
+<p>⇒ <b>「agent 自己滚」跑通了</b>；此外 <code>BAIZE_DATA_TASK.md</code> 当天两次自滚（79.8→39.5→31.6KB），<code>WATCH_NEWS_TASK.md</code> 自滚 3 次（41.8→33.3→31.6KB）。</p>
+
+<h2 class="sec" id="s2"><span class="no">2</span>⭐ 头条 B：ZhuLong 复活 —— 中继 + agent loop 从"哑火很久"到正常推进</h2>
+
+<h3>2.1 症状</h3>
+<p>ZhuLong 在 <code>36.15</code>。从 git 上看它<b>长期没有任何提交</b>（"哑火"），但登录不上那台机，只能靠 BaiZe 的通道间接看。</p>
+
+<h3>2.2 通道（用户给的方案，完全走通）</h3>
+<pre><code>BaiZe ops 中继（在 2.29，走 git，零 token）
+   └─ ssh -p 3333 localhost   ← 隧道 -R 3333:10.251.36.15:22（见 doc/三机互联方法.md §4.2）
+        └─ 在 36.15 上诊断 / 修复 / 重启 ZhuLong 的 relay 与 loop</code></pre>
+
+<h3>2.3 真因（三条，都不是"进程死了"）</h3>
+<table>
+<tr><th>#</th><th>真因</th><th>证据 / 处置</th></tr>
+<tr><td>①</td><td><b>远端跟踪 ref 陈旧</b> ⇒ <code>git fetch</code> 永远失败</td><td><code>cannot lock ref 'refs/remotes/origin/main': is at 203f323 but expected 5541f31</code> → <code>git update-ref -d</code> 后 <code>fetch</code> 成功（<code>* [new branch] main -&gt; origin/main</code>）</td></tr>
+<tr><td>②</td><td><b>重启用的非登录 shell ⇒ PATH 里没有 <code>cline</code></b></td><td>日志 <code>env: 'cline': No such file or directory</code>；交互式 shell 问出真实路径 = <code>/home/app.e0031982/.local/node-20/bin/cline</code>（既不在 <code>~/.nvm</code> 也不在 <code>~/.bun</code>）</td></tr>
+<tr><td>③</td><td><b>代理 env 缺失</b>（非交互 shell 不读 <code>~/.bashrc</code>）</td><td>36.15 自带 <code>~/.bashrc:119 https_proxy=http://172.19.92.23:13128</code>；实测 <code>via_.23_github=200</code> ✅（⚠️ 注意是 <b>.23</b>，与 .12/.29 的 .25 不同）</td></tr>
+</table>
+
+<h3>2.4 结果</h3>
+<div class="ok-box">
+✅ <b>积压的 5 个本地提交全部补推到 origin</b>（11:26：<code>B.glm-5.2 5/5=83.3±3.1%</code>、<code>deepseek-v4-flash 各轮</code>、<code>kimi r1 launched</code> 等）→ 之后 <code>11:44</code> 又有 <code>zhulong auto-commit</code> → 现 <code>## main...origin/main</code> <b>完全同步</b>。<br>
+✅ relay 与 loop 均以"显式 PATH + proxy"重启并存活（后续 <code>etimes</code> 持续增长）；Phase B 推进中（见 §8）。
+</div>
+<div class="danger">⚠️ 插曲（我造成的、已撤销）：我一度给 36.15 的仓库设了 <code>git config http.proxy=http://172.19.92.25:13128</code>（<b>.25 从 36.15 不可达</b>），它会<b>覆盖</b>机器自带的 .23 代理、弄坏 push ⇒ 已用 RUN_ID 79 <code>git config --unset</code> 清掉（<code>http/https.proxy unset OK</code>）。</div>
+
+<h2 class="sec" id="s3"><span class="no">3</span>四条线状态一览</h2>
+<table>
+<tr><th>线</th><th>状态</th><th>本轮关键数字</th></tr>
+<tr><td><b>pretrain</b><br><span class="badge b-ok">运行中</span></td><td>P-9.11② sglang ✅ → <b>P-9.12 NCCL 核查 ✅</b>（用户假设被证伪）→ 空窗提案裁决 → <b>⭐ 提速令</b></td><td>NVLink 100% / busbw 164.56 GB/s（69% 峰值）/ <b>tok/s +0%</b>；TASK 23.6KB</td></tr>
+<tr><td><b>data</b><br><span class="badge b-ok">运行中</span></td><td>配比改道（小代理 + BO）→ BO 崩溃修复 → <b>🚨 目标函数被用户更正</b></td><td>BO <b>79/200</b>，ETA ~19:10；TASK 79.8→31.6KB</td></tr>
+<tr><td><b>vision</b><br><span class="badge b-ok">运行中</span></td><td>R12 ✅ → 3-epoch 续跑 ✅ → 8-GPU eval 卡死→4-GPU ✅ → <b>R12b 全量数据 fresh run</b> + <b>论文 §6 改写完成</b></td><td>272k 步≈2ep，~5100 img/s，ETA ~21:00；MEMORY 31→9KB</td></tr>
+<tr><td><b>harness</b><br><span class="badge b-ok">运行中</span></td><td>codex×300 <code>--resume</code> 长跑</td><td><b>172/300</b>（30 resolved，35.3% ex-blocked）；SWEBENCH <b>202 entries</b></td></tr>
+<tr><td><b>ZhuLong</b><br><span class="badge b-ok">已复活</span></td><td>Phase B（大模型消融）推进中</td><td>glm-5.2 <b>83.3±3.1%</b> · flash <b>16.7±12.3%</b> · kimi r1 <b>79.1%</b>（r2 跑）</td></tr>
+<tr><td><b>news / research</b><br><span class="badge b-ok">运行中</span></td><td>常态采集 + 任务书自滚</td><td>news 累计 <b>134</b>（第52轮）· research 第55轮（0 新增，公告未刷新）</td></tr>
+</table>
+
+<h2 class="sec" id="s4"><span class="no">4</span>pretrain：NCCL 证伪 + 空窗提案裁决 + ⭐提速令</h2>
+
+<h3>4.1 ⭐ P-9.12 NCCL / NVLink 拓扑核查 ✅ COMPLETE —— <b>用户假设被证伪</b></h3>
+<p><b>你的假设</b>：「若当前 <b>NCCL 实际走的是 PCIe P2P</b>，换更好的 NVLink 拓扑会有改善」。<b>实测结论：不成立</b> —— NCCL 本来就在用 NVLink。</p>
+<table>
+<tr><th>项目</th><th>实测</th></tr>
+<tr><td>硬件拓扑（<code>nvidia-smi topo -m</code>）</td><td>8×H100 = <b>NV18 full-mesh NVSwitch</b>（18×NVLink @ 26.562 GB/s = <b>478 GB/s/GPU</b>，全部 UP）</td></tr>
+<tr><td>NCCL 实际通道（<code>NCCL_DEBUG=INFO</code>）</td><td><code>via P2P/CUMEM</code> = <b>42 次（100%）</b> · <code>via NET</code> = 0 · <code>via SHM</code> = 0 ⇒ <b>走 NVLink，不是 PCIe</b></td></tr>
+<tr><td>对照实验（7 组，2-GPU all_reduce）</td><td><b>default（Ring+P2P+LL）最优</b>：1GB busbw = <b>164.56 GB/s</b>（algbw 329 GB/s = <b>69% NVLink 峰值</b>）</td></tr>
+<tr><td>反证</td><td><code>NCCL_P2P_DISABLE</code> ⇒ 3.44 GB/s（<b>48× ↓</b>）—— 说明 NVLink 确实在起作用；<code>ib_disable</code>/<code>algo_tree</code> ≈15.6（10×↓）；<code>nvls_on</code>/<code>proto_simple</code>/<code>shm_disable</code> ≈66（2.5×↓）</td></tr>
+<tr><td>NVLS</td><td><b>不可用</b>（即使 <code>NCCL_NVLS_ENABLE=1</code> 仍报 "0 nvls channels"）</td></tr>
+<tr><td><b>判据（全给）</b></td><td>① 通道 = NVLink 100% ② 最佳 = <b>default</b> ③ <b>tok/s 提升 0%</b> ④ 可迁移 8 卡</td></tr>
+</table>
+<div class="ok-box">📄 产出：<code>report_pretrain_nccl_topo.html</code>（11.3KB，自包含：topo 矩阵 + NCCL 日志关键行 + busbw 表 + tok/s 表 + 结论）<br>
+⇒ <b>价值</b>：虽然证伪，但把 NCCL 这条线<b>彻底排除</b>了（69% 峰值 + default 已最优）——<b>瓶颈在别处</b>，直接指向 Step 2 的数据管线 / 并行 / backend。</div>
+
+<h3>4.2 空窗提案（5 条）→ 你的裁决</h3>
+<table>
+<tr><th>#</th><th>候选</th><th>占卡·墙钟</th><th>裁决</th></tr>
+<tr><td>A</td><td><b>复杂推理 6 集</b>（GSM8K/MATH/BBH/MMLU/HumanEval/MBPP）</td><td>1 卡 · ~3-4h</td><td><span class="badge b-ok">✅ 批准</span></td></tr>
+<tr><td>B</td><td><b>长上下文 4096 → 8192+</b>（RoPE/NTK/YaRN；hybrid 仅 4 层 attention 用 RoPE）</td><td>1 卡 · ~2-3h</td><td><span class="badge b-ok">✅ 批准</span></td></tr>
+<tr><td>C</td><td>P-8 dry-run（1B token WSD 小预演）</td><td>2 卡 · ~5h</td><td><span class="badge b-warn">⏸ 暂不动</span></td></tr>
+<tr><td>D</td><td>P-9.11 缺口补测（128K + H3 sglang）</td><td>1 卡 · 1-2h</td><td><span class="badge b-ok">✅ 批准</span></td></tr>
+<tr><td>E</td><td>ckpt → OpenAI 兼容服务 + 接 Cline harness</td><td>—</td><td><span class="badge b-no">🚫 不做</span>（「模型能力太弱，距离作为 harness 底模还很远」）</td></tr>
+</table>
+
+<h3>4.3 ⭐ 当前最高优先 = 「提速」（用 GPU0-1 优化训练配置）</h3>
+<ul>
+  <li><b>第 1 步</b>：NCCL/NVLink 拓扑核查（<b>已完成</b>，见 §4.1）</li>
+  <li><b>第 2 步</b>：<b>训练提速候选清单</b>（每条给「实测 tok/s + 判据 + 能否迁移 8 卡 + 时间盒」）：
+    MBS/GBS/seq 组合 · <code>--recompute</code> 档位 · CUDA-graph/静态形状 · 数据管线（num_workers/预取/阻塞）· TP/DP 拓扑 · kernel/backend（TE、attention backend）· <b>P-9.7「249K tok/s」口径复核</b></li>
+  <li><b>优先级</b>：<b>优先「不改 recipe、只改运行时/并行/IO」的项</b>（最可能迁移到 P-8 且不污染既有结论）；涉及改 recipe 的先报提案</li>
+  <li><b>顺序建议</b>：NCCL 核查 → 提速清单 → A → B → D</li>
+</ul>
+
+<h3>4.4 交付物</h3>
+<p><code>report_pretrain_p5b_8sets.html</code>(33KB) · <code>report_pretrain_p6b_scaling.html</code>(7.1KB) · <code>report_pretrain_p911_sglang.html</code>(17KB) · <code>report_pretrain_p95_profiler.html</code>(22KB) · <code>report_pretrain_nccl_topo.html</code>(11.3KB)；任务书自归档 33.1→23.6KB（P-6/P-7 → ARCHIVE）。</p>
+
+<h2 class="sec" id="s5"><span class="no">5</span>vision：R12 → 3-epoch 续跑 → 🚀 R12b 全量数据 + 论文 §6 定稿</h2>
+<table>
+<tr><th>阶段</th><th>结果</th></tr>
+<tr><td><b>R12</b> 训练 + eval</td><td>✅ 完成，120k 步 <b>lp@120k = 17.57%</b></td></tr>
+<tr><td><b>3-epoch 续跑</b></td><td>✅ 完成：step <b>344000/344k</b>，<b>final_loss = 1.5299</b>，总 39197.3s（10.9h），steady <b>3303 img/s</b></td></tr>
+<tr><td>并行 eval</td><td>⚠️→✅ 8-GPU 版因 <b>NFS 争用卡死</b>（8 进程各冗余读 40×500MB parquet，43min 只出 3-4 文件，loadavg 457）→ kill → 改 <b>4-GPU <code>r12_single_eval.sh</code></b>（35 ckpts）</td></tr>
+<tr><td><b>论文 §6</b></td><td>✅ <b>改写完成并编译通过</b>（Boundary 段 + 3-epoch 176M 结果回填；pdflatex 9 页 / 0 错误）</td></tr>
+<tr><td>提速归因实测</td><td>✅ bs 64/128/256 × nw 6/12/16 扫描 ⇒ <b>数据/IO 受限</b>（~5000 img/s ≈ NFS 上限），<b>1 epoch ≈ 3.3h</b></td></tr>
+<tr><td>🚀 <b>R12b 全量数据 AIMv2</b></td><td>12:54 起跑：<b>272k 步 ≈ 2 epoch</b>，<b>7527 shards</b>（GPIC 4176 + CC12M 1100 + Amshaker 2250），bs 64×8=512，nw=6，<b>~5100 img/s</b>，GPU util ~70%，<b>ETA ~20:30–21:10</b>；step 36300/272k（13%），loss ~2.6，C4=OK，3 ckpts</td></tr>
+</table>
+<p>📦 记忆自归档 <b>31→9KB</b>；所有 CPU 类交付物已完成，仅待训练结束 + 自动 eval → scaling 曲线。</p>
+
+<h2 class="sec" id="s6"><span class="no">6</span>data：配比改道 + <b>🚨 目标函数更正（loss → 评测均分）</b></h2>
+
+<h3>6.1 改道（由「伪实验」到真搜索）</h3>
+<ul>
+  <li>❌ <b>废弃 2.2B 单臂 S0a</b>（单臂/拍脑袋不算实验；已烧 ≈100 GPU·h，脚本标 DEPRECATED）</li>
+  <li>✅ 改为 <b>小代理 <code>d=128/L=14 ≈ 18.36M</code> + GP-EI 贝叶斯优化</b>（<code>baize_mix_optuna.py</code>，6 卡并行 GPU2-7，<code>D=1B token/trial</code>）</li>
+  <li>开工前 <b>5 项必验全过</b>（含「可分辨性证伪」排第一）</li>
+</ul>
+
+<h3>6.2 BO 崩溃 → 修复 → 推进</h3>
+<p>GP 竞态（<code>GPR.predict()</code> 在 <code>fit()</code> 前被调用 → <code>AttributeError</code>）⇒ 加 <code>threading.Lock</code> + <code>_fitted</code> 标志修复重启 ⇒ <b>19 → 79/200</b>（best-by-loss=4.6471 #64，先验 88:8:4 排 53/79、Δ 5.4% <b>更差</b>），ETA ~19:10。</p>
+
+<h3>6.3 🚨 用户更正：目标函数必须用「评测均分」，不是 val loss</h3>
+<div class="danger">「data 又错了，你的 <code>best=4.6471(#64)</code> 指的是 <b>loss</b> 吧？应该用 <b>8 个常识推理评测均分</b>；同样 <b>decay 数据配比实验，用 6 个复杂推理评测均分</b>。」<br>⇒ <b>方法学错误</b>：loss 排序 ≠ 能力排序，用 loss 当 BO 目标会选出「loss 低但能力不高」的配比。</div>
+<table>
+<tr><th>阶段</th><th>✅ 正确目标函数</th></tr>
+<tr><td><b>Stable 段配比</b></td><td><b>8 集常识推理均分</b>：<code>arc_challenge, arc_easy, boolq, hellaswag, openbookqa, piqa, sciq, winogrande</code>（zero-shot，与 P-6 同口径 lm_eval）</td></tr>
+<tr><td><b>Decay 段配比</b></td><td><b>6 集复杂推理均分</b>：<code>gsm8k, math, bbh, mmlu, humaneval, mbpp</code></td></tr>
+<tr><td><code>val loss</code></td><td><b>降级为诊断列</b>（不作排序/选优依据）</td></tr>
+</table>
+<p><b>已下发的 6 项要求</b>：① 改评测管线（复用已就绪的 <code>baize_mix_eval.sh</code>；遵守环境隔离）② <b>回算已有 trial</b>（top-K + 先验 + 随机点）→ <b>检验「loss 排名 vs 均分排名」秩相关</b>（不一致本身就是结论，如实报告）③ <b>预注册判定阈值</b>（Δ 须超评测噪声 σ）④ 同 ckpt <b>重复评测 ≥3 次报 σ</b>，协议全文唯一 ⑤ 在跑 trial <b>立即切 objective</b>（已完成 79 个保留作对照）⑥ 产出 <code>report_data_mix_eval.html</code>。</p>
+
+<h3>6.4 ⏱️ 用户追加「速度红线」</h3>
+<div class="note"><b>若本安排导致整体太慢 ⇒ 立刻汇报</b>（不许硬扛、不许静默降级）。可行方向：<b>1）减少题目数量</b>（每集降采样）；<b>2）用「评测集语料的 val loss」代表评测集评分</b>；两者都必须：先报（含成本估算：单 trial 评测耗时 × 剩余 trial 数）+ 给相关性证据 + 报告里显著标注「代理指标」。🚫 绝不许"偷偷用 loss 当 objective"。</div>
+<p>💡 技术提示：8 集常识多为 <b>multiple-choice</b>，而 lm_eval 对 MC 的评分本身就是「算各选项 loglikelihood」⇒ <b>「评测集自身文本的 val loss」与真实均分几乎同源</b>，是很有希望的省时方案；但 <b>Decay 的 6 集含生成式/代码执行（GSM8K/HumanEval/MBPP）</b>，代理可信度低 ⇒ 必须做相关性验证。</p>
+<p>📦 任务书自归档 <b>79.8 → 39.5 → 31.6KB</b>；BO 只占 GPU2-7（GPU0-1 留给 pretrain 提速）。</p>
+
+<h2 class="sec" id="s7"><span class="no">7</span>harness：codex×300 长跑（58 → 172/300）</h2>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>进度</td><td><b>172/300</b> entries（R96→R105 期间 58→172）</td></tr>
+<tr><td>评分</td><td><b>30 resolved</b> / 55 patch-but-failed / <b>87 blocked</b> ⇒ resolve rate（ex-blocked）<b>35.3%</b></td></tr>
+<tr><td>报告</td><td><code>SWEBENCH_COMPARE.html</code>：<b>202 entries / 48 resolved</b>（cline-patched 18 + codex 30）</td></tr>
+<tr><td>其他</td><td>✅ <code>deepseek-harness</code> pnpm install + <b>BUILD 完成</b>；✅ claude-code 遥测关闭（settings.json 10 变量 + driver env）</td></tr>
+<tr><td>阻塞</td><td>无硬阻塞；<b>87 blocked</b>（<code>git fetch</code> TIMEOUT + NFS <code>shallow.lock</code>）将在 codex×300 后 <code>--resume</code> 自动重跑</td></tr>
+</table>
+
+<h2 class="sec" id="s8"><span class="no">8</span>ZhuLong 与 personal-watch</h2>
+
+<h3>8.1 ZhuLong（DAC2027 · 36.15）—— 复活后 Phase B 推进</h3>
+<table>
+<tr><th>臂（Phase B 大模型消融）</th><th>成绩（Pass@1）</th></tr>
+<tr><td><code>glm-5.2</code></td><td><b>5/5 = 83.3 ± 3.1%</b> ✅</td></tr>
+<tr><td><code>deepseek-v4-flash</code></td><td><b>5/5 = 16.7 ± 12.3%</b> ✅</td></tr>
+<tr><td><code>kimi-k2.6-cloud</code></td><td>r1 <b>79.1%</b>（125/158，145 ok / 13 fail / 0 exec_err）；<b>r2 运行中</b></td></tr>
+</table>
+<p>其他：<code>0 Forbidden</code> ✅、独立 <code>CLI_DATA_DIR</code> 隔离、relay/loop 正常（<code>etimes</code> 持续增长）；试验次序 = <b>B → C1 → C2 → S1</b>（因 pro-fp4 额度 403 阻塞 C1 而调换）。</p>
+
+<h3>8.2 personal-watch（腾讯云 106.54.228.191）</h3>
+<table>
+<tr><th>线</th><th>本轮</th><th>累计</th></tr>
+<tr><td><b>news</b></td><td>第 52 轮 <b>+1</b>（希捷/东芝竞购 TDK 硬盘磁头业务 · AI 存储供应链）</td><td>当日 27 / <b>累计 134</b></td></tr>
+<tr><td><b>research</b></td><td>第 55 轮 <b>0 新增</b>（公告批次未刷新；15/15 ok，1 查询 429 重试成功）</td><td>—</td></tr>
+</table>
+<p>两条 loop 的 <code>PUSH_INTERVAL</code> 已 5h→30min 并重启生效；任务书已自滚（news 41.8→31.6KB）。</p>
+
+<h2 class="sec" id="s9"><span class="no">9</span>关键数字</h2>
+<div class="kpi-row">
+  <div class="kpi"><div class="v">49.22%</div><div class="l">pretrain 8 集常识 Avg @20B tok</div></div>
+  <div class="kpi"><div class="v">R²=0.986</div><div class="l">P-6② scaling 拟合</div></div>
+  <div class="kpi"><div class="v">0%</div><div class="l">NCCL 提速空间（已证伪）</div></div>
+  <div class="kpi"><div class="v">17.57%</div><div class="l">vision R12 lp@120k</div></div>
+  <div class="kpi"><div class="v">36.7%</div><div class="l">harness codex resolved（ex-blocked）</div></div>
+  <div class="kpi"><div class="v">134</div><div class="l">news 累计条数</div></div>
+</div>
+
+<h4>预训练（Stage i）</h4>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>参数量 / 架构</td><td>2.22B · Mamba-2 hybrid 56 层（4 层 attention）</td></tr>
+<tr><td>胜出配置</td><td>LR 1e-3 / WSD / warmup238 / decay477 / min_lr 1e-5 / GBS 1024 / seq 4096 / bf16 / seed 1234</td></tr>
+<tr><td>P-5b</td><td>20B token，final loss <b>1.9141</b>，31 ckpt</td></tr>
+<tr><td>P-6② 能力 scaling</td><td>Avg <b>33.26%→49.22%</b>（655M→20B token），log-linear <b>R²=0.986</b> ⇒ 55% 需 ~55B token ⇒ <b>P-8 100B 预算合理</b></td></tr>
+<tr><td>P-9.7 吞吐</td><td><b>249K tok/s</b>（8×H100 基线口径）</td></tr>
+<tr><td>P-9.8 / P-9.9</td><td>FP8(delayed) <b>可用于 P-8</b>（瞬时 spike 不否决；tensorwise 变体 FAIL 不用）</td></tr>
+<tr><td>P-9.11 sglang</td><td>prefill <b>2.18×@64K</b>（H1✅）· decode 1.18×@64K（H2⚠）· 128K failed（<code>max_pos=4096</code>）</td></tr>
+<tr><td>P-9.12 NCCL</td><td>NVLink 100% · busbw 164.56 GB/s（69% 峰值）· <b>tok/s +0%</b>（非瓶颈）</td></tr>
+</table>
+
+<h4>视觉（Stage iii）</h4>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>胜出架构</td><td><b>OpenVision2</b>（w512 = 126.8M，R8 六架构四指标第一）</td></tr>
+<tr><td>R12 / 3-epoch</td><td>lp@120k <b>17.57%</b>；续跑 344k 步 final_loss <b>1.5299</b>（10.9h，3303 img/s）</td></tr>
+<tr><td>⭐ 臂⑥ AIMv2 翻盘</td><td>lp <b>12.08%</b> vs 基线 6.08%（<b>+6pp</b>）⇒ 原「25.1% 是天花板」被<b>局部推翻</b>（依赖对比项；纯 AR 无翻盘）</td></tr>
+<tr><td>R12b（今日）</td><td>全量数据 272k 步 ≈ 2 epoch，~5100 img/s，ETA ~20:30–21:10</td></tr>
+<tr><td>预算</td><td>≈ <b>215 GPU·h</b>＋R12b ≈61.6 GPU·h（预计）</td></tr>
+</table>
+
+<h4>数据 / 磁盘 / 运维</h4>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>配比搜索</td><td>BO <b>79/200</b>（best-by-loss 4.6471；先验 88:8:4 排 53/79 更差）· ETA ~19:10 · <b>目标函数待切换为评测均分</b></td></tr>
+<tr><td>base 全量</td><td><code>l1_en_hq</code> ~65%（313G/478G）· <code>zh</code> ~62% · <b>下载进程 DEAD（待重启）</b>；已分词 22.05B tok（P-8 需 100B）</td></tr>
+<tr><td>磁盘</td><td><code>/nas_train</code> 84%（34T free）</td></tr>
+<tr><td>ops 中继</td><td>BaiZe（.29）RUN_ID 已到 84；ZhuLong（36.15）/personal-watch 各自独立</td></tr>
+</table>
+
+<h2 class="sec" id="s10"><span class="no">10</span>诚实条款：我这轮犯的错与修复</h2>
+<p>今天的治理层改动多、我又在 Windows 侧做了几次"整树手术"，过程中犯了 <b>5 个错</b>，全部已发现并修复，留痕如下：</p>
+<table>
+<tr><th>#</th><th>错误</th><th>后果</th><th>修复</th></tr>
+<tr><td>1</td><td><b>下发的 ops 块缺收尾围栏</b>（我编写时被吞）</td><td>中继把其后的 <code>&gt; 说明行</code> 当 bash 执行，<code>&gt; 文字</code> 成了<b>重定向</b> ⇒ 在仓库根生成 <code>**本块**：①</code>、<code>**背景（supervisor</code> 两个垃圾文件，并被推到 origin</td><td>✅ 已从 origin 树中删除（Windows 无法检出含 <code>*</code> 的路径，曾使本机 <code>pull/rebase/merge</code> 全废）</td></tr>
+<tr><td>2</td><td><b>用 <code>mktree</code> 未加 <code>-z</code></b>（把 <code>ls-tree</code> 的引号转义输出又喂回去）</td><td>顶层 24 个名字被损坏（<code>doc</code> → <code>"doc\r"</code> 等）</td><td>✅ 用正确的 <code>-z</code> 往返以 <code>923bf89</code> 为基准重建（已核验 25 项、0 可疑）</td></tr>
+<tr><td>3</td><td><b>误推一个 1634 文件的提交</b>（<code>f342e36</code>，含删除别线新增文件）</td><td>一次污染共享仓库</td><td>✅ <code>d78f01c</code> 逐字节还原（树 sha 与事故前一致）</td></tr>
+<tr><td>4</td><td>给 36.15 误设 <code>git config http.proxy=…:13128(.25)</code></td><td><b>.25 从 36.15 不可达</b>，会覆盖机器自带的 <code>.23</code> 代理、弄坏 push</td><td>✅ RUN_ID 79 <code>git config --unset</code>（<code>unset OK</code>）</td></tr>
+<tr><td>5</td><td>轮询方式笨（同一查询连续发 5 次）</td><td>触发工具"重复调用"保护，浪费轮次</td><td>✅ 改为"短睡 + 变化参数"轮询</td></tr>
+</table>
+<div class="note"><b>教训（已写进运维记忆）</b>：① <b>不在 Windows + CRLF 的 clone 上做整树手术</b>；② plumbing 必须 <code>ls-tree -z</code> / <code>mktree -z</code> 成对使用；③ 下发 ops 块前<b>必须离线校验</b>（提取首个 ```bash 块 / 危险模式 / <code>bash -n</code> / <b>围栏完整性</b>）；④ 提交前核对 <code>git diff --cached --name-only</code> 是否<b>只有预期文件</b>。</div>
+
+<h2 class="sec" id="s11"><span class="no">11</span>需要你决策 / 注意</h2>
+<table>
+<tr><th>#</th><th>事项</th><th>状态</th></tr>
+<tr><td>1</td><td>⭐ <b>base 全量下载进程 DEAD</b>（<code>l1_en_hq</code> 停在 ~65%、<code>zh</code> ~62%）—— 这是 <b>P-8 的硬前置</b></td><td class="b-no"><b>需决策：是否让 data 立即重启下载</b>（当前“不重启下载”是此前口径）</td></tr>
+<tr><td>2</td><td>pretrain <b>Step 2 提速清单</b>（它即将交；含 MBS/GBS/seq、recompute、CUDA-graph、数据管线、backend 等）</td><td>等它交付 → <b>你挑执行哪几条</b></td></tr>
+<tr><td>3</td><td>data <b>成本-可行性方案</b>（若"每 trial 跑 8/6 集"太慢）—— 你想选：<b>降采样</b> 还是 <b>评测集 val loss 代理</b></td><td>等它报成本 → 你拍板</td></tr>
+<tr><td>4</td><td>news 第 10 批（《东方时事解读》音频→文字）<b>P1–P6 待拍板</b>（RSS 路线已排除）</td><td class="b-warn">拍板前不实施日更</td></tr>
+<tr><td>5</td><td>P-8 配置拍板（seq 4096/8192、MBS、精度 bf16/FP8）—— 三件前置（P-9.7 + P-9.8 + P-6②）已齐，仍缺 base + 配比</td><td class="b-warn">不得顺手启动</td></tr>
+<tr><td>6</td><td>ISEDA 2027 <b>页数上限</b>待确认（当前论文 9 页）</td><td class="b-info">—</td></tr>
+</table>
+
+<h3>下一个观测点</h3>
+<ul>
+  <li><b>pretrain</b>：Step 2 提速清单 → 然后 <code>report_pretrain_complex6_scaling.html</code>(A) / <code>report_pretrain_longctx.html</code>(B) / P-9.11 缺口(D)</li>
+  <li><b>data</b>：<code>report_data_mix_eval.html</code>（含 <b>loss vs 均分 秩相关</b>）＋ 成本估算</li>
+  <li><b>vision</b>：R12b 训完 → 自动 eval → <b>scaling 曲线</b>（~21:00）</li>
+  <li><b>harness</b>：codex×300 完成 → 87 blocked <code>--resume</code> → 终版 <code>SWEBENCH_COMPARE.html</code></li>
+</ul>
+
+<footer>
+  <b>BaiZe 工作汇报 · 2026-10-06</b>（第 6 份）· 生成于 2026-10-06 ~15:00（CST）<br>
+  数据来源：各线 <code>run/MEMORY_*.md</code> 顶部状态 ＋ <code>run/daily-memories*/</code> ＋ <code>git log</code> ＋ <code>run/ops/outbox.md</code>（运维经中继的原始回执）<br>
+  运维口径与决策留痕：<code>MEMORY.md</code>（运维层）· <code>daily-memories/2026-10-06.md</code> · <code>run/ARCHIVE_OPERATOR_*.md</code><br>
+  ⚠️ 本报告为<b>快照</b>；各线状态以仓库最新 commit 为准。
+</footer>
+
+
+</div>
+</body>
+</html>
