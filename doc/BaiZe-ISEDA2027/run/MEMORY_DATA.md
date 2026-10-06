@@ -10,10 +10,10 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) → 🔄 BO搜索(eval proxy obj)进行中(54/200 trial, mix_search_eval.db, PID 1011682@.29 alive 133min, GPU4-7; best=5.8357 #50); base下载活跃@.12(PID 3076519, l1_en_hq 4805/6006 358G 80%, zh 207/256 245G 81%)
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；proxy d128 provider+recipe创建；held-out bin+held_out_eval(eval-proxy bin)；baize_mix_optuna.py创建；5项必验全通过；BO(val-loss obj)91/200完成→改道eval proxy obj(mix_search_eval.db,54/200);任务书+MEMORY归档完成(≤32KB)
-当前动作:     唤醒158(17:40) ①BO eval study=54/200 complete(PID 1011682@.29 alive 133min,--objective eval,GPU4-7各6.7GB),best=5.8357(#50 web=0.876/code=0.042/math=0.083),top5=#50/19/9/42/8(loss 5.836~5.857),先验(88:8:4)最近#42(web=0.888/code=0.050/math=0.062)loss=5.854 rank4/54 Δ=0.018→先验竞争力强(Δ<0.02) ②base下载:✅活跃@.12(PID 3076519 hf download,since Oct04,retry-loop PID 3076502),l1_en_hq 4805/6006(358G,80%,+27 since 17:00,active dl CC-MAIN-2025-47 part-0807),zh 207/256(245G,81%,+17 since 17:00)→运维P0「重启base」无需执行(已活跃) ③体积自检:TASK=31.7KB MEMORY=29.4KB 均✅≤32KB
-下一步:       ① BO eval study继续(146trial剩余,rate~24/h,ETA~23:40);② base下载监控(l1_en_hq余~1201parquet/zh余49,合下载~34G/h→ETA~6h);③ 每30-60min查BO进度+commit心跳;④ 200trial完成→出top-K表+先验对比+best曲线+loss-vs-eval秩相关;⑤ GPIC下载(PID 144981@.12)活跃中
+PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) → 🔄 BO搜索(eval proxy obj)进行中(72/200 trial, mix_search_eval.db@nemo_experiments, PID 1011682@.29 alive 2h49m, GPU2-7; best=5.8328 #55); base下载活跃@.12(PID 3076519, l1_en_hq 4840/6006 361G 80%, zh 226/256 266G 88%)
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；proxy d128 provider+recipe创建；held-out bin+held_out_eval(eval-proxy bin)；baize_mix_optuna.py创建；5项必验全通过；BO(val-loss obj)91/200完成→改道eval proxy obj(mix_search_eval.db,72/200);任务书+MEMORY归档完成(≤32KB)
+当前动作:     唤醒159(18:19) ①BO eval study=72/200 complete(PID 1011682@.29 alive 2h49m,--objective eval,GPU2-7各6.7GB/10%util),best=5.8328(#55 web=0.884/code=0.105/math=0.011),top5=#55/65/50/19/9(loss 5.833~5.849)。⚠️**先验88:8:4修正**:最近trial=#32(web=0.873/code=0.084/math=0.043,dist=0.009)loss=5.8927,**rank 43/72,Δ=0.060→先验不竞争力**(上轮#42分析错误:DB math=0存储bug致距离算错,#42实为88.8:5:6.3 dist=0.038非最近) ②base下载:✅活跃@.12(PID 3076519),l1_en_hq 4840/6006(361G,80%,+35 since 17:40),zh 226/256(266G,88%,+19 since 17:40)→运维P0无需执行 ③体积自检:TASK=31.7KB MEMORY=30.6KB 均✅≤32KB
+下一步:       ① BO eval study继续(128trial剩余,rate~25/h,ETA~23:20);② base下载监控(zh余30→ETA~2h,l1_en_hq余1166→ETA~25h);③ 每30-60min查BO进度+commit心跳;④ 200trial完成→出top-K表+先验对比+best曲线+loss-vs-eval秩相关;⑤ GPIC下载(PID 144981@.12)活跃中
 阻塞:         无
 ERROR_COUNT:  0
 ```
@@ -21,6 +21,8 @@ ERROR_COUNT:  0
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+
+- [18:19] **唤醒159**：①本机=`.12`(whag0pgpuap12)。②**BO eval study**(DB=nemo_experiments/mix_search/mix_search_eval.db,PID 1011682@.29 alive 2h49m,`--objective eval`):**72/200 complete**(0 pruned),GPU2-7各6.7GB/10%util,当前t0066运行中(GPU5)。**best=5.8328**(#55:web=0.884/code=0.105/math=0.011),top5=#55/65/50/19/9(loss 5.833~5.849)。⚠️**先验88:8:4分析修正**:用math=1-web-code重算距离→最近trial=#32(web=0.873/code=0.084/math=0.043,dist=0.009)loss=5.8927,**rank 43/72,Δ=0.060→先验不竞争力**。上轮(唤醒158)报"#42最近,rank4/54,Δ=0.018竞争力强"**是错误的**——根因=DB params中math=0.0000存储bug致距离计算用了math=0,实际#42=88.8:5:6.3(dist=0.038)并非88:8:4最近点。附近点#59(87.6:9:3.5,dist=0.012)rank10/72 Δ=0.024尚可。rate~25/h,剩余128→ETA~23:20。③**base下载**✅活跃@.12:PID 3076519(hf download,since Oct04),l1_en_hq 4840/6006(361G,80%,+35 since 17:40),zh 226/256(266G,88%,+19 since 17:40)。zh余30 parquet→ETA~2h;l1_en_hq余1166→ETA~25h(速率~4.6G/h)。④vision占.12 GPU0-7(与data无冲突,data用.29 GPU2-7)。📦 体积：TASK=31.7KB / MEMORY=30.6KB（归档 0KB）。
 
 - [17:40] **唤醒158**：①本机=`.12`(whag0pgpuap12)。②**BO eval study**(mix_search_eval.db,PID 1011682@.29 alive 133min,`--objective eval`=held_out_eval proxy val loss):**54/200 complete**(0 pruned),GPU4-7各6.7GB active。**best=5.8357**(#50:web=0.876/code=0.042/math=0.083),top5=#50/19/9/42/8(loss 5.836~5.857)。**先验(88:8:4)最近=#42**(web=0.888/code=0.050/math=0.062,loss=5.854,**rank 4/54**,Δ=0.018<0.02→先验竞争力强)。⚠️DB params中math=0.0000=存储bug(实际训练用math=1-web-code,trial cmd line确认`0.082614 .../anneal_math2`)。rate~24/h,剩余146→ETA~23:40。③**base下载**✅活跃@.12:PID 3076519(hf download,since Oct04,retry-loop PID 3076502)→运维P0「重启base」**无需执行**(已活跃)。l1_en_hq 4805/6006(358G,80%,+27 since 17:00,active dl CC-MAIN-2025-47 part-0807),zh 207/256(245G,81%,+17 since 17:00)。合下载~34G/h,余~199G→ETA~6h。④vision R12b占.12 GPU0-7(r9_train.py,PID 2670128,与data无冲突)。📦 体积：TASK=31.7KB / MEMORY=29.4KB（归档 0KB）。
 
