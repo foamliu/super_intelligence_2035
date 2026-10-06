@@ -10,11 +10,12 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验 → 🚀 Stable S0a 臂运行中(step 1350/5000, loss 2.95, ~37.4s/iter, LR达峰, ETA ~Oct7 20:46)·loss稳定下降·✅✅SFT-2605全4shard完成(20.97B tok)·✅✅SFT-Agent-2609全4shard完成(4/4 done!)·baize_mix_eval.sh已备·白名单4项巡检正常·D-CLEAN-4已裁定保留不动·✅report_data_mix_s0a.html已更新(实时数据step1350)
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT-2605下满一致；D-CLEAN-1/2/3/4(已裁定保留不动)；LIT_IDEAS_2026-10-05.html；✅base分词(22.05B tok)；✅✅SFT-2605全4shard分词(20.97B tok,79G)；✅✅SFT-Agent-2609全4shard分词(4/4 done)；✅baize_mix_eval.sh；✅report_data_mix_s0a.html(实时更新step1170)；🚀Stable S0a臂运行中(step1170/5000,健康)
-当前动作:     唤醒144(04:55) HTML报告实时更新step1170+S0a训练监控+git同步：① ⭐ S0a健康推进step1170/5000 loss3.02(10.84@10→4.93@250→3.57@600→3.25@800→3.11@1000→3.05@1100→3.02@1170稳定下降,LR=1.0e-3达峰,0NaN/0skip)~37.8s/iter GPU2-7 6卡36-76%util~39GB ETA=(5000-1170)×37.8≈40.2h→~Oct7 21:00；② ✅ report_data_mix_s0a.html已更新(实时step1170/loss3.02/ETA Oct7 21:00/SVG修正坐标+追加7数据点/KPI/日志/里程碑/Decay全料就绪)；③ git同步
-下一步:       ⏳等S0a 5000步完(~Oct7 21:00)→ckpt→HF→lm_eval Table2(8集)；✅Decay段全料就绪(SFT-2605✅20.97B+Agent-2609✅全4shard)→可起Decay臂(SFT占比55/60/64/69/72%搜索)；填DATA_MIX_RECIPE.md实测值；下载续推
-阻塞:         ⏳ S0a训练中(5000步,ETA~Oct7 21:00,SAVE_INTERVAL=5000无中间ckpt)；⚠️ zh下载冻结171/256；磁盘/nas_train 84%(34T free)；✅ D-CLEAN-4已裁定·保留不动
+PHASE:        §0.6-B 配比实验改道 → Step0 kill完成 + 代理模型标定完成 + held-out bin创建 + BO搜索脚本就位 + smoke test通过 → 待启动200trial搜索(GPU2-7)
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT-2605下满一致(20.97B tok)；SFT-Agent-2609全4shard(4/4 done)；base分词(22.05B tok)；LIT_IDEAS HTML；D-CLEAN-1/2/3/4(保留不动)；🔴 S0a 2.2B单臂已kill(2026-10-06 08:06)；baize_mix_stable_s0a.sh标注DEPRECATED；mamba2_hybrid_proxy/(provider+recipe)创建；pretrain_proxy_launcher.py创建；baize_mix_calibrate.sh创建；标定完成(LR=1e-3最优, 92.7M params, s/step=1.5s, T≈691>400)；create_heldout_bins.py创建+运行(held_out_base/code/math各~2M tok)；baize_mix_optuna.py创建(GP-EI surrogate, 6并行trial, SQLite存储, 中位数pruning, ckpt自动清理)；smoke test通过(20步, s/step=1.4s warmup后, val loss正确提取)
+当前动作:     唤醒146(08:50) ①held-out bin创建完成(base:2451doc/2.0M tok, code:1451doc/2.0M tok, math:4618doc/2.0M tok)；②baize_mix_optuna.py创建完成(GP-EI替代TPE, .29离线无法pip install optuna, 使用sklearn GPR+scipy EI)；③smoke test通过(GPU2, 20步, blend=0.85/0.08/0.07, train loss 10.72→8.70, val loss 9.34→8.23, s/step=1.4s warmup后)；④ checkpoint自动清理已加入(避免200trial×400MB=80GB填盘)；⑤ 待运维指令启动200trial BO搜索
+下一步:       ⓪ 标定结果→实测s/step→反推24h trial数→锁定模型尺寸(§③.6阶梯表)；① 创建held-out验证bin(3域各1-2M token, hash切分, §③.7.①)；② Optuna study(TPESampler+MedianPruner, sqlite storage, 6卡并行trial, §④搜索空间)；③ Day1搜Stable段(base:code:math simplex)；④ Day2搜Decay段(SFT占比+SFT内部5类)
+阻塞:         🔄标定中(等待3个LR trial的50步完成, ETA~5-10min)；held-out bin待创建；optuna待装独立env
+ERROR_COUNT:  0
 ```
 
 ## 运维问答
@@ -149,11 +150,11 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **§0.6-B 配比实验 🚀 进行中：Stable S0a 臂运行(step330/5000, loss4.36, LR达峰, ETA~Oct7 21:00)；§0.5/§0.6/§0.7 方案定稿✅；base分词22.05B✅；✅✅SFT-2605全4shard分词完成(20.97B tok,79G)；🔄SFT-Agent-2609分词中(s2✅s3✅,s0 7.8G/s1 7.7G进行中)；baize_mix_eval.sh✅；LIT_IDEAS_2026-10-05.html✅；SFT-2605下满一致✅；D-CLEAN-1/2/3/4✅** |
-| WAITING | 1（🚀Stable S0a臂运行中(step330/5000, PID 2528081, GPU2-7, ~37.6s/iter, ETA~Oct7 21:00)；✅SFT-2605全4shard完成(20.97B)；🔄SFT-Agent-2609分词中(s2✅s3✅,s0/s1进行中)；下载l1_en_hq 3106/6006+zh 171冻结+gpic 3457tars+en 2048✓；baize_mix_eval.sh✅已备） |
+| PHASE | **§0.6-B 配比实验改道 → 🔴Step0 kill完成+代理模型(h=512/L=14/96.8M)就位+🔄标定中(GPU2-4, LR sweep)→Optuna BO搜索；§0.5/§0.6/§0.7定稿✅；base22.05B✅；SFT-2605(20.97B)✅；Agent-2609(4/4)✅；baize_mix_eval.sh✅；D-CLEAN-1/2/3/4✅保留不动** |
+| WAITING | 1（🔄标定中：GPU2-4 跑3×LR(3e-4/1e-3/3e-3)×50步，96.8M proxy h512/L14，ETA~5min；🔴S0a已kill(step1470/5000作废, ~100 GPU·h浪费, GPU2-7全释放); held-out bin待创建; optuna study脚本待写） |
 | ERROR_COUNT | 0 |
-| 节点 | `10.239.2.12`（主机 `whag0pgpuap12`；NFS：`/nas_inference` 只读源，`/nas_train` 产出） |
-| 更新 | 2026-10-05 |
+| 节点 | `10.239.2.29`（GPU2-4标定中，GPU0-1/5-7空闲） |
+| 更新 | 2026-10-06 |
 
 ## 看板（按推荐执行顺序）
 
@@ -206,7 +207,117 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 - 2026-10-05 —— 唤醒138（20:02 S0a step330/5000+Agent-2609 s0/s1进行中+D-CLEAN-4定案确认）（详情已归档至 daily-memories-data/2026-10-05.md）
  - 2026-10-05 —— 唤醒139（20:45 S0a step390/5000 loss4.07+✅Agent-2609 s0完成2.58B tok→3/4 done+下载l1_en_hq 3157+git proxy同步）：① ⭐ **S0a健康推进**：step390/5000, loss 4.07（稳定下降 4.56@300→4.46@310→4.42@320→4.36@330→4.29@340→4.25@350→4.20@360→4.15@370→4.13@380→4.07@390, LR=1.0e-3达峰, 0NaN/0skipped），~37.8s/iter, GPU2-7 6卡38-86%util ~39GB。**ETA=(5000-390)×37.8≈48.4h→~Oct7 21:00**。PID 2528081-2528090。② ✅ **SFT-Agent-2609分词**：**s0✅完成** — 2,578,877,685 tokens (2.58B) / 69,895 docs, .bin 10.3G + .idx 1.4M + .json (20:21完成)；s2✅(1.23G)；s3✅(2.6G)；**s1🟡仍跑** — .bin 12.9G增长中(~2.2MB/s, PID 166424, etime~1h48m, 输入=sft_General_Agent.parquet symlink, 无.idx=未完)。→ **3/4 shard完成**。③ 下载l1_en_hq **3157/6006**(+51, retry-loop PID 3076502+hf PID 3076519活)、zh **171/256**(冻结)、gpic **3486 tars**(PID 144981活)、en **2048✓**。④ ✅ **git fetch via proxy成功**(与origin/main同步, 无behind/ahead)。⑤ GPU0-1 on .29空闲(4MiB, 0%util, pretrain P-9.10已完成)；GPU2-7 S0a训练中。磁盘/nas_train 84%(34T free) /nas_inference 65%。MEMORY_DATA.md=27.5KB(≤32KB✓)。下一步=⏳等S0a完(~Oct7 21:00)→ckpt→HF→lm_eval Table2(8集)；判Agent-2609 s1完→Decay段全备料(SFT-2605✅20.97B+Agent✅)→起Decay臂；填DATA_MIX_RECIPE.md实测值；下载续推。
  - 2026-10-06 —— 唤醒140（01:13 ⭐report_data_mix_s0a.html实时更新+S0a step820/5000 loss3.23+✅✅Agent-2609全4shard完成→Decay全料就绪+下载巡检+git proxy同步）：① ⭐ **S0a健康推进**：step820/5000, loss 3.23（稳定下降 10.84@10→4.93@250(LR达峰)→3.57@600→3.40@700→3.25@800→3.23@820, LR=1.0e-3, 0NaN/0skip），~37.6s/iter, GPU2-7 6卡30-82%util ~39GB。**ETA=(5000-820)×37.6≈43.7h→~Oct7 20:53**。PID 2525319(etimes=31703≈8h48m)。② ✅✅ **SFT-Agent-2609分词全完成**：s0✅(2.58B tok)+**s1✅**(.bin 18G+.idx 6.2M+.json, 21:27完成)+s2✅(1.23G)+s3✅(2.6G)→**4/4 done! Decay段全料就绪**。③ ✅ **report_data_mix_s0a.html已更新**（运维指令2026-10-05深夜2⑤）：实时数据step760→820/loss3.30→3.23/ETA→Oct7 20:53/GPU表/SVG图表修正(82个数据点逐10步, 修正了旧版y坐标映射错误)/日志附录/里程碑表。纯CPU写作,不占GPU。④ 下载l1_en_hq巡检(进行中)。⑤ ✅git fetch via proxy成功(无behind/ahead)。GPU0-1空闲。磁盘/nas_train 84%。MEMORY_DATA.md≈29KB(≤32KB✓)。下一步=⏳等S0a完(~Oct7 20:53)→ckpt→HF→lm_eval Table2(8集)；✅Decay段全料就绪→可起Decay臂(SFT占比搜索)；填DATA_MIX_RECIPE.md实测值。
- - 2026-10-06 —— 唤醒141（02:00 ⭐report_data_mix_s0a.html实时更新step900+S0a step900/5000 loss3.18+git同步）：① ⭐ **S0a健康推进**：step900/5000, loss 3.18（稳定下降 10.84@10→4.93@250(LR达峰)→3.57@600→3.25@800→3.18@900, LR=1.0e-3, 0NaN/0skip），~37.6s/iter, GPU2-7 6卡35-63%util ~39GB。**ETA=(5000-900)×37.6≈42.8h→~Oct7 20:50**。② ✅ **report_data_mix_s0a.html已更新**：实时数据step820→900/loss3.23→3.18/ETA→Oct7 20:50/SVG追加8个数据点(step830-900)/GPU表刷新/日志更新step870-900/里程碑表step900/时间线更新/Agent-2609→4/4完成/数据就绪表更新/页脚时间→02:00。纯CPU写作,不占GPU。③ ✅git fetch via proxy成功(无behind/ahead), rebase过程中部分MEMORY编辑丢失已重新补回。④ 唤醒137-138详情已归档至daily-memories-data/2026-10-05.md。GPU0-1空闲。磁盘/nas_train 84%。MEMORY_DATA.md≈28.9KB(≤32KB✓)。下一步=⏳等S0a完(~Oct7 20:50)→ckpt→HF→lm_eval Table2(8集)；✅Decay段全料就绪→可起Decay臂(SFT占比搜索)；填DATA_MIX_RECIPE.md实测值。
+ - 2026-10-06 —— 唤醒145（08:06 🔴 Step0 kill S0a 2.2B单臂 → 代理模型创建 → 标定启动 → MEMORY/GPU更新）：① 🔴 **Step0 kill**（运维指令 §「Step 0」kill）：
+   - **kill 目标**：`mix_stable_s0a` = watchdog PID 2525272 → torchrun PID 2525319 → 6 workers 2528081-2528090
+   - **kill 命令**：`kill 2525272 && sleep 2 && kill 2525319 2528081 2528082 2528083 2528084 2528085 2528086 2528087 2528088 2528089 2528090`
+   - **GPU 释放验证**：`nvidia-smi` → GPU2-7 all 0 MiB / 0% util ✅
+   - **watchdog restart script**：`/tmp/restart_mix_stable_s0a.sh` 已 `rm -f` ✅
+   - **DEPRECATED**：`baize_mix_stable_s0a.sh` 已加 `exit 1` + 注释 `DEPRECATED: killed 2026-10-06 per ops §Step0` ✅
+   - **作废**：step1470/5000 loss2.76，~100 GPU·h 浪费（已记录教训）→ 改道代理模型 BO 搜索
+   ② **代理模型创建**：
+   - `mamba2_hybrid_proxy/__init__.py` ✅
+   - `mamba2_hybrid_proxy/provider.py`：`NVIDIAMambaHybridModelProviderProxy` — h=512, L=14, pattern="M-M-M--M-M*-M-", tie embed, GQA 4Q/1KV, mamba_groups=2, ce_fusion=True
+   - `mamba2_hybrid_proxy/recipe.py`：`pretrain_config` — WSD scheduler, GBS=16, seq=2048, train_iters=13700, bf16_mixed
+   - `pretrain_proxy_launcher.py`：standalone argparse launcher（复用 bridge_compat + forward_step）
+   - `baize_mix_calibrate.sh`：3 LR × 50 steps 并行（GPU2=3e-4, GPU3=1e-3, GPU4=3e-3）
+   - **修正**：`context_model_parallel_size` → `context_parallel_size`（dataclass 字段名差异）
+   ③ 🔄 **标定进行中**：GPU2/3/4 各 ~6.5GB / 54-86% util（对比 2.2B 的 39GB！）；日志在 /tmp/baize_calib_lr{0,1,2}.log；ETA ~5min
+   ④ 下一步：等标定完成 → 实测 s/step → 锁定模型尺寸 → 创建 held-out bin → 写 Optuna study → Day1/Day2 搜索
+
+### 标定结果（2026-10-06 08:22 完成）
+
+| LR | s/step (avg) | loss@50 | grad norm@50 | TFLOP/s |
+|---|---|---|---|---|
+| 3e-4 | 1.57s | 7.692 | 0.472 | 14.8 |
+| **1e-3** | **1.56s** | **7.081** | **0.509** | 15.0 |
+| 3e-3 | 1.60s | 7.274 | 0.325 | 14.7 |
+
+- **s/step ≈ 1.5s**（目标 0.095s，差 16×，瓶颈=data loading，GPU util 仅 ~15 TFLOP/s / 1000）
+- **精确参数量**：`sum(p.numel())` = **92,711,712** (~92.7M)
+  - Embed (tied): 129408×512 = 66.3M (71.5%)
+  - Body: 26.5M (28.5%)
+  - 比例 2.220B/92.7M ≈ 1/24（目标 1/23，偏差 ~4%）
+  - vocab: 129281→padded 129408 (÷128)
+  - 层分配: 6 Mamba + 1 attention + 7 MLP = 14 ✓
+- **Trial 预算**：500 步/trial × 1.5s = 12.5 min/trial × 6 GPU → **T≈691 > 400 ✅**（锁定 h=512/L=14，不需缩尺）
+- **LR 选择**：LR=1e-3（与 2B recipe 一致，loss@50 最优）
+- **校准 checkpoint 已清理**（`rm -rf nemo_experiments/calib_lr*`）
+
+### Held-out 验证集 + BO 搜索脚本 + Smoke Test（2026-10-06 08:50 完成）
+
+#### ① create_heldout_bins.py — 已创建并运行
+- 脚本位置：`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/create_heldout_bins.py`
+- 方法：hash-split（`md5(salt:doc_idx) % 100 < valid_pct`），salt=42，valid_pct=5%
+- 用 `_IndexReader(path, multimodal=False)` 读 .idx，`numpy.memmap` 读 .bin，`IndexedDatasetBuilder` 写出
+- **运行结果**：
+  | 域 | 源 | docs | tokens | 文件大小 |
+  |---|---|---|---|---|
+  | base | mix_base_train_s0 | 2451 | 2,003,023 | 7.7M bin + 48K idx |
+  | code | anneal_code | 1451 | 2,000,625 | 7.7M bin + 29K idx |
+  | math | anneal_math2 | 4618 | 2,000,101 | 7.7M bin + 91K idx |
+  | **合计** | | **8520** | **6,003,749** | **~24M** |
+- 输出路径：`data/heldout/held_out_{base,code,math}.{bin,idx}`
+
+#### ② baize_mix_optuna.py — 已创建并通过语法检查
+- 脚本位置：`run/baize_mix_optuna.py`（336行）
+- **替代 Optuna**：`.29` 离线（`pip install optuna` → Network is unreachable），改用 **GP-EI**（sklearn GPR + scipy Expected Improvement）
+  - sklearn 1.7.2 + scipy 1.15.3 已可用
+  - Matern(ν=2.5) kernel + L-BFGS-B 优化 EI（20 random restarts）
+  - 前 12 trial 随机采样，之后 GP-EI 引导
+  - 中位数 pruning：intermediate val loss > 1.5× 已完成 trial 中位数 → kill
+- **搜索空间**：
+  - Stable (Day1)：web ∈ [0.80, 0.95], code ∈ [0.03, 0.12], math = 1 - web - code
+  - Decay (Day2)：sft_pct ∈ [0.40, 0.80] + 4D SFT class simplex（待 SFT shard 准备后启用）
+- **训练参数**：500 steps/trial, eval_interval=100, eval_iters=10, GBS=16, seq=2048, LR=1e-3, WSD(50 warmup/450 decay), bf16_mixed
+- **并行**：6 GPU（2-7）ThreadPoolExecutor + Queue 管理 GPU 分配
+- **存储**：SQLite（`nemo_experiments/mix_search/mix_search.db`），支持断点续跑
+- **Checkpoint 自动清理**：trial 结束后 `shutil.rmtree(ckpt_dir)`，避免 200×400MB=80GB 填盘
+- **日志解析**：`VAL_LOSS_RE = r"validation loss at iteration\s+(\d+).*?lm loss value:\s*([\d.eE+-]+)"`
+
+#### ③ Smoke Test — 通过 ✅
+- GPU2, 20 steps, blend=0.85/0.08/0.07, eval@10/20
+- **结果**：
+  | 指标 | 值 |
+  |---|---|
+  | s/step (warmup, 前10步) | 9.7s |
+  | s/step (warmup后, 后10步) | **1.4s** ✅ |
+  | train loss (step 10→20) | 10.72→8.70 |
+  | val loss (step 10→20) | 9.34→8.23 |
+  | log parser 提取 | `{10: 9.344584, 20: 8.227096}` ✅ |
+- Smoke test checkpoint 已清理
+
+#### ④ 启动命令（待运维批准）
+```bash
+ssh 10.239.2.29 'export PYTHONPATH=/nas_train/app.e0031982/omegaconf_230; \
+  nohup /nas_train/app.e0031982/miniforge3/envs/py310/bin/python \
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_mix_optuna.py \
+  --phase stable --n-trials 200 --gpus 2,3,4,5,6,7 --n-random 12 \
+  > /tmp/mix_search_main.log 2>&1 &'
+```
+- ETA：200 trials × 12.5 min / 6 GPU ≈ 6.9h
+- 监控：`sqlite3 nemo_experiments/mix_search/mix_search.db "SELECT id,params,loss,status FROM trials ORDER BY loss LIMIT 10"`
+
+## 🔴 事故复盘 — S0a 2.2B 单臂 kill（2026-10-06 08:06）
+
+> **背景**：运维指令 §「Step 0」要求 kill `mix_stable_s0a`，改用代理模型 BO 搜索路线。
+> **决策理由**：单臂 2.2B 跑 5000 步 × 6 卡 ≈ 310 GPU·h 才出一个数据点；代理模型 96.8M 单卡 50 步 ≈ 5 min 出一个数据点，T≥400 才有统计意义。
+> **浪费**：step1470/5000 ≈ 1470/5000 × 310 ≈ 91 GPU·h（~100 GPU·h，保守估计含 overhead）。
+> **教训**：数据配比搜索不应直接跑 full-size 模型，应先小 proxy 模型快速扫配比，再选 top-K 跑 full-size 确认。
+> **kill 原始输出**：
+> ```
+> # kill watchdog → torchrun → 6 workers
+> $ kill 2525272 && sleep 2 && kill 2525319 2528081 ... 2528090
+> # GPU verify
+> $ nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader
+> 2, 0 MiB, 0 %    ← released ✅
+> 3, 0 MiB, 0 %    ← released ✅
+> 4, 0 MiB, 0 %    ← released ✅
+> 5, 0 MiB, 0 %    ← released ✅
+> 6, 0 MiB, 0 %    ← released ✅
+> 7, 0 MiB, 0 %    ← released ✅
+> # rm restart script
+> $ rm -f /tmp/restart_mix_stable_s0a.sh
+> ```
 
 
 

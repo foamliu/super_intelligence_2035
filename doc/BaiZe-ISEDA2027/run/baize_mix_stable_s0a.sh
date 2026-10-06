@@ -1,8 +1,16 @@
 #!/bin/bash
+# DEPRECATED 2026-10-06：2.2B 单臂方案作废（运维指令 §🔴🔴 2026-10-06）。
+# 原因：用目标尺寸 2.2B 模型跑单臂（base:code:math=88:8:4），无对照/无搜索/无不确定性，
+#       不构成「实验」；成本 ≈312 GPU·h/臂 ≈ P-8 本体的 13%，搜索比训练还贵。
+# 已跑 1470/5000 步作废（~100 GPU·h 浪费）。GPU2-7 已于 2026-10-06 08:06 释放。
+# 新方案：小代理模型（96.8M h512/L14）+ Optuna BO + 每卡独立 trial → run/baize_mix_optuna.py
+#
+# === 以下为历史脚本，保留备查，不再调用 ===
 # BaiZe 数据配比实验（§0.6-B）— Stable 段 S0a 臂：base:code:math = 88:8:4
 # 口径：6 卡 · TP1/DP6 · seq=4094 · mb=1 · GBS=1024 · 5000 步 · bf16_mixed
 # GPU：CUDA_VISIBLE_DEVICES=2,3,4,5,6,7（GPU2-7，data 名下）
 # 代理指标：跑完 → ckpt → HF → lm_eval（Table 2 的 8 个）
+exit 1  # DEPRECATED — do not run
 set -uo pipefail
 
 BASE=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
