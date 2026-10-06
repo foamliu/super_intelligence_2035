@@ -1,6 +1,6 @@
 # MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
@@ -10,11 +10,11 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) 5项必验全部通过 → 待启动Optuna BO搜索(GPU2-7)
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；mamba2_hybrid_proxy_d128/(provider+recipe)创建；pretrain_proxy_launcher.py添加--proxy-size d128；check_numel.py创建；held-out bin(base/code/math各~2M tok)；baize_mix_optuna.py创建(GP-EI)；**5项必验全部通过(2026-10-06 09:48)**
-当前动作:     唤醒147(09:48) ①d=128结构合法性✅(N=18,355,656≈18.36M, heads=1/groups=1 edge case OK, 10 runs 0 NaN)；②2B tie/untie✅(N=2,220,909,056, UNTIE, body(N-E) coeff=8.32, body(N-2E) coeff=7.19)；③s_step✅(median=1.50s, T≈864/GPU/day, 5,184/6GPU/day >> 512 target)；④LR rescan✅(3e-4→10.19, 1e-3→8.04, 3e-3→7.40, 选定LR=3e-3)；⑤判别力✅✅✅(code=0% vs code=30% on held_out_code, Δloss=1.495, 2σ=0.190, Δloss/2σ=7.9×, 远超阈值)
-下一步:       ① 启动Optuna BO搜索(200+trial, 6 GPU并行, GP-EI surrogate, MedianPruner)；② Day1搜Stable段(base:code:math simplex)；③ Day2搜Decay段(SFT占比+SFT内部5类)
-阻塞:         无（5项必验全部通过，可开工）
+PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) → ⭐ BO搜索已启动(Stable段, 200 trial, 6 GPU并行, PID 2483227)
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；mamba2_hybrid_proxy_d128/(provider+recipe)创建；pretrain_proxy_launcher.py添加--proxy-size d128；check_numel.py创建；held-out bin(base/code/math各~2M tok)；baize_mix_optuna.py创建(GP-EI)；5项必验全部通过(09:48)；**BO搜索Stable段已启动(10:01)**
+当前动作:     唤醒148(10:01) ①LR修正1e-3→3e-3(必验#5选定)；②添加--proxy-size d128显式参数；③语法检查通过；④启动BO搜索(PID 2483227, nohup)；⑤6 trial并行(t0000-t0005, GPU2-7各~6.7GB/~10%util)；⑥t0000 step20/500 loss11.05 s/step1.56s LR=1.2e-3(warming→3e-3) 0NaN ✅健康
+下一步:       ① 等~13min首batch 6 trial完成→查SQLite结果；② 每~30min查进度+commit心跳(运维判死>60min无提交)；③ 200 trial完成(~7h)后出top-K表+先验点(88:8:4)对比；④ Day2搜Decay段
+阻塞:         无
 ERROR_COUNT:  0
 ```
 
@@ -87,6 +87,10 @@ ERROR_COUNT:  0
 | **Δloss / 2σ** | **7.9×** | > 1× | ✅✅✅ 远超 |
 
 > **结论**：d=128/L=14 proxy 的判别力**极强**（Δloss/2σ = 7.9×），可清晰区分 code=0% vs code=30% 配比。**规模可用，配比实验可开工。**
+
+## 📋 本唤醒流水
+
+- [10:01] **唤醒148**：⭐ **BO搜索Stable段已启动！** LR修正1e-3→3e-3(必验#5选定)+添加--proxy-size d128显式参数→语法OK→启动`baize_mix_optuna.py --phase stable --n-trials 200 --gpus 2,3,4,5,6,7`(PID 2483227 nohup)。6 trial并行(t0000-t0005)，GPU2-7各~6.7GB/~10%util。t0000 step20/500 `lm loss: 1.104813E+01` s/step=1.56s LR=1.2e-3(warming→3e-3) 0NaN ✅健康。ETA~7h(200trial×13min/6GPU)。📦 体积上报：BAIZE_DATA_TASK.md=79KB 超红线(40KB)，建议运维归档较早的运维指令块(§2026-10-05系列, 约30KB)。MEMORY_DATA.md=26KB ✓。
 
 ## 运维问答
 

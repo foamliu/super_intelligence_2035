@@ -29,7 +29,7 @@ EVAL_INTERVAL = 100
 EVAL_ITERS = 10
 GBS = 16
 SEQ = 2048
-LR = 1e-3
+LR = 3e-3  # 必验#5 选定: 3e-4→10.19, 1e-3→8.04, 3e-3→7.40 (最优)
 WARMUP = 50
 DECAY = 450
 SEED = 1234
@@ -201,6 +201,7 @@ def run_trial(trial_id, params, gpu_id, phase, gp_median=None):
         f"{PY}/torchrun", "--nnodes=1", "--nproc_per_node=1",
         "--master_addr=127.0.0.1", "--master_port", str(port),
         f"{BASE}/pretrain_proxy_launcher.py",
+        "--proxy-size", "d128",
         "--name", name, "--dir", EXP_DIR,
         "--tokenizer-path", TOKENIZER,
         "--train-data-path", *blend.split(),
