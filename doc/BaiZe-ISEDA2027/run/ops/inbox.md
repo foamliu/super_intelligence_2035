@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 83 -->
+<!-- RUN_ID: 84 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -30,6 +30,43 @@
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`。
 
 ---
+
+## RUN_ID 84 — 🩺 **ZhuLong(36.15) 停摆诊断（只读）**：git 树 / 任务书 / loop / 日志 / cline / proxy
+
+> **背景**：ZhuLong 最后提交 `db563f0 13:14:11`，**已停 ~5h**；而 **origin 侧 `ZHULONG_TASK.md` / `MEMORY_ZHULONG.md` 完好** ⇒ 怀疑**那台机的仓库又坏了**（时间点正对我 12:53–12:56 的事故链，与 personal-watch 同因：未解决的合并冲突 + 任务书被"改名"删掉）。
+> **本块纯只读**（经 2.29 → 36.15 隧道 3333）。🚫 不 kill / 不重启 / 不改文件。
+
+```bash
+set -u
+echo "=== RUN_ID 84 · ZhuLong 停摆诊断 $(date '+%F %T') ==="
+hostname; date '+%F %T %Z'
+echo
+timeout 150 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+cd "$W" || { echo "(NO repo)"; exit 1; }
+echo "host=$(hostname)  $(date '+%F %T')"
+echo "--- [1] git ---"
+git log --oneline -3 | cut -c1-140
+git status -sb | head -12 | cut -c1-140
+echo "--- [2] 任务书在位？ ---"
+ls -l doc/ZhuLong_DAC2027/run/ZHULONG_TASK.md doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md 2>&1 | cut -c1-150
+echo "--- [3] 进程 ---"
+ps -eo pid,etime,args | grep -E 'zhulong_(loop|ops_relay)[.]sh' | grep -v grep | cut -c1-140 || echo "(none)"
+echo "--- [4] 日志 ---"
+for f in /tmp/zhulong_loop.log /tmp/zhulong_ops_relay.log; do
+  echo "[$f] mtime=$(stat -c '%y' "$f" 2>/dev/null | cut -c1-19)"
+  tail -10 "$f" 2>/dev/null | cut -c1-190
+done
+echo "--- [5] cline / proxy ---"
+CP=$(bash -ic 'command -v cline' 2>/dev/null | tail -1); echo "cline=$CP"
+grep -inE 'proxy' ~/.bashrc 2>/dev/null | head -3 | cut -c1-120
+echo "--- [6] 顶层名字 sanity ---"
+ls -d doc 2>/dev/null | cat -A | head -3
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
 
 ## RUN_ID 83 — 🩺 **ZhuLong 健康检查（只读）**：relay/loop 进程 + 日志 + cline 可调用性
 
