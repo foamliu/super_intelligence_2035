@@ -842,3 +842,118 @@ RUN_ID 7
 c15a31b personal-watch/ops: RUN_ID 7 — 单实例核验(看 pidfile/新代码生效) + 追查瞬时第3实例来源(cro
 557f597 vision: two HTML reports (lp-eval + AIMv2-impl) + MEMORY/daily update
 ```
+
+---
+
+## RUN_ID 8 · 2026-10-06 10:38:39 · host=`VM-0-6-ubuntu` · exit=0
+
+**命令**
+```bash
+set -u
+cd ~/super_intelligence_2035 || exit 1
+R=doc/personal-watch/run
+echo "=== 0. 基本 ==="
+hostname; date '+%F %T %Z'; uptime
+echo
+echo "=== 1. 同步（拿新脚本）==="
+git fetch origin --quiet 2>&1
+git pull --rebase --autostash origin main 2>&1 | tail -3
+echo
+echo "=== 2. 确认新 PUSH_INTERVAL（应均为 1800）==="
+grep -n '^PUSH_INTERVAL=' "$R/watch_news_loop.sh" "$R/watch_research_loop.sh"
+echo
+echo "=== 3. 重启前：进程 + 日志尾部 ==="
+ps -eo pid,etime,args | grep -E 'watch_(news|research)_loop\.sh' | grep -v grep | cut -c1-140 || echo "(无 loop 在跑)"
+for n in news research; do echo "--- $n ---"; tail -2 "/tmp/watch_${n}_loop.log" 2>/dev/null | cut -c1-160 || echo "(无日志)"; done
+echo
+echo "=== 4. 逐个重启（仅当 sleep 空闲；避免打断唤醒中的 cline）==="
+restart_one() {
+  n="$1"; log="/tmp/watch_${n}_loop.log"; i=0
+  echo "--- [$n] ---"
+  while [ "$i" -lt 6 ]; do
+    tail -1 "$log" 2>/dev/null | grep -q 'sleep' && break
+    echo "  [$n] 疑似唤醒中 -> 等 30s"; sleep 30; i=$((i+1))
+  done
+  if ! tail -1 "$log" 2>/dev/null | grep -q 'sleep'; then
+    echo "  [$n] 等待 3min 仍非空闲 -> 本轮不重启（下个 RUN_ID 再试）"; return 0
+  fi
+  echo "  [$n] 空闲 -> 重启"
+  pkill -f "watch_${n}_loop.sh" 2>/dev/null; sleep 2
+  cd "$HOME/super_intelligence_2035/doc/personal-watch/run" || return 1
+  setsid bash "watch_${n}_loop.sh" > "$log" 2>&1 < /dev/null &
+  cd "$HOME/super_intelligence_2035" || return 1
+  sleep 3
+  ps -eo pid,etime,args | grep "watch_${n}_loop.sh" | grep -v grep | cut -c1-140 || echo "  [$n] 未起来！"
+}
+restart_one news
+restart_one research
+echo
+echo "=== 5. 重启后进程 ==="
+ps -eo pid,etime,args | grep -E 'watch_(news|research)_loop\.sh' | grep -v grep | cut -c1-140 || echo "(无)"
+echo "=== 6. 新日志尾部 ==="
+for n in news research; do echo "--- $n ---"; tail -3 "/tmp/watch_${n}_loop.log" 2>/dev/null | cut -c1-160; done
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. 基本 ===
+VM-0-6-ubuntu
+2026-10-06 10:38:39 CST
+ 10:38:39 up 1 day,  1:28,  3 users,  load average: 0.95, 0.38, 0.19
+
+=== 1. 同步（拿新脚本）===
+From github.com:foamliu/super_intelligence_2035
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+
+=== 2. 确认新 PUSH_INTERVAL（应均为 1800）===
+doc/personal-watch/run/watch_news_loop.sh:43:PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（2026-10-06 由 18000/5h 缩短，与 BaiZe 一致；agent 每轮自己也会提交）
+doc/personal-watch/run/watch_research_loop.sh:39:PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（2026-10-06 由 18000/5h 缩短，与 BaiZe 一致；agent 每轮自己也会提交）
+
+=== 3. 重启前：进程 + 日志尾部 ===
+  98701    22:12:11 bash watch_news_loop.sh
+ 108954    21:57:11 bash watch_research_loop.sh
+ 558291       02:34 node /home/liuyang/.nvm/versions/node/v24.21.0/bin/cline -c /home/liuyang/super_intelligence_2035/doc/personal-watch/run
+ 558300       02:34 /home/liuyang/.nvm/versions/node/v24.21.0/lib/node_modules/cline/bin/.cline -c /home/liuyang/super_intelligence_2035/doc
+--- news ---
+   [90m⎿ [0m[2m{"content":[{"type":"text","text":"[rss_latest] https://www.qbitai.com/feed（10 条）\n\n1. 刚刚，诺贝尔奖颁给...[0m
+[36m[web-search-free__search_news][0m {"query":"AI","count":30,"source":"hn"}
+--- research ---
+[loop] 2026-10-06 10:29:29 cline returned (exit 0); log=/tmp/watch_research_cline_last.log
+[loop] 2026-10-06 10:29:29 WAITING=1 (no pending follow-up) → sleep 1800s
+
+=== 4. 逐个重启（仅当 sleep 空闲；避免打断唤醒中的 cline）===
+--- [news] ---
+  [news] 疑似唤醒中 -> 等 30s
+  [news] 疑似唤醒中 -> 等 30s
+  [news] 疑似唤醒中 -> 等 30s
+  [news] 疑似唤醒中 -> 等 30s
+  [news] 疑似唤醒中 -> 等 30s
+  [news] 疑似唤醒中 -> 等 30s
+  [news] 空闲 -> 重启
+ 560123       00:03 bash watch_news_loop.sh
+ 560130       00:02 node /home/liuyang/.nvm/versions/node/v24.21.0/bin/cline -c /home/liuyang/super_intelligence_2035/doc/personal-watch/run
+ 560139       00:02 /home/liuyang/.nvm/versions/node/v24.21.0/lib/node_modules/cline/bin/.cline -c /home/liuyang/super_intelligence_2035/doc
+--- [research] ---
+  [research] 空闲 -> 重启
+ 560225       00:03 bash watch_research_loop.sh
+ 560232       00:03 node /home/liuyang/.nvm/versions/node/v24.21.0/bin/cline -c /home/liuyang/super_intelligence_2035/doc/personal-watch/run
+ 560241       00:02 /home/liuyang/.nvm/versions/node/v24.21.0/lib/node_modules/cline/bin/.cline -c /home/liuyang/super_intelligence_2035/doc
+
+=== 5. 重启后进程 ===
+ 560123       00:08 bash watch_news_loop.sh
+ 560130       00:08 node /home/liuyang/.nvm/versions/node/v24.21.0/bin/cline -c /home/liuyang/super_intelligence_2035/doc/personal-watch/run
+ 560139       00:08 /home/liuyang/.nvm/versions/node/v24.21.0/lib/node_modules/cline/bin/.cline -c /home/liuyang/super_intelligence_2035/doc
+ 560225       00:03 bash watch_research_loop.sh
+ 560232       00:03 node /home/liuyang/.nvm/versions/node/v24.21.0/bin/cline -c /home/liuyang/super_intelligence_2035/doc/personal-watch/run
+ 560241       00:02 /home/liuyang/.nvm/versions/node/v24.21.0/lib/node_modules/cline/bin/.cline -c /home/liuyang/super_intelligence_2035/doc
+=== 6. 新日志尾部 ===
+--- news ---
+[0m[2m4[0m[2m.[0m[2m Update[0m[2m MEM[0m[2mORY[0m[2m,[0m[2m daily[0m[2m,[0m[2m commit[0m[2m,[0m[2m push[0m[2m.
+
+[0m[2mLet[0m[2m me[0m[2m first[0m[2m understand[0m[2m what[0m[2m's[0m[2m in[0m[2m the[0m[2m task[0m[2m file[0m[2m that[0m[2m can[0m[2m
+--- research ---
+[loop] 2026-10-06 10:41:54 wake up, invoking cline ...
+=== DONE ===
+```
