@@ -1,7 +1,7 @@
 # EVENTS — 政策动作**事件库**（N3-3）
 
 
-> **生成**：2026-10-05 15:06 ｜ 脚本：`news/policy/extract_events.py` ｜ 语料：`news/archive/*.jsonl.gz`
+> **生成**：2026-10-06 11:19 ｜ 脚本：`news/policy/extract_events.py` ｜ 语料：`news/archive/*.jsonl.gz`
 
 > ⚠️ **口径**：本库为**描述性监督标签**（主体 / 动作 / 领域 / 力度）；由**规则/词典/正则**从**标题**抽取；**不预测、不表态**（政治中立）。
 
