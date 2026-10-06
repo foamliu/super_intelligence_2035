@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（supervisor 编辑，中继只读执行）
 
-<!-- RUN_ID: 8 -->
+<!-- RUN_ID: 9 -->
 
 > **用法**：在下面**新增一段** `## RUN_ID N`（N 递增）+ **一个 ```bash 块** → `git push`。
 > 中继（`ops_relay.sh`）轮询发现 **RUN_ID 变大** → 执行 → 结果 append 到 `ops/outbox.md` → push。
@@ -411,6 +411,48 @@ echo "=== 5. 重启后进程 ==="
 ps -eo pid,etime,args | grep -E 'watch_(news|research)_loop\.sh' | grep -v grep | cut -c1-140 || echo "(无)"
 echo "=== 6. 新日志尾部 ==="
 for n in news research; do echo "--- $n ---"; tail -3 "/tmp/watch_${n}_loop.log" 2>/dev/null | cut -c1-160; done
+echo "=== DONE ==="
+```
+
+
+## RUN_ID 9 — 🩺 **核验 news/research 两条 loop 是否已带 `PUSH_INTERVAL=1800` 重启**（只读体检 + **幂等修正**）
+
+**背景（supervisor 2026-10-06 ~11:0x）**：RUN_ID 8 已执行（`exit=0`，`.last_run_id=8`），但其 **outbox 段写入被截断**（在 `=== 4. 逐个重启 ===` 处断掉、输出代码块未闭合 —— 疑为 append 期间被别线 `pull --rebase` 换文件的竞争）⇒ **无法确认两条 loop 是否真的重启**。
+- 本块：**先只读体检**（进程 etimes / 日志首行时间 / `PUSH_INTERVAL`），**再幂等修正** —— 仅当某条 loop 的 `etimes > 3600s`（说明仍跑在旧进程、未吃到 1800）时才重启它；**若该线正在唤醒中（日志尾非 `sleep`）则跳过**，留待下个 RUN_ID。**全块不碰中继进程**。
+
+```bash
+set -u
+cd ~/super_intelligence_2035 || exit 1
+R=doc/personal-watch/run
+echo "=== 0. 基本 ==="; hostname; date '+%F %T %Z'
+echo "--- relay pidfile ---"
+if [ -f /tmp/watch_ops_relay.pid ]; then echo "pidfile=$(cat /tmp/watch_ops_relay.pid)"; else echo "(无 pidfile)"; fi
+echo "=== 1. loop 进程（etimes = 存活秒数）==="
+ps -eo pid=,etimes=,args= | grep -E 'bash watch_(news|research)_loop\.sh$' | grep -v grep | cut -c1-120 || echo "(无 loop)"
+echo "=== 2. 日志首行（= 本进程启动时刻）==="
+for n in news research; do printf '%s: ' "$n"; head -1 "/tmp/watch_${n}_loop.log" 2>/dev/null | cut -c1-90; done
+echo "=== 3. PUSH_INTERVAL ==="
+grep -h '^PUSH_INTERVAL=' "$R/watch_news_loop.sh" "$R/watch_research_loop.sh"
+echo "=== 4. 幂等修正：仅 etimes>3600 的旧进程才重启（唤醒中最多等 60s）==="
+for n in news research; do
+  line="$(ps -eo pid=,etimes=,args= | grep -E "bash watch_${n}_loop\.sh$" | grep -v grep | head -1)"
+  if [ -z "$line" ]; then
+    echo "[$n] 未在跑 -> 拉起"
+  else
+    pid="$(echo "$line" | awk '{print $1}')"; et="$(echo "$line" | awk '{print $2}')"
+    echo "[$n] pid=$pid etimes=${et}s"
+    if [ "$et" -le 3600 ]; then echo "[$n] 新进程(<=1h) -> 不动"; continue; fi
+    ok=0; for i in 1 2 3; do
+      if tail -1 "/tmp/watch_${n}_loop.log" 2>/dev/null | grep -q sleep; then ok=1; break; fi
+      sleep 20
+    done
+    if [ "$ok" -eq 0 ]; then echo "[$n] 唤醒中 -> 跳过（下个 RUN_ID 再试）"; continue; fi
+    echo "[$n] 旧进程 -> 重启"; pkill -f "watch_${n}_loop.sh"; sleep 2
+  fi
+  ( cd "$HOME/super_intelligence_2035/doc/personal-watch/run" && setsid bash "watch_${n}_loop.sh" > "/tmp/watch_${n}_loop.log" 2>&1 < /dev/null & )
+  sleep 3
+  ps -eo pid=,etimes=,args= | grep -E "bash watch_${n}_loop\.sh$" | grep -v grep | cut -c1-120 || echo "[$n] 未起来！"
+done
 echo "=== DONE ==="
 ```
 
