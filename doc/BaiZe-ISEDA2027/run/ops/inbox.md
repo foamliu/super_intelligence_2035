@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 76 -->
+<!-- RUN_ID: 77 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -30,6 +30,68 @@
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`。
 
 ---
+
+## RUN_ID 77 — 🔧 **ZhuLong（36.15）git 追平**：备份 → 挪未跟踪文件 → `fetch`(150s) → `rebase --autostash`(280s) → 成功才重启
+
+> **背景（supervisor 2026-10-06 11:3x）**：RUN_ID 76 诊断 —— 36.15 仓库 **`ahead 5, behind 304`**（长期推不出去 ⇒ 落后 304 提交）；`pull --rebase --autostash` **不是报错而是 120s 超时被杀**（rc=124）；另有 **2 个残留 `autostash`** 与未跟踪的 `doc/三机互联方法.md`。⇒ 上一块的 120s 不够用，本块**加长超时**并**先备份**。
+> **顺序**：[0] 备份（本地 5 提交清单 + 改动的 MEMORY/daily + HEAD sha → `/tmp/zbackup`）；[1] `rebase/merge --abort`（清残留，非破坏）；[2] 把未跟踪的 `doc/三机互联方法.md` **移到 /tmp 备份**（避免 checkout 被拒）；[3] `fetch` ≤150s；[4] `rebase --autostash origin/main` ≤280s；[5] 报告状态/stash；[6] **仅当 rebase 成功**才重启 relay + loop（loop 需其日志尾为 `sleep` 才重启；重启前备份旧日志）。
+> 🚫 不 `reset --hard` / 不 `clean` / 不删产物；备份先于一切。
+
+```bash
+set -u
+echo "=== RUN_ID 77 · ZhuLong git resync $(date '+%F %T') ==="
+timeout 520 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+cd "$W" || { echo "(NO repo)"; exit 1; }
+echo "host=$(hostname) $(date '+%F %T')"
+echo "=== [0] backup local state -> /tmp/zbackup ==="
+mkdir -p /tmp/zbackup
+echo "--- ahead commits (origin/main..HEAD) ---"; git log --oneline origin/main..HEAD 2>&1 | head -10 | cut -c1-150
+git rev-parse HEAD > /tmp/zbackup/HEAD.sha 2>&1
+cp -f doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md /tmp/zbackup/ 2>/dev/null
+cp -f doc/ZhuLong_DAC2027/run/daily-memories/2026-10-0*.md /tmp/zbackup/ 2>/dev/null
+ls -1 /tmp/zbackup | head -10
+echo "=== [1] abort any in-progress rebase/merge ==="
+git rebase --abort 2>&1 | head -2 | cut -c1-150
+git merge --abort 2>&1 | head -2 | cut -c1-150
+echo "=== [2] move untracked doc aside (backup) ==="
+[ -f "doc/三机互联方法.md" ] && mv -v "doc/三机互联方法.md" "/tmp/zbackup/3ji_hulian.md" 2>&1 | cut -c1-170 || echo "(none)"
+echo "=== [3] fetch (<=150s) ==="
+timeout 150 git fetch origin --quiet 2>&1 | tail -3 | cut -c1-170; echo "fetch_rc=$?"
+echo "=== [4] rebase --autostash origin/main (<=280s) ==="
+timeout 280 git rebase --autostash origin/main >/tmp/_z_rb.log 2>&1; RB=$?
+tail -15 /tmp/_z_rb.log | cut -c1-190
+echo "rebase_rc=$RB"
+echo "=== [5] status after ==="
+git status -sb 2>&1 | head -10 | cut -c1-150
+echo "--- stash list ---"; git stash list 2>&1 | head -5 | cut -c1-140
+echo "--- log -3 ---"; git log --oneline -3 2>&1 | cut -c1-140
+echo "=== [6] restart relay+loop — ONLY if RB==0 ==="
+if [ "$RB" -eq 0 ]; then
+  if tail -1 /tmp/zhulong_loop.log 2>/dev/null | grep -q sleep; then
+    echo "loop idle -> restart"
+    cp -f /tmp/zhulong_loop.log "/tmp/zhulong_loop.log.bak.$(date +%s)" 2>/dev/null
+    pkill -f zhulong_loop.sh 2>/dev/null; sleep 2
+    setsid bash "$W/doc/ZhuLong_DAC2027/run/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+    sleep 3
+    ps -eo pid,etime,args | grep -E 'zhulong_loop\.sh' | grep -v grep | cut -c1-140 || echo "   loop NOT up!"
+  else
+    echo "loop busy (log tail not sleep) -> SKIP loop restart"
+  fi
+  cp -f /tmp/zhulong_ops_relay.log "/tmp/zhulong_ops_relay.log.bak.$(date +%s)" 2>/dev/null
+  pkill -f zhulong_ops_relay.sh 2>/dev/null; sleep 2
+  setsid bash "$W/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh" > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
+  sleep 3
+  ps -eo pid,etime,args | grep -E 'zhulong_ops_relay\.sh' | grep -v grep | cut -c1-140 || echo "   relay NOT up!"
+else
+  echo "!! rebase failed -> NOT touching loops; see /tmp/_z_rb.log"
+fi
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
+
 
 ## RUN_ID 76 — 🚑 **救援 ZhuLong（36.15）**：修 git 卡死（`could not detach HEAD`）→ 重启中继 + loop（经 2.29→36.15 隧道）
 
