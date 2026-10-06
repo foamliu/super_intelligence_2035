@@ -19,53 +19,13 @@
 > 2. **做 `s_step` 归因（最高杠杆）**，争取把 **1.5 s 压到 ~30–100 ms** ⇒ **`D` 从 0.016 B 抬到 0.5–1 B**。
 > 3. **此时若 `.29` GPU0-1 已释放，就用 8 卡搜第二轮。**
 
-> ⚙️ **运维技术修正（先读，别走错方向）—— `s_step=1.5 s` ❗不是多卡同步**：
-> - `run/baize_mix_optuna.py:208` = `torchrun --nnodes=1 --nproc_per_node=1`；`:216` `--tensor-parallel 1`；`:231` `CUDA_VISIBLE_DEVICES=<单卡>` ⇒ **【每个 trial 本来就跑在单卡上】**（`--gpus 2,3,4,5,6,7` = 6 个**独立并行** trial，**无任何跨卡通信**）。
-> - `s_step=1.50 s` 本身也是**单卡**实测（`daily-memories-data/2026-10-06.md` 必验#4：16 次测量 1,425–1,582 ms）。
-> - ⇒ **真凶候选（都在单卡内）**：① ⭐ **`--micro-batch-size 1`（`:219`）+ `GBS=16`（`:218`）⇒ 每步 16 个 microbatch**，TP1/DP1 不可切分、只能梯度累积 ⇒ ≈**94 ms/microbatch** 的 Python/kernel-launch/DataLoader 开销 × 16 ≈ **1.5 s**；② 数据管线（NFS 小批读）；③ CE logits 4.24e9 元素（≈10–17 ms，非主因）；④ 无 CUDA graph。
-> - **算力账**：`6·N·tokens = 6×18.5e6×32768 ≈ 3.6 TFLOP ≈ <10 ms` ⇒ 实测 1.5 s = 算力的 **~100×** ⇒ **纯 overhead-bound，不是算力、更不是通信**。
-> - ⇒ **修法（单卡内即可，🚫 不用改多卡策略）**：**MBS 1→8/16**（microbatch 16→2/1）· 开 CUDA graph · DataLoader `num_workers`/prefetch 上调 · fused/chunked CE。判据 = 维修后 **`s_step` 中位数 ≤100 ms**（力争 ≤30 ms）。
-> - ℹ️ **`MBS=1` 的由来 + `MBS↑` 的显存账（运维补 · 用户 2026-10-06 追问）**：
->   - **由来 = 沿用 2.2B 基线 recipe 未重标定**：`run/baize_p5b_train.sh`（GBS1024·MBS1·seq4094）、`baize_p2/p3_sweep.sh`、`baize_p7_remeasure.sh` 全为 MBS1；arch-search 计划原文写「`micro_batch_size=1`（**共享 GPU 下 mb2 易 OOM**）」—— 那是**为 2.2B 设的**；`baize_mix_optuna.py:219` 只是**把该值抄给了 18.5M 代理**。
->   - **显存大头不是模型，是 logits/CE**（`vocab=129,408`）：`logits = MBS×seq×vocab` ⇒ MBS=1 → 2.65e8 元素 **0.53 GB(bf16)**；**MBS=16 → 4.24e9 元素 = 8.5 GB(bf16) / 17 GB(fp32)**（含反传可至 ~17–34 GB）⇒ **80 GB H100 装得下** ⇒ **MBS 16 预期可行，直接消掉 16× 梯度累积**。
->   - ⚠️ 但**以 step ②a 实测为准**（防 CE 反传 OOM）；若 OOM ⇒ 上 **fused/chunked CE**（本就该做）。✅ **改 MBS 不改 GBS 语义（GBS 恒 16）⇒ 结果仍可比。**
+> 📦 §三步令①②详细执行计划（2026-10-06）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：①200trial+top-K lm_eval+Spearman ρ=−0.43+σ=0 ✅；②MBS16→s_step 166ms(8.6×)→D=0.5B/trial ✅。需要时再读。
 
 > **执行（① 先收口；② 可并行、时间盒 ≤2h；③ 条件触发）**
 >
-> **① 收 Stable + 分析（沿用现有 GPU2-7，🚫 不改现跑脚本）**
-> - 让 `mix_search_eval.db`（PID 1011682）**自然跑完 200/200（不许 kill）**；随后按既有「下一步 ②③④」执行：
->   - 重跑 **top-5（#155/149/96/125/55）+ 先验 88:8:4（#79）共 6 config 带 ckpt → `lm_eval` 8 集 → 取均分作真 objective**；
->   - **Spearman 秩相关**（代理 val-loss ↔ 均分）；
->   - **噪声测量**（top-5 各 ≥3 次，报 **σ**）。
-> - 产出 `report_data_mix_eval.html`（200-trial 的 top-K/秩相关/σ）+ 更新 `DATA_MIX_RECIPE.md §6`。🚫 **不要把 200 扩成 512**（512 目标**并入第二轮**，见 ③）。
+> **① 收 Stable + 分析** ✅ 已完成 — 详见归档（200/200 BO + top-K lm_eval + Spearman ρ=−0.43 + σ=0 + report_data_mix_eval.html）
 >
-> **② `s_step` 归因（⭐ 最高杠杆；时间盒 ≤2h；**只占 1–2 卡**，别抢 ① 的卡）**
-> - **⭐ 目标函数（用户 2026-10-06 追问：`MBS`/`GBS` 都往大试，追求「最快训完 0.5–1 B」）**：**不是最小化 `s_step`，而是最小化「训完 `D`=0.5–1 B」的总墙钟**。模型：
->   `墙钟 = (D/(GBS·seq)) × s_step`，`s_step = F(每步固定) + (GBS/MBS)·P(每 microbatch) + c·GBS(算力)`
->   ⇒ `墙钟 ∝ D/seq × [ F/GBS + P/MBS + c ]` ⇒ **两杠杆都拉满：GBS↑（压 F/GBS）× MBS↑（压 P/MBS）**，地板 = 纯算力 `c`。
-> - **逐项实测（每次只改一个变量，贴原始输出）**：
->   a. ⭐ **MBS 扫描（拉满，受显存限）**：MBS ∈ **{1,4,8,16,32,64,128}**（GBS 固定 16 先测单点）→ 报 **s_step 中位数 + tok/s + 峰值显存 + OOM?**；**若 s_step 不随 microbatch 数变 ⇒ 转查数据管线**。
->      - **显存账（瓶颈 = `vocab=129,408` 的 logits）**：`logits = MBS×seq×vocab`（bf16）→ 16→**8.5 GB**、32→**17 GB**、64→**34 GB**、128→**68 GB**（+反传再翻倍）⇒ **32 稳 / 64 视情况 / 128 须先落 fused CE**。
->   b. ⭐ **先落 `fused/chunked CE`**（`--cross-entropy-loss-fusion`；TP1/DP1 无 TP 可切 ⇒ 必须）—— **落了它 MBS 才能上 128/256**（激活降到 `O(MBS·seq·d·L)` ≈ 1 GB 级）。**先做 b，再做 a 的高档位。**
->   c. ⭐ **GBS 扫描（拉满，但受「优化步数」限）**：GBS ∈ **{16,64,256,1024}**（MBS 取 a 的最大可用值）→ 报 **tok/s + 训完 D=0.5 B / 1 B 的总墙钟 + 步数**。
->      - ⚠️ **约束 = 有效性，而非「与 200-trial 可比」（用户 2026-10-06 明确：不需要跟 200-trial 可比，实验内可比即可）**：
->        - ✅ **实验内自洽即可**：第二轮各 trial **固定同一 `GBS/MBS/LR/schedule/D`**（每档 GBS 配一次 LR/warmup 重扫、本档内固定）⇒ **内部排序有效**；
->        - ✅ **与 200-trial 只对照「最优配比 + 排序结论」**，**不比 loss 绝对值**（`D`/GBS 不同，loss 尺度本就不同）。
->        - ⚠️ **仍要防的唯一风险**：`D` 固定时 **GBS↑ ⇒ 优化器步数↓**（GBS1024·seq2048·D=0.5B ⇒ **仅 238 步**），步数太少时**配比排序可能失真** ⇒ 报「步数」+ LR/warmup 按 Linear/Sqrt 规则起步再实测定档；**最终排序有效性由 ③ 的 top-K `lm_eval` 8 集背书**（代理排序 ≠ 真实均分 ⇒ 该 GBS 档作废）。
->        - 🔁 **LR 重扫协议（用户 2026-10-06 认可「很快、没问题」）**：**每档 GBS 做一次** —— 以 `3e-3@GBS16` 为锚、按 **Sqrt 规则**估中心，取 **3 点（÷3 / ×1 / ×3）** × **≤50 步** → 取 held-out val-loss 最低者写死本档 LR；复用 `run/baize_mix_calibrate.sh`（口径同必验#5）；**≤30 min/档**；**本档内所有 trial 共用该 LR**。
->   c′. ⭐ **「单卡无累积」= 主候选（用户 2026-10-06 提议：「单卡 + 不累积 ⇒ MBS=GBS」）**：
->      - ✅ **恒等式成立**：`GBS = MBS × 累积步数 × DP`；DP=1、累积=1 ⇒ **`MBS = GBS`**。
->      - ✅ **好处**：零累积开销 · DataLoader 变成**大块读**（利于治 NFS 小批延迟）· 逻辑最简（少一类 bug）。
->      - ⚠️ **代价**：**GBS 被 `logits = GBS×seq×vocab` 锁死** —— 无 fused CE 时 GBS ≲ **64**；**落 fused CE 后可 128–256**（`⇒ ②b 必须做在前面`）。
->      - 🔬 **必须两套都测（判据 = 「训完 0.5B 墙钟」谁更小）**：
->        (i) **无累积行**：`MBS = GBS ∈ {32, 64, 128, 256}`；
->        (ii) **累积对照行**：`MBS = 64/128 × GBS = 512/1024`。
->      - **判读**：若 **每步固定开销 `F ≈ 0`**（开销几乎全在每次前向）⇒ `墙钟 ∝ P/MBS`，**无累积（MBS=GBS）最优**；若 **`F > 0`**（`F/GBS` 项仍有效）⇒ **保留累积、把 GBS 拉大** 更快。**以实测为准，不许预设。**
->   d. **DataLoader**：`num_workers` / prefetch / 本地缓存 vs NFS → 报 s_step 差；
->   e. **CUDA graph**（若 launcher 暴露）/ 关 `--recompute`；
->   f. **纯前向 vs 纯数据处理分离计时**（定位到底卡在哪）。
-> - **判据（必须给）**：**MBS×GBS 网格表**（`s_step` / `tok/s` / 峰值显存 / OOM / **训完 0.5B·1B 的墙钟**）+ **最优组合**；目标把「训完 0.5 B」从当前（1.50 s/步 ⇒ ≈**6.4 h/trial**）压到 **≤1–2 h**；据此定 ③ 的 `D` / `trial 数` / `T`。
-> - 产出 `report_data_mix_sstep.html` + `DATA_MIX_RECIPE.md` 增节（网格原始输出 + 判据 + **GBS 档的「有效性」说明：实验内自洽 / 与 200-trial 只比最优配比**）。
+> **② `s_step` 归因** ✅ 已完成 — 详见归档（MBS=16 → s_step 166ms / 8.6×加速 / D=0.5B/trial 可行 / report_data_mix_sstep.html）
 >
 > **③ 第二轮搜索（**条件触发**：`.29` GPU0-1 已释放）**
 > - **触发条件**：pretrain 侧 **D（P-9.11 补测）已完成并明确释放 GPU0-1**（运维会在心跳/任务书确认）。🚫 **在此之前绝不碰 GPU0-1**（pretrain A/B/D 在用）。
@@ -78,30 +38,7 @@
 > 📦 §P0 base下载重启（2026-10-06）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：base下载已重启(PID 3520692,l1_en_hq 89%+zh✅256/256),proxy=172.19.92.25:13128,白名单不变。需要时再读。
 
 
-### 🆕 运维指令 · 2026-10-06（🚨 **目标函数错了：配比搜索必须用「评测均分」，不是 val loss**）· **P0 · 立即改**
-
-> **用户 2026-10-06 更正**：你在心跳里报的 **`best=4.6471(#64)` 是 proxy 的 `val loss`** —— **loss 排序 ≠ 能力排序** ⇒ 用 loss 当 BO 目标，会选出「loss 低但能力不高」的配比。**这是方法学错误，不是措辞问题。**
->
-> **✅ 正确口径（必须照此改）**
-> - **Stable 段配比搜索** → **目标函数 = 8 集常识推理评测均分**：`arc_challenge, arc_easy, boolq, hellaswag, openbookqa, piqa, sciq, winogrande`（**zero-shot**，**与 P-6 同口径的 lm_eval/harness**）。
-> - **Decay 段配比搜索** → **目标函数 = 6 集复杂推理评测均分**：`gsm8k, math, bbh, mmlu, humaneval, mbpp`（**同一套 lm_eval 口径**）。
-> - **`val loss` 降级为"诊断列"**：可继续记录，但**不作排序/选优依据**。
->
-> **必须做的 6 件事**
-> 1. **改评测管线**：每个 trial 训完的 ckpt → HF 转换 → 用 **`run/baize_mix_eval.sh`（已就绪）** 跑对应任务集 → **取均分**作为 BO 的 objective。（可对齐 pretrain 的 `p5b_lmeval_all.sh` / `p5b_collect_and_report.py` 口径；⚠️ **装包/起服遵守环境隔离**，不要污染共享 `py310`。）
-> 2. **回算已有 trial**：至少对 **top-K + 先验点(88:8:4) + 若干随机点** 在新目标下评测 → **检验「loss 排名 vs 均分排名」的相关性（秩相关）**——若不一致，**这本身就是结论**（说明此前挑选标准是错的）。**如实报告，不许美化**。
-> 3. **预注册**：先把**判定阈值**写进 `DATA_MIX_RECIPE.md`（例：「以 8 集均分为准；Δ 必须超过**评测噪声 σ** 才算真差异」）⇒ **先定后测**。
-> 4. **噪声必须有数**：**同一个 ckpt 重复评测 ≥3 次**，报 **σ**；评测协议（harness 版本 / shot / 数据 bin）**全文唯一**。
-> 5. **在跑的 trial**：**立即切换 objective**（后续采样不再由 loss 引导）；已完成的 **79 个保留**作对照。
-> 6. **产出**：`report_data_mix_eval.html`（自包含：新目标 top-K 表 + **loss-vs-均分散点/秩相关** + 先验点位置 + best-so-far 曲线 + **噪声 σ** + 命令与原始输出）。
->
-> **⏱️ 速度红线（用户 2026-10-06 追加）**：**若本安排导致整体太慢 ⇒ 立刻汇报**（🚫 不要自己硬扛、也🚫 不许静默降级）。用户给的**可行方向**（具体方案可再议）：
->   1. **减少题目数量**：每个评测集**降采样** ⇒ 必须标注「**用了几题 / 原题数**」，并**验证「降采样排名 vs 全量排名」一致性**（至少对 top-K 全量复算）。
->   2. **用「评测集语料的 val loss」代表评测集评分**：把这 **8/6 个评测集本身的文本**做成 held-out bin，算 **val loss** 作代理 ⇒ 必须 ①**语料就是评测集本身**（🚫 不是训练分布）②**在 top-K 上验证「代理 val loss ↔ 真实均分」的相关性**（给秩相关 + 散点）③**不得**与"训练分布 val loss"混为一谈。
->   3. 其他：降 trial 数 / 提高单 trial token / **仅 top-K 全评 + 其余用代理校正**。
->   **共同铁律**：任何降级都要 ①**先报**（含成本估算：**单 trial 评测耗时 × 剩余 trial 数**）②**给相关性证据**证明代理没失真 ③**报告里显著标注"代理指标"**。🚫 **绝不许"偷偷用 loss 当 objective"**（那等于没改）。
->
-> **纪律不变**：🚫 **不占 GPU0-1**（pretrain 提速用）/ 只动 **GPU2-7**；🚫 不重启下载、不改白名单；每步 commit + push；做不完就**如实写卡点 + 需要什么**。
+> 📦 §目标函数错了（2026-10-06）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：6项全执行✅(Round2用lm_eval 8集均分作objective, Spearman ρ=−0.43证实loss≠能力)。需要时再读。
 
 
 ### 🧭 运维规程 · 2026-10-06（**【agent 归档 MEMORY + 任务书】** —— 由你自己滚，不再由运维代劳）· 常驻

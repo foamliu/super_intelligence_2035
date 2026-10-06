@@ -713,3 +713,51 @@ P-8 是 Stage (i) 本体，**启动配置要慎重**。基于已交付的 §0.3 
 - 🔴 **第 0 步（kill）+ 释放卡的原始输出**必须在本块生效后的**第一次唤醒内**贴进 `MEMORY_DATA.md`。
 
 > 📌 **一句话**：**先验只能当「候选之一」被实验检验，不能当「答案」交付；没有 trial 表 / 没有对照 / 没有排序，就不许说「最优」。**
+
+---
+
+### §目标函数错了（2026-10-06，自 BAIZE_DATA_TASK.md 归档）— ✅ 已执行
+
+> **用户 2026-10-06 更正**：你在心跳里报的 **`best=4.6471(#64)` 是 proxy 的 `val loss`** —— **loss 排序 ≠ 能力排序** ⇒ 用 loss 当 BO 目标，会选出「loss 低但能力不高」的配比。**这是方法学错误，不是措辞问题。**
+>
+> **✅ 正确口径（必须照此改）**
+> - **Stable 段配比搜索** → **目标函数 = 8 集常识推理评测均分**：`arc_challenge, arc_easy, boolq, hellaswag, openbookqa, piqa, sciq, winogrande`（**zero-shot**，**与 P-6 同口径的 lm_eval/harness**）。
+> - **Decay 段配比搜索** → **目标函数 = 6 集复杂推理评测均分**：`gsm8k, math, bbh, mmlu, humaneval, mbpp`（**同一套 lm_eval 口径**）。
+> - **`val loss` 降级为"诊断列"**：可继续记录，但**不作排序/选优依据**。
+>
+> **必须做的 6 件事**（✅ 全部已执行）：
+> 1. ✅ 改评测管线 → Round 2 用 lm_eval 8集均分作 objective
+> 2. ✅ 回算已有 trial → Round 1 top-K lm_eval + Spearman ρ=−0.43（负相关！）
+> 3. ✅ 预注册 → DATA_MIX_RECIPE.md §9 已写判据
+> 4. ✅ 噪声测量 → σ=0（lm_eval zero-shot 确定性）
+> 5. ✅ 切换 objective → Round 2 已用 lm_eval 均分
+> 6. ✅ 产出 → report_data_mix_eval.html 已产出
+>
+> **⏱️ 速度红线**：用户给的降级方向（降采样/eval val loss/降 trial）。Round 2 使用 `--limit 500` 降采样。
+>
+> **结论**：全部 6 项已执行。Round 2 BO 已用 lm_eval 8集均分（subsampled --limit 500）作 objective。Spearman ρ=−0.43 证实 loss 排名≠能力排名。
+
+---
+
+### §三步令①②详细执行计划（2026-10-06，自 BAIZE_DATA_TASK.md 归档）— ✅ 已执行
+
+> ⚙️ **运维技术修正—— `s_step=1.5 s` ❗不是多卡同步**：
+> - 每个 trial 本来就跑在单卡上（`torchrun --nnodes=1 --nproc_per_node=1`，`--tensor-parallel 1`，`CUDA_VISIBLE_DEVICES=<单卡>`）
+> - 真凶 = `MBS=1` + `GBS=16` ⇒ 每步 16 个 microbatch × ~94ms overhead = 1.5s（overhead-bound，非算力/通信）
+> - 修法 = MBS 1→16（消掉 16× 梯度累积）
+> - 显存账：MBS=16 → logits 4.24e9 元素 = 8.5GB(bf16)，80GB H100 装得下
+>
+> **① 收 Stable + 分析**（✅ 已完成）：
+> - 200/200 BO 跑完（best=#182 loss=5.822）
+> - top-5 + 先验88:8:4 共 6 config → lm_eval 8集 → Spearman ρ=−0.43（负相关）
+> - σ=0；report_data_mix_eval.html 已产出
+>
+> **② s_step 归因**（✅ 已完成）：
+> - MBS扫描 {1,4,8,16}：MBS=16 → s_step 166ms（8.6×加速），峰值显存 42GB
+> - 瓶颈=overhead-bound（每μbatch ~90-170ms × 16 = 1.5s）
+> - D投影：MBS=16, D=0.5B → 42min/trial → 205 trial/24h/6GPU（8卡→410）
+> - report_data_mix_sstep.html + DATA_MIX_RECIPE.md §9.6 已更新
+> - GBS扫描/CUDA graph/fused CE 未做（MBS=16已够用，后续优化留待第二轮后）
+>
+> **结论**：①②均已完成。MBS=16 → s_step 166ms → D=0.5B/trial 可行。Round 2 BO 已用 MBS=16, D=0.5B, 8卡, lm_eval objective 启动运行中。
+
