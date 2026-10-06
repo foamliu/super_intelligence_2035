@@ -8259,3 +8259,106 @@ dirty:
 ?? "doc/\344\270\211\346\234\272\344\272\222\350\201\224\346\226\271\346\263\225.md"
 === DONE ===
 ```
+
+---
+
+## RUN_ID 76 · 2026-10-06 11:21:27 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 76 · rescue ZhuLong on 36.15 via tunnel $(date '+%F %T') ==="
+hostname; date '+%F %T %Z'
+echo
+timeout 260 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+cd "$W" || { echo "(NO repo)"; exit 1; }
+echo "host=$(hostname)  $(date '+%F %T')"
+echo "=== [1] git state diagnosis ==="
+echo "rebase-merge=$([ -d .git/rebase-merge ] && echo YES || echo no) rebase-apply=$([ -d .git/rebase-apply ] && echo YES || echo no) MERGE_HEAD=$([ -f .git/MERGE_HEAD ] && echo YES || echo no) index.lock=$([ -f .git/index.lock ] && echo YES || echo no)"
+echo "--- status -sb ---"; git status -sb 2>&1 | head -12 | cut -c1-150
+echo "--- unmerged ---"; git diff --name-only --diff-filter=U 2>&1 | head -10 | cut -c1-150
+echo "--- untracked ---"; git ls-files --others --exclude-standard 2>&1 | head -10 | cut -c1-150
+echo "--- stash ---"; git stash list 2>&1 | head -5 | cut -c1-150
+echo "--- origin/main...HEAD (behind ahead) ---"; git rev-list --left-right --count origin/main...HEAD 2>&1
+echo "=== [2] abort stale rebase/merge (non-destructive) ==="
+git rebase --abort 2>&1 | head -2 | cut -c1-150
+git merge --abort 2>&1 | head -2 | cut -c1-150
+echo "=== [3] pull --rebase --autostash (<=120s) ==="
+timeout 120 git pull --rebase --autostash origin main >/tmp/_z_pull.log 2>&1; PRC=$?
+tail -10 /tmp/_z_pull.log | cut -c1-190; echo "pull_rc=$PRC"
+if [ "$PRC" -ne 0 ] && grep -qi 'untracked working tree file' /tmp/_z_pull.log; then
+  echo "-> untracked file blocks pull; moving doc/三机互联方法.md aside (backup to /tmp) and retry"
+  mv -v doc/三机互联方法.md "/tmp/3ji_hulian_backup_$(date +%s).md" 2>&1 | cut -c1-170
+  timeout 120 git pull --rebase --autostash origin main >/tmp/_z_pull.log 2>&1; PRC=$?
+  tail -10 /tmp/_z_pull.log | cut -c1-190; echo "pull_rc_retry=$PRC"
+fi
+echo "=== [4] status after ==="; git status -sb 2>&1 | head -8 | cut -c1-150
+echo "=== [5] restart relay+loop — ONLY if pull_rc==0 ==="
+if [ "$PRC" -eq 0 ]; then
+  if tail -1 /tmp/zhulong_loop.log 2>/dev/null | grep -q sleep; then
+    echo "loop idle -> restart"
+    cp -f /tmp/zhulong_loop.log "/tmp/zhulong_loop.log.bak.$(date +%s)" 2>/dev/null
+    pkill -f zhulong_loop.sh 2>/dev/null; sleep 2
+    setsid bash "$W/doc/ZhuLong_DAC2027/run/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+    sleep 3
+    ps -eo pid,etime,args | grep -E 'zhulong_loop\.sh' | grep -v grep | cut -c1-140 || echo "   loop NOT up!"
+  else
+    echo "loop busy (log tail not sleep) -> SKIP loop restart"
+  fi
+  cp -f /tmp/zhulong_ops_relay.log "/tmp/zhulong_ops_relay.log.bak.$(date +%s)" 2>/dev/null
+  pkill -f zhulong_ops_relay.sh 2>/dev/null; sleep 2
+  setsid bash "$W/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh" > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
+  sleep 3
+  ps -eo pid,etime,args | grep -E 'zhulong_ops_relay\.sh' | grep -v grep | cut -c1-140 || echo "   relay NOT up!"
+else
+  echo "!! pull FAILED -> loops NOT touched (need manual look at /tmp/_z_pull.log)"
+fi
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
+
+**输出**
+```
+=== RUN_ID 76 · rescue ZhuLong on 36.15 via tunnel 2026-10-06 11:21:27 ===
+whag0pgpuap29
+2026-10-06 11:21:27 CST
+
+Warning: Permanently added '[localhost]:3333' (ED25519) to the list of known hosts.
+host=hfeg0tedaap02  2026-10-06 11:21:28
+=== [1] git state diagnosis ===
+rebase-merge=no rebase-apply=no MERGE_HEAD=no index.lock=no
+--- status -sb ---
+## main...origin/main [ahead 5, behind 304]
+ M doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md
+ M doc/ZhuLong_DAC2027/run/daily-memories/2026-10-04.md
+ M doc/ZhuLong_DAC2027/run/daily-memories/2026-10-05.md
+ M doc/ZhuLong_DAC2027/run/daily-memories/2026-10-06.md
+?? "doc/\344\270\211\346\234\272\344\272\222\350\201\224\346\226\271\346\263\225.md"
+--- unmerged ---
+--- untracked ---
+"doc/\344\270\211\346\234\272\344\272\222\350\201\224\346\226\271\346\263\225.md"
+--- stash ---
+stash@{0}: autostash
+stash@{1}: autostash
+--- origin/main...HEAD (behind ahead) ---
+304	5
+=== [2] abort stale rebase/merge (non-destructive) ===
+fatal: No rebase in progress?
+fatal: There is no merge to abort (MERGE_HEAD missing).
+=== [3] pull --rebase --autostash (<=120s) ===
+pull_rc=124
+=== [4] status after ===
+## main...origin/main [ahead 5, behind 305]
+ M doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md
+ M doc/ZhuLong_DAC2027/run/daily-memories/2026-10-04.md
+ M doc/ZhuLong_DAC2027/run/daily-memories/2026-10-05.md
+ M doc/ZhuLong_DAC2027/run/daily-memories/2026-10-06.md
+?? "doc/\344\270\211\346\234\272\344\272\222\350\201\224\346\226\271\346\263\225.md"
+=== [5] restart relay+loop — ONLY if pull_rc==0 ===
+!! pull FAILED -> loops NOT touched (need manual look at /tmp/_z_pull.log)
+=== DONE ===
+=== ALL DONE ===
+```
