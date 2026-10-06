@@ -416,3 +416,7 @@
 | 2026-10-07 | OpenAI Dots: The New Always-On AI Agents from OpenAI | devnavigator（聚合站·经 HN） | news(非核心·Dots 同事件·防重不收) | https://devnavigator.com/2026/10/06/openai-dots-always-on-ai-agents/ |
 | 2026-10-07 | How AI decision models could change content moderation | TechCrunch | news | https://techcrunch.com/2026/10/06/how-ai-decision-models-could-change-content-moderation/ |
 
+
+| 2026-10-07 | Silicon Valley's AI wunderkind launches Underdog, the most private Instinct/Muse competitor yet | TechCrunch | news | https://techcrunch.com/2026/10/06/silicon-valleys-ai-wunderkind-launches-underdog-the-most-private-instinct-muse-competitor-yet/ |
+| 2026-10-07 | Daniel Kokotajlo's senate testimony on AI risk [pdf] | Hacker News / U.S. Senate HSGAC | testimony(PDF·HTTP 403 不可核验·非新闻不收) | https://www.hsgac.senate.gov/wp-content/uploads/Daniel-Kokotajlo-Testimony.pdf |
+
