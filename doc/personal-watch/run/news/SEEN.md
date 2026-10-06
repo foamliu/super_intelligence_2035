@@ -371,3 +371,11 @@
 
 | 2026-10-06 | Google is about to remove free access to Gemini Flash and Pro | The Verge | news(同事件·已在账 IT之家 10-03) | https://www.theverge.com/ai-artificial-intelligence/1005451/google-gemini-free-flash-lite-only |
 | 2026-10-06 | Lawmakers Introduce Multiple Laws to Curb Flock After 404 Media Coverage | 404 Media | news(同事件·Sanders Ban Flock Act 10-02·非 AI) | https://www.404media.co/lawmakers-introduce-multiple-laws-to-curb-flock-after-404-media-coverage/ |
+
+| 2026-10-06 | 宣称“欧美最强开源模型”：Mistral AI 发布 Mistral Large 4 公开预览版，月底开放权重 | IT之家 | news | https://www.ithome.com/1/010/108.htm |
+| 2026-10-06 | 距 6 万亿美元仅一步之遥！英伟达市值达 5.8 万亿美元，创历史新高 | IT之家 | news | https://www.ithome.com/1/010/109.htm |
+| 2026-10-06 | Pinterest's AI now turns beauty Pins into action plans | TechCrunch | news | https://techcrunch.com/2026/10/06/pinterests-ai-now-turns-beauty-pins-into-action-plans/ |
+| 2026-10-06 | Flai's AI dealership software is booking 50,000 appointments per month | TechCrunch | news | https://techcrunch.com/2026/10/06/flais-ai-dealership-software-is-booking-50000-appointments-per-month/ |
+| 2026-10-06 | Glimpse wants to give hardware companies an X-ray view of every critical part | TechCrunch | news(AI 相关性弱·工业质检·从严不收) | https://techcrunch.com/2026/10/06/glimpse-wants-to-give-hardware-companies-an-x-ray-view-of-every-critical-part/ |
+| 2026-10-06 | Paramount closes historic Warner Bros. merger to form Skydance | TechCrunch | news(非 AI·流媒体合并) | https://techcrunch.com/2026/10/06/paramount-closes-historic-warner-bros-merger-to-form-skydance/ |
+
