@@ -1,0 +1,41 @@
+whag0pgpuap29:1928854:1928854 [1] NCCL INFO cudaDriverVersion 12080
+whag0pgpuap29:1928854:1928854 [1] NCCL INFO Bootstrap: Using enp24s0np0:10.239.8.29<0>
+whag0pgpuap29:1928854:1928854 [1] NCCL INFO NCCL version 2.27.3+cuda12.9
+whag0pgpuap29:1928854:1928854 [1] NCCL INFO Comm config Blocking set to 1
+whag0pgpuap29:1928854:1940417 [1] NCCL INFO NET/Plugin: Could not find: libnccl-net.so. 
+whag0pgpuap29:1928853:1940416 [0] NCCL INFO NET/IB : Using [0]mlx5_0:1/RoCE [1]mlx5_1:1/RoCE [2]mlx5_2:1/RoCE [3]mlx5_3:1/RoCE [4]mlx5_5:1/RoCE [5]mlx5_6:1/RoCE [6]mlx5_8:1/RoCE [7]mlx5_9:1/RoCE [8]mlx5_10:1/RoCE [9]mlx5_11:1/RoCE [10]mlx5_13:1/RoCE [11]mlx5_14:1/RoCE [RO]; OOB enp24s0np0:10.239.8.29<0>
+whag0pgpuap29:1928853:1940416 [0] NCCL INFO Initialized NET plugin IB
+whag0pgpuap29:1928853:1940416 [0] NCCL INFO Assigned NET plugin IB to comm
+whag0pgpuap29:1928853:1940416 [0] NCCL INFO Using network IB
+whag0pgpuap29:1928854:1940417 [1] NCCL INFO ncclCommInitRankConfig comm 0x555632239ed0 rank 1 nranks 2 cudaDev 1 nvmlDev 1 busId 17000 commId 0x51a5c93a46257d36 - Init START
+whag0pgpuap29:1928854:1940417 [1] NCCL INFO RAS client listening socket at 127.0.0.1<28028>
+whag0pgpuap29:1928854:1940417 [1] NCCL INFO Bootstrap timings total 0.001496 (create 0.000060, send 0.000330, recv 0.000273, ring 0.000043, delay 0.000001)
+whag0pgpuap29:1928854:1940417 [1] NCCL INFO MNNVL busId 0x17000 fabric UUID 0.0 cliqueId 0x0 state 3 healthMask 0x0
+whag0pgpuap29:1928854:1940417 [1] NCCL INFO NCCL_P2P_DISABLE set by environment to 1
+whag0pgpuap29:1928854:1940417 [1] NCCL INFO Setting affinity for GPU 1 to 0-55,112-167
+whag0pgpuap29:1928854:1940417 [1] NCCL INFO comm 0x555632239ed0 rank 1 nRanks 2 nNodes 1 localRanks 2 localRank 1 MNNVL 0
+whag0pgpuap29:1928854:1940417 [1] NCCL INFO Trees [0] -1/-1/-1->1->0 [1] -1/-1/-1->1->0
+whag0pgpuap29:1928854:1940417 [1] NCCL INFO P2P Chunksize set to 131072
+whag0pgpuap29:1928854:1940417 [1] NCCL INFO PROFILER/Plugin: Could not find: libnccl-profiler.so. 
+whag0pgpuap29:1928854:1940570 [1] NCCL INFO [Proxy Service UDS] Device 1 CPU core 25
+whag0pgpuap29:1928854:1940569 [1] NCCL INFO [Proxy Service] Device 1 CPU core 24
+whag0pgpuap29:1928854:1940417 [1] NCCL INFO threadThresholds 8/8/64 | 16/8/64 | 512 | 512
+whag0pgpuap29:1928854:1940417 [1] NCCL INFO 2 coll channels, 2 collnet channels, 0 nvls channels, 2 p2p channels, 2 p2p channels per peer
+whag0pgpuap29:1928854:1940417 [1] NCCL INFO TUNER/Plugin: Could not find: libnccl-tuner.so. Using internal tuner plugin.
+whag0pgpuap29:1928854:1940417 [1] NCCL INFO ncclCommInitRankConfig comm 0x555632239ed0 rank 1 nranks 2 cudaDev 1 nvmlDev 1 busId 17000 commId 0x51a5c93a46257d36 - Init COMPLETE
+whag0pgpuap29:1928854:1940417 [1] NCCL INFO Init timings - ncclCommInitRankConfig: rank 1 nranks 2 total 1.13 (kernels 0.51, alloc 0.56, bootstrap 0.00, allgathers 0.00, topo 0.04, graphs 0.00, connections 0.00, rest 0.00)
+whag0pgpuap29:1928854:1940572 [1] NCCL INFO Channel 00 : 1[1] -> 0[0] via SHM/direct/direct
+whag0pgpuap29:1928854:1940572 [1] NCCL INFO Channel 01 : 1[1] -> 0[0] via SHM/direct/direct
+whag0pgpuap29:1928854:1940572 [1] NCCL INFO Connected all rings, use ring PXN 0 GDR 1
+whag0pgpuap29:1928854:1939037 [1] NCCL INFO misc/socket.cc:64 -> 3
+whag0pgpuap29:1928854:1939037 [1] NCCL INFO misc/socket.cc:81 -> 3
+whag0pgpuap29:1928854:1939037 [1] NCCL INFO misc/socket.cc:863 -> 3
+whag0pgpuap29:1928854:1939037 [1] NCCL INFO misc/socket.cc:64 -> 3
+whag0pgpuap29:1928854:1939037 [1] NCCL INFO misc/socket.cc:81 -> 3
+whag0pgpuap29:1928854:1939037 [1] NCCL INFO misc/socket.cc:863 -> 3
+whag0pgpuap29:1928854:1940569 [1] NCCL INFO misc/socket.cc:915 -> 3
+whag0pgpuap29:1928854:1939037 [1] NCCL INFO comm 0x555632239ed0 rank 1 nranks 2 cudaDev 1 busId 17000 - Abort COMPLETE
+ [0] NCCL INFO misc/socket.cc:64 -> 3
+whag0pgpuap29:1928853:1940615 [0] NCCL INFO misc/socket.cc:81 -> 3
+whag0pgpuap29:1928853:1940615 [0] NCCL INFO misc/socket.cc:863 -> 3
+whag0pgpuap29:1928853:1940615 [0] NCCL INFO comm 0x55664cf1fc90 rank 0 nranks 2 cudaDev 0 busId 16000 - Abort COMPLETE

@@ -1,0 +1,48 @@
+{
+  "world_size": 2,
+  "nccl_version": [
+    2,
+    27,
+    3
+  ],
+  "env_overrides": {
+    "NCCL_DEBUG": "INFO",
+    "NCCL_DEBUG_FILE": "nccl_debug_nvls_on.log",
+    "NCCL_NVLS_ENABLE": "1",
+    "CUDA_VISIBLE_DEVICES": "0,1",
+    "CUDA_HOME": "/usr/local/cuda-12.8",
+    "CUDA_MODULE_LOADING": "LAZY"
+  },
+  "results": [
+    {
+      "size_bytes": 1048576,
+      "size_mb": 1.0,
+      "iters": 20,
+      "median_latency_us": 17.7,
+      "min_latency_us": 15.9,
+      "algbw_gbs": 59.36,
+      "busbw_gbs": 29.68,
+      "world_size": 2
+    },
+    {
+      "size_bytes": 104857600,
+      "size_mb": 100.0,
+      "iters": 20,
+      "median_latency_us": 386.4,
+      "min_latency_us": 383.1,
+      "algbw_gbs": 271.39,
+      "busbw_gbs": 135.7,
+      "world_size": 2
+    },
+    {
+      "size_bytes": 1073741824,
+      "size_mb": 1024.0,
+      "iters": 20,
+      "median_latency_us": 8085.7,
+      "min_latency_us": 5679.0,
+      "algbw_gbs": 132.79,
+      "busbw_gbs": 66.4,
+      "world_size": 2
+    }
+  ]
+}

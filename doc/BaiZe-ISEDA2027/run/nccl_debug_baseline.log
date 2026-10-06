@@ -1,0 +1,76 @@
+whag0pgpuap29:1908287:1908287 [1] NCCL INFO cudaDriverVersion 12080
+whag0pgpuap29:1908287:1908287 [1] NCCL INFO Bootstrap: Using enp24s0np0:10.239.8.29<0>
+whag0pgpuap29:1908287:1908287 [1] NCCL INFO NCCL version 2.27.3+cuda12.9
+whag0pgpuap29:1908287:1908287 [1] NCCL INFO Comm config Blocking set to 1
+whag0pgpuap29:1908287:1914223 [1] NCCL INFO NET/Plugin: Could not find: libnccl-net.so. 
+whag0pgpuap29:1908284:1914222 [0] NCCL INFO NET/IB : Using [0]mlx5_0:1/RoCE [1]mlx5_1:1/RoCE [2]mlx5_2:1/RoCE [3]mlx5_3:1/RoCE [4]mlx5_5:1/RoCE [5]mlx5_6:1/RoCE [6]mlx5_8:1/RoCE [7]mlx5_9:1/RoCE [8]mlx5_10:1/RoCE [9]mlx5_11:1/RoCE [10]mlx5_13:1/RoCE [11]mlx5_14:1/RoCE [RO]; OOB enp24s0np0:10.239.8.29<0>
+whag0pgpuap29:1908284:1914222 [0] NCCL INFO Initialized NET plugin IB
+whag0pgpuap29:1908284:1914222 [0] NCCL INFO Assigned NET plugin IB to comm
+whag0pgpuap29:1908284:1914222 [0] NCCL INFO Using network IB
+whag0pgpuap29:1908284:1914222 [0] NCCL INFO ncclCommInitRankConfig comm 0x558761f8dba0 rank 0 nranks 2 cudaDev 0 nvmlDev 0 busId 16000 commId 0xf6883b2ede42a0f6 - Init START
+whag0pgpuap29:1908287:1914223 [1] NCCL INFO RAS client listening socket at 127.0.0.1<28028>
+whag0pgpuap29:1908287:1914223 [1] NCCL INFO Bootstrap timings total 0.010319 (create 0.000076, send 0.000306, recv 0.008859, ring 0.000060, delay 0.000001)
+whag0pgpuap29:1908284:1914222 [0] NCCL INFO MNNVL busId 0x16000 fabric UUID 0.0 cliqueId 0x0 state 3 healthMask 0x0
+whag0pgpuap29:1908284:1914222 [0] NCCL INFO Setting affinity for GPU 0 to 0-55,112-167
+whag0pgpuap29:1908284:1914222 [0] NCCL INFO comm 0x558761f8dba0 rank 0 nRanks 2 nNodes 1 localRanks 2 localRank 0 MNNVL 0
+whag0pgpuap29:1908287:1914223 [1] NCCL INFO Trees [0] -1/-1/-1->1->0 [1] -1/-1/-1->1->0 [2] -1/-1/-1->1->0 [3] -1/-1/-1->1->0 [4whag0pgpuap29:1908284:1914222 [0] NCCL INFO Channel 02/24 : 0 1
+whag0pgpuap29:1908284:1914222 [0] NCCL INFO Channel 03/24 : 0 1
+whag0pgpuap29:1908284:1914222 [0] NCCL INFO Channel 04/24 : 0 1
+whag0pgpuap29:1908284:1914222 [0] NCCL INFO Channel 05/24 : 0 1
+whag0pgpuap29:1908284:1914222 [0] NCCL INFO Channel 06/24 : 0 1
+whag0pgpuap29:1908284:1914222 [0] NCCL INFO Channel 07/24 : 0 1
+whag0pgpuap29:1908284:1914222 [0] NCCL INFO Channel 08/24 : 0 1
+whag0pgpuap29:19whag0pgpuap29:1908287:1914223 [1] NCCL INFO PROFILER/Plugin: Could not find: libnccl-profiler.so. 
+whag0pgpuap29:1908287:1914437 [1] NCCL INFO [Proxy Service] Device 1 CPU core 16
+whag0pgpuap29:1908287:1914439 [1] NCCL INFO [Proxy Service UDS] Device 1 CPU core 131
+whag0pgpuap29:1908287:1914223 [1] NCCL INFO threadThresholds 8/8/64 | 16/8/64 | 512 | 512
+whag0pgpuap29:1908287:1914223 [1] NCCL INFO 24 coll channels, 24 collnet channels, 0 nvls channels, 32 p2p channels, 32 p2p channels per peer
+whag0pgpuap29:1908287:1914223 [1] NCCL INFO TUNER/Plugin: Could not find: libnccl-tuner.so. Using internal tuner plugin.
+whag0pgpuap29:1908287:1914223 [1] NCCL INFO ncclCommInitRankConfig comm 0x55d752f83570 rank 1 nranks 2 cudaDev 1 nvmlDev 1 busId 17000 commId 0xf6883b2ede42a0f6 - Init COMPLETE
+whag0pgpuap29:1908287:1914223 [1] NCCL INFO Init timings - ncclCommInitRankConfig: rank 1 nranks 2 total 1.19 (kernels 0.48, alloc 0.60, bootstrap 0.01, allgathers 0.00, topo 0.04, graphs 0.01, connections 0.03, rest 0.01)
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 00/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 01/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 02/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 03/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 04/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 05/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 06/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 07/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 08/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 09/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 10/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 11/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 12/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 13/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 14/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 15/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 16/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 17/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 18/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 19/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 20/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 21/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 22/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Channel 23/0 : 1[1] -> 0[0] via P2P/CUMEM
+whag0pgpuap29:1908287:1914441 [1] NCCL INFO Connected all rings, use ring PXN 0 GDR 1
+whag0pgpuap29:1908287:1908287 [1] NCCL INFO comm 0x55d752f83570 rank 1 nranks 2 cudaDev 1 busId 17000 - Destroy COMPLETE
+: 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Channel 07/0 : 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Channel 08/0 : 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Channel 09/0 : 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Channel 10/0 : 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Channel 11/0 : 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Channel 12/0 : 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Channel 13/0 : 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Channel 14/0 : 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Channel 15/0 : 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Channel 16/0 : 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Channel 17/0 : 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Channel 18/0 : 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Channel 19/0 : 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Channel 20/0 : 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Channel 21/0 : 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Channel 22/0 : 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Channel 23/0 : 0[0] -> 1[1] via P2P/CUMEM
+whag0pgpuap29:1908284:1914442 [0] NCCL INFO Connected all rings, use ring PXN 0 GDR 1
+whag0pgpuap29:1908284:1908284 [0] NCCL INFO comm 0x558761f8dba0 rank 0 nranks 2 cudaDev 0 busId 16000 - Destroy COMPLETE

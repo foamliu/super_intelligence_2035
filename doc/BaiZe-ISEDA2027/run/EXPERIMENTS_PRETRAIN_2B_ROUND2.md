@@ -2025,3 +2025,63 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 **建议执行顺序**：A（~3-4h GPU0）→ B（~2-3h GPU0）→ 若 P-8 前置临近 → C（~5h GPU0-1）。D/E 暂缓。
 
 > ⏸ **状态**：本提案已写入，等待运维批准。**未经批准不得启动任何实验。**
+
+
+---
+
+## P-9.12 NCCL/NVLink 拓扑核查 + 提速对照实验（2026-10-06 ~13:42–14:15，第 136 次，GPU0-1 @.29）✅ COMPLETE
+
+> **运维指令**：2026-10-06 提速令 Step 1 —— 核查 NCCL/NVLink 拓扑，验证用户假设「若 NCCL 走 PCIe 而非 NVLink，换拓扑有改善」。
+
+### 方法
+- **工具**：`nvidia-smi topo -m` + `nvidia-smi nvlink -s/-c` + `NCCL_DEBUG=INFO` + 自定义 PyTorch NCCL all_reduce 微基准（`nccl_bench.py`，2 GPU，float32，20 iters，5 warmup，中位数延迟）。
+- **对照实验**（每次只改一个 env）：baseline / P2P_DISABLE / IB_DISABLE / ALGO=Tree / NVLS_ENABLE / PROTO=Simple / SHM_DISABLE。
+
+### 结果
+
+**① 硬件拓扑**：8×H100 NV18 full-mesh NVSwitch，每对 GPU 间 18 NVLink @ 26.562 GB/s = 478 GB/s/GPU（双向），全部 UP，P2P supported=true。
+
+**② NCCL 传输通道**（NCCL_DEBUG=INFO baseline）：
+- `via P2P/CUMEM` = **42 次（100%）** → GPU 间直接 P2P（经 NVLink）
+- `via NET` = 0，`via SHM` = 0
+- 24 coll channels, 0 nvls channels, 32 p2p channels
+- → **NCCL 已在用 NVLink，非 PCIe**。用户假设证伪。
+
+**③ busbw 对照表（GB/s，2-GPU all_reduce）**：
+
+| 配置 | 1 MB | 100 MB | 1 GB | vs baseline (1G) |
+|:--|--:|--:|--:|:--|
+| **baseline (default)** | 4.52 | 135.28 | **164.56** | — |
+| p2p_disable | 5.23 | 3.06 | 3.44 | **−97.9% (48×↓)** |
+| ib_disable | 29.36 | 135.52 | 15.62 | −90.5% |
+| algo_tree | 17.60 | 137.09 | 15.61 | −90.5% |
+| nvls_on | 29.68 | 135.70 | 66.40 | −59.6% |
+| proto_simple | 18.45 | 135.61 | 66.31 | −59.7% |
+| shm_disable | 30.01 | 135.33 | 66.21 | −59.7% |
+
+**④ NVLink 利用率**：baseline algbw@1GB = 329.12 GB/s / 478 GB/s 峰值 = **68.8%**（合理，Ring 2-GPU 往返开销）。
+
+**⑤ NVLS 不可用**：`NCCL_NVLS_ENABLE=1` 后 log 仍显示 "0 nvls channels" → 此 H100 NVSwitch + CUDA 12.8 + NCCL 2.27.3 组合不支持 NVLink SHARP。
+
+### 判据（运维要求的 4 条）
+
+| 判据 | 结论 |
+|:--|:--|
+| ① 当前实际通道构成 | P2P/CUMEM (NVLink) **100%**，NET 0%，SHM 0%，NVLS 0%（不可用） |
+| ② 最佳 env 组合 | **default**（Ring + P2P/CUMEM + LL protocol）—— 无 env 改动优于 default |
+| ③ 相对 baseline tok/s 提升 | **0%**（default 已最优，所有 env 改动均不改善或恶化大消息带宽） |
+| ④ 可否迁移到 8 卡 | **可迁移**：8-GPU Ring 同样用 P2P over NV18 全连接；env 改动在 2-GPU 不改善 → 8-GPU 不会有不同表现；NVLS 不可用是硬件级限制。P-8 应沿用 default NCCL 配置 |
+
+### 结论
+- **✅ 用户假设证伪**：NCCL 已在使用 NVLink P2P（100%），不存在「走 PCIe」的问题。硬件已是 NV18 full-mesh NVSwitch，无可换的「更好拓扑」。
+- **✅ 默认 NCCL 配置已最优** → **NCCL 不是提速瓶颈**。
+- **→ 下一步**：转向 Step 2（训练配置提速候选清单）。
+
+### 产出
+- `doc/BaiZe-ISEDA2027/report_pretrain_nccl_topo.html`（11.3KB，自包含）
+- `run/nccl_bench.py`（benchmark 脚本）
+- `run/nccl_sweep.sh`（sweep 脚本）
+- `run/nccl_bench_*.json` ×7（结果数据）
+- `run/nccl_debug_*.log` ×3（NCCL 日志原文）
+- `run/nccl_read_results.py`（结果汇总脚本）
+

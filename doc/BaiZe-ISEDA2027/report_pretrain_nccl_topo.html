@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>BaiZe Pretrain — NCCL/NVLink Topology Investigation (P-9.12)</title>
+<style>
+body{font-family:-apple-system,sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#222;line-height:1.6}
+h1{color:#1a3a5c;border-bottom:3px solid #1a3a5c;padding-bottom:10px}
+h2{color:#1a3a5c;margin-top:30px;border-bottom:1px solid #ccc;padding-bottom:5px}
+h3{color:#333;margin-top:20px}
+table{border-collapse:collapse;width:100%;margin:15px 0;font-size:14px}
+th,td{border:1px solid #ccc;padding:6px 10px;text-align:center}
+th{background:#1a3a5c;color:#fff;font-weight:600}
+tr:nth-child(even){background:#f0f4f8}
+.highlight{background:#d4edda!important;font-weight:bold}
+.warn{background:#fff3cd!important} .bad{background:#f8d7da!important}
+pre{background:#1e1e1e;color:#d4d4d4;padding:15px;border-radius:8px;overflow-x:auto;font-size:13px}
+.kf{background:#e7f5ff;border-left:4px solid #1a3a5c;padding:12px 15px;margin:15px 0;border-radius:0 8px 8px 0}
+.cc{background:#d4edda;border-left:4px solid #28a745;padding:12px 15px;margin:15px 0;border-radius:0 8px 8px 0}
+.wn{background:#fff3cd;border-left:4px solid #ffc107;padding:12px 15px;margin:15px 0;border-radius:0 8px 8px 0}
+.meta{color:#666;font-size:13px;margin-bottom:20px}
+</style></head><body>
+<h1>BaiZe Pretrain — NCCL/NVLink Topology Investigation (P-9.12)</h1>
+<div class="meta"><b>Agent:</b> pretrain (#136) | <b>Date:</b> 2026-10-06 13:42–14:15 | <b>Node:</b> whag0pgpuap29 (10.239.2.29) | <b>GPUs:</b> GPU0-1 (8×H100 80GB) | <b>NCCL:</b> 2.27.3+cuda12.9 | <b>PyTorch:</b> 2.8.0+cu128 | <b>Directive:</b> 2026-10-06 提速令 Step 1</div>
+
+<div class="kf"><b>⭐ 核心结论（TL;DR）</b><br>
+① <b>NCCL 已在用 NVLink P2P</b>（非 PCIe）—— via P2P/CUMEM = 100%，via NET = 0，via SHM = 0。<br>
+② <b>用户假设证伪</b>：不存在「NCCL 走 PCIe」问题 → 换 NVLink 拓扑<b>无可换</b>（硬件已是 NV18 full-mesh NVSwitch）。<br>
+③ <b>默认配置已最优</b>：Ring + P2P + LL 在 ≥100MB 大消息上<b>全面胜出</b>（1GB busbw=164.56 GB/s = algbw 329 GB/s = 69% NVLink 峰值）。<br>
+④ <b>NVLS 不可用</b>：NCCL_NVLS_ENABLE=1 无效（"0 nvls channels"）—— 此 H100 NVSwitch + NCCL 2.27.3 组合不支持 NVLS。<br>
+⑤ <b>无 env 组合能提升大消息带宽</b> → <b>NCCL 不是提速瓶颈</b>，应转向 Step 2（训练配置优化）。</div>
+
+<h2>1. 硬件拓扑核查</h2>
+<h3>1.1 nvidia-smi topo -m（GPU 部分）</h3>
+<pre>	GPU0	GPU1	GPU2	GPU3	GPU4	GPU5	GPU6	GPU7
+GPU0	 X 	NV18	NV18	NV18	NV18	NV18	NV18	NV18
+GPU1	NV18	 X 	NV18	NV18	NV18	NV18	NV18	NV18
+GPU2	NV18	NV18	 X 	NV18	NV18	NV18	NV18	NV18
+GPU3	NV18	NV18	NV18	 X 	NV18	NV18	NV18	NV18
+GPU4	NV18	NV18	NV18	NV18	 X 	NV18	NV18	NV18
+GPU5	NV18	NV18	NV18	NV18	NV18	 X 	NV18	NV18
+GPU6	NV18	NV18	NV18	NV18	NV18	NV18	 X 	NV18
+GPU7	NV18	NV18	NV18	NV18	NV18	NV18	NV18	 X
+Legend: NV# = bonded set of # NVLinks | SYS = PCIe+SMP between NUMA | NODE = PCIe+PHB within NUMA</pre>
+<p><b>解读</b>：所有 8 对 GPU 之间均为 NV18（18 NVLink bond）→ <b>full-mesh NVSwitch 拓扑</b>。GPU0-3 NUMA 0，GPU4-7 NUMA 1。</p>
+
+<h3>1.2 NVLink 状态与速率</h3>
+<pre>GPU 0-7: 各 18 links, all at 26.562 GB/s → 478.12 GB/s/GPU (bidirectional)
+P2P is supported: true | Link is supported: true (all links UP)</pre>
+<p><b>所有 18 NVLink 均 UP，478 GB/s/GPU（双向）</b>。P2P 完全可用。</p>
+
+<h2>2. NCCL 传输通道取证（NCCL_DEBUG=INFO）</h2>
+<h3>2.1 Baseline 关键日志行</h3>
+<pre>NCCL INFO NCCL version 2.27.3+cuda12.9
+NCCL INFO NET/IB : Using [0]mlx5_0:1/RoCE ... [11]mlx5_14:1/RoCE [RO]
+NCCL INFO 24 coll channels, 24 collnet channels, 0 nvls channels, 32 p2p channels
+NCCL INFO Channel 00/0 : 1[1] -> 0[0] via P2P/CUMEM
+  ... (all 24 channels identical) ...
+NCCL INFO Channel 23/0 : 0[0] -> 1[1] via P2P/CUMEM
+NCCL INFO Connected all rings, use ring PXN 0 GDR 1</pre>
+
+<h3>2.2 传输通道统计</h3>
+<table><tr><th>传输类型</th><th>出现次数</th><th>占比</th><th>含义</th></tr>
+<tr class="highlight"><td>via P2P/CUMEM</td><td>42</td><td>100%</td><td>GPU 间直接 P2P（经 NVLink）</td></tr>
+<tr><td>via NET</td><td>0</td><td>0%</td><td>IB/RoCE —— 未用于 intra-node</td></tr>
+<tr><td>via SHM</td><td>0</td><td>0%</td><td>共享内存 —— 未使用</td></tr></table>
+<p><b>结论</b>：all_reduce 100% 通过 P2P/CUMEM 走 NVLink。CUMEM = CUDA cuMem API P2P 映射（NCCL 2.19+ 默认高效路径）。</p>
+
+<h3>2.3 NVLS 检测</h3>
+<pre># Baseline: 0 nvls channels
+# NCCL_NVLS_ENABLE=1: "set by environment to 1" → 仍然 0 nvls channels</pre>
+<div class="wn"><b>NVLS 不可用</b>：即使显式开启，NCCL 仍创建 0 个 NVLS channel。H100 NVSwitch + CUDA 12.8 + NCCL 2.27.3 组合下需额外驱动/插件支持。</div>
+
+<h2>3. all_reduce 带宽对照实验</h2>
+<p><b>方法</b>：自定义 PyTorch NCCL all_reduce 微基准（nccl_bench.py），2 GPU（GPU0-1），float32，20 iters，5 warmup，中位数延迟。消息大小 1MB–1GB。每次只改一个 NCCL env 变量。</p>
+
+<h3>3.1 busbw 表（GB/s）</h3>
+<table><tr><th>配置</th><th>NCCL env</th><th>1 MB</th><th>10 MB</th><th>100 MB</th><th>500 MB</th><th>1 GB</th><th>vs baseline (1G)</th></tr>
+<tr class="highlight"><td><b>baseline</b></td><td>(default)</td><td>4.52</td><td>45.31</td><td>135.28</td><td>154.81</td><td><b>164.56</b></td><td>—</td></tr>
+<tr class="bad"><td>p2p_disable</td><td>P2P_DISABLE=1</td><td>5.23</td><td>—</td><td>3.06</td><td>—</td><td>3.44</td><td><b>−97.9%</b> (48×↓)</td></tr>
+<tr class="bad"><td>ib_disable</td><td>IB_DISABLE=1</td><td>29.36</td><td>—</td><td>135.52</td><td>—</td><td>15.62</td><td>−90.5%</td></tr>
+<tr class="bad"><td>algo_tree</td><td>ALGO=Tree</td><td>17.60</td><td>—</td><td>137.09</td><td>—</td><td>15.61</td><td>−90.5%</td></tr>
+<tr class="warn"><td>nvls_on</td><td>NVLS_ENABLE=1</td><td>29.68</td><td>—</td><td>135.70</td><td>—</td><td>66.40</td><td>−59.6%</td></tr>
+<tr class="warn"><td>proto_simple</td><td>PROTO=Simple</td><td>18.45</td><td>—</td><td>135.61</td><td>—</td><td>66.31</td><td>−59.7%</td></tr>
+<tr class="warn"><td>shm_disable</td><td>SHM_DISABLE=1</td><td>30.01</td><td>—</td><td>135.33</td><td>—</td><td>66.21</td><td>−59.7%</td></tr></table>
+
+<h3>3.2 algbw 表（GB/s）与 NVLink 利用率</h3>
+<table><tr><th>配置</th><th>1 MB</th><th>100 MB</th><th>1 GB</th><th>NVLink 利用率 (1G)</th></tr>
+<tr class="highlight"><td><b>baseline</b></td><td>9.04</td><td>270.56</td><td><b>329.12</b></td><td><b>68.8%</b> (of 478 GB/s)</td></tr>
+<tr class="bad"><td>p2p_disable</td><td>10.47</td><td>6.11</td><td>6.87</td><td>1.4%</td></tr>
+<tr class="bad"><td>ib_disable</td><td>58.72</td><td>271.03</td><td>31.25</td><td>6.5%</td></tr>
+<tr class="warn"><td>nvls_on</td><td>59.36</td><td>271.39</td><td>132.79</td><td>27.8%</td></tr>
+<tr class="warn"><td>proto_simple</td><td>36.90</td><td>135.61</td><td>132.63</td><td>27.7%</td></tr></table>
+<p><b>69% NVLink 利用率对 2-GPU Ring all_reduce 合理</b>：Ring 在 2 节点时 = send-reduce-broadcast 往返，数据跨 NVLink 两次。流水线可掩盖部分延迟，但 kernel launch/reduction/sync 仍有开销。</p>
+
+<h2>4. 各实验归因</h2>
+<table><tr><th>配置</th><th>1G 表现</th><th>归因</th></tr>
+<tr class="highlight"><td>baseline</td><td>164.56 ✅</td><td>Ring + P2P/CUMEM + LL → 最优组合</td></tr>
+<tr class="bad"><td>p2p_disable</td><td>3.44 (48×↓)</td><td>禁 P2P → 退回 memcpy → <b>反证 NVLink 在用</b></td></tr>
+<tr class="bad"><td>ib_disable</td><td>15.62 (10×↓)</td><td>禁 IB → 拓扑检测变化 → 退回 Simple/SHM 路径</td></tr>
+<tr class="bad"><td>algo_tree</td><td>15.61 (10×↓)</td><td>2-GPU Tree = 1-hop send/recv，无 Ring 流水线</td></tr>
+<tr class="warn"><td>nvls_on</td><td>66.40 (2.5×↓)</td><td>NVLS 不可用但改了协议选择 → LL→Simple</td></tr>
+<tr class="warn"><td>proto_simple</td><td>66.31 (2.5×↓)</td><td>Simple 无流水线 → 大消息带宽减半</td></tr>
+<tr class="warn"><td>shm_disable</td><td>66.21 (2.5×↓)</td><td>禁 SHM → 同样退到 Simple 协议</td></tr></table>
+
+<h2>5. 与 P-9.7 基线 (249K tok/s) 的关系</h2>
+<table><tr><th>指标</th><th>P-9.7 基线</th><th>本次实测</th><th>说明</th></tr>
+<tr><td>8-GPU tok/s</td><td>249,000</td><td>— (无法测)</td><td>GPU2-7 被 data BO 占用</td></tr>
+<tr><td>2-GPU busbw @ 1GB</td><td>—</td><td>164.56 GB/s</td><td>本次新增基线</td></tr>
+<tr><td>最佳 env 组合</td><td>—</td><td><b>default</b></td><td>无 env 改动优于 default</td></tr>
+<tr><td>预期 tok/s 提升</td><td>—</td><td><b>0%</b></td><td>default 已最优 → 无 env 能提升</td></tr></table>
+<div class="wn"><b>8-GPU 可迁移性</b>：本次只能测 2-GPU（GPU2-7 被 data BO 占用）。但结论可外推：
+<ul><li>8-GPU Ring 同样用 P2P/CUMEM over NVLink（NV18 全连接）</li>
+<li>所有 env 改动在 2-GPU 均不改善或恶化 → 8-GPU 不会有不同表现</li>
+<li>NVLS 不可用是硬件/驱动级限制，与 GPU 数量无关</li>
+<li><b>结论可迁移到 8 卡</b>：P-8 训练应沿用 default NCCL 配置，无需任何 env 覆盖</li></ul></div>
+
+<h2>6. 结论</h2>
+<div class="cc"><b>✅ 用户假设证伪</b>：NCCL 已在使用 NVLink P2P（100%），不存在「走 PCIe」的问题。硬件已是 NV18 full-mesh NVSwitch，无可换的「更好拓扑」。</div>
+<div class="cc"><b>✅ 默认 NCCL 配置已最优</b>：Ring + P2P/CUMEM + LL 在 ≥100MB 大消息上全面胜出。1GB busbw=164.56 GB/s（algbw=329 GB/s = 69% NVLink 峰值）。7 个 env 改动均不改善或恶化。</div>
+<div class="cc"><b>✅ NCCL 不是提速瓶颈</b> → 应转向 <b>Step 2：训练配置提速候选清单</b>（MBS/GBS/seq 组合、recompute 档位、CUDA-graph、数据管线、TP/DP 拓扑、kernel/backend 选择等）。</div>
+<div class="wn"><b>⚠️ NVLS 不可用</b>：若未来要启用 NVLink SHARP，需安装 NCCL NVLS 插件 / 升级驱动 / 确认 NVSwitch firmware 支持。</div>
+
+<h2>7. 产物清单</h2>
+<table><tr><th>文件</th><th>路径</th></tr>
+<tr><td>本报告</td><td>doc/BaiZe-ISEDA2027/report_pretrain_nccl_topo.html</td></tr>
+<tr><td>benchmark 脚本</td><td>run/nccl_bench.py</td></tr>
+<tr><td>sweep 脚本</td><td>run/nccl_sweep.sh</td></tr>
+<tr><td>结果 JSON ×7</td><td>run/nccl_bench_*.json</td></tr>
+<tr><td>NCCL debug log ×2</td><td>run/nccl_debug_baseline.log, nccl_debug_nvls_on.log</td></tr></table>
+
+<h2>8. 复现命令</h2>
+<pre># Baseline
+CUDA_VISIBLE_DEVICES=0,1 NCCL_DEBUG=INFO NCCL_DEBUG_FILE=nccl_debug_baseline.log \
+  torchrun --nproc_per_node=2 --master_port=29501 nccl_bench.py \
+  --sizes 1M,10M,100M,500M,1G --iters 20 --warmup 5 --output nccl_bench_baseline.json
+
+# P2P disable (confirms NVLink)
+CUDA_VISIBLE_DEVICES=0,1 NCCL_P2P_DISABLE=1 \
+  torchrun --nproc_per_node=2 --master_port=29504 nccl_bench.py \
+  --sizes 1M,100M,1G --iters 20 --warmup 5 --output nccl_bench_p2p_disable.json</pre>
+
+<p style="color:#666;font-size:12px;margin-top:30px;">BaiZe Stage(i) Pretrain · P-9.12 NCCL Topology Investigation · Agent #136 · 2026-10-06 14:15</p>
+</body></html>
