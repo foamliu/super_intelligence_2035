@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **R12 训练+eval 完成**（120k 步, lp@120k=17.57%）· ✅ **3-epoch 续跑训练完成**（step 344000/344k, final_loss=1.5299, total=39197.3s, steady 3303 img/s, 10.9h）· 🚀 **并行 eval 进行中**（8 GPU × 4-5 ckpts, 35 ckpts total, PID 1890677, ETA ~10:55）· ✅ 两份 HTML 报告已验证 · ✅ 论文 §6 已改完(6207fe1a) · ✅ VISION_NEXT_DIRECTIONS.md 已交付 · ✅ r12_3epoch_scaling.py 已就绪 |
-| WAITING | 1（**并行 eval 进行中** · 8 GPU 并行评测 35 ckpts · PID 1890677 · ETA ~10:55 → 跑 r12_3epoch_scaling.py → 回填 §19 scaling + §18.5 公平表 + 刷新 §6.3）|
-| ERROR_COUNT | 2（① R9 w512 首跑 crash：损坏 jpg → data.py 修复 ② 续跑首试 crash：r9_train.py `log()` 在定义前被 resume 块调用 → 改为 `print()` 修复） |
+| PHASE | ✅ **R12 训练+eval 完成**（120k 步, lp@120k=17.57%）· ✅ **3-epoch 续跑训练完成**（step 344000/344k, final_loss=1.5299, total=39197.3s, steady 3303 img/s, 10.9h）· 🚀 **4-GPU eval 进行中**（r12_single_eval.sh, PID 1131090/1131659/1132182/1142247, 35 ckpts, data loading phase）· ✅ 两份 HTML 报告已验证 · ✅ 论文 §6 已改完(6207fe1a) · ✅ VISION_NEXT_DIRECTIONS.md 已交付 · ✅ r12_3epoch_scaling.py 已就绪 |
+| WAITING | 1（**4-GPU eval 进行中** · r12_single_eval.sh · 35 ckpts across 4 GPUs · ETA ~12:15 → 自动跑 r12_3epoch_scaling.py → 回填 §19 scaling + §18.5 公平表 + 刷新 §6.3）|
+| ERROR_COUNT | 3（① R9 w512 首跑 crash：损坏 jpg → data.py 修复 ② 续跑首试 crash：r9_train.py `log()` 在定义前被 resume 块调用 → 改为 `print()` 修复 ③ **8-GPU 并行 eval NFS 争用卡死**：8 进程×冗余读 40 parquet → 43min 仅 3-4 文件 → 已 kill，改 4-GPU r12_single_eval.sh） |
 | BUDGET_USED | R2–R12 累计 + **R12 完成**（6.3h×8卡≈50.4 GPU·h）+ **3-epoch 续跑完成**（10.9h×8卡≈87.1 GPU·h, 总 ≈215 GPU·h） |
-| 更新 | **2026-10-06 10:55（并行eval数据加载慢: 3-epoch续跑训练完成 [done] total=39197.3s steps=344000 steady_image_s=3303.1 final_loss=1.5299. 35 ckpts(10k-340k+vision.pt@344k)已存. 旧eval watcher(3879043)已kill, 替换为并行eval: r12_parallel_eval.py(PID 1890677) 8 GPU × 4-5 ckpts each. ⚠️数据加载慢: 8进程同时读NFS parquet(~1-2GB/file), I/O争用严重, 单进程~3min→8并行~15-20min. 已跑~10min仍在loading(RSS~3.5GB each, 增长中). 预计~11:15-11:20 eval完→合并到/tmp/r12_continue_eval_watcher.log→跑r12_3epoch_scaling.py. 所有CPU/写作交付物已完成. 📦 体积：TASK=25KB / MEMORY=32KB(暂无归档). WAITING=1[并行eval数据加载中]**· *[更早见 daily-memories-vision/2026-10-06.md]* |
+| 更新 | **2026-10-06 11:36（8-GPU并行eval卡死→kill→重启4-GPU eval: 旧r12_parallel_eval.py(8进程×冗余NFS读40 parquet, 43min仅3-4文件)已全部kill. 原因: load_in1k_split每进程独读40×500MB parquet, 8×冗余I/O+CPU争用(loadavg 457). 新方案: r12_single_eval.sh 4-GPU×9-8 ckpts, OMP=16, PYTHONUNBUFFERED=1, data在page cache(1825GB buff). PID 1131090/1131659/1132182/1142247 全在loading phase. ETA: data load ~5-10min + GPU eval ~27min = ~37min → ~12:15完. 脚本自动 merge→/tmp/r12_continue_eval_watcher.log→跑r12_3epoch_scaling.py. 📦 体积：TASK=25KB / MEMORY=31KB(暂无归档). WAITING=1[4-GPU eval loading]**· *[更早见 daily-memories-vision/2026-10-06.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
