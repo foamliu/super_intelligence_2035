@@ -273,4 +273,12 @@
 | 2026-10-06 | 谷歌有望升级 Call for Me 功能：Gemini 将支持代用户拨打私人亲友电话 | IT之家 | news | https://www.ithome.com/1/009/921.htm |
 | 2026-10-06 | tvOS 27.2 代码显示苹果 Apple TV 4K（第四代）将支持 Siri AI 和 Apple Intelligence | IT之家 | news | https://www.ithome.com/1/009/920.htm |
 | 2026-10-06 | Gemini Call for Me might tell your mom you're running late | The Verge | news(同事件) | https://www.theverge.com/ai-artificial-intelligence/1005177/google-gemini-call-for-me-expansion-rumors |
+| 2026-10-06 | 麦当劳在美遭集体诉讼，被指用 AI 系统非法操纵菜单价格 | IT之家 | news | https://www.ithome.com/1/009/924.htm |
+| 2026-10-06 | XCOR launches to trace outages in minutes. It still pages engineers | The New Stack（厂商产品稿，经 HN） | tool | https://thenewstack.io/cortex-xcor-ai-observability/ |
+| 2026-10-06 | Show HN: Rashomon – An independent execution record for AI coding agents | Hacker News（Show HN） | tool | https://github.com/altrace-dev-role/rashomon |
+| 2026-10-06 | Show HN: Ototo: Offload code exploration to a smaller model from Claude et al. | Hacker News（Show HN） | tool | https://ototo.dev/ |
+| 2026-10-06 | Show HN: Skins.dev – add the features missing from the web apps you use | Hacker News（Show HN） | tool | https://skins.dev/ |
+| 2026-10-06 | The AI Buildout Has Turned into a Doom Loop | HN（bird.makeup/Mastodon 镜像） | analysis | https://bird.makeup/users/gnoble79/statuses/2107068301004210338 |
+| 2026-10-06 | Design Systems for AI Agents (Luke Wroblewski) | lukew.com（经 HN） | analysis | https://www.lukew.com/ff/2164/design-systems-for-ai-agents |
+| 2026-10-06 | AI Tutoring with Khanmigo in a Two-Year School Experiment | edworkingpapers.com（论文，经 HN） | paper | https://edworkingpapers.com/ai26-1551 |
 
