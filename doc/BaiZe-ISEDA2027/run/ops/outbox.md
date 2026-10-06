@@ -8615,3 +8615,57 @@ env: ‘cline’: No such file or directory
 === DONE ===
 === ALL DONE ===
 ```
+
+---
+
+## RUN_ID 80 · 2026-10-06 11:40:15 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 79 · unset bad git proxy on 36.15 $(date '+%F %T') ==="
+timeout 100 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+cd "$W" || { echo "(NO repo)"; exit 1; }
+echo "host=$(hostname)  $(date '+%F %T')"
+echo "--- git proxy BEFORE ---"
+git config --get http.proxy 2>/dev/null || echo "(http.proxy unset)"
+git config --get https.proxy 2>/dev/null || echo "(https.proxy unset)"
+git config --unset http.proxy 2>/dev/null; git config --unset https.proxy 2>/dev/null
+echo "--- git proxy AFTER ---"
+git config --get http.proxy 2>/dev/null || echo "(http.proxy unset OK)"
+git config --get https.proxy 2>/dev/null || echo "(https.proxy unset OK)"
+echo "--- procs ---"
+ps -eo pid,etime,args | grep -E 'zhulong_(loop|ops_relay)\.sh' | grep -v grep | cut -c1-140 || echo "(none)"
+echo "--- loop log tail ---"
+tail -6 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-190
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
+
+**输出**
+```
+=== RUN_ID 79 · unset bad git proxy on 36.15 2026-10-06 11:40:15 ===
+Warning: Permanently added '[localhost]:3333' (ED25519) to the list of known hosts.
+host=hfeg0tedaap02  2026-10-06 11:40:16
+--- git proxy BEFORE ---
+(http.proxy unset)
+(https.proxy unset)
+--- git proxy AFTER ---
+(http.proxy unset OK)
+(https.proxy unset OK)
+--- procs ---
+2646996       03:24 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+2647415       03:19 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+--- loop log tail ---
+[loop] 2026-10-06 11:36:51 wake up, invoking cline ...
+env: ‘cline’: No such file or directory
+[loop] 2026-10-06 11:36:51 cline returned (exit 0), checking git sync ...
+[push] 2026-10-06 11:36:51 push interval reached, syncing ...
+[push] fetch FAILED (network?) - skip this cycle.
+[loop] 2026-10-06 11:38:51 WAITING=1 (eval running / infra not ready) → sleep 1800s
+=== DONE ===
+=== ALL DONE ===
+```
