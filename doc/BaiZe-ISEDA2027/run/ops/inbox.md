@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 79 -->
+<!-- RUN_ID: 80 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -30,6 +30,47 @@
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`。
 
 ---
+
+## RUN_ID 80 — 🔧 **带"显式 PATH(cline) + https_proxy"重启 ZhuLong relay/loop**（修正 77/78 用非登录 shell 重启的副作用）
+
+> **背景（supervisor 2026-10-06 11:4x）**：RUN_ID 79 复核发现 loop 虽然活着，但日志报 **`env: 'cline': No such file or directory`** 与 **`[push] fetch FAILED (network?)`** ⇒ 根因是 **RUN_ID 77/78 用 ssh 的非交互 shell 重启**，**PATH 里没有 nvm 的 `cline`、env 里没有 `~/.bashrc:119` 的 `https_proxy`**。⇒ 本块**显式注入**这两样再重启（不依赖 `.bashrc` 是否被 source）。
+> **本块**：① 测 36.15 的 `https_proxy=http://172.19.92.23:13128`（`.23`，注意**不是** `.25`）是否可用；② 自动定位 `~/.nvm/versions/node/*/bin/cline`；③ 用"显式 PATH+proxy"重启 relay 与 loop；④ 复核日志首行与新 PID。🚫 不改 `.bashrc`、不改 ZhuLong 脚本。
+
+FENCEbash
+set -u
+echo "=== RUN_ID 80 · restart ZhuLong with explicit PATH+proxy $(date '+%F %T') ==="
+timeout 180 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+PX=http://172.19.92.23:13128
+cd "$W" || { echo "(NO repo)"; exit 1; }
+echo "host=$(hostname)  $(date '+%F %T')"
+echo "--- [1] proxy .23 reachable from 36.15? ---"
+timeout 25 curl -x "$PX" -sS -o /dev/null -w 'via_.23_github=%{http_code}
+' --max-time 22 https://github.com 2>&1 | cut -c1-170
+echo "--- [2] locate cline / node bin ---"
+NB="$(ls -d "$HOME"/.nvm/versions/node/*/bin 2>/dev/null | tail -1)"
+echo "nodebin=$NB"
+[ -x "$NB/cline" ] && echo "cline found: $NB/cline" || echo "(no cline at $NB)"
+command -v cline >/dev/null 2>&1 && echo "cline already in PATH" || echo "(cline NOT in current PATH)"
+echo "--- [3] restart relay+loop with explicit PATH + proxy ---"
+export PATH="$NB:$HOME/.bun/bin:$PATH"
+export https_proxy="$PX"
+export http_proxy="$PX"
+command -v cline >/dev/null 2>&1 && echo "cline OK in new env" || echo "!! cline STILL missing"
+R="$W/doc/ZhuLong_DAC2027/run"
+pkill -f zhulong_loop.sh 2>/dev/null
+pkill -f zhulong_ops_relay.sh 2>/dev/null
+sleep 3
+setsid bash "$R/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+setsid bash "$R/zhulong_ops_relay.sh" > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
+sleep 5
+ps -eo pid,etime,args | grep -E 'zhulong_(loop|ops_relay)\.sh' | grep -v grep | cut -c1-140 || echo "(NOT up!)"
+echo "--- [4] loop log after ~5s (expect: wake up, invoking cline ...) ---"
+tail -5 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-190
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
 
 ## RUN_ID 79 — 🧹 **清掉我误设的 `git http.proxy`（36.15）** + 复核 ZhuLong 恢复（只读）
 
