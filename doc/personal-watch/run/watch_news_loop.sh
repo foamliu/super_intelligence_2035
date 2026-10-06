@@ -40,7 +40,7 @@ MODEL="deepseek-flash"          # 调研+整理用 flash（便宜/快）；要�
 #    新闻采集主要是"搜索 + 读 + 写摘要"，不需要深推理 → 默认 **low**；要更省可设 `none`。
 THINKING="low"
 CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟（与 BaiZe 一致）
-PUSH_INTERVAL=18000             # 每 5 小时兜底同步一次（与 BaiZe 一致；agent 每轮自己也会提交）
+PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（2026-10-06 由 18000/5h 缩短，与 BaiZe 一致；agent 每轮自己也会提交）
 SLEEP_SHORT=60                  # WAITING=0 / 失败重试：短睡 1 分钟（= BaiZe SLEEP_BUSY）
 SLEEP_LONG=1800                 # WAITING=1（无近期待办）→ 睡 30 分钟（= BaiZe SLEEP_WAIT）
 MEMORY="$SCRIPT_DIR/MEMORY_NEWS.md"

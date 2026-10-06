@@ -36,7 +36,7 @@ MODEL="deepseek-flash"          # 论文检索/整理用 flash（便宜/快）�
 # 推理强度（cline `--thinking`）：none|low|medium|high|xhigh；省略=用 provider 默认（flash 默认 high）。
 THINKING="low"                  # 采集+整理为主，不需要深推理；要更省可设 none
 CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟（与 BaiZe 一致）
-PUSH_INTERVAL=18000             # 每 5 小时兜底同步一次（与 BaiZe 一致；agent 每轮自己也会提交）
+PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（2026-10-06 由 18000/5h 缩短，与 BaiZe 一致；agent 每轮自己也会提交）
 SLEEP_SHORT=60                  # WAITING=0 / 失败重试：短睡 1 分钟（= BaiZe SLEEP_BUSY）
 SLEEP_LONG=1800                 # WAITING=1（无近期待办）→ 睡 30 分钟（= BaiZe SLEEP_WAIT）
 MEMORY="$SCRIPT_DIR/MEMORY_RESEARCH.md"

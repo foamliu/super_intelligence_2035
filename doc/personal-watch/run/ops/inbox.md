@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（supervisor 编辑，中继只读执行）
 
-<!-- RUN_ID: 7 -->
+<!-- RUN_ID: 8 -->
 
 > **用法**：在下面**新增一段** `## RUN_ID N`（N 递增）+ **一个 ```bash 块** → `git push`。
 > 中继（`ops_relay.sh`）轮询发现 **RUN_ID 变大** → 执行 → 结果 append 到 `ops/outbox.md` → push。
@@ -355,3 +355,62 @@ echo
 echo "=== 7. git 状态 ==="
 cd ~/super_intelligence_2035 2>/dev/null && git log --oneline -3 && echo '--- dirty ---' && git status --short | head -10
 ```
+
+## RUN_ID 8 — 🔧 **把 news / research 两条 loop 的兜底推送间隔 5h→30min 并重启生效**（本块会 kill 重启这两条 loop）
+
+**背景（supervisor 2026-10-06 ~10:4x，用户指令）**：用户令「三条线（personal-watch news/research、ZhuLong）把 PUSH_INTERVAL 调短；**先动 news/research**」。
+- 已改脚本：`watch_news_loop.sh` / `watch_research_loop.sh` 的 `PUSH_INTERVAL` **18000 → 1800**（5h→30min，与 BaiZe 一致）——**需重启 loop 才生效**。
+- 用户授权：**优先用本中继重启**；不行再由用户在服务器手工做。
+
+**本块动作（唯一会 kill 的块，仅 kill 这两条 loop；🚫 不碰任何中继进程）**：
+1. `git pull --rebase --autostash` 拿新脚本（**之后会核对 `PUSH_INTERVAL=1800`**）；
+2. 重启前先看该线**日志尾部是否为 `sleep`**（= 空闲）；**仅空闲才重启**，避免打断唤醒中的 cline（每条最多等 3min，超时则跳过、留待下个 RUN_ID）；
+3. `pkill -f watch_<线>_loop.sh` → `setsid` 重启 → 复查进程 + 新日志尾部。
+
+```bash
+set -u
+cd ~/super_intelligence_2035 || exit 1
+R=doc/personal-watch/run
+echo "=== 0. 基本 ==="
+hostname; date '+%F %T %Z'; uptime
+echo
+echo "=== 1. 同步（拿新脚本）==="
+git fetch origin --quiet 2>&1
+git pull --rebase --autostash origin main 2>&1 | tail -3
+echo
+echo "=== 2. 确认新 PUSH_INTERVAL（应均为 1800）==="
+grep -n '^PUSH_INTERVAL=' "$R/watch_news_loop.sh" "$R/watch_research_loop.sh"
+echo
+echo "=== 3. 重启前：进程 + 日志尾部 ==="
+ps -eo pid,etime,args | grep -E 'watch_(news|research)_loop\.sh' | grep -v grep | cut -c1-140 || echo "(无 loop 在跑)"
+for n in news research; do echo "--- $n ---"; tail -2 "/tmp/watch_${n}_loop.log" 2>/dev/null | cut -c1-160 || echo "(无日志)"; done
+echo
+echo "=== 4. 逐个重启（仅当 sleep 空闲；避免打断唤醒中的 cline）==="
+restart_one() {
+  n="$1"; log="/tmp/watch_${n}_loop.log"; i=0
+  echo "--- [$n] ---"
+  while [ "$i" -lt 6 ]; do
+    tail -1 "$log" 2>/dev/null | grep -q 'sleep' && break
+    echo "  [$n] 疑似唤醒中 -> 等 30s"; sleep 30; i=$((i+1))
+  done
+  if ! tail -1 "$log" 2>/dev/null | grep -q 'sleep'; then
+    echo "  [$n] 等待 3min 仍非空闲 -> 本轮不重启（下个 RUN_ID 再试）"; return 0
+  fi
+  echo "  [$n] 空闲 -> 重启"
+  pkill -f "watch_${n}_loop.sh" 2>/dev/null; sleep 2
+  cd "$HOME/super_intelligence_2035/doc/personal-watch/run" || return 1
+  setsid bash "watch_${n}_loop.sh" > "$log" 2>&1 < /dev/null &
+  cd "$HOME/super_intelligence_2035" || return 1
+  sleep 3
+  ps -eo pid,etime,args | grep "watch_${n}_loop.sh" | grep -v grep | cut -c1-140 || echo "  [$n] 未起来！"
+}
+restart_one news
+restart_one research
+echo
+echo "=== 5. 重启后进程 ==="
+ps -eo pid,etime,args | grep -E 'watch_(news|research)_loop\.sh' | grep -v grep | cut -c1-140 || echo "(无)"
+echo "=== 6. 新日志尾部 ==="
+for n in news research; do echo "--- $n ---"; tail -3 "/tmp/watch_${n}_loop.log" 2>/dev/null | cut -c1-160; done
+echo "=== DONE ==="
+```
+
