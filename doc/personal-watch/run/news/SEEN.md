@@ -291,3 +291,12 @@
 | 2026-10-05 | It's a Plan – issue tracker where people and AI agents ship together | itsaplan.dev（产品页，经 HN） | tool | https://itsaplan.dev |
 | 2026-10-05 | Ask HN: Are there AI models for generating sounds based on a text and reference? | Hacker News（Ask HN） | discussion | https://news.ycombinator.com/item?id=49972125 |
 
+| 2026-10-06 | 我国应用下一代通信关键技术空心光纤，AI 算力时代给光信号造出"磁悬浮"高速轨道 | IT之家 | news | https://www.ithome.com/1/009/941.htm |
+| 2026-10-06 | 挪威政府拟在部分敏感区域实施人工智能眼镜临时禁令 | IT之家 | news(同事件) | https://www.ithome.com/1/009/945.htm |
+| 2026-10-06 | 叫板 DeepSeek、Kimi，英伟达投资的 Reflection AI 发布旗下首款开放权重 AI 模型 Beam | IT之家 | news(同事件) | https://www.ithome.com/1/009/932.htm |
+| 2026-10-06 | 奥尔特曼：马斯克是个"霸凌者"，只尊重敢于回击他的人 | IT之家 | opinion | https://www.ithome.com/1/009/936.htm |
+| 2026-10-06 | 高盛上调台积电目标价至 3300 新台币，预示约 28% 上涨空间 | IT之家 | analysis | https://www.ithome.com/1/009/937.htm |
+| 2026-10-06 | 欧盟推行数字主权遇阻，微软 Teams 替代方案被某官员吐槽"绝对垃圾" | IT之家 | news(非 AI) | https://www.ithome.com/1/009/939.htm |
+| 2026-10-06 | Ask HN: How are AI budgets changing in your company? | Hacker News（Ask HN） | discussion | https://news.ycombinator.com/item?id=49972842 |
+| 2026-10-06 | I am building an Online Adobe Illustrator | Hacker News | discussion | https://news.ycombinator.com/item?id=49972994 |
+
