@@ -58,6 +58,8 @@ git status --short 2>/dev/null | head -6 | cut -c1-140
 echo "=== DONE ==="
 EOS
 echo "=== ALL DONE ==="
+```
+
 ## RUN_ID 77 — 🔧 **ZhuLong（36.15）git 追平**：备份 → 挪未跟踪文件 → `fetch`(150s) → `rebase --autostash`(280s) → 成功才重启
 
 > **背景（supervisor 2026-10-06 11:3x）**：RUN_ID 76 诊断 —— 36.15 仓库 **`ahead 5, behind 304`**（长期推不出去 ⇒ 落后 304 提交）；`pull --rebase --autostash` **不是报错而是 120s 超时被杀**（rc=124）；另有 **2 个残留 `autostash`** 与未跟踪的 `doc/三机互联方法.md`。⇒ 上一块的 120s 不够用，本块**加长超时**并**先备份**。
