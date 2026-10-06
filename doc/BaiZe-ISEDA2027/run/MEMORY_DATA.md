@@ -10,10 +10,10 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) → 🔄 BO搜索Stable段进行中(49/200 trial完成+6运行中, PID 36451, GPU2-7; best=4.6497 #44)
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；proxy d128 provider+recipe创建；held-out bin(base/code/math各~2M tok)；baize_mix_optuna.py创建(GP-EI)；5项必验全部通过(09:48)；BO搜索Stable段已启动(10:01)→GP竞态crash修复+重启(11:25)→49/200完成(12:42)；**任务书归档完成(79.8KB→31.6KB)**
-当前动作:     唤醒152(12:42) ①查BO搜索进度:49/200完成+6运行中(PID 36451 alive,etimes=4648s≈77min,GPU2-7各~6.7GB/0-15%util) ②DB查询:best=4.6497(#44 web=0.800/code=0.112/math=0.088),top5=#44/33/36/47/43(loss 4.650~4.692),先验(88:8:4)最近=#49 loss=4.898 rank23/49 Δ=0.249(5.3%更差),rate~43trial/h ETA~16:00 ③更新心跳+日报+commit
-下一步:       ① BO搜索继续(~145 trial剩余,ETA~16:00);② 每~30-60min查进度+commit心跳;③ 200 trial完成→出top-K表+先验点对比+best-so-far曲线;④ Day2搜Decay段
+PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) → 🔄 BO搜索Stable段进行中(61/200 trial完成+6运行中, PID 36451@.29, GPU2-7; best=4.6497 #44)
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；proxy d128 provider+recipe创建；held-out bin(base/code/math各~2M tok)；baize_mix_optuna.py创建(GP-EI)；5项必验全部通过(09:48)；BO搜索Stable段已启动(10:01)→GP竞态crash修复+重启(11:25)→61/200完成(13:21)；**任务书归档完成(79.8KB→31.6KB)**
+当前动作:     唤醒153(13:21) ①确认BO在.29运行(PID 36451 alive,etimes=7045s≈117min)，本机=.12(vision R12b占.12 GPU0-7，与data无冲突) ②DB查询:61/200 complete,best=4.6497(#44 web=0.8002/code=0.1117/math=0.088),top5=#44/56/60/33/36(loss 4.650~4.680),先验(88:8:4)最近=#49 loss=4.898 rank~23/61 Δ=0.249(5.3%更差),rate~21.5trial/h ETA~19:30 ③更新心跳+日报+commit
+下一步:       ① BO搜索继续(~139 trial剩余,ETA~19:30);② 每~30-60min查进度+commit心跳;③ 200 trial完成→出top-K表+先验点对比+best-so-far曲线;④ Day2搜Decay段
 阻塞:         无
 ERROR_COUNT:  0
 ```
@@ -99,6 +99,8 @@ ERROR_COUNT:  0
 - [12:08] **唤醒151**：①BO搜索进度=**37/200 trial完成**+6运行中(PID 36451 alive,etimes=2504s≈42min,GPU2-7各~6.7GB/10%util)。②DB查询(best loss asc):**best=4.6785**(#33:web=0.8142/code=0.1042/math=0.0815),top5=#33/36/16/9/15(loss 4.678~4.720),**先验(88:8:4)最近trial=#13**(web=0.8906/code=0.0757/math=0.0337,loss=4.9135,**rank 17/37**,**Δ=0.235=5%更差**)→BO已找到更优配比(更多math~8-12%/更少web~81-84%)。③rate~25trial/h(37trial/1.9h),剩余163trial→ETA~18:40。④log仅sklearn ConvergenceWarning(length_scale近下界,非致命)。📦 体积：TASK=31.6KB / MEMORY=27.2KB（归档 0KB）。
 
 - [12:42] **唤醒152**：①BO搜索进度=**49/200 trial完成**+6运行中(PID 36451 alive,etimes=4648s≈77min,GPU2-7各~6.7GB/0-15%util)。②DB查询(best loss asc):**best=4.6497**(#44:web=0.8002/code=0.1117/math=0.088),top5=#44/33/36/47/43(loss 4.650~4.692),**先验(88:8:4)最近trial=#49**(web=0.8841/code=0.0832/math=0.0327,loss=4.8983,**rank 23/49**,**Δ=0.2486=5.3%更差**)→BO持续优化,最佳点向web=0.80/code=0.11/math=0.09收敛(更多code/math/更少web)。③rate~43trial/h(55trial/77min since restart),剩余145trial→ETA~16:00。④创建query_bo.py(DB查询脚本)。📦 体积：TASK=31.6KB / MEMORY=27.7KB（归档 0KB）。
+
+- [13:21] **唤醒153**：①**环境确认**:本机=`.12`(hostname=whag0pgpuap12)，vision R12b(r9_train.py,PID 2669627)占.12 GPU0-7(~16.5GB/卡,60-90%util,~26min前启动)→**与data无冲突**，BO搜索在**.29**上运行。②SSH .29确认:PID 36451 alive(etimes=7045s≈117min)，GPU2-7各6689MiB/9-15%util，GPU0-1空。③DB查询:**61/200 complete**(全部status=complete,0 pruned),6 running(t0061-t0066)。best=4.6497(#44:web=0.8002/code=0.1117/math=0.088),top5=#44/56/60/33/36(loss 4.650~4.680),先验(88:8:4)最近#49 loss=4.898 rank~23/61 Δ=0.249(5.3%更差)。④rate~21.5trial/h(42new/117min),剩余139→ETA~19:30。📦 体积：TASK=31.6KB / MEMORY=28.4KB（归档 0KB）。
 
 ## 运维问答
 
