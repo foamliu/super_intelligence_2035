@@ -10,7 +10,7 @@ WAITING: 0
 | WAITING | 0（**全部完成**。R12 3-epoch scaling: 35 点, R²=0.94, a 撞上界不可定, 非单调(7/34), 3ep lp=20.27%@176M 仍攀升 → AIMv2 渐近 >>25.1% 强化。VERDICT: NON-MONOTONIC, 诚实报告）|
 | ERROR_COUNT | 3（① R9 w512 首跑 crash：损坏 jpg → data.py 修复 ② 续跑首试 crash：r9_train.py `log()` 在定义前被 resume 块调用 → 改为 `print()` 修复 ③ **8-GPU 并行 eval NFS 争用卡死**：8 进程×冗余读 40 parquet → 43min 仅 3-4 文件 → 已 kill，改 4-GPU r12_single_eval.sh） |
 | BUDGET_USED | R2–R12 累计 + **R12 完成**（6.3h×8卡≈50.4 GPU·h）+ **3-epoch 续跑完成**（10.9h×8卡≈87.1 GPU·h, 总 ≈215 GPU·h） |
-| 更新 | **2026-10-06 12:10（idle check #2: git pull=up-to-date, 无新运维指令, 3 份交付物已确认存在(report_vision_lp_eval.html 27KB / report_vision_aimv2_impl.html 31KB / VISION_NEXT_DIRECTIONS.md 7KB), GPU 全空闲, WAITING=0 保持. 📦 TASK=25KB/MEMORY=31KB）· *[更早见 daily-memories-vision/2026-10-06.md]* |
+| 更新 | **2026-10-06 12:17（idle check #3: git pull(proxy)=up-to-date, 无新运维指令, 3 份交付物已确认存在, push 成功(011d247c→origin), WAITING=0 保持. 📦 TASK=25KB/MEMORY=31KB）· *[更早见 daily-memories-vision/2026-10-06.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -198,6 +198,10 @@ WAITING: 0
 - 🔧 **修了 2 个 bug**：① `r9_train.py:370` resume 块调 `log()` 但 `log` 在 line 445 才定义 → `UnboundLocalError` → 改为 `print(..., flush=True)`（py_compile 过）；② `r12_continue_watcher.sh:24` `grep -c python || echo 0` 当 0 match 时输出 `0\n0` 双行 → `[: integer expression expected` → 改为 `grep -c python` + `N=${N:-0}`（bash -n 过）。
 - 脚本：`r12_continue_3epoch.sh`（父已退出, 8 rank orphaned ppid=1）；日志 `/tmp/r12_continue_3epoch.log`；eval watcher 日志 `/tmp/r12_continue_eval_watcher.log`。
 - [10:02] 巡检：3-epoch 续跑 step 334,800/344k(97.4%), PROBE C4=OK, loss=1.4470, 8卡活, NCCL [W]非致命, ETA~10:30. 所有交付物已完成.
+
+## 本唤醒流水
+
+- [12:17] idle check #3: git pull(proxy 172.19.92.25:13128)=up-to-date, 无新运维指令; push 011d247c→origin 成功; 交付物全在(lp_eval 27KB/aimv2_impl 31KB/next_dir 7KB); 体积 TASK=25KB/MEMORY=31KB ≤32KB; WAITING=0 保持.
 
 ## 历史条目已滚动归档（2026-10-03）
 
