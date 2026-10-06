@@ -48,6 +48,7 @@ export TOKENIZERS_PARALLELISM=false
 PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python
 ARMS="${1:-0.3 0.5 0.6 0.75 0.9}"
 STEPS="${2:-30000}"
+NW=6
 
 CC12M='/nas_train/app.e0031982/datasets/conceptual-captions-12m-webdataset/data/*.tar'
 AMSH='/nas_user/app.e0031982/datasets/Amshaker/Mobile-O-Pre-Train/*.tar'
