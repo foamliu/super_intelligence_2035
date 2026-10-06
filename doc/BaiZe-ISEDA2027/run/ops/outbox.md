@@ -7887,3 +7887,279 @@ Filesystem                    Type  Size  Used Avail Use% Mounted on
 --- C5. OOM / process-died records 07:20-08:40 ---
 === relay block done ===
 ```
+
+---
+
+## RUN_ID 74 · 2026-10-06 08:55:38 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== RUN_ID 74 · read-only recon + [D] sync new discipline + [E] restart pre-flight $(date '+%F %T') ==="; hostname; whoami
+K=k; PAT="${K}ill"
+
+echo; echo "=== [A] .12 · data line (ssh read-only) ==="
+timeout 300 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-165
+K=k; PAT="${K}ill"
+hostname; date '+%F %T'
+W=/nas_train/app.e0031982/code/super_intelligence_2035; R=$W/doc/BaiZe-ISEDA2027/run
+echo "--- A1. data loop process ---"
+pgrep -f 'baize_data_loop.sh' >/dev/null 2>&1 && pgrep -af 'baize_data_loop.sh' | cut -c1-110 || echo "   !! baize_data_loop.sh NOT RUNNING"
+echo "--- A2. loop log: mtime / Forbidden / last 12 lines ---"
+echo "   mtime=$(stat -c '%y' /tmp/baize_data_loop.log 2>/dev/null | cut -c1-19)  bytes=$(stat -c '%s' /tmp/baize_data_loop.log 2>/dev/null)  Forbidden=$(grep -c 'error:.*Forbidden' /tmp/baize_data_loop.log 2>/dev/null)"
+tail -12 /tmp/baize_data_loop.log 2>/dev/null | cut -c1-165
+echo "--- A3. *** worktree: uncommitted changes (what data is doing) ---"
+cd "$W" 2>/dev/null
+git status -s 2>/dev/null | head -25 | cut -c1-120
+echo "   dirty_files=$(git status --porcelain 2>/dev/null | wc -l)  unpushed=$(git log origin/main..HEAD --oneline 2>/dev/null | wc -l)"
+git log origin/main..HEAD --oneline 2>/dev/null | head -6 | cut -c1-115
+echo "   HEAD: $(git log -1 --format='%h %ad %s' --date=format:'%F %T' 2>/dev/null | cut -c1-115)"
+echo "   reflog4: $(git reflog -4 2>/dev/null | tr '\n' '|' | cut -c1-155)"
+echo "   s0a_script_diff: $(git diff --stat -- run/baize_mix_stable_s0a.sh 2>/dev/null | tail -1 | cut -c1-90)"
+grep -niE "deprecat|wakeup|${PAT}" run/baize_mix_stable_s0a.sh 2>/dev/null | head -5 | cut -c1-140
+echo "--- A4. data-owned files mtime ---"
+stat -c '%y | %s | %n' "$R/MEMORY_DATA.md" "$R/GPU29_ALLOC.md" "$R/DATA_MIX_RECIPE.md" 2>/dev/null | cut -c1-120
+ls -lt --time-style=+%F_%T "$R/daily-memories-data/" 2>/dev/null | head -4 | cut -c1-120
+echo "--- A5. proxy/calibration scripts: which size is coded? ---"
+ls -lt --time-style=+%F_%T "$R"/proxy* "$R"/data_pipeline/proxy* 2>/dev/null | head -6 | cut -c1-140
+grep -niE 'd=128|h512|96\.8|regmix|GBS' "$R"/proxy*.py "$R"/proxy*.sh 2>/dev/null | head -8 | cut -c1-150
+echo "--- A6. s0a trace inside cline session dirs (wake-145 forensics) ---"
+for d in "$HOME/.cline_data" "$HOME/.cline"; do
+  if [ -d "$d" ]; then echo "   dir=$d"; timeout 60 grep -rl 'mix_stable_s0a' "$d" 2>/dev/null | head -4 | cut -c1-160; fi
+done
+echo "--- A7. .12 GPUs ---"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -4
+echo "=== DONE(.12) ==="
+EOS12
+
+echo; echo "=== [B] base download status (.29, read-only) ==="
+B=/nas_train/app.e0031982/datasets
+echo "--- B1. download processes ---"; DL=$(ps -eo pid=,etimes=,args= | grep -iE 'huggingface|hf_transfer|snapshot_download' | grep -v grep | cut -c1-150); if [ -n "$DL" ]; then echo "$DL"; else echo "   (no download process)"; fi
+echo "--- B2. PID 550476 alive? ---"; ps -p 550476 -o pid=,etimes=,stat=,args= 2>/dev/null | cut -c1-150; ps -p 550476 >/dev/null 2>&1 && echo "   [OK] PID 550476 still alive" || echo "   (PID 550476 gone)"
+echo "--- B3. l1_en_hq on-disk progress ---"
+ls -d $B/*l1_en_hq* $B/*fineweb* 2>/dev/null | head -4
+for d in $(ls -d $B/*l1_en_hq* 2>/dev/null | head -2); do echo "   $d"; timeout 30 ls -l --time-style=+%F_%T "$d" 2>/dev/null | tail -4 | cut -c1-130; done
+echo "   files_changed_last_24h: $(timeout 60 find $B -maxdepth 3 -name '*l1_en_hq*' -newermt '-24 hours' 2>/dev/null | wc -l)"
+echo "--- B4. disk ---"; df -hT /nas_train 2>/dev/null | tail -2 | cut -c1-120
+
+echo; echo "=== [C] .29 8 GPUs + S0a leftovers + loops (local, read-only) ==="
+W=/nas_train/app.e0031982/code/super_intelligence_2035; R=$W/doc/BaiZe-ISEDA2027/run
+echo "--- C1. 8 GPUs recheck ---"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null
+echo "--- C2. S0a leftovers ---"; pgrep -f 'mix_stable_s0a' >/dev/null 2>&1 && pgrep -af 'mix_stable_s0a' | cut -c1-150 || echo "   (no S0a process)"
+set -- /tmp/restart_*s0a* /tmp/restart_*mix*; [ -e "$1" ] && ls -l "$@" | cut -c1-130 || echo "   (no restart script)"
+crontab -l 2>/dev/null | grep -niE 's0a|mix_stable' || echo "   (crontab clean)"
+echo "--- C3. proxy/calibration running? ---"; pgrep -f 'proxy|calibrat|regmix' >/dev/null 2>&1 && pgrep -af 'proxy|calibrat|regmix' | cut -c1-120 || echo "   (none - consistent with pretrain #127)"
+echo "--- C4. loops + relay ---"; pgrep -af 'baize_.*_loop.sh|ops_relay.sh|watchdog' | cut -c1-100; echo "   last_run_id=$(cat "$R/ops/.last_run_id" 2>/dev/null)"
+echo "--- C5. OOM / process-died records 07:20-08:40 ---"
+dmesg -T 2>/dev/null | grep -iE "oom|out of memory|${PAT}ed process" | tail -6 | cut -c1-170 || echo "   (dmesg unreadable / no record)"
+journalctl -k --since '2026-10-06 07:20' --until '2026-10-06 08:40' 2>&1 | grep -iE "oom|${PAT}" | tail -6 | cut -c1-170
+
+echo; echo "=== [D] 把新纪律同步进共享工作副本（收尾铁律 + 体积规程 + PUSH_INTERVAL 30min）$(date '+%F %T') ==="
+W=/nas_train/app.e0031982/code/super_intelligence_2035; R=$W/doc/BaiZe-ISEDA2027/run; REL=doc/BaiZe-ISEDA2027/run
+cd "$W" 2>/dev/null || echo "   !! 无法进入 $W"
+timeout 120 git fetch origin -q 2>&1 | tail -1
+echo "   origin/main=$(git log -1 --format='%h %ad %s' --date=format:'%m-%d_%H:%M' origin/main 2>/dev/null | cut -c1-100)"
+echo "   HEAD=$(git rev-parse --short HEAD)  ahead=$(git rev-list --count origin/main..HEAD 2>/dev/null)  behind=$(git rev-list --count HEAD..origin/main 2>/dev/null)  dirty=$(git status --porcelain 2>/dev/null | wc -l)"
+sync_one() {
+  f="$1"
+  if [ -n "$(git status --porcelain -- "$REL/$f" 2>/dev/null | head -1)" ]; then echo "   SKIP $f（工作副本有改动 ⇒ 保留在途编辑）"; return; fi
+  if [ -n "$(git rev-list origin/main..HEAD -- "$REL/$f" 2>/dev/null | head -1)" ]; then echo "   SKIP $f（本副本有该文件未推送提交）"; return; fi
+  if [ "$(git rev-parse HEAD:"$REL/$f" 2>/dev/null)" = "$(git rev-parse origin/main:"$REL/$f" 2>/dev/null)" ]; then echo "   ok   $f（已是 origin 版）"; return; fi
+  git show "origin/main:$REL/$f" > "$R/$f" 2>/dev/null && echo "   SYNC $f -> $(wc -c < "$R/$f") B"
+}
+for f in BAIZE_DATA_TASK.md BAIZE_PRETRAIN_2B_TASK.md BAIZE_VISION_TASK.md BAIZE_HARNESS_TASK.md baize_data_loop.sh baize_pretrain_loop.sh baize_harness_loop.sh baize_vision_loop.sh baize_2b_search_loop.sh; do sync_one "$f"; done
+echo "   --- 同步后判据（四线任务书应有：5 件事 / 体积自检 / 体积规程 各 >=1）---"
+for f in BAIZE_DATA_TASK.md BAIZE_PRETRAIN_2B_TASK.md BAIZE_VISION_TASK.md BAIZE_HARNESS_TASK.md; do
+  printf '   %-32s 5件事=%s 体积自检=%s 体积规程=%s\n' "$f" "$(grep -c '这 5 件事' "$R/$f")" "$(grep -c '体积自检（先跑' "$R/$f")" "$(grep -c '📉 体积维护规程' "$R/$f")"
+done
+echo "   PUSH_INTERVAL=1800 的脚本：$(grep -l '^PUSH_INTERVAL=1800' "$R"/baize_*_loop.sh 2>/dev/null | xargs -r -n1 basename | tr '\n' ' ')"
+echo "   ⚠️ 正在运行的老 loop 仍持有旧常量(18000)，需重启才生效 —— 证据见 [E]，重启留到下一块。"
+
+echo; echo "=== [E] 重启前置取证（只读，不做任何 kill）==="
+echo "--- E1. .29 loops ---"; pgrep -af 'baize_.*_loop\.sh' 2>/dev/null | cut -c1-110 || echo "   (none)"
+echo "--- E2. 每个 loop 的在跑子进程（空 = 未在唤醒 ⇒ 该线可无风险重启）---"
+for p in $(pgrep -f 'baize_.*_loop\.sh' 2>/dev/null); do
+  echo "   loop pid=$p etime=$(ps -o etimes= -p "$p" 2>/dev/null | tr -d ' ')s  $(ps -o args= -p "$p" 2>/dev/null | cut -c1-46)"
+  ps --ppid "$p" -o pid=,etimes=,args= 2>/dev/null | cut -c1-118 | sed 's/^/       child: /'
+done
+echo "--- E3. .29 cline（看 data-dir ⇒ 判哪条线在唤醒）---"
+pgrep -af 'cline' 2>/dev/null | grep -v grep | cut -c1-130 || echo "   (无 cline)"
+echo "--- E4. loop 日志 mtime ---"; for f in /tmp/baize_data_loop.log /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log /tmp/baize_vision_loop.log /tmp/baize_2b_loop.log; do [ -f "$f" ] && echo "   $(stat -c '%y' "$f" | cut -c1-19)  $f"; done
+echo "--- E5. 共享工作副本卫生 ---"; ls -l "$W/.git/index.lock" 2>/dev/null || echo "   (no index.lock)"
+echo "--- E6. 心跳文件 mtime（本地副本）---"; ls -l --time-style=+%F_%T "$R"/MEMORY_*.md 2>/dev/null | awk '{print "   "$6"  "$7}'
+echo "=== DONE(.29) ==="
+
+echo; echo "=== [E2] .12 的 loops / 子进程 / cline（ssh 只读）==="
+timeout 300 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-165
+hostname; date '+%F %T'
+W=/nas_train/app.e0031982/code/super_intelligence_2035; R=$W/doc/BaiZe-ISEDA2027/run
+echo "--- F1. loops ---"; pgrep -af 'baize_.*_loop\.sh' 2>/dev/null | cut -c1-110 || echo "   (none)"
+echo "--- F2. loop 子进程（空 = 未在唤醒）---"
+for p in $(pgrep -f 'baize_.*_loop\.sh' 2>/dev/null); do
+  echo "   loop pid=$p etime=$(ps -o etimes= -p "$p" 2>/dev/null | tr -d ' ')s  $(ps -o args= -p "$p" 2>/dev/null | cut -c1-46)"
+  ps --ppid "$p" -o pid=,etimes=,args= 2>/dev/null | cut -c1-118 | sed 's/^/       child: /'
+done
+echo "--- F3. cline ---"; pgrep -af 'cline' 2>/dev/null | grep -v grep | cut -c1-130 || echo "   (无 cline)"
+echo "--- F4. 日志 mtime ---"; for f in /tmp/baize_data_loop.log /tmp/baize_vision_loop.log /tmp/baize_2b_loop.log; do [ -f "$f" ] && echo "   $(stat -c '%y' "$f" | cut -c1-19)  $f"; done
+echo "--- F5. 工作副本（与 .29 共享，应一致）---"; cd "$W" 2>/dev/null && echo "   HEAD=$(git rev-parse --short HEAD) ahead=$(git rev-list --count origin/main..HEAD 2>/dev/null) dirty=$(git status --porcelain 2>/dev/null | wc -l)"
+echo "   index.lock: $(ls -l "$W/.git/index.lock" 2>/dev/null || echo none)"
+echo "=== DONE(.12) ==="
+EOS12
+
+echo "=== relay block done ==="
+```
+
+**输出**
+```
+=== RUN_ID 74 · read-only recon + [D] sync new discipline + [E] restart pre-flight 2026-10-06 08:55:38 ===
+whag0pgpuap29
+app.e0031982
+
+=== [A] .12 · data line (ssh read-only) ===
+whag0pgpuap12
+2026-10-06 08:55:39
+--- A1. data loop process ---
+1827417 bash baize_data_loop.sh
+--- A2. loop log: mtime / Forbidden / last 12 lines ---
+   mtime=2026-10-06 08:50:19  bytes=6660161  Forbidden=0
+      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:607:13)
+      at logWarnings (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)
+      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)
+
+[loop] 2026-10-06 08:50:18 cline returned (exit 0), checking git sync ...
+[push] 2026-10-06 08:50:18 push interval reached, syncing ...
+fatal: unable to access 'https://github.com/foamliu/super_intelligence_2035.git/': Failed to connect to github.com port 443 after 1012 ms: Network is unreachable
+[push] fetch FAILED (network?) - skip this cycle.
+[loop] 2026-10-06 08:50:19 WAITING=1 (async task running) → sleep 1800s
+--- A3. *** worktree: uncommitted changes (what data is doing) ---
+ M doc/BaiZe-ISEDA2027/run/harness/kimi_pilot_results.json
+ M doc/BaiZe-ISEDA2027/run/ops/inbox.md
+   dirty_files=1  unpushed=0
+   HEAD: b3e2015e 2026-10-06 08:54:29 ops(RUN_ID 74): recon-only relay block + [D] guarded sync of the new discipline into t
+   reflog4: b3e2015e HEAD@{0}: pull --rebase --autostash origin main: Fast-forward|f3d9baf4 HEAD@{1}: pull --rebase --autostash origin main: updating HEAD|f3d9baf4 H
+   s0a_script_diff: 
+--- A4. data-owned files mtime ---
+2026-10-06 08:52:30.264349700 +0800 | 34721 | /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/r
+2026-10-06 08:52:30.260803350 +0800 | 13877 | /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/r
+2026-10-06 08:01:22.388474290 +0800 | 16256 | /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/r
+total 400
+-rw-r----- 1 app.e0031982 app.adm  46805 2026-10-06_02:19:14 2026-10-05.md
+-rw-r----- 1 app.e0031982 app.adm  80455 2026-10-05_04:26:09 2026-10-04.md
+-rw-r----- 1 app.e0031982 app.adm 106870 2026-10-04_07:15:28 2026-10-03.md
+--- A5. proxy/calibration scripts: which size is coded? ---
+--- A6. s0a trace inside cline session dirs (wake-145 forensics) ---
+   dir=/home/app.e0031982/.cline
+--- A7. .12 GPUs ---
+0, 16569 MiB, 66 %
+1, 16489 MiB, 73 %
+2, 16489 MiB, 70 %
+3, 16489 MiB, 81 %
+=== DONE(.12) ===
+
+=== [B] base download status (.29, read-only) ===
+--- B1. download processes ---
+   (no download process)
+--- B2. PID 550476 alive? ---
+   (PID 550476 gone)
+--- B3. l1_en_hq on-disk progress ---
+   files_changed_last_24h: 0
+--- B4. disk ---
+Filesystem                    Type  Size  Used Avail Use% Mounted on
+10.239.23.31:/vol_CTE0_data01 nfs   207T  174T   34T  84% /nas_train
+
+=== [C] .29 8 GPUs + S0a leftovers + loops (local, read-only) ===
+--- C1. 8 GPUs recheck ---
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 0 MiB, 0 %
+7, 0 MiB, 0 %
+--- C2. S0a leftovers ---
+   (no S0a process)
+   (no restart script)
+   (crontab clean)
+--- C3. proxy/calibration running? ---
+3175037 bash -c GW_UPSTREAM=http://agi-gateway.cxmt.com/cloud GW_API_KEY=02_088EE9051AAE4BF0ABFC7130331BF697_80a707b0-44
+3175038 python3 gw_proxy.py
+--- C4. loops + relay ---
+1648 watchdogd
+1391466 bash baize_pretrain_loop.sh
+1784375 bash baize_harness_loop.sh
+1963221 bash ops_relay.sh
+2489749 bash ops_relay.sh
+   last_run_id=73
+--- C5. OOM / process-died records 07:20-08:40 ---
+
+=== [D] 把新纪律同步进共享工作副本（收尾铁律 + 体积规程 + PUSH_INTERVAL 30min）2026-10-06 08:56:45 ===
+   origin/main=b3e2015e 10-06_08:54 ops(RUN_ID 74): recon-only relay block + [D] guarded sync of the new discipline
+   HEAD=b3e2015e  ahead=0  behind=0  dirty=1
+   ok   BAIZE_DATA_TASK.md（已是 origin 版）
+   ok   BAIZE_PRETRAIN_2B_TASK.md（已是 origin 版）
+   ok   BAIZE_VISION_TASK.md（已是 origin 版）
+   ok   BAIZE_HARNESS_TASK.md（已是 origin 版）
+   ok   baize_data_loop.sh（已是 origin 版）
+   ok   baize_pretrain_loop.sh（已是 origin 版）
+   ok   baize_harness_loop.sh（已是 origin 版）
+   ok   baize_vision_loop.sh（已是 origin 版）
+   ok   baize_2b_search_loop.sh（已是 origin 版）
+   --- 同步后判据（四线任务书应有：5 件事 / 体积自检 / 体积规程 各 >=1）---
+   BAIZE_DATA_TASK.md               5件事=1 体积自检=1 体积规程=2
+   BAIZE_PRETRAIN_2B_TASK.md        5件事=1 体积自检=1 体积规程=2
+   BAIZE_VISION_TASK.md             5件事=1 体积自检=1 体积规程=3
+   BAIZE_HARNESS_TASK.md            5件事=1 体积自检=1 体积规程=2
+   PUSH_INTERVAL=1800 的脚本：baize_2b_search_loop.sh baize_data_loop.sh baize_harness_loop.sh baize_pretrain_loop.sh baize_vision_loop.sh 
+   ⚠️ 正在运行的老 loop 仍持有旧常量(18000)，需重启才生效 —— 证据见 [E]，重启留到下一块。
+
+=== [E] 重启前置取证（只读，不做任何 kill）===
+--- E1. .29 loops ---
+1391466 bash baize_pretrain_loop.sh
+1784375 bash baize_harness_loop.sh
+--- E2. 每个 loop 的在跑子进程（空 = 未在唤醒 ⇒ 该线可无风险重启）---
+   loop pid=1391466 etime=140372s  bash baize_pretrain_loop.sh
+       child:   18218    1696 sleep 1800
+   loop pid=1784375 etime=147052s  bash baize_harness_loop.sh
+       child:   27778    1689 sleep 1800
+--- E3. .29 cline（看 data-dir ⇒ 判哪条线在唤醒）---
+2751345 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /nas_train/app.e00319
+--- E4. loop 日志 mtime ---
+   2026-10-06 08:28:35  /tmp/baize_pretrain_loop.log
+   2026-10-06 08:28:42  /tmp/baize_harness_loop.log
+   2026-10-01 15:25:49  /tmp/baize_vision_loop.log
+   2026-10-01 11:10:04  /tmp/baize_2b_loop.log
+--- E5. 共享工作副本卫生 ---
+   (no index.lock)
+--- E6. 心跳文件 mtime（本地副本）---
+   2026-10-01_11:09:49  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_2B.md
+   2026-10-06_08:52:30  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md
+   2026-10-06_08:27:45  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md
+   2026-10-06_08:27:35  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md
+   2026-10-06_08:52:30  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_VISION.md
+=== DONE(.29) ===
+
+=== [E2] .12 的 loops / 子进程 / cline（ssh 只读）===
+whag0pgpuap12
+2026-10-06 08:56:52
+--- F1. loops ---
+1815982 bash baize_vision_loop.sh
+1827417 bash baize_data_loop.sh
+--- F2. loop 子进程（空 = 未在唤醒）---
+   loop pid=1815982 etime=139075s  bash baize_vision_loop.sh
+       child: 1986793     211 sleep 1800
+   loop pid=1827417 etime=139071s  bash baize_data_loop.sh
+       child: 1764848     393 sleep 1800
+--- F3. cline ---
+2877399 bun /home/app.e0031982/.bun/bin/cline --id 1790841049934_g0m3m
+3041408 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /nas_train/app.e0031982 --host 1
+--- F4. 日志 mtime ---
+   2026-10-06 08:50:19  /tmp/baize_data_loop.log
+   2026-10-06 08:53:21  /tmp/baize_vision_loop.log
+--- F5. 工作副本（与 .29 共享，应一致）---
+   HEAD=b3e2015e ahead=0 dirty=1
+   index.lock: none
+=== DONE(.12) ===
+=== relay block done ===
+```
