@@ -36,6 +36,7 @@ from io import BytesIO
 
 import torch
 import torch.nn as nn
+import torchvision.transforms as T
 from PIL import Image
 
 import r8_eval_in1k as R8
