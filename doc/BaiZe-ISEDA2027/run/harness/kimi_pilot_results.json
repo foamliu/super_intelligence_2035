@@ -4965,5 +4965,38 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "psf__requests-2674",
+    "repo": "psf/requests",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template psf__requests-1963"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 499.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_psf__requests-2674.json",
+      "stdout_tail": "alse wall=499.4s ==\n[stderr tail] ...2026-10-06T05:09:46.257587Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 1774 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_psf__requests-2674.json\n[run_single] cleanup: git reset --hard 0be38a0c37c59c4b66ce908731da15b401655113\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 5,
+        "f2p_total": 12,
+        "p2p_pass": 116,
+        "p2p_total": 142
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]
