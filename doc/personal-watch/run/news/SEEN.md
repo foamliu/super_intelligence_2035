@@ -281,4 +281,13 @@
 | 2026-10-06 | The AI Buildout Has Turned into a Doom Loop | HN（bird.makeup/Mastodon 镜像） | analysis | https://bird.makeup/users/gnoble79/statuses/2107068301004210338 |
 | 2026-10-06 | Design Systems for AI Agents (Luke Wroblewski) | lukew.com（经 HN） | analysis | https://www.lukew.com/ff/2164/design-systems-for-ai-agents |
 | 2026-10-06 | AI Tutoring with Khanmigo in a Two-Year School Experiment | edworkingpapers.com（论文，经 HN） | paper | https://edworkingpapers.com/ai26-1551 |
+| 2026-10-06 | Schema-guard, stop AI agents from inventing column names in SQL | GitHub（经 HN） | tool | https://github.com/idk-arsh/schema-guard |
+| 2026-10-06 | What Is Proactive AI? | proton.me（公司博客，经 HN） | analysis | https://proton.me/blog/proactive-ai |
+| 2026-10-06 | Fireship: PewDiePie is setting AI free and OpenAI is furious [video] | YouTube（经 HN） | discussion | https://www.youtube.com/watch?v=_5p1_TNSWqQ |
+| 2026-10-05 | Show HN: Headline Arena – public forecasting records for AI agents | Hacker News（Show HN） | tool | https://headlinearena.com |
+| 2026-10-05 | Show HN: Cold B2B email should be free (FlyHedwig) | Hacker News（Show HN） | tool | https://flyhedwig.com |
+| 2026-10-05 | I'm building a personal AI computer startup in Mumbai | X/Twitter（经 HN） | discussion | https://x.com/gfaang97609 |
+| 2026-10-05 | Find people relevant to your situation and explore their minds | delphi.ai（产品页，经 HN） | tool | https://www.delphi.ai/discover/people |
+| 2026-10-05 | It's a Plan – issue tracker where people and AI agents ship together | itsaplan.dev（产品页，经 HN） | tool | https://itsaplan.dev |
+| 2026-10-05 | Ask HN: Are there AI models for generating sounds based on a text and reference? | Hacker News（Ask HN） | discussion | https://news.ycombinator.com/item?id=49972125 |
 
