@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🚀 **R12b 全量数据 AIMv2 训练中**（fresh run, 272k 步≈2 epoch, 7527 shards GPIC=4176+CC12M=1100+Amshaker=2250, bs=64×8=512, nw=6, 12:54 起, GPU util~70%, ~5100 img/s, ETA≈7.7h ~20:30）. ✅ 前置 AIMv2 提速归因实测完成（bs/nw 扫描→数据/IO 受限, ~5000 img/s 是 NFS 上限）|
-| WAITING | 1（**R12b 训练中** step~300/272000, loss 6.04→4.21, ~5100 img/s. 训练完自动跑 IN-1k eval → scaling 曲线. 预计 ~20:30 完成）|
+| PHASE | 🚀 **R12b 全量数据 AIMv2 训练中**（fresh run, 272k 步≈2 epoch, 7527 shards, 12:54 起, ~5100 img/s, step~21900/272000, ETA~20:00）. ✅ 论文 §6 改写完成（Boundary 段+3-epoch 结果回填, 见 §20）. ✅ 前置 AIMv2 提速归因实测完成 |
+| WAITING | 1（**R12b 训练中** step~21900/272000 ~8%, loss~2.8, C4=OK, ~5100 img/s. 训练完自动跑 IN-1k eval → scaling 曲线. 预计 ~20:00 完成. 论文 §6 已改写, 两份 HTML 报告+方向建议已交）|
 | ERROR_COUNT | 3（① R9 w512 首跑 crash：损坏 jpg → data.py 修复 ② 续跑首试 crash：r9_train.py `log()` → 改 `print()` 修复 ③ 8-GPU 并行 eval NFS 争用卡死 → 改 4-GPU r12_single_eval.sh） |
 | BUDGET_USED | R2–R12 累计 ≈215 GPU·h + 归因实测 ~0.5 GPU·h + **R12b 训练中**（~7.7h×8卡≈61.6 GPU·h 预计） |
-| 更新 | **2026-10-06 12:58（R12b 全量数据 AIMv2 fresh run 已起跑: 272k步≈2ep, 7527 shards, ~5100 img/s, GPU util~70%, ETA~20:30. 前置归因实测完成: 数据/IO 受限. 📦 TASK=25KB/MEMORY=9KB）· *[更早见 daily-memories-vision/2026-10-06.md]* |
+| 更新 | **2026-10-06 13:37（论文 §6 改写完成: Boundary 段全替换+3-epoch 176M 结果回填, diff 摘要见 EXPERIMENTS_VISION_ROUND11.md §20. R12b step~21900/272000 ~8% C4=OK. 📦 TASK=25KB/MEMORY=10KB）· *[更早见 daily-memories-vision/2026-10-06.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -99,6 +99,7 @@ WAITING: 1
 - [12:45] 归档 R11-L→3-epoch 完成段到 `daily-memories-vision/2026-10-06.md`（MEMORY 31KB→9KB 腾位）；写 `EXPERIMENTS_VISION_ROUND12.md`.
 - [12:50] commit 923bf898 pushed（归因实测 + 归档）. 被 ops 的 d78f01ca 误回滚 → ops 50621368 修复.
 - [12:54] **R12b 全量数据 AIMv2 fresh run 起跑**：272k 步≈2 epoch, 7527 shards (GPIC=4176+CC12M=1100+Amshaker=2250), bs=64×8=512, nw=6, seed=1234, loss=aimv2. step 300: loss=4.21, ~5100 img/s, GPU util~70%. ETA ~20:30. 日志 `/tmp/r12b_fulldata_aimv2.log`.
+- [13:37] **论文 §6 改写**（运维指令 2026-10-05 晚 ②, R12b 稳态后授权）：`6_vision_encoder.tex` 2 处改动 — ① line 96 追加 3-epoch 延伸句（176M/20.27%/R²=0.94/非单调/a→1.0）② Boundary 段全替换（stale "currently underway" → completed 35-point scaling, 176M 无饱和, full-data mix matched-N 更低效, 交互效应确认）. diff 摘要 → `EXPERIMENTS_VISION_ROUND11.md §20`. R12b step~21900 C4=OK.
 
 ## 历史条目已滚动归档（2026-10-03 / 2026-10-06）
 

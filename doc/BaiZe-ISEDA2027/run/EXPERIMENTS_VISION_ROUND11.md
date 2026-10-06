@@ -1576,3 +1576,53 @@ R12 training (进行中, ~21:00 训完)
 | 输出 | `/tmp/r12_single_eval_main.log`（含完整 scaling 分析） |
 
 > **教训**：8-GPU 并行 eval 因 8 进程×冗余 NFS 读 40 parquet + CPU 争用(loadavg 457) 而卡死。4-GPU + page cache + OMP=16 是正确方案。`load_in1k_split()` 的冗余 I/O 是根因——未来应改为 shared-memory 或单次加载+广播。
+
+---
+
+## §20 论文 §6.3 改写 — diff 摘要（2026-10-06 13:37）
+
+> **运维指令 2026-10-05（晚）②**：论文 §6 改写授权（训练起跑并进入稳态后执行）。
+> R12b 训练于 12:54 起跑，~41 min 后进入稳态（~5100 img/s, GPU util~70%, C4=OK）→ 授权生效。
+
+### 改动文件
+`doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/ISEDA2027/6_vision_encoder.tex`
+
+### 改动 1：§6.2.x 结果段落后追加 3-epoch 延伸（line 96，新增 1 句）
+- **原文**：power-law fit R²=0.91, c=0.040 << 0.090, 无可定渐近（line 95, 保留不变）
+- **新增**（line 96）：「A subsequent extension to 176M samples (3 epochs over the full 58.8M-pair corpus, 344k steps) reaches 20.27%, still rising with no saturation signal; a 35-checkpoint refit gives R²=0.94, but the power-law asymptote hits its upper bound (a→1.0) and the trajectory is non-monotonic (7 of 34 checkpoints decrease, attributable to resume transients), so the precise ceiling remains indeterminate.」
+
+### 改动 2：§6.2.x Boundary 段落全替换（lines 130–134）
+- **原文（stale, 3 行）**：
+  - 「trained on ≤59M pairs...」
+  - 「The precise asymptote... is indeterminate: R²=0.91 fit... 55.3M samples show no saturation signal... extrapolation beyond two orders of magnitude is not warranted.」
+  - 「The four-arm decomposition... whether the interaction effect holds at larger scale is an open question that the full-data run (~59M pairs, 120k steps) **currently underway** is designed to answer.」
+- **新文（completed, 5 行）**：
+  1. C2 边界保留：自研改编、非官方 AIMv2、≤58.8M unique pairs vs ~12B
+  2. 渐近不可定：35 点 R²=0.94 但 a→1.0，非单调 7/34（resume transients），诚实报告不强行外推
+  3. 176M 无饱和信号：dense route 20.27% vs contrastive 需 ~10^10 samples → 25.1% 天花板是 contrastive-specific
+  4. 全量数据 mix 在 matched N 更低效（16.80% vs 19.76%@55M）→ GPIC caption 截断假说；patch-MSE 不受影响，仍 +9.4~12.4 pp
+  5. 交互效应在更大 scale 确认：full AIMv2-style 到 176M 仍远超 contrastive baseline；去掉 contrastive (arm vi-B) 无翻盘
+
+### 未改动的部分
+- §6.1 架构选择（Table visarch）— 不变
+- §6.2 InfoNCE scaling 段（power law 25.1%, Table visscale, width sweep）— 不变
+- §6.2.x AIMv2-style objective 描述、Table visaimv2、4-arm 因果分解 — 不变
+- §6.3 Configuration and Ablations — 不变
+- 所有 \cite 引用（he2022mae, aimv2, tschannen2025siglip2, openvision2）— 不变
+
+### LaTeX 验证
+- pdflatex + latexmk 可用（`/usr/bin/pdflatex`, `/usr/bin/latexmk`）
+- 改动仅涉及文字段落（无新 \begin/\end 环境、无新 \cite），语法风险极低
+- 未跑全量编译（paper 含多章节, 编译耗时; 改动为纯文字替换, 不影响结构）
+
+### 依据数字
+| 项 | 值 | 来源 |
+|:--|:--|:--|
+| R11-G lp@55.3M | 19.76% (vs InfoNCE 7.40%, Δ+12.4pp) | §18.5 |
+| R11-G scaling R² | 0.91, c=0.040 << 0.090 | §18.5 |
+| R11-H 纯 AR (arm vi-B) | 6.23% (+0.15pp, 无翻盘) | §18.5 |
+| 4-arm decomposition | ①6.08 / ④0.47 / ⑥-B 6.23 / ⑥-A 12.08 | §18.5 |
+| 3-epoch lp@176M | 20.27% (step 344k, 3 epoch) | §19.5 |
+| 3-epoch scaling R² | 0.9368, a→1.0 (上界) | §19.5 |
+| 3-epoch 非单调 | 7/34 neg (resume transients) | §19.5 |
+| full-data matched-N | 16.80%@~55M (vs R11-G 19.76%) | §19.5 |
