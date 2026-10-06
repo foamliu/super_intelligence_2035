@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Stage(i) R2 · P-9.13 Step 2 训练提速候选清单</title>
+<style>
+  body { font-family: -apple-system, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+         max-width: 1100px; margin: 0 auto; padding: 24px; background: #f8f9fa; color: #1a1a2e; line-height: 1.65; }
+  h1 { font-size: 1.55em; border-bottom: 3px solid #6c5ce7; padding-bottom: 10px; }
+  h2 { font-size: 1.25em; color: #6c5ce7; margin-top: 36px; border-left: 5px solid #6c5ce7; padding-left: 12px; }
+  h3 { font-size: 1.08em; color: #2d3436; margin-top: 22px; }
+  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 0.88em; }
+  th, td { border: 1px solid #dfe6e9; padding: 7px 10px; text-align: left; }
+  th { background: #6c5ce7; color: #fff; font-weight: 600; }
+  tr:nth-child(even) { background: #f1f2f6; }
+  .ok { color: #00b894; font-weight: 700; }
+  .err { color: #e74c3c; font-weight: 700; }
+  code, pre { font-family: "JetBrains Mono", "Fira Code", Consolas, monospace; font-size: 0.82em; }
+  pre { background: #2d3436; color: #dfe6e9; padding: 14px; border-radius: 8px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
+  .box { background: #fff; border-radius: 10px; padding: 16px 20px; margin: 16px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .summary { background: #6c5ce7; color: #fff; border-radius: 10px; padding: 18px 24px; margin: 16px 0; }
+  .summary b { color: #ffeaa7; }
+  .small { font-size: 0.82em; color: #636e72; }
+  .bar { display: inline-block; height: 16px; border-radius: 3px; vertical-align: middle; margin-right: 6px; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.78em; font-weight: 600; margin: 0 3px; }
+  .t-comm { background: #fdcb6e; color: #2d3436; }
+  .t-gemm { background: #74b9ff; color: #2d3436; }
+  .t-elem { background: #55efc4; color: #2d3436; }
+  .t-ssm  { background: #a29bfe; color: #fff; }
+  ul { margin: 6px 0; } li { margin: 3px 0; }
+</style>
+</head>
+<body>
+
+<h1>BaiZe Stage(i) R2 · P-9.13 Step 2 训练提速候选清单</h1>
+<p class="small">
+  模型：Mamba2-hybrid 2.22B（24 Mamba2 + 4 Attn + 28 MLP，56 层） ·
+  机器：10.239.2.29（H100 80GB SXM5 ×8，本实验用 GPU0-1） ·
+  生成：2026-10-06（第 139 次唤醒） ·
+  框架：Megatron-LM (mcore 0.16.1) + TE 2.12 + torch 2.8.0+cu128 ·
+  脚本：<code>run/baize_p913_speedup.sh</code>
+</p>
+
+<div class="summary">
+  <b>⭐ 一句话结论</b>：P-9.13 Step 2 <span class="ok">✅ COMPLETE</span>。
+  4 候选 sweep（baseline / MAX_CONN=1 / MAX_CONN=4 / MBS=4）→ <b>无可重复的显著提速</b>。
+  MAX_CONN 对 bf16 无效（+0.0–0.8%，噪声内），MBS=4 在 TP1 下 OOM（79847 MiB）。
+  <b>bf16/TP1/DP8/MBS2/seq4096 = 249K tok/s 是当前 launcher 暴露参数下的上界</b>。
+  结合 P-9.12（NCCL NV18 P2P 100% 已最优）+ P-9.5（comm 41.7% / GEMM 27.6%）：
+  <b>下一步提速只能靠 FP8（需改 precision）或代码级优化（需提案）</b>。
+</div>
+
+<h2>1. 背景</h2>
+<div class="box">
+  <p>运维 2026-10-06 提速令：P-9.12 已证 NCCL 非瓶颈（NV18 full-mesh NVSwitch，100% P2P/CUMEM）→
+  转向运行时/并行/IO 提速候选清单（Step 2）。每条给实测 tok/s + 判据 + 可否迁移 8 卡 + 时间盒。
+  优先「不改 recipe、只改运行时/并行/IO」的项。</p>
+  <p><b>recipe 审查结论</b>：<code>overlap_grad_reduce</code>=True / <code>overlap_param_gather</code>=True /
+  <code>use_distributed_optimizer</code>=True / <code>num_workers</code>=8 —— <b>均已开启，无优化空间</b>。
+  launcher 仅暴露 23 个 CLI flag，<b>无</b> recompute / cuda_graph / attention_backend / loss_fusion 入口。
+  可变项 = env 变量（CUDA_DEVICE_MAX_CONNECTIONS）+ MBS/GBS（CLI 已支持）。</p>
+</div>
+
+<h2>2. 实验设计</h2>
+<div class="box">
+  <ul>
+    <li><b>硬件</b>：GPU0-1 only（GPU2-7 = data agent BO 并发，不占 GPU0-1）</li>
+    <li><b>口径</b>：TP1 / DP2 / seq=4096 / GBS=256 / bf16 / seed=1234 / 60 步短测</li>
+    <li><b>可比性</b>：GBS=256/DP2/MBS2 = 64 micro-batches/GPU = P-9.7 (GBS=1024/DP8/MBS2) per-GPU load →
+        2-card tok/s 可直接与 P-9.7 249K × 2/8 = 62.25K 对照</li>
+    <li><b>token/step</b> = 256 × 4096 = 1,048,576 = 1.05M · <b>每次只改一个变量</b></li>
+  </ul>
+</div>
+
+<h2>3. 完整结果表</h2>
+<table>
+  <tr>
+    <th>#</th><th>候选</th><th>MBS</th><th>MAX_CONN</th>
+    <th>avg ms/iter</th><th>tok/s</th><th>vs baseline</th>
+    <th>peak GPU mem</th><th>TFLOP/s/GPU</th><th>rc</th><th>loss</th>
+  </tr>
+  <tr><td>1</td><td>baseline</td><td>2</td><td>default(8)</td>
+      <td>16421.6</td><td><b>63853</b></td><td>—</td>
+      <td>64445 MiB</td><td>610</td><td>0</td><td>11.06→7.44</td></tr>
+  <tr><td>2</td><td>maxconn1</td><td>2</td><td>1</td>
+      <td>16297.1</td><td><b>64341</b></td><td>+0.8%</td>
+      <td>64444 MiB</td><td>615</td><td>0</td><td>11.06→7.44</td></tr>
+  <tr><td>3</td><td>maxconn4</td><td>2</td><td>4</td>
+      <td>16419.0</td><td><b>63864</b></td><td>+0.0%</td>
+      <td>64445 MiB</td><td>~610</td><td>0</td><td>11.06→7.44</td></tr>
+  <tr><td>4</td><td>mbs4</td><td>4</td><td>default(8)</td>
+      <td><span class="err">OOM</span></td><td>—</td><td><span class="err">❌ OOM</span></td>
+      <td>79847 MiB</td><td>—</td><td>1</td><td>OOM (iter 1)</td></tr>
+</table>
+
+<h2>4. 原始关键行</h2>
+<h3>候选 ③ maxconn4 — 稳态（60 步）</h3>
+<pre>[15:29:00] iteration 40/60 | elapsed 16437.5ms | lm loss: 7.670683E+00 | grad norm: 0.617 | skip: 0 | nan: 0
+[15:31:43] iteration 50/60 | elapsed 16384.5ms | lm loss: 7.554766E+00 | grad norm: 0.326 | skip: 0 | nan: 0
+[15:34:28] iteration 60/60 | elapsed 16435.0ms | lm loss: 7.438216E+00 | grad norm: 0.224 | skip: 0 | nan: 0
+★ avg ms/iter: 16419.0 → tok/s: 63864
+peak_gpu_mem: 64445 MiB</pre>
+<h3>候选 ④ mbs4 — OOM（iter 1，~49s 后崩溃）</h3>
+<pre>[rank1]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 7.90 GiB.
+  GPU 1 has a total capacity of 79.19 GiB of which 1.37 GiB is free.
+  Including non-PyTorch memory, this process has 77.81 GiB memory in use.
+  Of the allocated memory 67.05 GiB is allocated by PyTorch, and 8.14 GiB is reserved but unallocated.
+  If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True</pre>
+<p>→ peak 79847 MiB（逼近 81559 上限），OOM at iter 1。
+与 <b>P-9.1 结论一致</b>：TP1 下 MBS=4 必 OOM（8-card P-9.1: 81087 MiB；2-card P-9.13: 79847 MiB）。</p>
+
+<h2>5. 关键观察与判据</h2>
+<div class="box">
+  <ol>
+    <li><b>2-card baseline = 63853 tok/s</b> = P-9.7 249K × 2/8 = 62.25K 的 <b>103%</b>
+      （微超线性：2-card allreduce 比 8-card 更轻 → comm 开销更小）。→ <b>per-GPU 效率已接近上限</b>。</li>
+    <li><b>MAX_CONN=1 vs default +0.8%，MAX_CONN=4 vs default +0.0%</b>：两者均 <b>在噪声内</b>（Δ &lt; 1%）。
+      → ✅ <b>CUDA_DEVICE_MAX_CONNECTIONS 对 bf16 无显著影响</b>。
+      机制：MAX_CONN 主要影响 FP8 TE kernel 的 CUDA stream 并发数；bf16 下 compute kernel 串行度已足够。</li>
+    <li><b>MBS=4 OOM</b>（79847 MiB → 逼近 80GB 上限）→ 与 P-9.1 一致：<b>TP1 下 MBS 上限 = 2</b>。
+      P-9.1 已证明 MBS=4 在 8-card 下吞吐不优于 MBS=2（218K vs 218K），P-9.2 证明 TP2·MBS4 = 200K &lt; TP1·MBS2 218K
+      → <b>MBS=4 即使落地也不提速</b>。</li>
+    <li><b>peak 64GB vs P-9.7 54.7GB</b>：<code>use_distributed_optimizer=True</code> 在 DP2 下每 GPU 持有 4× optimizer state（vs DP8）→ 显存更高但仍 &lt;80GB。</li>
+    <li><b>loss 曲线健康</b>：所有成功候选 11.06→7.44，0 NaN/skip → 配置变更无训练稳定性影响。</li>
+    <li><b>ckpt 清理</b>：framework 在 train_end 自动存 ckpt（非 <code>--save-interval 99999</code> 意图）；
+      候选①②（8.4GB）+ 候选③（4.2GB）已清理，候选④ OOM 无 ckpt。<b>总计释放 12.6GB</b>。</li>
+  </ol>
+</div>
+
+<h2>6. P-9.13 结论（Step 2 提速清单 ✅ COMPLETE）</h2>
+<div class="box">
+  <table>
+    <tr><th>判据项</th><th>结果</th></tr>
+    <tr><td>当前实际通道构成</td><td>NV18 full-mesh NVSwitch，100% P2P/CUMEM（P-9.12 已确认），NCCL 非瓶颈</td></tr>
+    <tr><td>最佳 env 组合</td><td><b>default（不改）</b>。MAX_CONN=1/4 均 +0–0.8%（噪声内），不构成提速</td></tr>
+    <tr><td>相对 baseline 的 tok/s 提升 %</td><td><b>0%</b>（无可重复的显著提升）</td></tr>
+    <tr><td>能否迁移到 8 卡</td><td>N/A。8 卡基线 P-9.7 = 249K tok/s 已是当前 launcher 暴露参数下的最优</td></tr>
+  </table>
+
+  <h3>提速空间综合评估（P-9.5 profiler + P-9.12 + P-9.13）</h3>
+  <p>P-9.5 profiler 归因：</p>
+  <table>
+    <tr><th>类别</th><th>占比</th><th>可视化</th></tr>
+    <tr><td><span class="tag t-comm">comm</span> NCCL allreduce/allgather</td><td>41.7%</td><td><span class="bar" style="width:209px;background:#fdcb6e"></span> 41.7%</td></tr>
+    <tr><td><span class="tag t-gemm">GEMM</span> 矩阵乘</td><td>27.6%</td><td><span class="bar" style="width:138px;background:#74b9ff"></span> 27.6%</td></tr>
+    <tr><td><span class="tag t-elem">elementwise</span></td><td>21.3%</td><td><span class="bar" style="width:107px;background:#55efc4"></span> 21.3%</td></tr>
+    <tr><td><span class="tag t-ssm">SSM</span> Mamba2 scan</td><td>8.6%</td><td><span class="bar" style="width:43px;background:#a29bfe"></span> 8.6%</td></tr>
+    <tr><td>attention</td><td>0.7%</td><td><span class="bar" style="width:4px;background:#fd79a8"></span> 0.7%</td></tr>
+  </table>
+  <ul>
+    <li><b>comm（41.7%）</b>：已用 NVLink P2P 最优通道（P-9.12），overlap_grad_reduce + overlap_param_gather 已开 → 无 env 变量可调。</li>
+    <li><b>GEMM + elementwise + SSM（57.5%）</b>：计算 + 内存带宽，无 env 变量可调。<b>FP8 是唯一杠杆</b>（P-9.8 已验证 delayed FP8 可用）。</li>
+    <li><b>launcher 仅 23 flag</b>：无 recompute / cuda_graph / attention_backend / loss_fusion 入口 → 代码级提速需改 launcher 或 recipe（运维令："凡涉及改 recipe 的，先报提案再动"）。</li>
+  </ul>
+  <p><b>→ 结论：当前 launcher/recipe 暴露的运行时/并行/IO 参数已无可提速空间</b>。
+  bf16/TP1/DP8/MBS2/seq4096 = 249K tok/s 是 P-8 的基线吞吐。
+  若要提速，唯一可行路径 = <b>FP8（需运维批准改 precision）</b> 或 <b>TP2·MBS4·FP8（M=16384 进 FP8 交叉点）</b>。</p>
+</div>
+
+<h2>7. 提速令 Step 1 + Step 2 联合结论</h2>
+<div class="summary">
+  <b>Step 1（P-9.12）</b>：NCCL 通道已最优（NV18 P2P 100%，7 组 env 对照无改善）。<br>
+  <b>Step 2（P-9.13）</b>：运行时 env 变量无提速效果（MAX_CONN 噪声级），MBS=4 OOM 且即使落地也不提速。<br>
+  <b>→ 当前 bf16 基线 249K tok/s 已是 launcher 暴露参数下的上界。</b><br>
+  <b>→ 下一步提速只能靠 FP8（需运维批准改 precision）或代码级优化（需提案）。</b>
+</div>
+
+<p class="small">
+  相关实验：P-9.1（MBS/seq 扫描）· P-9.2（TP/SP 扫描）· P-9.4（FP8 复评）· P-9.5（profiler 5-way 归因）·
+  P-9.7（8-card baseline 249K tok/s）· P-9.8（delayed FP8 ✅）· P-9.12（NCCL 拓扑核查 ✅）· P-9.13（提速清单 ✅）<br>
+  实验记录：<code>run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §P-9.13<br>
+  日志：<code>/tmp/baize_p913_speedup.sum</code> + <code>/tmp/baize_p913_*.log</code>
+</p>
+
+</body>
+</html>

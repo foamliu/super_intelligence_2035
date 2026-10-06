@@ -2087,7 +2087,7 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 
 ---
 
-## P-9.13 Step 2 训练提速候选清单 🚀 running（2026-10-06 14:42 启动，第 137 次唤醒，GPU0-1 @.29）
+## P-9.13 Step 2 训练提速候选清单 ✅ COMPLETE（2026-10-06 14:42–15:35，第 137–139 次唤醒，GPU0-1 @.29）
 
 > 运维 2026-10-06 提速令 Step 2：P-9.12 已证 NCCL 非瓶颈（NVLink P2P 100%，default 已最优）→ 转向运行时/并行提速。
 > 脚本：`run/baize_p913_speedup.sh`（setsid 后台），SUM=`/tmp/baize_p913_speedup.sum`。
@@ -2125,24 +2125,62 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 | 3 | MAX_CONN=4 | 2 | 4 | 中间值 |
 | 4 | MBS4 | 4 | default | 更大 micro-batch → 更好 GPU util |
 
-### 结果（候选①②已完成，③④运行中 — 第 138 次唤醒 15:24 收集）
+### 结果（✅ 4 候选全部完成 — 第 139 次唤醒 15:58 收集）
+
+> sweep 完成时间：2026-10-06 15:35:46（总耗时 ~54min）。SUM 文件：`/tmp/baize_p913_speedup.sum`。
 
 | # | 候选 | MBS | MAX_CONN | avg ms/iter | tok/s | vs baseline | peak GPU mem | TFLOP/s/GPU | rc | loss (init→final) |
 |:--|:--|:--|:--|--:|--:|--:|--:|--:|--:|:--|
 | 1 | baseline | 2 | default(8) | 16421.6 | **63853** | — | 64445 MiB | 610 | 0 | 11.06→7.44 |
 | 2 | maxconn1 | 2 | 1 | 16297.1 | **64341** | +0.8% | 64444 MiB | 615 | 0 | 11.06→7.44 |
-| 3 | maxconn4 | 2 | 4 | *running* (iter20: 16374ms) | *~64100* | *~+0.4%* | *~64400* | *~615* | — | — |
-| 4 | mbs4 | 4 | default(8) | *pending* | — | — | — | — | — | — |
+| 3 | maxconn4 | 2 | 4 | 16419.0 | **63864** | +0.0% | 64445 MiB | ~610 | 0 | 11.06→7.44 |
+| 4 | mbs4 | 4 | default(8) | OOM | — | ❌ OOM | 79847 MiB | — | 1 | OOM (iter 1) |
 
-> ⏳ 候选③④结果将在下唤醒(~16:00)补全。SUM 文件：`/tmp/baize_p913_speedup.sum`。
+#### 原始关键行
 
-#### 关键观察
+**候选 ③ maxconn4**（`/tmp/baize_p913_mbs2_maxconn4.log`，稳态）：
+```
+[15:29:00] iteration 40/60 | elapsed 16437.5ms | lm loss: 7.670683E+00 | grad norm: 0.617 | skip: 0 | nan: 0
+[15:31:43] iteration 50/60 | elapsed 16384.5ms | lm loss: 7.554766E+00 | grad norm: 0.326 | skip: 0 | nan: 0
+[15:34:28] iteration 60/60 | elapsed 16435.0ms | lm loss: 7.438216E+00 | grad norm: 0.224 | skip: 0 | nan: 0
+★ avg ms/iter: 16419.0 → tok/s: 63864
+```
 
-- **2-card baseline = 63853 tok/s** = P-9.7 249K × 2/8 = 62.25K 的 **103%**（微超线性：2-card allreduce 比 8-card 更轻 → comm 开销更小）。
-- **MAX_CONN=1 vs default +0.8%**（噪声内）→ **CUDA_DEVICE_MAX_CONNECTIONS 对 bf16 无显著影响**。符合预期：MAX_CONN 主要影响 FP8 TE kernel 的 CUDA stream 并发数，bf16 下 compute kernel 串行度已足够。
-- **peak 64GB vs P-9.7 54.7GB**：`use_distributed_optimizer=True` 在 DP2 下每 GPU 持有 4× optimizer state（vs DP8）→ 显存更高但仍 <80GB 有余量。
-- **loss 曲线健康**：所有候选 11.06→7.44，0 NaN/skip → 配置变更无训练稳定性影响。
-- **ckpt 清理**：framework 在 train_end 自动存 ckpt（非 `--save-interval 99999` 意图），已清理候选①②（8.4GB freed），候选③④待下唤醒清理。
+**候选 ④ mbs4 OOM**（`/tmp/baize_p913_mbs4_default.log`，~49s 后崩溃）：
+```
+[rank1]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 7.90 GiB.
+  GPU 1 has a total capacity of 79.19 GiB of which 1.37 GiB is free.
+  Including non-PyTorch memory, this process has 77.81 GiB memory in use.
+  Of the allocated memory 67.05 GiB is allocated by PyTorch, and 8.14 GiB is reserved by PyTorch but unallocated.
+  If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+```
+→ peak 79847 MiB（逼近 81559 上限），OOM at iter 1。与 **P-9.1 结论一致**：TP1 下 MBS=4 必 OOM（8-card P-9.1: 81087 MiB；2-card P-9.13: 79847 MiB，差因 dist_optimizer state 分摊不同但量级一致）。
 
-> ⏳ **sweep 仍在运行**（候选④~17min，ETA ~15:51）。完整 4 候选结果表 + 判据 + HTML 报告将在下唤醒收集后补全。
+#### 关键观察与判据
+
+1. **2-card baseline = 63853 tok/s** = P-9.7 249K × 2/8 = 62.25K 的 **103%**（微超线性：2-card allreduce 比 8-card 更轻 → comm 开销更小）。→ **per-GPU 效率已接近上限**。
+2. **MAX_CONN=1 vs default +0.8%，MAX_CONN=4 vs default +0.0%**：两者均 **在噪声内**（Δ < 1%）。→ ✅ **CUDA_DEVICE_MAX_CONNECTIONS 对 bf16 无显著影响**。机制：MAX_CONN 主要影响 FP8 TE kernel 的 CUDA stream 并发数；bf16 下 compute kernel 串行度已足够，改变并发数不改变吞吐。
+3. **MBS=4 OOM**（79847 MiB → 逼近 80GB 上限）→ 与 P-9.1 一致：**TP1 下 MBS 上限 = 2**。`PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` 理论上可减少 8.14 GiB 碎片使 MBS=4 落地，但 P-9.1 已证明 MBS=4 在 8-card 下吞吐不优于 MBS=2（218K vs 218K），且 P-9.2 证明 TP2·MBS4 = 200K < TP1·MBS2 218K → **MBS=4 即使落地也不提速**。
+4. **peak 64GB vs P-9.7 54.7GB**：`use_distributed_optimizer=True` 在 DP2 下每 GPU 持有 4× optimizer state（vs DP8）→ 显存更高但仍 <80GB。
+5. **loss 曲线健康**：所有成功候选 11.06→7.44，0 NaN/skip → 配置变更无训练稳定性影响。
+6. **ckpt 清理**：framework 在 train_end 自动存 ckpt（非 `--save-interval 99999` 意图）；候选①②（8.4GB）已上轮清理，候选③（4.2GB）本轮清理。候选④ OOM 无 ckpt。**总计释放 12.6GB**。
+
+#### P-9.13 结论（Step 2 提速清单 ✅ COMPLETE）
+
+- **当前实际通道构成**（Step 1 P-9.12 已确认）：NV18 full-mesh NVSwitch，100% P2P/CUMEM，NCCL 非瓶颈。
+- **最佳 env 组合**：**default（不改）**。MAX_CONN=1/4 均 +0–0.8%（噪声内），不构成提速。
+- **相对 baseline 的 tok/s 提升 %**：**0%**（无可重复的显著提升）。
+- **该提升能否迁移到 8 卡**：N/A（无提升可迁移）。8 卡基线 P-9.7 = 249K tok/s 已是当前 recipe/launcher 暴露参数下的最优。
+- **提速空间评估（综合 P-9.5 profiler + P-9.12 + P-9.13）**：
+  - P-9.5 profiler：comm 41.7% / GEMM 27.6% / elementwise 21.3% / SSM 8.6% / attn 0.7%。
+  - comm 已用 NVLink P2P 最优通道（P-9.12），overlap_grad_reduce + overlap_param_gather 已开（recipe 审查）。
+  - GEMM/elementwise/SSM = 计算 + 内存带宽，无 env 变量可调；FP8 是唯一杠杆（P-9.8 已验证 delayed FP8 可用，P-9.9 沿用 delayed）。
+  - launcher 仅暴露 23 flag，**无 recompute / cuda_graph / attention_backend / loss_fusion 入口** → 代码级提速需改 launcher 或 recipe（运维令："凡涉及改 recipe 的，先报提案再动"）。
+  - → **结论：当前 launcher/recipe 暴露的运行时/并行/IO 参数已无可提速空间**。bf16/TP1/DP8/MBS2/seq4096 = 249K tok/s 是 P-8 的基线吞吐；若要提速，唯一可行路径 = **FP8（P-9.8 delayed，已验证可用但未端到端测 throughput）或 TP2·MBS4·FP8（P-9.2+P-9.4，M=16384 进 FP8 交叉点）**。
+
+> **提速令 Step 1（P-9.12）+ Step 2（P-9.13）联合结论**：NCCL 通道已最优（NV18 P2P 100%），运行时 env 变量无提速效果（MAX_CONN 噪声级），MBS=4 OOM 且即使落地也不提速。**当前 bf16 基线 249K tok/s 已是 launcher 暴露参数下的上界**。下一步提速只能靠 FP8（需运维批准改 precision）或代码级优化（需提案）。
+
+### HTML 报告
+
+- `doc/BaiZe-ISEDA2027/report_pretrain_p913_speedup.html`（自包含：完整 4 候选表 + 判据 + 原始关键行 + 结论）。
 
