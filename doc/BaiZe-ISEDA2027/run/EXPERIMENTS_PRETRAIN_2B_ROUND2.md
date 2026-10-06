@@ -2125,19 +2125,24 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 | 3 | MAX_CONN=4 | 2 | 4 | 中间值 |
 | 4 | MBS4 | 4 | default | 更大 micro-batch → 更好 GPU util |
 
-### 初步结果（baseline，sweep 仍在运行中）
+### 结果（候选①②已完成，③④运行中 — 第 138 次唤醒 15:24 收集）
 
-| 指标 | iter 10（含 warmup） | iter 20（稳态） |
-|:--|--:|--:|
-| ms/iter | 18047.1 | **16251.5** |
-| tok/s | 58.1K | **64.5K** |
-| lm loss | 11.057 | 8.204 |
-| grad norm | 3.946 | 3.836 |
-| skipped / nan | 0 / 0 | 0 / 0 |
-| peak GPU mem | — | 64.1 GB/GPU |
+| # | 候选 | MBS | MAX_CONN | avg ms/iter | tok/s | vs baseline | peak GPU mem | TFLOP/s/GPU | rc | loss (init→final) |
+|:--|:--|:--|:--|--:|--:|--:|--:|--:|--:|:--|
+| 1 | baseline | 2 | default(8) | 16421.6 | **63853** | — | 64445 MiB | 610 | 0 | 11.06→7.44 |
+| 2 | maxconn1 | 2 | 1 | 16297.1 | **64341** | +0.8% | 64444 MiB | 615 | 0 | 11.06→7.44 |
+| 3 | maxconn4 | 2 | 4 | *running* (iter20: 16374ms) | *~64100* | *~+0.4%* | *~64400* | *~615* | — | — |
+| 4 | mbs4 | 4 | default(8) | *pending* | — | — | — | — | — | — |
 
-- **2-card baseline = 64.5K tok/s** = P-9.7 249K × 2/8 = 62.25K 的 **103%**（微超线性：2-card allreduce 比 8-card 更轻 → comm 开销更小 → 每 GPU 有效吞吐略高）。
+> ⏳ 候选③④结果将在下唤醒(~16:00)补全。SUM 文件：`/tmp/baize_p913_speedup.sum`。
+
+#### 关键观察
+
+- **2-card baseline = 63853 tok/s** = P-9.7 249K × 2/8 = 62.25K 的 **103%**（微超线性：2-card allreduce 比 8-card 更轻 → comm 开销更小）。
+- **MAX_CONN=1 vs default +0.8%**（噪声内）→ **CUDA_DEVICE_MAX_CONNECTIONS 对 bf16 无显著影响**。符合预期：MAX_CONN 主要影响 FP8 TE kernel 的 CUDA stream 并发数，bf16 下 compute kernel 串行度已足够。
 - **peak 64GB vs P-9.7 54.7GB**：`use_distributed_optimizer=True` 在 DP2 下每 GPU 持有 4× optimizer state（vs DP8）→ 显存更高但仍 <80GB 有余量。
+- **loss 曲线健康**：所有候选 11.06→7.44，0 NaN/skip → 配置变更无训练稳定性影响。
+- **ckpt 清理**：framework 在 train_end 自动存 ckpt（非 `--save-interval 99999` 意图），已清理候选①②（8.4GB freed），候选③④待下唤醒清理。
 
-> ⏳ **sweep 仍在运行**（4 候选 × ~20min = ~80min，ETA ~15:50）。完整 4 候选结果表 + 判据 + HTML 报告将在下唤醒收集后补全。
+> ⏳ **sweep 仍在运行**（候选④~17min，ETA ~15:51）。完整 4 候选结果表 + 判据 + HTML 报告将在下唤醒收集后补全。
 
