@@ -5,22 +5,24 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A kimi-k2.6-cloud serial cross-eval — codex×300 --resume RUNNING (PID 1898015, 174/300 entries) + ✅ deepseek-harness BUILD + ✅ claude-code telemetry OFF
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 --resume RUNNING (174 entries, 31 resolved, 56 patch-but-failed, 87 blocked) · SWEBENCH_COMPARE.html (204 entries, 49 resolved) · ✅ Claude Code 遥测关闭 · ✅ deepseek-harness pnpm install + build · ✅ setup_rootfs stale lock fix
-当前动作:     R106: codex×300 progress 174/300 (31 resolved, 35.6% ex-blocked) + SWEBENCH_COMPARE.html (204 entries, 49 resolved) + relay healthy skip 59th + git sync + 体积自检 OK
-下一步:       codex×300 完成(~126条剩余) → 87 blocked 重跑(--resume) → cline-patched×300 --resume → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新SWEBENCH_COMPARE.html
-阻塞:         无硬阻塞. 87 blocked instances (git fetch TIMEOUT + NFS shallow.lock) 将在 codex×300 完成后 --resume 自动重跑. setup_rootfs 已加 stale lock cleanup.
+PHASE:        H-A kimi-k2.6-cloud serial cross-eval — codex×300 --resume RUNNING (PID 1898015, 178/300 entries) + ✅ deepseek-harness BUILD + ✅ claude-code telemetry OFF
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 --resume RUNNING (178 entries, 33 resolved, 57 patch-but-failed, 88 blocked) · SWEBENCH_COMPARE.html (208 entries, 51 resolved) · ✅ Claude Code 遥测关闭 · ✅ deepseek-harness pnpm install + build · ✅ setup_rootfs stale lock fix
+当前动作:     R107: codex×300 progress 178/300 (33 resolved, 36.7% ex-blocked) + SWEBENCH_COMPARE.html (208 entries, 51 resolved) + relay healthy skip 60th + git sync + 体积自检 OK
+下一步:       codex×300 完成(~122条剩余) → 88 blocked 重跑(--resume) → cline-patched×300 --resume → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新SWEBENCH_COMPARE.html
+阻塞:         无硬阻塞. 88 blocked instances (git fetch TIMEOUT + NFS shallow.lock) 将在 codex×300 完成后 --resume 自动重跑. setup_rootfs 已加 stale lock cleanup.
 ERROR_COUNT:  0
 ```
 
-## 🆕 第一百零六轮速览（2026-10-06 14:57）— codex×300 progress 174/300 (31 resolved, 35.6% ex-blocked) + SWEBENCH_COMPARE.html (204 entries, 49 resolved) + relay healthy skip 59th + git sync + 体积自检 OK
+## 🆕 第一百零七轮速览（2026-10-06 15:30）— codex×300 progress 178/300 (33 resolved, 36.7% ex-blocked) + SWEBENCH_COMPARE.html (208 entries, 51 resolved) + relay healthy skip 60th + git sync + 体积自检 OK
 
-- 📊 **codex×300 --resume progress**：PID 1898015 运行中 (etimes≈56634s≈15.7h)。174 codex entries (+2 since R105)。31 resolved, 56 patch-but-failed, 87 blocked。resolve rate (excl blocked) = 31/87 = 35.6%。当前正在 `pydata__xarray-4248`（child PID 2659632 etimes=16s, timeout=1800s）。R105→R106: +2 entries (+1 resolved, +1 patch-but-failed) in ~36min。126 remaining。
-- 📈 **SWEBENCH_COMPARE.html regenerated**：204 entries, 49 resolved (cline-patched 18 + codex 31), 45008 bytes。gen_kimi_compare.py exit=0。
-- ✅ **ops 中继复核（第 59 次）→ 健康**。relay `2489749 1 427496 Ss`（ppid=1, etimes≈4.95d）。`.last_run_id=83`（无新 harness 指令）。跳过重启。
+- 📊 **codex×300 --resume progress**：PID 1898015 运行中 (etimes≈58690s≈16.3h)。178 codex entries (+4 since R106)。33 resolved, 57 patch-but-failed, 88 blocked。resolve rate (excl blocked) = 33/90 = 36.7%。当前正在 `pylint-dev__pylint-7080`（child PID 345496 etimes=592s, timeout=1800s）。R106→R107: +4 entries (+2 resolved, +1 patch-but-failed, +1 blocked) in ~33min。122 remaining。
+- 📈 **SWEBENCH_COMPARE.html regenerated**：208 entries, 51 resolved (cline-patched 18 + codex 33), 45890 bytes。gen_kimi_compare.py exit=0。
+- ✅ **ops 中继复核（第 60 次）→ 健康**。relay `2489749 1 429530 Ss`（ppid=1, etimes≈4.97d）。`.last_run_id=83`（无新 harness 指令）。跳过重启。
 - ✅ **git sync**：`git fetch`（proxy）exit=0。TASK.md 无 diff vs origin = 无新运维指令。
-- 📦 **体积自检（收尾步骤0）**：📦 体积：TASK=29771B / MEMORY=30842B（两者均 ≤32KB ✓, 无需归档）。
-- ⏭ **下一步**：codex×300 后台继续（~126 条剩余）→ 87 blocked 重跑（--resume） → cline-patched×300 `--resume` → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
+- 📦 **体积自检（收尾步骤0）**：📦 体积：TASK=29771B / MEMORY=~28KB（归档 R44/R47 后，两者均 ≤32KB ✓）。
+- ⏭ **下一步**：codex×300 后台继续（~122 条剩余）→ 88 blocked 重跑（--resume） → cline-patched×300 `--resume` → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
+
+## 🆕 第一百零六轮速览（2026-10-06 14:57）—— 已滚动归档至 daily-memories-harness/2026-10-06.md（结论不改：codex×300 progress 174/300 (31 resolved, 35.6% ex-blocked) + SWEBENCH_COMPARE.html (204 entries, 49 resolved) + relay healthy skip 59th + git sync + 体积自检 OK）
 
 ## 🆕 第一百零五轮速览（2026-10-06 14:21）—— 已滚动归档至 daily-memories-harness/2026-10-06.md（结论不改：codex×300 progress 172/300 (30 resolved, 35.3% ex-blocked) + SWEBENCH_COMPARE.html (202 entries, 48 resolved) + relay healthy skip 58th + git sync + 体积自检 OK）
 
@@ -194,9 +196,9 @@ ERROR_COUNT:  0
 
 - 2026-10-04 17:30 —— **第四十三轮（⏱ 响应 URGENT「恢复 ops 中继」第 4 次 → 健康跳过 + 🔧 cline 配置根因修复 + 📝 SWEBENCH_COMPARE.html + 🔬 cline × sympy-11400 resolved=False 部分正确）**：relay 复核：`2489749 1 ~260000 Ss bash ops_relay.sh`（ppid=1、态 Ss、etimes≈3d）、`pstree -p 2489749`=`bash---sleep`、`last_run_id`=42、log 末条 exit=0、无跑飞残留 → **跳过重启**。**cline 配置修复**：`~/.cline/data/globalState.json` `apiBase=/cloud/v1`（应为 `/v1`），vision loop cline 守护进程 PID 465698 不断回写 → **SIGKILL**；建独立 `cline_harness_data/globalState.json` → `127.0.0.1:9090/v1` gw_proxy + `--data-dir` + `-P openai` + `DUMMY_KEY`。**`run_harness_direct.py`** 创建（monkey-patch ClineDriver via `types.MethodType`）。**`SWEBENCH_COMPARE.html`** 创建（`run/harness/`，自包含方法论+4/5 django 结果+复现命令）。**cline × sympy__sympy-11400**：`rc=0 wall=707.1s` 80 iterations 2216B patch（`ccode.py`+`codeprinter.py`+`test_fcode.py`）→ `r1_eval.py --sandbox unshare --run-id R1_CLINE_SYMPY` → **resolved=False, F2P 1/2（`test_ccode_Relational`✅ / `test_ccode_sinc`❌ AssertionError）, P2P 28/28✅**。→ sympy 比 django 难 5.4×（707s vs 131s），exact 输出格式不匹配。`git fetch` Network unreachable，无新指令。⏭ 跑 codex/opencode/claude-code × sympy-11400 → 扩 20-30 instances。保持 `WAITING=1`。
 
-- 2026-10-04 18:10 —— **第四十四轮（⏱ 响应 URGENT「恢复 ops 中继」第 5 次 → 健康，跳过重启）**：relay 复核（原始输出）：`ps -eo pid=,ppid=,etimes=,stat=,args= | grep ops_relay.sh | grep -v grep` → **`2489749 1 266302 Ss bash ops_relay.sh`**（ppid=1 真守护、态 Ss、etimes≈3.08d）；`pstree -p 2489749`=`bash(2489749)---sleep(2309913)`（正常 20s 轮询）；`cat ops/.last_run_id`=`57`（较上轮 42 前进 15 → 日志在动）；`tail -6 /tmp/baize_ops_relay.log` → RUN_ID 52~57 均 `exit=0`；`pgrep -af 'grep -rl|fuser -v /nas_train|stage_1.5_mid'` → **无跑飞残留**（仅 cline 自身进程 + grep 命令的误匹配）→ 判据「恰好 1 条 relay 且日志在动」成立 → **跳过重启**（🚫 红线：不 pkill 健康 relay、不动 GPU pretrain P-9.2、不删数据）。`git fetch` 报 `Network is unreachable`（github 瞬断），`git log -- BAIZE_HARNESS_TASK.md` 最近仍 `4d19875`（即本条 URGENT）→ 无新指令。✅ URGENT 项完成。⏭ 继续本线：跑 codex/opencode/claude-code × sympy-11400 → 扩 20-30 instances pilot。保持 `WAITING=1`。
+- 2026-10-04 18:10 —— **第四十四轮** —— 已滚动归档至 daily-memories-harness/2026-10-04.md（结论不改：URGENT「恢复 ops 中继」第 5 次 → 健康，跳过重启）
 
-- 2026-10-04 21:00 —— **第四十七轮（⏱ 响应运维第 2 条「RUN_ID 62 有单不收」第 2 次 → RUN_ID 62 已执行健康跳过 + 🚫 H-A pilot 扩量受阻于 github 网络瞬断 + MEMORY 滚动归档 R43/R44）**：relay 复核（原始输出）：`ps -eo pid,ppid,etimes,stat,args | grep ops_relay.sh | grep -v grep` → `2489749 1 275390 Ss bash ops_relay.sh`（ppid=1 真守护、态 Ss、etimes≈3.19d）；`cat ops/.last_run_id`=`62`（与上轮 R46 一致 → RUN_ID 62 已跑）；`grep -c 'RUN_ID 62' ops/outbox.md`=`1`（已入 outbox）；`tail -20 /tmp/baize_ops_relay.log` → RUN_ID 42~62 均 `exit=0`（末行 `[relay] RUN_ID=62 executed, exit=0, appended to outbox.`）；`timeout 30 git fetch origin` → exit=128（`Failed to connect to github.com port 443: Network is unreachable`）；无 index.lock，git status 仅 `.nfs*` NFS 临时文件（非阻塞）；`pgrep -f 'bash ops_relay.sh'` 误匹配 node/cline 进程（PID 613301=`node(613301)-+-.cline(613308)`），真 relay=2489749。**判据**：outbox 已含 RUN_ID 62 + git fetch exit=128 → 按「git fetch exit≠0（network unreachable）= 根因网络，与中继无关 → 🚫 不要重启」+「outbox.md 已含 RUN_ID 62 → 中继已跑但 push 失败 → 🚫 不要重启；等网络」双重判据 → **跳过重启**（🚫 红线：不 pkill 健康 relay、不动 GPU pretrain P-9.2、不删数据）。✅ URGENT 项完成。**H-A pilot 扩量核查**：`instances/` 已备 30 条 JSON（15 django `django__django-{10924..11742}` + 15 sympy `sympy__sympy-{11870..13647}`），但 `git -C rootfs/django__django-10914/testbed cat-file -t <base_commit>` 对全部 15 django base_commit → **全 MISSING**；`git -C rootfs/sympy__sympy-11400/testbed cat-file -t <base_commit>` 对全部 15 sympy base_commit → **全 MISSING**（两 rootfs 均为 `--depth=1` 浅克隆、`--is-shallow-repository=true`）→ **`run_pilot_batch.py` 的 `setup_rootfs()` 需 `git fetch --depth=1 origin <base_commit>` 从 github 取新 commit → github 不可达 → 扩量阻塞**。诚实记录：`git ls-remote https://github.com/django/django.git HEAD` → `Network is unreachable` exit=128 → 网络瞬断，非永久故障；网络恢复后 `run_pilot_batch.py --all-prepared` 即可自动续跑（30 instances × 4 harness 顺序跑）。**MEMORY 滚动归档**：R43/R44 速览块归档至 `daily-memories-harness/2026-10-04.md`（原文不改），MEMORY 32296B→~30KB（回到 32KB 上限内）。`git fetch` Network unreachable，无新指令可拉。⏭ 等 github 网络恢复 → 扩 20-30 instances pilot。保持 `WAITING=1`。
+- 2026-10-04 21:00 —— **第四十七轮** —— 已滚动归档至 daily-memories-harness/2026-10-04.md（结论不改：RUN_ID 62 已执行健康跳过 + H-A pilot 扩量受阻于 github 网络瞬断 + MEMORY 滚动归档 R43/R44）
 - 2026-10-04 19:00 —— **第四十五轮** —— 已滚动归档至 `daily-memories-harness/2026-10-05.md`（结论不改：relay 健康 skip + codex/claude-code × sympy-11400 评分完成 全❌ + SWEBENCH_COMPARE.html 创建 20KB + MEMORY 滚动）
 
 - 2026-10-04 20:00 —— **第四十六轮** —— 已滚动归档至 `daily-memories-harness/2026-10-05.md`（结论不改：RUN_ID 62 已执行，健康跳过重启，git fetch Network unreachable 瞬断）
