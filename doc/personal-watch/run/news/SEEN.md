@@ -317,3 +317,9 @@
 | 2026-10-06 | 中国AI短片《合龙》海外获奖 执行导演称跨文化理解先过"质量关" | 中新网/中新社 | news | https://www.chinanews.com.cn/cul/2026/10-06/10708374.shtml |
 | 2026-10-06 | 消息称月之暗面完成上市前最后一轮融资：估值约 500 亿美元，计划明年一季度赴港 IPO | IT之家 | news | https://www.ithome.com/1/009/971.htm |
 
+| 2026-10-06 | 消息称希捷与东芝竞购 TDK 硬盘磁头业务，争夺 AI 存储供应链关键环节 | IT之家 | news | https://www.ithome.com/1/009/975.htm |
+| 2026-10-06 | 华为余承东官宣鸿蒙出海：正在考虑未来逐步将 HarmonyOS 推向全球市场 | IT之家 | news(非 AI·消费 OS) | https://www.ithome.com/1/009/974.htm |
+| 2026-10-06 | Ask HN: What do you think about AI generated slides for conferences? | Hacker News（Ask HN） | discussion | https://news.ycombinator.com/item?id=49973382 |
+| 2026-10-06 | Show HN: Moching – AI desktop agent with 219 built-in tools (Rust) | Hacker News（Show HN） | tool | https://github.com/moching-ai-dev/moching |
+| 2026-10-06 | Schema-guard, stop AI agents from inventing column names in SQL | Hacker News（Show HN） | tool | https://github.com/idk-arsh/schema-guard |
+
