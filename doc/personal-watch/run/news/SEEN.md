@@ -395,3 +395,7 @@
 | 2026-10-07 | Mistral to Release New AI Model to Better Compete with U.S. Rivals | The Wall Street Journal（经 HN） | news(同事件·在账 IT之家 010/108 Mistral Large 4) | https://www.wsj.com/tech/ai/mistral-to-release-new-ai-model-to-better-compete-with-u-s-rivals-3f7c8a3d |
 | 2026-10-07 | Ask HN: How come everyone is an LLM expert? | Hacker News (Ask HN) | discussion(非新闻不收) | https://news.ycombinator.com/item?id=49980529 |
 
+
+| 2026-10-07 | AI systems could cover up misbehavior | METR（研究机构笔记·经 HN） | analysis(Notes·非新闻不收) | https://metr.org/blog/2026-10-06-ai-systems-could-cover-up-misbehavior/ |
+| 2026-10-07 | Chick-fil-A will not use artificial intelligence to replace human workers | notthebee（opinion 站点·经 HN） | opinion(非新闻不收) | https://notthebee.com/article/chick-fil-a-will-not-use-artificial-intelligence-to-replace-human-workers-in-the-drive-thru |
+
