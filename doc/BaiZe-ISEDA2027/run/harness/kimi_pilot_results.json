@@ -2946,11 +2946,28 @@
       "msg": "existing workdir updated"
     },
     "rootfs_setup": {
-      "ok": false,
-      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+      "ok": true,
+      "msg": "using template django__django-10914"
     },
-    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
-    "classification": "blocked"
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 1800.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-12915.json",
+      "stdout_tail": " wall=1800.0s ==\n[stderr tail] ...b'2026-10-06T15:35:38.488199Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-12915.json\n[run_single] cleanup: git reset --hard 4652f1f0aa459a7b980441d629648707c32e36bf\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 3,
+        "p2p_pass": 8,
+        "p2p_total": 8
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "django__django-12983",
@@ -2962,11 +2979,28 @@
       "msg": "existing workdir updated"
     },
     "rootfs_setup": {
-      "ok": false,
-      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+      "ok": true,
+      "msg": "using template django__django-10914"
     },
-    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
-    "classification": "blocked"
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 196.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-12983.json",
+      "stdout_tail": "de04c028ea13fdc8c6\n[run_single] running codex ...\n== harness=codex rc=0 timed_out=False wall=195.6s ==\n[stderr tail] ...2026-10-06T16:08:09.687356Z ERROR codex_core::models_manager::manager: failed to refresh available models: timeout waiting for child process to exit\n\n[run_single] model_patch: 613 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-12983.json\n[run_single] cleanup: git reset --hard 3bc4240d979812bd11365ede04c028ea13fdc8c6\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 15,
+        "p2p_total": 15
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "django__django-13028",
