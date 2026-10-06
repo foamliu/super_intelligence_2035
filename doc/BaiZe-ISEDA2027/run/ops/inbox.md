@@ -72,6 +72,7 @@ tail -6 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-190
 echo "=== DONE ==="
 EOS
 echo "=== ALL DONE ==="
+```
 
 ## RUN_ID 81 — 🔧 **带"显式 PATH(cline) + https_proxy"重启 ZhuLong relay/loop**（修正 77/78 用非登录 shell 重启的副作用）
 
