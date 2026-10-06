@@ -957,3 +957,68 @@ doc/personal-watch/run/watch_research_loop.sh:39:PUSH_INTERVAL=1800             
 [loop] 2026-10-06 10:41:54 wake up, invoking cline ...
 === DONE ===
 ```
+
+---
+
+## RUN_ID 9 · 2026-10-06 11:10:13 · host=`VM-0-6-ubuntu` · exit=0
+
+**命令**
+```bash
+set -u
+cd ~/super_intelligence_2035 || exit 1
+R=doc/personal-watch/run
+echo "=== 0. 基本 ==="; hostname; date '+%F %T %Z'
+echo "--- relay pidfile ---"
+if [ -f /tmp/watch_ops_relay.pid ]; then echo "pidfile=$(cat /tmp/watch_ops_relay.pid)"; else echo "(无 pidfile)"; fi
+echo "=== 1. loop 进程（etimes = 存活秒数）==="
+ps -eo pid=,etimes=,args= | grep -E 'bash watch_(news|research)_loop\.sh$' | grep -v grep | cut -c1-120 || echo "(无 loop)"
+echo "=== 2. 日志首行（= 本进程启动时刻）==="
+for n in news research; do printf '%s: ' "$n"; head -1 "/tmp/watch_${n}_loop.log" 2>/dev/null | cut -c1-90; done
+echo "=== 3. PUSH_INTERVAL ==="
+grep -h '^PUSH_INTERVAL=' "$R/watch_news_loop.sh" "$R/watch_research_loop.sh"
+echo "=== 4. 幂等修正：仅 etimes>3600 的旧进程才重启（唤醒中最多等 60s）==="
+for n in news research; do
+  line="$(ps -eo pid=,etimes=,args= | grep -E "bash watch_${n}_loop\.sh$" | grep -v grep | head -1)"
+  if [ -z "$line" ]; then
+    echo "[$n] 未在跑 -> 拉起"
+  else
+    pid="$(echo "$line" | awk '{print $1}')"; et="$(echo "$line" | awk '{print $2}')"
+    echo "[$n] pid=$pid etimes=${et}s"
+    if [ "$et" -le 3600 ]; then echo "[$n] 新进程(<=1h) -> 不动"; continue; fi
+    ok=0; for i in 1 2 3; do
+      if tail -1 "/tmp/watch_${n}_loop.log" 2>/dev/null | grep -q sleep; then ok=1; break; fi
+      sleep 20
+    done
+    if [ "$ok" -eq 0 ]; then echo "[$n] 唤醒中 -> 跳过（下个 RUN_ID 再试）"; continue; fi
+    echo "[$n] 旧进程 -> 重启"; pkill -f "watch_${n}_loop.sh"; sleep 2
+  fi
+  ( cd "$HOME/super_intelligence_2035/doc/personal-watch/run" && setsid bash "watch_${n}_loop.sh" > "/tmp/watch_${n}_loop.log" 2>&1 < /dev/null & )
+  sleep 3
+  ps -eo pid=,etimes=,args= | grep -E "bash watch_${n}_loop\.sh$" | grep -v grep | cut -c1-120 || echo "[$n] 未起来！"
+done
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== 0. 基本 ===
+VM-0-6-ubuntu
+2026-10-06 11:10:13 CST
+--- relay pidfile ---
+pidfile=353526
+=== 1. loop 进程（etimes = 存活秒数）===
+ 560123    1703 bash watch_news_loop.sh
+ 560225    1698 bash watch_research_loop.sh
+=== 2. 日志首行（= 本进程启动时刻）===
+news: [loop] 2026-10-06 10:41:49 wake up, invoking cline ...
+research: [loop] 2026-10-06 10:41:54 wake up, invoking cline ...
+=== 3. PUSH_INTERVAL ===
+PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（2026-10-06 由 18000/5h 缩短，与 BaiZe 一致；agent 每轮自己也会提交）
+PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（2026-10-06 由 18000/5h 缩短，与 BaiZe 一致；agent 每轮自己也会提交）
+=== 4. 幂等修正：仅 etimes>3600 的旧进程才重启（唤醒中最多等 60s）===
+[news] pid=560123 etimes=1703s
+[news] 新进程(<=1h) -> 不动
+[research] pid=560225 etimes=1698s
+[research] 新进程(<=1h) -> 不动
+=== DONE ===
+```
