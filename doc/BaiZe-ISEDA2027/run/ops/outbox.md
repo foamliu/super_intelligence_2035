@@ -8163,3 +8163,99 @@ whag0pgpuap12
 === DONE(.12) ===
 === relay block done ===
 ```
+
+---
+
+## RUN_ID 75 · 2026-10-06 11:19:14 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 75 · tunnel probe + ZhuLong recon $(date '+%F %T') ==="
+hostname; whoami; date '+%F %T %Z'
+echo
+echo "=== [A] 3333 listening on THIS host (2.29)? ==="
+{ ss -tlnp 2>/dev/null || netstat -tlnp 2>/dev/null; } | grep -E ':3333' || echo "   !! 3333 NOT listening -> tunnel is DOWN"
+echo
+echo "=== [B] ~/.ssh + sshpass ==="
+ls -la ~/.ssh/ 2>/dev/null | cut -c1-120
+command -v sshpass >/dev/null 2>&1 && echo "sshpass=YES" || echo "sshpass=NO"
+echo
+echo "=== [C] 2.29 -> 36.15 via tunnel (BatchMode, <=25s) ==="
+timeout 25 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'echo TUNNEL_OK; hostname; date "+%F %T %Z"' 2>&1 | cut -c1-200
+echo "   ssh_rc=$?"
+echo
+echo "=== [D] if reachable: ZhuLong state on 36.15 (read-only, <=40s) ==="
+timeout 40 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-180
+set -u
+echo "host=$(hostname)"; date '+%F %T %Z'
+echo "--- procs (zhulong loop/relay) ---"
+ps -eo pid,etime,args | grep -E 'zhulong_(loop|ops_relay)\.sh' | grep -v grep || echo "(none running)"
+echo "--- repo ---"
+ls -d /nasdata/app.e0031982/code/super_intelligence_2035 2>/dev/null || echo "(NO repo at /nasdata)"
+echo "--- logs ---"
+for f in /tmp/zhulong_loop.log /tmp/zhulong_ops_relay.log; do
+  echo "[$f] mtime=$(stat -c '%y' "$f" 2>/dev/null | cut -c1-19) size=$(stat -c '%s' "$f" 2>/dev/null)"
+  tail -3 "$f" 2>/dev/null | cut -c1-180 || echo "   (no log)"
+done
+echo "--- git ---"
+cd /nasdata/app.e0031982/code/super_intelligence_2035 2>/dev/null && { git log --oneline -2 | cut -c1-140; echo "dirty:"; git status --short | head -5; } || echo "(no git)"
+EOS
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== RUN_ID 75 · tunnel probe + ZhuLong recon 2026-10-06 11:19:14 ===
+whag0pgpuap29
+app.e0031982
+2026-10-06 11:19:14 CST
+
+=== [A] 3333 listening on THIS host (2.29)? ===
+LISTEN 0      128        127.0.0.1:3333       0.0.0.0:*                                                 
+
+=== [B] ~/.ssh + sshpass ===
+total 28
+drwx------  2 app.e0031982 app.adm 4096 Oct  5 11:30 .
+drwxr-x--- 26 app.e0031982 app.adm 4096 Oct  6 10:56 ..
+-rw-------  1 app.e0031982 app.adm  847 Oct  5 11:19 authorized_keys
+-rw-------  1 app.e0031982 app.adm 3381 Dec 31  2025 id_rsa
+-rw-r-----  1 app.e0031982 app.adm  743 Dec 31  2025 id_rsa.pub
+-rw-------  1 app.e0031982 app.adm 3376 Oct  5 11:30 known_hosts
+-rw-------  1 app.e0031982 app.adm 2540 Oct  5 11:27 known_hosts.old
+sshpass=NO
+
+=== [C] 2.29 -> 36.15 via tunnel (BatchMode, <=25s) ===
+Warning: Permanently added '[localhost]:3333' (ED25519) to the list of known hosts.
+TUNNEL_OK
+hfeg0tedaap02
+2026-10-06 11:19:15 CST
+   ssh_rc=0
+
+=== [D] if reachable: ZhuLong state on 36.15 (read-only, <=40s) ===
+Warning: Permanently added '[localhost]:3333' (ED25519) to the list of known hosts.
+host=hfeg0tedaap02
+2026-10-06 11:19:15 CST
+--- procs (zhulong loop/relay) ---
+3186967  1-00:07:25 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+3189240  1-00:06:28 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+--- repo ---
+/nasdata/app.e0031982/code/super_intelligence_2035
+--- logs ---
+[/tmp/zhulong_loop.log] mtime=2026-10-06 11:16:55 size=2512886
+error: could not detach HEAD
+[push] pull --rebase FAILED (conflict?) - aborting rebase, skip this cycle.
+[loop] 2026-10-06 11:16:55 WAITING=1 (eval running / infra not ready) → sleep 1800s
+[/tmp/zhulong_ops_relay.log] mtime=2026-10-05 11:11:50 size=127
+[zhulong-relay] 2026-10-05 11:11:50 started. repo=/nasdata/app.e0031982/code/super_intelligence_2035  poll=20s  fetch_every=3x
+--- git ---
+85fac58 ZhuLong: B.kimi-k2.6-cloud r1 launched (PID 1981408, batch 2026_1006_071809); B.deepseek-v4-flash 5/5=16.7±12.3% done
+dc5a96c ZhuLong: B.deepseek-v4-flash r4=7.6% harvested, r5 started (PID 1615537, batch 2026_1006_045811)
+dirty:
+ M doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md
+ M doc/ZhuLong_DAC2027/run/daily-memories/2026-10-04.md
+ M doc/ZhuLong_DAC2027/run/daily-memories/2026-10-05.md
+ M doc/ZhuLong_DAC2027/run/daily-memories/2026-10-06.md
+?? "doc/\344\270\211\346\234\272\344\272\222\350\201\224\346\226\271\346\263\225.md"
+=== DONE ===
+```
