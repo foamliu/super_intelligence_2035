@@ -299,4 +299,6 @@
 | 2026-10-06 | 欧盟推行数字主权遇阻，微软 Teams 替代方案被某官员吐槽"绝对垃圾" | IT之家 | news(非 AI) | https://www.ithome.com/1/009/939.htm |
 | 2026-10-06 | Ask HN: How are AI budgets changing in your company? | Hacker News（Ask HN） | discussion | https://news.ycombinator.com/item?id=49972842 |
 | 2026-10-06 | I am building an Online Adobe Illustrator | Hacker News | discussion | https://news.ycombinator.com/item?id=49972994 |
+| 2026-10-06 | GLM-5.3 上架亚马逊 AWS 大模型平台，智谱打开海外收入分成通道 | IT之家 | news | https://www.ithome.com/1/009/946.htm |
+| 2026-10-06 | LG 电子将为北美超 5GW 人工智能数据中心供应冷水机组 | IT之家 | news | https://www.ithome.com/1/009/949.htm |
 
