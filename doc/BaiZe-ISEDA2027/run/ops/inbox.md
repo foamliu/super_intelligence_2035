@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 82 -->
+<!-- RUN_ID: 83 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -30,6 +30,38 @@
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`。
 
 ---
+
+## RUN_ID 83 — 🩺 **ZhuLong 健康检查（只读）**：relay/loop 进程 + 日志 + cline 可调用性
+
+> **目的（supervisor 2026-10-06 12:0x · 用户要求"只检查一下"）**：确认 36.15 上 ZhuLong 的 **中继 与 agent loop 是否正常**。🚫 纯只读：不 kill / 不重启 / 不改配置。
+> **看点**：① 两条进程在否；② 交互式 shell 能否解析 `cline`（RUN_ID 81 曾因 `PATH` 缺 cline 报 `No such file`）；③ loop 日志尾部是否出现正常唤醒（**无** `No such file`）；④ 磁盘上的 `PUSH_INTERVAL`。
+
+```bash
+set -u
+echo "=== RUN_ID 83 · ZhuLong health check (read-only) $(date '+%F %T') ==="
+timeout 120 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+cd "$W" || { echo "(NO repo)"; exit 1; }
+echo "host=$(hostname)  $(date '+%F %T')"
+echo "--- [1] procs (relay + loop) ---"
+ps -eo pid,etime,args | grep -E 'zhulong_(loop|ops_relay)[.]sh' | grep -v grep | cut -c1-140 || echo "(none running)"
+echo "--- [2] cline resolvable in INTERACTIVE shell ---"
+CP="$(bash -ic 'command -v cline' 2>/dev/null | tail -1)"
+echo "cline_path=$CP"
+echo "--- [3] loop log tail ---"
+tail -8 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-190
+echo "--- [4] relay log tail ---"
+tail -3 /tmp/zhulong_ops_relay.log 2>/dev/null | cut -c1-190
+echo "--- [5] PUSH_INTERVAL on disk ---"
+grep -n '^PUSH_INTERVAL=' "$W/doc/ZhuLong_DAC2027/run/zhulong_loop.sh" | cut -c1-120
+echo "--- [6] git status ---"
+git log --oneline -1 2>/dev/null | cut -c1-140
+git status -sb 2>/dev/null | head -3 | cut -c1-150
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
 
 ## RUN_ID 82 — 🎯 **ZhuLong 收口**：问出 `cline` 真实路径（`bash -ic`）+ 修 origin/main 陈旧 ref + 带正确 env 重启
 
