@@ -1,6 +1,6 @@
 # MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
@@ -10,106 +10,98 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验改道 → Step0 kill完成 + 代理模型标定完成 + held-out bin创建 + BO搜索脚本就位 + smoke test通过 → 待启动200trial搜索(GPU2-7)
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT-2605下满一致(20.97B tok)；SFT-Agent-2609全4shard(4/4 done)；base分词(22.05B tok)；LIT_IDEAS HTML；D-CLEAN-1/2/3/4(保留不动)；🔴 S0a 2.2B单臂已kill(2026-10-06 08:06)；baize_mix_stable_s0a.sh标注DEPRECATED；mamba2_hybrid_proxy/(provider+recipe)创建；pretrain_proxy_launcher.py创建；baize_mix_calibrate.sh创建；标定完成(LR=1e-3最优, 92.7M params, s/step=1.5s, T≈691>400)；create_heldout_bins.py创建+运行(held_out_base/code/math各~2M tok)；baize_mix_optuna.py创建(GP-EI surrogate, 6并行trial, SQLite存储, 中位数pruning, ckpt自动清理)；smoke test通过(20步, s/step=1.4s warmup后, val loss正确提取)
-当前动作:     唤醒146(08:50) ①held-out bin创建完成(base:2451doc/2.0M tok, code:1451doc/2.0M tok, math:4618doc/2.0M tok)；②baize_mix_optuna.py创建完成(GP-EI替代TPE, .29离线无法pip install optuna, 使用sklearn GPR+scipy EI)；③smoke test通过(GPU2, 20步, blend=0.85/0.08/0.07, train loss 10.72→8.70, val loss 9.34→8.23, s/step=1.4s warmup后)；④ checkpoint自动清理已加入(避免200trial×400MB=80GB填盘)；⑤ 待运维指令启动200trial BO搜索
-下一步:       ⓪ 标定结果→实测s/step→反推24h trial数→锁定模型尺寸(§③.6阶梯表)；① 创建held-out验证bin(3域各1-2M token, hash切分, §③.7.①)；② Optuna study(TPESampler+MedianPruner, sqlite storage, 6卡并行trial, §④搜索空间)；③ Day1搜Stable段(base:code:math simplex)；④ Day2搜Decay段(SFT占比+SFT内部5类)
-阻塞:         🔄标定中(等待3个LR trial的50步完成, ETA~5-10min)；held-out bin待创建；optuna待装独立env
+PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) 5项必验全部通过 → 待启动Optuna BO搜索(GPU2-7)
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；mamba2_hybrid_proxy_d128/(provider+recipe)创建；pretrain_proxy_launcher.py添加--proxy-size d128；check_numel.py创建；held-out bin(base/code/math各~2M tok)；baize_mix_optuna.py创建(GP-EI)；**5项必验全部通过(2026-10-06 09:48)**
+当前动作:     唤醒147(09:48) ①d=128结构合法性✅(N=18,355,656≈18.36M, heads=1/groups=1 edge case OK, 10 runs 0 NaN)；②2B tie/untie✅(N=2,220,909,056, UNTIE, body(N-E) coeff=8.32, body(N-2E) coeff=7.19)；③s_step✅(median=1.50s, T≈864/GPU/day, 5,184/6GPU/day >> 512 target)；④LR rescan✅(3e-4→10.19, 1e-3→8.04, 3e-3→7.40, 选定LR=3e-3)；⑤判别力✅✅✅(code=0% vs code=30% on held_out_code, Δloss=1.495, 2σ=0.190, Δloss/2σ=7.9×, 远超阈值)
+下一步:       ① 启动Optuna BO搜索(200+trial, 6 GPU并行, GP-EI surrogate, MedianPruner)；② Day1搜Stable段(base:code:math simplex)；③ Day2搜Decay段(SFT占比+SFT内部5类)
+阻塞:         无（5项必验全部通过，可开工）
 ERROR_COUNT:  0
 ```
+
+## 🔬 开工前 5 项必验结果（2026-10-06 09:48，全部通过）
+
+> 任务书 §B 要求的 5 项必验，在 .29 GPU2-7 上完成。**全部 PASS**，d=128/L=14 proxy 可开工。
+
+### 必验 #2: d=128 结构合法性 ✅
+
+| 项 | 实测值 | 预期值 | 判定 |
+|:--|:--|:--|:--|
+| **N（总参数）** | **18,355,656** | ≈18.5M | ✅ 差 < 1% |
+| **E（embedding）** | 16,560,256 (=129,408×128) | 16.56M (90%) | ✅ |
+| **body（N-E）** | 1,795,400 | ≈1.91M | ✅ (系数差异因 heads=1/groups=1，见下) |
+| **heads=1, n_groups=1** | 构建成功，10 runs 0 NaN | edge case | ✅ |
+| **vocab** | 129,408 (padded from 129,281) | 129,408 | ✅ |
+
+- 结构：d=128 · L=14 · ffn=512 · mamba d_inner=256 · ssm_state=128 · heads=1 · tie embed · pattern `M-M-M--M-M*-M-`
+- 原始输出（torchrun 1 GPU）：`number of parameters on (tensor, pipeline) model parallel rank (0, 0): 18355656`
+
+### 必验 #3: 2B tie/untie 系数 ✅
+
+| 项 | 实测值 | 说明 |
+|:--|:--|:--|
+| **2B N（总参数）** | **2,220,909,056** (TP=2, 每卡 1,110,454,528) | ≈2.221B ✅ |
+| **2B vocab** | 129,536 (padded from 129,281) | |
+| **share_embeddings_and_output_weights** | **False** | **UNTIE** |
+| **E = V×d** | 265,429,888 (=129,536×2048) | |
+| **body(N-E) coeff** | **8.324 ≈ 8.32** | body 含 output layer（untie） |
+| **body(N-2E) coeff** | **7.194 ≈ 7.19** | decoder only（不含 output） |
+| **d=128 body(N-E) coeff** | **7.825** | tie，body 仅 decoder；与 2B 差异因 heads/groups 比例不同 |
+
+> **结论**：2B 模型为 UNTIE（`share_embeddings_and_output_weights=False`）；body(N-E) 系数 = 8.32，body(N-2E) 系数 = 7.19。d=128 proxy 为 TIE，body 系数 = 7.825（与 2B 不同因架构比例差异，不影响迁移性论证——比例 `24M:4*:28-` 一致）。
+
+### 必验 #4: s_step 实测 ✅
+
+| 口径 | 值 | 说明 |
+|:--|:--|:--|
+| **s_step (median, iter 20-50)** | **1,503.65 ms ≈ 1.50s** | 16 次测量（4 runs × 4 iters），范围 1,425–1,582 ms |
+| **每 trial 总时间** | ≈100s | 50步×1.50s + init(15s) + eval(10s) |
+| **T (1 GPU/day)** | **864** | 86400÷100 |
+| **T (6 GPU/day)** | **5,184** | 864×6 |
+| **512 组需要** | < 1.5h | 512÷5,184×24 ≈ 2.4h → 远超需求 |
+
+> s_step 原始数据（ms）：1512.5, 1472.8, 1564.7, 1490.8, 1480.3, 1437.0, 1559.0, 1425.4, 1455.0, 1511.4, 1582.0, 1534.7, 1495.9, 1538.5, 1563.0, 1493.7
+
+### 必验 #5: LR 三点重扫 ✅
+
+| LR | val_loss@iter50 (held_out_base) | PPL | 判定 |
+|:--|:--|:--|:--|
+| **3e-4** | 10.194 | 26,746 | ❌ 太慢 |
+| **1e-3** | 8.044 | 3,102 | 🟡 可用 |
+| **3e-3** | **7.403** | **1,641** | ✅ **最优，选定** |
+
+> 选定 **LR=3e-3** 作为固定 LR。50 步内 loss 单调下降，grad norm 稳定（0.28–0.59），0 NaN。
+
+### 必验 #1: 判别力（可分辨性证伪）✅✅✅
+
+> **最关键验证**：code=0% vs code=30%，各 3 seed，eval on held_out_code，LR=3e-3，50 steps。
+
+| 配比 | seed=1234 | seed=2345 | seed=3456 | **mean** | **σ** |
+|:--|:--|:--|:--|:--|:--|
+| **code=0%** | 8.6805 | 8.6794 | 8.7790 | **8.7130** | **0.057** |
+| **code=30%** | 7.2746 | 7.2479 | 7.1316 | **7.2180** | **0.076** |
+
+| 指标 | 值 | 阈值 | 判定 |
+|:--|:--|:--|:--|
+| **Δloss** | **1.495** | > 2σ | ✅ |
+| **2σ (pooled)** | 0.190 | — | — |
+| **Δloss / 2σ** | **7.9×** | > 1× | ✅✅✅ 远超 |
+
+> **结论**：d=128/L=14 proxy 的判别力**极强**（Δloss/2σ = 7.9×），可清晰区分 code=0% vs code=30% 配比。**规模可用，配比实验可开工。**
 
 ## 运维问答
 
 > 外部运维在 `BAIZE_DATA_TASK.md` 的「运维指令区」提问时，答案写在这里。
 
-### ① `UltraData-SFT-2605` 重下（运维点名要「实际字节数 + 文件数 + 与 HF 官方清单一致性」）
 
-**✅ 已完成（2026-10-02 唤醒 37 实测确认）**：
-- **实际字节数**：`318,990,252,711 B` = **318.99 GB**（= 297.08 GiB）
-- **实际文件数**：**1504 jsonl**（`no_think` 855 + `think` 649）
-- **与 HF 官方清单一致性**：**逐字节完全一致** —— 官方清单（HF REST `/api/datasets` siblings + `/tree` 逐子目录求和）= **1504 文件 / 318,990,252,711 B**；本轮落盘 `find -printf '%s' | awk` 求和 = **318,990,252,711 字节**，两数**完全相等**；`.incomplete` 残留 = **0**。
-- 逐子目录对齐：`no_think` = CG 50✓ + Code 300✓ + IF 20✓ + Kn 80✓ + Math 300✓ + ML-Kn 50✓ + ML-Math 55✓ = **855✓**；`think` = CG 50✓ + Code 279✓ + IF 20✓ + Kn 50✓ + Math 250✓ = **649✓**。
+### ①-⑧ 已归档（详见 `daily-memories-data/2026-10-06.md`）
 
-
-### ② D-CLEAN（2026-10-03 运维指令）— ✅ 已盘点完成（**只盘点、不删除**）
-
-产出 `run/DISK_CLEANUP_INVENTORY.md`。可回收合计（分档）：
-
-- 🟢 **明确可清 ≈3.3G**：`~/.cache/pip` 3.3G + `~/.cache/huggingface` 4.8M。
-- 🟡 **需确认（本用户）≈10.1T**：laion2B-en-aesthetic ~~8.1T~~ **7.8G（D-CLEAN-2 已删）** + nemo_experiments 524G + servers 974G + models 452G + hf_cache 20G 等；LLaVA 85M 26T **保留不删**（运维令）。
-- 🔴 **不可动**：base/gpic 下载、L3/code/math、SFT-2605、GPIC、en500k/eval5k、EDA-Eval 隔离区。
-- 他人目录见 DISK_CLEANUP_INVENTORY.md（只读排查，未碰）。
-
-### ③ D-CLEAN-2（2026-10-03 运维指令）— ✅ 已执行删除（回收 ≈341G）+ `servers` 探查
-
-> ⚠️ **先更正前置错误**：D-CLEAN 盘点把 `laion2B-en-aesthetic` 记为 **8.1T，系 G/T 单位误读，实测 7.8G**（128 parquet URL 元数据）。
-
-- **已删（`rm -rf`/`rm -f`，贴命令+实测大小→见 DISK_CLEANUP_INVENTORY.md §6）**：
-  1. `laion2B-en-aesthetic` **7.8G** ✓（❌ 非 8.1T）
-  2. `/nas_train/app.e0031982/zhulong.tar.gz` 493,894,409 B ✓
-  3. `~/.cache/pip` 3.3G ✓
-  4. `nemo_experiments` **Round 1 / S 系列 27 目录 ≈310G** ✓（保留 live `p5b` 79G + R2 p1–p7 ≈135G；删后 524G→214G）
-- **实际回收 ≈ 341 GB ≈ 0.33 TiB**（`df -hT` /nas_train 仍显示 31T，因整 TB 粒度；`df -BG` Avail 30964G）—— **远小于运维预期 ~8.6T，原因即 laion2B 单位误读**。
-- **`servers` 探查（未删）**：`/nas_train/app.e0031982/servers/` = **974G = 6 节点（10_239_2_12/24/26/27/28/29）× `LLaVA/`，为 LLaVA-V1.5-Qwen3-4B 旧训练 ckpt（2026-02 消融：loss-scope/token-merge/layerwise/rope/siglip2/optimizer）**。高价值回收候选，但属模型权重、有跨节点 symlink，**建议运维/owner 确认后再删**。
-- **`nemo_experiments` R2 p1–p7（≈135G）保守保留**：被 P-5b 取代、但为近期（10-01~10-02）R2 中间实验；**是否也可清请运维二次确认**。
-
-### ④ D-CLEAN-3（2026-10-03 运维指令）— ✅ 已执行删除 `servers`（974G），`nemo_experiments` R2 ckpt 保留
-
-> 前置检查三项全过，已 `rm -rf`。结论：**实际回收 ≈972 GB**（=`du -sh` 974G，df 对得上）。
-
-- **P1 无进程占用 ✅**：`fuser -v`（**无 `-m`**）对 `servers` 目录本身 = 空（仅一条 Stale file handle 警告）；全用户 open-fd 扫描命中 `servers` = 0；关键进程 cwd 均不在 servers（vision R9 `pt_elastic`+python 的 cwd=`run/vision`；hf 下载 2023896/2426795 cwd=datasets）。注：指令给的 `fuser -vm` 带 `-m` 是「整挂载」口径，会列出所有用 /nas_train 的进程，易误判，故改无 `-m` 精确口径。
-- **P2 无近期活动 ✅**：`find servers -newermt '-7 days'` = 空（无任何 7 天内改动）。
-- **P3 无脚本引用 ✅**：共享工作副本 `super_intelligence_2035`（含全部 loop/task 脚本）grep `app.e0031982/servers` = 0 命中；全树 `/nas_train/app.e0031982/code` grep（后台 119s）0 命中后停。
-- **symlink 留证**：`servers` 内 symlink 指向**外部数据集**（coco/gqa/ocr_vqa/textvqa/vg/VG_100K）→ `rm -rf` **不跟随**，外部数据集**完好无损**（已逐一 `ls -d` 复核）；族内 symlink（adamw→siglip2-384、layerwise-a→lr-group-a、safetensors→checkpoint-3000）随删。
-- **df 前后**：删前 `180751G used / 31218G avail` → 删后稳定 `179779G used / 32190G avail`（85%）→ **回收 ≈972 GB**。⚠️ 说明：删后 df 曾短暂只显示 -271G（NFS statfs 延迟），约 2 分钟后稳定为 -972G；最终以稳定值为准。
-- **`nemo_experiments` R2 ckpt（p1/p2/p3/p5a/p7 ≈135G）按运维令保留**，本轮未动。
-
-### ⑤ 🔴 下载白名单锁定（2026-10-03 运维指令，**本轮唯一动作项**）— ✅ 已执行：停 `en_v1_4`，只下 `l1_en_hq` + `zh` + GPIC
-
-> 运维拍板：「数据下载现在就 MiniCPM5 的数据 + GPIC，不要再节外生枝。」→ 白名单 = ① `ultrafineweb_l1_en_hq`(478G) + `ultrafineweb_zh`(324G) ② GPIC；🔴 立即停 `en_v1_4`。
-
-- **停了什么**：`kill 2061268`（旧 base-rest 进程，`--include` 含 `en_v1_4`+`l1_en_hq`+`zh` 三 config、顺序执行中，卡在 en_v1_4 首个快照 CC-MAIN-2013-20 **488/512** @~1.8MB/s）。✅ 进程已死（`ps -p 2061268` = DEAD）。
-- **保留已下内容（🚫 不删）**：`en_v1_4` 已下 **488 parquet**（≈41.5GB，仅 CC-MAIN-2013-20 快照）**原样保留**在 `/nas_train/.../Ultra-FineWeb/data/ultrafineweb_en_v1_4/`。
-- **释放带宽去向**：en_v1_4 = 6.75TB/56,461 文件（@1.8MB/s≈43 天）的巨量阻塞 → 停后带宽让给 `l1_en_hq`(478G)+`zh`(324G) 与 gpic。
-- **新任务 pid**：**550476**（`setsid` 去进程组 + `nohup`、ppid=1；`--include 'data/ultrafineweb_l1_en_hq/*' 'data/ultrafineweb_zh/*' --local-dir /nas_train/.../Ultra-FineWeb`；log=`Ultra-FineWeb/download_l1_zh.log`）。已过 `list_repo_tree`（64,771 文件）并开拉：**首拉 `ultrafineweb_zh` part-001-of-256**（⚠️ HF 树序先 zh 后 l1_en_hq，非 `--include` 顺序），**起步速率 ≈3.3 MB/s**（15s 内 `.incomplete` +48.96MB，与 gpic 2426795 并存抢带宽）。
-- **带宽优先级（运维 ④）**：GPIC > l1_en_hq > zh —— 新任务按 `--include` 顺序先 l1_en_hq 后 zh，符合优先级。
-- **白名单 4 项口径（⑤）**：`en`=2048/2048✅满 · `l1_en_hq`=0（刚启动）· `zh`=0（随后）· `gpic`=train 1634/8000+test 128/128✓（pid 2426795，~20MB/s）。
-
-### ⑥ D-CLEAN-4（2026-10-04 运维指令）— ✅ 已执行「大盘复扫，只盘点、不删除」（产出 `DISK_CLEANUP_INVENTORY.md` §8）
-
-> 指令：`/nas_train` 需要清理 → 用 sudo 盘点各目录大小，找可删除大目录，重点 `/nas_train/app.e0031982`。
-
-- **大盘**：`/nas_train` 177T/207T（86%，Avail **31T**）；`/nas_inference` 60% / `/nas_user` 74% / `/data` 4%。
-- **sudo 不可用**（`sudo -n true` → "a password is required"；本线无明文口令、纪律「口令绝不打印」→ 未 sudo）→ 跨用户 root/权限收紧目录只读顶层、无法测实。
-- **本用户最大新增候选（🟡 需确认）**：`datasets/FineVision` **4.32 TiB**（可选补充源，~8.5 月未动）；`code/hell/LLaVA-OneVision-1.5` **1.24 TiB**（旧训练目录，疑与顶层 LLaVA-OneVision-1.5 重复）；`code/chip-mllm` 896G；`code/LLaVA` 716G；`code/LLaVA-OneVision-2` 650G；`chip_expert` 468G（4× chipexpert-cn 快照）；`models` 452G；`circuitvision-encoder` 244G；`datasets/HuggingFaceFW` 1.24T + `conceptual-captions` 1.13T。
-- **跨用户候选（🟡 需 owner/运维）**：`/nas_train/wangcongtao` **2.42 TiB**（2026-01-13，~264 天）；`/nas_train/app.e0025692` **946 GiB**（2026-02-14，~232 天）；`app.e0041332` 1.3G；`app.e0013625` 0.2G。
-- **可回收合计（分档）**：🟢 ≈0.6G · 🟡本用户 ≈**11.4 TiB** · 🟡跨用户 ≈**3.4 TiB**；🔴 不可动（mvp-lab 26T / base 2.74T / BaiZe-ISEDA2027 421G / eda_fastmcp / baize-vision / repo / harness / miniforge3）。
-- **建议运维先拍板 5 项**：`FineVision` / `hell` / `chip_expert` / 跨 `wangcongtao`+`app.e0025692`（合计可回 **≈9.5 TiB**），其余多为 vision 线历史资产需 owner 二次确认。
-
-### ⑦ ⭐ LLaVA-OneVision-1.5 4B checkpoint 专项（2026-10-04 用户点名追加 · D-CLEAN-4 下）— ✅ 已盘点（只盘点、不删除）
-
-> 用户点名：`LLaVA-OneVision-1.5` 目录沉淀大量 **4B 检查点，绝大部分可删**。产出 `DISK_CLEANUP_INVENTORY.md` §9。
-
-- **目标**：`/nas_train/app.e0031982/code/LLaVA-OneVision-1.5/`（203 项；最后活动 2026-09-25 ≈9 天前；无活跃训练）。
-- **核心（实测+计数）**：单个 Megatron 分布式 `iter_*` ckpt ≈ **61.6 GiB**（4 处一致）。**367 个 iter ckpt**（stage_1.5=299 + stage_2=68）≈ **22 TiB**；+ HF 转换 45 目录 **396 GiB**（du 精确）+ `checkpoints/baize_4b` 142G → **总 ≈22.5 TiB**。
-- **🟢 可回收（用户已确认"绝大部分可删"）≈ 22 TiB**（删全部 iter ckpt + 被取代 release/HF 旧版，仅保留每 stage 最终 best ≈30G）。
-- ⚠️ **史上最大单项**（远超 servers 974G / FineVision 4.3T / nemo_exp 272G 之和）；P1/P2/P3 全过 → 建议运维一次性拍板。
-
-### ⑧ ⭐ BaiZe 论文「idea 文献调研」HTML 报告（2026-10-04 运维指令 · 最高优先 · 明早 08:30 前）— ✅ 已产出 + ✅ 15条在线核验完成 + ✅ 全量升级(定价+ISEDA+2026新工作)完成
-
-> 运维指令：用 `cimi-search`/`cimi-fetch` 调研 7 方向（方向 0 成本经济性为最高优先），产出自包含 HTML `doc/BaiZe-ISEDA2027/LIT_IDEAS_2026-10-04.html`，明早 08:30 前交付。
-
-- **产出**：`doc/BaiZe-ISEDA2027/LIT_IDEAS_2026-10-04.html`（**78 KB / 608 行 / 自包含 · 无外部 CDN**），数据 agent 唤醒 110 于 2026-10-04 23:30 生成，唤醒 121 于 2026-10-05 07:45 完成在线核验，唤醒 122 于 2026-10-05 08:30 完成全量升级。
-- **结构齐全**：① TL;DR(10 条) ② 主表(50 idea × 全列) ③ 分三档(立即可做 16 条 / 需小实验 3 条 / 需长期 4 条) ④ 专章「成本救场」(4 子命题证据链 + DeepSeek-Flash 定价表 + 2026 SLM 成本证据表) ⑤ 最高性价比 TOP-10 ⑥ 7 方向详述(+2026前沿段) ⑦ 参考清单(37 条本地 bib + 15 条在线核验 + 7 篇 2026 新增) ⑧ 缺口清单(全部✅) ⑨ 给运维下一步建议。
-- **✅ 15条 arXiv 在线核验完成**（2026-10-05 07:35–07:45, cimi-search MCP 恢复可用）：
-  - **12 条核验通过**：DeepSeek-V3(2412.19437✅ 671B/37B/2.788M H800h) / GRPO(2402.03300✅) / DAPO(2503.14476✅) / 推测解码(2211.17192✅) / FrugalGPT(2305.05176✅ 98%降本) / Hinton蒸馏(1503.02531✅) / CLIP(2103.00020✅) / SigLIP(2303.15343✅) / MAE(2111.06377✅ 75%mask ViT-H 87.8%) / DINOv2(2304.07193✅) / Token Merging(2210.09461✅ ICLR2023 Oral 2x) / Kaplan(2001.08361✅)。
-  - **3 条 arXiv ID 更正**：RouteLLM 2406.08502→**2406.18665** / SigLIP 2 2502.04433→**2502.14786** / LLaVA-NeXT 2406.16860实为Cambrian-1→**博客文章**(无独立arXiv论文)。
-- **✅ DeepSeek-Flash 定价一手核验**（唤醒 122, cimi-fetch 抓取官方定价页 api-docs.deepseek.com）：DeepSeek-V4.1-Flash 输出 **4–8 元/M tok**（≈$0.56–1.11），已填入 §4 成本对比表。自部署 BaiZe 2.2B 输出 ≈$0.024/M tok → 比值 ~1/23–1/46（decode）→ 叠加 KV cache → ~1/100（agentic 长会话）。
-- **✅ ISEDA 投稿要求已确认**（cimi-fetch 抓取 eda2.com/iseda/sub.html）：Regular Full Paper **4–6 页**。⚠️ BaiZe 论文当前 7 页 → **需压缩 1 页**。
-- **✅ 7 篇 2026 新工作已补**（此前完全空白）：arXiv 2607.08938（CMU, SLM 89.7%@4%cost, cimi-fetch 正文一手核验）/ 2512.15943 / 2604.19299 / 2604.23577 / 2606.27457 / 2609.01532 / 2602.22495。详见 §4 成本专章 + §7 参考清单。
-- **git**：本轮已 `git add` 该 HTML + 本记忆 + 当日日志并**本地提交**；`git push` 因 `Network is unreachable` 失败，待网络恢复后同步远端。
-- **⭐⭐ LIT_IDEAS_2026-10-05.html（重做版）已产出**（唤醒 124 前）：**52 entries / 34 from 2024-2026 / 62% turnover vs 10-04 版 / 0 unverified**，用 cimi_search+cimi_fetch 从一开始就联网 discovery-driven。旧版 10-04 保留作对照。
-
+| # | 主题 | 结论 | 日期 |
+|:--|:--|:--|:--|
+| ① | SFT-2605 重下 | ✅ 1504 jsonl / 318.99 GB，与 HF 官方清单逐字节一致 | 10-02 |
+| ②-④ | D-CLEAN-1/2/3 | ✅ 盘点 + 删除 servers(974G)+nemo R1(310G)+laion(7.8G)+pip(3.3G) ≈1.3T；nemo R2 ckpt 保留 | 10-03 |
+| ⑤ | 下载白名单 | ✅ 停 en_v1_4，只下 l1_en_hq+zh+GPIC | 10-03 |
+| ⑥-⑦ | D-CLEAN-4 + LLaVA ckpt | ✅ 盘点：本用户可回收 ≈11.4TiB(含 LLaVA-OV 22TiB iter ckpt)，待运维拍板 | 10-04 |
+| ⑧ | LIT_IDEAS HTML | ✅ 产出 `LIT_IDEAS_2026-10-05.html`（52 entries/0 unverified/62% turnover），含成本专章+ISEDA投稿要求(4-6页) | 10-04 |
 ### ⑨ 🔴 配比实验可行性核查（2026-10-05 运维分卡指令 · §0.6-B）— ✅ 可行性核查完成，⏳ 等 GPU2-7
 
 > 运维 2026-10-05 批准：`.29` GPU2-7（6 卡）归 data 跑配比实验，与 pretrain 推理评测并行。**起跑前置 = 先等 P-9.8 armB(FP8) 跑完**。
