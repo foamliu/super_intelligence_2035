@@ -40,14 +40,20 @@
 > - 产出 `report_data_mix_eval.html`（200-trial 的 top-K/秩相关/σ）+ 更新 `DATA_MIX_RECIPE.md §6`。🚫 **不要把 200 扩成 512**（512 目标**并入第二轮**，见 ③）。
 >
 > **② `s_step` 归因（⭐ 最高杠杆；时间盒 ≤2h；**只占 1–2 卡**，别抢 ① 的卡）**
+> - **⭐ 目标函数（用户 2026-10-06 追问：`MBS`/`GBS` 都往大试，追求「最快训完 0.5–1 B」）**：**不是最小化 `s_step`，而是最小化「训完 `D`=0.5–1 B」的总墙钟**。模型：
+>   `墙钟 = (D/(GBS·seq)) × s_step`，`s_step = F(每步固定) + (GBS/MBS)·P(每 microbatch) + c·GBS(算力)`
+>   ⇒ `墙钟 ∝ D/seq × [ F/GBS + P/MBS + c ]` ⇒ **两杠杆都拉满：GBS↑（压 F/GBS）× MBS↑（压 P/MBS）**，地板 = 纯算力 `c`。
 > - **逐项实测（每次只改一个变量，贴原始输出）**：
->   a. **MBS 扫描**：MBS ∈ {1,4,8,16}（GBS 固定 16）→ 报 **s_step 中位数 + tok/s**；预期 microbatch 16→1 时 s_step 大降；**若 s_step 不随 microbatch 数变 ⇒ 转查数据管线**；
->   b. **DataLoader**：`num_workers` / prefetch / 本地缓存 vs NFS → 报 s_step 差；
->   c. **CUDA graph**（若 launcher 暴露）/ 关 `--recompute`；
->   d. **CE**：`--cross-entropy-loss-fusion`（fused/chunked）是否可用；
->   e. **纯前向 vs 纯数据处理分离计时**（定位到底卡在哪）。
-> - **判据（必须给）**：**基线 1.50 s → 最优组合 = ? ms**，及**据此可达的 `D`（= 步数×GBS×seq）与 `T`（6 卡/24h）**；目标 **`s_step ≤100 ms`（力争 ≤30 ms）⇒ `D` 可达 0.5–1 B**。
-> - 产出 `report_data_mix_sstep.html` + `DATA_MIX_RECIPE.md` 增节（原始输出 + 判据）。
+>   a. ⭐ **MBS 扫描（拉满，受显存限）**：MBS ∈ **{1,4,8,16,32,64,128}**（GBS 固定 16 先测单点）→ 报 **s_step 中位数 + tok/s + 峰值显存 + OOM?**；**若 s_step 不随 microbatch 数变 ⇒ 转查数据管线**。
+>      - **显存账（瓶颈 = `vocab=129,408` 的 logits）**：`logits = MBS×seq×vocab`（bf16）→ 16→**8.5 GB**、32→**17 GB**、64→**34 GB**、128→**68 GB**（+反传再翻倍）⇒ **32 稳 / 64 视情况 / 128 须先落 fused CE**。
+>   b. ⭐ **先落 `fused/chunked CE`**（`--cross-entropy-loss-fusion`；TP1/DP1 无 TP 可切 ⇒ 必须）—— **落了它 MBS 才能上 128/256**（激活降到 `O(MBS·seq·d·L)` ≈ 1 GB 级）。**先做 b，再做 a 的高档位。**
+>   c. ⭐ **GBS 扫描（拉满，但受「优化步数」限）**：GBS ∈ **{16,64,256,1024}**（MBS 取 a 的最大可用值）→ 报 **tok/s + 训完 D=0.5 B / 1 B 的总墙钟 + 步数**。
+>      - ⚠️ **fidelity 约束（不许无视）**：`D` 固定时 **GBS↑ ⇒ 优化器更新次数↓**（`步数 = D/(GBS·seq)`；GBS1024·seq2048·D=0.5B ⇒ **仅 238 步**）⇒ **GBS 不是越大越好**；必须 **按比例同步调 LR/warmup**，并在报告里**显式标注所选 GBS 的「步数」与「是否仍是可辩护的配比排序口径」**（排序相对性最终由 ③ 的 top-K `lm_eval` 背书）。
+>   d. **DataLoader**：`num_workers` / prefetch / 本地缓存 vs NFS → 报 s_step 差；
+>   e. **CUDA graph**（若 launcher 暴露）/ 关 `--recompute`；
+>   f. **纯前向 vs 纯数据处理分离计时**（定位到底卡在哪）。
+> - **判据（必须给）**：**MBS×GBS 网格表**（`s_step` / `tok/s` / 峰值显存 / OOM / **训完 0.5B·1B 的墙钟**）+ **最优组合**；目标把「训完 0.5 B」从当前（1.50 s/步 ⇒ ≈**6.4 h/trial**）压到 **≤1–2 h**；据此定 ③ 的 `D` / `trial 数` / `T`。
+> - 产出 `report_data_mix_sstep.html` + `DATA_MIX_RECIPE.md` 增节（网格原始输出 + 判据 + **GBS 的 fidelity 说明**）。
 >
 > **③ 第二轮搜索（**条件触发**：`.29` GPU0-1 已释放）**
 > - **触发条件**：pretrain 侧 **D（P-9.11 补测）已完成并明确释放 GPU0-1**（运维会在心跳/任务书确认）。🚫 **在此之前绝不碰 GPU0-1**（pretrain A/B/D 在用）。
