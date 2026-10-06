@@ -3,3 +3,20 @@ __pycache__/
 *.pyo
 *~
 .DS_Store
+
+# ── NFS "silly-rename" 残留（2026-10-06 · 用户指出）────────────────────────
+# 被删除但仍被进程占用的文件，NFS 会改名为 .nfs<hex> 保留；
+# 若被 git add -A / 自动提交卷进仓库即成为垃圾（曾误入库 37 个 / 917KB）。
+.nfs*
+*.nfs*
+# ── 编辑器 / 工具备份与临时件 ──────────────────────────────────────────────
+*.swp
+*.swo
+*.orig
+*.rej
+*.tmp
+*.bak
+Thumbs.db
+desktop.ini
+# ⚠️ 提交前自查：git check-ignore -v <file>  应命中本文件
+
