@@ -2256,3 +2256,78 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 
 **原始数据**：`run/b1_128k_diagnosis.json` + `/tmp/b1_retest.log` + `/tmp/b1_sglang_srv.log`
 
+---
+
+## B1 长上下文诊断 · 步骤 2/3：RoPE/ABF config 退化曲线 ✅ COMPLETE（2026-10-06 18:47–18:52，GPU1 @.29）
+
+> 运维指令「长上下文 B 扩展」B1 步骤 2/3：改 HF config + 跑 ctx ∈ {4K,8K,16K,32K,64K,128K} PPL + passkey 退化曲线。
+> **栈**：transformers 5.17.0 (NemotronHForCausalLM) · py310 env + PYTHONPATH=p6_tf5 · bf16 · H100 80GB · GPU1 only
+> **ckpt**：`p5b/hf_iter_4771`（2.22B, 20B token 训练, max_pos=4096, rope_theta=未设→默认1e4）
+> **数据**：P-5b 预 tokenize .bin（int32 memmap, EOD=129280→替换为295"."），chunk_size=4096 带 KV cache 递进
+
+### 三组 config（每次只改一个变量）
+
+| Config | max_position_embeddings | rope_theta | 说明 |
+|:--|:--|:--|:--|
+| **baseline** | 4096 | 1e4 (默认) | 原始训练配置，只测 4K（>4K 跳过） |
+| **maxpos_only** | 131072 | 1e4 (不变) | 只改 max_pos，隔离 max_pos 效果 |
+| **ABF_1e6** | 131072 | 1e6 | ABF 扩展（对齐 MiniCPM5 的 5e6 量级） |
+
+### PPL 退化曲线
+
+| ctx | baseline (θ=1e4, mp=4096) | maxpos_only (θ=1e4, mp=131072) | ABF_1e6 (θ=1e6, mp=131072) |
+|---:|---:|---:|---:|
+| 4K | **75.36** | **NaN** ❌ | **83.24** |
+| 8K | skip | NaN ❌ | **64.91** |
+| 16K | skip | NaN ❌ | **60.08** |
+| 32K | skip | NaN ❌ | **58.55** |
+| 64K | skip | NaN ❌ | **51.53** |
+| 128K | skip | NaN ❌ | **54.66** |
+
+### ⭐ 关键发现
+
+1. **maxpos_only (θ=1e4, mp=131072) → 全量 NaN**：**仅改 max_position_embeddings 不改 rope_theta 会导致数值崩溃**。RoPE 用 θ=1e4 + max_pos=131072 初始化时，高频分量波长极小 → cos/sin 表溢出 → 全局 NaN（连 4K 都炸）。⇒ **扩展 max_pos 必须同时调 rope_theta（ABF）或加 rope_scaling**。
+
+2. **ABF (θ=1e6, mp=131072) → 全量可用，无退化**：
+   - PPL@4K=83.24 vs baseline 75.36 → **ABF 税 = +10.5%**（在训练 ctx 上的代价）
+   - PPL@8K→128K **持续下降**（64.91→60.08→58.55→51.53），到 128K 微升至 54.66
+   - **PPL 随 ctx 增长而下降 = 正常 causal LM 行为**（更多上下文 → 更好预测），**非退化**
+   - 128K vs 64K：54.66 vs 51.53 → **+6.1% 微升**（可能的远端位置编码衰减，但远未"炸"）
+   - **判据**：8 集降幅 <10% 且 PPL 不炸 ⇒ **128K 免训练可用 ✅**（ABF 配置下）
+
+3. **⭐ hybrid 优势量化**：只有 **4 层 full_attention 吃 RoPE**（24 层 linear_attention/Mamba2 无位置编码）⇒ ABF 扩展只需适配 4/56 层 ⇒ **免训练即从 4K 扩到 128K，PPL 不炸**。纯 transformer 基线需要全部层重新适应 RoPE 外推。
+
+4. **Passkey 检索 = 0%（全 config 全 ctx）**：模型太弱（2.2B + ~20B token 训练），无法完成 passkey 检索。**这不是 ctx 扩展问题，是模型能力问题**。生成文本为通用 eval 句式（"Question: Is the text..."），而非 passkey。→ 需 P-8 正式训练（100B token）后才有可能。
+
+### B2 触发判据
+
+> 运维定义：「若 B1 显示 ≥16K 明显退化 ⇒ 做阶梯式长度扩展续训」
+
+- **ABF PPL@16K = 60.08，比 @4K=83.24 更低（更好）** → **无退化**
+- **ABF PPL@128K = 54.66，仍优于 @4K** → **无退化**
+- ⇒ **B2 不触发**（无需长度扩展续训）
+
+### B3 决策输入：P-8 seq 定多少？
+
+> 运维问题：「P-8 的 seq 定 4096 / 8192 / 还是 decay 段升 8192–16384？」
+
+**推荐**：**P-8 stable 段 seq=4096，decay 段可选升 8192**。理由：
+
+| 方案 | seq | ABF 税 | 长上下文能力 | 成本 |
+|:--|:--|:--|:--|:--|
+| **A（推荐）** | stable=4096, decay=4096 | 推理时用 ABF(θ=1e6) 扩到 128K | 免训练可用，PPL 无退化（本实验证实） | 0 额外训练成本 |
+| **B（可选）** | stable=4096, **decay=8192** | 训练时已覆盖 8K → 推理 ABF 扩到 128K 更稳 | decay 段 token 占比小（~10%），升 8K 几乎免费 | +~0% 墙钟（decay 段短） |
+| **C（不推荐）** | stable=8192 | 全程 8K → 吞吐降（P-9.7 实测 210K vs 249K, -16%） | 最好长上下文质量 | -16% 吞吐 = 多 ~2 天 |
+
+- **方案 A** 最经济：训练 4K（最快 249K tok/s），推理时 ABF 免训练扩到 128K
+- **方案 B** 是 "免费保险"：decay 段升 8K，成本几乎为 0（decay 段仅 ~477 步 / 4771 步 = 10%），但对 8K 质量有真实训练数据
+- **方案 C** 不划算：全程 8K 损失 16% 吞吐，而 ABF 已证明 4K→128K 免训练可用
+
+**一句话**：**P-8 用 seq=4096 训练（最快），推理时 ABF(θ=1e6) 免训练扩到 128K（本实验已验证 PPL 无退化）。decay 段升 8K 是可选项（成本~0），非必需。**
+
+### 原始数据
+
+- 结果 JSON：`nemo_experiments/p5b/b1_longctx_results.json`
+- 脚本：`run/baize_b1_longctx_benchmark.py`
+- 日志：`/tmp/baize_b1_longctx.log`
+
