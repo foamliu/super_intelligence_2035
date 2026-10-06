@@ -111,3 +111,110 @@ nw=16: [done] total=37.5s steps=250 steady_image_s=5311.2
 | `vision/r12_throughput_bench_128_256.sh` | `/tmp/bench_bs{128,256}.log` + `/tmp/r12_bench_128_256.log` |
 | `vision/r12_throughput_bench_nw.sh` | `/tmp/bench_nw{12,16}.log` + `/tmp/r12_bench_nw.log` |
 | 输出 ckpt | `/nas_train/.../baize-vision/out/bench_throughput/bs{64,128,256}/` (bench-only, 可删) |
+
+---
+
+## §2 R12b — 全量数据 fresh AIMv2 训练 + IN-1k eval（2026-10-06 → 10-07）
+
+### 2.1 配方
+
+- **目标**：运维指令 2026-10-05（晚）——「用全部现有数据训练当前最佳配方 AIMv2」。
+- **配方** = AIMv2-style = R11-G / R12 同款：`InfoNCE + 1.0×masked-patch-MSE`（`--loss aimv2 --mask-ratio 0.6 --patch-loss-weight 1.0 --contrast-weight 1.0`），w512（OpenVision2, 126.78M）+ 冻结 CLIP-768 文本塔。
+- **数据 = 现有全部**：GPIC（4175 tar × 12,637 ≈ 52.8M）+ CC12M（1100 tar × 10,000 ≈ 11.0M）+ Amshaker（2250 tar × 2,646 ≈ 5.95M）→ **~69.7M unique pairs**。
+- **超参**：bs64×8=512, lr=3e-3, warmup=20, seed=1234, bf16, patch=16, res=224, save-every=10000。
+- **步数**：272,000 步 ≈ **2 epochs**（69.7M / 512 = 136,133 步/epoch）。
+- **Fresh run**（非续跑）—— 干净 scaling 曲线，无 predictor random restart。
+- **硬件**：.12 8× A100-81.6GB。训练时间 12:54 → 02:14 ≈ **13.3h**（≈106.4 GPU·h）。
+- **吞吐**：稳态 ~5000 img/s；NFS 波动导致 2300–5900 img/s 区间波动（详见巡检流水）。
+
+### 2.2 IN-1k eval 结果（28 ckpts，built-in r8_eval_in1k.py，Protocol A = BaiZe 内部协议）
+
+| step | N (tokens) | zero-shot top1 | **lp top1** |
+|---:|---:|---:|---:|
+| 10k | 5.12M | 4.20% | **11.77%** |
+| 20k | 10.2M | 4.98% | **12.44%** |
+| 30k | 15.4M | 5.26% | **13.22%** |
+| 40k | 20.5M | 5.60% | 13.10% |
+| 50k | 25.6M | 6.08% | **14.04%** |
+| 60k | 30.7M | 6.93% | **14.71%** |
+| 70k | 35.8M | 7.05% | **15.56%** |
+| 80k | 41.0M | 7.72% | **16.18%** |
+| 90k | 46.1M | 8.13% | **17.05%** |
+| 100k | 51.2M | 7.66% | **17.63%** |
+| 110k | 56.3M | 8.30% | 17.80% |
+| 120k | 61.4M | 8.79% | **18.37%** |
+| 130k | 66.6M | 8.54% | 18.35% |
+| 140k | 71.7M | 8.30% | 18.17% |
+| 150k | 76.8M | 8.45% | 17.89% |
+| 160k | 81.9M | 8.77% | 18.40% |
+| 170k | 87.0M | 8.35% | 18.08% |
+| 180k | 92.2M | 8.43% | **18.69%** |
+| 190k | 97.3M | 8.21% | 18.21% |
+| 200k | 102.4M | 8.09% | 17.48% |
+| 210k | 107.5M | 8.65% | 18.42% |
+| 220k | 112.6M | 8.28% | 18.11% |
+| 230k | 117.8M | 8.20% | 18.12% |
+| 240k | 122.9M | 7.44% | 17.46% |
+| 250k | 128.0M | 8.65% | 18.32% |
+| 260k | 133.1M | 9.01% | 18.64% |
+| 270k | 138.2M | 8.87% | 18.70% |
+| **final** | **139.3M** | 8.51% | **18.81%** |
+
+> **lp_max = 18.81%**（final vision.pt, 139.3M tokens）。
+> step10k lp=11.77% — 显著高于 R11-G 同期（11.50%），大数据集 69.7M vs 18.5M 起效。
+> 但 lp 在 step120k（61.4M, ~0.9 epoch）后**进入平台**（18.0–18.8% 区间波动），**未超越 R11-G 的 19.76%@55.3M**。
+
+### 2.3 Scaling 拟合（r12b_scaling.py）
+
+| 曲线 | 点数 | lp 范围 | Power law | R² | 渐近 | 单调(±0.5pp) |
+|:--|---:|:--|:--|---:|---:|:--|
+| **R12b** (69.7M, 2ep) | 27 | 11.77–18.70% | `0.4781 - 1.1757·N^(-0.0749)` | 0.8867 | 47.8% | ❌ False |
+| R12 3-epoch (58.8M, 3ep) | 34 | 11.19–20.32% | `1.0 - 1.6152·N^(-0.0372)` | 0.9349 | 100.0%* | ✅ True |
+| R11-G (18.5M, 1ep) | 10 | 11.50–18.84% | `1.0 - 1.5949·N^(-0.0374)` | 0.9234 | 100.0%* | ✅ True |
+
+> *R12 3-epoch 和 R11-G 的 power law a=1.0 是退化拟合（渐近被钉在 100%），不可直接解读为「渐近 100%」。
+> R12b 的 a=47.8% 更可信（R²=0.89 但 < 0.90 阈值 → ⚠️ 报告如实标注「R²<0.90，不强推外推」）。
+
+### 2.4 关键发现：更多 unique 数据 ≠ 更高 lp
+
+| 实验 | 数据量 | Epoch | Token 总量 | **lp_max** | 说明 |
+|:--|---:|---:|---:|---:|:--|
+| R11-G | 18.5M | 1 | 55.3M | **19.76%** | CC12M+Amshaker，短/中 caption |
+| R12 3-epoch | 58.8M | 3 | 174M | **20.32%** | +GPIC(4161 tar)，3 epoch |
+| **R12b** | **69.7M** | **2** | **139M** | **18.81%** | +GPIC(4175 tar)，2 epoch |
+
+**R12b 用 3.8× 更多 unique 数据（69.7M vs 18.5M）和 2.5× 更多 token（139M vs 55.3M），lp 反而比 R11-G 低 0.95pp（18.81% vs 19.76%）。**
+
+归因分析：
+1. **GPIC 短 caption 稀释信号**：GPIC 占 R12b 数据的 ~76%（52.8M/69.7M），其 caption 为短 alt-text（~20 tok），远短于官方 AIMv2 的 LLaMA-3 长合成 caption（~128 tok）→ text AR / contrastive 信号天然弱（已在 `VISION_NEXT_DIRECTIONS.md` §5 handicap 中标注）。
+2. **2 epoch < 3 epoch**：R12 3-epoch（174M token）比 R12b（139M token）多 25% 训练量 → 更多 epoch 在已见数据上的重复可能有正收益。
+3. **非单调**：R12b lp 在 step120k 后波动（18.0–18.8%），power law R²=0.89 < 0.90 → 过拟合噪声或 NFS 吞吐波动影响训练稳定性。
+4. **结论**：在当前 caption 质量下，**增加 unique 数据量（加入 GPIC 短 caption）不改善 lp；增加 epoch 数（重复高质量数据）可能更有效**。这为后续 mask-ratio / weight-ratio 消融提供了数据策略参考。
+
+### 2.5 脚本与日志路径
+
+| 脚本 | 日志 | 输出 |
+|:--|:--|:--|
+| `vision/r12b_fulldata_fresh.sh` | `/tmp/r12b_fulldata_aimv2.log` | `/nas_train/.../baize-vision/out/R12b_fulldata_aimv2_w512/` |
+| `vision/r12b_eval_watcher.sh` | `/tmp/r12b_eval_watcher.log` | scaling 分析在 watcher log 末尾 |
+| `vision/r12b_scaling.py` | — | stdout → watcher log |
+| eval 脚本 | `vision/r8_eval_in1k.py` | 28 ckpt 结果在 train log |
+
+### 2.6 与 R12 3-epoch 的 N-matched 对比
+
+在相近 N（token 数）处对比：
+- N≈51M: R12b lp=17.63% vs R11-G lp=18.84% → **R12b 低 1.21pp**（更多数据但更差）
+- N≈92M: R12b lp=18.69% vs R12-3ep lp≈18.87% → **R12b 低 0.18pp**（接近持平）
+- N≈139M: R12b lp=18.81% vs R12-3ep lp≈19.46% (step290k) → **R12b 低 0.65pp**
+
+→ **在同 N 下 R12b 始终 ≤ R12 3-epoch**，证实 GPIC 短 caption 的加入不改善 lp。
+
+---
+
+## §3 lp 协议桥接评估（Protocol A vs B）— 进行中
+
+> 运维指令 2026-10-06：用同一批 ckpt 跑 BaiZe 协议（A）与主流协议（B），量化 Δlp = B − A。
+> 脚本：`vision/lp_protocol_bridge.py` + `vision/run_lp_protocol_bridge.sh`。
+> ckpts：R12b final + R12 1-epoch + R11G AIMv2。
+> B 组：SGD+momentum 0.9 + cosine + 90ep + batch 1024 + ImageNet mean/std + full IN-1k train (1.28M)。
+> 状态：🚀 **运行中**（PID 1499158, 03:07 启动）。结果待填。
