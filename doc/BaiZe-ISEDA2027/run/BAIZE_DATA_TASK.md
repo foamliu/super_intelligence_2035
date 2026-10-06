@@ -52,6 +52,7 @@
 >        - ✅ **实验内自洽即可**：第二轮各 trial **固定同一 `GBS/MBS/LR/schedule/D`**（每档 GBS 配一次 LR/warmup 重扫、本档内固定）⇒ **内部排序有效**；
 >        - ✅ **与 200-trial 只对照「最优配比 + 排序结论」**，**不比 loss 绝对值**（`D`/GBS 不同，loss 尺度本就不同）。
 >        - ⚠️ **仍要防的唯一风险**：`D` 固定时 **GBS↑ ⇒ 优化器步数↓**（GBS1024·seq2048·D=0.5B ⇒ **仅 238 步**），步数太少时**配比排序可能失真** ⇒ 报「步数」+ LR/warmup 按 Linear/Sqrt 规则起步再实测定档；**最终排序有效性由 ③ 的 top-K `lm_eval` 8 集背书**（代理排序 ≠ 真实均分 ⇒ 该 GBS 档作废）。
+>        - 🔁 **LR 重扫协议（用户 2026-10-06 认可「很快、没问题」）**：**每档 GBS 做一次** —— 以 `3e-3@GBS16` 为锚、按 **Sqrt 规则**估中心，取 **3 点（÷3 / ×1 / ×3）** × **≤50 步** → 取 held-out val-loss 最低者写死本档 LR；复用 `run/baize_mix_calibrate.sh`（口径同必验#5）；**≤30 min/档**；**本档内所有 trial 共用该 LR**。
 >   d. **DataLoader**：`num_workers` / prefetch / 本地缓存 vs NFS → 报 s_step 差；
 >   e. **CUDA graph**（若 launcher 暴露）/ 关 `--recompute`；
 >   f. **纯前向 vs 纯数据处理分离计时**（定位到底卡在哪）。
