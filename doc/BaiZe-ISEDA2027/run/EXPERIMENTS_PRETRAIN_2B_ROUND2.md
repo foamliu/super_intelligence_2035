@@ -2184,3 +2184,75 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 
 - `doc/BaiZe-ISEDA2027/report_pretrain_p913_speedup.html`（自包含：完整 4 候选表 + 判据 + 原始关键行 + 结论）。
 
+---
+
+## B1 长上下文诊断 · 步骤 1：128K 拒绝原因 ✅ COMPLETE（2026-10-06 17:53–18:01，GPU1 @.29）
+
+> 运维指令 2026-10-06「长上下文 B 扩展」B1 步骤 1：「先查 128K 的拒绝原因」。
+> **背景**：P-9.11 报告 128K×bs1/8 均 FAILED（e2e≈0.5s, total_completion_tokens=0），当时归因为 `max_position_embeddings=4096` + RoPE 外推超有效范围。
+
+### 实验设置
+
+- **模型**：BaiZe Mamba2-hybrid 2.220B（`p3_hybrid/hf_iter_5000`，nemotron_h，max_pos=4096, rope_theta=默认(1e4), rope_scaling=none）
+- **框架**：sglang 0.5.9（sglang conda env, Python 3.10, flashinfer 0.6.3），H100 80GB ×1 **GPU1**
+- **sglang 配置**：`--context-length 131072 --mem-fraction-static 0.85 --attention-backend flashinfer --mamba-ssm-dtype float32`，`SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1`
+- **服务端关键日志**（原文）：
+  ```
+  max_total_num_tokens=4335056, chunked_prefill_size=8192, max_prefill_tokens=16384, max_running_requests=207, context_len=131072, available_gpu_mem=10.24 GB
+  Warning: User-specified context_length (131072) is greater than the derived context_length (4096). This may lead to incorrect model outputs or CUDA errors.
+  ```
+- **/v1/models 返回**：`"max_model_len": 131072`（服务器确实配置了 128K 上下文）
+
+### 测试矩阵与结果
+
+| 测试 | prompt 目标 | 实际 prompt_tokens | max_tokens | HTTP | 耗时 | 结论 |
+|:--|:--|:--|:--|:--|:--|:--|
+| 4K 控制 | 4000 | 4941 | 64 | **200** | 0.74s | ✅ 正常生成 |
+| 64K 控制 | 65000 | 72721 | 64 | **200** | 7.20s | ✅ 正常生成 |
+| 128K 原 P-9.11 方式 | 131072 | **146131** | 64 | **400** | 0.49s | ❌ 被拒 |
+| 128K 减 gen | 131000 | **146051** | 64 | **400** | 0.38s | ❌ 被拒 |
+| 128K 减 margin | 130000 | **144941** | 64 | **400** | 0.37s | ❌ 被拒 |
+| **128K 正确尺寸** | ~128900 | **128891** | 64 | **200** | **3.79s** | ✅ **正常生成** |
+
+### 128K 拒绝的完整返回体（原文）
+
+```json
+{
+  "object": "error",
+  "message": "The input (146131 tokens) is longer than the model's context length (131072 tokens).",
+  "type": "BadRequestError",
+  "param": null,
+  "code": 400
+}
+```
+
+### ⭐ 根因裁定
+
+**128K "拒绝" = prompt 构造 bug，非模型/RoPE/max_position_embeddings 限制。**
+
+1. **直接原因**：prompt 的 **tokenized 长度超过 `context_len=131072`**。原 P-9.11 benchmark 构造 "128K" prompt 时，用字符数估算 token 数（~4 chars/token），但该 tokenizer 的实际比率为 **~4.5 chars/token（0.2222 tokens/char）**，导致 "130K target" 的 prompt 实际 tokenize 成 **144941 tokens** > 131072。
+2. **证据**：用正确尺寸的 prompt（580005 chars → 128891 tokens + 64 gen = 128955 < 131072）请求，**HTTP 200, 3.79s, 64 completion tokens** —— 模型**成功处理 128K 上下文**。
+3. **非 OOM**：VRAM 预分配 0.85×80GB=68GB 后仍有 10.24GB 可用，128K prefill 仅用 3.79s。
+4. **非 RoPE 外推失败**：sglang 的 `SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1` + `--context-length 131072` 已绕过 `max_position_embeddings=4096` 的限制；64K 和 128K 均能正常 prefill+decode。
+
+### 对 P-9.11 报告的更正
+
+**P-9.11 的「128K failed = max_pos=4096 限制」结论是错误的**。实际原因 = prompt token 数超过 context_len。更正后：
+- **4K/16K/64K/128K 在 sglang 生产栈上均可运行**（只要 prompt + gen ≤ 131072）
+- P-9.11 表中 128K 行应标注为「**prompt 构造 bug，非模型限制**」而非「max_pos=4096 限制」
+- prefill 优势数据（64K×1 的 2.18×）仍然有效
+
+### 生成质量观察（定性）
+
+- 4K 生成：`" and the most of the over the. the only for the most of the, and the most of the. the most of the..."`（重复但语法基本通顺 —— 2.2B 模型 + 123M token 训练，预期内）
+- 64K 生成：`" and the over the the. the only for the most, and the most of the..."`（与 4K 类似，**未观察到 64K RoPE 外推导致的质量崩塌**）
+- 128K 生成：HTTP 200 成功，64 completion tokens（具体文本因脚本引号问题未完整捕获，但 request 成功 = 模型能处理 128K 长度）
+
+### B1 后续步骤（下唤醒）
+
+1. **B1 步骤 2**：改 HF config（max_pos → 131072, rope_theta → 1e6），**每次只改一个变量**，测 PPL + passkey/needle + 8 集 eval 退化曲线
+2. **B1 步骤 3**：ctx ∈ {4K, 8K, 16K, 32K, 64K, 128K} 全量退化曲线（用 tokenizer 精确控制 prompt 长度）
+3. **关键修正**：所有长 ctx 测试**必须用 tokenizer 精确计数 prompt tokens**，不能用字符数估算
+
+**原始数据**：`run/b1_128k_diagnosis.json` + `/tmp/b1_retest.log` + `/tmp/b1_sglang_srv.log`
+
