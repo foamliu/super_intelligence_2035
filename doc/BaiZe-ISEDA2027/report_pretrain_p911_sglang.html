@@ -16,6 +16,13 @@ pre{background:#f0f0f0;padding:10px;overflow-x:auto;font-size:0.8em}
 .vf{background:#f8d7da;color:#721c24;padding:5px 10px;border-radius:4px;display:inline-block;font-weight:bold}
 </style></head><body>
 <h1>P-9.11 · sglang 生产栀 —— BaiZe(Mamba2-hybrid 2B) vs MiniCPM5-2B 推理对比</h1>
+<div class="note" style="border:2px solid #cc0000;background:#fff5f5;padding:12px;margin:10px 0;border-radius:6px">
+<b>🔴 2026-10-06 更正（B1 诊断结果）：</b>原报告结论「128K failed = max_pos=4096 限制」<b>是错误的</b>。<br>
+B1 长上下文诊断证实：<b>128K 失败的真正原因是 prompt 构造 bug</b>——原 benchmark 用字符数估算 token 数（~4 chars/token），但该 tokenizer 实际比率为 ~4.5 chars/token，导致"128K" prompt 实际 tokenize 成 <b>144941 tokens > 131072 context_len</b>。<br>
+用正确尺寸的 prompt（128891 tokens）请求时，<b>128K HTTP 200 成功，3.79s 生成 64 tokens</b>。<br>
+<b>更正后结论</b>：4K/16K/64K/128K 在 sglang 生产栀上<b>均可运行</b>（只要 prompt+gen ≤ context_len）。128K 行应标注为「prompt 构造 bug，非模型限制」而非「max_pos=4096 限制」。<br>
+<b>H3 VRAM</b>：本报告用 <code>--mem-fraction-static 0.85</code> 预分配 ~68GB，掩盖了真实 VRAM 差异。真实 VRAM 数据见 <b>P-9.10③ custom benchmark</b>（hybrid 0.22–0.44× at 128K）。D 补测（<code>--mem-fraction-static 0.3</code> + tokenizer 精确 prompt）脚本已就绪，待 GPU 空闲执行。
+</div>
 <p><b>日期:</b> 2026-10-06 00:03 | <b>框架:</b> sglang 0.5.9 | <b>GPU:</b> H100 80GB ×1 | <b>口径:</b> 生产推理栀</p>
 <div class="note"><b>⚠口径标注：</b> P-3 ckpt=5000步/123M token。旧 Round-1 mcore 10.3×与本轮不得直接相减。本实验=sglang 作为同一推理框架对比两架构（BaiZe=Mamba2-hybrid 2.220B ⚔ MiniCPM5-2B=dense GPT 2.512B）。</div>
 <h2>1. 实验设置</h2>
