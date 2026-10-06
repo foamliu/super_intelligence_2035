@@ -14,13 +14,14 @@ TOKENS = {"0156": 655e6, "0312": 1.31e9, "0624": 2.62e9,
           "1248": 5.24e9, "2496": 10.5e9, "4771": 20.0e9}
 
 # primary metric key per task (prefer flexible-extract for generative)
+# NOTE: lm_eval uses comma-suffixed keys like "acc,none", "pass@1,create_test"
 TASK_METRICS = {
     "gsm8k": ["exact_match,flexible-extract", "exact_match,strict-match"],
     "hendrycks_math500": ["exact_match,flexible-extract", "exact_match,strict-match"],
-    "mmlu": ["acc_norm", "acc"],
+    "mmlu": ["acc,none", "acc_norm,none", "acc_norm", "acc"],
     "bbh_zeroshot": ["exact_match,flexible-extract", "exact_match,strict-match"],
-    "humaneval": ["pass@1"],
-    "mbpp": ["pass@1"],
+    "humaneval": ["pass@1,create_test", "pass@1"],
+    "mbpp": ["pass_at_1,none", "pass@1"],
 }
 
 
