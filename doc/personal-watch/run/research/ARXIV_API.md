@@ -703,6 +703,18 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
 - **下轮预期**：周一公告（`2026-10-05` 提交批）应在 **UTC `2026-10-06` 稍晚**刷新到 API，届时主源最新 `published` 将由 `2026-10-02` 变为 `2026-10-05`，**预计出现新增**。
 
+### 9.54 第五十二轮（UTC 2026-10-06 周二 · **批次渐进索引**）→ **新增 7**（**本轮实时取数**）
+
+- **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-06T02:24:15.819870+00:00`，证据 `research/raw/2026-10-06-probe-r52.json`）：⚠️ **首次 `--probe` 因 `requests` 对 arXiv 网络停滞超时（工具级 30s）→ 改后台重跑成功**（非端点故障，与第五十一轮同现象）。
+  - **arXiv API**：`HTTP 200` + `application/atom+xml`，最新样本 `published=2026-10-03T20:15:17Z`（`totalResults=626945`，样本 `2610.04743 / 2610.04741 / 2610.04740`）→ ✅ **可达**（**批次未刷新，与第五十一轮同批**）；
+  - **HF Daily Papers**：`Network is unreachable` → ❌ 不可达（**如实记录，不伪造 `hf_daily` 标记**）；
+  - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml` + `items=185 / 191 / 456` → ✅ **工作日已有内容**。
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=daily`，窗口 72h**，`generated=2026-10-06T02:25:11.568294+00:00`）：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 7 / dropped 593** → **新增 7**（`llm-long-context` 3 + `mm-csmm` 4）。证据 `research/raw/2026-10-06-fetch-r52.json`。
+- **结论**：**UTC 为 `2026-10-06`（周二）**；主源样本 `published` 仍 `2026-10-03T20:15:17Z`、`totalResults` 仍 `626945`（**公告批次未刷新**），但增量命中 7 篇 `published` 落在 **`2026-10-03T20:38 ~ 2026-10-05T05:49`** 且均未在 `SEEN.md` → 判定为**上一公告批次的渐进索引**（arXiv 公告后 API 索引分批可见），**非重复**。实际日期区间按 R2′ 标注为 **`2026-10-03 ~ 2026-10-05`（渐进索引）**。**精选收录 6**（LLM 3 / 多模态 3）+ **候选 1**（`2610.04871`，cs.SD 超域）。`window_mode=daily`（72h）为第三十轮起的自动口径回落，非人工覆盖。
+- **第 3 批 A/B 复核**：TOP-K（含 `takeaway`/`action` 20 条）+ `TAKEAWAYS.md`（5 条）+ 视频线（`SHORTLIST.md` 17 / `scripts/` 3）**已交付未变**；本轮 7 篇**均落在 TOP-K 窗口（`2026-09-03 ~ 2026-10-01`）之外 → 不重跑**（诚实标注）。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
+- **下轮预期**：公告批次现为 `2026-10-03`（含渐进索引至 `2026-10-05`）；下一次工作日公告（`2026-10-06` 提交批）预计在 **UTC `2026-10-07` 前后**刷新，届时按 SOP 增量采集。
+
 ### 9.53 第五十一轮（UTC 2026-10-06 周二 · **新公告批次落地**）→ **新增 93**（**本轮实时取数**）
 
 - **取源复验（R1′）** `--probe --config queries.json`（证据 `research/raw/2026-10-06-probe-r51.json`）：⚠️ **首次 `--probe` 因 `requests` 对 arXiv 网络停滞超时（工具级 30s）→ 改后台重跑成功**（非端点故障，与第三十三轮同现象）。

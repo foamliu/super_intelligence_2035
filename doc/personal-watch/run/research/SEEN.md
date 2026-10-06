@@ -677,6 +677,13 @@
 | 2026-10-06 | 2610.04255 | Grounded in Time: A Multi-Source Dataset and Benchmark for Temporal Grounding in Robotic Manipulation | cs.RO | 候选 |
 | 2026-10-06 | 2610.04245 | On the Steering Dimensionality of Refusal in Language Models | cs.AI | 候选 |
 | 2026-10-06 | 2610.04210 | Can LLMs Separate Pasted Artifacts from User Speech? Absorption at Unmarked Prompt Seams | cs.CL | 候选 |
+| 2026-10-06 | 2610.05842 | HLA: Expressive Hybrid Linear Attention via Chunk-Wise Dynamic Mixing | cs.CL | 收录 |
+| 2026-10-06 | 2610.05779 | A Spatiotemporal Semantic Importance-Guided Unified Compression and Editing Framework for AI-Generated Videos | cs.CV | 收录 |
+| 2026-10-06 | 2610.05737 | Revisiting Frame-Wise Saliency for Audio Moment Retrieval | eess.AS | 收录 |
+| 2026-10-06 | 2610.05608 | Kandinsky 6.0 Video: Foundation Models for Synchronized Video and Audio Generation | cs.CV | 收录 |
+| 2026-10-06 | 2610.04973 | TrajLong: Co-Designing Agentic and Long-Context Supervision for Mid-Training | cs.CL | 收录 |
+| 2026-10-06 | 2610.04871 | A Multidimensional Model for Quantifying Tonal Strength: A Continuous Measure of Tonal Organization | cs.SD | 候选 |
+| 2026-10-06 | 2610.04753 | More Value per Key: Asymmetric Sparse Attention for Faster LLM Decoding | cs.CL | 收录 |
 
 > 累计（2026-10-03，两轮）共 407 条（收录 61 / 候选 346）：首轮 214（收录 34 / 候选 180）+ 本轮 193（收录 27 / 候选 166）。
 >
@@ -792,3 +799,5 @@
 > **第五十轮（UTC 2026-10-06 周二 01:1x，第四十九轮后 ~34min · 同批去重复核）**：**15/15 查询 `ok`**（`attempts=1`，无重试），命中 **435 条已在表中**（另 165 条超龄丢弃）→ **新增 0 条**。累计仍为 **578 条（收录 91 / 候选 487）**。**arXiv 周一公告仍未刷新到 API**（最近批次仍 `2026-10-02`，`totalResults` 未变 `626530`，与第十五~四十九轮同批），**0 新增属正常 非「无数据」**；`window_mode=daily`(72h，第三十轮起自动回落)，因去重先查 SEEN，结论不变；R1′ arXiv ✅ / HF ❌ / RSS 有内容，本轮 `--probe` / `--fetch` **均无重试（attempts=1）**（详见 `research/2026-10-06.md` 第五十轮 + `raw/2026-10-06-fetch-r50.json`）。
 
 > **第五十一轮（UTC 2026-10-06 周二 01:4x，第五十轮后 ~34min · 新公告批次落地）**：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 93 / dropped 491** → **新增 93 条**（**主源 `published` 由 `2026-10-02T17:59:14Z` 刷新为 `2026-10-03T20:15:17Z`**、`totalResults` 由 `626530` 增至 `626945` = **新批次 `2026-10-03` 落地**）。**精选收录 30**（LLM 7 / SLM 3 / 多模态 6 / agent harness 8 / 邻域 6）+ **候选 63**。累计 **671 条（收录 121 / 候选 550）**；`window_mode=daily`(72h，第三十轮起自动回落)。R1′ arXiv ✅ / HF ❌ / RSS 有内容；本轮 `--probe` **首次因网络停滞超时 → 后台重跑成功**、`--fetch` 无重试（`attempts=1`）（详见 `research/2026-10-06.md` 第五十一轮 + `raw/2026-10-06-{probe,fetch}-r51.json`）。
+
+> **第五十二轮（UTC 2026-10-06 周二 02:2x，第五十一轮后 ~36min · 批次渐进索引）**：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 7 / dropped 593** → **新增 7 条**（`llm-long-context` 3 + `mm-csmm` 4，`published` 落在 `2026-10-03T20:38 ~ 2026-10-05T05:49`；主源最新样本 `published` 仍 `2026-10-03T20:15:17Z`、`totalResults` 仍 `626945`，判定为**上一公告批次的渐进索引**，非重复）。**精选收录 6**（LLM 3 / 多模态 3）+ **候选 1**（`2610.04871`，cs.SD 超域）。累计 **678 条（收录 127 / 候选 551）**；`window_mode=daily`(72h，第三十轮起自动回落)。R1′ arXiv ✅ / HF ❌ / RSS 有内容；本轮 `--probe` **首次因网络停滞超时 → 后台重跑成功**、`--fetch` 无重试（`attempts=1`）（详见 `research/2026-10-06.md` 第五十二轮 + `raw/2026-10-06-{probe,fetch}-r52.json`）。
