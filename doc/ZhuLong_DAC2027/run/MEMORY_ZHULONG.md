@@ -11,7 +11,7 @@ WAITING: 1
 | STAGE | `B`（大模型消融；**已调换**：因 pro-fp4 额度 403 阻塞 C1，先跑 Phase B）|
 | CONFIG | `doubao-seed-2.0-pro-cloud`（B 第 4 臂，r1 运行中）|
 | ROUND | 1 |
-| PHASE | `running`（B.doubao-seed-2.0-pro-cloud r1 运行中，PID 316889，batch 2026_1007_010601，log=/tmp/ABL_doubao-seed-2.0-pro-cloud_r1.log，8 worker/158 题/-n，CLI_DATA_DIR=/nasdata/app.e0031982/.cline_doubao_eval/data 隔离，0 Forbidden ✅，doubao active 待下轮复核（沙盒清理阶段），反作弊 hook live；前序 B.glm-5.2 5/5=83.3±3.1% ✅、B.deepseek-v4-flash 5/5=16.7±12.3% ✅、B.kimi-k2.6-cloud 5/5=77.0±1.6% ✅；试验次序 B→C1→C2→S1；下轮唤醒走步骤 A harvest r1 → 记成绩 → ROUND≤5 启 r2）|
+| PHASE | `running`（B.doubao-seed-2.0-pro-cloud r1 运行中，PID 316889，batch 2026_1007_010601，log=/tmp/ABL_doubao-seed-2.0-pro-cloud_r1.log，8 worker/158 题/-n，CLI_DATA_DIR=/nasdata/app.e0031982/.cline_doubao_eval/data 隔离，0 Forbidden ✅，doubao active 待下轮复核（已进 run_eval 评分段 @02:07），反作弊 hook live；前序 B.glm-5.2 5/5=83.3±3.1% ✅、B.deepseek-v4-flash 5/5=16.7±12.3% ✅、B.kimi-k2.6-cloud 5/5=77.0±1.6% ✅；试验次序 B→C1→C2→S1；下轮唤醒走步骤 A harvest r1 → 记成绩 → ROUND≤5 启 r2）|
 | WAITING | 1 |
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
@@ -49,6 +49,11 @@ WAITING: 1
 | C1.wo_retrieval | r1=74.1（r2 infra 作废；pro-fp4 403→待 Phase B 完成后重试）| [74.1]（r1 复用 legacy；r2 0/158 Forbidden 作废）|
 
 ## 操作流水
+
+- [2026-10-07 02:22] [⏸ B.doubao-seed-2.0-pro-cloud r1 仍在跑（已进入 run_eval.py 评分段）→ 不做动作退出] §7 步骤 A（PHASE=running）：`pgrep '^bash scripts/run_cline_script'`→**有输出**（PID 316889 alive，etime≈4672s≈78min，batch 2026_1007_010601）→ r1 仍在运行。r1 log tail 见 cline agent 段已结束（158 trace 拷贝完成 @02:07:34），已进入 **Step 7.1 run_eval.py 评分段**（run_eval PID 466001 alive，run_on_sandbox.py shard_3 执行中，沙盒 8 并发跑 158 题）；log mtime 02:07；`grep -c Forbidden`=0 ✅（doubao CLI_DATA_DIR=.cline_doubao_eval 隔离持续生效）；尚无 `pass (/PASS_RATE` 汇总行（评分段未完成）。运维复检：legacy 组件 loop PID 2455466 alive ✅（运维指令(五)满足）；ops relay PID 2665949 alive ✅，`ops/.last_run_id`=21=inbox `RUN_ID: 21`（运维指令(八)已满足，RUN_ID 21 outbox @2026-10-06 11:26 exit=0，中继已恢复）；zhulong_loop PID 3579323 alive ✅；conductor 未触碰（红线）。infra：/nasdata ~373G ✅；端口 8664/8665/8653/8669/8090/9006 全 OPEN ✅。**按 §7 步骤 A「pgrep 有输出→什么都不做退出」**。状态不变：PHASE=running / STAGE=B / CONFIG=doubao-seed-2.0-pro-cloud / ROUND=1 / WAITING=1 / ERROR_COUNT=0。退出等下轮唤醒 harvest r1（pgrep 无输出→grep PASS_RATE 取 r1 Pass@1 → 复核 doubao active → 记成绩 → ROUND≤5 启 r2）。
+  ↳【push】本轮 commit（03a0e2f1）因 GitHub 网络慢 2 次 30s 超时（非 Forbidden、非 behind；pull--rebase 已静默完成），已 `setsid` 后台重推 → /tmp/zhulong_push_retry.log。**下轮唤醒首事复核 `git status -sb`：若仍 `[ahead 1]` 则补推。**
+
+
 
 - [2026-10-07 01:49] [⏸ B.doubao-seed-2.0-pro-cloud r1 仍在跑 → 不做动作退出] §7 步骤 A（PHASE=running）：`pgrep '^bash scripts/run_cline_script'`→**有输出**（PID 316889 alive，batch 2026_1007_010601）→ r1 仍在运行（01:06 启动至今 ~43min；前序各臂单轮 ~2-2.5h）。运维指令(五)优先复检：legacy 组件 loop PID 2455466 alive ✅（无需拉起）；conductor 未触碰（红线）。运维指令(八)复检：ops relay PID 2665949 alive ✅，`ops/.last_run_id`=21=inbox `RUN_ID: 21`（无新指令，中继已恢复）。zhulong_loop PID 3579323 alive ✅。infra：/nasdata 373G ✅；/home 5.8G/99%（非硬阻断，我方产物落 /nasdata）；端口 8664/8665/8653/8669/8090/9006 全 OPEN ✅。r1 log=/tmp/ABL_doubao-seed-2.0-pro-cloud_r1.log mtime 01:49（6.4MB 活跃写入，tail 见 agent 正在调 search_apis/get_api_details MCP + editor 推进 pyAether 代码）✅ 正常推进，未卡死；grep `pass (|PASS_RATE|评估结果汇总`=0（尚未到评分汇总段，仍在跑任务）；`grep -c Forbidden`=0 ✅（doubao CLI_DATA_DIR=.cline_doubao_eval 隔离持续生效）。**按 §7 步骤 A「pgrep 有输出→什么都不做退出」**。状态不变：PHASE=running / STAGE=B / CONFIG=doubao-seed-2.0-pro-cloud / ROUND=1 / WAITING=1 / ERROR_COUNT=0。退出等下轮唤醒 harvest r1（pgrep 无输出→grep PASS_RATE 取 r1 Pass@1 → 复核 doubao active → 记成绩 → ROUND≤5 启 r2）。
 
