@@ -31,34 +31,34 @@
 
 ---
 
-## RUN_ID 79 — 🧹 **清掉我误设的 `git http.proxy`（36.15）** + 复核 ZhuLong 恢复情况（只读）
+## RUN_ID 79 — 🧹 **清掉我误设的 `git http.proxy`（36.15）** + 复核 ZhuLong 恢复（只读）
 
-> **背景（supervisor 2026-10-06 11:5x · 自曝失误）**：RUN_ID 78 跑的是我的**旧版误判块**，它在 36.15 上执行了 `git config http.proxy/http(s).proxy = http://172.19.92.25:13128`。但实测 **36.15 自己的代理是 `~/.bashrc:119` 的 `https_proxy=http://172.19.92.23:13128`（`.23`）**，而我写的 `.25` 从 36.15 **不可达**（curl `000` / `ls-remote` 超时）。⇒ **该 `git config` 会覆盖可用代理、把 loop 的 push 弄坏，必须撤销**。
-> **本块**：[1] 显示当前 git proxy → **unset `http.proxy`/`https.proxy`** → 再显示确认已空；[2] 复核两条进程 + loop 日志尾部（看是否恢复推送）。🚫 只动这两个 git config 键，不碰 `.bashrc`、不碰其它配置。
+> **背景（supervisor 2026-10-06 11:5x · 自曝失误）**：RUN_ID 78 跑的是旧版误判块，已在 36.15 上执行 `git config http.proxy/https.proxy=http://172.19.92.25:13128`。实测 **36.15 自带代理在 `~/.bashrc:119` = `https_proxy=http://172.19.92.23:13128`（`.23`）**，而我写的 `.25` 从 36.15 **不可达**（curl `000` / `ls-remote` 超时）⇒ 该 config 会**覆盖可用代理、弄坏 loop 的 push**，必须撤销。
+> **本块**：unset 这两个键 + 复核进程/日志。🚫 只动这两个 git config 键，不碰 `.bashrc`。
 
 ```bash
 set -u
-echo "=== RUN_ID 79 · unset bad git proxy on 36.15 + recheck $(date '+%F %T') ==="
+echo "=== RUN_ID 79 · unset bad git proxy on 36.15 $(date '+%F %T') ==="
 timeout 100 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
 set -u
 W=/nasdata/app.e0031982/code/super_intelligence_2035
 cd "$W" || { echo "(NO repo)"; exit 1; }
 echo "host=$(hostname)  $(date '+%F %T')"
-echo "--- [1] git proxy BEFORE ---"
-git config --get http.proxy 2>/dev/null || echo "(http.proxy already unset)"
-git config --get https.proxy 2>/dev/null || echo "(https.proxy already unset)"
+echo "--- git proxy BEFORE ---"
+git config --get http.proxy 2>/dev/null || echo "(http.proxy unset)"
+git config --get https.proxy 2>/dev/null || echo "(https.proxy unset)"
 git config --unset http.proxy 2>/dev/null; git config --unset https.proxy 2>/dev/null
 echo "--- git proxy AFTER ---"
 git config --get http.proxy 2>/dev/null || echo "(http.proxy unset OK)"
 git config --get https.proxy 2>/dev/null || echo "(https.proxy unset OK)"
-echo "--- [2] procs ---"
-ps -eo pid,etime,args | grep -E 'zhulong_(loop|ops_relay)\.sh' | grep -v grep | cut -c1-140 || echo "(none running)"
-echo "--- [3] loop log tail ---"
+echo "--- procs ---"
+ps -eo pid,etime,args | grep -E 'zhulong_(loop|ops_relay)\.sh' | grep -v grep | cut -c1-140 || echo "(none)"
+echo "--- loop log tail ---"
 tail -6 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-190
 echo "=== DONE ==="
 EOS
 echo "=== ALL DONE ==="
-
+```
 
 ## RUN_ID 78 — ✅ **验收 ZhuLong 救援结果（只读）**：确认 36.15 上 relay/loop 已由 RUN_ID 77 重启并健康
 
