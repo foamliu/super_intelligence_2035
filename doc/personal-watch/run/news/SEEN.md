@@ -335,3 +335,17 @@
 | 2026-10-06 | Skyworks 完成与 Qorvo 合并，打造射频芯片业龙头 | IT之家 | news(非 AI·射频芯片) | https://www.ithome.com/1/010/024.htm |
 | 2026-10-06 | Third conversation with Claude that Anthropic reported to police since August | Tom's Hardware | news(同事件·已在账 TechSpot) | https://www.tomshardware.com/tech-industry/artificial-intelligence/anthropic-reports-florida-womans-claude-diary-threat-to-shoot-up-sheriffs-office-felony-charge-follows-its-at-least-the-third-such-conversation-to-reach-police-since-august |
 
+| 2026-10-06 | 韩国拟推 4.7 万亿韩元专项计划，明年 3 月起研发前沿 AI 大模型 | IT之家 | news | https://www.ithome.com/1/010/000.htm |
+| 2026-10-06 | 服务条款可单方面变更服务功能及订阅费等，意大利反垄断机构对 AI 音乐平台 Suno 展开调查 | IT之家 | news | https://www.ithome.com/1/010/031.htm |
+| 2026-10-06 | 索尼音乐 9 月要求下架 26 万首 AI 伪造歌曲：阿黛尔等艺人被冒充，请求量较 3 月近乎翻倍 | IT之家 | news | https://www.ithome.com/1/010/001.htm |
+| 2026-10-06 | 1800 万美元，Anthropic CEO 阿莫迪 2025 年薪酬曝光 | IT之家 | news | https://www.ithome.com/1/010/033.htm |
+| 2026-10-06 | 消息称 DeepSeek 接近完成至少 800 亿元融资，腾讯、宁德时代重金参与 | IT之家 | news | https://www.ithome.com/1/009/990.htm |
+| 2026-10-06 | 亚马逊 AWS 豪掷 10 亿美元安抚数据中心所在地社区，试图缓解美国民众反对声浪 | IT之家 | news(核心事件 10-02·超 72h) | https://www.ithome.com/1/009/999.htm |
+| 2026-10-06 | AMD 苏姿丰落地中国台湾会见供应链和客户 | IT之家 | news(非清单·routine 商务行程) | https://www.ithome.com/1/009/987.htm |
+| 2026-10-06 | 2026 年诺贝尔物理学奖揭晓！34 年来首次单人获奖 | IT之家 | news(非 AI·科学诺奖) | https://www.ithome.com/1/010/028.htm |
+| 2026-10-06 | 三款第一方游戏任选其一：任天堂将在日本推出 Switch 2“主机 + 游戏”自选套装 | IT之家 | news(非 AI·消费电子) | https://www.ithome.com/1/010/032.htm |
+| 2026-10-06 | Valve 确认：Linux 版 Steam 客户端目前不支持 Arm 芯片 | IT之家 | news(非 AI·游戏平台) | https://www.ithome.com/1/010/030.htm |
+| 2026-10-06 | LG 电子将为雷诺首款商用 SDV 提供集成座舱解决方案 | IT之家 | news(非 AI·汽车) | https://www.ithome.com/1/010/018.htm |
+| 2026-10-06 | 波兰监管机构指控谷歌：涉嫌在出版商报酬谈判中滥用市场支配地位 | IT之家 | news(非 AI·反垄断) | https://www.ithome.com/1/010/017.htm |
+| 2026-10-06 | 专利许可协议是否与逻辑折叠芯片技术相关，华为证实、高通称不属实 | IT之家 | news(同事件·在账 009/938) | https://www.ithome.com/1/010/022.htm |
+
