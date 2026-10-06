@@ -182,9 +182,9 @@ Xmodel-2 原文（`xmodel-2.tex:138,144-146,152-154`）：
 | **并行** | 6 GPU（.29 GPU2-7）· GP-EI surrogate（Matern(ν=2.5)） |
 | **存储** | SQLite `nemo_experiments/mix_search/mix_search_eval.db` |
 | **PID** | 1011682 @ .29（since 15:30） |
-| **进度** | **85/200 complete**（0 pruned），best=5.8328 (#55: web=0.884/code=0.105/math=0.011) |
-| **先验 88:8:4** | 最近 #79, loss=5.886, rank 43/85, Δ=0.053 |
-| **速率** | ~25.9 trial/h, remaining 115, ETA ~4.4h |
+| **进度** | **120/200 complete**（0 pruned），best=5.8327 (#96: web=0.943/code=0.034/math=0.023) |
+| **先验 88:8:4** | 最近 #79, loss=5.886, rank 63/120, Δ=0.053 |
+| **速率** | ~31.8 trial/h, remaining 80, ETA ~22:45 |
 
 ### 9.3 旧 study（val-loss objective，保留对照）
 
@@ -206,7 +206,7 @@ Xmodel-2 原文（`xmodel-2.tex:138,144-146,152-154`）：
 | 项 | 进度 | 速率 / ETA | PID |
 |:--|:--|:--|:--|
 | `ultrafineweb_en` | **2048/2048 ✅** | 完成 | — |
-| `ultrafineweb_l1_en_hq` | **4887/6006**（81%） | ~364G, ETA ~25h | 3076502/3076519 |
-| `ultrafineweb_zh` | **233/256**（91%） | ~274G, ETA ~2h | 3076502/3076519 |
+| `ultrafineweb_l1_en_hq` | **4951/6006**（82%） | ~370G, ETA ~06:00 Oct7 | 3076502/3076519 |
+| `ultrafineweb_zh` | **256/256 ✅ 完成** | 301G | — |
 | GPIC | 活跃中 | — | 144981 @.12 |
 | `gpic` | **3410 tars / 4.9T** | 活跃 | 144981 |
