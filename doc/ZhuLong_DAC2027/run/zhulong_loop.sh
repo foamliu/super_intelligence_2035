@@ -45,7 +45,7 @@ CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2
 CLINE_CONFIG_DIR="/nasdata/app.e0031982/.cline_zhulong"
 
 CLINE_TIMEOUT=2700              # 单次编排 cline 最多 45 分钟（读态+打分+切臂+启动，足够）
-PUSH_INTERVAL=18000             # 每 5 小时兜底同步一次
+PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（2026-10-06 由 18000/5h 缩短；agent 每轮自己也会提交）
 SLEEP_BUSY=60                   # 无阻塞时的唤醒间隔
 SLEEP_WAIT=1800                 # 有异步阻塞（eval 跑着/infra 不就绪）时的唤醒间隔
 MEMORY="$SCRIPT_DIR/MEMORY_ZHULONG.md"

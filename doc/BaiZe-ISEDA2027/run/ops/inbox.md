@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 74 -->
+<!-- RUN_ID: 75 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -30,6 +30,48 @@
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`。
 
 ---
+
+## RUN_ID 75 — 🔎 探活 **2.29→36.15 隧道（3333）** + **只读**诊断 ZhuLong 中继/loop（为「救援」取证）
+
+> **背景（supervisor 2026-10-06 11:2x）**：用户要求用**本中继（2.29）经隧道去救 ZhuLong（36.15）**。先确认：隧道是否在听、能否免密登入、36.15 上 ZhuLong 现状如何。**本块 🚫 纯只读** —— 不 kill / 不启停 / 不写 git / 不改文件。
+> 隧道定义：**2.29 上 `ssh -p 3333 localhost` → 36.15**（`-R 3333:10.251.36.15:22`，由外部机器执行 `ssh -N tunnel-229` 建立；见 `doc/三机互联方法.md` §4.2）。
+> 若 [A] 报 `3333 NOT listening` ⇒ **隧道已断**，需在那台能连 2.29 的机器上重启隧道（中继侧无能为力）。
+
+```bash
+set -u
+echo "=== RUN_ID 75 · tunnel probe + ZhuLong recon $(date '+%F %T') ==="
+hostname; whoami; date '+%F %T %Z'
+echo
+echo "=== [A] 3333 listening on THIS host (2.29)? ==="
+{ ss -tlnp 2>/dev/null || netstat -tlnp 2>/dev/null; } | grep -E ':3333' || echo "   !! 3333 NOT listening -> tunnel is DOWN"
+echo
+echo "=== [B] ~/.ssh + sshpass ==="
+ls -la ~/.ssh/ 2>/dev/null | cut -c1-120
+command -v sshpass >/dev/null 2>&1 && echo "sshpass=YES" || echo "sshpass=NO"
+echo
+echo "=== [C] 2.29 -> 36.15 via tunnel (BatchMode, <=25s) ==="
+timeout 25 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'echo TUNNEL_OK; hostname; date "+%F %T %Z"' 2>&1 | cut -c1-200
+echo "   ssh_rc=$?"
+echo
+echo "=== [D] if reachable: ZhuLong state on 36.15 (read-only, <=40s) ==="
+timeout 40 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-180
+set -u
+echo "host=$(hostname)"; date '+%F %T %Z'
+echo "--- procs (zhulong loop/relay) ---"
+ps -eo pid,etime,args | grep -E 'zhulong_(loop|ops_relay)\.sh' | grep -v grep || echo "(none running)"
+echo "--- repo ---"
+ls -d /nasdata/app.e0031982/code/super_intelligence_2035 2>/dev/null || echo "(NO repo at /nasdata)"
+echo "--- logs ---"
+for f in /tmp/zhulong_loop.log /tmp/zhulong_ops_relay.log; do
+  echo "[$f] mtime=$(stat -c '%y' "$f" 2>/dev/null | cut -c1-19) size=$(stat -c '%s' "$f" 2>/dev/null)"
+  tail -3 "$f" 2>/dev/null | cut -c1-180 || echo "   (no log)"
+done
+echo "--- git ---"
+cd /nasdata/app.e0031982/code/super_intelligence_2035 2>/dev/null && { git log --oneline -2 | cut -c1-140; echo "dirty:"; git status --short | head -5; } || echo "(no git)"
+EOS
+echo "=== DONE ==="
+```
+
 
 ## RUN_ID 74 — 🔎 **只读巡检（data 线节律 + base 下载 + `.29` 八卡 + proxy）** + 📦 **[D] 把新纪律同步进共享工作副本** + 🚦 **[E] 重启前置取证（不 kill）**
 
