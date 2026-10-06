@@ -10,10 +10,10 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) → 🔄 BO搜索Stable段进行中(18/200 trial完成, PID 2483227, GPU2-7)
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；proxy d128 provider+recipe创建；held-out bin(base/code/math各~2M tok)；baize_mix_optuna.py创建(GP-EI)；5项必验全部通过(09:48)；BO搜索Stable段已启动(10:01)；**任务书归档完成(79.8KB→39.5KB)**
-当前动作:     唤醒149(10:42) ①查BO搜索进度:18/200 trial完成,best=4.7115(#16:web0.82/code0.06/math0.12),先验点(88:8:4)Δ=0.20(排~7th);②任务书归档(79.8KB→39.5KB,移出改道方案①②③+2026-10-05块+§0/§0.6/§1.1/§2/§4/§5→ARCHIVE_OPERATOR_DATA.md+ARCHIVE_DATA_SPEC_HISTORY.md);③query_search.py创建;④更新心跳+日报+commit
-下一步:       ① BO搜索继续(~5h剩余,ETA~16:00);② 每~30-60min查进度+commit心跳;③ 200 trial完成→出top-K表+先验点对比+best-so-far曲线;④ Day2搜Decay段
+PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) → 🔄 BO搜索Stable段进行中(19/200 trial完成+6运行中, PID 36451, GPU2-7; GP竞态已修复)
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；proxy d128 provider+recipe创建；held-out bin(base/code/math各~2M tok)；baize_mix_optuna.py创建(GP-EI)；5项必验全部通过(09:48)；BO搜索Stable段已启动(10:01)→GP竞态crash修复+重启(11:25)；**任务书归档完成(79.8KB→39.5KB→31.5KB)**
+当前动作:     唤醒150(11:21) ①发现BO搜索crashed(GP竞态:GPR.predict()在fit()前被调用→AttributeError)②修复GPSurrogate加threading.Lock+_fitted标志+worker条件改not gp._fitted ③重启BO(PID 36451,19 existing trials loaded,trial19-24 running,GPU2-7各~6.7GB) ④任务书归档(39.5KB→31.5KB,§B/§A/§D/表格行→ARCHIVE_OPERATOR_DATA.md) ⑤更新心跳+日报+commit
+下一步:       ① BO搜索继续(~5h剩余,ETA~17:00);② 每~30-60min查进度+commit心跳;③ 200 trial完成→出top-K表+先验点对比+best-so-far曲线;④ Day2搜Decay段
 阻塞:         无
 ERROR_COUNT:  0
 ```
@@ -94,6 +94,8 @@ ERROR_COUNT:  0
 
 - [10:42] **唤醒149**：①BO搜索进度=**18/200 trial完成**(t0000-t0018),best=**4.7115**(#16:web=0.8222/code=0.0607/math=0.1170),先验点(88:8:4)最近trial=#13(web=0.8906/code=0.0757)loss=4.9135,**Δ(prior-best)=0.2020**(先验排~7th,BO已找到更优点→更多math/更少web);GP-EI已接管(trial≥12为BO引导,非随机);t0018运行中(GPU5)。②**任务书归档**:79.8KB→39.5KB(红线40KB内),移出→ARCHIVE_OPERATOR_DATA.md(改道方案①+2026-10-05三块)+ARCHIVE_DATA_SPEC_HISTORY.md(改道方案②③+§0/§0.6/§1.1/§2/§4/§5),留10条📦指针。③创建query_search.py(DB查询脚本)。📦 体积：TASK=39.5KB / MEMORY=25.8KB（归档 ~40KB → ARCHIVE_OPERATOR_DATA.md + ARCHIVE_DATA_SPEC_HISTORY.md）。
 
+- [11:25] **唤醒150**：①🔴**BO搜索crashed**(进程已死,GPU全空):tail log见`AttributeError: 'GaussianProcessRegressor' object has no attribute 'alpha_'`——**根因=GP竞态**:`add()`设`self.gp=GPR()`后`fit()`前,另一线程`suggest()`→`predict()`→crash。②**修复GPSurrogate**:加`threading.Lock`+`_fitted`标志,`add()`在lock内fit后设_fitted=True,`suggest()`在lock内检查_fitted,worker条件改`not gp._fitted`。③**重启BO**(PID 36451):19 existing trials loaded via load_trials,trial19-24 running(GPU2-7各~6.7GB/10-14%util),GP-EI已接管(无crash)。④**任务书归档**:39.5KB→**31.5KB**(§B 5项必验+§A事故复盘+§D文档订正+表格行→ARCHIVE_OPERATOR_DATA.md,留4条📦指针)。📦 体积：TASK=31.5KB / MEMORY=26.1KB（归档 ~8KB → ARCHIVE_OPERATOR_DATA.md）。
+
 ## 运维问答
 
 > 外部运维在 `BAIZE_DATA_TASK.md` 的「运维指令区」提问时，答案写在这里。
@@ -148,10 +150,10 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **§0.6-B 配比实验改道 → 🔄 BO搜索Stable段进行中(18/200, PID 2483227, GPU2-7); 任务书归档完成(79.8KB→39.5KB)** |
-| WAITING | 1（🔄 BO搜索Stable段运行中: 18/200 trial完成, best=4.7115(#16), 先验Δ=0.20, ETA~16:00; 每30-60min查进度+commit心跳） |
-| ERROR_COUNT | 0 |
-| 节点 | `10.239.2.29`（GPU2-4标定中，GPU0-1/5-7空闲） |
+| PHASE | **§0.6-B 配比实验改道 → 🔄 BO搜索Stable段进行中(19/200+6运行, PID 36451, GPU2-7; GP竞态已修复); 任务书归档完成(79.8KB→31.5KB)** |
+| WAITING | 1（🔄 BO搜索Stable段运行中: 19/200 trial完成+6运行中, best=4.7115(#16), 先验Δ=0.20, GP竞态crash已修复+重启, ETA~17:00; 每30-60min查进度+commit心跳） |
+| ERROR_COUNT | 1（GP竞态crash已修复，见流水唤醒150） |
+| 节点 | `10.239.2.29`（GPU2-7 BO搜索并行，GPU0-1空闲） |
 | 更新 | 2026-10-06 |
 
 ## 看板（按推荐执行顺序）

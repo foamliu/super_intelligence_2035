@@ -116,17 +116,21 @@ class GPSurrogate:
         self.X = []
         self.y = []
         self.gp = None
+        self._fitted = False
+        self._lock = threading.Lock()
 
     def add(self, x, y):
-        self.X.append(list(x))
-        self.y.append(y)
-        if len(self.X) >= 3:
-            kernel = ConstantKernel(1.0) * Matern(nu=2.5)
-            self.gp = GPR(kernel=kernel, alpha=1e-6, normalize_y=True)
-            self.gp.fit(np.array(self.X), np.array(self.y))
+        with self._lock:
+            self.X.append(list(x))
+            self.y.append(y)
+            if len(self.X) >= 3:
+                kernel = ConstantKernel(1.0) * Matern(nu=2.5)
+                self.gp = GPR(kernel=kernel, alpha=1e-6, normalize_y=True)
+                self.gp.fit(np.array(self.X), np.array(self.y))
+                self._fitted = True
 
     def _ei(self, x):
-        if self.gp is None:
+        if self.gp is None or not self._fitted:
             return 0.0
         x = x.reshape(1, -1)
         mu, sigma = self.gp.predict(x, return_std=True)
@@ -135,17 +139,18 @@ class GPSurrogate:
         return max((f_best - mu[0]) * norm.cdf(z) + sigma[0] * norm.pdf(z), 0.0)
 
     def suggest(self, n_restarts=20):
-        if self.gp is None:
-            return None
-        best_x, best_ei = None, -1
-        for _ in range(n_restarts):
-            x0 = np.random.uniform(self.bounds[:, 0], self.bounds[:, 1])
-            res = minimize(lambda x: -self._ei(x), x0, bounds=self.bounds,
-                           method="L-BFGS-B")
-            if -res.fun > best_ei:
-                best_ei = -res.fun
-                best_x = res.x
-        return best_x
+        with self._lock:
+            if self.gp is None or not self._fitted:
+                return None
+            best_x, best_ei = None, -1
+            for _ in range(n_restarts):
+                x0 = np.random.uniform(self.bounds[:, 0], self.bounds[:, 1])
+                res = minimize(lambda x: -self._ei(x), x0, bounds=self.bounds,
+                               method="L-BFGS-B")
+                if -res.fun > best_ei:
+                    best_ei = -res.fun
+                    best_x = res.x
+            return best_x
 
 
 # ---- Log parsing ----
@@ -292,7 +297,7 @@ def main():
     def worker(trial_id):
         gpu_id = gpu_queue.get()
         try:
-            if trial_id < args.n_random or gp.gp is None:
+            if trial_id < args.n_random or not gp._fitted:
                 params = random_sample(bounds)
             else:
                 suggested = gp.suggest()

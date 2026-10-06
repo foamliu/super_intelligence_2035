@@ -79,3 +79,4 @@
 
 | 2026-10-06 08:22 | **data 唤醒145**：🔴 **S0a 2.2B单臂已kill改道代理模型BO搜索**。校准完成（GPU2-4, 3×LR×50步, 92.7M proxy h=512/L=14, s/step≈1.5s, loss@50 best@LR=1e-3=7.08）。GPU2-4已释放。下一步=held-out bin→Optuna study（6卡并行, 500步/trial, T≈691>400）。GPU0-1/5-7空闲。 |
 
+2026-10-06 11:25 data-agent START BO search resumed (trial 19+, 19 existing, fix GP race condition) GPU2-7
