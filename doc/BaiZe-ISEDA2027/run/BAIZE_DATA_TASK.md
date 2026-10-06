@@ -25,6 +25,10 @@
 > - ⇒ **真凶候选（都在单卡内）**：① ⭐ **`--micro-batch-size 1`（`:219`）+ `GBS=16`（`:218`）⇒ 每步 16 个 microbatch**，TP1/DP1 不可切分、只能梯度累积 ⇒ ≈**94 ms/microbatch** 的 Python/kernel-launch/DataLoader 开销 × 16 ≈ **1.5 s**；② 数据管线（NFS 小批读）；③ CE logits 4.24e9 元素（≈10–17 ms，非主因）；④ 无 CUDA graph。
 > - **算力账**：`6·N·tokens = 6×18.5e6×32768 ≈ 3.6 TFLOP ≈ <10 ms` ⇒ 实测 1.5 s = 算力的 **~100×** ⇒ **纯 overhead-bound，不是算力、更不是通信**。
 > - ⇒ **修法（单卡内即可，🚫 不用改多卡策略）**：**MBS 1→8/16**（microbatch 16→2/1）· 开 CUDA graph · DataLoader `num_workers`/prefetch 上调 · fused/chunked CE。判据 = 维修后 **`s_step` 中位数 ≤100 ms**（力争 ≤30 ms）。
+> - ℹ️ **`MBS=1` 的由来 + `MBS↑` 的显存账（运维补 · 用户 2026-10-06 追问）**：
+>   - **由来 = 沿用 2.2B 基线 recipe 未重标定**：`run/baize_p5b_train.sh`（GBS1024·MBS1·seq4094）、`baize_p2/p3_sweep.sh`、`baize_p7_remeasure.sh` 全为 MBS1；arch-search 计划原文写「`micro_batch_size=1`（**共享 GPU 下 mb2 易 OOM**）」—— 那是**为 2.2B 设的**；`baize_mix_optuna.py:219` 只是**把该值抄给了 18.5M 代理**。
+>   - **显存大头不是模型，是 logits/CE**（`vocab=129,408`）：`logits = MBS×seq×vocab` ⇒ MBS=1 → 2.65e8 元素 **0.53 GB(bf16)**；**MBS=16 → 4.24e9 元素 = 8.5 GB(bf16) / 17 GB(fp32)**（含反传可至 ~17–34 GB）⇒ **80 GB H100 装得下** ⇒ **MBS 16 预期可行，直接消掉 16× 梯度累积**。
+>   - ⚠️ 但**以 step ②a 实测为准**（防 CE 反传 OOM）；若 OOM ⇒ 上 **fused/chunked CE**（本就该做）。✅ **改 MBS 不改 GBS 语义（GBS 恒 16）⇒ 结果仍可比。**
 
 > **执行（① 先收口；② 可并行、时间盒 ≤2h；③ 条件触发）**
 >
