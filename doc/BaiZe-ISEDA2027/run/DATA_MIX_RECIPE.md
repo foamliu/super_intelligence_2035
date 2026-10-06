@@ -107,6 +107,25 @@ Xmodel-2 原文（`xmodel-2.tex:138,144-146,152-154`）：
   - ⭐ **2026-10-06 定案**：`D ≈ 0.45B token/trial`（≈13,700 步 @GBS16×seq2048）· 代理 **`h=512/L=14` ≈ 96.8M**（总参 1/23、非-embed 30.5M = 1/64）· **`T = 86400·η/(N·D)`**（或 `D=0.45B` 时 `T = 37.75 ÷ s_step`；`D=1B` 时 `T = 17.0 ÷ s_step`）· **通用设计方程 `N[M]·D[B] = 86.4·(η/1e14)÷(T/100)`** · 完整阶梯 + 例外条款（GBS 64–128 / 分块 CE / `L` 取 14 的倍数）+ 三条开工前置（val bin 中立性 / val-loss 通路 / LR 重扫）见 `run/BAIZE_DATA_TASK.md §③.6–.8`。
 - 置信度：以 **Table 2 Avg + Table 3 Avg** 双指标做主判据，SFT 占比轴（D0）输出**具体百分比**（预期落在 60–69%）。
 
+### 6.1 📐 目标函数与预注册（2026-10-06，先定后测）
+
+> **运维指令（2026-10-06 P0）**：BO 目标函数必须用**评测均分**，不是 val loss。
+> 本线采用运维批准的「可行方向 #2」：**eval-set 语料 val loss 作代理**。
+
+**代理定义**：
+- **`held_out_eval` bin** = **8 集常识推理评测集本身的文本**（arc_challenge, arc_easy, boolq, hellaswag, openbookqa, piqa, sciq, winogrande）tokenized 成 `.bin/.idx`（2,770,208 tok / 19,627 docs / seq=2048）。
+- 路径：`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/heldout/held_out_eval.{bin,idx}`
+- BO objective = **该 bin 上的 val loss**（越小越好），**不是**训练分布的 val loss。
+- ⚠️ **这是代理指标**，最终选优以 **top-K 的 lm_eval 8 集均分**为准。
+
+**预注册（先定后测）**：
+1. **判定阈值**：两配比差异 **Δloss 必须超过评测噪声 σ×2** 才算真差异（否则归为「不可区分」）。
+2. **噪声测量**：同一 ckpt 在 `held_out_eval` bin 上重复评测 **≥3 次**（不同 seed），报 **σ**；在 BO 完成后对 top-5 ckpt 各测 3 次。
+3. **相关性验证**：BO 完成后取 **top-5 + 先验点(88:8:4) + 若干随机点**（≥8 个 ckpt），跑 **`baize_mix_eval.sh` 的 lm_eval 8 集**，计算 **「代理 val loss ↔ lm_eval 均分」的 Spearman 秩相关**；若 ρ < 0.5 → 代理失真，改用全量 lm_eval。
+4. **最终选优**：以 lm_eval 8 集均分排序，**不是**代理 val loss 排序。
+
+**DB 存储bug说明**：`baize_mix_optuna.py` 的 SQLite `params` 列中 `math=0.0000`（存储 bug，实际训练用 `math=1-web-code`），分析先验点距离时须用 `math=1-web-code` 重算。
+
 ---
 
 ## 7. P-8 数据就绪清单（§0.6 C.2，截至 2026-10-02）
@@ -150,39 +169,28 @@ Xmodel-2 原文（`xmodel-2.tex:138,144-146,152-154`）：
 | `UltraData-SFT-2605` shard s1 | 🟡 进行中 | `data/mix_sft_tok/mix_sft_train_s1` | ~?B（.bin 12G） | clean restart, PID 2868155, 1.5h |
 | `UltraData-SFT-Agent-2609` | ❌ 未分词 | `/nas_inference/.../UltraData-SFT-Agent-2609/` | ~?B | 50 shard jsonl / 51 GiB，待 s0/s1 完后启动 |
 
-### 9.2 Stable 段 S0a 臂（基线，🚀 运行中）
+### 9.2 Stable 段 BO 搜索（🚀 运行中，2026-10-06 改道后）
+
+> **S0a 2.2B 单臂已 kill（2026-10-06 08:06）** — 方法学错误（单臂 ≠ 实验）+ 成本失控（312 GPU·h/臂）。改道为小代理模型 + GP-EI BO 搜索。
 
 | 参数 | 值 |
 |:--|:--|
-| **配比** | base:code:math = **88:8:4**（4 base shards × 22 = 88, code 8, math 4） |
-| **GBS** | 1020（6×170，基线 1024 因 DP6 整除要求调为 1020，-0.4%） |
-| **口径** | 6 卡 · TP1/DP6 · seq=4094 · mb=1 · 5000 步 · bf16_mixed · seed=1234 · WSD(warmup=250, decay=0=纯 stable) |
-| **GPU** | .29 GPU2-7（CUDA_VISIBLE_DEVICES=2,3,4,5,6,7） |
-| **PID** | 1995742 (bash) / 1995914 (torchrun) / 1998724-738 (6 workers) |
-| **脚本** | `run/baize_mix_stable_s0a.sh` |
-| **SAVE_INTERVAL** | 5000（仅在末尾存 ckpt，无中间 ckpt） |
-| **当前进度** | step 60/5000, loss 10.84→7.16（step10→60，稳定下降） |
-| **速率** | ~37.8 s/iter（warmup 后稳定，358 TFLOP/s/GPU） |
-| **ETA** | (5000-60) × 37.8s ≈ **51.9 小时 → ~Oct 7 20:00** |
-| **ckpt 路径** | `nemo_experiments/mix_stable_s0a/checkpoints/iter_0005000/`（训练完后产出） |
+| **代理模型** | d=128 / L=14 / tie-embed ≈ **18.36M** |
+| **搜索空间** | web∈[0.80,0.95] / code∈[0.03,0.12] / math=1−web−code |
+| **每 trial** | 500 步 · GBS=16 · seq=2048 · LR=3e-3 · WSD(50/450) · seed=1234 |
+| **objective** | `held_out_eval` bin val loss（**eval-set 语料代理**，见 §6.1） |
+| **并行** | 6 GPU（.29 GPU2-7）· GP-EI surrogate（Matern(ν=2.5)） |
+| **存储** | SQLite `nemo_experiments/mix_search/mix_search_eval.db` |
+| **PID** | 1011682 @ .29（since 15:30） |
+| **进度** | **85/200 complete**（0 pruned），best=5.8328 (#55: web=0.884/code=0.105/math=0.011) |
+| **先验 88:8:4** | 最近 #79, loss=5.886, rank 43/85, Δ=0.053 |
+| **速率** | ~25.9 trial/h, remaining 115, ETA ~4.4h |
 
-### 9.3 ⚠️⚠️ ETA 重大更正（运维请注意）
+### 9.3 旧 study（val-loss objective，保留对照）
 
-**原 §6 估算**（2026-10-02）："每组 ~5000 步 × GBS；以 Round 1/2 的 2.2B 8 卡吞吐（~85–90K tok/s 混合）计，每组 ≈ 0.5–1 GPU·h×8 ≈ 可批跑，整轮 ~1–2 天"
-
-**实际**（2026-10-05 实测）：
-- 6 卡（非 8 卡），3B mamba2-hybrid 模型
-- GBS=1020 × seq=4094 = **4.18M tok/step**
-- 5000 步 = **~20.9B tokens**
-- 实测吞吐 ~112K tok/s（6 卡合计）
-- **每臂 = 6 GPU × 52h = 312 GPU·h**（比估算大 **~50×**）
-
-**影响**：按 12+ 臂计 → **总耗 ~24+ 天**，远超"1–2 天"估算。
-
-**建议**（不改 S0a，已运行不 kill）：
-- **方案 A**：保持 S0a 为完整 5000 步基线；**后续臂降至 1000–2000 步**（~10–21h/臂）。任务书明确允许"5000 步短地平线（**或更短**，但所有臂必须一致）"——若后续臂缩短，S0a 也可在 step1000/2000 时另存 ckpt 评测对比（需改 SAVE_INTERVAL，但 S0a 已在跑无法改）。
-- **方案 B**：所有臂均 5000 步，接受 ~24 天总耗。优先跑最关键的 D0 轴（SFT 占比 55/60/64/69/72%，5 臂 × 52h = ~11 天）。
-- **方案 C**：kill S0a，重启所有臂为 1000 步（~10h/臂，12 臂 = ~5 天）。代价 = 已跑 60 步（~38 min）的浪费。
+- DB: `nemo_experiments/mix_search/mix_search.db`（115 trial, best=4.6420 #84）
+- 用训练分布 held-out bin 的 val loss 作 objective → **已被运维判定为方法学错误**
+- 保留作对照：BO 完成后检验「loss 排名 vs eval 排名」的相关性
 
 ### 9.4 评测管线（✅ 已备）
 
@@ -193,11 +201,12 @@ Xmodel-2 原文（`xmodel-2.tex:138,144-146,152-154`）：
 - **GPU**：默认 GPU2-7（训练完后即可评测）
 - **依赖**：PYTHONPATH 前置 `p6_tf5`（transformers 5.17.0 NemotronHForCausalLM）+ `omegaconf_230`；HF_ENDPOINT=hf-mirror.com
 
-### 9.5 下载进度（白名单 4 项）
+### 9.5 下载进度（白名单 2+1 项，2026-10-06 19:20）
 
 | 项 | 进度 | 速率 / ETA | PID |
 |:--|:--|:--|:--|
 | `ultrafineweb_en` | **2048/2048 ✅** | 完成 | — |
-| `ultrafineweb_l1_en_hq` | **2795/6006**（46.5%） | ~0.8 MB/s, ETA ~15 天 | 3076502/3076519 |
-| `ultrafineweb_zh` | **171/256**（冻结） | 低优先级，等 l1_en_hq 完 | 3076502 |
+| `ultrafineweb_l1_en_hq` | **4887/6006**（81%） | ~364G, ETA ~25h | 3076502/3076519 |
+| `ultrafineweb_zh` | **233/256**（91%） | ~274G, ETA ~2h | 3076502/3076519 |
+| GPIC | 活跃中 | — | 144981 @.12 |
 | `gpic` | **3410 tars / 4.9T** | 活跃 | 144981 |
