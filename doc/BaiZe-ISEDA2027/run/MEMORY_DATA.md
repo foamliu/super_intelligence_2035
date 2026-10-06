@@ -10,10 +10,10 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) → ⭐ BO搜索已启动(Stable段, 200 trial, 6 GPU并行, PID 2483227)
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；mamba2_hybrid_proxy_d128/(provider+recipe)创建；pretrain_proxy_launcher.py添加--proxy-size d128；check_numel.py创建；held-out bin(base/code/math各~2M tok)；baize_mix_optuna.py创建(GP-EI)；5项必验全部通过(09:48)；**BO搜索Stable段已启动(10:01)**
-当前动作:     唤醒148(10:01) ①LR修正1e-3→3e-3(必验#5选定)；②添加--proxy-size d128显式参数；③语法检查通过；④启动BO搜索(PID 2483227, nohup)；⑤6 trial并行(t0000-t0005, GPU2-7各~6.7GB/~10%util)；⑥t0000 step20/500 loss11.05 s/step1.56s LR=1.2e-3(warming→3e-3) 0NaN ✅健康
-下一步:       ① 等~13min首batch 6 trial完成→查SQLite结果；② 每~30min查进度+commit心跳(运维判死>60min无提交)；③ 200 trial完成(~7h)后出top-K表+先验点(88:8:4)对比；④ Day2搜Decay段
+PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) → 🔄 BO搜索Stable段进行中(18/200 trial完成, PID 2483227, GPU2-7)
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；proxy d128 provider+recipe创建；held-out bin(base/code/math各~2M tok)；baize_mix_optuna.py创建(GP-EI)；5项必验全部通过(09:48)；BO搜索Stable段已启动(10:01)；**任务书归档完成(79.8KB→39.5KB)**
+当前动作:     唤醒149(10:42) ①查BO搜索进度:18/200 trial完成,best=4.7115(#16:web0.82/code0.06/math0.12),先验点(88:8:4)Δ=0.20(排~7th);②任务书归档(79.8KB→39.5KB,移出改道方案①②③+2026-10-05块+§0/§0.6/§1.1/§2/§4/§5→ARCHIVE_OPERATOR_DATA.md+ARCHIVE_DATA_SPEC_HISTORY.md);③query_search.py创建;④更新心跳+日报+commit
+下一步:       ① BO搜索继续(~5h剩余,ETA~16:00);② 每~30-60min查进度+commit心跳;③ 200 trial完成→出top-K表+先验点对比+best-so-far曲线;④ Day2搜Decay段
 阻塞:         无
 ERROR_COUNT:  0
 ```
@@ -90,7 +90,9 @@ ERROR_COUNT:  0
 
 ## 📋 本唤醒流水
 
-- [10:01] **唤醒148**：⭐ **BO搜索Stable段已启动！** LR修正1e-3→3e-3(必验#5选定)+添加--proxy-size d128显式参数→语法OK→启动`baize_mix_optuna.py --phase stable --n-trials 200 --gpus 2,3,4,5,6,7`(PID 2483227 nohup)。6 trial并行(t0000-t0005)，GPU2-7各~6.7GB/~10%util。t0000 step20/500 `lm loss: 1.104813E+01` s/step=1.56s LR=1.2e-3(warming→3e-3) 0NaN ✅健康。ETA~7h(200trial×13min/6GPU)。📦 体积上报：BAIZE_DATA_TASK.md=79KB 超红线(40KB)，建议运维归档较早的运维指令块(§2026-10-05系列, 约30KB)。MEMORY_DATA.md=26KB ✓。
+- [10:01] **唤醒148**：⭐ **BO搜索Stable段已启动！** LR修正1e-3→3e-3(必验#5选定)+添加--proxy-size d128显式参数→语法OK→启动`baize_mix_optuna.py --phase stable --n-trials 200 --gpus 2,3,4,5,6,7`(PID 2483227 nohup)。6 trial并行(t0000-t0005)，GPU2-7各~6.7GB/~10%util。t0000 step20/500 `lm loss: 1.104813E+01` s/step=1.56s LR=1.2e-3(warming→3e-3) 0NaN ✅健康。ETA~7h(200trial×13min/6GPU)。
+
+- [10:42] **唤醒149**：①BO搜索进度=**18/200 trial完成**(t0000-t0018),best=**4.7115**(#16:web=0.8222/code=0.0607/math=0.1170),先验点(88:8:4)最近trial=#13(web=0.8906/code=0.0757)loss=4.9135,**Δ(prior-best)=0.2020**(先验排~7th,BO已找到更优点→更多math/更少web);GP-EI已接管(trial≥12为BO引导,非随机);t0018运行中(GPU5)。②**任务书归档**:79.8KB→39.5KB(红线40KB内),移出→ARCHIVE_OPERATOR_DATA.md(改道方案①+2026-10-05三块)+ARCHIVE_DATA_SPEC_HISTORY.md(改道方案②③+§0/§0.6/§1.1/§2/§4/§5),留10条📦指针。③创建query_search.py(DB查询脚本)。📦 体积：TASK=39.5KB / MEMORY=25.8KB（归档 ~40KB → ARCHIVE_OPERATOR_DATA.md + ARCHIVE_DATA_SPEC_HISTORY.md）。
 
 ## 运维问答
 
@@ -146,8 +148,8 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **§0.6-B 配比实验改道 → 🔴Step0 kill完成+代理模型(h=512/L=14/96.8M)就位+🔄标定中(GPU2-4, LR sweep)→Optuna BO搜索；§0.5/§0.6/§0.7定稿✅；base22.05B✅；SFT-2605(20.97B)✅；Agent-2609(4/4)✅；baize_mix_eval.sh✅；D-CLEAN-1/2/3/4✅保留不动** |
-| WAITING | 1（🔄标定中：GPU2-4 跑3×LR(3e-4/1e-3/3e-3)×50步，96.8M proxy h512/L14，ETA~5min；🔴S0a已kill(step1470/5000作废, ~100 GPU·h浪费, GPU2-7全释放); held-out bin待创建; optuna study脚本待写） |
+| PHASE | **§0.6-B 配比实验改道 → 🔄 BO搜索Stable段进行中(18/200, PID 2483227, GPU2-7); 任务书归档完成(79.8KB→39.5KB)** |
+| WAITING | 1（🔄 BO搜索Stable段运行中: 18/200 trial完成, best=4.7115(#16), 先验Δ=0.20, ETA~16:00; 每30-60min查进度+commit心跳） |
 | ERROR_COUNT | 0 |
 | 节点 | `10.239.2.29`（GPU2-4标定中，GPU0-1/5-7空闲） |
 | 更新 | 2026-10-06 |
