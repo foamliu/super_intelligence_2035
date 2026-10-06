@@ -10,7 +10,7 @@ WAITING: 0
 | WAITING | 0（**全部完成**。R12 3-epoch scaling: 35 点, R²=0.94, a 撞上界不可定, 非单调(7/34), 3ep lp=20.27%@176M 仍攀升 → AIMv2 渐近 >>25.1% 强化。VERDICT: NON-MONOTONIC, 诚实报告）|
 | ERROR_COUNT | 3（① R9 w512 首跑 crash：损坏 jpg → data.py 修复 ② 续跑首试 crash：r9_train.py `log()` 在定义前被 resume 块调用 → 改为 `print()` 修复 ③ **8-GPU 并行 eval NFS 争用卡死**：8 进程×冗余读 40 parquet → 43min 仅 3-4 文件 → 已 kill，改 4-GPU r12_single_eval.sh） |
 | BUDGET_USED | R2–R12 累计 + **R12 完成**（6.3h×8卡≈50.4 GPU·h）+ **3-epoch 续跑完成**（10.9h×8卡≈87.1 GPU·h, 总 ≈215 GPU·h） |
-| 更新 | **2026-10-06 12:17（idle check #3: git pull(proxy)=up-to-date, 无新运维指令, 3 份交付物已确认存在, push 成功(011d247c→origin), WAITING=0 保持. 📦 TASK=25KB/MEMORY=31KB）· *[更早见 daily-memories-vision/2026-10-06.md]* |
+| 更新 | **2026-10-06 12:21（idle check #4: git pull(proxy)=up-to-date, 无新运维指令, GPU 8 卡全空闲(0%), 无训练/eval 进程. ⚠️ **push 失败 2 次**: `HTTP code 503 from proxy after CONNECT` — commit cfdd1bc6 已本地提交但未推送, **下一轮唤醒第一件事补推**. 📦 TASK=25KB/MEMORY=31KB）· *[更早见 daily-memories-vision/2026-10-06.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -201,7 +201,8 @@ WAITING: 0
 
 ## 本唤醒流水
 
-- [12:17] idle check #3: git pull(proxy 172.19.92.25:13128)=up-to-date, 无新运维指令; push 011d247c→origin 成功; 交付物全在(lp_eval 27KB/aimv2_impl 31KB/next_dir 7KB); 体积 TASK=25KB/MEMORY=31KB ≤32KB; WAITING=0 保持.
+- [12:17] idle check #3: git pull(proxy)=up-to-date, 无新运维指令; push 成功; 交付物全在; 体积 TASK=25KB/MEMORY=31KB ≤32KB; WAITING=0 保持.
+- [12:21] idle check #4: git pull(proxy)=up-to-date, 无新运维指令; GPU 8 卡全空闲(0% util); 无训练/eval 进程运行; 交付物全在(lp_eval 27KB/aimv2_impl 31KB/next_dir 7KB); 体积 TASK=25KB/MEMORY=31KB ≤32KB. ⚠️ **push 失败 2 次(HTTP 503 from proxy)** — commit cfdd1bc6 本地已提交未推送, **下一轮补推**.
 
 ## 历史条目已滚动归档（2026-10-03）
 
