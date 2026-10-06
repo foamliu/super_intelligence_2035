@@ -114,3 +114,6 @@
 
 > 🗓 **第六十三轮常态增量（UTC 2026-10-06 周二 16:1x，第六十二轮后约 60min · 同批去重复核）**：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600**（**470 already in SEEN** + **130 stale > 72h**）→ **0 新增**（**公告批次仍 `2026-10-05`**，主源仍 `2026-10-05T17:59:54Z`、`totalResults` 仍 `627806`，与第五十四~六十二轮一致，渐进索引已收尽）；`window_mode=daily`(72h，第三十轮起自动回落)，因去重先查 SEEN，结论不变；R1′ arXiv ✅ / HF ❌（`Network is unreachable`）/ RSS 有内容，本轮 `--probe`（**本轮实时 `--probe`**，无重试）/`--fetch` 均 `attempts=1` 无重试；`raw/2026-10-06-{probe,fetch}-r63.json`；口径 `ARXIV_API.md` §9.65。**下轮预期**：下一次工作日公告（`2026-10-06` 提交批）预计在 **UTC `2026-10-07` 前后**刷新，届时预计出现新增。
 
+
+> 🗓 **第六十四轮常态增量（UTC 2026-10-06 周二 16:5x，第六十三轮后约 40min · 同批去重复核）**：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600**（**470 already in SEEN** + **130 stale > 72h**）→ **0 新增**（**公告批次仍 `2026-10-05`**，主源仍 `2026-10-05T17:59:54Z`、`totalResults` 仍 `627806`，与第五十四~六十三轮一致，渐进索引已收尽）；`window_mode=daily`(72h，第三十轮起自动回落)，因去重先查 SEEN，结论不变；R1′ arXiv ✅ / HF ❌（`Network is unreachable`）/ RSS 有内容，本轮 `--probe`（**本轮实时 `--probe`**，无重试）/`--fetch` 均 `attempts=1` 无重试；`raw/2026-10-06-{probe,fetch}-r64.json`；口径 `ARXIV_API.md` §9.66。**下轮预期**：下一次工作日公告（`2026-10-06` 提交批）预计在 **UTC `2026-10-07` 前后**刷新，届时预计出现新增。
+
