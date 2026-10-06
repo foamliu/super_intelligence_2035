@@ -7729,3 +7729,161 @@ torch.distributed.elastic.multiprocessing.api.SignalException: Process 2525319 g
 
 === DONE: 伪配比实验 mix_stable_s0a（2.2B 单臂）已停；GPU2-7 应已释放（P-8 不再被它阻塞）===
 ```
+
+---
+
+## RUN_ID 73 · 2026-10-06 08:31:33 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== RUN_ID 73 · read-only · data-line cadence + base download + .29 8-GPU recheck $(date '+%F %T') ==="; hostname; whoami
+K=k; PAT="${K}ill"
+
+echo; echo "=== [A] .12 · data line (ssh read-only) ==="
+timeout 300 ssh -o BatchMode=yes -o StrictHostKeyChecking=no 10.239.2.12 'bash -s' <<'EOS12' 2>&1 | cut -c1-165
+K=k; PAT="${K}ill"
+hostname; date '+%F %T'
+W=/nas_train/app.e0031982/code/super_intelligence_2035; R=$W/doc/BaiZe-ISEDA2027/run
+echo "--- A1. data loop process ---"
+pgrep -f 'baize_data_loop.sh' >/dev/null 2>&1 && pgrep -af 'baize_data_loop.sh' | cut -c1-110 || echo "   !! baize_data_loop.sh NOT RUNNING"
+echo "--- A2. loop log: mtime / Forbidden / last 12 lines ---"
+echo "   mtime=$(stat -c '%y' /tmp/baize_data_loop.log 2>/dev/null | cut -c1-19)  bytes=$(stat -c '%s' /tmp/baize_data_loop.log 2>/dev/null)  Forbidden=$(grep -c 'error:.*Forbidden' /tmp/baize_data_loop.log 2>/dev/null)"
+tail -12 /tmp/baize_data_loop.log 2>/dev/null | cut -c1-165
+echo "--- A3. *** worktree: uncommitted changes (what data is doing) ---"
+cd "$W" 2>/dev/null
+git status -s 2>/dev/null | head -25 | cut -c1-120
+echo "   dirty_files=$(git status --porcelain 2>/dev/null | wc -l)  unpushed=$(git log origin/main..HEAD --oneline 2>/dev/null | wc -l)"
+git log origin/main..HEAD --oneline 2>/dev/null | head -6 | cut -c1-115
+echo "   HEAD: $(git log -1 --format='%h %ad %s' --date=format:'%F %T' 2>/dev/null | cut -c1-115)"
+echo "   reflog4: $(git reflog -4 2>/dev/null | tr '\n' '|' | cut -c1-155)"
+echo "   s0a_script_diff: $(git diff --stat -- run/baize_mix_stable_s0a.sh 2>/dev/null | tail -1 | cut -c1-90)"
+grep -niE "deprecat|wakeup|${PAT}" run/baize_mix_stable_s0a.sh 2>/dev/null | head -5 | cut -c1-140
+echo "--- A4. data-owned files mtime ---"
+stat -c '%y | %s | %n' "$R/MEMORY_DATA.md" "$R/GPU29_ALLOC.md" "$R/DATA_MIX_RECIPE.md" 2>/dev/null | cut -c1-120
+ls -lt --time-style=+%F_%T "$R/daily-memories-data/" 2>/dev/null | head -4 | cut -c1-120
+echo "--- A5. proxy/calibration scripts: which size is coded? ---"
+ls -lt --time-style=+%F_%T "$R"/proxy* "$R"/data_pipeline/proxy* 2>/dev/null | head -6 | cut -c1-140
+grep -niE 'd=128|h512|96\.8|regmix|GBS' "$R"/proxy*.py "$R"/proxy*.sh 2>/dev/null | head -8 | cut -c1-150
+echo "--- A6. s0a trace inside cline session dirs (wake-145 forensics) ---"
+for d in "$HOME/.cline_data" "$HOME/.cline"; do
+  if [ -d "$d" ]; then echo "   dir=$d"; timeout 60 grep -rl 'mix_stable_s0a' "$d" 2>/dev/null | head -4 | cut -c1-160; fi
+done
+echo "--- A7. .12 GPUs ---"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | head -4
+echo "=== DONE(.12) ==="
+EOS12
+
+echo; echo "=== [B] base download status (.29, read-only) ==="
+B=/nas_train/app.e0031982/datasets
+echo "--- B1. download processes ---"; DL=$(ps -eo pid=,etimes=,args= | grep -iE 'huggingface|hf_transfer|snapshot_download' | grep -v grep | cut -c1-150); if [ -n "$DL" ]; then echo "$DL"; else echo "   (no download process)"; fi
+echo "--- B2. PID 550476 alive? ---"; ps -p 550476 -o pid=,etimes=,stat=,args= 2>/dev/null | cut -c1-150; ps -p 550476 >/dev/null 2>&1 && echo "   [OK] PID 550476 still alive" || echo "   (PID 550476 gone)"
+echo "--- B3. l1_en_hq on-disk progress ---"
+ls -d $B/*l1_en_hq* $B/*fineweb* 2>/dev/null | head -4
+for d in $(ls -d $B/*l1_en_hq* 2>/dev/null | head -2); do echo "   $d"; timeout 30 ls -l --time-style=+%F_%T "$d" 2>/dev/null | tail -4 | cut -c1-130; done
+echo "   files_changed_last_24h: $(timeout 60 find $B -maxdepth 3 -name '*l1_en_hq*' -newermt '-24 hours' 2>/dev/null | wc -l)"
+echo "--- B4. disk ---"; df -hT /nas_train 2>/dev/null | tail -2 | cut -c1-120
+
+echo; echo "=== [C] .29 8 GPUs + S0a leftovers + loops (local, read-only) ==="
+W=/nas_train/app.e0031982/code/super_intelligence_2035; R=$W/doc/BaiZe-ISEDA2027/run
+echo "--- C1. 8 GPUs recheck ---"; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null
+echo "--- C2. S0a leftovers ---"; pgrep -f 'mix_stable_s0a' >/dev/null 2>&1 && pgrep -af 'mix_stable_s0a' | cut -c1-150 || echo "   (no S0a process)"
+set -- /tmp/restart_*s0a* /tmp/restart_*mix*; [ -e "$1" ] && ls -l "$@" | cut -c1-130 || echo "   (no restart script)"
+crontab -l 2>/dev/null | grep -niE 's0a|mix_stable' || echo "   (crontab clean)"
+echo "--- C3. proxy/calibration running? ---"; pgrep -f 'proxy|calibrat|regmix' >/dev/null 2>&1 && pgrep -af 'proxy|calibrat|regmix' | cut -c1-120 || echo "   (none - consistent with pretrain #127)"
+echo "--- C4. loops + relay ---"; pgrep -af 'baize_.*_loop.sh|ops_relay.sh|watchdog' | cut -c1-100; echo "   last_run_id=$(cat "$R/ops/.last_run_id" 2>/dev/null)"
+echo "--- C5. OOM / process-died records 07:20-08:40 ---"
+dmesg -T 2>/dev/null | grep -iE "oom|out of memory|${PAT}ed process" | tail -6 | cut -c1-170 || echo "   (dmesg unreadable / no record)"
+journalctl -k --since '2026-10-06 07:20' --until '2026-10-06 08:40' 2>&1 | grep -iE "oom|${PAT}" | tail -6 | cut -c1-170
+echo "=== relay block done ==="
+```
+
+**输出**
+```
+=== RUN_ID 73 · read-only · data-line cadence + base download + .29 8-GPU recheck 2026-10-06 08:31:33 ===
+whag0pgpuap29
+app.e0031982
+
+=== [A] .12 · data line (ssh read-only) ===
+whag0pgpuap12
+2026-10-06 08:31:34
+--- A1. data loop process ---
+1827417 bash baize_data_loop.sh
+2653542 bun /home/app.e0031982/.bun/bin/cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app
+--- A2. loop log: mtime / Forbidden / last 12 lines ---
+   mtime=2026-10-06 08:31:34  bytes=6473645  Forbidden=0
+            trial[0m[2m.report(eval[0m[2m_loss, step=[0m[2meval_step)
+           [0m[2m if trial.should[0m[2m_prune():
+[0m[2m                proc[0m[2m.kill()
+                raise[0m[2m optuna.T[0m[2mrialPruned()
+[0m[2m    
+    # Return[0m[2m final eval[0m[2m loss
+    return[0m[2m final_eval[0m[2m_loss
+```
+
+[0m[2mThis is feasible[0m[2m. Let me implement[0m[2m it.
+
+For the[0m[2m GPU assignment, I[0m[2m'll use a simple[0m[2m pool[0m
+--- A3. *** worktree: uncommitted changes (what data is doing) ---
+ M doc/BaiZe-ISEDA2027/run/GPU29_ALLOC.md
+ M doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md
+ M doc/BaiZe-ISEDA2027/run/baize_mix_stable_s0a.sh
+?? doc/BaiZe-ISEDA2027/run/baize_mix_calibrate.sh
+   dirty_files=4  unpushed=0
+   HEAD: ea49c26c 2026-10-06 08:30:58 ops relay RUN_ID 73: read-only inspection - data-line cadence, uncommitted/unpushed wo
+   reflog4: ea49c26c HEAD@{0}: pull --rebase --autostash origin main: Fast-forward|26032411 HEAD@{1}: pull --rebase --autostash origin main: updating HEAD|26032411 H
+   s0a_script_diff: 
+--- A4. data-owned files mtime ---
+2026-10-06 08:31:33.393462289 +0800 | 31236 | /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/r
+2026-10-06 08:31:33.315908430 +0800 | 13526 | /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/r
+2026-10-06 08:01:22.388474290 +0800 | 16256 | /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/r
+total 400
+-rw-r----- 1 app.e0031982 app.adm  46805 2026-10-06_02:19:14 2026-10-05.md
+-rw-r----- 1 app.e0031982 app.adm  80455 2026-10-05_04:26:09 2026-10-04.md
+-rw-r----- 1 app.e0031982 app.adm 106870 2026-10-04_07:15:28 2026-10-03.md
+--- A5. proxy/calibration scripts: which size is coded? ---
+--- A6. s0a trace inside cline session dirs (wake-145 forensics) ---
+   dir=/home/app.e0031982/.cline
+--- A7. .12 GPUs ---
+0, 16569 MiB, 76 %
+1, 16489 MiB, 70 %
+2, 16489 MiB, 80 %
+3, 16489 MiB, 72 %
+=== DONE(.12) ===
+
+=== [B] base download status (.29, read-only) ===
+--- B1. download processes ---
+   (no download process)
+--- B2. PID 550476 alive? ---
+   (PID 550476 gone)
+--- B3. l1_en_hq on-disk progress ---
+   files_changed_last_24h: 0
+--- B4. disk ---
+Filesystem                    Type  Size  Used Avail Use% Mounted on
+10.239.23.31:/vol_CTE0_data01 nfs   207T  174T   34T  84% /nas_train
+
+=== [C] .29 8 GPUs + S0a leftovers + loops (local, read-only) ===
+--- C1. 8 GPUs recheck ---
+0, 0 MiB, 0 %
+1, 0 MiB, 0 %
+2, 0 MiB, 0 %
+3, 0 MiB, 0 %
+4, 0 MiB, 0 %
+5, 0 MiB, 0 %
+6, 0 MiB, 0 %
+7, 0 MiB, 0 %
+--- C2. S0a leftovers ---
+   (no S0a process)
+   (no restart script)
+   (crontab clean)
+--- C3. proxy/calibration running? ---
+3175037 bash -c GW_UPSTREAM=http://agi-gateway.cxmt.com/cloud GW_API_KEY=02_088EE9051AAE4BF0ABFC7130331BF697_80a707b0-44
+3175038 python3 gw_proxy.py
+--- C4. loops + relay ---
+1648 watchdogd
+222195 bash ops_relay.sh
+1391466 bash baize_pretrain_loop.sh
+1784375 bash baize_harness_loop.sh
+2489749 bash ops_relay.sh
+   last_run_id=72
+--- C5. OOM / process-died records 07:20-08:40 ---
+=== relay block done ===
+```
