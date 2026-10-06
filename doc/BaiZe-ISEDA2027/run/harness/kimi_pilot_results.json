@@ -4767,5 +4767,137 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "pallets__flask-4045",
+    "repo": "pallets/flask",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+shallow fetch"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template pallets__flask-4045"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 951.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_pallets__flask-4045.json",
+      "stdout_tail": "7877b7c4c7e38a19e0\n[run_single] running codex ...\n== harness=codex rc=0 timed_out=False wall=951.3s ==\n[stderr tail] ...2026-10-06T03:59:34.371304Z ERROR codex_core::models_manager::manager: failed to refresh available models: timeout waiting for child process to exit\n\n[run_single] model_patch: 2416 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_pallets__flask-4045.json\n[run_single] cleanup: git reset --hard d8c37f43724cd9fb0870f77877b7c4c7e38a19e0\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "pallets__flask-4992",
+    "repo": "pallets/flask",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template pallets__flask-4045"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 212.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_pallets__flask-4992.json",
+      "stdout_tail": "lse wall=212.0s ==\n[stderr tail] ...2026-10-06T04:15:50.292192Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 3161 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_pallets__flask-4992.json\n[run_single] cleanup: git reset --hard 4c288bc97ea371817199908d0d9b12de9dae327e\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "pallets__flask-5063",
+    "repo": "pallets/flask",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template pallets__flask-4045"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 715.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_pallets__flask-5063.json",
+      "stdout_tail": "lse wall=714.8s ==\n[stderr tail] ...2026-10-06T04:20:01.117079Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 3614 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_pallets__flask-5063.json\n[run_single] cleanup: git reset --hard 182ce3dd15dfa3537391c3efaf9c3ff407d134d4\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 50,
+        "p2p_total": 54
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "psf__requests-1963",
+    "repo": "psf/requests",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+shallow fetch"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template psf__requests-1963"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 266.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_psf__requests-1963.json",
+      "stdout_tail": "t=False wall=266.2s ==\n[stderr tail] ...2026-10-06T04:32:18.465680Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_psf__requests-1963.json\n[run_single] cleanup: git reset --hard 110048f9837f8441ea536804115e80b69f400277\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 7,
+        "p2p_pass": 90,
+        "p2p_total": 112
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]
