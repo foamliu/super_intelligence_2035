@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **R12 训练+eval 完成**（120k 步, lp@120k=17.57%）· 🚀 **3-epoch 续跑训练中**（step ~334,800/344k, ~97.4% done, loss~1.45-1.80 stable, PROBE C4=OK C2_gap+0.1304, throughput ~2300-3200 img/s, ETA ~10:30 10-06）· ✅ 两份 HTML 报告已验证完成 · ✅ 论文 §6 已改完(commit 6207fe1a) · ✅ VISION_NEXT_DIRECTIONS.md 已交付 · ✅ r12_3epoch_scaling.py 已就绪 · ⚠️ 续跑 eval watcher PID 3879043 alive |
-| WAITING | 1（**3-epoch 续跑训练进行中** · step ~334,800/344k(~97.4%) · ~2300-3200 img/s · ETA ~10:30 10-06 训完 → eval watcher 自动收 ALL ckpts(33+) 跑 IN-1k lp/zs(~1-1.5h) → 下次唤醒跑 r12_3epoch_scaling.py → 待回填 §19 scaling + §18.5 公平表）|
+| PHASE | ✅ **R12 训练+eval 完成**（120k 步, lp@120k=17.57%）· ✅ **3-epoch 续跑训练完成**（step 344000/344k, final_loss=1.5299, total=39197.3s, steady 3303 img/s, 10.9h）· 🚀 **并行 eval 进行中**（8 GPU × 4-5 ckpts, 35 ckpts total, PID 1890677, ETA ~10:55）· ✅ 两份 HTML 报告已验证 · ✅ 论文 §6 已改完(6207fe1a) · ✅ VISION_NEXT_DIRECTIONS.md 已交付 · ✅ r12_3epoch_scaling.py 已就绪 |
+| WAITING | 1（**并行 eval 进行中** · 8 GPU 并行评测 35 ckpts · PID 1890677 · ETA ~10:55 → 跑 r12_3epoch_scaling.py → 回填 §19 scaling + §18.5 公平表 + 刷新 §6.3）|
 | ERROR_COUNT | 2（① R9 w512 首跑 crash：损坏 jpg → data.py 修复 ② 续跑首试 crash：r9_train.py `log()` 在定义前被 resume 块调用 → 改为 `print()` 修复） |
-| BUDGET_USED | R2–R12 累计 + **R12 完成**（6.3h×8卡≈50.4 GPU·h）+ **3-epoch 续跑进行中**（~10.5h×8卡≈84 GPU·h 预估, 总 ≈212 GPU·h） |
-| 更新 | **2026-10-06 10:02（巡检: 3-epoch续跑训练中 step~334,800/344k(~97.4%), loss~1.45-1.80(contrast~1.31-1.67+patch_mse~0.13-0.14), PROBE step334800 C4=OK C2_gap+0.1304, throughput~2300-3200img/s(ms/iter~154-223,NFS争用波动). ckpt已存到step330000(33个vision_step{N}.pt:10k-330k+vision.pt@120k). eval watcher(3879043)alive. train.log最新step=334800 loss=1.4470. 8卡全活(64-78%util). ⚠️NCCL HeartbeatMonitor [W]warning(Broken pipe,非fatal,训练仍在推进,log文件持续增长). git:本地无ahead(上次vision commit已push, ahead1=data线). 两份HTML报告已commit+验证. 所有CPU/写作交付物已完成. ETA~10:30 10-06(剩余~9.2k步/~180ms/iter≈28min)+eval~1-1.5h. WAITING=1[续跑训练中,loop勿唤醒]**· *[更早见 daily-memories-vision/2026-10-06.md]* |
+| BUDGET_USED | R2–R12 累计 + **R12 完成**（6.3h×8卡≈50.4 GPU·h）+ **3-epoch 续跑完成**（10.9h×8卡≈87.1 GPU·h, 总 ≈215 GPU·h） |
+| 更新 | **2026-10-06 10:42（训练完成+并行eval启动: 3-epoch续跑训练完成 [done] total=39197.3s steps=344000 steady_image_s=3303.1 final_loss=1.5299. 35 ckpts(10k-340k+vision.pt@344k)已存. 旧eval watcher(3879043)已kill, 替换为并行eval: r12_parallel_eval.py(PID 1890677) 8 GPU × 4-5 ckpts each, 写入 /tmp/r12_parallel_eval/gpu{0-7}.log → 合并到 /tmp/r12_continue_eval_watcher.log → 跑 r12_3epoch_scaling.py. ETA ~10:55 eval完. 所有CPU/写作交付物已完成. 📦 体积：TASK=25KB / MEMORY=32KB(暂无归档). WAITING=1[并行eval中]**· *[更早见 daily-memories-vision/2026-10-06.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
