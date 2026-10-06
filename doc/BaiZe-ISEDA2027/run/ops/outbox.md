@@ -8362,3 +8362,119 @@ pull_rc=124
 === DONE ===
 === ALL DONE ===
 ```
+
+---
+
+## RUN_ID 77 · 2026-10-06 11:25:39 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 77 · ZhuLong git resync $(date '+%F %T') ==="
+timeout 520 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+cd "$W" || { echo "(NO repo)"; exit 1; }
+echo "host=$(hostname) $(date '+%F %T')"
+echo "=== [0] backup local state -> /tmp/zbackup ==="
+mkdir -p /tmp/zbackup
+echo "--- ahead commits (origin/main..HEAD) ---"; git log --oneline origin/main..HEAD 2>&1 | head -10 | cut -c1-150
+git rev-parse HEAD > /tmp/zbackup/HEAD.sha 2>&1
+cp -f doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md /tmp/zbackup/ 2>/dev/null
+cp -f doc/ZhuLong_DAC2027/run/daily-memories/2026-10-0*.md /tmp/zbackup/ 2>/dev/null
+ls -1 /tmp/zbackup | head -10
+echo "=== [1] abort any in-progress rebase/merge ==="
+git rebase --abort 2>&1 | head -2 | cut -c1-150
+git merge --abort 2>&1 | head -2 | cut -c1-150
+echo "=== [2] move untracked doc aside (backup) ==="
+[ -f "doc/三机互联方法.md" ] && mv -v "doc/三机互联方法.md" "/tmp/zbackup/3ji_hulian.md" 2>&1 | cut -c1-170 || echo "(none)"
+echo "=== [3] fetch (<=150s) ==="
+timeout 150 git fetch origin --quiet 2>&1 | tail -3 | cut -c1-170; echo "fetch_rc=$?"
+echo "=== [4] rebase --autostash origin/main (<=280s) ==="
+timeout 280 git rebase --autostash origin/main >/tmp/_z_rb.log 2>&1; RB=$?
+tail -15 /tmp/_z_rb.log | cut -c1-190
+echo "rebase_rc=$RB"
+echo "=== [5] status after ==="
+git status -sb 2>&1 | head -10 | cut -c1-150
+echo "--- stash list ---"; git stash list 2>&1 | head -5 | cut -c1-140
+echo "--- log -3 ---"; git log --oneline -3 2>&1 | cut -c1-140
+echo "=== [6] restart relay+loop — ONLY if RB==0 ==="
+if [ "$RB" -eq 0 ]; then
+  if tail -1 /tmp/zhulong_loop.log 2>/dev/null | grep -q sleep; then
+    echo "loop idle -> restart"
+    cp -f /tmp/zhulong_loop.log "/tmp/zhulong_loop.log.bak.$(date +%s)" 2>/dev/null
+    pkill -f zhulong_loop.sh 2>/dev/null; sleep 2
+    setsid bash "$W/doc/ZhuLong_DAC2027/run/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+    sleep 3
+    ps -eo pid,etime,args | grep -E 'zhulong_loop\.sh' | grep -v grep | cut -c1-140 || echo "   loop NOT up!"
+  else
+    echo "loop busy (log tail not sleep) -> SKIP loop restart"
+  fi
+  cp -f /tmp/zhulong_ops_relay.log "/tmp/zhulong_ops_relay.log.bak.$(date +%s)" 2>/dev/null
+  pkill -f zhulong_ops_relay.sh 2>/dev/null; sleep 2
+  setsid bash "$W/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh" > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
+  sleep 3
+  ps -eo pid,etime,args | grep -E 'zhulong_ops_relay\.sh' | grep -v grep | cut -c1-140 || echo "   relay NOT up!"
+else
+  echo "!! rebase failed -> NOT touching loops; see /tmp/_z_rb.log"
+fi
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
+
+**输出**
+```
+=== RUN_ID 77 · ZhuLong git resync 2026-10-06 11:25:39 ===
+Warning: Permanently added '[localhost]:3333' (ED25519) to the list of known hosts.
+host=hfeg0tedaap02 2026-10-06 11:25:39
+=== [0] backup local state -> /tmp/zbackup ===
+--- ahead commits (origin/main..HEAD) ---
+85fac58 ZhuLong: B.kimi-k2.6-cloud r1 launched (PID 1981408, batch 2026_1006_071809); B.deepseek-v4-flash 5/5=16.7±12.3% done
+dc5a96c ZhuLong: B.deepseek-v4-flash r4=7.6% harvested, r5 started (PID 1615537, batch 2026_1006_045811)
+0075236 zhulong: B.deepseek-v4-flash r2=10.1% harvested -> r3 started (PID 1415328)
+7caa77c zhulong: B.glm-5.2 5/5 done 83.3±3.1%; launch B.deepseek-v4-flash r1 (PHASE=running, CLI_DATA_DIR flash isolation)
+ac63fe2 ZhuLong: launch Phase B glm-5.2 r1 (PHASE=running); .env full + MCP restart 8090 + glm-5.2 auth + canary pass
+2026-10-01.md
+2026-10-02.md
+2026-10-03.md
+2026-10-04.md
+2026-10-05.md
+2026-10-06.md
+HEAD.sha
+MEMORY_ZHULONG.md
+=== [1] abort any in-progress rebase/merge ===
+fatal: No rebase in progress?
+fatal: There is no merge to abort (MERGE_HEAD missing).
+=== [2] move untracked doc aside (backup) ===
+copied 'doc/三机互联方法.md' -> '/tmp/zbackup/3ji_hulian.md'
+removed 'doc/三机互联方法.md'
+=== [3] fetch (<=150s) ===
+fatal: unable to access 'https://github.com/foamliu/super_intelligence_2035/': Failed to connect to github.com port 443 after 132631 ms: Couldn't connect to server
+fetch_rc=0
+=== [4] rebase --autostash origin/main (<=280s) ===
+Created autostash: ae4f2ea
+Current branch main is up to date.
+Applied autostash.
+rebase_rc=0
+=== [5] status after ===
+## main...origin/main
+ M doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md
+ M doc/ZhuLong_DAC2027/run/daily-memories/2026-10-04.md
+ M doc/ZhuLong_DAC2027/run/daily-memories/2026-10-05.md
+ M doc/ZhuLong_DAC2027/run/daily-memories/2026-10-06.md
+?? doc/ZhuLong_DAC2027/run/.nfs00000000244ecb9a00001dcd
+--- stash list ---
+stash@{0}: autostash
+stash@{1}: autostash
+--- log -3 ---
+5541f31 zhulong-ops-relay: result @ 2026-10-06 11:26:01
+35e517d ZhuLong: B.kimi-k2.6-cloud r1 launched (PID 1981408, batch 2026_1006_071809); B.deepseek-v4-flash 5/5=16.7±12.3% done
+91298cf ZhuLong: B.deepseek-v4-flash r4=7.6% harvested, r5 started (PID 1615537, batch 2026_1006_045811)
+=== [6] restart relay+loop — ONLY if RB==0 ===
+loop idle -> restart
+2623669       00:03 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+2623867       00:03 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+=== DONE ===
+=== ALL DONE ===
+```
