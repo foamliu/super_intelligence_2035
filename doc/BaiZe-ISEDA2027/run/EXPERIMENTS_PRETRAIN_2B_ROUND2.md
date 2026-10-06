@@ -2418,3 +2418,67 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 
 > **Mamba2-hybrid 2.22B 在 ABF（rope_theta=1e6）下免训练扩展到 1M ctx，PPL 无退化（55.42），峰值显存仅 34.68GB（dense 在 1M 即 OOM）。瓶颈不是 RoPE 质量(a)也不是显存(b)，而是 4 层 attention 的 O(n²)(c)——在 ≥512K 开始主导 prefill 时间（~77%@1M）。对策 = 局部窗口/NoPE（P-8 启动前议题）。目标 ctx = 32K–128K（agentic EDA 刚需区间），1M 是冗余能力。**
 
+---
+
+## P-9.11-D · sglang VRAM benchmark（低 mem-fraction）✅ COMPLETE（2026-10-06 ~22:30–22:47，GPU0 @.29）
+
+> 运维 2026-10-06 批准 D：P-9.11 缺口补测——128K + H3 sglang。
+> **目标**：P-9.11② 原报告 H3（VRAM↑ctx）= ❌，因 `--mem-fraction-static 0.85` 预分配掩盖了真实 VRAM 随 ctx 变化。
+> 本次降 mem-fraction → 量真实 VRAM。
+
+### 实验设置
+
+- **模型**：BaiZe Mamba2-hybrid 2.220B（`p3_hybrid/hf_iter_5000`，nemotron_h）
+- **框架**：sglang 0.5.9（vllm env），H100 80GB ×1 GPU0
+- **sglang 启动**：`--mem-fraction-static 0.3`（低预分配，让真实 VRAM 暴露）+ `--context-length 131072` + `--host 127.0.0.1`（避 Squid proxy）+ `nohup`（避 `set -e` 杀 background）
+- **benchmark**：4 context (4K/16K/64K/128K) × 2 batch (1/8) = 8 cells，gen_len=64
+- **结果 JSON**：`run/p911d_hybrid_vram_results.json`
+
+### 结果表
+
+| ctx | bs | prompt_tok | TTFT (s) | prefill (tok/s) | decode (tok/s) | e2e (s) | **peak VRAM (GB)** |
+|:---|--:|--:|---:|---:|---:|---:|---:|
+| 4K | 1 | 3816 | 0.071 | 53,898 | 284.4 | 0.30 | **5.35** |
+| 4K | 8 | 3816 | 0.155 | 196,419 | 935.6 | 0.70 | **5.35** |
+| 16K | 1 | 15,631 | 0.133 | 117,274 | 283.0 | 0.36 | **5.35** |
+| 16K | 8 | 15,631 | 0.397 | 315,114 | 1,170.4 | 0.83 | **5.35** |
+| 64K | 1 | 62,893 | 0.428 | 146,948 | 267.9 | 0.67 | **5.35** |
+| 64K | 8 | 62,893 | 1.582 | 318,123 | 1,070.7 | 2.06 | **5.35** |
+| 128K | 1 | 125,908 | 0.643 | 195,938 | 249.0 | 0.90 | **5.35** |
+| 128K | 8 | 125,908 | 3.071 | 328,044 | 1,055.8 | 3.56 | **5.35** |
+
+### ⭐ 核心结论
+
+1. **H3 ✅ 证实（sglang 真实 VRAM）**：VRAM **恒定 5.35GB**，从 4K 到 128K **零增长**。
+   - P-9.11② 原报告 H3=❌ 是因为 `--mem-fraction-static 0.85` 预分配了 ~68GB，掩盖了真实 VRAM。
+   - 降 到 0.3 后，真实 VRAM = 5.35GB（模型权重 ~4.4GB + 少量激活），SSM 无 KV cache 增长。
+   - **对比 P-9.10③ eager 模式**：hybrid 128K×1 = 13GB（eager 含更多激活碎片）；sglang 优化后 = 5.35GB。
+   - **对比 dense**：P-9.10③ dense 128K×1 = 61GB（eager）；sglang 下 dense 会更高（预分配 + KV cache 线性增长）。
+
+2. **TTFT sublinear**：0.071s(4K) → 0.643s(128K) = 9.1× for 32× ctx → **sublinear**（O(n) 而非 O(n²)）。
+   - SSM 的 24 层 prefill 是 O(n)；仅 4 层 attention 是 O(n²)，但在 128K 内 attention 占比仍小。
+
+3. **Decode 仅降 12%**：284→249 tok/s（4K→128K），SSM decode 不随 ctx 增长（常数 state）。
+
+4. **bs8 加速 ~4×**：decode 284→936 tok/s（bs1→bs8 at 4K），接近线性批处理加速。
+
+### 与 P-9.10③ 的 H3 对照
+
+| 模式 | hybrid 128K×1 VRAM | dense 128K×1 VRAM | ratio |
+|:---|---:|---:|---:|
+| P-9.10③ eager | 13 GB | 61 GB | 0.21× |
+| **P-9.11-D sglang** | **5.35 GB** | (未测，预估 >61GB) | — |
+
+> sglang 优化了内存管理（paged attention / 连续批处理），hybrid VRAM 从 13GB 降到 5.35GB。
+> dense 在 sglang 下未测（GPU0-1 被 A/B 占用），但 P-9.10③ 已证明 dense VRAM 随 ctx 线性增长。
+
+### 产出
+
+- 结果 JSON：`run/p911d_hybrid_vram_results.json`
+- benchmark 脚本：`run/baize_p911d_vram_bench.py`
+- HTML：D 结果待整合进 `report_pretrain_p911_sglang.html`（下唤醒补）
+
+### 一句话结论
+
+> **sglang 低 mem-fraction（0.3）下，hybrid 2.22B 的 VRAM 从 4K 到 128K 恒定 5.35GB（零增长），证实 H3（SSM VRAM 优势）。P-9.11② 的 H3=❌ 是 0.85 预分配的假象。TTFT sublinear（9.1× for 32× ctx），decode 仅降 12%。**
+

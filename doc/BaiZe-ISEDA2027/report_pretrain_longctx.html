@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Stage(i) · Long Context 4096→8192+ Adaptation</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+       margin: 2rem auto; max-width: 1000px; color: #1a1a2e; background: #f5f5fa; }
+h1 { color: #16213e; border-bottom: 3px solid #0f3460; padding-bottom: .5rem; }
+h2 { color: #0f3460; margin-top: 2rem; }
+.meta { color: #666; font-size: .9rem; margin-bottom: 1rem; }
+.badge { display: inline-block; padding: .3rem .8rem; border-radius: 1rem; font-weight: 600; font-size: .85rem; }
+.badge.complete { background: #d4edda; color: #155724; }
+.badge.progress { background: #fff3cd; color: #856404; }
+table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .9rem; }
+th, td { border: 1px solid #ccc; padding: .5rem .7rem; text-align: center; }
+th { background: #0f3460; color: #fff; }
+td.task { font-weight: 600; text-align: left; }
+td.neg { color: #c62828; font-weight: 600; }
+td.pos { color: #2e7d32; font-weight: 600; }
+td.na { color: #ccc; }
+tr:nth-child(even) { background: #f8f8fc; }
+.note { background: #e3f2fd; border-left: 4px solid #2196f3; padding: .8rem 1rem; margin: 1rem 0; border-radius: .3rem; }
+.warn { background: #fff3e0; border-left: 4px solid #ff9800; padding: .8rem 1rem; margin: 1rem 0; border-radius: .3rem; }
+.footer { margin-top: 2rem; color: #999; font-size: .8rem; border-top: 1px solid #ddd; padding-top: .5rem; }
+</style></head><body>
+<h1>BaiZe Stage(i) · Long Context 4096→8192+ Adaptation</h1>
+<div class="meta">Model: Mamba2-hybrid 2.22B (iter_4771, 20B tokens)<br>
+ABF config: max_pos=8192, rope_theta=1e6 (symlinked weights, config-only change)<br>
+Generated: 2026-10-06 23:17 · <span class="badge progress">🔄 IN PROGRESS (ABF:3/4, baseline:2/4)</span></div>
+<div class="note"><strong>Question:</strong> Does ABF (Adjusted Base Frequency, rope_theta=1e6, max_pos=8192)
+degrade short-context zero-shot performance?<br>
+<strong>B1 context:</strong> PPL at 4K goes 75→83 with ABF — this eval verifies downstream degradation.<br>
+<strong>Why this matters:</strong> README risk #3 says "4096 对 agentic 轨迹过短";
+P-9.11② 128K failed (max_pos=4096). ABF is the simplest extension method.</div>
+<h2>Zero-Shot Comparison: Baseline (4K) vs ABF (8K)</h2>
+<table><thead><tr><th>Task</th><th>Baseline (4K)</th><th>ABF 1e6 (8K)</th><th>Delta</th></tr></thead>
+<tbody>  <tr><td class='task'>ARC-Easy</td><td>55.68%</td><td>56.40%</td><td class='pos'>+0.72pp</td></tr>
+  <tr><td class='task'>HellaSwag</td><td>37.09%</td><td>39.80%</td><td class='pos'>+2.71pp</td></tr>
+  <tr><td class='task'>MMLU</td><td>N/A</td><td>25.00%</td><td class='na'>N/A</td></tr>
+</tbody></table>
+<h2>Passkey Retrieval (4K / 8K)</h2>
+<table><thead><tr><th>Context Length</th><th>Accuracy</th></tr></thead>
+<tbody>  <tr><td colspan='2' class='na'>Passkey results not yet available</td></tr>
+</tbody></table>
+<div class="warn"><strong>RoPE scope note:</strong> Only 4 of 56 layers use RoPE attention
+(24 Mamba2 SSM layers have no positional encoding, 28 MLP layers).
+ABF only affects those 4 attention layers ⇒ benefit may be limited.
+This eval tests whether the degradation from B1 (PPL 75→83) manifests in downstream tasks.</div>
+<h2>Interpretation Guide</h2>
+<ul>
+<li><strong>Small delta (< 2pp)</strong>: ABF is safe — short-context performance preserved while extending to 8K.</li>
+<li><strong>Large negative delta (> 2pp)</strong>: ABF degrades short-context — need short-context fine-tuning after extension.</li>
+<li><strong>Passkey 4K ≈ 8K</strong>: Model can retrieve information at 8K as well as 4K (extension works).</li>
+<li><strong>Passkey 8K << 4K</strong>: Extension didn't actually help — model still effectively limited to 4K.</li>
+</ul>
+<div class="footer">Data: <code>b_longctx_comparison.json</code> + <code>passkey_results.json</code><br>
+Collector: <code>baize_b_collect.py</code> · Eval: <code>baize_b_longctx_eval.sh</code></div>
+</body></html>

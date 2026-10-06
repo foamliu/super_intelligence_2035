@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Stage(i) · Complex Reasoning 6-Set Scaling</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+       margin: 2rem auto; max-width: 1100px; color: #1a1a2e; background: #f5f5fa; }
+h1 { color: #16213e; border-bottom: 3px solid #0f3460; padding-bottom: .5rem; }
+h2 { color: #0f3460; margin-top: 2rem; }
+h3 { color: #16213e; margin: 0.5rem 0; }
+.meta { color: #666; font-size: .9rem; margin-bottom: 1rem; }
+.badge { display: inline-block; padding: .3rem .8rem; border-radius: 1rem; font-weight: 600; font-size: .85rem; }
+.badge.complete { background: #d4edda; color: #155724; }
+.badge.progress { background: #fff3cd; color: #856404; }
+table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .9rem; }
+th, td { border: 1px solid #ccc; padding: .5rem .7rem; text-align: center; }
+th { background: #0f3460; color: #fff; font-weight: 600; }
+td.iter { font-weight: 700; background: #e8eaf6; }
+td.tok { color: #555; font-size: .85rem; }
+td.na { color: #ccc; }
+td.avg { font-weight: 600; background: #f0f4c3; }
+tr:nth-child(even) { background: #f8f8fc; }
+.task-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1rem 0; }
+.task-card { background: #fff; border: 1px solid #ddd; border-radius: .5rem; padding: .8rem; }
+.scaling-points { font-family: monospace; font-size: .8rem; color: #555; }
+.note { background: #e3f2fd; border-left: 4px solid #2196f3; padding: .8rem 1rem; margin: 1rem 0; border-radius: .3rem; }
+.footer { margin-top: 2rem; color: #999; font-size: .8rem; border-top: 1px solid #ddd; padding-top: .5rem; }
+</style></head><body>
+<h1>BaiZe Stage(i) · Complex Reasoning 6-Set Scaling</h1>
+<div class="meta">Model: Mamba2-hybrid 2.22B (P-5b) · 6 ckpts (655M–20B tokens)<br>
+Tasks: GSM8K, MATH-500, MMLU, BBH, HumanEval, MBPP · zero-shot<br>
+Generated: 2026-10-06 23:17 · <span class="badge progress">🔄 IN PROGRESS (32/36 cells)</span></div>
+<div class="note"><strong>Context:</strong> Operator approved "A (复杂推理 6 集)" 2026-10-06.
+Task book requires "常识 8 集 + 复杂 6 集"两条曲线; common-sense 8-set done in P-5b/P-6.
+HumanEval/MBPP require <code>HF_ALLOW_CODE_EVAL=1</code> + <code>--confirm_run_unsafe_code</code>;
+all scores 0% (model at 20B tokens cannot generate valid code — expected floor).</div>
+<h2>Scaling Table</h2>
+<table><thead><tr><th>iter</th><th>tokens</th>
+<th>GSM8K</th><th>MATH-500</th><th>MMLU</th><th>BBH</th><th>HumanEval</th><th>MBPP</th><th>Avg</th></tr></thead>
+<tbody>  <tr><td class='iter'>0156</td><td class='tok'>655M</td><td class='val'>0.00%</td><td class='val'>0.00%</td><td class='val'>22.92%</td><td class='val'>3.07%</td><td class='val'>0.00%</td><td class='val'>0.00%</td><td class='avg'>4.33%</td></tr>
+  <tr><td class='iter'>0312</td><td class='tok'>1.3B</td><td class='val'>3.00%</td><td class='val'>0.00%</td><td class='val'>23.12%</td><td class='val'>6.56%</td><td class='val'>0.00%</td><td class='val'>0.00%</td><td class='avg'>5.45%</td></tr>
+  <tr><td class='iter'>0624</td><td class='tok'>2.6B</td><td class='val'>1.00%</td><td class='val'>0.00%</td><td class='val'>23.58%</td><td class='val'>14.26%</td><td class='val'>0.00%</td><td class='val'>0.00%</td><td class='avg'>6.47%</td></tr>
+  <tr><td class='iter'>1248</td><td class='tok'>5.2B</td><td class='val'>1.00%</td><td class='val'>0.00%</td><td class='val'>23.52%</td><td class='val'>9.56%</td><td class='val'>0.00%</td><td class='val'>0.00%</td><td class='avg'>5.68%</td></tr>
+  <tr><td class='iter'>2496</td><td class='tok'>10.5B</td><td class='val'>0.00%</td><td class='val'>0.00%</td><td class='val'>23.46%</td><td class='na'>N/A</td><td class='val'>0.00%</td><td class='val'>0.00%</td><td class='avg'>4.69%</td></tr>
+  <tr><td class='iter'>4771</td><td class='tok'>20.0B</td><td class='val'>1.00%</td><td class='na'>N/A</td><td class='na'>N/A</td><td class='na'>N/A</td><td class='val'>0.00%</td><td class='val'>0.00%</td><td class='avg'>0.33%</td></tr>
+</tbody></table>
+<h2>Per-Task Scaling (tokens → score%)</h2>
+<div class="task-grid">
+    <div class="task-card">
+      <h3>GSM8K</h3>
+      <div class="scaling-points">(0.66B,0.00%), (1.31B,3.00%), (2.62B,1.00%), (5.24B,1.00%), (10.50B,0.00%), (20.00B,1.00%)</div>
+    </div>
+    <div class="task-card">
+      <h3>MATH-500</h3>
+      <div class="scaling-points">(0.66B,0.00%), (1.31B,0.00%), (2.62B,0.00%), (5.24B,0.00%), (10.50B,0.00%)</div>
+    </div>
+    <div class="task-card">
+      <h3>MMLU</h3>
+      <div class="scaling-points">(0.66B,22.92%), (1.31B,23.12%), (2.62B,23.58%), (5.24B,23.52%), (10.50B,23.46%)</div>
+    </div>
+    <div class="task-card">
+      <h3>BBH</h3>
+      <div class="scaling-points">(0.66B,3.07%), (1.31B,6.56%), (2.62B,14.26%), (5.24B,9.56%)</div>
+    </div>
+    <div class="task-card">
+      <h3>HumanEval</h3>
+      <div class="scaling-points">(0.66B,0.00%), (1.31B,0.00%), (2.62B,0.00%), (5.24B,0.00%), (10.50B,0.00%), (20.00B,0.00%)</div>
+    </div>
+    <div class="task-card">
+      <h3>MBPP</h3>
+      <div class="scaling-points">(0.66B,0.00%), (1.31B,0.00%), (2.62B,0.00%), (5.24B,0.00%), (10.50B,0.00%), (20.00B,0.00%)</div>
+    </div>
+</div>
+<h2>Key Observations</h2>
+<ul>
+<li><strong>BBH</strong>: Clearest scaling signal 3.1%→14.3% (peak @2.62B tok), then fluctuates.</li>
+<li><strong>MMLU</strong>: ~23–23.6% flat (near 4-choice floor for 2B at 20B tok).</li>
+<li><strong>GSM8K/MATH-500</strong>: Near-zero across all ckpts.</li>
+<li><strong>HumanEval/MBPP</strong>: 0% — code gen beyond current capability.</li>
+<li><strong>Conclusion</strong>: At 20B tokens, model is at floor for all complex reasoning tasks.
+This quantifies the gap for Stage (ii) SFT/RL. The measurement itself is the conclusion.</li>
+</ul>
+<div class="footer">Data: <code>complex6_summary.json</code> · Collector: <code>baize_complex6_collect.py</code><br>
+Eval: <code>baize_complex6_eval_v2.sh</code> · HumanEval/MBPP fix: <code>baize_complex6_humaneval_mbpp_fix.sh</code></div>
+</body></html>
