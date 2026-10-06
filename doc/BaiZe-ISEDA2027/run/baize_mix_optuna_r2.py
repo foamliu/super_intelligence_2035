@@ -15,7 +15,7 @@ Usage:
   python baize_mix_optuna_r2.py --phase stable --n-trials 200 --gpus 2,3,4,5,6,7
   python baize_mix_optuna_r2.py --d-tokens 0.25e9 --n-trials 400 --gpus 0,1,2,3,4,5,6,7
 """
-import argparse, json, os, re, sqlite3, subprocess, sys, time, threading, shutil, glob
+import argparse, json, os, random, re, sqlite3, subprocess, sys, time, threading, shutil, glob
 from queue import Queue
 import numpy as np
 from scipy.stats import norm
@@ -116,6 +116,8 @@ def load_trials(db_path, phase):
         "SELECT params,score FROM trials WHERE phase=? AND status='complete'",
         (phase,)).fetchall()
     conn.close()
+    # Return (params_dict, negated_score) — GP stores -score so minimize → maximize
+    return [(json.loads(r[0]), -r[1]) for r in rows if r[1] is not None]
 
 class GPSurrogate:
     """GP-EI surrogate. Stores NEGATED score so minimize -> maximize original."""
@@ -189,7 +191,7 @@ def run_trial(trial_id, params, gpu_id, phase, train_iters, warmup, decay_iters,
     os.makedirs(EXP_DIR, exist_ok=True)
     name = f"r2_{phase}_t{trial_id:04d}_gpu{gpu_id}"
     log_path = f"/tmp/mix_search_r2_{name}.log"
-    port = 30000 + gpu_id
+    port = random.randint(20000, 60000)
 
     if phase == "stable":
         blend = build_blend_stable(params[0], params[1])
@@ -297,8 +299,15 @@ def run_trial(trial_id, params, gpu_id, phase, train_iters, warmup, decay_iters,
     score, detail = parse_lm_eval_score(eval_out)
     if score is None:
         print(f"[trial {trial_id}] GPU{gpu_id} SCORE PARSE FAILED")
-        if not keep_ckpt:
-            shutil.rmtree(f"{EXP_DIR}/{name}", ignore_errors=True)
+    else:
+        print(f"[trial {trial_id}] GPU{gpu_id} DONE score={score:.4f} detail={detail}")
+
+    # Step 6: Cleanup (free disk — each ckpt+HF can be several GB)
+    if not keep_ckpt:
+        shutil.rmtree(f"{EXP_DIR}/{name}", ignore_errors=True)
+
+    status = "complete" if score is not None else "failed"
+    return score, status, intermediate, detail
 
 def main():
     p = argparse.ArgumentParser(description="BaiZe BO Round 2 (lm_eval objective)")
