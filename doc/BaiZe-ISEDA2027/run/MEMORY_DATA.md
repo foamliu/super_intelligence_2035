@@ -10,10 +10,10 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) → 🔄 BO搜索Stable段进行中(19/200 trial完成+6运行中, PID 36451, GPU2-7; GP竞态已修复)
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；proxy d128 provider+recipe创建；held-out bin(base/code/math各~2M tok)；baize_mix_optuna.py创建(GP-EI)；5项必验全部通过(09:48)；BO搜索Stable段已启动(10:01)→GP竞态crash修复+重启(11:25)；**任务书归档完成(79.8KB→39.5KB→31.5KB)**
-当前动作:     唤醒150(11:21) ①发现BO搜索crashed(GP竞态:GPR.predict()在fit()前被调用→AttributeError)②修复GPSurrogate加threading.Lock+_fitted标志+worker条件改not gp._fitted ③重启BO(PID 36451,19 existing trials loaded,trial19-24 running,GPU2-7各~6.7GB) ④任务书归档(39.5KB→31.5KB,§B/§A/§D/表格行→ARCHIVE_OPERATOR_DATA.md) ⑤更新心跳+日报+commit
-下一步:       ① BO搜索继续(~5h剩余,ETA~17:00);② 每~30-60min查进度+commit心跳;③ 200 trial完成→出top-K表+先验点对比+best-so-far曲线;④ Day2搜Decay段
+PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) → 🔄 BO搜索Stable段进行中(37/200 trial完成+6运行中, PID 36451, GPU2-7; best=4.6785 #33)
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；proxy d128 provider+recipe创建；held-out bin(base/code/math各~2M tok)；baize_mix_optuna.py创建(GP-EI)；5项必验全部通过(09:48)；BO搜索Stable段已启动(10:01)→GP竞态crash修复+重启(11:25)→37/200完成(12:08)；**任务书归档完成(79.8KB→31.5KB)**
+当前动作:     唤醒151(12:08) ①查BO搜索进度:37/200完成+6运行中(PID 36451 alive,etimes=2504s,GPU2-7各~6.7GB/10%util) ②DB查询:best=4.6785(#33 web=0.814/code=0.104/math=0.082),先验(88:8:4)最近=#13 loss=4.9135 rank17/37 Δ=0.235(5%更差),rate~25trial/h ETA~18:40 ③更新心跳+日报+commit
+下一步:       ① BO搜索继续(~163 trial剩余,ETA~18:40);② 每~30-60min查进度+commit心跳;③ 200 trial完成→出top-K表+先验点对比+best-so-far曲线;④ Day2搜Decay段
 阻塞:         无
 ERROR_COUNT:  0
 ```
@@ -96,6 +96,8 @@ ERROR_COUNT:  0
 
 - [11:25] **唤醒150**：①🔴**BO搜索crashed**(进程已死,GPU全空):tail log见`AttributeError: 'GaussianProcessRegressor' object has no attribute 'alpha_'`——**根因=GP竞态**:`add()`设`self.gp=GPR()`后`fit()`前,另一线程`suggest()`→`predict()`→crash。②**修复GPSurrogate**:加`threading.Lock`+`_fitted`标志,`add()`在lock内fit后设_fitted=True,`suggest()`在lock内检查_fitted,worker条件改`not gp._fitted`。③**重启BO**(PID 36451):19 existing trials loaded via load_trials,trial19-24 running(GPU2-7各~6.7GB/10-14%util),GP-EI已接管(无crash)。④**任务书归档**:39.5KB→**31.5KB**(§B 5项必验+§A事故复盘+§D文档订正+表格行→ARCHIVE_OPERATOR_DATA.md,留4条📦指针)。📦 体积：TASK=31.5KB / MEMORY=26.1KB（归档 ~8KB → ARCHIVE_OPERATOR_DATA.md）。
 
+- [12:08] **唤醒151**：①BO搜索进度=**37/200 trial完成**+6运行中(PID 36451 alive,etimes=2504s≈42min,GPU2-7各~6.7GB/10%util)。②DB查询(best loss asc):**best=4.6785**(#33:web=0.8142/code=0.1042/math=0.0815),top5=#33/36/16/9/15(loss 4.678~4.720),**先验(88:8:4)最近trial=#13**(web=0.8906/code=0.0757/math=0.0337,loss=4.9135,**rank 17/37**,**Δ=0.235=5%更差**)→BO已找到更优配比(更多math~8-12%/更少web~81-84%)。③rate~25trial/h(37trial/1.9h),剩余163trial→ETA~18:40。④log仅sklearn ConvergenceWarning(length_scale近下界,非致命)。📦 体积：TASK=31.6KB / MEMORY=27.2KB（归档 0KB）。
+
 ## 运维问答
 
 > 外部运维在 `BAIZE_DATA_TASK.md` 的「运维指令区」提问时，答案写在这里。
@@ -150,8 +152,8 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **§0.6-B 配比实验改道 → 🔄 BO搜索Stable段进行中(19/200+6运行, PID 36451, GPU2-7; GP竞态已修复); 任务书归档完成(79.8KB→31.5KB)** |
-| WAITING | 1（🔄 BO搜索Stable段运行中: 19/200 trial完成+6运行中, best=4.7115(#16), 先验Δ=0.20, GP竞态crash已修复+重启, ETA~17:00; 每30-60min查进度+commit心跳） |
+| PHASE | **§0.6-B 配比实验改道 → 🔄 BO搜索Stable段进行中(37/200+6运行, PID 36451, GPU2-7; best=4.6785 #33); 任务书归档完成(79.8KB→31.5KB)** |
+| WAITING | 1（🔄 BO搜索Stable段运行中: 37/200 trial完成+6运行中, best=4.6785(#33), 先验rank17/37 Δ=5%, ETA~18:40; 每30-60min查进度+commit心跳） |
 | ERROR_COUNT | 1（GP竞态crash已修复，见流水唤醒150） |
 | 节点 | `10.239.2.29`（GPU2-7 BO搜索并行，GPU0-1空闲） |
 | 更新 | 2026-10-06 |
