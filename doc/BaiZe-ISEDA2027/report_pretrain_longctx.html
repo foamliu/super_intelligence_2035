@@ -26,7 +26,7 @@ tr:nth-child(even) { background: #f8f8fc; }
 <h1>BaiZe Stage(i) · Long Context 4096→8192+ Adaptation</h1>
 <div class="meta">Model: Mamba2-hybrid 2.22B (iter_4771, 20B tokens)<br>
 ABF config: max_pos=8192, rope_theta=1e6 (symlinked weights, config-only change)<br>
-Generated: 2026-10-06 23:17 · <span class="badge progress">🔄 IN PROGRESS (ABF:3/4, baseline:2/4)</span></div>
+Generated: 2026-10-07 00:35 · <span class="badge progress">🔄 IN PROGRESS (ABF:4/4, baseline:2/4)</span></div>
 <div class="note"><strong>Question:</strong> Does ABF (Adjusted Base Frequency, rope_theta=1e6, max_pos=8192)
 degrade short-context zero-shot performance?<br>
 <strong>B1 context:</strong> PPL at 4K goes 75→83 with ABF — this eval verifies downstream degradation.<br>
@@ -35,12 +35,14 @@ P-9.11② 128K failed (max_pos=4096). ABF is the simplest extension method.</div
 <h2>Zero-Shot Comparison: Baseline (4K) vs ABF (8K)</h2>
 <table><thead><tr><th>Task</th><th>Baseline (4K)</th><th>ABF 1e6 (8K)</th><th>Delta</th></tr></thead>
 <tbody>  <tr><td class='task'>ARC-Easy</td><td>55.68%</td><td>56.40%</td><td class='pos'>+0.72pp</td></tr>
+  <tr><td class='task'>BBH</td><td>N/A</td><td>8.78%</td><td class='na'>N/A</td></tr>
   <tr><td class='task'>HellaSwag</td><td>37.09%</td><td>39.80%</td><td class='pos'>+2.71pp</td></tr>
   <tr><td class='task'>MMLU</td><td>N/A</td><td>25.00%</td><td class='na'>N/A</td></tr>
 </tbody></table>
 <h2>Passkey Retrieval (4K / 8K)</h2>
 <table><thead><tr><th>Context Length</th><th>Accuracy</th></tr></thead>
-<tbody>  <tr><td colspan='2' class='na'>Passkey results not yet available</td></tr>
+<tbody>  <tr><td>4096</td><td>0.0%</td></tr>
+  <tr><td>8192</td><td>0.0%</td></tr>
 </tbody></table>
 <div class="warn"><strong>RoPE scope note:</strong> Only 4 of 56 layers use RoPE attention
 (24 Mamba2 SSM layers have no positional encoding, 28 MLP layers).

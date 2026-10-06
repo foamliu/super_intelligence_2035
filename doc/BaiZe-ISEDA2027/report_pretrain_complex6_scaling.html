@@ -29,7 +29,7 @@ tr:nth-child(even) { background: #f8f8fc; }
 <h1>BaiZe Stage(i) · Complex Reasoning 6-Set Scaling</h1>
 <div class="meta">Model: Mamba2-hybrid 2.22B (P-5b) · 6 ckpts (655M–20B tokens)<br>
 Tasks: GSM8K, MATH-500, MMLU, BBH, HumanEval, MBPP · zero-shot<br>
-Generated: 2026-10-06 23:17 · <span class="badge progress">🔄 IN PROGRESS (32/36 cells)</span></div>
+Generated: 2026-10-07 00:35 · <span class="badge progress">🔄 IN PROGRESS (35/36 cells)</span></div>
 <div class="note"><strong>Context:</strong> Operator approved "A (复杂推理 6 集)" 2026-10-06.
 Task book requires "常识 8 集 + 复杂 6 集"两条曲线; common-sense 8-set done in P-5b/P-6.
 HumanEval/MBPP require <code>HF_ALLOW_CODE_EVAL=1</code> + <code>--confirm_run_unsafe_code</code>;
@@ -41,8 +41,8 @@ all scores 0% (model at 20B tokens cannot generate valid code — expected floor
   <tr><td class='iter'>0312</td><td class='tok'>1.3B</td><td class='val'>3.00%</td><td class='val'>0.00%</td><td class='val'>23.12%</td><td class='val'>6.56%</td><td class='val'>0.00%</td><td class='val'>0.00%</td><td class='avg'>5.45%</td></tr>
   <tr><td class='iter'>0624</td><td class='tok'>2.6B</td><td class='val'>1.00%</td><td class='val'>0.00%</td><td class='val'>23.58%</td><td class='val'>14.26%</td><td class='val'>0.00%</td><td class='val'>0.00%</td><td class='avg'>6.47%</td></tr>
   <tr><td class='iter'>1248</td><td class='tok'>5.2B</td><td class='val'>1.00%</td><td class='val'>0.00%</td><td class='val'>23.52%</td><td class='val'>9.56%</td><td class='val'>0.00%</td><td class='val'>0.00%</td><td class='avg'>5.68%</td></tr>
-  <tr><td class='iter'>2496</td><td class='tok'>10.5B</td><td class='val'>0.00%</td><td class='val'>0.00%</td><td class='val'>23.46%</td><td class='na'>N/A</td><td class='val'>0.00%</td><td class='val'>0.00%</td><td class='avg'>4.69%</td></tr>
-  <tr><td class='iter'>4771</td><td class='tok'>20.0B</td><td class='val'>1.00%</td><td class='na'>N/A</td><td class='na'>N/A</td><td class='na'>N/A</td><td class='val'>0.00%</td><td class='val'>0.00%</td><td class='avg'>0.33%</td></tr>
+  <tr><td class='iter'>2496</td><td class='tok'>10.5B</td><td class='val'>0.00%</td><td class='val'>0.00%</td><td class='val'>23.46%</td><td class='val'>7.15%</td><td class='val'>0.00%</td><td class='val'>0.00%</td><td class='avg'>5.10%</td></tr>
+  <tr><td class='iter'>4771</td><td class='tok'>20.0B</td><td class='val'>1.00%</td><td class='val'>0.00%</td><td class='val'>25.00%</td><td class='na'>N/A</td><td class='val'>0.00%</td><td class='val'>0.00%</td><td class='avg'>5.20%</td></tr>
 </tbody></table>
 <h2>Per-Task Scaling (tokens → score%)</h2>
 <div class="task-grid">
@@ -52,15 +52,15 @@ all scores 0% (model at 20B tokens cannot generate valid code — expected floor
     </div>
     <div class="task-card">
       <h3>MATH-500</h3>
-      <div class="scaling-points">(0.66B,0.00%), (1.31B,0.00%), (2.62B,0.00%), (5.24B,0.00%), (10.50B,0.00%)</div>
+      <div class="scaling-points">(0.66B,0.00%), (1.31B,0.00%), (2.62B,0.00%), (5.24B,0.00%), (10.50B,0.00%), (20.00B,0.00%)</div>
     </div>
     <div class="task-card">
       <h3>MMLU</h3>
-      <div class="scaling-points">(0.66B,22.92%), (1.31B,23.12%), (2.62B,23.58%), (5.24B,23.52%), (10.50B,23.46%)</div>
+      <div class="scaling-points">(0.66B,22.92%), (1.31B,23.12%), (2.62B,23.58%), (5.24B,23.52%), (10.50B,23.46%), (20.00B,25.00%)</div>
     </div>
     <div class="task-card">
       <h3>BBH</h3>
-      <div class="scaling-points">(0.66B,3.07%), (1.31B,6.56%), (2.62B,14.26%), (5.24B,9.56%)</div>
+      <div class="scaling-points">(0.66B,3.07%), (1.31B,6.56%), (2.62B,14.26%), (5.24B,9.56%), (10.50B,7.15%)</div>
     </div>
     <div class="task-card">
       <h3>HumanEval</h3>

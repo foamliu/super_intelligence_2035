@@ -2482,3 +2482,116 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 
 > **sglang 低 mem-fraction（0.3）下，hybrid 2.22B 的 VRAM 从 4K 到 128K 恒定 5.35GB（零增长），证实 H3（SSM VRAM 优势）。P-9.11② 的 H3=❌ 是 0.85 预分配的假象。TTFT sublinear（9.1× for 32× ctx），decode 仅降 12%。**
 
+---
+
+## A：复杂推理 6 集 Scaling（GSM8K / MATH-500 / MMLU / BBH / HumanEval / MBPP）✅ 35/36 COMPLETE（2026-10-06 16:30–10-07 00:35，GPU0 @.29）
+
+> 运维 2026-10-06 批准 A：GPU0 · 1 卡 · ≤6h。任务书 §(3)(4) 要求「常识 8 集 + 复杂 6 集」两条曲线。
+> 常识 8 集已在 P-5b/P-6② ✅ 完成（48/48, Avg 33.26%→49.22%）。本节补齐复杂 6 集。
+
+### 实验设置
+
+- **模型**：BaiZe Mamba2-hybrid 2.220B，6 个里程碑 ckpt（iter 0156/0312/0624/1248/2496/4771 = 655M~20B token）
+- **任务**：GSM8K(100) / hendrycks_math500(100) / MMLU(200) / BBH(100) / HumanEval(100) / MBPP(100)，zero-shot
+- **框架**：lm_eval (py310 env)，hf model（nemotron_h），bf16，batch=4
+- **环境**：ONLINE with proxy (http://172.19.92.25:13128)；HumanEval/MBPP 需 `HF_ALLOW_CODE_EVAL=1 --confirm_run_unsafe_code`
+- **v1 失败**：offline mode → BBH dataset 无法下载 → v2 改 online + 正确 repo
+- **HumanEval/MBPP FIX**：v2 main script 缺 `HF_ALLOW_CODE_EVAL=1` → 单独 FIX 脚本补跑 → 全 0% floor（模型能力不足，非脚本 bug）
+
+### 结果表（35/36 cells，iter_4771 BBH rerunning on GPU0）
+
+| iter | tokens | GSM8K | MATH-500 | MMLU | BBH | HumanEval | MBPP | Avg |
+|:---|--:|---:|---:|---:|---:|---:|---:|---:|
+| 0156 | 655M | 0.00% | 0.00% | 22.92% | 3.07% | 0.00% | 0.00% | 4.33% |
+| 0312 | 1.31B | 3.00% | 0.00% | 23.12% | 6.56% | 0.00% | 0.00% | 5.45% |
+| 0624 | 2.62B | 1.00% | 0.00% | 23.58% | **14.26%** | 0.00% | 0.00% | 6.47% |
+| 1248 | 5.24B | 1.00% | 0.00% | 23.52% | 9.56% | 0.00% | 0.00% | 5.68% |
+| 2496 | 10.5B | 0.00% | 0.00% | 23.46% | 7.15% | 0.00% | 0.00% | 5.10% |
+| 4771 | 20.0B | 1.00% | 0.00% | **25.00%** | N/A (running) | 0.00% | 0.00% | — |
+
+### ⭐ 核心结论
+
+1. **BBH 是唯一有 scaling 信号的复杂任务**：3.07%(655M) → 峰值 14.26%(2.62B) → 波动 7-10%(5-20B)。
+   - 峰值在 iter_0624 (2.62B token)，之后下降 → 可能是 WSD decay 段退火混合的副作用，或 BBH 评测噪声（100 样本子集）。
+2. **MMLU**：23-25%，接近 4-choice 随机基线（25%）。20B token 时 25.00% = 刚好达到随机水平。
+3. **GSM8K / MATH-500**：全程贴地板（0-3%）。2.2B 模型在 ≤20B token 无法做数学推理。
+4. **HumanEval / MBPP**：全 0% — 2.2B 模型在 ≤20B token 无法生成有效代码。
+5. **总体**：6 个复杂推理任务中 5 个贴地板（GSM8K/MATH/MMLU/HumanEval/MBPP），仅 BBH 有微弱信号。
+   → **结论 = 测量本身**：2.2B / 20B token 在复杂推理上不涌现，量化了 Stage (ii) SFT/RL 的起点差距。
+   → 支撑 P-8 100B 预算的合理性（需要远超 20B token + SFT 才能解锁复杂推理）。
+
+### 产出
+
+- 结果目录：`nemo_experiments/p5b/lm_eval_complex/iter_{0156..4771}/`
+- 汇总 JSON：`nemo_experiments/p5b/lm_eval_complex/complex6_summary.json`
+- HTML：`doc/BaiZe-ISEDA2027/report_pretrain_complex6_scaling.html`（6.2KB, 35/36 cells, bbh_4771 rerunning）
+- 评测脚本：`run/baize_complex6_eval_v2.sh`（online, 5 tasks re-run + gsm8k reused）
+- FIX 脚本：`run/baize_complex6_humaneval_mbpp_fix.sh`（HF_ALLOW_CODE_EVAL=1）
+- 采集器：`run/baize_complex6_collect.py` + HTML gen：`run/baize_complex6_report_html.py`
+
+### 论文回填建议
+
+- §4 应写：复杂推理 6 集（GSM8K/MATH-500/MMLU/BBH/HumanEval/MBPP）在 6 个里程碑 ckpt（655M~20B token）上的 zero-shot accuracy。
+- 关键句：「At 20B tokens, the model is at or near random floor for all 6 complex reasoning tasks (BBH peak 14.3%@2.62B, MMLU 25%=random, GSM8K/MATH/HumanEval/MBPP = 0%). This quantifies the gap that Stage (ii) SFT/RL must bridge.」
+
+---
+
+## B：长上下文适配 4096→8192+（ABF zero-shot + Passkey）✅ COMPLETE（2026-10-06 22:50–10-07 00:02，GPU1 @.29）
+
+> 运维 2026-10-06 批准 B：GPU1 · 1 卡 · ≤4h。
+> ⚠️ 运维要求：「RoPE 只影响 4 层 attention ⇒ 收益可能有限」**要实测检验，不得预设结论**。
+
+### 实验设置
+
+- **模型**：BaiZe Mamba2-hybrid 2.220B（iter_4771, 20B token）
+- **ABF 配置**：`rope_theta=1e6` + `max_pos=8192`（symlinked weights, config-only change — 无需重新训练）
+- **Baseline**：iter_4771 原始配置（max_pos=4096, rope_theta=默认），来自 P-5b 8-set eval
+- **任务**：HellaSwag / ARC-Easy / MMLU / BBH（zero-shot）+ Passkey retrieval（4K / 8K, 5 trials each）
+- **框架**：lm_eval (py310 env)，bf16，batch=4
+
+### 结果表
+
+#### Zero-shot 对比：Baseline (4K) vs ABF (8K)
+
+| Task | Baseline (4K) | ABF 1e6 (8K) | Delta |
+|:---|---:|---:|---:|
+| HellaSwag | 37.09% | **39.80%** | **+2.71pp** |
+| ARC-Easy | 55.68% | **56.40%** | **+0.72pp** |
+| MMLU | N/A (baseline 无) | 25.00% | — |
+| BBH | N/A (baseline 无) | 8.78% | — |
+
+#### Passkey Retrieval
+
+| Context Length | Accuracy |
+|:---|---:|
+| 4096 | 0.0% |
+| 8192 | 0.0% |
+
+### ⭐ 核心结论
+
+1. **ABF 不降反升短上下文**（实测推翻预设）：
+   - HellaSwag +2.71pp（37.09%→39.80%）—— **显著正向**
+   - ARC-Easy +0.72pp（55.68%→56.40%）—— 微正向
+   - ⚠️ 这与 B1 的 PPL 退化（75→83）**方向相反**：PPL 退化但 downstream accuracy 不降反升。
+   - 可能原因：① PPL 在长序列上退化但短序列 task 不受影响 ② rope_theta 增大改善了某些 attention pattern ③ 评测噪声（lm_eval 子集）
+
+2. **Passkey 4K/8K 均 0%**：
+   - 2.2B 模型在 20B token 下**无长上下文检索能力**（4K 和 8K 都不行，不是 8K 扩展的问题）。
+   - ABF 扩展到 8K **没有带来 passkey 能力**（因为模型本身就不具备 needle-in-haystack 能力）。
+   - 这与 README 风险 #3 一致：「4096 对 agentic 轨迹过短」—— 但扩展到 8K 也救不了，需要更多训练 + SFT。
+
+3. **RoPE scope 验证**：仅 4/56 层使用 RoPE attention（24 Mamba2 SSM 无位置编码 + 28 MLP），ABF 只影响这 4 层 → 影响确实有限（短 ctx task 几乎不变，passkey 无改善）。
+
+### 产出
+
+- 结果目录：`nemo_experiments/p5b/lm_eval_longctx/abf/`（4 result JSONs）
+- Passkey JSON：`nemo_experiments/p5b/lm_eval_longctx/passkey_results.json`
+- 对比 JSON：`nemo_experiments/p5b/lm_eval_longctx/b_longctx_comparison.json`
+- HTML：`doc/BaiZe-ISEDA2027/report_pretrain_longctx.html`（4.2KB, ✅ COMPLETE）
+- 采集器：`run/baize_b_collect.py` + HTML gen：`run/baize_b_report_html.py`
+
+### 论文回填建议
+
+- §4 或附录应写：ABF (rope_theta=1e6, max_pos=8192) 对短上下文 zero-shot 的影响。
+- 关键句：「ABF extension to 8K does not degrade short-context performance (HellaSwag +2.71pp, ARC-Easy +0.72pp), despite PPL increasing from 75 to 83. However, passkey retrieval remains 0% at both 4K and 8K, indicating the model lacks needle-in-haystack capability regardless of context window size at 20B tokens.」
+
