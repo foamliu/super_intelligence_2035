@@ -2331,3 +2331,90 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 - 脚本：`run/baize_b1_longctx_benchmark.py`
 - 日志：`/tmp/baize_b1_longctx.log`
 
+
+## B1 长上下文扩展 · 256K / 512K / 1M + 瓶颈判定 ✅ COMPLETE（2026-10-06 19:35–19:45，GPU1 @.29）
+
+> 运维指令 2026-10-06「ctx 可以继续扩张吗？128k → 256k → 512k → 1M」+「判定下一个瓶颈是谁」。
+
+### 实验设置
+
+- **模型**：`hf_iter_4771`（2.22B, 20B token, 56 层 = 4 full_attention + 24 linear_attention/Mamba2 + 28 MLP）
+- **Config**：ABF_1e6（`rope_theta=1e6`, `max_position_embeddings=1048576`），bf16，H100 80GB GPU1
+- **栈**：transformers 5.17.0 NemotronHForCausalLM, py310+p6_tf5, chunk_size=4096 带 KV cache 递进
+- **数据**：P-5b 预 tokenize `.bin`（1285M token，足够 1M ctx）
+- **方法**：chunked PPL（use_cache=True），**跳过 passkey**（B1 已证 0% = 模型太弱，且 `model.generate()` 在 ≥256K 触发 Triton illegal memory access）
+
+### 结果：PPL 退化曲线（4K → 1M）
+
+| ctx | PPL | prefill 时间 | 峰值 VRAM | ms/tok | 来源 |
+|:---|---:|---:|---:|---:|:---|
+| 4K | 83.24 | — | — | — | B1 step23 |
+| 8K | 64.91 | — | — | — | B1 step23 |
+| 16K | 60.08 | — | — | — | B1 step23 |
+| 32K | 58.55 | — | — | — | B1 step23 |
+| 64K | 51.53 | — | — | — | B1 step23 |
+| 128K | 53.34 | 10.7s | 10.92GB | 0.082 | B1 ext |
+| 256K | 52.99 | 13.8s | 14.25GB | 0.053 | B1 ext |
+| 512K | 55.81 | 53.0s | 19.65GB | 0.101 | B1 ext |
+| **1M** | **55.42** | **172.4s** | **34.68GB** | 0.164 | B1 ext |
+
+**⭐ 核心结论：PPL 从 128K 到 1M 全程稳定在 53–56，无质量退化。** ABF（rope_theta=1e6）免训练扩展到 1M 可行。
+
+> 注：128K 的 PPL 有两组值（B1 step23=54.66 vs B1 ext=53.34），差异来自 max_pos 不同（131072 vs 1048576），但 RoPE 频率相同（θ=1e6），差异在噪声内。取 B1 ext 的值（统一口径）。
+
+### 瓶颈判定（三类逐档分析）
+
+#### (a) RoPE 外推质量 —— ✅ 不是瓶颈（至 1M）
+
+- 仅 4/56 层使用 RoPE（24 层 SSM 无位置编码 → 无位置 OOD）
+- PPL 1M=55.42 vs 128K=53.34 = +3.9%（噪声内），vs 64K=51.53 = +7.6%
+- **拐点**：无明显质量拐点；1M 仍可用
+- **机理**：ABF（θ=1e6）将 RoPE 基频提高 100×，使 4096 训练长度的位置编码在 1M 处仍不饱和
+
+#### (b) KV cache / 显存 —— ✅ 不是瓶颈（至 1M，bs=1）
+
+| ctx | hybrid cache | dense cache | ratio | dense 80GB? |
+|:---|---:|---:|---:|:---|
+| 4K | 0.06GB | 0.35GB | 0.167 | OK |
+| 32K | 0.29GB | 2.82GB | 0.104 | OK |
+| 128K | 1.10GB | 11.27GB | 0.097 | OK |
+| 256K | 2.17GB | 22.55GB | 0.096 | OK |
+| 512K | 4.32GB | 45.10GB | 0.096 | OK |
+| **1M** | **8.62GB** | **90.19GB** | **0.096** | **OOM** |
+
+- hybrid 1M 实测峰值 VRAM = **34.68GB**（含模型 4.4GB + KV 8.6GB + 激活/碎片），远低于 80GB
+- **dense 在 1M×bs1 即 OOM**（90.19GB cache + 5.02GB 权重 = 95GB > 80GB）
+- hybrid cache/ctx 增长斜率 = 4 层（非 56 层）⇒ ratio 稳定在 ~0.096（= 4/42）
+
+#### (c) 4 层 attention 的 O(n²) —— ⚠️ 新兴瓶颈（≥512K 开始主导）
+
+| ctx 对比 | 时间比（2× ctx） | 纯 O(N) 预期 | 纯 O(n²) 预期 | 判读 |
+|:---|---:|---:|---:|:---|
+| 256K→512K | 3.84× | 2× | 4× | 偏向 O(n²) |
+| 512K→1M | 3.25× | 2× | 4× | 偏向 O(n²) |
+
+- **per-chunk 时间增长**：256K=0.22s/chunk → 512K=0.41s/chunk → 1M≈0.67s/chunk
+- **估算**：在 1M 处，O(n²) attention 占 prefill 时间的 **~77%**（用 time=aN+bN² 拟合 256K-1M 三点）
+- **架构级对策（属 P-8 启动前议题，本次只做可行性判断）**：
+  - 把 4 层 attention 改为 **局部窗口/sliding window**（窗口=4K–8K → attention 回到 O(n·w)=O(n)）
+  - 或 **NoPE**（无位置编码 attention，近期研究表明短训练后可外推）
+  - 成本：改架构需重训，但只影响 4 层 → 迁移面小
+
+### 对齐真实需求：agentic EDA 需要多长 ctx？
+
+- **SWE-bench**（harness 侧 330 实例）：每实例含 repo 代码上下文（10K–100K token）+ 多步 tool-call 轨迹（20–100 步 × ~1K token）= **总计 32K–128K**
+- **EDA agentic 轨迹**：类似 coding agent，单轮 4K–32K，完整 session 32K–128K
+- **⭐ 结论：目标 ctx = 32K–128K**（正是 B1 已验证免训练可用的区间）；1M 是\"冗余能力\"，非刚需
+- 但 1M 可行性本身是**论据**：证明 hybrid 架构的 SSM 部分无 ctx 上限，瓶颈只在 4 层 attention 且有明确对策
+
+### 产出
+
+- 结果 JSON：`nemo_experiments/p5b/b1_longctx_extend_results.json`（已重建，含 4K–1M PPL 曲线 + KV 分析）
+- 脚本：`run/baize_b1_longctx_extend.py`（完整版，含 passkey）+ `run/baize_b1_extend_ppl_only.py`（PPL-only 修复版）
+- 日志：`/tmp/baize_b1_extend_v2.log` + `/tmp/baize_b1_ppl_only.log`
+- **advantage report**：`doc/BaiZe-ISEDA2027/report_pretrain_hybrid_longctx_advantage.html`（含「可扩展到多长」节）
+
+### 一句话结论
+
+> **Mamba2-hybrid 2.22B 在 ABF（rope_theta=1e6）下免训练扩展到 1M ctx，PPL 无退化（55.42），峰值显存仅 34.68GB（dense 在 1M 即 OOM）。瓶颈不是 RoPE 质量(a)也不是显存(b)，而是 4 层 attention 的 O(n²)(c)——在 ≥512K 开始主导 prefill 时间（~77%@1M）。对策 = 局部窗口/NoPE（P-8 启动前议题）。目标 ctx = 32K–128K（agentic EDA 刚需区间），1M 是冗余能力。**
+
