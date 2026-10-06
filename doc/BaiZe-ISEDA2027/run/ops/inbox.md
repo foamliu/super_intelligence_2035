@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 84 -->
+<!-- RUN_ID: 85 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -30,6 +30,46 @@
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`。
 
 ---
+
+## RUN_ID 85 — 🔧 **修好 ZhuLong(36.15) 的 loop：用【正确 PATH（含 cline）+ proxy】重启**（真因：当前 loop 是 RUN_ID 81「空 $NB」起的那次，PATH 丢了）
+
+> **诊断依据（RUN_ID 84 @18:12）**：仓库**正常**（`## main...origin/main`）、任务书在位、loop/relay 进程均活（etime 6.5h），**但日志每轮都是 `env: 'cline': No such file or directory`** ⇒ **空转 ~5h**（不是死，是**调不起 cline**）。
+> **已确认**：`cline` = **`/home/app.e0031982/.local/node-20/bin/cline`**（`bash -ic` 可解析）；`~/.bashrc:119` = `https_proxy=http://172.19.92.23:13128`。
+> **本块**：显式注入 **PATH（含该目录）+ proxy**，重启 `zhulong_loop.sh`（**🚫 不碰 relay**，它是通道）。重启前备份旧日志。
+
+```bash
+set -u
+echo "=== RUN_ID 85 · fix ZhuLong loop PATH+proxy $(date '+%F %T') ==="
+timeout 180 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+CDIR=/home/app.e0031982/.local/node-20/bin
+PX=http://172.19.92.23:13128
+cd "$W" || { echo "(NO repo)"; exit 1; }
+echo "host=$(hostname)  $(date '+%F %T')"
+echo "--- [1] 重启前：现有 loop 进程 ---"
+ps -eo pid,etime,args | grep 'zhulong_loop[.]sh' | grep -v grep | cut -c1-140 || echo "(none)"
+echo "--- [2] 注入 PATH + proxy 并自检 ---"
+export PATH="$CDIR:$HOME/.bun/bin:$PATH"
+export https_proxy="$PX"
+export http_proxy="$PX"
+command -v cline >/dev/null 2>&1 && echo "cline OK -> $(command -v cline)" || echo "!! cline STILL missing"
+echo "--- [3] 重启 loop（备份旧日志；🚫 不动 relay）---"
+R="$W/doc/ZhuLong_DAC2027/run"
+cp -f /tmp/zhulong_loop.log "/tmp/zhulong_loop.log.bak.$(date +%s)" 2>/dev/null
+pkill -f zhulong_loop.sh 2>/dev/null
+sleep 2
+setsid bash "$R/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+sleep 8
+ps -eo pid,etime,args | grep 'zhulong_loop[.]sh' | grep -v grep | cut -c1-140 || echo "!! loop NOT up"
+echo "--- [4] 新日志（前 6 行；应见 invoking cline 且无 No such file）---"
+tail -6 /tmp/zhulong_loop.log | cut -c1-190
+echo "--- [5] relay 仍在（通道）---"
+ps -eo pid,etime,args | grep 'zhulong_ops_relay[.]sh' | grep -v grep | cut -c1-140 || echo "(relay none)"
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
 
 ## RUN_ID 84 — 🩺 **ZhuLong(36.15) 停摆诊断（只读）**：git 树 / 任务书 / loop / 日志 / cline / proxy
 
