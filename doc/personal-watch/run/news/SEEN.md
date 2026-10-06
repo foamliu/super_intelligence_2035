@@ -402,3 +402,7 @@
 | 2026-10-07 | India's JioHotstar takes partnership route for Middle East expansion | TechCrunch | news(非 AI·流媒体) | https://techcrunch.com/2026/10/06/indias-jiohotstar-takes-partnership-route-for-middle-east-expansion/ |
 | 2026-10-07 | Furientis lands $25M from Benchmark to mass-produce low-cost missile interceptors | TechCrunch | news(非 AI·国防) | https://techcrunch.com/2026/10/06/furientis-lands-25m-from-benchmark-to-mass-produce-low-cost-missile-interceptors/ |
 
+| 2026-10-07 | Hark releases an AI personal assistant with a focus on privacy | TechCrunch | news | https://techcrunch.com/2026/10/06/hark-releases-an-ai-personal-assistant-with-a-focus-on-privacy/ |
+| 2026-10-07 | Paramount completes $111B Warner merger, creating "Skydance" behemoth | Ars Technica | news(非 AI·媒体并购) | https://arstechnica.com/tech-policy/2026/10/paramount-completes-111b-warner-merger-creating-skydance-behemoth/ |
+| 2026-10-07 | Amazon kills Alexa's ability to control Echo speakers' AUX input | Ars Technica | news(非 AI·硬件功能) | https://arstechnica.com/gadgets/2026/10/amazon-bricks-alexas-ability-to-control-echo-speakers-aux-input/ |
+
