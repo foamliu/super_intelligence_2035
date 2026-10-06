@@ -5,21 +5,21 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A kimi-k2.6-cloud serial cross-eval — codex×300 --resume RUNNING (PID 1898015, 51/270 new done, 81 codex entries) + ✅ deepseek-harness BUILD + ✅ claude-code telemetry OFF
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 --resume RUNNING (81 entries, 29 resolved, 32 patch-but-failed, 20 blocked) · SWEBENCH_COMPARE.html (111 entries, 47 resolved) · ✅ Claude Code 遥测关闭 · ✅ deepseek-harness pnpm install + build · ✅ setup_rootfs stale lock fix
-当前动作:     R94: codex×300 progress 51/270 new (81 codex, 29 resolved, 47.5% ex-blocked) + SWEBENCH_COMPARE.html regenerated (111 entries, 47 resolved) + relay healthy skip 47th + git sync
-下一步:       codex×300 完成(~219条剩余, ~2.6天) → 20 blocked 重跑(--resume) → cline-patched×300 --resume → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新SWEBENCH_COMPARE.html
-阻塞:         无硬阻塞. 20 blocked instances (django shallow.lock + astropy git timeout) 将在 codex×300 完成后 --resume 自动重跑. setup_rootfs 已加 stale lock cleanup.
+PHASE:        H-A kimi-k2.6-cloud serial cross-eval — codex×300 --resume RUNNING (PID 1898015, 54/270 new done, 84 codex entries) + ✅ deepseek-harness BUILD + ✅ claude-code telemetry OFF
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 --resume RUNNING (84 entries, 29 resolved, 34 patch-but-failed, 21 blocked) · SWEBENCH_COMPARE.html (114 entries, 47 resolved) · ✅ Claude Code 遥测关闭 · ✅ deepseek-harness pnpm install + build · ✅ setup_rootfs stale lock fix
+当前动作:     R95: codex×300 progress 54/270 new (84 codex, 29 resolved, 46.0% ex-blocked) + SWEBENCH_COMPARE.html regenerated (114 entries, 47 resolved) + relay healthy skip 48th + git sync
+下一步:       codex×300 完成(~216条剩余, ~2.5天) → 21 blocked 重跑(--resume) → cline-patched×300 --resume → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新SWEBENCH_COMPARE.html
+阻塞:         无硬阻塞. 21 blocked instances (django shallow.lock + astropy git timeout) 将在 codex×300 完成后 --resume 自动重跑. setup_rootfs 已加 stale lock cleanup.
 ERROR_COUNT:  0
 ```
 
-## 🆕 第九十四轮速览（2026-10-06 07:51）— codex×300 progress 51/270 (81 total, 29 resolved, 47.5% ex-blocked) + SWEBENCH_COMPARE.html (111 entries, 47 resolved) + relay healthy skip 47th + git sync
+## 🆕 第九十五轮速览（2026-10-06 08:26）— codex×300 progress 54/270 (84 total, 29 resolved, 46.0% ex-blocked) + SWEBENCH_COMPARE.html (114 entries, 47 resolved) + relay healthy skip 48th + git sync
 
-- 📊 **codex×300 --resume progress**：PID 1898015 运行中 (etimes≈31140s≈8.65h)。81 codex entries (51 new since ×30)。29 resolved, 32 patch-but-failed, 20 blocked。resolve rate (excl blocked) = 29/61 = 47.5%。当前 instance: `django__django-13964` 正在 run_single (child PID 441683, etimes≈923s≈15min, timeout=1800s)。最新 5 条 codex：django-13710(pbf)→django-13757(✅)→django-13768(pbf)→django-13925(✅)→django-13933(✅)。R93→R94: +2 entries in ~34min → ~17min/inst。219 remaining (199 real + 20 blocked) → ETA ~62h ≈ 2.6天。
-- 📈 **SWEBENCH_COMPARE.html regenerated**：111 entries, 47 resolved (cline-patched 18 + codex 29), 24422 bytes。gen_kimi_compare.py exit=0。
-- ✅ **ops 中继复核（第 47 次）→ 健康**。relay `2489749 1 401980 Ss`（ppid=1, etimes≈4.65d）。`.last_run_id=71`（与上轮一致, 无新命令）。跳过重启。
+- 📊 **codex×300 --resume progress**：PID 1898015 运行中 (etimes≈33199s≈9.22h)。84 codex entries (54 new since ×30)。29 resolved, 34 patch-but-failed, 21 blocked。resolve rate (excl blocked) = 29/63 = 46.0%。当前 instance: `django__django-14155` 正在 run_single (child PID 3360045, etimes≈589s≈10min, timeout=1800s)。R94→R95: +3 entries in ~35min → ~11.7min/inst。216 remaining (195 real + 21 blocked) → ETA ~42h ≈ 1.75天。
+- 📈 **SWEBENCH_COMPARE.html regenerated**：114 entries, 47 resolved (cline-patched 18 + codex 29), 25079 bytes。gen_kimi_compare.py exit=0。
+- ✅ **ops 中继复核（第 48 次）→ 健康**。relay `2489749 1 404039 Ss`（ppid=1, etimes≈4.68d）。`.last_run_id=72`（较上轮 71 前进 1 → RUN_ID 72 已执行 = 跨线 ops 任务 kill mix_stable_s0a, 非 harness 指令）。跳过重启。
 - ✅ **git sync**：`git fetch`（proxy）exit=0。rev-list 0/0（完全同步, 无 ahead/behind）。BAIZE_HARNESS_TASK.md last commit `17de0dcf`（不变, 无新运维指令）。完全同步。
-- ⏭ **下一步**：codex×300 后台继续（~219 条剩余, ~2.6天）→ 20 blocked 重跑（--resume） → cline-patched×300 `--resume` → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
+- ⏭ **下一步**：codex×300 后台继续（~216 条剩余, ~1.75天）→ 21 blocked 重跑（--resume） → cline-patched×300 `--resume` → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
 
 
 ## 🆕 第九十三轮速览（2026-10-06 07:17）— codex×300 progress 49/270 (79 total, 27 resolved, 45.8% ex-blocked) + SWEBENCH_COMPARE.html (109 entries, 45 resolved) + relay healthy skip 46th + git sync
