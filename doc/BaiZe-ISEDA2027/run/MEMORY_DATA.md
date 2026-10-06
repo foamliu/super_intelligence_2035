@@ -10,10 +10,10 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验 → d=128/L=14 proxy(18.36M) → BO搜索(eval-set语料代理)进行中(120/200, mix_search_eval.db, PID 1011682@.29 alive, GPU2-7; best=5.8327 #96; held_out_eval=eval-set语料代理已确认); base下载@.12: zh✅256/256下满(301G), l1_en_hq 4951/6006 82%
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a已kill；proxy d128 provider+recipe创建；held-out bin+held_out_eval(eval-set语料代理bin,2.77M tok/19.6K docs); baize_mix_optuna.py创建；5项必验全通过；BO(val-loss obj)115/200→改道eval-set语料代理(mix_search_eval.db,120/200); §6.1预注册+代理定义已写入DATA_MIX_RECIPE.md; zh下载完成✅
-当前动作:     唤醒162(20:15) ①BO eval study=120/200(PID 1011682@.29 alive~4h45m,best=5.8327#96 web=0.943/code=0.034/math=0.023),先验88:8:4最近#79 rank63/120 Δ=0.053,rate~31.8/h ETA~22:45 ②base下载: zh✅256/256下满(301G)! l1_en_hq 4951/6006(82%,370G,0 incomplete)
-下一步:       ① BO eval study继续(80trial剩余,ETA~22:45);② 200trial完成→top-K跑lm_eval 8集+代理val-loss-vs-均分Spearman秩相关;③ 噪声测量(top-5 ckpt各测3次报σ);④ l1_en_hq下载监控(余1055→ETA~06:00 Oct7);⑤ 产出report_data_mix_eval.html
+PHASE:        §0.6-B 配比实验 → d=128/L=14 proxy(18.36M) → BO搜索(eval-set语料代理)进行中(124/200, mix_search_eval.db, PID 1011682@.29 alive~5h21m, GPU2-7; best=5.8327 #95; held_out_eval=eval-set语料代理已确认); base下载@.12: zh✅256/256下满(301G), l1_en_hq 5001/6006 83%
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a已kill；proxy d128 provider+recipe创建；held-out bin+held_out_eval(eval-set语料代理bin,2.77M tok/19.6K docs); baize_mix_optuna.py创建；5项必验全通过；BO(val-loss obj)115/200→改道eval-set语料代理(mix_search_eval.db,124/200); §6.1预注册+代理定义已写入DATA_MIX_RECIPE.md; zh下载完成✅
+当前动作:     唤醒163(20:51) ①BO eval study=124/200(PID 1011682@.29 alive~5h21m,best=5.832675#95,先验88:8:4=#78 loss5.886 rank66/124 Δ0.053),rate~6.7/h(120→124 in 36min,减速),6trial in-flight(130-137),ETA~07:00Oct7 ②base下载: zh✅256/256下满(301G)! l1_en_hq 5001/6006(373G,83%,+50 since 20:15,0 incomplete,actively writing mtime 20:51)
+下一步:       ① BO eval study继续(76trial剩余,rate减速→ETA待观察);② 200trial完成→top-K跑lm_eval 8集+代理val-loss-vs-均分Spearman秩相关;③ 噪声测量(top-5 ckpt各测3次报σ);④ l1_en_hq下载监控(余1005→ETA~08:55 Oct7);⑤ 产出report_data_mix_eval.html
 阻塞:         无
 ERROR_COUNT:  0
 ```
@@ -21,6 +21,8 @@ ERROR_COUNT:  0
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+- [20:51] **唤醒163**：①本机=`.12`。②**BO eval study**(mix_search_eval.db,PID 1011682@.29 alive~5h21m,`--objective eval`):**124/200 complete**(0 pruned,6 in-flight t130-137)。**best=5.832675**(#95:web≈0.94/code≈0.03),top5=#95/54/64/49/74(loss 5.833~5.843)。先验88:8:4=**#78**(web=0.881/code=0.085/math=0.034,loss=5.886048,**rank66/124,Δ=0.053→先验不竞争力**)。rate减速:120→124 in 36min=~6.7/h(前轮31.8/h),ETA待观察。GPU2-7各6.7GB/~10%util,GPU0-1=pretrain。③⭐**base下载**: zh✅**256/256下满**(301G,0 incomplete)! l1_en_hq **5001/6006**(373G,83.3%,+50 since 20:15),0 incomplete,PID 3076519+retry-loop 3076502 alive,actively writing(mtime 20:51)。l1_en_hq余1005→ETA~08:55 Oct7(速率~1.39parquet/min)。④vision占.12 GPU0-7(R12b,与data无冲突,data用.29 GPU2-7)。📦 体积：TASK=32.5KB / MEMORY=28.8KB（归档 0KB,TASK略超32KB但远低于40KB红线,无可归档已闭合块）。
+
 - [20:15] **唤醒162**：①本机=`.12`。②**BO eval study**(mix_search_eval.db,PID 1011682@.29 alive~4h45m,`--objective eval`):**120/200 complete**(0 pruned),rate~31.8/h(102→120 in 34min)。**best=5.8327**(#96:web=0.9429/code=0.0338/math=0.0233),top5=#96/55/65/50/75(loss 5.833~5.843)。先验88:8:4最近=#79(web=0.881/code=0.085/math=0.035,loss=5.886,**rank63/120,Δ=0.053→先验不竞争力**)。remaining80 ETA~22:45。GPU2-7各6.7GB/~10%util,GPU0=pretrain(5.4GB/30%),GPU1=空闲。③⭐**base下载**: zh✅**256/256下满**(301G,最后part-256 mtime 20:02),0 incomplete! l1_en_hq 4951/6006(370G,82.4%,+28 since 19:41),0 incomplete,PID 3076519+retry-loop 3076502 alive。l1_en_hq余1055→ETA~06:00 Oct7。④vision占.12 GPU0-7(与data无冲突,data用.29 GPU2-7)。📦 体积：TASK=32.5KB / MEMORY=28.8KB（归档 0KB）。
 
 - [19:41] **唤醒161**：①本机=`.12`。②**BO eval study**(mix_search_eval.db,PID 1011682@.29 alive~4h11m,`--objective eval`):**102/200 complete**(0 pruned),rate~48.6/h(85→102 in 21min,加速)。**best=5.8327**(#96:web=0.9429/code=0.0338/math=0.0233),top5=#96/55/65/50/75(loss 5.833~5.843)。先验88:8:4最近=#59(web=0.876/code=0.090/math=0.035,loss=5.8570,**rank15/102,Δ=0.024→先验仍不竞争力但差距较85trial时缩小**)。remaining98 ETA~21:41。GPU2-7各6.7GB/10%util,当前t0107(GPU7)运行中。③**base下载**✅活跃@.12:PID 3076519(retry-loop PID 3076502),l1_en_hq 4923/6006(367G,82%,+36 since 19:20),zh 243/256(286G,95%,+10),0 incomplete,log显示连续完成(CC-MAIN-2025-47 part-0914~0924)。zh余13→ETA~20:08;l1_en_hq余1083→ETA~06:00 Oct7(速率~1.7parquet/min)。④vision占.12 GPU0-7(与data无冲突,data用.29 GPU2-7)。📦 体积：TASK=31.7KB / MEMORY=27.3KB（归档 0KB）。
