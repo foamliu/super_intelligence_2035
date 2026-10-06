@@ -379,3 +379,8 @@
 | 2026-10-06 | Glimpse wants to give hardware companies an X-ray view of every critical part | TechCrunch | news(AI 相关性弱·工业质检·从严不收) | https://techcrunch.com/2026/10/06/glimpse-wants-to-give-hardware-companies-an-x-ray-view-of-every-critical-part/ |
 | 2026-10-06 | Paramount closes historic Warner Bros. merger to form Skydance | TechCrunch | news(非 AI·流媒体合并) | https://techcrunch.com/2026/10/06/paramount-closes-historic-warner-bros-merger-to-form-skydance/ |
 
+| 2026-10-06 | AMD 股价创历史新高！CEO 苏姿丰称 AI 芯片需求非常旺盛，将持续大幅扩产 | IT之家 | news | https://www.ithome.com/1/010/114.htm |
+| 2026-10-06 | Mistral's new 1T model aims to leapfrog closed and open rivals | TechCrunch | news(同事件·在账 IT之家 010/108 Mistral Large 4) | https://techcrunch.com/2026/10/06/mistrals-new-1t-model-aims-to-leapfrog-closed-and-open-rivals/ |
+| 2026-10-06 | Building advertising for the way people use AI | OpenAI（官方·经 HN） | news(同事件·在账 OpenAI 视觉广告 10-05) | https://openai.com/index/new-chatgpt-ads-format-and-measurement/ |
+| 2026-10-06 | 特斯拉在印度市场交付超一年，仅注册不到 1000 辆汽车 | IT之家 | news(非 AI·EV 销量) | https://www.ithome.com/1/010/111.htm |
+
