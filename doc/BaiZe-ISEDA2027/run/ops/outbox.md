@@ -8669,3 +8669,71 @@ env: ‘cline’: No such file or directory
 === DONE ===
 === ALL DONE ===
 ```
+
+---
+
+## RUN_ID 81 · 2026-10-06 11:42:24 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 81 · restart ZhuLong with explicit PATH+proxy $(date '+%F %T') ==="
+timeout 180 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+PX=http://172.19.92.23:13128
+cd "$W" || { echo "(NO repo)"; exit 1; }
+echo "host=$(hostname)  $(date '+%F %T')"
+echo "--- [1] proxy .23 reachable from 36.15 ? ---"
+timeout 25 curl -x "$PX" -sS -o /dev/null -w 'via_.23_github=%{http_code}' --max-time 22 https://github.com 2>&1 | cut -c1-170
+echo ""
+echo "--- [2] locate cline / node bin ---"
+NB="$(ls -d "$HOME"/.nvm/versions/node/*/bin 2>/dev/null | tail -1)"
+echo "nodebin=$NB"
+[ -x "$NB/cline" ] && echo "cline found at nodebin" || echo "(no cline at nodebin)"
+command -v cline >/dev/null 2>&1 && echo "cline already in PATH" || echo "(cline NOT in PATH)"
+echo "--- [3] restart relay+loop with explicit PATH + proxy ---"
+export PATH="$NB:$HOME/.bun/bin:$PATH"
+export https_proxy="$PX"
+export http_proxy="$PX"
+command -v cline >/dev/null 2>&1 && echo "cline OK in new env" || echo "!! cline STILL missing"
+R="$W/doc/ZhuLong_DAC2027/run"
+pkill -f zhulong_loop.sh 2>/dev/null
+pkill -f zhulong_ops_relay.sh 2>/dev/null
+sleep 3
+setsid bash "$R/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+setsid bash "$R/zhulong_ops_relay.sh" > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
+sleep 5
+ps -eo pid,etime,args | grep -E 'zhulong_(loop|ops_relay)[.]sh' | grep -v grep | cut -c1-140 || echo "(NOT up!)"
+echo "--- [4] loop log after ~5s ---"
+tail -5 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-190
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
+
+**输出**
+```
+=== RUN_ID 81 · restart ZhuLong with explicit PATH+proxy 2026-10-06 11:42:24 ===
+Warning: Permanently added '[localhost]:3333' (ED25519) to the list of known hosts.
+host=hfeg0tedaap02  2026-10-06 11:42:26
+--- [1] proxy .23 reachable from 36.15 ? ---
+via_.23_github=200
+
+--- [2] locate cline / node bin ---
+nodebin=
+(no cline at nodebin)
+(cline NOT in PATH)
+--- [3] restart relay+loop with explicit PATH + proxy ---
+!! cline STILL missing
+2661652       00:05 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+2661653       00:05 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+--- [4] loop log after ~5s ---
+error: cannot lock ref 'refs/remotes/origin/main': is at 203f3236f127817d47e8bb41d7ab649dc6e4a8ee but expected 5541f3199ef8e22e06428ea535a615b2660533b8
+From https://github.com/foamliu/super_intelligence_2035
+ ! 5541f31..203f323  main       -> origin/main  (unable to update local ref)
+[push] fetch FAILED (network?) - skip this cycle.
+[loop] 2026-10-06 11:42:32 WAITING=1 (eval running / infra not ready) → sleep 1800s
+=== DONE ===
+=== ALL DONE ===
+```
