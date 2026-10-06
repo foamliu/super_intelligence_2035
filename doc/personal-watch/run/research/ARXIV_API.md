@@ -703,6 +703,18 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
 - **下轮预期**：周一公告（`2026-10-05` 提交批）应在 **UTC `2026-10-06` 稍晚**刷新到 API，届时主源最新 `published` 将由 `2026-10-02` 变为 `2026-10-05`，**预计出现新增**。
 
+### 9.55 第五十三轮（UTC 2026-10-06 周二 · 同批去重复核）→ **0 新增**（**本轮实时取数**）
+
+- **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-06T02:42:43.483370+00:00`，证据 `research/raw/2026-10-06-probe-r53.json`）：⚠️ **首次 `--probe` 因 `requests` 对 arXiv 网络停滞超时（工具级 30s）→ 改后台重跑成功**（非端点故障，与第五十一/五十二轮同现象）。
+  - **arXiv API**：`HTTP 200` + `application/atom+xml`，最新样本 `published=2026-10-03T20:15:17Z`（`totalResults=626945`，样本 `2610.04743 / 2610.04741 / 2610.04740`）→ ✅ **可达**（**批次未刷新，与第五十一/五十二轮同批**）；
+  - **HF Daily Papers**：`Network is unreachable` → ❌ 不可达（**如实记录，不伪造 `hf_daily` 标记**）；
+  - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml` + `items=185 / 191 / 456` → ✅ **工作日已有内容**。
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=daily`，窗口 72h**，`generated=2026-10-06T02:42:44.913310+00:00`）：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600**；其中 **430 条 = `already in SEEN`**，其余 **170 条 = `stale > 72h`（自首次提交起）**。证据 `research/raw/2026-10-06-fetch-r53.json`。
+- **结论**：**UTC 为 `2026-10-06`（周二）**；arXiv 公告批次仍为 **`2026-10-03`**（`totalResults=626945`，与第五十一/五十二轮一致；该批次的**渐进索引已在前两轮基本收尽**，本轮无新 ID 命中）→ **0 新增属正常**（**非「无数据」**）；实际日期区间按 R2′ 标注为 **`2026-10-03`（最近公告批次）**。`window_mode=daily`（72h）为第三十轮起的自动口径回落，非人工覆盖。
+- **第 3 批 A/B 复核**：TOP-K（含 `takeaway`/`action` 20 条）+ `TAKEAWAYS.md`（5 条）+ 视频线（`SHORTLIST.md` 17 / `scripts/` 3）**已交付未变**；**无新增 → 不重跑**。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
+- **下轮预期**：公告批次现为 `2026-10-03`（渐进索引已基本收尽）；下一次工作日公告（`2026-10-06` 提交批）预计在 **UTC `2026-10-07` 前后**刷新，届时按 SOP 增量采集。
+
 ### 9.54 第五十二轮（UTC 2026-10-06 周二 · **批次渐进索引**）→ **新增 7**（**本轮实时取数**）
 
 - **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-06T02:24:15.819870+00:00`，证据 `research/raw/2026-10-06-probe-r52.json`）：⚠️ **首次 `--probe` 因 `requests` 对 arXiv 网络停滞超时（工具级 30s）→ 改后台重跑成功**（非端点故障，与第五十一轮同现象）。
