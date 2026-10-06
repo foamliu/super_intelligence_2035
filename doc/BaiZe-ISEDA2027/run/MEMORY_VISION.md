@@ -1,16 +1,16 @@
 # MEMORY_VISION.md — BaiZe Stage(iii) 视觉编码器预训练 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **R12 训练+eval 完成**（120k 步, lp@120k=17.57%）· ✅ **3-epoch 续跑训练完成**（step 344000/344k, final_loss=1.5299, total=39197.3s, steady 3303 img/s, 10.9h）· 🚀 **4-GPU eval 进行中**（r12_single_eval.sh, PID 1131090/1131659/1132182/1142247, 35 ckpts, data loading phase）· ✅ 两份 HTML 报告已验证 · ✅ 论文 §6 已改完(6207fe1a) · ✅ VISION_NEXT_DIRECTIONS.md 已交付 · ✅ r12_3epoch_scaling.py 已就绪 |
-| WAITING | 1（**4-GPU eval 进行中** · r12_single_eval.sh · 35 ckpts across 4 GPUs · ETA ~12:15 → 自动跑 r12_3epoch_scaling.py → 回填 §19 scaling + §18.5 公平表 + 刷新 §6.3）|
+| PHASE | ✅ **R12 全线完成**：训练(120k,lp@120k=17.57%) · 3-ep 续跑(344k,10.9h) · **35-ckpt eval + scaling 完成**(11:56, 4-GPU, ~16min) · 两份 HTML 报告 · 论文 §6 改完 · VISION_NEXT_DIRECTIONS.md · §19.5+§18.5 已回填 |
+| WAITING | 0（**全部完成**。R12 3-epoch scaling: 35 点, R²=0.94, a 撞上界不可定, 非单调(7/34), 3ep lp=20.27%@176M 仍攀升 → AIMv2 渐近 >>25.1% 强化。VERDICT: NON-MONOTONIC, 诚实报告）|
 | ERROR_COUNT | 3（① R9 w512 首跑 crash：损坏 jpg → data.py 修复 ② 续跑首试 crash：r9_train.py `log()` 在定义前被 resume 块调用 → 改为 `print()` 修复 ③ **8-GPU 并行 eval NFS 争用卡死**：8 进程×冗余读 40 parquet → 43min 仅 3-4 文件 → 已 kill，改 4-GPU r12_single_eval.sh） |
 | BUDGET_USED | R2–R12 累计 + **R12 完成**（6.3h×8卡≈50.4 GPU·h）+ **3-epoch 续跑完成**（10.9h×8卡≈87.1 GPU·h, 总 ≈215 GPU·h） |
-| 更新 | **2026-10-06 11:36（8-GPU并行eval卡死→kill→重启4-GPU eval: 旧r12_parallel_eval.py(8进程×冗余NFS读40 parquet, 43min仅3-4文件)已全部kill. 原因: load_in1k_split每进程独读40×500MB parquet, 8×冗余I/O+CPU争用(loadavg 457). 新方案: r12_single_eval.sh 4-GPU×9-8 ckpts, OMP=16, PYTHONUNBUFFERED=1, data在page cache(1825GB buff). PID 1131090/1131659/1132182/1142247 全在loading phase. ETA: data load ~5-10min + GPU eval ~27min = ~37min → ~12:15完. 脚本自动 merge→/tmp/r12_continue_eval_watcher.log→跑r12_3epoch_scaling.py. 📦 体积：TASK=25KB / MEMORY=31KB(暂无归档). WAITING=1[4-GPU eval loading]**· *[更早见 daily-memories-vision/2026-10-06.md]* |
+| 更新 | **2026-10-06 11:57（R12 3-epoch eval+scaling 全部完成。4-GPU r12_single_eval.sh: data load ~9.5min(40 parquet, page cache) + GPU eval ~6.5min(35 ckpts, ~1min/ckpt) = ~16min 总. 自动 merge→r12_3epoch_scaling.py. 结果: 35 点 step10k→344k, lp 11.19%→20.27%, R²=0.9368(powerlaw)/0.9404(loglinear), 幂律 a=1.0 撞上界不可信, 非单调(7/34 neg, resume 瞬态), 3ep vs 1ep +2.77pp, R12@同N 劣于 R11-G(-0.31→-2.96pp, 数据重复更高效). VERDICT: NON-MONOTONIC→诚实报告, AIMv2 渐近>>25.1% 强化. §19.5+§18.5 已回填 EXPERIMENTS_VISION_ROUND11.md. 📦 TASK=25KB/MEMORY=31KB. WAITING=0）· *[更早见 daily-memories-vision/2026-10-06.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
