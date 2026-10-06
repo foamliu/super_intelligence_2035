@@ -21,6 +21,7 @@ ERROR_COUNT:  0
 - ✅ **git sync**：`git fetch`（proxy）exit=0。rev-list 0/0 (fully synced)。TASK.md 无 diff vs origin/main = 无新运维指令。
 - 📦 **体积自检**：TASK=29771B / MEMORY=30679B（均 ≤32KB ✓，无需归档）。
 - ⏭ **下一步**：codex --resume 后台继续（181 blocked）→ 完成后 cline-patched×300 `--resume` → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
+- ⚠️ **push 失败**：`git push` 两次均 `fatal: ... Received HTTP code 503 from proxy after CONNECT`（proxy 172.19.92.25:13128 暂时 503）。commit `18e6b4ef` 已本地 ahead 1。**下一轮唤醒第一件事 = 补推**。
 
 ## 🆕 第一百二十二轮速览（2026-10-07 00:17）—— 已滚动归档至 daily-memories-harness/2026-10-07.md（结论不改：codex --resume RUNNING PID 2151526 ~275min, 2 unblocked since R121 (+1 resolved), codex 38 resolved/79 pbf/183 blocked, SWEBENCH_COMPARE.html 72960B 56 resolved, relay healthy skip 75th, git sync）
 
