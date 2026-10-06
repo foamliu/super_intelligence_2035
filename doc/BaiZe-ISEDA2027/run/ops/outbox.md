@@ -9025,3 +9025,65 @@ doc$
 === DONE ===
 === ALL DONE ===
 ```
+
+---
+
+## RUN_ID 85 · 2026-10-06 18:15:01 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 85 · fix ZhuLong loop PATH+proxy $(date '+%F %T') ==="
+timeout 180 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+CDIR=/home/app.e0031982/.local/node-20/bin
+PX=http://172.19.92.23:13128
+cd "$W" || { echo "(NO repo)"; exit 1; }
+echo "host=$(hostname)  $(date '+%F %T')"
+echo "--- [1] 重启前：现有 loop 进程 ---"
+ps -eo pid,etime,args | grep 'zhulong_loop[.]sh' | grep -v grep | cut -c1-140 || echo "(none)"
+echo "--- [2] 注入 PATH + proxy 并自检 ---"
+export PATH="$CDIR:$HOME/.bun/bin:$PATH"
+export https_proxy="$PX"
+export http_proxy="$PX"
+command -v cline >/dev/null 2>&1 && echo "cline OK -> $(command -v cline)" || echo "!! cline STILL missing"
+echo "--- [3] 重启 loop（备份旧日志；🚫 不动 relay）---"
+R="$W/doc/ZhuLong_DAC2027/run"
+cp -f /tmp/zhulong_loop.log "/tmp/zhulong_loop.log.bak.$(date +%s)" 2>/dev/null
+pkill -f zhulong_loop.sh 2>/dev/null
+sleep 2
+setsid bash "$R/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+sleep 8
+ps -eo pid,etime,args | grep 'zhulong_loop[.]sh' | grep -v grep | cut -c1-140 || echo "!! loop NOT up"
+echo "--- [4] 新日志（前 6 行；应见 invoking cline 且无 No such file）---"
+tail -6 /tmp/zhulong_loop.log | cut -c1-190
+echo "--- [5] relay 仍在（通道）---"
+ps -eo pid,etime,args | grep 'zhulong_ops_relay[.]sh' | grep -v grep | cut -c1-140 || echo "(relay none)"
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
+
+**输出**
+```
+=== RUN_ID 85 · fix ZhuLong loop PATH+proxy 2026-10-06 18:15:01 ===
+Warning: Permanently added '[localhost]:3333' (ED25519) to the list of known hosts.
+host=hfeg0tedaap02  2026-10-06 18:15:02
+--- [1] 重启前：现有 loop 进程 ---
+2665948    06:30:59 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+--- [2] 注入 PATH + proxy 并自检 ---
+cline OK -> /home/app.e0031982/.local/node-20/bin/cline
+--- [3] 重启 loop（备份旧日志；🚫 不动 relay）---
+3579323       00:08 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+--- [4] 新日志（前 6 行；应见 invoking cline 且无 No such file）---
+[loop] 2026-10-06 18:15:04 wake up, invoking cline ...
+[2m[thinking] [0m[2mLet[0m[2m me understand[0m[2m the situation[0m[2m. This[0m[2m is the[0m[2m ZhuLong DAC[0m[2m2027 EDA[0m[2m ablation evaluation[0m[2m task. I'm[0m[2m 
+
+Let[0m[2m me start by reading[0m[2m the MEMORY[0m[2m_ZHULONG.md[0m[2m file[0m[2m and today[0m[2m's daily memory[0m[2m.[0m
+我将首先读取内存文件和今天的日常记忆以恢复状态，然后检查运营说明中提到的 ops 中继和基础设施状态。
+--- [5] relay 仍在（通道）---
+2665949    06:31:10 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+=== DONE ===
+=== ALL DONE ===
+```
