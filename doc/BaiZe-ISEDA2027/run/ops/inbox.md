@@ -31,14 +31,14 @@
 
 ---
 
-## RUN_ID 72 — 🔴🔴 **kill「伪」配比实验：`mix_stable_s0a`（2.2B 单臂 · 已废弃方法）→ 释放 `.29` GPU2–7**（**本块最新，最先执行**）
+## RUN_ID 72 — 🔴🔴 **（✅ 已执行完成 `08:12:52` · exit=0 —— **实测为 no-op：到场时已无 S0a 进程**；本块已降级为 text）kill「伪」配比实验：`mix_stable_s0a`（2.2B 单臂 · 已废弃方法）→ 释放 `.29` GPU2–7**
 
 > **为什么运维亲自 kill**：用户 2026-10-06 裁定 `S0a` **不是实验**（2.2B 单臂 / 1 seed / 无中间 ckpt ⇒ 312 GPU·h/臂，已烧 ≈98 GPU·h ≈ 搜索日预算 68%），**必须立即停**；
 > 但它**一直占着 GPU2–7**、**连带阻塞 pretrain 的 P-8**（`MEMORY_PRETRAIN_2B.md` 状态核查 #126）；而 data agent 处于 30 min 长睡 ⇒ 等它唤醒有 ~98 GPU·h 级风险窗口。⇒ **运维经中继直接断电**，data agent 侧改为**只核验**（见 `BAIZE_DATA_TASK.md` 顶部第 5 轮块 §D）。
 > ⚠️ **历史（本块第 1 步的由来）**：S0a 曾于 2026-10-05 16:32 被 P-9.10 端口冲突 kill 后，**由 `/tmp/restart_mix_stable_s0a.sh` 自动重启**（从 step 0 重跑）⇒ **必须先把这个「重拉器」移走**，否则 kill 完它又自己起来。
 > 🚫 **只动 S0a**：进程匹配排除 `ops_relay` / 各线 `*_loop.sh` / `watchdog` / `cline`；**不碰 pretrain 的 GPU0–1**。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 
 echo; echo "=== 1. 先断电「重拉器」（mv 而非 rm，保留取证）==="
