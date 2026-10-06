@@ -3630,5 +3630,710 @@
     },
     "blocked": "git fetch failed: \n[TIMEOUT]",
     "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-14672",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 90.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-14672.json",
+      "stdout_tail": "alse wall=89.6s ==\n[stderr tail] ...2026-10-06T01:38:05.412230Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 510 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_django__django-14672.json\n[run_single] cleanup: git reset --hard 00ea883ef56fb5e092cbe4a6f7ff2e7470886ac4\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 168,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-14730",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: \n[TIMEOUT]"
+    },
+    "blocked": "rootfs: base_commit fetch failed: \n[TIMEOUT]",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-14752",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-14787",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-14855",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-14915",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-14997",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-14999",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15061",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15202",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15213",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15252",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15320",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15347",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15388",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15400",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15498",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15695",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15738",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15781",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15789",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15790",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15814",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15819",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15851",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15902",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-15996",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-16041",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-16046",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-16139",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-16229",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-16255",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-16379",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-16400",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-16408",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-16527",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-16595",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-16816",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-16820",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-16873",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-16910",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-17051",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-17087",
+    "repo": "django/django",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan "
+    },
+    "blocked": "rootfs: base_commit fetch failed: fatal: Unable to create '/nas_train/app.e0031982/harness_work/rootfs/django__django-10914/testbed/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan ",
+    "classification": "blocked"
   }
 ]
