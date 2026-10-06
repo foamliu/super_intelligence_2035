@@ -2484,7 +2484,7 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 
 ---
 
-## A：复杂推理 6 集 Scaling（GSM8K / MATH-500 / MMLU / BBH / HumanEval / MBPP）✅ 35/36 COMPLETE（2026-10-06 16:30–10-07 00:35，GPU0 @.29）
+## A：复杂推理 6 集 Scaling（GSM8K / MATH-500 / MMLU / BBH / HumanEval / MBPP）✅ 36/36 COMPLETE（2026-10-06 16:30–10-07 01:41，GPU0 @.29）
 
 > 运维 2026-10-06 批准 A：GPU0 · 1 卡 · ≤6h。任务书 §(3)(4) 要求「常识 8 集 + 复杂 6 集」两条曲线。
 > 常识 8 集已在 P-5b/P-6② ✅ 完成（48/48, Avg 33.26%→49.22%）。本节补齐复杂 6 集。
@@ -2498,7 +2498,7 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 - **v1 失败**：offline mode → BBH dataset 无法下载 → v2 改 online + 正确 repo
 - **HumanEval/MBPP FIX**：v2 main script 缺 `HF_ALLOW_CODE_EVAL=1` → 单独 FIX 脚本补跑 → 全 0% floor（模型能力不足，非脚本 bug）
 
-### 结果表（35/36 cells，iter_4771 BBH rerunning on GPU0）
+### 结果表（36/36 cells ✅）
 
 | iter | tokens | GSM8K | MATH-500 | MMLU | BBH | HumanEval | MBPP | Avg |
 |:---|--:|---:|---:|---:|---:|---:|---:|---:|
@@ -2507,12 +2507,12 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 | 0624 | 2.62B | 1.00% | 0.00% | 23.58% | **14.26%** | 0.00% | 0.00% | 6.47% |
 | 1248 | 5.24B | 1.00% | 0.00% | 23.52% | 9.56% | 0.00% | 0.00% | 5.68% |
 | 2496 | 10.5B | 0.00% | 0.00% | 23.46% | 7.15% | 0.00% | 0.00% | 5.10% |
-| 4771 | 20.0B | 1.00% | 0.00% | **25.00%** | N/A (running) | 0.00% | 0.00% | — |
+| 4771 | 20.0B | 1.00% | 0.00% | **25.00%** | 8.78% | 0.00% | 0.00% | 5.80% |
 
 ### ⭐ 核心结论
 
-1. **BBH 是唯一有 scaling 信号的复杂任务**：3.07%(655M) → 峰值 14.26%(2.62B) → 波动 7-10%(5-20B)。
-   - 峰值在 iter_0624 (2.62B token)，之后下降 → 可能是 WSD decay 段退火混合的副作用，或 BBH 评测噪声（100 样本子集）。
+1. **BBH 是唯一有 scaling 信号的复杂任务**：3.07%(655M) → 峰值 14.26%(2.62B) → 波动 7-10%(5-20B)，iter_4771(20B)=8.78%。
+   - 峰值在 iter_0624 (2.62B token)，之后下降 → 可能是 WSD decay 段退火混合的副作用，或 BBH 评测噪声（100 样本子集）。20B token 时 8.78% < 峰值 14.26%，确认非单调。
 2. **MMLU**：23-25%，接近 4-choice 随机基线（25%）。20B token 时 25.00% = 刚好达到随机水平。
 3. **GSM8K / MATH-500**：全程贴地板（0-3%）。2.2B 模型在 ≤20B token 无法做数学推理。
 4. **HumanEval / MBPP**：全 0% — 2.2B 模型在 ≤20B token 无法生成有效代码。
@@ -2524,7 +2524,7 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 
 - 结果目录：`nemo_experiments/p5b/lm_eval_complex/iter_{0156..4771}/`
 - 汇总 JSON：`nemo_experiments/p5b/lm_eval_complex/complex6_summary.json`
-- HTML：`doc/BaiZe-ISEDA2027/report_pretrain_complex6_scaling.html`（6.2KB, 35/36 cells, bbh_4771 rerunning）
+- HTML：`doc/BaiZe-ISEDA2027/report_pretrain_complex6_scaling.html`（6.2KB, 36/36 cells ✅）
 - 评测脚本：`run/baize_complex6_eval_v2.sh`（online, 5 tasks re-run + gsm8k reused）
 - FIX 脚本：`run/baize_complex6_humaneval_mbpp_fix.sh`（HF_ALLOW_CODE_EVAL=1）
 - 采集器：`run/baize_complex6_collect.py` + HTML gen：`run/baize_complex6_report_html.py`
