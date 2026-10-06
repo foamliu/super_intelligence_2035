@@ -386,4 +386,5 @@
 | 2026-10-06 | 德国交通部长：希望特斯拉 FSD（监督版）辅助驾驶系统能在欧盟获批 | IT之家 | news | https://www.ithome.com/1/010/124.htm |
 | 2026-10-06 | LibreOffice says 'no AI' is now a software feature | TechCrunch | news | https://techcrunch.com/2026/10/06/libreoffice-says-no-ai-is-now-a-software-feature/ |
 | 2026-10-06 | 《明日方舟：终末地》游戏将支持英伟达 RTX Spark 笔记本 | IT之家 | news(非 AI·游戏) | https://www.ithome.com/1/010/123.htm |
+| 2026-10-07 | Anthropic is giving startups a free year of Claude Team and $1,000 in credits | TechCrunch | news | https://techcrunch.com/2026/10/06/anthropic-gives-startups-a-free-year-of-enterprise-service-and-1000-in-token-credits/ |
 
