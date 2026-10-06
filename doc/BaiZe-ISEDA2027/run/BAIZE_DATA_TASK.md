@@ -12,6 +12,47 @@
 > 本节由**外部运维**通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停**。
 > **agent 禁止修改本节**（只写别的区）。本节为「无」时，按下方默认阶段顺序自主推进。
 
+### 🆕 运维指令 · 2026-10-06（🎯 **【用户三步令】① 收 Stable 200-trial + top-K `lm_eval`/Spearman/σ ② `s_step` 归因（1.5 s→~30–100 ms，`D` 0.016 B→0.5–1 B）③ `.29` GPU0-1 释放后 **8 卡**搜第二轮**）· **最高优先 · 用户直令**
+
+> **用户 2026-10-06 三步令（按此顺序）**：
+> 1. **把当前 data BO Stable 200-trial 跑完**；**排队中的 top-K `lm_eval` 8 集 + Spearman 秩相关 + 噪声测量也跑完**。
+> 2. **做 `s_step` 归因（最高杠杆）**，争取把 **1.5 s 压到 ~30–100 ms** ⇒ **`D` 从 0.016 B 抬到 0.5–1 B**。
+> 3. **此时若 `.29` GPU0-1 已释放，就用 8 卡搜第二轮。**
+
+> ⚙️ **运维技术修正（先读，别走错方向）—— `s_step=1.5 s` ❗不是多卡同步**：
+> - `run/baize_mix_optuna.py:208` = `torchrun --nnodes=1 --nproc_per_node=1`；`:216` `--tensor-parallel 1`；`:231` `CUDA_VISIBLE_DEVICES=<单卡>` ⇒ **【每个 trial 本来就跑在单卡上】**（`--gpus 2,3,4,5,6,7` = 6 个**独立并行** trial，**无任何跨卡通信**）。
+> - `s_step=1.50 s` 本身也是**单卡**实测（`daily-memories-data/2026-10-06.md` 必验#4：16 次测量 1,425–1,582 ms）。
+> - ⇒ **真凶候选（都在单卡内）**：① ⭐ **`--micro-batch-size 1`（`:219`）+ `GBS=16`（`:218`）⇒ 每步 16 个 microbatch**，TP1/DP1 不可切分、只能梯度累积 ⇒ ≈**94 ms/microbatch** 的 Python/kernel-launch/DataLoader 开销 × 16 ≈ **1.5 s**；② 数据管线（NFS 小批读）；③ CE logits 4.24e9 元素（≈10–17 ms，非主因）；④ 无 CUDA graph。
+> - **算力账**：`6·N·tokens = 6×18.5e6×32768 ≈ 3.6 TFLOP ≈ <10 ms` ⇒ 实测 1.5 s = 算力的 **~100×** ⇒ **纯 overhead-bound，不是算力、更不是通信**。
+> - ⇒ **修法（单卡内即可，🚫 不用改多卡策略）**：**MBS 1→8/16**（microbatch 16→2/1）· 开 CUDA graph · DataLoader `num_workers`/prefetch 上调 · fused/chunked CE。判据 = 维修后 **`s_step` 中位数 ≤100 ms**（力争 ≤30 ms）。
+
+> **执行（① 先收口；② 可并行、时间盒 ≤2h；③ 条件触发）**
+>
+> **① 收 Stable + 分析（沿用现有 GPU2-7，🚫 不改现跑脚本）**
+> - 让 `mix_search_eval.db`（PID 1011682）**自然跑完 200/200（不许 kill）**；随后按既有「下一步 ②③④」执行：
+>   - 重跑 **top-5（#155/149/96/125/55）+ 先验 88:8:4（#79）共 6 config 带 ckpt → `lm_eval` 8 集 → 取均分作真 objective**；
+>   - **Spearman 秩相关**（代理 val-loss ↔ 均分）；
+>   - **噪声测量**（top-5 各 ≥3 次，报 **σ**）。
+> - 产出 `report_data_mix_eval.html`（200-trial 的 top-K/秩相关/σ）+ 更新 `DATA_MIX_RECIPE.md §6`。🚫 **不要把 200 扩成 512**（512 目标**并入第二轮**，见 ③）。
+>
+> **② `s_step` 归因（⭐ 最高杠杆；时间盒 ≤2h；**只占 1–2 卡**，别抢 ① 的卡）**
+> - **逐项实测（每次只改一个变量，贴原始输出）**：
+>   a. **MBS 扫描**：MBS ∈ {1,4,8,16}（GBS 固定 16）→ 报 **s_step 中位数 + tok/s**；预期 microbatch 16→1 时 s_step 大降；**若 s_step 不随 microbatch 数变 ⇒ 转查数据管线**；
+>   b. **DataLoader**：`num_workers` / prefetch / 本地缓存 vs NFS → 报 s_step 差；
+>   c. **CUDA graph**（若 launcher 暴露）/ 关 `--recompute`；
+>   d. **CE**：`--cross-entropy-loss-fusion`（fused/chunked）是否可用；
+>   e. **纯前向 vs 纯数据处理分离计时**（定位到底卡在哪）。
+> - **判据（必须给）**：**基线 1.50 s → 最优组合 = ? ms**，及**据此可达的 `D`（= 步数×GBS×seq）与 `T`（6 卡/24h）**；目标 **`s_step ≤100 ms`（力争 ≤30 ms）⇒ `D` 可达 0.5–1 B**。
+> - 产出 `report_data_mix_sstep.html` + `DATA_MIX_RECIPE.md` 增节（原始输出 + 判据）。
+>
+> **③ 第二轮搜索（**条件触发**：`.29` GPU0-1 已释放）**
+> - **触发条件**：pretrain 侧 **D（P-9.11 补测）已完成并明确释放 GPU0-1**（运维会在心跳/任务书确认）。🚫 **在此之前绝不碰 GPU0-1**（pretrain A/B/D 在用）。
+> - **做法**：用 **8 卡（GPU0-7）** 跑 **Stable 第二轮 BO**；`D`（token/trial）按 ② 修好的 `s_step` **反算**（目标 0.5–1 B；若 `T` 不允许则如实降档并标注），trial 数按 `T` 反算（**目标 ≥200 且尽量多**；512 若可达则取 512）。
+> - 新 study 用**独立 DB**（如 `mix_search_eval_r2.db`），保留 200-trial 结果作对照；**同样跑 top-K `lm_eval` + σ**。
+> - 产出 `report_data_mix_eval_r2.html`。
+>
+> **纪律（不变）**：🚫 **不 kill 正在跑的 BO**；🚫 **不在 pretrain 释放前碰 GPU0-1**；🚫 不改白名单 / 不重启下载；**心跳 ≤60 min** 且每步 commit + push；做不完**如实写卡点 + 需要什么 + 阻塞**；`TASK/MEMORY` 体积均 ≤32KB。
+
 ### 🆕 运维指令 · 2026-10-06（🚨 **P0 · 立即重启 base 全量下载**）· **最高优先 · 用户直令**
 
 > **用户指令（2026-10-06）**：「**让 data 立即重启下载 base**」。
