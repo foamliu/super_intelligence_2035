@@ -323,3 +323,15 @@
 | 2026-10-06 | Show HN: Moching – AI desktop agent with 219 built-in tools (Rust) | Hacker News（Show HN） | tool | https://github.com/moching-ai-dev/moching |
 | 2026-10-06 | Schema-guard, stop AI agents from inventing column names in SQL | Hacker News（Show HN） | tool | https://github.com/idk-arsh/schema-guard |
 
+| 2026-10-06 | 12GB 显存显卡跑 125B Qwen3.8 模型：Strata 登场，单张 RTX 5070 跑出 94 词元 / 秒 | IT之家 | news | https://www.ithome.com/1/010/006.htm |
+| 2026-10-06 | 瑞萨推出品牌首款低压氮化镓功率半导体，面向 AI 数据中心、人形机器人等领域 | IT之家 | news | https://www.ithome.com/1/010/015.htm |
+| 2026-10-06 | OpenAI 与 Anthropic 向澳大利亚表态：支持出台数据泄露相关监管法规 | IT之家 | news | https://www.ithome.com/1/010/003.htm |
+| 2026-10-06 | 消息称 Meta 和微软要求员工减少使用 Claude，多用自家 AI 节省成本 | IT之家 | news | https://www.ithome.com/1/010/010.htm |
+| 2026-10-04 | ChatGPT-6 Astra cracks 217-year-old Napoleonic code in just six hours | Tom's Hardware | news | https://www.tomshardware.com/tech-industry/artificial-intelligence/chatgpt-6-astra-cracks-217-year-old-napoleonic-code-in-just-six-hours-single-prompt-ai-run-solves-24-rows-of-custom-symbols-from-a-single-image-reveals-lost-troop-orders |
+| 2026-10-06 | Solidigm 扩大数据中心固态硬盘产能，新增在台 ODM 制造基地 | IT之家 | news(核心事件 9-25·超 72h) | https://www.ithome.com/1/010/029.htm |
+| 2026-10-06 | 不er，咋陶哲轩也成AI减速派了？？ | 量子位 | analysis | https://www.qbitai.com/2026/10/501736.html |
+| 2026-10-06 | OpenAI「疯狂28天」首日，这都发了些啥啊… | 量子位 | analysis | https://www.qbitai.com/2026/10/501726.html |
+| 2026-10-06 | 高通把 Arm 告上法庭：指控其扣留芯片测试工具、泄露机密 | IT之家 | news(非 AI·芯片 IP) | https://www.ithome.com/1/010/016.htm |
+| 2026-10-06 | Skyworks 完成与 Qorvo 合并，打造射频芯片业龙头 | IT之家 | news(非 AI·射频芯片) | https://www.ithome.com/1/010/024.htm |
+| 2026-10-06 | Third conversation with Claude that Anthropic reported to police since August | Tom's Hardware | news(同事件·已在账 TechSpot) | https://www.tomshardware.com/tech-industry/artificial-intelligence/anthropic-reports-florida-womans-claude-diary-threat-to-shoot-up-sheriffs-office-felony-charge-follows-its-at-least-the-third-such-conversation-to-reach-police-since-august |
+
