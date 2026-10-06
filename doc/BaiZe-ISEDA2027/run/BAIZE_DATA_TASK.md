@@ -48,17 +48,20 @@
 >      - **显存账（瓶颈 = `vocab=129,408` 的 logits）**：`logits = MBS×seq×vocab`（bf16）→ 16→**8.5 GB**、32→**17 GB**、64→**34 GB**、128→**68 GB**（+反传再翻倍）⇒ **32 稳 / 64 视情况 / 128 须先落 fused CE**。
 >   b. ⭐ **先落 `fused/chunked CE`**（`--cross-entropy-loss-fusion`；TP1/DP1 无 TP 可切 ⇒ 必须）—— **落了它 MBS 才能上 128/256**（激活降到 `O(MBS·seq·d·L)` ≈ 1 GB 级）。**先做 b，再做 a 的高档位。**
 >   c. ⭐ **GBS 扫描（拉满，但受「优化步数」限）**：GBS ∈ **{16,64,256,1024}**（MBS 取 a 的最大可用值）→ 报 **tok/s + 训完 D=0.5 B / 1 B 的总墙钟 + 步数**。
->      - ⚠️ **fidelity 约束（不许无视）**：`D` 固定时 **GBS↑ ⇒ 优化器更新次数↓**（`步数 = D/(GBS·seq)`；GBS1024·seq2048·D=0.5B ⇒ **仅 238 步**）⇒ **GBS 不是越大越好**；必须 **按比例同步调 LR/warmup**，并在报告里**显式标注所选 GBS 的「步数」与「是否仍是可辩护的配比排序口径」**（排序相对性最终由 ③ 的 top-K `lm_eval` 背书）。
+>      - ⚠️ **约束 = 有效性，而非「与 200-trial 可比」（用户 2026-10-06 明确：不需要跟 200-trial 可比，实验内可比即可）**：
+>        - ✅ **实验内自洽即可**：第二轮各 trial **固定同一 `GBS/MBS/LR/schedule/D`**（每档 GBS 配一次 LR/warmup 重扫、本档内固定）⇒ **内部排序有效**；
+>        - ✅ **与 200-trial 只对照「最优配比 + 排序结论」**，**不比 loss 绝对值**（`D`/GBS 不同，loss 尺度本就不同）。
+>        - ⚠️ **仍要防的唯一风险**：`D` 固定时 **GBS↑ ⇒ 优化器步数↓**（GBS1024·seq2048·D=0.5B ⇒ **仅 238 步**），步数太少时**配比排序可能失真** ⇒ 报「步数」+ LR/warmup 按 Linear/Sqrt 规则起步再实测定档；**最终排序有效性由 ③ 的 top-K `lm_eval` 8 集背书**（代理排序 ≠ 真实均分 ⇒ 该 GBS 档作废）。
 >   d. **DataLoader**：`num_workers` / prefetch / 本地缓存 vs NFS → 报 s_step 差；
 >   e. **CUDA graph**（若 launcher 暴露）/ 关 `--recompute`；
 >   f. **纯前向 vs 纯数据处理分离计时**（定位到底卡在哪）。
 > - **判据（必须给）**：**MBS×GBS 网格表**（`s_step` / `tok/s` / 峰值显存 / OOM / **训完 0.5B·1B 的墙钟**）+ **最优组合**；目标把「训完 0.5 B」从当前（1.50 s/步 ⇒ ≈**6.4 h/trial**）压到 **≤1–2 h**；据此定 ③ 的 `D` / `trial 数` / `T`。
-> - 产出 `report_data_mix_sstep.html` + `DATA_MIX_RECIPE.md` 增节（网格原始输出 + 判据 + **GBS 的 fidelity 说明**）。
+> - 产出 `report_data_mix_sstep.html` + `DATA_MIX_RECIPE.md` 增节（网格原始输出 + 判据 + **GBS 档的「有效性」说明：实验内自洽 / 与 200-trial 只比最优配比**）。
 >
 > **③ 第二轮搜索（**条件触发**：`.29` GPU0-1 已释放）**
 > - **触发条件**：pretrain 侧 **D（P-9.11 补测）已完成并明确释放 GPU0-1**（运维会在心跳/任务书确认）。🚫 **在此之前绝不碰 GPU0-1**（pretrain A/B/D 在用）。
 > - **做法**：用 **8 卡（GPU0-7）** 跑 **Stable 第二轮 BO**；`D`（token/trial）按 ② 修好的 `s_step` **反算**（目标 0.5–1 B；若 `T` 不允许则如实降档并标注），trial 数按 `T` 反算（**目标 ≥200 且尽量多**；512 若可达则取 512）。
-> - 新 study 用**独立 DB**（如 `mix_search_eval_r2.db`），保留 200-trial 结果作对照；**同样跑 top-K `lm_eval` + σ**。
+> - 新 study 用**独立 DB**（如 `mix_search_eval_r2.db`）；**与 200-trial 的对照 = 只比「最优配比 + 排序结论」，不比 loss 绝对值**（`D`/GBS 不同，loss 尺度不同）；**同样跑 top-K `lm_eval` + σ**。
 > - 产出 `report_data_mix_eval_r2.html`。
 >
 > **纪律（不变）**：🚫 **不 kill 正在跑的 BO**；🚫 **不在 pretrain 释放前碰 GPU0-1**；🚫 不改白名单 / 不重启下载；**心跳 ≤60 min** 且每步 commit + push；做不完**如实写卡点 + 需要什么 + 阻塞**；`TASK/MEMORY` 体积均 ≤32KB。
