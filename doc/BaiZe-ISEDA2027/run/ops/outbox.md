@@ -7612,3 +7612,120 @@ whag0pgpuap29
 
 === DONE ===
 ```
+
+---
+
+## RUN_ID 72 · 2026-10-06 08:12:52 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+
+echo; echo "=== 1. 先断电「重拉器」（mv 而非 rm，保留取证）==="
+TS=$(date +%Y%m%d_%H%M%S)
+F=/tmp/restart_mix_stable_s0a.sh
+if [ -f "$F" ]; then mv -v "$F" "${F}.disabled_${TS}"; else echo "   ($F 不存在，无需断电)"; fi
+echo "   /tmp 下遗留的 restart 脚本（只读列出）："
+ls -l /tmp/restart_*.sh* 2>/dev/null | cut -c1-140 || echo "   (无)"
+echo "   crontab 中与 mix_stable / s0a 相关的行："
+crontab -l 2>/dev/null | grep -n -i 'mix_stable\|s0a' || echo "   (无) crontab 无相关条目"
+
+echo; echo "=== 2. kill 前快照（宽匹配，排除 relay / cline / 各线 loop / watchdog）==="
+PAT='mix_stable_s0a'
+EXC='grep|ops_relay|cline|baize_(pretrain|data|vision|harness|search|2b)_loop|watchdog'
+ps -eo pid=,ppid=,etimes=,args= | grep -F "$PAT" | grep -vE "$EXC" | cut -c1-150
+PIDS=$(ps -eo pid=,args= | grep -F "$PAT" | grep -vE "$EXC" | awk '{print $1}')
+PORT_PID=$(ss -lntp 2>/dev/null | grep -F ':29950' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | sort -u)
+if [ -n "$PORT_PID" ]; then echo "   监听 29950 的 PID：$(echo $PORT_PID | tr '\n' ' ')"; PIDS="$PIDS
+$PORT_PID"; fi
+PIDS=$(echo "$PIDS" | grep -E '^[0-9]+$' | sort -un)
+echo "   ==> 目标 PID 列表 = [$(echo $PIDS | tr '\n' ' ')]"
+
+if [ -z "$(echo $PIDS | tr -d ' \n')" ]; then
+  echo "   [!] 未命中 S0a 进程（可能已被 data agent 杀掉）==> 跳过 kill，直接做第 3 步取证。"
+else
+  echo; echo "=== 2b. 优雅退出：SIGTERM（父+子一起）==="
+  echo "$PIDS" | xargs -r -n1 kill -TERM 2>/dev/null
+  LEFT=""
+  for i in $(seq 1 20); do
+    sleep 1
+    LEFT=$(ps -eo pid=,args= | grep -F "$PAT" | grep -vE "$EXC" | awk '{print $1}' | tr '\n' ' ')
+    [ -z "${LEFT// /}" ] && break
+  done
+  if [ -n "${LEFT// /}" ]; then
+    echo "   ${i}s 后仍存活：[$(echo $LEFT | tr '\n' ' ')] ==> SIGKILL"
+    echo "$LEFT" | xargs -r -n1 kill -9 2>/dev/null
+    sleep 6
+  else
+    echo "   [OK] SIGTERM 后 ${i}s 内全部退出（0 残留）"
+  fi
+fi
+
+echo; echo "=== 3. 取证 ==="
+echo "--- 3a. 残留 S0a 进程（应为空）---"
+ps -eo pid=,ppid=,etimes=,args= | grep -F "$PAT" | grep -vE "$EXC" | cut -c1-150 || true
+echo "--- 3b. GPU 计算进程（.29 全部）---"
+nvidia-smi --query-compute-apps=pid,used_memory --format=csv,noheader 2>/dev/null | cut -c1-120
+echo "--- 3c. GPU 占用一览（index,name,mem.used,util）---"
+nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | cut -c1-120
+echo "--- 3d. 仍占显存 >1GB 的进程 cmdline（只读，不 kill —— 防误杀 pretrain）---"
+nvidia-smi --query-compute-apps=pid,used_memory --format=csv,noheader 2>/dev/null | awk -F', ' '$2+0>1000{print $1}' | while read -r p; do
+  echo "   PID $p : $(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | cut -c1-150)"
+done
+echo "--- 3e. S0a 日志尾巴（原始，验收 kill 时刻）---"
+tail -4 /tmp/baize_mix_stable_s0a_train.log 2>/dev/null | cut -c1-190
+tail -3 /tmp/baize_mix_stable_s0a.log 2>/dev/null | cut -c1-190
+echo "--- 3f. 各线 loop / relay 仍活（证明没误杀）---"
+pgrep -af 'baize_.*_loop\.sh|ops_relay\.sh|watchdog' 2>/dev/null | cut -c1-120
+
+echo; echo "=== DONE: 伪配比实验 mix_stable_s0a（2.2B 单臂）已停；GPU2-7 应已释放（P-8 不再被它阻塞）==="
+```
+
+**输出**
+```
+=== 0. HOST/TIME ===
+whag0pgpuap29
+2026-10-06 08:12:52
+
+=== 1. 先断电「重拉器」（mv 而非 rm，保留取证）===
+   (/tmp/restart_mix_stable_s0a.sh 不存在，无需断电)
+   /tmp 下遗留的 restart 脚本（只读列出）：
+-rw-r----- 1 app.e0031982 app.adm 828 Oct  4 15:56 /tmp/restart_29.sh
+-rw-r----- 1 app.e0031982 app.adm 356 Oct  4 15:54 /tmp/restart_pretrain_29.sh
+   crontab 中与 mix_stable / s0a 相关的行：
+   (无) crontab 无相关条目
+
+=== 2. kill 前快照（宽匹配，排除 relay / cline / 各线 loop / watchdog）===
+   ==> 目标 PID 列表 = [ ]
+   [!] 未命中 S0a 进程（可能已被 data agent 杀掉）==> 跳过 kill，直接做第 3 步取证。
+
+=== 3. 取证 ===
+--- 3a. 残留 S0a 进程（应为空）---
+--- 3b. GPU 计算进程（.29 全部）---
+--- 3c. GPU 占用一览（index,name,mem.used,util）---
+0, NVIDIA H100 80GB HBM3, 0 MiB, 0 %
+1, NVIDIA H100 80GB HBM3, 0 MiB, 0 %
+2, NVIDIA H100 80GB HBM3, 0 MiB, 0 %
+3, NVIDIA H100 80GB HBM3, 0 MiB, 0 %
+4, NVIDIA H100 80GB HBM3, 0 MiB, 0 %
+5, NVIDIA H100 80GB HBM3, 0 MiB, 0 %
+6, NVIDIA H100 80GB HBM3, 0 MiB, 0 %
+7, NVIDIA H100 80GB HBM3, 0 MiB, 0 %
+--- 3d. 仍占显存 >1GB 的进程 cmdline（只读，不 kill —— 防误杀 pretrain）---
+--- 3e. S0a 日志尾巴（原始，验收 kill 时刻）---
+    time.sleep(monitor_interval)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 2525319 got signal: 15
+  CUDA_VISIBLE_DEVICES=2,3,4,5,6,7
+  rc=1
+===== mix mix_stable_s0a END @ 2026-10-05 16:31:56 rc=1 =====
+--- 3f. 各线 loop / relay 仍活（证明没误杀）---
+1648 watchdogd
+1391466 bash baize_pretrain_loop.sh
+1784375 bash baize_harness_loop.sh
+2489749 bash ops_relay.sh
+3071070 bash ops_relay.sh
+
+=== DONE: 伪配比实验 mix_stable_s0a（2.2B 单臂）已停；GPU2-7 应已释放（P-8 不再被它阻塞）===
+```
