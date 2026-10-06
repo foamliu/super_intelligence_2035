@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🚀 **R12b 全量数据 AIMv2 训练中**（fresh run, 272k 步≈2 epoch, 7527 shards, 12:54 起, step~58600/272000 ~21.5%, loss~2.1, C4=OK, NFS 波动 img/s 5470→2130, 5 ckpts 已存, ETA~23:00–01:00）. ✅ 论文 §6 改写完成. ✅ 前置 AIMv2 提速归因实测完成. ✅ 两份 HTML 报告+方向建议已交 |
-| WAITING | 1（**R12b 训练中** step~58600/272000 ~21.5%, loss~2.1(contrast~1.9/patch_mse~0.22), C4=OK, 5 ckpts(step10k/20k/30k/40k/50k 487MB each). 训练完自动跑 IN-1k eval → scaling 曲线. ETA~23:00–01:00. 所有交付物已完成, 仅待训练结束+eval）|
+| PHASE | 🚀 **R12b 全量数据 AIMv2 训练中**（fresh run, 272k 步≈2 epoch, 7527 shards, 12:54 起, step~69500/272000 ~25.6%, loss~2.05, C4=OK, NFS 波动 img/s 5385→2360, 6 ckpts 已存, ETA~02:00）. ✅ 论文 §6 改写完成. ✅ 前置 AIMv2 提速归因实测完成. ✅ 两份 HTML 报告+方向建议已交 |
+| WAITING | 1（**R12b 训练中** step~69500/272000 ~25.6%, loss~2.05(contrast~1.89/patch_mse~0.16), C4=OK(C1=0.40/C2_gap=+0.12/loss_ema=2.10), 6 ckpts(step10k–60k 487MB each). 训练完自动跑 IN-1k eval → scaling 曲线. ETA~02:00（NFS波动致吞吐下降, 原 ETA~23:00 已滑）. 所有交付物已完成, 仅待训练结束+eval）|
 | ERROR_COUNT | 3（① R9 w512 首跑 crash：损坏 jpg → data.py 修复 ② 续跑首试 crash：r9_train.py `log()` → 改 `print()` 修复 ③ 8-GPU 并行 eval NFS 争用卡死 → 改 4-GPU r12_single_eval.sh） |
 | BUDGET_USED | R2–R12 累计 ≈215 GPU·h + 归因实测 ~0.5 GPU·h + **R12b 训练中**（~7.7h×8卡≈61.6 GPU·h 预计） |
-| 更新 | **2026-10-06 15:25（R12b 心跳巡检#3: step~58600/272000 ~21.5%, loss~2.1(contrast~1.9/patch_mse~0.22), C4=OK(C1=0.41/C2_gap=+0.12/loss_ema=2.18), 5 ckpts(step10k/20k/30k/40k/50k 487MB each), 7/8 GPU util 100%(GPU6 transient 0%), mem 16.5GB each, NFS 波动 img/s 5470→2130(当前 dip). avg~390 steps/min, 剩余~213k 步, ETA~23:00–01:00. 所有交付物已完成. 📦 TASK=25KB/MEMORY=11KB）· *[更早见 daily-memories-vision/2026-10-06.md]* |
+| 更新 | **2026-10-06 16:00（R12b 心跳巡检#4: step~69500/272000 ~25.6%, loss~2.05(contrast~1.89/patch_mse~0.16), C4=OK(C1=0.40/C2_gap=+0.12/loss_ema=2.10), 6 ckpts(step10k–60k 487MB each), NFS 波动 img/s 5385→2360(当前 dip), avg~320 steps/min, 剩余~202k 步, ETA~02:00. 所有交付物已完成. 📦 体积：TASK=29KB/MEMORY=12KB（归档 ~5KB → ARCHIVE_OPERATOR_VISION.md：深夜2+深夜两块））· *[更早见 daily-memories-vision/2026-10-06.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
@@ -103,6 +103,7 @@ WAITING: 1
 - [14:18] **R12b 心跳巡检#1**：step 36300/272000 ~13%, loss~2.6 (contrast~2.4, patch_mse~0.21), C4=OK. 3 ckpts 已落盘（step10k/20k/30k, 487MB each）. 8 GPU util 67-88%, mem 16.5GB each. NFS 波动 img/s 5300→2400（正常波动, GPU 未崩）. ETA~20:30–21:10. 所有交付物（HTML 报告×2 + 论文 §6 + 方向建议 + 归因实测）均已完成并提交.
 - [14:52] **R12b 心跳巡检#2**：step~46750/272000 ~17%, loss~2.4 (contrast~2.2, patch_mse~0.23), C4=OK. 4 ckpts 已落盘（step10k/20k/30k/40k, 510MB each）. 7/8 GPU util 100%（GPU0 transient 0% — 数据加载瞬时）, mem 16.5GB each. NFS 波动 img/s 5600→3000（正常波动）. 平均 ~396 steps/min, 剩余 225k 步, ETA~21:00–23:00（NFS 波动大, 不确定）. 训练健康, 无需干预. 📦 体积：TASK=24KB / MEMORY=10KB（无归档）.
 - [15:25] **R12b 心跳巡检#3**：step~58600/272000 ~21.5%, loss~2.1 (contrast~1.9, patch_mse~0.22), C4=OK (probe@58500: C1=0.41/C2_gap=+0.12/loss_ema=2.18). 5 ckpts 已落盘（step10k/20k/30k/40k/50k, 487MB each）. 7/8 GPU util 100%（GPU6 transient 0%）, mem 16.5GB each. NFS 波动 img/s 5470→2130（当前 dip, 正常波动）. avg~390 steps/min, 剩余~213k 步, ETA~23:00–01:00. 训练健康, 无需干预. 📦 体积：TASK=25KB / MEMORY=11KB（无归档）.
+- [16:00] **R12b 心跳巡检#4 + TASK 归档**：step~69500/272000 ~25.6%, loss~2.05 (contrast~1.89, patch_mse~0.16), C4=OK (probe@69300: C1=0.40/C2_gap=+0.12/loss_ema=2.10). 6 ckpts 已落盘（step10k–60k, 487MB each）. NFS 波动 img/s 5385→2360（当前 dip）. avg~320 steps/min, 剩余~202k 步, ETA~02:00（NFS 波动致吞吐下降, 原 ETA~23:00 已滑）. 训练健康, 无需干预. **TASK 归档**：TASK 33.6KB>32KB → 把「深夜2 两份 HTML 报告」+「深夜 R12→3epoch+方向建议」两块原文搬入 ARCHIVE_OPERATOR_VISION.md, 留 1 行指针 → TASK 28.8KB ✅. 📦 体积：TASK=29KB / MEMORY=12KB（归档~5KB）.
 
 ## 历史条目已滚动归档（2026-10-03 / 2026-10-06）
 

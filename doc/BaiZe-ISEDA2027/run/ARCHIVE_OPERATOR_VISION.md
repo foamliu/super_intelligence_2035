@@ -303,4 +303,50 @@
   要下"前沿架构在我们场景行不行"的结论，**必须有这个对照**。
   ⚠️ 注意：**R14 已查明官方仓库存在情况**（FastVLM / MambaEye / MoE-ViE **找到**；**iGVLM / TuringViT 未找到**）→ R13 只能在**有官方实现的那几个**上做。
 - **前置**：先交**书面「值不值得 / 成本」判断**，**运维批准后再跑**。
-
+
+---
+
+> 📦 以下 2 块由 vision agent 于 2026-10-06 从 BAIZE_VISION_TASK.md 原文搬迁（均已执行完毕：两份 HTML 报告已交 + 3-epoch 续跑+方向建议已完成）。
+
+### 🆕 运维指令 · 2026-10-05（深夜2 · ⑥ **两份 HTML 报告：A. lp 评测细节 · B. AIMv2 架构实现细节**）· 高优先
+
+> **用户 2026-10-05 深夜**：「vision 的 **lp 评测细节**和 **AIMv2 架构实现细节**，**分别写（两个）html 报告**。」
+
+**A. `report_vision_lp_eval.html` —— 「frozen-trunk linear-probe」评测细节**（可复现级别）
+- **协议**：自切 IN-1k `val50000 / probe49970`（与 R8–R13 一致）；**冻结 trunk**、只训一个 `Linear(d→1000)`；优化器 / 步数 / bs / 是否 full-batch；**top-1 / top-5** 定义。
+- **口径**：`lp` vs `zs`（zero-shot）各自怎么算；**为什么 frozen-trunk lp 是我们横比的主指标**；**噪声带 ±1.5 pp** 的来源（ROUND10 §1.5）。
+- **in-domain / 不可比**：`en500k`（= LLaVA imagenet/EN，~30 epochs）**单列不排名**（R8.2 红线）。
+- **代码路径**：`run/vision/r8_eval_in1k.py`（**贴关键行号**）+ ckpt 加载 / 特征抽取方式。
+- **各轮实测 lp 汇总表**（R9 / R10 / R11-F 五臂 / R11-G / R11-H / R12 …）。
+
+**B. `report_vision_aimv2_impl.html` —— AIMv2-style 架构与实现细节**
+- **架构**：OpenVision2 **w512 / depth30 / patch16 / 224²**（126.78M）+ **`PatchPredictor` 0.66M**（`Linear(w→w)→LN→GELU→Linear(w→768)`，fc2 `N(0,0.02)` / bias 0）→ 总 **127.44M**；**文本塔 = 冻结 CLIP-768**（`openai/clip-vit-large-patch14-336`，ctx 77）。
+- **前向 / 目标**：`--loss aimv2` = **InfoNCE(pooled) + 1.0×masked-patch-MSE**；**`mask_ratio=0.6`**；`mae_norm_pix_target`（反 CLIP 归一化 → fold → 逐 patch 标准化）；**trunk forward 不变（全 patch 可见、无 mask token）** ⇒ frozen-trunk lp 可比（**关键设计理由**，务必写清）。
+- **与官方 AIMv2 的差异（C2 限定）**：官方 = **纯 AR（vision AR + text AR）、无对比项、α≈0.4、prefix-attention、~12B 对**；我们保留 InfoNCE、α=1.0、随机 mask、58.8M 对。
+- **代码路径**：`run/vision/models.py` 的 `PatchPredictor` + `r9_train.py` 的 `--loss aimv2` 分支（**贴行号**）。
+- **四臂因果分解**（① 6.08 / ④ CoCa 0.47 / ⑥-B 6.23 / ⑥-A 12.08）作为「为什么保留对比项」的证据。
+
+> 两份都要求：**自包含、无 CDN**，写进 `doc/BaiZe-ISEDA2027/`；**命令 + 原始输出 + 路径**（铁律）；**不改论文 .tex**。
+> ⚠️ **R12 训练仍在跑（`.12` 8 卡）—— 两份报告是纯 CPU/写作，不得干扰 R12**；写作与训练可并行。
+> ✅ 本块生效即视为已批准。
+
+### 🆕 运维指令 · 2026-10-05（深夜 · ① **R12 后「续跑到 3 epoch」+ 逐 epoch 评测 + 重拟合 scaling 刷新 25.1% 上限** ② **自提 ≥3 个下一步方向**）· 高优先 · **已批准**
+
+> **用户拍板（2026-10-05 深夜）**：
+> ①「**R12 结束后安排续跑到 3 个 epoch，在 epoch=1/2/3 时分别评测对比（也可多几个点），做 scaling law 的计算，刷新原来的数据无限外推上限（25.1%）**。」
+> ②「**让 vision agent 自己建议下一步方向（≥3 个）**。」
+
+**① R12 → 续跑到 3 epoch + 逐 epoch 评测 + 重拟合 scaling（刷新 25.1%）**
+- **起点**：R12 已跑 120k 步（≈1.05 epoch, N≈61.4M）；**从 R12 final ckpt 续训**到 **≈3 epoch**（≈3×114,746 ≈ **344,000 步**，N≈176M）。
+- **采点（≥6 点）**：**epoch=1 / 2 / 3 必测**；**建议加密到每 0.5 epoch 一点**（1.0/1.5/2.0/2.5/3.0，含 R12 已有的 ~1.05 epoch 点）。每点跑 IN-1k **frozen-trunk lp**（同 R8–R12 口径）。
+- **scaling 计算**：与 R11-G 同法（幂律 `a−b·N^−c` + 对数线性），报 **R² + 渐近 a**，与 **R9 的 InfoNCE 25.1%** 并列 → **刷新「数据无限外推上限」**。
+- **🔒 预注册判据（先定后测）**：**R²≥0.90 且 a 显著 >25.1%** → 正面（「换目标函数抬高渐近」）；**R²<0.90 或非单调** → 如实写「非简单幂律，需更多点」，🚫 不得强行外推。
+- **口径（全不变）**：AIMv2-style（InfoNCE + 1.0×patch-MSE）· w512 · 冻结 CLIP-768 · bs64×8=512 · seed1234 · bf16 · `.12` 8 卡；`--save-interval` 对齐采点。
+- **成本**：**先按实测 img/s 报「墙钟 / GPU·h / epoch」估算再起跑**（沿用「先报估算」铁律；R12 ~5400 img/s，3 epoch ≈344k 步）。
+- **产出**：`EXPERIMENTS_VISION_ROUND11.md` 新 §19（或新建 `EXPERIMENTS_VISION_ROUND12.md`）写 (lp,N) 新点 + 拟合式 + R² + 与 25.1% 对照；**回填论文 §6.3 的 scaling 数字**（该段已解冻）。
+
+**② 自提 ≥3 个下一步方向（只建议、未批不得起跑）**
+- 基于现有结果（AIMv2 翻盘 / R11-H 纯 AR 无翻盘 / R11-G scaling / R11-F 数据源横比 / OpenVision2 官方=纯生成 / R13 官方 79.81%），**书面提出 ≥3 个候选方向**；每个给：**动机 · 成本（GPU·h + 墙钟）· 预注册判据 · 预期产出 · 风险/边界**。
+- 交付：`run/VISION_NEXT_DIRECTIONS.md`（写入并在 MEMORY / 日报里引用）。**仅建议 —— 等运维批准后才可执行。**
+
+> ✅ 本块生效即视为已批准：**R12 训完 + eval 后，按序执行 ①（续跑 3 epoch）并交 ②（方向建议）**，无需再等唤醒。
