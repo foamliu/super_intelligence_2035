@@ -690,3 +690,16 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **结论**：**UTC 仍为 `2026-10-05`（周一）**；arXiv 公告批次仍为 **`2026-10-02`**（**周一公告尚未刷新**，通常于周一 20:00 ET 之后才出，约对应 UTC 次日 00:00）→ **0 新增属正常**（**非「无数据」**）；实际日期区间按 R2′ 标注为 **`2026-10-02`（最近公告批次）**。`window_mode=daily`（72h）为第三十轮起的自动口径回落，非人工覆盖。
 - **第 3 批 A/B 复核**：TOP-K（含 `takeaway`/`action` 20 条）+ `TAKEAWAYS.md`（5 条）+ 视频线（`SHORTLIST.md` 17 / `scripts/` 3）**已交付未变**；**无新增 → 不重跑**。
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
+
+### 9.50 第四十八轮（UTC 2026-10-06 周二 · 同批去重复核）：跨日入周二但周一公告仍未刷新 → **0 新增**（**本轮实时取数**）
+
+- **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-06T00:07:21.300726+00:00`，证据 `research/raw/2026-10-06-probe-r48.json`）：
+  - **arXiv API**：`HTTP 200` + `application/atom+xml`，最新 `published=2026-10-02T17:59:14Z`（`totalResults=626530`，样本 `2610.03717 / 2610.03716 / 2610.03715`）→ ✅ **可达**（本轮无重试）；
+  - **HF Daily Papers**：`Network is unreachable` → ❌ 不可达（**如实记录，不伪造 `hf_daily` 标记**）；
+  - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml` + `items=185 / 191 / 456` → ✅ **工作日已有内容**。
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=daily`，窗口 72h**，`generated=2026-10-06T00:04:53.425124+00:00`）：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600**；其中 **435 条 = `already in SEEN`**，其余 **165 条 = `stale > 72h`**。证据 `research/raw/2026-10-06-fetch-r48.json`。
+- **结论**：**UTC 已跨入 `2026-10-06`（周二）**；但 arXiv 公告批次仍为 **`2026-10-02`**（**周一公告尚未刷新到 API**，通常于周一 20:00 ET 之后才出，约对应 UTC 次日 00:00，**本轮恰在临界点、尚未生效**）→ **0 新增属正常**（**非「无数据」**）；实际日期区间按 R2′ 标注为 **`2026-10-02`（最近公告批次）**。`window_mode=daily`（72h）为第三十轮起的自动口径回落，非人工覆盖。
+- **第 3 批 A/B 复核**：TOP-K（含 `takeaway`/`action` 20 条）+ `TAKEAWAYS.md`（5 条）+ 视频线（`SHORTLIST.md` 17 / `scripts/` 3）**已交付未变**；**无新增 → 不重跑**。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
+- **下轮预期**：周一公告（`2026-10-05` 提交批）应在 **UTC `2026-10-06` 稍晚**刷新到 API，届时主源最新 `published` 将由 `2026-10-02` 变为 `2026-10-05`，**预计出现新增**。
+
