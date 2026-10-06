@@ -405,4 +405,6 @@
 | 2026-10-07 | Hark releases an AI personal assistant with a focus on privacy | TechCrunch | news | https://techcrunch.com/2026/10/06/hark-releases-an-ai-personal-assistant-with-a-focus-on-privacy/ |
 | 2026-10-07 | Paramount completes $111B Warner merger, creating "Skydance" behemoth | Ars Technica | news(非 AI·媒体并购) | https://arstechnica.com/tech-policy/2026/10/paramount-completes-111b-warner-merger-creating-skydance-behemoth/ |
 | 2026-10-07 | Amazon kills Alexa's ability to control Echo speakers' AUX input | Ars Technica | news(非 AI·硬件功能) | https://arstechnica.com/gadgets/2026/10/amazon-bricks-alexas-ability-to-control-echo-speakers-aux-input/ |
+| 2026-10-07 | Support Ars and get a better reading experience in return (ArsPro 订阅推广) | Ars Technica | promo(非新闻不收) | https://arstechnica.com/staff/2026/10/make-ars-better-with-an-arspro-subscription/ |
+| 2026-10-07 | Big Oil asks Supreme Court to kill climate lawsuits before trial | Ars Technica | news(非 AI·法律/气候) | https://arstechnica.com/tech-policy/2026/10/big-oil-asks-supreme-court-to-kill-climate-lawsuits-before-trial/ |
 

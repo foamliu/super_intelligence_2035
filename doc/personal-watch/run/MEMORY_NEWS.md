@@ -13,9 +13,9 @@ WAITING: 1
 ```
 PHASE:        常态采集（T1–T10 ✅）+ **L1/N3 收口（G1 全过）+ L2/N4 探索性（G2 全过）** + **任务书自滚归档（已把第2–10批 + §0.0.0/§0.0.1 背景块 → `WATCH_NEWS_TASK_ARCHIVE.md`；每次唤醒按 ≤32KB 自检）**（L1 焦点 · L2 探索性 · L3 冻结）
 已完成:       T1–T10 ✅ · 首~六十轮常态 ✅ · **N1 抓取器 + 语料〔全库完抓〕2,492,230 条 / 11 片 2016–2026（游标 `2015-12-31`，倒序收尾至 `2016-01-01`）· N3-1 EDA · TAXONOMY · N3-2 信号 · N3-3 事件库 75,610 条 · N3-4 预警方案 · L1 预警准则加固（`early_warning.py` §4.3 固定召回率 precision + §4.4 措辞强度 tone 信号，`EARLY_WARNING.md` 424 行）· L2 预注册 · 价格源复测 · N4 探索性关联（EXPLORE.md + explore.csv）· G2′④ 运行台账（cycle_run.py + STABILITY_LOG.md）+ 连续性自报（`compute_streak`：连续 7 自然日 · ≥20h · 同天计 1 · record-only 不计入）· **任务书自滚归档（第2–10批 + §0.0.0/§0.0.1 背景块 → `WATCH_NEWS_TASK_ARCHIVE.md`）** · **第六十轮常态采集（news +4：Mistral Large 4 · 英伟达市值新高 · Pinterest AI Beauty Guides · Flai A 轮）** · **第六十一轮常态采集（news +1：AMD 股价创历史新高·苏姿丰称 AI 芯片需求旺盛）** · **第六十二轮常态采集（news +2：德国交通部长盼特斯拉 FSD〔监督版〕获欧盟批准 · TechCrunch：LibreOffice 把「no AI」当特性）** · **第六十三轮常态采集（news +1：TechCrunch Anthropic 赠初创企业一年 Claude Team + 1,000 美元 API credits）** · **第六十四轮常态采集（news +1：Google 官方博客 EmbeddingGemma 2 开放轻量多模态嵌入模型〔基于 Gemma 4 · 端侧〕）** · **第六十五轮常态采集（news +1：TechCrunch Mirror Particle 构建「人类行为世界模型」基础模型〔将亮相 TechCrunch Disrupt Startup Battlefield 200〕）** · **第六十六轮常态采集（news +0：窗口 0.55h 无新 AI 事件 → 如实留空）** · **第六十七轮常态采集（news +0：窗口 0.53h 无新 AI 事件 → 如实留空）** · **第六十八轮常态采集（news +1：TechCrunch Hark 发布 AI 个人助理 Hark Pro〔computer-use 模型〕）**
-当前动作:     **本唤醒：第六十八轮常态采集（news +1：中文 0 / 英文 1）** —— 窗口约 **0.55h**（第六十七轮 02:15 → 本次 **2026-10-07 02:48 CST**；深夜/假期末段）。收录 **TechCrunch《Hark releases an AI personal assistant with a focus on privacy》**（`datePublished 2026-10-06T18:22:45+00:00` ＝ **02:22 CST**，本机 `HTTP 200` 实测原文可解析；**初创 Hark**〔Brett Adcock 创立·成立不足一年〕正式广泛发布 AI 个人助理 `Hark Pro`，免费 + 订阅档，底座为**专为「计算机操作 computer use」训练的模型**、目标＝「未来 AI 计算机的操作系统」，以**隐私 / 显示 agent 操作过程**为卖点 → 归第 1 类）。其余逐源**无新 AI 事件**：`cn_news`（限 50，活源 6）`AI/…` 正则零命中（假期返程/民生/时政/文旅/财经/体育）→ 不收；**联合国中文源仍 404**；IT之家 feed 头部仍 `010/124`〔六十二轮已账〕/`010/123` 游戏/`010/098` 驱动非 AI → 无新 AI 条目；量子位非 AI/analysis/已在账；TechCrunch 余 `JioHotstar`〔非 AI 流媒体〕/`Mirror Particle…`〔六十五轮〕/`Furientis`〔国防非 AI〕；The Verge `index` 头部（Prime Day/Netflix 游戏）非 AI；Ars `index` 头部 `Paramount-华纳并购`〔非 AI〕/`Amazon Alexa AUX`〔硬件非 AI〕/`诺奖物理`〔非 AI〕→ 不收；`search_news`(HN `AI`) 候选多 tool/promo/discussion、`UT Austin 称 OpenAI 400 篇证明`〔Twitter 转述·不可核验〕→ 拒收。`SEEN.md` **+3 行**（1 news + 2 防重）。**体积**：TASK=**31.6KB** / MEMORY≈**30KB**（ARCHIVE≈47KB）均 ≤32KB → **无需额外归档**。**上一唤醒**：第六十七轮（+0）详见 §2 流水。
+当前动作:     **本唤醒：第六十九轮常态采集（news +0：中文 0 / 英文 0）** —— 窗口约 **0.55h**（第六十八轮 02:48 → 本次 **2026-10-07 03:21 CST**；深夜/假期末段）内**无新 AI 事件** → **如实留空、不凑数**。逐源：`cn_news`（限 50，活源 6）`AI/…` 正则零命中（假期返程/民生/时政/文旅/财经/体育；唯一命中=央视网《华为 AI 时代计算架构·徐直军圆桌摘要》＝问答摘要/analysis·超龄 → 拒收）→ 不收；**联合国中文源仍 404**；IT之家 feed 头部仍 `010/124`〔六十二轮已账〕/`010/123` 游戏/`010/098` 驱动非 AI → 无新 AI 条目；量子位非 AI/analysis/已在账；TechCrunch 新头部仍 `Hark…`〔第六十八轮已收〕/`Mirror Particle…`〔六十五轮〕/`Anthropic…`〔六十三轮〕→ 无新头部；The Verge `ai` 头部 column/opinion；Ars `index` 头部 `Paramount-华纳并购`〔非 AI·防重〕/`ArsPro`〔promo〕/`Amazon Alexa AUX`〔硬件非 AI〕/诺奖物理〔非 AI〕/`Big Oil 诉最高法院`〔非 AI〕→ 不收；`search_news`(HN `AI`/`artificial intelligence`) 候选多 opinion/analysis/tool/feature/已在账、`UT Austin 称 OpenAI 400 篇证明`〔Twitter 转述·不可核验〕→ 拒收；本机 `web-search__search_news` 直接超时失败（DDGS 8/8 引擎被墙，一致）。`SEEN.md` **+2 行**（均非新闻/非 AI 防重：ArsPro · Big Oil）。**体积**：TASK=**31.6KB** / MEMORY≈**31KB**（ARCHIVE≈47KB）均 ≤32KB → **无需额外归档**。**上一唤醒**：第六十八轮（+1）详见 §2 流水。
 下一步:       ① 常态采集续跑（窗口内新 AI 事件照收、无则如实留空）；② **G2′④ 累积**：维持 ≥20h 真实重跑节奏（下一窗约 `2026-10-07 ≥07:24`），**如实自报连续天数/未达标**（`STABILITY_LOG.md`）；③ **第 10 批 B 线**：**仍待用户拍板 P1–P6/P7**（`news/dongfang/report.html` §8）→ **拍板前不实施日更**；④ L1 稳定性 / 下一个候选文本信号 = **新词首发 / 版面**（§4.4 措辞组合**未胜出**，如实保留）；⑤ L3（N5）**冻结**；⑥ **任务书/MEMORY 自滚归档**（>32KB 目标 / >40KB 红线前先搬 `WATCH_NEWS_TASK_ARCHIVE.md` / `daily-memories-news/`）
-本轮新增:     **第六十八轮常态 news +1（中文 0 / 英文 1；当日 4 / 累计 163）**——TechCrunch《Hark releases an AI personal assistant with a focus on privacy》（**初创 Hark 发布 AI 助理 `Hark Pro`**；computer-use 模型；归第 1 类）。`SEEN.md` **+3 行**（1 news + 2 非新闻防重）。┃ 第六十七轮（news +0）见 §2 流水
+本轮新增:     **第六十九轮常态 news +0（中文 0 / 英文 0；当日 4 / 累计 163 不变）**——窗口约 **0.55h**（02:48 → 03:21 CST，深夜）内**无新 AI 事件** → **如实留空、不凑数**。`SEEN.md` **+2 行**（均非新闻/非 AI 防重：ArsPro · Big Oil）。┃ 上一唤醒：第六十八轮（news +1：Hark Pro）见 §2 流水
 阻塞:         无（新华网长期 403/405 → 兜底源 `chinanews`；⚠️ **无 bypy → 网盘不可用** → ≥5MB 一律「本地保留 + 清单登记 + 如实标『未上云』」；⚠️ **东财日K 运行机 TLS 被重置** → 历史日线走腾讯 `ifzq`；⚠️ **停后台抓取须杀 python 子进程**；⚠️ **等抓取勿用 `pgrep -f <脚本名>`** → 用 `kill -0 <pid>`；⚠️ **ops relay 的 `git pull --rebase` 会删掉被 untrack 的工作区分片** → 须从 `~/archive_data_backup/` 恢复）｜🆕 **第 10 批**：⚠️ **`mcp<2` 已成运行机全局 pin**（2.3.0 → **1.30.0**，否则 `mcp_ddgs`/离线自检不可用）→ 与需 **mcp 2.x** 的其它线**可能冲突**，**待 supervisor 确认**；⚠️ **ddgs 8/8 引擎被墙**（duckduckgo/yahoo 超时；cn.bing/mojeek 可达但结果端点被拦）→ 免费通用 web 搜索**本机不可用**，日常仍以 `cn_news` + 官方 RSS 为准；⚠️ **CN-Bing 抓取相关性降级**（查「人工智能 最新 政策」返回「人工」词条 → 200 ≠ 有料） ｜📦 **体积：TASK=31.6KB / MEMORY≈28KB（ARCHIVE≈47KB）**（均已 ≤32KB 目标；soft 32KB / 红线 40KB）
 ERROR_COUNT:  4（历史：模型名白睡一轮，已修；并发双抓重复，已修；watcher `pgrep -f` 自匹配死锁，已修；**relay rebase 删工作区分片 → 已恢复**）
 ```
@@ -95,12 +95,15 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - **L2 产物（探索性 · 非因果）**：`news/policy/`（`L2_PREREG.md` / **`EXPLORE.md` + `explore.csv`**）
 - **日流水**：`daily-memories-news/<YYYY-MM-DD>.md`
 - **采集节律**：对齐 BaiZe —— `WAITING=1`（常态）睡 **30min**；`WAITING=0`（有近期待办）短睡 **60s**
-- **上次采集窗口**：`2026-10-07 00:36 CST` 第六十四轮 ~ `2026-10-07 01:10 CST` 第六十五轮（**第六十五轮为本轮唤醒**）
-- **累计收录**：`news` **162** 条（第一~六十五轮；当日 **3**）+ 非新闻（口径=逐行统计 `SEEN.md` 类型列）〔**仅存 `SEEN.md`**〕
+- **上次采集窗口**：`2026-10-07 02:48 CST` 第六十八轮 ~ `2026-10-07 03:21 CST` 第六十九轮（**第六十九轮为本轮唤醒**）
+- **累计收录**：`news` **163** 条（第一~六十九轮；当日 **4**）+ 非新闻（口径=逐行统计 `SEEN.md` 类型列）〔**仅存 `SEEN.md`**〕
 
 ---
 
 ## 2. 流水（倒序，保留最近 ~20 条）
+
+- **2026-10-07（本唤醒 ~03:21）** —— ⏸️ **第六十九轮常态采集：news +0（中文 0 / 英文 0；当日 4 / 累计 163 不变）**：窗口约 **0.55h**（第六十八轮 02:48 → 本次 **2026-10-07 03:21 CST**，深夜/假期末段）内**无新 AI 事件** → **如实留空、不凑数**（§0.1 / §4.10）。逐源核对：`cn_news`（限 50，活源 6）中新网/央视网均**假期返程/民生/时政/文旅/财经/体育**（2032 布里斯班奥运会徽 · 澜湄合作洪水预警 · 中国足球队收官 · IMF 对冲基金风险 · 以色列旅行警告 · WTT 大满贯 · 《只此青绿》千场 · 安徽矾都文旅 · 拉脱维亚组阁 · 商务部/外交部涉欧答问 · 冯德莱恩黑海 · 泰国通胀 · 诺贝尔物理学奖…），**`AI/…` 正则零命中**（唯一命中=`央视网《华为开创AI时代计算架构…徐直军圆桌摘要》`＝**问答摘要/analysis·且为超龄条目** → 拒收）；**联合国中文源仍 404**；IT之家 feed 头部仍 `010/124`〔第六十二轮已账〕/`010/123` 游戏/`010/098` 驱动/`010/111` 特斯拉印度〔均非 AI〕→ 无晚于 `010/124` 的新 AI 条目；量子位头部 诺奖物理〔非 AI〕/陶哲轩〔analysis〕/OpenAI 28 天〔analysis/已在账段〕→ 不收/去重；TechCrunch AI feed **新头部仍 `Hark…`**〔第六十八轮已收录〕/`Mirror Particle…`〔六十五轮〕/`Anthropic…`〔六十三轮〕/`LibreOffice no-AI`〔六十二轮〕/`Mistral Large 4`〔六十轮〕→ 无新头部；The Verge `ai` 头部 `We can't just change the definition of 'recording'`〔**column/opinion**〕→ 非新闻不收；Ars `index` 头部 `Paramount 完成 $111B 华纳合并`〔非 AI·防重〕/`ArsPro`〔**promo**〕/`Amazon 砍 Alexa AUX`〔硬件非 AI·已账〕/`2026 诺奖物理`〔非 AI〕/`Googlebook Better Together`〔非 AI〕/`NASA 7500 承包商`〔非 AI〕/`Pebble Flow`〔非 AI〕/`Big Oil 诉最高法院`〔非 AI〕/`OpenAI agents 攻击 Wikipedia 工具`〔同事件·已在账 Wikimedia〕/`VMware 许可调查`〔非 AI〕→ 去重/不收；`search_news`(HN `AI`/`artificial intelligence`) 候选多 `Gary Marcus substack`〔opinion〕/`Our minds aren't equipped…`〔**feature/opinion·已账**〕/`AMD Quark`〔tool〕/`Render IA`〔spam〕/`Chick-fil-A`〔opinion 来源〕/`Tom's Hardware Anthropic 佛州`〔已账〕/`Apple Intelligence 删除工具`〔已账〕/`UT Austin 称 OpenAI 拟发 400 篇证明`〔**Twitter 转述·非新闻机构·不可核验**〕→ 拒收/去重；**本机 DDGS `web_search`/`search_news` 仍 8/8 引擎被墙**（本轮 `web-search__search_news` 直接超时失败 → 一致）。**台账**：`SEEN.md` **+2 行**（均非新闻/非 AI 防重：ArsPro〔promo〕· Big Oil 诉最高法院〔非 AI〕）。**G2′④**：距 2026-10-06 11:24 真实重跑约 **16.0h <20h** → 不刷连续性（自报仍 **连续 2 天 / 目标 7 天 · ⚠️ 未达标**；下一窗 ≥20h 约 `2026-10-07 ≥07:24`）。**体积**：TASK=**31.6KB** / MEMORY≈**31KB**（ARCHIVE≈47KB）均 ≤32KB → 无需额外归档。**判据复核**：✅ 无新增（如实留空、未凑数）· ✅ 非 AI/promo/opinion/feature/analysis/tool/discussion 从严不收 · ✅ 非新闻单列（仅存 `SEEN.md`）· ✅ 无因果措辞 · ✅ 非投资建议 · ✅ **L3（N5）冻结**。
+
 
 - **2026-10-07（本唤醒 ~02:48）** —— ✅ **第六十八轮常态采集：news +1（中文 0 / 英文 1；当日 4 / 累计 163）**：窗口约 **0.55h**（第六十七轮 02:15 → 本次 **2026-10-07 02:48 CST**，深夜/假期末段）。**收录**：**TechCrunch《Hark releases an AI personal assistant with a focus on privacy》**（`datePublished 2026-10-06T18:22:45+00:00` ＝ **2026-10-07 02:22 CST**，本机 `HTTP 200` 实测原文可解析并核验发布时刻在窗；**初创 Hark**〔由连续创业者 **Brett Adcock** 创立·成立不足一年〕**正式广泛发布 AI 个人助理 `Hark Pro`**，免费 + 重用户订阅档；公司自述使命＝**「为 AI 造一个用户界面」，而非做 AGI**；底座＝**专为「计算机操作 computer use」训练的模型**，产品目标＝**「未来 AI 计算机的操作系统」**；全屏首页＝中央对话框 + 提示 feed + 公司称 `panels`（迷你仪表盘），背景随天气/时间定制；用户接入邮箱/日历/硬盘/信用卡等后它**代做数字任务**；**设计负责人 Abidur Chowdhury（前 Apple）** 演示：主动提示待批费用/待回邮件/会议、提议代订机票，并曾**识别同事需在加州 DMV 续办车辆注册并代其官网办妥**；显著 UX＝**以小窗展示 agent 如何操作网页**以建立信任；归第 1 类）。**未收/去重**：`cn_news`（限 50，活源 6）`AI/…` 正则零命中（假期返程/民生/时政/文旅/财经/体育）→ 不收；**联合国中文源仍 404**；IT之家 feed 头部仍 `010/124`〔六十二轮已账〕/`010/123` 游戏/`010/098` 驱动非 AI → 无新 AI 条目；量子位非 AI/analysis/已在账；TechCrunch 余 `JioHotstar`〔非 AI 流媒体〕/`Mirror Particle…`〔六十五轮〕/`Furientis`〔国防非 AI〕；The Verge `index` 头部非 AI（Prime Day / Netflix 游戏）；Ars `index` 头部 `Paramount 完成 $111B 华纳合并`〔非 AI·媒体并购〕/`Amazon 砍 Alexa AUX`〔硬件非 AI〕/`2026 诺奖物理`〔非 AI〕→ 不收；`search_news`(HN `AI`) 候选多 `Show HN/Promo`〔tool/promo〕/视频/`Ask HN`〔discussion〕、`UT Austin 数学系主任称 OpenAI 拟发 400 篇 AI 生成证明`〔Twitter 转述·非新闻机构·不可核验〕→ 拒收。**台账**：`SEEN.md` **+3 行**（1 news + 2 非新闻防重：Paramount-华纳并购 · Amazon Alexa AUX）。**G2′④**：距 2026-10-06 11:24 真实重跑约 **15.4h <20h** → 不刷连续性（自报仍 **连续 2 天 / 目标 7 天 · ⚠️ 未达标**；下一窗 ≥20h 约 `2026-10-07 ≥07:24`）。**体积**：TASK=**31.6KB** / MEMORY≈**30KB**（ARCHIVE≈47KB）均 ≤32KB → 无需额外归档（任务书 31.6KB ≤32KB，**归档自检通过、本轮无需搬迁**）。**判据复核**：✅ 标题+来源+发布日期+链接 · ✅ 本机实测 `HTTP 200` 核验 `datePublished` 在窗 · ✅ 产品/能力如实归属为「发布/自述/演示」（非既成结果）· ✅ 非 AI/tool/promo/discussion/opinion/analysis 从严不收 · ✅ 非新闻单列（仅存 `SEEN.md`）· ✅ 无因果措辞 · ✅ 非投资建议 · ✅ **L3（N5）冻结**。
 
@@ -137,34 +140,4 @@ python3 -c "import sys; sys.path.insert(0,'news'); import mcp_web_search_free as
 - 🔀 **第五十六轮**（2026-10-06 ~19:55，news +3：IT之家 谷歌×Constellation 3.59GW 长期电力协议 / Mistral AI 新模型预告〔网安等方面优于中国竞品〕/ Guardian AI 滥用为品牌最大声誉威胁）已由滚动机制归档至 `daily-memories-news/2026-10-06.md`（原文不改）。
 
 
-- **2026-10-06（本唤醒 ~18:41）第五十四轮常态采集（news +5：韩国 4.7 万亿韩元专项 / AGCM 调查 Suno / 索尼音乐下架 26 万首 AI 伪造歌曲 / Anthropic CEO 薪酬 / DeepSeek 800 亿元融资）** —— 🗂 明细已由滚动机制归档至 `daily-memories-news/2026-10-06.md`（原文不改）。
-
-
-- 🔀 **第五十二~五十三轮流水原文已滚入** `daily-memories-news/2026-10-06.md`（📦 滚动归档 · 第五十二~五十三轮，2026-10-06）。
-
-
-- 🔀 **第五十一轮**（2026-10-06 ~11:56，news +1：IT之家 月之暗面 pre-IPO〔估值约 500 亿美元·明年一季度赴港 IPO〕）已由滚动机制归档至 `daily-memories-news/2026-10-06.md`（原文不改）。
-
-
-- 🔀 **第五十轮**（2026-10-06 ~11:16，news +2：快手可灵 AI 赴港 IPO 筹备〔募资至少 10 亿美元〕· 中新网 AI 短片<合龙>海外获奖；含 G2′④ 真实重跑 + 任务书自滚归档）已由滚动机制归档至 `daily-memories-news/2026-10-06.md`（原文不改）。
-- 🔀 **第四十九轮流水原文已滚入** `daily-memories-news/2026-10-06.md`（📦 滚动归档 · 第四十九轮，2026-10-06）。
-
-- 🔀 **第四十八轮流水原文已滚入** `daily-memories-news/2026-10-06.md`（📦 滚动归档 · 第四十八轮，2026-10-06）。
-
-
-- 🔀 **第四十七轮**（2026-10-06 ~10:05，news +2：IT之家 GLM-5.3 上架 AWS Bedrock〔智谱海外云分成〕· LG 电子北美超 5GW AIDC 冷水机组）已由滚动机制归档至 `daily-memories-news/2026-10-06.md`（原文不改）。
-
-
-- 🔀 **第四十六轮**（2026-10-06 ~09:32，news +1：IT之家 空芯光纤〔hollow-core fiber·宁夏中卫智算中心间商用〕）已由滚动机制归档至 `daily-memories-news/2026-10-06.md`（原文不改）。
-- 🔀 **第四十五轮**（2026-10-06 ~08:55，news +0）已由滚动机制归档至 `daily-memories-news/2026-10-06.md`（原文不改）。
-
-- 🔀 **第四十四轮**（2026-10-06 ~08:22，news +1：IT之家《麦当劳在美遭集体诉讼，被指用 AI 系统非法操纵菜单价格》）已由滚动机制归档至 `daily-memories-news/2026-10-06.md`（原文不改）。
-
-- 🔀 **第四十三轮**（2026-10-06 ~07:48，news +2：Gemini Call-for-Me 爆料 · tvOS 27.2 Apple TV 4K Siri AI 爆料）已由滚动机制归档至 `daily-memories-news/2026-10-06.md`（原文不改）。
-
-- 🔀 **第四十一~四十二轮**（2026-10-06 ~06:41〔+1 Ars MCP〕/ ~07:14〔+0〕）已由滚动机制归档至 `daily-memories-news/2026-10-06.md`（原文不改）。
-- 🗂 **第三十八~四十轮（10-06 ~05:00 / ~05:33 / ~06:06，均 news +0）** —— 由滚动机制归档至 `daily-memories-news/2026-10-06.md`（原文不改）。
-
-- **2026-10-05（本唤醒 ~23:40）** —— 🗂 **用户直派「第 10 批」A/B 双线**（A：免费 web-search MCP 装进 cline〔**依赖装齐 + cline 注册成功，但 ddgs 8/8 引擎被墙 → 本机不可用**〕；B：《衍射+东方时事解读音频》获取与转写调研〔**只调研不实施日更**〕）→ **明细已由滚动机制归档至 `daily-memories-news/2026-10-05.md`**（原文不改）；产物：`news/MCP_INSTALL.md` · `news/dongfang/report.html` · `news/dongfang/METHODS.md`；**待用户拍板 P1–P6/P7**。
-
-- （更早流水：**2026-10-06 ~03:52 / ~04:40 第三十六~三十七轮**（Reflection Beam · Menlo×Factory · Etched 融资要约 · Nolla 处方；本轮由滚动机制平滑归档至 `daily-memories-news/2026-10-06.md`）· **2026-10-06 ~01:24 第三十一轮**（The Verge《OpenAI PR 要求记者 move on》；已归档 `daily-memories-news/2026-10-06.md`）· **2026-10-06 ~00:13 / ~00:52 第二十九~三十轮**（已归档 `daily-memories-news/2026-10-06.md`）· **2026-10-05 22:13/22:49 第二十七~二十八轮**（The Verge StarCraft 破规作弊 · TechCrunch 中国 AI「agent fleet」；由滚动机制平滑归档至 `daily-memories-news/2026-10-05.md`）· **2026-10-05 21:05/21:37 第二十五~二十六轮**（常态采集；本轮第 10 批唤醒由滚动机制平滑归档至 `daily-memories-news/2026-10-05.md`）· **2026-10-05 18:45~20:26 第二十一~二十四轮**（常态采集；本轮 22:49 由滚动机制平滑归档至 `daily-memories-news/2026-10-05.md`）· **2026-10-05 17:25/17:55 第十九~二十轮**（TechCrunch 超级智能部队 · 钛媒体 SpaceXSI · TechCrunch 联邦法官裁定 Flock；已归档 `daily-memori
+- 🔀 **第五十四轮及更早（第五十三~十九轮 + 第 10 批块）流水原文已滚入** `daily-memories-news/2026-10-06.md`（📦 滚动归档 · 第六十九轮唤醒 2026-10-07 03:21；原文不改）。
