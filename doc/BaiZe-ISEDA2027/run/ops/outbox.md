@@ -8737,3 +8737,149 @@ From https://github.com/foamliu/super_intelligence_2035
 === DONE ===
 === ALL DONE ===
 ```
+
+---
+
+## RUN_ID 82 · 2026-10-06 11:43:43 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 82 · ZhuLong finalize: cline path + ref fix + restart $(date '+%F %T') ==="
+timeout 240 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+PX=http://172.19.92.23:13128
+cd "$W" || { echo "(NO repo)"; exit 1; }
+echo "host=$(hostname)  $(date '+%F %T')"
+echo "--- [1] ask an INTERACTIVE shell where cline is ---"
+CP="$(bash -ic 'command -v cline' 2>/dev/null | tail -1)"
+echo "cline_path=$CP"
+CDIR="$(dirname "$CP" 2>/dev/null)"
+echo "cline_dir=$CDIR"
+echo "--- [2] fix stale origin/main ref + fetch with proxy ---"
+git update-ref -d refs/remotes/origin/main 2>&1 | head -2
+export https_proxy="$PX"
+export http_proxy="$PX"
+timeout 150 git fetch origin 2>&1 | tail -3 | cut -c1-190
+git status -sb 2>&1 | head -3 | cut -c1-150
+echo "--- [3] restart relay+loop with real PATH + proxy ---"
+export PATH="$CDIR:$HOME/.bun/bin:$PATH"
+command -v cline >/dev/null 2>&1 && echo "cline OK in new env" || echo "!! cline STILL missing"
+R="$W/doc/ZhuLong_DAC2027/run"
+pkill -f zhulong_loop.sh 2>/dev/null
+pkill -f zhulong_ops_relay.sh 2>/dev/null
+sleep 3
+setsid bash "$R/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+setsid bash "$R/zhulong_ops_relay.sh" > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
+sleep 8
+ps -eo pid,etime,args | grep -E 'zhulong_(loop|ops_relay)[.]sh' | grep -v grep | cut -c1-140 || echo "(NOT up!)"
+echo "--- [4] loop log (expect invoking cline, and NO 'No such file') ---"
+tail -6 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-190
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+
+## RUN_ID 81 — 🔧 **带"显式 PATH(cline) + https_proxy"重启 ZhuLong relay/loop**（修正 77/78 用非登录 shell 重启的副作用）
+
+> **背景（supervisor 2026-10-06 11:4x）**：RUN_ID 79 复核发现 loop 虽然活着，但日志报 **`env: cline: No such file or directory`** 与 **`[push] fetch FAILED (network?)`** ⇒ 根因是 **RUN_ID 77/78 用 ssh 的非交互 shell 重启**，**PATH 里没有 nvm 的 `cline`、env 里没有 `~/.bashrc:119` 的 `https_proxy`**。⇒ 本块**显式注入**这两样再重启（不依赖 `.bashrc` 是否被 source）。
+> **本块**：① 测 36.15 的 `https_proxy=http://172.19.92.23:13128`（`.23`，**不是** `.25`）是否可用；② 自动定位 `~/.nvm/versions/node/*/bin/cline`；③ 用"显式 PATH+proxy"重启 relay 与 loop；④ 复核新 PID 与日志首行。🚫 不改 `.bashrc`、不改 ZhuLong 脚本。
+
+set -u
+echo "=== RUN_ID 81 · restart ZhuLong with explicit PATH+proxy $(date '+%F %T') ==="
+timeout 180 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+PX=http://172.19.92.23:13128
+cd "$W" || { echo "(NO repo)"; exit 1; }
+echo "host=$(hostname)  $(date '+%F %T')"
+echo "--- [1] proxy .23 reachable from 36.15 ? ---"
+timeout 25 curl -x "$PX" -sS -o /dev/null -w 'via_.23_github=%{http_code}' --max-time 22 https://github.com 2>&1 | cut -c1-170
+echo ""
+echo "--- [2] locate cline / node bin ---"
+NB="$(ls -d "$HOME"/.nvm/versions/node/*/bin 2>/dev/null | tail -1)"
+echo "nodebin=$NB"
+[ -x "$NB/cline" ] && echo "cline found at nodebin" || echo "(no cline at nodebin)"
+command -v cline >/dev/null 2>&1 && echo "cline already in PATH" || echo "(cline NOT in PATH)"
+echo "--- [3] restart relay+loop with explicit PATH + proxy ---"
+export PATH="$NB:$HOME/.bun/bin:$PATH"
+export https_proxy="$PX"
+export http_proxy="$PX"
+command -v cline >/dev/null 2>&1 && echo "cline OK in new env" || echo "!! cline STILL missing"
+R="$W/doc/ZhuLong_DAC2027/run"
+pkill -f zhulong_loop.sh 2>/dev/null
+pkill -f zhulong_ops_relay.sh 2>/dev/null
+sleep 3
+setsid bash "$R/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+setsid bash "$R/zhulong_ops_relay.sh" > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
+sleep 5
+ps -eo pid,etime,args | grep -E 'zhulong_(loop|ops_relay)[.]sh' | grep -v grep | cut -c1-140 || echo "(NOT up!)"
+echo "--- [4] loop log after ~5s ---"
+tail -5 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-190
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
+
+**输出**
+```
+=== RUN_ID 82 · ZhuLong finalize: cline path + ref fix + restart 2026-10-06 11:43:43 ===
+Warning: Permanently added '[localhost]:3333' (ED25519) to the list of known hosts.
+host=hfeg0tedaap02  2026-10-06 11:43:44
+--- [1] ask an INTERACTIVE shell where cline is ---
+cline_path=/home/app.e0031982/.local/node-20/bin/cline
+cline_dir=/home/app.e0031982/.local/node-20/bin
+--- [2] fix stale origin/main ref + fetch with proxy ---
+From https://github.com/foamliu/super_intelligence_2035
+ * [new branch]      main       -> origin/main
+## main...origin/main
+ M doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md
+ M doc/ZhuLong_DAC2027/run/daily-memories/2026-10-04.md
+--- [3] restart relay+loop with real PATH + proxy ---
+cline OK in new env
+2665186       00:08 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+2665187       00:08 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+--- [4] loop log (expect invoking cline, and NO 'No such file') ---
+[loop] 2026-10-06 11:43:48 wake up, invoking cline ...
+[2m[thinking] [0m[2mLet[0m[2m me start by understanding[0m[2m the current state.[0m[2m I'm in the[0m[2m run directory of[0m[2m the ZhuLong DAC[0m[2m2027 project[0m[2m. Let m
+
+Let me begin[0m[2m by reading the MEMORY[0m[2m file[0m[2m and today[0m[2m's daily memory[0m[2m to[0m[2m understand current[0m[2m state.[0m
+我先读取关键状态文件，以了解目前的情况。
+=== DONE ===
+=== ALL DONE ===
+/tmp/tmp.l3XgNCyVIG: line 39: env:: command not found
+/tmp/tmp.l3XgNCyVIG: command substitution: line 39: syntax error near unexpected token `('
+/tmp/tmp.l3XgNCyVIG: command substitution: line 39: `[push] fetch FAILED (network?)'
+[31merror:[0m interactive mode requires a TTY (stdin/stdout must both be terminals)
+/tmp/tmp.l3XgNCyVIG: line 39: /home/app.e0031982/.bashrc:119: No such file or directory
+/tmp/tmp.l3XgNCyVIG: line 39: https_proxy: command not found
+/tmp/tmp.l3XgNCyVIG: line 39: .bashrc: command not found
+/tmp/tmp.l3XgNCyVIG: line 39: 2026-10-06: command not found
+/tmp/tmp.l3XgNCyVIG: line 40: .23: command not found
+/tmp/tmp.l3XgNCyVIG: line 40: .25: command not found
+/tmp/tmp.l3XgNCyVIG: line 40: /home/app.e0031982/.nvm/versions/node/*/bin/cline: No such file or directory
+/tmp/tmp.l3XgNCyVIG: line 40: .bashrc: command not found
+/tmp/tmp.l3XgNCyVIG: line 40: 测: command not found
+=== RUN_ID 81 · restart ZhuLong with explicit PATH+proxy 2026-10-06 11:43:58 ===
+Warning: Permanently added '[localhost]:3333' (ED25519) to the list of known hosts.
+host=hfeg0tedaap02  2026-10-06 11:43:58
+--- [1] proxy .23 reachable from 36.15 ? ---
+via_.23_github=200
+
+--- [2] locate cline / node bin ---
+nodebin=
+(no cline at nodebin)
+(cline NOT in PATH)
+--- [3] restart relay+loop with explicit PATH + proxy ---
+!! cline STILL missing
+2665948       00:05 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+2665949       00:05 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+--- [4] loop log after ~5s ---
+[push] committed.
+To https://github.com/foamliu/super_intelligence_2035
+   36808bd..ad41b6a  main -> main
+[push] push OK.
+[loop] 2026-10-06 11:44:06 WAITING=1 (eval running / infra not ready) → sleep 1800s
+=== DONE ===
+=== ALL DONE ===
+```
