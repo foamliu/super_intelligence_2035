@@ -10,10 +10,10 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) → 🔄 BO搜索Stable段进行中(79/200 trial完成+6运行中, PID 36451@.29, GPU2-7; best=4.6471 #64)
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；proxy d128 provider+recipe创建；held-out bin(base/code/math各~2M tok)；baize_mix_optuna.py创建(GP-EI)；5项必验全部通过(09:48)；BO搜索Stable段已启动(10:01)→GP竞态crash修复+重启(11:25)→79/200完成(13:55)；**任务书归档完成(79.8KB→31.6KB)**
-当前动作:     唤醒154(13:55) ①确认BO在.29运行(PID 36451 alive,etimes=9053s≈151min,GPU2-7各6.7GB/0-15%util,GPU0-1空) ②DB查询:79/200 complete(0 pruned/0 failed)+6运行中(t0079-t0084),best=4.6471(#64 web=0.8055/code=0.0999/math=0.0946),top5=#64/44/78/56/76(loss 4.647~4.653),先验(88:8:4)=#49(web=0.884/code=0.083/math=0.033,loss=4.898,rank 53/79,Δ=0.251=5.4%更差),rate=21.9trial/h ETA~19:10 ③更新心跳+日报+commit
-下一步:       ① BO搜索继续(~115 trial剩余,ETA~19:10);② 每~30-60min查进度+commit心跳;③ 200 trial完成→出top-K表+先验点对比+best-so-far曲线;④ Day2搜Decay段
+PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) → 🔄 BO搜索Stable段进行中(91/200 trial完成, PID 36451@.29, GPU2-7; best=4.6420 #84)
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；proxy d128 provider+recipe创建；held-out bin(base/code/math各~2M tok)；baize_mix_optuna.py创建(GP-EI)；5项必验全部通过(09:48)；BO搜索Stable段已启动(10:01)→GP竞态crash修复+重启(11:25)→91/200完成(14:30)；**任务书归档完成(79.8KB→31.6KB)**
+当前动作:     唤醒155(14:30) ①确认BO在.29运行(PID 36451 alive,etimes=11131s≈185min,GPU2-7各6.7GB/7-10%util,GPU0-1空) ②DB查询:91/200 complete(0 pruned/0 failed),best=4.6420(#84 web=0.8008/code=0.1118/math=0.0874),top5=#84/80/64/44/78(loss 4.642~4.651),先验(88:8:4)=#49(web=0.884/code=0.083/math=0.033,loss=4.898,rank 64/91,Δ=0.256=5.5%更差),rate≈20.6trial/h(12trial/35min) ETA~19:45 ③更新心跳+日报+commit
+下一步:       ① BO搜索继续(~109 trial剩余,ETA~19:45);② 每~30-60min查进度+commit心跳;③ 200 trial完成→出top-K表+先验点对比+best-so-far曲线;④ Day2搜Decay段
 阻塞:         无
 ERROR_COUNT:  0
 ```
@@ -104,6 +104,8 @@ ERROR_COUNT:  0
 
 - [13:55] **唤醒154**：①SSH .29确认:PID 36451 alive(etimes=9053s≈151min)，6个trial运行中(t0079-t0084,GPU2-7各6689MiB/0-15%util)，GPU0-1空(GPU1有2631MiB/100%util=pretrain P-9.9,与data无冲突)。②DB查询:**79/200 complete**(全部complete,0 pruned/0 failed)+6 running。**best=4.6471**(#64:web=0.8055/code=0.0999/math=0.0946)，top5=#64/44/78/56/76(loss 4.647~4.653)。**先验(88:8:4)=#49**(web=0.884/code=0.083/math=0.033,loss=4.898,**rank 53/79**,Δ=0.251=**5.4%更差**)→BO持续优化,最佳点向web~0.80/code~0.10/math~0.09收敛。③rate=21.9trial/h(79trial/3.6h),剩余115→ETA~19:10。📦 体积：TASK=31.6KB / MEMORY=29.1KB（归档 0KB）。
 
+- [14:30] **唤醒155**：①SSH .29确认:PID 36451 alive(etimes=11131s≈185min)，GPU2-7各6689MiB/7-10%util，GPU0-1空。②DB查询:**91/200 complete**(全部complete,0 pruned/0 failed)。**best=4.6420**(#84:web=0.8008/code=0.1118/math=0.0874)，top5=#84/80/64/44/78(loss 4.642~4.651)。**先验(88:8:4)=#49**(loss=4.898,**rank 64/91**,Δ=0.256=**5.5%更差**)→BO持续优化,best从#64(4.6471)→#84(4.6420),收敛区web=0.80/code=0.11/math=0.09稳定。③rate≈20.6trial/h(12trial/35min since 唤醒154),剩余109→ETA~19:45。④任务书&记忆体积均在32KB内,无需归档。📦 体积：TASK=31.6KB / MEMORY=29.8KB（归档 0KB）。
+
 ## 运维问答
 
 > 外部运维在 `BAIZE_DATA_TASK.md` 的「运维指令区」提问时，答案写在这里。
@@ -158,8 +160,8 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **§0.6-B 配比实验改道 → 🔄 BO搜索Stable段进行中(79/200+6运行, PID 36451, GPU2-7; best=4.6471 #64); 任务书归档完成(79.8KB→31.6KB)** |
-| WAITING | 1（🔄 BO搜索Stable段运行中: 79/200 trial完成+6运行中, best=4.6471(#64), 先验rank53/79 Δ=5.4%, ETA~19:10; 每30-60min查进度+commit心跳） |
+| PHASE | **§0.6-B 配比实验改道 → 🔄 BO搜索Stable段进行中(91/200, PID 36451, GPU2-7; best=4.6420 #84); 任务书归档完成(79.8KB→31.6KB)** |
+| WAITING | 1（🔄 BO搜索Stable段运行中: 91/200 trial完成, best=4.6420(#84), 先验rank64/91 Δ=5.5%, ETA~19:45; 每30-60min查进度+commit心跳） |
 | ERROR_COUNT | 1（GP竞态crash已修复，见流水唤醒150） |
 | 节点 | `10.239.2.29`（GPU2-7 BO搜索并行，GPU0-1空闲） |
 | 更新 | 2026-10-06 |
