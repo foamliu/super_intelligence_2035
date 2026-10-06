@@ -348,4 +348,9 @@
 | 2026-10-06 | LG 电子将为雷诺首款商用 SDV 提供集成座舱解决方案 | IT之家 | news(非 AI·汽车) | https://www.ithome.com/1/010/018.htm |
 | 2026-10-06 | 波兰监管机构指控谷歌：涉嫌在出版商报酬谈判中滥用市场支配地位 | IT之家 | news(非 AI·反垄断) | https://www.ithome.com/1/010/017.htm |
 | 2026-10-06 | 专利许可协议是否与逻辑折叠芯片技术相关，华为证实、高通称不属实 | IT之家 | news(同事件·在账 009/938) | https://www.ithome.com/1/010/022.htm |
+| 2026-10-05 | Meta Rushed to Fix Muse 'VM Escape' Vulnerability Soon Before Launch | 404 Media | news | https://www.404media.co/meta-rushed-to-fix-muse-vm-escape-vulnerability-immediately-before-launch/ |
+| 2026-10-05 | German military intelligence uses AI to screen Bundeswehr applicants for right-wing extremism | Osna.FM（转述 Der Spiegel） | news | https://news.osna.fm/german-military-intelligence-uses-ai-to-screen-bundeswehr-applicants-for-right-wing-extremism/ |
+| 2026-10-06 | 'Pull the plug': protesters resort to direct action against AI firms | The Guardian（正文本机不可达，仅标题+链接+HN 日期核验） | news | https://www.theguardian.com/technology/2026/oct/06/pull-the-plug-protesters-resort-to-direct-action-against-ai-firms |
+| 2026-10-05 | arXiv Is Rate Limiting Submissions Because It Can't Keep up With AI Slop | 404 Media | news(同事件·已于 10-03 经量子位入账) | https://www.404media.co/arxiv-is-rate-limiting-submissions-because-it-cant-keep-up-with-ai-slop/ |
+| 2026-10-06 | Amazon Alexa Plus keeps creepily singing 'lalala' for minutes on end | The Verge | news(非清单·消费产品故障) | https://www.theverge.com/tech/1005342/amazon-alexa-plus-keeps-creepily-singing-lalala-for-minutes-on-end |
 
