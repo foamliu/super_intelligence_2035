@@ -5,33 +5,26 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A kimi-k2.6-cloud serial cross-eval — codex×300 --resume RUNNING (PID 1898015, 158/300 entries) + ✅ deepseek-harness BUILD + ✅ claude-code telemetry OFF
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 --resume RUNNING (158 entries, 29 resolved, 42 patch-but-failed, 87 blocked) · SWEBENCH_COMPARE.html (188 entries, 47 resolved) · ✅ Claude Code 遥测关闭 · ✅ deepseek-harness pnpm install + build · ✅ setup_rootfs stale lock fix
-当前动作:     R100: codex×300 progress 158/300 (29 resolved, 40.8% ex-blocked) + SWEBENCH_COMPARE.html (188 entries, 47 resolved) + relay healthy skip 53rd + git sync
-下一步:       codex×300 完成(~142条剩余, ~0.4天) → 87 blocked 重跑(--resume) → cline-patched×300 --resume → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新SWEBENCH_COMPARE.html
+PHASE:        H-A kimi-k2.6-cloud serial cross-eval — codex×300 --resume RUNNING (PID 1898015, 162/300 entries) + ✅ deepseek-harness BUILD + ✅ claude-code telemetry OFF
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 --resume RUNNING (162 entries, 30 resolved, 45 patch-but-failed, 87 blocked) · SWEBENCH_COMPARE.html (192 entries, 48 resolved) · ✅ Claude Code 遥测关闭 · ✅ deepseek-harness pnpm install + build · ✅ setup_rootfs stale lock fix
+当前动作:     R101: codex×300 progress 162/300 (30 resolved, 40.0% ex-blocked) + SWEBENCH_COMPARE.html (192 entries, 48 resolved) + relay healthy skip 54th + git sync + 体积自检 OK
+下一步:       codex×300 完成(~138条剩余, ~0.8天) → 87 blocked 重跑(--resume) → cline-patched×300 --resume → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新SWEBENCH_COMPARE.html
 阻塞:         无硬阻塞. 87 blocked instances (git fetch TIMEOUT + NFS shallow.lock) 将在 codex×300 完成后 --resume 自动重跑. setup_rootfs 已加 stale lock cleanup.
 ERROR_COUNT:  0
 ```
 
-## 🆕 第一百轮速览（2026-10-06 11:29）— codex×300 progress 158/300 (29 resolved, 40.8% ex-blocked) + SWEBENCH_COMPARE.html (188 entries, 47 resolved) + relay healthy skip 53rd + git sync + 体积自检 OK
+## 🆕 第一百零一轮速览（2026-10-06 12:03）— codex×300 progress 162/300 (30 resolved, 40.0% ex-blocked) + SWEBENCH_COMPARE.html (192 entries, 48 resolved) + relay healthy skip 54th + git sync + 体积自检 OK
 
-- 📊 **codex×300 --resume progress**：PID 1898015 运行中 (etimes≈44123s≈12.3h)。158 codex entries (128 new since ×30)。29 resolved, 42 patch-but-failed, 87 blocked。resolve rate (excl blocked) = 29/71 = 40.8%。当前正在 r1_eval `mwaskom__seaborn-2848`（新 repo, 已过 matplotlib 批次, child PID 259281 etimes=31s）。R99→R100: +7 entries (全 blocked, matplotlib shallow.lock) in ~43min。142 remaining → ETA ~9h ≈ 0.4天。
-- 📈 **SWEBENCH_COMPARE.html regenerated**：188 entries, 47 resolved (cline-patched 18 + codex 29), 40387 bytes。gen_kimi_compare.py exit=0。
-- ✅ **ops 中继复核（第 53 次）→ 健康**。relay `2489749 1 414963 Ss`（ppid=1, etimes≈4.8d）。`.last_run_id=76`（较上轮 74 前进 2 → RUN_ID 75/76/77 跨线 ops, 非 harness 指令）。relay log RUN_ID 75/76/77 均 `exit=0`。跳过重启。
-- ✅ **git sync**：`git fetch`（proxy）exit=0。`git pull --rebase --autostash` 成功（rebased 1 commit, c0e9069c..5541f319）。BAIZE_HARNESS_TASK.md last commit `086cfb5e`（10-06 10:56 = 本线 R99, 无新运维指令）。
-- 📦 **体积自检（收尾步骤0）**：📦 体积：TASK=29771B / MEMORY≈30.6KB（R98 归档 → daily-memories, 体积回到上限内）。
-- ⏭ **下一步**：codex×300 后台继续（~142 条剩余, ~0.4天）→ 87 blocked 重跑（--resume） → cline-patched×300 `--resume` → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
+- 📊 **codex×300 --resume progress**：PID 1898015 运行中 (etimes≈46274s≈12.9h)。162 codex entries (132 new since ×30)。30 resolved, 45 patch-but-failed, 87 blocked。resolve rate (excl blocked) = 30/75 = 40.0%。当前正在 `pallets__flask-4045`（新 repo flask, 已过 seaborn 批次, child PID 2567425 etimes=251s）。R100→R101: +4 entries (+1 resolved, +3 patch-but-failed) in ~34min。138 remaining → ETA ~20h ≈ 0.8天。
+- 📈 **SWEBENCH_COMPARE.html regenerated**：192 entries, 48 resolved (cline-patched 18 + codex 30), 42406 bytes。gen_kimi_compare.py exit=0。
+- ✅ **ops 中继复核（第 54 次）→ 健康**。relay `2489749 1 417155 Ss`（ppid=1, etimes≈4.83d）。`.last_run_id=83`（较上轮 76 前进 7 → RUN_ID 77~83 跨线 ops, 非 harness 指令）。relay log RUN_ID 81/82/83 均 `exit=0`（1 次 push FAILED will retry）。跳过重启。
+- ✅ **git sync**：`git fetch`（proxy）exit=0。rev-list 0/0（已同步）。BAIZE_HARNESS_TASK.md last commit `086cfb5e`（10-06 10:56 = 本线 R99, 无新运维指令）。
+- 📦 **体积自检（收尾步骤0）**：📦 体积：TASK=29771B / MEMORY=31021B（两者均 ≤32KB ✓, 无需归档）。
+- ⏭ **下一步**：codex×300 后台继续（~138 条剩余, ~0.8天）→ 87 blocked 重跑（--resume） → cline-patched×300 `--resume` → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
 
+## 🆕 第一百轮速览（2026-10-06 11:29）—— 已滚动归档至 daily-memories-harness/2026-10-06.md（结论不改：codex×300 progress 158/300 (29 resolved, 40.8% ex-blocked) + SWEBENCH_COMPARE.html (188 entries, 47 resolved) + relay healthy skip 53rd + git sync + 体积自检 OK）
 
-## 🆕 第九十九轮速览（2026-10-06 10:46）— codex×300 progress 151/300 (29 resolved, 40.8% ex-blocked) + TASK.md archived 2 blocks + SWEBENCH_COMPARE.html (183 entries, 47 resolved) + relay healthy skip 52nd + 体积自检 OK
-
-- 📊 **codex×300 --resume progress**：PID 1898015 运行中 (etimes≈41667s≈11.6h)。151 codex entries (121 new since ×30)。29 resolved, 42 patch-but-failed, 80 blocked。resolve rate (excl blocked) = 29/71 = 40.8%。当前正在 `git fetch --depth=1 origin <hash>` 取下一 instance base_commit (matplotlib 批次)。R98→R99: +20 entries (全 blocked, matplotlib repo git fetch TIMEOUT) in ~36min。149 remaining → ETA ~9.4h ≈ 0.4天。
-- 📈 **SWEBENCH_COMPARE.html regenerated**：183 entries, 47 resolved (cline-patched 18 + codex 29), 39931 bytes。gen_kimi_compare.py exit=0。
-- 📦 **TASK.md 归档**：2 个已闭合运维块（Claude Code 合规口径 + deepseek-harness 工具链授权）原文搬入 ARCHIVE_OPERATOR_HARNESS.md，各留 1 行指针。TASK.md 33841 B → 29771 B（≤32KB ✓）。
-- ✅ **ops 中继复核（第 52 次）→ 健康**。relay `2489749 1 412541 Ss`（ppid=1, etimes≈4.77d）。`.last_run_id=74`（与上轮一致 → 无新 harness 指令）。跳过重启。
-- ✅ **git sync**：`git fetch`（proxy）exit=0。`git pull --rebase` = Already up to date。
-- 📦 **体积自检（收尾步骤0）**：📦 体积：TASK=29771B / MEMORY≈31KB（归档 ~4KB → ARCHIVE_OPERATOR_HARNESS.md + R96/R97 → daily-memories）。
-- ⏭ **下一步**：codex×300 后台继续（~149 条剩余, ~0.4天）→ 80 blocked 重跑（--resume） → cline-patched×300 `--resume` → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
+## 🆕 第九十九轮速览（2026-10-06 10:46）—— 已滚动归档至 daily-memories-harness/2026-10-06.md（结论不改：codex×300 progress 151/300 (29 resolved, 40.8% ex-blocked) + TASK.md archived 2 blocks + SWEBENCH_COMPARE.html (183 entries, 47 resolved) + relay healthy skip 52nd + 体积自检 OK）
 
 
 ## 🆕 第九十八轮速览（2026-10-06 10:10）—— 已滚动归档至 daily-memories-harness/2026-10-06.md（结论不改：codex×300 progress 131/300 (29 resolved, 40.8% ex-blocked) + SWEBENCH_COMPARE.html (162 entries, 47 resolved) + relay healthy skip 51st + git sync + 体积自检 OK）
