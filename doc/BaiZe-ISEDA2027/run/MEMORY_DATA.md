@@ -10,9 +10,9 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) → 🔄 BO搜索(eval objective)进行中(18/200 trial, mix_search_eval.db, PID 1011682@.29, GPU2-7; best=5.8491 #9); base下载恢复中(PID 530450@.29, l1_en_hq 4750/5652 354G, zh 174/256 205G)
+PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) → 🔄 BO搜索(eval objective)进行中(18/200 trial, mix_search_eval.db, PID 1011682@.29, GPU2-7; best=5.8491 #9); base下载恢复中(PID 3689969@.29, l1_en_hq 4754/5652 354G, zh 175/256 205G)
 已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；proxy d128 provider+recipe创建；held-out bin；baize_mix_optuna.py创建；5项必验全通过；BO(Stable段,val-loss objective)91/200完成→**改道eval objective**(mix_search_eval.db);**任务书归档完成(38.5KB→31.7KB,本轮归档6KB)**
-当前动作:     唤醒156(15:10) ①BO eval study=18/200 complete(PID 1011682 alive,GPU2-7各6.7GB/9-11%util,GPU0-1空),best=5.8491(#9 web=0.856/code=0.081/math=0.063),top5=#9/8/17/18/6(loss 5.849~5.871),old study(mix_search.db 115trial)保留对比 ②base下载:PID 4172910 crashed(lock cleaner误删活跃lock→FileNotFoundError)→kill lock cleaner→清lock→重启PID 530450(无lock cleaner),l1_en_hq 4738→4750(+12,354G),zh 172→174(+3,205G) ③任务书归档:§A/§D/§C/运维规程/第5轮块头/用户复核②块头/改道裁定→ARCHIVE_OPERATOR_DATA.md,TASK 38.5KB→31.7KB
+当前动作:     唤醒156(15:10) ①BO eval study=18/200 complete(PID 1011682 alive,57min,GPU2-7各6.7GB/9-11%util,GPU0-1空),best=5.8491(#9 web=0.856/code=0.081/math=0.063),top5=#9/8/17/18/6(loss 5.849~5.871),old study(mix_search.db 115trial)保留对比 ②base下载:PID 4172910 crashed(lock cleaner误删活跃lock)→我重启PID 530450也crashed(与已存在的PID 3689969竞态)→**实际活跃下载=PID 3689969**(非我所启,可能loop脚本或前次唤醒启动,etimes~20min, progressing),l1_en_hq 4754/5652(354G),zh 175/256(205G) ③任务书归档7块→ARCHIVE,TASK 38.5KB→31.7KB
 下一步:       ① BO eval study继续(182trial剩余);② base下载监控(l1_en_hq ETA~12h, zh ETA~5h);③ 每30-60min查BO进度+commit心跳;④ 200trial完成→出top-K表+先验对比+best曲线;⑤ GPIC下载待重启
 阻塞:         无（lock cleaner已撤，下载仅慢不崩）
 ERROR_COUNT:  0
@@ -162,8 +162,8 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **§0.6-B 配比实验改道 → 🔄 BO搜索(eval obj)进行中(18/200, mix_search_eval.db, PID 1011682, GPU2-7; best=5.8491 #9); base下载恢复中(PID 530450, l1_en_hq 4750/5652, zh 174/256); 任务书归档完成(38.5KB→31.7KB)** |
-| WAITING | 1（🔄 BO eval study运行中: 18/200 trial, best=5.8491(#9), PID 1011682; base下载PID 530450 l1_en_hq+zh; 每30-60min查进度+commit心跳） |
+| PHASE | **§0.6-B 配比实验改道 → 🔄 BO搜索(eval obj)进行中(18/200, mix_search_eval.db, PID 1011682, GPU2-7; best=5.8491 #9); base下载恢复中(PID 3689969, l1_en_hq 4754/5652, zh 175/256); 任务书归档完成(38.5KB→31.7KB)** |
+| WAITING | 1（🔄 BO eval study运行中: 18/200 trial, best=5.8491(#9), PID 1011682; base下载PID 3689969 l1_en_hq+zh; 每30-60min查进度+commit心跳） |
 | ERROR_COUNT | 2（①GP竞态crash已修复见流水唤醒150；②base下载lock cleaner误删活跃lock→已撤lock cleaner见流水唤醒156） |
 | 节点 | `10.239.2.29`（GPU2-7 BO搜索并行，GPU0-1空闲） |
 | 更新 | 2026-10-06 |
