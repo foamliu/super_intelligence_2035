@@ -387,4 +387,7 @@
 | 2026-10-06 | LibreOffice says 'no AI' is now a software feature | TechCrunch | news | https://techcrunch.com/2026/10/06/libreoffice-says-no-ai-is-now-a-software-feature/ |
 | 2026-10-06 | 《明日方舟：终末地》游戏将支持英伟达 RTX Spark 笔记本 | IT之家 | news(非 AI·游戏) | https://www.ithome.com/1/010/123.htm |
 | 2026-10-07 | Anthropic is giving startups a free year of Claude Team and $1,000 in credits | TechCrunch | news | https://techcrunch.com/2026/10/06/anthropic-gives-startups-a-free-year-of-enterprise-service-and-1000-in-token-credits/ |
+| 2026-10-07 | EmbeddingGemma 2: an open, lightweight multimodal embedding model | Google（官方博客·经 HN） | news | https://blog.google/innovation-and-ai/technology/developers-tools/embeddinggemma-2/ |
+| 2026-10-07 | In race with U.S., China struggles to recruit foreign AI researchers | The New York Times（经 HN） | feature(分析·付费墙·非新闻不收) | https://www.nytimes.com/2026/10/06/science/china-ai-research-recruitment.html |
+| 2026-10-07 | We can't just change the definition of 'recording' | The Verge | opinion(column·非新闻不收) | https://www.theverge.com/column/1005697/we-cant-just-change-the-definition-of-recording |
 
