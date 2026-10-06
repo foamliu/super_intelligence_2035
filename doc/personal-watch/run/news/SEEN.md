@@ -421,4 +421,6 @@
 
 | 2026-10-07 | Ex-Ramp engineers raise $20M for platform Melius after scrapping their first product | TechCrunch | news | https://techcrunch.com/2026/10/06/ex-ramp-engineers-raise-20m-for-platform-melius-after-scrapping-their-first-product/ |
 | 2026-10-07 | Italian PM files to trademark her voice against AI threats | BBC（经 HN） | news(未核验·BBC 直连不可达·HN 提交 05:50 CST 早于本轮窗口 → 防重不收) | https://www.bbc.com/news/articles/ckly0g1ljq2yo |
+| 2026-10-07 | 已挖出十几万漏洞，Anthropic 向更多安全团队开放其最强 Claude 模型 | IT之家（据路透社） | news | https://www.ithome.com/1/010/127.htm |
+| 2026-10-07 | 从种土豆到“种”Token 这里的年轻人都发生了哪些变化？ | 央视网 | feature(内蒙古算力产业人物特写·非具体事件·防重不收) | https://news.cctv.com/2026/10/07/ARTIWFt7Q3BzF7kwNcivcusq261007.shtml |
 
