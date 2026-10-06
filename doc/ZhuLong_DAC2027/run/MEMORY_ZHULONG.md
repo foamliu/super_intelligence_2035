@@ -50,6 +50,8 @@ WAITING: 1
 
 ## 操作流水
 
+- [2026-10-06 19:37] [⏳ B.kimi-k2.6-cloud r3 健康巡检 → 仍在跑，不动] §7 步骤 A：`pgrep '^bash scripts/run_cline_script'`→**有输出**（PID 3583097 仍存活，etime ~4874s≈81min）。健康核验：r3 log mtime 19:37（11.8MB，active），tail 见 live cline thinking（emyDesign/block/pyAether 任务推进中）；尚无 `pass (/PASS_RATE` 汇总行→r3 未结束；`grep -c Forbidden`=0 ✅（kimi-k2.6-cloud active ✅，独立 CLI_DATA_DIR 隔离完好）。判据 pgrep 有输出→什么都不做退出，WAITING 保持 1。下轮唤醒复检 r3（无输出则 harvest r3 Pass@1）。
+
 - [2026-10-06 19:02] [⏳ B.kimi-k2.6-cloud r3 健康巡检 → 仍在跑，不动；补推成功] §7 步骤 A（PHASE=running）：`pgrep '^bash scripts/run_cline_script'`→**有输出**（PID 3583097 仍存活）。健康核验：r3 log mtime 19:02:31（刚写入，7.1MB，active），tail 见 live cline 活动（thinking + `pyAether_MCP_server__run_code` 调用 + Auto compacting messages）；尚无 `pass (/PASS_RATE` 汇总行→r3 未结束。**模型核验**：`grep -c Forbidden`=0 ✅；infra：8664/8665/8653/8669 + 8090 全 OPEN ✅；/nasdata 373G free ✅（/home 6G 99% 但我方产物→/nasdata，RUN_ID 4 已证，非阻断）。**判据 pgrep 有输出→什么都不做退出**，WAITING 保持 1。**🚑 运维指令(八)ops 中继复检**：relay PID 2665949 alive ✅；`.last_run_id`=21 = inbox RUN_ID 21（relay 11:44:02 重启后已补跑 RUN_ID 21，exit=0，见 outbox L2057）→ **中继已恢复，无需抢救**。**git 补推**：上轮 push 失败系未带 proxy（github:443 不通）→ 本轮 `export https_proxy=http://172.19.92.23:13128` 后 `git pull --rebase --autostash`（up to date）+ `git push origin main`（6866a654..ce96f021 ✅，PUSH_EXIT=0）→ git status 干净（无 ahead/behind）。**状态更新**：PHASE=running / STAGE=B / CONFIG=kimi-k2.6-cloud / ROUND=3 / WAITING=1 / ERROR_COUNT=0（无变化，仅心跳+补推）。退出等下轮唤醒 harvest r3（pgrep 无输出→grep PASS_RATE 取 r3 → r4…r5 → 算 mean±std → PHASE=just_finished → 切 B.doubao-seed-2.0-pro-cloud）。
 
 
