@@ -8478,3 +8478,86 @@ loop idle -> restart
 === DONE ===
 === ALL DONE ===
 ```
+
+---
+
+## RUN_ID 78 · 2026-10-06 11:33:12 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 78 · ZhuLong proxy fix + catch-up $(date '+%F %T') ==="
+timeout 500 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+P=http://172.19.92.25:13128
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+cd "$W" || { echo "(NO repo)"; exit 1; }
+echo "host=$(hostname) $(date '+%F %T')"
+echo "=== [1] existing proxy config ==="
+grep -in 'proxy' ~/.bashrc 2>/dev/null | head -5 | cut -c1-160 || echo "(none in bashrc)"
+git config --get http.proxy 2>/dev/null || echo "(no git http.proxy)"
+echo "=== [2] proxy reachable from 36.15? ==="
+timeout 25 curl -x "$P" -sS -o /dev/null -w 'via_proxy_github_http=%{http_code}\n' --max-time 22 https://github.com 2>&1 | cut -c1-170
+echo "=== [3] set git proxy + ls-remote (<=60s) ==="
+git config http.proxy "$P"; git config https.proxy "$P"
+timeout 60 git ls-remote origin -h refs/heads/main 2>&1 | head -3 | cut -c1-170
+echo "=== [4] fetch (<=180s) ==="
+timeout 180 git fetch origin 2>&1 | tail -3 | cut -c1-170
+echo "--- behind/ahead ---"; git rev-list --left-right --count origin/main...HEAD 2>&1
+echo "=== [5] rebase --autostash origin/main (<=180s) ==="
+timeout 180 git rebase --autostash origin/main >/tmp/_z_rb.log 2>&1; RB=$?
+tail -8 /tmp/_z_rb.log | cut -c1-190
+echo "rebase_rc=$RB"
+echo "=== [6] if OK: fix PUSH_INTERVAL on disk + restart relay/loop ==="
+if [ "$RB" -eq 0 ]; then
+  sed -i 's/^PUSH_INTERVAL=18000/PUSH_INTERVAL=1800/' "$W/doc/ZhuLong_DAC2027/run/zhulong_loop.sh"
+  grep -n '^PUSH_INTERVAL=' "$W/doc/ZhuLong_DAC2027/run/zhulong_loop.sh" | cut -c1-120
+  if tail -1 /tmp/zhulong_loop.log 2>/dev/null | grep -q sleep; then
+    cp -f /tmp/zhulong_loop.log "/tmp/zhulong_loop.log.bak.$(date +%s)" 2>/dev/null
+    pkill -f zhulong_loop.sh 2>/dev/null; sleep 2
+    setsid bash "$W/doc/ZhuLong_DAC2027/run/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+    sleep 3; ps -eo pid,etime,args | grep 'zhulong_loop\.sh' | grep -v grep | cut -c1-140
+  else
+    echo "loop busy -> SKIP loop restart"
+  fi
+  cp -f /tmp/zhulong_ops_relay.log "/tmp/zhulong_ops_relay.log.bak.$(date +%s)" 2>/dev/null
+  pkill -f zhulong_ops_relay.sh 2>/dev/null; sleep 2
+  setsid bash "$W/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh" > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
+  sleep 3; ps -eo pid,etime,args | grep 'zhulong_ops_relay\.sh' | grep -v grep | cut -c1-140
+else
+  echo "!! rebase failed -> abort + NOT touching loops"; git rebase --abort 2>/dev/null
+fi
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
+
+**输出**
+```
+=== RUN_ID 78 · ZhuLong proxy fix + catch-up 2026-10-06 11:33:12 ===
+Warning: Permanently added '[localhost]:3333' (ED25519) to the list of known hosts.
+host=hfeg0tedaap02 2026-10-06 11:33:13
+=== [1] existing proxy config ===
+119:export https_proxy=http://172.19.92.23:13128
+120:#export http_proxy=http://172.19.92.23:13128
+(no git http.proxy)
+=== [2] proxy reachable from 36.15? ===
+curl: (28) Connection timed out after 22002 milliseconds
+via_proxy_github_http=000
+=== [3] set git proxy + ls-remote (<=60s) ===
+=== [4] fetch (<=180s) ===
+fatal: unable to access 'https://github.com/foamliu/super_intelligence_2035/': Failed to connect to 172.19.92.25 port 13128 after 133257 ms: Couldn't connect to server
+--- behind/ahead ---
+0	0
+=== [5] rebase --autostash origin/main (<=180s) ===
+Created autostash: 19ed619
+Current branch main is up to date.
+Applied autostash.
+rebase_rc=0
+=== [6] if OK: fix PUSH_INTERVAL on disk + restart relay/loop ===
+48:PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（2026-10-06 由 18000/5h 缩短；agent 每轮自�
+2646996       00:03 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+2647415       00:03 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+=== DONE ===
+=== ALL DONE ===
+```
