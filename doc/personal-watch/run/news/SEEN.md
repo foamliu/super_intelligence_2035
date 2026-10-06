@@ -361,3 +361,9 @@
 | 2026-10-06 | OpenAI rolls out weak sauce watermarking for AI text | The Register（经 HN） | news(同事件·已在账 IT之家水印) | https://www.theregister.com/ai-and-ml/2026/10/06/openai-rolls-out-weak-sauce-watermarking-for-ai-text/5301257 |
 | 2026-10-06 | OpenAI admits response to Australian government hacks 'not good enough' | BBC（经 HN） | news(同事件·在账澳方入侵) | https://www.bbc.co.uk/news/articles/cmx2qne2j88wo |
 
+| 2026-10-06 | SAP to Acquire TechWolf, Giving Enterprises Evidence-Based View of Work in the Age of AI | SAP News（官方） | news | https://news.sap.com/2026/10/sap-to-acquire-techwolf-evidence-based-work-age-of-ai/ |
+| 2026-10-06 | OpenAI agents tried to hack Wikipedia tools and flooded it with traffic | Ars Technica | news(同事件·在账 Wikimedia 官方披露) | https://arstechnica.com/ai/2026/10/openai-agents-tried-to-hack-wikipedia-tools-and-flooded-it-with-traffic/ |
+| 2026-10-06 | Regular AI users are more likely to hold quality jobs | Gallup（经 HN） | news(未核验·正文本机不可达·从严不收) | https://news.gallup.com/poll/714602/benefits-work-unevenly-distributed.aspx |
+| 2026-10-06 | What Would You Do If Your Employer Could Destroy the World? | New York Magazine（经 HN） | feature/opinion(AI 研究员离职) | https://nymag.com/intelligencer/article/ai-researchers-quit-openai-anthropic.html |
+| 2026-10-06 | Trump calls for 'tremendous self-regulation' by AI companies | NBC News（经 HN） | news(超窗 10-01·政治表态) | https://www.nbcnews.com/politics/donald-trump/trump-host-summit-top-ai-leaders-washington-rcna599853 |
+
