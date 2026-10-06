@@ -58,8 +58,8 @@ class AttentionBlock(nn.Module):
         self.norm2 = LayerNorm(dim)
         self.mlp = SwiGLU(dim, mlp_dim)
 
-    def forward(self, x):
-        x = x + self.attn(self.norm1(x))
+    def forward(self, x, attn_mask=None):
+        x = x + self.attn(self.norm1(x), attn_mask=attn_mask)
         x = x + self.mlp(self.norm2(x))
         return x
 
@@ -176,10 +176,16 @@ class OpenVision2(nn.Module):
         self.norm = LayerNorm(width)
         self.head = ReadoutHead(width)
 
-    def forward(self, x, return_patch: bool = False):
+    def forward(self, x, return_patch: bool = False, causal: bool = False):
         x = self.embed(x)
-        for b in self.blocks:
-            x = b(x)
+        if causal:
+            N = x.shape[1]
+            causal_mask = torch.tril(torch.ones(N, N, dtype=torch.bool, device=x.device))
+            for b in self.blocks:
+                x = b(x, attn_mask=causal_mask)
+        else:
+            for b in self.blocks:
+                x = b(x)
         x = self.norm(x)
         pooled = self.head(x)
         return (pooled, x) if return_patch else pooled
@@ -473,6 +479,32 @@ class CoCaDecoder(nn.Module):
         for b in self.blocks:
             x = b(x, ctx, causal)
         return self.head(self.norm(x))
+
+
+class ARTextDecoder(CoCaDecoder):
+    """AIMv2-style AR text decoder (self-written, not copied from Apple ml-aim).
+
+    Same structure as CoCaDecoder (causal self-attn + cross-attn to vision patches)
+    but with a **trainable** token embedding (not frozen CLIP).  This is the key
+    difference from the CoCa caption decoder: in the official AIMv2 paradigm the
+    text decoder learns its own vocabulary representation from scratch, rather
+    than inheriting frozen CLIP embeddings.
+
+    Cross-attention target: the caller MUST pass **causal** vision patches
+    (``OpenVision2.forward(causal=True)`` output) — each patch contains only
+    prefix information (positions 0..i).  Attending to bidirectional patches
+    would be "bidirectional vision + causal text", NOT the official AIMv2
+    paradigm.  See VISION_AIMV2_OFFICIAL_PLAN.md §3.1 (revision point ②).
+    """
+
+    def __init__(self, dim: int = 768, heads: int = 12, depth: int = 4,
+                 mlp_dim: int = 2048, vocab_size: int = 49408, max_len: int = 77,
+                 vision_width: int = 512):
+        super().__init__(dim=dim, heads=heads, depth=depth, mlp_dim=mlp_dim,
+                         vocab_size=vocab_size, max_len=max_len,
+                         vision_width=vision_width, token_embed=None)
+        # Weight-tie output head with token embedding (official AIMv2 style)
+        self.head.weight = self.token_embed.weight
 
 
 class PatchPredictor(nn.Module):

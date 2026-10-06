@@ -28,7 +28,7 @@ from torch import nn
 from torch.nn.parallel import DistributedDataParallel as DDP
 
 import models
-from models import get_vision_tower, param_count, active_param_count, CoCaDecoder, PatchPredictor
+from models import get_vision_tower, param_count, active_param_count, CoCaDecoder, PatchPredictor, ARTextDecoder
 
 EMBED = 768
 CLIP_PATH = '/nas_train/app.e0031982/models/openai/clip-vit-large-patch14-336'
@@ -202,10 +202,12 @@ def main():
     ap.add_argument('--steps', type=int, default=3000)
     ap.add_argument('--lr', type=float, default=3e-3)
     ap.add_argument('--warmup', type=int, default=20)
-    ap.add_argument('--loss', choices=['clip', 'siglip', 'localloss', 'coca', 'aimv2'], default='clip',
+    ap.add_argument('--loss', choices=['clip', 'siglip', 'localloss', 'coca', 'aimv2', 'aimv2_ar'], default='clip',
                     help='clip=InfoNCE (R9/R10 baseline); siglip=SigLIP bidirectional sigmoid (R11-L arm2); '
                          'localloss=InfoNCE local_loss=True per-rank pool (R11-L arm3); '
-                         'coca=InfoNCE contrastive + autoregressive caption CE (R11-L arm4)')
+                         'coca=InfoNCE contrastive + autoregressive caption CE (R11-L arm4); '
+                         'aimv2=InfoNCE+masked-patch-MSE (R11-L arm6); '
+                         'aimv2_ar=official AIMv2 pure AR: causal ViT + next-patch pixel + text AR (no InfoNCE)')
     ap.add_argument('--data', required=True,
                     help='tar shard glob(s), comma-separated for multi-source (e.g. CC12M,Amshaker)')
     ap.add_argument('--data-source', default='wds', choices=['wds', 'gpic', 'mixed'],
@@ -260,12 +262,17 @@ def main():
     ap.add_argument('--lora-alpha', type=float, default=16.0, help='LoRA alpha (scale=alpha/r)')
     ap.add_argument('--lora-lr', type=float, default=1e-4,
                     help='LoRA parameter-group lr (separate from vision lr=3e-3)')
+    ap.add_argument('--alpha-pixel', type=float, default=0.4,
+                    help='AIMv2 AR (aimv2_ar): weight of next-patch pixel_loss in '
+                         'total = cap_loss + alpha_pixel * pixel_loss (official AIMv2 alpha≈0.4)')
     args = ap.parse_args()
 
     _OBJ = {'clip': 'InfoNCE', 'siglip': 'SigLIP', 'localloss': 'LocalLoss', 'coca': 'CoCa',
-            'aimv2': 'AIMv2-style(MIM+InfoNCE)'}[args.loss]
+            'aimv2': 'AIMv2-style(MIM+InfoNCE)',
+            'aimv2_ar': 'AIMv2-official-AR'}[args.loss]
     _LOSS_KEY = {'clip': 'clip_infonce', 'siglip': 'siglip', 'localloss': 'clip_local',
-                 'coca': 'coca', 'aimv2': 'aimv2_mim'}[args.loss]
+                 'coca': 'coca', 'aimv2': 'aimv2_mim',
+                 'aimv2_ar': 'aimv2_ar'}[args.loss]
 
     rank = int(os.environ['RANK'])
     world_size = int(os.environ['WORLD_SIZE'])
@@ -315,7 +322,7 @@ def main():
         loss_fn = ClipLoss(local_loss=False, gather_with_grad=False,
                            rank=rank, world_size=world_size)
 
-    # ---- CoCa caption decoder (R11-L arm4): contrastive + autoregressive caption ---- #
+    # ---- CoCa caption decoder (R11-L arm4) / ARTextDecoder (aimv2_ar) ---- #
     decoder = None
     dec_trainable = 0
     dec_total = 0
@@ -333,19 +340,37 @@ def main():
                   f'trainable={dec_trainable/1e6:.1f}M total={dec_total/1e6:.1f}M '
                   f'vocab={tok_emb.num_embeddings} caption_weight={args.caption_loss_weight}',
                   flush=True)
+    elif args.loss == 'aimv2_ar':
+        _vis_w = args.width if args.width is not None else 1024
+        dec_mod = ARTextDecoder(dim=EMBED, heads=12, depth=args.decoder_depth, mlp_dim=2048,
+                                vocab_size=49408, max_len=77, vision_width=_vis_w).to(device)
+        decoder = DDP(dec_mod, device_ids=[rank], find_unused_parameters=True)
+        dec_trainable = sum(p.numel() for p in dec_mod.parameters() if p.requires_grad)
+        dec_total = param_count(dec_mod)
+        if is_main:
+            print(f'[ar-decoder] depth={args.decoder_depth} dim={EMBED} heads=12 '
+                  f'trainable={dec_trainable/1e6:.1f}M total={dec_total/1e6:.1f}M '
+                  f'vocab=49408 alpha_pixel={args.alpha_pixel} (trainable token_embed)',
+                  flush=True)
 
-    # ---- AIMv2-style patch predictor (R11-L arm6): InfoNCE + masked patch recon ---- #
+    # ---- AIMv2-style patch predictor (R11-L arm6 / aimv2_ar) ---- #
     predictor = None
-    if args.loss == 'aimv2':
+    if args.loss in ('aimv2', 'aimv2_ar'):
         _vis_w = args.width if args.width is not None else 1024
         _patch_dim = (args.patch ** 2) * 3
         pred_mod = PatchPredictor(width=_vis_w, patch_dim=_patch_dim).to(device)
         predictor = DDP(pred_mod, device_ids=[rank], find_unused_parameters=True)
-        dec_trainable = sum(p.numel() for p in pred_mod.parameters() if p.requires_grad)
-        dec_total = param_count(pred_mod)
+        _pred_trainable = sum(p.numel() for p in pred_mod.parameters() if p.requires_grad)
+        _pred_total = param_count(pred_mod)
+        if args.loss == 'aimv2_ar':
+            dec_trainable += _pred_trainable
+            dec_total += _pred_total
+        else:
+            dec_trainable = _pred_trainable
+            dec_total = _pred_total
         if is_main:
             print(f'[predictor] patch_dim={_patch_dim} width={_vis_w} '
-                  f'trainable={dec_trainable/1e6:.2f}M total={dec_total/1e6:.2f}M '
+                  f'trainable={_pred_trainable/1e6:.2f}M total={_pred_total/1e6:.2f}M '
                   f'mask_ratio={args.mask_ratio} patch_loss_weight={args.patch_loss_weight}',
                   flush=True)
 
@@ -426,7 +451,7 @@ def main():
             all_shards.extend(sorted(glob.glob(_g)))
     all_shards = sorted(set(all_shards))
     my_shards = all_shards[rank::world_size]
-    _tok = text.tokenize_cap if args.loss == 'coca' else text.tokenize
+    _tok = text.tokenize_cap if args.loss in ('coca', 'aimv2_ar') else text.tokenize
     if args.data_source == 'gpic':
         loader = D.build_gpic_loader(my_shards, args.batch_size, _tok,
                                      size=args.resolution, num_workers=args.num_workers,
@@ -494,12 +519,13 @@ def main():
                        'text': ('lora-CLIP-768' if text_trainable else 'frozen-CLIP-768'),
                        'width': args.width, 'depth': args.depth,
                        'heads': args.heads, 'mlp_dim': args.mlp_dim,
-                       'caption_loss_weight': args.caption_loss_weight if args.loss == 'coca' else None,
-                       'decoder_depth': args.decoder_depth if args.loss == 'coca' else None,
+                       'caption_loss_weight': args.caption_loss_weight if args.loss in ('coca', 'aimv2_ar') else None,
+                       'decoder_depth': args.decoder_depth if args.loss in ('coca', 'aimv2_ar') else None,
                        'mask_ratio': args.mask_ratio if args.loss == 'aimv2' else None,
                        'patch_loss_weight': args.patch_loss_weight if args.loss == 'aimv2' else None,
                         'contrast_weight': args.contrast_weight if args.loss == 'aimv2' else None,
-                        'c2_collapse_guard': args.c2_collapse_guard if args.loss == 'aimv2' else None},
+                        'c2_collapse_guard': args.c2_collapse_guard if args.loss in ('aimv2', 'aimv2_ar') else None,
+                         'alpha_pixel': args.alpha_pixel if args.loss == 'aimv2_ar' else None},
             'final_loss': loss_ema,
             'params_total': param_count(vision.module),
             'params_active': active_param_count(vision.module),
@@ -531,7 +557,7 @@ def main():
             loader_iter = iter(loader)
             batch = next(loader_iter)
 
-        if args.loss == 'coca':
+        if args.loss in ('coca', 'aimv2_ar'):
             imgs, (ids, mask) = batch
             ids = ids.to(device, non_blocking=True)
             mask = mask.to(device, non_blocking=True)
@@ -543,6 +569,7 @@ def main():
         t0 = time.time()
         contr_i = None
         cap_i = None
+        pixel_i = None
         with torch.autocast('cuda', dtype=torch.bfloat16):
             if args.loss == 'coca':
                 pooled, patches = vision(imgs, return_patch=True)
@@ -574,6 +601,27 @@ def main():
                     cur_loss = args.patch_loss_weight * patch_loss
                     contr_i = 0.0
                 cap_i = patch_loss.item()          # reuse cap_i slot -> logged as patch_mse
+            elif args.loss == 'aimv2_ar':
+                # Official AIMv2 pure AR: causal ViT → next-patch pixel + text AR (no InfoNCE)
+                # AR ≠ MAE: AR predicts patch i+1 from prefix 0..i (causal, unidirectional);
+                #   MAE reconstructs masked patches from bidirectional context.
+                # See VISION_AIMV2_OFFICIAL_PLAN.md §3.2 (revision point ①).
+                _, ar_patches = vision(imgs, return_patch=True, causal=True)
+                B, N, _W = ar_patches.shape
+                # Next-patch pixel prediction: pred[:, :-1] predicts target[:, 1:]
+                target = mae_norm_pix_target(imgs, args.patch)       # (B, N, patch_dim)
+                pred_pixels = predictor(ar_patches)                   # (B, N, patch_dim)
+                # AR shift-by-1: position 0 sees only patch 0, position 195 has no target
+                pixel_loss = torch.mean((pred_pixels[:, :-1].float() -
+                                         target[:, 1:].float()) ** 2)
+                # Text AR: caption next-token, cross-attn to CAUSAL vision patches
+                # (revision point ②: must cross-attend to causal patches, NOT bidirectional)
+                cap_logits = decoder(ids[:, :-1], ar_patches)
+                cap_loss, _ntok = coca_caption_loss(cap_logits, ids[:, 1:], mask[:, 1:])
+                cur_loss = cap_loss + args.alpha_pixel * pixel_loss
+                contr_i = 0.0  # no InfoNCE in pure AR
+                cap_i = cap_loss.item()
+                pixel_i = pixel_loss.item()
             else:
                 If = torch.nn.functional.normalize(vision(imgs), dim=-1)
                 Tf = torch.nn.functional.normalize(text(txts), dim=-1)
@@ -600,6 +648,8 @@ def main():
                 cap_s = f' contrast={contr_i:.4f} caption={cap_i:.4f}'
             elif args.loss == 'aimv2':
                 cap_s = f' contrast={contr_i:.4f} patch_mse={cap_i:.4f}'
+            elif args.loss == 'aimv2_ar':
+                cap_s = f' cap={cap_i:.4f} pixel={pixel_i:.4f}'
             else:
                 cap_s = ''
             log(f'[step {step}/{args.steps}] loss={li:.4f}{cap_s} scale={logit_scale.exp().item():.3f}{bias_s} '
