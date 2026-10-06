@@ -15,10 +15,11 @@
 import argparse
 import json
 import os
+import random
 import shutil
 
 os.environ.setdefault("MASTER_ADDR", "127.0.0.1")
-os.environ.setdefault("MASTER_PORT", "29502")
+os.environ.setdefault("MASTER_PORT", str(random.randint(20000, 60000)))
 
 import torch  # noqa: E402
 from safetensors.torch import save_file  # noqa: E402

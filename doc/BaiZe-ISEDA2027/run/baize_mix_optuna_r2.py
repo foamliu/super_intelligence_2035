@@ -263,6 +263,7 @@ def run_trial(trial_id, params, gpu_id, phase, train_iters, warmup, decay_iters,
         conv_env = os.environ.copy()
         conv_env["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
         conv_env["PYTHONPATH"] = "/nas_train/app.e0031982/omegaconf_230"
+        conv_env["MASTER_PORT"] = str(random.randint(20000, 60000))
         conv_cmd = [f"{PY}/python", f"{RUN_DIR}/baize_p6_ckpt_to_hf.py",
                     "--ckpt", ckpt, "--tokenizer", TOKENIZER, "--out", hf_out]
         conv_proc = subprocess.run(conv_cmd, capture_output=True, text=True, env=conv_env, timeout=300)
