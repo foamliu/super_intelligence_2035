@@ -1022,3 +1022,91 @@ PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（2026-10-06 �
 [research] 新进程(<=1h) -> 不动
 === DONE ===
 ```
+
+---
+
+## RUN_ID 10 · 2026-10-06 18:06:08 · host=`VM-0-6-ubuntu` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 10 · verify personal-watch rescue $(date '+%F %T') ==="
+W=$(ls -d ~/super_intelligence_2035/doc/personal-watch/run 2>/dev/null)
+[ -z "$W" ] && W=$(find ~ -maxdepth 4 -type d -path '*doc/personal-watch/run' 2>/dev/null | head -1)
+echo "RUN_DIR=$W"
+cd ~/super_intelligence_2035 || exit 1
+hostname; date '+%F %T %Z'; uptime | cut -c1-80
+echo "--- [1] git ---"
+git log --oneline -3 | cut -c1-140
+git status -sb | head -10 | cut -c1-140
+echo "--- [2] 任务书在位？ ---"
+ls -l doc/personal-watch/run/WATCH_NEWS_TASK.md doc/personal-watch/run/WATCH_RESEARCH_TASK.md 2>&1 | cut -c1-150
+echo "--- [3] loop 进程 ---"
+ps -eo pid,etime,args | grep -E 'watch_(news|research)_loop[.]sh' | grep -v grep | cut -c1-140 || echo "(none)"
+echo "--- [4] 日志尾部（各 8 行）---"
+for f in /tmp/watch_news_loop.log /tmp/watch_research_loop.log; do
+  echo "[$f] mtime=$(stat -c '%y' "$f" 2>/dev/null | cut -c1-19)"
+  tail -8 "$f" 2>/dev/null | cut -c1-180
+done
+echo "--- [5] 中继 ---"
+[ -f /tmp/watch_ops_relay.pid ] && echo "pidfile=$(cat /tmp/watch_ops_relay.pid)"
+echo "--- [6] 顶层名字 sanity（应只看到 doc）---"
+ls -d doc 2>/dev/null | cat -A | head -3
+echo "--- [7] 未跟踪项（前 5）---"
+git status --porcelain -uall 2>/dev/null | awk '$1=="??"{print $2}' | head -5 | cut -c1-140
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
+
+**输出**
+```
+=== RUN_ID 10 · verify personal-watch rescue 2026-10-06 18:06:09 ===
+RUN_DIR=/home/liuyang/super_intelligence_2035/doc/personal-watch/run
+VM-0-6-ubuntu
+2026-10-06 18:06:09 CST
+ 18:06:09 up 1 day,  8:56,  3 users,  load average: 0.46, 0.27, 0.10
+--- [1] git ---
+af9d9cc personal-watch ops: RUN_ID 10 (read-only verify of rescue: git tree / task books / loops / logs / relay)
+aabf060 harness R111: codex×300 progress 187/300 (33 resolved, 34.0% ex-blocked) + SWEBENCH_COMPARE.html (217 entries, 51 resolved) + relay
+b4b8cb5 data 158: BO eval 54/200 (best=5.8357 #50) + base下载确认活跃@.12 (l1_en_hq 80%/zh 81%) + 体积OK
+## main...origin/main
+ M doc/personal-watch/run/research/raw/2026-10-06-fetch-r56.json
+--- [2] 任务书在位？ ---
+-rw-rw-r-- 1 liuyang liuyang 32354 Oct  6 18:03 doc/personal-watch/run/WATCH_NEWS_TASK.md
+-rw-rw-r-- 1 liuyang liuyang 28309 Oct  6 18:03 doc/personal-watch/run/WATCH_RESEARCH_TASK.md
+--- [3] loop 进程 ---
+ 560123    07:24:19 bash watch_news_loop.sh
+ 560225    07:24:14 bash watch_research_loop.sh
+ 837187       02:28 node /home/liuyang/.nvm/versions/node/v24.21.0/bin/cline -c /home/liuyang/super_intelligence_2035/doc/personal-watch/run
+ 837196       02:28 /home/liuyang/.nvm/versions/node/v24.21.0/lib/node_modules/cline/bin/.cline -c /home/liuyang/super_intelligence_2035/doc
+ 837395       02:17 node /home/liuyang/.nvm/versions/node/v24.21.0/bin/cline -c /home/liuyang/super_intelligence_2035/doc/personal-watch/run
+ 837404       02:17 /home/liuyang/.nvm/versions/node/v24.21.0/lib/node_modules/cline/bin/.cline -c /home/liuyang/super_intelligence_2035/doc
+--- [4] 日志尾部（各 8 行）---
+[/tmp/watch_news_loop.log] mtime=2026-10-06 18:06:09
+
+[0m[2mNow[0m[2m write[0m[2m the[0m[2m block[0m[2m.[0m[2m Let[0m[2m me[0m[2m create[0m[2m it[0m[2m.
+
+[0m[2mLet[0m[2m me[0m[2m write[0m[2m the[0m[2m news[0m[2m/[0m[2m202[0m[2m6[0m[2m-[0m[2m10[0m[2m-[0m[2m06[0m[2m.md[0m[2m appendix[0m[2m.
+
+[0m[2mThen[0m[2m SE[0m[2mEN[0m[2m rows[0m[2m:
+[0m[2m|[0m[2m [0m[2m202[0m[2m6[0m[2m-[0m[2m10[0m[2m-[0m[2m06[0m[2m |[0m[2m [0m[2m12[0m[2mGB[0m[2m [0m[2m显[0m[2m存[0m[2m显卡[0m[2m跑[0m[2m 
+[0m[2m|[0m[2m [0m[2m202[0m[2m6[0m[2m-[0m[2m10[0m[2m-[0m[2m06[0m[2m |[0m[2m [0m[2m瑞[0m[2m萨[0m[2m推出[0m
+[/tmp/watch_research_loop.log] mtime=2026-10-06 18:05:56
+
+[0m[2mLet[0m[2m me[0m[2m wait[0m[2m more[0m[2m.[0m[2m The[0m[2m probe[0m[2m has[0m[2m ret[0m[2mries[0m[2m with[0m[2m back[0m[2moff[0m[2m.[0m[2m Let[0
+
+[0m[2mActually[0m[2m,[0m[2m let[0m[2m me[0m[2m wait[0m[2m for[0m[2m the[0m[2m fetch[0m[2m to[0m[2m complete[0m[2m too[0m[2m.[0m[2m Let[0m[2m me[0m[2m 
+
+[0m[2mActually[0m[2m,[0m[2m let[0m[2m me[0m[2m be[0m[2m patient[0m[2m —[0m[2m poll[0m[2m every[0m[2m ~[0m[2m25[0m[2ms[0m[2m.[0m
+Probe is still running (likely a network stall + retry). Let me keep polling.
+[36m[run_commands][0m cd /home/liuyang/super_intelligence_2035/doc/personal-watch/run && sleep 28 && (ls research/raw/2026-10-06-r56.done >...
+--- [5] 中继 ---
+pidfile=353526
+--- [6] 顶层名字 sanity（应只看到 doc）---
+doc$
+--- [7] 未跟踪项（前 5）---
+=== DONE ===
+/tmp/tmp.7ucm3jzPjc: line 27: EOS: command not found
+=== ALL DONE ===
+```
