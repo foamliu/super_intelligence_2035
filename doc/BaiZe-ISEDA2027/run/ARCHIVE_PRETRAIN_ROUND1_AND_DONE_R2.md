@@ -360,3 +360,160 @@ Round 1 的 S0–S5 已经收敛，但有三处**在论文里会被审稿人直�
 2. 20000 步 loss 收敛曲线 + 3 seed 均值±σ（回填论文图表）
 3. `BAIZE_PRETRAIN_RESULT.html`（自包含：搜索矩阵 + 各配置 loss 表 + 胜出结论 + 命令）
 4. git commit + push（只提交 `doc/` 文本 md/html，checkpoint/.bin/.idx 不入库）
+
+
+---
+
+## [归档 2026-10-06] P-6 lm_eval 评测 + P-7 训练吞吐核查（均已完成）
+
+> 从 `BAIZE_PRETRAIN_2B_TASK.md` 原文搬迁。P-6①② 均 ✅ COMPLETE，P-7 ✅ COMPLETE。
+
+**P-6 细节 —— lm_eval 评测（第 1 步：8 集零样本摸底；第 2 步：**scaling law 曲线 + 外推**）**
+
+> **目的**：Stage (i) 的定位是**通用模型**，**本任务不做 EDA-Eval**。
+> 唯一目标是**摸底训练效果**——让 Stage (i) 的结论**不只是 loss 数字**。
+>
+> **口径严格对齐 Xmodel-2 论文**（`doc/BaiZe-ISEDA2027/Xmodel-2/xmodel-2.tex:198,207`）：
+> - Harness：**EleutherAI Language Model Evaluation Harness（lm-eval）**
+> - **zero-shot**、**raw accuracy**
+> - **8 个评测集**（与 Table 2 的 8 列一致），另报 **Avg**：
+>   `ARC-Challenge` · `ARC-Easy` · `BoolQ` · `HellaSwag` · `OpenBookQA` · `PiQA` · `SciQ` · `Winogrande`
+> - ⚠️ 论文正文还提到 **TriviaQA**，但 **Table 2 里没有这一列** → **以表为准，只跑这 8 个**，并在报告里注明此差异。
+
+**第 1 步（最便宜，先做）：评测现有的 20000 步 checkpoint**
+- 它就是 Stage (i) 的最终产物；**先拿到它的 8 集分数**，立刻就有"摸底"数据。
+
+**第 2 步（最有价值）⭐ —— 与 P-5b 结合 → 「能力 vs token」<u>scaling law 曲线 + 外推</u>**
+
+> ## 🎯 运维 2026-10-02 明确要求
+> 「**希望画出 scaling law 曲线，估计常识推理 8 任务和复杂推理 6 任务要达到更高的水平需要多少训练数据。**」
+>
+> **两条口径澄清（运维 2026-10-02，务必照做）**：
+> 1. 🔧 **全部走 `lm_eval`，<u>不要换框架</u>** ——
+>    Xmodel-2 是 **2 年前的论文**，当年 HumanEval/MBPP 要另配 `bigcode-evaluation-harness`；
+>    **现在 `lm_eval` 已原生支持**，**无需引入第二套框架**。
+> 2. 🔢 **n-shot 的 n 就用 `lm_eval` 的<u>默认值</u>** ——
+>    **不必**去对齐 Xmodel-2 的 5/4/3/0-shot。
+
+### (1) 数据点：P-5b 的 6 个 checkpoint
+在 **655M / 1.3B / 2.6B / 5.2B / 10.5B / 20B token** 各跑一遍**下面两套**评测。
+
+### (2) 两套指标（**都用 `lm_eval`**，n-shot 用默认值）
+
+| 集 | 任务 | 说明 |
+|:--|:--|:--|
+| **常识推理（8）** | `ARC-C` `ARC-E` `BoolQ` `HellaSwag` `OpenBookQA` `PiQA` `SciQ` `Winogrande` | 与 **P-6 第 1 步同一套**（已跑通，Avg **0.4395**）→ **直接可比** |
+| **复杂推理（6）** | `GSM8K` `MATH` `BBH` `MMLU` `HumanEval` `MBPP` | **`lm_eval` 原生支持全部 6 个**；⚠️ HumanEval/MBPP **需代码执行**（`lm_eval` 自带沙箱，按其文档开执行开关即可，**不要另起框架**）|
+
+- ⚠️ **论文正文提到 TriviaQA 但 Table 2 表里没有** → **以表为准**（8 个），报告注明。
+- ⚠️ **报绝对值时要标 harness 版本与 shot 数**（因为与 Xmodel-2 的口径不同）。
+
+### (3) ⭐ **参照线**（Xmodel-2 论文的公开数值，供"更高水平"定位）
+
+> ⚠️ **口径不可严格比**（shot 数、harness 版本、模型规模均不同）→ **只作"量级参照"，必须标注**。
+
+**常识推理 Avg（zero-shot）：**
+| 模型 | Avg |
+|:--|--:|
+| TinyLLaMA1.1-1.1B | 55.24 |
+| Llama-3.2-1B | 57.70 |
+| OpenELM-1.1B | 56.95 |
+| MiniCPM-1.2B | 59.45 |
+| **Xmodel-2-1.2B** | **61.79** ← 同类论文直接对标 |
+| Qwen2.5-1.5B | 63.14 |
+| Phi-1.5-1.3B | **65.68** ← 强标杆 |
+
+**我们起点**：**P-6 第 1 步已测 Avg = 0.4395（43.95%）** @ 20k 步 / **655M token**。
+→ **距最弱的 1B 级（55.24）差 11.3 个点；距 Xmodel-2-1.2B（61.79）差 17.8 个点。**
+
+**复杂推理 Avg：**
+| 模型 | GSM8K | MATH | BBH | MMLU | HE | MBPP | **Avg** |
+|:--|--:|--:|--:|--:|--:|--:|--:|
+| OpenELM-1.1B | 0.45 | 1.06 | 6.62 | 25.52 | 8.54 | 6.80 | **8.16** |
+| OLMo-1B | 2.35 | 1.46 | 25.60 | 24.46 | 5.49 | 0.20 | **9.93** |
+| TinyLLaMA1.1-1.1B | 2.50 | 1.48 | 25.57 | 25.35 | 1.83 | 3.40 | **10.02** |
+
+> 🚨 **预期校准（必须写进报告）**：**1B 级模型在这 6 个任务上基本贴地板** ——
+> GSM8K **0.45–2.5%**、MATH **~1%**、MMLU **~25%（≈chance）**、BBH **~25%（≈chance）**。
+> → **我们 2.2B / ≤20B token 跑出来很可能<u>全程贴地板</u>**。
+> **若确实全程贴地板 → 「量不出斜率」本身就是结论**（说明复杂推理在**更晚**才涌现，
+> 需要远超 20B 的训练量）—— **如实写，不要硬拟合**。
+
+### (4) ⭐⭐ **画 scaling law 曲线**
+
+- **x 轴：训练 token（log 轴）**；**y 轴：各集分数 + Avg**。
+- **常识 8 集**：画 **1 张图**（8 条细线 + **Avg 粗线**），**叠加上述参照线**（虚线）。
+- **复杂 6 集**：同一格式；若贴地板就**如实呈现**。
+- **拟合**：对 **常识 Avg** 拟合幂律 `acc = a − b·N^(−c)` 或对数 `acc = a + b·log10(N)`，**报 R²**。
+- **同时记** loss / grad norm / img/s，以对照"loss 曲线"与"能力曲线"的**不同饱和点**。
+
+### (5) ⭐⭐ **外推**（决策价值所在）
+
+1. 用拟合曲线外推：**常识 Avg 达到 50% / 55% / 60% 各需要多少训练 token？**
+2. **对照我们的算力**：按实测 ~83K tok/s（P-7 修正后），
+   **这些 token 预算分别要跑多少天**（8×H100）？
+3. **一句话结论**：
+   - 若在**可接受的天数内**可达 → 给"**需 X 万亿 token / Y 天**"，直接作为 **P-8 的 token 预算依据**
+   - 若**远超可承受范围** → 明确写"**在当前算力窗口内达不到 55%（或 60%）**"
+4. **如实报外推不确定性**（**用 ≤6 个点外推**，且我们处在曲线**陡升段**，误差会很大）。
+
+
+
+**执行路径（⚠️ 以你们**自己已查证过的结论**为准，不要另起炉灶）**
+
+> 你们在 **2026-09-29** 已经查清过这条路
+> （`run/daily-memories/2026-09-29.md:201,207,223` 与 `run/BAIZE_2B_ARCH_SEARCH_TASK.md:218`）：
+> - **既定路径就是「ckpt → HF → SGLang 起服」**；当时的阻碍只是 **vLLM（`_C.abi3.so` 崩）与 `sglang`（未装）**，
+>   于是退到 mcore 直驱，并明确注明那是**下界测量**（"如需精确 decode 数后续 SGLang 起服复核"）。
+> - 那次也写明：**真正的坑是「mcore 分布式 ckpt → HF 格式转换」**（无现成 bridge，需把
+>   `NVIDIAMambaHybridModelProvider2B` 权重映射到 **Nemotron-H / Llama HF 结构** + DeepSeek tokenizer）；
+>   **mcore 手写前向只是 fallback**。
+> - **SGLang 原生支持 `nemotron_h`**（`--mamba-ssm-dtype float32` / `--mamba-full-memory-ratio`）——
+>   这正是当初选 SGLang 的原因。
+
+**推荐路径（标准做法；不需要写自定义 lm_eval model 类）**
+
+1. **转 HF**：mcore 分布式 ckpt → **Nemotron-H HF 结构**（含 DeepSeek-V4.1-Flash tokenizer）。
+2. **SGLang 起服**（若 `sglang` 未装，先 `pip install sglang`）：
+   `python -m sglang.launch_server --model-path <hf> --port 30000 --mamba-ssm-dtype float32 --mamba-full-memory-ratio <按需>`
+3. **lm_eval 用内置模型类型直连，无需改接口**：
+   `lm_eval --model local-completions --model_args base_url=http://localhost:30000/v1,model=<name>,tokenizer=<hf> --tasks arc_challenge,arc_easy,boolq,hellaswag,openbookqa,piqa,sciq,winogrande --num_fewshot 0`
+   （`local-completions` / `local-chat-completions` 可接**任何 OpenAI 兼容服务**——这是标准用法。）
+
+**⚠️ 先验证一件事（成败所系，第一步就做）**
+这 8 个任务里 **7 个是 multiple-choice**，lm_eval 的 `local-completions` 靠 **`loglikelihood`** 打分，
+即需要服务端在 `/v1/completions` 上支持 **`echo=True` 且返回 prompt 的 `logprobs`**。
+→ **先用一个最小请求验证这一点**；若不支持，再考虑 `local-chat-completions`，
+**最后**才回退到自定义 model 类包 mcore 前向。
+
+**时间盒**：转换 + 起服 **≤ 2 小时**；超时就记录卡点并转 fallback，不要无限调试。
+
+**产出**：`EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 追加一节；
+并给出**论文回填建议**（§4 是否加一张"通用能力零样本"表）。
+
+**P-7 细节 —— 训练吞吐幅度核查（P-3 的补充，**必须查明**）**
+
+> **问题**：论文 `tab:archcomp` 写 **dense 89K vs hybrid 72K（dense +24%）**；
+> 而 **P-3 在同一口径下**（6 卡 / TP1/DP6 / GBS=6 / seq 4096）实测
+> **dense 89.7K vs hybrid 85.6K（dense 仅 +4.8%）**。
+> - dense 侧几乎一致（89K → 89.7K）✅
+> - **是 hybrid 从 72K 涨到 85.6K（+19%）**，即 ms/iter 由 ~340 降到 ~287。
+>
+> **为什么必须查明**：**训练吞吐代价是 hybrid 论证里唯一的「成本侧」数字**。
+> 若真值接近 +5% 而非 +24%，hybrid 的性价比论证会**明显更强**；
+> 反之若是 Round 1 的测量本身有问题，论文里那个 `+24%` 就**站不住**。两种情况都直接决定 `tab:archcomp` 怎么写。
+
+**要做的核查**
+1. **先算一笔账**：Round 1 是 **1000 步**短跑；若把 SSM 首步编译开销（记录中的 **~12.3s**）摊进平均，
+   相对稳态只抬高约 **3.6%**（12.3s ÷ (1000 × 0.34s)）——**不足以解释 340ms → 287ms 的 16%**。
+   → 因此**一定还有别的原因**，继续查。
+2. **比对两次测量的差异项**：micro-batch / gradient-accumulation 设置、`--recompute` 档位、并行度、
+   mcore / `transformer_engine` / 容器版本、以及**当时的集群争用状态**——是同一套配置吗？**逐项列出**。
+3. **在同一环境、同一配置下重测一遍** hybrid 与 dense 的**稳态** ms/iter（各 ≥300 步，**剔除首步**），
+   得到可复现的干净数字；记录 **GPU 独占核验原文**（沿用 R2-4 做法）。
+4. **给结论**：`tab:archcomp` 的 "Training tok/s" 一列应写**哪两个值**、差距**百分之几**；
+   并说明 Round 1 的 72K 究竟属于「含首步开销的短跑均值」还是「另一环境下的值」。
+
+**产出**：写入 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 的 P-3 节 + 更新「论文回填建议」，
+明确指出 `tab:archcomp` 该改成什么。**时间盒 ≤1h。**
+

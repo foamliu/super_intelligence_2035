@@ -1916,3 +1916,112 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 1. ✅ ① sglang 上界补测 → P-9.11 矩阵 ✅ COMPLETE + HTML ✅
 2. → ④ P-9.5 profiler 复跑 → HTML 报告
 3. P-8 暂缓（等 base 下满 + 配比定稿）
+
+---
+
+## 空窗提案 · 2026-10-06（P-8 未启动期间 GPU0-1 可用实验候选）
+
+> **背景**：P-8 暂缓（① base 全量未齐 ② BO 配比未定稿 ETA~20:00），`.29` GPU0-1 空转。
+> 以下 5 条候选均**只用 GPU0-1**（不碰 GPU2-7 的 data BO 搜索），**未经运维批准不得启动**。
+
+### 候选 A：复杂推理 6 集（GSM8K/MATH/BBH/MMLU/HumanEval/MBPP）lm_eval 零样本 ⭐
+
+① **目标**：补齐任务书 §(3)(4) 要求的「常识 8 集 **+ 复杂推理 6 集**」第二条曲线。当前只有常识 8 集（P-6② ✅ 48/48, Avg 33.26%→49.22%），复杂 6 集**明确未跑**（本文件 L1851）。回答：2.2B / ≤20B token 在复杂推理上是否全程贴地板？若是 → 本身是结论。
+
+② **占卡与墙钟**：GPU0（1 卡）。常识 8 集 48 runs ~1.5h → 复杂 6 集 36 runs 预计 **~3-4h**（MMLU 子集多、HumanEval/MBPP 需代码执行）。**完全可中断**（每 task 独立写 JSON）。
+
+③ **可复用既有资产**：
+- HF ckpt：`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/p5b/hf_iter_{0156,0312,0624,1248,2496,4771}`（6 个里程碑，655M~20B token）
+- 脚本模板：`doc/BaiZe-ISEDA2027/run/p5b_lmeval_all.sh`（改 TASKS 数组为 `gsm8k math bbh mmlu humaneval mbpp`）
+- 报告脚本：`doc/BaiZe-ISEDA2027/run/p5b_collect_and_report.py`
+- 环境：vllm env（lm_eval 0.4.13, Python 3.12）
+- 参照线：任务书 §(3) 已给 OpenELM/OLMo/TinyLLaMA 1B 级数值（GSM8K 0.45-2.5%, MMLU ~25%=chance）
+
+④ **产出物**：`doc/BaiZe-ISEDA2027/report_pretrain_complex6_scaling.html`（6 任务 × 6 ckpt scaling 曲线 + Avg）；EXPERIMENTS 新增「复杂推理 6 集」节。若全程贴地板 → 论文写「复杂推理在 ≤20B token 不涌现，需远超 20B」。
+
+⑤ **与 P-8 前置的关系**：**与 P-8 并行不冲突**（纯推理，不改训练 recipe）。且「贴地板」结论直接**支撑 P-8 100B token 预算的合理性**。
+
+⑥ **成本与风险**：~3-4 GPU·h（GPU0）。时间盒 6h。风险：HumanEval/MBPP 代码执行沙箱可能需额外配置（lm_eval 自带 `--tasks humaneval,mbpp`）。**可中断**：是。判据：成功=36/36 runs 出分数（含贴地板）；失败=>50% runs 报错。
+
+### 候选 B：长上下文适配 4096 → 8192+（RoPE/NTK/YaRN 扩展评估）
+
+① **目标**：评估 4096 训练的 hybrid 模型能否零样本扩展到 8K/16K。回答 README 风险 #3 🔴「4096 对 agentic 轨迹过短」+ P-9.11 的 128K failed（`max_pos=4096`）。**hybrid 独特优势**：56 层中仅 4 层 attention 用 RoPE，24 层 Mamba2 SSM 天生支持任意长序列 → RoPE 扩展只需改 4 层。
+
+② **占卡与墙钟**：GPU0（1 卡，sglang 起服 + 评测）。预计 **~2-3h**（改 config.json `rope_scaling` → sglang `--context-length 8192` → perplexity + 8 集 eval 对比）。
+
+③ **可复用既有资产**：
+- HF ckpt：`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/p5b/hf_iter_4771`（20B token final）；对照 `p3_hybrid/hf_iter_5000`
+- sglang 0.5.9（vllm env），`--context-length 8192 --rope-scaling-type dynamic`
+- 评测：lm_eval 8 集 @ 4K vs 8K + 长文本 perplexity
+
+④ **产出物**：`doc/BaiZe-ISEDA2027/report_pretrain_longctx.html`（4K/8K/16K perplexity + 8 集 accuracy 对比 + RoPE 方法对比）；EXPERIMENTS 新增「长上下文适配」节。
+
+⑤ **与 P-8 前置的关系**：**与 P-8 并行不冲突**（纯推理）。为 Stage (ii) 前置探路：若 8K 可用 → Stage (ii) 直接用；若不行 → P-8 需考虑加长 seq。
+
+⑥ **成本与风险**：~2-3 GPU·h。时间盒 4h。风险：① Mamba2 层不用 RoPE，rope_scaling 只影响 4 层 attention → 效果可能有限；② sglang 对 nemotron_h + rope_scaling 兼容性未验证。**可中断**：是。判据：成功=8K perplexity 可测 + 8 集 accuracy 降幅 <10%；失败=sglang 拒绝或 accuracy 崩塌。
+
+### 候选 C：P-8 dry-run（1-2B token WSD 小预演）
+
+① **目标**：用 GPU0-1（2 卡 TP1/DP2）跑 1B token WSD 小预演，验证 P-8 启动脚本 / **FP8 delayed** 配置 / ckpt 保存与磁盘清理策略 → 给 12.5 天长跑降风险。
+
+② **占卡与墙钟**：GPU0-1（2 卡）。按 2 卡 ~55K tok/s（8 卡 218K 的 1/4），1B token → ~5h。**建议 1B token**。
+
+③ **可复用既有资产**：
+- 数据：`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/p5b_l3/p5b_l3_train_s{0..15}`（取 2-3 片 ~2.6B token）
+- 训练脚本：现有 P-5b 脚本（改 DP=2, train_iters≈18000）
+- FP8 delayed 配置：P-9.8/P-9.9 已验证方案
+- ckpt 转换：`doc/BaiZe-ISEDA2027/run/baize_p6_ckpt_to_hf.py`
+
+④ **产出物**：dry-run 报告（启动时间、FP8 稳定性、ckpt 大小/时间、磁盘占用、首步编译开销、异常记录）；EXPERIMENTS 新增「P-8 dry-run」节。
+
+⑤ **与 P-8 前置的关系**：**解 P-8 的前置**（直接降风险）。不替代正式训练，但提前发现脚本/配置/磁盘问题。
+
+⑥ **成本与风险**：~10 GPU·h（GPU0-1 × 5h）。时间盒 8h。风险：① 2 卡 DP2 吞吐与 8 卡有差异，结果不能完全代表正式跑；② FP8 在 M=8192（MBS2×seq4096）下**无收益**（P-9.1 已证），dry-run 只验 FP8 不崩不验加速。**可中断**：部分（可存 ckpt 中断，但不如 eval 干净）。判据：成功=1B token 跑完无 NaN/OOM + FP8 delayed 正常 + ckpt 正常；失败=发散/OOM/ckpt 损坏。
+
+### 候选 D：P-9.11 缺口补测（128K + H3 sglang）
+
+① **目标**：补两个 P-9.11 缺口：(a) 128K failed → 试动态 RoPE + `--context-length 131072`；(b) H3 VRAM under sglang → 降 `--mem-fraction-static 0.3` 量真实 VRAM 随 ctx 变化。
+
+② **占卡与墙钟**：GPU0（1 卡）。~1-2h。
+
+③ **可复用既有资产**：
+- HF ckpt：`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/p3_{hybrid,dense}/hf_iter_5000`
+- sglang 0.5.9, `run/p911_hybrid_results.json` / `p911_dense_results.json`
+- `doc/BaiZe-ISEDA2027/report_pretrain_p911_sglang.html`
+
+④ **产出物**：更新 P-9.11 表 + HTML（补 128K 行 + H3 sglang 真实 VRAM 列）。
+
+⑤ **与 P-8 前置的关系**：**与 P-8 并行不冲突**（纯论文补强）。
+
+⑥ **成本与风险**：~1-2 GPU·h。时间盒 3h。风险：① 128K 大概率仍 fail（max_pos=4096 硬限，与候选 B 有依赖）；② 降 mem_fraction 可能 OOM。**可中断**：是。判据：成功=至少补齐 H3 sglang 真实 VRAM；失败=128K 仍 fail（预期内，如实记录）。
+
+### 候选 E：ckpt → OpenAI 兼容推理服务 + Cline harness 接入
+
+① **目标**：用 sglang 起 P-5b final ckpt 的 OpenAI 兼容服务，接入 `run/harness/` 的 Cline harness，跑端到端推理 demo。
+
+② **占卡与墙钟**：GPU0（1 卡起服）+ CPU（harness）。~2-3h。
+
+③ **可复用既有资产**：
+- HF ckpt：`p5b/hf_iter_4771`（20B token final）
+- sglang 0.5.9, Cline harness in `doc/BaiZe-ISEDA2027/run/harness/`
+- `doc/BaiZe-ISEDA2027/run/benchmark_p910.py`
+
+④ **产出物**：集成报告 + 延迟/吞吐表 + Cline 调用 BaiZe 模型日志。
+
+⑤ **与 P-8 前置的关系**：**纯论文补强**（非 P-8 前置）。
+
+⑥ **成本与风险**：~2-3 GPU·h。时间盒 4h。风险：① 20B token 模型能力弱（Avg 49%），agentic 任务大概率失败；② Cline harness 对自定义端点支持未验证。**可中断**：是。判据：成功=Cline 能调用 BaiZe 完成 ≥1 简单代码任务；失败=模型能力不足（预期内，如实记录）。
+
+### 推荐排序 + 理由
+
+| 排序 | 候选 | 理由 |
+|:--|:--|:--|
+| **1** | **A 复杂推理 6 集** | 最高性价比：纯推理 ~3-4h、填补任务书明确缺口、"贴地板"本身就是有效结论、且支撑 P-8 100B 预算合理性。**强烈推荐第 1 个做**。 |
+| **2** | **B 长上下文 4096→8192** | 论文差异化卖点：hybrid 的 Mamba2 层天生支持长序列，RoPE 扩展只需改 4 层 attention → 可能比纯 transformer 更易扩展。即使失败也有论文价值。 |
+| **3** | **C P-8 dry-run** | 工程降风险：12.5 天长跑前验证脚本/FP8/ckpt/磁盘。但需 2 卡 5h，且 FP8 在 2 卡 TP1 下无加速收益。建议在 A/B 完成后、P-8 前置临近时做。 |
+| **4** | **D P-9.11 补测** | 边际改善：128K 大概率仍 fail（与 B 有依赖），H3 补测价值有限（P-9.10③ 已有更可信数据）。低优先。 |
+| **5** | **E Cline harness** | 时机过早：20B token 模型能力不足（Avg 49%），agentic 任务必然失败。建议等 P-8 100B 模型出来后再做。 |
+
+**建议执行顺序**：A（~3-4h GPU0）→ B（~2-3h GPU0）→ 若 P-8 前置临近 → C（~5h GPU0-1）。D/E 暂缓。
+
+> ⏸ **状态**：本提案已写入，等待运维批准。**未经批准不得启动任何实验。**
