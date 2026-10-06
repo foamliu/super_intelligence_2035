@@ -369,3 +369,5 @@
 | 2026-10-06 | Teenager rescued from B.C.'s 'Widowmaker' after getting stranded using AI instructions | CTV News（经 HN，仅 lede+元数据可得） | news | https://www.ctvnews.ca/vancouver/article/teenager-rescued-from-bcs-widowmaker-after-getting-stranded-using-ai-instructions/ |
 | 2026-10-06 | AI training of copyrighted material not fair use: Third Circuit | Courthouse News Service（经 HN） | news(核心事件 9-30·超 72h) | https://www.courthousenews.com/ai-training-of-copyrighted-material-not-fair-use-third-circuit/ |
 
+| 2026-10-06 | Google is about to remove free access to Gemini Flash and Pro | The Verge | news(同事件·已在账 IT之家 10-03) | https://www.theverge.com/ai-artificial-intelligence/1005451/google-gemini-free-flash-lite-only |
+| 2026-10-06 | Lawmakers Introduce Multiple Laws to Curb Flock After 404 Media Coverage | 404 Media | news(同事件·Sanders Ban Flock Act 10-02·非 AI) | https://www.404media.co/lawmakers-introduce-multiple-laws-to-curb-flock-after-404-media-coverage/ |
