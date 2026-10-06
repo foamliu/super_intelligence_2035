@@ -2085,3 +2085,59 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 - `run/nccl_debug_*.log` ×3（NCCL 日志原文）
 - `run/nccl_read_results.py`（结果汇总脚本）
 
+---
+
+## P-9.13 Step 2 训练提速候选清单 🚀 running（2026-10-06 14:42 启动，第 137 次唤醒，GPU0-1 @.29）
+
+> 运维 2026-10-06 提速令 Step 2：P-9.12 已证 NCCL 非瓶颈（NVLink P2P 100%，default 已最优）→ 转向运行时/并行提速。
+> 脚本：`run/baize_p913_speedup.sh`（setsid 后台），SUM=`/tmp/baize_p913_speedup.sum`。
+
+### recipe 审查（提速空间评估）
+
+审查 `mamba2_hybrid_2b/recipe.py`（`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/mamba2_hybrid_2b/recipe.py`）：
+
+| 设置 | 当前值 | 提速空间 |
+|:--|:--|:--|
+| `overlap_grad_reduce` | **True** | ✅ 已开（无空间） |
+| `overlap_param_gather` | **True** | ✅ 已开（无空间） |
+| `use_distributed_optimizer` | **True** | ✅ 已开（无空间） |
+| `grad_reduce_in_fp32` | True | 通信精度，不改 |
+| `num_workers` | **8** | ✅ 已较高（P-4 profile: 数据加载 GPU 侧 0%） |
+| `dataloader_type` | "single" | megatron 单进程加载 |
+| `recompute` | **未设置**（mcore default） | ⚠️ 需查 default；2-card 64GB peak 有余量可关 |
+| `cross_entropy_loss_fusion` | 未暴露 | launcher 无此 flag |
+| `cuda_graph` | 未暴露 | launcher 无此 flag |
+| `attention_backend` | 未暴露 | launcher 无此 flag |
+
+→ **结论**：recipe 已启用三大通信重叠优化 + distributed optimizer + 8 workers；launcher 仅暴露 23 个 CLI flag，无 recompute/loss-fusion/cuda-graph/attention-backend 入口。可变项 = env 变量（CUDA_DEVICE_MAX_CONNECTIONS）+ MBS/GBS（CLI 已支持）。
+
+### 实验设计
+
+- **硬件**：GPU0-1 only（GPU2-7 = data agent BO 并发，不占 GPU0-1）。
+- **口径**：TP1 / DP2 / seq=4096 / GBS=256 / bf16 / seed=1234 / 60 步短测不存 ckpt。
+- **可比性**：GBS=256/DP2/MBS2 = 64 micro-batches/GPU = P-9.7 (GBS=1024/DP8/MBS2) 的 per-GPU load → 2-card tok/s 可直接与 P-9.7 249K×2/8=62.25K 对照。
+- **候选（每次只改一个变量）**：
+
+| # | 候选 | MBS | CUDA_DEVICE_MAX_CONNECTIONS | 目的 |
+|:--|:--|:--|:--|:--|
+| 1 | baseline | 2 | default (unset = 8) | 2-card 参考 |
+| 2 | MAX_CONN=1 | 2 | 1 | FP8 用的设置，bf16 是否受影响 |
+| 3 | MAX_CONN=4 | 2 | 4 | 中间值 |
+| 4 | MBS4 | 4 | default | 更大 micro-batch → 更好 GPU util |
+
+### 初步结果（baseline，sweep 仍在运行中）
+
+| 指标 | iter 10（含 warmup） | iter 20（稳态） |
+|:--|--:|--:|
+| ms/iter | 18047.1 | **16251.5** |
+| tok/s | 58.1K | **64.5K** |
+| lm loss | 11.057 | 8.204 |
+| grad norm | 3.946 | 3.836 |
+| skipped / nan | 0 / 0 | 0 / 0 |
+| peak GPU mem | — | 64.1 GB/GPU |
+
+- **2-card baseline = 64.5K tok/s** = P-9.7 249K × 2/8 = 62.25K 的 **103%**（微超线性：2-card allreduce 比 8-card 更轻 → comm 开销更小 → 每 GPU 有效吞吐略高）。
+- **peak 64GB vs P-9.7 54.7GB**：`use_distributed_optimizer=True` 在 DP2 下每 GPU 持有 4× optimizer state（vs DP8）→ 显存更高但仍 <80GB 有余量。
+
+> ⏳ **sweep 仍在运行**（4 候选 × ~20min = ~80min，ETA ~15:50）。完整 4 候选结果表 + 判据 + HTML 报告将在下唤醒收集后补全。
+
