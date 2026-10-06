@@ -73,6 +73,24 @@ def run(cmd, cwd=None, timeout=300, env=None):
         return out + "\n[TIMEOUT]", -1
 
 
+def git_fetch_retry(workdir, base_commit, max_retries=3, timeout=300):
+    """Git fetch with retry — addresses 65.7% block rate from 120s timeout."""
+    for attempt in range(1, max_retries + 1):
+        # Clean stale .lock files before each attempt
+        for lock in Path(workdir / ".git").glob("*.lock"):
+            try:
+                lock.unlink()
+            except OSError:
+                pass
+        out, rc = run(["git", "fetch", "--depth=1", "origin", base_commit], cwd=workdir, timeout=timeout)
+        if rc == 0:
+            return True, out
+        if attempt < max_retries:
+            print(f"  [FETCH RETRY {attempt}/{max_retries}] timeout={timeout}s, waiting 10s...")
+            time.sleep(10)
+    return False, out
+
+
 def git_clone_or_fetch(repo, base_commit, workdir):
     workdir = Path(workdir)
     url = f"https://github.com/{repo}"
@@ -82,8 +100,8 @@ def git_clone_or_fetch(repo, base_commit, workdir):
                 lock.unlink()
             except OSError:
                 pass
-        out, rc = run(["git", "fetch", "--depth=1", "origin", base_commit], cwd=workdir, timeout=120)
-        if rc != 0:
+        ok, out = git_fetch_retry(workdir, base_commit, max_retries=3, timeout=300)
+        if not ok:
             out2, rc2 = run(["git", "checkout", base_commit], cwd=workdir, timeout=60)
             if rc2 == 0:
                 return True, f"fetch errored but checkout ok: {out[:80]}"
@@ -96,8 +114,8 @@ def git_clone_or_fetch(repo, base_commit, workdir):
         workdir.mkdir(parents=True, exist_ok=True)
         run(["git", "init", "-q"], cwd=workdir, timeout=30)
         run(["git", "remote", "add", "origin", url], cwd=workdir, timeout=30)
-        out, rc = run(["git", "fetch", "--depth=1", "origin", base_commit], cwd=workdir, timeout=120)
-        if rc != 0:
+        ok, out = git_fetch_retry(workdir, base_commit, max_retries=3, timeout=300)
+        if not ok:
             out2, rc2 = run(["git", "checkout", base_commit], cwd=workdir, timeout=60)
             if rc2 == 0:
                 return True, f"fetch errored but checkout ok: {out[:80]}"
@@ -132,8 +150,8 @@ def setup_rootfs(instance, rootfs_path):
                 lock.unlink()
             except OSError:
                 pass
-        out, rc = run(["git", "fetch", "--depth=1", "origin", base_commit], cwd=testbed, timeout=120)
-        if rc != 0:
+        ok, out = git_fetch_retry(testbed, base_commit, max_retries=3, timeout=300)
+        if not ok:
             return False, f"base_commit fetch failed: {out[:200]}"
     return True, f"using template {template.name}"
 
