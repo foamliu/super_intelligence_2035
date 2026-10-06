@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（supervisor 编辑，中继只读执行）
 
-<!-- RUN_ID: 9 -->
+<!-- RUN_ID: 10 -->
 
 > **用法**：在下面**新增一段** `## RUN_ID N`（N 递增）+ **一个 ```bash 块** → `git push`。
 > 中继（`ops_relay.sh`）轮询发现 **RUN_ID 变大** → 执行 → 结果 append 到 `ops/outbox.md` → push。
@@ -13,6 +13,78 @@
 > ② 🚫 **绝不整树 `du`**（大目录会跑很久）—— 只用 `df` + 有界定向 `du`（每条带 `timeout`）；
 > ③ 单块总超时 **600s**，输出超 **20000 字符**会被截断；
 > ④ 危险模式（`rm -rf /`、`mkfs`、**`git clean -fdx`**、**`git reset --hard`**、**杀 ops_relay**）会被**拒绝**。
+
+## RUN_ID 10 — 🩺 **验收 personal-watch 修复（只读）**：git 树 / 任务书 / loop / 日志 / 中继
+
+> **背景**：2026-10-06 该机出现**未解决的合并冲突** + **HEAD 停在被"名字搞坏"的提交**（`d78f01c`，运维事故链）⇒ 任务书被删、`pull` 永久失败 ⇒ news/research 停摆 ~5h。用户已执行修复（备份 → `rebase/merge --abort` → `reset --hard origin/main` → 回灌产物）。
+> **本块纯只读**，用于确认修复是否生效 + loop 是否已恢复工作。
+
+```
+set -u
+echo "=== RUN_ID 10 · verify personal-watch rescue $(date '+%F %T') ==="
+W=$(ls -d ~/super_intelligence_2035/doc/personal-watch/run 2>/dev/null)
+[ -z "$W" ] && W=$(find ~ -maxdepth 4 -type d -path '*doc/personal-watch/run' 2>/dev/null | head -1)
+echo "RUN_DIR=$W"
+cd ~/super_intelligence_2035 || exit 1
+hostname; date '+%F %T %Z'; uptime | cut -c1-80
+echo "--- [1] git ---"
+git log --oneline -3 | cut -c1-140
+git status -sb | head -10 | cut -c1-140
+echo "--- [2] 任务书在位？ ---"
+ls -l doc/personal-watch/run/WATCH_NEWS_TASK.md doc/personal-watch/run/WATCH_RESEARCH_TASK.md 2>&1 | cut -c1-150
+echo "--- [3] loop 进程 ---"
+ps -eo pid,etime,args | grep -E 'watch_(news|research)_loop[.]sh' | grep -v grep | cut -c1-140 || echo "(none)"
+echo "--- [4] 日志尾部（各 8 行）---"
+for f in /tmp/watch_news_loop.log /tmp/watch_research_loop.log; do
+  echo "[$f] mtime=$(stat -c '%y' "$f" 2>/dev/null | cut -c1-19)"
+  tail -8 "$f" 2>/dev/null | cut -c1-180
+done
+echo "--- [5] 中继 ---"
+[ -f /tmp/watch_ops_relay.pid ] && echo "pidfile=$(cat /tmp/watch_ops_relay.pid)"
+echo "--- [6] 顶层名字 sanity（应只看到 doc）---"
+ls -d doc 2>/dev/null | cat -A | head -3
+echo "--- [7] 未跟踪项（前 5）---"
+git status --porcelain -uall 2>/dev/null | awk '$1=="??"{print $2}' | head -5 | cut -c1-140
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
+
+## RUN_ID 10 — 🩺 **验收 personal-watch 修复（只读）**：git 树 / 任务书 / loop / 日志 / 中继
+
+> **背景**：2026-10-06 该机出现**未解决的合并冲突** + **HEAD 停在被"名字搞坏"的提交**（`d78f01c`，运维事故链）⇒ 任务书被删、`pull` 永久失败 ⇒ news/research 停摆 ~5h。用户已执行修复（备份 → `rebase/merge --abort` → `reset --hard origin/main` → 回灌产物）。
+> **本块纯只读**，用于确认修复是否生效 + loop 是否已恢复工作。
+
+```bash
+set -u
+echo "=== RUN_ID 10 · verify personal-watch rescue $(date '+%F %T') ==="
+W=$(ls -d ~/super_intelligence_2035/doc/personal-watch/run 2>/dev/null)
+[ -z "$W" ] && W=$(find ~ -maxdepth 4 -type d -path '*doc/personal-watch/run' 2>/dev/null | head -1)
+echo "RUN_DIR=$W"
+cd ~/super_intelligence_2035 || exit 1
+hostname; date '+%F %T %Z'; uptime | cut -c1-80
+echo "--- [1] git ---"
+git log --oneline -3 | cut -c1-140
+git status -sb | head -10 | cut -c1-140
+echo "--- [2] 任务书在位？ ---"
+ls -l doc/personal-watch/run/WATCH_NEWS_TASK.md doc/personal-watch/run/WATCH_RESEARCH_TASK.md 2>&1 | cut -c1-150
+echo "--- [3] loop 进程 ---"
+ps -eo pid,etime,args | grep -E 'watch_(news|research)_loop[.]sh' | grep -v grep | cut -c1-140 || echo "(none)"
+echo "--- [4] 日志尾部（各 8 行）---"
+for f in /tmp/watch_news_loop.log /tmp/watch_research_loop.log; do
+  echo "[$f] mtime=$(stat -c '%y' "$f" 2>/dev/null | cut -c1-19)"
+  tail -8 "$f" 2>/dev/null | cut -c1-180
+done
+echo "--- [5] 中继 ---"
+[ -f /tmp/watch_ops_relay.pid ] && echo "pidfile=$(cat /tmp/watch_ops_relay.pid)"
+echo "--- [6] 顶层名字 sanity（应只看到 doc）---"
+ls -d doc 2>/dev/null | cat -A | head -3
+echo "--- [7] 未跟踪项（前 5）---"
+git status --porcelain -uall 2>/dev/null | awk '$1=="??"{print $2}' | head -5 | cut -c1-140
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
 
 ## RUN_ID 7 — 🩺 **单实例核验** + 🔎 **追查瞬时第 3 实例** + 📦 **补跑被跳过的 RUN_ID 4**（**全只读**）
 
