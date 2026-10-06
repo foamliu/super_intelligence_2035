@@ -8945,3 +8945,83 @@ ad41b6a zhulong auto-commit 2026-10-06 11:44:04
 === DONE ===
 === ALL DONE ===
 ```
+
+---
+
+## RUN_ID 84 · 2026-10-06 18:12:52 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 84 · ZhuLong 停摆诊断 $(date '+%F %T') ==="
+hostname; date '+%F %T %Z'
+echo
+timeout 150 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+cd "$W" || { echo "(NO repo)"; exit 1; }
+echo "host=$(hostname)  $(date '+%F %T')"
+echo "--- [1] git ---"
+git log --oneline -3 | cut -c1-140
+git status -sb | head -12 | cut -c1-140
+echo "--- [2] 任务书在位？ ---"
+ls -l doc/ZhuLong_DAC2027/run/ZHULONG_TASK.md doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md 2>&1 | cut -c1-150
+echo "--- [3] 进程 ---"
+ps -eo pid,etime,args | grep -E 'zhulong_(loop|ops_relay)[.]sh' | grep -v grep | cut -c1-140 || echo "(none)"
+echo "--- [4] 日志 ---"
+for f in /tmp/zhulong_loop.log /tmp/zhulong_ops_relay.log; do
+  echo "[$f] mtime=$(stat -c '%y' "$f" 2>/dev/null | cut -c1-19)"
+  tail -10 "$f" 2>/dev/null | cut -c1-190
+done
+echo "--- [5] cline / proxy ---"
+CP=$(bash -ic 'command -v cline' 2>/dev/null | tail -1); echo "cline=$CP"
+grep -inE 'proxy' ~/.bashrc 2>/dev/null | head -3 | cut -c1-120
+echo "--- [6] 顶层名字 sanity ---"
+ls -d doc 2>/dev/null | cat -A | head -3
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
+
+**输出**
+```
+=== RUN_ID 84 · ZhuLong 停摆诊断 2026-10-06 18:12:52 ===
+whag0pgpuap29
+2026-10-06 18:12:52 CST
+
+Warning: Permanently added '[localhost]:3333' (ED25519) to the list of known hosts.
+host=hfeg0tedaap02  2026-10-06 18:12:53
+--- [1] git ---
+ab4940ce research auto-commit 2026-10-06 18:11:00
+880d5286 research 第五十六轮: 0 新增（公告批次未刷新，loop 停摆后补跑）
+53e9fe73 news 第五十三轮: 常态采集 +5（Strata 引擎/瑞萨 GaN/OpenAI&Anthropic 澳监管/Meta&微软减少 Claude/GPT-6 Astra �
+## main...origin/main
+--- [2] 任务书在位？ ---
+-rw-r--r-- 1 app.e0031982 app.adm 31485 Oct  6 12:58 doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md
+-rw-r--r-- 1 app.e0031982 app.adm 32054 Oct  6 12:58 doc/ZhuLong_DAC2027/run/ZHULONG_TASK.md
+--- [3] 进程 ---
+2665948    06:28:51 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+2665949    06:28:51 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+--- [4] 日志 ---
+[/tmp/zhulong_loop.log] mtime=2026-10-06 17:44:30
+[loop] 2026-10-06 17:14:28 WAITING=1 (eval running / infra not ready) → sleep 1800s
+[loop] 2026-10-06 17:44:28 wake up, invoking cline ...
+env: ‘cline’: No such file or directory
+[loop] 2026-10-06 17:44:28 cline returned (exit 0), checking git sync ...
+[push] 2026-10-06 17:44:28 push interval reached, syncing ...
+[push] ahead=0 behind=0
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-10-06 17:44:30 WAITING=1 (eval running / infra not ready) → sleep 1800s
+[/tmp/zhulong_ops_relay.log] mtime=2026-10-06 11:44:02
+[zhulong-relay] 2026-10-06 11:44:02 started. repo=/nasdata/app.e0031982/code/super_intelligence_2035  poll=20s  fetch_every=3x
+--- [5] cline / proxy ---
+cline=/home/app.e0031982/.local/node-20/bin/cline
+119:export https_proxy=http://172.19.92.23:13128
+120:#export http_proxy=http://172.19.92.23:13128
+--- [6] 顶层名字 sanity ---
+doc$
+=== DONE ===
+=== ALL DONE ===
+```
