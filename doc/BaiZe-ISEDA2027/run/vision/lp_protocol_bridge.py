@@ -146,7 +146,7 @@ def extract_features_streaming(vision, parquet_files, transform, device,
             if not bt:
                 continue
             b = torch.stack(bt).to(device).float().to(torch.bfloat16)
-            with torch.autocast('cuda', dtype=torch.bfloat16):
+            with torch.no_grad(), torch.autocast('cuda', dtype=torch.bfloat16):
                 out = vision(b)
             pooled = out[0] if isinstance(out, tuple) else out
             all_feats.append(pooled.float().cpu())
@@ -183,6 +183,7 @@ def linear_probe_mainstream(Xtr, ytr, Xva, yva, device,
     torch.manual_seed(seed)
     d = Xtr.shape[1]
     clf = nn.Linear(d, 1000).to(device)
+    Xtr = Xtr.to(device)
     ytr = ytr.to(device)
     yva = yva.to(device)
     n = Xtr.shape[0]

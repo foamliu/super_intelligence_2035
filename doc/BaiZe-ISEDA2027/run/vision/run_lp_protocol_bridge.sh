@@ -50,6 +50,7 @@ echo "[run_bridge] mode: $MODE"
 case "$MODE" in
     full)
         echo "[run_bridge] B group with FULL IN-1k train (1.28M) — heavy I/O!"
+        PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True \
         python lp_protocol_bridge.py --ckpts "${CKPTS[@]}" --protocol both \
             --probe-full-train --repeats 3 --gpu 0 \
             2>&1 | tee /tmp/lp_bridge_full.log
