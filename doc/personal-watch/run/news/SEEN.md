@@ -391,3 +391,7 @@
 | 2026-10-07 | In race with U.S., China struggles to recruit foreign AI researchers | The New York Times（经 HN） | feature(分析·付费墙·非新闻不收) | https://www.nytimes.com/2026/10/06/science/china-ai-research-recruitment.html |
 | 2026-10-07 | We can't just change the definition of 'recording' | The Verge | opinion(column·非新闻不收) | https://www.theverge.com/column/1005697/we-cant-just-change-the-definition-of-recording |
 
+| 2026-10-07 | Mirror Particle is building a 'world model' of human behavior | TechCrunch | news | https://techcrunch.com/2026/10/06/mirror-particle-is-building-a-world-model-of-human-behavior/ |
+| 2026-10-07 | Mistral to Release New AI Model to Better Compete with U.S. Rivals | The Wall Street Journal（经 HN） | news(同事件·在账 IT之家 010/108 Mistral Large 4) | https://www.wsj.com/tech/ai/mistral-to-release-new-ai-model-to-better-compete-with-u-s-rivals-3f7c8a3d |
+| 2026-10-07 | Ask HN: How come everyone is an LLM expert? | Hacker News (Ask HN) | discussion(非新闻不收) | https://news.ycombinator.com/item?id=49980529 |
+
