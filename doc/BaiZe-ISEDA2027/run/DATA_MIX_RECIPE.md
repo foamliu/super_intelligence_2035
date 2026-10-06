@@ -177,14 +177,14 @@ Xmodel-2 原文（`xmodel-2.tex:138,144-146,152-154`）：
 |:--|:--|
 | **代理模型** | d=128 / L=14 / tie-embed ≈ **18.36M** |
 | **搜索空间** | web∈[0.80,0.95] / code∈[0.03,0.12] / math=1−web−code |
-| **每 trial** | 500 步 · GBS=16 · seq=2048 · LR=3e-3 · WSD(50/450) · seed=1234 |
+| **每 trial** | 500 步 · GBS=16 · seq=2048 · LR=3e-3 · WSD(50/450) · seed=1234 · **MBS=1**（s_step≈1.5s，见 §9.6 归因） |
 | **objective** | `held_out_eval` bin val loss（**eval-set 语料代理**，见 §6.1） |
 | **并行** | 6 GPU（.29 GPU2-7）· GP-EI surrogate（Matern(ν=2.5)） |
 | **存储** | SQLite `nemo_experiments/mix_search/mix_search_eval.db` |
 | **PID** | 1011682 @ .29（since 15:30） |
-| **进度** | **120/200 complete**（0 pruned），best=5.8327 (#96: web=0.943/code=0.034/math=0.023) |
-| **先验 88:8:4** | 最近 #79, loss=5.886, rank 63/120, Δ=0.053 |
-| **速率** | ~31.8 trial/h, remaining 80, ETA ~22:45 |
+| **进度** | **192/200 complete**（0 pruned），best=**5.821864** (#182: web≈0.84/code≈0.04/math≈0.12), top5=#182/155/149/96/125 |
+| **先验 88:8:4** | 最近 #59, loss=5.857, rank **27/192**, Δ=**0.025** |
+| **速率** | ~33 trial/h, remaining 8, ETA ~23:50 Oct6 |
 
 ### 9.3 旧 study（val-loss objective，保留对照）
 
@@ -206,7 +206,30 @@ Xmodel-2 原文（`xmodel-2.tex:138,144-146,152-154`）：
 | 项 | 进度 | 速率 / ETA | PID |
 |:--|:--|:--|:--|
 | `ultrafineweb_en` | **2048/2048 ✅** | 完成 | — |
-| `ultrafineweb_l1_en_hq` | **4951/6006**（82%） | ~370G, ETA ~06:00 Oct7 | 3076502/3076519 |
+| `ultrafineweb_l1_en_hq` | **5128/6006**（85.4%） | ~382G, ETA ~11:00 Oct7 | 3076502/3076519 |
 | `ultrafineweb_zh` | **256/256 ✅ 完成** | 301G | — |
 | GPIC | 活跃中 | — | 144981 @.12 |
 | `gpic` | **3410 tars / 4.9T** | 活跃 | 144981 |
+
+### 9.6 ⭐ s_step 归因实验（2026-10-06 22:48-22:56, GPU1@.29）
+
+> **目的**：第一轮 BO 用 MBS=1 → s_step=1.5s → D=0.016B/trial（500步×16×2048）。需降到 ≤100ms 才能使 D=0.5–1B/trial 可行。
+
+**方法**：`baize_sstep_profile.py`，固定 GBS=16/seq=2048/50步/WSD/88:8:4 blend，仅改 MBS∈{1,4,8,16}。记录 NeMo `elapsed time per iteration`（去掉 step 10 warmup）+ `max allocated` 显存。
+
+| MBS | μbatch/step | 中位 s_step (ms) | tok/s | 峰值显存 (MB) | 加速比 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 1   | 16 | **1432** | 22,893 | 3,024 | 1.0× (基线) |
+| 4   | 4  | **418**  | 78,431 | 10,851 | 3.4× |
+| 8   | 2  | **220**  | 149,211 | ~20,000 | 6.5× |
+| 16  | 1  | **166**  | 197,831 | 42,164 | **8.6×** |
+
+**结论**：
+1. **瓶颈 = overhead-bound**：每 μbatch ~90-170ms Python/kernel-launch overhead × 16 μbatch = ~1.5s。非 compute-bound（GPU util 仅 ~15 TFLOP/s / 1000）。
+2. **MBS=16 使 s_step 1432→166ms（8.6×）**，峰值显存 42GB < 80GB H100。
+3. **D 投影（6 GPU, 24h）**：
+   - D=0.5B/trial：15,259步 × 0.166s = 42min/trial → **205 trial/24h** ✅
+   - D=1B/trial：30,518步 × 0.166s = 84min/trial → **103 trial/24h** ✅
+   - 8 卡（GPU0-7）：D=0.5B → **410 trial/24h**；D=1B → **206 trial/24h**
+4. **第二轮 BO 建议**：MBS=16, D=0.5B/trial, 200 trial/24h/6GPU（或 8 卡 → 400 trial）。目标 ≤100ms 需 CUDA graph + CE fusion（后续优化）。
+5. **结果文件**：`nemo_experiments/sstep_profile/sstep_profile_results.json`
