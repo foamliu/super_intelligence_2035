@@ -1,0 +1,133 @@
+{
+  "experiment": "P-9.11-D",
+  "description": "sglang VRAM benchmark with low mem-fraction (H3 gap fill)",
+  "model_name": "default",
+  "model_path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/p3_hybrid/hf_iter_5000",
+  "base_url": "http://127.0.0.1:30001",
+  "gpu_id": 0,
+  "gen_len": 64,
+  "contexts": [
+    4096,
+    16384,
+    65536,
+    131072
+  ],
+  "batches": [
+    1,
+    8
+  ],
+  "results": [
+    {
+      "model": "default",
+      "ctx": 4096,
+      "batch": 1,
+      "gen_len": 64,
+      "prompt_tokens_actual": 3816,
+      "ttft_s": 0.0708,
+      "prefill_tok_s": 53898.4,
+      "decode_tok_s": 284.4,
+      "e2e_latency_s": 0.2958,
+      "peak_vram_gb": 5.35,
+      "total_completion_tokens": 64,
+      "vram_samples": 2
+    },
+    {
+      "model": "default",
+      "ctx": 4096,
+      "batch": 8,
+      "gen_len": 64,
+      "prompt_tokens_actual": 3816,
+      "ttft_s": 0.1554,
+      "prefill_tok_s": 196419.3,
+      "decode_tok_s": 935.6,
+      "e2e_latency_s": 0.7027,
+      "peak_vram_gb": 5.35,
+      "total_completion_tokens": 512,
+      "vram_samples": 4
+    },
+    {
+      "model": "default",
+      "ctx": 16384,
+      "batch": 1,
+      "gen_len": 64,
+      "prompt_tokens_actual": 15631,
+      "ttft_s": 0.1333,
+      "prefill_tok_s": 117274.2,
+      "decode_tok_s": 283.0,
+      "e2e_latency_s": 0.3594,
+      "peak_vram_gb": 5.35,
+      "total_completion_tokens": 64,
+      "vram_samples": 2
+    },
+    {
+      "model": "default",
+      "ctx": 16384,
+      "batch": 8,
+      "gen_len": 64,
+      "prompt_tokens_actual": 15631,
+      "ttft_s": 0.3968,
+      "prefill_tok_s": 315114.0,
+      "decode_tok_s": 1170.4,
+      "e2e_latency_s": 0.8343,
+      "peak_vram_gb": 5.35,
+      "total_completion_tokens": 512,
+      "vram_samples": 4
+    },
+    {
+      "model": "default",
+      "ctx": 65536,
+      "batch": 1,
+      "gen_len": 64,
+      "prompt_tokens_actual": 62893,
+      "ttft_s": 0.428,
+      "prefill_tok_s": 146947.5,
+      "decode_tok_s": 267.9,
+      "e2e_latency_s": 0.6669,
+      "peak_vram_gb": 5.35,
+      "total_completion_tokens": 64,
+      "vram_samples": 4
+    },
+    {
+      "model": "default",
+      "ctx": 65536,
+      "batch": 8,
+      "gen_len": 64,
+      "prompt_tokens_actual": 62893,
+      "ttft_s": 1.5816,
+      "prefill_tok_s": 318122.9,
+      "decode_tok_s": 1070.7,
+      "e2e_latency_s": 2.0598,
+      "peak_vram_gb": 5.35,
+      "total_completion_tokens": 512,
+      "vram_samples": 10
+    },
+    {
+      "model": "default",
+      "ctx": 131072,
+      "batch": 1,
+      "gen_len": 64,
+      "prompt_tokens_actual": 125908,
+      "ttft_s": 0.6426,
+      "prefill_tok_s": 195938.1,
+      "decode_tok_s": 249.0,
+      "e2e_latency_s": 0.8996,
+      "peak_vram_gb": 5.35,
+      "total_completion_tokens": 64,
+      "vram_samples": 5
+    },
+    {
+      "model": "default",
+      "ctx": 131072,
+      "batch": 8,
+      "gen_len": 64,
+      "prompt_tokens_actual": 125908,
+      "ttft_s": 3.0705,
+      "prefill_tok_s": 328043.8,
+      "decode_tok_s": 1055.8,
+      "e2e_latency_s": 3.5555,
+      "peak_vram_gb": 5.35,
+      "total_completion_tokens": 512,
+      "vram_samples": 16
+    }
+  ]
+}

@@ -18,11 +18,13 @@ SGLANG_PY=/nas_train/app.e0031982/miniforge3/envs/sglang/bin/python
 BENCH_PY=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/p911d_sglang_vram_bench.py
 HYBRID_HF=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/p3_hybrid/hf_iter_5000
 OUT_JSON=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/p911d_hybrid_vram_results.json
-SRV_LOG=/tmp/p911d_sglang_srv.log
+SRV_LOG=/tmp/p911d_sglang_srv2.log
 
 export SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1
 export http_proxy="http://172.19.92.25:13128"
 export https_proxy="http://172.19.92.25:13128"
+export no_proxy="localhost,127.0.0.1,0.0.0.0"
+export NO_PROXY="localhost,127.0.0.1,0.0.0.0"
 
 echo "[$(date)] P-9.11 D: launching sglang with --mem-fraction-static 0.3 on GPU${GPU_ID}"
 echo "  model=$HYBRID_HF"
@@ -32,23 +34,26 @@ echo "  log=$SRV_LOG"
 # Launch sglang server with LOW mem-fraction (0.3) to reveal true VRAM
 CUDA_VISIBLE_DEVICES=$GPU_ID $SGLANG_PY -m sglang.launch_server \
     --model-path "$HYBRID_HF" \
-    --host 0.0.0.0 \
+    --host 127.0.0.1 \
     --port "$PORT" \
     --context-length 131072 \
     --trust-remote-code \
     --mem-fraction-static 0.3 \
     --attention-backend flashinfer \
     --mamba-ssm-dtype float32 \
+    --skip-server-warmup \
     --log-level info \
     > "$SRV_LOG" 2>&1 &
+# nohup not needed — the & backgrounds it, and the script keeps running
 SRV_PID=$!
 echo "  sglang PID=$SRV_PID"
 
-# Wait for server to be ready (up to 120s)
+# Wait for server to be ready (up to 180s — model load takes >60s)
 echo "[$(date)] Waiting for sglang server to be ready..."
-for i in $(seq 1 60); do
-    if curl -s "http://127.0.0.1:${PORT}/v1/models" > /dev/null 2>&1; then
-        echo "[$(date)] Server ready after ${i}x2s"
+for i in $(seq 1 90); do
+    http_code=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:${PORT}/v1/models" 2>/dev/null || echo "000")
+    if [ "$http_code" = "200" ]; then
+        echo "[$(date)] Server ready after ${i}x2s (HTTP 200)"
         break
     fi
     if ! kill -0 $SRV_PID 2>/dev/null; then
@@ -60,8 +65,9 @@ for i in $(seq 1 60); do
 done
 
 # Verify server is up
-if ! curl -s "http://127.0.0.1:${PORT}/v1/models" | grep -q "data"; then
-    echo "[ERROR] Server not responding after 120s"
+http_code=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:${PORT}/v1/models" 2>/dev/null || echo "000")
+if [ "$http_code" != "200" ]; then
+    echo "[ERROR] Server not responding (HTTP $http_code) after 180s"
     tail -20 "$SRV_LOG"
     kill $SRV_PID 2>/dev/null || true
     exit 1
