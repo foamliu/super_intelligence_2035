@@ -131,3 +131,6 @@
 > 🗓 **第六十九轮常态增量（UTC 2026-10-06 周二 19:4x，第六十八轮后约 30min · 同批去重复核）**：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600**（**470 already in SEEN** + **130 stale > 72h**）→ **0 新增**（**公告批次仍 `2026-10-05`**，主源仍 `2026-10-05T17:59:54Z`、`totalResults` 仍 `627806`，与第五十四~六十八轮一致，渐进索引已收尽）；`window_mode=daily`(72h，第三十轮起自动回落)，因去重先查 SEEN，结论不变；R1′ arXiv ✅ / HF ❌（`Network is unreachable`）/ RSS 有内容，本轮 `--probe`（**本轮实时 `--probe`**，无重试）/`--fetch` 均 `attempts=1` 无重试。⚠️ **首跑误在 `research/` 目录下用不存在的相对路径 `--seen research/SEEN.md`（去重台账未加载）→ 假阳性 `kept 222`；已在 `run/` 目录按 docstring 复跑得 `kept 0 / dropped 600`，以复跑为准**；`raw/2026-10-06-{probe,fetch}-r69.json`；口径 `ARXIV_API.md` §9.71。**下轮预期**：下一次工作日公告（`2026-10-06` 提交批）预计在 **UTC `2026-10-07` 前后**刷新，届时预计出现新增。
 
 
+
+> 🗓 **第七十轮常态增量（UTC 2026-10-06 周二 20:1x，第六十九轮后约 32min · 同批去重复核）**：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600**（**470 already in SEEN** + **130 stale > 72h**）→ **0 新增**（**公告批次仍 `2026-10-05`**，主源仍 `2026-10-05T17:59:54Z`、`totalResults` 仍 `627806`，与第五十四~六十九轮一致，渐进索引已收尽）；`window_mode=daily`(72h，第三十轮起自动回落)，因去重先查 SEEN，结论不变；R1′ arXiv ✅ / HF ❌（`Network is unreachable`）/ RSS 有内容，本轮 `--probe`（**本轮实时 `--probe`**，无重试）/`--fetch` 均 `attempts=1` 无重试；`raw/2026-10-06-{probe,fetch}-r70.json`；口径 `ARXIV_API.md` §9.72。**下轮预期**：下一次工作日公告（`2026-10-06` 提交批）预计在 **UTC `2026-10-07` 前后**刷新，届时预计出现新增。
+
