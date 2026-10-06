@@ -408,3 +408,6 @@
 | 2026-10-07 | Support Ars and get a better reading experience in return (ArsPro 订阅推广) | Ars Technica | promo(非新闻不收) | https://arstechnica.com/staff/2026/10/make-ars-better-with-an-arspro-subscription/ |
 | 2026-10-07 | Big Oil asks Supreme Court to kill climate lawsuits before trial | Ars Technica | news(非 AI·法律/气候) | https://arstechnica.com/tech-policy/2026/10/big-oil-asks-supreme-court-to-kill-climate-lawsuits-before-trial/ |
 
+| 2026-10-07 | Vinod Khosla believes ex-DeepMind engineer's Wajo will win agent market on trust | TechCrunch | news | https://techcrunch.com/2026/10/06/vinod-khosla-believes-ex-deepmind-engineers-wajo-will-win-agent-market-on-trust/ |
+| 2026-10-07 | Spurred on by AI usage, Google Docs and Drive now support Markdown files natively | TechRadar（经 HN） | news(非核心·Workspace 文件格式·防重不收) | https://www.techradar.com/pro/spurred-on-by-ai-usage-google-docs-and-drive-now-support-markdown-files-natively |
+
