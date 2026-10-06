@@ -1,0 +1,215 @@
+2610.06852 | 2026-10-05 | cs.CV | 广度扫描 | One Figure, Every Canvas: Editable Flowchart Relayout via Agentic Pipeline
+2610.06851 | 2026-10-05 | cs.LG | 广度扫描 | Base Models Can Reason By Taking a Cue From Training Data
+2610.06850 | 2026-10-05 | cs.RO | 广度扫描 | InterMimicGen: Scaling Humanoid Loco-Manipulation through Self-Evolving Motion Imitation
+2610.06847 | 2026-10-05 | cs.CV | 广度扫描 | S2PD: Serial-to-Parallel Diffusion for Physically and Logically Consistent Video Generation
+2610.06846 | 2026-10-05 | cs.AI | 广度扫描/邻域 | BiasFlow: Geometric Monitoring and Backbone Regularization for Spurious Feature Reliance
+2610.06844 | 2026-10-05 | cs.CV | 多模态/广度扫描/邻域 | Learning to Read the Contextual Tokens in Diffusion Transformers
+2610.06843 | 2026-10-05 | cs.RO | 多模态/广度扫描 | Recursive Video In-Context Learning for Agentic Robot
+2610.06837 | 2026-10-05 | cs.CV | 多模态/广度扫描 | Anatomy-aware Fine-grained Multimodal Fusion for Laryngopharyngeal Cancer T-Staging Prediction Using CT and Radiology Report
+2610.06834 | 2026-10-05 | stat.ML | 广度扫描 | Direct Intermediate Initialization for Tilted Diffusion Samplers
+2610.06833 | 2026-10-05 | cs.LG | 广度扫描 | Towards Looped Models Done Right, Part II: Rethinking at Fixed Points
+2610.06831 | 2026-10-05 | cs.CV | 广度扫描 | UniSlider: Perceptually Uniform Sliders for Continuous Image Editing
+2610.06830 | 2026-10-05 | cs.CL | 广度扫描 | MemPilot: Orchestrating On-Demand Multimodal Memory Curation for LLM Agents
+2610.06829 | 2026-10-05 | cs.CL | 广度扫描 | CLIFT: Conformal Self-Verification for Web Agent Training and Test-Time Scaling
+2610.06825 | 2026-10-05 | cs.CL | 多模态/广度扫描 | PlotGround: Grounding Plot Digitization in Real Scientific Figures and Their Source Data
+2610.06824 | 2026-10-05 | cs.AI | 广度扫描 | TasteVal: Measuring the Experimental Research Taste of AI Systems Against Human Experts
+2610.06823 | 2026-10-05 | cs.LG | 广度扫描 | Deep Learning for Sleep Heart Rate Estimation from Accelerometers: Toward Population-Scale Cardiac Insight Without Optical Sensors
+2610.06822 | 2026-10-05 | cs.LG | 广度扫描 | Private online learning and prediction for Littlestone classes
+2610.06817 | 2026-10-05 | cs.SD | 广度扫描/邻域 | Paradee: Distilling Kokoro-82M into an 8M-Parameter Single-Voice Text-to-Speech Model
+2610.06814 | 2026-10-05 | cs.CV | 广度扫描 | TAPDreamer: Transferable Adversarial Patches for World Action Models
+2610.06813 | 2026-10-05 | cs.CV | 广度扫描 | Less Context, Better Geometry: Masked Geometric Encoder for Robust 3D Foundation Models
+2610.06810 | 2026-10-05 | quant-ph | 广度扫描 | Finding Gaussian Structure in Bosonic States
+2610.06809 | 2026-10-05 | cs.LG | 广度扫描 | Block Disentanglement in CRL: Bridging Identifiability and Visual State Estimation
+2610.06805 | 2026-10-05 | cs.LG | 广度扫描 | H-JEPA: End-to-End Learning of Hierarchical World Models for Visual Planning
+2610.06804 | 2026-10-05 | cs.LG | 广度扫描 | Sharpen Without Search: On-Policy Distillation of Sequence-Level Power Distribution
+2610.06801 | 2026-10-05 | cs.CV | 广度扫描/邻域 | MC-Sparse: Deconstructing and Closing the Dense-Sparse Attention Gap in Diffusion Transformers
+2610.06798 | 2026-10-05 | math.DS | 广度扫描 | A Response Theory Probe for Learned Stochastic AI Simulators, Tested on Lorenz-63
+2610.06795 | 2026-10-05 | cs.LG | 广度扫描 | Round-Trip KNN Clustering: multiscale hierarchical cluster detection on directed nearest-neighbour graphs
+2610.06790 | 2026-10-05 | cs.AI | 广度扫描 | Back to the Future: Rethinking EDA Infrastructure for Agentic Systems in Chip Design Verification
+2610.06784 | 2026-10-05 | hep-ex | LLM/广度扫描 | How to scale your HEP ML models: A recipe for robust architecture comparisons at scale
+2610.06782 | 2026-10-05 | cs.CL | 广度扫描 | T-Search: An Open Agentic Retriever and Playground for Hard Multi-Step Search
+2610.06778 | 2026-10-05 | cs.CL | 广度扫描 | IdeaLens: Detecting AI Ideas in Long-form Writing
+2610.06777 | 2026-10-05 | cs.MA | 广度扫描 | On Learning Optimal Corners in Orthogonal Partially Observable Cooperative Guard Art Galleries
+2610.06770 | 2026-10-05 | math.NA | 广度扫描 | Singular parameters and missing limits in neural PDE solvers
+2610.06765 | 2026-10-05 | cs.AI | 广度扫描/邻域 | Conditional Rank Allocation for Taxonomy-Aware Medical Language Model Adaptation
+2610.06751 | 2026-10-05 | cs.LG | 广度扫描 | MatrixFormer: A Foundation Model for Matrix Completion
+2610.06750 | 2026-10-05 | cs.CL | 广度扫描 | Balancing Memory Pathways: Analyzing and Improving Memory Utilization in Hybrid LMs
+2610.06748 | 2026-10-05 | cs.MA | 广度扫描 | BazaarBench: Delegation Safety in Decentralized C2C Marketplaces Run by LLM Agents
+2610.06745 | 2026-10-05 | cs.LG | 广度扫描 | Hyperbolic Graph Representation Learning: Embed in One Metric, Optimize with Another
+2610.06744 | 2026-10-05 | cs.CL | 广度扫描 | ufakzeka-karar: An Open Turkish Typed-Decision Model with Order-Invariant Option Scoring
+2610.06729 | 2026-10-05 | cs.CL | LLM/广度扫描 | Improving Diversity in LLM Short Story Generation
+2610.06725 | 2026-10-05 | cs.LG | SLM | BRANCH-MoE: Balance-Aware Tree Routing for Large Embedding Models
+2610.06703 | 2026-10-05 | cs.IR | LLM | Reading the Mood: Emotion-Guided Book-to-Music Recommendation via CGANs and LLMs
+2610.06695 | 2026-10-05 | cs.CL | LLM | MedPrune: Topology-Efficient Multimodal Multi-Agent Communication Evolution for Medical VQA Tasks
+2610.06685 | 2026-10-05 | cs.LG | LLM | Aligning Multimodal Patient Evidence with Biomedical Knowledge Graphs for Clinical LLMs
+2610.06679 | 2026-10-05 | cs.LG | 邻域 | Closing the Context Gap: Activation Alignment for Tabular In-Context Learning
+2610.06672 | 2026-10-05 | cs.CV | 多模态 | VideoTapestry: Query-Adaptive Memory Refinement for Multi-Agent Long-Video Understanding
+2610.06671 | 2026-10-05 | cs.LG | SLM | Learning What to Imitate: Entropy-Aware Distribution Mixing
+2610.06670 | 2026-10-05 | cs.CL | LLM | Reward Stealing Attack on Large Language Models
+2610.06666 | 2026-10-05 | cs.LG | LLM | What Matters for Latent Reasoning with Flow Matching
+2610.06657 | 2026-10-05 | cs.LG | SLM | TrustmeWatcher: An Application for Workplace Micro-Sensing and Explainable Well-Being Feedback
+2610.06647 | 2026-10-05 | cs.CL | LLM | LoGRA: Scaling LLM Reinforcement Learning with Low-Rank Gradient Sketches
+2610.06625 | 2026-10-05 | cs.CL | LLM | JEV versus LLMs: Accuracy, Cost and Calibration on Seven Political Science Replications
+2610.06616 | 2026-10-05 | cs.CV | 多模态 | Video Encoders Built on Image Representations
+2610.06611 | 2026-10-05 | cs.CV | 多模态 | Lens3D: Target-Conditioned Visual Foveation for Fine-Grained 3D Understanding
+2610.06598 | 2026-10-05 | cs.RO | 多模态/邻域 | SimForcing: Distilling Simulation Motion Priors into Real-Domain Robot World Models
+2610.06597 | 2026-10-05 | cs.AI | agent harness | Can Agent Harnesses and Inference Engines Hear Each Other? The HEAR Protocol for Agentic LLM Serving
+2610.06578 | 2026-10-05 | cs.AI | 邻域 | DGA-Muon: Decoupled Geometry-Aligned Adaptive Scaling for Muon
+2610.06576 | 2026-10-05 | cs.CL | LLM | Before Agent Tells The Lie: Has Deception Already Been Represented?
+2610.06571 | 2026-10-05 | cs.CV | 多模态 | BrainTRACE: Tracing Longitudinal, Multimodal, and Volumetric Evidence in Brain MRI Clinical Reasoning
+2610.06563 | 2026-10-05 | cs.AI | agent harness | HERA: Harness-Environment Co-Evolution for Reliable Agentic Abstention
+2610.06553 | 2026-10-05 | cs.AI | 邻域 | Signature-Based Feature Learning for Human Activity Recognition: A Reproducible Machine Learning Study of Representation, Depth, and Model Choice
+2610.06516 | 2026-10-05 | cs.CL | LLM | Test-Time Adaptation of Reasoning Strategies with Bayesian Nonparametric Memory
+2610.06510 | 2026-10-05 | cs.RO | 多模态 | MarvisNav: Making Memory Visible on Route Choices for Zero-Shot Object Navigation
+2610.06479 | 2026-10-05 | cs.CL | LLM | Behavior-Preserving KV Cache Compression
+2610.06469 | 2026-10-05 | cs.RO | 多模态 | Odyssey: A Closed-Loop Benchmark for Long-Horizon Real-World Driving with Explicit Navigation Routes
+2610.06446 | 2026-10-05 | cs.CL | LLM | The Assistance Dilemma: Learning to Teach via Multi-Turn Reinforcement Learning
+2610.06443 | 2026-10-05 | cs.LG | 邻域 | ARO: Aligned Representation learning for multi-Omics data
+2610.06413 | 2026-10-05 | cs.CV | 多模态 | SpatialChain: A Benchmark for Auditing Spatial Reasoning Faithfulness in VLMs
+2610.06406 | 2026-10-05 | cs.AI | 邻域 | What Did the Agent Actually Do? Evidence-Grounded Oversight for Long-Horizon Agents
+2610.06401 | 2026-10-05 | cs.CR | agent harness | RAISED: Self-Distillation for Robustness to Prompt Injection in LLM Agents
+2610.06400 | 2026-10-05 | cs.RO | agent harness | Visual Swarm Navigation via Deep Reinforcement Learning and Evolutionary Hybrid Design
+2610.06394 | 2026-10-05 | cs.CV | 多模态 | Harnessing Multimodal Large Language Models for Training-Free Human-Object Interaction Detection
+2610.06387 | 2026-10-05 | cs.LG | LLM | Scaling Down the Scaling Laws: Parameter Efficiency and Compute-Optimal Training in Resource-Constrained Large Language Models
+2610.06378 | 2026-10-05 | cs.CV | 多模态 | MTOR: Generalizable AI-Generated Video Detection with Multimodal Semantics and Temporal Over-Regularity
+2610.06369 | 2026-10-05 | cs.CV | 多模态 | Environmental sensor readings in two crop disease image datasets identify the session in which each image was taken
+2610.06324 | 2026-10-05 | cs.CV | 多模态 | Readout Blindness: VLM Scores Miss the Spatial Direction Their Frozen Encoders Retain
+2610.06322 | 2026-10-05 | cs.CL | LLM | Agentic schema-guided extraction of materials process knowledge from scientific literature
+2610.06318 | 2026-10-05 | cs.CV | 多模态 | Wiring Matters: Injection Topology and Initialization of Affordance Heads in Vision-Language-Action Policies
+2610.06315 | 2026-10-05 | cs.LG | SLM | SPDAlign: Interpretable Riemannian Alignment for EEG Forward Modeling Shifts
+2610.06293 | 2026-10-05 | cs.CV | 多模态 | VepAgent: Bridging Causal-Transition via Tool-Augmented Reinforcement Learning for Video Event Prediction
+2610.06286 | 2026-10-05 | cs.CL | LLM | DeferKV: Rethinking Eviction Timing for One-Shot KV Cache Compression
+2610.06280 | 2026-10-05 | cs.RO | 多模态 | Future Anchored Verification and Online Recovery for World Action Models
+2610.06273 | 2026-10-05 | cs.CL | LLM | Probabilistic Race and Ethnicity Prediction Using Group-Specific Name Lists
+2610.06271 | 2026-10-05 | cs.RO | 多模态 | VLA-ZO: Fast Zeroth-Order Adaptation for Vision-Language-Action Models
+2610.06241 | 2026-10-05 | cs.LG | SLM | Few-Shot Prototype Head Adaptation for On-Device ECG Personalization on PSoC~6
+2610.06235 | 2026-10-05 | cs.RO | 多模态 | Encoded but Not in Control: Revealing the Grounding Gap in Vision-Language Robot Policies
+2610.06234 | 2026-10-05 | cs.CV | 邻域 | Joint Class-Time Learning for Video Classification with Multi-Instance Partial-Label Learning
+2610.06210 | 2026-10-05 | cs.CV | 多模态 | MoCAR: Motion-code Coordinate-aware AutoRegression for Continuous Trajectory Forecasting
+2610.06204 | 2026-10-05 | cs.AI | LLM | Do Small Language Models Learn to Negotiate? A Controlled Scaling Study of RL-Trained Sellers
+2610.06196 | 2026-10-05 | cs.CV | 多模态 | EORestore-Agent: Fidelity-Guided Agentic Restoration of Remote Sensing Images with Composite Degradations
+2610.06193 | 2026-10-05 | cs.SE | agent harness | Correct Code, Broken Contributions? SWE-CC: Benchmarking Repository Policy Compliance for Coding Agents
+2610.06191 | 2026-10-05 | cs.AI | agent harness | Judged Useless, Queried Anyway: Tool-Using Agents Rarely Turn Their Own Evidence Judgments into Stopping Decisions
+2610.06184 | 2026-10-05 | cs.RO | 多模态 | Arm-wise Compositional Generalization in Dual-Arm Vision-Language-Action Models
+2610.06170 | 2026-10-05 | cs.AI | LLM | MS-Exam-Gen: Source-Grounded Benchmark Construction for Evaluating LLMs on Textual Multiple Sclerosis MRI Knowledge
+2610.06147 | 2026-10-05 | cs.CV | 多模态 | Efficient Test-time Adaptation through Candidate Verification and Divergence Shifts
+2610.06122 | 2026-10-05 | cs.AI | 多模态 | Benchmarking Jailbreak Guardrails for Embodied Agents
+2610.06096 | 2026-10-05 | cs.LG | 邻域 | On the Geometry of Multimodal Saturation: Riemannian VICReg
+2610.06093 | 2026-10-05 | cs.CL | LLM/邻域 | Cross-Lingual Transferability of Training Data Extraction Attacks to Recover Memorized PII
+2610.06078 | 2026-10-05 | cs.RO | 邻域 | Do VLAs Understand and Adapt to the Objects They Handle, or Simply Replay Learned Behaviors?
+2610.06069 | 2026-10-05 | cs.MA | agent harness | Attention Tax, Handoff Tax: A Stylised Model of When Multi-Agent LLM Systems Help
+2610.06064 | 2026-10-05 | cs.CL | LLM | TrustMI: Causally controlling how assistants trust their users
+2610.06056 | 2026-10-05 | cs.CV | 多模态 | ROT: Rotating Hidden States towards Contextual Vectors for Hallucination Mitigation in LVLMs
+2610.06052 | 2026-10-05 | cs.CV | 邻域 | Local2Mesh: Spatially Localized Contour-to-Mesh for Left Ventricular Reconstruction from Sparse 2D Cardiac MRI
+2610.06041 | 2026-10-05 | cs.CV | 邻域 | Representation Disentanglement for Fair Chest X-Ray Diagnosis
+2610.06031 | 2026-10-05 | cs.CL | LLM | LightMTP: Lightweight Latent Multi-Token Prediction
+2610.06026 | 2026-10-05 | cs.CL | LLM | Differentiable Bit-Widths: Co-optimizing Pruning and Quantization via SVD for Ultra-Efficient LLM Compression
+2610.06025 | 2026-10-05 | cs.AI | 邻域 | Grounded Joint-Attention Other-Play for Zero-Shot Coordination
+2610.06021 | 2026-10-05 | cs.CV | 多模态 | Scalable Minimal-Change Learning for Controllable Image Editing
+2610.05994 | 2026-10-05 | cs.RO | 多模态 | How (and How Not) to Use Data Augmentation in VLA Post-Training
+2610.05993 | 2026-10-05 | cs.CV | 多模态 | From Transformation to Target State: Rethinking Query Representation for Zero-Shot Composed Image Retrieval
+2610.05982 | 2026-10-05 | cs.CL | LLM | Breaking the Tie: A Cluster-Aware Routing Framework for Large Language Models
+2610.05977 | 2026-10-05 | cs.LG | LLM | StagQ: Constraint-Driven Multi-Precision Weight Quantization for LLMs
+2610.05966 | 2026-10-05 | cs.CL | LLM | HuatuoGPT-3: RL-Only Domain Adaptation from Base Models
+2610.05940 | 2026-10-05 | cs.CV | 多模态 | ReMem: Streaming Video Understanding With Long Context Retention
+2610.05932 | 2026-10-05 | cs.CV | 多模态/邻域 | UltraDub: Towards Authentic Dubbing by Unifying Visually-Steered Flow Learning and Trajectory Guidance
+2610.05922 | 2026-10-05 | cs.GT | 邻域 | Incentive Alignment in Online Experimentation
+2610.05919 | 2026-10-05 | cs.LG | SLM | Non-invasive Seizure Detection Using Wearable Wrist-worn Accelerometry and Deep Learning
+2610.05915 | 2026-10-05 | cs.LG | SLM | Large Stepsizes Federated Learning on Logistic Regression with Linearly Separable Data: The Case of Heterogeneous Devices
+2610.05910 | 2026-10-05 | cs.CV | 多模态 | AstraSR: Real-World Thermal Super-Resolution with GPT-6 Astra
+2610.05897 | 2026-10-05 | cs.CV | 多模态 | Fitting Vision Adapters at Frontier Scales
+2610.05880 | 2026-10-05 | cs.CV | 多模态 | fMRI-TAMCL: Text-Anchored Supervised Multimodal Contrastive Learning for fMRI-Based Brain Disorder Classification
+2610.05878 | 2026-10-05 | cs.LG | 多模态/邻域 | OGAM: Connecting Systematic Testing to Runtime Assurance through Object-Grounded Attention Monitoring for VLA Policies
+2610.05861 | 2026-10-05 | cs.CV | 多模态 | Imagine to Act: High-Fidelity Data Synthesis via Image Editing World Model for Scalable GUI Agent Training
+2610.05845 | 2026-10-05 | cs.LG | 邻域 | CACFG: Curvature-Aware Classifier-Free Guidance and Optimal Control
+2610.05833 | 2026-10-05 | cs.AI | 邻域 | Request Order Matters: Cache-History Sensitivity in Selective KV-Cache Reuse for Rolling Agents
+2610.05828 | 2026-10-05 | cs.AI | 邻域 | Data-Driven Personas for Survey Simulation: Insights into Simulation Alignment Across Data-Access Regimes
+2610.05818 | 2026-10-05 | cs.RO | 多模态 | What the Guard Misses, the Robot Executes: Implied Harm in VLA Instructions
+2610.05817 | 2026-10-05 | cs.AI | LLM | Nash Equilibrium Text: A Game-Theoretic Decoding Framework for Text Generation
+2610.05793 | 2026-10-05 | cs.AI | agent harness | Topology-Conditioned Backdoors: Language Models That Insert Vulnerabilities When They Infer They Are in a Multi-Agent System
+2610.05783 | 2026-10-05 | cs.CL | 邻域 | CLARA: Can AI Assess Developmental Appropriateness in Children's Stories?
+2610.05782 | 2026-10-05 | cs.AI | agent harness | Agentic-ZTA: A Multi-Agent Architecture for Autonomous Zero Trust Enforcement
+2610.05778 | 2026-10-05 | cs.CL | agent harness | MedicalHarness: A Controlled Evaluation of LLMs and Agent Harnesses on Medical Tasks
+2610.05768 | 2026-10-05 | cs.SD | 邻域 | Relational Synthesis: Structure-Mediated Concatenative Synthesis for Foley and Retrieval-Augmented Audio Generation
+2610.05764 | 2026-10-05 | cs.NI | 多模态 | Implementation of Zero-shot Semantic Communication on Software Defined Radio
+2610.05744 | 2026-10-05 | cs.LG | SLM | CIPHER-MoE: Balancing Efficiency and Routing Fidelity in Trillion-Scale MoE Training
+2610.05726 | 2026-10-05 | cs.AI | 邻域 | FreSia: Frequency-Semantic Instantiation and Alignment for Multivariate Time Series Analysis
+2610.05719 | 2026-10-05 | cs.RO | 多模态 | When to Switch: Reliable Action-Chunk Extension for Vision-Language-Action Models
+2610.05715 | 2026-10-05 | cs.CV | 多模态 | Rotated, but How Far? Diagnosing and Improving Object-Rotation Reasoning in VLMs
+2610.05697 | 2026-10-05 | cs.AI | 邻域 | From Token-Max to Outcome-Max: How You Use AI Determines Its Productivity
+2610.05664 | 2026-10-05 | cs.CV | 多模态 | StageVLN: Spatial and Trajectory Auxiliary Guidance for Efficient Vision-Language Navigation
+2610.05649 | 2026-10-05 | cs.LG | LLM | Training and Scaling Compute-Optimal Physiological Waveform Foundation Models
+2610.05640 | 2026-10-05 | cs.MA | agent harness | Can CaMeLs Talk? Securing Multi-Agent Systems Against Indirect Prompt Injection Attacks
+2610.05637 | 2026-10-05 | cs.AI | 多模态/邻域 | Visual Grounding Safety in Vision-Language Models
+2610.05630 | 2026-10-04 | cs.CL | 多模态 | Atomic Visual Entailment: Enhancing Zero-Shot Vision-Language Reasoning through Atomic Fact Decomposition and Learned Selection
+2610.05625 | 2026-10-04 | cs.AI | agent harness | A Framework for Automated Multi-Source Satellite Data Analytics and LLM-Based Report Generation
+2610.05622 | 2026-10-04 | cs.SE | agent harness | UndoBench: Separating Task Competence from Recovery Capability in Tool-Using AI Agents
+2610.05615 | 2026-10-04 | cs.AI | LLM/多模态 | DREAM: Dynamic Resolution Assignment For Multimodal Multi-agent Debate
+2610.05586 | 2026-10-04 | cs.CR | agent harness | AgentDoxx: Agentic Re-identification of Anonymized Text with Web Search
+2610.05578 | 2026-10-04 | cs.DC | 多模态 | Rethinking Streaming-Perception Evaluation on Heterogeneous Edge Platforms
+2610.05566 | 2026-10-04 | cs.AI | agent harness | LifeLong Digital Twin: A Unified Modeling Paradigm and Agent Harness for Event-Driven Lifelong Health State Trajectories
+2610.05563 | 2026-10-04 | stat.ML | SLM | G-CARB: Graph-Localized Conformal Agent Risk Budget for Compositional Harm
+2610.05541 | 2026-10-04 | cs.LG | 邻域 | Don't Judge an LLM Only by Its Activations: Discovering Suppressed Safety Features via Counterfactual Activation Potential
+2610.05526 | 2026-10-04 | cs.AI | 多模态 | Have I Scene This Before? Spatially Grounded Conversational Memory for Complex Queries in Egocentric Assistants
+2610.05505 | 2026-10-04 | cs.RO | 多模态 | Robust 2D Traversability Mapping for Construction AMRs via Failure-Mode-Aware Fusion of LiDAR Geometry and Monocular Semantics
+2610.05492 | 2026-10-04 | cs.LG | 多模态 | When Does Retrieval Help? A Study of In-Context Adaptation in Vision-Language-Action Models
+2610.05481 | 2026-10-04 | cs.AI | 邻域 | CodeForge-MA: Execution-Verified Multi-Agent Learning with Language-Conditioned LoRA for Multilingual Code Generation
+2610.05463 | 2026-10-04 | cs.HC | 多模态 | Human-Like Attention? A Psychophysical Comparison of Visual Search in Humans and MLLMs
+2610.05453 | 2026-10-04 | cs.CR | SLM/多模态 | The Poisoned Conversation: Privacy-Leaking Watermarks in Unified Multimodal Models
+2610.05432 | 2026-10-04 | cs.IR | 多模态 | OpticalRec: Unified Optical Vision-Language Representation for Multimodal Recommendation
+2610.05425 | 2026-10-04 | cs.CV | 多模态 | Unmentioned Checklist Findings Change How Reinforcement Learning Appears to Improve Chest Radiograph Report Checking
+2610.05418 | 2026-10-04 | cs.RO | 多模态 | EvoMem-VLA: State-Evolution Memory for Long-Horizon Robot Manipulation
+2610.05417 | 2026-10-04 | cs.CV | 多模态 | Render to Reason: Novel-View Semantic Prediction Improves Spatial Understanding in VLMs
+2610.05414 | 2026-10-04 | cs.RO | 多模态 | RMMBench: A Comprehensive Benchmark for Robotic Mobile Manipulation
+2610.05413 | 2026-10-04 | cs.CV | 多模态 | A Strong Baseline for Evaluating Vision Encoders in Multimodal Large Language Models
+2610.05411 | 2026-10-04 | cs.CV | 多模态 | CleanMDM: Clean Motion Diffusion Model for Multimodal Motion Cleanup
+2610.05398 | 2026-10-04 | cs.AI | 邻域 | MMPostTrainBench: Benchmarking Autonomous Research for Multimodal Post-Training
+2610.05387 | 2026-10-04 | cs.LG | LLM | GNN-CB: A Graph Neural Network Competition Benchmark for Human and LLM Evaluation
+2610.05383 | 2026-10-04 | cs.AI | SLM | Sibyl: An Efficient Small-large Model Collaboration Framework for Long-horizon Tasks
+2610.05380 | 2026-10-04 | cs.PL | LLM | VHDL-REPOBENCH: A Repository-Level Benchmark for Evaluating Large Language Models on VHDL Design Generation
+2610.05367 | 2026-10-04 | cs.LO | 邻域 | AIProver: Agentic Auto-Formalization of Mathematical Research via Certificate-Driven Evolving Harness
+2610.05342 | 2026-10-04 | cs.CV | 多模态 | IRSTD-Agent: Agentic Infrared Small Target Detection via Zoom-Guided Interaction Learning
+2610.05337 | 2026-10-04 | cs.LG | 邻域 | Green-Routed Neural Operators:\\Physics Determines Where the Network Reads
+2610.05318 | 2026-10-04 | cs.LG | SLM | Robust Parameter-Efficient LLM Adaptation on Analog Hardware
+2610.05308 | 2026-10-04 | cs.CL | LLM | RubricArmor: Adversarial Evolution Improves LLM-Based Rubric Generation
+2610.05300 | 2026-10-04 | cs.AI | agent harness | MESH-Harness: Self-Improving Agent Harnesses via Bandit-Guided Compositional Evolution
+2610.05282 | 2026-10-04 | cs.CL | LLM | Red-TTT: Test-Time Training for Automated Jailbreaking Large Language Models
+2610.05275 | 2026-10-04 | cs.CL | LLM | Inductive Claims Extraction at Scale
+2610.05274 | 2026-10-04 | cs.CV | 多模态 | Answer with Evidence: Consistency-Aware Grounded Visual Question Answering for Roadside Traffic Scenes
+2610.05270 | 2026-10-04 | cs.MA | agent harness | Synergizing Drone Delivery Order Pooling and Road Network Monitoring through Monitoring-Task Orderization
+2610.05269 | 2026-10-04 | cs.LG | LLM | A Unified Scaling Law for Time Series Foundation Models
+2610.05252 | 2026-10-04 | cs.CV | 邻域 | MGPO: Manifold-Guided Diffusion Alignment for Task-Aware Dataset Distillation
+2610.05249 | 2026-10-04 | cs.CV | 多模态 | ArticuTable: Generating Instance-Level Interactive Rigid-Articulated 3D Tabletop Scenes from a Single Image
+2610.05247 | 2026-10-04 | cs.MA | LLM | templar: agentic induction and evolution of standardized radiology reporting templates from large-scale clinical corpora
+2610.05241 | 2026-10-04 | cs.SE | agent harness | StateWise: Diagnosing and Repairing Persistent Operational State Before Agent Actions
+2610.05219 | 2026-10-04 | cs.AI | LLM/邻域 | Safe Context Switching for Agents in the Wild: Mitigating Subspace Interference via Orthogonal Adaptation
+2610.05195 | 2026-10-04 | cs.CV | 多模态 | Long-MDR: Long-Context Reinforcement Learning for Multimodal Deep-Research Agents
+2610.05190 | 2026-10-04 | cs.CL | LLM | FORGE: Verification-Gated Behavioral Repair for Generative Language Models
+2610.05163 | 2026-10-04 | cs.CR | 邻域 | Blocking at the Boundary: Auditing Long-Horizon Agents against Staged Prompt Injection
+2610.05162 | 2026-10-04 | cs.AI | 邻域 | Memadapter: Counterfactual Adaptation Against Memory-induced Sycophancy
+2610.05157 | 2026-10-04 | cs.LG | 邻域 | Cross-Modal Contrastive Learning for the Retrieval of Immunotherapy-Associated Molecular Signatures from Histopathology
+2610.05131 | 2026-10-04 | cs.CV | 多模态 | RoMod: Temporal Routing Modulation via Mixture-of-Experts for Video Anomaly Detection
+2610.05129 | 2026-10-04 | cs.CV | 多模态 | Representation--Behavior Alignment for Explainable Weakly-Supervised Video Anomaly Detection
+2610.05126 | 2026-10-04 | cs.CL | SLM | Selecting Repetition Counts Across Model Scales in Data-Constrained Pretraining
+2610.05114 | 2026-10-04 | cs.CL | LLM | Belief-Trajectory Energy: Measuring the Path to a Prediction
+2610.05097 | 2026-10-04 | cs.CV | LLM/多模态 | ReMAP: Restoring the Perceptual Cycle with Reasoning-Time Latent Visual Memory
+2610.05094 | 2026-10-04 | cs.CL | LLM | How Much Do LLM-as-a-Judge Design Choices Matter? A Systematic Comparison of Prompt Designs, Rating Scales, and Models
+2610.05069 | 2026-10-04 | cs.CL | LLM | Usage-Modulated Sentiment Representations in Large Language Models
+2610.05039 | 2026-10-04 | cs.CL | agent harness | Causal Improvement Graph for Agentic Harness Optimization
+2610.05033 | 2026-10-04 | cs.CV | 多模态 | Code2Games: Enabling Coding Agents for Gaming World Generation
+2610.05031 | 2026-10-04 | cs.CL | LLM | When LLMs Sit Above Diagnostic Tools: Unrealized Complementarity in Industrial Fault Diagnosis
+2610.04991 | 2026-10-04 | cs.AI | agent harness | CIPO: Counterfactual Imagination Policy Optimization for Adaptive Tool Granularity Selection
+2610.04975 | 2026-10-04 | cs.AI | agent harness | Runtime Authorization of Self-Generated Subgoals in Long-Horizon Tool-Using AI Agents
+2610.04974 | 2026-10-04 | cs.CL | LLM/邻域 | IREA: Intermediate Representation-based Embedding Alignment for Normative RAG
+2610.04966 | 2026-10-04 | cs.AI | agent harness | BACAM: Behavior-Aware Continual Agent Merging for Multi-Turn Interaction
+2610.04961 | 2026-10-04 | cs.CL | LLM | Building LLM Agent Systems the Deep Learning Way: From Modular Design to Architecture Search
+2610.04950 | 2026-10-04 | cs.LG | SLM | How Should Teachers Be Prepared? RL on Student-Induced States for On-Policy Distillation
+2610.04921 | 2026-10-04 | cs.SE | agent harness | Complex Agents, Shallow Tests: Demystifying and Enhancing Test Adequacy of Agent Harness in the Wild
+2610.04914 | 2026-10-04 | cs.AI | agent harness | Monitorability Disposition in Large Reasoning Models
+2610.04893 | 2026-10-04 | cs.LG | SLM | SFlexRCA: Lightweight, Scalable, and Flexible Root Cause Analysis for IIoT Edge Systems
+2610.04829 | 2026-10-04 | cs.CL | agent harness | Viva La Vida: Verification and Accumulation Failures in Multi-Agent Proof Search
+2610.04802 | 2026-10-03 | cs.LG | SLM | Multi-Agent Spectrum Sharing
+2610.04792 | 2026-10-03 | cs.AI | 多模态 | Do More Modalities Always Help? A Geometric Perspective on Missing-Modality Robustness
+2610.04784 | 2026-10-03 | cs.NI | SLM | RepTC: Representation-Aware Optimization for Efficient Traffic Classification on Edge IoT Devices
+2610.04777 | 2026-10-03 | cs.CV | 多模态 | ARISE: Adaptive Agentic Reasoning with Image-grounded Self-Evaluation for Interpretable IBD Assessment
+2610.04747 | 2026-10-03 | cs.AI | agent harness | Formalizing the Moral Evaluation of Speech Acts: Truthfulness, Lies and Ethical Dilemmas
