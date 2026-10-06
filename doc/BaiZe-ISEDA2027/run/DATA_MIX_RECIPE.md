@@ -169,7 +169,7 @@ Xmodel-2 原文（`xmodel-2.tex:138,144-146,152-154`）：
 | `UltraData-SFT-2605` shard s1 | 🟡 进行中 | `data/mix_sft_tok/mix_sft_train_s1` | ~?B（.bin 12G） | clean restart, PID 2868155, 1.5h |
 | `UltraData-SFT-Agent-2609` | ❌ 未分词 | `/nas_inference/.../UltraData-SFT-Agent-2609/` | ~?B | 50 shard jsonl / 51 GiB，待 s0/s1 完后启动 |
 
-### 9.2 Stable 段 BO 搜索（🚀 运行中，2026-10-06 改道后）
+### 9.2 Stable 段 BO 搜索 Round 1（✅ 完成，2026-10-06~07）
 
 > **S0a 2.2B 单臂已 kill（2026-10-06 08:06）** — 方法学错误（单臂 ≠ 实验）+ 成本失控（312 GPU·h/臂）。改道为小代理模型 + GP-EI BO 搜索。
 
@@ -181,10 +181,46 @@ Xmodel-2 原文（`xmodel-2.tex:138,144-146,152-154`）：
 | **objective** | `held_out_eval` bin val loss（**eval-set 语料代理**，见 §6.1） |
 | **并行** | 6 GPU（.29 GPU2-7）· GP-EI surrogate（Matern(ν=2.5)） |
 | **存储** | SQLite `nemo_experiments/mix_search/mix_search_eval.db` |
-| **PID** | 1011682 @ .29（since 15:30） |
-| **进度** | **192/200 complete**（0 pruned），best=**5.821864** (#182: web≈0.84/code≈0.04/math≈0.12), top5=#182/155/149/96/125 |
-| **先验 88:8:4** | 最近 #59, loss=5.857, rank **27/192**, Δ=**0.025** |
-| **速率** | ~33 trial/h, remaining 8, ETA ~23:50 Oct6 |
+| **进度** | **200/200 complete**（0 pruned），best=**5.821864** (#182: web=0.827/code=0.062/math=0.111) |
+| **top-5** | #182(5.822) / #198(5.823) / #155(5.832) / #149(5.832) / #96(5.833) |
+| **先验 88:8:4** | #79, loss=5.886, rank ~92/200 |
+
+### 9.2.1 🔴 Round 1 关键结论：代理 val-loss 与 lm_eval 负相关（方法学验证）
+
+> **这是 Round 1 最重要的产出** — 证明了 proxy val-loss **不能**预测 lm_eval 性能。
+
+**top-K lm_eval 8 集结果**（6 configs × 8 tasks, zero-shot, 见 `report_data_mix_eval.html`）：
+
+| Config | BO loss rank | lm_eval 均分 | lm_eval rank |
+|:--|:--:|:--:|:--:|
+| #182 (BO best) | 1/6 | 0.3373 | **6/6** (最差) |
+| #198 | 2/6 | 0.3350 | 5/6 |
+| #155 | 3/6 | 0.3420 | **1/6** (最好) |
+| #149 | 4/6 | 0.3387 | 3/6 |
+| #96 | 5/6 | 0.3343 | 5/6 |
+| #79 (先验88:8:4) | 6/6 | 0.3387 | 2/6 |
+
+- **Spearman 秩相关**：ρ=**−0.43**, p=0.40, n=6（**负相关**！BO loss 最优 → lm_eval 最差）
+  - arc_challenge: ρ=−0.83, p=0.04（显著负相关）
+  - 6/8 集呈负相关
+- **噪声 σ=0**（lm_eval zero-shot 分类为确定性）
+- **均分 spread=0.0053**（极小，≈随机基线 0.33 → 18.36M + 0.016B token 太小）
+
+**结论**：① proxy val-loss 不可用作 BO objective；② D=0.016B (500步) 太小，模型未学到足以区分配比；③ Round 2 必须用 lm_eval 均分作 objective + 增大 D。
+
+### 9.2.2 Round 2 设计（待 GPU0-1 释放后启动）
+
+| 参数 | Round 1 | **Round 2** |
+|:--|:--|:--|
+| **objective** | held_out_eval val-loss | **lm_eval 8集均分**（subsampled --limit 500） |
+| **MBS** | 1 (s_step=1.5s) | **16** (s_step=166ms, 8.6×) |
+| **D/trial** | 0.016B (500步) | **0.5B** (15259步) |
+| **save ckpt** | 否 (--save-interval 0) | **是** (final ckpt → HF → lm_eval) |
+| **GPUs** | 6 (GPU2-7) | **8** (GPU0-7, 待释放) |
+| **DB** | mix_search_eval.db | **mix_search_eval_r2.db** |
+| **trial 数** | 200 | ≥200 (8卡 → ~400 in 24h) |
+| **脚本** | baize_mix_optuna.py | **baize_mix_optuna_r2.py** |
+| **对照** | — | 只比「最优配比+排序」，不比 loss 绝对值 |
 
 ### 9.3 旧 study（val-loss objective，保留对照）
 
@@ -201,12 +237,12 @@ Xmodel-2 原文（`xmodel-2.tex:138,144-146,152-154`）：
 - **GPU**：默认 GPU2-7（训练完后即可评测）
 - **依赖**：PYTHONPATH 前置 `p6_tf5`（transformers 5.17.0 NemotronHForCausalLM）+ `omegaconf_230`；HF_ENDPOINT=hf-mirror.com
 
-### 9.5 下载进度（白名单 2+1 项，2026-10-06 19:20）
+### 9.5 下载进度（白名单 2+1 项，2026-10-07 01:20）
 
 | 项 | 进度 | 速率 / ETA | PID |
 |:--|:--|:--|:--|
 | `ultrafineweb_en` | **2048/2048 ✅** | 完成 | — |
-| `ultrafineweb_l1_en_hq` | **5128/6006**（85.4%） | ~382G, ETA ~11:00 Oct7 | 3076502/3076519 |
+| `ultrafineweb_l1_en_hq` | **5476/6006**（91.2%） | ~409G, ETA ~06:00 Oct7 | 3076502/3076519 |
 | `ultrafineweb_zh` | **256/256 ✅ 完成** | 301G | — |
 | GPIC | 活跃中 | — | 144981 @.12 |
 | `gpic` | **3410 tars / 4.9T** | 活跃 | 144981 |

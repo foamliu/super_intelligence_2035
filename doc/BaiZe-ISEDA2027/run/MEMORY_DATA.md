@@ -10,18 +10,18 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验 → ①BO 200/200+top-K lm_eval+Spearman+σ+report ✅完成 → ②s_step归因✅(MBS1→16:8.6×) → ③第二轮BO待GPU0释放
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a已kill；proxy d128 provider+recipe创建；held-out bin+held_out_eval; baize_mix_optuna.py；5项必验全通过；**BO 200/200完成**(best=#182 loss=5.822); **top-K lm_eval 8集完成**(6 configs); **Spearman ρ=−0.43 p=0.40**(负相关!loss≠能力); **噪声σ=0**(确定性); **report_data_mix_eval.html已产出**; **s_step归因完成**(MBS1→16:8.6×,166ms); report_data_mix_sstep.html已产出
-当前动作:     唤醒168(01:03) ①**report_data_mix_eval.html已产出**(BO 200-trial top-K/Spearman/σ/反思) ②**Spearman ρ=−0.43**(loss与lm_eval均分负相关,arc_challenge ρ=−0.83 p=0.04显著) ③**GPU0仍被pretrain lm_eval占用**(GPU1-7空闲) ④步骤③第二轮BO待GPU0-1释放
-下一步:       ①待pretrain释放GPU0-1→8卡第二轮BO(MBS=16,D=0.5B,lm_eval objective,独立DB mix_search_eval_r2.db); ②base下载监控(l1_en_hq 5372/6006 89%); ③DATA_MIX_RECIPE.md §6更新(已部分更新)
-阻塞:         GPU0仍被pretrain lm_eval占用(bbh_zeroshot),步骤③需GPU0-1全释放
+PHASE:        §0.6-B 配比实验 → ①BO 200/200+top-K lm_eval+Spearman+σ+report ✅完成 → ②s_step归因✅(MBS1→16:8.6×) → ③第二轮BO脚本就绪,待GPU0释放
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a已kill；proxy d128 provider+recipe创建；held-out bin+held_out_eval; baize_mix_optuna.py；5项必验全通过；BO 200/200完成(best=#182 loss=5.822); top-K lm_eval 8集完成(6 configs); Spearman ρ=−0.43(负相关!); σ=0; report_data_mix_eval.html; s_step归因完成(MBS1→16:8.6×,166ms); report_data_mix_sstep.html; **baize_mix_optuna_r2.py已创建**(lm_eval objective,MBS=16,D=0.5B,ckpt→HF→lm_eval); DATA_MIX_RECIPE.md §9.2.1/§9.2.2已更新
+当前动作:     唤醒169(01:20) ①**baize_mix_optuna_r2.py已创建**(Round2 BO: lm_eval objective, MBS=16, D=0.5B→15259步, --limit 500, 独立DB mix_search_eval_r2.db, 语法验证✅) ②**DATA_MIX_RECIPE.md §9.2.1/§9.2.2已更新**(Round1结论+Round2设计对比表) ③**GPU0仍被pretrain bbh_4771占用**(84%,ETA~10min) ④base下载l1_en_hq 5476/6006(91%)
+下一步:       ①待pretrain释放GPU0-1→ssh .29 跑 `python baize_mix_optuna_r2.py --gpus 0,1,2,3,4,5,6,7 --n-trials 200`; ②base下载监控(l1_en_hq 91%); ③Round2完成后top-K full lm_eval+σ+report_data_mix_eval_r2.html
+阻塞:         GPU0仍被pretrain bbh_4771占用(84%,ETA~10min),步骤③需GPU0-1全释放
 ERROR_COUNT:  0
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-- [01:03] **唤醒168**：①本机=`.12`。②**步骤①全完成**: BO 200/200(mix_search_eval.db,0 pruned,best=#182 loss=5.822 web=0.827/code=0.062/math=0.111)。top-K lm_eval 8集已由commit 049231d1完成(6 configs:#182/198/155/149/96/#79)。**Spearman ρ=−0.43 p=0.40 n=6**(负相关!BO best #182在lm_eval排rank6/6,先验#79排rank2)。arc_challenge ρ=−0.83 p=0.04(显著负)。**噪声σ=0**(确定性)。均分spread=0.0053(极小,≈随机基线0.33)。**report_data_mix_eval.html已产出**(11.4KB,含top-K表+Spearman+σ+方法学反思+第二轮建议)。③**步骤②已完成**: s_step归因MBS1→16=8.6×(1432→166ms),report_data_mix_sstep.html已产出。④**步骤③阻塞**: .29 GPU1-7空闲,GPU0仍被pretrain lm_eval(bbh_zeroshot,~32min elapsed)占用→需GPU0-1全释放才能8卡第二轮。⑤**base下载**: l1_en_hq 5372/6006(89%)。📦 体积：TASK=34.3KB / MEMORY=14.5KB（归档0KB,TASK略超32KB但<40KB红线）。
+- [01:20] **唤醒169**：①本机=`.12`。②**baize_mix_optuna_r2.py已创建**(389行,语法验证✅)：Round2 BO脚本，关键改动=objective改为lm_eval 8集均分(非val-loss proxy)、MBS=16(非1)、D=0.5B→15259步、save final ckpt→HF转换→lm_eval(subsampled --limit 500)→parse score→cleanup、独立DB mix_search_eval_r2.db、支持8卡。GP surrogate存储negated score(minimize→maximize)。每trial≈42min训练+5min评测≈47min，200trial/8卡≈20h。③**DATA_MIX_RECIPE.md §9.2.1/§9.2.2已更新**：§9.2改为"Round1 ✅完成"、新增§9.2.1(Round1关键结论：Spearman ρ=−0.43负相关+top-K表+σ=0+spread=0.0053)、新增§9.2.2(Round2设计对比表)。§9.5下载进度更新(l1_en_hq 5476/6006=91%)。④**GPU0仍被pretrain bbh_4771占用**(84% 2269/2700, ETA~10min)，GPU1-7空闲。步骤③触发条件(GPU0-1全释放)未满足。⑤base下载l1_en_hq 5476/6006(91.2%)。📦 体积：TASK=34.3KB / MEMORY=15.0KB（归档0KB,TASK略超32KB但<40KB红线）。
 - [22:39] **唤醒166**：①本机=`.12`。②**BO eval study**(mix_search_eval.db,PID 1011682@.29 alive~7h,`--objective eval`):**187/200 complete**(0 pruned,6 in-flight t186-191)。**best=5.831981**(#155:web=0.847/code=0.035/math=0.118),top5=#155/149/96/125/55。先验88:8:4=#59(loss=5.856989,**rank27/187,Δ=0.025→先验竞争力上升**)。rate:168→187 in 34min=~33.5/h,13剩余,ETA~23:30。GPU2-7各6.7GB/~10%util,GPU0=pretrain lm_eval,GPU1已释放(sglang停)。③⭐**s_step归因实验完成**！`baize_sstep_profile.py`在GPU1@.29测MBS∈{1,4,8,16}(GBS=16,seq=2048,50step,88:8:4 blend):**MBS=1 median=1432ms**(16μbatch)→**MBS=4=418ms**(3.4×)→**MBS=8=220ms**(6.5×)→**MBS=16=166ms**(8.6×)。Peak mem: 3→11→20→42GB(均<80GB)。结论：**overhead-bound(每μbatch~90-170ms Python/kernel-launch)，非compute-bound**。MBS=16使D=0.5B/trial(15259步×0.166s=42min→205trial/24h/6GPU)可行。结果存`sstep_profile/sstep_profile_results.json`。④base下载:zh✅256/256(301G),l1_en_hq 5128/6006(382G,85.4%)。📦 体积：TASK=31.7KB/MEMORY待更新。
 - [22:05] **唤醒165**：①本机=`.12`。②**BO eval study**(mix_search_eval.db,PID 1011682@.29 alive~6h35m,`--objective eval`):**168/200 complete**(0 pruned,6 in-flight t168-173)。**新best=5.831981**(#155:web=0.847/code=0.035/math=0.118),top5=#155/149/96/125/55(loss 5.832~5.833)。先验88:8:4=#79(loss=5.886048,**rank~92/168,Δ=0.054→先验不竞争力**)。rate:150→168 in 38min=~28.4/h,32剩余,ETA~23:12。GPU2-7各6.7GB/~10%util,GPU0-1=pretrain。③⭐**base下载**: zh✅**256/256下满**(301G)! l1_en_hq **5088/6006**(379G,84.7%,5snap×1000✅+CC-2025-51@89 actively downloading part-0090),0 incomplete,PID 3076519+retry-loop 3076502 alive。l1_en_hq余918→ETA~11:15 Oct7(速率~70/h)。④vision占.12 GPU0-7(R12b,与data无冲突,data用.29 GPU2-7)。⑤**BO完成后计划**:top-5(#155/149/96/125/55)+先验88:8:4(#79)共6个config需重跑带ckpt→lm_eval 8集取均分→Spearman秩相关验证代理有效性→噪声σ→report。📦 体积：TASK=31.7KB / MEMORY=30.8KB（归档 0KB,均≤32KB ✅）。
 > 📦 旧流水（唤醒156-164）已归档 → `daily-memories-data/2026-10-06.md`
@@ -78,11 +78,11 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **§0.6-B 配比实验 → BO搜索(eval proxy)187/200 + ⭐s_step归因完成(MBS1→16: 1432→166ms=8.6×, D可达0.5-1B/trial); base下载: zh✅, l1_en_hq 85%; MEMORY≤32KB** |
-| WAITING | 1（🔄 BO eval study 187/200, best=5.831981(#155), PID 1011682; s_step归因已完成; base下载l1_en_hq 5128/6006; 每30-60min查进度+commit心跳） |
+| PHASE | **§0.6-B 配比实验 → ①BO 200/200✅+Spearman ρ=−0.43(负相关!)+σ=0 ②s_step归因✅(MBS1→16:8.6×) ③Round2脚本就绪(baize_mix_optuna_r2.py),待GPU0释放; base下载: zh✅, l1_en_hq 91%** |
+| WAITING | 0（步骤①②完成; Round2脚本就绪待GPU0-1释放; pretrain bbh_4771@84% ETA~10min; base下载l1_en_hq 91%） |
 | ERROR_COUNT | 0（历史②项已修复归档） |
-| 节点 | `10.239.2.29`（GPU2-7 BO搜索并行, GPU0=pretrain lm_eval, GPU1已释放） |
-| 更新 | 2026-10-06 22:39 |
+| 节点 | `10.239.2.29`（GPU0=pretrain bbh_4771, GPU1-7空闲; Round2需GPU0-7全释放） |
+| 更新 | 2026-10-07 01:20 |
 
 ## 看板（按推荐执行顺序）
 
