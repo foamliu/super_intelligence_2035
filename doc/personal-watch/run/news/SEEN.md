@@ -302,3 +302,11 @@
 | 2026-10-06 | GLM-5.3 上架亚马逊 AWS 大模型平台，智谱打开海外收入分成通道 | IT之家 | news | https://www.ithome.com/1/009/946.htm |
 | 2026-10-06 | LG 电子将为北美超 5GW 人工智能数据中心供应冷水机组 | IT之家 | news | https://www.ithome.com/1/009/949.htm |
 
+| 2026-10-06 | 防止 AI 胡编乱造：微软 Word Copilot 新增引用功能，可溯源查证 | IT之家 | news | https://www.ithome.com/1/009/958.htm |
+| 2026-10-06 | 消息称 OpenAI 洽谈 300 亿美元融资，阿联酋基金、贝莱德入局磋商 | IT之家 | news | https://www.ithome.com/1/009/961.htm |
+| 2026-10-06 | Groq 遭起诉：被控与英伟达 200 亿美元"类收购"交易牺牲少数股东权益 | IT之家 | news | https://www.ithome.com/1/009/960.htm |
+| 2026-10-06 | 苹果与 OpenAI 商业秘密诉讼交锋升级：互指违规提交新证据 | IT之家 | news | https://www.ithome.com/1/009/955.htm |
+| 2026-10-06 | 微软 Win11 逐步淘汰传统打印机驱动，旧设备恐面临兼容性挑战 | IT之家 | news(非 AI) | https://www.ithome.com/1/009/962.htm |
+| 2026-10-06 | 余承东详解华为手机"拼好网"：高铁视频通话卡顿减少 90%，Mate 90 系列首发 | IT之家 | news(非 AI) | https://www.ithome.com/1/009/957.htm |
+| 2026-10-06 | 微软工程师回应"Win10/Win11 不适合开发"论调，称其开发者规模超 macOS / Linux | IT之家 | news(非 AI) | https://www.ithome.com/1/009/954.htm |
+| 2026-10-06 | Constellation 收获亚马逊 20 年核电长单，接近与 Alphabet 达成 10 亿美元交易 | IT之家 | news(超 72h·9-30) | https://www.ithome.com/1/009/956.htm |
