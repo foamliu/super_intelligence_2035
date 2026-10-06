@@ -51,7 +51,9 @@ SPACES = {
     },
 }
 
-VALID_BLEND = f"1 {HELDOUT}/held_out_base 1 {HELDOUT}/held_out_code 1 {HELDOUT}/held_out_math"
+VALID_BLEND_LOSS = f"1 {HELDOUT}/held_out_base 1 {HELDOUT}/held_out_code 1 {HELDOUT}/held_out_math"
+VALID_BLEND_EVAL = f"1 {HELDOUT}/held_out_eval"
+VALID_BLEND = VALID_BLEND_LOSS  # set by --objective in main()
 
 
 def build_blend_stable(web, code):
@@ -218,7 +220,7 @@ def run_trial(trial_id, params, gpu_id, phase, gp_median=None):
         "--seq-length", str(SEQ),
         "--eval-interval", str(EVAL_INTERVAL),
         "--eval-iters", str(EVAL_ITERS),
-        "--save-interval", str(TRAIN_ITERS),
+        "--save-interval", "0",  # search phase: no ckpt (operator §C)
         "--lr", str(LR), "--min-lr", "1e-5",
         "--lr-warmup-iters", str(WARMUP), "--lr-decay-iters", str(DECAY),
         "--lr-decay-style", "WSD",
@@ -267,7 +269,22 @@ def main():
     p.add_argument("--n-trials", type=int, default=200)
     p.add_argument("--gpus", default="2,3,4,5,6,7")
     p.add_argument("--n-random", type=int, default=12)
+    p.add_argument("--objective", choices=["loss", "eval"], default="eval",
+                   help="loss=old(base/code/math) | eval=proxy(held_out_eval)")
+    p.add_argument("--db-suffix", default=None,
+                   help="DB filename suffix (auto: _eval for eval, '' for loss)")
     args = p.parse_args()
+
+    global VALID_BLEND, DB_PATH
+    if args.objective == "eval":
+        VALID_BLEND = VALID_BLEND_EVAL
+        suffix = "_eval" if args.db_suffix is None else args.db_suffix
+    else:
+        VALID_BLEND = VALID_BLEND_LOSS
+        suffix = "" if args.db_suffix is None else args.db_suffix
+    DB_PATH = f"{EXP_DIR}/mix_search{suffix}.db"
+    print(f"Objective: {args.objective} | DB: {DB_PATH}")
+    print(f"Valid blend: {VALID_BLEND}")
 
     gpu_list = [int(g) for g in args.gpus.split(",")]
     n_workers = len(gpu_list)
