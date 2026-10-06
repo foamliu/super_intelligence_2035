@@ -1048,3 +1048,6 @@
 
 > **第六十四轮（UTC 2026-10-06 周二 16:5x，第六十三轮后约 40min · 同批去重复核）**：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600**（**470 条 = `already in SEEN`** + **130 条 = `stale > 72h`**）→ **新增 0 条**。累计仍为 **893 条（收录 161 / 候选 732）**。**arXiv 公告批次仍为 `2026-10-05`**（主源最新样本 `published=2026-10-05T17:59:54Z`、`totalResults=627806`，与第五十四~六十三轮一致，**批次未刷新**），**0 新增属正常 非「无数据」**；`window_mode=daily`(72h，第三十轮起自动回落)，因去重先查 SEEN，结论不变；R1′ arXiv ✅ / HF ❌（`Network is unreachable`）/ RSS 有内容，本轮 `--probe`（**本轮实时 `--probe`**，无重试）/`--fetch` 均 `attempts=1` 无重试（详见 `research/2026-10-06.md` 第六十四轮 + `raw/2026-10-06-{probe,fetch}-r64.json`）。
 
+
+> **第六十五轮（UTC 2026-10-06 周二 17:3x，第六十四轮后约 40min · 同批去重复核）**：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600**（**470 条 = `already in SEEN`** + **130 条 = `stale > 72h`**）→ **新增 0 条**。累计仍为 **893 条（收录 161 / 候选 732）**。**arXiv 公告批次仍为 `2026-10-05`**（主源最新样本 `published=2026-10-05T17:59:54Z`、`totalResults=627806`，与第五十四~六十四轮一致，**批次未刷新**），**0 新增属正常 非「无数据」**；`window_mode=daily`(72h，第三十轮起自动回落)，因去重先查 SEEN，结论不变；R1′ arXiv ✅ / HF ❌（`Network is unreachable`）/ RSS 有内容，本轮 `--probe`（**本轮实时 `--probe`**，无重试）/`--fetch` 均 `attempts=1` 无重试（详见 `research/2026-10-06.md` 第六十五轮 + `raw/2026-10-06-{probe,fetch}-r65.json`）。
+
