@@ -11,7 +11,7 @@ WAITING: 1
 | STAGE | `B`（大模型消融；**已调换**：因 pro-fp4 额度 403 阻塞 C1，先跑 Phase B）|
 | CONFIG | `kimi-k2.6-cloud`（B 第 3 臂，r3 运行中）|
 | ROUND | 3 |
-| PHASE | `running`（B.kimi-k2.6-cloud r3 已启动，PID 3583097，batch 2026_1006_181646，18:16:46，8 worker/158 题/-n，log=/tmp/ABL_kimi-k2.6-cloud_r3.log；模型确认 kimi-k2.6-cloud active / 0 Forbidden ✅，独立 CLI_DATA_DIR=/nasdata/app.e0031982/.cline_kimi_eval/data 隔离；r1=79.1%、r2=76.6% 已收割；前序 B.glm-5.2 5/5=83.3±3.1% ✅、B.deepseek-v4-flash 5/5=16.7±12.3% ✅；试验次序 B→C1→C2→S1；下轮唤醒走步骤 A harvest r3）|
+| PHASE | `running`（B.kimi-k2.6-cloud r3 仍在跑，PID 3583097，etime ~6842s≈114min，batch 2026_1006_181646，log=/tmp/ABL_kimi-k2.6-cloud_r3.log，mtime 20:10 active 15.6MB，尚无 PASS_RATE 汇总 / 0 Forbidden ✅，kimi active ✅ CLI_DATA_DIR=.cline_kimi_eval 隔离；r1=79.1%、r2=76.6% 已收割；前序 B.glm-5.2 5/5=83.3±3.1% ✅、B.deepseek-v4-flash 5/5=16.7±12.3% ✅；试验次序 B→C1→C2→S1；下轮唤醒走步骤 A harvest r3）|
 | WAITING | 1 |
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
@@ -49,6 +49,8 @@ WAITING: 1
 | C1.wo_retrieval | r1=74.1（r2 infra 作废；pro-fp4 403→待 Phase B 完成后重试）| [74.1]（r1 复用 legacy；r2 0/158 Forbidden 作废）|
 
 ## 操作流水
+
+- [2026-10-06 20:10] [⏳ B.kimi-k2.6-cloud r3 健康巡检 → 仍在跑，不动] §7 步骤 A（PHASE=running）：`pgrep '^bash scripts/run_cline_script'`→**有输出**（PID 3583097 仍存活，etime ~6842s≈114min）→ r3 未结束。健康核验：r3 log mtime 20:10:23（15.6MB，active），tail 见 live cline thinking（instHeader/master/libName 任务推进中）；尚无 `pass (/PASS_RATE` 汇总行；`grep -c Forbidden`=0 ✅（kimi-k2.6-cloud active ✅，CLI_DATA_DIR=.cline_kimi_eval 隔离完好）。infra：8664/8665/8653/8669/8090/9006 全 OPEN ✅；/nasdata 372G free ✅。运维复检：legacy 组件 loop PID 2455466 alive ✅；zhulong ops relay PID 2665949 alive ✅（`.last_run_id`=21=inbox，无新 RUN_ID）；conductor 未触碰（红线）。判据 pgrep 有输出→什么都不做退出，WAITING 保持 1。下轮唤醒复检 r3（无输出则 harvest r3 Pass@1）。
 
 - [2026-10-06 19:37] [⏳ B.kimi-k2.6-cloud r3 健康巡检 → 仍在跑，不动] §7 步骤 A：`pgrep '^bash scripts/run_cline_script'`→**有输出**（PID 3583097 仍存活，etime ~4874s≈81min）。健康核验：r3 log mtime 19:37（11.8MB，active），tail 见 live cline thinking（emyDesign/block/pyAether 任务推进中）；尚无 `pass (/PASS_RATE` 汇总行→r3 未结束；`grep -c Forbidden`=0 ✅（kimi-k2.6-cloud active ✅，独立 CLI_DATA_DIR 隔离完好）。判据 pgrep 有输出→什么都不做退出，WAITING 保持 1。下轮唤醒复检 r3（无输出则 harvest r3 Pass@1）。
 
