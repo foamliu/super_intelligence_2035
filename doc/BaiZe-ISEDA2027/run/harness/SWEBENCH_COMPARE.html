@@ -22,7 +22,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 </style></head><body>
 <h1>SWE-bench Cross-Eval Report</h1>
 <p><span class="model-badge">Model: kimi-k2.6-cloud</span> &nbsp; Gateway: <code>http://agi-gateway.cxmt.com/cloud/v1</code></p>
-<p><strong>Generated:</strong> 2026-10-06 13:48 | <strong>Concurrency:</strong> 1 (strict serial) | <strong>Protocol:</strong> one harness × 30 instances, then next harness</p>
+<p><strong>Generated:</strong> 2026-10-06 14:23 | <strong>Concurrency:</strong> 1 (strict serial) | <strong>Protocol:</strong> one harness × 30 instances, then next harness</p>
 <div class="callout">
 <p><strong>📋 Key Design (per operator instruction 2026-10-05):</strong></p>
 <ul>
@@ -37,13 +37,13 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <table>
 <tr><th>Harness</th><th>Resolved</th><th>Patch-but-failed</th><th>Quota-blocked</th><th>Blocked (infra)</th><th>Resolve Rate (of scored)</th><th>Avg Wall</th><th>Status</th></tr>
 <tr><td class='hname'>cline-patched</td><td>18</td><td>12</td><td>0</td><td>0</td><td>18/30 (60%)</td><td>479s</td><td>🔄 in progress</td></tr>
-<tr><td class='hname'>codex</td><td>30</td><td>52</td><td>0</td><td>87</td><td>30/82 (37%)</td><td>771s</td><td>🔄 in progress</td></tr>
+<tr><td class='hname'>codex</td><td>30</td><td>55</td><td>0</td><td>87</td><td>30/85 (35%)</td><td>782s</td><td>🔄 in progress</td></tr>
 <tr><td class='hname'>opencode</td><td>0</td><td>0</td><td>0</td><td>0</td><td>N/A</td><td>N/A</td><td>🔄 in progress</td></tr>
 <tr><td class='hname'>claude-code</td><td>0</td><td>0</td><td>0</td><td>0</td><td>N/A</td><td>N/A</td><td>🔄 in progress</td></tr>
 <tr><td class='hname'>deepseek-harness</td><td>0</td><td>0</td><td>0</td><td>0</td><td>N/A</td><td>N/A</td><td>🔄 in progress</td></tr>
 </table>
 <div class="callout">
-<p><strong>📊 Overall:</strong> 199 entries scored | 48 total resolved</p>
+<p><strong>📊 Overall:</strong> 202 entries scored | 48 total resolved</p>
 <p><strong>vs deepseek-v4-flash (previous):</strong> 0% resolve rate (0/22 scored) — kimi-k2.6-cloud shows dramatic improvement with zero quota blocks.</p>
 </div>
 <h2>2. Instance-level Detail</h2>
@@ -204,6 +204,9 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <tr><td class='iid'>psf__requests-2148</td><td class="pending">—</td><td class="failed">&#10006;<br><small>933s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
 <tr><td class='iid'>psf__requests-2317</td><td class="pending">—</td><td class="failed">&#10006;<br><small>792s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
 <tr><td class='iid'>psf__requests-2674</td><td class="pending">—</td><td class="failed">&#10006;<br><small>500s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>psf__requests-3362</td><td class="pending">—</td><td class="failed">&#10006;<br><small>1727s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>psf__requests-863</td><td class="pending">—</td><td class="failed">&#10006;<br><small>326s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>pydata__xarray-3364</td><td class="pending">—</td><td class="failed">&#10006;<br><small>1159s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
 <tr><td class='iid'>sympy__sympy-11870</td><td class="failed">&#10006;<br><small>589s</small></td><td class="failed">&#10006;<br><small>580s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
 <tr><td class='iid'>sympy__sympy-11897</td><td class="failed">&#10006;<br><small>598s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
 <tr><td class='iid'>sympy__sympy-12171</td><td class="failed">&#10006;<br><small>353s</small></td><td class="failed">&#10006;<br><small>298s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
@@ -247,5 +250,5 @@ python3 gen_kimi_compare.py</code></pre>
 </ol>
 </div>
 <hr>
-<p><small>BaiZe Harness H-A, 2026-10-06 13:48. Model: kimi-k2.6-cloud. Serial concurrency=1. Data: kimi_pilot_results.json (199 entries).</small></p>
+<p><small>BaiZe Harness H-A, 2026-10-06 14:23. Model: kimi-k2.6-cloud. Serial concurrency=1. Data: kimi_pilot_results.json (202 entries).</small></p>
 </body></html>
