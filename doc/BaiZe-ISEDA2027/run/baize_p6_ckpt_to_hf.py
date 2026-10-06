@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026, BaiZe Stage(i) LLM pretrain.
 #
-# P-6 第 1 步：把 s5_01 20000 步 mcore "torch_dist" checkpoint 转换为
+# P-6 第 1 步：把 mcore "torch_dist" checkpoint 转换为
 # HF Nemotron-H（model_type="nemotron_h"）格式，供 SGLang 起服 + lm_eval 零样本评测。
+#
+# 2026-10-07 更新：支持 **自动架构检测**（2B / d128 proxy）。
+#   - 从 checkpoint 的 embedding.weight 形状自动推断 hidden_size
+#   - hidden_size=2048 → 2B 模型常量（56 层，原口径，向后兼容）
+#   - hidden_size=128  → d128 proxy 常量（14 层，tie_embed=True）
 #
 # 用法：
 #   PYTHONPATH=/nas_train/app.e0031982/omegaconf_230 python baize_p6_ckpt_to_hf.py \
@@ -18,7 +23,8 @@ os.environ.setdefault("MASTER_PORT", "29502")
 import torch  # noqa: E402
 from safetensors.torch import save_file  # noqa: E402
 
-# ── 架构常量（与 mamba2_hybrid_2b/provider.py + s5_01/run_config.yaml 完全一致）────
+# ── 架构常量：默认 2B（与 mamba2_hybrid_2b/provider.py + s5_01/run_config.yaml 完全一致）────
+# 2026-10-07：这些全局变量会在 main() 中根据 checkpoint 自动检测后被覆盖（d128 proxy）。
 HIDDEN_SIZE = 2048
 INTERMEDIATE_SIZE = 8192          # ffn_hidden_size
 NUM_LAYERS = 56
@@ -36,6 +42,64 @@ MAX_POSITION_EMBEDDINGS = 4096
 
 # 56 层 hybrid pattern：M=mamba2 / *=attention / -=mlp（provider._HYBRID_OVERRIDE_PATTERN 一致）
 HYBRID_PATTERN = "M-M-M--M-M*-M-M-M-M--M*-M-M-M-M-M*--M-M-M-M-M*-M--M-M-M-"
+
+# tie_word_embeddings：2B=False, d128 proxy=True（share_embeddings_and_output_weights）
+_TIE_EMBEDDINGS = False
+
+
+def _detect_and_set_arch(sd: dict):
+    """从 checkpoint 的 embedding.weight 形状自动推断架构，覆盖全局常量。"""
+    global HIDDEN_SIZE, INTERMEDIATE_SIZE, NUM_LAYERS, NUM_ATTENTION_HEADS
+    global NUM_KV_HEADS, HEAD_DIM, MAMBA_NUM_HEADS, MAMBA_HEAD_DIM
+    global SSM_STATE_SIZE, N_GROUPS, EXPAND, CONV_KERNEL
+    global MAX_POSITION_EMBEDDINGS, HYBRID_PATTERN, _TIE_EMBEDDINGS
+
+    emb_key = "embedding.word_embeddings.weight"
+    if emb_key not in sd:
+        raise KeyError(f"Cannot find '{emb_key}' in checkpoint for architecture detection")
+    detected_hidden = sd[emb_key].shape[1]
+
+    if detected_hidden == 2048:
+        # 2B model — explicitly set defaults (in case globals were modified by a prior call)
+        print(f"[arch] detected 2B model (hidden_size={detected_hidden})")
+        HIDDEN_SIZE = 2048
+        INTERMEDIATE_SIZE = 8192
+        NUM_LAYERS = 56
+        NUM_ATTENTION_HEADS = 16
+        NUM_KV_HEADS = 4
+        HEAD_DIM = HIDDEN_SIZE // NUM_ATTENTION_HEADS   # 128
+        MAMBA_NUM_HEADS = 64
+        MAMBA_HEAD_DIM = 64
+        SSM_STATE_SIZE = 128
+        N_GROUPS = 8
+        EXPAND = 2
+        CONV_KERNEL = 4
+        MAX_POSITION_EMBEDDINGS = 4096
+        HYBRID_PATTERN = "M-M-M--M-M*-M-M-M-M--M*-M-M-M-M-M*--M-M-M-M-M*-M--M-M-M-"
+        _TIE_EMBEDDINGS = False
+    elif detected_hidden == 128:
+        # d128 proxy model (18.5M, d=128/L=14, tie_embed=True)
+        # See: mamba2_hybrid_proxy_d128/provider.py
+        print(f"[arch] detected d128 proxy model (hidden_size={detected_hidden})")
+        HIDDEN_SIZE = 128
+        INTERMEDIATE_SIZE = 512          # 4 × hidden
+        NUM_LAYERS = 14
+        NUM_ATTENTION_HEADS = 1          # d/128 = 128/128
+        NUM_KV_HEADS = 1                 # ≤ heads
+        HEAD_DIM = HIDDEN_SIZE // NUM_ATTENTION_HEADS   # 128
+        MAMBA_NUM_HEADS = 4              # d_inner(256) / head_dim(64) = 4
+        MAMBA_HEAD_DIM = 64
+        SSM_STATE_SIZE = 128
+        N_GROUPS = 1                     # ≤ heads
+        EXPAND = 2
+        CONV_KERNEL = 4
+        MAX_POSITION_EMBEDDINGS = 2048
+        HYBRID_PATTERN = "M-M-M--M-M*-M-"   # 56层pattern的前14字符 (6M/1*/7-)
+        _TIE_EMBEDDINGS = True
+    else:
+        raise ValueError(
+            f"Unknown hidden_size={detected_hidden}; expected 128 (d128 proxy) or 2048 (2B)"
+        )
 
 
 def build_config_json() -> dict:
@@ -61,7 +125,7 @@ def build_config_json() -> dict:
         "max_position_embeddings": MAX_POSITION_EMBEDDINGS,
         "attention_bias": False,
         "mlp_bias": False,
-        "tie_word_embeddings": False,
+        "tie_word_embeddings": _TIE_EMBEDDINGS,
         # mamba-2
         "ssm_state_size": SSM_STATE_SIZE,
         "mamba_num_heads": MAMBA_NUM_HEADS,
@@ -193,6 +257,9 @@ def main():
     sd = load_plain_tensors(args.ckpt)
     n_param = sum(v.numel() for v in sd.values() if hasattr(v, "numel"))
     print(f"[load] {len(sd)} keys, {n_param/1e9:.3f}B params")
+
+    # Auto-detect architecture (2B vs d128 proxy) from checkpoint
+    _detect_and_set_arch(sd)
 
     hf = convert(sd)
     print(f"[map] {len(hf)} HF keys")
