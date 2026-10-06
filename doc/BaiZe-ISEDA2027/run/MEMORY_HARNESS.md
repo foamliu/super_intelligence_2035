@@ -5,13 +5,22 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A kimi-k2.6-cloud serial cross-eval — codex --resume RUNNING (PID 2151526, ~583min): 166 blocked remaining (2 unblocked since R130: +2 pbf). 330 entries, 61 resolved.
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 (43 resolved, 91 pbf, 166 blocked) · SWEBENCH_COMPARE.html (330 entries, 61 resolved) · ✅ git_fetch_retry (120→300s + 3 retries)
-当前动作:     R131: codex --resume progress check (PID 2151526 alive, ~583min, working django__django-15213; 2 unblocked since R130: +2 pbf → 43/91/166) + SWEBENCH_COMPARE.html regenerated (72943B, 61 resolved) + relay healthy skip 84th + git sync (0/0 synced) + 体积自检 + MEMORY rolling archive (R113及更早 → daily-memories)
-下一步:       codex --resume 完成(166 blocked) → cline-patched×300 --resume → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新 SWEBENCH_COMPARE.html
-阻塞:         无硬阻塞. 166 blocked remaining. git_fetch_retry fix (300s+3retry) 正在逐条解除.
+PHASE:        H-A kimi-k2.6-cloud serial cross-eval — codex --resume RUNNING (PID 2151526, ~626min): 165 blocked remaining (1 unblocked since R131: +1 pbf). 330 entries, 61 resolved.
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 (43 resolved, 92 pbf, 165 blocked) · SWEBENCH_COMPARE.html (330 entries, 61 resolved) · ✅ git_fetch_retry (120→300s + 3 retries)
+当前动作:     R132: codex --resume progress check (PID 2151526 alive, ~626min, working django__django-15252; 1 unblocked since R131: +1 pbf → 43/92/165) + SWEBENCH_COMPARE.html regenerated (72939B, 61 resolved) + relay healthy skip 85th + git sync (0/0 synced) + 体积自检 (TASK=29771B/MEMORY=14661B, both ≤32KB ✓)
+下一步:       codex --resume 完成(165 blocked) → cline-patched×300 --resume → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新 SWEBENCH_COMPARE.html
+阻塞:         无硬阻塞. 165 blocked remaining. git_fetch_retry fix (300s+3retry) 正在逐条解除.
 ERROR_COUNT:  0
 ```
+
+## 🆕 第一百三十二轮速览（2026-10-07 06:07）— codex --resume RUNNING (PID 2151526, ~626min): 1 unblocked since R131 (+1 pbf → 43/92/165) + SWEBENCH_COMPARE.html regenerated (72939B, 61 resolved) + relay healthy skip 85th + git sync (0/0 synced) + 体积自检 (TASK=29771B/MEMORY=14661B, both ≤32KB ✓)
+
+- 🔄 **codex --resume progress**：PID 2151526 (ppid=1, etimes≈37586s ≈ 626min) alive, currently running `django__django-15252` (child PID 4144623→run_single.py, etimes≈1004s ≈ 17min). 1 instance unblocked since R131: +1 pbf (92 total), -1 blocked (165 total). codex 300 total: 43 resolved (14.3%), 92 pbf (30.7%), 165 blocked (55.0%). Total: 61 resolved (cline 18 + codex 43), 104 pbf, 165 blocked. git_fetch_retry fix (300s+3retry) continues unblocking.
+- 📈 **SWEBENCH_COMPARE.html regenerated**：330 entries (30 cline-patched + 300 codex), 61 resolved, 72939 bytes。gen_kimi_compare.py exit=0.
+- ✅ **ops 中继复核（第 85 次）→ 健康**。relay `2489749 1 482093 bash ops_relay.sh`（ppid=1, etimes≈5.6d）。跳过重启。
+- ✅ **git sync**：`git fetch`（proxy）exit=0。rev-list 0/0 (fully synced)。无新运维指令。
+- 📦 **体积自检**：TASK=29771B / MEMORY=14661B → 两者均 ≤32KB ✓（R131 已滚动归档，本轮无需再归档）。
+- ⏭ **下一步**：codex --resume 后台继续（165 blocked）→ 完成后 cline-patched×300 `--resume` → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
 
 ## 🆕 第一百三十一轮速览（2026-10-07 05:24）— codex --resume RUNNING (PID 2151526, ~583min): 2 unblocked since R130 (+2 pbf → 43/91/166) + SWEBENCH_COMPARE.html regenerated (72943B, 61 resolved) + relay healthy skip 84th + git sync (0/0 synced) + 体积自检 + MEMORY rolling archive (R113及更早 → daily-memories)
 
