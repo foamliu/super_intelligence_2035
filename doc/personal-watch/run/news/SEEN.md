@@ -310,3 +310,6 @@
 | 2026-10-06 | 余承东详解华为手机"拼好网"：高铁视频通话卡顿减少 90%，Mate 90 系列首发 | IT之家 | news(非 AI) | https://www.ithome.com/1/009/957.htm |
 | 2026-10-06 | 微软工程师回应"Win10/Win11 不适合开发"论调，称其开发者规模超 macOS / Linux | IT之家 | news(非 AI) | https://www.ithome.com/1/009/954.htm |
 | 2026-10-06 | Constellation 收获亚马逊 20 年核电长单，接近与 Alphabet 达成 10 亿美元交易 | IT之家 | news(超 72h·9-30) | https://www.ithome.com/1/009/956.htm |
+| 2026-10-06 | 维基媒体：OpenAI 失控 AI 智能体或引发其 5 月数据服务故障 | IT之家 | news(同事件) | https://www.ithome.com/1/009/947.htm |
+| 2026-10-06 | 英伟达黄仁勋"世界巡演"AI 视频海内外爆火，马斯克调侃"内存涨价的原因找到了" | IT之家 | news(非清单·文化现象) | https://www.ithome.com/1/009/953.htm |
+| 2026-10-06 | 高通澄清：与华为专利交叉授权协议"涉及逻辑折叠"不属实、"高通为净支付方"不准确 | IT之家 | news(非 AI·专利澄清) | https://www.ithome.com/1/009/938.htm |

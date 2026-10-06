@@ -338,3 +338,74 @@
 - **铁律**：见 §4（不许编造 / 不许把推测写成事实 / 不整篇转载 / 控制频率）。
 - **完成后**：更新 `MEMORY_NEWS.md` 顶部进度快照与 `WAITING`，并 `git add` **只加本线文件** → commit → push。
 
+
+---
+
+## 🗂 归档块 · 2026-10-06（第四十九轮唤醒，news agent 自滚）—— 「第 10 批运维指令」原文
+
+> 搬迁自 `WATCH_NEWS_TASK.md`（原文一字未改）；对应指针见任务书 §运维指令区「📦 历史运维批次」。
+
+### 🆕 运维指令 · 2026-10-05（第 10 批：① 给 cline 装 **免费 web-search MCP** ② **东方时事解读音频** → 文字稿 **调研 HTML 报告**）⭐ **当前最高优先**
+（**本批取代第 9 批的"最高优先"**；第 9 批仍有效，但排在本批之后）
+
+> **来源**：用户 2026-10-05 直接指派。**L1 常态采集与 G2′④ 连续性累积照常并行、不得中断。**
+
+#### A. 给 cline 装「免费 web search MCP」= **照抄 supervisor 现用的那一套**（用户 2026-10-05 指定）
+
+> **用户原话**：「你现在就有一个 web search 工具吧，效果似乎还不错，可以让 news agent **按照你现有的工具来配置**。」
+> → **不要再另造轮子**：直接复刻 **supervisor（Windows 侧 cline）正在用**的 `web-search` MCP。
+
+**已由 supervisor vendor 进仓库（同一份代码，非重写）**：
+| 文件 | 说明 |
+|:--|:--|
+| `run/news/mcp_ddgs/web_search_mcp_server.py` | **就是 supervisor 现用的服务器**（`E:\code\stem_fest\mcp_server\web_search_mcp_server.py` 的原样副本） |
+| `run/news/mcp_ddgs/web_search_selftest.py` | **离线**自检（不联网也能跑）→ 先跑它证明"装对了" |
+| `run/news/mcp_ddgs/requirements.txt` | 依赖清单 |
+| `run/news/mcp_ddgs/README.md` | **安装 / 注册 / 逐引擎实测 / 排错**（**先读它**） |
+
+- **它是什么**：FastMCP **stdio** 服务器、**全免 key**；6 个工具 —— `web_search` · `search_news` · `search_images` · `wiki_lookup` · `fetch_page`（正文，可分页）· `search_status`（自检，`live_probe=True` 会真发一次搜索）。
+- **依赖**：`mcp`（FastMCP）+ **`ddgs`（supervisor 机实测 9.16.0）**；可选 `beautifulsoup4` + `lxml`。
+- **环境变量（可选）**：`WEB_SEARCH_DEFAULT_REGION=cn-zh` · `WEB_SEARCH_DEFAULT_BACKEND=auto` · `WEB_SEARCH_MAX_RESULTS=8`。
+
+**步骤（顺序执行，每步留证据）**：
+1. **装依赖 + 离线自检**：`python3 -m pip install -r news/mcp_ddgs/requirements.txt`（国内慢加 `-i https://pypi.tuna.tsinghua.edu.cn/simple`）→ `python3 news/mcp_ddgs/web_search_selftest.py`（应**全 PASS**）。
+2. **定位该机 cline 配置**（⚠️ 新机布局与旧机不同，`~/.cline/data/globalState.json` **不存在**）：`ls -la ~/.cline/ 2>/dev/null`；`find ~ -maxdepth 6 -iname '*mcp*' 2>/dev/null`；`cline --help`；记 cline 版本。
+3. **注册进 cline**（**先备份**配置）：`command=python3`，`args` = **仓库绝对路径**的 `web_search_mcp_server.py`；`env` 如上；`timeout=120`。（JSON 样例见 `mcp_ddgs/README.md` §3。）
+4. ⭐ **逐引擎实测（本步决定可用性 —— 腾讯机在中国网络，海外引擎可能不可达）**：`ddgs` 回退序 = `auto → duckduckgo → brave → bing → google → mojeek → yahoo → startpage`；先 `search_status(live_probe=True)`，再写个 3 行脚本**逐个 backend 试**，做成 **实测表**（每个引擎：成功/失败 + 报错）。**`bing` 最可能可用**。
+5. **配置生效后真跑一次**：工具列表出现 6 个工具 → 各跑一次 `web_search` / `fetch_page`，拿回**带 URL 的结果**，原始证据贴进 `news/MCP_INSTALL.md`。
+6. **与本线既有 `mcp_web_search_free.py`（CN-Bing + 360）互补**：哪套通就用哪套；**两套都注册**也行 → 双后端。
+7. **装不上 / 某引擎不通 → 如实写**（报错原文 + 原因 + 替代）。🚫 不许"假装成功"。
+
+- **产物**：新建 **`news/MCP_INSTALL.md`**（安装记录 + **逐引擎实测表** + 复现命令）；同步 `news/README.md`、`news/FETCH_CN_NEWS.md`。
+- **红线**：**全程免 key**；配置里 🚫 **不得出现任何 key/token**；只改**本线** cline 配置，🚫 不动别的线（BaiZe）的配置；🚫 **不要改 vendor 的 `web_search_mcp_server.py`**（改了会与 supervisor 现用版分叉 → 要改先问）。
+
+#### B. 「东方时事解读音频」→ 文字稿：**先出调研 HTML 报告**（本批**只调研、不实施日更**）
+
+- **用户原话**：「需要**每天下载**东方时事评论的**音频**，**转录为文字稿**；我是**年卡会员**，但是**微信登录**的。**调研如何下载**，生成一份 **html 报告**。」
+- ⚠️ **本批交付 = 调研 + HTML 报告**；**日更流水线只出草案、不实施**（实施须用户拍板，见报告末节）。
+- 🔎 **主管初步核实（supervisor 2026-10-05 用 web_search 快查，⚠️ 待你复核/纠正）**：
+  - **最可能的目标 = 《东方时事解读》音频**（非"评论"二字）：渠道 = **汇智 `dongfangtime.com`** · **衍射传媒 微信服务号** · **衍射教育 `yanshe.org.cn`**；会员 = 「**东方音频年卡** / 东方时事解读音频年卡」；**微信 H5 平台更新最快**；节奏约 **周一/三/五晚 + 周日下午**；**有期号**（示例：**第 9652 期 · 2026-09-29**）；最近更新 **2026-10-05**。
+  - **另有近名者**：《东方时事评论》/「大参考」`dacankao.com`（**以文字/论坛为主**）—— **很可能不是**用户所指。
+  - 👉 **请先核实用户指的是哪一个**；若确为「东方时事解读音频」，按此展开。**若有歧义**：在 `MEMORY_NEWS.md`「运维问答」列出候选请用户确认，**同时先按最可能的那个继续调研**（不许空等）。
+
+
+#### B-续. 报告必须覆盖的 7 点（**逐条给证据；拿不到就如实写"拿不到 + 原因 + 需要什么"**）
+
+1. **分发渠道与会员权益**：官方是否提供**下载 / 离线缓存**（会员功能）？缓存落在设备何处？
+2. **音频获取路径（合法，会员本人）**：候选 = ① 官方下载/缓存 ② H5/小程序内**接口**（**只调研、只记录**，🚫 **不得绕过付费墙**）③ **播客 / RSS** 版本是否上架（若上架 → 可合法直下）。
+3. **微信登录的凭证**：凭证形态（cookie / token，如 `wx_*`）、**有效期**、**如何在用户自己的设备上导出**；**agent 需要用户提供什么**（列成**清单**）。
+4. **转写方案**：① **本地 ASR**（whisper / faster-whisper / FunASR）在**本机 2C4G 无 GPU** 的**可行性 + 速度/资源**（**实测或给可复现估算**）；② **云端 ASR**（**免 key 优先**，**先测可达性**）。产出 `news/dongfang/transcripts/<date>.md`（含 **标题 / 日期 / 期号 / 时长 / 来源 / 链接**）。
+5. **合规红线（硬性）**：会员**个人使用**；🚫 **不得二次分发 / 公开传播**音频或全文；🚫 **不得绕过付费墙**；🚫 **音频一律不进 git**（见 §4-11：**≥5MB 走网盘/local**，音频通常远超阈值）；**文字稿**可入 `news/`，但**长篇全文**同样受**体积红线**约束。
+6. **日更流水线草案**（**供拍板，🚫 本批不实施**）：定时 → 获取 → 转写 → 归档 → 去重；写清**频次**（按节目更新节奏）、**失败重试**、**存储位置**、**与 news 线的耦合方式**。
+7. **需用户提供 / 拍板清单**（**这是本报告最重要的产出之一**：把"卡在哪、要用户做什么"讲清楚）。
+
+#### B-产物与铁律
+
+- **产物**：`news/dongfang/METHODS.md`（底稿）+ **`news/dongfang/report.html`**（**自包含、内联 CSS**、离线可开，**对齐 `news/API_COMPARISON.html` 范式**）。
+- **铁律**：**「200 ≠ 有料」**（拿到的音频**必须验 `Content-Type` + 时长/大小**）· 🚫 **不许编造接口/字段/期号** · 🚫 **不许把"推测"写成"事实"** · ✅ **区分「已实测」/「据文档」/「待验证」**（沿用 `API_COMPARISON` 口径）· 🚫 不采集/不转写**未获授权**的内容。
+
+**顺序**：**B 的「节目核实 + 获取路径调研」优先**（用户最关心的可行性）；**A 可并行**（历史欠账、成本低）。
+**完成后**：更新 `MEMORY_NEWS.md` + 当日流水；commit → push（**只 add 本线文件**）。
+
+> 📦 **历史运维批次（第 2–9 批 · 建哨首启）已原文归档** → `run/WATCH_NEWS_TASK_ARCHIVE.md`（**2026-10-06 首次归档**，原文不改）。
+> 这些批次的任务**均已执行完成**（第 6/2 批标注「✅ 已完成，留档」；第 7/8/9 批的 N1/N3/N4 已交付、N5 已冻结）；其 **红线/结论已并入 §0.0.x 与 §4** —— **归档仅搬迁、不改变任何指令**。
