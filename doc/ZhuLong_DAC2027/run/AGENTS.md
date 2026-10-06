@@ -22,6 +22,14 @@
 >   > /tmp/zhulong_loop.log 2>&1 < /dev/null &
 > ```
 > **停止**：`pkill -f zhulong_loop.sh`。
+
+> 🔴 **启动纪律（2026-10-06 血泪 · 必须遵守）**：**务必用「登录 shell」或显式注入 PATH 启动 loop** ——
+> ```bash
+> setsid bash -lc "exec bash <...>/run/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+> # 或：export PATH="/home/app.e0031982/.local/node-20/bin:$HOME/.bun/bin:$PATH"; export https_proxy=http://172.19.92.23:13128
+> ```
+> **否则**（用非登录 shell 起）：`PATH` 里没有 `cline`（真实路径 **`/home/app.e0031982/.local/node-20/bin/cline`**）、也没有 `~/.bashrc:119` 的 `https_proxy` ⇒ loop 会**每轮 `env: 'cline': No such file or directory` 静默空转**（**2026-10-06 就这样白停了 ~5h**，而进程、git、任务书全都正常，极难察觉）。
+> ✅ **启动后必须自检**：`command -v cline` 有输出 + `tail` 日志里出现 `invoking cline ...` 且**无** `No such file`。
 > **唤醒间隔自适应**：读 `MEMORY_ZHULONG.md` 行首 `WAITING` —— `0` 约 1 分钟续跑，`1` 约 30 分钟轮询省 token。
 
 ---

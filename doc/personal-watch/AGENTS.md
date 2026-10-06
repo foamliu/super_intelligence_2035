@@ -55,6 +55,7 @@
 | **兜底提交范围** | 只 `git add` **本线自己的文件**（🚫 不要 `git add -A`，会卷入其他线在途文件） |
 | **每轮唤醒必须提交+推送**（2026-10-06 用户令） | **每次唤醒收尾自己 `commit+push`**（写心跳 → 写日报 → 提交推送 → `git status -sb` 自检）；🚫 **不许依赖 loop 兜底**（兜底只是保险丝）。判死判据：**心跳文件 >60min 无新提交 = 卡死** |
 | **自适应睡眠** | `WAITING:0` → 短睡（近期待办）；`WAITING:1` → 长睡（常态省 token） |
+| 🔴 **启动必须带 PATH（2026-10-06 血泪）** | **只用「登录 shell」起 loop**：`setsid bash -lc "exec bash <run>/watch_news_loop.sh" …`。**否则非登录 shell 的 PATH 里没有 `cline`** ⇒ loop 会**每轮 `env: 'cline': No such file` 静默空转**（进程/git 全正常，极难察觉）。✅ 启后自检：`command -v cline` 有输出 + 日志见 `invoking cline` 且无 `No such file` |
 | **任务书即 prompt** | loop 用 `prompt="$(< TASK_MD)"` → 任务书要**精简**，历史归档不进 prompt |
 
 > `run/watch_news_loop.sh` **已从设计上避开**上述三处历史坑，可作为**新线的模板**。

@@ -48,6 +48,20 @@
 > **处置**：① 37 个已 `git rm --cached` + 删盘；② **根 `.gitignore` 已加 `.nfs*` / `*.nfs*`**（连带 `*.swp`/`*.orig`/`*.rej`/`*.tmp`/`*.bak`/`Thumbs.db` 等）。
 > **纪律（新增）**：**各线提交一律用 `git add -- <明确路径>`**，🚫 **不要 `git add -A`**（它会把 `.nfs*`、别线在途文件一并卷进来）；提交前可 `git check-ignore -v <file>` 自查。
 
+### (4) 🔴 **loop 重启必须带「正确 PATH」**（2026-10-06 血泪 · 两个项目各中一次）
+
+> **症状**：loop 进程活着、`git` 正常、任务书在位，**但日志每轮是 `env: 'cline': No such file or directory`** ⇒ **静默空转数小时**（ZhuLong 白停 ~5h、personal-watch 停 ~5h），**极难察觉**。
+> **成因**：用**非登录 shell**（如 `ssh` 非交互、或 `bash -c`）重启 loop ⇒ `PATH` 里**没有 cline**，也**没有 `~/.bashrc` 的 `https_proxy`**。
+> **正确做法（三种任选）**：
+> ```bash
+> # ① 登录 shell（最稳）
+> setsid bash -lc "exec bash <...>/baize_<线>_loop.sh" > /tmp/baize_<线>_loop.log 2>&1 < /dev/null &
+> # ② 显式注入（.29/.12）：cline 在 ~/.bun/bin
+> export PATH="$HOME/.bun/bin:$PATH"; export https_proxy=http://172.19.92.25:13128 https_proxy=...
+> # ③ 先 `bash -ic 'command -v cline'` 问出真实路径，再 `export PATH="$(dirname <path>):$PATH"`
+> ```
+> ✅ **重启后必查**：`command -v cline` 有输出；`ps` 见新 PID；`tail` 日志出现 `invoking cline ...` 且**无** `No such file`。
+
 ## 3.5 ⚠️ 已知的运维级问题（**会复发，需周期性检查**）
 
 ### (1) `ops_relay.sh` 的「多个副本」—— ⚠️ **2026-10-03 更正：多半是「子进程」，不是副本**
