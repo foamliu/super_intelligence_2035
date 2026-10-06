@@ -383,4 +383,7 @@
 | 2026-10-06 | Mistral's new 1T model aims to leapfrog closed and open rivals | TechCrunch | news(同事件·在账 IT之家 010/108 Mistral Large 4) | https://techcrunch.com/2026/10/06/mistrals-new-1t-model-aims-to-leapfrog-closed-and-open-rivals/ |
 | 2026-10-06 | Building advertising for the way people use AI | OpenAI（官方·经 HN） | news(同事件·在账 OpenAI 视觉广告 10-05) | https://openai.com/index/new-chatgpt-ads-format-and-measurement/ |
 | 2026-10-06 | 特斯拉在印度市场交付超一年，仅注册不到 1000 辆汽车 | IT之家 | news(非 AI·EV 销量) | https://www.ithome.com/1/010/111.htm |
+| 2026-10-06 | 德国交通部长：希望特斯拉 FSD（监督版）辅助驾驶系统能在欧盟获批 | IT之家 | news | https://www.ithome.com/1/010/124.htm |
+| 2026-10-06 | LibreOffice says 'no AI' is now a software feature | TechCrunch | news | https://techcrunch.com/2026/10/06/libreoffice-says-no-ai-is-now-a-software-feature/ |
+| 2026-10-06 | 《明日方舟：终末地》游戏将支持英伟达 RTX Spark 笔记本 | IT之家 | news(非 AI·游戏) | https://www.ithome.com/1/010/123.htm |
 
