@@ -399,3 +399,6 @@
 | 2026-10-07 | AI systems could cover up misbehavior | METR（研究机构笔记·经 HN） | analysis(Notes·非新闻不收) | https://metr.org/blog/2026-10-06-ai-systems-could-cover-up-misbehavior/ |
 | 2026-10-07 | Chick-fil-A will not use artificial intelligence to replace human workers | notthebee（opinion 站点·经 HN） | opinion(非新闻不收) | https://notthebee.com/article/chick-fil-a-will-not-use-artificial-intelligence-to-replace-human-workers-in-the-drive-thru |
 
+| 2026-10-07 | India's JioHotstar takes partnership route for Middle East expansion | TechCrunch | news(非 AI·流媒体) | https://techcrunch.com/2026/10/06/indias-jiohotstar-takes-partnership-route-for-middle-east-expansion/ |
+| 2026-10-07 | Furientis lands $25M from Benchmark to mass-produce low-cost missile interceptors | TechCrunch | news(非 AI·国防) | https://techcrunch.com/2026/10/06/furientis-lands-25m-from-benchmark-to-mass-produce-low-cost-missile-interceptors/ |
+
