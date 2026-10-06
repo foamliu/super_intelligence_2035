@@ -8883,3 +8883,65 @@ To https://github.com/foamliu/super_intelligence_2035
 === DONE ===
 === ALL DONE ===
 ```
+
+---
+
+## RUN_ID 83 · 2026-10-06 11:52:29 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 83 · ZhuLong health check (read-only) $(date '+%F %T') ==="
+timeout 120 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+cd "$W" || { echo "(NO repo)"; exit 1; }
+echo "host=$(hostname)  $(date '+%F %T')"
+echo "--- [1] procs (relay + loop) ---"
+ps -eo pid,etime,args | grep -E 'zhulong_(loop|ops_relay)[.]sh' | grep -v grep | cut -c1-140 || echo "(none running)"
+echo "--- [2] cline resolvable in INTERACTIVE shell ---"
+CP="$(bash -ic 'command -v cline' 2>/dev/null | tail -1)"
+echo "cline_path=$CP"
+echo "--- [3] loop log tail ---"
+tail -8 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-190
+echo "--- [4] relay log tail ---"
+tail -3 /tmp/zhulong_ops_relay.log 2>/dev/null | cut -c1-190
+echo "--- [5] PUSH_INTERVAL on disk ---"
+grep -n '^PUSH_INTERVAL=' "$W/doc/ZhuLong_DAC2027/run/zhulong_loop.sh" | cut -c1-120
+echo "--- [6] git status ---"
+git log --oneline -1 2>/dev/null | cut -c1-140
+git status -sb 2>/dev/null | head -3 | cut -c1-150
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
+
+**输出**
+```
+=== RUN_ID 83 · ZhuLong health check (read-only) 2026-10-06 11:52:29 ===
+Warning: Permanently added '[localhost]:3333' (ED25519) to the list of known hosts.
+host=hfeg0tedaap02  2026-10-06 11:52:30
+--- [1] procs (relay + loop) ---
+2665948       08:27 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+2665949       08:27 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+--- [2] cline resolvable in INTERACTIVE shell ---
+cline_path=/home/app.e0031982/.local/node-20/bin/cline
+--- [3] loop log tail ---
+ 1 file changed, 1 insertion(+)
+Applied autostash.
+[push] pull --rebase OK.
+[push] committed.
+To https://github.com/foamliu/super_intelligence_2035
+   36808bd..ad41b6a  main -> main
+[push] push OK.
+[loop] 2026-10-06 11:44:06 WAITING=1 (eval running / infra not ready) → sleep 1800s
+--- [4] relay log tail ---
+[zhulong-relay] 2026-10-06 11:44:02 started. repo=/nasdata/app.e0031982/code/super_intelligence_2035  poll=20s  fetch_every=3x
+--- [5] PUSH_INTERVAL on disk ---
+48:PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（2026-10-06 由 18000/5h 缩短；agent 每轮自�
+--- [6] git status ---
+ad41b6a zhulong auto-commit 2026-10-06 11:44:04
+## main...origin/main
+=== DONE ===
+=== ALL DONE ===
+```
