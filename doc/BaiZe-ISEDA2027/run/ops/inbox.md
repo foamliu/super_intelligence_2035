@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 71 -->
+<!-- RUN_ID: 72 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,13 +31,87 @@
 
 ---
 
-## RUN_ID 71 — 🔬 **为 harness 横评挑「冷门模型」：逐个候选实测可用性 + 【tool-calling 能力】**（**本块最新，优先执行**）
+## RUN_ID 72 — 🔴🔴 **kill「伪」配比实验：`mix_stable_s0a`（2.2B 单臂 · 已废弃方法）→ 释放 `.29` GPU2–7**（**本块最新，最先执行**）
+
+> **为什么运维亲自 kill**：用户 2026-10-06 裁定 `S0a` **不是实验**（2.2B 单臂 / 1 seed / 无中间 ckpt ⇒ 312 GPU·h/臂，已烧 ≈98 GPU·h ≈ 搜索日预算 68%），**必须立即停**；
+> 但它**一直占着 GPU2–7**、**连带阻塞 pretrain 的 P-8**（`MEMORY_PRETRAIN_2B.md` 状态核查 #126）；而 data agent 处于 30 min 长睡 ⇒ 等它唤醒有 ~98 GPU·h 级风险窗口。⇒ **运维经中继直接断电**，data agent 侧改为**只核验**（见 `BAIZE_DATA_TASK.md` 顶部第 5 轮块 §D）。
+> ⚠️ **历史（本块第 1 步的由来）**：S0a 曾于 2026-10-05 16:32 被 P-9.10 端口冲突 kill 后，**由 `/tmp/restart_mix_stable_s0a.sh` 自动重启**（从 step 0 重跑）⇒ **必须先把这个「重拉器」移走**，否则 kill 完它又自己起来。
+> 🚫 **只动 S0a**：进程匹配排除 `ops_relay` / 各线 `*_loop.sh` / `watchdog` / `cline`；**不碰 pretrain 的 GPU0–1**。
+
+```bash
+echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
+
+echo; echo "=== 1. 先断电「重拉器」（mv 而非 rm，保留取证）==="
+TS=$(date +%Y%m%d_%H%M%S)
+F=/tmp/restart_mix_stable_s0a.sh
+if [ -f "$F" ]; then mv -v "$F" "${F}.disabled_${TS}"; else echo "   ($F 不存在，无需断电)"; fi
+echo "   /tmp 下遗留的 restart 脚本（只读列出）："
+ls -l /tmp/restart_*.sh* 2>/dev/null | cut -c1-140 || echo "   (无)"
+echo "   crontab 中与 mix_stable / s0a 相关的行："
+crontab -l 2>/dev/null | grep -n -i 'mix_stable\|s0a' || echo "   (无) crontab 无相关条目"
+
+echo; echo "=== 2. kill 前快照（宽匹配，排除 relay / cline / 各线 loop / watchdog）==="
+PAT='mix_stable_s0a'
+EXC='grep|ops_relay|cline|baize_(pretrain|data|vision|harness|search|2b)_loop|watchdog'
+ps -eo pid=,ppid=,etimes=,args= | grep -F "$PAT" | grep -vE "$EXC" | cut -c1-150
+PIDS=$(ps -eo pid=,args= | grep -F "$PAT" | grep -vE "$EXC" | awk '{print $1}')
+PORT_PID=$(ss -lntp 2>/dev/null | grep -F ':29950' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | sort -u)
+if [ -n "$PORT_PID" ]; then echo "   监听 29950 的 PID：$(echo $PORT_PID | tr '\n' ' ')"; PIDS="$PIDS
+$PORT_PID"; fi
+PIDS=$(echo "$PIDS" | grep -E '^[0-9]+$' | sort -un)
+echo "   ==> 目标 PID 列表 = [$(echo $PIDS | tr '\n' ' ')]"
+
+if [ -z "$(echo $PIDS | tr -d ' \n')" ]; then
+  echo "   [!] 未命中 S0a 进程（可能已被 data agent 杀掉）==> 跳过 kill，直接做第 3 步取证。"
+else
+  echo; echo "=== 2b. 优雅退出：SIGTERM（父+子一起）==="
+  echo "$PIDS" | xargs -r -n1 kill -TERM 2>/dev/null
+  LEFT=""
+  for i in $(seq 1 20); do
+    sleep 1
+    LEFT=$(ps -eo pid=,args= | grep -F "$PAT" | grep -vE "$EXC" | awk '{print $1}' | tr '\n' ' ')
+    [ -z "${LEFT// /}" ] && break
+  done
+  if [ -n "${LEFT// /}" ]; then
+    echo "   ${i}s 后仍存活：[$(echo $LEFT | tr '\n' ' ')] ==> SIGKILL"
+    echo "$LEFT" | xargs -r -n1 kill -9 2>/dev/null
+    sleep 6
+  else
+    echo "   [OK] SIGTERM 后 ${i}s 内全部退出（0 残留）"
+  fi
+fi
+
+echo; echo "=== 3. 取证 ==="
+echo "--- 3a. 残留 S0a 进程（应为空）---"
+ps -eo pid=,ppid=,etimes=,args= | grep -F "$PAT" | grep -vE "$EXC" | cut -c1-150 || true
+echo "--- 3b. GPU 计算进程（.29 全部）---"
+nvidia-smi --query-compute-apps=pid,used_memory --format=csv,noheader 2>/dev/null | cut -c1-120
+echo "--- 3c. GPU 占用一览（index,name,mem.used,util）---"
+nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | cut -c1-120
+echo "--- 3d. 仍占显存 >1GB 的进程 cmdline（只读，不 kill —— 防误杀 pretrain）---"
+nvidia-smi --query-compute-apps=pid,used_memory --format=csv,noheader 2>/dev/null | awk -F', ' '$2+0>1000{print $1}' | while read -r p; do
+  echo "   PID $p : $(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | cut -c1-150)"
+done
+echo "--- 3e. S0a 日志尾巴（原始，验收 kill 时刻）---"
+tail -4 /tmp/baize_mix_stable_s0a_train.log 2>/dev/null | cut -c1-190
+tail -3 /tmp/baize_mix_stable_s0a.log 2>/dev/null | cut -c1-190
+echo "--- 3f. 各线 loop / relay 仍活（证明没误杀）---"
+pgrep -af 'baize_.*_loop\.sh|ops_relay\.sh|watchdog' 2>/dev/null | cut -c1-120
+
+echo; echo "=== DONE: 伪配比实验 mix_stable_s0a（2.2B 单臂）已停；GPU2-7 应已释放（P-8 不再被它阻塞）==="
+```
+
+> 回读：`run/ops/outbox.md` 末尾的 **RUN_ID 72** 段 = kill 证据 + GPU 释放证据（原始输出）。
+
+---
+
+## RUN_ID 71 — 🔬 **（已执行完成 · 本块已降级为 ```text，勿依赖）为 harness 横评挑「冷门模型」：逐个候选实测可用性 + 【tool-calling 能力】**
 
 > **背景（用户 2026-10-05 提议）**：harness 横评卡在 **quota（5h 滑动窗口）** —— 21 条里 **17 条拿到空 patch**，按 4 inst/window 估 **~15 天**。用户建议：**换一把「冷门」的 key/模型（kimi / 豆包…）+ 一条一条串行跑、不并行**。
 > **运维判断**：那 15 天**主要是"等配额"不是"算"**（1500 次 × ~2–4 min ≈ 50–100 h 纯跑）⇒ 只要配额不再挡，**串行 ≈ 2–4 天**。⚠️ 但换模型有**三个前提**：① 所有 harness 用**同一个**模型（否则不公平）；② 该模型**必须支持 tool-calling**（agentic CLI 全靠它）；③ 原先 21 条是 `deepseek-v4-flash` 下的 → **要重跑那 21 条**。
 > **本块只做只读探针**（不跑评测、不改配置）：逐个候选打一个**带 `tools` 的真实请求**，看 `http` 码 + **是否返回 `tool_calls`**。
 
-```bash
+```text
 echo "=== 0. HOST/TIME ==="; hostname; date '+%F %T'
 W=/nas_train/app.e0031982/code/super_intelligence_2035; KEYS=$W/doc/keys.txt; RUN=$W/doc/BaiZe-ISEDA2027/run
 LLM_DATA_DIR=/tmp/_none; . "$RUN/llm_rotate.sh"
