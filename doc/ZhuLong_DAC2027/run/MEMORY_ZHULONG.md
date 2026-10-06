@@ -9,9 +9,9 @@ WAITING: 1
 | 字段 | 值 |
 |:--|:--|
 | STAGE | `B`（大模型消融；**已调换**：因 pro-fp4 额度 403 阻塞 C1，先跑 Phase B）|
-| CONFIG | `doubao-seed-2.0-pro-cloud`（B 第 4 臂，r2 运行中）|
-| ROUND | 2 |
-| PHASE | `running`（B.doubao-seed-2.0-pro-cloud r2 运行中，PID 586670，batch 2026_1007_030335，log=/tmp/ABL_doubao-seed-2.0-pro-cloud_r2.log，8 worker/158 题/-n，CLI_DATA_DIR=/nasdata/app.e0031982/.cline_doubao_eval/data 隔离，0 Forbidden ✅，0 模型泄漏 ✅，doubao active ✅（API gate 200），反作弊 hook live；r1 已收割=63.9%（101/158, batch 2026_1007_010601）；前序 B.glm-5.2 5/5=83.3±3.1% ✅、B.deepseek-v4-flash 5/5=16.7±12.3% ✅、B.kimi-k2.6-cloud 5/5=77.0±1.6% ✅；试验次序 B→C1→C2→S1；下轮唤醒走步骤 A harvest r2 → 记成绩 → ROUND≤5 启 r3）|
+| CONFIG | `doubao-seed-2.0-pro-cloud`（B 第 4 臂，r3 运行中）|
+| ROUND | 3 |
+| PHASE | `running`（B.doubao-seed-2.0-pro-cloud r3 运行中，PID 854474，batch 2026_1007_050414，log=/tmp/ABL_doubao-seed-2.0-pro-cloud_r3.log，8 worker/158 题/-n，CLI_DATA_DIR=/nasdata/app.e0031982/.cline_doubao_eval/data 隔离，0 Forbidden ✅，0 模型泄漏 ✅，doubao active ✅，反作弊 hook live；r1=63.9%（101/158, b2026_1007_010601）、r2=64.6%（102/158, b2026_1007_030335）已收割；前序 B.glm-5.2 5/5=83.3±3.1% ✅、B.deepseek-v4-flash 5/5=16.7±12.3% ✅、B.kimi-k2.6-cloud 5/5=77.0±1.6% ✅；试验次序 B→C1→C2→S1；下轮唤醒走步骤 A harvest r3 → 记成绩 → ROUND≤5 启 r4）|
 | WAITING | 1 |
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
@@ -24,7 +24,7 @@ WAITING: 1
 | B | glm-5.2 | 5/5 ✅ | **83.3±3.1%** [84.2,87.3,84.2,79.1,81.6]（r5=81.6% 129/158 batch 2026_1005_233928, 0 Forbidden ✅）|
 | B | deepseek-v4-flash | 5/5 ✅ | **16.7 ± 12.3%** [9.5,10.1,19.0,7.6,37.3]（r1=9.5%(15/158,b2026_1006_022818); r2=10.1%(16/158,b2026_1006_031227); r3=19.0%(30/158,b2026_1006_034557); r4=7.6%(12/158,15ok/143fail/0exec_err,b2026_1006_042140); r5=37.3%(59/158,67ok/90fail/0exec_err,b2026_1006_045811), 0 Forbidden ✅ 全程）|
 | B | kimi-k2.6-cloud | 5/5 ✅ | **77.0±1.6%** [79.1,76.6,77.2,74.7,77.2]（r5=77.2% 122/158 batch 2026_1006_230904, 137ok/21fail/0exec_err, 0 Forbidden ✅, kimi active ✅）|
-| B | doubao-seed-2.0-pro-cloud | 2/5 ▶（r2 运行中）| r1=63.9%（101/158, batch 2026_1007_010601, 0 Forbidden ✅, doubao active ✅）; r2 运行中（PID 586670, batch 2026_1007_030335, 0 Forbidden ✅, CLI_DATA_DIR=.cline_doubao_eval 隔离）|
+| B | doubao-seed-2.0-pro-cloud | 3/5 ▶（r3 运行中）| r1=63.9%（101/158, b2026_1007_010601, 0 Forbidden ✅, doubao active ✅）; r2=64.6%（102/158, b2026_1007_030335, 158 ok/0 fail/0 exec_err, 0 Forbidden ✅, doubao active ✅）; r3 运行中（PID 854474, b2026_1007_050414, 0 Forbidden ✅, CLI_DATA_DIR=.cline_doubao_eval 隔离）|
 | C1 | pure_llm | 5/5 â | â 10.5Â±1.9%ï¼å¤ç¨ legacyï¼[8.2,9.5,10.1,11.4,13.3]ï¼|
 | C1 | rag | 0/5 | â¬ï¼legacy 68.2Â±7.4% ä½åºâé¡»æ¬çº¿éè·ï¼|
 | C1 | wo_retrieval | 1/5 â r2 â¸ï¼pro-fp4 403 é»å¡âå¾ Phase B å®æåéè¯ï¼| r1=74.1% å¤ç¨ legacyï¼r2 infra ä½åºï¼pro-fp4 403ï¼|
@@ -44,7 +44,7 @@ WAITING: 1
 | B.glm-5.2 | **83.3 ± 3.1%** | [84.2, 87.3, 84.2, 79.1, 81.6] |
 | B.deepseek-v4-flash | **16.7 ± 12.3%** | r1=9.5%（15/158, batch 2026_1006_022818）；r2=10.1%（16/158, batch 2026_1006_031227）；r3=19.0%（30/158, batch 2026_1006_034557）；r4=7.6%（12/158, 15 ok/143 fail/0 exec_err, 0 Forbidden ✅, batch 2026_1006_042140）；r5=37.3%（59/158, 67 ok/90 fail/0 exec_err, 0 Forbidden ✅, batch 2026_1006_045811）|
 | B.kimi-k2.6-cloud | **77.0 ± 1.6%** | [79.1, 76.6, 77.2, 74.7, 77.2]（r1=79.1% 125/158 b2026_1006_071809；r2=76.6% 121/158 b2026_1006_100626；r3=77.2% 122/158 b2026_1006_181646；r4=74.7% 118/158 b2026_1006_204422；r5=77.2% 122/158 b2026_1006_230904, 137 ok/21 fail/0 exec_err, 0 Forbidden ✅ 全程）|
-| B.doubao-seed-2.0-pro-cloud | [TBD]（2/5，r2 运行中）| r1=63.9%（101/158, PASS_RATE=0.6392, batch 2026_1007_010601, 0 Forbidden ✅, doubao active ✅）; r2 运行中（PID 586670, batch 2026_1007_030335）|
+| B.doubao-seed-2.0-pro-cloud | [TBD]（3/5，r3 运行中）| r1=63.9%（101/158, PASS_RATE=0.6392, b2026_1007_010601, 0 Forbidden ✅, doubao active ✅）; r2=64.6%（102/158, PASS_RATE=0.6456, b2026_1007_030335, 158 ok/0 fail/0 exec_err, 0 Forbidden ✅, doubao active ✅）; r3 运行中（PID 854474, b2026_1007_050414）|
 | C1.pure_llm | 10.5 ± 1.9% | [8.2, 9.5, 10.1, 11.4, 13.3]（复用 legacy）|
 | C1.wo_retrieval | r1=74.1（r2 infra 作废；pro-fp4 403→待 Phase B 完成后重试）| [74.1]（r1 复用 legacy；r2 0/158 Forbidden 作废）|
 
@@ -99,5 +99,7 @@ WAITING: 1
 - [2026-10-05 11:25] [ð 试验次序调换] **Phase B（大模型消融）提到最前**。因  额度 HTTP 403 阻塞 C1/wo_retrieval 无法推进，而 Phase B 的 4 个模型（glm-5.2 / deepseek-v4-flash / kimi-k2.6-cloud / doubao-seed-2.0-pro-cloud）均使用独立 key/endpoint，完全不受 pro-fp4 限制。新顺序：**B â C1 â C2 â S1**。已同步更新：ZHULONG_TASK.md §§ 0/4/5（顺序表+轮转矩阵）、MEMORY_ZHULONG.md 状态头/看板/成绩表。C1/wo_retrieval r2 标记为 â¸（暂停），待 Phase B 完成后 pro-fp4 恢复时重试。legacy 组件 loop 仍在跑（PID 2455466），本轮不干扰。
 - [2026-10-04/05 早期流水] *legacy-保活(10-05 11:13)+bootstrap(10-04)+infra-check(10-04 ~21:54) 已滚出至 daily-memories/2026-10-05.md 与 2026-10-04.md（rolled-from-MEMORY 段，2026-10-06 10:08 滚动以保 <=32KB）。*
 - [2026-10-06 05:32–06:35] [⏩ 已滜出] B.deepseek-v4-flash r5 健康巡检（06:35/06:03/05:32）+ 07:07 r5 收割 37.3%→致完成 16.7±12.3% 详情已原文搬入 daily-memories/2026-10-06.md（rolled-from-MEMORY 2026-10-07 03:05）。
-- [2026-10-07 04:22] [🩺 B.doubao-seed-2.0-pro-cloud r2 健康巡检 → 不动作退出] §7 步骤 A（PHASE=running）：`pgrep '^bash scripts/run_cline_script'`→**有输出**（PID 586670 alive，etime≈4771s≈80min，batch 2026_1007_030335）→ r2 仍在运行。进程树核验健康：子 PID 720858=`run_eval.py -g completed_code_generation_2026_1007_030335.jsonl` 活跃；孙 PID 720882/720883=`run_on_sandbox.py --scripts-dir .../generated_solutions_shard_3` 正在 sandbox 执行（log mtime 03:57:48 后静默属正常，run_eval 结果写输出文件不回写父 log）。0 Forbidden ✅。infra：8664/8665/8653/8669 全 OPEN ✅、/nasdata 372G ✅、/home 99%/6G（非硬阻断，我方产物落 /nasdata）。运维指令复核：(五) legacy 组件 loop PID 2455466 alive ✅；(八) ops relay PID 2665949 alive ✅（.last_run_id=21=inbox RUN_ID=21，已追平）；zhulong_loop PID 3579323 alive ✅。**状态不变**：STAGE=B / CONFIG=doubao-seed-2.0-pro-cloud / ROUND=2 / PHASE=running / WAITING=1 / ERROR_COUNT=0。退出等下轮唤醒 harvest r2（pgrep 无输出→grep PASS_RATE 取 r2 → 记成绩 → ROUND≤5 启 r3）。
+- [2026-10-07 04:22] [⏩ 已滚出] B.doubao-seed-2.0-pro-cloud r2 健康巡检（不动作退出，r2 PID 586670 仍在跑）详情已原文搬入 daily-memories/2026-10-07.md（该轮记录，已被 05:01 r2 收割 64.6% 闭合）。
+- [2026-10-07 05:01] [✅ B.doubao-seed-2.0-pro-cloud r2 收割 64.6% → r3 启动] §7 步骤 A（PHASE=running）：`pgrep '^bash scripts/run_cline_script'`→**无输出**（r2 PID 586670 已不在，log mtime 04:48:37 已结束）→ 进入打分。打分：`grep 'pass (|PASS_RATE|评估结果汇总' /tmp/ABL_doubao-seed-2.0-pro-cloud_r2.log`→**102/158 pass (64.6%)**，PASS_RATE=0.6456，generated 158 ok/0 fail/0 exec_err，batch 2026_1007_030335。**模型核验**：AI SDK 警告含 `openai-compatible.chat / doubao-seed-2.0-pro-cloud`（非 glm）✅；`grep -c Forbidden`=**0** ✅。infra：8664/8665/8653/8669 全 OPEN ✅、/nasdata 372G free ✅、/home 99%/6G（非硬阻断，我方产物落 /nasdata）。**r2=64.6%**（r1=63.9%、r2=64.6% 两轮稳定）。ROUND=3≤5 → 启动 r3。**启动 r3**：`CLI_DATA_DIR=/nasdata/app.e0031982/.cline_doubao_eval/data setsid bash scripts/run_cline_script.sh -p 8 -n`（full 配置不切 set_ablation，doubao CLI_DATA_DIR 隔离复用 r1/r2）→ **PID 854474**, batch **2026_1007_050414**, 8 worker/158 题/-n, log=/tmp/ABL_doubao-seed-2.0-pro-cloud_r3.log。验证：pgrep PID 854474 alive ✅；模型=doubao-seed-2.0-pro-cloud ✅；0 Forbidden ✅；log 218KB 活跃增长，43 cline worker 活跃。运维复检：legacy 组件 loop PID 2455466 ✅；zhulong_loop PID 3579323 ✅；ops relay PID 2665949 ✅（.last_run_id=21=inbox RUN_ID 21，无新指令）；conductor 未触碰（红线）。**状态**：STAGE=B / CONFIG=doubao-seed-2.0-pro-cloud / ROUND=3 / PHASE=running / WAITING=1 / ERROR_COUNT=0。退出等下轮唤醒 harvest r3。
+
 
