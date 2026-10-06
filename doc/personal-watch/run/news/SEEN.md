@@ -423,4 +423,8 @@
 | 2026-10-07 | Italian PM files to trademark her voice against AI threats | BBC（经 HN） | news(未核验·BBC 直连不可达·HN 提交 05:50 CST 早于本轮窗口 → 防重不收) | https://www.bbc.com/news/articles/ckly0g1ljq2yo |
 | 2026-10-07 | 已挖出十几万漏洞，Anthropic 向更多安全团队开放其最强 Claude 模型 | IT之家（据路透社） | news | https://www.ithome.com/1/010/127.htm |
 | 2026-10-07 | 从种土豆到“种”Token 这里的年轻人都发生了哪些变化？ | 央视网 | feature(内蒙古算力产业人物特写·非具体事件·防重不收) | https://news.cctv.com/2026/10/07/ARTIWFt7Q3BzF7kwNcivcusq261007.shtml |
+| 2026-10-07 | OpenAI 发布又一批 AI 数学研究成果，攻破数百个悬而未决难题 | IT之家 | news | https://www.ithome.com/1/010/137.htm |
+| 2026-10-07 | 落实特朗普行政令，美国司法部要求员工改称 AI 为“超级智能” | IT之家（据路透社） | news | https://www.ithome.com/1/010/135.htm |
+| 2026-10-07 | 消息称 SpaceX 计划募资 400 亿美元，用于采购英伟达 AI 芯片 | IT之家（据金融时报） | news | https://www.ithome.com/1/010/134.htm |
+
 
