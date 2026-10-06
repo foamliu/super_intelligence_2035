@@ -366,4 +366,6 @@
 | 2026-10-06 | Regular AI users are more likely to hold quality jobs | Gallup（经 HN） | news(未核验·正文本机不可达·从严不收) | https://news.gallup.com/poll/714602/benefits-work-unevenly-distributed.aspx |
 | 2026-10-06 | What Would You Do If Your Employer Could Destroy the World? | New York Magazine（经 HN） | feature/opinion(AI 研究员离职) | https://nymag.com/intelligencer/article/ai-researchers-quit-openai-anthropic.html |
 | 2026-10-06 | Trump calls for 'tremendous self-regulation' by AI companies | NBC News（经 HN） | news(超窗 10-01·政治表态) | https://www.nbcnews.com/politics/donald-trump/trump-host-summit-top-ai-leaders-washington-rcna599853 |
+| 2026-10-06 | Teenager rescued from B.C.'s 'Widowmaker' after getting stranded using AI instructions | CTV News（经 HN，仅 lede+元数据可得） | news | https://www.ctvnews.ca/vancouver/article/teenager-rescued-from-bcs-widowmaker-after-getting-stranded-using-ai-instructions/ |
+| 2026-10-06 | AI training of copyrighted material not fair use: Third Circuit | Courthouse News Service（经 HN） | news(核心事件 9-30·超 72h) | https://www.courthousenews.com/ai-training-of-copyrighted-material-not-fair-use-third-circuit/ |
 
