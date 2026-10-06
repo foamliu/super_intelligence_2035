@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 84 -->
+<!-- RUN_ID: 83 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -30,45 +30,6 @@
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`。
 
 ---
-
-## RUN_ID 84 — 🧹 **清理仓库根目录的垃圾文件**（`**本块**：①` / `**背景（supervisor`）—— 它们由"缺围栏的坏块"被当 bash 执行时产生，已推到 origin，导致 Windows 侧 pull/rebase 全废
-
-> **背景（supervisor 2026-10-06 12:1x）**：早前 RUN_ID 82 的**首个版本缺收尾围栏** ⇒ 中继把其后若干 `> **本块**：…` 说明行**当 bash 执行**，`> 文字` 成了**重定向**，在**仓库根**生成了名为 `**本块**：①`、`**背景（supervisor` 的**垃圾文件**，并被提交推到 origin/main。**Windows 无法检出含 `*` 的路径** ⇒ 本机 `pull --rebase`/`merge` 全部报 `invalid path` + `could not detach HEAD`。
-> **本块**：在 2.29（Linux）上把所有**含 `*` 的已跟踪路径**（先打印后删除）`git rm --cached` + 删文件 → 提交 → push。🚫 只删**名字里含 `*` 的路径**，其它一律不碰。
-
-```bash
-set -u
-echo "=== RUN_ID 84 · remove junk files (invalid paths) $(date '+%F %T') ==="
-cd /nas_train/app.e0031982/code/super_intelligence_2035 || { echo "(NO repo)"; exit 1; }
-hostname; date '+%F %T'
-echo "--- [1] sync ---"
-timeout 120 git fetch origin --quiet 2>&1 | tail -2
-git pull --rebase --autostash origin main 2>&1 | tail -3
-echo "--- [2] candidates: tracked paths containing '*' ---"
-git ls-files -z | tr '\0' '\n' | grep -F '*' | cut -c1-90 || echo "(none)"
-echo "--- [3] git rm --cached + rm ---"
-git ls-files -z | tr '\0' '\n' | grep -F '*' | while IFS= read -r f; do
-  echo "JUNK: $f"
-  git rm -f --cached -- "$f" 2>&1 | tail -1
-  rm -f -- "$f" 2>&1 | tail -1
-done
-echo "--- [4] staged ---"
-git status --short | head -10
-echo "--- [5] commit + push ---"
-if git diff --cached --quiet; then
-  echo "(nothing staged - junk already gone?)"
-else
-  git commit -m "ops: remove junk files created by a malformed ops block (invalid paths with *)" 2>&1 | tail -2
-fi
-timeout 120 git push origin main 2>&1 | tail -3
-echo "--- [6] verify: any tracked path containing '*' left? ---"
-git ls-files -z | tr '\0' '\n' | grep -F '*' && echo "!! STILL PRESENT" || echo "(clean: no path with * )"
-echo "--- [7] head ---"
-git log --oneline -2 | cut -c1-140
-echo "=== DONE ==="
-EOS
-echo "=== ALL DONE ==="
-```
 
 ## RUN_ID 83 — 🩺 **ZhuLong 健康检查（只读）**：relay/loop 进程 + 日志 + cline 可调用性
 
