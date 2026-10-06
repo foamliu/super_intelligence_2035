@@ -5278,5 +5278,87 @@
     },
     "blocked": "rootfs: base_commit fetch failed: error: RPC failed; curl 92 HTTP/2 stream 0 was not closed cleanly: CANCEL (err 8)\nerror: 9 bytes of body are still expected\nfatal: expected flush after ref listing\n",
     "classification": "blocked"
+  },
+  {
+    "instance_id": "pylint-dev__pylint-7080",
+    "repo": "pylint-dev/pylint",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template pylint-dev__pylint-5859"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 1800.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_pylint-dev__pylint-7080.json",
+      "stdout_tail": "453b5d2930f0\n[run_single] running codex ...\n== harness=codex rc=-1 timed_out=True wall=1800.0s ==\n[stderr tail] ...b'2026-10-06T07:22:00.961790Z ERROR codex_core::models_manager::manager: failed to refresh available models: timeout waiting for child process to exit\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_pylint-dev__pylint-7080.json\n[run_single] cleanup: git reset --hard 3c5eca2ded3dd2b59ebaf23eb289453b5d2930f0\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 101,
+        "p2p_total": 120
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "pylint-dev__pylint-7114",
+    "repo": "pylint-dev/pylint",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template pylint-dev__pylint-5859"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 854.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_pylint-dev__pylint-7114.json",
+      "stdout_tail": " wall=854.2s ==\n[stderr tail] ...2026-10-06T07:54:22.721754Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 709 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_pylint-dev__pylint-7114.json\n[run_single] cleanup: git reset --hard 397c1703e8ae6349d33f7b99f45b2ccaf581e666\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 53,
+        "p2p_total": 56
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "pylint-dev__pylint-7228",
+    "repo": "pylint-dev/pylint",
+    "harness": "codex",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": false,
+      "msg": "base_commit fetch failed: \n[TIMEOUT]"
+    },
+    "blocked": "rootfs: base_commit fetch failed: \n[TIMEOUT]",
+    "classification": "blocked"
   }
 ]
