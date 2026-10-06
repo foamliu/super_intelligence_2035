@@ -35,7 +35,7 @@ CLINE_KEY="$(sed -n 's/.*"openAiApiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1
 [ -z "$CLINE_KEY" ] && CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
 
 CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟
-PUSH_INTERVAL=18000             # 每 5 小时 git push 一次（4~6 小时间隔内）
+PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（=SLEEP_WAIT；2026-10-06 由 5h 缩短：心跳 >30min 即按卡死处理）
 SLEEP_BUSY=60                   # 无阻塞任务时的唤醒间隔：约 1 分钟（连续推进，不空耗）
 SLEEP_WAIT=1800                 # 有异步阻塞任务(训练 running)时的唤醒间隔：30 分钟（省 token）
 MEMORY="$SCRIPT_DIR/MEMORY_PRETRAIN_2B.md"
@@ -71,8 +71,13 @@ git_push_if_needed() {
     fi
 
     # 2) 只提交本任务自己的文件（共享工作副本：git add -A 会卷入其他任务的在途文件）
-    git add -- "$REL/MEMORY_PRETRAIN_2B.md" "$REL/EXPERIMENTS_PRETRAIN_2B.md" \
-               "$REL/EXPERIMENTS_PRETRAIN_2B_ROUND2.md" "$REL/daily-memories" 2>/dev/null
+    # 🧭 2026-10-06：① 补 `BAIZE_PRETRAIN_2B_TASK.md`（此前漏项）；② 逐项判存在后再 add
+    #   （`git add` 只要有一个 pathspec 不匹配就整体失败，而 2>/dev/null 会吞掉报错）。
+    for p in "$REL/MEMORY_PRETRAIN_2B.md" "$REL/EXPERIMENTS_PRETRAIN_2B.md" \
+             "$REL/EXPERIMENTS_PRETRAIN_2B_ROUND2.md" "$REL/BAIZE_PRETRAIN_2B_TASK.md" \
+             "$REL/daily-memories" "$REL/GPU29_ALLOC.md"; do
+        [ -e "$p" ] && git add -- "$p"
+    done
     if git diff --cached --quiet; then
         echo "[push] nothing of ours to commit."
     else

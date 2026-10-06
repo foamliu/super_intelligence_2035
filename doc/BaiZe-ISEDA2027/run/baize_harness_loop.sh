@@ -28,7 +28,7 @@ MODEL="glm-5.2"                     # 编排模型（deepseek-v4-pro-fp4 额度�
 CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
 
 CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟
-PUSH_INTERVAL=18000             # 每 5 小时兜底同步一次
+PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（=SLEEP_WAIT；2026-10-06 由 5h 缩短：心跳 >30min 即按卡死处理）
 SLEEP_BUSY=60                   # 无阻塞时的唤醒间隔（源码分析是连续任务，用短睡尽快续跑）
 SLEEP_WAIT=1800                 # 有异步阻塞时的唤醒间隔（省 token）
 MEMORY="$SCRIPT_DIR/MEMORY_HARNESS.md"
@@ -73,7 +73,12 @@ git_sync_and_push() {
     fi
 
     # 2) 只提交本任务自己的文件（避免卷入其他任务的在途文件）
-    git add -- "$REL/MEMORY_HARNESS.md" "$REL/harness" "$REL/daily-memories-harness" 2>/dev/null
+    # 🧭 2026-10-06：① 补 `BAIZE_HARNESS_TASK.md`（此前漏项）；② 逐项判存在后再 add
+    #   （`git add` 只要有一个 pathspec 不匹配就整体失败，而 2>/dev/null 会吞掉报错）。
+    for p in "$REL/MEMORY_HARNESS.md" "$REL/BAIZE_HARNESS_TASK.md" \
+             "$REL/harness" "$REL/daily-memories-harness" "$REL/GPU29_ALLOC.md"; do
+        [ -e "$p" ] && git add -- "$p"
+    done
     if git diff --cached --quiet; then
         echo "[push] nothing of ours to commit."
     else

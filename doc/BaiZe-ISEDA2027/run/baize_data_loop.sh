@@ -34,7 +34,7 @@ LLM_DATA_DIR="$DATA_DIR"            # 让 llm_rotate.sh 把 openAiBaseUrl 写进
 CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
 
 CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟
-PUSH_INTERVAL=18000             # 每 5 小时兜底同步一次
+PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（=SLEEP_WAIT；2026-10-06 由 5h 缩短：心跳 >30min 即按卡死处理）
 SLEEP_BUSY=60                   # 无阻塞时的唤醒间隔
 SLEEP_WAIT=1800                 # 有异步阻塞时的唤醒间隔（省 token）
 MEMORY="$SCRIPT_DIR/MEMORY_DATA.md"
@@ -78,9 +78,17 @@ git_sync_and_push() {
         fi
     fi
 
-    # 2) 只提交本任务自己的文件（避免卷入其他任务的在途文件）
-    git add -- "$REL/MEMORY_DATA.md" "$REL/DATA_LEDGER.md" "$REL/CONTAMINATION_CHECK.md" \
-               "$REL/data_pipeline" "$REL/daily-memories-data" 2>/dev/null
+    # 2) 只提交本任务自己的文件（共享工作副本：git add -A 会卷入其他任务的在途文件）
+    # 🧭 2026-10-06：① 补齐此前漏掉的本线产物（任务书/配方/磁盘清单/HTML），否则它们永不会被兜底提交；
+    #             ② 逐项判存在后再 add —— `git add` 只要有一个 pathspec 不匹配就整体失败，而 2>/dev/null 会吞掉报错。
+    for p in "$REL/MEMORY_DATA.md" "$REL/DATA_LEDGER.md" "$REL/CONTAMINATION_CHECK.md" \
+             "$REL/BAIZE_DATA_TASK.md" "$REL/DATA_MIX_RECIPE.md" "$REL/DISK_CLEANUP_INVENTORY.md" \
+             "$REL/data_pipeline" "$REL/daily-memories-data" "$REL/GPU29_ALLOC.md"; do
+        [ -e "$p" ] && git add -- "$p"
+    done
+    for g in doc/BaiZe-ISEDA2027/report_data_*.html; do
+        [ -e "$g" ] && git add -- "$g"
+    done
     if git diff --cached --quiet; then
         echo "[push] nothing of ours to commit."
     else

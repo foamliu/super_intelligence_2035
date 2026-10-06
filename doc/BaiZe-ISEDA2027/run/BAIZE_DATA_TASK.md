@@ -12,6 +12,32 @@
 > 本节由**外部运维**通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停**。
 > **agent 禁止修改本节**（只写别的区）。本节为「无」时，按下方默认阶段顺序自主推进。
 
+### 🧭 收尾铁律 · 2026-10-06（**用户指令 · 每轮唤醒必须执行，不许省**）
+
+> **为什么新增（真实事故）**：2026-10-06 06:55 → 08:30，本线心跳文件 **`run/MEMORY_DATA.md` 近 2 小时未更新**（其间 agent 确实在改任务书/配方、也 push 得出去），**外部运维只能靠 git 看到「06:55 后零提交」⇒ 被误判成静默卡死并上机排查**。
+> 根因：**「更新记忆 + push」以前只是建议、没有硬约束**；而 loop 的兜底 push 间隔是 **5h**（本日已缩短，**见下**），且只覆盖固定白名单 —— **不许依赖兜底**。
+> 🚫 **旧口径（已废）**：「每 5 小时由 loop 兜底同步一次」**不再作为你的交付保障** —— 兜底只是保险丝，**不是你的提交手段**。
+
+**每轮唤醒（一次 cline 会话）结束前，按顺序做完这 4 件事，再置 `WAITING` / 去睡：**
+
+1. **写心跳**：更新 `run/MEMORY_DATA.md` 顶部进度快照（`PHASE` / `已完成` / `当前动作` / `下一步` / `阻塞`），并**追加 1 行「本唤醒流水」**：`[HH:MM] 干了什么 + 关键原始输出 1–2 行`。
+2. **写日报**：`run/daily-memories-data/<YYYY-MM-DD>.md` 追加本轮记录（**当天文件必须建**，不许攒着最后补）。
+3. **自己提交 + 推送**（**不许等 loop 兜底**）：
+   ```bash
+   cd /nas_train/app.e0031982/code/super_intelligence_2035
+   git add -- doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md doc/BaiZe-ISEDA2027/run/DATA_LEDGER.md \
+              doc/BaiZe-ISEDA2027/run/CONTAMINATION_CHECK.md doc/BaiZe-ISEDA2027/run/BAIZE_DATA_TASK.md \
+              doc/BaiZe-ISEDA2027/run/DATA_MIX_RECIPE.md doc/BaiZe-ISEDA2027/run/DISK_CLEANUP_INVENTORY.md \
+              doc/BaiZe-ISEDA2027/run/daily-memories-data doc/BaiZe-ISEDA2027/run/data_pipeline
+   git commit -m "data <轮次>: <一句话>"      # 🚫 提交信息必须带线名前缀，否则运维无法溯源
+   git push origin main
+   ```
+   🚫 **绝不用 `git add -A`** —— 这是**共享工作副本**，`-A` 会把别线尚未完成的在途文件一并卷进你的提交（10-05 已因此出过事故：`restore other agents files from dropped auto-commit`），后果是**提交归属不可溯**（运维查不出谁在干活）。
+4. **闭环自检**：`git status -sb` ⇒ **无 ahead / 无 behind**；`git log -1 --format='%h %ad %s' --date=format:'%H:%M'` 的时间戳 = 本轮。
+   **push 失败（`error: Forbidden` / 网络）**：重试 1 次；仍失败 ⇒ 把**报错原文**写进心跳，**下一轮唤醒第一件事就是补推**。
+
+> ⏱️ **运维判死判据（硬）**：**心跳文件 >60 min 无新提交 ⇒ 按卡死处理**（派人上机 kill / 重排卡），**不再等你**。**你干得再多，心跳不动 = 仍会被判死。**
+
 ### 🔴🔴 运维指令 · 2026-10-06（**第 5 轮 · 代理规模定案 `d=128/L=14 ≈ 18.5M` + 开工前 5 项必验**）· **P0 · 从本块开始执行**（前两块的方法学定义与改道方案**全部继续有效**；**仅「代理规模」一项被本块覆盖**）
 
 > **用户 2026-10-06 追加两问**：①「代理模型到底多小？」②「**若每 trial 1B token、24h + 6×H100 要跑 512 组，要多小？**（**要把评测时间算进去**）」

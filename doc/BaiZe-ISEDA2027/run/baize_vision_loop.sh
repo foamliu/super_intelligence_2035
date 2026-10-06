@@ -27,7 +27,7 @@ LLM_DATA_DIR="$DATA_DIR"            # 让 llm_rotate.sh 把 openAiBaseUrl 写进
 CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
 
 CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟
-PUSH_INTERVAL=18000             # 每 5 小时 git push 一次（4~6 小时间隔内）
+PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（=SLEEP_WAIT；2026-10-06 由 5h 缩短：心跳 >30min 即按卡死处理）
 SLEEP_BUSY=60                   # 无阻塞任务时的唤醒间隔：约 1 分钟（连续推进，不空耗假期）
 SLEEP_WAIT=1800                 # 有异步阻塞任务(训练 running)时的唤醒间隔：30 分钟（省 token）
 MEMORY="$SCRIPT_DIR/MEMORY_VISION.md"
@@ -51,8 +51,15 @@ git_push_if_needed() {
     fi
     echo "[push] $(date '+%F %T') push interval reached, committing + pushing ..."
     cd "$GIT_ROOT" || return
-    git add -A
-    if git commit -m "auto-commit $(date '+%F %T')" >/dev/null 2>&1; then
+    # 🧭 2026-10-06 运维：共享工作副本上 `git add -A` 会卷走别线的在途文件
+    #   （10-05 已出事故：commit `06effe2 restore other agents files from dropped auto-commit`）
+    #   ⇒ 改为「本线白名单 + -A」+ 提交信息加线名前缀（否则运维无法靠 git 溯源谁在干活）。
+    for p in doc/BaiZe-ISEDA2027/run/MEMORY_VISION.md doc/BaiZe-ISEDA2027/run/EXPERIMENTS_VISION.md \
+             doc/BaiZe-ISEDA2027/run/BAIZE_VISION_TASK.md doc/BaiZe-ISEDA2027/run/daily-memories-vision \
+             doc/BaiZe-ISEDA2027/run/vision doc/BaiZe-ISEDA2027/run/GPU29_ALLOC.md; do
+        [ -e "$p" ] && git add -A -- "$p"
+    done
+    if git commit -m "vision auto-commit $(date '+%F %T')" >/dev/null 2>&1; then
         echo "[push] committed."
     else
         echo "[push] nothing to commit."
