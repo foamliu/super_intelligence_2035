@@ -410,4 +410,8 @@
 
 | 2026-10-07 | Vinod Khosla believes ex-DeepMind engineer's Wajo will win agent market on trust | TechCrunch | news | https://techcrunch.com/2026/10/06/vinod-khosla-believes-ex-deepmind-engineers-wajo-will-win-agent-market-on-trust/ |
 | 2026-10-07 | Spurred on by AI usage, Google Docs and Drive now support Markdown files natively | TechRadar（经 HN） | news(非核心·Workspace 文件格式·防重不收) | https://www.techradar.com/pro/spurred-on-by-ai-usage-google-docs-and-drive-now-support-markdown-files-natively |
+| 2026-10-07 | AI computing startup Lambda to raise $4B ahead of planned IPO | TechCrunch | news | https://techcrunch.com/2026/10/06/ai-computing-startup-lambda-to-raise-4b-ahead-of-planned-ipo/ |
+| 2026-10-07 | The next hurdle for AI agents: getting websites to let them in | TechCrunch | analysis(行业分析·非具体事件·防重不收) | https://techcrunch.com/2026/10/06/the-next-hurdle-for-ai-agents-getting-websites-to-let-them-in/ |
+| 2026-10-07 | Meta's Muse AI agent is building a dossier on you | TIME（经 HN） | feature(Muse 画像同事件·防重不收) | https://time.com/article/2026/10/06/meta-muse-ai-agent-privacy/ |
+| 2026-10-07 | OpenAI Dots: The New Always-On AI Agents from OpenAI | devnavigator（聚合站·经 HN） | news(非核心·Dots 同事件·防重不收) | https://devnavigator.com/2026/10/06/openai-dots-always-on-ai-agents/ |
 
