@@ -5,6 +5,31 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_VISION.md` / `EXPERIMENTS_VISION*` / `daily-memories-vision/` / `vision/`）。⚠️ **唯一例外（2026-10-06）**：按「📉 体积维护规程」，agent **可把「已闭合」的运维块/旧正文【原文】搬入** `run/ARCHIVE_OPERATOR_VISION.md`（**只搬迁、留 1 行指针**；不新增/不改写任何指令）。
 
+### 🆕 运维指令 · 2026-10-06（✅ **批准 `VISION_AIMV2_OFFICIAL_PLAN.md`（方向⑤）** ＋ ⚠️ **开跑前必须先按下列 6 点修订方案**）· 高优先
+
+> **用户已批准**「复现官方 AIMv2 纯 AR 范式，并与我们的 AIMv2 做量化对比」。**但要求开跑前先把下面 6 点写清/改对**（用户逐项审阅意见；**重点 = 问题 3 与问题 5**）。**这 6 点落实后即可按队列开跑，不必再等第二次批准**（前提仍是队列 ①②③ 已完成：R12b 训完 + lp 协议 A/B 跑完）。
+
+**① §3.2 AR 前向语义 —— 必须写清「AR ≠ MAE」**
+`MSE(pred[:, :-1], target[:, 1:])` 的 shift-by-1 是对的，但报告要**显式说明语义差异**：AR 是「**给定前文预测后文**」，**不是** MAE 的「给定上下文重建被遮位置」；并写明**位置 0 的输出只看到 patch 0 自身、位置 195 无 target 被 shift 掉**。否则读者会把两者混淆。
+
+**② §3.1 text decoder 的 cross-attention 目标 —— 必须显式声明**
+**必须写明「text decoder cross-attend 到 `causal` vision patches（每个 patch 只含前缀信息）」**（与官方一致）。🚫 若 attend 到**双向** patch 特征，就变成「双向 vision + causal text」，**不是**官方 AIMv2 范式 —— 请在方案里显式声明确认。
+
+**③ §6 短 caption handicap（用户点名重点）**
+官方用 **LLaMA-3 长合成 caption（~12B 样本）**，我们用**短 alt-text（CC12M / Amshaker / GPIC short）** ⇒ **text AR 的 next-token 信号天然弱**。**必须在方案与最终报告里显著标注该 handicap**，否则会把「**短 caption 不适合 text AR**」误读成「**官方 AIMv2 范式差**」。
+
+**④ §4 吞吐预估 —— 先 smoke test，并预留更差情况**
+**AR causal attention 的 FLOPs 不降**（SDPA + `attn_mask` 通常不省算力，还有 mask 开销）；text decoder 的 cross-attn 与 **`PatchPredictor` 对全部 196 位置**（vs 随机掩码 ~118 ⇒ +66%）都会增算 ⇒ **预留「实际吞吐可能只有 3500–4000 img/s」**。**必须先 smoke test**；⚠️ **若 30k 快速 A/B 的实际墙钟 >3h，需重新评估是否值得上 108k**。
+
+**⑤ §3.3 B' 的参数量隔离（用户点名重点）—— 改成「缩宽度」而非「减深度」**
+`depth=2` **隔离不干净**（浅 decoder 的表达能力本身就差 ⇒ 无法区分"参数少"还是"太浅"）⇒ **改为「保持 depth 不变、缩小 hidden dim」**使参数量对齐 Arm A；**并同时报告 B' 的 `cap_loss` 与 `pixel_loss`**（若 B' 的 cap_loss 明显更高 ⇒ 说明是 text AR 能力不足，而非参数量）。
+
+**⑥ §5.2 判定规则 —— 补一个中间态**
+加一档「**趋势性优势但不显著**」（**+0.5 < Δlp < +1.5**）⇒ 报告写「**AR 有正向趋势，但未达预注册显著性阈值，需更大规模验证**」；并写明「**Δlp 大但 C1 接近坍缩（如 C1=0.90）**」这类组合**怎么判**。
+
+> **执行顺序**：① 先改 `VISION_AIMV2_OFFICIAL_PLAN.md` 落实上述 6 点 → 提交（版本/diff 记入 `MEMORY_VISION.md`）；② ✅ 然后按队列（**① lp 协议 A/B → ② mask-ratio → ③ 权重比 → ④ 本项**）开跑。🚫 **不打断 R12b**；每步 commit + push。
+
+
 ### 🆕 运维指令 · 2026-10-06（📋 **vision 后续队列裁定**：批「lp 协议 → mask-ratio + 权重比」；方向1 **不急** / 方向4 **作废**；**第三批 = 复现「官方 AIMv2」范式并做量化对比**）· 排队执行 · **不打断 R12b**
 
 > **用户 2026-10-06 裁定（原文口径）**：
