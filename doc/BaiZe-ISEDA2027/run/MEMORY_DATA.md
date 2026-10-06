@@ -10,11 +10,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) → 🔄 BO搜索Stable段进行中(91/200 trial完成, PID 36451@.29, GPU2-7; best=4.6420 #84)
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；proxy d128 provider+recipe创建；held-out bin(base/code/math各~2M tok)；baize_mix_optuna.py创建(GP-EI)；5项必验全部通过(09:48)；BO搜索Stable段已启动(10:01)→GP竞态crash修复+重启(11:25)→91/200完成(14:30)；**任务书归档完成(79.8KB→31.6KB)**
-当前动作:     唤醒155(14:30) ①确认BO在.29运行(PID 36451 alive,etimes=11131s≈185min,GPU2-7各6.7GB/7-10%util,GPU0-1空) ②DB查询:91/200 complete(0 pruned/0 failed),best=4.6420(#84 web=0.8008/code=0.1118/math=0.0874),top5=#84/80/64/44/78(loss 4.642~4.651),先验(88:8:4)=#49(web=0.884/code=0.083/math=0.033,loss=4.898,rank 64/91,Δ=0.256=5.5%更差),rate≈20.6trial/h(12trial/35min) ETA~19:45 ③更新心跳+日报+commit
-下一步:       ① BO搜索继续(~109 trial剩余,ETA~19:45);② 每~30-60min查进度+commit心跳;③ 200 trial完成→出top-K表+先验点对比+best-so-far曲线;④ Day2搜Decay段
-阻塞:         无
+PHASE:        §0.6-B 配比实验改道 → d=128/L=14 proxy(18.36M) → 🔄 BO搜索(eval objective)进行中(18/200 trial, mix_search_eval.db, PID 1011682@.29, GPU2-7; best=5.8491 #9); base下载恢复中(PID 530450@.29, l1_en_hq 4750/5652 354G, zh 174/256 205G)
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a 2.2B单臂已kill；proxy d128 provider+recipe创建；held-out bin；baize_mix_optuna.py创建；5项必验全通过；BO(Stable段,val-loss objective)91/200完成→**改道eval objective**(mix_search_eval.db);**任务书归档完成(38.5KB→31.7KB,本轮归档6KB)**
+当前动作:     唤醒156(15:10) ①BO eval study=18/200 complete(PID 1011682 alive,GPU2-7各6.7GB/9-11%util,GPU0-1空),best=5.8491(#9 web=0.856/code=0.081/math=0.063),top5=#9/8/17/18/6(loss 5.849~5.871),old study(mix_search.db 115trial)保留对比 ②base下载:PID 4172910 crashed(lock cleaner误删活跃lock→FileNotFoundError)→kill lock cleaner→清lock→重启PID 530450(无lock cleaner),l1_en_hq 4738→4750(+12,354G),zh 172→174(+3,205G) ③任务书归档:§A/§D/§C/运维规程/第5轮块头/用户复核②块头/改道裁定→ARCHIVE_OPERATOR_DATA.md,TASK 38.5KB→31.7KB
+下一步:       ① BO eval study继续(182trial剩余);② base下载监控(l1_en_hq ETA~12h, zh ETA~5h);③ 每30-60min查BO进度+commit心跳;④ 200trial完成→出top-K表+先验对比+best曲线;⑤ GPIC下载待重启
+阻塞:         无（lock cleaner已撤，下载仅慢不崩）
 ERROR_COUNT:  0
 ```
 
@@ -106,6 +106,8 @@ ERROR_COUNT:  0
 
 - [14:30] **唤醒155**：①SSH .29确认:PID 36451 alive(etimes=11131s≈185min)，GPU2-7各6689MiB/7-10%util，GPU0-1空。②DB查询:**91/200 complete**(全部complete,0 pruned/0 failed)。**best=4.6420**(#84:web=0.8008/code=0.1118/math=0.0874)，top5=#84/80/64/44/78(loss 4.642~4.651)。**先验(88:8:4)=#49**(loss=4.898,**rank 64/91**,Δ=0.256=**5.5%更差**)→BO持续优化,best从#64(4.6471)→#84(4.6420),收敛区web=0.80/code=0.11/math=0.09稳定。③rate≈20.6trial/h(12trial/35min since 唤醒154),剩余109→ETA~19:45。④任务书&记忆体积均在32KB内,无需归档。📦 体积：TASK=31.6KB / MEMORY=29.8KB（归档 0KB）。
 
+- [15:10] **唤醒156**：①**BO eval study**(mix_search_eval.db,PID 1011682 `--objective eval`,GPU2-7各6.7GB/9-11%util):**18/200 complete**,best=**5.8491**(#9:web=0.856/code=0.081/math=0.063),top5=#9/8/17/18/6(loss 5.849~5.871)。old study(mix_search.db,115trial,best=4.6420)保留对比。②**base下载**:PID 4172910(hf_transfer+lock cleaner)crashed——lock cleaner(-mmin+1)误删活跃lock→`FileNotFoundError: .incomplete`。**修复**:kill lock cleaner(PID 4172912)→清所有.lock→重启PID 530450(无lock cleaner,接受偶发lock wait)。进度:l1_en_hq 4738→4750(+12,354G),zh 172→174(+3,205G)。③**任务书归档**:7块(§A规模定案/§D第0步分工/§C评测硬规则/运维规程agent归档/第5轮块头/用户复核②块头/改道方案裁定)→ARCHIVE_OPERATOR_DATA.md,各留1行📦指针。📦 体积：TASK=31.7KB / MEMORY=30.4KB（归档 ~6KB → ARCHIVE_OPERATOR_DATA.md）。
+
 ## 运维问答
 
 > 外部运维在 `BAIZE_DATA_TASK.md` 的「运维指令区」提问时，答案写在这里。
@@ -160,9 +162,9 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **§0.6-B 配比实验改道 → 🔄 BO搜索Stable段进行中(91/200, PID 36451, GPU2-7; best=4.6420 #84); 任务书归档完成(79.8KB→31.6KB)** |
-| WAITING | 1（🔄 BO搜索Stable段运行中: 91/200 trial完成, best=4.6420(#84), 先验rank64/91 Δ=5.5%, ETA~19:45; 每30-60min查进度+commit心跳） |
-| ERROR_COUNT | 1（GP竞态crash已修复，见流水唤醒150） |
+| PHASE | **§0.6-B 配比实验改道 → 🔄 BO搜索(eval obj)进行中(18/200, mix_search_eval.db, PID 1011682, GPU2-7; best=5.8491 #9); base下载恢复中(PID 530450, l1_en_hq 4750/5652, zh 174/256); 任务书归档完成(38.5KB→31.7KB)** |
+| WAITING | 1（🔄 BO eval study运行中: 18/200 trial, best=5.8491(#9), PID 1011682; base下载PID 530450 l1_en_hq+zh; 每30-60min查进度+commit心跳） |
+| ERROR_COUNT | 2（①GP竞态crash已修复见流水唤醒150；②base下载lock cleaner误删活跃lock→已撤lock cleaner见流水唤醒156） |
 | 节点 | `10.239.2.29`（GPU2-7 BO搜索并行，GPU0-1空闲） |
 | 更新 | 2026-10-06 |
 
