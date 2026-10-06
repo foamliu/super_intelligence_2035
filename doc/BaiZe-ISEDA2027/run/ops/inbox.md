@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 81 -->
+<!-- RUN_ID: 82 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -30,6 +30,48 @@
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`。
 
 ---
+
+## RUN_ID 82 — 🎯 **ZhuLong 收口**：问出 `cline` 真实路径（`bash -ic`）+ 修 origin/main 陈旧 ref + 带正确 env 重启
+
+> **背景（supervisor 2026-10-06 11:4x）**：RUN_ID 81 已证 **代理 `.23` 从 36.15 可达（`via_.23_github=200` ✅）**；但 ① `$HOME/.nvm/versions/node/*/bin` **不存在**（`nodebin=` 为空）⇒ cline 在别处，需用**交互式 shell** 问出真实位置；② loop 的 fetch 报 **`cannot lock ref 'refs/remotes/origin/main': is at 203f323 but expected 5541f31`** ⇒ 远端跟踪 ref **陈旧**，需 `git update-ref -d` 后重 fetch；③ cline 找不到 ⇒ 必须把**真实目录**加进 PATH。
+> **本块**：① `bash -ic 'command -v cline'` 取真实路径；② 删陈旧 ref + 显式带代理 `fetch`；③ 用**真实 PATH + `.23` 代理**重启 relay/loop；④ 复核（预期：日志出现 `invoking cline ...` 且**不再** `No such file or directory`）。🚫 不改 `.bashrc`、不改 ZhuLong 脚本。
+
+```bash
+set -u
+echo "=== RUN_ID 82 · ZhuLong finalize: cline path + ref fix + restart $(date '+%F %T') ==="
+timeout 240 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+PX=http://172.19.92.23:13128
+cd "$W" || { echo "(NO repo)"; exit 1; }
+echo "host=$(hostname)  $(date '+%F %T')"
+echo "--- [1] ask an INTERACTIVE shell where cline is ---"
+CP="$(bash -ic 'command -v cline' 2>/dev/null | tail -1)"
+echo "cline_path=$CP"
+CDIR="$(dirname "$CP" 2>/dev/null)"
+echo "cline_dir=$CDIR"
+echo "--- [2] fix stale origin/main ref + fetch with proxy ---"
+git update-ref -d refs/remotes/origin/main 2>&1 | head -2
+export https_proxy="$PX"
+export http_proxy="$PX"
+timeout 150 git fetch origin 2>&1 | tail -3 | cut -c1-190
+git status -sb 2>&1 | head -3 | cut -c1-150
+echo "--- [3] restart relay+loop with real PATH + proxy ---"
+export PATH="$CDIR:$HOME/.bun/bin:$PATH"
+command -v cline >/dev/null 2>&1 && echo "cline OK in new env" || echo "!! cline STILL missing"
+R="$W/doc/ZhuLong_DAC2027/run"
+pkill -f zhulong_loop.sh 2>/dev/null
+pkill -f zhulong_ops_relay.sh 2>/dev/null
+sleep 3
+setsid bash "$R/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+setsid bash "$R/zhulong_ops_relay.sh" > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
+sleep 8
+ps -eo pid,etime,args | grep -E 'zhulong_(loop|ops_relay)[.]sh' | grep -v grep | cut -c1-140 || echo "(NOT up!)"
+echo "--- [4] loop log (expect invoking cline, and NO 'No such file') ---"
+tail -6 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-190
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
 
 ## RUN_ID 81 — 🔧 **带"显式 PATH(cline) + https_proxy"重启 ZhuLong relay/loop**（修正 77/78 用非登录 shell 重启的副作用）
 
