@@ -48,7 +48,7 @@ WAITING: 0
 |:--|:--|:--|:--|
 | **pretrain** | ✅ P-5b(20B) + P-9.1–9.6①② + **P-9.7 ✅ 定稿（249K tok/s 确认）** + **P-9.8 armA ✅ / armB 87%（裁定按用户立场修订：瞬时 spike 不否决 → FP8 可用于 P-8）** → 🆕 **P-9.9 给 FP8 更多机会**（换 seed / ≥2000 步 / 试 fine-grained FP8 recipe） | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` | 🟢 **`.cline_pretrain` 隔离目录**；P-9.9 已下发 |
 | **vision** | ✅ R9/R10/R14/E1 + R11-L 四臂 + R11-L2 + caption-weight + **R11-E(未抬高)** + **R13(官方 OV2 79.81%)** 全完成 → ⭐ **臂⑥ AIMv2 翻盘**（lp 12.08% vs 基线 6.08%，**+6pp → 25.1% 渐近局部推翻**）→ 🔄 **R11-F 数据源横比运行中** → 🟢 **R11-G(AIMv2 长跑重拟合 scaling) + R11-H(⑥-B 纯 AR) 已批准**（见 `BAIZE_VISION_TASK.md`「运维指令 · 2026-10-04（七）」） | `run/EXPERIMENTS_VISION_ROUND11.md` · `VISION_OFFICIAL_REPOS_SURVEY.md` | 🔄 **`.cline_vision` 隔离目录**；凌晨空窗 ≈4–5h 已排满 |
-| **data** | 🔴 **配比实验已改道（2026-10-06 用户裁定；**同夜复核②：单臂/拍脑袋不算实验** ⇒ 已写死「实验」5 条可检验判据 + 先验点强制同台对比 + 心跳纪律）**：**废弃 2.2B 单臂**（S0a 待 kill）→ **小代理模型（~50–150M 同族 mamba2-hybrid，规模按「24h 跑 200–400 trial」反推）+ Optuna 贝叶斯优化（TPE+MedianPruner）+ 每卡独立 trial（TP1/DP1、6 并行）+ GBS 8–16 + seq 2048**；**Day1 搜 Stable / Day2 搜 Decay**（对齐 `ye2024datamixinglaws` / Xmodel-2「400+ 次试验」）· 下载巡检（白名单 = `l1_en_hq` + `zh` + GPIC；D-CLEAN ✅） | **`run/DATA_MIX_RECIPE.md §6`（重写）** · `run/DISK_CLEANUP_INVENTORY.md` · `LIT_IDEAS_2026-10-0{4,5}.html` | 🔴 **最高优先指令已下发**（`BAIZE_DATA_TASK.md` 顶部 · 2026-10-06） |
+| **data** | 🔴 **配比实验已改道（2026-10-06 用户裁定；**同夜复核②：单臂/拍脑袋不算实验** ⇒ 已写死「实验」5 条可检验判据 + 先验点强制同台对比 + 心跳纪律）**：**废弃 2.2B 单臂**（S0a 待 kill）→ **小代理（2026-10-06 定案 `h=512/L=14`≈96.8M · 1/23 · 非-embed 1/64 · `D`=0.45B token/trial）+ Optuna 贝叶斯优化（TPE+MedianPruner）+ 每卡独立 trial（TP1/DP1、6 并行）+ GBS 8–16 + seq 2048**；**Day1 搜 Stable / Day2 搜 Decay**（对齐 `ye2024datamixinglaws` / Xmodel-2「400+ 次试验」）· 下载巡检（白名单 = `l1_en_hq` + `zh` + GPIC；D-CLEAN ✅） | **`run/DATA_MIX_RECIPE.md §6`（重写）** · `run/DISK_CLEANUP_INVENTORY.md` · `LIT_IDEAS_2026-10-0{4,5}.html` | 🔴 **最高优先指令已下发**（`BAIZE_DATA_TASK.md` 顶部 · 2026-10-06） |
 | **harness** | ✅ **4/5 harness 端到端打通**（cline/codex/opencode/claude-code）· **H-A pilot 30/30 完成**（21 评分 + 9 受阻→lock 已修）· `SWEBENCH_COMPARE.html` final（公平口径 **codex 2/3=67% 领先**）→ 🔄 **已批「换冷门模型（kimi/豆包）+ 严格串行」以绕开 quota 墙并重跑 21 条** | `run/harness/SWEBENCH_LITE_FEASIBILITY.md` · `SWEBENCH_COMPARE.html` | 🟡 **quota（5h 窗口）是扩 300 的主要障碍**；deepseek-harness 仍缺工具链 |
 
 > ✅ **vision 叙事已决（2026-10-03 用户）：走 A = 保持「从零训练」**（"A 本身也是为了学习"）。
@@ -66,7 +66,7 @@ WAITING: 0
 - [ ] ⭐ **vision 全量数据跑 AIMv2（待 vision 回报估算）**：用户令「用全部现有数据（GPIC 41% + CC12M + Amshaker）跑当前最佳配方 AIMv2」；**先答「要多久 / 是否 >1 epoch」**（运维粗估 1 epoch ≈6.6h、2 epoch ≈13h，待 vision 实测精算）。
 - [ ] ⭐ **pretrain 四件（2026-10-05 深夜2 下发，最高优先；⭐ 用户追加「P-6② 早点做」⇒ 顺序已改）**：**先 ②③（P-5b 8 集常识评测 + P-6②，同一评测管线，合并跑、分别出 HTML，用 `.29` GPU0–1，P-5b 从未在 8 集上评过、此前仅 P-6 第 1 步 Avg 0.4395）** → **① sglang 上界补测**（CPU 部分 HF 转换 `nemotron_h` + ABI/`std::bad_alloc` 排查 + **必须用 `cimi_search`** 并行推进；转换好后起的 GPU 补测）→ **④ P-9.5 profiler 排查复跑 → HTML**。
 - [ ] **data / vision 各出 HTML（2026-10-05 深夜2 下发）**：⑤ `report_data_mix_s0a.html`（Stable S0a 是什么 + 现况，纯 CPU 写作、不扰训练）；⑥ vision 两份 `report_vision_lp_eval.html` + `report_vision_aimv2_impl.html`（纯 CPU 写作、不扰 R12）。
-- [x] ✅ **配比实验改道已裁定（2026-10-06 用户）** —— **2.2B 单臂方案（S0a）作废**（方法学错 + 成本失控：312 GPU·h/臂 vs 原估 0.5–1 GPU·h）；改为 **小代理模型（~50–150M，规模按「24h/6×H100 跑 200–400 trial」反推）+ Optuna 贝叶斯优化 + 每卡独立 trial + GBS 8–16 + seq 2048**；**Day1 Stable / Day2 Decay 各 1 天**。已下发 `BAIZE_DATA_TASK.md` 顶部最高优先块。⇒ **P-8 配比前置的「内容」不变（仍等它），但「形态」从「跑一次全尺寸」变成「两天小模型搜索」。**
+- [x] ✅ **配比实验改道已裁定（2026-10-06 用户）** —— **2.2B 单臂方案（S0a）作废**（方法学错 + 成本失控：312 GPU·h/臂 vs 原估 0.5–1 GPU·h）；改为 **小代理（2026-10-06 定案 `h=512/L=14`≈96.8M：总参 1/23 · 非-embed 1/64 · `D`=0.45B token/trial）+ Optuna BO + 每卡独立 trial + GBS 8–16 + seq 2048**；**Day1 Stable / Day2 Decay 各 1 天**。已下发 `BAIZE_DATA_TASK.md` 顶部最高优先块（含**预注册 `T=37.75/s_step` 阶梯**）。⇒ **「内容」不变，「形态」= 两天小模型搜索。**
 - [x] ✅🔴 **「实验」定义已写死（2026-10-06 用户复核②）** —— **5 条可检验判据**（**≥200 trial / 全部落盘含 `pruned` / 评测协议唯一 / 结果=排序+不确定性（best-so-far 曲线 + top-K） / 先验点必须同台**）⇒ **违反者禁用「最优·胜出·结论」字样**；**强制把 `88:8:4`、`SFT=64%` 用 `enqueue_trial` 喂进 study 报 `Δloss`**（用数据回答「直觉 vs 实验」）；**心跳 ≤60 min**。
 - [ ] ⭐ **AIMv2 提速（待 vision 归因实测）**：用户问「能否加速 / 显卡满否 / 能否加 MBS」—— 运维读数：**显存未满（同配方 ≈22.7–30 / 81.6 GB）**但**同配方吞吐波动大（R11-G 2485 ↔ ⑥-A 5971 img/s）⇒ 疑数据/IO 受限**；已下发「bs{64,128,256}×≥200 步 + `nvidia-smi dmon`」归因实测。**判据：util≲70% 或 ms/iter 不随 MBS 变 ⇒ 数据受限（改数据管线、保持 bs=512 以保 scaling 可比）；util≈100% 且 img/s 随 MBS 升 ⇒ 算力受限（可加 MBS，但须标注 global batch 变化）**。⭐ **用户 2026-10-05 晚拍板：本提速项 = 下一批「全量数据训练」的硬性前置 —— 先优化速度、把实测 img/s 提上去，再跑 ≈59.5M 对全量；估算用提速后 img/s。**
 - [ ] 💬 **另一「运维会话」在并行活动**（2026-10-04 深夜发现：origin 上出现**我没写过的 RUN_ID 63 诊断记录**）→ **需与用户确认是否统一到单一会话**，以免重复下发/互相覆盖。
@@ -100,7 +100,7 @@ WAITING: 0
 ## 6. 关键路径与事实速查
 
 - **关键路径**：`P-5b → P-9 → P-6② → P-8`（P-8 = Stage(i) 本体，周级墙钟，仍暂缓等 base + 配比）。
-- 🔴 **配比搜索形态已改（2026-10-06）**：**不再用 2.2B 跑单臂**，改 **小代理（~50–150M）× Optuna BO × 6 卡并行 × 1 天/段**（Stable / Decay）；**24h 目标 200–400 trial**。锚点 = `ye2024datamixinglaws` + Xmodel-2 `400+ 次试验`。⇒ **「等配比」的等待时间从「周级」降到「2 天」。**
+- 🔴 **配比搜索形态已改（2026-10-06）**：**不再用 2.2B 跑单臂**，改 **小代理（定案 `h=512/L=14`=96.8M = 1/23）× Optuna BO × 6 卡并行 × 1 天/段**；**24h 目标 200–400 trial**。锚点 = `ye2024datamixinglaws` + Xmodel-2 `400+ 次试验`。⇒ **「等配比」的等待时间从「周级」降到「2 天」。**
 - **两条硬口径（2026-10-03 定）**：
   - **seq 统一 4096**（P-8 起）；`4094` 仅存于正在跑的 P-5b。
   - **每步 ≈ 4M token 不变量**：`4096↔GBS1024` · `8192↔512` · `16384↔256` · `2048↔2048`。**总步数 = 总token/4M，与 seq 无关**。
