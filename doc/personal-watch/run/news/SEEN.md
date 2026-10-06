@@ -418,5 +418,7 @@
 
 
 | 2026-10-07 | Silicon Valley's AI wunderkind launches Underdog, the most private Instinct/Muse competitor yet | TechCrunch | news | https://techcrunch.com/2026/10/06/silicon-valleys-ai-wunderkind-launches-underdog-the-most-private-instinct-muse-competitor-yet/ |
-| 2026-10-07 | Daniel Kokotajlo's senate testimony on AI risk [pdf] | Hacker News / U.S. Senate HSGAC | testimony(PDF·HTTP 403 不可核验·非新闻不收) | https://www.hsgac.senate.gov/wp-content/uploads/Daniel-Kokotajlo-Testimony.pdf |
+
+| 2026-10-07 | Ex-Ramp engineers raise $20M for platform Melius after scrapping their first product | TechCrunch | news | https://techcrunch.com/2026/10/06/ex-ramp-engineers-raise-20m-for-platform-melius-after-scrapping-their-first-product/ |
+| 2026-10-07 | Italian PM files to trademark her voice against AI threats | BBC（经 HN） | news(未核验·BBC 直连不可达·HN 提交 05:50 CST 早于本轮窗口 → 防重不收) | https://www.bbc.com/news/articles/ckly0g1ljq2yo |
 
