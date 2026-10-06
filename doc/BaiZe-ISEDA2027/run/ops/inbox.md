@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 75 -->
+<!-- RUN_ID: 76 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -30,6 +30,68 @@
 > > `awk -v rid="$rid" '/^## RUN_ID /{cur=$3} /^```bash/{if(cur==rid){f=1;next}} /^```/{if(f)exit} f' "$INBOX"`。
 
 ---
+
+## RUN_ID 76 — 🚑 **救援 ZhuLong（36.15）**：修 git 卡死（`could not detach HEAD`）→ 重启中继 + loop（经 2.29→36.15 隧道）
+
+> **背景（supervisor 2026-10-06 11:2x）**：RUN_ID 75 已证实 —— 隧道 **✅ 通**（2.29:3333 → `hfeg0tedaap02`）；ZhuLong 的 `zhulong_loop.sh`/`zhulong_ops_relay.sh` **进程都活着（~1 天）**，loop 日志今天 11:16:55 还在更新；**但 loop 日志持续报 `error: could not detach HEAD` → `[push] pull --rebase FAILED … skip this cycle`** ⇒ **仓库卡住导致所有提交推不出去**（这就是"哑火很久"的实质：不是没人跑，是 **push 全失败**）。另：36.15 上 `doc/三机互联方法.md` 是 **untracked**，可能是 pull 的第二个拦路石。
+> **本块动作（在 36.15 上）**：① 诊断 git 状态（rebase/merge 残留 · unmerged · stash · ahead/behind）；② **非破坏性**地 `rebase --abort` / `merge --abort`；③ `pull --rebase --autostash`（若报 untracked 冲突 → **把 `doc/三机互联方法.md` 移到 /tmp 备份**后重试）；④ **仅当 pull 成功**才重启 relay + loop（loop 仅在其日志尾为 `sleep` 空闲时重启；重启前**备份旧日志到 /tmp**，不丢证据）。
+> 🚫 不 `git reset --hard`、不 `git clean`、不删任何产物。
+
+```bash
+set -u
+echo "=== RUN_ID 76 · rescue ZhuLong on 36.15 via tunnel $(date '+%F %T') ==="
+hostname; date '+%F %T %Z'
+echo
+timeout 260 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+cd "$W" || { echo "(NO repo)"; exit 1; }
+echo "host=$(hostname)  $(date '+%F %T')"
+echo "=== [1] git state diagnosis ==="
+echo "rebase-merge=$([ -d .git/rebase-merge ] && echo YES || echo no) rebase-apply=$([ -d .git/rebase-apply ] && echo YES || echo no) MERGE_HEAD=$([ -f .git/MERGE_HEAD ] && echo YES || echo no) index.lock=$([ -f .git/index.lock ] && echo YES || echo no)"
+echo "--- status -sb ---"; git status -sb 2>&1 | head -12 | cut -c1-150
+echo "--- unmerged ---"; git diff --name-only --diff-filter=U 2>&1 | head -10 | cut -c1-150
+echo "--- untracked ---"; git ls-files --others --exclude-standard 2>&1 | head -10 | cut -c1-150
+echo "--- stash ---"; git stash list 2>&1 | head -5 | cut -c1-150
+echo "--- origin/main...HEAD (behind ahead) ---"; git rev-list --left-right --count origin/main...HEAD 2>&1
+echo "=== [2] abort stale rebase/merge (non-destructive) ==="
+git rebase --abort 2>&1 | head -2 | cut -c1-150
+git merge --abort 2>&1 | head -2 | cut -c1-150
+echo "=== [3] pull --rebase --autostash (<=120s) ==="
+timeout 120 git pull --rebase --autostash origin main >/tmp/_z_pull.log 2>&1; PRC=$?
+tail -10 /tmp/_z_pull.log | cut -c1-190; echo "pull_rc=$PRC"
+if [ "$PRC" -ne 0 ] && grep -qi 'untracked working tree file' /tmp/_z_pull.log; then
+  echo "-> untracked file blocks pull; moving doc/三机互联方法.md aside (backup to /tmp) and retry"
+  mv -v doc/三机互联方法.md "/tmp/3ji_hulian_backup_$(date +%s).md" 2>&1 | cut -c1-170
+  timeout 120 git pull --rebase --autostash origin main >/tmp/_z_pull.log 2>&1; PRC=$?
+  tail -10 /tmp/_z_pull.log | cut -c1-190; echo "pull_rc_retry=$PRC"
+fi
+echo "=== [4] status after ==="; git status -sb 2>&1 | head -8 | cut -c1-150
+echo "=== [5] restart relay+loop — ONLY if pull_rc==0 ==="
+if [ "$PRC" -eq 0 ]; then
+  if tail -1 /tmp/zhulong_loop.log 2>/dev/null | grep -q sleep; then
+    echo "loop idle -> restart"
+    cp -f /tmp/zhulong_loop.log "/tmp/zhulong_loop.log.bak.$(date +%s)" 2>/dev/null
+    pkill -f zhulong_loop.sh 2>/dev/null; sleep 2
+    setsid bash "$W/doc/ZhuLong_DAC2027/run/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+    sleep 3
+    ps -eo pid,etime,args | grep -E 'zhulong_loop\.sh' | grep -v grep | cut -c1-140 || echo "   loop NOT up!"
+  else
+    echo "loop busy (log tail not sleep) -> SKIP loop restart"
+  fi
+  cp -f /tmp/zhulong_ops_relay.log "/tmp/zhulong_ops_relay.log.bak.$(date +%s)" 2>/dev/null
+  pkill -f zhulong_ops_relay.sh 2>/dev/null; sleep 2
+  setsid bash "$W/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh" > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
+  sleep 3
+  ps -eo pid,etime,args | grep -E 'zhulong_ops_relay\.sh' | grep -v grep | cut -c1-140 || echo "   relay NOT up!"
+else
+  echo "!! pull FAILED -> loops NOT touched (need manual look at /tmp/_z_pull.log)"
+fi
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
+
 
 ## RUN_ID 75 — 🔎 探活 **2.29→36.15 隧道（3333）** + **只读**诊断 ZhuLong 中继/loop（为「救援」取证）
 
