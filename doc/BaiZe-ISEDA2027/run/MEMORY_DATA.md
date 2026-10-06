@@ -10,17 +10,18 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验 → ①BO 200/200+top-K lm_eval+Spearman+σ ✅ → ②s_step归因✅(MBS16:8.6×) → ③Round2 BO 🚀运行中(32trial:19✅score0.379-0.416/13❌早期→修复后连续19✅/8卡全速/8trial in-flight)
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a已kill；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py；5项必验全通过；BO R1 200/200+Spearman ρ=−0.43+σ=0+report_data_mix_eval.html; s_step归因(MBS16:8.6×,166ms)+report_data_mix_sstep.html; Round2 BO(PID=3614158@.29)启动+修3bug(load_trials/run_trial/port)+修ckpt2HF(arch auto-detect+random port); port+arch修复确认有效(连续19trial✅); best=0.4155(id=23:web=0.941/code=0.109/math≈0.01)
-当前动作:     唤醒175(05:16@.12) ①查Round2 BO DB:32trial(19✅complete/13❌failed),13fail全早期batch→修复后trial14+连续19✅ ②Best=0.4155(id=23),score stats:min=0.3787/max=0.4155/mean=0.3887/σ=0.0089 ③8trial in-flight(t0032-t0039 on GPU0-7,3 nearly done@35-36min,5 just started) ④BO PID=3614158 alive~3.4h,ETA~15h ⑤无新运维指令(git fetch proxy,TASK unchanged) ⑥base下载进程已死(按指令不重启)
-下一步:       ①监控BO进度(ETA~15h到200trial); ②BO跑完200trial→top-K全量lm_eval→report_data_mix_eval_r2.html; ③更新DATA_MIX_RECIPE.md §6 Round2结论
-阻塞:         Round2 BO运行中(PID=3614158@.29,elapsed~3.4h,32/200trial),ETA~15h
+PHASE:        §0.6-B 配比实验 → ①BO 200/200+top-K lm_eval+Spearman+σ ✅ → ②s_step归因✅(MBS16:8.6×) → ③Round2 BO 🚀运行中(40trial:27✅score0.379-0.416/13❌早期→修复后连续27✅/8卡全速/8trial in-flight t0040-t0047)
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a已kill；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py；5项必验全通过；BO R1 200/200+Spearman ρ=−0.43+σ=0+report_data_mix_eval.html; s_step归因(MBS16:8.6×,166ms)+report_data_mix_sstep.html; Round2 BO(PID=3614158@.29)启动+修3bug(load_trials/run_trial/port)+修ckpt2HF(arch auto-detect+random port); port+arch修复确认有效(连续27trial✅); best=0.4155(id=23:web=0.941/code=0.109/math≈0.01)
+当前动作:     唤醒176(05:50@.12) ①查Round2 BO DB:40trial(27✅complete/13❌failed),13fail全早期batch→修复后id14+连续27✅ ②Best=0.4155(id=23),2nd=0.4138(id=38:web=0.895/code=0.100),3rd=0.4090(id=33:web=0.940/code=0.086);score stats:min=0.3787/max=0.4155/mean=0.3903/σ=0.0098(n=27) ③8trial in-flight(t0040-t0047 on GPU0-7,all 62GB/44-89%util) ④BO PID=3614158 alive~4.0h,rate=12.1complete/h,ETA~13h(200trial完成~19:00) ⑤无新运维指令(git fetch proxy,TASK unchanged) ⑥base下载进程已死(按指令不重启)
+下一步:       ①监控BO进度(ETA~13h到200trial); ②BO跑完200trial→top-K全量lm_eval→report_data_mix_eval_r2.html; ③更新DATA_MIX_RECIPE.md §6 Round2结论
+阻塞:         Round2 BO运行中(PID=3614158@.29,elapsed~4.0h,40/200trial),ETA~13h
 ERROR_COUNT:  0
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+- [05:50] **唤醒176**：①本机=`.12`。②⭐**Round2 BO稳步推进**！DB(nemo_experiments/mix_search/mix_search_eval_r2.db):**40trial(27✅complete/13❌failed)**,13fail全早期batch(id1-13),修复后(id14-40)**连续27trial✅**。③**Best=0.4155**(id=23:web=0.941/code=0.109/math≈0.01);新2nd=0.4138(id=38:web=0.895/code=0.100/math=0.005);新3rd=0.4090(id=33:web=0.940/code=0.086);score stats:min=0.3787/max=0.4155/mean=0.3903/σ=0.0098(n=27,σ>R1的0.005→D=0.5B信号强)。④**8trial in-flight**(t0040-t0047 on GPU0-7,all 62GB/44-89%util,etimes 1512-1842s≈25-31min)。⑤BO进程PID=3614158@.29 alive~4.0h(etimes=14516s),rate:27complete/~2.23h(first→last)=12.1complete/h→160剩余→ETA~13.2h(200trial完成~19:00)。⑥git fetch(with proxy=172.19.92.25:13128)成功,无新TASK diff→无新运维指令。⑦base下载进程已死(不重启,按指令)。📦 体积：TASK=24.3KB / MEMORY=~20KB（归档 0KB,均≤32KB ✅）。
 - [01:48] **唤醒170**：①本机=`.12`。②⭐**Round2 BO已启动并确认训练运行**！流程：pretrain A/D占用GPU0-7(唤醒169后)→01:41 bbh_4771完成→GPU0-7全释放→修baize_mix_optuna_r2.py **3个关键bug**：a)`load_trials()`缺return→补return b)`run_trial()`缺return+cleanup→补return+cleanup c)`port=30000+gpu_id`→重复启动致EADDRINUSE→改`random.randint(20000,60000)`→删r2 DB+清理8个r2_stable实验目录+清理/tmp日志→重启(PID=3614158@.29)。③**训练确认**：8trial全在跑(GPU0-7各62GB/61-92%util)，trial0 iter140/15258，s_step~140ms(与s_step profiling的166ms吻合)，loss 10.2→9.7递减。ETA~17h(200trial/8卡，~41min/trial)。④base下载l1_en_hq 5476/6006(91%)。⑤⚠️教训：nohup启动勿重复（上次setsid超时+nohup→双进程→port冲突→全部失败）。📦 TASK=35.1KB/MEMORY=15.5KB。
 - [02:30] **唤醒171**：①本机=`.29`(ops via ssh)。②⭐**诊断并修复batch1全fail根因**：Round2 BO第一批8trial(trial0-7)训练成功(15258步)但全部在**ckpt→HF转换**步骤失败(status=failed,score=None,DB id1-8)。根因：`baize_p6_ckpt_to_hf.py`硬编码2B架构常量(HIDDEN_SIZE=2048/NUM_LAYERS=56)不匹配d128 proxy模型(HIDDEN_SIZE=128/NUM_LAYERS=14,tied embeddings)。③**修复**：a)新增`_detect_and_set_arch(sd)`函数——从checkpoint的`embedding.word_embeddings.weight.shape[1]`自动检测：2048→2B(显式设56层常量,backward compat),128→d128 proxy(14层,H=128/FFN=512/heads=1/kv=1/mamba_heads=4/head_dim=64/n_groups=1/tie_embed=True/pattern="M-M-M--M-M*-M-")；b)`build_config_json()`的`tie_word_embeddings`改为`_TIE_EMBEDDINGS`全局变量；c)`main()`在`load_plain_tensors()`后`convert()`前调用`_detect_and_set_arch(sd)`。④**单测通过**：d128检测→H=128/L=14/tie=True/pattern14char/layers_block_type=[6 linear_attention+7 mlp+1 full_attention]✅；2B backward compat→H=2048/L=56/tie=False/pattern56char✅。⑤batch2(trial8-15)训练中iter2770/15258(~18%),ETA~30min到达HF转换步骤——将首次使用修复后的脚本(subprocess调用,自动pick up NFS上的更新)。⑥base下载CC-MAIN-2025-51 562/1000(PID 3520692已死,按指令不重启)。📦 TASK~35KB/MEMORY~16KB。
 - [03:53] **唤醒173**：①本机=`.12`。②⭐**Round2 BO修复确认有效**！DB:24trial(11✅complete/13❌failed)。13fail全早期batch(id1-13)port 29502冲突+arch硬编码;修复后(id14-24)**连续11trial✅**,score范围0.378-0.416(spread=0.037>R1的0.005→D=0.5B信号更强)。③**Best score=0.4155**(id=23:web=0.941/code=0.109/math≈0.01 after clamp);次best=0.3963(id=17:web=0.832/code=0.097/math=0.071)。④GPU状态:5卡训练中(GPU0,1,2,4,5@62GB/63-81%util),3卡间trial(GPU3,6,7@609MB/0%)。新trial t0024-t0031刚启动。⑤BO进程PID=3614158@.29 alive~2.1h,ETA~21h到200trial(179剩余/8卡×57min)。⑥**build_blend_stable**用`max(1-web-code,0.01)`→web+code>1时math clamp到0.01,NeMo内部归一化→正确处理,非bug。⑦GP有11数据点→GP-EI建议中(ConvergenceWarning正常=参数少)。⑧归档TASK:「目标函数错了」块+「三步令①②详细」块→ARCHIVE_OPERATOR_DATA.md;TASK 35.1KB→24.3KB✅。📦 体积：TASK=24.3KB / MEMORY=18.1KB（归档~11KB → ARCHIVE_OPERATOR_DATA.md）。
@@ -82,11 +83,11 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **§0.6-B 配比实验 → ①BO R1 200/200✅+Spearman ρ=−0.43(负相关!)+σ=0 ②s_step归因✅(MBS1→16:8.6×) ③Round2 BO🚀运行中(PID=3614158@.29,16trial:3✅/13❌port冲突→已修random port→batch3训练中30%)** |
-| WAITING | 1（Round2 BO在跑,batch3训练中ETA~26min到HF转换;等验证port修复后继续监控） |
-| ERROR_COUNT | 0（batch1 arch mismatch已修+batch2 port冲突已修） |
-| 节点 | `10.239.2.29`（GPU0-7=Round2 BO,各62GB; batch3 trial16-23训练中） |
-| 更新 | 2026-10-07 03:20 |
+| PHASE | **§0.6-B 配比实验 → ①BO R1 200/200✅+Spearman ρ=−0.43(负相关!)+σ=0 ②s_step归因✅(MBS1→16:8.6×) ③Round2 BO🚀运行中(PID=3614158@.29,40trial:27✅/13❌早期→修复后连续27✅/8trial in-flight t0040-t0047)** |
+| WAITING | 1（Round2 BO在跑,40/200trial,ETA~13h到200trial完成~19:00;等BO完成后跑top-K全量lm_eval） |
+| ERROR_COUNT | 0（batch1 arch mismatch已修+batch2 port冲突已修,修复后连续27trial✅） |
+| 节点 | `10.239.2.29`（GPU0-7=Round2 BO,各62GB/44-89%util; t0040-t0047训练中） |
+| 更新 | 2026-10-07 05:50 |
 
 ## 看板（按推荐执行顺序）
 
