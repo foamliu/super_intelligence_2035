@@ -353,4 +353,11 @@
 | 2026-10-06 | 'Pull the plug': protesters resort to direct action against AI firms | The Guardian（正文本机不可达，仅标题+链接+HN 日期核验） | news | https://www.theguardian.com/technology/2026/oct/06/pull-the-plug-protesters-resort-to-direct-action-against-ai-firms |
 | 2026-10-05 | arXiv Is Rate Limiting Submissions Because It Can't Keep up With AI Slop | 404 Media | news(同事件·已于 10-03 经量子位入账) | https://www.404media.co/arxiv-is-rate-limiting-submissions-because-it-cant-keep-up-with-ai-slop/ |
 | 2026-10-06 | Amazon Alexa Plus keeps creepily singing 'lalala' for minutes on end | The Verge | news(非清单·消费产品故障) | https://www.theverge.com/tech/1005342/amazon-alexa-plus-keeps-creepily-singing-lalala-for-minutes-on-end |
+| 2026-10-06 | 总规模近 3.6GW：谷歌与 Constellation 达成长期电力协议 | IT之家 | news | https://www.ithome.com/1/010/063.htm |
+| 2026-10-06 | Mistral AI 放出预告：今日新模型可在网安等方面优于中国竞品 | IT之家 | news | https://www.ithome.com/1/010/043.htm |
+| 2026-10-06 | Misuse of AI is brands' top reputational threat, new survey says | The Guardian（正文本机不可达，仅标题+链接+HN 日期核验） | news | https://www.theguardian.com/technology/2026/oct/06/ai-misuse-brand-reputation |
+| 2026-10-06 | 亚马逊 Alexa Echo 智能音箱出现诡异 Bug：毫无征兆哼唱"啦啦啦"数分钟，官方承诺修复 | IT之家 | news(非清单·消费产品故障) | https://www.ithome.com/1/010/048.htm |
+| 2026-10-06 | 华为发布AI时代计算架构：让百万处理器成为一台计算机 | 中新网 | analysis(问答摘要/综述体·非新闻) | https://www.chinanews.com.cn/cj/2026/10-06/10708509.shtml |
+| 2026-10-06 | OpenAI rolls out weak sauce watermarking for AI text | The Register（经 HN） | news(同事件·已在账 IT之家水印) | https://www.theregister.com/ai-and-ml/2026/10/06/openai-rolls-out-weak-sauce-watermarking-for-ai-text/5301257 |
+| 2026-10-06 | OpenAI admits response to Australian government hacks 'not good enough' | BBC（经 HN） | news(同事件·在账澳方入侵) | https://www.bbc.co.uk/news/articles/cmx2qne2j88wo |
 
