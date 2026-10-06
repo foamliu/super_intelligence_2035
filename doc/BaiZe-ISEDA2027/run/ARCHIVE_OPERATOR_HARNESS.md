@@ -2,6 +2,54 @@
 
 > 运维 2026-10-05「任务书瘦身」时移出（**原文未改**，不改任何结论）。仅当需要查历史指令细节时再读。
 
+---
+
+### 🆕 运维口径 · 2026-10-05（深夜4 · **Claude Code 合规口径定案：关掉遥测即可继续用 —— 无需暂停 / 无需 egress 拦截 / 无需审计**）· 高优先
+
+> **用户裁定（2026-10-05 深夜，最新）**：
+> ①「**关掉遥测后可以用，有问题我负责。**因为我们公司**网络出口是有严格防火墙的，它的信息出不去**。」
+> ②「**不需要审计报告。**」
+> （背景：此前用户提过「公司禁止 Claude Code、用者会被列名单通报领导」，疑因遥测外发 Anthropic ⇒ **现口径明确为「关掉遥测即可继续用」**。）
+
+**✅ 要做的事（就一件，做到位）**
+1. **关闭 Claude Code 的遥测外发尝试** —— **通过配置，必要时改代码**（用户原话「通过配置甚至改代码的方式」）：
+   - **配置层**：写入 **`settings.json` 的 `env` 块**（项目级 + `~/.claude/settings.json`），**不依赖调用方 shell**。候选（⚠️ **键名用 `cimi_search`/`cimi_fetch` 查官方文档核实，别凭记忆**）：`DISABLE_TELEMETRY=1` · `DISABLE_ERROR_REPORTING=1` · `DISABLE_AUTOUPDATER=1` · `DISABLE_BUG_COMMAND=1` · `DISABLE_NON_ESSENTIAL_MODEL_CALLS=1` · `DO_NOT_TRACK=1` · OTel 关断（`CLAUDE_CODE_ENABLE_TELEMETRY=0` / `OTEL_*_EXPORTER=none`）。
+   - **代码/包装层**（若某些外发是硬编码、配置关不掉）：在**我们自己的 harness 适配层/包装脚本**里关掉（例：起 `claude` 时强制注入上述 env；或把其外发目标导向 `127.0.0.1` 的本地 stub）。🚫 **不改上游二进制分发**；🚫 不动共享 `py310`。
+2. **claude-code 横评恢复正常**：**不用暂停、不用从列表摘出、不用 egress 拦截**（公司出口防火墙已是兜底）；`claude-code` 照常参与 `×30 / ×300`。
+3. **不需要审计报告**（用户明确）—— 但请在 `MEMORY_HARNESS.md` **记一行**：「已按 X / Y / Z 关闭遥测；依据 = 官方文档 <URL>；claude-code 恢复横评」，便于日后追溯。
+
+**🔎 运维已先查到的起点（二手摘要，键名仍请按官方文档复核）**
+- **官方文档**：<https://code.claude.com/docs/en/env-vars>（设置途径 = shell env 或 **`settings.json` 的 `env` 块**；`env` 块**每次运行都生效**）。
+- ⚠️ **关键**：Claude Code 有**两套独立遥测** —— **`DISABLE_TELEMETRY` 只管 Statsig 一侧**；**`CLAUDE_CODE_ENABLE_TELEMETRY` 管 OTel 一侧**；**两者正交**（设了前者 ≠ 关掉后者）。
+- **Anthropic issue #47558**：会连 **Statsig** 上报 latency/reliability/usage（官方称不含代码/路径），opt-out = `DISABLE_TELEMETRY`。
+
+> ✅ 本块生效即视为已批准；**合规口径已由用户明确（关遥测即可用）** —— 做完第 1 步、记一行即可恢复 claude-code 横评。
+
+> 📦 **本块于 2026-10-06 由 agent 归档**（已闭合：遥测已关、claude-code 已恢复横评）。**结论**：关掉遥测即可用，无需暂停/拦截/审计。
+
+---
+
+### 🆕 运维指令 · 2026-10-05（深夜 · ✅ **授权自装 deepseek-harness 工具链（node≥22.13 + rust）**；codex×30 后按序扩 300）· 高优先 · **已批准**
+
+> **用户拍板（2026-10-05 深夜）**：「deepseek-harness 仍缺工具链（node22+rust）：**可以自己装**。」
+
+**① 授权自装（隔离，🚫 别动共享 `py310` / loop）**
+- **node ≥22.13**：优先官方二进制（`nodejs.org/dist`，**走 proxy**）解到 **`~/.local/node22`**（或 `nvm`）；🚫 别用 apt（只有 12.x）。
+- **rust**：`rustup` + **镜像源**（`RUSTUP_DIST_SERVER`/`RUSTUP_UPDATE_ROOT` 指向 `mirrors.tuna.tsinghua.edu.cn/rustup` 或 `rsproxy.cn`）；装到 `~/.cargo`。
+- 装完 `which node rustc cargo` + `node -v` + `rustc -V` **贴原文**；再 build `deepseek-harness`（其 `landlock-run` 等）。
+- 源候选（逐个换）：npmmirror / tsinghua / rsproxy / aliyun / tencent；**外网命令显式带 proxy**；**全不通** → 如实报告（贴 `http_code`）。
+- 装好 → 把它并入横评（**第 5 个 harness**），口径同其余（`kimi-k2.6-cloud`，**串行=1**）。
+
+**② codex×30 完成后的顺序（不变，重申）**
+`codex×300 --resume`（skip 已跑 30）→ `cline-patched×300 --resume` → `opencode×300` → `claude-code×300` → **`deepseek-harness`**（本次装上后）→ 最终刷新 `SWEBENCH_COMPARE.html`。
+- 同一 harness 内**只用一个模型**；命中 429 → 暂停等窗口；空 patch/quota **单列**。
+
+**③ 边界**：不占 GPU；重 I/O 避让训练；🚫 不动共享 `py310`；🚫 不改 loop。
+
+> ✅ 本块生效即视为已批准。
+
+> 📦 **本块于 2026-10-06 由 agent 归档**（已闭合：node22+rust 已装、deepseek-harness 已 build）。**结论**：授权自装工具链完成，deepseek-harness 待并入横评。
+
 ### 🆕 运维指令 · 2026-10-05（✅ **你已具备联网检索能力（MCP `cimi_search`/`cimi_fetch`）—— 做手头任务时用起来**）
 
 > **已开通（运维 2026-10-05 实测）**：`.29:8090` 的 `eda_fastmcp` SSE MCP 已接入 cline；`cline config mcp` 显示 **`pyAether_MCP_server [sse]`**，**本线（`.29`）已实测 `cimi_search` 成功（rc=0）**。
