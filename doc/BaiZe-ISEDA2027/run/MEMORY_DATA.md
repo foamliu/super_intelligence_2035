@@ -10,11 +10,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验 → d=128/L=14 proxy(18.36M) → BO搜索(eval-set语料代理)187/200 + s_step归因完成(MBS1→16: 1432→166ms=8.6×, D可达0.5-1B/trial); base下载: zh✅256/256, l1_en_hq 5128/6006 85%
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a已kill；proxy d128 provider+recipe创建；held-out bin+held_out_eval; baize_mix_optuna.py创建；5项必验全通过；BO(val-loss)115/200→改道eval-set语料代理(mix_search_eval.db,187/200); §6.1预注册; zh✅; **s_step归因完成**(baize_sstep_profile.py, MBS∈{1,4,8,16}, GPU1@.29)
-当前动作:     唤醒166(22:39→22:58更新) ①BO eval study=192/200(PID 1011682@.29 alive~7h,**新best=5.821864 #182**,先验88:8:4 rank27/192 Δ0.025),8trial剩余,ETA~23:50 ②⭐s_step归因完成: MBS=1→16, s_step 1432→166ms(8.6×),mem 3→42GB(80GB H100可),D=0.5B/trial需15259步×0.166s=42min→205trial/24h/6GPU✅ ③base下载: zh✅256/256, l1_en_hq 5128/6006(382G,85.4%)
-下一步:       ① BO 13trial剩余→200完成(ETA~23:30);② BO完成→top-5(#155/149/96/125/55)+先验88:8:4共6config带ckpt→lm_eval 8集→均分;③ Spearman秩相关+噪声σ;④ 第二轮BO用MBS=16(D=0.5-1B/trial,待GPU0-1释放);⑤ l1_en_hq下载监控(余878→ETA~11:00 Oct7);⑥ 产出report_data_mix_eval.html + report_data_mix_sstep.html
-阻塞:         无(GPU0-1待pretrain释放才能8卡第二轮; s_step用GPU1已完成)
+PHASE:        §0.6-B 配比实验 → BO 200/200 ✅完成(best=#182 loss=5.821864) → top-K重训+lm_eval进行中 → s_step归因完成(MBS1→16:8.6×); base下载重启(l1_en_hq 5372/6006 89%)
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a已kill；proxy d128 provider+recipe创建；held-out bin+held_out_eval; baize_mix_optuna.py创建；5项必验全通过；**BO 200/200完成**(mix_search_eval.db,best=#182 web=0.827/code=0.062/math=0.111); §6.1预注册; zh✅256/256; **s_step归因完成**(MBS1→16:1432→166ms=8.6×); baize_mix_retrain_topk.py+baize_mix_topk_lmeval.py创建
+当前动作:     唤醒167(23:46) ①**BO 200/200完成**! best=#182(loss=5.821864,web=0.827/code=0.062/math=0.111),top5=#182/198/155/149/96,先验88:8:4=#79(loss=5.886,rank~92/200) ②**top-K重训进行中**: baize_mix_retrain_topk.py在GPU2-7跑6config(#182/198/155/149/96+#79),MBS=1/500步/save_interval=500,iter~200/500,ETA~00:00 ③base下载已重启(PID 3520692,l1_en_hq 5372/6006 89%) ④lm_eval脚本baize_mix_topk_lmeval.py已就绪,待ckpt完成
+下一步:       ① 重训完成→lm_eval 8集(arc/boolq/hellaswag/obqa/piqa/sciq/winogrande)→均分;② Spearman秩相关(代理loss↔均分)+噪声σ;③ 第二轮BO用MBS=16(D=0.5-1B,待GPU0-1释放);④ l1_en_hq下载监控;⑤ 产出report_data_mix_eval.html
+阻塞:         无(GPU0-1待pretrain释放才能8卡第二轮)
 ERROR_COUNT:  0
 ```
 
