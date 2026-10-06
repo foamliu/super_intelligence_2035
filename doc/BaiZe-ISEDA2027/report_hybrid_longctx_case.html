@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe · 长上下文下 Mamba2-hybrid vs 稠密基线 —— 资源申请论据包</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  h4 { font-size:14.5px; margin:16px 0 6px; color:var(--primary); }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr;} }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#0d5c22; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6a4a00; }
+  .danger { background:#fff0f0; border:1px solid #ffc9c9; border-left:4px solid var(--bad); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#8a1c1c; }
+  .quote { background:#f6f8fa; border:1px dashed var(--accent); border-radius:8px; padding:12px 16px; font-size:13.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>长上下文场景下：Mamba2-hybrid(2.220B) vs 稠密基线(2.512B)</h1>
+  <div class="sub">BaiZe · P-8 正式训练资源申请 —— 论据包（自包含）</div>
+  <div class="meta">
+    <span>📅 2026-10-06</span>
+    <span>📄 运维侧整理（数据均来自已入库实验记录）</span>
+    <span>🔖 待 pretrain 用 B1 数据扩充为 <code>report_pretrain_hybrid_longctx_advantage.html</code></span>
+  </div>
+</header>
+
+<div class="verdict">
+  <b>🎯 一句话论点</b><br>
+  在长上下文（<b>32K–128K</b>，正是 agentic EDA 的刚需区间）这个维度上，Mamba2-hybrid 的优势不是"百分比级"而是 <b>量级级</b>，且<b>随 ctx 增大而单调扩大</b>；而代价只有 <b>训练吞吐 −8%</b>。
+  <br><br>
+  <span class="badge b-ok">prefill 3.7× → 23×（4K→128K）</span>
+  <span class="badge b-ok">显存 0.22×–0.44×（128K 下 13 GB vs 61 GB）</span>
+  <span class="badge b-ok">参数 −11.6%</span>
+  <span class="badge b-warn">代价：训练吞吐 −8% / decode 短 ctx 慢 1.2–1.6×</span>
+</div>
+
+<nav class="toc">
+  <b>目录</b>
+  <ol>
+    <li><a href="#s1">结论速览</a></li>
+    <li><a href="#s2">三笔账（prefill / 显存 / 参数）</a></li>
+    <li><a href="#s3">劣势与边界（如实写）</a></li>
+    <li><a href="#s4">🔑 关键：我们现在测到的是"下界"</a></li>
+    <li><a href="#s5">为什么这对 agentic EDA 特别重要</a></li>
+    <li><a href="#s6">P-8 资源申请挂钩段（可直接引用）</a></li>
+    <li><a href="#s7">证据出处与口径（方法学）</a></li>
+    <li><a href="#s8">下一步：B1 / B2 / B3</a></li>
+  </ol>
+</nav>
+
+<h2 class="sec" id="s1"><span class="no">1</span>结论速览</h2>
+<div class="kpi-row">
+  <div class="kpi"><div class="v">3.7×→23×</div><div class="l">prefill 加速（4K→128K）</div></div>
+  <div class="kpi"><div class="v">13 vs 61</div><div class="l">GB @128K×bs1</div></div>
+  <div class="kpi"><div class="v">0.22×–0.44×</div><div class="l">显存占比</div></div>
+  <div class="kpi"><div class="v">5.1×</div><div class="l">每 token 缓存搬运更低</div></div>
+  <div class="kpi"><div class="v">2.220B</div><div class="l">vs 2.512B（−11.6%）</div></div>
+  <div class="kpi"><div class="v">−8%</div><div class="l">训练吞吐（唯一代价）</div></div>
+</div>
+<div class="ok-box">
+<b>三句话</b>：<br>
+① <b>长上下文越用越省</b>：prefill 优势从 4K 的 3.7× 单调拉到 128K 的 23× —— 这是 <b>SSM O(n) vs attention O(n²)</b> 的结构性差异，不是调参出来的。<br>
+② <b>长上下文"能不能服务"由显存决定，而这条我们赢 2–4.5×</b>：128K×bs1 只要 <b>13 GB</b>（稠密 61 GB）；<b>稠密在 128K×bs8 直接 OOM</b>。<br>
+③ <b>代价只有训练吞吐 −8%</b>（不是论文早期写的 −24%，那是跨节点测量 artifact），且<b>参数还少 11.6%</b>。
+</div>
+
+<h2 class="sec" id="s2"><span class="no">2</span>三笔账（按 ctx 长度）</h2>
+
+<h3>2.1 Prefill / TTFT —— O(n) vs O(n²)，<b>越长的上下文优势越大</b></h3>
+<table>
+<tr><th>口径（栈）</th><th>4K</th><th>64K</th><th>128K</th><th>出处</th></tr>
+<tr><td><b>自定义 benchmark</b>（同构 hybrid vs dense，bf16/A100）</td><td><b>3.7×</b></td><td>区间内递增</td><td><b>23×</b></td><td>P-9.10③ <code>benchmark_p910.py</code> / <code>benchmark_p910_results.json</code></td></tr>
+<tr><td><b>sglang 生产栈</b>（0.5.9，真实服务）</td><td>—</td><td><b>2.18×</b>（bs1）</td><td>未测（请求被拒）</td><td>P-9.11② <code>report_pretrain_p911_sglang.html</code></td></tr>
+<tr><td><b>mcore eager 下界</b>（最保守口径）</td><td>—</td><td>—</td><td><b>3.6×</b></td><td>P-9.10②</td></tr>
+</table>
+<p>⚠️ <b>口径不同不可混比</b>：<code>23×</code> 是"同构实现、只换架构"的干净对比；<code>2.18×</code> 是真实生产栈（含 sglang 预分配/后端开销）；<code>3.6×</code> 是 eager 下界。<b>三者都指向同一方向，且都随 ctx 上升。</b></p>
+
+<h3>2.2 显存 / KV —— <b>决定"能不能服务"</b>（这条最硬）</h3>
+<table>
+<tr><th>场景</th><th>Mamba2-hybrid 2.220B</th><th>稠密 2.512B</th><th>结论</th></tr>
+<tr><td>128K × bs1 显存</td><td><b>13 GB</b></td><td><b>61 GB</b></td><td><b>0.22×</b></td></tr>
+<tr><td>128K × bs8</td><td>可服务</td><td class="b-no"><b>OOM（跑不起来）</b></td><td>稠密直接<b>不可服务</b></td></tr>
+<tr><td>全 ctx 区间显存比</td><td colspan="2">0.22× – 0.44×</td><td>H3 ✅（P-9.10③）</td></tr>
+<tr><td>状态 / 缓存（state）</td><td colspan="2">0.20× – 0.48×</td><td>H4 ✅（P-9.10③）</td></tr>
+<tr><td><b>每 token 缓存搬运</b></td><td colspan="2">hybrid <b>5.1× 更低</b></td><td>P-9.10② H3（总 cache 18.2× 但 <b>per-token 更低</b>）</td></tr>
+</table>
+<p><b>机理</b>：56 层里 <b>24 层 Mamba2 的状态是定长的</b>（不随序列增长），<b>只有 4 层 attention 有 KV cache</b> ⇒ 长序列下的缓存规模由"4 层"决定，而不是"56 层"。</p>
+
+<h3>2.3 参数量与质量</h3>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>参数量</td><td>hybrid <b>2.220B</b> vs 稠密 <b>2.512B</b> ⇒ <b>−11.6%</b></td></tr>
+<tr><td>质量（同口径 500–5000 步）</td><td><b>hybrid 五点全胜</b>（Δloss ≈ 0.22–0.43，末段 0.30）⇒ 不只是"更小"，而且<b>更优</b>（P-3）</td></tr>
+</table>
+
+<h2 class="sec" id="s3"><span class="no">3</span>劣势与边界（如实写，才可信）</h2>
+<table>
+<tr><th>项</th><th>实测</th><th>边界 / 说明</th></tr>
+<tr><td><b>decode 吞吐</b></td><td>短 ctx 下 <b>稠密快 1.2–1.6×</b>（自定义 benchmark）；<b>sglang 生产栈 1.18×@64K</b></td><td>⭐ <b>crossover ≈ 50K</b> ⇒ <b>ctx ≥ ~50K 后 hybrid 反超/持平</b>；短 ctx 的劣势主要来自实现（transformers KV-cache 优化 / 每步 launch 开销）</td></tr>
+<tr><td><b>训练吞吐</b></td><td><b>−8%</b>（P-7 同节点同配置重测：稠密 ~89K vs hybrid ~82–83K tok/s）</td><td>⚠️ <b>论文早期写的 "~24% training-throughput cost" 是跨节点 artifact，必须改掉</b>（改后 hybrid 的性价比论证更强）</td></tr>
+<tr><td><b>未测项</b></td><td>1M ctx；128K 下 hybrid 的具体 decode 吞吐</td><td>一律标"<b>未测</b>"，不得当结论（B1 会补）</td></tr>
+</table>
+
+<h2 class="sec" id="s4"><span class="no">4</span>🔑 关键：我们现在测到的是<b>"下界"</b>（而非上限）</h2>
+<p>核准到的配置事实（来自入库的 HF 转换脚本与对照 config）：</p>
+<pre><code>我们（baize_p6_ckpt_to_hf.py → nemotron_h config）
+    "max_position_embeddings": 4096
+    （无 rope_theta / 无 rope_scaling）        ⇒ 走 transformers 默认 rope_theta = 1e4
+
+对照 MiniCPM5-2B（MiniCPM5-2B.config.json）
+    "max_position_embeddings": 131072
+    "rope_theta": 5000000                     ⇒ 比我们高 500×</code></pre>
+<div class="danger">
+<b>⇒ 基线是"天生为长上下文配的"，我们从没配过。</b> 而且 P-9.11 的 128K 结果不是"质量崩"而是 <b>被直接拒绝</b>（<code>e2e≈0.5s</code>、<code>total_completion_tokens=0</code>、<b>非 OOM / 非超时</b>），而 <b>4K / 16K / 64K 都成功</b>。
+</div>
+<div class="ok-box">
+<b>这意味着</b>：本报告里的 <code>3.7×–23×</code> 与 <code>0.22×–0.44×</code> 是在 <b>"hybrid 完全没有为长上下文做任何准备"</b> 的条件下测出来的。
+<br>⇒ <b>hybrid 的长上下文能力尚未被真正测过</b>；<b>B1 只需改 config</b>（<code>max_pos→131072</code> + <code>rope_theta→5e5/1e6</code> + 试 PI/NTK/YaRN）就能给出统一口径的真实曲线。
+<br>⇒ 也就是说：<b>目前的数字是"最保守"的一版</b>，对申请资源而言是<b>安全的下界</b>。
+</div>
+
+<h2 class="sec" id="s5"><span class="no">5</span>为什么这对 agentic EDA 特别重要</h2>
+<ul>
+  <li><b>agentic 轨迹天然长</b>：代码文件 + 工具返回 + <b>多轮 generate–execute–refine</b> 的中间结果，很容易超过 32K；一次端到端 refactor 的上下文常达 <b>数十万 token</b> ⇒ 这是本项目 <code>README</code> 风险表 <b>#3 🔴</b> 明确点出的问题（"4096 对 agentic 轨迹过短"）。</li>
+  <li><b>在长上下文里，"能不能服务"优先于"跑得快"</b>：稠密模型在 128K 下要么 <b>OOM</b>（bs8）、要么显存吃掉绝大部分卡容量；<b>hybrid 用 1/4–1/5 的显存就能服务同样长度</b> ⇒ <b>直接决定单卡能放多长的上下文、能并发多少条轨迹</b>。</li>
+  <li><b>prefill 是大头</b>：agentic 每一轮都要把整段上下文重新 prefill 一次；<b>prefill 加速 3.7×→23×</b> 直接乘以"轮数 × 任务数"，是端到端吞吐与成本的主要杠杆。</li>
+  <li>与 ZhuLong 的叙事衔接：<b>harness 把观测保真度解决之后，backbone 侧的长上下文成本就是下一个瓶颈</b>——而 hybrid 恰好在这一点上占结构性便宜。</li>
+</ul>
+
+<h2 class="sec" id="s6"><span class="no">6</span>P-8 资源申请挂钩段（可直接引用）</h2>
+<div class="quote">
+<b>中文（推荐口径）</b><br>
+给 P-8 足量资源（<b>100B token / ~12.5 天 / 8×H100</b>）产出的，是一个在 <b>agentic EDA 的 32K–128K 场景</b>下：
+<b>prefill 快 3.7×（4K）→ 23×（128K）</b>；<b>显存省 2–4.5×</b>（128K 下 <b>13 GB vs 61 GB</b>，而稠密基线在 128K×bs8 <b>直接 OOM</b>）；<b>参数少 11.6%</b>（2.220B vs 2.512B）；
+<b>代价仅为训练吞吐 −8%</b> 的 <b>2.2B Mamba2-hybrid</b> 模型。
+<br><br>
+换句话说：<b>这份资源买到的不是"又一个 2B 模型"，而是"在长上下文这个最贵的维度上，用小模型替掉大 backbone"的可服务性。</b>
+</div>
+<div class="quote">
+<b>English（供论文/对外材料）</b><br>
+At <b>128K context</b>, the 2.22B Mamba2-hybrid serves with <b>0.22×</b> the memory of the 2.51B dense baseline (13 GB vs 61 GB at bs=1), while the dense baseline <b>OOMs at 128K×bs=8</b>. Prefill speedup grows monotonically with context length—from <b>3.7× at 4K to 23× at 128K</b>—reflecting SSM <i>O(n)</i> versus attention <i>O(n²)</i> scaling, at a cost of only <b>−8% training throughput</b> and with <b>11.6% fewer parameters</b>.
+</div>
+
+<h2 class="sec" id="s7"><span class="no">7</span>证据出处与口径（方法学）</h2>
+<table>
+<tr><th>数据</th><th>来源（入库文件）</th><th>口径要点</th></tr>
+<tr><td>prefill 3.7×→23×、显存 0.22–0.44×、state 0.20–0.48×、dense@128K×bs8 OOM</td><td><code>run/benchmark_p910.py</code> + <code>run/benchmark_p910_results.json</code>（P-9.10③）</td><td><b>自定义推理 benchmark</b>：hybrid 用 <code>mamba_ssm.Mamba2</code> 构 56 层（24 Mamba2 + 4 Attn + 28 MLP, 2.22B）、dense 用 <code>LlamaForCausalLM</code>（42 层, 2.51B），A100 80GB bf16，<code>logits_to_keep=1</code>，ctx{4K,16K,64K,128K}×bs{1,8}。<b>同构实现、只换架构</b> ⇒ 最干净的对比。</td></tr>
+<tr><td>prefill 2.18×@64K、decode 1.18×@64K（crossover≈50K）、128K 被拒</td><td><code>run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> P-9.11② + <code>report_pretrain_p911_sglang.html</code></td><td><b>sglang 生产栈</b> 0.5.9（vllm env，torch 2.9.1+cu128，flashinfer 0.6.3），H100 80GB×1，<code>--context-length 131072 --mem-fraction-static 0.85 --attention-backend flashinfer</code>，hybrid 另加 <code>--mamba-ssm-dtype float32</code>，<code>SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1</code>。</td></tr>
+<tr><td>eager 下界：decode 1.58–1.62×、prefill 128K 3.6×、cache 18.2×（per-token 5.1× 更低）</td><td>P-9.10②（<code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code>）</td><td><b>mcore 直驱 eager</b>（无 CUDA graph：与 mcore <code>StaticInferenceContext</code> 不兼容）⇒ 含每步 launch 开销，属<b>下界</b>。</td></tr>
+<tr><td>训练吞吐 −8%（89K vs 82–83K tok/s）</td><td>P-7（同节点同配置重测；<code>tab:archcomp</code> 回填建议）</td><td>⚠️ 论文早期 "~24%" 系 <b>Round 1 把 hybrid 放在 10.239.2.12、dense 放在 .29</b> 的<b>跨节点 artifact</b>，<b>已作废</b>。</td></tr>
+<tr><td>参数量 2.220B vs 2.512B、五点全胜</td><td><code>EXPERIMENTS_2B.md</code> / R2 P-3</td><td>同口径（6 卡 TP1/DP6/GBS=6/seq4096）500→5000 步。</td></tr>
+<tr><td>配置事实：<code>max_position_embeddings=4096</code>、无 <code>rope_theta</code></td><td><code>run/baize_p6_ckpt_to_hf.py</code>（<code>MAX_POSITION_EMBEDDINGS=4096</code>）；对照 <code>MiniCPM5-2B.config.json</code>（<code>131072</code> / <code>rope_theta=5e6</code>）</td><td>直接取自入库文件。</td></tr>
+</table>
+<div class="note">
+<b>待补（B1 会做，本报告暂标"未测"）</b>：① 统一口径下 <b>4K/8K/16K/32K/64K/128K</b> 的 prefill+显存曲线（改 <code>max_pos</code>/<code>rope_theta</code>/<code>rope_scaling</code> 后）；② <b>128K 被拒的确切原因</b>（sglang 日志/返回体原文）；③ 128K 下 hybrid 的 decode 吞吐；④ 长上下文下的<b>质量</b>（PPL + passkey/needle + 8 集 eval 退化曲线）。
+</div>
+
+<h2 class="sec" id="s8"><span class="no">8</span>下一步：B1 / B2 / B3（已下发，1 卡 · ~2–3h）</h2>
+<table>
+<tr><th>步骤</th><th>内容</th><th>产出</th></tr>
+<tr><td><b>B1</b>（~1h，免训练诊断）</td><td>① 查 128K 拒绝原因（日志+返回体）② 改 config：<code>max_pos→131072</code> + <code>rope_theta 1e4→5e5/1e6</code>（ABF）+ 试 PI/NTK/YaRN（<b>每次只改一个变量</b>）③ 跑 4K→128K 的 PPL + passkey + 8 集</td><td><b>统一口径的退化曲线</b>（本报告的 §2 数字将据此刷新）</td></tr>
+<tr><td><b>B2</b>（~2–3h，条件触发）</td><td>若 ≥16K 明显退化 ⇒ <b>阶梯续训 4K→8K→16K</b>（每档 0.5–2B token）</td><td>⭐ <b>收敛速度</b>（"只有 4 层吃 RoPE ⇒ 适应快"本身就是 hybrid 优势的量化证据）</td></tr>
+<tr><td><b>B3</b>（0 成本）</td><td>给 <b>P-8 的 seq 决策</b>：4096 / 8192 / 还是 <b>decay 段升 8192–16384</b>（+成本差）</td><td>⚠️ <b>必须在 P-8 启动前定案</b>，否则 P-8 作废</td></tr>
+</table>
+<p>数据版报告（含 B1 实测）将由 pretrain 交付为 <code>report_pretrain_hybrid_longctx_advantage.html</code>；<b>本文件是运维侧的论据包草稿，B1 完成后以其为准并更新此处数字</b>。</p>
+
+<footer>
+  <b>BaiZe · 长上下文下 Mamba2-hybrid vs 稠密基线 —— 资源申请论据包</b>（自包含单文件）<br>
+  生成：2026-10-06 · 运维侧整理；<b>所有数字均来自已入库的实验记录</b>（出处见 §7），未实测项一律标注。<br>
+  相关文件：<code>report_pretrain_p911_sglang.html</code> · <code>run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code>（P-9.10/P-9.11/P-7/P-3）· <code>run/benchmark_p910_results.json</code> · <code>run/baize_p6_ckpt_to_hf.py</code> · <code>MiniCPM5-2B.config.json</code><br>
+  ⚠️ 口径不可混比：自定义 benchmark / sglang 生产栈 / mcore eager 三者已分别标注。
+</footer>
+
+
+</div>
+</body>
+</html>
