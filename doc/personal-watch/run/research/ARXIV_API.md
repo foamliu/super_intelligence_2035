@@ -703,6 +703,19 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
 - **下轮预期**：周一公告（`2026-10-05` 提交批）应在 **UTC `2026-10-06` 稍晚**刷新到 API，届时主源最新 `published` 将由 `2026-10-02` 变为 `2026-10-05`，**预计出现新增**。
 
+### 9.53 第五十一轮（UTC 2026-10-06 周二 · **新公告批次落地**）→ **新增 93**（**本轮实时取数**）
+
+- **取源复验（R1′）** `--probe --config queries.json`（证据 `research/raw/2026-10-06-probe-r51.json`）：⚠️ **首次 `--probe` 因 `requests` 对 arXiv 网络停滞超时（工具级 30s）→ 改后台重跑成功**（非端点故障，与第三十三轮同现象）。
+  - **arXiv API**：`HTTP 200` + `application/atom+xml`，**最新 `published=2026-10-03T20:15:17Z`**（`totalResults=626945`，样本 `2610.04743 / 2610.04741 / 2610.04740`）→ ✅ **可达**，且**批次已刷新**（此前第四十四~五十轮均 `2026-10-02T17:59:14Z` / `626530`）；
+  - **HF Daily Papers**：`Network is unreachable` → ❌ 不可达（**如实记录，不伪造 `hf_daily` 标记**）；
+  - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml` + `items=185 / 191 / 456` → ✅ **工作日已有内容**。
+- **增量取数** `--fetch --seen SEEN.md`（**`window_mode=daily`，窗口 72h**，`generated=2026-10-06T01:48:54.829158+00:00`）：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 93 / dropped 491** → **新增 93**。证据 `research/raw/2026-10-06-fetch-r51.json`。
+- **结论**：**UTC 为 `2026-10-06`（周二）**；arXiv 公告批次已由 `2026-10-02` 刷新为 **`2026-10-03`**（`totalResults` `626530 → 626945`，+415）→ **新批次落地、产生新增属正常**。实际日期区间按 R2′ 标注为 **`2026-10-03`（最近公告批次）**。**精选收录 30**（LLM 7 / SLM 3 / 多模态 6 / agent harness 8 / 邻域 6）+ **候选 63**。`window_mode=daily`（72h）为第三十轮起的自动口径回落，非人工覆盖。
+- **第 3 批 A/B 复核**：TOP-K（含 `takeaway`/`action` 20 条）+ `TAKEAWAYS.md`（5 条）+ 视频线（`SHORTLIST.md` 17 / `scripts/` 3）**已交付未变**；本轮新增 93 篇**均为 `2026-10-03` 批次**，**TOP-K 窗口（`2026-09-03 ~ 2026-10-01`）未覆盖 → 不重跑**（诚实标注）。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
+- **下轮预期**：公告批次现为 `2026-10-03`；下一次工作日公告（`2026-10-06` 提交批）预计在 **UTC `2026-10-07` 前后**刷新，届时按 SOP 增量采集。
+
+
 ### 9.52 第五十轮（UTC 2026-10-06 周二 · 同批去重复核）：周一公告仍未刷新 → **0 新增**（**本轮实时取数**）
 
 - **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-06T01:13:23.969285+00:00`，证据 `research/raw/2026-10-06-probe-r50.json`）：

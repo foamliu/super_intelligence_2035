@@ -584,6 +584,99 @@
 | 2026-10-05 | 2610.02267 | Fast Models, Slow Evidence: A Paired and Self-Audited Evaluation of System-1 Decision Models for LLM Agent Harnesses | cs.AI | 收录 |
 | 2026-10-05 | 2610.02265 | Event-guided Neural Video Compression | eess.IV | 候选 |
 | 2026-10-05 | 2610.02255 | MACTS-EM: Multi-Agent Collaborative Time Series Forecasting with Emergent Memory | cs.LG | 候选 |
+| 2026-10-06 | 2610.04409 | Understanding and Mitigating Hallucination Escape in Tool-Using LLM Agents | cs.CL | 收录 |
+| 2026-10-06 | 2610.04295 | Language-Conditioned Token and Reasoning Efficiency in Large Language Models: A Paired Cross-Lingual Study Protocol | cs.AI | 收录 |
+| 2026-10-06 | 2610.04239 | Conformal Prediction with Paraphrase-Aware Scoring for LLM Uncertainty Quantification | cs.CL | 收录 |
+| 2026-10-06 | 2610.04344 | Hierarchical Credit Assignment for RLVR on Fused Gromov-Wasserstein Geometry | cs.LG | 收录 |
+| 2026-10-06 | 2610.04261 | Playing social deduction games with reinforcement fine-tuned large language models | cs.CL | 收录 |
+| 2026-10-06 | 2610.04720 | WNet: Discrete Wavelets Transform for Efficient Token Mixing | cs.CL | 收录 |
+| 2026-10-06 | 2610.04489 | DV-Lens: Revealing the Functional Organization of Language Model Parameters | cs.CL | 收录 |
+| 2026-10-06 | 2610.04740 | Toward a Locally Deployable Agentic Co-Scientist: Small-Model Planning for Early-Stage Drug Discovery | cs.AI | 收录 |
+| 2026-10-06 | 2610.04537 | PhaseGate: Phase-Aware CPU Retrieval Scheduling for On-Device LLMs on Unified Memory | cs.LG | 收录 |
+| 2026-10-06 | 2610.04396 | JASPER: Special Session on Joint Reliability And Security Assessment of SPlit Computing for Edge Robustness | cs.CR | 收录 |
+| 2026-10-06 | 2610.04580 | Strong Helps Weak: Directional Cross-Modal Alignment Transfer in Multi-modal LLMs | cs.AI | 收录 |
+| 2026-10-06 | 2610.04469 | Trinity: Self-Evolving Vision-Language Models with a Self-Verifier | cs.AI | 收录 |
+| 2026-10-06 | 2610.04318 | Rethinking Long-Video Efficiency: A Joint Allocation Perspective on Frames, Pixels, and Front-End Latency | cs.CV | 收录 |
+| 2026-10-06 | 2610.04225 | FlashGaze: Training-Free Multi-Scale Patch Pruning For Efficient Video Understanding | cs.CV | 收录 |
+| 2026-10-06 | 2610.04664 | FLASHSWIN: Unlocking Large Windows and Dense Tokens in Swin Vision Transformers with Memory Efficient Attention | cs.CV | 收录 |
+| 2026-10-06 | 2610.04506 | EgoExo-Next:Benchmarking Vision-Language Models on Visual-Option Next-State and Cross-View Reasoning | cs.CV | 收录 |
+| 2026-10-06 | 2610.04433 | What Does a Harness Buy? Tokens, Mostly | cs.AI | 收录 |
+| 2026-10-06 | 2610.04378 | COPEX: Benchmarking LLM Robustness to Adversarial Context Across Model Context Protocol Layers | cs.CR | 收录 |
+| 2026-10-06 | 2610.04737 | PyINE: A Framework for Scalable Elicitation and Oversight via Code Execution | cs.AI | 收录 |
+| 2026-10-06 | 2610.04716 | Towards Automatically Pruning Logging Code with Coding Agents: How Far Are We? | cs.SE | 收录 |
+| 2026-10-06 | 2610.04686 | When Debate Helps: Proposal Supply and Verification-Aware Readout in Multi-Agent Reasoning | cs.AI | 收录 |
+| 2026-10-06 | 2610.04672 | MASBench: Benchmarking LLM-based Multi-Agent Collaboration under Partial Observability | cs.AI | 收录 |
+| 2026-10-06 | 2610.04371 | Functionally Equivalent or Not? Graph-Grounded Differential Surrogate Execution for Code Equivalence | cs.AI | 收录 |
+| 2026-10-06 | 2610.04658 | RETRACE: From Entangled Repair Histories to Reusable Experience for CI Repair | cs.SE | 收录 |
+| 2026-10-06 | 2610.04691 | RAGStress: A controlled benchmark for evaluating retrieval-augmented generation under knowledge-base degradation | cs.AI | 收录 |
+| 2026-10-06 | 2610.04470 | Reactivating Alignment: Defending LLMs from Jailbreaks via Intention-Aware Input-Output Matching | cs.AI | 收录 |
+| 2026-10-06 | 2610.04467 | Target-free Latent Safety Alignment | cs.LG | 收录 |
+| 2026-10-06 | 2610.04642 | Grounding Probes: Generator-Independent Hallucination Detection from Observer Model Hidden States | cs.CL | 收录 |
+| 2026-10-06 | 2610.04670 | A Tropical Geometry View of Forgetting: A Per-Unit Projector for Knowledge-Preserving Fine-Tuning | cs.AI | 收录 |
+| 2026-10-06 | 2610.04283 | First-Order Steering: Translating Weight Adaptation into Activation Steering | cs.LG | 收录 |
+| 2026-10-06 | 2610.04743 | ThyCLIPNet: A BiomedCLIP-Guided Lightweight Attention-Enhanced DeepLabV3+ Framework for Robust Thyroid Nodule Segmentation | cs.CV | 候选 |
+| 2026-10-06 | 2610.04741 | Robot Learning with Visual Predicted Force | cs.RO | 候选 |
+| 2026-10-06 | 2610.04736 | Probabilistic Pedestrian Forecasts from a Handheld Phone: World-Frame Heat Maps, Visual-Inertial Height Drift, and Evaluation without Ground Truth | cs.CV | 候选 |
+| 2026-10-06 | 2610.04727 | Investigating Spatiotemporal Redundancy in Video Transformer for Collision Anticipation | cs.CV | 候选 |
+| 2026-10-06 | 2610.04725 | Verb-ICL: Rethinking In-Context Learning for Structured Prediction | cs.CL | 候选 |
+| 2026-10-06 | 2610.04723 | Latent-Lagrangian Neural Networks for Reduced Order Modeling of Non-autonomous Nonlinear Dynamical Systems | cs.CE | 候选 |
+| 2026-10-06 | 2610.04722 | NAMVIS: Next-Scale Autoregressive Multi-View Image Synthesis | cs.CV | 候选 |
+| 2026-10-06 | 2610.04721 | Knossos and Ariadne: Benchmarking and Learning Complete Diagram Topology Extraction with Vision-Language Models | cs.CV | 候选 |
+| 2026-10-06 | 2610.04719 | Learning to Clarify Underspecified Intents Under Limited Interaction | cs.AI | 候选 |
+| 2026-10-06 | 2610.04715 | GPU-Accelerated Bregman Douglas-Rachford Splitting for Discrete Optimal Transport | math.OC | 候选 |
+| 2026-10-06 | 2610.04710 | Organising Trajectory Evidence for Language-Model Agent Assurance: Fragments, Methods, and the Residual | cs.MA | 候选 |
+| 2026-10-06 | 2610.04708 | Localized Operator Learning with Adaptive Partition-of-Unity Mixture-of-Expert Networks | cs.LG | 候选 |
+| 2026-10-06 | 2610.04706 | VoCa: Designing Speech-Canvas Interaction for Voice-Based Conversational Agents | cs.HC | 候选 |
+| 2026-10-06 | 2610.04705 | Neurodiversity-Aware Multimodal Affective Computing for Neurodevelopmental Assessment: From Norm-Referenced Classification to Context-Sensitive Decision Support | cs.HC | 候选 |
+| 2026-10-06 | 2610.04703 | Learning Discriminative Geometry for Drifting Models | cs.LG | 候选 |
+| 2026-10-06 | 2610.04700 | Decouple, Purify and Unite: Semantic-Structural Prototype Learning for Federated Medical Segmentation | cs.CV | 候选 |
+| 2026-10-06 | 2610.04699 | Not Self-Decidable: LLMs Cannot Draw the Boundary of What an Agent Verifier Can Check | cs.AI | 候选 |
+| 2026-10-06 | 2610.04696 | Score-Calibrated Flow for Sampling from Unnormalized Densities with Applications to Generative Online Reinforcement Learning | cs.LG | 候选 |
+| 2026-10-06 | 2610.04695 | Low-Fidelity FDM Spectral Guidance for Neural Eigenvalue Solvers | cs.LG | 候选 |
+| 2026-10-06 | 2610.04693 | Penumbra: Sample-Efficient Adversarial Search for Regulatory Obligations | cs.AI | 候选 |
+| 2026-10-06 | 2610.04690 | SepRQ : Self-Supervised Speech Mixture Representation Learning via Mask-Free, Multi-Scale Source Separation | eess.AS | 候选 |
+| 2026-10-06 | 2610.04687 | Understanding Errors in LLM-Based Question Answering over Imperfect Tables | cs.CL | 候选 |
+| 2026-10-06 | 2610.04683 | Steering Speech-Language Models: Training-Free Task Specialization via Contrastive Activation Addition | cs.CL | 候选 |
+| 2026-10-06 | 2610.04681 | RoboIRS: Inference-Time Internal Representation Steering for Generalist Robot Policies | cs.RO | 候选 |
+| 2026-10-06 | 2610.04680 | COMPASS: Comet Object Measurement Pipeline with Automated Selection and Scoring | cs.CV | 候选 |
+| 2026-10-06 | 2610.04676 | Extracting Persona Subspaces Through Iterative Nullspace Projection For Modulation | cs.CL | 候选 |
+| 2026-10-06 | 2610.04671 | Asking the Crowd the Right Question: Bias-Cancelling Weights for Federated Learning | math.OC | 候选 |
+| 2026-10-06 | 2610.04665 | Efficient Neural Surrogates for Linear Radiation Transport on the Lattice and Hohlraum benchmarks | cs.AI | 候选 |
+| 2026-10-06 | 2610.04659 | PermVLA: Factorization Order as a Regularizer for VLA Learning | cs.AI | 候选 |
+| 2026-10-06 | 2610.04657 | Path Laplacian Encodings for Directed Graphs | cs.LG | 候选 |
+| 2026-10-06 | 2610.04652 | Pareto-Improving Adversarial Attacks with Primal-Dual Regularization | cs.LG | 候选 |
+| 2026-10-06 | 2610.04620 | Stance Drift: How AI-mediated Communication Distorts Our Message | cs.CL | 候选 |
+| 2026-10-06 | 2610.04616 | PerturBot: Breaking Shortcut Priors in Vision-Language-Action Models with Perturbative Training | cs.RO | 候选 |
+| 2026-10-06 | 2610.04607 | ForeAct3D: Policy-Grounded Future World Modeling for VLA Policies | cs.RO | 候选 |
+| 2026-10-06 | 2610.04605 | ConEx: Human-Interpretable Saliency Maps via Concept-Aware Attribution | cs.CV | 候选 |
+| 2026-10-06 | 2610.04592 | Bounds, Decompositions and Null Behaviour of KRATOS: A Mathematical Specification of a Recognition-Comparability Diagnostic | cs.AI | 候选 |
+| 2026-10-06 | 2610.04545 | Nonlinear Density-Driven Optimal Control (D2OC) for Multi-Agent Spatial Coverage via Sequential Convex Programming | cs.MA | 候选 |
+| 2026-10-06 | 2610.04541 | Autonomous Structuring of Radiology Reports Across Modalities at Archive Scale Using an Open-Weight Large Language Model | cs.AI | 候选 |
+| 2026-10-06 | 2610.04539 | Action-Consequence Alignment for Reliable Planning and Self-Improving in Latent World Models | cs.AI | 候选 |
+| 2026-10-06 | 2610.04533 | Weight Decay and Neuron Condensation: A Three-Stage Analysis of Two-Layer ReLU Networks | cs.LG | 候选 |
+| 2026-10-06 | 2610.04515 | Towards Credible Agent-Based Policy Simulations: Disentangling Opportunities and Preferences in a Financial Inclusion Case Study of Egypt | cs.AI | 候选 |
+| 2026-10-06 | 2610.04502 | Localization Lens for Improving Medical Vision-Language Models | cs.CV | 候选 |
+| 2026-10-06 | 2610.04475 | VCLMU: Mechanism-Centric Virtual Cell World Modeling for Perturbation Response | cs.AI | 候选 |
+| 2026-10-06 | 2610.04438 | RAGrasp: Geometry-Semantic Template Retrieval and Grasp Transfer | cs.AI | 候选 |
+| 2026-10-06 | 2610.04427 | COSMOS: Soft Mechanism Mixtures with Verifiable Routing for Long-Horizon PDE Forecasting | cs.LG | 候选 |
+| 2026-10-06 | 2610.04425 | AgroGround: Multi-Granularity Grounded Recognition in Agriculture | cs.CV | 候选 |
+| 2026-10-06 | 2610.04419 | MaDeL: Manifold-Decomposed Feature Losses for Generative Modeling | cs.LG | 候选 |
+| 2026-10-06 | 2610.04418 | CORE-RL: Confidence-Oriented Reliability Evaluation of Black-Box Reinforcement Learning Policies | cs.AI | 候选 |
+| 2026-10-06 | 2610.04412 | Large Language Models and Augmented Democracy | cs.CY | 候选 |
+| 2026-10-06 | 2610.04399 | GlitchPatch: Repairing Glitch Tokens in Frozen Language Models via Local Retokenization | cs.CL | 候选 |
+| 2026-10-06 | 2610.04391 | AgenticTactileVLA: Contact-Guided Execution-Time Supervision for Generalizable Dexterous Manipulation without VLA Retraining | cs.RO | 候选 |
+| 2026-10-06 | 2610.04387 | TrustMed-RL: Long-Horizon Reinforcement Learning for Evidence-Grounded Clinical Diagnosis | cs.AI | 候选 |
+| 2026-10-06 | 2610.04381 | Beyond Plausibility: Verifiable Fine-Grained Image Editing on Structured Assets | cs.CV | 候选 |
+| 2026-10-06 | 2610.04345 | System One Models for Wireless Decision-Making:Applications and Performance Evaluation | eess.SP | 候选 |
+| 2026-10-06 | 2610.04328 | Bidirectional Preference Synthesis: Learning Prompt-Conditioned Preferences from Boundary Failures | cs.AI | 候选 |
+| 2026-10-06 | 2610.04304 | Evaluating Modeling Approaches for Experience-Level Classification in Job Description | cs.CL | 候选 |
+| 2026-10-06 | 2610.04303 | What to Preserve in Recursive Computation: A Local Predictive Sufficiency Principle | cs.LG | 候选 |
+| 2026-10-06 | 2610.04301 | EnvDreamer: Large-Scale Multimodal-to-Environment Generation for Embodied AI | cs.AI | 候选 |
+| 2026-10-06 | 2610.04292 | LMBuild: Evaluating LLM Agents for Generating Buildable and Functional Structures | cs.AI | 候选 |
+| 2026-10-06 | 2610.04286 | CyTReX: Explainable AI-Based Cybersecurity Threat Reasoning Framework for DER Networks | cs.CR | 候选 |
+| 2026-10-06 | 2610.04255 | Grounded in Time: A Multi-Source Dataset and Benchmark for Temporal Grounding in Robotic Manipulation | cs.RO | 候选 |
+| 2026-10-06 | 2610.04245 | On the Steering Dimensionality of Refusal in Language Models | cs.AI | 候选 |
+| 2026-10-06 | 2610.04210 | Can LLMs Separate Pasted Artifacts from User Speech? Absorption at Unmarked Prompt Seams | cs.CL | 候选 |
 
 > 累计（2026-10-03，两轮）共 407 条（收录 61 / 候选 346）：首轮 214（收录 34 / 候选 180）+ 本轮 193（收录 27 / 候选 166）。
 >
@@ -697,3 +790,5 @@
 > **第四十九轮（UTC 2026-10-06 周二 00:4x，第四十八轮后 ~36min · 同批去重复核）**：**15/15 查询 `ok`**（`attempts=1`，无重试），命中 **435 条已在表中**（另 165 条超龄丢弃）→ **新增 0 条**。累计仍为 **578 条（收录 91 / 候选 487）**。**arXiv 周一公告仍未刷新到 API**（最近批次仍 `2026-10-02`，`totalResults` 未变 `626530`，与第十五~四十八轮同批），**0 新增属正常 非「无数据」**；`window_mode=daily`(72h，第三十轮起自动回落)，因去重先查 SEEN，结论不变；R1′ arXiv ✅ / HF ❌ / RSS 有内容，本轮 `--probe` / `--fetch` **均无重试（attempts=1）**（详见 `research/2026-10-06.md` 第四十九轮 + `raw/2026-10-06-fetch-r49.json`）。
 
 > **第五十轮（UTC 2026-10-06 周二 01:1x，第四十九轮后 ~34min · 同批去重复核）**：**15/15 查询 `ok`**（`attempts=1`，无重试），命中 **435 条已在表中**（另 165 条超龄丢弃）→ **新增 0 条**。累计仍为 **578 条（收录 91 / 候选 487）**。**arXiv 周一公告仍未刷新到 API**（最近批次仍 `2026-10-02`，`totalResults` 未变 `626530`，与第十五~四十九轮同批），**0 新增属正常 非「无数据」**；`window_mode=daily`(72h，第三十轮起自动回落)，因去重先查 SEEN，结论不变；R1′ arXiv ✅ / HF ❌ / RSS 有内容，本轮 `--probe` / `--fetch` **均无重试（attempts=1）**（详见 `research/2026-10-06.md` 第五十轮 + `raw/2026-10-06-fetch-r50.json`）。
+
+> **第五十一轮（UTC 2026-10-06 周二 01:4x，第五十轮后 ~34min · 新公告批次落地）**：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 93 / dropped 491** → **新增 93 条**（**主源 `published` 由 `2026-10-02T17:59:14Z` 刷新为 `2026-10-03T20:15:17Z`**、`totalResults` 由 `626530` 增至 `626945` = **新批次 `2026-10-03` 落地**）。**精选收录 30**（LLM 7 / SLM 3 / 多模态 6 / agent harness 8 / 邻域 6）+ **候选 63**。累计 **671 条（收录 121 / 候选 550）**；`window_mode=daily`(72h，第三十轮起自动回落)。R1′ arXiv ✅ / HF ❌ / RSS 有内容；本轮 `--probe` **首次因网络停滞超时 → 后台重跑成功**、`--fetch` 无重试（`attempts=1`）（详见 `research/2026-10-06.md` 第五十一轮 + `raw/2026-10-06-{probe,fetch}-r51.json`）。
