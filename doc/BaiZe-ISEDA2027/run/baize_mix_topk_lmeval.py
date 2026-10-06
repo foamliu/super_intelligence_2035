@@ -32,9 +32,10 @@ def ckpt_to_hf(arm_name, ckpt_name):
     if os.path.exists(hf_out + "/config.json"):
         return hf_out
     ckpt = exp + "/checkpoints/" + ckpt_name
-    cmd = [PY + "/python", RUN + "/baize_p6_ckpt_to_hf.py",
+    cmd = [PY + "/python", RUN + "/baize_proxy_ckpt_to_hf.py",
            "--ckpt", ckpt, "--tokenizer", BASE + "/data/tokenizer_eod", "--out", hf_out]
     env = os.environ.copy()
+    env["MASTER_ADDR"] = "127.0.0.1"
     env["PYTHONPATH"] = "/nas_train/app.e0031982/omegaconf_230"
     print("  Converting ckpt -> HF: " + arm_name + "/" + ckpt_name)
     r = subprocess.run(cmd, env=env, capture_output=True, text=True, timeout=300)
@@ -53,10 +54,14 @@ def run_lmeval(hf_path, gpu_id, arm_name):
     env["HF_DATASETS_CACHE"] = "/nas_train/app.e0031982/hf_cache"
     env["HF_HOME"] = "/nas_train/app.e0031982/.cache"
     env["HF_ENDPOINT"] = "https://hf-mirror.com"
+    env["HF_HUB_OFFLINE"] = "1"
+    env["HF_DATASETS_OFFLINE"] = "1"
+    env["https_proxy"] = "http://172.19.92.25:13128"
+    env["http_proxy"] = "http://172.19.92.25:13128"
     env["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
     log_file = eval_out + "/eval_t2.log"
     cmd = [PY + "/python", "-m", "lm_eval", "--model", "hf",
-           "--model_args", "pretrained=" + hf_path + ",dtype=bfloat16,trust_remote_code=False",
+           "--model_args", "pretrained=" + hf_path + ",dtype=bfloat16,trust_remote_code=True",
            "--tasks", T2_TASKS, "--num_fewshot", "0", "--batch_size", "4",
            "--output_path", eval_out]
     print("  lm_eval on GPU" + str(gpu_id) + ": " + arm_name)
@@ -152,7 +157,7 @@ def main():
             data = json.load(f)
         results = data.get("results", {})
         bo_losses = data.get("bo_losses", {})
-        tids = [int(t) for t in results.keys() if int(t) in bo_losses]
+        tids = [int(t) for t in results.keys() if t in bo_losses]
         if len(tids) >= 3:
             losses = [bo_losses[str(t)] for t in tids]
             avgs = [results[str(t)]["avg"] for t in tids]
