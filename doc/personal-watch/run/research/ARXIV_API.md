@@ -871,3 +871,17 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
 - **下轮预期**：下一次工作日公告（`2026-10-06` 提交批）预计在 **UTC `2026-10-07` 前后**刷新，届时按 SOP 增量采集。
 
+
+### 9.64 第六十二轮（UTC 2026-10-06 周二 · 同批去重复核，距第六十一轮约 40min）：公告批次未刷新 → **0 新增**（**本轮实时取数**）
+
+- **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-06T15:07:25.123864+00:00`，证据 `research/raw/2026-10-06-probe-r62.json`）：
+  - **arXiv API**：`HTTP 200` + `application/atom+xml`，最新样本 `published=2026-10-05T17:59:54Z`（`totalResults=627806`，样本 `2610.06852 / 2610.06851 / 2610.06850`）→ ✅ **可达**（无端点故障）；
+  - **HF Daily Papers**：`Network is unreachable` → ❌ 不可达（**如实记录，不伪造 `hf_daily` 标记**）；
+  - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml` + `items=427 / 451 / 931` → ✅ **工作日已有内容**。
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=daily`，窗口 72h**，`generated=2026-10-06T15:13:28.238432+00:00`）：**15/15 查询 `ok`**（均 `attempts=1`，无重试），**kept 0 / dropped 600**；其中 **470 条 = `already in SEEN`**，其余 **130 条 = `stale > 72h`（自首次提交起）**。证据 `research/raw/2026-10-06-fetch-r62.json`。
+- **结论**：**UTC 为 `2026-10-06`（周二）15:1x**；arXiv 公告批次仍为 **`2026-10-05`**（主源 `published` 仍 `2026-10-05T17:59:54Z`、`totalResults` 仍 `627806`，与第五十四~六十一轮一致 → **批次未刷新**，渐进索引已收尽）→ **0 新增属正常**（**非「无数据」**）；实际日期区间按 R2′ 标注为 **`2026-10-05`（最近公告批次）**。`window_mode=daily`（72h）为第三十轮起的自动口径回落，非人工覆盖。
+- **说明**：本轮唤醒时发现上一唤醒留有**未提交的在途 probe + fetch**（`raw/2026-10-06-probe-r62.json` `generated=15:07:25Z`、`raw/2026-10-06-fetch-r62.json` `generated=15:13:28Z`）→ 本轮直接沿用该证据，结论一致。
+- **第 3 批 A/B 复核**：TOP-K（含 `takeaway`/`action` 20 条）+ `TAKEAWAYS.md`（5 条）+ 视频线（`SHORTLIST.md` 17 / `scripts/` 3）**已交付未变**；**无新增 → 不重跑**。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
+- **下轮预期**：下一次工作日公告（`2026-10-06` 提交批）预计在 **UTC `2026-10-07` 前后**刷新，届时按 SOP 增量采集。
+
