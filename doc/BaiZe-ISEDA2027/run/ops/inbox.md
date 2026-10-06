@@ -31,61 +31,33 @@
 
 ---
 
-## RUN_ID 78 — 🔌 **给 ZhuLong（36.15）配 GitHub 代理并追平**（真因：36.15 连不上 github:443，132s 超时）
+## RUN_ID 78 — ✅ **验收 ZhuLong 救援结果（只读）**：确认 36.15 上 relay/loop 已由 RUN_ID 77 重启并健康
 
-> **背景（supervisor 2026-10-06 11:4x）**：RUN_ID 77 证实 **36.15 → github.com:443 连接超时（132s）** ⇒ **既不能 pull 也不能 push**，这才是「哑火」真因（进程一直活着在本地干活）。`.12`/`.29` 均靠 **`http_proxy=https_proxy=http://172.19.92.25:13128`** 才能出网（见 `run/ARCHIVE_OPERATOR_PRETRAIN.md`）。
-> **本块（在 36.15 上）**：[1] 看现有 proxy 配置；[2] **测代理可达性**（curl 走代理取 github）；[3] 给本仓库设 `git config http.proxy/https.proxy` + `ls-remote` 验证；[4] `fetch`(≤180s)；[5] `rebase --autostash origin/main`(≤180s)；[6] **成功则**：`sed` 就地改 `PUSH_INTERVAL=1800`（因 git 拉不到我改的版本）+ 重启 relay/loop。
-> 失败即**不动 loop**并 `rebase --abort` 回退。🚫 不 reset --hard / 不 clean。
+> **背景（supervisor 2026-10-06 11:4x → 更正）**：**跑偏更正** —— 本块原写的是"给 36.15 配 GitHub 代理"，**属误判**：用户的方案从来是「**2.29 经隧道 → 36.15 → 重启 ZhuLong 的 relay/loop**」，与"外网"无关。原 `git fetch` 从 36.15 失败是我的 **ssh 非登录 shell 未继承代理**所致，**不是** 36.15 的常态（loop 由登录态启动，自带代理 env）。⇒ 本块**纯只读验收**，**不设/不清任何代理、不碰外网**。
+> **验收点**：① 两条进程在且 `etime` 应是几分钟（= 77 重启的）；② loop 日志尾部应见新一轮唤醒与 `[push] …`（若 `push OK` 则彻底闭环）；③ 磁盘上的 `PUSH_INTERVAL`。
 
 ```bash
 set -u
-echo "=== RUN_ID 78 · ZhuLong proxy fix + catch-up $(date '+%F %T') ==="
-timeout 500 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+echo "=== RUN_ID 78 · verify ZhuLong rescue (read-only) $(date '+%F %T') ==="
+timeout 120 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
 set -u
-P=http://172.19.92.25:13128
 W=/nasdata/app.e0031982/code/super_intelligence_2035
 cd "$W" || { echo "(NO repo)"; exit 1; }
-echo "host=$(hostname) $(date '+%F %T')"
-echo "=== [1] existing proxy config ==="
-grep -in 'proxy' ~/.bashrc 2>/dev/null | head -5 | cut -c1-160 || echo "(none in bashrc)"
-git config --get http.proxy 2>/dev/null || echo "(no git http.proxy)"
-echo "=== [2] proxy reachable from 36.15? ==="
-timeout 25 curl -x "$P" -sS -o /dev/null -w 'via_proxy_github_http=%{http_code}\n' --max-time 22 https://github.com 2>&1 | cut -c1-170
-echo "=== [3] set git proxy + ls-remote (<=60s) ==="
-git config http.proxy "$P"; git config https.proxy "$P"
-timeout 60 git ls-remote origin -h refs/heads/main 2>&1 | head -3 | cut -c1-170
-echo "=== [4] fetch (<=180s) ==="
-timeout 180 git fetch origin 2>&1 | tail -3 | cut -c1-170
-echo "--- behind/ahead ---"; git rev-list --left-right --count origin/main...HEAD 2>&1
-echo "=== [5] rebase --autostash origin/main (<=180s) ==="
-timeout 180 git rebase --autostash origin/main >/tmp/_z_rb.log 2>&1; RB=$?
-tail -8 /tmp/_z_rb.log | cut -c1-190
-echo "rebase_rc=$RB"
-echo "=== [6] if OK: fix PUSH_INTERVAL on disk + restart relay/loop ==="
-if [ "$RB" -eq 0 ]; then
-  sed -i 's/^PUSH_INTERVAL=18000/PUSH_INTERVAL=1800/' "$W/doc/ZhuLong_DAC2027/run/zhulong_loop.sh"
-  grep -n '^PUSH_INTERVAL=' "$W/doc/ZhuLong_DAC2027/run/zhulong_loop.sh" | cut -c1-120
-  if tail -1 /tmp/zhulong_loop.log 2>/dev/null | grep -q sleep; then
-    cp -f /tmp/zhulong_loop.log "/tmp/zhulong_loop.log.bak.$(date +%s)" 2>/dev/null
-    pkill -f zhulong_loop.sh 2>/dev/null; sleep 2
-    setsid bash "$W/doc/ZhuLong_DAC2027/run/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
-    sleep 3; ps -eo pid,etime,args | grep 'zhulong_loop\.sh' | grep -v grep | cut -c1-140
-  else
-    echo "loop busy -> SKIP loop restart"
-  fi
-  cp -f /tmp/zhulong_ops_relay.log "/tmp/zhulong_ops_relay.log.bak.$(date +%s)" 2>/dev/null
-  pkill -f zhulong_ops_relay.sh 2>/dev/null; sleep 2
-  setsid bash "$W/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh" > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
-  sleep 3; ps -eo pid,etime,args | grep 'zhulong_ops_relay\.sh' | grep -v grep | cut -c1-140
-else
-  echo "!! rebase failed -> abort + NOT touching loops"; git rebase --abort 2>/dev/null
-fi
+echo "host=$(hostname)  $(date '+%F %T')"
+echo "--- [1] procs (etime should be minutes: restarted by RUN_ID 77) ---"
+ps -eo pid,etime,args | grep -E 'zhulong_(loop|ops_relay)\.sh' | grep -v grep | cut -c1-140 || echo "(none running)"
+echo "--- [2] loop log tail (look for [push] ...) ---"
+tail -8 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-190
+echo "--- [3] relay log tail ---"
+tail -4 /tmp/zhulong_ops_relay.log 2>/dev/null | cut -c1-190
+echo "--- [4] PUSH_INTERVAL on disk ---"
+grep -n '^PUSH_INTERVAL=' "$W/doc/ZhuLong_DAC2027/run/zhulong_loop.sh" | cut -c1-120
+echo "--- [5] git head + dirty ---"
+git log --oneline -2 2>/dev/null | cut -c1-140
+git status --short 2>/dev/null | head -6 | cut -c1-140
 echo "=== DONE ==="
 EOS
 echo "=== ALL DONE ==="
-```
-
-
 ## RUN_ID 77 — 🔧 **ZhuLong（36.15）git 追平**：备份 → 挪未跟踪文件 → `fetch`(150s) → `rebase --autostash`(280s) → 成功才重启
 
 > **背景（supervisor 2026-10-06 11:3x）**：RUN_ID 76 诊断 —— 36.15 仓库 **`ahead 5, behind 304`**（长期推不出去 ⇒ 落后 304 提交）；`pull --rebase --autostash` **不是报错而是 120s 超时被杀**（rc=124）；另有 **2 个残留 `autostash`** 与未跟踪的 `doc/三机互联方法.md`。⇒ 上一块的 120s 不够用，本块**加长超时**并**先备份**。
