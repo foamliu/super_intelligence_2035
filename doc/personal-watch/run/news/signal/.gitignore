@@ -1,0 +1,20 @@
+# 📦 体积红线（红线 §4-11 · 2026-10-05 用户明令）：
+#   任何单个文件 ≥ 5 MB 一律不入 git → 走网盘。
+#   本目录：`prices/<code>.json` 单标的十年日频很小（≪5MB）⇒ **入 git**。
+#   只拦「合并宽表 / 原始超大中间件」。
+
+# 合并宽表 / 原始缓存（可能 ≥5MB）
+prices/wide_*.json
+prices/*_wide.json
+raw/
+*.large.json
+
+# 压缩包 / 归档（防御性）
+*.zip
+*.tar.gz
+*.7z
+*.gz
+
+# Python 缓存
+__pycache__/
+*.pyc
