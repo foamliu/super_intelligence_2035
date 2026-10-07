@@ -1,6 +1,6 @@
 # SIGNALS — 先行信号清单（N3-2）
 
-> **生成**：2026-10-07 07:54 ｜ 脚本：`news/policy/signals.py` ｜ 语料：`news/archive/*.jsonl.gz`
+> **生成**：2026-10-08 06:08 ｜ 脚本：`news/policy/signals.py` ｜ 语料：`news/archive/*.jsonl.gz`
 
 > ⚠️ **口径**：本表只做**描述性统计**（计数 / 首次出现 / 分布 / 趋势），**不预测、不表态**（政治中立）；每条信号给**可操作提取方法** + **`as-of` 可得时点**。
 

@@ -427,5 +427,15 @@
 | 2026-10-07 | 落实特朗普行政令，美国司法部要求员工改称 AI 为“超级智能” | IT之家（据路透社） | news | https://www.ithome.com/1/010/135.htm |
 | 2026-10-07 | 消息称 SpaceX 计划募资 400 亿美元，用于采购英伟达 AI 芯片 | IT之家（据金融时报） | news | https://www.ithome.com/1/010/134.htm |
 | 2026-10-07 | AI 颠覆担忧消退，美国软件股创 2026 年阶段新高 | IT之家 | news | https://www.ithome.com/1/010/141.htm |
+| 2026-10-08 | MAI Code 1.1 Flash 模型将整合到微软 Win11：上下文窗口 256K、130B 参数 | IT之家 | news | https://www.ithome.com/1/010/308.htm |
+| 2026-10-08 | 英伟达发布 DGX Station for Windows：本地运行 1 万亿参数 AI 模型，最高 748GB 内存 | IT之家 | news | https://www.ithome.com/1/010/313.htm |
+| 2026-10-08 | Google's new SynthID website can identify AI-generated media | TechCrunch | news | https://techcrunch.com/2026/10/07/googles-new-synthid-website-can-identify-ai-generated-media/ |
+| 2026-10-08 | Nous Research confirms it hit $1.5B valuation, launches AI agents for business users | TechCrunch | news | https://techcrunch.com/2026/10/07/nous-research-confirms-it-hit-1-5b-valuation-launches-ai-agents-for-business-users/ |
+| 2026-10-08 | 传三星电子 12Hi HBM4E 内存已通过英伟达等主要客户质量验证测试 | IT之家（据韩国经济日报） | news | https://www.ithome.com/1/010/303.htm |
+| 2026-10-08 | CoreWeave 落子印度，签署 240MW 数据中心容量租约 | IT之家 | news | https://www.ithome.com/1/010/300.htm |
+| 2026-10-08 | 微软 Surface Laptop Ultra 售价公布：起价 21988 元，128GB 内存顶配售 48388 元 | IT之家 | news(同发布会簇·防重不收·已由 010/313 覆盖) | https://www.ithome.com/1/010/320.htm |
+| 2026-10-08 | 英伟达黄仁勋：已测超 1200 款应用，RTX Spark 是全球唯一本地原生运行所有应用的电脑 | IT之家 | news(同发布会簇·防重不收·已由 010/313 覆盖) | https://www.ithome.com/1/010/318.htm |
+| 2026-10-08 | Meta's Muse launches on iPad just a month after its mobile debut | TechCrunch | news(本轮未收·留待下轮或按需) | https://techcrunch.com/2026/10/07/metas-muse-launches-on-ipad-just-a-month-after-its-mobile-debut/ |
+| 2026-10-08 | 微软发布 VS Code v1.141：清理"僵尸"Agent 会话等 | IT之家 | devtool(非新闻·防重不收) | https://www.ithome.com/1/010/325.htm |
 
 

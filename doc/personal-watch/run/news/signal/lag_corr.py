@@ -457,10 +457,12 @@ def write_md(rows, assets, cal, ncorpus):
     sig = [r for r in rows if r["q"] < 0.10]
     stable = [r for r in rows if r["flag"] == "stable"]
     L = []
-    L.append("# LAG_CORR — 新闻信号 → 资产价格 · 滞后相关 / 预测力（第一版 · R1）")
+    L.append("# LAG_CORR — 新闻信号 → 资产价格 · 滞后相关 / 预测力（R2 复核 · 2026-10-08）")
     L.append("")
     L.append(f"> 生成：`news/signal/lag_corr.py` ｜ 预注册：`PREREG.md`（**先于本结果**）"
              f" ｜ 语料 {ncorpus} 条 / 交易日 {len(cal)}（{cal[0]}~{cal[-1]}）")
+    L.append("> 🔁 **R2 复核**：本版为重跑（确定性，无随机成分）—— 全网格数值与 R1 一致；"
+             "结论台账见 `FINDINGS.md`，块自助 CI 见 `BOOTSTRAP.md`。")
     L.append("> ⚠️ **非因果 · 非投资建议**：本文只做**样本外预测关联**的描述性统计；"
              "🚫 禁用「影响/导致/利好/利空/冲击」、🚫 无点位预测/仓位/择时。")
     L.append("> ⚠️ 语料为**代理源 `chinanews`**（非新华社）⇒ 结论仅就该源成立，扩展源须按源分列重算。")
@@ -540,9 +542,10 @@ def write_md(rows, assets, cal, ncorpus):
     L.append("- ⚠️ 信号为**标题级子串计数**（噪声：A4『举行』/A11『上市』/A13『回应』等）⇒ 仅**存在性**证据。")
     L.append("- ⚠️ 语料为**代理源**；且**只含标题+日期**（无正文/版面）。")
     L.append("- ⚠️ 样本外命中率对比的是**多数向基线**；未做交易成本/涨跌停建模（**L3 冻结**）。")
-    L.append("- ⚠️ **block bootstrap CI 待补**（R2）；本版 CI 为 HAC 解析 CI。")
+    L.append("- ✅ **block bootstrap CI 已补**（R2）：见 `BOOTSTRAP.md`（移动块，block=21，B=5000）——"
+             "与 HAC 结论一致（负面结果照写）。")
     L.append("- ⚠️ **不做因果识别**（DID/断点/反事实/IV）—— 超本线能力 ⇒ **需人工/计量专家介入**。")
-    L.append("- 下一步（R2）：并入 `FINDINGS.md` 台账；对 FDR 存活格补 block bootstrap；出首份早报。")
+    L.append("- 结论台账：`FINDINGS.md`；信号快照：`LATEST_SIGNALS.md`；日报：`daily/<date>.md`。")
     L.append("")
     with open(OUT_MD, "w", encoding="utf-8") as f:
         f.write("\n".join(L) + "\n")
