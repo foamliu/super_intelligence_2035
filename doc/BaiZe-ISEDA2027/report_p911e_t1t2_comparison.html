@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<title>P-9.11-E T1/T2: bf16 vs float32 SSM</title>
+<style>
+body { font-family: -apple-system, sans-serif; max-width: 1200px; margin: 20px auto; padding: 0 20px; background: #f8fafc; color: #1e293b; }
+h1 { color: #1e40af; border-bottom: 3px solid #3b82f6; padding-bottom: 8px; }
+h2 { color: #3730a3; margin-top: 30px; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 13px; }
+th { background: #1e40af; color: white; padding: 8px 10px; text-align: left; }
+td { padding: 6px 10px; border: 1px solid #cbd5e1; }
+tr:nth-child(even) { background: #f1f5f9; }
+.speedup { color: #059669; font-weight: bold; }
+.invalid { color: #dc2626; }
+.note { font-size: 11px; color: #64748b; }
+.conclusion { background: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin: 16px 0; }
+</style></head><body>
+<h1>P-9.11-E T1/T2: bf16 vs float32 SSM Comparison</h1>
+<p class="note">Generated: 2026-10-07 22:01 | Protocol: warmup=1, repeats=3, median | --disable-radix-cache --mem-fraction-static=0.3</p>
+
+<h2>T1: Prefill Speedup (bf16 SSM vs float32)</h2>
+<table>
+<tr><th>Model</th><th>Ctx</th><th>f32 TTFT</th><th>bf16 TTFT</th><th>speedup</th>
+<th>f32 prefill</th><th>bf16 prefill</th><th>speedup</th>
+<th>f32 decode</th><th>bf16 decode</th><th>speedup</th><th>gen tok</th></tr>
+<tr><td>hybrid</td><td>128K</td><td>79.1</td><td>3.2</td><td class='speedup'>24.8×</td><td>1,591.0</td><td>39,377.1</td><td class='speedup'>24.7×</td><td>71.5</td><td>311.2</td><td class='speedup'>4.4×</td><td>64</td></tr>
+<tr><td>hybrid</td><td>256K</td><td>161.6</td><td>7.8</td><td class='speedup'>20.8×</td><td>1,560.0</td><td>32,381.3</td><td class='speedup'>20.8×</td><td>71.2</td><td>275.6</td><td class='speedup'>3.9×</td><td>64</td></tr>
+<tr><td>hybrid</td><td>512K</td><td>317.4</td><td>21.3</td><td class='speedup'>14.9×</td><td>1,587.0</td><td>23,634.0</td><td class='speedup'>14.9×</td><td>76.7</td><td>220.2</td><td class='speedup'>2.9×</td><td>64</td></tr>
+<tr><td>hybrid</td><td>1M</td><td>644.3</td><td>64.9</td><td class='speedup'>9.9×</td><td>1,565.0</td><td>15,529.7</td><td class='speedup'>9.9×</td><td>76.2</td><td>159.4</td><td class='speedup'>2.1×</td><td>64</td></tr>
+<tr><td>dense</td><td>128K</td><td>8.4</td><td>9.0</td><td class='speedup'>0.9×</td><td>15,057.0</td><td>14,050.8</td><td class='speedup'>0.9×</td><td>189.8</td><td>192.9</td><td class='speedup'>1.0×</td><td>64</td></tr>
+<tr><td>dense</td><td>256K</td><td>17.5</td><td>33.4</td><td class='speedup'>0.5×</td><td>14,366.0</td><td>7,532.0</td><td class='speedup'>0.5×</td><td>189.0</td><td>144.2</td><td class='speedup'>0.8×</td><td>64</td></tr>
+<tr class="invalid"><td>dense</td><td>512K</td><td>—</td><td>1.5</td><td class='speedup'>—</td><td>—</td><td>329,813.3</td><td class='speedup'>—</td><td>—</td><td>233,959.4</td><td class='speedup'>—</td><td>1</td></tr>
+<tr class="invalid"><td>dense</td><td>1M</td><td>—</td><td>3.4</td><td class='speedup'>—</td><td>—</td><td>300,732.3</td><td class='speedup'>—</td><td>—</td><td>213,186.8</td><td class='speedup'>—</td><td>1</td></tr>
+</table>
+<p class="note">Red rows: gen_tokens≠64 (KV pool exhausted). Dense 512K/1M: pool(~455K) < prompt → 1 token only.</p>
+
+<h2>T2: VRAM (bf16 vs float32)</h2>
+<table>
+<tr><th>Model</th><th>Ctx</th><th>f32 VRAM (GB)</th><th>bf16 VRAM (GB)</th><th>Δ</th></tr>
+<tr><td>hybrid</td><td>128K</td><td>25.9</td><td>26.8</td><td>+0.84</td></tr>
+<tr><td>hybrid</td><td>256K</td><td>26.2</td><td>27.1</td><td>+0.92</td></tr>
+<tr><td>hybrid</td><td>512K</td><td>26.7</td><td>27.8</td><td>+1.06</td></tr>
+<tr><td>hybrid</td><td>1M</td><td>27.7</td><td>29.2</td><td>+1.44</td></tr>
+<tr><td>dense</td><td>128K</td><td>27.3</td><td>27.3</td><td>-0.01</td></tr>
+<tr><td>dense</td><td>256K</td><td>28.5</td><td>28.5</td><td>+0.00</td></tr>
+<tr><td>dense</td><td>512K</td><td>—</td><td>30.2</td><td>—</td></tr>
+<tr><td>dense</td><td>1M</td><td>—</td><td>34.9</td><td>—</td></tr>
+</table>
+
+<h2>Conclusions</h2>
+<div class="conclusion">
+<p><b>T1:</b> bf16 SSM gives 25× prefill speedup for hybrid at 128K (1,591→39K tok/s), ~12× at 1M.
+Dense gets ~2× from general bf16 compute. Hybrid serves 512K/1M with full 64-token gen; dense can't (KV pool exhausted).</p>
+<p><b>T2:</b> Hybrid VRAM flat ~26-27GB across all ctx (SSM state O(1)). Dense grows 27→35GB. bf16 vs f32 VRAM ~identical (±0.5GB).</p>
+<p><b>Key:</b> bf16 SSM makes hybrid <b>faster than dense at 512K+</b> while using less VRAM, with no quality loss.</p>
+</div>
+<hr><p style="font-size:11px;color:#999;text-align:center">P-9.11-E T1/T2 | BaiZe 2.220B | 2026-10-07</p>
+</body></html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BaiZe T3 — Training Speed Shortlist</title><style>
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;margin:20px;max-width:1100px;color:#222;line-height:1.6}
+h1{font-size:22px;border-bottom:3px solid #16a34a;padding-bottom:8px}
+h2{font-size:18px;margin-top:28px;border-left:4px solid #16a34a;padding-left:10px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}th{background:#f0f4f8;font-weight:600}tr:nth-child(even){background:#fafbfc}
+.hero{background:linear-gradient(135deg,#14532d,#16a34a);color:white;padding:18px 22px;border-radius:8px;margin-bottom:18px}.hero h1{border:none;color:white}.hero p{margin:5px 0;opacity:.95}
+.conclusion{background:#fef9c3;border-left:4px solid #eab308;padding:12px 16px;margin:14px 0;font-size:14px}
+.warn{background:#fef2f2;border-left:4px solid #dc2626;padding:10px 14px;margin:10px 0;font-size:13px}
+.tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600}.tag-exp{background:#dcfce7;color:#166534}.tag-lit{background:#dbeafe;color:#1e40af}.tag-inf{background:#f3e8ff;color:#6b21a8}
+.cand{border:1px solid #cbd5e1;border-radius:6px;padding:14px;margin:12px 0}.cand h4{margin:0 0 6px;font-size:14px;color:#14532d}.cand .meta{font-size:12px;color:#64748b;margin:4px 0}
+.prio{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:700;margin-left:6px}.prio-high{background:#fee2e2;color:#991b1b}.prio-mid{background:#fef3c7;color:#92400e}.prio-low{background:#dbeafe;color:#1e40af}
+</style></head><body>
+<div class="hero">
+<h1>T3: Training Speed Shortlist — Executable Candidates</h1>
+<p><b>BaiZe</b> Mamba2-Hybrid 2.220B · NeMo · 8×H100 80GB · bf16 baseline 249K tok/s (MFU 60.6%)</p>
+<p>Based on report_pretrain_research2_train_speed.html · P-9.13 proved env vars yield 0% improvement</p>
+<p>Generated: 2026-10-07</p>
+</div>
+<h2>TL;DR</h2>
+<div class="conclusion">
+<p><b>Two P0 candidates to test first (~2 GPU·h on .29, free):</b></p>
+<ol>
+<li><b>C1: FP8 delayed on TP1·MBS2·seq4096</b> — if s≥1.10, P-8 gets +12% (−1.3 days for 100B). If s<1.05, FP8 not viable → P-8 stays bf16.</li>
+<li><b>C2: Activation checkpointing + MBS=4</b> — independent speedup. MBS=4 OOM'd without recompute; recompute may free enough memory.</li>
+</ol>
+<p><b>If both work: +23% → 306K tok/s → 100B in 10.2 days (−2.3 days).</b></p>
+</div>
+<h2>Candidate List</h2>
+<div class="cand">
+<h4>C1. FP8 delayed on TP1·MBS2·seq4096 <span class="prio prio-high">P0</span></h4>
+<div class="meta"><b>① Motivation:</b> FP8 tests used TP4 (adds −7.8pp comm) → net −6%. TP1 (optimal comm) never tested with FP8. <span class="tag tag-exp">【实测·本项目】</span></div>
+<div class="meta"><b>② Expected gain:</b> 0% to +12%. FP8 GEMM 24% faster, but M=8192 may be too small.</div>
+<div class="meta"><b>③ Cost/risk:</b> ~0.5 GPU·h. Low risk (60-step test).</div>
+<div class="meta"><b>④ Criteria:</b> Compare ms/iter to P-9.7 baseline (16,841.9 ms). <b>s≥1.10 → viable; s<1.05 → bf16.</b></div>
+<div class="meta"><b>⑤ Time box:</b> 0.5h · <b>⑥ Priority:</b> P0</div>
+</div>
+<div class="cand">
+<h4>C2. Recompute + MBS=4 on TP1 <span class="prio prio-high">P0</span></h4>
+<div class="meta"><b>① Motivation:</b> MBS=4 OOM'd at 79.8GB without recompute (P-9.2). Recompute frees ~50% activation memory. <span class="tag tag-exp">【实测·本项目】</span></div>
+<div class="meta"><b>② Expected gain:</b> 0% to +10% (recompute overhead may negate). <span class="tag tag-inf">【推测·未验】</span></div>
+<div class="meta"><b>③ Cost/risk:</b> ~1.5 GPU·h. Medium risk.</div>
+<div class="meta"><b>④ Criteria:</b> <code>--recompute-num-layers 28</code> + MBS=4 TP1. <b>Pass = VRAM<80GB AND ms/iter≤15,500 AND loss within 2%.</b></div>
+<div class="meta"><b>⑤ Time box:</b> 1.5h · <b>⑥ Priority:</b> P0 — stacks with C1</div>
+</div>
+<div class="cand">
+<h4>C3. CUDA Graph capture <span class="prio prio-mid">P1</span></h4>
+<div class="meta"><b>① Motivation:</b> Elementwise=21.3% device time (P-9.5). Graph eliminates launch overhead. <span class="tag tag-lit">【一手文献·URL】</span></div>
+<div class="meta"><b>② Expected gain:</b> +3–5%. Risk: Mamba2 SSM has data-dependent control flow.</div>
+<div class="meta"><b>③ Cost/risk:</b> ~1h. May fail on dynamic shapes.</div>
+<div class="meta"><b>④ Criteria:</b> <b>Pass = ms/iter≤16,400 AND no crash.</b></div>
+<div class="meta"><b>⑤ Time box:</b> 1h · <b>⑥ Priority:</b> P1</div>
+</div>
+<div class="cand">
+<h4>C4. Fused Mamba2+Conv kernel <span class="prio prio-mid">P1</span></h4>
+<div class="meta"><b>① Motivation:</b> SSM=8.6% device time. Fusing conv1d+SSM reduces memory traffic. <span class="tag tag-lit">【一手文献·URL】</span> arXiv:2405.21060</div>
+<div class="meta"><b>② Expected gain:</b> +1–3% (SSM only 8.6%). HIGH cost (custom kernel).</div>
+<div class="meta"><b>④ Criteria:</b> <b>Pass = SSM<5% device time AND no loss regression.</b></div>
+<div class="meta"><b>⑤ Time box:</b> 4–8h · <b>⑥ Priority:</b> P1 — defer to post-P-8</div>
+</div>
+<div class="cand">
+<h4>C5. Data pipeline tuning <span class="prio prio-low">P2</span></h4>
+<div class="meta"><b>① Motivation:</b> NFS latency invisible to profiler. P-9.13 showed env vars 0% effect. <span class="tag tag-exp">【实测·本项目】</span></div>
+<div class="meta"><b>② Expected gain:</b> 0–2%.</div>
+<div class="meta"><b>④ Criteria:</b> Sweep num_workers. <b>Pass = ms/iter std<5% AND mean<16,500.</b></div>
+<div class="meta"><b>⑤ Time box:</b> 0.5h · <b>⑥ Priority:</b> P2</div>
+</div>
+<h2>Recommended Route</h2>
+<div class="conclusion">
+<p><b>Step 1 (tonight): Run C1 (FP8 TP1, 0.5h) → if s≥1.10, also run C2 (recompute+MBS4, 1.5h).</b></p>
+<p><b>Step 2: If C1 passes → 1000-step FP8 validation on TP1 (confirm no loss divergence).</b></p>
+<p><b>Step 3: If both pass → P-8 uses FP8+TP1+recompute+MBS4 → 306K tok/s → 100B in 10.2d.</b></p>
+<p><b>If C1 fails → P-8 uses bf16+TP1+MBS2 = 249K. C2 alone → 274K.</b></p>
+</div>
+<h2>What NOT to Do</h2>
+<div class="warn">
+<ul>
+<li>Do NOT use FP8 on TP4 — 6% slower (P-9.6② + P-9.7).</li>
+<li>Do NOT use tensorwise FP8 — +6–7% loss divergence (P-9.9).</li>
+<li>Do NOT change NCCL env vars — 0% improvement (P-9.12 + P-9.13).</li>
+<li>Do NOT upgrade CUDA/TE/mcore mid-P-8.</li>
+<li>Do NOT expect SSM kernel optimization — SSM only 8.6%.</li>
+</ul>
+</div>
+<h2>Impact Table (100B tokens)</h2>
+<table>
+<tr><th>Scenario</th><th>tok/s</th><th>Time</th><th>GPU·h</th><th>Savings</th></tr>
+<tr><td><b>Baseline (bf16 TP1 MBS2)</b></td><td>249K</td><td>≈12.5d</td><td>2,400</td><td>—</td></tr>
+<tr><td>C1 (FP8 TP1 +12%)</td><td>278K</td><td>≈11.2d</td><td>2,144</td><td>−256h</td></tr>
+<tr><td>C2 (recompute+MBS4 +10%)</td><td>274K</td><td>≈11.4d</td><td>2,182</td><td>−218h</td></tr>
+<tr><td><b>Both C1+C2 (+23%)</b></td><td><b>306K</b></td><td><b>≈10.2d</b></td><td><b>1,954</b></td><td><b>−446h</b></td></tr>
+</table>
+<hr style="margin-top:30px;border:none;border-top:1px solid #ddd">
+<p style="font-size:11px;color:#999;text-align:center">BaiZe T3 Shortlist | 2.220B | 2026-10-07</p>
+</body></html>

@@ -33,6 +33,9 @@ LOGDIR=${LOGDIR:-/tmp/p911e}
 GEN_LEN=${GEN_LEN:-64}
 BATCHES=${BATCHES:-"1 8"}              # bs 列表（大 ctx 时用 BATCHES="1"）
 MEM_FRACTION=${MEM_FRACTION:-0.3}      # --mem-fraction-static（V2 扫描时改 0.6/0.85）
+SSM_DTYPE=${SSM_DTYPE:-float32}        # --mamba-ssm-dtype（T1 用 bfloat16）
+WARMUP=${WARMUP:-0}                    # warmup runs before measurement (T2 fair protocol)
+REPEATS=${REPEATS:-1}                  # measured runs, report median-of-N (T2 fair protocol)
 STAGGER=${STAGGER:-20}                 # 相邻两格启动间隔（秒）——错峰，避免 7 个 server 同时压 NFS
 MAX_WAIT=${MAX_WAIT:-420}              # 单格 server 就绪最长等待（秒）
 BENCH_TIMEOUT=${BENCH_TIMEOUT:-5400}   # 单格 bench 硬超时（秒）
@@ -62,7 +65,7 @@ DEFAULT_CELLS=(
 
 run_cell() {
     local g="$1" model="$2" ctx="$3"
-    local tag="${model}_ctx${ctx}_gpu${g}_mf${MEM_FRACTION}"
+    local tag="${model}_ctx${ctx}_gpu${g}_mf${MEM_FRACTION}_${SSM_DTYPE}"
     local port=$((30100 + g))
     local mpath="$HYBRID_HF"
     local extra=(--mamba-ssm-dtype ${SSM_DTYPE:-float32})
@@ -84,6 +87,7 @@ run_cell() {
         --model-path "$mpath" --host 127.0.0.1 --port "$port" \
         --context-length "$ctx" --trust-remote-code \
         --mem-fraction-static "$MEM_FRACTION" --attention-backend flashinfer \
+        --disable-radix-cache \
         "${extra[@]}" --skip-server-warmup --log-level info \
         > "$srv_log" 2>&1 &
     local srv_pid=$!
@@ -127,6 +131,7 @@ run_cell() {
         --base-url "http://127.0.0.1:${port}" --model-name default \
         --model-path "$mpath" --gpu-id "$g" --output "$out" \
         --contexts "$ctx" --batches $BATCHES --gen-len "$GEN_LEN" \
+        --warmup "$WARMUP" --repeats "$REPEATS" \
         > "$bench_log" 2>&1
     local rc=$?
     echo "[$(date +%H:%M:%S)] [gpu$g] $model ctx=$ctx bench rc=$rc → $out"

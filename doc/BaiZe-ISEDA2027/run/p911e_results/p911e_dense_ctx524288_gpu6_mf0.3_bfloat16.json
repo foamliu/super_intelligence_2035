@@ -1,0 +1,68 @@
+{
+  "experiment": "P-9.11-D",
+  "description": "sglang VRAM benchmark with low mem-fraction (H3 gap fill)",
+  "model_name": "default",
+  "model_path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/p3_dense/hf_iter_5000",
+  "base_url": "http://127.0.0.1:30106",
+  "gpu_id": 6,
+  "gen_len": 64,
+  "warmup": 1,
+  "repeats": 3,
+  "contexts": [
+    524288
+  ],
+  "batches": [
+    1
+  ],
+  "results": [
+    {
+      "model": "default",
+      "ctx": 524288,
+      "batch": 1,
+      "gen_len": 64,
+      "prompt_tokens_actual": 504001,
+      "warmup": 1,
+      "repeats": 3,
+      "ttft_s": 1.5281,
+      "prefill_tok_s": 329813.3,
+      "decode_tok_s": 233959.4,
+      "e2e_latency_s": 1.5284,
+      "peak_vram_gb": 30.22,
+      "total_completion_tokens": 1,
+      "vram_samples": 8,
+      "all_runs": [
+        {
+          "ttft_s": 1.6156,
+          "e2e_latency_s": 1.6159,
+          "peak_vram_gb": 30.22,
+          "total_completion_tokens": 1,
+          "vram_samples": 6,
+          "error": null,
+          "prefill_tok_s": 311959.3,
+          "decode_tok_s": 214909.5
+        },
+        {
+          "ttft_s": 1.5226,
+          "e2e_latency_s": 1.5229,
+          "peak_vram_gb": 30.22,
+          "total_completion_tokens": 1,
+          "vram_samples": 6,
+          "error": null,
+          "prefill_tok_s": 331012.0,
+          "decode_tok_s": 233959.4
+        },
+        {
+          "ttft_s": 1.5281,
+          "e2e_latency_s": 1.5284,
+          "peak_vram_gb": 30.22,
+          "total_completion_tokens": 1,
+          "vram_samples": 8,
+          "error": null,
+          "prefill_tok_s": 329813.3,
+          "decode_tok_s": 251579.6
+        }
+      ],
+      "error": null
+    }
+  ]
+}

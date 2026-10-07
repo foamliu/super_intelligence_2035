@@ -1,0 +1,95 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BaiZe T4 — Training Quality Shortlist</title><style>
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;margin:20px;max-width:1100px;color:#222;line-height:1.6}
+h1{font-size:22px;border-bottom:3px solid #7c3aed;padding-bottom:8px}
+h2{font-size:18px;margin-top:28px;border-left:4px solid #7c3aed;padding-left:10px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}th{background:#f0f4f8;font-weight:600}tr:nth-child(even){background:#fafbfc}
+.hero{background:linear-gradient(135deg,#4c1d95,#7c3aed);color:white;padding:18px 22px;border-radius:8px;margin-bottom:18px}.hero h1{border:none;color:white}.hero p{margin:5px 0;opacity:.95}
+.conclusion{background:#fef9c3;border-left:4px solid #eab308;padding:12px 16px;margin:14px 0;font-size:14px}
+.warn{background:#fef2f2;border-left:4px solid #dc2626;padding:10px 14px;margin:10px 0;font-size:13px}
+.good{background:#f0fdf4;border-left:4px solid #16a34a;padding:10px 14px;margin:10px 0;font-size:13px}
+.tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600}.tag-exp{background:#dcfce7;color:#166534}.tag-lit{background:#dbeafe;color:#1e40af}.tag-inf{background:#f3e8ff;color:#6b21a8}
+.cand{border:1px solid #cbd5e1;border-radius:6px;padding:14px;margin:12px 0}.cand h4{margin:0 0 6px;font-size:14px;color:#4c1d95}.cand .meta{font-size:12px;color:#64748b;margin:4px 0}
+.prio{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:700;margin-left:6px}.prio-high{background:#fee2e2;color:#991b1b}.prio-mid{background:#fef3c7;color:#92400e}.prio-low{background:#dbeafe;color:#1e40af}
+</style></head><body>
+<div class="hero">
+<h1>T4: Training Quality Shortlist — Executable Candidates</h1>
+<p><b>BaiZe</b> Mamba2-Hybrid 2.220B · 20B tokens · Avg 49.22% · Complex 5/6 at floor · BBH 14.3% peak</p>
+<h2>TL;DR</h2>
+<div class="conclusion">
+<p><b>Two-tier quality is real: common-sense scales (33→49%, R²=0.986), complex reasoning at floor (5/6 tasks). The #1 lever is data mixture quality + token budget, not architecture or LR.</b></p>
+<ol>
+<li><b>Q1: Increase token budget to 100B</b> (P-8 planned) — scaling law predicts 57-58% Avg. P0, no code change needed.</li>
+<li><b>Q2: Data mixture enrichment</b> — add math/code/knowledge data. Phi-2 (2.7B, 250B curated) → GSM8K 61%. P0, high leverage.</li>
+<li><b>Q3: Long-context training data</b> — current passkey=0% at 4K/8K. Need long-doc data in training mix. P1.</li>
+<li><b>Q4: Instruction/CoT data for post-pretraining</b> — Stage (ii) scope, not P-8. P1, deferred.</li>
+<li><b>Q5: WSD annealing schedule</b> — already optimal (P-5b). No action. P2.</li>
+</ol>
+</div>
+<h2>Current State (Measured) <span class="tag tag-exp">【实测·本项目】</span></h2>
+<table>
+<tr><th>Metric</th><th>Value</th><th>Source</th></tr>
+<tr><td>Common-sense 8-set Avg</td><td>33.26→49.22% (655M→20B tok)</td><td>P-6② scaling law, R²=0.986</td></tr>
+<tr><td>Complex reasoning 6-set</td><td>5/6 at floor (GSM8K 0-3%, MATH 0%, HumanEval 0%, MBPP 0%, MMLU ~23%)</td><td>A 36/36 eval</td></tr>
+<tr><td>BBH (only emergent)</td><td>3.1→14.3% peak @2.6B, settling 8.8%</td><td>A 36/36 eval</td></tr>
+<tr><td>Hybrid vs Dense</td><td>Hybrid wins all 5 ckpts (Δ=0.22-0.43, 9% advantage at 11.6% fewer params)</td><td>P-3</td></tr>
+<tr><td>LR optimum</td><td>1e-3 at ALL batch sizes (no batch rescaling needed)</td><td>P-5a 12-point sweep</td></tr>
+<tr><td>Passkey accuracy</td><td>0% at 4K/8K (B test)</td><td>B passkey eval</td></tr>
+<tr><td>1M PPL</td><td>55.42 (no degradation vs 4K)</td><td>B1 long-ctx PPL</td></tr>
+</table>
+<p>Based on report_pretrain_research3_train_quality.html · Target: 8 common-sense + 6 complex + agent/SWE-Bench</p>
+<p>Generated: 2026-10-07</p>
+</div>
+<h2>Candidate List</h2>
+<div class="cand">
+<h4>Q1. Token budget → 100B (P-8) <span class="prio prio-high">P0</span></h4>
+<div class="meta"><b>① Motivation:</b> Scaling law R²=0.986 predicts 57-58% Avg at 100B. Loss still descending at 20B. <span class="tag tag-exp">【实测·本项目】</span></div>
+<div class="meta"><b>② Expected gain:</b> +8-9pp Avg (49→58%). No gain on complex reasoning (web-only).</div>
+<div class="meta"><b>③ Cost/risk:</b> ~12.5d GPU. Diminishing returns (log-linear).</div>
+<div class="meta"><b>④ Criteria:</b> P-8 Avg≥55%. Loss≤1.7 at 100B.</div>
+<div class="meta"><b>⑤ Time box:</b> 12.5d · <b>⑥ Priority:</b> P0 — planned</div>
+</div>
+<div class="cand">
+<h4>Q2. Data mixture: math/code/knowledge <span class="prio prio-high">P0</span></h4>
+<div class="meta"><b>① Motivation:</b> Complex reasoning at floor. Phi-2 (2.7B, 250B curated)→GSM8K 61% vs our 1%. Gap=data quality. <span class="tag tag-lit">【一手文献·URL】</span> arXiv:2311.00659</div>
+<div class="meta"><b>② Expected gain:</b> GSM8K 0→30-50%, MMLU 23→50%, HumanEval 0→20%.</div>
+<div class="meta"><b>③ Cost/risk:</b> Data prep + continued PT. Mixture ratio sensitivity.</div>
+<div class="meta"><b>④ Criteria:</b> web75%+math10%+code10%+knowledge5%. <b>Pass=GSM8K≥15%, MMLU≥40%.</b></div>
+<div class="meta"><b>⑤ Time box:</b> Data prep+~5d PT · <b>⑥ Priority:</b> P0 — highest leverage</div>
+</div>
+<div class="cand">
+<h4>Q3. Long-context training data <span class="prio prio-mid">P1</span></h4>
+<div class="meta"><b>① Motivation:</b> Passkey=0% at 4K/8K. 1M PPL=55.42 (no degradation but can't retrieve). <span class="tag tag-exp">【实测·本项目】</span></div>
+<div class="meta"><b>② Expected gain:</b> Passkey 0→50%+ with long-doc data + ABF.</div>
+<div class="meta"><b>③ Cost/risk:</b> Long-doc data + RoPE config. ABF showed no degradation on downstream (B test).</div>
+<div class="meta"><b>④ Criteria:</b> 5-10% long-doc data + ABF(rope_theta=1e6). <b>Pass=passkey≥30% at 4K.</b></div>
+<div class="meta"><b>⑤ Time box:</b> Data prep+config · <b>⑥ Priority:</b> P1</div>
+</div>
+<div class="cand">
+<h4>Q4. Instruction/CoT (Stage ii) <span class="prio prio-mid">P1</span></h4>
+<div class="meta"><b>① Motivation:</b> Complex reasoning needs CoT, not just pretraining. <span class="tag tag-lit">【一手文献·URL】</span></div>
+<div class="meta"><b>② Expected gain:</b> GSM8K +10-20pp with SFT.</div>
+<div class="meta"><b>③ Cost/risk:</b> Stage (ii), not P-8. SFT may overfit at 2B.</div>
+<div class="meta"><b>④ Criteria:</b> Post-P-8 SFT on OpenOrca/MetaMathQA. <b>Pass=GSM8K≥20%.</b></div>
+<div class="meta"><b>⑤ Time box:</b> Stage (ii) · <b>⑥ Priority:</b> P1 — deferred</div>
+</div>
+<div class="cand">
+<h4>Q5. WSD schedule <span class="prio prio-low">P2</span></h4>
+<div class="meta"><b>① Motivation:</b> P-5b tested 8 configs, current is optimal. <span class="tag tag-exp">【实测·本项目】</span></div>
+<div class="meta"><b>② Expected gain:</b> 0% (no action).</div>
+<div class="meta"><b>④ Criteria:</b> N/A · <b>⑤ Time box:</b> N/A · <b>⑥ Priority:</b> P2</div>
+</div>
+<h2>Recommended Route</h2>
+<div class="conclusion">
+<p><b>Phase A (P-8, immediate):</b> 100B tokens, current web-only mix → 57-58% Avg (common-sense).</p>
+<p><b>Phase B (post-P-8 or parallel):</b> Data mixture (math10%+code10%+knowledge5%) + 5-10% long-doc + ABF → unlock complex reasoning + long-ctx.</p>
+<p><b>Phase C (Stage ii):</b> SFT/CoT on P-8 ckpt → GSM8K 20%+, HumanEval 10%+.</p>
+<p><b>Do NOT:</b> tune LR (optimal at 1e-3). Do NOT change arch (hybrid beats dense). Do NOT expect complex reasoning from web-only data (TinyLLaMA 1.5T→GSM8K 2%).</p>
+</div>
+<h2>References</h2>
+<div class="ref" style="font-size:12px;color:#475569;margin:4px 0;padding-left:16px;text-indent:-16px">[1] Phi-2: arXiv:2311.00659 — 2.7B, 250B curated, GSM8K 61.1%</div>
+<div class="ref" style="font-size:12px;color:#475569;margin:4px 0;padding-left:16px;text-indent:-16px">[2] Nemotron-H: arXiv:2504.03624 — 8B hybrid, 4/52 attn, FP8</div>
+<div class="ref" style="font-size:12px;color:#475569;margin:4px 0;padding-left:16px;text-indent:-16px">[3] TinyLLaMA: arXiv:2401.17123 — 1.1B, 1.5T web, GSM8K 2%</div>
+<div class="ref" style="font-size:12px;color:#475569;margin:4px 0;padding-left:16px;text-indent:-16px">[4] BaiZe internal: EXPERIMENTS §P-3, §P-5a/b, §P-6②, §A, §B</div>
+<hr style="margin-top:30px;border:none;border-top:1px solid #ddd">
+<p style="font-size:11px;color:#999;text-align:center">BaiZe T4 Shortlist | 2.220B | 2026-10-07</p>
+</body></html>
