@@ -83,19 +83,14 @@ class VRAMSampler:
     def peak(self):
         return max(self.samples) if self.samples else -1.0
 
-def benchmark_cell(base_url, model_name, model_path, context, batch, gen_len, gpu_id):
-    prompt, actual_tok = make_prompt_precise(model_path, context)
-    url = f"{base_url}/v1/completions"
-    payload = {"model": model_name, "prompt": [prompt] * batch,
-               "max_tokens": gen_len, "temperature": 0.0, "stream": True,
-               "stream_options": {"include_usage": True}}
-    result = {"model": model_name, "ctx": context, "batch": batch,
-              "gen_len": gen_len, "prompt_tokens_actual": actual_tok}
+def _single_run(url, payload, gpu_id, timeout=600):
+    """Execute one streaming request, return raw timing metrics."""
     sampler = VRAMSampler(gpu_id, interval=0.1)
     sampler.start()
+    raw = {}
     try:
         t_start = time.perf_counter()
-        resp = requests.post(url, json=payload, stream=True, timeout=600)
+        resp = requests.post(url, json=payload, stream=True, timeout=timeout)
         resp.raise_for_status()
         ttft = None; total_tokens = 0; first_token_time = None
         for line in resp.iter_lines():
@@ -119,24 +114,66 @@ def benchmark_cell(base_url, model_name, model_path, context, batch, gen_len, gp
         t_end = time.perf_counter()
         e2e = t_end - t_start
         sampler.stop()
-        peak_vram = sampler.peak()
-        decode_tokens = gen_len * batch
-        prefill_tokens = actual_tok * batch
-        if ttft and ttft > 0:
-            result["ttft_s"] = round(ttft, 4)
-            result["prefill_tok_s"] = round(prefill_tokens / ttft, 1)
-        else:
-            result["ttft_s"] = None; result["prefill_tok_s"] = None
-        dt = e2e - (ttft or 0)
-        result["decode_tok_s"] = round(decode_tokens / dt, 1) if dt > 0 else None
-        result["e2e_latency_s"] = round(e2e, 4)
-        result["peak_vram_gb"] = round(peak_vram, 2)
-        result["total_completion_tokens"] = total_tokens
-        result["vram_samples"] = len(sampler.samples)
+        raw["ttft_s"] = ttft
+        raw["e2e_latency_s"] = e2e
+        raw["peak_vram_gb"] = sampler.peak()
+        raw["total_completion_tokens"] = total_tokens
+        raw["vram_samples"] = len(sampler.samples)
+        raw["error"] = None
     except Exception as e:
         sampler.stop()
-        result["error"] = f"{type(e).__name__}: {e}"
-        result["peak_vram_gb"] = round(sampler.peak(), 2)
+        raw["error"] = f"{type(e).__name__}: {e}"
+        raw["peak_vram_gb"] = sampler.peak()
+    return raw
+
+import statistics
+
+def benchmark_cell(base_url, model_name, model_path, context, batch, gen_len, gpu_id, warmup=0, repeats=1):
+    prompt, actual_tok = make_prompt_precise(model_path, context)
+    url = f"{base_url}/v1/completions"
+    payload = {"model": model_name, "prompt": [prompt] * batch,
+               "max_tokens": gen_len, "temperature": 0.0, "stream": True,
+               "stream_options": {"include_usage": True}}
+    result = {"model": model_name, "ctx": context, "batch": batch,
+              "gen_len": gen_len, "prompt_tokens_actual": actual_tok,
+              "warmup": warmup, "repeats": repeats}
+    decode_tokens = gen_len * batch
+    prefill_tokens = actual_tok * batch
+    for w in range(warmup):
+        print(f"  [warmup {w+1}/{warmup}] ...", flush=True)
+        _single_run(url, payload, gpu_id, timeout=600)
+        time.sleep(1)
+    all_runs = []
+    for r_idx in range(repeats):
+        raw = _single_run(url, payload, gpu_id, timeout=600)
+        if raw.get("error"):
+            print(f"  [run {r_idx+1}/{repeats}] ERROR: {raw['error']}", flush=True)
+            all_runs.append(raw); continue
+        ttft = raw["ttft_s"]; e2e = raw["e2e_latency_s"]
+        raw["prefill_tok_s"] = round(prefill_tokens / ttft, 1) if ttft and ttft > 0 else None
+        dt = e2e - (ttft or 0)
+        raw["decode_tok_s"] = round(decode_tokens / dt, 1) if dt > 0 else None
+        raw["ttft_s"] = round(ttft, 4) if ttft else None
+        raw["e2e_latency_s"] = round(e2e, 4)
+        raw["peak_vram_gb"] = round(raw["peak_vram_gb"], 2)
+        print(f"  [run {r_idx+1}/{repeats}] TTFT={raw['ttft_s']}s prefill={raw['prefill_tok_s']} "
+              f"decode={raw['decode_tok_s']} e2e={raw['e2e_latency_s']}s VRAM={raw['peak_vram_gb']}GB", flush=True)
+        all_runs.append(raw); time.sleep(2)
+    valid = [r for r in all_runs if not r.get("error")]
+    if not valid:
+        result["error"] = all_runs[0].get("error", "all_runs_failed") if all_runs else "no_runs"
+        result["all_runs"] = all_runs; return result
+    def med(key):
+        vals = [r[key] for r in valid if r.get(key) is not None]
+        return round(statistics.median(vals), 4) if vals else None
+    result["ttft_s"] = med("ttft_s")
+    pm = med("prefill_tok_s"); result["prefill_tok_s"] = round(pm, 1) if pm else None
+    dm = med("decode_tok_s"); result["decode_tok_s"] = round(dm, 1) if dm else None
+    result["e2e_latency_s"] = med("e2e_latency_s")
+    result["peak_vram_gb"] = med("peak_vram_gb")
+    result["total_completion_tokens"] = valid[-1].get("total_completion_tokens", 0)
+    result["vram_samples"] = max(r.get("vram_samples", 0) for r in valid)
+    result["all_runs"] = all_runs; result["error"] = None
     return result
 
 def main():
@@ -149,6 +186,8 @@ def main():
     ap.add_argument("--contexts", type=int, nargs="+", default=[4096, 16384, 65536, 131072])
     ap.add_argument("--batches", type=int, nargs="+", default=[1, 8])
     ap.add_argument("--gen-len", type=int, default=64)
+    ap.add_argument("--warmup", type=int, default=0, help="Number of warmup runs (discarded)")
+    ap.add_argument("--repeats", type=int, default=1, help="Number of measured runs (median-of-N)")
     args = ap.parse_args()
     try:
         models = requests.get(f"{args.base_url}/v1/models", timeout=30).json()
@@ -163,11 +202,12 @@ def main():
         for bs in args.batches:
             print(f"\n=== {args.model_name} | ctx={ctx} batch={bs} ===")
             r = benchmark_cell(args.base_url, args.model_name, args.model_path,
-                               ctx, bs, args.gen_len, args.gpu_id)
-            if "error" in r:
+                               ctx, bs, args.gen_len, args.gpu_id,
+                               warmup=args.warmup, repeats=args.repeats)
+            if "error" in r and r["error"]:
                 print(f"  ERROR: {r['error']}")
             else:
-                print(f"  TTFT={r.get('ttft_s')}s  prefill={r.get('prefill_tok_s')} tok/s  "
+                print(f"  MEDIAN: TTFT={r.get('ttft_s')}s  prefill={r.get('prefill_tok_s')} tok/s  "
                       f"decode={r.get('decode_tok_s')} tok/s  e2e={r.get('e2e_latency_s')}s  "
                       f"VRAM={r.get('peak_vram_gb')}GB  prompt_tok={r.get('prompt_tokens_actual')}")
             results.append(r)
@@ -180,6 +220,8 @@ def main():
         "base_url": args.base_url,
         "gpu_id": args.gpu_id,
         "gen_len": args.gen_len,
+        "warmup": args.warmup,
+        "repeats": args.repeats,
         "contexts": args.contexts,
         "batches": args.batches,
         "results": results,
