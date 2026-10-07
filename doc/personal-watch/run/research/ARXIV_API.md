@@ -1097,3 +1097,17 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
 - **下轮预期**：下一次工作日公告（`2026-10-06` 提交批）预计在 **UTC `2026-10-07` 早间**刷新，届时按 SOP 增量采集；**按新节律，下轮唤醒 = 本地 `2026-10-07 18:00`**。
 
+### 9.81 第七十九轮（本地 2026-10-07 18:00 时窗 · **P0 第 4 批首轮 · 新公告批次落地**）：`2026-10-06` 批刷新 → **+187（收录 5 / 候选 182）**
+
+> 🎯 **P0 第 4 批（2026-10-07 下发）**：每天 5 篇推荐论文（早 3 晚 2）→ 日报 HTML。**本日为批次首日**，18:00 轮 = **首轮**（AM 轮未运行）⇒ 晚报一次性产出当日 5 篇。
+
+- **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-07T10:00:19Z`，证据 `research/raw/2026-10-07-probe-r79.log`）：
+  - **arXiv API**：`HTTP 200` + `application/atom+xml`，**公告批次已刷新**：最新样本 `published=2026-10-06T17:59:56Z`（`totalResults=628559`，样本 `2610.08791 / 2610.08790 / 2610.08789`）→ ✅ **可达**；
+  - **HF Daily Papers**：`Network is unreachable` → ❌ 不可达（**如实记录，不伪造 `hf_daily`**）；
+  - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml` + `items=224 / 247 / 526` → ✅ **工作日有内容**。
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=daily`，窗口 72h**，`generated=2026-10-07T10:00:18Z`）：**15/15 查询 `ok`**（均 `attempts=1`，无重试），**kept 187 / dropped 383**。证据 `research/raw/2026-10-07-fetch-r79.json`。
+- **结论**：**公告批次由 `2026-10-05` 刷新为 `2026-10-06`**（主源 `published` `2026-10-05T17:59:54Z` → `2026-10-06T17:59:56Z`；`totalResults` `627806` → **`628559`**）→ **+187**（其中 **5 篇按 P0 口径推荐入账**：FC-SWE / Harness Engineering / UNREAL / Building Rome / World Models' Last Exam in Physics）。
+- **产出（P0 交付）**：`research/daily/2026-10-07.html`（**自包含单文件**，5 篇 = 3 借鉴 + 2 科普；页头「首日 · 晚报」+ 进度 5/5 + 「晚报变更说明（AM → PM）」）+ **新建** `research/daily/index.html`。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）。
+- **下轮预期**：本地 **`2026-10-08 06:00`**（首日后首个标准「早 3」轮），按 SOP 增量采集并产出当日 3 篇。
+
