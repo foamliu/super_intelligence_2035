@@ -11,8 +11,9 @@
 | 卡 | 归谁 | 用途 | 状态（vision 07:12 自测 + 用户旁证） |
 |:--|:--|:--|:--|
 | **GPU0** | **vision** | `lp 协议 A/B 桥接`（`vision/lp_protocol_bridge.py`, PID 807654） | 🚧 **占用中**：2.4GB / 39% util（NFS I/O bound）；ckpt1 ✅（Δlp=**+10.05pp**）、ckpt2 streaming ~51%、ckpt3 待跑；**ETA ~10:00–11:00** |
-| **GPU1–2** | **pretrain（借出）** | 长上下文推理成本矩阵（GPU1=hybrid、GPU2=dense，各 4 档顺序） | 📌 2026-10-07 运维代申请 → **✅ 批准，借用至 11:00**（见 §3） |
-| **GPU3–7** | **vision** | 排队项（mask-ratio/权重比消融、AIMv2 官方 AR 范式、text-AR…） | ⬜ 空闲；**11:00 前 vision 可自由用** |
+| **GPU1–4** | **pretrain（借出）** | 长上下文成本矩阵 · **hybrid @ 128K / 256K / 512K / 1M**（一格一卡） | 📌 2026-10-07 用户直令②「7 张都拿来并行」→ **✅ 批准**；**预计 30–45 min 交还，硬天花板 11:00**（见 §3） |
+| **GPU5–7** | **pretrain（借出）** | 长上下文成本矩阵 · **dense @ 128K / 256K / 512K**（**dense 1M = 第 2 波**，接首张空卡） | 📌 同上 |
+| **GPU3–7（vision 排队项）** | vision | mask-ratio/权重比消融、AIMv2 官方 AR 范式、text-AR… | ⏸ **这期间要不到卡**（GPU1–7 全借出）；**11:00 后恢复**，或按 §3 申请让 pretrain 提前交还 |
 
 > ⚠️ `.12` 的 GPU0–7 **全部属本项目**。起跑前必须核验；**若看到与本项目无关的进程 → 停手报告**，🚫 不许 kill。
 
@@ -38,7 +39,7 @@
 
 | 日期 时间 | 申请人 | 要哪几张 | 多久 | 为什么 | 状态 |
 |:--|:--|:--|:--|:--|:--|
-| 2026-10-07 上午 | **pretrain（运维代发）** | **GPU1–2** | **至 11:00**（不够则续借 ≤2h） | 用户直令：sglang 长上下文推理成本矩阵（ctx 128K/256K/512K/1M，hybrid ⚔ dense，吞吐/prefill/decode/显存）；`.29` 已被 data BO 占满（62.6GB/卡，不可共卡） | ✅ 已批准（用户当场点头） |
+| 2026-10-07 上午 | **pretrain（运维代发）** | **GPU1–7（全部 7 张）** | **目标 30–45 min 跑完即还**（硬天花板 11:00） | 用户直令②：「**何必只用 1、2，让 pretrain 用 `.12` 的 1–7 把长上下文并行测完**」⇒ 一格一卡扇出：hybrid@128K/256K/512K/1M（GPU1–4）+ dense@128K/256K/512K（GPU5–7），dense 1M 第 2 波；`.29` 已被 data BO 占满（62.6GB/卡，不可共卡） | ✅ 已批准（用户两次直令） |
 
 ---
 
@@ -47,3 +48,4 @@
 | 时间 | 事件 |
 |:--|:--|
 | 2026-10-07 上午（精确时刻见本条 commit） | **运维建立本文件**：用户指出「`.12` GPU0 被 bridge 占至 10–11AM、**GPU1–7 空闲**」⇒ **批准 pretrain 借 GPU1–2** 跑长上下文推理成本矩阵（`BAIZE_PRETRAIN_2B_TASK.md` 顶部块；`BAIZE_VISION_TASK.md` 同步告知）；**`.29` 侧不向 data 索卡**（避免 Round2 BO 由 8 槽降速、P-8 前置顺延）。依据：env/ckpt 全在 NFS 共享路径（`/nas_train/app.e0031982/miniforge3/envs/vllm`、`nemo_experiments/p3_{hybrid,dense}/hf_iter_5000`），`.12` **零改造**可跑。 |
+| 2026-10-07 上午（同日第 2 条） | **用户直令②**：「**何必只用 1、2 呢，让 pretrain 用 `.12` 的 1–7 把长上下文并行测完**」⇒ 借用范围 **GPU1–2 → GPU1–7**；**一格一卡扇出**（GPU1–4 hybrid 四档 / GPU5–7 dense 128K-512K，dense 1M 第 2 波）；**并行启动器已入库** `run/p911e_matrix_launch.sh`（含逐格 GPU 占用预检、错峰 `STAGGER=20s`、逐格 `kill` server + 归还核验、逐格 JSON）；**目标 30–45 min 跑完即还**（硬天花板 11:00），并已在 `BAIZE_VISION_TASK.md` 同步「此期间 vision 要不到卡」的口径。 |
