@@ -60,6 +60,39 @@
 
 > 📦 §运维指令·2026-10-07（📊 昨夜工作汇报 HTML）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：report_10_07_harness_overnight.html 已交付（27187B，自包含内联SVG，R118→R134，codex 43/96/161，总 resolved 61）。需要时再读。
 
+### 🆕 运维指令 · 2026-10-07（⏸ 300 全量先搁置 → **立即做「30 × 5 harness 横评」，先把 5 个 harness 对比结果拿到**）⭐ 最高优先 · **已批准**
+
+> **用户直令（2026-10-07 原文口径）**：「**harness 拖了太久了，先做 30 横评，把 5 个 harness 对比的结果拿到。**」
+> **本次任务一句话**（用户 2026-10-07 复述确认）：「找 SWE-bench 里 **30 个相同的任务**，**评测 5 个 harness**，**得到分数**，**列表对比**。」
+> **运维判断（为什么读成「先停下 300」）**：横评口径是 **并发=1 严格串行**，而 **`codex ×300 --resume`（PID 2151526）正占着这唯一的串行槽**（已 14h+，尚有 **151 blocked**；按 ~30 条/10h 还须 **~50h**；其后还要 cline/opencode/claude-code/deepseek 各 ×300）⇒ **第一个「5 harness 对比」要等好几天**。用户要的是**先拿到「30 规模」的 5-way 对比**，再谈扩量。
+
+**① 先腾出串行槽（本轮第一件事）**
+- **停掉 `codex ×300` 的 `--resume`**：`kill` PID 2151526（或让它跑完当前 instance 后**不再取新 instance**）—— **二选一，把选择与理由写进心跳**。
+- 🚫 **不要删** `run/harness/kimi_pilot_results.json`；**已得的 330 entries / codex×300 的 43 resolved 全部保留**（将来 `--resume` 可续）。
+- ✅ 停下后确认串行槽空闲（无 `run_serial_kimi.py` 进程在跑）。
+
+**② 把「同一 30 条」在 5 个 harness 上补齐（本次唯一 KPI）**
+- **题集 = 固定的那 30 条**（**15 django + 15 sympy**，`instances/` 已备好的一批）；🚫 不许换题、不许增删。
+- **模型 = 统一 `kimi-k2.6-cloud`**；**并发 = 1 严格串行**（沿用已批口径）；**quota 失败单列**、不计入失败率。
+- **已有可复用**：`cline-patched ×30 ✅ 18/30 = 60.0%`、`codex ×30 ✅ 14/30 = 46.7%`（若二者与本题集**同批**则直接引用；**不同批则补跑**——同批与否要写清）。
+- **待跑（按此顺序）**：`opencode ×30` → `claude-code ×30` → `deepseek-harness ×30`。
+  - ⚠️ **5 个都要有分**：`deepseek-harness` 若工具链仍不通（`pnpm install` ECONNRESET / 镜像全 000）⇒ **本轮先把它修通**（node22+rust 已装、`build` 待 `pnpm`；**显式带 proxy + 用镜像**，🚫 勿动共享 `py310`）；**实在不通**才标「未参与」并回报，🚫 **不许因它卡住前两个**。
+
+**③ 交付（本轮必须落地）**
+- 刷新 `run/harness/SWEBENCH_COMPARE.html` ⇒ **只含「这 30 条 × 5 harness」的对比**（自包含、可复算）。
+- **一张 5 行汇总表**：`harness | scored | resolved | patch-but-failed | quota-blocked | resolve rate`。
+- **写清口径**：同 30 条 / 同模型 `kimi-k2.6-cloud` / 并发=1 / 时间窗 / 各 harness 版本。
+- 结论**跑完即固化**；按「收尾铁律」commit + push。
+
+**④ 300 全量**：**本轮不做** —— 等这 5-way 结果出来、用户/运维**再拍板**是否 `--resume` 续扩。
+
+**判据**：`SWEBENCH_COMPARE.html` 出现 **5 行**对照表（**同一 30 条**），每行的 `scored / resolved / patch-but-failed / quota-blocked / rate` 均可由 `kimi_pilot_results.json` 复算；若 `deepseek-harness` 确不可用，**表内保留该行**并标注「工具链未通·未参与」+ 已尝试的取证。
+**时间盒**：3 harness × 30 × ~8 min ≈ **~12h**（**先报你实测的 s/inst 估算**；若显著超 1 天须立即回报）。
+**铁律**：同一轮**只用 kimi 一个模型**（换模型必须重跑）；不改选题；不缩水；不改论文；不占 GPU。
+
+> 📦 **体积提醒**：本块加入后 `BAIZE_HARNESS_TASK.md` **≈34.1KB（>32KB）** ⇒ **你本轮收尾前先按「📉 体积维护规程」把已闭合旧块归档到 ≤32KB 再提交**（确切字节以你自己 `wc -c` 实测为准；**未到 40KB 红线**）。
+
+
 ### 🆕 运维指令 · 2026-10-05（晚 · ✅ 批准「扩 300」= **先扩 kimi**；+ 环境隔离纪律）· 高优先 · **已批准**
 
 > **用户拍板（2026-10-05 晚）**：「harness 扩 300 的 quota 瓶颈 —— **按你的建议先扩 kimi**。」
