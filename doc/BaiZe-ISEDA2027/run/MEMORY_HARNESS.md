@@ -5,13 +5,35 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 30×5 harness cross-eval (kimi-k2.6-cloud, serial=1) — cline-patched×30 ✅ 60.0% · codex×30 ✅ 46.7% · opencode×30 ✅ 50.0% · claude-code×30 ✅ 44.8% · deepseek-harness×30 🔄 RUNNING (9/30, 7 resolved = 77.8%, chain PID 1292346 → run_serial PID 3587539). gw_proxy healthy (PID 3175038, port 9090) + gw_proxy_dsh healthy (PID 1307655, port 9091).
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped (43/108/149) · opencode×30 (50.0%) · claude-code×30 (44.8%) · deepseek-harness×9/30 (7 res/2 pbf = 77.8%, RUNNING) · SWEBENCH_COMPARE.html (30×5, 129 entries, 67 resolved)
-当前动作:     R153: deepseek-harness×30 progress check (9/30 done, 7 resolved/2 pbf = 77.8%) → SWEBENCH_COMPARE.html regenerated (15608B, 129 entries, 67 resolved) → commit+push
-下一步:       [AUTO] deepseek-harness×21 remaining (~90min at ~4min/inst) → chain auto-regen final HTML (5 rows complete) → [next wake] verify final results → final commit+push
-阻塞:         无硬阻塞. deepseek-harness toolchain working, 7/9 resolved so far.
+PHASE:        H-A 30×5 harness cross-eval (kimi-k2.6-cloud, serial=1) — cline-patched×30 ✅ 60.0% · codex×30 ✅ 46.7% · opencode×30 ✅ 50.0% · claude-code×30 ✅ 44.8% · deepseek-harness×30 🔄 RUNNING (12/30, 7 resolved/5 pbf = 58.3%, chain PID 1292346 → run_serial PID 3587539, on inst 13 django__django-11620). gw_proxy healthy (PID 3175038, port 9090) + gw_proxy_dsh healthy (PID 1307655, port 9091).
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped (43/108/149) · opencode×30 (50.0%) · claude-code×30 (44.8%) · deepseek-harness×12/30 (7 res/5 pbf = 58.3%, RUNNING) · SWEBENCH_COMPARE.html (30×5, 132 entries, 67 resolved)
+当前动作:     R154: deepseek-harness×30 progress check (12/30 done, 7 resolved/5 pbf = 58.3%) → SWEBENCH_COMPARE.html regenerated (15719B, 132 entries, 67 resolved) → commit+push
+下一步:       [AUTO] deepseek-harness×18 remaining (~90min at ~5min/inst) → chain auto-regen final HTML (5 rows complete) → [next wake] verify final results → final commit+push
+阻塞:         无硬阻塞. deepseek-harness toolchain working, last 4 instances were pbf (11283/11422/11564/11583).
 ERROR_COUNT:  0
 ```
+
+## 🆕 第一百五十四轮速览（2026-10-07 20:34）— deepseek-harness×30 progress 12/30 (7 res/5 pbf = 58.3%) + SWEBENCH_COMPARE.html regenerated (15719B, 132 entries, 67 resolved)
+
+- 🔄 **deepseek-harness×30 progress**：chain script (PID 1292346) running, run_serial PID 3587539 (etimes ~4500s = ~75min), 12/30 done, **7 resolved / 5 patch-but-failed = 58.3%** (on 12 scored)。
+  - Instances 1–12: 10924(res) → 11001(res) → 11019(pbf) → 11039(res) → 11049(res) → 11099(res) → 11133(res) → 11179(res) → 11283(pbf) → 11422(pbf) → 11564(pbf) → 11583(pbf)。
+  - Current instance: django__django-11620 (inst 13, run_single PID 484912, etimes ~97s)。
+  - **Pace**: avg ~300s/inst → 18 remaining ≈ **~90 min** to completion。
+  - Note: resolve rate dropped from 77.8% (R153, 9 done) to 58.3% (12 done) — last 4 instances all pbf。
+- 📈 **SWEBENCH_COMPARE.html regenerated**：15719 bytes, 30 instances, 132 entries (cline 30 + codex 30 + opencode 30 + claude-code 30 + deepseek 12), 67 resolved。
+- 📊 **当前 5-way 对比**（kimi_pilot_results.json, 同 30 instances）：
+  | harness | scored | resolved | pbf | blk | rate |
+  |---|---|---|---|---|---|
+  | cline-patched | 30/30 | 18 | 12 | 0 | 60.0% |
+  | codex (30-subset) | 30/30 | 14 | 16 | 0 | 46.7% |
+  | opencode | 30/30 | 15 | 15 | 0 | 50.0% |
+  | claude-code | 30/30 | 13 | 16 | 1 | 44.8% |
+  | deepseek-harness | 12/30 | 7 | 5 | 0 | 58.3% (so far) |
+- ✅ **gw_proxy 健康**：PID 3175038 (port 9090, HTTP 200) + gw_proxy_dsh PID 1307655 (port 9091, HTTP 200)。
+- ✅ **chain script 健康**：PID 1292346 (etimes ~30885 = ~8.6h)，正在跑 deepseek-harness×30 (last step before final HTML regen)。
+- 📦 **体积自检**：TASK=31476B（30.7KB，≤32KB ✓）/ MEMORY=~29.5KB（≤32KB ✓）。📦 体积：TASK=30.7KB / MEMORY=29.5KB（归档 0KB）。
+- ⏭ **下一步**：chain script 自动跑 deepseek-harness×18 remaining (~90min) → final regen HTML (5 rows complete) → [next wake] verify final results → final commit+push。保持 `WAITING=1`。
+
 
 ## 🆕 第一百五十三轮速览（2026-10-07 19:59）— deepseek-harness×30 progress 9/30 (7 res/2 pbf = 77.8%) + SWEBENCH_COMPARE.html regenerated (15608B, 129 entries, 67 resolved)
 
