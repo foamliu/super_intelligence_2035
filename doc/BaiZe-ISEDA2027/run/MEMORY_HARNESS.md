@@ -5,13 +5,33 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 30×7 harness cross-eval (kimi-k2.6-cloud, serial=1) — cline-patched×30 ✅ 60.0% · codex×30 ✅ 46.7% · opencode×30 ✅ 50.0% · claude-code×30 ✅ 43.3% · deepseek-harness×30 ✅ 40.0% · Pi×30 ✅ 60.0% · Hermes×30 🔄 RUNNING (3/30 done: 1 res/2 pbf, inst 4/30 django-11039 fetching). gw_proxy healthy (PID 3175038, port 9090) + gw_proxy_dsh healthy (PID 1307655, port 9091).
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped · opencode×30 (50.0%) · claude-code×30 (43.3%) · deepseek-harness×30 (40.0%) · Pi×30 (60.0%) · Hermes 3/30 done (1 res/2 pbf) · gen_kimi_compare.py 7-way + version table · SWEBENCH_COMPARE.html (30×7, 183 entries, 91 resolved, 21229B with version table)
-当前动作:     R161: Hermes×30 progress check (3/30: django-10924 pbf, django-11001 res, django-11019 pbf-timeout) → harness version/commit verification via GitHub API (Hermes=NousResearch/hermes-agent@0e219331 MIT 251.8k★, Pi=@fleetagent/pi-coding-agent v0.2.15 MIT) → added §3.1 version table to gen_kimi_compare.py → SWEBENCH_COMPARE.html regenerated (21229B, 183 entries, 91 resolved) → commit+push
-下一步:       [AUTO] Hermes×30 running (~8.7min avg/inst × 27 = ~3.9h remaining ETA, chain PID 838805 auto-regens HTML when done) → next wake: check Hermes×30 progress → update HTML → commit+push
+PHASE:        H-A 30×7 harness cross-eval (kimi-k2.6-cloud, serial=1) — cline-patched×30 ✅ 60.0% · codex×30 ✅ 46.7% · opencode×30 ✅ 50.0% · claude-code×30 ✅ 43.3% · deepseek-harness×30 ✅ 40.0% · Pi×30 ✅ 60.0% · Hermes×30 🔄 RUNNING (8/30 done: 6 res/2 pbf, inst 10/30 django-11283 running ~23min). gw_proxy healthy (PID 3175038, port 9090) + gw_proxy_dsh healthy (PID 1307655, port 9091).
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped · opencode×30 (50.0%) · claude-code×30 (43.3%) · deepseek-harness×30 (40.0%) · Pi×30 (60.0%) · Hermes 8/30 done (6 res/2 pbf) · gen_kimi_compare.py 7-way + version table · SWEBENCH_COMPARE.html (30×7, 188 entries, 96 resolved, 21370B with version table)
+当前动作:     R162: Hermes×30 progress check (8/30: 6 res/2 pbf, inst 10/30 django-11283 running) → SWEBENCH_COMPARE.html regenerated (21370B, 188 entries, 96 resolved) → commit+push
+下一步:       [AUTO] Hermes×30 running (~22 inst × ~7min avg = ~2.6h remaining, chain PID 838805 auto-regens HTML when done) → next wake: check Hermes×30 progress → update HTML → commit+push
 阻塞:         <无> (Hermes toolchain working: Python 3.14.6 venv, CLI at ~/.hermes/bin/hermes, config at ~/.hermes/config.yaml with kimi-proxy provider → gw_proxy:9090)
 ERROR_COUNT:  0
 ```
+
+## 🆕 第一百六十二轮速览（2026-10-08 02:42）— Hermes×30 progress (8/30: 6 res/2 pbf) + SWEBENCH_COMPARE.html regenerated (188 entries, 96 resolved)
+
+- 🔄 **Hermes×30 progress**：8/30 done, chain healthy (PID 838805 → 850763, inst 10/30 django__django-11283 running ~23min):
+  - django-10924 → patch-but-failed (rc=0, 567.9s)
+  - django-11001 → **resolved** ✅
+  - django-11019 → patch-but-failed (rc=1, 1800.6s — timed out)
+  - django-11039 → **resolved** ✅
+  - django-11049 → **resolved** ✅
+  - django-11099 → **resolved** ✅
+  - django-11133 → **resolved** ✅
+  - django-11179 → **resolved** ✅
+  - **6 resolved / 2 pbf = 75.0%** (8/30, 0 blocked)
+  - ETA: ~22 inst × ~7min avg = ~2.6h remaining
+- 📊 **SWEBENCH_COMPARE.html regenerated**: 21370B, 188 entries, 96 resolved (was 21229B/183/91 at R161)
+- 📊 **7-way standings (30-set)**:
+  - cline-patched: 18/30 = 60.0% ✅ · Pi: 18/30 = 60.0% ✅ · opencode: 15/30 = 50.0% ✅
+  - codex: 14/30 = 46.7% ✅ · claude-code: 13/30 = 43.3% ✅ · deepseek-harness: 12/30 = 40.0% ✅
+  - Hermes: 6/8 = 75.0% 🔄 (8/30 running)
+- 📦 体积：TASK=29428B(28.7KB ✓) / MEMORY=23406B(22.9KB ✓)（归档 9889B → daily-memories-harness/2026-10-07.md, R154-R158）
 
 ## 🆕 第一百六十一轮速览（2026-10-08 02:06）— Hermes×30 progress (3/30) + harness version/commit verification + HTML version table
 
@@ -73,103 +93,7 @@ ERROR_COUNT:  0
 - ✅ **gw_proxy + gw_proxy_dsh healthy**：PID 3175038 (port 9090) + PID 1307655 (port 9091).
 - 📦 **体积自检**：TASK=29428B（28.7KB，≤32KB ✓）/ MEMORY=24226B（23.7KB，≤32KB ✓）。📦 体积：TASK=28.7KB / MEMORY=23.7KB（归档 0KB）。
 
-## 🆕 第一百五十八轮速览（2026-10-07 23:18）— Pi×30 progress 12/30 (75.0%) + SWEBENCH_COMPARE.html regenerated (22024B, 162 entries, 81 resolved)
-
-- 🔄 **Pi×30 progress check**：chain PID 3288315 → run_serial_kimi.py PID 690669 (etimes=2915s). Currently on inst 13/30 (`django__django-11620`).
-  - Pi instances so far (12 scored): 10924(res)→11001(res)→11019(pbf)→11039(res)→11049(res)→11099(res)→11133(res)→11179(res)→11283(pbf)→11422(res)→11564(pbf)→11583(res)→11620(running)
-  - **9 resolved / 3 patch-but-failed = 75.0%** (12/30, 0 blocked)
-  - Remaining 18 instances ≈ ~50min (at ~175s/inst). Chain script will auto-regen HTML when done.
-- 📊 **SWEBENCH_COMPARE.html regenerated** (22024B, 30×7, 162 entries, 81 resolved):
-  - cline-patched: 30 scored, 18 res / 12 pbf = 60.0% ✅
-  - codex: 30 scored, 14 res / 16 pbf = 46.7% ✅
-  - opencode: 30 scored, 15 res / 15 pbf = 50.0% ✅
-  - claude-code: 29 scored, 13 res / 16 pbf / 1 blk = 43.3% ✅
-  - deepseek-harness: 30 scored, 12 res / 18 pbf = 40.0% ✅
-  - Pi: 12 scored, 9 res / 3 pbf = 75.0% 🔄 (12/30, running)
-  - Hermes Agent: ❌ toolchain unavailable
-- ✅ **gw_proxy + gw_proxy_dsh healthy**：PID 3175038 (port 9090) + PID 1307655 (port 9091).
-- 📦 **体积自检**：TASK=29428B（28.7KB，≤32KB ✓）/ MEMORY=22895B（22.4KB，≤32KB ✓）。📦 体积：TASK=28.7KB / MEMORY=22.4KB（归档 0KB）。
-
-## 🆕 第一百五十七轮速览（2026-10-07 22:44）— deepseek-harness×30 ✅ COMPLETE (40.0%) + gen_kimi_compare.py upgraded to 7-way + SWEBENCH_COMPARE.html regenerated (7 rows) + Pi×30 🔄 RUNNING (6/30, 83.3%)
-
-- ✅ **deepseek-harness×30 COMPLETE**：chain PID 1292346 finished at 22:31. Final: **12 resolved / 18 patch-but-failed = 40.0%** (30/30 scored, 0 blocked).
-  - Instances: 10924(res)→11001(res)→11019(pbf)→11039(res)→11049(res)→11099(res)→11133(res)→11179(res)→11283(pbf)→11422(pbf)→11564(pbf)→11583(pbf)→11620(pbf)→11630(pbf)→11742(pbf)→11870(pbf)→11897(pbf)→12171(pbf)→12236(pbf)→12419(res)→12454(pbf)→12481(res)→13031(res)→13043(pbf)→13146(pbf)→13177(pbf)→13437(pbf)→13471(res)→13480(res)→13647(pbf)
-- 🔧 **gen_kimi_compare.py upgraded to 7-way**：Added `pi` to HARNESS_ORDER (6th) + Hermes Agent special row (7th, "toolchain not available"). Updated title/scope/detail-table-headers/methodology/caveats/footer from 5→7. Pi column shows results; Hermes column always N/A.
-- 📊 **SWEBENCH_COMPARE.html regenerated** (21852B, 30×7, 156 entries, 77 resolved):
-  - cline-patched: 30 scored, 18 res / 12 pbf = 60.0% ✅
-  - codex: 30 scored, 14 res / 16 pbf = 46.7% ✅
-  - opencode: 30 scored, 15 res / 15 pbf = 50.0% ✅
-  - claude-code: 29 scored, 13 res / 16 pbf / 1 blk = 44.8% ✅
-  - deepseek-harness: 30 scored, 12 res / 18 pbf = 40.0% ✅
-  - Pi: 6 scored, 5 res / 1 pbf = 83.3% 🔄 (6/30, running)
-  - Hermes Agent: ❌ toolchain unavailable
-- 🔄 **Pi×30 chain running autonomously**：`chain_pi_after_deepseek.sh` (PID 3288315) launched `run_serial_kimi.py --harness pi --resume` (PID 690669) at 22:31. Currently on inst 7 (django__django-11133). 24 remaining ≈ ~2-3h. Chain script will auto-regen HTML when done.
-  - Pi instances so far: 10924(res)→11001(res)→11019(pbf)→11039(res)→11049(res)→11099(res)→11133(running)
-- 📦 **体积自检**：TASK=29428B（28.7KB，≤32KB ✓）/ MEMORY=~21KB（≤32KB ✓）。📦 体积：TASK=28.7KB / MEMORY=~21KB（归档 0KB）。
-
-## 🆕 第一百五十六轮速览（2026-10-07 22:05）— Pi smoke-test ✅ PASSED (resolved django__django-10924!) + Hermes ❌ toolchain unavailable + TASK archived 34.8KB→29.4KB + Pi×30 prepared
-
-- 🎉 **Pi smoke-test PASSED**：PiDriver 端到端验证成功！
-  - 实例：`django__django-10924`（FilePathField callable path）
-  - Pi 通过 `bun dist/cli.js -p` 非交互模式 → gw_proxy (127.0.0.1:9090/v1) → kimi-k2.6-cloud
-  - 产出 `model_patch`（5087 chars，proper git diff）
-  - `r1_eval.py` 评估结果：**`resolved: true`** ✅
-    - `patch_successfully_applied: true` ✅
-    - `FAIL_TO_PASS: test_callable_path → success` ✅
-    - `PASS_TO_PASS: test_path → success` ✅
-  - 预测文件：`/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-10924.json`
-- ❌ **Hermes Agent toolchain unavailable**（证据充分）：
-  - 系统有 Python 3.10.18 / Node v20.18.1；Hermes 需要 **Python 3.14 + Node 26**（via PM toolchain manager）
-  - Docker daemon **permission denied**（`docker pull` 失败：`connect: permission denied` on `/var/run/docker.sock`）
-  - Install script (`https://hermes-agent.nousresearch.com/install.sh`) 通过 proxy 下载失败（SSL/curl 返回空）
-  - 源码 `activate` 脚本需要 PM 已安装工具链（未安装则不可用）
-  - **结论**：Hermes Agent 标记为「toolchain not available·未参与」+ 已尝试的取证
-- 📦 **TASK 归档**：`BAIZE_HARNESS_TASK.md` 34812B→29428B（34.8KB→29.4KB），两个已闭合运维块搬到 `ARCHIVE_OPERATOR_HARNESS.md`（10-07 30×5 横评 + 10-05 扩300），各留 1 行指针。
-- 🔄 **deepseek-harness×30 progress**：23/30 done, **10 resolved / 13 patch-but-failed = 43.5%**（on 23 scored）。chain PID 1292346, on inst 24 sympy__sympy-13043。7 remaining ≈ ~70min。
-- ⏭ **下一步**：deepseek chain 完成后 → launch Pi×30 (`run_serial_kimi.py --harness pi --resume`) → eval → update `SWEBENCH_COMPARE.html` to 6 rows (5+Pi, Hermes marked unavailable) → commit+push。保持 `WAITING=1`。
-- 📦 **体积自检**：TASK=29428B（28.7KB，≤32KB ✓）/ MEMORY=~19KB（≤32KB ✓）。📦 体积：TASK=28.7KB / MEMORY=~19KB（归档 ~5.4KB → ARCHIVE_OPERATOR_HARNESS.md）。
-
-- 🔄 **deepseek-harness×30 progress**：chain script (PID 1292346) running, run_serial PID 3587539 (etimes ~6663s = ~111min), 15/30 done, **7 resolved / 8 patch-but-failed = 46.7%** (on 15 scored)。
-  - Instances 1–15: 10924(res) → 11001(res) → 11019(pbf) → 11039(res) → 11049(res) → 11099(res) → 11133(res) → 11179(res) → 11283(pbf) → 11422(pbf) → 11564(pbf) → 11583(pbf) → 11620(pbf) → 11630(pbf) → 11742(pbf)。
-  - Current instance: sympy__sympy-11870 (inst 16, first sympy instance)。
-  - **Pace**: avg ~300s/inst → 15 remaining ≈ **~75 min** to completion。
-  - Note: rate dropped from 77.8% (R153, 9 done) → 58.3% (R154, 12 done) → 46.7% (R155, 15 done) — last 7 instances all pbf。
-- 📈 **SWEBENCH_COMPARE.html regenerated**：15799 bytes, 30 instances, 135 entries (cline 30 + codex 30 + opencode 30 + claude-code 30 + deepseek 15), 67 resolved。
-- 📊 **当前 5-way 对比**（kimi_pilot_results.json, 同 30 instances）：
-  | harness | scored | resolved | pbf | blk | rate |
-  |---|---|---|---|---|---|
-  | cline-patched | 30/30 | 18 | 12 | 0 | 60.0% |
-  | codex (30-subset) | 30/30 | 14 | 16 | 0 | 46.7% |
-  | opencode | 30/30 | 15 | 15 | 0 | 50.0% |
-  | claude-code | 29/30 | 13 | 16 | 1 | 44.8% |
-  | deepseek-harness | 15/30 | 7 | 8 | 0 | 46.7% (so far) |
-- ✅ **gw_proxy 健康**：PID 3175038 (port 9090, HTTP 200) + gw_proxy_dsh PID 1307655 (port 9091, HTTP 200)。
-- ✅ **chain script 健康**：PID 1292346 (etimes ~32996 = ~9.2h)，正在跑 deepseek-harness×30 (last step before final HTML regen)。
-- 📦 **体积自检**：TASK=31476B（30.7KB，≤32KB ✓）/ MEMORY=17702B（17.3KB，≤32KB ✓）。📦 体积：TASK=30.7KB / MEMORY=17.3KB（归档 ~13KB R147-R153 → daily-memories-harness/2026-10-07.md）。
-- ⏭ **下一步**：chain script 自动跑 deepseek-harness×15 remaining (~75min) → final regen HTML (5 rows complete) → [next wake] verify final results → final commit+push。保持 `WAITING=1`。
-
-
-## 🆕 第一百五十四轮速览（2026-10-07 20:34）— deepseek-harness×30 progress 12/30 (7 res/5 pbf = 58.3%) + SWEBENCH_COMPARE.html regenerated (15719B, 132 entries, 67 resolved)
-
-- 🔄 **deepseek-harness×30 progress**：chain script (PID 1292346) running, run_serial PID 3587539 (etimes ~4500s = ~75min), 12/30 done, **7 resolved / 5 patch-but-failed = 58.3%** (on 12 scored)。
-  - Instances 1–12: 10924(res) → 11001(res) → 11019(pbf) → 11039(res) → 11049(res) → 11099(res) → 11133(res) → 11179(res) → 11283(pbf) → 11422(pbf) → 11564(pbf) → 11583(pbf)。
-  - Current instance: django__django-11620 (inst 13, run_single PID 484912, etimes ~97s)。
-  - **Pace**: avg ~300s/inst → 18 remaining ≈ **~90 min** to completion。
-  - Note: resolve rate dropped from 77.8% (R153, 9 done) to 58.3% (12 done) — last 4 instances all pbf。
-- 📈 **SWEBENCH_COMPARE.html regenerated**：15719 bytes, 30 instances, 132 entries (cline 30 + codex 30 + opencode 30 + claude-code 30 + deepseek 12), 67 resolved。
-- 📊 **当前 5-way 对比**（kimi_pilot_results.json, 同 30 instances）：
-  | harness | scored | resolved | pbf | blk | rate |
-  |---|---|---|---|---|---|
-  | cline-patched | 30/30 | 18 | 12 | 0 | 60.0% |
-  | codex (30-subset) | 30/30 | 14 | 16 | 0 | 46.7% |
-  | opencode | 30/30 | 15 | 15 | 0 | 50.0% |
-  | claude-code | 30/30 | 13 | 16 | 1 | 44.8% |
-  | deepseek-harness | 12/30 | 7 | 5 | 0 | 58.3% (so far) |
-- ✅ **gw_proxy 健康**：PID 3175038 (port 9090, HTTP 200) + gw_proxy_dsh PID 1307655 (port 9091, HTTP 200)。
-- ✅ **chain script 健康**：PID 1292346 (etimes ~30885 = ~8.6h)，正在跑 deepseek-harness×30 (last step before final HTML regen)。
-- 📦 **体积自检**：TASK=31476B（30.7KB，≤32KB ✓）/ MEMORY=~29.5KB（≤32KB ✓）。📦 体积：TASK=30.7KB / MEMORY=29.5KB（归档 0KB）。
-- ⏭ **下一步**：chain script 自动跑 deepseek-harness×18 remaining (~90min) → final regen HTML (5 rows complete) → [next wake] verify final results → final commit+push。保持 `WAITING=1`。
-
+> 📦 R154-R158（2026-10-07 20:34~23:18，deepseek-harness×30 progress + COMPLETE + Pi smoke-test + Hermes unavailable 误判 + gen_kimi_compare.py 7-way 升级）已滚动归档至 `daily-memories-harness/2026-10-07.md`「从 MEMORY_HARNESS.md 滚动归档」节。结论：deepseek-harness×30 COMPLETE 40.0%，Pi smoke-test PASSED，Hermes toolchain 误判后纠正。
 
 > 📦 R147-R153（2026-10-07 16:16~19:59，claude-code×30 全程 + deepseek-harness×30 启动 + toolchain 修复 + 早期 progress）已滚动归档至 `daily-memories-harness/2026-10-07.md`「从 MEMORY_HARNESS.md 滚动归档」节。结论：claude-code×30 COMPLETE 44.8%，deepseek-harness×30 RUNNING (toolchain fixed via gw_proxy_dsh.py port 9091)。
 > 📦 R131~R145 已归档至同文件。R113及更早已归档至 `daily-memories-harness/2026-10-04.md` ~ `2026-10-06.md`。
@@ -242,3 +166,4 @@ ERROR_COUNT:  0
 - 2026-10-07 23:53 —— **第一百五十九轮** —— Pi×30 progress 16/30 (10 res/6 pbf = 62.5%, inst 17/30 sympy__sympy-11897, PID 690669 etimes=4906s) → SWEBENCH_COMPARE.html regenerated（22136B, 166 entries, 82 resolved）+ gw_proxy + gw_proxy_dsh healthy → commit+push。📦 体积：TASK=28.7KB / MEMORY=23.7KB（归档 0KB）。
 - 2026-10-08 01:29 —— **第一百六十轮** —— ✅ Pi×30 COMPLETE (18 res/12 pbf = 60.0%, tied with cline-patched for best) → 🔧 Hermes toolchain FIX (Python 3.14.6 found at ~/.local/bin, venv+CLI+config already set up, smoke test done django-10924 pbf) → Hermes×30 chain STARTED (PID 838805/850763, --resume, ETA ~4.6h) → gen_kimi_compare.py upgraded to 7-way with Hermes data row → SWEBENCH_COMPARE.html regenerated（19658B, 181 entries, 90 resolved）→ commit+push。📦 体积：TASK=28.7KB / MEMORY=~28KB（归档 0KB）。
 - 2026-10-08 02:06 —— **第一百六十一轮** —— Hermes×30 progress 3/30 (1 res/2 pbf, inst 4/30 django-11039 fetching, chain PID 838805 healthy) → harness version/commit verified via GitHub API (Hermes=NousResearch/hermes-agent@0e219331 MIT 251.8k★, Pi=@fleetagent/pi-coding-agent v0.2.15 MIT) → §3.1 version table added to gen_kimi_compare.py → SWEBENCH_COMPARE.html regenerated（21229B, 183 entries, 91 resolved）→ commit+push。📦 体积：TASK=28.7KB / MEMORY=~29.5KB（归档 0KB）。
+- 2026-10-08 02:42 —— **第一百六十二轮** —— Hermes×30 progress 8/30 (6 res/2 pbf = 75.0%, inst 10/30 django-11283 running ~23min, chain PID 838805 healthy) → SWEBENCH_COMPARE.html regenerated（21370B, 188 entries, 96 resolved）→ R154-R158 archived (9889B → daily) → commit+push。📦 体积：TASK=28.7KB / MEMORY=22.9KB（归档 9.9KB → daily-memories-harness/2026-10-07.md）。
