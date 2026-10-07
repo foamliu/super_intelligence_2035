@@ -1,6 +1,6 @@
 # EARLY_WARNING — 预警方案（规则 + 评估协议）· N3-4
 
-> **生成**：2026-10-07 07:56 ｜ 脚本：`news/policy/early_warning.py` ｜ 事件源：`EVENTS.csv` ｜ 语料：`news/archive/*.jsonl.gz`
+> **生成**：2026-10-08 06:10 ｜ 脚本：`news/policy/early_warning.py` ｜ 事件源：`EVENTS.csv` ｜ 语料：`news/archive/*.jsonl.gz`
 
 > ⚠️ **口径**：只做**描述性与统计性**分析，**不预测、不表态**（政治中立）；产出是**研究性观察，🚫 不是投资建议**。
 
