@@ -97,6 +97,9 @@ tail -5 /tmp/watch_ops_relay.log    # [relay] started ...
 **停止**：`pkill -f watch_ops_relay.sh`
 > ⚠️ **不要** `pkill -f ops_relay.sh` —— 会**顺带杀掉 BaiZe 的中继**（本机另一条运维信道）。
 > 🚫 **绝不要把中继当"可随意杀"的进程** —— 它是唯一的远程通道。
+> 🩺 **判活（2026-10-07 起）**：日志**每 ~10min 一行 `💓` 心跳**（含 `last_run_id`/`tick`），启动行带 `HEAD=<sha>`（脚本版本）。
+> ⛔ **不能只靠 `pgrep` 判活**：中继可能**活着但冻死**（`kill -0` 也通过，却 14h 不干活）—— 判据是 **日志 mtime + `/proc/<pid>/wchan`（不该是 `pipe_read`）**；处置见 `ops/README.md` §4.5。
+> ✅ **保底通道**：supervisor 现**有 SSH 直连**（用户 2026-10-07 授权）⇒ 中继冻死/不可用时**不必再等它**，直接上机（本次「loop 换档 + 中继解冻」即如此完成）。
 
 详见 `ops/README.md`（含**我们相对 BaiZe 版的修复**：多段 RUN_ID 共存、新增 `git clean -fdx` / `git reset --hard` / 杀中继 的拦截）。
 

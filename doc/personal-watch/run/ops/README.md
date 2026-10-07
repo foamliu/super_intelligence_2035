@@ -4,7 +4,9 @@
 
 ## 1. 为什么有它
 
-- supervisor（Windows 侧）**不能 SSH** 到观察哨机器 → 只能走 git。
+- supervisor（Windows 侧）**原设计上不能 SSH** 到观察哨机器 → 只能走 git。
+- ✅ **2026-10-07 起：用户已授权 supervisor SSH 直连**（`liuyang@106.54.228.191`，**凭据不落库**）⇒ 定位变为
+  **中继 = 便利通道（异步/零 token）· SSH = 保底通道（同步/强干预）**。本次「loop 换档 + 中继解冻」就是用 SSH 完成的。
 - **worker loop 停 / 撞额度 / OOM 时，git 上"什么都看不到"** —— 本中继**不依赖 cline、不依赖额度**，
   **loop 停着也能执行诊断与运维命令**（这是它最大价值）。
 
@@ -49,6 +51,47 @@ tail -5 /tmp/watch_ops_relay.log      # 看 [relay] started（首行含 pid= / p
 | **进程可辨识** | — | ✅ 启动用 `exec -a watch_ops_relay.sh` → `pgrep/-pkill -f` **又准、又不误伤同名 cmdline** |
 | **危险模式** | `rm -rf /`·`mkfs`·`dd`·fork bomb | ＋**`git clean -fdx`**（会删掉别线在途文件）· **`git reset --hard`** · **杀 `ops_relay`**（别断信道） |
 | 提交范围 | 只 add `ops/` | 只 add `ops/`（`outbox.md`/`inbox.md`/`.last_run_id`） |
+| 🩺 **活性可观测**（2026-10-07） | 只在有动作时打日志（**静默 ≠ 死，但静默 14h 也看不出来**） | ✅ **每 ~10min 一行 `💓` 心跳**（`last_run_id` / `inbox_max` / `tick`）+ 启动行带**脚本自身 HEAD 版本**（`HEAD=<sha>`）⇒ 一眼分辨「版本是否最新 / 还活着没有」 |
+| 🧯 **命令块输出捕获**（2026-10-07 加固） | — | ✅ 改**落盘捕获**（不再 `out="$( … )"`）+ stdin 接 `/dev/null` ⇒ **根治「块里 `setsid … &` 起守护 → 管道写端永不关闭 → 父 bash 卡在 `pipe_read` 永久等 EOF」**（本线 2026-10-06 18:06 真实冻死 14h，见 §4.5） |
+| 🔊 **git 失败可见**（2026-10-07） | — | ✅ `fetch` / `pull` 失败**打印真实原因**（旧版 `>/dev/null 2>&1 \|\| return 0` = **静默吞错** ⇒ 同步失败无人知） |
+| 🔓 **单实例锁判活**（2026-10-07） | — | ✅ `kill -0` **＋核对 `/proc/<pid>/cmdline` 含 `ops_relay`**（防 PID 回收误挡启动）+ **`RELAY_FORCE=1` 强制接管**（仅在确认旧实例半死时用） |
+
+## 4.5 🧯 已修故障：中继「活着但冻死」14h（2026-10-06 18:06 → 2026-10-07 08:15）
+
+**症状**（极易误判为"正常待命"）：
+
+| 判据 | 冻死时 | 正常时 |
+|:--|:--|:--|
+| `pgrep -af watch_ops_relay` / `kill -0 <pid>` | **通过** ⛔（最误导） | 通过 |
+| `/tmp/watch_ops_relay.log` mtime | **14h 没动** | 每 ≤10min 有 `💓`（2026-10-07 后） |
+| `ops/.last_run_id` | **永停**（inbox 已到 11，它还在 10） | 会跟上 |
+| `/proc/<pid>/wchan` | **`pipe_read`** ⛔ | `do_wait` / `hrtimer_nanosleep` |
+| `/proc/<pid>/fd/*` | **`pipe:[…]`（只读端）且无子进程** | 无异常管道 |
+| `/proc/<pid>/io` 的 `syscr` | **不涨** | 持续涨 |
+
+**根因**：老版 `run_once` 用 `out="$( cd … && timeout … bash -c … )"` 捕获输出；**命令块里 `setsid … &` 起的后台守护继承了该命令替换管道的写端且永不关闭** ⇒ 父 bash 在 `pipe_read` 上**永久等 EOF**（`timeout 600` 只杀得掉前台 bash，杀不掉已脱离的守护）。
+**WSL 对照实测：旧法 8s（等守护退出）/ 新法 0s。**
+
+**加固后的判活 / 处置**（已上机，commit `c8fcdb3c`）：
+
+```bash
+# ① 判活（新）：应见 ≤10min 一行心跳 + 首行带 HEAD
+tail -3 /tmp/watch_ops_relay.log     # [relay] 💓 … alive pid=… last_run_id=… inbox_max=… tick=…
+# ② 卡死判据：wchan == pipe_read ⇒ 立即处置（TERM 对它无效）
+P="$(cat /tmp/watch_ops_relay.pid)"; cat /proc/$P/wchan; echo
+# ③ 处置：留档旧日志 → kill -9 → 直接重启（pidfile 里 PID 已失效，新锁会自动放行）
+cp /tmp/watch_ops_relay.log /tmp/watch_ops_relay.log.frozen-$(date +%m%d)
+kill -9 "$P"
+cd ~/super_intelligence_2035/doc/personal-watch/run && \
+  setsid bash -c 'exec -a watch_ops_relay.sh bash ops_relay.sh' > /tmp/watch_ops_relay.log 2>&1 < /dev/null &
+sleep 5; cat /tmp/watch_ops_relay.pid; head -1 /tmp/watch_ops_relay.log
+# ④ 活性核验（不靠"看起来没事"）：wchan 应 ≠ pipe_read，且 12s 内 syscr 增长
+Q="$(cat /tmp/watch_ops_relay.pid)"; cat /proc/$Q/wchan; echo
+awk '/^syscr/{print "syscr#1="$2}' /proc/$Q/io; sleep 12; awk '/^syscr/{print "syscr#2="$2}' /proc/$Q/io
+```
+
+> ⚠️ **`RELAY_FORCE=1` 的适用边界**：它只跳过单实例锁。**若旧实例真的还活着并会干活（只是你认为它卡了）⇒ 会出现两个中继同时 push**。
+> ⇒ 规矩：**先 `kill -9` 再起**（此时新锁会正确放行）；`RELAY_FORCE=1` 仅在「pidfile 指向的 PID 还活着且你已确认它半死」时用。
 
 ## 5. ⚠️ 安全（务必知悉）
 
