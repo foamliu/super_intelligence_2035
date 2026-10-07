@@ -1007,3 +1007,58 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 
 > ✅ **执行状态**：① GPIC优先序——被 ④ 块（用户直令15:58）作废「15:30定时停UltraX」→改为UltraX续传到底。② BO方向核对——唤醒190确认：报告方向bug（非BO code bug），TRUE best=t23(0.4155)，t75(0.373)=MIN/worst，R1 Spearman ρ=−0.43不受影响。已创建query_bo_r2.py(ORDER BY score DESC)。唤醒192再次DB查询复核确认。本块已闭合，归档于此。
 
+
+--- Archived 2026-10-07 (data 唤醒200) ---
+
+### 🆕 运维指令 · 2026-10-06（🎯 **【用户三步令】① 收 Stable 200-trial + top-K `lm_eval`/Spearman/σ ② `s_step` 归因（1.5 s→~30–100 ms，`D` 0.016 B→0.5–1 B）③ `.29` GPU0-1 释放后 **8 卡**搜第二轮**）· **最高优先 · 用户直令**
+
+> **用户 2026-10-06 三步令（按此顺序）**：
+> 1. **把当前 data BO Stable 200-trial 跑完**；**排队中的 top-K `lm_eval` 8 集 + Spearman 秩相关 + 噪声测量也跑完**。
+> 2. **做 `s_step` 归因（最高杠杆）**，争取把 **1.5 s 压到 ~30–100 ms** ⇒ **`D` 从 0.016 B 抬到 0.5–1 B**。
+> 3. **此时若 `.29` GPU0-1 已释放，就用 8 卡搜第二轮。**
+
+> 📦 §三步令①②详细执行计划（2026-10-06）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：①200trial+top-K lm_eval+Spearman ρ=−0.43+σ=0 ✅；②MBS16→s_step 166ms(8.6×)→D=0.5B/trial ✅。需要时再读。
+
+> **③ 第二轮搜索（**条件触发**：`.29` GPU0-1 已释放）**
+> - **触发条件**：pretrain 侧 **D（P-9.11 补测）已完成并明确释放 GPU0-1**（运维会在心跳/任务书确认）。🚫 **在此之前绝不碰 GPU0-1**（pretrain A/B/D 在用）。
+> - **做法**：用 **8 卡（GPU0-7）** 跑 **Stable 第二轮 BO**；`D`（token/trial）按 ② 修好的 `s_step` **反算**（目标 0.5–1 B；若 `T` 不允许则如实降档并标注），trial 数按 `T` 反算（**目标 ≥200 且尽量多**；512 若可达则取 512）。
+> - 新 study 用**独立 DB**（如 `mix_search_eval_r2.db`）；**与 200-trial 的对照 = 只比「最优配比 + 排序结论」，不比 loss 绝对值**（`D`/GBS 不同，loss 尺度不同）；**同样跑 top-K `lm_eval` + σ**。
+> - 产出 `report_data_mix_eval_r2.html`。
+>
+> **纪律（不变）**：🚫 **不 kill 正在跑的 BO**；🚫 **不在 pretrain 释放前碰 GPU0-1**；🚫 **不改白名单 / 不起白名单外的下载**（⚠️ **数据下载失败需主动重启**：白名单内任一进程「失败 / 僵死 / 速率趋零 / PID 已死」⇒ 立即 kill+重启，见顶部「运维指令 · 2026-10-07」P0 块）；**心跳 ≤60 min** 且每步 commit + push；做不完**如实写卡点 + 需要什么 + 阻塞**；`TASK/MEMORY` 体积均 ≤32KB。
+
+
+
+### 🔴 运维指令 · 2026-10-06（**配比实验改道**：废弃「目标尺寸模型 + 手挑单臂」→ 改「**小代理模型 + Optuna 贝叶斯优化 + 每卡独立 trial**」；**1 天搜 Stable / 1 天搜 Decay**）· **最高优先 · 立即执行**
+
+> 📦 §改道方案·裁定原文（2026-10-06）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：S0a方法学错(单臂2.2B)+成本失控(312GPU·h/臂)→改道小代理+BO(§①②③已归档,§④⑤⑥见下)。需要时再读。
+
+> 📦 §改道方案 ①②③（2026-10-06）已归档 → run/ARCHIVE_OPERATOR_DATA.md（①立即动作）+ run/ARCHIVE_DATA_SPEC_HISTORY.md（②硬约束+③标定）；**结论**：kill S0a 完成、d=128/L=14 由第5轮块定案、标定5项必验全部通过（见 MEMORY_DATA.md）。需要时再读。
+
+#### ④ 搜索空间（Optuna `suggest_*`）
+
+- **Day1 · Stable 段（WSD 的 stable 主体）**：`web`（base / UltraX；**UltraX 🚫 未下 → 本轴降级为「仅 base」**，沿用 §0.6-B 既有口径）· `code` · `math` **三点、`sum=1`**。
+  初值域：`web ∈ [0.80, 0.95]`、`code ∈ [0.03, 0.12]`、`math = 1 − web − code`（**让 BO 自己找，别把先验钉死**）。
+- **Day2 · Decay 段（带 SFT 的退火）**：**`SFT 总占比 ∈ [0.40, 0.80]`**（⚠️ Xmodel-2 最优落在 **60–69%（取 64%）**，**是文献锚点不是答案**——**让 BO 自己搜**）+ **SFT 内部 5 类**（`Mathematics` / `Code` / `Logic` / `Knowledge` / `Commonsense`，**CoT 归 Logic**）**单纯形采样**。
+- 搜索空间若有物理约束（`sum=1`、非负）→ 用 **`suggest_float` + 归一化**，**不要**用会越界的独立 `suggest_float`。
+
+#### ⑤ 目标函数（objective）与收尾
+
+- **主 objective = 固定 held-out 验证集 loss**（⭐ **整轮固定同一个 held-out bin，防泄**；用 `suggest=` 采样出的配比去训，在**同一验证 bin** 上测）。
+  → 便宜、信号密、**可早停**；**别对 300+ 个模型都跑 `lm_eval`**。
+- **早停**：`MedianPruner`（如 **1/3 步处 loss 显著差于中位 → prune**）→ 同 24h 内能跑**更多** trial。
+- **收尾**：取 **top-K（如 5）** 配比跑 **`lm_eval` Table 2（8 集）/ Table 3（6 集）** 复核（复用 pretrain 已打通的 `ckpt → HF → lm_eval` 管线）。
+- **可复现**：每 trial 落盘 **Optuna `sqlite` storage** + **trial 配置 CSV**（`number / params / steps / loss / status / created`）。
+- **依赖安装**：`optuna` **装进独立 env**（🚫 **不许污染共享 `py310`**，见上方「环境隔离纪律」）；**外网命令显式带 proxy**（见上方 proxy 口径块）。
+
+#### ⑥ 交付 & 纪律
+
+- **交付**：**重写 `DATA_MIX_RECIPE.md §6`** = **① Optuna study 定义（搜索空间/采样器/pruner/objective）② trial 数（实测）③ 两段各自的最优配比百分比 ④ 外推到 2.2B 的迁移性说明**（引用 `ye2024datamixinglaws`；**如实标注「代理规模 ≠ 2.2B」这一限制**）；每 trial 一行进实验记录（`MEMORY_DATA.md` / `DATA_LEDGER.md`）。
+- **口径统一**：`DATA_MIX_RECIPE.md` 里 §6 的模型尺寸数字**有 2.2B / 2.47B / 3B 三种写法** → **一并订正**（以 `pretrain_launcher.py` 的 `NVIDIAMambaHybridModelProvider2B` = **2.220B** 为唯一准据）。
+- **纪律（不变）**：🚫 不改 pretrain 的脚本 / 🚫 不碰 `.29` GPU0–1 / 🚫 **不 kill 对方进程** / 🚫 **全轮不出现领域化** / 重 I/O 避让（`.29` 与 `.12` 共享 `/nas_train`）。
+- **回写**：`MEMORY_DATA.md` 的「进度快照」+「运维问答」须写清 **标定结果** 与 **最终两段配比**。
+
+> ✅ **本块生效即视为已批准**，**无需再等拍板**。**这是当前 data 线唯一主攻**（白名单下载巡检照常后台低强度进行）。
+> 📌 **一句话**：**用小模型跑几百次试验去拟合配比，而不是用 2.2B 跑一次；两天（Stable / Decay 各一天）出配方。**
+
+

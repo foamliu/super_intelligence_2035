@@ -12,11 +12,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验 → 全部交付✅ → 后台: GPIC 5241/8001 + zh分词(s4.bin=57.5GB,file33/256)
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a已kill；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43+report; s_step归因(MBS16:8.6×,166ms)+report; Round2 BO✅200/200(166✅+34❌,best=t23=0.4155); base下载完成; R1 lm_eval errata更正; UltraX✅479 parquet(454GB,5config); ✅top-K收尾全完成(retrain5/5+HF转换+全量lm_eval+topk_lmeval_results_r2.json@19:40); ✅report_data_mix_eval_r2.html(18KB); Spearman ρ=−0.80(BO score vs full eval,n=5)
-当前动作:     唤醒199(20:59@.12) 巡检: ①GPIC 5241/8001(+33since198,PID144981活,rate~40tar/h,ETA~2.7d) ②UltraX✅479parquet/454GB完成(进程已退出) ③zh分词s4.bin=57.5GB(+7.5GB,PID2851334活99%CPU,file33/256,log buffered至18:34,ETA~2.5d) ④.29全8GPU空闲 ⑤TASK=31.2KB/MEMORY=26.8KB(均✅≤32KB) ⑥无新运维指令
-下一步:       ①GPIC继续下载(5241/8001,2760remaining,ETA~2.7d); ②zh分词完成→启动l1_en_hq分词(ETA~2.5d); ③GPIC下完→运维决定是否放en_v1_4; ④等待运维新指令(配比实验已完成交付)
-阻塞:         zh分词进行中(s4.bin=57.5GB,file33/256,无.idx,ETA~2.5d); GPIC下载进行中(5241/8001,ETA~2.7d)
+PHASE:        §0.6-B 配比实验 → 全部交付✅ → 后台: GPIC 5278/8001 + zh分词并行化(8进程s4-s11,ETA~9.8h)
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a已kill；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43+report; s_step归因(MBS16:8.6×,166ms)+report; Round2 BO✅200/200(166✅+34❌,best=t23=0.4155); base下载完成; R1 lm_eval errata更正; UltraX✅479 parquet(454GB,5config); ✅top-K收尾全完成(retrain5/5+HF转换+全量lm_eval+topk_lmeval_results_r2.json@19:40); ✅report_data_mix_eval_r2.html(18KB); Spearman ρ=−0.80(BO score vs full eval,n=5); ✅zh分词并行化(1→8进程,ETA 2.5d→~9.8h)
+当前动作:     唤醒200(21:33@.12) ⭐zh分词并行化: kill旧单进程(PID2851334,33/256,file58GB无idx)+删s4.bin(58GB)+建baize_tokenize_zh_parallel.sh(8进程nice-10,各32file→s4-s11)+21:38:45启动8×preprocess_data.py(PID2574412~2575292,ppid=1✅)+T1→T3实测吞吐=45.9GB/h(5.74GB/h/proc,7.8×speedup)+GPIC 5278/8001(未掉速~42tar/h)+load52→47(nice-10可控)+归档2块TASK36.5KB→30.1KB
+下一步:       ①zh分词8进程跑完(ETA~07:30AM 10/8)→合入blend; ②启动l1_en_hq分词(6000 parquet); ③GPIC续下(5278/8001,ETA~2.7d); ④⑥块: 配比收官总报告HTML(report_data_mix_summary.html); ⑤en_v1_4排队等放行
+阻塞:         zh分词并行化进行中(8进程s4-s11,~7.7GB@21:49,ETA~9.8h); GPIC下载进行中(5278/8001,ETA~2.7d); ⑥块HTML报告待写
 ERROR_COUNT:  0
 ```
 
@@ -24,6 +24,7 @@ ERROR_COUNT:  0
 
 ## 📋 本唤醒流水
 > 📦 唤醒185-190 已归档 → `daily-memories-data/2026-10-07.md`（含BO方向bug调查全链+UltraX启动+zh分词启动详情）
+- [21:33] **唤醒200**：①本机=`.12`。②⭐**运维指令⑤: zh分词并行化**——nproc=224,load=46,起步N=8(min(8,112))。kill旧单进程(PID2851334+2850810,33/256files,58GB s4.bin无idx=不可用),删s4.bin(58GB)。建`baize_tokenize_zh_parallel.sh`:256file→8组×32file→s4-s11,symlink到/tmp/mix_base_tok_zh_work/s{4..11},nice-n10,setsid(ppid=1✅),各独立log。21:38:45启动8×preprocess_data.py(PID2574412~2575292)。③⭐**实测吞吐**:T1(21:40:48)=1310MB→T3(21:49:11)=7728MB,delta=6418MB/503s=**45.9GB/h total(5.74GB/h/proc)**,7.8×speedup vs单进程(6.1GB/h)。每shard~56GB@5.74GB/h→**ETA~9.8h(~07:30AM 10/8)**,≤12h目标✅。④GPIC:5278/8001(+9since21:36,~42tar/h,**未掉速✅**),PID144981活。⑤load=47(nice-10可控,224核)。⑥📦体积:TASK=36.5KB→归档2块(三步令+配比改道→ARCHIVE)→**30.1KB✅**,MEMORY=待测。⑦⑥块(配比收官HTML)待写→下一步。下载线心跳：base ✅全满 | GPIC 5278/8001（活PID144981,+9,~42tar/h,ETA~2.7d）| UltraX ✅479完成 | en_v1_4 排队 | zh分词 8进程s4-s11（PID2574412~2575292,ppid=1✅,~7.7GB@21:49,45.9GB/h,ETA~9.8h）。
 - [20:59] **唤醒199**：①本机=`.12`。②巡检所有后台任务——GPIC:5241/8001(+33since198,0incomplete,PID144981活,latest=05240,rate~40tar/h,ETA~2.7d)。UltraX:✅479parquet/454GB完成(0incomplete,进程已退出rc=0)。zh分词:s4.bin=57.5GB(+7.5GBsince198,PID2851334活99%CPU,fd77→正在读part-033-of-256,log buffered至18:34最后行=12.1Mdocs/10.43Btok/23359s,无.idx,按file33/256估算ETA~2.5d)。.29全8GPU空闲(0MiB,0%)。③无新运维指令(git log origin/main无新data相关提交)。④📦体积:TASK=31.2KB/MEMORY=26.8KB(均✅≤32KB,本轮无需归档)。下载线心跳：base ✅全满 | GPIC 5241/8001（活PID144981,+33,~40tar/h,ETA~2.7d）| UltraX ✅479parquet完成 | en_v1_4 排队 | zh分词 s4.bin=57.5GB（活PID2851334,file33/256,ETA~2.5d）。
 - [20:09] **唤醒198**：①本机=`.12`。②⭐**top-K收尾全完成**：PID1985872已退出(进程不存在)，.29全8GPU空闲(0MiB)。`topk_lmeval_results_r2.json`(4014B,19:40)已生成——5 trial全量lm_eval(8 tasks,no limit)结果：t199 avg=0.3899(best)>t33=0.3897>t118=0.3877>t23=0.3846>t38=0.3835。**BO score排名与全量排名几乎完全反转**，Spearman ρ=−0.80(n=5)。③⭐**UltraX下完**：479parquet(454GB,5config),0incomplete,rc=0@19:52。进程已自然退出。④⭐**report_data_mix_eval_r2.html已生成**(18KB)。⑤GPIC(5208/8001+128test✅,PID144981活)。⑥zh分词(s4.bin=50GB,PID2851334 nice-19活)。⑦📦体积:TASK=30.5KB/MEMORY=待测。
 - [19:33] **唤醒197**：①本机=`.12`。②⭐**top-K retrain 5/5全完成**：TB log t0023最后step=14593/15258(loss=4.029),所有5个目录(r2_topk_t0023_gpu2~t0033_gpu6)均已出现`checkpoints/iter_0015258/`(含__0_0.distcp+common.pt+train_state.pt,~37MB)。GPU2-6已释放(仅GPU4保留60GB=HF转换中)。脚本PID1985872(ppid=1✅)仍活,进入ckpt→HF(baize_p6_ckpt_to_hf.py)→full lm_eval(8tasks,no limit)→Spearman→topk_lmeval_results_r2.json阶段,ETA~20:00。③UltraX(458/483,95%,PID3883720 ppid=1✅,462fetched/8incomplete,rate~26.5s/file,21remaining,ETA~19:42,435GB) ④GPIC(5318/8001+128test✅,PID144981,latest tar 05188@19:29,rate慢因UltraX分流) ⑤zh分词(s4.bin=46GB,+1.6GBsince196,PID2851334 nice-19,无.idx)。⑥📦体积:TASK=30.5KB/MEMORY=23.9KB均≤32KB✅。下载线心跳：base ✅全满 | GPIC 5318/8001（活PID144981,rate慢因UltraX分流）| UltraX 458/483（活PID3883720 ppid=1✅,ETA~19:42）| en_v1_4 排队 | zh分词 s4.bin=46GB（活PID2851334,nice-19）。
@@ -116,11 +117,11 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **配比实验全部交付✅ → 后台巡检: GPIC 5241/8001 + zh分词(s4.bin=57.5GB,file33/256)** |
-| WAITING | 1（GPIC下载进行中5241/8001 ETA~2.7d; zh分词进行中s4 file33/256 ETA~2.5d; 等待运维新指令） |
+| PHASE | **配比实验全部交付✅ → 后台: GPIC 5278/8001 + zh分词并行化(8进程s4-s11,45.9GB/h,ETA~9.8h)** |
+| WAITING | 1（GPIC下载进行中5278/8001 ETA~2.7d; zh分词8进程进行中ETA~9.8h; ⑥块HTML报告待写） |
 | ERROR_COUNT | 0（所有后台任务健康运行中） |
-| 节点 | `10.239.2.29`（全8GPU空闲0MiB）+`.12`（GPIC下载PID=144981活 + zh分词PID=2851334活99%CPU） |
-| 更新 | 2026-10-07 20:59 |
+| 节点 | `10.239.2.29`（全8GPU空闲0MiB）+`.12`（GPIC下载PID=144981活 + zh分词8进程PID2574412~2575292活 nice-10） |
+| 更新 | 2026-10-07 21:50 |
 
 ## 看板（按推荐执行顺序）
 
