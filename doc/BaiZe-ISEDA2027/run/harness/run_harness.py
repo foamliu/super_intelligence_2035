@@ -299,25 +299,79 @@ class ClaudeCodeDriver:
 
 
 class DeepseekHarnessDriver:
-    """deepseek-harness — python SDK `jsonrpc-agent` minimal variant.
+    """deepseek-harness — Python SDK `deepseek_harness.DeepSeekHarness`.
 
-    docs/user/guide/python-sdk.md: minimal variant; separate workspace + session
-    id per task (BENCHMARK.md).  Requires `pip install` of the SDK (not on host).
+    Installed via ``pip install --target /tmp/dsh_sdk deepseek-harness-sdk``
+    (avoids touching the shared py310 env).  The SDK launches a bundled native
+    runtime (``dsh``) as a subprocess over JSON-RPC stdio.
+
+    Provider/base_url point at the local gw_proxy (port 9090) which injects the
+    real gateway key and rewrites ``developer``→``system`` roles.
     """
 
     name = "deepseek-harness"
+    _SDK_PATH = "/tmp/dsh_sdk"
+    _DSH_HOME = "/tmp/dsh_home"
 
     def available(self) -> bool:
         try:
             import importlib.util
-            return importlib.util.find_spec("deepseek_sdk") is not None
+            import sys
+            if self._SDK_PATH not in sys.path:
+                sys.path.insert(0, self._SDK_PATH)
+            return importlib.util.find_spec("deepseek_harness") is not None
         except Exception:
             return False
 
     def run(self, instance: dict, workdir: Path, timeout: int = 3600) -> DriverResult:
-        r = DriverResult(returncode=1)
+        import sys
+        import time
+        import tempfile
+
+        if self._SDK_PATH not in sys.path:
+            sys.path.insert(0, self._SDK_PATH)
+
+        r = DriverResult()
         r.harness = self.name
-        r.stderr = "deepseek-harness SDK not installed on host (available()==False)"
+        t0 = time.time()
+
+        try:
+            from deepseek_harness import DeepSeekHarness
+        except ImportError as ex:
+            r.returncode = 1
+            r.stderr = f"deepseek_harness import failed: {ex}"
+            r.wall_s = time.time() - t0
+            return r
+
+        # Ensure DSH_HOME exists (SDK requires an explicit, non-empty path).
+        Path(self._DSH_HOME).mkdir(parents=True, exist_ok=True)
+
+        problem_statement = instance.get("problem_statement", "")
+        instance_id = instance.get("instance_id", "unknown")
+
+        try:
+            harness = DeepSeekHarness(
+                provider="deepseek-official",
+                model=UNIFIED_MODEL,
+                base_url=f"http://127.0.0.1:9090/v1",
+                api_key=DUMMY_KEY,
+                cwd=str(workdir),
+                dsh_home=self._DSH_HOME,
+                profile="sdk-minimal",
+                request_timeout_seconds=float(timeout),
+                initialize_timeout_seconds=60.0,
+            )
+            with harness:
+                result = harness.run(problem_statement, session_id=instance_id)
+            r.stdout = getattr(result, "final_response", "") or ""
+            r.returncode = 0
+        except Exception as ex:
+            r.returncode = 1
+            r.stderr = f"deepseek-harness run error: {ex}"
+            r.timed_out = "timeout" in str(ex).lower() or "timed out" in str(ex).lower()
+
+        r.wall_s = time.time() - t0
+        r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
         return r
 
 

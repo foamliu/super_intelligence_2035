@@ -34,7 +34,7 @@ ROOTFS_TEMPLATES = {
     "mwaskom/seaborn":            ROOTFS_DIR / "mwaskom__seaborn-2848",
     "pallets/flask":              ROOTFS_DIR / "pallets__flask-4045",
 }
-ALL_HARNESSES = ["cline-patched", "codex", "opencode", "claude-code"]
+ALL_HARNESSES = ["cline-patched", "codex", "opencode", "claude-code", "deepseek-harness"]
 TIMEOUT_RUN = 1800
 TIMEOUT_EVAL = 1800
 PROXY = "http://172.19.92.25:13128"
@@ -268,16 +268,56 @@ def process_instance_for_harness(instance_id, harness, do_setup=True, do_run=Tru
 
 
 def load_results():
-    if SUMMARY_PATH.exists():
+    """Load results under a shared lock (concurrent-safe with save_results)."""
+    import fcntl
+    lock_path = SUMMARY_PATH.with_suffix(".lock")
+    with open(lock_path, "w") as lf:
+        fcntl.flock(lf, fcntl.LOCK_SH)
         try:
-            return json.loads(SUMMARY_PATH.read_text())
-        except Exception:
+            if SUMMARY_PATH.exists():
+                try:
+                    return json.loads(SUMMARY_PATH.read_text())
+                except Exception:
+                    return []
             return []
-    return []
+        finally:
+            fcntl.flock(lf, fcntl.LOCK_UN)
 
 
-def save_results(results):
-    SUMMARY_PATH.write_text(json.dumps(results, indent=2, default=str))
+def save_results(results, harness=None):
+    """Read-merge-write under exclusive lock for concurrent multi-harness safety.
+
+    When *harness* is given, only entries whose ``harness`` field matches are
+    written to disk; entries for *other* harnesses are preserved from the
+    on-disk copy (preventing a stale in-memory list from clobbering a
+    concurrent process's newer results).
+    """
+    import fcntl
+    lock_path = SUMMARY_PATH.with_suffix(".lock")
+    with open(lock_path, "w") as lf:
+        fcntl.flock(lf, fcntl.LOCK_EX)
+        try:
+            current = []
+            if SUMMARY_PATH.exists():
+                try:
+                    current = json.loads(SUMMARY_PATH.read_text())
+                except Exception:
+                    current = []
+            idx = {}
+            for i, r in enumerate(current):
+                idx[(r.get("instance_id"), r.get("harness"))] = i
+            for r in results:
+                if harness and r.get("harness") != harness:
+                    continue
+                key = (r.get("instance_id"), r.get("harness"))
+                if key in idx:
+                    current[idx[key]] = r
+                else:
+                    idx[key] = len(current)
+                    current.append(r)
+            SUMMARY_PATH.write_text(json.dumps(current, indent=2, default=str))
+        finally:
+            fcntl.flock(lf, fcntl.LOCK_UN)
 
 
 def main():
@@ -325,7 +365,7 @@ def main():
                 break
         if not found:
             all_results.append(res)
-        save_results(all_results)
+        save_results(all_results, harness=args.harness)
         cls = res.get("classification", "?")
         print(f"  => {iid} | {args.harness} | {cls}")
 

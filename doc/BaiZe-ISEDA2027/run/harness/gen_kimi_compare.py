@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Generate SWEBENCH_COMPARE.html from kimi_pilot_results.json (single-model serial cross-eval)."""
+"""Generate SWEBENCH_COMPARE.html from kimi_pilot_results.json — 30×5 harness comparison.
+
+Per operator instruction 2026-10-07: same 30 instances (15 django + 15 sympy) × 5 harnesses,
+single model (kimi-k2.6-cloud), concurrency=1 strict serial.
+"""
 import json, html
 from pathlib import Path
 from collections import defaultdict
@@ -10,14 +14,31 @@ RESULTS_FILE = HERE / "kimi_pilot_results.json"
 MODEL = "kimi-k2.6-cloud"
 GATEWAY = "http://agi-gateway.cxmt.com/cloud/v1"
 HARNESS_ORDER = ["cline-patched", "codex", "opencode", "claude-code", "deepseek-harness"]
+TOTAL_PLANNED = 30  # 15 django + 15 sympy
 
 def load_results():
     if not RESULTS_FILE.exists():
         return []
     return json.loads(RESULTS_FILE.read_text())
 
+def get_target_instances(data):
+    """The 30 instances are defined by the cline-patched run (15 django + 15 sympy)."""
+    cl_ids = set(e["instance_id"] for e in data if e.get("harness") == "cline-patched")
+    if not cl_ids:
+        # Fallback: if cline-patched not yet run, use the first 30 django+sympy from codex
+        cl_ids = set(e["instance_id"] for e in data
+                      if e.get("harness") == "codex"
+                      and ("django" in e["instance_id"] or "sympy" in e["instance_id"]))
+        # Take first 30 sorted
+        cl_ids = set(sorted(cl_ids)[:30])
+    return cl_ids
+
 def main():
     data = load_results()
+    target_ids = get_target_instances(data)
+    # Filter to only the 30 target instances
+    data = [e for e in data if e["instance_id"] in target_ids]
+
     by_harness = defaultdict(list)
     for entry in data:
         h = entry.get("harness", "unknown")
@@ -26,23 +47,25 @@ def main():
     stats = {}
     for h in HARNESS_ORDER:
         entries = by_harness.get(h, [])
-        resolved = sum(1 for e in entries if e["classification"] == "resolved")
-        pbf = sum(1 for e in entries if e["classification"] == "patch-but-failed")
-        qb = sum(1 for e in entries if e["classification"] == "quota-blocked")
-        blk = sum(1 for e in entries if e["classification"] == "blocked")
+        resolved = sum(1 for e in entries if e.get("classification") == "resolved")
+        pbf = sum(1 for e in entries if e.get("classification") == "patch-but-failed")
+        qb = sum(1 for e in entries if e.get("classification") == "quota-blocked")
+        blk = sum(1 for e in entries if e.get("classification") == "blocked")
         scored = resolved + pbf
-        total_planned = 300
-        walls = [e.get("harness_result", {}).get("wall_s") for e in entries if "wall_s" in e.get("harness_result", {})]
+        walls = [e.get("harness_result", {}).get("wall_s") for e in entries
+                 if isinstance(e.get("harness_result", {}).get("wall_s"), (int, float))]
         avg_wall = f"{sum(walls)/len(walls):.0f}s" if walls else "N/A"
-        resolve_rate = f"{resolved}/{scored} ({100*resolved/scored:.0f}%)" if scored > 0 else "N/A"
+        resolve_rate = f"{resolved}/{scored} ({100*resolved/scored:.1f}%)" if scored > 0 else "N/A"
         stats[h] = {
             "scored": scored, "resolved": resolved, "pbf": pbf, "qb": qb, "blk": blk,
-            "remaining": total_planned - len(entries),
+            "total": len(entries),
+            "remaining": TOTAL_PLANNED - len(entries),
             "resolve_rate": resolve_rate, "avg_wall": avg_wall,
-            "in_progress": len(entries) < total_planned,
+            "in_progress": 0 < len(entries) < TOTAL_PLANNED,
+            "not_started": len(entries) == 0,
         }
 
-    instances = sorted(set(e["instance_id"] for e in data))
+    instances = sorted(target_ids)
     rows_detail = []
     for iid in instances:
         cells = []
@@ -69,10 +92,16 @@ def main():
     summary_rows = []
     for h in HARNESS_ORDER:
         s = stats[h]
-        status = "🔄 in progress" if s["in_progress"] else "✅ done"
+        if s["not_started"]:
+            status = "⬜ not started"
+        elif s["in_progress"]:
+            status = f"🔄 in progress ({s['total']}/{TOTAL_PLANNED})"
+        else:
+            status = "✅ done"
         summary_rows.append(
             f"<tr><td class='hname'>{h}</td>"
-            f"<td>{s['resolved']}</td><td>{s['pbf']}</td><td>{s['qb']}</td><td>{s['blk']}</td>"
+            f"<td>{s['scored']}</td><td>{s['resolved']}</td><td>{s['pbf']}</td>"
+            f"<td>{s['qb']}</td><td>{s['blk']}</td>"
             f"<td>{s['resolve_rate']}</td><td>{s['avg_wall']}</td><td>{status}</td></tr>")
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -104,12 +133,13 @@ td.pending {{ text-align: center; color: #ccc; }}
 .model-badge {{ display: inline-block; background: #6c5ce7; color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; }}
 pre {{ background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 12px; }}
 </style></head><body>
-<h1>SWE-bench Cross-Eval Report</h1>
+<h1>SWE-bench 30×5 Harness Cross-Eval Report</h1>
 <p><span class="model-badge">Model: {MODEL}</span> &nbsp; Gateway: <code>{GATEWAY}</code></p>
-<p><strong>Generated:</strong> {now} | <strong>Concurrency:</strong> 1 (strict serial) | <strong>Protocol:</strong> one harness × 30 instances, then next harness</p>
+<p><strong>Generated:</strong> {now} | <strong>Scope:</strong> 30 instances (15 django + 15 sympy) × 5 harnesses | <strong>Concurrency:</strong> 1 (strict serial)</p>
 <div class="callout">
-<p><strong>📋 Key Design (per operator instruction 2026-10-05):</strong></p>
+<p><strong>📋 Key Design (per operator instruction 2026-10-07):</strong></p>
 <ul>
+<li><strong>Same 30 instances</strong> across all 5 harnesses (15 django + 15 sympy, fixed set)</li>
 <li><strong>Single model</strong> ({MODEL}) — no model mixing (fair comparison)</li>
 <li><strong>Strict serial</strong> (concurrency=1) — one instance × one harness at a time</li>
 <li><strong>Three-column classification:</strong> <code>resolved</code> / <code>patch-but-failed</code> / <code>quota-blocked</code></li>
@@ -117,14 +147,13 @@ pre {{ background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; o
 <li><strong>Immediate固化:</strong> results saved to JSON after each instance</li>
 </ul>
 </div>
-<h2>1. Summary by Harness</h2>
+<h2>1. Summary by Harness (30 instances each)</h2>
 <table>
-<tr><th>Harness</th><th>Resolved</th><th>Patch-but-failed</th><th>Quota-blocked</th><th>Blocked (infra)</th><th>Resolve Rate (of scored)</th><th>Avg Wall</th><th>Status</th></tr>
+<tr><th>Harness</th><th>Scored</th><th>Resolved</th><th>Patch-but-failed</th><th>Quota-blocked</th><th>Blocked (infra)</th><th>Resolve Rate</th><th>Avg Wall</th><th>Status</th></tr>
 {summary_joined}
 </table>
 <div class="callout">
-<p><strong>📊 Overall:</strong> {total_entries} entries scored | {total_resolved} total resolved</p>
-<p><strong>vs deepseek-v4-flash (previous):</strong> 0% resolve rate (0/22 scored) — {MODEL} shows dramatic improvement with zero quota blocks.</p>
+<p><strong>📊 Overall:</strong> {total_entries} entries on 30 instances | {total_resolved} total resolved across all harnesses</p>
 </div>
 <h2>2. Instance-level Detail</h2>
 <p>Legend: &#10004;=resolved, &#10006;=patch-but-failed, &#9728;=quota-blocked, &#9888;=infra-blocked (git/rootfs failure), — = not yet run</p>
@@ -146,7 +175,9 @@ pre {{ background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; o
 </div>
 <h2>4. Reproduction</h2>
 <pre><code>cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness
-PYTHONUNBUFFERED=1 HARNESS_MODEL={MODEL} python3 run_serial_kimi.py --harness cline-patched --all-prepared --resume
+# The 30 instances are defined by the cline-patched run (15 django + 15 sympy)
+INSTS=$(python3 -c "import json; d=json.load(open('kimi_pilot_results.json')); print(' '.join(sorted(set(e['instance_id'] for e in d if e['harness']=='cline-patched'))))")
+PYTHONUNBUFFERED=1 HARNESS_MODEL={MODEL} python3 run_serial_kimi.py --harness &lt;harness_name&gt; --instances $INSTS --resume
 python3 gen_kimi_compare.py</code></pre>
 <h2>5. Caveats</h2>
 <div class="caveat">
@@ -154,12 +185,13 @@ python3 gen_kimi_compare.py</code></pre>
 <li><strong>NOT a standard SWE-bench leaderboard score.</strong> Internal cross-harness comparison only.</li>
 <li><strong>Non-Docker sandbox</strong> (unshare R1) — may differ from official Docker-based eval.</li>
 <li><strong>Single model</strong> ({MODEL}) — comparable across harnesses, not vs leaderboard.</li>
-<li><strong>Partial results:</strong> cline-patched first; others run after it completes 30.</li>
+<li><strong>30 instances only</strong> — small sample, confidence intervals are wide.</li>
 <li><strong>cline-patched</strong> is a modified cline, not vanilla.</li>
+<li><strong>Harnesses not yet run</strong> are marked "⬜ not started" — results update as runs complete.</li>
 </ol>
 </div>
 <hr>
-<p><small>BaiZe Harness H-A, {now}. Model: {MODEL}. Serial concurrency=1. Data: kimi_pilot_results.json ({total_entries} entries).</small></p>
+<p><small>BaiZe Harness H-A, 30×5 cross-eval, {now}. Model: {MODEL}. Serial concurrency=1. Data: kimi_pilot_results.json (filtered to 30 instances, {total_entries} entries).</small></p>
 </body></html>"""
 
     out = HERE / "SWEBENCH_COMPARE.html"
