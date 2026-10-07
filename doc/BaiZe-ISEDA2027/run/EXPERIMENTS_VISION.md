@@ -168,6 +168,27 @@ bash r8_run.sh 3000
 
 ---
 
+## ⭐ Weight-ratio 消融（🚧 进行中，2026-10-07 · `VISION_NEXT_DIRECTIONS.md` 方向 3）
+
+> 运维指令 2026-10-06 批准。**只变 contrast_weight : patch_loss_weight**（4 臂: 1:2 / 1:0.5 / 0.5:1 / 2:1），其余固定：w512 / CC12M+Amshaker / 30k 步 / mask-ratio=0.6 / InfoNCE+patch_MSE / 冻结 CLIP-768。Baseline = 1:1（R11-L arm6-A, lp@30k=12.08%，mask-ratio 消融复现=13.49%）。预注册判据：lp >= baseline + 1.5 → "更优"；全部 ±1.5 → "不敏感（flip 由共存驱动，非比例）"。🚫 改 recipe ⇒ 不并入 scaling 曲线。
+
+### Arm 1/4 训练结果（✅ 完成，2026-10-07 20:07→22:11）
+
+| arm (CW:PLW) | C1_final | C1_peak | C2_gap | C4 | final_loss | 训练耗时 | steady img/s | lp@30k | Δlp vs 1:1 |
+|---:|---:|---:|---:|:--:|---:|---:|---:|---:|---:|
+| 1:2 (cw1_plw2) | 0.3546 | 0.4229 | +0.1197 | OK | 3.1601 | 7403s | 2462.6 | *pending* | *pending* |
+| 1:0.5 | — | — | — | — | — | — | — | *pending* | *pending* |
+| 0.5:1 | — | — | — | — | — | — | — | *pending* | *pending* |
+| 2:1 | — | — | — | — | — | — | — | *pending* | *pending* |
+
+> ⚠️ **脚本异常退出 + 已恢复**：arm 1 完成后原脚本 `run_weight_ratio_ablation.sh` 异常退出（master log 无 "done" 行，无 arm 2 启动，PID 187262 gone，GPU 全空 ~30min）。已创建恢复脚本 `run_weight_ratio_ablation_resume.sh`（PID 3214830, setsid+nohup, ppid=1），arms 2-4 重新启动 + arm1 ckpts 预载入 eval 队列。arm 2 (1:0.5) 于 22:45 开跑。
+
+> lp 评测在全部 4 臂训练完成后统一进行（`r8_eval_in1k.py`，~16 ckpts，Protocol A）。
+
+- **证据**：`/tmp/ablation_weight_ratio_cw1_plw2.log`（arm1, 48MB）+ `/tmp/ablation_weight_ratio.log`（master log）+ ckpts 在 `/nas_train/.../out/ABL_weight_ratio_cw1_plw2/`。恢复脚本 `vision/run_weight_ratio_ablation_resume.sh`。
+
+---
+
 ## 胜出结论（S0+S1+S2+S3 汇总 · ⚠️ R1/R2 旧读数，已因坍缩/lr 伪影作废，仅作历史）
 
 **胜出架构：OpenVision2（纯 Attention ViT，w1024·d30·h16·mlp4096，505.0M）**
