@@ -41,13 +41,21 @@ POLL=20                # 本地轮询间隔（秒）
 FETCH_EVERY=3          # 每 N 次轮询做一次 git fetch（=> 默认 ~60s 拉一次远端）
 CMD_TIMEOUT=600        # 单次命令块总超时（秒）
 MAX_OUT_CHARS=20000    # 单次输出截断上限（字符）
+GIT_ERR="/tmp/_watch_relay_git.err"   # git 失败原因落盘（🚫 不再 2>/dev/null 静默吞错）
+HEARTBEAT_EVERY=30     # 每 N 次轮询打一行心跳（30×POLL≈10min）⇒ 「静默 14h 无人知」这类故障可见
 
 mkdir -p "$OPS"
 
 # ── ⭐ 单实例保护（修「两个中继并存 → 同一 RUN_ID 被执行两遍 + 提交两遍」）──
-if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE" 2>/dev/null)" 2>/dev/null; then
-    echo "[relay] ⚠️ 检测到已在运行（pid=$(cat "$PIDFILE" 2>/dev/null)）→ 本实例退出，避免双实例重复执行。"
-    echo "[relay]    如需强制重启：kill \"\$(cat $PIDFILE)\"，然后再启动。"
+# ⚠️ 2026-10-07 加固：a) 判活时**核对对方 cmdline**（PID 被回收时旧 pidfile 会误挡启动）；
+#    b) `RELAY_FORCE=1` 可强制接管（热修 / 卡死时不必先手工 kill）。
+OLD_PID="$(cat "$PIDFILE" 2>/dev/null || true)"
+if [ "${RELAY_FORCE:-0}" = "1" ]; then
+    echo "[relay] ⚠️ RELAY_FORCE=1 → 忽略单实例锁（旧 pid=${OLD_PID:-无}）"
+elif [ -n "${OLD_PID:-}" ] && kill -0 "$OLD_PID" 2>/dev/null \
+     && tr '\0' ' ' < "/proc/$OLD_PID/cmdline" 2>/dev/null | grep -q 'ops_relay'; then
+    echo "[relay] ⚠️ 检测到已在运行（pid=$OLD_PID）→ 本实例退出，避免双实例重复执行。"
+    echo "[relay]    如需强制重启：kill \"\$(cat $PIDFILE)\"（或 RELAY_FORCE=1 启动），然后再启动。"
     exit 0
 fi
 echo $$ > "$PIDFILE"
@@ -114,11 +122,21 @@ guard_block() {
 git_sync() {
     local counts behind
     cd "$GIT_ROOT" || return 0
-    timeout 60 git fetch origin >/dev/null 2>&1 || return 0
+    # ⚠️ 2026-10-07：失败**必须说出原因**（旧版 2>/dev/null + return 0 ⇒ 同步失败无人知，
+    #    「静默 14h 不干活」这类事故就是这么来的）
+    if ! timeout 60 git fetch origin >/dev/null 2>"$GIT_ERR"; then
+        echo "[relay] ⚠️ git fetch FAILED → 本轮不取新命令，下轮重试。原因: $(tr '\n' ' ' < "$GIT_ERR" 2>/dev/null | cut -c1-200)"
+        return 0
+    fi
     counts="$(git rev-list --left-right --count origin/main...HEAD 2>/dev/null || echo '0 0')"
     behind="$(echo "$counts" | awk '{print $1}')"
     if [ "${behind:-0}" -gt 0 ]; then
-        git pull --rebase --autostash origin main >/dev/null 2>&1 || { git rebase --abort >/dev/null 2>&1; return 0; }
+        if git pull --rebase --autostash origin main >/dev/null 2>"$GIT_ERR"; then
+            echo "[relay] pull --rebase OK (behind=${behind})"
+        else
+            git rebase --abort >/dev/null 2>&1 || true
+            echo "[relay] ⚠️ 同步失败（behind=${behind}）→ 本轮不取新命令，下轮重试。原因: $(tr '\n' ' ' < "$GIT_ERR" 2>/dev/null | cut -c1-240)"
+        fi
     fi
 }
 git_publish() {
@@ -136,7 +154,7 @@ git_publish() {
             echo "[relay] pull --rebase OK (behind=${behind})"
         else
             git rebase --abort >/dev/null 2>&1 || true
-            echo "[relay] ⚠️ pull --rebase FAILED（冲突？）→ 本轮不发布，下轮重试"
+            echo "[relay] ⚠️ pull --rebase FAILED → 本轮不发布，下轮重试。原因: $(tr '\n' ' ' < "$GIT_ERR" 2>/dev/null | cut -c1-240)"
             return 0
         fi
     fi
@@ -171,12 +189,18 @@ run_once() {
     host="$(hostname 2>/dev/null || echo '?')"
 
     if guard="$(guard_block "$block")"; then
-        local tmp; tmp="$(mktemp)"
+        # ⚠️ 2026-10-07 加固：**不再用 `out="$( … )"` 捕获输出** —— 命令块一旦 `setsid … &` 起后台守护，
+        #    那个守护会继承命令替换管道的**写端**且永不关闭 ⇒ 父 bash 卡在 `pipe_read` **永久等 EOF**
+        #    （实测把中继冻死 14h：/proc/<pid>/fd/3 -> pipe:[…] 只读端 + wchan=pipe_read + 无子进程）。
+        #    ⇒ 改为「落盘捕获」+ stdin 接 `/dev/null`：这整类故障从根上消失。
+        local tmp outf; tmp="$(mktemp)"; outf="$(mktemp)"
         printf '%s\n' "$block" > "$tmp"
         # 显式启用 pipefail，让管道中间的错误也能被 exit code 反映
-        out="$(cd "$GIT_ROOT" && timeout "$CMD_TIMEOUT" bash -c "set -o pipefail; bash '$tmp'" 2>&1)"
+        ( cd "$GIT_ROOT" && timeout "$CMD_TIMEOUT" bash -c "set -o pipefail; bash '$tmp'" ) > "$outf" 2>&1 < /dev/null
         rc=$?
         rm -f "$tmp"
+        out="$(cat "$outf" 2>/dev/null)"
+        rm -f "$outf"
         if [ "$rc" -eq 124 ]; then
             out="${out}
 [relay] ⚠️ 命令块超时（>${CMD_TIMEOUT}s），已被 timeout 终止"
@@ -213,10 +237,14 @@ run_once() {
 }
 
 # ── 主循环 ────────────────────────────────────────────────────────────────
-echo "[relay] $(date '+%F %T') started. pid=$$ repo=$GIT_ROOT  poll=${POLL}s  fetch_every=${FETCH_EVERY}x  pidfile=$PIDFILE"
+echo "[relay] $(date '+%F %T') started. pid=$$ repo=$GIT_ROOT  poll=${POLL}s  fetch_every=${FETCH_EVERY}x  heartbeat=${HEARTBEAT_EVERY}x  pidfile=$PIDFILE  HEAD=$(git -C "$GIT_ROOT" log -1 --format='%h' 2>/dev/null || echo '?')"
 i=0
 while true; do
     i=$((i + 1))
+    # 💓 心跳：让「还活着 / 卡住了」一眼可判（旧版只在有动作时打日志 ⇒ 静默 14h 无人知）
+    if [ $((i % HEARTBEAT_EVERY)) -eq 0 ]; then
+        echo "[relay] 💓 $(date '+%F %T') alive pid=$$ last_run_id=$(last_run_id) inbox_max=$(inbox_run_id) tick=${i}"
+    fi
     if [ $((i % FETCH_EVERY)) -eq 1 ]; then
         git_sync
     fi
