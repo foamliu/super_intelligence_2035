@@ -33,22 +33,7 @@ ERROR_COUNT:  0
 - ⏭ **下一步**：chain script 自动执行 claude-code×30→deepseek-harness×30→regen HTML。下次唤醒检查 chain script 日志 + 最终 SWEBENCH_COMPARE.html (5 rows) → commit+push。保持 `WAITING=1`。
 
 
-## 🆕 第一百四十三轮速览（2026-10-07 13:45）— opencode×30 at 22/30 (12 res/10 pbf = 54.5%) + SWEBENCH_COMPARE.html regenerated (14377B, 84 entries, 44 resolved) + relay skip 95th + commit+push
-
-- 📊 **opencode×30 进展**：22/30 done → 12 resolved, 10 patch-but-failed = **54.5%** so far。PID 87730 (etimes≈10782s≈180min)，当前处理 instance 23/30 `sympy__sympy-13031`（run_single.py 子进程运行中，etimes≈304s）。avg≈294s/inst, ~8 remaining, ETA ~40min (~14:25)。
-- 📈 **SWEBENCH_COMPARE.html regenerated**：gen_kimi_compare.py exit=0, 14377 bytes, 30 instances, 84 entries (cline 30 + codex 30-subset + opencode 22 + deepseek 2), 44 resolved。
-- 📊 **当前 5-way 对比**（kimi_pilot_results.json, 同 30 instances）：
-  | harness | total | scored | resolved | pbf | blk | rate |
-  |---|---|---|---|---|---|---|
-  | cline-patched | 30 | 30 | 18 | 12 | 0 | 60.0% |
-  | codex (30-subset) | 30 | 30 | 14 | 16 | 0 | 46.7% |
-  | opencode | 22/30 | 22 | 12 | 10 | 0 | 54.5% (so far) |
-  | claude-code | 0/30 | 0 | — | — | 0 | N/A |
-  | deepseek-harness | 2/30 | 2 | 0 | 2 | 0 | 0.0% |
-- 🚀 **chain script 仍在等待**：PID 1292346 (ppid=1, etimes≈6320s) → 等 opencode PID 87730 结束 → claude-code×30 `--resume` → deepseek-harness×30 `--resume` → 每步 regen HTML。日志 `/tmp/chain_harnesses.log` 正常（"Waiting for opencode PID 87730 to finish..."）。
-- ✅ **ops 中继复核（第 95 次）→ 健康**。relay `2489749 1 509602 bash ops_relay.sh`（ppid=1, etimes≈5.9d）。跳过重启。
-- 📦 **体积自检**：TASK=31476B（30.7KB，≤32KB ✓）/ MEMORY=28524B（27.9KB，≤32KB ✓）。📦 体积：TASK=30.7KB / MEMORY=27.9KB（归档 0KB）。
-- ⏭ **下一步**：chain script 自动执行 opencode→claude-code→deepseek-harness→regen HTML。下次唤醒检查 chain script 日志 + 最终 SWEBENCH_COMPARE.html (5 rows) → commit+push。保持 `WAITING=1`。
+> 📦 R143（2026-10-07 13:45）已归档 → daily-memories-harness/2026-10-07.md；**结论**：opencode×30 at 22/30 (12 res/10 pbf = 54.5%) + SWEBENCH_COMPARE.html (14377B, 84 entries, 44 resolved) + relay skip 95th。需要时再读。
 
 
 > 📦 R142（2026-10-07 13:10）已归档 → daily-memories-harness/2026-10-07.md；**结论**：opencode×30 at 19/30 (9 res/10 pbf = 47.4%) + SWEBENCH_COMPARE.html (14288B, 81 entries, 41 resolved) + relay skip 94th。需要时再读。
