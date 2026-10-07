@@ -12095,5 +12095,104 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-11422",
+    "repo": "django/django",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 336.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-11422.json",
+      "stdout_tail": "=django__django-11422\n[run_single] base_commit=df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n[run_single] ps_len=669\n[run_single] git reset --hard df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=335.5s ==\n[run_single] model_patch: 977 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-11422.json\n[run_single] cleanup: git reset --hard df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 46,
+        "p2p_total": 46
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-11564",
+    "repo": "django/django",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 833.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-11564.json",
+      "stdout_tail": "django__django-11564\n[run_single] base_commit=580e644f24f1c5ae5b94784fb73a9953a178fd26\n[run_single] ps_len=928\n[run_single] git reset --hard 580e644f24f1c5ae5b94784fb73a9953a178fd26\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=832.5s ==\n[run_single] model_patch: 4909 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-11564.json\n[run_single] cleanup: git reset --hard 580e644f24f1c5ae5b94784fb73a9953a178fd26\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 174,
+        "p2p_total": 174
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-11583",
+    "repo": "django/django",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "fetch errored but checkout ok: fatal: unable to access 'https://github.com/django/django/': Received HTTP code "
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 95.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-11583.json",
+      "stdout_tail": "django__django-11583\n[run_single] base_commit=60dc957a825232fdda9138e2f8878b2ca407a7c9\n[run_single] ps_len=4665\n[run_single] git reset --hard 60dc957a825232fdda9138e2f8878b2ca407a7c9\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=94.5s ==\n[run_single] model_patch: 2232 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-11583.json\n[run_single] cleanup: git reset --hard 60dc957a825232fdda9138e2f8878b2ca407a7c9\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 50,
+        "p2p_total": 50
+      }
+    },
+    "classification": "resolved"
   }
 ]
