@@ -14,6 +14,39 @@
 
 > 📦 §运维指令·昨夜汇报HTML（2026-10-07）已执行完毕 → report_10_07_data_overnight.html 已交付；详细指令已归档 → run/ARCHIVE_OPERATOR_DATA.md。需要时再读。
 
+### 🆕 运维指令 · 2026-10-07②（**解除白名单锁定：① 立即下载 UltraX-Preview ② en_v1_4 排队 ③ 已下载部分开始分词**）· **用户直令** · 最高优先
+
+> **用户直令（2026-10-07 中午）**：「**安排 data agent 开始下载 UltraX-Preview，ultrafineweb_en_v1_4 排队**」＋「**对于已下载部分的分词可以同步推进了**」。
+> ⓠ **本块【覆盖】2026-10-03 的白名单锁定（commit `1c2f248`）**：白名单**新增 2 项** —— `openbmb/UltraX-Preview` + `ultrafineweb_en_v1_4`。**其余白名单外仍不下载**（`UltraData-RL-2609`、LLaVA 等照旧）。**这是用户主动解禁，不是 agent 可以自行扩权的先例。**
+
+**① 立即下载 `UltraX-Preview`**（新白名单第 5 项）
+- repo = **`openbmb/UltraX-Preview`**；规模 **487 GB / 0.44 TiB / 479 parquet / 5 config / ~100B token**（与 base 部分重叠）。
+- 落盘：**`/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview/`**（先 `df -h` 核实余量；`/nas_train` 上轮 ≈34 T free）。
+- 口径照抄 base 那套：`hf download` + **`--include` config 级** + **外网显式带 proxy** + `setsid nohup`（`ppid=1`）+ **retry-loop** + log；**先核 HF 官方清单（行数/字节）再下**。
+- **为什么**：配方 §0.6 Stable 段的 **S1 轴（base vs UltraX 占比）**此前因它出局而**降级为「仅 base」** ⇒ 下满即**恢复该轴**（可回填配比搜索）。
+- **报**：PID / 起步速率 / `n-目标` / ETA / 落盘路径。
+
+**② `ultrafineweb_en_v1_4` 排队**（新白名单第 6 项）
+- 规模 **6.75 TB / 56,461 文件**（CC-MAIN 110 快照）——**很长**（@1.8 MB/s ≈ 43 天；带宽改善会快些）。**保留已下分片，🚫 不删**。
+- **排在 UltraX 之后**做长尾；**不与 GPIC 抢**（优先级见 ④）。
+- **报**：排队位置 + 预计起跑时刻。
+
+**③ 已下载部分开始分词（与下载并行推进）**
+- 链路**复用既有**：`preprocess_data.py` + tokenizer **`tokenizer_eod`**（DeepSeek-V4.1-Flash，vocab **129,281** / pad **129,408**）→ `.bin/.idx`，落 `/nas_train/app.e0031982/datasets/baize-data/text/`（plan）。
+- **范围**：**已下满/已下**的 base 三项 —— `ultrafineweb_en` ✅2048 + `l1_en_hq` ✅6000 + `zh` ✅256（**UltraX / en_v1_4 下到哪切到哪**，增量追加）。
+- **目标**：P-8 需 **~100B token**（现已分词 **22.05B** ⇒ 差额即本轮要补的）。
+- ⚠️ **I/O 纪律（重要，别踩）**：分词是**重 parquet 读（NFS）**，而**`.29` 上 Round2 BO 正在跑**（其数据加载同走 NFS）—— **可能与 BO 抢 I/O**（这正是今天 BO 变慢的候选原因之一）⇒ **`nice -n 19` + 限并发（先 2–4 进程）**，并**盯着 BO 速率**；**BO 明显掉速 ⇒ 降并发或暂停分词**，**宁可分词慢，不可伤 BO**。
+- **报**：已完成 config / 累计 token / tok·s⁻¹ / CPU·IO 占用。
+
+**④ 优先级（互抢时）**：**GPIC > UltraX-Preview > en_v1_4**；**分词（CPU/IO）单列**，且**不得压死 BO 与 GPIC**。
+- ⚠️ **如实预告（不许报喜不报忧）**：**新增两路下载会分流带宽 ⇒ GPIC 的 ETA 会变长**（当前 ≈2.6 天）。请给出**联合 ETA**（GPIC / UltraX / en_v1_4 三者各自的预计完成时刻）。
+
+**⑤ 投料红线不变**：新下载数据落盘后**必须过 `check_contamination.py`**（与 `EDA-Eval-PyAether` 158 任务**不同源** + 跨集去重比对）**才可进训练集**；`.bin/.idx` 与原始集**不入 git**。
+
+**⑥ 收尾**：按「收尾铁律」commit+push；心跳固定加一行 **下载/分词** 状态。
+> 📦 **体积提醒**：本块加入后 `BAIZE_DATA_TASK.md` 约 **≈32KB** ⇒ 若超 32KB，**收尾前先把已闭合旧块归档**（确切字节以你自己 `wc -c` 为准）。
+
+
 ### 🚨 运维指令 · 2026-10-07（**P0 · 两条下载线（base + GPIC）继续 / 立即重启 —— 正文口径统一为「数据下载失败需主动重启」**）· **最高优先 · 用户直令**
 
 > **用户 2026-10-07 直令**：**data 的两条数据下载线必须继续跑** —— **base 死了 / 僵死就重启**，**从来没有过「拖着不动」的指令**（用户原话逐字见 `run/ARCHIVE_OPERATOR_DATA.md`「2026-10-07 口径修正」块）。

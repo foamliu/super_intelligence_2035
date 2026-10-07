@@ -185,7 +185,7 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
-- **2026-10-07（三条用户令：harness 30 横评 · pretrain 2M–16M+显存归因 · pretrain 5 份研究 HTML）** —— ⚠️ **资源真相**：pretrain **09:44 归还** `.12` GPU1–7，**vision 09:52 占满 8 张**（mask-ratio，ETA~14:30），`.29` 被 data BO 占 ⇒ **无空卡**。已下发三个顶部块：`BAIZE_HARNESS_TASK.md`（**停 codex×300 → 补 opencode/claude-code/deepseek ×30（同一 30 条）→ 出 5 行对比表**）· `BAIZE_PRETRAIN_2B_TASK.md` **③**（hybrid ctx 2M/4M/8M/16M ＋ 诊断 **V1–V4**：mem-fraction 预分配假象 / PagedAttention≠虚拟内存 / 4 层 attention O(n²)＋float32 SSM）· **④**（5 份研究 HTML：**公平对比口径 / 训练提速 / 训练效果 / 1M 长上下文 P-8 方案 / NAS**）＋ `GPU12_ALLOC.md` 申请区 +1 ＋ `BAIZE_DATA_TASK.md`「运维问询」（GPIC 是否加速 / base 是否还有待下 / BO 为何变慢）。**明细见 `daily-memories/2026-10-07.md`。**
+- **2026-10-07（三条用户令：harness 30 横评 · pretrain 2M–16M+显存归因 · pretrain 5 份研究 HTML）** —— ⚠️ **资源真相**：pretrain **09:44 归还** `.12` GPU1–7，**vision 09:52 占满 8 张**（mask-ratio，ETA~14:30），`.29` 被 data BO 占 ⇒ **无空卡**。已下发三个顶部块：`BAIZE_HARNESS_TASK.md`（**停 codex×300 → 补 opencode/claude-code/deepseek ×30（同一 30 条）→ 出 5 行对比表**）· `BAIZE_PRETRAIN_2B_TASK.md` **③**（hybrid ctx 2M/4M/8M/16M ＋ 诊断 **V1–V4**：mem-fraction 预分配假象 / PagedAttention≠虚拟内存 / 4 层 attention O(n²)＋float32 SSM）· **④**（5 份研究 HTML：**公平对比口径 / 训练提速 / 训练效果 / 1M 长上下文 P-8 方案 / NAS**）＋ `GPU12_ALLOC.md` 申请区 +1 ＋ `BAIZE_DATA_TASK.md`「运维问询」（GPIC 是否加速 / base 是否还有待下 / BO 为何变慢）＋ ✅ **data 解禁白名单**（UltraX 立即下 / en_v1_4 排队 / 开始分词）。**明细见 `daily-memories/2026-10-07.md`。**
 
 - **🎯 2026-10-06（用户三步令 · data）** —— ① 收 200-trial（top-K `lm_eval`+Spearman+σ）② **`s_step` 归因**（1.5 s→**166 ms**，真凶 = `MBS=1`+GBS16 ⇒ 每步 16 个 microbatch；已升级 MBS×GBS 网格）③ `.29` GPU0-1 释放后 8 卡搜第二轮。**明细见 `daily-memories/2026-10-06.md`。**
 
