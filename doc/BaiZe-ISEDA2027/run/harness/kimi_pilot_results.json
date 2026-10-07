@@ -8684,5 +8684,203 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-13043",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 126.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13043.json",
+      "stdout_tail": "in test_cases:\n    result = decompose(expr, sep)\n    if result != expected:\n        print(f'FAIL expr={expr}: got {result}, expected {expected}')\n        all_pass = False\n\nif all_pass:\n    print('All non-separate tests passed!')\n\"\nAll non-separate tests passed!\n\u001b[0m\n\n[run_single] model_patch: 1805 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13043.json\n[run_single] cleanup: git reset --hard a3389a25ec84d36f5cf04a4f2562d820f131db64\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 1,
+        "p2p_total": 1
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-13146",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 48.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13146.json",
+      "stdout_tail": "ortError: cannot import name 'Mapping' from 'collections' (/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/collections/__init__.py)\n\u001b[0m\n\u001b[0m$ \u001b[0mpython --version && which python\nPython 3.10.18\n/nas_train/app.e0031982/miniforge3/envs/py310/bin/python\n\u001b[0m\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13146.json\n[run_single] cleanup: git reset --hard b678d8103e48fdb1af335dbf0080b3d5366f2d17\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 34,
+        "p2p_total": 34
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-13177",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 146.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13177.json",
+      "stdout_tail": "      setattr(collections, name, getattr(collections.abc, name))\n\nfrom sympy import Mod, S, Symbol\nx = Symbol('x')\nprint('Mod(x**2, x) =', Mod(x**2, x))\nx = S(3)/2\nprint('Mod((3/2)**2, 3/2) =', Mod(x**2, x))\n\"\nMod(x**2, x) = x*Mod(x, 1)\nMod((3/2)**2, 3/2) = 3/4\n\u001b[0m\n\n[run_single] model_patch: 1218 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13177.json\n[run_single] cleanup: git reset --hard 662cfb818e865f580e18b59efbb3540c34232beb\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 75,
+        "p2p_total": 75
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-13437",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 116.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13437.json",
+      "stdout_tail": "t_harmonic():\n     n = Symbol(\"n\")\n \n     assert harmonic(n, 0) == n\n\n\u001b[0m\n\u001b[0m\u2192 \u001b[0mRead sympy/functions/combinatorial/numbers.py\u001b[90m [offset=435, limit=15]\u001b[0m\n\u001b[0m\u2192 \u001b[0mRead sympy/functions/combinatorial/tests/test_comb_numbers.py\u001b[90m [offset=113, limit=10]\u001b[0m\n\n[run_single] model_patch: 1101 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13437.json\n[run_single] cleanup: git reset --hard 674afc619d7f5c519b6a5393a8b0532a131e57e0\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 15,
+        "p2p_total": 15
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-13471",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 216.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13471.json",
+      "stdout_tail": "p('Ll'), 16)\n                 _mpf_ = tuple(num)\n             else:\n                 if len(num) == 4:\n\u001b[0m\n\u001b[0m\u2731 \u001b[0mGrep \"hex\\(\"\u001b[90m in sympy/core/numbers.py \u00b7 0 matches\u001b[0m\n\u001b[0m\n\u001b[0m$ \u001b[0mrm /dev/shm/harness_work/workdirs/sympy_sympy/run_tests.py\n(no output)\n\u001b[0m\n\n[run_single] model_patch: 574 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13471.json\n[run_single] cleanup: git reset --hard 3546ac7ed78e1780c1a76929864bb33330055740\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 82,
+        "p2p_total": 82
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-13480",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 94.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13480.json",
+      "stdout_tail": "rable = collections.abc.Iterable\ncollections.Callable = collections.abc.Callable\ncollections.MutableSet = collections.abc.MutableSet\n\nfrom sympy.functions.elementary.tests.test_hyperbolic import test_coth\ntest_coth()\nprint('test_coth passed')\n\"\ntest_coth passed\n\u001b[0m\n\n[run_single] model_patch: 1155 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13480.json\n[run_single] cleanup: git reset --hard f57fe3f4b3f2cab225749e1b3b38ae1bf80b62f0\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 43,
+        "p2p_total": 43
+      }
+    },
+    "classification": "resolved"
   }
 ]
