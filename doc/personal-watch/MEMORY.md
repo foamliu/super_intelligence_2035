@@ -186,6 +186,11 @@ WAITING: 0
 - 🔴 **`doc/keys.txt` 仍在 git 里（2026-10-05 发现，⚠️ 未处置）**：含 8 个 LLM Key + ASR + 文生图 →建议 `git rm --cached` + `.gitignore` + **轮换 Key**（与「仓库内含远程执行通道 ops 中继」叠加，风险放大）。
 - 📦 **96MB 新闻语料仍在 git 历史里**（10 分片 ≈96MB）：run 机**无 `bypy`** ⇒ 迁云卡住；**要迁须先装 `bypy` 或换通道**；**改写历史属高危，未获用户批准不动**。
 - ⚠️ **判活不能只看 `pgrep`**：ops 中继曾**活着但冻死 14h**（`wchan=pipe_read`）⇒ 中继判据 = **日志 ≤10min 一行 `💓`** + `wchan ≠ pipe_read`；**loop 判据 = `/tmp/watch_<线>_loop.hb` mtime <30min**（**不再看提交间隔** —— 每天 2 次唤醒后 12h 一提交是正常的）。
+- 🔴 **「派活 push 完 ≠ 生效」（2026-10-07 踩到）**：`watch_*_loop.sh` 的循环体是 `prompt="$(< TASK_MD)"` → `cline` → **`git_sync_and_push`（fetch+pull 在最后一步）** ⇒
+  **唤醒时读的是运行机本地工作副本的任务书**。我在 16:1x 下发的第 11 批，**若没人 pull，18:00 那轮仍跑旧任务书**（要等某轮结束后才拉到）。
+  **规矩**：**每次改任务书/规格后，必须确认运行机已 pull**（`git ls-remote` 比对 tip + **SSH 实测任务书字节/关键串**），🚫 不许假定"push 完就生效"。
+  **安全拉法（唯一许可）**：`git pull --rebase origin main` **不带 `--autostash`** —— 脏树时**直接拒绝**，绝不会像 10-06 那样把共享工作副本弄脏。
+  **现成工具**：`C:\Users\liuyu\_pw_sync.sh`（+ 探针 `_pw_probe.sh`）经 `_rsh.bat` → `ssh liuyang@106.54.228.191 "tr -d '\r' | bash -s"` 执行。
 
 ---
 
