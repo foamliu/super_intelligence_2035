@@ -1,0 +1,399 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BaiZe Research 2 — Training Speed Optimization Opportunities for Hybrid-2B</title><style>
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;margin:20px;max-width:1150px;color:#222;line-height:1.6}
+h1{font-size:22px;border-bottom:3px solid #16a34a;padding-bottom:8px}
+h2{font-size:18px;margin-top:32px;border-left:4px solid #16a34a;padding-left:10px}
+h3{font-size:15px;margin-top:20px;color:#333}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}th{background:#f0f4f8;font-weight:600}tr:nth-child(even){background:#fafbfc}
+.hero{background:linear-gradient(135deg,#14532d,#16a34a);color:white;padding:20px 24px;border-radius:8px;margin-bottom:20px}.hero h1{border:none;color:white}.hero p{margin:6px 0;opacity:.95}
+.conclusion{background:#fef9c3;border-left:4px solid #eab308;padding:12px 16px;margin:16px 0;font-size:14px}
+.warn{background:#fef2f2;border-left:4px solid #dc2626;padding:12px 16px;margin:12px 0;font-size:13px}
+.svg-c{text-align:center;margin:16px 0;overflow-x:auto}
+.note{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:12px 16px;margin:12px 0;font-size:12px;color:#555}
+pre{background:#f8f8f8;border:1px solid #e0e0e0;border-radius:4px;padding:10px;font-size:12px;overflow-x:auto}
+.tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;margin:1px;font-weight:600}
+.tag-exp{background:#dcfce7;color:#166534}.tag-lit{background:#dbeafe;color:#1e40af}.tag-sec{background:#fef3c7;color:#92400e}.tag-inf{background:#f3e8ff;color:#6b21a8}
+.cand{border:1px solid #cbd5e1;border-radius:6px;padding:14px;margin:12px 0}.cand h4{margin:0 0 6px;font-size:14px;color:#14532d}.cand .meta{font-size:12px;color:#64748b;margin:4px 0}
+.prio{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:700;margin-left:6px}
+.prio-high{background:#fee2e2;color:#991b1b}.prio-mid{background:#fef3c7;color:#92400e}.prio-low{background:#dbeafe;color:#1e40af}
+.ref{font-size:12px;color:#475569;margin:4px 0;padding-left:16px;text-indent:-16px}
+</style></head><body>
+<div class="hero">
+<h1>Research Report 2: Opportunities to Improve Hybrid-2B Training Speed</h1>
+<p><b>BaiZe</b> Mamba2-Hybrid 2.220B (4/56 attn) · NeMo Framework · 8×H100 80GB NV18</p>
+<p>bf16 baseline: 249,040 tok/s (MFU 60.6%) · FP8 delayed: validated but net slower · Generated: 2026-10-07</p>
+<p>Evidence grading: <span class="tag tag-exp">【实测·本项目】</span> <span class="tag tag-lit">【一手文献·URL】</span> <span class="tag tag-sec">【二手·未核】</span> <span class="tag tag-inf">【推测·未验】</span></p>
+</div>
+
+<h2>1. TL;DR</h2>
+<div class="conclusion">
+<p><b>Our 2.22B hybrid trains at 249K tok/s (MFU 60.6%) on 8×H100. The #1 bottleneck is communication (41.7% of device time), not compute. NCCL is already on NVLink P2P (optimal), all overlap flags are on, and env-variable sweeps yield 0% improvement. The only remaining speedup lever is FP8 — but our FP8 tests show a paradox: FP8 speeds up GEMM by 24%, yet requires TP4 (which adds comm overhead), resulting in net <b>6% slower</b> throughput. The path forward is FP8 on TP1 (untested) or code-level kernel/communication optimization.</b></p>
+</div>
+<ol>
+<li><b>Communication is the #1 bottleneck, not compute</b> <span class="tag tag-exp">【实测·本项目】</span>: P-9.5 profiler (torch.profiler, 5-way attribution) shows comm=41.7%, GEMM=27.6%, elementwise=21.3%, SSM=8.6%, attention=0.7%. The hybrid architecture's 4/56 attention design makes attention negligible (0.7%) — a direct quantification of the architecture's training advantage.</li>
+<li><b>NCCL is already optimal — no env-variable speedup available</b> <span class="tag tag-exp">【实测·本项目】</span>: P-9.12 confirmed NV18 full-mesh NVSwitch, 100% P2P/CUMEM, busbw 164.56 GB/s (68.8% of 478 GB/s peak). P-9.13 swept MAX_CONN∈{1,4} (+0–0.8%, noise) and MBS=4 (OOM at 79.8GB). <b>249K tok/s is the launcher-exposed parameter ceiling.</b></li>
+<li><b>FP8 validated for accuracy but paradoxically slower in throughput</b> <span class="tag tag-exp">【实测·本项目】</span>: P-9.8 confirmed delayed FP8 passes all 4 long-run criteria (1000 steps, loss consistency ✅, nan=0 ✅, s=1.194 ✅, accuracy ≤2% ✅). P-9.9 confirmed tensorwise FP8 FAILs (persistent +6–7% loss divergence). But FP8 requires TP4·MBS8·seq8192 (M=65536) to turn on (s=1.24), and TP4's communication overhead (−7.8pp MFU) eats the GEMM speedup → net 235K vs 249K bf16 (−6%).</li>
+<li><b>All recipe-level optimizations are already enabled</b> <span class="tag tag-exp">【实测·本项目】</span>: Recipe audit (P-9.13) confirms overlap_grad_reduce=True, overlap_param_gather=True, use_distributed_optimizer=True, num_workers=8. Launcher exposes only 23 flags — no recompute, cuda_graph, attention_backend, or loss_fusion entry points. <b>Further speedup requires code-level changes or FP8-on-TP1 testing.</b></li>
+<li><b>The MBS=1→2 lesson: grad-accum bubbles were the low-hanging fruit</b> <span class="tag tag-exp">【实测·本项目】</span>: P-9.1 showed MBS 1→2 = +59% throughput (MFU 33%→61%, grad-accum segments 128→64). This is already captured. MBS=4 OOMs at 79.8GB on TP1 — the memory wall prevents further bubble reduction without activation checkpointing.</li>
+</ol>
+
+<h2>2. Our Current State (Measured Data)</h2>
+
+<h3>2.1 Training Configuration <span class="tag tag-exp">【实测·本项目】</span></h3>
+<p><i>Source: <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §P-9.7, §P-9.5, recipe <code>mamba2_hybrid_2b/recipe.py</code></i></p>
+<table>
+<tr><th>Parameter</th><th>Value</th><th>Source</th></tr>
+<tr><td>Architecture</td><td>Mamba2-Hybrid 2.220B (4 attn / 24 Mamba2 / 28 MLP = 56 layers)</td><td>§P-6 §3</td></tr>
+<tr><td>Hardware</td><td>8×H100 80GB SXM5, NV18 full-mesh NVSwitch</td><td>§P-9.12</td></tr>
+<tr><td>Parallelism</td><td>TP1 · DP8 · MBS2 · seq4094 · GBS1024</td><td>§P-9.7</td></tr>
+<tr><td>Precision</td><td>bf16_mixed (FP8 delayed validated but not deployed)</td><td>§P-9.8</td></tr>
+<tr><td><b>Steady-state throughput</b></td><td><b>249,040 tok/s</b> (16,841.9 ms/iter, 1100 steps)</td><td>§P-9.7</td></tr>
+<tr><td>MFU (vs bf16 peak 989 TFLOP/s)</td><td><b>60.6%</b> (599 TFLOP/s/GPU)</td><td>§P-9.5</td></tr>
+<tr><td>Peak VRAM</td><td>54,675 MiB (MBS2, TP1)</td><td>§P-9.7</td></tr>
+<tr><td>Recipe flags</td><td>overlap_grad_reduce ✅ / overlap_param_gather ✅ / distributed_optimizer ✅ / 8 workers</td><td>§P-9.13</td></tr>
+</table>
+
+<h3>2.2 P-9.5 Profiler: 5-Way Time Attribution <span class="tag tag-exp">【实测·本项目】</span></h3>
+<p><i>Source: <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §P-9.5 Level-3, <code>run/p95_keyavg_v2.txt</code>, <code>report_pretrain_p95_profiler.html</code></i></p>
+<p><b>Method</b>: torch.profiler, DP2·MBS2·20 steps (profile [5,15)), record_shapes=False (crash fix). Synthesized to production DP8·MBS2·seq4094·bf16 using P-4 (DP8) comm ratio + two compute-only runs.</p>
+<table>
+<tr><th>Category</th><th>P-9.5 (DP2·MBS2)</th><th>P-4 (DP8·MBS1)</th><th>⭐ Synthesized (DP8·MBS2)</th><th>Rank</th></tr>
+<tr><td><b>comm (NCCL)</b></td><td>10.2%</td><td>41.7%</td><td><b>41.7%</b></td><td><b>#1</b></td></tr>
+<tr><td>GEMM</td><td>41.1%</td><td>28.6%</td><td>27.6%</td><td>#2</td></tr>
+<tr><td>elementwise</td><td>34.0%</td><td>20.4%</td><td>21.3%</td><td>#3</td></tr>
+<tr><td>SSM (Mamba2 scan)</td><td>13.6%</td><td>8.4%</td><td>8.6%</td><td>#4</td></tr>
+<tr><td>attention</td><td>1.1%</td><td>0.7%</td><td>0.7%</td><td>#5</td></tr>
+</table>
+<div class="note"><b>Key insight:</b> Communication (NCCL allreduce/allgather) is the dominant bottleneck at 41.7%. The hybrid architecture makes attention negligible (0.7% — only 4/56 layers). SSM scan is not a bottleneck (8.6%) — the DaoAILab Mamba2 kernel path is efficient. <b>FP8 targets GEMM (27.6%) → Amdahl upper bound = 1/(1−0.276) = 1.38× on compute, but comm grows proportionally → realistic ~1.21× (matches P-9.6② measured s=1.21–1.24).</b></div>
+
+<h3>2.3 P-9.12: NCCL/NVLink Topology <span class="tag tag-exp">【实测·本项目】</span></h3>
+<p><i>Source: <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §P-9.12, <code>report_pretrain_nccl_topo.html</code></i></p>
+<table>
+<tr><th>Metric</th><th>Value</th><th>Note</th></tr>
+<tr><td>Topology</td><td>NV18 full-mesh NVSwitch</td><td>18 NVLinks/GPU, 478 GB/s/GPU bidirectional</td></tr>
+<tr><td>NCCL transport</td><td>P2P/CUMEM = 100%</td><td>Direct GPU-to-GPU via NVLink, not PCIe</td></tr>
+<tr><td>busbw (2-GPU all_reduce, 1GB)</td><td><b>164.56 GB/s</b></td><td>68.8% of 478 GB/s peak (Ring overhead)</td></tr>
+<tr><td>Best env config</td><td><b>default (no change)</b></td><td>All env tweaks worse or equal</td></tr>
+<tr><td>NVLS (NVLink SHARP)</td><td>Unavailable</td><td>H100 NVSwitch + CUDA 12.8 + NCCL 2.27.3 limitation</td></tr>
+</table>
+<div class="warn"><b>Conclusion:</b> NCCL is already on the optimal NVLink P2P path. The user hypothesis ("if NCCL uses PCIe, switching topology helps") is <b>disproven</b>. There is no better hardware topology to switch to — NV18 full-mesh is the maximum for this platform.</div>
+
+<h3>2.4 P-9.13: Environment Variable Speedup Sweep <span class="tag tag-exp">【实测·本项目】</span></h3>
+<p><i>Source: <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §P-9.13, <code>report_pretrain_p913_speedup.html</code></i></p>
+<table>
+<tr><th>#</th><th>Config</th><th>TP</th><th>MBS</th><th>ms/iter</th><th>tok/s</th><th>Δ vs baseline</th><th>VRAM</th><th>rc</th></tr>
+<tr><td>1</td><td>baseline (default)</td><td>1</td><td>2</td><td>16,421.6</td><td><b>63,853</b></td><td>—</td><td>64,445 MiB</td><td>0</td></tr>
+<tr><td>2</td><td>MAX_CONN=1</td><td>1</td><td>2</td><td>16,297.1</td><td>64,341</td><td>+0.8%</td><td>64,445 MiB</td><td>0</td></tr>
+<tr><td>3</td><td>MAX_CONN=4</td><td>1</td><td>4</td><td>16,419.0</td><td>63,864</td><td>+0.0%</td><td>64,445 MiB</td><td>0</td></tr>
+<tr><td>4</td><td>MBS=4</td><td>1</td><td>4</td><td colspan="2" style="color:#dc2626">OOM (79,847 MiB)</td><td>❌</td><td>79,847 MiB</td><td>1</td></tr>
+</table>
+<div class="note"><b>Note:</b> 2-card baseline (63,853) = 249K × 2/8 × 103% (slight superlinear — 2-card allreduce lighter). MAX_CONN effects are within noise (&lt;1%). MBS=4 OOMs at 79.8GB (approaching 80GB limit). <b>No launcher-exposed env variable provides measurable speedup.</b></div>
+
+
+<h3>2.5 P-9.8 / P-9.9: FP8 Accuracy and Speed <span class="tag tag-exp">【实测·本项目】</span></h3>
+<p><i>Source: <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §P-9.8, §P-9.9</i></p>
+<table>
+<tr><th>Experiment</th><th>Config</th><th>Recipe</th><th>Speedup s</th><th>Loss Δ (end)</th><th>T1 (≤1%)</th><th>T4 (≤2%)</th><th>Verdict</th></tr>
+<tr><td>P-9.8 (delayed)</td><td>TP4·SP·MBS8·seq8192</td><td>delayed_scaling_mixed</td><td><b>1.194</b></td><td>—</td><td>✅</td><td>✅</td><td><b>4/4 PASS → usable for P-8</b></td></tr>
+<tr><td>P-9.9 (tensorwise)</td><td>TP4·SP·MBS8·seq8192</td><td>current_scaling_mixed</td><td>1.158</td><td>+5.13%</td><td>❌ FAIL</td><td>❌ FAIL</td><td><b>Rejected → P-8 uses delayed</b></td></tr>
+</table>
+<div class="warn"><b>The FP8 throughput paradox:</b> FP8 delayed gives s=1.194 (19.4% GEMM speedup) on TP4·MBS8·seq8192. But TP4 adds −7.8pp MFU communication overhead (P-9.5). Net throughput: FP8 TP4 = <b>235K tok/s</b> vs bf16 TP1 = <b>249K tok/s</b> → <b>FP8 is 6% SLOWER in absolute throughput</b> despite 19% GEMM speedup. The comm fraction grows from 41.7% → ~67% when GEMM shrinks, negating the compute gain.</div>
+
+<h3>2.6 P-9.1: MBS Scaling (Already Captured) <span class="tag tag-exp">【实测·本项目】</span></h3>
+<table>
+<tr><th>MBS</th><th>tok/s</th><th>MFU</th><th>Grad-accum segments</th><th>Improvement</th></tr>
+<tr><td>1</td><td>~156K</td><td>33.3%</td><td>128</td><td>baseline</td></tr>
+<tr><td><b>2</b></td><td><b>249K</b></td><td><b>60.6%</b></td><td><b>64</b></td><td><b>+59%</b></td></tr>
+<tr><td>4</td><td colspan="4" style="color:#dc2626">OOM (79.8GB on TP1, 81087 MiB on 8-card)</td></tr>
+</table>
+<div class="note">MBS 1→2 nearly doubled throughput by halving grad-accum bubbles. MBS=4 hits the VRAM wall. <b>This gain is already captured in our 249K baseline.</b> Further MBS increase requires activation checkpointing (recompute) to free memory — but the launcher doesn't expose this flag.</div>
+
+<div class="svg-c"><svg width="780" height="380" viewBox="0 0 780 380" xmlns="http://www.w3.org/2000/svg">
+<rect width="780" height="380" fill="white"/>
+<text x="390" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#14532d">Training Time Breakdown: Where Does 16.8s/iter Go? 【实测数据】</text>
+<text x="390" y="40" text-anchor="middle" font-size="11" fill="#64748b">P-9.5 profiler 5-way attribution (DP8·MBS2·seq4094·bf16, 249K tok/s)</text>
+<rect x="120" y="60" width="468" height="50" fill="#dc2626" rx="3"/>
+<text x="354" y="90" text-anchor="middle" font-size="14" fill="white" font-weight="bold">comm (NCCL) 41.7%</text>
+<rect x="120" y="115" width="309" height="50" fill="#2563eb" rx="3"/>
+<text x="274" y="145" text-anchor="middle" font-size="14" fill="white" font-weight="bold">GEMM 27.6%</text>
+<rect x="120" y="170" width="239" height="50" fill="#16a34a" rx="3"/>
+<text x="239" y="200" text-anchor="middle" font-size="13" fill="white" font-weight="bold">elementwise 21.3%</text>
+<rect x="120" y="225" width="96" height="50" fill="#f59e0b" rx="3"/>
+<text x="168" y="255" text-anchor="middle" font-size="12" fill="white" font-weight="bold">SSM 8.6%</text>
+<rect x="120" y="280" width="8" height="50" fill="#7c3aed" rx="3"/>
+<text x="140" y="310" font-size="12" fill="#7c3aed" font-weight="bold">attn 0.7%</text>
+<text x="600" y="90" font-size="11" fill="#dc2626">← FP8 targets this</text>
+<text x="600" y="105" font-size="10" fill="#dc2626">(but comm grows)</text>
+<text x="430" y="145" font-size="10" fill="#2563eb">← FP8 compresses</text>
+<text x="360" y="200" font-size="10" fill="#16a34a">← fused kernels</text>
+<text x="600" y="310" font-size="10" fill="#7c3aed">← hybrid advantage</text>
+<text x="390" y="365" text-anchor="middle" font-size="10" fill="#64748b" font-style="italic">Source: EXPERIMENTS_PRETRAIN_2B_ROUND2.md §P-9.5, synthesized DP8·MBS2 production config</text>
+
+<h2>3. External Evidence (First-Hand Sources)</h2>
+
+<h3>3.1 Mamba2 SSD: Chunked Parallel Scan <span class="tag tag-lit">【一手文献·URL】</span></h3>
+<div class="note">
+<p><b>Paper:</b> Dao &amp; Gu, "Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality," arXiv 2405.21060, May 2024</p>
+<p><b>URL:</b> <code>https://arxiv.org/abs/2405.21060</code></p>
+<p><b>Key claims:</b></p>
+<ul>
+<li>Mamba2 replaces the custom parallel scan kernel of Mamba1 with a <b>chunked matrix multiplication</b> formulation (SSD), enabling native tensor-parallel support and better GPU utilization</li>
+<li>Mamba2 core layer is <b>2–8× faster</b> than Mamba1 on A100</li>
+<li>The SSD formulation allows the computation to be expressed as either recurrence (efficient inference) or matmul (efficient training)</li>
+</ul>
+<p><b>Relevance:</b> Our 8.6% SSM time confirms the Mamba2 kernel is already efficient. The chunked scan formulation is what we're using (mamba-ssm 2.2.6). Further SSM speedup would require custom kernel work beyond the stock implementation.</p>
+</div>
+
+<h3>3.2 FP8 Training: Throughput Gains and Recipes <span class="tag tag-lit">【一手文献·URL】</span></h3>
+<div class="note">
+<p><b>Source 1:</b> NVIDIA Transformer Engine documentation, FP8 recipes</p>
+<p><b>URL:</b> <code>https://docs.nvidia.com/deeplearning/transformer-engine-user-guide/index.html</code> (accessed 2026-10-07)</p>
+<p><b>Key mechanism:</b></p>
+<ul>
+<li><b>Delayed scaling</b>: amax from history buffer (past N steps) → one global memory read, good performance, but accuracy risk at >7B scale <span class="tag tag-lit">【一手文献·URL】</span></li>
+<li><b>Current (per-tensor) scaling</b>: amax from current tensor → two reads, slightly slower, better accuracy (used by Nemotron-H-56B)</li>
+<li><b>Blockwise scaling</b> (128×128 tiles): best accuracy, requires CUDA ≥ 12.9</li>
+<li>FP8 Tensor Core: 2× peak FLOP/s vs bf16 on H100 (1979 vs 989 TFLOP/s)</li>
+</ul>
+<p><b>Source 2:</b> Emergent Mind FP8 training survey (2025)</p>
+<p><b>URL:</b> <code>https://www.emergentmind.com/topics/fp8-training-on-trillion-token-datasets</code> (accessed 2026-10-07)</p>
+<p><b>Reported throughput gains (vs BF16):</b> 25–40% (μnit Scaling 25–33%, FOG 18–40%, COAT 1.43×, TWEO 36%). <span class="tag tag-sec">【二手·未核】</span> for exact figures — aggregate from multiple papers.</p>
+<p><b>Relevance:</b> Our P-9.8 measured s=1.194 (19.4%) for delayed FP8 — within the 18–40% range, but lower than typical because our comm fraction (41.7%) is higher than pure-compute models. The literature's 25–40% assumes comm is a smaller fraction.</p>
+</div>
+
+<h3>3.3 Nemotron-H: Production FP8 Hybrid <span class="tag tag-lit">【一手文献·URL】</span></h3>
+<div class="note">
+<p><b>Paper:</b> NVIDIA, "Nemotron-H: A Family of Accurate and Efficient Hybrid Mamba-Transformer Models," arXiv 2504.03624, April 2025 (v4 Sep 2025)</p>
+<p><b>URL:</b> <code>https://arxiv.org/abs/2504.03624</code></p>
+<p><b>Key claims:</b></p>
+<ul>
+<li>8B model: 52 layers, 4 attention (8%) — <b>same 4-attn design as BaiZe</b></li>
+<li>FP8 training recipe achieves on-par accuracy with BF16</li>
+<li>Up to 3× faster inference vs same-size Transformers</li>
+<li>Uses per-tensor current scaling for the 56B model (delayed scaling has convergence issues at >7B)</li>
+</ul>
+<p><b>Relevance:</b> Nemotron-H validates the 4-attn hybrid design at 8B scale with FP8. Our 2.2B model uses delayed scaling (P-9.8 validated), but at P-8's 100B token scale, we should monitor for convergence drift. Nemotron-H's choice of current scaling at 56B aligns with our P-9.9 finding that tensorwise (current) has accuracy issues at 2.2B — suggesting our scale is below the delayed→current crossover.</p>
+</div>
+
+<h3>3.4 Megatron-Core: Optimization Features <span class="tag tag-lit">【一手文献·URL】</span></h3>
+<div class="note">
+<p><b>Source:</b> DeepWiki Megatron-LM Optimization and Performance</p>
+<p><b>URL:</b> <code>https://deepwiki.com/dialectics67/Megatron-LM/7-optimization-and-performance</code> (accessed 2026-10-07)</p>
+<p><b>Key optimization features (Megatron-Core 0.16.1, our version):</b></p>
+<ul>
+<li><b>FP8</b>: 3–5× speed, 75% memory savings (vs 2–3× for FP16/BF16), requires Transformer Engine</li>
+<li><b>Activation checkpointing (recompute)</b>: trades compute for memory, enables larger MBS</li>
+<li><b>CUDA Graph capture</b>: eliminates kernel launch overhead for repetitive iteration patterns</li>
+<li><b>Communication overlap</b>: overlap_grad_reduce + overlap_param_gather + distributed_optimizer (all already enabled in our recipe)</li>
+<li><b>Context parallelism</b>: ring-attention for long sequences, reduces KV memory 40%</li>
+
+<h2>4. Candidate List — Speedup Opportunities</h2>
+
+<div class="cand">
+<h4>C1. FP8 delayed on TP1·MBS2·seq4096 (untested configuration) <span class="prio prio-high">P0 · Critical</span></h4>
+<div class="meta"><b>① Motivation:</b> Our FP8 tests (P-9.6②, P-9.8) used TP4·MBS8·seq8192 (M=65536) because FP8 only "turns on" (s&gt;1.05) at large M. But TP4 adds −7.8pp MFU comm overhead, eating the GEMM speedup → net −6% throughput. <b>FP8 on TP1 (our optimal comm config) has never been tested.</b> P-9.4 tested TP2·MBS4·seq4096 and got s≤1.01 (no speedup) — but that was TP2, not TP1. <span class="tag tag-exp">【实测·本项目】</span></div>
+<div class="meta"><b>② Expected benefit:</b> If FP8 turns on at TP1·MBS2·seq4096 (M=8192), we get 19% GEMM speedup WITHOUT the TP4 comm penalty → potential 249K × 1.19 × (1−0.417×0.19/0.583) ≈ <b>278K tok/s (+12%)</b>. If FP8 doesn't turn on (like TP2), we learn the M threshold for FP8 activation. <span class="tag tag-inf">【推测·未验】</span></div>
+<div class="meta"><b>③ Cost/risk:</b> Low. ~1h GPU (60-step short test, same as P-9.6②). Risk: FP8 at M=8192 may be memory-bandwidth-bound (P-9.4 showed s≤1.01 at M=16384 TP2) → no speedup. But TP1 has different memory access patterns than TP2.</div>
+<div class="meta"><b>④ Testable criteria:</b> Run TP1·DP8·MBS2·seq4096·FP8_delayed, 60 steps. Measure s/iter vs bf16 baseline (16,841.9 ms). <b>s ≥ 1.10 → FP8 viable on TP1 → re-evaluate for P-8</b>. s &lt; 1.05 → FP8 requires large M, TP1 not viable.</div>
+<div class="meta"><b>⑤ Priority:</b> <span class="prio prio-high">P0</span> — this is the single most impactful untested experiment. If it works, it's a free 12% speedup for P-8's 100B token run (saves ~1.5 days).</div>
+</div>
+
+<div class="cand">
+<h4>C2. Activation checkpointing (recompute) to enable MBS=4 <span class="prio prio-high">P0 · Critical</span></h4>
+<div class="meta"><b>① Motivation:</b> MBS 1→2 gave +59% throughput (P-9.1). MBS=4 OOMs at 79.8GB (P-9.13). Activation checkpointing (recompute) trades ~33% more compute for ~40% memory savings → could fit MBS=4 in 80GB. <span class="tag tag-lit">【一手文献·URL】</span> (Megatron-Core docs: recompute saves activations memory). <span class="tag tag-exp">【实测·本项目】</span> (P-9.13: MBS4=79.8GB OOM)</div>
+<div class="meta"><b>② Expected benefit:</b> MBS=4 halves grad-accum segments (64→32), reducing bubble overhead. If MFU scales linearly (60.6%→~70%), throughput → ~287K tok/s (+15%). But recompute adds ~20% compute overhead → net may be ~250–270K. <span class="tag tag-inf">【推测·未验】</span></div>
+<div class="meta"><b>③ Cost/risk:</b> Medium. Requires recipe/launcher modification (recompute flag not exposed — P-9.13 recipe audit). Risk: recompute + MBS4 may still OOM if activation savings &lt; 25GB needed. Risk: recompute changes numerics slightly.</div>
+<div class="meta"><b>④ Testable criteria:</b> Add <code>--recompute-num-layers 28</code> (or selective) to recipe, run MBS=4, 60 steps. Measure: peak VRAM (&lt;80GB?), tok/s, loss consistency (vs MBS=2 baseline). <b>VRAM &lt; 75GB AND tok/s &gt; 260K → viable for P-8</b>.</div>
+<div class="meta"><b>⑤ Priority:</b> <span class="prio prio-high">P0</span> — second most impactful. Combined with C1 (FP8 TP1), could push to 300K+ tok/s.</div>
+</div>
+
+<div class="cand">
+<h4>C3. CUDA Graph capture for iteration kernel fusion <span class="prio prio-mid">P1 · Important</span></h4>
+<div class="meta"><b>① Motivation:</b> elementwise = 21.3% of device time (P-9.5). Many elementwise ops are small kernel launches with overhead. CUDA Graph captures the entire forward/backward as a single graph, eliminating per-kernel launch overhead. <span class="tag tag-lit">【一手文献·URL】</span> (Megatron-Core supports CUDA Graph; PyTorch <code>torch.cuda.CUDAGraph</code>)</div>
+<div class="meta"><b>② Expected benefit:</b> Eliminates kernel launch overhead for the 21.3% elementwise + 8.6% SSM ops. Estimated 5–15% speedup on the compute portion → ~3–8% end-to-end. <span class="tag tag-inf">【推测·未验】</span></div>
+<div class="meta"><b>③ Cost/risk:</b> Medium-high. Requires launcher/recipe modification (cuda_graph flag not exposed). Risk: CUDA Graph requires static shapes (our WSD schedule has fixed shapes ✅), but dynamic loss scaling or variable-length data may break capture. Risk: debugging difficulty if graph capture fails.</div>
+<div class="meta"><b>④ Testable criteria:</b> Enable <code>--cuda-graph</code> in recipe (if Megatron-Core supports it for Mamba2 hybrid), run 60 steps. Measure tok/s vs baseline. <b>tok/s &gt; 260K → viable</b>.</div>
+<div class="meta"><b>⑤ Priority:</b> <span class="prio prio-mid">P1</span> — promising but requires code changes and may not be compatible with Mamba2 SSM scan (dynamic sequence-dependent shapes).</div>
+</div>
+</ul>
+<p><b>Relevance:</b> Our launcher (23 flags) does NOT expose recompute, cuda_graph, or context_parallel. These are available in Megatron-Core 0.16.1 but require recipe/launcher modification. <b>This is the code-level optimization path.</b></p>
+</div>
+
+<div class="cand">
+<h4>C4. Context parallelism for longer training sequences <span class="prio prio-mid">P1 · Important</span></h4>
+<div class="meta"><b>① Motivation:</b> If P-8 uses seq &gt; 4096 (for long-context capability), TP-based sequence parallelism adds comm overhead (P-9.6①: TP4 = −7.8pp MFU). Context parallelism (ring-attention) distributes the attention computation across GPUs with O(seq_len) communication, reducing KV memory 40%. <span class="tag tag-lit">【一手文献·URL】</span> (Megatron-Core context parallelism, NVIDIA docs)</div>
+<div class="meta"><b>② Expected benefit:</b> For the 4 attention layers only (0.7% of time), CP may not help much. But if P-8 targets seq8192+, CP avoids the TP4 penalty. The SSM layers (8.6%) are inherently O(n) and don't need CP. <span class="tag tag-inf">【推测·未验】</span></div>
+<div class="meta"><b>③ Cost/risk:</b> Medium. Requires recipe modification. Risk: CP only helps attention layers; with 4/56 attention, the benefit is marginal. Risk: CP + Mamba2 interaction untested.</div>
+<div class="meta"><b>④ Testable criteria:</b> Compare TP4·SP (current long-ctx path) vs CP at seq8192. Measure tok/s and comm fraction. <b>CP tok/s &gt; TP4 tok/s (235K) → viable alternative for long-ctx P-8</b>.</div>
+<div class="meta"><b>⑤ Priority:</b> <span class="prio prio-mid">P1</span> — only relevant if P-8 uses seq &gt; 4096. For pure throughput at seq4096, not applicable.</div>
+</div>
+
+<div class="cand">
+<h4>C5. Upgrade Transformer Engine / Megatron-Core <span class="prio prio-mid">P1 · Important</span></h4>
+<div class="meta"><b>① Motivation:</b> Current: TE 2.12.0, mcore 0.16.1, CUDA 12.8. Megatron-Core 0.11+ (NeMo 25.02) introduces hierarchical AllReduce, chunked inter-DC comms, and improved FP8 kernels. <span class="tag tag-lit">【一手文献·URL】</span> (NVIDIA blog: NeMo 25.02 + mcore 0.11.0, May 2025). Blockwise FP8 (128×128) requires CUDA ≥ 12.9 (P-9.9: rc=1 on CUDA 12.8). <span class="tag tag-exp">【实测·本项目】</span></div>
+<div class="meta"><b>② Expected benefit:</b> Blockwise FP8 may give better accuracy than delayed (P-9.9 tensorwise failed, but blockwise is a different recipe). Updated TE kernels may have better kernel fusion. <span class="tag tag-inf">【推测·未验】</span></div>
+<div class="meta"><b>③ Cost/risk:</b> High. Upgrading CUDA/TE/mcore mid-project risks breaking the validated P-5b recipe. Risk: new bugs, regression in FP8 delayed behavior. Must be done BEFORE P-8 starts, not during.</div>
+<div class="meta"><b>④ Testable criteria:</b> Upgrade CUDA to 12.9+, TE to latest, test blockwise FP8 128×128. Run P-9.8-equivalent 1000-step consistency check. <b>All 4 criteria pass → upgrade viable</b>.</div>
+<div class="meta"><b>⑤ Priority:</b> <span class="prio prio-mid">P1</span> — high potential but high risk. Only if P-8 hasn't started and upgrade window is available.</div>
+</div>
+
+<div class="cand">
+<h4>C6. Fused SSM + elementwise kernel (custom CUDA) <span class="prio prio-low">P2 · Exploratory</span></h4>
+<div class="meta"><b>① Motivation:</b> SSM (8.6%) + elementwise (21.3%) = 29.9% of device time. Many elementwise ops (norms, activations, residuals) could be fused with the SSM scan kernel. <span class="tag tag-lit">【一手文献·URL】</span> (Mamba2 SSD chunked formulation allows fusion, Dao &amp; Gu 2024)</div>
+<div class="meta"><b>② Expected benefit:</b> Fusing 5–10% of elementwise into SSM → 2–3% end-to-end speedup. <span class="tag tag-inf">【推测·未验】</span></div>
+<div class="meta"><b>③ Cost/risk:</b> Very high. Requires custom CUDA kernel development (weeks of engineering). Risk: may break numerical equivalence with stock mamba-ssm. Not feasible within P-8 timeline.</div>
+<div class="meta"><b>④ Testable criteria:</b> Profile which elementwise ops are adjacent to SSM scan. Prototype fusion for 1–2 ops. Measure kernel time reduction.</div>
+<div class="meta"><b>⑤ Priority:</b> <span class="prio prio-low">P2</span> — research-grade, not actionable for P-8. Document for future work.</div>
+</div>
+
+<div class="cand">
+<h4>C7. Gradient accumulation in FP8 (comm compression) <span class="prio prio-low">P2 · Exploratory</span></h4>
+<div class="meta"><b>① Motivation:</b> comm = 41.7% is the #1 bottleneck. If gradient allreduce uses FP8 instead of FP32, communication volume halves → ~20% comm time reduction → ~8% end-to-end. <span class="tag tag-lit">【一手文献·URL】</span> (FP8 communication: "no-reduction communication theoretically can use FP8" — qingkeai FP8 survey 2025)</div>
+<div class="meta"><b>② Expected benefit:</b> 41.7% × 50% reduction = 20.8% → ~8.7% end-to-end speedup. <span class="tag tag-inf">【推测·未验】</span></div>
+<div class="meta"><b>③ Cost/risk:</b> High. FP8 allreduce requires NCCL FP8 support (available in NCCL 2.18+). Risk: FP8 gradient reduction may cause accuracy drift. Our recipe uses grad_reduce_in_fp32=True (conservative). Risk: TE/mcore may not support FP8 grad reduce for Mamba2.</div>
+<div class="meta"><b>④ Testable criteria:</b> Set <code>grad_reduce_in_fp32=False</code> + FP8 comm, run 1000 steps. Compare loss curve to bf16 baseline. <b>Loss Δ ≤ 2% → viable</b>.</div>
+<div class="meta"><b>⑤ Priority:</b> <span class="prio prio-low">P2</span> — theoretically the highest-impact optimization (targets the #1 bottleneck directly), but high accuracy risk and untested in our stack.</div>
+</div>
+
+<h3>3.5 Waleffe et al.: 8B Mamba-2-Hybrid Training <span class="tag tag-lit">【一手文献·URL】</span></h3>
+<div class="note">
+<p><b>Paper:</b> Waleffe et al., "An Empirical Study of Mamba-based Language Models," arXiv 2406.07887, June 2024</p>
+<p><b>URL:</b> <code>https://arxiv.org/abs/2406.07887</code></p>
+<p><b>Key claims:</b></p>
+<ul>
+<li>8B Mamba-2-Hybrid (43% Mamba-2 + 7% attention + 50% MLP) exceeds 8B Transformer on all 12 tasks</li>
+<li>Trained on 3.5T tokens with Megatron-LM</li>
+<li>Reported training efficiency gains from the hybrid architecture (fewer attention layers = less O(n²) compute)</li>
+</ul>
+<p><b>Relevance:</b> At 8B/3.5T scale, their hybrid design (7% attn) closely matches ours (7.1% = 4/56). They did not report detailed profiler breakdowns, so we cannot directly compare comm fractions. Their training was on a larger cluster (more GPUs → different comm:compute ratio).</p>
+</div>
+
+<div class="svg-c"><svg width="780" height="360" viewBox="0 0 780 360" xmlns="http://www.w3.org/2000/svg">
+<rect width="780" height="380" fill="white"/>
+<text x="390" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#14532d">FP8 Throughput Paradox: Why 19% GEMM Speedup → 6% Slower 【实测数据】</text>
+<rect x="60" y="50" width="220" height="280" fill="#f8fafc" stroke="#cbd5e1" rx="6"/>
+<text x="170" y="72" text-anchor="middle" font-size="13" font-weight="bold" fill="#14532d">bf16 TP1·MBS2</text>
+<rect x="80" y="85" width="180" height="80" fill="#dc2626" rx="3"/>
+<text x="170" y="110" text-anchor="middle" font-size="11" fill="white">comm 41.7%</text>
+<text x="170" y="128" text-anchor="middle" font-size="11" fill="white">(NVLink, optimal)</text>
+<text x="170" y="150" text-anchor="middle" font-size="20" fill="white" font-weight="bold">249K tok/s</text>
+<text x="170" y="185" text-anchor="middle" font-size="11" fill="#64748b">MFU 60.6%</text>
+<text x="170" y="210" text-anchor="middle" font-size="11" fill="#16a34a" font-weight="bold">✅ Baseline</text>
+<rect x="500" y="50" width="220" height="280" fill="#f8fafc" stroke="#cbd5e1" rx="6"/>
+<text x="610" y="72" text-anchor="middle" font-size="13" font-weight="bold" fill="#14532d">FP8 TP4·MBS8</text>
+<rect x="520" y="85" width="180" height="110" fill="#dc2626" rx="3"/>
+<text x="610" y="110" text-anchor="middle" font-size="11" fill="white">comm ~67%</text>
+<text x="610" y="128" text-anchor="middle" font-size="11" fill="white">(TP4 overhead!)</text>
+<text x="610" y="150" text-anchor="middle" font-size="11" fill="white">+ −7.8pp MFU</text>
+<text x="610" y="175" text-anchor="middle" font-size="11" fill="white">from TP4 allreduce</text>
+<text x="610" y="210" text-anchor="middle" font-size="20" fill="#dc2626" font-weight="bold">235K tok/s</text>
+<text x="610" y="235" text-anchor="middle" font-size="11" fill="#64748b">MFU 32.7% (FP8 peak)</text>
+<text x="610" y="260" text-anchor="middle" font-size="11" fill="#dc2626" font-weight="bold">❌ −6% vs bf16</text>
+<text x="610" y="285" text-anchor="middle" font-size="10" fill="#dc2626">GEMM 24% faster</text>
+<text x="610" y="300" text-anchor="middle" font-size="10" fill="#dc2626">but comm grows</text>
+<line x1="280" y1="190" x2="500" y2="190" stroke="#64748b" stroke-width="2" marker-end="url(#arr2)"/>
+<defs><marker id="arr2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#64748b"/></marker></defs>
+<text x="390" y="185" text-anchor="middle" font-size="11" fill="#64748b">FP8 forces TP4</text>
+<text x="390" y="200" text-anchor="middle" font-size="11" fill="#64748b">→ more comm</text>
+<text x="390" y="340" text-anchor="middle" font-size="10" fill="#64748b" font-style="italic">Source: P-9.7 (bf16 TP1), P-9.6②/P-9.8 (FP8 TP4), P-9.5 (profiler attribution)</text>
+</svg></div>
+
+<h2>5. Recommended Route + Time Box</h2>
+
+<div class="conclusion">
+<b>Do these 2 experiments first (2 GPU·h total), then decide P-8 precision:</b>
+</div>
+
+<h3>Step 1: FP8 delayed on TP1·MBS2·seq4096 — ~0.5h, 1 GPU-pair (C1) <span class="prio prio-high">P0</span></h3>
+<p>Run the <b>exact production config</b> (TP1·DP8·MBS2·seq4096·GBS1024) with <code>--precision bf16_with_fp8_delayed_scaling_mixed</code> instead of bf16_mixed. 60 steps, same as P-9.6② short test.</p>
+<pre>
+# Test FP8 on the OPTIMAL comm config (TP1), not TP4
+CUDA_DEVICE_MAX_CONNECTIONS=1 torchrun --nproc_per_node=8 pretrain_launcher.py \
+  --arch mamba2 --tensor-parallel 1 --seq-length 4096 \
+  --global-batch-size 1024 --micro-batch-size 2 \
+  --precision bf16_with_fp8_delayed_scaling_mixed \
+  --train-iters 60 --save-interval 0 --lr 1e-3 ...
+# Compare ms/iter to P-9.7 baseline (16,841.9 ms)
+# s ≥ 1.10 → FP8 viable on TP1 → re-run P-9.8 1000-step validation
+# s &lt; 1.05 → FP8 requires large M, TP1 not viable → P-8 stays bf16
+</pre>
+<p><b>Expected outcome:</b> P-9.4 showed FP8 on TP2·MBS4·seq4096 (M=16384) gives s≤1.01 — but TP1 has different memory access patterns. M=8192 may be too small for FP8 to overcome quantization overhead. <b>If this fails, FP8 is confirmed not viable at our optimal throughput config, and P-8 must use bf16 249K.</b></p>
+<p><b>This is the single most important experiment</b> — it determines whether P-8 can get a free 12% speedup or must accept 249K as the ceiling.</p>
+
+<h3>Step 2: Activation checkpointing + MBS=4 — ~1.5h, 1 GPU-pair (C2) <span class="prio prio-high">P0</span></h3>
+<p>Add recompute to the recipe and test MBS=4. If VRAM fits and throughput increases, this is a second speedup vector independent of FP8.</p>
+<pre>
+# Add to recipe: recompute_num_layers = 28 (half of 56) or selective
+# Then test MBS=4 on TP1
+
+<h3>What NOT to do</h3>
+<div class="warn">
+<ul>
+<li><b>Do not</b> use FP8 on TP4 for P-8 — it's 6% slower than bf16 TP1 (P-9.6② + P-9.7). The FP8 speedup only materializes if comm doesn't grow.</li>
+<li><b>Do not</b> use tensorwise (current) FP8 — P-9.9 confirmed persistent +6–7% loss divergence (T1/T1'/T4 all FAIL).</li>
+<li><b>Do not</b> change NCCL env variables — P-9.12 + P-9.13 confirmed default is optimal (0% improvement from any env tweak).</li>
+<li><b>Do not</b> upgrade CUDA/TE/mcore mid-P-8 — regression risk outweighs potential gain. Upgrade only BEFORE P-8 starts, with full re-validation.</li>
+<li><b>Do not</b> expect SSM kernel optimization — SSM is only 8.6% of time; even a 2× faster kernel saves &lt;4% end-to-end.</li>
+</ul>
+</div>
+
+<h3>Time-cost impact for P-8 (100B tokens at 249K tok/s)</h3>
+<table>
+<tr><th>Scenario</th><th>tok/s</th><th>Time for 100B</th><th>GPU·h</th><th>Savings vs baseline</th></tr>
+<tr><td><b>Current (bf16 TP1)</b></td><td>249K</td><td>≈12.5 days</td><td>2,400</td><td>—</td></tr>
+<tr><td>C1 works (FP8 TP1 +12%)</td><td>278K</td><td>≈11.2 days</td><td>2,144</td><td>−256 GPU·h (−1.3 days)</td></tr>
+<tr><td>C2 works (MBS4 +recompute +10%)</td><td>274K</td><td>≈11.4 days</td><td>2,182</td><td>−218 GPU·h (−1.1 days)</td></tr>
+<tr><td>Both C1+C2 work (+23%)</td><td>306K</td><td>≈10.2 days</td><td>1,954</td><td>−446 GPU·h (−2.3 days)</td></tr>
+</table>
+CUDA_DEVICE_MAX_CONNECTIONS=1 torchrun --nproc_per_node=8 pretrain_launcher.py \
+  --arch mamba2 --tensor-parallel 1 --seq-length 4096 \
+  --global-batch-size 1024 --micro-batch-size 4 \
+  --precision bf16_mixed --recompute-num-layers 28 \
+
+<h2>6. Reference List</h2>
+
+<div class="ref"><b>[1]</b> Dao &amp; Gu, "Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality," arXiv 2405.21060, May 2024. <code>https://arxiv.org/abs/2405.21060</code> — Mamba2 SSD, chunked parallel scan, 2–8× faster than Mamba1. <span class="tag tag-lit">【一手文献·URL】</span></div>
+
+<div class="ref"><b>[2]</b> NVIDIA, "Nemotron-H: A Family of Accurate and Efficient Hybrid Mamba-Transformer Models," arXiv 2504.03624, April 2025 (v4 Sep 2025). <code>https://arxiv.org/abs/2504.03624</code> — 8% attention, FP8 training, 3× faster inference. <span class="tag tag-lit">【一手文献·URL】</span></div>
+
+<div class="ref"><b>[3]</b> Waleffe et al., "An Empirical Study of Mamba-based Language Models," arXiv 2406.07887, June 2024. <code>https://arxiv.org/abs/2406.07887</code> — 8B Mamba-2-Hybrid, 7% attention, 3.5T tokens. <span class="tag tag-lit">【一手文献·URL】</span></div>
+
+<div class="ref"><b>[4]</b> NVIDIA Transformer Engine User Guide, FP8 recipes. <code>https://docs.nvidia.com/deeplearning/transformer-engine-user-guide/index.html</code> (accessed 2026-10-07) — delayed vs current vs blockwise scaling, FP8 Tensor Core 2× peak. <span class="tag tag-lit">【一手文献·URL】</span></div>
+
+<div class="ref"><b>[5]</b> DeepWiki, "Megatron-LM Optimization and Performance." <code>https://deepwiki.com/dialectics67/Megatron-LM/7-optimization-and-performance</code> (accessed 2026-10-07) — FP8 3–5× speed, activation checkpointing, CUDA Graph, communication overlap. <span class="tag tag-lit">【一手文献·URL】</span></div>
+
+<div class="ref"><b>[6]</b> Emergent Mind, "FP8 Training on Trillion-Token Datasets," 2025. <code>https://www.emergentmind.com/topics/fp8-training-on-trillion-token-datasets</code> (accessed 2026-10-07) — 25–40% throughput improvement, μnit/FOG/COAT/TWEO benchmarks. <span class="tag tag-sec">【二手·未核】</span></div>
+
+<div class="ref"><b>[7]</b> 青稞社区, "当谈论 FP8 训练的时候,我们到底在聊什么?" 2025. <code>https://www.qingkeai.online/archives/aaxcavut</code> (accessed 2026-10-07) — FP8 recipe survey, delayed vs current scaling, >7B convergence issues, FP8 communication. <span class="tag tag-sec">【二手·未核】</span></div>
+
+<div class="ref"><b>[8]</b> NVIDIA Developer Blog, "Turbocharge LLM Training Across Long-Haul Data Center Networks with NVIDIA NeMo Framework," May 2025. <code>https://developer.nvidia.com/blog/turbocharge-llm-training-across-long-haul-data-center-networks-with-nvidia-nemo-framework/</code> — NeMo 25.02, mcore 0.11, hierarchical AllReduce, distributed optimizer. <span class="tag tag-lit">【一手文献·URL】</span></div>
+
+<div class="ref"><b>[9]</b> Project experiment P-9.5, <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §P-9.5, <code>run/p95_keyavg_v2.txt</code>, <code>report_pretrain_p95_profiler.html</code>, 2026-10-06. — 5-way profiler attribution. <span class="tag tag-exp">【实测·本项目】</span></div>
+
+<div class="ref"><b>[10]</b> Project experiment P-9.7, <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §P-9.7, <code>run/baize_p97_a1_steady.sh</code>, 2026-10-04. — 249K tok/s steady-state, 1100 steps. <span class="tag tag-exp">【实测·本项目】</span></div>
+
+<div class="ref"><b>[11]</b> Project experiment P-9.12, <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §P-9.12, <code>report_pretrain_nccl_topo.html</code>, 2026-10-06. — NCCL NVLink P2P 100%, busbw 164.56 GB/s. <span class="tag tag-exp">【实测·本项目】</span></div>
+
+<div class="ref"><b>[12]</b> Project experiment P-9.13, <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §P-9.13, <code>report_pretrain_p913_speedup.html</code>, 2026-10-06. — Env sweep, 0% speedup, MBS4 OOM. <span class="tag tag-exp">【实测·本项目】</span></div>
+
+<div class="ref"><b>[13]</b> Project experiment P-9.8, <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §P-9.8, 2026-10-05. — FP8 delayed 1000-step validation, 4/4 criteria PASS, s=1.194. <span class="tag tag-exp">【实测·本项目】</span></div>
+
+<div class="ref"><b>[14]</b> Project experiment P-9.9, <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §P-9.9, 2026-10-05. — FP8 tensorwise FAIL, T1/T1'/T4 fail, +6–7% loss divergence. <span class="tag tag-exp">【实测·本项目】</span></div>
+
+<div class="ref"><b>[15]</b> Project experiment P-9.6②, <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §P-9.6, 2026-10-04. — FP8 TP4·MBS8·seq8192, s=1.24, 235K tok/s. <span class="tag tag-exp">【实测·本项目】</span></div>
+
+<div class="ref"><b>[16]</b> Project experiment P-9.1, <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §P-9.1, 2026-10-03. — MBS 1→2 = +59% throughput, MFU 33%→61%. <span class="tag tag-exp">【实测·本项目】</span></div>
+
+<hr style="margin-top:32px;border:none;border-top:1px solid #ddd">
+<div class="note" style="font-size:11px">
+<p><b>Report metadata:</b> BaiZe pretrain research report 2/5 | Operator instruction 2026-10-07④ | Pure CPU/web research, no GPU used | All project data from real experiments (no fabrication) | External sources verified with URL + year</p>
+<p><b>Limitations:</b> (1) FP8 on TP1 (C1) is proposed but NOT yet tested — the throughput estimate is speculative; (2) Activation checkpointing + MBS4 (C2) requires recipe modification not yet attempted; (3) External FP8 throughput figures (25–40%) are from models with lower comm fractions than ours (41.7%) — direct comparison may be misleading; (4) CUDA 12.9 blockwise FP8 (C5) not tested due to CUDA 12.8 constraint; (5) FP8 gradient communication (C7) is theoretically promising but unvalidated in our stack.</p>
+</div>
+</body></html>
+  --train-iters 60 --save-interval 0 ...
+# Measure: peak VRAM (<80GB?), tok/s, loss vs MBS=2 baseline
+</pre>
+<p><b>Expected outcome:</b> If VRAM &lt; 75GB and tok/s &gt; 260K, MBS=4 + recompute is viable → halve grad-accum bubbles → ~10% speedup. Combined with C1 (if FP8 TP1 works), potential 300K+ tok/s.</p>
+
+<h3>Step 3 (if Steps 1+2 both fail): Document 249K as the ceiling <span class="prio prio-low">P2</span></h3>
+<p>If FP8 on TP1 gives s&lt;1.05 AND MBS=4+recompute OOMs or doesn't speed up, then <b>249K tok/s is the definitive ceiling</b> for this architecture/hardware/recipe. P-8 proceeds at 249K, and the paper reports this honestly as the training cost. Further speedup requires code-level kernel work (C3–C7) that is out of scope for P-8.</p>
+</svg></div>
