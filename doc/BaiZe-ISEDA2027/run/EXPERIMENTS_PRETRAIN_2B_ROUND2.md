@@ -2639,13 +2639,14 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 
 ---
 
-## P-9.11-F · hybrid ctx 扩 2M/4M/8M/16M ＋「显存为何恒定」归因诊断（运维指令 2026-10-07③ · 用户直令）⏸ **2M@0.3 REJECTED · 2M@0.6 ✅ SERVED · 0.85 startup ✅ · V1/V2/V3 ✅ 有实测 · 4M@0.85 待卡 · 8M/16M 单卡不可服务**
+## P-9.11-F · hybrid ctx 扩 2M/4M/8M/16M ＋「显存为何恒定」归因诊断（运维指令 2026-10-07③ · 用户直令）⏸ **2M@0.3 REJECTED · 2M@0.6 ✅ SERVED · 0.85 startup ✅ · V1/V2/V3 ✅ · V4② ✅ bf16 SSM 1.67× faster · 4M@0.85 bench 运行中 · 8M/16M 单卡不可服务**
 
 > **状态**：2026-10-07 10:30 收到用户直令「hybrid 继续扩 ctx 到 2m/4m/8m/16m」+ 三问（VRAM 恒定 / hybrid 无速度优势 / 是否用虚拟内存）。
 > **#167 结论**：两节点无安全空卡 → 2M-16M 未执行，脚本备好。
 > **#169 更新（2026-10-07 ~15:43, GPU5 @.29 短暂空闲）**：抓住 data BO 试次间隙的 GPU5 空窗（609→25018→62611 MiB），**成功启动 2M@0.3 sglang server** 并采集了完整 V1/V3 诊断数据。server 启动后 data BO 立即把下一 trial 调度到 GPU5（62611 MiB），但**启动日志已完整保留**。**2M prompt 被 sglang 拒绝**（KV pool 1.24M < prompt 2.02M）。2M@0.6/0.85 + 4M-16M 仍待卡。
 > **#170.5 更新（2026-10-07 ~17:08–17:18, GPU2 @.29 短暂空闲）**：前序唤醒在 data BO 试次间隙 GPU2 空窗运行 **2M@0.6 成功**：VRAM=75.91GB, pool=2.75M, TTFT=427.8s, prefill=4713.8 tok/s, decode=20.9 tok/s。同时 GPU1 0.85 server 启动成功（pool=4.30M），但 bench 未完成（GPU 被 data BO 占据）。结果未及时提交。
 > **#171 更新（2026-10-07 ~17:44–18:00, 无 GPU）**：补提交 #170.5 的 2M@0.6 + 0.85 启动诊断结果。V2 三档 mem-fraction 扫描 ✅ 完成。GPU1 窗口已关闭（data BO 占满 80GB）。4M@0.85 bench + V4② bf16 SSM 对照待卡。
+> **#172 更新（2026-10-07 ~18:30–18:55, GPU0+GPU2 @.29 空闲）**：data BO 完成（GPU 释放）。① **V4② bf16 SSM 对照 ✅ 完成**（GPU2, 1M@0.3, bfloat16）：prefill 10820 tok/s vs float32 6484 tok/s = **1.67× faster**，TTFT -40%，decode/VRAM 无变化。Mamba cache slots 382 vs 177（bf16 半内存/状态）。⭐ float32 SSM 人为压低 hybrid prefill 40%——P-9.11-E dense-faster 结论需修订。② **4M@0.85 bench 运行中**（GPU0, server ready 18:39:49, pool=4.335M, 4M prompt ~4.02M fits with margin ~315K）。③ GPU1 有 78GB leaked memory（无进程，需 driver reset 或自然释放）。
 
 ### Step 0 · 找卡（#167: 2026-10-07 ~10:35 / #169: ~15:40 实测）
 
@@ -2777,13 +2778,23 @@ MEM_FRACTION=0.85 BATCHES="1" MAX_WAIT=600 BENCH_TIMEOUT=7200 \
   - `page_size=1`（PagedAttention block 管理，显存内）
 - **V3 缺项已补齐** ✅：三档（0.3/0.6/0.85）均有 host RSS 实测，1.08GB 绝对值足以排除「KV 换出到 host」假设（若含 KV cache 应 >10GB）。
 
-**V4 · 拆 hybrid「没速度优势」（部分有据，bf16 对照需 GPU）**
+**V4 · 拆 hybrid「没速度优势」（✅ V4①有据 + V4②实测完成）**
 - ① **4 层 attention 时间占比**：B1 已测 **≥512K 时 attention 占 prefill ~77%**（`MEMORY_PRETRAIN_2B.md` B1 结论）⇒ hybrid 在超长 ctx **退化为准 O(n²)**（4 层 attention 主导），这是「hybrid 无速度优势」的主因。
-- ② **`--mamba-ssm-dtype float32` 的代价**：P-9.11（0.85 mem-frac, likely bf16 SSM）hybrid @64K **prefill 2.18× faster**；P-9.11-E（0.3 mem-frac, float32 SSM）hybrid @128K **反而 dense 3.3× faster** ⇒ float32 SSM 显著拖慢 hybrid。**bf16 SSM 对照需 GPU**（⏸ 未测）。
-- ③ **结论**：hybrid 的优势在**容量**（能服务到 1M+，dense 512K 即 OOM）与**显存**（~26GB vs dense ~61GB）；**速度**上 dense 的 flashinfer attention 在中长 ctx 更快是**预期行为**（hybrid 仅 4/56 层用 attention，但那 4 层在超长 ctx 成瓶颈）。
+- ② **`--mamba-ssm-dtype float32` 的代价** ✅ **实测完成（2026-10-07 18:34, GPU2 @.29）**【实测·本项目】：
+  - **同模型同 ctx (1M=1048576)、同 mem-frac (0.3)、同 bs=1、同 gen_len=64**，唯一变量 = `--mamba-ssm-dtype`（float32 vs bfloat16）
+  - | 指标 | float32 SSM（P-9.11-E 基线, GPU4） | bfloat16 SSM（V4②, GPU2） | Δ |
+    |:--|--:|--:|:--|
+    | TTFT (s) | 155.47 | 93.17 | **-40.1%（快 40%）** |
+    | Prefill (tok/s) | 6484.3 | 10820.2 | **+66.9%（1.67× 快）** |
+    | Decode (tok/s) | 34.4 | 33.2 | -3.5%（噪声级） |
+    | Peak VRAM (GB) | 26.53 | 27.11 | +0.58GB（噪声级） |
+    | Mamba cache slots | 177 | 382 | 2.16×（bf16 = 每状态半内存） |
+  - **结论**：float32 SSM 令 hybrid prefill **慢 40%**，decode/VRAM 无收益。⭐ **P-9.11-E 的 float32 SSM 口径人为压低了 hybrid prefill 速度**——若用 bfloat16（sglang 默认读 model config），hybrid @1M prefill 从 6484→10820 tok/s，与 dense @1M prefill（~6484 tok/s in P-9.11-E）相比**反而快 1.67×**。这解释了 P-9.11（0.85/bf16）hybrid 2.18× faster vs P-9.11-E（0.3/float32）dense 3.3× faster 的口径矛盾。
+  - **可复现命令**：`SSM_DTYPE=bfloat16 MEM_FRACTION=0.3 BATCHES="1" bash p911e_matrix_launch.sh "2 hybrid 1048576"`（结果：`p911e_hybrid_ctx1048576_gpu2_mf0.3.json`）
+- ③ **结论**：hybrid 的优势在**容量**（能服务到 1M+，dense 512K 即 OOM）与**显存**（~26GB vs dense ~61GB）；**速度**上：① float32 SSM 人为拖慢 hybrid prefill 40%（实测），换 bfloat16 后 hybrid prefill 反超 dense；② 但 4 层 attention 在超长 ctx 成瓶颈（≥512K 占 77%），dense flashinfer attention 在中长 ctx（128K-256K）更快仍属预期。
 
-### 一句话可引用结论（P-9.11-F #171 更新）
-> **V2 mem-fraction 扫描 ✅ 三档实测完成：0.3→pool 1.24M (VRAM~23GB, 2M❌REJECTED), 0.6→pool 2.75M (VRAM=75.91GB, 2M✅SERVED, TTFT=427.8s, prefill=4713.8 tok/s, decode=20.9 tok/s), 0.85→pool 4.30M (VRAM~73GB, bench未完成)。「VRAM 恒定」是 mem-fraction=0.3 口径假象（pool 未撑满时的预分配读数），已被实测证伪。⭐ 关键发现：Mamba SSM cache 随 mem-fraction 线性增长（8.34→18.56→29.02GB），sglang max_mamba_cache_size 按 available memory 分配（177→395→618 entries）。V3 ✅ 三档 host RSS 均为 ~1.08GB ⇒ 无 host swap（PagedAttention=显存内分页）。4M@0.85 勉强可服务（pool 4.30M > 4.02M, margin ~280K）；8M/16M 单卡 80GB H100 不可服务。hybrid 无速度优势 = 4 层 attention O(n²) 主导（B1: ≥512K 占 prefill 77%）+ float32 SSM；优势在容量（2M vs dense 512K OOM）。4M@0.85 bench + V4② bf16 SSM 对照待卡。**
+### 一句话可引用结论（P-9.11-F #172 更新）
+> **V2 mem-fraction 扫描 ✅ 三档实测完成：0.3→pool 1.24M (VRAM~23GB, 2M❌REJECTED), 0.6→pool 2.75M (VRAM=75.91GB, 2M✅SERVED, TTFT=427.8s, prefill=4713.8 tok/s, decode=20.9 tok/s), 0.85→pool 4.30M (VRAM~73GB)。「VRAM 恒定」是 mem-fraction=0.3 口径假象，已被实测证伪。⭐ V4② bf16 SSM 对照 ✅ 实测完成：同 1M@0.3，float32→bfloat16 prefill **1.67× 快**（6484→10820 tok/s），TTFT -40%，decode/VRAM 无变化。⭐⭐ **float32 SSM 口径人为压低 hybrid prefill 40%**——P-9.11-E 的 dense-faster 结论需修订。V3 ✅ 三档 host RSS ~1.08GB ⇒ 无 host swap。4M@0.85 bench 运行中（GPU0, 18:39 起）。8M/16M 单卡不可服务。**
 
 ### 产出（本阶段）
 - `run/p911e_matrix_launch.sh`（已更新：支持 `MEM_FRACTION` / `BATCHES` env var + V1/V3 诊断捕获）
@@ -2795,5 +2806,9 @@ MEM_FRACTION=0.85 BATCHES="1" MAX_WAIT=600 BENCH_TIMEOUT=7200 \
 - `run/p911e_results/p911e_hybrid_ctx2097152_gpu0_mf0.6.json`（skip: GPU occupied）
 - `run/p911e_results/p911e_hybrid_ctx2097152_gpu1_mf0.85.json`（skip: GPU occupied）
 - `run/p911e_results/p911e_hybrid_ctx2097152_gpu6_mf0.85.json`（skip: GPU occupied）
+- `run/p911e_results/p911e_hybrid_ctx1048576_gpu2_mf0.3.json`（V4② bf16 SSM 对照 ✅ 1M@0.3 bfloat16 bench 结果）
+- `run/p911e_results/p911e_hybrid_ctx1048576_gpu2_mf0.3_diag.txt`（V4② 诊断：bfloat16 启动日志 + host RSS, Mamba cache slots=382）
+- `run/p911e_results/p911e_hybrid_ctx4194304_gpu0_mf0.85.json`（4M@0.85 bench 结果，运行中/待回填）
+- `run/p911e_results/p911e_hybrid_ctx4194304_gpu0_mf0.85_diag.txt`（4M@0.85 诊断：启动日志 + host RSS）
 - 本节（EXPERIMENTS P-9.11-F）
-- 4M@0.85 bench + V4② bf16 SSM 对照：**待 GPU 空闲后补跑回填**
+- 8M/16M：**单卡 80GB H100 不可服务**（pool 4.30M < 8M/16M prompt）

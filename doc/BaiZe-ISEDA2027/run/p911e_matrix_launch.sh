@@ -65,7 +65,7 @@ run_cell() {
     local tag="${model}_ctx${ctx}_gpu${g}_mf${MEM_FRACTION}"
     local port=$((30100 + g))
     local mpath="$HYBRID_HF"
-    local extra=(--mamba-ssm-dtype float32)
+    local extra=(--mamba-ssm-dtype ${SSM_DTYPE:-float32})
     if [ "$model" = "dense" ]; then mpath="$DENSE_HF"; extra=(); fi
     local srv_log="$LOGDIR/${tag}.srv.log" bench_log="$LOGDIR/${tag}.bench.log"
     local out="$OUTDIR/p911e_${tag}.json"
