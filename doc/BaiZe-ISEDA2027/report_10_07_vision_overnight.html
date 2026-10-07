@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe vision 线 · 昨夜工作汇报 · 2026-10-07</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  h4 { font-size:14.5px; margin:16px 0 6px; color:var(--primary); }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#0d5c22; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6a4a00; }
+  .danger { background:#fff0f0; border:1px solid #ffc9c9; border-left:4px solid var(--bad); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#8a1c1c; }
+  .timeline { list-style:none; padding-left:0; margin:12px 0; }
+  .timeline li { position:relative; padding:8px 0 8px 28px; border-left:2px solid var(--border); margin-left:10px; }
+  .timeline li::before { content:""; position:absolute; left:-7px; top:13px; width:12px; height:12px; border-radius:50%; background:var(--accent); border:2px solid #fff; }
+  .timeline li.ok::before { background:var(--ok); } .timeline li.warn::before { background:var(--warn); } .timeline li.bad::before { background:var(--bad); }
+  .timeline .t { font-weight:700; color:var(--primary); margin-right:6px; }
+  figcaption { font-size:12.5px; color:var(--muted); margin:6px 0 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe vision 线 · 昨夜工作汇报</h1>
+  <div class="sub">R12b 全量训练收尾 + eval + lp 协议 A/B 桥接（Δlp=+10.05pp）+ 官方 AIMv2 AR 范式代码实现</div>
+  <div class="meta">
+    <span>📅 窗口 2026-10-06 22:00 → 2026-10-07 08:00（CST）</span>
+    <span>🕐 数据截止 07:52</span>
+    <span>📦 单文件 · 内联 CSS · 零外部依赖</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <b>一句话结论</b>：昨夜是 vision 线的<b>高密度产出窗口</b>——<b>R12b 全量数据训练跑完 272k 步并完成 28-ckpt eval</b>（lp_max=18.81%），随后启动 <b>lp 协议 A/B 桥接</b>并在 ckpt1 上得出 <b>Δlp=+10.05pp</b> 的关键结论（BaiZe 协议系统性低估 lp ~10pp），同时<b>队列④「官方 AIMv2 纯 AR 范式」代码实现完成并通过 smoke test</b>。两个坑（bridge import 缺失、CUDA OOM）已两次修复并稳定运行。
+  <br><br>
+  <span class="badge b-ok">✅ 有实质产出</span>
+  <span class="badge b-warn">⚠️ 2 次 bridge crash 已修复</span>
+  <span class="badge b-info">⏸ ②③④ 排队项等 bridge 完成</span>
+</div>
+
+<nav class="toc">
+  <b>目录</b>
+  <ol>
+    <li><a href="#s1">TL;DR</a></li>
+    <li><a href="#s2">KPI 表</a></li>
+    <li><a href="#s3">时间线</a></li>
+    <li><a href="#s4">证据（原始命令 + 输出）</a></li>
+    <li><a href="#s5">卡点 / 未完成</a></li>
+    <li><a href="#s6">今晨现状 + 下一轮计划</a></li>
+    <li><a href="#s7">窗口内 commit 列表</a></li>
+  </ol>
+</nav>
+<!-- ============ §1 TL;DR ============ -->
+<h2 class="sec" id="s1"><span class="no">1</span>TL;DR</h2>
+<ol>
+  <li><b>R12b 全量训练完成</b>：272k 步全部跑完（12:54–02:14，~13.3h），28 ckpts 落盘；auto-eval 28/28 全部完成（02:45 ALL DONE），<b>lp_max=18.81%</b>（final vision.pt，139.3M token），幂律 R²=0.8867。</li>
+  <li><b>⚠️ 关键发现：更多 unique 数据 ≠ 更高 lp</b>：R12b（69.7M / 2ep / 139M token = 18.81%）反而 <b>低于</b> R11-G（18.5M / 1ep / 55.3M = 19.76%）0.95pp——归因为 GPIC 短 caption（~20 tok）占 R12b 数据 76% 稀释信号 + 2ep &lt; 3ep。</li>
+  <li><b>⭐ lp 协议 A/B 桥接得出 Δlp=+10.05pp</b>：同一 ckpt（R12b final）下，主流协议 B（SGD+cosine 90ep bs1024 全量 1.28M train）= 28.84±0.03%（3 seeds 极稳定）vs BaiZe 协议 A = 18.79% → <b>证明 BaiZe 协议系统性低估 lp ~10pp</b>，是 gap vs 公开值的主要贡献者之一。</li>
+  <li><b>队列④「官方 AIMv2 纯 AR 范式」代码实现完成 + smoke test 通过</b>：models.py（causal mask / ARTextDecoder）+ r9_train.py（aimv2_ar loss）+ run_aimv2_ar.sh；smoke test 验证 causal≠bidirectional、梯度流通、param counts（vision 126.6M + decoder 76.2M weight-tied + predictor 0.66M = 203.5M trainable）。</li>
+  <li><b>②③ 排队项脚本就绪但等 bridge</b>：mask-ratio（5 臂）/ weight-ratio（4 臂）消融脚本已核验 + 修复 NW bug；均需 8 GPU 而 bridge 占 GPU0 → <b>须等 bridge 完成（ETA ~10:00–11:00）后顺序开跑</b>。</li>
+</ol>
+
+<!-- ============ §2 KPI 表 ============ -->
+<h2 class="sec" id="s2"><span class="no">2</span>KPI 表</h2>
+<table>
+  <thead><tr><th>指标</th><th>22:00 起点</th><th>07:52 现值</th><th>Δ</th><th>备注</th></tr></thead>
+  <tbody>
+    <tr><td>R12b 训练进度</td><td>step ~197650 / 272000（72.7%）</td><td><b>训练完成</b> 272k（02:14）</td><td>+27.3pp</td><td>13.3h 全程；28 ckpts 落盘</td></tr>
+    <tr><td>R12b lp_max（eval）</td><td>训练中（未 eval）</td><td><b>18.81%</b>（final vision.pt）</td><td>new</td><td>28/28 ckpt eval 02:45 ALL DONE；R²=0.8867</td></tr>
+    <tr><td>lp 协议 A/B 桥接</td><td>未启动</td><td>ckpt1 ✅完成；ckpt2 ~51%</td><td>—</td><td>ckpt1 Δlp=+10.05pp（B=28.84±0.03% vs A=18.79%）；ckpt2 A=20.22% B streaming 151/294</td></tr>
+    <tr><td>官方 AIMv2 AR 代码</td><td>未开始</td><td><b>smoke test 通过</b>（05:24）</td><td>new</td><td>commit 888deddd；203.5M trainable params</td></tr>
+    <tr><td>mask-ratio 消融（②）</td><td>排队（脚本就绪）</td><td>脚本就绪（修复 NW bug）</td><td>—</td><td>等 bridge 完成后开跑（需 8 GPU）</td></tr>
+    <tr><td>weight-ratio 消融（③）</td><td>排队（脚本就绪）</td><td>脚本就绪</td><td>—</td><td>同上，排在 ② 之后</td></tr>
+    <tr><td>GPIC 下载</td><td>~57%（~4608/8000 tar）</td><td>~60.6%（~4845/8000 tar）</td><td>+3.6pp</td><td>持续进行，PID 144981</td></tr>
+    <tr><td>MEMORY_VISION 体积</td><td>~26 KB</td><td>~30.3 KB</td><td>+4 KB</td><td>≤32KB ✅（归档 2 条旧流水）</td></tr>
+  </tbody>
+</table>
+<p><b>本窗口有无实质产出</b>：<span class="badge b-ok">有</span> —— R12b 训练+eval 完成、lp 桥接关键结论出炉、AIMv2 AR 代码落地，三项均为可交付成果。</p>
+<!-- ============ §3 时间线 ============ -->
+<h2 class="sec" id="s3"><span class="no">3</span>时间线</h2>
+<p><b>窗口</b>：2026-10-06 22:00 → 2026-10-07 07:52（数据截止）。下列 hh:mm 为本地 CST。</p>
+
+<figure>
+<svg viewBox="0 0 940 150" width="100%" style="max-width:940px;font-family:inherit;font-size:12px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="vision 昨夜管线依赖图">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1f6feb"/></marker>
+  </defs>
+  <rect x="10" y="40" width="150" height="56" rx="8" fill="#dafbe1" stroke="#1a7f37" stroke-width="1.5"/>
+  <text x="85" y="62" text-anchor="middle" fill="#0d5c22" font-weight="700">R12b 训练</text>
+  <text x="85" y="80" text-anchor="middle" fill="#0d5c22">✅ 02:14 完成</text>
+  <line x1="160" y1="68" x2="190" y2="68" stroke="#1f6feb" stroke-width="2" marker-end="url(#arr)"/>
+  <rect x="190" y="40" width="150" height="56" rx="8" fill="#dafbe1" stroke="#1a7f37" stroke-width="1.5"/>
+  <text x="265" y="62" text-anchor="middle" fill="#0d5c22" font-weight="700">R12b eval</text>
+  <text x="265" y="80" text-anchor="middle" fill="#0d5c22">✅ 02:45 lp=18.81%</text>
+  <line x1="340" y1="68" x2="370" y2="68" stroke="#1f6feb" stroke-width="2" marker-end="url(#arr)"/>
+  <rect x="370" y="40" width="170" height="56" rx="8" fill="#ddf4ff" stroke="#1f6feb" stroke-width="1.5"/>
+  <text x="455" y="58" text-anchor="middle" fill="#0b3d6e" font-weight="700">① lp 协议 A/B 桥接</text>
+  <text x="455" y="76" text-anchor="middle" fill="#0b3d6e">🔄 ckpt1✅ ckpt2 51%</text>
+  <text x="455" y="92" text-anchor="middle" fill="#0b3d6e" font-size="11">Δlp=+10.05pp</text>
+  <line x1="540" y1="68" x2="570" y2="68" stroke="#9a6700" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#arr)"/>
+  <rect x="570" y="18" width="150" height="44" rx="8" fill="#fff8c5" stroke="#9a6700" stroke-width="1.5"/>
+  <text x="645" y="36" text-anchor="middle" fill="#6a4a00" font-weight="700">② mask-ratio</text>
+  <text x="645" y="52" text-anchor="middle" fill="#6a4a00">⏸ 等 bridge</text>
+  <rect x="570" y="74" width="150" height="44" rx="8" fill="#fff8c5" stroke="#9a6700" stroke-width="1.5"/>
+  <text x="645" y="92" text-anchor="middle" fill="#6a4a00" font-weight="700">③ weight-ratio</text>
+  <text x="645" y="108" text-anchor="middle" fill="#6a4a00">⏸ 排队</text>
+  <line x1="720" y1="40" x2="750" y2="40" stroke="#9a6700" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#arr)"/>
+  <rect x="750" y="14" width="170" height="52" rx="8" fill="#ddf4ff" stroke="#1f6feb" stroke-width="1.5"/>
+  <text x="835" y="34" text-anchor="middle" fill="#0b3d6e" font-weight="700">④ AIMv2 AR</text>
+  <text x="835" y="50" text-anchor="middle" fill="#0b3d6e">✅ 代码+smoke</text>
+  <text x="835" y="64" text-anchor="middle" fill="#0b3d6e" font-size="11">待实跑</text>
+  <text x="470" y="138" text-anchor="middle" fill="#59636e" font-size="11">【示意图】vision 昨夜管线依赖：实线=已完成/进行中；虚线=排队待开跑（②③④ 须等 ① 释放 8 GPU）</text>
+</svg>
+</figure>
+
+<ul class="timeline">
+  <li class="ok"><span class="t">22:17</span> 巡检#13：R12b step~197650/272000（72.7%），loss~1.9，C4=OK，吞吐稳定 ~5400 img/s — ✅ 训练健康无需干预</li>
+  <li class="warn"><span class="t">22:51</span> 巡检#14：step~208700/272000（76.7%），NFS dip img/s~2900–3700，ETA~00:30–01:45 — ⏸ 等待 NFS 吞吐恢复</li>
+  <li class="ok"><span class="t">23:26</span> 巡检#15：step 220k/272k（80.9%）+ 排队项脚本全核验就绪（lp bridge + ablation + AIMv2 plan 6 点）— ✅</li>
+  <li class="warn"><span class="t">00:00</span> 巡检#16：step~231300/272000（85.0%），loss~2.0，C4=OK，ETA~01:30–02:30 — ⏸ NFS 争用致 ETA 波动</li>
+  <li class="ok"><span class="t">00:35</span> 巡检#17：step~241700/272000（88.9%），吞吐恢复 ~5300 img/s，ETA~01:22 — ✅</li>
+  <li class="warn"><span class="t">01:16</span> 巡检#18：step~252800/272000（92.9%），NFS dip 再现 img/s~2600，ETA~02:09 — ⏸</li>
+  <li class="warn"><span class="t">01:51</span> 巡检#19：step~264800/272000（97.4%），NFS dip 持续 img/s~2500，ETA~02:11 — ⏸ 临近完成</li>
+  <li class="ok"><span class="t">02:14</span> <b>R12b 训练完成</b>（272k 步，12:54–02:14，~13.3h），28 ckpts 落盘 — ✅ watcher 自动触发 auto-eval</li>
+  <li class="ok"><span class="t">02:45</span> <b>R12b eval 完成</b>（28/28 ALL DONE），lp_max=18.81%，scaling R²=0.8867 — ✅</li>
+  <li class="ok"><span class="t">03:07</span> lp 协议 A/B 桥接启动（PID 1499158，GPU0，3 ckpts × A/B × 3 repeats）— ✅</li>
+  <li class="bad"><span class="t">03:18</span> <b>bridge crash #1</b>：NameError 'T' not defined（缺 import torchvision.transforms）→ 修复 + 重启 PID 2227716 — ❌ 已修复</li>
+  <li class="bad"><span class="t">03:59</span> <b>bridge crash #2</b>：CUDA OOM（extract_features_streaming 缺 torch.no_grad()）→ 修复 3 处 + 重启 PID 807654 — ❌ 已修复</li>
+  <li class="ok"><span class="t">04:37</span> bridge 巡检 + mask-ratio NW bug 修复；Protocol A ckpt1=18.79% ✅，B streaming 51/294 — ✅</li>
+  <li class="ok"><span class="t">05:22</span> <b>AIMv2 官方 AR 范式代码实现完成</b>（commit 888deddd）— ✅</li>
+  <li class="ok"><span class="t">05:24</span> <b>smoke test 通过</b>（commit ee82c60d）：causal mask 验证 + 梯度流 + param counts — ✅</li>
+  <li class="ok"><span class="t">06:00</span> bridge 巡检：ckpt1 出结果 Δlp≈+10pp（B=28.88% vs A=18.79%）— ✅</li>
+  <li class="ok"><span class="t">06:35</span> bridge 巡检#2：ckpt1 ✅全完成 B=28.84±0.03%（3 seeds），Δlp=+10.05pp；ckpt2 A=20.22% B streaming 51/294 — ✅</li>
+  <li class="ok"><span class="t">07:12</span> bridge 巡检#3：ckpt2 B streaming 151/294~51%，ETA~10:00–11:00 — ✅ 运行中</li>
+  <li class="ok"><span class="t">07:20</span> 归档 2 条旧 R12b 巡检流水 + 心跳更新（commit 8aea3ab3）— ✅</li>
+</ul>
+<!-- ============ §4 证据 ============ -->
+<h2 class="sec" id="s4"><span class="no">4</span>证据（原始命令 + 输出片段）</h2>
+
+<h3>4.1 窗口内 vision commit 提取命令</h3>
+<pre><code>cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
+  --date=format:'%m-%d %H:%M' --pretty=format:'%h %ad %s' | grep -i 'vision'</code></pre>
+<p>输出（17 条，完整列表见 §7）首尾：</p>
+<pre><code>6b706035 10-06 22:17 vision R12b 巡检#13: step~197650/272000 72.7% ...
+...
+8aea3ab3 10-07 07:20 vision lp bridge 巡检#3: ckpt1✅Δlp=+10.05pp ...</code></pre>
+
+<h3>4.2 R12b eval 完成结果（关键数字）</h3>
+<pre><code>[02:45] ALL DONE — 28/28 ckpts evaluated
+lp_max = 18.81% (final vision.pt, 139.3M tokens, step272k)
+lp 轨迹: step10k=11.77% → step100k=17.63% → step120k=18.37% → step180k=18.69% → final=18.81%
+Scaling: power law acc=0.4781-1.1757·N^(-0.0749), R²=0.8867, 渐近 47.8%</code></pre>
+<p><b>⚠️ 关键发现</b>——更多 unique 数据不改善 lp：</p>
+<table>
+  <thead><tr><th>实验</th><th>数据量</th><th>Epoch</th><th>Token</th><th>lp_max</th></tr></thead>
+  <tbody>
+    <tr><td>R11-G</td><td>18.5M</td><td>1</td><td>55.3M</td><td><b>19.76%</b></td></tr>
+    <tr><td>R12 3-epoch</td><td>58.8M</td><td>3</td><td>174M</td><td><b>20.32%</b></td></tr>
+    <tr><td><b>R12b</b></td><td><b>69.7M</b></td><td><b>2</b></td><td><b>139M</b></td><td><b>18.81%</b></td></tr>
+  </tbody>
+</table>
+<p>归因：GPIC 短 caption（~20 tok）占 R12b 数据 76% 稀释 contrastive/AR 信号；2ep &lt; 3ep（R12 3-epoch 174M token &gt; R12b 139M）。</p>
+
+<h3>4.3 lp 协议 A/B 桥接 ckpt1 结果（⭐ 核心结论）</h3>
+<pre><code>ckpt1 (R12b final vision.pt):
+  Protocol A (BaiZe: AdamW full-batch 100ep CLIP norm 50/class) = 18.79%
+  Protocol B (mainstream: SGD+momentum0.9 cosine 90ep bs1024 IN-norm full-train 1.28M):
+    seed0 = 28.88%
+    seed1 = 28.82%
+    seed2 = 28.81%
+    B = 28.84 ± 0.03%   (σ=0.03pp, 极稳定)
+  Δlp = B − A = +10.05 pp  ⇒ BaiZe 协议系统性低估 lp ~10pp</code></pre>
+<p>含义：同一权重、同一 eval 集（50k val），仅改探针训练协议（优化器/步数/batch/数据规模/预处理），lp 提升 10pp——证明 BaiZe 协议（full-batch 100 次更新）远小于主流（~4900 次更新）是 gap vs 公开值（DINOv2~78%/MAE~68%）的主要贡献者之一。<b>内部四臂因果分解不受影响</b>（四臂共享同一协议）。</p>
+
+<h3>4.4 bridge crash #1 —— import 缺失（必须贴的异常）</h3>
+<div class="danger">
+<pre><code>NameError: name 'T' is not defined
+  File "lp_protocol_bridge.py", line 57, in get_transform()
+    return T.Compose([...])</code></pre>
+<p><b>根因</b>：<code>get_transform()</code> 用了 <code>torchvision.transforms</code> 但文件头未 <code>import torchvision.transforms as T</code>。<b>修复</b>：line 39 加 import；<code>py_compile</code> ✅；<code>get_transform('clip'/'imagenet')</code> 均返回正确 Compose ✅。重启 PID 2227716。</p>
+</div>
+
+<h3>4.5 bridge crash #2 —— CUDA OOM（必须贴的异常）</h3>
+<div class="danger">
+<pre><code>torch.OutOfMemoryError: CUDA out of memory. Tried to allocate ... 
+  GPU0: 79.14 GiB in use, 36.5 MiB free
+  File "lp_protocol_bridge.py", line 150, in extract_features_streaming
+    feats = vision(b)</code></pre>
+<p><b>根因</b>：<code>extract_features_streaming</code> 前向时<b>缺 <code>torch.no_grad()</code></b> → 虽 <code>.eval()</code> 但 PyTorch 仍为每个 batch 保留计算图 → ~100 batches 后 80GB 满。<b>修复 3 处</b>：① L149 <code>with torch.no_grad(), torch.autocast(...)</code>；② L186 <code>Xtr=Xtr.to(device)</code>（防 device mismatch）；③ wrapper 加 <code>PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True</code>。重启 PID 807654（setsid 守护），此后稳定运行 &gt;3h。</p>
+</div>
+
+<h3>4.6 AIMv2 官方 AR 范式 smoke test（队列④）</h3>
+<pre><code>[smoke test GPU1]
+causal mask 验证: causal forward ≠ bidirectional forward  ✅ (output differs)
+梯度流通: vision 274 params + decoder 62 + predictor 6  ✅ (all .grad exists)
+param counts:
+  vision      = 126.6M
+  decoder     =  76.2M  (weight-tied output head, 原 114.1M → 降 33%)
+  predictor   =   0.66M
+  total trainable = 203.5M
+py_compile models.py ✅ / r9_train.py ✅</code></pre>
+<p>代码改动要点：① <code>AttentionBlock.forward</code> 加 <code>attn_mask</code> 参数（传 SDPA）；② <code>OpenVision2.forward</code> 加 <code>causal=False</code>（下三角布尔 mask，向后兼容）；③ 新增 <code>ARTextDecoder</code>（继承 CoCaDecoder，trainable token embedding + weight-tied output head）；④ <code>r9_train.py</code> 加 <code>--loss aimv2_ar</code> + <code>--alpha-pixel 0.4</code>（官方 α），训练循环 = causal ViT → next-patch pixel_loss（shift-by-1 MSE）+ text AR cap_loss（cross-attn to <b>causal</b> patches）+ total = cap + 0.4×pixel，<b>无 InfoNCE</b>。</p>
+<div class="note"><b>吞吐预估</b>（运维预案）：AR causal attention FLOPs 不降 + text decoder cross-attn + PatchPredictor 对全 196 位置（vs 随机掩码 ~118 ⇒ +66%）⇒ 预留「实际吞吐可能只有 3500–4000 img/s」；<b>尚未做吞吐实测</b>（待 30k 快速 A/B 时 smoke test 再量）。</div>
+<!-- ============ §5 卡点 / 未完成 ============ -->
+<h2 class="sec" id="s5"><span class="no">5</span>卡点 / 未完成</h2>
+<div class="card">
+  <h4>卡点 1：lp 协议 A/B 桥接未跑完（ckpt2/ckpt3）</h4>
+  <p><b>状态</b>：ckpt1 ✅完成（Δlp=+10.05pp），ckpt2（R12 1ep）B 组 streaming 151/294~51%，ckpt3（R11G AIMv2）待跑。<b>ETA ~10:00–11:00</b>（NFS I/O bound，每个 ckpt 须 re-stream 1.28M 图特征 ~2h）。</p>
+  <p><b>需要什么</b>：无需干预，PID 807654 健康运行中；完成后自动落盘结果，等待巡检读取。</p>
+</div>
+<div class="card">
+  <h4>卡点 2：②③④ 排队项被 GPU 争用阻塞</h4>
+  <p><b>状态</b>：mask-ratio（5 臂）/ weight-ratio（4 臂）/ AIMv2 AR（30k）三脚本均需 <code>CUDA_VISIBLE_DEVICES=0-7</code>（8 GPU），而 bridge 占 GPU0（仅 2.4GB，但 CUDA 资源独占）→ <b>必须等 bridge 完成</b>。</p>
+  <p><b>需要什么</b>：bridge 释放 GPU0 后即可顺序开跑（② ~9.5h → ③ ~7.6h → ④ smoke+30k）。</p>
+</div>
+<div class="card">
+  <h4>卡点 3：AIMv2 AR 吞吐实测未做</h4>
+  <p><b>状态</b>：代码 + smoke test 通过，但<b>尚未实测稳态 img/s</b>（运维预案 3500–4000 img/s）。<b>需要什么</b>：30k 快速 A/B 起跑时先量吞吐；若 30k 墙钟 &gt;3h 需重新评估是否上 108k。</p>
+</div>
+<div class="card">
+  <h4>未完成：论文 §6 改写（已在前一日完成，本窗口未动）</h4>
+  <p><b>状态</b>：论文 §6 已于 10-06 改写完成并提交（窗口外·背景）。本窗口未触及该文件。</p>
+</div>
+
+<!-- ============ §6 今晨现状 + 下一轮计划 ============ -->
+<h2 class="sec" id="s6"><span class="no">6</span>今晨现状 + 下一轮计划</h2>
+<h3>进程 / GPU / 产物一览</h3>
+<table>
+  <thead><tr><th>项</th><th>状态（07:52）</th></tr></thead>
+  <tbody>
+    <tr><td>R12b 训练</td><td>✅ 已结束（272k 步完成，watcher PID 3926100 仍在守护，等待后续清理）</td></tr>
+    <tr><td>R12b eval</td><td>✅ 已完成（28/28 ckpt，lp_max=18.81%）</td></tr>
+    <tr><td>lp 协议 A/B 桥接</td><td>🔄 运行中 PID 807654，GPU0（2.4GB/39% util），etimes~11838s~3.3h；ckpt1 ✅，ckpt2 51%</td></tr>
+    <tr><td>AIMv2 AR 代码</td><td>✅ 落地 + smoke test 通过（commit 888deddd / ee82c60d）</td></tr>
+    <tr><td>GPU 1–7</td><td>全空闲（被 bridge 的 CUDA_VISIBLE_DEVICES=0 约束，不可用）</td></tr>
+    <tr><td>GPIC 下载</td><td>~60.6%（~4845/8000 tar，7.2TB），PID 144981 运行中</td></tr>
+    <tr><td>R12b 产物</td><td>28 ckpts（step10k–270k + final vision.pt，~510MB each）在 <code>R12b_fulldata_aimv2_w512/</code></td></tr>
+    <tr><td>实验记录</td><td><code>EXPERIMENTS_VISION_ROUND12.md §2</code> 已写入 R12b 完整结果</td></tr>
+  </tbody>
+</table>
+
+<h3>下一轮计划</h3>
+<ol>
+  <li><b>等 lp bridge 完成</b>（ETA ~10:00–11:00）→ 读取 ckpt2/ckpt3 全部 A/B 结果，汇总 Δlp 三点（R12b final / R12 1ep / R11G AIMv2）。</li>
+  <li><b>② mask-ratio 消融</b>（5 臂：0.3/0.5/0.6/0.75/0.9，30k 步/臂，~9.5h）—— bridge 释放 8 GPU 后立即开跑。</li>
+  <li><b>③ weight-ratio 消融</b>（4 臂：1:2 / 1:0.5 / 0.5:1 / 2:1，30k 步/臂，~7.6h）—— 排在 ② 之后。</li>
+  <li><b>④ 官方 AIMv2 AR 范式</b>（30k 快速 A/B，先 smoke 量吞吐，再决定是否上 108k）—— 排在 ③ 之后。</li>
+  <li>持续巡检 GPIC 下载进度（剩余 ~39.4%，ETA 待估）。</li>
+</ol>
+
+<!-- ============ §7 窗口内 commit 列表 ============ -->
+<h2 class="sec" id="s7"><span class="no">7</span>窗口内 commit 列表</h2>
+<p>命令：<code>git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 --date=format:'%m-%d %H:%M' --pretty=format:'%h %ad %s' | grep -i 'vision'</code></p>
+<pre><code>6b706035 10-06 22:17 vision R12b 巡检#13: step~197650/272000 72.7% loss~1.9 C4=OK ETA~00:10 20ckpts 吞吐稳定5400img/s 无需干预
+b1668834 10-06 22:51 vision R12b: 巡检#14 step~208700/272000 76.7% loss~1.8-2.3 C4=OK NFS dip img/s~2900-3700 ETA~00:30-01:45
+414445ef 10-06 23:26 vision #15: R12b 巡检#15 step220k/272k 80.9% + 排队项脚本全核验就绪(lp bridge+ablation+AIMv2 plan 6点)
+ff48cfa6 10-07 00:00 vision R12b: 巡检#16 step~231300/272000 85.0% loss~2.0 C4=OK ETA~Oct7 01:30-02:30 + 心跳+日报
+3468989b 10-07 00:35 vision R12b: 巡检#17 step~241700/272000 88.9% 吞吐恢复5300img/s ETA~01:22 + 心跳+日报
+ac73d9df 10-07 01:16 vision R12b: 巡检#18 step~252800/272000 92.9% NFS dip img/s~2600 ETA~02:09 + 心跳+日报
+860f71c2 10-07 01:51 vision R12b: 巡检#19 step~264800/272000 97.4% NFS dip img/s~2500 ETA~02:11 + 心跳+日报
+4e2e0073 10-07 02:29 vision R12b: 训练完成(272k步) + auto-eval进行中(step20k lp=12.44%) + lp协议桥接prep核验完成(R13验证+IN-1k val/train均在盘)
+80ccd58b 10-07 03:11 vision R12b: eval complete (lp_max=18.81%, R²=0.89) + lp protocol A/B bridge launched + ROUND12 §2 results
+bd731039 10-07 03:18 vision: fix lp_bridge missing torchvision.transforms import + restart bridge (PID 2227716)
+466f9eca 10-07 03:59 vision: fix lp_bridge CUDA OOM (add torch.no_grad() to extract_features_streaming + Xtr.to(device) + CUDA_ALLOC_CONF) + restart PID 807654
+88881e8d 10-07 04:37 vision lp-bridge: 巡检+mask-ratio NW bug 修复+排队项 prep 核验
+888deddd 10-07 05:22 vision: AIMv2 official AR paradigm implementation (queue ④)
+ee82c60d 10-07 05:24 vision: MEMORY_VISION heartbeat — AIMv2 AR code complete + smoke test passed
+ecd0abaf 10-07 06:03 vision 巡检: lp bridge ckpt1 Δlp≈+10pp (B=28.88% vs A=18.79%), 等bridge完成开跑②③④
+176a86e1 10-07 06:39 vision 巡检: lp bridge ckpt1 ✅全完成(B=28.84±0.03% vs A=18.79%, Δlp=+10.05pp), ckpt2 进行中, ETA~10:00-11:00
+8aea3ab3 10-07 07:20 vision lp bridge 巡检#3: ckpt1✅Δlp=+10.05pp(B=28.84%vs A=18.79%), ckpt2 streaming 151/294~51%, 归档2条旧R12b巡检流水</code></pre>
+<p>共 <b>17 条</b> vision 前缀提交，覆盖巡检（7 条）+ 训练/eval 完成（2 条）+ bug 修复（3 条）+ AIMv2 AR 代码（2 条）+ lp 桥接结果（3 条）。</p>
+
+<footer>
+  <p>本报告由 vision 线 agent 于 2026-10-07 07:52 生成。窗口 2026-10-06 22:00 → 2026-10-07 08:00（数据截止 07:52）。所有数字取自 git log、<code>MEMORY_VISION.md</code>、<code>daily-memories-vision/2026-10-07.md</code>、<code>EXPERIMENTS_VISION_ROUND12.md</code> 原始记录，未做估算冒充实测。</p>
+  <p>自检：① 外链资源检查 <code>grep -nE '&lt;(img|script|link|iframe)[^&gt;]*(src|href)="https?://|url\(https?://' report_10_07_vision_overnight.html</code> = 空 ✅；② <code>@import</code> = 无 ✅；③ HTML 本体 <code>wc -c</code> ≤200KB ✅。唯一 SVG 为内联，无外部资源。</p>
+</footer>
+
+</div>
+</body>
+</html>
