@@ -8882,5 +8882,38 @@
       }
     },
     "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-13647",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 301.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13647.json",
+      "stdout_tail": ":\nMatrix([[1, 0, 0, 2], [0, 1, 0, 2], [0, 0, 1, 2]])\n\npos=1:\nMatrix([[1, 2, 0, 0], [0, 2, 1, 0], [0, 2, 0, 1]])\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[\u2713] Fix _eval_col_insert bug in sympy/matrices/common.py\n[\u2713] Add test for col_insert with multi-row matrix\n[\u2713] Verify fix works\n\u001b[0m\n\n[run_single] model_patch: 14369 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13647.json\n[run_single] cleanup: git reset --hard 67e3c956083d0128a621f65ee86a7dacd4f9f19f\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 76,
+        "p2p_total": 76
+      }
+    },
+    "classification": "resolved"
   }
 ]
