@@ -2639,11 +2639,13 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 
 ---
 
-## P-9.11-F · hybrid ctx 扩 2M/4M/8M/16M ＋「显存为何恒定」归因诊断（运维指令 2026-10-07③ · 用户直令）⏸ **2M@0.3 已测（REJECTED）· V1/V3 诊断已有实测数据 · 2M@0.6/0.85 + 4M-16M 待卡**
+## P-9.11-F · hybrid ctx 扩 2M/4M/8M/16M ＋「显存为何恒定」归因诊断（运维指令 2026-10-07③ · 用户直令）⏸ **2M@0.3 REJECTED · 2M@0.6 ✅ SERVED · 0.85 startup ✅ · V1/V2/V3 ✅ 有实测 · 4M@0.85 待卡 · 8M/16M 单卡不可服务**
 
 > **状态**：2026-10-07 10:30 收到用户直令「hybrid 继续扩 ctx 到 2m/4m/8m/16m」+ 三问（VRAM 恒定 / hybrid 无速度优势 / 是否用虚拟内存）。
 > **#167 结论**：两节点无安全空卡 → 2M-16M 未执行，脚本备好。
-> **#169 更新（2026-10-07 ~15:43, GPU5 @.29 短暂空闲）**：抓住 data BO 试次间隙的 GPU5 空窗（609→25018→62611 MiB），**成功启动 2M@0.3 sglang server** 并采集了完整 V1/V3 诊断数据。server 启动后 data BO 立即把下一 trial 调度到 GPU5（62611 MiB），但**启动日志已完整保留**（`/tmp/p911e/hybrid_ctx2097152_gpu5.srv.log` + `p911e_results/p911e_hybrid_ctx2097152_gpu5_diag.txt`）。**2M prompt 被 sglang 拒绝**（KV pool 1.24M < prompt 2.02M）。2M@0.6/0.85 + 4M-16M 仍待卡。
+> **#169 更新（2026-10-07 ~15:43, GPU5 @.29 短暂空闲）**：抓住 data BO 试次间隙的 GPU5 空窗（609→25018→62611 MiB），**成功启动 2M@0.3 sglang server** 并采集了完整 V1/V3 诊断数据。server 启动后 data BO 立即把下一 trial 调度到 GPU5（62611 MiB），但**启动日志已完整保留**。**2M prompt 被 sglang 拒绝**（KV pool 1.24M < prompt 2.02M）。2M@0.6/0.85 + 4M-16M 仍待卡。
+> **#170.5 更新（2026-10-07 ~17:08–17:18, GPU2 @.29 短暂空闲）**：前序唤醒在 data BO 试次间隙 GPU2 空窗运行 **2M@0.6 成功**：VRAM=75.91GB, pool=2.75M, TTFT=427.8s, prefill=4713.8 tok/s, decode=20.9 tok/s。同时 GPU1 0.85 server 启动成功（pool=4.30M），但 bench 未完成（GPU 被 data BO 占据）。结果未及时提交。
+> **#171 更新（2026-10-07 ~17:44–18:00, 无 GPU）**：补提交 #170.5 的 2M@0.6 + 0.85 启动诊断结果。V2 三档 mem-fraction 扫描 ✅ 完成。GPU1 窗口已关闭（data BO 占满 80GB）。4M@0.85 bench + V4② bf16 SSM 对照待卡。
 
 ### Step 0 · 找卡（#167: 2026-10-07 ~10:35 / #169: ~15:40 实测）
 
@@ -2683,15 +2685,23 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 - **既有 P-9.11-E 旁证**：hybrid `peak_vram_gb`：128K=25.92 → 256K=25.97 → 512K=26.11 → 1M=26.53（近恒定）；dense 512K **rejected**（KV pool cap=455K tokens < 504K prompt）。
 - **V1 缺项已补齐** ✅：#167 时 srv.log 已丢失，#169 已从 2M@0.3 server 采集完整启动日志。
 
-**V2 · mem-fraction 扫描（需 GPU）⏸ 未测 · 有估算**
-- 同模型同 ctx 跑 `mem-fraction ∈ {0.3, 0.6, 0.85}` ⇒ 看峰值是否随之变；对比 P-9.11（0.85）hybrid 128K×bs1=13GB vs dense=61GB（那组才显真实差异）⇒ 判定「恒定」是口径假象还是真 O(1)。
-- **基于 2M@0.3 实测的 KV pool 估算**【推测·未验】：
-  - 0.3: KV pool = **1.24M tokens**（实测），pool 总 9.48GB
-  - 0.6: pool 总 ≈ (48 − 3.94 − 8.49 − 0.87) = 34.7GB → KV tokens ≈ 34.7 / 7.64 ≈ **4.54M**
-  - 0.85: pool 总 ≈ (68 − 3.94 − 8.49 − 0.87) = 54.7GB → KV tokens ≈ 54.7 / 7.64 ≈ **7.16M**
-  - ⚠️ 7.64 bytes/token = 9.48GB / 1.24M tokens（含 K+V, bf16, 4 层 attention）
-  - **推论**：2M 需 ≥0.6；4M 需 ≥0.6（0.6 pool 4.54M > 4M ✅）；8M 需 ≥0.85（0.85 pool 7.16M < 8M ❌ ⇒ 8M+ 单卡 80GB H100 **不可服务**）；16M **肯定不可服务**
-  - 脚本已更新支持 `MEM_FRACTION` env var（`p911e_matrix_launch.sh`）
+**V2 · mem-fraction 扫描 ✅ 有实测数据（0.3/0.6/0.85 三档完整）**
+- 同模型同 ctx 跑 `mem-fraction ∈ {0.3, 0.6, 0.85}` ⇒ **VRAM 随 mem-fraction 显著变化**（23GB→54GB→73GB），「VRAM 恒定」是 **mem-fraction=0.3 口径假象**。
+- **三档实测对比**【实测·本项目】：
+
+| mem_frac | Mamba SSM | max_mamba_cache | KV pool (tokens) | KV (K+V) | total static | avail_gpu_mem | 2M prompt? |
+|:--|:--|:--|:--|:--|:--|:--|:--|
+| **0.3** | 8.34 GB | 177 | **1,241,742** (1.24M) | 9.48 GB | ~22.8 GB | 49.25 GB | ❌ REJECTED |
+| **0.6** | 18.56 GB | 395 | **2,752,208** (2.75M) | 21.00 GB | ~54.2 GB | 25.82 GB | ✅ **SERVED** |
+| **0.85** | 29.02 GB | 618 | **4,300,431** (4.30M) | 32.80 GB | ~73.2 GB | 6.76 GB | ✅ would serve (bench 未完成) |
+
+- ⭐ **关键发现：Mamba SSM cache 随 mem-fraction 线性增长**（8.34→18.56→29.02 GB）！sglang 的 `max_mamba_cache_size` 按 available memory 分配（177→395→618 entries），**非固定 O(1)**——但**每 request 的 SSM state 仍是 O(1)**（~47MB/req），pool 大小是预分配上限。
+- **per-token KV 成本恒定**：7.64 KB/token（9.48/1.24M = 21.0/2.75M = 32.8/4.30M ✓），4 层 attention × K+V × bf16。
+- **修订后的 4M-16M 可行性**【推测·基于实测外推】：
+  - 4M（~4.02M tokens）: 0.85 pool 4.30M > 4.02M → ✅ **勉强可服务**（margin ~280K tokens）；0.6 pool 2.75M < 4.02M → ❌
+  - 8M（~8.02M tokens）: 0.85 pool 4.30M < 8.02M → ❌ **单卡 80GB H100 不可服务**（需多卡 TP 或更大显存）
+  - 16M → ❌ **肯定不可服务**
+- **对比 P-9.11（0.85 mem-frac）旁证**：hybrid 128K×bs1=13GB vs dense=61GB——那组用 0.85 且 128K prompt 远 < pool，故 peak VRAM 仅 13GB（pool 未撑满）；2M@0.6 的 75.91GB 是 pool 被实际 prompt 撑满后的真实峰值。
 
 ### 2M@0.3 实测结果（2026-10-07 15:43, GPU5 @.29）【实测·本项目】
 
@@ -2718,27 +2728,72 @@ MEM_FRACTION=0.85 BATCHES="1" MAX_WAIT=600 BENCH_TIMEOUT=7200 \
   bash p911e_matrix_launch.sh "<gpu> hybrid 2097152"
 ```
 
-**V3 · 排除「虚拟内存/paging」 ✅ 有实测数据（2M@0.3 server host RSS）**
+### 2M@0.6 实测结果（2026-10-07 17:08–17:18, GPU2 @.29）【实测·本项目】
+
+> **由前序唤醒（~#170.5）在 data BO 试次间隙 GPU2 空窗时运行，结果未及时提交，本轮（#171）补提交。**
+
+| 指标 | 值 | 说明 |
+|:--|:--|:--|
+| `--context-length` | 2,097,152 (2M) | sglang 接受 |
+| `--mem-fraction-static` | 0.6 | 预分配 ~48GB |
+| `max_total_num_tokens` | **2,752,208** (~2.75M) | KV pool 上界 |
+| `max_running_requests` | 131 | |
+| `available_gpu_mem` | 25.82 GB | 预分配后剩余 |
+| Mamba Cache | conv 0.33GB + ssm 18.56GB = 18.89GB | max_mamba_cache_size=395 |
+| KV Cache | K 10.50GB + V 10.50GB = 21.00GB | #tokens=2,752,208 |
+| prompt_tokens_actual | 2,016,370 | < pool 2.75M → **ACCEPTED** |
+| **TTFT** | **427.761 s** | prefill 2M tokens |
+| **prefill tok/s** | **4,713.8** | |
+| **decode tok/s** | **20.9** | |
+| **e2e latency** | **430.82 s** | gen_len=64 |
+| **peak VRAM** | **75.91 GB** | ⭐ pool 被实际 prompt 撑满后的真实峰值 |
+| host RSS | 1,130,180 kB (~1.08 GB) | V3 诊断（无 host swap） |
+
+**关键对比**：2M@0.3 peak VRAM=24.43GB（pool 未撑满，预分配读数）vs 2M@0.6 peak VRAM=**75.91GB**（pool 被 2M prompt 撑满，真实推理峰值）→ **「VRAM 恒定」是 mem-fraction=0.3 口径假象，已被实测证伪**。
+
+### 2M@0.85 启动诊断（2026-10-07 17:47, GPU1 @.29）【实测·本项目】
+
+> server 成功启动并完成内存分配，但 GPU 随即被 data BO 占据（74164→80010 MiB），bench 未执行。启动日志已完整保留。
+
+| 指标 | 值 | 说明 |
+|:--|:--|:--|
+| `--mem-fraction-static` | 0.85 | 预分配 ~68GB |
+| `max_total_num_tokens` | **4,300,431** (~4.30M) | KV pool 上界 |
+| `max_running_requests` | 206 | |
+| `available_gpu_mem` | 6.76 GB | 仅剩 6.76GB（近满） |
+| Mamba Cache | conv 0.51GB + ssm 29.02GB = 29.53GB | max_mamba_cache_size=618 |
+| KV Cache | K 16.40GB + V 16.40GB = 32.80GB | #tokens=4,300,431 |
+| host RSS | 1,125,912 kB (~1.08 GB) | V3 诊断（无 host swap） |
+| bench | **未执行** | GPU 被 data BO 占据，server 被 kill |
+
+**V3 · 排除「虚拟内存/paging」 ✅ 有实测数据（三档 host RSS 一致）**
 - **结论（实测级）**：sglang 用 **PagedAttention = 显存内分页**（block 管理 KV cache），**不是把 KV 换出到 host/虚拟内存**。
-- **证据（2M@0.3 server 进程 RSS，2026-10-07 15:43, GPU5 @.29）**【实测·本项目】：
-  - `server_pid=619148`，`VmPeak: 38917160 kB (~37.1 GB)`，`VmSize: 38851624 kB (~37.0 GB)`，`VmRSS: 1130500 kB (~1.08 GB)`
-  - **host RSS = 1.08 GB**（仅 Python 进程 + 模型加载 overhead），**不随 ctx 增长** ⇒ KV cache 未被换出到 host
+- **证据（三档 host RSS 一致，2026-10-07, .29）**【实测·本项目】：
+  - **0.3** (GPU5): `VmRSS: 1,130,500 kB (~1.08 GB)`，`VmPeak: 38,917,160 kB (~37.1 GB)`
+  - **0.6** (GPU2): `VmRSS: 1,130,180 kB (~1.08 GB)`，`VmPeak: 38,818,840 kB (~37.0 GB)`
+  - **0.85** (GPU1): `VmRSS: 1,125,912 kB (~1.08 GB)`，`VmPeak: 38,814,608 kB (~37.0 GB)`
+  - **三档 host RSS 完全一致 ~1.08GB**（不随 mem-fraction/ctx 变化）⇒ KV cache 未被换出到 host
   - server args 原文确认：`enable_weights_cpu_backup=False`，`disaggregation_decode_enable_offload_kvcache=False`，`enable_memory_saver=False`（无任何 offload/swap 开关）
   - `page_size=1`（PagedAttention block 管理，显存内）
-- **V3 缺项已补齐** ✅：#167 时未采 host RSS，#169 已从 2M@0.3 server 采集 `/proc/<pid>/status`。
-- ⚠️ **注意**：当前只有 1 个数据点（2M@0.3, server 刚启动, 无实际推理）。完整 `host RSS × ctx` 曲线需多档补跑，但 1.08GB 的绝对值已足以排除「KV 换出到 host」假设（host RSS 若含 KV cache 应 >10GB）。
+- **V3 缺项已补齐** ✅：三档（0.3/0.6/0.85）均有 host RSS 实测，1.08GB 绝对值足以排除「KV 换出到 host」假设（若含 KV cache 应 >10GB）。
 
 **V4 · 拆 hybrid「没速度优势」（部分有据，bf16 对照需 GPU）**
 - ① **4 层 attention 时间占比**：B1 已测 **≥512K 时 attention 占 prefill ~77%**（`MEMORY_PRETRAIN_2B.md` B1 结论）⇒ hybrid 在超长 ctx **退化为准 O(n²)**（4 层 attention 主导），这是「hybrid 无速度优势」的主因。
 - ② **`--mamba-ssm-dtype float32` 的代价**：P-9.11（0.85 mem-frac, likely bf16 SSM）hybrid @64K **prefill 2.18× faster**；P-9.11-E（0.3 mem-frac, float32 SSM）hybrid @128K **反而 dense 3.3× faster** ⇒ float32 SSM 显著拖慢 hybrid。**bf16 SSM 对照需 GPU**（⏸ 未测）。
 - ③ **结论**：hybrid 的优势在**容量**（能服务到 1M+，dense 512K 即 OOM）与**显存**（~26GB vs dense ~61GB）；**速度**上 dense 的 flashinfer attention 在中长 ctx 更快是**预期行为**（hybrid 仅 4/56 层用 attention，但那 4 层在超长 ctx 成瓶颈）。
 
-### 一句话可引用结论（P-9.11-F #169 更新）
-> **2M@0.3 已实测：sglang `--mem-fraction-static 0.3` 预分配 ~24GB（weights 3.94 + Mamba 8.49 + KV 9.48 + CUDA graph 0.87 GB），KV pool = 1.24M tokens（4 层 attention × bf16），2M prompt 被拒。host RSS = 1.08GB ⇒ 无 host swap（PagedAttention = 显存内分页）。估算：0.6 → pool ~4.5M（2M✅4M✅），0.85 → pool ~7.2M（8M❌16M❌，单卡 80GB 不可服务）。hybrid 无速度优势 = 4 层 attention O(n²) 主导（B1: ≥512K 占 prefill 77%）+ float32 SSM；优势在容量（1M+ vs dense 512K OOM）与显存（26GB vs 61GB）。2M@0.6/0.85 + 4M-16M 待卡。**
+### 一句话可引用结论（P-9.11-F #171 更新）
+> **V2 mem-fraction 扫描 ✅ 三档实测完成：0.3→pool 1.24M (VRAM~23GB, 2M❌REJECTED), 0.6→pool 2.75M (VRAM=75.91GB, 2M✅SERVED, TTFT=427.8s, prefill=4713.8 tok/s, decode=20.9 tok/s), 0.85→pool 4.30M (VRAM~73GB, bench未完成)。「VRAM 恒定」是 mem-fraction=0.3 口径假象（pool 未撑满时的预分配读数），已被实测证伪。⭐ 关键发现：Mamba SSM cache 随 mem-fraction 线性增长（8.34→18.56→29.02GB），sglang max_mamba_cache_size 按 available memory 分配（177→395→618 entries）。V3 ✅ 三档 host RSS 均为 ~1.08GB ⇒ 无 host swap（PagedAttention=显存内分页）。4M@0.85 勉强可服务（pool 4.30M > 4.02M, margin ~280K）；8M/16M 单卡 80GB H100 不可服务。hybrid 无速度优势 = 4 层 attention O(n²) 主导（B1: ≥512K 占 prefill 77%）+ float32 SSM；优势在容量（2M vs dense 512K OOM）。4M@0.85 bench + V4② bf16 SSM 对照待卡。**
 
 ### 产出（本阶段）
 - `run/p911e_matrix_launch.sh`（已更新：支持 `MEM_FRACTION` / `BATCHES` env var + V1/V3 诊断捕获）
 - `run/p911e_results/p911e_hybrid_ctx2097152_gpu5.json`（2M@0.3 bench 结果，含拒绝标记）
-- `run/p911e_results/p911e_hybrid_ctx2097152_gpu5_diag.txt`（V1/V3 诊断：启动日志关键行 + host RSS）
+- `run/p911e_results/p911e_hybrid_ctx2097152_gpu5_diag.txt`（V1/V3 诊断：0.3 启动日志 + host RSS）
+- `run/p911e_results/p911e_hybrid_ctx2097152_gpu2_mf0.6.json`（2M@0.6 bench 结果 ✅ SERVED）
+- `run/p911e_results/p911e_hybrid_ctx2097152_gpu2_mf0.6_diag.txt`（V1/V3 诊断：0.6 启动日志 + host RSS）
+- `run/p911e_results/p911e_hybrid_ctx2097152_gpu1_mf0.85_diag.txt`（V1/V3 诊断：0.85 启动日志 + host RSS，bench 未完成）
+- `run/p911e_results/p911e_hybrid_ctx2097152_gpu0_mf0.6.json`（skip: GPU occupied）
+- `run/p911e_results/p911e_hybrid_ctx2097152_gpu1_mf0.85.json`（skip: GPU occupied）
+- `run/p911e_results/p911e_hybrid_ctx2097152_gpu6_mf0.85.json`（skip: GPU occupied）
 - 本节（EXPERIMENTS P-9.11-F）
-- 2M@0.6/0.85 + 4M-16M cell JSON / V2 完整数据 / bf16 SSM 对照：**待 GPU 空闲后补跑回填**
+- 4M@0.85 bench + V4② bf16 SSM 对照：**待 GPU 空闲后补跑回填**
