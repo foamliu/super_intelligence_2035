@@ -31,8 +31,8 @@ print(f"  avg                 rho={rho:+.4f} p={pval:.4f}")
 print()
 print("=== Data table ===")
 print(f"{'TID':>5} {'BO_loss':>10} {'lm_avg':>8} {'BO_rank':>8} {'lm_rank':>8}")
-bo_ranks = np.argsort(np.argsort(losses)) + 1
-lm_ranks = np.argsort(np.argsort(avgs)) + 1
+bo_ranks = np.argsort(np.argsort(losses)) + 1          # loss: lower=better → rank 1 = lowest loss
+lm_ranks = np.argsort(np.argsort(-np.asarray(avgs))) + 1  # accuracy: higher=better → rank 1 = highest avg
 for i, t in enumerate(tids):
     print(f"{t:>5} {losses[i]:>10.6f} {avgs[i]:>8.4f} {bo_ranks[i]:>8} {lm_ranks[i]:>8}")
 print()

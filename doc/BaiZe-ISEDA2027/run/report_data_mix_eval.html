@@ -27,10 +27,10 @@ code { background: #e8e8e8; padding: 2px 6px; border-radius: 3px; font-size: 13p
 <h1>📊 BaiZe 数据配比 BO 200-trial + top-K lm_eval 评测报告</h1>
 <p><strong>日期</strong>: 2026-10-06 ~ 2026-10-07 | <strong>机器</strong>: 10.239.2.29 GPU2-7 | <strong>代理模型</strong>: d=128 proxy (18.36M, L=14)</p>
 <div class="critical">
-<strong>🔴 核心发现</strong>：代理 val-loss <strong>不能</strong>预测 lm_eval 评测均分（Spearman ρ = <span class="negative">−0.43</span>, p = 0.40, n = 6）。BO 选出的 loss 最优配比（#182）在 lm_eval 上反而排名最末（rank 6/6）。<strong>这证实了运维 2026-10-06 的判断：loss 排序 ≠ 能力排序，用 loss 当 BO 目标是方法学错误。</strong>
+<strong>🔴 核心发现（2026-10-07 更正）</strong>：6 配比 8 集均分 0.3320–0.3373，而 8 集随机基线均值 = 0.34375；除 boolq（低 11.9pp = 常数输出坍塌）外 7 集全在 ±3.3pp 内 → <strong>18.36M/0.016B 代理对这 8 集无能力</strong>。Spearman ρ = −0.43 (p=0.40, n=6) 含义是 loss 越低→均分越高 = <strong>代理方向正确</strong>，但 n=6 p=0.40 <strong>无统计功效 → 证据不足</strong>。BO best #182 在 lm_eval 上也是 rank 1（两边一致），<strong>非「完全反向」</strong>。配置极差仅 0.53pp ≈ 1.2×SE → σ=0 只表示「重跑确定」，不代表配置差异可信。
 </div>
 <div class="summary-box">
-<strong>一句话结论</strong>：200-trial BO 在代理 val-loss 上收敛到 best=#182（web=82.7%, code=6.2%, math=11.1%），但 top-K 的 lm_eval 8 集均分仅 0.332–0.337（接近随机基线），且 loss 与均分呈<strong>负相关</strong>。根因：18.36M 模型 + 500 步（0.016B token）训练量太小。<strong>结论</strong>：第二轮 BO 必须用 MBS=16 + D=0.5–1B token/trial + <strong>lm_eval 均分作 objective</strong>。
+<strong>一句话结论</strong>：200-trial BO 在代理 val-loss 上收敛到 best=#182（web=82.7%, code=6.2%, math=11.1%），top-K lm_eval 8 集均分 0.332–0.337（≈随机基线 0.344），极差 0.53pp ≈ 1.2×SE。<strong>代理无分辨力 + 证据不足</strong>（n=6, p=0.40）。根因：18.36M 模型 + 500 步（0.016B token）训练量太小。<strong>结论</strong>：第二轮 BO 必须用 MBS=16 + D=0.5–1B token/trial + <strong>lm_eval 均分作 objective</strong>。
 </div>
 <h2>1. BO 200-trial 搜索概览</h2>
 <table>
@@ -67,18 +67,18 @@ code { background: #e8e8e8; padding: 2px 6px; border-radius: 3px; font-size: 13p
 <p>对 BO top-5 + 先验点 #79 共 6 个配比，重训 500 步 → HF → lm_eval zero-shot 8 集。</p>
 <table>
 <tr><th>TID</th><th>BO loss</th><th>BO rk</th><th>arc_ch</th><th>arc_ea</th><th>boolq</th><th>hella</th><th>obqa</th><th>piqa</th><th>sciq</th><th>wino</th><th><strong>avg</strong></th><th>lm rk</th></tr>
-<tr class="highlight"><td>#182</td><td>5.8219</td><td>1</td><td>0.228</td><td>0.287</td><td>0.378</td><td>0.253</td><td>0.262</td><td>0.512</td><td>0.262</td><td>0.516</td><td><strong>0.3373</strong></td><td>6</td></tr>
-<tr><td>#198</td><td>5.8304</td><td>2</td><td>0.231</td><td>0.279</td><td>0.378</td><td>0.254</td><td>0.258</td><td>0.520</td><td>0.256</td><td>0.506</td><td><strong>0.3353</strong></td><td>4</td></tr>
-<tr><td>#155</td><td>5.8320</td><td>3</td><td>0.229</td><td>0.282</td><td>0.378</td><td>0.253</td><td>0.256</td><td>0.510</td><td>0.263</td><td>0.485</td><td><strong>0.3320</strong></td><td><strong>1</strong></td></tr>
-<tr><td>#149</td><td>5.8324</td><td>4</td><td>0.226</td><td>0.282</td><td>0.378</td><td>0.252</td><td>0.262</td><td>0.516</td><td>0.258</td><td>0.497</td><td><strong>0.3338</strong></td><td>3</td></tr>
-<tr><td>#96</td><td>5.8327</td><td>5</td><td>0.225</td><td>0.282</td><td>0.395</td><td>0.252</td><td>0.272</td><td>0.515</td><td>0.253</td><td>0.489</td><td><strong>0.3354</strong></td><td>5</td></tr>
-<tr><td>#79</td><td>5.8860</td><td>6</td><td>0.218</td><td>0.287</td><td>0.379</td><td>0.252</td><td>0.266</td><td>0.511</td><td>0.257</td><td>0.500</td><td><strong>0.3337</strong></td><td>2</td></tr>
+<tr class="highlight"><td>#182</td><td>5.8219</td><td>1</td><td>0.228</td><td>0.287</td><td>0.378</td><td>0.253</td><td>0.262</td><td>0.512</td><td>0.262</td><td>0.516</td><td><strong>0.3373</strong></td><td>1</td></tr>
+<tr><td>#198</td><td>5.8304</td><td>2</td><td>0.231</td><td>0.279</td><td>0.378</td><td>0.254</td><td>0.258</td><td>0.520</td><td>0.256</td><td>0.506</td><td><strong>0.3353</strong></td><td>3</td></tr>
+<tr><td>#155</td><td>5.8320</td><td>3</td><td>0.229</td><td>0.282</td><td>0.378</td><td>0.253</td><td>0.256</td><td>0.510</td><td>0.263</td><td>0.485</td><td><strong>0.3320</strong></td><td>6</td></tr>
+<tr><td>#149</td><td>5.8324</td><td>4</td><td>0.226</td><td>0.282</td><td>0.378</td><td>0.252</td><td>0.262</td><td>0.516</td><td>0.258</td><td>0.497</td><td><strong>0.3338</strong></td><td>4</td></tr>
+<tr><td>#96</td><td>5.8327</td><td>5</td><td>0.225</td><td>0.282</td><td>0.395</td><td>0.252</td><td>0.272</td><td>0.515</td><td>0.253</td><td>0.489</td><td><strong>0.3354</strong></td><td>2</td></tr>
+<tr><td>#79</td><td>5.8860</td><td>6</td><td>0.218</td><td>0.287</td><td>0.379</td><td>0.252</td><td>0.266</td><td>0.511</td><td>0.257</td><td>0.500</td><td><strong>0.3337</strong></td><td>5</td></tr>
 </table>
-<div class="warning"><strong>关键</strong>：BO rank 1→lm_eval rank 6；BO rank 6→lm_eval rank 2。<strong>完全反向</strong>。spread=0.0053。</div>
+<div class="warning"><strong>更正（2026-10-07）</strong>：BO rank 1 (#182) → lm_eval rank <strong>1</strong>（两边一致，<strong>非「完全反向」</strong>）。6 配比均分 0.3320–0.3373，极差 0.53pp ≈ 1.2×SE → 配置差异不可信。spread=0.0053。</div>
 <h2>4. Spearman 秩相关（代理 val-loss ↔ lm_eval 均分）</h2>
 <table>
 <tr><th>指标</th><th>ρ</th><th>p</th><th>方向</th></tr>
-<tr class="highlight"><td><strong>Overall</strong></td><td class="negative"><strong>−0.43</strong></td><td>0.40</td><td>负</td></tr>
+<tr class="highlight"><td><strong>Overall</strong></td><td class="negative"><strong>−0.43</strong></td><td>0.40</td><td>代理方向正确(但证据不足)</td></tr>
 <tr><td>arc_challenge</td><td class="negative">−0.83</td><td>0.04</td><td>负(显著)</td></tr>
 <tr><td>hellaswag</td><td class="negative">−0.71</td><td>0.11</td><td>负</td></tr>
 <tr><td>winogrande</td><td class="negative">−0.49</td><td>0.33</td><td>负</td></tr>
@@ -88,7 +88,7 @@ code { background: #e8e8e8; padding: 2px 6px; border-radius: 3px; font-size: 13p
 <tr><td>openbookqa</td><td class="positive">+0.64</td><td>0.17</td><td>正</td></tr>
 <tr><td>boolq</td><td class="positive">+0.78</td><td>0.07</td><td>正</td></tr>
 </table>
-<div class="critical">8 集中 6 集负相关，arc_challenge 达统计显著（ρ=−0.83, p=0.04）。<strong>val-loss 与评测能力反相关</strong>。</div>
+<div class="critical"><strong>更正（2026-10-07）</strong>：8 集中 <strong>5/8</strong> 呈负 ρ（loss 越低→均分越高 = 代理方向有利），arc_challenge 达统计显著（ρ=−0.83, p=0.04，支持代理）。但 Overall ρ=−0.43, p=0.40, n=6 <strong>无统计功效 → 证据不足</strong>。原表述「6/8 负相关 / 反相关」系名次方向 bug + ρ 符号读反所致，已更正。</div>
 <h2>5. 噪声测量</h2>
 <table>
 <tr><th>指标</th><th>值</th><th>说明</th></tr>
@@ -127,8 +127,8 @@ code { background: #e8e8e8; padding: 2px 6px; border-radius: 3px; font-size: 13p
 </div>
 <h2>9. 方法学反思</h2>
 <div class="critical">
-<strong>失败原因</strong>：① 模型太小(18.36M) ② 训练量太小(D=0.016B) ③ objective错误(val-loss负相关) ④ spread太小(0.005)<br>
-<strong>第二轮改进</strong>：D↑(0.5-1B,30-60×) + MBS=16(8.6×) + lm_eval objective + 8卡
+<strong>根因</strong>：① 模型太小(18.36M) ② 训练量太小(D=0.016B) ③ 代理无分辨力(均分≈随机基线,极差0.53pp≈1.2×SE) ④ 证据不足(n=6,p=0.40)<br>
+<strong>第二轮改进</strong>：D↑(0.5-1B,30-60×) + MBS=16(8.6×) + lm_eval objective + 8卡。<strong>R2 改 objective 的决定不变、仍正确</strong>，理由改为「代理无分辨力 + 证据不足」
 </div>
 <h2>10. GPU 状态（2026-10-07 01:05）</h2>
 <table>
@@ -147,8 +147,8 @@ code { background: #e8e8e8; padding: 2px 6px; border-radius: 3px; font-size: 13p
 <tr><td>s_step报告</td><td><code>report_data_mix_sstep.html</code></td></tr>
 </table>
 <div class="footer">
-<p>Generated: 2026-10-07 01:10 | Agent: data (唤醒168)<br>
-Spearman ρ=−0.43 p=0.40 n=6 | σ=0 | spread=0.0053</p>
+<p>Generated: 2026-10-07 01:10, 更正 2026-10-07 09:15 | Agent: data (唤醒181)<br>
+Spearman ρ=−0.43 p=0.40 n=6 (代理方向正确,证据不足) | σ=0 (确定性,非配置差异可信) | spread=0.0053 (≈1.2×SE)</p>
 </div>
 </body>
 </html>
