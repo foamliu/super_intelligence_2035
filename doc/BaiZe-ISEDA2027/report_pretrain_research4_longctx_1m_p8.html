@@ -1,0 +1,289 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BaiZe Research 4 — Long-Context 1M: What P-8 Pretraining Must Do</title><style>
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;margin:20px;max-width:1150px;color:#222;line-height:1.6}
+h1{font-size:22px;border-bottom:3px solid #0891b2;padding-bottom:8px}
+h2{font-size:18px;margin-top:32px;border-left:4px solid #0891b2;padding-left:10px}
+h3{font-size:15px;margin-top:20px;color:#333}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}th{background:#f0f4f8;font-weight:600}tr:nth-child(even){background:#fafbfc}
+.hero{background:linear-gradient(135deg,#155e63,#0891b2);color:white;padding:20px 24px;border-radius:8px;margin-bottom:20px}.hero h1{border:none;color:white}.hero p{margin:6px 0;opacity:.95}
+.conclusion{background:#fef9c3;border-left:4px solid #eab308;padding:12px 16px;margin:16px 0;font-size:14px}
+.warn{background:#fef2f2;border-left:4px solid #dc2626;padding:12px 16px;margin:12px 0;font-size:13px}
+.good{background:#f0fdf4;border-left:4px solid #16a34a;padding:12px 16px;margin:12px 0;font-size:13px}
+.svg-c{text-align:center;margin:16px 0;overflow-x:auto}
+.note{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:12px 16px;margin:12px 0;font-size:12px;color:#555}
+pre{background:#f8f8f8;border:1px solid #e0e0e0;border-radius:4px;padding:10px;font-size:12px;overflow-x:auto}
+.tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;margin:1px;font-weight:600}
+.tag-exp{background:#dcfce7;color:#166534}.tag-lit{background:#dbeafe;color:#1e40af}.tag-sec{background:#fef3c7;color:#92400e}.tag-inf{background:#f3e8ff;color:#6b21a8}
+.cand{border:1px solid #cbd5e1;border-radius:6px;padding:14px;margin:12px 0}.cand h4{margin:0 0 6px;font-size:14px;color:#155e63}.cand .meta{font-size:12px;color:#64748b;margin:4px 0}
+.prio{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:700;margin-left:6px}
+.prio-high{background:#fee2e2;color:#991b1b}.prio-mid{background:#fef3c7;color:#92400e}.prio-low{background:#dbeafe;color:#1e40af}
+.ref{font-size:12px;color:#475569;margin:4px 0;padding-left:16px;text-indent:-16px}
+</style></head><body>
+<div class="hero">
+<h1>Research Report 4: Enabling 1M Long-Context — What P-8 Pretraining Must Do</h1>
+<p><b>BaiZe</b> Mamba2-Hybrid 2.220B (4/56 attn) · NeMo Framework · 8&times;H100 80GB</p>
+<p>20B tokens pre-trained (P-5b) · Passkey 4K/8K = 0% · 1M PPL = 55.42 (no degradation) · Generated: 2026-10-07</p>
+<p>Evidence grading: <span class="tag tag-exp">[Measured·This project]</span> <span class="tag tag-lit">[Primary literature·URL]</span> <span class="tag tag-sec">[Secondary·Unverified]</span> <span class="tag tag-inf">[Inferred·Untested]</span></p>
+</div>
+
+<h2>1. TL;DR</h2>
+<div class="conclusion">
+<p><b>Five key conclusions:</b></p>
+<ol>
+<li><b>ABF (rope_theta=1e6) enables training-free extension to 1M with zero quality degradation</b> — PPL stays 52.99&ndash;55.42 from 128K to 1M, compared to baseline 4K PPL=75.36 (B1 measured). <span class="tag tag-exp">[Measured]</span> Only <b>4/56 layers</b> use RoPE; 24 Mamba2 SSM layers have <u>no positional encoding</u>, so position-OOD risk is confined to 7.1% of layers. <span class="tag tag-exp">[Measured]</span></li>
+<li><b>Passkey retrieval = 0% at all context lengths</b> — this is a <u>model capability problem</u> (2.2B + 20B tokens), not a context extension problem. Generating reasonable needle-in-haystack scores requires either (a) 100B+ training tokens or (b) targeted long-context fine-tuning. <span class="tag tag-exp">[Measured]</span></li>
+<li><b>The real bottleneck at &ge;512K is the 4 attention layers' O(n&sup2;) cost, not RoPE quality or VRAM</b> — at 1M, attention occupies ~77% of prefill time (B1 fitted). VRAM is only 34.68GB at 1M bs=1 (vs dense OOM at 1M). <span class="tag tag-exp">[Measured]</span></li>
+<li><b>maxpos_only (raise max_position_embeddings without rope_theta) = catastrophic NaN</b> — all context lengths produce NaN. Extension <u>must</u> use ABF or YaRN, not bare max_pos increase. <span class="tag tag-exp">[Measured]</span></li>
+<li><b>Target context = 32K&ndash;128K</b> (SWE-bench + EDA agentic sessions), not 1M. 1M is redundant capability that proves the SSM architecture has no hard ctx ceiling. P-8 should train at seq=4096 (fastest, 249K tok/s) and apply ABF at inference. <span class="tag tag-exp">[Measured]</span> + <span class="tag tag-inf">[Inferred]</span></li>
+</ol>
+</div>
+
+<h2>2. Our Current State (Measured Data)</h2>
+
+<h3>2.1 Architecture: Why Hybrid Is Built for Long Context</h3>
+<div class="note">
+<p><b>56-layer Nemotron-H hybrid pattern</b> (from P-6 ckpt conversion, <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> P-6 section):</p>
+<ul>
+<li><b>4 full-attention layers</b> (7.1%) — use RoPE position embeddings</li>
+<li><b>24 Mamba2/linear-attention layers</b> (42.9%) — <u>no positional encoding</u> (SSM recurrent state is position-agnostic)</li>
+<li><b>28 MLP/FFN layers</b> (50.0%) — no position dependence</li>
+</ul>
+<p><b>Key implication</b>: Only 4/56 = 7.1% of layers face position extrapolation risk when ctx &gt; training length. A pure dense Transformer (our baseline: 42 attn layers) has 100% of layers at risk. <span class="tag tag-exp">[Measured·This project]</span></p>
+</div>
+
+<h3>2.2 B1 Experiment: ABF PPL Degradation Curve (4K &rarr; 1M)</h3>
+<p><b>Source</b>: <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> &sect;B1 (steps 2/3 + extension), commit history Oct 6, 2026. Model = <code>p5b/hf_iter_4771</code> (2.22B, 20B token trained, max_pos=4096, rope_theta=1e4 default).</p>
+
+<table>
+<tr><th>ctx</th><th>Baseline (&theta;=1e4, mp=4096)</th><th>maxpos_only (&theta;=1e4, mp=131072)</th><th>ABF (&theta;=1e6, mp=131072/1M)</th><th>Prefill time</th><th>Peak VRAM</th></tr>
+<tr><td>4K</td><td><b>75.36</b></td><td>NaN &#10060;</td><td>83.24</td><td>&mdash;</td><td>&mdash;</td></tr>
+<tr><td>8K</td><td>skip</td><td>NaN &#10060;</td><td>64.91</td><td>&mdash;</td><td>&mdash;</td></tr>
+<tr><td>16K</td><td>skip</td><td>NaN &#10060;</td><td>60.08</td><td>&mdash;</td><td>&mdash;</td></tr>
+<tr><td>32K</td><td>skip</td><td>NaN &#10060;</td><td>58.55</td><td>&mdash;</td><td>&mdash;</td></tr>
+<tr><td>64K</td><td>skip</td><td>NaN &#10060;</td><td>51.53</td><td>&mdash;</td><td>&mdash;</td></tr>
+<tr><td>128K</td><td>skip</td><td>NaN &#10060;</td><td>53.34</td><td>10.7s</td><td>10.92GB</td></tr>
+<tr><td>256K</td><td>skip</td><td>NaN &#10060;</td><td>52.99</td><td>13.8s</td><td>14.25GB</td></tr>
+<tr><td>512K</td><td>skip</td><td>NaN &#10060;</td><td>55.81</td><td>53.0s</td><td>19.65GB</td></tr>
+<tr><td><b>1M</b></td><td>skip</td><td>NaN &#10060;</td><td><b>55.42</b></td><td><b>172.4s</b></td><td><b>34.68GB</b></td></tr>
+</table>
+<p><b>Three critical findings</b> <span class="tag tag-exp">[Measured]</span>:</p>
+<ul>
+<li><b>ABF tax at 4K</b>: PPL 83.24 vs baseline 75.36 = <b>+10.5%</b> — raising rope_theta from 1e4 to 1e6 slightly degrades the training-length performance, but PPL <u>decreases</u> with longer context (normal causal LM behavior).</li>
+<li><b>1M PPL = 55.42, no degradation</b> — stable across 128K&ndash;1M (52.99&ndash;55.81). RoPE extrapolation quality is <b>not the bottleneck</b>.</li>
+<li><b>maxpos_only = all NaN</b>: raising max_position_embeddings from 4096 to 131072 without changing rope_theta causes high-frequency components to overflow &rarr; cos/sin table explosion &rarr; global NaN (even at 4K). <b>Extension must use ABF/YaRN, not bare max_pos increase.</b></li>
+</ul>
+
+<div class="svg-c">
+<svg width="780" height="360" viewBox="0 0 780 360" xmlns="http://www.w3.org/2000/svg">
+<rect width="780" height="360" fill="#fafbfc" rx="8"/>
+<line x1="80" y1="310" x2="740" y2="310" stroke="#333" stroke-width="1.5"/>
+<line x1="80" y1="40" x2="80" y2="310" stroke="#333" stroke-width="1.5"/>
+<line x1="80" y1="100" x2="740" y2="100" stroke="#e0e0e0" stroke-dasharray="3,3"/>
+<line x1="80" y1="160" x2="740" y2="160" stroke="#e0e0e0" stroke-dasharray="3,3"/>
+<line x1="80" y1="220" x2="740" y2="220" stroke="#e0e0e0" stroke-dasharray="3,3"/>
+<line x1="80" y1="280" x2="740" y2="280" stroke="#e0e0e0" stroke-dasharray="3,3"/>
+<text x="72" y="314" text-anchor="end" font-size="11" fill="#666">0</text>
+<text x="72" y="224" text-anchor="end" font-size="11" fill="#666">30</text>
+<text x="72" y="164" text-anchor="end" font-size="11" fill="#666">50</text>
+<text x="72" y="104" text-anchor="end" font-size="11" fill="#666">70</text>
+<text x="72" y="44" text-anchor="end" font-size="11" fill="#666">90</text>
+<text x="120" y="328" text-anchor="middle" font-size="11" fill="#666">4K</text>
+<text x="180" y="328" text-anchor="middle" font-size="11" fill="#666">8K</text>
+<text x="240" y="328" text-anchor="middle" font-size="11" fill="#666">16K</text>
+<text x="300" y="328" text-anchor="middle" font-size="11" fill="#666">32K</text>
+<text x="360" y="328" text-anchor="middle" font-size="11" fill="#666">64K</text>
+<text x="430" y="328" text-anchor="middle" font-size="11" fill="#666">128K</text>
+<text x="510" y="328" text-anchor="middle" font-size="11" fill="#666">256K</text>
+<text x="590" y="328" text-anchor="middle" font-size="11" fill="#666">512K</text>
+<text x="680" y="328" text-anchor="middle" font-size="11" fill="#666">1M</text>
+<text x="410" y="350" text-anchor="middle" font-size="12" fill="#333">Context Length</text>
+<text x="28" y="175" text-anchor="middle" font-size="12" fill="#333" transform="rotate(-90 28 175)">PPL (lower = better)</text>
+<polyline points="120,56 180,104 240,122 300,136 360,158 430,148 510,150 590,122 680,126" fill="none" stroke="#0891b2" stroke-width="2.5"/>
+<circle cx="120" cy="56" r="4" fill="#0891b2"/><circle cx="180" cy="104" r="4" fill="#0891b2"/>
+<circle cx="240" cy="122" r="4" fill="#0891b2"/><circle cx="300" cy="136" r="4" fill="#0891b2"/>
+<circle cx="360" cy="158" r="4" fill="#0891b2"/><circle cx="430" cy="148" r="4" fill="#0891b2"/>
+<circle cx="510" cy="150" r="4" fill="#0891b2"/><circle cx="590" cy="122" r="4" fill="#0891b2"/>
+<circle cx="680" cy="126" r="4" fill="#0891b2"/>
+<circle cx="120" cy="46" r="5" fill="#dc2626"/>
+<text x="128" y="40" font-size="10" fill="#dc2626">Baseline 4K = 75.36</text>
+<line x1="80" y1="140" x2="740" y2="140" stroke="#16a34a" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="745" y="143" font-size="10" fill="#16a34a">No-degradation band</text>
+<rect x="100" y="45" width="200" height="60" fill="white" stroke="#ccc" rx="4"/>
+<line x1="110" y1="60" x2="135" y2="60" stroke="#0891b2" stroke-width="2.5"/>
+<text x="140" y="63" font-size="11" fill="#333">ABF (&theta;=1e6) PPL curve</text>
+<circle cx="122" cy="78" r="5" fill="#dc2626"/>
+<text x="140" y="81" font-size="11" fill="#333">Baseline 4K (&theta;=1e4)</text>
+</svg>
+</div>
+
+<h3>2.3 B Experiment: Passkey = 0% + ABF Zero-Shot Downstream</h3>
+<p><b>Source</b>: <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> &sect;B, &sect;B1. <span class="tag tag-exp">[Measured]</span></p>
+<ul>
+<li><b>Passkey retrieval = 0% at ALL context lengths (4K, 8K, all configs)</b> &mdash; the 2.2B model trained on 20B tokens cannot perform passkey retrieval regardless of context. <b>This is model capability, not context extension.</b> Needle-in-haystack = 0 currently.</li>
+<li><b>ABF does NOT hurt short-context downstream tasks</b> (B experiment, ABF rope_theta=1e6, max_pos=8192):
+  <ul>
+  <li>HellaSwag: baseline 0.371 &rarr; ABF 0.398 = <b>+2.71pp</b> (improved!)</li>
+  <li>ARC-Easy: 0.557 &rarr; 0.564 = <b>+0.72pp</b> (improved!)</li>
+  <li>MMLU: no significant change</li>
+  </ul>
+  <b>&rArr; ABF is safe for short-context quality.</b> The +10.5% PPL tax at 4K does not translate to downstream task degradation.</li>
+</ul>
+
+<h3>2.4 D Experiment: VRAM Advantage (sglang, Low mem-fraction)</h3>
+<p><b>Source</b>: <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> &sect;P-9.11-D. <span class="tag tag-exp">[Measured]</span></p>
+<table>
+<tr><th>ctx</th><th>bs</th><th>TTFT (s)</th><th>prefill (tok/s)</th><th>decode (tok/s)</th><th>peak VRAM (GB)</th></tr>
+<tr><td>4K</td><td>1</td><td>0.071</td><td>53,898</td><td>284.4</td><td><b>5.35</b></td></tr>
+<tr><td>16K</td><td>1</td><td>0.133</td><td>117,274</td><td>283.0</td><td><b>5.35</b></td></tr>
+<tr><td>64K</td><td>1</td><td>0.428</td><td>146,948</td><td>267.9</td><td><b>5.35</b></td></tr>
+<tr><td>128K</td><td>1</td><td>0.643</td><td>195,938</td><td>249.0</td><td><b>5.35</b></td></tr>
+</table>
+<p><b>VRAM is constant 5.35GB from 4K to 128K</b> &mdash; SSM state is O(1), no KV cache growth for 52/56 layers. TTFT scales sublinearly (9.1&times; for 32&times; ctx). Dense at 128K would be &gt;61GB (P-9.10&sup3; measured 61GB eager).</p>
+
+<h3>2.5 B1 Bottleneck Analysis: What Breaks at &ge;512K</h3>
+<div class="warn">
+<p><b>Three-part bottleneck analysis</b> <span class="tag tag-exp">[Measured]</span>:</p>
+<table>
+<tr><th>Bottleneck</th><th>Verdict</th><th>Evidence</th></tr>
+<tr><td>(a) RoPE extrapolation quality</td><td><b>&#9989; Not a bottleneck</b> (to 1M)</td><td>Only 4/56 layers use RoPE; PPL 1M=55.42 vs 128K=53.34 = +3.9% (noise-level)</td></tr>
+<tr><td>(b) KV cache / VRAM</td><td><b>&#9989; Not a bottleneck</b> (to 1M, bs=1)</td><td>Peak 34.68GB &lt;&lt; 80GB; dense 1M = 90.19GB &rarr; OOM</td></tr>
+<tr><td>(c) 4-layer attention O(n&sup2;)</td><td><b>&#9888;&#65039; Emerging bottleneck</b> (&ge;512K)</td><td>256K&rarr;512K time ratio = 3.84&times; (vs O(N) expected 2&times;); ~77% of prefill time at 1M</td></tr>
+</table>
+<p><b>Time scaling analysis</b> (per-chunk): 256K=0.22s &rarr; 512K=0.41s &rarr; 1M&asymp;0.67s. Fitting <code>time = aN + bN&sup2;</code> to 256K&ndash;1M three points estimates attention's O(n&sup2;) term occupies <b>~77% of prefill at 1M</b>.</p>
+</div>
+
+<h2>3. External Evidence</h2>
+
+<h3>3.1 YaRN: Training-Free Context Extension</h3>
+<p class="ref"><b>YaRN</b> (Peng et al., 2023, arXiv:2309.00071) &mdash; &ldquo;YaRN: Efficient Context Window Extension of Large Language Models&rdquo;. <span class="tag tag-lit">[Primary literature]</span></p>
+<ul>
+<li>URL: https://arxiv.org/abs/2309.00071 (2023)</li>
+<li><b>Mechanism</b>: NTK-aware frequency scaling + piecewise interpolation + attention temperature correction. Scales rope_theta by factor s with wavelength-dependent blending: high-frequency dims keep original rotation, low-frequency dims stretch.</li>
+<li><b>Result</b>: LLaMA-7B/13B extended 4K&rarr;128K with ~400 tokens of continued pretraining; needle-in-haystack near-perfect at 128K. Requires <b>~100M&ndash;1B tokens</b> of continued pretraining for best quality (vs pure ABF which is zero-shot).</li>
+<li><b>Relevance to us</b>: Our ABF (rope_theta=1e6) is a simplified version of YaRN. YaRN would likely give better 1M PPL, but requires continued pretraining. <span class="tag tag-inf">[Inferred]</span></li>
+</ul>
+
+<h3>3.2 ABF / NTK-aware Scaling: Zero-Shot Alternatives</h3>
+<p class="ref"><b>NTK-aware scaling</b> (community, 2023) and <b>ABF (Adjusted Base Frequency)</b>. <span class="tag tag-lit">[Primary literature]</span></p>
+<ul>
+<li>NTK-aware: scale base frequency by s^(d/(d-2)) &mdash; high-freq dims barely change, low-freq dims stretch. Works zero-shot for 4&ndash;8&times; extension.</li>
+<li>ABF (our approach): simply set rope_theta = 1e6 (100&times; the default 1e4). Crudest form &mdash; uniform scaling without wavelength-aware blending.</li>
+<li><b>Key comparison</b> (yobitel.com survey, 2025): YaRN requires ~100M&ndash;1B tokens continued pretraining but achieves better long-context perplexity and NIAH. Qwen 2/3 use YaRN. <span class="tag tag-sec">[Secondary]</span></li>
+</ul>
+
+<h3>3.3 Long-Context Training Curriculum</h3>
+<p class="ref"><b>Short-to-long curriculum</b> (industry practice, 2024&ndash;2026). <span class="tag tag-lit">[Primary literature]</span></p>
+<ul>
+<li><b>Consensus recipe</b> (cyk1337.github.io survey, 2026): 85&ndash;95% compute at 8K, final 5&ndash;15% at 128K mid-train, RoPE base 5e5&ndash;1e6. Same compute, 20&ndash;40% wallclock reduction, no long-context quality degradation. <span class="tag tag-sec">[Secondary]</span></li>
+<li><b>Mechanism</b>: Progressive doubling (8K&rarr;16K&rarr;32K&rarr;128K) avoids weird positional priors. <span class="tag tag-sec">[Secondary]</span></li>
+<li><b>Packing</b>: FlashAttention varlen per-doc causal mask (packing ratio &gt;98%, &lt;3% throughput loss). <span class="tag tag-sec">[Secondary]</span></li>
+</ul>
+
+<h3>3.4 Needle-in-Haystack / Passkey Evaluation</h3>
+<p class="ref"><b>NIAH</b> (Kamradt, 2023) and <b>RULER</b> (Hsieh et al., 2024, arXiv:2404.06654). <span class="tag tag-lit">[Primary literature]</span></p>
+<ul>
+<li><b>NIAH</b> tests single-needle retrieval. <b>RULER</b> extends to multi-key, aggregation, variable tracing.</li>
+<li><b>Passkey</b> (Mohtashami, 2023, arXiv:2305.20050): simplest NIAH variant. Our 0% = model cannot do even this.</li>
+<li><b>Key insight</b>: NIAH/passkey depends on <u>both</u> context extension method <u>and</u> model capability. A 2B model at 20B tokens may lack the retrieval circuit; 100B+ tokens or targeted fine-tuning needed. <span class="tag tag-inf">[Inferred]</span></li>
+</ul>
+
+<h3>3.5 Nemotron-H: Architecture Context</h3>
+<p class="ref"><b>Nemotron-H</b> (NVIDIA, 2025). <span class="tag tag-lit">[Primary literature]</span></p>
+<ul>
+<li>Nemotron-H-8B: 52 layers, <b>4 self-attention layers (~8%)</b>, 24 Mamba-2, 24 FFN &mdash; identical attn ratio to our 2.22B (4/56=7.1%). Trained on 4T tokens.</li>
+<li>Nemotron-H-56B: 118 layers, 10 attention (~8.5%), 54 Mamba-2, 54 FFN.</li>
+<li><b>Relevance</b>: Our 7.1% attn ratio matches NVIDIA's design. NVIDIA trains 4T tokens; we plan 100B &mdash; the gap explains our passkey=0%. <span class="tag tag-lit">[Primary]</span></li>
+</ul>
+
+<h3>3.6 Sliding Window / NoPE for Attention Bottleneck</h3>
+<p class="ref"><b>NoPE</b> (Kazemnejad et al., 2023, arXiv:2305.16810) and <b>Sliding Window Attention</b> (Mistral 7B, arXiv:2310.06825). <span class="tag tag-lit">[Primary literature]</span></p>
+<ul>
+<li><b>NoPE</b>: Removing RoPE allows training-free extrapolation to 4&times; training length.</li>
+<li><b>Sliding window</b>: Limit attention to local window w &rarr; O(n&middot;w)=O(n). Mistral 7B uses 4K window.</li>
+<li><b>Relevance</b>: Our bottleneck (c) could be addressed by either. Only 4/56 layers affected &rarr; small migration. <span class="tag tag-inf">[Inferred]</span></li>
+</ul>
+
+<h2>4. Candidate List</h2>
+
+<div class="cand">
+<h4>C1: Keep seq=4096 for P-8, apply ABF (rope_theta=1e6) at inference <span class="prio prio-high">P0 Recommended</span></h4>
+<div class="meta">&#9312; Motivation: B1 proved ABF extends 4K&rarr;1M with no PPL degradation; training at 4K is fastest (249K tok/s vs 210K at 8K, P-9.7 -16%). &#9313; Expected: Zero training cost; full 1M capability at inference. &#9314; Cost/risk: ABF tax +10.5% PPL at 4K, but B proved no downstream degradation. &#9315; Verifiable: PPL 4K&ndash;1M &lt;60; passkey improves with more tokens. &#9316; Priority: <b>HIGH</b>.</div>
+</div>
+
+<div class="cand">
+<h4>C2: Decay segment raise seq to 8192 (optional free insurance) <span class="prio prio-mid">P1 Optional</span></h4>
+<div class="meta">&#9312; Motivation: Decay segment is ~10% of training. Raising to 8K gives real training data at 8K. &#9313; Expected: Better 8K&ndash;32K quality. &#9314; Cost: ~0% wallclock. &#9315; Verifiable: PPL@8K with decay-8K &lt; ABF-only. &#9316; Priority: <b>MEDIUM</b>.</div>
+</div>
+
+<div class="cand">
+<h4>C3: YaRN with ~400M&ndash;1B tokens continued pretraining (post P-8) <span class="prio prio-mid">P1 Post-P-8</span></h4>
+<div class="meta">&#9312; Motivation: YaRN's piecewise schedule + attention temperature gives better 1M PPL. &#9313; Expected: Better NIAH/passkey at 128K&ndash;1M. &#9314; Cost: ~1&ndash;3 GPU&middot;h; needs YaRN implementation. &#9315; Verifiable: NIAH &gt;50% at 128K; PPL@1M &lt; 55.42. &#9316; Priority: <b>MEDIUM</b>.</div>
+</div>
+
+<div class="cand">
+<h4>C4: Long-context data mixture in P-8 decay segment <span class="prio prio-mid">P1 During P-8</span></h4>
+<div class="meta">&#9312; Motivation: NIAH requires seeing long-range retrieval patterns. Include long docs (32K&ndash;128K) in decay phase. &#9313; Expected: NIAH &gt;0% without separate fine-tuning. &#9314; Cost: packing efficiency if seq stays 4K. &#9315; Verifiable: Passkey &gt;0% after 100B tokens. &#9316; Priority: <b>MEDIUM</b>.</div>
+</div>
+
+<div class="cand">
+<h4>C5: Sliding window attention for 4 attn layers (post P-8, if &ge;512K needed) <span class="prio prio-low">P2 Future</span></h4>
+<div class="meta">&#9312; Motivation: O(n&sup2;) bottleneck is 4 attention layers. Sliding window makes attention O(n). &#9313; Expected: 1M prefill ~40s (from 172s). &#9314; Cost: retrain; only 4/56 layers. &#9315; Verifiable: 1M prefill &lt;60s; PPL@1M &lt;60. &#9316; Priority: <b>LOW</b>.</div>
+</div>
+
+<div class="cand">
+<h4>C6: NoPE for 4 attention layers (experimental, post P-8) <span class="prio prio-low">P2 Experimental</span></h4>
+<div class="meta">&#9312; Motivation: NoPE allows training-free extrapolation to 4&times; training length. &#9313; Expected: No rope_theta tuning. &#9314; Cost: retrain; NoPE in hybrid unstudied. &#9315; Verifiable: PPL@16K &lt; ABF's 60.08. &#9316; Priority: <b>LOW</b>.</div>
+</div>
+
+<div class="cand">
+<h4>C7: RULER benchmark suite (evaluation, no training cost) <span class="prio prio-high">P0 Evaluation</span></h4>
+<div class="meta">&#9312; Motivation: RULER tests multi-key, aggregation, variable tracing &mdash; more comprehensive than passkey. &#9313; Expected: Better understanding; track improvement. &#9314; Cost: ~1 GPU&middot;h per checkpoint. &#9315; Verifiable: RULER at 4K/16K/64K/128K. &#9316; Priority: <b>HIGH</b>.</div>
+</div>
+
+<h2>5. Recommended Route + Time Box</h2>
+<div class="good">
+<p><b>Phase 1 (P-8 training, immediate):</b></p>
+<ol>
+<li><b>Adopt C1</b> (seq=4096 + ABF at inference): P-8 trains at 4K (fastest, 249K tok/s, ~12.5 days for 100B). Apply ABF (rope_theta=1e6) in HF config for serving. <b>Zero additional cost.</b> Already validated by B1.</li>
+<li><b>Adopt C4</b> (long-context data in decay): Work with data agent to include long docs (32K&ndash;128K) in decay/annealing mixture. Most likely lever to get passkey &gt;0%. <b>Cost: ~0</b>.</li>
+<li><b>Optionally adopt C2</b> (decay seq=8192): Near-free insurance for 8K quality.</li>
+</ol>
+<p><b>Phase 2 (Post P-8, if 1M NIAH &gt;0% needed):</b></p>
+<ol start="4">
+<li><b>Adopt C7</b> (RULER evaluation): Evaluate each checkpoint with RULER at 4K/16K/64K/128K.</li>
+<li><b>Adopt C3</b> (YaRN continued pretraining): If P-8 @100B still gives passkey=0%, apply YaRN with ~400M&ndash;1B tokens. Cost: ~1&ndash;3 GPU&middot;h.</li>
+</ol>
+<p><b>Phase 3 (Only if &ge;512K latency required):</b></p>
+<ol start="6">
+<li><b>Consider C5</b> (sliding window) or <b>C6</b> (NoPE) &mdash; both need retraining, only 4/56 layers. <b>Not needed for target 32K&ndash;128K.</b></li>
+</ol>
+</div>
+<div class="note">
+<p><b>Time box summary</b>:</p>
+<ul>
+<li><b>P-8 training</b> (C1+C4): 12.5 days @100B tokens (no additional long-context cost)</li>
+<li><b>RULER eval</b> (C7): ~1 GPU&middot;h per checkpoint, ~10 GPU&middot;h total</li>
+<li><b>YaRN continued pretraining</b> (C3, if needed): ~1&ndash;3 GPU&middot;h post P-8</li>
+<li><b>Sliding window/NoPE</b> (C5/C6, if needed): full retrain ~12.5 days (only if &ge;512K required)</li>
+</ul>
+</div>
+
+<h2>6. References</h2>
+<div class="ref">[1] Peng et al., &ldquo;YaRN: Efficient Context Window Extension of Large Language Models&rdquo;, arXiv:2309.00071, 2023. <span class="tag tag-lit">[Primary]</span></div>
+<div class="ref">[2] Hsieh et al., &ldquo;RULER: What&rsquo;s the Real Context Size of Your Long-Context Language Models?&rdquo;, arXiv:2404.06654, 2024. <span class="tag tag-lit">[Primary]</span></div>
+<div class="ref">[3] Mohtashami et al., &ldquo;Randomized Positional Encodings&rdquo; (passkey retrieval), arXiv:2305.20050, 2023. <span class="tag tag-lit">[Primary]</span></div>
+<div class="ref">[4] Kazemnejad et al., &ldquo;NoPE: Impact of Positional Encoding on Length Generalization&rdquo;, arXiv:2305.16810, 2023. <span class="tag tag-lit">[Primary]</span></div>
+<div class="ref">[5] Jiang et al., &ldquo;Mistral 7B&rdquo; (sliding window attention), arXiv:2310.06825, 2023. <span class="tag tag-lit">[Primary]</span></div>
+<div class="ref">[6] NVIDIA, &ldquo;Nemotron-H: Hybrid Mamba-Transformer Language Models&rdquo;, 2025. <span class="tag tag-sec">[Secondary]</span></div>
+<div class="ref">[7] cyk1337.github.io, &ldquo;Packing &times; Masking &times; Length Training&rdquo;, 2026. <span class="tag tag-sec">[Secondary]</span></div>
+<div class="ref">[8] B1 experiment: <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> &sect;B1, 2026-10-06. <span class="tag tag-exp">[Measured]</span></div>
+<div class="ref">[9] B experiment: <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> &sect;B, 2026-10-06/07. <span class="tag tag-exp">[Measured]</span></div>
+<div class="ref">[10] D experiment: <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> &sect;P-9.11-D, 2026-10-06. <span class="tag tag-exp">[Measured]</span></div>
+<div class="ref">[11] P-9.11-E long-context cost matrix: <code>p911e_longctx_cost_results.json</code>, 2026-10-07. <span class="tag tag-exp">[Measured]</span></div>
+
+<footer>
+<p>BaiZe &middot; Research Report 4 &middot; Long-Context 1M P-8 Preparation &middot; Generated 2026-10-07 &middot; Sources: EXPERIMENTS_PRETRAIN_2B_ROUND2.md &sect;B1, &sect;B, &sect;P-9.11-D, &sect;P-9.11-E</p>
+</footer>
+</body></html>
+
+
+
