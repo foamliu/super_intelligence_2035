@@ -172,20 +172,22 @@ bash r8_run.sh 3000
 
 > 运维指令 2026-10-06 批准。**只变 contrast_weight : patch_loss_weight**（4 臂: 1:2 / 1:0.5 / 0.5:1 / 2:1），其余固定：w512 / CC12M+Amshaker / 30k 步 / mask-ratio=0.6 / InfoNCE+patch_MSE / 冻结 CLIP-768。Baseline = 1:1（R11-L arm6-A, lp@30k=12.08%，mask-ratio 消融复现=13.49%）。预注册判据：lp >= baseline + 1.5 → "更优"；全部 ±1.5 → "不敏感（flip 由共存驱动，非比例）"。🚫 改 recipe ⇒ 不并入 scaling 曲线。
 
-### Arm 1–2/4 训练结果（✅ 完成；arm 3 运行中）
+### Arm 1–3/4 训练结果（✅ 完成；arm 4 运行中）
 
 | arm (CW:PLW) | C1_final | C1_peak | C2_gap | C4 | final_loss | 训练耗时 | steady img/s | lp@30k | Δlp vs 1:1 |
 |---:|---:|---:|---:|:--:|---:|---:|---:|---:|---:|
 | 1:2 (cw1_plw2) | 0.3546 | 0.4229@18600 | +0.1197 | OK | 3.1601 | 7403s | 2462.6 | *pending* | *pending* |
 | 1:0.5 (cw1_plw0p5) | 0.3517 | 0.4176@19200 | +0.1131 | OK | 3.5013 | 7383s | 2443.8 | *pending* | *pending* |
-| 0.5:1 (cw0p5_plw1) | — | 0.4304@2100（运行中） | +0.1334 | OK | — | — | — | *pending* | *pending* |
-| 2:1 | — | — | — | — | — | — | — | *pending* | *pending* |
+| 0.5:1 (cw0p5_plw1) | 0.2816 | 0.4304@2100 | +0.1278 | OK | 1.6794 | 7829s | 4747.0 | *pending* | *pending* |
+| 2:1 (cw2_plw1) | — | 0.3300@5700（运行中） | +0.1165 | OK | — | — | — | *pending* | *pending* |
 
-> ⚠️ **脚本异常退出 + 已恢复**：arm 1 完成后原脚本 `run_weight_ratio_ablation.sh` 异常退出（master log 无 "done" 行，无 arm 2 启动，PID 187262 gone，GPU 全空 ~30min）。已创建恢复脚本 `run_weight_ratio_ablation_resume.sh`（PID 3214830, setsid+nohup, ppid=1），arms 2-4 重新启动 + arm1 ckpts 预载入 eval 队列。arm 2 (1:0.5) 于 22:45 开跑，00:48 完成。arm 3 (0.5:1) 于 00:48 开跑，当前 step~11650/30k ~39%。
+> ⚠️ **脚本异常退出 + 已恢复**：arm 1 完成后原脚本 `run_weight_ratio_ablation.sh` 异常退出（master log 无 "done" 行，无 arm 2 启动，PID 187262 gone，GPU 全空 ~30min）。已创建恢复脚本 `run_weight_ratio_ablation_resume.sh`（PID 3214830, setsid+nohup, ppid=1），arms 2-4 重新启动 + arm1 ckpts 预载入 eval 队列。arm 2 (1:0.5) 于 22:45 开跑，00:48 完成。arm 3 (0.5:1) 于 00:48 开跑，02:59 完成。arm 4 (2:1) 于 02:59 开跑，当前 step~5900/30k ~20%。
+
+> ⚠️ **arm 3 C1 非单调**：C1 从 0.4304@2100（早现峰值）下降到 0.2924@11700（低谷），再回升到 0.3589@29100，末点 0.2816@30000 回落。C2_gap 全程 +0.117~+0.134、C4=OK → **无坍缩**，但 C1 波动幅度较大（对比 arm 1/2 的 0.35±0.02 稳态）。contrast_weight=0.5 的 InfoNCE 信号减弱 → 对齐特征更不稳定。
 
 > lp 评测在全部 4 臂训练完成后统一进行（`r8_eval_in1k.py`，~16 ckpts，Protocol A）。
 
-- **证据**：`/tmp/ablation_weight_ratio_cw1_plw2.log`（arm1, 48MB）+ `/tmp/ablation_weight_ratio.log`（master log）+ ckpts 在 `/nas_train/.../out/ABL_weight_ratio_cw1_plw2/`。恢复脚本 `vision/run_weight_ratio_ablation_resume.sh`。
+- **证据**：`/tmp/ablation_weight_ratio.log`（master log）+ 各 arm `train.log` 在 `/nas_train/.../out/ABL_weight_ratio_cw{1_plw2,1_plw0p5,0p5_plw1,2_plw1}/`。恢复脚本 `vision/run_weight_ratio_ablation_resume.sh`。
 
 ---
 
