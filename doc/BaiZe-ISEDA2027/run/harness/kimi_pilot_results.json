@@ -11237,5 +11237,104 @@
       }
     },
     "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-11630",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 121.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11630.json",
+      "stdout_tail": "e] instance_id=django__django-11630\n[run_single] base_commit=65e86948b80262574058a94ccaae3a9b59c3faea\n[run_single] ps_len=660\n[run_single] git reset --hard 65e86948b80262574058a94ccaae3a9b59c3faea\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=121.4s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11630.json\n[run_single] cleanup: git reset --hard 65e86948b80262574058a94ccaae3a9b59c3faea\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 16,
+        "p2p_total": 16
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-11742",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 190.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11742.json",
+      "stdout_tail": "instance_id=django__django-11742\n[run_single] base_commit=fee75d2aed4e58ada6567c464cfd22e89dc65f4a\n[run_single] ps_len=328\n[run_single] git reset --hard fee75d2aed4e58ada6567c464cfd22e89dc65f4a\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=189.8s ==\n[run_single] model_patch: 3950 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11742.json\n[run_single] cleanup: git reset --hard fee75d2aed4e58ada6567c464cfd22e89dc65f4a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 43,
+        "p2p_total": 43
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-11870",
+    "repo": "sympy/sympy",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 544.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_sympy__sympy-11870.json",
+      "stdout_tail": "le] instance_id=sympy__sympy-11870\n[run_single] base_commit=5c2e1f96a7ff562d4a778f4ca9ffc9c81557197e\n[run_single] ps_len=344\n[run_single] git reset --hard 5c2e1f96a7ff562d4a778f4ca9ffc9c81557197e\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=543.9s ==\n[run_single] model_patch: 2619 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_sympy__sympy-11870.json\n[run_single] cleanup: git reset --hard 5c2e1f96a7ff562d4a778f4ca9ffc9c81557197e\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 58,
+        "p2p_total": 58
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]
