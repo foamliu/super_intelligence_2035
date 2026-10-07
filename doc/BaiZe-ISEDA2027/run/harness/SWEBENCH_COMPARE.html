@@ -22,7 +22,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 </style></head><body>
 <h1>SWE-bench 30×5 Harness Cross-Eval Report</h1>
 <p><span class="model-badge">Model: kimi-k2.6-cloud</span> &nbsp; Gateway: <code>http://agi-gateway.cxmt.com/cloud/v1</code></p>
-<p><strong>Generated:</strong> 2026-10-07 11:19 | <strong>Scope:</strong> 30 instances (15 django + 15 sympy) × 5 harnesses | <strong>Concurrency:</strong> 1 (strict serial)</p>
+<p><strong>Generated:</strong> 2026-10-07 12:34 | <strong>Scope:</strong> 30 instances (15 django + 15 sympy) × 5 harnesses | <strong>Concurrency:</strong> 1 (strict serial)</p>
 <div class="callout">
 <p><strong>📋 Key Design (per operator instruction 2026-10-07):</strong></p>
 <ul>
@@ -39,12 +39,12 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <tr><th>Harness</th><th>Scored</th><th>Resolved</th><th>Patch-but-failed</th><th>Quota-blocked</th><th>Blocked (infra)</th><th>Resolve Rate</th><th>Avg Wall</th><th>Status</th></tr>
 <tr><td class='hname'>cline-patched</td><td>30</td><td>18</td><td>12</td><td>0</td><td>0</td><td>18/30 (60.0%)</td><td>479s</td><td>✅ done</td></tr>
 <tr><td class='hname'>codex</td><td>30</td><td>14</td><td>16</td><td>0</td><td>0</td><td>14/30 (46.7%)</td><td>843s</td><td>✅ done</td></tr>
-<tr><td class='hname'>opencode</td><td>8</td><td>6</td><td>2</td><td>0</td><td>0</td><td>6/8 (75.0%)</td><td>255s</td><td>🔄 in progress (8/30)</td></tr>
+<tr><td class='hname'>opencode</td><td>17</td><td>8</td><td>9</td><td>0</td><td>0</td><td>8/17 (47.1%)</td><td>308s</td><td>🔄 in progress (17/30)</td></tr>
 <tr><td class='hname'>claude-code</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>N/A</td><td>N/A</td><td>⬜ not started</td></tr>
 <tr><td class='hname'>deepseek-harness</td><td>2</td><td>0</td><td>2</td><td>0</td><td>0</td><td>0/2 (0.0%)</td><td>4s</td><td>🔄 in progress (2/30)</td></tr>
 </table>
 <div class="callout">
-<p><strong>📊 Overall:</strong> 70 entries on 30 instances | 38 total resolved across all harnesses</p>
+<p><strong>📊 Overall:</strong> 79 entries on 30 instances | 40 total resolved across all harnesses</p>
 </div>
 <h2>2. Instance-level Detail</h2>
 <p>Legend: &#10004;=resolved, &#10006;=patch-but-failed, &#9728;=quota-blocked, &#9888;=infra-blocked (git/rootfs failure), — = not yet run</p>
@@ -58,15 +58,15 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <tr><td class='iid'>django__django-11099</td><td class="resolved">&#10004;<br><small>153s</small></td><td class="resolved">&#10004;<br><small>93s</small></td><td class="resolved">&#10004;<br><small>48s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
 <tr><td class='iid'>django__django-11133</td><td class="resolved">&#10004;<br><small>481s</small></td><td class="resolved">&#10004;<br><small>508s</small></td><td class="resolved">&#10004;<br><small>130s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
 <tr><td class='iid'>django__django-11179</td><td class="resolved">&#10004;<br><small>303s</small></td><td class="resolved">&#10004;<br><small>174s</small></td><td class="resolved">&#10004;<br><small>178s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
-<tr><td class='iid'>django__django-11283</td><td class="failed">&#10006;<br><small>581s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
-<tr><td class='iid'>django__django-11422</td><td class="resolved">&#10004;<br><small>279s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
-<tr><td class='iid'>django__django-11564</td><td class="failed">&#10006;<br><small>509s</small></td><td class="failed">&#10006;<br><small>1026s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
-<tr><td class='iid'>django__django-11583</td><td class="resolved">&#10004;<br><small>152s</small></td><td class="resolved">&#10004;<br><small>186s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
-<tr><td class='iid'>django__django-11620</td><td class="resolved">&#10004;<br><small>458s</small></td><td class="resolved">&#10004;<br><small>762s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
-<tr><td class='iid'>django__django-11630</td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
-<tr><td class='iid'>django__django-11742</td><td class="failed">&#10006;<br><small>303s</small></td><td class="failed">&#10006;<br><small>1768s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
-<tr><td class='iid'>sympy__sympy-11870</td><td class="failed">&#10006;<br><small>589s</small></td><td class="failed">&#10006;<br><small>580s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
-<tr><td class='iid'>sympy__sympy-11897</td><td class="failed">&#10006;<br><small>598s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11283</td><td class="failed">&#10006;<br><small>581s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>292s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11422</td><td class="resolved">&#10004;<br><small>279s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>201s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11564</td><td class="failed">&#10006;<br><small>509s</small></td><td class="failed">&#10006;<br><small>1026s</small></td><td class="failed">&#10006;<br><small>565s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11583</td><td class="resolved">&#10004;<br><small>152s</small></td><td class="resolved">&#10004;<br><small>186s</small></td><td class="resolved">&#10004;<br><small>121s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11620</td><td class="resolved">&#10004;<br><small>458s</small></td><td class="resolved">&#10004;<br><small>762s</small></td><td class="resolved">&#10004;<br><small>300s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11630</td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>390s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11742</td><td class="failed">&#10006;<br><small>303s</small></td><td class="failed">&#10006;<br><small>1768s</small></td><td class="failed">&#10006;<br><small>500s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>sympy__sympy-11870</td><td class="failed">&#10006;<br><small>589s</small></td><td class="failed">&#10006;<br><small>580s</small></td><td class="failed">&#10006;<br><small>297s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>sympy__sympy-11897</td><td class="failed">&#10006;<br><small>598s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>533s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
 <tr><td class='iid'>sympy__sympy-12171</td><td class="failed">&#10006;<br><small>353s</small></td><td class="failed">&#10006;<br><small>298s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
 <tr><td class='iid'>sympy__sympy-12236</td><td class="resolved">&#10004;<br><small>975s</small></td><td class="failed">&#10006;<br><small>748s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
 <tr><td class='iid'>sympy__sympy-12419</td><td class="resolved">&#10004;<br><small>634s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr>
@@ -111,5 +111,5 @@ python3 gen_kimi_compare.py</code></pre>
 </ol>
 </div>
 <hr>
-<p><small>BaiZe Harness H-A, 30×5 cross-eval, 2026-10-07 11:19. Model: kimi-k2.6-cloud. Serial concurrency=1. Data: kimi_pilot_results.json (filtered to 30 instances, 70 entries).</small></p>
+<p><small>BaiZe Harness H-A, 30×5 cross-eval, 2026-10-07 12:34. Model: kimi-k2.6-cloud. Serial concurrency=1. Data: kimi_pilot_results.json (filtered to 30 instances, 79 entries).</small></p>
 </body></html>

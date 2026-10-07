@@ -8387,5 +8387,104 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-11742",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 500.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11742.json",
+      "stdout_tail": "d _check_max_length_choices() to Field class\n[\u2713] Update CharField.check() to call _check_max_length_choices()\n[\u2713] Update TextField.check() to call _check_max_length_choices()\n[\u2713] Add tests for max_length vs choices check\n[\u2713] Run tests to verify implementation\n\u001b[0m\n\n[run_single] model_patch: 5580 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11742.json\n[run_single] cleanup: git reset --hard fee75d2aed4e58ada6567c464cfd22e89dc65f4a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 43,
+        "p2p_total": 43
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-11870",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 297.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-11870.json",
+      "stdout_tail": "p(f) =', trigsimp(f))\nprint('  Expected: sin(k)/k (sinc(k))')\n\"\n\nExample 1:\n  f = -I*exp(I*k)/2 + I*exp(-I*k)/2\n  trigsimp(f) = sin(k)\n  Expected: sin(k)\n\nExample 2:\n  f = (-I*exp(I*k) + I*exp(-I*k))/(2*k)\n  trigsimp(f) = sin(k)/k\n  Expected: sin(k)/k (sinc(k))\n\u001b[0m\n\n[run_single] model_patch: 2507 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-11870.json\n[run_single] cleanup: git reset --hard 5c2e1f96a7ff562d4a778f4ca9ffc9c81557197e\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 58,
+        "p2p_total": 58
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-11897",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 532.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-11897.json",
+      "stdout_tail": "in _handle_creation_inputs\n    if len(args) == 3 and isinstance(args[2], collections.Callable):\nAttributeError: module 'collections' has no attribute 'Callable'\n\u001b[0m\n\u001b[0m$ \u001b[0mpython -c \"\nfrom sympy import *\nx, y = symbols('x y')\nprint(latex(x**(-y)))\n\"\nx^{- y}\n\u001b[0m\n\n[run_single] model_patch: 5117 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-11897.json\n[run_single] cleanup: git reset --hard e2918c1205c47345eb73c9be68b14c0f15fdeb17\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 93,
+        "p2p_total": 95
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]
