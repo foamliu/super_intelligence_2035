@@ -2639,14 +2639,14 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 
 ---
 
-## P-9.11-F · hybrid ctx 扩 2M/4M/8M/16M ＋「显存为何恒定」归因诊断（运维指令 2026-10-07③ · 用户直令）⏸ **2M@0.3 REJECTED · 2M@0.6 ✅ SERVED · 0.85 startup ✅ · V1/V2/V3 ✅ · V4② ✅ bf16 SSM 1.67× faster · 4M@0.85 bench 运行中 · 8M/16M 单卡不可服务**
+## P-9.11-F · hybrid ctx 扩 2M/4M/8M/16M ＋「显存为何恒定」归因诊断（运维指令 2026-10-07③ · 用户直令）⏸ **2M@0.3 REJECTED · 2M@0.6 ✅ SERVED · 0.85 startup ✅ · V1/V2/V3 ✅ · V4② ✅ bf16 SSM 1.67× faster · 4M@0.85 TIMED OUT (servable but prefill ~33min, attention O(n²)) · 8M/16M 单卡不可服务**
 
 > **状态**：2026-10-07 10:30 收到用户直令「hybrid 继续扩 ctx 到 2m/4m/8m/16m」+ 三问（VRAM 恒定 / hybrid 无速度优势 / 是否用虚拟内存）。
 > **#167 结论**：两节点无安全空卡 → 2M-16M 未执行，脚本备好。
 > **#169 更新（2026-10-07 ~15:43, GPU5 @.29 短暂空闲）**：抓住 data BO 试次间隙的 GPU5 空窗（609→25018→62611 MiB），**成功启动 2M@0.3 sglang server** 并采集了完整 V1/V3 诊断数据。server 启动后 data BO 立即把下一 trial 调度到 GPU5（62611 MiB），但**启动日志已完整保留**。**2M prompt 被 sglang 拒绝**（KV pool 1.24M < prompt 2.02M）。2M@0.6/0.85 + 4M-16M 仍待卡。
 > **#170.5 更新（2026-10-07 ~17:08–17:18, GPU2 @.29 短暂空闲）**：前序唤醒在 data BO 试次间隙 GPU2 空窗运行 **2M@0.6 成功**：VRAM=75.91GB, pool=2.75M, TTFT=427.8s, prefill=4713.8 tok/s, decode=20.9 tok/s。同时 GPU1 0.85 server 启动成功（pool=4.30M），但 bench 未完成（GPU 被 data BO 占据）。结果未及时提交。
 > **#171 更新（2026-10-07 ~17:44–18:00, 无 GPU）**：补提交 #170.5 的 2M@0.6 + 0.85 启动诊断结果。V2 三档 mem-fraction 扫描 ✅ 完成。GPU1 窗口已关闭（data BO 占满 80GB）。4M@0.85 bench + V4② bf16 SSM 对照待卡。
-> **#172 更新（2026-10-07 ~18:30–18:55, GPU0+GPU2 @.29 空闲）**：data BO 完成（GPU 释放）。① **V4② bf16 SSM 对照 ✅ 完成**（GPU2, 1M@0.3, bfloat16）：prefill 10820 tok/s vs float32 6484 tok/s = **1.67× faster**，TTFT -40%，decode/VRAM 无变化。Mamba cache slots 382 vs 177（bf16 半内存/状态）。⭐ float32 SSM 人为压低 hybrid prefill 40%——P-9.11-E dense-faster 结论需修订。② **4M@0.85 bench 运行中**（GPU0, server ready 18:39:49, pool=4.335M, 4M prompt ~4.02M fits with margin ~315K）。③ GPU1 有 78GB leaked memory（无进程，需 driver reset 或自然释放）。
+> **#172 更新（2026-10-07 ~18:30–19:00, GPU0+GPU2 @.29 空闲）**：data BO 完成（GPU 释放）。① **V4② bf16 SSM 对照 ✅ 完成**（GPU2, 1M@0.3, bfloat16）：prefill 10820 tok/s vs float32 6484 tok/s = **1.67× faster**，TTFT -40%，decode/VRAM 无变化。Mamba cache slots 382 vs 177（bf16 半内存/状态）。⭐ float32 SSM 人为压低 hybrid prefill 40%——P-9.11-E dense-faster 结论需修订。② **4M@0.85 bench TIMED OUT**（GPU0, server ready 18:39:49, pool=4,335,056 / 4.34M, prompt=4,032,862 / 4.03M）：bench HTTP timeout=600s, prefill 仅完成 56% @18:50 (throughput 3100→1650 tok/s 递减, attention O(n²) bottleneck)。peak VRAM=76.93GB (< 80GB ✅ 未 OOM)。**4M 技术上可服务但 prefill 极慢**（~33min @avg 2000 tok/s，vs 2M@0.6 的 427s）。③ GPU1 有 78GB leaked memory（无进程，需 driver reset 或自然释放）。
 
 ### Step 0 · 找卡（#167: 2026-10-07 ~10:35 / #169: ~15:40 实测）
 
