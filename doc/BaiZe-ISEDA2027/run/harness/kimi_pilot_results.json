@@ -7878,7 +7878,7 @@
       "returncode": 0,
       "wall_s": 230.4,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-10924.json",
-      "stdout_tail": "0003_logentry_add_action_flag_choices... OK\n  Applying sites.0001_initial... OK\n  Applying sites.0002_alter_domain_unique... OK\nSystem check identified no issues (0 silenced).\n\u001b[0m\n\u001b[0m→ \u001b[0mRead django/db/models/fields/__init__.py\u001b[90m [offset=1661, limit=70]\u001b[0m\n\n[run_single] model_patch: 3748 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-10924.json\n[run_single] cleanup: git reset --hard bceadd2788dc2dad53eba0caae172bd8522fd483\n",
+      "stdout_tail": "0003_logentry_add_action_flag_choices... OK\n  Applying sites.0001_initial... OK\n  Applying sites.0002_alter_domain_unique... OK\nSystem check identified no issues (0 silenced).\n\u001b[0m\n\u001b[0m\u2192 \u001b[0mRead django/db/models/fields/__init__.py\u001b[90m [offset=1661, limit=70]\u001b[0m\n\n[run_single] model_patch: 3748 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-10924.json\n[run_single] cleanup: git reset --hard bceadd2788dc2dad53eba0caae172bd8522fd483\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -7911,7 +7911,7 @@
       "returncode": 0,
       "wall_s": 123.3,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11001.json",
-      "stdout_tail": "\" | tail -5\nRan 279 tests in 0.859s\nOK (skipped=3, expected failures=2)\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Locate SQLCompiler.get_order_by() and understand the bug\n[✓] Implement fix for multiline RawSQL order_by duplicate detection\n[✓] Write/run tests to verify the fix\n\u001b[0m\n\n[run_single] model_patch: 1977 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11001.json\n[run_single] cleanup: git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n",
+      "stdout_tail": "\" | tail -5\nRan 279 tests in 0.859s\nOK (skipped=3, expected failures=2)\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[\u2713] Locate SQLCompiler.get_order_by() and understand the bug\n[\u2713] Implement fix for multiline RawSQL order_by duplicate detection\n[\u2713] Write/run tests to verify the fix\n\u001b[0m\n\n[run_single] model_patch: 1977 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11001.json\n[run_single] cleanup: git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -8010,7 +8010,7 @@
       "returncode": 0,
       "wall_s": 445.1,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11049.json",
-      "stdout_tail": "onField error message format string\n[✓] Update model DurationField test for new error message\n[✓] Add default help_text to model DurationField\n[✓] Add default help_text to forms DurationField\n[✓] Add tests for default help_text\n[✓] Run tests to verify changes\n\u001b[0m\n\n[run_single] model_patch: 3881 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11049.json\n[run_single] cleanup: git reset --hard 17455e924e243e7a55e8a38f45966d8cbb27c273\n",
+      "stdout_tail": "onField error message format string\n[\u2713] Update model DurationField test for new error message\n[\u2713] Add default help_text to model DurationField\n[\u2713] Add default help_text to forms DurationField\n[\u2713] Add tests for default help_text\n[\u2713] Run tests to verify changes\n\u001b[0m\n\n[run_single] model_patch: 3881 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11049.json\n[run_single] cleanup: git reset --hard 17455e924e243e7a55e8a38f45966d8cbb27c273\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -8109,7 +8109,7 @@
       "returncode": 0,
       "wall_s": 178.5,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11179.json",
-      "stdout_tail": "ent behavior and locate the relevant code\n[✓] Create a reproduction script to verify the bug\n[✓] Implement the fix to clear PK after delete() for models without dependencies\n[✓] Run existing tests to ensure no regressions\n[✓] Write any needed test for the fix\n\u001b[0m\n\n[run_single] model_patch: 1180 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11179.json\n[run_single] cleanup: git reset --hard 19fc6376ce67d01ca37a91ef2f55ef769f50513a\n",
+      "stdout_tail": "ent behavior and locate the relevant code\n[\u2713] Create a reproduction script to verify the bug\n[\u2713] Implement the fix to clear PK after delete() for models without dependencies\n[\u2713] Run existing tests to ensure no regressions\n[\u2713] Write any needed test for the fix\n\u001b[0m\n\n[run_single] model_patch: 1180 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11179.json\n[run_single] cleanup: git reset --hard 19fc6376ce67d01ca37a91ef2f55ef769f50513a\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -8175,7 +8175,7 @@
       "returncode": 0,
       "wall_s": 200.7,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11422.json",
-      "stdout_tail": "v/shm/harness_work/workdirs/django_django/django'\nImporting application utils_tests\nSkipping setup of unused database(s): default, other.\nSystem check identified no issues (0 silenced).\n\u001b[0m\n\u001b[0m→ \u001b[0mRead django/utils/autoreload.py\u001b[90m [offset=577, limit=20]\u001b[0m\n\n[run_single] model_patch: 3636 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11422.json\n[run_single] cleanup: git reset --hard df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n",
+      "stdout_tail": "v/shm/harness_work/workdirs/django_django/django'\nImporting application utils_tests\nSkipping setup of unused database(s): default, other.\nSystem check identified no issues (0 silenced).\n\u001b[0m\n\u001b[0m\u2192 \u001b[0mRead django/utils/autoreload.py\u001b[90m [offset=577, limit=20]\u001b[0m\n\n[run_single] model_patch: 3636 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11422.json\n[run_single] cleanup: git reset --hard df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -8208,7 +8208,7 @@
       "returncode": 0,
       "wall_s": 564.7,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11564.json",
-      "stdout_tail": " Modify static tag and staticfiles tag to prepend SCRIPT_NAME when available\n[✓] Modify FileSystemStorage and StaticFilesStorage URL methods to prepend SCRIPT_NAME when available\n[✓] Write tests for the new SCRIPT_NAME support\n[✓] Run tests and verify changes\n\u001b[0m\n\n[run_single] model_patch: 8316 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11564.json\n[run_single] cleanup: git reset --hard 580e644f24f1c5ae5b94784fb73a9953a178fd26\n",
+      "stdout_tail": " Modify static tag and staticfiles tag to prepend SCRIPT_NAME when available\n[\u2713] Modify FileSystemStorage and StaticFilesStorage URL methods to prepend SCRIPT_NAME when available\n[\u2713] Write tests for the new SCRIPT_NAME support\n[\u2713] Run tests and verify changes\n\u001b[0m\n\n[run_single] model_patch: 8316 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11564.json\n[run_single] cleanup: git reset --hard 580e644f24f1c5ae5b94784fb73a9953a178fd26\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -8274,7 +8274,7 @@
       "returncode": 0,
       "wall_s": 299.6,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11620.json",
-      "stdout_tail": "Ran 29 tests in 0.475s\n\nOK\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore Django URL resolution and path converter code\n[✓] Identify where Http404 is mishandled during to_python\n[✓] Implement fix for Http404 in path converter to_python\n[✓] Write/run tests to verify the fix\n\u001b[0m\n\n[run_single] model_patch: 2676 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11620.json\n[run_single] cleanup: git reset --hard 514efa3129792ec2abb2444f3e7aeb3f21a38386\n",
+      "stdout_tail": "Ran 29 tests in 0.475s\n\nOK\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[\u2713] Explore Django URL resolution and path converter code\n[\u2713] Identify where Http404 is mishandled during to_python\n[\u2713] Implement fix for Http404 in path converter to_python\n[\u2713] Write/run tests to verify the fix\n\u001b[0m\n\n[run_single] model_patch: 2676 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11620.json\n[run_single] cleanup: git reset --hard 514efa3129792ec2abb2444f3e7aeb3f21a38386\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -8340,7 +8340,7 @@
       "returncode": 0,
       "wall_s": 500.4,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11742.json",
-      "stdout_tail": "d _check_max_length_choices() to Field class\n[✓] Update CharField.check() to call _check_max_length_choices()\n[✓] Update TextField.check() to call _check_max_length_choices()\n[✓] Add tests for max_length vs choices check\n[✓] Run tests to verify implementation\n\u001b[0m\n\n[run_single] model_patch: 5580 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11742.json\n[run_single] cleanup: git reset --hard fee75d2aed4e58ada6567c464cfd22e89dc65f4a\n",
+      "stdout_tail": "d _check_max_length_choices() to Field class\n[\u2713] Update CharField.check() to call _check_max_length_choices()\n[\u2713] Update TextField.check() to call _check_max_length_choices()\n[\u2713] Add tests for max_length vs choices check\n[\u2713] Run tests to verify implementation\n\u001b[0m\n\n[run_single] model_patch: 5580 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-11742.json\n[run_single] cleanup: git reset --hard fee75d2aed4e58ada6567c464cfd22e89dc65f4a\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -8439,7 +8439,7 @@
       "returncode": 0,
       "wall_s": 171.6,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-12171.json",
-      "stdout_tail": "nting/tests/test_mathematica.py\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Find the mathematica code printer (MCodePrinter) in the sympy codebase\n[✓] Add _print_Derivative method to MCodePrinter\n[✓] Add _print_Float method to MCodePrinter\n[✓] Run relevant tests to verify the fix\n\u001b[0m\n\n[run_single] model_patch: 1792 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-12171.json\n[run_single] cleanup: git reset --hard ca6ef27272be31c9dc3753ede9232c39df9a75d8\n",
+      "stdout_tail": "nting/tests/test_mathematica.py\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[\u2713] Find the mathematica code printer (MCodePrinter) in the sympy codebase\n[\u2713] Add _print_Derivative method to MCodePrinter\n[\u2713] Add _print_Float method to MCodePrinter\n[\u2713] Run relevant tests to verify the fix\n\u001b[0m\n\n[run_single] model_patch: 1792 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-12171.json\n[run_single] cleanup: git reset --hard ca6ef27272be31c9dc3753ede9232c39df9a75d8\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -8472,7 +8472,7 @@
       "returncode": 0,
       "wall_s": 733.8,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-12236.json",
-      "stdout_tail": "e bug: apart() gives wrong result when symbolic coefficient 'a' is present\n[✓] Find the apart implementation in sympy codebase\n[✓] Create a minimal reproduction script to verify the bug\n[✓] Fix the bug in the apart implementation\n[✓] Run tests to verify the fix\n\u001b[0m\n\n[run_single] model_patch: 2297 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-12236.json\n[run_single] cleanup: git reset --hard d60497958f6dea7f5e25bc41e9107a6a63694d01\n",
+      "stdout_tail": "e bug: apart() gives wrong result when symbolic coefficient 'a' is present\n[\u2713] Find the apart implementation in sympy codebase\n[\u2713] Create a minimal reproduction script to verify the bug\n[\u2713] Fix the bug in the apart implementation\n[\u2713] Run tests to verify the fix\n\u001b[0m\n\n[run_single] model_patch: 2297 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-12236.json\n[run_single] cleanup: git reset --hard d60497958f6dea7f5e25bc41e9107a6a63694d01\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -8538,7 +8538,7 @@
       "returncode": 0,
       "wall_s": 152.6,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-12454.json",
-      "stdout_tail": " edge case tests passed!\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Find the is_upper implementation in the codebase\n[✓] Fix the IndexError for tall matrices by limiting j range to self.cols\n[✓] Check if is_lower has a similar issue and fix if needed\n[✓] Verify the fix with tests\n\u001b[0m\n\n[run_single] model_patch: 804 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-12454.json\n[run_single] cleanup: git reset --hard d3fcdb72bfcbb560eb45264ac1c03f359436edef\n",
+      "stdout_tail": " edge case tests passed!\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[\u2713] Find the is_upper implementation in the codebase\n[\u2713] Fix the IndexError for tall matrices by limiting j range to self.cols\n[\u2713] Check if is_lower has a similar issue and fix if needed\n[\u2713] Verify the fix with tests\n\u001b[0m\n\n[run_single] model_patch: 804 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-12454.json\n[run_single] cleanup: git reset --hard d3fcdb72bfcbb560eb45264ac1c03f359436edef\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -8736,7 +8736,7 @@
       "returncode": 0,
       "wall_s": 116.8,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13437.json",
-      "stdout_tail": "t_harmonic():\n     n = Symbol(\"n\")\n \n     assert harmonic(n, 0) == n\n\n\u001b[0m\n\u001b[0m→ \u001b[0mRead sympy/functions/combinatorial/numbers.py\u001b[90m [offset=435, limit=15]\u001b[0m\n\u001b[0m→ \u001b[0mRead sympy/functions/combinatorial/tests/test_comb_numbers.py\u001b[90m [offset=113, limit=10]\u001b[0m\n\n[run_single] model_patch: 1101 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13437.json\n[run_single] cleanup: git reset --hard 674afc619d7f5c519b6a5393a8b0532a131e57e0\n",
+      "stdout_tail": "t_harmonic():\n     n = Symbol(\"n\")\n \n     assert harmonic(n, 0) == n\n\n\u001b[0m\n\u001b[0m\u2192 \u001b[0mRead sympy/functions/combinatorial/numbers.py\u001b[90m [offset=435, limit=15]\u001b[0m\n\u001b[0m\u2192 \u001b[0mRead sympy/functions/combinatorial/tests/test_comb_numbers.py\u001b[90m [offset=113, limit=10]\u001b[0m\n\n[run_single] model_patch: 1101 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13437.json\n[run_single] cleanup: git reset --hard 674afc619d7f5c519b6a5393a8b0532a131e57e0\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -8769,7 +8769,7 @@
       "returncode": 0,
       "wall_s": 216.4,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13471.json",
-      "stdout_tail": "p('Ll'), 16)\n                 _mpf_ = tuple(num)\n             else:\n                 if len(num) == 4:\n\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"hex\\(\"\u001b[90m in sympy/core/numbers.py · 0 matches\u001b[0m\n\u001b[0m\n\u001b[0m$ \u001b[0mrm /dev/shm/harness_work/workdirs/sympy_sympy/run_tests.py\n(no output)\n\u001b[0m\n\n[run_single] model_patch: 574 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13471.json\n[run_single] cleanup: git reset --hard 3546ac7ed78e1780c1a76929864bb33330055740\n",
+      "stdout_tail": "p('Ll'), 16)\n                 _mpf_ = tuple(num)\n             else:\n                 if len(num) == 4:\n\u001b[0m\n\u001b[0m\u2731 \u001b[0mGrep \"hex\\(\"\u001b[90m in sympy/core/numbers.py \u00b7 0 matches\u001b[0m\n\u001b[0m\n\u001b[0m$ \u001b[0mrm /dev/shm/harness_work/workdirs/sympy_sympy/run_tests.py\n(no output)\n\u001b[0m\n\n[run_single] model_patch: 574 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13471.json\n[run_single] cleanup: git reset --hard 3546ac7ed78e1780c1a76929864bb33330055740\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -8835,7 +8835,7 @@
       "returncode": 0,
       "wall_s": 301.7,
       "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13647.json",
-      "stdout_tail": ":\nMatrix([[1, 0, 0, 2], [0, 1, 0, 2], [0, 0, 1, 2]])\n\npos=1:\nMatrix([[1, 2, 0, 0], [0, 2, 1, 0], [0, 2, 0, 1]])\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Fix _eval_col_insert bug in sympy/matrices/common.py\n[✓] Add test for col_insert with multi-row matrix\n[✓] Verify fix works\n\u001b[0m\n\n[run_single] model_patch: 14369 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13647.json\n[run_single] cleanup: git reset --hard 67e3c956083d0128a621f65ee86a7dacd4f9f19f\n",
+      "stdout_tail": ":\nMatrix([[1, 0, 0, 2], [0, 1, 0, 2], [0, 0, 1, 2]])\n\npos=1:\nMatrix([[1, 2, 0, 0], [0, 2, 1, 0], [0, 2, 0, 1]])\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[\u2713] Fix _eval_col_insert bug in sympy/matrices/common.py\n[\u2713] Add test for col_insert with multi-row matrix\n[\u2713] Verify fix works\n\u001b[0m\n\n[run_single] model_patch: 14369 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-13647.json\n[run_single] cleanup: git reset --hard 67e3c956083d0128a621f65ee86a7dacd4f9f19f\n",
       "quota_blocked": false,
       "quota_retry": null,
       "eval": {
@@ -10673,6 +10673,336 @@
         "f2p_total": 1,
         "p2p_pass": 1,
         "p2p_total": 1
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-13177",
+    "repo": "sympy/sympy",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 401.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sympy__sympy-13177.json",
+      "stdout_tail": "ngle] base_commit=662cfb818e865f580e18b59efbb3540c34232beb\n[run_single] ps_len=390\n[run_single] git reset --hard 662cfb818e865f580e18b59efbb3540c34232beb\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=401.2s ==\n[run_single] model_patch: 1182 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sympy__sympy-13177.json\n[run_single] cleanup: git reset --hard 662cfb818e865f580e18b59efbb3540c34232beb\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 75,
+        "p2p_total": 75
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-13437",
+    "repo": "sympy/sympy",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 127.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sympy__sympy-13437.json",
+      "stdout_tail": "ngle] base_commit=674afc619d7f5c519b6a5393a8b0532a131e57e0\n[run_single] ps_len=614\n[run_single] git reset --hard 674afc619d7f5c519b6a5393a8b0532a131e57e0\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=126.9s ==\n[run_single] model_patch: 1136 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sympy__sympy-13437.json\n[run_single] cleanup: git reset --hard 674afc619d7f5c519b6a5393a8b0532a131e57e0\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 15,
+        "p2p_total": 15
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-13471",
+    "repo": "sympy/sympy",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 201.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sympy__sympy-13471.json",
+      "stdout_tail": "ingle] base_commit=3546ac7ed78e1780c1a76929864bb33330055740\n[run_single] ps_len=786\n[run_single] git reset --hard 3546ac7ed78e1780c1a76929864bb33330055740\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=201.4s ==\n[run_single] model_patch: 573 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sympy__sympy-13471.json\n[run_single] cleanup: git reset --hard 3546ac7ed78e1780c1a76929864bb33330055740\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 82,
+        "p2p_total": 82
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-13480",
+    "repo": "sympy/sympy",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 94.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sympy__sympy-13480.json",
+      "stdout_tail": "single] base_commit=f57fe3f4b3f2cab225749e1b3b38ae1bf80b62f0\n[run_single] ps_len=430\n[run_single] git reset --hard f57fe3f4b3f2cab225749e1b3b38ae1bf80b62f0\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=94.7s ==\n[run_single] model_patch: 588 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sympy__sympy-13480.json\n[run_single] cleanup: git reset --hard f57fe3f4b3f2cab225749e1b3b38ae1bf80b62f0\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 43,
+        "p2p_total": 43
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-13647",
+    "repo": "sympy/sympy",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 162.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sympy__sympy-13647.json",
+      "stdout_tail": "gle] base_commit=67e3c956083d0128a621f65ee86a7dacd4f9f19f\n[run_single] ps_len=1088\n[run_single] git reset --hard 67e3c956083d0128a621f65ee86a7dacd4f9f19f\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=162.0s ==\n[run_single] model_patch: 2451 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sympy__sympy-13647.json\n[run_single] cleanup: git reset --hard 67e3c956083d0128a621f65ee86a7dacd4f9f19f\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 76,
+        "p2p_total": 76
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-11001",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 199.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11001.json",
+      "stdout_tail": "nstance_id=django__django-11001\n[run_single] base_commit=ef082ebb84f00e38af4e8880d04e8365c2766d34\n[run_single] ps_len=2220\n[run_single] git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=199.2s ==\n[run_single] model_patch: 2202 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11001.json\n[run_single] cleanup: git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 118,
+        "p2p_total": 118
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-11019",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 131.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11019.json",
+      "stdout_tail": "] instance_id=django__django-11019\n[run_single] base_commit=93e892bb645b16ebaf287beb5fe7f3ffe8d10408\n[run_single] ps_len=1801\n[run_single] git reset --hard 93e892bb645b16ebaf287beb5fe7f3ffe8d10408\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=130.9s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11019.json\n[run_single] cleanup: git reset --hard 93e892bb645b16ebaf287beb5fe7f3ffe8d10408\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 16,
+        "p2p_pass": 58,
+        "p2p_total": 58
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-11039",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 116.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11039.json",
+      "stdout_tail": "instance_id=django__django-11039\n[run_single] base_commit=d5276398046ce4a102776a1e67dcac2884d80dfe\n[run_single] ps_len=879\n[run_single] git reset --hard d5276398046ce4a102776a1e67dcac2884d80dfe\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=116.0s ==\n[run_single] model_patch: 2243 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11039.json\n[run_single] cleanup: git reset --hard d5276398046ce4a102776a1e67dcac2884d80dfe\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 88,
+        "p2p_total": 88
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-11049",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 79.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11049.json",
+      "stdout_tail": " instance_id=django__django-11049\n[run_single] base_commit=17455e924e243e7a55e8a38f45966d8cbb27c273\n[run_single] ps_len=706\n[run_single] git reset --hard 17455e924e243e7a55e8a38f45966d8cbb27c273\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=79.0s ==\n[run_single] model_patch: 1134 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11049.json\n[run_single] cleanup: git reset --hard 17455e924e243e7a55e8a38f45966d8cbb27c273\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 8,
+        "p2p_total": 8
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-11099",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 98.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11099.json",
+      "stdout_tail": " instance_id=django__django-11099\n[run_single] base_commit=d26b2424437dabeeca94d7900b37d2df4410da0c\n[run_single] ps_len=764\n[run_single] git reset --hard d26b2424437dabeeca94d7900b37d2df4410da0c\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=97.7s ==\n[run_single] model_patch: 1990 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11099.json\n[run_single] cleanup: git reset --hard d26b2424437dabeeca94d7900b37d2df4410da0c\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 3,
+        "f2p_total": 3,
+        "p2p_pass": 19,
+        "p2p_total": 19
       }
     },
     "classification": "resolved"

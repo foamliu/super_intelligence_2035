@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Generate SWEBENCH_COMPARE.html from kimi_pilot_results.json — 30×5 harness comparison.
+"""Generate SWEBENCH_COMPARE.html from kimi_pilot_results.json — 30×7 harness comparison.
 
-Per operator instruction 2026-10-07: same 30 instances (15 django + 15 sympy) × 5 harnesses,
+Per operator instruction 2026-10-07⑥: same 30 instances (15 django + 15 sympy) × 7 harnesses,
 single model (kimi-k2.6-cloud), concurrency=1 strict serial.
+Hermes Agent marked "toolchain not available" (Python 3.14+Node 26 not on system, Docker perm denied).
 """
 import json, html
 from pathlib import Path
@@ -13,7 +14,9 @@ HERE = Path(__file__).resolve().parent
 RESULTS_FILE = HERE / "kimi_pilot_results.json"
 MODEL = "kimi-k2.6-cloud"
 GATEWAY = "http://agi-gateway.cxmt.com/cloud/v1"
-HARNESS_ORDER = ["cline-patched", "codex", "opencode", "claude-code", "deepseek-harness"]
+HARNESS_ORDER = ["cline-patched", "codex", "opencode", "claude-code", "deepseek-harness", "pi"]
+# Hermes Agent (7th) is handled specially — toolchain not available, no JSON entries
+HERMES_NOTE = "Toolchain not available (Python 3.14+Node 26 not on system, Docker permission denied)"
 TOTAL_PLANNED = 30  # 15 django + 15 sympy
 
 def load_results():
@@ -87,6 +90,8 @@ def main():
             else:  # "blocked" = infrastructure failure (git fetch timeout etc.)
                 icon = "&#9888;"; cell_cls = "infblocked"
             cells.append(f'<td class="{cell_cls}">{icon}<br><small>{wall_str}</small></td>')
+        # Hermes Agent: toolchain not available — always N/A
+        cells.append(f'<td class="pending" title="{HERMES_NOTE}">N/A</td>')
         rows_detail.append(f"<tr><td class='iid'>{html.escape(iid)}</td>{''.join(cells)}</tr>")
 
     summary_rows = []
@@ -103,6 +108,11 @@ def main():
             f"<td>{s['scored']}</td><td>{s['resolved']}</td><td>{s['pbf']}</td>"
             f"<td>{s['qb']}</td><td>{s['blk']}</td>"
             f"<td>{s['resolve_rate']}</td><td>{s['avg_wall']}</td><td>{status}</td></tr>")
+    # Hermes Agent: 7th harness — toolchain not available
+    summary_rows.append(
+        f"<tr><td class='hname'>Hermes Agent</td>"
+        f"<td colspan='5' style='text-align:center;color:#999;'>{HERMES_NOTE}</td>"
+        f"<td>N/A</td><td>N/A</td><td>❌ unavailable</td></tr>")
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     total_entries = len(data)
@@ -133,13 +143,13 @@ td.pending {{ text-align: center; color: #ccc; }}
 .model-badge {{ display: inline-block; background: #6c5ce7; color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; }}
 pre {{ background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 12px; }}
 </style></head><body>
-<h1>SWE-bench 30×5 Harness Cross-Eval Report</h1>
+<h1>SWE-bench 30×7 Harness Cross-Eval Report</h1>
 <p><span class="model-badge">Model: {MODEL}</span> &nbsp; Gateway: <code>{GATEWAY}</code></p>
-<p><strong>Generated:</strong> {now} | <strong>Scope:</strong> 30 instances (15 django + 15 sympy) × 5 harnesses | <strong>Concurrency:</strong> 1 (strict serial)</p>
+<p><strong>Generated:</strong> {now} | <strong>Scope:</strong> 30 instances (15 django + 15 sympy) × 7 harnesses (6 active + 1 unavailable) | <strong>Concurrency:</strong> 1 (strict serial)</p>
 <div class="callout">
 <p><strong>📋 Key Design (per operator instruction 2026-10-07):</strong></p>
 <ul>
-<li><strong>Same 30 instances</strong> across all 5 harnesses (15 django + 15 sympy, fixed set)</li>
+<li><strong>Same 30 instances</strong> across all 7 harnesses (15 django + 15 sympy, fixed set; Hermes unavailable)</li>
 <li><strong>Single model</strong> ({MODEL}) — no model mixing (fair comparison)</li>
 <li><strong>Strict serial</strong> (concurrency=1) — one instance × one harness at a time</li>
 <li><strong>Three-column classification:</strong> <code>resolved</code> / <code>patch-but-failed</code> / <code>quota-blocked</code></li>
@@ -158,8 +168,8 @@ pre {{ background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; o
 <h2>2. Instance-level Detail</h2>
 <p>Legend: &#10004;=resolved, &#10006;=patch-but-failed, &#9728;=quota-blocked, &#9888;=infra-blocked (git/rootfs failure), — = not yet run</p>
 <table>
-<tr><th>Instance</th><th>cline-patched</th><th>codex</th><th>opencode</th><th>claude-code</th><th>deepseek</th></tr>
-{rows_joined if rows_joined else '<tr><td colspan="6">No data yet</td></tr>'}
+<tr><th>Instance</th><th>cline-patched</th><th>codex</th><th>opencode</th><th>claude-code</th><th>deepseek</th><th>Pi</th><th>Hermes</th></tr>
+{rows_joined if rows_joined else '<tr><td colspan="9">No data yet</td></tr>'}
 </table>
 <h2>3. Methodology</h2>
 <div class="callout">
@@ -170,7 +180,9 @@ pre {{ background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; o
 <li><strong>Model:</strong> {MODEL} via gw_proxy.py (port 9090)</li>
 <li><strong>Timeout:</strong> 1800s per instance</li>
 <li><strong>Eval:</strong> r1_eval.py — FAIL_TO_PASS + PASS_TO_PASS (official SWE-bench criteria)</li>
-<li><strong>Order:</strong> cline-patched → codex → opencode → claude-code → deepseek</li>
+<li><strong>Order:</strong> cline-patched → codex → opencode → claude-code → deepseek-harness → Pi (Hermes: toolchain unavailable)</li>
+<li><strong>Pi driver:</strong> <code>bun dist/cli.js -p</code> (print mode, non-interactive) via gw_proxy port 9090</li>
+<li><strong>Hermes Agent:</strong> requires Python 3.14 + Node 26 (system has 3.10 + Node 20), Docker daemon permission denied — marked unavailable</li>
 </ol>
 </div>
 <h2>4. Reproduction</h2>
@@ -188,10 +200,11 @@ python3 gen_kimi_compare.py</code></pre>
 <li><strong>30 instances only</strong> — small sample, confidence intervals are wide.</li>
 <li><strong>cline-patched</strong> is a modified cline, not vanilla.</li>
 <li><strong>Harnesses not yet run</strong> are marked "⬜ not started" — results update as runs complete.</li>
+<li><strong>Hermes Agent</strong> could not be evaluated (toolchain unavailable: Python 3.14+Node 26 not on system, Docker permission denied). Marked "❌ unavailable".</li>
 </ol>
 </div>
 <hr>
-<p><small>BaiZe Harness H-A, 30×5 cross-eval, {now}. Model: {MODEL}. Serial concurrency=1. Data: kimi_pilot_results.json (filtered to 30 instances, {total_entries} entries).</small></p>
+<p><small>BaiZe Harness H-A, 30×7 cross-eval (6 active + 1 unavailable), {now}. Model: {MODEL}. Serial concurrency=1. Data: kimi_pilot_results.json (filtered to 30 instances, {total_entries} entries).</small></p>
 </body></html>"""
 
     out = HERE / "SWEBENCH_COMPARE.html"

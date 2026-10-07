@@ -5,13 +5,30 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 30×7 harness cross-eval (kimi-k2.6-cloud, serial=1) — cline-patched×30 ✅ 60.0% · codex×30 ✅ 46.7% · opencode×30 ✅ 50.0% · claude-code×30 ✅ 44.8% · deepseek-harness×23/30 🔄 RUNNING (10 res/13 pbf = 43.5%, on inst 24 sympy__sympy-13043) · Pi ✅ smoke-test PASSED (resolved django__django-10924!) · Hermes ❌ toolchain unavailable (Python 3.14+Node 26 not on system, Docker permission denied). gw_proxy healthy (PID 3175038, port 9090) + gw_proxy_dsh healthy (PID 1307655, port 9091).
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped (43/108/149) · opencode×30 (50.0%) · claude-code×30 (44.8%) · deepseek-harness×23/30 (10 res/13 pbf = 43.5%, RUNNING) · PiDriver smoke-test ✅ (django__django-10924 resolved) · SWEBENCH_COMPARE.html (30×5, 135 entries, 67 resolved)
-当前动作:     R156: Pi smoke-test PASSED (resolved django__django-10924) → Hermes toolchain unavailable (evidence gathered) → TASK archived 34.8KB→29.4KB → prepare Pi×30 launch (after deepseek chain finishes)
-下一步:       [AUTO] deepseek-harness×7 remaining (~70min) → launch Pi×30 (serial, same 30 instances) → update SWEBENCH_COMPARE.html to 6 rows (5+Pi) → final commit+push
-阻塞:         Hermes Agent: Python 3.14 + Node 26 not available (system has 3.10 + Node 20), Docker daemon permission denied, install script SSL issues through proxy. Marked as "toolchain not available" with evidence.
+PHASE:        H-A 30×7 harness cross-eval (kimi-k2.6-cloud, serial=1) — cline-patched×30 ✅ 60.0% · codex×30 ✅ 46.7% · opencode×30 ✅ 50.0% · claude-code×30 ✅ 44.8% · deepseek-harness×30 ✅ 40.0% · Pi×6/30 🔄 RUNNING (5 res/1 pbf = 83.3%, on inst 7) · Hermes ❌ toolchain unavailable. gw_proxy healthy (PID 3175038, port 9090) + gw_proxy_dsh healthy (PID 1307655, port 9091).
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped (43/108/149) · opencode×30 (50.0%) · claude-code×30 (44.8%) · deepseek-harness×30 (12 res/18 pbf = 40.0%) · Pi×6/30 RUNNING (5 res/1 pbf = 83.3%) · gen_kimi_compare.py upgraded to 7-way · SWEBENCH_COMPARE.html (30×7, 156 entries, 77 resolved)
+当前动作:     R157: deepseek-harness×30 COMPLETE (40.0%) → gen_kimi_compare.py upgraded to 7-way (Pi+Hermes) → SWEBENCH_COMPARE.html regenerated (21852B, 7 rows) → Pi×30 chain running autonomously (PID 690669, on inst 7) → commit+push
+下一步:       [AUTO] Pi×30 remaining 24 instances (~2-3h, chain script will auto-regen HTML) → next wake: verify Pi×30 complete → final SWEBENCH_COMPARE.html → commit+push
+阻塞:         Hermes Agent: Python 3.14 + Node 26 not available (system has 3.10 + Node 20), Docker daemon permission denied. Marked as "toolchain not available" with evidence.
 ERROR_COUNT:  0
 ```
+
+## 🆕 第一百五十七轮速览（2026-10-07 22:44）— deepseek-harness×30 ✅ COMPLETE (40.0%) + gen_kimi_compare.py upgraded to 7-way + SWEBENCH_COMPARE.html regenerated (7 rows) + Pi×30 🔄 RUNNING (6/30, 83.3%)
+
+- ✅ **deepseek-harness×30 COMPLETE**：chain PID 1292346 finished at 22:31. Final: **12 resolved / 18 patch-but-failed = 40.0%** (30/30 scored, 0 blocked).
+  - Instances: 10924(res)→11001(res)→11019(pbf)→11039(res)→11049(res)→11099(res)→11133(res)→11179(res)→11283(pbf)→11422(pbf)→11564(pbf)→11583(pbf)→11620(pbf)→11630(pbf)→11742(pbf)→11870(pbf)→11897(pbf)→12171(pbf)→12236(pbf)→12419(res)→12454(pbf)→12481(res)→13031(res)→13043(pbf)→13146(pbf)→13177(pbf)→13437(pbf)→13471(res)→13480(res)→13647(pbf)
+- 🔧 **gen_kimi_compare.py upgraded to 7-way**：Added `pi` to HARNESS_ORDER (6th) + Hermes Agent special row (7th, "toolchain not available"). Updated title/scope/detail-table-headers/methodology/caveats/footer from 5→7. Pi column shows results; Hermes column always N/A.
+- 📊 **SWEBENCH_COMPARE.html regenerated** (21852B, 30×7, 156 entries, 77 resolved):
+  - cline-patched: 30 scored, 18 res / 12 pbf = 60.0% ✅
+  - codex: 30 scored, 14 res / 16 pbf = 46.7% ✅
+  - opencode: 30 scored, 15 res / 15 pbf = 50.0% ✅
+  - claude-code: 29 scored, 13 res / 16 pbf / 1 blk = 44.8% ✅
+  - deepseek-harness: 30 scored, 12 res / 18 pbf = 40.0% ✅
+  - Pi: 6 scored, 5 res / 1 pbf = 83.3% 🔄 (6/30, running)
+  - Hermes Agent: ❌ toolchain unavailable
+- 🔄 **Pi×30 chain running autonomously**：`chain_pi_after_deepseek.sh` (PID 3288315) launched `run_serial_kimi.py --harness pi --resume` (PID 690669) at 22:31. Currently on inst 7 (django__django-11133). 24 remaining ≈ ~2-3h. Chain script will auto-regen HTML when done.
+  - Pi instances so far: 10924(res)→11001(res)→11019(pbf)→11039(res)→11049(res)→11099(res)→11133(running)
+- 📦 **体积自检**：TASK=29428B（28.7KB，≤32KB ✓）/ MEMORY=~21KB（≤32KB ✓）。📦 体积：TASK=28.7KB / MEMORY=~21KB（归档 0KB）。
 
 ## 🆕 第一百五十六轮速览（2026-10-07 22:05）— Pi smoke-test ✅ PASSED (resolved django__django-10924!) + Hermes ❌ toolchain unavailable + TASK archived 34.8KB→29.4KB + Pi×30 prepared
 
