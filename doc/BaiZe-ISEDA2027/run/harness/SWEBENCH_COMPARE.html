@@ -22,7 +22,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 </style></head><body>
 <h1>SWE-bench 30×5 Harness Cross-Eval Report</h1>
 <p><span class="model-badge">Model: kimi-k2.6-cloud</span> &nbsp; Gateway: <code>http://agi-gateway.cxmt.com/cloud/v1</code></p>
-<p><strong>Generated:</strong> 2026-10-07 14:22 | <strong>Scope:</strong> 30 instances (15 django + 15 sympy) × 5 harnesses | <strong>Concurrency:</strong> 1 (strict serial)</p>
+<p><strong>Generated:</strong> 2026-10-07 15:03 | <strong>Scope:</strong> 30 instances (15 django + 15 sympy) × 5 harnesses | <strong>Concurrency:</strong> 1 (strict serial)</p>
 <div class="callout">
 <p><strong>📋 Key Design (per operator instruction 2026-10-07):</strong></p>
 <ul>
@@ -40,23 +40,23 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <tr><td class='hname'>cline-patched</td><td>30</td><td>18</td><td>12</td><td>0</td><td>0</td><td>18/30 (60.0%)</td><td>479s</td><td>✅ done</td></tr>
 <tr><td class='hname'>codex</td><td>30</td><td>14</td><td>16</td><td>0</td><td>0</td><td>14/30 (46.7%)</td><td>843s</td><td>✅ done</td></tr>
 <tr><td class='hname'>opencode</td><td>30</td><td>15</td><td>15</td><td>0</td><td>0</td><td>15/30 (50.0%)</td><td>290s</td><td>✅ done</td></tr>
-<tr><td class='hname'>claude-code</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>N/A</td><td>N/A</td><td>⬜ not started</td></tr>
+<tr><td class='hname'>claude-code</td><td>6</td><td>4</td><td>2</td><td>0</td><td>1</td><td>4/6 (66.7%)</td><td>196s</td><td>🔄 in progress (7/30)</td></tr>
 <tr><td class='hname'>deepseek-harness</td><td>2</td><td>0</td><td>2</td><td>0</td><td>0</td><td>0/2 (0.0%)</td><td>4s</td><td>🔄 in progress (2/30)</td></tr>
 </table>
 <div class="callout">
-<p><strong>📊 Overall:</strong> 92 entries on 30 instances | 47 total resolved across all harnesses</p>
+<p><strong>📊 Overall:</strong> 99 entries on 30 instances | 51 total resolved across all harnesses</p>
 </div>
 <h2>2. Instance-level Detail</h2>
 <p>Legend: &#10004;=resolved, &#10006;=patch-but-failed, &#9728;=quota-blocked, &#9888;=infra-blocked (git/rootfs failure), — = not yet run</p>
 <table>
 <tr><th>Instance</th><th>cline-patched</th><th>codex</th><th>opencode</th><th>claude-code</th><th>deepseek</th></tr>
-<tr><td class='iid'>django__django-10924</td><td class="resolved">&#10004;<br><small>383s</small></td><td class="failed">&#10006;<br><small>455s</small></td><td class="failed">&#10006;<br><small>230s</small></td><td class="pending">—</td><td class="failed">&#10006;<br><small>4s</small></td></tr>
-<tr><td class='iid'>django__django-11001</td><td class="resolved">&#10004;<br><small>901s</small></td><td class="resolved">&#10004;<br><small>225s</small></td><td class="resolved">&#10004;<br><small>123s</small></td><td class="pending">—</td><td class="failed">&#10006;<br><small>4s</small></td></tr>
-<tr><td class='iid'>django__django-11019</td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>802s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
-<tr><td class='iid'>django__django-11039</td><td class="resolved">&#10004;<br><small>741s</small></td><td class="resolved">&#10004;<br><small>190s</small></td><td class="resolved">&#10004;<br><small>84s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
-<tr><td class='iid'>django__django-11049</td><td class="resolved">&#10004;<br><small>270s</small></td><td class="resolved">&#10004;<br><small>146s</small></td><td class="resolved">&#10004;<br><small>445s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
-<tr><td class='iid'>django__django-11099</td><td class="resolved">&#10004;<br><small>153s</small></td><td class="resolved">&#10004;<br><small>93s</small></td><td class="resolved">&#10004;<br><small>48s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
-<tr><td class='iid'>django__django-11133</td><td class="resolved">&#10004;<br><small>481s</small></td><td class="resolved">&#10004;<br><small>508s</small></td><td class="resolved">&#10004;<br><small>130s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-10924</td><td class="resolved">&#10004;<br><small>383s</small></td><td class="failed">&#10006;<br><small>455s</small></td><td class="failed">&#10006;<br><small>230s</small></td><td class="failed">&#10006;<br><small>451s</small></td><td class="failed">&#10006;<br><small>4s</small></td></tr>
+<tr><td class='iid'>django__django-11001</td><td class="resolved">&#10004;<br><small>901s</small></td><td class="resolved">&#10004;<br><small>225s</small></td><td class="resolved">&#10004;<br><small>123s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>4s</small></td></tr>
+<tr><td class='iid'>django__django-11019</td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>802s</small></td><td class="failed">&#10006;<br><small>266s</small></td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11039</td><td class="resolved">&#10004;<br><small>741s</small></td><td class="resolved">&#10004;<br><small>190s</small></td><td class="resolved">&#10004;<br><small>84s</small></td><td class="resolved">&#10004;<br><small>111s</small></td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11049</td><td class="resolved">&#10004;<br><small>270s</small></td><td class="resolved">&#10004;<br><small>146s</small></td><td class="resolved">&#10004;<br><small>445s</small></td><td class="resolved">&#10004;<br><small>116s</small></td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11099</td><td class="resolved">&#10004;<br><small>153s</small></td><td class="resolved">&#10004;<br><small>93s</small></td><td class="resolved">&#10004;<br><small>48s</small></td><td class="resolved">&#10004;<br><small>30s</small></td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11133</td><td class="resolved">&#10004;<br><small>481s</small></td><td class="resolved">&#10004;<br><small>508s</small></td><td class="resolved">&#10004;<br><small>130s</small></td><td class="resolved">&#10004;<br><small>204s</small></td><td class="pending">—</td></tr>
 <tr><td class='iid'>django__django-11179</td><td class="resolved">&#10004;<br><small>303s</small></td><td class="resolved">&#10004;<br><small>174s</small></td><td class="resolved">&#10004;<br><small>178s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
 <tr><td class='iid'>django__django-11283</td><td class="failed">&#10006;<br><small>581s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>292s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
 <tr><td class='iid'>django__django-11422</td><td class="resolved">&#10004;<br><small>279s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>201s</small></td><td class="pending">—</td><td class="pending">—</td></tr>
@@ -111,5 +111,5 @@ python3 gen_kimi_compare.py</code></pre>
 </ol>
 </div>
 <hr>
-<p><small>BaiZe Harness H-A, 30×5 cross-eval, 2026-10-07 14:22. Model: kimi-k2.6-cloud. Serial concurrency=1. Data: kimi_pilot_results.json (filtered to 30 instances, 92 entries).</small></p>
+<p><small>BaiZe Harness H-A, 30×5 cross-eval, 2026-10-07 15:03. Model: kimi-k2.6-cloud. Serial concurrency=1. Data: kimi_pilot_results.json (filtered to 30 instances, 99 entries).</small></p>
 </body></html>
