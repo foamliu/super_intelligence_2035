@@ -12,17 +12,18 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验 → ①BO 200/200+top-K lm_eval+Spearman+σ ✅ → ②s_step归因✅(MBS16:8.6×) → ③Round2 BO 🚀运行中(91trial:77✅/14❌,score0.3730-0.4155,rate11.8/h,ETA~20:54) → 🎉base下载✅完成(l1_en_hq 6000/6000+zh 256/256,rc=0@08:16) → ✅R1 lm_eval errata更正落地+归档
+PHASE:        §0.6-B 配比实验 → ①BO 200/200+top-K lm_eval+Spearman+σ ✅ → ②s_step归因✅(MBS16:8.6×) → ③Round2 BO 🚀运行中(97trial:83✅/14❌,score0.3730-0.4155,rate9.5/h,ETA~21:56) → 🎉base下载✅完成(l1_en_hq 6000/6000+zh 256/256,rc=0@08:16) → ✅R1 lm_eval errata更正落地+归档
 已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a已kill；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py；5项必验全通过；BO R1 200/200+Spearman+σ=0+report_data_mix_eval.html; s_step归因(MBS16:8.6×,166ms)+report_data_mix_sstep.html; Round2 BO(PID=3614158@.29)启动+修3bug+修ckpt2HF; best=0.4155(id=23); ⭐base下载完成→MiniCPM5 base族就绪; ✅R1 lm_eval errata更正(analyze_lmeval.py L35名次方向+DATA_MIX_RECIPE §9.2.1表格+report_data_mix_eval.html)+归档到ARCHIVE_OPERATOR_DATA.md
-当前动作:     唤醒183(10:30@.12) ①base下载✅完成(6000+256,rc=0@08:16,l1_en_hq=446G+zh=301G@/nas_train/.../Ultra-FineWeb/,1 .incomplete=stale en_v1_4→无需重启) ②GPIC PID=144981存活(5048/8001 train+128/128 test,+29 since唤醒182,nohup.out秒级活跃→无需重启) ③Round2 BO DB(mix_search_eval_r2.db mtime=10:30):91trial(77✅/14❌),best=id23(0.4155不变),top5:id23(0.4155)/38(0.4138)/33(0.4090)/57(0.4058)/79(0.4052),stats:min0.373/max0.4155/avg0.3907,rate11.8/h→123remaining→ETA~10.4h→~20:54 ④git fetch(proxy)成功,behind0→无新运维指令
-下一步:       ①监控BO进度(ETA~20:54到200trial); ②BO跑完200trial→top-K全量lm_eval→report_data_mix_eval_r2.html; ③GPIC续下至8001tar; ④更新DATA_MIX_RECIPE.md §6 Round2结论; ⑤base已满→可启动P-8备料(base分词扩展); ⑥R2收尾时用归档§⑤操作提醒(EVAL_LIMIT不调大/只比轮内排序)
-阻塞:         Round2 BO运行中(91/200trial,ETA~20:54); GPIC下载进行中(5048/8001)
+当前动作:     唤醒184(11:08@.12) ①base下载✅完成(6000+256,rc=0@08:16,0 .incomplete→无需重启) ②GPIC PID=144981存活(5076/8001 train+128/128 test,+28 since唤醒183,mtime 11:08秒级活跃→无需重启) ③Round2 BO DB(mix_search_eval_r2.db mtime=10:36):97trial(83✅/14❌),best=id23(0.4155不变),top5:id23(0.4155)/38(0.4138)/33(0.4090)/57(0.4058)/79(0.4052),rate9.5/h→103remaining→ETA~10.8h→~21:56 ④git fetch(proxy)成功,behind0→无新运维指令
+下一步:       ①监控BO进度(ETA~21:56到200trial); ②BO跑完200trial→top-K全量lm_eval→report_data_mix_eval_r2.html; ③GPIC续下至8001tar; ④更新DATA_MIX_RECIPE.md §6 Round2结论; ⑤base已满→可启动P-8备料(base分词扩展); ⑥R2收尾时用归档§⑤操作提醒(EVAL_LIMIT不调大/只比轮内排序)
+阻塞:         Round2 BO运行中(97/200trial,ETA~21:56); GPIC下载进行中(5076/8001)
 ERROR_COUNT:  0
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+- [11:08] **唤醒184**：①本机=`.12`。②**base下载✅完成**（6000+256,rc=0@08:16,0 .incomplete→无需重启）。③**GPIC** PID=144981存活(hf)+3525273(download_it_pairs.sh),train **5076/8001**（+28 since唤醒183)+test 128/128✅,mtime 11:08秒级活跃(gpic_train_05075.tar)→无需重启。④**Round2 BO** DB(/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/mix_search/mix_search_eval_r2.db mtime=10:36):**97trial(83✅/14❌)**,best=id23(0.4155不变),top5:id23(0.4155)/38(0.4138)/33(0.4090)/57(0.4058)/79(0.4052)。⑤BO PID=3614158 alive@.29(etime 9h20m),8GPU全62GB/46-69%util。⑥rate:+6complete/38min≈9.5/h→103remaining→ETA~10.8h→~21:56。⑦git fetch(proxy=172.19.92.25:13128)成功,behind0→无新运维指令。📦 体积：TASK=26.9KB / MEMORY=29.7KB（归档0KB,均≤32KB✅）。下载线心跳：base l1_en_hq ✅6000/6000（已完成,rc=0）· zh ✅256/256 | GPIC 5076/8001（活PID144981,ETA~长）。
 - [10:30] **唤醒183**：①本机=`.12`。②**base下载✅完成**（实测确认：`/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/`下 l1_en_hq=**6000 parquet**(6 snapshot×1000,446G)+zh=**256 parquet**(301G),log末尾=`[retry-loop] DONE rc=0 2026-10-07_08:16:38`,1 .incomplete=stale en_v1_4→非失败,无需重启）→MiniCPM5 base族就绪。③**GPIC** PID=144981存活(hf)+3525273(download_it_pairs.sh),train **5048/8001**（+29 since唤醒182)+test 128/128✅,nohup.out显示active downloading gpic_train_05050→无需重启。④**Round2 BO** DB(mtime=10:30,秒级写入):**91trial(77✅/14❌)**,best=id23(0.4155不变),top5:id23(0.4155)/38(0.4138)/33(0.4090)/57(0.4058)/79(0.4052),stats:min0.373/max0.4155/avg0.3907(n=77)。⑤BO PID=3614158 alive@.29,8GPU(GPU3=54%/GPU6=65%/GPU7=61GB active)。⑥rate:11.8trial/h(77complete end_times)→123remaining→ETA~10.4h→~20:54。⑦git fetch(proxy=172.19.92.25:13128)成功,behind0→无新运维指令。📦 体积：TASK=~26KB / MEMORY=~28KB（归档0KB,均≤32KB✅）。下载线心跳：base l1_en_hq ✅6000/6000（已完成,rc=0）· zh ✅256/256 | GPIC 5048/8001（活PID144981,ETA~长）。
 - [09:52] **唤醒182**：①本机=`.12`。②**base下载✅完成**（6000+256,rc=0@08:16,0 .incomplete→MiniCPM5 base族就绪,无需重启）。③**GPIC** PID=144981存活,train **5019/8001**（+32 since 唤醒181）+test 128/128✅,1 .incomplete在途,mtime 09:53秒级活跃→无需重启。④**Round2 BO** DB(code/BaiZe-ISEDA2027/nemo_experiments/mix_search/mix_search_eval_r2.db,mtime=09:52):**88trial(75✅/13❌early id1-13)**,best=id23(0.4155不变),top5:id23(0.4155)/38(0.4138)/33(0.4090)/57(0.4058)/79(0.4052),stats:min0.373/max0.4155/avg0.3907。⑤BO PID=3614158 alive@.29,8GPU全62GB/55-82%util,当前t0088。⑥rate:12.1trial/h(75complete→88total,+8complete/40min)→125remaining→ETA~10.4h→~20:15。⑦✅**R1 lm_eval errata块归档**：更正已于唤醒181全部落地→本块原文搬入ARCHIVE_OPERATOR_DATA.md,TASK留1行指针（R2收尾§⑤操作提醒在归档中,收尾时需读）。⑧git fetch(proxy=172.19.92.25:13128)成功,behind0→无新运维指令。📦 体积：TASK=~25KB / MEMORY=~26KB（归档~5KB→ARCHIVE_OPERATOR_DATA.md）。下载线心跳：base l1_en_hq ✅6000/6000（已完成,rc=0）· zh ✅256/256 | GPIC 5019/8001（活PID144981,ETA~长）。
 - [09:11] **唤醒181**：①本机=`.12`。②**base下载✅完成**（6000+256,rc=0@08:16,1 .incomplete=stale en_v1_4 0-byte→非失败,无需重启）→MiniCPM5 base族就绪。③**GPIC** PID=144981存活,train **4987/8001**（+29 since 唤醒180）+test 128/128✅,mtime 09:11:42秒级活跃→无需重启。④**Round2 BO** DB(mtime=09:07):**80trial(67✅/13❌early id1-13)**,best=id23(0.4155不变),top5:id23(0.4155)/38(0.4138)/33(0.4090)/57(0.4058)/**79(0.4052,新)**,stats:min0.373/max0.4155/avg0.3905。⑤BO PID=3614158 alive@.29,8GPU,当前t0082。⑥rate:+8complete/38min≈12.6/h→120剩余→ETA~18:40。⑦✅**R1 lm_eval errata全部落地**：analyze_lmeval.py L35名次方向bug修（`np.argsort(-np.asarray(avgs))`）+DATA_MIX_RECIPE.md §9.2.1表格从JSON重生成（#182 lm rk 6→1,#155 0.3420→0.3320等5处）+report_data_mix_eval.html 6处更正（核心发现/表格lm rk列/warning/Spearman summary/方法学/footer）+结论改「代理无分辨力+证据不足」。⑧git fetch(proxy),local ahead1(autocommit c225e0b5),behind0→无新运维指令。📦 体积：TASK=29.5KB / MEMORY=25.4KB（归档 0KB,均≤32KB ✅）。下载线心跳：base l1_en_hq ✅6000/6000（已完成,rc=0）· zh ✅256/256 | GPIC 4987/8001（活PID144981,ETA~长）。
@@ -92,11 +93,11 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **§0.6-B 配比实验 → ①BO R1 200/200✅+Spearman ρ=−0.43(证据不足)+σ=0 ②s_step归因✅(MBS1→16:8.6×) ③Round2 BO🚀运行中(PID=3614158@.29,88trial:75✅/13❌早期→修复后连续75✅,rate12.1/h,ETA~20:15)** |
-| WAITING | 1（Round2 BO在跑,88/200trial,ETA~10.4h到200trial完成~20:15;等BO完成后跑top-K全量lm_eval） |
-| ERROR_COUNT | 0（batch1 arch mismatch已修+batch2 port冲突已修,修复后连续75trial✅） |
-| 节点 | `10.239.2.29`（GPU0-7=Round2 BO,各62GB/55-82%util; t0088训练中） |
-| 更新 | 2026-10-07 09:52 |
+| PHASE | **§0.6-B 配比实验 → ①BO R1 200/200✅+Spearman ρ=−0.43(证据不足)+σ=0 ②s_step归因✅(MBS1→16:8.6×) ③Round2 BO🚀运行中(PID=3614158@.29,97trial:83✅/14❌早期→修复后连续83✅,rate9.5/h,ETA~21:56)** |
+| WAITING | 1（Round2 BO在跑,97/200trial,ETA~10.8h到200trial完成~21:56;等BO完成后跑top-K全量lm_eval） |
+| ERROR_COUNT | 0（batch1 arch mismatch已修+batch2 port冲突已修,修复后连续83trial✅） |
+| 节点 | `10.239.2.29`（GPU0-7=Round2 BO,各62GB/46-69%util; 97trial运行中） |
+| 更新 | 2026-10-07 11:08 |
 
 ## 看板（按推荐执行顺序）
 
