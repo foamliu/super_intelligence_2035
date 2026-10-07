@@ -13,6 +13,9 @@
 > **时序**：本块 = **无卡时段的填充任务（纯 CPU / 联网，不占 GPU）**；**③（2M–16M 实测 ＋ 显存归因诊断）依然有效** —— **一旦有卡，优先插空跑 ③**，再回来做本块。
 > 🔴 **2026-10-07 11:35 用户令（覆盖本节时序）**：**③ 没卡没关系、不用等** —— **④（这 5 份研究）现在就是第 1 优先，立刻开做**；**不得因 ③ 无卡而空转**。③ 继续挂着等卡（vision 消融 ~16:30–17:00 / data BO ~21:56 释放后再补跑）。
 > **工具**：你的 MCP 有 **`cimi_search` / `cimi_fetch`（联网检索+读原文）** 与 **文生图** —— 本块主要靠它们。
+> ⚠️ **收尾修正（2026-10-07 14:4x · 运维）**：**research4 目前出了两份** —— `report_pretrain_research4_long_ctx.html`（46.9KB，"Long-Context Extension"）与 `report_pretrain_research4_longctx_1m_p8.html`（26.1KB，"Long-Context 1M: What P-8 Must Do"）。**以我指定的 `..._longctx_1m_p8.html` 为准**；请把另一份的**独有内容并入**它后**删除冗余文件**（或申请改名为 `..._appendix` 并在 MEMORY 注明）—— **🚫 不许留两份同号报告**（会造成"到底哪份是 r4"的歧义）。收尾照常 commit+push。
+
+
 
 **① 五份报告（每份一个话题、一份 HTML，落到 `doc/BaiZe-ISEDA2027/`）**
 
