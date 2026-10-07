@@ -2595,3 +2595,44 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 - §4 或附录应写：ABF (rope_theta=1e6, max_pos=8192) 对短上下文 zero-shot 的影响。
 - 关键句：「ABF extension to 8K does not degrade short-context performance (HellaSwag +2.71pp, ARC-Easy +0.72pp), despite PPL increasing from 75 to 83. However, passkey retrieval remains 0% at both 4K and 8K, indicating the model lacks needle-in-haystack capability regardless of context window size at 20B tokens.」
 
+
+## P-9.11-E · sglang 长上下文推理成本矩阵（128K–1M, hybrid vs dense）✅ COMPLETE（2026-10-07 ~09:30–09:44, GPU1-7 @.12）
+
+> **目标**：Benchmark long-context inference cost (128K–1M) comparing BaiZe (Mamba2-hybrid 2.220B, 4/56 attn) vs Dense (Llama 2.512B, 42/42 attn) on sglang 0.5.9.
+> **口径**：`--mem-fraction-static 0.3` + `--attention-backend flashinfer` + `--mamba-ssm-dtype float32`（hybrid）。Served via `SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1`（no ABF/YaRN）。Both models `max_position_embeddings=4096` in HF config — RoPE extrapolating beyond 4096. Cost metrics are architecture-level, valid regardless of RoPE config.
+
+### 结果表（bs=1, gen_len=64）
+
+| ctx | Hybrid TTFT | Hybrid prefill | Hybrid decode | Hybrid VRAM | Dense TTFT | Dense prefill | Dense decode | Dense VRAM | 状态 |
+|:---|---:|---:|---:|---:|---:|---:|---:|---:|:---|
+| 128K | 79.1s | 1591 tok/s | 71.5 tok/s | 25.9GB | 24.0s | 5253 tok/s | 189.0 tok/s | 27.3GB | ✅ both |
+| 256K | 81.4s | 3094 tok/s | 63.0 tok/s | 26.1GB | 47.6s | 5289 tok/s | 137.3 tok/s | 28.5GB | ✅ both |
+| 512K | 96.5s | 5222 tok/s | 53.3 tok/s | 26.3GB | — | — | — | — | ❌ dense KV OOM |
+| 1M | 155.5s | 6484 tok/s | 34.4 tok/s | 26.5GB | — | — | — | — | ❌ dense KV OOM |
+
+### ⭐ 核心结论
+
+1. **Dense OOMs at 512K**: KV cache pool cap = 455,214 tokens（`--mem-fraction-static 0.3` on 80GB H100）；512K prompt = 504,001 tokens > 455K → request rejected (completion_tokens=1).
+2. **Hybrid serves through 1M**: VRAM near-constant ~26GB across 128K-1M（Mamba2 SSM state O(1) for 52/56 layers + small KV for 4 attn layers）.
+3. **At 128K-256K (both valid)**: Dense faster — prefill 1.7-3.3x, decode 2.2-2.6x. Attention matmul parallelism wins at medium ctx; float32 SSM dtype penalizes hybrid.
+4. **Hybrid prefill throughput INCREASES with ctx**（1591→6484 tok/s, 128K→1M）— Mamba2 parallel scan efficiency improves with longer sequences. Crossover extrapolated ~512K but dense OOMs before measurement.
+5. **No decode crossover**: Dense always faster at decode where it can serve（hybrid decode slows 71→34 tok/s due to 4 attn layers' growing KV）.
+
+### 一句话结论（论文用）
+
+> "At 128K-256K where both architectures can serve, dense attention is 1.7-3.3x faster at prefill and 2.2-2.6x faster at decode. However, dense OOMs at 512K (KV cache pool cap 455K tokens at 0.3 mem-fraction on 80GB H100), while the Mamba2-hybrid serves through 1M with near-constant 26GB VRAM — the decisive advantage for long-context inference."
+
+### 口径说明
+
+- **P-9.11 (mem-frac 0.85, likely bf16 SSM)**: At 64K bs1, hybrid prefill 2.18x faster, decode 1.18x faster.
+- **P-9.11-E (mem-frac 0.3, float32 SSM)**: At 128K bs1, dense prefill 3.3x faster, decode 2.6x faster.
+- 口径 change（0.3 mem-frac + float32 SSM）reduces hybrid absolute throughput；relative hybrid-vs-dense comparison within P-9.11-E is valid.
+- float32 SSM dtype penalizes hybrid；production bf16 would improve hybrid speeds.
+
+### 产出
+
+- 8 cell JSONs: `run/p911e_results/p911e_{hybrid,dense}_ctx{131072,262144,524288,1048576}_gpu{N}.json`
+- Merged JSON: `run/p911e_longctx_cost_results.json`
+- HTML report: `report_pretrain_longctx_infer_cost.html`（14.8KB, self-contained, 0 external links ✅）
+- Merge script: `run/p911e_merge_and_report.py`
+- Launcher: `run/p911e_matrix_launch.sh`
