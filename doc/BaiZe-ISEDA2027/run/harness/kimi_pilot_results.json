@@ -7927,72 +7927,6 @@
     "classification": "resolved"
   },
   {
-    "instance_id": "django__django-10924",
-    "repo": "django/django",
-    "harness": "deepseek-harness",
-    "model": "kimi-k2.6-cloud",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "deepseek-harness",
-      "returncode": 0,
-      "wall_s": 3.8,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-10924.json",
-      "stdout_tail": "_single] base_commit=bceadd2788dc2dad53eba0caae172bd8522fd483\n[run_single] ps_len=822\n[run_single] git reset --hard bceadd2788dc2dad53eba0caae172bd8522fd483\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=3.3s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-10924.json\n[run_single] cleanup: git reset --hard bceadd2788dc2dad53eba0caae172bd8522fd483\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 1,
-        "p2p_pass": 1,
-        "p2p_total": 1
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
-    "instance_id": "django__django-11001",
-    "repo": "django/django",
-    "harness": "deepseek-harness",
-    "model": "kimi-k2.6-cloud",
-    "workdir_setup": {
-      "ok": true,
-      "msg": "existing workdir updated"
-    },
-    "rootfs_setup": {
-      "ok": true,
-      "msg": "using template django__django-10914"
-    },
-    "harness_result": {
-      "harness": "deepseek-harness",
-      "returncode": 0,
-      "wall_s": 3.6,
-      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11001.json",
-      "stdout_tail": "single] base_commit=ef082ebb84f00e38af4e8880d04e8365c2766d34\n[run_single] ps_len=2220\n[run_single] git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=3.2s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11001.json\n[run_single] cleanup: git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n",
-      "quota_blocked": false,
-      "quota_retry": null,
-      "eval": {
-        "eval_rc": 0,
-        "resolved": false,
-        "patch_applied": true,
-        "f2p_pass": 0,
-        "f2p_total": 2,
-        "p2p_pass": 118,
-        "p2p_total": 118
-      }
-    },
-    "classification": "patch-but-failed"
-  },
-  {
     "instance_id": "django__django-11019",
     "repo": "django/django",
     "harness": "opencode",
@@ -9620,5 +9554,170 @@
       }
     },
     "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-13031",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 593.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13031.json",
+      "stdout_tail": "y-13031\n[run_single] base_commit=2dfa7457f20ee187fbb09b5b6a1631da4458388c\n[run_single] ps_len=717\n[run_single] git reset --hard 2dfa7457f20ee187fbb09b5b6a1631da4458388c\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=593.1s ==\n[run_single] model_patch: 2448 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13031.json\n[run_single] cleanup: git reset --hard 2dfa7457f20ee187fbb09b5b6a1631da4458388c\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 3,
+        "p2p_total": 9
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-13043",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 856.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13043.json",
+      "stdout_tail": "y-13043\n[run_single] base_commit=a3389a25ec84d36f5cf04a4f2562d820f131db64\n[run_single] ps_len=449\n[run_single] git reset --hard a3389a25ec84d36f5cf04a4f2562d820f131db64\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=856.4s ==\n[run_single] model_patch: 2364 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13043.json\n[run_single] cleanup: git reset --hard a3389a25ec84d36f5cf04a4f2562d820f131db64\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 1,
+        "p2p_total": 1
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-13146",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 54.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13146.json",
+      "stdout_tail": "sympy-13146\n[run_single] base_commit=b678d8103e48fdb1af335dbf0080b3d5366f2d17\n[run_single] ps_len=290\n[run_single] git reset --hard b678d8103e48fdb1af335dbf0080b3d5366f2d17\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=54.2s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13146.json\n[run_single] cleanup: git reset --hard b678d8103e48fdb1af335dbf0080b3d5366f2d17\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 34,
+        "p2p_total": 34
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-13177",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 105.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13177.json",
+      "stdout_tail": "py-13177\n[run_single] base_commit=662cfb818e865f580e18b59efbb3540c34232beb\n[run_single] ps_len=390\n[run_single] git reset --hard 662cfb818e865f580e18b59efbb3540c34232beb\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=105.6s ==\n[run_single] model_patch: 561 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13177.json\n[run_single] cleanup: git reset --hard 662cfb818e865f580e18b59efbb3540c34232beb\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 75,
+        "p2p_total": 75
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-13437",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 62.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13437.json",
+      "stdout_tail": "py-13437\n[run_single] base_commit=674afc619d7f5c519b6a5393a8b0532a131e57e0\n[run_single] ps_len=614\n[run_single] git reset --hard 674afc619d7f5c519b6a5393a8b0532a131e57e0\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=62.6s ==\n[run_single] model_patch: 1226 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13437.json\n[run_single] cleanup: git reset --hard 674afc619d7f5c519b6a5393a8b0532a131e57e0\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 15,
+        "p2p_total": 15
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]

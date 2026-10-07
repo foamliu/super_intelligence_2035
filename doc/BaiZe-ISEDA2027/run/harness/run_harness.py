@@ -353,7 +353,7 @@ class DeepseekHarnessDriver:
             harness = DeepSeekHarness(
                 provider="deepseek-official",
                 model=UNIFIED_MODEL,
-                base_url=f"http://127.0.0.1:9090/v1",
+                base_url=f"http://127.0.0.1:9091/v1",  # DSH proxy strips DeepSeek-specific params
                 api_key=DUMMY_KEY,
                 cwd=str(workdir),
                 dsh_home=self._DSH_HOME,

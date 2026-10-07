@@ -5,13 +5,36 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 30×5 harness cross-eval (kimi-k2.6-cloud, serial=1) — cline-patched×30 ✅ 60.0% · codex×30 ✅ 46.7% · opencode×30 ✅ 50.0% · claude-code×30 🔄 RUNNING (21/30, 9 res/11 pbf/1 blk = 45.0%, PID 3273581 inst 22/30 sympy__sympy-12481) · deepseek-harness×30 ⬜ (2/30). CHAIN SCRIPT (PID 1292346) → claude-code running → auto-starts deepseek-harness after. gw_proxy healthy (PID 3175038, port 9090).
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped (43/108/149) · opencode×30 (50.0%) · ✅ chain script launched · ✅ R131~R145 archived · SWEBENCH_COMPARE.html (30×5, 113 entries, 56 resolved)
-当前动作:     R150: claude-code×30 progress check (21/30, 9 res/11 pbf/1 blk = 45.0%) → SWEBENCH_COMPARE.html regenerated (15193B, 113 entries, 56 resolved) → chain script healthy (PID 1292346) → relay skip 102nd → commit+push
-下一步:       [AUTO] claude-code×30 finish (~8 inst × ~10min = ~80min, ETA ~19:20) → chain auto-starts deepseek-harness×30 (~28 inst × ~8min = ~3.7h, ETA ~23:00) → final SWEBENCH_COMPARE.html (5 rows) → [next wake] commit+push
-阻塞:         无硬阻塞. claude-code×30 running via chain script, deepseek-harness queued.
+PHASE:        H-A 30×5 harness cross-eval (kimi-k2.6-cloud, serial=1) — cline-patched×30 ✅ 60.0% · codex×30 ✅ 46.7% · opencode×30 ✅ 50.0% · claude-code×30 🔄 RUNNING (26/30, 10 res/15 pbf/1 blk = 40.0%) · deepseek-harness×30 ⬜ FIXED (gw_proxy_dsh.py port 9091, 0 entries, chain will run all 30). CHAIN SCRIPT (PID 1292346) → claude-code running → auto-starts deepseek-harness after. gw_proxy healthy (PID 3175038, port 9090) + gw_proxy_dsh (port 9091).
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped (43/108/149) · opencode×30 (50.0%) · ✅ chain script launched · ✅ R131~R145 archived · ✅ deepseek-harness toolchain FIXED (R151) · SWEBENCH_COMPARE.html (30×5, 116 entries, 57 resolved)
+当前动作:     R151: deepseek-harness toolchain FIX (gw_proxy_dsh.py port 9091 strips reasoning_effort/thinking/dsh_plugin_packages/stream_options, caps max_tokens=8192, fixes auth header) → SDK test confirmed working (9.2s, finish_reason=completed) → removed 2 broken entries → updated run_harness.py to port 9091 → claude-code×26/30 → SWEBENCH_COMPARE.html regenerated → commit+push
+下一步:       [AUTO] claude-code×4 remaining (~40min) → chain auto-starts deepseek-harness×30 with fixed proxy (port 9091, ~30 inst × ~9s = ~5min first + eval) → final SWEBENCH_COMPARE.html (5 rows) → [next wake] commit+push
+阻塞:         无硬阻塞. deepseek-harness toolchain fixed and ready.
 ERROR_COUNT:  0
 ```
+
+## 🆕 第一百五十一轮速览（2026-10-07 18:48）— 🔧 deepseek-harness toolchain FIXED (gw_proxy_dsh.py port 9091) + claude-code×26/30 + SWEBENCH_COMPARE.html regenerated (15267B, 116 entries, 57 resolved)
+
+- 🔧 **deepseek-harness 工具链修复（本轮核心成果）**：诊断发现 deepseek-harness SDK 通过 gw_proxy (port 9090) 调用 kimi-k2.6-cloud 时收到 **HTTP 400 INVALID_REQUEST**（`finish_reason: error`），原因 = SDK 发送 DeepSeek 特有参数（`reasoning_effort: high`、`thinking: {type: enabled}`、`dsh_plugin_packages`、`stream_options`、`max_tokens: 256000`）被 vLLM 网关拒绝。
+  - **修法**：创建 `/nas_train/app.e0031982/harness_work/gw_proxy_dsh.py`（port 9091），在 `rewrite_dsh_body()` 中剥离这些参数 + 封顶 `max_tokens=8192` + 剥离 auth 头后注入真 API key。
+  - **验证**：SDK 测试通过 → `finish_reason: completed`、`final_response: 'Done! I've created a file called hello.txt...'`、wall=9.2s（vs 之前 2.7s with error）。
+  - **更新**：`run_harness.py:356` 改为 `base_url=http://127.0.0.1:9091/v1`。
+  - **清理**：删除 2 条 broken deepseek-harness entries（HTTP 400 产生的空 patch），--resume 将跑全部 30 条。
+  - gw_proxy_dsh PID 运行在 port 9091，与主 gw_proxy (port 9090) 互不干扰。
+- 🔄 **claude-code×30 进展**：26/30 done → 10 resolved, 15 patch-but-failed, 1 blocked = **40.0%** (10/25 scored)。chain script (PID 1292346) 仍在跑，4 remaining。
+- 📈 **SWEBENCH_COMPARE.html regenerated**：15267 bytes, 30 instances, 116 entries (cline 30 + codex 30 + opencode 30 + claude-code 26 + deepseek 0), 57 resolved。
+- 📊 **当前 5-way 对比**（kimi_pilot_results.json, 同 30 instances）：
+  | harness | scored | resolved | pbf | blk | rate |
+  |---|---|---|---|---|---|
+  | cline-patched | 30/30 | 18 | 12 | 0 | 60.0% |
+  | codex (30-subset) | 30/30 | 14 | 16 | 0 | 46.7% |
+  | opencode | 30/30 | 15 | 15 | 0 | 50.0% |
+  | claude-code | 26/30 | 10 | 15 | 1 | 40.0% (so far) |
+  | deepseek-harness | 0/30 | 0 | 0 | 0 | N/A (fixed, pending) |
+- ✅ **gw_proxy 健康**：PID 3175038, port 9090 + gw_proxy_dsh PID on port 9091。
+- 📦 **体积自检**：TASK=31476B（30.7KB，≤32KB ✓）/ MEMORY=~21.8KB（≤32KB ✓）。📦 体积：TASK=30.7KB / MEMORY=21.8KB（归档 0KB）。
+- ⏭ **下一步**：chain script 自动执行 claude-code 剩 4 inst → deepseek-harness×30（fixed proxy 9091）→ final regen HTML。下次唤醒检查结果 → 最终 SWEBENCH_COMPARE.html (5 rows) → commit+push。保持 `WAITING=1`。
+
 
 ## 🆕 第一百五十轮速览（2026-10-07 18:03）— claude-code×30 progress (21/30, 9 res/11 pbf/1 blk = 45.0%) + SWEBENCH_COMPARE.html regenerated (15193B, 113 entries, 56 resolved) + chain script healthy + relay skip 102nd
 
