@@ -22,7 +22,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 </style></head><body>
 <h1>SWE-bench 30×7 Harness Cross-Eval Report</h1>
 <p><span class="model-badge">Model: kimi-k2.6-cloud</span> &nbsp; Gateway: <code>http://agi-gateway.cxmt.com/cloud/v1</code></p>
-<p><strong>Generated:</strong> 2026-10-08 05:00 | <strong>Scope:</strong> 30 instances (15 django + 15 sympy) × 7 harnesses (7 active) | <strong>Concurrency:</strong> 1 (strict serial)</p>
+<p><strong>Generated:</strong> 2026-10-08 05:34 | <strong>Scope:</strong> 30 instances (15 django + 15 sympy) × 7 harnesses (7 active) | <strong>Concurrency:</strong> 1 (strict serial)</p>
 <div class="callout">
 <p><strong>📋 Key Design (per operator instruction 2026-10-07):</strong></p>
 <ul>
@@ -43,10 +43,10 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <tr><td class='hname'>claude-code</td><td>29</td><td>13</td><td>16</td><td>0</td><td>1</td><td>13/29 (44.8%)</td><td>425s</td><td>✅ done</td></tr>
 <tr><td class='hname'>deepseek-harness</td><td>30</td><td>12</td><td>18</td><td>0</td><td>0</td><td>12/30 (40.0%)</td><td>293s</td><td>✅ done</td></tr>
 <tr><td class='hname'>Pi</td><td>30</td><td>18</td><td>12</td><td>0</td><td>0</td><td>18/30 (60.0%)</td><td>275s</td><td>✅ done</td></tr>
-<tr><td class='hname'>Hermes Agent</td><td>19</td><td>9</td><td>10</td><td>0</td><td>0</td><td>9/19 (47.4%)</td><td>583s</td><td>🔄 in progress (19/30)</td></tr>
+<tr><td class='hname'>Hermes Agent</td><td>21</td><td>11</td><td>10</td><td>0</td><td>0</td><td>11/21 (52.4%)</td><td>618s</td><td>🔄 in progress (21/30)</td></tr>
 </table>
 <div class="callout">
-<p><strong>📊 Overall:</strong> 199 entries on 30 instances | 99 total resolved across all harnesses</p>
+<p><strong>📊 Overall:</strong> 201 entries on 30 instances | 101 total resolved across all harnesses</p>
 </div>
 <h2>2. Instance-level Detail</h2>
 <p>Legend: &#10004;=resolved, &#10006;=patch-but-failed, &#9728;=quota-blocked, &#9888;=infra-blocked (git/rootfs failure), — = not yet run</p>
@@ -71,8 +71,8 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <tr><td class='iid'>sympy__sympy-11897</td><td class="failed">&#10006;<br><small>598s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>533s</small></td><td class="failed">&#10006;<br><small>252s</small></td><td class="failed">&#10006;<br><small>486s</small></td><td class="failed">&#10006;<br><small>847s</small></td><td class="failed">&#10006;<br><small>143s</small></td></tr>
 <tr><td class='iid'>sympy__sympy-12171</td><td class="failed">&#10006;<br><small>353s</small></td><td class="failed">&#10006;<br><small>298s</small></td><td class="failed">&#10006;<br><small>172s</small></td><td class="failed">&#10006;<br><small>364s</small></td><td class="failed">&#10006;<br><small>309s</small></td><td class="failed">&#10006;<br><small>372s</small></td><td class="failed">&#10006;<br><small>575s</small></td></tr>
 <tr><td class='iid'>sympy__sympy-12236</td><td class="resolved">&#10004;<br><small>975s</small></td><td class="failed">&#10006;<br><small>748s</small></td><td class="resolved">&#10004;<br><small>734s</small></td><td class="failed">&#10006;<br><small>1143s</small></td><td class="failed">&#10006;<br><small>81s</small></td><td class="resolved">&#10004;<br><small>540s</small></td><td class="resolved">&#10004;<br><small>892s</small></td></tr>
-<tr><td class='iid'>sympy__sympy-12419</td><td class="resolved">&#10004;<br><small>634s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="resolved">&#10004;<br><small>760s</small></td><td class="failed">&#10006;<br><small>286s</small></td><td class="resolved">&#10004;<br><small>431s</small></td><td class="resolved">&#10004;<br><small>666s</small></td><td class="pending">—</td></tr>
-<tr><td class='iid'>sympy__sympy-12454</td><td class="resolved">&#10004;<br><small>219s</small></td><td class="resolved">&#10004;<br><small>125s</small></td><td class="resolved">&#10004;<br><small>153s</small></td><td class="resolved">&#10004;<br><small>122s</small></td><td class="failed">&#10006;<br><small>24s</small></td><td class="resolved">&#10004;<br><small>192s</small></td><td class="pending">—</td></tr>
+<tr><td class='iid'>sympy__sympy-12419</td><td class="resolved">&#10004;<br><small>634s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="resolved">&#10004;<br><small>760s</small></td><td class="failed">&#10006;<br><small>286s</small></td><td class="resolved">&#10004;<br><small>431s</small></td><td class="resolved">&#10004;<br><small>666s</small></td><td class="resolved">&#10004;<br><small>1781s</small></td></tr>
+<tr><td class='iid'>sympy__sympy-12454</td><td class="resolved">&#10004;<br><small>219s</small></td><td class="resolved">&#10004;<br><small>125s</small></td><td class="resolved">&#10004;<br><small>153s</small></td><td class="resolved">&#10004;<br><small>122s</small></td><td class="failed">&#10006;<br><small>24s</small></td><td class="resolved">&#10004;<br><small>192s</small></td><td class="resolved">&#10004;<br><small>121s</small></td></tr>
 <tr><td class='iid'>sympy__sympy-12481</td><td class="resolved">&#10004;<br><small>196s</small></td><td class="resolved">&#10004;<br><small>1119s</small></td><td class="resolved">&#10004;<br><small>205s</small></td><td class="resolved">&#10004;<br><small>462s</small></td><td class="resolved">&#10004;<br><small>550s</small></td><td class="resolved">&#10004;<br><small>203s</small></td><td class="pending">—</td></tr>
 <tr><td class='iid'>sympy__sympy-13031</td><td class="resolved">&#10004;<br><small>366s</small></td><td class="resolved">&#10004;<br><small>1212s</small></td><td class="failed">&#10006;<br><small>389s</small></td><td class="failed">&#10006;<br><small>593s</small></td><td class="resolved">&#10004;<br><small>645s</small></td><td class="resolved">&#10004;<br><small>519s</small></td><td class="pending">—</td></tr>
 <tr><td class='iid'>sympy__sympy-13043</td><td class="failed">&#10006;<br><small>242s</small></td><td class="failed">&#10006;<br><small>1234s</small></td><td class="failed">&#10006;<br><small>127s</small></td><td class="failed">&#10006;<br><small>857s</small></td><td class="failed">&#10006;<br><small>129s</small></td><td class="failed">&#10006;<br><small>255s</small></td><td class="pending">—</td></tr>
@@ -129,5 +129,5 @@ python3 gen_kimi_compare.py</code></pre>
 </ol>
 </div>
 <hr>
-<p><small>BaiZe Harness H-A, 30×7 cross-eval (7 active), 2026-10-08 05:00. Model: kimi-k2.6-cloud. Serial concurrency=1. Data: kimi_pilot_results.json (filtered to 30 instances, 199 entries).</small></p>
+<p><small>BaiZe Harness H-A, 30×7 cross-eval (7 active), 2026-10-08 05:34. Model: kimi-k2.6-cloud. Serial concurrency=1. Data: kimi_pilot_results.json (filtered to 30 instances, 201 entries).</small></p>
 </body></html>
