@@ -108,10 +108,15 @@ tail -5 /tmp/watch_ops_relay.log    # [relay] started ...
 |:--|:--|:--|
 | `MODEL` | `deepseek-flash` | 规范 ID（本机 DeepSeek 官方 API 仅 `deepseek-flash` / `deepseek-v4-pro`） |
 | `THINKING` | `low` | **推理强度**：`none\|low\|medium\|high\|xhigh`。`deepseek-flash` provider 默认 `high`（想得久/费 token）→ 已降到 `low`；要更省设 `none` |
-| `SLEEP_SHORT` | `60` | `WAITING=0`/失败重试（= BaiZe `SLEEP_BUSY`） |
-| `SLEEP_LONG` | `1800` | `WAITING=1`（= BaiZe `SLEEP_WAIT`） |
+| `SLEEP_SHORT` | `60` | **仅旧模式**：`WAITING=0`/失败重试（= BaiZe `SLEEP_BUSY`） |
+| `SLEEP_LONG` | `1800` | **仅旧模式**：`WAITING=1`（= BaiZe `SLEEP_WAIT`） |
+| ⏰ `SCHEDULE_HOURS` | `6,18` | **定时唤醒时窗**（本地时区）= **每天 2 次：06:00 / 18:00**（2026-10-07 用户令，防烧自己 token）。可用环境变量 `WATCH_SCHEDULE_HOURS` 覆盖；**置空 ⇒ 回退 WAITING 自适应** |
+| `SLEEP_CHUNK` | `300` | 时窗内分段睡：每 5 分钟刷新存活标记（**不调 cline = 零 token**） |
+| `SLEEP_RETRY` / `SCHEDULE_RETRY_MAX` | `300` / `1` | 时窗内致命错的重试等待 / **同窗最多重试次数**（🚫 防 60s 死循环烧 token） |
+| `LOOP_HB` | `/tmp/watch_<线>_loop.hb` | **零 token 存活标记**（判活用；本两线**不再**用「>60min 无提交」判死） |
+| — | — | 启动后**日志头两行**即打印 `⏰ 定时模式已启用：唤醒时窗 = 6,18` + `⏰ 时窗参考：此刻之后的下一个时窗 = …` ⇒ **秒级核验运行中的模式**（不必等首轮 cline 跑完） |
 | `CLINE_TIMEOUT` | `1500` | 单次 cline 上限（= BaiZe） |
-| `PUSH_INTERVAL` | `18000` | git 兜底同步间隔（= BaiZe） |
+| `PUSH_INTERVAL` | `1800` | git 兜底同步间隔（2026-10-06 由 `18000`/5h → 30min；**现仅在每次唤醒后触发**，即 ~2 次/天） |
 
 > ⚠️ **改 `watch_news_loop.sh` 后必须重启 loop 才生效**（bash 不会重读已在运行的脚本）。
 

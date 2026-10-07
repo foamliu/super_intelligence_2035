@@ -2,7 +2,7 @@
 
 > **用途**：`run/` 下会有多个 `*_loop.sh` 与 `MEMORY_*.md`，本文件是**唯一权威**的"谁在跑"清单，避免数错。
 >
-> 最后更新：2026-10-03（建哨）
+> 最后更新：2026-10-07（**唤醒节律：每 30 分钟 → 每天 2 次定时 06:00 / 18:00**）
 
 ---
 
@@ -10,8 +10,8 @@
 
 | Agent | loop 脚本 | 任务书 | 状态文件 | 日志目录 | 跑什么 | 状态 |
 |:---|:---|:---|:---|:---|:---|:---|
-| **news** 🆕 | `run/watch_news_loop.sh` | `run/WATCH_NEWS_TASK.md` | `run/MEMORY_NEWS.md` | `run/daily-memories-news/` | 按关注清单**常态化采集超级智能/前沿 AI 新闻**，产出 `run/news/<date>.md` 摘要 + `run/news/SEEN.md` 去重台账 | 🔄 运行中（纠偏中：中文权威源 / 新闻定义） |
-| **research** 🆕 | `run/watch_research_loop.sh` | `run/WATCH_RESEARCH_TASK.md` | `run/MEMORY_RESEARCH.md` | `run/daily-memories-research/` | **① 借鉴**：与 BaiZe/ZhuLong 相关的前沿研究 → `TOP_K.*` + `TAKEAWAYS.md`；**② 科普**：《两分钟论文》视频 → `video/SHORTLIST.md` + `video/scripts/*.md`（+ 后续成片） | ✅ 运行中（61 篇；TOP-K/视频线刚派） |
+| **news** 🆕 | `run/watch_news_loop.sh` | `run/WATCH_NEWS_TASK.md` | `run/MEMORY_NEWS.md` | `run/daily-memories-news/` | 按关注清单**常态化采集超级智能/前沿 AI 新闻**，产出 `run/news/<date>.md` 摘要 + `run/news/SEEN.md` 去重台账 | 🔄 运行中（纠偏中：中文权威源 / 新闻定义）· ⏰ **定时唤醒：每天 2 次 06:00 / 18:00** |
+| **research** 🆕 | `run/watch_research_loop.sh` | `run/WATCH_RESEARCH_TASK.md` | `run/MEMORY_RESEARCH.md` | `run/daily-memories-research/` | **① 借鉴**：与 BaiZe/ZhuLong 相关的前沿研究 → `TOP_K.*` + `TAKEAWAYS.md`；**② 科普**：《两分钟论文》视频 → `video/SHORTLIST.md` + `video/scripts/*.md`（+ 后续成片） | ✅ 运行中（61 篇；TOP-K/视频线刚派）· ⏰ **定时唤醒：每天 2 次 06:00 / 18:00** |
 
 > 🚫 **用户已定（2026-10-03）：暂不新增智能体。** 新职能**一律并入既有线**。
 > 例：原 **archive（历史回溯）线已并入 news**（职能 = `news/archive/` + `news/analysis/`），脚手架已删除。
@@ -53,8 +53,9 @@
 | **push 前先同步** | `git fetch` → 必要时 `git pull --rebase --autostash origin main`（**只 push 不 pull** 会在远端前进后**永久卡死**） |
 | **WAITING 正则** | 只认**行首** `^WAITING:[[:space:]]*1`（宽正则 `WAITING:[* ]*1` 会误匹配正文散文） |
 | **兜底提交范围** | 只 `git add` **本线自己的文件**（🚫 不要 `git add -A`，会卷入其他线在途文件） |
-| **每轮唤醒必须提交+推送**（2026-10-06 用户令） | **每次唤醒收尾自己 `commit+push`**（写心跳 → 写日报 → 提交推送 → `git status -sb` 自检）；🚫 **不许依赖 loop 兜底**（兜底只是保险丝）。判死判据：**心跳文件 >60min 无新提交 = 卡死** |
-| **自适应睡眠** | `WAITING:0` → 短睡（近期待办）；`WAITING:1` → 长睡（常态省 token） |
+| **每轮唤醒必须提交+推送**（2026-10-06 用户令） | **每次唤醒收尾自己 `commit+push`**（写心跳 → 写日报 → 提交推送 → `git status -sb` 自检）；🚫 **不许依赖 loop 兜底**（兜底只是保险丝）。**判死判据**：⚠️ **2026-10-07 起本两线改为「每天 2 次定时唤醒」⇒ 旧的「心跳 >60min 无提交 = 卡死」不再适用**；改判 **loop 存活标记 `/tmp/watch_<线>_loop.hb`（每 5 分钟刷新）+ 日志尾部 `⏰ 定时模式：下次唤醒 = …`** |
+| ⏰ **定时唤醒**（2026-10-07 用户令） | **每 30 分钟 → 每天 2 次：06:00 / 18:00**（`SCHEDULE_HOURS=6,18`，本地时区）。时窗内**纯 bash 分段睡**（`SLEEP_CHUNK=300s`，**零 token**）；时窗内致命错**最多重试 1 次**（`SCHEDULE_RETRY_MAX`），之后等下个时窗。⚠️ **一次唤醒 ≈ 半天工作量 ⇒ 当轮做满、别留碎活**（下一轮 12h 后）。回退旧节律：环境变量 `WATCH_SCHEDULE_HOURS=` 置空。✅ **启后秒级自检**：日志头两行应打印 `⏰ 定时模式已启用：唤醒时窗 = 6,18` + `⏰ 时窗参考：此刻之后的下一个时窗 = …`（**这条是给中继/巡检核验用的**，不必等 25min 首轮跑完） |
+| **自适应睡眠**（**仅旧模式 / 回退时生效**） | `WAITING:0` → 短睡（近期待办）；`WAITING:1` → 长睡（常态省 token） |
 | 🔴 **启动必须带 PATH（2026-10-06 血泪）** | **只用「登录 shell」起 loop**：`setsid bash -lc "exec bash <run>/watch_news_loop.sh" …`。**否则非登录 shell 的 PATH 里没有 `cline`** ⇒ loop 会**每轮 `env: 'cline': No such file` 静默空转**（进程/git 全正常，极难察觉）。✅ 启后自检：`command -v cline` 有输出 + 日志见 `invoking cline` 且无 `No such file` |
 | **任务书即 prompt** | loop 用 `prompt="$(< TASK_MD)"` → 任务书要**精简**，历史归档不进 prompt |
 

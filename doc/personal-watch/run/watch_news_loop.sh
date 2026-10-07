@@ -1,11 +1,11 @@
 #!/bin/bash
 # personal-watch（观察哨）· 新闻 agent 自动推进循环
 # 让 cline 读任务书（WATCH_NEWS_TASK.md）连续采集新闻，并每约 PUSH_INTERVAL 秒兜底做一次 git 同步 + commit + push。
-# 唤醒间隔自适应（**与 BaiZe 的 loop 完全一致**：SLEEP_BUSY=60 / SLEEP_WAIT=1800）：
-#   WAITING=0（有近期待办，如追某事件后续）→ 短睡 SLEEP_SHORT = 60 秒，连续推进；
-#   WAITING=1（无近期待办，常态）          → 睡 SLEEP_LONG = 1800 秒（30 分钟）省 token。
-# 兜底：若本轮 cline 报致命错（模型名错 / 额度耗尽 / hook 失败）→ 无论 WAITING 都**强制短睡重试**，
-#   避免"报错却 exit 0 → 白睡长觉"（BaiZe 记录过这个坑）。
+# ⏰ 唤醒节律（**2026-10-07 用户令：由「每 30 分钟」改为「每天 2 次 —— 06:00 / 18:00」**）：
+#   定时模式（**默认**，SCHEDULE_HOURS=6,18）：只在时窗边界调用 cline；其余时间**纯 bash 分段睡眠（零 token）**，
+#     每 SLEEP_CHUNK 秒刷新存活标记 /tmp/watch_news_loop.hb（供外部判活）—— 目的就是「**别再烧用户自己的 token**」。
+#   旧模式（回退）：环境变量 `WATCH_SCHEDULE_HOURS=`（置空）⇒ 恢复 WAITING 自适应（0→60s 连续推进 / 1→1800s）。
+#   时窗内致命错：**最多重试 SCHEDULE_RETRY_MAX 次**，之后等下个时窗（🚫 不做 60s 死循环重试 —— 那会疯狂烧 token）。
 #
 # 启动方式（脱离进程组，防工具超时误杀）:
 #   cd <仓库根>/doc/personal-watch/run
@@ -41,8 +41,14 @@ MODEL="deepseek-flash"          # 调研+整理用 flash（便宜/快）；要�
 THINKING="low"
 CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟（与 BaiZe 一致）
 PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（2026-10-06 由 18000/5h 缩短，与 BaiZe 一致；agent 每轮自己也会提交）
-SLEEP_SHORT=60                  # WAITING=0 / 失败重试：短睡 1 分钟（= BaiZe SLEEP_BUSY）
-SLEEP_LONG=1800                 # WAITING=1（无近期待办）→ 睡 30 分钟（= BaiZe SLEEP_WAIT）
+SLEEP_SHORT=60                  # 【仅旧模式】WAITING=0 / 失败重试：短睡 1 分钟（= BaiZe SLEEP_BUSY）
+SLEEP_LONG=1800                 # 【仅旧模式】WAITING=1（无近期待办）→ 睡 30 分钟（= BaiZe SLEEP_WAIT）
+# ── ⏰ 定时唤醒时窗（2026-10-07 用户令：每天 2 次 · 06:00 / 18:00 · 本地时区）──────
+SCHEDULE_HOURS="${WATCH_SCHEDULE_HOURS-6,18}"   # 逗号分隔的小时；**置空 ⇒ 回退旧模式**
+SLEEP_CHUNK=300                 # 时窗内分段睡：每 5 分钟刷新存活标记（零 token；可被 SIGTERM 立刻打断）
+SLEEP_RETRY=300                 # 时窗内 cline 失败后的重试等待
+SCHEDULE_RETRY_MAX=1            # 同一时窗内最多重试 1 次 ⇒ 之后等下个时窗（防 60s 死循环烧 token）
+LOOP_HB="/tmp/watch_news_loop.hb"   # 零 token 存活标记：loop 活着、只是在等时窗（判活不必等提交）
 MEMORY="$SCRIPT_DIR/MEMORY_NEWS.md"
 LAST_PUSH="/tmp/watch_news_last_push"
 CLINE_LOG="/tmp/watch_news_cline_last.log"   # cline 本轮输出，用于检测"报错却 exit 0"
@@ -108,8 +114,65 @@ waiting_is_1() {
 # cline 级致命错误特征（**不要**用裸 `error:` —— agent 干活时会把 API 报错当证据贴出来，会误判）
 FATAL_RE='(supported API model names|额度已用完|hook dispatch failed|[Uu]nauthoriz|[Aa]uthentication (failed|error)|请等待[0-9]+分钟)'
 
+# ── ⏰ 定时唤醒：下一个时窗的 epoch 秒（SCHEDULE_HOURS=6,18 ⇒ 06:00 / 18:00）──
+next_slot_epoch() {
+    local now h target best=""
+    now=$(date +%s)
+    local IFS=','
+    for h in $SCHEDULE_HOURS; do
+        h="${h//[^0-9]/}"                       # 去掉空格等杂字符
+        [ -z "$h" ] && continue
+        h="$(printf '%02d:00' "$((10#$h))")"    # → 06:00（10# 防前导零被判成八进制）
+        if ! target=$(date -d "today $h" +%s 2>/dev/null); then continue; fi
+        if [ "$target" -le "$now" ]; then       # 今天该时窗已过 ⇒ 顺延到明天
+            # ⚠️ 必须写 "tomorrow $h"：GNU date 会把 "06:00 +1 day" 里的 `+1` 当成**时区偏移**（→ 13:00，实测踩过）
+            target=$(date -d "tomorrow $h" +%s 2>/dev/null) || continue
+        fi
+        if [ -z "$best" ] || [ "$target" -lt "$best" ]; then best="$target"; fi
+    done
+    unset IFS
+    [ -z "$best" ] && return 1
+    echo "$best"
+}
+
+# ── 睡到下一个时窗（分段睡；**不调用 cline ⇒ 零 token**）──
+sleep_until_next_slot() {
+    local target now remain chunk ticks=0
+    if ! target=$(next_slot_epoch); then
+        echo "[loop] $(date '+%F %T') ⚠️ SCHEDULE_HOURS 为空/非法 → 回退 sleep ${SLEEP_LONG}s"
+        sleep "$SLEEP_LONG"
+        return
+    fi
+    now=$(date +%s)
+    remain=$((target - now))
+    [ "$remain" -le 0 ] && remain=1
+    echo "[loop] $(date '+%F %T') ⏰ 定时模式：下次唤醒 = $(date -d "@$target" '+%F %T %Z')（$((remain / 60))min 后；每天 2 次 · 时窗 ${SCHEDULE_HOURS}）"
+    while [ "$remain" -gt 0 ]; do
+        chunk="$SLEEP_CHUNK"
+        [ "$remain" -lt "$chunk" ] && chunk="$remain"
+        sleep "$chunk"
+        remain=$((remain - chunk))
+        date +%s > "$LOOP_HB" 2>/dev/null || true      # 零 token 存活标记
+        ticks=$((ticks + 1))
+        if [ $((ticks % (1800 / SLEEP_CHUNK))) -eq 0 ]; then
+            echo "[loop] $(date '+%F %T') 💤 等时窗中（剩余 $((remain / 60))min；未调 cline = 零 token）"
+        fi
+    done
+}
+
+# ── 启动横幅：让外部一眼看出「跑的是哪种模式 / 时窗」（中继据此核验）──
+if [ -n "$SCHEDULE_HOURS" ]; then
+    echo "[loop] ⏰ 定时模式已启用：唤醒时窗 = ${SCHEDULE_HOURS}（每天 2 次）· 存活标记 = $LOOP_HB · 回退：WATCH_SCHEDULE_HOURS= 置空"
+    if _t=$(next_slot_epoch); then
+        echo "[loop] ⏰ 时窗参考：此刻之后的下一个时窗 = $(date -d "@$_t" '+%F %T %Z')（首轮唤醒=立即执行；各轮跑完会实时重算）"
+    fi
+else
+    echo "[loop] 🔁 旧模式（WAITING 自适应）：SLEEP_SHORT=${SLEEP_SHORT}s / SLEEP_LONG=${SLEEP_LONG}s"
+fi
+
+RETRY=0     # 本时窗内的致命错重试计数（定时模式用）
 while true; do
-    echo "[loop] $(date '+%F %T') wake up, invoking cline ..."
+    echo "[loop] $(date '+%F %T') wake up, invoking cline ... [mode=${SCHEDULE_HOURS:-adaptive}]"
     FORCE_SHORT=0
     if [[ -f "$TASK_MD" ]]; then
         prompt="$(< "$TASK_MD")"
@@ -126,14 +189,31 @@ while true; do
         FORCE_SHORT=1
     fi
     git_sync_and_push
-    if [ "$FORCE_SHORT" -eq 1 ]; then
-        echo "[loop] $(date '+%F %T') 失败/异常重试 → sleep ${SLEEP_SHORT}s"
-        sleep "$SLEEP_SHORT"
-    elif waiting_is_1; then
-        echo "[loop] $(date '+%F %T') WAITING=1 (no pending follow-up) → sleep ${SLEEP_LONG}s"
-        sleep "$SLEEP_LONG"
+    date +%s > "$LOOP_HB" 2>/dev/null || true       # 每轮唤醒回来都刷新存活标记
+    if [ -n "$SCHEDULE_HOURS" ]; then
+        # ── ⏰ 定时模式：每天 2 次（06:00 / 18:00）──
+        if [ "$FORCE_SHORT" -eq 1 ]; then
+            RETRY=$((RETRY + 1))
+            if [ "$RETRY" -le "$SCHEDULE_RETRY_MAX" ]; then
+                echo "[loop] $(date '+%F %T') ⚠️ cline 失败/报错 → 本时窗内重试 ${RETRY}/${SCHEDULE_RETRY_MAX}（sleep ${SLEEP_RETRY}s 后立刻重试）"
+                sleep "$SLEEP_RETRY"
+                continue
+            fi
+            echo "[loop] $(date '+%F %T') 🛑 已达本时窗重试上限（${SCHEDULE_RETRY_MAX}）→ 不再重试（防死循环烧 token），等下一个时窗"
+        fi
+        RETRY=0                                     # 无致命错（或重试已耗尽）⇒ 清零，睡到下一个时窗
+        sleep_until_next_slot
     else
-        echo "[loop] $(date '+%F %T') WAITING=0 (pending follow-up) → sleep ${SLEEP_SHORT}s"
-        sleep "$SLEEP_SHORT"
+        # ── 旧模式（WAITING 自适应；仅当 WATCH_SCHEDULE_HOURS 被置空）──
+        if [ "$FORCE_SHORT" -eq 1 ]; then
+            echo "[loop] $(date '+%F %T') 失败/异常重试 → sleep ${SLEEP_SHORT}s"
+            sleep "$SLEEP_SHORT"
+        elif waiting_is_1; then
+            echo "[loop] $(date '+%F %T') WAITING=1 (no pending follow-up) → sleep ${SLEEP_LONG}s"
+            sleep "$SLEEP_LONG"
+        else
+            echo "[loop] $(date '+%F %T') WAITING=0 (pending follow-up) → sleep ${SLEEP_SHORT}s"
+            sleep "$SLEEP_SHORT"
+        fi
     fi
 done

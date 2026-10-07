@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（supervisor 编辑，中继只读执行）
 
-<!-- RUN_ID: 10 -->
+<!-- RUN_ID: 11 -->
 
 > **用法**：在下面**新增一段** `## RUN_ID N`（N 递增）+ **一个 ```bash 块** → `git push`。
 > 中继（`ops_relay.sh`）轮询发现 **RUN_ID 变大** → 执行 → 结果 append 到 `ops/outbox.md` → push。
@@ -13,6 +13,72 @@
 > ② 🚫 **绝不整树 `du`**（大目录会跑很久）—— 只用 `df` + 有界定向 `du`（每条带 `timeout`）；
 > ③ 单块总超时 **600s**，输出超 **20000 字符**会被截断；
 > ④ 危险模式（`rm -rf /`、`mkfs`、**`git clean -fdx`**、**`git reset --hard`**、**杀 ops_relay**）会被**拒绝**。
+
+## RUN_ID 11 — ⏰ **把 news / research 两条 loop 切成「每天 2 次 · 06:00 / 18:00」并重启生效**（本块会 kill 重启这两条 loop）
+
+**背景（supervisor 2026-10-07 ~08:1x，用户指令）**：用户令「**research 和 news 在烧我自己的 token，限制它们的启动频次 —— 从每 30 分钟启动，改成每天启动 2 次：6AM 和 6PM**」。
+- 已改脚本：两条 `*_loop.sh` 新增 **定时模式（默认）** —— `SCHEDULE_HOURS=6,18` / `SLEEP_CHUNK=300` / `SLEEP_RETRY=300` / `SCHEDULE_RETRY_MAX=1` / `LOOP_HB=/tmp/watch_<线>_loop.hb`；**旧 WAITING 自适应降级为「回退模式」**（`WATCH_SCHEDULE_HOURS=` 置空即回退）。**需重启 loop 才生效。**
+- 已在 Windows 侧 WSL 干跑验证：`bash -n` 双绿 · 默认→今天 18:00 · 边界（`06,18` / `6, 18` / `9` / `abc` / 空）· **h=0..23 性质测试 24/24** · 分段睡+HB 刷新 · 回退分支。
+- ⚠️ **本块的空闲判据已改**：新模式下 loop 睡眠时打印 `💤 等时窗中…` / `⏰ 定时模式：下次唤醒 = …`，**不再含 `sleep` 字样** ⇒ RUN_ID 8/9 那种 `grep sleep` 会**永远判「唤醒中」→ 永不重启**。
+
+**本块动作（仅 kill 这两条 loop；🚫 不碰任何中继进程）**：
+1. `git pull --rebase --autostash` 拿新脚本 → **核对 5 个新常量**（每线应 5 行）+ `bash -n` + **用脚本自身的 `next_slot_epoch()` 干跑**（应 = 本地 06:00 或 18:00）；
+2. 重启前先看日志尾行（**空闲才重启**；唤醒中最多等 90s，超时则跳过、留待下个 RUN_ID）；
+3. `setsid` 重启 → 复查进程 + **证据链**：日志里的 `⏰ 定时模式已启用：唤醒时窗 = 6,18` + `⏰ 时窗参考：此刻之后的下一个时窗 = …`（**重启后立刻就有**，秒级可判）。
+
+```bash
+set -u
+cd ~/super_intelligence_2035 || exit 1
+R=doc/personal-watch/run
+echo "=== RUN_ID 11 · 定时唤醒(06:00/18:00) 切换 + 重启 $(date '+%F %T') ==="
+hostname; date '+%F %T %Z'; uptime | cut -c1-70
+echo
+echo "=== 1. 同步（拿新脚本）==="
+timeout 90 git fetch origin 2>&1 | tail -2
+git pull --rebase --autostash origin main 2>&1 | tail -3
+echo
+echo "=== 2. 核对新常量（每线应 5 行）==="
+for n in news research; do echo "[$n]"; grep -n 'SCHEDULE_HOURS=\|SLEEP_CHUNK=\|SLEEP_RETRY=\|SCHEDULE_RETRY_MAX=\|LOOP_HB=' "$R/watch_${n}_loop.sh" | cut -c1-110; done
+echo
+echo "=== 2b. 语法 + 干跑脚本自身的 next_slot_epoch()（应为本地 06:00 或 18:00）==="
+bash -n "$R/watch_news_loop.sh" && bash -n "$R/watch_research_loop.sh" && echo "SYNTAX_OK x2"
+mkdir -p /tmp/wt11 && awk '/^next_slot_epoch\(\)/{f=1} f{print} f&&/^}/{exit}' "$R/watch_news_loop.sh" > /tmp/wt11/ns.sh
+echo "抽取行数=$(wc -l < /tmp/wt11/ns.sh)"
+( . /tmp/wt11/ns.sh 2>/dev/null; SCHEDULE_HOURS=6,18; if t=$(next_slot_epoch); then echo "next_slot = $(date -d "@$t" '+%F %T %Z')"; else echo "next_slot 干跑失败（不致命）"; fi )
+echo
+echo "=== 3. 重启前：进程 + 日志尾行 ==="
+ps -eo pid,etime,args | grep -E 'watch_(news|research)_loop\.sh' | grep -v grep | cut -c1-120 || echo "(无 loop 在跑)"
+for n in news research; do printf '[%s] ' "$n"; tail -1 "/tmp/watch_${n}_loop.log" 2>/dev/null | cut -c1-140; done
+echo
+echo "=== 4. 逐个重启（空闲判据已改）==="
+restart_one() {
+  n="$1"; log="/tmp/watch_${n}_loop.log"; i=0
+  echo "--- [$n] ---"
+  while [ "$i" -lt 3 ]; do
+    tail -1 "$log" 2>/dev/null | grep -qE '等时窗中|下次唤醒|sleep' && break
+    echo "  [$n] 疑似唤醒中 -> 等 30s"; sleep 30; i=$((i+1))
+  done
+  if ! tail -1 "$log" 2>/dev/null | grep -qE '等时窗中|下次唤醒|sleep'; then
+    echo "  [$n] 等 90s 仍非空闲 -> 本轮不重启（下个 RUN_ID 再试）"; return 0
+  fi
+  echo "  [$n] 空闲 -> 重启（新节律 = 每天 2 次）"
+  pkill -f "watch_${n}_loop.sh" 2>/dev/null; sleep 2
+  ( cd "$HOME/super_intelligence_2035/doc/personal-watch/run" && setsid bash "watch_${n}_loop.sh" > "$log" 2>&1 < /dev/null & )
+  sleep 5
+  ps -eo pid,etime,args | grep "watch_${n}_loop.sh" | grep -v grep | cut -c1-120 || echo "  [$n] 未起来！"
+}
+restart_one news
+restart_one research
+echo
+echo "=== 5. ⭐验收：模式横幅 + 时窗参考（重启后立刻就有）==="
+for n in news research; do echo "--- [$n] ---"; grep -m2 -E '定时模式已启用|时窗参考' "/tmp/watch_${n}_loop.log" 2>/dev/null | cut -c1-170; done
+echo
+echo "=== 6. 进程终检 + HB ==="
+ps -eo pid,etime,args | grep -E 'watch_(news|research)_loop\.sh' | grep -v grep | cut -c1-120 || echo "(无)"
+ls -l /tmp/watch_news_loop.hb /tmp/watch_research_loop.hb 2>/dev/null | cut -c1-90 || echo "(HB 未生成：要等首轮 cline 跑完进入睡眠才写；~25min 后应有)"
+echo "=== DONE ==="
+```
+
 
 ## RUN_ID 10 — 🩺 **验收 personal-watch 修复（只读）**：git 树 / 任务书 / loop / 日志 / 中继
 
