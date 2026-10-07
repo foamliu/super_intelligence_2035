@@ -5,13 +5,26 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 30×7 harness cross-eval (kimi-k2.6-cloud, serial=1) — cline-patched×30 ✅ 60.0% · codex×30 ✅ 46.7% · opencode×30 ✅ 50.0% · claude-code×30 ✅ 43.3% · deepseek-harness×30 ✅ 40.0% · Pi×30 ✅ 60.0% · Hermes×30 🔄 RUNNING (14/30 done: 8 res/6 pbf = 57.1%, inst 15/30 django-11742 running ~3min). gw_proxy healthy (PID 3175038, port 9090) + gw_proxy_dsh healthy (PID 1307655, port 9091).
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped · opencode×30 (50.0%) · claude-code×30 (43.3%) · deepseek-harness×30 (40.0%) · Pi×30 (60.0%) · Hermes 14/30 done (8 res/6 pbf = 57.1%) · gen_kimi_compare.py 7-way + version table · SWEBENCH_COMPARE.html (30×7, 194 entries, 98 resolved, 21541B with version table)
-当前动作:     R164: Hermes×30 progress check (14/30: 8 res/6 pbf = 57.1%, inst 15/30 django-11742 running ~3min) → SWEBENCH_COMPARE.html regenerated (21541B, 194 entries, 98 resolved) → commit+push
-下一步:       [AUTO] Hermes×30 running (~16 inst × ~7min avg = ~1.9h remaining, chain PID 838805 auto-regens HTML when done) → next wake: check Hermes×30 progress/completion → update HTML → commit+push
+PHASE:        H-A 30×7 harness cross-eval (kimi-k2.6-cloud, serial=1) — cline-patched×30 ✅ 60.0% · codex×30 ✅ 46.7% · opencode×30 ✅ 50.0% · claude-code×30 ✅ 43.3% · deepseek-harness×30 ✅ 40.0% · Pi×30 ✅ 60.0% · Hermes×30 🔄 RUNNING (16/30 done: 8 res/8 pbf = 50.0%, inst 17/30 sympy-11897 running ~2min). gw_proxy healthy (PID 3175038, port 9090) + gw_proxy_dsh healthy (PID 1307655, port 9091).
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped · opencode×30 (50.0%) · claude-code×30 (43.3%) · deepseek-harness×30 (40.0%) · Pi×30 (60.0%) · Hermes 16/30 done (8 res/8 pbf = 50.0%) · gen_kimi_compare.py 7-way + version table · SWEBENCH_COMPARE.html (30×7, 196 entries, 98 resolved, 21595B with version table)
+当前动作:     R165: Hermes×30 progress check (16/30: 8 res/8 pbf = 50.0%, inst 17/30 sympy-11897 running ~2min) → SWEBENCH_COMPARE.html regenerated (21595B, 196 entries, 98 resolved) → commit+push
+下一步:       [AUTO] Hermes×30 running (~14 inst × ~7min avg = ~1.6h remaining, chain PID 838805 auto-regens HTML when done) → next wake: check Hermes×30 progress/completion → update HTML → commit+push
 阻塞:         <无> (Hermes toolchain working: Python 3.14.6 venv, CLI at ~/.hermes/bin/hermes, config at ~/.hermes/config.yaml with kimi-proxy provider → gw_proxy:9090)
 ERROR_COUNT:  0
 ```
+
+## 🆕 第一百六十五轮速览（2026-10-08 04:26）— Hermes×30 progress (16/30: 8 res/8 pbf = 50.0%) + SWEBENCH_COMPARE.html regenerated (196 entries, 98 resolved)
+
+- 🔄 **Hermes×30 progress**：16/30 done, chain healthy (PID 838805 → 850763, inst 17/30 sympy__sympy-11897 running ~2min):
+  - New since R164: django-11742 → patch-but-failed (650s), sympy-11870 → patch-but-failed (638s)
+  - **8 resolved / 8 pbf = 50.0%** (16/30, 0 blocked)
+  - ETA: ~14 inst × ~7min avg = ~1.6h remaining (finish ~06:00)
+- 📊 **SWEBENCH_COMPARE.html regenerated**: 21595B, 196 entries, 98 resolved (was 21541B/194/98 at R164)
+- 📊 **7-way standings (30-set)**:
+  - cline-patched: 18/30 = 60.0% ✅ · Pi: 18/30 = 60.0% ✅
+  - Hermes: 8/16 = 50.0% 🔄 (16/30 running) · opencode: 15/30 = 50.0% ✅
+  - codex: 14/30 = 46.7% ✅ · claude-code: 13/30 = 43.3% ✅ · deepseek-harness: 12/30 = 40.0% ✅
+- 📦 体积：TASK=29428B(28.7KB ✓) / MEMORY=~25.6KB ✓（归档 0KB）
 
 ## 🆕 第一百六十四轮速览（2026-10-08 03:52）— Hermes×30 progress (14/30: 8 res/6 pbf = 57.1%) + SWEBENCH_COMPARE.html regenerated (194 entries, 98 resolved)
 
@@ -195,3 +208,4 @@ ERROR_COUNT:  0
 - 2026-10-08 02:42 —— **第一百六十二轮** —— Hermes×30 progress 8/30 (6 res/2 pbf = 75.0%, inst 10/30 django-11283 running ~23min, chain PID 838805 healthy) → SWEBENCH_COMPARE.html regenerated（21370B, 188 entries, 96 resolved）→ R154-R158 archived (9889B → daily) → commit+push。📦 体积：TASK=28.7KB / MEMORY=22.9KB（归档 9.9KB → daily-memories-harness/2026-10-07.md）。
 - 2026-10-08 03:18 —— **第一百六十三轮** —— Hermes×30 progress 12/30 (7 res/5 pbf = 58.3%, inst 15/30 django-11620 running ~11min, chain PID 838805 healthy) → SWEBENCH_COMPARE.html regenerated（21483B, 192 entries, 97 resolved）→ commit+push。📦 体积：TASK=28.7KB / MEMORY=~24.0KB（归档 0KB）。
 - 2026-10-08 03:52 —— **第一百六十四轮** —— Hermes×30 progress 14/30 (8 res/6 pbf = 57.1%, inst 15/30 django-11742 running ~3min, chain PID 838805 healthy) → SWEBENCH_COMPARE.html regenerated（21541B, 194 entries, 98 resolved）→ commit+push。📦 体积：TASK=28.7KB / MEMORY=~24.5KB（归档 0KB）。
+- 2026-10-08 04:26 —— **第一百六十五轮** —— Hermes×30 progress 16/30 (8 res/8 pbf = 50.0%, inst 17/30 sympy-11897 running ~2min, chain PID 838805 healthy) → SWEBENCH_COMPARE.html regenerated（21595B, 196 entries, 98 resolved）→ commit+push。📦 体积：TASK=28.7KB / MEMORY=~25.6KB（归档 0KB）。
