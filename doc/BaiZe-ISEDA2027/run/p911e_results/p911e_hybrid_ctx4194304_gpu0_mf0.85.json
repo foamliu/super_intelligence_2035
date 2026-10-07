@@ -1,0 +1,26 @@
+{
+  "experiment": "P-9.11-D",
+  "description": "sglang VRAM benchmark with low mem-fraction (H3 gap fill)",
+  "model_name": "default",
+  "model_path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/p3_hybrid/hf_iter_5000",
+  "base_url": "http://127.0.0.1:30100",
+  "gpu_id": 0,
+  "gen_len": 64,
+  "contexts": [
+    4194304
+  ],
+  "batches": [
+    1
+  ],
+  "results": [
+    {
+      "model": "default",
+      "ctx": 4194304,
+      "batch": 1,
+      "gen_len": 64,
+      "prompt_tokens_actual": 4032862,
+      "error": "ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=30100): Read timed out.",
+      "peak_vram_gb": 76.93
+    }
+  ]
+}
