@@ -69,6 +69,10 @@
 - **共享工作副本**：同一个 git 仓库工作区。
   - **只需一个 agent `git pull`，其余立刻看到**——不要重复 pull。
   - 工作区里陌生的未提交改动**可能是别的线/兄弟项目（如 `BaiZe-ISEDA2027`）的在途文件** → 🚫 不要 clean / stash / reset。
+  - ⚠️ **`pull --rebase --autostash` 之后必查 `git stash list`**（2026-10-07 血泪）：共享工作区里可能**躺着历史 autostash**（本次发现 1 条 10-06 冲突事故的残留，含 research 线 `research/raw/2026-10-06-fetch-r56.json` 的 **60 行旧快照**，而 HEAD 里该文件已是 **3227 行**）。自动回放失败时它会**静默留在 stash 里**，无人发现 —— 直到某天被误 `pop` 成脏树。
+    - 🚫 **禁止**用 `git stash pop` 或 `git checkout stash@{N} -- <path>` 去"恢复"它：前者**一冲突就把共享工作区弄脏 ⇒ 阻塞所有线的 pull**（10-06 停摆 5h 即此类）；后者**连 index 一起写**（status 会变成 `M `(已暂存)，你会误以为"只是工作区变了"）。
+    - ✅ 规矩：① 先用 `git diff 'stash@{N}' HEAD -- <path>` 判断是否**陈旧残留**（**base 是空 blob / 旧内容 = 陈旧**，别拿它覆盖前进后的 HEAD）；② 真需要回正用 **`git checkout HEAD -- <path>`**（**index + 工作区一起刷**）；③ 陈旧残留 → 记下 `git stash drop` 打出的 dangling SHA 再丢弃。
+    - ✅ **同步后自检三连**：`git status --porcelain`（干净）/ `git stash list`（空）/ `git rev-list --left-right --count origin/main...HEAD`（`0 0`）。
 - **网络**：news 线是**唯一重度使用外网**的线 → 控制单轮请求量、避免对同一站点高频抓取。
 
 ---
