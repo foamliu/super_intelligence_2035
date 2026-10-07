@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe harness 线 · 昨夜工作汇报 · 2026-10-07</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  .kpi .delta { font-size:13px; font-weight:600; }
+  .kpi .delta.up { color:var(--ok); } .kpi .delta.down { color:var(--bad); }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#0d5c22; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6a4a00; }
+  .svg-chart { width:100%; max-width:900px; margin:16px auto; display:block; }
+  .svg-caption { text-align:center; font-size:12.5px; color:var(--muted); margin-top:4px; }
+  .tl-table td.time { white-space:nowrap; font-weight:600; color:var(--primary); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe harness 线 · 昨夜工作汇报</h1>
+  <div class="sub">codex × kimi-k2.6-cloud SWE-bench Lite 300 条 <code>--resume</code> 长跑：17 轮巡检无中断 · resolved 52→61 · pbf 75→96 · blocked 191→161</div>
+  <div class="meta">
+    <span>📅 窗口：2026-10-06 22:00 → 2026-10-07 08:00（CST）</span>
+    <span>🕐 数据截止：07:47</span>
+    <span>📊 17 轮（R118→R134）· 19 commits</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <strong>一句话结论：</strong>codex <code>--resume</code> 进程（PID 2151526）在整个 10h 窗口内持续运行，以 ~34 min/轮的节奏稳定巡检；
+  30 条 instance 从 blocked 解除（+9 resolved、+21 pbf），<strong>无配额阻塞、无空转、无需运维介入</strong>。
+  唯一异常为 R123 一次 push 503（R124 自动补推成功）。
+</div>
+
+<nav class="toc">
+  <strong>目录</strong>：
+  <a href="#tldr">TL;DR</a> ·
+  <a href="#kpi">KPI 表</a> ·
+  <a href="#timeline">时间线</a> ·
+  <a href="#chart">进度图</a> ·
+  <a href="#evidence">证据</a> ·
+  <a href="#issues">卡点/未完成</a> ·
+  <a href="#status">今晨现状</a> ·
+  <a href="#commits">窗口内 commit</a>
+</nav>
+
+<!-- ==================== TL;DR ==================== -->
+<h2 class="sec" id="tldr"><span class="no">1</span>TL;DR</h2>
+<ol>
+  <li><strong>codex <code>--resume</code> 全程在跑</strong>：PID 2151526（ppid=1）从窗口前 ~19:43 启动，至 07:47 仍在运行（~12h），当前处理 <code>django__django-15695</code>。</li>
+  <li><strong>30 条 instance 解除 blocked</strong>：codex 300 条 resolved 34→43（+9）、pbf 75→96（+21）、blocked 191→161（-30）；总 resolved 52→61。</li>
+  <li><strong>SWEBENCH_COMPARE.html 每轮刷新</strong>：330 entries，52→61 resolved，体积 ~72.9 KB（gen_kimi_compare.py exit=0 ×17）。</li>
+  <li><strong>relay + git sync 正常</strong>：ops_relay 第 71→87 次健康复核（全 skip）；git fetch 17 次均 exit=0、0/0 synced。</li>
+  <li><strong>唯一异常</strong>：R123（00:52）push 503 → R124（01:26）自动补推成功；R129 MEMORY 体积修正 + R131 滚动归档（均自主完成）。</li>
+</ol>
+
+<!-- ==================== KPI ==================== -->
+<h2 class="sec" id="kpi"><span class="no">2</span>KPI 表</h2>
+
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="v">52 → 61</div>
+    <div class="l">总 resolved（cline 18 + codex）</div>
+    <div class="delta up">+9</div>
+  </div>
+  <div class="kpi">
+    <div class="v">75 → 96</div>
+    <div class="l">codex patch-but-failed</div>
+    <div class="delta up">+21</div>
+  </div>
+  <div class="kpi">
+    <div class="v">191 → 161</div>
+    <div class="l">codex blocked</div>
+    <div class="delta down">-30</div>
+  </div>
+  <div class="kpi">
+    <div class="v">71 → 87</div>
+    <div class="l">relay 健康复核次数</div>
+    <div class="delta up">+16</div>
+  </div>
+</div>
+
+<table>
+  <tr><th>指标</th><th>22:00 起点（R118）</th><th>07:47 现值（R134）</th><th>Δ</th><th>备注</th></tr>
+  <tr><td>codex resolved</td><td>34（11.3%）</td><td>43（14.3%）</td><td><span class="badge b-ok">+9</span></td><td>R118→R125 集中增长（+9），R125 后持平</td></tr>
+  <tr><td>codex patch-but-failed</td><td>75（25.0%）</td><td>96（32.0%）</td><td><span class="badge b-info">+21</span></td><td>全窗口持续增长（git_fetch_retry 300s+3retry 解除 blocked）</td></tr>
+  <tr><td>codex blocked</td><td>191（63.7%）</td><td>161（53.7%）</td><td><span class="badge b-ok">-30</span></td><td>每轮减 1–3 条，稳定递减</td></tr>
+  <tr><td>总 resolved（含 cline 18）</td><td>52</td><td>61</td><td><span class="badge b-ok">+9</span></td><td>cline-patched 30 条窗口内无变化（已完成 60.0%）</td></tr>
+  <tr><td>SWEBENCH_COMPARE.html</td><td>52 resolved</td><td>61 resolved · 72933 B</td><td><span class="badge b-ok">+9</span></td><td>每轮由 gen_kimi_compare.py 重新生成</td></tr>
+  <tr><td>relay 健康复核</td><td>第 71 次（skip）</td><td>第 87 次（skip）</td><td><span class="badge b-ok">+16</span></td><td>ops_relay.sh PID 2489749（ppid=1，~5.6d），全程健康</td></tr>
+  <tr><td>codex 进程运行时长</td><td>~137 min（窗口起）</td><td>~728 min（≈12.1h）</td><td>—</td><td>PID 2151526（ppid=1），启动于窗口前 ~19:43</td></tr>
+  <tr><td>MEMORY_HARNESS.md 体积</td><td>~30 KB</td><td>17781 B（17.4 KB）</td><td><span class="badge b-ok">↓</span></td><td>R131 滚动归档 R113→daily 后降至 ~15 KB</td></tr>
+  <tr><td>配额阻塞（quota-blocked）</td><td>0</td><td>0</td><td>—</td><td>kimi-k2.6-cloud 全程 0 quota 阻塞</td></tr>
+  <tr><td>未唤醒 / 空转轮次</td><td>0</td><td>0</td><td>—</td><td>17 轮全部正常执行</td></tr>
+</table>
+
+<div class="ok-box">
+  <strong>【本窗口有无实质产出】：有</strong> —— 30 条 instance 从 blocked 状态解除（+9 resolved、+21 pbf），SWEBENCH_COMPARE.html 每轮刷新并提交，relay + git sync 全程健康。
+</div>
+
+<!-- ==================== TIMELINE ==================== -->
+<h2 class="sec" id="timeline"><span class="no">3</span>时间线（R118→R134，每轮 ~34 min）</h2>
+
+<table class="tl-table">
+  <tr><th>时间</th><th>轮次</th><th>动作</th><th>resolved/pbf/blocked</th><th>总 resolved</th><th>状态</th></tr>
+  <tr><td class="time">22:00</td><td>R118</td><td>codex --resume ~137min · 2 unblocked · HTML 52 resolved · relay skip 71st · git sync</td><td>34/75/191</td><td>52</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td class="time">22:34</td><td>R119</td><td>codex --resume ~172min · 2 unblocked · HTML 53 resolved</td><td>35/76/189</td><td>53</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td class="time">23:08</td><td>R120</td><td>codex --resume ~205min · 1 unblocked · HTML 53 resolved · relay skip 73rd</td><td>35/77/188</td><td>53</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td class="time">23:42</td><td>R121</td><td>codex --resume ~240min · 3 unblocked（+2 resolved）· HTML 55 resolved · relay skip 74th</td><td>37/78/185</td><td>55</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td class="time">00:18</td><td>R122</td><td>codex --resume ~275min · 2 unblocked（+1 resolved）· HTML 56 resolved · relay skip 75th</td><td>38/79/183</td><td>56</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td class="time">00:52</td><td>R123</td><td>codex --resume ~309min · 2 unblocked（+2 resolved）· HTML 58 resolved · <strong>push 503 ⚠️</strong></td><td>40/79/181</td><td>58</td><td><span class="badge b-warn">⚠️ push</span></td></tr>
+  <tr><td class="time">01:26</td><td>R124</td><td>codex --resume ~344min · 1 unblocked（+1 resolved）· HTML 59 resolved · <strong>R123 push 补推成功</strong> · relay skip 77th</td><td>41/80/179</td><td>59</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td class="time">01:59</td><td>R125</td><td>codex --resume ~378min · 2 unblocked（+2 resolved）· HTML 61 resolved · relay skip 78th</td><td>43/80/177</td><td>61</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td class="time">02:33</td><td>R126</td><td>codex --resume ~411min · 2 unblocked（+2 pbf）· HTML 61 resolved · relay skip 79th</td><td>43/82/175</td><td>61</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td class="time">03:08</td><td>R127</td><td>codex --resume ~445min · 2 unblocked（+2 pbf）· HTML 61 resolved · relay skip 80th</td><td>43/84/173</td><td>61</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td class="time">03:42</td><td>R128</td><td>codex --resume ~478min · 3 unblocked（+3 pbf）· HTML 72945B · relay skip 81st</td><td>43/87/170</td><td>61</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td class="time">04:17</td><td>R129</td><td>codex --resume ~514min · 1 unblocked（+1 pbf）· HTML 61 resolved · relay skip 82nd · <strong>MEMORY 体积修正</strong></td><td>43/88/169</td><td>61</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td class="time">04:52</td><td>R130</td><td>codex --resume ~549min · 1 unblocked（+1 pbf）· HTML 61 resolved · relay skip 83rd</td><td>43/89/168</td><td>61</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td class="time">05:34</td><td>R131</td><td>codex --resume ~583min · 2 unblocked（+2 pbf）· HTML 72943B · relay skip 84th · <strong>MEMORY 滚动归档 R113→daily</strong></td><td>43/91/166</td><td>61</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td class="time">06:08</td><td>R132</td><td>codex --resume ~626min · 1 unblocked（+1 pbf）· HTML 61 resolved · relay skip 85th</td><td>43/92/165</td><td>61</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td class="time">06:42</td><td>R133</td><td>codex --resume ~660min · 3 unblocked（+3 pbf）· HTML 72939B · relay skip 86th</td><td>43/95/162</td><td>61</td><td><span class="badge b-ok">✅</span></td></tr>
+  <tr><td class="time">07:16</td><td>R134</td><td>codex --resume ~693min · 1 unblocked（+1 pbf）· HTML 72933B · relay skip 87th · 体积自检 OK</td><td>43/96/161</td><td>61</td><td><span class="badge b-ok">✅</span></td></tr>
+</table>
+
+<p style="font-size:13px;color:var(--muted);">轮间间隔：~34 min（与 loop 睡眠周期一致）；17 轮全部正常执行，无空转、无 blocked。</p>
+
+<!-- ==================== CHART ==================== -->
+<h2 class="sec" id="chart"><span class="no">4</span>进度图（实测数据 · 内联 SVG）</h2>
+
+<svg class="svg-chart" viewBox="0 0 940 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="codex --resume 进度图">
+  <rect x="0" y="0" width="940" height="440" fill="#f6f8fa" rx="8"/>
+  <text x="470" y="24" text-anchor="middle" font-size="14" font-weight="600" fill="#0b3d6e">codex × kimi-k2.6-cloud · SWE-bench Lite 300 · R118→R134 进度</text>
+  <line x1="80" y1="40" x2="80" y2="380" stroke="#d0d7de" stroke-width="1"/>
+  <line x1="80" y1="380" x2="880" y2="380" stroke="#d0d7de" stroke-width="1"/>
+  <line x1="80" y1="295" x2="880" y2="295" stroke="#e1e4e8" stroke-width="0.5" stroke-dasharray="4,3"/>
+  <text x="72" y="299" text-anchor="end" font-size="11" fill="#59636e">50</text>
+  <line x1="80" y1="210" x2="880" y2="210" stroke="#e1e4e8" stroke-width="0.5" stroke-dasharray="4,3"/>
+  <text x="72" y="214" text-anchor="end" font-size="11" fill="#59636e">100</text>
+  <line x1="80" y1="125" x2="880" y2="125" stroke="#e1e4e8" stroke-width="0.5" stroke-dasharray="4,3"/>
+  <text x="72" y="129" text-anchor="end" font-size="11" fill="#59636e">150</text>
+  <line x1="80" y1="40" x2="880" y2="40" stroke="#e1e4e8" stroke-width="0.5" stroke-dasharray="4,3"/>
+  <text x="72" y="44" text-anchor="end" font-size="11" fill="#59636e">200</text>
+  <text x="72" y="384" text-anchor="end" font-size="11" fill="#59636e">0</text>
+  <text x="80" y="398" text-anchor="middle" font-size="11" fill="#59636e">R118</text>
+  <text x="276" y="398" text-anchor="middle" font-size="11" fill="#59636e">R122</text>
+  <text x="472" y="398" text-anchor="middle" font-size="11" fill="#59636e">R126</text>
+  <text x="668" y="398" text-anchor="middle" font-size="11" fill="#59636e">R130</text>
+  <text x="864" y="398" text-anchor="middle" font-size="11" fill="#59636e">R134</text>
+  <text x="470" y="418" text-anchor="middle" font-size="11" fill="#59636e">轮次（22:00 → 07:16）</text>
+  <polyline points="80,55 129,59 178,60 227,66 276,69 325,72 374,76 423,79 472,83 521,86 570,91 619,93 668,94 717,98 766,100 815,105 864,106" fill="none" stroke="#db6d28" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="80" cy="55" r="3" fill="#db6d28"/><circle cx="864" cy="106" r="3" fill="#db6d28"/>
+  <polyline points="80,253 129,251 178,249 227,247 276,246 325,246 374,244 423,244 472,241 521,237 570,232 619,230 668,229 717,225 766,224 815,219 864,217" fill="none" stroke="#1f6feb" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="80" cy="253" r="3" fill="#1f6feb"/><circle cx="864" cy="217" r="3" fill="#1f6feb"/>
+  <polyline points="80,322 129,321 178,321 227,317 276,315 325,312 374,310 423,307 472,307 521,307 570,307 619,307 668,307 717,307 766,307 815,307 864,307" fill="none" stroke="#1a7f37" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="80" cy="322" r="3" fill="#1a7f37"/><circle cx="864" cy="307" r="3" fill="#1a7f37"/>
+  <text x="872" y="109" font-size="11" fill="#db6d28" font-weight="600">161</text>
+  <text x="872" y="220" font-size="11" fill="#1f6feb" font-weight="600">96</text>
+  <text x="872" y="310" font-size="11" fill="#1a7f37" font-weight="600">43</text>
+  <text x="72" y="52" text-anchor="end" font-size="10" fill="#db6d28">191</text>
+  <text x="72" y="250" text-anchor="end" font-size="10" fill="#1f6feb">75</text>
+  <text x="72" y="319" text-anchor="end" font-size="10" fill="#1a7f37">34</text>
+  <rect x="560" y="44" width="300" height="68" fill="#fff" stroke="#d0d7de" rx="6"/>
+  <line x1="572" y1="58" x2="596" y2="58" stroke="#1a7f37" stroke-width="2.5"/>
+  <text x="602" y="62" font-size="12" fill="#1f2328">resolved（43，+9）</text>
+  <line x1="572" y1="78" x2="596" y2="78" stroke="#1f6feb" stroke-width="2.5"/>
+  <text x="602" y="82" font-size="12" fill="#1f2328">patch-but-failed（96，+21）</text>
+  <line x1="572" y1="98" x2="596" y2="98" stroke="#db6d28" stroke-width="2.5"/>
+  <text x="602" y="102" font-size="12" fill="#1f2328">blocked（161，−30）</text>
+</svg>
+<p class="svg-caption">【实测数据】codex 300 条 SWE-bench Lite 评测进度（R118=22:00 起点 → R134=07:16 终点）。纵轴 = instance 数量。</p>
+
+<!-- ==================== EVIDENCE ==================== -->
+<h2 class="sec" id="evidence"><span class="no">5</span>证据（原始命令 + 输出）</h2>
+
+<h3>5.1 窗口内 commit 拉取命令</h3>
+<pre><code>$ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
+  --date=format:'%m-%d %H:%M' --pretty=format:'%h %ad %s' | grep -i 'harness'
+(19 行输出 — 见 §8 完整列表)</code></pre>
+<p style="font-size:13px;color:var(--muted);">共 19 条 commit（17 轮，R123 和 R129 各 2 条）。</p>
+
+<h3>5.2 codex 进程实时状态（07:47 快照）</h3>
+<pre><code>$ ps -eo pid=,ppid=,etimes=,args= | grep -E 'codex|run_single|run_serial' | grep -v grep
+2151526       1   43665 python3 run_serial_kimi.py --harness codex --all-prepared --resume
+2407546 2151526    1513 .../run_single.py --harness codex --instance-json .../django__django-15695.json ...
+2407890 2407546    1513 codex exec --cd .../django_django --model kimi-k2.6-cloud ...</code></pre>
+<p style="font-size:13px;color:var(--muted);">PID 2151526（ppid=1，etimes=43665s ≈ 728min ≈ 12.1h）存活，当前处理 <code>django__django-15695</code>（子进程 etimes=1513s ≈ 25min）。</p>
+
+<h3>5.3 ops relay 健康状态</h3>
+<pre><code>$ ps -eo pid=,ppid=,etimes=,args= | grep 'ops_relay' | grep -v grep
+2489749       1  488172 bash ops_relay.sh</code></pre>
+<p style="font-size:13px;color:var(--muted);">relay PID 2489749（ppid=1，~5.6d）—— 全程健康，17 次复核均 skip 重启。</p>
+
+<h3>5.4 SWEBENCH_COMPARE.html 体积</h3>
+<pre><code>$ wc -c run/harness/SWEBENCH_COMPARE.html run/harness/kimi_pilot_results.json
+  72930 run/harness/SWEBENCH_COMPARE.html
+ 322056 run/harness/kimi_pilot_results.json</code></pre>
+
+<h3>5.5 R123 push 503 失败 + R124 补推证据</h3>
+<pre><code>$ git show 062087b1 --stat --format='%h %ad %s' --date=format:'%H:%M'
+062087b1 00:52 harness R123: push失败503记录(下一轮补推)
+ doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md | 1 +
+
+$ git show df7d0481 --format='%h %ad %s' --date=format:'%H:%M' --no-patch
+df7d0481 01:26 harness R124: ... R123 push confirmed succeeded, relay healthy skip 77th</code></pre>
+<div class="note">
+  <strong>处置</strong>：R123 push 503 后在 MEMORY 记录 1 行，R124（34 min 后）自动补推成功。按「收尾铁律」push 失败重试 1 次、仍失败则下一轮补推 —— 本次第一轮即恢复。
+</div>
+
+<h3>5.6 MEMORY 体积维护记录</h3>
+<pre><code># R129（04:17-04:18）—— MEMORY 体积修正
+9061b0ab 04:18 harness R129: MEMORY 体积修正(32465B≤32KB) R52/R50 指针化
+
+# R131（05:34）—— MEMORY 滚动归档
+69ad7842 05:34 harness R131: ... + MEMORY rolling archive R113→daily</code></pre>
+<p style="font-size:13px;color:var(--muted);">R129：MEMORY 超标（32465B > 32KB），指针化 R52/R50 → ≤32KB。R131：滚动归档 R113 及更早条目 → MEMORY ~32KB 降至 ~15KB。</p>
+
+<h3>5.7 最终体积自检（R134，07:16）</h3>
+<pre><code>📦 体积：TASK=29771B / MEMORY=17781B → 两者均 ≤32KB ✓（无需归档）</code></pre>
+
+<!-- ==================== ISSUES ==================== -->
+<h2 class="sec" id="issues"><span class="no">6</span>卡点 / 未完成</h2>
+
+<table>
+  <tr><th>项</th><th>状态</th><th>详情 / 需要什么</th></tr>
+  <tr><td>R123 push 503</td><td><span class="badge b-ok">已恢复</span></td><td>00:52 push 返回 503，R124（01:26）自动补推成功。无需运维介入。</td></tr>
+  <tr><td>MEMORY 体积超标</td><td><span class="badge b-ok">已处置</span></td><td>R129 指针化 + R131 滚动归档，MEMORY 从 ~32KB 降至 17.8KB。无需运维介入。</td></tr>
+  <tr><td>codex 161 条 blocked</td><td><span class="badge b-warn">进行中</span></td><td>git_fetch_retry fix（300s+3retry）正在逐条解除。按当前速率（~30 条/10h），预计 ~54h 可全部解除。无需运维介入。</td></tr>
+  <tr><td>配额阻塞</td><td><span class="badge b-ok">无</span></td><td>kimi-k2.6-cloud 全程 0 quota block。</td></tr>
+  <tr><td>运维介入</td><td><span class="badge b-ok">无需</span></td><td>本窗口内无任何需要运维介入的事项。</td></tr>
+</table>
+
+<!-- ==================== STATUS ==================== -->
+<h2 class="sec" id="status"><span class="no">7</span>今晨现状</h2>
+
+<h3>进程一览</h3>
+<table>
+  <tr><th>进程</th><th>PID</th><th>ppid</th><th>运行时长</th><th>状态</th></tr>
+  <tr><td>codex --resume（run_serial_kimi.py）</td><td>2151526</td><td>1</td><td>~728 min（12.1h）</td><td><span class="badge b-ok">运行中</span></td></tr>
+  <tr><td>ops_relay.sh</td><td>2489749</td><td>1</td><td>~5.6d</td><td><span class="badge b-ok">健康</span></td></tr>
+  <tr><td>baize_harness_loop.sh</td><td>—</td><td>—</td><td>—</td><td><span class="badge b-ok">运行中</span>（驱动每轮唤醒）</td></tr>
+</table>
+
+<h3>产物一览</h3>
+<table>
+  <tr><th>文件</th><th>体积</th><th>状态</th></tr>
+  <tr><td>SWEBENCH_COMPARE.html</td><td>72930 B</td><td>330 entries · 61 resolved · 每轮刷新</td></tr>
+  <tr><td>kimi_pilot_results.json</td><td>322056 B</td><td>330 entries（30 cline-patched + 300 codex）· codex 进程持续写入</td></tr>
+  <tr><td>MEMORY_HARNESS.md</td><td>17781 B（17.4 KB）</td><td>≤32KB ✓ · R131 归档后稳定</td></tr>
+  <tr><td>BAIZE_HARNESS_TASK.md</td><td>35729 B（34.9 KB）</td><td>⚠️ 超 32KB（运维 10-07 指令块所致）—— 下轮需归档</td></tr>
+  <tr><td>daily-memories-harness/2026-10-07.md</td><td>~16 KB</td><td>当日 17 轮记录已写入</td></tr>
+</table>
+
+<h3>下一轮计划</h3>
+<ol>
+  <li><strong>归档 BAIZE_HARNESS_TASK.md</strong>：当前 35729B > 32KB，需将已闭合运维块归档至 <code>ARCHIVE_OPERATOR_HARNESS.md</code>（留 1 行指针），降至 ≤32KB。</li>
+  <li><strong>codex --resume 继续</strong>：161 blocked 待解除 → 完成后进入 cline-patched×300 <code>--resume</code> → opencode×300 → claude-code×300 → deepseek-harness×300。</li>
+  <li><strong>保持 <code>WAITING=1</code></strong>：loop 每 ~34 min 唤醒一次巡检。</li>
+</ol>
+
+<!-- ==================== COMMITS ==================== -->
+<h2 class="sec" id="commits"><span class="no">8</span>窗口内 commit 列表</h2>
+<p style="font-size:13px;color:var(--muted);">命令：<code>git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 --date=format:'%m-%d %H:%M' --pretty=format:'%h %ad %s' | grep -i 'harness'</code></p>
+<pre><code>2bc662e4 10-07 07:16 harness R134: codex --resume ~693min, +1 pbf → 43/96/161, SWEBENCH_COMPARE.html regenerated (61 resolved)
+43fbda91 10-07 06:42 harness R133: codex --resume ~660min, +3 pbf → 43/95/162, SWEBENCH_COMPARE.html regenerated (61 resolved)
+514803a3 10-07 06:08 harness R132: codex --resume RUNNING ~626min, 1 unblocked (+1 pbf → 43/92/165), SWEBENCH_COMPARE.html 61 resolved, relay skip 85th
+69ad7842 10-07 05:34 harness R131: codex --resume ~583min +2pbf(43/91/166) + HTML 72943B 61resolved + relay skip 84th + MEMORY rolling archive R113→daily
+bbe043cf 10-07 04:52 harness R130: codex --resume ~549min +1pbf(43/89/168) + HTML 72943B 61resolved + relay skip 83rd
+9061b0ab 10-07 04:18 harness R129: MEMORY 体积修正(32465B≤32KB) R52/R50 指针化
+cc785749 10-07 04:17 harness R129: codex --resume ~514min (+1 pbf → 43/88/169) + HTML regen 61 resolved + relay skip 82nd + git sync
+f96ebbe4 10-07 03:42 harness R128: codex --resume ~478min 3 unblocked (+3 pbf → 43/87/170) + SWEBENCH_COMPARE.html 72945B + relay healthy skip 81st + git sync 0/0
+59f18e55 10-07 03:08 harness R127: codex --resume ~445min, +2 pbf (43/84/173), SWEBENCH_COMPARE.html regenerated, relay healthy skip 80th, git synced
+1860dbb1 10-07 02:33 harness R126: codex --resume ~411min +2 pbf (43/82/175) + HTML 61 resolved + relay skip 79th + git sync
+59b2affc 10-07 01:59 harness R125: codex --resume ~378min +2 resolved (43/80/177) + HTML 61 resolved + relay skip 78th + git sync
+df7d0481 10-07 01:26 harness R124: codex --resume ~344min, +1 resolved→41/80/179, total 59 resolved, SWEBENCH_COMPARE.html 72960B, R123 push confirmed succeeded, relay healthy skip 77th
+062087b1 10-07 00:52 harness R123: push失败503记录(下一轮补推)
+18e6b4ef 10-07 00:52 harness R123: codex --resume ~309min, +2 resolved→40/79/181, total 58 resolved, SWEBENCH_COMPARE.html 72960B
+a116ef2b 10-07 00:18 harness R122: codex --resume ~275min, 2 unblocked (+1 resolved → 38/79/183), SWEBENCH_COMPARE.html 56 resolved
+e3eb4f05 10-06 23:42 harness R121: codex --resume ~240min, 3 unblocked (+2 resolved → 37/78/185), SWEBENCH_COMPARE.html 55 resolved
+7c884952 10-06 23:08 harness R120: codex --resume ~205min, 1 unblocked (35 resolved/77 pbf/188 blocked), SWEBENCH_COMPARE.html 53 resolved
+ce48cca2 10-06 22:34 harness R119: codex --resume ~172min, 2 unblocked (35 resolved/76 pbf/189 blocked), SWEBENCH_COMPARE.html 53 resolved
+c73389b3 10-06 22:00 harness R118: codex --resume ~137min 2 unblocked (34 resolved/75 pbf/191 blocked) + SWEBENCH_COMPARE.html 52 resolved + relay healthy skip 71st + git sync</code></pre>
+<p style="font-size:13px;color:var(--muted);">共 19 条 commit · 17 轮（R118→R134）· 全部带 <code>harness</code> 前缀。</p>
+
+<footer>
+  <p>BaiZe harness 线 · 昨夜工作汇报 · 窗口 2026-10-06 22:00 → 2026-10-07 07:47（CST）<br>
+  生成时间：2026-10-07 07:47 · 自包含 HTML · 零外部依赖 · 内联 SVG（实测数据）</p>
+</footer>
+
+</div>
+</body>
+</html>
