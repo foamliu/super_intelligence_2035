@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 工作汇报 · 2026-10-07</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  h4 { font-size:14.5px; margin:16px 0 6px; color:var(--primary); }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr;} }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#0d5c22; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6a4a00; }
+  .danger { background:#fff0f0; border:1px solid #ffc9c9; border-left:4px solid var(--bad); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#8a1c1c; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe 工作汇报 · 2026-10-07</h1>
+  <div class="sub">「不重启」误读正名 · 🎉 base 下载下满（P-8 前置解除一）· 四线昨夜汇报交付 · pretrain A/B/D 全收官 · vision lp 协议 Δlp ≈ +10pp · data s_step 8.6× · harness 61 resolved</div>
+  <div class="meta">
+    <span>📅 2026-10-07（CST）</span>
+    <span>🕐 截至 ~09:55</span>
+    <span>📄 第 7 份日报</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <b>一句话</b>：今天上半场是<b>「纠错 + 交付」</b>——① 用户直令纠正了运维一处<b>长期被误读的指令</b>（「不重启下载」→ 正式正名为「<b>数据下载失败需主动重启</b>」，全仓 11 处活文改口 + 归档存证）；② 按用户令给四线派活，<b>四份「昨夜工作」HTML 汇报全部交付</b>（并追加「按需附图 + 限分辨率 + JPEG」规格）；③ 就在这半天里，<b>base 两条下载线全部下满</b>（<code>l1_en_hq 6000/6000 + zh 256/256</code>，<code>rc=0</code>）→ <b>MiniCPM5 base 族就绪，P-8 的两个硬前置解开一个</b>。
+  <br><br>
+  <span class="badge b-ok">✅ 4 条 BaiZe 线全在跑</span>
+  <span class="badge b-ok">🎉 base 下满 → P-8 前置 −1</span>
+  <span class="badge b-warn">⚠️ 运维一处「指令歧义」已认领并修复（见 §9）</span>
+</div>
+
+<nav class="toc">
+  <b>目录</b>
+  <ol>
+    <li><a href="#s1">⭐ 头条 A：「不重启」误读正名（P0）</a></li>
+    <li><a href="#s2">⭐ 头条 B：四线昨夜汇报派活 + 追加令（附图规格）</a></li>
+    <li><a href="#s3">🎉 base 下载下满 → P-8 前置解除一</a></li>
+    <li><a href="#s4">四条线状态一览</a></li>
+    <li><a href="#s5">pretrain：A/B/D 全收官 + GPU0-1 被抢占</a></li>
+    <li><a href="#s6">vision：R12b 训完 + lp 协议 Δlp≈+10pp + AIMv2 AR</a></li>
+    <li><a href="#s7">data：s_step 8.6× + Round1 收口 + Round2 BO</a></li>
+    <li><a href="#s8">harness：codex×300 长跑（61 resolved）</a></li>
+    <li><a href="#s9">诚实条款：我这轮犯的错与自纠</a></li>
+    <li><a href="#s10">需要你决策 / 注意</a></li>
+  </ol>
+</nav>
+
+<h2 class="sec" id="s1"><span class="no">1</span>⭐ 头条 A：「不重启」被误读 —— 用户直令正名为「数据下载失败需主动重启」</h2>
+
+<h3>1.1 触发（用户原话）</h3>
+<div class="note">「<b>data 的两条数据下载线得继续啊，谁说 base 不重启的</b>」</div>
+<p>背景：data 心跳里那句 <code>Base 下载: 进程已死（按指令不重启）</code> 连续写了 4 次（唤醒 175–178）—— 用户一眼看穿这是<b>误读</b>。</p>
+
+<h3>1.2 误读溯源（我查到的真因，如实记）</h3>
+<table>
+<tr><th>环节</th><th>事实</th></tr>
+<tr><td>源头文件</td><td><code>run/BAIZE_DATA_TASK.md</code> 第 36 行（今为第 60 行）：<code>🚫 不改白名单 / 不重启下载</code></td></tr>
+<tr><td>原意</td><td>2026-10-03 白名单锁定（commit <code>1c2f248</code>）时的<b>巡检纪律</b>：不要擅自改白名单、不要乱动<b>[健康的]</b>下载 —— <b>不是</b>「死了也不许重启」</td></tr>
+<tr><td>放大机制</td><td>10-06 15:1x 用户已直令重启 base，我下了 <b>P0 块「立即重启 base 全量下载」</b>；当时 base <b>还活着</b>（<code>l1_en_hq</code> 4805/6006），data 回「无需执行——已活跃且在增长」= 正确。但<b>该 P0 块随后被归档进 <code>run/ARCHIVE_OPERATOR_DATA.md</code></b> ⇒ 活文里<b>只剩「不重启」半句、重启授权被一并带走</b>。之后 <code>l1_en_hq</code> 一度停在 ~91%、心跳只看得见「不重启」⇒ 不敢动。</td></tr>
+<tr><td>旁证</td><td>10-03 归档块原文本就写着「某项<b>僵死 → kill + 重启</b>（沿用既有规程）」—— 即「僵死即重启」才是原有长期口径</td></tr>
+<tr><td>责任</td><td><b>表述缺陷在运维，不在 data。</b>「不重启」被读成它的反面。</td></tr>
+</table>
+
+<h3>1.3 处置（已下发）</h3>
+<ol>
+  <li><code>run/BAIZE_DATA_TASK.md</code> 顶部新增 <b>P0 块「2026-10-07 · 两条下载线（base+GPIC）继续/立即重启」</b>（含溯源 + 永久口径 + 5 步动作 + 固定心跳格式）。</li>
+  <li>第 60 行纪律行改写：<code>不重启下载</code> → <code>不起白名单外的下载</code>（＋括注「<b>白名单内僵死/趋零/PID 已死 ⇒ 立即 kill+重启</b>」）。</li>
+  <li>同步更新 <code>MEMORY.md §3</code> data 行状态。</li>
+</ol>
+
+<h3>1.4 永久口径（本案裁决）</h3>
+<div class="ok-box">
+<b>白名单内（<code>l1_en_hq</code> / <code>zh</code> / GPIC）任一下载僵死 / 速率趋零 / PID 已死 ⇒ 立即 kill + 重启，报告标「已重启」+ 新 PID，不再等运维点名。</b><br>
+「不重启下载」今后<b>只剩</b>「不改白名单、不起白名单外新下载」这一种含义。全仓活文 11 处已改口（任务书 5 · <code>MEMORY_DATA</code> 6 · <code>MEMORY</code> 1），残留只在归档存证块与 <code>daily-memories*/</code>。
+</div>
+
+<h2 class="sec" id="s2"><span class="no">2</span>⭐ 头条 B：四线昨夜汇报派活 + 追加令（附图规格）</h2>
+
+<h3>2.1 用户令（两连）</h3>
+<div class="note">
+①「关于昨夜（10/6 22:00–10/7 08:00）的工作，让 <b>pretrain、vision、data 和 harness 各自写一个 html 报告</b>」<br>
+②「另外四条线的 agent 的工具包（MCP）里都有<b>文生图工具</b>，让它们做报告时<b>可以考虑按需附图</b>以便于理解」→ 追加「<b>限制配图分辨率 + 图片格式用 JPEG 而非 PNG</b>」
+</div>
+
+<h3>2.2 派活通道裁定</h3>
+<p><code>run/ops/inbox.md</code> 中继<b>只执行 bash 块</b>（干不了「写报告」）⇒ 改走各线任务书「运维指令区」（agent 每次唤醒必读）。四块插在指令区<b>顶部 = 当轮第一件事</b>：pretrain <code>L10</code> · vision <code>L8</code> · data <code>L15</code>（在 P0 之上，注明「不替代 P0」）· harness <code>L61</code>。</p>
+
+<h3>2.3 统一规格（四线完全一致，便于并排对照）</h3>
+<table>
+<tr><th>项</th><th>规格</th></tr>
+<tr><td>产出</td><td><code>report_10_07_&lt;line&gt;_overnight.html</code>（四份并列）</td></tr>
+<tr><td>自包含</td><td>内联 CSS · <b>零外部依赖</b>（图表用内联 SVG）· HTML 本体 ≤200KB · 字体栈沿用 <code>report_10_06.html</code></td></tr>
+<tr><td>窗口</td><td><code>2026-10-06 22:00 → 2026-10-07 08:00</code>；窗外内容须标「窗口外·背景」</td></tr>
+<tr><td>固定 8 节</td><td>HERO · TL;DR · KPI 表（起点→现值→Δ）＋「本窗口有无实质产出」判定 · 时间线 · 证据（含失败与异常）· 卡点 · 今晨现状 · 窗口内 commit 列表</td></tr>
+<tr><td>硬约束</td><td>只写事实、<b>数字必须真</b>、<b>禁止估算冒充实测</b>；「等待/空转」必须显式标出；不许拿窗外成果充数</td></tr>
+</table>
+
+<h3>2.4 追加令：附图规格（三条铁律）</h3>
+<div class="danger">
+🚫 <b>严禁用文生图「编」数据图</b> —— 曲线/柱状/数值分布<b>必须由真实实测数据</b>生成（内联 SVG / matplotlib）；文生图<b>只能画示意图</b>，caption 须标【示意图·文生图】，实测图标【实测数据】。（否则模型会「画」出一条很专业的<b>假曲线</b>，比不配图危险得多。）
+</div>
+<ul>
+  <li><b>图只是辅助</b>：关键结论必须由表格/文字/原始输出承载，正文数字不得只存在于图里。</li>
+  <li><b>图片落本地并 commit</b>：工具只返回 URL ⇒ 先 <code>curl -o</code> 下载再引用；HTML 里禁止被引用的外链（离线必须能开）。</li>
+  <li><b>位图规格</b>：一律 <b>JPEG <code>.jpg</code>、长边 ≤1280px</b>、q85、单图 ≤400KB / 总量 ≤4MB；🚫 禁 PNG 原件、🚫 禁 1920/2560 档。<b>数据图仍首选内联 SVG</b>（最锐利、零体积）。</li>
+</ul>
+<div class="note"><b>连带后果（已处理）</b>：加完「附图」节后四本任务书全部 &gt;32KB（DATA 35.3 / VISION 38.9 / PRETRAIN_2B 34.8 / HARNESS 36.7 KB）⇒ 四块内都补了体积提醒（「先自己滚动归档到 ≤32KB 再提交」，由 agent 自滚，非运维代劳）；均未到 40KB 红线。</div>
+
+<h3>2.5 交付结果（08:01–08:21 全部落地）</h3>
+<table>
+<tr><th>线</th><th>文件</th><th>大小</th><th>关键内容</th></tr>
+<tr><td>harness</td><td><code>report_10_07_harness_overnight.html</code></td><td>27.2 KB</td><td>codex <code>--resume</code> R118→R134，43/96/161，61 resolved</td></tr>
+<tr><td>vision</td><td><code>report_10_07_vision_overnight.html</code></td><td>—</td><td>R12b 训完 272k（lp_max 18.81%）+ lp 协议 Δlp=+10.05pp + AIMv2 AR smoke 过</td></tr>
+<tr><td>pretrain</td><td><code>report_10_07_pretrain_overnight.html</code></td><td>—</td><td>A/B/D 全 ✅ + GPU 占用时间线内联 SVG</td></tr>
+<tr><td>data</td><td><code>report_10_07_data_overnight.html</code></td><td>—</td><td>s_step 8.6× + Round1 收口 + Round2 启动 + 下载线取证</td></tr>
+</table>
+<p>四份均在 <code>doc/BaiZe-ISEDA2027/</code> 相邻，格式统一，可直接并排对照。</p>
+
+<h2 class="sec" id="s3"><span class="no">3</span>🎉 base 下载下满 → P-8 前置解除一</h2>
+<p><b>08:16</b>，<code>download_l1_zh.log</code> 末尾出现 <code>[retry-loop] DONE rc=0 2026-10-07_08:16:38</code> —— <b>干净退出，非崩溃</b>。实测：</p>
+<div class="kpi-row">
+  <div class="kpi"><div class="v">6000/6000</div><div class="l">l1_en_hq（CC-MAIN-2025 六快照）</div></div>
+  <div class="kpi"><div class="v">256/256</div><div class="l">ultrafineweb_zh</div></div>
+  <div class="kpi"><div class="v">rc=0</div><div class="l">retry-loop 退出码</div></div>
+  <div class="kpi"><div class="v">0</div><div class="l">.incomplete 残留</div></div>
+</div>
+<div class="ok-box">
+<b>base 族就绪</b> —— 这是 <b>P-8（Stage (i) 本体）的硬前置之一</b>。P-8 此前卡在两件事：① base 全量数据（下满 ✅）② Round2 BO 配比定稿（进行中，见 §7）。<br>
+→ 现状：<b>P-8 两个硬前置已解开一个</b>。base 分词此前仅 22.05B token（P-8 需 ~100B）⇒ 可启动 <b>P-8 备料（base 分词扩展）</b>。
+</div>
+<div class="note"><b>诚实备注</b>：早前心跳连写的「base 进程已死（按指令不重启）」经 <code>ps -ef</code> 复核为<b>误读</b> —— 进程 PID 3076519 自 Oct-04 起一直健康，直到 <b>08:16 正常下满</b>，<b>从未死亡、窗口内无「已死却维持不动」时段</b>。误读根因与正名见 §1。</div>
+<p>另一条下载线 <b>GPIC</b> 仍在跑：<code>train 4987/8001（62%）+ test 128/128 ✅</code>，PID 144981 存活（mtime 秒级活跃）。</p>
+
+<h2 class="sec" id="s4"><span class="no">4</span>四条线状态一览（截至 ~09:55）</h2>
+<table>
+<tr><th>线</th><th>状态</th><th>本轮关键数字</th></tr>
+<tr><td><b>pretrain</b><br><span class="badge b-ok">运行中</span></td><td>A/B/D 三项运维指令<b>全收官</b> → GPU0-1 后半段被 data BO 抢占 → 新令：long-ctx 推理成本矩阵</td><td>A 36/36 ✅ · B ✅（Passkey 4K/8K=0%）· D ✅（VRAM 恒 5.35GB）· <b>P-8 前置：base ✅ / BO 未完</b></td></tr>
+<tr><td><b>vision</b><br><span class="badge b-ok">运行中</span></td><td>R12b 训完 + 28-ckpt eval → <b>lp 协议 A/B 桥接全部完成</b> → AIMv2 AR 代码 smoke 过</td><td>lp_max <b>18.81%</b> · <b>Δlp ≈ +10.05pp（3 ckpt 极稳定）</b> · 下一步 ②mask-ratio ③weight-ratio ④AIMv2 AR</td></tr>
+<tr><td><b>data</b><br><span class="badge b-ok">运行中</span></td><td>s_step 归因 ✅ → Round1 收口 ✅ → R1 errata 更正 → <b>Round2 BO 运行中</b></td><td>s_step <b>1432→166 ms（8.6×）</b> · R2 BO <b>80/200</b>（67✅，best=<b>0.4155</b>，ETA~18:40）· <b>base 下满 ✅</b></td></tr>
+<tr><td><b>harness</b><br><span class="badge b-ok">运行中</span></td><td>codex × kimi-k2.6-cloud SWE-bench Lite 300 条 <code>--resume</code> 长跑</td><td><b>61 resolved</b>（52→61）· pbf 75→106 · blocked 191→151</td></tr>
+<tr><td><b>ZhuLong</b><br><span class="badge b-ok">运行中</span></td><td>Phase B 大模型消融</td><td><code>B.doubao</code> r3 <b>61.4%</b> → r4 启动</td></tr>
+<tr><td><b>news / research</b><br><span class="badge b-info">换档</span></td><td>personal-watch 节律 <b>30min → 每天 2 次（06:00 / 18:00）</b>；中继加固</td><td>news 第七十八轮 +1 · research 第七十八轮 0 新增</td></tr>
+</table>
+
+<h2 class="sec" id="s5"><span class="no">5</span>pretrain：A/B/D 全收官 + GPU0-1 被抢占</h2>
+<p>窗口 <code>10-06 22:00 → 10-07 08:00</code> 内，三条运维指令 <b>A（复杂推理 6 集）/ B（长上下文）/ D（sglang VRAM 补测）全部 ✅</b>；后半段（02:26–08:06，~5.5h）GPU0-1 被 data Round2 BO 抢占，仅做状态核查、<b>无实质产出（如实记录）</b>。</p>
+
+<h3>5.1 A 复杂推理 6 集 —— 36/36 ✅</h3>
+<ul>
+  <li><b>5/6 任务贴地板</b>（GSM8K / MATH / MMLU / HumanEval / MBPP）—— 小模型在这些任务上还没有能力。</li>
+  <li><b>仅 BBH 有微弱 scaling 信号</b>：峰值 <b>14.26% @ 2.62B token</b>，到 20B 时回落到 <b>8.78%</b>（<b>非单调</b>）。</li>
+</ul>
+
+<h3>5.2 B 长上下文 4096→8192 —— ✅，且一个假设被证实</h3>
+<table>
+<tr><th>项</th><th>实测</th></tr>
+<tr><td>ABF（<code>rope_theta=1e6</code>）对短上下文</td><td><b>不降反升</b>：HellaSwag <b>+2.71pp</b>、ARC-Easy <b>+0.72pp</b></td></tr>
+<tr><td>Passkey 4K / 8K</td><td>均 <b>0%</b> ⇒ 检索能力未建立</td></tr>
+<tr><td>结论</td><td><b>「RoPE 只作用于 4 层 attention ⇒ 长上下文收益有限」被实测证实</b></td></tr>
+</table>
+
+<h3>5.3 D sglang VRAM 补测 —— H3 从 ❌ 更正为 ✅</h3>
+<table>
+<tr><th>ctx</th><th>bs</th><th>TTFT (s)</th><th>decode (tok/s)</th><th>VRAM (GB)</th></tr>
+<tr><td>4K</td><td>1</td><td>0.159</td><td>284.0</td><td><b>5.35</b></td></tr>
+<tr><td>4K</td><td>8</td><td>0.155</td><td>935.6</td><td><b>5.35</b></td></tr>
+<tr><td>16K</td><td>8</td><td>0.397</td><td>1,170.4</td><td><b>5.35</b></td></tr>
+<tr><td>64K</td><td>8</td><td>1.582</td><td>1,070.7</td><td><b>5.35</b></td></tr>
+<tr><td>128K</td><td>1</td><td>0.643</td><td>249.0</td><td><b>5.35</b></td></tr>
+<tr><td>128K</td><td>8</td><td>3.071</td><td>1,055.8</td><td><b>5.35</b></td></tr>
+</table>
+<div class="ok-box">
+<b>核心结论</b>：低 <code>mem-fraction 0.3</code> 下，VRAM <b>4K→128K 恒定 5.35GB（零增长）</b> ⇒ <b>H3（SSM 显存优势）✅ 证实</b>。P-9.11② 原报告 H3=❌ 是 <code>--mem-fraction-static 0.85</code> 预分配 ~68GB 的假象。<br>
+TTFT <b>sublinear</b>（0.071→0.643s = <b>9.1× for 32× ctx</b>），decode 仅降 12%（284→249 tok/s）。128K 成功 —— 更正原「failed」：实为 prompt tokenized <b>144941 &gt; 131072</b>，<b>非</b> <code>max_pos=4096</code> 限制。
+</div>
+<p><b>异常与修复</b>：sglang launch 失败根因 = Squid proxy 拦截 localhost 请求 + 脚本 <code>set -e</code> 杀掉后台进程 ⇒ Fix：<code>no_proxy=localhost,127.0.0.1</code> + <code>--host 127.0.0.1</code> + <code>--skip-server-warmup</code> + <code>nohup</code> 直接启动。</p>
+
+<h3>5.4 GPU0-1 被 data BO 抢占（如实记录）</h3>
+<table>
+<tr><th>时段</th><th>GPU0-1</th><th>产出</th></tr>
+<tr><td>22:00 – 01:52（~4h）</td><td>本线 A/B/D 独占（data BO 仅占 GPU2-7）</td><td><span class="badge b-ok">A/B/D 实质产出</span></td></tr>
+<tr><td>02:24 – 08:06（~5.5h）</td><td>data Round2 BO 扩展至<b>全 8 卡</b>（62GB/卡）</td><td><span class="badge b-warn">仅 10 次状态核查，无实质产出</span></td></tr>
+</table>
+<p>被抢占量 = <b>~5.5h × 2 GPU ≈ 11 GPU·h</b>（但此时 A/B/D 已完成，<b>未影响已交付成果</b>）。</p>
+
+<h3>5.5 新令：sglang long-ctx 推理成本矩阵</h3>
+<p>用户令（09:09 经中继下发并重发）：跑 <b><code>128K/256K/512K/1M</code> × 两架构</b> 的 sglang 推理成本矩阵；运维同时把 <code>.12 GPU1-7</code> 借给 pretrain 至 11:00（新增 <code>GPU12_ALLOC.md</code> 账本 + 并行 launcher <code>p911e_matrix_launch.sh</code>，一卡一格）。</p>
+
+<h2 class="sec" id="s6"><span class="no">6</span>vision：R12b 训完 + lp 协议 Δlp ≈ +10pp + AIMv2 AR</h2>
+
+<h3>6.1 R12b 全量数据训练 + eval ✅</h3>
+<table>
+<tr><th>项</th><th>结果</th></tr>
+<tr><td>训练</td><td>12:54–02:14（~13.3h），<b>272k 步全部跑完</b>，28 ckpts 落盘（~510MB each）</td></tr>
+<tr><td>eval</td><td>28/28 ckpt 完成（02:45 ALL DONE），<b>lp_max = 18.81%</b>（final <code>vision.pt</code>，139.3M token），幂律 R²=0.8867</td></tr>
+<tr><td>吞吐</td><td>稳定 ~5400 img/s（NFS 抖动时降到 ~2500–3700）</td></tr>
+</table>
+<div class="danger">
+⚠️ <b>关键发现：更多 unique 数据 ≠ 更高 lp</b> —— R12b（69.7M / 2ep / 139M token = <b>18.81%</b>）反而<b>低于</b> R11-G（18.5M / 1ep / 55.3M = <b>19.76%</b>）<b>0.95pp</b>。<br>
+归因：GPIC 短 caption（~20 tok）占 R12b 数据 <b>76%</b> 稀释信号 + 2ep &lt; 3ep。
+</div>
+
+<h3>6.2 ⭐ lp 协议 A/B 桥接 —— Δlp ≈ +10pp（3 ckpt 极稳定）</h3>
+<table>
+<tr><th>ckpt</th><th>协议 A（BaiZe）</th><th>协议 B（SGD+cosine 90ep bs1024 全量 1.28M）</th><th>Δlp</th></tr>
+<tr><td>ckpt1（R12b final）</td><td>18.79%</td><td><b>28.84 ± 0.03%</b></td><td><b>+10.05pp</b></td></tr>
+<tr><td>ckpt2（R12 1ep）</td><td>20.22%</td><td><b>30.27 ± 0.03%</b></td><td><b>+10.05pp</b></td></tr>
+<tr><td>ckpt3（R11G AIMv2）</td><td>19.77%</td><td><b>29.94 ± 0.04%</b></td><td><b>+10.17pp</b></td></tr>
+</table>
+<div class="ok-box">⭐ <b>Δlp ~+10pp 极稳定</b> ⇒ <b>BaiZe 协议系统性低估 lp ~10pp</b>，是 gap vs 公开值的主要贡献者之一。这是本窗口最可交付的结论。（bridge PID 807654 已退出，GPU0 释放，8 GPU 全空闲。）</div>
+<p><b>两次 bridge crash（已修）</b>：① 缺 <code>import torchvision.transforms</code> → 补 import 重启；② CUDA OOM（<code>extract_features_streaming</code> 前向缺 <code>torch.no_grad()</code>，80GB 被计算图占满）→ 加 <code>no_grad</code> + <code>Xtr.to(device)</code> + <code>expandable_segments:True</code>，重启后稳定 &gt;3h。</p>
+
+<h3>6.3 队列④「官方 AIMv2 纯 AR 范式」代码落地 + smoke 过</h3>
+<pre><code>[smoke test GPU1]
+causal mask 验证: causal forward ≠ bidirectional forward  ✅ (output differs)
+梯度流通: vision 274 params + decoder 62 + predictor 6  ✅ (all .grad exists)
+param counts: vision=126.6M / decoder=76.2M(weight-tied, 原 114.1M→降33%) / predictor=0.66M
+              total trainable = 203.5M
+py_compile models.py ✅ / r9_train.py ✅</code></pre>
+<p>训练循环 = causal ViT → next-patch pixel_loss（shift-by-1 MSE）+ text AR cap_loss（cross-attn to <b>causal</b> patches）+ total = cap + 0.4×pixel，<b>无 InfoNCE</b>。</p>
+<div class="note">⚠️ <b>吞吐未实测</b>：AR causal attention FLOPs 不降 + text decoder cross-attn + PatchPredictor 对全 196 位置（vs 随机掩码 ~118 ⇒ +66%）⇒ 运维预案「实际吞吐可能只有 3500–4000 img/s」，<b>待 30k 快速 A/B 时再量</b>。</div>
+
+<h3>6.4 下一步（②③④ 排队，等 GPU）</h3>
+<ol>
+  <li><b>② mask-ratio 消融</b>（5 臂：0.3/0.5/0.6/0.75/0.9，30k 步/臂，~9.5h）</li>
+  <li><b>③ weight-ratio 消融</b>（4 臂：1:2 / 1:0.5 / 0.5:1 / 2:1，30k 步/臂，~7.6h）</li>
+  <li><b>④ 官方 AIMv2 AR 范式</b>（先 30k 快速 A/B 量吞吐，再决定是否上 108k）</li>
+  <li>持续巡检 GPIC 下载</li>
+</ol>
+<p>⚠️ ②③④ 均需 8 GPU，而运维把 GPU1-7 借给 pretrain 至 11:00 ⇒ vision 已申请 8 GPU（<code>GPU12_ALLOC.md</code>），排在 11:00 后开跑。</p>
+
+<h2 class="sec" id="s7"><span class="no">7</span>data：s_step 8.6× + Round1 收口 + Round2 BO</h2>
+
+<h3>7.1 ⭐ s_step 归因完成（最高杠杆，用户的「技术修正」被证实）</h3>
+<p>用户在 10-06 指出 <code>s_step=1.5 s</code> 是瓶颈，并给出「每卡独立跑」的修正。归因实验（<code>baize_sstep_profile.py</code>@GPU1，GBS=16、seq=2048、50 step、88:8:4 blend）：</p>
+<table>
+<tr><th>MBS</th><th>median s/step</th><th>加速</th><th>Peak mem</th></tr>
+<tr><td>1</td><td>1432 ms</td><td>1.0×</td><td>3 GB</td></tr>
+<tr><td>4</td><td>418 ms</td><td>3.4×</td><td>11 GB</td></tr>
+<tr><td>8</td><td>220 ms</td><td>6.5×</td><td>20 GB</td></tr>
+<tr><td><b>16</b></td><td><b>166 ms</b></td><td><b>8.6×</b></td><td>42 GB</td></tr>
+</table>
+<div class="ok-box">
+<b>结论：overhead-bound（每 μbatch ~90–170ms Python / kernel-launch），非 compute-bound。</b><br>
+MBS=16 使 <b>D = 0.5B token/trial</b>（15259 步 × 0.166s = 42 min/trial → <b>205 trial/24h/6GPU</b>）可行 ⇒ <b>D 从 0.016B 抬到 0.5B</b>。产出 <code>report_data_mix_sstep.html</code>。
+</div>
+
+<h3>7.2 Round1 BO 200/200 + top-K lm_eval + Spearman</h3>
+<table>
+<tr><th>项</th><th>结果</th></tr>
+<tr><td>Round1 BO</td><td><b>200/200 ✅</b>（best=#182）</td></tr>
+<tr><td>top-K lm_eval</td><td>6 ckpt × 8 集（常识推理）完成</td></tr>
+<tr><td>Spearman ρ</td><td><b>≈ −0.43</b>（loss 排名 vs 均分排名不一致）；σ=0（确定性）</td></tr>
+<tr><td>结论（经 errata 更正）</td><td><b>「代理（val loss）无分辨力 + 证据不足」</b> —— 印证用户 10-06 的判断（loss 排序 ≠ 能力排序）</td></tr>
+</table>
+<div class="note"><b>errata 自查（09:11）</b>：data 线自查发现 <code>analyze_lmeval.py</code> L35 <b>名次方向 bug</b> + <b>ρ 符号误读</b> ⇒ 已修 <code>analyze_lmeval.py</code>、<code>DATA_MIX_RECIPE.md §9.2.1</code>（表格从 JSON 重生成）、<code>report_data_mix_eval.html</code>（6 处），核心结论改为<b>「代理无分辨力 + 证据不足」</b>。这是<b>主动纠正自己的报告</b>，不是掩盖。</div>
+
+<h3>7.3 Round2 BO 运行中（8 卡全速）</h3>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>进度</td><td><b>80/200 trial</b>（67✅ / 13❌，13 个失败全在早期 id1-13）</td></tr>
+<tr><td>best</td><td><b>0.4155</b>（id=23：web=0.941 / code=0.109）；top5 = id23/38/33/57/79</td></tr>
+<tr><td>score 统计</td><td>min 0.373 / max 0.4155 / mean 0.3905（σ≈0.0091，&gt; Round1 的 0.005 ⇒ <b>D=0.5B 信号更强</b>）</td></tr>
+<tr><td>修复 3 bug</td><td>端口冲突 → random port / ckpt→HF 架构硬编码 → auto-detect / HF key 名 mismatch → 修</td></tr>
+<tr><td>速率 / ETA</td><td>≈ <b>12.6/h</b> ⇒ <b>ETA ~18:40</b> 到 200 trial（PID 3614158@.29 存活，8 GPU）</td></tr>
+</table>
+
+<h3>7.4 两条下载线（本轮取证）</h3>
+<table>
+<tr><th>线</th><th>状态</th><th>PID</th></tr>
+<tr><td><b>base</b> <code>l1_en_hq</code></td><td><span class="badge b-ok">6000/6000 ✅ 下满（rc=0 @08:16）</span></td><td>—（已退出）</td></tr>
+<tr><td><b>base</b> <code>zh</code></td><td><span class="badge b-ok">256/256 ✅</span></td><td>—</td></tr>
+<tr><td><b>GPIC</b> train</td><td><span class="badge b-warn">4987/8001（62%）</span></td><td>144981 存活</td></tr>
+<tr><td><b>GPIC</b> test</td><td><span class="badge b-ok">128/128 ✅</span></td><td>—</td></tr>
+</table>
+<p>data 下一步：① 监控 BO（ETA ~18:40）② BO 200 → top-K 全量 lm_eval → <code>report_data_mix_eval_r2.html</code> ③ GPIC 续下至 8001 tar ④ 更新 <code>DATA_MIX_RECIPE.md §6</code> ⑤ <b>base 已满 → 可启动 P-8 备料（base 分词扩展）</b>。</p>
+
+<h2 class="sec" id="s8"><span class="no">8</span>harness：codex×300 长跑（61 resolved）</h2>
+<table>
+<tr><th>指标</th><th>22:00 起点（R118）</th><th>09:51 现值（R138）</th><th>Δ</th></tr>
+<tr><td>codex resolved</td><td>34（11.3%）</td><td>43（14.3%）</td><td><span class="badge b-ok">+9</span></td></tr>
+<tr><td>codex patch-but-failed</td><td>75（25.0%）</td><td>106（35.3%）</td><td><span class="badge b-info">+31</span></td></tr>
+<tr><td>codex blocked</td><td>191（63.7%）</td><td>151（50.3%）</td><td><span class="badge b-ok">−40</span></td></tr>
+<tr><td>总 resolved（含 cline 18）</td><td>52</td><td><b>61</b></td><td><span class="badge b-ok">+9</span></td></tr>
+<tr><td>relay 健康复核</td><td>71st</td><td>90th（全 skip）</td><td>+19</td></tr>
+</table>
+<div class="ok-box">
+codex <code>--resume</code>（PID 2151526，ppid=1）以 ~34 min/轮稳定巡检，<b>无配额阻塞、无空转、无需运维介入</b>。SWE-bench Lite 300 条按「从 blocked 逐条解除」推进（<code>git_fetch_retry</code> fix：300s+3retry）；<code>SWEBENCH_COMPARE.html</code> 每轮刷新（330 entries，~72.9 KB）。
+</div>
+<p><b>唯一异常</b>：R123（00:52）push 返回 <b>503</b> → R124（01:26）<b>自动补推成功</b>。MEMORY 体积维护（R129 指针化 + R131 滚动归档）均由 agent 自主完成。</p>
+
+<h2 class="sec" id="s9"><span class="no">9</span>诚实条款：我这轮犯的错与自纠</h2>
+<table>
+<tr><th>#</th><th>问题</th><th>性质</th><th>处置</th></tr>
+<tr><td>1</td><td><b>「不重启下载」指令歧义</b>（源头在我）</td><td>任务书 L36 的巡检纪律被<b>长期误读</b>为「下载失败也不重启」，且重启授权块被归档带走 ⇒ 白名单内下载一度「僵死不敢动」</td><td>✅ 用户直令后 <b>全仓活文 11 处正名</b>为「数据下载失败需主动重启」+ 归档存证 + <code>MEMORY.md §3</code> 同步（见 §1）</td></tr>
+<tr><td>2</td><td>派活块体积提醒写了<b>精确字节</b></td><td>该行自身增删就会让数字失真（改完实测已变），<b>违反我写的「数字必须真」</b></td><td>✅ 统一改为 <code>≈NN.NKB</code> + 「确切字节以你自己 <code>wc -c</code> 实测为准」，让提示自洽</td></tr>
+<tr><td>3</td><td>追加「附图」节后四本任务书全部 <b>&gt;32KB</b></td><td>DATA 35.3 / VISION 38.9 / PRETRAIN_2B 34.8 / HARNESS 36.7 KB（VISION 距今 40KB 红线仅 3%）</td><td>✅ 四块内都写明「先自己滚动归档到 ≤32KB 再提交」（按 10-06 规程由 agent 自滚）；均未到红线</td></tr>
+</table>
+<div class="note"><b>教训</b>：① <b>活文只放现行指令，历史进归档</b> —— 否则「授权被归档带走、只剩禁忌半句」会制造相反的指令；② <b>写进规范的数字必须自洽</b>（不能用会随编辑漂移的精确值）；③ <b>体积提醒要留出余量</b>（VISION 已贴红线）。</div>
+
+<h2 class="sec" id="s10"><span class="no">10</span>需要你决策 / 注意</h2>
+<table>
+<tr><th>#</th><th>事项</th><th>状态</th></tr>
+<tr><td>1</td><td><b>🎉 base 下满 → P-8 备料可启动</b>（base 分词扩展 22.05B → ~100B token）</td><td class="b-info">P-8 两个硬前置已解一个；另一个 = Round2 BO 配比（ETA ~18:40）</td></tr>
+<tr><td>2</td><td><b>P-8 配置拍板</b>（seq 4096/8192、MBS、精度 bf16/FP8）</td><td class="b-warn">仍需「配比定稿」；<b>不得顺手启动</b></td></tr>
+<tr><td>3</td><td>pretrain <b>long-ctx 推理成本矩阵</b>（128K/256K/512K/1M × 两架构）—— 已按你令开跑，借 <code>.12 GPU1-7</code> 至 11:00</td><td class="b-info">运行中；11:00 后 GPU 归还 vision</td></tr>
+<tr><td>4</td><td>vision <b>② masked-ratio / ③ weight-ratio / ④ AIMv2 AR</b> 三项消融</td><td class="b-warn">等 11:00 GPU 归还后顺序开跑（~9.5h + ~7.6h + smoke）</td></tr>
+<tr><td>5</td><td>data <b>Round2 top-K lm_eval</b>（BO 跑完后取 top-5 → 8 集均分 → 秩相关）—— 用「评测均分」当 objective（你 10-06 的更正）</td><td class="b-info">BO 完成后自动进行</td></tr>
+<tr><td>6</td><td>news 第 10 批（《东方时事解读》音频→文字）<b>P1–P6 待拍板</b>；personal-watch 已换档每天 2 次（06:00/18:00）</td><td class="b-warn">拍板前不实施日更</td></tr>
+<tr><td>7</td><td>ISEDA 2027 <b>页数上限</b>待确认（当前论文 9 页）</td><td class="b-info">—</td></tr>
+</table>
+
+<h3>下一个观测点</h3>
+<ul>
+  <li><b>pretrain</b>：long-ctx 成本矩阵（128K→1M）→ 为 P-8 seq 决策 + 资源申请供数</li>
+  <li><b>vision</b>：11:00 GPU 归还 → ② masked-ratio（5 臂）→ ③ weight-ratio（4 臂）→ ④ AIMv2 AR 30k（先量吞吐）</li>
+  <li><b>data</b>：Round2 BO → 200 trial（ETA ~18:40）→ top-K lm_eval → <code>report_data_mix_eval_r2.html</code> + <code>RECIPE §6</code></li>
+  <li><b>harness</b>：codex 151 blocked 续解（~30 条/10h）→ 完成后转 cline-patched×300 <code>--resume</code></li>
+</ul>
+
+<footer>
+  <b>BaiZe 工作汇报 · 2026-10-07</b>（第 7 份）· 生成于 2026-10-07 ~09:55（CST）<br>
+  数据来源：四线昨夜汇报 <code>report_10_07_*_overnight.html</code> ＋ 各线 <code>run/MEMORY_*.md</code> 顶部状态 ＋ <code>run/daily-memories*/</code> ＋ <code>git log</code> ＋ <code>run/ops/</code><br>
+  运维口径与决策留痕：<code>MEMORY.md</code>（运维层）· <code>daily-memories/2026-10-07.md</code> · <code>run/ARCHIVE_OPERATOR_*.md</code><br>
+  ⚠️ 本报告为<b>快照</b>；各线状态以仓库最新 commit 为准。
+</footer>
+
+</div>
+</body>
+</html>
