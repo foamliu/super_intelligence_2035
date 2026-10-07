@@ -185,10 +185,9 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
-- **📐 2026-10-07（用户令 · pretrain）** —— 「**hybrid ctx 继续扩 2M/4M/8M/16M**」＋ 三问（**VRAM 为何恒定 ~25GB / hybrid 为何无速度优势 / sglang 是否用了虚拟内存**）。**⚠️ 资源真相**：pretrain **09:44 已提前归还** `.12` GPU1–7，**vision 09:52 占满 8 张**（mask-ratio，ETA~14:30），`.29` 被 data BO 占 ⇒ **无空卡**。已下发 `BAIZE_PRETRAIN_2B_TASK.md` 顶部新块（**待卡不抢占** + 2M–16M 测量 + **诊断课题 V1–V4**：mem-fraction 预分配假象 / PagedAttention≠虚拟内存 / 4 层 attention O(n²) + float32 SSM）。`GPU12_ALLOC.md` 申请区 +1 行。**明细见 `daily-memories/2026-10-07.md`。**
-- **🏁 2026-10-07（用户令 · harness）** —— 「**harness 拖太久了，先做 30 横评，把 5 个 harness 对比结果拿到**」（复述确认 = **SWE-bench 同一批 30 个任务 × 5 harness → 出分 → 列表对比**）。**真因 = `codex ×300 --resume`（PID 2151526，14h+，151 blocked）占着唯一串行槽** ⇒ 已下发 `BAIZE_HARNESS_TASK.md` 顶部新块（**① 停 300 腾槽 ② 补 `opencode/claude-code/deepseek ×30`（同一 30 条，kimi，并发=1）③ 出 5 行对比表 + 刷新 `SWEBENCH_COMPARE.html` ④ 300 暂缓**）。**明细见 `daily-memories/2026-10-07.md`。**
+- **2026-10-07（三条用户令：harness 30 横评 · pretrain 2M–16M+显存归因 · pretrain 5 份研究 HTML）** —— ⚠️ **资源真相**：pretrain **09:44 归还** `.12` GPU1–7，**vision 09:52 占满 8 张**（mask-ratio，ETA~14:30），`.29` 被 data BO 占 ⇒ **无空卡**。已下发三个顶部块：`BAIZE_HARNESS_TASK.md`（**停 codex×300 → 补 opencode/claude-code/deepseek ×30（同一 30 条）→ 出 5 行对比表**）· `BAIZE_PRETRAIN_2B_TASK.md` **③**（hybrid ctx 2M/4M/8M/16M ＋ 诊断 **V1–V4**：mem-fraction 预分配假象 / PagedAttention≠虚拟内存 / 4 层 attention O(n²)＋float32 SSM）· **④**（5 份研究 HTML：**公平对比口径 / 训练提速 / 训练效果 / 1M 长上下文 P-8 方案 / NAS**）＋ `GPU12_ALLOC.md` 申请区 +1。**明细见 `daily-memories/2026-10-07.md`。**
 
-- **🎯 2026-10-06（用户三步令下发 · data）** —— ① 收 Stable **200-trial** + top-K `lm_eval` 8 集 + Spearman + **σ**；② ⭐ **`s_step` 归因**（1.5 s → ~30–100 ms ⇒ `D` 0.016 B→0.5–1 B）；③ **`.29` GPU0-1 释放后 8 卡搜第二轮**。**技术修正**：`s_step=1.5 s` **非多卡同步**（脚本已 `--nproc_per_node=1` / `--tensor-parallel 1` / 单卡 `CUDA_VISIBLE_DEVICES`）—— 真凶 = **`--micro-batch-size 1` + GBS16 ⇒ 每步 16 个 microbatch**（≈94 ms/个；算力仅 <10 ms）。＋ 归因已升级为 **MBS×GBS 网格**（目标 = **最快训完 0.5–1 B**；MBS 受显存限 / GBS 受步数底线限）。已下发 `BAIZE_DATA_TASK.md` 顶部。**明细见 `daily-memories/2026-10-06.md`。**
+- **🎯 2026-10-06（用户三步令 · data）** —— ① 收 200-trial（top-K `lm_eval`+Spearman+σ）② **`s_step` 归因**（1.5 s→**166 ms**，真凶 = `MBS=1`+GBS16 ⇒ 每步 16 个 microbatch；已升级 MBS×GBS 网格）③ `.29` GPU0-1 释放后 8 卡搜第二轮。**明细见 `daily-memories/2026-10-06.md`。**
 
 - **📦 旧流水已滚动归档** → `daily-memories/2026-10-06.md`（**原文未改一字**：10-06「第 6 轮」/「第 5 轮块」/「两条流水（复核②、改道）」）。**勿再塞回本文件。**
 

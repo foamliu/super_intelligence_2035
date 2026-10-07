@@ -7,6 +7,38 @@
 
 > 📦 **2026-10-06 已归档**：「B1 ctx 扩到 1M」+「hybrid 优势论证」两个运维块均已完成，原文见 `ARCHIVE_OPERATOR_PRETRAIN.md`。结论：PPL 1M=55.42 无退化，bottleneck=(c) attention O(n²) ≥512K，目标 ctx=32K–128K，advantage report 已交付。
 
+### 🆕 运维指令 · 2026-10-07④（**🖥️ 无卡窗口：5 份「研究型」HTML 报告** — web search ＋ 内联 SVG／文生图）· **用户直令** · 高优先
+
+> **用户令原文（2026-10-07）**：「**pretrain：既然没有 GPU，但总有 web search 和文生图，可否做一些研究。安排下列每个方向写个 html 报告**」（5 个方向见 ①）。
+> **时序**：本块 = **无卡时段的填充任务（纯 CPU / 联网，不占 GPU）**；**③（2M–16M 实测 ＋ 显存归因诊断）依然有效** —— **一旦有卡，优先插空跑 ③**，再回来做本块。
+> **工具**：你的 MCP 有 **`cimi_search` / `cimi_fetch`（联网检索+读原文）** 与 **文生图** —— 本块主要靠它们。
+
+**① 五份报告（每份一个话题、一份 HTML，落到 `doc/BaiZe-ISEDA2027/`）**
+
+| # | 方向 | 交付文件名 | 必须挂靠的「我们已有实测」 |
+|:--|:--|:--|:--|
+| 1 | **如何公平地对比评测 hybrid vs dense 的推理速度 & 成本** | `report_pretrain_research1_fair_eval.html` | **P-9.11-E（mem-frac 0.3 / float32 SSM）** vs **P-9.11（0.85 口径）结论相反**；dense KV pool=**455K tokens**；**B1: attention 占 prefill ~77%** |
+| 2 | **提升 hybrid-2B 训练速度的机会点** | `report_pretrain_research2_train_speed.html` | P-9.13（**249K tok/s 上界 / env 无提速**）、P-9.12（NCCL 已 NVLink）、P-9.5 profiler 5-way 归因、P-9.9 FP8 |
+| 3 | **提升 hybrid-2B 训练效果的机会点**（8 常识 ＋ 6 复杂 ＋ agent/SWE-Bench） | `report_pretrain_research3_train_quality.html` | **A 36/36（5/6 贴地板，仅 BBH 有信号）**、P-6 scaling、P-3 五点全胜；data 线在搜配比 |
+| 4 | **为支持 1M 长上下文，P-8 预训练阶段要做什么（YaRN/ABF/长文课程/数据配比…）才能尽快让「大海捞针」得合理分（现 0）** | `report_pretrain_research4_longctx_1m_p8.html` | **B：passkey 4K/8K=0%**；**B1：1M PPL 55.42 无退化、≥512K attention 占 ~77%**；D：VRAM 5.35GB；⭐ **我们的 RoPE 只作用于 4/56 层** |
+| 5 | **架构锁定 hybrid-2B 后，是否还能搜（NAS）** | `report_pretrain_research5_arch_nas.html` | 2B 架构搜索（`BAIZE_2B_ARCH_RESULT.html`）、R8 六架构四指标、`MAMBA2_HYBRID_2B_FEASIBILITY_REPORT.html` |
+
+**② 每份统一骨架（6 节）**
+1. **TL;DR**（3–5 条结论）；2. **我们的现状**（把上表「已有实测」贴数字 + 标出处文件/commit）；3. **外部证据**（**一手优先**：官方仓库/官方文档/arXiv；**每条给 URL ＋ 版本或年份**；二手只能作线索并标「**二手·未核**」；**核不到就写「未核实」——🚫 不许编造**）；4. **候选清单**（每条：① 动机 ② 预期收益 ③ 成本/风险 ④ **可检验判据** ⑤ 优先级）；5. **推荐路线 ＋ 时间盒**（明确「先做哪 1–3 条、为什么」）；6. **引用清单**。
+
+**③ 证据分级（每条结论都要标）**：`【实测·本项目】` / `【一手文献·URL】` / `【二手·未核】` / `【推测·未验】`。
+
+**④ 格式（沿用 house style，参照 `report_10_06.html`）**
+- **自包含**：内联 CSS、**数据图优先内联 SVG**、零外链、**HTML 本体 ≤200KB**。
+- **按需附图**（用户令）：文生图 / SVG 均可；**🚫 严禁用文生图「编」数据图**（曲线/柱状/数值分布**必须由真实数据**生成；文生图只能画**示意图**，caption 标 **【示意图·文生图】**，实测图标 **【实测数据】**）；位图**一律 JPEG、长边 ≤1280、q85**，单图 ≤400KB / 总量 ≤4MB；**图片落本地并 commit**，HTML 内禁止被引用的外链。
+- 收尾按「收尾铁律」commit+push（前缀 **`pretrain 研究: …`**）＋ `MEMORY_PRETRAIN_2B.md` 记 1 行指针。
+
+**⑤ 顺序与时间盒**：**按用户编号 1→2→3→4→5**，**一份完成即 commit**（可分多轮唤醒）；**r1 / r4 最影响决策，最优先**。纯 CPU/联网，**不占 GPU、不下大文件、不改论文、不改 P-5b recipe**。
+
+**⑥ 铁律**：只写事实、**数字必须真**、**禁止编造或用估算冒充实测**；外部结论**必须可核**（URL＋年份）。
+> 📦 **体积提醒**：本块加入后 `BAIZE_PRETRAIN_2B_TASK.md` 约 **≈37KB（>32KB）** ⇒ **本轮收尾前先把已闭合旧块归档到 ≤32KB 再提交**（确切字节以你自己 `wc -c` 为准；未到 40KB 红线）。
+
+
 ### 🆕 运维指令 · 2026-10-07③（**hybrid ctx 继续扩 2M/4M/8M/16M** ＋ **「显存为何恒定」归因诊断**）· **用户直令** · 高优先
 
 > **用户令原文（2026-10-07 10:30）**：「安排 pretrain 在 hybrid 这边**继续提升 ctx 到 2m、4m、8m、16m**」＋ 三个追问题（见 **③**）。
