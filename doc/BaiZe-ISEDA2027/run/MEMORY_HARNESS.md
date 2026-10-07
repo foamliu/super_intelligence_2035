@@ -5,30 +5,30 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 30×5 harness cross-eval (kimi-k2.6-cloud, serial=1) — cline-patched×30 ✅ 60.0% · codex×30 ✅ 46.7% · opencode×30 ✅ 50.0% · claude-code×30 🔄 RUNNING (10/30, 6 res/3 pbf/1 blk = 60.0%, PID 3273581 inst 11/30 django__django-11564) · deepseek-harness×30 ⬜ (2/30). CHAIN SCRIPT (PID 1292346) → claude-code running → auto-starts deepseek-harness after. gw_proxy healthy (PID 3175038, port 9090).
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped (43/108/149) · opencode×30 (50.0%) · ✅ chain script launched · ✅ R131~R145 archived · SWEBENCH_COMPARE.html (30×5, 102 entries, 53 resolved)
-当前动作:     R146: claude-code×30 progress check (10/30, 6 res/3 pbf/1 blk = 60.0%) → SWEBENCH_COMPARE.html regenerated (14885B, 102 entries, 53 resolved) → chain script healthy (PID 1292346) → relay skip 98th → commit+push
-下一步:       [AUTO] claude-code×30 finish (~20 inst × ~7.7min = ~2.6h, ETA ~18:30) → chain auto-starts deepseek-harness×30 (~28 inst × ~8min = ~3.7h, ETA ~22:15) → final SWEBENCH_COMPARE.html (5 rows) → [next wake] commit+push
+PHASE:        H-A 30×5 harness cross-eval (kimi-k2.6-cloud, serial=1) — cline-patched×30 ✅ 60.0% · codex×30 ✅ 46.7% · opencode×30 ✅ 50.0% · claude-code×30 🔄 RUNNING (12/30, 7 res/4 pbf/1 blk = 63.6%, PID 3273581 inst 13/30 django__django-11620) · deepseek-harness×30 ⬜ (2/30). CHAIN SCRIPT (PID 1292346) → claude-code running → auto-starts deepseek-harness after. gw_proxy healthy (PID 3175038, port 9090).
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped (43/108/149) · opencode×30 (50.0%) · ✅ chain script launched · ✅ R131~R145 archived · SWEBENCH_COMPARE.html (30×5, 104 entries, 54 resolved)
+当前动作:     R147: claude-code×30 progress check (12/30, 7 res/4 pbf/1 blk = 63.6%) → SWEBENCH_COMPARE.html regenerated (14943B, 104 entries, 54 resolved) → data integrity verified (no dupes) → chain script healthy (PID 1292346) → relay skip 99th → commit+push
+下一步:       [AUTO] claude-code×30 finish (~18 inst × ~9min = ~2.7h, ETA ~19:00) → chain auto-starts deepseek-harness×30 (~28 inst × ~8min = ~3.7h, ETA ~22:45) → final SWEBENCH_COMPARE.html (5 rows) → [next wake] commit+push
 阻塞:         无硬阻塞. claude-code×30 running via chain script, deepseek-harness queued.
 ERROR_COUNT:  0
 ```
 
-## 🆕 第一百四十六轮速览（2026-10-07 15:55）— claude-code×30 progress (10/30, 6 res/3 pbf/1 blk = 60.0%) + SWEBENCH_COMPARE.html regenerated (14885B, 102 entries, 53 resolved) + chain script healthy + relay skip 98th
+## 🆕 第一百四十七轮速览（2026-10-07 16:16）— claude-code×30 progress (12/30, 7 res/4 pbf/1 blk = 63.6%) + SWEBENCH_COMPARE.html regenerated (14943B, 104 entries, 54 resolved) + data integrity verified + chain script healthy + relay skip 99th
 
-- 🔄 **claude-code×30 进展**：10/30 done → 6 resolved, 3 patch-but-failed, 1 blocked = **60.0%** so far。PID 3273581 (ppid=1292346, etimes≈4614s≈77min)，当前处理 instance 11/30 `django__django-11564`（run_single.py 子进程 PID 3952474, etimes≈563s, timeout=1800s）。avg≈7.7min/inst, 20 remaining, ETA ~18:30。
-- 📈 **SWEBENCH_COMPARE.html regenerated**：gen_kimi_compare.py exit=0, 14885 bytes, 30 instances, 102 entries (cline 30 + codex 30-subset + opencode 30 + claude-code 10 + deepseek 2), 53 resolved。
+- 🔄 **claude-code×30 进展**：12/30 done → 7 resolved, 4 patch-but-failed, 1 blocked = **63.6%** (7/11 scored) so far。PID 3273581 (ppid=1292346, etimes≈6701s≈112min)，当前处理 instance 13/30 `django__django-11620`（run_single.py 子进程 PID 1806071, etimes≈1039s≈17min, timeout=1800s）。avg≈9.3min/inst, 18 remaining, ETA ~19:00。
+- 📈 **SWEBENCH_COMPARE.html regenerated**：gen_kimi_compare.py exit=0, 14943 bytes, 30 instances, 104 entries (cline 30 + codex 30 + opencode 30 + claude-code 12 + deepseek 2), 54 resolved。
 - 📊 **当前 5-way 对比**（kimi_pilot_results.json, 同 30 instances）：
   | harness | scored | resolved | pbf | blk | rate |
   |---|---|---|---|---|---|
   | cline-patched | 30/30 | 18 | 12 | 0 | 60.0% |
   | codex (30-subset) | 30/30 | 14 | 16 | 0 | 46.7% |
   | opencode | 30/30 | 15 | 15 | 0 | 50.0% |
-  | claude-code | 10/30 | 6 | 3 | 1 | 60.0% (so far) |
+  | claude-code | 12/30 | 7 | 4 | 1 | 63.6% (so far) |
   | deepseek-harness | 2/30 | 0 | 2 | 0 | 0.0% |
 - 🔍 **claude-code “blocked” 1 件**：`django__django-11001` classification=blocked（非 quota-blocked，harness 执行层面 blocked；eval.resolved 未测）。
-- 🚀 **chain script 健康**：PID 1292346 (ppid=1, etimes≈13255s≈3.7h) → claude-code×30 running → 完成后 auto-start deepseek-harness×30 → final regen HTML。日志 `/tmp/chain_harnesses.log` 正常（"Starting claude-code×30 (--resume)" at 14:22:59）。
-- ✅ **gw_proxy 健康**：PID 3175038, port 9090, etimes≈191388s≈2.2d。
-- ✅ **ops 中继复核（第 98 次）→ 健康**。relay `2489749 1 516528 bash ops_relay.sh`（ppid=1, etimes≈6.0d）。跳过重启。
+- 🚀 **chain script 健康**：PID 1292346 (ppid=1, etimes≈15342s≈4.3h) → claude-code×30 running → 完成后 auto-start deepseek-harness×30 → final regen HTML。日志 `/tmp/chain_harnesses.log` 8 行正常。
+- ✅ **gw_proxy 健康**：PID 3175038, port 9090, etimes≈195829s≈2.3d。
+- ✅ **ops 中继复核（第 99 次）→ 健康**。relay `2489749 1 518704 bash ops_relay.sh`（ppid=1, etimes≈6.0d）。跳过重启。
 - 📦 **体积自检**：TASK=31476B（30.7KB，≤32KB ✓）/ MEMORY=~14KB（≤32KB ✓）。📦 体积：TASK=30.7KB / MEMORY=~14.0KB（归档 0KB）。
 - ⏭ **下一步**：chain script 自动执行 claude-code→deepseek-harness→regen HTML。下次唤醒检查 chain script 日志 + claude-code/deepseek-harness 进度 → 最终 SWEBENCH_COMPARE.html (5 rows) → commit+push。保持 `WAITING=1`。
 
@@ -93,3 +93,4 @@ ERROR_COUNT:  0
 - 2026-10-07 14:20 —— **第一百四十四轮** —— opencode×30 at 29/30 (14 res/15 pbf = 48.3%, last inst sympy__sympy-13647 running) → SWEBENCH_COMPARE.html regenerated（14568B, 91 entries, 46 resolved）+ all 5 harnesses verified available + gw_proxy healthy + relay skip 96th + R142 archived → commit+push。📦 体积：TASK=30.7KB / MEMORY=31.0KB（归档 ~1.7KB → daily-memories-harness/2026-10-07.md）。
 - 2026-10-07 15:02 —— **第一百四十五轮** —— claude-code×30 progress (7/30, 4 res/2 pbf/1 blk = 57.1%, inst 8/30 django__django-11179) → SWEBENCH_COMPARE.html regenerated（14796B, 99 entries, 51 resolved）+ chain script healthy (PID 1292346) + gw_proxy healthy + relay skip 97th + R131~R144 archived to daily → commit+push。📦 体积：TASK=30.7KB / MEMORY=12.8KB（归档 ~13.4KB → daily-memories-harness/2026-10-07.md）。
 - 2026-10-07 15:55 —— **第一百四十六轮** —— claude-code×30 progress (10/30, 6 res/3 pbf/1 blk = 60.0%, inst 11/30 django__django-11564) → SWEBENCH_COMPARE.html regenerated（14885B, 102 entries, 53 resolved）+ chain script healthy (PID 1292346) + gw_proxy healthy + relay skip 98th → commit+push。📦 体积：TASK=30.7KB / MEMORY=~14.0KB（归档 0KB）。
+- 2026-10-07 16:16 —— **第一百四十七轮** —— claude-code×30 progress (12/30, 7 res/4 pbf/1 blk = 63.6%, inst 13/30 django__django-11620) → SWEBENCH_COMPARE.html regenerated（14943B, 104 entries, 54 resolved）+ data integrity verified (no dupes on 30-set) + chain script healthy (PID 1292346) + gw_proxy healthy + relay skip 99th → commit+push。📦 体积：TASK=30.7KB / MEMORY=~14.0KB（归档 0KB）。
