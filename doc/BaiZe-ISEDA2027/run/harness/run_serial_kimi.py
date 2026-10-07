@@ -34,7 +34,7 @@ ROOTFS_TEMPLATES = {
     "mwaskom/seaborn":            ROOTFS_DIR / "mwaskom__seaborn-2848",
     "pallets/flask":              ROOTFS_DIR / "pallets__flask-4045",
 }
-ALL_HARNESSES = ["cline-patched", "codex", "opencode", "claude-code", "deepseek-harness"]
+ALL_HARNESSES = ["cline-patched", "codex", "opencode", "claude-code", "deepseek-harness", "pi", "hermes"]
 TIMEOUT_RUN = 1800
 TIMEOUT_EVAL = 1800
 PROXY = "http://172.19.92.25:13128"

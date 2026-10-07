@@ -375,6 +375,100 @@ class DeepseekHarnessDriver:
         return r
 
 
+class PiDriver:
+    """pi — @fleetagent/pi-coding-agent CLI (v0.2.15), run via bun.
+
+    Installed via ``npm install -g --ignore-scripts @fleetagent/pi-coding-agent``
+    (requires Node >=22.19 per engines, but bun 1.3.14 runs the dist/cli.js
+    entry point without issue — verified 2026-10-07).
+
+    Non-interactive mode: ``pi -p`` (print mode — process prompt and exit).
+    Docs: https://github.com/fleetagent/pi (commit debf866e, 2026-10-07 clone).
+
+    Provider/model come from ``~/.pi/agent/models.json`` where we registered a
+    custom provider ``gw`` pointing at the local gw_proxy (127.0.0.1:9090/v1)
+    with ``api: "openai-completions"`` and ``compat.supportsDeveloperRole: false``
+    (the gateway only accepts system/user/assistant roles).
+    """
+
+    name = "pi"
+    _PI_CLI = Path.home() / ".npm-global" / "lib" / "node_modules" / "@fleetagent" / "pi-coding-agent" / "dist" / "cli.js"
+    _BUN = shutil.which("bun") or "/home/app.e0031982/.bun/bin/bun"
+
+    def available(self) -> bool:
+        return Path(self._BUN).exists() and self._PI_CLI.exists()
+
+    def run(self, instance: dict, workdir: Path, timeout: int = 3600) -> DriverResult:
+        cmd = [
+            self._BUN, str(self._PI_CLI),
+            "-p",                          # print mode (non-interactive)
+            "--provider", "gw",            # custom provider from models.json
+            "--model", UNIFIED_MODEL,      # kimi-k2.6-cloud
+            "--api-key", DUMMY_KEY,        # gw_proxy injects real key upstream
+            instance["problem_statement"],
+        ]
+        env = {
+            "PI_OFFLINE": "1",             # disable startup network ops
+            "PI_SKIP_VERSION_CHECK": "1",  # skip npm metadata request
+            "no_proxy": "127.0.0.1,localhost",
+            "NO_PROXY": "127.0.0.1,localhost",
+        }
+        r = _run(cmd, workdir, timeout, env=env)
+        r.harness = self.name
+        r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
+        return r
+
+
+class HermesDriver:
+    """hermes — NousResearch/hermes-agent (commit cb6ffe6c, 2026-10-07 clone).
+
+    A complex Python+Node project (requires Python 3.14 + Node 26 via its own
+    PM toolchain manager).  Non-interactive mode: ``hermes -z "<prompt>"``
+    (oneshot — only outputs final answer, no banner/spinner).
+
+    Docs: https://github.com/NousResearch/hermes-agent
+    CLI ref: https://hermes-agent.nousresearch.com/docs/reference/cli-commands
+
+    Provider config: ``custom`` provider type for OpenAI-compatible endpoints,
+    configured via ``hermes model`` wizard or ``~/.hermes/config.yaml``.
+
+    NOTE: Not yet available — requires installing Python 3.14 + Node 26 via the
+    project's PM toolchain (install script at hermes-agent.nousresearch.com has
+    SSL issues through the proxy).  Manual setup is deferred to a future wake.
+    """
+
+    name = "hermes"
+    _HERMES_SRC = Path("/nas_train/app.e0031982/harness_work/hermes-agent-src")
+    _HERMES_BIN = Path.home() / ".hermes" / "bin" / "hermes"
+
+    def available(self) -> bool:
+        return self._HERMES_BIN.exists()
+
+    def run(self, instance: dict, workdir: Path, timeout: int = 3600) -> DriverResult:
+        cmd = [
+            str(self._HERMES_BIN),
+            "-z",                          # oneshot (non-interactive, final answer only)
+            "--provider", "custom",        # OpenAI-compatible custom endpoint
+            "--model", UNIFIED_MODEL,      # kimi-k2.6-cloud
+            "--yolo",                      # skip dangerous command approval
+            "--max-turns", "50",           # limit tool call rounds
+            "-Q",                          # quiet mode (no banner/spinner)
+            instance["problem_statement"],
+        ]
+        env = {
+            "HERMES_PROVIDER": "custom",
+            "HERMES_MODEL": UNIFIED_MODEL,
+            "CUSTOM_API_KEY": DUMMY_KEY,
+            "CUSTOM_BASE_URL": "http://127.0.0.1:9090/v1",
+            "no_proxy": "127.0.0.1,localhost",
+            "NO_PROXY": "127.0.0.1,localhost",
+        }
+        r = _run(cmd, workdir, timeout, env=env)
+        r.harness = self.name
+        r.model_patch = git_patch(workdir) if r.returncode == 0 else ""
+        return r
+
+
 DRIVERS = {
     d.name: d
     for d in [
@@ -383,6 +477,8 @@ DRIVERS = {
         OpencodeDriver(),
         ClaudeCodeDriver(),
         DeepseekHarnessDriver(),
+        PiDriver(),
+        HermesDriver(),
     ]
 }
 
