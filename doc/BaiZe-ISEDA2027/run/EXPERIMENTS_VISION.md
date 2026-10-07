@@ -168,26 +168,37 @@ bash r8_run.sh 3000
 
 ---
 
-## ⭐ Weight-ratio 消融（🚧 进行中，2026-10-07 · `VISION_NEXT_DIRECTIONS.md` 方向 3）
+## ⭐ Weight-ratio 消融（✅ ALL DONE，2026-10-07→08 · `VISION_NEXT_DIRECTIONS.md` 方向 3）
 
 > 运维指令 2026-10-06 批准。**只变 contrast_weight : patch_loss_weight**（4 臂: 1:2 / 1:0.5 / 0.5:1 / 2:1），其余固定：w512 / CC12M+Amshaker / 30k 步 / mask-ratio=0.6 / InfoNCE+patch_MSE / 冻结 CLIP-768。Baseline = 1:1（R11-L arm6-A, lp@30k=12.08%，mask-ratio 消融复现=13.49%）。预注册判据：lp >= baseline + 1.5 → "更优"；全部 ±1.5 → "不敏感（flip 由共存驱动，非比例）"。🚫 改 recipe ⇒ 不并入 scaling 曲线。
 
-### Arm 1–3/4 训练结果（✅ 完成；arm 4 运行中）
+### 4 臂训练 + IN-1k lp 评测结果（✅ 全部完成，2026-10-08 05:27）
 
-| arm (CW:PLW) | C1_final | C1_peak | C2_gap | C4 | final_loss | 训练耗时 | steady img/s | lp@30k | Δlp vs 1:1 |
-|---:|---:|---:|---:|:--:|---:|---:|---:|---:|---:|
-| 1:2 (cw1_plw2) | 0.3546 | 0.4229@18600 | +0.1197 | OK | 3.1601 | 7403s | 2462.6 | *pending* | *pending* |
-| 1:0.5 (cw1_plw0p5) | 0.3517 | 0.4176@19200 | +0.1131 | OK | 3.5013 | 7383s | 2443.8 | *pending* | *pending* |
-| 0.5:1 (cw0p5_plw1) | 0.2816 | 0.4304@2100 | +0.1278 | OK | 1.6794 | 7829s | 4747.0 | *pending* | *pending* |
-| 2:1 (cw2_plw1) | — | 0.3300@5700（运行中） | +0.1165 | OK | — | — | — | *pending* | *pending* |
+| arm (CW:PLW) | C1_final@30k | C1_peak | C2_gap | C4 | final_loss | 训练耗时 | steady img/s | lp@10k | lp@20k | lp@30k | Δlp vs 1:1(13.49%) |
+|---:|---:|---:|---:|:--:|---:|---:|---:|---:|---:|---:|---:|
+| 1:2 (cw1_plw2) | 0.3546 | 0.4229@20400 | +0.1197 | OK | 3.1601 | 7403s | 2462.6 | 11.80% | 12.73% | **13.13%** | **−0.36** |
+| 1:0.5 (cw1_plw0p5) | 0.3517 | 0.4176@19200 | +0.1131 | OK | 3.5013 | 7383s | 2443.8 | 9.22% | 8.65% | **10.22%** | **−3.27** |
+| 0.5:1 (cw0p5_plw1) | 0.2816 | 0.4304@2100 | +0.1278 | OK | 1.6794 | 7829s | 4747.0 | 13.32% | 13.55% | **13.80%** | **+0.31** |
+| 2:1 (cw2_plw1) | 0.3475 | 0.4177@22500 | +0.1147 | OK | 7.0765 | 7521s | 2691.8 | 8.09% | 9.31% | **10.21%** | **−3.28** |
 
-> ⚠️ **脚本异常退出 + 已恢复**：arm 1 完成后原脚本 `run_weight_ratio_ablation.sh` 异常退出（master log 无 "done" 行，无 arm 2 启动，PID 187262 gone，GPU 全空 ~30min）。已创建恢复脚本 `run_weight_ratio_ablation_resume.sh`（PID 3214830, setsid+nohup, ppid=1），arms 2-4 重新启动 + arm1 ckpts 预载入 eval 队列。arm 2 (1:0.5) 于 22:45 开跑，00:48 完成。arm 3 (0.5:1) 于 00:48 开跑，02:59 完成。arm 4 (2:1) 于 02:59 开跑，当前 step~5900/30k ~20%。
+> Baseline 1:1 = mask-ratio 消融 arm 0.6 的 lp@30k = **13.49%**（同 recipe、同数据、同 30k 步、Protocol A）。
+
+### 结论
+
+1. **无臂翻盘**：最优 arm 0.5:1 (lp=13.80%) 仅 +0.31pp vs baseline 13.49% → **远低于 +1.5pp 预注册阈值** → **"更优"判据不满足**。
+2. **contrast_weight 过高显著有害**：arm 2:1 (lp=10.21%, Δlp=−3.28pp) 超出 ±1.5pp 噪声带 → **显著更差**。contrast=2 使 InfoNCE 主导训练，patch 预测信号被淹没。
+3. **patch_loss_weight 过低显著有害**：arm 1:0.5 (lp=10.22%, Δlp=−3.27pp) 超出噪声带 → **显著更差**。削弱 patch 重建 → 几何/局部特征退化。
+4. **patch_loss_weight 过高中性**：arm 1:2 (lp=13.13%, Δlp=−0.36pp) 在噪声带内 → **不敏感**。patch 重建信号增强不损害 lp。
+5. **contrast_weight 减半微正但不显著**：arm 0.5:1 (lp=13.80%, Δlp=+0.31pp) 在噪声带内 → **不敏感**（微正趋势）。C1 波动大（0.4304@2100→0.2816@30000）但 C4=OK 无坍缩。
+6. **倒 U 形不对称**：最优 ≈ 1:1 (baseline)，但**向 patch-heavy 方向（1:2）更宽容**（−0.36 vs −3.27），向 contrast-heavy 方向（2:1）更敏感（−3.28）。→ **patch loss 是「安全冗余」信号，contrast loss 是「关键」信号——不宜削弱也不宜过度放大**。
+7. **C1 与 lp 分歧再现**：arm 0.5:1 的 C1_final (0.2816) 是全臂最低，但 lp (13.80%) 是全臂最高 → **低 contrast_weight 导致对齐弱（C1 低）但 lp 特征更好** → 与 mask-ratio 消融 arm 0.3 同一规律。
+8. 🚫 **改 recipe ⇒ 不并入 scaling 曲线**。
 
 > ⚠️ **arm 3 C1 非单调**：C1 从 0.4304@2100（早现峰值）下降到 0.2924@11700（低谷），再回升到 0.3589@29100，末点 0.2816@30000 回落。C2_gap 全程 +0.117~+0.134、C4=OK → **无坍缩**，但 C1 波动幅度较大（对比 arm 1/2 的 0.35±0.02 稳态）。contrast_weight=0.5 的 InfoNCE 信号减弱 → 对齐特征更不稳定。
 
-> lp 评测在全部 4 臂训练完成后统一进行（`r8_eval_in1k.py`，~16 ckpts，Protocol A）。
+> ⚠️ **脚本异常退出 + 已恢复**：arm 1 完成后原脚本 `run_weight_ratio_ablation.sh` 异常退出。已创建恢复脚本 `run_weight_ratio_ablation_resume.sh`（PID 3214830, setsid+nohup, ppid=1），arms 2-4 串行完成 + 16 ckpts 统一 IN-1k eval。ALL DONE 2026-10-08 05:27:03。
 
-- **证据**：`/tmp/ablation_weight_ratio.log`（master log）+ 各 arm `train.log` 在 `/nas_train/.../out/ABL_weight_ratio_cw{1_plw2,1_plw0p5,0p5_plw1,2_plw1}/`。恢复脚本 `vision/run_weight_ratio_ablation_resume.sh`。
+- **证据**：`/tmp/ablation_weight_ratio.log`（master log, ALL DONE 05:27:03）+ 各 arm `train.log` 在 `/nas_train/.../out/ABL_weight_ratio_cw{1_plw2,1_plw0p5,0p5_plw1,2_plw1}/`。恢复脚本 `vision/run_weight_ratio_ablation_resume.sh`。
 
 ---
 
