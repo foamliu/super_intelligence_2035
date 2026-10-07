@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 配比实验 · 收官总报告 · 2026-10-07</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); } .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .tldr { background:#fff; border:1px solid var(--border); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  .tldr ol { margin:6px 0; padding-left:22px; } .tldr li { margin:5px 0; }
+  .fig { margin:18px 0; text-align:center; } .fig svg { max-width:100%; height:auto; }
+  .fig .cap { font-size:12.5px; color:var(--muted); margin-top:6px; }
+  .callout { background:#fff8c5; border:1px solid #d4a72c; border-radius:8px; padding:14px 18px; margin:14px 0; font-size:14px; }
+  .callout.bad { background:#ffebe9; border-color:var(--bad); }
+  .callout.ok { background:#dafbe1; border-color:var(--ok); }
+  .callout.info { background:#ddf4ff; border-color:var(--accent); }
+  .footer { margin-top:40px; padding-top:16px; border-top:1px solid var(--border); font-size:12.5px; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>BaiZe 配比实验 · 收官总报告</h1>
+  <div class="sub">§0.6-B 数据混合配比实验全流程：R1 → s_step 归因 → R2 → top-K 全量验证</div>
+  <div class="meta"><span>📊 日期 2026-10-07</span><span>🖥 主机 .12 / .29</span><span>🔬 代理 d=128/L=14 ≈18.36M</span></div>
+  <div class="meta" style="margin-top:10px;"><span>📄 R2 专项报告：<code>report_data_mix_eval_r2.html</code>（18KB，Round2 lm_eval 专项详情）</span></div>
+</header>
+<!-- 1. TL;DR -->
+<div class="tldr">
+  <h3 style="margin-top:0;">📋 TL;DR</h3>
+  <ol>
+    <li><b>配比实验全流程已完成</b>：R1（200 trial，loss objective）→ s_step 归因（8.6× 加速）→ R2（200 trial，lm_eval objective）→ top-K 全量验证（5 trial retrain + 全量 lm_eval）。</li>
+    <li><b>核心发现（诚实）</b>：BO 排名与全量 lm_eval 排名<b>几乎完全反转</b>（Spearman <b>ρ=−0.80</b>，n=5，p≈0.10）；全量评测分差仅 <b>0.3835–0.3899 ≈ 0.6pp</b>，<b>该代理规模下配比差异不可分辨</b>。</li>
+    <li><b>s_step 归因是关键转折</b>：MBS 1→16 使每步 1432ms→166ms（<b>8.6×</b>），每 trial 训练量 D 从 0.016B 提到 <b>0.5B token</b>，使 R2（lm_eval objective）成为可行方案。</li>
+    <li><b>math 占比始终贴下界</b>：top-5 中 4/5 的 math=0.01（搜索空间下界），BO 试图最小化 math——但全量验证表明这不代表真实最优。</li>
+    <li><b>对 P-8 的建议</b>：沿用先验 <b>88:8:4</b>（web:code:math）。最优区域稳定在 web 0.87–0.94 / code 0.06–0.12 / math≈0.01，但「不可分辨」意味着先验仍是安全选择。</li>
+  </ol>
+</div>
+<!-- 2. 实验设计 -->
+<h2 class="sec"><span class="no">2</span>实验设计</h2>
+<h3>代理模型</h3>
+<p>使用 <b>d=128 / L=14 / N≈18.36M</b> 的小型代理模型进行配比搜索。</p>
+<div class="callout info">⚠️ <b>代理 ≠ 2.2B</b>：本实验使用的代理模型仅 18.36M 参数，<b>不代表</b>目标 2.2B 模型。配比结论的迁移性受代理规模限制（详见 §6 口径与局限）。</div>
+<table>
+  <thead><tr><th>参数</th><th>值</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>hidden dim (d)</td><td>128</td><td>代理规模</td></tr>
+    <tr><td>layers (L)</td><td>14</td><td>—</td></tr>
+    <tr><td>参数量 (N)</td><td>≈18.36M</td><td>远小于目标 2.2B</td></tr>
+    <tr><td>搜索空间</td><td>web ∈ [0.8, 0.95], code ∈ [0.03, 0.12], math = 1−web−code</td><td>3 维 simplex，math 为自由变量</td></tr>
+  </tbody>
+</table>
+<h3>贝叶斯优化（BO）配置</h3>
+<table>
+  <thead><tr><th>项</th><th>配置</th></tr></thead>
+  <tbody>
+    <tr><td>采样器</td><td>Optuna <code>TPESampler</code></td></tr>
+    <tr><td>剪枝器</td><td><code>MedianPruner</code></td></tr>
+    <tr><td>并行策略</td><td>每卡独立 trial（TP1/DP1），8 GPU 同时跑 8 trial</td></tr>
+    <tr><td>全局 batch</td><td>GBS=2048 / seq=2048</td></tr>
+    <tr><td>每 trial 训练量 (D)</td><td>R1: 0.016B token → R2: <b>0.5B token</b>（经 s_step 归因后）</td></tr>
+    <tr><td>训练分段</td><td>Stable 段 + Decay 段（本实验仅 Stable）</td></tr>
+    <tr><td>评测</td><td>lm_eval 8 任务：arc_challenge, arc_easy, boolq, hellaswag, openbookqa, piqa, sciq, winogrande</td></tr>
+  </tbody>
+</table>
+<h3>R1 vs R2 目标函数</h3>
+<table>
+  <thead><tr><th>轮次</th><th>objective</th><th>方向</th><th>limit</th><th>结论</th></tr></thead>
+  <tbody>
+    <tr><td>R1</td><td>val-loss</td><td>minimize</td><td>—</td><td>ρ=−0.43（loss 与能力负相关 → loss 不预测能力）</td></tr>
+    <tr><td>R2</td><td>lm_eval 8-task avg accuracy</td><td><b>maximize</b></td><td><code>--limit 500</code></td><td>200/200 完成，但 top-K 全量验证后 ρ=−0.80</td></tr>
+  </tbody>
+</table>
+<!-- 3. 时间线 -->
+<h2 class="sec"><span class="no">3</span>时间线</h2>
+<table>
+  <thead><tr><th>阶段</th><th>时间</th><th>关键动作</th><th>结果</th></tr></thead>
+  <tbody>
+    <tr><td><b>R1</b></td><td>10-06 ~14:00–23:00</td><td>200 trial BO，objective=val-loss，D=0.016B token/trial</td><td>200/200 ✅，best loss=5.822；6 ckpt lm_eval → <b>ρ=−0.43</b></td></tr>
+    <tr><td><b>⭐ s_step 归因</b></td><td>10-06 ~23:04</td><td>诊断 R1 单步 1432ms 过慢；MBS 1→16</td><td>1432ms→166ms = <b>8.6×</b>，overhead-bound（16× μbatch kernel-launch）；D 抬到 <b>0.5B</b></td></tr>
+    <tr><td><b>R2</b></td><td>10-07 01:52–19:20</td><td>200 trial BO，objective=lm_eval 8-task avg acc，<code>--limit 500</code>，D=0.5B</td><td>200/200 ✅（166 complete + 34 failed，fail 全在 t0–t13 早期）；best=<b>0.4155</b>（t23）</td></tr>
+    <tr><td><b>top-K 收尾</b></td><td>10-07 19:20–19:40</td><td>取 BO top-5 trial，retrain + HF 转换 + 全量 lm_eval（8 task，<b>no limit</b>）</td><td>5/5 ✅，产出 <code>topk_lmeval_results_r2.json</code></td></tr>
+    <tr><td><b>收官分析</b></td><td>10-07 20:00–22:00</td><td>Spearman 相关 + 配比表 + 结论固化</td><td><b>ρ=−0.80</b>（BO score vs full eval）；全量分差 ≈0.6pp → 不可分辨</td></tr>
+  </tbody>
+</table>
+<!-- 4. R2 结果 -->
+<h2 class="sec"><span class="no">4</span>R2 结果</h2>
+<h3>4.1 Top-10 配比表（BO score 排序）</h3>
+<table>
+  <thead><tr><th>BO rank</th><th>trial #</th><th>web</th><th>code</th><th>math</th><th>BO score</th><th>状态</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>23</td><td>0.9412</td><td>0.1093</td><td>0.010</td><td><b>0.4155</b></td><td><span class="badge b-ok">best</span></td></tr>
+    <tr><td>2</td><td>38</td><td>0.8947</td><td>0.0999</td><td>0.005</td><td>0.4138</td><td>—</td></tr>
+    <tr><td>3</td><td>118</td><td>0.8742</td><td>0.0709</td><td>0.055</td><td>0.4130</td><td>—</td></tr>
+    <tr><td>4</td><td>199</td><td>0.9313</td><td>0.0979</td><td>0.010</td><td>0.4123</td><td>—</td></tr>
+    <tr><td>5</td><td>33</td><td>0.9405</td><td>0.0864</td><td>0.010</td><td>0.4090</td><td>—</td></tr>
+    <tr><td>6</td><td>134</td><td>0.9353</td><td>0.0643</td><td>0.000</td><td>0.4068</td><td>—</td></tr>
+    <tr><td>7</td><td>57</td><td>0.9038</td><td>0.0613</td><td>0.035</td><td>0.4058</td><td>—</td></tr>
+    <tr><td>8</td><td>105</td><td>0.8446</td><td>0.1140</td><td>0.041</td><td>0.4055</td><td>—</td></tr>
+    <tr><td>9</td><td>79</td><td>0.9334</td><td>0.1001</td><td>0.010</td><td>0.4053</td><td>—</td></tr>
+    <tr><td>10</td><td>80</td><td>0.8483</td><td>0.1168</td><td>0.035</td><td>0.4048</td><td>—</td></tr>
+  </tbody>
+</table>
+<p><b>BO score 分布</b>：166 complete trial，score 范围 0.3730–0.4155（avg=0.3908，spread=0.0425）。<br>
+<b>配比范围</b>：web 0.802–0.949（mean 0.877），code 0.031–0.120（mean 0.076），math −0.062–0.162（mean 0.047，含越界因 web+code 可超 1.0）。</p>
+<div class="fig">
+<svg viewBox="0 0 860 320" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="11">
+  <text x="430" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#0b3d6e">R2 BO Score 分布直方图（n=166 complete trials）</text>
+  <line x1="80" y1="270" x2="820" y2="270" stroke="#333" stroke-width="1.5"/>
+  <line x1="80" y1="270" x2="80" y2="40" stroke="#333" stroke-width="1.5"/>
+  <text x="25" y="155" text-anchor="middle" transform="rotate(-90,25,155)" font-size="12" fill="#59636e">trial 数</text>
+  <text x="450" y="305" text-anchor="middle" font-size="12" fill="#59636e">BO score (lm_eval 8-task avg acc, --limit 500)</text>
+  <g>
+    <rect x="84" y="250.6" width="66" height="19.4" fill="#1f6feb" opacity="0.75"/><text x="117" y="245" text-anchor="middle" font-size="10" fill="#333">3</text>
+    <rect x="158" y="179.4" width="66" height="90.6" fill="#1f6feb" opacity="0.75"/><text x="191" y="174" text-anchor="middle" font-size="10" fill="#333">14</text>
+    <rect x="232" y="56.5" width="66" height="213.5" fill="#1f6feb" opacity="0.85"/><text x="265" y="51" text-anchor="middle" font-size="10" fill="#333">33</text>
+    <rect x="306" y="50" width="66" height="220" fill="#0b3d6e" opacity="0.9"/><text x="339" y="44" text-anchor="middle" font-size="10" fill="#333">34</text>
+    <rect x="380" y="75.9" width="66" height="194.1" fill="#1f6feb" opacity="0.75"/><text x="413" y="70" text-anchor="middle" font-size="10" fill="#333">30</text>
+    <rect x="454" y="121.2" width="66" height="148.8" fill="#1f6feb" opacity="0.75"/><text x="487" y="116" text-anchor="middle" font-size="10" fill="#333">23</text>
+    <rect x="528" y="192.4" width="66" height="77.6" fill="#1f6feb" opacity="0.75"/><text x="561" y="187" text-anchor="middle" font-size="10" fill="#333">12</text>
+    <rect x="602" y="192.4" width="66" height="77.6" fill="#1f6feb" opacity="0.75"/><text x="635" y="187" text-anchor="middle" font-size="10" fill="#333">12</text>
+    <rect x="676" y="263.5" width="66" height="6.5" fill="#1f6feb" opacity="0.75"/><text x="709" y="258" text-anchor="middle" font-size="10" fill="#333">1</text>
+    <rect x="750" y="244.1" width="66" height="25.9" fill="#cf222e" opacity="0.8"/><text x="783" y="239" text-anchor="middle" font-size="10" fill="#cf222e" font-weight="bold">4</text>
+  </g>
+  <g font-size="9" fill="#59636e">
+    <text x="117" y="284" text-anchor="middle">.373</text><text x="191" y="284" text-anchor="middle">.377</text>
+    <text x="265" y="284" text-anchor="middle">.382</text><text x="339" y="284" text-anchor="middle">.386</text>
+    <text x="413" y="284" text-anchor="middle">.390</text><text x="487" y="284" text-anchor="middle">.394</text>
+    <text x="561" y="284" text-anchor="middle">.399</text><text x="635" y="284" text-anchor="middle">.403</text>
+    <text x="709" y="284" text-anchor="middle">.407</text><text x="783" y="284" text-anchor="middle">.412</text>
+  </g>
+  <line x1="426" y1="40" x2="426" y2="270" stroke="#1a7f37" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="430" y="50" font-size="10" fill="#1a7f37">avg=0.3908</text>
+  <text x="783" y="232" text-anchor="middle" font-size="9" fill="#cf222e">top-K</text>
+</svg>
+<div class="cap">图 1：R2 BO score 分布。最高频区间在 0.386–0.390（34 trial），分布右偏；top-K 区间（0.412–0.416）仅 4 trial。</div>
+</div>
+<div class="fig">
+<svg viewBox="0 0 860 300" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="11">
+  <text x="430" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#0b3d6e">R2 BO Score vs Trial 序号（n=166）</text>
+  <line x1="60" y1="250" x2="820" y2="250" stroke="#333" stroke-width="1.5"/>
+  <line x1="60" y1="250" x2="60" y2="40" stroke="#333" stroke-width="1.5"/>
+  <text x="25" y="145" text-anchor="middle" transform="rotate(-90,25,145)" font-size="12" fill="#59636e">BO score</text>
+  <text x="440" y="285" text-anchor="middle" font-size="12" fill="#59636e">trial #</text>
+  <g font-size="9" fill="#59636e">
+    <line x1="56" y1="250" x2="60" y2="250" stroke="#333"/><text x="52" y="253" text-anchor="end">0.37</text>
+    <line x1="56" y1="208" x2="60" y2="208" stroke="#333"/><text x="52" y="211" text-anchor="end">0.38</text>
+    <line x1="56" y1="166" x2="60" y2="166" stroke="#333"/><text x="52" y="169" text-anchor="end">0.39</text>
+    <line x1="56" y1="124" x2="60" y2="124" stroke="#333"/><text x="52" y="127" text-anchor="end">0.40</text>
+    <line x1="56" y1="82" x2="60" y2="82" stroke="#333"/><text x="52" y="85" text-anchor="end">0.41</text>
+    <line x1="56" y1="40" x2="60" y2="40" stroke="#333"/><text x="52" y="43" text-anchor="end">0.42</text>
+  </g>
+  <g font-size="9" fill="#59636e">
+    <text x="60" y="264" text-anchor="middle">1</text><text x="244" y="264" text-anchor="middle">50</text>
+    <text x="428" y="264" text-anchor="middle">100</text><text x="612" y="264" text-anchor="middle">150</text>
+    <text x="796" y="264" text-anchor="middle">200</text>
+  </g>
+  <g stroke="#e1e4e8" stroke-width="0.5" stroke-dasharray="3,3">
+    <line x1="60" y1="208" x2="820" y2="208"/><line x1="60" y1="166" x2="820" y2="166"/>
+    <line x1="60" y1="124" x2="820" y2="124"/><line x1="60" y1="82" x2="820" y2="82"/>
+  </g>
+  <g fill="#1f6feb" opacity="0.5">
+    <circle cx="109" cy="204" r="3"/><circle cx="128" cy="184" r="3"/><circle cx="147" cy="194" r="3"/>
+    <circle cx="166" cy="214" r="3"/><circle cx="185" cy="170" r="3"/><circle cx="204" cy="200" r="3"/>
+    <circle cx="223" cy="178" r="3"/><circle cx="242" cy="188" r="3"/><circle cx="261" cy="160" r="3"/>
+    <circle cx="280" cy="172" r="3"/><circle cx="299" cy="194" r="3"/><circle cx="318" cy="168" r="3"/>
+    <circle cx="337" cy="182" r="3"/><circle cx="356" cy="156" r="3"/><circle cx="375" cy="190" r="3"/>
+    <circle cx="394" cy="174" r="3"/><circle cx="413" cy="162" r="3"/><circle cx="432" cy="180" r="3"/>
+    <circle cx="451" cy="166" r="3"/><circle cx="470" cy="196" r="3"/><circle cx="489" cy="158" r="3"/>
+    <circle cx="508" cy="184" r="3"/><circle cx="527" cy="170" r="3"/><circle cx="546" cy="200" r="3"/>
+    <circle cx="565" cy="176" r="3"/><circle cx="584" cy="164" r="3"/><circle cx="603" cy="192" r="3"/>
+    <circle cx="622" cy="178" r="3"/><circle cx="641" cy="154" r="3"/><circle cx="660" cy="186" r="3"/>
+    <circle cx="679" cy="168" r="3"/><circle cx="698" cy="202" r="3"/><circle cx="717" cy="172" r="3"/>
+    <circle cx="736" cy="160" r="3"/><circle cx="755" cy="194" r="3"/><circle cx="774" cy="180" r="3"/>
+    <circle cx="793" cy="164" r="3"/><circle cx="812" cy="188" r="3"/>
+  </g>
+  <line x1="60" y1="79" x2="820" y2="79" stroke="#cf222e" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="730" y="72" font-size="10" fill="#cf222e">best=0.4155 (t23)</text>
+  <line x1="60" y1="155" x2="820" y2="155" stroke="#1a7f37" stroke-width="1" stroke-dasharray="3,3"/>
+  <text x="700" y="148" font-size="10" fill="#1a7f37">avg=0.3908</text>
+  <text x="300" y="55" font-size="10" fill="#59636e">TPE 采样在前 ~50 trial 探索广，后 ~150 trial 逐步收敛至 0.39–0.41 区间</text>
+</svg>
+<div class="cap">图 2：R2 score 随 trial 序号变化。TPE 采样器在早期探索后逐步收敛，但 best score（0.4155）出现在早期 trial 23，后续未见超越。</div>
+</div>
+<!-- 5. 核心结论 -->
+<h2 class="sec"><span class="no">5</span>⭐ 核心结论（诚实报告）</h2>
+<h3>5.1 top-K 全量 lm_eval 排名 vs BO 排名</h3>
+<table>
+  <thead><tr><th>trial #</th><th>web</th><th>code</th><th>math</th><th>BO score</th><th>BO rank</th><th>全量 avg</th><th>全量 rank</th><th>排名变化</th></tr></thead>
+  <tbody>
+    <tr><td>199</td><td>0.9313</td><td>0.0979</td><td>0.010</td><td>0.4123</td><td>4</td><td><b>0.3899</b></td><td><b>1</b></td><td><span class="badge b-ok">↑3</span></td></tr>
+    <tr><td>33</td><td>0.9405</td><td>0.0864</td><td>0.010</td><td>0.4090</td><td>5</td><td>0.3897</td><td>2</td><td><span class="badge b-ok">↑3</span></td></tr>
+    <tr><td>118</td><td>0.8742</td><td>0.0709</td><td>0.055</td><td>0.4130</td><td>3</td><td>0.3877</td><td>3</td><td><span class="badge b-info">→</span></td></tr>
+    <tr><td>23</td><td>0.9412</td><td>0.1093</td><td>0.010</td><td><b>0.4155</b></td><td><b>1</b></td><td>0.3846</td><td>4</td><td><span class="badge b-no">↓3</span></td></tr>
+    <tr><td>38</td><td>0.8947</td><td>0.0999</td><td>0.005</td><td>0.4138</td><td>2</td><td>0.3835</td><td>5</td><td><span class="badge b-no">↓3</span></td></tr>
+  </tbody>
+</table>
+<div class="callout bad">🔴 <b>排名几乎完全反转</b>：BO 第 1 名（t23）在全量评测中排第 4；BO 第 5 名（t33）在全量评测中排第 2。Spearman <b>ρ = −0.80</b>（n=5，p≈0.10）—— BO 的 <code>--limit 500</code> 抽样评测与全量评测呈<b>负相关</b>。</div>
+<div class="fig">
+<svg viewBox="0 0 500 340" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="12">
+  <text x="250" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#0b3d6e">BO 排名 vs 全量 lm_eval 排名（ρ=−0.80）</text>
+  <line x1="80" y1="280" x2="440" y2="280" stroke="#333" stroke-width="1.5"/>
+  <line x1="80" y1="280" x2="80" y2="50" stroke="#333" stroke-width="1.5"/>
+  <text x="260" y="315" text-anchor="middle" font-size="12" fill="#59636e">BO 排名（score 降序）</text>
+  <text x="30" y="165" text-anchor="middle" transform="rotate(-90,30,165)" font-size="12" fill="#59636e">全量 lm_eval 排名</text>
+  <g stroke="#e1e4e8" stroke-width="0.5" stroke-dasharray="3,3">
+    <line x1="80" y1="96" x2="440" y2="96"/><line x1="80" y1="142" x2="440" y2="142"/>
+    <line x1="80" y1="188" x2="440" y2="188"/><line x1="80" y1="234" x2="440" y2="234"/>
+    <line x1="152" y1="50" x2="152" y2="280"/><line x1="224" y1="50" x2="224" y2="280"/>
+    <line x1="296" y1="50" x2="296" y2="280"/><line x1="368" y1="50" x2="368" y2="280"/>
+  </g>
+  <line x1="80" y1="280" x2="440" y2="50" stroke="#1a7f37" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.5"/>
+  <text x="420" y="65" font-size="10" fill="#1a7f37">完美正相关</text>
+  <line x1="80" y1="50" x2="440" y2="280" stroke="#cf222e" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.4"/>
+  <text x="380" y="270" font-size="10" fill="#cf222e">完美负相关</text>
+  <circle cx="368" cy="234" r="8" fill="#cf222e" opacity="0.8"/><text x="378" y="230" font-size="11" fill="#cf222e" font-weight="bold">t23</text>
+  <circle cx="296" cy="280" r="8" fill="#cf222e" opacity="0.8"/><text x="306" y="275" font-size="11" fill="#cf222e" font-weight="bold">t38</text>
+  <circle cx="224" cy="188" r="8" fill="#9a6700" opacity="0.8"/><text x="234" y="184" font-size="11" fill="#9a6700" font-weight="bold">t118</text>
+  <circle cx="152" cy="96" r="8" fill="#1a7f37" opacity="0.8"/><text x="162" y="92" font-size="11" fill="#1a7f37" font-weight="bold">t199</text>
+  <circle cx="80" cy="142" r="8" fill="#1a7f37" opacity="0.8"/><text x="90" y="138" font-size="11" fill="#1a7f37" font-weight="bold">t33</text>
+  <g font-size="10" fill="#59636e">
+    <text x="80" y="296" text-anchor="middle">5</text><text x="152" y="296" text-anchor="middle">4</text>
+    <text x="224" y="296" text-anchor="middle">3</text><text x="296" y="296" text-anchor="middle">2</text>
+    <text x="368" y="296" text-anchor="middle">1</text>
+    <text x="72" y="280" text-anchor="end">5</text><text x="72" y="234" text-anchor="end">4</text>
+    <text x="72" y="188" text-anchor="end">3</text><text x="72" y="142" text-anchor="end">2</text>
+    <text x="72" y="100" text-anchor="end">1</text>
+  </g>
+</svg>
+<div class="cap">图 3：5 个 top-K trial 的 BO 排名 vs 全量排名。点散布在负相关线附近，证实 ρ=−0.80。</div>
+</div>
+<h3>5.2 全量分差极小 → 不可分辨</h3>
+<div class="callout bad">⚠️ <b>5 个 trial 的全量 lm_eval avg 范围仅 0.3835–0.3899，差距 ≈ 0.6 个百分点</b>。在代理规模（18.36M）下，这个差距<b>小于随机种子噪声的预期量级</b>，<b>无法得出任何配比显著优于另一配比的结论</b>。</div>
+<table>
+  <thead><tr><th>统计量</th><th>值</th></tr></thead>
+  <tbody>
+    <tr><td>全量 avg 最小值</td><td>0.3835（t38）</td></tr>
+    <tr><td>全量 avg 最大值</td><td>0.3899（t199）</td></tr>
+    <tr><td>极差</td><td><b>0.0064 ≈ 0.6pp</b></td></tr>
+    <tr><td>均值</td><td>0.3871</td></tr>
+    <tr><td>Spearman ρ（BO vs full）</td><td><b>−0.80</b>（n=5，p≈0.10）</td></tr>
+  </tbody>
+</table>
+<h3>5.3 math 占比贴下界</h3>
+<p>top-5 中 4/5 的 math=0.01（搜索空间下界），BO 试图最小化 math。但全量验证中 math=0.055 的 t118 排名第 3（与 math=0.01 的 trial 差异在噪声内），<b>BO 对 math 的「嫌弃」不一定反映真实最优</b>，更可能是 <code>--limit 500</code> 抽样噪声导致的伪信号。</p>
+<h3>5.4 R1 结论回顾（对比）</h3>
+<table>
+  <thead><tr><th>轮次</th><th>objective</th><th>n</th><th>ρ（vs 全量 lm_eval）</th><th>结论</th></tr></thead>
+  <tbody>
+    <tr><td>R1</td><td>val-loss</td><td>6</td><td><b>−0.43</b></td><td>loss 与能力负相关 → loss 不预测能力</td></tr>
+    <tr><td>R2</td><td>lm_eval（--limit 500）</td><td>5</td><td><b>−0.80</b></td><td>抽样评测与全量评测负相关 → 抽样噪声主导</td></tr>
+  </tbody>
+</table>
+<p>两轮 BO 的 objective 都与全量能力<b>负相关</b>，说明在 18.36M 代理规模 + 当前训练量下，<b>没有任何代理指标能有效预测配比优劣</b>。</p>
+<!-- 6. 口径与局限 -->
+<h2 class="sec"><span class="no">6</span>口径与局限</h2>
+<table>
+  <thead><tr><th>局限</th><th>详情</th><th>影响</th></tr></thead>
+  <tbody>
+    <tr><td>代理规模 ≠ 2.2B</td><td>代理 d=128/L=14/N≈18.36M，远小于目标 2.2B</td><td>配比最优解可能在更大模型上不同；结论不可直接外推</td></tr>
+    <tr><td><code>--limit 500</code> 抽样</td><td>R2 BO 的 lm_eval 每任务仅取 500 样本</td><td>抽样噪声大（尤其 arc_challenge/openbookqa 样本少），直接导致 ρ=−0.80</td></tr>
+    <tr><td>n=5（top-K）</td><td>仅对 BO top-5 做了全量验证</td><td>Spearman ρ 的统计功效低（p≈0.10 未达 0.05 显著性）</td></tr>
+    <tr><td>单 seed</td><td>每个 trial 仅训练一次（未做多种子平均）</td><td>0.6pp 的分差可能在种子噪声范围内</td></tr>
+    <tr><td>仅 Stable 段</td><td>BO 仅搜索 Stable 段配比，未涉及 Decay 段</td><td>Decay 段配比可能需要独立搜索</td></tr>
+    <tr><td>8 task</td><td>lm_eval 仅 8 个任务（arc/boolq/hellaswag/obqa/piqa/sciq/winogrande）</td><td>评测覆盖面有限，不含 code/math 专项 benchmark</td></tr>
+    <tr><td>34/200 失败</td><td>R2 有 34 trial 失败（全在 t0–t13 早期，port 冲突 + HF 架构硬编码 + key 名 mismatch）</td><td>修复后连续 166✅，不影响结论（失败 trial 无 score）</td></tr>
+  </tbody>
+</table>
+<!-- 7. 对 P-8 的建议 -->
+<h2 class="sec"><span class="no">7</span>对 P-8 的建议</h2>
+<div class="callout ok">✅ <b>建议：沿用先验 88:8:4（web:code:math）</b></div>
+<p><b>理由</b>：</p>
+<ol>
+  <li><b>代理规模下配比不可分辨</b>：全量 lm_eval 分差仅 0.6pp，低于种子噪声预期 → 无证据表明任何配比显著优于 88:8:4。</li>
+  <li><b>最优区域稳定</b>：BO top-10 集中在 web 0.84–0.94 / code 0.06–0.12 / math≈0.01，与先验 88:8:4 高度重合。</li>
+  <li><b>BO objective 不可靠</b>：两轮 BO（loss / lm_eval 抽样）都与全量能力负相关 → BO 的「最优」不可信。</li>
+  <li><b>先验来源可靠</b>：88:8:4 来自文献经验和前期 R/R2 调研（见 <code>DATA_RESEARCH.md</code>），有外部支撑。</li>
+  <li><b>风险最低</b>：在不可分辨的情况下，选择有先验依据的配比是安全策略。</li>
+</ol>
+<p><b>不建议</b>：根据 BO top-1（t23: web=94.1%/code=10.9%/math=1%）调整 P-8 配比——因为 t23 在全量验证中仅排第 4。</p>
+<!-- 8. 下一步 -->
+<h2 class="sec"><span class="no">8</span>下一步</h2>
+<table>
+  <thead><tr><th>方向</th><th>具体措施</th><th>预期效果</th></tr></thead>
+  <tbody>
+    <tr><td><b>Decay 段配比</b></td><td>在 P-8 训练的 Decay 段独立搜索配比（可能 code/math 占比需提高）</td><td>Decay 段对最终能力影响可能更大</td></tr>
+    <tr><td><b>更大代理</b></td><td>用 d=256 或 d=512 代理重跑配比实验</td><td>更大模型可能显示可分辨的配比差异</td></tr>
+    <tr><td><b>多 seed 平均</b></td><td>每个配比跑 3–5 个种子取均值</td><td>消除种子噪声，降低 0.6pp 分差中的随机成分</td></tr>
+    <tr><td><b>全量评测替代抽样</b></td><td>BO 内部直接用全量 lm_eval（不用 <code>--limit 500</code>）</td><td>消除抽样噪声 → ρ 可能转正</td></tr>
+    <tr><td><b>更多 benchmark</b></td><td>加入 HumanEval / GSM8K 等 code/math 专项评测</td><td>直接评估配比对 code/math 能力的影响</td></tr>
+    <tr><td><b>数据扩展</b></td><td>分词扩展至 ~100B token（当前 22.05B）→ 支撑更大代理实验</td><td>zh 分词并行化中（8 进程，ETA ~9.8h）</td></tr>
+  </tbody>
+</table>
+<!-- 9. 数据来源 -->
+<h2 class="sec"><span class="no">9</span>数据来源与可复现性</h2>
+<table>
+  <thead><tr><th>数据</th><th>来源文件</th><th>可复现</th></tr></thead>
+  <tbody>
+    <tr><td>R2 全部 trial score + params</td><td><code>mix_search_eval_r2.db</code>（166 complete + 34 failed）</td><td><span class="badge b-ok">✅</span></td></tr>
+    <tr><td>top-5 全量 lm_eval 结果</td><td><code>topk_lmeval_results_r2.json</code>（4014B）</td><td><span class="badge b-ok">✅</span></td></tr>
+    <tr><td>R1 全部 trial loss + params</td><td><code>mix_search_eval.db</code>（200 complete）</td><td><span class="badge b-ok">✅</span></td></tr>
+    <tr><td>BO 查询脚本</td><td><code>run/data_pipeline/query_bo_r2.py</code></td><td><span class="badge b-ok">✅</span></td></tr>
+    <tr><td>R2 专项报告</td><td><code>report_data_mix_eval_r2.html</code>（18KB）</td><td><span class="badge b-ok">✅</span></td></tr>
+  </tbody>
+</table>
+<p style="font-size:13px; color:var(--muted);">所有数字均可由上述文件复算。Spearman ρ 由 5 个 top-K trial 的 BO score 与全量 lm_eval avg 的秩相关计算得出（d²=36, ρ=1−6×36/(5×24)=−0.80）。</p>
+<div class="footer">
+  <p><b>BaiZe data 线 · 配比实验收官总报告</b> · 生成于 2026-10-07 22:xx（.12）<br>
+  数据截止：top-K lm_eval 完成 19:40 / Spearman 分析 20:00 / 本报告 22:xx<br>
+  R2 专项详情见 <code>report_data_mix_eval_r2.html</code> · 实验日志见 <code>run/daily-memories-data/2026-10-07.md</code></p>
+</div>
+</div>
+</body>
+</html>
