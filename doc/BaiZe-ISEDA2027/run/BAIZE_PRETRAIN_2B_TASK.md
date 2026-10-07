@@ -34,7 +34,10 @@
 4. `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 新增节 + **一句话可引用结论**（**劣势如实写**：短 ctx dense decode 更快；谁在哪个档 OOM）。
 
 **④ 资源与铁律**
-- 🚫 **不抢占 data BO**（data BO 是 P-8 硬前置，优先级高于本项）：GPU 被占 ⇒ **排队或用 `.29` 单卡串行**，并把**等待时段**如实写进报告；本项预算 **≤3h**。
+- 🥇 **测试场地 = `.12`（用户 2026-10-07 直指：GPU1–7 已空）** —— vision 的 `lp 协议 A/B 桥接`（PID 807654）**只占 GPU0**（2.4GB / 39% util，NFS I/O bound，**ETA ~10:00–11:00**）。**借 `.12` GPU1–2**：**GPU1 = hybrid 4 档顺序（128K→1M 递进）、GPU2 = dense 4 档顺序**（`p911d_launch.sh` **已参数化** ⇒ `ssh 10.239.2.12 "nohup setsid bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/p911d_launch.sh 1 <port> </dev/null >/tmp/p911e_gpu1.log 2>&1 &"`，**零改造**）。🚫 **不碰 GPU0**、🚫 **绝不 kill PID 807654**。
+- ✅ **`.12` 可行性 = 已实测，不是推测**：env 与 ckpt **全在 NFS 共享路径**上 —— `/nas_train/app.e0031982/miniforge3/envs/{vllm,sglang}`（P-9.10① 已 `ssh .12` 查证「**同样有 `vllm`**」，sglang **0.5.9** ✅）、`…/nemo_experiments/p3_{hybrid,dense}/hf_iter_5000`（HF 已导出 ✅）；flag 照抄：`SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1` + `--attention-backend flashinfer`（避开 cutlass RoundingModeKind bug）+ hybrid 加 `--mamba-ssm-dtype float32`；**`--mem-fraction-static 0.3`**。
+- ⏰ **时间片铁律（硬）**：借用**到 11:00**；**10:30 起每 15 min 自查**，未跑完 ⇒ 在 `run/GPU12_ALLOC.md` 申请区申请**续借 ≤2h**，**vision 若要用卡则无条件让**（优先级：vision 训练臂/桥接 > 本推理评测）；交还时**必须 kill 自己的 sglang server + 核 `memory.used`≈0** 并写流水。
+- 🥈 **备选场地 `.29` GPU0–1（仅当 `.12` 不可用）**：这两张按 `run/GPU29_ALLOC.md` §1 **本归 pretrain**，现被 data Round2 BO（PID 3614158，`--gpus 0-7`，**62,613 MiB/卡**）占用 ⇒ 索卡须在申请区写一行、等 data 在 **trial 边界**让出（**会让 BO 降速、P-8 前置顺延，尽量避免**）。⚠️ **`util%` 低 ≠ 空闲**：显存被占的卡**装不下 1M hybrid（需 34.7GB）** ⇒ 必须整张空卡；🚫 **GPU2–7 是 data 的**、🚫 **绝不 kill data BO**。本项预算 **≤3h**。
 - 📌 **先写死预期，避免事后挑数**：hybrid **1M 已知可跑**（B1：prefill 172.4s / 峰值 34.68GB）；**dense 1M 预期 OOM**（KV≈90GB）⇒ **OOM 就记 OOM**，「**dense 在 xxK 处 OOM、hybrid 到 1M 仍可服务**」即本报告**核心结论**。
 - ✅ **可直接复用、不必重测**：4K/16K/64K 的 P-9.11 数据（prefill **2.18×**、decode **1.18×** @64K×bs1，`p911_hybrid_results.json` / `p911_dense_results.json`）**只引用**；若本轮重测，须标注「新口径」并说明与 P-9.11 是否可比。
 - 收尾按「收尾铁律」commit + push（前缀 `pretrain 长ctx成本: …`）+ `MEMORY_PRETRAIN_2B.md` 记 1 行指针。

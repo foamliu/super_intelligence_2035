@@ -80,3 +80,5 @@
 | 2026-10-06 08:22 | **data 唤醒145**：🔴 **S0a 2.2B单臂已kill改道代理模型BO搜索**。校准完成（GPU2-4, 3×LR×50步, 92.7M proxy h=512/L=14, s/step≈1.5s, loss@50 best@LR=1e-3=7.08）。GPU2-4已释放。下一步=held-out bin→Optuna study（6卡并行, 500步/trial, T≈691>400）。GPU0-1/5-7空闲。 |
 
 2026-10-06 11:25 data-agent START BO search resumed (trial 19+, 19 existing, fix GP race condition) GPU2-7
+| 2026-10-07 上午 | **运维（用户直令）**：**长上下文推理成本矩阵改去 `.12` 取卡** —— 用户指出 `.12` **GPU1–7 空闲**（GPU0 被 vision 的 lp bridge PID 807654 占至 ~11:00）⇒ **本项优先借 `.12` GPU1–2（至 11:00）**，**暂不向 data 索卡**（避免 Round2 BO 从 8 槽降速、P-8 前置顺延）；对账簿新建 `run/GPU12_ALLOC.md`。**仅当 `.12` 不可用时**才按 §1 申请 GPU0–1（pretrain 静态归属；BO 现以 `--gpus 0-7` 超额占用，62,613 MiB/卡）。⏰ 提醒：**`util%` 低 ≠ 空闲**，显存被占的卡装不下 1M hybrid（需 34.7GB）⇒ 必须整张空卡；🚫 双方均不 kill 对方进程。 |
+
