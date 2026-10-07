@@ -422,19 +422,20 @@ class PiDriver:
 class HermesDriver:
     """hermes — NousResearch/hermes-agent (commit cb6ffe6c, 2026-10-07 clone).
 
-    A complex Python+Node project (requires Python 3.14 + Node 26 via its own
-    PM toolchain manager).  Non-interactive mode: ``hermes -z "<prompt>"``
-    (oneshot — only outputs final answer, no banner/spinner).
+    Installed via ``uv pip install -e .`` in a Python 3.14.6 venv at
+    ``/nas_train/app.e0031982/harness_work/hermes-venv`` (linked from
+    ``hermes-agent-src/.venv``).  The CLI entry point is symlinked to
+    ``~/.hermes/bin/hermes``.
+
+    Non-interactive mode: ``hermes -z "<prompt>"`` (oneshot — prints ONLY the
+    final response text to stdout, no banner/spinner/session_id line).
 
     Docs: https://github.com/NousResearch/hermes-agent
     CLI ref: https://hermes-agent.nousresearch.com/docs/reference/cli-commands
 
-    Provider config: ``custom`` provider type for OpenAI-compatible endpoints,
-    configured via ``hermes model`` wizard or ``~/.hermes/config.yaml``.
-
-    NOTE: Not yet available — requires installing Python 3.14 + Node 26 via the
-    project's PM toolchain (install script at hermes-agent.nousresearch.com has
-    SSL issues through the proxy).  Manual setup is deferred to a future wake.
+    Provider config: custom provider ``kimi-proxy`` in ``~/.hermes/config.yaml``
+    pointing at the local gw_proxy (127.0.0.1:9090/v1) with
+    ``api_mode: chat_completions``.  ``agent.max_turns: 50`` limits tool rounds.
     """
 
     name = "hermes"
@@ -445,21 +446,20 @@ class HermesDriver:
         return self._HERMES_BIN.exists()
 
     def run(self, instance: dict, workdir: Path, timeout: int = 3600) -> DriverResult:
+        # NOTE: -z must be immediately followed by the prompt (no space form
+        # "-z<prompt>") so argparse doesn't swallow subsequent --flags as the
+        # prompt value.  Using "-z" + prompt as separate list elements also
+        # works UNLESS the prompt itself starts with "-" — the prefix form
+        # is robust against that too.
+        prompt = instance["problem_statement"]
         cmd = [
             str(self._HERMES_BIN),
-            "-z",                          # oneshot (non-interactive, final answer only)
-            "--provider", "custom",        # OpenAI-compatible custom endpoint
+            f"-z{prompt}",                 # oneshot: -z immediately followed by prompt
+            "--provider", "kimi-proxy",    # custom provider from config.yaml
             "--model", UNIFIED_MODEL,      # kimi-k2.6-cloud
             "--yolo",                      # skip dangerous command approval
-            "--max-turns", "50",           # limit tool call rounds
-            "-Q",                          # quiet mode (no banner/spinner)
-            instance["problem_statement"],
         ]
         env = {
-            "HERMES_PROVIDER": "custom",
-            "HERMES_MODEL": UNIFIED_MODEL,
-            "CUSTOM_API_KEY": DUMMY_KEY,
-            "CUSTOM_BASE_URL": "http://127.0.0.1:9090/v1",
             "no_proxy": "127.0.0.1,localhost",
             "NO_PROXY": "127.0.0.1,localhost",
         }
