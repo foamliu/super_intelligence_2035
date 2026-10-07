@@ -22,7 +22,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 </style></head><body>
 <h1>SWE-bench 30×7 Harness Cross-Eval Report</h1>
 <p><span class="model-badge">Model: kimi-k2.6-cloud</span> &nbsp; Gateway: <code>http://agi-gateway.cxmt.com/cloud/v1</code></p>
-<p><strong>Generated:</strong> 2026-10-08 01:28 | <strong>Scope:</strong> 30 instances (15 django + 15 sympy) × 7 harnesses (7 active) | <strong>Concurrency:</strong> 1 (strict serial)</p>
+<p><strong>Generated:</strong> 2026-10-08 02:07 | <strong>Scope:</strong> 30 instances (15 django + 15 sympy) × 7 harnesses (7 active) | <strong>Concurrency:</strong> 1 (strict serial)</p>
 <div class="callout">
 <p><strong>📋 Key Design (per operator instruction 2026-10-07):</strong></p>
 <ul>
@@ -43,18 +43,18 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <tr><td class='hname'>claude-code</td><td>29</td><td>13</td><td>16</td><td>0</td><td>1</td><td>13/29 (44.8%)</td><td>425s</td><td>✅ done</td></tr>
 <tr><td class='hname'>deepseek-harness</td><td>30</td><td>12</td><td>18</td><td>0</td><td>0</td><td>12/30 (40.0%)</td><td>293s</td><td>✅ done</td></tr>
 <tr><td class='hname'>Pi</td><td>30</td><td>18</td><td>12</td><td>0</td><td>0</td><td>18/30 (60.0%)</td><td>275s</td><td>✅ done</td></tr>
-<tr><td class='hname'>Hermes Agent</td><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0/1 (0.0%)</td><td>568s</td><td>🔄 in progress (1/30)</td></tr>
+<tr><td class='hname'>Hermes Agent</td><td>3</td><td>1</td><td>2</td><td>0</td><td>0</td><td>1/3 (33.3%)</td><td>865s</td><td>🔄 in progress (3/30)</td></tr>
 </table>
 <div class="callout">
-<p><strong>📊 Overall:</strong> 181 entries on 30 instances | 90 total resolved across all harnesses</p>
+<p><strong>📊 Overall:</strong> 183 entries on 30 instances | 91 total resolved across all harnesses</p>
 </div>
 <h2>2. Instance-level Detail</h2>
 <p>Legend: &#10004;=resolved, &#10006;=patch-but-failed, &#9728;=quota-blocked, &#9888;=infra-blocked (git/rootfs failure), — = not yet run</p>
 <table>
 <tr><th>Instance</th><th>cline-patched</th><th>codex</th><th>opencode</th><th>claude-code</th><th>deepseek</th><th>Pi</th><th>Hermes</th></tr>
 <tr><td class='iid'>django__django-10924</td><td class="resolved">&#10004;<br><small>383s</small></td><td class="failed">&#10006;<br><small>455s</small></td><td class="failed">&#10006;<br><small>230s</small></td><td class="failed">&#10006;<br><small>451s</small></td><td class="resolved">&#10004;<br><small>258s</small></td><td class="resolved">&#10004;<br><small>175s</small></td><td class="failed">&#10006;<br><small>568s</small></td></tr>
-<tr><td class='iid'>django__django-11001</td><td class="resolved">&#10004;<br><small>901s</small></td><td class="resolved">&#10004;<br><small>225s</small></td><td class="resolved">&#10004;<br><small>123s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="resolved">&#10004;<br><small>153s</small></td><td class="resolved">&#10004;<br><small>200s</small></td><td class="pending">—</td></tr>
-<tr><td class='iid'>django__django-11019</td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>802s</small></td><td class="failed">&#10006;<br><small>266s</small></td><td class="failed">&#10006;<br><small>587s</small></td><td class="failed">&#10006;<br><small>131s</small></td><td class="pending">—</td></tr>
+<tr><td class='iid'>django__django-11001</td><td class="resolved">&#10004;<br><small>901s</small></td><td class="resolved">&#10004;<br><small>225s</small></td><td class="resolved">&#10004;<br><small>123s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="resolved">&#10004;<br><small>153s</small></td><td class="resolved">&#10004;<br><small>200s</small></td><td class="resolved">&#10004;<br><small>226s</small></td></tr>
+<tr><td class='iid'>django__django-11019</td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>802s</small></td><td class="failed">&#10006;<br><small>266s</small></td><td class="failed">&#10006;<br><small>587s</small></td><td class="failed">&#10006;<br><small>131s</small></td><td class="failed">&#10006;<br><small>1801s</small></td></tr>
 <tr><td class='iid'>django__django-11039</td><td class="resolved">&#10004;<br><small>741s</small></td><td class="resolved">&#10004;<br><small>190s</small></td><td class="resolved">&#10004;<br><small>84s</small></td><td class="resolved">&#10004;<br><small>111s</small></td><td class="resolved">&#10004;<br><small>115s</small></td><td class="resolved">&#10004;<br><small>116s</small></td><td class="pending">—</td></tr>
 <tr><td class='iid'>django__django-11049</td><td class="resolved">&#10004;<br><small>270s</small></td><td class="resolved">&#10004;<br><small>146s</small></td><td class="resolved">&#10004;<br><small>445s</small></td><td class="resolved">&#10004;<br><small>116s</small></td><td class="resolved">&#10004;<br><small>162s</small></td><td class="resolved">&#10004;<br><small>79s</small></td><td class="pending">—</td></tr>
 <tr><td class='iid'>django__django-11099</td><td class="resolved">&#10004;<br><small>153s</small></td><td class="resolved">&#10004;<br><small>93s</small></td><td class="resolved">&#10004;<br><small>48s</small></td><td class="resolved">&#10004;<br><small>30s</small></td><td class="resolved">&#10004;<br><small>33s</small></td><td class="resolved">&#10004;<br><small>98s</small></td><td class="pending">—</td></tr>
@@ -97,6 +97,19 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <li><strong>Hermes Agent driver:</strong> <code>hermes -z&lt;prompt&gt;</code> (oneshot mode) via Python 3.14.6 venv, custom provider <code>kimi-proxy</code> in <code>~/.hermes/config.yaml</code> pointing at gw_proxy port 9090</li>
 </ol>
 </div>
+<h2>3.1 Harness Versions &amp; Sources</h2>
+<div class="callout">
+<table>
+<tr><th>Harness</th><th>Version / Commit</th><th>Source</th><th>License</th><th>Non-interactive mode</th></tr>
+<tr><td>cline-patched</td><td>v4.1.21 (modified)</td><td><code>/nas_train/app.e0031982/harness/cline</code></td><td>Apache-2.0</td><td><code>cline --allowedTools ... -m &lt;model&gt;</code></td></tr>
+<tr><td>codex</td><td>from source</td><td><code>/nas_train/app.e0031982/harness/codex</code></td><td>Apache-2.0</td><td><code>codex --quiet --full-auto</code></td></tr>
+<tr><td>opencode</td><td>from source</td><td><code>/nas_train/app.e0031982/harness/opencode</code></td><td>MIT</td><td><code>opencode run --non-interactive</code></td></tr>
+<tr><td>claude-code</td><td>from source</td><td><code>/nas_train/app.e0031982/harness/claude-code</code></td><td>MIT</td><td><code>claude --print --dangerously-skip-permissions</code></td></tr>
+<tr><td>deepseek-harness</td><td>from source (built)</td><td><code>/nas_train/app.e0031982/harness/deepseek-harness</code></td><td>MIT</td><td>Rust binary, headless via env config</td></tr>
+<tr><td>Pi</td><td>v0.2.15 (npm)</td><td><a href="https://github.com/fleetagent/pi">fleetagent/pi</a></td><td>MIT</td><td><code>pi -p</code> (print mode)</td></tr>
+<tr><td>Hermes Agent</td><td>commit 0e219331</td><td><a href="https://github.com/NousResearch/hermes-agent">NousResearch/hermes-agent</a></td><td>MIT</td><td><code>hermes -z&lt;prompt&gt; --yolo</code> (oneshot)</td></tr>
+</table>
+</div>
 <h2>4. Reproduction</h2>
 <pre><code>cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness
 # The 30 instances are defined by the cline-patched run (15 django + 15 sympy)
@@ -116,5 +129,5 @@ python3 gen_kimi_compare.py</code></pre>
 </ol>
 </div>
 <hr>
-<p><small>BaiZe Harness H-A, 30×7 cross-eval (7 active), 2026-10-08 01:28. Model: kimi-k2.6-cloud. Serial concurrency=1. Data: kimi_pilot_results.json (filtered to 30 instances, 181 entries).</small></p>
+<p><small>BaiZe Harness H-A, 30×7 cross-eval (7 active), 2026-10-08 02:07. Model: kimi-k2.6-cloud. Serial concurrency=1. Data: kimi_pilot_results.json (filtered to 30 instances, 183 entries).</small></p>
 </body></html>

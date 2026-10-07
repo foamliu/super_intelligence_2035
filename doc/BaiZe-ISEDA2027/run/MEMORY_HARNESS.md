@@ -5,13 +5,28 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 30×7 harness cross-eval (kimi-k2.6-cloud, serial=1) — cline-patched×30 ✅ 60.0% · codex×30 ✅ 46.7% · opencode×30 ✅ 50.0% · claude-code×30 ✅ 44.8% · deepseek-harness×30 ✅ 40.0% · Pi×30 ✅ 60.0% · Hermes×30 🔄 RUNNING (1/30 smoke test done, 29 remaining). gw_proxy healthy (PID 3175038, port 9090) + gw_proxy_dsh healthy (PID 1307655, port 9091).
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped (43/108/149) · opencode×30 (50.0%) · claude-code×30 (44.8%) · deepseek-harness×30 (40.0%) · Pi×30 (60.0%) · Hermes smoke test done (django-10924, pbf) · gen_kimi_compare.py upgraded to 7-way with Hermes data row · SWEBENCH_COMPARE.html (30×7, 181 entries, 90 resolved)
-当前动作:     R160: Pi×30 COMPLETE (18 res/12 pbf = 60.0%) → Hermes toolchain FIX (Python 3.14.6 venv found, CLI installed, config set up) → Hermes×30 chain STARTED (PID 838805, run_serial PID 850763) → gen_kimi_compare.py upgraded to 7-way with Hermes data row → SWEBENCH_COMPARE.html regenerated (19658B, 181 entries, 90 resolved) → commit+push
-下一步:       [AUTO] Hermes×30 running (~9.5min/inst × 29 = ~4.6h ETA, chain PID 838805 will auto-regen HTML) → next wake: check Hermes×30 progress → update HTML → commit+push
-阻塞:         <无> (Hermes toolchain issue RESOLVED: Python 3.14.6 found at ~/.local/bin/python3.14, venv at /nas_train/app.e0031982/harness_work/hermes-venv, CLI at ~/.hermes/bin/hermes, config at ~/.hermes/config.yaml with kimi-proxy provider)
+PHASE:        H-A 30×7 harness cross-eval (kimi-k2.6-cloud, serial=1) — cline-patched×30 ✅ 60.0% · codex×30 ✅ 46.7% · opencode×30 ✅ 50.0% · claude-code×30 ✅ 43.3% · deepseek-harness×30 ✅ 40.0% · Pi×30 ✅ 60.0% · Hermes×30 🔄 RUNNING (3/30 done: 1 res/2 pbf, inst 4/30 django-11039 fetching). gw_proxy healthy (PID 3175038, port 9090) + gw_proxy_dsh healthy (PID 1307655, port 9091).
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped · opencode×30 (50.0%) · claude-code×30 (43.3%) · deepseek-harness×30 (40.0%) · Pi×30 (60.0%) · Hermes 3/30 done (1 res/2 pbf) · gen_kimi_compare.py 7-way + version table · SWEBENCH_COMPARE.html (30×7, 183 entries, 91 resolved, 21229B with version table)
+当前动作:     R161: Hermes×30 progress check (3/30: django-10924 pbf, django-11001 res, django-11019 pbf-timeout) → harness version/commit verification via GitHub API (Hermes=NousResearch/hermes-agent@0e219331 MIT 251.8k★, Pi=@fleetagent/pi-coding-agent v0.2.15 MIT) → added §3.1 version table to gen_kimi_compare.py → SWEBENCH_COMPARE.html regenerated (21229B, 183 entries, 91 resolved) → commit+push
+下一步:       [AUTO] Hermes×30 running (~8.7min avg/inst × 27 = ~3.9h remaining ETA, chain PID 838805 auto-regens HTML when done) → next wake: check Hermes×30 progress → update HTML → commit+push
+阻塞:         <无> (Hermes toolchain working: Python 3.14.6 venv, CLI at ~/.hermes/bin/hermes, config at ~/.hermes/config.yaml with kimi-proxy provider → gw_proxy:9090)
 ERROR_COUNT:  0
 ```
+
+## 🆕 第一百六十一轮速览（2026-10-08 02:06）— Hermes×30 progress (3/30) + harness version/commit verification + HTML version table
+
+- 🔄 **Hermes×30 progress**：3/30 done, chain healthy (PID 838805 → 850763, inst 4/30 django-11039 fetching base_commit):
+  - django-10924 → patch-but-failed (rc=0, 567.9s) — smoke test
+  - django-11001 → **resolved** (rc=0, 226.3s) ✅
+  - django-11019 → patch-but-failed (rc=1, 1800.6s — timed out at 30min)
+  - ETA: ~27 inst × ~8.7min avg = ~3.9h remaining
+- ✅ **Harness version/commit verification**（per 10-07⑥ "🚫 但你要自己复核版本/commit 并贴来源 URL"）：
+  - **Hermes Agent**: GitHub API confirmed `NousResearch/hermes-agent` (MIT, 251,883★, pushed 2026-10-07), our clone at commit `0e219331`, pyproject.toml version `0.0.0`, Python `>=3.11,<3.15` (running on 3.14.6)
+  - **Pi**: npm package `@fleetagent/pi-coding-agent` v0.2.15 (from installed package.json), GitHub `fleetagent/pi` (MIT, 1★, pushed 2026-10-07), CLI runs via `bun dist/cli.js -p` (print mode)
+  - Both repos confirmed via `https_proxy=... curl https://api.github.com/repos/...`
+- ✅ **HTML version table added**: §3.1 "Harness Versions & Sources" in `gen_kimi_compare.py` — 7-row table with version/commit, source URL (clickable), license, and non-interactive mode for each harness
+- 📊 **SWEBENCH_COMPARE.html regenerated**: 21229B, 183 entries, 91 resolved (was 19658B/181/90)
+- 📦 体积：TASK=29428B(28.7KB ✓) / MEMORY=~29.5KB(≤32KB ✓)（归档 0KB）
 
 ## 🆕 第一百六十轮速览（2026-10-08 01:29）— Pi×30 COMPLETE (60.0%) + Hermes toolchain FIX + Hermes×30 STARTED + gen_kimi_compare.py 7-way upgrade
 
@@ -226,3 +241,4 @@ ERROR_COUNT:  0
 - 2026-10-07 21:14 —— **第一百五十五轮** —— deepseek-harness×30 progress 15/30 (7 res/8 pbf = 46.7%) → SWEBENCH_COMPARE.html regenerated（15799B, 135 entries, 67 resolved）+ R147-R153 archived to daily → commit+push。📦 体积：TASK=30.7KB / MEMORY=17.3KB（归档 ~13KB → daily-memories-harness/2026-10-07.md）。
 - 2026-10-07 23:53 —— **第一百五十九轮** —— Pi×30 progress 16/30 (10 res/6 pbf = 62.5%, inst 17/30 sympy__sympy-11897, PID 690669 etimes=4906s) → SWEBENCH_COMPARE.html regenerated（22136B, 166 entries, 82 resolved）+ gw_proxy + gw_proxy_dsh healthy → commit+push。📦 体积：TASK=28.7KB / MEMORY=23.7KB（归档 0KB）。
 - 2026-10-08 01:29 —— **第一百六十轮** —— ✅ Pi×30 COMPLETE (18 res/12 pbf = 60.0%, tied with cline-patched for best) → 🔧 Hermes toolchain FIX (Python 3.14.6 found at ~/.local/bin, venv+CLI+config already set up, smoke test done django-10924 pbf) → Hermes×30 chain STARTED (PID 838805/850763, --resume, ETA ~4.6h) → gen_kimi_compare.py upgraded to 7-way with Hermes data row → SWEBENCH_COMPARE.html regenerated（19658B, 181 entries, 90 resolved）→ commit+push。📦 体积：TASK=28.7KB / MEMORY=~28KB（归档 0KB）。
+- 2026-10-08 02:06 —— **第一百六十一轮** —— Hermes×30 progress 3/30 (1 res/2 pbf, inst 4/30 django-11039 fetching, chain PID 838805 healthy) → harness version/commit verified via GitHub API (Hermes=NousResearch/hermes-agent@0e219331 MIT 251.8k★, Pi=@fleetagent/pi-coding-agent v0.2.15 MIT) → §3.1 version table added to gen_kimi_compare.py → SWEBENCH_COMPARE.html regenerated（21229B, 183 entries, 91 resolved）→ commit+push。📦 体积：TASK=28.7KB / MEMORY=~29.5KB（归档 0KB）。

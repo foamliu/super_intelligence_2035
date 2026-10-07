@@ -186,6 +186,19 @@ pre {{ background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; o
 <li><strong>Hermes Agent driver:</strong> <code>hermes -z&lt;prompt&gt;</code> (oneshot mode) via Python 3.14.6 venv, custom provider <code>kimi-proxy</code> in <code>~/.hermes/config.yaml</code> pointing at gw_proxy port 9090</li>
 </ol>
 </div>
+<h2>3.1 Harness Versions &amp; Sources</h2>
+<div class="callout">
+<table>
+<tr><th>Harness</th><th>Version / Commit</th><th>Source</th><th>License</th><th>Non-interactive mode</th></tr>
+<tr><td>cline-patched</td><td>v4.1.21 (modified)</td><td><code>/nas_train/app.e0031982/harness/cline</code></td><td>Apache-2.0</td><td><code>cline --allowedTools ... -m &lt;model&gt;</code></td></tr>
+<tr><td>codex</td><td>from source</td><td><code>/nas_train/app.e0031982/harness/codex</code></td><td>Apache-2.0</td><td><code>codex --quiet --full-auto</code></td></tr>
+<tr><td>opencode</td><td>from source</td><td><code>/nas_train/app.e0031982/harness/opencode</code></td><td>MIT</td><td><code>opencode run --non-interactive</code></td></tr>
+<tr><td>claude-code</td><td>from source</td><td><code>/nas_train/app.e0031982/harness/claude-code</code></td><td>MIT</td><td><code>claude --print --dangerously-skip-permissions</code></td></tr>
+<tr><td>deepseek-harness</td><td>from source (built)</td><td><code>/nas_train/app.e0031982/harness/deepseek-harness</code></td><td>MIT</td><td>Rust binary, headless via env config</td></tr>
+<tr><td>Pi</td><td>v0.2.15 (npm)</td><td><a href="https://github.com/fleetagent/pi">fleetagent/pi</a></td><td>MIT</td><td><code>pi -p</code> (print mode)</td></tr>
+<tr><td>Hermes Agent</td><td>commit 0e219331</td><td><a href="https://github.com/NousResearch/hermes-agent">NousResearch/hermes-agent</a></td><td>MIT</td><td><code>hermes -z&lt;prompt&gt; --yolo</code> (oneshot)</td></tr>
+</table>
+</div>
 <h2>4. Reproduction</h2>
 <pre><code>cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness
 # The 30 instances are defined by the cline-patched run (15 django + 15 sympy)
