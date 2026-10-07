@@ -122,6 +122,52 @@ bash r8_run.sh 3000
 - 证据：`/tmp/r13_official.log`（exit 0）+ `/tmp/r13_ov2/bench.log`（1766.5 img/s）+ `/tmp/r13_ov2/smoke2.log`（load 成功）；脚本 `run/vision/r13_eval_official.py` + `r13_run_official.sh`；权重 `/nas_train/app.e0031982/datasets/baize-vision/r13_official/open_clip_pytorch_model.bin`（1.217GB）。
 ---
 
+## ⭐ R12b 全量数据 AIMv2 训练（✅ 完成，2026-10-06 → 10-07）
+
+> 运维指令 2026-10-05（晚）：用全部现有数据训练当前最佳配方 AIMv2。Fresh run（非续跑）。详见 `EXPERIMENTS_VISION_ROUND12.md §2`。
+
+- **配方** = AIMv2-style：`InfoNCE + 1.0×masked-patch-MSE`（`--loss aimv2 --mask-ratio 0.6`），w512（126.78M）+ 冻结 CLIP-768 文本塔。**数据 = 全部现有**：GPIC（~52.8M）+ CC12M（~11.0M）+ Amshaker（~5.95M）→ ~69.7M unique pairs。
+- **步数**：272,000 步 ≈ 2 epochs。训练时间 12:54 → 02:14 ≈ 13.3h（106.4 GPU·h）。
+- **lp_max = 18.81%**（final, 139.3M tokens）。lp 在 step120k（61.4M, ~0.9 epoch）后进入平台（18.0–18.8%），未超越 R11-G 的 19.76%@55.3M。
+- ⚠️ **更多 unique 数据 ≠ 更高 lp**：R12b（69.7M, 2ep）lp_max=18.81% < R11-G（18.5M, 1ep）lp_max=19.76% < R12 3-epoch（58.8M, 3ep）lp_max=20.32%。→ **epoch 数（数据重复遍历次数）比 unique 数据量更重要**。
+
+---
+
+## ⭐ Mask-ratio 消融（✅ 完成，2026-10-07 · `VISION_NEXT_DIRECTIONS.md` 方向 2）
+
+> 运维指令 2026-10-06 批准。**只变 mask-ratio**（0.3/0.5/0.6/0.75/0.9），其余固定：w512 / CC12M+Amshaker / 30k 步 / InfoNCE+patch_MSE (1:1) / 冻结 CLIP-768。Arm 0.6 = R11-L arm6-A 的受控复现。预注册判据：lp >= baseline + 1.5 → "更优"；全部 ±1.5 → "不敏感"。
+
+### IN-1k frozen-trunk lp 结果（20 ckpts, Protocol A = BaiZe 内部协议）
+
+| mask_ratio | C1_final (probe) | C1_peak (probe) | lp@10k | lp@20k | **lp@30k** | Δlp vs 0.6 | zs@30k | 训练耗时 |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 0.3  | 0.3495 | 0.4421 | 10.70% | 11.34% | **12.69%** | −0.80 | 5.25% | 7119s |
+| 0.5  | 0.3756 | 0.4066 | 9.81%  | 10.90% | **11.91%** | −1.58 | 4.82% | 7062s |
+| **0.6**  | **0.3810** | 0.4241 | 11.75% | 12.52% | **13.49%** | **(baseline)** | 5.82% | 6910s |
+| 0.75 | 0.3736 | **0.4458** | 11.88% | 12.02% | **12.49%** | −1.00 | 5.22% | 6992s |
+| 0.9  | 0.3468 | 0.4097 | 10.18% | 10.47% | **11.53%** | −1.96 | 4.89% | 7138s |
+
+> R11-L arm6-A 原始 lp@30k = 12.08%；本次受控复现 = 13.49%（Δ=+1.41pp，在 ±1.5pp 噪声带内 → 确认可复现性）。
+
+### 预注册裁定
+
+- **lp >= baseline + 1.5**（"更优"）：❌ 无臂达到。
+- **全部 ±1.5 内**（"不敏感"）：arm 0.3（Δ=−0.80）✅、arm 0.75（Δ=−1.00）✅ 在噪声带内。
+- **显著更差**（Δ < −1.5）：arm 0.5（Δ=−1.58）⚠️、arm 0.9（Δ=−1.96）⚠️。
+
+### 科学结论
+
+1. **mask_ratio=0.6 最优**：IN-1k lp 呈倒 U 形——0.6 最高（13.49%），两侧递减。C1 probe 同样在 0.6 达 final 最高（0.3810）。
+2. **0.3–0.75 区间不敏感**：arm 0.3 和 0.75 在 ±1.5pp 噪声带内 → flip 对 mask-ratio 在 [0.3, 0.75] 区间稳健。
+3. **极端值显著更差**：0.5（−1.58）和 0.9（−1.96）超出噪声带 → 过低/过高 mask-ratio 损害 lp。
+4. **C1 vs lp 分歧**：arm 0.75 的 C1 peak（0.4458）为全臂最高，但 final C1（0.3736）和 lp（12.49%）均低于 0.6 → **高 mask-ratio 的 C1 峰值早现但不稳定，终态劣于 0.6**。
+5. **非单调 lp**：arm 0.3 lp（12.69%）> arm 0.5 lp（11.91%），但 C1 相反（0.3495 < 0.3756）→ **对比对齐（C1）与线性可分性（lp）不完全正相关**；可能因 0.3 更低 mask → 更多可见 patch → 更丰富的 InfoNCE 负样本 → 更好的 lp 特征，尽管 C1 对齐较低。
+6. 🚫 **改 recipe ⇒ 不并入 scaling 曲线**（运维要求）。
+
+- **证据**：`/tmp/ablation_mask_ratio.log`（master log, ALL DONE 20:06:17）+ 各 arm `train.log` 在 `/nas_train/app.e0031982/datasets/baize-vision/out/ABL_mask_ratio_0p{3,5,6,75,9}/`。脚本 `vision/run_mask_ratio_ablation.sh`。
+
+---
+
 ## 胜出结论（S0+S1+S2+S3 汇总 · ⚠️ R1/R2 旧读数，已因坍缩/lr 伪影作废，仅作历史）
 
 **胜出架构：OpenVision2（纯 Attention ViT，w1024·d30·h16·mlp4096，505.0M）**
