@@ -14,7 +14,7 @@ WAITING: 0
 - 我是 `doc/personal-watch` 的 **supervisor（观察哨长）**：**不亲自采集**，只**派活、巡检、汇总、拍板**。
 - **下达通道** = 各任务书的 `## 🔧 运维指令区（OPERATOR NOTES）`（**改文件 + git commit/push**）。
 - **查看通道** = 读各线的 `run/MEMORY_*.md` 顶部「进度快照」+ `run/` 产物（`git pull` 即可，**不登录服务器**）。
-- 我当前指挥的线：**news**（新闻采集，任务书 `run/WATCH_NEWS_TASK.md`）。
+- 我当前指挥的线：**news**（任务书 `run/WATCH_NEWS_TASK.md`；**当前 P0 = 第 11 批「新闻信号 → 资产价格」十年滞后相关 + 每日两报**，全文规格 `run/NEWS_PRICE_SIGNAL_SPEC.md`）· **research**（任务书 `run/WATCH_RESEARCH_TASK.md`）。
 - 上级 = 用户（作者刘杨/Foam）；本哨位的**服务对象是《超级智能2035》的写作与修订**。
 
 ---
@@ -35,7 +35,8 @@ WAITING: 0
 ## 2. 通讯协议 / 接口（关键认知）
 
 - **接口 = 任务书的「运维指令区」**，当前有：
-  - `run/WATCH_NEWS_TASK.md`（news 线）
+  - `run/WATCH_NEWS_TASK.md`（news 线）+ **P0 全文规格 `run/NEWS_PRICE_SIGNAL_SPEC.md`**（第 11 批；**与任务书同级**，改它 = 改派活）；
+  - `run/WATCH_RESEARCH_TASK.md`（research 线）。
 - **下发格式**：`### 🆕 运维指令 · <日期>（摘要）` + 正文；**新块放前面**，写清 **优先级 / 顺序 / 判据 / 铁律**。
 - **各线回写位置**：`run/MEMORY_NEWS.md`（状态头 + 进度快照 + 运维问答 + 流水）、`run/daily-memories-news/`、`run/news/`。
 - **⏰ 唤醒节律（2026-10-07 起 = 每天 2 次；`WAITING` 不再驱动睡眠）**：两条 loop 的**默认模式 = 定时模式**（`SCHEDULE_HOURS=6,18`，本地时区）——
@@ -50,7 +51,7 @@ WAITING: 0
 
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
-| **news** | 🧭 **三层「解耦」（非串联）**：**L1 政治信号预警（核心 P0）** / **L2 与股价关联（探索性·非因果 P2）** / **L3 算法交易（❄️ 冻结）**；**第 9 批 = N4 探索性 + N5 冻结**（第 8 批 = N3 L1；第 7 批 = N1 语料库 + N2）；T1–T10 全 ✅ | `news/policy/`（`EDA.md` `TAXONOMY.md` `SIGNALS.md` `EVENTS.csv` `EARLY_WARNING.md` `EXPLORE.*`）· `news/archive/` · `news/analysis/` | ✅ 运行中（61 条真新闻；N1/N3 待做） |
+| **news** | ⭐ **第 11 批（2026-10-07 用户直派 · P0）**：**新闻信号 → 资产价格** —— 十年多资产价格数据（≥20 标的 / 6 类 / 2016–2026）+ **滞后相关/预测力研究（先预注册）** + **每日两报（06:00 早报 / 18:00 晚报优化）**；规格 `run/NEWS_PRICE_SIGNAL_SPEC.md`。<br>🧭 长期三层**解耦**（非串联）：**L1 政治信号预警（= 本批信号供给层，G2′④ 连续性照常）** / **L2（本批焦点，仍非因果）** / **L3 算法交易（❄️ 冻结）**；T1–T10 全 ✅ · **N1 语料 ✅（2,492,230 条 / 11 片 / 2016–2026）** | `news/signal/`（`PREREG.md` `lag_corr.csv` `LAG_CORR.md` `FINDINGS.md` `daily/<date>.md` `prices/`）· `news/policy/`（`EDA` `TAXONOMY` `SIGNALS` `EVENTS.csv` `EARLY_WARNING` `EXPLORE.*`）· `news/archive/` | 🔄 运行中（**R1 = 10-07 18:00 唤醒**） |
 | **research** | **第 3 批：两大目的定案** —— ① **借鉴**（与 BaiZe/ZhuLong 相关，含**半导体/EDA/存储**视角）→ `TOP_K.*`(加 `takeaway`/`action`) + **`TAKEAWAYS.md`≤5 条**；② **科普视频《两分钟论文》**（B站/抖音涨粉）→ `video/SHORTLIST.md` + `video/scripts/*.md`；并行常态增量 | `research/TOP_K.*` · `TAKEAWAYS.md` · `video/SHORTLIST.md` · `video/scripts/<arXiv ID>.md` | ✅ 运行中（61 篇；第 3 批刚派） |
 
 > ✅ **T1–T4 已完成并交付（2026-10-03，commit `c326ba8`）**：
@@ -76,7 +77,7 @@ WAITING: 0
 **在飞（等交付）**
 - [ ] ⭐ **news N1**：新华社 2016–2026 十年回溯（标题+日期+链接）+ 分析/饼图 → `news/archive/` `news/analysis/`。
       ⚠️ **前置**：新华网 `/politics/…` **403**、`so.news.cn/getNews` **405+WAF**（**须在运行机复测**）；走不通则用**中新网兜底并标注"非新华社"**（🚫 不许冒充）。
-- [ ] ⭐ **news N2**：新闻 ×**资产价格**相关性（**先做 N1**；价格源需先做**免 key + 可达性**实测）。
+- [x] ⭐ **news N2 → 已升为 P0（第 11 批 · 2026-10-07 用户直派）**：新闻 × **资产价格** —— **十年多资产**（沪指/板块/海外/汇率/利率/**大宗商品**）+ **滞后相关/预测力** + **每日两报**；**N1 语料 ✅ 已就绪**（2,492,230 条）；价格源 ✅ 腾讯 `ifzq` 前复权日K（东财在运行机 ❌）。**规格** `run/NEWS_PRICE_SIGNAL_SPEC.md`。
 - [ ] ⭐ **research TOP-K**：`TOP_K.md`/`TOP_K.jsonl`（**质量 × BaiZe/ZhuLong 相关性**，≤30d）＋ **A 节强化**（加 `takeaway`/`action` + `TAKEAWAYS.md`≤5 条）。
 - [ ] ⭐ **research 视频线 V1/V2**：《两分钟论文》**选题表** + **3 条两分钟口播稿**（`research/video/`）。
 - [ ] ⚠️ **V3 视频生成工具链待确认**：运行机是否有 **TTS / 文生图 / 剪辑**？（我这边有 ComfyUI 系工具，**但不确定运行机可用**）→ **确认后再派**。
@@ -109,6 +110,8 @@ WAITING: 0
 - [x] ✅ **采集节律（2026-10-07 用户拍板）**：**「research 和 news 在烧我自己的 token」→ 改为每天 2 次：06:00 / 18:00**（≈48 轮/天 → 2 轮/天，且时窗内**零 token**）。落地见 §2 与文末 2026-10-07 条。
 - [ ] **输出形态**：是否需要**周报合订**（把日报并成一份）。
 - [ ] **news 关注清单**是否收敛（现 6 大类）；research 视频栏目**起名**（避免与已有《两分钟论文》混淆）。
+- [ ] ⭐ **第 11 批资产宇宙**：默认清单见 `run/NEWS_PRICE_SIGNAL_SPEC.md` **§1.3**（A股指数 5 · A股板块 13 · 海外 2 · 债券 1 · 汇率 1 · **大宗商品 ≈7**；目标 **≥20 标的 / 6 类**）—— **用户可一条指令增删**；未回复则**按默认执行**（取不到者换同类并注明）。
+- [ ] ⚠️ **`doc/keys.txt` 轮换 + 96MB 语料迁云**（run 机无 `bypy`）→ 见 §7；**迁云前不动 git 历史**。
 
 ---
 
@@ -180,6 +183,9 @@ WAITING: 0
 - ⚠️ **任务书全文 = 每次唤醒的 prompt**（loop 里 `prompt="$(< TASK_MD)"`）→ 任务书要**精简**，历史移入归档文件、不进 prompt。
 - ⚠️ 本机 PowerShell 读 UTF-8 中文可能显示乱码——**只影响显示**；校验用 `read_files`。
 - ⚠️ 若 worker 机器**外网时通时断**（如 VPN 影响）→ 搜索失败**重试即可**，不是仓库/权限问题。
+- 🔴 **`doc/keys.txt` 仍在 git 里（2026-10-05 发现，⚠️ 未处置）**：含 8 个 LLM Key + ASR + 文生图 →建议 `git rm --cached` + `.gitignore` + **轮换 Key**（与「仓库内含远程执行通道 ops 中继」叠加，风险放大）。
+- 📦 **96MB 新闻语料仍在 git 历史里**（10 分片 ≈96MB）：run 机**无 `bypy`** ⇒ 迁云卡住；**要迁须先装 `bypy` 或换通道**；**改写历史属高危，未获用户批准不动**。
+- ⚠️ **判活不能只看 `pgrep`**：ops 中继曾**活着但冻死 14h**（`wchan=pipe_read`）⇒ 中继判据 = **日志 ≤10min 一行 `💓`** + `wchan ≠ pipe_read`；**loop 判据 = `/tmp/watch_<线>_loop.hb` mtime <30min**（**不再看提交间隔** —— 每天 2 次唤醒后 12h 一提交是正常的）。
 
 ---
 
@@ -328,48 +334,11 @@ WAITING: 0
   `research/video/README.md`（`SHORTLIST.md` + `scripts/<arXiv ID>.md` · 350–450 字固定结构 · 不盗图/不夸大）。
 
 
-## 🔴 2026-10-05 巡检：personal-watch 已停 ≈27 小时（附处置）
+## 🔴 2026-10-05 巡检（27h 停摆）/ 机器信息 / DEPLOY_CHECKLIST / `keys.txt` / ops 中继 / 台账诚信
 
-- **事实**：agents 最后提交 **10-04 09:31 / 09:27**；用户 **10-05 12:20** 查状态时仍无新提交。
-- **判定**（按 §7 巡检铁律）：`ls-remote` 与本地 `origin/main` 一致（`dea95f9`）→ 无需 fetch、直接可信 → 本次**不是**缓存误判。
-- **旁证**：BaiZe/ZhuLong 同期**全线正常**（11:29–12:14 持续提交）→ 机器/网络正常，**是个人线特有**。
-- **机制证据**：news loop 兜底 `PUSH_INTERVAL=5h` → 本应出现 **~14:27 auto-commit**，**未出现** → 该 loop 至少 5h 未跑完一个周期。
-- **根因（高度可能）**：**额度/鉴权**（BaiZe 10-04 17:00 实测：`deepseek-v4-pro-fp4`→**429**、其余 7 个→200；**base 须与模型匹配**，`flash@/v1`=200 但 `@/cloud/v1`=**403**）
-  ＋ 我们 loop 的失败兜底（致命错→**60s 短睡重试**）→ **静默空转、零产出**（不丢东西，但**无观测性**）。
-- ⚠️ **另一推测**：`llm_rotate.sh` 会改写**全局** `~/.cline/data/globalState.json` 的 `openAiBaseUrl` → 两线共用 HOME 时**可能互相改 base**（→ 403）。**须看日志定性**。
-- **本次处置**：
-  1. 💓 **心跳条款（零重启）** 写入两份任务书：每轮唤醒**必须**向 `daily-memories-*/<date>.md` 追加
-     `[HH:MM] wake | PHASE=… | 本轮=…`（**0 变更也必须写**）→ 让 supervisor 能区分"在跑/停了"。
-  2. 🔧 **额度轮换接入方案**：新建 `run/LLM_ROTATE_INTEGRATION.md`（复用 BaiZe `llm_rotate.sh`：`llm_parse_candidates`/`llm_probe`/`llm_pick`），
-     给出**可直接套用的 patch**；标明 **改 loop.sh 须先 pkill 再改再启**、**跨线改 base 的干扰风险**。
-  3. **分工**：**心跳 = 可观测性（不需重启）**；**llm_rotate = 可用性（需重启）**。
-- **待用户**：运行机 `pgrep -af 'watch_.*_loop.sh'` + `tail -30 /tmp/watch_{news,research}_loop.log` → 贴回来定性（429 / 403）。
-- **2026-10-05（用户提供机器信息 → 根因判断修正 + 部署清单）** —— 用户告知：阿里云实例 **`iZuf65t80q2n4qgbjqbcp0Z`（华东2上海，2 vCPU / 2 GiB，Ubuntu 22.04）CPU 70–80%，正在重启**；并**已在腾讯云新租 2 核 4G**。
-  - **关键修正**：**2 核 2G 跑 `cline`(Node)+两条 loop+60 万条逐日抓取 → CPU 打满 / 内存极易 OOM** 很可能是 27h 静默的**更根本原因**（不只是 LLM 额度）。→ 排查 `dmesg -T | grep -i -E 'oom|killed process'`。
-  - **重要提醒**：**`setsid ... &` 不是开机自启** → **实例重启会杀掉两条 loop**（必须手动拉起或配 systemd）。
-  - **新建 `run/DEPLOY_CHECKLIST.md`**：新机 bring-up · **cline 配置不在仓库需重建**（`openAiBaseUrl` 在 `~/.cline/data/globalState.json`）· **2 核加固**（swap / **两条 loop 错峰** / 抓取 `nice -ionice` 降优先级 / OOM 排查）· systemd 自启模板 · 启动停止验证命令。
-  - 🚨 **安全发现**：**`doc/keys.txt` 被 git 跟踪**（含 8 个 LLM Key + ASR + 文生图，提交 `56fae84`）且**不在 `.gitignore`** → 建议 `.gitignore` + `git rm --cached` + **轮换 Key**。
-- **2026-10-05（用户要求"给观察哨也做个 ops 中继" → 已建）** ——
-  - **动机**：loop 停了/撞额度/OOM 时，`git log` 上"什么都看不到"；中继**纯 bash、零 token、不依赖 cline**，**loop 停着也能远程运维**。
-  - **新建** `run/ops_relay.sh`（照抄 BaiZe `ops_relay.sh` 设计）· `run/ops/{inbox.md,outbox.md,.last_run_id,README.md}`。
-  - ✅ **修掉 BaiZe 的已知坑**：那边「**只执行第一个 ```bash 块**」→ 新命令**静默失效**；
-    本版**支持多段 `## RUN_ID N` 历史共存，总执行 RUN_ID 最大那一段** → **老块不用删/降级**。
-  - ➕ **新增 3 条拦截**（针对共享工作副本 + 中继自身）：`git clean -fdx` · `git reset --hard` · **杀 `ops_relay`**。
-  - 🚫 **停止纪律**：只可 `pkill -f watch_ops_relay.sh`（**别** `pkill -f ops_relay.sh` → 会误杀 **BaiZe 的中继**）。
-  - **已内置 `RUN_ID 1` = 诊断块**：进程 / loop 日志 / **OOM（dmesg）** / 资源 / CPU top5 / cline base / git 状态 ——
-    **用户一启中继，结果就自动进 `outbox.md`，我 pull 即可定性**。
-  - 登记：`run/README.md §2.2` · `README.md §4` · `AGENTS.md`。
-  - ⚠️ **安全**：中继本质是**远程代码执行通道** → **仓库须 private**；与 `keys.txt` 入仓叠加**风险放大** → **务必轮换 Key**。
-- **2026-10-05（诊断结果到手 + 🚨 台账诚信红灯处置）** ——
-  - 🖥 **机器实况（腾讯 2C/4G，`VM-0-6-ubuntu`）**：**OOM 无痕迹** · 内存 **available 2661M / swap 1987M 用 0** · 磁盘 11% · **CPU top1 仅 2.2%** · **cline 在跑**（PID 98716）· 另有 `curl get-pip.py`（在补 pip/numpy）。
-    → **结论：27h 停摆与资源无关**（内存/CPU/磁盘全富余）→ 更像**进程被杀/重启**或**鉴权/额度**。
-  - 🔎 **中继"没推上来"的病根确认**：日志 `RUN_ID=1 executed, exit=0` 但 `git status` 里 `ops/outbox.md` **仍是 modified（未提交）** → **`git add`/`commit` 那步失败且被原代码吞掉**（12:31 时 news agent 正在抓取/提交，**`index.lock` 冲突**极可能）。
-    → ✅ 已修两处：① **分别报 add/commit/push 错误**（不再静默）② **`git_publish` 推送前先 `fetch + pull --rebase --autostash`**（本仓库与 4 条 BaiZe 线**共享远端**，不 rebase 必被拒）。
-  - 🚨 **台账诚信红灯（查实：未造假，但指标设计有罪）**：`STABILITY_LOG.md` 3 行（12:35 / 12:38 / **`record-only(补记/自检)`** / 12:49）**数字均由产物实测解析（含 sha16）**，且**主动标注了 record-only** → **透明，非伪装**。
-    但 agent 日志里出现「**authenticity vs time**」的权衡 → 因 **G2′④ 原文是"连续 N 周"，一天内不可能达成**，且**"台账行数=周数"是错代理**。
-    → ✅ **处置（已改任务书）**：
-    1. **G2′④ 修订**为「**连续 7 个自然日、每天 ≥1 次真实重跑、相邻间隔 ≥20h**」；**同一天多次只计 1 天**；**record-only 不计入连续性**；台账**必须自报"已连续 X 天/目标 7 天"，未达标就写未达标**（负面结果可接受）；
-    2. **§4 新增 2 条铁律**：**⑨ 台账诚信**（只记真实发生；禁补造/回填/模拟；允许并鼓励标注条目类型）· **⑩ 指标未达标如实写**（禁改口径/挑样本/刷台账/改时间戳）。
+> **本段已按 §8 规程全文滚动归档 → `daily-memories/2026-10-05.md`**（原文不改）；结论与红线均已并入 §4/§5/§7 与两份任务书。
+> 一句话：**停摆与资源无关**（内存/CPU/磁盘富余）→ 更像**进程被杀/重启**或**额度/鉴权**；已加**心跳条款 + ops 中继 + 体积红线（≥5MB 不进 git）+ 台账诚信铁律（§4⑨⑩）**。
+> ⚠️ **仍悬空**：`doc/keys.txt` 轮换 · 96MB 语料迁云（run 机**无 `bypy`**）→ 见 §7。
 - **2026-10-05（🚨 用户重大纠错：新闻语料被塞进 GitHub → 立「体积红线」）** ——
   - 🔴 **用户原话**："**不要让 agent 把中国一年的新闻打包放在 github 里啊！**" → **这是我的失职**：
     - `news/archive/chinanews-2016~2026.jsonl.gz` = **11 个分片 ≈ 96 MB，最小 5.51 MB，全部已入 git**（且**历史里也有**）；
@@ -412,3 +381,21 @@ WAITING: 0
     - 💡 **可选优化（未做，留待用户决定）**：把两线首轮改成「**先睡到时窗再干活**」（现为"首轮立即执行"）⇒ **此后任何重启都零 token**（当前每次重启会立刻多烧 2 轮 ≈ 半天成本）；代价 = 换档后要等到下一个时窗才见 agent 干活。
   - ⚠️ **欠账（如实记）**：本文件 **50.1KB > 32KB 纪律线**（§8 要求滚动到 `daily-memories/`）——**它不进任何 agent prompt ⇒ 不影响本次省 token 目标**，仅影响我自己的读取成本；待下次顺手滚动（`daily-memories/2026-10-03.md` 已有 39KB 存量，需去重后再搬）。
 
+---
+
+## 🎯 2026-10-07（用户直派：**news 焦点转向「新闻信号 → 资产价格」+ 每日两报**）
+
+- **用户原话**：「1. 下载10年内(2016-2026)新闻(已完成)。2.下载10年主要资产价格趋势数据（包括但不限于国内沪指股价、大宗商品价格等）。3.做数据分析：资产价格 与 新闻 的相关性分析，尤其是在哪些领域新闻对资产价格有滞后相关（lagged correlation）。也就是新闻信号对于资产价格有预测能力。4.让news主要研究这个问题，每早生成日报，晚上优化日报。」
+- **处置（已下发 · 第 11 批 · P0）**：
+  1. **新建全文规格** `run/NEWS_PRICE_SIGNAL_SPEC.md`（supervisor 写 · agent 只读 · **与任务书同级**）：
+     **数据 A**（十年多资产价格：**先实测再用**；候选源 = 腾讯 `ifzq` 日K(主) / 新浪期货(备)；**东财在运行机 TLS 被重置 ⇒ 不用**；≥20 标的 / 6 类 / 2016–2026；**≥5MB 不入 git**，走 `INDEX_FILES.md` 登记）；
+     **研究 B**（**先预注册 `PREREG.md` 再跑** → `lag_corr.csv` + `LAG_CORR.md` + `FINDINGS.md`；滞后 `k=0…+20` 日 / `+4` 周 / `+3` 月；**必给 CI + N + 样本外 + FDR**；HAC / 星期效应 / 反向因果对照 / 滚动稳定性；**N 不足就写「样本不足」**）；
+     **日报 C**（`news/signal/daily/<date>.md`：**06:00 早报生成 / 18:00 晚报优化 + `## 变更记录（AM → PM）`**；每条结论须可指到表/脚本；顶部免责）。
+  2. **任务书 `WATCH_NEWS_TASK.md`**：顶部新增**第 11 批块**（含 R1 硬指标）+ 改写「📊 当前指令 / 优先级覆盖」——**L1 降为信号供给层**（**G2′④ 连续性照常累积**）· **L2 = 焦点（仍非因果）** · **❄️ L3 冻结** · **AI 新闻采集降为 P2 顺手（不追量）**。
+  3. **`AGENTS.md`**：news 行改写（P0 = 第 11 批；任务书列补 P0 规格文件）。
+  4. ⚠️ **「预测能力」口径钉死** = **样本外预测关联，≠ 因果** ⇒ **仍禁用**「影响/导致/利好/利空/冲击」与**点位预测 / 仓位 / 择时**（**L3 冻结**）；**负面结果（未发现稳定滞后相关）必须如实写、且必须写进当日日报**。🚫 不做因果识别（超能力就写「需人工/计量专家介入」）。
+- **R1（2026-10-07 18:00 唤醒）必交**：① `news/signal/PREREG.md` ② **价格源实测表（含失败项）** ③ `fetch_prices.py` + 十年价格落盘 + `INDEX_FILES.md` 登记 ④ 有余力 → 第一版 `LAG_CORR.md`。
+- ⏰ **节律不变**：每天 2 次 **06:00 / 18:00**（**与「早生成 / 晚优化」天然对齐**）；**无需重启 loop**（18:00 唤醒直接读新任务书）。
+- 📦 **顺手滚动**：MEMORY.md 把 10-05 重复段（原文已在 `daily-memories/2026-10-05.md`）**归档为指针**（≈-6KB）。
+- ⚠️ **债务**：MEMORY.md 滚动**仍未达标**（仍 >32KB）→ 下轮把 **§9 的 2026-10-03/10-04 流水**按日期滚动进 `daily-memories/2026-10-0X.md`。
+- **commit**：`supervisor 派活: 第11批 新闻信号×资产价格(十年·滞后相关·每日两报) + 规格文件`（本文件与规格同批提交）。

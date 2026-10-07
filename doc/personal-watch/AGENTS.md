@@ -10,7 +10,7 @@
 
 | Agent | loop 脚本 | 任务书 | 状态文件 | 日志目录 | 跑什么 | 状态 |
 |:---|:---|:---|:---|:---|:---|:---|
-| **news** 🆕 | `run/watch_news_loop.sh` | `run/WATCH_NEWS_TASK.md` | `run/MEMORY_NEWS.md` | `run/daily-memories-news/` | 按关注清单**常态化采集超级智能/前沿 AI 新闻**，产出 `run/news/<date>.md` 摘要 + `run/news/SEEN.md` 去重台账 | 🔄 运行中（纠偏中：中文权威源 / 新闻定义）· ⏰ **定时唤醒：每天 2 次 06:00 / 18:00** |
+| **news** 🆕 | `run/watch_news_loop.sh` | `run/WATCH_NEWS_TASK.md` + **P0 规格 `run/NEWS_PRICE_SIGNAL_SPEC.md`** | `run/MEMORY_NEWS.md` | `run/daily-memories-news/` | ⭐ **P0（2026-10-07 起）：新闻信号 → 资产价格** —— 十年多资产价格数据（≥20 标的 / 6 类 / 2016–2026）+ **滞后相关/预测力研究（先预注册）** → `run/news/signal/`（`PREREG.md` `lag_corr.csv` `LAG_CORR.md` `FINDINGS.md`）+ **每日两报**（**06:00 生成早报 / 18:00 优化晚报**）。<br>（P2 顺手，不追量）按关注清单常态化采集 AI 新闻 → `run/news/<date>.md` + `SEEN.md` | 🔄 运行中（P0 第 11 批刚派 R1）· ⏰ **定时唤醒：每天 2 次 06:00 / 18:00** |
 | **research** 🆕 | `run/watch_research_loop.sh` | `run/WATCH_RESEARCH_TASK.md` | `run/MEMORY_RESEARCH.md` | `run/daily-memories-research/` | **① 借鉴**：与 BaiZe/ZhuLong 相关的前沿研究 → `TOP_K.*` + `TAKEAWAYS.md`；**② 科普**：《两分钟论文》视频 → `video/SHORTLIST.md` + `video/scripts/*.md`（+ 后续成片） | ✅ 运行中（61 篇；TOP-K/视频线刚派）· ⏰ **定时唤醒：每天 2 次 06:00 / 18:00** |
 
 > 🚫 **用户已定（2026-10-03）：暂不新增智能体。** 新职能**一律并入既有线**。
