@@ -12,11 +12,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验 → ①BO R1 200/200✅+Spearman+σ ✅ → ②s_step归因✅(MBS16:8.6×) → ③Round2 BO 🚀运行中(137trial:122✅/15❌,8GPU,rate~10/h,ETA~21:00,⭐TRUE best=t23(0.4155)) → 🔴BO报告方向bug已查明(唤醒189误报t75(0.373)为best,实为worst) → 🎉base下载✅完成 → 🔓白名单解禁 → 🚀UltraX下载进行中(166/483,167GB,rate~22s/file,ETA~16:40,⚠15:30将被kill让回GPIC) → 🔧zh分词进行中(s4.bin=17GB,nice-19,ETA~17:00) → ⚠GPIC降速至2.5/h(受UltraX分流,ETA~长)
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a已kill；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman+σ=0+report; s_step归因(MBS16:8.6×,166ms)+report; Round2 BO(PID=3614158@.29)启动+修3bug+修ckpt2HF; ⭐base下载完成→MiniCPM5 base族就绪; ✅R1 lm_eval errata更正+归档; ✅白名单解禁→UltraX下载启动+zh分词启动; ✅BO 8GPU运行; ✅🔴BO报告方向bug已查明+corrected query_bo_r2.py(唤醒190)
-当前动作:     唤醒190(14:38@.12) ①🔴BO方向bug调查完成：R2 DB用score列(accuracy,higher=better),BO code正确(gp.add(-score),argmax),但唤醒189误用ORDER BY score ASC报worst(t75=0.373)为best→已修正为ORDER BY score DESC,TRUE best=t23(0.4155) ②GPIC优先序：UltraX(166/483,rate~22s/file,ETA~16:40)不会在15:30完成→已设sleep+kill在15:30停UltraX让回GPIC ③4进程全活：UltraX(PID=2850809/1448940)+zh分词(PID=2851334,s4.bin=17GB)+GPIC(PID=144981,5135/8001)+BO(PID=3614158@.29,137trial:122✅/15❌,8GPU全活) ④TASK=32.4KB/MEMORY更新中
-下一步:       ①15:30 UltraX被kill后→确认GPIC速率恢复(目标≥20/h); ②监控BO(63remaining,ETA~21:00到200trial); ③BO跑完→top-K(score DESC)全量lm_eval→report_data_mix_eval_r2.html; ④zh分词完成后→启动l1_en_hq分词; ⑤GPIC恢复后报速率+新ETA+en_v1_4排队位置
-阻塞:         Round2 BO运行中(137/200trial,ETA~21:00); GPIC下载进行中(5135/8001,⚠降速~2.5/h); UltraX下载进行中(166/483,167GB/487GB,⚠15:30将被停)
+PHASE:        §0.6-B 配比实验 → ①BO R1 200/200✅+Spearman+σ ✅ → ②s_step归因✅(MBS16:8.6×) → ③Round2 BO 🚀运行中(145trial:130✅/15❌,8GPU,rate~9.4/h,ETA~21:20,⭐TRUE best=t23(0.4155)) → 🔴BO方向bug已确认(唤醒189误报,非code bug) → ✅UltraX已kill(15:27)让回带宽→GPIC → 🔧zh分词进行中(s4.bin=21GB,nice-19) → GPIC 5137/8001(恢复中,1新tar@15:28)
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a已kill；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman+σ=0+report; s_step归因(MBS16:8.6×,166ms)+report; Round2 BO(PID=3614158@.29)启动+修3bug+修ckpt2HF; base下载完成→MiniCPM5 base族就绪; R1 lm_eval errata更正+归档; 白名单解禁→UltraX下载启动+zh分词启动; BO 8GPU运行; BO报告方向bug已查明; ✅query_bo_r2.py创建并验证(唤醒191); ✅UltraX已kill让回GPIC带宽(唤醒191)
+当前动作:     唤醒191(15:23@.12) ①✅UltraX已kill(PID 2850809+1448940,15:27)→带宽让回GPIC(运维指令2026-10-07③①) ②✅BO方向bug复核确认(DB查询:Top5 score DESC=t23(0.4155)>t38(0.4138)>t118(0.4130)>t33(0.4090)>t134(0.4068);Bottom5 score ASC=t75(0.373)=MIN/worst;BO code正确) ③✅query_bo_r2.py创建+复制.29+验证 ④3进程活:GPIC(PID144981,5137/8001,1新tar@15:28恢复中)+BO(PID3614158@.29,130✅/15❌,145total)+zh分词(PID2851334,s4.bin=21GB)
+下一步:       ①下轮唤醒确认GPIC速率恢复(目标≥20/h,当前仅1新tar@15:28需更长观察窗); ②监控BO(55remaining,ETA~21:20到200trial); ③BO跑完→top-K(score DESC)全量lm_eval→report_data_mix_eval_r2.html; ④zh分词完成后→启动l1_en_hq分词; ⑤GPIC恢复后报速率+新ETA+en_v1_4排队位置
+阻塞:         Round2 BO运行中(145/200trial,ETA~21:20); GPIC下载进行中(5137/8001,恢复中待确认); zh分词进行中(s4.bin=21GB,无.idx)
 ERROR_COUNT:  0
 ```
 
@@ -41,6 +41,8 @@ ERROR_COUNT:  0
 - [12:46] **唤醒187**：①本机=`.12`。②**4进程全活**：UltraX(PID=2850809,ppid=1✅,etimes~39min)+zh分词(PID=2850810,ppid=1✅)+GPIC(PID=144981)+BO(PID=3614158@.29,etimes~10.9h)。③**UltraX**:36/483files(7.5%),34GB/487GB,rate~68s/file→ETA~8.4h→~21:00。④**zh分词**:s4.bin=4.3GB(growing~100MB/min,no .idx yet)→ETA~5-6h→~18:00。⑤**GPIC**:5124/8001(+21 since 185),rate~20/h(**⚠从45.5/h降速→UltraX分流带宽**)→ETA~6天→~10-13。⑥**Round2 BO**:DB(116trial:101✅/15❌),best=t23(0.4155不变),top5:t23/t38/t33/t57/t105。rate~8.8/h(波gap~37min),84remaining→ETA~22:00。GPU:3active(0=46%/1=91%/7=66%),5idle。⑦vmstat .29:**wa=0**,CPU idle=96%→**分词未影响BO**。⑧git fetch(proxy)成功,behind0→**无新运维指令**。⑨磁盘:34T free(84%)。**联合ETA**:GPIC~10-13(受UltraX降速)|UltraX~10-07_21:00|en_v1_4排队(UltraX后)|zh分词~10-07_18:00。下载线心跳：base ✅全满 | GPIC 5124/8001（活,rate~20/h⚠降速,ETA~6天）| UltraX 36/483 34GB/487GB（活PID2850809,ETA~21:00）| zh分词 s4.bin=4.3GB（活PID2850810,nice-19,ETA~18:00）。
 - [12:03] **唤醒186**：①本机=`.12`。②⭐**收到新运维指令`9471ed9b`(解禁白名单)**：立即下载UltraX-Preview(487GB,483files,5config)+en_v1_4排队(6.75TB)+已下载base开始分词扩展22.05B→~100B tok。优先级:GPIC>UltraX>en_v1_4；分词nice-19+限2-4进程+盯BO速率。③⭐**UltraX-Preview下载已启动**：PID=2850809(ppid=1✅),`hf download --repo-type dataset openbmb/UltraX-Preview`,8 parallel,489MB/487GB,speed~4MB/s(起步),落`/nas_train/.../openbmb/UltraX-Preview/`。④⭐**zh分词已启动**：PID=2850810(ppid=1✅),nice-19,1进程,256 parquet→mix_base_train_s4(.bin=190MB增长中,ETA~10h)。⑤**Round2 BO**:111trial(97✅/14❌),best=t23(0.4155不变),t107-t111在12:00-12:03连续complete→**BO未受分词影响**。⑥GPIC PID=144981存活(5103/8001)。⑦磁盘:/nas_train 34T free(84%)。⑧脚本已创建:`baize_download_ultrax.sh`+`baize_tokenize_zh.sh`。📦 体积：TASK~32KB / MEMORY更新后~33KB（需归档唤醒184→daily）。下载线心跳：base ✅全满 | GPIC 5103/8001（活PID144981,ETA~2.7天）| UltraX 489MB/487GB（活PID2850809,起步~4MB/s）| zh分词 s4.bin=190MB（活PID2850810,nice-19）。
 - [11:43] **唤醒185**：①本机=`.12`。②**base✅全满**（en 2048+l1_en_hq 6000+zh 256,0 .incomplete,stale en_v1_4 .incomplete已rm清理）。③**GPIC** PID=144981+3525273存活,train **5103/8001**（+27 since唤醒184)+test 128/128✅,mtime 11:44秒级活跃(gpic_train_05102.tar)→无需重启。④**Round2 BO** DB(mtime=11:21):**105trial(91✅/14❌)**,best=t23(0.4155不变),top5:t23(0.4155)/t38(0.4138)/t33(0.4090)/t57(0.4058)/t105(0.4055,新)。⑤波分析:end_time波间gap稳定37-40min(12波),8trial/波=**12.5/h无变慢**→95remaining→ETA~7.6h→~19:20。⑥vmstat .29:**wa(iowait)=0**,CPU idle 87-94%,GPU 48-88%util→**无I/O争用**;harness跑/dev/shm不抢NFS。⑦✅**运维三问已答**(见运维问答⑩)。⑧git fetch(proxy=172.19.92.25:13128)成功,behind0→无新运维指令。📦 体积：TASK=28.3KB / MEMORY更新后~32KB（归档~1.5KB→daily 10-06）。下载线心跳：base l1_en_hq ✅6000/6000 · zh ✅256/256 | GPIC 5103/8001（活PID144981,ETA~63h）。
+- [15:23] **唤醒191**：①本机=`.12`。②✅**UltraX已kill**（运维指令2026-10-07③①）：15:27 kill PID 2850809(retry-loop)+1448940(hf download)+清理leftover sleep timer(PID 2201734/2201735)。UltraX停时=210/479parquet(215GB/487GB,44%),已下部分保留不删。**带宽全部让回GPIC**，en_v1_4继续排队不启动。③✅**BO方向bug复核**（运维指令2026-10-07③②）：用query_bo_r2.py实测DB——Top5(score DESC,正确):t23(0.4155)>t38(0.4138)>t118(0.4130)>t33(0.4090)>t134(0.4068);Bottom5(score ASC,唤醒189误用):t75(0.373)=MIN/worst。MIN/MAX/AVG=0.373/0.4155/0.3906。BO code正确(gp.add(-score)→minimize(-score)=maximize(score)✓+argmax(scores)✓+argsort[::-1]✓)。bug仅在agent报告查询方向,**不影响BO搜索本身,R1 Spearman ρ=−0.43不受影响**(R1用独立DB mix_search_eval.db with loss列)。④✅**query_bo_r2.py创建**：`run/query_bo_r2.py`(ORDER BY score DESC=正确),已scp到.29:/tmp/并验证输出。⑤**3进程全活**：GPIC(PID=144981,5137/8001,1新tar@15:28=UltraX kill后1min,恢复迹象但需更长观察窗)+BO(PID=3614158@.29,130✅/15❌=145total,rate~9.4/h,55remaining,ETA~21:20)+zh分词(PID=2851334,s4.bin=21GB,无.idx仍处理中)。⑥体积:TASK=32.5KB/MEMORY=24.2KB均≤32KB(注:TASK微超32KB但<40KB红线)。下载线心跳：base ✅全满 | GPIC 5137/8001（活PID144981,恢复中,ETA待确认）| UltraX ✅已停(210/479保留) | en_v1_4 排队 | zh分词 s4.bin=21GB（活PID2851334,nice-19）。
+> 📦 唤醒190 已归档 → `daily-memories-data/2026-10-07.md`
 > 📦 唤醒184 已归档 → `daily-memories-data/2026-10-07.md`
 > 📦 唤醒171-183 已归档 → `daily-memories-data/2026-10-07.md`
 > 📦 旧流水（唤醒156-166）已归档 → `daily-memories-data/2026-10-06.md`
@@ -105,11 +107,11 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **§0.6-B 配比实验 → ①BO R1 200/200✅+Spearman ρ=−0.43 ②s_step归因✅(MBS1→16:8.6×) ③Round2 BO🚀运行中(PID=3614158@.29,116trial:101✅/15❌,rate~8.8/h,ETA~22:00) ④🔓白名单解禁→UltraX下载进行中(PID=2850809,36/483,34GB)+zh分词进行中(PID=2850810,s4.bin=4.3GB,nice-19)** |
-| WAITING | 1（Round2 BO在跑,116/200trial,ETA~22:00到200trial完成;等BO完成后跑top-K全量lm_eval; UltraX下载+zh分词后台进行中） |
-| ERROR_COUNT | 0（batch1 arch mismatch已修+batch2 port冲突已修,修复后连续101trial✅; BO未受分词影响,vmstat wa=0） |
-| 节点 | `10.239.2.29`（GPU0-7=Round2 BO,3active/5idle; 116trial运行中; vmstat wa=0无I/O争用）+`.12`（UltraX下载PID=2850809+zh分词PID=2850810 nice-19） |
-| 更新 | 2026-10-07 12:46 |
+| PHASE | **§0.6-B 配比实验 → ①BO R1 200/200✅+Spearman ρ=−0.43 ②s_step归因✅(MBS1→16:8.6×) ③Round2 BO🚀运行中(PID=3614158@.29,145trial:130✅/15❌,rate~9.4/h,ETA~21:20,⭐best=t23(0.4155)) ④✅UltraX已kill(15:27)让回GPIC ⑤zh分词进行中(PID=2851334,s4.bin=21GB,nice-19)** |
+| WAITING | 1（Round2 BO在跑,145/200trial,ETA~21:20到200trial完成;等BO完成后跑top-K全量lm_eval; GPIC恢复中+zh分词后台进行中） |
+| ERROR_COUNT | 0（batch1 arch mismatch已修+batch2 port冲突已修,修复后连续trial✅; BO方向bug=报告bug非code bug,已修正query_bo_r2.py） |
+| 节点 | `10.239.2.29`（GPU0-7=Round2 BO,8GPU全活; 145trial运行中; vmstat wa=0无I/O争用）+`.12`（GPIC下载PID=144981+zh分词PID=2851334 nice-19; UltraX已kill） |
+| 更新 | 2026-10-07 15:30 |
 
 ## 看板（按推荐执行顺序）
 
