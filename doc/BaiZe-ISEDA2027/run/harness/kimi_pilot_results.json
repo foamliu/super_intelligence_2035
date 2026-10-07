@@ -9158,5 +9158,71 @@
       }
     },
     "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-11283",
+    "repo": "django/django",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 1070.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-11283.json",
+      "stdout_tail": "283\n[run_single] base_commit=08a4ee06510ae45562c228eefbdcaac84bd38c7a\n[run_single] ps_len=1193\n[run_single] git reset --hard 08a4ee06510ae45562c228eefbdcaac84bd38c7a\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=1069.9s ==\n[run_single] model_patch: 3294 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-11283.json\n[run_single] cleanup: git reset --hard 08a4ee06510ae45562c228eefbdcaac84bd38c7a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 8,
+        "p2p_total": 8
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-11422",
+    "repo": "django/django",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 266.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-11422.json",
+      "stdout_tail": "11422\n[run_single] base_commit=df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n[run_single] ps_len=669\n[run_single] git reset --hard df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=265.9s ==\n[run_single] model_patch: 2364 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-11422.json\n[run_single] cleanup: git reset --hard df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 46,
+        "p2p_total": 46
+      }
+    },
+    "classification": "resolved"
   }
 ]
