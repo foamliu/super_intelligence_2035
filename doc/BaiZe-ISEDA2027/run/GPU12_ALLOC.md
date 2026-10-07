@@ -40,7 +40,7 @@
 | 日期 时间 | 申请人 | 要哪几张 | 多久 | 为什么 | 状态 |
 |:--|:--|:--|:--|:--|:--|
 | 2026-10-07 上午 | **pretrain（运维代发）** | **GPU1–7（全部 7 张）** | **目标 30–45 min 跑完即还**（硬天花板 11:00） | 用户直令②：「**何必只用 1、2，让 pretrain 用 `.12` 的 1–7 把长上下文并行测完**」⇒ 一格一卡扇出：hybrid@128K/256K/512K/1M（GPU1–4）+ dense@128K/256K/512K（GPU5–7），dense 1M 第 2 波；`.29` 已被 data BO 占满（62.6GB/卡，不可共卡） | ✅ 已批准（用户两次直令） |
-| 2026-10-07 09:42 | **vision** | **GPU0–7（全部 8 张）** | **~9.5h**（mask-ratio 5臂消融） | lp bridge 已完成(PID 807654 退出, GPU0 释放). nvidia-smi 显示 8 GPU 全空闲(pretrain 矩阵尚未占卡). ② mask-ratio 消融需 8 GPU(CUDA_VISIBLE_DEVICES=0-7). 按运维指令「确有 8 卡硬需求⇒在账本申请区写一行, pretrain 必须让」⇒ **申请 8 GPU 开跑 ② mask-ratio** | 🟡 待 pretrain 确认让卡（nvidia-smi 显示全空闲, 可立即开跑） |
+| 2026-10-07 09:42 | **vision** | **GPU0–7（全部 8 张）** | **~4.5–9.5h**（mask-ratio 5臂消融） | lp bridge 已完成(PID 807654 退出, GPU0 释放). nvidia-smi 显示 8 GPU 全空闲(pretrain 矩阵尚未占卡). ② mask-ratio 消融需 8 GPU(CUDA_VISIBLE_DEVICES=0-7). 按运维指令「确有 8 卡硬需求⇒在账本申请区写一行, pretrain 必须让」⇒ **申请 8 GPU 开跑 ② mask-ratio** | ✅ 已开跑（09:52, 8 GPU 全占用 16.4GB/卡, arm 0.3 step200/30k, ~4500 img/s） |
 
 ---
 
@@ -50,3 +50,5 @@
 |:--|:--|
 | 2026-10-07 上午（精确时刻见本条 commit） | **运维建立本文件**：用户指出「`.12` GPU0 被 bridge 占至 10–11AM、**GPU1–7 空闲**」⇒ **批准 pretrain 借 GPU1–2** 跑长上下文推理成本矩阵（`BAIZE_PRETRAIN_2B_TASK.md` 顶部块；`BAIZE_VISION_TASK.md` 同步告知）；**`.29` 侧不向 data 索卡**（避免 Round2 BO 由 8 槽降速、P-8 前置顺延）。依据：env/ckpt 全在 NFS 共享路径（`/nas_train/app.e0031982/miniforge3/envs/vllm`、`nemo_experiments/p3_{hybrid,dense}/hf_iter_5000`），`.12` **零改造**可跑。 |
 | 2026-10-07 上午（同日第 2 条） | **用户直令②**：「**何必只用 1、2 呢，让 pretrain 用 `.12` 的 1–7 把长上下文并行测完**」⇒ 借用范围 **GPU1–2 → GPU1–7**；**一格一卡扇出**（GPU1–4 hybrid 四档 / GPU5–7 dense 128K-512K，dense 1M 第 2 波）；**并行启动器已入库** `run/p911e_matrix_launch.sh`（含逐格 GPU 占用预检、错峰 `STAGGER=20s`、逐格 `kill` server + 归还核验、逐格 JSON）；**目标 30–45 min 跑完即还**（硬天花板 11:00），并已在 `BAIZE_VISION_TASK.md` 同步「此期间 vision 要不到卡」的口径。 |
+| 2026-10-07 09:52 | **vision 开跑 ② mask-ratio 消融**：lp bridge 全部完成(PID 807654 退出, GPU0 释放), 8 GPU 全空闲. 按运维指令申请 8 GPU 并开跑 run_mask_ratio_ablation.sh(5 arms: 0.3/0.5/0.6/0.75/0.9, 30k steps/arm, ~4500 img/s, ETA ~4.5h). 8 GPU 全占用 16.4GB/卡. pretrain p911e_matrix_launch.sh 有逐格 GPU 占用预检, 若启动会检测到 vision 占用并等待. |
+| 2026-10-07 **09:44** | **pretrain 全部归还 GPU1-7**：Wave 1（7 格并行 hybrid@128K/256K/512K/1M + dense@128K/256K/512K）+ Wave 2（dense@1M）全部完成。`nvidia-smi` 确认 GPU1-7 全部 `memory.used≈0`。8 个 cell JSON 已入 `p911e_results/`。✅ **已归还 09:44**（远早于 11:00 硬天花板）。vision 可恢复使用 GPU1-7。 |
