@@ -5,13 +5,23 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A kimi-k2.6-cloud serial cross-eval — codex --resume RUNNING (PID 2151526, ~728min): 161 blocked remaining. 330 entries, 61 resolved. 📊 昨夜工作汇报 HTML 已交付.
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 (43 resolved, 96 pbf, 161 blocked) · SWEBENCH_COMPARE.html (330 entries, 61 resolved) · ✅ git_fetch_retry · 📊 report_10_07_harness_overnight.html
-当前动作:     R135: 昨夜工作汇报 HTML 交付 (report_10_07_harness_overnight.html, 27187B, 自包含, 内联SVG) + codex --resume 仍在运行 (PID 2151526, ~728min, django__django-15695) + 体积自检 (TASK=35729B>32KB待下轮归档/MEMORY=19345B≤32KB ✓)
-下一步:       归档 TASK.md 已闭合块→≤32KB → codex --resume 完成(161 blocked) → cline-patched×300 --resume → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新 SWEBENCH_COMPARE.html
-阻塞:         无硬阻塞. TASK.md=35729B>32KB (10-07指令块所致, 下轮归档). 161 blocked remaining.
+PHASE:        H-A kimi-k2.6-cloud serial cross-eval — codex --resume RUNNING (PID 2151526, ~778min): 156 blocked remaining. 330 entries, 61 resolved. TASK.md archived to ≤32KB.
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 (43 resolved, 101 pbf, 156 blocked) · SWEBENCH_COMPARE.html (330 entries, 61 resolved) · ✅ git_fetch_retry · 📊 report_10_07_harness_overnight.html · ✅ TASK.md归档(10-07块→ARCHIVE)
+当前动作:     R136: TASK.md归档 (10-07报告指令块→ARCHIVE_OPERATOR_HARNESS.md, 37158B→30050B) + SWEBENCH_COMPARE.html regenerated (72925B, 61 resolved, codex 43/101/156) + relay healthy skip 88th + git sync (0/0)
+下一步:       codex --resume 完成(156 blocked) → cline-patched×300 --resume → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新 SWEBENCH_COMPARE.html
+阻塞:         无硬阻塞. 156 blocked remaining.
 ERROR_COUNT:  0
 ```
+
+## 🆕 第一百三十六轮速览（2026-10-07 08:37）— TASK.md归档 (10-07报告块→ARCHIVE, 37158B→30050B) + SWEBENCH_COMPARE.html regenerated (72925B, 61 resolved, codex 43/101/156) + relay healthy skip 88th + git sync (0/0)
+
+- 📦 **TASK.md 归档**：10-07 报告指令块（已执行完毕，report_10_07_harness_overnight.html 已交付）原文搬入 `ARCHIVE_OPERATOR_HARNESS.md`，留 1 行指针。TASK.md 37158B→30050B（≤32KB ✓）。ARCHIVE 31114B→38634B（+7520B）。
+- 🔄 **codex --resume 仍在运行**：PID 2151526（ppid=1，etimes≈46646s ≈ 778min），当前处理 `django__django-15781`。codex 300: 43 resolved / 101 pbf / 156 blocked（较 R135 的 43/96/161: +5 pbf, -5 blocked, resolved 不变）。总 61 resolved (cline 18 + codex 43)。
+- 📈 **SWEBENCH_COMPARE.html regenerated**：330 entries, 61 resolved, 72925 bytes。gen_kimi_compare.py exit=0。
+- ✅ **ops 中继复核（第 88 次）→ 健康**。relay `2489749 1 491153 bash ops_relay.sh`（ppid=1, etimes≈5.7d）。跳过重启。
+- ✅ **git sync**：`git fetch`（proxy=http://172.19.92.25:13128）exit=0。rev-list 0/0 (fully synced)。
+- 📦 **体积自检**：TASK=30050B（29.3KB，≤32KB ✓）/ MEMORY=21120B（20.6KB，≤32KB ✓）。📦 体积：TASK=29.3KB / MEMORY=20.6KB（归档 7.1KB → ARCHIVE_OPERATOR_HARNESS.md）。
+- ⏭ **下一步**：codex --resume 后台继续（156 blocked）→ 完成后 cline-patched×300 `--resume` → opencode×300 → claude-code×300 → deepseek-harness×300 → 最终更新 SWEBENCH_COMPARE.html。保持 `WAITING=1`。
 
 ## 🆕 第一百三十五轮速览（2026-10-07 07:47）— 📊 昨夜工作汇报 HTML 交付 (report_10_07_harness_overnight.html, 27187B) + codex --resume 仍在运行 (PID 2151526, ~728min) + 体积自检 (TASK=35729B>32KB待下轮归档/MEMORY=19345B≤32KB ✓)
 
@@ -137,3 +147,4 @@ ERROR_COUNT:  0
 
 - 2026-10-04 23:25 —— **第五十轮** —— 已归档（同上）
 - 2026-10-07 07:47 —— **第一百三十五轮** —— 📊 昨夜工作汇报 HTML 交付 `report_10_07_harness_overnight.html`（27187B，自包含，内联SVG，8章节）。窗口 R118→R134，codex 43/96/161，总 resolved 61。📦 体积：TASK=35729B(>32KB待归档) / MEMORY=19345B(≤32KB ✓)（归档 0KB）。
+- 2026-10-07 08:37 —— **第一百三十六轮** —— TASK.md归档（10-07报告块→ARCHIVE, 37158B→30050B）+ SWEBENCH_COMPARE.html regenerated（72925B, 61 resolved, codex 43/101/156）+ relay skip 88th + git sync 0/0。📦 体积：TASK=30050B(≤32KB ✓) / MEMORY=21120B(≤32KB ✓)（归档 7108B → ARCHIVE_OPERATOR_HARNESS.md）。
