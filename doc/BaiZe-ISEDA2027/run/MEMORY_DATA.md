@@ -12,11 +12,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B 配比实验全流程交付✅(含收官HTML) → 后台: GPIC 5563/8001 + zh分词8进程(7shard@38GB~68%by_bin+s9@18GB~32%,ETA~07:00/10:30)
+PHASE:        §0.6-B 配比实验全流程交付✅(含收官HTML) → 后台: GPIC 5592/8001 + zh分词8进程(7shard@44GB~79%by_bin+s9@23GB~41%by_bin,ETA~07:00/10:00)
 已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a已kill；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43+report; s_step归因(MBS16:8.6×,166ms)+report; Round2 BO✅200/200(166✅+34❌,best=t23=0.4155); base下载完成; R1 lm_eval errata更正; UltraX✅479 parquet(454GB,5config); ✅top-K收尾全完成(retrain5/5+HF转换+全量lm_eval+topk_lmeval_results_r2.json@19:40); ✅report_data_mix_eval_r2.html(18KB); Spearman ρ=−0.80(BO score vs full eval,n=5); ✅zh分词并行化(1→8进程); ✅report_data_mix_summary.html(29KB,配比收官总报告,house style浅色,3内联SVG,9节全); ✅part-172重下成功(1.2G)
-当前动作:     唤醒209(04:11@.12) 巡检zh分词(7shard@38GB 6.05M docs/5.22B tok log缓冲滞后+s9@18GB 5.6M docs)+GPIC(5563/8001)+心跳更新
-下一步:       ①zh分词8进程跑完(7shard ETA~07:00+s9 ETA~10:30)→合入blend+报zh总token数; ②s9完成后补tokenize part-172(已重下1.2G); ③启动l1_en_hq分词(6000 parquet); ④GPIC续下(5563/8001,ETA~2.1d); ⑤en_v1_4排队等放行
-阻塞:         zh分词进行中(7shard@38GB ETA~07:00+s9@18GB ETA~10:30); GPIC下载进行中(5563/8001,ETA~2.1d)
+当前动作:     唤醒210(04:49@.12) 巡检zh分词(7shard@44GB 12.1M docs/10.4B tok+s9@23GB 6.05M docs/5.2B tok)+GPIC(5592/8001)+心跳更新
+下一步:       ①zh分词8进程跑完(7shard ETA~07:00+s9 ETA~10:00)→合入blend+报zh总token数; ②s9完成后补tokenize part-172(已重下1.2G); ③启动l1_en_hq分词(6000 parquet); ④GPIC续下(5592/8001,ETA~2.2d); ⑤en_v1_4排队等放行
+阻塞:         zh分词进行中(7shard@44GB ETA~07:00+s9@23GB ETA~10:00); GPIC下载进行中(5592/8001,ETA~2.2d)
 ERROR_COUNT:  1
 ```
 
@@ -25,6 +25,7 @@ ERROR_COUNT:  1
 ## 📋 本唤醒流水
 > 📦 唤醒185-190 已归档 → `daily-memories-data/2026-10-07.md`（含BO方向bug调查全链+UltraX启动+zh分词启动详情）
 > 📦 唤醒201-203 已归档 → `daily-memories-data/2026-10-08.md`（含report_data_mix_summary.html产出+zh分词8进程启动+GPIC巡检）
+- [04:49] **唤醒210**：①本机=`.12`。②**zh分词巡检**：7shard(s4-s8,s10,s11)各.bin=42-44GB@04:49(+6GB since 04:11,rate~9.5GB/h/shard,I/O争用已缓解),log@12.1M docs/10.4B tok(24262s),进程全活(PID2574412~2575292,etimes~25824s,ppid=2574340✅),无.idx.按.bin估算~79%done,ETA~07:00.s9@23GB(+5GB since 04:11,rate~7.9GB/h),log@6.05M docs/5.2B tok(12495s),PID286565活(etimes~13800s,ppid=286557✅),~41%done,ETA~10:00.s0-s3✅(en base,21GB+.idx).③**GPIC** 5592/8001(+29 since 04:11,~46tar/h)+128/128 test✅,PID144981活(etimes~295000s≈82h,cwd=/nas_inference/.../datasets),latest tar=gpic_train_05591@04:50,ETA(8001-5592)/46≈52.4h≈2.2d.④**base**✅全满·**UltraX**✅479/479·**en_v1_4**排队.⑤git fetch(proxy)成功,无新运维指令.⑥load=54.8/224核.⑦📦体积:TASK=30.1KB✅/MEMORY=29.6KB✅.下载线心跳：base ✅全满 | GPIC 5592/8001（活PID144981,+29,~46tar/h,ETA~2.2d）| UltraX ✅479完成 | en_v1_4 排队 | zh分词 7进程@44GB~79%by_bin+s9@23GB~41%by_bin（ETA~07:00/10:00）。
 - [04:11] **唤醒209**：①本机=`.12`。②**zh分词巡检**：7shard(s4-s8,s10,s11)各.bin=37-38GB@04:11(+1.5GB since 03:35,rate~2.5GB/h/shard,I/O争用减速),log仍@6.05M docs/5.22B tok(buffer lag,实际>6.05M),进程全活(PID2574412~2575292,etimes=23579s,ppid=2574340✅),无.idx.按.bin估算~68%done,ETA~07:00.s9@18GB(+2.7GB,rate~4.5GB/h),log@5.6M docs/4.83B tok(10797s),PID286565活(etimes=11569s,ppid=286557✅),~32%done,ETA~10:30.s0-s3✅(en base,21GB+.idx).③**GPIC** 5563/8001(+29 since 03:35,~48tar/h)+128/128 test✅,PID144981活(etimes=292693s≈81h),ETA(8001-5563)/48≈50.8h≈2.1d.④**base**✅全满·**UltraX**✅479/479·**en_v1_4**排队.⑤git fetch(proxy)成功,无新运维指令.⑥load=50.6/224核.⑦📦体积:TASK=30.1KB✅/MEMORY=31.5KB✅.下载线心跳：base ✅全满 | GPIC 5563/8001（活PID144981,+29,~48tar/h,ETA~2.1d）| UltraX ✅479完成 | en_v1_4 排队 | zh分词 7进程@38GB~68%by_bin+s9@18GB~32%（ETA~07:00/10:30）。
 - [03:35] **唤醒208**：①本机=`.12`。②**zh分词巡检**：7shard(s4-s8,s10,s11)全同步@6.05M docs/5.22B tok/.bin~36.5GB(log@~11750s),进程全活(PID2574412~2575292,etimes=21270s,ppid=2574340✅),log缓冲滞后(actual>6.05M,by .bin~65%done).s9@15.32GB(PID286565,etimes=9260s,ppid=286557✅),log含旧run条目(10797s系崩溃前),当前run~4.8M docs~28%done.ETA:7shard~07:00/s9~10:30.③**GPIC** 5534/8001(+58 since 02:18,~46tar/h)+128/128 test✅,PID144981活(etimes=290384s≈80h),ETA~2.2d.④**base**✅全满·**UltraX**✅479/479·**en_v1_4**排队.⑤git fetch(proxy)成功,无新运维指令.⑥load=48.2/224核.⑦📦体积:TASK=30.1KB✅/MEMORY=31.2KB✅.下载线心跳：base ✅全满 | GPIC 5534/8001（活PID144981,+58,~46tar/h,ETA~2.2d）| UltraX ✅479完成 | en_v1_4 排队 | zh分词 7进程@36.5GB~65%by_bin+s9@15.3GB~28%（ETA~07:00/10:30）。
 - [03:00] **唤醒207**：①本机=`.12`。②⭐**修report_data_mix_summary.html数据错误**：复核topk_lmeval_results_r2.json发现t38的math值报告写0.005(系1−web−code残差),JSON实际为0.01(搜索空间下界)。Top-10表(line113)+核心结论表(line215)两处已修正为0.010。修正后top-5中4/5 math=0.01(TL;DR/§5.3原文即如此写,此前表格与文字矛盾,现已一致)。③全量数字复核:5 trial的web/code/math/bo_score/full_avg全部与JSON逐位匹配✅;Spearman ρ=−0.80(d²=36,n=5)手算确认✅。④📦体积:TASK=30.1KB✅/MEMORY=30.7KB✅。⑤zh分词/GPIC后台进行中(未巡检,下轮补)。
