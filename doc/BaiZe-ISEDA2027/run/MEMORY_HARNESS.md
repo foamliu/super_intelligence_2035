@@ -5,13 +5,33 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 30×5 harness cross-eval (kimi-k2.6-cloud, serial=1) — opencode×30 RUNNING (PID 87730, 8/30 done: 6 resolved/2 pbf, ETA ~94min). cline-patched×30 ✅ 60.0%, codex×30 ✅ 46.7% (same batch confirmed). claude-code×30 ⬜, deepseek-harness×30 ⬜ (2/30 done).
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 (43 resolved, 106 pbf, 151 blocked) · ✅ codex×300 stopped (PID 2151526 killed) · SWEBENCH_COMPARE.html (30×5, 70 entries, 38 resolved) · ✅ TASK.md归档(10-05横评块→ARCHIVE)
-当前动作:     R139: codex×300 stopped (per 10-07 directive) → opencode×30 already RUNNING (PID 87730, 8/30, 6 resolved/2 pbf, avg 255s/inst, ETA ~94min) → SWEBENCH_COMPARE.html regenerated (13981B, 30 instances, 70 entries, 38 resolved) → TASK.md archived (10-05横评块→ARCHIVE, 33987B→~31KB) → relay healthy skip 91st
-下一步:       opencode×30 complete → claude-code×30 → deepseek-harness×30 → regenerate SWEBENCH_COMPARE.html (5 rows) → commit+push
-阻塞:         无硬阻塞. opencode running, ~22 instances remaining.
+PHASE:        H-A 30×5 harness cross-eval (kimi-k2.6-cloud, serial=1) — opencode×30 RUNNING (PID 87730, 14/30: 8 res/6 pbf=57.1%). cline-patched×30 ✅ 60.0%, codex×30 ✅ 46.7%. claude-code×30 ⬜, deepseek-harness×30 ⬜ (2/30 done). CHAIN SCRIPT LAUNCHED (PID 1292346) to auto-start claude-code+deepseek after opencode.
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 (43 res/108 pbf/149 blk) · ✅ codex×300 stopped · SWEBENCH_COMPARE.html (30×5, 70+ entries) · ✅ TASK.md归档 · ✅ all 5 harnesses available verified · ✅ chain script launched
+当前动作:     R140: opencode×30 at 14/30 (8 res/6 pbf, PID 87730, ~75min elapsed) → verified all 5 harnesses available (claude-code entry+bun ✅, deepseek-harness SDK ✅, gw_proxy:9090 HTTP 200 ✅) → launched chain_remaining_harnesses.sh (PID 1292346) to auto-run claude-code×30+deepseek-harness×30 after opencode → relay healthy skip 92nd
+下一步:       [AUTO] opencode×30 finish → chain script auto-starts claude-code×30 → deepseek-harness×30 → final SWEBENCH_COMPARE.html (5 rows) → [next wake] commit+push
+阻塞:         无硬阻塞. opencode running (~16 instances remaining), chain script waiting.
 ERROR_COUNT:  0
 ```
+
+## 🆕 第一百四十轮速览（2026-10-07 11:58）— opencode×30 at 14/30 (57.1%) + chain script launched (claude-code+deepseek auto-queued) + all 5 harnesses verified available + relay skip 92nd
+
+- 📊 **opencode×30 进展**：14/30 done → 8 resolved, 6 patch-but-failed = **57.1%** so far。PID 87730 (etimes≈4521s≈75min)，当前处理 instance 15/30 `django__django-11742`。avg≈255s/inst, ~16 remaining, ETA ~68min (~13:06)。
+- ✅ **5 harness 可用性全部验证**：`DRIVERS` dict → cline=True, codex=True, opencode=True, **claude-code=True** (entry `src/entrypoints/cli.tsx` exists + bun 1.3.14 available), **deepseek-harness=True** (SDK at `/tmp/dsh_sdk`, `from deepseek_harness import DeepSeekHarness` OK)。
+- ✅ **gw_proxy 健康**：PID 3175038, port 9090, `curl /v1/models` → HTTP 200。
+- 🚀 **chain script 已启动**：`chain_remaining_harnesses.sh` (PID 1292346, ppid=1) → 等待 opencode PID 87730 结束 → 自动启动 claude-code×30 `--resume` → deepseek-harness×30 `--resume` → 每步后 regen SWEBENCH_COMPARE.html。日志 → `/tmp/chain_harnesses.log`。
+- 📊 **当前 5-way 对比**（kimi_pilot_results.json）：
+  | harness | total | resolved | pbf | rate |
+  |---|---|---|---|---|
+  | cline-patched | 30 | 18 | 12 | 60.0% |
+  | codex (30-subset) | 30 | 14 | 16 | 46.7% |
+  | opencode | 14/30 | 8 | 6 | 57.1% |
+  | claude-code | 0/30 | — | — | N/A |
+  | deepseek-harness | 2/30 | 0 | 2 | 0.0% |
+- ✅ **ops 中继复核（第 92 次）→ 健康**。relay `2489749 1 503295 bash ops_relay.sh`（ppid=1, etimes≈5.8d）。跳过重启。
+- ✅ **git sync**：`git fetch` (proxy) exit=0, rev-list 0/0 (fully synced)。
+- 📦 **体积自检**：TASK=31476B（30.7KB，≤32KB ✓）/ MEMORY=28186B（27.5KB，≤32KB ✓）。📦 体积：TASK=30.7KB / MEMORY=27.5KB（归档 0KB）。
+- ⏭ **下一步**：chain script 自动执行 opencode→claude-code→deepseek-harness→regen HTML。下次唤醒检查 chain script 日志 + 最终 SWEBENCH_COMPARE.html (5 rows) → commit+push。保持 `WAITING=1`。
+
 
 ## 🆕 第一百三十九轮速览（2026-10-07 11:19）— 30×5 横评启动: codex×300 stopped + opencode×30 RUNNING (8/30, 6 res/2 pbf) + SWEBENCH_COMPARE.html regenerated (13981B) + TASK.md archived (10-05横评块→ARCHIVE) + relay skip 91st
 
