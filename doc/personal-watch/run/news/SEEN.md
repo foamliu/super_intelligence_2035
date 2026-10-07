@@ -426,5 +426,6 @@
 | 2026-10-07 | OpenAI 发布又一批 AI 数学研究成果，攻破数百个悬而未决难题 | IT之家 | news | https://www.ithome.com/1/010/137.htm |
 | 2026-10-07 | 落实特朗普行政令，美国司法部要求员工改称 AI 为“超级智能” | IT之家（据路透社） | news | https://www.ithome.com/1/010/135.htm |
 | 2026-10-07 | 消息称 SpaceX 计划募资 400 亿美元，用于采购英伟达 AI 芯片 | IT之家（据金融时报） | news | https://www.ithome.com/1/010/134.htm |
+| 2026-10-07 | AI 颠覆担忧消退，美国软件股创 2026 年阶段新高 | IT之家 | news | https://www.ithome.com/1/010/141.htm |
 
 
