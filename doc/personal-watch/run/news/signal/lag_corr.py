@@ -515,12 +515,20 @@ def write_md(rows, assets, cal, ncorpus):
     L.append("")
     L.append("## 4. 数据覆盖（⚠️ 个股特有偏差 · 幸存者偏差）")
     L.append("")
-    L.append("| code | 名称 | 类 | 首日 | 末日 | 行数 |")
-    L.append("|:--|:--|:--|:--|:--|--:|")
+    L.append("| code | 名称 | 类 | 首日 | 末日 | 行数 N | 覆盖率 |")
+    L.append("|:--|:--|:--|:--|:--|--:|--:|")
+    calset = set(cal)
+    Mcal = len(cal)
+    n2016 = sum(1 for a in assets if a["rows"][0][0] <= "2016-12-31")
     for a in assets:
         ra = a["rows"]
+        ncal = sum(1 for d, _ in ra if d in calset)
         L.append(f"| {a['code']} | {a['name']} | {a['kind']} | {ra[0][0]} | "
-                 f"{ra[-1][0]} | {len(ra)} |")
+                 f"{ra[-1][0]} | {len(ra)} | {ncal/Mcal:.1%} |")
+    L.append("")
+    L.append(f"- 覆盖率 = 落在主交易历（A股个股日线并集，共 {Mcal} 天）内的行数占比；"
+             f"**2016 年即有数据 {n2016} 只 / 后段才上市或入库 {len(assets)-n2016} 只**"
+             "（见「首日」列），**两类分开看、不混算**。")
     L.append("")
     L.append("> 🔴 **个股上市日 ≠ 2016** ⇒ 各行**首日 = 上市日/数据可得日**（如工业富联 2018-06、"
              "寒武纪 2020-07、中芯国际 A股 2020-07、海光信息 2022-08、SC0 原油 2018-03）—— "

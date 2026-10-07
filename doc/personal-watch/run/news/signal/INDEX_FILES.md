@@ -9,10 +9,10 @@
 | `signal/lag_corr.csv` | 23941 | 4018511 | `83d3bf349be52251` | git |
 | `signal/prices/`（38 个 JSON，合计） | — | 2560273 | `c711347086cd3e05`¹ | git |
 | `signal/fetch_prices.py` | 306 | 13836 | `2716603285212c33` | git |
-| `signal/lag_corr.py` | 546 | 24745 | `961a423b3905381c` | git |
+| `signal/lag_corr.py` | 554 | 25259 | `b34a02cf7e50bfb0` | git |
 | `signal/PREREG.md` | 139 | 10346 | `967d7a43619c26c2` | git |
 | `signal/SOURCE_TEST.md` | 55 | 5074 | `bc23d4ef5eded7af` | git |
-| `signal/LAG_CORR.md` | 86 | 6177 | `777c237df23c91e5` | git |
+| `signal/LAG_CORR.md` | 88 | 6741 | `534eb130b17d556d` | git |
 
 > ¹ `prices/` 的 sha256(前16) = **对 `prices/*.json` 逐文件 sha256 排序后再 sha256**（目录级指纹），共 38 个文件。
 > `lag_corr.csv` / `LAG_CORR.md` 为**生成物**，随 `lag_corr.py` 每次运行覆盖（sha 会变）；此处记录 R1 首版指纹。
