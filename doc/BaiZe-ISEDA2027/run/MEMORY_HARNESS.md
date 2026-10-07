@@ -5,11 +5,11 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 30×5 harness cross-eval (kimi-k2.6-cloud, serial=1) — opencode×30 RUNNING (PID 87730, 29/30: 14 res/15 pbf = 48.3%, last inst sympy__sympy-13647 running ~277s). cline-patched×30 ✅ 60.0%, codex×30 ✅ 46.7%. claude-code×30 ⬜ (available=True), deepseek-harness×30 ⬜ (2/30 done, available=True). CHAIN SCRIPT (PID 1292346) waiting → auto-starts claude-code+deepseek after opencode. gw_proxy healthy (PID 3175038, port 9090).
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 (43 res/108 pbf/149 blk) · ✅ codex×300 stopped · SWEBENCH_COMPARE.html (30×5, 91 entries, 46 resolved) · ✅ TASK.md归档 · ✅ all 5 harnesses verified · ✅ chain script launched · ✅ R135-R138 archived
-当前动作:     R144: opencode×30 at 29/30 (14 res/15 pbf = 48.3%, last inst running ~277s/1800s) → SWEBENCH_COMPARE.html regenerated (14568B, 91 entries, 46 resolved) → verified claude-code+deepseek-harness available=True + gw_proxy healthy → relay skip 96th → commit+push
-下一步:       [AUTO] opencode×30 finish (~1 remaining, ~25min max) → chain script auto-starts claude-code×30 → deepseek-harness×30 → final SWEBENCH_COMPARE.html (5 rows) → [next wake] commit+push
-阻塞:         无硬阻塞. opencode last instance running, chain script waiting.
+PHASE:        H-A 30×5 harness cross-eval (kimi-k2.6-cloud, serial=1) — opencode×30 ✅ COMPLETE (15 res/15 pbf = 50.0%). cline-patched×30 ✅ 60.0%, codex×30 ✅ 46.7%. claude-code×30 🔄 RUNNING (PID 3273581, chain script, inst 1/30 django__django-10924). deepseek-harness×30 ⬜ (2/30 done). CHAIN SCRIPT (PID 1292346) → claude-code running → will auto-start deepseek-harness after. gw_proxy healthy (PID 3175038, port 9090).
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 (43 res/108 pbf/149 blk) · ✅ codex×300 stopped · opencode×30 (50.0%) · SWEBENCH_COMPARE.html (30×5, 92 entries, 47 resolved) · ✅ TASK.md归档 · ✅ all 5 harnesses verified · ✅ chain script launched · ✅ R135-R138/R142 archived · ✅ race condition fixed (killed duplicate run_parallel_3h.sh)
+当前动作:     R144: opencode×30 COMPLETE (15 res/15 pbf = 50.0%) → SWEBENCH_COMPARE.html regenerated (14568B, 91 entries, 46 resolved) → discovered+fixed race condition (duplicate run_parallel_3h.sh PID 87727 started claude-code concurrently with chain script → killed duplicate, kept chain script PID 1292346) → claude-code×30 RUNNING (inst 1/30) → commit+push
+下一步:       [AUTO] claude-code×30 finish (~30 inst × ~5min = ~2.5h) → chain script auto-starts deepseek-harness×30 → final SWEBENCH_COMPARE.html (5 rows) → [next wake] commit+push
+阻塞:         无硬阻塞. claude-code×30 running via chain script, deepseek-harness queued.
 ERROR_COUNT:  0
 ```
 
@@ -29,7 +29,8 @@ ERROR_COUNT:  0
 - 🚀 **chain script 仍在等待**：PID 1292346 (ppid=1, etimes≈8366s) → 等 opencode PID 87730 结束 → regen HTML → claude-code×30 `--resume` → regen HTML → deepseek-harness×30 `--resume` → final regen HTML。日志 `/tmp/chain_harnesses.log` 正常（"Waiting for opencode PID 87730 to finish..."）。
 - ✅ **ops 中继复核（第 96 次）→ 健康**。relay `2489749 1 511681 bash ops_relay.sh`（ppid=1, etimes≈5.9d）。跳过重启。
 - 📦 **体积自检**：TASK=31476B（30.7KB，≤32KB ✓）/ MEMORY=30862B（30.1KB，≤32KB ✓）。📦 体积：TASK=30.7KB / MEMORY=30.1KB（归档 0KB）。
-- ⏭ **下一步**：chain script 自动执行 opencode finish→claude-code×30→deepseek-harness×30→regen HTML。下次唤醒检查 chain script 日志 + 最终 SWEBENCH_COMPARE.html (5 rows) → commit+push。保持 `WAITING=1`。
+- ⚠️ **竞态条件发现+修复**：opencode 结束后发现**两个 claude-code×30 同时启动**——`run_parallel_3h.sh`（PID 87727，之前轮次启动的并行脚本）在 opencode 结束后自动继续到 claude-code（PID 3261831），同时 chain script（PID 1292346）也启动了 claude-code（PID 3273581）。两者同时跑 `django__django-10924` 同一 workdir → **立即 kill 了 `run_parallel_3h.sh` 树**（PID 87727/3261831/3297681），保留 chain script 的运行。JSON 文件锁保护了 `kimi_pilot_results.json`（362 entries，valid）。
+- ⏭ **下一步**：chain script 自动执行 claude-code×30→deepseek-harness×30→regen HTML。下次唤醒检查 chain script 日志 + 最终 SWEBENCH_COMPARE.html (5 rows) → commit+push。保持 `WAITING=1`。
 
 
 ## 🆕 第一百四十三轮速览（2026-10-07 13:45）— opencode×30 at 22/30 (12 res/10 pbf = 54.5%) + SWEBENCH_COMPARE.html regenerated (14377B, 84 entries, 44 resolved) + relay skip 95th + commit+push
