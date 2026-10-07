@@ -7,6 +7,35 @@
 
 > 📦 **2026-10-06 已归档**：「B1 ctx 扩到 1M」+「hybrid 优势论证」两个运维块均已完成，原文见 `ARCHIVE_OPERATOR_PRETRAIN.md`。结论：PPL 1M=55.42 无退化，bottleneck=(c) attention O(n²) ≥512K，目标 ctx=32K–128K，advantage report 已交付。
 
+### 🆕 运维指令 · 2026-10-07⑤（**① bf16 SSM 重跑 128K–1M 矩阵 ② 按 research1 的公平协议重做 BaiZe⚔dense ③ 按 research2 找训练提速 ④ 按 research3 找训练效果提升**）· **用户直令** · 高优先
+
+> **用户令原文（2026-10-07 21:2x）**：「**① 用 bf16 SSM 重跑 128K–1M 矩阵；② 参考自己的分析（`report_pretrain_research1_fair_eval`），用更公平的方式比较 BaiZe 和 dense；③ 看 `report_pretrain_research2_train_speed`，训练速度是否有提升空间；④ 看 `report_pretrain_research3_train_quality`，训练效果有否提升空间。**」
+> 🟢 **资源已就绪**：**`.29` 全 8 GPU 空闲**（你 #176 自己 ssh 核验 8×0 MiB）⇒ **T1/T2 现在就能跑，用 `.29`，不必再抢 `.12`**。
+
+**T1 ⭐ 用 bf16 SSM 重跑 128K–1M 矩阵（修正 P-9.11-E）**
+- 动机是你自己量化的：**`float32` SSM 人为压低 hybrid prefill 40%**（bf16 10820 vs float32 6484 tok/s）。
+- **重跑**：hybrid @ ctx ∈ {**128K, 256K, 512K, 1M**}（时间允许再 2M@0.6/0.85），**`--mamba-ssm-dtype bfloat16`**；**dense 同排对照**（同 attention backend / 同 mem-fraction 口径）。
+- **产出**：修订 `report_pretrain_longctx_infer_cost.html`（**新增「bf16 vs float32」对照表 + 把 float32 口径明确标为「作废/仅对照」**）+ EXPERIMENTS P-9.11-E 节修订。
+- **判据（预注册，不许事后改）**：**若 bf16 下 hybrid 反超 dense ⇒ 必须如实改写原「dense 3.3× faster」结论**（那是口径 artifact）。
+
+**T2 按 research1 的「公平对比协议」重做 BaiZe ⚔ dense**
+- 严格照你自己在 `report_pretrain_research1_fair_eval.html` 里定的协议：① 两模型 **同 attention backend（flashinfer）**；② **显存口径改用「KV/SSM pool tokens + 活跃 KV」**，**不用 nvidia-smi 预分配值**；③ **mem-fraction 固定并报 pool 大小**；④ **显式标注 SSM dtype**；⑤ **tokenizer 精确计数**；⑥ **warmup + median-of-N**，prefill/decode 分离。
+- **产出**：`report_pretrain_longctx_infer_cost_v2.html`（或就地修订），**口径表写清哪些「不可混比」**。
+- **可与 T1 合并执行**（一次起服、两套口径）。
+
+**T3 按 research2 找「训练速度」提升空间**
+- 基于 `report_pretrain_research2_train_speed.html` 出**可执行短名单**（每条：预期增益 / 成本 / 风险 / **可检验判据** / 时间盒 / 优先级），并**挑 1–2 条最稳的先做**（`.29` 免费）。
+- 约束：**P-9.13 已证「env 无提速、249K tok/s 是 launcher 暴露参数上界」** ⇒ 候选应聚焦 **FP8 / 融合 kernel（mamba2+conv、TE）/ recompute / CUDA graph / 数据管线 / TP·DP 拓扑**；**优先「不改 recipe 的运行时/并行/IO 项」**。
+
+**T4 按 research3 找「训练效果」提升空间**
+- 基于 `report_pretrain_research3_train_quality.html` 出短名单（目标 = **8 常识 + 6 复杂 + agent/SWE-Bench**），每条给**判据 + 成本 + 风险 + 优先级**；**先出分析、不必马上烧 GPU**。
+- 重点参考你自己的实测：**A 36/36 里 5/6 贴地板、仅 BBH 有微弱信号** ⇒ 优先 **数据/课程/长上下文/指令与 CoT 数据** 这类**高杠杆**项，而不是继续微调 lr。
+
+**顺序**：**T1+T2（GPU，`.29`，今晚）→ T3/T4 短名单（纯分析，可并行）→ T3 的 1–2 条低风险实验（T1/T2 完成后在 `.29`）**。
+**铁律**：不改 P-5b recipe、不回训、不存 ckpt；🚫 绝不 kill watchdog loop；**数字必须真**（口径变了就明写、不许拿旧口径充新结论）。
+> 📦 体积提醒：本块加入后 `BAIZE_PRETRAIN_2B_TASK.md` ≈35KB（**<40KB 红线**）⇒ 收尾前先归档已闭合旧块。
+
+
 ### 🆕 运维指令 · 2026-10-07④（**🖥️ 无卡窗口：5 份「研究型」HTML 报告** — web search ＋ 内联 SVG／文生图）· **用户直令** · 高优先
 
 > **用户令原文（2026-10-07）**：「**pretrain：既然没有 GPU，但总有 web search 和文生图，可否做一些研究。安排下列每个方向写个 html 报告**」（5 个方向见 ①）。
