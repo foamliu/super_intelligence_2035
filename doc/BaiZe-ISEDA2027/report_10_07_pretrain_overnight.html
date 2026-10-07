@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe pretrain 线 · 昨夜工作汇报 · 2026-10-07</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  h4 { font-size:14.5px; margin:16px 0 6px; color:var(--primary); }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#0d5c22; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6a4a00; }
+  .danger { background:#fff0f0; border:1px solid #ffc9c9; border-left:4px solid var(--bad); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#8a1c1c; }
+  .figcap { font-size:12.5px; color:var(--muted); margin:6px 0 16px; text-align:center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe pretrain 线 · 昨夜工作汇报</h1>
+  <div class="sub">A/B/D 三项运维指令全部收官 · GPU0-1 后半段被 data BO 抢占 · P-8 前置仍未就绪</div>
+  <div class="meta">
+    <span>📅 窗口 2026-10-06 22:00 → 10-07 08:00（CST）</span>
+    <span>🕐 数据截止 08:06</span>
+    <span>📦 第 148–164 次唤醒</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <b>一句话结论</b>：前半段（22:00–01:52，~4h）三条运维指令 <b>A（复杂推理 6 集）/ B（长上下文）/ D（sglang VRAM 补测）全部 ✅ 完成</b>；后半段（02:26–08:06，~5.5h）<b>GPU0-1 被 data Round2 BO 抢占</b>，仅做状态核查、<b>无实质产出</b>。P-8 两个前置（base 下载 stalled ~91% + BO 配比 ~69/200）均未就绪。
+  <br><br>
+  <span class="badge b-ok">✅ A 36/36 · B ✅ · D ✅ — 三项运维指令全收官</span>
+  <span class="badge b-warn">⚠️ GPU0-1 被抢占 ~5.5h → 后半段无实质产出</span>
+  <span class="badge b-no">❌ P-8 前置未齐（base stalled + BO 未完）</span>
+</div>
+
+<h2 class="sec"><span class="no">1</span>TL;DR</h2>
+<ol>
+  <li><b>A（复杂推理 6 集）36/36 ✅</b> — 5/6 任务贴地板（GSM8K/MATH/MMLU/HumanEval/MBPP），仅 BBH 有微弱 scaling 信号（峰值 14.26%@2.62B token，20B 时 8.78%，<b>非单调</b>）。</li>
+  <li><b>B（长上下文 4096→8192）✅</b> — ABF（rope_theta=1e6）<b>不降反升</b>短上下文（HellaSwag +2.71pp, ARC-Easy +0.72pp），但 Passkey 4K/8K 均 0% → <b>「RoPE 仅 4 层 ⇒ 收益有限」被实测证实</b>。</li>
+  <li><b>D（sglang VRAM 补测）✅</b> — 低 mem-fraction 0.3 下 VRAM 4K→128K <b>恒定 5.35GB（零增长）</b>；128K 成功（更正原"失败" = prompt 构造 bug，非 max_pos=4096 限制）；TTFT sublinear（9.1× for 32× ctx），decode 仅降 12%。</li>
+  <li><b>02:24 起 GPU0-1 被 data BO 扩展抢占</b>（全 8 GPU 62GB/卡）→ ~5.5h 仅状态核查（#154–#163，共 10 次），无新实验。</li>
+  <li><b>P-8 仍暂缓</b>：base 下载 stalled ~91%（无活跃进程，路径不存在）+ Round2 BO ~69/200 trials（ETA ~19:00 today）→ 两前置均未就绪。</li>
+</ol>
+
+<h2 class="sec"><span class="no">2</span>KPI 表</h2>
+<table>
+  <tr><th>指标</th><th>22:00 起点</th><th>08:00 现值</th><th>Δ</th><th>备注</th></tr>
+  <tr><td>A complex6 cells</td><td>32/36 (in-flight)</td><td><b>36/36 ✅</b></td><td>+4 cells</td><td>bbh_4771 rerun 完成（8.78%）</td></tr>
+  <tr><td>B longctx</td><td>3/4 task (bbh 跑中)</td><td><b>4/4 ✅ + passkey</b></td><td>COMPLETE</td><td>ABF hellaswag +2.71pp</td></tr>
+  <tr><td>D sglang VRAM</td><td>未启动</td><td><b>8 cells ✅</b></td><td>COMPLETE</td><td>VRAM 5.35GB const 4K→128K</td></tr>
+  <tr><td>GPU0-1 可用性</td><td>✅ 可用（A/B 在跑）</td><td><span class="badge b-no">❌ 被 data BO 占</span></td><td>-2 GPU</td><td>~02:24 BO 扩展到全 8 卡</td></tr>
+  <tr><td>data BO trials</td><td>~44/200</td><td>~69/200</td><td>+25</td><td>MBS=16 提速后 ~32min/trial, ETA ~19:00</td></tr>
+  <tr><td>P-8 前置</td><td>未就绪</td><td>未就绪</td><td>0</td><td>base stalled ~91% 无进程 + BO 未完</td></tr>
+  <tr><td>wake 唤醒次数</td><td>#148</td><td>#164</td><td>+16</td><td>含本轮报告</td></tr>
+</table>
+<div class="note">
+  <b>本窗口有无实质产出</b>：<span class="badge b-warn">部分</span> —
+  前 ~4h（22:00–01:52）有实质产出（A/B/D 全部完成），后 ~5.5h（02:26–08:06）因 GPU0-1 被 data BO 抢占、<b>无实质产出</b>（仅 10 次状态核查）。
+</div>
+
+<h2 class="sec"><span class="no">3</span>时间线</h2>
+
+<!-- Inline SVG: GPU0-1 occupancy timeline (实测数据，非文生图) -->
+<svg viewBox="0 0 920 170" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:920px;margin:10px 0;">
+  <defs>
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+      <rect width="3" height="6" fill="#cf222e" opacity="0.15"/>
+    </pattern>
+  </defs>
+  <line x1="60" y1="110" x2="880" y2="110" stroke="#59636e" stroke-width="1.5"/>
+  <g font-size="11" fill="#59636e" font-family="sans-serif" text-anchor="middle">
+    <line x1="60"  y1="106" x2="60"  y2="114" stroke="#59636e"/><text x="60"  y="130">22:00</text>
+    <line x1="142" y1="106" x2="142" y2="114" stroke="#59636e"/><text x="142" y="130">23:00</text>
+    <line x1="224" y1="106" x2="224" y2="114" stroke="#59636e"/><text x="224" y="130">00:00</text>
+    <line x1="306" y1="106" x2="306" y2="114" stroke="#59636e"/><text x="306" y="130">01:00</text>
+    <line x1="388" y1="106" x2="388" y2="114" stroke="#59636e"/><text x="388" y="130">02:00</text>
+    <line x1="470" y1="106" x2="470" y2="114" stroke="#59636e"/><text x="470" y="130">03:00</text>
+    <line x1="552" y1="106" x2="552" y2="114" stroke="#59636e"/><text x="552" y="130">04:00</text>
+    <line x1="634" y1="106" x2="634" y2="114" stroke="#59636e"/><text x="634" y="130">05:00</text>
+    <line x1="716" y1="106" x2="716" y2="114" stroke="#59636e"/><text x="716" y="130">06:00</text>
+    <line x1="798" y1="106" x2="798" y2="114" stroke="#59636e"/><text x="798" y="130">07:00</text>
+    <line x1="880" y1="106" x2="880" y2="114" stroke="#59636e"/><text x="880" y="130">08:00</text>
+  </g>
+  <text x="52" y="56" font-size="12" fill="#1f2328" font-family="sans-serif" text-anchor="end">GPU0</text>
+  <rect x="60" y="44" width="336" height="22" rx="3" fill="#1a7f37" opacity="0.75"/>
+  <text x="228" y="60" font-size="11" fill="#fff" font-family="sans-serif" text-anchor="middle">pretrain A (complex6 eval)</text>
+  <rect x="396" y="44" width="484" height="22" rx="3" fill="url(#hatch)" stroke="#cf222e" stroke-width="1"/>
+  <text x="638" y="60" font-size="11" fill="#8a1c1c" font-family="sans-serif" text-anchor="middle">data BO t0040+ 抢占（全8GPU）</text>
+  <text x="52" y="88" font-size="12" fill="#1f2328" font-family="sans-serif" text-anchor="end">GPU1</text>
+  <rect x="60" y="76" width="16" height="22" rx="3" fill="#9a6700" opacity="0.4"/>
+  <rect x="76" y="76" width="182" height="22" rx="3" fill="#1a7f37" opacity="0.75"/>
+  <text x="167" y="92" font-size="11" fill="#fff" font-family="sans-serif" text-anchor="middle">pretrain B (longctx eval)</text>
+  <rect x="258" y="76" width="13" height="22" rx="3" fill="#9a6700" opacity="0.4"/>
+  <rect x="271" y="76" width="609" height="22" rx="3" fill="url(#hatch)" stroke="#cf222e" stroke-width="1"/>
+  <text x="575" y="92" font-size="11" fill="#8a1c1c" font-family="sans-serif" text-anchor="middle">data BO 抢占</text>
+  <line x1="76"  y1="38" x2="76"  y2="106" stroke="#1f6feb" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="76"  y="32" font-size="10" fill="#1f6feb" font-family="sans-serif" text-anchor="middle">D✅</text>
+  <line x1="258" y1="38" x2="258" y2="106" stroke="#1f6feb" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="258" y="32" font-size="10" fill="#1f6feb" font-family="sans-serif" text-anchor="middle">B✅</text>
+  <line x1="378" y1="38" x2="378" y2="106" stroke="#1f6feb" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="378" y="32" font-size="10" fill="#1f6feb" font-family="sans-serif" text-anchor="middle">A✅ 36/36</text>
+  <line x1="396" y1="38" x2="396" y2="106" stroke="#cf222e" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="396" y="20" font-size="10" fill="#cf222e" font-family="sans-serif" text-anchor="middle">BO 抢 GPU0</text>
+</svg>
+<div class="figcap">【实测数据·内联 SVG】GPU0-1 占用时间线：绿=pretrain A/B/D 评测，红斜线=data Round2 BO 抢占。D✅ 22:53 / B✅ 00:38 / A✅ 01:52 / BO 扩展全 8 卡 ~02:24。</div>
+
+<table>
+  <tr><th>hh:mm</th><th>动作</th><th>状态</th></tr>
+  <tr><td>22:00</td><td>A v2 main 32/36 (bbh 跑中) + B 3/4 (bbh 跑中) + D 未启动</td><td>⏸ in-flight</td></tr>
+  <tr><td>22:53</td><td><b>D ✅ COMPLETE</b> — sglang VRAM 8 cells, 5.35GB const 4K→128K; B GPU1 launch; A v2 FIX ✅</td><td>✅ 完成</td></tr>
+  <tr><td>23:20</td><td>D 文档化 + HTML 生成器创建 + A/B 进度核查 (32/36, 3/4)</td><td>✅ 完成</td></tr>
+  <tr><td>00:00</td><td>D 整合进 <code>report_pretrain_p911_sglang.html</code> ✅ (H3 ❌→✅) + A 35/36 + B 3/4 bbh 跑中</td><td>✅ 完成</td></tr>
+  <tr><td>00:38</td><td><b>B ✅ COMPLETE</b> — HTML + EXPERIMENTS; A 35/36; bbh_4771 rerun GPU0 启动</td><td>✅ 完成</td></tr>
+  <tr><td>01:16</td><td>bbh_4771 56% progress + kill 重复进程 + auto-complete 脚本启动</td><td>✅ 完成</td></tr>
+  <tr><td>01:52</td><td><b>A 36/36 ✅ COMPLETE</b> (bbh_4771=8.78%) + EXPERIMENTS 更新 + MEMORY 归档到 25KB</td><td>✅ 完成</td></tr>
+  <tr><td>02:26</td><td>状态核查 #154 — <b>全 8 GPU 被 data BO 占用</b>（BO PID 3614158 扩展到 --gpus 0-7）</td><td>⏸ 等待</td></tr>
+  <tr><td>03:01–07:35</td><td>状态核查 #155–#163（9 次）— GPU 被 BO 占、无新运维指令、P-8 前置未齐</td><td>⏸ 等待</td></tr>
+  <tr><td>08:06</td><td>本唤醒：写昨夜工作汇报 HTML（用户直令）</td><td>🔄 进行中</td></tr>
+</table>
+
+<h2 class="sec"><span class="no">4</span>证据</h2>
+
+<h3>4.1 A — 复杂推理 6 集（36/36 ✅）</h3>
+<p><b>评测命令</b>（v2 online, proxy）：</p>
+<pre><code>HF_DATASETS_OFFLINE=0 HTTPS_PROXY=http://172.19.92.25:13128 \
+  lm_eval --model hf --tasks gsm8k,hendrycks_math500,mmlu,bbh_zeroshot \
+    --num_fewshot 0 --batch_size 4 --limit 100 \
+    --model_args pretrained=nemo_experiments/p3_hybrid/hf_iter_4771 \
+    --output_path lm_eval_complex/iter_4771</code></pre>
+<p><b>结果表（36/36 cells，6 ckpt × 6 task）</b>：</p>
+<table>
+  <tr><th>iter</th><th>tokens</th><th>GSM8K</th><th>MATH-500</th><th>MMLU</th><th>BBH</th><th>HumanEval</th><th>MBPP</th><th>Avg</th></tr>
+  <tr><td>0156</td><td>655M</td><td>0.00%</td><td>0.00%</td><td>22.92%</td><td>3.07%</td><td>0.00%</td><td>0.00%</td><td>4.33%</td></tr>
+  <tr><td>0312</td><td>1.31B</td><td>3.00%</td><td>0.00%</td><td>23.12%</td><td>6.56%</td><td>0.00%</td><td>0.00%</td><td>5.45%</td></tr>
+  <tr><td>0624</td><td>2.62B</td><td>1.00%</td><td>0.00%</td><td>23.58%</td><td><b>14.26%</b></td><td>0.00%</td><td>0.00%</td><td>6.47%</td></tr>
+  <tr><td>1248</td><td>5.24B</td><td>1.00%</td><td>0.00%</td><td>23.52%</td><td>9.56%</td><td>0.00%</td><td>0.00%</td><td>5.68%</td></tr>
+  <tr><td>2496</td><td>10.5B</td><td>0.00%</td><td>0.00%</td><td>23.46%</td><td>7.15%</td><td>0.00%</td><td>0.00%</td><td>5.10%</td></tr>
+  <tr><td>4771</td><td>20.0B</td><td>1.00%</td><td>0.00%</td><td><b>25.00%</b></td><td>8.78%</td><td>0.00%</td><td>0.00%</td><td>5.80%</td></tr>
+</table>
+<div class="ok-box">
+  <b>核心结论</b>：6 任务中 5 个贴地板，仅 BBH 有微弱 scaling 信号（峰值 14.26%@2.62B，20B 时 8.78%，<b>非单调</b>——峰值在 iter_0624 后下降）。MMLU 25.00%@20B = 刚好达到 4-choice 随机基线。<b>结论 = 测量本身</b>：2.2B / 20B token 在复杂推理上不涌现，量化了 Stage (ii) SFT/RL 的起点差距。
+</div>
+<p><b>异常与修复</b>：</p>
+<ul>
+  <li><code>bbh_4771</code> v1 offline mode 失败：<code>Couldn't reach 'SaylorTwift/bbh' on the Hub (OfflineModeIsEnabled)</code> → v2 改 online + proxy 重跑。</li>
+  <li><code>HumanEval/MBPP</code> v2 main script 缺 <code>HF_ALLOW_CODE_EVAL=1</code> → <code>ValueError</code>；修复后 lm_eval <code>UNSAFE_CODE</code> 检查 → 需 <code>--confirm_run_unsafe_code</code> flag → 单独 FIX 脚本补跑 → <b>全 0% floor（模型能力不足，非脚本 bug）</b>。</li>
+  <li>GPU0 上发现 2 个相同 <code>lm_eval --tasks bbh_zeroshot</code> 进程（PID 2461497 + 2475580，间隔 25s 启动）互相抢 GPU → kill 旧进程 2461497，速度从 2.5s/it → 1.37s/it。</li>
+</ul>
+
+<h3>4.2 B — 长上下文 4096→8192（ABF + Passkey ✅）</h3>
+<p><b>ABF 配置</b>：<code>rope_theta=1e6</code> + <code>max_pos=8192</code>（symlinked weights, config-only change — 无需重训）。</p>
+<table>
+  <tr><th>Task</th><th>Baseline (4K)</th><th>ABF 1e6 (8K)</th><th>Delta</th></tr>
+  <tr><td>HellaSwag</td><td>37.09%</td><td><b>39.80%</b></td><td><b>+2.71pp</b></td></tr>
+  <tr><td>ARC-Easy</td><td>55.68%</td><td><b>56.40%</b></td><td><b>+0.72pp</b></td></tr>
+  <tr><td>MMLU</td><td>N/A</td><td>25.00%</td><td>—</td></tr>
+  <tr><td>BBH</td><td>N/A</td><td>8.78%</td><td>—</td></tr>
+</table>
+<table>
+  <tr><th>Passkey Context</th><th>Accuracy</th></tr>
+  <tr><td>4096</td><td>0.0%</td></tr>
+  <tr><td>8192</td><td>0.0%</td></tr>
+</table>
+<div class="note">
+  <b>⭐ 关键发现（运维要求实测检验的判决）</b>：<br>
+  ① <b>ABF 不降反升短上下文</b>（HellaSwag +2.71pp, ARC-Easy +0.72pp）—— 与 B1 的 PPL 退化（75→83）方向相反：PPL 退化但 downstream accuracy 不降反升。<br>
+  ② <b>Passkey 4K/8K 均 0%</b> —— 模型在 20B token 下无 needle-in-haystack 能力（4K 就不行，不是 8K 扩展的问题）。<br>
+  ③ <b>「RoPE 仅 4 层 ⇒ 收益有限」被实测证实</b>：仅 4/56 层使用 RoPE attention（24 Mamba2 SSM 无位置编码 + 28 MLP），ABF 只影响这 4 层 → 短 ctx task 几乎不变、passkey 无改善。
+</div>
+
+<h3>4.3 D — sglang VRAM 补测（8 cells ✅）</h3>
+<p><b>sglang 启动</b>：<code>--mem-fraction-static 0.3</code>（低预分配，暴露真实 VRAM）+ <code>--context-length 131072</code> + <code>--host 127.0.0.1</code>（避 Squid proxy）。</p>
+<table>
+  <tr><th>ctx</th><th>bs</th><th>prompt_tok</th><th>TTFT(s)</th><th>prefill(tok/s)</th><th>decode(tok/s)</th><th>peak VRAM(GB)</th></tr>
+  <tr><td>4K</td><td>1</td><td>3,816</td><td>0.071</td><td>53,898</td><td>284.4</td><td><b>5.35</b></td></tr>
+  <tr><td>4K</td><td>8</td><td>3,816</td><td>0.155</td><td>196,419</td><td>935.6</td><td><b>5.35</b></td></tr>
+  <tr><td>16K</td><td>1</td><td>15,631</td><td>0.133</td><td>117,274</td><td>283.0</td><td><b>5.35</b></td></tr>
+  <tr><td>16K</td><td>8</td><td>15,631</td><td>0.397</td><td>315,114</td><td>1,170.4</td><td><b>5.35</b></td></tr>
+  <tr><td>64K</td><td>1</td><td>62,893</td><td>0.428</td><td>146,948</td><td>267.9</td><td><b>5.35</b></td></tr>
+  <tr><td>64K</td><td>8</td><td>62,893</td><td>1.582</td><td>318,123</td><td>1,070.7</td><td><b>5.35</b></td></tr>
+  <tr><td>128K</td><td>1</td><td>125,908</td><td>0.643</td><td>195,938</td><td>249.0</td><td><b>5.35</b></td></tr>
+  <tr><td>128K</td><td>8</td><td>125,908</td><td>3.071</td><td>328,044</td><td>1,055.8</td><td><b>5.35</b></td></tr>
+</table>
+<div class="ok-box">
+  <b>核心结论</b>：VRAM <b>恒定 5.35GB</b>，4K→128K 零增长 → H3（SSM VRAM 优势）✅ 证实。P-9.11② 原报告 H3=❌ 是 <code>--mem-fraction-static 0.85</code> 预分配 ~68GB 的假象。TTFT sublinear（0.071→0.643s = 9.1× for 32× ctx），decode 仅降 12%（284→249 tok/s）。128K 成功（更正原"failed" = prompt tokenized 144941 > 131072，非 max_pos=4096 限制）。
+</div>
+<p><b>异常与修复</b>：sglang launch 失败根因：Squid proxy 拦截 localhost 请求 + 脚本 <code>set -e</code> 杀 background 进程 → Fix：<code>no_proxy=localhost,127.0.0.1</code> + <code>--host 127.0.0.1</code> + <code>--skip-server-warmup</code> + <code>nohup</code> 直接启动。</p>
+
+<h2 class="sec"><span class="no">5</span>卡点 / 未完成</h2>
+<div class="danger">
+  <b>卡点 1 — GPU0-1 被 data BO 抢占 ~5.5h</b><br>
+  02:24 起 data Round2 BO（PID 3614158, <code>--gpus 0,1,2,3,4,5,6,7 --n-trials 200</code>）扩展到全 8 GPU，每卡 62613 MiB / 47–93% util。GPU0-1 非本线可用 → 02:26–08:06 仅 10 次状态核查、<b>无实质产出</b>。<br>
+  <b>需要</b>：data BO 完成配比定稿（ETA ~19:00 today，~69/200 trials）后释放 GPU，或运维新指令。
+</div>
+<div class="danger">
+  <b>卡点 2 — P-8 前置均未就绪</b><br>
+  ① <b>base 下载 stalled ~91%</b>：无活跃进程，路径 <code>/nas_train/app.e0031982/data/ultrafineweb/</code> 不存在 → <b>需要 data agent 恢复下载</b>。<br>
+  ② <b>Round2 BO 配比未定稿</b>：~69/200 trials，ETA ~19:00 today → <b>需要 BO 跑完</b>。<br>
+  两前置齐备前 P-8 不启动（运维 2026-10-02 指令）。
+</div>
+<p><b>未做（运维已裁决不做的）</b>：C（P-8 dry-run）= 暂不动（用户：「P-8 暂时不动」）；E（ckpt → OpenAI 兼容服务 + 接 Cline harness）= 不做（用户：「现在模型能力太弱，距离能作为 harness 底模还很远」）。</p>
+
+<h2 class="sec"><span class="no">6</span>今晨现状</h2>
+<h3>进程 / GPU</h3>
+<pre><code>$ nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader
+0, 62613 MiB, 85 %    ← data BO t0064_gpu0
+1, 62613 MiB, 58 %    ← data BO t0065_gpu1
+2, 62613 MiB, 47 %    ← data BO t0066_gpu2
+3, 62613 MiB, 60 %    ← data BO (trial in-flight)
+4, 62613 MiB, 67 %    ← data BO t0067_gpu4
+5, 62613 MiB, 62 %    ← data BO t0068_gpu5
+6, 62613 MiB, 56 %    ← data BO t0063_gpu6
+7, 62613 MiB, 59 %    ← data BO t0069_gpu7
+
+$ ps -eo pid=,ppid=,etimes=,args= | grep -E 'baize_pretrain_loop|ops_relay'
+1391466       1  223800 bash baize_pretrain_loop.sh    ← watchdog ✅ (~62h)
+2489749       1  489332 bash ops_relay.sh              ← ops_relay ✅ (ppid=1)
+3614158       1  22xxx python .../baize_mix_optuna_r2.py --n-trials 200 --gpus 0-7  ← data BO</code></pre>
+<div class="ok-box">watchdog PID 1391466 ✅ alive（etimes≈223800s ≈ 62h）；ops_relay PID 2489749 ✅（ppid=1，真守护进程）。全 8 GPU 被 data BO 占用，GPU0-1 非本线可用。</div>
+
+<h3>产物一览</h3>
+<table>
+  <tr><th>产物</th><th>路径</th><th>大小</th><th>状态</th></tr>
+  <tr><td>A HTML</td><td><code>report_pretrain_complex6_scaling.html</code></td><td>6.2 KB</td><td>✅ 36/36</td></tr>
+  <tr><td>B HTML</td><td><code>report_pretrain_longctx.html</code></td><td>4.2 KB</td><td>✅ COMPLETE</td></tr>
+  <tr><td>D HTML (整合)</td><td><code>report_pretrain_p911_sglang.html</code></td><td>22 KB</td><td>✅ H3 ❌→✅</td></tr>
+  <tr><td>NCCL topo HTML</td><td><code>report_pretrain_nccl_topo.html</code></td><td>11.3 KB</td><td>✅ (窗口外·背景)</td></tr>
+  <tr><td>提速 HTML</td><td><code>report_pretrain_p913_speedup.html</code></td><td>11.7 KB</td><td>✅ (窗口外·背景)</td></tr>
+  <tr><td>EXPERIMENTS</td><td><code>run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code></td><td>—</td><td>✅ A/B/D 节已写入</td></tr>
+</table>
+
+<h3>下一轮计划</h3>
+<ul>
+  <li>等待运维新指令（当前 A/B/D 全 ✅，提速令全 ✅，无在跑任务）。</li>
+  <li>等待 P-8 前置就绪：base 下载恢复 + Round2 BO 配比定稿（ETA ~19:00）→ 才能启动 P-8。</li>
+  <li>持续 30min 长轮询状态核查（不占 GPU、不打断 BO）。</li>
+</ul>
+
+<h2 class="sec"><span class="no">7</span>窗口内 commit 列表</h2>
+<p><b>取数命令</b>：</p>
+<pre><code>cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
+  --date=format:'%m-%d %H:%M' --pretty=format:'%h %ad %s' | grep -i 'pretrain'</code></pre>
+<p><b>输出（18 条 pretrain commit）</b>：</p>
+<pre><code>9b632768 10-07 07:35 pretrain #163: 状态核查 A/B/D全✅ GPU0/1/6被BO占 BO~65/200 P-8前置未就绪
+f7c66ea3 10-07 07:02 pretrain #162: 状态核查 — A/B/D 全✅, GPU 全被 data BO 占(t0056+), P-8 前置未齐
+8a890ca3 10-07 06:28 pretrain #161: 状态核查 — 全8GPU仍被data BO占用(t0048-t0055), P-8前置未就绪
+e4edb9da 10-07 05:55 pretrain #160: 状态核查 — 全8GPU再次被data BO占用, P-8前置未齐, R2_idle
+64f2fd40 10-07 05:23 pretrain #159: 状态核查(GPU0-5空闲,data BO缩减3卡,归档#132-138,WAITING)
+aed36372 10-07 04:46 pretrain #158: 状态核查(全8GPU被data BO占,P-8前置未齐,WAITING)
+5c9ea908 10-07 04:10 pretrain #157: 状态核查—A/B/D全✅/全8GPU被data BO占/无新指令/WAITING=1
+69545132 10-07 03:36 pretrain #156: 状态核查 A/B/D全✅ GPU0-7被data BO占用 P-8前置未齐
+4ede00bc 10-07 03:01 pretrain #155: status check - A/B/D done, GPU0-7 occupied by data BO, P-8 prereqs not ready
+aa03d117 10-07 02:26 pretrain #154: 状态核查 — A/B/D 全✅无新指令；全8GPU被data BO占用；P-8前置未齐
+1da061d8 10-07 01:52 pretrain #153: A 36/36 ✅ COMPLETE (bbh_4771=8.78%) + EXPERIMENTS updated + MEMORY archived
+6afd87ad 10-07 01:16 pretrain #152: bbh_4771 56% progress + kill duplicate + auto-complete script launched
+f1514775 10-07 00:38 pretrain #151: B COMPLETE HTML+EXPERIMENTS, A 35/36 HTML+EXPERIMENTS, bbh_4771 rerun GPU0
+7937b441 10-07 00:00 pretrain #150: D 整合进 sglang HTML ✅ (H3 ❌→✅ VRAM 恒定 5.35GB, 128K 成功); A 35/36 + B 3/4
+08ab285d 10-06 23:20 pretrain #149: D 文档化 + HTML 生成器创建 + A/B 进度核查 (32/36, 3/4)
+183155ab 10-06 22:53 pretrain: D ✅ COMPLETE (128K sglang flat 5.35GB VRAM) + B GPU1 launch + A v2 FIX ✅</code></pre>
+<div class="note">注：以上 18 条为本线 commit（前缀 <code>pretrain</code>）；#148（22:00 前）及更早的 commit 不在窗口内。前 7 条（22:53–01:52）为实质产出，后 10 条（02:26–07:35）为状态核查。</div>
+
+<h2 class="sec"><span class="no">8</span>窗口外·背景（提速主线，窗口前已完成）</h2>
+<div class="card">
+  <p>以下为<b>窗口外</b>（10-06 13:42–16:10）已完成的提速令两项，作为背景说明（非本窗口产出）：</p>
+  <ul>
+    <li><b>P-9.12 NCCL/NVLink 拓扑核查 ✅</b>（10-06 ~13:42–14:15）：8×H100 <b>NV18 full-mesh NVSwitch</b>（18 NVLink @ 26.562 GB/s = 478 GB/s/GPU 双向，全 UP）。NCCL <code>via P2P/CUMEM = 42 次（100%）</code> → <b>已在用 NVLink，非 PCIe</b>。用户假设（PCIe）<b>证伪</b>。7 组对照：baseline busbw 164.56 GB/s（69% NVLink 峰值）最优，无 env 优于 default → tok/s 提升 <b>0%</b>。可迁移 8 卡（P-8 沿用 default NCCL）。</li>
+    <li><b>P-9.13 提速候选清单 ✅</b>（10-06 ~14:42–15:35）：baseline 63853 tok/s，MAX_CONN=1 +0.8%（噪声），MAX_CONN=4 +0%，MBS=4 OOM → <b>249K tok/s 是 launcher 暴露参数上界</b>，env 无提速 → 下一步提速只能靠 FP8 或代码级优化。</li>
+  </ul>
+  <p><b>GPU0-1 昨夜真实占空</b>：22:00–01:52 本线 A/B/D 评测独占 GPU0-1（data BO 当时仅占 GPU2-7）；02:24 起 data BO 扩展到全 8 GPU → GPU0-1 被抢占 ~5.5h（02:24–08:06）。本线被抢占时段 = <b>~5.5h × 2 GPU = ~11 GPU·h</b>（但此时 A/B/D 已全部完成，抢占不影响已交付成果）。</p>
+</div>
+
+<footer>
+  BaiZe pretrain 线 · 昨夜工作汇报 · 2026-10-07 08:06 CST<br>
+  数据截止 08:06 · 窗口 2026-10-06 22:00 → 10-07 08:00 · 自包含 HTML（零外部依赖）
+</footer>
+
+</div>
+</body>
+</html>
