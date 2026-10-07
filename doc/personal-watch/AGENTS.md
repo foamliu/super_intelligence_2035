@@ -10,8 +10,8 @@
 
 | Agent | loop 脚本 | 任务书 | 状态文件 | 日志目录 | 跑什么 | 状态 |
 |:---|:---|:---|:---|:---|:---|:---|
-| **news** 🆕 | `run/watch_news_loop.sh` | `run/WATCH_NEWS_TASK.md` + **P0 规格 `run/NEWS_PRICE_SIGNAL_SPEC.md`** | `run/MEMORY_NEWS.md` | `run/daily-memories-news/` | ⭐ **P0（2026-10-07 起）：新闻信号 → 资产价格** —— 十年多资产价格数据（≥20 标的 / 6 类 / 2016–2026）+ **滞后相关/预测力研究（先预注册）** → `run/news/signal/`（`PREREG.md` `lag_corr.csv` `LAG_CORR.md` `FINDINGS.md`）+ **每日两报**（**06:00 生成早报 / 18:00 优化晚报**）。<br>（P2 顺手，不追量）按关注清单常态化采集 AI 新闻 → `run/news/<date>.md` + `SEEN.md` | 🔄 运行中（P0 第 11 批刚派 R1）· ⏰ **定时唤醒：每天 2 次 06:00 / 18:00** |
-| **research** 🆕 | `run/watch_research_loop.sh` | `run/WATCH_RESEARCH_TASK.md` | `run/MEMORY_RESEARCH.md` | `run/daily-memories-research/` | **① 借鉴**：与 BaiZe/ZhuLong 相关的前沿研究 → `TOP_K.*` + `TAKEAWAYS.md`；**② 科普**：《两分钟论文》视频 → `video/SHORTLIST.md` + `video/scripts/*.md`（+ 后续成片） | ✅ 运行中（61 篇；TOP-K/视频线刚派）· ⏰ **定时唤醒：每天 2 次 06:00 / 18:00** |
+| **news** 🆕 | `run/watch_news_loop.sh` | `run/WATCH_NEWS_TASK.md` + **P0 规格 `run/NEWS_PRICE_SIGNAL_SPEC.md`** | `run/MEMORY_NEWS.md` | `run/daily-memories-news/` | ⭐ **P0（2026-10-07 起）：新闻信号 → 资产价格** —— 十年多资产价格数据（**2026-10-07 晚用户修正：个股 ≥20 · 汇率 10 条 vs RMB · 大宗 7；无指数 / 无海外 / 无债券**）+ **滞后相关/预测力研究（先预注册）** → `run/news/signal/`（`PREREG.md` `lag_corr.csv` `LAG_CORR.md` `FINDINGS.md`）+ **每日两报**（**06:00 生成早报 / 18:00 优化晚报**）。<br>（P2 顺手，不追量）按关注清单常态化采集 AI 新闻 → `run/news/<date>.md` + `SEEN.md` | 🔄 运行中（P0 第 11 批刚派 R1）· ⏰ **定时唤醒：每天 2 次 06:00 / 18:00** |
+| **research** 🆕 | `run/watch_research_loop.sh` | `run/WATCH_RESEARCH_TASK.md` | `run/MEMORY_RESEARCH.md` | `run/daily-memories-research/` | ⭐ **P0（2026-10-07 起）：每天 5 篇推荐论文（早 3 / 晚 2）→ 日报 HTML** —— `run/research/daily/<date>.html`（**自包含**；**06:00 生成 3 篇 / 18:00 优化补齐 2 篇 + 晚报变更说明**；顺手维护 `daily/index.html`）。<br>（P1）**① 借鉴**：与 BaiZe/ZhuLong 相关的前沿研究 → `TOP_K.*` + `TAKEAWAYS.md`；**② 科普**：《两分钟论文》视频 → `video/SHORTLIST.md` + `video/scripts/*.md`（+ 后续成片） | ✅ 运行中（61 篇；**第 4 批「5 篇/天 · HTML」刚派**）· ⏰ **定时唤醒：每天 2 次 06:00 / 18:00** |
 
 > 🚫 **用户已定（2026-10-03）：暂不新增智能体。** 新职能**一律并入既有线**。
 > 例：原 **archive（历史回溯）线已并入 news**（职能 = `news/archive/` + `news/analysis/`），脚手架已删除。
@@ -80,6 +80,8 @@
 ## 5. 📉 记忆体量维护
 
 > **为什么**：loop 脚本对 `MEMORY_*.md` 只做 `grep '^WAITING:'`（近零成本），但 **cline agent 每次唤醒会把整个 `MEMORY_*.md` 读进上下文** → 文件越大，**每次唤醒烧的 token 越多**，且**无上限增长**。
+
+> ⏸ **2026-10-07 用户令「旧代存档暂停」**：**不再追溯搬迁「旧代」材料**（旧批次 / 旧轮次 / 已作废块**一律保持现状**）；**唯一保留** = 超限时的**最小滚动**（任务书 **>40KB** / `MEMORY_*.md` **>32KB** ⇒ 只搬刚超出的最少内容）。`news/archive/` 十年语料**回溯已停**（**11 片保留 —— 它是第 11 批的输入，🚫 不许删**）。
 
 **规程**：
 
