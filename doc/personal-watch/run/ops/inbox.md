@@ -1,6 +1,7 @@
 # OPS INBOX — 运维下发命令（supervisor 编辑，中继只读执行）
 
 <!-- RUN_ID: 11 -->
+<!-- RUN_ID: 12 -->
 
 > **用法**：在下面**新增一段** `## RUN_ID N`（N 递增）+ **一个 ```bash 块** → `git push`。
 > 中继（`ops_relay.sh`）轮询发现 **RUN_ID 变大** → 执行 → 结果 append 到 `ops/outbox.md` → push。
@@ -18,6 +19,49 @@
 > ✅ **实际结果已核验通过**：两条 loop 均在 **08:08:0x** 以新节律启动（`watch_news` pid=1156927 / `watch_research` pid=1157046），日志首行 = `[loop] ⏰ 定时模式已启用：唤醒时窗 = 6,18`，次行 = `⏰ 时窗参考：… 下一个时窗 = 2026-10-07 18:00:00 CST`；news 线已打印 `⏰ 定时模式：下次唤醒 = 2026-10-07 18:00:00 CST（588min 后）` 并写入 HB，research 线仍在首轮内。<br>
 > 🚫 **本块不宜再跑**：新节律下「重启 = 立刻多烧一轮 cline」（两线各一轮 ≈ 用户 token），**目标已达成，重复执行纯浪费**。⇒ `.last_run_id` 已同步置为 **11**（中继不会再取它）。<br>
 > ℹ️ **当时的通道故障**：中继 `pid=353526` 自 2026-10-06 18:06 起**卡死在命令替换管道上**（`fd 3 -> pipe:[…]` 只读端 + `wchan=pipe_read` + 无子进程 ⇒ 写端被脱离进程组的后台进程长期持有），故本块**未由中继执行**；已按「SSH 直连（用户授权）+ 中继加固（文件捕获 + stdin `/dev/null` + 失败打印原因 + 心跳）」两条腿处理。
+
+## RUN_ID 12 — 🧪 **加固版中继「端到端 + 冻死回归」自检**（只读诊断 + 1 个无害后台守护做回归探针）
+
+**背景（supervisor 2026-10-07 08:2x）**：中继 `pid=353526` 自 2026-10-06 18:06 起**卡死在命令替换管道上**（`/proc/<pid>/fd/3 -> pipe:[…]` 只读端 + `wchan=pipe_read` + **无子进程** + `fd 255 -> ops_relay.sh (deleted)`）；根因 = 命令块里 `setsid … &` 起的守护**继承了 `out="$( … )"` 的管道写端且永不关闭** ⇒ 父 bash 永久等 EOF ⇒ RUN_ID 11 **永不执行**。
+已加固（commit `c8fcdb3c`）：① `run_once` 改**落盘捕获 + stdin `/dev/null`**；② git 失败**打印真实原因**；③ 单实例锁判活（`kill -0` + 核对 cmdline）+ `RELAY_FORCE=1`；④ 启动行带 **HEAD 版本** + **每 ~10min 一行 `💓` 心跳**。
+
+**本块要判定的**：加固版在生产上「**能被正常执行 + 收尾 + 写 outbox + push**」，且**同类守护不再冻死它**。
+
+> 🔬 **回归探针**：本块会**故意**`setsid sleep 150 &`（**不重定向** ⇒ 继承块输出 fd）—— 这正是当初冻死中继的形状。
+> **通过判据**：本块结果**正常出现在 `outbox.md`**（= 没冻死）；若日志停在 `RUN_ID=12` 前后 **>90s 无输出** ⇒ 加固无效，按 `ops/README.md` §4.5 处置（`cp` 留档 → `kill -9` → 重启）。
+> 🚫 本块**不 kill / 不重启任何进程**（后台那个 `sleep 150` 会自己退出；loop 两线也不动）。
+
+```bash
+set -u
+echo "=== RUN_ID 12 · 加固版中继 端到端 + 冻死回归 自检（$(date '+%F %T')）==="
+hostname; date '+%F %T %Z'; uptime | cut -c1-70
+echo
+echo "=== [1] 本行被打印 = 加固版 run_once「落盘捕获」在生产可用 ==="
+RP="$(cat /tmp/watch_ops_relay.pid 2>/dev/null || echo '')"
+echo "  relay pid=$RP  etime=$(ps -o etime= -p "$RP" 2>/dev/null | tr -d ' ')"
+echo "  wchan=$(cat /proc/$RP/wchan 2>/dev/null)   （应 do_wait / hrtimer_nanosleep；若 pipe_read = 已冻死）"
+echo "  日志尾 6 行："; tail -6 /tmp/watch_ops_relay.log 2>/dev/null | cut -c1-200
+echo "  日志 mtime=$(stat -c %y /tmp/watch_ops_relay.log 2>/dev/null | cut -c1-19)（≤10min 前 = 心跳在跑）"
+echo
+echo "=== [2] 🔬 冻死回归探针（不重定向的后台守护；旧版正因此冻死 14h）==="
+setsid sleep 150 &
+echo "  已起后端守护 pid=$!（150s 自行退出）；**本块能正常收尾并写入 outbox = 回归通过**"
+echo
+echo "=== [3] 两条 loop 终态（节律 = 每天 2 次 06:00/18:00）==="
+ps -o pid,lstart,cmd -p 1156927,1157046 2>/dev/null | cut -c1-100
+for n in news research; do
+  echo "  [$n] $(tail -1 /tmp/watch_${n}_loop.log 2>/dev/null | cut -c1-132)"
+  hb="$(cat /tmp/watch_${n}_loop.hb 2>/dev/null || echo '')"
+  echo "  [$n] HB=$(date -d "@$hb" '+%F %T' 2>/dev/null || echo '无')  日志行数=$(wc -l < /tmp/watch_${n}_loop.log 2>/dev/null)"
+done
+echo "  personal-watch 的 cline 进程数（期望 0 = 两线都在睡）：$(pgrep -af cline 2>/dev/null | grep -c personal-watch)"
+echo
+echo "=== [4] 共享工作副本健康三连（应 0 / 0 / 0 0）==="
+cd ~/super_intelligence_2035 || exit 1
+echo "  status=$(git status --porcelain | wc -l)  stash=$(git stash list | wc -l)  origin...HEAD=$(git --no-pager rev-list --left-right --count origin/main...HEAD | tr '\t' ' ')"
+echo "  HEAD=$(git rev-parse --short HEAD)  $(git --no-pager log -1 --format=%s | cut -c1-58)"
+echo "=== DONE ==="
+```
 
 ## RUN_ID 11 — ⛔ **（已降级）把 news / research 两条 loop 切成「每天 2 次 · 06:00 / 18:00」并重启生效**
 
