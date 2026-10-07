@@ -12491,5 +12491,71 @@
       }
     },
     "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-12481",
+    "repo": "sympy/sympy",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 1097.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_sympy__sympy-12481.json",
+      "stdout_tail": "d=sympy__sympy-12481\n[run_single] base_commit=c807dfe7569692cad24f02a08477b70c1679a4dd\n[run_single] ps_len=407\n[run_single] git reset --hard c807dfe7569692cad24f02a08477b70c1679a4dd\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=1097.1s ==\n[run_single] model_patch: 10384 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_sympy__sympy-12481.json\n[run_single] cleanup: git reset --hard c807dfe7569692cad24f02a08477b70c1679a4dd\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 7,
+        "p2p_total": 7
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-13031",
+    "repo": "sympy/sympy",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 925.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_sympy__sympy-13031.json",
+      "stdout_tail": "_id=sympy__sympy-13031\n[run_single] base_commit=2dfa7457f20ee187fbb09b5b6a1631da4458388c\n[run_single] ps_len=717\n[run_single] git reset --hard 2dfa7457f20ee187fbb09b5b6a1631da4458388c\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=924.8s ==\n[run_single] model_patch: 1386 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_sympy__sympy-13031.json\n[run_single] cleanup: git reset --hard 2dfa7457f20ee187fbb09b5b6a1631da4458388c\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 9,
+        "p2p_total": 9
+      }
+    },
+    "classification": "resolved"
   }
 ]
