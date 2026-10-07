@@ -132,7 +132,8 @@ def parse_sina_fut(body: bytes):
     """新浪国内期货 jsonp → [(date, close)]。"""
     txt = body.decode("utf-8", "replace")
     a, b = txt.find("=("), txt.rfind(")")
-    arr = json.loads(txt[a + 1:b])
+    # body = "/*<script>…*/ var _X=([{...}])" ⇒ '[' 位于 a+2（修复 2026-10-07 R1）
+    arr = json.loads(txt[a + 2:b])
     return [(r["d"], float(r["c"])) for r in arr if r.get("c") not in (None, "")]
 
 
@@ -258,16 +259,20 @@ def main() -> int:
     table, ok, fail = [], 0, 0
     for kind, code, name, key in tasks:
         try:
+            # ⚠️ 符号口径（修复 bug 2026-10-07 R1）：
+            #   stock/fut 的第 3 字段 = 展示分组（非符号）⇒ 取符号用 code；
+            #   fx 的第 3 字段 = 源符号（cnyXXX）⇒ 取符号用 key。
+            sym = key if kind == "fx" else code
             if kind == "stock":
-                rows, metas = fetch_stock(key, args.since, args.until)
+                rows, metas = fetch_stock(sym, args.since, args.until)
                 source = "tencent.ifzq.fqkline(qfq,按年分页)"
                 qd, deriv = "CNY/股", ""
             elif kind == "fx":
-                rows, metas = fetch_fx(key, args.since, args.until)
+                rows, metas = fetch_fx(sym, args.since, args.until)
                 source = "sina.NewForexService.getDayKLine"
                 qd, deriv = "1外币=X人民币", f"1/{key}"
             else:
-                rows, metas = fetch_fut(key, args.since, args.until)
+                rows, metas = fetch_fut(sym, args.since, args.until)
                 source = "sina.InnerFuturesNewService.getDailyKLine"
                 qd, deriv = "元/吨(或合约口径)", ""
             rows = dedup_sort(rows)
