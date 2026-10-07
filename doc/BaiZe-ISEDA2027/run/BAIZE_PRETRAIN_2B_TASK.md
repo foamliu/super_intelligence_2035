@@ -7,6 +7,30 @@
 
 > 📦 **2026-10-06 已归档**：「B1 ctx 扩到 1M」+「hybrid 优势论证」两个运维块均已完成，原文见 `ARCHIVE_OPERATOR_PRETRAIN.md`。结论：PPL 1M=55.42 无退化，bottleneck=(c) attention O(n²) ≥512K，目标 ctx=32K–128K，advantage report 已交付。
 
+### 🆕 运维指令 · 2026-10-07③（**hybrid ctx 继续扩 2M/4M/8M/16M** ＋ **「显存为何恒定」归因诊断**）· **用户直令** · 高优先
+
+> **用户令原文（2026-10-07 10:30）**：「安排 pretrain 在 hybrid 这边**继续提升 ctx 到 2m、4m、8m、16m**」＋ 三个追问题（见 **③**）。
+> **⚠️ 资源现状（运维核实；与你原以为的不同 —— 先读这条）**：`.12` GPU1–7 **你已于 09:44 提前归还**；**vision 已于 09:52 在 `GPU12_ALLOC.md` 申请并占用 8 张卡**（② mask-ratio 消融，PID 1752298，**ETA ~14:30**）⇒ **`.12` 现无空卡**；`.29` 8 张被 data Round2 BO 占（62.6GB/卡，至 ~19:00）。
+> ⇒ **第 0 步 = 找卡**（按 `GPU12_ALLOC.md` 铁律：**vision 训练臂 > pretrain 推理评测**）：① 看 `.12` vision 消融**是否出现空窗/单卡余量**（其 16.4GB/卡，但**已预分配**；🚫 **不许 kill、不许强占**）；② **确无卡 ⇒ 如实记「无可用 GPU，未执行」**，脚本备好（复用 `p911e_matrix_launch.sh` 只改 ctx 档），**一旦有 1 张空卡立即补跑**；③ 🚫 不抢 data BO / vision。
+
+**① 测量（用户令）**：hybrid 单独扩 **ctx ∈ {2M, 4M, 8M, 16M}**（`2097152 / 4194304 / 8388608 / 16777216`），bs=1、`gen_len=64`、**tokenizer 精确计数**；沿用 P-9.11-E 的 sglang flag，并**逐档同时记 §③ 的诊断量**。
+- 逐格采：`HTTP · TTFT(s) · prefill(s) · prefill tok/s · decode tok/s · e2e · 峰值显存(nvidia-smi) · **服务端 max_total_num_tokens / KV pool 字节数** · host RSS · OOM/超时原文`。
+- **时间盒**：能做几张算几张（优先 **2M → 4M → 8M → 16M**）；**未做的如实标「未测」**，🚫 不许外推冒充实测。
+
+**② 交付**：扩 `run/p911e_longctx_cost_results.json` + 刷新 `report_pretrain_longctx_infer_cost.html`（加 2M–16M 档）+ `EXPERIMENTS` 增节。
+
+**③ ⭐ 诊断课题（用户三问；**必须给证据/原始日志，不许只给结论**）**
+> 用户问：「VRAM 居然**不随 ctx 增加**（恒 ~25GB），无论 O(n)/O(n²) 这都不正常吧？」「在这么长的上下文里 hybrid 居然相对 dense **没有明显优势**，这是怎么回事？」「现有 **sglang 参数是否用了虚拟内存之类的方案**，才让 hybrid 速度反而低于 dense？」
+1. **V1 读池子**：贴每格 sglang **启动日志**的 `max_total_num_tokens` / `max_running_requests` / `available_gpu_mem` ⇒ 验证 **`--mem-fraction-static 0.3` 在启动时把「权重 + KV pool + overhead」预分配 ≈ 80GB×0.3 ≈ 24GB，且 pool 被尽量撑满** ⇒ **nvidia-smi 的 ~26GB 是「预分配读数」，与 ctx 无关**（也是 dense 在 prompt 504K > pool **455K tokens** 时被拒的原因）。
+2. **V2 mem-fraction 扫描**：同模型同 ctx 跑 **mem-fraction ∈ {0.3, 0.6, 0.85}** ⇒ 看峰值**是否随之变**；并**对比 P-9.11（0.85 口径）的 hybrid 128K×bs1=13GB vs dense=61GB**（那组才显真实差异）⇒ 判定「恒定」是**口径假象**还是真 O(1)。
+3. **V3 排除「虚拟内存/paging」**：写明 sglang 的 **PagedAttention = 显存内分页**（block 管理 KV），**不是把 KV 换出到 host/虚拟内存**；**取 host RSS × ctx 曲线**（不涨 ⇒ 非 host 侧换页）；若发现任何 offload/swap 开关被开 ⇒ 贴配置原文。
+4. **V4 拆 hybrid「没优势」**：① **4 层 attention 的时间占比**（**B1 已测 ≥512K 时 attention 占 prefill ~77%** ⇒ **hybrid 退化为准 O(n²)**）；② **`--mamba-ssm-dtype float32` 的代价** —— 跑一次 **bf16 SSM** 对照，量 prefill/decode 差多少；③ 结论要分清：hybrid 的优势应在 **容量（能服务到 1M+）/ 显存**；**速度**上 dense 的 flashinfer attention 在中长 ctx 更快是**预期行为**。
+5. 报告新增一节 **「为什么 VRAM 恒定 ＋ hybrid 为何未显速度优势」**，**每条都给可复现命令/日志**。
+
+**④ 铁律**：🚫 不 kill 别人进程 / 不强占卡；不改 P-5b recipe、不回训、不存 ckpt；🚫 绝不 kill watchdog loop；如实记 OOM/未测。
+> 📦 **体积提醒**：本块加入后 `BAIZE_PRETRAIN_2B_TASK.md` 约 **≈33KB（>32KB）** ⇒ **本轮收尾前先把已闭合旧块归档到 ≤32KB 再提交**（确切字节以你自己 `wc -c` 为准；未到 40KB 红线）。
+
+
 ### 🆕 运维指令 · 2026-10-07②（📐 **【长上下文推理成本矩阵】sglang 下 BaiZe(Mamba2-hybrid 2.220B) ⚔ MiniCPM5-2B(dense 2.512B) @ ctx {128K, 256K, 512K, 1M}**）· **用户直令** · 高优先（**不抢占 data BO**）
 
 > **用户令原文（2026-10-07）**：「在**更长的上下文：128k / 256k / 512k / 1m**，**和 sglang 框架下**对比 **BaiZe（Mamba2-Hybrid-2B）** 和 **Dense（MiniCPM5-2B）** 架构的**推理成本**（**包括但不限于：吞吐率、prefill/decode 速度、显存占用等**）」。
