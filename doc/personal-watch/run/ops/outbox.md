@@ -1110,3 +1110,76 @@ doc$
 /tmp/tmp.7ucm3jzPjc: line 27: EOS: command not found
 === ALL DONE ===
 ```
+
+---
+
+## RUN_ID 12 · 2026-10-07 08:23:20 · host=`VM-0-6-ubuntu` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 12 · 加固版中继 端到端 + 冻死回归 自检（$(date '+%F %T')）==="
+hostname; date '+%F %T %Z'; uptime | cut -c1-70
+echo
+echo "=== [1] 本行被打印 = 加固版 run_once「落盘捕获」在生产可用 ==="
+RP="$(cat /tmp/watch_ops_relay.pid 2>/dev/null || echo '')"
+echo "  relay pid=$RP  etime=$(ps -o etime= -p "$RP" 2>/dev/null | tr -d ' ')"
+echo "  wchan=$(cat /proc/$RP/wchan 2>/dev/null)   （应 do_wait / hrtimer_nanosleep；若 pipe_read = 已冻死）"
+echo "  日志尾 6 行："; tail -6 /tmp/watch_ops_relay.log 2>/dev/null | cut -c1-200
+echo "  日志 mtime=$(stat -c %y /tmp/watch_ops_relay.log 2>/dev/null | cut -c1-19)（≤10min 前 = 心跳在跑）"
+echo
+echo "=== [2] 🔬 冻死回归探针（不重定向的后台守护；旧版正因此冻死 14h）==="
+setsid sleep 150 &
+echo "  已起后端守护 pid=$!（150s 自行退出）；**本块能正常收尾并写入 outbox = 回归通过**"
+echo
+echo "=== [3] 两条 loop 终态（节律 = 每天 2 次 06:00/18:00）==="
+ps -o pid,lstart,cmd -p 1156927,1157046 2>/dev/null | cut -c1-100
+for n in news research; do
+  echo "  [$n] $(tail -1 /tmp/watch_${n}_loop.log 2>/dev/null | cut -c1-132)"
+  hb="$(cat /tmp/watch_${n}_loop.hb 2>/dev/null || echo '')"
+  echo "  [$n] HB=$(date -d "@$hb" '+%F %T' 2>/dev/null || echo '无')  日志行数=$(wc -l < /tmp/watch_${n}_loop.log 2>/dev/null)"
+done
+echo "  personal-watch 的 cline 进程数（期望 0 = 两线都在睡）：$(pgrep -af cline 2>/dev/null | grep -c personal-watch)"
+echo
+echo "=== [4] 共享工作副本健康三连（应 0 / 0 / 0 0）==="
+cd ~/super_intelligence_2035 || exit 1
+echo "  status=$(git status --porcelain | wc -l)  stash=$(git stash list | wc -l)  origin...HEAD=$(git --no-pager rev-list --left-right --count origin/main...HEAD | tr '\t' ' ')"
+echo "  HEAD=$(git rev-parse --short HEAD)  $(git --no-pager log -1 --format=%s | cut -c1-58)"
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== RUN_ID 12 · 加固版中继 端到端 + 冻死回归 自检（2026-10-07 08:23:20）===
+VM-0-6-ubuntu
+2026-10-07 08:23:20 CST
+ 08:23:20 up 1 day, 23:13,  5 users,  load average: 0.05, 0.06, 0.16
+
+=== [1] 本行被打印 = 加固版 run_once「落盘捕获」在生产可用 ===
+  relay pid=1160036  etime=07:41
+  wchan=do_wait   （应 do_wait / hrtimer_nanosleep；若 pipe_read = 已冻死）
+  日志尾 6 行：
+[relay] 2026-10-07 08:15:39 started. pid=1160036 repo=/home/liuyang/super_intelligence_2035  poll=20s  fetch_every=3x  heartbeat=30x  pidfile=/tmp/watch_ops_relay.pid  HEAD=c8fcdb3c
+[relay] pull --rebase OK (behind=1)
+[relay] pull --rebase OK (behind=1)
+[relay] pull --rebase OK (behind=1)
+  日志 mtime=2026-10-07 08:23:20（≤10min 前 = 心跳在跑）
+
+=== [2] 🔬 冻死回归探针（不重定向的后台守护；旧版正因此冻死 14h）===
+  已起后端守护 pid=1163220（150s 自行退出）；**本块能正常收尾并写入 outbox = 回归通过**
+
+=== [3] 两条 loop 终态（节律 = 每天 2 次 06:00/18:00）===
+    PID                  STARTED CMD
+1156927 Wed Oct  7 08:08:06 2026 bash watch_news_loop.sh
+1157046 Wed Oct  7 08:08:13 2026 bash watch_research_loop.sh
+  [news] [loop] 2026-10-07 08:11:36 ⏰ 定时模式：下次唤醒 = 2026-10-07 18:00:00 CST（588min 后；每天 2 次 · 时窗 6,18）
+  [news] HB=2026-10-07 08:21:36  日志行数=914
+  [research] [loop] 2026-10-07 08:13:38 ⏰ 定时模式：下次唤醒 = 2026-10-07 18:00:00 CST（586min 后；每天 2 次 · 时窗 6,18）
+  [research] HB=2026-10-07 08:18:38  日志行数=820
+  personal-watch 的 cline 进程数（期望 0 = 两线都在睡）：0
+
+=== [4] 共享工作副本健康三连（应 0 / 0 / 0 0）===
+  status=0  stash=0  origin...HEAD=0 0
+  HEAD=ca264791  ops(inbox): RUN_ID 12 = 加固版中继「端到端 + 冻�
+=== DONE ===
+```
