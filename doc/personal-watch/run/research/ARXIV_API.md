@@ -1082,3 +1082,18 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **第 3 批 A/B 复核**：TOP-K（含 `takeaway`/`action` 20 条）+ `TAKEAWAYS.md`（5 条）+ 视频线（`SHORTLIST.md` 17 / `scripts/` 3）**已交付未变**；**无新增 → 不重跑**。
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
 - **下轮预期**：下一次工作日公告（`2026-10-06` 提交批）预计在 **UTC `2026-10-07` 00:00 前后**刷新，届时按 SOP 增量采集。
+
+### 9.80 第七十八轮（UTC 2026-10-07 周三 · 同批去重复核 · **新节律首个唤醒**，距第七十七轮约 17min）：公告批次未刷新 → **0 新增**（**本轮实时取数**）
+
+> ⏰ **节律变更**：本线唤醒节律由「每 30 分钟」改为 **每天 2 次（06:00 / 18:00 本地时区）**；本轮 = 新节律**首个唤醒**（本地 `2026-10-07 06:00` 时窗）。
+
+- **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-07T00:08:47.719659+00:00`，证据 `research/raw/2026-10-07-probe-r78.json`）：
+  - **arXiv API**：`HTTP 200` + `application/atom+xml`，最新样本 `published=2026-10-05T17:59:54Z`（`totalResults=627806`，样本 `2610.06852 / 2610.06851 / 2610.06850`）→ ✅ **可达**（无端点故障）；
+  - **HF Daily Papers**：`Network is unreachable` → ❌ 不可达（**如实记录，不伪造 `hf_daily` 标记**）；
+  - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml` + `items=427 / 451 / 931` → ✅ **工作日已有内容**。
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=daily`，窗口 72h**，`generated=2026-10-07T00:09:41.158189+00:00`）：**15/15 查询 `ok`**（均 `attempts=1`，无重试），**kept 0 / dropped 600**；其中 **470 条 = `already in SEEN`**，其余 **130 条 = `stale > 72h`（自首次提交起）**。证据 `research/raw/2026-10-07-fetch-r78.json`。
+- **结论**：**UTC 为 `2026-10-07`（周三）00:0x**，**紧邻 `2026-10-06` 提交批公告刷新临界点（20:00 ET ≈ UTC 00:00），但本轮尚未刷新**；arXiv 公告批次仍为 **`2026-10-05`**（主源 `published` 仍 `2026-10-05T17:59:54Z`、`totalResults` 仍 `627806`，与第五十四~七十七轮一致 → **批次未刷新**，渐进索引已收尽）→ **0 新增属正常**（**非「无数据」**）；实际日期区间按 R2′ 标注为 **`2026-10-05`（最近公告批次）**。`window_mode=daily`（72h）为第三十轮起的自动口径回落，非人工覆盖。
+- **第 3 批 A/B 复核**：TOP-K（含 `takeaway`/`action` 20 条）+ `TAKEAWAYS.md`（5 条）+ 视频线（`SHORTLIST.md` 17 / `scripts/` 3）**已交付未变**；**无新增 → 不重跑**。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮无代码改动。
+- **下轮预期**：下一次工作日公告（`2026-10-06` 提交批）预计在 **UTC `2026-10-07` 早间**刷新，届时按 SOP 增量采集；**按新节律，下轮唤醒 = 本地 `2026-10-07 18:00`**。
+
