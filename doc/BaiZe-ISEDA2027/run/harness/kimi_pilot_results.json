@@ -9851,5 +9851,269 @@
       }
     },
     "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-11001",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 153.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11001.json",
+      "stdout_tail": "e] base_commit=ef082ebb84f00e38af4e8880d04e8365c2766d34\n[run_single] ps_len=2220\n[run_single] git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=152.9s ==\n[run_single] model_patch: 3445 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11001.json\n[run_single] cleanup: git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 118,
+        "p2p_total": 118
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-11019",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 587.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11019.json",
+      "stdout_tail": "ngle] base_commit=93e892bb645b16ebaf287beb5fe7f3ffe8d10408\n[run_single] ps_len=1801\n[run_single] git reset --hard 93e892bb645b16ebaf287beb5fe7f3ffe8d10408\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=586.8s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11019.json\n[run_single] cleanup: git reset --hard 93e892bb645b16ebaf287beb5fe7f3ffe8d10408\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 16,
+        "p2p_pass": 58,
+        "p2p_total": 58
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-11039",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 114.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11039.json",
+      "stdout_tail": "le] base_commit=d5276398046ce4a102776a1e67dcac2884d80dfe\n[run_single] ps_len=879\n[run_single] git reset --hard d5276398046ce4a102776a1e67dcac2884d80dfe\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=114.5s ==\n[run_single] model_patch: 2172 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11039.json\n[run_single] cleanup: git reset --hard d5276398046ce4a102776a1e67dcac2884d80dfe\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 88,
+        "p2p_total": 88
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-11049",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 162.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11049.json",
+      "stdout_tail": "le] base_commit=17455e924e243e7a55e8a38f45966d8cbb27c273\n[run_single] ps_len=706\n[run_single] git reset --hard 17455e924e243e7a55e8a38f45966d8cbb27c273\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=161.7s ==\n[run_single] model_patch: 1134 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11049.json\n[run_single] cleanup: git reset --hard 17455e924e243e7a55e8a38f45966d8cbb27c273\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 8,
+        "p2p_total": 8
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-11099",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 32.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11099.json",
+      "stdout_tail": "ngle] base_commit=d26b2424437dabeeca94d7900b37d2df4410da0c\n[run_single] ps_len=764\n[run_single] git reset --hard d26b2424437dabeeca94d7900b37d2df4410da0c\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=32.2s ==\n[run_single] model_patch: 899 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11099.json\n[run_single] cleanup: git reset --hard d26b2424437dabeeca94d7900b37d2df4410da0c\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 3,
+        "f2p_total": 3,
+        "p2p_pass": 19,
+        "p2p_total": 19
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-11133",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 187.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11133.json",
+      "stdout_tail": "le] base_commit=879cc3da6249e920b8d54518a0ae06de835d7373\n[run_single] ps_len=895\n[run_single] git reset --hard 879cc3da6249e920b8d54518a0ae06de835d7373\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=187.0s ==\n[run_single] model_patch: 1790 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11133.json\n[run_single] cleanup: git reset --hard 879cc3da6249e920b8d54518a0ae06de835d7373\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 64,
+        "p2p_total": 64
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-11179",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 147.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11179.json",
+      "stdout_tail": "le] base_commit=19fc6376ce67d01ca37a91ef2f55ef769f50513a\n[run_single] ps_len=283\n[run_single] git reset --hard 19fc6376ce67d01ca37a91ef2f55ef769f50513a\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=147.2s ==\n[run_single] model_patch: 1211 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11179.json\n[run_single] cleanup: git reset --hard 19fc6376ce67d01ca37a91ef2f55ef769f50513a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 40,
+        "p2p_total": 40
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-11283",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 90.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11283.json",
+      "stdout_tail": "ingle] base_commit=08a4ee06510ae45562c228eefbdcaac84bd38c7a\n[run_single] ps_len=1193\n[run_single] git reset --hard 08a4ee06510ae45562c228eefbdcaac84bd38c7a\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=90.2s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-11283.json\n[run_single] cleanup: git reset --hard 08a4ee06510ae45562c228eefbdcaac84bd38c7a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 8,
+        "p2p_total": 8
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]
