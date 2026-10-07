@@ -31,6 +31,8 @@ BENCH_PY=$RUN/p911d_sglang_vram_bench.py
 OUTDIR=$RUN/p911e_results
 LOGDIR=${LOGDIR:-/tmp/p911e}
 GEN_LEN=${GEN_LEN:-64}
+BATCHES=${BATCHES:-"1 8"}              # bs 列表（大 ctx 时用 BATCHES="1"）
+MEM_FRACTION=${MEM_FRACTION:-0.3}      # --mem-fraction-static（V2 扫描时改 0.6/0.85）
 STAGGER=${STAGGER:-20}                 # 相邻两格启动间隔（秒）——错峰，避免 7 个 server 同时压 NFS
 MAX_WAIT=${MAX_WAIT:-420}              # 单格 server 就绪最长等待（秒）
 BENCH_TIMEOUT=${BENCH_TIMEOUT:-5400}   # 单格 bench 硬超时（秒）
@@ -60,7 +62,7 @@ DEFAULT_CELLS=(
 
 run_cell() {
     local g="$1" model="$2" ctx="$3"
-    local tag="${model}_ctx${ctx}_gpu${g}"
+    local tag="${model}_ctx${ctx}_gpu${g}_mf${MEM_FRACTION}"
     local port=$((30100 + g))
     local mpath="$HYBRID_HF"
     local extra=(--mamba-ssm-dtype float32)
@@ -81,7 +83,7 @@ run_cell() {
     CUDA_VISIBLE_DEVICES="$g" "$SGLANG_PY" -m sglang.launch_server \
         --model-path "$mpath" --host 127.0.0.1 --port "$port" \
         --context-length "$ctx" --trust-remote-code \
-        --mem-fraction-static 0.3 --attention-backend flashinfer \
+        --mem-fraction-static "$MEM_FRACTION" --attention-backend flashinfer \
         "${extra[@]}" --skip-server-warmup --log-level info \
         > "$srv_log" 2>&1 &
     local srv_pid=$!
@@ -101,12 +103,30 @@ run_cell() {
         kill "$srv_pid" 2>/dev/null || true
         return 1
     fi
-    echo "[$(date +%H:%M:%S)] [gpu$g] server ready → bench（ctx=$ctx, bs 1→8, gen_len=$GEN_LEN）"
+    echo "[$(date +%H:%M:%S)] [gpu$g] server ready → bench（ctx=$ctx, bs {$BATCHES}, gen_len=$GEN_LEN）"
+
+    # ---- V1/V3 诊断：捕获 server 启动日志关键行 + host RSS ----
+    local diag_file="$OUTDIR/p911e_${tag}_diag.txt"
+    {
+        echo "=== server startup log key lines ==="
+        grep -iE 'max_total_num_tokens|max_running_requests|available_gpu_mem|mem_fraction|kv_pool|mem_pool|cache|total_token|num_cpu_blocks|num_gpu_blocks|max_prefill' "$srv_log" 2>/dev/null | head -30
+        echo "=== server PID & host RSS (V3: 验证无 host swap) ==="
+        local rss_pid
+        rss_pid=$(pgrep -f "sglang.launch_server.*--port $port" | head -1)
+        if [ -n "$rss_pid" ]; then
+            echo "server_pid=$rss_pid"
+            cat /proc/$rss_pid/status 2>/dev/null | grep -iE 'VmRSS|VmSize|VmPeak'
+            echo "ps_rss_kb=$(ps -o rss= -p $rss_pid 2>/dev/null | tr -d ' ')"
+        else
+            echo "server_pid=NOT_FOUND"
+        fi
+    } > "$diag_file" 2>&1
+    echo "[$(date +%H:%M:%S)] [gpu$g] diag → $diag_file"
 
     timeout "$BENCH_TIMEOUT" "$SGLANG_PY" "$BENCH_PY" \
         --base-url "http://127.0.0.1:${port}" --model-name default \
         --model-path "$mpath" --gpu-id "$g" --output "$out" \
-        --contexts "$ctx" --batches 1 8 --gen-len "$GEN_LEN" \
+        --contexts "$ctx" --batches $BATCHES --gen-len "$GEN_LEN" \
         > "$bench_log" 2>&1
     local rc=$?
     echo "[$(date +%H:%M:%S)] [gpu$g] $model ctx=$ctx bench rc=$rc → $out"

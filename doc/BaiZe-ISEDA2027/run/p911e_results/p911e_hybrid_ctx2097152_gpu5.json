@@ -1,0 +1,31 @@
+{
+  "experiment": "P-9.11-D",
+  "description": "sglang VRAM benchmark with low mem-fraction (H3 gap fill)",
+  "model_name": "default",
+  "model_path": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/p3_hybrid/hf_iter_5000",
+  "base_url": "http://127.0.0.1:30105",
+  "gpu_id": 5,
+  "gen_len": 64,
+  "contexts": [
+    2097152
+  ],
+  "batches": [
+    1
+  ],
+  "results": [
+    {
+      "model": "default",
+      "ctx": 2097152,
+      "batch": 1,
+      "gen_len": 64,
+      "prompt_tokens_actual": 2016370,
+      "ttft_s": 8.4873,
+      "prefill_tok_s": 237575.3,
+      "decode_tok_s": 145634.1,
+      "e2e_latency_s": 8.4877,
+      "peak_vram_gb": 24.43,
+      "total_completion_tokens": 1,
+      "vram_samples": 39
+    }
+  ]
+}
