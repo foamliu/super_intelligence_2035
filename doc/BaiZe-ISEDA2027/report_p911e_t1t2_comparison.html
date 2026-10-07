@@ -1,57 +1,83 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8">
-<title>P-9.11-E T1/T2: bf16 vs float32 SSM</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P-9.11-E T1/T2 v2: Warmup-Corrected Comparison</title>
 <style>
-body { font-family: -apple-system, sans-serif; max-width: 1200px; margin: 20px auto; padding: 0 20px; background: #f8fafc; color: #1e293b; }
-h1 { color: #1e40af; border-bottom: 3px solid #3b82f6; padding-bottom: 8px; }
-h2 { color: #3730a3; margin-top: 30px; }
-table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 13px; }
-th { background: #1e40af; color: white; padding: 8px 10px; text-align: left; }
-td { padding: 6px 10px; border: 1px solid #cbd5e1; }
-tr:nth-child(even) { background: #f1f5f9; }
-.speedup { color: #059669; font-weight: bold; }
-.invalid { color: #dc2626; }
-.note { font-size: 11px; color: #64748b; }
-.conclusion { background: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin: 16px 0; }
+body{font-family:-apple-system,sans-serif;margin:20px;max-width:1200px;color:#222;line-height:1.6}
+h1{font-size:22px;border-bottom:3px solid #dc2626;padding-bottom:8px}
+h2{font-size:18px;margin-top:28px;border-left:4px solid #2563eb;padding-left:10px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}
+th{background:#f0f4f8;font-weight:600;border:1px solid #ddd;padding:6px 10px;text-align:center}
+td{border:1px solid #ddd;padding:6px 10px;text-align:center}
+tr:nth-child(even){background:#fafbfc}
+.deprecated{background:#fef2f2;border-left:4px solid #dc2626;padding:12px 16px;margin:14px 0;font-size:14px}
+.conclusion{background:#f0fdf4;border-left:4px solid #16a34a;padding:12px 16px;margin:14px 0;font-size:14px}
+.warn{background:#fef9c3;border-left:4px solid #eab308;padding:10px 14px;margin:10px 0;font-size:13px}
+.note{font-size:12px;color:#64748b;margin:8px 0}
+.invalid{color:#dc2626}
+.hero{background:linear-gradient(135deg,#991b1b,#dc2626);color:white;padding:20px 24px;border-radius:8px;margin-bottom:20px}
+.hero h1{border:none;color:white}
+.hero p{margin:6px 0;opacity:.95}
+.tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600}
+.tag-exp{background:#dcfce7;color:#166534}
 </style></head><body>
-<h1>P-9.11-E T1/T2: bf16 vs float32 SSM Comparison</h1>
-<p class="note">Generated: 2026-10-07 22:01 | Protocol: warmup=1, repeats=3, median | --disable-radix-cache --mem-fraction-static=0.3</p>
-
-<h2>T1: Prefill Speedup (bf16 SSM vs float32)</h2>
-<table>
-<tr><th>Model</th><th>Ctx</th><th>f32 TTFT</th><th>bf16 TTFT</th><th>speedup</th>
-<th>f32 prefill</th><th>bf16 prefill</th><th>speedup</th>
-<th>f32 decode</th><th>bf16 decode</th><th>speedup</th><th>gen tok</th></tr>
-<tr><td>hybrid</td><td>128K</td><td>79.1</td><td>3.2</td><td class='speedup'>24.8×</td><td>1,591.0</td><td>39,377.1</td><td class='speedup'>24.7×</td><td>71.5</td><td>311.2</td><td class='speedup'>4.4×</td><td>64</td></tr>
-<tr><td>hybrid</td><td>256K</td><td>161.6</td><td>7.8</td><td class='speedup'>20.8×</td><td>1,560.0</td><td>32,381.3</td><td class='speedup'>20.8×</td><td>71.2</td><td>275.6</td><td class='speedup'>3.9×</td><td>64</td></tr>
-<tr><td>hybrid</td><td>512K</td><td>317.4</td><td>21.3</td><td class='speedup'>14.9×</td><td>1,587.0</td><td>23,634.0</td><td class='speedup'>14.9×</td><td>76.7</td><td>220.2</td><td class='speedup'>2.9×</td><td>64</td></tr>
-<tr><td>hybrid</td><td>1M</td><td>644.3</td><td>64.9</td><td class='speedup'>9.9×</td><td>1,565.0</td><td>15,529.7</td><td class='speedup'>9.9×</td><td>76.2</td><td>159.4</td><td class='speedup'>2.1×</td><td>64</td></tr>
-<tr><td>dense</td><td>128K</td><td>8.4</td><td>9.0</td><td class='speedup'>0.9×</td><td>15,057.0</td><td>14,050.8</td><td class='speedup'>0.9×</td><td>189.8</td><td>192.9</td><td class='speedup'>1.0×</td><td>64</td></tr>
-<tr><td>dense</td><td>256K</td><td>17.5</td><td>33.4</td><td class='speedup'>0.5×</td><td>14,366.0</td><td>7,532.0</td><td class='speedup'>0.5×</td><td>189.0</td><td>144.2</td><td class='speedup'>0.8×</td><td>64</td></tr>
-<tr class="invalid"><td>dense</td><td>512K</td><td>—</td><td>1.5</td><td class='speedup'>—</td><td>—</td><td>329,813.3</td><td class='speedup'>—</td><td>—</td><td>233,959.4</td><td class='speedup'>—</td><td>1</td></tr>
-<tr class="invalid"><td>dense</td><td>1M</td><td>—</td><td>3.4</td><td class='speedup'>—</td><td>—</td><td>300,732.3</td><td class='speedup'>—</td><td>—</td><td>213,186.8</td><td class='speedup'>—</td><td>1</td></tr>
-</table>
-<p class="note">Red rows: gen_tokens≠64 (KV pool exhausted). Dense 512K/1M: pool(~455K) < prompt → 1 token only.</p>
-
-<h2>T2: VRAM (bf16 vs float32)</h2>
-<table>
-<tr><th>Model</th><th>Ctx</th><th>f32 VRAM (GB)</th><th>bf16 VRAM (GB)</th><th>Δ</th></tr>
-<tr><td>hybrid</td><td>128K</td><td>25.9</td><td>26.8</td><td>+0.84</td></tr>
-<tr><td>hybrid</td><td>256K</td><td>26.2</td><td>27.1</td><td>+0.92</td></tr>
-<tr><td>hybrid</td><td>512K</td><td>26.7</td><td>27.8</td><td>+1.06</td></tr>
-<tr><td>hybrid</td><td>1M</td><td>27.7</td><td>29.2</td><td>+1.44</td></tr>
-<tr><td>dense</td><td>128K</td><td>27.3</td><td>27.3</td><td>-0.01</td></tr>
-<tr><td>dense</td><td>256K</td><td>28.5</td><td>28.5</td><td>+0.00</td></tr>
-<tr><td>dense</td><td>512K</td><td>—</td><td>30.2</td><td>—</td></tr>
-<tr><td>dense</td><td>1M</td><td>—</td><td>34.9</td><td>—</td></tr>
-</table>
-
-<h2>Conclusions</h2>
-<div class="conclusion">
-<p><b>T1:</b> bf16 SSM gives 25× prefill speedup for hybrid at 128K (1,591→39K tok/s), ~12× at 1M.
-Dense gets ~2× from general bf16 compute. Hybrid serves 512K/1M with full 64-token gen; dense can't (KV pool exhausted).</p>
-<p><b>T2:</b> Hybrid VRAM flat ~26-27GB across all ctx (SSM state O(1)). Dense grows 27→35GB. bf16 vs f32 VRAM ~identical (±0.5GB).</p>
-<p><b>Key:</b> bf16 SSM makes hybrid <b>faster than dense at 512K+</b> while using less VRAM, with no quality loss.</p>
+<div class="hero">
+<h1>P-9.11-E T1/T2 v2: Warmup-Corrected bf16 vs float32 SSM</h1>
+<p><b>BaiZe Mamba2-Hybrid 2.220B</b> (4/56 attn) vs <b>Dense Llama 2.512B</b> (42/42 attn)</p>
+<p>sglang 0.5.9 | ctx {128K,256K,512K,1M} | bs=1 | gen_len=64 | mem-frac=0.3 | flashinfer | <b>warmup=1, repeats=3 (median)</b></p>
+<p>Generated: 2026-10-07 22:50 | <span class="tag tag-exp">【实测·本项目】</span> 8×H100 @.29, same protocol</p>
 </div>
-<hr><p style="font-size:11px;color:#999;text-align:center">P-9.11-E T1/T2 | BaiZe 2.220B | 2026-10-07</p>
+<div class="deprecated">
+<b>⚠️ CORRECTION:</b> v1 used hardcoded float32 baselines from P-9.11-E (WARMUP=0, REPEATS=1 — no warmup, compilation overhead).
+This made hybrid appear 25× slower. v2 uses <b>same-protocol</b> float32 re-runs (WARMUP=1, REPEATS=3) for clean comparison.
+</div>
+<h2>1. float32 vs bf16 SSM (Hybrid, Same Protocol) <span class="tag tag-exp">【实测·本项目】</span></h2>
+<p class="note">Protocol: warmup=1, repeats=3 (median), --disable-radix-cache, --mem-fraction-static=0.3, flashinfer. Run 2026-10-07 22:40-22:45 on .29 GPU0-3.</p>
+<table><tr><th>ctx</th><th colspan="3">Prefill (tok/s)</th><th colspan="3">Decode (tok/s)</th><th colspan="2">TTFT (s)</th><th colspan="2">VRAM (GB)</th></tr>
+<tr><th></th><th>float32</th><th>bfloat16</th><th>ratio</th><th>float32</th><th>bfloat16</th><th>ratio</th><th>float32</th><th>bfloat16</th><th>float32</th><th>bfloat16</th></tr>
+<tr><td><b>128K</b></td><td>38,941.8</td><td>39,377.1</td><td><span style="color:#059669;font-weight:bold">1.01×</span></td><td>309.3</td><td>311.2</td><td><span style="color:#059669;font-weight:bold">1.01×</span></td><td>3.2</td><td>3.2</td><td>26.5</td><td>26.8</td></tr>
+<tr><td><b>256K</b></td><td>32,375.2</td><td>32,381.3</td><td><span style="color:#059669;font-weight:bold">1.00×</span></td><td>275.4</td><td>275.6</td><td><span style="color:#059669;font-weight:bold">1.00×</span></td><td>7.8</td><td>7.8</td><td>26.8</td><td>27.1</td></tr>
+<tr><td><b>512K</b></td><td>23,514.1</td><td>23,634.0</td><td><span style="color:#059669;font-weight:bold">1.01×</span></td><td>219.5</td><td>220.2</td><td><span style="color:#059669;font-weight:bold">1.00×</span></td><td>21.4</td><td>21.3</td><td>27.2</td><td>27.8</td></tr>
+<tr><td><b>1M</b></td><td>15,529.6</td><td>15,529.7</td><td><span style="color:#059669;font-weight:bold">1.00×</span></td><td>158.8</td><td>159.4</td><td><span style="color:#059669;font-weight:bold">1.00×</span></td><td>64.9</td><td>64.9</td><td>28.0</td><td>29.2</td></tr>
+</table>
+<div class="conclusion"><b>⭐ Finding 1:</b> float32 and bf16 SSM give <b>essentially identical</b> performance (1.00-1.01×). The V4② claim of "40% depression" was a warmup artifact — <b>retracted</b>. bf16's only advantage: 2× more SSM cache slots (382 vs 177 @1M).</div>
+<h2>2. Hybrid vs Dense (Both Proper Warmup, Same Protocol) <span class="tag tag-exp">【实测·本项目】</span></h2>
+<p class="note">Same protocol for both. Dense 512K/1M: KV pool (~455K) < prompt → 1 token only (invalid).</p>
+<table><tr><th>ctx</th><th colspan="3">Prefill (tok/s)</th><th colspan="3">Decode (tok/s)</th><th colspan="2">TTFT (s)</th><th colspan="2">VRAM (GB)</th><th>gen</th></tr>
+<tr><th></th><th>hybrid</th><th>dense</th><th>hyb/den</th><th>hybrid</th><th>dense</th><th>hyb/den</th><th>hybrid</th><th>dense</th><th>hybrid</th><th>dense</th><th></th></tr>
+<tr><td><b>128K</b></td><td>39,377.1</td><td>14,050.8</td><td><span style="color:#059669;font-weight:bold">2.80×</span></td><td>311.2</td><td>192.9</td><td><span style="color:#059669;font-weight:bold">1.61×</span></td><td>3.2</td><td>9.0</td><td>26.8</td><td>27.3</td><td>64</td></tr>
+<tr><td><b>256K</b></td><td>32,381.3</td><td>7,532.0</td><td><span style="color:#059669;font-weight:bold">4.30×</span></td><td>275.6</td><td>144.2</td><td><span style="color:#059669;font-weight:bold">1.91×</span></td><td>7.8</td><td>33.4</td><td>27.1</td><td>28.5</td><td>64</td></tr>
+<tr class="invalid"><td><b>512K</b></td><td>23,634.0</td><td>329,813.3</td><td><span style="color:#dc2626;font-weight:bold">0.07×</span></td><td>220.2</td><td>233,959.4</td><td><span style="color:#dc2626;font-weight:bold">0.00×</span></td><td>21.3</td><td>1.5</td><td>27.8</td><td>30.2</td><td>1</td></tr>
+<tr class="invalid"><td><b>1M</b></td><td>15,529.7</td><td>300,732.3</td><td><span style="color:#dc2626;font-weight:bold">0.05×</span></td><td>159.4</td><td>213,186.8</td><td><span style="color:#dc2626;font-weight:bold">0.00×</span></td><td>64.9</td><td>3.4</td><td>29.2</td><td>34.9</td><td>1</td></tr>
+</table>
+<div class="conclusion"><b>⭐ Finding 2:</b> With proper warmup, <b>hybrid is 2.8× faster at 128K</b> (39,377 vs 14,051) and <b>4.3× at 256K</b> (32,381 vs 7,532). At 512K+ dense cannot serve. The original "dense 3.3× faster" is <b>retracted</b>.</div>
+<h2>3. Original P-9.11-E (⚠️ DEPRECATED — No Warmup)</h2>
+<p class="note">WARMUP=0, REPEATS=1. Single run includes CUDA JIT compilation overhead. <b>Do not use for hybrid-vs-dense comparison.</b></p>
+<table><tr><th>ctx</th><th colspan="3">Prefill (tok/s)</th><th colspan="2">TTFT (s)</th></tr>
+<tr><th></th><th>hybrid (f32)</th><th>dense</th><th>hyb/den</th><th>hybrid</th><th>dense</th></tr>
+<tr><td><b>128K</b></td><td>1,591.0</td><td>5,252.9</td><td>0.30×</td><td>79.1</td><td>24.0</td></tr>
+<tr><td><b>256K</b></td><td>3,093.6</td><td>5,288.6</td><td>0.58×</td><td>81.4</td><td>47.6</td></tr>
+<tr><td><b>512K</b></td><td>5,222.2</td><td>—</td><td>—</td><td>96.5</td><td>—</td></tr>
+<tr><td><b>1M</b></td><td>6,484.3</td><td>—</td><td>—</td><td>155.5</td><td>—</td></tr>
+</table>
+<div class="deprecated"><b>⚠️ DEPRECATED:</b> "dense 3.3× faster" retracted — warmup artifact.</div>
+<h2>4. Warmup Effect (Hybrid float32)</h2>
+<p class="note">Same model, same flags — only WARMUP=0/REPEATS=1 (original) vs WARMUP=1/REPEATS=3 (corrected).</p>
+<table><tr><th>ctx</th><th>orig (no warmup)</th><th>corrected (warmup)</th><th>warmup effect</th><th>orig TTFT</th><th>corrected TTFT</th></tr>
+<tr><td><b>128K</b></td><td>1,591.0</td><td>38,941.8</td><td><span style="color:#dc2626;font-weight:bold">24.5×</span></td><td>79.1</td><td>3.2</td></tr>
+<tr><td><b>256K</b></td><td>3,093.6</td><td>32,375.2</td><td><span style="color:#dc2626;font-weight:bold">10.5×</span></td><td>81.4</td><td>7.8</td></tr>
+<tr><td><b>512K</b></td><td>5,222.2</td><td>23,514.1</td><td><span style="color:#dc2626;font-weight:bold">4.5×</span></td><td>96.5</td><td>21.4</td></tr>
+<tr><td><b>1M</b></td><td>6,484.3</td><td>15,529.6</td><td><span style="color:#dc2626;font-weight:bold">2.4×</span></td><td>155.5</td><td>64.9</td></tr>
+</table>
+<div class="conclusion"><b>⭐ Finding 3:</b> Warmup gives <b>24.5× at 128K</b> (1,591→38,942) and <b>2.4× at 1M</b> (6,484→15,530). SSM JIT compilation is a fixed cost dominating short prompts.</div>
+<h2>5. Corrected Conclusions</h2>
+<div class="conclusion"><ol>
+<li><b>SSM dtype: NO difference</b> (1.00-1.01×) with warmup. "40% depression" retracted. <span class="tag tag-exp">【实测】</span></li>
+<li><b>Hybrid 2.8-4.3× faster than dense</b> at 128K-256K. Dense fails at 512K+. "Dense 3.3× faster" retracted. <span class="tag tag-exp">【实测】</span></li>
+<li><b>Warmup is critical</b> for SSM benchmarking (24× at 128K). All future benchmarks: WARMUP≥1.</li>
+<li><b>bf16 advantage = cache capacity only</b> (382 vs 177 slots), not speed.</li>
+<li><b>Hybrid VRAM flat</b> ~26-29GB (SSM O(1)) vs dense 27→35GB. Real advantage: long-ctx capacity.</li>
+</ol></div>
+<div class="warn"><b>Pre-registered criterion:</b> "若 bf16 下 hybrid 反超 dense → 改写「dense 3.3× faster」" → <b>CONFIRMED & RETRACTED.</b> Hybrid IS faster (2.8-4.3×), regardless of SSM dtype. Original conclusion was warmup artifact.</div>
+<hr style="margin-top:30px;border:none;border-top:1px solid #ddd">
+<p style="font-size:11px;color:#999;text-align:center">P-9.11-E T1/T2 v2 | BaiZe 2.220B | 2026-10-07 | Warmup-corrected</p>
 </body></html>

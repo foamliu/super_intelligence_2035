@@ -787,3 +787,93 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 - 收尾按「收尾铁律」commit + push（前缀 `pretrain 长ctx成本: …`）+ `MEMORY_PRETRAIN_2B.md` 记 1 行指针。
 
 
+
+---
+
+## [ARCHIVED 2026-10-07 #178] 运维指令 ⑤④③（2026-10-07，均已完成）
+
+### 🆕 运维指令 · 2026-10-07⑤（**① bf16 SSM 重跑 128K–1M 矩阵 ② 按 research1 的公平协议重做 BaiZe⚔dense ③ 按 research2 找训练提速 ④ 按 research3 找训练效果提升**）· **用户直令** · 高优先
+
+> **用户令原文（2026-10-07 21:2x）**：「**① 用 bf16 SSM 重跑 128K–1M 矩阵；② 参考自己的分析（`report_pretrain_research1_fair_eval`），用更公平的方式比较 BaiZe 和 dense；③ 看 `report_pretrain_research2_train_speed`，训练速度是否有提升空间；④ 看 `report_pretrain_research3_train_quality`，训练效果有否提升空间。**」
+> 🟢 **资源已就绪**：**`.29` 全 8 GPU 空闲**（你 #176 自己 ssh 核验 8×0 MiB）⇒ **T1/T2 现在就能跑，用 `.29`，不必再抢 `.12`**。
+
+**T1 ⭐ 用 bf16 SSM 重跑 128K–1M 矩阵（修正 P-9.11-E）**
+- 动机是你自己量化的：**`float32` SSM 人为压低 hybrid prefill 40%**（bf16 10820 vs float32 6484 tok/s）。
+- **重跑**：hybrid @ ctx ∈ {**128K, 256K, 512K, 1M**}（时间允许再 2M@0.6/0.85），**`--mamba-ssm-dtype bfloat16`**；**dense 同排对照**（同 attention backend / 同 mem-fraction 口径）。
+- **产出**：修订 `report_pretrain_longctx_infer_cost.html`（**新增「bf16 vs float32」对照表 + 把 float32 口径明确标为「作废/仅对照」**）+ EXPERIMENTS P-9.11-E 节修订。
+- **判据（预注册，不许事后改）**：**若 bf16 下 hybrid 反超 dense ⇒ 必须如实改写原「dense 3.3× faster」结论**（那是口径 artifact）。
+
+**T2 按 research1 的「公平对比协议」重做 BaiZe ⚔ dense**
+- 严格照你自己在 `report_pretrain_research1_fair_eval.html` 里定的协议：① 两模型 **同 attention backend（flashinfer）**；② **显存口径改用「KV/SSM pool tokens + 活跃 KV」**，**不用 nvidia-smi 预分配值**；③ **mem-fraction 固定并报 pool 大小**；④ **显式标注 SSM dtype**；⑤ **tokenizer 精确计数**；⑥ **warmup + median-of-N**，prefill/decode 分离。
+- **产出**：`report_pretrain_longctx_infer_cost_v2.html`（或就地修订），**口径表写清哪些「不可混比」**。
+- **可与 T1 合并执行**（一次起服、两套口径）。
+
+**T3 按 research2 找「训练速度」提升空间**
+- 基于 `report_pretrain_research2_train_speed.html` 出**可执行短名单**（每条：预期增益 / 成本 / 风险 / **可检验判据** / 时间盒 / 优先级），并**挑 1–2 条最稳的先做**（`.29` 免费）。
+- 约束：**P-9.13 已证「env 无提速、249K tok/s 是 launcher 暴露参数上界」** ⇒ 候选应聚焦 **FP8 / 融合 kernel（mamba2+conv、TE）/ recompute / CUDA graph / 数据管线 / TP·DP 拓扑**；**优先「不改 recipe 的运行时/并行/IO 项」**。
+
+**T4 按 research3 找「训练效果」提升空间**
+- 基于 `report_pretrain_research3_train_quality.html` 出短名单（目标 = **8 常识 + 6 复杂 + agent/SWE-Bench**），每条给**判据 + 成本 + 风险 + 优先级**；**先出分析、不必马上烧 GPU**。
+- 重点参考你自己的实测：**A 36/36 里 5/6 贴地板、仅 BBH 有微弱信号** ⇒ 优先 **数据/课程/长上下文/指令与 CoT 数据** 这类**高杠杆**项，而不是继续微调 lr。
+
+**顺序**：**T1+T2（GPU，`.29`，今晚）→ T3/T4 短名单（纯分析，可并行）→ T3 的 1–2 条低风险实验（T1/T2 完成后在 `.29`）**。
+**铁律**：不改 P-5b recipe、不回训、不存 ckpt；🚫 绝不 kill watchdog loop；**数字必须真**（口径变了就明写、不许拿旧口径充新结论）。
+> 📦 体积提醒：本块加入后 `BAIZE_PRETRAIN_2B_TASK.md` ≈35KB（**<40KB 红线**）⇒ 收尾前先归档已闭合旧块。
+
+### 🆕 运维指令 · 2026-10-07④（**🖥️ 无卡窗口：5 份「研究型」HTML 报告** — web search ＋ 内联 SVG／文生图）· **用户直令** · 高优先
+
+> **用户令原文（2026-10-07）**：「**pretrain：既然没有 GPU，但总有 web search 和文生图，可否做一些研究。安排下列每个方向写个 html 报告**」（5 个方向见 ①）。
+> **时序**：本块 = **无卡时段的填充任务（纯 CPU / 联网，不占 GPU）**；**③（2M–16M 实测 ＋ 显存归因诊断）依然有效** —— **一旦有卡，优先插空跑 ③**，再回来做本块。
+> 🔴 **2026-10-07 11:35 用户令（覆盖本节时序）**：**③ 没卡没关系、不用等** —— **④（这 5 份研究）现在就是第 1 优先，立刻开做**；**不得因 ③ 无卡而空转**。③ 继续挂着等卡（vision 消融 ~16:30–17:00 / data BO ~21:56 释放后再补跑）。
+> **工具**：你的 MCP 有 **`cimi_search` / `cimi_fetch`（联网检索+读原文）** 与 **文生图** —— 本块主要靠它们。
+> ⚠️ **收尾修正（2026-10-07 14:4x · 运维）**：**research4 目前出了两份** —— `report_pretrain_research4_long_ctx.html`（46.9KB，"Long-Context Extension"）与 `report_pretrain_research4_longctx_1m_p8.html`（26.1KB，"Long-Context 1M: What P-8 Must Do"）。**以我指定的 `..._longctx_1m_p8.html` 为准**；请把另一份的**独有内容并入**它后**删除冗余文件**（或申请改名为 `..._appendix` 并在 MEMORY 注明）—— **🚫 不许留两份同号报告**（会造成"到底哪份是 r4"的歧义）。收尾照常 commit+push。
+
+
+
+**① 五份报告（每份一个话题、一份 HTML，落到 `doc/BaiZe-ISEDA2027/`）**
+
+| # | 方向 | 交付文件名 | 必须挂靠的「我们已有实测」 |
+|:--|:--|:--|:--|
+| 1 | **如何公平地对比评测 hybrid vs dense 的推理速度 & 成本** | `report_pretrain_research1_fair_eval.html` | **P-9.11-E（mem-frac 0.3 / float32 SSM）** vs **P-9.11（0.85 口径）结论相反**；dense KV pool=**455K tokens**；**B1: attention 占 prefill ~77%** |
+| 2 | **提升 hybrid-2B 训练速度的机会点** | `report_pretrain_research2_train_speed.html` | P-9.13（**249K tok/s 上界 / env 无提速**）、P-9.12（NCCL 已 NVLink）、P-9.5 profiler 5-way 归因、P-9.9 FP8 |
+| 3 | **提升 hybrid-2B 训练效果的机会点**（8 常识 ＋ 6 复杂 ＋ agent/SWE-Bench） | `report_pretrain_research3_train_quality.html` | **A 36/36（5/6 贴地板，仅 BBH 有信号）**、P-6 scaling、P-3 五点全胜；data 线在搜配比 |
+| 4 | **为支持 1M 长上下文，P-8 预训练阶段要做什么（YaRN/ABF/长文课程/数据配比…）才能尽快让「大海捞针」得合理分（现 0）** | `report_pretrain_research4_longctx_1m_p8.html` | **B：passkey 4K/8K=0%**；**B1：1M PPL 55.42 无退化、≥512K attention 占 ~77%**；D：VRAM 5.35GB；⭐ **我们的 RoPE 只作用于 4/56 层** |
+| 5 | **架构锁定 hybrid-2B 后，是否还能搜（NAS）** | `report_pretrain_research5_arch_nas.html` | 2B 架构搜索（`BAIZE_2B_ARCH_RESULT.html`）、R8 六架构四指标、`MAMBA2_HYBRID_2B_FEASIBILITY_REPORT.html` |
+
+**② 每份统一骨架（6 节）**
+1. **TL;DR**（3–5 条结论）；2. **我们的现状**（把上表「已有实测」贴数字 + 标出处文件/commit）；3. **外部证据**（**一手优先**：官方仓库/官方文档/arXiv；**每条给 URL ＋ 版本或年份**；二手只能作线索并标「**二手·未核**」；**核不到就写「未核实」——🚫 不许编造**）；4. **候选清单**（每条：① 动机 ② 预期收益 ③ 成本/风险 ④ **可检验判据** ⑤ 优先级）；5. **推荐路线 ＋ 时间盒**（明确「先做哪 1–3 条、为什么」）；6. **引用清单**。
+
+**③ 证据分级（每条结论都要标）**：`【实测·本项目】` / `【一手文献·URL】` / `【二手·未核】` / `【推测·未验】`。
+
+**④ 格式（沿用 house style，参照 `report_10_06.html`）**
+- **自包含**：内联 CSS、**数据图优先内联 SVG**、零外链、**HTML 本体 ≤200KB**。
+- **按需附图**（用户令）：文生图 / SVG 均可；**🚫 严禁用文生图「编」数据图**（曲线/柱状/数值分布**必须由真实数据**生成；文生图只能画**示意图**，caption 标 **【示意图·文生图】**，实测图标 **【实测数据】**）；位图**一律 JPEG、长边 ≤1280、q85**，单图 ≤400KB / 总量 ≤4MB；**图片落本地并 commit**，HTML 内禁止被引用的外链。
+- 收尾按「收尾铁律」commit+push（前缀 **`pretrain 研究: …`**）＋ `MEMORY_PRETRAIN_2B.md` 记 1 行指针。
+
+**⑤ 顺序与时间盒**：**按用户编号 1→2→3→4→5**，**一份完成即 commit**（可分多轮唤醒）；**r1 / r4 最影响决策，最优先**。纯 CPU/联网，**不占 GPU、不下大文件、不改论文、不改 P-5b recipe**。
+
+**⑥ 铁律**：只写事实、**数字必须真**、**禁止编造或用估算冒充实测**；外部结论**必须可核**（URL＋年份）。
+> 📦 **体积提醒**：本块加入后 `BAIZE_PRETRAIN_2B_TASK.md` 约 **≈37KB（>32KB）** ⇒ **本轮收尾前先把已闭合旧块归档到 ≤32KB 再提交**（确切字节以你自己 `wc -c` 为准；未到 40KB 红线）。
+
+### 🆕 运维指令 · 2026-10-07③（**hybrid ctx 继续扩 2M/4M/8M/16M** ＋ **「显存为何恒定」归因诊断**）· **用户直令** · 高优先
+
+> **用户令原文（2026-10-07 10:30）**：「安排 pretrain 在 hybrid 这边**继续提升 ctx 到 2m、4m、8m、16m**」＋ 三个追问题（见 **③**）。
+> **⚠️ 资源现状（运维核实；与你原以为的不同 —— 先读这条）**：`.12` GPU1–7 **你已于 09:44 提前归还**；**vision 已于 09:52 在 `GPU12_ALLOC.md` 申请并占用 8 张卡**（② mask-ratio 消融，PID 1752298，**ETA ~14:30**）⇒ **`.12` 现无空卡**；`.29` 8 张被 data Round2 BO 占（62.6GB/卡，至 ~19:00）。
+> ⇒ **第 0 步 = 找卡**（按 `GPU12_ALLOC.md` 铁律：**vision 训练臂 > pretrain 推理评测**）：① 看 `.12` vision 消融**是否出现空窗/单卡余量**（其 16.4GB/卡，但**已预分配**；🚫 **不许 kill、不许强占**）；② **确无卡 ⇒ 如实记「无可用 GPU，未执行」**，脚本备好（复用 `p911e_matrix_launch.sh` 只改 ctx 档），**一旦有 1 张空卡立即补跑**；③ 🚫 不抢 data BO / vision。
+
+**① 测量（用户令）**：hybrid 单独扩 **ctx ∈ {2M, 4M, 8M, 16M}**（`2097152 / 4194304 / 8388608 / 16777216`），bs=1、`gen_len=64`、**tokenizer 精确计数**；沿用 P-9.11-E 的 sglang flag，并**逐档同时记 §③ 的诊断量**。
+- 逐格采：`HTTP · TTFT(s) · prefill(s) · prefill tok/s · decode tok/s · e2e · 峰值显存(nvidia-smi) · **服务端 max_total_num_tokens / KV pool 字节数** · host RSS · OOM/超时原文`。
+- **时间盒**：能做几张算几张（优先 **2M → 4M → 8M → 16M**）；**未做的如实标「未测」**，🚫 不许外推冒充实测。
+
+**② 交付**：扩 `run/p911e_longctx_cost_results.json` + 刷新 `report_pretrain_longctx_infer_cost.html`（加 2M–16M 档）+ `EXPERIMENTS` 增节。
+
+**③ ⭐ 诊断课题（用户三问；**必须给证据/原始日志，不许只给结论**）**
+> 用户问：「VRAM 居然**不随 ctx 增加**（恒 ~25GB），无论 O(n)/O(n²) 这都不正常吧？」「在这么长的上下文里 hybrid 居然相对 dense **没有明显优势**，这是怎么回事？」「现有 **sglang 参数是否用了虚拟内存之类的方案**，才让 hybrid 速度反而低于 dense？」
+1. **V1 读池子**：贴每格 sglang **启动日志**的 `max_total_num_tokens` / `max_running_requests` / `available_gpu_mem` ⇒ 验证 **`--mem-fraction-static 0.3` 在启动时把「权重 + KV pool + overhead」预分配 ≈ 80GB×0.3 ≈ 24GB，且 pool 被尽量撑满** ⇒ **nvidia-smi 的 ~26GB 是「预分配读数」，与 ctx 无关**（也是 dense 在 prompt 504K > pool **455K tokens** 时被拒的原因）。
+2. **V2 mem-fraction 扫描**：同模型同 ctx 跑 **mem-fraction ∈ {0.3, 0.6, 0.85}** ⇒ 看峰值**是否随之变**；并**对比 P-9.11（0.85 口径）的 hybrid 128K×bs1=13GB vs dense=61GB**（那组才显真实差异）⇒ 判定「恒定」是**口径假象**还是真 O(1)。
+3. **V3 排除「虚拟内存/paging」**：写明 sglang 的 **PagedAttention = 显存内分页**（block 管理 KV），**不是把 KV 换出到 host/虚拟内存**；**取 host RSS × ctx 曲线**（不涨 ⇒ 非 host 侧换页）；若发现任何 offload/swap 开关被开 ⇒ 贴配置原文。
+4. **V4 拆 hybrid「没优势」**：① **4 层 attention 的时间占比**（**B1 已测 ≥512K 时 attention 占 prefill ~77%** ⇒ **hybrid 退化为准 O(n²)**）；② **`--mamba-ssm-dtype float32` 的代价** —— 跑一次 **bf16 SSM** 对照，量 prefill/decode 差多少；③ 结论要分清：hybrid 的优势应在 **容量（能服务到 1M+）/ 显存**；**速度**上 dense 的 flashinfer attention 在中长 ctx 更快是**预期行为**。
+5. 报告新增一节 **「为什么 VRAM 恒定 ＋ hybrid 为何未显速度优势」**，**每条都给可复现命令/日志**。
+
+**④ 铁律**：🚫 不 kill 别人进程 / 不强占卡；不改 P-5b recipe、不回训、不存 ckpt；🚫 绝不 kill watchdog loop；如实记 OOM/未测。
+> 📦 **体积提醒**：本块加入后 `BAIZE_PRETRAIN_2B_TASK.md` 约 **≈33KB（>32KB）** ⇒ **本轮收尾前先把已闭合旧块归档到 ≤32KB 再提交**（确切字节以你自己 `wc -c` 为准；未到 40KB 红线）。

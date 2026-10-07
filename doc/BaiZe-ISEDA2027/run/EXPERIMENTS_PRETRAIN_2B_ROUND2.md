@@ -2812,3 +2812,60 @@ MEM_FRACTION=0.85 BATCHES="1" MAX_WAIT=600 BENCH_TIMEOUT=7200 \
 - `run/p911e_results/p911e_hybrid_ctx4194304_gpu0_mf0.85_diag.txt`（4M@0.85 诊断：启动日志 + host RSS）
 - 本节（EXPERIMENTS P-9.11-F）
 - 8M/16M：**单卡 80GB H100 不可服务**（pool 4.30M < 8M/16M prompt）
+
+---
+
+## P-9.11-E T1/T2 v2 · Warmup-Corrected bf16 vs float32 SSM 矩阵（运维指令 2026-10-07⑤ · 用户直令）✅ COMPLETE（2026-10-07 22:40–22:45, GPU0-3 @.29）
+
+> ⚠️ **本节更正了 V4② 和 P-9.11-E 的关键结论**。V4② 的「float32 SSM 人为压低 hybrid prefill 40%」结论是**错误的**——它是 WARMUP 协议差异的假象，不是 SSM dtype 的真实影响。
+
+### 背景
+- 运维指令⑤ T1 要求用 bf16 SSM 重跑 128K–1M 矩阵，T2 要求按公平协议重做 BaiZe⚔dense。
+- 前一次唤醒（#177）创建了 `report_p911e_t1t2_comparison.html`（v1），但其 hardcoded F32 基线数据来自 P-9.11-E（WARMUP=0, REPEATS=1），与 bf16 新跑（WARMUP=1, REPEATS=3）**协议不同**，导致「25× 加速」的虚假结论。
+- 本次唤醒（#178）用**相同协议**（WARMUP=1, REPEATS=3, --disable-radix-cache, --mem-fraction-static=0.3, flashinfer）重跑了 float32 SSM 全矩阵，得到干净的 bf16 vs float32 对照。
+
+### 实测结果（同协议对照）
+
+| ctx | hybrid f32 prefill | hybrid bf16 prefill | ratio | dense bf16 prefill | hybrid/dense |
+|--:|--:|--:|--:|--:|--:|
+| 128K | 38,942 | 39,377 | **1.01×** | 14,051 | **2.80×** |
+| 256K | 32,375 | 32,381 | **1.00×** | 7,532 | **4.30×** |
+| 512K | 23,514 | 23,634 | **1.01×** | INVALID (gen=1) | — |
+| 1M | 15,530 | 15,530 | **1.00×** | INVALID (gen=1) | — |
+
+| ctx | hybrid f32 decode | hybrid bf16 decode | ratio | dense bf16 decode | hybrid/dense |
+|--:|--:|--:|--:|--:|--:|
+| 128K | 309 | 311 | 1.01× | 193 | 1.61× |
+| 256K | 275 | 276 | 1.00× | 144 | 1.91× |
+| 512K | 220 | 220 | 1.00× | INVALID | — |
+| 1M | 159 | 159 | 1.00× | INVALID | — |
+
+### Warmup 效应量化（同一 hybrid float32 模型）
+
+| ctx | orig (无 warmup) | corrected (warmup) | warmup 效果 |
+|--:|--:|--:|--:|
+| 128K | 1,591 | 38,942 | **24.5×** |
+| 256K | 3,094 | 32,375 | **10.5×** |
+| 512K | 5,222 | 23,514 | **4.5×** |
+| 1M | 6,484 | 15,530 | **2.4×** |
+
+### 核心结论（更正后）
+
+1. **SSM dtype（float32 vs bf16）对推理速度无影响**（1.00-1.01×）。V4② 的「float32 SSM 压低 40%」结论是**WARMUP 协议差异的假象**，现予撤回。bf16 唯一优势：2× SSM cache slots（382 vs 177 @1M），利于并发服务。
+2. **Hybrid 比 dense 快 2.8-4.3×**（128K-256K，同协议同 warmup）。P-9.11-E 的「dense 3.3× faster」结论是**无 warmup 假象**，现予撤回。
+3. **Warmup 对 SSM 模型至关重要**：Mamba2 SSM 的 CUDA JIT 编译开销在首次运行中占主导（短 ctx 时 24.5×），attention kernels 的编译开销较小。**此后所有 sglang 基准测试必须 WARMUP≥1**。
+4. Dense 512K/1M 不可服务（KV pool ~455K tokens < 504K prompt），hybrid 全档可服务。Hybrid VRAM 平坦 ~26-29GB（SSM O(1)）vs dense 27→35GB。
+
+### 对 V4② 结论的更正
+> V4②（#172）比较了 P-9.11-E 的 float32 1M（WARMUP=0, 6,484 tok/s）与单独跑的 bf16 1M（WARMUP=0, 10,820 tok/s），得出「float32 SSM 压低 40%」。但同协议重跑（WARMUP=1, REPEATS=3）显示 float32 1M = 15,530 tok/s，与 bf16 1M = 15,530 tok/s 完全相同。V4② 的 1.67× 差异来自**两次跑的 warmup/条件不同**，不是 SSM dtype。
+
+### 预注册判据
+> 运维指令⑤：「若 bf16 下 hybrid 反超 dense ⇒ 必须如实改写原「dense 3.3× faster」结论」
+> **✅ 已确认并改写**：Hybrid 确实反超 dense（2.8-4.3×），但原因是 warmup 协议更正（非 SSM dtype）。原结论已撤回。
+
+### 产出
+- `report_p911e_t1t2_comparison.html`（v2，9.4KB，warmup-corrected，4 表 + 5 条结论）
+- `report_pretrain_longctx_infer_cost.html`（修订：§1 结论标 DEPRECATED + 新增 §7 warmup-corrected 矩阵）
+- `run/p911e_results/p911e_hybrid_ctx{131072,262144,524288,1048576}_gpu{0,1,2,3}_mf0.3_float32.json`（4 cells，同协议 float32 重跑）
+- `report_pretrain_t3_train_speed_shortlist.html`（T3 短名单，#177 产出）
+- `report_pretrain_t4_train_quality_shortlist.html`（T4 短名单，#177 产出）
