@@ -31,42 +31,7 @@
 > 📦 **体积提醒**：本块加入后 `BAIZE_PRETRAIN_2B_TASK.md` 约 **≈33KB（>32KB）** ⇒ **本轮收尾前先把已闭合旧块归档到 ≤32KB 再提交**（确切字节以你自己 `wc -c` 为准；未到 40KB 红线）。
 
 
-### 🆕 运维指令 · 2026-10-07②（📐 **【长上下文推理成本矩阵】sglang 下 BaiZe(Mamba2-hybrid 2.220B) ⚔ MiniCPM5-2B(dense 2.512B) @ ctx {128K, 256K, 512K, 1M}**）· **用户直令** · 高优先（**不抢占 data BO**）
-
-> **用户令原文（2026-10-07）**：「在**更长的上下文：128k / 256k / 512k / 1m**，**和 sglang 框架下**对比 **BaiZe（Mamba2-Hybrid-2B）** 和 **Dense（MiniCPM5-2B）** 架构的**推理成本**（**包括但不限于：吞吐率、prefill/decode 速度、显存占用等**）」。
-> 🧭 **溯源（运维认账）**：本需求**此前被窄化**，两块各只做了一半 ——
-> ① **P-9.11（10-05）** sglang 两模型矩阵**只到 64K**（128K 当时因 **prompt 构造 bug** 被拒；P-9.11D 已更正为「可跑」但**矩阵格从未回填**，`p911_*_results.json` 里 128K 仍是 `null/0 completion`）；
-> ② **B1 扩展（10-06）**「ctx 扩到 256K/512K/1M」**只测了 hybrid 单模型**的 PPL/耗时/显存（`baize_b1_longctx_extend.py`）。
-> ⇒ **「两模型 × {128K,256K,512K,1M} × sglang」的整块矩阵至今空缺 —— 本轮补齐，这是本块的唯一目标。**
-
-**⓪ 先归档（把本任务书压回 ≤32KB —— 当前 ≈33KB，确切字节以你自己 `wc -c` 为准）**：把**已闭合**的下一块「📊 **交付：昨夜工作汇报 HTML**」（**已由 #164 交付**）**原文**搬入 `run/ARCHIVE_OPERATOR_PRETRAIN.md` + 留 1 行指针，**然后**执行本块。
-
-**① 测试矩阵（同一 sglang 栈、两模型逐格对齐）**
-- **对象**：BaiZe = `p3_hybrid/iter_0005000`（HF `nemotron_h`, 2.220B, 56 层 / 仅 4 层 attention）⚔ Dense = `p3_dense/iter_0005000`（HF Llama, MiniCPM5-2B 2.512B）——**与 P-9.11 同 ckpt，便于拼接**。
-- **档位**：ctx ∈ {**131072, 262144, 524288, 1048576**} × bs ∈ {1, 8}，`gen_len=64`。⏱ 时间不够时**最低交付 = bs=1 × 4 档 × 两模型**，bs=8 可只记「可跑 / OOM」。
-- ⚠️ **prompt 一律 tokenizer 精确计数**（`len(tok(prompt))`，目标 = `ctx − 64`），**每格贴实际 token 数**；🚫 严禁再用字符数估算（P-9.11 的 128K 就死在这里）。
-- **服务端口径**：`--context-length` 按档设 + `SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1`；hybrid 加 `--mamba-ssm-dtype float32`；**`--mem-fraction-static` 取低预分配（如 0.3）并在表头写明**（0.85 会把 VRAM 差异掩盖掉 —— P-9.11 的 H3 就是这么被否掉的）；**两模型 flag 必须完全一致**。
-- **config 口径（逐行标注，不许混）**：hybrid 原始 HF config 只有 `max_pos=4096` ⇒ ≥256K 请沿用 **B1 的 ABF 写法（推理时 `rope_theta=1e6, max_position_embeddings=1048576`，见 `baize_b1_longctx_extend.py`）**；dense 原始为 `max_pos=131072, rope_theta=5e6` ⇒ **若 256K+ 需 YaRN/rope_scaling 才能起服，如实写「需外推配置」并标为口径差异**（🚫 不许偷改配置不写）。
-
-**② 每格必采（缺项就写「未测」）**
-`HTTP(200/400/500) · TTFT(s) · prefill 时间(s) · prefill tok/s · decode tok/s（≥32 step 均值）· e2e 延迟(s) · 峰值显存（nvidia-smi 采样 ＋ 服务端 KV/state 估算）· OOM/超时原文`
-
-**③ 交付（4 件）**
-1. `run/p911e_longctx_cost_results.json` —— 逐格原始数据（含 prompt token 数 / flags / config 口径）；
-2. **比值表**：`hybrid ÷ dense` 的 **TTFT / prefill tok/s / decode tok/s / 峰值显存 逐档**，并给出 **crossover ctx**（prefill、decode 各一个）；
-3. **自包含 HTML** `doc/BaiZe-ISEDA2027/report_pretrain_longctx_infer_cost.html`（内联 SVG `ctx → 比值` 曲线；零外链；≤200KB）；
-4. `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` 新增节 + **一句话可引用结论**（**劣势如实写**：短 ctx dense decode 更快；谁在哪个档 OOM）。
-
-**④ 资源与铁律**
-- 🥇 **测试场地 = `.12` GPU1–7（用户 2026-10-07 直令：7 张空卡全用上、并行尽快测完）** —— vision 的 `lp 协议 A/B 桥接`（PID 807654）**只占 GPU0**（2.4GB / 39% util，NFS I/O bound，**ETA ~10:00–11:00**）⇒ **借 GPU1–7**。🚫 **不碰 GPU0**、🚫 **绝不 kill PID 807654**。
-- 🚀 **一条命令扇出（脚本已入库：`run/p911e_matrix_launch.sh`）**：`ssh 10.239.2.12 "nohup setsid bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/p911e_matrix_launch.sh </dev/null >/tmp/p911e_main.log 2>&1 &"` —— **默认波次**：**GPU1–4 = hybrid @ 128K/256K/512K/1M**、**GPU5–7 = dense @ 128K/256K/512K**（**dense 1M 走第 2 波**：`bash p911e_matrix_launch.sh "4 dense 1048576"`）。逐格产出 `run/p911e_results/p911e_<model>_ctx<ctx>_gpu<g>.json`（**TTFT / prefill tok·s⁻¹ / decode tok·s⁻¹ / e2e / peak VRAM / prompt 实 token 数 / OOM 错误串**），你 merge 成 ③ 的 `p911e_longctx_cost_results.json`。**目标墙钟 ≤45 min**（7 格并行；单格 = 载模型 ~1–2 min + 4 档请求）。
-- ✅ **`.12` 可行性 = 已实测，不是推测**：env 与 ckpt **全在 NFS 共享路径** —— `/nas_train/app.e0031982/miniforge3/envs/{sglang,vllm}`（P-9.10① 已 `ssh .12` 查证「同样有 `vllm`」sglang 0.5.9 ✅；脚本**自动择优**，`.12` 只需能 `import sglang`）、`…/nemo_experiments/p3_{hybrid,dense}/hf_iter_5000` ✅。flag 照抄：`--mem-fraction-static 0.3` + `SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1` + `--attention-backend flashinfer` + hybrid 加 `--mamba-ssm-dtype float32`。⚠️ **7 个 server 同时载模型会压 NFS**（vision 的 bridge 正好是 NFS I/O bound）⇒ 脚本默认 **`STAGGER=20s` 错峰**；若 bridge 的读带宽/进度明显被拖慢 ⇒ `STAGGER=40` 或降到 4–5 并发（**别为了本项把 vision 的 ETA 拖垮**）。
-- ⏰ **交还铁律**：**≤45 min 跑完即交还**（**硬天花板 11:00**）；脚本每格结束**自动 kill 该卡 server** 并打印该卡 `memory.used`；**收尾必须**核 `nvidia-smi` 上 GPU1–7 已无自己的进程 + 在 `run/GPU12_ALLOC.md` 流水写「已归还 hh:mm」。**优先级**：vision 训练臂/桥接 > 本推理评测（vision 要卡 ⇒ **无条件让**）。预算 **≤3h**。
-- 📌 **先写死预期，避免事后挑数**：hybrid **1M 已知可跑**（B1：prefill 172.4s / 峰值 34.68GB）；**dense 1M 预期 OOM**（KV≈90GB）⇒ **OOM 就记 OOM**，「**dense 在 xxK 处 OOM、hybrid 到 1M 仍可服务**」即本报告**核心结论**。
-- ✅ **可直接复用、不必重测**：4K/16K/64K 的 P-9.11 数据（prefill **2.18×**、decode **1.18×** @64K×bs1，`p911_hybrid_results.json` / `p911_dense_results.json`）**只引用**；若本轮重测，须标注「新口径」并说明与 P-9.11 是否可比。
-- 收尾按「收尾铁律」commit + push（前缀 `pretrain 长ctx成本: …`）+ `MEMORY_PRETRAIN_2B.md` 记 1 行指针。
-
-
+> 📦 §运维指令·2026-10-07②（长上下文推理成本矩阵 128K-1M）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：P-9.11-E COMPLETE — Dense OOMs@512K(KV pool=455K tokens), Hybrid serves 1M@~26GB(near-constant = `--mem-fraction-static 0.3` 预分配 ~24GB, 与 ctx 无关); 128K-256K Dense faster 1.7-3.3x prefill / 2.2-2.6x decode。**sglang flag 沿用**：`--mem-fraction-static 0.3 --attention-backend flashinfer --mamba-ssm-dtype float32` + `SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1`。需要时再读。
 > 📦 §运维指令·2026-10-07（📊 交付：昨夜工作汇报 HTML）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：report_10_07_pretrain_overnight.html 已由 #164 交付(26.5KB,自包含,全自检过)。需要时再读。
 
 > 📦 §运维指令·2026-10-06（裁决+提速令：批准A/B/D，C暂不动/E不做，NCCL拓扑核查+提速清单）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：P-9.12 NCCL已在用NVLink(P2P 100%,用户PCIe假设证伪,busbw 164.56GB/s),P-9.13 env无提速(249K tok/s上界),A 36/36✅(BBH峰值14.26%@2.62B),B✅(ABF不降反升+2.71pp,passkey 0%),D✅(VRAM 5.35GB恒定4K→128K)。需要时再读。

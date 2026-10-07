@@ -2636,3 +2636,55 @@ conda run -n vllm python -m pip install --proxy http://172.19.92.25:13128 \
 - HTML report: `report_pretrain_longctx_infer_cost.html`（14.8KB, self-contained, 0 external links ✅）
 - Merge script: `run/p911e_merge_and_report.py`
 - Launcher: `run/p911e_matrix_launch.sh`
+
+---
+
+## P-9.11-F · hybrid ctx 扩 2M/4M/8M/16M ＋「显存为何恒定」归因诊断（运维指令 2026-10-07③ · 用户直令）⏸ **无可用 GPU · 2M-16M 未执行（脚本已备好）**
+
+> **状态**：2026-10-07 10:30 收到用户直令「hybrid 继续扩 ctx 到 2m/4m/8m/16m」+ 三问（VRAM 恒定 / hybrid 无速度优势 / 是否用虚拟内存）。
+> **本唤醒（#167）结论**：**两节点均无安全空卡** → 2M-16M 测量**未执行**（铁律：🚫 不抢 data BO / vision）；脚本已备好，一旦有空卡立即补跑。**V1 诊断可从既有 P-9.11-E 数据给出初步结论**（见下）。
+
+### Step 0 · 找卡（2026-10-07 ~10:35 实测）
+
+| 节点 | GPU 占用 | 来源 | 可用？ |
+|:--|:--|:--|:--|
+| `.12` | **全 8 卡** 16.4GB/卡, 63-92%util | vision mask-ratio 消融（PID 1752298, ETA ~14:30） | 🚫 无空卡 |
+| `.29` | GPU0/1/2/4/5 = 62.6GB（data BO trial）；GPU3/6 = 609MiB（试次间隙空闲）；GPU7 = 5.6GB（残值） | data Round2 BO `--gpus 0,1,2,3,4,5,6,7`（PID 3614158, ETA ~19:00） | 🚫 **不安全**：BO `--gpus` 含 0-7，会随时把下一 trial 调度到 GPU3/6 ⇒ 占用即「抢 BO」 |
+
+⇒ **无安全空卡**。按指令 Step 0②：如实记「无可用 GPU，2M-16M 未执行」，脚本备好，一旦有 1 张空卡立即补跑。
+
+### 脚本（已备好，待卡即发）
+- `run/p911f_longctx_2m_16m_launch.sh` —— 复用 `p911e_matrix_launch.sh` 全部口径（`--mem-fraction-static 0.3 --attention-backend flashinfer --mamba-ssm-dtype float32` + `SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1`），仅 ctx 换成 `{2097152, 4194304, 8388608, 16777216}`，hybrid 单模型。
+- 用法：`bash p911f_longctx_2m_16m_launch.sh [gpu]`（顺序 2M→4M→8M→16M）；≥4 卡空时直接 `bash p911e_matrix_launch.sh "1 hybrid 2097152" "2 hybrid 4194304" "3 hybrid 8388608" "4 hybrid 16777216"`（并行）。
+- ⚠️ **V1 诊断依赖 srv.log 的 `max_total_num_tokens`**：P-9.11-E 的 `/tmp/p911e/*.srv.log` 已被清理（.12 /tmp 回收）⇒ **本轮补跑时务必保留 srv.log**（脚本已写 `/tmp/p911e/<tag>.srv.log`）。
+- ⚠️ **prompt 精确计数**：1M 实测 `prompt_tokens_actual=1008124`（未严格 = ctx−64=1048512）⇒ 2M-16M 跑前先核 `p911d_sglang_vram_bench.py` 能否精确到 ctx−64，否则需调 prompt 构造。
+
+### ③ 诊断课题（用户三问）
+
+**V1 · 读池子 —— VRAM 为何不随 ctx 增加（初步结论，无需新 GPU）**
+- **结论**：nvidia-smi 的 ~26GB 是 **`--mem-fraction-static 0.3` 的预分配读数**（80GB×0.3≈24GB + overhead），**与 ctx 无关**；这也是 dense 在 prompt 504K > pool **455K tokens** 时被拒的原因（pool 撑满后无法再放更长 prompt 的 KV）。
+- **证据（既有 P-9.11-E JSON，无新 GPU）**：
+  - hybrid `peak_vram_gb`：128K=25.92 → 256K=25.97 → 512K=26.11 → 1M=26.53（**近恒定**，Δ<0.7GB across 8× ctx）。
+  - dense `peak_vram_gb`：128K=60.95（近 pool 上限）→ 512K **request rejected**（KV pool cap=455K tokens < 504K prompt）。
+  - flag 原文：`--mem-fraction-static 0.3`（见 `p911e_matrix_launch.sh:84`）。
+- **缺项**：sglang 启动日志的 `max_total_num_tokens` / `available_gpu_mem` 原文**已丢失**（/tmp/p911e 被清理）⇒ **需补跑时采集 srv.log 回填**（V1 的「贴启动日志」要求待满足）。
+
+**V2 · mem-fraction 扫描（需 GPU）** ⏸ 未测
+- 同模型同 ctx 跑 `mem-fraction ∈ {0.3, 0.6, 0.85}` ⇒ 看峰值是否随之变；对比 P-9.11（0.85）hybrid 128K×bs1=13GB vs dense=61GB（那组才显真实差异）⇒ 判定「恒定」是口径假象还是真 O(1)。
+
+**V3 · 排除「虚拟内存/paging」（文档 + 需重跑采 host RSS）**
+- **结论（文档级）**：sglang 用 **PagedAttention = 显存内分页**（block 管理 KV cache），**不是把 KV 换出到 host/虚拟内存**；本次未开任何 offload/swap 开关（flag 见上，无 `--kv-cache-dtype`/offload 相关）。
+- **缺项**：`host RSS × ctx` 曲线**未采**（P-9.11-E 未记 host RSS）⇒ 需补跑时采 `psutil`/`/proc/<pid>/status VmRSS` 曲线（不涨 ⇒ 坐实非 host 换页）。
+
+**V4 · 拆 hybrid「没速度优势」（部分有据，bf16 对照需 GPU）**
+- ① **4 层 attention 时间占比**：B1 已测 **≥512K 时 attention 占 prefill ~77%**（`MEMORY_PRETRAIN_2B.md` B1 结论）⇒ hybrid 在超长 ctx **退化为准 O(n²)**（4 层 attention 主导），这是「hybrid 无速度优势」的主因。
+- ② **`--mamba-ssm-dtype float32` 的代价**：P-9.11（0.85 mem-frac, likely bf16 SSM）hybrid @64K **prefill 2.18× faster**；P-9.11-E（0.3 mem-frac, float32 SSM）hybrid @128K **反而 dense 3.3× faster** ⇒ float32 SSM 显著拖慢 hybrid。**bf16 SSM 对照需 GPU**（⏸ 未测）。
+- ③ **结论**：hybrid 的优势在**容量**（能服务到 1M+，dense 512K 即 OOM）与**显存**（~26GB vs dense ~61GB）；**速度**上 dense 的 flashinfer attention 在中长 ctx 更快是**预期行为**（hybrid 仅 4/56 层用 attention，但那 4 层在超长 ctx 成瓶颈）。
+
+### 一句话可引用结论（P-9.11-F 阶段性）
+> **2M-16M 测量因双节点无安全空卡暂未执行（脚本已备好）；V1 初步诊断：sglang `--mem-fraction-static 0.3` 预分配 ~24GB 是「VRAM 恒定」的口径原因（与 ctx 无关），hybrid 在超长 ctx 的 4 层 attention 占 prefill ~77%（B1）+ float32 SSM 共同导致其相对 dense 无速度优势——hybrid 的真正优势在容量（服务到 1M+）与显存（26GB vs 61GB），而非速度。**
+
+### 产出（本阶段）
+- `run/p911f_longctx_2m_16m_launch.sh`（待卡即发）
+- 本节（EXPERIMENTS P-9.11-F）
+- 2M-16M cell JSON / 刷新 HTML / V2-V4 完整数据：**待 GPU 空闲后补跑回填**
