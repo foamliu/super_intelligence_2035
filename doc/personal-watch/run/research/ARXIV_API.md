@@ -1111,3 +1111,24 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）。
 - **下轮预期**：本地 **`2026-10-08 06:00`**（首日后首个标准「早 3」轮），按 SOP 增量采集并产出当日 3 篇。
 
+
+### 9.82 第八十轮（本地 2026-10-08 06:00 时窗 · **P0 第 4 批第 2 轮 · 首日后的首个标准「早 3」轮**）：API 关键词增量 0（批次未刷新）→ **RSS 补充发现 +510（收录 3 / 候选 507）**
+
+> 🎯 **P0 第 4 批口径**：每天 5 篇（早 3 + 晚 2）。**本日 06:00 = AM 轮**，产出 **3 篇「借鉴」**；18:00 晚报补 **2 篇「科普」** 并修订本页。
+
+- **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-07T22:00:15Z`，证据 `research/raw/2026-10-08-probe-r80.{json,log}`）：
+  - **arXiv API**：`HTTP 200` + `application/atom+xml; charset=utf-8`，**公告批次仍为 `2026-10-06`（未刷新）**：`total_results=628559`、最新样本 `published=2026-10-06T17:59:56Z`（`2610.08791 / 2610.08790 / 2610.08789`）→ ✅ **可达**，与第七十九轮同批；
+  - **HF Daily Papers**：`ok=false`，`request failed: HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded` → ❌ **不可达**（**如实记录，不伪造 `hf_daily`**）；
+  - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml`，`items=224 / 247 / 526` → ✅ **工作日有内容**。
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=daily`，窗口 72h**，`generated=2026-10-07T22:01:13Z`，证据 `research/raw/2026-10-08-fetch-r80.json`）：**15/15 查询 `ok`**（均 `attempts=1`，无重试），**kept 0 / dropped 600** = **488 条 `already in SEEN`** + **112 条 `stale > 72h`（自首次提交起）**。
+- **结论（API 侧）**：**公告批次未刷新 → 关键词增量 0 新增，属正常**（**非「无数据」**）；与第七十九轮同批（`2026-10-06`）。
+- **补充发现（RSS · 工作日补充源，R1′ 许可范围）** —— **本轮新增的取数路径，已落盘留证**：
+  1. 拉取 6 个分类 RSS（cs.CL / cs.CV / cs.AI / cs.MM / cs.SE / cs.LG），汇总 **1523** 条 item → `research/raw/2026-10-08-rss-pool-r80.json`；
+  2. 与 `research/SEEN.md` 去重后得 **1408 个**「不在本台账」的 arXiv ID；其中 **871 个为 `2610.*`**（当前公告批次）→ `research/raw/2026-10-08-rss-2610-ids.txt`；
+  3. 因「**RSS ≠ 证据**」（无 `published` 权威字段），对 871 个 ID 走 **arXiv API `id_list` 批量复核**（`max_results=40`/批，限速 ≥3s；一次性脚本 `research/raw/verify_rss_r80.py`）：**871/871 返回、`fails=0`**，全部 `HTTP 200` + `application/atom+xml` + 含 `published` → `research/raw/2026-10-08-rss-verify-r80.json`；
+  4. 按 §0.1 窗口（`published >= 2026-10-04T22:00Z`，72h）筛选 → **510 条**入账：**收录 3 / 候选（RSS补充）507**。
+  5. 精选 3 篇另存权威单条元数据（`id_list=2610.08527,2610.08457,2610.08402`）→ `research/raw/2026-10-08-idlist-r80.{xml,json}`。
+- **产出（P0 交付）**：`research/daily/2026-10-08.html`（**自包含单文件**，早报 3 篇 = 3 借鉴；页头「AM 轮」+ 进度 **3/5**；附录含 15 查询命中数表 + 口径护栏）→ 同步更新 `research/daily/index.html` 与 `research/INDEX.md`。
+- **台账**：`research/SEEN.md` **+510 行** → 累计 **1590 条（收录 169 / 候选 1421，其中 RSS 补充候选 507）**；`research/papers.jsonl` **+3** → **169 行**。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮**无代码改动**（`verify_rss_r80.py` 为一次性留证脚本，非长期工具）。
+- **下轮预期**：**本地 `2026-10-08 18:00`**（P0「晚 2」轮）：① 复验批次是否刷新（`2026-10-07` 提交批预计在本日 UTC 00:00 前后公告）；② 补 **2 篇「科普」** 并**修订**早报 3 篇（错字/口径/推荐理由）；③ 在 `2026-10-08.html` 追加 `## 晚报变更说明（AM → PM）`，进度改为 **5/5**。

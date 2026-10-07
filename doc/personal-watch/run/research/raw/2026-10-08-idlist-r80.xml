@@ -1,0 +1,284 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/tuEgAhBJrKY9MyRQZ2Kok3LqZEQ</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.08457,2610.08527,2610.08402,2610.08514,2610.08403,2610.08502,2610.07853,2610.08662,2610.07822,2610.07904&amp;start=0&amp;max_results=50</title>
+  <updated>2026-10-07T22:03:26Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=50&amp;id_list=2610.08457,2610.08527,2610.08402,2610.08514,2610.08403,2610.08502,2610.07853,2610.08662,2610.07822,2610.07904" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>50</opensearch:itemsPerPage>
+  <opensearch:totalResults>10</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.08527v1</id>
+    <title>PHBA: Prefix-State Hybrid Block Attention</title>
+    <updated>2026-10-06T15:22:49Z</updated>
+    <link href="https://arxiv.org/abs/2610.08527v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.08527v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Hybrid architectures combining linear sequence models with softmax attention provide an effective balance between efficient long-context modeling and precise token retrieval. Existing designs such as Native Hybrid Attention (NHA) combine compressed long-term states with sliding-window attention, but their exact attention is restricted to a fixed local window. In this work, we introduce Prefix-State Hybrid Block Attention (PHBA), which replaces local sliding-window attention with top-k block-sparse retrieval and couples each retrieved block with a compact prefix state summarizing its preceding context. The prefix states are constructed by a gated linear recurrence at block boundaries and retrieved together with the corresponding token blocks, allowing the model to combine precise long-range evidence with compressed historical context within a unified layer. We further develop a hardware-aware Triton implementation that streams routed token blocks and prefix states without materializing large intermediate tensors. Experiments show that PHBA improves long-context and retrieval performance over strong linear and hybrid baselines while retaining efficient training and inference.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-06T15:22:49Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Ruijie Li</name>
+    </author>
+    <author>
+      <name>Jiaxi Hu</name>
+    </author>
+    <author>
+      <name>Shiyu Wang</name>
+    </author>
+    <author>
+      <name>Yuxuan Liang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.08514v1</id>
+    <title>How Much Evidence Should a Coding Agent's Self-Correction Carry? Adaptive Dirichlet Evidence for Self-Distillation</title>
+    <updated>2026-10-06T15:17:56Z</updated>
+    <link href="https://arxiv.org/abs/2610.08514v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.08514v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Execution feedback lets coding agents revise programs and learn from their own corrections. A correction's learning weight should reflect both the transitions supported by its executions and the amount of evidence behind that support. We introduce Effective-Evidence Self-Distillation (EESD), which represents these quantities separately. Normalized execution relevance determines relative transition support and an effective pseudo-count mass; a Dirichlet posterior then produces an uncertainty-penalized weight for KL-anchored correction learning. Under a symmetric prior, changing mass preserves category ordering, and effective mass yields a supervised coefficient bounded by its matched fixed-mass counterpart. Across four model-domain history sweeps, increasing visible observations from one to eight reduces future-outcome NLL by 55.0-59.3%. At eight observations, effective mass achieves lower NLL than fixed mass in all four comparisons. In the primary matched DeepSeek/RunBugRun study, argmax predictions agree on all 3,000 examples, with the largest NLL gain under concentrated relevance. After one correction-learning round, DeepSeek/CodeARC all-tests Pass@1 increases from 15.0% to 20.4%, with a paired 95% source-bootstrap interval of [+2.8, +8.0] percentage points. The twelve-setting downstream evaluation establishes the model-domain scope of this update. These results show how separating evidence support from evidence mass changes probability estimation and correction learning in coding agents.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-06T15:17:56Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Yunbo Long</name>
+    </author>
+    <author>
+      <name>Guangya Hao</name>
+    </author>
+    <author>
+      <name>Yuhan Liu</name>
+    </author>
+    <author>
+      <name>Yiting Duan</name>
+    </author>
+    <author>
+      <name>Longyan Tan</name>
+    </author>
+    <author>
+      <name>Yunchen Long</name>
+    </author>
+    <author>
+      <name>Hao Wu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.07822v1</id>
+    <title>Nucleus Speculative Decoding: Plausibility-Aware Verification Beyond Exact Distribution</title>
+    <updated>2026-10-06T06:18:16Z</updated>
+    <link href="https://arxiv.org/abs/2610.07822v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.07822v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Speculative decoding accelerates autoregressive generation by using a lightweight draft model to propose multiple tokens that are verified by a target model in parallel. However, the standard acceptance rule focuses on exact distribution correction and rejects tokens that remain highly plausible under the target model when the draft model assigns excess probability. This conservative verification limits the number of draft tokens retained after each verification forward pass. We introduce Nucleus Speculative Decoding (NSD), a relaxed verification method that incorporates target-model plausibility into speculative decoding. NSD accepts a draft token if it satisfies the standard acceptance rule or belongs to the target model's nucleus. We theoretically characterize the distributional deviation introduced by our method and show that the single-step error is exactly determined by the draft model's excess probability within the target nucleus. We further derive sequence-level fidelity bounds that quantify how local deviations accumulate over autoregressive decoding. Experiments across multiple target models and proposal mechanisms demonstrate that NSD consistently improves speculative decoding efficiency while maintaining competitive task performance. Our method achieves throughput speedups of up to $5.16\times$ over autoregressive decoding and up to $3.15\times$ over standard speculative decoding. These improvements coincide with longer accepted lengths, allowing more output tokens to share the cost of each target verification pass. Analysis shows that plausibility-aware verification provides an effective approach for relaxed verification and speculative decoding efficiency. Our code is available at https://github.com/EIT-NLP/Nucleus-Speculative-Decoding.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-06T06:18:16Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Shuhao Li</name>
+    </author>
+    <author>
+      <name>Fanghua Ye</name>
+    </author>
+    <author>
+      <name>Wanyu Lin</name>
+    </author>
+    <author>
+      <name>Tianyu Yuan</name>
+    </author>
+    <author>
+      <name>Xiaoyu Shen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.08457v1</id>
+    <title>Climbing the Design Ladder: Sequential Knowledge Distillation for Early-Stage Circuit Timing Prediction</title>
+    <updated>2026-10-05T17:33:11Z</updated>
+    <link href="https://arxiv.org/abs/2610.08457v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.08457v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Integrated circuit design involves multiple design stages: logic synthesis, floorplanning, placement, and routing, with each stage taking hours to weeks to complete. Discovering timing violations late in this flow forces costly iterations back to earlier stages, wasting computational resources and delaying product launches. While predicting post-routing timing from early-stage data could prevent these failures, existing machine learning approaches struggle with the massive abstraction gap between post-synthesis logical descriptions and post-routing physical layouts. We propose STEP-KD (Sequential Timing Evaluation via Progressive Knowledge Distillation), which leverages intermediate design stages as ``stepping stones'' for progressive knowledge transfer rather than attempting direct prediction. STEP-KD trains teacher models at the post-routing, post-placement, and post-floorplan stages, then sequentially distills their knowledge to a post-synthesis student model through representation alignment. Experiments on diverse circuits demonstrate that STEP-KD reduces timing prediction error compared to direct distillation and supervised baselines, and in most settings compared to the industry-standard Static Timing Analysis (STA) tool. STEP-KD reduces the weighted mean absolute percentage error of Total Negative Slack prediction to 19.78\%, compared with 74.84\% for STA. Our proposed method is step forward to identify timing problems earlier, avoiding expensive late-stage redesigns.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-05T17:33:11Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Reza Moravej</name>
+    </author>
+    <author>
+      <name>Fahad Rahman Amik</name>
+    </author>
+    <author>
+      <name>Zhanguang Zhang</name>
+    </author>
+    <author>
+      <name>Didier Chételat</name>
+    </author>
+    <author>
+      <name>Yingxue Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.08403v1</id>
+    <title>SSR: Sparse Segment Reduction for Ternary GEMM Acceleration</title>
+    <updated>2026-10-06T14:15:12Z</updated>
+    <link href="https://arxiv.org/abs/2610.08403v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.08403v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) require substantial computational resources, limiting their deployment on resource-constrained hardware. Ternary LLMs mitigate these demands through weight quantization via ternary values, achieving significant compression often with 50-90% sparsity. However, existing approaches have limitations: methods optimized for ternary weights, such as BitNet, redundant segment reduction (RSR), and its improved version RSR++, do not exploit sparsity structures, while conventional sparse formats neglect ternary characteristics, foregoing dual optimization opportunities.
+  In this paper, we introduce Sparse Segment Reduction (SSR), a ternary matrix multiplication method designed to accelerate the inference of ternary LLMs and general Ternary Weight Networks (TWNs). SSR has a dedicated optimized ternary data format and an algorithm that systematically exploits sparsity patterns through computation trees that scale with the sparsity. SSR provides theoretical gains with asymptotically faster inference than RSR++ for sparsity above 50%, while practical evaluations reveal performance improvements across all sparsity levels. Evaluation results show that SSR achieves 2.1-11.3x speedup over RSR++ on ternary GEMM with 45-95% sparsity. Furthermore, SSR achieves 3.5-6.3x end-to-end speedup and 4.9% of memory saving over RSR++ on the Llama-3 1B model inference.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-06T14:15:12Z</published>
+    <arxiv:comment>Published in the Proceedings of the Design, Automation &amp; Test in Europe Conference (DATE 2026)</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <arxiv:journal_ref>2026 Design, Automation &amp; Test in Europe Conference (DATE), pp. 1-7, 2026</arxiv:journal_ref>
+    <author>
+      <name>Adeline Pittet</name>
+    </author>
+    <author>
+      <name>Shien Zhu</name>
+    </author>
+    <author>
+      <name>Valérie Verdan</name>
+    </author>
+    <author>
+      <name>Gustavo Alonso</name>
+    </author>
+    <arxiv:doi>10.23919/DATE69613.2026.11539457</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.23919/DATE69613.2026.11539457" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.08662v1</id>
+    <title>ParanoiaEval: Benchmarking Unnecessary Defensive Work in Agentic Coding</title>
+    <updated>2026-10-06T16:46:14Z</updated>
+    <link href="https://arxiv.org/abs/2610.08662v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.08662v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>As coding agents increasingly undertake real-world work autonomously, judging whether their risk treatments are warranted has become important. Existing work evaluates related agent behaviors from separate perspectives, but lacks a systematic framework for unifying these behaviors. To bridge this gap, we introduce ParanoiaEval, the first benchmark for unified evaluation of risk-treatment capabilities in coding agents. Grounded in the well-established Avoidance-Transfer-Mitigation-Acceptance framework in software engineering risk management, ParanoiaEval operationalizes its 4 fundamental treatments for coding-agent settings and contains 200 evidence-controlled repository-level task pairs, each differing only in treatment-defining evidence. We further introduce dedicated metrics for risk-treatment violations and evidence responsiveness, using a human-calibrated agentic judge for reliable evaluation. Large-scale experiments on 8 representative models and a post-hoc human study reveal that (I) unnecessary risk treatment occurs in 11.2%-58.7% of runs despite explicit evidence, with substantial variation across agent configurations; (II) stronger task capability does not ensure more appropriate risk treatment, while treatment violations substantially harm developers' experience, establishing risk treatment as an independent capability dimension; and (III) agents exhibit systematic patterns consistent with established risk-management findings, suggesting that knowledge from human practice can guide the diagnosis and improvement of this capability.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-06T16:46:14Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Hanjun Luo</name>
+    </author>
+    <author>
+      <name>Xiucheng Zhang</name>
+    </author>
+    <author>
+      <name>Zhuoning Xu</name>
+    </author>
+    <author>
+      <name>Zhimu Huang</name>
+    </author>
+    <author>
+      <name>Yingbin Jin</name>
+    </author>
+    <author>
+      <name>Xinfeng Li</name>
+    </author>
+    <author>
+      <name>Hanan Salam</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.07853v1</id>
+    <title>Lost in the bf16 Cast: Exporting Ternary Language Models Can Revert Most Low-Learning-Rate Code Changes</title>
+    <updated>2026-10-06T06:58:35Z</updated>
+    <link href="https://arxiv.org/abs/2610.07853v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.07853v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Ternary language models such as BitNet b1.58, Falcon-E and BitCPM are fine-tuned with higher-precision latent weights and deployed as ternary codes produced by an export step that, in the labs' documented pipelines, first casts the latents to bf16. We audit those pipelines across three labs. In released checkpoints, fp32 quantization of the shipped latents disagrees with the deployed codes on 0.83-1.77% of codes in Falcon-E and BitCPM and on 1.530% in BitNet 2B-4T; for Falcon-E and BitCPM most disagreements are products that bf16 rounding lands exactly on the threshold, which ties-to-even maps to zero, and the unmodified onebitllms exporter reproduces all four Falcon-E releases byte for byte. At fine-tuned endpoints, with learning rates selected to match a nominal learning-rate-to-bf16-ULP ratio, the documented export lowers greedy GSM8K strict accuracy from 58.79% to 0.78% for Falcon-E-1B-Base and from 36.13% to 0.39% for BitCPM-CANN-0.5B, and a bf16 save and reload lowers BitNet 2B-4T's strict accuracy by 27.54 points while its last-number accuracy rises. Two compatibility remedies, writing the training quantizer's codes directly or adjusting the bf16 inputs until the unchanged tools emit them, each met a 4-point strict-accuracy non-inferiority criterion against online evaluation in all three models. In two model families, randomized interventions on the initial distance from the threshold support distance-dependent selection of the codes that fine-tuning changes.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-06T06:58:35Z</published>
+    <arxiv:comment>14 pages, 4 figures, 17 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Avichal Sahai</name>
+      <arxiv:affiliation>Ofbusiness</arxiv:affiliation>
+    </author>
+    <author>
+      <name>Nishant Raj</name>
+      <arxiv:affiliation>Ofbusiness</arxiv:affiliation>
+    </author>
+    <author>
+      <name>Animesh Srivastava</name>
+      <arxiv:affiliation>Ofbusiness</arxiv:affiliation>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.08502v1</id>
+    <title>X-OPM: Explainable Automatic Digital On-Chip Power Modeling for Enhanced Robustness</title>
+    <updated>2026-10-06T15:09:52Z</updated>
+    <link href="https://arxiv.org/abs/2610.08502v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.08502v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Proactive power management systems reduce processor dynamic power through runtime power prediction and power-aware scheduling. Accurate, stable and low-overhead digital on-chip power meters (OPMs) are crucial for improving the prediction quality. Recent studies have explored various modeling methods, including using linear models, decision trees, and multi-layer perceptrons (MLPs) to construct OPMs. However, most current approaches train models end-to-end without analyzing the physical interpretability of features, affecting their ability to generalize to unseen workloads. Grounded in the design principles of synchronous digital VLSI circuits, X-OPM introduces a robust feature engineering framework that uses tree-based models to capture feature interactions and linear models for prediction. It also incorporates a human-in-the-loop workflow to balance model accuracy against modeling effort. Evaluated on a commercial C906 vector processor, X-OPM consistently achieves $R^2 &gt; 0.93$ across all workloads with sampling window size set below $8$ cycles. In contrast, state-of-the-art methods including APOLLO, COBIT, and standard MLPs fail to generalize across all test cases. Layout with commercial EDA tools shows that X-OPM incurs an area overhead below $0.1\%$, which is on par with lightweight tree-based and linear models, and significantly smaller than MLP-based models.</summary>
+    <category term="cs.AR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-06T15:09:52Z</published>
+    <arxiv:primary_category term="cs.AR"/>
+    <author>
+      <name>Jingbo Jiang</name>
+    </author>
+    <author>
+      <name>Xizi Chen</name>
+    </author>
+    <author>
+      <name>Jian Peng</name>
+    </author>
+    <author>
+      <name>Wei Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.08402v1</id>
+    <title>VETTA: Coordinating Turn- and Token-Level Credit Assignment for Multi-Turn LLM Agents</title>
+    <updated>2026-10-06T14:15:11Z</updated>
+    <link href="https://arxiv.org/abs/2610.08402v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.08402v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Multi-turn LLM agents often receive sparse task feedback across several interactions, while generating each response token by token. This creates two related credit-assignment questions: which responses helped achieve the outcome, and which generation decisions mattered within each response? Existing methods typically focus on only one level: turn-level methods evaluate complete responses but do not distinguish the decisions within them; token-level methods can propagate feedback across turns but do not explicitly model credit for each response. These complementary limitations motivate learning credit at both levels and coordinating it in a single policy update. We introduce VETTA, a credit assignment method that jointly learns turn- and token-level values through separate heads on a shared lightweight critic. VETTA computes advantages along both temporal sequences and combines each turn advantage with a within-response-centered token residual for PPO updates. Furthermore, to reduce value-learning cost, the critic retains only early Transformer blocks from the pretrained checkpoint used to initialize the actor. On two challenging agent benchmarks, ALFWorld and WebShop, VETTA improves success rates over PPO by 37.5% and 22.3%, respectively, with Qwen2.5-1.5B-Instruct and achieves success rates of 95.5% and 76.0%, respectively, with Qwen2.5-7B-Instruct. Critic-depth comparisons further show strong task performance with substantially lower critic-side computation. These results suggest that a compact shared critic can coordinate turn- and token-level credit to improve agent performance while keeping value estimation efficient. Code is available at https://github.com/Jiaju-Chen/VETTA-official.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-06T14:15:11Z</published>
+    <arxiv:comment>16 pages, 6 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Jiaju Chen</name>
+    </author>
+    <author>
+      <name>Min Yang</name>
+    </author>
+    <author>
+      <name>Jinghua Piao</name>
+    </author>
+    <author>
+      <name>Xiaochong Lan</name>
+    </author>
+    <author>
+      <name>Xu Xia</name>
+    </author>
+    <author>
+      <name>Xiangnan He</name>
+    </author>
+    <author>
+      <name>Yong Li</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.07904v1</id>
+    <title>ApexQuant: Data-Free Elastic Quantization by Residual Re-Isotropization</title>
+    <updated>2026-10-06T07:49:55Z</updated>
+    <link href="https://arxiv.org/abs/2610.07904v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.07904v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We introduce ApexQuant, a calibration-free quantization method that recursively re-quantizes the residual error, serving as a refinement layer on top of existing quantizers. We establish that a fresh random rotation returns each residual to the uniform distribution on the hypersphere, which characterizes the rate of progressive error decay across successive passes. This result lets us determine, before any weight is read, how many passes a layer needs for a target weight-space error. Every prefix is itself a valid lower-rate model, so one artifact serves several precisions. We instantiate ApexQuant with three interchangeable stages, scalar, $E_8$ and trellis, and validate it on four open-weight LLMs and on Earth-observation and medical domains where in-distribution data is often unattainable as imagery arrives under restrictive licences or due to patient material under privacy constraints. Progressive re-isotropization comes within a few percent of full precision at four bits and gives the best two-bit arm we measure, in a completely data-free setting.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-06T07:49:55Z</published>
+    <arxiv:comment>25 pages, 6 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Aksel Fristrup</name>
+    </author>
+    <author>
+      <name>Sumit Pandey</name>
+    </author>
+    <author>
+      <name>Ankit Kariryaa</name>
+    </author>
+  </entry>
+</feed>
