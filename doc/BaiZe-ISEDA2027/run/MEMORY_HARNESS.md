@@ -5,13 +5,30 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 30×7 harness cross-eval (kimi-k2.6-cloud, serial=1) — cline-patched×30 ✅ 60.0% · codex×30 ✅ 46.7% · opencode×30 ✅ 50.0% · claude-code×30 ✅ 44.8% · deepseek-harness×30 ✅ 40.0% · Pi×6/30 🔄 RUNNING (5 res/1 pbf = 83.3%, on inst 7) · Hermes ❌ toolchain unavailable. gw_proxy healthy (PID 3175038, port 9090) + gw_proxy_dsh healthy (PID 1307655, port 9091).
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped (43/108/149) · opencode×30 (50.0%) · claude-code×30 (44.8%) · deepseek-harness×30 (12 res/18 pbf = 40.0%) · Pi×6/30 RUNNING (5 res/1 pbf = 83.3%) · gen_kimi_compare.py upgraded to 7-way · SWEBENCH_COMPARE.html (30×7, 156 entries, 77 resolved)
-当前动作:     R157: deepseek-harness×30 COMPLETE (40.0%) → gen_kimi_compare.py upgraded to 7-way (Pi+Hermes) → SWEBENCH_COMPARE.html regenerated (21852B, 7 rows) → Pi×30 chain running autonomously (PID 690669, on inst 7) → commit+push
-下一步:       [AUTO] Pi×30 remaining 24 instances (~2-3h, chain script will auto-regen HTML) → next wake: verify Pi×30 complete → final SWEBENCH_COMPARE.html → commit+push
+PHASE:        H-A 30×7 harness cross-eval (kimi-k2.6-cloud, serial=1) — cline-patched×30 ✅ 60.0% · codex×30 ✅ 46.7% · opencode×30 ✅ 50.0% · claude-code×30 ✅ 43.3% · deepseek-harness×30 ✅ 40.0% · Pi×12/30 🔄 RUNNING (9 res/3 pbf = 75.0%, on inst 13) · Hermes ❌ toolchain unavailable. gw_proxy healthy (PID 3175038, port 9090) + gw_proxy_dsh healthy (PID 1307655, port 9091).
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped (43/108/149) · opencode×30 (50.0%) · claude-code×30 (43.3%) · deepseek-harness×30 (40.0%) · Pi×12/30 RUNNING (9 res/3 pbf = 75.0%) · gen_kimi_compare.py upgraded to 7-way · SWEBENCH_COMPARE.html (30×7, 162 entries, 81 resolved)
+当前动作:     R158: Pi×30 progress check (12/30, 75.0%) → SWEBENCH_COMPARE.html regenerated (22024B, 162 entries, 81 resolved) → commit+push
+下一步:       [AUTO] Pi×30 remaining 18 instances (~50min, chain script will auto-regen HTML) → next wake: verify Pi×30 complete → final 7-way SWEBENCH_COMPARE.html → commit+push
 阻塞:         Hermes Agent: Python 3.14 + Node 26 not available (system has 3.10 + Node 20), Docker daemon permission denied. Marked as "toolchain not available" with evidence.
 ERROR_COUNT:  0
 ```
+
+## 🆕 第一百五十八轮速览（2026-10-07 23:18）— Pi×30 progress 12/30 (75.0%) + SWEBENCH_COMPARE.html regenerated (22024B, 162 entries, 81 resolved)
+
+- 🔄 **Pi×30 progress check**：chain PID 3288315 → run_serial_kimi.py PID 690669 (etimes=2915s). Currently on inst 13/30 (`django__django-11620`).
+  - Pi instances so far (12 scored): 10924(res)→11001(res)→11019(pbf)→11039(res)→11049(res)→11099(res)→11133(res)→11179(res)→11283(pbf)→11422(res)→11564(pbf)→11583(res)→11620(running)
+  - **9 resolved / 3 patch-but-failed = 75.0%** (12/30, 0 blocked)
+  - Remaining 18 instances ≈ ~50min (at ~175s/inst). Chain script will auto-regen HTML when done.
+- 📊 **SWEBENCH_COMPARE.html regenerated** (22024B, 30×7, 162 entries, 81 resolved):
+  - cline-patched: 30 scored, 18 res / 12 pbf = 60.0% ✅
+  - codex: 30 scored, 14 res / 16 pbf = 46.7% ✅
+  - opencode: 30 scored, 15 res / 15 pbf = 50.0% ✅
+  - claude-code: 29 scored, 13 res / 16 pbf / 1 blk = 43.3% ✅
+  - deepseek-harness: 30 scored, 12 res / 18 pbf = 40.0% ✅
+  - Pi: 12 scored, 9 res / 3 pbf = 75.0% 🔄 (12/30, running)
+  - Hermes Agent: ❌ toolchain unavailable
+- ✅ **gw_proxy + gw_proxy_dsh healthy**：PID 3175038 (port 9090) + PID 1307655 (port 9091).
+- 📦 **体积自检**：TASK=29428B（28.7KB，≤32KB ✓）/ MEMORY=22895B（22.4KB，≤32KB ✓）。📦 体积：TASK=28.7KB / MEMORY=22.4KB（归档 0KB）。
 
 ## 🆕 第一百五十七轮速览（2026-10-07 22:44）— deepseek-harness×30 ✅ COMPLETE (40.0%) + gen_kimi_compare.py upgraded to 7-way + SWEBENCH_COMPARE.html regenerated (7 rows) + Pi×30 🔄 RUNNING (6/30, 83.3%)
 
