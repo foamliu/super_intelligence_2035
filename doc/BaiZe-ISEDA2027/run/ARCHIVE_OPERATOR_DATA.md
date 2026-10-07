@@ -944,3 +944,66 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 
 > ✅ **落地状态**：2026-10-07 唤醒181 全部更正已落地（`analyze_lmeval.py` L35 名次方向 bug 修 + `DATA_MIX_RECIPE.md §9.2.1` 表格从 JSON 重生成 + `report_data_mix_eval.html` 6 处更正 + 结论改「代理无分辨力 + 证据不足」）。
 
+---
+
+## [归档自 BAIZE_DATA_TASK.md · 2026-10-07 唤醒192] §运维指令·2026-10-07②（解除白名单锁定：UltraX-Preview下载+en_v1_4排队+分词）原文
+
+### 🆕 运维指令 · 2026-10-07②（**解除白名单锁定：① 立即下载 UltraX-Preview ② en_v1_4 排队 ③ 已下载部分开始分词**）· **用户直令** · 最高优先
+
+> **用户直令（2026-10-07 中午）**：「**安排 data agent 开始下载 UltraX-Preview，ultrafineweb_en_v1_4 排队**」＋「**对于已下载部分的分词可以同步推进了**」。
+> ⓠ **本块【覆盖】2026-10-03 的白名单锁定（commit `1c2f248`）**：白名单**新增 2 项** —— `openbmb/UltraX-Preview` + `ultrafineweb_en_v1_4`。**其余白名单外仍不下载**（`UltraData-RL-2609`、LLaVA 等照旧）。**这是用户主动解禁，不是 agent 可以自行扩权的先例。**
+
+**① 立即下载 `UltraX-Preview`**（新白名单第 5 项）
+- repo = **`openbmb/UltraX-Preview`**；规模 **487 GB / 0.44 TiB / 479 parquet / 5 config / ~100B token**（与 base 部分重叠）。
+- 落盘：**`/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview/`**（先 `df -h` 核实余量；`/nas_train` 上轮 ≈34 T free）。
+- 口径照抄 base 那套：`hf download` + **`--include` config 级** + **外网显式带 proxy** + `setsid nohup`（`ppid=1`）+ **retry-loop** + log；**先核 HF 官方清单（行数/字节）再下**。
+- **为什么**：配方 §0.6 Stable 段的 **S1 轴（base vs UltraX 占比）**此前因它出局而**降级为「仅 base」** ⇒ 下满即**恢复该轴**（可回填配比搜索）。
+- **报**：PID / 起步速率 / `n-目标` / ETA / 落盘路径。
+
+**② `ultrafineweb_en_v1_4` 排队**（新白名单第 6 项）
+- 规模 **6.75 TB / 56,461 文件**（CC-MAIN 110 快照）——**很长**（@1.8 MB/s ≈ 43 天；带宽改善会快些）。**保留已下分片，🚫 不删**。
+- **排在 UltraX 之后**做长尾；**不与 GPIC 抢**（优先级见 ④）。
+- **报**：排队位置 + 预计起跑时刻。
+
+**③ 已下载部分开始分词（与下载并行推进）**
+- 链路**复用既有**：`preprocess_data.py` + tokenizer **`tokenizer_eod`**（DeepSeek-V4.1-Flash，vocab **129,281** / pad **129,408**）→ `.bin/.idx`，落 `/nas_train/app.e0031982/datasets/baize-data/text/`（plan）。
+- **范围**：**已下满/已下**的 base 三项 —— `ultrafineweb_en` ✅2048 + `l1_en_hq` ✅6000 + `zh` ✅256（**UltraX / en_v1_4 下到哪切到哪**，增量追加）。
+- **目标**：P-8 需 **~100B token**（现已分词 **22.05B** ⇒ 差额即本轮要补的）。
+- ⚠️ **I/O 纪律（重要，别踩）**：分词是**重 parquet 读（NFS）**，而**`.29` 上 Round2 BO 正在跑**（其数据加载同走 NFS）—— **可能与 BO 抢 I/O**（这正是今天 BO 变慢的候选原因之一）⇒ **`nice -n 19` + 限并发（先 2–4 进程）**，并**盯着 BO 速率**；**BO 明显掉速 ⇒ 降并发或暂停分词**，**宁可分词慢，不可伤 BO**。
+- **报**：已完成 config / 累计 token / tok·s⁻¹ / CPU·IO 占用。
+
+**④ 优先级（互抢时）**：**GPIC > UltraX-Preview > en_v1_4**；**分词（CPU/IO）单列**，且**不得压死 BO 与 GPIC**。
+- ⚠️ **如实预告（不许报喜不报忧）**：**新增两路下载会分流带宽 ⇒ GPIC 的 ETA 会变长**（当前 ≈2.6 天）。请给出**联合 ETA**（GPIC / UltraX / en_v1_4 三者各自的预计完成时刻）。
+
+**⑤ 投料红线不变**：新下载数据落盘后**必须过 `check_contamination.py`**（与 `EDA-Eval-PyAether` 158 任务**不同源** + 跨集去重比对）**才可进训练集**；`.bin/.idx` 与原始集**不入 git**。
+
+**⑥ 收尾**：按「收尾铁律」commit+push；心跳固定加一行 **下载/分词** 状态。
+> 📦 **体积提醒**：本块加入后 `BAIZE_DATA_TASK.md` 约 **≈32KB** ⇒ 若超 32KB，**收尾前先把已闭合旧块归档**（确切字节以你自己 `wc -c` 为准）。
+
+> ✅ **执行状态**：2026-10-07 唤醒186 已执行——UltraX-Preview 下载已启动（PID=2850809）+ zh 分词已启动（PID=2850810）+ en_v1_4 排队。唤醒192 续传重启 UltraX（PID=3883720）。本块已闭合，归档于此。
+
+---
+
+## [归档自 BAIZE_DATA_TASK.md · 2026-10-07 唤醒192] §运维指令·2026-10-07③（GPIC优先序裁定+BO objective方向核对）原文
+
+### 🆕 运维指令 · 2026-10-07③（**① GPIC 优先序裁定（运维拍板）② BO objective 方向核对（🔴 疑似 bug，最高优先）**）· 最高优先
+
+> **背景**：① UltraX 一开跑，**GPIC 从 ~45 tar/h 掉到 3.4–5.5/h**（ETA 2.7 天 → ~22 天）——你在下一步里请示「是否暂停 UltraX 优先 GPIC」；② 唤醒 189 突然写 **「⭐new best t75=0.373」**，而唤醒 185–188 一直是 **`best=t23(0.4155)`**，且 **0.373 正是旧的 min** —— 与 10-07 `analyze_lmeval.py` 那次**「名次方向 bug」同一类症状**。
+
+**① GPIC 优先序裁定（运维拍板 · 立即执行）**
+- **让 `UltraX` 下完**（ETA ~15:00，只差 ~2h；中途停会浪费已下 122GB 进度）。
+- **UltraX 一完成（或 15:30 仍未完成）⇒ 立即把带宽全部让回 `GPIC`**：**不启动 `en_v1_4`**（继续排队），**直到 GPIC 下完（8001 tar）** 或运维另行指示。
+  - ⚠️ **本条【已被 `2026-10-07④`（用户直令 15:58）作废】**：「15:30 定时停 UltraX」取消 ⇒ **UltraX 改为续传到底（479/479）**，**GPIC 等 UltraX 跑完再让回**。以 ④ 块为准。
+- **判据**：GPIC 速率应回到 **≥20 tar/h（ETA ≤6 天）**；若仍 ~5/h ⇒ **还有别的分流**，**如实报根因**（CDN / 别的下载 / NFS）。
+- **报**：GPIC 恢复后速率 + 新 ETA + `en_v1_4` 排队位置。
+
+**② BO objective 方向核对（🔴 最高优先 · 疑似又一次方向 bug）**
+- **现象**：唤醒 185–188 = `best=t23(0.4155)`；唤醒 **189 = `new best t75(0.373)`** —— 8 集均分**越高越好**，而 **0.373 是旧的 min**。
+- **要求（必须给原始证据/命令）**：① `--objective` **实际传的是什么**？② DB 里 `best` / `top5` 的**排序方向**（`ORDER BY score ASC/DESC`）？③ objective 究竟是 **max(8 集均分)** 还是 **min(loss 或某列)**？④ 与 10-07 已更正的 `analyze_lmeval.py` 名次方向**是否同源**？
+- **若确认方向错** ⇒ **立即修正**，并回答两问：**(a) 已跑的 129 trial 里真正的 best 是谁？(b) 是否影响 R1 已交付的 Spearman ρ=−0.43 结论？**
+- 🚫 **核对清楚之前**：**不得**据当前 `best` 定配比、**不得**改动已跑 trial 的记录。
+
+**③ 铁律**：🚫 不 kill BO；分词保持 `nice -19`；**测到与推测冲突时以测到为准**（今天你已用 `wa=0` 纠正过运维的 I/O 争用推测，很好）。
+
+> ✅ **执行状态**：① GPIC优先序——被 ④ 块（用户直令15:58）作废「15:30定时停UltraX」→改为UltraX续传到底。② BO方向核对——唤醒190确认：报告方向bug（非BO code bug），TRUE best=t23(0.4155)，t75(0.373)=MIN/worst，R1 Spearman ρ=−0.43不受影响。已创建query_bo_r2.py(ORDER BY score DESC)。唤醒192再次DB查询复核确认。本块已闭合，归档于此。
+
