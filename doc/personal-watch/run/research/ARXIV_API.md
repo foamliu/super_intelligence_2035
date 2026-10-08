@@ -1112,6 +1112,25 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **下轮预期**：本地 **`2026-10-08 06:00`**（首日后首个标准「早 3」轮），按 SOP 增量采集并产出当日 3 篇。
 
 
+### 9.83 第八十一轮（本地 2026-10-08 18:00 时窗 · **P0 第 4 批第 3 轮 · 「晚 2」轮 · 当日收口**）：`2026-10-07` 批刷新 → **+180（收录 2 / 候选 178）**，当日日报收口 **5/5**
+
+> 🎯 **P0 第 4 批口径**：每天 5 篇（早 3 + 晚 2）。**本日 06:00 = AM 轮（第八十轮，早报 3 篇「借鉴」）**；**本日 18:00 = PM 轮（第八十一轮，晚报 2 篇「科普」）** → 当日合计 **5 篇**，并在 `research/daily/2026-10-08.html` 追加「晚报变更说明（AM → PM）」。
+
+- **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-08T10:00:34Z`，证据 `research/raw/2026-10-08-probe-r81.{json,log}`）：
+  - **arXiv API**：`HTTP 200` + `application/atom+xml; charset=utf-8`，**公告批次已刷新为 `2026-10-07`**：`total_results=629290`（较 AM 轮 `628559` **+731**）、最新样本 `published=2026-10-07T17:59:48Z`（`2610.10539 / 2610.10538 / 2610.10536`）→ ✅ **可达，且批次刷新**；
+  - **HF Daily Papers**：`ok=false`，`Max retries exceeded ... host='huggingface.co'` → ❌ **不可达**（**如实记录，不伪造 `hf_daily`**）；
+  - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml`，`items=190 / 262 / 512` → ✅ **有内容**（本轮 RSS **未**用于增量入账，仅作复验）。
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=daily`，窗口 72h**，`generated=2026-10-08T10:02:03Z`，证据 `research/raw/2026-10-08-fetch-r81.json`）：**15/15 查询 `ok`**（均 `attempts=1`，**无重试**），**kept 180 / dropped 393** = **297 条 `already in SEEN`** + **96 条 `stale > 72h`（自首次提交起）**。
+- **逐查询 kept（PM）**：`sweep-cs-5cats` 40 · `llm-large-language-model` 34 · `llm-long-context` 1 · `llm-scaling-law` 1 · `slm-small-language-model` 4 · `slm-on-device` 4 · `mm-vision-language` 37 · `mm-multimodal` 12 · `mm-csmm` 2 · `agent-harness-title` 1 · `agent-swe-bench` 3 · `agent-tool-use` 7 · `agent-csma-multiagent` 6 · `nb-retrieval-augmented` 2 · `nb-alignment` 26 —— **合计 180**。
+- **结论**：**公告批次刷新 → 180 条新增**（**收录 2** / **候选 178**）；实际窗口按 R2′ 为 `2026-10-07` 提交批（含少量 `2026-10-06` 渐进索引条目）。
+- **权威复核（`id_list`）** —— 晚报 2 篇逐条复核，**`200` 不足以判成功**，须 XML + `published` 齐备：
+  - `id_list=2610.09769,2610.10462` → `research/raw/2026-10-08-idlist-r81.{xml,headers,json}`：`HTTP 200` + `application/atom+xml` + `published` 齐备（`2610.09769`：`2026-10-07T09:52:46Z`；`2610.10462`：`2026-10-07T17:28:32Z`）。
+- **产出（P0 交付 · 收口）**：`research/daily/2026-10-08.html`（**自包含单文件**，**5 篇 = 3 借鉴（AM）+ 2 科普（PM）**；页头标识 `早报 → 晚报`、进度 `3/5 → 5/5`；新增「📝 晚报变更说明（AM → PM）」小节 = 6 项变更表 + 「未变更项」声明；附录扩为 **AM / PM 双列** 15 查询表 + PM `id_list` 证据）→ 同步更新 `research/daily/index.html`（2026-10-08 行：`早报 3/5` → `晚报 5/5`）与 `research/INDEX.md`（行计数 `3|507` → `5|685`）。
+- **台账**：`research/SEEN.md` **+180 行**（收录 2 / 候选 178）→ 累计 **1770 条（收录 171 / 候选 1599，其中 RSS 补充候选 507）**；`research/papers.jsonl` **+2** → **171 行**。
+- **回归**：`research/test_arxiv_fetch.py` · `research/test_top_k.py`（均离线）；本轮**无长期工具代码改动**（`research/raw/update_r81.py` 为一次性留证/入账脚本，**非长期工具**）。
+- **下轮预期**：**本地 `2026-10-09 06:00`（新一日 AM 轮）**：① 复验批次（`2026-10-07` 批已落地，预计 `2026-10-08` 提交批在 UTC 00:00 前后公告）；② 出 **3 篇「借鉴」**；③ 新建 `research/daily/2026-10-09.html` 与 `research/2026-10-09.md`。
+
+---
 ### 9.82 第八十轮（本地 2026-10-08 06:00 时窗 · **P0 第 4 批第 2 轮 · 首日后的首个标准「早 3」轮**）：API 关键词增量 0（批次未刷新）→ **RSS 补充发现 +510（收录 3 / 候选 507）**
 
 > 🎯 **P0 第 4 批口径**：每天 5 篇（早 3 + 晚 2）。**本日 06:00 = AM 轮**，产出 **3 篇「借鉴」**；18:00 晚报补 **2 篇「科普」** 并修订本页。

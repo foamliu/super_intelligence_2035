@@ -1,0 +1,17 @@
+{
+  "n_entries": 2,
+  "content_type": "application/atom+xml; charset=utf-8",
+  "http": "200",
+  "entries": [
+    {
+      "id": "http://arxiv.org/abs/2610.09769v1",
+      "title": "From Expert-Guided Proof Search to Automated Open-Problem Solving",
+      "published": "2026-10-07T09:52:46Z"
+    },
+    {
+      "id": "http://arxiv.org/abs/2610.10462v1",
+      "title": "FoldBack: Self-Correcting Masked Generative Policy for Long-Horizon Garment Folding",
+      "published": "2026-10-07T17:28:32Z"
+    }
+  ]
+}
