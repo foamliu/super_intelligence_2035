@@ -64,7 +64,7 @@ WAITING: 0
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
 | **pretrain** | 🔄 **R3 数据配比 BO（6 维 / 100 trial）运行中**：DB 32 行（31 complete + 1 failed=#24），best=**trial#8 score=0.4032**；第 5 批 trials 32–39 训练中 ~62–75%，**0 NaN**；PID 2637043（ppid=1），8 卡 62GB/55–90% util，**ETA ~05:50 Oct 9**。R2 全线 ✅ / 论文 ✅ / 收官报告 ✅ / R3 脚本 + 小样本分词 6/6 ✅（10-07⑤ T1–T4 ✅：float32 vs bf16 SSM **无差异**，「dense 3.3× faster」系 warmup 假象已撤回） | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` · `BAIZE_DATA_R3_TASK.md` | 🟢 `.cline_pretrain`；**P-8 暂缓令（10-02）仍未撤** |
-| **vision** | 🔄 从「全线收敛」转入 **AIMv2 缩放对比实验（2026-10-08⑤，用户直令；同日修订）**：**E1 = 同族 OV2 w512/d30 126.78M** vs **E2 = 同族 w768/d30 284.54M（2.24×，只差宽度）**，均 224/p16、**从零**、同 AIMv2 objective + 同 94.9M + 同 1 epoch；主指标 **IN-1k lp Protocol B**（3 seeds）；预注册 Δlp ±1.5pp。⚠️ R9 实测 w768 吞吐 ≈ w512（2978 vs 2938 img/s）⇒ 两臂 ETA 同量级。顺序：登记 `.12` 8 卡 → smoke 报 ETA → 开跑。背景：BP-1/2/3 已锁定；R9 阶段一（InfoNCE/15.36M）w512 6.10% > w768 3.63% | `run/EXPERIMENTS_VISION*.md` · `report_vision_aimv2_scaling.html`（待出） | 🟢 `.cline_vision`；`.12` 8 卡空闲 |
+| **vision** | 🟧 **AIMv2 缩放对比实验进行中（用户直令 10-08⑤ + 同日⑥ E2 变更）**：**E1 = 同族 OV2 w512/d30 126.78M** vs **E2 = 同族 w768/d30 284.54M（2.24×，只差宽度）**，均 224/p16、从零、同 AIMv2 objective + 同 94.9M + 同 1 epoch；主指标 IN-1k **lp Protocol B**（3 seeds）；判据 Δlp ±1.5pp。**agent 已完成**：smoke（E1 4697 / 官方臂 2347 img/s）· 登记 `.12` 8 卡 · `models.py` 加 width/depth override · 预注册初稿。**已令（⑥）**：E2 由「官方 304M@336」**改为 w768**，并**防止自动链跑到官方臂**。 | `run/EXPERIMENTS_VISION*.md` · `report_vision_aimv2_scaling.html`（待出） | 🟢 `.cline_vision`；`.12` 8 卡 |
 | **data** | 🔄 分词收尾 + 下载：`zh` 8/8 ✅112.47B · `l1_en_hq` 12/12 ✅152.17B · `ultrax` 10/10 ✅30.97B · `en_base` s24–s33 @24%（ETA ~04:30 Oct 9）；**累计 317.67B tok（≫ P-8 目标 100B）**；GPIC **6167/8001**（ETA ~1.7d）；base ✅ / UltraX ✅479 / `en_v1_4` 排队 | `report_data_*.html` · `DATA_MIX_RECIPE.md` · `BAIZE_DATA_R3_TASK.md` | 🟢 `.cline_data`；**配比实验已交接 pretrain 执行（R3）** |
 | **harness** | ✅ **7-way × 30 全完成**（cline-patched 60.0% · Pi 60.0% · Hermes 53.3% · opencode 50.0% · codex 46.7% · claude-code 43.3% · deepseek-harness 40.0%）；报告 4 份已交付；无运行中 chain → 🆕 **已下发 2026-10-08⑤：① 第二轮 7×100 横评（先报 ETA）② 深挖第一轮交互轨迹 + 逐 harness 特点对比表** | `run/harness/SWEBENCH_COMPARE.html` · `kimi_pilot_results.json` | 🟢 `.cline_harness`；**先做②（纯 CPU）再跑①** |
 
@@ -79,19 +79,16 @@ WAITING: 0
 
 - [ ] **P-9 结果** → 定 **P-8 的 seq(4096/8192) / MBS / 精度(bf16/FP8)**（含 16384 是否 OOM 的长上下文边界）。
 - [ ] ⭐ **P-8 配置拍板**（等 **P-9.7 定稿 + P-9.8 长程一致性 + P-6② token 预算**三件齐 → 再定）。现有建议 = **候选A `TP4·SP·MBS8·seq8192·FP8·MAX_CONN=1`（235K tok/s）**；⚠️ 前置未齐（base 下满 ~2.7 天 + 配比 §0.6 未做）→ 🚫 **不得顺手启动 P-8**。
-- [ ] ⭐ **vision AIMv2 缩放对比实验（2026-10-08⑤，用户直令）**：**E1** = 同族 OV2 **w512/d30 126.78M** vs **E2** = 同族 **w768/d30 284.54M（2.24×）**，均 224/p16、**从零**、同 AIMv2 objective + 同 94.9M + **同 1 epoch**；主指标 **IN-1k lp Protocol B**（3 seeds → mean±σ），辅报 Protocol A + C1–C4 + 公平表；预注册 **Δlp ±1.5pp**（σ>Δ 判「不可分辨」）。**待回报**：smoke 两臂 ETA（R9 实测 w768 吞吐 ≈ w512 ⇒ ETA 同量级）→ 开跑。⚙️ 原「官方 L/14@336 304M」臂已按用户裁定**改为同族 w768**（只差宽度，避免 4 变量同变）；若仍要官方臂则另议。
+- [ ] ⭐ **vision AIMv2 缩放对比实验（10-08⑤/⑥，用户直令）**：**E1** w512/d30 **126.78M** vs **E2** 同族 **w768/d30 284.54M（2.24×）**，224/p16、从零、同 AIMv2 objective + 94.9M + 1 epoch；主指标 **lp Protocol B**（3 seeds）；**Δlp ±1.5pp**（σ>Δ 判「不可分辨」）。**待回报**：E2(w768) smoke ETA → 开跑 → 两臂 Protocol A/B + C1–C4 + 公平表。⚠️ **官方 304M@336 臂已作废**（降为可选第三条；agent 已为它做过 smoke）；**已令防自动链跑到官方臂**。
 - [ ] 🆕 **P-8 启动令再评估（2026-10-08）**：前置已大幅改善（分词 **317.67B ≫ 目标 100B**；GPIC 6167/8001 未满但 P-8 未必依赖）⇒ **待用户拍板是否撤 10-02「⏸ P-8 暂缓」令**；未撤前 🚫 不得启动。
 - [ ] 🆕 **harness 第二轮 7×100 ETA（2026-10-08 下发）**：待回报总 ETA（首轮 210 run ≈34h 串行 ⇒ 700 run 估 ≈4.5–5 天）；**若不接受需另定**（减题量 / 允许并发 = 改口径）。
 - [ ] 🆕 **vision / harness 各一份「运维问答」待我答复**：vision 2026-10-08③ 四问（未验证假设 / Stage iv 前置 / GPU 空窗 / 论文补充）· harness 2026-10-08④ 五问（横评深挖 / BaiZe 接入前置 / 扩规模 / 多 backbone pilot / 论文补充）。
 > 📦 **§4 已闭合条目滚动归档**（2026-10-08 执行，原文未改一字）→ `daily-memories/2026-10-08.md`「从 MEMORY.md §4 滚动归档」= pretrain 四件（10-05 深夜2）· data/vision 三份 HTML（10-05 深夜2）· AIMv2 提速归因前置（10-05 晚）· data 三步令（10-06）· **harness deepseek 工具链（10-05，已装通）** · **R9「53M cap」口径修正（10-03）** · **R8「六架构=自研改编」结论边界（10-03，R13 官方对照已完成 79.81%）**。
 - [ ] 💬 **另一「运维会话」在并行活动**（2026-10-04 深夜发现：origin 上出现**我没写过的 RUN_ID 63 诊断记录**）→ **需与用户确认是否统一到单一会话**，以免重复下发/互相覆盖。
-> 📦 **data 三步令（2026-10-06）已闭合**（Stable 200-trial ✅ · `s_step` 归因 ✅ 166 ms · Round2 BO 200/200 ✅）→ 原文见 `daily-memories/2026-10-08.md`「从 MEMORY.md §4 滚动归档」。
 > 📦 **归档指针（查旧决策去这里，勿再塞回本文件）**：① **`daily-memories/2026-10-03.md`「从 MEMORY.md 滚动归档」A 节** = D-CLEAN-2/-3 与回收量核实 · harness R1 沙箱路线 · GPIC E1 实测 + C1 口径 · H-A′ 放行 · docker 系降末选 · sudo 口令 · `ops_relay`「2 副本」误判结案 · 论文冻结 · vision 队列裁定 · data 白名单锁定；② **`daily-memories/2026-10-05.md`「从 MEMORY.md §4 滚动归档」** = 本区已闭合的 `[x]` 条目（AIMv2 改写授权 · D-CLEAN-4 定案 · harness 取 kimi · sglang 走 conda · 环境隔离纪律 · proxy 口径 · Claude Code 合规口径定案）—— **原文未改一字**。
 
 > ③ **`daily-memories/2026-10-06.md`「从 MEMORY.md §4 滚动归档」**（2026-10-07 滚动）= **配比实验改道裁定 · 「实验」定义 5 条判据**。**原文未改一字。**
-- [ ] ⛔ **loop 优化：暂不做（用户 2026-10-03 决定）** —— `SLEEP_WAIT 1800→3600` 与「训练未完成就跳过 cline 调用」都要重启 loop（需回公司），且会让反应变慢 → **待回公司后择机**。
-- [ ] **文档口径统一**：seq 已定 4096（P-8 起），README/论文里残留的 4094 需对齐。
-- [ ] 是否把关键决策合并进 `BAIZE_PROGRESS.html`（单一事实来源）。
+- [ ] ⛔ **loop 优化：暂不做**（用户 10-03 定；需回公司重启 loop）· **文档口径**：seq 统一 4096（README/论文残留 4094 待对齐）· 是否把关键决策并进 `BAIZE_PROGRESS.html`（单一事实来源）。
 
 ---
 
@@ -185,6 +182,7 @@ WAITING: 0
 - 🪟 **本机（Windows）工具坑**：① PowerShell 下 `git commit -m "…"` 遇 `()` / `->` / 全角括号会报「字符串缺少终止符」→ **一律 `git commit -F <临时文件>`**；② `Select-String` 对**中文/`$tag[...]` 插值**匹配不可靠 → **中文校验改用 Python**；③ 控制台是 GBK → Python `print` 中文/emoji 会 `UnicodeEncodeError` → **把结果写文件再 `read_files`**。
 - 🔎 **MCP 配置不走 `--data-dir`（会复发）**：固定读共享 `~/.cline/data/settings/cline_mcp_settings.json`（与 `--data-dir` 无关）；`.29`/`.12` **各自本地一份**（非 NFS）→ **修 MCP 两台都要修**。⚠️ 探针坑：① SSE 端点不能 `curl -w '%{http_code}'`（长连接 → 空输出 → 误判）→ 只取响应头 `curl -sS -D - -o /dev/null`；② `cline mcp list` 无效 → 正解 `cline config mcp`。
 - 💡 **诊断教训**：`baize_p5b_train.log` **只在 START/END 写**；**逐迭代日志是 `/tmp/baize_p5b.log`**（我 tail 错了文件，下次注意）。
+- 🏁 **改「已下发块」的关键参数 ⇒ 必须新起一个序号块置于最顶**（2026-10-08 竞态教训：⑤ 下发后 ~1h 才改 E2，agent 已按旧版 smoke/写预注册/排队）—— 只改原块正文不行，agent 的 `MEMORY` 里仍引用旧版。
 
 ---
 
@@ -204,7 +202,8 @@ WAITING: 0
   - `BAIZE_HARNESS_TASK.md` 新增 **2026-10-08⑤**（① 第二轮 **7×100** 同题集横评，**先报 ETA**、口径与首轮逐字一致 ② **深挖首轮 7×30 交互轨迹** → 新报告 `report_harness_interaction_traces.html` + 逐 harness 特点对比表；**② 先做**，纯 CPU）。
   - `BAIZE_VISION_TASK.md` 新增 **2026-10-08④**（答「现有全部数据含 GPIC 6167/8001 训 1 epoch 多久」：逐源列 N=**≈94.9M 对**、两个 img/s 口径（R12 干净 4993 / R12b 有效 ≈2909）、墙钟 **≈5.5–9 h/epoch**、是否 >1 epoch；**纯 CPU 估算，非批准开跑**）。
   - 同步：`MEMORY.md §3` 四行状态更新为 10-08 实测 · §4 滚动归档 · 本日 `daily-memories/2026-10-08.md`。
-  - ➕ **同日再下一条（用户直令）**：`BAIZE_VISION_TASK.md` 新增 **2026-10-08⑤ AIMv2 缩放对比实验** —— **E1**（同族 OV2 w512/d30 **126.78M**）vs **E2**（同族 **w768/d30 284.54M**，**2.24×，只差宽度**），均 224/p16、从零；**同 AIMv2 objective + 同 94.9M + 同 1 epoch**；主指标 **IN-1k lp Protocol B**，预注册 Δlp ±1.5pp；先登记 `.12` 8 卡 + smoke 报 ETA 再跑。⚙️ **同日晚修订**：E2 原为「官方 OV2 L/14@336 304M」⇒ 运维指出那会**同时改 4 个变量**（参数量/结构/patch/分辨率），**用户裁定改用同族 w768**（只差宽度）；官方臂若仍要则另议。
+  - ➕ **同日再下一条（用户直令）**：`BAIZE_VISION_TASK.md` 新增 **2026-10-08⑤ AIMv2 缩放对比实验** —— **E1**=同族 OV2 w512/d30 **126.78M** vs **E2**=同族 **w768/d30 284.54M（2.24×，只差宽度）**，均 224/p16、从零；同 AIMv2 objective + 同 94.9M + 同 1 epoch；主指标 **IN-1k lp Protocol B**，预注册 Δlp ±1.5pp。
+  - ➕➕ **同日第三次（E2 变更令 ⑥，`657ef6bb`）**：核对 origin 发现 **vision 已按 ⑤ 初版动手**（`329bdf8d`：smoke 官方臂 E2=**2347 img/s / ETA 11.2h**、E1=4697 img/s、写预注册、`models.py` 加 width/depth override、E1 即将启动 / E2 排队）⇒ 立即下发 **⑥「E2 作废官方臂 → 改同族 w768」**，要点：E1 不动 · **勿启动官方臂** · **改 `run_scaling_experiment.sh` 防自动链跑到官方臂** · 重跑 w768 smoke · 改预注册（留「改前/改后」）· 官方臂降为可选第三条。
 
 > 📦 **2026-10-08 早/午两条运维流水已滚动归档** → `daily-memories/2026-10-08.md`（**原文未改一字**：①「让 pretrain/vision/data 更新论文」`5cf87a53` ②「各线自己写报告」`e3afb272`）。**勿再塞回本文件。**
 
