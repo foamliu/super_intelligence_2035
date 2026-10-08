@@ -7,7 +7,7 @@ WAITING: 1
 ```
 PHASE:        H-A ROUND-2 7×100 RUNNING 🔄 (all 7 parallel, --resume, codex 100% done) + 口径与并发 DISCLOSED ✅ + TRACE REPORT COPIED TO DOC ROOT ✅ + SWEBENCH_COMPARE.html UPGRADED TO 7×100 ✅
 已完成:       gen_round2_compare.py (7×100 with 复用/新跑 marker + 口径与并发 section) ✅ · report_harness_interaction_traces.html copied to doc root ✅ · SWEBENCH_COMPARE.html regenerated (47501B, 318 entries in 100-set) ✅ · report_harness_interaction_traces.html (38307B) ✅ · Round-2 launched (7 parallel, --resume) ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE · report_harness_swebench_analysis.html
-当前动作:     R188: operator ⑦ compliance — 口径与并发 section added to MEMORY + SWEBENCH_COMPARE.html; trace report copied to doc/BaiZe-ISEDA2027/ root; gen_round2_compare.py created (100 instances, R1/R2 split, monitoring table). Round-2 progress: codex 100/100✅, opencode 40/100, pi 37/100, cline 33/100, claude-code 36/100, dsh 36/100, hermes 36/100.
+当前动作:     R189: SWEBENCH_COMPARE.html refreshed (48067B, 338 entries, 130 resolved) with latest Round-2 progress — codex 100/100✅(res=30,rate41.1%), pi 44/100(res=21,rate56.8%), opencode 42/100, cline 39/100, claude-code 38/100, dsh 37/100, hermes 37/100. ⑦ deliverables all verified intact (口径与并发 section ✅, trace report in doc root ✅, 复用/新跑 markers ✅).
 下一步:       Monitor Round-2; regenerate SWEBENCH_COMPARE.html per harness completion; final 7×100 table + 口径 analysis when all done.
 阻塞:         <无>
 ERROR_COUNT:  0
@@ -29,9 +29,9 @@ ERROR_COUNT:  0
 2. **codex 特例**：codex 在 R1 跑了 300 条超集（串行），其中 70 条与本轮 100-set 重叠 → codex 的 70 条"新跑"实际来自 **300 串行超集**，**非 R2 并行**。codex 全部 100 条均为串行。
 3. **监控指标**（本轮必须对比 R1 同 30 条）：`quota-blocked` / `timeout` / `no-patch` 率 → 若 R2 显著上升 ⇒ 判"并行污染" → 结论打折。SWEBENCH_COMPARE.html §2 监控表已生成。
 
-**当前 R2 监控快照**（2026-10-08 20:40，进行中）：
-- 各 harness R1 30 条：quota-blocked=0, infra-blocked=0（R1 串行无争用）✅
-- R2 新题进行中：暂无显著 quota-blocked 上升（需等全部完成后最终判定）
+**当前 R2 监控快照**（2026-10-08 21:21，进行中）：
+- 各 harness R1 30 条：quota-blocked=0（R1 串行无争用）✅
+- R2 新题进行中：暂无显著 quota-blocked 上升（codex R2=70 有 27 blk 但属 no-patch 非 quota-blocked；其余 harness R2 进度 7–15/70，qb=0）。需等全部完成后最终判定。
 
 ## 🗣️ 运维问答 · 2026-10-08④（下一步工作建议）
 
@@ -211,3 +211,5 @@ ERROR_COUNT:  0
 - 2026-10-08 15:19 —— **第一百八十一轮** —— 💓 Health-check heartbeat：report_harness_swebench_analysis.html re-verified (9 sections, 64201B, all requirements met: TL;DR/eval design/results/failure modes SVG/cost SVG/architecture/BaiZe implications/limitations/next steps), no new instructions, no running chains, R160-R171 archived to daily → commit+push。📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~30KB(29.3KB ✓)（归档 ~4KB → daily-memories-harness/2026-10-08.md）。
 - 2026-10-08 17:58 —— **第一百八十五轮** —— 💓 Health-check heartbeat：Q&A (2026-10-08④) already delivered in R184 (commit 27859f2e 17:26). All deliverables re-verified intact (report 75647B, SWEBENCH_COMPARE 21976B, HARNESS_7WAY 56352B, HARNESS_3WAY 59268B, kimi_pilot_results.json 532623B)，no new instructions (git fetch=up to date)，no running chains → commit+push。📦 体积：TASK=29919B(29.2KB ✓) / MEMORY=24875B(24.3KB ✓)（归档 0KB）。
 - 2026-10-08 20:05 —— **第一百八十七轮** —— 🚀 运维指令 2026-10-08⑤ 执行中：② report_harness_interaction_traces.html 已交付（38307B, 7 sections S1-S7, 5 inline SVG, 0 ext links, ≤200KB ✓）—— 覆盖产出 A（7×N harness 特点对比表：启动方式/交互轮次/工具调用/执行闭环/avg wall_s/失败模式/patch规模/resolved率）+ 产出 B（20pp gap 归因：3 个证据化因素 = no-patch rate 33% vs 10% + timeout rate 27% vs 0% + patch scope 4.2 vs 2.2 files）+ 数据诚实声明（per-turn 交互轨迹仅 stdout_tail 500 chars 存活，完整轨迹需重跑）。HARNESS_7WAY_COMPARISON.html 已加 cross-ref。① Round-2 7×100 已起跑（19:22 launch, 7 harnesses parallel, --resume skips 30 R1）：instance_selection_100.json = 30 R1 + 70 stratified new（含全部 11 repo），progress cline 31/pi 31/hermes 33/opencode 32/codex 300(32 pending)/claude-code 30/dsh 32。ETA ~10h（bottleneck hermes 520s×70=10.1h → ~05:30 Oct9）。④ block archived → ARCHIVE_OPERATOR_HARNESS.md。→ commit+push。📦 体积：TASK=30492B(29.8KB ✓) / MEMORY=~26KB(25.4KB ✓)（归档 ~3KB → ARCHIVE_OPERATOR_HARNESS.md）。
+- 2026-10-08 20:41 —— **第一百八十八轮** —— ✅ 运维指令 2026-10-08⑦ 执行：① 口径与并发 section added to MEMORY_HARNESS.md（串行 vs 并行 · 30 条 R1 复用 · 70 条 R2 新跑 · codex 300 串行超集特例 · 监控指标对比表）；② report_harness_interaction_traces.html copied to doc/BaiZe-ISEDA2027/ root（38307B，与其它线报告一致）；③ gen_round2_compare.py 创建（100 instances, R1/R2 split, 复用/新跑 marker column, §2 monitoring table）→ SWEBENCH_COMPARE.html regenerated (47501B, 318 entries, 127 resolved)。→ commit+push。📦 体积：TASK=32870B(32.1KB) / MEMORY=~29KB(28.3KB ✓)（归档 0KB）。
+- 2026-10-08 21:21 —— **第一百八十九轮** —— 🔄 Round-2 progress monitor + SWEBENCH_COMPARE.html refreshed (48067B, 338 entries, 130 resolved)：codex 100/100✅(res=30,rate41.1%), pi 44/100(res=21,rate56.8% 领先), opencode 42/100, cline 39/100, claude-code 38/100, dsh 37/100, hermes 37/100。⑦ deliverables re-verified intact (口径与并发 section ✅ / trace report in doc root ✅ / 102 复用新跑 markers ✅ / monitoring table ✅)。7 harness 进程仍在运行（etimes~6750s≈1.9h）。→ commit+push。📦 体积：TASK=32870B(32.1KB, marginal) / MEMORY=~30KB(29.4KB ✓)（归档 0KB）。
