@@ -17,6 +17,34 @@
 > 📦 §运维指令·2026-10-07（📊 交付：昨夜工作汇报 HTML）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：report_10_07_pretrain_overnight.html 已由 #164 交付(26.5KB,自包含,全自检过)。需要时再读。
 
 
+### 🆕 运维指令 · 2026-10-08（📝 **更新论文 LaTeX：把 R2 实测数据写入 `4_llm_pretrain.tex` / `3_architecture.tex`**）· **用户直令：各线自己更新论文** · 高优先
+
+> **用户令**：「让 pretrain，vision 和 data 更新一下论文。」
+> ⚠️ **不要代笔写 LaTeX** —— 你只负责把你自己的实验数据填入对应的 `.tex` 文件，然后编译 `main.pdf`。
+> ⚠️ **论文在 `BaiZe-ISEDA2027/` 目录下，与任务书同在一个 repo** —— 你直接可见可改。
+
+**① 当前论文中 `4_llm_pretrain.tex` 已有 R1（S1–S5）的基础数据，但 R2 的大量新结果完全没有反映**。你需要审阅 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md`，判断哪些值得写入论文。
+
+**② 建议更新的内容（自行判断，不一定要全写）：**
+1. **长上下文能力**（B1 实验）：1M PPL=55.42 无退化 → 可补入 §4.2 或新增一段，说明 hybrid 的 long-context 优势（只需 4 层 attention 可见状态增长）。
+2. **推理成本对比**（P-9.11 系列）：128K–256K 下 hybrid vs dense 加速比 2.8–4.3×（prefill 1.7–3.3×，decode 2.2–2.6×）→ 强化 Table~8 或新增一段。
+3. **FP8 训练可行性**（P-9.8/P-9.9）：delayed FP8 可用于 P-8，但 tensorwise FP8 因 T1/T4 失败 → 可加一句预算说明。
+4. **更新 Table~8（tab:archcomp）**：若有新的更精确的数据（如 decode gap 在 sglang 下的实测），可更新。
+5. **Training throughput 数据**：P-9.7 定稿的 249K tok/s 可更新到相关位置。
+
+**③ 格式纪律**
+- 🚫 **不改 § 编号、不改 label、不改 cross-ref** —— 只更新数字、表格行、段落描述。
+- ✅ **可以加子节**（`\subsection{...}`）/ 加段落 / 加表 / 加图 —— 但 label 和 cross-ref 不能冲突。
+- **编译前先 `cd doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027 && rm -f main.aux main.bbl main.blg main.log`，然后 `pdflatex main && bibtex main && pdflatex main && pdflatex main`，确认 0 error。
+- 编译后的 `main.pdf` **一起 commit**（审稿人看 PDF）。
+- **git 前缀**：`pretrain 论文更新: ...`
+
+**④ 本块不撤销之前的报告任务** —— 写报告和更新论文是两件事，**都要做**。
+- 推荐顺序：**先更新论文（简短任务），再写报告（深度任务）**。
+
+> 📦 本块加入后 TASK 约 24KB，仍 ≤32KB ✅。
+
+
 ### 🆕 运维指令 · 2026-10-08（📄 **R2 全线实验收官总报告 HTML**）· **用户直令：各线自己写报告** · 高优先
 
 > **用户令**：「把任务下发给各 agent，由 agent 自己写报告，不要替代他们写。」

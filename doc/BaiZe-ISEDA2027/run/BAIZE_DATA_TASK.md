@@ -14,6 +14,34 @@
 
 > 📦 §运维指令·昨夜汇报HTML（2026-10-07）已执行完毕 → report_10_07_data_overnight.html 已交付；详细指令已归档 → run/ARCHIVE_OPERATOR_DATA.md。需要时再读。
 
+### 🆕 运维指令 · 2026-10-08（📝 **更新论文 LaTeX：把数据配比实验结论写入 `4_llm_pretrain.tex`**）· **用户直令：各线自己更新论文** · 高优先
+
+> **用户令**：「让 pretrain，vision 和 data 更新一下论文。」
+> ⚠️ **不要代笔写 LaTeX** —— 你只负责把你自己的实验数据填入对应的 `.tex` 文件，然后编译 `main.pdf`。
+> ⚠️ **论文在 `BaiZe-ISEDA2027/` 目录下，与任务书同在一个 repo** —— 你直接可见可改。
+
+**① 当前 `4_llm_pretrain.tex` 已有基础数据配比描述（Ultra-FineWeb-L3 EN 1.8T + code 1.2T + math 515G），但你的配比实验结论——特别是「其他配比在代理规模下不可分辨」这一发现——完全没反映。**
+**`5_llm_posttrain.tex` §5.1 也提到了 domain annealing 数据，你可更新数据描述的具体数值。**
+
+**② 建议更新的内容（自行判断，不一定要全写）：**
+1. **数据配比实验结论**：配比实验在 18.36M 代理上的发现——最优区域稳定在 web 0.87–0.94 / code 0.06–0.12 / math≈0.01（`88:8:4`），但全量 lm_eval 排名与 BO 排名几乎反转（ρ=−0.80），全量分差仅 0.6pp ⇒ 该规模下「不可分辨」。
+   - 可在 §4 数据段加一句诚实的说明：「At the proxy scale of 18.36M parameters, data mixture rankings were indistinguishable within 0.6pp, leading to the adoption of the 88:8:4 prior from the literature.」
+2. **数据准备状态**：base（Ultra-FineWeb-L3 EN 6000 parquet / ZH 256 / EN 2048）✅ 全量下载完成并分词中；GPIC 下载进度；UltraX ✅ 完成。
+3. **污染隔离**：黑名单机制已实施，EDA-Eval-PyAether 的 158 个任务已隔离，可更新论文中的 contamination control 描述。
+4. **更新 `5_llm_posttrain.tex` 的数据描述**：SFT 数据（UltraData-SFT-Agent 51G）的实际规模和校验状态，若有新数据可更新数字。
+
+**③ 格式纪律**
+- 🚫 **不改 § 编号、不改 label、不改 cross-ref** —— 只更新数字、表格行、段落描述。
+- ✅ **可以加子节 / 加段落 / 加表 / 加图** —— 但 label 和 cross-ref 不能冲突。
+- **编译前先 `cd doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027 && rm -f main.aux main.bbl main.blg main.log`，然后 `pdflatex main && bibtex main && pdflatex main && pdflatex main`，确认 0 error。
+- 编译后的 `main.pdf` **一起 commit**。
+- **git 前缀**：`data 论文更新: ...`
+
+**④ 本块不撤销之前的报告任务** —— 推荐顺序：**先更新论文（简短任务），再写全链路状态报告**。
+> ⚠️ **注意**：更新论文时你仍然要维护分词/下载后台任务。论文修改在 CPU 上做，不冲突。
+
+> 📦 本块加入后 TASK 约 32KB，仍 ≤32KB ✅。
+
 ### 🆕 运维指令 · 2026-10-08（📄 **数据准备全链路状态报告 HTML**）· **用户直令：各线自己写报告** · 高优先
 
 > **用户令**：「把任务下发给各 agent，由 agent 自己写报告，不要替代他们写。」

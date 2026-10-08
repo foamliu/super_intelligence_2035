@@ -5,6 +5,36 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_VISION.md` / `EXPERIMENTS_VISION*` / `daily-memories-vision/` / `vision/`）。⚠️ **唯一例外（2026-10-06）**：按「📉 体积维护规程」，agent **可把「已闭合」的运维块/旧正文【原文】搬入** `run/ARCHIVE_OPERATOR_VISION.md`（**只搬迁、留 1 行指针**；不新增/不改写任何指令）。
 
+
+### 🆕 运维指令 · 2026-10-08（📝 **更新论文 LaTeX：把视觉编码器消融数据写入 `6_vision_encoder.tex`**）· **用户直令：各线自己更新论文** · **等当前实验跑完再改** · 高优先
+
+> **用户令**：「让 pretrain，vision 和 data 更新一下论文。」
+> ⚠️ **不要代笔写 LaTeX** —— 你只负责把你自己的实验数据填入对应的 `.tex` 文件，然后编译 `main.pdf`。
+> ⚠️ **论文在 `BaiZe-ISEDA2027/` 目录下，与任务书同在一个 repo** —— 你直接可见可改。
+> 🕐 **本块不插队**：等 **④ Arm B-hybrid（30k 步）跑完 + IN-1k eval 出结果** 后，再启动论文更新。
+
+**① 当前 `6_vision_encoder.tex` 已有基础架构对比（Table~IX）和部分消融，但 R9–R14 的大量新结果、消融实验、AIMv2 范式探索完全没有反映。**
+
+**② 建议更新的内容（自行判断，不一定要全写）：**
+1. **Scaling 结论**：R9 幂律拟合（渐近 25.1%，R²=0.94）→ 可写入 §VI-C，说明数据受限瓶颈。
+2. **宽度（M）边际效应**：R10 2D 拟合（M 边际全区间为负 ≈ −2.2 lp pp/参数翻倍）→ 影响架构锁定结论。
+3. **AIMv2 翻盘**：R11-G lp@55.3M=19.76%（vs 基线 7.40%，R²=0.91）→ 可写入 §VI-B 或新增子节，强化 AIMv2 作为备选。
+4. **消融实验**：mask-ratio 最优 0.6（倒 U 曲线）/ weight-ratio 无翻盘 / caption-weight 与 IN-1k 正交 / R11-F 数据源横比 GPIC 无显著差异。
+5. **InfoNCE 防 AR 坍缩**：Arm B pure AR 坍缩@600 C1=0.9731 vs B-hybrid（+InfoNCE）C1≈0.33 稳定 → 重要科学发现，值得写进论文。
+6. **Table~IX（tab:visarch）**：若有新的更精确数据，可更新。
+7. **更新结论段**：目前结论停留在 OpenVision2 胜出，应反映后续消融对架构锁定的验证。
+
+**③ 格式纪律**
+- 🚫 **不改 § 编号、不改 label、不改 cross-ref** —— 只更新数字、表格行、段落描述。
+- ✅ **可以加子节 / 加段落 / 加表 / 加图** —— 但 label 和 cross-ref 不能冲突。
+- **编译前先 `cd doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027 && rm -f main.aux main.bbl main.blg main.log`，然后 `pdflatex main && bibtex main && pdflatex main && pdflatex main`，确认 0 error。
+- 编译后的 `main.pdf` **一起 commit**。
+- **git 前缀**：`vision 论文更新: ...`
+
+**④ 本块不撤销之前的报告任务** —— 推荐顺序：**先等实验跑完 → 更新论文 → 再写全线总结报告**。
+
+> 📦 本块加入后 TASK 约 34KB（略超 32KB），agent 收尾前先把已闭合旧块归档到 `ARCHIVE_OPERATOR_VISION.md`。
+
 ### 🆕 运维指令 · 2026-10-08（📄 **视觉编码器全线实验总结报告 HTML**）· **用户直令：各线自己写报告** · **等当前实验跑完再写** · 高优先
 
 > **用户令**：「把任务下发给各 agent，由 agent 自己写报告，不要替代他们写。」
