@@ -6822,11 +6822,32 @@
     "harness": "codex",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git fetch failed: fatal: unable to access 'https://github.com/scikit-learn/scikit-learn/': Received HTTP code 503 from proxy after CONNECT\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git fetch failed: fatal: unable to access 'https://github.com/scikit-learn/scikit-learn/': Received HTTP code 503 from proxy after CONNECT\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 1550.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_scikit-learn__scikit-learn-10508.json",
+      "stdout_tail": "5017\n[run_single] running codex ...\n== harness=codex rc=0 timed_out=False wall=1550.8s ==\n[stderr tail] ...2026-10-08T13:52:14.550978Z ERROR codex_core::models_manager::manager: failed to refresh available models: timeout waiting for child process to exit\n\n[run_single] model_patch: 1819 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_scikit-learn__scikit-learn-10508.json\n[run_single] cleanup: git reset --hard c753b77ac49e72ebc0fe5e3c2369fe628f975017\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 18,
+        "p2p_total": 18
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "scikit-learn__scikit-learn-10949",
@@ -6834,11 +6855,32 @@
     "harness": "codex",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git fetch failed: fatal: unable to access 'https://github.com/scikit-learn/scikit-learn/': Received HTTP code 503 from proxy after CONNECT\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git fetch failed: fatal: unable to access 'https://github.com/scikit-learn/scikit-learn/': Received HTTP code 503 from proxy after CONNECT\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 674.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_scikit-learn__scikit-learn-10949.json",
+      "stdout_tail": "9s ==\n[stderr tail] ...2026-10-08T14:20:49.255185Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 2220 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_scikit-learn__scikit-learn-10949.json\n[run_single] cleanup: git reset --hard 3b5abf76597ce6aff76192869f92647c1b5259e7\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 42,
+        "p2p_total": 42
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "scikit-learn__scikit-learn-11040",
@@ -15395,6 +15437,741 @@
         "f2p_total": 2,
         "p2p_pass": 82,
         "p2p_total": 82
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-12589",
+    "repo": "django/django",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/backends/base/schema.py\n\tdjango/db/models/fields/related.py\n\tdjango/db/models/sql/compiler.py\n\ttests/inval"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/backends/base/schema.py\n\tdjango/db/models/fields/related.py\n\tdjango/db/models/sql/compiler.py\n\ttests/inval",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12497",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 103.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-12497.json",
+      "stdout_tail": "le] base_commit=a4881f5e5d7ee38b7e83301331a0b4962845ef8a\n[run_single] ps_len=787\n[run_single] git reset --hard a4881f5e5d7ee38b7e83301331a0b4962845ef8a\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=102.6s ==\n[run_single] model_patch: 7581 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-12497.json\n[run_single] cleanup: git reset --hard a4881f5e5d7ee38b7e83301331a0b4962845ef8a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 82,
+        "p2p_total": 82
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-12470",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 988.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-12470.json",
+      "stdout_tail": "e] instance_id=django__django-12470\n[run_single] base_commit=142ab6846ac09d6d401e26fc8b6b988a583ac0f5\n[run_single] ps_len=599\n[run_single] git reset --hard 142ab6846ac09d6d401e26fc8b6b988a583ac0f5\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=987.9s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-12470.json\n[run_single] cleanup: git reset --hard 142ab6846ac09d6d401e26fc8b6b988a583ac0f5\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 33,
+        "p2p_total": 33
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-12497",
+    "repo": "django/django",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: fatal: unable to write new index file\n"
+    },
+    "blocked": "git checkout failed: fatal: unable to write new index file\n",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12700",
+    "repo": "django/django",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tAUTHORS\n\tdjango/contrib/admin/static/admin/js/SelectFilter2.js\n\tdjango/contrib/auth/hashers.py\n\tdjango/contrib/gis/d"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tAUTHORS\n\tdjango/contrib/admin/static/admin/js/SelectFilter2.js\n\tdjango/contrib/auth/hashers.py\n\tdjango/contrib/gis/d",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12708",
+    "repo": "django/django",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tAUTHORS\n\tdjango/contrib/admin/static/admin/css/base.css\n\tdjango/contrib/admin/static/admin/js/SelectFilter2.js\n\tdjan"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tAUTHORS\n\tdjango/contrib/admin/static/admin/css/base.css\n\tdjango/contrib/admin/static/admin/js/SelectFilter2.js\n\tdjan",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12589",
+    "repo": "django/django",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/contrib/admin/static/admin/js/SelectFilter2.js\n\tdjango/contrib/postgres/search.py\n\tdjango/db/backends/mysql/v"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/contrib/admin/static/admin/js/SelectFilter2.js\n\tdjango/contrib/postgres/search.py\n\tdjango/db/backends/mysql/v",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12700",
+    "repo": "django/django",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tAUTHORS\n\tdjango/contrib/admin/static/admin/js/SelectFilter2.js\n\tdjango/contrib/auth/hashers.py\n\tdjango/contrib/gis/d"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tAUTHORS\n\tdjango/contrib/admin/static/admin/js/SelectFilter2.js\n\tdjango/contrib/auth/hashers.py\n\tdjango/contrib/gis/d",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12708",
+    "repo": "django/django",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tAUTHORS\n\tdjango/contrib/admin/static/admin/css/base.css\n\tdjango/contrib/admin/static/admin/js/SelectFilter2.js\n\tdjan"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tAUTHORS\n\tdjango/contrib/admin/static/admin/css/base.css\n\tdjango/contrib/admin/static/admin/js/SelectFilter2.js\n\tdjan",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12747",
+    "repo": "django/django",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tAUTHORS\n\tdjango/contrib/admin/static/admin/css/base.css\n\tdjango/contrib/admin/static/admin/js/SelectFilter2.js\n\tdjan"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tAUTHORS\n\tdjango/contrib/admin/static/admin/css/base.css\n\tdjango/contrib/admin/static/admin/js/SelectFilter2.js\n\tdjan",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12497",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git fetch failed: fatal: shallow file has changed since we read it\n"
+    },
+    "blocked": "git fetch failed: fatal: shallow file has changed since we read it\n",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12856",
+    "repo": "django/django",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tAUTHORS\n\tdjango/contrib/admin/static/admin/css/base.css\n\tdjango/contrib/admin/static/admin/js/SelectFilter2.js\n\tdjan"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tAUTHORS\n\tdjango/contrib/admin/static/admin/css/base.css\n\tdjango/contrib/admin/static/admin/js/SelectFilter2.js\n\tdjan",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12589",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/contrib/admin/static/admin/js/SelectFilter2.js\n\tdjango/contrib/postgres/search.py\n\tdjango/db/backends/base/sc"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/contrib/admin/static/admin/js/SelectFilter2.js\n\tdjango/contrib/postgres/search.py\n\tdjango/db/backends/base/sc",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12708",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 333.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-12708.json",
+      "stdout_tail": "...............s......s.s...s\n----------------------------------------------------------------------\nRan 131 tests in 0.894s\n\nOK (skipped=24)\nDestroying test database for alias 'default'...\n\u001b[0m\n\u001b[0m\u2192 \u001b[0mRead tests/schema/tests.py\u001b[90m [offset=28, limit=10]\u001b[0m\n\n[run_single] model_patch: 442579 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-12708.json\n[run_single] cleanup: git reset --hard 447980e72ac01da1594dd3373a03ba40b7ee6f80\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-12908",
+    "repo": "django/django",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "fetch errored but checkout ok: fatal: Unable to create '/dev/shm/harness_work/workdirs/django_django/.git/shall"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 126.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12908.json",
+      "stdout_tail": "as_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 976 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12908.json\n[run_single] cleanup: git reset --hard 49ae7ce50a874f8a04cd910882fb9571ff3a0d7a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 25,
+        "p2p_total": 25
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-12915",
+    "repo": "django/django",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 239.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12915.json",
+      "stdout_tail": "s_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 4586 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12915.json\n[run_single] cleanup: git reset --hard 4652f1f0aa459a7b980441d629648707c32e36bf\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 3,
+        "p2p_pass": 8,
+        "p2p_total": 8
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-12983",
+    "repo": "django/django",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 129.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12983.json",
+      "stdout_tail": "s_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 6239 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-12983.json\n[run_single] cleanup: git reset --hard 3bc4240d979812bd11365ede04c028ea13fdc8c6\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 15,
+        "p2p_total": 15
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-12700",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 712.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-12700.json",
+      "stdout_tail": "e] base_commit=d51c50d836c5cf8db5566da17963f871be554615\n[run_single] ps_len=1703\n[run_single] git reset --hard d51c50d836c5cf8db5566da17963f871be554615\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=712.0s ==\n[run_single] model_patch: 1553 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-12700.json\n[run_single] cleanup: git reset --hard d51c50d836c5cf8db5566da17963f871be554615\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 77,
+        "p2p_total": 77
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-12708",
+    "repo": "django/django",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\ttests/delete/tests.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\ttests/delete/tests.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12747",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 1068.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-12747.json",
+      "stdout_tail": "----------------------------\nRan 54 tests in 1.014s\n\nOK (skipped=1)\nDestroying test database for alias 'default'...\nDestroying test database for alias 'default'...\nDestroying test database for alias 'default'...\nDestroying test database for alias 'default'...\n\u001b[0m\n\n[run_single] model_patch: 7431 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-12747.json\n[run_single] cleanup: git reset --hard c86201b6ed4f8256b0a0520c08aa674f623d4127\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 3,
+        "f2p_total": 3,
+        "p2p_pass": 49,
+        "p2p_total": 49
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-12856",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 138.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-12856.json",
+      "stdout_tail": "or alias 'default'...\nDestroying test database for alias 'other'...\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[\u2713] Explore codebase to understand unique_together and UniqueConstraint validation\n[\u2713] Implement field existence check for UniqueConstraint\n[\u2713] Write tests and verify fix\n\u001b[0m\n\n[run_single] model_patch: 9013 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-12856.json\n[run_single] cleanup: git reset --hard 8328811f048fed0dd22573224def8c65410c9f2e\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 3,
+        "f2p_total": 3,
+        "p2p_pass": 78,
+        "p2p_total": 78
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-12908",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/sql/compiler.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/sql/compiler.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12113",
+    "repo": "django/django",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 1,
+      "wall_s": 1801.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-12113.json",
+      "stdout_tail": "=django__django-12113\n[run_single] base_commit=62254c5202e80a68f4fe6572a2be46a3d953de1a\n[run_single] ps_len=4774\n[run_single] git reset --hard 62254c5202e80a68f4fe6572a2be46a3d953de1a\n[run_single] running hermes ...\n== harness=hermes rc=-1 timed_out=True wall=1800.1s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-12113.json\n[run_single] cleanup: git reset --hard 62254c5202e80a68f4fe6572a2be46a3d953de1a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-12915",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 310.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-12915.json",
+      "stdout_tail": "sertNumQueries(1):\n             self.assertEqual(\n                 User.objects.filter(avatar__desc='missing').delete(),\n-                (0, {'delete.User': 0})\n+                (0, {})\n             )\n \n     def test_fast_delete_combined_relationships(self):\n\u001b[0m\n\n[run_single] model_patch: 2528 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-12915.json\n[run_single] cleanup: git reset --hard 4652f1f0aa459a7b980441d629648707c32e36bf\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-12589",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "fetch errored but checkout ok: error: Could not read 27746ab28ac88fc213456e63302b408312d95122\nfatal: Failed to "
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 1624.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-12589.json",
+      "stdout_tail": "stance_id=django__django-12589\n[run_single] base_commit=895f28f9cbed817c00ab68770433170d83132d90\n[run_single] ps_len=2417\n[run_single] git reset --hard 895f28f9cbed817c00ab68770433170d83132d90\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=1623.7s ==\n[run_single] model_patch: 1068 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-12589.json\n[run_single] cleanup: git reset --hard 895f28f9cbed817c00ab68770433170d83132d90\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-12700",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/sql/query.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/sql/query.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12708",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/sql/query.py\n\tdjango/utils/text.py\n\ttests/delete/tests.py\nPlease commit your changes or stash them "
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/sql/query.py\n\tdjango/utils/text.py\n\ttests/delete/tests.py\nPlease commit your changes or stash them ",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12747",
+    "repo": "django/django",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 1,
+      "wall_s": 1800.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-12747.json",
+      "stdout_tail": "o-12747\n[run_single] base_commit=c86201b6ed4f8256b0a0520c08aa674f623d4127\n[run_single] ps_len=927\n[run_single] git reset --hard c86201b6ed4f8256b0a0520c08aa674f623d4127\n[run_single] running claude-code ...\n== harness=claude-code rc=-1 timed_out=True wall=1800.2s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-12747.json\n[run_single] cleanup: git reset --hard c86201b6ed4f8256b0a0520c08aa674f623d4127\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 3,
+        "p2p_pass": 0,
+        "p2p_total": 49
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-13028",
+    "repo": "django/django",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 1034.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13028.json",
+      "stdout_tail": "/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-13028.json\n[run_single] cleanup: git reset --hard 78ad4b4b0201003792bfdbf1a7781cbc9ee03539\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 2,
+        "p2p_pass": 276,
+        "p2p_total": 276
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-12856",
+    "repo": "django/django",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/deletion.py\n\tdjango/utils/text.py\n\ttests/delete/tests.py\nPlease commit your changes or stash them b"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/deletion.py\n\tdjango/utils/text.py\n\ttests/delete/tests.py\nPlease commit your changes or stash them b",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12908",
+    "repo": "django/django",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/deletion.py\n\tdjango/utils/text.py\n\ttests/delete/tests.py\n\ttests/utils_tests/test_text.py\nPlease com"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/deletion.py\n\tdjango/utils/text.py\n\ttests/delete/tests.py\n\ttests/utils_tests/test_text.py\nPlease com",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12915",
+    "repo": "django/django",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/deletion.py\n\tdjango/utils/text.py\n\ttests/delete/tests.py\n\ttests/utils_tests/test_text.py\nPlease com"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/deletion.py\n\tdjango/utils/text.py\n\ttests/delete/tests.py\n\ttests/utils_tests/test_text.py\nPlease com",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12983",
+    "repo": "django/django",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/deletion.py\n\tdjango/utils/text.py\n\ttests/delete/tests.py\n\ttests/utils_tests/test_text.py\nPlease com"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/deletion.py\n\tdjango/utils/text.py\n\ttests/delete/tests.py\n\ttests/utils_tests/test_text.py\nPlease com",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-13028",
+    "repo": "django/django",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/deletion.py\n\tdjango/utils/text.py\n\ttests/delete/tests.py\n\ttests/utils_tests/test_text.py\nPlease com"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/deletion.py\n\tdjango/utils/text.py\n\ttests/delete/tests.py\n\ttests/utils_tests/test_text.py\nPlease com",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-12983",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 186.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-12983.json",
+      "stdout_tail": ".. ok\ntest_slugify01 (template_tests.filter_tests.test_slugify.SlugifyTests) ... ok\ntest_slugify02 (template_tests.filter_tests.test_slugify.SlugifyTests) ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 0.005s\n\nOK\n\u001b[0m\n\n[run_single] model_patch: 3319 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-12983.json\n[run_single] cleanup: git reset --hard 3bc4240d979812bd11365ede04c028ea13fdc8c6\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
       }
     },
     "classification": "patch-but-failed"

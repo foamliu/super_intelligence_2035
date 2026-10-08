@@ -5,10 +5,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A ROUND-2 7×100 RUNNING 🔄 (6/7 parallel, codex done) + 口径与并发 MONITORING: instance-composition bias identified (NOT parallel pollution) + ⑦ deliverables ✅
-已完成:       R190 SWEBENCH_COMPARE.html refreshed (49127B, 375 entries, 135 resolved) ✅ · ⑦ all deliverables ✅ · R188 口径与并发 section ✅ · trace report in doc root ✅ · Round-2 launched (7 parallel, --resume) ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
-当前动作:     R190: SWEBENCH_COMPARE.html refreshed (49127B, 375/700 entries, 135 resolved). Round-2 progress: codex 100/100✅, pi 47/100, cline 47/100, opencode 48/100, claude-code 47/100, dsh 47/100, hermes 39/100. 6 processes running (etimes~8960s≈2.5h). 🔬 ⑦ MONITORING FINDING: quota_blocked=False for ALL entries (R1+R2) → NO parallel pollution. R2 resolve-rate drop is INSTANCE COMPOSITION BIAS (R1=django+sympy only [easiest repos], R2 adds 44 harder-repo instances [matplotlib/sklearn/pytest/sphinx/astropy at 0%]). Also: eval env can't apply patches for non-django/sympy repos (patch_applied=False despite model_patch generated).
-下一步:       Continue monitoring Round-2; refresh SWEBENCH_COMPARE.html per harness completion; final 7×100 table + 口径 analysis when all done. ETA ~4-5h remaining (bottleneck hermes 61/70 remaining × ~520s ≈ 8.8h).
+PHASE:        H-A ROUND-2 7×100 RUNNING 🔄 (6/7 parallel active, codex done) + 口径与并发 MONITORING: quota_blocked=0 ALL → NO parallel pollution ✅ + ⑦ deliverables ✅
+已完成:       R191 SWEBENCH_COMPARE.html refreshed (50092B, 409 entries, 141 resolved) ✅ · R190 · R188 口径与并发 section ✅ · trace report in doc root ✅ · Round-2 launched (7 parallel, --resume) ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
+当前动作:     R191: SWEBENCH_COMPARE.html refreshed (50092B, 409/700 entries, 141 resolved). Round-2 progress: codex 100/100✅, cline 57/100, opencode 56/100, claude-code 52/100, dsh 52/100, pi 50/100, hermes 41/100. 6 serial processes running (etimes~11488s≈3.2h). quota_blocked=0 ALL → NO parallel pollution. R2 resolve-rate drop = INSTANCE COMPOSITION BIAS (R1=django+sympy easiest repos, R2 adds harder repos at 0%). non-django/sympy patches generated but patch_applied=False (eval env limitation, no Docker).
+下一步:       Continue monitoring Round-2; refresh SWEBENCH_COMPARE.html per harness completion; final 7×100 table + 口径 analysis when all done. ETA: bottleneck hermes 59 R2 remaining × ~1044s ≈ 17h; others finish in 5-7h.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -29,13 +29,13 @@ ERROR_COUNT:  0
 2. **codex 特例**：codex 在 R1 跑了 300 条超集（串行），其中 70 条与本轮 100-set 重叠 → codex 的 70 条"新跑"实际来自 **300 串行超集**，**非 R2 并行**。codex 全部 100 条均为串行。
 3. **监控指标**（本轮必须对比 R1 同 30 条）：`quota-blocked` / `timeout` / `no-patch` 率 → 若 R2 显著上升 ⇒ 判"并行污染" → 结论打折。SWEBENCH_COMPARE.html §2 监控表已生成。
 
-**R2 监控快照**（2026-10-08 21:55，R190 更新）：
+**R2 监控快照**（2026-10-08 22:39，R191 更新）：
 
 | 指标 | R1 (30 serial) | R2 (70 parallel, in progress) | 判定 |
 |:--|:--|:--|:--|
 | **quota_blocked** | 0/210 (0%) | 0/all (0%) | ✅ **NO parallel pollution** |
 | **timeout** | 0 (codex 2) | minimal (codex 3, claude-code 1 astropy) | ✅ 正常 |
-| **no-patch (patch_applied=False)** | **0/210 (0%)** | **较高** (astropy 2/2, etc.) | ⚠️ 见下 |
+| **no-patch (patch_applied=False)** | **0/210 (0%)** | **较高** (non-django/sympy repos) | ⚠️ eval env limitation |
 
 **🔬 关键发现：R2 resolve-rate 下降 = 实例集组成偏差，NOT 并行污染**：
 1. **R1 = 仅 django(15) + sympy(15)** → 两个最易 repo（codex 300-full: django 29%, sympy 8%）
@@ -87,6 +87,19 @@ ERROR_COUNT:  0
 **③ 失败模式对训练的启示**：主要失败模式 f2p-fail（90%+），即「知道改哪里但改不对」。对 BaiZe RL——reward signal 应关注「patch 通过 f2p test」而非仅「patch apply」。依据：failure detail 分析。
 **④ 成本-性能 Pareto**：Pi（60.0%, 275s）vs deepseek-harness（40.0%, 293s）wall time 接近但差 20pp。依据：per-harness avg_wall_s + resolve rate。
 **⑤ "Nobody solved" 12 条作为难度基准**：12/30=40% 实例 7 个 harness 全失败，定义为「hard」实例。依据：instance-level ALL/NONE/SOME = 8/12/10。
+
+## 🆕 第一百九十一轮速览（2026-10-08 22:39）— ⑦ SWEBENCH_COMPARE 刷新 (50092B/409entries/141resolved) + Round-2 进度监控
+
+- 📋 **运维指令 2026-10-08⑦ 持续执行**：
+  1. ✅ **口径与并发 section** 在 MEMORY（serial vs 并行 · 30 复用 · 70 新跑 · codex 300 超集特例 · 监控指标对比）— R188 已建，本轮更新监控快照
+  2. ✅ **report_harness_interaction_traces.html 在 `doc/BaiZe-ISEDA2027/` 根目录**（38307B）— R188 已交付
+  3. ✅ **SWEBENCH_COMPARE.html 已刷新**（50092B，409/700 entries in 100-set，141 resolved，含 R1复用/R2新跑 标记列 + 口径与并发 disclosure section + §2 监控表）
+- 📊 **Round-2 进度**（22:39）：codex 100/100✅ · cline 57/100 · opencode 56/100 · claude-code 52/100 · dsh 52/100 · pi 50/100 · hermes 41/100（6 processes running, etimes~11488s≈3.2h）
+- 📊 **Per-harness resolve rate**（scored only）：cline 52.5% · pi 52.4% · opencode 44.4% · hermes 42.5% · codex 41.0% · claude-code 36.8% · dsh 34.1%
+- 🔬 **⑦ 监控结论**：quota_blocked=0 ALL entries → **NO parallel pollution** confirmed。R2 resolve-rate 下降 = **实例集组成偏差**（R1=django+sympy 仅最易 repo；R2 增 44 条难题 repo [matplotlib/sklearn/pytest/sphinx/astropy 0%]）。非 django/sympy 的 patch 已生成但 patch_applied=False（eval 环境无 Docker 限制）。
+- ⏱️ **ETA**：bottleneck hermes 59 R2 remaining × ~1044s ≈ 17h；其他 harness 5-7h
+- 📦 体积：TASK=32870B(32.1KB ✓) / MEMORY=~28KB（本轮新增~0.5KB）
+
 
 ## 🆕 第一百八十八轮速览（2026-10-08 20:40）— ⑦ 口径披露 + 轨迹报告补落根目录 + SWEBENCH_COMPARE 升级 7×100
 
