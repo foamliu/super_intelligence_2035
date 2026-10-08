@@ -8,6 +8,7 @@ The language backbone is a sequential hybrid model~\cite{dao2024transformers,nvi
 The layer allocation follows the Nemotron-H sequential hybrid convention---four attention layers among the 56, the remainder Mamba-2 and MLP---as provided by Megatron-Core's Mamba-hybrid recipe, whose 56-layer pattern we reuse verbatim while halving only the hidden and FFN widths to reach the $\approx$2B scale.
 BaiZe is not a Nemotron-H model: it is an order of magnitude smaller, contains no mixture-of-experts layers, and is pre-trained from scratch on an independent corpus under a fixed GPU-hour budget.
 Each Mamba-2 layer uses 8 state-space groups; the four attention layers use 16 query heads and 4 query groups (GQA) with untied word embeddings.
+Crucially, only the four attention layers carry rotary position embeddings (RoPE); the 24 Mamba-2 state-space layers are position-agnostic, so the backbone's long-context extrapolation quality depends on just $4/56{=}7.1\%$ of layers, an asymmetry exploited in Section~\ref{sec:longctx}.
 The full configuration is listed in Table~\ref{tab:config}; the model totals $\approx$2.22B parameters.
 
 \begin{table}[htbp]

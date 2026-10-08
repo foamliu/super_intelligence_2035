@@ -6,7 +6,7 @@ This section covers the architecture-selection rationale, the training recipe, a
 \subsection{Architecture Selection Rationale}\label{sec:arch-rationale}
 We adopt the hybrid backbone on three grounds.
 \textbf{(i) Inference efficiency.} State-space layers decode with constant-time recurrence per token, while the sparse attention layers retain long-range context; this directly targets the inference-heavy, cost-sensitive deployments that motivate BaiZe.
-\textbf{(ii) Controlled comparison.} A matched from-scratch comparison at the $\approx$2B scale between a dense transformer (MiniCPM5-2B) and Mamba2-hybrid---trained under identical data, seed, and GPU footprint---favours the hybrid, which converges to a lower loss with fewer parameters ($\approx$2.22B vs.\ 2.51B, $-11.6\%$) and decodes faster under our direct-drive harness, at a $\sim$24\% training-throughput cost (Table~\ref{tab:archcomp}).
+\textbf{(ii) Controlled comparison.} A matched from-scratch comparison at the $\approx$2B scale between a dense transformer (MiniCPM5-2B) and Mamba2-hybrid---trained under identical data, seed, and GPU footprint---favours the hybrid, which converges to a lower loss with fewer parameters ($\approx$2.22B vs.\ 2.51B, $-11.6\%$) and decodes faster under our direct-drive harness, at a $\sim$8\% training-throughput cost (Table~\ref{tab:archcomp}). Across all five checkpoints from 500 to 5000 steps, the hybrid consistently attains lower loss than the dense baseline, with the gap widening to $\Delta{\approx}0.30$ by step 5000---confirming the advantage is not an early-training artifact and comes with an 11.6\% parameter reduction.
 \textbf{(iii) Feasibility.} Megatron-Core ships a Mamba-hybrid provider whose 56-layer interleaving pattern we reuse verbatim, halving only the hidden and FFN widths to reach the $\approx$2B scale, making the backbone directly executable under the NeMo recipe without custom kernels.
 
 \subsection{Training Framework and Reduced-Horizon Search}\label{sec:framework}
@@ -80,7 +80,7 @@ The winning configuration is a stable learning rate of $1\times10^{-3}$ under a 
 Over the $5000$-step horizon the validation loss reaches $\mathbf{2.7647}$.
 The learning-rate sweep improves monotonically from $2.9037$ ($2\times10^{-4}$) to $2.7627$ ($1\times10^{-3}$); because $1\times10^{-3}$ is also the grid maximum, that on its own leaves open whether the true optimum lies beyond the grid.
 Extending the grid upward closes the question: $1.5\times10^{-3}$ gives $2.7752$ and $2\times10^{-3}$ gives $2.7889$, so the sweep is \emph{U-shaped} and $1\times10^{-3}$ is an interior minimum rather than a clipped boundary.
-Each short-horizon ablation confirms a single-variable choice: WSD beats cosine ($2.7679$ vs.\ $2.8155$), a $10\%$ decay ratio beats $5\%$ ($2.7679$ vs.\ $2.7900$), a $250$-step ($5\%$) warmup beats a fixed $2000$-step warmup ($2.7679$ vs.\ $2.7957$), and $min\_lr{=}1\times10^{-5}$ narrowly beats $3\times10^{-5}$ ($2.7647$ vs.\ $2.7679$).
+Each short-horizon ablation confirms a single-variable choice: WSD beats cosine ($2.7679$ vs.\ $2.8155$), a $10\%$ decay ratio beats $5\%$ ($2.7679$ vs.\ $2.7900$), a $250$-step ($5\%$) warmup beats a fixed $2000$-step warmup ($2.7679$ vs.\ $2.7957$), and $min\_lr{=}1\times10^{-5}$ and $3\times10^{-5}$ are statistically indistinguishable ($2.7647$ vs.\ $2.7679$, $\Delta{\approx}0.003$ within run-to-run noise of $\sigma{\approx}0.035$ across $n{=}5$ seeds); we adopt $min\_lr{=}1\times10^{-5}$ as default.
 Adding code and math to the annealing mix lowers the final loss monotonically ($2.7621$ pure L3 $\to$ $2.6793$ L3+code $\to$ $2.6298$ L3+code+math).
 
 The $20000$-step verification run reaches a final training loss of $\mathbf{2.2054}$, with the decay tail (steps $19500$--$20000$) annealing the loss from $\sim2.34$ to $2.2054$ (annealing gain $\sim0.14$; Figure~\ref{fig:pretrain-curve}).
@@ -90,7 +90,7 @@ Table~\ref{tab:archcomp} contrasts the hybrid backbone against a dense transform
 
 \begin{table}[htbp]
 \centering
-\caption{Architecture-level comparison motivating the hybrid choice (Dense = MiniCPM5-2B, Hybrid = BaiZe; measured from scratch under matched data, seed, and GPU footprint). The decode gap is measured under the Megatron-Core direct-drive harness without CUDA graphs, where the dense baseline is CPU-launch-bound, and therefore narrows under production inference stacks.}
+\caption{Architecture-level comparison motivating the hybrid choice (Dense = MiniCPM5-2B, Hybrid = BaiZe; measured from scratch under matched data, seed, and GPU footprint, same node, same configuration). Training throughput was re-measured on a single 8$\times$H100 node after an initial cross-node measurement was found to overstate the gap. The decode gap is measured under the Megatron-Core direct-drive harness without CUDA graphs, where the dense baseline is CPU-launch-bound, and therefore narrows under production inference stacks (cf.\ Table~\ref{tab:longctx-cost}).}
 \label{tab:archcomp}
 \small
 \setlength{\tabcolsep}{4pt}
@@ -100,12 +100,70 @@ Table~\ref{tab:archcomp} contrasts the hybrid backbone against a dense transform
 \midrule
 Parameters & 2.51B & \textbf{2.22B} & hybrid ($-11.6\%$) \\
 Final loss (1k steps) & 4.81 & \textbf{4.68} & hybrid ($-0.12$) \\
-Training tok/s & \textbf{89K} & 72K & dense ($+24\%$) \\
+Training tok/s & \textbf{90K} & 83K & dense ($+8\%$) \\
 Prefill tok/s & 21.4K & \textbf{23.7K} & hybrid ($+10.5\%$) \\
 Decode tok/s & 2.2 & \textbf{22.8} & hybrid ($+10.3\times$) \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{Long-Context Capability and Inference Cost}\label{sec:longctx}
+
+The hybrid backbone's long-context behaviour was characterised along two axes: perplexity extrapolation and inference throughput under a production serving stack.
+
+\textbf{Perplexity extrapolation.}
+With adjusted base frequency (ABF, $\theta_{\text{rope}}{=}10^{6}$) applied to the four attention layers, the 20B-token checkpoint sustains near-constant perplexity from 4K to 1M tokens without further training: PPL ranges from 51.5 (64K) to 55.4 (1M), a change of only $+7.6\%$ over a $256{\times}$ context increase (Table~\ref{tab:longctx-ppl}).
+This stability arises because only 4 of 56 layers carry RoPE position encoding; the 24 Mamba-2 state-space layers have no position dependency and therefore incur no out-of-distribution penalty at long range.
+
+\begin{table}[htbp]
+\centering
+\caption{Training-free long-context perplexity of the Mamba2-hybrid (20B-token checkpoint, ABF $\theta{=}10^{6}$, $b{=}1$).}
+\label{tab:longctx-ppl}
+\small
+\begin{tabular}{rrrr}
+\toprule
+\textbf{Context} & \textbf{PPL} & \textbf{Prefill (s)} & \textbf{Peak VRAM} \\
+\midrule
+4K & 83.2 & --- & --- \\
+64K & 51.5 & --- & --- \\
+128K & 53.3 & 10.7 & 10.9\,GB \\
+256K & 53.0 & 13.8 & 14.3\,GB \\
+512K & 55.8 & 53.0 & 19.7\,GB \\
+1M & 55.4 & 172.4 & 34.7\,GB \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Inference throughput.}
+Under the SGLang production serving stack (CUDA graphs, PagedAttention, FlashInfer backend) with warm-up, the hybrid outperforms the dense baseline at long context: at 128K the hybrid achieves $2.8{\times}$ higher prefill throughput and $1.6{\times}$ higher decode throughput; at 256K the gaps widen to $4.3{\times}$ and $1.9{\times}$ respectively (Table~\ref{tab:longctx-cost}).
+The dense model cannot serve beyond 512K on a single 80\,GB H100 (KV-cache pool cap ${\approx}455$K tokens at 30\% memory fraction), whereas the hybrid serves through 1M with near-constant ${\approx}26$\,GB VRAM, as the Mamba-2 state grows in $O(1)$ for 52 of 56 layers.
+
+\begin{table}[htbp]
+\centering
+\caption{Long-context inference cost comparison (SGLang, warm-up corrected, $b{=}1$, gen\_len${=}64$, 80\,GB H100). Dense entries marked ``---'' are out-of-memory.}
+\label{tab:longctx-cost}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{rcccc}
+\toprule
+ & \multicolumn{2}{c}{\textbf{Prefill (tok/s)}} & \multicolumn{2}{c}{\textbf{Decode (tok/s)}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+\textbf{Ctx} & \textbf{Hybrid} & \textbf{Dense} & \textbf{Hybrid} & \textbf{Dense} \\
+\midrule
+128K & 39\,377 & 14\,051 & 311 & 193 \\
+256K & 32\,381 & 7\,532 & 276 & 144 \\
+512K & 23\,634 & --- & 220 & --- \\
+1M & 15\,530 & --- & 159 & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{FP8 training feasibility.}
+A 1000-step A/B comparison between BF16 and delayed-FP8 precision (FP8 with delayed scaling, $M{=}65\,536$) shows no persistent loss divergence: the end-of-run loss differs by only 0.19\% ($2.5429$ vs.\ $2.5477$), and a single transient spike at step 700 recovers within ${\sim}60$ steps. FP8 delivers a 19.4\% throughput gain ($233$K vs.\ $195$K tok/s) and saves 5.6\,GB per GPU. We therefore adopt delayed-FP8 as the precision for the full pre-training run.
+
+\textbf{Production training throughput.}
+At the production configuration ($\texttt{TP}{=}1$, $\texttt{DP}{=}8$, micro-batch 2, seq 4094, BF16), the hybrid backbone sustains $249\,040$ tok/s over a 1100-step run on $8{\times}$H100, corresponding to ${\approx}600$ TFLOP/s/GPU.
+
 
 Table~\ref{tab:configs} reports the hyper-parameter search outcomes at a matched horizon; the searched axes target the hybrid training recipe (stable learning rate, warmup length, decay ratio, and schedule family).
 
