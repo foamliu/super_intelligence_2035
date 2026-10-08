@@ -5,10 +5,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A ROUND-2 7×100 RUNNING 🔄 (5 procs alive 1.3h, pi+codex 100% done) + 口径与并发 MONITORING: quota_blocked=0 ALL → NO parallel pollution ✅ + ⑦ deliverables ✅
-已完成:       R201 SWEBENCH_COMPARE.html refreshed (56090B, 627 entries, 172 resolved) ✅ · R200 · R199 · R188 口径与并发 section ✅ · trace report in doc root ✅ · Round-2 restarted (5 parallel) ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
-当前动作:     R201: Verified 5 Round-2 processes ALIVE (ppid=1, etimes~4540s≈1.3h since R199 restart). Progress: codex 100/100✅(34.0%), pi 100/100✅(27.0%), hermes 70/100(40.0% 领先), cline 88/100(27.3%), opencode 88/100(27.3%), dsh 93/100(21.5%), claude-code 88/100(17.0%). SWEBENCH_COMPARE.html refreshed (56090B, 627/700, 172 resolved). quota_blocked=0 ALL ✅. ⑦ deliverables verified ✅.
-下一步:       Continue monitoring Round-2; refresh SWEBENCH_COMPARE.html when harnesses complete. ETA: bottleneck hermes 30 rem × ~659s ≈ 5.5h → ~10:15 Oct9; cline/claude-code 12 rem × ~550s → ~06:30; opencode 12 rem × ~431s → ~06:10; dsh 7 rem × ~426s → ~05:30. Final 7×100 table when all done.
+PHASE:        H-A ROUND-2 7×100 RUNNING 🔄 (5 procs alive 1.8h, pi+codex 100% done) + 口径与并发 MONITORING: quota_blocked=0 ALL → NO parallel pollution ✅ + ⑦ deliverables ✅
+已完成:       R202 SWEBENCH_COMPARE.html refreshed (56175B, 631 entries, 177 resolved) ✅ · R201 · R200 · R199 · R188 口径与并发 section ✅ · trace report in doc root ✅ · Round-2 restarted (5 parallel) ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
+当前动作:     R202: Verified 5 Round-2 processes ALIVE (ppid=1, etimes~6640s≈1.8h). Progress: codex 100/100✅(34.0%), pi 100/100✅(27.0%), hermes 72/100(40.0% 领先, 28 rem), cline 88/100(27.3%, 12 rem), opencode 88/100(27.3%, 12 rem), dsh 95/100(21.5%, 5 rem), claude-code 88/100(17.0%, 12 rem). SWEBENCH_COMPARE.html refreshed (56175B, 631/700, 177 resolved). quota_blocked=0 ALL ✅. ⑦ deliverables verified ✅.
+下一步:       Continue monitoring Round-2; refresh SWEBENCH_COMPARE.html when harnesses complete. ETA: bottleneck hermes 28 rem × ~659s ≈ 5.1h → ~10:25 Oct9; cline/claude-code/opencode 12 rem × ~550s → ~07:00; dsh 5 rem × ~426s → ~05:50. Final 7×100 table when all done.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -29,7 +29,7 @@ ERROR_COUNT:  0
 2. **codex 特例**：codex 在 R1 跑了 300 条超集（串行），其中 70 条与本轮 100-set 重叠 → codex 的 70 条"新跑"实际来自 **300 串行超集**，**非 R2 并行**。codex 全部 100 条均为串行。
 3. **监控指标**（本轮必须对比 R1 同 30 条）：`quota-blocked` / `timeout` / `no-patch` 率 → 若 R2 显著上升 ⇒ 判"并行污染" → 结论打折。SWEBENCH_COMPARE.html §2 监控表已生成。
 
-**R2 监控快照**（2026-10-09 04:43，R201 更新）：
+**R2 监控快照**（2026-10-09 05:19，R202 更新）：
 
 | 指标 | R1 (30 serial) | R2 (70 parallel, in progress) | 判定 |
 |:--|:--|:--|:--|
@@ -113,6 +113,15 @@ ERROR_COUNT:  0
 - 🔬 **⑦ 监控**：quota_blocked=0 ALL → NO parallel pollution ✅。R2 resolve-rate 差异 = 实例集组成偏差 + eval 环境限制。
 - ⏱️ **ETA**：bottleneck hermes 36 rem × ~659s ≈ 6.6h → ~10:50 Oct9；其他 7-12 rem → ~05:00-06:00
 - 📦 体积：TASK=32870B(32.1KB) / MEMORY=28278B(27.6KB ✓)
+
+## 🆕 第二百零二轮速览（2026-10-09 05:19）— ⑦ 进程存活确认 + SWEBENCH_COMPARE 刷新 (56175B/631entries/177resolved) + Round-2 进度监控
+
+- ✅ **进程存活确认**：5 个 run_serial_kimi.py 父进程 ALIVE（ppid=1, etimes~6640s≈1.8h）：cline-patched(4037322) · opencode(4038920) · claude-code(4039024) · dsh(4039199) · hermes(4039300)。各有活跃子进程（run_single.py）在跑。
+- 📊 **Round-2 进度**（05:19）：codex 100/100✅(34.0%) · pi 100/100✅(27.0%) · hermes 72/100(40.0% 领先, 28 rem) · dsh 95/100(21.5%, 5 rem) · cline 88/100(27.3%, 12 rem) · opencode 88/100(27.3%, 12 rem) · claude-code 88/100(17.0%, 12 rem)（5 procs running）
+- 📊 **SWEBENCH_COMPARE.html**：56175B，631/700 in-scope，177 resolved。R1=30/30 reused，R2 in-progress。含 R1复用/R2新跑 标记列 ✅
+- 🔬 **⑦ 监控**：quota_blocked=0 ALL → NO parallel pollution ✅。timeout=0 ALL ✅。R2 resolve-rate 差异 = 实例集组成偏差 + eval 环境限制。
+- ⏱️ **ETA**：bottleneck hermes 28 rem × ~659s ≈ 5.1h → ~10:25 Oct9；cline/claude-code/opencode 12 rem × ~550s → ~07:00；dsh 5 rem × ~426s → ~05:50
+- 📦 体积：TASK=32870B(32.1KB) / MEMORY=~30.5KB(29.8KB ✓)（归档 0KB）
 
 ## 🆕 第二百零一轮速览（2026-10-09 04:43）— ⑦ 进程存活确认 + SWEBENCH_COMPARE 刷新 (56090B/627entries/172resolved) + Round-2 进度监控
 
