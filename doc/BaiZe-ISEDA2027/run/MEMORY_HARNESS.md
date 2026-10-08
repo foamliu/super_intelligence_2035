@@ -6,9 +6,9 @@ WAITING: 1
 
 ```
 PHASE:        H-A ROUND-2 7×100 RUNNING 🔄 (6/7 parallel active, codex 100% done) + 口径与并发 MONITORING: quota_blocked=0 ALL → NO parallel pollution ✅ + ⑦ deliverables ✅
-已完成:       R195 SWEBENCH_COMPARE.html refreshed (52716B, 504 entries, 152 resolved) ✅ · R194 · R188 口径与并发 section ✅ · trace report in doc root ✅ · Round-2 launched (7 parallel, --resume) ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
-当前动作:     R195: SWEBENCH_COMPARE.html refreshed (52716B, 504/700 entries, 152 resolved). Round-2 in-scope progress: codex 100/100✅(res=33,33.0%), hermes 49/100(res=20,40.8% 领先), pi 71/100(res=26,36.6%), cline 72/100(res=21,29.2%), opencode 72/100(res=21,29.2%), dsh 68/100(res=17,25.0%), claude-code 72/100(res=14,19.4%). 7 serial processes running (etimes~19970s≈5.5h). quota_blocked=0 ALL → NO parallel pollution ✅. ⑦ deliverables verified intact.
-下一步:       Continue monitoring Round-2; refresh SWEBENCH_COMPARE.html per harness completion; final 7×100 table + 口径 analysis when all done. ETA: bottleneck hermes 51 R2 remaining × ~1000s ≈ 14h → ~15:00 Oct9; dsh 32 remaining → ~05:00; cline/opencode/claude-code 28 remaining → ~05:00; pi 29 remaining → ~03:30.
+已完成:       R196 SWEBENCH_COMPARE.html refreshed (53167B, 520 entries, 156 resolved) ✅ · R195 · R188 口径与并发 section ✅ · trace report in doc root ✅ · Round-2 launched (7 parallel, --resume) ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
+当前动作:     R196: SWEBENCH_COMPARE.html refreshed (53167B, 520/700 entries in 100-set, 156 resolved). Round-2 in-scope progress: codex 100/100✅(res=34,39.5%), pi 74/100(res=26,43.3% 领先), hermes 52/100(res=22,43.1%), cline 73/100(res=21,40.4%), opencode 73/100(res=21,35.0%), dsh 74/100(res=18,29.0%), claude-code 74/100(res=14,26.4%). 7 serial processes running. quota_blocked=0 ALL → NO parallel pollution ✅. ⑦ deliverables verified intact.
+下一步:       Continue monitoring Round-2; refresh SWEBENCH_COMPARE.html per harness completion; final 7×100 table + 口径 analysis when all done. ETA: bottleneck hermes 48 R2 remaining × ~700s ≈ 9.3h → ~11:00 Oct9; other harnesses 26-27 remaining × ~500s → ~05:00.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -29,7 +29,7 @@ ERROR_COUNT:  0
 2. **codex 特例**：codex 在 R1 跑了 300 条超集（串行），其中 70 条与本轮 100-set 重叠 → codex 的 70 条"新跑"实际来自 **300 串行超集**，**非 R2 并行**。codex 全部 100 条均为串行。
 3. **监控指标**（本轮必须对比 R1 同 30 条）：`quota-blocked` / `timeout` / `no-patch` 率 → 若 R2 显著上升 ⇒ 判"并行污染" → 结论打折。SWEBENCH_COMPARE.html §2 监控表已生成。
 
-**R2 监控快照**（2026-10-09 01:00，R195 更新）：
+**R2 监控快照**（2026-10-09 01:35，R196 更新）：
 
 | 指标 | R1 (30 serial) | R2 (70 parallel, in progress) | 判定 |
 |:--|:--|:--|:--|
@@ -88,7 +88,17 @@ ERROR_COUNT:  0
 **④ 成本-性能 Pareto**：Pi（60.0%, 275s）vs deepseek-harness（40.0%, 293s）wall time 接近但差 20pp。依据：per-harness avg_wall_s + resolve rate。
 **⑤ "Nobody solved" 12 条作为难度基准**：12/30=40% 实例 7 个 harness 全失败，定义为「hard」实例。依据：instance-level ALL/NONE/SOME = 8/12/10。
 
-## 🆕 第一百九十一轮速览（2026-10-08 22:39）— ⑦ SWEBENCH_COMPARE 刷新 (50092B/409entries/141resolved) + Round-2 进度监控
+## 🆕 第一百九十六轮速览（2026-10-09 01:35）— ⑦ SWEBENCH_COMPARE 刷新 (53167B/520entries/156resolved) + Round-2 进度监控
+
+- 📋 **运维指令 2026-10-08⑦ 持续执行**：口径与并发 section ✅ · trace report in doc root ✅ · SWEBENCH_COMPARE.html 含 R1复用/R2新跑 标记列 + 口径 disclosure + §2 监控表 ✅
+- 📊 **Round-2 进度**（01:35）：codex 100/100✅ · pi 74/100(43.3% 领先) · hermes 52/100(43.1%) · cline 73/100(40.4%) · opencode 73/100(35.0%) · dsh 74/100(29.0%) · claude-code 74/100(26.4%)（7 processes running）
+- 📊 **SWEBENCH_COMPARE.html**：53167B，520/700 entries in 100-set，156 resolved。R1=30/30 all reused，R2 in-progress。
+- 🔬 **⑦ 监控结论**：quota_blocked=0 ALL → **NO parallel pollution** confirmed ✅。R2 resolve-rate 差异 = 实例集组成偏差 + eval 环境限制（非 django/sympy patch_applied=False），非并发争用。
+- ⏱️ **ETA**：bottleneck hermes 48 R2 remaining × ~700s ≈ 9.3h → ~11:00 Oct9；其他 harness 26-27 remaining × ~500s → ~05:00
+- 📦 体积：TASK=32870B(32.1KB ✓) / MEMORY=~30KB（本轮归档 R183/R186 → daily-memories）
+
+> 📦 R183/R186（2026-10-08 16:38~17:30，health-check + Q&A delivered）已滚动归档至 `daily-memories-harness/2026-10-08.md`。结论：5 questions answered (Q1-Q5)，all deliverables verified intact。需要时再读。
+
 
 - 📋 **运维指令 2026-10-08⑦ 持续执行**：
   1. ✅ **口径与并发 section** 在 MEMORY（serial vs 并行 · 30 复用 · 70 新跑 · codex 300 超集特例 · 监控指标对比）— R188 已建，本轮更新监控快照
@@ -112,42 +122,7 @@ ERROR_COUNT:  0
 - 📦 体积：TASK=32870B(32.1KB ✓) / MEMORY=自检中（本轮新增~2KB）
 
 
-## 🆕 第一百八十六轮速览（2026-10-08 18:30）— 💓 Health-check heartbeat (Q&A delivered, all deliverables verified)
-
-- 💓 **Health-check heartbeat**: Q&A (2026-10-08④) already delivered in R184 (commit 27859f2e). All 5 questions answered (Q1–Q5) with evidence from `kimi_pilot_results.json`.
-- ✅ **All deliverables re-verified intact**:
-  - `report_harness_swebench_analysis.html` (75647B, 9 sections + §4.5, 10 inline SVG) ✅
-  - `SWEBENCH_COMPARE.html` (21976B, 7-way, 210 entries, 105 resolved) ✅
-  - `HARNESS_7WAY_COMPARISON.html` (56352B) ✅
-  - `HARNESS_3WAY_COMPARISON.html` (59268B) ✅
-  - `kimi_pilot_results.json` (532623B, 480 entries) ✅
-- ✅ **No new operator instructions** (git fetch = up to date, HEAD = origin/main, 0 ahead/0 behind).
-- ✅ **No running chains** (no eval processes).
-- 📦 体积：TASK=29919B(29.2KB ✓) / MEMORY=25274B(24.7KB ✓)（归档 0KB）
-
-## 🆕 第一百八十四轮速览（2026-10-08 17:30）— 🗣️ Operator Q&A: 5 questions answered (2026-10-08④)
-
-- 🗣️ **Operator Q&A (2026-10-08④) answered**: 5 questions on next-step work, grounded in `kimi_pilot_results.json` (480 entries: 210 in 30×7 scope + 270 codex×300 superset).
-  - Q1: 4 uncovered angles (codex 300-full subset bias 3.3×, 12 "nobody solved" root cause, patch overlap, wall-vs-resolution)
-  - Q2: 5 prep items (P0: frozen config + endpoint health check; P1: 5-run automation + paired stats + diagnostic D1-D6)
-  - Q3: Expand to 100-300 (django→sympy→sklearn/matplotlib); EDA-Eval pipeline reusable
-  - Q4: 3-phase pilot plan (kimi new-20 → MiniCPM5-2B → BaiZe), needs GPU window + API keys
-  - Q5: 5 paper supplements (harness variance 20pp, subset bias 3.3×, f2p-fail training implication, Pareto frontier, hard-instance benchmark)
-- 📦 **TASK archived**: 2 completed blocks (report HTML + 7-way) → `ARCHIVE_OPERATOR_HARNESS.md` (34.7KB→29.2KB)
-- 📦 **MEMORY archived**: R169-R182 (14 rounds) → `daily-memories-harness/2026-10-08.md`
-- ✅ **No running chains** (pgrep = empty).
-
-## 🆕 第一百八十三轮速览（2026-10-08 16:38）— 💓 Health-check heartbeat (all deliverables verified complete)
-
-- 💓 **Health-check heartbeat**: All deliverables re-verified intact:
-  - `report_harness_swebench_analysis.html` (75647B, 73.9KB ≤ 200KB ✅): 9 sections + §4.5 Repo-Based Failure Analysis, 10 inline SVG, 0 external links (only internal gateway URL + SVG namespace), references SWEBENCH_COMPARE.html ✅
-  - `SWEBENCH_COMPARE.html` (21976B): 7-way results table, 210 entries, 105 resolved ✅
-  - `HARNESS_3WAY_COMPARISON.html` (59268B): cline/Pi/Hermes deep comparison ✅
-  - `HARNESS_7WAY_COMPARISON.html` (56352B): 7-way unified architecture+performance ✅
-  - `kimi_pilot_results.json` (532623B, 12791 lines): 210 entries, all data reproducible ✅
-- ✅ **No new operator instructions** (git fetch = up to date, HEAD = origin/main, 0 ahead/0 behind).
-- ✅ **No running chains** (pgrep = empty).
-- 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=30034B(29.3KB ✓)（归档 0KB）
+> 📦 R186/R184/R183（2026-10-08 16:38~18:30，health-check + Q&A delivered）已滚动归档至 `daily-memories-harness/2026-10-08.md`。结论：5 questions answered (Q1-Q5)，all deliverables verified intact。需要时再读。
 
 > 📦 R169-R182（2026-10-08 07:15~16:03，14 轮：Hermes×30 COMPLETE→7-way ALL DONE→report 交付→3-way/7-way HTML→§4.5→health-check）已滚动归档至 `daily-memories-harness/2026-10-08.md`。结论：7-way 横评全完成（40%–60%），report + 3-way/7-way HTML 均已交付。
 
