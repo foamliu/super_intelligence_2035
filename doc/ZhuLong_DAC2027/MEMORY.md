@@ -186,6 +186,10 @@ error: error: unknown option '-b'
 
 ## 9. 流水（倒序）
 
+- **2026-10-08（运维经任务书提醒 agent：loop git 超时 = 缺 https_proxy）** —— 用户观察到 `zhulong_loop.sh` git 操作经常超时。经核对脚本源码确认根因：**loop 脚本自身不 `export https_proxy`**，完全继承启动 shell 环境；脚本只在调 cline 时 `env -u` 剥代理（内网网关不该走代理），但 **git 访问 GitHub 是外网、必须走代理** → loop 进程若启动时没带 `https_proxy=http://172.19.92.23:13128`，`git fetch/push` 就超时。
+  - 落地：在 `run/ZHULONG_TASK.md` 运维指令区**置顶**（`(一)` 报告块之前）新增 `### 🆕 运维指令 · 2026-10-08（二）— 🔧 git 操作超时：确保 loop 进程带 https_proxy（常驻·每次唤醒自检）`。指令含：① `/proc/<pid>/environ` 自检命令；② 缺代理则 `pkill` + `export https_proxy` + `setsid` 重启的修复步骤；③ 红线（不改脚本源码 / 重启带 setsid / 常驻自检）。
+  - ⏭ 待提交推送（任务书 + 本文件 + 日流水）。
+
 - **2026-10-08（运维经任务书派 ZhuLong agent 写「国庆假期试验进展」HTML 报告）** —— 用户下达「安排 ZhuLong agent 写 html 报告，汇报假期试验进展」。
   - 处置：按 SOP 同步读取 `run/MEMORY_ZHULONG.md`（状态头/看板/成绩表）+ `run/ZHULONG_TASK.md` 运维指令区 + `run/ops/outbox.md`，确认假期进度：**Phase B 4/4 ✅**（glm-5.2 83.3±3.1 / deepseek-v4-flash 16.7±12.3 / kimi-k2.6-cloud 77.0±1.6 / doubao-seed-2.0-pro-cloud 63.8±1.4）；**C1** pure_llm 5/5（10.5±1.9 复用 legacy）· rag 5/5（71.8±2.5 本线重跑）· wo_retrieval 4/5（r5 运行中 PID 198350）· full 待跑；C2/S1 未启动。
   - 落地：在 `run/ZHULONG_TASK.md` 运维指令区**置顶**新增 `### 🆕 运维指令 · 2026-10-08（一）— 📝 写一份「国庆假期试验进展」HTML 报告【本次唤醒优先动作】`（新块放在常驻规程之后、`(八)` 块之前）。指令要点：产物 = 自包含 HTML，路径 `run/reports/report_2026-10-08_holiday.html`；数据来源限 `MEMORY_ZHULONG.md` 成绩表 + `run/daily-memories/` + `outbox.md` + 任务书 §0；8 个必含小节（概览/进度总览表/Phase B 专题/C1 专题/关键事件时间线/infra 状态/下一步/页脚）；红线 = 不得臆造数字、不动 `ops/` 与论文树、不 `git add -A`、写完仍 commit+push 心跳+日报。

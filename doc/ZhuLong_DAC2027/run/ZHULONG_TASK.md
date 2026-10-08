@@ -38,6 +38,53 @@
 > ⏱️ **判死判据（硬）**：**心跳文件 >60min 无新提交 ⇒ 按卡死处理**（不再等你）。**你干得再多，心跳不动 = 仍会被判死。**
 
 
+### 🆕 运维指令 · 2026-10-08（二）— 🔧 git 操作超时：确保 loop 进程带 https_proxy（常驻·每次唤醒自检）
+
+> **来源**：用户 2026-10-08 观察。`zhulong_loop.sh` 的 git fetch/push 经常超时，根因 = **loop 进程环境里没有 `https_proxy`**（脚本本身不 export 代理，完全继承启动 shell 的环境；而脚本只在调 cline 时 `env -u` 剥代理——内网网关不该走代理——但 **git 访问 GitHub 是外网，必须走代理**）。
+
+**现状（已核对 `zhulong_loop.sh` 源码）**：
+- 脚本**无**任何 `export https_proxy=...` —— 代理靠启动 shell 注入。
+- 第 117 行 cline 调用 `env -u http_proxy -u https_proxy ...`（剥代理给 cline）—— **这只作用于 cline 那一行**，不影响 loop 自身的 git。
+- `git_sync_and_push()`（第 54–103 行）里的 `git fetch origin` / `git push origin main` **直接用 loop 进程的环境** → 若该环境无 `https_proxy` → GitHub 不通 → `timeout 120 git fetch` 触发 → `[push] fetch FAILED (network?) - skip this cycle.` → 永远推不出去 / 拉不回来。
+
+**正确代理值**（与 eval 启动、BaiZe 线一致）：
+```
+https_proxy=http://172.19.92.23:13128
+http_proxy=http://172.19.92.23:13128
+```
+
+**你要做的（每次唤醒自检 + 必要时修复）**：
+
+1. **查 loop 进程环境有没有代理**：
+   ```bash
+   _LPID="$(pgrep -f 'zhulong_loop.sh' | head -1)"
+   [ -n "$_LPID" ] && tr '\0' '\n' < /proc/$_LPID/environ | grep -iE 'https_proxy|http_proxy' || echo "NO_PROXY_IN_LOOP"
+   ```
+   - 有 `https_proxy=http://172.19.92.23:13128` → ✅ 正常，无需操作。
+   - 无 / 值不对 → ❌ 进入第 2 步修复。
+
+2. **若 loop 缺代理 → 重启 loop 并显式注入代理**：
+   ```bash
+   cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+   git pull --rebase --autostash origin main          # 先同步（这次用你当前 shell 的代理）
+   pkill -f zhulong_loop.sh; sleep 3
+   export https_proxy=http://172.19.92.23:13128
+   export http_proxy=http://172.19.92.23:13128
+   setsid bash zhulong_loop.sh > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+   sleep 4
+   # 复核：新 loop 进程应带代理
+   _NPID="$(pgrep -f 'zhulong_loop.sh' | head -1)"
+   tr '\0' '\n' < /proc/$_NPID/environ | grep -iE 'https_proxy'
+   ```
+
+3. **回报**：把自检结果（有无代理 / 是否重启 / 新 PID + environ 证据）写进 `MEMORY_ZHULONG.md` 操作流水 1 行。
+
+**红线**：
+- 🚫 **不要改 `zhulong_loop.sh` 源码**（加 `export` 是可选项，但当前先靠启动环境注入；若你判断有必要在脚本里加 `export https_proxy=...`，**先在流水里写明理由再改**，且只加在 `git_sync_and_push` 之前、不要影响 cline 那行的 `env -u`）。
+- 🚫 重启 loop **必须带 `setsid` + 重定向**（否则随 ssh 会话断开而死，血的教训）。
+- ✅ 若 loop 当前正带代理且健康，**什么都不用做**，流水记一句「自检通过」即可。
+- ✅ 这条指令**常驻**：以后每次唤醒顺手 `tr '\0' '\n' < /proc/$(pgrep -f zhulong_loop.sh|head -1)/environ | grep -i proxy` 扫一眼。
+
 ### 🆕 运维指令 · 2026-10-08（一）— 📝 写一份「国庆假期试验进展」HTML 报告【本次唤醒优先动作】
 
 > **来源**：用户 2026-10-08 下达。国庆假期（约 10/01–10/08）期间本线持续推进，现需汇总成一份**可读的 HTML 报告**向用户汇报。**本动作优先于新一轮评测推进**（但**不打断正在跑的 `C1.wo_retrieval r5`**——若 r5 仍在跑，先正常巡检/收割，再写报告；报告里把 r5 标为「运行中/收割值待补」即可）。
