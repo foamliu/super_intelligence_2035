@@ -26,12 +26,12 @@ The main contributions are:
     generate--execute--refine loop (the \emph{belief update}) form one closed loop, driven by a
     single \texttt{lang} parameter so the same agent logic covers PyAether, SKILL, and Tcl
     (Section~\ref{sec:system}). In a commercial Empyrean Aether environment, ZhuLong attains
-    \textbf{84.8\%} Pass@1 on the 158-task PyAether slice, versus \textbf{11.4\%} for a pure
-    LLM and \textbf{70.3\%} for a retrieval-augmented static baseline, and \textbf{[X\%]}
+    \textbf{84.8\%} Pass@1 on the 158-task PyAether slice, versus \textbf{10.5\%} for a pure
+    LLM and \textbf{71.8\%} for a retrieval-augmented static baseline, and \textbf{[X\%]}
     overall on the unified benchmark. % TODO: fill unified-benchmark Pass@1 once SKILL/Tcl slices are done
     Ablation shows that the three components are \emph{jointly necessary and not
     interchangeable}: adding sandbox execution to RAG yields \textbf{+[TBD]~pp}, while removing
-    execution ($-[TBD]$~pp) or retrieval ($-3.2$~pp) reduces accuracy, and
+    execution ($-[TBD]$~pp) or retrieval ($-3.8$~pp) reduces accuracy, and
     bounding the belief update degrades it monotonically (Section~\ref{sec:experiments}). The
     offline \textbf{API self-exploration} mechanism, measured as one rung of the observation
     ladder, adds \textbf{+[TBD]~pp} and reduces tool calls by \textbf{22.1\%} per trace

@@ -92,15 +92,15 @@ The framework of Section~\ref{sec:grounding-theory} fixes what each study must v
 \textbf{Configuration} & \textbf{Pass@1 (\%)} & \textbf{$\Delta$} \\
 \midrule
 \multicolumn{3}{l}{\textit{Progressive build-up (vs. previous row)}} \\
-Baseline 1: Pure LLM & 11.4 $\pm$ [TBD] & — \\
-Baseline 2: RAG & 70.3 $\pm$ [TBD] & +58.9 pp \\
+Baseline 1: Pure LLM & 10.5 $\pm$ 1.9 & — \\
+Baseline 2: RAG & 71.8 $\pm$ 2.5 & +61.3 pp \\
 ZhuLong w/o Self-Expl. & [TBD] $\pm$ [TBD] & +[TBD] pp \\
 \textbf{ZhuLong} (Full) & \textbf{84.8 $\pm$ [TBD]} & \textbf{+[TBD] pp} \\
 \midrule
 \multicolumn{3}{l}{\textit{Component ablation (vs. ZhuLong Full)}} \\
 ZhuLong w/o Self-Expl. & [TBD] $\pm$ [TBD] & -[TBD] pp \\
 ZhuLong w/o Sandbox & [TBD] $\pm$ [TBD] & -[TBD] pp \\
-ZhuLong w/o Retrieval & 81.6 $\pm$ [TBD] & -3.2 pp \\
+ZhuLong w/o Retrieval & 81.0 $\pm$ 4.5 & -3.8 pp \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -127,9 +127,9 @@ Principle 2 predicts that with the model fixed, accuracy is bounded by the fidel
 \toprule
 \textbf{Rung} & \textbf{Configuration} & \textbf{Pass@1 (\%)} \\
 \midrule
-(N) No observation & Baseline 1 (Pure LLM) & 11.4 $\pm$ [TBD] \\
+(N) No observation & Baseline 1 (Pure LLM) & 10.5 $\pm$ 1.9 \\
 (L) Low fidelity & name-only index & [TBD] $\pm$ [TBD] \\
-(H) High fidelity & \shortstack[l]{+ description, BM25,\\ abbreviations, synonyms} & [TBD] $\pm$ [TBD] \\
+(H) High fidelity & \shortstack[l]{+ description, BM25,\\ abbreviations, synonyms} & 71.8 $\pm$ 2.5 \\
 \shortstack[l]{(H+E) High fidelity,\\ self-explored} & \textbf{ZhuLong} (Full) & 84.8 $\pm$ [TBD] \\
 \bottomrule
 \end{tabular}
@@ -163,11 +163,11 @@ Table~\ref{tab:ablation-harness} reports Pass@1 and the mean number of execution
 \end{table}
 % 表：回读轴上的观测保真度消融（原则2）。
 
-\textbf{The self-exploration rung.} The top rung of Table~\ref{tab:omega} adds constraints discovered offline by counterfactual experimentation (Section~\ref{sec:selfdoc}). Per the framework this enriches only the L1--L3 facts the observation channel can return, so it should move the result less than the channel's own fidelity does. Removing it while keeping retrieval and the effector reduces Pass@1 from 84.8\% to [TBD]\%, a drop of [TBD] percentage points. In the absence of the effector the same mechanism improves Pass@1 from 70.3\% (RAG) to [TBD]\%, a gain of [TBD] percentage points---so the same prior-side enrichment is worth more when the observation channel is weaker, consistent with its being bounded by observation rather than substituting for it.
+\textbf{The self-exploration rung.} The top rung of Table~\ref{tab:omega} adds constraints discovered offline by counterfactual experimentation (Section~\ref{sec:selfdoc}). Per the framework this enriches only the L1--L3 facts the observation channel can return, so it should move the result less than the channel's own fidelity does. Removing it while keeping retrieval and the effector reduces Pass@1 from 84.8\% to [TBD]\%, a drop of [TBD] percentage points. In the absence of the effector the same mechanism improves Pass@1 from 71.8\% (RAG) to [TBD]\%, a gain of [TBD] percentage points---so the same prior-side enrichment is worth more when the observation channel is weaker, consistent with its being bounded by observation rather than substituting for it.
 % 自探索档。表~\ref{tab:omega}的最高档加入经离线反事实实验发现的约束（第~\ref{sec:selfdoc}节）。
 % 按框架，它只丰富观测通道可返回的L1–L3事实，因此其效应应小于通道自身保真度带来的效应。
 % 保留检索与执行器而移除它，Pass@1从84.8\%降至[TBD]\%（-[TBD]pp）。
-% 无执行器时同一机制把Pass@1从70.3\%（RAG）提升至[TBD]\%（+[TBD]pp）——
+% 无执行器时同一机制把Pass@1从71.8\%（RAG）提升至[TBD]\%（+[TBD]pp）——
 % 同一先验侧增强在观测通道更弱时价值更大，与"它被观测所界定而非替代观测"一致。
 
 Beyond accuracy, this rung also changes efficiency. Table~\ref{tab:selfdoc-efficiency} compares tool usage with and without self-exploration. With self-exploration enabled the agent produces more traces (243 vs. 220) because it persists longer with better documentation, yet total tool calls drop by 13.9\% and average calls per trace decrease by 22.1\%.
@@ -213,9 +213,9 @@ The reduction is most pronounced in \texttt{run\_code} (27.0\%, see Table~\ref{t
 
 Principle 3 requires two things: that actions reach the design through a causal interface, and that the belief update $\Phi$ run continuously.
 
-\textbf{Effector: does the action reach the live design?} Removing the sandbox from the full system drops Pass@1 from 84.8\% to [TBD]\% ($-[TBD]$~pp); adding it to the RAG baseline raises it from 70.3\% to [TBD]\% ($+[TBD]$~pp). Without an effector no $a_t$ is executed against the design, so $b_t$ receives no evidence about the live state at all and the agent is reduced to a prior-only predictor. We attribute the gain to two mechanisms: execution returns concrete error messages that guide corrections, transforming one-shot generation into iterative search, and it lets the agent probe parameter combinations that documentation omits~\cite{kumar2026agentforge, jiang2024seed}.
+\textbf{Effector: does the action reach the live design?} Removing the sandbox from the full system drops Pass@1 from 84.8\% to [TBD]\% ($-[TBD]$~pp); adding it to the RAG baseline raises it from 71.8\% to [TBD]\% ($+[TBD]$~pp). Without an effector no $a_t$ is executed against the design, so $b_t$ receives no evidence about the live state at all and the agent is reduced to a prior-only predictor. We attribute the gain to two mechanisms: execution returns concrete error messages that guide corrections, transforming one-shot generation into iterative search, and it lets the agent probe parameter combinations that documentation omits~\cite{kumar2026agentforge, jiang2024seed}.
 % 执行器：动作是否抵达实时设计？从完整系统移除沙盒使Pass@1从84.8\%降至[TBD]\%（-[TBD]pp）；
-% 把沙盒加入RAG基线使其从70.3\%升至[TBD]\%（+[TBD]pp）。没有执行器，$a_t$未被作用于设计，
+% 把沙盒加入RAG基线使其从71.8\%升至[TBD]\%（+[TBD]pp）。没有执行器，$a_t$未被作用于设计，
 % $b_t$得不到任何关于实时状态的证据，智能体退化为仅凭先验的预测器。
 
 \textbf{Belief update: how much evidence may $\Phi$ accumulate?} ZhuLong is an ICL-type autonomous agent: once the task is issued it plans, queries the API knowledge base, and executes and debugs code on its own, and it is the agent---not the harness---that decides when the result is good enough to submit. We therefore do not shorten the loop or force an early submission; we bound how often the loop \emph{may execute}, which is what determines how much state evidence $b_t$ ever receives. Operationally the bound is the number of \texttt{run\_code} calls a trace is allowed: once the budget is spent, the call is denied at the tool boundary by a second, co-resident \texttt{PreToolUse} hook that counts \texttt{run\_code} calls per trace; its error carries a unique \texttt{{[PHI-BUDGET-EXHAUSTED]}} prefix because Cline's hook engine OR-merges cancellations and concatenates their reasons, which would otherwise make the anti-leak hook's denials indistinguishable from the budget hook's, and the agent keeps running under its own control until it chooses to submit. Because termination stays with the agent, we report the harness's own finish reason next to accuracy---\emph{completed} (the agent decided it was done) versus \emph{max iterations} or budget-denied---so that a tight budget cannot be mistaken for early convergence. In an agent with no explicit posterior, $\Phi$ is realized by what remains in the model's context, so Table~\ref{tab:phi-bound} additionally includes a lagged channel realized as a single-slot ($L{=}1$) buffer in the \texttt{run\_code} handler, whose read-back returns the state emitted by the previous execution---with a \texttt{reported\_call\_index} recorded so the one-step lag is auditable---leaving the agent permanently one action behind the design; the first read-back carries no state, and every other setting is unchanged. Both axes leave the LLM, the observation content and the effector untouched. Principle 3 predicts that accuracy rises with the execution budget but saturates once updates are fast enough for the design's own dynamics, since evidence obtained before the previous action is partly obsolete by the time the next action is chosen.
@@ -272,11 +272,11 @@ Principle 1 separates knowledge from belief: the frozen prior should bound what 
 \toprule
 \textbf{LLM Backbone} & \textbf{Pass@1 (\%)} & \textbf{$\Delta$} \\
 \midrule
-DeepSeek-V4-Pro & [TBD] $\pm$ [TBD] & — \\
-GLM-5.2 & [TBD] $\pm$ [TBD] & [TBD] \\
-DeepSeek-V4-Flash & [TBD] $\pm$ [TBD] & [TBD] \\
-Kimi-K2.6 & [TBD] $\pm$ [TBD] & [TBD] \\
-Doubao-Seed-2.0-Pro & [TBD] $\pm$ [TBD] & [TBD] \\
+DeepSeek-V4-Pro & 84.8 $\pm$ [TBD] & — \\
+GLM-5.2 & 83.3 $\pm$ 3.1 & -1.5 pp \\
+DeepSeek-V4-Flash & 16.7 $\pm$ 12.3 & -68.1 pp \\
+Kimi-K2.6 & 77.0 $\pm$ 1.6 & -7.8 pp \\
+Doubao-Seed-2.0-Pro & 63.8 $\pm$ 1.4 & -21.0 pp \\
 \bottomrule
 \end{tabular}
 \end{table}
