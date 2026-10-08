@@ -20,11 +20,11 @@
 | | 塔 | 参数 | 结构 | 分辨率/patch | 图 token |
 |:--|:--|--:|:--|:--|--:|
 | **E1（实验一）** | 现用 `vision/models.py` 的 **OpenVision2 w512/d30** | **126.8M** | patch16（我们自研） | 224 | 196 |
-| **E2（实验二）** | **官方 OV2 结构塔**（`UCSC-VLAA/openvision2-vit-large-patch14-336-vision-only`；**结构定义直接复用 R13 的 `vision/r13_eval_official.py` 那套**：p14 / d24 / w1024 / h16 / GELU / no_ln_pre / pool=avg），并把它**接进训练环 `r9_train.py`** | **304M** | patch14（官方结构） | 336 | 576 |
+| **E2（实验二）** | **同族 OpenVision2 w768/d30**（`vision/models.py` 同一实现，**只把 `width` 512 → 768**；`heads`/`mlp_dim` 随 width 同步缩放） | **284.5M** | patch16（我们自研） | 224 | 196 |
 
 - **共同（不许动）**：**AIMv2 dense objective = BP-1**（`--loss aimv2`：双向 ViT + 随机掩码 `mask_ratio=0.6`，`contrast:patch = 1:1`，冻结 `clip-vit-large-patch14-336` 文本塔 768-d）；**同数据 = 上述 94.9M**（GPIC **6167** tar `all` + CC12M + Amshaker）；**同预算 = 1 epoch（94.9M 样本）**；同 optim/lr/seed/bs（沿用 R12b 生产配方：bs512 / 8 卡）。
-- **E2 读出头改到 768**（为对齐冻结 CLIP-768 文本塔；官方原生是 1024 生成式 → 按既有做法改 head，并在报告里写明这是必要改动）。
-- 🔴 **E2 必须「从零训练」**（随机初始化官方结构塔）。**只有「同 objective + 同数据 + 同预算 + 从零」才能支撑本 claim**。⚠️ **若你判断用户其实想要「用官方预训练权重做初始化/冻结」⇒ 先停手、回报我确认**（那样只能证明「大预训练模型更强」，**证明不了本 claim**）。
+- 🔴 **两臂都「从零训练」**（随机初始化）。**只有「同 objective + 同数据 + 同预算 + 从零 + 只差宽度」才能把差异归因到「模型规模」**。⚠️ **若你判断用户其实想要「用官方预训练权重做初始化/冻结」⇒ 先停手、回报我确认**（那样只能证明「大预训练模型更强」，**证明不了本 claim**）。
+- **⚙️ 运维 2026-10-08 修订（用户裁定）**：E2 原写「官方 OV2 `L/14@336`（304M）」，但那样**同时改了 4 个变量**（参数量 / 结构 / patch / 分辨率）⇒ 用户同意**改用同族 `w768`**，**只差「宽度」一个轴**（属标准缩放轴）。**原「官方 336」臂若仍要，另作第三条臂再议**（那属 R13 的「官方 vs 自研」话题，非本 claim）。
 
 **② 评测**：**主指标 = IN-1k frozen-trunk lp top-1, Protocol B**（`vision/lp_protocol_bridge.py --protocol B --probe-full-train`，**3 seeds → mean ± σ**）；**辅报** Protocol A（与 R9–R14 对照）+ **坍缩判据 C1/C2/C4**；**必给公平表**：`params / 训练 token / 每步耗时 / 每样本耗时 / 峰值显存`（R13 先例）。
 **参照线（可选、🚩 非可比）**：官方 `...p14-336-vision-only` **预训练权重冻结** → Protocol B lp（R13 在 **224 变体**上已测 **79.81%**，可直接引用；若要 336 变体则补测，~1.2 GB 下载 + 纯评测）——**必须标「含大规模预训练，非可比」**。
@@ -35,9 +35,9 @@
 - ⚠️ 阈值 ±1.5 pp = 你自己的噪声带（`ROUND10 §1.5`）；**同时报 3-seed σ**，**σ > Δ 判「不可分辨」**。
 - ⚠️ **两点不构成 scaling law** —— 只报「单预算点上大模型是否更优」，**不得外推曲线**。
 
-**④ 顺序**：① `GPU12_ALLOC.md` 登记 8 卡 → ② **smoke test 测两臂吞吐、报 ETA**（E2 为 304M@336²/576tok，预计显著慢；**若 E2 的 1-epoch ETA > 48 h ⇒ 先回报**，再定「缩预算」方案 —— **缩预算必须两臂同步缩**（如各 30M 样本 ×1 pass）以保可比）→ ③ 写预注册进 `EXPERIMENTS_VISION` → ④ 开跑。
+**④ 顺序**：① `GPU12_ALLOC.md` 登记 8 卡 → ② **smoke test 测两臂吞吐、报 ETA** ⚠️ **R9 实测：同为 224/p16 时 w768 吞吐 ≈ w512**（2978.2 vs 2938.6 img/s，nw2，`EXPERIMENTS_VISION_ROUND9.md:16-18`）⇒ **两臂 ETA 应基本同量级**（以你本次 smoke 实测为准；若 w768 显著慢到总 ETA > 48h ⇒ 先回报再定「同步缩预算」）→ ③ 写预注册进 `EXPERIMENTS_VISION` → ④ 开跑。
 
-**⑤ 必须如实标注的混淆（写进报告显著位置）**：E1 vs E2 **同时**差了 **参数量（126.8M vs 304M）· 结构（d30 自研 vs d24 官方）· patch（16 vs 14）· 分辨率（224 vs 336 ⇒ token 196 vs 576）** ⇒ **单看 Δlp 不能把差异单独归因于「参数量」**。**建议加 1 个隔离臂**（成本允许时）：**E1 塔 @336/14**（同 patch / 同 token，只差参数量与结构）；**若不跑，必须在报告里写清「无法分离」**。
+**⑤ 口径说明（写进报告）**：改用同族 w768 后，**E1 vs E2 只差「宽度」**（**126.78M → 284.54M = 2.24×**）；`width` 同时决定 hidden dim / heads / mlp_dim，是**标准模型缩放轴**，可直接作为「模型规模」的对照（报告里写明）。其余（objective / 数据 / 1 epoch / 优化器 / lr / seed / 分辨率 224 / patch 16 / 冻结文本塔）**全部相同**。⚠️ 仍须注明：**单预算点 × 单 seed 的 Δlp 不构成 scaling law**。
 
 **⑥ 交付**：`report_vision_aimv2_scaling.html`（house style，内联 SVG，零外链，≤200 KB）+ `EXPERIMENTS_VISION` 新增一节（预注册判据 / 两臂表 / Protocol A·B / C1–C4 / 混淆声明）。
 **收尾**：commit+push（前缀 `vision scaling: …`）+ 心跳 + `WAITING=1`；🚫 不 `git add -A`；🚫 不删 ckpt。
