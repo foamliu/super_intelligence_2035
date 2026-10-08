@@ -69,11 +69,11 @@
 <div class="kpi">
   <div class="b"><span class="v">4 / 4</span><span class="l">Phase B 模型 ✅</span></div>
   <div class="b"><span class="v">3 / 4</span><span class="l">C1 组件（full r1 运行中）</span></div>
-  <div class="b"><span class="v">0 / 4</span><span class="l">C2 S2Φ 待跑</span></div>
-  <div class="b"><span class="v">0 / 3</span><span class="l">S1 保真度 待跑</span></div>
+  <div class="b"><span class="v">4 / 4</span><span class="l">C2 S2Φ 探路 ✅（legacy）</span></div>
+  <div class="b"><span class="v">3 / 3</span><span class="l">S1 保真度 ✅（legacy）</span></div>
 </div>
 <h2>2. 假期进度总览表（15 臂逐行）</h2>
-<p class="sub">数字来源：<code>run/MEMORY_ZHULONG.md</code> 成绩记录表 + 执行看板。已完成的填实数；<code>full</code> r1 运行中标 ▶；C2 / S1 未启动的标 ⬜ 待跑。</p>
+<p class="sub">数字来源：<code>run/MEMORY_ZHULONG.md</code> 成绩记录表 + 执行看板（本线 B/C1）+ legacy <code>MEMORY_s1_full.md</code>（S1）+ legacy <code>MEMORY_s2_1shot.md</code>（S2）。已完成的填实数；<code>full</code> r1 运行中标 ▶；C2 S2Φ 为 legacy 1-shot 探路值（5-run 待跑）。</p>
 <table>
 <thead>
 <tr><th>阶段</th><th>臂</th><th class="ctr">轮次进度</th><th class="num">N=5 mean±std</th><th>各轮原始值（Pass@1 %）</th><th class="ctr">状态</th></tr>
@@ -87,13 +87,13 @@
 <tr><td>C1</td><td>rag</td><td class="ctr">5/5</td><td class="num"><strong>71.8 ± 2.5%</strong></td><td>[70.3, 72.2, 69.6, 70.9, 75.9]（本线重跑）</td><td class="ctr"><span class="pill pill-ok">✅ 完成</span></td></tr>
 <tr><td>C1</td><td>wo_retrieval</td><td class="ctr">5/5</td><td class="num"><strong>81.0 ± 4.5%</strong></td><td>[74.1, 86.1, 81.6, 79.7, 83.5] · r1 复用 legacy；r5=83.5% 132/158（batch 2026_1008_081817，147 ok/8 fail/0 exec_err）</td><td class="ctr"><span class="pill pill-ok">✅ 完成</span></td></tr>
 <tr><td>C1</td><td>full（锚点）</td><td class="ctr">1/5</td><td class="num">—</td><td>r1 运行中（PID 817892，batch 2026_1008_114702）；探路 1-shot 84.8%</td><td class="ctr"><span class="pill pill-run">▶ 运行中</span></td></tr>
-<tr><td>C2</td><td>phi_k10</td><td class="ctr">0/5</td><td class="num">—</td><td>待跑（探路 1-shot 75.3%）</td><td class="ctr"><span class="pill pill-wait">⬜ 待跑</span></td></tr>
-<tr><td>C2</td><td>phi_k3</td><td class="ctr">0/5</td><td class="num">—</td><td>待跑（探路 1-shot 69.0%）</td><td class="ctr"><span class="pill pill-wait">⬜ 待跑</span></td></tr>
-<tr><td>C2</td><td>phi_k1</td><td class="ctr">0/5</td><td class="num">—</td><td>待跑（探路 1-shot 60.8%）</td><td class="ctr"><span class="pill pill-wait">⬜ 待跑</span></td></tr>
-<tr><td>C2</td><td>phi_lagged</td><td class="ctr">0/5</td><td class="num">—</td><td>待跑（探路 1-shot 84.2%，r2 修复后 98.1%）</td><td class="ctr"><span class="pill pill-wait">⬜ 待跑</span></td></tr>
-<tr><td>S1</td><td>omega_low</td><td class="ctr">0/5</td><td class="num">—</td><td>待跑（旧 5-run 已出 r1=81.6 / r2=82.3，待定是否延续）</td><td class="ctr"><span class="pill pill-wait">⬜ 待跑</span></td></tr>
-<tr><td>S1</td><td>readback_binary</td><td class="ctr">0/5</td><td class="num">—</td><td>待跑</td><td class="ctr"><span class="pill pill-wait">⬜ 待跑</span></td></tr>
-<tr><td>S1</td><td>readback_none</td><td class="ctr">0/5</td><td class="num">—</td><td>待跑</td><td class="ctr"><span class="pill pill-wait">⬜ 待跑</span></td></tr>
+<tr><td>C2</td><td>phi_k10</td><td class="ctr">1-shot</td><td class="num">75.3%</td><td>探路 1-shot（legacy，119/158，Converged 91.1%）；5-run 待跑</td><td class="ctr"><span class="pill pill-ok">探路 ✅</span></td></tr>
+<tr><td>C2</td><td>phi_k3</td><td class="ctr">1-shot</td><td class="num">69.0%</td><td>探路 1-shot（legacy，109/158，Converged 79.1%）；5-run 待跑</td><td class="ctr"><span class="pill pill-ok">探路 ✅</span></td></tr>
+<tr><td>C2</td><td>phi_k1</td><td class="ctr">1-shot</td><td class="num">60.8%</td><td>探路 1-shot（legacy，96/158，Converged 71.5%）；5-run 待跑</td><td class="ctr"><span class="pill pill-ok">探路 ✅</span></td></tr>
+<tr><td>C2</td><td>phi_lagged</td><td class="ctr">1-shot</td><td class="num">84.2%</td><td>探路 1-shot（legacy r2，133/158，Converged 98.1%，lag==1 审计通过）；5-run 待跑</td><td class="ctr"><span class="pill pill-ok">探路 ✅</span></td></tr>
+<tr><td>S1</td><td>omega_low (Ω L)</td><td class="ctr">5/5</td><td class="num"><strong>82.8 ± 1.0%</strong></td><td>[81.6, 82.3, 84.2, 82.9, 82.9]（legacy，2026-09-29~10-02 跑完）</td><td class="ctr"><span class="pill pill-ok">✅ 完成</span></td></tr>
+<tr><td>S1</td><td>readback_binary (B)</td><td class="ctr">5/5</td><td class="num"><strong>66.2 ± 16.1%</strong></td><td>[56.3, 74.1, 75.3, 43.0, 82.3]（legacy，r4=43.0% 异常低致 std 偏大）</td><td class="ctr"><span class="pill pill-ok">✅ 完成</span></td></tr>
+<tr><td>S1</td><td>readback_none (N)</td><td class="ctr">5/5</td><td class="num"><strong>73.3 ± 2.2%</strong></td><td>[72.2, 70.3, 73.4, 75.9, 74.7]（legacy，2026-10-02~03 跑完）</td><td class="ctr"><span class="pill pill-ok">✅ 完成</span></td></tr>
 </tbody>
 </table>
 <div class="note">说明：主基座 <code>deepseek-v4-pro-fp4</code> 的模型消融臂 ≡ <code>full×5</code> 锚点，不重跑。<code>rag</code> 的 legacy 值（68.2±7.4%，系 BM25 降级态）已作废，由本线重跑得 71.8±2.5%。<code>wo_retrieval</code> r5 已收割（83.5%，132/158，batch 2026_1008_081817），5/5 mean±std = 81.0±4.5%。</div>
@@ -130,9 +130,32 @@
 </tbody>
 </table>
 <div class="note"><strong>含义</strong>：pure_llm（10.5%）→ rag（71.8%，+61.3pp）→ wo_retrieval（81.0%，+9.2pp）→ full（待测）逐步累加，定性证明「检索」与「sandbox 自执行」各自带来显著增益。Δ 列由 mean 相减、不加 ±。</div>
-<h2>5. 假期关键事件时间线</h2>
+<h2>5. Legacy S1（保真度消融）+ S2（Φ 预算轴）专题</h2>
+<p class="sub">数据来源：legacy <code>MEMORY_s1_full.md</code>（PHASE=done_all，2026-10-03 14:18 收口）+ legacy <code>MEMORY_s2_1shot.md</code>（PHASE=done_all，1-shot 探路）。S1 为 5-run mean±std，S2 为 1-shot 探路值（5-run 待跑）。反作弊 hook 全程启用。</p>
+<div class="grid2">
+<div class="card">
+<h3>S1 · omega_low (Ω L) · 82.8 ± 1.0% ✅</h3>
+<p>Ω 文档保真度=low（<code>search_apis_by_keyword</code> 仅返回 <code>{api_name, similarity}</code>），核心 4 工具全开 + readback=full。5 轮 [81.6, 82.3, 84.2, 82.9, 82.9]。<strong>Ω=low 反高于 full 探路 84.8%</strong>，说明低保真 API 文档在当前评测集上未造成显著性能下降。r1/r3 各有 1 次 attempt 因 <code>/home</code> 磁盘满作废后重跑恢复。</p>
+</div>
+<div class="card">
+<h3>S1 · readback_binary (B) · 66.2 ± 16.1% ✅</h3>
+<p>readback=binary（<code>run_code</code> 仅返回 pass/fail），Ω=high。5 轮 [56.3, 74.1, 75.3, <strong>43.0</strong>, 82.3]。<strong>std 极大（16.1pp）</strong>，r4=43.0% 异常低（68/158）为方差主因。论文成表时需标出该臂不稳定性。binary 回读显著弱于 none（73.3%），回读轴效应显著。</p>
+</div>
+<div class="card">
+<h3>S1 · readback_none (N) · 73.3 ± 2.2% ✅</h3>
+<p>readback=none（<code>run_code</code> 仅返回 <code>{response:"executed"}</code>），Ω=high。5 轮 [72.2, 70.3, 73.4, 75.9, 74.7]。<strong>none（73.3%）&gt; binary（66.2%）</strong>，即「不回读反而优于二元回读」——agent 不被误导性 pass/fail 信号干扰时表现更好。r2 attempt1 因崩溃风暴作废（26.6%），重跑恢复为 70.3%。</p>
+</div>
+<div class="card">
+<h3>S2 · Φ 预算轴 · 1-shot 探路 ✅</h3>
+<p>4 臂各 1 轮探路（非 5-run）：phi_k10=<strong>75.3%</strong>（Converged 91.1%）/ phi_k3=<strong>69.0%</strong>（79.1%）/ phi_k1=<strong>60.8%</strong>（71.5%）/ phi_lagged=<strong>84.2%</strong>（98.1%）。预算收紧 → Pass@1 单调下降（k10→k3→k1），符合预期。phi_lagged r1 因 lag 审计 fail（槽位跨 trace 泄漏）作废，r2 修复后通过。phi_unbounded ≡ full（84.8%），跳过不跑。<strong>5-run 待重跑</strong>后方可填 <code>tab:phi-bound</code> mean±std。</p>
+</div>
+</div>
+<div class="note"><strong>legacy rag 参考</strong>：legacy 组件线 rag = <s>68.2 ± 7.4%</s> [71.5, 70.3, 75.3, 68.4, 55.7]，因 RAG recall 端口 9012 无监听降级为 BM25-only，<strong>已作废</strong>。本线已用真语义检索态（端口 9006）重跑为 71.8 ± 2.5%。</div>
+<h2>6. 假期关键事件时间线</h2>
 <p class="sub">只列有 <code>daily-memories/</code> / <code>ops/outbox.md</code> 证据的转折点。</p>
 <ul class="tl">
+<li><span class="d">09-28</span> — <strong>legacy S2 Φ 轴探路完成</strong>：phi_k10=75.3% / phi_k3=69.0% / phi_k1=60.8% / phi_lagged=84.2%（r2 修复 lag 审计后通过）。各臂 1-shot，Converged% / Mean read-backs 同步采集。（证据：legacy <code>MEMORY_s2_1shot.md</code> PHASE=done_all）</li>
+<li><span class="d">09-29~10-03</span> — <strong>legacy S1 保真度消融 5-run 完成</strong>：omega_low 82.8±1.0% [81.6,82.3,84.2,82.9,82.9] → readback_binary 66.2±16.1% [56.3,74.1,75.3,43.0,82.3] → readback_none 73.3±2.2% [72.2,70.3,73.4,75.9,74.7]。3 臂 ×5 全部 done_all。期间经历 /home 磁盘满致 r3 作废重跑、崩溃风暴致 readback_none r2 作废重跑。（证据：legacy <code>MEMORY_s1_full.md</code> PHASE=done_all @2026-10-03 14:18）</li>
 <li><span class="d">10/01</span> — <strong>旧 S1 保真度线 infra 作废停摆</strong>：omega_low r3 因 license 耗尽 + shard 端口 8664/8665 宕 + <code>/home</code> 磁盘 &lt;8G 三项同时不满足，自 9/30 起停摆；10/01 全天反复 infra 复检，双条件未恢复，原地等待不重跑 r3。（证据：daily-memories/2026-10-01.md 全天 infra 复检记录）</li>
 <li><span class="d">10/02</span> — <strong>旧 S1 线恢复推进</strong>：infra 部分恢复后 omega_low r3–r5 完成，切 readback_binary（5-run 完成），再切 readback_none r1；期间多次出现沙箱阻断（run_commands 被拦）周期。（证据：daily-memories/2026-10-02.md）</li>
 <li><span class="d">10/03</span> — <strong>readback_none r2 崩溃风暴作废 + 重试</strong>：r2 attempt1 因 <code>/home</code> 卷 99% 满 + 多用户并发导致 111/158 cline worker 瞬间崩溃（26.6% 作废）；重试 attempt2。沙箱阻断反复 3 周期后复通。（证据：daily-memories/2026-10-03.md）</li>
@@ -142,7 +165,7 @@
 <li><span class="d">10/07</span> — <strong>Phase B 收官 + 切回 C1</strong>：kimi 5/5 完成（77.0±1.6%）→ doubao-seed-2.0-pro-cloud 5/5 完成（63.8±1.4%）；<strong>pro-fp4 恢复 HTTP 200</strong>（C1.rag r1 起用 pro-fp4 成功运行，0 Forbidden）→ 切 C1.pure_llm（复用 legacy）→ <strong>C1.rag 本线重跑启动</strong>。（证据：daily-memories/2026-10-07.md；MEMORY 状态头「eval backbone=deepseek-v4-pro-fp4（已恢复 HTTP 200）」）</li>
 <li><span class="d">10/08</span> — <strong>C1.rag 收官 + wo_retrieval 收官 + 切 full 锚点</strong>：rag 5/5 完成（71.8±2.5%，r3 infra 作废已重跑恢复）→ wo_retrieval r2=86.1 / r3=81.6 / r4=79.7 / <strong>r5=83.5% 收割</strong> → 5/5 = <strong>81.0±4.5%</strong> → <code>set_ablation.py full</code> + MCP 重启 → <strong>C1.full 锚点 r1 启动</strong>（PID 817892，batch 2026_1008_114702）。撰写国庆假期进展 HTML 报告。（证据：daily-memories/2026-10-08.md）</li>
 </ul>
-<h2>6. 基础设施状态</h2>
+<h2>7. 基础设施状态</h2>
 <div class="grid2">
 <div class="card">
 <h3>磁盘</h3>
@@ -164,18 +187,18 @@
 </div>
 </div>
 <div class="note">评测代码 <code>eda_fastmcp</code> 在 36.15 位于 <code>/nasdata/app.e0031982/code/eda_fastmcp</code>（仓库外，独立 git）。本线 cline 配置已隔离（编排用 <code>--config .cline_zhulong</code>；评测侧用各自 <code>CLI_DATA_DIR</code> 隔离，防作弊 hook 不影响编排 agent）。</div>
-<h2>7. 下一步</h2>
+<h2>8. 下一步</h2>
 <ol>
 <li><strong>收割 C1.full r1</strong>：pgrep 无输出 → <code>grep PASS_RATE /tmp/ABL_full_r1.log</code> 取 r1 → 记成绩 → 启 r2–r5（同臂 full 不切 set_ablation）。</li>
 <li><strong>算 full mean±std</strong>：5/5 完成 → PHASE=<code>just_finished</code> → 回填 5 张表锚点行（<code>tab:main-ablation</code>(full) + <code>tab:omega</code>(H) + <code>tab:ablation-harness</code>(F) + <code>tab:phi-bound</code>(unbounded) + <code>tab:llm-comparison</code>(DeepSeek-V4-Pro)）。</li>
-<li><strong>C2（S2 Φ）</strong>：phi_k10 → phi_k3 → phi_k1 → phi_lagged，各 5 轮；切前 <code>set_s2_phi.py &lt;ARM&gt;</code> + stop/start。需遵守 §8 Φ 语义约束（同步报告 Converged% / Mean read-backs；lagged 核 reported_call_index 差==1）。</li>
-<li><strong>S1（保真度）</strong>：omega_low → readback_binary → readback_none，各 5 轮；切前 <code>set_s1_fidelity.py &lt;ARM&gt;</code> + stop/start。omega_low 旧 5-run 部分值（r1=81.6 / r2=82.3）是否延续<strong>待运维拍板</strong>。</li>
+<li><strong>C2（S2 Φ）5-run 重跑</strong>：legacy 1-shot 探路值已有（phi_k10=75.3% / k3=69.0% / k1=60.8% / lagged=84.2%），需各臂补齐 5-run 得 mean±std。切前 <code>set_s2_phi.py &lt;ARM&gt;</code> + stop/start，遵守 Φ 语义约束（同步报告 Converged% / Mean read-backs；lagged 核 reported_call_index 差==1）。</li>
+<li><strong>S1（保真度）已由 legacy 完成 5-run</strong>：omega_low 82.8±1.0% / readback_binary 66.2±16.1% / readback_none 73.3±2.2% 全部 done_all。数据可直接填 <code>tab:omega</code>(L) + <code>tab:ablation-harness</code>(N/B)。如运维决定重跑则切前 <code>set_s1_fidelity.py &lt;ARM&gt;</code> + stop/start。</li>
 </ol>
-<div class="note"><strong>尚待运维拍板的开放项</strong>：① S1.omega_low 旧 5-run 已出 r1/r2，是否延续到 r3–r5 还是整体重跑；② 是否追加 RQ3 SKILL/Tcl 切片（任务书 §运维指令预留区）。</div>
+<div class="note"><strong>尚待运维拍板的开放项</strong>：① S1 legacy 5-run 数据是否直接采信填表，还是需在同批 infra 下重跑对齐；② C2 S2 Φ 轴是否复用 legacy 1-shot 探路值作为首轮、仅补 r2–r5，还是整体 5-run 重跑；③ 是否追加 RQ3 SKILL/Tcl 切片（任务书 §运维指令预留区）。</div>
 
 <footer>
 <p>生成时间：2026-10-08 11:42 CST（唤醒时系统时间）｜数据截止点：<code>MEMORY_ZHULONG.md</code> 最后一次提交（2026-10-08 11:42 wo_retrieval r5 收割 + C1.full r1 启动）</p>
-<p>数字来源：<code>run/MEMORY_ZHULONG.md</code> 成绩记录表 + 执行看板｜事件证据：<code>run/daily-memories/2026-10-0[1-8].md</code> + <code>run/ops/outbox.md</code></p>
+<p>数字来源：<code>run/MEMORY_ZHULONG.md</code> 成绩记录表 + 执行看板（本线 B/C1）｜legacy <code>MEMORY_s1_full.md</code>（S1）+ <code>MEMORY_s2_1shot.md</code>（S2）+ <code>MEMORY_component_full.md</code>（legacy rag 参考）｜事件证据：<code>run/daily-memories/2026-10-0[1-8].md</code> + <code>run/ops/outbox.md</code></p>
 <p>🚫 本报告所有 Pass@1 / std / 轮次值均可在 <code>MEMORY_ZHULONG.md</code> 回溯；未测项显式标注「待跑 / 运行中」，未臆造任何数字。</p>
 </footer>
 </div>

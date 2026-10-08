@@ -18,6 +18,13 @@
 | C1 | rag | **71.8 ± 2.5%** | 5/5 ✅ |
 | C1 | wo_retrieval | **81.0 ± 4.5%** | 5/5 ✅ |
 | C1 | full（锚点） | —（探路 84.8%） | 1/5 ▶ r1 运行中 |
+| S1 | omega_low (Ω L) | **82.8 ± 1.0%** | 5/5 ✅（legacy） |
+| S1 | readback_binary (B) | **66.2 ± 16.1%** | 5/5 ✅（legacy） |
+| S1 | readback_none (N) | **73.3 ± 2.2%** | 5/5 ✅（legacy） |
+| S2 | phi_k10 | 75.3% | 1-shot 探路 ✅（legacy） |
+| S2 | phi_k3 | 69.0% | 1-shot 探路 ✅（legacy） |
+| S2 | phi_k1 | 60.8% | 1-shot 探路 ✅（legacy） |
+| S2 | phi_lagged | 84.2% | 1-shot 探路 ✅（legacy） |
 
 ---
 
@@ -117,12 +124,82 @@
 
 ---
 
+## S1：保真度消融（固定 LLM=DeepSeek-V4-Pro，逐保真度轴开关）
+
+> 数据来源：legacy `MEMORY_s1_full.md`（PHASE=done_all，2026-10-03 14:18 收口）。
+> 3 臂 × 5 轮全部完成，反作弊 hook 全程启用。
+
+### S1.omega_low（Ω 文档保真度=low，核心 4 工具全开 + readback=full）
+
+| 轮次 | Pass@1 (%) | 通过数 | batch ID | 备注 |
+|:--|:-:|:-:|:--|:--|
+| r1 | 81.6 | 129/158 | 2026_0929_181818 | attempt2；attempt1 batch 2026_0929_172453 因 /home 满作废 |
+| r2 | 82.3 | 130/158 | 2026_0929_214931 | |
+| r3 | 84.2 | 133/158 | 2026_1001_170011 | 重跑；原 batch 2026_0930_012235 因 /home 满致 sandbox 超时作废 |
+| r4 | 82.9 | 131/158 | 2026_1001_205505 | |
+| r5 | 82.9 | 131/158 | 2026_1002_000832 | |
+| **mean±std** | **82.8 ± 1.0%** | | | Ω=low 反高于 full 探路 84.8% |
+
+### S1.readback_binary（readback=binary，Ω=high）
+
+| 轮次 | Pass@1 (%) | 通过数 | batch ID | 备注 |
+|:--|:-:|:-:|:--|:--|
+| r1 | 56.3 | 89/158 | 2026_1002_032216 | |
+| r2 | 74.1 | 117/158 | 2026_1002_042610 | |
+| r3 | 75.3 | 119/158 | 2026_1002_093747 | |
+| r4 | 43.0 | 68/158 | 2026_1002_132204 | 异常低，方差主因 |
+| r5 | 82.3 | 130/158 | 2026_1002_142553 | |
+| **mean±std** | **66.2 ± 16.1%** | | | binary 回读方差偏大（r4=43.0% 异常低），论文成表需标出不稳定性 |
+
+### S1.readback_none（readback=none，Ω=high）
+
+| 轮次 | Pass@1 (%) | 通过数 | batch ID | 备注 |
+|:--|:-:|:-:|:--|:--|
+| r1 | 72.2 | 114/158 | 2026_1002_201425 | |
+| r2 | 70.3 | 111/158 | 2026_1003_010254 | attempt2；attempt1 batch 2026_1002_232521 因崩溃风暴作废 |
+| r3 | 73.4 | 116/158 | 2026_1003_034423 | |
+| r4 | 75.9 | 120/158 | 2026_1003_062630 | |
+| r5 | 74.7 | 118/158 | 2026_1003_110543 | |
+| **mean±std** | **73.3 ± 2.2%** | | | none > binary，回读轴效应显著 |
+
+---
+
+## S2：Φ 预算轴消融（固定 LLM=DeepSeek-V4-Pro，限 run_code 调用预算）
+
+> 数据来源：legacy `MEMORY_s2_1shot.md`（PHASE=done_all，1-shot 探路）。
+> 每臂仅 1 轮探路值（非 5-run mean±std），Converged% / Mean read-backs 同步报告。
+> phi_unbounded ≡ full 锚点（84.8%），跳过不跑。
+
+| 臂 | Pass@1 (%) | 通过数 | Converged (%) | Mean read-backs | batch ID | 备注 |
+|:--|:-:|:-:|:-:|:-:|:--|:--|
+| phi_k10 | 75.3 | 119/158 | 91.1 (144/158) | 9.58 | 2026_0928_220542 | deny[PHI-BUDGET]=59；14 条 cancelled |
+| phi_k3 | 69.0 | 109/158 | 79.1 (125/158) | 8.18 | 2026_0929_005419 | deny[PHI-BUDGET]=105；33 条 cancelled |
+| phi_k1 | 60.8 | 96/158 | 71.5 (113/158) | 8.66 | 2026_0929_033533 | deny[PHI-BUDGET]=152；45 条 cancelled |
+| phi_lagged | 84.2 | 133/158 | 98.1 (155/158) | — | 2026_0929_110309 | r2（r1 batch 2026_0929_061645 因 lag 审计 fail 作废）；lag==1 审计 133/158 精确通过 |
+
+> **注**：S2 各臂为 1-shot 探路值，需 5-run 重跑后方可填论文 `tab:phi-bound` 的 mean±std。cancelled = agent 超额重试后自身终止（非 hook 中断）。
+
+---
+
+## Legacy 组件消融参考（已作废）
+
+> 数据来源：legacy `MEMORY_component_full.md`。rag 全 5 轮在 BM25-only 降级态测得（RAG recall 端口 9012 无监听，降级为 BM25），**已作废**，本线已用真语义检索态重跑（见 C1.rag 71.8±2.5%）。
+
+| 臂 | N=5 mean±std | 各轮原始值 | 状态 |
+|:--|:-:|:--|:--|
+| rag (legacy, BM25-only) | ~~68.2 ± 7.4%~~ | [71.5, 70.3, 75.3, 68.4, 55.7] | ❌ 作废（端口错配降级态） |
+
+---
+
 ## 备注
 
-1. **数据来源**：`run/MEMORY_ZHULONG.md` §成绩记录，每个数字可回溯到 (config, run_id, batch) 级别。
+1. **数据来源**：`run/MEMORY_ZHULONG.md` §成绩记录（本线 B/C1）+ legacy `MEMORY_s1_full.md`（S1）+ legacy `MEMORY_s2_1shot.md`（S2）+ legacy `MEMORY_component_full.md`（legacy rag 参考），每个数字可回溯到 (config, run_id, batch) 级别。
 2. **pure_llm**：5 轮数据复用 legacy 组件线结果（同一配置、同一评测协议、反作弊 hook 下），非假期新跑。
-3. **rag r3**：曾因 infra 额度耗尽作废（batch 2026_1007_151301, 0/158），已重跑恢复为 69.6%。
-4. **wo_retrieval r2**：旧 r2 因 pro-fp4 403 全军覆没作废（0/158），已重跑恢复为 86.1%。
-5. **C1.full**：1-shot 探路值 84.8%（134/158）为 2026-09-28 实测；5-run r1 于 10-08 11:47 启动，运行中。
-6. **Δ 计算**：效应量由同批 mean 相减得出。已完成的 5-run Δ：pure_llm→rag = +61.3 pp（71.8−10.5）。涉及 full 的 Δ 待 full 5-run 收割后从同批数据算出。
-7. **本机无 pdflatex**：论文 .tex 已更新实测值，PDF 编译需在 Windows MiKTeX 或装有 LaTeX 的环境执行。
+3. **S1 保真度消融**（omega_low / readback_binary / readback_none）：5 轮数据全部来自 legacy `MEMORY_s1_full.md`（2026-09-29 至 10-03 跑完，PHASE=done_all）。反作弊 hook 全程启用、冻结。omega_low r1/r3、readback_none r2 各有 1 次 attempt 因 /home 磁盘满或崩溃风暴作废后重跑恢复。
+4. **S2 Φ 轴**（phi_k10/k3/k1/lagged）：1-shot 探路值来自 legacy `MEMORY_s2_1shot.md`（2026-09-28 至 09-29 跑完，PHASE=done_all）。phi_lagged r1 因 lag 审计 fail（槽位跨 trace 泄漏）作废，r2 修复后通过。各臂仅 1 轮，需 5-run 重跑后方可填论文 mean±std。
+5. **legacy rag**（68.2±7.4%）：因 RAG recall 端口 9012 无监听降级为 BM25-only，已作废；本线已用真语义检索态（端口 9006）重跑为 71.8±2.5%。
+6. **rag r3**：曾因 infra 额度耗尽作废（batch 2026_1007_151301, 0/158），已重跑恢复为 69.6%。
+7. **wo_retrieval r2**：旧 r2 因 pro-fp4 403 全军覆没作废（0/158），已重跑恢复为 86.1%。
+8. **C1.full**：1-shot 探路值 84.8%（134/158）为 2026-09-28 实测；5-run r1 于 10-08 11:47 启动，运行中。
+9. **Δ 计算**：效应量由同批 mean 相减得出。已完成的 5-run Δ：pure_llm→rag = +61.3 pp（71.8−10.5）。涉及 full 的 Δ 待 full 5-run 收割后从同批数据算出。
+10. **本机无 pdflatex**：论文 .tex 已更新实测值，PDF 编译需在 Windows MiKTeX 或装有 LaTeX 的环境执行。
