@@ -2949,3 +2949,112 @@ MEM_FRACTION=0.85 BATCHES="1" MAX_WAIT=600 BENCH_TIMEOUT=7200 \
 - `run/baize_tokenize_r3_sources.sh`（小样本分词脚本）
 - `nemo_experiments/mix_search/mix_search_eval_r3.db`（100 trials DB）
 - `DATA_MIX_RECIPE.md` §9.7（R3 结果回写）
+
+---
+
+## P-8 前置预研（P-8 PREP）— 2026-10-09 唤醒 #231
+
+> **状态**：P-8 暂缓令（2026-10-02）未撤。本节为 P-8 启动前的就绪度核查，不启动训练。
+> **目的**：在运维下发 P-8 启动令时，可立即起跑，无意外阻塞。
+
+### P-8.1 数据就绪度核查（⭐ 关键发现）
+
+**R3 best blend (#8) 对 100B token 预算的数据需求**：
+
+| 段 | 占比 | token | 源 | 需求 | 可用量 | 状态 |
+|:--|:---:|:---:|:--|---:|---:|:--|
+| **Stable** web-en | 16.8% | 15.12B | mix_base s24-s33 (en_base) | 15.1B | 206.76B | ✅ 充足(13.7×) |
+| **Stable** web-zh | 32.0% | 28.80B | mix_base s4-s11 (zh) | 28.8B | 112.47B | ✅ 充足(3.9×) |
+| **Stable** web-l1 | 32.4% | 29.16B | mix_base s12-s23 (l1_en_hq) | 29.2B | 152.17B | ✅ 充足(5.2×) |
+| **Stable** ultrax | 8.0% | 7.20B | mix_base s34-s43 (ultrax) | 7.2B | 30.97B | ✅ 充足(4.3×) |
+| **Stable** code | 6.4% | 5.76B | UltraData-Code (全量) | 5.76B | **0.27B** | 🔴 **缺口 21×** |
+| **Stable** math | 4.4% | 3.96B | UltraData-MATH (全量) | 3.96B | **0.61B** | 🟠 **缺口 6.5×** |
+| **Decay** L3 | 86% | 8.60B | mix_base (任意 web shards) | 8.6B | 524.42B | ✅ 充足 |
+| **Decay** code | 10% | 1.00B | anneal_code (FineVision) | 1.0B | 0.09B | 🔴 **缺口 11×** |
+| **Decay** math | 4% | 0.40B | anneal_math2 (FineVision) | 0.4B | 0.43B | ✅ 勉强够 |
+
+> 注：Stable 90B = 90% × 100B（warmup 250 步占比 <0.1% 忽略）；Decay 10B = 10% × 100B。
+> 可用量 = R3 小样本分词（r3_sources/）+ 既有 anneal 分词。
+> mix_base 44 shards 合计 524.42B token（data agent 确认，2026-10-09）。
+
+**🔴 关键发现 — Code/Math 全量分词缺口**：
+
+- **UltraData-Code**（1.22TB 原始）仅有 R3 小样本分词 180M token + anneal_code 90M token = **270M total**
+  - P-8 Stable 段需 5.76B + Decay 段需 1.0B = **6.76B code tokens**
+  - **缺口 25×** → 若用现有数据，code 将被重复 ~25 个 epoch（严重过拟合风险）
+- **UltraData-MATH**（552GB 原始）仅有 R3 小样本分词 178M token + anneal_math2 431M token = **609M total**
+  - P-8 Stable 段需 3.96B + Decay 段需 0.4B = **4.36B math tokens**
+  - **缺口 7×** → 若用现有数据，math 将被重复 ~7 个 epoch（中等过拟合风险）
+
+**🟢 Web 数据完全充足**：524B token 可用 vs ~89B 需求 = **5.9× 覆盖**，无任何缺口。
+
+**建议处置（供运维决策）**：
+1. **方案 A（推荐）**：等 data agent 完成 UltraData-Code/MATH 全量分词后再启 P-8 → 无数据重复风险，但需额外 1–2 天分词时间
+2. **方案 B（可行但有风险）**：用现有小样本 + anneal 数据，接受 code 25× / math 7× 重复 → R2 BO 已验证小样本可用（0.5B/trial），但 P-8 规模更大，重复 epoch 对最终质量的影响未验证
+3. **方案 C（折中）**：Stable 段 web 用全量（524B），code/math 用 R3 小样本（180M+178M）；Decay 段 code/math 用 anneal（90M+431M）→ code 总重复 ~17×，math ~5× → 可接受
+
+### P-8.2 训练脚本核验
+
+**模板**：`baize_p5b_train.sh`（已验证可用，P-5b 20B token 成功跑完）
+
+**P-8 需要修改的关键参数**：
+
+| 参数 | P-5b 值 | P-8 值 | 来源 |
+|:--|:--|:--|:--|
+| `--arch` | mamba2 | mamba2 (hybrid 56L/4-attn) | R1/R2 锁定 |
+| `--name` | p5b | p8 | — |
+| `--train-iters` | 4771 | ~24,829 (100B ÷ 4.023M tok/step) | 100B ÷ (GBS×seq) |
+| `--global-batch-size` | 1024 | **待定**（P-5a 结论：若无右移则 GBS=8，但 P-5b 用 1024 跑通） | P-5a |
+| `--seq-length` | 4094 | 4094 | 固定口径 |
+| `--lr` | 1e-3 | 1e-3 | Round 1 胜出 |
+| `--lr-decay-style` | WSD | WSD | Round 1 |
+| `--lr-warmup-iters` | 238 | 250 | Round 1 |
+| `--lr-decay-iters` | 477 | ~2,483 (10% of 24,829) | 10% decay |
+| `--min-lr` | 1e-5 | 1e-5 | Round 1 |
+| `--precision` | bf16_mixed | **delayed FP8**（P-9.8 裁定） | P-9.8 |
+| `--save-interval` | 156 | ~2,483 (每 10% 一个) | 10 个 ckpt |
+| BLEND | 16× p5b_l3 等权 | R3 blend（web shards 加权 + code/math） | R3 |
+
+**⚠️ GBS 问题**：P-5a 结论是「若无右移则 GBS=8」，但 P-5b 实际用 GBS=1024 跑通。
+  - GBS=8：每步 32,752 token → 100B 需 3,052,024 步 → 极多步数，可能效率低
+  - GBS=1024：每步 4.192M token → 100B 需 23,854 步 → 与 P-5b 同口径，吞吐 ~92.6K tok/s
+  - **建议**：P-8 用 GBS=1024（P-5b 已验证），除非 P-5a 明确指出小 GBS 更优
+
+### P-8.3 吞吐与时间估算
+
+| 指标 | 值 | 来源 |
+|:--|:--|:--|
+| 实测吞吐（hybrid, GBS=1024, 8×H100） | ~92.6K tok/s | P-5b 日志 |
+| P-9.7 上界（dense, env 优化后） | 249K tok/s | P-9.7（dense, 非 hybrid） |
+| **P-8 预估吞吐（hybrid + delayed FP8）** | ~92.6K–130K tok/s | FP8 预计提速 1.3–1.4×（P-9.8 armA） |
+| **100B token 墙钟** | **~9–12.5 天** | 100B ÷ 92.6K = 12.5d（bf16）/ 100B ÷ 130K = 8.9d（FP8） |
+| GPU·h | ~1,720–2,400 | 8 GPU × 9–12.5d × 24h |
+
+### P-8.4 Checkpoint 存储策略
+
+| 类型 | 单个大小 | 数量（每 10% + final） | 总计 | 磁盘 |
+|:--|---:|:---:|---:|:--|
+| Model-only (torch_dist) | ~4.4 GB | 11 | ~48 GB | 43T free → ✅ 无压力 |
+| Full (model + AdamW + grad) | ~30 GB | 11 | ~330 GB | 43T free → ✅ 无压力 |
+| **建议**：保留 model-only（~48 GB）+ final full ckpt（~30 GB） = ~78 GB total | | | | |
+
+### P-8.5 就绪度总结
+
+| 检查项 | 状态 | 备注 |
+|:--|:--:|:--|
+| 架构（hybrid 56L/4-attn, 2.22B） | ✅ | R1/R2 锁定 |
+| 超参（LR 1e-3, WSD, warmup 250, decay 10%） | ✅ | Round 1 + P-4 退火消融 |
+| 精度（delayed FP8） | ✅ | P-9.8 裁定 |
+| Web 数据（4 源, 524B token） | ✅ | data agent 全量分词完成 |
+| Code 数据（UltraData-Code 全量） | 🔴 | **未分词**，仅有 270M 小样本 |
+| Math 数据（UltraData-MATH 全量） | 🟠 | **未分词**，仅有 609M 小样本 |
+| 污染扫描 | ✅ | 160K docs 全 0 命中（data agent） |
+| 训练脚本模板 | ✅ | baize_p5b_train.sh 可改 |
+| GPU（8×H100） | ✅ | 全空闲 |
+| 磁盘（/nas_train 43T free） | ✅ | ckpt ~78 GB |
+| 运维启动令 | ⏸ | 暂缓令未撤 |
+
+**结论**：P-8 在 web 数据、架构、超参、精度、GPU、磁盘方面均已就绪。
+**唯一阻塞** = Code/Math 全量分词（需 data agent 完成）+ 运维撤销暂缓令。
+若接受 Code 25× / Math 7× 重复（方案 B/C），则数据层面可立即启动。
+
