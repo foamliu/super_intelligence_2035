@@ -24005,5 +24005,443 @@
     },
     "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/core/basic.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
     "classification": "blocked"
+  },
+  {
+    "instance_id": "sympy__sympy-13971",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 80.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13971.json",
+      "stdout_tail": "py-13971\n[run_single] base_commit=84c125972ad535b2dfb245f8d311d347b45e5b8a\n[run_single] ps_len=515\n[run_single] git reset --hard 84c125972ad535b2dfb245f8d311d347b45e5b8a\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=80.6s ==\n[run_single] model_patch: 3101 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-13971.json\n[run_single] cleanup: git reset --hard 84c125972ad535b2dfb245f8d311d347b45e5b8a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 102,
+        "p2p_total": 102
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-14308",
+    "repo": "sympy/sympy",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 1359.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-14308.json",
+      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 8177 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-14308.json\n[run_single] cleanup: git reset --hard fb536869fb7aa28b2695ad7a3b70949926b291c4\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-14024",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 1001.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-14024.json",
+      "stdout_tail": "ase:\nn1 = (-1)**(2/3)\nn2 = (-1)**(2/3)\nN(n1) = -0.5 + 0.866025403784439*I\nN(n2) = -0.5 + 0.866025403784439*I\nEqual? True\n\nConcrete rational case:\nn1 = (-1)**(2/3)\nn2 = (-1)**(2/3)\nN(n1) = -0.5 + 0.866025403784439*I\nN(n2) = -0.5 + 0.866025403784439*I\nEqual? True\n\u001b[0m\n\n[run_single] model_patch: 1741 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-14024.json\n[run_single] cleanup: git reset --hard b17abcb09cbcee80a90f6750e0f9b53f0247656c\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "scikit-learn__scikit-learn-10949",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 1742.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_scikit-learn__scikit-learn-10949.json",
+      "stdout_tail": "-10949\n[run_single] base_commit=3b5abf76597ce6aff76192869f92647c1b5259e7\n[run_single] ps_len=1478\n[run_single] git reset --hard 3b5abf76597ce6aff76192869f92647c1b5259e7\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=1742.0s ==\n[run_single] model_patch: 1638 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_scikit-learn__scikit-learn-10949.json\n[run_single] cleanup: git reset --hard 3b5abf76597ce6aff76192869f92647c1b5259e7\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-14317",
+    "repo": "sympy/sympy",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 523.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-14317.json",
+      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 1963 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-14317.json\n[run_single] cleanup: git reset --hard fb536869fb7aa28b2695ad7a3b70949926b291c4\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 116,
+        "p2p_total": 116
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-14396",
+    "repo": "sympy/sympy",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 281.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-14396.json",
+      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 6278 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-14396.json\n[run_single] cleanup: git reset --hard f35ad6411f86a15dd78db39c29d1e5291f66f9b5\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 44,
+        "p2p_total": 44
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-14024",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 1,
+      "wall_s": 1475.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-14024.json",
+      "stdout_tail": "mpy-14024\n[run_single] base_commit=b17abcb09cbcee80a90f6750e0f9b53f0247656c\n[run_single] ps_len=685\n[run_single] git reset --hard b17abcb09cbcee80a90f6750e0f9b53f0247656c\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=1475.1s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-14024.json\n[run_single] cleanup: git reset --hard b17abcb09cbcee80a90f6750e0f9b53f0247656c\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 83,
+        "p2p_total": 83
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-14308",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/printing/tests/test_latex.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/printing/tests/test_latex.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "sympy__sympy-14317",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/printing/tests/test_latex.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/printing/tests/test_latex.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "sympy__sympy-14396",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/printing/tests/test_latex.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/printing/tests/test_latex.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "sympy__sympy-14774",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/printing/tests/test_latex.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/printing/tests/test_latex.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "sympy__sympy-14817",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/printing/tests/test_latex.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/printing/tests/test_latex.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "sympy__sympy-15011",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/printing/latex.py\n\tsympy/printing/tests/test_latex.py\nPlease commit your changes or stash them before you swit"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/printing/latex.py\n\tsympy/printing/tests/test_latex.py\nPlease commit your changes or stash them before you swit",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "sympy__sympy-15308",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/physics/vector/printing.py\n\tsympy/printing/latex.py\n\tsympy/printing/tests/test_latex.py\nPlease commit your cha"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/physics/vector/printing.py\n\tsympy/printing/latex.py\n\tsympy/printing/tests/test_latex.py\nPlease commit your cha",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "sympy__sympy-15345",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/physics/vector/printing.py\n\tsympy/printing/latex.py\n\tsympy/printing/tests/test_latex.py\nPlease commit your cha"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/physics/vector/printing.py\n\tsympy/printing/latex.py\n\tsympy/printing/tests/test_latex.py\nPlease commit your cha",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "sympy__sympy-15346",
+    "repo": "sympy/sympy",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/physics/vector/printing.py\n\tsympy/printing/latex.py\n\tsympy/printing/tests/test_latex.py\nPlease commit your cha"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/physics/vector/printing.py\n\tsympy/printing/latex.py\n\tsympy/printing/tests/test_latex.py\nPlease commit your cha",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "sympy__sympy-14774",
+    "repo": "sympy/sympy",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 129.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-14774.json",
+      "stdout_tail": "nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 2665 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_sympy__sympy-14774.json\n[run_single] cleanup: git reset --hard 8fc63c2d71752389a44367b8ef4aba8a91af6a45\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 114,
+        "p2p_total": 114
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "scikit-learn__scikit-learn-11040",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 626.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_scikit-learn__scikit-learn-11040.json",
+      "stdout_tail": "rn-11040\n[run_single] base_commit=96a02f3934952d486589dddd3f00b40d5a5ab5f2\n[run_single] ps_len=747\n[run_single] git reset --hard 96a02f3934952d486589dddd3f00b40d5a5ab5f2\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=626.2s ==\n[run_single] model_patch: 9310 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_scikit-learn__scikit-learn-11040.json\n[run_single] cleanup: git reset --hard 96a02f3934952d486589dddd3f00b40d5a5ab5f2\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 44,
+        "p2p_total": 44
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "scikit-learn__scikit-learn-11281",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 110.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_scikit-learn__scikit-learn-11281.json",
+      "stdout_tail": "learn-11281\n[run_single] base_commit=4143356c3c51831300789e4fdf795d83716dbab6\n[run_single] ps_len=552\n[run_single] git reset --hard 4143356c3c51831300789e4fdf795d83716dbab6\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=110.2s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_scikit-learn__scikit-learn-11281.json\n[run_single] cleanup: git reset --hard 4143356c3c51831300789e4fdf795d83716dbab6\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 43,
+        "p2p_total": 43
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]
