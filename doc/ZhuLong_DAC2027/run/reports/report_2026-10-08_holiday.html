@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZhuLong（DAC2027）国庆假期试验进展报告</title>
+<style>
+  :root{--hd:#1f3a5f;--hd2:#2c5282;--zebra:#f4f7fb;--border:#c5d2e0;--ok:#1a7f37;--wait:#b8860b;--run:#0969da;--accent:#6b46c1;--muted:#57606a}
+  *{box-sizing:border-box}
+  body{margin:0;padding:0;background:#eef2f7;color:#1f2328;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;line-height:1.6;font-size:15px}
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 24px 60px}
+  h1{font-size:26px;color:var(--hd);margin:0 0 4px;letter-spacing:.5px}
+  h2{font-size:19px;color:var(--hd2);margin:30px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--hd2)}
+  h3{font-size:16px;color:var(--hd);margin:18px 0 8px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 6px}
+  p{margin:8px 0}
+  .lead{background:#fff;border-left:4px solid var(--accent);padding:12px 16px;border-radius:0 6px 6px 0;margin:14px 0}
+  table{width:100%;border-collapse:collapse;margin:12px 0;background:#fff;font-size:13.5px}
+  th,td{border:1px solid var(--border);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:var(--hd);color:#fff;font-weight:600}
+  tr:nth-child(even) td{background:var(--zebra)}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  td.ctr,th.ctr{text-align:center}
+  .pill{display:inline-block;padding:1px 7px;border-radius:10px;font-size:12px;font-weight:600}
+  .pill-ok{background:#dafbe1;color:var(--ok)}.pill-wait{background:#fff8c5;color:var(--wait)}.pill-run{background:#ddf4ff;color:var(--run)}
+  code{background:#f0f3f7;padding:1px 5px;border-radius:4px;font-size:12.5px;font-family:"SFMono-Regular",Consolas,monospace}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin:8px 0}
+  .card h3{margin-top:0}
+  ul{margin:6px 0;padding-left:22px}li{margin:3px 0}
+  .tl{position:relative;margin:10px 0 0 0;padding:0 0 0 18px;list-style:none;border-left:2px solid var(--border)}
+  .tl li{position:relative;margin:0 0 14px 0}
+  .tl li::before{content:"";position:absolute;left:-23px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--hd2);border:2px solid #fff}
+  .tl .d{font-weight:700;color:var(--hd)}
+  .note{font-size:12.5px;color:var(--muted);background:#fff;border:1px dashed var(--border);padding:8px 12px;border-radius:6px;margin:10px 0}
+  footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--border);color:var(--muted);font-size:12.5px;text-align:center}
+  .kpi{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+  .kpi .b{flex:1 1 150px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center}
+  .kpi .b .v{font-size:22px;font-weight:700;color:var(--hd);display:block}
+  .kpi .b .l{font-size:12px;color:var(--muted)}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr}.kpi .b{flex:1 1 120px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>ZhuLong（DAC2027）EDA 消融评测 · 国庆假期试验进展报告</h1>
+<p class="sub">合并消融线（单任务书 + 单循环）· 36.15 服务器（<code>/nasdata/</code> 挂载）· 生成于 2026-10-08 10:48 CST</p>
+
+<h2>1. 概览</h2>
+<div class="lead">本报告汇总国庆假期（约 10/01–10/08）期间 ZhuLong（DAC2027）EDA 消融评测「合并消融线」的推进情况。所有 Pass@1 / std / 轮次数字均<strong>一字不改地抄自</strong> <code>run/MEMORY_ZHULONG.md</code> 成绩记录表，未测项显式标注「待跑 / 运行中」，未臆造任何数字。</div>
+
+<h3>1.1 合并消融线设计</h3>
+<ul>
+<li><strong>4 个消融轴 · 15 臂 · 75 轮</strong>，单任务书（<code>ZHULONG_TASK.md</code>）+ 单循环（<code>zhulong_loop.sh</code>）串行驱动。</li>
+<li><strong>执行顺序（已调换）</strong>：B（大模型消融）→ C1（组件）→ C2（S2 Φ）→ S1（保真度）。<span class="note" style="display:inline-block">调换原因：<code>deepseek-v4-pro-fp4</code> 主基座额度 HTTP 403 阻塞 C1，而 Phase B 四模型均用独立 key/endpoint 不受影响，故将 Phase B 提到最前（2026-10-05 运维追认）。</span></li>
+<li><strong>目标</strong>：把论文 6 张表里 56 个 <code>[TBD]</code> / 30 行回填为实测 <code>mean ± std</code>。</li>
+<li><strong>锚点复用</strong>：<code>C1.full ×5</code> 同时充当 <code>tab:main-ablation</code>(full) + <code>tab:omega</code>(H) + <code>tab:ablation-harness</code>(F) + <code>tab:phi-bound</code>(unbounded) + <code>tab:llm-comparison</code>(DeepSeek-V4-Pro 主基座)，跑一次多处引用，禁止重复跑。</li>
+</ul>
+
+<h3>1.2 冻结设置（所有臂共用，不得变动）</h3>
+<ul>
+<li>数据集 <strong>EDA-Eval-PyAether</strong>，<strong>158 任务</strong>；通过判据 = 生成代码在 sandbox 无错执行且全断言通过。</li>
+<li><strong>Pass@1 = 通过/158 × 100%</strong>；每配置 <strong>5 次独立运行</strong> → <code>mean ± std</code>（std = 样本标准差 n−1）。</li>
+<li>每次<strong>重排任务顺序</strong> + <strong>全新 agent context</strong>；单任务单 trace、超时 <strong>2500s</strong>、<code>-p 8 -n</code>（8 并发 + 禁 Memory Bank 注入）。</li>
+<li>主 backbone <strong>deepseek-v4-pro-fp4</strong>（仅 STAGE=B 模型消融才换）；编排模型 <strong>glm-5.2</strong>。</li>
+<li><strong>反作弊 PreToolUse hook 全程启用、所有臂完全一致</strong>（冻结变量，非消融对象）；<code>cimi_search</code> / <code>cimi_fetch</code> / <code>vqa</code> 永久关闭。</li>
+</ul>
+
+<div class="kpi">
+  <div class="b"><span class="v">4 / 4</span><span class="l">Phase B 模型 ✅</span></div>
+  <div class="b"><span class="v">2.5 / 4</span><span class="l">C1 组件（r5 运行中）</span></div>
+  <div class="b"><span class="v">0 / 4</span><span class="l">C2 S2Φ 待跑</span></div>
+  <div class="b"><span class="v">0 / 3</span><span class="l">S1 保真度 待跑</span></div>
+</div>
+<h2>2. 假期进度总览表（15 臂逐行）</h2>
+<p class="sub">数字来源：<code>run/MEMORY_ZHULONG.md</code> 成绩记录表 + 执行看板。已完成的填实数；<code>full</code> / C2 / S1 未启动的标 ⬜ 待跑；<code>wo_retrieval</code> r5 运行中标 ▶。</p>
+<table>
+<thead>
+<tr><th>阶段</th><th>臂</th><th class="ctr">轮次进度</th><th class="num">N=5 mean±std</th><th>各轮原始值（Pass@1 %）</th><th class="ctr">状态</th></tr>
+</thead>
+<tbody>
+<tr><td>B</td><td>glm-5.2</td><td class="ctr">5/5</td><td class="num"><strong>83.3 ± 3.1%</strong></td><td>[84.2, 87.3, 84.2, 79.1, 81.6]</td><td class="ctr"><span class="pill pill-ok">✅ 完成</span></td></tr>
+<tr><td>B</td><td>deepseek-v4-flash</td><td class="ctr">5/5</td><td class="num"><strong>16.7 ± 12.3%</strong></td><td>[9.5, 10.1, 19.0, 7.6, 37.3]</td><td class="ctr"><span class="pill pill-ok">✅ 完成</span></td></tr>
+<tr><td>B</td><td>kimi-k2.6-cloud</td><td class="ctr">5/5</td><td class="num"><strong>77.0 ± 1.6%</strong></td><td>[79.1, 76.6, 77.2, 74.7, 77.2]</td><td class="ctr"><span class="pill pill-ok">✅ 完成</span></td></tr>
+<tr><td>B</td><td>doubao-seed-2.0-pro-cloud</td><td class="ctr">5/5</td><td class="num"><strong>63.8 ± 1.4%</strong></td><td>[63.9, 64.6, 61.4, 65.2, 63.9]</td><td class="ctr"><span class="pill pill-ok">✅ 完成</span></td></tr>
+<tr><td>C1</td><td>pure_llm</td><td class="ctr">5/5</td><td class="num"><strong>10.5 ± 1.9%</strong></td><td>[8.2, 9.5, 10.1, 11.4, 13.3]（复用 legacy）</td><td class="ctr"><span class="pill pill-ok">✅ 完成</span></td></tr>
+<tr><td>C1</td><td>rag</td><td class="ctr">5/5</td><td class="num"><strong>71.8 ± 2.5%</strong></td><td>[70.3, 72.2, 69.6, 70.9, 75.9]（本线重跑）</td><td class="ctr"><span class="pill pill-ok">✅ 完成</span></td></tr>
+<tr><td>C1</td><td>wo_retrieval</td><td class="ctr">4/5 → r5</td><td class="num">待算（r5 运行中）</td><td>[74.1, 86.1, 81.6, 79.7] · r1 复用 legacy；r5 ▶ 运行中（PID 198350）</td><td class="ctr"><span class="pill pill-run">▶ 运行中</span></td></tr>
+<tr><td>C1</td><td>full（锚点）</td><td class="ctr">0/5</td><td class="num">—</td><td>待跑（探路 1-shot 84.8%）</td><td class="ctr"><span class="pill pill-wait">⬜ 待跑</span></td></tr>
+<tr><td>C2</td><td>phi_k10</td><td class="ctr">0/5</td><td class="num">—</td><td>待跑（探路 1-shot 75.3%）</td><td class="ctr"><span class="pill pill-wait">⬜ 待跑</span></td></tr>
+<tr><td>C2</td><td>phi_k3</td><td class="ctr">0/5</td><td class="num">—</td><td>待跑（探路 1-shot 69.0%）</td><td class="ctr"><span class="pill pill-wait">⬜ 待跑</span></td></tr>
+<tr><td>C2</td><td>phi_k1</td><td class="ctr">0/5</td><td class="num">—</td><td>待跑（探路 1-shot 60.8%）</td><td class="ctr"><span class="pill pill-wait">⬜ 待跑</span></td></tr>
+<tr><td>C2</td><td>phi_lagged</td><td class="ctr">0/5</td><td class="num">—</td><td>待跑（探路 1-shot 84.2%，r2 修复后 98.1%）</td><td class="ctr"><span class="pill pill-wait">⬜ 待跑</span></td></tr>
+<tr><td>S1</td><td>omega_low</td><td class="ctr">0/5</td><td class="num">—</td><td>待跑（旧 5-run 已出 r1=81.6 / r2=82.3，待定是否延续）</td><td class="ctr"><span class="pill pill-wait">⬜ 待跑</span></td></tr>
+<tr><td>S1</td><td>readback_binary</td><td class="ctr">0/5</td><td class="num">—</td><td>待跑</td><td class="ctr"><span class="pill pill-wait">⬜ 待跑</span></td></tr>
+<tr><td>S1</td><td>readback_none</td><td class="ctr">0/5</td><td class="num">—</td><td>待跑</td><td class="ctr"><span class="pill pill-wait">⬜ 待跑</span></td></tr>
+</tbody>
+</table>
+<div class="note">说明：主基座 <code>deepseek-v4-pro-fp4</code> 的模型消融臂 ≡ <code>full×5</code> 锚点，不重跑。<code>rag</code> 的 legacy 值（68.2±7.4%，系 BM25 降级态）已作废，由本线重跑得 71.8±2.5%。<code>wo_retrieval</code> r5 报告生成时仍在运行（log 29MB 活跃、无 <code>PASS_RATE</code> 汇总行），收割值待补。</div>
+<h2>3. Phase B（大模型消融）专题</h2>
+<p>Phase B 使用 <strong>full 配置</strong>（检索 + sandbox 全开，不切 <code>set_ablation</code>），仅通过 <code>cline auth</code> 切换 key/model。4 个 backbone 各跑 5 轮，顺序 glm-5.2 → deepseek-v4-flash → kimi-k2.6-cloud → doubao-seed-2.0-pro-cloud。全程 <strong>0 Forbidden</strong>，反作弊 hook canary 全部 PASS。</p>
+<div class="grid2">
+<div class="card">
+<h3>glm-5.2 · 83.3 ± 3.1% ✅</h3>
+<p>Phase B 首臂，用独立 key（<code>c2759d74</code>）+ <code>/cloud/v1</code>，不受 pro-fp4 403 影响。5 轮 [84.2, 87.3, 84.2, 79.1, 81.6]，分布稳定、std 小（3.1pp），为四模型中最高分。<strong>glm-5.2 同时是本线的编排模型</strong>。</p>
+</div>
+<div class="card">
+<h3>deepseek-v4-flash · 16.7 ± 12.3% ✅</h3>
+<p>5 轮 [9.5, 10.1, 19.0, 7.6, <strong>37.3</strong>]。<strong>异常低分且 std 极大（12.3pp）</strong>：r1–r4 仅 7.6–19.0%，但 r5 跳升至 37.3%。判断为 flash 模型能力上限较低 + 单 trace 波动剧烈所致（该模型非本线主基座，仅作横评对比行）。该臂全程 0 Forbidden、infra 健康，数值照实记录不作废。</p>
+</div>
+<div class="card">
+<h3>kimi-k2.6-cloud · 77.0 ± 1.6% ✅</h3>
+<p>5 轮 [79.1, 76.6, 77.2, 74.7, 77.2]，<strong>std 最小（1.6pp）</strong>，表现最稳定。用独立 key（<code>80a707b0</code>）+ <code>/cloud/v1</code>，CLI_DATA_DIR 隔离完好（<code>.cline_kimi_eval</code>）。</p>
+</div>
+<div class="card">
+<h3>doubao-seed-2.0-pro-cloud · 63.8 ± 1.4% ✅</h3>
+<p>5 轮 [63.9, 64.6, 61.4, 65.2, 63.9]，std 1.4pp 亦很稳定。用独立 key（<code>3dd97aea</code>）+ <code>/cloud/v1</code>，<code>.cline_doubao_eval</code> 隔离。Phase B 第 4 臂完成后即切回 C1 组件消融。</p>
+</div>
+</div>
+<div class="note"><strong>简评</strong>：glm-5.2（83.3%）&gt; kimi-k2.6-cloud（77.0%）&gt; doubao-seed-2.0-pro-cloud（63.8%）&gt;&gt; deepseek-v4-flash（16.7%）。flash 异常低分 + std 偏大是该模型在 EDA 代码生成任务上的真实表现（非 infra 故障，全程 0 Forbidden），论文将以 mean±std 如实呈现并加注说明。</div>
+<h2>4. C1（组件消融）专题</h2>
+<p>C1 在 <code>deepseek-v4-pro-fp4</code> 主基座下，通过 <code>set_ablation.py</code> 切换工具可见性，消融「检索 + sandbox」四件套的贡献。回填 <code>tab:main-ablation</code> 4 行 + 锚点行。</p>
+<table>
+<thead><tr><th>臂</th><th>含义</th><th class="ctr">进度</th><th class="num">mean±std</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>pure_llm</td><td>核心 4 工具全关（纯 LLM）</td><td class="ctr">5/5 ✅</td><td class="num">10.5 ± 1.9%</td><td>复用 legacy 5-run [8.2,9.5,10.1,11.4,13.3]；纯 LLM 几乎无法完成 EDA 任务，证明工具检索/sandbox 不可或缺。</td></tr>
+<tr><td>rag</td><td>仅检索、关 sandbox（run_code OFF）</td><td class="ctr">5/5 ✅</td><td class="num">71.8 ± 2.5%</td><td>本线重跑（legacy 68.2±7.4% 系 BM25 降级态作废）。5 轮 [70.3,72.2,69.6,70.9,75.9]。<strong>r3 曾因 infra 额度耗尽作废（不计数），已重跑恢复</strong>。</td></tr>
+<tr><td>wo_retrieval</td><td>仅 sandbox（run_code ON）、关检索 3 件套</td><td class="ctr">4/5 → r5 ▶</td><td class="num">待算</td><td>r1=74.1% 复用 legacy；本线续跑 r2=86.1 / r3=81.6 / r4=79.7；<strong>r5 运行中</strong>（PID 198350，agent 靠 run_code 自探索 API）。<strong>旧 r2 因 pro-fp4 403 作废已剔除</strong>。</td></tr>
+<tr><td>full（锚点）</td><td>检索 + sandbox 全开</td><td class="ctr">0/5 ⬜</td><td class="num">—</td><td>待跑（探路 1-shot 84.8%）；将同时回填 5 张表的锚点行。</td></tr>
+</tbody>
+</table>
+<div class="note"><strong>含义</strong>：pure_llm（10.5%）→ rag（71.8%，+61.3pp）→ wo_retrieval（≈80%，+~9pp）→ full（待测）逐步累加，定性证明「检索」与「sandbox 自执行」各自带来显著增益。Δ 列由 mean 相减、不加 ±。</div>
+<h2>5. 假期关键事件时间线</h2>
+<p class="sub">只列有 <code>daily-memories/</code> / <code>ops/outbox.md</code> 证据的转折点。</p>
+<ul class="tl">
+<li><span class="d">10/01</span> — <strong>旧 S1 保真度线 infra 作废停摆</strong>：omega_low r3 因 license 耗尽 + shard 端口 8664/8665 宕 + <code>/home</code> 磁盘 &lt;8G 三项同时不满足，自 9/30 起停摆；10/01 全天反复 infra 复检，双条件未恢复，原地等待不重跑 r3。（证据：daily-memories/2026-10-01.md 全天 infra 复检记录）</li>
+<li><span class="d">10/02</span> — <strong>旧 S1 线恢复推进</strong>：infra 部分恢复后 omega_low r3–r5 完成，切 readback_binary（5-run 完成），再切 readback_none r1；期间多次出现沙箱阻断（run_commands 被拦）周期。（证据：daily-memories/2026-10-02.md）</li>
+<li><span class="d">10/03</span> — <strong>readback_none r2 崩溃风暴作废 + 重试</strong>：r2 attempt1 因 <code>/home</code> 卷 99% 满 + 多用户并发导致 111/158 cline worker 瞬间崩溃（26.6% 作废）；重试 attempt2。沙箱阻断反复 3 周期后复通。（证据：daily-memories/2026-10-03.md）</li>
+<li><span class="d">10/04</span> — <strong>合并线 bootstrap + ops 中继抢救</strong>：环境迁移 + 合并任务书上线（4 phase 合并为单任务书 + 单 loop）；ops 中继（<code>zhulong_ops_relay.sh</code>）抢救恢复（RUN_ID 1–5 全 exit=0）；运维确定 loop 旧版带非法 <code>-b</code> 静默失效需重启；<code>/home</code> 满经 RUN_ID 4 证实我方产物实为 symlink→<code>/nasdata</code>，主因是别的用户。C1.wo_retrieval r2 启动 → <strong>作废</strong>（pro-fp4 额度 403 + providers.json 被 glm-key 污染，0/158 Forbidden）。（证据：daily-memories/2026-10-04.md、ops/outbox.md RUN_ID 14–17）</li>
+<li><span class="d">10/05</span> — <strong>legacy 保活 + 试验次序调换</strong>：legacy 组件 loop（PID 2455466）确认存活无需拉起；pro-fp4 仍 403 → <strong>正式调换顺序为 B→C1→C2→S1</strong>（运维指令六追认）；<strong>Phase B 首臂 glm-5.2 r1 启动</strong>（独立 key 不受 pro-fp4 限制）。（证据：daily-memories/2026-10-05.md）</li>
+<li><span class="d">10/06</span> — <strong>Phase B 高产 + ops 中继恢复</strong>：glm-5.2 5/5 完成（83.3±3.1%）→ deepseek-v4-flash 5/5 完成（16.7±12.3%）→ kimi-k2.6-cloud r1 启动；ops 中继 RUN_ID 21 执行 exit=0（中继恢复健康）。（证据：daily-memories/2026-10-06.md、ops/outbox.md RUN_ID 21 @2026-10-06 11:26）</li>
+<li><span class="d">10/07</span> — <strong>Phase B 收官 + 切回 C1</strong>：kimi 5/5 完成（77.0±1.6%）→ doubao-seed-2.0-pro-cloud 5/5 完成（63.8±1.4%）；<strong>pro-fp4 恢复 HTTP 200</strong>（C1.rag r1 起用 pro-fp4 成功运行，0 Forbidden）→ 切 C1.pure_llm（复用 legacy）→ <strong>C1.rag 本线重跑启动</strong>。（证据：daily-memories/2026-10-07.md；MEMORY 状态头「eval backbone=deepseek-v4-pro-fp4（已恢复 HTTP 200）」）</li>
+<li><span class="d">10/08</span> — <strong>C1.rag 收官 + wo_retrieval 推进</strong>：rag 5/5 完成（71.8±2.5%，r3 infra 作废已重跑恢复）→ wo_retrieval r2=86.1 / r3=81.6 / r4=79.7 依次收割 → <strong>r5 启动运行中</strong>（PID 198350）；本轮撰写国庆假期进展 HTML 报告。（证据：daily-memories/2026-10-08.md）</li>
+</ul>
+<h2>6. 基础设施状态</h2>
+<div class="grid2">
+<div class="card">
+<h3>磁盘</h3>
+<table>
+<tr><th>挂载点</th><th class="num">总量</th><th class="num">可用</th><th class="num">使用率</th><th>说明</th></tr>
+<tr><td>/nasdata</td><td class="num">527G</td><td class="num">366G</td><td class="num">31%</td><td>充裕 ✅（我方评测产物实际落此）</td></tr>
+<tr><td>/home</td><td class="num">394G</td><td class="num">5.8G</td><td class="num">99%</td><td>满，但经 RUN_ID 4 证实我方产物（<code>~/eda_code_eval</code>、<code>~/.cache</code>）实为 symlink→/nasdata，<strong>非阻断</strong>；满主因是别的用户。</td></tr>
+</table>
+</div>
+<div class="card">
+<h3>端口 / 进程</h3>
+<ul>
+<li>四 shard 端口 <code>8653 / 8664 / 8665 / 8669</code>：<strong>全 OPEN ✅</strong>（RAG recall 9006 亦 up）</li>
+<li>反作弊 hook：<strong>0 Forbidden</strong>（全程），ACCESS RESTRICTED canary PASS（wo_retrieval r5 已累计 836× 拦截，hook live）</li>
+<li>ops 中继 <code>zhulong_ops_relay.sh</code>：PID 2665949 <strong>alive ✅</strong>（<code>.last_run_id=21</code>=inbox RUN_ID 21，无新指令）</li>
+<li><code>zhulong_loop.sh</code>：PID 3579323 <strong>alive ✅</strong></li>
+<li>legacy 组件 loop：PID 2455466 <strong>alive ✅</strong>（运维指令五满足）</li>
+</ul>
+</div>
+</div>
+<div class="note">评测代码 <code>eda_fastmcp</code> 在 36.15 位于 <code>/nasdata/app.e0031982/code/eda_fastmcp</code>（仓库外，独立 git）。本线 cline 配置已隔离（编排用 <code>--config .cline_zhulong</code>；评测侧用各自 <code>CLI_DATA_DIR</code> 隔离，防作弊 hook 不影响编排 agent）。</div>
+<h2>7. 下一步</h2>
+<ol>
+<li><strong>收割 C1.wo_retrieval r5</strong>：pgrep 无输出 → <code>grep PASS_RATE /tmp/ABL_wo_retrieval_r5.log</code> 取 r5 → 记成绩。</li>
+<li><strong>算 wo_retrieval mean±std</strong>：[74.1, 86.1, 81.6, 79.7, r5] → PHASE=<code>just_finished</code>。</li>
+<li><strong>切 C1.full 锚点</strong>：⚠️ 切前执行 <code>scripts/set_ablation.py full</code> + <code>stop.sh && start.sh</code>，启动 full r1（跑一次，回填 5 张表锚点行）。</li>
+<li><strong>C2（S2 Φ）</strong>：phi_k10 → phi_k3 → phi_k1 → phi_lagged，各 5 轮；切前 <code>set_s2_phi.py &lt;ARM&gt;</code> + stop/start。需遵守 §8 Φ 语义约束（同步报告 Converged% / Mean read-backs；lagged 核 reported_call_index 差==1）。</li>
+<li><strong>S1（保真度）</strong>：omega_low → readback_binary → readback_none，各 5 轮；切前 <code>set_s1_fidelity.py &lt;ARM&gt;</code> + stop/start。omega_low 旧 5-run 部分值（r1=81.6 / r2=82.3）是否延续<strong>待运维拍板</strong>。</li>
+</ol>
+<div class="note"><strong>尚待运维拍板的开放项</strong>：① S1.omega_low 旧 5-run 已出 r1/r2，是否延续到 r3–r5 还是整体重跑；② 是否追加 RQ3 SKILL/Tcl 切片（任务书 §运维指令预留区）。</div>
+
+<footer>
+<p>生成时间：2026-10-08 10:48 CST（唤醒时系统时间）｜数据截止点：<code>MEMORY_ZHULONG.md</code> 最后一次提交（2026-10-08 10:09 巡检#3）</p>
+<p>数字来源：<code>run/MEMORY_ZHULONG.md</code> 成绩记录表 + 执行看板｜事件证据：<code>run/daily-memories/2026-10-0[1-8].md</code> + <code>run/ops/outbox.md</code></p>
+<p>🚫 本报告所有 Pass@1 / std / 轮次值均可在 <code>MEMORY_ZHULONG.md</code> 回溯；未测项显式标注「待跑 / 运行中」，未臆造任何数字。</p>
+</footer>
+</div>
+</body>
+</html>
