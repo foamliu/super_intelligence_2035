@@ -185,6 +185,13 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
+- **2026-10-08（用户令：各线更新论文）** —— 用户指令：「让 pretrain，vision 和 data 更新一下论文」。已在对应任务书追加论文更新指令：
+  - **pretrain**：把 R2 实测数据（长上下文/推理成本/FP8/吞吐）写入 `4_llm_pretrain.tex` / `3_architecture.tex`
+  - **vision**：把 R9–R14 消融/Scaling/AIMv2 翻盘/InfoNCE 防坍缩结论写入 `6_vision_encoder.tex`（等当前实验跑完再改）
+  - **data**：把配比实验结论/数据准备状态/污染隔离写入 `4_llm_pretrain.tex`（数据段）
+  **commit**: `5cf87a53` · **工作已完成**，等待各 agent 下次唤醒后自行交付 LaTeX 修改 + PDF。
+
+
 - **2026-10-08（用户令：各线自己写报告）** —— 用户指令：「把任务下发给各 agent，由 agent 自己写报告，不要替代他们写」。已下发 4 条线各一份 HTML 报告任务：
   - **pretrain** → `report_pretrain_r2_final.html`（R2 全线实验收官总报告）
   - **data** → `report_data_pipeline_status.html`（数据准备全链路状态报告）
