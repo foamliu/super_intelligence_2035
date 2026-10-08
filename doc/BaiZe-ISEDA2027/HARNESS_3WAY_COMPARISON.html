@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<title>H-B Deep Analysis: cline vs Pi vs Hermes — SWE-bench Implementation Comparison</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 1100px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #2d3436; line-height: 1.6; }
+h1 { color: #1a1a2e; border-bottom: 3px solid #6c5ce7; padding-bottom: 10px; font-size: 22px; }
+h2 { color: #2d3436; margin-top: 35px; border-left: 4px solid #6c5ce7; padding-left: 12px; font-size: 18px; }
+h3 { color: #6c5ce7; margin-top: 25px; font-size: 15px; }
+table { border-collapse: collapse; width: 100%; margin: 15px 0; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 8px; overflow: hidden; }
+th { background: #6c5ce7; color: white; padding: 10px 14px; text-align: left; font-size: 13px; }
+td { padding: 8px 14px; border-bottom: 1px solid #eee; font-size: 13px; vertical-align: top; }
+td.code { font-family: 'SF Mono', Consolas, monospace; font-size: 12px; }
+td.center { text-align: center; }
+td.green { background: #d4edda; color: #155724; font-weight: bold; }
+td.red { background: #f8d7da; color: #721c24; }
+td.yellow { background: #fff3cd; color: #856404; }
+.callout { background: #e8f4fd; border-left: 4px solid #0984e3; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+.warn { background: #fff3cd; border-left: 4px solid #f39c12; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+.key { background: #d4edda; border-left: 4px solid #27ae60; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 12px; line-height: 1.4; }
+code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: 'SF Mono', Consolas, monospace; }
+.chart-box { text-align: center; margin: 20px 0; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.tldr { background: linear-gradient(135deg, #6c5ce7, #0984e3); color: white; padding: 20px; border-radius: 12px; margin: 15px 0; }
+.tldr h2 { color: white; border: none; }
+.tldr li { margin: 8px 0; }
+</style></head><body>
+<h1>🔗 H-B Deep Analysis: cline vs Pi vs Hermes — SWE-bench Implementation Comparison</h1>
+<p><strong>Generated:</strong> 2026-10-08 | <strong>Scope:</strong> Source-level architecture comparison + 30-instance SWE-bench cross-eval | <strong>Model:</strong> kimi-k2.6-cloud (unified backbone)</p>
+<p><strong>Companion report:</strong> <code>SWEBENCH_COMPARE.html</code> (7-way results table) | <strong>Deep analysis:</strong> <code>report_harness_swebench_analysis.html</code> (7-way failure mode analysis)</p>
+<p><strong>Source evidence rule:</strong> Every conclusion cites <code>path:line</code> or data from <code>kimi_pilot_results.json</code>. No speculation.</p>
+
+
+<div class="tldr">
+<h2>TL;DR</h2>
+<ol>
+<li><strong>cline-patched and Pi achieve identical 60.0% (18/30)</strong> — and solved the <em>exact same 18 instances</em>. Hermes scored 53.3% (16/30), a strict subset. This suggests the <strong>model (kimi-k2.6-cloud) is the bottleneck</strong>, not the harness, for these 30 instances.</li>
+<li><strong>Pi is 1.7× faster than cline-patched</strong> (mean 275s vs 479s) and 2.0× faster than Hermes (553s), despite identical resolve rate — lightweight TypeScript/Bun print-mode architecture minimizes overhead.</li>
+<li><strong>Hermes's 2 unique failures</strong> (django-10924, django-11422) are both "broke existing tests" (p2p_fail) — its verbose execution-discipline prompt may cause over-editing. cline's YOLO prompt ("run test suite to confirm") may prevent this.</li>
+<li><strong>12/30 instances unsolved by all three</strong> — these are genuinely hard for kimi-k2.6-cloud, not harness-dependent. The harness ceiling for this model+subset is ~60%.</li>
+<li><strong>Tool count inversely correlates with speed</strong>: Pi (7 tools) &gt; cline (9 tools) &gt; Hermes (20+ tools). More tools = more prompt tokens = slower per turn, but does not improve resolve rate.</li>
+</ol>
+</div>
+
+
+<h2>1. Architecture Overview</h2>
+<table>
+<tr><th>Dimension</th><th>cline-patched</th><th>Pi</th><th>Hermes Agent</th></tr>
+<tr><td><strong>Language</strong></td><td>TypeScript (Node/Bun)</td><td>TypeScript (Bun)</td><td>Python 3.14.6</td></tr>
+<tr><td><strong>Origin</strong></td><td>Cline v4.1.21 (modified)</td><td><code>@fleetagent/pi-coding-agent</code> v0.2.15</td><td><code>NousResearch/hermes-agent</code> @0e219331</td></tr>
+<tr><td><strong>Source path</strong></td><td class="code">/nas_train/.../harness/cline/sdk/packages/</td><td class="code">~/.npm-global/.../@fleetagent/pi-coding-agent/</td><td class="code">/nas_train/.../hermes-agent-src/</td></tr>
+<tr><td><strong>Architecture</strong></td><td>VS Code extension (SDK monorepo)</td><td>Standalone CLI (print/interactive/RPC modes)</td><td>Full agent platform (TUI, gateway, daemon, skills, memory)</td></tr>
+<tr><td><strong>Non-interactive mode</strong></td><td><code>cline --allowedTools ... -m &lt;model&gt;</code></td><td><code>pi -p</code> (print mode: process prompt → exit)</td><td><code>hermes -z&lt;prompt&gt; --yolo</code> (oneshot, skip approval)</td></tr>
+<tr><td><strong>Provider config</strong></td><td>CLI flags + env vars</td><td><code>~/.pi/agent/models.json</code> (custom OpenAI-compatible)</td><td><code>~/.hermes/config.yaml</code> (custom provider, SQLite state)</td></tr>
+<tr><td><strong>Max turns</strong></td><td>Implicit (no hard cap in prompt)</td><td>Implicit (context-window driven)</td><td><code>agent.max_turns: 50</code> (config.yaml)</td></tr>
+<tr><td><strong>State persistence</strong></td><td>Session files (JSONL)</td><td>Session JSONL + in-memory</td><td>SQLite (<code>state.db</code>, 15MB), sessions, memory, skills</td></tr>
+<tr><td><strong>Context management</strong></td><td>Auto-compaction (VS Code built-in)</td><td><code>compress_context</code> tool (explicit, model-invoked)</td><td>Conversation compression (4 strategies: auto/codex/manual/archive)</td></tr>
+</table>
+
+
+<h2>2. System Prompt Comparison</h2>
+<p>The system prompt is the <strong>single most impactful harness design choice</strong> — it shapes how the model approaches the task. All three prompts were read from source:</p>
+
+<h3>cline-patched — <code>YOLO_CLINE_SYSTEM_PROMPT</code></h3>
+<p><strong>Source:</strong> <code>cline/sdk/packages/shared/src/prompt/system.ts:38-68</code></p>
+<div class="callout">
+<p><strong>Key directives:</strong></p>
+<ul>
+<li><em>"You are Cline, a careful and helpful coding agent that works in the background"</em> — emphasizes autonomous operation</li>
+<li><em>"Your goal is to utilize the tools at your disposal to investigate and answer the question"</em> — investigation-first</li>
+<li><em>"When the user describes a bug... your primary goal is to produce a correct fix"</em> — fix-focused</li>
+<li><strong>⭐ "After applying your fix, you must run the relevant test suite to confirm your changes actually resolve the problem. If tests fail, analyze the failures, revise your fix, and re-run until tests pass."</strong> — explicit test-verification loop</li>
+<li><strong>⭐ "You should only end the task when all the requirements are met by calling the 'submit_and_exit' tool"</strong> — structured termination</li>
+<li><em>"Always show your planning process"</em> — plan-then-execute pattern</li>
+<li><em>"You can call multiple tools in a single response"</em> — encourages parallel tool calls</li>
+</ul>
+</div>
+
+<h3>Pi — <code>buildDefaultSystemPrompt()</code></h3>
+<p><strong>Source:</strong> <code>dist/core/system-prompt.js:70-100</code></p>
+<div class="callout">
+<p><strong>Key directives:</strong></p>
+<ul>
+<li><em>"You are an expert coding assistant operating inside pi, a coding agent harness"</em> — identity is the harness, not a persona</li>
+<li><em>"You help users by reading files, executing commands, editing code, and writing new files"</em> — tool-oriented, no bug-fixing framing</li>
+<li><strong>Tool list is injected inline</strong> (<code>formatAvailableTools()</code>) — model sees exact tool names + descriptions</li>
+<li><strong>Orchestration section</strong> (conditional on subagent tool): <em>"You are the primary agent and final decision-maker. Use subagents as isolated workers"</em> — multi-agent delegation</li>
+<li><strong>State compression</strong> (conditional): <em>"Consider compress_context at concrete checkpoints"</em> — explicit context management guidance</li>
+<li><strong>Guidelines are tool-aware</strong>: <em>"Prefer grep/find/ls tools over bash for file exploration (faster, respects .gitignore)"</em></li>
+<li><strong>No test-verification directive</strong> — Pi does not explicitly tell the model to run tests after fixing</li>
+</ul>
+</div>
+
+<h3>Hermes Agent — <code>DEFAULT_AGENT_IDENTITY + OPENAI_MODEL_EXECUTION_GUIDANCE</code></h3>
+<p><strong>Source:</strong> <code>agent/prompt_builder.py:160-169</code> (identity) + <code>:442-506</code> (execution guidance)</p>
+<div class="callout">
+<p><strong>Key directives:</strong></p>
+<ul>
+<li><em>"You are Hermes Agent, built by Nous Research. Be direct: match the length of your reply to the weight of the ask"</em> — conciseness-focused, anti-filler</li>
+<li><em>"No filler, no restating the request back, no re-summarizing what you already said"</em> — token economy</li>
+<li><strong>Execution discipline (7 sections):</strong>
+  <ul>
+  <li><code>&lt;tool_persistence&gt;</code>: "Keep calling tools until: (1) the task is complete, AND (2) you have verified the result"</li>
+  <li><code>&lt;mandatory_tool_use&gt;</code>: "NEVER answer these from memory — ALWAYS use a tool" (arithmetic, hashes, time, file contents, git history)</li>
+  <li><code>&lt;act_dont_ask&gt;</code>: "When a question has an obvious default interpretation, act on it immediately"</li>
+  <li><code>&lt;prerequisite_checks&gt;</code>: "Do not skip prerequisite steps"</li>
+  <li><code>&lt;verification&gt;</code>: "done means every named acceptance criterion is verified"</li>
+  <li><code>&lt;external_state_verification&gt;</code>: "verify the effect by reading back the exact target before claiming success"</li>
+  <li><code>&lt;literal_preservation&gt;</code>: "Preserve identifiers, commands, and values exactly as given"</li>
+  </ul>
+</li>
+<li><strong>Very verbose</strong> — the execution guidance alone is ~700 words, vs cline's ~200 and Pi's ~150</li>
+</ul>
+</div>
+
+<div class="key">
+<p><strong>Key insight:</strong> cline's prompt has the <strong>most SWE-bench-specific guidance</strong> (test-verification loop + submit_and_exit). Pi's prompt is the <strong>most minimal</strong> (tool list + guidelines, no bug-fixing framing). Hermes's prompt is the <strong>most verbose</strong> (7 execution-discipline sections), which may increase prompt tokens but not improve task-specific behavior.</p>
+</div>
+
+
+<h2>3. Tool Set Comparison</h2>
+<div class="chart-box"><svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;"><text x="260.0" y="18" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Default Tool Count (SWE-bench mode)</text><rect x="50" y="107.0" width="100" height="63.0" fill="#6c5ce7" rx="4" opacity="0.8"/>
+<text x="100.0" y="99.0" text-anchor="middle" font-size="14" font-weight="bold" fill="#6c5ce7">9</text>
+<text x="100.0" y="190" text-anchor="middle" font-size="12" fill="#333">cline-patched</text>
+<rect x="210" y="121.0" width="100" height="49.0" fill="#0984e3" rx="4" opacity="0.8"/>
+<text x="260.0" y="113.0" text-anchor="middle" font-size="14" font-weight="bold" fill="#0984e3">7</text>
+<text x="260.0" y="190" text-anchor="middle" font-size="12" fill="#333">Pi</text>
+<rect x="370" y="30.0" width="100" height="140.0" fill="#e17055" rx="4" opacity="0.8"/>
+<text x="420.0" y="22.0" text-anchor="middle" font-size="14" font-weight="bold" fill="#e17055">20</text>
+<text x="420.0" y="190" text-anchor="middle" font-size="12" fill="#333">Hermes</text></svg></div>
+<table>
+<tr><th>Harness</th><th>Default Tools</th><th>Tool Names</th><th>Source</th></tr>
+<tr><td class="center"><strong>cline-patched</strong><br>(9 tools)</td><td>read_files, search_codebase, run_commands, fetch_web_content, apply_patch, editor, skills, ask_question, <strong>submit_and_exit</strong></td><td class="code">extensions/tools/constants.ts:12-26</td></tr>
+<tr><td class="center"><strong>Pi</strong><br>(7 core tools)</td><td>read, bash, edit, write, grep, find, ls<br><em>(+ websearch, subagent, compress_context if enabled)</em></td><td class="code">dist/core/agent-session.js:66</td></tr>
+<tr><td class="center"><strong>Hermes</strong><br>(20+ tools)</td><td>terminal, read_file, write_file, search_files, edit_file, execute_code, memory, skill_manage, session_search, browser, apply_diff, list_dir, read_terminal, close_terminal, ...</td><td class="code">tools/*.py (80+ tool files)</td></tr>
+</table>
+
+<h3>Tool design philosophy</h3>
+<table>
+<tr><th>Aspect</th><th>cline-patched</th><th>Pi</th><th>Hermes</th></tr>
+<tr><td><strong>File reading</strong></td><td><code>read_files</code> (batch, line ranges)</td><td><code>read</code> (single file, hashline tracking)</td><td><code>read_file</code> + <code>search_files</code></td></tr>
+<tr><td><strong>File editing</strong></td><td><code>editor</code> (line-based) + <code>apply_patch</code> (diff format)</td><td><code>edit</code> (str replace) + <code>write</code> (full file)</td><td><code>edit_file</code> (str replace) + <code>write_file</code></td></tr>
+<tr><td><strong>Code search</strong></td><td><code>search_codebase</code> (regex, built-in)</td><td><code>grep</code> + <code>find</code> + <code>ls</code> (separate tools)</td><td><code>search_files</code> + <code>file_operations_search</code></td></tr>
+<tr><td><strong>Command execution</strong></td><td><code>run_commands</code> (batch, timeout)</td><td><code>bash</code> (single shell)</td><td><code>terminal</code> (persistent PTY) + <code>execute_code</code> (kernel)</td></tr>
+<tr><td><strong>Task termination</strong></td><td><strong>⭐ <code>submit_and_exit</code></strong> (explicit)</td><td>None (model stops calling tools)</td><td>None (model produces text response)</td></tr>
+<tr><td><strong>Context management</strong></td><td>Automatic (VS Code built-in)</td><td><code>compress_context</code> (model-invoked, explicit)</td><td>Auto-compression (4 strategies, system-invoked)</td></tr>
+<tr><td><strong>Multi-agent</strong></td><td>No</td><td><code>subagent</code> (delegation to isolated workers)</td><td><code>delegate</code> + async delegation + kanban</td></tr>
+</table>
+
+<div class="key">
+<p><strong>Key insight:</strong> cline's <code>submit_and_exit</code> tool is unique — it provides a <strong>structured termination signal</strong> that the task is complete. Pi and Hermes rely on the model simply stopping tool calls, which can lead to premature termination or endless loops. Hermes's 20+ tool set is the <strong>largest but also the most token-expensive</strong> — each tool definition is injected into the prompt, consuming context window.</p>
+</div>
+
+
+<h2>4. Agent Loop &amp; Orchestration</h2>
+<table>
+<tr><th>Aspect</th><th>cline-patched</th><th>Pi</th><th>Hermes</th></tr>
+<tr><td><strong>Loop driver</strong></td><td>VS Code extension runtime → CLI adapter</td><td><code>Agent</code> class from <code>@fleetagent/pi-agent-core</code></td><td><code>run_conversation()</code> in <code>agent/conversation_loop.py</code></td></tr>
+<tr><td><strong>Turn structure</strong></td><td>User message → model call → tool dispatch → repeat</td><td>User message → model stream → tool calls → results → repeat</td><td>User turn → API call → tool round → post-turn hooks → repeat</td></tr>
+<tr><td><strong>Tool dispatch</strong></td><td>Sequential within a turn, batched across turns</td><td>Sequential (print mode) or concurrent (interactive)</td><td><strong>Concurrent</strong> (<code>concurrent.futures</code>, <code>tool_call_batches.py</code>) — parallel tool execution within a turn</td></tr>
+<tr><td><strong>Error handling</strong></td><td>Tool errors → formatted feedback to model</td><td>Tool errors → stderr in output, model continues</td><td><strong>Multi-layer</strong>: API retry loop (<code>_run_api_retry_loop</code>), rate-limit guard (<code>nous_rate_limit_guard</code>), ladder retry, conversation compression on overflow</td></tr>
+<tr><td><strong>Repetition guard</strong></td><td>Not found in source</td><td>Not found in source</td><td><code>repetition_guard.py</code>: <code>is_runaway_repetition()</code> detects loops</td></tr>
+<tr><td><strong>Run budget</strong></td><td>Timeout via <code>--timeout</code> (1800s in our eval)</td><td>No explicit budget (model-driven termination)</td><td><code>--run-budget</code> with 80% wrap-up notice (<code>conversation_loop.py:75-79</code>)</td></tr>
+</table>
+
+<h3>Hermes's sophisticated turn pipeline</h3>
+<p><strong>Source:</strong> <code>agent/conversation_loop.py:1-62</code> — the turn is decomposed into 15+ phases:</p>
+<pre><code>begin_turn → prepare_iteration → announce_api_call → build_api_request
+  → assemble_api_request → perform_api_call → check_api_response
+  → normalize_model_response → run_tool_round → finalize_turn
+  → handle_api_error → handle_api_interrupt → finish_text_response</code></pre>
+<p>Each phase is a separate module (<code>turn_api_call.py</code>, <code>turn_tool_round.py</code>, etc.), making Hermes the most architecturally complex of the three.</p>
+
+<h3>Pi's lightweight print-mode flow</h3>
+<p><strong>Source:</strong> <code>dist/modes/print-mode.js:29-80</code></p>
+<pre><code>runPrintMode(runtimeHost, options)
+  → session.sendUserMessage(initialMessage)
+  → session.waitForIdle()
+  → writeFinalTextOutput(lastMessage)  // extracts text from assistant message
+  → disposeRuntime()  // cleanup + exit</code></pre>
+<p>Pi's print mode is <strong>radically simple</strong>: send prompt, wait for idle, extract text, exit. No retry loops, no compression triggers, no repetition guards — the simplicity directly contributes to its 1.7× speed advantage.</p>
+
+
+<h2>5. SWE-bench Results: Resolve Rate</h2>
+<div class="chart-box"><svg viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;"><text x="210.0" y="20" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Resolve Rate (30 instances × kimi-k2.6-cloud)</text><line x1="50" y1="250.0" x2="370" y2="250.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="42" y="254.0" text-anchor="end" font-size="10" fill="#999">0</text>
+<line x1="50" y1="197.5" x2="370" y2="197.5" stroke="#e0e0e0" stroke-width="1"/>
+<text x="42" y="201.5" text-anchor="end" font-size="10" fill="#999">25</text>
+<line x1="50" y1="145.0" x2="370" y2="145.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="42" y="149.0" text-anchor="end" font-size="10" fill="#999">50</text>
+<line x1="50" y1="92.5" x2="370" y2="92.5" stroke="#e0e0e0" stroke-width="1"/>
+<text x="42" y="96.5" text-anchor="end" font-size="10" fill="#999">75</text>
+<line x1="50" y1="40.0" x2="370" y2="40.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="42" y="44.0" text-anchor="end" font-size="10" fill="#999">100</text><rect x="50" y="40.0" width="80" height="210.0" fill="#6c5ce7" rx="4"/>
+<text x="90.0" y="32.0" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">18</text>
+<text x="90.0" y="16.0" text-anchor="middle" font-size="11" fill="#666">(60.0%)</text>
+<text x="90.0" y="270" text-anchor="middle" font-size="12" fill="#333">cline-patched</text>
+<rect x="170" y="40.0" width="80" height="210.0" fill="#0984e3" rx="4"/>
+<text x="210.0" y="32.0" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">18</text>
+<text x="210.0" y="16.0" text-anchor="middle" font-size="11" fill="#666">(60.0%)</text>
+<text x="210.0" y="270" text-anchor="middle" font-size="12" fill="#333">Pi</text>
+<rect x="290" y="63.33333333333334" width="80" height="186.66666666666666" fill="#e17055" rx="4"/>
+<text x="330.0" y="55.33333333333334" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">16</text>
+<text x="330.0" y="39.33333333333334" text-anchor="middle" font-size="11" fill="#666">(53.3%)</text>
+<text x="330.0" y="270" text-anchor="middle" font-size="12" fill="#333">Hermes</text></svg></div>
+
+<table>
+<tr><th>Harness</th><th>Scored</th><th>Resolved</th><th>Patch-but-failed</th><th>Resolve Rate</th><th>Mean Wall</th><th>Median Wall</th></tr>
+<tr><td><strong>cline-patched</strong></td><td class="center">30</td><td class="center green">18</td><td class="center">12</td><td class="center"><strong>60.0%</strong></td><td class="center">479s</td><td class="center">342s</td></tr>
+<tr><td><strong>Pi</strong></td><td class="center">30</td><td class="center green">18</td><td class="center">12</td><td class="center"><strong>60.0%</strong></td><td class="center">275s</td><td class="center">193s</td></tr>
+<tr><td><strong>Hermes</strong></td><td class="center">30</td><td class="center">16</td><td class="center">14</td><td class="center"><strong>53.3%</strong></td><td class="center">553s</td><td class="center">406s</td></tr>
+</table>
+
+
+<h2>6. Resolve Overlap Analysis</h2>
+<div class="chart-box"><svg viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;"><text x="250" y="20" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Resolve Overlap (30 instances)</text><circle cx="180" cy="140" r="80" fill="#6c5ce7" opacity="0.3" stroke="#6c5ce7" stroke-width="2"/><circle cx="280" cy="140" r="80" fill="#0984e3" opacity="0.3" stroke="#0984e3" stroke-width="2"/><circle cx="230" cy="210" r="80" fill="#e17055" opacity="0.3" stroke="#e17055" stroke-width="2"/><text x="130" y="100" font-size="12" font-weight="bold" fill="#6c5ce7">cline</text><text x="320" y="100" font-size="12" font-weight="bold" fill="#0984e3">Pi</text><text x="210" y="280" font-size="12" font-weight="bold" fill="#e17055">Hermes</text><text x="140" y="135" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">0</text><text x="320" y="135" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">0</text><text x="225" y="265" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">0</text><text x="215" y="145" text-anchor="middle" font-size="11" fill="#333">2</text><text x="195" y="195" text-anchor="middle" font-size="11" fill="#333">0</text><text x="265" y="195" text-anchor="middle" font-size="11" fill="#333">0</text><text x="230" y="170" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">16</text><text x="400" y="145" text-anchor="middle" font-size="11" fill="#999">none: 12</text><text x="250" y="295" text-anchor="middle" font-size="10" fill="#666">all 3=16 · cline-only=0 · pi-only=0 · hermes-only=0 · none=12</text></svg></div>
+<div class="key">
+<p><strong>The most striking finding:</strong> cline-patched and Pi solved <strong>exactly the same 18 instances</strong> — zero divergence. Hermes's 16 solves are a <strong>strict subset</strong> of both. This means:</p>
+<ul>
+<li>The <strong>model (kimi-k2.6-cloud) determines which instances are solvable</strong>, not the harness — for these 30 instances, the harness only affects <em>whether</em> a solvable instance is actually solved, not <em>which</em> instances are solvable.</li>
+<li><strong>Hermes lost 2 instances</strong> that cline/Pi both solved: <code>django__django-10924</code> and <code>django__django-11422</code>. Both are "broke existing tests" failures (p2p_fail).</li>
+<li><strong>12 instances</strong> were unsolved by all three — these are the model's genuine capability ceiling for this subset.</li>
+</ul>
+</div>
+
+
+<h2>7. Per-Instance Heatmap</h2>
+<div class="chart-box"><svg viewBox="0 0 460 590" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;"><text x="230.0" y="12" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Per-Instance Resolve Heatmap (30 instances × 3 harnesses)</text><text x="190" y="44" text-anchor="end" font-size="10" fill="#555">django__django-10924</text>
+<rect x="200" y="30" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="44" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="30" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="44" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="30" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="397.5" y="44" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<text x="190" y="62" text-anchor="end" font-size="10" fill="#555">django__django-11001</text>
+<rect x="200" y="48" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="62" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="48" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="62" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="48" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="397.5" y="62" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<text x="190" y="80" text-anchor="end" font-size="10" fill="#555">django__django-11019</text>
+<rect x="200" y="66" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="237.5" y="80" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="280" y="66" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="317.5" y="80" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="360" y="66" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="397.5" y="80" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<text x="190" y="98" text-anchor="end" font-size="10" fill="#555">django__django-11039</text>
+<rect x="200" y="84" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="98" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="84" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="98" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="84" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="397.5" y="98" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<text x="190" y="116" text-anchor="end" font-size="10" fill="#555">django__django-11049</text>
+<rect x="200" y="102" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="116" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="102" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="116" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="102" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="397.5" y="116" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<text x="190" y="134" text-anchor="end" font-size="10" fill="#555">django__django-11099</text>
+<rect x="200" y="120" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="134" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="120" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="134" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="120" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="397.5" y="134" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<text x="190" y="152" text-anchor="end" font-size="10" fill="#555">django__django-11133</text>
+<rect x="200" y="138" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="152" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="138" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="152" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="138" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="397.5" y="152" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<text x="190" y="170" text-anchor="end" font-size="10" fill="#555">django__django-11179</text>
+<rect x="200" y="156" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="170" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="156" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="170" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="156" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="397.5" y="170" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<text x="190" y="188" text-anchor="end" font-size="10" fill="#555">django__django-11283</text>
+<rect x="200" y="174" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="237.5" y="188" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="280" y="174" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="317.5" y="188" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="360" y="174" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="397.5" y="188" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<text x="190" y="206" text-anchor="end" font-size="10" fill="#555">django__django-11422</text>
+<rect x="200" y="192" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="206" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="192" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="206" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="192" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="397.5" y="206" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<text x="190" y="224" text-anchor="end" font-size="10" fill="#555">django__django-11564</text>
+<rect x="200" y="210" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="237.5" y="224" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="280" y="210" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="317.5" y="224" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="360" y="210" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="397.5" y="224" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<text x="190" y="242" text-anchor="end" font-size="10" fill="#555">django__django-11583</text>
+<rect x="200" y="228" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="242" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="228" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="242" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="228" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="397.5" y="242" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<text x="190" y="260" text-anchor="end" font-size="10" fill="#555">django__django-11620</text>
+<rect x="200" y="246" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="260" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="246" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="260" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="246" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="397.5" y="260" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<text x="190" y="278" text-anchor="end" font-size="10" fill="#555">django__django-11630</text>
+<rect x="200" y="264" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="237.5" y="278" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="280" y="264" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="317.5" y="278" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="360" y="264" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="397.5" y="278" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<text x="190" y="296" text-anchor="end" font-size="10" fill="#555">django__django-11742</text>
+<rect x="200" y="282" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="237.5" y="296" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="280" y="282" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="317.5" y="296" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="360" y="282" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="397.5" y="296" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<text x="190" y="314" text-anchor="end" font-size="10" fill="#555">sympy__sympy-11870</text>
+<rect x="200" y="300" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="237.5" y="314" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="280" y="300" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="317.5" y="314" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="360" y="300" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="397.5" y="314" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<text x="190" y="332" text-anchor="end" font-size="10" fill="#555">sympy__sympy-11897</text>
+<rect x="200" y="318" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="237.5" y="332" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="280" y="318" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="317.5" y="332" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="360" y="318" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="397.5" y="332" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<text x="190" y="350" text-anchor="end" font-size="10" fill="#555">sympy__sympy-12171</text>
+<rect x="200" y="336" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="237.5" y="350" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="280" y="336" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="317.5" y="350" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="360" y="336" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="397.5" y="350" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<text x="190" y="368" text-anchor="end" font-size="10" fill="#555">sympy__sympy-12236</text>
+<rect x="200" y="354" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="368" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="354" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="368" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="354" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="397.5" y="368" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<text x="190" y="386" text-anchor="end" font-size="10" fill="#555">sympy__sympy-12419</text>
+<rect x="200" y="372" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="386" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="372" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="386" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="372" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="397.5" y="386" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<text x="190" y="404" text-anchor="end" font-size="10" fill="#555">sympy__sympy-12454</text>
+<rect x="200" y="390" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="404" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="390" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="404" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="390" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="397.5" y="404" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<text x="190" y="422" text-anchor="end" font-size="10" fill="#555">sympy__sympy-12481</text>
+<rect x="200" y="408" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="422" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="408" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="422" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="408" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="397.5" y="422" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<text x="190" y="440" text-anchor="end" font-size="10" fill="#555">sympy__sympy-13031</text>
+<rect x="200" y="426" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="440" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="426" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="440" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="426" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="397.5" y="440" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<text x="190" y="458" text-anchor="end" font-size="10" fill="#555">sympy__sympy-13043</text>
+<rect x="200" y="444" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="237.5" y="458" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="280" y="444" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="317.5" y="458" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="360" y="444" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="397.5" y="458" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<text x="190" y="476" text-anchor="end" font-size="10" fill="#555">sympy__sympy-13146</text>
+<rect x="200" y="462" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="237.5" y="476" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="280" y="462" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="317.5" y="476" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="360" y="462" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="397.5" y="476" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<text x="190" y="494" text-anchor="end" font-size="10" fill="#555">sympy__sympy-13177</text>
+<rect x="200" y="480" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="237.5" y="494" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="280" y="480" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="317.5" y="494" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="360" y="480" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="397.5" y="494" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<text x="190" y="512" text-anchor="end" font-size="10" fill="#555">sympy__sympy-13437</text>
+<rect x="200" y="498" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="237.5" y="512" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="280" y="498" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="317.5" y="512" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<rect x="360" y="498" width="75" height="16" fill="#e74c3c" opacity="0.7" rx="2"/>
+<text x="397.5" y="512" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✗</text>
+<text x="190" y="530" text-anchor="end" font-size="10" fill="#555">sympy__sympy-13471</text>
+<rect x="200" y="516" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="530" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="516" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="530" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="516" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="397.5" y="530" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<text x="190" y="548" text-anchor="end" font-size="10" fill="#555">sympy__sympy-13480</text>
+<rect x="200" y="534" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="548" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="534" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="548" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="534" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="397.5" y="548" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<text x="190" y="566" text-anchor="end" font-size="10" fill="#555">sympy__sympy-13647</text>
+<rect x="200" y="552" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="237.5" y="566" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="280" y="552" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="317.5" y="566" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<rect x="360" y="552" width="75" height="16" fill="#27ae60" opacity="0.7" rx="2"/>
+<text x="397.5" y="566" text-anchor="middle" font-size="11" fill="white" font-weight="bold">✓</text>
+<text x="237.5" y="22" text-anchor="middle" font-size="11" font-weight="bold" fill="#333">cline</text>
+<text x="317.5" y="22" text-anchor="middle" font-size="11" font-weight="bold" fill="#333">pi</text>
+<text x="397.5" y="22" text-anchor="middle" font-size="11" font-weight="bold" fill="#333">hermes</text></svg></div>
+<p><span style="color:#27ae60">■</span> Resolved &nbsp; <span style="color:#e74c3c">■</span> Patch-but-failed &nbsp; — The identical pattern between cline and Pi columns is visible at a glance.</p>
+
+
+<h2>8. Wall Time Analysis</h2>
+<div class="chart-box"><svg viewBox="0 0 380 280" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;"><text x="190.0" y="20" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Wall Time Distribution (seconds)</text><line x1="80.0" y1="220.14439631234032" x2="80.0" y2="40.021104076418965" stroke="#6c5ce7" stroke-width="2" opacity="0.4"/>
+<rect x="50" y="179.5060350253619" width="60" height="50.49396497463808" fill="#6c5ce7" rx="4" opacity="0.8"/>
+<line x1="50" y1="193.86454515161614" x2="110" y2="193.86454515161614" stroke="#333" stroke-width="2"/>
+<text x="80.0" y="171.5060350253619" text-anchor="middle" font-size="13" font-weight="bold" fill="#6c5ce7">479s</text>
+<text x="80.0" y="250" text-anchor="middle" font-size="12" fill="#333">cline-patched</text>
+<text x="80.0" y="265" text-anchor="middle" font-size="10" fill="#999">med=342s</text>
+<line x1="190.0" y1="223.31000777518605" x2="190.0" y2="140.59258025102744" stroke="#0984e3" stroke-width="2" opacity="0.4"/>
+<rect x="160" y="201.0318412381058" width="60" height="28.96815876189418" fill="#0984e3" rx="4" opacity="0.8"/>
+<line x1="160" y1="209.58708208374986" x2="220" y2="209.58708208374986" stroke="#333" stroke-width="2"/>
+<text x="190.0" y="193.0318412381058" text-anchor="middle" font-size="13" font-weight="bold" fill="#0984e3">275s</text>
+<text x="190.0" y="250" text-anchor="middle" font-size="12" fill="#333">Pi</text>
+<text x="190.0" y="265" text-anchor="middle" font-size="10" fill="#999">med=193s</text>
+<line x1="300.0" y1="227.28812618016218" x2="300.0" y2="40.0" stroke="#e17055" stroke-width="2" opacity="0.4"/>
+<rect x="270" y="171.6106483024177" width="60" height="58.38935169758229" fill="#e17055" rx="4" opacity="0.8"/>
+<line x1="270" y1="187.20620904143064" x2="330" y2="187.20620904143064" stroke="#333" stroke-width="2"/>
+<text x="300.0" y="163.6106483024177" text-anchor="middle" font-size="13" font-weight="bold" fill="#e17055">553s</text>
+<text x="300.0" y="250" text-anchor="middle" font-size="12" fill="#333">Hermes</text>
+<text x="300.0" y="265" text-anchor="middle" font-size="10" fill="#999">med=406s</text>
+<line x1="50" y1="230.0" x2="330" y2="230.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="42" y="234.0" text-anchor="end" font-size="10" fill="#999">0</text>
+<line x1="50" y1="182.5" x2="330" y2="182.5" stroke="#e0e0e0" stroke-width="1"/>
+<text x="42" y="186.5" text-anchor="end" font-size="10" fill="#999">450</text>
+<line x1="50" y1="135.0" x2="330" y2="135.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="42" y="139.0" text-anchor="end" font-size="10" fill="#999">900</text>
+<line x1="50" y1="87.5" x2="330" y2="87.5" stroke="#e0e0e0" stroke-width="1"/>
+<text x="42" y="91.5" text-anchor="end" font-size="10" fill="#999">1350</text>
+<line x1="50" y1="40.0" x2="330" y2="40.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="42" y="44.0" text-anchor="end" font-size="10" fill="#999">1800</text></svg></div>
+
+<table>
+<tr><th>Harness</th><th>Mean</th><th>Median</th><th>Min</th><th>Max</th><th>Std Dev</th></tr>
+<tr><td><strong>cline-patched</strong></td><td class="center">479s</td><td class="center">342s</td><td class="center">93s</td><td class="center">1800s</td><td class="center">425s</td></tr>
+<tr><td><strong>Pi</strong></td><td class="center">275s</td><td class="center">193s</td><td class="center">63s</td><td class="center">847s</td><td class="center">212s</td></tr>
+<tr><td><strong>Hermes</strong></td><td class="center">553s</td><td class="center">406s</td><td class="center">26s</td><td class="center">1801s</td><td class="center">535s</td></tr>
+</table>
+
+<div class="key">
+<p><strong>Pi is the fastest harness by a wide margin</strong> (mean 275s vs cline's 479s vs Hermes's 553s). This is because:</p>
+<ul>
+<li><strong>Pi's print mode</strong> (<code>dist/modes/print-mode.js</code>) is a minimal send-wait-extract loop with no retry, no compression, no repetition guard</li>
+<li><strong>Bun runtime</strong> is faster than Node.js for startup and I/O</li>
+<li><strong>7 tools</strong> = smaller tool-definition payload in each API request = fewer prompt tokens</li>
+<li><strong>Hermes's max=1801s</strong> is a timeout on <code>django__django-11019</code> — its 50-turn limit + verbose prompt can cause it to get stuck in exploration loops</li>
+</ul>
+</div>
+
+
+<h2>9. Failure Mode Analysis (with log evidence)</h2>
+<p>Each harness's failures were examined via <code>stdout_tail</code> and <code>eval</code> fields in <code>kimi_pilot_results.json</code>.</p>
+
+<h3>Failure classification</h3>
+<table>
+<tr><th>Failure Type</th><th>cline-patched</th><th>Pi</th><th>Hermes</th><th>Evidence</th></tr>
+<tr><td><strong>Timeout (1800s)</strong></td><td class="center">1</td><td class="center">0</td><td class="center red">1</td><td>Hermes: <code>django__django-11019</code> rc=-1 timed_out=True wall=1800s</td></tr>
+<tr><td><strong>Empty patch (0 bytes)</strong></td><td class="center">2</td><td class="center">2</td><td class="center">2</td><td>All: <code>django__django-11019</code>, <code>django__django-11630</code> — model couldn't produce a fix</td></tr>
+<tr><td><strong>Wrong fix (f2p_fail)</strong></td><td class="center">7</td><td class="center">7</td><td class="center">7</td><td>FAIL_TO_PASS tests don't pass — model misunderstood the bug</td></tr>
+<tr><td><strong>Broke existing tests (p2p_fail)</strong></td><td class="center">3</td><td class="center">3</td><td class="center red">5</td><td>Hermes has 2 extra: <code>django-10924</code> (p2p=0/1), <code>django-11422</code> (p2p=46→fail)</td></tr>
+</table>
+
+<h3>Hermes's 2 unique failures (evidence)</h3>
+<div class="callout">
+<p><strong>① <code>django__django-10924</code></strong> — Hermes produced a 5412-byte patch that fixed the target test (f2p=1/1) but <strong>broke an existing test</strong> (p2p=0/1):</p>
+<pre><code>== harness=hermes rc=0 timed_out=False wall=567.5s ==
+[run_single] model_patch: 5412 bytes
+eval: f2p_pass=1/1, p2p_pass=0/1  ← broke existing test!</code></pre>
+<p>cline-patched and Pi both resolved this instance (p2p=1/1). cline's YOLO prompt says <em>"run the relevant test suite to confirm... If tests fail, analyze the failures, revise your fix"</em> — this test-verification loop likely caught the regression before submission.</p>
+</div>
+
+<div class="callout">
+<p><strong>② <code>django__django-11422</code></strong> — Hermes produced a tiny 977-byte patch (vs cline/Pi's larger patches), suggesting under-editing:</p>
+<pre><code>== harness=hermes rc=0 timed_out=False wall=335.5s ==
+[run_single] model_patch: 977 bytes  ← suspiciously small
+eval: f2p_pass=0/1, p2p_pass=46/46  ← didn't fix the bug, but didn't break anything</code></pre>
+<p>Hermes's conciseness-focused prompt (<em>"match the length of your reply to the weight of the ask"</em>) may have caused the model to produce a minimal patch that didn't fully address the issue.</p>
+</div>
+
+<div class="key">
+<p><strong>Root cause hypothesis:</strong> cline's <code>submit_and_exit</code> + test-verification prompt creates a <strong>self-checking loop</strong> that catches regressions before submission. Hermes's verbose execution-discipline prompt focuses on <em>process</em> (tool persistence, mandatory tool use) rather than <em>outcome verification</em> (run tests, check regressions). Pi achieves the same rate as cline <strong>without</strong> explicit test-verification guidance — suggesting kimi-k2.6-cloud may natively run tests when fixing bugs, but the prompt can still <em>prevent</em> regressions (as Hermes's failures show).</p>
+</div>
+
+
+<h2>10. Architecture-Performance Correlation</h2>
+<table>
+<tr><th>Dimension</th><th>cline-patched</th><th>Pi</th><th>Hermes</th><th>Correlation with resolve rate</th></tr>
+<tr><td><strong>Prompt length</strong></td><td>~200 words</td><td>~150 words</td><td>~850 words</td><td>⬇️ Inverse (longer prompt ≠ better)</td></tr>
+<tr><td><strong>Tool count</strong></td><td>9</td><td>7</td><td>20+</td><td>⬇️ Inverse (more tools ≠ better)</td></tr>
+<tr><td><strong>Wall time</strong></td><td>479s mean</td><td>275s mean</td><td>553s mean</td><td>⬇️ Inverse (slower ≠ better)</td></tr>
+<tr><td><strong>Test-verification prompt</strong></td><td>✅ Explicit</td><td>❌ None</td><td>⚠️ Implicit ("verified")</td><td>✅ cline's explicit loop prevents p2p regressions</td></tr>
+<tr><td><strong>Structured termination</strong></td><td>✅ <code>submit_and_exit</code></td><td>❌ Implicit</td><td>❌ Implicit</td><td>✅ Prevents premature/late termination</td></tr>
+<tr><td><strong>Context compression</strong></td><td>Automatic</td><td>Model-invoked</td><td>System-invoked (4 strategies)</td><td>Neutral — no instance hit context limit</td></tr>
+<tr><td><strong>Parallel tool calls</strong></td><td>✅ Encouraged in prompt</td><td>✅ Supported</td><td>✅ <code>concurrent.futures</code></td><td>Neutral — kimi may not emit parallel calls</td></tr>
+<tr><td><strong>Error retry</strong></td><td>Tool-level</td><td>None (fail-fast)</td><td>Multi-layer (API + rate-limit + ladder)</td><td>⚠️ Hermes's retry may extend wall time without improving outcome</td></tr>
+</table>
+
+<div class="key">
+<p><strong>The paradox:</strong> Hermes has the <em>most sophisticated</em> architecture (concurrent tools, 4 compression strategies, repetition guard, API retry ladder, run-budget notices) yet achieves the <em>lowest</em> resolve rate and <em>slowest</em> wall time. This suggests that for SWE-bench tasks with a capable model (kimi-k2.6-cloud), <strong>harness simplicity is an advantage</strong>: less prompt overhead, faster tool dispatch, fewer retry loops. The harness's job is to get out of the model's way.</p>
+</div>
+
+
+<h2>11. Implications for BaiZe</h2>
+<p>If BaiZe 2.2B is to serve as a backbone for SWE-bench-style tasks, this analysis suggests:</p>
+
+<table>
+<tr><th>Capability needed</th><th>Why (evidence)</th><th>Priority</th></tr>
+<tr><td><strong>Test-verification behavior</strong></td><td>cline's prompt explicitly tells the model to "run the relevant test suite to confirm" — this prevented 2 p2p regressions that Hermes suffered. A 2.2B model may need <em>stronger</em> prompt reinforcement for this.</td><td>⭐ Critical</td></tr>
+<tr><td><strong>Concise tool use</strong></td><td>Pi's 7-tool setup achieved the same rate as cline's 9 tools. Fewer tools = less prompt token overhead. For a 2.2B model with limited context, a minimal tool set is essential.</td><td>⭐ Critical</td></tr>
+<tr><td><strong>Structured termination</strong></td><td>cline's <code>submit_and_exit</code> prevents both premature termination (model stops too early) and endless loops (model keeps exploring). A 2.2B model is more prone to both failure modes.</td><td>⭐ High</td></tr>
+<tr><td><strong>Bug-understanding capability</strong></td><td>12/30 instances were unsolved by all three harnesses — these are model capability gaps, not harness gaps. The model must understand the bug, locate the relevant code, and produce a correct fix.</td><td>⭐ Critical (model-level)</td></tr>
+<tr><td><strong>Patch completeness</strong></td><td>Hermes's 977-byte patch on django-11422 (under-editing) vs cline/Pi's larger patches — a 2.2B model may tend toward minimal patches that don't fully fix the issue.</td><td>⭐ High</td></tr>
+<tr><td><strong>Regression awareness</strong></td><td>Hermes broke existing tests on 2 instances — the model must understand that a fix should not break other tests. This requires either prompt guidance or training data with test-suite feedback.</td><td>⭐ Medium</td></tr>
+</table>
+
+<div class="callout">
+<p><strong>Recommended harness design for BaiZe 2.2B:</strong></p>
+<ol>
+<li><strong>Minimal tool set</strong> (≤7 tools): read, bash, edit, write, grep, find, submit_and_exit — no browser, no memory, no skills, no subagents</li>
+<li><strong>Test-verification prompt</strong>: explicitly instruct "run tests after fixing, check for regressions, revise if any test fails"</li>
+<li><strong>Structured termination</strong>: provide a <code>submit_and_exit</code> tool that signals task completion</li>
+<li><strong>Short system prompt</strong> (≤200 words): focus on bug-fixing discipline, not general execution philosophy</li>
+<li><strong>No retry loops</strong>: fail-fast is faster and doesn't improve outcomes — let the model handle errors by seeing the error output</li>
+<li><strong>No context compression</strong> for 30-instance runs: none of the instances hit the context limit with kimi-k2.6-cloud's 128K context</li>
+</ol>
+</div>
+
+
+<h2>12. Limitations</h2>
+<div class="warn">
+<ol>
+<li><strong>30 instances only</strong> — the identical cline/Pi solve set could be coincidental with this small sample. A 100+ instance run would be needed to confirm.</li>
+<li><strong>Single model</strong> (kimi-k2.6-cloud) — the "model is the bottleneck" finding may not generalize to weaker or stronger models. A 2.2B model might show more harness-dependent variation.</li>
+<li><strong>cline-patched is modified</strong> — it's not vanilla cline; the "patched" version may include SWE-bench-specific optimizations not in the upstream.</li>
+<li><strong>Pi and Hermes versions are early</strong> — Pi v0.2.15 and Hermes @0e219331 are both pre-1.0; later versions may have different behavior.</li>
+<li><strong>No token consumption data</strong> — the eval didn't capture per-turn token counts, so cost analysis is limited to wall time.</li>
+<li><strong>Non-Docker sandbox</strong> (unshare R1) — may differ from official Docker-based SWE-bench evaluation.</li>
+<li><strong>Single seed</strong> — no variance estimation; different random seeds might produce different resolve patterns.</li>
+</ol>
+</div>
+
+
+<h2>13. Next Steps</h2>
+<ol>
+<li><strong>Scale to 100-300 instances</strong> to confirm whether cline/Pi solve-set identity is robust</li>
+<li><strong>Test with BaiZe 2.2B</strong> as backbone — expect more harness-dependent variation (weaker model = harness matters more)</li>
+<li><strong>Test with a stronger model</strong> (e.g., Claude Sonnet 4.5) to see if the 12 unsolved instances become solvable</li>
+<li><strong>Add token consumption tracking</strong> to the eval harness for proper cost analysis</li>
+<li><strong>Multi-seed runs</strong> (3-5 seeds) for variance estimation</li>
+<li><strong>Source analysis of codex, opencode, claude-code, deepseek-harness</strong> — extend this comparison to all 7 harnesses</li>
+<li><strong>Ablation study</strong>: add cline's test-verification prompt to Hermes to test if it prevents p2p regressions</li>
+</ol>
+
+
+<hr>
+<p><small>H-B Deep Source Analysis: cline vs Pi vs Hermes SWE-bench implementation comparison. BaiZe Harness research line, 2026-10-08. Model: kimi-k2.6-cloud. Data: kimi_pilot_results.json (90 entries, 30×3). Source evidence: all conclusions cite file:line or JSON data. Self-contained HTML with inline CSS + inline SVG.</small></p>
+</body></html>

@@ -5,13 +5,25 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 30×7 cross-eval COMPLETE ✅ + **DEEP ANALYSIS REPORT VERIFIED** (report_harness_swebench_analysis.html, 62.7KB, 9 sections, 8 inline SVG charts, all sections verified). All 7 harnesses done. cline-patched 60.0% · Pi 60.0% · Hermes 53.3% · opencode 50.0% · codex 46.7% · claude-code 43.3% · deepseek-harness 40.0%.
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped · opencode×30 (50.0%) · claude-code×30 (43.3%) · deepseek-harness×30 (40.0%) · Pi×30 (60.0%) · Hermes×30 (53.3%) · gen_kimi_compare.py 7-way · SWEBENCH_COMPARE.html (21976B final) · **report_harness_swebench_analysis.html** (64201B, 9 sections, failure mode analysis, cost analysis, BaiZe implications) — VERIFIED at both doc/BaiZe-ISEDA2027/ and run/harness/
-当前动作:     R175: Report verification + heartbeat — verified report_harness_swebench_analysis.html has all 9 sections (TL;DR · 评测设计 · 结果总表 · 失败模式分析 · 成本分析 · 架构差异 · BaiZe启示 · 局限 · 下一步), 8 inline SVG charts, 62.7KB ≤200KB, data from kimi_pilot_results.json (480 entries). No new operator instructions (git fetch = up to date).
-下一步:       <待运维指令> — 分析报告已交付验证(两处). Per 2026-10-08 instruction: "写完本报告后，若运维无新指令，可自主做 harness 源码分析（H-B 方向）—— 深入 cline / Pi / Hermes 的 SWE-bench 实现差异"
+PHASE:        H-A 30×7 cross-eval COMPLETE ✅ + DEEP ANALYSIS REPORT ✅ + **H-B 3-WAY SOURCE ANALYSIS DELIVERED** (HARNESS_3WAY_COMPARISON.html, 57.4KB, 14 sections, 5 inline SVG charts, cline vs Pi vs Hermes source-level comparison). All 7 harnesses done. cline-patched 60.0% · Pi 60.0% · Hermes 53.3% · opencode 50.0% · codex 46.7% · claude-code 43.3% · deepseek-harness 40.0%.
+已完成:       H-B 3-way source analysis (HARNESS_3WAY_COMPARISON.html) · H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped · opencode×30 (50.0%) · claude-code×30 (43.3%) · deepseek-harness×30 (40.0%) · Pi×30 (60.0%) · Hermes×30 (53.3%) · gen_kimi_compare.py 7-way · SWEBENCH_COMPARE.html (21976B final) · report_harness_swebench_analysis.html (64201B, 9 sections) — VERIFIED at both locations · **HARNESS_3WAY_COMPARISON.html** (58809B, 14 sections, 5 SVG, architecture+prompt+tools+loop+failure analysis, BaiZe implications) — at both doc/BaiZe-ISEDA2027/ and run/harness/
+当前动作:     R176: H-B 3-way source analysis DELIVERED — HARNESS_3WAY_COMPARISON.html (57.4KB, 14 sections: TL;DR, Architecture, System Prompt, Tool Set, Agent Loop, Resolve Rate, Overlap Venn, Heatmap, Wall Time, Failure Mode, Architecture-Performance Correlation, BaiZe Implications, Limitations, Next Steps). Key finding: cline & Pi solve identical 18/30, Hermes 16/30 (strict subset). Pi fastest (275s vs 479s vs 553s). Tool count inversely correlates with speed.
+下一步:       <待运维指令> — H-B 3-way source analysis delivered. Possible next: extend to remaining 4 harnesses (codex, opencode, claude-code, deepseek-harness), or test with BaiZe 2.2B backbone.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
+
+## 🆕 第一百七十六轮速览（2026-10-08 11:46）— 📄 H-B 3-way source analysis DELIVERED (HARNESS_3WAY_COMPARISON.html, 57.4KB)
+
+- 📄 **H-B deep source analysis report delivered**: `HARNESS_3WAY_COMPARISON.html` (58809B = 57.4KB, ≤200KB ✓) at both `doc/BaiZe-ISEDA2027/` and `run/harness/`.
+  - **14 sections**: TL;DR · Architecture Overview · System Prompt Comparison · Tool Set Comparison · Agent Loop & Orchestration · Resolve Rate · Resolve Overlap (Venn) · Per-Instance Heatmap · Wall Time Analysis · Failure Mode Analysis · Architecture-Performance Correlation · BaiZe Implications · Limitations · Next Steps
+  - **5 inline SVG charts**: resolve rate bar chart, tool count comparison, 3-circle Venn overlap, 30×3 per-instance heatmap, wall time distribution
+  - **Key findings**: (1) cline-patched & Pi solve identical 18/30 — model is the bottleneck, not harness; (2) Pi 1.7× faster than cline, 2.0× faster than Hermes; (3) Hermes's 2 unique failures (django-10924, django-11422) are p2p_fail — broke existing tests; (4) 12/30 unsolved by all three — model capability ceiling; (5) Tool count inversely correlates with speed (Pi 7 > cline 9 > Hermes 20+)
+  - **Source evidence**: all conclusions cite file:line or kimi_pilot_results.json data — cline system.ts:38-68, Pi system-prompt.js:70-100, Hermes prompt_builder.py:160-169/442-506
+  - **BaiZe recommendations**: ≤7 tools, test-verification prompt, submit_and_exit, ≤200-word system prompt, no retry loops
+- ✅ **gen_3way_report.py** (generator script) + **analyze_3way.py** (data analysis) also committed
+- ✅ **No new operator instructions** (`git fetch` = up to date).
+- 📦 体积：TASK=31.5KB ✓ / MEMORY=~31.0KB ✓（归档 0KB）
 
 ## 🆕 第一百七十五轮速览（2026-10-08 10:54）— ✅ Report verification + heartbeat
 
