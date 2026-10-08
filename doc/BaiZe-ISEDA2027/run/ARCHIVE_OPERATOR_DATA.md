@@ -1062,3 +1062,92 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 > 📌 **一句话**：**用小模型跑几百次试验去拟合配比，而不是用 2.2B 跑一次；两天（Stable / Decay 各一天）出配方。**
 
 
+---
+
+## 📦 已归档运维指令块（2026-10-08 · 唤醒218归档）
+
+### 🆕 运维指令 · 2026-10-08（📝 **更新论文 LaTeX：把数据配比实验结论写入 `4_llm_pretrain.tex`**）· **用户直令：各线自己更新论文** · 高优先
+
+> **用户令**：「让 pretrain，vision 和 data 更新一下论文。」
+> ⚠️ **不要代笔写 LaTeX** —— 你只负责把你自己的实验数据填入对应的 `.tex` 文件，然后编译 `main.pdf`。
+> ⚠️ **论文在 `BaiZe-ISEDA2027/` 目录下，与任务书同在一个 repo** —— 你直接可见可改。
+
+**① 当前 `4_llm_pretrain.tex` 已有基础数据配比描述（Ultra-FineWeb-L3 EN 1.8T + code 1.2T + math 515G），但你的配比实验结论——特别是「其他配比在代理规模下不可分辨」这一发现——完全没反映。**
+**`5_llm_posttrain.tex` §5.1 也提到了 domain annealing 数据，你可更新数据描述的具体数值。**
+
+**② 建议更新的内容（自行判断，不一定要全写）：**
+1. **数据配比实验结论**：配比实验在 18.36M 代理上的发现——最优区域稳定在 web 0.87–0.94 / code 0.06–0.12 / math≈0.01（`88:8:4`），但全量 lm_eval 排名与 BO 排名几乎反转（ρ=−0.80），全量分差仅 0.6pp ⇒ 该规模下「不可分辨」。
+   - 可在 §4 数据段加一句诚实的说明：「At the proxy scale of 18.36M parameters, data mixture rankings were indistinguishable within 0.6pp, leading to the adoption of the 88:8:4 prior from the literature.」
+2. **数据准备状态**：base（Ultra-FineWeb-L3 EN 6000 parquet / ZH 256 / EN 2048）✅ 全量下载完成并分词中；GPIC 下载进度；UltraX ✅ 完成。
+3. **污染隔离**：黑名单机制已实施，EDA-Eval-PyAether 的 158 个任务已隔离，可更新论文中的 contamination control 描述。
+4. **更新 `5_llm_posttrain.tex` 的数据描述**：SFT 数据（UltraData-SFT-Agent 51G）的实际规模和校验状态，若有新数据可更新数字。
+
+**③ 格式纪律**
+- 🚫 **不改 § 编号、不改 label、不改 cross-ref** —— 只更新数字、表格行、段落描述。
+- ✅ **可以加子节 / 加段落 / 加表 / 加图** —— 但 label 和 cross-ref 不能冲突。
+- **编译前先 `cd doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027 && rm -f main.aux main.bbl main.blg main.log`，然后 `pdflatex main && bibtex main && pdflatex main && pdflatex main`，确认 0 error。
+- 编译后的 `main.pdf` **一起 commit**。
+- **git 前缀**：`data 论文更新: ...`
+
+**④ 本块不撤销之前的报告任务** —— 推荐顺序：**先更新论文（简短任务），再写全链路状态报告**。
+> ⚠️ **注意**：更新论文时你仍然要维护分词/下载后台任务。论文修改在 CPU 上做，不冲突。
+
+> 📦 本块加入后 TASK 约 32KB，仍 ≤32KB ✅。
+> ✅ **执行完毕**（唤醒217, 2026-10-08）：更新 `4_llm_pretrain.tex` §4.5+§4.6 + `5_llm_posttrain.tex` §5.2+§5.4，main.pdf=9pp 0err，commit cbe0b641→debb3260。
+
+### 🆕 运维指令 · 2026-10-08（📄 **数据准备全链路状态报告 HTML**）· **用户直令：各线自己写报告** · 高优先
+
+> **用户令**：「把任务下发给各 agent，由 agent 自己写报告，不要替代他们写。」
+> ⚠️ 你的配比收官报告 `report_data_mix_summary.html` ✅ 已交付。但**完整的数据全链路状态**尚未形成一份统一报告。**用户点名要 agent 自己写报告**。
+
+**① 交付**：`report_data_pipeline_status.html`（落 `doc/BaiZe-ISEDA2027/`）
+
+**② 格式（沿用 house style）**
+- **自包含**：内联 CSS + **数据图优先内联 SVG**；**零外链**；**HTML 本体 ≤200KB**。
+- 位图一律 **JPEG、长边 ≤1280、q85**、单图 ≤400KB/总量 ≤4MB、**落本地并 commit**；🚫 严禁外链、🚫 严禁用文生图「编」数据图。
+- **开头 1 行指向** `report_data_mix_summary.html`（配比专项已有，不再重复）。
+
+**③ 建议 8 节**
+1. **TL;DR**（3–5 条：base 下载 ✅ / 分词完成量 / GPIC 进度 / 配比实验结论 88:8:4 / 剩余瓶颈）；
+2. **数据全景**（参考 `DATA_LEDGER.md`）：各源（Ultra-FineWeb L3 EN/ZH / GPIC / UltraX / en_v1_4）的 **规模、格式、下载状态、分词状态** 总表；
+3. **下载状态**：base（✅ 全满：l1_en_hq 6000 parquet + zh 256 + en 2048）/ GPIC（5768/8001，ETA~2.1d）/ UltraX（✅ 479/479）/ en_v1_4（排队）；
+4. **分词进度**：zh（7/8 shard ✅ 98.80B tok，s9 ~88% ETA~09:45）/ l1_en_hq（12 进程 s12-s23，ETA~16:00）/ 总 token 量与 ETA；
+5. **配比实验**（指向 `report_data_mix_summary.html`）：一句话结论 + 对 P-8 的建议（88:8:4）；
+6. **污染隔离**：黑名单机制 / 扫描进度 / 命中率（引用 `CONTAMINATION_CHECK.md`）；
+7. **磁盘与资源**：`/nas_train` 用量 / 预计 P-8 所需空间 / 清理建议；
+8. **下一步与风险**：待完成项 + 关键路径（分词完成 → P-8 启动 → GPIC 下完 → en_v1_4 放行）。
+
+**④ 纪律**
+- **数字必须真**：每个数字可由 `DATA_LEDGER.md` / `MEMORY_DATA.md` 巡检记录复算；
+- **报告写作与后台任务不冲突**：分词/下载照常进行，写报告在 CPU 上并行做；
+- **收尾按「收尾铁律」commit+push**（前缀 `data 管道报告: …`）。
+
+> 📦 本块加入后 TASK 约 31KB，仍 ≤32KB ✅。如需归档，只归档下方已闭合旧块。
+> ✅ **执行完毕**（唤醒217, 2026-10-08）：`report_data_pipeline_status.html`（31KB）已交付并 commit。
+
+### 🆕 运维指令 · 2026-10-07⑥（📄 **配比实验「收官总报告」HTML**）· **用户直令** · 高优先
+
+> **用户令（2026-10-07 夜）**：「**既然 ✅ 配比实验全部交付，让 data 写个 html 报告。**」
+> ⚠️ **注意：不是再写一份 R2 专项** —— 你已交付 `report_data_mix_eval_r2.html`（18KB，R2 专项）。**本次要的是整条 §0.6-B 配比实验的「收官总报告」**，把 R1 → s_step → R2 → top-K 的弧线一次讲清。**请在报告开头用 1 行指向那份 R2 专项**（避免重复劳动，也避免出现两份同主题报告）。
+
+**① 交付**：`report_data_mix_summary.html`（落 `doc/BaiZe-ISEDA2027/`）
+
+**② 格式（沿用 house style —— 参照 `report_10_06.html` / `report_10_07_data_overnight.html`）**
+- **自包含**：内联 CSS + **数据图优先内联 SVG**；**零外链**；**HTML 本体 ≤200KB**。
+- ⚠️ 你现有那份 R2 报告用的是**深色主题** ⇒ **收官报告请统一到 house style**（浅色，与其它报告一致）。
+- 若用位图：**一律 JPEG、长边 ≤1280、q85**、单图 ≤400KB / 总量 ≤4MB、**落本地并 commit**；🚫 严禁外链、🚫 严禁用文生图「编」数据图。
+
+**③ 建议 8 节**
+1. **TL;DR**（3–5 条）；
+2. **实验设计**：小代理 `d=128/L=14 ≈ 18.36M`（**显式标注「代理 ≠ 2.2B」**）· Optuna `TPESampler + MedianPruner` · 每卡独立 trial（TP1/DP1）· GBS/seq=2048 · `D`(token/trial) · Stable/Decay 两段；
+3. **时间线**：R1（`loss` objective，`D=0.016B`，**ρ=−0.43**）→ ⭐ **`s_step` 归因（MBS 1→16：1432ms→166ms = 8.6×，`D` 抬到 0.5B）** → R2（`lm_eval` objective，**200/200**）→ **top-K 收尾**（retrain top-5 + HF 转换 + 全量 lm_eval）；
+4. **R2 结果**：Top-10 配比表（web/code/math + score）+ **score 分布/收敛曲线（内联 SVG）**；
+5. ⭐ **核心结论（必须诚实）**：**top-K 全量 lm_eval 排名与 BO 排名几乎反转**；**ρ=−0.80（n=5, p≈0.10）**；**全量分差仅 0.3835–0.3899 ≈ 0.6pp ⇒ 该规模下「不可分辨」**；math 占比贴下界；
+6. **口径与局限**：代理规模 ≠ 2.2B · `--limit 500` 抽样 · n=5 · 单 seed？（**如实写**）；
+7. **对 P-8 的建议**：**沿用先验 88:8:4**（最优区域稳定在 web 0.87–0.94 / code 0.06–0.12 / math≈0.01）；
+8. **下一步**：Decay 段配比 · 提分辨率的手段（更大代理 / 多 seed / 全量评测替代抽样）。
+
+**④ 纪律**：**数字必须真** —— 每个数字可由 `topk_lmeval_results_r2.json` / `mix_search_eval_r2.db` 复算；**结论跑完即固化**；收尾按「收尾铁律」commit+push（前缀 `data 配比收官: …`）。
+> 📦 体积提醒：本块加入后 `BAIZE_DATA_TASK.md` ≈36KB ⇒ 收尾前先归档已闭合旧块。
+> ✅ **执行完毕**（唤醒203, 2026-10-08）：`report_data_mix_summary.html`（29KB）已交付并 commit。
+
