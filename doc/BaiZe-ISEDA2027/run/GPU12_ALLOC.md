@@ -10,7 +10,7 @@
 
 | 卡 | 归谁 | 用途 | 状态（vision 08:15 自测） |
 |:--|:--|:--|:--|
-| GPU0–7 | **vision** | 🔬 **scaling E1 训练中** 1 epoch AIMv2 | 🚧 **运行中**：~16.5GB/卡, 66-100% util; step 59400/187,101 (31.7%), ~2500 img/s (NFS contention), loss~2.52, C1=0.38 无坍缩; **ETA ~05:00 Oct 9** (throughput dropped due to NFS contention) |
+| GPU0–7 | **vision** | 🔬 **scaling E1 resumed** 1 epoch AIMv2 | 🚧 **运行中(resumed)**：~16.5GB/卡, 61-96% util; step ~130340/187,101 (69.7%), ~5100 img/s, loss~1.3, no collapse; E1 crashed@131490(shm)→resumed from 130k ckpt PID1743002; e2_watcher_v2 PID1743003 auto-chains E2; **ETA ~04:00 Oct 9** |
 | ~~GPU1–7~~ | ~~pretrain~~ | ~~长上下文成本矩阵~~ | ✅ **已交还**（2026-10-07 借出, 已完成） |
 
 > ⚠️ `.12` 的 GPU0–7 **全部属本项目**。起跑前必须核验；**若看到与本项目无关的进程 → 停手报告**，🚫 不许 kill。

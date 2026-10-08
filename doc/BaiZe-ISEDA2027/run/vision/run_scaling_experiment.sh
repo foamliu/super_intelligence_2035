@@ -48,10 +48,13 @@ NW="${3:-6}"
 
 run_e1() {
     local _steps="$1" _nw="$2"
+    local _resume="${3:-}"
     local OUT="$OUTROOT/scaling_E1_ov2_w512_d30_p16_224"
     local LOG=/tmp/scaling_e1.log
-    echo "===== E1 START steps=$_steps $(date '+%F %T') =====" | tee "$LOG"
+    echo "===== E1 START steps=$_steps resume=${_resume:-none} $(date '+%F %T') =====" | tee "$LOG"
     nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv >> "$LOG" 2>&1
+    local RESUME_ARG=""
+    [ -n "$_resume" ] && RESUME_ARG="--resume $_resume"
     "$PY" -m torch.distributed.run --nproc_per_node=8 --nnodes=1 \
         --master_addr=$MASTER_ADDR --master_port=$((29800 + RANDOM % 1000)) \
         r9_train.py --tower openvision2 --width 512 --depth 30 \
@@ -60,8 +63,10 @@ run_e1() {
         --loss aimv2 --mask-ratio 0.6 --patch-loss-weight 1.0 --contrast-weight 1.0 \
         --data "$DATA" --data-source mixed --caption-type all --output-dir "$OUT" \
         --log-every 10 --probe-every 300 --probe-n 128 --num-workers "$_nw" \
-        --save-every 10000 --eval-data "$EVAL" >> "$LOG" 2>&1
-    echo "===== E1 done (exit $?) $(date '+%F %T') =====" >> "$LOG"
+        --save-every 10000 --eval-data "$EVAL" $RESUME_ARG >> "$LOG" 2>&1
+    local rc=$?
+    echo "===== E1 done (exit $rc) $(date '+%F %T') =====" >> "$LOG"
+    return $rc
 }
 
 run_e2() {
@@ -81,18 +86,34 @@ run_e2() {
         --data "$DATA" --data-source mixed --caption-type all --output-dir "$OUT" \
         --log-every 10 --probe-every 300 --probe-n 128 --num-workers "$_nw" \
         --save-every 10000 --eval-data "$EVAL" >> "$LOG" 2>&1
-    echo "===== E2 done (exit $?) $(date '+%F %T') =====" >> "$LOG"
+    local rc=$?
+    echo "===== E2 done (exit $rc) $(date '+%F %T') =====" >> "$LOG"
+    return $rc
 }
 
 run_eval() {
     local arm="$1" out_dir="$2"
+    local final_only="${3:-}"
     local LOG=/tmp/scaling_${arm}_eval.log
     echo "===== ${arm} eval START $(date '+%F %T') =====" | tee "$LOG"
-    CKPTS=()
-    while IFS= read -r f; do CKPTS+=("$f"); done < <(printf '%s\n' "$out_dir"/vision_step*.pt 2>/dev/null | sort -V)
-    FINAL="$out_dir/vision.pt"; [ -f "$FINAL" ] || FINAL="$out_dir/vision_fused.pt"
-    [ -f "$FINAL" ] && CKPTS+=("$FINAL")
+    local CKPTS=()
+    if [ "$final_only" = "final" ]; then
+        # Only evaluate the final checkpoint (vision.pt or vision_fused.pt)
+        local FINAL="$out_dir/vision.pt"; [ -f "$FINAL" ] || FINAL="$out_dir/vision_fused.pt"
+        if [ -f "$FINAL" ]; then
+            CKPTS+=("$FINAL")
+        else
+            # Fallback: use the highest step checkpoint
+            local LAST_STEP=$(ls "$out_dir"/vision_step*.pt 2>/dev/null | sort -V | tail -1)
+            [ -n "$LAST_STEP" ] && CKPTS+=("$LAST_STEP")
+        fi
+    else
+        while IFS= read -r f; do CKPTS+=("$f"); done < <(printf '%s\n' "$out_dir"/vision_step*.pt 2>/dev/null | sort -V)
+        local FINAL="$out_dir/vision.pt"; [ -f "$FINAL" ] || FINAL="$out_dir/vision_fused.pt"
+        [ -f "$FINAL" ] && CKPTS+=("$FINAL")
+    fi
     if [ "${#CKPTS[@]}" -eq 0 ]; then echo "ERROR: zero ckpts" >> "$LOG"; return 1; fi
+    echo "[eval] ckpts: ${#CKPTS[@]} files" >> "$LOG"
     "$PY" lp_protocol_bridge.py --ckpts "${CKPTS[@]}" --protocol B --probe-full-train >> "$LOG" 2>&1
     "$PY" lp_protocol_bridge.py --ckpts "${CKPTS[@]}" --protocol A >> "$LOG" 2>&1
     echo "===== ${arm} eval DONE $(date '+%F %T') =====" >> "$LOG"
@@ -122,17 +143,29 @@ case "$MODE" in
         run_e1 "$STEPS" "$NW"; rc=$?
         [ "$STEPS" -gt 1000 ] && [ $rc -eq 0 ] && run_eval e1 "$OUTROOT/scaling_E1_ov2_w512_d30_p16_224"
         ;;
+    resume_e1)
+        # Resume E1 from a checkpoint: bash run_scaling_experiment.sh resume_e1 <steps> <nw> <ckpt_path>
+        RESUME_CKPT="${4:-$OUTROOT/scaling_E1_ov2_w512_d30_p16_224/vision_step130000.pt}"
+        run_e1 "$STEPS" "$NW" "$RESUME_CKPT"; rc=$?
+        [ "$STEPS" -gt 1000 ] && [ $rc -eq 0 ] && run_eval e1 "$OUTROOT/scaling_E1_ov2_w512_d30_p16_224" final
+        ;;
     e2)
         run_e2 "$STEPS" "$NW"; rc=$?
-        [ "$STEPS" -gt 1000 ] && [ $rc -eq 0 ] && run_eval e2 "$OUTROOT/scaling_E2_ov2_w768_d30_p16_224"
+        [ "$STEPS" -gt 1000 ] && [ $rc -eq 0 ] && run_eval e2 "$OUTROOT/scaling_E2_ov2_w768_d30_p16_224" final
         ;;
     both)
         run_e1 "$STEPS" "$NW"; rc1=$?
-        [ "$STEPS" -gt 1000 ] && [ $rc1 -eq 0 ] && run_eval e1 "$OUTROOT/scaling_E1_ov2_w512_d30_p16_224"
+        [ "$STEPS" -gt 1000 ] && [ $rc1 -eq 0 ] && run_eval e1 "$OUTROOT/scaling_E1_ov2_w512_d30_p16_224" final
         run_e2 "$STEPS" "$NW"; rc2=$?
-        [ "$STEPS" -gt 1000 ] && [ $rc2 -eq 0 ] && run_eval e2 "$OUTROOT/scaling_E2_ov2_w768_d30_p16_224"
+        [ "$STEPS" -gt 1000 ] && [ $rc2 -eq 0 ] && run_eval e2 "$OUTROOT/scaling_E2_ov2_w768_d30_p16_224" final
+        ;;
+    eval_final)
+        # Evaluate only the final ckpts of both arms
+        run_eval e1 "$OUTROOT/scaling_E1_ov2_w512_d30_p16_224" final
+        run_eval e2 "$OUTROOT/scaling_E2_ov2_w768_d30_p16_224" final
         ;;
     *)
-        echo "Usage: bash run_scaling_experiment.sh {smoke|smoke_e1|smoke_e2|e1|e2|both} [steps] [nw]"; exit 1
+        echo "Usage: bash run_scaling_experiment.sh {smoke|smoke_e1|smoke_e2|e1|resume_e1|e2|both|eval_final} [steps] [nw] [ckpt_path]"
+        exit 1
         ;;
 esac
