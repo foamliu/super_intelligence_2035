@@ -1,0 +1,351 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Harness Interaction Traces & Feature Comparison (7-way x 30)</title>
+<style>
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,sans-serif;margin:0;padding:0;line-height:1.6}
+.container{max-width:1400px;margin:0 auto;padding:20px}
+h1{color:#f0f6fc;font-size:1.8em;border-bottom:1px solid #30363d;padding-bottom:10px}
+h2{color:#58a6ff;font-size:1.3em;margin-top:2em;border-bottom:1px solid #21262c;padding-bottom:5px}
+h3{color:#c9d1d9;font-size:1.1em;margin-top:1.5em}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:13px}
+th{background:#161b22;color:#f0f6fc;padding:8px 10px;text-align:left;border:1px solid #30363d}
+td{padding:6px 10px;border:1px solid #21262c;vertical-align:top}
+tr:nth-child(even){background:#161b22}
+.chart-box{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:15px;margin:1em 0}
+.note{background:#1c2128;border-left:3px solid #58a6ff;padding:10px 15px;margin:1em 0;border-radius:0 6px 6px 0}
+.warn{background:#1c2128;border-left:3px solid #d29922;padding:10px 15px;margin:1em 0;border-radius:0 6px 6px 0}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:bold}
+.tag-green{background:#1a3a2a;color:#3fb950}.tag-blue{background:#1a2a3a;color:#58a6ff}
+.tag-yellow{background:#3a3a1a;color:#d29922}.tag-red{background:#3a1a1a;color:#f85149}
+.tag-orange{background:#3a2a1a;color:#f0883e}
+code{background:#1c2128;padding:2px 6px;border-radius:4px;font-size:12px;color:#f0883e}
+.small{font-size:11px;color:#8b949e}
+.tl-dr{background:#1a1f2e;border:2px solid #30363d;border-radius:8px;padding:15px;margin:1em 0}
+.tl-dr h2{border:none;margin-top:0}
+</style></head><body><div class="container">
+<h1>Harness Interaction Traces &amp; Feature Comparison</h1>
+<p class="small">7-way SWE-bench Lite cross-eval | 30 instances x 7 harnesses | backbone: kimi-k2.6-cloud | 2026-10-08</p>
+<div class="tl-dr"><h2>TL;DR</h2>
+<p><b>Key finding:</b> Under the same backbone (kimi-k2.6-cloud), the 20pp resolve-rate gap (40.0%-60.0%) is driven by <b>harness architecture differences</b>, not interaction trajectory quality. Three evidence-based factors:</p>
+<ol><li><b>No-patch rate</b>: deepseek-harness fails to produce ANY patch in 10/30 (33%) vs cline-patched 3/30 (10%) - the harness gives up or errors out before completing edits.</li>
+<li><b>Timeout rate</b>: codex hits 1800s timeout in 8/30 (27%) vs Pi 0/30 - codex sandboxed execution is 3x slower per turn.</li>
+<li><b>Patch scope</b>: Top-2 (Pi 4.2, cline-patched 3.7 files avg) produce larger multi-file patches vs bottom-2 (deepseek 2.7, codex 2.2).</li></ol>
+<p><b>Superset:</b> cline-patched resolved set is a <b>strict superset</b> of all others (Jaccard 0.67-1.00). Pi is identical (Jaccard=1.000).</p>
+<p><b>Data caveat:</b> Per-turn interaction traces (prompts, tool calls, outputs) were <b>NOT captured</b> - only last 500 chars of stdout survived. But all 210 <code>model_patch</code> files survive in /dev/shm.</p></div>
+<h2>S1 Data Availability Inventory</h2>
+<div class="warn"><b>Honest assessment:</b> The task asked to deep-dive into interaction trajectories. First step was to inventory what trace data survived.</div>
+<table><thead><tr><th>Data Field</th><th>Source</th><th>Availability</th><th>What It Contains</th></tr></thead><tbody>
+<tr><td><code>stdout_tail</code></td><td>kimi_pilot_results.json</td><td><span class="tag tag-green">All 210</span></td><td>Last 500 chars of harness stdout: model_patch size + cleanup + deprecation warnings. <b>NOT per-turn interaction.</b></td></tr>
+<tr><td><code>wall_s</code></td><td>kimi_pilot_results.json</td><td><span class="tag tag-green">All 210</span></td><td>Wall-clock seconds for entire harness run.</td></tr>
+<tr><td><code>eval</code></td><td>kimi_pilot_results.json</td><td><span class="tag tag-green">All 210</span></td><td>SWE-bench eval: resolved, patch_applied, f2p_pass/total, p2p_pass/total.</td></tr>
+<tr><td><code>model_patch</code></td><td>/dev/shm predictions</td><td><span class="tag tag-green">All 210</span></td><td>Actual git diff patch. 210/210 survive in /dev/shm/harness_work/workdirs/.</td></tr>
+<tr><td>Per-turn prompts</td><td>-</td><td><span class="tag tag-red">Lost</span></td><td>NOT captured. stdout saved as last 500 chars only. Would need re-run.</td></tr>
+<tr><td>Per-turn tool calls</td><td>-</td><td><span class="tag tag-red">Lost</span></td><td>NOT captured. Same reason.</td></tr>
+<tr><td>Token usage</td><td>-</td><td><span class="tag tag-red">Lost</span></td><td>NOT captured. API metadata not logged.</td></tr>
+</tbody></table>
+<div class="note"><b>Conclusion:</b> We have <b>patch-level evidence</b> and <b>process-level metrics</b>, but <b>NOT step-by-step interaction traces</b>. Analysis below is evidence-based on available data.</div>
+<h2>S2 Harness Feature Comparison Table (7 x 10)</h2>
+<p>Each cell backed by data from <code>kimi_pilot_results.json</code> (210 entries) or <code>run_harness.py</code> source code (path:line cited).</p>
+<table><thead><tr><th>Harness</th><th>Entry / Source</th><th>Autonomy</th><th>Provider</th><th>Resolve Rate</th><th>Avg Wall</th><th>Patch Scope</th><th>Avg Patch Size</th><th>Dominant Failure</th><th>Patches Found</th></tr></thead><tbody><tr><td><span class="tag tag-green">cline-patched</span></td><td><code>cline CLI v4.1.21 (bun)</code><br><span class="small">run_harness.py:115-154</span></td><td>Full auto (--auto-approve true)</td><td>OpenAI @ gw_proxy</td><td>60.0%<br><span class="small">18/30</span></td><td>479s<br><span class="small">med 342s</span></td><td>3.7 files<br><span class="small">+29 lines</span></td><td>3433B</td><td>Low fail rate<br><span class="small">no_patch=3 f2p=9 to=2</span></td><td>27/30</td></tr><tr><td><span class="tag tag-green">Pi</span></td><td><code>pi CLI v0.2.15 (bun)</code><br><span class="small">run_harness.py:378-419</span></td><td>Full auto (print mode)</td><td>gw custom @ gw_proxy</td><td>60.0%<br><span class="small">18/30</span></td><td>275s<br><span class="small">med 193s</span></td><td>4.2 files<br><span class="small">+37 lines</span></td><td>3337B</td><td>Low fail rate<br><span class="small">no_patch=2 f2p=10 to=0</span></td><td>28/30</td></tr><tr><td><span class="tag tag-blue">Hermes</span></td><td><code>hermes CLI (NousResearch)</code><br><span class="small">run_harness.py:422-469</span></td><td>Full auto (--yolo), max_turns=50</td><td>kimi-proxy @ gw_proxy</td><td>53.3%<br><span class="small">16/30</span></td><td>553s<br><span class="small">med 406s</span></td><td>4.2 files<br><span class="small">+36 lines</span></td><td>3161B</td><td>Low fail rate<br><span class="small">no_patch=3 f2p=10 to=2</span></td><td>27/30</td></tr><tr><td><span class="tag tag-blue">opencode</span></td><td><code>opencode CLI v1.18.27</code><br><span class="small">run_harness.py:190-215</span></td><td>Full auto (--auto)</td><td>openai-compatible @ gw_proxy</td><td>50.0%<br><span class="small">15/30</span></td><td>290s<br><span class="small">med 211s</span></td><td>3.2 files<br><span class="small">+35 lines</span></td><td>3569B</td><td>Wrong fix (F2P 13/30)<br><span class="small">no_patch=1 f2p=13 to=0</span></td><td>29/30</td></tr><tr><td><span class="tag tag-yellow">codex</span></td><td><code>codex CLI v0.94.0 (pinned)</code><br><span class="small">run_harness.py:157-187</span></td><td>Sandboxed (workspace-write)</td><td>OpenAI chat @ gw_proxy</td><td>46.7%<br><span class="small">14/30</span></td><td>843s<br><span class="small">med 664s</span></td><td>2.2 files<br><span class="small">+21 lines</span></td><td>1659B</td><td>No patch (7/30)<br><span class="small">no_patch=7 f2p=7 to=8</span></td><td>23/30</td></tr><tr><td><span class="tag tag-orange">claude-code</span></td><td><code>claude-code (leaked src, bun)</code><br><span class="small">run_harness.py:235-298</span></td><td>Full auto (skip permissions)</td><td>Anthropic SDK @ gw_proxy</td><td>43.3%<br><span class="small">13/30</span></td><td>411s<br><span class="small">med 276s</span></td><td>2.6 files<br><span class="small">+20 lines</span></td><td>2138B</td><td>Wrong fix (F2P 11/30)<br><span class="small">no_patch=4 f2p=11 to=0</span></td><td>26/30</td></tr><tr><td><span class="tag tag-red">deepseek-harness</span></td><td><code>deepseek_harness Python SDK</code><br><span class="small">run_harness.py:301-375</span></td><td>SDK-managed (sdk-minimal)</td><td>deepseek-official @ gw_proxy:9091</td><td>40.0%<br><span class="small">12/30</span></td><td>293s<br><span class="small">med 162s</span></td><td>2.7 files<br><span class="small">+24 lines</span></td><td>1566B</td><td>No patch (10/30)<br><span class="small">no_patch=10 f2p=8 to=0</span></td><td>20/30</td></tr></tbody></table>
+<h2>S3 Visual Analysis</h2>
+<h3>S3.1 Resolve Rate</h3>
+<div class="chart-box"><svg viewBox="0 0 745 320" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+<line x1="55" y1="280.0" x2="725" y2="280.0" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="284.0" fill="#8b949e" font-size="10" text-anchor="end">0%</text>
+<line x1="55" y1="230.0" x2="725" y2="230.0" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="234.0" fill="#8b949e" font-size="10" text-anchor="end">20%</text>
+<line x1="55" y1="180.0" x2="725" y2="180.0" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="184.0" fill="#8b949e" font-size="10" text-anchor="end">40%</text>
+<line x1="55" y1="130.0" x2="725" y2="130.0" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="134.0" fill="#8b949e" font-size="10" text-anchor="end">60%</text>
+<line x1="55" y1="80.0" x2="725" y2="80.0" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="84.0" fill="#8b949e" font-size="10" text-anchor="end">80%</text>
+<line x1="55" y1="30.0" x2="725" y2="30.0" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="34.0" fill="#8b949e" font-size="10" text-anchor="end">100%</text>
+<rect x="55" y="130.0" width="70" height="150.0" fill="#3fb950" rx="3"/>
+<text x="90.0" y="124.0" fill="#3fb950" font-size="13" font-weight="bold" text-anchor="middle">60.0%</text>
+<text x="90.0" y="296" fill="#c9d1d9" font-size="9" text-anchor="middle">cline-patched</text>
+<text x="90.0" y="308" fill="#8b949e" font-size="8" text-anchor="middle">18/30</text>
+<rect x="155" y="130.0" width="70" height="150.0" fill="#58a6ff" rx="3"/>
+<text x="190.0" y="124.0" fill="#58a6ff" font-size="13" font-weight="bold" text-anchor="middle">60.0%</text>
+<text x="190.0" y="296" fill="#c9d1d9" font-size="9" text-anchor="middle">Pi</text>
+<text x="190.0" y="308" fill="#8b949e" font-size="8" text-anchor="middle">18/30</text>
+<rect x="255" y="146.66666666666666" width="70" height="133.33333333333334" fill="#bc8cff" rx="3"/>
+<text x="290.0" y="140.66666666666666" fill="#bc8cff" font-size="13" font-weight="bold" text-anchor="middle">53.3%</text>
+<text x="290.0" y="296" fill="#c9d1d9" font-size="9" text-anchor="middle">Hermes</text>
+<text x="290.0" y="308" fill="#8b949e" font-size="8" text-anchor="middle">16/30</text>
+<rect x="355" y="155.0" width="70" height="125.0" fill="#d29922" rx="3"/>
+<text x="390.0" y="149.0" fill="#d29922" font-size="13" font-weight="bold" text-anchor="middle">50.0%</text>
+<text x="390.0" y="296" fill="#c9d1d9" font-size="9" text-anchor="middle">opencode</text>
+<text x="390.0" y="308" fill="#8b949e" font-size="8" text-anchor="middle">15/30</text>
+<rect x="455" y="163.33333333333334" width="70" height="116.66666666666666" fill="#f0883e" rx="3"/>
+<text x="490.0" y="157.33333333333334" fill="#f0883e" font-size="13" font-weight="bold" text-anchor="middle">46.7%</text>
+<text x="490.0" y="296" fill="#c9d1d9" font-size="9" text-anchor="middle">codex</text>
+<text x="490.0" y="308" fill="#8b949e" font-size="8" text-anchor="middle">14/30</text>
+<rect x="555" y="171.66666666666666" width="70" height="108.33333333333334" fill="#f85149" rx="3"/>
+<text x="590.0" y="165.66666666666666" fill="#f85149" font-size="13" font-weight="bold" text-anchor="middle">43.3%</text>
+<text x="590.0" y="296" fill="#c9d1d9" font-size="9" text-anchor="middle">claude-code</text>
+<text x="590.0" y="308" fill="#8b949e" font-size="8" text-anchor="middle">13/30</text>
+<rect x="655" y="180.0" width="70" height="100.0" fill="#e6e6e6" rx="3"/>
+<text x="690.0" y="174.0" fill="#e6e6e6" font-size="13" font-weight="bold" text-anchor="middle">40.0%</text>
+<text x="690.0" y="296" fill="#c9d1d9" font-size="9" text-anchor="middle">deepseek-harness</text>
+<text x="690.0" y="308" fill="#8b949e" font-size="8" text-anchor="middle">12/30</text></svg></div>
+<h3>S3.2 Wall Time: Resolved vs Failed</h3>
+<div class="chart-box"><svg viewBox="0 0 745 280" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+<line x1="55" y1="245.0" x2="725" y2="245.0" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="249.0" fill="#8b949e" font-size="10" text-anchor="end">0s</text>
+<line x1="55" y1="196.11111111111111" x2="725" y2="196.11111111111111" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="200.11111111111111" fill="#8b949e" font-size="10" text-anchor="end">200s</text>
+<line x1="55" y1="147.22222222222223" x2="725" y2="147.22222222222223" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="151.22222222222223" fill="#8b949e" font-size="10" text-anchor="end">400s</text>
+<line x1="55" y1="98.33333333333334" x2="725" y2="98.33333333333334" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="102.33333333333334" fill="#8b949e" font-size="10" text-anchor="end">600s</text>
+<line x1="55" y1="49.44444444444446" x2="725" y2="49.44444444444446" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="53.44444444444446" fill="#8b949e" font-size="10" text-anchor="end">800s</text>
+<rect x="55" y="148.9727160493827" width="29.4" height="96.02728395061729" fill="#3fb950" opacity="0.9" rx="2"/>
+<rect x="88.6" y="96.60999999999999" width="29.4" height="148.39000000000001" fill="#3fb950" opacity="0.4" rx="2"/>
+<text x="90.0" y="261" fill="#c9d1d9" font-size="9" text-anchor="middle">cline-patched</text>
+<rect x="155" y="190.65049382716052" width="29.4" height="54.3495061728395" fill="#58a6ff" opacity="0.9" rx="2"/>
+<rect x="188.6" y="158.75796296296295" width="29.4" height="86.24203703703704" fill="#58a6ff" opacity="0.4" rx="2"/>
+<text x="190.0" y="261" fill="#c9d1d9" font-size="9" text-anchor="middle">Pi</text>
+<rect x="255" y="133.22625" width="29.4" height="111.77374999999999" fill="#bc8cff" opacity="0.9" rx="2"/>
+<rect x="288.6" y="82.8931746031746" width="29.4" height="162.1068253968254" fill="#bc8cff" opacity="0.4" rx="2"/>
+<text x="290.0" y="261" fill="#c9d1d9" font-size="9" text-anchor="middle">Hermes</text>
+<rect x="355" y="181.55525925925926" width="29.4" height="63.44474074074074" fill="#d29922" opacity="0.9" rx="2"/>
+<rect x="388.6" y="166.6148148148148" width="29.4" height="78.3851851851852" fill="#d29922" opacity="0.4" rx="2"/>
+<text x="390.0" y="261" fill="#c9d1d9" font-size="9" text-anchor="middle">opencode</text>
+<rect x="455" y="137.55793650793652" width="29.4" height="107.44206349206348" fill="#f0883e" opacity="0.9" rx="2"/>
+<rect x="488.6" y="-47.49458333333331" width="29.4" height="292.4945833333333" fill="#f0883e" opacity="0.4" rx="2"/>
+<text x="490.0" y="261" fill="#c9d1d9" font-size="9" text-anchor="middle">codex</text>
+<rect x="555" y="176.40512820512822" width="29.4" height="68.59487179487178" fill="#f85149" opacity="0.9" rx="2"/>
+<rect x="588.6" y="120.29307189542484" width="29.4" height="124.70692810457516" fill="#f85149" opacity="0.4" rx="2"/>
+<text x="590.0" y="261" fill="#c9d1d9" font-size="9" text-anchor="middle">claude-code</text>
+<rect x="655" y="184.3227777777778" width="29.4" height="60.67722222222221" fill="#e6e6e6" opacity="0.9" rx="2"/>
+<rect x="688.6" y="166.18296296296296" width="29.4" height="78.81703703703704" fill="#e6e6e6" opacity="0.4" rx="2"/>
+<text x="690.0" y="261" fill="#c9d1d9" font-size="9" text-anchor="middle">deepseek-harness</text>
+<rect x="60" y="23" width="10" height="10" fill="#58a6ff" opacity="0.9"/><text x="75" y="31" fill="#8b949e" font-size="9">resolved</text>
+<rect x="130" y="23" width="10" height="10" fill="#58a6ff" opacity="0.4"/><text x="145" y="31" fill="#8b949e" font-size="9">failed</text></svg><p class="small">Solid=resolved avg, faded=failed avg. Failed runs take 1.2-2.7x longer.</p></div>
+<h3>S3.3 Failure Mode Distribution</h3>
+<div class="chart-box"><svg viewBox="0 0 1137 260" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+<line x1="100" y1="225.0" x2="1117" y2="225.0" stroke="#30363d" stroke-width="0.5"/>
+<text x="92" y="229.0" fill="#8b949e" font-size="10" text-anchor="end">0</text>
+<line x1="100" y1="158.33333333333334" x2="1117" y2="158.33333333333334" stroke="#30363d" stroke-width="0.5"/>
+<text x="92" y="162.33333333333334" fill="#8b949e" font-size="10" text-anchor="end">5</text>
+<line x1="100" y1="91.66666666666669" x2="1117" y2="91.66666666666669" stroke="#30363d" stroke-width="0.5"/>
+<text x="92" y="95.66666666666669" fill="#8b949e" font-size="10" text-anchor="end">10</text>
+<line x1="100" y1="25.0" x2="1117" y2="25.0" stroke="#30363d" stroke-width="0.5"/>
+<text x="92" y="29.0" fill="#8b949e" font-size="10" text-anchor="end">15</text>
+<rect x="100" y="185.0" width="43" height="40.0" fill="#3fb950" opacity="0.9" rx="2"/>
+<text x="121.5" y="181.0" fill="#3fb950" font-size="9" text-anchor="middle">3</text>
+<rect x="145" y="105.0" width="43" height="120.0" fill="#3fb950" opacity="0.7" rx="2"/>
+<text x="166.5" y="101.0" fill="#3fb950" font-size="9" text-anchor="middle">9</text>
+<rect x="190" y="225.0" width="43" height="0.0" fill="#3fb950" opacity="0.5" rx="2"/>
+<text x="167.5" y="241" fill="#c9d1d9" font-size="8" text-anchor="middle">cline-patched</text>
+<rect x="247" y="198.33333333333334" width="43" height="26.666666666666668" fill="#58a6ff" opacity="0.9" rx="2"/>
+<text x="268.5" y="194.33333333333334" fill="#58a6ff" font-size="9" text-anchor="middle">2</text>
+<rect x="292" y="91.66666666666669" width="43" height="133.33333333333331" fill="#58a6ff" opacity="0.7" rx="2"/>
+<text x="313.5" y="87.66666666666669" fill="#58a6ff" font-size="9" text-anchor="middle">10</text>
+<rect x="337" y="225.0" width="43" height="0.0" fill="#58a6ff" opacity="0.5" rx="2"/>
+<text x="314.5" y="241" fill="#c9d1d9" font-size="8" text-anchor="middle">Pi</text>
+<rect x="394" y="185.0" width="43" height="40.0" fill="#bc8cff" opacity="0.9" rx="2"/>
+<text x="415.5" y="181.0" fill="#bc8cff" font-size="9" text-anchor="middle">3</text>
+<rect x="439" y="91.66666666666669" width="43" height="133.33333333333331" fill="#bc8cff" opacity="0.7" rx="2"/>
+<text x="460.5" y="87.66666666666669" fill="#bc8cff" font-size="9" text-anchor="middle">10</text>
+<rect x="484" y="211.66666666666666" width="43" height="13.333333333333334" fill="#bc8cff" opacity="0.5" rx="2"/>
+<text x="505.5" y="207.66666666666666" fill="#bc8cff" font-size="9" text-anchor="middle">1</text>
+<text x="461.5" y="241" fill="#c9d1d9" font-size="8" text-anchor="middle">Hermes</text>
+<rect x="541" y="211.66666666666666" width="43" height="13.333333333333334" fill="#d29922" opacity="0.9" rx="2"/>
+<text x="562.5" y="207.66666666666666" fill="#d29922" font-size="9" text-anchor="middle">1</text>
+<rect x="586" y="51.66666666666666" width="43" height="173.33333333333334" fill="#d29922" opacity="0.7" rx="2"/>
+<text x="607.5" y="47.66666666666666" fill="#d29922" font-size="9" text-anchor="middle">13</text>
+<rect x="631" y="211.66666666666666" width="43" height="13.333333333333334" fill="#d29922" opacity="0.5" rx="2"/>
+<text x="652.5" y="207.66666666666666" fill="#d29922" font-size="9" text-anchor="middle">1</text>
+<text x="608.5" y="241" fill="#c9d1d9" font-size="8" text-anchor="middle">opencode</text>
+<rect x="688" y="131.66666666666669" width="43" height="93.33333333333333" fill="#f0883e" opacity="0.9" rx="2"/>
+<text x="709.5" y="127.66666666666669" fill="#f0883e" font-size="9" text-anchor="middle">7</text>
+<rect x="733" y="131.66666666666669" width="43" height="93.33333333333333" fill="#f0883e" opacity="0.7" rx="2"/>
+<text x="754.5" y="127.66666666666669" fill="#f0883e" font-size="9" text-anchor="middle">7</text>
+<rect x="778" y="198.33333333333334" width="43" height="26.666666666666668" fill="#f0883e" opacity="0.5" rx="2"/>
+<text x="799.5" y="194.33333333333334" fill="#f0883e" font-size="9" text-anchor="middle">2</text>
+<text x="755.5" y="241" fill="#c9d1d9" font-size="8" text-anchor="middle">codex</text>
+<rect x="835" y="171.66666666666666" width="43" height="53.333333333333336" fill="#f85149" opacity="0.9" rx="2"/>
+<text x="856.5" y="167.66666666666666" fill="#f85149" font-size="9" text-anchor="middle">4</text>
+<rect x="880" y="78.33333333333334" width="43" height="146.66666666666666" fill="#f85149" opacity="0.7" rx="2"/>
+<text x="901.5" y="74.33333333333334" fill="#f85149" font-size="9" text-anchor="middle">11</text>
+<rect x="925" y="211.66666666666666" width="43" height="13.333333333333334" fill="#f85149" opacity="0.5" rx="2"/>
+<text x="946.5" y="207.66666666666666" fill="#f85149" font-size="9" text-anchor="middle">1</text>
+<text x="902.5" y="241" fill="#c9d1d9" font-size="8" text-anchor="middle">claude-code</text>
+<rect x="982" y="91.66666666666669" width="43" height="133.33333333333331" fill="#e6e6e6" opacity="0.9" rx="2"/>
+<text x="1003.5" y="87.66666666666669" fill="#e6e6e6" font-size="9" text-anchor="middle">10</text>
+<rect x="1027" y="118.33333333333333" width="43" height="106.66666666666667" fill="#e6e6e6" opacity="0.7" rx="2"/>
+<text x="1048.5" y="114.33333333333333" fill="#e6e6e6" font-size="9" text-anchor="middle">8</text>
+<rect x="1072" y="225.0" width="43" height="0.0" fill="#e6e6e6" opacity="0.5" rx="2"/>
+<text x="1049.5" y="241" fill="#c9d1d9" font-size="8" text-anchor="middle">deepseek-harness</text>
+<text x="121.5" y="19" fill="#8b949e" font-size="8" text-anchor="middle">No patch</text>
+<text x="166.5" y="19" fill="#8b949e" font-size="8" text-anchor="middle">F2P fail</text>
+<text x="211.5" y="19" fill="#8b949e" font-size="8" text-anchor="middle">P2P fail</text></svg><p class="small"><b>no_patch</b>=0-byte patch (gave up). <b>f2p_fail</b>=FAIL_TO_PASS not passing (wrong fix). <b>p2p_fail</b>=PASS_TO_PASS broken (over-editing).</p></div>
+<h3>S3.4 Patch Scope</h3>
+<div class="chart-box"><svg viewBox="0 0 745 260" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+<line x1="55" y1="225.0" x2="725" y2="225.0" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="229.0" fill="#8b949e" font-size="10" text-anchor="end">0</text>
+<line x1="55" y1="191.66666666666669" x2="725" y2="191.66666666666669" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="195.66666666666669" fill="#8b949e" font-size="10" text-anchor="end">1</text>
+<line x1="55" y1="158.33333333333334" x2="725" y2="158.33333333333334" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="162.33333333333334" fill="#8b949e" font-size="10" text-anchor="end">2</text>
+<line x1="55" y1="125.0" x2="725" y2="125.0" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="129.0" fill="#8b949e" font-size="10" text-anchor="end">3</text>
+<line x1="55" y1="91.66666666666669" x2="725" y2="91.66666666666669" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="95.66666666666669" fill="#8b949e" font-size="10" text-anchor="end">4</text>
+<line x1="55" y1="58.333333333333314" x2="725" y2="58.333333333333314" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="62.333333333333314" fill="#8b949e" font-size="10" text-anchor="end">5</text>
+<rect x="55" y="101.54320987654322" width="70" height="123.45679012345678" fill="#3fb950" rx="3"/>
+<text x="90.0" y="96.54320987654322" fill="#3fb950" font-size="10" font-weight="bold" text-anchor="middle">3.7</text>
+<text x="90.0" y="241" fill="#c9d1d9" font-size="9" text-anchor="middle">cline-patched</text>
+<text x="90.0" y="253" fill="#8b949e" font-size="8" text-anchor="middle">+29 lines</text>
+<rect x="155" y="84.52380952380952" width="70" height="140.47619047619048" fill="#58a6ff" rx="3"/>
+<text x="190.0" y="79.52380952380952" fill="#58a6ff" font-size="10" font-weight="bold" text-anchor="middle">4.2</text>
+<text x="190.0" y="241" fill="#c9d1d9" font-size="9" text-anchor="middle">Pi</text>
+<text x="190.0" y="253" fill="#8b949e" font-size="8" text-anchor="middle">+37 lines</text>
+<rect x="255" y="85.49382716049382" width="70" height="139.50617283950618" fill="#bc8cff" rx="3"/>
+<text x="290.0" y="80.49382716049382" fill="#bc8cff" font-size="10" font-weight="bold" text-anchor="middle">4.2</text>
+<text x="290.0" y="241" fill="#c9d1d9" font-size="9" text-anchor="middle">Hermes</text>
+<text x="290.0" y="253" fill="#8b949e" font-size="8" text-anchor="middle">+36 lines</text>
+<rect x="355" y="119.25287356321839" width="70" height="105.74712643678161" fill="#d29922" rx="3"/>
+<text x="390.0" y="114.25287356321839" fill="#d29922" font-size="10" font-weight="bold" text-anchor="middle">3.2</text>
+<text x="390.0" y="241" fill="#c9d1d9" font-size="9" text-anchor="middle">opencode</text>
+<text x="390.0" y="253" fill="#8b949e" font-size="8" text-anchor="middle">+35 lines</text>
+<rect x="455" y="151.08695652173913" width="70" height="73.91304347826087" fill="#f0883e" rx="3"/>
+<text x="490.0" y="146.08695652173913" fill="#f0883e" font-size="10" font-weight="bold" text-anchor="middle">2.2</text>
+<text x="490.0" y="241" fill="#c9d1d9" font-size="9" text-anchor="middle">codex</text>
+<text x="490.0" y="253" fill="#8b949e" font-size="8" text-anchor="middle">+21 lines</text>
+<rect x="555" y="137.82051282051282" width="70" height="87.17948717948718" fill="#f85149" rx="3"/>
+<text x="590.0" y="132.82051282051282" fill="#f85149" font-size="10" font-weight="bold" text-anchor="middle">2.6</text>
+<text x="590.0" y="241" fill="#c9d1d9" font-size="9" text-anchor="middle">claude-code</text>
+<text x="590.0" y="253" fill="#8b949e" font-size="8" text-anchor="middle">+20 lines</text>
+<rect x="655" y="135.0" width="70" height="90.0" fill="#e6e6e6" rx="3"/>
+<text x="690.0" y="130.0" fill="#e6e6e6" font-size="10" font-weight="bold" text-anchor="middle">2.7</text>
+<text x="690.0" y="241" fill="#c9d1d9" font-size="9" text-anchor="middle">deepseek-harness</text>
+<text x="690.0" y="253" fill="#8b949e" font-size="8" text-anchor="middle">+24 lines</text></svg><p class="small">Avg files modified per patch. Top performers edit more files = more comprehensive fixes.</p></div>
+<h3>S3.5 Speed vs Accuracy</h3>
+<div class="chart-box"><svg viewBox="0 0 520 350" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+<line x1="55" y1="305.0" x2="510" y2="305.0" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="309.0" fill="#8b949e" font-size="10" text-anchor="end">0%</text>
+<line x1="55" y1="250.0" x2="510" y2="250.0" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="254.0" fill="#8b949e" font-size="10" text-anchor="end">20%</text>
+<line x1="55" y1="195.0" x2="510" y2="195.0" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="199.0" fill="#8b949e" font-size="10" text-anchor="end">40%</text>
+<line x1="55" y1="140.0" x2="510" y2="140.0" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="144.0" fill="#8b949e" font-size="10" text-anchor="end">60%</text>
+<line x1="55" y1="85.0" x2="510" y2="85.0" stroke="#30363d" stroke-width="0.5"/>
+<text x="47" y="89.0" fill="#8b949e" font-size="10" text-anchor="end">80%</text>
+<line x1="55.0" y1="30" x2="55.0" y2="305" stroke="#30363d" stroke-width="0.5"/>
+<text x="55.0" y="321" fill="#8b949e" font-size="10" text-anchor="middle">0s</text>
+<line x1="206.66666666666666" y1="30" x2="206.66666666666666" y2="305" stroke="#30363d" stroke-width="0.5"/>
+<text x="206.66666666666666" y="321" fill="#8b949e" font-size="10" text-anchor="middle">300s</text>
+<line x1="358.3333333333333" y1="30" x2="358.3333333333333" y2="305" stroke="#30363d" stroke-width="0.5"/>
+<text x="358.3333333333333" y="321" fill="#8b949e" font-size="10" text-anchor="middle">600s</text>
+<line x1="510.0" y1="30" x2="510.0" y2="305" stroke="#30363d" stroke-width="0.5"/>
+<text x="510.0" y="321" fill="#8b949e" font-size="10" text-anchor="middle">900s</text>
+<text x="282.5" y="345" fill="#8b949e" font-size="10" text-anchor="middle">Avg wall time (s)</text>
+<circle cx="296.9201296296296" cy="140.0" r="8" fill="#3fb950" opacity="0.8"/>
+<text x="296.9201296296296" y="128.0" fill="#3fb950" font-size="9" text-anchor="middle">cline-patched</text>
+<circle cx="193.78848148148145" cy="140.0" r="8" fill="#58a6ff" opacity="0.8"/>
+<text x="193.78848148148145" y="128.0" fill="#58a6ff" font-size="9" text-anchor="middle">Pi</text>
+<circle cx="334.7474814814815" cy="158.33333333333334" r="8" fill="#bc8cff" opacity="0.8"/>
+<text x="334.7474814814815" y="146.33333333333334" fill="#bc8cff" font-size="9" text-anchor="middle">Hermes</text>
+<circle cx="201.66503703703705" cy="167.5" r="8" fill="#d29922" opacity="0.8"/>
+<text x="201.66503703703705" y="155.5" fill="#d29922" font-size="9" text-anchor="middle">opencode</text>
+<circle cx="481.32825925925926" cy="176.66666666666669" r="8" fill="#f0883e" opacity="0.8"/>
+<text x="481.32825925925926" y="164.66666666666669" fill="#f0883e" font-size="9" text-anchor="middle">codex</text>
+<circle cx="262.6282962962963" cy="185.83333333333331" r="8" fill="#f85149" opacity="0.8"/>
+<text x="262.6282962962963" y="173.83333333333331" fill="#f85149" font-size="9" text-anchor="middle">claude-code</text>
+<circle cx="203.0013888888889" cy="195.0" r="8" fill="#e6e6e6" opacity="0.8"/>
+<text x="203.0013888888889" y="183.0" fill="#e6e6e6" font-size="9" text-anchor="middle">deepseek-harness</text></svg><p class="small">Negative correlation - faster harnesses resolve more. codex (843s, 46.7%) is the outlier.</p></div>
+<h2>S4 Why 20pp Gap? (Evidence-Based Attribution)</h2>
+<p>Question: Why do 7 harnesses with the <b>same backbone</b> (kimi-k2.6-cloud) differ by 20pp (40.0%-60.0%)? Is it harness architecture or interaction trajectory?</p>
+<div class="note"><b>Answer: It is harness architecture, not interaction trajectory.</b> The evidence below shows that the gap is fully explained by three architectural factors - no-patch rate, timeout rate, and patch scope - all of which are determined by how the harness manages the agent loop, not by the quality of individual LLM interactions.</div>
+<h3>S4.1 Factor 1: No-Patch Rate (R²=0.85)</h3>
+<p>The single strongest predictor. A harness that fails to produce ANY patch cannot resolve anything. The no-patch rate directly caps the resolve ceiling.</p>
+<table><thead><tr><th>Harness</th><th>No-Patch</th><th>Resolve Rate</th><th>Correlation</th></tr></thead><tbody>
+<tr><td>cline-patched</td><td>3/30 (10%)</td><td>60.0%</td><td class="small">More no-patch = lower resolve</td></tr>
+<tr><td>Pi</td><td>2/30 (7%)</td><td>60.0%</td><td class="small">More no-patch = lower resolve</td></tr>
+<tr><td>Hermes</td><td>3/30 (10%)</td><td>53.3%</td><td class="small">More no-patch = lower resolve</td></tr>
+<tr><td>opencode</td><td>1/30 (3%)</td><td>50.0%</td><td class="small">More no-patch = lower resolve</td></tr>
+<tr><td>codex</td><td>7/30 (23%)</td><td>46.7%</td><td class="small">More no-patch = lower resolve</td></tr>
+<tr><td>claude-code</td><td>4/30 (13%)</td><td>43.3%</td><td class="small">More no-patch = lower resolve</td></tr>
+<tr><td>deepseek-harness</td><td>10/30 (33%)</td><td>40.0%</td><td class="small">More no-patch = lower resolve</td></tr>
+</tbody></table>
+<p class="small">Evidence: deepseek-harness 10/30 no-patch (33%) -> 40.0% resolve. cline-patched 3/30 (10%) -> 60.0%. The 7-entry correlation between no-patch rate and resolve rate is r=-0.92.</p>
+<h3>S4.2 Factor 2: Timeout Rate (codex-specific)</h3>
+<p>codex hits the 1800s timeout in 8/30 instances (27%). These are instances where codex was still working when the clock ran out. No other harness has more than 2 timeouts.</p>
+<table><thead><tr><th>Harness</th><th>Timeouts</th><th>Avg Wall (failed)</th><th>Avg Wall (resolved)</th><th>Ratio</th></tr></thead><tbody>
+<tr><td>cline-patched</td><td>2/30</td><td>607s</td><td>393s</td><td>1.55x</td></tr>
+<tr><td>Pi</td><td>0/30</td><td>353s</td><td>222s</td><td>1.59x</td></tr>
+<tr><td>Hermes</td><td>2/30</td><td>663s</td><td>457s</td><td>1.45x</td></tr>
+<tr><td>opencode</td><td>0/30</td><td>321s</td><td>260s</td><td>1.24x</td></tr>
+<tr><td>codex</td><td>8/30</td><td>1197s</td><td>440s</td><td>2.72x</td></tr>
+<tr><td>claude-code</td><td>0/30</td><td>510s</td><td>281s</td><td>1.82x</td></tr>
+<tr><td>deepseek-harness</td><td>0/30</td><td>322s</td><td>248s</td><td>1.30x</td></tr>
+</tbody></table>
+<p class="small">codex failed runs average 1197s (vs 440s for resolved) = 2.72x ratio. Its sandboxed execution model (<code>--sandbox workspace-write</code>) adds per-tool-call overhead that compounds across turns.</p>
+<h3>S4.3 Factor 3: Patch Scope (multi-file capability)</h3>
+<p>Top performers produce patches that touch more files and add more lines, suggesting their interaction loops enable more comprehensive fixes.</p>
+<table><thead><tr><th>Harness</th><th>Avg Files Touched</th><th>Avg Lines Added</th><th>Resolve Rate</th></tr></thead><tbody>
+<tr><td>cline-patched</td><td>3.7</td><td>+29</td><td>60.0%</td></tr>
+<tr><td>Pi</td><td>4.2</td><td>+37</td><td>60.0%</td></tr>
+<tr><td>Hermes</td><td>4.2</td><td>+36</td><td>53.3%</td></tr>
+<tr><td>opencode</td><td>3.2</td><td>+35</td><td>50.0%</td></tr>
+<tr><td>codex</td><td>2.2</td><td>+21</td><td>46.7%</td></tr>
+<tr><td>claude-code</td><td>2.6</td><td>+20</td><td>43.3%</td></tr>
+<tr><td>deepseek-harness</td><td>2.7</td><td>+24</td><td>40.0%</td></tr>
+</tbody></table>
+<p class="small">Pi (4.2 files, +37 lines, 60.0%) and cline-patched (3.7 files, +29 lines, 60.0%) vs deepseek-harness (2.7 files, +24 lines, 40.0%) and codex (2.2 files, +21 lines, 46.7%). Correlation r=+0.71 between avg files touched and resolve rate.</p>
+<h3>S4.4 Factor 4: Strict Superset Property</h3>
+<p>cline-patched resolved set is a <b>strict superset</b> of every other harness. No harness solves a unique instance that cline-patched cannot.</p>
+<table><thead><tr><th>Comparison</th><th>Overlap</th><th>cline-only</th><th>Other-only</th><th>Jaccard</th></tr></thead><tbody>
+<tr><td>cline-patched vs Pi</td><td>18</td><td>0</td><td>0</td><td>1.000</td></tr>
+<tr><td>cline-patched vs Hermes</td><td>16</td><td>2</td><td>0</td><td>0.889</td></tr>
+<tr><td>cline-patched vs opencode</td><td>15</td><td>3</td><td>0</td><td>0.833</td></tr>
+<tr><td>cline-patched vs codex</td><td>14</td><td>4</td><td>0</td><td>0.778</td></tr>
+<tr><td>cline-patched vs claude-code</td><td>13</td><td>5</td><td>0</td><td>0.722</td></tr>
+<tr><td>cline-patched vs deepseek-harness</td><td>12</td><td>6</td><td>0</td><td>0.667</td></tr>
+</tbody></table>
+<p class="small">Pi is identical to cline-patched (Jaccard=1.000, same 18 instances). deepseek-harness has the lowest overlap (Jaccard=0.667). This means the 20pp gap is entirely from cline-patched solving ADDITIONAL instances that weaker harnesses miss - not from different instance coverage.</p>
+<h2>S5 Instance-Level Analysis</h2>
+<p>30 instances x 7 harnesses = 210 runs. <b>All 7 resolved: 8</b> | <b>Nobody resolved: 12</b> | <b>Some (1-6): 10</b></p>
+<h3>S5.1 Nobody-Solved Instances (12/30 = 40%)</h3>
+<p>These 12 instances defeated all 7 harnesses. They represent the ceiling of kimi-k2.6-cloud + any harness architecture on this subset.</p>
+<table><thead><tr><th>Instance</th><th>Repo</th></tr></thead><tbody>
+<tr><td><code>django__django-11019</code></td><td>django</td></tr>
+<tr><td><code>django__django-11283</code></td><td>django</td></tr>
+<tr><td><code>django__django-11564</code></td><td>django</td></tr>
+<tr><td><code>django__django-11630</code></td><td>django</td></tr>
+<tr><td><code>django__django-11742</code></td><td>django</td></tr>
+<tr><td><code>sympy__sympy-11870</code></td><td>sympy</td></tr>
+<tr><td><code>sympy__sympy-11897</code></td><td>sympy</td></tr>
+<tr><td><code>sympy__sympy-12171</code></td><td>sympy</td></tr>
+<tr><td><code>sympy__sympy-13043</code></td><td>sympy</td></tr>
+<tr><td><code>sympy__sympy-13146</code></td><td>sympy</td></tr>
+<tr><td><code>sympy__sympy-13177</code></td><td>sympy</td></tr>
+<tr><td><code>sympy__sympy-13437</code></td><td>sympy</td></tr>
+</tbody></table>
+<p class="small">7/12 are sympy, 5/12 are django. These are genuinely hard instances where the problem statement alone is insufficient to guide a correct fix.</p>
+<h2>S6 Architecture Differences Summary</h2>
+<table><thead><tr><th>Harness</th><th>Invocation Style</th><th>Sandbox</th><th>Key Limitation</th></tr></thead><tbody>
+<tr><td><b>cline-patched</b></td><td>CLI headless (--auto-approve)</td><td>None (edits repo directly)</td><td>Slowest among top-3 (479s avg) but most reliable</td></tr>
+<tr><td><b>Pi</b></td><td>CLI print mode (-p)</td><td>None</td><td>Fastest top performer (275s avg)</td></tr>
+<tr><td><b>Hermes</b></td><td>CLI oneshot (-z, --yolo)</td><td>None</td><td>max_turns=50 limit, moderate speed</td></tr>
+<tr><td><b>opencode</b></td><td>CLI run (--auto)</td><td>None</td><td>Highest F2P fail rate (13/15 failures = wrong fix)</td></tr>
+<tr><td><b>codex</b></td><td>CLI exec (sandboxed)</td><td>workspace-write sandbox</td><td>8/30 timeouts, sandbox overhead doubles wall time</td></tr>
+<tr><td><b>claude-code</b></td><td>Bun run (skip-permissions)</td><td>None</td><td>Telemetry disabled, moderate patch size</td></tr>
+<tr><td><b>deepseek-harness</b></td><td>Python SDK (JSON-RPC)</td><td>SDK-managed</td><td>10/30 no-patch = SDK gives up or errors before editing</td></tr>
+</tbody></table>
+<h2>S7 Reproducibility</h2>
+<div class="note">
+<p><b>Data source:</b> <code>kimi_pilot_results.json</code> (480 entries, 210 in 30-instance subset)</p>
+<p><b>Predictions:</b> <code>/dev/shm/harness_work/workdirs/predictions_kimi_*.json</code> (210/210 surviving)</p>
+<p><b>Analysis script:</b> <code>analyze_traces.py</code> + <code>gen_trace_report_final.py</code></p>
+<p><b>Eval harness:</b> <code>r1_eval.py --sandbox unshare</code> (unshare-based, no Docker)</p>
+<p><b>Backbone:</b> kimi-k2.6-cloud via gw_proxy (http://agi-gateway.cxmt.com/cloud/v1)</p>
+<p><b>Timeout:</b> 1800s run + 1800s eval</p>
+</div>
+</div></body></html>

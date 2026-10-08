@@ -5,13 +5,33 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A ROUND-2 7×100 RUNNING 🔄 (launched 19:22, all 7 parallel, --resume) + INTERACTION TRACE REPORT DELIVERED ✅ + H-A 30×7 COMPLETE ✅ + H-B 7-WAY/3-WAY SOURCE ANALYSIS ✅
-已完成:       report_harness_interaction_traces.html (38307B, 7 sections, 5 SVG, 20pp gap attribution) ✅ · Round-2 instance selection (30 R1 + 70 stratified = 100) ✅ · Round-2 launched (7 harnesses parallel, --resume) ✅ · HARNESS_7WAY_COMPARISON.html cross-ref updated ✅ · H-B 7-way/3-way comparison · H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · 7 harnesses×30 (R1 COMPLETE) · SWEBENCH_COMPARE.html · report_harness_swebench_analysis.html (75647B)
-当前动作:     R187: ② trace report verified complete (38307B, 5 SVG, 0 ext links) + HARNESS_7WAY cross-ref added + ④ archived. ① Round-2 running: 7 harnesses × 100 instances parallel (--resume skips 30 R1). Progress: cline 31/100, pi 31/100, hermes 33/100, opencode 32/100, codex 300 (32 pending), claude-code 30/100, dsh 32/100. ETA ~10h (bottleneck=hermes 520s×70=10.1h) → ~05:30 Oct 9.
-下一步:       Monitor Round-2 progress; regenerate SWEBENCH_COMPARE.html when each harness completes; final 7×100 comparison table when all done.
+PHASE:        H-A ROUND-2 7×100 RUNNING 🔄 (all 7 parallel, --resume, codex 100% done) + 口径与并发 DISCLOSED ✅ + TRACE REPORT COPIED TO DOC ROOT ✅ + SWEBENCH_COMPARE.html UPGRADED TO 7×100 ✅
+已完成:       gen_round2_compare.py (7×100 with 复用/新跑 marker + 口径与并发 section) ✅ · report_harness_interaction_traces.html copied to doc root ✅ · SWEBENCH_COMPARE.html regenerated (47501B, 318 entries in 100-set) ✅ · report_harness_interaction_traces.html (38307B) ✅ · Round-2 launched (7 parallel, --resume) ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE · report_harness_swebench_analysis.html
+当前动作:     R188: operator ⑦ compliance — 口径与并发 section added to MEMORY + SWEBENCH_COMPARE.html; trace report copied to doc/BaiZe-ISEDA2027/ root; gen_round2_compare.py created (100 instances, R1/R2 split, monitoring table). Round-2 progress: codex 100/100✅, opencode 40/100, pi 37/100, cline 33/100, claude-code 36/100, dsh 36/100, hermes 36/100.
+下一步:       Monitor Round-2; regenerate SWEBENCH_COMPARE.html per harness completion; final 7×100 table + 口径 analysis when all done.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
+
+## ⚠️ 口径与并发 (Caliber & Concurrency Disclosure) — 2026-10-08⑦ 要求
+
+> **运维指令 2026-10-08⑦ 追认了并发变更（serial=1→7路并行），但要求显式披露口径。**
+
+| 维度 | Round-1 (30 条) | Round-2 (70 条新题) |
+|:--|:--|:--|
+| **并发** | **串行 (concurrency=1)** | **7 harness 全并行**（每个内部串行，7 个同时跑） |
+| **运行条件** | 无网关争用 | 7 harness 同时竞争网关配额/沙箱/I/O |
+| **--resume** | R2 复用 R1 的 30 条串行结果（不重跑） | 仅 70 条新题在 R2 并行条件下评测 |
+| **可比性** | ⚠️ **跨轮不可严格比**：同一张 7×100 表混了两种运行条件 | |
+
+**关键事实**：
+1. **30 条 R1 实例 = `--resume` 复用的首轮串行结果**；**70 条新题 = 本轮并行结果** → SWEBENCH_COMPARE.html 每行标注 `R1复用` / `R2新跑`。
+2. **codex 特例**：codex 在 R1 跑了 300 条超集（串行），其中 70 条与本轮 100-set 重叠 → codex 的 70 条"新跑"实际来自 **300 串行超集**，**非 R2 并行**。codex 全部 100 条均为串行。
+3. **监控指标**（本轮必须对比 R1 同 30 条）：`quota-blocked` / `timeout` / `no-patch` 率 → 若 R2 显著上升 ⇒ 判"并行污染" → 结论打折。SWEBENCH_COMPARE.html §2 监控表已生成。
+
+**当前 R2 监控快照**（2026-10-08 20:40，进行中）：
+- 各 harness R1 30 条：quota-blocked=0, infra-blocked=0（R1 串行无争用）✅
+- R2 新题进行中：暂无显著 quota-blocked 上升（需等全部完成后最终判定）
 
 ## 🗣️ 运维问答 · 2026-10-08④（下一步工作建议）
 
@@ -56,6 +76,17 @@ ERROR_COUNT:  0
 **③ 失败模式对训练的启示**：主要失败模式 f2p-fail（90%+），即「知道改哪里但改不对」。对 BaiZe RL——reward signal 应关注「patch 通过 f2p test」而非仅「patch apply」。依据：failure detail 分析。
 **④ 成本-性能 Pareto**：Pi（60.0%, 275s）vs deepseek-harness（40.0%, 293s）wall time 接近但差 20pp。依据：per-harness avg_wall_s + resolve rate。
 **⑤ "Nobody solved" 12 条作为难度基准**：12/30=40% 实例 7 个 harness 全失败，定义为「hard」实例。依据：instance-level ALL/NONE/SOME = 8/12/10。
+
+## 🆕 第一百八十八轮速览（2026-10-08 20:40）— ⑦ 口径披露 + 轨迹报告补落根目录 + SWEBENCH_COMPARE 升级 7×100
+
+- 📋 **运维指令 2026-10-08⑦ 执行**：
+  1. ✅ **口径与并发 section** 已新增到 MEMORY_HARNESS.md（serial vs 并行 · 30 复用 · 70 新跑 · codex 300 超集特例 · 监控指标对比）
+  2. ✅ **report_harness_interaction_traces.html 已复制到 `doc/BaiZe-ISEDA2027/` 根目录**（38307B，与其它线报告一致）
+  3. ✅ **gen_round2_compare.py 新建**：支持 100 instances（30 R1 + 70 stratified new），每行标注 `R1复用`/`R2新跑`，含 §2 监控表（R1 vs R2 quota-blocked/infra-blk），含口径与并发 disclosure section
+  4. ✅ **SWEBENCH_COMPARE.html 已刷新**（47501B，318 entries in 100-set，127 resolved）
+- 📊 **Round-2 进度**（20:40）：codex 100/100✅ · opencode 40/100 · pi 37/100 · cline 33/100 · claude-code 36/100 · dsh 36/100 · hermes 36/100（R1 30 条全部复用，R2 新题 3-10/70）
+- 📦 体积：TASK=32870B(32.1KB ✓) / MEMORY=自检中（本轮新增~2KB）
+
 
 ## 🆕 第一百八十六轮速览（2026-10-08 18:30）— 💓 Health-check heartbeat (Q&A delivered, all deliverables verified)
 
