@@ -1,48 +1,23 @@
-  [RESUME] Skipping 30 completed for cline-patched
+  [RESUME] Skipping 62 completed for cline-patched
 Serial kimi eval: harness=cline-patched model=kimi-k2.6-cloud
-  Total=100 Pending=70 Skip=30 Concurrency=1
+  Total=100 Pending=38 Skip=62 Concurrency=1
 
 ############################################################
-# [1/70] cline-patched x astropy__astropy-12907
-############################################################
-
-============================================================
-[SETUP] astropy__astropy-12907 for cline-patched
-  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
-  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
-
-[RUN] cline-patched on astropy__astropy-12907 ...
-  [EVAL] cline-patched on astropy__astropy-12907 ...
-  => astropy__astropy-12907 | cline-patched | patch-but-failed
-
-############################################################
-# [2/70] cline-patched x astropy__astropy-14182
+# [1/38] cline-patched x django__django-11815
 ############################################################
 
 ============================================================
-[SETUP] astropy__astropy-14182 for cline-patched
+[SETUP] django__django-11815 for cline-patched
 
-[RUN] cline-patched on astropy__astropy-14182 ...
-  [EVAL] cline-patched on astropy__astropy-14182 ...
-  => astropy__astropy-14182 | cline-patched | patch-but-failed
-
-############################################################
-# [3/70] cline-patched x django__django-10914
-############################################################
-
-============================================================
-[SETUP] django__django-10914 for cline-patched
-
-[RUN] cline-patched on django__django-10914 ...
-  [EVAL] cline-patched on django__django-10914 ...
-  => django__django-10914 | cline-patched | patch-but-failed
+[RUN] cline-patched on django__django-11815 ...
+  [EVAL] cline-patched on django__django-11815 ...
+  => django__django-11815 | cline-patched | patch-but-failed
 
 ############################################################
-# [4/70] cline-patched x django__django-11797
+# [2/38] cline-patched x django__django-11848
 ############################################################
 
 ============================================================
-[SETUP] django__django-11797 for cline-patched
-  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+[SETUP] django__django-11848 for cline-patched
 
-[RUN] cline-patched on django__django-11797 ...
+[RUN] cline-patched on django__django-11848 ...

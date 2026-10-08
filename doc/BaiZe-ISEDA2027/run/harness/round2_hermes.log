@@ -1,55 +1,12 @@
-  [RESUME] Skipping 30 completed for hermes
+  [RESUME] Skipping 63 completed for hermes
 Serial kimi eval: harness=hermes model=kimi-k2.6-cloud
-  Total=100 Pending=70 Skip=30 Concurrency=1
+  Total=100 Pending=37 Skip=63 Concurrency=1
 
 ############################################################
-# [1/70] hermes x astropy__astropy-12907
-############################################################
-
-============================================================
-[SETUP] astropy__astropy-12907 for hermes
-  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
-  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
-
-[RUN] hermes on astropy__astropy-12907 ...
-  [EVAL] hermes on astropy__astropy-12907 ...
-  => astropy__astropy-12907 | hermes | patch-but-failed
-
-############################################################
-# [2/70] hermes x astropy__astropy-14182
+# [1/37] hermes x astropy__astropy-14182
 ############################################################
 
 ============================================================
 [SETUP] astropy__astropy-14182 for hermes
-  => astropy__astropy-14182 | hermes | blocked
 
-############################################################
-# [3/70] hermes x django__django-10914
-############################################################
-
-============================================================
-[SETUP] django__django-10914 for hermes
-
-[RUN] hermes on django__django-10914 ...
-  [EVAL] hermes on django__django-10914 ...
-  => django__django-10914 | hermes | resolved
-
-############################################################
-# [4/70] hermes x django__django-11797
-############################################################
-
-============================================================
-[SETUP] django__django-11797 for hermes
-
-[RUN] hermes on django__django-11797 ...
-  [EVAL] hermes on django__django-11797 ...
-  => django__django-11797 | hermes | patch-but-failed
-
-############################################################
-# [5/70] hermes x django__django-11815
-############################################################
-
-============================================================
-[SETUP] django__django-11815 for hermes
-
-[RUN] hermes on django__django-11815 ...
+[RUN] hermes on astropy__astropy-14182 ...
