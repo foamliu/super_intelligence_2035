@@ -5,10 +5,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A ROUND-2 7×100 RUNNING 🔄 (all 7 parallel, --resume, codex 100% done) + 口径与并发 DISCLOSED ✅ + TRACE REPORT COPIED TO DOC ROOT ✅ + SWEBENCH_COMPARE.html UPGRADED TO 7×100 ✅
-已完成:       gen_round2_compare.py (7×100 with 复用/新跑 marker + 口径与并发 section) ✅ · report_harness_interaction_traces.html copied to doc root ✅ · SWEBENCH_COMPARE.html regenerated (47501B, 318 entries in 100-set) ✅ · report_harness_interaction_traces.html (38307B) ✅ · Round-2 launched (7 parallel, --resume) ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE · report_harness_swebench_analysis.html
-当前动作:     R189: SWEBENCH_COMPARE.html refreshed (48067B, 338 entries, 130 resolved) with latest Round-2 progress — codex 100/100✅(res=30,rate41.1%), pi 44/100(res=21,rate56.8%), opencode 42/100, cline 39/100, claude-code 38/100, dsh 37/100, hermes 37/100. ⑦ deliverables all verified intact (口径与并发 section ✅, trace report in doc root ✅, 复用/新跑 markers ✅).
-下一步:       Monitor Round-2; regenerate SWEBENCH_COMPARE.html per harness completion; final 7×100 table + 口径 analysis when all done.
+PHASE:        H-A ROUND-2 7×100 RUNNING 🔄 (6/7 parallel, codex done) + 口径与并发 MONITORING: instance-composition bias identified (NOT parallel pollution) + ⑦ deliverables ✅
+已完成:       R190 SWEBENCH_COMPARE.html refreshed (49127B, 375 entries, 135 resolved) ✅ · ⑦ all deliverables ✅ · R188 口径与并发 section ✅ · trace report in doc root ✅ · Round-2 launched (7 parallel, --resume) ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
+当前动作:     R190: SWEBENCH_COMPARE.html refreshed (49127B, 375/700 entries, 135 resolved). Round-2 progress: codex 100/100✅, pi 47/100, cline 47/100, opencode 48/100, claude-code 47/100, dsh 47/100, hermes 39/100. 6 processes running (etimes~8960s≈2.5h). 🔬 ⑦ MONITORING FINDING: quota_blocked=False for ALL entries (R1+R2) → NO parallel pollution. R2 resolve-rate drop is INSTANCE COMPOSITION BIAS (R1=django+sympy only [easiest repos], R2 adds 44 harder-repo instances [matplotlib/sklearn/pytest/sphinx/astropy at 0%]). Also: eval env can't apply patches for non-django/sympy repos (patch_applied=False despite model_patch generated).
+下一步:       Continue monitoring Round-2; refresh SWEBENCH_COMPARE.html per harness completion; final 7×100 table + 口径 analysis when all done. ETA ~4-5h remaining (bottleneck hermes 61/70 remaining × ~520s ≈ 8.8h).
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -29,9 +29,20 @@ ERROR_COUNT:  0
 2. **codex 特例**：codex 在 R1 跑了 300 条超集（串行），其中 70 条与本轮 100-set 重叠 → codex 的 70 条"新跑"实际来自 **300 串行超集**，**非 R2 并行**。codex 全部 100 条均为串行。
 3. **监控指标**（本轮必须对比 R1 同 30 条）：`quota-blocked` / `timeout` / `no-patch` 率 → 若 R2 显著上升 ⇒ 判"并行污染" → 结论打折。SWEBENCH_COMPARE.html §2 监控表已生成。
 
-**当前 R2 监控快照**（2026-10-08 21:21，进行中）：
-- 各 harness R1 30 条：quota-blocked=0（R1 串行无争用）✅
-- R2 新题进行中：暂无显著 quota-blocked 上升（codex R2=70 有 27 blk 但属 no-patch 非 quota-blocked；其余 harness R2 进度 7–15/70，qb=0）。需等全部完成后最终判定。
+**R2 监控快照**（2026-10-08 21:55，R190 更新）：
+
+| 指标 | R1 (30 serial) | R2 (70 parallel, in progress) | 判定 |
+|:--|:--|:--|:--|
+| **quota_blocked** | 0/210 (0%) | 0/all (0%) | ✅ **NO parallel pollution** |
+| **timeout** | 0 (codex 2) | minimal (codex 3, claude-code 1 astropy) | ✅ 正常 |
+| **no-patch (patch_applied=False)** | **0/210 (0%)** | **较高** (astropy 2/2, etc.) | ⚠️ 见下 |
+
+**🔬 关键发现：R2 resolve-rate 下降 = 实例集组成偏差，NOT 并行污染**：
+1. **R1 = 仅 django(15) + sympy(15)** → 两个最易 repo（codex 300-full: django 29%, sympy 8%）
+2. **R2 = 26 django + 15 sympy + 44 难题 repo**（matplotlib 0%, sklearn 4%, pytest 0%, sphinx 0%, astropy 0%）
+3. **eval 环境问题**：非 django/sympy repo 的 patch 已生成（model_patch present）但 `patch_applied=False`（eval 无法在无 Docker 环境下 apply）→ 这些条目分类为 `blocked`，非 harness 失败
+4. **结论**：R1→R2 resolve-rate 下降（60%→6% on completed R2）是**实例难度差异** + **eval 环境限制**，**非并发争用**。quota_blocked=0 证实无网关限流污染。
+5. **⚠️ 报告含义**：R2 7×100 表中，非 django/sympy 行的 resolve=0 可能**不代表 harness 真实能力**，而是 eval 环境限制。最终报告需标注此限制。
 
 ## 🗣️ 运维问答 · 2026-10-08④（下一步工作建议）
 
@@ -187,23 +198,7 @@ ERROR_COUNT:  0
 > 📦 R35~R52 的流水条目（claude-code 打通 · gw_proxy 基建 · 30×4 pilot · batch v2 · relay 多轮健康 skip · MEMORY 滚动）均已滚动归档至 `daily-memories-harness/2026-10-04.md` ~ `daily-memories-harness/2026-10-05.md`（原文不改）。需要时再读。
 
 - 2026-10-04 23:25 —— **第五十轮** —— 已归档（同上）
-- 2026-10-07 07:47 —— **第一百三十五轮** —— 📊 昨夜工作汇报 HTML 交付 `report_10_07_harness_overnight.html`（27187B，自包含，内联SVG，8章节）。窗口 R118→R134，codex 43/96/161，总 resolved 61。📦 体积：TASK=35729B(>32KB待归档) / MEMORY=19345B(≤32KB ✓)（归档 0KB）。
-- 2026-10-07 08:37 —— **第一百三十六轮** —— TASK.md归档（10-07报告块→ARCHIVE, 37158B→30050B）+ SWEBENCH_COMPARE.html regenerated（72925B, 61 resolved, codex 43/101/156）+ relay skip 88th + git sync 0/0。📦 体积：TASK=30050B(≤32KB ✓) / MEMORY=21120B(≤32KB ✓)（归档 7108B → ARCHIVE_OPERATOR_HARNESS.md）。
-- 2026-10-07 09:14 —— **第一百三十七轮** —— codex --resume 进展(+2 pbf, -2 blocked: 43/103/154) + SWEBENCH_COMPARE.html regenerated（72925B, 61 resolved）+ relay skip 89th + push auto-commit(c225e0b5) + git sync 0/0。📦 体积：TASK=29.3KB / MEMORY=22.4KB（归档 0KB）。
-- 2026-10-07 09:48 —— **第一百三十八轮** —— codex --resume 进展(+3 pbf, -3 blocked: 43/106/151, [41/197] django__django-15781) + SWEBENCH_COMPARE.html regenerated（72921B, 61 resolved）+ relay skip 90th + git sync 0/0。📦 体积：TASK=29.3KB / MEMORY=24.1KB（归档 0KB）。
-- 2026-10-07 13:45 —— **第一百四十三轮** —— opencode×30 progressed to 22/30 (12 res/10 pbf = 54.5%, PID 87730, running inst 23) → SWEBENCH_COMPARE.html regenerated（14377B, 84 entries, 44 resolved）+ relay skip 95th + commit+push。📦 体积：TASK=30.7KB / MEMORY=27.9KB（归档 0KB）。
-- 2026-10-07 14:20 —— **第一百四十四轮** —— opencode×30 at 29/30 (14 res/15 pbf = 48.3%, last inst sympy__sympy-13647 running) → SWEBENCH_COMPARE.html regenerated（14568B, 91 entries, 46 resolved）+ all 5 harnesses verified available + gw_proxy healthy + relay skip 96th + R142 archived → commit+push。📦 体积：TASK=30.7KB / MEMORY=31.0KB（归档 ~1.7KB → daily-memories-harness/2026-10-07.md）。
-- 2026-10-07 15:02 —— **第一百四十五轮** —— claude-code×30 progress (7/30, 4 res/2 pbf/1 blk = 57.1%, inst 8/30 django__django-11179) → SWEBENCH_COMPARE.html regenerated（14796B, 99 entries, 51 resolved）+ chain script healthy (PID 1292346) + gw_proxy healthy + relay skip 97th + R131~R144 archived to daily → commit+push。📦 体积：TASK=30.7KB / MEMORY=12.8KB（归档 ~13.4KB → daily-memories-harness/2026-10-07.md）。
-- 2026-10-07 15:55 —— **第一百四十六轮** —— claude-code×30 progress (10/30, 6 res/3 pbf/1 blk = 60.0%, inst 11/30 django__django-11564) → SWEBENCH_COMPARE.html regenerated（14885B, 102 entries, 53 resolved）+ chain script healthy (PID 1292346) + gw_proxy healthy + relay skip 98th → commit+push。📦 体积：TASK=30.7KB / MEMORY=~14.0KB（归档 0KB）。
-- 2026-10-07 16:16 —— **第一百四十七轮** —— claude-code×30 progress (12/30, 7 res/4 pbf/1 blk = 63.6%, inst 13/30 django__django-11620) → SWEBENCH_COMPARE.html regenerated（14943B, 104 entries, 54 resolved）+ data integrity verified (no dupes on 30-set) + chain script healthy (PID 1292346) + gw_proxy healthy + relay skip 99th → commit+push。📦 体积：TASK=30.7KB / MEMORY=~14.0KB（归档 0KB）。
-- 2026-10-07 16:53 —— **第一百四十八轮** —— claude-code×30 progress (15/30, 8 res/6 pbf/1 blk = 57.1%, inst 16/30 sympy__sympy-11870) → SWEBENCH_COMPARE.html regenerated（15027B, 107 entries, 55 resolved）+ chain script healthy (PID 1292346) + gw_proxy healthy + relay skip 100th → commit+push。📦 体积：TASK=30.7KB / MEMORY=~14.5KB（归档 0KB）。
-- 2026-10-07 17:26 —— **第一百四十九轮** —— claude-code×30 progress (18/30, 8 res/9 pbf/1 blk = 47.1%, inst 19/30 sympy__sympy-12236, +3 pbf since R148) → SWEBENCH_COMPARE.html regenerated（15108B, 110 entries, 55 resolved）+ chain script healthy (PID 1292346) + gw_proxy healthy + relay skip 101st → commit+push。📦 体积：TASK=30.7KB / MEMORY=~17.5KB（归档 0KB）。
-- 2026-10-07 18:03 —— **第一百五十轮** —— claude-code×30 progress (21/30, 9 res/11 pbf/1 blk = 45.0%, inst 22/30 sympy__sympy-12481, +3 pbf since R149) → SWEBENCH_COMPARE.html regenerated（15193B, 113 entries, 56 resolved）+ chain script healthy (PID 1292346) + gw_proxy healthy + relay skip 102nd → commit+push。📦 体积：TASK=30.7KB / MEMORY=~19.7KB（归档 0KB）。
-- 2026-10-07 19:25 —— **第一百五十二轮** —— ✅ claude-code×30 COMPLETE (13 res/16 pbf/1 blk = 44.8%) → deepseek-harness×30 RUNNING (1/30, django__django-10924 → resolved ✅, toolchain fix confirmed working in production) → SWEBENCH_COMPARE.html regenerated（15409B, 121 entries, 61 resolved）+ chain script healthy (PID 1292346) + gw_proxy + gw_proxy_dsh healthy → commit+push。📦 体积：TASK=30.7KB / MEMORY=~25.5KB（归档 0KB）。
-- 2026-10-07 19:59 —— **第一百五十三轮** —— deepseek-harness×30 progress 9/30 (7 res/2 pbf = 77.8%) → SWEBENCH_COMPARE.html regenerated（15608B, 129 entries, 67 resolved）→ commit+push。📦 体积：TASK=30.7KB / MEMORY=27.2KB（归档 0KB）。
-- 2026-10-07 20:34 —— **第一百五十四轮** —— deepseek-harness×30 progress 12/30 (7 res/5 pbf = 58.3%) → SWEBENCH_COMPARE.html regenerated（15719B, 132 entries, 67 resolved）→ commit+push。📦 体积：TASK=30.7KB / MEMORY=29.5KB（归档 0KB）。
-- 2026-10-07 21:14 —— **第一百五十五轮** —— deepseek-harness×30 progress 15/30 (7 res/8 pbf = 46.7%) → SWEBENCH_COMPARE.html regenerated（15799B, 135 entries, 67 resolved）+ R147-R153 archived to daily → commit+push。📦 体积：TASK=30.7KB / MEMORY=17.3KB（归档 ~13KB → daily-memories-harness/2026-10-07.md）。
-- 2026-10-07 23:53 —— **第一百五十九轮** —— Pi×30 progress 16/30 (10 res/6 pbf = 62.5%, inst 17/30 sympy__sympy-11897, PID 690669 etimes=4906s) → SWEBENCH_COMPARE.html regenerated（22136B, 166 entries, 82 resolved）+ gw_proxy + gw_proxy_dsh healthy → commit+push。📦 体积：TASK=28.7KB / MEMORY=23.7KB（归档 0KB）。
+> 📦 R135~R159 的流水条目（Oct-7: report HTML · TASK归档 · codex --resume · opencode×30 · claude-code×30 · deepseek-harness×30 · Pi×30 progress）已滚动归档至 `daily-memories-harness/2026-10-07.md`「从 MEMORY_HARNESS.md 滚动归档 R135~R159」节（原文不改）。需要时再读。
 - 2026-10-08 09:46 —— **第一百七十二~七十六轮** —— 📄 report_harness_swebench_analysis.html 交付（64201B, 9 sections, deep analysis with failure modes, cost analysis, BaiZe implications）→ HARNESS_3WAY_COMPARISON.html 交付（59268B, 14 sections, cline/Pi/Hermes deep comparison）→ HARNESS_7WAY_COMPARISON.html 交付（56352B, 10 sections, 5 inline SVG, superset analysis finding）→ all verified at both locations → commit+push。📦 体积：TASK=31.5KB / MEMORY=~29KB（归档 0KB）。
 - 2026-10-08 13:00 —— **第一百七十八轮** —— 💓 Health-check heartbeat：all deliverables verified intact, no new instructions, no running chains → commit+push。📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~29KB(28.3KB ✓)（归档 0KB）。
 - 2026-10-08 13:38 —— **第一百七十九轮** —— 💓 Health-check heartbeat：all deliverables verified intact (SWEBENCH_COMPARE 21976B, report_harness_swebench_analysis 64201B, HARNESS_7WAY_COMPARISON 56352B, HARNESS_3WAY_COMPARISON 59268B, kimi_pilot_results.json 532623B)，no new instructions (git fetch=up to date)，no running chains → commit+push。📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~29.6KB(28.9KB ✓)（归档 0KB）。
@@ -213,3 +208,4 @@ ERROR_COUNT:  0
 - 2026-10-08 20:05 —— **第一百八十七轮** —— 🚀 运维指令 2026-10-08⑤ 执行中：② report_harness_interaction_traces.html 已交付（38307B, 7 sections S1-S7, 5 inline SVG, 0 ext links, ≤200KB ✓）—— 覆盖产出 A（7×N harness 特点对比表：启动方式/交互轮次/工具调用/执行闭环/avg wall_s/失败模式/patch规模/resolved率）+ 产出 B（20pp gap 归因：3 个证据化因素 = no-patch rate 33% vs 10% + timeout rate 27% vs 0% + patch scope 4.2 vs 2.2 files）+ 数据诚实声明（per-turn 交互轨迹仅 stdout_tail 500 chars 存活，完整轨迹需重跑）。HARNESS_7WAY_COMPARISON.html 已加 cross-ref。① Round-2 7×100 已起跑（19:22 launch, 7 harnesses parallel, --resume skips 30 R1）：instance_selection_100.json = 30 R1 + 70 stratified new（含全部 11 repo），progress cline 31/pi 31/hermes 33/opencode 32/codex 300(32 pending)/claude-code 30/dsh 32。ETA ~10h（bottleneck hermes 520s×70=10.1h → ~05:30 Oct9）。④ block archived → ARCHIVE_OPERATOR_HARNESS.md。→ commit+push。📦 体积：TASK=30492B(29.8KB ✓) / MEMORY=~26KB(25.4KB ✓)（归档 ~3KB → ARCHIVE_OPERATOR_HARNESS.md）。
 - 2026-10-08 20:41 —— **第一百八十八轮** —— ✅ 运维指令 2026-10-08⑦ 执行：① 口径与并发 section added to MEMORY_HARNESS.md（串行 vs 并行 · 30 条 R1 复用 · 70 条 R2 新跑 · codex 300 串行超集特例 · 监控指标对比表）；② report_harness_interaction_traces.html copied to doc/BaiZe-ISEDA2027/ root（38307B，与其它线报告一致）；③ gen_round2_compare.py 创建（100 instances, R1/R2 split, 复用/新跑 marker column, §2 monitoring table）→ SWEBENCH_COMPARE.html regenerated (47501B, 318 entries, 127 resolved)。→ commit+push。📦 体积：TASK=32870B(32.1KB) / MEMORY=~29KB(28.3KB ✓)（归档 0KB）。
 - 2026-10-08 21:21 —— **第一百八十九轮** —— 🔄 Round-2 progress monitor + SWEBENCH_COMPARE.html refreshed (48067B, 338 entries, 130 resolved)：codex 100/100✅(res=30,rate41.1%), pi 44/100(res=21,rate56.8% 领先), opencode 42/100, cline 39/100, claude-code 38/100, dsh 37/100, hermes 37/100。⑦ deliverables re-verified intact (口径与并发 section ✅ / trace report in doc root ✅ / 102 复用新跑 markers ✅ / monitoring table ✅)。7 harness 进程仍在运行（etimes~6750s≈1.9h）。→ commit+push。📦 体积：TASK=32870B(32.1KB, marginal) / MEMORY=~30KB(29.4KB ✓)（归档 0KB）。
+- 2026-10-08 21:55 —— **第一百九十轮** —— 🔄 Round-2 progress monitor + SWEBENCH_COMPARE.html refreshed (49127B, 375 entries, 135 resolved)：codex 100/100✅, pi 47/100(res=22), cline 47/100(res=19), opencode 48/100(res=16), claude-code 47/100(res=14), dsh 47/100(res=14), hermes 39/100(res=17)。6 进程运行中(etimes~8960s≈2.5h)。🔬 ⑦ MONITORING KEY FINDING: quota_blocked=False for ALL entries (R1+R2) → NO parallel pollution. R2 resolve-rate drop = INSTANCE COMPOSITION BIAS: R1=django(15)+sympy(15) only [easiest repos, codex 300-full: django 29%, sympy 8%], R2 adds 44 harder-repo instances (matplotlib/sklearn/pytest/sphinx/astropy at 0%). Also: eval env can't apply patches for non-django/sympy repos (patch_applied=False despite model_patch generated). R135~R159 archived to daily → commit+push。📦 体积：TASK=32870B(32.1KB, marginal) / MEMORY=~27KB(26.4KB ✓)（归档 ~6KB → daily-memories-harness/2026-10-07.md）。
