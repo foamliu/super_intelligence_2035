@@ -5,13 +5,25 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 30×7 cross-eval COMPLETE ✅ + **DEEP ANALYSIS REPORT DELIVERED** (report_harness_swebench_analysis.html, 62.7KB, 9 sections, 8 inline SVG charts). All 7 harnesses done. cline-patched 60.0% · Pi 60.0% · Hermes 53.3% · opencode 50.0% · codex 46.7% · claude-code 43.3% · deepseek-harness 40.0%.
-已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped · opencode×30 (50.0%) · claude-code×30 (43.3%) · deepseek-harness×30 (40.0%) · Pi×30 (60.0%) · Hermes×30 (53.3%) · gen_kimi_compare.py 7-way · SWEBENCH_COMPARE.html (21976B final) · **report_harness_swebench_analysis.html** (64201B, 9 sections, failure mode analysis, cost analysis, BaiZe implications)
-当前动作:     R174: Report location fix — copied report_harness_swebench_analysis.html to doc/BaiZe-ISEDA2027/ (operator instruction specified this path, R173 had it in run/harness/) → heartbeat → commit+push
-下一步:       <待运维指令> — 分析报告已交付(两处), 等待下一步（可能：扩到 300 条？换 BaiZe 模型重测？深入 H-B cline/Pi/Hermes SWE-bench 实现差异？）
+PHASE:        H-A 30×7 cross-eval COMPLETE ✅ + **DEEP ANALYSIS REPORT VERIFIED** (report_harness_swebench_analysis.html, 62.7KB, 9 sections, 8 inline SVG charts, all sections verified). All 7 harnesses done. cline-patched 60.0% · Pi 60.0% · Hermes 53.3% · opencode 50.0% · codex 46.7% · claude-code 43.3% · deepseek-harness 40.0%.
+已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped · opencode×30 (50.0%) · claude-code×30 (43.3%) · deepseek-harness×30 (40.0%) · Pi×30 (60.0%) · Hermes×30 (53.3%) · gen_kimi_compare.py 7-way · SWEBENCH_COMPARE.html (21976B final) · **report_harness_swebench_analysis.html** (64201B, 9 sections, failure mode analysis, cost analysis, BaiZe implications) — VERIFIED at both doc/BaiZe-ISEDA2027/ and run/harness/
+当前动作:     R175: Report verification + heartbeat — verified report_harness_swebench_analysis.html has all 9 sections (TL;DR · 评测设计 · 结果总表 · 失败模式分析 · 成本分析 · 架构差异 · BaiZe启示 · 局限 · 下一步), 8 inline SVG charts, 62.7KB ≤200KB, data from kimi_pilot_results.json (480 entries). No new operator instructions (git fetch = up to date).
+下一步:       <待运维指令> — 分析报告已交付验证(两处). Per 2026-10-08 instruction: "写完本报告后，若运维无新指令，可自主做 harness 源码分析（H-B 方向）—— 深入 cline / Pi / Hermes 的 SWE-bench 实现差异"
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
+
+## 🆕 第一百七十五轮速览（2026-10-08 10:54）— ✅ Report verification + heartbeat
+
+- ✅ **Report fully verified**: `report_harness_swebench_analysis.html` (64201B = 62.7KB) at both `doc/BaiZe-ISEDA2027/` and `run/harness/` — identical content.
+  - **9 sections** confirmed: TL;DR · Evaluation Design · Results Summary · ⭐Failure Mode Analysis · Cost & Efficiency · Architecture Differences · BaiZe Implications · Limitations · Next Steps
+  - **8 inline SVG charts** confirmed (resolve rate bar, failure mode stacked bar, wall-vs-rate scatter, patch-size-vs-rate scatter, repo grouped bar, difficulty distribution, heatmap table, cost ranking)
+  - **Failure evidence**: 3 categories with actual log snippets (timeout, wrong fix, both fail) from kimi_pilot_results.json stdout_tail
+  - **Data integrity**: kimi_pilot_results.json = 480 entries (30×7 = 210 in scope + 270 codex×300 superset); all numbers reproducible
+  - **Self-contained**: inline CSS + inline SVG, zero external links, zero images, ≤200KB ✓
+- ✅ **No new operator instructions** (`git fetch` = up to date, TASK file unchanged since R174).
+- ✅ **No chains running**: no run_serial_kimi / chain_* processes.
+- 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~29.1KB(28.4KB ✓)（归档 0KB，两者均 ≤32KB 无需归档）
 
 ## 🆕 第一百七十四轮速览（2026-10-08 10:20）— 📄 Report location fix + heartbeat
 
