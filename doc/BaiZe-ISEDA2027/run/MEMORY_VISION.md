@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **ALL CONVERGED — 已回答运维 2026-10-08③ 下一步工作建议**. ④ Arm B-hybrid DONE. 论文+6份HTML报告+AIMv2专项报告均已完成. ✅ **运维问答 2026-10-08③ 已写入本文件「🗣️ 运维问答」区**（4 题：未验证假设/Stage iv 前置/GPU 利用/论文补充，每条附实验依据）. ✅ GPU orphans cleaned (8GPU=4MiB idle). ✅ git synced. |
-| WAITING | 1（✅ **全线实验收敛 + 全部交付物完成** — ④ hybrid=1.37% 信息量已获取, Arm A baseline=13.49% 仍最优. 论文+全线报告+AIMv2专项报告均已完成, 待运维审阅+派新任务. 视觉编码器线 R2–R14 全部 closed. |
-| ERROR_COUNT | 5（① R9 w512 首跑 crash：损坏 jpg → data.py 修复 ② 续跑首试 crash：r9_train.py `log()` → 改 `print()` 修复 ③ 8-GPU 并行 eval NFS 争用卡死 → 改 4-GPU r12_single_eval.sh ④ lp bridge crash 缺 `import T` → line 39 加 import ⑤ lp bridge crash CUDA OOM → `extract_features_streaming` 加 `torch.no_grad()` + `linear_probe_mainstream` 加 `Xtr.to(device)`） |
+| PHASE | 🟧 **🔬 Scaling 对比实验进行中** — 运维指令 2026-10-08⑤（用户直令·最高优先）: E1(OV2 w512/d30,126.8M,224/p16) vs E2(官方OV2 GELU ViT w1024/d24,304.2M,336/p14). 同 AIMv2 objective/数据(94.9M)/1epoch/bs512. ✅ Smoke test DONE(E1=4697img/s E2=2347img/s, ETA E1~5.6h E2~11.2h both<48h). ✅ 预注册写入 EXPERIMENTS_VISION.md. ✅ models.py 修复(AIMv2 tower 支持 return_patch + width/depth override). 🟧 E1 1-epoch 训练即将启动 → E2 排队. |
+| WAITING | 1（🔬 scaling 实验在跑 — E1+E2 各 1 epoch + Protocol B eval 3 seeds + HTML 报告. ETA total ~17h+eval. |
+| ERROR_COUNT | 6（①~⑤ 同前 ⑥ AIMv2.forward() 不支持 return_patch → 已加 return_patch+causal 参数修复） |
 | BUDGET_USED | R2–R12 ≈215 + R12b(106.4) + lp bridge(5.8) + mask-ratio(78.4+0.5) + weight-ratio(~65.4+0.5) + ④ AIMv2 AR Arm B(2.1) + Arm B-hybrid(~24) ≈ **累计 ~498 GPU·h**（最终） |
-| 更新 | **2026-10-08 18:39（唤醒巡检 + TASK/MEMORY 归档）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind — **无新运维指令**. ✅ 3 个已闭合运维块归档→ARCHIVE（2026-10-08③ + 2026-10-06×2）, TASK 31.5→22.2KB. ✅ 3 条旧流水滚动→daily, MEMORY 32.1→29.8KB. ✅ GPU 8×H100 全 idle. 📦 体积：TASK=22.2KB / MEMORY=29.8KB（均≤32KB✅, 归档~9KB→ARCHIVE + ~2KB→daily）· *[更早见 daily-memories-vision/2026-10-08.md]* |
+| 更新 | **2026-10-08 19:30（scaling 实验启动）**: ✅ git fetch✅(w/proxy), 新运维指令 2026-10-08⑤⑤(④). ✅ GPU12_ALLOC.md 登记 8 卡. ✅ models.py 修复: AIMv2 tower 支持 return_patch+causal+width/depth override. ✅ run_scaling_experiment.sh 创建. ✅ Smoke test: E1(126.8M)=4697img/s ETA~5.6h, E2(304.2M)=2347img/s ETA~11.2h. ✅ 预注册写入 EXPERIMENTS_VISION.md. 🟧 E1 1-epoch 训练启动中. 📦 体积：TASK=30.4KB / MEMORY=30.5KB（均≤32KB✅）· *[更早见 daily-memories-vision/2026-10-08.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）

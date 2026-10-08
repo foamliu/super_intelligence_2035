@@ -438,3 +438,92 @@ bash run_s9.sh  # batch + 多分辨率 bench
 **产物**：`doc/BaiZe-ISEDA2027/BAIZE_VISION_ENCODER_RESULT.html`（自包含，已回填）+ `ISEDA2027/6_vision_encoder.tex`（config/results 已回填）。
 
 **裁剪说明（预算）**：S7 数据侧（caption 粒度·规模·中英比例）因重 prep + 低信息量裁剪；S9 的 SGLang 生产栈未装（推迟到 MLLM Stage iv）。详见 HTML「局限」节。
+---
+
+## 🔬 Scaling Comparison Experiment (2026-10-08⑤) — AIMv2 objective: does a bigger model score higher?
+
+> **Operator instruction**: 2026-10-08⑤ (user direct order, highest priority).
+> **Pre-registered BEFORE training** — criteria locked, no post-hoc changes.
+
+### 1. Pre-registration
+
+**Claim under test**: Under the AIMv2-style dense objective (BP-1), a larger model
+achieves a higher frozen-trunk linear-probe top-1 (Protocol B) on IN-1k, at a
+fixed data budget of 1 epoch over ~94.9M image–caption pairs.
+
+**Pre-registered criterion**: Δlp = lp(E2) − lp(E1), Protocol B, 3 seeds (0,1,2) → mean ± σ.
+
+| Outcome | Interpretation |
+|:--|:--|
+| **Δ ≥ +1.5 pp** | Supports “bigger model → higher lp under AIMv2” (challenges R9/R10 “smaller tower better” under this objective) |
+| **\|Δ\| ≤ 1.5 pp** | Not supported (no discernible advantage at this budget) |
+| **Δ ≤ −1.5 pp** | Bigger model is *worse* (data-limited regime: widening is negative) |
+| **σ > \|Δ\|** | Indistinguishable (noise dominates signal) |
+
+Threshold ±1.5 pp = our internal noise band (ROUND10 §1.5). Two points do NOT
+constitute a scaling law — only report whether a single budget point favours the
+larger model. **No curve extrapolation.**
+
+### 2. Two arms (identical recipe, only the tower differs)
+
+| | Tower | Params | Structure | Res / patch | Img tokens | Throughput (smoke) | 1-epoch ETA |
+|:--|:--|--:|:--|:--|--:|--:|--:|
+| **E1** | OpenVision2 w512/d30 (self-research) | **126.8M** | patch16, SwiGLU MLP | 224 / 16 | 196 | 4697 img/s | **~5.6 h** |
+| **E2** | Official OV2 structure (GELU ViT w1024/d24) | **304.2M** | patch14, GELU MLP, no_ln_pre, avg-pool | 336 / 14 | 576 | 2347 img/s | **~11.2 h** |
+
+**Common (locked)**:
+- Objective = AIMv2 dense (`--loss aimv2`): 1.0×InfoNCE + 1.0×masked-patch-MSE, mask_ratio=0.6, contrast:patch=1:1
+- Text tower = frozen CLIP-ViT-L/14-336 (768-d), not unfrozen
+- Data = GPIC 6233 tar × ~12639 + CC12M 1100 tar × ~10000 + Amshaker 2250 tar × ~2646 ≈ **95.7M pairs** (1 epoch ≈ 186,978 steps)
+- Budget = **1 epoch** (same step count for both arms)
+- Optim = AdamW lr=3e-3, warmup 20, constant, betas=(0.9,0.95), eps=1e-6
+- Batch = 64/GPU × 8 = 512 total, bf16 autocast
+- Seed = 1234
+- Attention = bidirectional (no causal AR)
+
+**E2 readout head modified to 768-d** (to align with frozen CLIP-768 text tower;
+official OV2 native head is 1024-d generative → necessary change, noted in report).
+
+**E2 trained from scratch** (random init official structure) — only “same objective
++ same data + same budget + from scratch” supports the claim.
+
+### 3. Confounds (must be stated prominently in report)
+
+E1 vs E2 differ **simultaneously** in:
+1. **Params**: 126.8M vs 304.2M (2.4×)
+2. **Structure**: d30 self-research SwiGLU vs d24 official GELU
+3. **Patch size**: 16 vs 14
+4. **Resolution / tokens**: 224/196 vs 336/576 (2.9× more tokens)
+
+⇒ A single Δlp **cannot** attribute the difference to parameter count alone.
+An isolation arm (E1 tower @336/14, same patch/tokens, only params+structure differ)
+is **recommended** if budget allows; if not run, the report must state
+“cannot separate the contributions”.
+
+### 4. Evaluation plan
+
+- **Primary**: IN-1k frozen-trunk LP top-1, **Protocol B** (SGD+momentum 0.9, cosine,
+  5-ep warmup, 90 ep, mini-batch 1024, IN-1k full train, 3 seeds 0/1/2 → mean ± σ)
+- **Secondary**: Protocol A (for R9–R14 internal comparison)
+- **Collapse guards**: C1 (cosine off-diag), C2 (cross-gap), C4 (loss-decreasing)
+- **Fairness table**: params / training tokens / per-step time / per-sample time / peak GPU memory
+
+### 5. Reference line (🚩 not comparable)
+
+Official `openvision2-vit-large-patch14-336-vision-only` **pretrained weights**
+frozen → Protocol B LP: R13 measured **79.81%** on the 224 variant. If 336 variant
+is needed, ~1.2 GB download + pure eval. **Must label “contains large-scale
+pretraining, not comparable”**.
+
+### 6. Status
+
+| Phase | Status |
+|:--|:--|
+| GPU registration (GPU12_ALLOC.md) | ✅ Done |
+| Smoke test (both arms, 30 steps) | ✅ Done — E1=4697 img/s, E2=2347 img/s |
+| ETA report | ✅ E1 ~5.6h, E2 ~11.2h (both < 48h threshold) |
+| Pre-registration (this section) | ✅ Written before training |
+| E1 training (1 epoch) | 🟧 Launching |
+| E2 training (1 epoch) | ⏸ Queued after E1 |
+| Evaluation (Protocol A+B, 3 seeds) | ⏸ Pending |
+| Report (HTML) | ⏸ Pending |

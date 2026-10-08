@@ -10,7 +10,7 @@
 
 | 卡 | 归谁 | 用途 | 状态（vision 08:15 自测） |
 |:--|:--|:--|:--|
-| **GPU0–7** | **vision** | `R13 Arm B-hybrid (AR+InfoNCE)` 30k 训练（`run_aimv2_ar_hybrid.sh`, PID 2418851） | 🚧 **占用中**：~45GB/卡, 57-100% util; step 300/30000, C1=0.2480(健康), ~1983 img/s; **ETA ~10:45** |
+| GPU0–7 | **vision** | 🔬 **scaling 对比实验** E1+E2（`run_scaling_experiment.sh`） | 🟧 **smoke test 中**：8 卡空闲已登记，正测两臂吞吐 |
 | ~~GPU1–7~~ | ~~pretrain~~ | ~~长上下文成本矩阵~~ | ✅ **已交还**（2026-10-07 借出, 已完成） |
 
 > ⚠️ `.12` 的 GPU0–7 **全部属本项目**。起跑前必须核验；**若看到与本项目无关的进程 → 停手报告**，🚫 不许 kill。
@@ -55,3 +55,4 @@
 | 2026-10-07 **09:44** | **pretrain 全部归还 GPU1-7**：Wave 1（7 格并行 hybrid@128K/256K/512K/1M + dense@128K/256K/512K）+ Wave 2（dense@1M）全部完成。`nvidia-smi` 确认 GPU1-7 全部 `memory.used≈0`。8 个 cell JSON 已入 `p911e_results/`。✅ **已归还 09:44**（远早于 11:00 硬天花板）。vision 可恢复使用 GPU1-7。 |
 | 2026-10-08 07:53 | **vision** | **GPU0–7（全部 8 张）** | **~2.5h**（④ AIMv2 AR Arm B 30k + eval） | ③ weight-ratio 消融 ALL DONE(@05:27, GPU已释放). 8 GPU 全空闲. ④ 官方 AIMv2 AR 范式 Arm B 30k 需 8 GPU(causal ViT + AR decoder, ~203.7M params). smoke test✅(2069 img/s, 30k ETA~2.1h). 脚本 run_aimv2_ar.sh 自动 smoke→30k→eval. 按既有优先序 vision > pretrain 推理 ⇒ **继续占用 8 GPU** | ✅ 已开跑（07:57, 8 GPU 22.5GB/卡 48-85%util, step100/30000, ETA~10:00） |
 | 2026-10-08 07:57 | **vision ④ AIMv2 AR Arm B 30k 开跑**: ③ weight-ratio ALL DONE(@05:27, GPU已释放). 8 GPU 全空闲(nvidia-smi 4MiB/卡). smoke test✅(30步/9.1s/exit0, 2069 img/s). 30k full run START@07:58: step100/30000, loss=5.94, ~2185 img/s, 8 GPU 22.5GB/卡 48-85%util. ETA~10:00. 脚本 run_aimv2_ar.sh 自动 smoke→30k→IN-1k eval. |
+| 2026-10-08 19:00 | **vision 🔬 scaling 对比实验**: 8 GPU 全空闲(4MiB/卡). 运维指令 2026-10-08⑤ 用户直令: E1(OV2 w512/d30,126.8M,224/p16) vs E2(官方OV2结构 w1024/d24,304M,336/p14), 同 AIMv2 objective/数据(94.9M)/1epoch/bs512. smoke test 测两臂吞吐→报ETA→写预注册→开跑. 脚本 run_scaling_experiment.sh. |

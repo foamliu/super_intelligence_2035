@@ -288,8 +288,8 @@ class VitGeluBlock(nn.Module):
         self.mlp = nn.Sequential(
             nn.Linear(dim, mlp_dim), nn.GELU(), nn.Linear(mlp_dim, dim))
 
-    def forward(self, x):
-        x = x + self.attn(self.norm1(x))
+    def forward(self, x, attn_mask=None):
+        x = x + self.attn(self.norm1(x), attn_mask=attn_mask)
         x = x + self.mlp(self.norm2(x))
         return x
 
@@ -310,11 +310,19 @@ class AIMv2(nn.Module):
         self.norm = LayerNorm(width)
         self.head = ReadoutHead(width)
 
-    def forward(self, x):
+    def forward(self, x, return_patch: bool = False, causal: bool = False):
         x = self.embed(x)
-        for b in self.blocks:
-            x = b(x)
-        return self.head(self.norm(x))
+        if causal:
+            N = x.shape[1]
+            causal_mask = torch.tril(torch.ones(N, N, dtype=torch.bool, device=x.device))
+            for b in self.blocks:
+                x = b(x, attn_mask=causal_mask)
+        else:
+            for b in self.blocks:
+                x = b(x)
+        x = self.norm(x)
+        pooled = self.head(x)
+        return (pooled, x) if return_patch else pooled
 
 
 # --------------------------------------------------------------------------- #
@@ -563,6 +571,16 @@ def get_vision_tower(name: str, width: int = None, depth: int = None,
         h = heads if heads is not None else max(1, w // 64)
         m = mlp_dim if mlp_dim is not None else (4 * w)
         return OpenVision2(width=w, depth=d, heads=h, mlp_dim=m)
+    if name == 'aimv2':
+        # Official OV2 structure (AIMv2-style GELU ViT): patch14/d24/w1024/h16
+        # is the released openvision2-vit-large-patch14-{224,336}-vision-only.
+        # Width/depth/heads overrides honoured so the training loop can build
+        # any scale (e.g. E2 = w1024/d24/h16 for the scaling experiment).
+        w = width if width is not None else 1024
+        d = depth if depth is not None else 40
+        h = heads if heads is not None else max(1, w // 64)
+        m = mlp_dim if mlp_dim is not None else (4 * w)
+        return AIMv2(width=w, depth=d, heads=h, mlp_dim=m)
     return towers[name]()
 
 
