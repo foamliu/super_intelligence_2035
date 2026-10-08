@@ -35,7 +35,7 @@ PRICE_DIR = os.path.join(HERE, "prices")
 
 UA = "Mozilla/5.0 (compatible; PersonalWatch/1.0)"
 START = "2016-01-01"
-END = "2026-10-07"
+END = "2026-10-08"          # 区间末 = 采集日（规格 §1.1「能取到的最晚为准」）
 RATE = 1.0          # 限速（秒）
 RETRY = 3
 TIMEOUT = 30
@@ -138,22 +138,42 @@ def parse_sina_fut(body: bytes):
 
 
 # ── 抓取（分类）─────────────────────────────────────────────────────────────
+# ⚠️ 端点实测（2026-10-08 晚报轮）：腾讯 `fqkline` **缓存不一致** —— **同一 `param`
+#    会被负载均衡到不同后端，部分后端缺「当日 bar」**（实测同一 code 同区间：
+#    `count=100/350` 返回到 2026-10-08，而 `count=200/400` 只到 2026-09-30）。
+#    ⇒ 对**最后一年**用「多 count 轮询、取末日最大」，直到末日 = 请求末日为止。
+STOCK_COUNTS = (400, 350, 300, 250, 200, 150, 100, 60, 30)
+
+
+def _stock_slice(code: str, s: str, e: str, count: int):
+    url = f"{TENCENT}?param={code},day,{s},{e},{count},qfq"
+    body, st, ct = http_get(url)
+    return parse_tencent(body), (st, ct)
+
+
 def fetch_stock(code: str, since: str, until: str):
-    """腾讯按年分页（单次 count 有上限）。返回 (rows, [meta...])。"""
+    """腾讯按年分页（单次 count 有上限）。返回 (rows, [meta...])。
+    末年起改用 `STOCK_COUNTS` 轮询（见上方缓存不一致说明）。"""
     rows, metas = [], []
     y0, y1 = int(since[:4]), int(until[:4])
     for y in range(y0, y1 + 1):
         s = max(f"{y}-01-01", since)
         e = min(f"{y}-12-31", until)
-        url = f"{TENCENT}?param={code},day,{s},{e},400,qfq"
-        try:
-            body, st, ct = http_get(url)
-            got = parse_tencent(body)
-            rows.extend(got)
-            metas.append((f"{s}~{e}", st, ct, len(got)))
-        except Exception as e:  # noqa: BLE001
-            metas.append((f"{s}~{e}", "ERR", str(e)[:60], 0))
-        time.sleep(RATE)
+        counts = STOCK_COUNTS if y == y1 else (400,)
+        best, best_meta = [], None
+        for c in counts:
+            try:
+                got, (st, ct) = _stock_slice(code, s, e, c)
+            except Exception as exc:  # noqa: BLE001
+                best_meta = best_meta or (f"{s}~{e}", "ERR", str(exc)[:60], 0)
+                continue
+            if got and (not best or got[-1][0] > best[-1][0]):
+                best, best_meta = got, (f"{s}~{e}", st, ct, len(got))
+            time.sleep(RATE)
+            if best and best[-1][0] >= e:      # 已取到请求末日
+                break
+        rows.extend(best)
+        metas.append(best_meta or (f"{s}~{e}", "ERR", "empty", 0))
     return rows, metas
 
 
