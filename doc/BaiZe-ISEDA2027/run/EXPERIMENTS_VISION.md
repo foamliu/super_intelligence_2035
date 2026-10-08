@@ -539,7 +539,8 @@ pretraining, not comparable"**.
 | ETA report | ✅ E1 ~5.6h; E2 (w768) est. ~5.6h (R9 ref: w768@224/p16 ≈ w512 throughput) |
 | Pre-registration (this section) | ✅ Written before training (⑥ revised) |
 | Script fix (run_scaling_experiment.sh) | ✅ Done — run_e2() changed to w768/d30/p16/224 |
-| E1 training (1 epoch) | 🟧 **98% — step ~183,530/187,101** — resumed from step130000 ckpt @02:17 after shm bus error crash. ~5200 img/s, loss~1.6, C1=0.45, no collapse. ETA ~04:17 Oct 9 (~6 min remaining) |
+| E1 training (1 epoch) | ✅ **DONE** — 187101/187101 steps, loss=1.3036, 6060 img/s, no collapse, vision.pt=487MB (completed 04:22 Oct 9) |
+| E1 evaluation (Protocol B, 3 seeds) | 🟧 **RUNNING** — feature extraction 251/294 parquet (85%), ETA ~07:13 Oct 9 |
 | E2 training (1 epoch) | ⏸ Queued after E1 (e2_watcher_v3.sh PID 3261084 waiting → smoke_e2 → full training + auto-eval) |
 | Evaluation (Protocol A+B, 3 seeds) | ⏸ Pending — E1 auto-eval by resume_e1 mode; E2 auto-eval by e2 mode; safety-net E1 eval in watcher v3 |
 | Report (HTML) | ⏸ Pending |
