@@ -7,11 +7,19 @@ WAITING: 1
 ```
 PHASE:        H-A 30×7 cross-eval COMPLETE ✅ + **DEEP ANALYSIS REPORT DELIVERED** (report_harness_swebench_analysis.html, 62.7KB, 9 sections, 8 inline SVG charts). All 7 harnesses done. cline-patched 60.0% · Pi 60.0% · Hermes 53.3% · opencode 50.0% · codex 46.7% · claude-code 43.3% · deepseek-harness 40.0%.
 已完成:       H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped · opencode×30 (50.0%) · claude-code×30 (43.3%) · deepseek-harness×30 (40.0%) · Pi×30 (60.0%) · Hermes×30 (53.3%) · gen_kimi_compare.py 7-way · SWEBENCH_COMPARE.html (21976B final) · **report_harness_swebench_analysis.html** (64201B, 9 sections, failure mode analysis, cost analysis, BaiZe implications)
-当前动作:     R173: Delivered deep analysis report report_harness_swebench_analysis.html (62.7KB, 9 sections, 8 inline SVG charts, all data from kimi_pilot_results.json) per operator instruction 2026-10-08 → commit+push
-下一步:       <待运维指令> — 分析报告已交付，等待下一步（可能：扩到 300 条？换 BaiZe 模型重测？harness 源码分析 H-B？）
+当前动作:     R174: Report location fix — copied report_harness_swebench_analysis.html to doc/BaiZe-ISEDA2027/ (operator instruction specified this path, R173 had it in run/harness/) → heartbeat → commit+push
+下一步:       <待运维指令> — 分析报告已交付(两处), 等待下一步（可能：扩到 300 条？换 BaiZe 模型重测？深入 H-B cline/Pi/Hermes SWE-bench 实现差异？）
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
+
+## 🆕 第一百七十四轮速览（2026-10-08 10:20）— 📄 Report location fix + heartbeat
+
+- 📄 **Report location fix**: R173 placed `report_harness_swebench_analysis.html` in `run/harness/`, but operator instruction 2026-10-08 specified `doc/BaiZe-ISEDA2027/`. Copied to correct path `doc/BaiZe-ISEDA2027/report_harness_swebench_analysis.html` (64201B = 62.7KB, identical content).
+- ✅ **No new operator instructions** (`git fetch` = up to date, TASK file unchanged since R173).
+- ✅ **All deliverables intact**: `SWEBENCH_COMPARE.html` (21976B, 210 entries, 106 resolved) + `report_harness_swebench_analysis.html` (now at both `doc/BaiZe-ISEDA2027/` and `run/harness/`) + `kimi_pilot_results.json` (480 entries).
+- ✅ **No chains running**: `pgrep` confirms no `run_serial_kimi` / `chain_*` processes.
+- 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=28070B(27.4KB ✓)（归档 0KB，两者均 ≤32KB 无需归档）
 
 ## 🆕 第一百七十三轮速览（2026-10-08 09:30）— 📄 Deep analysis report DELIVERED (report_harness_swebench_analysis.html, 62.7KB)
 

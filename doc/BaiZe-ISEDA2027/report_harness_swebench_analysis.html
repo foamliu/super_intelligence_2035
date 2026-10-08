@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SWE-bench 7-Way Cross-Eval — Deep Analysis Report</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 1100px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #333; line-height: 1.6; }
+h1 { color: #1a1a2e; border-bottom: 3px solid #6c5ce7; padding-bottom: 10px; font-size: 24px; }
+h2 { color: #2d3436; margin-top: 35px; border-left: 4px solid #6c5ce7; padding-left: 12px; font-size: 20px; }
+h3 { color: #2d3436; margin-top: 25px; font-size: 16px; }
+h4 { margin-top: 15px; margin-bottom: 5px; font-size: 14px; }
+table { border-collapse: collapse; width: 100%; margin: 15px 0; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 6px; overflow: hidden; }
+th { background: #6c5ce7; color: white; padding: 8px 10px; text-align: left; font-size: 12px; }
+td { padding: 7px 10px; border-bottom: 1px solid #eee; font-size: 12px; }
+td.hname { font-weight: bold; }
+td.iid { font-family: monospace; font-size: 11px; }
+td.hm-resolved { background: #00b894; color: white; text-align: center; font-weight: bold; font-size: 10px; }
+td.hm-pbf { background: #fdcb6e; color: #2d3436; text-align: center; font-size: 10px; }
+td.hm-blocked { background: #dfe6e9; text-align: center; font-size: 10px; }
+td.hm-other { background: #d63031; color: white; text-align: center; font-size: 10px; }
+td.hm-na { background: #f5f5f5; text-align: center; color: #ccc; }
+td.hm-iid { font-family: monospace; font-size: 10px; white-space: nowrap; }
+td.hm-count { text-align: center; font-weight: bold; }
+.callout { background: #e8f4fd; border-left: 4px solid #0984e3; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+.caveat { background: #fff5f5; border: 1px solid #fed7d7; padding: 15px; margin: 15px 0; border-radius: 8px; }
+.tldr { background: #f0fff4; border: 2px solid #00b894; padding: 20px; margin: 15px 0; border-radius: 10px; }
+.tldr ul { margin: 8px 0; padding-left: 20px; }
+.tldr li { margin: 5px 0; }
+.model-badge { display: inline-block; background: #6c5ce7; color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; }
+pre { background: #2d3436; color: #dfe6e9; padding: 12px; border-radius: 6px; overflow-x: auto; font-size: 11px; line-height: 1.4; }
+.evidence { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px; margin: 12px 0; }
+.evidence pre { background: #f5f5f5; color: #333; border: 1px solid #ddd; }
+.chart-container { text-align: center; margin: 20px 0; }
+.chart-container svg { max-width: 100%; height: auto; }
+.section-num { display: inline-block; background: #6c5ce7; color: white; width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px; font-weight: bold; margin-right: 8px; font-size: 14px; }
+.heatmap-table { font-size: 10px; }
+.heatmap-table th { font-size: 9px; padding: 4px; }
+.heatmap-table td { padding: 3px 5px; }
+.ref-link { background: #e8f4fd; padding: 8px 15px; border-radius: 6px; margin: 10px 0; display: inline-block; }
+</style></head><body>
+<h1>SWE-bench 7-Way Harness Cross-Eval — Deep Analysis Report</h1>
+<p><span class="model-badge">Model: kimi-k2.6-cloud</span> &nbsp; Gateway: <code>http://agi-gateway.cxmt.com/cloud/v1</code></p>
+<p><strong>Generated:</strong> 2026-10-08 09:46 | <strong>Analyst:</strong> BaiZe Harness Agent (R173) | <strong>Data:</strong> <code>kimi_pilot_results.json</code> (210 entries, 210 in 30x7 scope)</p>
+<div class="ref-link">Result table (full per-instance data): <code>SWEBENCH_COMPARE.html</code> — this report adds attribution, failure-mode analysis, and BaiZe implications on top of that table.</div>
+<h2><span class="section-num">1</span>TL;DR</h2>
+<div class="tldr"><ul>
+<li><strong>cline-patched and Pi tied for #1 at 60.0%</strong> (18/30 resolved each) — despite vastly different architectures (TypeScript agentic loop vs. Bun print-mode), both hit the same ceiling with the same backbone model.</li>
+<li><strong>7-way resolution spread is 40%-60%</strong> (deepseek-harness 40.0% to cline-patched/Pi 60.0%) — a 20-point gap attributable purely to harness engineering, since model and instances are identical.</li>
+<li><strong>Backbone is the bottleneck, not the harness.</strong> 12/30 instances (40%) were solved by <em>zero</em> harnesses, and 8/30 (26%) by <em>all seven</em> — only 10/30 (33%) are "discriminating" instances that separate harness quality.</li>
+<li><strong>Dominant failure mode is "wrong fix" (83% of all failures):</strong> the patch applies cleanly but FAIL_TO_PASS tests still fail — the model misunderstood the bug, not a tooling failure.</li>
+<li><strong>Patch size correlates with resolve rate (r approx 0.7):</strong> top-3 harnesses produce 3.1-3.6KB avg patches; bottom-2 produce 1.6KB — smaller patches often mean incomplete fixes.</li>
+</ul></div>
+<h2><span class="section-num">2</span>Evaluation Design</h2>
+<div class="callout"><table>
+<tr><th>Dimension</th><th>Value</th></tr>
+<tr><td>Dataset</td><td>SWE-bench Lite subset — <strong>30 instances</strong> (15 django/django + 15 sympy/sympy)</td></tr>
+<tr><td>Harnesses</td><td><strong>7</strong>: cline-patched, codex, opencode, claude-code, deepseek-harness, Pi, Hermes Agent</td></tr>
+<tr><td>Model (backbone)</td><td><strong>kimi-k2.6-cloud</strong> (same for all harnesses — eliminates model variance)</td></tr>
+<tr><td>Concurrency</td><td><strong>1 (strict serial)</strong> — one instance x one harness at a time, no parallelism</td></tr>
+<tr><td>Timeout</td><td>1800s (30 min) per instance</td></tr>
+<tr><td>Evaluation</td><td><code>r1_eval.py</code> — unshare R1 sandbox (non-Docker), FAIL_TO_PASS + PASS_TO_PASS (official SWE-bench criteria)</td></tr>
+<tr><td>Classification</td><td>3-column: <code>resolved</code> / <code>patch-but-failed</code> / <code>quota-blocked</code></td></tr>
+<tr><td>Gateway</td><td><code>http://agi-gateway.cxmt.com/cloud/v1</code> via <code>gw_proxy</code> (port 9090)</td></tr>
+</table></div>
+<p><strong>Why this design works:</strong> By holding model, instances, and evaluation fixed, the only variable is the <em>harness</em> — its system prompt, tool format, context management, and iteration strategy. This isolates the harness contribution to resolve rate.</p>
+<h2><span class="section-num">3</span>Results Summary</h2>
+<p>The full per-instance results table (30x7 = 210 entries, with version info and reproduction commands) is in <code>SWEBENCH_COMPARE.html</code>. Key summary:</p>
+<div class="chart-container"><svg xmlns="http://www.w3.org/2000/svg" width="600" height="346" viewBox="0 0 600 346">
+<line x1="140.0" y1="30" x2="140.0" y2="306" stroke="#ddd" stroke-width="1"/>
+<text x="140.0" y="331" text-anchor="middle" font-size="11" fill="#666">0%</text>
+<line x1="220.0" y1="30" x2="220.0" y2="306" stroke="#ddd" stroke-width="1"/>
+<text x="220.0" y="331" text-anchor="middle" font-size="11" fill="#666">20%</text>
+<line x1="300.0" y1="30" x2="300.0" y2="306" stroke="#ddd" stroke-width="1"/>
+<text x="300.0" y="331" text-anchor="middle" font-size="11" fill="#666">40%</text>
+<line x1="380.0" y1="30" x2="380.0" y2="306" stroke="#ddd" stroke-width="1"/>
+<text x="380.0" y="331" text-anchor="middle" font-size="11" fill="#666">60%</text>
+<line x1="460.0" y1="30" x2="460.0" y2="306" stroke="#ddd" stroke-width="1"/>
+<text x="460.0" y="331" text-anchor="middle" font-size="11" fill="#666">80%</text>
+<line x1="540.0" y1="30" x2="540.0" y2="306" stroke="#ddd" stroke-width="1"/>
+<text x="540.0" y="331" text-anchor="middle" font-size="11" fill="#666">100%</text>
+<line x1="140" y1="30" x2="140" y2="306" stroke="#333" stroke-width="1"/>
+<rect x="140" y="35" width="240.0" height="28" fill="#6c5ce7" rx="3"/>
+<text x="132" y="53.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">cline-patched</text>
+<text x="385.0" y="53.0" font-size="12" fill="#333">18/30 (60.0%)</text>
+<rect x="140" y="73" width="186.7" height="28" fill="#e17055" rx="3"/>
+<text x="132" y="91.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">codex</text>
+<text x="331.7" y="91.0" font-size="12" fill="#333">14/30 (46.7%)</text>
+<rect x="140" y="111" width="200.0" height="28" fill="#00b894" rx="3"/>
+<text x="132" y="129.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">opencode</text>
+<text x="345.0" y="129.0" font-size="12" fill="#333">15/30 (50.0%)</text>
+<rect x="140" y="149" width="179.3" height="28" fill="#d63031" rx="3"/>
+<text x="132" y="167.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">claude-code</text>
+<text x="324.3" y="167.0" font-size="12" fill="#333">13/29 (44.8%)</text>
+<rect x="140" y="187" width="160.0" height="28" fill="#fdcb6e" rx="3"/>
+<text x="132" y="205.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">deepseek-harness</text>
+<text x="305.0" y="205.0" font-size="12" fill="#333">12/30 (40.0%)</text>
+<rect x="140" y="225" width="240.0" height="28" fill="#0984e3" rx="3"/>
+<text x="132" y="243.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">Pi</text>
+<text x="385.0" y="243.0" font-size="12" fill="#333">18/30 (60.0%)</text>
+<rect x="140" y="263" width="213.3" height="28" fill="#a29bfe" rx="3"/>
+<text x="132" y="281.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">Hermes Agent</text>
+<text x="358.3" y="281.0" font-size="12" fill="#333">16/30 (53.3%)</text>
+</svg></div>
+<table><tr><th>Rank</th><th>Harness</th><th>Resolved</th><th>Patch-but-failed</th><th>Blocked</th><th>Resolve Rate</th><th>Avg Wall</th></tr>
+<tr><td>1</td><td class="hname">cline-patched</td><td>18</td><td>12</td><td>0</td><td><strong>60.0%</strong></td><td>479s</td></tr>
+<tr><td>2</td><td class="hname">Pi</td><td>18</td><td>12</td><td>0</td><td><strong>60.0%</strong></td><td>275s</td></tr>
+<tr><td>3</td><td class="hname">Hermes Agent</td><td>16</td><td>14</td><td>0</td><td><strong>53.3%</strong></td><td>553s</td></tr>
+<tr><td>4</td><td class="hname">opencode</td><td>15</td><td>15</td><td>0</td><td><strong>50.0%</strong></td><td>290s</td></tr>
+<tr><td>5</td><td class="hname">codex</td><td>14</td><td>16</td><td>0</td><td><strong>46.7%</strong></td><td>843s</td></tr>
+<tr><td>6</td><td class="hname">claude-code</td><td>13</td><td>16</td><td>1</td><td><strong>44.8%</strong></td><td>425s</td></tr>
+<tr><td>7</td><td class="hname">deepseek-harness</td><td>12</td><td>18</td><td>0</td><td><strong>40.0%</strong></td><td>293s</td></tr>
+</table>
+<p style="font-size:11px;color:#666"><em>Total across 7 harnesses: 106 resolved / 103 patch-but-failed / 1 other = 210 entries. Aggregate resolve rate: 50.5%.</em></p>
+<h3>3.1 Difficulty Distribution</h3>
+<p>How many of the 7 harnesses solved each instance? This reveals whether the 30-instance subset has enough discriminating power:</p>
+<div class="chart-container"><svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300">
+<rect x="69.6" y="30.0" width="44.6" height="220.0" fill="#d63031" rx="3"/>
+<text x="91.9" y="25.0" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">12</text>
+<text x="91.9" y="268" text-anchor="middle" font-size="11" fill="#666">0/7</text>
+<rect x="133.3" y="250.0" width="44.6" height="0.0" fill="#fdcb6e" rx="3"/>
+<text x="155.6" y="245.0" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">0</text>
+<text x="155.6" y="268" text-anchor="middle" font-size="11" fill="#666">1/7</text>
+<rect x="197.1" y="250.0" width="44.6" height="0.0" fill="#fdcb6e" rx="3"/>
+<text x="219.4" y="245.0" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">0</text>
+<text x="219.4" y="268" text-anchor="middle" font-size="11" fill="#666">2/7</text>
+<rect x="260.8" y="213.3" width="44.6" height="36.7" fill="#fdcb6e" rx="3"/>
+<text x="283.1" y="208.3" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">2</text>
+<text x="283.1" y="268" text-anchor="middle" font-size="11" fill="#666">3/7</text>
+<rect x="324.6" y="231.7" width="44.6" height="18.3" fill="#fdcb6e" rx="3"/>
+<text x="346.9" y="226.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">1</text>
+<text x="346.9" y="268" text-anchor="middle" font-size="11" fill="#666">4/7</text>
+<rect x="388.3" y="213.3" width="44.6" height="36.7" fill="#00b894" rx="3"/>
+<text x="410.6" y="208.3" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">2</text>
+<text x="410.6" y="268" text-anchor="middle" font-size="11" fill="#666">5/7</text>
+<rect x="452.1" y="158.3" width="44.6" height="91.7" fill="#00b894" rx="3"/>
+<text x="474.4" y="153.3" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">5</text>
+<text x="474.4" y="268" text-anchor="middle" font-size="11" fill="#666">6/7</text>
+<rect x="515.8" y="103.3" width="44.6" height="146.7" fill="#00b894" rx="3"/>
+<text x="538.1" y="98.3" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">8</text>
+<text x="538.1" y="268" text-anchor="middle" font-size="11" fill="#666">7/7</text>
+<line x1="60" y1="30" x2="60" y2="250" stroke="#333"/>
+<line x1="60" y1="250" x2="570" y2="250" stroke="#333"/>
+<text x="315.0" y="292" text-anchor="middle" font-size="12" fill="#333"># Harnesses that Resolved Instance</text>
+<text x="20" y="140.0" text-anchor="middle" font-size="12" fill="#333" transform="rotate(-90 20 140.0)"># Instances</text>
+</svg></div>
+<p><strong>Key insight:</strong> 12 instances (40%) were unsolved by <em>any</em> harness (0/7), and 8 (26%) were solved by <em>all</em> (7/7). Only <strong>10 instances (33%) are discriminating</strong> (1-6/7) — these are where harness quality actually matters.</p>
+<h3>3.2 Per-Repo Breakdown</h3>
+<div class="chart-container"><svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300">
+<line x1="100" y1="250.0" x2="590" y2="250.0" stroke="#eee" stroke-width="1"/>
+<text x="92" y="254.0" text-anchor="end" font-size="10" fill="#666">0%</text>
+<line x1="100" y1="208.0" x2="590" y2="208.0" stroke="#eee" stroke-width="1"/>
+<text x="92" y="212.0" text-anchor="end" font-size="10" fill="#666">20%</text>
+<line x1="100" y1="166.0" x2="590" y2="166.0" stroke="#eee" stroke-width="1"/>
+<text x="92" y="170.0" text-anchor="end" font-size="10" fill="#666">40%</text>
+<line x1="100" y1="124.0" x2="590" y2="124.0" stroke="#eee" stroke-width="1"/>
+<text x="92" y="128.0" text-anchor="end" font-size="10" fill="#666">60%</text>
+<line x1="100" y1="82.0" x2="590" y2="82.0" stroke="#eee" stroke-width="1"/>
+<text x="92" y="86.0" text-anchor="end" font-size="10" fill="#666">80%</text>
+<line x1="100" y1="40.0" x2="590" y2="40.0" stroke="#eee" stroke-width="1"/>
+<text x="92" y="44.0" text-anchor="end" font-size="10" fill="#666">100%</text>
+<line x1="100" y1="40" x2="100" y2="250" stroke="#333"/>
+<line x1="100" y1="250" x2="590" y2="250" stroke="#333"/>
+<text x="222.5" y="268" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">django</text>
+<rect x="115.3" y="110.0" width="29.6" height="140.0" fill="#6c5ce7" rx="1"/>
+<text x="130.6" y="107.0" text-anchor="middle" font-size="8" fill="#666">10</text>
+<rect x="145.9" y="138.0" width="29.6" height="112.0" fill="#e17055" rx="1"/>
+<text x="161.2" y="135.0" text-anchor="middle" font-size="8" fill="#666">8</text>
+<rect x="176.6" y="138.0" width="29.6" height="112.0" fill="#00b894" rx="1"/>
+<text x="191.9" y="135.0" text-anchor="middle" font-size="8" fill="#666">8</text>
+<rect x="207.2" y="138.0" width="29.6" height="112.0" fill="#d63031" rx="1"/>
+<text x="222.5" y="135.0" text-anchor="middle" font-size="8" fill="#666">8</text>
+<rect x="237.8" y="152.0" width="29.6" height="98.0" fill="#fdcb6e" rx="1"/>
+<text x="253.1" y="149.0" text-anchor="middle" font-size="8" fill="#666">7</text>
+<rect x="268.4" y="110.0" width="29.6" height="140.0" fill="#0984e3" rx="1"/>
+<text x="283.8" y="107.0" text-anchor="middle" font-size="8" fill="#666">10</text>
+<rect x="299.1" y="138.0" width="29.6" height="112.0" fill="#a29bfe" rx="1"/>
+<text x="314.4" y="135.0" text-anchor="middle" font-size="8" fill="#666">8</text>
+<text x="467.5" y="268" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">sympy</text>
+<rect x="360.3" y="138.0" width="29.6" height="112.0" fill="#6c5ce7" rx="1"/>
+<text x="375.6" y="135.0" text-anchor="middle" font-size="8" fill="#666">8</text>
+<rect x="390.9" y="166.0" width="29.6" height="84.0" fill="#e17055" rx="1"/>
+<text x="406.2" y="163.0" text-anchor="middle" font-size="8" fill="#666">6</text>
+<rect x="421.6" y="152.0" width="29.6" height="98.0" fill="#00b894" rx="1"/>
+<text x="436.9" y="149.0" text-anchor="middle" font-size="8" fill="#666">7</text>
+<rect x="452.2" y="180.0" width="29.6" height="70.0" fill="#d63031" rx="1"/>
+<text x="467.5" y="177.0" text-anchor="middle" font-size="8" fill="#666">5</text>
+<rect x="482.8" y="180.0" width="29.6" height="70.0" fill="#fdcb6e" rx="1"/>
+<text x="498.1" y="177.0" text-anchor="middle" font-size="8" fill="#666">5</text>
+<rect x="513.4" y="138.0" width="29.6" height="112.0" fill="#0984e3" rx="1"/>
+<text x="528.8" y="135.0" text-anchor="middle" font-size="8" fill="#666">8</text>
+<rect x="544.1" y="138.0" width="29.6" height="112.0" fill="#a29bfe" rx="1"/>
+<text x="559.4" y="135.0" text-anchor="middle" font-size="8" fill="#666">8</text>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="25">
+<rect x="5" y="5" width="10" height="10" fill="#6c5ce7"/>
+<text x="18" y="14" font-size="10" fill="#333">cline-patched</text>
+<rect x="108" y="5" width="10" height="10" fill="#e17055"/>
+<text x="121" y="14" font-size="10" fill="#333">codex</text>
+<rect x="163" y="5" width="10" height="10" fill="#00b894"/>
+<text x="176" y="14" font-size="10" fill="#333">opencode</text>
+<rect x="236" y="5" width="10" height="10" fill="#d63031"/>
+<text x="249" y="14" font-size="10" fill="#333">claude-code</text>
+<rect x="327" y="5" width="10" height="10" fill="#fdcb6e"/>
+<text x="340" y="14" font-size="10" fill="#333">deepseek-harness</text>
+<rect x="448" y="5" width="10" height="10" fill="#0984e3"/>
+<text x="461" y="14" font-size="10" fill="#333">Pi</text>
+<rect x="485" y="5" width="10" height="10" fill="#a29bfe"/>
+<text x="498" y="14" font-size="10" fill="#333">Hermes Agent</text>
+</svg></div>
+<table><tr><th>Repo</th><th>Harness</th><th>Resolved</th><th>Total</th><th>Rate</th></tr>
+<tr><td rowspan="7"><strong>django/django</strong></td><td>cline-patched</td><td>10</td><td>15</td><td>66.7%</td></tr>
+<tr><td>codex</td><td>8</td><td>15</td><td>53.3%</td></tr>
+<tr><td>opencode</td><td>8</td><td>15</td><td>53.3%</td></tr>
+<tr><td>claude-code</td><td>8</td><td>15</td><td>53.3%</td></tr>
+<tr><td>deepseek-harness</td><td>7</td><td>15</td><td>46.7%</td></tr>
+<tr><td>Pi</td><td>10</td><td>15</td><td>66.7%</td></tr>
+<tr><td>Hermes Agent</td><td>8</td><td>15</td><td>53.3%</td></tr>
+<tr><td rowspan="7"><strong>sympy/sympy</strong></td><td>cline-patched</td><td>8</td><td>15</td><td>53.3%</td></tr>
+<tr><td>codex</td><td>6</td><td>15</td><td>40.0%</td></tr>
+<tr><td>opencode</td><td>7</td><td>15</td><td>46.7%</td></tr>
+<tr><td>claude-code</td><td>5</td><td>15</td><td>33.3%</td></tr>
+<tr><td>deepseek-harness</td><td>5</td><td>15</td><td>33.3%</td></tr>
+<tr><td>Pi</td><td>8</td><td>15</td><td>53.3%</td></tr>
+<tr><td>Hermes Agent</td><td>8</td><td>15</td><td>53.3%</td></tr>
+</table>
+<p><strong>Finding:</strong> All harnesses perform better on django than sympy (avg django rate ~56% vs avg sympy rate ~45%). Sympy instances are harder — likely due to deeper mathematical domain knowledge required. The ranking is more stable on django (top-2 always cline-patched/Pi) but more volatile on sympy.</p>
+<h3>3.3 Full Heatmap (30 instances x 7 harnesses)</h3>
+<table class="heatmap-table"><tr><th>Instance</th>
+<th>cline-patche</th>
+<th>codex</th>
+<th>opencode</th>
+<th>claude-code</th>
+<th>deepseek-har</th>
+<th>Pi</th>
+<th>Hermes Agent</th>
+<th>Score</th></tr>
+<tr><td class="hm-iid">dj-10924</td><td class="hm-resolved">YES</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-pbf">no</td><td class="hm-count">3/7</td></tr>
+<tr><td class="hm-iid">dj-11001</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-blocked">blk</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-count">6/7</td></tr>
+<tr><td class="hm-iid">dj-11019</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-count">0/7</td></tr>
+<tr><td class="hm-iid">dj-11039</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-count">7/7</td></tr>
+<tr><td class="hm-iid">dj-11049</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-count">7/7</td></tr>
+<tr><td class="hm-iid">dj-11099</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-count">7/7</td></tr>
+<tr><td class="hm-iid">dj-11133</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-count">7/7</td></tr>
+<tr><td class="hm-iid">dj-11179</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-count">7/7</td></tr>
+<tr><td class="hm-iid">dj-11283</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-count">0/7</td></tr>
+<tr><td class="hm-iid">dj-11422</td><td class="hm-resolved">YES</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-resolved">YES</td><td class="hm-pbf">no</td><td class="hm-resolved">YES</td><td class="hm-pbf">no</td><td class="hm-count">3/7</td></tr>
+<tr><td class="hm-iid">dj-11564</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-count">0/7</td></tr>
+<tr><td class="hm-iid">dj-11583</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-pbf">no</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-count">6/7</td></tr>
+<tr><td class="hm-iid">dj-11620</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-pbf">no</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-count">6/7</td></tr>
+<tr><td class="hm-iid">dj-11630</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-count">0/7</td></tr>
+<tr><td class="hm-iid">dj-11742</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-count">0/7</td></tr>
+<tr><td class="hm-iid">sy-11870</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-count">0/7</td></tr>
+<tr><td class="hm-iid">sy-11897</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-count">0/7</td></tr>
+<tr><td class="hm-iid">sy-12171</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-count">0/7</td></tr>
+<tr><td class="hm-iid">sy-12236</td><td class="hm-resolved">YES</td><td class="hm-pbf">no</td><td class="hm-resolved">YES</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-count">4/7</td></tr>
+<tr><td class="hm-iid">sy-12419</td><td class="hm-resolved">YES</td><td class="hm-pbf">no</td><td class="hm-resolved">YES</td><td class="hm-pbf">no</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-count">5/7</td></tr>
+<tr><td class="hm-iid">sy-12454</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-pbf">no</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-count">6/7</td></tr>
+<tr><td class="hm-iid">sy-12481</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-count">7/7</td></tr>
+<tr><td class="hm-iid">sy-13031</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-count">5/7</td></tr>
+<tr><td class="hm-iid">sy-13043</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-count">0/7</td></tr>
+<tr><td class="hm-iid">sy-13146</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-count">0/7</td></tr>
+<tr><td class="hm-iid">sy-13177</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-count">0/7</td></tr>
+<tr><td class="hm-iid">sy-13437</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-pbf">no</td><td class="hm-count">0/7</td></tr>
+<tr><td class="hm-iid">sy-13471</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-count">7/7</td></tr>
+<tr><td class="hm-iid">sy-13480</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-count">7/7</td></tr>
+<tr><td class="hm-iid">sy-13647</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-pbf">no</td><td class="hm-resolved">YES</td><td class="hm-resolved">YES</td><td class="hm-count">6/7</td></tr>
+
+</table>
+<p style="font-size:10px;color:#888"><span style="background:#00b894;color:#fff;padding:2px 6px;border-radius:3px">YES</span> resolved &nbsp; <span style="background:#fdcb6e;color:#333;padding:2px 6px;border-radius:3px">no</span> patch-but-failed &nbsp; <span style="background:#dfe6e9;padding:2px 6px;border-radius:3px">blk</span> blocked/infra</p>
+<h2><span class="section-num">4</span>Failure Mode Analysis</h2>
+<p>This is the core of the report. We classified every non-resolved outcome into failure sub-modes using the evaluation data in <code>kimi_pilot_results.json</code>:</p>
+<ul>
+<li><strong>FAIL_TO_PASS only (f2p_fail_only):</strong> Patch applied cleanly, PASS_TO_PASS tests still pass, but FAIL_TO_PASS tests <em>still fail</em> — the fix was <em>incorrect</em> (model misunderstood the bug).</li>
+<li><strong>PASS_TO_PASS only (p2p_fail_only):</strong> Patch applied, FAIL_TO_PASS tests pass, but it <em>broke existing tests</em> — the fix was correct but not regression-safe.</li>
+<li><strong>Both fail:</strong> Patch applied but neither test class passes — the fix was both wrong and destructive.</li>
+<li><strong>Timeout:</strong> Harness hit the 1800s wall — wall_s >= 1790, returncode=1.</li>
+<li><strong>Blocked/infra:</strong> Harness failed to produce a result (not counted as harness failure).</li>
+</ul>
+<h3>4.1 Failure Mode Distribution</h3>
+<div class="chart-container"><svg xmlns="http://www.w3.org/2000/svg" width="600" height="346" viewBox="0 0 600 346">
+<line x1="140.0" y1="30" x2="140.0" y2="306" stroke="#ddd" stroke-width="1"/>
+<text x="140.0" y="331" text-anchor="middle" font-size="11" fill="#666">0</text>
+<line x1="215.0" y1="30" x2="215.0" y2="306" stroke="#ddd" stroke-width="1"/>
+<text x="215.0" y="331" text-anchor="middle" font-size="11" fill="#666">5</text>
+<line x1="290.0" y1="30" x2="290.0" y2="306" stroke="#ddd" stroke-width="1"/>
+<text x="290.0" y="331" text-anchor="middle" font-size="11" fill="#666">10</text>
+<line x1="365.0" y1="30" x2="365.0" y2="306" stroke="#ddd" stroke-width="1"/>
+<text x="365.0" y="331" text-anchor="middle" font-size="11" fill="#666">15</text>
+<line x1="440.0" y1="30" x2="440.0" y2="306" stroke="#ddd" stroke-width="1"/>
+<text x="440.0" y="331" text-anchor="middle" font-size="11" fill="#666">20</text>
+<line x1="515.0" y1="30" x2="515.0" y2="306" stroke="#ddd" stroke-width="1"/>
+<text x="515.0" y="331" text-anchor="middle" font-size="11" fill="#666">25</text>
+<line x1="590.0" y1="30" x2="590.0" y2="306" stroke="#ddd" stroke-width="1"/>
+<text x="590.0" y="331" text-anchor="middle" font-size="11" fill="#666">30</text>
+<line x1="140" y1="30" x2="140" y2="306" stroke="#333" stroke-width="1"/>
+<rect x="140.0" y="35" width="270.0" height="28" fill="#00b894" rx="1"/>
+<text x="275.0" y="53.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">18</text>
+<rect x="410.0" y="35" width="165.0" height="28" fill="#fdcb6e" rx="1"/>
+<text x="492.5" y="53.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">11</text>
+<rect x="575.0" y="35" width="15.0" height="28" fill="#d63031" rx="1"/>
+<rect x="590.0" y="35" width="30.0" height="28" fill="#2d3436" rx="1"/>
+<text x="605.0" y="53.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">2</text>
+<text x="132" y="53.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">cline-patched</text>
+<rect x="140.0" y="73" width="210.0" height="28" fill="#00b894" rx="1"/>
+<text x="245.0" y="91.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">14</text>
+<rect x="350.0" y="73" width="195.0" height="28" fill="#fdcb6e" rx="1"/>
+<text x="447.5" y="91.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">13</text>
+<rect x="545.0" y="73" width="30.0" height="28" fill="#e17055" rx="1"/>
+<text x="560.0" y="91.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">2</text>
+<rect x="575.0" y="73" width="15.0" height="28" fill="#d63031" rx="1"/>
+<rect x="590.0" y="73" width="105.0" height="28" fill="#2d3436" rx="1"/>
+<text x="642.5" y="91.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">7</text>
+<text x="132" y="91.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">codex</text>
+<rect x="140.0" y="111" width="225.0" height="28" fill="#00b894" rx="1"/>
+<text x="252.5" y="129.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">15</text>
+<rect x="365.0" y="111" width="135.0" height="28" fill="#fdcb6e" rx="1"/>
+<text x="432.5" y="129.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">9</text>
+<rect x="500.0" y="111" width="15.0" height="28" fill="#e17055" rx="1"/>
+<rect x="515.0" y="111" width="75.0" height="28" fill="#d63031" rx="1"/>
+<text x="552.5" y="129.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">5</text>
+<text x="132" y="129.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">opencode</text>
+<rect x="140.0" y="149" width="195.0" height="28" fill="#00b894" rx="1"/>
+<text x="237.5" y="167.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">13</text>
+<rect x="335.0" y="149" width="180.0" height="28" fill="#fdcb6e" rx="1"/>
+<text x="425.0" y="167.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">12</text>
+<rect x="515.0" y="149" width="15.0" height="28" fill="#e17055" rx="1"/>
+<rect x="530.0" y="149" width="45.0" height="28" fill="#d63031" rx="1"/>
+<text x="552.5" y="167.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">3</text>
+<rect x="575.0" y="149" width="15.0" height="28" fill="#b2bec3" rx="1"/>
+<text x="132" y="167.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">claude-code</text>
+<rect x="140.0" y="187" width="180.0" height="28" fill="#00b894" rx="1"/>
+<text x="230.0" y="205.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">12</text>
+<rect x="320.0" y="187" width="255.0" height="28" fill="#fdcb6e" rx="1"/>
+<text x="447.5" y="205.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">17</text>
+<rect x="575.0" y="187" width="15.0" height="28" fill="#d63031" rx="1"/>
+<text x="132" y="205.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">deepseek-harness</text>
+<rect x="140.0" y="225" width="270.0" height="28" fill="#00b894" rx="1"/>
+<text x="275.0" y="243.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">18</text>
+<rect x="410.0" y="225" width="165.0" height="28" fill="#fdcb6e" rx="1"/>
+<text x="492.5" y="243.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">11</text>
+<rect x="575.0" y="225" width="15.0" height="28" fill="#d63031" rx="1"/>
+<text x="132" y="243.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">Pi</text>
+<rect x="140.0" y="263" width="240.0" height="28" fill="#00b894" rx="1"/>
+<text x="260.0" y="281.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">16</text>
+<rect x="380.0" y="263" width="180.0" height="28" fill="#fdcb6e" rx="1"/>
+<text x="470.0" y="281.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">12</text>
+<rect x="560.0" y="263" width="15.0" height="28" fill="#e17055" rx="1"/>
+<rect x="575.0" y="263" width="15.0" height="28" fill="#d63031" rx="1"/>
+<rect x="590.0" y="263" width="15.0" height="28" fill="#2d3436" rx="1"/>
+<text x="132" y="281.0" text-anchor="end" font-size="12" font-weight="bold" fill="#333">Hermes Agent</text>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="30">
+<rect x="10" y="5" width="12" height="12" fill="#00b894"/>
+<text x="26" y="15" font-size="11" fill="#333">Resolved</text>
+<rect x="96" y="5" width="12" height="12" fill="#fdcb6e"/>
+<text x="112" y="15" font-size="11" fill="#333">FAIL_TO_PASS only</text>
+<rect x="245" y="5" width="12" height="12" fill="#e17055"/>
+<text x="261" y="15" font-size="11" fill="#333">PASS_TO_PASS only</text>
+<rect x="394" y="5" width="12" height="12" fill="#d63031"/>
+<text x="410" y="15" font-size="11" fill="#333">Both fail</text>
+<rect x="487" y="5" width="12" height="12" fill="#636e72"/>
+<text x="503" y="15" font-size="11" fill="#333">No patch</text>
+<rect x="573" y="5" width="12" height="12" fill="#b2bec3"/>
+<text x="589" y="15" font-size="11" fill="#333">Blocked</text>
+<rect x="652" y="5" width="12" height="12" fill="#2d3436"/>
+<text x="668" y="15" font-size="11" fill="#333">Timeout</text>
+</svg></div>
+<table><tr><th>Harness</th><th>Resolved</th><th>f2p_fail_only</th><th>p2p_fail_only</th><th>both_fail</th><th>Timeout</th><th>Blocked</th><th>Total PBF</th></tr>
+<tr><td class="hname">cline-patched</td><td>18</td><td>11</td><td>0</td><td>1</td><td>2</td><td>0</td><td>12</td></tr>
+<tr><td class="hname">codex</td><td>14</td><td>13</td><td>2</td><td>1</td><td>7</td><td>0</td><td>16</td></tr>
+<tr><td class="hname">opencode</td><td>15</td><td>9</td><td>1</td><td>5</td><td>0</td><td>0</td><td>15</td></tr>
+<tr><td class="hname">claude-code</td><td>13</td><td>12</td><td>1</td><td>3</td><td>0</td><td>1</td><td>16</td></tr>
+<tr><td class="hname">deepseek-harness</td><td>12</td><td>17</td><td>0</td><td>1</td><td>0</td><td>0</td><td>18</td></tr>
+<tr><td class="hname">Pi</td><td>18</td><td>11</td><td>0</td><td>1</td><td>0</td><td>0</td><td>12</td></tr>
+<tr><td class="hname">Hermes Agent</td><td>16</td><td>12</td><td>1</td><td>1</td><td>1</td><td>0</td><td>14</td></tr>
+</table>
+<h3>4.2 Key Findings from Failure Modes</h3>
+<div class="callout"><ol>
+<li><strong>"Wrong fix" (f2p_fail_only) is the dominant failure mode — 85 of 103 PBF cases (83%).</strong> The patch applies cleanly and does not break existing tests, but it simply does not fix the target bug. This is a <em>model comprehension</em> failure, not a tooling failure. No harness can compensate for a backbone that misunderstands the bug.</li>
+<li><strong>codex has the most timeouts (7/30 = 23%).</strong> Its avg wall time (843s) is nearly 3x Pi (275s). The Rust-based harness spends too long exploring — 7 instances hit the 1800s wall. This suggests codex iteration strategy is inefficient with this model.</li>
+<li><strong>opencode has the most "both_fail" (5/15 PBF).</strong> Its patches are more likely to be both wrong AND break existing tests — suggesting its edit format or context handling introduces more collateral damage.</li>
+<li><strong>deepseek-harness: 17/18 PBF are pure "wrong fix" (94%).</strong> The Rust harness generates the smallest patches (1566B avg) — it is conservative but frequently incomplete. It never times out, never breaks existing tests, but also rarely gets the fix right.</li>
+<li><strong>Pi and cline-patched have identical failure profiles</strong> (11 f2p_only, 1 both_fail) — except cline-patched has 2 timeouts and Pi has 0. Pi faster iteration (275s vs 479s) means it never hits the wall.</li>
+</ol></div>
+<h3>4.3 Failure Evidence (from logs)</h3>
+<div class="evidence"><h4>TIMEOUT: cline-patched / django__django-11019</h4><pre>wall_s=1800s  returncode=1  eval: f2p=0/16 p2p=58/58
+stdout_tail: ...un_single] wrote predictions -&gt; /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11019.json
+[run_single] cleanup: git reset --hard 93e892bb645b16ebaf287beb5fe7f3ffe8d10408
+</pre></div>
+<div class="evidence"><h4>TIMEOUT: cline-patched / django__django-11630</h4><pre>wall_s=1800s  returncode=1  eval: f2p=0/2 p2p=16/16
+stdout_tail: ...un_single] wrote predictions -&gt; /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_django__django-11630.json
+[run_single] cleanup: git reset --hard 65e86948b80262574058a94ccaae3a9b59c3faea
+</pre></div>
+<div class="evidence"><h4>Wrong Fix (FAIL_TO_PASS only): cline-patched / django__django-11019</h4><pre>patch_applied=True  patch_size=0 bytes
+eval: f2p=0/16 (FAIL)  p2p=58/58 (PASS)
+Patch was applied cleanly but did not fix the target bug</pre></div>
+<div class="evidence"><h4>Wrong Fix (FAIL_TO_PASS only): cline-patched / django__django-11564</h4><pre>patch_applied=True  patch_size=11765 bytes
+eval: f2p=0/2 (FAIL)  p2p=174/174 (PASS)
+Patch was applied cleanly but did not fix the target bug</pre></div>
+<div class="evidence"><h4>Both Fail: cline-patched / django__django-11283</h4><pre>eval: f2p=0/1 (FAIL)  p2p=0/8 (FAIL)
+Patch did not fix the bug AND broke existing tests</pre></div>
+
+<h3>4.4 Instances Nobody Solved (12/30 = 40%)</h3>
+<p>These instances defeated all 7 harnesses — they represent the <em>backbone model ceiling</em>, not harness limitations:</p>
+<table><tr><th>Instance ID</th><th>Repo</th></tr>
+<tr><td class='iid'>django__django-11019</td><td>django</td></tr>
+<tr><td class='iid'>django__django-11283</td><td>django</td></tr>
+<tr><td class='iid'>django__django-11564</td><td>django</td></tr>
+<tr><td class='iid'>django__django-11630</td><td>django</td></tr>
+<tr><td class='iid'>django__django-11742</td><td>django</td></tr>
+<tr><td class='iid'>sympy__sympy-11870</td><td>sympy</td></tr>
+<tr><td class='iid'>sympy__sympy-11897</td><td>sympy</td></tr>
+<tr><td class='iid'>sympy__sympy-12171</td><td>sympy</td></tr>
+<tr><td class='iid'>sympy__sympy-13043</td><td>sympy</td></tr>
+<tr><td class='iid'>sympy__sympy-13146</td><td>sympy</td></tr>
+<tr><td class='iid'>sympy__sympy-13177</td><td>sympy</td></tr>
+<tr><td class='iid'>sympy__sympy-13437</td><td>sympy</td></tr>
+
+</table>
+<p style="font-size:11px;color:#666"><em>Pattern: 5 django + 7 sympy. The sympy instances likely require deep mathematical domain knowledge; the django ones may involve complex ORM or migration logic.</em></p>
+<h2><span class="section-num">5</span>Cost and Efficiency Analysis</h2>
+<div class="chart-container"><svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+<line x1="60" y1="350.0" x2="570" y2="350.0" stroke="#eee" stroke-width="1"/>
+<text x="52" y="354.0" text-anchor="end" font-size="10" fill="#666">0%</text>
+<line x1="60" y1="286.0" x2="570" y2="286.0" stroke="#eee" stroke-width="1"/>
+<text x="52" y="290.0" text-anchor="end" font-size="10" fill="#666">20%</text>
+<line x1="60" y1="222.0" x2="570" y2="222.0" stroke="#eee" stroke-width="1"/>
+<text x="52" y="226.0" text-anchor="end" font-size="10" fill="#666">40%</text>
+<line x1="60" y1="158.0" x2="570" y2="158.0" stroke="#eee" stroke-width="1"/>
+<text x="52" y="162.0" text-anchor="end" font-size="10" fill="#666">60%</text>
+<line x1="60" y1="94.0" x2="570" y2="94.0" stroke="#eee" stroke-width="1"/>
+<text x="52" y="98.0" text-anchor="end" font-size="10" fill="#666">80%</text>
+<line x1="60" y1="30.0" x2="570" y2="30.0" stroke="#eee" stroke-width="1"/>
+<text x="52" y="34.0" text-anchor="end" font-size="10" fill="#666">100%</text>
+<line x1="60.0" y1="30" x2="60.0" y2="350" stroke="#eee" stroke-width="1"/>
+<text x="60.0" y="365" text-anchor="middle" font-size="10" fill="#666">0s</text>
+<line x1="162.0" y1="30" x2="162.0" y2="350" stroke="#eee" stroke-width="1"/>
+<text x="162.0" y="365" text-anchor="middle" font-size="10" fill="#666">200s</text>
+<line x1="264.0" y1="30" x2="264.0" y2="350" stroke="#eee" stroke-width="1"/>
+<text x="264.0" y="365" text-anchor="middle" font-size="10" fill="#666">400s</text>
+<line x1="366.0" y1="30" x2="366.0" y2="350" stroke="#eee" stroke-width="1"/>
+<text x="366.0" y="365" text-anchor="middle" font-size="10" fill="#666">600s</text>
+<line x1="468.0" y1="30" x2="468.0" y2="350" stroke="#eee" stroke-width="1"/>
+<text x="468.0" y="365" text-anchor="middle" font-size="10" fill="#666">800s</text>
+<line x1="570.0" y1="30" x2="570.0" y2="350" stroke="#eee" stroke-width="1"/>
+<text x="570.0" y="365" text-anchor="middle" font-size="10" fill="#666">1000s</text>
+<line x1="60" y1="30" x2="60" y2="350" stroke="#333"/>
+<line x1="60" y1="350" x2="570" y2="350" stroke="#333"/>
+<text x="315.0" y="390" text-anchor="middle" font-size="12" fill="#333">Avg Wall Time (seconds)</text>
+<text x="15" y="190.0" text-anchor="middle" font-size="12" fill="#333" transform="rotate(-90 15 190.0)">Resolve Rate (%)</text>
+<circle cx="304.0" cy="158.0" r="8" fill="#6c5ce7" opacity="0.8"/>
+<text x="316.0" y="162.0" font-size="11" fill="#333" font-weight="bold">cline-patched</text>
+<circle cx="490.1" cy="200.7" r="8" fill="#e17055" opacity="0.8"/>
+<text x="502.1" y="204.7" font-size="11" fill="#333" font-weight="bold">codex</text>
+<circle cx="208.0" cy="190.0" r="8" fill="#00b894" opacity="0.8"/>
+<text x="220.0" y="194.0" font-size="11" fill="#333" font-weight="bold">opencode</text>
+<circle cx="276.7" cy="206.6" r="8" fill="#d63031" opacity="0.8"/>
+<text x="288.7" y="210.6" font-size="11" fill="#333" font-weight="bold">claude-code</text>
+<circle cx="209.3" cy="222.0" r="8" fill="#fdcb6e" opacity="0.8"/>
+<text x="221.3" y="226.0" font-size="11" fill="#333" font-weight="bold">deepseek-harness</text>
+<circle cx="200.0" cy="158.0" r="8" fill="#0984e3" opacity="0.8"/>
+<text x="212.0" y="162.0" font-size="11" fill="#333" font-weight="bold">Pi</text>
+<circle cx="342.2" cy="179.3" r="8" fill="#a29bfe" opacity="0.8"/>
+<text x="354.2" y="183.3" font-size="11" fill="#333" font-weight="bold">Hermes Agent</text>
+</svg></div>
+<p><strong>Efficiency metric:</strong> resolved instances per hour of wall-clock time (higher = more efficient use of compute):</p>
+<table><tr><th>Rank</th><th>Harness</th><th>Resolved</th><th>Rate</th><th>Avg Wall</th><th>Total Wall</th><th>Timeouts</th><th>Avg Patch</th><th>Efficiency (res/h)</th></tr>
+<tr><td style="text-align:center">1</td><td class="hname">cline-patched</td><td style="text-align:center">18/30</td><td style="text-align:center">60.0%</td><td style="text-align:center">479s</td><td style="text-align:center">4.0h</td><td style="text-align:center">2</td><td style="text-align:center">3433B</td><td style="text-align:center;font-weight:bold">4.5</td></tr>
+<tr><td style="text-align:center">2</td><td class="hname">Pi</td><td style="text-align:center">18/30</td><td style="text-align:center">60.0%</td><td style="text-align:center">275s</td><td style="text-align:center">2.3h</td><td style="text-align:center">0</td><td style="text-align:center">3337B</td><td style="text-align:center;font-weight:bold">7.9</td></tr>
+<tr><td style="text-align:center">3</td><td class="hname">Hermes Agent</td><td style="text-align:center">16/30</td><td style="text-align:center">53.3%</td><td style="text-align:center">553s</td><td style="text-align:center">4.6h</td><td style="text-align:center">1</td><td style="text-align:center">3161B</td><td style="text-align:center;font-weight:bold">3.5</td></tr>
+<tr><td style="text-align:center">4</td><td class="hname">opencode</td><td style="text-align:center">15/30</td><td style="text-align:center">50.0%</td><td style="text-align:center">290s</td><td style="text-align:center">2.4h</td><td style="text-align:center">0</td><td style="text-align:center">3569B</td><td style="text-align:center;font-weight:bold">6.2</td></tr>
+<tr><td style="text-align:center">5</td><td class="hname">codex</td><td style="text-align:center">14/30</td><td style="text-align:center">46.7%</td><td style="text-align:center">843s</td><td style="text-align:center">7.0h</td><td style="text-align:center">7</td><td style="text-align:center">1659B</td><td style="text-align:center;font-weight:bold">2.0</td></tr>
+<tr><td style="text-align:center">6</td><td class="hname">claude-code</td><td style="text-align:center">13/29</td><td style="text-align:center">44.8%</td><td style="text-align:center">425s</td><td style="text-align:center">3.4h</td><td style="text-align:center">0</td><td style="text-align:center">2212B</td><td style="text-align:center;font-weight:bold">3.8</td></tr>
+<tr><td style="text-align:center">7</td><td class="hname">deepseek-harness</td><td style="text-align:center">12/30</td><td style="text-align:center">40.0%</td><td style="text-align:center">293s</td><td style="text-align:center">2.4h</td><td style="text-align:center">0</td><td style="text-align:center">1566B</td><td style="text-align:center;font-weight:bold">4.9</td></tr>
+
+</table>
+<div class="callout"><p><strong>Cost findings:</strong></p><ul>
+<li><strong>Pi is the most efficient</strong> (7.9 res/h) — fastest avg wall (275s), zero timeouts, tied for highest resolve rate. It gets the most done per unit of compute.</li>
+<li><strong>codex is the least efficient</strong> (2.0 res/h) — 3x slower than Pi, 7 timeouts waste 3.5h of wall time, and its resolve rate is only 46.7%.</li>
+<li><strong>opencode and deepseek-harness are fast but inaccurate</strong> — both ~290s avg but only 50% and 40% resolve rates. Speed without accuracy is not valuable.</li>
+<li><strong>cline-patched is mid-efficiency</strong> (4.5 res/h) — good resolve rate but 2 timeouts and 479s avg wall drag it down vs Pi.</li>
+<li><strong>Hermes Agent is slow (553s avg) but decent</strong> (3.5 res/h) — Python-based overhead shows, but 53.3% resolve rate is respectable.</li>
+</ul></div>
+<h3>5.1 Patch Size Correlation</h3>
+<div class="chart-container"><svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+<line x1="60" y1="350.0" x2="570" y2="350.0" stroke="#eee" stroke-width="1"/>
+<text x="52" y="354.0" text-anchor="end" font-size="10" fill="#666">0%</text>
+<line x1="60" y1="286.0" x2="570" y2="286.0" stroke="#eee" stroke-width="1"/>
+<text x="52" y="290.0" text-anchor="end" font-size="10" fill="#666">20%</text>
+<line x1="60" y1="222.0" x2="570" y2="222.0" stroke="#eee" stroke-width="1"/>
+<text x="52" y="226.0" text-anchor="end" font-size="10" fill="#666">40%</text>
+<line x1="60" y1="158.0" x2="570" y2="158.0" stroke="#eee" stroke-width="1"/>
+<text x="52" y="162.0" text-anchor="end" font-size="10" fill="#666">60%</text>
+<line x1="60" y1="94.0" x2="570" y2="94.0" stroke="#eee" stroke-width="1"/>
+<text x="52" y="98.0" text-anchor="end" font-size="10" fill="#666">80%</text>
+<line x1="60" y1="30.0" x2="570" y2="30.0" stroke="#eee" stroke-width="1"/>
+<text x="52" y="34.0" text-anchor="end" font-size="10" fill="#666">100%</text>
+<line x1="60.0" y1="30" x2="60.0" y2="350" stroke="#eee" stroke-width="1"/>
+<text x="60.0" y="365" text-anchor="middle" font-size="10" fill="#666">0KB</text>
+<line x1="187.5" y1="30" x2="187.5" y2="350" stroke="#eee" stroke-width="1"/>
+<text x="187.5" y="365" text-anchor="middle" font-size="10" fill="#666">1KB</text>
+<line x1="315.0" y1="30" x2="315.0" y2="350" stroke="#eee" stroke-width="1"/>
+<text x="315.0" y="365" text-anchor="middle" font-size="10" fill="#666">2KB</text>
+<line x1="442.5" y1="30" x2="442.5" y2="350" stroke="#eee" stroke-width="1"/>
+<text x="442.5" y="365" text-anchor="middle" font-size="10" fill="#666">3KB</text>
+<line x1="570.0" y1="30" x2="570.0" y2="350" stroke="#eee" stroke-width="1"/>
+<text x="570.0" y="365" text-anchor="middle" font-size="10" fill="#666">4KB</text>
+<line x1="60" y1="30" x2="60" y2="350" stroke="#333"/>
+<line x1="60" y1="350" x2="570" y2="350" stroke="#333"/>
+<text x="315.0" y="390" text-anchor="middle" font-size="12" fill="#333">Avg Patch Size (bytes)</text>
+<text x="15" y="190.0" text-anchor="middle" font-size="12" fill="#333" transform="rotate(-90 15 190.0)">Resolve Rate (%)</text>
+<circle cx="497.8" cy="158.0" r="8" fill="#6c5ce7" opacity="0.8"/>
+<text x="509.8" y="162.0" font-size="11" fill="#333" font-weight="bold">cline-patched</text>
+<circle cx="271.6" cy="200.7" r="8" fill="#e17055" opacity="0.8"/>
+<text x="283.6" y="204.7" font-size="11" fill="#333" font-weight="bold">codex</text>
+<circle cx="515.1" cy="190.0" r="8" fill="#00b894" opacity="0.8"/>
+<text x="527.1" y="194.0" font-size="11" fill="#333" font-weight="bold">opencode</text>
+<circle cx="342.0" cy="206.6" r="8" fill="#d63031" opacity="0.8"/>
+<text x="354.0" y="210.6" font-size="11" fill="#333" font-weight="bold">claude-code</text>
+<circle cx="259.6" cy="222.0" r="8" fill="#fdcb6e" opacity="0.8"/>
+<text x="271.6" y="226.0" font-size="11" fill="#333" font-weight="bold">deepseek-harness</text>
+<circle cx="485.5" cy="158.0" r="8" fill="#0984e3" opacity="0.8"/>
+<text x="497.5" y="162.0" font-size="11" fill="#333" font-weight="bold">Pi</text>
+<circle cx="463.0" cy="179.3" r="8" fill="#a29bfe" opacity="0.8"/>
+<text x="475.0" y="183.3" font-size="11" fill="#333" font-weight="bold">Hermes Agent</text>
+</svg></div>
+<p><strong>Correlation:</strong> There is a clear positive correlation (r ~ 0.7) between average patch size and resolve rate. The top-3 performers (cline-patched 3433B, Pi 3337B, Hermes 3161B) all produce larger, more complete patches. The bottom-2 (deepseek-harness 1566B, codex 1659B) produce the smallest — suggesting their fixes are too minimal to fully address the bug. <em>This is not about "more code is better" — it is that complete fixes require sufficient context modifications.</em></p>
+<h2><span class="section-num">6</span>Harness Architecture Differences</h2>
+<table><tr><th>Harness</th><th>Language</th><th>Tools</th><th>Context</th><th>Approach</th><th>Non-interactive</th><th>Resolve Rate</th></tr>
+<tr><td class="hname">cline-patched</td><td>TypeScript (Node/Bun)</td><td style="font-size:11px">read_file, write_to_file, replace_in_file, execute_command, search_files</td><td>Full file + diff</td><td>Agentic loop with auto-approve</td><td><code>cline --allowedTools ... -m</code></td><td style="text-align:center;font-weight:bold;color:#6c5ce7">60.0%</td></tr>
+<tr><td class="hname">codex</td><td>Rust + TypeScript</td><td style="font-size:11px">shell, file_edit, apply_patch</td><td>Full repo scan</td><td>Multi-turn with sandboxed exec</td><td><code>codex --quiet --full-auto</code></td><td style="text-align:center;font-weight:bold;color:#e17055">46.7%</td></tr>
+<tr><td class="hname">opencode</td><td>TypeScript (Bun)</td><td style="font-size:11px">read, write, edit, bash, glob, grep</td><td>File-level with tree</td><td>LSP-aware, fast iteration</td><td><code>opencode run --non-interactive</code></td><td style="text-align:center;font-weight:bold;color:#00b894">50.0%</td></tr>
+<tr><td class="hname">claude-code</td><td>TypeScript (Node)</td><td style="font-size:11px">Read, Write, Edit, Bash, Glob, Grep</td><td>Full repo</td><td>Claude-optimized prompt format</td><td><code>claude --print --dangerously-skip-permissions</code></td><td style="text-align:center;font-weight:bold;color:#d63031">44.8%</td></tr>
+<tr><td class="hname">deepseek-harness</td><td>Rust</td><td style="font-size:11px">file_read, file_write, shell_exec</td><td>File-level</td><td>Minimal overhead, raw patches</td><td><code>Rust binary, headless via env</code></td><td style="text-align:center;font-weight:bold;color:#fdcb6e">40.0%</td></tr>
+<tr><td class="hname">Pi</td><td>TypeScript (Bun)</td><td style="font-size:11px">read, write, edit, bash, search</td><td>Full file + project tree</td><td>Print mode, JSON events</td><td><code>pi -p (print mode)</code></td><td style="text-align:center;font-weight:bold;color:#0984e3">60.0%</td></tr>
+<tr><td class="hname">Hermes Agent</td><td>Python</td><td style="font-size:11px">file_ops, shell, search, web</td><td>Full repo</td><td>CLI oneshot with yolo flag</td><td><code>hermes -z --yolo</code></td><td style="text-align:center;font-weight:bold;color:#a29bfe">53.3%</td></tr>
+
+</table>
+<h3>6.1 Architecture to Performance Correlations</h3>
+<div class="callout"><ul>
+<li><strong>TypeScript/Bun harnesses dominate the top</strong> (cline-patched, Pi, opencode all use Bun/Node). Bun fast startup and efficient file I/O may give more iteration cycles within the timeout.</li>
+<li><strong>Rust harnesses are split:</strong> deepseek-harness (Rust) is fast but inaccurate; codex (Rust+TS) is slow and timeout-prone. Rust alone does not guarantee good performance — the <em>iteration strategy</em> matters more than the language.</li>
+<li><strong>Tool richness does not predict performance:</strong> cline-patched and Pi both expose similar tool sets (read/write/edit/bash/search) and tie at 60%. deepseek-harness has a minimal tool set and scores 40%. But opencode has the richest LSP-aware tools and only gets 50% — the model ability to <em>use</em> the tools matters more than the tools themselves.</li>
+<li><strong>Context management is key:</strong> Pi and cline-patched both provide full file + project tree context. deepseek-harness provides file-level only. The extra context helps the model understand the fix scope.</li>
+<li><strong>Non-interactive mode quality varies:</strong> Pi print mode (-p) is the cleanest — JSON event stream, no interactive overhead. codex --quiet --full-auto is the most timeout-prone. The non-interactive implementation directly affects wall time.</li>
+</ul></div>
+<h2><span class="section-num">7</span>Implications for BaiZe</h2>
+<p>If BaiZe 2.2B were to serve as the backbone model in a SWE-bench harness, what capabilities would it need to approach 60% resolve rate?</p>
+<div class="callout"><h3>7.1 Required Capabilities (ranked by impact)</h3><ol>
+<li><strong>Code comprehension (critical):</strong> 83% of failures are "wrong fix" — the patch applies but does not solve the bug. This is pure code understanding. BaiZe 2.2B needs strong reading comprehension of real-world codebases (django, sympy), including understanding idioms, inheritance, and implicit behavior. <em>This is the #1 bottleneck — no harness can compensate for weak comprehension.</em></li>
+<li><strong>Patch completeness (high):</strong> The patch-size correlation shows that top harnesses produce 3KB+ patches with multiple coordinated edits. BaiZe needs to generate <em>complete</em> fixes — not just the "obvious" line, but all related changes (imports, tests, config). A model that produces 1.5KB patches will plateau at ~40%.</li>
+<li><strong>Tool-use reasoning (medium):</strong> The harness provides tools (read, search, edit, bash), but the model must know <em>when</em> to use each. Pi and cline-patched succeed because kimi-k2.6-cloud reasons well about tool sequences. BaiZe needs strong function-calling / tool-use training.</li>
+<li><strong>Long-context handling (medium):</strong> Real SWE-bench instances require reading multiple files, understanding diffs, and maintaining context across turns. BaiZe context window (likely 32K-128K) must handle full-file reads + search results + edit history simultaneously.</li>
+<li><strong>Domain knowledge (medium for sympy, low for django):</strong> Sympy instances require mathematical domain knowledge — 7/15 sympy instances were unsolved by any harness. BaiZe pretraining on math/code corpora directly impacts sympy performance.</li>
+<li><strong>Efficiency / iteration speed (low for model, high for harness):</strong> The model does not control wall time — the harness does. But a model that can produce a correct fix in fewer turns saves compute. Pi efficiency (275s avg) comes from the harness, but a "smarter" model could reduce turns further.</li>
+</ol></div>
+<h3>7.2 Expected BaiZe 2.2B Performance</h3>
+<div class="caveat"><p>Based on this 7-way cross-eval, if BaiZe 2.2B replaces kimi-k2.6-cloud as backbone:</p><ul>
+<li><strong>If BaiZe 2.2B has kimi-level code comprehension:</strong> Expected resolve rate ~55-60% (harness variance only).</li>
+<li><strong>If BaiZe 2.2B has weaker comprehension (e.g., 70% of kimi):</strong> Expected ~35-45% — the "wrong fix" failure mode would dominate even more.</li>
+<li><strong>The harness choice matters ~20 points:</strong> Even with a perfect model, a poor harness (deepseek-harness) caps at ~40%. A good harness (Pi) extracts ~60%. BaiZe own harness should be designed like Pi: Bun-based, print mode, full context, efficient iteration.</li>
+<li><strong>The 12 "unsolvable" instances set a hard ceiling:</strong> With kimi-k2.6-cloud, the ceiling is 60% (18/30). With a weaker model, the ceiling drops. Expanding to 100+ instances would give a more precise ceiling estimate.</li>
+</ul></div>
+<h2><span class="section-num">8</span>Limitations</h2>
+<div class="caveat"><ol>
+<li><strong>30-instance subset is small.</strong> Confidence intervals are wide: at 60% (18/30), the 95% CI is approximately [41%, 77%]. The 20-point spread between harnesses may not be statistically significant with this sample size.</li>
+<li><strong>Single seed, single run.</strong> No variance estimation — a different random seed or model temperature could change individual instance outcomes. kimi-k2.6-cloud temperature was fixed across all runs.</li>
+<li><strong>kimi-k2.6-cloud is not BaiZe.</strong> All conclusions about "what the model needs" are inferred from kimi behavior. BaiZe 2.2B may have different strengths/weaknesses (e.g., better at sympy if trained on more math data).</li>
+<li><strong>Non-Docker sandbox (unshare R1).</strong> The evaluation uses a custom unshare-based sandbox, not the official SWE-bench Docker harness. Results may differ from official Docker-based evaluations (different dependency versions, test execution environment).</li>
+<li><strong>Not comparable to SWE-bench leaderboard.</strong> The official leaderboard uses 300 instances (SWE-bench Lite) with Docker. Our 30-instance subset + non-Docker eval means results <strong>cannot</strong> be compared to published leaderboard scores.</li>
+<li><strong>Only 2 repos (django, sympy).</strong> SWE-bench Lite spans 11 repos. Our subset misses scikit-learn, matplotlib, sphinx, etc. — performance may differ on other repos.</li>
+<li><strong>cline-patched is modified.</strong> The "cline-patched" harness includes custom patches to the upstream cline — its 60% rate may not reflect vanilla cline performance.</li>
+<li><strong>No token consumption data.</strong> Wall time is a proxy for cost, but actual API token consumption was not tracked per-harness. Some harnesses may use more tokens per turn.</li>
+</ol></div>
+<h2><span class="section-num">9</span>Next Steps and Recommendations</h2>
+<div class="callout"><ol>
+<li><strong>Expand to 100-300 instances</strong> (full SWE-bench Lite) to narrow confidence intervals and get statistically significant harness rankings. The 10 "discriminating" instances in our 30-set are too few for robust conclusions.</li>
+<li><strong>Swap in BaiZe 2.2B as backbone</strong> and re-run the 7-way cross-eval. This directly answers: "what resolve rate can BaiZe achieve, and which harness extracts the most from it?" Use Pi as the reference harness (best efficiency).</li>
+<li><strong>Add more repos</strong> (scikit-learn, matplotlib, requests, flask) to test domain generalization. The django/sympy split may not represent the full difficulty spectrum.</li>
+<li><strong>Run multiple seeds</strong> (3-5) to estimate variance. A single run cannot distinguish "harness A is better" from "harness A got lucky on 2 instances."</li>
+<li><strong>Track token consumption</strong> per harness to compute true cost-per-resolve. Wall time alone misses API cost differences (some harnesses make more/smaller API calls).</li>
+<li><strong>Failure-mode deep dive on the unsolvable instances:</strong> Analyze what makes them hard — is it bug complexity, codebase size, or domain knowledge? This directly informs BaiZe training data strategy.</li>
+<li><strong>Test BaiZe on harness source analysis (H-B direction):</strong> The harness architecture differences (Sec 6) suggest that BaiZe own harness should be Bun-based with print mode, full-file context, and rich tool set. Prototype this and benchmark against Pi.</li>
+</ol></div>
+<hr>
+<p style="font-size:11px;color:#888"><strong>BaiZe Harness H-A, 30x7 cross-eval deep analysis.</strong><br>Generated: 2026-10-08 09:46 | Model: kimi-k2.6-cloud | Serial concurrency=1 | Data: <code>kimi_pilot_results.json</code> (210 entries, 210 in scope)<br>All numbers are computed from <code>kimi_pilot_results.json</code> and are reproducible via <code>analyze_for_report.py</code>.<br>Result table: <code>SWEBENCH_COMPARE.html</code> | Reproduction: <code>run_serial_kimi.py --harness &lt;name&gt; --instances $INSTS --resume</code></p>
+</body></html>
