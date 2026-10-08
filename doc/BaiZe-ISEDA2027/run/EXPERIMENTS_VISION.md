@@ -473,7 +473,7 @@ larger model. **No curve extrapolation.**
 | | Tower | Params | Structure | Res / patch | Img tokens | Throughput (smoke) | 1-epoch ETA |
 |:--|:--|--:|:--|:--|--:|--:|--:|
 | **E1** | OpenVision2 w512/d30 (self-research) | **126.78M** | patch16, SwiGLU MLP | 224 / 16 | 196 | 4697 img/s | **~5.6 h** |
-| **E2** (⑥ revised) | OpenVision2 w768/d30 (same family, width 512→768) | **284.54M** (2.24×) | patch16, SwiGLU MLP | 224 / 16 | 196 | **pending smoke** (R9 ref: 2978 img/s) | **~5.6 h** (est.) |
+| **E2** (⑥ revised) | OpenVision2 w768/d30 (same family, width 512→768) | **284.54M** (2.24×) | patch16, SwiGLU MLP | 224 / 16 | 196 | **4845 img/s** (smoke+full run) | **~5.5 h** |
 | ~~E2 (original ⑤, abandoned)~~ | ~~Official OV2 w1024/d24~~ | ~~304.2M~~ | ~~patch14, GELU~~ | ~~336 / 14~~ | ~~576~~ | ~~2347 img/s~~ | ~~11.2 h~~ |
 
 > **⑥ revision note (2026-10-08, user ruling)**: The original E2 (official OV2 L/14@336, 304M)
@@ -487,7 +487,8 @@ larger model. **No curve extrapolation.**
 - Objective = AIMv2 dense (`--loss aimv2`): 1.0×InfoNCE + 1.0×masked-patch-MSE, mask_ratio=0.6, contrast:patch=1:1
 - Text tower = frozen CLIP-ViT-L/14-336 (768-d), not unfrozen
 - Data = GPIC 6233 tar × ~12639 + CC12M 1100 tar × ~10000 + Amshaker 2250 tar × ~2646 ≈ **95.7M pairs** (1 epoch ≈ 186,978 steps)
-- Budget = **1 epoch** (same step count for both arms)
+  - ⚠️ **Step count locked to 187,101** (E1's actual step count). GPIC grew to 6754 tar by E2 launch time (would compute 199,839 steps), but E2 is launched with `--steps 187101` to match E1 exactly. E2 sees a random subset (~93.6%) of the larger dataset over the same number of gradient steps. This preserves the "same budget" constraint.
+- Budget = **same number of gradient steps** (187,101 steps = E1's count). Both arms train from scratch for identical step counts.
 - Optim = AdamW lr=3e-3, warmup 20, constant, betas=(0.9,0.95), eps=1e-6
 - Batch = 64/GPU × 8 = 512 total, bf16 autocast
 - Seed = 1234
@@ -535,12 +536,15 @@ pretraining, not comparable"**.
 | GPU registration (GPU12_ALLOC.md) | ✅ Done |
 | Smoke test E1 (30 steps) | ✅ Done — 4697 img/s |
 | Smoke test E2 original ⑤ (304M, abandoned) | ✅ Done — 2347 img/s (kept as reference) |
-| Smoke test E2 revised ⑥ (w768, 284.54M) | ⏳ Pending — E1 occupying all 8 GPUs; will run after E1 completes |
-| ETA report | ✅ E1 ~5.6h; E2 (w768) est. ~5.6h (R9 ref: w768@224/p16 ≈ w512 throughput) |
+| Smoke test E2 revised ⑥ (w768, 284.54M) | ✅ **DONE** — 4328–4850 img/s, ETA ~5.5h, 284.5M params confirmed |
+| ETA report | ✅ E1 ~5.6h (done); E2 ~5.5h (running) |
 | Pre-registration (this section) | ✅ Written before training (⑥ revised) |
-| Script fix (run_scaling_experiment.sh) | ✅ Done — run_e2() changed to w768/d30/p16/224 |
-| E1 training (1 epoch) | ✅ **DONE** — 187101/187101 steps, loss=1.3036, 6060 img/s, no collapse, vision.pt=487MB (completed 04:22 Oct 9) |
-| E1 evaluation (Protocol B, 3 seeds) | 🟧 **RUNNING** — feature extraction 251/294 parquet (85%), ETA ~07:13 Oct 9 |
-| E2 training (1 epoch) | ⏸ Queued after E1 (e2_watcher_v3.sh PID 3261084 waiting → smoke_e2 → full training + auto-eval) |
-| Evaluation (Protocol A+B, 3 seeds) | ⏸ Pending — E1 auto-eval by resume_e1 mode; E2 auto-eval by e2 mode; safety-net E1 eval in watcher v3 |
-| Report (HTML) | ⏸ Pending |
+| Script fix (run_scaling_experiment.sh) | ✅ Done — run_e2() changed to w768/d30/p16/224; step count explicitly set to 187101 |
+| Step-count audit (2026-10-09) | ✅ **Caught & fixed**: GPIC grew 6233→6754 tar; E2 would have run 199,839 steps vs E1's 187,101 (6.8% longer). Restarted E2 with `--steps 187101` to match E1 exactly. |
+| sympy fix (2026-10-09) | ✅ sympy 1.5.1→1.14.0 (copied from vllm conda env) — fixes `equal_valued`/`core.sorting`/`core.traversal`/`core.parameters` ImportError that blocked Protocol A eval |
+| E1 training (187,101 steps) | ✅ **DONE** — 187101/187101 steps, loss=1.3036, 6060 img/s, no collapse, vision.pt=487MB (completed 04:22 Oct 9) |
+| E1 evaluation (Protocol B, 3 seeds) | ✅ **DONE** — **lp = 29.35 ± 0.00%** (seeds 0/1/2: 29.34/29.35/29.35) |
+| E1 evaluation (Protocol A) | ❌ Failed (sympy 1.5.1) → 🟧 **Re-run queued** in e2_post_watcher.sh (sympy 1.14.0 now installed) |
+| E2 training (187,101 steps) | 🟧 **RUNNING** — PID 764635, step ~220/187101, ~4845 img/s, loss=5.0 (decreasing), ETA ~5.5h (started 06:51 Oct 9) |
+| E2 evaluation (Protocol B+A) | ⏸ Auto-eval by `e2` mode after training; safety-net watcher also scheduled |
+| Report (HTML) | ⏸ Pending — after E2 eval |
