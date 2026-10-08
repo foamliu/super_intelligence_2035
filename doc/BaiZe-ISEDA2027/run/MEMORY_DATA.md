@@ -12,11 +12,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅全分词完成(44 shards=524.42B tok)+✅全量污染扫描清洁(30 parquet×5K=150K docs,0命中,累计160K docs全0)+GPIC 6708/8001(ETA~29h→~10:48Oct10)
+PHASE:        ✅全分词完成(44 shards=524.42B tok)+✅全量污染扫描清洁(30 parquet×5K=150K docs,0命中,累计160K docs全0)+GPIC 6734/8001(ETA~28h→~10:50Oct10)
 已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；D-CLEAN-1/2/3/4；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43; s_step归因(MBS16:8.6×,166ms); Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); zh分词8/8✅(112.47B); 论文更新(4+5节,main.pdf 0err); l1_en_hq分词12/12✅(152.17B); ultrax分词s34-s43✅(30.97B); en_base分词s24-s33✅(206.76B); ✅投料前污染采样扫描(10K docs,0命中); ✅全量污染扫描(30 parquet×5K=150K docs,0命中,累计160K docs全0命中)
-当前动作:     唤醒246(05:48@.12) 全量污染扫描确认完成(30/32files,150K docs,0命中✅)+GPIC 6708/8001(+31,~45tar/h)+CONTAMINATION_CHECK更新+心跳
-下一步:       ①GPIC续下(6708/8001,ETA~29h→~10:48Oct10); ②en_v1_4排队等运维放行; ③报运维"全分词完成+全量污染扫描清洁,数据就绪"
-阻塞:         GPIC下载进行中(6708/8001,ETA~29h→~10:48Oct10); en_v1_4排队等运维放行
+当前动作:     唤醒247(06:23@.12) GPIC巡检(6734/8001,+26,~44.5tar/h,活PID144981,ETA~28h)+心跳,无新运维指令
+下一步:       ①GPIC续下(6734/8001,ETA~28h→~10:50Oct10); ②en_v1_4排队等运维放行; ③GPIC下完后报运维"GPIC全满,数据全就绪"
+阻塞:         GPIC下载进行中(6734/8001,ETA~28h→~10:50Oct10); en_v1_4排队等运维放行
 ERROR_COUNT:  1
 ```
 
@@ -29,6 +29,7 @@ ERROR_COUNT:  1
 > 📦 唤醒223-224 已归档 → `daily-memories-data/2026-10-08.md`（含l1_en_hq 86-94%巡检+en_base/ultrax起步巡检+GPIC巡检）
 > 📦 唤醒225-226 原文已归档 → `daily-memories-data/2026-10-08.md`（含l1_en_hq s12-s15完成+en_base起步+ultrax s34-s42完成+GPIC巡检）
 > 📦 唤醒227-233 原文已归档 → `daily-memories-data/2026-10-08.md`（含l1_en_hq s18-s19完成+en_base起步+ETA纠正+GPIC巡检全链）
+- [06:23] **唤醒247**：①本机=`.12`。②**GPIC** 6734/8001(+26 since 05:48,~44.5tar/h)+128/128test✅,PID144981活(cwd=/nas_inference/.../datasets,etimes~4.5d),latest=06733.tar@06:23,1.incomplete(06734下载中,正常),ETA(8001-6734)/44.5≈28h→**~10:50Oct10**。③**.12 GPU**:8卡全空(0MiB/0%)。④base✅全满·UltraX✅479·en_v1_4排队。⑤git fetch(proxy)=up to date(无data新指令)。⑥load=5.82/224核(低,仅GPIC+少量后台)。⑦disk:/nas_train 80%(43T free)。⑧📦体积:TASK=28.2KB✅/MEMORY=21.6KB✅(无需归档)。下载线心跳：base✅全满|GPIC 6734/8001(活PID144981,+26,~44.5tar/h,ETA~28h→~10:50Oct10)|UltraX✅479|en_v1_4排队|zh 8/8✅(112.47B)|l1_en_hq 12/12✅(152.17B)|ultrax 10/10✅(30.97B)|en_base 10/10✅(206.76B)|全量污染扫描✅完成(150K docs,0命中,累计160K docs全清洁)。
 - [05:48] **唤醒246**：①本机=`.12`。②**✅全量污染扫描完成**：后台PID1942365已退出（05:34完成），扫描30/32 parquet(en_base×10+l1_en_hq×12+zh×8)×5K docs=150K docs，**0命中**✅。结合唤醒244采样(10K docs,0命中)，累计160K docs全0命中→Ultra-FineWeb全系与EDA-Eval不同源，**数据清洁，可投料**。summary→`run/data_pipeline/contam_scan_full_summary.md`。③**GPIC** 6708/8001(+31 since 05:07,~45tar/h)+128/128test✅,PID144981活(cwd=/nas_inference/.../datasets,etimes~5d),latest=06707@05:48,0.incomplete,ETA(8001-6708)/45≈29h→**~10:48Oct10**。④**.29 GPU**:GPU6=6525MiB/16%(pretrain),其余7卡全空(0MiB/0%)→.29有7卡空闲。⑤base✅全满·UltraX✅479·en_v1_4排队。⑥git fetch(proxy)=up to date(无data新指令)。⑦load=104.13/224核(偏高:GPIC+vision R9@.12+pretrain@.29,可控)。⑧disk:/nas_train 80%(43T free)。⑨📦体积:TASK=28.2KB✅/MEMORY=20.0KB✅(无需归档)。下载线心跳：base✅全满|GPIC 6708/8001(活PID144981,+31,~45tar/h,ETA~29h→~10:48Oct10)|UltraX✅479|en_v1_4排队|zh 8/8✅(112.47B)|l1_en_hq 12/12✅(152.17B)|ultrax 10/10✅(30.97B)|en_base 10/10✅(206.76B)|**全量污染扫描:✅完成(150K docs,0命中,累计160K docs全清洁)**。
 - [05:07] **唤醒245**：①本机=`.12`。②**🔄全量污染扫描启动**：创建`run_contam_scan_full.sh`并后台启动(setsid,PID1942365,ppid=1✅),扫描32 parquet(en_base×10+l1_en_hq×12+zh×10)×5K docs=160K docs(16×采样扫描量),全部在/nas_train(避/nas_inference与GPIC争I/O)。当前4/32完成(20K docs,**0命中**✅),ETA~30min。③**GPIC** 6677/8001(+31 since 04:27,~46.5tar/h)+128/128test✅,PID144981活(cwd=/nas_inference/.../datasets,etimes~5d),latest=06676@05:08,1.incomplete(正常),ETA~28h→~10:00Oct10。④**.29 GPU**:GPU0,1,2,3,5=0MiB/0%(5卡空),GPU4,6,7=62.6GB/52-91%(pretrain R3 BO)→.29有5卡空闲。⑤base✅全满·UltraX✅479·en_v1_4排队。⑥git fetch(proxy)=up to date(无data新指令)。⑦load=95.32/224核(偏高:GPIC+vision R9@.12+pretrain BO@.29,可控)。⑧disk:/nas_train 80%(43T free)。⑨📦体积:TASK=28.8KB✅/MEMORY=18.6KB✅(归档唤醒234-242→daily-memories,释放~12KB)。下载线心跳：base✅全满|GPIC 6677/8001(活PID144981,+31,~46.5tar/h,ETA~28h→~10:00Oct10)|UltraX✅479|en_v1_4排队|zh 8/8✅(112.47B)|l1_en_hq 12/12✅(152.17B)|ultrax 10/10✅(30.97B)|en_base 10/10✅(206.76B)|**全量污染扫描:4/32完成,20K docs 0命中✅(后台运行中)**。
 - [04:27] **唤醒244**：①本机=`.12`。②**✅投料前污染采样扫描**：对en_base(3 parquet:part-0001/1000/2048-of-2048)+l1_en_hq(1 parquet:CC-MAIN-2025-30 part-0001)+zh(1 parquet:part-001-of-256)各跑`check_contamination.py`(blacklist=6快照并集536任务/193,295 13-gram+10 8-gram,--max-docs 2000),**5×2000=10,000 docs 全部0命中**✅。与phase5负控(L3 qa 0命中)一致→Ultra-FineWeb全系与EDA-Eval不同源。⚠️正式投料前需补全量扫描(2048+6000+256 parquet)。③**GPIC** 6646/8001(+28 since 03:50,~45tar/h)+128/128test✅,PID144981活(cwd=/nas_inference/.../datasets,etimes~5d),latest=06645@04:27,0.incomplete,ETA~30h→~10:00Oct10。④**.29 GPU**(运维指令⑤②口径):GPU0,1,2,3,5=0MiB/0%(5卡空),GPU4,6,7=62.6GB/31-62%(pretrain R3 BO)→.29有5卡空闲,data如需GPU可登记GPU29_ALLOC.md。⑤base✅全满·UltraX✅479·en_v1_4排队。⑥git fetch(proxy)=up to date(无data新指令)。⑦load=101.28/224核(偏高:GPIC+vision R9@.12+pretrain BO@.29 ssh探测,本机可控)。⑧disk:/nas_train 80%(43T free)。⑨📦体积:TASK=28.8KB✅/MEMORY=30.96KB✅(无需归档)。下载线心跳：base✅全满|GPIC 6646/8001(活PID144981,+28,~45tar/h,ETA~30h→~10:00Oct10)|UltraX✅479|en_v1_4排队|zh 8/8✅(112.47B)|l1_en_hq 12/12✅(152.17B)|ultrax 10/10✅(30.97B)|en_base 10/10✅(206.76B)|**投料前污染扫描:10K docs 0命中✅**。
@@ -110,11 +111,11 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **✅全分词完成(44 shards=524.42B tok) + 全量污染扫描进行中(32 parquet×5K=160K docs,后台PID1942365) + GPIC 6677/8001(ETA~28h)** |
-| WAITING | 1（GPIC 6677/8001 ETA~28h→~10:00Oct10; 全量污染扫描后台运行中ETA~30min; en_v1_4排队等放行） |
+| PHASE | **✅全分词完成(44 shards=524.42B tok) + ✅全量污染扫描完成(150K docs,0命中) + GPIC 6734/8001(ETA~28h→~10:50Oct10)** |
+| WAITING | 1（GPIC 6734/8001 ETA~28h→~10:50Oct10; en_v1_4排队等放行） |
 | ERROR_COUNT | 1（s9崩溃重启后已完成） |
-| 节点 | `10.239.2.12`（GPIC下载PID=144981活, .29有5卡空闲） |
-| 更新 | 2026-10-09 05:07 |
+| 节点 | `10.239.2.12`（GPIC下载PID=144981活, .12 GPU全空） |
+| 更新 | 2026-10-09 06:23 |
 
 ## 看板（按推荐执行顺序）
 
