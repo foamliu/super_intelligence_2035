@@ -5,6 +5,38 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_VISION.md` / `EXPERIMENTS_VISION*` / `daily-memories-vision/` / `vision/`）。⚠️ **唯一例外（2026-10-06）**：按「📉 体积维护规程」，agent **可把「已闭合」的运维块/旧正文【原文】搬入** `run/ARCHIVE_OPERATOR_VISION.md`（**只搬迁、留 1 行指针**；不新增/不改写任何指令）。
 
+### 🆕 运维指令 · 2026-10-08（📄 **视觉编码器全线实验总结报告 HTML**）· **用户直令：各线自己写报告** · **等当前实验跑完再写** · 高优先
+
+> **用户令**：「把任务下发给各 agent，由 agent 自己写报告，不要替代他们写。」
+> ⚠️ 你的 mask-ratio 报告 ✅ 已交付。但**视觉编码器从 R2 到 R14 的全线实验**尚未形成统一总结。**用户点名要 agent 自己写报告**。
+> 🕐 **本块不插队**：等 **④ Arm B-hybrid（30k 步）跑完 + IN-1k eval 出结果** 后，再启动本报告。
+
+**① 交付**：`report_vision_encoder_final.html`（落 `doc/BaiZe-ISEDA2027/`）
+
+**② 格式（沿用 house style）**
+- **自包含**：内联 CSS + **数据图优先内联 SVG**；**零外链**；**HTML 本体 ≤200KB**。
+- 位图一律 **JPEG、长边 ≤1280、q85**、单图 ≤400KB/总量 ≤4MB、**落本地并 commit**；🚫 严禁外链、🚫 严禁用文生图「编」数据图（曲线必须由**真实实测数据**生成）。
+- **开头 1 行指向** `report_vision_mask_ratio.html` / `report_vision_lp_protocol.html`，注明本报告是全线总结，不重复专项细节。
+
+**③ 建议 10 节**
+1. **TL;DR**（3–5 条：w512=126.8M 最优 / R11-G AIMv2 长跑翻盘 lp 19.76% / mask-ratio 最优 0.6 / weight-ratio 无翻盘 / InfoNCE 防 AR 坍缩）；
+2. **实验设计总览**：R2→R14 各轮目的、预算（累计 ~489 GPU·h）、决策链；
+3. **架构选型**：R8 六架构四指标 → OpenVision2 胜出（patch16/d30/w512/InfoNCE）；
+4. **Scaling 实验**：R9 1D scaling（渐近 25.1%，R²=0.94）+ R10 2D 拟合（M 边际全区间为负）+ R11-G AIMv2 翻盘；
+5. **消融实验**：mask-ratio（倒 U 最优 0.6）/ weight-ratio（patch-heavy 更宽容，但无翻盘）/ caption-weight（与 IN-1k 正交）/ R11-F 数据源横比（GPIC 无显著差异）；
+6. **AIMv2 范式探索**：R11-G（长跑翻盘）/ R11-H（纯 AR 无翻盘）/ ④ Arm B-hybrid（含本报告启动时最新结果）；
+7. **文本塔实验**：R11-L 四臂（无一翻盘）/ R11-L2 文本塔解冻 LoRA（−0.80pp）；
+8. **官方对照**：R13 官方 OV2 L/14@224 IN-1k lp=79.81% vs 自研 7.99%（口径差异说明）+ 官方仓库调研结论；
+9. **对正式训练的启示**：架构锁定为 OV2 w512 / 数据需扩量 / 目标函数需 InfoNCE+AR 混合；
+10. **局限与诚实交代**：数据受限 / 单 seed / 代理实验 / 尚未多模态对齐。
+
+**④ 纪律**
+- **数字必须真**：每个数字可由 `EXPERIMENTS_VISION*.md` / 原始日志复算；
+- **先等当前实验（④ Arm B-hybrid）出结果**，把最新数据写进报告；
+- **收尾按「收尾铁律」commit+push**（前缀 `vision 全线总结: …`）。
+
+> 📦 本块加入后 TASK 约 33KB（略超 32KB），agent 收尾前先把已闭合旧块归档到 `ARCHIVE_OPERATOR_VISION.md`。
+
 ### 🆕 运维指令 · 2026-10-07③（📄 **mask-ratio 消融报告 HTML**）· **用户直令** · 高优先
 
 > **用户令（2026-10-07 夜）**：「**既然 ✅ mask-ratio ALL DONE，让 vision 写个 html 报告。**」

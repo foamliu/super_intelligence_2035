@@ -11,6 +11,38 @@
 
 > 本节由**外部运维**通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停**。
 > **agent 禁止修改本节**。本节为「无」时，按下方默认顺序自主推进。
+### 🆕 运维指令 · 2026-10-08（📄 **SWE-bench 横评分析报告 HTML**）· **用户直令：各线自己写报告** · 高优先
+
+> **用户令**：「把任务下发给各 agent，由 agent 自己写报告，不要替代他们写。」
+> ⚠️ 你的 7-way 横评全完成，`SWEBENCH_COMPARE.html` ✅ 已交付。但长期空转心跳不是正事。**用户点名要 agent 自己写报告**。
+> **本报告要求比 `SWEBENCH_COMPARE.html` 更深一层分析** —— 不仅是结果表，还要有归因、模式分析、对 BaiZe 的启示。
+
+**① 交付**：`report_harness_swebench_analysis.html`（落 `doc/BaiZe-ISEDA2027/`）
+
+**② 格式（沿用 house style）**
+- **自包含**：内联 CSS + **数据图优先内联 SVG**；**零外链**；**HTML 本体 ≤200KB**。
+- 位图一律 **JPEG、长边 ≤1280、q85**、单图 ≤400KB/总量 ≤4MB、**落本地并 commit**；🚫 严禁外链、🚫 严禁用文生图「编」数据图（曲线必须由**真实实测数据**生成）。
+- **开头 1 行指向** `SWEBENCH_COMPARE.html`（结果表已有，不重复贴全文）。
+
+**③ 建议 9 节**
+1. **TL;DR**（3–5 条：cline-patched & Pi 并列第一 60.0% / 7-way 分辨率 40%–60% / kimi-k2.6-cloud 统一 backbone / 关键发现）；
+2. **评测设计**：30 条 SWE-bench Lite × 7 harness / kimi-k2.6-cloud backbone / serial=1 / 统一口径；
+3. **结果总表**（引用 `SWEBENCH_COMPARE.html`，不重复全文）；
+4. ⭐ **失败模式分析**（核心）：按 repo / 任务类型 / 失败原因分类——是工具调用失败？理解错误？patch 不完整？**给出各 harness 的失败模式分布图（内联 SVG）**；
+5. **成本分析**：每 harness 平均轮数 / token 消耗 / 墙钟 / 性价比排名；
+6. **Harness 架构差异**：各 harness 的系统提示/工具调用方式/代码模型差异 → 与表现的相关性；
+7. **对 BaiZe 的启示**：如果 BaiZe 2.2B 作为 backbone，需要哪些能力才能达到类似 60% resolve rate？—— 代码能力 / 工具调用 / 长上下文 / 领域知识；
+8. **局限**：30 条子集 / 单 seed / kimi 非 BaiZe 模型 / 与官方 leaderboard 不可比；
+9. **下一步建议**：扩到 100–300 条 / 换 BaiZe 模型重测 / 加入更多 harness。
+
+**④ 纪律**
+- **数字必须真**：每个数字可由 `kimi_pilot_results.json` / `SWEBENCH_COMPARE.html` 复算；
+- **失败模式分析要有实际日志证据**，不要编造分类；
+- **收尾按「收尾铁律」commit+push**（前缀 `harness 横评分析: …`）；
+- 写完本报告后，若运维无新指令，**可自主做 harness 源码分析（H-B 方向）** —— 深入 cline / Pi / Hermes 的 SWE-bench 实现差异。
+
+> 📦 本块加入后 TASK 约 30KB，仍 ≤32KB ✅。如需归档，只归档下方已闭合旧块。
+
 
 ### 🧭 运维规程 · 2026-10-06（**【agent 归档 MEMORY + 任务书】** —— 由你自己滚，不再由运维代劳）· 常驻
 

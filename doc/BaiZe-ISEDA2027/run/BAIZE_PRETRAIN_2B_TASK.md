@@ -16,6 +16,39 @@
 > 📦 §运维指令·2026-10-07②（长上下文推理成本矩阵 128K-1M）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：P-9.11-E COMPLETE — Dense OOMs@512K(KV pool=455K tokens), Hybrid serves 1M@~26GB(near-constant = `--mem-fraction-static 0.3` 预分配 ~24GB, 与 ctx 无关); 128K-256K Dense faster 1.7-3.3x prefill / 2.2-2.6x decode。**sglang flag 沿用**：`--mem-fraction-static 0.3 --attention-backend flashinfer --mamba-ssm-dtype float32` + `SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1`。需要时再读。
 > 📦 §运维指令·2026-10-07（📊 交付：昨夜工作汇报 HTML）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：report_10_07_pretrain_overnight.html 已由 #164 交付(26.5KB,自包含,全自检过)。需要时再读。
 
+
+### 🆕 运维指令 · 2026-10-08（📄 **R2 全线实验收官总报告 HTML**）· **用户直令：各线自己写报告** · 高优先
+
+> **用户令**：「把任务下发给各 agent，由 agent 自己写报告，不要替代他们写。」
+> ⚠️ **本线 R2 所有实验已完成**（P-1~P-9.13 全 ✅），长期空转心跳不是正事。**用户点名要 agent 自己写报告**。
+
+**① 交付**：`report_pretrain_r2_final.html`（落 `doc/BaiZe-ISEDA2027/`）
+
+**② 格式（沿用 house style）**
+- **自包含**：内联 CSS + **数据图优先内联 SVG**；**零外链**；**HTML 本体 ≤200KB**。
+- 位图一律 **JPEG、长边 ≤1280、q85**、单图 ≤400KB/总量 ≤4MB、**落本地并 commit**；🚫 严禁外链、🚫 严禁用文生图「编」数据图（曲线必须由 **真实实测数据** 生成）。
+- 若引用已有报告（如 `BAIZE_PRETRAIN_RESULT.html` / `report_pretrain_research{1..5}.html`），只给链接指针，**不重复贴全文**。
+
+**③ 建议 10 节**
+1. **TL;DR**（3–5 条：架构锁定为 hybrid 56L/4-attn，LR 1e-3 WSD，val loss 2.2054，hybrid vs dense 加速比 2.8–4.3×@128K–256K，FP8 裁定为 delayed 可用于 P-8）；
+2. **实验设计总览**：R1（架构搜索 S0–S5）→ R2（P-1~P-9.13），各阶段目的与预算；
+3. **架构选型**：dense vs hybrid vs 其他，**hybrid 锁定为正式架构**（附 P-3 5000 步对比 + B1 1M PPL=55.42 无退化）；
+4. **超参搜索**：P-1 LR 扫描（1e-3 最优）+ P-2 3-seed 复现（2.6739±0.0469）+ P-4 退火消融；
+5. **FP8 裁定**：P-9.8 armA/armB + P-9.9 tensorwise → 结论：delayed FP8 可用于 P-8；
+6. **长上下文能力**：P-9.11 系列（2M served / 4M timeout / 显存归因）+ 推理成本矩阵；
+7. **提速实验**：T1 bf16-SSM（无差异 1.00×）/ T2 公平对比 / T3 短名单（C1 FP8-TP1 / C2 recompute+MBS4）/ T4 效果短名单（Q1 100B tokens / Q2 data mixture）；
+8. **复杂推理**：A 36/36（BBH 峰值 14.26%@2.62B）/ B ABF（+2.71pp）/ D VRAM 5.35GB 恒定；
+9. **对 P-8 的建议**：配方 88:8:4 / FP8 delayed / hybrid 架构 / 数据就绪条件；
+10. **局限与诚实交代**：655M token 代理实验 / 未收敛 / 单 seed 方差 / 待正式训练验证。
+
+**④ 纪律**
+- **数字必须真**：每个数字可由 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` / 原始日志复算；
+- **结论跑完即固化**：不新增实验、不改已有结论；
+- **收尾按「收尾铁律」commit+push**（前缀 `pretrain R2收官: …`）；
+- 写完本报告后，**不要回到空转心跳** —— 改做 **P-8 前置预研**（若运维尚未撤暂缓令，预研 P-8 recipe / 数据配方复算 / 训练脚本核验）。
+
+> 📦 本块加入后 TASK 约 23KB，仍 ≤32KB ✅。如需归档，只归档下方已闭合旧块。
+
 > 📦 §运维指令·2026-10-06（裁决+提速令：批准A/B/D，C暂不动/E不做，NCCL拓扑核查+提速清单）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：P-9.12 NCCL已在用NVLink(P2P 100%,用户PCIe假设证伪,busbw 164.56GB/s),P-9.13 env无提速(249K tok/s上界),A 36/36✅(BBH峰值14.26%@2.62B),B✅(ABF不降反升+2.71pp,passkey 0%),D✅(VRAM 5.35GB恒定4K→128K)。需要时再读。
 
 > 📦 §运维指令·2026-10-06（空窗提案：5条候选A-E）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：运维裁决✅A/B/D批准,⏸C暂不动,🚫E不做。A/B/D均已✅COMPLETE。需要时再读。
