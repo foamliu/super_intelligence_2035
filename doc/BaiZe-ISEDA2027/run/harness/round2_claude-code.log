@@ -184,3 +184,36 @@ Serial kimi eval: harness=claude-code model=kimi-k2.6-cloud
 [SETUP] matplotlib__matplotlib-23299 for claude-code
 
 [RUN] claude-code on matplotlib__matplotlib-23299 ...
+  [EVAL] claude-code on matplotlib__matplotlib-23299 ...
+  => matplotlib__matplotlib-23299 | claude-code | patch-but-failed
+
+############################################################
+# [21/38] claude-code x pylint-dev__pylint-6506
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-6506 for claude-code
+
+[RUN] claude-code on pylint-dev__pylint-6506 ...
+  [EVAL] claude-code on pylint-dev__pylint-6506 ...
+  => pylint-dev__pylint-6506 | claude-code | patch-but-failed
+
+############################################################
+# [22/38] claude-code x scikit-learn__scikit-learn-10949
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-10949 for claude-code
+
+[RUN] claude-code on scikit-learn__scikit-learn-10949 ...
+  [EVAL] claude-code on scikit-learn__scikit-learn-10949 ...
+  => scikit-learn__scikit-learn-10949 | claude-code | patch-but-failed
+
+############################################################
+# [23/38] claude-code x scikit-learn__scikit-learn-11281
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-11281 for claude-code
+
+[RUN] claude-code on scikit-learn__scikit-learn-11281 ...
