@@ -5,13 +5,26 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 30×7 cross-eval COMPLETE ✅ + DEEP ANALYSIS REPORT ✅ + H-B 3-WAY SOURCE ANALYSIS ✅ + **H-B 7-WAY UNIFIED COMPARISON DELIVERED** (HARNESS_7WAY_COMPARISON.html, 55.0KB, 10 sections, 5 inline SVG, all 7 harnesses architecture+performance). cline-patched 60.0% · Pi 60.0% · Hermes 53.3% · opencode 50.0% · codex 46.7% · claude-code 43.3% · deepseek-harness 40.0%.
-已完成:       H-B 7-way unified comparison (HARNESS_7WAY_COMPARISON.html) · H-B 3-way source analysis (HARNESS_3WAY_COMPARISON.html) · H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · 7 harnesses×30 (all COMPLETE) · SWEBENCH_COMPARE.html (21976B) · report_harness_swebench_analysis.html (64201B, 9 sections) — VERIFIED at both locations · HARNESS_3WAY_COMPARISON.html (59268B, 14 sections) — at both locations · **HARNESS_7WAY_COMPARISON.html** (56352B, 10 sections, 5 SVG, superset analysis, architecture table, failure modes, BaiZe implications) — at both doc/BaiZe-ISEDA2027/ and run/harness/
-当前动作:     R181: Health-check heartbeat — report_harness_swebench_analysis.html re-verified (9 sections, 64201B, all requirements met), no new operator instructions, no running chains. Standing by.
-下一步:       <待运维指令> — All H-A and H-B deliverables complete. Possible next: expand to 100-300 instances, swap BaiZe 2.2B backbone, or add more harnesses (Aider, SWE-agent).
+PHASE:        H-A 30×7 cross-eval COMPLETE ✅ + DEEP ANALYSIS REPORT ENHANCED ✅ (§4.5 repo-based analysis added) + H-B 3-WAY SOURCE ANALYSIS ✅ + H-B 7-WAY UNIFIED COMPARISON ✅. cline-patched 60.0% · Pi 60.0% · Hermes 53.3% · opencode 50.0% · codex 46.7% · claude-code 43.3% · deepseek-harness 40.0%. Repo gap: django 56.2% vs sympy 44.8% (+11.4pp).
+已完成:       H-B 7-way unified comparison (HARNESS_7WAY_COMPARISON.html) · H-B 3-way source analysis (HARNESS_3WAY_COMPARISON.html) · H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · 7 harnesses×30 (all COMPLETE) · SWEBENCH_COMPARE.html (21976B) · report_harness_swebench_analysis.html (75647B, 9 sections + §4.5 repo-based, 10 SVG) — at both locations · HARNESS_3WAY_COMPARISON.html (59268B) · HARNESS_7WAY_COMPARISON.html (56352B) — at both doc/BaiZe-ISEDA2027/ and run/harness/
+当前动作:     R182: Enhanced report_harness_swebench_analysis.html with §4.5 Repo-Based Failure Analysis (django vs sympy: 56.2% vs 44.8%, +11.4pp gap, Hermes only repo-agnostic harness, claude-code largest gap +20pp). 10 inline SVG, 73.9KB, all numbers from kimi_pilot_results.json.
+下一步:       <待运维指令> — All H-A and H-B deliverables complete. Possible next: expand to 100-300 instances, swap BaiZe 2.2B backbone, or add more harnesses.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
+
+## 🆕 第一百八十二轮速览（2026-10-08 16:03）— 📊 Report enhanced: §4.5 Repo-Based Failure Analysis added
+
+- 📊 **Report enhanced**: `report_harness_swebench_analysis.html` upgraded from 64201B→75647B (73.9KB), adding **§4.5 Repo-Based Failure Analysis** per operator instruction "按 repo / 任务类型 / 失败原因分类":
+  - **Grouped bar SVG**: resolve rate by harness × repo (django solid, sympy light) — 7 harnesses × 2 repos
+  - **Stacked bar SVG**: failure mode distribution django vs sympy (resolved/wrong-fix/regression/both-fail/timeout)
+  - **Per-harness table**: django vs sympy resolve rate + gap (cline-patched +13.3, Pi +13.3, Hermes +0.0, claude-code +20.0 largest)
+  - **7 key findings**: django 56.2% vs sympy 44.8% (+11.4pp gap), Hermes only repo-agnostic, sympy 42% more wrong-fix, claude-code largest gap
+  - All data computed from `kimi_pilot_results.json` (210 entries, 30 instances × 7 harnesses)
+- ✅ **Report verified**: 9 main sections + §4.5, 10 inline SVG, 0 external links, self-contained, 73.9KB ≤ 200KB ✅
+- ✅ **Both locations updated**: `doc/BaiZe-ISEDA2027/report_harness_swebench_analysis.html` + `run/harness/report_harness_swebench_analysis.html`
+- ✅ **No new operator instructions** (git fetch = up to date).
+- 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~29KB(28.3KB ✓)（归档 0KB）
 
 ## 🆕 第一百八十一轮速览（2026-10-08 15:19）— 💓 Health-check heartbeat (report re-verified complete)
 
@@ -41,18 +54,6 @@ ERROR_COUNT:  0
 - ✅ **No new operator instructions** (`git fetch` = up to date, origin/main unchanged).
 - ✅ **No running chains** (no `run_serial_kimi` / `chain_*` processes).
 - 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~31KB(30.4KB ✓)（归档 0KB）
-
-## 🆕 第一百七十九轮速览（2026-10-08 13:38）— 💓 Health-check heartbeat (all deliverables verified)
-
-- 💓 **Health-check heartbeat**: All H-A and H-B deliverables verified intact at both locations:
-  - `SWEBENCH_COMPARE.html` (21976B, 7-way results table) ✅
-  - `report_harness_swebench_analysis.html` (64201B, 9 sections) ✅ at both `doc/BaiZe-ISEDA2027/` and `run/harness/`
-  - `HARNESS_3WAY_COMPARISON.html` (59268B, 14 sections) ✅ at both locations
-  - `HARNESS_7WAY_COMPARISON.html` (56352B, 10 sections, 5 SVG) ✅ at both locations
-  - `kimi_pilot_results.json` (532623B, 12791 lines) ✅
-- ✅ **No new operator instructions** (`git fetch` = up to date, origin/main unchanged).
-- ✅ **No running chains** (no `run_serial_kimi` / `chain_*` processes).
-- 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~29KB(28.9KB ✓)（归档 0KB）
 
 ## 🆕 第一百七十七轮速览（2026-10-08 12:30）— 📄 H-B 7-WAY UNIFIED COMPARISON DELIVERED (HARNESS_7WAY_COMPARISON.html, 55.0KB)
 

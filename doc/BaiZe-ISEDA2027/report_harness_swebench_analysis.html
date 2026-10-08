@@ -417,6 +417,118 @@ Patch did not fix the bug AND broke existing tests</pre></div>
 
 </table>
 <p style="font-size:11px;color:#666"><em>Pattern: 5 django + 7 sympy. The sympy instances likely require deep mathematical domain knowledge; the django ones may involve complex ORM or migration logic.</em></p>
+
+<h3>4.5 Repo-Based Failure Analysis</h3>
+<p>The 30-instance subset contains exactly 15 django + 15 sympy instances (105 entries per repo across 7 harnesses). Breaking down results by repo reveals a systematic difficulty gap:</p>
+<div class="chart-container"><svg xmlns="http://www.w3.org/2000/svg" width="600" height="360" viewBox="0 0 600 360">
+<text x="300" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Resolve Rate by Harness × Repo (15 instances each)</text>
+<line x1="60" y1="40" x2="60" y2="300" stroke="#333" stroke-width="1"/>
+<line x1="60" y1="300" x2="560" y2="300" stroke="#333" stroke-width="1"/>
+<line x1="60" y1="40" x2="560" y2="40" stroke="#eee" stroke-width="1"/>
+<text x="52" y="44" text-anchor="end" font-size="10" fill="#666">80%</text>
+<line x1="60" y1="105" x2="560" y2="105" stroke="#eee" stroke-width="1"/>
+<text x="52" y="109" text-anchor="end" font-size="10" fill="#666">60%</text>
+<line x1="60" y1="170" x2="560" y2="170" stroke="#eee" stroke-width="1"/>
+<text x="52" y="174" text-anchor="end" font-size="10" fill="#666">40%</text>
+<line x1="60" y1="235" x2="560" y2="235" stroke="#eee" stroke-width="1"/>
+<text x="52" y="239" text-anchor="end" font-size="10" fill="#666">20%</text>
+<rect x="75" y="90.5" width="18" height="209.5" fill="#6c5ce7" rx="2"/>
+<text x="84" y="85" text-anchor="middle" font-size="9" fill="#333">66.7</text>
+<rect x="95" y="129.9" width="18" height="170.1" fill="#6c5ce7" opacity="0.5" rx="2"/>
+<text x="104" y="124" text-anchor="middle" font-size="9" fill="#333">53.3</text>
+<text x="94" y="315" text-anchor="middle" font-size="9" fill="#666">cline</text>
+<rect x="140" y="129.9" width="18" height="170.1" fill="#e17055" rx="2"/>
+<text x="149" y="124" text-anchor="middle" font-size="9" fill="#333">53.3</text>
+<rect x="160" y="169.0" width="18" height="131.0" fill="#e17055" opacity="0.5" rx="2"/>
+<text x="169" y="163" text-anchor="middle" font-size="9" fill="#333">40.0</text>
+<text x="159" y="315" text-anchor="middle" font-size="9" fill="#666">codex</text>
+<rect x="205" y="129.9" width="18" height="170.1" fill="#00b894" rx="2"/>
+<text x="214" y="124" text-anchor="middle" font-size="9" fill="#333">53.3</text>
+<rect x="225" y="147.1" width="18" height="152.9" fill="#00b894" opacity="0.5" rx="2"/>
+<text x="234" y="141" text-anchor="middle" font-size="9" fill="#333">46.7</text>
+<text x="224" y="315" text-anchor="middle" font-size="9" fill="#666">opencode</text>
+<rect x="270" y="129.9" width="18" height="170.1" fill="#d63031" rx="2"/>
+<text x="279" y="124" text-anchor="middle" font-size="9" fill="#333">53.3</text>
+<rect x="290" y="191.2" width="18" height="108.8" fill="#d63031" opacity="0.5" rx="2"/>
+<text x="299" y="185" text-anchor="middle" font-size="9" fill="#333">33.3</text>
+<text x="289" y="315" text-anchor="middle" font-size="9" fill="#666">claude-code</text>
+<rect x="335" y="147.1" width="18" height="152.9" fill="#fdcb6e" rx="2"/>
+<text x="344" y="141" text-anchor="middle" font-size="9" fill="#333">46.7</text>
+<rect x="355" y="191.2" width="18" height="108.8" fill="#fdcb6e" opacity="0.5" rx="2"/>
+<text x="364" y="185" text-anchor="middle" font-size="9" fill="#333">33.3</text>
+<text x="354" y="315" text-anchor="middle" font-size="9" fill="#666">deepseek</text>
+<rect x="400" y="90.5" width="18" height="209.5" fill="#0984e3" rx="2"/>
+<text x="409" y="85" text-anchor="middle" font-size="9" fill="#333">66.7</text>
+<rect x="420" y="129.9" width="18" height="170.1" fill="#0984e3" opacity="0.5" rx="2"/>
+<text x="429" y="124" text-anchor="middle" font-size="9" fill="#333">53.3</text>
+<text x="419" y="315" text-anchor="middle" font-size="9" fill="#666">Pi</text>
+<rect x="465" y="129.9" width="18" height="170.1" fill="#a29bfe" rx="2"/>
+<text x="474" y="124" text-anchor="middle" font-size="9" fill="#333">53.3</text>
+<rect x="485" y="129.9" width="18" height="170.1" fill="#a29bfe" opacity="0.5" rx="2"/>
+<text x="494" y="124" text-anchor="middle" font-size="9" fill="#333">53.3</text>
+<text x="484" y="315" text-anchor="middle" font-size="9" fill="#666">Hermes</text>
+<rect x="100" y="335" width="14" height="14" fill="#333" rx="2"/>
+<text x="120" y="346" font-size="11" fill="#333">django (solid)</text>
+<rect x="260" y="335" width="14" height="14" fill="#333" opacity="0.5" rx="2"/>
+<text x="280" y="346" font-size="11" fill="#333">sympy (light)</text>
+</svg></div>
+<table class="heatmap-table"><tr><th>Harness</th><th>Django Res</th><th>Django Rate</th><th>Sympy Res</th><th>Sympy Rate</th><th>Gap (dj−sy)</th></tr>
+<tr><td class="hname">cline-patched</td><td style="text-align:center">10/15</td><td style="text-align:center">66.7%</td><td style="text-align:center">8/15</td><td style="text-align:center">53.3%</td><td style="text-align:center">+13.3</td></tr>
+<tr><td class="hname">Pi</td><td style="text-align:center">10/15</td><td style="text-align:center">66.7%</td><td style="text-align:center">8/15</td><td style="text-align:center">53.3%</td><td style="text-align:center">+13.3</td></tr>
+<tr><td class="hname">Hermes Agent</td><td style="text-align:center">8/15</td><td style="text-align:center">53.3%</td><td style="text-align:center">8/15</td><td style="text-align:center">53.3%</td><td style="text-align:center">+0.0</td></tr>
+<tr><td class="hname">codex</td><td style="text-align:center">8/15</td><td style="text-align:center">53.3%</td><td style="text-align:center">6/15</td><td style="text-align:center">40.0%</td><td style="text-align:center">+13.3</td></tr>
+<tr><td class="hname">opencode</td><td style="text-align:center">8/15</td><td style="text-align:center">53.3%</td><td style="text-align:center">7/15</td><td style="text-align:center">46.7%</td><td style="text-align:center">+6.7</td></tr>
+<tr><td class="hname">claude-code</td><td style="text-align:center">8/15</td><td style="text-align:center">53.3%</td><td style="text-align:center">5/15</td><td style="text-align:center">33.3%</td><td style="text-align:center">+20.0</td></tr>
+<tr><td class="hname">deepseek-harness</td><td style="text-align:center">7/15</td><td style="text-align:center">46.7%</td><td style="text-align:center">5/15</td><td style="text-align:center">33.3%</td><td style="text-align:center">+13.3</td></tr>
+<tr style="font-weight:bold;background:#f0f0f0"><td>ALL (aggregate)</td><td style="text-align:center">59/105</td><td style="text-align:center">56.2%</td><td style="text-align:center">47/105</td><td style="text-align:center">44.8%</td><td style="text-align:center">+11.4</td></tr>
+</table>
+<h4>Failure Mode Distribution by Repo (all 7 harnesses, 210 entries)</h4>
+<div class="chart-container"><svg xmlns="http://www.w3.org/2000/svg" width="560" height="230" viewBox="0 0 560 230">
+<text x="280" y="18" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">Failure Mode Distribution: django vs sympy</text>
+<rect x="120" y="40" width="187.0" height="40" fill="#00b894" rx="1"/>
+<text x="213.5" y="64" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">59 (56.2%)</text>
+<rect x="307.0" y="40" width="98.2" height="40" fill="#fdcb6e" rx="1"/>
+<text x="356.1" y="64" text-anchor="middle" font-size="10" fill="#333" font-weight="bold">31</text>
+<rect x="405.2" y="40" width="9.5" height="40" fill="#e17055" rx="1"/>
+<text x="414.7" y="64" text-anchor="middle" font-size="9" fill="#fff">3</text>
+<rect x="414.7" y="40" width="15.9" height="40" fill="#d63031" rx="1"/>
+<text x="422.6" y="64" text-anchor="middle" font-size="9" fill="#fff">5</text>
+<rect x="430.6" y="40" width="22.2" height="40" fill="#2d3436" rx="1"/>
+<text x="441.7" y="64" text-anchor="middle" font-size="9" fill="#fff">7</text>
+<text x="100" y="64" text-anchor="end" font-size="12" font-weight="bold" fill="#333">django</text>
+<text x="465" y="64" font-size="10" fill="#666">n=105</text>
+<rect x="120" y="100" width="149.3" height="40" fill="#00b894" rx="1"/>
+<text x="194.7" y="124" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">47 (44.8%)</text>
+<rect x="269.3" y="100" width="139.4" height="40" fill="#fdcb6e" rx="1"/>
+<text x="339.0" y="124" text-anchor="middle" font-size="10" fill="#333" font-weight="bold">44</text>
+<rect x="408.7" y="100" width="6.3" height="40" fill="#e17055" rx="1"/>
+<text x="415.0" y="124" text-anchor="middle" font-size="9" fill="#fff">2</text>
+<rect x="415.0" y="100" width="28.6" height="40" fill="#d63031" rx="1"/>
+<text x="429.3" y="124" text-anchor="middle" font-size="9" fill="#fff">9</text>
+<rect x="443.6" y="100" width="9.5" height="40" fill="#2d3436" rx="1"/>
+<text x="448.4" y="124" text-anchor="middle" font-size="9" fill="#fff">3</text>
+<text x="100" y="124" text-anchor="end" font-size="12" font-weight="bold" fill="#333">sympy</text>
+<text x="465" y="124" font-size="10" fill="#666">n=105</text>
+<rect x="80" y="165" width="12" height="12" fill="#00b894" rx="2"/>
+<text x="98" y="175" font-size="11" fill="#333">Resolved</text>
+<rect x="180" y="165" width="12" height="12" fill="#fdcb6e" rx="2"/>
+<text x="198" y="175" font-size="11" fill="#333">Wrong fix (f2p)</text>
+<rect x="320" y="165" width="12" height="12" fill="#e17055" rx="2"/>
+<text x="338" y="175" font-size="11" fill="#333">Regression (p2p)</text>
+<rect x="80" y="190" width="12" height="12" fill="#d63031" rx="2"/>
+<text x="98" y="200" font-size="11" fill="#333">Both fail</text>
+<rect x="180" y="190" width="12" height="12" fill="#2d3436" rx="2"/>
+<text x="198" y="200" font-size="11" fill="#333">Timeout</text>
+</svg></div>
+<div class="callout"><h4>Key Repo-Based Findings</h4><ol>
+<li><strong>Systematic django &gt; sympy gap (aggregate: 56.2% vs 44.8%, +11.4pp).</strong> Every harness except Hermes Agent performs better on django. This is a <em>domain knowledge</em> effect: sympy bugs require mathematical reasoning (algebraic simplification, series expansion, assumptions), while django bugs are more about standard web framework patterns (ORM, forms, migrations).</li>
+<li><strong>Hermes Agent is the only repo-agnostic harness (53.3% on both).</strong> Its consistent performance suggests its system prompt or tool format does not bias toward any particular codebase style — a desirable property for general-purpose agents.</li>
+<li><strong>Sympy has 42% more "wrong fix" failures (41.9% vs 29.5%).</strong> The model frequently misunderstands sympy bugs — it applies a plausible-looking patch that doesn't actually fix the mathematical issue. This is a <em>model comprehension</em> limit, not a harness issue.</li>
+<li><strong>Sympy has nearly 2× the "both fail" rate (8.6% vs 4.8%).</strong> Patches on sympy are more likely to be both wrong AND break existing tests — the mathematical codebase is more fragile to incorrect edits.</li>
+<li><strong>Django has more timeouts (6.7% vs 2.9%) and longer wall time (476s vs 422s).</strong> Django's larger codebase and test suite make iterations slower; harnesses that explore more (codex: 7 timeouts) are penalized more on django.</li>
+<li><strong>Larger patches on django (avg 3049B vs 2370B).</strong> Django fixes require more code changes (ORM modifications, form fields, migration logic), while sympy fixes are more surgical (single function corrections).</li>
+<li><strong>claude-code has the largest repo gap (+20.0pp: 53.3% django vs 33.3% sympy).</strong> Its architecture may be tuned for web/framework code patterns. For BaiZe, this suggests training data should be balanced across domains to avoid such bias.</li>
+</ol></div>
 <h2><span class="section-num">5</span>Cost and Efficiency Analysis</h2>
 <div class="chart-container"><svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
 <line x1="60" y1="350.0" x2="570" y2="350.0" stroke="#eee" stroke-width="1"/>
