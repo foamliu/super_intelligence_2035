@@ -1,0 +1,24 @@
+  [RESUME] Skipping 29 completed for claude-code
+Serial kimi eval: harness=claude-code model=kimi-k2.6-cloud
+  Total=100 Pending=71 Skip=29 Concurrency=1
+
+############################################################
+# [1/71] claude-code x django__django-11001
+############################################################
+
+============================================================
+[SETUP] django__django-11001 for claude-code
+
+[RUN] claude-code on django__django-11001 ...
+  [EVAL] claude-code on django__django-11001 ...
+  => django__django-11001 | claude-code | resolved
+
+############################################################
+# [2/71] claude-code x astropy__astropy-12907
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-12907 for claude-code
+
+[RUN] claude-code on astropy__astropy-12907 ...
+  [EVAL] claude-code on astropy__astropy-12907 ...

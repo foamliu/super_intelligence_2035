@@ -5178,11 +5178,32 @@
     "harness": "codex",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git fetch base_commit failed: \n[TIMEOUT]"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git fetch base_commit failed: \n[TIMEOUT]",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 258.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_matplotlib__matplotlib-18869.json",
+      "stdout_tail": "258.1s ==\n[stderr tail] ...2026-10-08T11:28:58.855808Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 1535 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_matplotlib__matplotlib-18869.json\n[run_single] cleanup: git reset --hard b7d05919865fc0c37a0164cf467d5d5513bd0ede\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "matplotlib__matplotlib-22711",
@@ -8889,11 +8910,32 @@
     "harness": "claude-code",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdocs/ref/models/fields.txt\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdocs/ref/models/fields.txt\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 388.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-11001.json",
+      "stdout_tail": "1001\n[run_single] base_commit=ef082ebb84f00e38af4e8880d04e8365c2766d34\n[run_single] ps_len=2220\n[run_single] git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=388.4s ==\n[run_single] model_patch: 2235 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-11001.json\n[run_single] cleanup: git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 118,
+        "p2p_total": 118
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "django__django-11019",
@@ -12788,5 +12830,440 @@
       }
     },
     "classification": "resolved"
+  },
+  {
+    "instance_id": "astropy__astropy-12907",
+    "repo": "astropy/astropy",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template astropy__astropy-12907"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 1,
+      "wall_s": 1.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_astropy__astropy-12907.json",
+      "stdout_tail": "le] git reset --hard d16bfe05a744909de4b27f5875fe0d4ed41ce607\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=1 timed_out=False wall=0.9s ==\n[stderr tail] ...deepseek-harness run error: session \"astropy__astropy-12907\" already exists\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_astropy__astropy-12907.json\n[run_single] cleanup: git reset --hard d16bfe05a744909de4b27f5875fe0d4ed41ce607\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "astropy__astropy-12907",
+    "repo": "astropy/astropy",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "fetch errored but checkout ok: error: Could not read a4f25a2ced5d7bb5cfe539071c36f30ae35b0b42\nfatal: Failed to "
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template astropy__astropy-12907"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 195.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_astropy__astropy-12907.json",
+      "stdout_tail": "py__astropy-12907\n[run_single] base_commit=d16bfe05a744909de4b27f5875fe0d4ed41ce607\n[run_single] ps_len=1246\n[run_single] git reset --hard d16bfe05a744909de4b27f5875fe0d4ed41ce607\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=195.2s ==\n[run_single] model_patch: 2060 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_astropy__astropy-12907.json\n[run_single] cleanup: git reset --hard d16bfe05a744909de4b27f5875fe0d4ed41ce607\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "astropy__astropy-14182",
+    "repo": "astropy/astropy",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tastropy/modeling/separable.py\n\tastropy/modeling/tests/test_separable.py\nPlease commit your changes or stash them bef"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tastropy/modeling/separable.py\n\tastropy/modeling/tests/test_separable.py\nPlease commit your changes or stash them bef",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "astropy__astropy-12907",
+    "repo": "astropy/astropy",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template astropy__astropy-12907"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 435.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_astropy__astropy-12907.json",
+      "stdout_tail": "ance_id=astropy__astropy-12907\n[run_single] base_commit=d16bfe05a744909de4b27f5875fe0d4ed41ce607\n[run_single] ps_len=1246\n[run_single] git reset --hard d16bfe05a744909de4b27f5875fe0d4ed41ce607\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=435.1s ==\n[run_single] model_patch: 500 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_astropy__astropy-12907.json\n[run_single] cleanup: git reset --hard d16bfe05a744909de4b27f5875fe0d4ed41ce607\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "astropy__astropy-12907",
+    "repo": "astropy/astropy",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "fetch errored but checkout ok: error: Could not read a4f25a2ced5d7bb5cfe539071c36f30ae35b0b42\nfatal: Failed to "
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template astropy__astropy-12907"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 585.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_astropy__astropy-12907.json",
+      "stdout_tail": "train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:637:5)\n      at transform (/nas_train/app.e0031982/harness/cline/node_modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\n\n\n[run_single] model_patch: 2158 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_astropy__astropy-12907.json\n[run_single] cleanup: git reset --hard d16bfe05a744909de4b27f5875fe0d4ed41ce607\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-10914",
+    "repo": "django/django",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 360.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-10914.json",
+      "stdout_tail": "jango__django-10914\n[run_single] base_commit=e7fd69d051eaa67cb17f172a39b57253e9cb831a\n[run_single] ps_len=1021\n[run_single] git reset --hard e7fd69d051eaa67cb17f172a39b57253e9cb831a\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=359.6s ==\n[run_single] model_patch: 4186 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-10914.json\n[run_single] cleanup: git reset --hard e7fd69d051eaa67cb17f172a39b57253e9cb831a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 98,
+        "p2p_total": 98
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "astropy__astropy-12907",
+    "repo": "astropy/astropy",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "fetch errored but checkout ok: fatal: Unable to create '/dev/shm/harness_work/workdirs/astropy_astropy/.git/sha"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template astropy__astropy-12907"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 718.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_astropy__astropy-12907.json",
+      "stdout_tail": " False False]\n [ True  True False False]\n [False False  True False]\n [False False False  True]]\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[\u2713] Investigate separability_matrix bug with nested CompoundModels\n[\u2713] Find and fix the root cause\n[\u2713] Add/regenerate tests to cover the fix\n\u001b[0m\n\n[run_single] model_patch: 1693 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_astropy__astropy-12907.json\n[run_single] cleanup: git reset --hard d16bfe05a744909de4b27f5875fe0d4ed41ce607\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "astropy__astropy-14182",
+    "repo": "astropy/astropy",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template astropy__astropy-12907"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 1018.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_astropy__astropy-14182.json",
+      "stdout_tail": "base_commit=a5917978be39d13cd90b517e1de4e7a539ffaa48\n[run_single] ps_len=1871\n[run_single] git reset --hard a5917978be39d13cd90b517e1de4e7a539ffaa48\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=1018.0s ==\n[run_single] model_patch: 5070 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_astropy__astropy-14182.json\n[run_single] cleanup: git reset --hard a5917978be39d13cd90b517e1de4e7a539ffaa48\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "astropy__astropy-14182",
+    "repo": "astropy/astropy",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template astropy__astropy-12907"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 380.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_astropy__astropy-14182.json",
+      "stdout_tail": "al(str(dat[\"wave\"].unit), \"nm\")\n+    assert_equal(str(dat[\"response\"].unit), \"ct\")\n+    assert_almost_equal(dat[0][0], 350.0)\n+    assert_almost_equal(dat[1][1], 1.2)\n+\n\u001b[0m\n\u001b[0m\u2731 \u001b[0mGrep \"^def test_\"\u001b[90m in astropy/io/ascii/tests/test_rst.py \u00b7 100 matches\u001b[0m\n\n[run_single] model_patch: 3028 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_astropy__astropy-14182.json\n[run_single] cleanup: git reset --hard a5917978be39d13cd90b517e1de4e7a539ffaa48\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "astropy__astropy-14182",
+    "repo": "astropy/astropy",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template astropy__astropy-12907"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 729.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_astropy__astropy-14182.json",
+      "stdout_tail": "nce_id=astropy__astropy-14182\n[run_single] base_commit=a5917978be39d13cd90b517e1de4e7a539ffaa48\n[run_single] ps_len=1871\n[run_single] git reset --hard a5917978be39d13cd90b517e1de4e7a539ffaa48\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=729.4s ==\n[run_single] model_patch: 2971 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_astropy__astropy-14182.json\n[run_single] cleanup: git reset --hard a5917978be39d13cd90b517e1de4e7a539ffaa48\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-10914",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 162.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-10914.json",
+      "stdout_tail": "stance_id=django__django-10914\n[run_single] base_commit=e7fd69d051eaa67cb17f172a39b57253e9cb831a\n[run_single] ps_len=1021\n[run_single] git reset --hard e7fd69d051eaa67cb17f172a39b57253e9cb831a\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=162.3s ==\n[run_single] model_patch: 13588 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-10914.json\n[run_single] cleanup: git reset --hard e7fd69d051eaa67cb17f172a39b57253e9cb831a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 98,
+        "p2p_total": 98
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-10914",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 259.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-10914.json",
+      "stdout_tail": "eployment/checklist.txt for new default behavior\n[\u2713] Add release note in docs/releases/3.0.txt\n[\u2713] Update tests/test_utils/tests.py to expect 0o644 as default\n[\u2713] Add/update staticfiles tests for new default permissions\n[\u2713] Run relevant tests to verify changes\n\u001b[0m\n\n[run_single] model_patch: 925 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-10914.json\n[run_single] cleanup: git reset --hard e7fd69d051eaa67cb17f172a39b57253e9cb831a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 98,
+        "p2p_total": 98
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-11797",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdocs/howto/deployment/checklist.txt\n\tdocs/ref/settings.txt\n\tdocs/releases/3.0.txt\nPlease commit your changes or stas"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdocs/howto/deployment/checklist.txt\n\tdocs/ref/settings.txt\n\tdocs/releases/3.0.txt\nPlease commit your changes or stas",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-11797",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdocs/howto/deployment/checklist.txt\n\tdocs/ref/settings.txt\n\tdocs/releases/3.0.txt\nPlease commit your changes or stas"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdocs/howto/deployment/checklist.txt\n\tdocs/ref/settings.txt\n\tdocs/releases/3.0.txt\nPlease commit your changes or stas",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-11815",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdocs/howto/deployment/checklist.txt\n\tdocs/ref/settings.txt\n\tdocs/releases/3.0.txt\n\ttests/file_storage/tests.py\n\ttest"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdocs/howto/deployment/checklist.txt\n\tdocs/ref/settings.txt\n\tdocs/releases/3.0.txt\n\ttests/file_storage/tests.py\n\ttest",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-11815",
+    "repo": "django/django",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdocs/howto/deployment/checklist.txt\n\tdocs/ref/settings.txt\n\tdocs/releases/3.0.txt\n\ttests/file_storage/tests.py\n\ttest"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdocs/howto/deployment/checklist.txt\n\tdocs/ref/settings.txt\n\tdocs/releases/3.0.txt\n\ttests/file_storage/tests.py\n\ttest",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "django__django-11848",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdocs/howto/deployment/checklist.txt\n\tdocs/ref/settings.txt\n\tdocs/releases/3.0.txt\n\ttests/file_storage/tests.py\n\ttest"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdocs/howto/deployment/checklist.txt\n\tdocs/ref/settings.txt\n\tdocs/releases/3.0.txt\n\ttests/file_storage/tests.py\n\ttest",
+    "classification": "blocked"
   }
 ]
