@@ -1,0 +1,41 @@
+# BaiZe R3 Stable Best Blend — Data Mixture BO Search Round 3
+# ============================================================
+# Generated: 2026-10-09 06:00 (pretrain agent, wake #230)
+# DB: nemo_experiments/mix_search/mix_search_eval_r3.db
+# Total trials: 100 (98 complete + 2 failed)
+# Search: 6-dim simplex, D=1B token/trial, full lm_eval (no --limit)
+# Proxy: d=128/L=14 ≈ 18.36M, GBS=16, MBS=16, seq=2048, LR=3e-3, seed=1234
+# Budget: ~19.5h (8 GPU, 13 rounds), deadline met ✅
+
+# ── Best Trial #8 (score=0.4032, lm_eval 8-task avg accuracy) ──
+# Normalized blend (sum=1.000000, for P-8 Stable phase):
+ultrafineweb_en        0.168011
+ultrafineweb_zh        0.319851
+ultrafineweb_l1_en_hq  0.324217
+ultrax_preview         0.079583
+ultradata_code         0.063881
+ultradata_math         0.044457
+
+# Per-task scores (Trial #8):
+#   arc_challenge=0.2278  arc_easy=0.3333  boolq=0.5890  hellaswag=0.2615
+#   openbookqa=0.2420    piqa=0.5653      sciq=0.4960   winogrande=0.5107
+
+# ── Top-5 Summary (normalized blends) ──
+# #1 Trial #8  score=0.4032  en=0.1680 zh=0.3199 l1=0.3242 ultrax=0.0796 code=0.0639 math=0.0445
+# #2 Trial #47 score=0.4002  en=0.3395 zh=0.0747 l1=0.2123 ultrax=0.1350 code=0.1649 math=0.0736
+# #3 Trial #37 score=0.3998  en=0.4227 zh=0.1184 l1=0.2893 ultrax=0.1036 code=0.0543 math=0.0117
+# #4 Trial #46 score=0.3998  en=0.3924 zh=0.0211 l1=0.2612 ultrax=0.1092 code=0.1620 math=0.0542
+# #5 Trial #84 score=0.3979  en=0.2712 zh=0.1146 l1=0.2400 ultrax=0.0965 code=0.1961 math=0.0817
+
+# ── Average of Top-5 (robust alternative, normalized) ──
+# en=0.3188 zh=0.1297 l1=0.2654 ultrax=0.1048 code=0.1282 math=0.0531
+
+# ── Score Statistics (98 complete trials) ──
+# Mean=0.3824  Min=0.3645  Max=0.4032  N=98
+# Top-5 spread: Δ=0.0053 (1.3% of mean) → landscape is flat
+
+# ── Key Findings ──
+# 1. Web:Code:Math ≈ 89:6:4 (best trial), close to prior 88:8:4 but code↓ math≈same
+# 2. Within web: l1_en_hq consistently high (21-32%), zh/en ratio has high variance
+# 3. Landscape is flat (top-5 Δ=0.005) → exact blend matters little at this scale
+# 4. Recommendation: use best trial #8 for P-8, or top-5 average for robustness
