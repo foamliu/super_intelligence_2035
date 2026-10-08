@@ -10,7 +10,7 @@ WAITING: 1
 | WAITING | 1（🔬 scaling 实验在跑 — E1训练中(~5h剩余) → E2 smoke+训练(~5.6h) → Protocol B eval 3 seeds → HTML报告. ETA total ~11h+eval. |
 | ERROR_COUNT | 6（①~⑤ 同前 ⑥ AIMv2.forward() 不支持 return_patch → 已加 return_patch+causal 参数修复） |
 | BUDGET_USED | R2–R12 ≈215 + R12b(106.4) + lp bridge(5.8) + mask-ratio(78.4+0.5) + weight-ratio(~65.4+0.5) + ④ AIMv2 AR Arm B(2.1) + Arm B-hybrid(~24) ≈ **累计 ~498 GPU·h** + scaling E1(~8 GPU·h so far) |
-| 更新 | **2026-10-08 20:10（⑥ E2变更执行）**: ✅ 读到运维指令⑥(E2作废官方304M→改同族w768/d30/284.54M,只差宽度). ✅ E1训练中(step~14080/187101,~5100img/s,loss 2.6,无坍缩)→不动. ✅ run_scaling_experiment.sh已修: run_e2()改为--tower openvision2 --width 768 --depth 30 --resolution 224 --patch 16. ✅ 预注册EXPERIMENTS_VISION.md已更新(⑥修订,保留历史). ✅ e2_watcher.sh启动(PID 161134,等E1完后自动跑E2 smoke→训练). 📦 体积：TASK=33.8KB / MEMORY=待测 · *[更早见 daily-memories-vision/2026-10-08.md]* |
+| 更新 | **2026-10-08 20:14（⑥ E2变更执行完毕+push✅）**: ✅ 读到运维指令⑥(E2作废官方304M→改同族w768/d30/284.54M,只差宽度). ✅ E1训练中(step~18k/187k,~5100img/s,loss 2.6,无坍缩)→不动. ✅ run_scaling_experiment.sh已修: run_e2()改为--tower openvision2 --width 768 --depth 30 --resolution 224 --patch 16. ✅ 预注册EXPERIMENTS_VISION.md已更新(⑥修订,保留历史). ✅ e2_watcher.sh启动(PID 161134,等E1完后自动跑E2 smoke→训练). ✅ ④估算已答(MEMORY新增⏱️节,smoke实测5.2-9.1h/epoch)+④块归档→ARCHIVE. ✅ commit ee1a2bfd push✅. 📦 体积：TASK=31.2KB / MEMORY=31.3KB（均≤32KB✅, 归档④~1.9KB→ARCHIVE_OPERATOR_VISION.md）· *[更早见 daily-memories-vision/2026-10-08.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
