@@ -24,3 +24,78 @@ Sources: en_base(10) + l1_en_hq(12) + zh(10) = 32 files × 5K docs = 160K docs
 [done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-en-part-1225-of-2048.md
   → docs=5000 hits=0
 --- en_base: ultrafineweb-en-part-1429-of-2048.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-en-part-1429-of-2048.md
+  → docs=5000 hits=0
+--- en_base: ultrafineweb-en-part-1633-of-2048.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-en-part-1633-of-2048.md
+  → docs=5000 hits=0
+--- en_base: ultrafineweb-en-part-1837-of-2048.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-en-part-1837-of-2048.md
+  → docs=5000 hits=0
+--- l1_en_hq: ultrafineweb-l1-en-hq-CC-MAIN-2025-30-part-0001-of-1000.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-l1-en-hq-CC-MAIN-2025-30-part-0001-of-1000.md
+  → docs=5000 hits=0
+--- l1_en_hq: ultrafineweb-l1-en-hq-CC-MAIN-2025-30-part-0501-of-1000.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-l1-en-hq-CC-MAIN-2025-30-part-0501-of-1000.md
+  → docs=5000 hits=0
+--- l1_en_hq: ultrafineweb-l1-en-hq-CC-MAIN-2025-33-part-0001-of-1000.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-l1-en-hq-CC-MAIN-2025-33-part-0001-of-1000.md
+  → docs=5000 hits=0
+--- l1_en_hq: ultrafineweb-l1-en-hq-CC-MAIN-2025-33-part-0501-of-1000.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-l1-en-hq-CC-MAIN-2025-33-part-0501-of-1000.md
+  → docs=5000 hits=0
+--- l1_en_hq: ultrafineweb-l1-en-hq-CC-MAIN-2025-38-part-0001-of-1000.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-l1-en-hq-CC-MAIN-2025-38-part-0001-of-1000.md
+  → docs=5000 hits=0
+--- l1_en_hq: ultrafineweb-l1-en-hq-CC-MAIN-2025-38-part-0501-of-1000.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-l1-en-hq-CC-MAIN-2025-38-part-0501-of-1000.md
+  → docs=5000 hits=0
+--- l1_en_hq: ultrafineweb-l1-en-hq-CC-MAIN-2025-43-part-0001-of-1000.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-l1-en-hq-CC-MAIN-2025-43-part-0001-of-1000.md
+  → docs=5000 hits=0
+--- l1_en_hq: ultrafineweb-l1-en-hq-CC-MAIN-2025-43-part-0501-of-1000.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-l1-en-hq-CC-MAIN-2025-43-part-0501-of-1000.md
+  → docs=5000 hits=0
+--- l1_en_hq: ultrafineweb-l1-en-hq-CC-MAIN-2025-47-part-0001-of-1000.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-l1-en-hq-CC-MAIN-2025-47-part-0001-of-1000.md
+  → docs=5000 hits=0
+--- l1_en_hq: ultrafineweb-l1-en-hq-CC-MAIN-2025-47-part-0501-of-1000.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-l1-en-hq-CC-MAIN-2025-47-part-0501-of-1000.md
+  → docs=5000 hits=0
+SKIP (not found): /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq/CC-MAIN-2025-50/ultrafineweb-l1-en-hq-CC-MAIN-2025-50-part-0001-of-1000.parquet
+SKIP (not found): /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq/CC-MAIN-2025-50/ultrafineweb-l1-en-hq-CC-MAIN-2025-50-part-0501-of-1000.parquet
+--- zh: ultrafineweb-zh-part-001-of-256.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-zh-part-001-of-256.md
+  → docs=5000 hits=0
+--- zh: ultrafineweb-zh-part-026-of-256.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-zh-part-026-of-256.md
+  → docs=5000 hits=0
+--- zh: ultrafineweb-zh-part-051-of-256.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-zh-part-051-of-256.md
+  → docs=5000 hits=0
+--- zh: ultrafineweb-zh-part-076-of-256.parquet ---
+  → docs=5000 hits=0
+--- zh: ultrafineweb-zh-part-101-of-256.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-zh-part-101-of-256.md
+  → docs=5000 hits=0
+--- zh: ultrafineweb-zh-part-126-of-256.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-zh-part-126-of-256.md
+  → docs=5000 hits=0
+--- zh: ultrafineweb-zh-part-151-of-256.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-zh-part-151-of-256.md
+  → docs=5000 hits=0
+--- zh: ultrafineweb-zh-part-176-of-256.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-zh-part-176-of-256.md
+  → docs=5000 hits=0
+--- zh: ultrafineweb-zh-part-201-of-256.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-zh-part-201-of-256.md
+  → docs=5000 hits=0
+--- zh: ultrafineweb-zh-part-226-of-256.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-zh-part-226-of-256.md
+  → docs=5000 hits=0
+
+=== Scan Complete ===
+End: Fri Oct  9 05:34:08 AM CST 2026
+Files scanned: 30
+Total docs scanned: 150000
+Total hits: 0

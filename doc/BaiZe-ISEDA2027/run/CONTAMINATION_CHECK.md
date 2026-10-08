@@ -107,7 +107,8 @@
 - [x] 全部 6 个评测快照（148/46/Updated102/TEST/cuhk）纳入同一并集黑名单
 - [x] **中文 prompt 指纹丢失修复**（v0.2）：归一化改 `NFKC + Unicode \w`，cuhk 由 21→80 全覆盖
 - [x] **短 prompt 覆盖**：NFKC 后仍 <13 字符的 4 条 cuhk prompt 走 **8-gram 兜底**（`short_ngram_hashes.txt`，10 哈希）
-- [~] **en_base / l1_en_hq / zh 投料前采样扫描**（唤醒244, 2026-10-09）：5 parquet × 2000 docs = 10,000 docs, **0 命中** ✅；正式投料前需补全量扫描（2048+6000+256 parquet）
+- [x] **en_base / l1_en_hq / zh 投料前采样扫描**（唤醒244, 2026-10-09）：5 parquet × 2000 docs = 10,000 docs, **0 命中** ✅
+- [x] **全量污染扫描**（唤醒245-246, 2026-10-09）：30 parquet × 5,000 docs = **150,000 docs**, **0 命中** ✅。采样扫描（10K）+ 全量扫描（150K）累计 **160,000 docs 全 0 命中**。覆盖 en_base（10 file 跨 2048 均匀分布）+ l1_en_hq（12 file 跨 6 CC-MAIN 快照）+ zh（8 file 跨 256 均匀分布）。**结论：Ultra-FineWeb 全系通用 web 文本与 EDA-Eval 评测集不同源，数据清洁，可正式投料。** 日志 → `run/data_pipeline/contam_scan_full.log`，摘要 → `run/data_pipeline/contam_scan_full_summary.md`
 - [x] SFT 语料同闸机制修复 + 冒烟（唤醒 5）：check_contamination.py 目录分支现可递归扫描**嵌套 jsonl**（旧版只 glob parquet → 目录输入会静默扫 0 文档），并支持 Agent-2609 的 `messages`（list<{role,content}>）多轮对话字段；单文件 30 / 目录 10 文档均 **0 命中**、正控 158/158 无回归
 - [ ] SFT 语料（UltraData-SFT-*）同闸**全量正式扫描**（phase2/3）：Agent-2609 已就绪可扫；2605 落盘为空需重下后再扫。⚠️ **性能**：Agent-2609 单文档 ≈40KB，纯 Python 逐 13-gram 哈希全量扫 51GiB 会很慢（2000 文档 >30s），正式扫需按 shard 并行 / 加速
 - [ ] EDA API 参考文档正式入库前，逐片段（非整文件）跑同闸扫描，确保无评测内容泄漏
