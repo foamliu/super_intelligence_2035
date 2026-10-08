@@ -26,7 +26,7 @@ from datetime import datetime
 HERE = os.path.dirname(os.path.abspath(__file__))
 CSV_IN = os.path.join(HERE, "lag_corr.csv")
 OUT_MD = os.path.join(HERE, "FINDINGS.md")
-VERIFY_DATE = "2026-10-08"      # 最后核验日（R2 复核）
+VERIFY_DATE = "2026-10-08"      # 最后核验日（R3 复核 · 2026-10-08 晚报轮）
 
 
 def status_of(r):
@@ -110,6 +110,12 @@ def main() -> int:
     L.append("## 3. 变更记录（台账滚动）")
     L.append(f"- **{VERIFY_DATE}**（R2 复核）：首版台账入库；全网格重核，`q<0.10`=0 / `stable`=0（**无变更**，"
              f"与 R1 一致）；补 `BOOTSTRAP.md`（移动块自助，见 PREREG §5①）。")
+    L.append(f"- **{VERIFY_DATE} 晚（R3 复核）**：**38 标的十年价格全量刷新**（ok=38 / fail=0）后重跑；"
+             f"**分析窗口显式截断为「价格 ∩ 语料」共同可用区间**（语料冻结 ⇒ 其后交易日 X 恒为 0，"
+             f"属**无语料**而非无新闻，须剔除）⇒ `lag_corr.csv` **与 R2 逐字节一致**"
+             f"（sha256 `83d3bf349be52251…`，4,018,511 B，23,941 行）⇒ **台账无变更**（`q<0.10`=0 / `stable`=0）。"
+             f"**新增** `AM_PM_CHECK.md`（早报→晚报**首次机械复核**：3 个 `|z|≥1.5` 信号的 daily `k=1` 格 × 21 只个股，"
+             f"对照 2026-10-08 实际收益）—— ⚠️ **单日样本，不构成任何结论**，仅证「复核链路真实跑过」。")
     L.append("")
     L.append("## 4. 下一步 / 局限")
     L.append("- ⚠️ 信号为**标题级子串计数**（噪声高）⇒ 仅「存在性」证据；下一步可试**正文/版面/新词首发**（L1 §4.4 候选）。")

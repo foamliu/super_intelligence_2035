@@ -135,6 +135,12 @@ def main() -> int:
     M = len(cal)
     print(f"[boot] 交易日历 {M} 天 {cal[0]}~{cal[-1]} · 资产 {len(assets)}")
     daily_counts = L.load_signal_counts()
+    # 窗口 = 「价格 ∩ 语料」共同可用区间（与 lag_corr.main 同规则 · R3 显式化）
+    corpus_end = max(daily_counts) if daily_counts else ""
+    if corpus_end and cal[-1] > corpus_end:
+        cal = [d for d in cal if d <= corpus_end]
+        M = len(cal)
+        print(f"[boot] 语料止于 {corpus_end} → 日历截断为 {M} 天 {cal[0]}~{cal[-1]}")
     names = [n for n, _ in L.SIGNALS]
     cnt_daily = {}
     for name in names:

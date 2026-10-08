@@ -437,5 +437,9 @@
 | 2026-10-08 | 英伟达黄仁勋：已测超 1200 款应用，RTX Spark 是全球唯一本地原生运行所有应用的电脑 | IT之家 | news(同发布会簇·防重不收·已由 010/313 覆盖) | https://www.ithome.com/1/010/318.htm |
 | 2026-10-08 | Meta's Muse launches on iPad just a month after its mobile debut | TechCrunch | news(本轮未收·留待下轮或按需) | https://techcrunch.com/2026/10/07/metas-muse-launches-on-ipad-just-a-month-after-its-mobile-debut/ |
 | 2026-10-08 | 微软发布 VS Code v1.141：清理"僵尸"Agent 会话等 | IT之家 | devtool(非新闻·防重不收) | https://www.ithome.com/1/010/325.htm |
+| 2026-10-08 | 小马智行与 Uber 将在伦敦测试第七代 Robotaxi，未来数周内启动 | IT之家 | news | https://www.ithome.com/1/010/636.htm |
+| 2026-10-08 | 消息称三星电子计划斥资超 100 万亿越南盾在越建设 2 座半导体后端测试工厂 | IT之家（据首尔经济新闻） | news | https://www.ithome.com/1/010/640.htm |
+| 2026-10-08 | 欧盟拟以普遍税替代数字服务税 | IT之家 | policy(非 AI 范畴·防重不收) | https://www.ithome.com/1/010/634.htm |
+| 2026-10-08 | 中国人民银行发布关于人民币汇率的政策立场 | 中新网（转新华社） | policy(非 AI 范畴·仅作 P0 as-of 说明·不入摘要) | https://www.chinanews.com.cn/ |
 
 

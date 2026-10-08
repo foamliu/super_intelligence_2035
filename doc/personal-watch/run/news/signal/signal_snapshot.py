@@ -43,6 +43,12 @@ def main() -> int:
     cal = L.build_calendar(assets)
     M = len(cal)
     daily_counts = L.load_signal_counts()
+    # 窗口 = 「价格 ∩ 语料」共同可用区间（同 lag_corr.py：语料冻结 ⇒ 其后交易日 X 恒为 0，须截断）
+    corpus_end = max(daily_counts) if daily_counts else ""
+    if corpus_end and cal[-1] > corpus_end:
+        cal = [d for d in cal if d <= corpus_end]
+        M = len(cal)
+        print(f"[win] 语料止于 {corpus_end} → 日历截断为 {M} 天 {cal[0]}~{cal[-1]}")
     names = [n for n, _ in L.SIGNALS]
     cnt = {}
     for name in names:

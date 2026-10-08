@@ -358,6 +358,17 @@ def main() -> int:
     print(f"[main] 交易日历 {M} 天 {cal[0]}~{cal[-1]} · 资产 {len(assets)}")
 
     daily_counts = load_signal_counts()
+    # ── 分析窗口 = 「价格 ∩ 语料」共同可用区间（数据可得性对齐 · 非结果驱动）────────────
+    # 语料回溯已冻结（截至 2026-10-03）⇒ 其末日之后的交易日 X 恒为 0，
+    # 那是「无语料」而不是「无新闻」⇒ 必须截断，否则每格 N 被系统性注入伪零样本。
+    # 注：截断后与 R1/R2 的样本区间完全一致（彼时价格止于 09-30，日历自然止于同一天）。
+    corpus_end = max(daily_counts) if daily_counts else ""
+    if corpus_end and cal[-1] > corpus_end:
+        cal = [d for d in cal if d <= corpus_end]
+        M = len(cal)
+        print(f"[win] 语料止于 {corpus_end} → 日历截断为 {M} 天 {cal[0]}~{cal[-1]}"
+              "（窗口 = 价格 ∩ 语料共同可用区间）")
+
     names = [n for n, _ in SIGNALS]
     cnt_daily = {}
     for name in names:
@@ -457,11 +468,13 @@ def write_md(rows, assets, cal, ncorpus):
     sig = [r for r in rows if r["q"] < 0.10]
     stable = [r for r in rows if r["flag"] == "stable"]
     L = []
-    L.append("# LAG_CORR — 新闻信号 → 资产价格 · 滞后相关 / 预测力（R2 复核 · 2026-10-08）")
+    L.append("# LAG_CORR — 新闻信号 → 资产价格 · 滞后相关 / 预测力（R3 复核 · 2026-10-08 晚）")
     L.append("")
     L.append(f"> 生成：`news/signal/lag_corr.py` ｜ 预注册：`PREREG.md`（**先于本结果**）"
              f" ｜ 语料 {ncorpus} 条 / 交易日 {len(cal)}（{cal[0]}~{cal[-1]}）")
-    L.append("> 🔁 **R2 复核**：本版为重跑（确定性，无随机成分）—— 全网格数值与 R1 一致；"
+    L.append("> 🔁 **R3 复核**：**38 标的十年价格全量刷新后**重跑（ok=38 / fail=0，确定性、无随机成分）；"
+             "**分析窗口显式截断为「价格 ∩ 语料」共同可用区间**（语料冻结于 2026-09-30 ⇒ 其后交易日 X 恒为 0，"
+             "属「无语料」而非「无新闻」，不得计入）⇒ **样本区间与 R1/R2 完全一致**。"
              "结论台账见 `FINDINGS.md`，块自助 CI 见 `BOOTSTRAP.md`。")
     L.append("> ⚠️ **非因果 · 非投资建议**：本文只做**样本外预测关联**的描述性统计；"
              "🚫 禁用「影响/导致/利好/利空/冲击」、🚫 无点位预测/仓位/择时。")
@@ -471,6 +484,9 @@ def write_md(rows, assets, cal, ncorpus):
     L.append("- X = 逐日 `log1p(条数)` → **滚动 z-score（窗 252 / min60，只用 ≤t 信息）**；"
              "Y = **对数收益** `ln(P_t/P_{t-1})`。")
     L.append("- 对齐：交易日历 = A股个股日线并集；信号 X_t = 落在 `(上一交易日, 本交易日]` 的新闻条数。")
+    L.append("- 窗口（R3 显式化）：**只保留「价格 ∩ 语料」共同可用的交易日** —— 语料冻结于其末日，"
+             "其后交易日的 X 恒为 0（**无语料 ≠ 无新闻**）⇒ 截断；价格上市/可得晚于 2016 的标的，"
+             "**其缺段保持 NaN / 不参与该段回归**（⚠️ 幸存者偏差见 §4）。")
     L.append("- 回归：`r_{t+k} = a + b·X_t + c·r_{t-1} + 星期哑变量 + 节假日前后哑变量`；"
              "`b` = 关注系数；**HAC(Newey–West)** SE；CI = `b ± 1.96·se`。")
     L.append("- k：日频 `0..+20`，周频 `0..+4`，月频 `0..+3`（**仅「新闻在前」方向**）；"
