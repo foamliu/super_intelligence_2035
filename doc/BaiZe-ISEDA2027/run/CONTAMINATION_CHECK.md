@@ -79,6 +79,13 @@
 | 来源对照 | API 参考文档（pyAether_API_Docstring / emyDesign / sklangref） | 3 文件 | **0** | ✅ 来源材料不含评测内容（粗粒度） |
 | SFT 同闸 | UltraData-SFT-Agent-2609 `Code_Agent_part-1-of-7.jsonl`（单文件，`messages` 字段） | 30 文档 | **0** | ✅ SFT jsonl + `messages` 多轮对话字段可扫（实测单文档 ≈40KB，短兜底 0） |
 | SFT 同闸 | UltraData-SFT-Agent-2609 `data/Code_Agent/`（嵌套 jsonl **目录**） | 10 文档 | **0** | ✅ 目录输入递归收集 jsonl（旧版漏扫目录内 jsonl → 静默 0 文档，已修复） |
+| **en_base 投料前扫描** | ultrafineweb_en part-0001-of-2048（通用 web 英文） | 2000 文档 | **0** | ✅ en_base 源无评测污染（唤醒244, 2026-10-09） |
+| **en_base 投料前扫描** | ultrafineweb_en part-1000-of-2048（中段采样） | 2000 文档 | **0** | ✅ |
+| **en_base 投料前扫描** | ultrafineweb_en part-2048-of-2048（末段采样） | 2000 文档 | **0** | ✅ |
+| **l1_en_hq 投料前扫描** | ultrafineweb_l1_en_hq CC-MAIN-2025-30 part-0001-of-1000 | 2000 文档 | **0** | ✅ l1_en_hq 源无评测污染 |
+| **zh 投料前扫描** | ultrafineweb_zh part-001-of-256（中文通用 web） | 2000 文档 | **0** | ✅ zh 源无评测污染（中文黑名单覆盖验证） |
+
+> **投料前扫描小结（2026-10-09 唤醒244）**：5 个代表性源 parquet × 2000 docs = **10,000 docs**，覆盖 en_base（首/中/末）、l1_en_hq、zh 三个 config，**全部 0 命中**。与 phase5 负控（L3 qa 1500 docs 0 命中）一致 → Ultra-FineWeb 全系通用 web 文本与 EDA-Eval 评测集不同源。⚠️ 正式投料前需对**全量** 2048 en_base + 6000 l1_en_hq + 256 zh parquet 跑完整扫描（当前为代表性采样）。
 
 - 命令：
   ```
@@ -100,7 +107,7 @@
 - [x] 全部 6 个评测快照（148/46/Updated102/TEST/cuhk）纳入同一并集黑名单
 - [x] **中文 prompt 指纹丢失修复**（v0.2）：归一化改 `NFKC + Unicode \w`，cuhk 由 21→80 全覆盖
 - [x] **短 prompt 覆盖**：NFKC 后仍 <13 字符的 4 条 cuhk prompt 走 **8-gram 兜底**（`short_ngram_hashes.txt`，10 哈希）
-- [ ] phase2 产出 `.bin/.idx` 前，对**全量训练文档**跑正式扫描并记录扫描量/命中
+- [~] **en_base / l1_en_hq / zh 投料前采样扫描**（唤醒244, 2026-10-09）：5 parquet × 2000 docs = 10,000 docs, **0 命中** ✅；正式投料前需补全量扫描（2048+6000+256 parquet）
 - [x] SFT 语料同闸机制修复 + 冒烟（唤醒 5）：check_contamination.py 目录分支现可递归扫描**嵌套 jsonl**（旧版只 glob parquet → 目录输入会静默扫 0 文档），并支持 Agent-2609 的 `messages`（list<{role,content}>）多轮对话字段；单文件 30 / 目录 10 文档均 **0 命中**、正控 158/158 无回归
 - [ ] SFT 语料（UltraData-SFT-*）同闸**全量正式扫描**（phase2/3）：Agent-2609 已就绪可扫；2605 落盘为空需重下后再扫。⚠️ **性能**：Agent-2609 单文档 ≈40KB，纯 Python 逐 13-gram 哈希全量扫 51GiB 会很慢（2000 文档 >30s），正式扫需按 shard 并行 / 加速
 - [ ] EDA API 参考文档正式入库前，逐片段（非整文件）跑同闸扫描，确保无评测内容泄漏
