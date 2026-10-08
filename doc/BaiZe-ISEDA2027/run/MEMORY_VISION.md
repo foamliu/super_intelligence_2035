@@ -6,12 +6,81 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **ALL CONVERGED — 待运维派新任务**. ④ Arm B-hybrid DONE (30k, no collapse C1~0.48, lp@30k=1.37% vs baseline 13.49%). ✅ 论文 6_vision_encoder.tex 更新 (mask-ratio表+weight-ratio表+§VI-D AR范式探索, main.pdf 11p 0err). ✅ 全线总结报告 report_vision_encoder_final.html (10节/4SVG/28.6KB). ✅ **专项报告 report_vision_aimv2_official_vs_ours.html 交付** (9节/7表/1SVG/23.2KB — 规格对照表+三臂结果+差异归因+论文措辞建议, 覆盖运维6点修订). ✅ GPU orphans cleaned (8GPU=4MiB idle). ✅ git synced (commits 6f2baa2b+67a306f8+本轮). |
+| PHASE | ✅ **ALL CONVERGED — 已回答运维 2026-10-08③ 下一步工作建议**. ④ Arm B-hybrid DONE. 论文+6份HTML报告+AIMv2专项报告均已完成. ✅ **运维问答 2026-10-08③ 已写入本文件「🗣️ 运维问答」区**（4 题：未验证假设/Stage iv 前置/GPU 利用/论文补充，每条附实验依据）. ✅ GPU orphans cleaned (8GPU=4MiB idle). ✅ git synced. |
 | WAITING | 1（✅ **全线实验收敛 + 全部交付物完成** — ④ hybrid=1.37% 信息量已获取, Arm A baseline=13.49% 仍最优. 论文+全线报告+AIMv2专项报告均已完成, 待运维审阅+派新任务. 视觉编码器线 R2–R14 全部 closed. |
 | ERROR_COUNT | 5（① R9 w512 首跑 crash：损坏 jpg → data.py 修复 ② 续跑首试 crash：r9_train.py `log()` → 改 `print()` 修复 ③ 8-GPU 并行 eval NFS 争用卡死 → 改 4-GPU r12_single_eval.sh ④ lp bridge crash 缺 `import T` → line 39 加 import ⑤ lp bridge crash CUDA OOM → `extract_features_streaming` 加 `torch.no_grad()` + `linear_probe_mainstream` 加 `Xtr.to(device)`） |
 | BUDGET_USED | R2–R12 ≈215 + R12b(106.4) + lp bridge(5.8) + mask-ratio(78.4+0.5) + weight-ratio(~65.4+0.5) + ④ AIMv2 AR Arm B(2.1) + Arm B-hybrid(~24) ≈ **累计 ~498 GPU·h**（最终） |
-| 更新 | **2026-10-08 16:44（唤醒巡检 · 全线仍收敛）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind — **无新运维指令**(BAIZE_VISION_TASK.md 自14:17以来无新提交). ✅ GPU 8×H100 全 idle (4MiB/卡, 0% util). ✅ 交付物完好: main.pdf(358KB)+6_vision_encoder.tex(25KB)+6份HTML报告(全线总结28.6KB+mask-ratio34.3KB+lp-protocol21.2KB+lp-eval27KB+AIMv2专项23.2KB+final-v2 28.7KB). GPIC 下载 ~76%(data线), 方向1仍暂缓. **视觉编码器线 R2–R14 全线收敛, WAITING=1 待运维派新任务**. 📦 体积：TASK=28.9KB / MEMORY=25.6KB（均≤32KB✅）· *[更早见 daily-memories-vision/2026-10-08.md]* |
+| 更新 | **2026-10-08 17:20（回答运维 2026-10-08③ · 下一步工作建议）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind. ✅ **运维指令 2026-10-08③ 已执行**：在 MEMORY_VISION.md 状态头下方新增「🗣️ 运维问答 · 2026-10-08③」区，逐条回答 4 题（1-未验证假设: w384 AIMv2/C1-lp 背离/R12b epoch-vs-unique/高分辨率 dense; 2-Stage iv 前置: projector/分辨率/冻结vs解冻/特征缓存/数据配对; 3-GPU 利用: P1=w384 AIMv2(~16h)/P2=Protocol B 消融臂(~6h)/P3=336/16(~24h); 4-论文补充: Limitations/Protocol B 横比/R12b 发现/C1-lp 背离/Future Work），每条附实验编号+报告路径为依据。✅ 纯写作，不占 GPU。✅ GPU 8×H100 全 idle. GPIC 下载 ~76%(data线), 方向1仍暂缓. 📦 体积：TASK=30.8KB / MEMORY=31.5KB（均≤32KB✅, 归档 3 条旧流水→daily）· *[更早见 daily-memories-vision/2026-10-08.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
+
+## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
+
+> 回应运维指令 2026-10-08③。纯写作，不占 GPU。每条建议附实验编号/报告/数据路径为依据。
+
+### 1. 未验证的假设 / 遗留疑点
+
+**1-A · AIMv2-style 在更小塔（w384）上可能更优**
+- 依据：R10-③ 实测 w384(71.5M) InfoNCE lp=7.99%@15.36M **全宽度最高**（w512=6.08%），M 边际全区间为负 ≈−2.2pp/参数翻倍（`EXPERIMENTS_VISION.md §R10`，论文 §VI-B）。R11-G 证 AIMv2-style 在 w512 翻盘（7.40%→19.76%，+12.4pp，R²=0.91）（`§R11-G`，Table~XII）。**两者交叉点未验证**。
+- 设计：1 臂 w384 AIMv2-style(`--loss aimv2 --mask-ratio 0.6`)，CC12M+Amshaker 18.5M，30k 步，8 卡。≈2h/~16 GPU·h。判据：lp@30k ≥ 13.49%+1.5=15.0% → w384 更优。
+- 价值：若正面 → 最终编码器选 w384（更小更快，Stage iv 延迟更低），scaling 曲线需重拟合。
+
+**1-B · C1（对比对齐）与 lp（线性可分性）的背离是系统性的**
+- 依据：① mask-ratio arm 0.3（C1=0.3495 < 0.6 的 0.3810，但 lp=12.69% 接近，zs=5.25% > 4.72%）（`§mask-ratio 结论#5`）；② weight-ratio arm 0.5:1（C1_final=0.2816 **最低**，但 lp=13.80% **最高**）（`§weight-ratio 结论#7`）。→ 降低 contrast 权重 → C1↓ 但 lp↑，暗示 InfoNCE 对齐压力与 lp 特征质量有 trade-off。
+- 设计：contrast_weight 精细扫描 {0.1,0.25,0.5,0.75,1.0} × 3 seeds。先跑 0.1/0.25 两点 × 1 seed = ~32 GPU·h 确认趋势。判据：lp 倒 U，峰值点 = 最优 trade-off。
+- 价值：机制理解——若确认，论文可写「InfoNCE 的作用是防坍缩锚点而非 lp 最优化」。
+
+**1-C · R12b「更多 unique 数据 ≠ 更高 lp」归因未隔离**
+- 依据：R12b(69.7M,2ep) 18.81% < R11-G(18.5M,1ep) 19.76% < R12-3ep(58.8M,3ep) 20.27%。matched-N 显示 R12b 始终 ≤ R12-3ep（`EXPERIMENTS_VISION_ROUND12.md §2`）。可能原因：① GPIC short caption 9% 在 77-token 100% 截断→InfoNCE 退化；② epoch 重复=隐式增强。**两因素未隔离**。
+- 设计：取 R12 58.8M 混合数据只跑 1 epoch(~136k 步)，与 R12 3-epoch 同 N 对比。≈6.5h/~52 GPU·h。判据：1-epoch lp ≈ 19.76% → epoch 有效；> 18.81% → GPIC 质量是主因。
+- 价值：指导方向 1(GPIC 全量 100M)是否值得——若 epoch > unique，100M×1ep 不如 58.8M×3ep。
+
+**1-D（低优先）· 更高分辨率的 dense 监督信号更强**
+- 依据：224/16=196 patch，mask 0.6=~118 被遮。336/16=576 patch，mask 0.6=~346 → dense 密度 2.9×。S6(论文 §VI-C)只测 InfoNCE 未测 AIMv2-style。
+- 设计：336/16 AIMv2 30k，对比 224/16 baseline 13.49%。≈3h/~24 GPU·h（吞吐降 ~40%）。判据：lp ≥ 13.49%+1.5 → 高分辨率有益。
+
+### 2. Stage (iv) MLLM 对齐的前置准备（视觉编码器侧）
+
+**2-A · Projector 设计预研**（纯 CPU，~1 天）
+- 编码器输出 196 patch token(512-dim)+1 CLS。候选：① LLaVA 式 linear projection；② 2-layer MLP(LLaVA-1.5)；③ Q-Former/resampler(BLIP-2)。196 token 已较紧凑(CLIP-L/14@336=576)，linear/MLP 可能够用。→ 产出 `VISION_MLLM_PROJECTOR_DESIGN.md`。依据：论文 §VI-C 已声明「Stage~(iv) revisits the visual-token count for detail-dense layout」。
+
+**2-B · 分辨率/patch token 消融预案**（CPU 准备 + GPU 实验）
+- 224/16=196 对版图 VQA 远不够。预案：336/16=576、448/16=784、336/14=576(匹配官方 OV2)。需决定重训 vs pos-emb 插值。→ 先跑假设 1-D(336/16 AIMv2 30k)验证。依据：S6 显示 224/16 InfoNCE 最优但 dense 未测；官方 OV2 用 patch14/336（`VISION_OFFICIAL_REPOS_SURVEY.md §10.4`）。
+
+**2-C · 视觉塔冻结 vs 解冻评测框架**（纯 CPU 代码，~2 天）
+- Stage iv 需决定：① 冻结 trunk+可训 projector；② +LLM LoRA；③ 端到端微调。→ 搭 `vision/eval_mllm_readiness.py`：从最佳 ckpt 提特征→冻结/解冻开关→lp/zs 评测。依据：R11-L2 LoRA 解冻文本塔未翻盘(Δ−0.30~−0.80)（`§R11-L2`）→ 视觉塔解冻也需预验。
+
+**2-D · 特征提取与缓存管线**（CPU+轻 GPU，~0.5 天）
+- 从最佳 ckpt(R12 3-epoch 或 R11-G)提取并缓存 IN-1k/GPIC 特征到磁盘，供 Stage iv 直接读取。脚本 `vision/extract_features_cache.py`，复用已修复的 `extract_features_streaming`。依据：lp protocol bridge 已验证提取管线稳定(3 ckpt×A/B×3 seeds 无 crash)。
+
+**2-E · 数据配对脚本**（纯 CPU，~1 天）
+- GPIC 含 layout/parasitic 标注。Stage iv 需 image→script/script→image/版图 VQA。→ 检查 GPIC json 字段、编写配对脚本、统计可用量。与 data 线协调。依据：E1 实测 GPIC 每 tar ≈12,639 对（`§C1`）。
+
+### 3. GPU 空窗期利用建议（优先级排序）
+
+| 优先级 | 候选 | 成本 | 理由 |
+|:--|:--|:--|:--|
+| **P1** | AIMv2 on w384(假设 1-A) | ~16 GPU·h/~2h | 信息密度最高：1 臂回答「最优编码器是否应更小」+「AIMv2 翻盘在 w384 是否放大」。若正面→直接影响 Stage iv 选型。R10 已证 w384 InfoNCE 最优，AIMv2 交叉点未测是最大空白。 |
+| **P2** | Protocol B 评测消融臂(9 ckpt) | ~6 GPU·h/~1h | 论文消融表(Table~XIII/XIV)全用 Protocol A(比主流低~10pp，`BP-3`)。对 9 臂跑 Protocol B → 补「主流协议」数字，可与 DINOv2/MAE/iBOT 横比。桥接脚本 `lp_protocol_bridge.py` 已就绪，GPU 占用极轻。 |
+| **P3** | 336/16 AIMv2 test(假设 1-D) | ~24 GPU·h/~3h | 同时验证高分辨率 dense 假说 + 为 Stage iv 分辨率选型提供数据。吞吐降~40%+需 pos-emb 插值，风险高于 P1。建议 P1 有正面信号后再做。 |
+
+> **不建议现在做**：假设 1-B(contrast 扫描 ~240 GPU·h)和 1-C(epoch vs unique ~52 GPU·h)——前者太重且已有 2 点数据，后者与方向 1(GPIC 全量)强耦合，等 GPIC 下完一起做更有意义。
+
+### 4. 对论文的补充建议
+
+**4-A · 缺 Limitations 段（应补）**
+- 论文以 §VI-D AR 探索收尾(line 277)，无 Limitations/Future Work。建议加：① 数据规模 ~118M vs AIMv2 ~12B(102× 缺口)(`§C1`)；② 短 alt-text(~20 tok) vs LLaMA-3 长合成 caption(`VISION_AIMV2_OFFICIAL_PLAN.md §6`)；③ 单 seed(除 lp 协议 3 seeds 外消融全 seed 0)(`§mask-ratio/§weight-ratio`)；④ Protocol A 比主流低~10pp(`BP-3`)；⑤ 仅 224/16 未测高分辨率 dense；⑥ 无下游 MLLM 评测。
+
+**4-B · 缺 Protocol B 结果+公开基准横比（应补）**
+- Table~XII 仍用 Protocol A(19.76%)。已有 Protocol B：R11-G=**29.94±0.04%**、R12 1ep=**30.27±0.03%**(3 seeds σ<0.1pp)(`report_vision_lp_protocol.html`)。→ 加一列「Protocol B(mainstream)」或脚注，补与 DINOv2/MAE/iBOT 公开 lp 横比表(需 `cimi_search` 查公开数字)。
+
+**4-C · R12b「更多 unique 数据 ≠ 更高 lp」未写入（应补）**
+- 论文 §VI-C 提到 3-epoch 延伸(20.27%@176M)但未讨论 R12b(69.7M,2ep,18.81% < R11-G 19.76%)。这是 epoch vs unique 的重要发现(`§R12b`，`EXPERIMENTS_VISION_ROUND12.md §2`)，应写入 §VI-C 或 Limitations。
+
+**4-D · C1 vs lp 背离未写入（可选补）**
+- 两组消融均发现 C1↓ 但 lp↑(`§mask-ratio 结论#5/§weight-ratio 结论#7`)。建议加 1-2 句：「contrastive alignment (C₁) and linear separability (lp) can diverge: reducing contrast weight lowers C₁ but raises lp, suggesting the contrastive term's role is collapse prevention rather than lp optimization.」
+
+**4-E · Future Work 段（应补）**
+- ① 高分辨率编码器(336/448) for MLLM；② 更长 caption(LLaMA-3 式)；③ GPIC 全量 100M scaling；④ Stage (iv) MLLM 对齐评测。
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
 
@@ -115,10 +184,9 @@ WAITING: 1
 - [13:43] **唤醒巡检 · 全线仍收敛（CPU-only, 无训练）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind — **无新运维指令**. ✅ GPU 8×H100 全 idle. ✅ 交付物完好: main.pdf(358KB)+6_vision_encoder.tex+report_vision_encoder_final.html(28.6KB)+4份专项报告. ✅ 体积: TASK=30.3KB / MEMORY=22.2KB（均≤32KB✅）. **视觉编码器线 R2–R14 全线收敛，WAITING=1 待运维派新任务**.
 - [14:16] **唤醒巡检 · 提交未归档的归档变更 + 心跳同步（CPU-only, 无训练）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind — **无新运维指令**. ⚠️ 发现工作区有未提交的归档变更: BAIZE_VISION_TASK.md（+Best Practices三节 BP-1/2/3 + 归档 2026-10-08①②块→指针, 34KB→28.9KB）+ ARCHIVE_OPERATOR_VISION.md（+67行接收归档块）— 均为上一轮 agent 归档工作未提交. ✅ GPU 8×H100 全 idle. ✅ 体积: TASK=28.9KB / MEMORY=22.6KB（均≤32KB✅）. **视觉编码器线 R2–R14 全线收敛，WAITING=1 待运维派新任务**. 📦 体积：TASK=28.9KB / MEMORY=22.6KB（均≤32KB✅）.
 - [01:39] **③ weight-ratio arm2✅DONE + arm3巡检#1**: ✅ **arm2 cw1_plw0p5(1:0.5) DONE@00:48**: step30k, total=7383s, steady_img_s=2443.8, final_loss=3.5013, C1_final=0.3517, C1_peak=0.4176@19200, C2_gap=+0.1131, C4=OK(无坍缩), 4ckpts✅. arm2结果已写入EXPERIMENTS_VISION.md. 🚀 **arm3 cw0p5_plw1(0.5:1) RUNNING**: PID 3214830健康(ppid=1,~2.9h), step~11650/30k~39%, C1_peak=0.4304@2100(早现), C1_latest=0.2924@11700(下降趋势但C4=OK), C2_gap~+0.133, loss~1.7-1.8, img/s~2200-2700, 8GPU 16.5GB/卡 55-67%util, step10k ckpt✅. arm3 ETA~02:40, 1 arm remaining(2:1), all+eval ETA~05:10. ⚠️ **git fetch FAILED: Network unreachable(github.com:443)** — HEAD=origin/main=1a36624d(synced), push将重试. 📦 体积：TASK=31.2KB / MEMORY=31.0KB（均≤32KB✅, 无需归档）.
-- [15:10] **AIMv2专项报告补交付（CPU-only, 无训练）**: ✅ **report_vision_aimv2_official_vs_ours.html 交付**: 发现运维指令2026-10-06明确要求的交付物 `report_vision_aimv2_official_vs_ours.html` 此前遗漏（实验已完成但未产出专项报告）. 本轮补齐: 9节(TL;DR/规格对照表(4列×9行)/三臂结果(Arm B坍缩@600 + Arm B-hybrid lp=1.37%)/C1诊断SVG/公平性表/差异归因(3小节)/预注册判据匹配/论文§VI-D措辞建议(4条)/许可证合规), 7表1SVG, 23.2KB, 自包含dark-theme HTML. 覆盖运维6点修订: ①AR≠MAE语义说明 ②text decoder cross-attn→causal声明 ③短caption handicap显著标注(yellow box) ④吞吐实测2434/2176 img/s(低于预估3500-4000) ⑤B'参数隔离说明(未跑,12.1pp差距非67M参数可解释) ⑥组合判定(Δlp=−12.12pp+C1=0.48→unambiguous❌). ✅ git fetch+push FAILED(Network unreachable, github.com:443, retry×2), 本地 1 ahead(commit da4ba0dd 未推送), **下一轮唤醒第一件事=补推**. ✅ GPU 8×H100 全idle. 📦 体积：TASK=28.9KB / MEMORY=~23.5KB（均≤32KB✅）.
-- [15:36] **唤醒巡检 · 补推确认 + 全线仍收敛（CPU-only, 无训练）**: ✅ **补推确认**: git fetch✅(w/proxy `172.19.92.25:13128`), 此前失败的 commit da4ba0dd(AIMv2专项报告) 已在 origin/main — repo 完全 synced(0 ahead/0 behind). ✅ **无新运维指令**（BAIZE_VISION_TASK.md 运维指令区无新块; 最新活跃块仍为 2026-10-06「官方AIMv2范式复现」+「后续队列裁定」, 已全部执行完毕）. ✅ GPU 8×H100 全 idle (4MiB/卡, 0% util). ✅ 交付物验证: main.pdf(358KB) + 6_vision_encoder.tex + 5份HTML报告(全线总结28.6KB+mask-ratio34.3KB+lp-protocol21.2KB+lp-eval27KB+AIMv2专项23.2KB) 均在盘+git tracked. GPIC 下载 data线报 6062/8001 tar(~76%), 方向1(GPIC全量重跑scaling)仍暂缓. **视觉编码器线 R2–R14 全线收敛, WAITING=1 待运维派新任务**. 📦 体积：TASK=28.9KB / MEMORY=24.3KB（均≤32KB✅）.
-- [16:10] **唤醒巡检 · 全线仍收敛（CPU-only, 无训练）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind — **无新运维指令**（BAIZE_VISION_TASK.md 自15:38以来无新提交）. ✅ GPU 8×H100 全 idle (4MiB/卡, 0% util). ✅ 交付物完好: main.pdf(358KB)+6_vision_encoder.tex+5份HTML报告(全线总结28.6KB+mask-ratio34.3KB+lp-protocol21.2KB+lp-eval27KB+AIMv2专项23.2KB) 均在盘+git tracked. ✅ 体积: TASK=28.9KB / MEMORY=25.1KB（均≤32KB✅）. **视觉编码器线 R2–R14 全线收敛, WAITING=1 待运维派新任务**. 📦 体积：TASK=28.9KB / MEMORY=25.1KB（均≤32KB✅）.
-- [16:44] **唤醒巡检 · 全线仍收敛（CPU-only, 无训练）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind — **无新运维指令**（BAIZE_VISION_TASK.md 自14:17以来无新提交, 运维指令区最新活跃块仍为 2026-10-06「官方AIMv2范式复现」+「后续队列裁定」, 已全部执行完毕）. ✅ GPU 8×H100 全 idle (4MiB/卡, 0% util). ✅ 交付物验证: main.pdf(358KB)+6_vision_encoder.tex(25KB)+6份HTML报告(全线总结28.6KB+final-v2 28.7KB+mask-ratio34.3KB+lp-protocol21.2KB+lp-eval27KB+AIMv2专项23.2KB) 均在盘. ✅ 体积: TASK=28.9KB / MEMORY=25.6KB（均≤32KB✅）. **视觉编码器线 R2–R14 全线收敛, WAITING=1 待运维派新任务**. 📦 体积：TASK=28.9KB / MEMORY=25.6KB（均≤32KB✅）.
+- [15:10→16:10] *(AIMv2 专项报告补交付 + 补推确认 + 2 次巡检)* — 已归档至 `daily-memories-vision/2026-10-08.md`（report_vision_aimv2_official_vs_ours.html 23.2KB 交付 + git 补推确认 + 交付物完好）
+- [16:44] **唤醒巡检 · 全线仍收敛（CPU-only, 无训练）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind. ✅ GPU 8×H100 全 idle. ✅ 交付物完好: main.pdf+6_vision_encoder.tex+6份HTML报告均在盘. ✅ 体积: TASK=28.9KB / MEMORY=25.6KB（均≤32KB✅）. **视觉编码器线 R2–R14 全线收敛, WAITING=1 待运维派新任务**.
+- [17:20] **回答运维 2026-10-08③ · 下一步工作建议（CPU-only, 纯写作）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind. ✅ **运维指令 2026-10-08③ 已执行**：在 MEMORY_VISION.md 状态头下方新增「🗣️ 运维问答 · 2026-10-08③（下一步工作建议）」区（4 题 × 逐条回答 + 每条附实验依据）：① 未验证假设 4 条（w384 AIMv2 / C1-lp 背离 / R12b epoch-vs-unique / 高分辨率 dense）；② Stage iv 前置 5 项（projector/分辨率/冻结vs解冻/特征缓存/数据配对）；③ GPU 利用 3 候选（P1=w384 AIMv2 ~16h / P2=Protocol B 消融臂 ~6h / P3=336/16 ~24h）；④ 论文补充 5 项（Limitations/Protocol B 横比/R12b 发现/C1-lp 背离/Future Work）。✅ 纯写作不占 GPU。✅ GPU 8×H100 全 idle。📦 体积：TASK=30.8KB / MEMORY=31.5KB（均≤32KB✅, 归档 3 条旧流水→daily）.
 
 ## 历史条目已滚动归档（2026-10-03 / 2026-10-06）
 
