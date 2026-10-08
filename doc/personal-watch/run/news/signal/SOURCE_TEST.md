@@ -1,6 +1,6 @@
 # SOURCE_TEST — 价格源实测表（第11批 · R1）
 
-> 生成：2026-10-08 18:13:19（`fetch_prices.py`；运行机 = 本仓库所在机 · 中国网络）
+> 生成：2026-10-09 06:05:36（`fetch_prices.py`；运行机 = 本仓库所在机 · 中国网络）
 > 列：类别 / code / 名称 / HTTP / Content-Type / 首日 / 末日 / 行数。**含失败项**。
 
 | 类别 | code | 名称 | HTTP | Content-Type | 首日 | 末日 | 行数 |
@@ -26,16 +26,16 @@
 | stock | `sz002241` | 歌尔股份 | 200 | text/html; charset=UTF-8 | 2016-01-04 | 2026-10-08 | 2612 |
 | stock | `sz300750` | 宁德时代 | ERR | empty | 2018-06-11 | 2026-10-08 | 2019 |
 | stock | `sz002594` | 比亚迪 | 200 | text/html; charset=UTF-8 | 2016-01-04 | 2026-10-08 | 2612 |
-| fx | `USDCNY` | 美元 | 200 | application/javascript; char | 2016-01-01 | 2026-09-30 | 2785 |
-| fx | `EURCNY` | 欧元 | 200 | application/javascript; char | 2016-01-01 | 2026-10-07 | 2807 |
-| fx | `JPYCNY` | 日元 | 200 | application/javascript; char | 2016-01-01 | 2026-10-07 | 2807 |
-| fx | `GBPCNY` | 英镑 | 200 | application/javascript; char | 2016-01-01 | 2026-10-07 | 2809 |
-| fx | `HKDCNY` | 港币 | 200 | application/javascript; char | 2016-01-01 | 2026-10-07 | 2809 |
-| fx | `AUDCNY` | 澳元 | 200 | application/javascript; char | 2016-01-01 | 2026-10-07 | 2809 |
-| fx | `CADCNY` | 加元 | 200 | application/javascript; char | 2016-01-01 | 2026-10-07 | 2809 |
-| fx | `CHFCNY` | 瑞郎 | 200 | application/javascript; char | 2016-01-01 | 2026-10-07 | 2807 |
-| fx | `SGDCNY` | 新元 | 200 | application/javascript; char | 2016-01-01 | 2026-10-07 | 2809 |
-| fx | `NZDCNY` | 新西兰元 | 200 | application/javascript; char | 2016-01-01 | 2026-10-07 | 2809 |
+| fx | `USDCNY` | 美元 | 200 | application/javascript; char | 2016-01-01 | 2026-10-08 | 2786 |
+| fx | `EURCNY` | 欧元 | 200 | application/javascript; char | 2016-01-01 | 2026-10-08 | 2808 |
+| fx | `JPYCNY` | 日元 | 200 | application/javascript; char | 2016-01-01 | 2026-10-08 | 2808 |
+| fx | `GBPCNY` | 英镑 | 200 | application/javascript; char | 2016-01-01 | 2026-10-08 | 2810 |
+| fx | `HKDCNY` | 港币 | 200 | application/javascript; char | 2016-01-01 | 2026-10-08 | 2810 |
+| fx | `AUDCNY` | 澳元 | 200 | application/javascript; char | 2016-01-01 | 2026-10-08 | 2810 |
+| fx | `CADCNY` | 加元 | 200 | application/javascript; char | 2016-01-01 | 2026-10-08 | 2810 |
+| fx | `CHFCNY` | 瑞郎 | 200 | application/javascript; char | 2016-01-01 | 2026-10-08 | 2808 |
+| fx | `SGDCNY` | 新元 | 200 | application/javascript; char | 2016-01-01 | 2026-10-08 | 2810 |
+| fx | `NZDCNY` | 新西兰元 | 200 | application/javascript; char | 2016-01-01 | 2026-10-08 | 2810 |
 | fut | `AU0` | 沪金 | 200 | application/javascript; char | 2016-01-04 | 2026-10-08 | 2612 |
 | fut | `SC0` | 原油(INE) | 200 | application/javascript; char | 2018-03-26 | 2026-10-08 | 2069 |
 | fut | `CU0` | 沪铜 | 200 | application/javascript; char | 2016-01-04 | 2026-10-08 | 2612 |

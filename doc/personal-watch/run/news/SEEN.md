@@ -443,3 +443,17 @@
 | 2026-10-08 | 中国人民银行发布关于人民币汇率的政策立场 | 中新网（转新华社） | policy(非 AI 范畴·仅作 P0 as-of 说明·不入摘要) | https://www.chinanews.com.cn/ |
 
 
+
+| 2026-10-08 | 谷歌云发布 Gemini Agent，定位"通用工作智能体" | IT之家 | news | https://www.ithome.com/1/010/706.htm |
+| 2026-10-08 | Google brings agentic AI to Gemini, starting with businesses（与上条同事件·英文源交叉印证·不另计） | TechCrunch | news(同事件·防重不另计) | https://techcrunch.com/2026/10/08/google-brings-agentic-ai-to-gemini-starting-with-businesses/ |
+| 2026-10-08 | Waymo 获 50 亿美元贷款：未来将推动无人驾驶出租车扩张，入局欧洲、日本等市场 | IT之家 | news | https://www.ithome.com/1/010/734.htm |
+| 2026-10-08 | 格芯与台积电签署 20 亿美元协议，在美国建立首个硅中介层生产基地 | IT之家 | news | https://www.ithome.com/1/010/716.htm |
+| 2026-10-08 | Popular AI leaderboard Arena nearly doubles valuation to $3.1B in 10 months | TechCrunch | news | https://techcrunch.com/2026/10/08/popular-ai-leaderboard-arena-nearly-doubles-valuation-to-3-1b-valuation-in-10-months/ |
+| 2026-10-08 | Fired OpenAI safety researchers dispute misconduct claims, warn of chilling effect | TechCrunch | news | https://techcrunch.com/2026/10/08/fired-openai-safety-researchers-dispute-misconduct-claims-warn-of-chilling-effect/ |
+| 2026-10-08 | 亚马逊发布 Alexa Tablet 平板电脑：接替 Fire Tablet，全面支持 Alexa+ AI | IT之家 | news(AI 相关·本轮按「不追量」未展开收录·留档可回收) | https://www.ithome.com/1/010/715.htm |
+| 2026-10-09 | 苹果官宣"欢迎回家"发布会定档 10 月 13 日，暗示首款智能家居中枢产品 | IT之家 | news(预告·AI 相关·留档可回收) | https://www.ithome.com/1/010/743.htm |
+| 2026-10-08 | 余承东：未来肯定会有更多华为手机采用基于韬定律的逻辑折叠芯片 | IT之家 | news(半导体表态·留档可回收) | https://www.ithome.com/1/010/737.htm |
+| 2026-10-08 | Counterpoint 数据：晶圆代工 2.0 营收 2026Q2 达 966 亿美元，同比增长 25% | IT之家 | data(行业数据·留档) | https://www.ithome.com/1/010/697.htm |
+| 2026-10-08 | OpenAI's revenue is reportedly $20 billion less than previously projected | TechCrunch | news(报道口径·数字不确·留档待佐证) | https://techcrunch.com/2026/10/08/openais-revenue-is-reportedly-20-billion-less-than-previously-projected/ |
+| 2026-10-08 | Ben Affleck is an AI nerd, and the internet is impressed | TechCrunch | feature(名人花边·非具体事件·防重不收) | https://techcrunch.com/2026/10/08/ben-affleck-is-an-ai-nerd-and-the-internet-is-impressed/ |
+| 2026-10-08 | Pretend you're sitting at Elizabeth Holmes' desk on this weirdly detailed website | TechCrunch | feature(趣味站·非 AI 事件·防重不收) | https://techcrunch.com/2026/10/08/pretend-youre-sitting-at-elizabeth-holmes-desk-on-this-weirdly-detailed-website/ |
