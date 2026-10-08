@@ -539,7 +539,7 @@ pretraining, not comparable"**.
 | ETA report | ✅ E1 ~5.6h; E2 (w768) est. ~5.6h (R9 ref: w768@224/p16 ≈ w512 throughput) |
 | Pre-registration (this section) | ✅ Written before training (⑥ revised) |
 | Script fix (run_scaling_experiment.sh) | ✅ Done — run_e2() changed to w768/d30/p16/224 |
-| E1 training (1 epoch) | 🟧 **Resumed** — crashed @step131490/187101 (70.3%) due to DataLoader bus error (shm); resumed from step130000 ckpt @02:17. Now at step~130340, ~5100 img/s, loss~1.3, no collapse. ETA ~04:00 Oct 9 (~1.6h remaining) |
-| E2 training (1 epoch) | ⏸ Queued after E1 (e2_watcher_v2.sh PID 1743003 waiting → smoke_e2 → full training) |
-| Evaluation (Protocol A+B, 3 seeds) | ⏸ Pending |
+| E1 training (1 epoch) | 🟧 **89% — step 165,810/187,101** — resumed from step130000 ckpt @02:17 after shm bus error crash. ~5100 img/s, loss~1.4, C1=0.46, no collapse. ETA ~04:06 Oct 9 (~35 min remaining) |
+| E2 training (1 epoch) | ⏸ Queued after E1 (e2_watcher_v3.sh PID 3261084 waiting → smoke_e2 → full training + auto-eval) |
+| Evaluation (Protocol A+B, 3 seeds) | ⏸ Pending — E1 auto-eval by resume_e1 mode; E2 auto-eval by e2 mode; safety-net E1 eval in watcher v3 |
 | Report (HTML) | ⏸ Pending |
