@@ -202,6 +202,62 @@ bash r8_run.sh 3000
 
 ---
 
+## ⭐ R13 官方 AIMv2 AR 范式对比（🔴 Arm B 坍缩 + 🟢 Arm B-hybrid 运行中, 2026-10-08）
+
+> 运维指令 2026-10-07 批准（`VISION_AIMV2_OFFICIAL_PLAN.md`）。**核心问题**：官方 AIMv2 用纯 AR（causal ViT + next-patch pixel + text AR, 无 InfoNCE）在 12B 样本上成功——**我们的数据规模（~7.7M 对 + 短 caption）能否复现？**
+>
+> **三臂对照**：
+> - **Arm A（baseline, 已有）**：bidirectional + InfoNCE + masked-patch-MSE → lp@30k=12.08%（R11-G arm⑥-A）
+> - **Arm B（官方 AR）**：causal ViT + cap_loss + 0.4×pixel_loss, **无 InfoNCE** → 🔴 **坍缩 @step600**
+> - **Arm B-hybrid（追加实验）**：causal ViT + 1.0×InfoNCE + cap_loss + 0.4×pixel_loss → 🟢 **C1=0.2480@300, 无坍缩**
+
+### Arm B（pure AR, 无 InfoNCE）— 🔴 步 600 坍缩
+
+| 指标 | 值 | 说明 |
+|:--|:--|:--|
+| 探针 step 300 | C1=**0.8649** C2_gap=−0.0001 C4=OK | 已接近坍缩阈值 0.95 |
+| 探针 step 600 | C1=**0.9731** C2_gap=+0.0000 C4=OK | **>0.95 → 触发熔断** |
+| 熔断步数 | **600 / 30000** | 仅完成 2% |
+| final_loss | 5.0552 | loss 在降（C4=OK），但特征坍缩 |
+| throughput | 2434.5 img/s | |
+| 保存 | `vision_fused.pt`（坍缩 ckpt） | |
+
+**关键发现**：
+1. **纯 causal AR 无对比项 → 快速坍缩**：C1 从 0.86（step300）升至 0.97（step600），仅 300 步即越过 0.95 阈值。
+2. **与 R11-H（bidirectional 无对比项）不同**：R11-H 用**双向**注意力 + 无 InfoNCE → **C1=0.43, 未坍缩**。Arm B 用**因果**注意力 + 无 InfoNCE → **坍缩**。→ **坍缩是 causal attention + 无对比项的组合效应，非单一因素**。
+3. **loss 在降但特征坍缩**：cap_loss 从 6.77→5.08（降），pixel_loss 稳定 ~0.73，C4=OK。→ 经典「loss 下降但表征坍缩」——AR next-token/pixel 任务可被平凡解满足。
+4. **DDP 死锁 bug 已修复**：rank0 熔断后 break，其他 rank 仍在 forward → NCCL 超时死锁。已加 `dist.broadcast(fused_flag, src=0)` 让所有 rank 同步退出。
+
+**预注册判据匹配**：`Arm B C1 > 0.95 → 🔴 AR collapse (no contrastive → collapse)` — ✅ 命中。
+
+### Arm B-hybrid（AR + InfoNCE）— 🟢 运行中（step 300/30000）
+
+| 指标 | 值 | 说明 |
+|:--|:--|:--|
+| 探针 step 300 | C1=**0.2480** C2_gap=**+0.0960** C4=OK | ✅ 健康！与 Arm A baseline (~0.33) 相当 |
+| contrast@300 | 5.0960 | InfoNCE 在学（scale 10.0→22.4） |
+| cap@300 | 5.0362 | text AR 在降 |
+| pixel@300 | 0.7258 | patch 预测稳定 |
+| throughput | ~1983 img/s | 略低于纯 AR（多一次 text forward） |
+| 预计完成 | ~10:45 | 30k 步 ETA ~2.5h |
+
+**对比**：
+| 臂 | 注意力 | InfoNCE | C1@300 | C1@600 | 判定 |
+|:--|:--|:--|--:|--:|:--|
+| Arm A (baseline) | bidirectional | ✅ | ~0.33 | ~0.30 | ✅ 健康, lp=12.08% |
+| Arm B (pure AR) | causal | ❌ | **0.8649** | **0.9731** | 🔴 坍缩 |
+| Arm B-hybrid | causal | ✅ | **0.2480** | — | 🟢 健康（运行中） |
+| R11-H (no contrast) | bidirectional | ❌ | 0.43 | 0.37 | ✅ 健康 |
+
+**初步结论**（待 hybrid 30k 完成 + lp eval 确认）：
+- **InfoNCE 是防止 AR 坍缩的必要条件**（在我们的数据规模下）：纯 AR 无对比项 → 坍缩；加 InfoNCE → 健康。
+- **Causal attention 比 bidirectional 更容易坍缩**：双向无对比（R11-H）不坍缩，因果无对比（Arm B）坍缩。
+- 官方 AIMv2 不坍缩可能依赖：① 12B 样本（vs 我们 7.7M, 1557×差距）② LLaMA-3 长 caption（text AR 信号更强）③ 可能的其他正则化。
+
+- **证据**：`/tmp/r13_aimv2_ar.log`（Arm B 纯 AR, 坍缩@600）+ `/tmp/r13_aimv2_ar_hybrid.log`（Arm B-hybrid, 运行中）。脚本 `vision/run_aimv2_ar.sh` + `vision/run_aimv2_ar_hybrid.sh`。代码修改 `r9_train.py`：`aimv2_ar` 分支新增 `--contrast-weight` 支持 + DDP 熔断广播修复。
+
+---
+
 ## 胜出结论（S0+S1+S2+S3 汇总 · ⚠️ R1/R2 旧读数，已因坍缩/lr 伪影作废，仅作历史）
 
 **胜出架构：OpenVision2（纯 Attention ViT，w1024·d30·h16·mlp4096，505.0M）**

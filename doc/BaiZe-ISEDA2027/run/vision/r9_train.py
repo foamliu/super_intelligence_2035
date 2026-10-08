@@ -606,7 +606,9 @@ def main():
                 # AR ≠ MAE: AR predicts patch i+1 from prefix 0..i (causal, unidirectional);
                 #   MAE reconstructs masked patches from bidirectional context.
                 # See VISION_AIMV2_OFFICIAL_PLAN.md §3.2 (revision point ①).
-                _, ar_patches = vision(imgs, return_patch=True, causal=True)
+                # Hybrid mode: --contrast-weight > 0 adds InfoNCE using causal pooled features
+                #   (R13 follow-up: test if contrastive prevents AR collapse).
+                pooled, ar_patches = vision(imgs, return_patch=True, causal=True)
                 B, N, _W = ar_patches.shape
                 # Next-patch pixel prediction: pred[:, :-1] predicts target[:, 1:]
                 target = mae_norm_pix_target(imgs, args.patch)       # (B, N, patch_dim)
@@ -618,8 +620,18 @@ def main():
                 # (revision point ②: must cross-attend to causal patches, NOT bidirectional)
                 cap_logits = decoder(ids[:, :-1], ar_patches)
                 cap_loss, _ntok = coca_caption_loss(cap_logits, ids[:, 1:], mask[:, 1:])
-                cur_loss = cap_loss + args.alpha_pixel * pixel_loss
-                contr_i = 0.0  # no InfoNCE in pure AR
+                if args.contrast_weight > 0:
+                    # Hybrid AR + InfoNCE: contrastive on causal pooled features + text
+                    If = torch.nn.functional.normalize(pooled, dim=-1)
+                    Tf = torch.nn.functional.normalize(text(ids), dim=-1)
+                    contrastive = loss_fn(If, Tf, logit_scale.exp(), None)
+                    cur_loss = (args.contrast_weight * contrastive
+                                + cap_loss + args.alpha_pixel * pixel_loss)
+                    contr_i = contrastive.item()
+                else:
+                    # Pure AR (official AIMv2): no InfoNCE
+                    cur_loss = cap_loss + args.alpha_pixel * pixel_loss
+                    contr_i = 0.0  # no InfoNCE in pure AR
                 cap_i = cap_loss.item()
                 pixel_i = pixel_loss.item()
             else:
@@ -649,7 +661,10 @@ def main():
             elif args.loss == 'aimv2':
                 cap_s = f' contrast={contr_i:.4f} patch_mse={cap_i:.4f}'
             elif args.loss == 'aimv2_ar':
-                cap_s = f' cap={cap_i:.4f} pixel={pixel_i:.4f}'
+                if args.contrast_weight > 0:
+                    cap_s = f' contrast={contr_i:.4f} cap={cap_i:.4f} pixel={pixel_i:.4f}'
+                else:
+                    cap_s = f' cap={cap_i:.4f} pixel={pixel_i:.4f}'
             else:
                 cap_s = ''
             log(f'[step {step}/{args.steps}] loss={li:.4f}{cap_s} scale={logit_scale.exp().item():.3f}{bias_s} '
@@ -686,6 +701,16 @@ def main():
         # periodic checkpoint (R9.3 stage-2 needs a ckpt every 10k; also crash resilience)
         if args.save_every and step and step % args.save_every == 0:
             save_ckpt(f'vision_step{step}.pt')
+
+        # ---- DDP-safe fuse broadcast ---- #
+        # The probe (which sets `fused`) only runs on rank 0. Broadcast the flag
+        # to all ranks so they break together, preventing DDP deadlock where
+        # non-zero ranks hang waiting for rank 0 in the next forward/backward.
+        if world_size > 1:
+            fused_flag = torch.tensor([1 if fused else 0], dtype=torch.int, device=device)
+            dist.broadcast(fused_flag, src=0)
+            if fused_flag.item():
+                fused = True
 
         if fused:
             break
