@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🟧 **🔬 Scaling 对比实验进行中** — 运维指令 2026-10-08⑤（用户直令·最高优先）: E1(OV2 w512/d30,126.8M,224/p16) vs E2(官方OV2 GELU ViT w1024/d24,304.2M,336/p14). 同 AIMv2 objective/数据(94.9M)/1epoch/bs512. ✅ Smoke test DONE(E1=4697img/s E2=2347img/s, ETA E1~5.6h E2~11.2h both<48h). ✅ 预注册写入 EXPERIMENTS_VISION.md. ✅ models.py 修复(AIMv2 tower 支持 return_patch + width/depth override). 🟧 E1 1-epoch 训练即将启动 → E2 排队. |
-| WAITING | 1（🔬 scaling 实验在跑 — E1+E2 各 1 epoch + Protocol B eval 3 seeds + HTML 报告. ETA total ~17h+eval. |
+| PHASE | 🟧 **🔬 Scaling 对比实验进行中（⑥修订E2→w768）** — 运维指令 2026-10-08⑤→⑥(用户裁定): E1(OV2 w512/d30,126.78M,224/p16) vs **E2改为同族OV2 w768/d30(284.54M,224/p16)** — 旧E2(官方304M/336/p14)作废(4变量同变). 同AIMv2/数据94.9M/1epoch/bs512. ✅ E1训练中(step~14k/187k,~5100img/s,loss↓,无坍缩). ✅ 脚本已修(run_e2→w768/d30/p16/224). ✅ 预注册已更新(⑥). ✅ e2_watcher.sh已启动(E1完后自动跑E2 smoke+训练). |
+| WAITING | 1（🔬 scaling 实验在跑 — E1训练中(~5h剩余) → E2 smoke+训练(~5.6h) → Protocol B eval 3 seeds → HTML报告. ETA total ~11h+eval. |
 | ERROR_COUNT | 6（①~⑤ 同前 ⑥ AIMv2.forward() 不支持 return_patch → 已加 return_patch+causal 参数修复） |
-| BUDGET_USED | R2–R12 ≈215 + R12b(106.4) + lp bridge(5.8) + mask-ratio(78.4+0.5) + weight-ratio(~65.4+0.5) + ④ AIMv2 AR Arm B(2.1) + Arm B-hybrid(~24) ≈ **累计 ~498 GPU·h**（最终） |
-| 更新 | **2026-10-08 19:30（scaling 实验启动）**: ✅ git fetch✅(w/proxy), 新运维指令 2026-10-08⑤⑤(④). ✅ GPU12_ALLOC.md 登记 8 卡. ✅ models.py 修复: AIMv2 tower 支持 return_patch+causal+width/depth override. ✅ run_scaling_experiment.sh 创建. ✅ Smoke test: E1(126.8M)=4697img/s ETA~5.6h, E2(304.2M)=2347img/s ETA~11.2h. ✅ 预注册写入 EXPERIMENTS_VISION.md. 🟧 E1 1-epoch 训练启动中. 📦 体积：TASK=30.4KB / MEMORY=30.5KB（均≤32KB✅）· *[更早见 daily-memories-vision/2026-10-08.md]* |
+| BUDGET_USED | R2–R12 ≈215 + R12b(106.4) + lp bridge(5.8) + mask-ratio(78.4+0.5) + weight-ratio(~65.4+0.5) + ④ AIMv2 AR Arm B(2.1) + Arm B-hybrid(~24) ≈ **累计 ~498 GPU·h** + scaling E1(~8 GPU·h so far) |
+| 更新 | **2026-10-08 20:10（⑥ E2变更执行）**: ✅ 读到运维指令⑥(E2作废官方304M→改同族w768/d30/284.54M,只差宽度). ✅ E1训练中(step~14080/187101,~5100img/s,loss 2.6,无坍缩)→不动. ✅ run_scaling_experiment.sh已修: run_e2()改为--tower openvision2 --width 768 --depth 30 --resolution 224 --patch 16. ✅ 预注册EXPERIMENTS_VISION.md已更新(⑥修订,保留历史). ✅ e2_watcher.sh启动(PID 161134,等E1完后自动跑E2 smoke→训练). 📦 体积：TASK=33.8KB / MEMORY=待测 · *[更早见 daily-memories-vision/2026-10-08.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
@@ -115,6 +115,28 @@ WAITING: 1
 > 📦 以上全部已闭合实验（R11-L 四臂→R11-L2→caption-weight→R11-F→R11-G→R11-H→R12→3-epoch 续跑）的详细流水已滚动归档 → `daily-memories-vision/2026-10-06.md`「从 MEMORY_VISION.md 滚动归档」节（**原文未改**）。**结论以 `EXPERIMENTS_VISION_ROUND11.md` + `EXPERIMENTS_VISION_ROUND12.md` 为权威。**
 
 **一句话结论**：R11-L 四臂（SigLIP/LocalLoss/CoCa/基线）**无一翻盘**；R11-L2 文本塔解冻（LoRA）**未翻盘**（−0.80 pp）；caption-weight 三点消融 → **caption 监督与 IN-1k 正交**；R11-F 数据源横比 → GPIC short/medium/short+medium **无显著差异**；⭐ **R11-G AIMv2 长跑翻盘**（lp@55.3M=19.76% vs 基线 7.40%，R²=0.91，渐近 >>25.1%）；R11-H 纯 AR **无翻盘**（翻盘依赖对比项）；R12 全量 58.8M 1.05 epoch lp@61.4M=17.57%（< R11-G 同 N）；3-epoch 续跑 344k/176M lp=20.27%，35 点 scaling R²=0.94，非单调 7/34，a 撞上界不可定。
+
+## ⏱️ 全量 1-epoch 耗时估算（✅ 回答运维指令 2026-10-08④，使用 scaling 实验 smoke 实测数据）
+
+> 运维指令 2026-10-08④ 问：「现有所有数据训练 1 epoch 需要多长时间？」
+> ⑤ 升级后本估算作为 ETA 报备（不再是终点）—— 实际训练已在跑。
+
+**N（逐源）**：GPIC 6233 tar × 12,639 = 78.8M + CC12M 1100 × 10,000 = 11.0M + Amshaker 2250 × 2,646 = 5.95M ⇒ **合计 ≈ 95.7M 对**（与 ④ 的 94.9M 基本一致，差异来自 tar 计数微调）。
+不含 LLaVA/CC3M/coco/vg（这些不参与当前训练）。
+
+**img/s（实测，2026-10-08 smoke test）**：
+- **(a) E1 w512 smoke**：**4697 img/s**（30 steps / 6.3s，8 卡 H100，bs64×8=512，nw=6，224/p16，AIMv2 dense objective）— **这是最真实的端到端吞吐**（含 NFS 数据加载 + AIMv2 forward/backward）。
+- **(b) E1 训练实测**：稳态 ~5100 img/s（step 14k–17k，NFS 波动 2300–6300）。
+- **(c) R12b 有效吞吐**（历史参考）：139.3M 图 / 106.4 GPU·h / 8 卡 = ≈2909 img/s（含更多 overhead）。
+
+**墙钟（8 卡，1 epoch ≈ 187,101 steps）**：
+- 按 smoke 4697 img/s：95.7M / 4697 = 20,373 s = **5.66 h**
+- 按训练稳态 5100 img/s：95.7M / 5100 = 18,765 s = **5.21 h**
+- 按 R12b 2909 img/s（保守下界）：95.7M / 2909 = 32,895 s = **9.14 h**
+- ⇒ **区间 ≈ 5.2–9.1 h/epoch**（+ IN-1k 评测 ~1–2h）
+- GPIC 若下满 8001 tar（N ≈ 118M）⇒ **6.6–11.3 h/epoch**
+
+**是否 >1 epoch**：R12b 已实测「更多 unique 数据 ≠ 更高 lp」（69.7M×2ep lp=18.81% < R11-G 18.5M 的 19.76%）⇒ **1 epoch 足够**；多 epoch 是隐式增强效果（R12 3-epoch 20.27% > 1-epoch 17.57%），但边际递减。
 
 ## AIMv2 提速归因实测（✅ 完成，2026-10-06 12:33–12:44）
 

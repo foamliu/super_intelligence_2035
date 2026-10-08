@@ -1,8 +1,10 @@
 #!/bin/bash
 # ============================================================================
-# Scaling Comparison Experiment (2026-10-08⑤)
-#   E1: OpenVision2 w512/d30, patch16, 224, 126.8M  (existing self-research)
-#   E2: Official OV2 structure   w1024/d24, patch14, 336, 304M  (GELU ViT)
+# Scaling Comparison Experiment (2026-10-08⑤ → ⑥ revision)
+#   E1: OpenVision2 w512/d30, patch16, 224, 126.78M  (existing self-research)
+#   E2: OpenVision2 w768/d30, patch16, 224, 284.54M  (SAME family, only width 512→768)
+#       (⑥ revision 2026-10-08: old E2 = official OV2 w1024/d24/p14/336/304M ABANDONED
+#        — it changed 4 variables at once; now only "width" differs = standard scaling axis)
 #   Same: AIMv2 dense objective, same data (94.9M), 1 epoch, bs512/8GPU, seed 1234
 #
 # Usage:
@@ -64,14 +66,16 @@ run_e1() {
 
 run_e2() {
     local _steps="$1" _nw="$2"
-    local OUT="$OUTROOT/scaling_E2_ov2official_w1024_d24_p14_336"
+    # ⑥ revision 2026-10-08: E2 = same-family OV2 w768/d30 (284.54M), NOT official w1024/d24/336/304M
+    # Only "width" differs from E1 (512→768), heads/mlp_dim scale with width — standard scaling axis
+    local OUT="$OUTROOT/scaling_E2_ov2_w768_d30_p16_224"
     local LOG=/tmp/scaling_e2.log
-    echo "===== E2 START steps=$_steps $(date '+%F %T') =====" | tee "$LOG"
+    echo "===== E2 START (w768/d30, 284.54M) steps=$_steps $(date '+%F %T') =====" | tee "$LOG"
     nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv >> "$LOG" 2>&1
     "$PY" -m torch.distributed.run --nproc_per_node=8 --nnodes=1 \
         --master_addr=$MASTER_ADDR --master_port=$((29900 + RANDOM % 1000)) \
-        r9_train.py --tower aimv2 --width 1024 --depth 24 --heads 16 \
-        --steps "$_steps" --resolution 336 --patch 14 \
+        r9_train.py --tower openvision2 --width 768 --depth 30 \
+        --steps "$_steps" --resolution 224 --patch 16 \
         --batch-size 64 --lr 3e-3 --warmup 20 --seed 1234 \
         --loss aimv2 --mask-ratio 0.6 --patch-loss-weight 1.0 --contrast-weight 1.0 \
         --data "$DATA" --data-source mixed --caption-type all --output-dir "$OUT" \
@@ -104,21 +108,31 @@ case "$MODE" in
         grep -E 'image/s|params' /tmp/scaling_e1.log | tail -5
         grep -E 'image/s|params' /tmp/scaling_e2.log | tail -5
         ;;
+    smoke_e1)
+        echo "########## SMOKE E1 only (30 steps) ##########"
+        run_e1 30 6
+        grep -E 'image/s|params' /tmp/scaling_e1.log | tail -5
+        ;;
+    smoke_e2)
+        echo "########## SMOKE E2 only (30 steps, w768/d30) ##########"
+        run_e2 30 6
+        grep -E 'image/s|params' /tmp/scaling_e2.log | tail -5
+        ;;
     e1)
         run_e1 "$STEPS" "$NW"; rc=$?
         [ "$STEPS" -gt 1000 ] && [ $rc -eq 0 ] && run_eval e1 "$OUTROOT/scaling_E1_ov2_w512_d30_p16_224"
         ;;
     e2)
         run_e2 "$STEPS" "$NW"; rc=$?
-        [ "$STEPS" -gt 1000 ] && [ $rc -eq 0 ] && run_eval e2 "$OUTROOT/scaling_E2_ov2official_w1024_d24_p14_336"
+        [ "$STEPS" -gt 1000 ] && [ $rc -eq 0 ] && run_eval e2 "$OUTROOT/scaling_E2_ov2_w768_d30_p16_224"
         ;;
     both)
         run_e1 "$STEPS" "$NW"; rc1=$?
         [ "$STEPS" -gt 1000 ] && [ $rc1 -eq 0 ] && run_eval e1 "$OUTROOT/scaling_E1_ov2_w512_d30_p16_224"
         run_e2 "$STEPS" "$NW"; rc2=$?
-        [ "$STEPS" -gt 1000 ] && [ $rc2 -eq 0 ] && run_eval e2 "$OUTROOT/scaling_E2_ov2official_w1024_d24_p14_336"
+        [ "$STEPS" -gt 1000 ] && [ $rc2 -eq 0 ] && run_eval e2 "$OUTROOT/scaling_E2_ov2_w768_d30_p16_224"
         ;;
     *)
-        echo "Usage: bash run_scaling_experiment.sh {smoke|e1|e2|both} [steps] [nw]"; exit 1
+        echo "Usage: bash run_scaling_experiment.sh {smoke|smoke_e1|smoke_e2|e1|e2|both} [steps] [nw]"; exit 1
         ;;
 esac

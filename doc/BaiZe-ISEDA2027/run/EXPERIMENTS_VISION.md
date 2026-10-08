@@ -440,9 +440,13 @@ bash run_s9.sh  # batch + 多分辨率 bench
 **裁剪说明（预算）**：S7 数据侧（caption 粒度·规模·中英比例）因重 prep + 低信息量裁剪；S9 的 SGLang 生产栈未装（推迟到 MLLM Stage iv）。详见 HTML「局限」节。
 ---
 
-## 🔬 Scaling Comparison Experiment (2026-10-08⑤) — AIMv2 objective: does a bigger model score higher?
+## 🔬 Scaling Comparison Experiment (2026-10-08⑤ → ⑥ revision) — AIMv2 objective: does a bigger model score higher?
 
 > **Operator instruction**: 2026-10-08⑤ (user direct order, highest priority).
+> **⑥ revision (2026-10-08, user ruling)**: E2 changed from "official OV2 L/14@336 (304M, w1024/d24/p14/336)"
+> to **same-family OV2 w768/d30 (284.54M, w768/d30/p16/224)** — the original E2 changed 4 variables
+> simultaneously (params / structure / patch / resolution), which cannot attribute the difference to
+> model scale. Now E1 vs E2 differ **only in width** (512→768), a standard model-scaling axis.
 > **Pre-registered BEFORE training** — criteria locked, no post-hoc changes.
 
 ### 1. Pre-registration
@@ -464,12 +468,20 @@ Threshold ±1.5 pp = our internal noise band (ROUND10 §1.5). Two points do NOT
 constitute a scaling law — only report whether a single budget point favours the
 larger model. **No curve extrapolation.**
 
-### 2. Two arms (identical recipe, only the tower differs)
+### 2. Two arms (identical recipe, only the tower width differs)
 
 | | Tower | Params | Structure | Res / patch | Img tokens | Throughput (smoke) | 1-epoch ETA |
 |:--|:--|--:|:--|:--|--:|--:|--:|
-| **E1** | OpenVision2 w512/d30 (self-research) | **126.8M** | patch16, SwiGLU MLP | 224 / 16 | 196 | 4697 img/s | **~5.6 h** |
-| **E2** | Official OV2 structure (GELU ViT w1024/d24) | **304.2M** | patch14, GELU MLP, no_ln_pre, avg-pool | 336 / 14 | 576 | 2347 img/s | **~11.2 h** |
+| **E1** | OpenVision2 w512/d30 (self-research) | **126.78M** | patch16, SwiGLU MLP | 224 / 16 | 196 | 4697 img/s | **~5.6 h** |
+| **E2** (⑥ revised) | OpenVision2 w768/d30 (same family, width 512→768) | **284.54M** (2.24×) | patch16, SwiGLU MLP | 224 / 16 | 196 | **pending smoke** (R9 ref: 2978 img/s) | **~5.6 h** (est.) |
+| ~~E2 (original ⑤, abandoned)~~ | ~~Official OV2 w1024/d24~~ | ~~304.2M~~ | ~~patch14, GELU~~ | ~~336 / 14~~ | ~~576~~ | ~~2347 img/s~~ | ~~11.2 h~~ |
+
+> **⑥ revision note (2026-10-08, user ruling)**: The original E2 (official OV2 L/14@336, 304M)
+> was abandoned because it changed 4 variables simultaneously (params / structure / patch / resolution),
+> making it impossible to attribute any Δlp to model scale alone. The revised E2 uses the **same
+> `vision/models.py` OpenVision2 implementation** with only `width` changed from 512→768;
+> `heads` and `mlp_dim` scale with width automatically. This is a **standard model-scaling axis**.
+> All other hyperparameters are identical to E1.
 
 **Common (locked)**:
 - Objective = AIMv2 dense (`--loss aimv2`): 1.0×InfoNCE + 1.0×masked-patch-MSE, mask_ratio=0.6, contrast:patch=1:1
@@ -480,25 +492,22 @@ larger model. **No curve extrapolation.**
 - Batch = 64/GPU × 8 = 512 total, bf16 autocast
 - Seed = 1234
 - Attention = bidirectional (no causal AR)
+- Both arms **trained from scratch** (random init)
 
-**E2 readout head modified to 768-d** (to align with frozen CLIP-768 text tower;
-official OV2 native head is 1024-d generative → necessary change, noted in report).
+### 3. Confounds (⑥ revision: now minimal)
 
-**E2 trained from scratch** (random init official structure) — only “same objective
-+ same data + same budget + from scratch” supports the claim.
+After the ⑥ revision, E1 vs E2 differ **only in width** (512→768):
+1. **Params**: 126.78M → 284.54M (2.24×) — this is the **intended variable** (model scale)
+2. **Heads / mlp_dim**: scale with width (8→12 heads, 2048→3072 mlp_dim) — automatic, part of the same scaling axis
+3. **Structure / patch / resolution / tokens**: **all identical** (d30, p16, 224, 196 tokens)
 
-### 3. Confounds (must be stated prominently in report)
+⇒ A single Δlp **can** be attributed to parameter count (model scale) alone, since
+width is the only varying axis. This is a cleaner experimental design than the
+original ⑤ E2 (which confounded 4 variables).
 
-E1 vs E2 differ **simultaneously** in:
-1. **Params**: 126.8M vs 304.2M (2.4×)
-2. **Structure**: d30 self-research SwiGLU vs d24 official GELU
-3. **Patch size**: 16 vs 14
-4. **Resolution / tokens**: 224/196 vs 336/576 (2.9× more tokens)
-
-⇒ A single Δlp **cannot** attribute the difference to parameter count alone.
-An isolation arm (E1 tower @336/14, same patch/tokens, only params+structure differ)
-is **recommended** if budget allows; if not run, the report must state
-“cannot separate the contributions”.
+> **Historical note (original ⑤, abandoned)**: The original E2 changed params (126.8→304.2M),
+> structure (d30 SwiGLU→d24 GELU), patch (16→14), and resolution (224→336) simultaneously —
+> 4 confounds. The ⑥ revision eliminates all confounds except the intended width axis.
 
 ### 4. Evaluation plan
 
@@ -512,18 +521,25 @@ is **recommended** if budget allows; if not run, the report must state
 
 Official `openvision2-vit-large-patch14-336-vision-only` **pretrained weights**
 frozen → Protocol B LP: R13 measured **79.81%** on the 224 variant. If 336 variant
-is needed, ~1.2 GB download + pure eval. **Must label “contains large-scale
-pretraining, not comparable”**.
+is needed, ~1.2 GB download + pure eval. **Must label "contains large-scale
+pretraining, not comparable"**.
+
+> The original ⑤ E2 smoke test (official 304M, 2347 img/s, ETA ~11.2h) is **not wasted** —
+> it can serve as an **optional third arm** (🚩 not part of this claim's evidence) if the
+> operator/user decides to run it separately (that belongs to R13's "official vs self-research" topic).
 
 ### 6. Status
 
 | Phase | Status |
 |:--|:--|
 | GPU registration (GPU12_ALLOC.md) | ✅ Done |
-| Smoke test (both arms, 30 steps) | ✅ Done — E1=4697 img/s, E2=2347 img/s |
-| ETA report | ✅ E1 ~5.6h, E2 ~11.2h (both < 48h threshold) |
-| Pre-registration (this section) | ✅ Written before training |
-| E1 training (1 epoch) | 🟧 Launching |
-| E2 training (1 epoch) | ⏸ Queued after E1 |
+| Smoke test E1 (30 steps) | ✅ Done — 4697 img/s |
+| Smoke test E2 original ⑤ (304M, abandoned) | ✅ Done — 2347 img/s (kept as reference) |
+| Smoke test E2 revised ⑥ (w768, 284.54M) | ⏳ Pending — E1 occupying all 8 GPUs; will run after E1 completes |
+| ETA report | ✅ E1 ~5.6h; E2 (w768) est. ~5.6h (R9 ref: w768@224/p16 ≈ w512 throughput) |
+| Pre-registration (this section) | ✅ Written before training (⑥ revised) |
+| Script fix (run_scaling_experiment.sh) | ✅ Done — run_e2() changed to w768/d30/p16/224 |
+| E1 training (1 epoch) | 🟧 Running — step ~14080/187101, ~5100 img/s, loss↓, no collapse |
+| E2 training (1 epoch) | ⏸ Queued after E1 + smoke |
 | Evaluation (Protocol A+B, 3 seeds) | ⏸ Pending |
 | Report (HTML) | ⏸ Pending |
