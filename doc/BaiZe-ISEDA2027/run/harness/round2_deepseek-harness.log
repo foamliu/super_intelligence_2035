@@ -95,3 +95,25 @@ Serial kimi eval: harness=deepseek-harness model=kimi-k2.6-cloud
 [SETUP] pytest-dev__pytest-11143 for deepseek-harness
 
 [RUN] deepseek-harness on pytest-dev__pytest-11143 ...
+  [EVAL] deepseek-harness on pytest-dev__pytest-11143 ...
+  => pytest-dev__pytest-11143 | deepseek-harness | patch-but-failed
+
+############################################################
+# [11/29] deepseek-harness x pytest-dev__pytest-11148
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-11148 for deepseek-harness
+
+[RUN] deepseek-harness on pytest-dev__pytest-11148 ...
+  [EVAL] deepseek-harness on pytest-dev__pytest-11148 ...
+  => pytest-dev__pytest-11148 | deepseek-harness | patch-but-failed
+
+############################################################
+# [12/29] deepseek-harness x pytest-dev__pytest-5103
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-5103 for deepseek-harness
+
+[RUN] deepseek-harness on pytest-dev__pytest-5103 ...

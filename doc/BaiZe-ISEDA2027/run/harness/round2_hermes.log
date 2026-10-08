@@ -21,3 +21,25 @@ Serial kimi eval: harness=hermes model=kimi-k2.6-cloud
 [SETUP] mwaskom__seaborn-2848 for hermes
 
 [RUN] hermes on mwaskom__seaborn-2848 ...
+  [EVAL] hermes on mwaskom__seaborn-2848 ...
+  => mwaskom__seaborn-2848 | hermes | patch-but-failed
+
+############################################################
+# [3/37] hermes x pallets__flask-4045
+############################################################
+
+============================================================
+[SETUP] pallets__flask-4045 for hermes
+
+[RUN] hermes on pallets__flask-4045 ...
+  [EVAL] hermes on pallets__flask-4045 ...
+  => pallets__flask-4045 | hermes | patch-but-failed
+
+############################################################
+# [4/37] hermes x psf__requests-1963
+############################################################
+
+============================================================
+[SETUP] psf__requests-1963 for hermes
+
+[RUN] hermes on psf__requests-1963 ...
