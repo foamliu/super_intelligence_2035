@@ -66,7 +66,7 @@ WAITING: 0
 | **pretrain** | 🔄 **R3 数据配比 BO（6 维 / 100 trial）运行中**：DB 32 行（31 complete + 1 failed=#24），best=**trial#8 score=0.4032**；第 5 批 trials 32–39 训练中 ~62–75%，**0 NaN**；PID 2637043（ppid=1），8 卡 62GB/55–90% util，**ETA ~05:50 Oct 9**。R2 全线 ✅ / 论文 ✅ / 收官报告 ✅ / R3 脚本 + 小样本分词 6/6 ✅（10-07⑤ T1–T4 ✅：float32 vs bf16 SSM **无差异**，「dense 3.3× faster」系 warmup 假象已撤回） | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` · `BAIZE_DATA_R3_TASK.md` | 🟢 `.cline_pretrain`；**P-8 暂缓令（10-02）仍未撤** |
 | **vision** | 🟧 **AIMv2 缩放对比实验进行中（用户直令 10-08⑤ + 同日⑥ E2 变更）**：**E1 = 同族 OV2 w512/d30 126.78M** vs **E2 = 同族 w768/d30 284.54M（2.24×，只差宽度）**，均 224/p16、从零、同 AIMv2 objective + 同 94.9M + 同 1 epoch；主指标 IN-1k **lp Protocol B**（3 seeds）；判据 Δlp ±1.5pp。**agent 已完成**：smoke（E1 4697 / 官方臂 2347 img/s）· 登记 `.12` 8 卡 · `models.py` 加 width/depth override · 预注册初稿。**已令（⑥）**：E2 由「官方 304M@336」**改为 w768**，并**防止自动链跑到官方臂**。 | `run/EXPERIMENTS_VISION*.md` · `report_vision_aimv2_scaling.html`（待出） | 🟢 `.cline_vision`；`.12` 8 卡 |
 | **data** | 🔄 分词收尾 + 下载：`zh` 8/8 ✅112.47B · `l1_en_hq` 12/12 ✅152.17B · `ultrax` 10/10 ✅30.97B · `en_base` s24–s33 @24%（ETA ~04:30 Oct 9）；**累计 317.67B tok（≫ P-8 目标 100B）**；GPIC **6167/8001**（ETA ~1.7d）；base ✅ / UltraX ✅479 / `en_v1_4` 排队 | `report_data_*.html` · `DATA_MIX_RECIPE.md` · `BAIZE_DATA_R3_TASK.md` | 🟢 `.cline_data`；**配比实验已交接 pretrain 执行（R3）** |
-| **harness** | ✅ **7-way × 30 全完成**（cline-patched 60.0% · Pi 60.0% · Hermes 53.3% · opencode 50.0% · codex 46.7% · claude-code 43.3% · deepseek-harness 40.0%）；报告 4 份已交付；无运行中 chain → 🆕 **已下发 2026-10-08⑤：① 第二轮 7×100 横评（先报 ETA）② 深挖第一轮交互轨迹 + 逐 harness 特点对比表** | `run/harness/SWEBENCH_COMPARE.html` · `kimi_pilot_results.json` | 🟢 `.cline_harness`；**先做②（纯 CPU）再跑①** |
+| **harness** | 🔄 **R2 7×100 运行中**（19:22 起，**7 路并行**，ETA ~10h → ~05:30 Oct 9；100 = **30 R1 + 70 stratified**）；② 轨迹报告 ✅ `report_harness_interaction_traces.html`（38KB；**20pp gap 归因**：no-patch 33% vs 10% · timeout 27% vs 0% · patch scope 4.2 vs 2.2 files；**诚实声明仅 `stdout_tail` 存活**）；R1 7×30 ✅（60.0%–40.0%）；报告 4 份已交付。**⑦ 已下发**：并发变更**追认**但须**披露口径**（首轮 serial=1 vs 本轮并行；30 复用 / 70 新跑须标注；监控 quota/timeout/no-patch 率）+ 报告补落根目录 | `run/harness/*.html` · `run/harness/kimi_pilot_results.json` | 🟢 `.cline_harness`；**不占 GPU**（与 pretrain R3 BO 无卡冲突，注意 CPU/IO） |
 
 > ✅ **vision 叙事已决（2026-10-03 用户）：走 A = 保持「从零训练」**（"A 本身也是为了学习"）。
 > → R9 的 **~25.1% 渐近 = 从零路线的如实上限**（负结果有价值）；**loss 轴 R11 = 主线**；**架构轴非主要杠杆**。
@@ -81,7 +81,6 @@ WAITING: 0
 - [ ] ⭐ **P-8 配置拍板**（等 **P-9.7 定稿 + P-9.8 长程一致性 + P-6② token 预算**三件齐 → 再定）。现有建议 = **候选A `TP4·SP·MBS8·seq8192·FP8·MAX_CONN=1`（235K tok/s）**；⚠️ 前置未齐（base 下满 ~2.7 天 + 配比 §0.6 未做）→ 🚫 **不得顺手启动 P-8**。
 - [ ] ⭐ **vision AIMv2 缩放对比实验（10-08⑤/⑥，用户直令）**：**E1** w512/d30 **126.78M** vs **E2** 同族 **w768/d30 284.54M（2.24×）**，224/p16、从零、同 AIMv2 objective + 94.9M + 1 epoch；主指标 **lp Protocol B**（3 seeds）；**Δlp ±1.5pp**（σ>Δ 判「不可分辨」）。**待回报**：E2(w768) smoke ETA → 开跑 → 两臂 Protocol A/B + C1–C4 + 公平表。⚠️ **官方 304M@336 臂已作废**（降为可选第三条；agent 已为它做过 smoke）；**已令防自动链跑到官方臂**。
 - [ ] 🆕 **P-8 启动令再评估（2026-10-08）**：前置已大幅改善（分词 **317.67B ≫ 目标 100B**；GPIC 6167/8001 未满但 P-8 未必依赖）⇒ **待用户拍板是否撤 10-02「⏸ P-8 暂缓」令**；未撤前 🚫 不得启动。
-- [ ] 🆕 **harness 第二轮 7×100 ETA（2026-10-08 下发）**：待回报总 ETA（首轮 210 run ≈34h 串行 ⇒ 700 run 估 ≈4.5–5 天）；**若不接受需另定**（减题量 / 允许并发 = 改口径）。
 - [ ] 🆕 **vision / harness 各一份「运维问答」待我答复**：vision 2026-10-08③ 四问（未验证假设 / Stage iv 前置 / GPU 空窗 / 论文补充）· harness 2026-10-08④ 五问（横评深挖 / BaiZe 接入前置 / 扩规模 / 多 backbone pilot / 论文补充）。
 > 📦 **§4 已闭合条目滚动归档**（2026-10-08 执行，原文未改一字）→ `daily-memories/2026-10-08.md`「从 MEMORY.md §4 滚动归档」= pretrain 四件（10-05 深夜2）· data/vision 三份 HTML（10-05 深夜2）· AIMv2 提速归因前置（10-05 晚）· data 三步令（10-06）· **harness deepseek 工具链（10-05，已装通）** · **R9「53M cap」口径修正（10-03）** · **R8「六架构=自研改编」结论边界（10-03，R13 官方对照已完成 79.81%）**。
 - [ ] 💬 **另一「运维会话」在并行活动**（2026-10-04 深夜发现：origin 上出现**我没写过的 RUN_ID 63 诊断记录**）→ **需与用户确认是否统一到单一会话**，以免重复下发/互相覆盖。
@@ -170,10 +169,7 @@ WAITING: 0
   - ℹ️ **注意**：改 `.bashrc` **不影响已在运行的 loop**（进程 env 已固化），属"防未来"；loop 侧 V3 配方（剥 proxy + 显式 `-k`）保持不变。
 - ⚠️ **`.29` 与 `.12` 的 `/tmp` 不共享** → 诊断 loop 日志必须**指明机器**；而**共享工作副本在 NFS**，所以**跨机能看到"别的线未提交的在途文件"**（这正是判断"某线是否在干活"的好办法）。
 - ⚠️ **`ops_relay.sh` 的「多副本」是误判（2026-10-03 更正）**：`ps | grep ops_relay` 会看到 **2 行**，但其中一行是 relay **执行命令块时 fork 的子 shell**（`ppid` = 真 relay、`etimes≈0`）。→ **判别看 `ppid`**；**唯一真 relay 的 `ppid=1`**。🚫 **绝不要"把两个都杀掉"**（会切断远程通讯）。详见 `run/AGENTS.md` §3.5(1)。
-- 🔴🔴 **4 条线共用一份 `~/.cline/data`（2026-10-04 深夜定位 —— 比 `-k` 更根本，且会反复复发）**：
-  - **机制**：`.29` 上 pretrain 与 harness **共用 `globalState.json`**；harness 把它改成自己的 `gw_proxy`（`127.0.0.1:9090`）→ pretrain 的 cline 被指向**本地死代理** → `Forbidden`（而 cline 仍 `exit 0` → 静默）。**这解释了「修好 key 后还会复发」。**
-  - **修法**：**按线隔离 `--data-dir`** —— `/nas_train/app.e0031982/.cline_{pretrain,harness,vision,data}`；pretrain/vision/data 已切（`Forbidden=0`），harness 目录已建、**按用户指示暂未切**。
-  - **三个坑（都已解决）**：① **`--data-dir` 指向的是 data 目录本身**（文件放 `<D>/` 根，**不是** `<D>/data/`）；② **只播 `globalState.json`+`secrets.json` 不够** —— provider/base 也在 **`settings/`**（`providers.json`/`models.json`），漏了就 **`Cannot connect to API`**（**不是** Forbidden）；③ **ssh 非交互 shell 的 PATH 里没有 `bun`** → 需 `export PATH=$HOME/.bun/bin:$PATH`（否则 `/usr/bin/env: 'bun': No such file`）。
+- 🔴🔴 **4 条线共用一份 `~/.cline/data`（2026-10-04 定位，比 `-k` 更根本，会复发）**：`.29` 上 pretrain/harness 共用 `globalState.json`，harness 改成自己的 `gw_proxy` → pretrain 被指向死代理 → `Forbidden`（cline 仍 `exit 0` ⇒ 静默）—— 这就是「修好 key 后还复发」的原因。**修法 = 按线 `--data-dir`**（`/nas_train/app.e0031982/.cline_{pretrain,harness,vision,data}`；前三已切，harness 已建未切）。⚠️ 三个坑：① **`--data-dir` 指 data 目录本身**（文件放 `<D>/` 根）；② 只播 `globalState.json`+`secrets.json` 不够，**provider/base 在 `settings/`**（漏了报 `Cannot connect to API`）；③ **ssh 非交互 shell 无 `bun`** ⇒ 需 `export PATH=$HOME/.bun/bin:$PATH`。
 - 🔴 **relay 块里凡「可能读 stdin」的命令（尤其是 cline smoke）必须加 `< /dev/null`** —— 否则它会把 ssh heredoc 里**剩余的脚本当 stdin 吃掉** → 输出莫名截断，我因此**误判成「嵌套 heredoc bug」白绕两轮**。
 - 🔴 **relay smoke 必须复现「loop 的真实 (model, base) 配对」** —— `llm_pick` 会选中「**curl 探针 200 但 cline 实际 403**」的候选（`deepseek-v4-flash @ /v1`）→ 我已给 `llm_rotate.sh` 加 **「优先 glm-5.2」**（`glm-5.2 @ /cloud/v1` 实测 cline 可用）。
 - 🔴 **下发 relay 块的「最后一步」= 核对两件事**：顶部 `<!-- RUN_ID -->` **已 +1**，且 **文件已 push**。RUN_ID 50 曾因头标没加（`rid == last`）**卡了整整一轮**。
@@ -181,7 +177,7 @@ WAITING: 0
 - 💬 **可能另有「并行运维会话」** —— 2026-10-04 深夜在 origin 见到**我没写过的 RUN_ID 63 记录** → **下发前先 `git pull --rebase`**，遇冲突**保留双方**，勿互相覆盖。
 - 🪟 **本机（Windows）工具坑**：① PowerShell 下 `git commit -m "…"` 遇 `()` / `->` / 全角括号会报「字符串缺少终止符」→ **一律 `git commit -F <临时文件>`**；② `Select-String` 对**中文/`$tag[...]` 插值**匹配不可靠 → **中文校验改用 Python**；③ 控制台是 GBK → Python `print` 中文/emoji 会 `UnicodeEncodeError` → **把结果写文件再 `read_files`**。
 - 🔎 **MCP 配置不走 `--data-dir`（会复发）**：固定读共享 `~/.cline/data/settings/cline_mcp_settings.json`（与 `--data-dir` 无关）；`.29`/`.12` **各自本地一份**（非 NFS）→ **修 MCP 两台都要修**。⚠️ 探针坑：① SSE 端点不能 `curl -w '%{http_code}'`（长连接 → 空输出 → 误判）→ 只取响应头 `curl -sS -D - -o /dev/null`；② `cline mcp list` 无效 → 正解 `cline config mcp`。
-- 💡 **诊断教训**：`baize_p5b_train.log` **只在 START/END 写**；**逐迭代日志是 `/tmp/baize_p5b.log`**（我 tail 错了文件，下次注意）。
+- 💡 **诊断教训**：`baize_p5b_train.log` **只在 START/END 写**；**逐迭代日志是 `/tmp/baize_p5b.log`**。
 - 🏁 **改「已下发块」的关键参数 ⇒ 必须新起一个序号块置于最顶**（2026-10-08 竞态教训：⑤ 下发后 ~1h 才改 E2，agent 已按旧版 smoke/写预注册/排队）—— 只改原块正文不行，agent 的 `MEMORY` 里仍引用旧版。
 
 ---
@@ -203,14 +199,15 @@ WAITING: 0
   - `BAIZE_VISION_TASK.md` 新增 **2026-10-08④**（答「现有全部数据含 GPIC 6167/8001 训 1 epoch 多久」：逐源列 N=**≈94.9M 对**、两个 img/s 口径（R12 干净 4993 / R12b 有效 ≈2909）、墙钟 **≈5.5–9 h/epoch**、是否 >1 epoch；**纯 CPU 估算，非批准开跑**）。
   - 同步：`MEMORY.md §3` 四行状态更新为 10-08 实测 · §4 滚动归档 · 本日 `daily-memories/2026-10-08.md`。
   - ➕ **同日再下一条（用户直令）**：`BAIZE_VISION_TASK.md` 新增 **2026-10-08⑤ AIMv2 缩放对比实验** —— **E1**=同族 OV2 w512/d30 **126.78M** vs **E2**=同族 **w768/d30 284.54M（2.24×，只差宽度）**，均 224/p16、从零；同 AIMv2 objective + 同 94.9M + 同 1 epoch；主指标 **IN-1k lp Protocol B**，预注册 Δlp ±1.5pp。
-  - ➕➕ **同日第三次（E2 变更令 ⑥，`657ef6bb`）**：核对 origin 发现 **vision 已按 ⑤ 初版动手**（`329bdf8d`：smoke 官方臂 E2=**2347 img/s / ETA 11.2h**、E1=4697 img/s、写预注册、`models.py` 加 width/depth override、E1 即将启动 / E2 排队）⇒ 立即下发 **⑥「E2 作废官方臂 → 改同族 w768」**，要点：E1 不动 · **勿启动官方臂** · **改 `run_scaling_experiment.sh` 防自动链跑到官方臂** · 重跑 w768 smoke · 改预注册（留「改前/改后」）· 官方臂降为可选第三条。
+  - ➕➕ **vision ⑥ 已落实（`ee1a2bfd`）**：agent 读到 ⑥ 后**已作废官方 304M 臂**、把 `run_scaling_experiment.sh` 的 E2 改为 `--tower openvision2 --width 768 --depth 30 --resolution 224 --patch 16`、更新预注册（保留改前/改后）、启动 `e2_watcher.sh`（等 E1 完自动跑 E2 smoke+训练）、④ 估算已答并归档；**E1 已在跑**（step ~18k/187k，~5100 img/s，无坍缩）。
+  - ➕➕➕ **harness R187 回报 + 运维 ⑦ 追认块**：② 轨迹报告 ✅ 交付（38KB，**20pp gap 归因**：no-patch 33% vs 10% · timeout 27% vs 0% · patch scope 4.2 vs 2.2 files）· ① **R2 7×100 已起跑**（19:22，**7 路并行**、`--resume`，100 = **30 R1 + 70 stratified**，ETA ~10h）。⚠️ **它未按 ⑤「先报方案」就改了并发** ⇒ 下发 **⑦**：**追认**该变更（11× 收益；轮内公平性不破），但**必须披露口径**（首轮 serial=1 vs 本轮并行 · **30 复用/70 新跑须标注** · 监控 `quota-blocked`/`timeout`/`no-patch` 率）+ 报告补落 `doc/BaiZe-ISEDA2027/` 根。
 
 > 📦 **2026-10-08 早/午两条运维流水已滚动归档** → `daily-memories/2026-10-08.md`（**原文未改一字**：①「让 pretrain/vision/data 更新论文」`5cf87a53` ②「各线自己写报告」`e3afb272`）。**勿再塞回本文件。**
 
 
 > 📦 **2026-10-07 流水已滚动归档** → `daily-memories/2026-10-07.md`（**原文未改一字**：harness 30 横评 · pretrain 2M–16M+显存归因+5 份研究 · data 解禁白名单 ＋ 撤销「15:30 定时停 UltraX」）。
 
-- **🎯 2026-10-06（用户三步令 · data）** —— ① 收 200-trial（top-K `lm_eval`+Spearman+σ）② **`s_step` 归因**（1.5 s→**166 ms**，真凶 = `MBS=1`+GBS16 ⇒ 每步 16 个 microbatch；已升级 MBS×GBS 网格）③ `.29` GPU0-1 释放后 8 卡搜第二轮。**明细见 `daily-memories/2026-10-06.md`。**
+> 📦 **2026-10-06 流水已滚动归档** → `daily-memories/2026-10-06.md`（data 三步令：Stable 200-trial · `s_step` 归因 166 ms · `.29` 8 卡搜第二轮）。
 
 - **📦 旧流水已滚动归档** → `daily-memories/2026-10-06.md`（**原文未改一字**：10-06「第 6 轮」/「第 5 轮块」/「两条流水（复核②、改道）」）。**勿再塞回本文件。**
 
