@@ -1,5 +1,17 @@
 # MEMORY.md — BaiZe-ISEDA2027 **运维（operator）** 长期记忆 · **醒来先读本文件**
 
+
+## 🆕 最近操作（2026-10-08）
+
+### 🔬 给 pretrain 下发 Round 3 数据配比 BO 搜索指令
+- **背景**：data agent 已完成 R3 方案定型（`run/BAIZE_DATA_R3_TASK.md`），正式交接给 pretrain 团队执行。交接文档明确写「pretrain 负责：代码改造、脚本落地、执行」。
+- **R3 搜索规格**：6 维单纯形（ultrafineweb_en/zh/l1_en_hq + UltraX-Preview + UltraData-Code/MATH），100 trial × 1B token/trial，全量 lm_eval（无 `--limit`），~19.5h ≤ 24h，8 卡满跑。
+- **为什么现在做**：pretrain 全 8 GPU 空闲（等 P-8 分词/下载就绪至少还需 2–3 天），R3 只需要小样本分词 ~30min + 19.5h BO，**正好利用空窗期**，跑完直接定 P-8 Stable 配比，不占 P-8 时间。
+- **指令已下发至** `run/BAIZE_PRETRAIN_2B_TASK.md` 顶部（最高优先级，置于论文更新/报告之前）。
+- 同期义务（论文更新/R2 报告）：**抽空做**（纯 CPU），不延迟 R3 主干 Step 1–3。
+
+**commit pending**（待编辑本文件和更新 daily-memories 后一并提交）
+
 WAITING: 0
 
 > ⚠️ **本文件在项目根**（`doc/BaiZe-ISEDA2027/`），是**运维侧**（指挥 4 条线的那个"我"）的状态文件。

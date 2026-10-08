@@ -17,6 +17,72 @@
 > 📦 §运维指令·2026-10-07（📊 交付：昨夜工作汇报 HTML）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：report_10_07_pretrain_overnight.html 已由 #164 交付(26.5KB,自包含,全自检过)。需要时再读。
 
 
+### 🆕 运维指令 · 2026-10-08（🔬 **数据配比 Round 3 搜索：接收 data agent 交接，在 P-8 前跑完**）· **最高优先 — 在更新论文/写报告之前先干这个**
+
+> **背景**：data agent 已完成 R3 方案定型，正式交接给 pretrain 团队执行。
+> **交接文档**：`run/BAIZE_DATA_R3_TASK.md`（👈 **你启动前先通读此文**，以下是指令摘要）。
+> **为什么现在做、而不是等 P-8 再搜**：P-8 的前置（全量分词 + GPIC 下载）至少还需要 2–3 天；
+> 而 R3 只需要小样本分词（~30 分钟）+ 100 trial BO（~19.5h），**8 卡空闲期正好利用**，
+> 跑完直接决定 P-8 的 Stable 段配比，**不占 P-8 启动后的时间**。
+
+**① R3 vs R2 的本质区别**
+| 对比项 | R2（已完成） | R3（本次） |
+|:--|:--|:--|
+| 搜索空间 | 3 维 `base:code:math` | **6 维** `ultrafineweb_en / ultrafineweb_zh / ultrafineweb_l1_en_hq / UltraX-Preview / UltraData-Code / UltraData-MATH` |
+| 评测 | `--limit 500`（sampled） | **全量** 73106 requests（无 `--limit`） |
+| trial 数 | 200 | **100**（预算压缩到 ≤24h） |
+| D/trial | 0.5B | **1B**（信噪比更高） |
+| 代理规模 | d=128/L=14 (18.36M) | **同**（不换代理） |
+| 前置 | 已有 8 源分词 bin | 需跑 **小样本分词**（6 源 × 2 parquet，~30 min） |
+
+**② 执行顺序（对照交接文档 §6）**
+
+```text
+Step 0  ⭐ 先通读 run/BAIZE_DATA_R3_TASK.md（尤其是 §5 代码改造规格 + §3.2 小样本分词路径）
+Step 1  备份 R2 脚本 → 改出 baize_mix_optuna_r3.py（按 §5 改造）
+        - 搜索空间从 3-dim 改为 6-dim（6 个单源名）
+        - 新增 build_blend_stable() 函数
+        - objective = lm_eval 全量 8 任务均分（无 --limit）
+        - 沿用 Optuna TPE+MedianPruner + MBS=16 + GBS=16 + seq=2048 + D=1B
+Step 2  跑 baize_tokenize_r3_sources.sh（6 源小样本分词, ~30 min）
+        - 数据源位置见交接文档 §3.1 Table
+        - 每源取 2 parquet（路径已列出），参考 baize_mix_tokenize_base.sh
+        - 输出到 {BASE}/data/r3_sources/
+Step 3  python baize_mix_optuna_r3.py --phase stable --n-trials 100 \\
+            --gpus 0,1,2,3,4,5,6,7   # ~19.5h（8 卡满）
+Step 4  等 100 trial 完成（第 13 轮最后 4-trial 收尾）
+Step 5  top-K（K≥5）全量 lm_eval 验证
+Step 6  输出 r3_best_blend.txt → 供 P-8 Stable 热身引用
+```
+
+**③ 关键改动点（相对于 R2 的 `baize_mix_optuna_r2.py`）**
+- 搜索空间：`ultrafineweb_en, ultrafineweb_zh, ultrafineweb_l1_en_hq, ultrax_preview, ultradata_code, ultradata_math`
+- 不搜索 `decay` 段（Decay 段保持 R2 的 3-dim 原样，R3 只搜 Stable）
+- 每 trial D=1B 而非 0.5B（训练步数 30518 步 @ MBS=16, GBS=16, seq=2048）
+- `lm_eval` 不加 `--limit`（全量 73106 requests，~3.6 分钟/trial）
+- 末轮不足 8 trial 时 `--gpus` 改传实际空闲卡号
+
+**④ 预算确认（交接文档 §2 实测锚点）**
+| 操作 | 单 trial | 100 trial |
+|:--|:--|:--|
+| 训练 (1B tok, MBS=16, 166ms/step) | 84.4 min | — |
+| HF 转换 | 2 min | — |
+| 全量 lm_eval（8 任务, 无 limit） | 3.6 min | — |
+| 单 trial 合计 | ~90 min | — |
+| 100 ÷ 8 GPU = 13 轮 × 90min | — | **~19.5h ≤ 24h** ✅ |
+
+**⑤ 同期义务（不冲突的，可后台并行）**
+- 论文更新（纯 CPU 工作）：等 R3 跑起来之后（Step 3 已启动、稳态运行后），**抽空做**，不占 GPU。
+- R2 收官报告（纯 CPU 自包含 HTML 写作）：同理，R3 跑起来之后抽空做，不占 GPU。
+- ⚠️ **不得因写论文/报告而延迟 Step 1–3**：R3 的主干是先改代码 + 分词 + 起跑，**写报告是后台 CPU 活**。
+
+**⑥ 收尾**
+- R3 搜索完成后（r3_best_blend.txt 已生成），把结果回写到 `DATA_MIX_RECIPE.md` 更新 Stable 段推荐配比。
+- 在 `MEMORY_PRETRAIN_2B.md` 记录 R3 结论 + best trial 详情。
+- **不 kill loop**：跑完后 `WAITING=1` 回原位等 P-8 启动令。
+
+> 📦 本块加入后 TASK 约 28KB，仍 ≤32KB ✅。
+
 ### 🆕 运维指令 · 2026-10-08（📝 **更新论文 LaTeX：把 R2 实测数据写入 `4_llm_pretrain.tex` / `3_architecture.tex`**）· **用户直令：各线自己更新论文** · 高优先
 
 > **用户令**：「让 pretrain，vision 和 data 更新一下论文。」
