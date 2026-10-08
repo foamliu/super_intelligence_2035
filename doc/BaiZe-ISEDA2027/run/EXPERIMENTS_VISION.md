@@ -539,7 +539,7 @@ pretraining, not comparable"**.
 | ETA report | ✅ E1 ~5.6h; E2 (w768) est. ~5.6h (R9 ref: w768@224/p16 ≈ w512 throughput) |
 | Pre-registration (this section) | ✅ Written before training (⑥ revised) |
 | Script fix (run_scaling_experiment.sh) | ✅ Done — run_e2() changed to w768/d30/p16/224 |
-| E1 training (1 epoch) | 🟧 Running — step ~105960/187101 (56.6%), ~5000 img/s (throughput recovered), loss_ema~1.42, no collapse (C1=0.43, C2_gap=+0.12, C4=OK). 11 ckpts saved. ETA ~02:40 Oct 9 |
+| E1 training (1 epoch) | 🟧 Running — step ~114970/187101 (**61.4%**), ~2600 img/s (NFS contention from GPIC download), loss_ema~1.27, no collapse (C1=0.44, C2_gap=+0.12, C4=OK). 12 ckpts saved (step0–110k). ETA ~05:30 Oct 9 (slipped from 02:40 due to NFS contention) |
 | E2 training (1 epoch) | ⏸ Queued after E1 + smoke (e2_watcher.sh PID 161134 waiting) |
 | Evaluation (Protocol A+B, 3 seeds) | ⏸ Pending |
 | Report (HTML) | ⏸ Pending |

@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🟧 **🔬 Scaling 对比实验进行中（⑥修订E2→w768）** — E1(OV2 w512/d30,126.78M) vs E2(同族OV2 w768/d30,284.54M), 同AIMv2/94.9M/1ep/bs512. ✅ E1训练中(step~106k/187k=56.6%,~5000img/s(吞吐回升),loss_ema~1.42,无坍缩C1=0.43). ✅ 脚本已修(w768). ✅ 预注册已更新(⑥). ✅ e2_watcher.sh运行中(PID161134,E1完后自动跑E2 smoke+训练+eval). |
-| WAITING | 1（🔬 scaling — E1训练中(~2.2h剩余,ETA~02:40 Oct9,~5000img/s) → E2 smoke+训练(~5.6h) → Protocol B eval 3seeds → HTML报告. ETA total ~10h+eval). |
+| PHASE | 🟧 **🔬 Scaling 对比实验进行中（⑥修订E2→w768）** — E1(OV2 w512/d30,126.78M) vs E2(同族OV2 w768/d30,284.54M), 同AIMv2/94.9M/1ep/bs512. ✅ E1训练中(step~115k/187k=61.4%,~2600img/s(NFS争用,GPIC下载中),loss_ema~1.27,无坍缩C1=0.44). ✅ 脚本已修(w768). ✅ 预注册已更新(⑥). ✅ e2_watcher.sh运行中(PID161134,E1完后自动跑E2 smoke+训练+eval). |
+| WAITING | 1（🔬 scaling — E1训练中(~4.5h剩余,ETA~05:30 Oct9,~2600img/s NFS争用) → E2 smoke+训练(~5.6h) → Protocol B eval 3seeds → HTML报告. ETA total ~12h+eval). |
 | ERROR_COUNT | 6（①~⑤ 同前 ⑥ AIMv2.forward() 不支持 return_patch → 已加 return_patch+causal 参数修复） |
-| BUDGET_USED | R2–R12 ≈215 + R12b(106.4) + lp bridge(5.8) + mask-ratio(78.4+0.5) + weight-ratio(~65.4+0.5) + ④ AIMv2 AR Arm B(2.1) + Arm B-hybrid(~24) ≈ **累计 ~498 GPU·h** + scaling E1(~29 GPU·h so far) |
-| 更新 | **2026-10-09 00:25（巡检#7: E1健康56.6%+全线核验✅）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind — 无新运维指令. ✅ E1训练健康: step105960/187101(56.6%), loss_ema~1.42(stable), C1=0.4329 C2_gap=+0.1231 C4=OK(无坍缩), ~5000img/s(吞吐回升from~2700,ms/iter~98avg), 8GPU 16.5GB/卡 52-96%util, 11ckpts(step0/10k/.../100k,~510MB each). ✅ e2_watcher.sh核验: PID161134健康(etimes=15333s,wait PID1429345退出→smoke_e2→e2训练→eval), run_e2()=w768/d30/p16/224✅. E1剩~81k步×~100ms≈2.2h→ETA~02:40 Oct9. 📦 体积：TASK=31.9KB / MEMORY=30.4KB（均≤32KB✅, 无需归档）· *[更早见 daily-memories-vision/2026-10-08.md]* |
+| BUDGET_USED | R2–R12 ≈215 + R12b(106.4) + lp bridge(5.8) + mask-ratio(78.4+0.5) + weight-ratio(~65.4+0.5) + ④ AIMv2 AR Arm B(2.1) + Arm B-hybrid(~24) ≈ **累计 ~498 GPU·h** + scaling E1(~32 GPU·h so far) |
+| 更新 | **2026-10-09 00:59（巡检#8: E1健康61.4%+吞吐下降+NFS争用）**: ⚠️ git fetch失败(Network unreachable,proxy未设→下轮补推). ✅ E1训练健康: step114970/187101(61.4%), loss_ema~1.274(↓from1.42), C1=0.4446 C2_gap=+0.1246 C4=OK(无坍缩), ~2600img/s(↓from~5000,ms/iter~200avg,range130-290,NFS争用from GPIC download PID144981), 8GPU 16.5GB/卡, 12ckpts(step0/10k/.../110k). ✅ e2_watcher核验: PID161134健康(etimes=17359s,wait PID1429345). ✅脚本核验: run_e2()=w768/d30/p16/224✅(无官方304M). E1剩~72k步×~227ms≈4.5h→ETA~05:30 Oct9(已从02:40推迟,因NFS吞吐下降). 📦 体积：TASK=31.9KB / MEMORY=31.7KB（均≤32KB✅, 无需归档）· *[更早见 daily-memories-vision/2026-10-09.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
