@@ -230,24 +230,26 @@ bash r8_run.sh 3000
 
 **预注册判据匹配**：`Arm B C1 > 0.95 → 🔴 AR collapse (no contrastive → collapse)` — ✅ 命中。
 
-### Arm B-hybrid（AR + InfoNCE）— 🟢 运行中（step 300/30000）
+### Arm B-hybrid（AR + InfoNCE）— 🟢 运行中（step 1650/30000）
 
 | 指标 | 值 | 说明 |
 |:--|:--|:--|
-| 探针 step 300 | C1=**0.2480** C2_gap=**+0.0960** C4=OK | ✅ 健康！与 Arm A baseline (~0.33) 相当 |
-| contrast@300 | 5.0960 | InfoNCE 在学（scale 10.0→22.4） |
-| cap@300 | 5.0362 | text AR 在降 |
-| pixel@300 | 0.7258 | patch 预测稳定 |
-| throughput | ~1983 img/s | 略低于纯 AR（多一次 text forward） |
-| 预计完成 | ~10:45 | 30k 步 ETA ~2.5h |
+| 探针 step 300 | C1=**0.2480** C2_gap=+0.0960 C4=OK | ✅ 健康 |
+| 探针 step 600 | C1=**0.4332** C2_gap=+0.0486 C4=OK | ✅ 健康（logit_scale 过冲, 25→20） |
+| 探针 step 900 | C1=**0.3844** C2_gap=+0.0651 C4=OK | ✅ 恢复 |
+| 探针 step 1200 | C1=**0.3270** C2_gap=+0.0676 C4=OK | ✅ 持续下降 |
+| 探针 step 1500 | C1=**0.3417** C2_gap=+0.0656 C4=OK | ✅ 稳定 ~0.33 |
+| loss@1650 | 11.29 (contrast=5.59, cap=5.34, pixel=0.88) | loss 在降 |
+| throughput | ~2200 img/s (230 ms/iter) | 双进程清理后加速 |
+| 预计完成 | ~10:20 | 30k 步 ETA |
 
 **对比**：
-| 臂 | 注意力 | InfoNCE | C1@300 | C1@600 | 判定 |
-|:--|:--|:--|--:|--:|:--|
-| Arm A (baseline) | bidirectional | ✅ | ~0.33 | ~0.30 | ✅ 健康, lp=12.08% |
-| Arm B (pure AR) | causal | ❌ | **0.8649** | **0.9731** | 🔴 坍缩 |
-| Arm B-hybrid | causal | ✅ | **0.2480** | — | 🟢 健康（运行中） |
-| R11-H (no contrast) | bidirectional | ❌ | 0.43 | 0.37 | ✅ 健康 |
+| 臂 | 注意力 | InfoNCE | C1@300 | C1@600 | C1@1500 | 判定 |
+|:--|:--|:--|--:|--:|--:|:--|
+| Arm A (baseline) | bidirectional | ✅ | ~0.33 | ~0.30 | ~0.28 | ✅ 健康, lp=12.08% |
+| Arm B (pure AR) | causal | ❌ | **0.8649** | **0.9731** | — | 🔴 坍缩@600 |
+| Arm B-hybrid | causal | ✅ | **0.2480** | **0.4332** | **0.3417** | 🟢 健康（运行中） |
+| R11-H (no contrast) | bidirectional | ❌ | 0.43 | 0.37 | ~0.35 | ✅ 健康 |
 
 **初步结论**（待 hybrid 30k 完成 + lp eval 确认）：
 - **InfoNCE 是防止 AR 坍缩的必要条件**（在我们的数据规模下）：纯 AR 无对比项 → 坍缩；加 InfoNCE → 健康。
