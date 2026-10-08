@@ -12,11 +12,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        §0.6-B配比实验全交付✅ → 后台: zh分词7/8shard完成(98.80B tok)+s9~74%done + l1_en_hq分词12进程运行中(s12-s23,各~3.85GB.bin) + GPIC 5714/8001
+PHASE:        §0.6-B配比实验全交付✅ → 后台: zh分词7/8shard完成(98.80B tok)+s9~81%done + l1_en_hq分词12进程运行中(s12-s23,各~7.3GB.bin) + GPIC 5741/8001
 已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a已kill；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43+report; s_step归因(MBS16:8.6×,166ms)+report; Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾全完成(ρ=−0.80); report_data_mix_eval_r2.html(18KB)+report_data_mix_summary.html(29KB); zh分词并行化(1→8进程); ✅zh分词7shard(s4-s8,s10,s11)完成(98.80B tok,各~14.1B/56.5GB.bin); ✅l1_en_hq分词启动(12进程s12-s23,6000 parquet/446GB)
-当前动作:     唤醒214(07:29@.12) 巡检zh s9(~74%done,ETA~09:45)+l1_en_hq 12进程(各~3.85GB.bin)+GPIC 5714/8001+心跳更新
-下一步:       ①s9完成后报zh总token(~113B); ②l1_en_hq分词完成(ETA~15:00-16:00)→报l1总token; ③GPIC续下(5714/8001,ETA~2.1d); ④en_v1_4排队等放行; ⑤新分词产物投料前过check_contamination.py
-阻塞:         s9 zh分词进行中(42GB.bin,ETA~09:45); l1_en_hq分词12进程进行中(各3.85GB.bin,ETA~15:00-16:00); GPIC下载进行中(5714/8001,ETA~2.1d)
+当前动作:     唤醒215(08:04@.12) 巡检zh s9(~81%done,45.9GB.bin,ETA~09:42)+l1_en_hq 12进程(各~7.3GB.bin,ETA~15:30)+GPIC 5741/8001+心跳更新
+下一步:       ①s9完成后报zh总token(~113B); ②l1_en_hq分词完成(ETA~15:30)→报l1总token; ③GPIC续下(5741/8001,ETA~2.0d); ④en_v1_4排队等放行; ⑤新分词产物投料前过check_contamination.py
+阻塞:         s9 zh分词进行中(45.9GB.bin,ETA~09:42); l1_en_hq分词12进程进行中(各7.3GB.bin,ETA~15:30); GPIC下载进行中(5741/8001,ETA~2.0d)
 ERROR_COUNT:  1
 ```
 
@@ -25,6 +25,7 @@ ERROR_COUNT:  1
 ## 📋 本唤醒流水
 > 📦 唤醒185-190 已归档 → `daily-memories-data/2026-10-07.md`（含BO方向bug调查全链+UltraX启动+zh分词启动详情）
 > 📦 唤醒201-203 已归档 → `daily-memories-data/2026-10-08.md`（含report_data_mix_summary.html产出+zh分词8进程启动+GPIC巡检）
+- [08:04] **唤醒215**：①本机=`.12`。②**zh s9巡检**：PID286565活(etimes=25612s≈7.1h,99%CPU,ppid=286557✅),log@12.1M docs/10.43B tok(23341.8s,buffer lag——实际>12.1M),.bin=45.9GB(无.idx,仍在写)。对比已完成shard(.bin~56.5GB),s9~81%done by .bin。rate~1.8MB/s,remaining~10.6GB→ETA~09:42。s4-s8,s10,s11✅(98.80B tok)。s0-s3✅(en base,22.05B tok)。③**l1_en_hq巡检**：12进程(s12-s23)全活(99%CPU,PID759478~787625,ppid=758456✅,nice-10,etimes~72min),各.bin~7.2-7.4GB@08:04(72min in,rate~5.9GB/h/shard),无.idx,logs仅import warnings(输出缓冲)。按final~52GB→remaining~44.7GB→ETA~15:30。load=26.66/224核(可控)。④**GPIC** 5741/8001(+27 since 07:29,~46tar/h)+128/128 test✅,PID144981活(cwd=/nas_inference/.../datasets,downloading gpic_train_05741),latest tar=gpic_train_05740@08:04,ETA(8001-5741)/46≈49.1h≈2.0d。⑤base✅全满·UltraX✅479/479·en_v1_4排队。⑥git pull(proxy)=Already up to date,无新运维指令。⑦📦体积:TASK=30.1KB✅/MEMORY=23.4KB✅。下载线心跳：base ✅全满 | GPIC 5741/8001（活PID144981,+27,~46tar/h,ETA~2.0d）| UltraX ✅479完成 | en_v1_4 排队 | zh分词 7/8shard完成(98.80B tok)+s9运行中(45.9GB,~81%,ETA~09:42) | l1_en_hq 12进程运行中(s12-s23,各7.3GB.bin,ETA~15:30)。
 - [07:29] **唤醒214**：①本机=`.12`。②**zh s9巡检**：log@12.1M docs/10.43B tok(23341.8s≈6.48h),.bin=41.98GB(无.idx,仍在写),PID286565活(99%CPU,ppid=286557✅)。对比已完成shard(.bin~56.5GB=~14.1B tok),s9~74%done by .bin。rate~1.8MB/s,remaining~14.5GB→ETA~09:45。s4-s8,s10,s11✅(.bin56.5GB+.idx327MB each,98.80B tok)。s0-s3✅(en base,22.05B tok)。③**l1_en_hq巡检**：12进程(s12-s23)全活(99%CPU,PID759478~787625,ppid=758456✅,nice-10),各.bin~3.85GB@07:29(37min in,rate~1.73MB/s/shard),无.idx。按input~37GB/shard+expansion~1.5x→final~56GB→ETA~15:00-16:00。load=18.68/224核(可控)。④**GPIC** 5714/8001(+28 since 06:52,~45tar/h)+128/128 test✅,PID144981活,latest tar=gpic_train_05713@07:29,ETA(8001-5714)/45≈50.7h≈2.1d。⑤base✅全满·UltraX✅479/479·en_v1_4排队。⑥git pull(proxy)=Already up to date,无新运维指令。⑦📦体积:TASK=30.1KB✅/MEMORY=23.4KB✅。下载线心跳：base ✅全满 | GPIC 5714/8001（活PID144981,+28,~45tar/h,ETA~2.1d）| UltraX ✅479完成 | en_v1_4 排队 | zh分词 7/8shard完成(98.80B tok)+s9运行中(42GB,~74%,ETA~09:45) | l1_en_hq 12进程运行中(s12-s23,各3.85GB.bin,ETA~15:00-16:00)。
 - [06:52] **唤醒213**：①本机=`.12`。②**zh分词7shard(s4-s8,s10,s11)全部完成✅**：各~16.375M docs/~14.1B tok/~56.5GB.bin+327MB.idx,合计=**98.80B tokens**,耗时~8.9h/shard(~32000s).输出@`code/BaiZe-ISEDA2027/data/mix_base/mix_base_train_s{4,5,6,7,8,10,11}.bin/.idx`.s9仍在跑(37.8GB.bin,log@6.05M docs/5.22B tok,12495s,ETA~11:00).③**l1_en_hq分词启动✅**：12进程(s12-s23),各500 parquet/~37GB input,setsid ppid=1✅,主PID=758456+子PID759478~787625,nice-10,log@/tmp/baize_tokenize_l1_par/.load=15.33/224(可控).④**GPIC** 5686/8001(+1 since 06:52,rate~48tar/h,未受影响),PID144981活.⑤git pull=Already up to date,无新运维指令.⑥📦体积:TASK=30.1KB✅/MEMORY=21.6KB✅.下载线心跳：base ✅全满 | GPIC 5686/8001（活PID144981,~48tar/h,ETA~2.2d）| UltraX ✅479完成 | en_v1_4 排队 | zh分词 7/8shard完成(98.80B tok)+s9运行中(37.8GB,ETA~11:00) | l1_en_hq 12进程启动(s12-s23,ETA~16:00)。
 - [06:04] **唤醒212**：①本机=`.12`。②**zh分词巡检**：7shard(s4-s8,s10,s11)各.bin=49.6-53.2GB@06:05(mtime活跃,bin仍在写,无.idx),log@12.1M docs/10.4B tok(24262-24818s,**自~04:25未更新~100min=logs已停在12.1M docs=全部32 parquet读完,进入final write/index phase**),进程全活(PID2574412~2575292,etimes=30561s≈8.5h,ppid=2574340✅).按log 7×10.4B=72.8B tok(按.bin~50GB/int32则~12.5B/shard=87.5B合计,差异=final flush尚未完成).**ETA:7shard.idx应~1h内出现**.s9@31.9GB(+6.6GB since唤醒211@05:27,rate~9.9GB/h),log@6.05M docs/5.22B tok(12495s,stalled~98min),PID286565活(etimes=18551s≈5.1h,ppid=286557✅),~60%done by .bin,ETA~10:00.s0-s3✅(en base,21GB+.idx,22.05B tok).③**GPIC** 5650/8001(+31 since唤醒211@05:27,~46.5tar/h)+128/128 test✅,PID144981活(etimes≈302000s≈83.9h,cwd=/nas_inference/.../datasets),latest tar=gpic_train_05649@06:06,无.incomplete,ETA(8001-5650)/46.5≈50.6h≈2.1d.④**base**✅全满·**UltraX**✅479/479·**en_v1_4**排队.⑤git pull(proxy)成功=Already up to date,无新运维指令.⑥load=13.76/224核(I/O争用已消退).⑦📦体积:TASK=30.1KB✅/MEMORY=归档前31.4KB→归档唤醒191-200(9条→daily-memories-data/2026-10-08.md)→待测.⑧l1_en_hq分词脚本就绪(baize_tokenize_l1_en_hq_parallel.sh,bash -n✅),待zh跑完后启动.下载线心跳：base ✅全满 | GPIC 5650/8001（活PID144981,+31,~47tar/h,ETA~2.1d）| UltraX ✅479完成 | en_v1_4 排队 | zh分词 7进程@50GB final-write-phase无.idx+s9@32GB~60%（ETA~07:30/10:00）。
@@ -106,11 +107,11 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **配比实验全部交付✅ → 后台: zh分词7/8shard完成(98.80B tok)+s9~74%done + l1_en_hq分词12进程(s12-s23,各~3.85GB.bin) + GPIC 5714/8001** |
-| WAITING | 1（GPIC下载进行中5714/8001 ETA~2.1d; s9 zh分词进行中ETA~09:45; l1_en_hq分词12进程进行中ETA~15:00-16:00） |
+| PHASE | **配比实验全部交付✅ → 后台: zh分词7/8shard完成(98.80B tok)+s9~81%done + l1_en_hq分词12进程(s12-s23,各~7.3GB.bin) + GPIC 5741/8001** |
+| WAITING | 1（GPIC下载进行中5741/8001 ETA~2.0d; s9 zh分词进行中ETA~09:42; l1_en_hq分词12进程进行中ETA~15:30） |
 | ERROR_COUNT | 1（s9崩溃重启后稳定运行,part-172待s9完成后补tokenize） |
 | 节点 | `10.239.2.29`（全8GPU空闲0MiB）+`.12`（GPIC下载PID=144981活 + zh分词s9 PID286565活 + l1_en_hq分词12进程PID759478~787625活 nice-10） |
-| 更新 | 2026-10-08 07:29 |
+| 更新 | 2026-10-08 08:04 |
 
 ## 看板（按推荐执行顺序）
 
