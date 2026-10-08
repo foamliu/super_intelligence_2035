@@ -16175,5 +16175,17 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-13028",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/deletion.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/models/deletion.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
+    "classification": "blocked"
   }
 ]
