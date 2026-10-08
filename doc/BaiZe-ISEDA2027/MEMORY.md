@@ -59,14 +59,14 @@ WAITING: 0
 
 ---
 
-## 3. 在途任务（截至 2026-10-06）
+## 3. 在途任务（截至 2026-10-08）
 
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
-| **pretrain** | ✅ P-5b(20B) + P-9.1–9.6①② + **P-9.7 ✅ 定稿（249K tok/s 确认）** + **P-9.8 armA ✅ / armB 87%（裁定按用户立场修订：瞬时 spike 不否决 → FP8 可用于 P-8）** → 🆕 **P-9.9 给 FP8 更多机会**（换 seed / ≥2000 步 / 试 fine-grained FP8 recipe） | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` | 🟢 `.cline_pretrain` 隔离目录；**P-8 暂缓（base 下载 PID DEAD + 配比未定稿）** |
-| **vision** | ✅ R9/R10/R14/E1 + R11-L 四臂 + R11-L2 + caption-weight + **R11-E(未抬高)** + **R13(官方 OV2 79.81%)** 全完成 → ⭐ **臂⑥ AIMv2 翻盘**（lp 12.08% vs 基线 6.08%，**+6pp → 25.1% 渐近局部推翻**）→ 🔄 **R11-F 数据源横比运行中** → 🟢 **R11-G(AIMv2 长跑重拟合 scaling) + R11-H(⑥-B 纯 AR) 已批准**（见 `BAIZE_VISION_TASK.md`「运维指令 · 2026-10-04（七）」） | `run/EXPERIMENTS_VISION_ROUND11.md` · `VISION_OFFICIAL_REPOS_SURVEY.md` | 🔄 **`.cline_vision` 隔离目录**；凌晨空窗 ≈4–5h 已排满 |
-| **data** | 🔴 **配比实验已改道（2026-10-06 用户裁定；**同夜复核②：单臂/拍脑袋不算实验** ⇒ 已写死「实验」5 条可检验判据 + 先验点强制同台对比 + 心跳纪律）**：**废弃 2.2B 单臂**（S0a **已停**：**data 唤醒 145 @08:06 自停 · pretrain `#127` 认定**；中继 `RUN_ID 72` **核验**为 no-op）→ **小代理（**第 5 轮定案 `d=128/L=14`≈18.5M**，**取代**旧 `h=512/L=14`≈96.8M 主选 ⇒ 后者降为备用；body≈1.91M · `D`=**1B token/trial**，512 组/24h）+ Optuna 贝叶斯优化（TPE+MedianPruner）+ 每卡独立 trial（TP1/DP1、6 并行）+ GBS 8–16 + seq 2048**；**开工前 5 项必验（「可分辨性证伪」排第一：`code 0%` vs `30%` × 3 seed；分辨不出就放大，别上 Optuna）**；**Day1 搜 Stable / Day2 搜 Decay**（对齐 `ye2024datamixinglaws` / Xmodel-2「400+ 次试验」）· 下载巡检（白名单 = `l1_en_hq` + `zh` + GPIC；D-CLEAN ✅） | **`run/DATA_MIX_RECIPE.md §6`（重写）** · `run/DISK_CLEANUP_INVENTORY.md` · `LIT_IDEAS_2026-10-0{4,5}.html` | 🔴 **第 5 轮指令已下发**（`BAIZE_DATA_TASK.md` 顶部 · 2026-10-06）· **中继 `RUN_ID 73` 只读巡检已下发**（`.12` 节律 + base 下载 + 8 卡）· 🆕 **用户三步令已下发（10-06）**：① 收 Stable 200-trial + top-K `lm_eval`/Spearman/σ ② **`s_step` 归因（1.5 s→≤100 ms）** ③ `.29` GPU0-1 释放后 **8 卡搜第二轮** · 🚨 **2026-10-07 新 P0（用户直令）**：**两条下载线（base `l1_en_hq`+`zh` / GPIC）立即重启**；正文口径已统一为 **「数据下载失败需主动重启」**（见 `BAIZE_DATA_TASK.md` 顶部新块） |
-| **harness** | ✅ **4/5 harness 端到端打通**（cline/codex/opencode/claude-code）· **cline-patched ×30 = 60.0% / codex ×30 = 46.7%**（kimi-k2.6-cloud，串行）→ ⏸ **`codex ×300 --resume`（PID 2151526，已 14h+，151 blocked）占着唯一串行槽 ⇒ 用户令「先做 30 横评」** → 🆕 **已下发：停 300 → 补 `opencode/claude-code/deepseek ×30`（同一 30 条）→ 出 5-way 对比** | `run/harness/SWEBENCH_COMPARE.html` · `kimi_pilot_results.json` | 🟢 **2026-10-07 指令已下发（`BAIZE_HARNESS_TASK.md` 顶部**：先 30 后 300）**；deepseek-harness 工具链仍可能不通（如实标「未参与」） |
+| **pretrain** | 🔄 **R3 数据配比 BO（6 维 / 100 trial）运行中**：DB 32 行（31 complete + 1 failed=#24），best=**trial#8 score=0.4032**；第 5 批 trials 32–39 训练中 ~62–75%，**0 NaN**；PID 2637043（ppid=1），8 卡 62GB/55–90% util，**ETA ~05:50 Oct 9**。R2 全线 ✅ / 论文 ✅ / 收官报告 ✅ / R3 脚本 + 小样本分词 6/6 ✅（10-07⑤ T1–T4 ✅：float32 vs bf16 SSM **无差异**，「dense 3.3× faster」系 warmup 假象已撤回） | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` · `BAIZE_DATA_R3_TASK.md` | 🟢 `.cline_pretrain`；**P-8 暂缓令（10-02）仍未撤** |
+| **vision** | ✅ **ALL CONVERGED**（R2–R14 全 closed）：**BP-1/2/3 最佳实践已锁定**；Arm A baseline lp=**13.49%** 仍最优，④ Arm B-hybrid=1.37%；论文 §6 + 9 份 HTML 全交付；GPU 全 idle → 🆕 **已下发 2026-10-08④：答「全量现有数据 1 epoch 耗时」**（纯 CPU，**未批准不得起训练**） | `run/EXPERIMENTS_VISION*.md` · `report_vision_*.html` | 🟢 `.cline_vision`；答完待运维派新活 |
+| **data** | 🔄 分词收尾 + 下载：`zh` 8/8 ✅112.47B · `l1_en_hq` 12/12 ✅152.17B · `ultrax` 10/10 ✅30.97B · `en_base` s24–s33 @24%（ETA ~04:30 Oct 9）；**累计 317.67B tok（≫ P-8 目标 100B）**；GPIC **6167/8001**（ETA ~1.7d）；base ✅ / UltraX ✅479 / `en_v1_4` 排队 | `report_data_*.html` · `DATA_MIX_RECIPE.md` · `BAIZE_DATA_R3_TASK.md` | 🟢 `.cline_data`；**配比实验已交接 pretrain 执行（R3）** |
+| **harness** | ✅ **7-way × 30 全完成**（cline-patched 60.0% · Pi 60.0% · Hermes 53.3% · opencode 50.0% · codex 46.7% · claude-code 43.3% · deepseek-harness 40.0%）；报告 4 份已交付；无运行中 chain → 🆕 **已下发 2026-10-08⑤：① 第二轮 7×100 横评（先报 ETA）② 深挖第一轮交互轨迹 + 逐 harness 特点对比表** | `run/harness/SWEBENCH_COMPARE.html` · `kimi_pilot_results.json` | 🟢 `.cline_harness`；**先做②（纯 CPU）再跑①** |
 
 > ✅ **vision 叙事已决（2026-10-03 用户）：走 A = 保持「从零训练」**（"A 本身也是为了学习"）。
 > → R9 的 **~25.1% 渐近 = 从零路线的如实上限**（负结果有价值）；**loss 轴 R11 = 主线**；**架构轴非主要杠杆**。
@@ -79,19 +79,17 @@ WAITING: 0
 
 - [ ] **P-9 结果** → 定 **P-8 的 seq(4096/8192) / MBS / 精度(bf16/FP8)**（含 16384 是否 OOM 的长上下文边界）。
 - [ ] ⭐ **P-8 配置拍板**（等 **P-9.7 定稿 + P-9.8 长程一致性 + P-6② token 预算**三件齐 → 再定）。现有建议 = **候选A `TP4·SP·MBS8·seq8192·FP8·MAX_CONN=1`（235K tok/s）**；⚠️ 前置未齐（base 下满 ~2.7 天 + 配比 §0.6 未做）→ 🚫 **不得顺手启动 P-8**。
-- [ ] **harness：`deepseek-harness` 缺工具链**（node ≥22.13 + rust；镜像全 000/301/404）→ **需内网镜像或装工具链**；另 **H-A pilot 扩容被 github 网络瞬时中断挡住**（base_commit 在 shallow clone 中缺失）。
-- [ ] ⭐ **vision 全量数据跑 AIMv2（待 vision 回报估算）**：用户令「用全部现有数据（GPIC 41% + CC12M + Amshaker）跑当前最佳配方 AIMv2」；**先答「要多久 / 是否 >1 epoch」**（运维粗估 1 epoch ≈6.6h、2 epoch ≈13h，待 vision 实测精算）。
-- [ ] ⭐ **pretrain 四件（2026-10-05 深夜2 下发，最高优先；⭐ 用户追加「P-6② 早点做」⇒ 顺序已改）**：**先 ②③（P-5b 8 集常识评测 + P-6②，同一评测管线，合并跑、分别出 HTML，用 `.29` GPU0–1，P-5b 从未在 8 集上评过、此前仅 P-6 第 1 步 Avg 0.4395）** → **① sglang 上界补测**（CPU 部分 HF 转换 `nemotron_h` + ABI/`std::bad_alloc` 排查 + **必须用 `cimi_search`** 并行推进；转换好后起的 GPU 补测）→ **④ P-9.5 profiler 排查复跑 → HTML**。
-- [ ] **data / vision 各出 HTML（2026-10-05 深夜2 下发）**：⑤ `report_data_mix_s0a.html`（Stable S0a 是什么 + 现况，纯 CPU 写作、不扰训练）；⑥ vision 两份 `report_vision_lp_eval.html` + `report_vision_aimv2_impl.html`（纯 CPU 写作、不扰 R12）。
-- [ ] ⭐ **AIMv2 提速（待 vision 归因实测）**：用户问「能否加速 / 显卡满否 / 能否加 MBS」—— 运维读数：**显存未满（同配方 ≈22.7–30 / 81.6 GB）**但**同配方吞吐波动大（R11-G 2485 ↔ ⑥-A 5971 img/s）⇒ 疑数据/IO 受限**；已下发「bs{64,128,256}×≥200 步 + `nvidia-smi dmon`」归因实测。**判据：util≲70% 或 ms/iter 不随 MBS 变 ⇒ 数据受限（改数据管线、保持 bs=512 以保 scaling 可比）；util≈100% 且 img/s 随 MBS 升 ⇒ 算力受限（可加 MBS，但须标注 global batch 变化）**。⭐ **用户 2026-10-05 晚拍板：本提速项 = 下一批「全量数据训练」的硬性前置 —— 先优化速度、把实测 img/s 提上去，再跑 ≈59.5M 对全量；估算用提速后 img/s。**
+- [ ] ⭐ **vision 全量 1-epoch 耗时（2026-10-08 重下发）**：用户再问「现有所有数据（含 GPIC 6167/8001）训 1 epoch 要多久」⇒ 已下发 `BAIZE_VISION_TASK.md` 2026-10-08④（要求逐源列 N + 两个 img/s 口径 + 墙钟区间 + 是否 >1 epoch）。**运维粗估 ≈5.5–9 h/epoch（8 卡）**，待 vision 实测精算。⚠️ R12b 已证「更多 unique 数据 ≠ 更高 lp」⇒ **本题 ≠ 批准开跑**。
+- [ ] 🆕 **P-8 启动令再评估（2026-10-08）**：前置已大幅改善（分词 **317.67B ≫ 目标 100B**；GPIC 6167/8001 未满但 P-8 未必依赖）⇒ **待用户拍板是否撤 10-02「⏸ P-8 暂缓」令**；未撤前 🚫 不得启动。
+- [ ] 🆕 **harness 第二轮 7×100 ETA（2026-10-08 下发）**：待回报总 ETA（首轮 210 run ≈34h 串行 ⇒ 700 run 估 ≈4.5–5 天）；**若不接受需另定**（减题量 / 允许并发 = 改口径）。
+- [ ] 🆕 **vision / harness 各一份「运维问答」待我答复**：vision 2026-10-08③ 四问（未验证假设 / Stage iv 前置 / GPU 空窗 / 论文补充）· harness 2026-10-08④ 五问（横评深挖 / BaiZe 接入前置 / 扩规模 / 多 backbone pilot / 论文补充）。
+> 📦 **§4 已闭合条目滚动归档**（2026-10-08 执行，原文未改一字）→ `daily-memories/2026-10-08.md`「从 MEMORY.md §4 滚动归档」= pretrain 四件（10-05 深夜2）· data/vision 三份 HTML（10-05 深夜2）· AIMv2 提速归因前置（10-05 晚）· data 三步令（10-06）· **harness deepseek 工具链（10-05，已装通）** · **R9「53M cap」口径修正（10-03）** · **R8「六架构=自研改编」结论边界（10-03，R13 官方对照已完成 79.81%）**。
 - [ ] 💬 **另一「运维会话」在并行活动**（2026-10-04 深夜发现：origin 上出现**我没写过的 RUN_ID 63 诊断记录**）→ **需与用户确认是否统一到单一会话**，以免重复下发/互相覆盖。
-- [ ] 🎯 **data 三步令（2026-10-06 用户 · 已下发）** —— ① 收 Stable **200-trial** + top-K **`lm_eval` 8 集** + Spearman + **σ**；② ⭐ **`s_step` 归因**（1.5 s → ~30–100 ms ⇒ `D` 0.016 B → 0.5–1 B）；③ **`.29` GPU0-1 释放后 8 卡搜第二轮**（512 并入此轮）。**运维技术修正**：`s_step=1.5 s` **不是多卡同步** —— `baize_mix_optuna.py` 已 `--nproc_per_node=1`/`--tensor-parallel 1`/单卡 `CUDA_VISIBLE_DEVICES` ⇒ **每 trial 本就单卡**；真凶 = **`--micro-batch-size 1`+GBS16 ⇒ 每步 16 microbatch**（≈94 ms/个 ×16 ≈1.5 s；算力仅 <10 ms ⇒ ~100× overhead-bound）。
+> 📦 **data 三步令（2026-10-06）已闭合**（Stable 200-trial ✅ · `s_step` 归因 ✅ 166 ms · Round2 BO 200/200 ✅）→ 原文见 `daily-memories/2026-10-08.md`「从 MEMORY.md §4 滚动归档」。
 > 📦 **归档指针（查旧决策去这里，勿再塞回本文件）**：① **`daily-memories/2026-10-03.md`「从 MEMORY.md 滚动归档」A 节** = D-CLEAN-2/-3 与回收量核实 · harness R1 沙箱路线 · GPIC E1 实测 + C1 口径 · H-A′ 放行 · docker 系降末选 · sudo 口令 · `ops_relay`「2 副本」误判结案 · 论文冻结 · vision 队列裁定 · data 白名单锁定；② **`daily-memories/2026-10-05.md`「从 MEMORY.md §4 滚动归档」** = 本区已闭合的 `[x]` 条目（AIMv2 改写授权 · D-CLEAN-4 定案 · harness 取 kimi · sglang 走 conda · 环境隔离纪律 · proxy 口径 · Claude Code 合规口径定案）—— **原文未改一字**。
 
 > ③ **`daily-memories/2026-10-06.md`「从 MEMORY.md §4 滚动归档」**（2026-10-07 滚动）= **配比实验改道裁定 · 「实验」定义 5 条判据**。**原文未改一字。**
-- [ ] ⛔ **loop 优化：暂不做（用户 2026-10-03 决定）** —— `SLEEP_WAIT 1800→3600` 与「训练未完成就跳过 cline 调用」的前置检查，**都需在公司重启 loop**（假期内做不了），且 1800→3600 **会让反应变慢**。→ **待回公司后择机**。
-- [ ] 🚩 **R9 的「本地 53M 上限」是 `r9_scaling.py` 的假设常量（default=53），非实测** → 按 GPIC 采样应为 **≈103M**；**必须用真实 cap 重算所有 "×N 缺口"**（已在 vision 任务书下达「口径修正」）。
-- [ ] 🚩 **R8 的 6 架构是「自研 from-scratch 等参改编」，非官方实现** → 「SSM 坍缩」不得推广为对官方架构的否定；要下"前沿行不行"的结论需做 **R13（官方 vs 自研 对照）**。
+- [ ] ⛔ **loop 优化：暂不做（用户 2026-10-03 决定）** —— `SLEEP_WAIT 1800→3600` 与「训练未完成就跳过 cline 调用」都要重启 loop（需回公司），且会让反应变慢 → **待回公司后择机**。
 - [ ] **文档口径统一**：seq 已定 4096（P-8 起），README/论文里残留的 4094 需对齐。
 - [ ] 是否把关键决策合并进 `BAIZE_PROGRESS.html`（单一事实来源）。
 
@@ -126,7 +124,7 @@ WAITING: 0
 - **vision 现状**：R9 lp 渐近 **25.1%**（当前路线 = **OpenVision2 w512 + CC12M+Amshaker + 冻结CLIP文本塔 + InfoNCE**；⚠️ **不是 GPIC**）；`attention flash` 仅占 GPU 自耗 **0.7%**（P-4 profile）。
 - 🚩 **`launcher` 只暴露 MBS / TP / SP / seq-length / precision**（agent P-9 非 GPU 预研，2026-10-03）→ **P-9 只用已暴露开关、不改 recipe**；B/C/E/F 类（recompute / 通信重叠 / dataloader / attn-backend）**冻结**，其中 **NCCL（P-4 占 41.7%）** 收益最大 → 记录在案、**待批准后另开**。
 - **磁盘**：`/nas_train` 207T/剩 ~31T（86%）· `/nas_inference` 剩 20T · `/nas_user` 剩 29T。
-- 🪶 **任务书瘦身（长期纪律）**：loop 是 `prompt="$(< TASK_MD)"` → **任务书全文 = 每次唤醒的 prompt**，故必须保持小；**已完成轮次**与**已执行完 / 已作废的运维块**要移出 → 归档文件**不进 prompt**（agent 需要时才去读，指引已写在各任务书里）。历次瘦身数字（10-03 的 237.2→114.1KB、10-05 的 236.6→104.5KB）见 `daily-memories/2026-10-0{3,5}.md`。
+- 🪶 **任务书瘦身（长期纪律）**：loop 是 `prompt="$(< TASK_MD)"` → **任务书全文 = 每次唤醒的 prompt**，必须保持小；已闭合块要移出（归档不进 prompt）。历次瘦身数字见 `daily-memories/2026-10-0{3,5}.md`。
 - **本机（Windows 侧）**：`C:\Users\liuyu\super_intelligence_2035`（git clone）；**可 fetch/pull/push GitHub**；**不能直连 `.12`/`.29`**（SSH 超时）——**通道就是 git**。
 - 🔒 **cline 隔离目录（NFS 共享）**：`.cline_pretrain`（`.29`）· `.cline_vision` / `.cline_data`（`.12`）**均已切**、`Forbidden=0`、model=glm-5.2；`.cline_harness`（`.29`）**已建未切**。目录路径：`/nas_train/app.e0031982/.cline_<line>`。
 - 🔎 **MCP / web search（2026-10-05 已四线打通）**：`.29:8090` 的 **`eda_fastmcp` SSE MCP** 暴露 **`cimi_search` / `cimi_fetch`**（服务绑 `0.0.0.0`、`.12` 可跨机用）。⚠️ **cline 的 MCP 配置走「共享」路径** `~/.cline/data/settings/cline_mcp_settings.json`（**不随 `--data-dir` 变**；`.29`/`.12` **各自本地一份**）→ 修 MCP **要两台都修**。**四线均已逐一实测 `cimi_search` 成功（rc=0）**：pretrain/harness（`.29`）· vision/data（`.12`）。
@@ -185,7 +183,7 @@ WAITING: 0
 - 🌐 **`.29`/`.12` 的 GitHub 通道会「时通时断」⇒ `origin/main` 落后 ≠ 线停摆！** 判据 = `grep -c 'error:.*Forbidden' /tmp/baize_*_loop.log`（应 0）+ `nvidia-smi` util（是否真空转）。抖动时 agent **照常在本地提交**、只是推不上（曾见 `.12` `ahead 16`、`.29` `fetch FAILED`）；恢复后**积压会自动回补**。
 - 💬 **可能另有「并行运维会话」** —— 2026-10-04 深夜在 origin 见到**我没写过的 RUN_ID 63 记录** → **下发前先 `git pull --rebase`**，遇冲突**保留双方**，勿互相覆盖。
 - 🪟 **本机（Windows）工具坑**：① PowerShell 下 `git commit -m "…"` 遇 `()` / `->` / 全角括号会报「字符串缺少终止符」→ **一律 `git commit -F <临时文件>`**；② `Select-String` 对**中文/`$tag[...]` 插值**匹配不可靠 → **中文校验改用 Python**；③ 控制台是 GBK → Python `print` 中文/emoji 会 `UnicodeEncodeError` → **把结果写文件再 `read_files`**。
-- 🔎 **MCP 配置不走 `--data-dir`（2026-10-05 实测，会复发）**：cline 的 MCP 配置固定读 **共享** 的 `<config>/data/settings/cline_mcp_settings.json`（`~/.cline/data/settings/`），**与 `--data-dir` 无关**；且 `.29`/`.12` **各自本地一份**（**不是 NFS**）→ **修 MCP 必须两台都修**。⚠️ **两个探针坑**：① **SSE 端点不能用 `curl -w '%{http_code}'` 探测**（长连接永不结束 → 超时被杀 → **空输出**，会误判成"服务不可用"）→ 应 **只取响应头**（`curl -sS -D - -o /dev/null`）或抓首帧（`curl -sN`）；② **`cline mcp list` 不是有效子命令** → 正解 **`cline config mcp`**。
+- 🔎 **MCP 配置不走 `--data-dir`（会复发）**：固定读共享 `~/.cline/data/settings/cline_mcp_settings.json`（与 `--data-dir` 无关）；`.29`/`.12` **各自本地一份**（非 NFS）→ **修 MCP 两台都要修**。⚠️ 探针坑：① SSE 端点不能 `curl -w '%{http_code}'`（长连接 → 空输出 → 误判）→ 只取响应头 `curl -sS -D - -o /dev/null`；② `cline mcp list` 无效 → 正解 `cline config mcp`。
 - 💡 **诊断教训**：`baize_p5b_train.log` **只在 START/END 写**；**逐迭代日志是 `/tmp/baize_p5b.log`**（我 tail 错了文件，下次注意）。
 
 ---
@@ -202,19 +200,12 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
-- **2026-10-08（用户令：各线更新论文）** —— 用户指令：「让 pretrain，vision 和 data 更新一下论文」。已在对应任务书追加论文更新指令：
-  - **pretrain**：把 R2 实测数据（长上下文/推理成本/FP8/吞吐）写入 `4_llm_pretrain.tex` / `3_architecture.tex`
-  - **vision**：把 R9–R14 消融/Scaling/AIMv2 翻盘/InfoNCE 防坍缩结论写入 `6_vision_encoder.tex`（等当前实验跑完再改）
-  - **data**：把配比实验结论/数据准备状态/污染隔离写入 `4_llm_pretrain.tex`（数据段）
-  **commit**: `5cf87a53` · **工作已完成**，等待各 agent 下次唤醒后自行交付 LaTeX 修改 + PDF。
+- **🔬 2026-10-08（用户两条指令：harness 第二轮 7×100 + 交互轨迹深挖；vision 全量 1-epoch 耗时）** —— 已下发：
+  - `BAIZE_HARNESS_TASK.md` 新增 **2026-10-08⑤**（① 第二轮 **7×100** 同题集横评，**先报 ETA**、口径与首轮逐字一致 ② **深挖首轮 7×30 交互轨迹** → 新报告 `report_harness_interaction_traces.html` + 逐 harness 特点对比表；**② 先做**，纯 CPU）。
+  - `BAIZE_VISION_TASK.md` 新增 **2026-10-08④**（答「现有全部数据含 GPIC 6167/8001 训 1 epoch 多久」：逐源列 N=**≈94.9M 对**、两个 img/s 口径（R12 干净 4993 / R12b 有效 ≈2909）、墙钟 **≈5.5–9 h/epoch**、是否 >1 epoch；**纯 CPU 估算，非批准开跑**）。
+  - 同步：`MEMORY.md §3` 四行状态更新为 10-08 实测 · §4 滚动归档 · 本日 `daily-memories/2026-10-08.md`。
 
-
-- **2026-10-08（用户令：各线自己写报告）** —— 用户指令：「把任务下发给各 agent，由 agent 自己写报告，不要替代他们写」。已下发 4 条线各一份 HTML 报告任务：
-  - **pretrain** → `report_pretrain_r2_final.html`（R2 全线实验收官总报告）
-  - **data** → `report_data_pipeline_status.html`（数据准备全链路状态报告）
-  - **vision** → `report_vision_encoder_final.html`（视觉编码器全线总结报告，等当前实验跑完再写）
-  - **harness** → `report_harness_swebench_analysis.html`（SWE-bench 横评深度分析报告）
-  **commit**: `e3afb272` · **工作已完成**，等待各 agent 下次唤醒后自行交付产物。
+> 📦 **2026-10-08 早/午两条运维流水已滚动归档** → `daily-memories/2026-10-08.md`（**原文未改一字**：①「让 pretrain/vision/data 更新论文」`5cf87a53` ②「各线自己写报告」`e3afb272`）。**勿再塞回本文件。**
 
 
 - **2026-10-07（用户令：harness 30 横评 · pretrain 2M–16M+显存归因+5 份研究 · data 解禁白名单）** —— ⚠️ **资源**：pretrain 09:44 归还 `.12` GPU1–7，**vision 09:52 占满 8 张**（mask-ratio），`.29` 被 data BO 占 ⇒ 无空卡。已下发：`BAIZE_HARNESS_TASK.md`（停 codex×300 → 补 opencode/claude-code/deepseek ×30（同 30 条）→ 5 行对比表）· `BAIZE_PRETRAIN_2B_TASK.md` **③**（hybrid ctx 2M/4M/8M/16M ＋ 诊断 V1–V4）**④**（5 份研究 HTML：公平口径/提速/效果/1M-P8/NAS）· `BAIZE_DATA_TASK.md` 解禁白名单（UltraX 立即下 / en_v1_4 排队 / 开始分词）＋「运维问询」＋ **GPIC 优先序裁定 + BO 方向核对令 + research4 去重** ＋ **15:58 补令 ④（用户直令）**：**撤销「15:30 定时停 UltraX」** —— UltraX 已于 **15:27 被停（210/479, 215GB/487GB, 44%）**，现令 **续传下完（479/479）**、**GPIC 等它跑完再让回**、**禁止再设预设定时终止**。**明细见 `daily-memories/2026-10-07.md`。**
