@@ -2869,3 +2869,83 @@ MEM_FRACTION=0.85 BATCHES="1" MAX_WAIT=600 BENCH_TIMEOUT=7200 \
 - `run/p911e_results/p911e_hybrid_ctx{131072,262144,524288,1048576}_gpu{0,1,2,3}_mf0.3_float32.json`（4 cells，同协议 float32 重跑）
 - `report_pretrain_t3_train_speed_shortlist.html`（T3 短名单，#177 产出）
 - `report_pretrain_t4_train_quality_shortlist.html`（T4 短名单，#177 产出）
+
+---
+
+## R3　数据配比 BO 搜索 Round 3（✅ 完成，2026-10-08~09）
+
+> **运维指令·2026-10-08**：接收 data agent 交接（`BAIZE_DATA_R3_TASK.md`），在 P-8 前跑完 Stable 段 6 维配比搜索。
+> **与 R2 的区别**：3 维→6 维、`--limit 500`→全量、D=0.5B→1B、200 trial→100 trial。
+> **目的**：为 P-8 Stable 段确定精确的 6 源配比（en / zh / l1_en_hq / ultrax / code / math）。
+
+### R3.0 实验规格
+
+| 参数 | 值 |
+|:--|:--|
+| **代理模型** | d=128 / L=14 / tie-embed ≈ **18.36M**（同 R2） |
+| **搜索空间** | 6 维单纯形：ultrafineweb_en∈[0.01,0.50] / zh∈[0.01,0.40] / l1_en_hq∈[0.01,0.40] / ultrax∈[0.01,0.30] / code∈[0.01,0.20] / math∈[0.01,0.10] |
+| **每 trial** | 30518 步 · GBS=16 · MBS=16 · seq=2048 · LR=3e-3 · WSD · seed=1234 · **D=1B token** |
+| **objective** | **全量** lm_eval 8 任务 avg accuracy（无 `--limit`，73106 requests，~3.6 min/trial） |
+| **优化器** | Optuna TPE + MedianPruner |
+| **并行** | 8 GPU（.29 GPU0-7）· 每卡独立 trial（TP1/DP1） |
+| **存储** | SQLite `nemo_experiments/mix_search/mix_search_eval_r3.db` |
+| **预算** | ~19.5h（100 trial ÷ 8 GPU × 90 min），≤24h ✅ |
+
+### R3.1 小样本分词（前置，~30 min）
+
+6 源 × 2 parquet 小样本分词，输出到 `{BASE}/data/r3_sources/`：
+- ultrafineweb_en: 919M token
+- ultrafineweb_zh: 884M token
+- ultrafineweb_l1_en_hq: 47M token
+- ultrax_preview: 351M token
+- ultradata_code: 180M token
+- ultradata_math: 178M token
+- 总计 ~2.56B token（足够 100 trial × 1B = 100B 消耗）
+
+### R3.2 结果
+
+| 指标 | 值 |
+|:--|:--|
+| **总 trial** | 100（98 complete + 2 failed=#25,#49） |
+| **Best trial** | **#8, score=0.4032** |
+| **Score 统计** | Mean=0.3824 / Min=0.3645 / Max=0.4032 / N=98 |
+| **Top-5 spread** | Δ=0.0053（1.3% of mean）→ landscape 平坦 |
+| **实际耗时** | ~19.5h（Oct 8 10:00 → Oct 9 05:50），≤24h ✅ |
+| **NaN** | 0（全 100 trial 无 NaN） |
+
+**Top-5 normalized blends（sum=1.0）**：
+
+| Rank | Trial | Score | en | zh | l1_en_hq | ultrax | code | math |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 1 | #8  | **0.4032** | 0.168 | 0.320 | 0.324 | 0.080 | 0.064 | 0.044 |
+| 2 | #47 | 0.4002 | 0.340 | 0.075 | 0.212 | 0.135 | 0.165 | 0.074 |
+| 3 | #37 | 0.3998 | 0.423 | 0.118 | 0.289 | 0.104 | 0.054 | 0.012 |
+| 4 | #46 | 0.3998 | 0.392 | 0.021 | 0.261 | 0.109 | 0.162 | 0.054 |
+| 5 | #84 | 0.3979 | 0.271 | 0.115 | 0.240 | 0.096 | 0.196 | 0.082 |
+
+**Best trial #8 per-task lm_eval scores**：
+- arc_challenge=0.2278 / arc_easy=0.3333 / boolq=0.5890 / hellaswag=0.2615
+- openbookqa=0.2420 / piqa=0.5653 / sciq=0.4960 / winogrande=0.5107
+
+### R3.3 关键结论
+
+1. **Web:Code:Math ≈ 89:6:4**（best trial）—— 先验 88:8:4 大方向正确，R3 微调 code↓（8%→6%）、math≈same（4%）
+2. **l1_en_hq 是 web 段主力**（top-5 avg 26.5%，一致 21–32%）→ 高质量英文 web > 普通英文 web
+3. **zh/en 比例未被 BO 稳定识别**（zh 在 top-5 中 3.2%–33.4%，方差极大）→ landscape 平坦，zh/en 分配对 lm_eval 影响小
+4. **ultrax 稳定 ~10%**（8–13.5%）→ UltraX-Preview 有稳定但适度贡献
+5. **Landscape 平坦**（top-5 Δ=0.005）→ P-8 不需过度优化配比，合理范围即可
+
+### R3.4 对 P-8 的建议
+
+- **Stable 段配比**：主选 best trial #8（en=16.8% / zh=32.0% / l1=32.4% / ultrax=8.0% / code=6.4% / math=4.4%）
+- **稳健选**：top-5 average（en=31.9% / zh=13.0% / l1=26.5% / ultrax=10.5% / code=12.8% / math=5.3%）
+- **Decay 段**：保持 R2 的 3-dim 原样（本轮不动）
+- **注意**：zh=32% 偏高可能因为小样本分词中 zh 源只有 1 parquet（覆盖面有限），P-8 用全量数据时 zh 比例可适当下调
+
+### R3.5 产出
+
+- `run/r3_best_blend.txt`（best blend + top-5 summary）
+- `run/baize_mix_optuna_r3.py`（R3 BO 脚本）
+- `run/baize_tokenize_r3_sources.sh`（小样本分词脚本）
+- `nemo_experiments/mix_search/mix_search_eval_r3.db`（100 trials DB）
+- `DATA_MIX_RECIPE.md` §9.7（R3 结果回写）

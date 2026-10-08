@@ -271,3 +271,49 @@ Xmodel-2 原文（`xmodel-2.tex:138,144-146,152-154`）：
    - 8 卡（GPU0-7）：D=0.5B → **410 trial/24h**；D=1B → **206 trial/24h**
 4. **第二轮 BO 建议**：MBS=16, D=0.5B/trial, 200 trial/24h/6GPU（或 8 卡 → 400 trial）。目标 ≤100ms 需 CUDA graph + CE fusion（后续优化）。
 5. **结果文件**：`nemo_experiments/sstep_profile/sstep_profile_results.json`
+
+### 9.7 ⭐⭐ Round 3 Stable 段 BO 搜索（✅ 完成，2026-10-08~09）
+
+> **R3 = R2 的下钻升级**：从 3 维 `base:code:math` 扩展到 **6 维**单纯形（ultrafineweb_en / zh / l1_en_hq + ultrax_preview + ultradata_code / math），评测从 `--limit 500` 升级到**全量 73106 requests**，D/trial 从 0.5B 升到 1B（信噪比更高）。交接文档：`run/BAIZE_DATA_R3_TASK.md`。
+
+| 参数 | 值 |
+|:--|:--|
+| **代理模型** | d=128 / L=14 / tie-embed ≈ **18.36M**（同 R2，不换代理） |
+| **搜索空间** | 6 维单纯形：en∈[0.01,0.50] / zh∈[0.01,0.40] / l1∈[0.01,0.40] / ultrax∈[0.01,0.30] / code∈[0.01,0.20] / math∈[0.01,0.10] |
+| **每 trial** | 30518 步 · GBS=16 · MBS=16 · seq=2048 · LR=3e-3 · WSD · seed=1234 · **D=1B token** |
+| **objective** | **全量** lm_eval 8 任务均分（arc_challenge / arc_easy / boolq / hellaswag / openbookqa / piqa / sciq / winogrande，无 `--limit`） |
+| **并行** | 8 GPU（.29 GPU0-7）· Optuna TPE + MedianPruner · 每卡独立 trial |
+| **存储** | SQLite `nemo_experiments/mix_search/mix_search_eval_r3.db` |
+| **进度** | **100/100 complete**（98 complete + 2 failed=#25,#49），best=**0.4032** (#8) |
+| **耗时** | ~19.5h（8 卡，13 轮），deadline ≤24h ✅ |
+
+**Top-5 结果（normalized blends, sum=1.0）**：
+
+| Rank | Trial | Score | en | zh | l1_en_hq | ultrax | code | math |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 1 | #8  | **0.4032** | 0.168 | 0.320 | 0.324 | 0.080 | 0.064 | 0.044 |
+| 2 | #47 | 0.4002 | 0.340 | 0.075 | 0.212 | 0.135 | 0.165 | 0.074 |
+| 3 | #37 | 0.3998 | 0.423 | 0.118 | 0.289 | 0.104 | 0.054 | 0.012 |
+| 4 | #46 | 0.3998 | 0.392 | 0.021 | 0.261 | 0.109 | 0.162 | 0.054 |
+| 5 | #84 | 0.3979 | 0.271 | 0.115 | 0.240 | 0.096 | 0.196 | 0.082 |
+| — | **Top-5 avg** | 0.4002 | 0.319 | 0.130 | 0.265 | 0.105 | 0.128 | 0.053 |
+
+**Score 统计**（98 complete）：Mean=0.3824 / Min=0.3645 / Max=0.4032
+
+**🔴 关键结论**：
+
+1. **Web:Code:Math ≈ 89:6:4**（best trial #8）—— 与先验 88:8:4 接近，但 **code 从 8% 降到 6%**，math 保持 ~4%。先验的大方向正确，R3 微调了 code 比例。
+2. **Web 内部分解**（R3 的核心增量）：
+   - **l1_en_hq（高质量英文 web）一致高**（21–32%，top-5 avg 26.5%）→ **质量 > 数量**，l1_en_hq 是 web 段的主力
+   - **zh（中文 web）方差极大**（3.2%–33.4%）→ zh/en 比例在 top-5 中未被 BO 稳定识别，landscape 平坦
+   - **ultrax 稳定在 ~10%**（8–13.5%）→ UltraX-Preview 有稳定但适度的贡献
+3. **Landscape 平坦**：top-5 Δ=0.0053（1.3% of mean）→ 在 18.36M 代理 + 1B token 规模下，**精确配比对 lm_eval 均分影响很小**。这意味着 P-8 不需要过度优化配比，合理范围即可。
+4. **推荐**：
+   - **主选**：best trial #8（en=16.8% / zh=32.0% / l1=32.4% / ultrax=8.0% / code=6.4% / math=4.4%）
+   - **稳健选**：top-5 average（en=31.9% / zh=13.0% / l1=26.5% / ultrax=10.5% / code=12.8% / math=5.3%）
+   - 两者 web:code:math 均在 ~87-89:6-13:4-5 范围，差异主要在 web 内部 en/zh 分配
+
+**交付物**：
+- `run/r3_best_blend.txt`（best trial #8 normalized blend + top-5 summary）
+- `nemo_experiments/mix_search/mix_search_eval_r3.db`（100 trials, 98 complete）
+- 脚本：`run/baize_mix_optuna_r3.py` / `run/baize_tokenize_r3_sources.sh`
