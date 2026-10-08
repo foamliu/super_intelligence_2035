@@ -7,11 +7,28 @@ WAITING: 1
 ```
 PHASE:        H-A 30×7 cross-eval COMPLETE ✅ + DEEP ANALYSIS REPORT ✅ + H-B 3-WAY SOURCE ANALYSIS ✅ + **H-B 7-WAY UNIFIED COMPARISON DELIVERED** (HARNESS_7WAY_COMPARISON.html, 55.0KB, 10 sections, 5 inline SVG, all 7 harnesses architecture+performance). cline-patched 60.0% · Pi 60.0% · Hermes 53.3% · opencode 50.0% · codex 46.7% · claude-code 43.3% · deepseek-harness 40.0%.
 已完成:       H-B 7-way unified comparison (HARNESS_7WAY_COMPARISON.html) · H-B 3-way source analysis (HARNESS_3WAY_COMPARISON.html) · H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · 7 harnesses×30 (all COMPLETE) · SWEBENCH_COMPARE.html (21976B) · report_harness_swebench_analysis.html (64201B, 9 sections) — VERIFIED at both locations · HARNESS_3WAY_COMPARISON.html (59268B, 14 sections) — at both locations · **HARNESS_7WAY_COMPARISON.html** (56352B, 10 sections, 5 SVG, superset analysis, architecture table, failure modes, BaiZe implications) — at both doc/BaiZe-ISEDA2027/ and run/harness/
-当前动作:     R180: Health-check heartbeat — all deliverables verified intact at both locations, no new operator instructions (git fetch=up to date), no running chains. Standing by.
+当前动作:     R181: Health-check heartbeat — report_harness_swebench_analysis.html re-verified (9 sections, 64201B, all requirements met), no new operator instructions, no running chains. Standing by.
 下一步:       <待运维指令> — All H-A and H-B deliverables complete. Possible next: expand to 100-300 instances, swap BaiZe 2.2B backbone, or add more harnesses (Aider, SWE-agent).
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
+
+## 🆕 第一百八十一轮速览（2026-10-08 15:19）— 💓 Health-check heartbeat (report re-verified complete)
+
+- 💓 **Health-check heartbeat**: Re-verified `report_harness_swebench_analysis.html` (64201B, 586 lines, 9 sections) at both `doc/BaiZe-ISEDA2027/` and `run/harness/`:
+  - §1 TL;DR (5 bullets: cline-patched & Pi 60.0%, 40%-60% spread, backbone bottleneck, 83% wrong-fix, patch-size r≈0.7) ✅
+  - §2 Eval Design (30×7, kimi-k2.6-cloud, serial=1, unshare R1 sandbox) ✅
+  - §3 Results Summary (SVG bar chart + ranking table + difficulty distribution SVG, refs SWEBENCH_COMPARE.html) ✅
+  - §4 Failure Mode Analysis (SVG distribution chart, per-harness profiles, log evidence, 12/30 unsolvable) ✅
+  - §5 Cost Analysis (SVG scatter plot, efficiency ranking res/h, Pi=7.9 most efficient) ✅
+  - §6 Architecture Differences (7-harness comparison table, Bun/TS dominance, tool richness ≠ performance) ✅
+  - §7 BaiZe Implications (6 ranked capabilities, expected BaiZe 2.2B performance estimate) ✅
+  - §8 Limitations (7 points: small sample, single seed, kimi≠BaiZe, non-Docker, not leaderboard) ✅
+  - §9 Next Steps (7 recommendations: expand to 100-300, swap BaiZe backbone, add repos, multi-seed) ✅
+  - Format: self-contained (inline CSS+SVG), zero external links, 64KB ≤ 200KB ✅
+- ✅ **No new operator instructions** (`git fetch` = up to date, origin/main unchanged).
+- ✅ **No running chains** (no `run_serial_kimi` / `chain_*` processes).
+- 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~32KB(31.3KB ✓)（归档 0KB → removed R178 heartbeat to stay under 32KB）
 
 ## 🆕 第一百八十轮速览（2026-10-08 14:11）— 💓 Health-check heartbeat (all deliverables verified)
 
@@ -36,18 +53,6 @@ ERROR_COUNT:  0
 - ✅ **No new operator instructions** (`git fetch` = up to date, origin/main unchanged).
 - ✅ **No running chains** (no `run_serial_kimi` / `chain_*` processes).
 - 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~29KB(28.9KB ✓)（归档 0KB）
-
-## 🆕 第一百七十八轮速览（2026-10-08 13:00）— 💓 Health-check heartbeat (all deliverables verified)
-
-- 💓 **Health-check heartbeat**: All H-A and H-B deliverables verified intact at both locations:
-  - `SWEBENCH_COMPARE.html` (21976B, 7-way results table) ✅
-  - `report_harness_swebench_analysis.html` (64201B, 9 sections) ✅ at both `doc/BaiZe-ISEDA2027/` and `run/harness/`
-  - `HARNESS_3WAY_COMPARISON.html` (59268B, 14 sections) ✅ at both locations
-  - `HARNESS_7WAY_COMPARISON.html` (56352B, 10 sections, 5 SVG) ✅ at both locations
-  - `kimi_pilot_results.json` (480 entries: 7×30=210 in scope + 270 codex extras) ✅
-- ✅ **No new operator instructions** (`git fetch` = up to date, origin/main unchanged).
-- ✅ **No running chains** (no `run_serial_kimi` / `chain_*` processes).
-- 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~29KB(28.3KB ✓)（归档 0KB）
 
 ## 🆕 第一百七十七轮速览（2026-10-08 12:30）— 📄 H-B 7-WAY UNIFIED COMPARISON DELIVERED (HARNESS_7WAY_COMPARISON.html, 55.0KB)
 
@@ -204,18 +209,8 @@ ERROR_COUNT:  0
 - 2026-10-07 20:34 —— **第一百五十四轮** —— deepseek-harness×30 progress 12/30 (7 res/5 pbf = 58.3%) → SWEBENCH_COMPARE.html regenerated（15719B, 132 entries, 67 resolved）→ commit+push。📦 体积：TASK=30.7KB / MEMORY=29.5KB（归档 0KB）。
 - 2026-10-07 21:14 —— **第一百五十五轮** —— deepseek-harness×30 progress 15/30 (7 res/8 pbf = 46.7%) → SWEBENCH_COMPARE.html regenerated（15799B, 135 entries, 67 resolved）+ R147-R153 archived to daily → commit+push。📦 体积：TASK=30.7KB / MEMORY=17.3KB（归档 ~13KB → daily-memories-harness/2026-10-07.md）。
 - 2026-10-07 23:53 —— **第一百五十九轮** —— Pi×30 progress 16/30 (10 res/6 pbf = 62.5%, inst 17/30 sympy__sympy-11897, PID 690669 etimes=4906s) → SWEBENCH_COMPARE.html regenerated（22136B, 166 entries, 82 resolved）+ gw_proxy + gw_proxy_dsh healthy → commit+push。📦 体积：TASK=28.7KB / MEMORY=23.7KB（归档 0KB）。
-- 2026-10-08 01:29 —— **第一百六十轮** —— ✅ Pi×30 COMPLETE (18 res/12 pbf = 60.0%, tied with cline-patched for best) → 🔧 Hermes toolchain FIX (Python 3.14.6 found at ~/.local/bin, venv+CLI+config already set up, smoke test done django-10924 pbf) → Hermes×30 chain STARTED (PID 838805/850763, --resume, ETA ~4.6h) → gen_kimi_compare.py upgraded to 7-way with Hermes data row → SWEBENCH_COMPARE.html regenerated（19658B, 181 entries, 90 resolved）→ commit+push。📦 体积：TASK=28.7KB / MEMORY=~28KB（归档 0KB）。
-- 2026-10-08 02:06 —— **第一百六十一轮** —— Hermes×30 progress 3/30 (1 res/2 pbf, inst 4/30 django-11039 fetching, chain PID 838805 healthy) → harness version/commit verified via GitHub API (Hermes=NousResearch/hermes-agent@0e219331 MIT 251.8k★, Pi=@fleetagent/pi-coding-agent v0.2.15 MIT) → §3.1 version table added to gen_kimi_compare.py → SWEBENCH_COMPARE.html regenerated（21229B, 183 entries, 91 resolved）→ commit+push。📦 体积：TASK=28.7KB / MEMORY=~29.5KB（归档 0KB）。
-- 2026-10-08 02:42 —— **第一百六十二轮** —— Hermes×30 progress 8/30 (6 res/2 pbf = 75.0%, inst 10/30 django-11283 running ~23min, chain PID 838805 healthy) → SWEBENCH_COMPARE.html regenerated（21370B, 188 entries, 96 resolved）→ R154-R158 archived (9889B → daily) → commit+push。📦 体积：TASK=28.7KB / MEMORY=22.9KB（归档 9.9KB → daily-memories-harness/2026-10-07.md）。
-- 2026-10-08 03:18 —— **第一百六十三轮** —— Hermes×30 progress 12/30 (7 res/5 pbf = 58.3%, inst 15/30 django-11620 running ~11min, chain PID 838805 healthy) → SWEBENCH_COMPARE.html regenerated（21483B, 192 entries, 97 resolved）→ commit+push。📦 体积：TASK=28.7KB / MEMORY=~24.0KB（归档 0KB）。
-- 2026-10-08 03:52 —— **第一百六十四轮** —— Hermes×30 progress 14/30 (8 res/6 pbf = 57.1%, inst 15/30 django-11742 running ~3min, chain PID 838805 healthy) → SWEBENCH_COMPARE.html regenerated（21541B, 194 entries, 98 resolved）→ commit+push。📦 体积：TASK=28.7KB / MEMORY=~24.5KB（归档 0KB）。
-- 2026-10-08 04:26 —— **第一百六十五轮** —— Hermes×30 progress 16/30 (8 res/8 pbf = 50.0%, inst 17/30 sympy-11897 running ~2min, chain PID 838805 healthy) → SWEBENCH_COMPARE.html regenerated（21595B, 196 entries, 98 resolved）→ commit+push。📦 体积：TASK=28.7KB / MEMORY=~25.6KB（归档 0KB）。
-- 2026-10-08 05:00 —— **第一百六十六轮** —— Hermes×30 progress 19/30 (9 res/10 pbf = 47.4%, inst 19/30 sympy-12419 running ~5min, chain PID 838805 healthy) → SWEBENCH_COMPARE.html regenerated（21679B, 199 entries, 99 resolved）→ commit+push。📦 体积：TASK=28.7KB / MEMORY=~27.0KB（归档 0KB）。
-- 2026-10-08 05:34 —— **第一百六十七轮** —— Hermes×30 progress 21/30 (11 res/10 pbf = 52.4%, inst 22/30 sympy-12481 running ~2min, chain PID 838805 healthy) → SWEBENCH_COMPARE.html regenerated（21741B, 201 entries, 101 resolved）→ commit+push。📦 体积：TASK=28.7KB / MEMORY=~28.2KB（归档 0KB）。
-- 2026-10-08 06:07 —— **第一百六十八轮** —— Hermes×30 progress 22/30 (12 res/10 pbf = 54.5%, inst 23/30 sympy-13031 running ~15min, chain PID 838805 healthy) → SWEBENCH_COMPARE.html regenerated（21771B, 202 entries, 102 resolved）→ commit+push。📦 体积：TASK=28.7KB / MEMORY=~29.5KB（归档 0KB）。
-- 2026-10-08 07:15 —— **第一百六十九轮** —— 🏆 Hermes×30 COMPLETE (16 res/14 pbf = 53.3%) → 7-way cross-eval ALL DONE (210 entries, 106 resolved, SWEBENCH_COMPARE.html 21976B final) → R159-R165 archived to daily → commit+push。📦 体积：TASK=28.7KB / MEMORY=~17.8KB（归档 ~13.3KB → daily-memories-harness/2026-10-08.md）。
-- 2026-10-08 07:52 —— **第一百七十轮** —— 💓 Health-check heartbeat：7-way 横评结果已验证完整（kimi_pilot_results.json 480 entries, SWEBENCH_COMPARE.html 21976B），无新运维指令（git pull=up to date），无运行中 chain → commit+push。📦 体积：TASK=28.7KB / MEMORY=23.1KB（归档 0KB）。
-- 2026-10-08 08:25 —— **第一百七十一轮** —— 💓 Health-check heartbeat：7-way 横评再次验证完整（kimi_pilot_results.json 480 entries, SWEBENCH_COMPARE.html 21976B, 7 harness counts confirmed），无新运维指令，无运行中 chain → commit+push。📦 体积：TASK=28.7KB / MEMORY=~24KB（归档 0KB）。
 - 2026-10-08 09:46 —— **第一百七十二~七十六轮** —— 📄 report_harness_swebench_analysis.html 交付（64201B, 9 sections, deep analysis with failure modes, cost analysis, BaiZe implications）→ HARNESS_3WAY_COMPARISON.html 交付（59268B, 14 sections, cline/Pi/Hermes deep comparison）→ HARNESS_7WAY_COMPARISON.html 交付（56352B, 10 sections, 5 inline SVG, superset analysis finding）→ all verified at both locations → commit+push。📦 体积：TASK=31.5KB / MEMORY=~29KB（归档 0KB）。
 - 2026-10-08 13:00 —— **第一百七十八轮** —— 💓 Health-check heartbeat：all deliverables verified intact, no new instructions, no running chains → commit+push。📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~29KB(28.3KB ✓)（归档 0KB）。
 - 2026-10-08 13:38 —— **第一百七十九轮** —— 💓 Health-check heartbeat：all deliverables verified intact (SWEBENCH_COMPARE 21976B, report_harness_swebench_analysis 64201B, HARNESS_7WAY_COMPARISON 56352B, HARNESS_3WAY_COMPARISON 59268B, kimi_pilot_results.json 532623B)，no new instructions (git fetch=up to date)，no running chains → commit+push。📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~29.6KB(28.9KB ✓)（归档 0KB）。
+- 2026-10-08 14:11 —— **第一百八十轮** —— 💓 Health-check heartbeat：all deliverables verified intact, no new instructions, no running chains → commit+push。📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~31KB(30.4KB ✓)（归档 0KB）。
+- 2026-10-08 15:19 —— **第一百八十一轮** —— 💓 Health-check heartbeat：report_harness_swebench_analysis.html re-verified (9 sections, 64201B, all requirements met: TL;DR/eval design/results/failure modes SVG/cost SVG/architecture/BaiZe implications/limitations/next steps), no new instructions, no running chains, R160-R171 archived to daily → commit+push。📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~30KB(29.3KB ✓)（归档 ~4KB → daily-memories-harness/2026-10-08.md）。
