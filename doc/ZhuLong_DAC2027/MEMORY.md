@@ -186,6 +186,12 @@ error: error: unknown option '-b'
 
 ## 9. 流水（倒序）
 
+- **2026-10-08（运维经任务书派 ZhuLong agent 写「国庆假期试验进展」HTML 报告）** —— 用户下达「安排 ZhuLong agent 写 html 报告，汇报假期试验进展」。
+  - 处置：按 SOP 同步读取 `run/MEMORY_ZHULONG.md`（状态头/看板/成绩表）+ `run/ZHULONG_TASK.md` 运维指令区 + `run/ops/outbox.md`，确认假期进度：**Phase B 4/4 ✅**（glm-5.2 83.3±3.1 / deepseek-v4-flash 16.7±12.3 / kimi-k2.6-cloud 77.0±1.6 / doubao-seed-2.0-pro-cloud 63.8±1.4）；**C1** pure_llm 5/5（10.5±1.9 复用 legacy）· rag 5/5（71.8±2.5 本线重跑）· wo_retrieval 4/5（r5 运行中 PID 198350）· full 待跑；C2/S1 未启动。
+  - 落地：在 `run/ZHULONG_TASK.md` 运维指令区**置顶**新增 `### 🆕 运维指令 · 2026-10-08（一）— 📝 写一份「国庆假期试验进展」HTML 报告【本次唤醒优先动作】`（新块放在常驻规程之后、`(八)` 块之前）。指令要点：产物 = 自包含 HTML，路径 `run/reports/report_2026-10-08_holiday.html`；数据来源限 `MEMORY_ZHULONG.md` 成绩表 + `run/daily-memories/` + `outbox.md` + 任务书 §0；8 个必含小节（概览/进度总览表/Phase B 专题/C1 专题/关键事件时间线/infra 状态/下一步/页脚）；红线 = 不得臆造数字、不动 `ops/` 与论文树、不 `git add -A`、写完仍 commit+push 心跳+日报。
+  - ⚠️ **本沙箱限制**：当前会话 `run_commands` 被全量拦截（`ACCESS RESTRICTED`，与 s2_1shot 期沙箱阻断同因），**无法在此执行 `git commit/push`**。任务书文件改动已落盘到工作副本，**待具备 shell/git 能力的环境提交推送**后，36.15 的 `zhulong_loop.sh` 下轮 `git pull` 才能取到该指令。
+  - ⏭ 待办（具备 git 能力时）：`git pull --rebase --autostash` → `git add -- doc/ZhuLong_DAC2027/run/ZHULONG_TASK.md doc/ZhuLong_DAC2027/MEMORY.md doc/ZhuLong_DAC2027/daily-memories/2026-10-08.md` → `git commit -m "zhulong 运维: 派 agent 写国庆假期进展 HTML 报告"` → `git push origin main`。push 成功后观察 `run/MEMORY_ZHULONG.md` 心跳 + `run/reports/report_2026-10-08_holiday.html` 是否出现。
+
 - **2026-10-05（"中继卡死"实为**盲**；未杀任何进程；合并线 agent 已自主工作）** ——
   - ✅ 用户到公司后中继/loop 恢复：`RUN_ID 20` 于 **11:04:10** 执行，输出证实 **legacy loop 一直活着**（PID `2455466`，etimes≈44h）→ 昨晚 `RUN_ID 18` **从未执行**（`.last_run_id` 直接 17→20）→ **"停 legacy"根本没发生、零进程损失**。真因 = **36.15 的 GitHub 通道整夜不通**（relay 活着却拉不到 inbox；loop 也推不出），**不是我 kill 的**。
   - ✅ 合并线 agent 连续 2 轮工作：**11:13** 执行(五)保活检查 + infra 复检（pro-fp4 **HTTP 403 额度耗尽**、glm-5.2 200、四端口 OPEN、`/nasdata` 377G 富余）；**11:25 自主把试验次序改为 `B → C1 → C2 → S1`**（Phase B 4 模型用独立 key/endpoint，不受 pro-fp4 限制）。commit `ad685df`。

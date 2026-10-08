@@ -38,6 +38,37 @@
 > ⏱️ **判死判据（硬）**：**心跳文件 >60min 无新提交 ⇒ 按卡死处理**（不再等你）。**你干得再多，心跳不动 = 仍会被判死。**
 
 
+### 🆕 运维指令 · 2026-10-08（一）— 📝 写一份「国庆假期试验进展」HTML 报告【本次唤醒优先动作】
+
+> **来源**：用户 2026-10-08 下达。国庆假期（约 10/01–10/08）期间本线持续推进，现需汇总成一份**可读的 HTML 报告**向用户汇报。**本动作优先于新一轮评测推进**（但**不打断正在跑的 `C1.wo_retrieval r5`**——若 r5 仍在跑，先正常巡检/收割，再写报告；报告里把 r5 标为「运行中/收割值待补」即可）。
+
+**目标产物**：一份**自包含**（内联 CSS、无外部依赖、UTF-8）的 HTML 报告，路径 = `run/reports/report_2026-10-08_holiday.html`（`reports/` 目录不存在则自建）。中文撰写。
+
+**数据来源（必须只读引用，不得臆造）**：
+1. `run/MEMORY_ZHULONG.md` —— 状态头 / 执行看板 / 成绩记录表 / 操作流水。
+2. `run/daily-memories/2026-10-0[1-8].md` —— 假期每日流水（关键事件、转折点）。
+3. `run/ops/outbox.md` —— 中继回收的环境/进程诊断（infra 状态佐证）。
+4. 本任务书 §0 速览 + 各运维块 —— 试验次序调换、legacy 接管等决策来源。
+
+**报告必须包含的小节**：
+1. **概览**：合并消融线设计（15 臂 × 5 轮 = 75 轮，串行 B→C1→C2→S1，回填 6 表 56 个 `[TBD]`）；冻结设置（EDA-Eval-PyAether 158 任务、Pass@1、单 trace、5 次独立运行 mean±std、主 backbone deepseek-v4-pro-fp4）。
+2. **假期进度总览表**：15 臂逐行列出 `阶段/臂/轮次进度/N=5 mean±std/各轮原始值/状态`，**数字一字不改地抄成绩表**（已完成的填实数；`full`/C2/S1 未启动的标 ⬜ 待跑；`wo_retrieval` r5 若未收割标「运行中」）。
+3. **Phase B（大模型消融）专题**：4 个 backbone（glm-5.2 / deepseek-v4-flash / kimi-k2.6-cloud / doubao-seed-2.0-pro-cloud）的结果与简评（含 flash 异常低分、std 偏大的说明）。
+4. **C1（组件消融）专题**：pure_llm / rag / wo_retrieval / full 的进度与含义（pure_llm 复用 legacy、rag 本线重跑、wo_retrieval r5 进行中）。
+5. **假期关键事件时间线**：按日期列出转折点（例如：pro-fp4 额度 403 阻塞 → 试验次序调换为先跑 Phase B；ops 中继抢救/重启；legacy 组件 loop 保活；`/home` 磁盘 99% 硬阻塞处置；编排模型切 glm-5.2；pro-fp4 恢复 HTTP 200 等）。**只写有 daily-memory / outbox 证据的事件**。
+6. **基础设施状态**：磁盘（/nasdata 充裕、/home 99% 非阻断）、端口（8653/8664/8665/8669）、反作弊 hook（0 Forbidden）、ops 中继与 loop 存活情况。
+7. **下一步**：C1.wo_retrieval r5 收割 → 算 mean±std → 切 C1.full 锚点 → C2(S2Φ) → S1(保真度)；以及尚待运维拍板的开放项（若有）。
+8. **页脚**：生成时间（用你唤醒时的系统时间）、数据截止点（MEMORY 最后一次提交）、「数字来源：run/MEMORY_ZHULONG.md 成绩记录表」。
+
+**样式要求**：表格有边框、斑马纹、表头深色底；Pass@1 数值右对齐；状态列用 emoji（✅/⬜/▶/⏸）；标题层级清晰；整体宽度 ≤ 1100px、居中。
+
+**红线**：
+- 🚫 **不得臆造任何数字**——所有 Pass@1 / std / 轮次值必须能在 `MEMORY_ZHULONG.md` 成绩记录表回溯；未测的显式标「待跑/运行中」。
+- 🚫 **不得改动** `ops/` 下任何文件、不得动论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`（报告不是回填 `[TBD]`）。
+- 🚫 **不得**因写报告而 `git add -A`；只 add 报告文件本身。
+- ✅ 报告写完**仍要遵守常驻规程**：更新心跳（`MEMORY_ZHULONG.md` 顶部 + 流水追加 1 行）+ 当日 `daily-memories/2026-10-08.md` + **自己 commit+push**（`git pull --rebase --autostash` → `git add -- doc/ZhuLong_DAC2027/run/reports/report_2026-10-08_holiday.html doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md doc/ZhuLong_DAC2027/run/daily-memories/2026-10-08.md` → `git commit -m "zhulong 报告: 国庆假期试验进展 HTML"` → `git push origin main`）。push 失败重试 1 次，仍失败把报错写进心跳、下轮首件事补推。
+- ✅ 若 `C1.wo_retrieval r5` 在你唤醒时已可收割，**先收割记成绩再写报告**（让报告里的 wo_retrieval 行尽可能完整）；若仍在跑则按上文标「运行中」。
+
 ### 🆕 运维指令 · 2026-10-05（八）— 🚑【优先】请你排查并恢复 ops 中继
 
 **背景**：36.15 的 `zhulong_ops_relay.sh` **自 11:04（RUN_ID 20）后不再响应**（`inbox.md` 已置 `RUN_ID 21`，1 小时+ 未执行）；而 **GitHub 通道本身是通的**（运维与本机都能 `git fetch`）。→ 大概率**中继进程已死/卡住**（很可能是启动时没带 `setsid`，随 ssh 会话断开被带走）。**运维无法登录 36.15，故请你（agent）代为排查并恢复——这是本轮优先动作（先于 Phase B 推进）。**
