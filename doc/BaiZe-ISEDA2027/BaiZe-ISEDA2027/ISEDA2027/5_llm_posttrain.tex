@@ -10,7 +10,7 @@ Because the step changes only the data distribution, we contrast it against an S
 
 \subsection{Supervised Fine-Tuning}\label{sec:posttrain-sft}
 SFT teaches the generate--execute--refine loop that the deployment target requires.
-The corpus combines the agentic instruction set (\texttt{UltraData-SFT-Agent}, $51$\,G) with PyAether-specific material synthesised from API documentation.
+The corpus combines the agentic instruction set (\texttt{UltraData-SFT-Agent-2609}, $51$\,G across 50 shards) and a general instruction set (\texttt{UltraData-SFT-2605}, $319$\,G across 1{,}504 JSONL files, verified byte-identical to the HuggingFace manifest) with PyAether-specific material synthesised from API documentation.
 We ablate the data mixture (agentic / code / mathematics / PyAether), the presence of interleaved tool-call traces, full fine-tuning versus LoRA, and the sequence length: agentic traces---code, tool returns, and successive refinements---routinely exceed the $4096$-token window of Table~\ref{tab:config}, so window extension is treated as a first-class variable rather than a fixed setting.
 
 \subsection{Reinforcement Learning with Verifiable Rewards}\label{sec:posttrain-rl}
@@ -41,7 +41,9 @@ Each task pairs a natural-language prompt and a function signature with assertio
 We follow the benchmark's own protocol so that our numbers are comparable to published ones: five independent runs with reshuffled task order and fresh context, reporting mean Pass@1 and its run-to-run standard deviation, with a $2500$-second per-task timeout and a single non-restartable trace per task.
 
 Two controls make the comparison interpretable.
-First, \emph{contamination}: no task, assertion, or reference solution from the benchmark enters any training split; PyAether training material is drawn only from API documentation, and we isolate it by symbol so that benchmark targets cannot leak.
+First, \emph{contamination}: no task, assertion, or reference solution from the benchmark enters any training split.
+A blacklist of $193{,}295$ character-level 13-gram fingerprints (FNV-1a 64-bit hashed, NFKC-normalised, with 8-gram fallback for short texts) is built from all $536$ tasks across six evaluation snapshots of EDA-Eval-PyAether; every training shard---including SFT corpora---is scanned for ${\geq}0.80$ n-gram overlap before release, with MinHash($k{=}128$) tracing for source attribution.
+PyAether training material is drawn only from API documentation, and we isolate it by symbol so that benchmark targets cannot leak.
 Second, \emph{harness parity}: only the backbone is varied. The retrieval stack, sandbox, anti-cheat hook, and agent scaffold are held byte-identical to the published configuration, because the harness supplies most of the observed accuracy and a variant harness would confound the model's contribution with the scaffold's.
 
 Results are reported as \textbf{[TBD]}.

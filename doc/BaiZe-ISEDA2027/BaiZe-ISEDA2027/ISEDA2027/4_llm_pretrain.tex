@@ -32,8 +32,43 @@ At every stage only a single variable changes relative to the running best, isol
 The architectural search space is validated up front: the hybrid (Mamba2-hybrid) and dense (MiniCPM5-2B) candidates are compared head-to-head from scratch (Section~\ref{sec:arch-rationale}), which selects the hybrid backbone before the hyper-parameter search begins.
 
 \subsection{Data}\label{sec:llm-data}
-Pre-training uses the \texttt{Ultra-FineWeb-L3} English subset ($\approx$1.8\,T tokens), streamed and packed to a sequence length of $4096$, tokenised with the DeepSeek-V4.1-Flash tokenizer (vocabulary size $129{,}281$).
-Complementary corpora---code (\texttt{UltraData-Code}, $1.2$\,T), mathematics (\texttt{UltraData-Math}, $515$\,G), and an agentic instruction-tuning set (\texttt{UltraData-SFT-Agent}, $51$\,G)---are reserved for post-training (Section~\ref{sec:llm-posttrain}).
+Pre-training uses the \texttt{Ultra-FineWeb-L3} English subset ($\approx$690\,B tokens across 616 parquet shards, 618\,GiB), streamed and packed to a sequence length of $4096$, tokenised with the DeepSeek-V4.1-Flash tokenizer (vocabulary size $129{,}281$).
+Complementary corpora---code (\texttt{UltraData-Code}, $\approx$411\,B tokens, 1.22\,TB), mathematics (\texttt{UltraData-Math}, $\approx$303\,B tokens, 552\,GB), and an agentic instruction-tuning set (\texttt{UltraData-SFT-Agent-2609}, $51$\,G)---are reserved for post-training (Section~\ref{sec:llm-posttrain}).
+For the full-scale production run, the larger \texttt{Ultra-FineWeb} base corpus (English high-quality tier, $\approx$2.66\,TB / 6{,}000 parquet shards, plus a Chinese subset of 256 shards / 324\,GB) is being prepared to supersede L3 as the stable-phase main corpus; the L3 subset is retained for the annealing tail.
+Contamination control is enforced before any corpus enters training: a blacklist of $193{,}295$ character-level 13-gram fingerprints (FNV-1a 64-bit hashed, NFKC-normalised) is built from all $536$ tasks across six evaluation snapshots of EDA-Eval-PyAether, and every new data shard---including SFT corpora---is scanned for ${\geq}0.80$ n-gram overlap before release (Section~\ref{sec:posttrain-eval}).
+
+\subsection{Data Mixture Proportion Search}\label{sec:mix-search}
+Because the optimal web/code/math ratio is scale-dependent and a full-scale sweep is infeasible, we searched the three-way mixture at a proxy scale using Bayesian optimisation.
+A compact proxy model ($d{=}128$, $L{=}14$, $\approx$18.36\,M parameters---two orders of magnitude smaller than the 2.2\,B target and not intended as a performance predictor) was trained for each trial under Optuna's \texttt{TPESampler} with \texttt{MedianPruner}, one trial per GPU, global batch size $2048$ at sequence length $4096$.
+The objective was the average accuracy on eight common-sense \texttt{lm-eval} tasks (\texttt{arc\_challenge}, \texttt{arc\_easy}, \texttt{boolq}, \texttt{hellaswag}, \texttt{openbookqa}, \texttt{piqa}, \texttt{sciq}, \texttt{winogrande}), each evaluated with \texttt{-{}-limit~500} subsampling.
+
+Two rounds of 200 trials each were completed.
+In the first round, using final training loss as the objective, the Spearman rank correlation between loss-ranked and accuracy-ranked mixtures was $\rho{=}{-}0.43$, confirming that loss is a weak proxy for downstream ability.
+In the second round, using the eight-task average directly, the top-5 mixtures were retrained and re-evaluated at the full \texttt{lm-eval} scale.
+Table~\ref{tab:mix-topk} reports the results: the full-eval rankings were nearly inverted relative to the Bayesian-optimisation rankings (Spearman $\rho{=}{-}0.80$, $n{=}5$, $p{\approx}0.10$), and the spread across all five mixtures was only $0.383$--$0.390$ ($\approx 0.6$\,pp).
+
+\begin{table}[htbp]
+\centering
+\caption{Top-5 data mixtures from the second Bayesian-optimisation round, retrained and evaluated at full \texttt{lm-eval} scale. The BO ranking (column~5) is nearly inverted relative to the full-eval ranking (column~6), and the score spread is $\approx$$0.6$\,pp.}
+\label{tab:mix-topk}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{cccccc}
+\toprule
+\textbf{Trial} & \textbf{Web} & \textbf{Code} & \textbf{Math} & \textbf{BO} & \textbf{Full} \\
+\midrule
+23  & 0.941 & 0.109 & 0.010 & \textbf{0.4155} & 0.3846 \\
+38  & 0.895 & 0.100 & 0.010 & 0.4138 & 0.3835 \\
+118 & 0.874 & 0.071 & 0.055 & 0.4130 & 0.3877 \\
+199 & 0.931 & 0.098 & 0.010 & 0.4123 & \textbf{0.3899} \\
+33  & 0.940 & 0.086 & 0.010 & 0.4090 & 0.3897 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\emph{At the proxy scale of 18.36\,M parameters, data-mixture rankings were indistinguishable within 0.6\,pp}, leading us to adopt the $88{:}8{:}4$ (web/code/math) prior from the literature rather than over-fitting to proxy-scale noise.
+The empirically optimal region was stable at web $0.87$--$0.94$, code $0.06$--$0.12$, math $\approx$$0.01$, consistent with the prior.
+Raising the discrimination floor---via a larger proxy, multiple seeds, or full-scale evaluation replacing the \texttt{-{}-limit~500} subsampling---is left to future work.
 
 \subsection{Search Budget}\label{sec:llm-budget}
 The pre-training search is bound by a $\approx$92\,GPU-hour plan on eight H100 GPUs ($\approx$192\,GPU-hours wall-clock available); $\approx$85\,GPU-hours were consumed.
