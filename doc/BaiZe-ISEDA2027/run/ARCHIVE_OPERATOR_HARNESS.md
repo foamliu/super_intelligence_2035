@@ -507,3 +507,68 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 
 > ✅ 本块生效即视为已批准 —— 按上表执行，无需再等。
 
+---
+
+### 🆕 运维指令 · 2026-10-08（📄 **SWE-bench 横评分析报告 HTML**）· **用户直令：各线自己写报告** · 高优先
+
+> **用户令**：「把任务下发给各 agent，由 agent 自己写报告，不要替代他们写。」
+> ⚠️ 你的 7-way 横评全完成，`SWEBENCH_COMPARE.html` ✅ 已交付。但长期空转心跳不是正事。**用户点名要 agent 自己写报告**。
+> **本报告要求比 `SWEBENCH_COMPARE.html` 更深一层分析** —— 不仅是结果表，还要有归因、模式分析、对 BaiZe 的启示。
+
+**① 交付**：`report_harness_swebench_analysis.html`（落 `doc/BaiZe-ISEDA2027/`）
+
+**② 格式（沿用 house style）**
+- **自包含**：内联 CSS + **数据图优先内联 SVG**；**零外链**；**HTML 本体 ≤200KB**。
+- 位图一律 **JPEG、长边 ≤1280、q85**、单图 ≤400KB/总量 ≤4MB、**落本地并 commit**；🚫 严禁外链、🚫 严禁用文生图「编」数据图（曲线必须由**真实实测数据**生成）。
+- **开头 1 行指向** `SWEBENCH_COMPARE.html`（结果表已有，不重复贴全文）。
+
+**③ 建议 9 节**
+1. **TL;DR**（3–5 条：cline-patched & Pi 并列第一 60.0% / 7-way 分辨率 40%–60% / kimi-k2.6-cloud 统一 backbone / 关键发现）；
+2. **评测设计**：30 条 SWE-bench Lite × 7 harness / kimi-k2.6-cloud backbone / serial=1 / 统一口径；
+3. **结果总表**（引用 `SWEBENCH_COMPARE.html`，不重复全文）；
+4. ⭐ **失败模式分析**（核心）：按 repo / 任务类型 / 失败原因分类——是工具调用失败？理解错误？patch 不完整？**给出各 harness 的失败模式分布图（内联 SVG）**；
+5. **成本分析**：每 harness 平均轮数 / token 消耗 / 墙钟 / 性价比排名；
+6. **Harness 架构差异**：各 harness 的系统提示/工具调用方式/代码模型差异 → 与表现的相关性；
+7. **对 BaiZe 的启示**：如果 BaiZe 2.2B 作为 backbone，需要哪些能力才能达到类似 60% resolve rate？—— 代码能力 / 工具调用 / 长上下文 / 领域知识；
+8. **局限**：30 条子集 / 单 seed / kimi 非 BaiZe 模型 / 与官方 leaderboard 不可比；
+9. **下一步建议**：扩到 100–300 条 / 换 BaiZe 模型重测 / 加入更多 harness。
+
+**④ 纪律**
+- **数字必须真**：每个数字可由 `kimi_pilot_results.json` / `SWEBENCH_COMPARE.html` 复算；
+- **失败模式分析要有实际日志证据**，不要编造分类；
+- **收尾按「收尾铁律」commit+push**（前缀 `harness 横评分析: …`）；
+- 写完本报告后，若运维无新指令，**可自主做 harness 源码分析（H-B 方向）** —— 深入 cline / Pi / Hermes 的 SWE-bench 实现差异。
+
+> 📦 本块加入后 TASK 约 30KB，仍 ≤32KB ✅。如需归档，只归档下方已闭合旧块。
+
+---
+
+### 🆕 运维指令 · 2026-10-07⑥（🔧 **30 条 SWE-bench 横评再加 2 个 harness ⇒ 7-way**：`Hermes Agent` ＋ `Pi`）· **用户直令** · 高优先
+
+> **用户直令（2026-10-07 21:4x）**：「**harness 的 SWE-Bench（30）对比加两个 harness：Hermes Agent 和 pi。**」
+> ⇒ 现有 5 个（cline-patched / codex / opencode / claude-code / deepseek-harness）＋ **新 2 个** = **7-way × 同一 30 条**。
+
+**① 我已替你定位（🚫 但你要自己复核版本/commit 并贴来源 URL —— 「不许猜」）**
+
+| harness | 是什么 | 入口 | 接自定义/兼容 endpoint | 非交互 |
+|:--|:--|:--|:--|:--|
+| **Hermes Agent** | **`NousResearch/hermes-agent`**（MIT，251.8k★，Python；含 `hermes_cli` / `providers` / `evals` / `docker`；文档 hermes-agent.nousresearch.com/docs） | `hermes`（`hermes setup` 向导） | ✅ **Providers / Environment Variables 可配**（含 OpenAI 兼容） | CLI/headless；**有 Docker 镜像** |
+| **Pi** | **`pi.dev`**（GitHub **`fleetagent/pi`**，Earendil Inc.，MIT，Node/npm；**已发 Pi 1.0**；文档 pi.dev/docs/latest） | npm 装后 `pi` | ✅ **Add Custom Providers / Run Local Models / 兼容 endpoint** | ⭐ **自带 print mode**（脚本化一次性）+ **JSON event stream** + **RPC** + **TS SDK** |
+
+**② 口径（与现有 5 个完全一致，不许破口径）**
+- **同一批 30 条**（现有 pilot `instances/`，**不许换题**）；**同一模型 `kimi-k2.6-cloud`**；**并发 = 1 严格串行**；**quota 失败单列**（不计入失败率）。
+- **评分同口径**：产出的 `model_patch` 走**同一个 `r1_eval.py`（unshare 沙箱）** + **同一 timeout**；报告三列 `resolved / patch-but-failed / quota-blocked`。
+
+**③ 做法（每步都要贴证据）**
+1. **写适配层**：照现有 `run_harness.py` 的 driver，为两个新 harness 各加一个 driver（启动 → 指向 `gw_proxy`@`.29` + 指定 model → **产出 `model_patch`** → 交 `r1_eval.py`）。⚠️ **非交互 flag 必须从官方文档核实并贴 URL**（**Pi 用 print mode**；**Hermes 用其 CLI/headless 方式**）。
+2. **安装**：**显式带 proxy**；**用独立 env / `--target`**，🚫 **别动共享 `py310`**；node/rust 已装过，缺件按老规矩走镜像。
+3. **先 smoke 1 条**（端到端：装 → 起 → 产 patch → 评分），**跑通再上 30 条**；smoke 不通就**如实报卡点（含报错原文）**。
+4. 🚫 **不许打断**正在跑的 chain（`deepseek-harness×30`，PID 1292346）—— **新 harness 排在它之后**（若另起并行槽，**仍必须保持「同一 harness 内并发 = 1」**）。
+
+**④ 交付**
+- `run/harness/SWEBENCH_COMPARE.html` 扩到 **7 行**（每行 `scored / resolved / pbf / quota-blocked / rate`）；`kimi_pilot_results.json` 同步；**口径表**写清：同 30 条 / 同模型 / 并发=1 / 时间窗 / **各 harness 版本或 commit**。
+- 收尾按「收尾铁律」commit+push（前缀 `harness R<n>: …`）。
+
+**时间盒**：装机+打通 ≈ 数小时/个；30 条 × ~5–9 min ≈ **2.5–4.5 h/个** ⇒ **两个 ≈ 1 天（不含装机）**。**先报你的估算**。
+> 📦 体积提醒：本块加入后 `BAIZE_HARNESS_TASK.md` ≈34KB ⇒ 收尾前先归档已闭合旧块（确切字节以你自己 `wc -c` 为准）。
+

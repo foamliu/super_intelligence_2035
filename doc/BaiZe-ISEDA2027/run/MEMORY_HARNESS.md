@@ -7,11 +7,67 @@ WAITING: 1
 ```
 PHASE:        H-A 30×7 cross-eval COMPLETE ✅ + DEEP ANALYSIS REPORT ENHANCED ✅ (§4.5 repo-based analysis added) + H-B 3-WAY SOURCE ANALYSIS ✅ + H-B 7-WAY UNIFIED COMPARISON ✅. cline-patched 60.0% · Pi 60.0% · Hermes 53.3% · opencode 50.0% · codex 46.7% · claude-code 43.3% · deepseek-harness 40.0%. Repo gap: django 56.2% vs sympy 44.8% (+11.4pp).
 已完成:       H-B 7-way unified comparison (HARNESS_7WAY_COMPARISON.html) · H-B 3-way source analysis (HARNESS_3WAY_COMPARISON.html) · H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · 7 harnesses×30 (all COMPLETE) · SWEBENCH_COMPARE.html (21976B) · report_harness_swebench_analysis.html (75647B, 9 sections + §4.5 repo-based, 10 SVG) — at both locations · HARNESS_3WAY_COMPARISON.html (59268B) · HARNESS_7WAY_COMPARISON.html (56352B) — at both doc/BaiZe-ISEDA2027/ and run/harness/
-当前动作:     R183: Health-check heartbeat — all deliverables re-verified intact, no new operator instructions, no running chains. Report complete with 9 sections + §4.5.
-下一步:       <待运维指令> — All H-A and H-B deliverables complete. Possible next: expand to 100-300 instances, swap BaiZe 2.2B backbone, or add more harnesses.
+当前动作:     R184: Operator Q&A (2026-10-08④) — 5 questions answered with data-grounded analysis from kimi_pilot_results.json (480 entries: 210 in 30×7 scope + 270 codex×300 superset). Archived 2 completed TASK blocks + R169-R182 heartbeats.
+下一步:       <待运维指令> — Q&A delivered. Awaiting operator decision on: deep mining / BaiZe endpoint prep / scale expansion / multi-backbone pilot / paper supplements.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
+
+## 🗣️ 运维问答 · 2026-10-08④（下一步工作建议）
+
+> 数据源：`kimi_pilot_results.json`（480 entries = 30×7=210 in-scope + codex×300 superset），全 kimi-k2.6-cloud backbone。
+
+### Q1. 横评数据的深度挖掘
+
+现有报告已覆盖 per-harness resolve rate、per-repo breakdown、failure mode、cost、difficulty。以下 4 角度**尚未覆盖**：
+
+**① Codex 300-instance 全量暴露的子集偏差（最高价值）**：codex 30-subset 46.7% vs 300-full **14.3%**——**3.3 倍偏差**。12 repo 中 7 个 0%（astropy/matplotlib/sklearn/sphinx/pytest/flask/requests），仅 django 28.9%、sympy 7.8% 非零。产出：对比柱状图（30-subset vs 300-full per-repo）。依据：`kimi_pilot_results.json` codex=300 entries。
+
+**② "Nobody solved" 12 条根因深挖**：报告 §4.4 列出 12 条 ALL-fail（40%）但未做根因。逐条检查 `harness_result.stdout_tail`，分类：跨文件修改 / 测试歧义 / 领域知识缺失。依据：12×7=84 entries 的 `stdout_tail`。
+
+**③ Patch 重叠度分析**：18 条 instance 有 2+ harness resolved（ALL=8+SOME=10），提取 `model_patch` 做 diff：convergent（同文件同行）vs divergent（不同方法）。限制：原始 patch 在 `/dev/shm/` 已过期，需重跑或从 git 恢复。
+
+**④ Wall time vs Resolution**：Pi avg 275s 但 60.0%，codex avg 843s 但 46.7%——速度与正确率**负相关**。分析 resolved vs failed 的 wall time 分布。
+
+### Q2. BaiZe backbone 接入评测的前置准备
+
+**P0（立即做）**：① Harness 冻结配置文档化（`harness_frozen_config.yaml` + `harness_adapter_spec.md`，从现有 `run_harness.py`/`run_serial_kimi.py`/`r1_eval.py` 抽取，半天）；② Endpoint 健康检查脚本（`endpoint_health_check.py`，测 `/v1/models` + `/v1/chat/completions` + 延迟，2h）。
+
+**P1（训练前做框架）**：③ 5-run 自动化（扩展 `run_serial_kimi.py` → `run_serial_multi.py --runs N`，聚合 mean±std，1 天）；④ 配对检验（`paired_stats.py`：McNemar + paired bootstrap CI，半天）；⑤ 诊断 D1–D6（从 `r1_eval.py` 抽取为 `diagnostic.py`，半天）。
+
+### Q3. 评测规模扩展的建议
+
+**强烈建议扩到 100–300 条**。依据：codex 30-subset 46.7% vs 300-full 14.3% = 3.3 倍偏差。30 条仅 django+sympy。
+
+**扩优先序**：① django（114/300，补 35–85 条）→ ② sympy（77/300，补 25–35 条）→ ③ sklearn+matplotlib（各 23/300，codex 300 上 0%，测试「完全失败 repo」）→ ④ 不急 sphinx/pytest（与 EDA 相关性低）。
+
+**EDA-Eval-PyAether 管线**：可提前搭建。现有 `run_harness.py`+`r1_eval.py` unshare 沙箱已验证。158 任务若也是「产 patch→跑 test→判 resolved」，管线可直接复用，只需替换数据集+评测脚本+沙箱环境。建议先 kimi 跑 5–10 条 smoke test。**缺什么**：EDA-Eval 158 任务定义文件+评测脚本（需确认是否已有）。
+
+
+
+### Q4. 多 backbone 对比的前置
+
+**现在可跑 pilot 版**，但有条件。**可行**：kimi × 7 harness × 30 条已完成，再跑 kimi × 2 harness × 20 新 instance 验证管线稳定性。**缺什么**：① MiniCPM5-2B endpoint——需 vLLM server，GPU 被训练占满，需等空窗；② DeepSeek-V4-Pro——需运维提供 API key；③ BaiZe base/SFT/RL——训练未完成。**3 阶段建议**：Phase 1（立即可做）kimi × 新 20 条 → Phase 2（等 GPU 空窗）MiniCPM5-2B × 2 harness × 20 条 → Phase 3（BaiZe 完成后）BaiZe-base/SFT/RL × 7 harness × 30+ 条。
+
+### Q5. 对论文的补充建议
+
+**① Harness 方差效应（核心）**：同一 backbone、同一 30 条，7 个 harness resolve rate 从 40.0% 到 60.0%——**20pp 方差完全由 harness 架构差异造成**。报告 BaiZe 成绩必须同时报告所用 harness。依据：210 entries per-harness 40.0%–60.0%。
+**② 子集偏差警告**：codex 30-subset 46.7% vs 300-full 14.3% = 3.3 倍偏差。论文应标注子集选择影响。依据：codex=300 entries。
+**③ 失败模式对训练的启示**：主要失败模式 f2p-fail（90%+），即「知道改哪里但改不对」。对 BaiZe RL——reward signal 应关注「patch 通过 f2p test」而非仅「patch apply」。依据：failure detail 分析。
+**④ 成本-性能 Pareto**：Pi（60.0%, 275s）vs deepseek-harness（40.0%, 293s）wall time 接近但差 20pp。依据：per-harness avg_wall_s + resolve rate。
+**⑤ "Nobody solved" 12 条作为难度基准**：12/30=40% 实例 7 个 harness 全失败，定义为「hard」实例。依据：instance-level ALL/NONE/SOME = 8/12/10。
+
+## 🆕 第一百八十四轮速览（2026-10-08 17:30）— 🗣️ Operator Q&A: 5 questions answered (2026-10-08④)
+
+- 🗣️ **Operator Q&A (2026-10-08④) answered**: 5 questions on next-step work, grounded in `kimi_pilot_results.json` (480 entries: 210 in 30×7 scope + 270 codex×300 superset).
+  - Q1: 4 uncovered angles (codex 300-full subset bias 3.3×, 12 "nobody solved" root cause, patch overlap, wall-vs-resolution)
+  - Q2: 5 prep items (P0: frozen config + endpoint health check; P1: 5-run automation + paired stats + diagnostic D1-D6)
+  - Q3: Expand to 100-300 (django→sympy→sklearn/matplotlib); EDA-Eval pipeline reusable
+  - Q4: 3-phase pilot plan (kimi new-20 → MiniCPM5-2B → BaiZe), needs GPU window + API keys
+  - Q5: 5 paper supplements (harness variance 20pp, subset bias 3.3×, f2p-fail training implication, Pareto frontier, hard-instance benchmark)
+- 📦 **TASK archived**: 2 completed blocks (report HTML + 7-way) → `ARCHIVE_OPERATOR_HARNESS.md` (34.7KB→29.2KB)
+- 📦 **MEMORY archived**: R169-R182 (14 rounds) → `daily-memories-harness/2026-10-08.md`
+- ✅ **No running chains** (pgrep = empty).
 
 ## 🆕 第一百八十三轮速览（2026-10-08 16:38）— 💓 Health-check heartbeat (all deliverables verified complete)
 
@@ -25,125 +81,7 @@ ERROR_COUNT:  0
 - ✅ **No running chains** (pgrep = empty).
 - 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=30034B(29.3KB ✓)（归档 0KB）
 
-## 🆕 第一百八十二轮速览（2026-10-08 16:03）— 📊 Report enhanced: §4.5 Repo-Based Failure Analysis added
-
-- 📊 **Report enhanced**: `report_harness_swebench_analysis.html` upgraded from 64201B→75647B (73.9KB), adding **§4.5 Repo-Based Failure Analysis** per operator instruction "按 repo / 任务类型 / 失败原因分类":
-  - **Grouped bar SVG**: resolve rate by harness × repo (django solid, sympy light) — 7 harnesses × 2 repos
-  - **Stacked bar SVG**: failure mode distribution django vs sympy (resolved/wrong-fix/regression/both-fail/timeout)
-  - **Per-harness table**: django vs sympy resolve rate + gap (cline-patched +13.3, Pi +13.3, Hermes +0.0, claude-code +20.0 largest)
-  - **7 key findings**: django 56.2% vs sympy 44.8% (+11.4pp gap), Hermes only repo-agnostic, sympy 42% more wrong-fix, claude-code largest gap
-  - All data computed from `kimi_pilot_results.json` (210 entries, 30 instances × 7 harnesses)
-- ✅ **Report verified**: 9 main sections + §4.5, 10 inline SVG, 0 external links, self-contained, 73.9KB ≤ 200KB ✅
-- ✅ **Both locations updated**: `doc/BaiZe-ISEDA2027/report_harness_swebench_analysis.html` + `run/harness/report_harness_swebench_analysis.html`
-- ✅ **No new operator instructions** (git fetch = up to date).
-- 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~29KB(28.3KB ✓)（归档 0KB）
-
-## 🆕 第一百八十一轮速览（2026-10-08 15:19）— 💓 Health-check heartbeat (report re-verified complete)
-
-- 💓 **Health-check heartbeat**: Re-verified `report_harness_swebench_analysis.html` (64201B, 586 lines, 9 sections) at both `doc/BaiZe-ISEDA2027/` and `run/harness/`:
-  - §1 TL;DR (5 bullets: cline-patched & Pi 60.0%, 40%-60% spread, backbone bottleneck, 83% wrong-fix, patch-size r≈0.7) ✅
-  - §2 Eval Design (30×7, kimi-k2.6-cloud, serial=1, unshare R1 sandbox) ✅
-  - §3 Results Summary (SVG bar chart + ranking table + difficulty distribution SVG, refs SWEBENCH_COMPARE.html) ✅
-  - §4 Failure Mode Analysis (SVG distribution chart, per-harness profiles, log evidence, 12/30 unsolvable) ✅
-  - §5 Cost Analysis (SVG scatter plot, efficiency ranking res/h, Pi=7.9 most efficient) ✅
-  - §6 Architecture Differences (7-harness comparison table, Bun/TS dominance, tool richness ≠ performance) ✅
-  - §7 BaiZe Implications (6 ranked capabilities, expected BaiZe 2.2B performance estimate) ✅
-  - §8 Limitations (7 points: small sample, single seed, kimi≠BaiZe, non-Docker, not leaderboard) ✅
-  - §9 Next Steps (7 recommendations: expand to 100-300, swap BaiZe backbone, add repos, multi-seed) ✅
-  - Format: self-contained (inline CSS+SVG), zero external links, 64KB ≤ 200KB ✅
-- ✅ **No new operator instructions** (`git fetch` = up to date, origin/main unchanged).
-- ✅ **No running chains** (no `run_serial_kimi` / `chain_*` processes).
-- 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~32KB(31.3KB ✓)（归档 0KB → removed R178 heartbeat to stay under 32KB）
-
-## 🆕 第一百八十轮速览（2026-10-08 14:11）— 💓 Health-check heartbeat (all deliverables verified)
-
-- 💓 **Health-check heartbeat**: All H-A and H-B deliverables verified intact at both locations:
-  - `SWEBENCH_COMPARE.html` (21976B, 7-way results table) ✅
-  - `report_harness_swebench_analysis.html` (64201B, 9 sections) ✅ at both `doc/BaiZe-ISEDA2027/` and `run/harness/`
-  - `HARNESS_3WAY_COMPARISON.html` (59268B, 14 sections) ✅ at both locations
-  - `HARNESS_7WAY_COMPARISON.html` (56352B, 10 sections, 5 SVG) ✅ at both locations
-  - `kimi_pilot_results.json` (532623B, 12791 lines) ✅
-- ✅ **No new operator instructions** (`git fetch` = up to date, origin/main unchanged).
-- ✅ **No running chains** (no `run_serial_kimi` / `chain_*` processes).
-- 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~31KB(30.4KB ✓)（归档 0KB）
-
-## 🆕 第一百七十七轮速览（2026-10-08 12:30）— 📄 H-B 7-WAY UNIFIED COMPARISON DELIVERED (HARNESS_7WAY_COMPARISON.html, 55.0KB)
-
-- 📄 **H-B 7-way unified architecture+performance comparison delivered**: `HARNESS_7WAY_COMPARISON.html` (56352B = 55.0KB, ≤200KB ✓) at both `doc/BaiZe-ISEDA2027/` and `run/harness/`.
-  - **10 sections**: TL;DR · Evaluation Design · Resolve Rate Comparison (7-bar SVG) · Superset Analysis (cline-patched dominance) · Wall Time & Efficiency · Architecture Comparison (7-way table) · Failure Mode Analysis · BaiZe Implications · Limitations · Next Steps
-  - **5 inline SVG charts**: resolve rate bars, 30×7 per-instance heatmap, resolve distribution histogram, wall time bars (avg+median), wall-vs-rate scatter
-  - **Key finding (NEW)**: **cline-patched's resolved set is a strict superset of ALL 6 other harnesses** — no harness solves any instance cline-patched doesn't. This proves the model (kimi-k2.6-cloud) is the ceiling, not the harness.
-  - **Architecture data**: synthesized from 5 individual source analyses (cline/codex/opencode/claude-code/deepseek-harness) + 3-way comparison (Pi/Hermes) — all conclusions cite source reports
-  - **BaiZe recommendation**: Use Pi architecture (7 tools, diff-based, concise prompt, print mode) as BaiZe 2.2B harness template
-- ✅ **gen_7way_report.py** (generator script, 27975B) committed — regenerates report from kimi_pilot_results.json
-- ✅ **No new operator instructions** (`git fetch` = up to date).
-- ✅ **Archived**: R166-R168, R170-R172 (6 old rounds) → daily-memories-harness/2026-10-08.md, freed ~5KB from MEMORY
-- 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~27.5KB(26.9KB ✓)（归档 ~5KB → daily-memories-harness/2026-10-08.md）
-
-## 🆕 第一百七十六轮速览（2026-10-08 11:46）— 📄 H-B 3-way source analysis DELIVERED (HARNESS_3WAY_COMPARISON.html, 57.4KB)
-
-- 📄 **H-B deep source analysis report delivered**: `HARNESS_3WAY_COMPARISON.html` (58809B = 57.4KB, ≤200KB ✓) at both `doc/BaiZe-ISEDA2027/` and `run/harness/`.
-  - **14 sections**: TL;DR · Architecture Overview · System Prompt Comparison · Tool Set Comparison · Agent Loop & Orchestration · Resolve Rate · Resolve Overlap (Venn) · Per-Instance Heatmap · Wall Time Analysis · Failure Mode Analysis · Architecture-Performance Correlation · BaiZe Implications · Limitations · Next Steps
-  - **5 inline SVG charts**: resolve rate bar chart, tool count comparison, 3-circle Venn overlap, 30×3 per-instance heatmap, wall time distribution
-  - **Key findings**: (1) cline-patched & Pi solve identical 18/30 — model is the bottleneck, not harness; (2) Pi 1.7× faster than cline, 2.0× faster than Hermes; (3) Hermes's 2 unique failures (django-10924, django-11422) are p2p_fail — broke existing tests; (4) 12/30 unsolved by all three — model capability ceiling; (5) Tool count inversely correlates with speed (Pi 7 > cline 9 > Hermes 20+)
-  - **Source evidence**: all conclusions cite file:line or kimi_pilot_results.json data — cline system.ts:38-68, Pi system-prompt.js:70-100, Hermes prompt_builder.py:160-169/442-506
-  - **BaiZe recommendations**: ≤7 tools, test-verification prompt, submit_and_exit, ≤200-word system prompt, no retry loops
-- ✅ **gen_3way_report.py** (generator script) + **analyze_3way.py** (data analysis) also committed
-- ✅ **No new operator instructions** (`git fetch` = up to date).
-- 📦 体积：TASK=31.5KB ✓ / MEMORY=~31.0KB ✓（归档 0KB）
-
-## 🆕 第一百七十五轮速览（2026-10-08 10:54）— ✅ Report verification + heartbeat
-
-- ✅ **Report fully verified**: `report_harness_swebench_analysis.html` (64201B = 62.7KB) at both `doc/BaiZe-ISEDA2027/` and `run/harness/` — identical content.
-  - **9 sections** confirmed: TL;DR · Evaluation Design · Results Summary · ⭐Failure Mode Analysis · Cost & Efficiency · Architecture Differences · BaiZe Implications · Limitations · Next Steps
-  - **8 inline SVG charts** confirmed (resolve rate bar, failure mode stacked bar, wall-vs-rate scatter, patch-size-vs-rate scatter, repo grouped bar, difficulty distribution, heatmap table, cost ranking)
-  - **Failure evidence**: 3 categories with actual log snippets (timeout, wrong fix, both fail) from kimi_pilot_results.json stdout_tail
-  - **Data integrity**: kimi_pilot_results.json = 480 entries (30×7 = 210 in scope + 270 codex×300 superset); all numbers reproducible
-  - **Self-contained**: inline CSS + inline SVG, zero external links, zero images, ≤200KB ✓
-- ✅ **No new operator instructions** (`git fetch` = up to date, TASK file unchanged since R174).
-- ✅ **No chains running**: no run_serial_kimi / chain_* processes.
-- 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~29.1KB(28.4KB ✓)（归档 0KB，两者均 ≤32KB 无需归档）
-
-## 🆕 第一百七十四轮速览（2026-10-08 10:20）— 📄 Report location fix + heartbeat
-
-- 📄 **Report location fix**: R173 placed `report_harness_swebench_analysis.html` in `run/harness/`, but operator instruction 2026-10-08 specified `doc/BaiZe-ISEDA2027/`. Copied to correct path `doc/BaiZe-ISEDA2027/report_harness_swebench_analysis.html` (64201B = 62.7KB, identical content).
-- ✅ **No new operator instructions** (`git fetch` = up to date, TASK file unchanged since R173).
-- ✅ **All deliverables intact**: `SWEBENCH_COMPARE.html` (21976B, 210 entries, 106 resolved) + `report_harness_swebench_analysis.html` (now at both `doc/BaiZe-ISEDA2027/` and `run/harness/`) + `kimi_pilot_results.json` (480 entries).
-- ✅ **No chains running**: `pgrep` confirms no `run_serial_kimi` / `chain_*` processes.
-- 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=28070B(27.4KB ✓)（归档 0KB，两者均 ≤32KB 无需归档）
-
-## 🆕 第一百七十三轮速览（2026-10-08 09:30）— 📄 Deep analysis report DELIVERED (report_harness_swebench_analysis.html, 62.7KB)
-
-- 📄 **Deep analysis report delivered** per operator instruction 2026-10-08: `report_harness_swebench_analysis.html` (64201B = 62.7KB, ≤200KB ✓)
-  - **9 sections**: TL;DR · 评测设计 · 结果总表(引用 SWEBENCH_COMPARE.html) · ⭐失败模式分析 · 成本分析 · 架构差异 · BaiZe启示 · 局限 · 下一步
-  - **8 inline SVG charts** (all from real kimi_pilot_results.json data): resolve rate bar chart, failure mode stacked bar, wall-vs-rate scatter, patch-size-vs-rate scatter, repo comparison grouped bar, difficulty distribution, heatmap table, cost ranking table
-  - **Key findings**: cline-patched & Pi tied at 60.0% · 7-way spread 40%-60% · 12/30 nobody solved (backbone ceiling) · 83% failures are "wrong fix" (f2p_fail_only) · patch size correlates with resolve rate (r≈0.7) · Pi most efficient (7.9 res/h)
-  - **Failure evidence**: 3 categories with actual log snippets (timeout, wrong fix, both fail) from kimi_pilot_results.json stdout_tail
-  - **Self-contained**: inline CSS + inline SVG, zero external links, zero images, all numbers reproducible
-- 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~27KB(26.4KB ✓)（归档 0KB，两者均 ≤32KB 无需归档）
-
-> 📦 R170-R172（2026-10-08 07:52~08:58，3× heartbeat health-check）已滚动归档至 `daily-memories-harness/2026-10-08.md`。结论：7-way 结果反复验证完整，无新运维指令。
-
-
-## 🆕 第一百六十九轮速览（2026-10-08 07:15）— ✅ Hermes×30 COMPLETE (16/30 = 53.3%) → 🏆 7-way cross-eval ALL DONE
-
-- ✅ **Hermes×30 COMPLETE**：chain PID 838805 finished at 06:47:30. Final: **16 resolved / 14 pbf = 53.3%** (30/30, 0 blocked).
-  - Last 8 instances (since R168): sympy-13031→pbf, sympy-13043→pbf, sympy-13146→pbf, sympy-13177→pbf, sympy-13437→res✅, sympy-13471→res✅, sympy-13480→res✅, sympy-13647→res✅
-  - Chain auto-regenerated SWEBENCH_COMPARE.html at completion
-- 🏆 **7-way cross-eval ALL COMPLETE** (30 instances, kimi-k2.6-cloud, serial=1):
-
-  | Rank | Harness | Resolved | PBF | Rate |
-  |:--:|:--|--:|--:|:--|
-  | 1 | cline-patched | 18/30 | 12 | **60.0%** |
-  | 1 | Pi | 18/30 | 12 | **60.0%** |
-  | 3 | Hermes | 16/30 | 14 | **53.3%** |
-  | 4 | opencode | 15/30 | 15 | **50.0%** |
-  | 5 | codex | 14/30 | 16 | **46.7%** |
-  | 6 | claude-code | 13/30 | 16 | **43.3%** |
-  | 7 | deepseek-harness | 12/30 | 18 | **40.0%** |
-
-  Total: 210 entries, 106 resolved. SWEBENCH_COMPARE.html = 21976B (final).
-- 📦 体积：TASK=29428B(28.7KB ✓) / MEMORY=见下方自检（归档 R160-R165 → daily）
+> 📦 R169-R182（2026-10-08 07:15~16:03，14 轮：Hermes×30 COMPLETE→7-way ALL DONE→report 交付→3-way/7-way HTML→§4.5→health-check）已滚动归档至 `daily-memories-harness/2026-10-08.md`。结论：7-way 横评全完成（40%–60%），report + 3-way/7-way HTML 均已交付。
 
 > 📦 R166-R168（2026-10-08 05:00~06:07，Hermes×30 progress 19→22/30）已滚动归档至 `daily-memories-harness/2026-10-08.md`。结论：Hermes 推进 19→22/30，最终 16/30=53.3%。
 
@@ -182,7 +120,7 @@ ERROR_COUNT:  0
 
 > 外部运维在 `BAIZE_HARNESS_TASK.md` 的「运维指令区」提问时，答案写在这里。
 
-（暂无）
+（详见上方 `## 🗣️ 运维问答 · 2026-10-08④（下一步工作建议）` 小节，2026-10-08 17:30 已回答 5 个问题。）
 
 ## 启动说明（首次唤醒）
 
