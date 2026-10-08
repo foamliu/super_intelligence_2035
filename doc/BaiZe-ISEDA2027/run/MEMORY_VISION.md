@@ -10,7 +10,7 @@ WAITING: 1
 | WAITING | 1（✅ **全线实验收敛 + 全部交付物完成** — ④ hybrid=1.37% 信息量已获取, Arm A baseline=13.49% 仍最优. 论文+全线报告+AIMv2专项报告均已完成, 待运维审阅+派新任务. 视觉编码器线 R2–R14 全部 closed. |
 | ERROR_COUNT | 5（① R9 w512 首跑 crash：损坏 jpg → data.py 修复 ② 续跑首试 crash：r9_train.py `log()` → 改 `print()` 修复 ③ 8-GPU 并行 eval NFS 争用卡死 → 改 4-GPU r12_single_eval.sh ④ lp bridge crash 缺 `import T` → line 39 加 import ⑤ lp bridge crash CUDA OOM → `extract_features_streaming` 加 `torch.no_grad()` + `linear_probe_mainstream` 加 `Xtr.to(device)`） |
 | BUDGET_USED | R2–R12 ≈215 + R12b(106.4) + lp bridge(5.8) + mask-ratio(78.4+0.5) + weight-ratio(~65.4+0.5) + ④ AIMv2 AR Arm B(2.1) + Arm B-hybrid(~24) ≈ **累计 ~498 GPU·h**（最终） |
-| 更新 | **2026-10-08 17:20（回答运维 2026-10-08③ · 下一步工作建议）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind. ✅ **运维指令 2026-10-08③ 已执行**：在 MEMORY_VISION.md 状态头下方新增「🗣️ 运维问答 · 2026-10-08③」区，逐条回答 4 题（1-未验证假设: w384 AIMv2/C1-lp 背离/R12b epoch-vs-unique/高分辨率 dense; 2-Stage iv 前置: projector/分辨率/冻结vs解冻/特征缓存/数据配对; 3-GPU 利用: P1=w384 AIMv2(~16h)/P2=Protocol B 消融臂(~6h)/P3=336/16(~24h); 4-论文补充: Limitations/Protocol B 横比/R12b 发现/C1-lp 背离/Future Work），每条附实验编号+报告路径为依据。✅ 纯写作，不占 GPU。✅ GPU 8×H100 全 idle. GPIC 下载 ~76%(data线), 方向1仍暂缓. 📦 体积：TASK=30.8KB / MEMORY=31.5KB（均≤32KB✅, 归档 3 条旧流水→daily）· *[更早见 daily-memories-vision/2026-10-08.md]* |
+| 更新 | **2026-10-08 18:00（唤醒巡检 · 全线仍收敛, 无新指令）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind — **无新运维指令**. ✅ 运维指令 2026-10-08③ 已于 17:20 执行完毕（commit 0bb4dc24）. ✅ GPU 8×H100 全 idle (4MiB/卡, 0% util). ✅ 交付物完好: main.pdf+6_vision_encoder.tex+6份HTML报告均在盘. 📦 体积：TASK=31.5KB / MEMORY=31.5KB（均≤32KB✅）· *[更早见 daily-memories-vision/2026-10-08.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
@@ -187,6 +187,7 @@ WAITING: 1
 - [15:10→16:10] *(AIMv2 专项报告补交付 + 补推确认 + 2 次巡检)* — 已归档至 `daily-memories-vision/2026-10-08.md`（report_vision_aimv2_official_vs_ours.html 23.2KB 交付 + git 补推确认 + 交付物完好）
 - [16:44] **唤醒巡检 · 全线仍收敛（CPU-only, 无训练）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind. ✅ GPU 8×H100 全 idle. ✅ 交付物完好: main.pdf+6_vision_encoder.tex+6份HTML报告均在盘. ✅ 体积: TASK=28.9KB / MEMORY=25.6KB（均≤32KB✅）. **视觉编码器线 R2–R14 全线收敛, WAITING=1 待运维派新任务**.
 - [17:20] **回答运维 2026-10-08③ · 下一步工作建议（CPU-only, 纯写作）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind. ✅ **运维指令 2026-10-08③ 已执行**：在 MEMORY_VISION.md 状态头下方新增「🗣️ 运维问答 · 2026-10-08③（下一步工作建议）」区（4 题 × 逐条回答 + 每条附实验依据）：① 未验证假设 4 条（w384 AIMv2 / C1-lp 背离 / R12b epoch-vs-unique / 高分辨率 dense）；② Stage iv 前置 5 项（projector/分辨率/冻结vs解冻/特征缓存/数据配对）；③ GPU 利用 3 候选（P1=w384 AIMv2 ~16h / P2=Protocol B 消融臂 ~6h / P3=336/16 ~24h）；④ 论文补充 5 项（Limitations/Protocol B 横比/R12b 发现/C1-lp 背离/Future Work）。✅ 纯写作不占 GPU。✅ GPU 8×H100 全 idle。📦 体积：TASK=30.8KB / MEMORY=31.5KB（均≤32KB✅, 归档 3 条旧流水→daily）.
+- [18:00] **唤醒巡检 · 全线仍收敛（CPU-only, 无训练）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind — **无新运维指令**. ✅ 运维 2026-10-08③ 已于 17:20 完成(commit 0bb4dc24). ✅ GPU 8×H100 全 idle (4MiB/卡, 0% util). ✅ 交付物完好: main.pdf+6_vision_encoder.tex+6份HTML报告均在盘. ✅ 体积: TASK=31.5KB / MEMORY=31.5KB（均≤32KB✅）. **视觉编码器线 R2–R14 全线收敛, WAITING=1 待运维派新任务**.
 
 ## 历史条目已滚动归档（2026-10-03 / 2026-10-06）
 
