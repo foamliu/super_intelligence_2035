@@ -10,3 +10,14 @@ Serial kimi eval: harness=hermes model=kimi-k2.6-cloud
 [SETUP] astropy__astropy-14182 for hermes
 
 [RUN] hermes on astropy__astropy-14182 ...
+  [EVAL] hermes on astropy__astropy-14182 ...
+  => astropy__astropy-14182 | hermes | patch-but-failed
+
+############################################################
+# [2/37] hermes x mwaskom__seaborn-2848
+############################################################
+
+============================================================
+[SETUP] mwaskom__seaborn-2848 for hermes
+
+[RUN] hermes on mwaskom__seaborn-2848 ...

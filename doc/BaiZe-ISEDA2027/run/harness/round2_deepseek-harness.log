@@ -33,3 +33,65 @@ Serial kimi eval: harness=deepseek-harness model=kimi-k2.6-cloud
 [SETUP] django__django-12125 for deepseek-harness
 
 [RUN] deepseek-harness on django__django-12125 ...
+  [EVAL] deepseek-harness on django__django-12125 ...
+  => django__django-12125 | deepseek-harness | resolved
+
+############################################################
+# [4/29] deepseek-harness x django__django-12184
+############################################################
+
+============================================================
+[SETUP] django__django-12184 for deepseek-harness
+  => django__django-12184 | deepseek-harness | blocked
+
+############################################################
+# [5/29] deepseek-harness x django__django-12284
+############################################################
+
+============================================================
+[SETUP] django__django-12284 for deepseek-harness
+  => django__django-12284 | deepseek-harness | blocked
+
+############################################################
+# [6/29] deepseek-harness x django__django-12286
+############################################################
+
+============================================================
+[SETUP] django__django-12286 for deepseek-harness
+  => django__django-12286 | deepseek-harness | blocked
+
+############################################################
+# [7/29] deepseek-harness x django__django-12589
+############################################################
+
+============================================================
+[SETUP] django__django-12589 for deepseek-harness
+  => django__django-12589 | deepseek-harness | blocked
+
+############################################################
+# [8/29] deepseek-harness x django__django-12708
+############################################################
+
+============================================================
+[SETUP] django__django-12708 for deepseek-harness
+  => django__django-12708 | deepseek-harness | blocked
+
+############################################################
+# [9/29] deepseek-harness x matplotlib__matplotlib-22711
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-22711 for deepseek-harness
+
+[RUN] deepseek-harness on matplotlib__matplotlib-22711 ...
+  [EVAL] deepseek-harness on matplotlib__matplotlib-22711 ...
+  => matplotlib__matplotlib-22711 | deepseek-harness | patch-but-failed
+
+############################################################
+# [10/29] deepseek-harness x pytest-dev__pytest-11143
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-11143 for deepseek-harness
+
+[RUN] deepseek-harness on pytest-dev__pytest-11143 ...

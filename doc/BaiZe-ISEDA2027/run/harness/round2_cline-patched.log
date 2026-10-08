@@ -21,3 +21,14 @@ Serial kimi eval: harness=cline-patched model=kimi-k2.6-cloud
 [SETUP] django__django-11848 for cline-patched
 
 [RUN] cline-patched on django__django-11848 ...
+  [EVAL] cline-patched on django__django-11848 ...
+  => django__django-11848 | cline-patched | patch-but-failed
+
+############################################################
+# [3/38] cline-patched x django__django-11905
+############################################################
+
+============================================================
+[SETUP] django__django-11905 for cline-patched
+
+[RUN] cline-patched on django__django-11905 ...

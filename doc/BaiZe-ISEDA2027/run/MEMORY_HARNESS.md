@@ -5,10 +5,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A ROUND-2 7×100 RUNNING 🔄 (5/7 restarted, pi+codex 100% done) + 口径与并发 MONITORING: quota_blocked=0 ALL → NO parallel pollution ✅ + ⑦ deliverables ✅
-已完成:       R199 SWEBENCH_COMPARE.html refreshed (55973B, 621 entries, 164 resolved) ✅ · R198 · R188 口径与并发 section ✅ · trace report in doc root ✅ · Round-2 restarted (5 parallel, setsid+nohup) ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
-当前动作:     R199: Old Round-2 processes found dead (6 had ppid=1, ~8h old, slow). Killed old + restarted 5 incomplete harnesses with setsid+nohup. SWEBENCH_COMPARE.html refreshed (55973B, 621/700 in-scope, 164 resolved). codex 100/100✅(37.4%), pi 100/100✅(39.1%), hermes 64/100(42.9% 领先), cline 88/100(35.5%), opencode 88/100(31.9%), dsh 93/100(25.4%), claude-code 88/100(22.6%). 5 processes running (ppid=1). quota_blocked=0 ALL ✅.
-下一步:       Continue monitoring Round-2; refresh SWEBENCH_COMPARE.html per harness completion; final 7×100 table + 口径 analysis when all done. ETA: bottleneck hermes 36 rem × ~659s ≈ 6.6h → ~10:00 Oct9; cline/claude-code 12 rem × ~550s → ~05:15; opencode 12 rem × ~431s → ~04:55; dsh 7 rem × ~426s → ~04:15.
+PHASE:        H-A ROUND-2 7×100 RUNNING 🔄 (5 procs alive, pi+codex 100% done) + 口径与并发 MONITORING: quota_blocked=0 ALL → NO parallel pollution ✅ + ⑦ deliverables ✅
+已完成:       R200 SWEBENCH_COMPARE.html refreshed (55942B, 621 entries, 166 resolved) ✅ · R199 · R198 · R188 口径与并发 section ✅ · trace report in doc root ✅ · Round-2 restarted (5 parallel) ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
+当前动作:     R200: Verified 5 Round-2 processes ALIVE (ppid=1, etimes~2420s≈40min). Progress: codex 100/100✅(34.0%), pi 100/100✅(27.0%), hermes 64/100(42.2% 领先), cline 88/100(25.0%), opencode 88/100(25.0%), dsh 93/100(20.4%), claude-code 88/100(17.0%). SWEBENCH_COMPARE.html refreshed (55942B, 621/700, 166 resolved). quota_blocked=0 ALL ✅.
+下一步:       Continue monitoring Round-2; refresh SWEBENCH_COMPARE.html when harnesses complete. ETA: bottleneck hermes 36 rem × ~659s ≈ 6.6h → ~10:50 Oct9; cline/claude-code 12 rem × ~550s → ~06:00; opencode 12 rem × ~431s → ~05:35; dsh 7 rem × ~426s → ~05:00. Final 7×100 table when all done.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -104,6 +104,15 @@ ERROR_COUNT:  0
 - 🔬 **⑦ 监控**：quota_blocked=0 ALL → NO parallel pollution ✅。R2 resolve-rate 差异 = 实例集组成偏差 + eval 环境限制。
 - ⏱️ **ETA**：bottleneck hermes 39 rem × ~659s ≈ 7.1h → ~10:00 Oct9；其他 13-16 rem → ~04:15-05:15
 - 📦 体积：TASK=32870B(32.1KB ✓) / MEMORY=~31KB（归档 R191/R188 → daily-memories）
+
+## 🆕 第二百轮速览（2026-10-09 04:10）— ⑦ 进程存活确认 + SWEBENCH_COMPARE 刷新 (55942B/621entries/166resolved) + Round-2 进度监控
+
+- ✅ **进程存活确认**：5 个 run_serial_kimi.py 父进程 ALIVE（ppid=1, etimes~2420s≈40min）：cline-patched(4037322) · opencode(4038920) · claude-code(4039024) · dsh(4039199) · hermes(4039300)。各有活跃子进程（run_single.py / r1_eval.py）在跑。
+- 📊 **Round-2 进度**（04:10）：codex 100/100✅(34.0%) · pi 100/100✅(27.0%) · hermes 64/100(42.2% 领先) · cline 88/100(25.0%) · opencode 88/100(25.0%) · dsh 93/100(20.4%) · claude-code 88/100(17.0%)（5 procs running）
+- 📊 **SWEBENCH_COMPARE.html**：55942B，621/700 in-scope，166 resolved。R1=30/30 reused，R2 in-progress。含 R1复用/R2新跑 标记列 ✅
+- 🔬 **⑦ 监控**：quota_blocked=0 ALL → NO parallel pollution ✅。R2 resolve-rate 差异 = 实例集组成偏差 + eval 环境限制。
+- ⏱️ **ETA**：bottleneck hermes 36 rem × ~659s ≈ 6.6h → ~10:50 Oct9；其他 7-12 rem → ~05:00-06:00
+- 📦 体积：TASK=32870B(32.1KB) / MEMORY=28278B(27.6KB ✓)
 
 > 📦 R183/R186（2026-10-08 16:38~17:30，health-check + Q&A delivered）已滚动归档至 `daily-memories-harness/2026-10-08.md`。结论：5 questions answered (Q1-Q5)，all deliverables verified intact。需要时再读。
 
