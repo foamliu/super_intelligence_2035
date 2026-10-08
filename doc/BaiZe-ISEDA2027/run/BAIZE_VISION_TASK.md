@@ -5,67 +5,54 @@
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_VISION.md` / `EXPERIMENTS_VISION*` / `daily-memories-vision/` / `vision/`）。⚠️ **唯一例外（2026-10-06）**：按「📉 体积维护规程」，agent **可把「已闭合」的运维块/旧正文【原文】搬入** `run/ARCHIVE_OPERATOR_VISION.md`（**只搬迁、留 1 行指针**；不新增/不改写任何指令）。
 
+---
 
-### 🆕 运维指令 · 2026-10-08（📝 **更新论文 LaTeX：把视觉编码器消融数据写入 `6_vision_encoder.tex`**）· **用户直令：各线自己更新论文** · **等当前实验跑完再改** · 高优先
+### 🏆 最佳实践（BEST PRACTICES）— **2026-10-08 锁定 · 如无特殊指定，一律按此执行**
 
-> **用户令**：「让 pretrain，vision 和 data 更新一下论文。」
-> ⚠️ **不要代笔写 LaTeX** —— 你只负责把你自己的实验数据填入对应的 `.tex` 文件，然后编译 `main.pdf`。
-> ⚠️ **论文在 `BaiZe-ISEDA2027/` 目录下，与任务书同在一个 repo** —— 你直接可见可改。
-> 🕐 **本块不插队**：等 **④ Arm B-hybrid（30k 步）跑完 + IN-1k eval 出结果** 后，再启动论文更新。
+> 以下三项由 R2–R14 全线实验**预注册 + 收敛**后裁定，证据见对应报告/实验记录。
+> **默认执行**：除非运维另有指令，所有视觉编码器训练与评测一律遵循以下配置。
+> **不得回退**：禁止在未经运维明确批准的情况下，使用以下已被实验否定的旧配置。
 
-**① 当前 `6_vision_encoder.tex` 已有基础架构对比（Table~IX）和部分消融，但 R9–R14 的大量新结果、消融实验、AIMv2 范式探索完全没有反映。**
+#### BP-1 · 目标函数 = AIMv2-style dense objective（`--loss aimv2`）
 
-**② 建议更新的内容（自行判断，不一定要全写）：**
-1. **Scaling 结论**：R9 幂律拟合（渐近 25.1%，R²=0.94）→ 可写入 §VI-C，说明数据受限瓶颈。
-2. **宽度（M）边际效应**：R10 2D 拟合（M 边际全区间为负 ≈ −2.2 lp pp/参数翻倍）→ 影响架构锁定结论。
-3. **AIMv2 翻盘**：R11-G lp@55.3M=19.76%（vs 基线 7.40%，R²=0.91）→ 可写入 §VI-B 或新增子节，强化 AIMv2 作为备选。
-4. **消融实验**：mask-ratio 最优 0.6（倒 U 曲线）/ weight-ratio 无翻盘 / caption-weight 与 IN-1k 正交 / R11-F 数据源横比 GPIC 无显著差异。
-5. **InfoNCE 防 AR 坍缩**：Arm B pure AR 坍缩@600 C1=0.9731 vs B-hybrid（+InfoNCE）C1≈0.33 稳定 → 重要科学发现，值得写进论文。
-6. **Table~IX（tab:visarch）**：若有新的更精确数据，可更新。
-7. **更新结论段**：目前结论停留在 OpenVision2 胜出，应反映后续消融对架构锁定的验证。
+| 项 | 值 |
+|:--|:--|
+| **损失** | `1.0 × InfoNCE + 1.0 × masked-patch-MSE`（双向 ViT + 随机掩码） |
+| **文本塔** | 冻结 CLIP-ViT-L/14-336（768-d），**不**解冻 / **不**用 LoRA |
+| **注意力** | **双向**（bidirectional）—— 🚫 禁用 causal AR（④ 已证明坍缩或 lp 极低） |
+| **证据** | R11-G：lp 7.40% → **19.76%**（+12.36 pp，11 点全单调，R²=0.91，无饱和）；3-epoch 续跑达 **20.27%** |
+| **否决项** | ❌ 纯 InfoNCE（天花板 ~7.4%）· ❌ CoCa（caption-CE 坍缩 trunk）· ❌ 纯 AR（step 600 坍缩 C1=0.97）· ❌ AR+InfoNCE hybrid（lp=1.37%，−12.1 pp）· ❌ SigLIP / LocalLoss（均低于基线）· ❌ 文本塔 LoRA 解冻（−0.30~−0.80 pp） |
+| **报告** | `report_vision_aimv2_impl.html` · `EXPERIMENTS_VISION_ROUND11.md §14–§17` |
 
-**③ 格式纪律**
-- 🚫 **不改 § 编号、不改 label、不改 cross-ref** —— 只更新数字、表格行、段落描述。
-- ✅ **可以加子节 / 加段落 / 加表 / 加图** —— 但 label 和 cross-ref 不能冲突。
-- **编译前先 `cd doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027 && rm -f main.aux main.bbl main.blg main.log`，然后 `pdflatex main && bibtex main && pdflatex main && pdflatex main`，确认 0 error。
-- 编译后的 `main.pdf` **一起 commit**。
-- **git 前缀**：`vision 论文更新: ...`
+#### BP-2 · 超参 = mask-ratio 0.6 + contrast:patch weight-ratio 1:1
 
-**④ 本块不撤销之前的报告任务** —— 推荐顺序：**先等实验跑完 → 更新论文 → 再写全线总结报告**。
+| 超参 | 最优值 | 消融设计 | 证据 |
+|:--|:--|:--|:--|
+| `--mask_ratio` | **0.6** | 5 臂（0.3/0.5/0.6/0.75/0.9），倒 U 形，lp@30k=13.49% 为峰 | `EXPERIMENTS_VISION.md` mask-ratio 节 · `report_vision_mask_ratio.html` |
+| `--contrast_weight` / `--patch_loss_weight` | **1.0 / 1.0**（即 1:1） | 4 臂（1:2 / 1:0.5 / 0.5:1 / 2:1），1:1 最优；patch-heavy 方向更宽容但无翻盘；contrast 过高显著有害（−3.28 pp） | `EXPERIMENTS_VISION.md` weight-ratio 节 |
 
-> 📦 本块加入后 TASK 约 34KB（略超 32KB），agent 收尾前先把已闭合旧块归档到 `ARCHIVE_OPERATOR_VISION.md`。
+#### BP-3 · 评测协议 = Protocol B（主流对齐）
 
-### 🆕 运维指令 · 2026-10-08（📄 **视觉编码器全线实验总结报告 HTML**）· **用户直令：各线自己写报告** · **等当前实验跑完再写** · 高优先
+| 项 | Protocol A（旧 · 🚫 废弃为默认） | Protocol B（新 · ✅ 默认） |
+|:--|:--|:--|
+| 优化器 | AdamW lr=3e-3，无 schedule | **SGD + momentum 0.9 + cosine**（5-ep warmup） |
+| Batch size | full-batch（49,970） | **mini-batch 1024** |
+| Epochs | 100（= 100 次梯度更新） | **90**（≈ 112,605 次更新） |
+| Probe-train | 50/类 = 49,970 张 | **IN-1k full train = 1,281,167 张** |
+| Eval 集 | 自切分 val（50/类 = 5,000） | **IN-1k 官方 validation（50k）** |
+| Normalization | CLIP mean/std | **ImageNet mean/std** |
+| 重复 | seed 0 单次 | **3 seeds（0,1,2）→ mean ± σ** |
+| **证据** | Δlp ≈ **+10.05 pp**（B−A，3 ckpts: +10.05/+10.05/+10.17，σ_cross-ckpt=0.06 pp）；主因 = 更新次数 100 vs 112,605（1126×）+ probe-train 25.7× 小 → 分类器欠拟合 | `report_vision_lp_protocol.html` · `vision/lp_protocol_bridge.py` |
+| **内部横比** | 旧实验（R2–R14）均用 Protocol A，相对排序**仍有效**（A/B 排序一致）；但**绝对数字**须标注 "BaiZe internal protocol" | 新实验一律用 Protocol B；**与 DINOv2/MAE/iBOT 等公开值可直接横比** |
 
-> **用户令**：「把任务下发给各 agent，由 agent 自己写报告，不要替代他们写。」
-> ⚠️ 你的 mask-ratio 报告 ✅ 已交付。但**视觉编码器从 R2 到 R14 的全线实验**尚未形成统一总结。**用户点名要 agent 自己写报告**。
-> 🕐 **本块不插队**：等 **④ Arm B-hybrid（30k 步）跑完 + IN-1k eval 出结果** 后，再启动本报告。
+> ⚠️ **Protocol A → B 迁移说明**：旧实验的**相对结论**（架构排名、目标函数翻盘、消融排序）不受协议切换影响—— Protocol A/B 排序一致（20.22>19.77>18.79 vs 30.27>29.94>28.84）。正式训练后的评测一律用 Protocol B；论文中旧数据标 "BaiZe internal protocol"，新数据标 "mainstream protocol"，**不混表**。
 
-**① 交付**：`report_vision_encoder_final.html`（落 `doc/BaiZe-ISEDA2027/`）
+---
 
-**② 格式（沿用 house style）**
-- **自包含**：内联 CSS + **数据图优先内联 SVG**；**零外链**；**HTML 本体 ≤200KB**。
-- 位图一律 **JPEG、长边 ≤1280、q85**、单图 ≤400KB/总量 ≤4MB、**落本地并 commit**；🚫 严禁外链、🚫 严禁用文生图「编」数据图（曲线必须由**真实实测数据**生成）。
-- **开头 1 行指向** `report_vision_mask_ratio.html` / `report_vision_lp_protocol.html`，注明本报告是全线总结，不重复专项细节。
 
-**③ 建议 10 节**
-1. **TL;DR**（3–5 条：w512=126.8M 最优 / R11-G AIMv2 长跑翻盘 lp 19.76% / mask-ratio 最优 0.6 / weight-ratio 无翻盘 / InfoNCE 防 AR 坍缩）；
-2. **实验设计总览**：R2→R14 各轮目的、预算（累计 ~489 GPU·h）、决策链；
-3. **架构选型**：R8 六架构四指标 → OpenVision2 胜出（patch16/d30/w512/InfoNCE）；
-4. **Scaling 实验**：R9 1D scaling（渐近 25.1%，R²=0.94）+ R10 2D 拟合（M 边际全区间为负）+ R11-G AIMv2 翻盘；
-5. **消融实验**：mask-ratio（倒 U 最优 0.6）/ weight-ratio（patch-heavy 更宽容，但无翻盘）/ caption-weight（与 IN-1k 正交）/ R11-F 数据源横比（GPIC 无显著差异）；
-6. **AIMv2 范式探索**：R11-G（长跑翻盘）/ R11-H（纯 AR 无翻盘）/ ④ Arm B-hybrid（含本报告启动时最新结果）；
-7. **文本塔实验**：R11-L 四臂（无一翻盘）/ R11-L2 文本塔解冻 LoRA（−0.80pp）；
-8. **官方对照**：R13 官方 OV2 L/14@224 IN-1k lp=79.81% vs 自研 7.99%（口径差异说明）+ 官方仓库调研结论；
-9. **对正式训练的启示**：架构锁定为 OV2 w512 / 数据需扩量 / 目标函数需 InfoNCE+AR 混合；
-10. **局限与诚实交代**：数据受限 / 单 seed / 代理实验 / 尚未多模态对齐。
+> 📦 §运维指令 · 2026-10-08①（📝 更新论文 LaTeX）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`；**结论**：6_vision_encoder.tex 已更新（mask-ratio 表 + weight-ratio 表 + §VI-D AR 范式探索），main.pdf 11p 0err，commit 6f2baa2b。需要时再读。
 
-**④ 纪律**
-- **数字必须真**：每个数字可由 `EXPERIMENTS_VISION*.md` / 原始日志复算；
-- **先等当前实验（④ Arm B-hybrid）出结果**，把最新数据写进报告；
-- **收尾按「收尾铁律」commit+push**（前缀 `vision 全线总结: …`）。
-
-> 📦 本块加入后 TASK 约 33KB（略超 32KB），agent 收尾前先把已闭合旧块归档到 `ARCHIVE_OPERATOR_VISION.md`。
+> 📦 §运维指令 · 2026-10-08②（📄 全线总结报告 HTML）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`；**结论**：report_vision_encoder_final.html（28.6KB, 10 节/4SVG）+ report_vision_final_20261008.html（v2 最终版）已交付，commit 67a306f8。需要时再读。
 
 > 📦 §运维指令 · 2026-10-07③（mask-ratio 消融报告 HTML）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：report_vision_mask_ratio.html 已交付（34.3KB, 8节+2SVG, 倒U形 0.6 最优, commit ee9db3ca）。需要时再读。
 
