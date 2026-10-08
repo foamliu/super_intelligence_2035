@@ -12,11 +12,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        en_base s24-s33 @~65%(.bin~53.5GiB/shard,ETA~03:30-04:30Oct9)+GPIC 6370/8001(ETA~1.2d)
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a已kill；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43+report; s_step归因(MBS16:8.6×,166ms)+report; Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾全完成(ρ=−0.80); report_data_mix_eval_r2.html+report_data_mix_summary.html+report_data_pipeline_status.html; zh分词8/8✅(112.47B tok); ✅论文更新(4+5节,main.pdf 0err); ✅l1_en_hq分词12/12全完成(152.17B tok); ✅ultrax分词s34-s43全完成(30.97B tok); ✅en_base分词s24-s33进行中(10进程,@~65%,ETA~03:30-04:30Oct9)
-当前动作:     唤醒235(22:22@.12) 巡检后台:en_base s24-s33@~65%(.bin~53.5GiB,~13.4B/20.7B tok,ETA~03:30Oct9)+GPIC 6370/8001(+32,~56tar/h)+心跳更新
-下一步:       ①en_base s24-s33完成(ETA~03:30-04:30Oct9)→报en_base总token(~207B)+check_contamination; ②GPIC续下(6370/8001,ETA~1.2d); ③en_v1_4排队等放行; ④新分词产物投料前过check_contamination.py
-阻塞:         en_base s24-s33进行中(ETA~03:30-04:30Oct9); GPIC下载进行中(6370/8001,ETA~1.2d)
+PHASE:        en_base s24-s33 @~69%(.bin~53.4GiB/shard,ETA~03:15Oct9)+GPIC 6399/8001(ETA~1.4d)
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满；base分词(22.05B tok)；D-CLEAN-1/2/3/4；S0a已kill；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43+report; s_step归因(MBS16:8.6×,166ms)+report; Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾全完成(ρ=−0.80); report_data_mix_eval_r2.html+report_data_mix_summary.html+report_data_pipeline_status.html; zh分词8/8✅(112.47B tok); ✅论文更新(4+5节,main.pdf 0err); ✅l1_en_hq分词12/12全完成(152.17B tok); ✅ultrax分词s34-s43全完成(30.97B tok); ✅en_base分词s24-s33进行中(10进程,@~69%,ETA~03:15Oct9)
+当前动作:     唤醒236(22:59@.12) 巡检后台:en_base s24-s33@~69%(.bin~53.4GiB,~14.3B/20.7B tok,ETA~03:15Oct9)+GPIC 6399/8001(+29,~47tar/h)+心跳更新
+下一步:       ①en_base s24-s33完成(ETA~03:15Oct9)→报en_base总token(~207B)+check_contamination; ②GPIC续下(6399/8001,ETA~1.4d); ③en_v1_4排队等放行; ④新分词产物投料前过check_contamination.py
+阻塞:         en_base s24-s33进行中(ETA~03:15Oct9); GPIC下载进行中(6399/8001,ETA~1.4d)
 ERROR_COUNT:  1
 ```
 
@@ -37,6 +37,7 @@ ERROR_COUNT:  1
 - [21:03] **唤醒233**：①本机=`.12`。②**en_base s24-s33**：10进程全活(PPID3251929,ppid=1✅,nice-10,etimes~28300s≈7.9h,100%CPU)。各.bin~46.7GiB(46.7-47.0GB,无.idx),stat确认仍在增长(+4.4MB/3s=1.47MB/s per shard瞬时;s24=46750475484B vs l1_en_hq s12完成=46626938960B=100.2%→已达到/略超l1_en_hq完成shard尺寸,即将完成)。ETA~21:30-22:00 Oct8。③**GPIC** 6311/8001(+28 since 20:30,~51tar/h)+128/128 test✅,PID144981活(via download_it_pairs.sh PID3525273),latest=gpic_train_06310@21:05,0 .incomplete,ETA(8001-6311)/51≈33h≈1.4d→~Oct 10 morning。④**Token inventory(精确from .json,34 shards with .idx)**：s0-s3=22.05B✅·s4-s11=112.47B✅·s12-s23=152.04B✅·s34-s43=30.97B✅→**grand total completed=317.67B tok(P-8 target~100B EXCEEDED 3.2x)**。en_base s24-s33待完成(预期~207B)→最终~525B。⑤base✅全满·UltraX✅479/479·en_v1_4排队。⑥git fetch(proxy)=up to date,无新运维指令。⑦load=61.80/224核(10 en_base@100%+GPIC+vision训练,可控)。⑧disk:/nas_train 84%(36T free),/tmp 24%(72G free),mix_base=1.6T。⑨📦体积:TASK=28.8KB✅/MEMORY=29.0KB✅(无需归档)。下载线心跳：base ✅全满 | GPIC 6311/8001（活PID144981,+28,~51tar/h,ETA~1.4d）| UltraX ✅479完成 | en_v1_4 排队 | zh 8/8✅(112.47B) | l1_en_hq 12/12✅(152.04B) | ultrax 10/10✅(30.97B) | en_base s24-s33 10进程@~98%(.bin~46.7GiB,ETA~21:40Oct8)。
 - [21:48] **唤醒234**：①本机=`.12`。②**🔴en_base ETA重大纠正**：前几轮心跳(唤醒231-233)报"en_base s24-s33 @~85-98%, ETA~21:40-22:00 Oct8"——**错误**。根因：误用.bin尺寸对比l1_en_hq完成shard(47GiB)判断进度，但en_base(ultrafineweb_en)每shard~20.7B tok远大于l1_en_hq(~11.7B)→最终.bin~80GiB而非47GiB。**实测**：du≈ls(.bin非prealloc,是真实数据),s24.bin=50,495,685,424B=12.62B tok(50.5G/4B)。log stale@19:44(Python stdout buffer,2h未刷新),log最后=9.83B tok@23406s→实际.bin=12.62B。预期total~20.7B tok/shard(45parquet×459M tok/file)→**实际进度~61%**,rate~378K tok/s/shard(从.bin增长:46.7→50.5GiB/39min),remaining~8.1B→ETA~5.9h→**~03:30-04:30 Oct9**。10/10进程活(PPID3251929,ppid=1✅,nice-10,~8.5h)。③**GPIC** 6338/8001(+27 since 21:03,~49tar/h)+128/128test✅,PID144981活,latest=06337@21:39,0.incomplete,ETA~1.2d→~Oct10 morning。④**Token inventory(精确from .json,34 shards with .idx)**:s0-s3=22.05B·s4-s11=112.47B·s12-s23=152.17B·s34-s43=30.97B→**total=317.67B completed(P-8~100B exceeded3.2x)**。en_base s24-s33待完成(预期~207B)→最终~525B。⑤base✅全满·UltraX✅479·en_v1_4排队。⑥git fetch(proxy)=up to date,无新运维指令。⑦load=54/224核(10 en_base@100%+GPIC+vision,可控)。⑧disk:/nas_train 83%(36T free),mix_base~1.7T。⑨📦体积:TASK=28.8KB✅/MEMORY=30.1KB→~31KB✅(无需归档)。下载线心跳：base✅全满|GPIC 6338/8001(活PID144981,+27,~49tar/h,ETA~1.2d)|UltraX✅479|en_v1_4排队|zh 8/8✅(112.47B)|l1_en_hq 12/12✅(152.17B)|ultrax 10/10✅(30.97B)|en_base s24-s33 10进程@~61%(.bin~50GiB,ETA~03:30-04:30Oct9)。
 - [22:22] **唤醒235**：①本机=`.12`。②**en_base s24-s33**：10/10进程活(PPID3251929,ppid=1✅,nice-10,etimes~33117s≈9.2h,100%CPU)。各.bin~53.5GiB(无.idx,仍增长),s24=53,562,478,152B=13.39B tok。预期total~20.7B tok/shard→**~65%done**。rate~400K tok/s/shard(.bin 50.5→53.5GiB/34min),remaining~7.3B→ETA~5.4h→**~03:30-04:30 Oct9**(与唤醒234判断一致,on track)。③**GPIC** 6370/8001(+32 since 21:48,~56.5tar/h)+128/128test✅,PID144981活,latest=06369@22:23,1.incomplete(正常),ETA(8001-6370)/56.5≈28.9h≈1.2d→~Oct10 morning。④**Token inventory(34 shards with .idx)**:s0-s3=22.05B·s4-s11=112.47B·s12-s23=152.17B·s34-s43=30.97B→**total=317.67B completed**。en_base s24-s33待完成(预期~207B)→最终~525B。⑤base✅全满·UltraX✅479·en_v1_4排队。⑥git fetch(proxy)=up to date,无新运维指令。⑦load=59.78/224核(10 en_base@100%+GPIC+vision R9训练8proc,可控)。⑧disk:/nas_train 83%(37T free),/tmp 24%(72G free)。⑨📦体积:TASK=28.8KB✅/MEMORY=31.2KB✅(接近上限,无需归档)。下载线心跳：base✅全满|GPIC 6370/8001(活PID144981,+32,~56.5tar/h,ETA~1.2d)|UltraX✅479|en_v1_4排队|zh 8/8✅(112.47B)|l1_en_hq 12/12✅(152.17B)|ultrax 10/10✅(30.97B)|en_base s24-s33 10进程@~65%(.bin~53.5GiB,ETA~03:30-04:30Oct9)。
+- [22:59] **唤醒236**：①本机=`.12`。②**en_base s24-s33**：10/10进程活(PPID3251929,ppid=1✅,nice-10,etimes~35640s≈9.9h,100%CPU)。s24@part-0079/0093=file31/45=69%,各.bin~53.4GiB(无.idx,s24=57,292,377,964B=14.32B tok)。rate~1.51B tok/h/shard(.bin 53.56→57.29GB/37min),remaining~6.4B→ETA~4.2h→**~03:15 Oct9**(on track)。③**GPIC** 6399/8001(+29 since 22:22,~47tar/h)+128/128test✅,PID144981活,latest=06398@23:01,1.incomplete(正常),ETA(8001-6399)/47≈34h≈1.4d→~Oct10 morning。④**Token inventory(34 shards with .idx)**:s0-s3=22.05B·s4-s11=112.47B·s12-s23=152.17B·s34-s43=30.97B→**total=317.66B completed**。en_base s24-s33待完成(预期~207B,当前~143B)→最终~525B。⑤base✅全满·UltraX✅479·en_v1_4排队。⑥git fetch(proxy)=up to date,无新运维指令。⑦load=60.18/224核(10 en_base@100%+GPIC+vision R9@.29 8GPU,可控)。⑧disk:/nas_train 83%(37T free),mix_base=1.8T。⑨📦体积:TASK=28.8KB✅/MEMORY=~30.5KB✅(无需归档)。下载线心跳：base✅全满|GPIC 6399/8001(活PID144981,+29,~47tar/h,ETA~1.4d)|UltraX✅479|en_v1_4排队|zh 8/8✅(112.47B)|l1_en_hq 12/12✅(152.17B)|ultrax 10/10✅(30.97B)|en_base s24-s33 10进程@~69%(.bin~53.4GiB,ETA~03:15Oct9)。
 > 📦 唤醒219-221 已归档 → `daily-memories-data/2026-10-08.md`（含l1_en_hq分词12进程启动+巡检进度+GPIC计数）
 > 📦 唤醒211-218 原文已归档 → `daily-memories-data/2026-10-08.md`（含zh s9完成+论文更新+l1_en_hq巡检全链+GPIC巡检）
 > 📦 唤醒207-210 原文已归档 → `daily-memories-data/2026-10-08.md`（含zh分词巡检+report修正+GPIC巡检）
@@ -113,11 +114,11 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **后台: en_base s24-s33 10进程@~65%(ETA~03:30-04:30Oct9) + GPIC 6370/8001** |
-| WAITING | 1（en_base s24-s33 ETA~03:30-04:30Oct9; GPIC 6370/8001 ETA~1.2d） |
+| PHASE | **后台: en_base s24-s33 10进程@~69%(ETA~03:15Oct9) + GPIC 6399/8001** |
+| WAITING | 1（en_base s24-s33 ETA~03:15Oct9; GPIC 6399/8001 ETA~1.4d） |
 | ERROR_COUNT | 1（s9崩溃重启后已完成） |
-| 节点 | `10.239.2.29`（8GPU=pretrain R3）+`.12`（GPIC下载PID=144981活 + en_base分词10进程(s24-s33), nice-10） |
-| 更新 | 2026-10-08 22:22 |
+| 节点 | `10.239.2.29`（8GPU=pretrain R3 BO trial65-72）+`.12`（GPIC下载PID=144981活 + en_base分词10进程(s24-s33), nice-10） |
+| 更新 | 2026-10-08 22:59 |
 
 ## 看板（按推荐执行顺序）
 
