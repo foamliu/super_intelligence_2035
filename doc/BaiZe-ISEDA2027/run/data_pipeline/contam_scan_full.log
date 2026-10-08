@@ -1,0 +1,26 @@
+=== Comprehensive Contamination Scan ===
+Start: Fri Oct  9 05:12:03 AM CST 2026
+Sources: en_base(10) + l1_en_hq(12) + zh(10) = 32 files × 5K docs = 160K docs
+
+--- en_base: ultrafineweb-en-part-0001-of-2048.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-en-part-0001-of-2048.md
+  → docs=5000 hits=0
+--- en_base: ultrafineweb-en-part-0205-of-2048.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-en-part-0205-of-2048.md
+  → docs=5000 hits=0
+--- en_base: ultrafineweb-en-part-0409-of-2048.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-en-part-0409-of-2048.md
+  → docs=5000 hits=0
+--- en_base: ultrafineweb-en-part-0613-of-2048.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-en-part-0613-of-2048.md
+  → docs=5000 hits=0
+--- en_base: ultrafineweb-en-part-0817-of-2048.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-en-part-0817-of-2048.md
+  → docs=5000 hits=0
+--- en_base: ultrafineweb-en-part-1021-of-2048.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-en-part-1021-of-2048.md
+  → docs=5000 hits=0
+--- en_base: ultrafineweb-en-part-1225-of-2048.parquet ---
+[done] 扫描 5000 文档 / 命中 0；报告写入 /tmp/contam_ultrafineweb-en-part-1225-of-2048.md
+  → docs=5000 hits=0
+--- en_base: ultrafineweb-en-part-1429-of-2048.parquet ---
