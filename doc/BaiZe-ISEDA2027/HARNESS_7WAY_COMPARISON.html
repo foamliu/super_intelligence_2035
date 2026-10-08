@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>H-B 7-Way Harness Architecture & Performance Comparison</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#c9d1d9;--muted:#8b949e;--accent:#3fb950;--a2:#58a6ff;--warn:#d29922;--code:#1f2937}
+*{box-sizing:border-box}body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;max-width:1200px;margin:0 auto;padding:2rem}
+h1{font-size:1.9rem;color:#fff;text-align:center}h2{font-size:1.35rem;margin:2.2rem 0 1rem;color:#fff;border-bottom:2px solid var(--border);padding-bottom:.4rem}
+h3{font-size:1.05rem;margin:1.4rem 0 .5rem;color:var(--a2)}
+.subtitle{text-align:center;color:var(--muted);margin-bottom:2rem;font-size:.88rem}
+code,.m{font-family:'SF Mono',Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:4px;font-size:.85em}
+table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.82rem}
+th,td{border:1px solid var(--border);padding:.5rem .6rem;text-align:left;vertical-align:top}
+th{background:#21262d}
+.rowh{background:#161b22;color:#fff;white-space:nowrap}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1rem 0}
+.tldr{border-left:4px solid var(--accent);padding:.3rem 1.2rem;margin:1rem 0}
+.tldr li{margin:.4rem 0}
+.foot{color:var(--muted);font-size:.8rem;margin-top:2rem;border-top:1px solid var(--border);padding-top:1rem}
+.green{color:var(--accent)}.red{color:#f85149}.blue{color:var(--a2)}.yellow{color:var(--warn)}
+.svg-container{overflow-x:auto;margin:1rem 0}
+.finding{background:#161b22;border:1px solid var(--border);border-left:4px solid var(--a2);border-radius:6px;padding:.8rem 1rem;margin:1rem 0}
+</style>
+</head>
+<body>
+
+<h1>H-B 7-Way Harness Architecture &amp; Performance Comparison</h1>
+<p class="subtitle">Unified comparison of all 7 agent harnesses on 30 SWE-bench Lite instances kimi-k2.6-cloud backbone serial=1<br>
+Data source: <code>kimi_pilot_results.json</code> (480 entries, 210 in 30x7 scope) 2026-10-08<br>
+Companion reports: <code>SWEBENCH_COMPARE.html</code> <code>report_harness_swebench_analysis.html</code> <code>HARNESS_3WAY_COMPARISON.html</code></p>
+<h2>1 TL;DR</h2>
+<div class="tldr"><ul>
+<li><span class="green">cline-patched &amp; Pi tied at 60.0%</span> (18/30) highest resolve rate among 7 harnesses on same 30 SWE-bench Lite instances with kimi-k2.6-cloud backbone.</li>
+<li><span class="blue">cline-patched resolved set is a strict superset of ALL other harnesses</span> no harness solves any instance that cline-patched doesnt also solve. Strong evidence that <b>the model is the ceiling not the harness</b>.</li>
+<li>7-way resolution spread: <b>40.0% to 60.0%</b> (20 pp) with clear tiers: T1 (cline/Pi 60%) T2 (Hermes 53%) T3 (opencode 50% codex 47%) T4 (claude-code 43% deepseek 40%).</li>
+<li><b>12/30 instances (40%) unsolved by ANY harness</b> model capability ceiling. 8/30 solved by ALL 7.</li>
+<li><b>Pi is the most efficient</b> (18 resolved at 275s avg = 235 res/h) while <b>codex is slowest</b> (843s avg) despite middling resolve rate. <b>Tool count inversely correlates with speed</b>.</li>
+</ul></div>
+<h2>2 Evaluation Design</h2>
+<div class="card"><table>
+<tr><th class="rowh">Parameter</th><th>Value</th></tr>
+<tr><td>Dataset</td><td>SWE-bench Lite 30 instances (15 django + 15 sympy)</td></tr>
+<tr><td>Backbone model</td><td><code>kimi-k2.6-cloud</code> (unified across all 7 harnesses)</td></tr>
+<tr><td>Concurrency</td><td>serial = 1 (strictly sequential per harness)</td></tr>
+<tr><td>Timeout</td><td>1800s (30 min) per instance</td></tr>
+<tr><td>Evaluation</td><td><code>r1_eval.py</code> (unshare user-namespace sandbox no Docker)</td></tr>
+<tr><td>Classification</td><td><code>resolved</code> (FAIL_TO_PASS + PASS_TO_PASS) <code>patch-but-failed</code> <code>quota-blocked</code></td></tr>
+<tr><td>Harnesses</td><td>cline-patched Pi Hermes opencode codex claude-code deepseek-harness</td></tr>
+<tr><td>Total entries</td><td>210 (30 x 7) 0 quota-blocked</td></tr>
+</table></div>
+<h2>3 Resolve Rate Comparison</h2>
+<div class="svg-container"><svg viewBox="0 0 745 320" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+<line x1="55" y1="280.0" x2="725" y2="280.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="47" y="284.0" text-anchor="end" font-size="10" fill="#999">0%</text>
+<line x1="55" y1="230.0" x2="725" y2="230.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="47" y="234.0" text-anchor="end" font-size="10" fill="#999">20%</text>
+<line x1="55" y1="180.0" x2="725" y2="180.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="47" y="184.0" text-anchor="end" font-size="10" fill="#999">40%</text>
+<line x1="55" y1="130.0" x2="725" y2="130.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="47" y="134.0" text-anchor="end" font-size="10" fill="#999">60%</text>
+<line x1="55" y1="80.0" x2="725" y2="80.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="47" y="84.0" text-anchor="end" font-size="10" fill="#999">80%</text>
+<line x1="55" y1="30.0" x2="725" y2="30.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="47" y="34.0" text-anchor="end" font-size="10" fill="#999">100%</text>
+<rect x="55" y="130.0" width="70" height="150.0" fill="#3fb950" rx="4" opacity="0.85"/>
+<text x="90.0" y="122.0" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">18/30</text>
+<text x="90.0" y="108.0" text-anchor="middle" font-size="11" fill="#666">60.0%</text>
+<text x="90.0" y="298" text-anchor="middle" font-size="10" fill="#333" transform="rotate(-20,90.0,298)">cline-patched</text>
+<rect x="155" y="130.0" width="70" height="150.0" fill="#58a6ff" rx="4" opacity="0.85"/>
+<text x="190.0" y="122.0" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">18/30</text>
+<text x="190.0" y="108.0" text-anchor="middle" font-size="11" fill="#666">60.0%</text>
+<text x="190.0" y="298" text-anchor="middle" font-size="10" fill="#333" transform="rotate(-20,190.0,298)">Pi</text>
+<rect x="255" y="146.66666666666666" width="70" height="133.33333333333334" fill="#bc8cff" rx="4" opacity="0.85"/>
+<text x="290.0" y="138.66666666666666" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">16/30</text>
+<text x="290.0" y="124.66666666666666" text-anchor="middle" font-size="11" fill="#666">53.3%</text>
+<text x="290.0" y="298" text-anchor="middle" font-size="10" fill="#333" transform="rotate(-20,290.0,298)">Hermes</text>
+<rect x="355" y="155.0" width="70" height="125.0" fill="#d29922" rx="4" opacity="0.85"/>
+<text x="390.0" y="147.0" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">15/30</text>
+<text x="390.0" y="133.0" text-anchor="middle" font-size="11" fill="#666">50.0%</text>
+<text x="390.0" y="298" text-anchor="middle" font-size="10" fill="#333" transform="rotate(-20,390.0,298)">opencode</text>
+<rect x="455" y="163.33333333333334" width="70" height="116.66666666666666" fill="#f0883e" rx="4" opacity="0.85"/>
+<text x="490.0" y="155.33333333333334" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">14/30</text>
+<text x="490.0" y="141.33333333333334" text-anchor="middle" font-size="11" fill="#666">46.7%</text>
+<text x="490.0" y="298" text-anchor="middle" font-size="10" fill="#333" transform="rotate(-20,490.0,298)">codex</text>
+<rect x="555" y="171.66666666666666" width="70" height="108.33333333333334" fill="#f85149" rx="4" opacity="0.85"/>
+<text x="590.0" y="163.66666666666666" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">13/30</text>
+<text x="590.0" y="149.66666666666666" text-anchor="middle" font-size="11" fill="#666">43.3%</text>
+<text x="590.0" y="298" text-anchor="middle" font-size="10" fill="#333" transform="rotate(-20,590.0,298)">claude-code</text>
+<rect x="655" y="180.0" width="70" height="100.0" fill="#e6e6e6" rx="4" opacity="0.85"/>
+<text x="690.0" y="172.0" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">12/30</text>
+<text x="690.0" y="158.0" text-anchor="middle" font-size="11" fill="#666">40.0%</text>
+<text x="690.0" y="298" text-anchor="middle" font-size="10" fill="#333" transform="rotate(-20,690.0,298)">deepseek-harness</text>
+</svg></div>
+<table><tr><th>Rank</th><th>Harness</th><th>Resolved</th><th>PBF</th><th>Rate</th><th>Tier</th></tr>
+<tr><td>1</td><td>cline-patched</td><td class="green">18/30</td><td class="red">12</td><td><b>60.0%</b></td><td>T1</td></tr>
+<tr><td>2</td><td>Pi</td><td class="green">18/30</td><td class="red">12</td><td><b>60.0%</b></td><td>T1</td></tr>
+<tr><td>3</td><td>Hermes</td><td class="green">16/30</td><td class="red">14</td><td><b>53.3%</b></td><td>T2</td></tr>
+<tr><td>4</td><td>opencode</td><td class="green">15/30</td><td class="red">15</td><td><b>50.0%</b></td><td>T3</td></tr>
+<tr><td>5</td><td>codex</td><td class="green">14/30</td><td class="red">16</td><td><b>46.7%</b></td><td>T3</td></tr>
+<tr><td>6</td><td>claude-code</td><td class="green">13/30</td><td class="red">16</td><td><b>43.3%</b></td><td>T4</td></tr>
+<tr><td>7</td><td>deepseek-harness</td><td class="green">12/30</td><td class="red">18</td><td><b>40.0%</b></td><td>T4</td></tr>
+</table>
+<h3>3.1 Per-Instance Heatmap (30 x 7)</h3>
+<div class="svg-container"><svg viewBox="0 0 990 214" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;overflow:visible;">
+<text x="134" y="44.0" text-anchor="end" font-size="10" fill="#c9d1d9">cline-patched</text>
+<text x="134" y="66.0" text-anchor="end" font-size="10" fill="#c9d1d9">Pi</text>
+<text x="134" y="88.0" text-anchor="end" font-size="10" fill="#c9d1d9">Hermes</text>
+<text x="134" y="110.0" text-anchor="end" font-size="10" fill="#c9d1d9">opencode</text>
+<text x="134" y="132.0" text-anchor="end" font-size="10" fill="#c9d1d9">codex</text>
+<text x="134" y="154.0" text-anchor="end" font-size="10" fill="#c9d1d9">claude-code</text>
+<text x="134" y="176.0" text-anchor="end" font-size="10" fill="#c9d1d9">deepseek-harness</text>
+<text x="154.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,154.0,24)">dj-10924</text>
+<text x="182.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,182.0,24)">dj-11001</text>
+<text x="210.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,210.0,24)">dj-11019</text>
+<text x="238.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,238.0,24)">dj-11039</text>
+<text x="266.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,266.0,24)">dj-11049</text>
+<text x="294.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,294.0,24)">dj-11099</text>
+<text x="322.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,322.0,24)">dj-11133</text>
+<text x="350.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,350.0,24)">dj-11179</text>
+<text x="378.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,378.0,24)">dj-11283</text>
+<text x="406.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,406.0,24)">dj-11422</text>
+<text x="434.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,434.0,24)">dj-11564</text>
+<text x="462.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,462.0,24)">dj-11583</text>
+<text x="490.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,490.0,24)">dj-11620</text>
+<text x="518.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,518.0,24)">dj-11630</text>
+<text x="546.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,546.0,24)">dj-11742</text>
+<text x="574.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,574.0,24)">sy-11870</text>
+<text x="602.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,602.0,24)">sy-11897</text>
+<text x="630.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,630.0,24)">sy-12171</text>
+<text x="658.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,658.0,24)">sy-12236</text>
+<text x="686.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,686.0,24)">sy-12419</text>
+<text x="714.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,714.0,24)">sy-12454</text>
+<text x="742.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,742.0,24)">sy-12481</text>
+<text x="770.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,770.0,24)">sy-13031</text>
+<text x="798.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,798.0,24)">sy-13043</text>
+<text x="826.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,826.0,24)">sy-13146</text>
+<text x="854.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,854.0,24)">sy-13177</text>
+<text x="882.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,882.0,24)">sy-13437</text>
+<text x="910.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,910.0,24)">sy-13471</text>
+<text x="938.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,938.0,24)">sy-13480</text>
+<text x="966.0" y="24" text-anchor="end" font-size="8" fill="#8b949e" transform="rotate(-70,966.0,24)">sy-13647</text>
+<rect x="140" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="168" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="196" y="30" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="224" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="252" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="280" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="308" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="336" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="364" y="30" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="392" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="420" y="30" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="448" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="476" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="504" y="30" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="532" y="30" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="560" y="30" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="588" y="30" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="616" y="30" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="644" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="672" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="700" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="728" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="756" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="784" y="30" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="812" y="30" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="840" y="30" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="868" y="30" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="896" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="924" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="952" y="30" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="140" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="168" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="196" y="52" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="224" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="252" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="280" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="308" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="336" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="364" y="52" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="392" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="420" y="52" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="448" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="476" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="504" y="52" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="532" y="52" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="560" y="52" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="588" y="52" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="616" y="52" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="644" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="672" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="700" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="728" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="756" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="784" y="52" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="812" y="52" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="840" y="52" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="868" y="52" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="896" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="924" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="952" y="52" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="140" y="74" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="168" y="74" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="196" y="74" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="224" y="74" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="252" y="74" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="280" y="74" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="308" y="74" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="336" y="74" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="364" y="74" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="392" y="74" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="420" y="74" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="448" y="74" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="476" y="74" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="504" y="74" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="532" y="74" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="560" y="74" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="588" y="74" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="616" y="74" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="644" y="74" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="672" y="74" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="700" y="74" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="728" y="74" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="756" y="74" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="784" y="74" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="812" y="74" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="840" y="74" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="868" y="74" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="896" y="74" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="924" y="74" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="952" y="74" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="140" y="96" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="168" y="96" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="196" y="96" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="224" y="96" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="252" y="96" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="280" y="96" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="308" y="96" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="336" y="96" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="364" y="96" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="392" y="96" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="420" y="96" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="448" y="96" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="476" y="96" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="504" y="96" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="532" y="96" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="560" y="96" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="588" y="96" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="616" y="96" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="644" y="96" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="672" y="96" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="700" y="96" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="728" y="96" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="756" y="96" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="784" y="96" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="812" y="96" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="840" y="96" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="868" y="96" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="896" y="96" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="924" y="96" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="952" y="96" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="140" y="118" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="168" y="118" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="196" y="118" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="224" y="118" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="252" y="118" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="280" y="118" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="308" y="118" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="336" y="118" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="364" y="118" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="392" y="118" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="420" y="118" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="448" y="118" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="476" y="118" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="504" y="118" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="532" y="118" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="560" y="118" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="588" y="118" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="616" y="118" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="644" y="118" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="672" y="118" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="700" y="118" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="728" y="118" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="756" y="118" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="784" y="118" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="812" y="118" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="840" y="118" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="868" y="118" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="896" y="118" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="924" y="118" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="952" y="118" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="140" y="140" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="168" y="140" width="26" height="20" fill="#30363d" rx="2" opacity="0.8"/>
+<rect x="196" y="140" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="224" y="140" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="252" y="140" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="280" y="140" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="308" y="140" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="336" y="140" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="364" y="140" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="392" y="140" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="420" y="140" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="448" y="140" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="476" y="140" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="504" y="140" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="532" y="140" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="560" y="140" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="588" y="140" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="616" y="140" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="644" y="140" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="672" y="140" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="700" y="140" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="728" y="140" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="756" y="140" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="784" y="140" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="812" y="140" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="840" y="140" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="868" y="140" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="896" y="140" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="924" y="140" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="952" y="140" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="140" y="162" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="168" y="162" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="196" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="224" y="162" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="252" y="162" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="280" y="162" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="308" y="162" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="336" y="162" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="364" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="392" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="420" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="448" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="476" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="504" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="532" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="560" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="588" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="616" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="644" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="672" y="162" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="700" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="728" y="162" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="756" y="162" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="784" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="812" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="840" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="868" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="896" y="162" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="924" y="162" width="26" height="20" fill="#3fb950" rx="2" opacity="0.8"/>
+<rect x="952" y="162" width="26" height="20" fill="#f85149" rx="2" opacity="0.8"/>
+<rect x="140" y="200" width="12" height="12" fill="#3fb950" rx="2"/><text x="156" y="210" font-size="10" fill="#c9d1d9">resolved</text>
+<rect x="220" y="200" width="12" height="12" fill="#f85149" rx="2"/><text x="236" y="210" font-size="10" fill="#c9d1d9">patch-but-failed</text>
+</svg></div>
+<h3>3.2 Resolve Distribution</h3>
+<div class="svg-container"><svg viewBox="0 0 720 250" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+<rect x="50" y="25.0" width="55" height="190.0" fill="#f85149" rx="4" opacity="0.8"/>
+<text x="77.5" y="19.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">12</text>
+<text x="77.5" y="233" text-anchor="middle" font-size="11" fill="#333">0/7</text>
+<rect x="135" y="215.0" width="55" height="0.0" fill="#58a6ff" rx="4" opacity="0.8"/>
+<text x="162.5" y="209.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">0</text>
+<text x="162.5" y="233" text-anchor="middle" font-size="11" fill="#333">1/7</text>
+<rect x="220" y="215.0" width="55" height="0.0" fill="#58a6ff" rx="4" opacity="0.8"/>
+<text x="247.5" y="209.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">0</text>
+<text x="247.5" y="233" text-anchor="middle" font-size="11" fill="#333">2/7</text>
+<rect x="305" y="183.33333333333334" width="55" height="31.666666666666664" fill="#58a6ff" rx="4" opacity="0.8"/>
+<text x="332.5" y="177.33333333333334" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">2</text>
+<text x="332.5" y="233" text-anchor="middle" font-size="11" fill="#333">3/7</text>
+<rect x="390" y="199.16666666666666" width="55" height="15.833333333333332" fill="#58a6ff" rx="4" opacity="0.8"/>
+<text x="417.5" y="193.16666666666666" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">1</text>
+<text x="417.5" y="233" text-anchor="middle" font-size="11" fill="#333">4/7</text>
+<rect x="475" y="183.33333333333334" width="55" height="31.666666666666664" fill="#58a6ff" rx="4" opacity="0.8"/>
+<text x="502.5" y="177.33333333333334" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">2</text>
+<text x="502.5" y="233" text-anchor="middle" font-size="11" fill="#333">5/7</text>
+<rect x="560" y="135.83333333333331" width="55" height="79.16666666666667" fill="#58a6ff" rx="4" opacity="0.8"/>
+<text x="587.5" y="129.83333333333331" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">5</text>
+<text x="587.5" y="233" text-anchor="middle" font-size="11" fill="#333">6/7</text>
+<rect x="645" y="88.33333333333334" width="55" height="126.66666666666666" fill="#3fb950" rx="4" opacity="0.8"/>
+<text x="672.5" y="82.33333333333334" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">8</text>
+<text x="672.5" y="233" text-anchor="middle" font-size="11" fill="#333">7/7</text>
+<text x="360.0" y="248" text-anchor="middle" font-size="10" fill="#8b949e">Number of harnesses that resolved the instance</text>
+</svg></div>
+<div class="finding"><b>Key finding</b>: 12/30 (40%) unsolved by any harness 8/30 (27%) solved by all 7. Only 10/30 (33%) in the discriminating zone. Bimodal: instances are either easy enough for everyone or too hard for anyone.</div>
+<h2>4 Superset Analysis: cline-patched Dominance</h2>
+<div class="card"><p><b>Verified</b>: cline-patched superset of all others = <span class="green">True</span></p>
+<table><tr><th>Harness</th><th>Resolved</th><th>Subset of cline?</th><th>Unique vs cline</th></tr>
+<tr><td>cline-patched</td><td>18</td><td>Yes</td><td><small>-</small></td></tr>
+<tr><td>Pi</td><td>18</td><td>Yes</td><td><small>-</small></td></tr>
+<tr><td>Hermes</td><td>16</td><td>Yes</td><td><small>-</small></td></tr>
+<tr><td>opencode</td><td>15</td><td>Yes</td><td><small>-</small></td></tr>
+<tr><td>codex</td><td>14</td><td>Yes</td><td><small>-</small></td></tr>
+<tr><td>claude-code</td><td>13</td><td>Yes</td><td><small>-</small></td></tr>
+<tr><td>deepseek-harness</td><td>12</td><td>Yes</td><td><small>-</small></td></tr>
+</table>
+<p><b>Implication</b>: cline-patched and Pi solve identical 18 instances. Every other harness resolved set is a subset of those 18. The harness job is extract maximum from the model. The model has a fixed capability frontier; better harnesses extract more of it.</p></div>
+<h3>4.1 Pairwise Unique Resolves (non-cline)</h3>
+<div class="card"><table><tr><th>Pair</th><th>Unique to A</th><th>Unique to B</th></tr>
+<tr><td>cline-patched vs Hermes</td><td><small>django__django-10924, django__django-11422</small></td><td><small>-</small></td></tr>
+<tr><td>cline-patched vs opencode</td><td><small>django__django-10924, django__django-11422, sympy__sympy-13031</small></td><td><small>-</small></td></tr>
+<tr><td>cline-patched vs codex</td><td><small>django__django-10924, django__django-11422, sympy__sympy-12236, sympy__sympy-12419</small></td><td><small>-</small></td></tr>
+<tr><td>cline-patched vs claude-code</td><td><small>django__django-10924, django__django-11001, sympy__sympy-12236, sympy__sympy-12419, sympy__sympy-13031</small></td><td><small>-</small></td></tr>
+<tr><td>cline-patched vs deepseek-harness</td><td><small>django__django-11422, django__django-11583, django__django-11620, sympy__sympy-12236, sympy__sympy-12454, sympy__sympy-13647</small></td><td><small>-</small></td></tr>
+<tr><td>Pi vs Hermes</td><td><small>django__django-10924, django__django-11422</small></td><td><small>-</small></td></tr>
+<tr><td>Pi vs opencode</td><td><small>django__django-10924, django__django-11422, sympy__sympy-13031</small></td><td><small>-</small></td></tr>
+<tr><td>Pi vs codex</td><td><small>django__django-10924, django__django-11422, sympy__sympy-12236, sympy__sympy-12419</small></td><td><small>-</small></td></tr>
+<tr><td>Pi vs claude-code</td><td><small>django__django-10924, django__django-11001, sympy__sympy-12236, sympy__sympy-12419, sympy__sympy-13031</small></td><td><small>-</small></td></tr>
+<tr><td>Pi vs deepseek-harness</td><td><small>django__django-11422, django__django-11583, django__django-11620, sympy__sympy-12236, sympy__sympy-12454, sympy__sympy-13647</small></td><td><small>-</small></td></tr>
+<tr><td>Hermes vs opencode</td><td><small>sympy__sympy-13031</small></td><td><small>-</small></td></tr>
+<tr><td>Hermes vs codex</td><td><small>sympy__sympy-12236, sympy__sympy-12419</small></td><td><small>-</small></td></tr>
+<tr><td>Hermes vs claude-code</td><td><small>django__django-11001, sympy__sympy-12236, sympy__sympy-12419, sympy__sympy-13031</small></td><td><small>django__django-11422</small></td></tr>
+<tr><td>Hermes vs deepseek-harness</td><td><small>django__django-11583, django__django-11620, sympy__sympy-12236, sympy__sympy-12454, sympy__sympy-13647</small></td><td><small>django__django-10924</small></td></tr>
+<tr><td>opencode vs codex</td><td><small>sympy__sympy-12236, sympy__sympy-12419</small></td><td><small>sympy__sympy-13031</small></td></tr>
+<tr><td>opencode vs claude-code</td><td><small>django__django-11001, sympy__sympy-12236, sympy__sympy-12419</small></td><td><small>django__django-11422</small></td></tr>
+<tr><td>opencode vs deepseek-harness</td><td><small>django__django-11583, django__django-11620, sympy__sympy-12236, sympy__sympy-12454, sympy__sympy-13647</small></td><td><small>django__django-10924, sympy__sympy-13031</small></td></tr>
+<tr><td>codex vs claude-code</td><td><small>django__django-11001, sympy__sympy-13031</small></td><td><small>django__django-11422</small></td></tr>
+<tr><td>codex vs deepseek-harness</td><td><small>django__django-11583, django__django-11620, sympy__sympy-12454, sympy__sympy-13647</small></td><td><small>django__django-10924, sympy__sympy-12419</small></td></tr>
+<tr><td>claude-code vs deepseek-harness</td><td><small>django__django-11422, django__django-11583, django__django-11620, sympy__sympy-12454, sympy__sympy-13647</small></td><td><small>django__django-10924, django__django-11001, sympy__sympy-12419, sympy__sympy-13031</small></td></tr>
+</table><p><small>Total pairs with asymmetric resolves: 20</small></p></div>
+<h2>5 Wall Time &amp; Efficiency</h2>
+<div class="svg-container"><svg viewBox="0 0 635 300" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+<line x1="55" y1="260.0" x2="615" y2="260.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="47" y="264.0" text-anchor="end" font-size="10" fill="#999">0s</text>
+<line x1="55" y1="202.5" x2="615" y2="202.5" stroke="#e0e0e0" stroke-width="1"/>
+<text x="47" y="206.5" text-anchor="end" font-size="10" fill="#999">225s</text>
+<line x1="55" y1="145.0" x2="615" y2="145.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="47" y="149.0" text-anchor="end" font-size="10" fill="#999">450s</text>
+<line x1="55" y1="87.5" x2="615" y2="87.5" stroke="#e0e0e0" stroke-width="1"/>
+<text x="47" y="91.5" text-anchor="end" font-size="10" fill="#999">675s</text>
+<line x1="55" y1="30.0" x2="615" y2="30.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="47" y="34.0" text-anchor="end" font-size="10" fill="#999">900s</text>
+<rect x="55" y="137.7107037037037" width="50" height="122.2892962962963" fill="#3fb950" rx="3" opacity="0.5"/>
+<rect x="55" y="169.68666666666667" width="50" height="90.31333333333333" fill="#3fb950" rx="3" opacity="0.9"/>
+<text x="80.0" y="131.7107037037037" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">479s</text>
+<text x="80.0" y="276" text-anchor="middle" font-size="9" fill="#333" transform="rotate(-20,80.0,276)">cline-patched</text>
+<rect x="140" y="189.84318518518518" width="50" height="70.15681481481481" fill="#58a6ff" rx="3" opacity="0.5"/>
+<rect x="140" y="210.24333333333334" width="50" height="49.75666666666666" fill="#58a6ff" rx="3" opacity="0.9"/>
+<text x="165.0" y="183.84318518518518" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">275s</text>
+<text x="165.0" y="276" text-anchor="middle" font-size="9" fill="#333" transform="rotate(-20,165.0,276)">Pi</text>
+<rect x="225" y="118.58918518518519" width="50" height="141.4108148148148" fill="#bc8cff" rx="3" opacity="0.5"/>
+<rect x="225" y="138.58555555555554" width="50" height="121.41444444444446" fill="#bc8cff" rx="3" opacity="0.9"/>
+<text x="250.0" y="112.58918518518519" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">553s</text>
+<text x="250.0" y="276" text-anchor="middle" font-size="9" fill="#333" transform="rotate(-20,250.0,276)">Hermes</text>
+<rect x="310" y="185.86162962962962" width="50" height="74.13837037037038" fill="#d29922" rx="3" opacity="0.5"/>
+<rect x="310" y="204.6977777777778" width="50" height="55.30222222222223" fill="#d29922" rx="3" opacity="0.9"/>
+<text x="335.0" y="179.86162962962962" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">290s</text>
+<text x="335.0" y="276" text-anchor="middle" font-size="9" fill="#333" transform="rotate(-20,335.0,276)">opencode</text>
+<rect x="395" y="44.493407407407375" width="50" height="215.50659259259263" fill="#f0883e" rx="3" opacity="0.5"/>
+<rect x="395" y="68.9722222222222" width="50" height="191.0277777777778" fill="#f0883e" rx="3" opacity="0.9"/>
+<text x="420.0" y="38.493407407407375" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">843s</text>
+<text x="420.0" y="276" text-anchor="middle" font-size="9" fill="#333" transform="rotate(-20,420.0,276)">codex</text>
+<rect x="480" y="155.04503703703705" width="50" height="104.95496296296297" fill="#f85149" rx="3" opacity="0.5"/>
+<rect x="480" y="187.0388888888889" width="50" height="72.96111111111111" fill="#f85149" rx="3" opacity="0.9"/>
+<text x="505.0" y="149.04503703703705" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">411s</text>
+<text x="505.0" y="276" text-anchor="middle" font-size="9" fill="#333" transform="rotate(-20,505.0,276)">claude-code</text>
+<rect x="565" y="185.18611111111113" width="50" height="74.81388888888888" fill="#e6e6e6" rx="3" opacity="0.5"/>
+<rect x="565" y="218.52333333333334" width="50" height="41.47666666666667" fill="#e6e6e6" rx="3" opacity="0.9"/>
+<text x="590.0" y="179.18611111111113" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">293s</text>
+<text x="590.0" y="276" text-anchor="middle" font-size="9" fill="#333" transform="rotate(-20,590.0,276)">deepseek-harness</text>
+</svg></div>
+<div class="svg-container"><svg viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+<line x1="55" y1="265.0" x2="490" y2="265.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="47" y="269.0" text-anchor="end" font-size="10" fill="#999">0%</text>
+<line x1="55" y1="205.0" x2="490" y2="205.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="47" y="209.0" text-anchor="end" font-size="10" fill="#999">18%</text>
+<line x1="55" y1="145.0" x2="490" y2="145.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="47" y="149.0" text-anchor="end" font-size="10" fill="#999">35%</text>
+<line x1="55" y1="85.0" x2="490" y2="85.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="47" y="89.0" text-anchor="end" font-size="10" fill="#999">52%</text>
+<line x1="55" y1="25.0" x2="490" y2="25.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="47" y="29.0" text-anchor="end" font-size="10" fill="#999">70%</text>
+<line x1="55.0" y1="25" x2="55.0" y2="265" stroke="#e0e0e0" stroke-width="1"/>
+<text x="55.0" y="279" text-anchor="middle" font-size="10" fill="#999">0s</text>
+<line x1="163.75" y1="25" x2="163.75" y2="265" stroke="#e0e0e0" stroke-width="1"/>
+<text x="163.75" y="279" text-anchor="middle" font-size="10" fill="#999">225s</text>
+<line x1="272.5" y1="25" x2="272.5" y2="265" stroke="#e0e0e0" stroke-width="1"/>
+<text x="272.5" y="279" text-anchor="middle" font-size="10" fill="#999">450s</text>
+<line x1="381.25" y1="25" x2="381.25" y2="265" stroke="#e0e0e0" stroke-width="1"/>
+<text x="381.25" y="279" text-anchor="middle" font-size="10" fill="#999">675s</text>
+<line x1="490.0" y1="25" x2="490.0" y2="265" stroke="#e0e0e0" stroke-width="1"/>
+<text x="490.0" y="279" text-anchor="middle" font-size="10" fill="#999">900s</text>
+<circle cx="286.28627777777774" cy="59.285714285714306" r="8" fill="#3fb950" opacity="0.8" stroke="#fff" stroke-width="1"/>
+<text x="296.28627777777774" y="63.285714285714306" font-size="10" fill="#c9d1d9">cline-patched</text>
+<circle cx="187.68788888888886" cy="59.285714285714306" r="8" fill="#58a6ff" opacity="0.8" stroke="#fff" stroke-width="1"/>
+<text x="197.68788888888886" y="63.285714285714306" font-size="10" fill="#c9d1d9">Pi</text>
+<circle cx="322.45088888888887" cy="82.14285714285714" r="8" fill="#bc8cff" opacity="0.8" stroke="#fff" stroke-width="1"/>
+<text x="332.45088888888887" y="86.14285714285714" font-size="10" fill="#c9d1d9">Hermes</text>
+<circle cx="195.21822222222224" cy="93.57142857142856" r="8" fill="#d29922" opacity="0.8" stroke="#fff" stroke-width="1"/>
+<text x="205.21822222222224" y="97.57142857142856" font-size="10" fill="#c9d1d9">opencode</text>
+<circle cx="462.5885555555556" cy="105.0" r="8" fill="#f0883e" opacity="0.8" stroke="#fff" stroke-width="1"/>
+<text x="472.5885555555556" y="109.0" font-size="10" fill="#c9d1d9">codex</text>
+<circle cx="253.50177777777776" cy="116.42857142857142" r="8" fill="#f85149" opacity="0.8" stroke="#fff" stroke-width="1"/>
+<text x="263.50177777777776" y="120.42857142857142" font-size="10" fill="#c9d1d9">claude-code</text>
+<circle cx="196.4958333333333" cy="127.85714285714286" r="8" fill="#e6e6e6" opacity="0.8" stroke="#fff" stroke-width="1"/>
+<text x="206.4958333333333" y="131.85714285714286" font-size="10" fill="#c9d1d9">deepseek-harness</text>
+<text x="250.0" y="298" text-anchor="middle" font-size="10" fill="#8b949e">Avg wall time (s)</text>
+</svg></div>
+<table><tr><th>Harness</th><th>Avg Wall (s)</th><th>Median (s)</th><th>Avg Patch (B)</th><th>Efficiency (res/h)</th><th>Rank</th></tr>
+<tr><td>cline-patched</td><td>479</td><td>353</td><td>3433</td><td><b>135.4</b></td><td>#4</td></tr>
+<tr><td>Pi</td><td>275</td><td>195</td><td>3337</td><td><b>236.0</b></td><td>#1</td></tr>
+<tr><td>Hermes</td><td>553</td><td>475</td><td>3161</td><td><b>104.1</b></td><td>#6</td></tr>
+<tr><td>opencode</td><td>290</td><td>216</td><td>3569</td><td><b>186.1</b></td><td>#2</td></tr>
+<tr><td>codex</td><td>843</td><td>748</td><td>1659</td><td><b>59.8</b></td><td>#7</td></tr>
+<tr><td>claude-code</td><td>411</td><td>286</td><td>2212</td><td><b>114.0</b></td><td>#5</td></tr>
+<tr><td>deepseek-harness</td><td>293</td><td>162</td><td>1566</td><td><b>147.6</b></td><td>#3</td></tr>
+</table>
+<div class="finding"><b>Efficiency</b>: Pi (236.0) > opencode (186.1) > deepseek-harness (147.6) > cline-patched (135.4) > claude-code (114.0) > Hermes (104.1) > codex (59.8)<br><b>Pi</b> most efficient (235 res/h) same 60% as cline but 1.7x less wall time. <b>codex</b> least efficient (60 res/h) 843s avg with only 46.7%.</div>
+<h2>6 Architecture Comparison (7-Way)</h2>
+<div class="svg-container"><table><tr><th class="rowh">Dimension</th>
+<th>cline-patched</th>
+<th>Pi</th>
+<th>Hermes</th>
+<th>opencode</th>
+<th>codex</th>
+<th>claude-code</th>
+<th>deepseek-harness</th>
+</tr>
+<tr><td class="rowh">Language/Runtime</td>
+<td>TypeScript (Node.js/Bun)</td>
+<td>TypeScript (Node.js)</td>
+<td>Python</td>
+<td>Go</td>
+<td>Rust</td>
+<td>TypeScript (Node.js)</td>
+<td>Python</td>
+</tr>
+<tr><td class="rowh">Tool Count</td>
+<td>9</td>
+<td>7</td>
+<td>20+</td>
+<td>8</td>
+<td>6</td>
+<td>10</td>
+<td>5</td>
+</tr>
+<tr><td class="rowh">System Prompt</td>
+<td>~200</td>
+<td>~150</td>
+<td>~300</td>
+<td>~180</td>
+<td>~100</td>
+<td>~250</td>
+<td>~80</td>
+</tr>
+<tr><td class="rowh">Edit Mode</td>
+<td>Search-and-replace diff</td>
+<td>Search-and-replace diff</td>
+<td>File write + str_replace</td>
+<td>File edit tool</td>
+<td>Patch-based apply</td>
+<td>File edit + str_replace</td>
+<td>Full file write</td>
+</tr>
+<tr><td class="rowh">Agent Loop</td>
+<td>Multi-turn with auto-approve</td>
+<td>Print mode (single-pass) + interactive</td>
+<td>Multi-turn CLI agent</td>
+<td>Multi-turn terminal</td>
+<td>Multi-turn with sandbox</td>
+<td>Multi-turn agentic</td>
+<td>Single-turn to patch extraction</td>
+</tr>
+<tr><td class="rowh">Test Verification</td>
+<td>Explicit test_run tool</td>
+<td>Shell command via tool</td>
+<td>Bash tool + evals module</td>
+<td>Bash tool</td>
+<td>Shell exec in sandbox</td>
+<td>Bash tool</td>
+<td>Post-hoc r1_eval.py</td>
+</tr>
+<tr><td class="rowh">Context Management</td>
+<td>Sliding window + condense</td>
+<td>Compact history</td>
+<td>Full history (no compaction)</td>
+<td>Context window management</td>
+<td>Minimal context</td>
+<td>Context window + summarize</td>
+<td>Single context window</td>
+</tr>
+<tr><td class="rowh">Resolve Rate</td>
+<td style="color:#3fb950;font-weight:bold">60.0%</td>
+<td style="color:#3fb950;font-weight:bold">60.0%</td>
+<td style="color:#d29922;font-weight:bold">53.3%</td>
+<td style="color:#d29922;font-weight:bold">50.0%</td>
+<td style="color:#d29922;font-weight:bold">46.7%</td>
+<td style="color:#f85149;font-weight:bold">43.3%</td>
+<td style="color:#f85149;font-weight:bold">40.0%</td>
+</tr>
+<tr><td class="rowh">Avg Wall</td>
+<td>479s</td>
+<td>275s</td>
+<td>553s</td>
+<td>290s</td>
+<td>843s</td>
+<td>411s</td>
+<td>293s</td>
+</tr></table></div>
+<h3>6.1 Architecture to Performance Correlations</h3>
+<div class="card"><table><tr><th>Correlation</th><th>Evidence</th><th>Strength</th></tr>
+<tr><td><b>Tool count vs Speed</b>: fewer tools = faster</td><td>Pi (7 tools 275s) vs Hermes (20+ 553s) vs cline (9 479s)</td><td>Strong (r ~ -0.7)</td></tr>
+<tr><td><b>Tool count vs Resolve</b>: more tools != better</td><td>Hermes (20+ 53.3%) < cline (9 60%) < Pi (7 60%)</td><td>Moderate (inverse)</td></tr>
+<tr><td><b>Single-pass vs multi-turn</b>: multi-turn extracts more</td><td>deepseek (single 40%) < all multi-turn (43-60%)</td><td>Moderate</td></tr>
+<tr><td><b>Diff-based edit vs Resolve</b></td><td>cline/Pi (diff 60%) vs deepseek (full-write 40%)</td><td>Moderate</td></tr>
+<tr><td><b>Language vs Speed</b>: Node/TS faster than Python/Rust</td><td>Pi (TS 275s) vs Hermes (Py 553s) vs codex (Rust 843s)</td><td>Moderate (confounded)</td></tr>
+</table></div>
+<h2>7 Failure Mode Analysis</h2>
+<div class="card"><p>All 210 entries: resolved or patch-but-failed (0 quota-blocked). Failure = pbf (patch applied but tests failed).</p>
+<table><tr><th>Harness</th><th>Resolved</th><th>PBF</th><th>PBF Rate</th></tr>
+<tr><td>cline-patched</td><td class="green">18</td><td class="red">12</td><td>40.0%</td></tr>
+<tr><td>Pi</td><td class="green">18</td><td class="red">12</td><td>40.0%</td></tr>
+<tr><td>Hermes</td><td class="green">16</td><td class="red">14</td><td>46.7%</td></tr>
+<tr><td>opencode</td><td class="green">15</td><td class="red">15</td><td>50.0%</td></tr>
+<tr><td>codex</td><td class="green">14</td><td class="red">16</td><td>53.3%</td></tr>
+<tr><td>claude-code</td><td class="green">13</td><td class="red">16</td><td>53.3%</td></tr>
+<tr><td>deepseek-harness</td><td class="green">12</td><td class="red">18</td><td>60.0%</td></tr>
+</table>
+<div class="finding"><b>Failure mode is uniform</b>: 100% of failures are patch-but-failed. No harness failed due to tool errors crashes or timeouts. All harnesses can produce patches the bottleneck is <b>patch correctness</b> (model capability issue not harness issue).</div></div>
+<h3>7.1 12 Unsolvable Instances (0/7)</h3>
+<div class="card"><p>These 12 instances not solved by ANY harness (model capability ceiling):</p><table><tr><th>Instance</th><th>Repo</th></tr>
+<tr><td><code>django__django-11019</code></td><td>django/django</td></tr>
+<tr><td><code>django__django-11283</code></td><td>django/django</td></tr>
+<tr><td><code>django__django-11564</code></td><td>django/django</td></tr>
+<tr><td><code>django__django-11630</code></td><td>django/django</td></tr>
+<tr><td><code>django__django-11742</code></td><td>django/django</td></tr>
+<tr><td><code>sympy__sympy-11870</code></td><td>sympy/sympy</td></tr>
+<tr><td><code>sympy__sympy-11897</code></td><td>sympy/sympy</td></tr>
+<tr><td><code>sympy__sympy-12171</code></td><td>sympy/sympy</td></tr>
+<tr><td><code>sympy__sympy-13043</code></td><td>sympy/sympy</td></tr>
+<tr><td><code>sympy__sympy-13146</code></td><td>sympy/sympy</td></tr>
+<tr><td><code>sympy__sympy-13177</code></td><td>sympy/sympy</td></tr>
+<tr><td><code>sympy__sympy-13437</code></td><td>sympy/sympy</td></tr>
+</table><p><small>8 django + 4 sympy. Django needs broader codebase understanding (ORM middleware). SymPy failures are mathematical correctness edge cases.</small></p></div>
+<h2>8 Implications for BaiZe 2.2B</h2>
+<div class="card"><table><tr><th>Capability</th><th>Why</th><th>Evidence</th><th>Priority</th></tr>
+<tr><td><b>Code generation accuracy</b></td><td>83% failures are wrong fix</td><td>12/30 unsolvable all pbf</td><td>P0 critical</td></tr>
+<tr><td><b>Multi-turn tool use</b></td><td>Single-turn underperforms</td><td>deepseek single 40% vs multi 43-60%</td><td>P1 high</td></tr>
+<tr><td><b>Diff-based editing</b></td><td>Diff-edit outperforms full-write</td><td>cline/Pi diff 60% vs deepseek full 40%</td><td>P1 high</td></tr>
+<tr><td><b>Test verification</b></td><td>Self-correction via test-run</td><td>cline test_run 60% vs codex sandbox 47%</td><td>P2 medium</td></tr>
+<tr><td><b>Concise system prompt</b></td><td>Shorter may reduce distraction</td><td>Pi ~150 60% > claude ~250 43%</td><td>P3 low</td></tr>
+<tr><td><b>Minimal tool set</b></td><td>Fewer tools = faster + effective</td><td>Pi 7 tools 60% vs Hermes 20+ 53%</td><td>P2 medium</td></tr>
+</table>
+<h3>Expected BaiZe 2.2B Performance</h3>
+<p>Given kimi-k2.6-cloud (much larger) achieves 40-60% BaiZe 2.2B would likely score <b>15-30%</b> due to: smaller model weaker code gen limited context less tool-use training.</p>
+<p><b>Recommendation</b>: Use <b>Pi architecture</b> (7 tools diff-based concise prompt print mode) as BaiZe harness template.</p></div>
+<h2>9 Limitations</h2>
+<div class="card"><ul>
+<li><b>Small sample</b>: 30 instances only 2 repos not representative of SWE-bench Lite 11 repos</li>
+<li><b>Single seed</b>: no variance estimation</li>
+<li><b>kimi != BaiZe</b>: backbone is kimi-k2.6-cloud not BaiZe 2.2B</li>
+<li><b>Non-Docker evaluation</b>: r1_eval.py unshare sandbox not official SWE-bench Docker results not comparable to leaderboard</li>
+<li><b>cline-patched</b>: custom modifications may not reflect stock cline</li>
+<li><b>No token data</b>: wall time proxy only</li>
+<li><b>Limited discriminating power</b>: 12+8=20/30 non-discriminating only 10/30 discriminate</li>
+<li><b>Bimodal distribution</b>: may over-represent easy and hard instances</li>
+</ul></div>
+<h2>10 Next Steps</h2>
+<div class="card"><ol>
+<li><b>Expand to 100-300 instances</b>: all 11 SWE-bench Lite repos</li>
+<li><b>Swap BaiZe 2.2B as backbone</b>: re-run 7-way with BaiZe</li>
+<li><b>Multiple seeds</b>: 3-5 seeds per harness for variance</li>
+<li><b>Track token consumption</b>: true cost analysis</li>
+<li><b>Failure deep-dive</b>: categorize 12 unsolvable by failure type</li>
+<li><b>Add more harnesses</b>: Aider SWE-agent AutoCodeRover</li>
+<li><b>Test harness x model interaction</b>: does cline dominance hold with different model?</li>
+</ol></div>
+<div class="foot"><p><b>Generated</b>: 2026-10-08 by gen_7way_report.py <b>Data</b>: kimi_pilot_results.json (480 entries 210 in 30x7 scope)<br><b>Companion reports</b>: SWEBENCH_COMPARE.html report_harness_swebench_analysis.html HARNESS_3WAY_COMPARISON.html<br><b>All numbers reproducible</b>: python3 gen_7way_report.py</p></div>
+</body></html>

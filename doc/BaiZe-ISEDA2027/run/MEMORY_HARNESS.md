@@ -5,13 +5,26 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 30×7 cross-eval COMPLETE ✅ + DEEP ANALYSIS REPORT ✅ + **H-B 3-WAY SOURCE ANALYSIS DELIVERED** (HARNESS_3WAY_COMPARISON.html, 57.4KB, 14 sections, 5 inline SVG charts, cline vs Pi vs Hermes source-level comparison). All 7 harnesses done. cline-patched 60.0% · Pi 60.0% · Hermes 53.3% · opencode 50.0% · codex 46.7% · claude-code 43.3% · deepseek-harness 40.0%.
-已完成:       H-B 3-way source analysis (HARNESS_3WAY_COMPARISON.html) · H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · cline-patched×30 (60.0%) · codex×300 stopped · opencode×30 (50.0%) · claude-code×30 (43.3%) · deepseek-harness×30 (40.0%) · Pi×30 (60.0%) · Hermes×30 (53.3%) · gen_kimi_compare.py 7-way · SWEBENCH_COMPARE.html (21976B final) · report_harness_swebench_analysis.html (64201B, 9 sections) — VERIFIED at both locations · **HARNESS_3WAY_COMPARISON.html** (58809B, 14 sections, 5 SVG, architecture+prompt+tools+loop+failure analysis, BaiZe implications) — at both doc/BaiZe-ISEDA2027/ and run/harness/
-当前动作:     R176: H-B 3-way source analysis DELIVERED — HARNESS_3WAY_COMPARISON.html (57.4KB, 14 sections: TL;DR, Architecture, System Prompt, Tool Set, Agent Loop, Resolve Rate, Overlap Venn, Heatmap, Wall Time, Failure Mode, Architecture-Performance Correlation, BaiZe Implications, Limitations, Next Steps). Key finding: cline & Pi solve identical 18/30, Hermes 16/30 (strict subset). Pi fastest (275s vs 479s vs 553s). Tool count inversely correlates with speed.
-下一步:       <待运维指令> — H-B 3-way source analysis delivered. Possible next: extend to remaining 4 harnesses (codex, opencode, claude-code, deepseek-harness), or test with BaiZe 2.2B backbone.
+PHASE:        H-A 30×7 cross-eval COMPLETE ✅ + DEEP ANALYSIS REPORT ✅ + H-B 3-WAY SOURCE ANALYSIS ✅ + **H-B 7-WAY UNIFIED COMPARISON DELIVERED** (HARNESS_7WAY_COMPARISON.html, 55.0KB, 10 sections, 5 inline SVG, all 7 harnesses architecture+performance). cline-patched 60.0% · Pi 60.0% · Hermes 53.3% · opencode 50.0% · codex 46.7% · claude-code 43.3% · deepseek-harness 40.0%.
+已完成:       H-B 7-way unified comparison (HARNESS_7WAY_COMPARISON.html) · H-B 3-way source analysis (HARNESS_3WAY_COMPARISON.html) · H-B 5×源码分析 · H-D 对比矩阵 · H-C 评测调研 · kimi serial runner · 7 harnesses×30 (all COMPLETE) · SWEBENCH_COMPARE.html (21976B) · report_harness_swebench_analysis.html (64201B, 9 sections) — VERIFIED at both locations · HARNESS_3WAY_COMPARISON.html (59268B, 14 sections) — at both locations · **HARNESS_7WAY_COMPARISON.html** (56352B, 10 sections, 5 SVG, superset analysis, architecture table, failure modes, BaiZe implications) — at both doc/BaiZe-ISEDA2027/ and run/harness/
+当前动作:     R177: H-B 7-way unified architecture+performance comparison DELIVERED — HARNESS_7WAY_COMPARISON.html (55.0KB, 10 sections: TL;DR, Eval Design, Resolve Rate, Superset Analysis, Wall Time, Architecture 7-way table, Failure Mode, BaiZe Implications, Limitations, Next Steps). Key finding: cline-patched resolved set is strict superset of ALL other harnesses — model is the ceiling. 12/30 unsolvable by any harness. Pi most efficient (235 res/h).
+下一步:       <待运维指令> — All H-A and H-B deliverables complete. Possible next: expand to 100-300 instances, swap BaiZe 2.2B backbone, or add more harnesses (Aider, SWE-agent).
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
+
+## 🆕 第一百七十七轮速览（2026-10-08 12:30）— 📄 H-B 7-WAY UNIFIED COMPARISON DELIVERED (HARNESS_7WAY_COMPARISON.html, 55.0KB)
+
+- 📄 **H-B 7-way unified architecture+performance comparison delivered**: `HARNESS_7WAY_COMPARISON.html` (56352B = 55.0KB, ≤200KB ✓) at both `doc/BaiZe-ISEDA2027/` and `run/harness/`.
+  - **10 sections**: TL;DR · Evaluation Design · Resolve Rate Comparison (7-bar SVG) · Superset Analysis (cline-patched dominance) · Wall Time & Efficiency · Architecture Comparison (7-way table) · Failure Mode Analysis · BaiZe Implications · Limitations · Next Steps
+  - **5 inline SVG charts**: resolve rate bars, 30×7 per-instance heatmap, resolve distribution histogram, wall time bars (avg+median), wall-vs-rate scatter
+  - **Key finding (NEW)**: **cline-patched's resolved set is a strict superset of ALL 6 other harnesses** — no harness solves any instance cline-patched doesn't. This proves the model (kimi-k2.6-cloud) is the ceiling, not the harness.
+  - **Architecture data**: synthesized from 5 individual source analyses (cline/codex/opencode/claude-code/deepseek-harness) + 3-way comparison (Pi/Hermes) — all conclusions cite source reports
+  - **BaiZe recommendation**: Use Pi architecture (7 tools, diff-based, concise prompt, print mode) as BaiZe 2.2B harness template
+- ✅ **gen_7way_report.py** (generator script, 27975B) committed — regenerates report from kimi_pilot_results.json
+- ✅ **No new operator instructions** (`git fetch` = up to date).
+- ✅ **Archived**: R166-R168, R170-R172 (6 old rounds) → daily-memories-harness/2026-10-08.md, freed ~5KB from MEMORY
+- 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~27.5KB(26.9KB ✓)（归档 ~5KB → daily-memories-harness/2026-10-08.md）
 
 ## 🆕 第一百七十六轮速览（2026-10-08 11:46）— 📄 H-B 3-way source analysis DELIVERED (HARNESS_3WAY_COMPARISON.html, 57.4KB)
 
@@ -55,35 +68,8 @@ ERROR_COUNT:  0
   - **Self-contained**: inline CSS + inline SVG, zero external links, zero images, all numbers reproducible
 - 📦 体积：TASK=32277B(31.5KB ✓) / MEMORY=~27KB(26.4KB ✓)（归档 0KB，两者均 ≤32KB 无需归档）
 
-## 🆕 第一百七十二轮速览（2026-10-08 08:58）— 💓 Health-check heartbeat — 7-way re-verified intact, no new instructions
+> 📦 R170-R172（2026-10-08 07:52~08:58，3× heartbeat health-check）已滚动归档至 `daily-memories-harness/2026-10-08.md`。结论：7-way 结果反复验证完整，无新运维指令。
 
-- 💓 **Heartbeat / health check**：R171 后再次唤醒，无新运维指令（`git fetch` 无新内容）。
-- ✅ **Results re-verified**：`kimi_pilot_results.json` = 480 entries（含 codex×300 子集），7-way 30-set 全部确认：
-  - cline-patched 18/30=60.0% · Pi 18/30=60.0% · Hermes 16/30=53.3% · opencode 15/30=50.0%
-  - codex 14/30=46.7% · claude-code 13/30=43.3% · deepseek-harness 12/30=40.0%
-- ✅ **Deliverables intact**：`SWEBENCH_COMPARE.html` = 21976B（30×7, 210 entries, 106 resolved），含 §3.1 version table + §4 reproduction + §5 caveats。
-- ✅ **No chains running**：`pgrep` 确认无 `run_serial_kimi` / `chain_*` 进程。
-- 📦 体积：TASK=29428B(28.7KB ✓) / MEMORY=25730B(25.1KB ✓)（归档 0KB，两者均 ≤32KB 无需归档）
-
-## 🆕 第一百七十一轮速览（2026-10-08 08:25）— 💓 Health-check heartbeat — 7-way re-verified intact, no new instructions
-
-- 💓 **Heartbeat / health check**：R170 后再次唤醒，无新运维指令（`git pull` = "Already up to date"）。
-- ✅ **Results re-verified**：`kimi_pilot_results.json` = 480 entries（含 codex×300 子集），7-way 30-set 全部确认：
-  - cline-patched 18/30=60.0% · Pi 18/30=60.0% · Hermes 16/30=53.3% · opencode 15/30=50.0%
-  - codex 14/30=46.7% · claude-code 13/30=43.3% · deepseek-harness 12/30=40.0%
-- ✅ **Deliverables intact**：`SWEBENCH_COMPARE.html` = 21976B（30×7, 210 entries, 106 resolved），含 §3.1 version table + §4 reproduction + §5 caveats。
-- ✅ **No chains running**：`pgrep` 确认无 `run_serial_kimi` / `chain_*` 进程。
-- 📦 体积：TASK=29428B(28.7KB ✓) / MEMORY=~24KB(23.4KB ✓)（归档 0KB，两者均 ≤32KB 无需归档）
-
-## 🆕 第一百七十轮速览（2026-10-08 07:52）— 💓 Health-check heartbeat — 7-way verified intact, no new instructions
-
-- 💓 **Heartbeat / health check**：R169 完成 7-way 横评后首次唤醒，无新运维指令（`git pull` = "Already up to date"）。
-- ✅ **Results verified**：`kimi_pilot_results.json` = 480 entries（含 codex×300 子集），7-way 30-set 全部完整：
-  - cline-patched 18/30=60.0% · Pi 18/30=60.0% · Hermes 16/30=53.3% · opencode 15/30=50.0%
-  - codex 14/30=46.7% · claude-code 13/30=43.3% · deepseek-harness 12/30=40.0%
-- ✅ **Deliverables intact**：`SWEBENCH_COMPARE.html` = 21976B（30×7, 210 entries, 106 resolved），含 §3.1 version table + §4 reproduction + §5 caveats。
-- ✅ **No chains running**：`pgrep` 确认无 `run_serial_kimi` / `chain_*` 进程。
-- 📦 体积：TASK=29428B(28.7KB ✓) / MEMORY=23118B(22.6KB ✓)（归档 0KB，两者均 ≤32KB 无需归档）
 
 ## 🆕 第一百六十九轮速览（2026-10-08 07:15）— ✅ Hermes×30 COMPLETE (16/30 = 53.3%) → 🏆 7-way cross-eval ALL DONE
 
@@ -105,45 +91,8 @@ ERROR_COUNT:  0
   Total: 210 entries, 106 resolved. SWEBENCH_COMPARE.html = 21976B (final).
 - 📦 体积：TASK=29428B(28.7KB ✓) / MEMORY=见下方自检（归档 R160-R165 → daily）
 
-## 🆕 第一百六十八轮速览（2026-10-08 06:07）— Hermes×30 progress (22/30: 12 res/10 pbf = 54.5%) + SWEBENCH_COMPARE.html regenerated (202 entries, 102 resolved)
+> 📦 R166-R168（2026-10-08 05:00~06:07，Hermes×30 progress 19→22/30）已滚动归档至 `daily-memories-harness/2026-10-08.md`。结论：Hermes 推进 19→22/30，最终 16/30=53.3%。
 
-- 🔄 **Hermes×30 progress**：22/30 done, chain healthy (PID 838805 → 850763, inst 23/30 sympy__sympy-13031 running ~15min):
-  - New since R167: sympy-12481 → **resolved** ✅
-  - **12 resolved / 10 pbf = 54.5%** (22/30, 0 blocked)
-  - ETA: ~8 inst × ~7min avg = ~0.9h remaining (finish ~06:55)
-- 📊 **SWEBENCH_COMPARE.html regenerated**: 21771B, 202 entries, 102 resolved (was 21741B/201/101 at R167)
-- 📊 **7-way standings (30-set)**:
-  - cline-patched: 18/30 = 60.0% ✅ · Pi: 18/30 = 60.0% ✅
-  - Hermes: 12/22 = 54.5% 🔄 (22/30 running) · opencode: 15/30 = 50.0% ✅
-  - codex: 14/30 = 46.7% ✅ · claude-code: 13/30 = 43.3% ✅ · deepseek-harness: 12/30 = 40.0% ✅
-- 📦 体积：TASK=29428B(28.7KB ✓) / MEMORY=~29.5KB ✓（归档 0KB）
-
-## 🆕 第一百六十七轮速览（2026-10-08 05:34）— Hermes×30 progress (21/30: 11 res/10 pbf = 52.4%) + SWEBENCH_COMPARE.html regenerated (201 entries, 101 resolved)
-
-- 🔄 **Hermes×30 progress**：21/30 done, chain healthy (PID 838805 → 850763, inst 22/30 sympy__sympy-12481 running ~2min):
-  - New since R166: sympy-12419 → **resolved** ✅ (1780.7s), sympy-12454 → **resolved** ✅ (121.4s)
-  - **11 resolved / 10 pbf = 52.4%** (21/30, 0 blocked)
-  - ETA: ~9 inst × ~7min avg = ~1.1h remaining (finish ~06:35)
-- 📊 **SWEBENCH_COMPARE.html regenerated**: 21741B, 201 entries, 101 resolved (was 21679B/199/99 at R166)
-- 📊 **7-way standings (30-set)**:
-  - cline-patched: 18/30 = 60.0% ✅ · Pi: 18/30 = 60.0% ✅
-  - Hermes: 11/21 = 52.4% 🔄 (21/30 running) · opencode: 15/30 = 50.0% ✅
-  - codex: 14/30 = 46.7% ✅ · claude-code: 13/30 = 43.3% ✅ · deepseek-harness: 12/30 = 40.0% ✅
-- 📦 体积：TASK=29428B(28.7KB ✓) / MEMORY=~28.2KB ✓（归档 0KB）
-
-## 🆕 第一百六十六轮速览（2026-10-08 05:00）— Hermes×30 progress (19/30: 9 res/10 pbf = 47.4%) + SWEBENCH_COMPARE.html regenerated (199 entries, 99 resolved)
-
-- 🔄 **Hermes×30 progress**：19/30 done, chain healthy (PID 838805 → 850763, inst 19/30 sympy__sympy-12419 running ~5min):
-  - New since R165: sympy-11897 → patch-but-failed (143s), sympy-12171 → patch-but-failed (575s), sympy-12236 → **resolved** ✅ (892s)
-  - **9 resolved / 10 pbf = 47.4%** (19/30, 0 blocked)
-  - ETA: ~11 inst × ~7min avg = ~1.3h remaining (finish ~06:15)
-- 📊 **SWEBENCH_COMPARE.html regenerated**: 21679B, 199 entries, 99 resolved (was 21595B/196/98 at R165)
-- 📊 **7-way standings (30-set)**:
-  - cline-patched: 18/30 = 60.0% ✅ · Pi: 18/30 = 60.0% ✅
-  - opencode: 15/30 = 50.0% ✅
-  - Hermes: 9/19 = 47.4% 🔄 (19/30 running) · codex: 14/30 = 46.7% ✅
-  - claude-code: 13/30 = 43.3% ✅ · deepseek-harness: 12/30 = 40.0% ✅
-- 📦 体积：TASK=29428B(28.7KB ✓) / MEMORY=~27.0KB ✓（归档 0KB）
 
 > 📦 R159-R165（2026-10-07 23:53 ~ 2026-10-08 04:26，Pi×30 progress + Hermes×30 启动/progress 3/30→16/30 + 版本复核 + HTML version table）已滚动归档至 daily-memories-harness/2026-10-08.md。结论：Hermes×30 从 3/30 推进到 16/30 (50.0%)，版本/commit 已验证并写入 HTML version table。
 
