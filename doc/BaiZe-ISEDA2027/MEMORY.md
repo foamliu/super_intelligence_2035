@@ -10,6 +10,11 @@
 - **指令已下发至** `run/BAIZE_PRETRAIN_2B_TASK.md` 顶部（最高优先级，置于论文更新/报告之前）。
 - 同期义务（论文更新/R2 报告）：**抽空做**（纯 CPU），不延迟 R3 主干 Step 1–3。
 
+### 💬 给 vision / harness 下发「下一步工作建议」征询指令
+- **背景**：两条线（vision R2–R14 全线收敛、harness 7-way 横评全完成）均已空闲（WAITING=1, GPU idle），全部交付物已完成。距 ISEDA 2027 投稿还有 ~4 个月，在 Stage (iv)/(ii) 正式启动前有大量前置准备空间。
+- **指令**：在 `BAIZE_VISION_TASK.md` / `BAIZE_HARNESS_TASK.md` 各新增运维指令块（2026-10-08③ / ④），要求 agent **不执行实验、纯写作**，在各自 `MEMORY_*.md` 的「运维问答」区回答 4–5 个问题（未验证假设 / Stage 前置准备 / GPU 空窗期利用 / 论文补充建议 / harness 侧多了 backbone 网格 pilot + 评测管线搭建）。
+- **为什么**：运维不替 agent 拍脑袋——agent 自己最清楚实验数据里还有什么值得挖、什么前置工作能提前做。先听建议再拍板。
+
 **commit pending**（待编辑本文件和更新 daily-memories 后一并提交）
 
 WAITING: 0
