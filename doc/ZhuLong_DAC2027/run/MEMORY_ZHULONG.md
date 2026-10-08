@@ -9,11 +9,11 @@ WAITING: 1
 | 字段 | 值 |
 |:--|:--|
 | STAGE | `C1`（组件消融；Phase B 4/4 ✅，C1.pure_llm 5/5 + C1.rag 5/5 + C1.wo_retrieval 5/5 ✅，**C1.full 锚点 r1=88.0% ✅ 收割，r2 运行中**；国庆假期进展 HTML 报告已写 `reports/report_2026-10-08_holiday.html`）|
-| CONFIG | `full`（C1 第 4 臂 = 锚点，**r2 运行中** PID 1340901 b2026_1008_142054；r1=88.0% 139/158 已收割）|
+| CONFIG | `full`（C1 第 4 臂 = 锚点，**r2 重启运行中** PID 1505377 b2026_1008_150357；r1=88.0% 139/158 已收割）|
 | ROUND | 2 |
-| PHASE | `running`（**C1.full r2 运行中** PID 1340901 b2026_1008_142054 8worker/158/-n，ppid=1 setsid detached✅，log /tmp/ABL_full_r2.log 活跃增长(14:21 mtime) workers active。**r1 已收割**=88.0%(139/158, 150ok/7fail/0exec_err, 0 Forbidden✅, 808 ACCESS RESTRICTED 反作弊 hook live✅, batch b2026_1008_114702)。infra 端口 8653/8664/8665/8669 全 OPEN✅ /nasdata 371G✅ /home 1.8G(100%⚠️跌破8G但非阻断,产物落/nasdata)。运维复检 legacy 2455466✅ ops 2665949✅(.last_run_id=21 无新指令) loop 3579323✅(proxy✅ https_proxy=172.19.92.23:13128 自检通过无需重启)。**下轮**：pgrep 无输出→grep PASS_RATE /tmp/ABL_full_r2.log 取 r2→记成绩→ROUND 2→3≤5→启 r3（同臂 full 不切 set_ablation））|
+| PHASE | `running`（**C1.full r2 重启运行中** PID 1505377 b2026_1008_150357 8worker/158/-n，ppid=1 setsid detached✅，log /tmp/ABL_full_r2.log 活跃增长(15:04 mtime) 0 Forbidden✅ 14 ACCESS RESTRICTED✅ workers active。**r2 首启失败已诊断重跑**：首启 b2026_1008_142054 缺四 override→158 Forbidden+grading crash(FileNotFoundError .env默认路径)→旧log存档/tmp/ABL_full_r2_FAILED_142054.log→重跑带四 override(EVAL_FW_DIR+CLI_DATA_DIR=.cline_prof4_eval/data+PYTHON+https_proxy)→0 Forbidden✅。**r1 已收割**=88.0%(139/158, 150ok/7fail/0exec_err, 0 Forbidden✅, 808 ACCESS RESTRICTED, batch b2026_1008_114702)。infra 端口全OPEN✅ /nasdata 371G✅ /home 1.8G(非阻断)。运维复检 legacy 2455466✅ ops 2665949✅ loop 3579323✅(proxy✅自检通过)。**下轮**：pgrep无输出→grep PASS_RATE /tmp/ABL_full_r2.log取r2→记成绩→ROUND 2→3≤5→启r3（同臂full不切set_ablation，**⚠️必带四override**））|
 | WAITING | 1 |
-| ERROR_COUNT | 0（C1.rag r3 作废=infra 额度耗尽，不计数；已重跑恢复）|
+| ERROR_COUNT | 1（C1.full r2 首启缺四 override→158 Forbidden+grading crash=config 失败非 infra，已重跑恢复）|
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
 | 基座 | 编排=`glm-5.2`；eval backbone=`deepseek-v4-pro-fp4`（**已恢复 HTTP 200，C1/C2/S1 均用 pro-fp4**）|
 
@@ -28,7 +28,7 @@ WAITING: 1
 | C1 | pure_llm | 5/5 ✅ | ✅ 10.5±1.9%（复用 legacy：[8.2,9.5,10.1,11.4,13.3]）|
 | C1 | rag | 5/5 ✅ | **71.8±2.5%** [70.3,72.2,69.6,70.9,75.9]（r5=75.9% 120/158 batch 2026_1007_202448, 151 ok/7 fail/0 exec_err, 0 Forbidden ✅；legacy 68.2±7.4% 作废→本线重跑）|
 | C1 | wo_retrieval | 5/5 ✅ | **81.0±4.5%** [74.1,86.1,81.6,79.7,83.5]（r1=74.1% 复用 legacy；r2=86.1% 136/158 b2026_1007_221959；r3=81.6% 129/158 b2026_1008_015818；r4=79.7% 126/158 b2026_1008_0507；r5=83.5% 132/158 b2026_1008_081817 147ok/8fail/0exec_err 0 Forbidden✅ 全程）|
-| C1 | full（锚点）| 2/5 ▶（r2 运行中）| r1=88.0% 139/158 b2026_1008_114702 150ok/7fail/0exec_err 0 Forbidden✅（探路 84.8%；r2 PID 1340901 b2026_1008_142054 运行中）|
+| C1 | full（锚点）| 2/5 ▶（r2 重启运行中）| r1=88.0% 139/158 b2026_1008_114702 150ok/7fail/0exec_err 0 Forbidden✅（探路 84.8%；r2 首启 b2026_1008_142054 FAILED 缺四 override→158 Forbidden+grading crash 已存档 /tmp/ABL_full_r2_FAILED_142054.log；r2 重启 PID 1505377 b2026_1008_150357 0 Forbidden✅ 14 ACCESS RESTRICTED✅ 运行中）|
 | C2 | phi_k10 | 1-5/5 | ⬜（探路 75.3%）|
 | C2 | phi_k3 | 1-5/5 | ⬜（探路 69.0%）|
 | C2 | phi_k1 | 1-5/5 | ⬜（探路 60.8%）|
@@ -194,3 +194,5 @@ WAITING: 1
 - [2026-10-08 13:10] [🩾 C1.full r1 健康巡检 #1（仍在跑）] [⏩ 已滚出] 详情已原文搬入 daily-memories/2026-10-08.md（§13:10，rolled-from-MEMORY 2026-10-08 14:20）。
 
 - [2026-10-08 13:44] [🩾 C1.full r1 健康巡检 #2（仍在跑·grading 阶段）+ 补推 ahead1] [⏩ 已滚出] 详情已原文搬入 daily-memories/2026-10-08.md（§13:44，rolled-from-MEMORY 2026-10-08 14:20）。
+
+- [2026-10-08 15:04] [❌→✅ C1.full r2 首启 EVAL_FAILED（缺四 override→158 Forbidden+grading crash）→诊断+重跑带 override→PID 1505377 b2026_1008_150357 0 Forbidden✅ 14 ACCESS RESTRICTED✅ 运行中] §7步骤A：pgrep无输出→打分无pass行→log 59KB 仅跑3min→158 Forbidden+FileNotFoundError(.env默认EVAL_FW_DIR不存在)→根因=首启用裸§6命令缺四override(r1带了)→pro-fp4 API curl验活200✅→proxy自检loop 3579323✅→ERROR_COUNT 0→1<3重试→存档旧log→重跑带四override→PID 1505377 ppid=1 setsid✅ /proc/environ四override✅ 0 Forbidden✅ ACCESS RESTRICTED 14✅ log 103KB活跃。详情见 daily-memories/2026-10-08.md §15:04。
