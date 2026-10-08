@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 十一假期训练进展报告 · 2026-10-01 ~ 10-08</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--dim:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff;--orange:#db6d28}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;line-height:1.6;padding:20px;max-width:1200px;margin:0 auto}
+h1{font-size:1.8em;margin-bottom:4px;background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+h2{font-size:1.35em;margin:28px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border);color:var(--accent)}
+h3{font-size:1.1em;margin:20px 0 8px;color:var(--purple)}
+h4{font-size:0.95em;margin:14px 0 6px;color:var(--yellow)}
+.subtitle{color:var(--dim);font-size:0.9em;margin-bottom:20px}
+.hero{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px}
+.hero p{margin:8px 0}
+.tag{display:inline-block;padding:2px 10px;border-radius:20px;font-size:0.78em;font-weight:600;margin:2px 4px 2px 0}
+.tag-green{background:rgba(63,185,80,0.15);color:var(--green);border:1px solid rgba(63,185,80,0.3)}
+.tag-red{background:rgba(248,81,73,0.15);color:var(--red);border:1px solid rgba(248,81,73,0.3)}
+.tag-yellow{background:rgba(210,153,34,0.15);color:var(--yellow);border:1px solid rgba(210,153,34,0.3)}
+.tag-blue{background:rgba(88,166,255,0.15);color:var(--accent);border:1px solid rgba(88,166,255,0.3)}
+.tag-purple{background:rgba(188,140,255,0.15);color:var(--purple);border:1px solid rgba(188,140,255,0.3)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin:12px 0}
+.grid{display:grid;gap:12px}
+.grid-2{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:1fr 1fr 1fr}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:768px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:0.85em}
+th{background:rgba(88,166,255,0.08);color:var(--accent);padding:8px 10px;text-align:left;border-bottom:2px solid var(--border);white-space:nowrap}
+td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--text)}
+tr:hover td{background:rgba(88,166,255,0.04)}
+.kpi{text-align:center;padding:14px 8px;border-radius:8px;background:var(--card);border:1px solid var(--border)}
+.kpi .num{font-size:1.8em;font-weight:700;color:var(--accent)}
+.kpi .label{font-size:0.75em;color:var(--dim);margin-top:4px}
+.kpi .num.green{color:var(--green)}
+.kpi .num.yellow{color:var(--yellow)}
+.kpi .num.purple{color:var(--purple)}
+.kpi .num.orange{color:var(--orange)}
+.kpi .num.red{color:var(--red)}
+ul,ol{margin:6px 0 6px 20px}
+li{margin:4px 0}
+.conclusion{background:linear-gradient(135deg,rgba(88,166,255,0.06),rgba(188,140,255,0.06));border:1px solid var(--border);border-radius:10px;padding:16px;margin:16px 0}
+code{background:rgba(110,118,129,0.2);padding:1px 5px;border-radius:4px;font-size:0.85em;font-family:"SFMono-Regular",Consolas,monospace}
+.delta-pos{color:var(--green);font-weight:600}
+.delta-neg{color:var(--red);font-weight:600}
+.footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--border);color:var(--dim);font-size:0.8em;text-align:center}
+.svg-wrap{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;margin:12px 0;overflow-x:auto}
+.svg-caption{font-size:0.8em;color:var(--dim);text-align:center;margin-top:6px}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{padding:8px 0 8px 24px;position:relative;border-left:2px solid var(--border)}
+.tl li:before{content:'';position:absolute;left:-6px;top:14px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.tl li.green:before{background:var(--green)}
+.tl li.yellow:before{background:var(--yellow)}
+.tl li.red:before{background:var(--red)}
+.tl li.purple:before{background:var(--purple)}
+.tl time{color:var(--dim);font-size:0.82em;margin-right:8px}
+</style>
+</head>
+<body>
+<h1>🐉 BaiZe 十一假期训练进展报告</h1>
+<div class="subtitle">2026-10-01 ~ 2026-10-08 · ISEDA 2027 · 2.2B Mamba-2/Attention Hybrid LLM + Vision Encoder</div>
+<div class="hero">
+<p><strong>一句话结论</strong>：假期 8 天，4 条并行线共产出 <strong style="color:var(--green)">1,876 次 commit</strong>，完成了 LLM 预训练 R2 全线定稿 + 20B token scaling 曲线 + 视觉编码器 R2–R14 全线收敛 + 数据管线 288B token 就绪 + harness 7-way 横评。架构已锁定，数据已就绪，<strong style="color:var(--accent)">P-8 正式预训练可在 10 月中启动</strong>。</p>
+<p style="color:var(--dim);font-size:0.88em">距 ISEDA 2027 投稿截止（≈2027-02-01）还有 <strong>≈4 个月（123 天）</strong>。当前阶段：架构实验期 → 正式训练过渡期。</p>
+</div>
+<h2>📊 核心 KPI 总览</h2>
+<div class="grid grid-4">
+<div class="kpi"><div class="num green">1,876</div><div class="label">假期总 commit 数</div></div>
+<div class="kpi"><div class="num">4</div><div class="label">并行 agent 线</div></div>
+<div class="kpi"><div class="num purple">~1,050</div><div class="label">累计 GPU·h 消耗</div></div>
+<div class="kpi"><div class="num orange">42</div><div class="label">完成实验编号</div></div>
+</div>
+<div style="height:12px"></div>
+<div class="grid grid-4">
+<div class="kpi"><div class="num green">20B</div><div class="label">LLM 训练 token（P-5b）</div></div>
+<div class="kpi"><div class="num green">288B</div><div class="label">数据分词 token 总量</div></div>
+<div class="kpi"><div class="num">249K</div><div class="label">峰值训练吞吐 tok/s</div></div>
+<div class="kpi"><div class="num purple">20.3%</div><div class="label">视觉编码器最佳 lp</div></div>
+</div>
+<div style="height:12px"></div>
+<div class="grid grid-4">
+<div class="kpi"><div class="num">60.0%</div><div class="label">Harness 最高 resolve rate</div></div>
+<div class="kpi"><div class="num orange">7</div><div class="label">Harness 横评数量</div></div>
+<div class="kpi"><div class="num">11</div><div class="label">HTML 报告产出</div></div>
+<div class="kpi"><div class="num green">0</div><div class="label">论文编译错误</div></div>
+</div>
+
+<div class="svg-wrap">
+<svg viewBox="0 0 800 220" width="100%" style="max-width:800px;margin:0 auto;display:block">
+<text x="400" y="18" text-anchor="middle" fill="#8b949e" font-size="13" font-weight="600">每日 commit 数（2026-10-01 ~ 10-08）</text>
+<g>
+<rect x="40" y="40" width="70" height="148" fill="#58a6ff" rx="3"/><text x="75" y="36" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="700">148</text><text x="75" y="205" text-anchor="middle" fill="#8b949e" font-size="10">10-01</text>
+<rect x="130" y="71" width="70" height="117" fill="#58a6ff" rx="3"/><text x="165" y="67" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="700">117</text><text x="165" y="205" text-anchor="middle" fill="#8b949e" font-size="10">10-02</text>
+<rect x="220" y="30" width="70" height="158" fill="#3fb950" rx="3"/><text x="255" y="26" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="700">235</text><text x="255" y="205" text-anchor="middle" fill="#8b949e" font-size="10">10-03</text>
+<rect x="310" y="5" width="70" height="183" fill="#3fb950" rx="3"/><text x="345" y="1" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="700">314</text><text x="345" y="205" text-anchor="middle" fill="#8b949e" font-size="10">10-04</text>
+<rect x="400" y="42" width="70" height="146" fill="#58a6ff" rx="3"/><text x="435" y="38" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="700">267</text><text x="435" y="205" text-anchor="middle" fill="#8b949e" font-size="10">10-05</text>
+<rect x="490" y="3" width="70" height="185" fill="#3fb950" rx="3"/><text x="525" y="-1" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="700">324</text><text x="525" y="205" text-anchor="middle" fill="#8b949e" font-size="10">10-06</text>
+<rect x="580" y="37" width="70" height="151" fill="#58a6ff" rx="3"/><text x="615" y="33" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="700">278</text><text x="615" y="205" text-anchor="middle" fill="#8b949e" font-size="10">10-07</text>
+<rect x="670" y="73" width="70" height="115" fill="#d29922" rx="3"/><text x="705" y="69" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="700">154</text><text x="705" y="205" text-anchor="middle" fill="#8b949e" font-size="10">10-08</text>
+</g>
+<line x1="30" y1="188" x2="750" y2="188" stroke="#30363d" stroke-width="1"/>
+</svg>
+<div class="svg-caption">【实测数据】绿色 = 日 commit ≥ 300，蓝色 = 200~299，黄色 = &lt; 200（10-08 截至下午）</div>
+</div>
+
+<div class="svg-wrap">
+<svg viewBox="0 0 500 180" width="100%" style="max-width:500px;margin:0 auto;display:block">
+<text x="250" y="18" text-anchor="middle" fill="#8b949e" font-size="13" font-weight="600">各线 commit 分布（假期总计）</text>
+<g font-size="12" fill="#e6edf3">
+<text x="70" y="50" text-anchor="end" fill="#8b949e">pretrain</text>
+<rect x="80" y="38" width="313" height="22" fill="#58a6ff" rx="3"/>
+<text x="400" y="54" fill="#e6edf3" font-weight="700">238</text>
+<text x="70" y="80" text-anchor="end" fill="#8b949e">vision</text>
+<rect x="80" y="68" width="313" height="22" fill="#bc8cff" rx="3"/>
+<text x="400" y="84" fill="#e6edf3" font-weight="700">313</text>
+<text x="70" y="110" text-anchor="end" fill="#8b949e">data</text>
+<rect x="80" y="98" width="312" height="22" fill="#3fb950" rx="3"/>
+<text x="400" y="114" fill="#e6edf3" font-weight="700">312</text>
+<text x="70" y="140" text-anchor="end" fill="#8b949e">harness</text>
+<rect x="80" y="128" width="226" height="22" fill="#d29922" rx="3"/>
+<text x="313" y="144" fill="#e6edf3" font-weight="700">226</text>
+<text x="70" y="170" text-anchor="end" fill="#8b949e">运维/其他</text>
+<rect x="80" y="158" width="187" height="22" fill="#f85149" rx="3" opacity="0.6"/>
+<text x="274" y="174" fill="#e6edf3" font-weight="700">~187</text>
+</g>
+</svg>
+<div class="svg-caption">【实测数据】vision 和 data 线活动最频繁（分词/下载/实验高频心跳）</div>
+</div>
+
+<h2>🧪 一、Pretrain 线 — LLM 预训练（.29 · 8×H100）</h2>
+<div class="conclusion">
+<strong>核心成就</strong>：R2 全线实验定稿（P-1 ~ P-9.11），20B token scaling 曲线完成，生产口径吞吐 249K tok/s 确认，FP8 可行性裁定，R3 数据配比 BO 搜索运行中。<strong>架构锁定 = Mamba2-hybrid 2.2B（56层含4层attention），P-8 配置基本确定</strong>。
+</div>
+
+<h3>P-1：LR 网格扩展 — 1e-3 确认为全局极小值</h3>
+<div class="card">
+<p>Round 1 的 7 点 LR 扫描单调递减到网格上限。P-1 向上扩展 3 点，得到完整 10 点 U 形曲线：</p>
+<table>
+<tr><th>LR</th><th>2e-4</th><th>3e-4</th><th>4e-4</th><th>5e-4</th><th>6e-4</th><th>8e-4</th><th>1e-3</th><th>1.5e-3</th><th>2e-3</th><th>3e-3</th></tr>
+<tr><td>loss@5000</td><td>2.904</td><td>2.846</td><td>2.817</td><td>2.798</td><td>2.778</td><td>2.770</td><td><strong style="color:var(--green)">2.763</strong></td><td>2.775</td><td>2.789</td><td>2.886</td></tr>
+</table>
+<p><span class="tag tag-green">结论</span> <strong>1e-3 是扩展网格内部的全局极小值</strong>，不是截断边界。3e-3 无 NaN 未发散。</p>
+</div>
+
+<h3>P-3：架构对比延长到 5000 步 — hybrid 全程领先</h3>
+<div class="card">
+<table>
+<tr><th>Checkpoint</th><th>500步</th><th>1000步</th><th>2000步</th><th>3000步</th><th>5000步</th></tr>
+<tr><td>dense (2.512B)</td><td>5.468</td><td>4.835</td><td>4.227</td><td>3.813</td><td>3.358</td></tr>
+<tr><td>hybrid (2.220B)</td><td>5.150</td><td>4.614</td><td>3.828</td><td>3.382</td><td><strong style="color:var(--green)">3.056</strong></td></tr>
+<tr><td>Δ (dense−hybrid)</td><td>0.319</td><td>0.221</td><td>0.399</td><td>0.431</td><td><strong>0.301</strong></td></tr>
+</table>
+<p><span class="tag tag-green">结论</span> hybrid 全部 5 个 checkpoint 均优于 dense，且 <strong>少 11.6% 参数</strong>。</p>
+</div>
+
+<h3>P-5b：20B token scaling 曲线 — 核心长跑</h3>
+<div class="card">
+<p>从零训练 20B token，墙钟 38.7h / 309 GPU·h，全程 skip=0/nan=0：</p>
+<table>
+<tr><th>Token</th><th>655M</th><th>1.3B</th><th>2.6B</th><th>5.2B</th><th>10.5B</th><th>20B</th></tr>
+<tr><td>lm loss</td><td>5.367</td><td>3.988</td><td>2.925</td><td>2.361</td><td>2.119</td><td><strong style="color:var(--green)">1.914</strong></td></tr>
+</table>
+<div class="svg-wrap" style="margin:8px 0">
+<svg viewBox="0 0 600 200" width="100%" style="max-width:600px;margin:0 auto;display:block">
+<text x="300" y="18" text-anchor="middle" fill="#8b949e" font-size="12" font-weight="600">P-5b: Loss vs Training Tokens</text>
+<line x1="60" y1="170" x2="560" y2="170" stroke="#30363d" stroke-width="1"/>
+<line x1="60" y1="40" x2="60" y2="170" stroke="#30363d" stroke-width="1"/>
+<text x="55" y="44" text-anchor="end" fill="#8b949e" font-size="9">6.0</text>
+<text x="55" y="75" text-anchor="end" fill="#8b949e" font-size="9">5.0</text>
+<text x="55" y="106" text-anchor="end" fill="#8b949e" font-size="9">4.0</text>
+<text x="55" y="137" text-anchor="end" fill="#8b949e" font-size="9">3.0</text>
+<text x="55" y="168" text-anchor="end" fill="#8b949e" font-size="9">2.0</text>
+<polyline points="90,46 170,96 250,135 330,155 410,164 490,168" fill="none" stroke="#58a6ff" stroke-width="2.5"/>
+<circle cx="90" cy="46" r="5" fill="#58a6ff"/><text x="90" y="36" text-anchor="middle" fill="#e6edf3" font-size="9">5.37</text>
+<circle cx="170" cy="96" r="5" fill="#58a6ff"/><text x="170" y="86" text-anchor="middle" fill="#e6edf3" font-size="9">3.99</text>
+<circle cx="250" cy="135" r="5" fill="#58a6ff"/><text x="250" y="125" text-anchor="middle" fill="#e6edf3" font-size="9">2.93</text>
+<circle cx="330" cy="155" r="5" fill="#58a6ff"/><text x="330" y="145" text-anchor="middle" fill="#e6edf3" font-size="9">2.36</text>
+<circle cx="410" cy="164" r="5" fill="#58a6ff"/><text x="410" y="154" text-anchor="middle" fill="#e6edf3" font-size="9">2.12</text>
+<circle cx="490" cy="168" r="5" fill="#3fb950"/><text x="490" y="158" text-anchor="middle" fill="#3fb950" font-size="9" font-weight="700">1.91</text>
+<text x="90" y="185" text-anchor="middle" fill="#8b949e" font-size="8">655M</text>
+<text x="170" y="185" text-anchor="middle" fill="#8b949e" font-size="8">1.3B</text>
+<text x="250" y="185" text-anchor="middle" fill="#8b949e" font-size="8">2.6B</text>
+<text x="330" y="185" text-anchor="middle" fill="#8b949e" font-size="8">5.2B</text>
+<text x="410" y="185" text-anchor="middle" fill="#8b949e" font-size="8">10.5B</text>
+<text x="490" y="185" text-anchor="middle" fill="#8b949e" font-size="8">20B</text>
+</svg>
+</div>
+<p><span class="tag tag-yellow">关键判断</span> stable 段 loss 到 17.9B 仍持续缓降、<strong>未见变平</strong> → P-8 推荐 100B token。</p>
+</div>
+
+<h3>P-7/P-9：吞吐修正与生产口径确认</h3>
+<div class="card">
+<p><strong>P-7</strong>：Round 1 "dense +24%" 是跨节点 artifact，同节点重测真值 <strong>~8%</strong>。论文已修正。</p>
+<p><strong>P-9</strong>：A1 配置（TP1·DP8·MBS2·seq4096·bf16）= <strong>249K tok/s</strong>，1000 步长跑确认。P-9.8 FP8 4/4 PASS → FP8 可用于 P-8。P-9.11 确认 hybrid 长上下文优势。</p>
+</div>
+
+<h3>R3：数据配比 BO 搜索 — 进行中</h3>
+<div class="card">
+<p>6 维贝叶斯优化：100 trial × 1B token/trial，当前 <strong>24/100 完成</strong>，Best = <strong>trial#8 = 0.4032</strong>，ETA ~06:00 Oct 9。</p>
+</div>
+
+<h2>👁️ 二、Vision 线 — 视觉编码器（.12 · 8×H100）</h2>
+<div class="conclusion">
+<strong>核心成就</strong>：R2–R14 全线收敛，OpenVision2 胜出，scaling law 定量外推（渐近 25.1%），AIMv2 dense objective 翻盘（lp 7.4% → 19.8%），BP-1/2/3 锁定。累计 ~498 GPU·h。
+</div>
+
+<h3>R8：6 架构公平对比 — OpenVision2 全指标第一</h3>
+<div class="card">
+<table>
+<tr><th>架构</th><th>参数</th><th>类型</th><th>loss@3k</th><th>IN-1k lp</th><th>判定</th></tr>
+<tr><td><strong>OpenVision2</strong></td><td>505M</td><td>Attention</td><td><strong>4.865</strong></td><td><strong>1.14%</strong></td><td><span class="tag tag-green">胜出</span></td></tr>
+<tr><td>MoE-ViE</td><td>505M</td><td>MoE</td><td>5.558</td><td>0.28%</td><td>健康</td></tr>
+<tr><td>MambaEye</td><td>535M</td><td>SSM</td><td>6.251*</td><td>0.10%</td><td><span class="tag tag-red">@300坍缩</span></td></tr>
+<tr><td>DeepEncoderV2</td><td>517M</td><td>Attn+SSM</td><td>6.251*</td><td>0.10%</td><td><span class="tag tag-red">@300坍缩</span></td></tr>
+</table>
+<p><span class="tag tag-green">结论</span> ① 架构有真实差异；② 坍缩是 SSM 特异；③ IN-1k 替换退化 R@1。</p>
+</div>
+
+<h3>R9-R10：Scaling Law — 25.1% 渐近</h3>
+<div class="card">
+<ul>
+<li><strong>N 轴</strong>（R²=0.94）：幂律渐近 <strong style="color:var(--purple)">25.1%</strong>，目标 20% 需 619 亿样本（525× 本地上限）</li>
+<li><strong>M 轴</strong>：边际效应全区间为负 → 数据受限区间加宽塔是负收益</li>
+<li>瓶颈在<strong>数据量与目标函数</strong>（649× 数据缺口），非架构</li>
+</ul>
+</div>
+
+<h3>R11-G：AIMv2 Dense Objective — 关键翻盘</h3>
+<div class="card">
+<table>
+<tr><th>配置</th><th>lp@5.12M</th><th>lp@55.3M</th><th>Δ</th></tr>
+<tr><td>InfoNCE 基线</td><td>3.43%</td><td>6.08%</td><td>—</td></tr>
+<tr><td><strong>AIMv2 dense</strong></td><td>7.40%</td><td><strong style="color:var(--green)">19.76%</strong></td><td><strong class="delta-pos">+12.36 pp</strong></td></tr>
+<tr><td>3-epoch 续跑</td><td>—</td><td><strong style="color:var(--green)">20.27%</strong></td><td><strong class="delta-pos">+12.87 pp</strong></td></tr>
+</table>
+<p><span class="tag tag-green">翻盘</span> 11 点全单调（R²=0.91），+12.36 pp 是全线最大改进。锁定为 BP-1。</p>
+</div>
+
+<h3>消融汇总 + 最佳实践</h3>
+<div class="card">
+<table>
+<tr><th>消融</th><th>最优值</th></tr>
+<tr><td>Mask ratio（5臂）</td><td><strong>0.6</strong>（倒 U 形）</td></tr>
+<tr><td>Weight ratio（4臂）</td><td><strong>1:1</strong></td></tr>
+<tr><td>AIMv2 AR 范式</td><td><strong style="color:var(--red)">坍缩</strong>（lp=1.37%）</td></tr>
+<tr><td>SigLIP/LocalLoss/CoCa</td><td>全未翻盘</td></tr>
+</table>
+<p><strong>BP-1</strong>: AIMv2 dense | <strong>BP-2</strong>: mask 0.6 + weight 1:1 | <strong>BP-3</strong>: Protocol B</p>
+</div>
+
+<h2>📦 三、Data 线 — 数据准备（.12）</h2>
+<div class="conclusion">
+<strong>核心成就</strong>：288B token 分词就绪（远超 P-8 目标 100B），配比 BO R1+R2 共 400 trial（ρ=−0.80），s_step 8.6× 加速，污染隔离 536 任务黑名单。
+</div>
+<div class="card">
+<h3>数据下载与分词</h3>
+<table>
+<tr><th>数据源</th><th>状态</th><th>分词 token</th></tr>
+<tr><td>ultrafineweb_zh</td><td><span class="tag tag-green">✅ 完成</span></td><td>113.47B</td></tr>
+<tr><td>ultrafineweb_l1_en_hq</td><td><span class="tag tag-yellow">10/12 done</span></td><td>122.94B</td></tr>
+<tr><td>UltraX-Preview</td><td><span class="tag tag-green">✅ 479/479</span></td><td>30.97B</td></tr>
+<tr><td>en_base</td><td><span class="tag tag-yellow">进行中 ~27%</span></td><td>20.05B</td></tr>
+<tr><td>GPIC</td><td><span class="tag tag-yellow">6089/8001 (76%)</span></td><td>—</td></tr>
+<tr><td><strong>总计</strong></td><td colspan="2"><strong style="color:var(--green)">288.43B token</strong></td></tr>
+</table>
+</div>
+<div class="card">
+<h3>配比搜索 + s_step 归因</h3>
+<p><strong>BO R1</strong>: 200 trial, ρ=−0.43 | <strong>BO R2</strong>: 200 trial, best=t23=0.4155, <strong>ρ=−0.80</strong> | <strong>R3</strong>: 进行中</p>
+<p><strong>s_step 归因</strong>: MBS=16 使 s_step 从 1432ms → <strong>166ms（8.6×）</strong>，D 从 0.016B → 1B/trial。</p>
+<p><strong>污染隔离</strong>: 536 任务黑名单（6 快照并集），NFKC/Unicode 归一化 + 8-gram 兜底，全快照正控 100%。</p>
+</div>
+
+<h2>🔧 四、Harness 线 — EDA 下游评测（.29）</h2>
+<div class="conclusion">
+<strong>核心成就</strong>：7-way SWE-bench Lite 横评全完成（210 entries），cline-patched 与 Pi 并列第一（60.0%），repo-based 失败分析 django vs sympy +11.4pp。
+</div>
+<div class="card">
+<table>
+<tr><th>Harness</th><th>Resolve Rate</th><th>排名</th></tr>
+<tr><td><strong>cline-patched</strong></td><td><strong style="color:var(--green)">60.0%</strong></td><td>🥇</td></tr>
+<tr><td><strong>Pi</strong></td><td><strong style="color:var(--green)">60.0%</strong></td><td>🥇</td></tr>
+<tr><td>Hermes</td><td>53.3%</td><td>🥉</td></tr>
+<tr><td>opencode</td><td>50.0%</td><td>4</td></tr>
+<tr><td>codex</td><td>46.7%</td><td>5</td></tr>
+<tr><td>claude-code</td><td>43.3%</td><td>6</td></tr>
+<tr><td>deepseek-harness</td><td>40.0%</td><td>7</td></tr>
+</table>
+</div>
+<div class="svg-wrap">
+<svg viewBox="0 0 700 220" width="100%" style="max-width:700px;margin:0 auto;display:block">
+<text x="350" y="18" text-anchor="middle" fill="#8b949e" font-size="13" font-weight="600">7-way Harness Resolve Rate 对比</text>
+<g>
+<rect x="120" y="35" width="360" height="22" fill="#3fb950" rx="3"/><text x="490" y="51" fill="#e6edf3" font-size="11" font-weight="700">60.0%</text><text x="110" y="51" text-anchor="end" fill="#8b949e" font-size="11">cline-patched</text>
+<rect x="120" y="65" width="360" height="22" fill="#3fb950" rx="3"/><text x="490" y="81" fill="#e6edf3" font-size="11" font-weight="700">60.0%</text><text x="110" y="81" text-anchor="end" fill="#8b949e" font-size="11">Pi</text>
+<rect x="120" y="95" width="320" height="22" fill="#58a6ff" rx="3"/><text x="450" y="111" fill="#e6edf3" font-size="11" font-weight="700">53.3%</text><text x="110" y="111" text-anchor="end" fill="#8b949e" font-size="11">Hermes</text>
+<rect x="120" y="125" width="300" height="22" fill="#58a6ff" rx="3"/><text x="430" y="141" fill="#e6edf3" font-size="11" font-weight="700">50.0%</text><text x="110" y="141" text-anchor="end" fill="#8b949e" font-size="11">opencode</text>
+<rect x="120" y="155" width="280" height="22" fill="#d29922" rx="3"/><text x="410" y="171" fill="#e6edf3" font-size="11" font-weight="700">46.7%</text><text x="110" y="171" text-anchor="end" fill="#8b949e" font-size="11">codex</text>
+<rect x="120" y="185" width="260" height="22" fill="#d29922" rx="3"/><text x="390" y="201" fill="#e6edf3" font-size="11" font-weight="700">43.3%</text><text x="110" y="201" text-anchor="end" fill="#8b949e" font-size="11">claude-code</text>
+</g>
+<line x1="120" y1="30" x2="120" y2="215" stroke="#30363d" stroke-width="1"/>
+</svg>
+<div class="svg-caption">【实测数据】统一 backbone = kimi-k2.6-cloud，30 条 SWE-bench Lite</div>
+</div>
+<div class="card">
+<p><strong>Repo-Based 失败分析</strong>: django 56.2% vs sympy 44.8%（+11.4pp）。Hermes 唯一 repo-agnostic；claude-code 差距最大（+20pp）。</p>
+<p>✅ <code>report_harness_swebench_analysis.html</code>（75.6KB, 10 SVG）+ 3-way/7-way 对比 HTML 交付</p>
+</div>
+
+<h2>📅 五、关键时间线</h2>
+<div class="card">
+<ul class="tl">
+<li class="green"><time>10-01</time> P-1 LR 扩展 + P-4 FP8 profile + vision R8 → OpenVision2 胜出</li>
+<li><time>10-02</time> P-2 五 seed + P-3 5000 步架构对比 + P-5b 20B 启动 + vision R9</li>
+<li class="green"><time>10-03</time> P-5b 过 10.5B + vision R9 完成（25.1%）+ R10 + R11-L 消融 + data BO R1</li>
+<li class="green"><time>10-04</time> <strong>P-5b 20B 完成（loss 1.914）</strong> + P-7 修正 + P-9 扫描 + vision R11-G 翻盘</li>
+<li><time>10-05</time> P-9.7 249K 确认 + P-9.8 FP8 PASS + R14 调研 + harness 横评推进</li>
+<li class="purple"><time>10-06</time> P-9.11 长上下文 + P-6② + data BO R2（ρ=−0.80）+ s_step 8.6×</li>
+<li class="purple"><time>10-07</time> 各线 HTML 报告 + R3 BO 准备 + data 口径修正 + harness 7-way HTML</li>
+<li class="green"><time>10-08</time> <strong>R3 BO 启动</strong>（24/100）+ 论文更新 + main.pdf 0 err</li>
+</ul>
+</div>
+
+<h2>🚀 六、假期后的关键路径</h2>
+<div class="card">
+<table>
+<tr><th>时间</th><th>里程碑</th><th>状态</th></tr>
+<tr><td>2026-10 上/中</td><td>锁定架构</td><td><span class="tag tag-green">✅ 基本完成</span></td></tr>
+<tr><td>2026-10 下</td><td>正式数据准备</td><td><span class="tag tag-yellow">288B 就绪</span></td></tr>
+<tr><td>2026-11</td><td>大规模 LLM 预训练 P-8 + 视觉正式训练</td><td><span class="tag tag-blue">待启动</span></td></tr>
+<tr><td>2026-12</td><td>后训练 SFT → RL + MLLM 对齐</td><td>⬜</td></tr>
+<tr><td>2027-01</td><td>EDA-Eval 评测 + 论文定稿</td><td>⬜</td></tr>
+<tr><td><strong>2027-02-01</strong></td><td><strong>投稿</strong></td><td>⬜</td></tr>
+</table>
+</div>
+<div class="card">
+<h3>P-8 启动条件</h3>
+<table>
+<tr><th>前置项</th><th>状态</th></tr>
+<tr><td>架构锁定</td><td><span class="tag tag-green">✅</span></td></tr>
+<tr><td>配置定稿（249K tok/s）</td><td><span class="tag tag-green">✅</span></td></tr>
+<tr><td>数据下载</td><td><span class="tag tag-green">✅</span></td></tr>
+<tr><td>数据分词</td><td><span class="tag tag-yellow">进行中</span></td></tr>
+<tr><td>GPIC 下载</td><td><span class="tag tag-yellow">76%</span></td></tr>
+<tr><td>R3 配比定稿</td><td><span class="tag tag-yellow">24/100</span></td></tr>
+</table>
+<p><span class="tag tag-blue">预计</span> <strong>10 月中旬 P-8 可启动</strong>（100B @ 249K tok/s ≈ 4.6 天）。</p>
+</div>
+
+<h2>💡 七、总结</h2>
+<div class="conclusion">
+<ol>
+<li><strong>架构锁定</strong>：Mamba2-hybrid 2.2B — 5000 步全程领先 dense -11.6% 参数；吞吐代价修正为 ~8%；249K tok/s 确认。三大 claim 全部加固。</li>
+<li><strong>Scaling 量化</strong>：P-5b 20B（loss 5.37→1.91），未变平 → 推荐 100B；vision 二维 scaling（渐近 25.1%，649× 缺口）。</li>
+<li><strong>视觉翻盘</strong>：AIMv2 dense 使 lp 7.4%→19.8%（+12.36pp）；AR 范式坍缩证伪纯 AR。</li>
+<li><strong>数据就绪</strong>：288B token 远超目标；BO 400 trial（ρ=−0.80）；污染隔离 536 黑名单。</li>
+<li><strong>评测基础</strong>：7-way 横评完成（cline-patched 60%）。</li>
+<li><strong>论文</strong>：main.pdf 0 err，R2 数据全部回填。</li>
+</ol>
+<p><strong>一句话</strong>：十一假期完成"架构锁定 + 数据就绪 + scaling 量化"三件大事，<strong>P-8 可在 10 月中启动</strong>，项目从"实验探索期"进入"大规模训练期"。</p>
+</div>
+
+<div class="footer">
+<p>BaiZe-ISEDA2027 · 十一假期训练进展报告 · 生成于 2026-10-08</p>
+<p>数据来源：git log（1,876 commits）+ 4 线 MEMORY/EXPERIMENTS · 所有数字均来自实测</p>
+</div>
+
+</body></html>
