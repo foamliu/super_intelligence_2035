@@ -185,6 +185,14 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
+- **2026-10-08（用户令：各线自己写报告）** —— 用户指令：「把任务下发给各 agent，由 agent 自己写报告，不要替代他们写」。已下发 4 条线各一份 HTML 报告任务：
+  - **pretrain** → `report_pretrain_r2_final.html`（R2 全线实验收官总报告）
+  - **data** → `report_data_pipeline_status.html`（数据准备全链路状态报告）
+  - **vision** → `report_vision_encoder_final.html`（视觉编码器全线总结报告，等当前实验跑完再写）
+  - **harness** → `report_harness_swebench_analysis.html`（SWE-bench 横评深度分析报告）
+  **commit**: `e3afb272` · **工作已完成**，等待各 agent 下次唤醒后自行交付产物。
+
+
 - **2026-10-07（用户令：harness 30 横评 · pretrain 2M–16M+显存归因+5 份研究 · data 解禁白名单）** —— ⚠️ **资源**：pretrain 09:44 归还 `.12` GPU1–7，**vision 09:52 占满 8 张**（mask-ratio），`.29` 被 data BO 占 ⇒ 无空卡。已下发：`BAIZE_HARNESS_TASK.md`（停 codex×300 → 补 opencode/claude-code/deepseek ×30（同 30 条）→ 5 行对比表）· `BAIZE_PRETRAIN_2B_TASK.md` **③**（hybrid ctx 2M/4M/8M/16M ＋ 诊断 V1–V4）**④**（5 份研究 HTML：公平口径/提速/效果/1M-P8/NAS）· `BAIZE_DATA_TASK.md` 解禁白名单（UltraX 立即下 / en_v1_4 排队 / 开始分词）＋「运维问询」＋ **GPIC 优先序裁定 + BO 方向核对令 + research4 去重** ＋ **15:58 补令 ④（用户直令）**：**撤销「15:30 定时停 UltraX」** —— UltraX 已于 **15:27 被停（210/479, 215GB/487GB, 44%）**，现令 **续传下完（479/479）**、**GPIC 等它跑完再让回**、**禁止再设预设定时终止**。**明细见 `daily-memories/2026-10-07.md`。**
 
 - **🎯 2026-10-06（用户三步令 · data）** —— ① 收 200-trial（top-K `lm_eval`+Spearman+σ）② **`s_step` 归因**（1.5 s→**166 ms**，真凶 = `MBS=1`+GBS16 ⇒ 每步 16 个 microbatch；已升级 MBS×GBS 网格）③ `.29` GPU0-1 释放后 8 卡搜第二轮。**明细见 `daily-memories/2026-10-06.md`。**
