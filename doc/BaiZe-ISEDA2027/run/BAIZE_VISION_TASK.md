@@ -37,39 +37,9 @@
 
 > 📦 本块加入后 TASK 约 33KB（略超 32KB），agent 收尾前先把已闭合旧块归档到 `ARCHIVE_OPERATOR_VISION.md`。
 
-### 🆕 运维指令 · 2026-10-07③（📄 **mask-ratio 消融报告 HTML**）· **用户直令** · 高优先
+> 📦 §运维指令 · 2026-10-07③（mask-ratio 消融报告 HTML）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：report_vision_mask_ratio.html 已交付（34.3KB, 8节+2SVG, 倒U形 0.6 最优, commit ee9db3ca）。需要时再读。
 
-> **用户令（2026-10-07 夜）**：「**既然 ✅ mask-ratio ALL DONE，让 vision 写个 html 报告。**」
-> ⚠️ **不是重复 `report_vision_lp_protocol.html`**（那是 lp 协议专项）—— 本次是 **② mask-ratio 消融**这一项的独立报告。**请在开头 1 行区分二者**。
-
-**① 交付**：`report_vision_mask_ratio.html`（落 `doc/BaiZe-ISEDA2027/`）
-
-**② 格式（沿用 house style —— 参照 `report_10_06.html` / `report_10_07_vision_overnight.html`）**
-- **自包含**：内联 CSS + **数据图优先内联 SVG**；**零外链**；**HTML 本体 ≤200KB**。
-- 位图一律 **JPEG、长边 ≤1280、q85**、单图 ≤400KB/总量 ≤4MB、**落本地并 commit**；🚫 严禁外链、🚫 严禁用文生图「编」数据图（曲线必须由**真实实测数据**生成）。
-
-**③ 建议 8 节**
-1. **TL;DR**；
-2. **实验设计**：5 臂 `mask-ratio ∈ {0.3, 0.5, 0.6, 0.75, 0.9}` · 30k 步/臂 · 8 卡 · 吞吐 ~4500–5000 img/s · IN-1k lp 评测 20 ckpt · 起止时刻（09:52 → 19:42，eval 20:06）；
-3. ⭐ **结果表 + 倒 U 曲线（内联 SVG）**：`0.3→12.69% · 0.5→11.91% · 0.6→13.49%（最优） · 0.75→12.49% · 0.9→11.53%`（Δ vs 最优：−0.80 / −1.58 / — / −1.00 / −1.96）；
-4. **坍缩判据与健康度**：逐臂 **C1**（0.3495 / 0.3756 / 0.3810 / 0.3736 / —）、**C2 gap**、**C4**；**如实写「无坍缩」的证据**（如 arm0.75 C1 峰值 0.4458@19800）；
-5. **结论**：**mask-ratio 存在最优 ≈0.6**；0.3 / 0.75 落在 **±1.5pp 噪声带**内；0.5 / 0.9 显著更差；
-6. **与既有 lp 结论的关系**：**必须显式标注「本消融的 lp 口径」**，并说明与 `report_vision_lp_protocol.html` 的 **Δlp ≈ +10pp**（协议差异）**不可直接混比**；
-7. **局限（如实）**：±1.5pp 噪声带 · **单 seed？**（是就写「单 seed，未做多 seed 方差」）；
-8. **下一步**：③ weight-ratio 消融（进行中，ETA ~04:34）→ ④ 官方 AIMv2 AR 范式。
-
-**④ 纪律**：**数字必须真**（取自 `EXPERIMENTS_VISION*.md` / 原始 ckpt 日志，可复算）；收尾按「收尾铁律」commit+push（前缀 `vision 报告: …`）。
-> 📦 体积提醒：本块加入后 `BAIZE_VISION_TASK.md` ≈32KB ⇒ 收尾前先归档已闭合旧块。
-
-
-### 🆕 运维指令 · 2026-10-07②（🤝 **对账簿：pretrain 借 `.12` GPU1–2 跑长上下文推理成本矩阵，至 ~11:00 硬交还**）· 常驻 · 非实验 · **用户直令**
-
-**⓪ 先归档（超 40KB 红线）**：把**已闭合**的下一块「📊 昨夜工作汇报 HTML」（已交付 ✅）**原文**搬入 `ARCHIVE_OPERATOR_VISION.md` + 留 1 行指针，**再**读本块。
-
-> **用户令（2026-10-07）**：「`.12` GPU1–7 空闲…**何必只用 1、2？让 pretrain 用 1–7 把长上下文并行测完**」⇒ **批准 pretrain 借 GPU1–7** 跑 sglang 长上下文成本矩阵 128K–1M（一格一卡扇出；`.29` 被 data BO 占满）**至 11:00**。
-> 📓 对账簿 = 新建 `run/GPU12_ALLOC.md`。**GPU0 仍归你的 `lp bridge`（PID 807654）**，🚫 双方都不 kill 对方进程；bridge / CPU / 写作类任务**照常，无需改期**。
-> 🚫 **唯一约束**：**GPU1–7 整段借给 pretrain 跑并行矩阵（预计 30–45 min 交还，硬天花板 11:00）** ⇒ 这期间你的排队项**要不到卡**；确有 8 卡硬需求 ⇒ 在账本申请区写一行，**pretrain 必须让**。
-
+> 📦 §运维指令 · 2026-10-07②（GPU12 对账簿）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：pretrain 借 GPU1–7 跑完长上下文成本矩阵后 09:44 已归还，GPU12_ALLOC.md 已建。需要时再读。
 
 > 📦 §运维指令 · 2026-10-07（📊 昨夜工作汇报 HTML）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：report_10_07_vision_overnight.html 已交付（自包含 27.7KB，内联 SVG，零外部依赖）。需要时再读。
 
