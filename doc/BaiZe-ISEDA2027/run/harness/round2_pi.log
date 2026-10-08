@@ -61,3 +61,14 @@ Serial kimi eval: harness=pi model=kimi-k2.6-cloud
 ============================================================
 [SETUP] django__django-11848 for pi
   [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  => django__django-11848 | pi | blocked
+
+############################################################
+# [7/70] pi x django__django-11905
+############################################################
+
+============================================================
+[SETUP] django__django-11905 for pi
+
+[RUN] pi on django__django-11905 ...
+  [EVAL] pi on django__django-11905 ...

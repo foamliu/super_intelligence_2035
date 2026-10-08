@@ -68,3 +68,21 @@ Serial kimi eval: harness=opencode model=kimi-k2.6-cloud
 
 ============================================================
 [SETUP] django__django-11905 for opencode
+  => django__django-11905 | opencode | blocked
+
+############################################################
+# [8/70] opencode x django__django-11910
+############################################################
+
+============================================================
+[SETUP] django__django-11910 for opencode
+  => django__django-11910 | opencode | blocked
+
+############################################################
+# [9/70] opencode x django__django-11964
+############################################################
+
+============================================================
+[SETUP] django__django-11964 for opencode
+
+[RUN] opencode on django__django-11964 ...

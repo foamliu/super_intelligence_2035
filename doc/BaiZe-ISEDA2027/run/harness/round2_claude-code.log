@@ -22,3 +22,14 @@ Serial kimi eval: harness=claude-code model=kimi-k2.6-cloud
 
 [RUN] claude-code on astropy__astropy-12907 ...
   [EVAL] claude-code on astropy__astropy-12907 ...
+  => astropy__astropy-12907 | claude-code | patch-but-failed
+
+############################################################
+# [3/71] claude-code x astropy__astropy-14182
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14182 for claude-code
+
+[RUN] claude-code on astropy__astropy-14182 ...
+  [EVAL] claude-code on astropy__astropy-14182 ...
