@@ -64,7 +64,7 @@ WAITING: 0
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
 | **pretrain** | 🔄 **R3 数据配比 BO（6 维 / 100 trial）运行中**：DB 32 行（31 complete + 1 failed=#24），best=**trial#8 score=0.4032**；第 5 批 trials 32–39 训练中 ~62–75%，**0 NaN**；PID 2637043（ppid=1），8 卡 62GB/55–90% util，**ETA ~05:50 Oct 9**。R2 全线 ✅ / 论文 ✅ / 收官报告 ✅ / R3 脚本 + 小样本分词 6/6 ✅（10-07⑤ T1–T4 ✅：float32 vs bf16 SSM **无差异**，「dense 3.3× faster」系 warmup 假象已撤回） | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` · `BAIZE_DATA_R3_TASK.md` | 🟢 `.cline_pretrain`；**P-8 暂缓令（10-02）仍未撤** |
-| **vision** | ✅ **ALL CONVERGED**（R2–R14 全 closed）：**BP-1/2/3 最佳实践已锁定**；Arm A baseline lp=**13.49%** 仍最优，④ Arm B-hybrid=1.37%；论文 §6 + 9 份 HTML 全交付；GPU 全 idle → 🆕 **已下发 2026-10-08④：答「全量现有数据 1 epoch 耗时」**（纯 CPU，**未批准不得起训练**） | `run/EXPERIMENTS_VISION*.md` · `report_vision_*.html` | 🟢 `.cline_vision`；答完待运维派新活 |
+| **vision** | 🔄 从「全线收敛」转入 **AIMv2 缩放对比实验（2026-10-08⑤，用户直令）**：**E1** = 现用 OV2 w512/d30 **126.8M**（224/p16）vs **E2** = 官方 OV2 **L/14@336 304M**（官方结构、**从零**），**同 AIMv2 objective + 同 94.9M 数据 + 同 1 epoch**，主指标 **IN-1k lp Protocol B**；预注册 Δlp 判据 ±1.5pp。顺序：登记 `.12` 8 卡 → smoke 报 ETA → 开跑。背景：R2–R14 全 closed、**BP-1/2/3 已锁定**、Arm A baseline lp=13.49%（Protocol A） | `run/EXPERIMENTS_VISION*.md` · `report_vision_aimv2_scaling.html`（待出） | 🟢 `.cline_vision`；`.12` 8 卡空闲 |
 | **data** | 🔄 分词收尾 + 下载：`zh` 8/8 ✅112.47B · `l1_en_hq` 12/12 ✅152.17B · `ultrax` 10/10 ✅30.97B · `en_base` s24–s33 @24%（ETA ~04:30 Oct 9）；**累计 317.67B tok（≫ P-8 目标 100B）**；GPIC **6167/8001**（ETA ~1.7d）；base ✅ / UltraX ✅479 / `en_v1_4` 排队 | `report_data_*.html` · `DATA_MIX_RECIPE.md` · `BAIZE_DATA_R3_TASK.md` | 🟢 `.cline_data`；**配比实验已交接 pretrain 执行（R3）** |
 | **harness** | ✅ **7-way × 30 全完成**（cline-patched 60.0% · Pi 60.0% · Hermes 53.3% · opencode 50.0% · codex 46.7% · claude-code 43.3% · deepseek-harness 40.0%）；报告 4 份已交付；无运行中 chain → 🆕 **已下发 2026-10-08⑤：① 第二轮 7×100 横评（先报 ETA）② 深挖第一轮交互轨迹 + 逐 harness 特点对比表** | `run/harness/SWEBENCH_COMPARE.html` · `kimi_pilot_results.json` | 🟢 `.cline_harness`；**先做②（纯 CPU）再跑①** |
 
@@ -79,7 +79,7 @@ WAITING: 0
 
 - [ ] **P-9 结果** → 定 **P-8 的 seq(4096/8192) / MBS / 精度(bf16/FP8)**（含 16384 是否 OOM 的长上下文边界）。
 - [ ] ⭐ **P-8 配置拍板**（等 **P-9.7 定稿 + P-9.8 长程一致性 + P-6② token 预算**三件齐 → 再定）。现有建议 = **候选A `TP4·SP·MBS8·seq8192·FP8·MAX_CONN=1`（235K tok/s）**；⚠️ 前置未齐（base 下满 ~2.7 天 + 配比 §0.6 未做）→ 🚫 **不得顺手启动 P-8**。
-- [ ] ⭐ **vision 全量 1-epoch 耗时（2026-10-08 重下发）**：用户再问「现有所有数据（含 GPIC 6167/8001）训 1 epoch 要多久」⇒ 已下发 `BAIZE_VISION_TASK.md` 2026-10-08④（要求逐源列 N + 两个 img/s 口径 + 墙钟区间 + 是否 >1 epoch）。**运维粗估 ≈5.5–9 h/epoch（8 卡）**，待 vision 实测精算。⚠️ R12b 已证「更多 unique 数据 ≠ 更高 lp」⇒ **本题 ≠ 批准开跑**。
+- [ ] ⭐ **vision AIMv2 缩放对比实验（2026-10-08⑤，用户直令）**：**E1**（OV2 w512/d30 126.8M, 224/p16）vs **E2**（官方 OV2 **L/14@336 304M**，**从零**），**同 AIMv2 objective + 同 94.9M 数据 + 同 1 epoch**，主指标 IN-1k lp **Protocol B**；预注册 Δlp ±1.5pp。**待回报**：smoke ETA（**E2 >48h 需回来定缩预算**）、两臂 Protocol A/B + C1–C4 + 公平表。⚠️ **待用户确认一点**：E2 是否确为「从零」而非「官方预训练权重初始化/冻结」（后者证明不了本 claim）。
 - [ ] 🆕 **P-8 启动令再评估（2026-10-08）**：前置已大幅改善（分词 **317.67B ≫ 目标 100B**；GPIC 6167/8001 未满但 P-8 未必依赖）⇒ **待用户拍板是否撤 10-02「⏸ P-8 暂缓」令**；未撤前 🚫 不得启动。
 - [ ] 🆕 **harness 第二轮 7×100 ETA（2026-10-08 下发）**：待回报总 ETA（首轮 210 run ≈34h 串行 ⇒ 700 run 估 ≈4.5–5 天）；**若不接受需另定**（减题量 / 允许并发 = 改口径）。
 - [ ] 🆕 **vision / harness 各一份「运维问答」待我答复**：vision 2026-10-08③ 四问（未验证假设 / Stage iv 前置 / GPU 空窗 / 论文补充）· harness 2026-10-08④ 五问（横评深挖 / BaiZe 接入前置 / 扩规模 / 多 backbone pilot / 论文补充）。
@@ -204,11 +204,12 @@ WAITING: 0
   - `BAIZE_HARNESS_TASK.md` 新增 **2026-10-08⑤**（① 第二轮 **7×100** 同题集横评，**先报 ETA**、口径与首轮逐字一致 ② **深挖首轮 7×30 交互轨迹** → 新报告 `report_harness_interaction_traces.html` + 逐 harness 特点对比表；**② 先做**，纯 CPU）。
   - `BAIZE_VISION_TASK.md` 新增 **2026-10-08④**（答「现有全部数据含 GPIC 6167/8001 训 1 epoch 多久」：逐源列 N=**≈94.9M 对**、两个 img/s 口径（R12 干净 4993 / R12b 有效 ≈2909）、墙钟 **≈5.5–9 h/epoch**、是否 >1 epoch；**纯 CPU 估算，非批准开跑**）。
   - 同步：`MEMORY.md §3` 四行状态更新为 10-08 实测 · §4 滚动归档 · 本日 `daily-memories/2026-10-08.md`。
+  - ➕ **同日再下一条（用户直令）**：`BAIZE_VISION_TASK.md` 新增 **2026-10-08⑤ AIMv2 缩放对比实验** —— **E1**（OV2 w512/d30 **126.8M**, 224/p16）vs **E2**（官方 OV2 **L/14@336 304M**，结构复用 R13 的 `r13_eval_official.py` 并接进训练环，**从零**），**同 AIMv2 objective + 同 94.9M 数据 + 同 1 epoch**，主指标 **IN-1k lp Protocol B**，预注册 Δlp ±1.5pp；要求先登记 `.12` 8 卡 + smoke 报 ETA 再跑。⚠️ 已要求如实标注 **4 个混淆**（参数量/结构/patch/分辨率）并建议加隔离臂。
 
 > 📦 **2026-10-08 早/午两条运维流水已滚动归档** → `daily-memories/2026-10-08.md`（**原文未改一字**：①「让 pretrain/vision/data 更新论文」`5cf87a53` ②「各线自己写报告」`e3afb272`）。**勿再塞回本文件。**
 
 
-- **2026-10-07（用户令：harness 30 横评 · pretrain 2M–16M+显存归因+5 份研究 · data 解禁白名单）** —— ⚠️ **资源**：pretrain 09:44 归还 `.12` GPU1–7，**vision 09:52 占满 8 张**（mask-ratio），`.29` 被 data BO 占 ⇒ 无空卡。已下发：`BAIZE_HARNESS_TASK.md`（停 codex×300 → 补 opencode/claude-code/deepseek ×30（同 30 条）→ 5 行对比表）· `BAIZE_PRETRAIN_2B_TASK.md` **③**（hybrid ctx 2M/4M/8M/16M ＋ 诊断 V1–V4）**④**（5 份研究 HTML：公平口径/提速/效果/1M-P8/NAS）· `BAIZE_DATA_TASK.md` 解禁白名单（UltraX 立即下 / en_v1_4 排队 / 开始分词）＋「运维问询」＋ **GPIC 优先序裁定 + BO 方向核对令 + research4 去重** ＋ **15:58 补令 ④（用户直令）**：**撤销「15:30 定时停 UltraX」** —— UltraX 已于 **15:27 被停（210/479, 215GB/487GB, 44%）**，现令 **续传下完（479/479）**、**GPIC 等它跑完再让回**、**禁止再设预设定时终止**。**明细见 `daily-memories/2026-10-07.md`。**
+> 📦 **2026-10-07 流水已滚动归档** → `daily-memories/2026-10-07.md`（**原文未改一字**：harness 30 横评 · pretrain 2M–16M+显存归因+5 份研究 · data 解禁白名单 ＋ 撤销「15:30 定时停 UltraX」）。
 
 - **🎯 2026-10-06（用户三步令 · data）** —— ① 收 200-trial（top-K `lm_eval`+Spearman+σ）② **`s_step` 归因**（1.5 s→**166 ms**，真凶 = `MBS=1`+GBS16 ⇒ 每步 16 个 microbatch；已升级 MBS×GBS 网格）③ `.29` GPU0-1 释放后 8 卡搜第二轮。**明细见 `daily-memories/2026-10-06.md`。**
 
