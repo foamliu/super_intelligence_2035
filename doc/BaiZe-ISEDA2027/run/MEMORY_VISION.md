@@ -6,11 +6,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🟧 **🔬 Scaling 对比实验进行中（⑥修订E2→w768）** — 运维指令 2026-10-08⑤→⑥(用户裁定): E1(OV2 w512/d30,126.78M,224/p16) vs **E2改为同族OV2 w768/d30(284.54M,224/p16)** — 旧E2(官方304M/336/p14)作废(4变量同变). 同AIMv2/数据94.9M/1epoch/bs512. ✅ E1训练中(step~14k/187k,~5100img/s,loss↓,无坍缩). ✅ 脚本已修(run_e2→w768/d30/p16/224). ✅ 预注册已更新(⑥). ✅ e2_watcher.sh已启动(E1完后自动跑E2 smoke+训练). |
-| WAITING | 1（🔬 scaling 实验在跑 — E1训练中(~5h剩余) → E2 smoke+训练(~5.6h) → Protocol B eval 3 seeds → HTML报告. ETA total ~11h+eval. |
+| PHASE | 🟧 **🔬 Scaling 对比实验进行中（⑥修订E2→w768）** — E1(OV2 w512/d30,126.78M) vs E2(同族OV2 w768/d30,284.54M), 同AIMv2/94.9M/1ep/bs512. ✅ E1训练中(step~33k/187k=17.5%,~5300img/s,loss~2.3,无坍缩C1=0.435). ✅ 脚本已修(w768). ✅ 预注册已更新(⑥). ✅ e2_watcher.sh运行中(PID161134,E1完后自动跑E2 smoke+训练+eval). |
+| WAITING | 1（🔬 scaling — E1训练中(~4h剩余,ETA~01:00) → E2 smoke+训练(~5.6h) → Protocol B eval 3seeds → HTML报告. ETA total ~10h+eval). |
 | ERROR_COUNT | 6（①~⑤ 同前 ⑥ AIMv2.forward() 不支持 return_patch → 已加 return_patch+causal 参数修复） |
-| BUDGET_USED | R2–R12 ≈215 + R12b(106.4) + lp bridge(5.8) + mask-ratio(78.4+0.5) + weight-ratio(~65.4+0.5) + ④ AIMv2 AR Arm B(2.1) + Arm B-hybrid(~24) ≈ **累计 ~498 GPU·h** + scaling E1(~8 GPU·h so far) |
-| 更新 | **2026-10-08 20:14（⑥ E2变更执行完毕+push✅）**: ✅ 读到运维指令⑥(E2作废官方304M→改同族w768/d30/284.54M,只差宽度). ✅ E1训练中(step~18k/187k,~5100img/s,loss 2.6,无坍缩)→不动. ✅ run_scaling_experiment.sh已修: run_e2()改为--tower openvision2 --width 768 --depth 30 --resolution 224 --patch 16. ✅ 预注册EXPERIMENTS_VISION.md已更新(⑥修订,保留历史). ✅ e2_watcher.sh启动(PID 161134,等E1完后自动跑E2 smoke→训练). ✅ ④估算已答(MEMORY新增⏱️节,smoke实测5.2-9.1h/epoch)+④块归档→ARCHIVE. ✅ commit ee1a2bfd push✅. 📦 体积：TASK=31.2KB / MEMORY=31.3KB（均≤32KB✅, 归档④~1.9KB→ARCHIVE_OPERATOR_VISION.md）· *[更早见 daily-memories-vision/2026-10-08.md]* |
+| BUDGET_USED | R2–R12 ≈215 + R12b(106.4) + lp bridge(5.8) + mask-ratio(78.4+0.5) + weight-ratio(~65.4+0.5) + ④ AIMv2 AR Arm B(2.1) + Arm B-hybrid(~24) ≈ **累计 ~498 GPU·h** + scaling E1(~13 GPU·h so far) |
+| 更新 | **2026-10-08 20:48（巡检#1: E1健康+脚本核验✅）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind — 无新运维指令. ✅ E1训练健康: step32710/187101(17.5%), loss~2.3, C1=0.435 C2_gap=+0.110 C4=OK(无坍缩), ~5300img/s, 8GPU 16.5GB/卡 51-83%util, 4ckpts(step0/10k/20k/30k). ✅ run_scaling_experiment.sh核验: run_e2()=w768/d30/p16/224(非旧304M/336/p14)✅. ✅ e2_watcher.sh健康(PID161134,等E1完后自动smoke_e2→e2训练→eval). E1 ETA~01:00 Oct9. 📦 体积：TASK=31.2KB / MEMORY=~31.5KB（均≤32KB✅）· *[更早见 daily-memories-vision/2026-10-08.md]* |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
@@ -209,6 +209,7 @@ WAITING: 1
 - [17:20] **回答运维 2026-10-08③ · 下一步工作建议（CPU-only, 纯写作）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind. ✅ **运维指令 2026-10-08③ 已执行**：在 MEMORY_VISION.md 状态头下方新增「🗣️ 运维问答 · 2026-10-08③（下一步工作建议）」区（4 题 × 逐条回答 + 每条附实验依据）：① 未验证假设 4 条（w384 AIMv2 / C1-lp 背离 / R12b epoch-vs-unique / 高分辨率 dense）；② Stage iv 前置 5 项（projector/分辨率/冻结vs解冻/特征缓存/数据配对）；③ GPU 利用 3 候选（P1=w384 AIMv2 ~16h / P2=Protocol B 消融臂 ~6h / P3=336/16 ~24h）；④ 论文补充 5 项（Limitations/Protocol B 横比/R12b 发现/C1-lp 背离/Future Work）。✅ 纯写作不占 GPU。✅ GPU 8×H100 全 idle。📦 体积：TASK=30.8KB / MEMORY=31.5KB（均≤32KB✅, 归档 3 条旧流水→daily）.
 - [18:00] **唤醒巡检 · 全线仍收敛（CPU-only, 无训练）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind — **无新运维指令**. ✅ 运维 2026-10-08③ 已于 17:20 完成(commit 0bb4dc24). ✅ GPU 8×H100 全 idle (4MiB/卡, 0% util). ✅ 交付物完好: main.pdf+6_vision_encoder.tex+6份HTML报告均在盘. ✅ 体积: TASK=31.5KB / MEMORY=31.5KB（均≤32KB✅）. **视觉编码器线 R2–R14 全线收敛, WAITING=1 待运维派新任务**.
 - [18:39] **唤醒巡检 + TASK 归档（CPU-only, 无训练）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind — **无新运维指令**. ✅ **3 个已闭合运维指令块原文归档→ARCHIVE_OPERATOR_VISION.md**（① 2026-10-08③ Q&A 下一步建议 → ② 2026-10-06 批准 AIMv2 官方 AR 范式+6点修订 → ③ 2026-10-06 队列裁定）, 各留 1 行指针. TASK 31.5KB→22.2KB(−9.3KB). ✅ GPU 8×H100 全 idle. ✅ 交付物完好: main.pdf+6_vision_encoder.tex+6份HTML报告. 📦 体积：TASK=22.2KB / MEMORY=31.6KB（均≤32KB✅, 归档~9KB→ARCHIVE_OPERATOR_VISION.md）.
+- [20:48] **🔬 scaling 巡检#1: E1健康+脚本核验（CPU-only, 不打断训练）**: ✅ git fetch✅(w/proxy), 0 ahead/0 behind — 无新运维指令. ✅ E1训练健康: step32710/187101(17.5%), loss~2.3(contrast~2.1 patch_mse~0.25), C1=0.435 C2_gap=+0.110 C4=OK(无坍缩), ~5300img/s(ms/iter~95), 8GPU 16.5GB/卡 51-83%util, 4ckpts(step0/10k/20k/30k,~510MB each). ✅ **run_scaling_experiment.sh核验✅**: run_e2()=--width 768 --depth 30 --resolution 224 --patch 16(⑥修订, 非旧304M/336/p14). ✅ **e2_watcher.sh健康**(PID161134, ppid=1, 等E1 PID1429345完后自动smoke_e2→e2训练→eval). E1 ETA~01:00 Oct9(~4h剩余). 全自动管线就绪, 无需干预. 📦 体积：TASK=31.2KB / MEMORY=~31.5KB（均≤32KB✅）.
 
 ## 历史条目已滚动归档（2026-10-03 / 2026-10-06）
 
