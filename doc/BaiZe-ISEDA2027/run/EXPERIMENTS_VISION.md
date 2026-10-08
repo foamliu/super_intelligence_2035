@@ -202,7 +202,7 @@ bash r8_run.sh 3000
 
 ---
 
-## ⭐ R13 官方 AIMv2 AR 范式对比（🔴 Arm B 坍缩 + 🟢 Arm B-hybrid 运行中, 2026-10-08）
+## ⭐ R13 官方 AIMv2 AR 范式对比（✅ Arm B 坍缩 + ✅ Arm B-hybrid 完成, 2026-10-08）
 
 > 运维指令 2026-10-07 批准（`VISION_AIMV2_OFFICIAL_PLAN.md`）。**核心问题**：官方 AIMv2 用纯 AR（causal ViT + next-patch pixel + text AR, 无 InfoNCE）在 12B 样本上成功——**我们的数据规模（~7.7M 对 + 短 caption）能否复现？**
 >
@@ -230,33 +230,42 @@ bash r8_run.sh 3000
 
 **预注册判据匹配**：`Arm B C1 > 0.95 → 🔴 AR collapse (no contrastive → collapse)` — ✅ 命中。
 
-### Arm B-hybrid（AR + InfoNCE）— 🟢 运行中（step 1650/30000）
+### Arm B-hybrid（AR + InfoNCE）— ✅ 完成（30k 步 + IN-1k eval）
 
 | 指标 | 值 | 说明 |
 |:--|:--|:--|
-| 探针 step 300 | C1=**0.2480** C2_gap=+0.0960 C4=OK | ✅ 健康 |
-| 探针 step 600 | C1=**0.4332** C2_gap=+0.0486 C4=OK | ✅ 健康（logit_scale 过冲, 25→20） |
-| 探针 step 900 | C1=**0.3844** C2_gap=+0.0651 C4=OK | ✅ 恢复 |
-| 探针 step 1200 | C1=**0.3270** C2_gap=+0.0676 C4=OK | ✅ 持续下降 |
-| 探针 step 1500 | C1=**0.3417** C2_gap=+0.0656 C4=OK | ✅ 稳定 ~0.33 |
-| loss@1650 | 11.29 (contrast=5.59, cap=5.34, pixel=0.88) | loss 在降 |
-| throughput | ~2200 img/s (230 ms/iter) | 双进程清理后加速 |
-| 预计完成 | ~10:20 | 30k 步 ETA |
+| 训练步数 | 30000 / 30000 | ✅ 全程完成 |
+| 总耗时 | 8712.7s (~2.42h) | steady_image_s=2175.9 |
+| fused | **False** | ✅ **无坍缩** |
+| C1@30000 | **0.4845** | 振荡 0.30–0.55, C4=OK, C2_gap~+0.064 |
+| final_loss | 9.7075 | contrast~5.38, cap~4.62, pixel~0.77 |
+| 保存 | vision_step{10k,20k,30k}.pt + vision.pt | 4 ckpts |
+
+**IN-1k frozen-trunk eval 结果**：
+
+| ckpt | lp top-1 | zs top-1 |
+|:--|--:|--:|
+| step 10000 | 0.31% | 0.37% |
+| step 20000 | 1.31% | 0.36% |
+| step 30000 | **1.37%** | 0.37% |
+| vision.pt (=30k) | 1.37% | 0.37% |
 
 **对比**：
-| 臂 | 注意力 | InfoNCE | C1@300 | C1@600 | C1@1500 | 判定 |
-|:--|:--|:--|--:|--:|--:|:--|
-| Arm A (baseline) | bidirectional | ✅ | ~0.33 | ~0.30 | ~0.28 | ✅ 健康, lp=12.08% |
-| Arm B (pure AR) | causal | ❌ | **0.8649** | **0.9731** | — | 🔴 坍缩@600 |
-| Arm B-hybrid | causal | ✅ | **0.2480** | **0.4332** | **0.3417** | 🟢 健康（运行中） |
-| R11-H (no contrast) | bidirectional | ❌ | 0.43 | 0.37 | ~0.35 | ✅ 健康 |
+| 臂 | 注意力 | InfoNCE | C1@300 | C1@600 | C1@30k | lp@30k | 判定 |
+|:--|:--|:--|--:|--:|--:|--:|:--|
+| Arm A (baseline) | bidirectional | ✅ | ~0.33 | ~0.30 | ~0.28 | **13.49%** | ✅ 健康, 最优 |
+| Arm B (pure AR) | causal | ❌ | 0.8649 | **0.9731** | — | — | 🔴 坍缩@600 |
+| **Arm B-hybrid** | causal | ✅ | 0.2480 | 0.4332 | **0.4845** | **1.37%** | ✅ 无坍缩, 但 lp 极低 |
+| R11-H (no contrast) | bidirectional | ❌ | 0.43 | 0.37 | ~0.35 | — | ✅ 健康 |
 
-**初步结论**（待 hybrid 30k 完成 + lp eval 确认）：
-- **InfoNCE 是防止 AR 坍缩的必要条件**（在我们的数据规模下）：纯 AR 无对比项 → 坍缩；加 InfoNCE → 健康。
-- **Causal attention 比 bidirectional 更容易坍缩**：双向无对比（R11-H）不坍缩，因果无对比（Arm B）坍缩。
-- 官方 AIMv2 不坍缩可能依赖：① 12B 样本（vs 我们 7.7M, 1557×差距）② LLaMA-3 长 caption（text AR 信号更强）③ 可能的其他正则化。
+**最终结论**（✅ 已完成 30k + eval 确认）：
+1. **InfoNCE 是防止 AR 坍缩的必要条件**（在我们的数据规模下）：纯 AR 无对比项 → 坍缩@600；加 InfoNCE → 全程无坍缩（C1~0.48）。**假说确认**。
+2. **但 causal AR 严重损害表征质量**：Arm B-hybrid lp@30k=1.37% vs Arm A 基线 13.49% → **Δlp=−12.12pp**，远超 ±1.5pp 噪声带。zero-shot 几乎为随机（0.37% vs chance 0.10%）。
+3. **Causal attention 比 bidirectional 更易坍缩**：双向无对比（R11-H）C1=0.43 不坍缩；因果无对比（Arm B）C1=0.97 坍缩。→ **坍缩是 causal + 无对比的组合效应**。
+4. **官方 AIMv2 不坍缩的可能原因**：① 12B 样本（vs 我们 7.7M, 1557×差距）② LLaMA-3 长 caption（text AR 信号更强）③ 可能的其他正则化。**我们的短 caption（alt-text, ~20 tok）+ 小数据规模无法支撑 causal AR 范式**。
+5. **决策**：causal AR 范式在本地数据规模下不可用；维持 bidirectional + InfoNCE + masked-patch-MSE（即 AIMv2-style）为最优 recipe。
 
-- **证据**：`/tmp/r13_aimv2_ar.log`（Arm B 纯 AR, 坍缩@600）+ `/tmp/r13_aimv2_ar_hybrid.log`（Arm B-hybrid, 运行中）。脚本 `vision/run_aimv2_ar.sh` + `vision/run_aimv2_ar_hybrid.sh`。代码修改 `r9_train.py`：`aimv2_ar` 分支新增 `--contrast-weight` 支持 + DDP 熔断广播修复。
+- **证据**：`/tmp/r13_aimv2_ar.log`（Arm B 纯 AR, 坍缩@600）+ `/tmp/r13_aimv2_ar_hybrid.log`（Arm B-hybrid, 30k 完成 + eval）。脚本 `vision/run_aimv2_ar.sh` + `vision/run_aimv2_ar_hybrid.sh`。代码修改 `r9_train.py`：`aimv2_ar` 分支新增 `--contrast-weight` 支持 + DDP 熔断广播修复。
 
 ---
 

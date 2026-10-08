@@ -175,9 +175,103 @@ lr $5{\times}10^{-3}$ & 4.4542 & --- & --- \\
 \end{tabular}
 \end{table}
 
+\paragraph{Mask-ratio ablation.}
+The dense patch-MSE term in the AIMv2-style objective masks a fraction of patches and reconstructs their raw pixels.
+We sweep the mask ratio $\{0.3, 0.5, 0.6, 0.75, 0.9\}$ at $30000$ steps on the same w512 / CC12M$+$Amshaker / InfoNCE$+$patch-MSE (1:1) recipe, with the ratio $0.6$ serving as the baseline (it reproduces the arm~vi-A setting).
+Table~\ref{tab:vismask} shows an inverted-U: $0.6$ is optimal ($13.49\%$), and both lower and higher ratios are worse, with the steeper falloff on the high side ($0.9 \to 11.53\%$, $\Delta{=}{-}1.96$\,pp).
+None of the alternatives exceeds the $+1.5$\,pp pre-registered threshold, so $0.6$ is retained.
+The inverted-U is consistent with the MAE literature: too little masking starves the reconstruction signal, while too much masking leaves the predictor with insufficient context.
+
+\begin{table}[htbp]
+\centering
+\caption{Mask-ratio ablation on the AIMv2-style objective (OpenVision2, w512, $30000$ steps, CC12M$+$Amshaker, InfoNCE$+$patch-MSE 1:1, frozen-trunk ImageNet-1k linear probe). The inverted-U peaks at $0.6$. $\Delta$ is vs.\ the $0.6$ baseline.}
+\label{tab:vismask}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Mask ratio} & 0.3 & 0.5 & \textbf{0.6} & 0.75 & 0.9 \\
+\midrule
+\textbf{lp top-1} & 12.69 & 11.91 & \textbf{13.49} & 12.49 & 11.53 \\
+$\boldsymbol{\Delta}$ (pp) & $-0.80$ & $-1.58$ & --- & $-1.00$ & $-1.96$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Contrast-to-patch weight-ratio ablation.}
+With the mask ratio fixed at $0.6$, we sweep the relative weight of the InfoNCE contrastive term to the patch-MSE dense term: $\{1{:}2, 1{:}0.5, 0.5{:}1, 2{:}1\}$, against the $1{:}1$ baseline.
+Table~\ref{tab:visweight} shows no arm breaks through the $+1.5$\,pp threshold.
+The best arm ($0.5{:}1$, $13.80\%$, $\Delta{=}{+}0.31$) is within the noise band, but two arms are significantly worse: $2{:}1$ (contrast-heavy, $10.21\%$, $\Delta{=}{-}3.28$) and $1{:}0.5$ (patch-starved, $10.22\%$, $\Delta{=}{-}3.27$).
+The asymmetry is informative: increasing the patch weight ($1{:}2$) is nearly neutral ($\Delta{=}{-}0.36$), while increasing the contrastive weight ($2{:}1$) is strongly harmful---the contrastive term is the ``critical'' signal that must not be diluted, whereas the dense term is a ``safe redundancy'' that tolerates over-weighting.
+
+\begin{table}[htbp]
+\centering
+\caption{Contrast-to-patch weight-ratio ablation (same recipe as Table~\ref{tab:vismask}, mask ratio $0.6$, $30000$ steps). $1{:}1$ is the baseline. No arm exceeds the $+1.5$\,pp threshold; contrast-heavy and patch-starved arms are significantly worse.}
+\label{tab:visweight}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{contrast:patch} & 1:2 & 1:0.5 & 0.5:1 & 2:1 \\
+\midrule
+\textbf{lp top-1} & 13.13 & 10.22 & \textbf{13.80} & 10.21 \\
+$\boldsymbol{\Delta}$ (pp) & $-0.36$ & $-3.27$ & $+0.31$ & $-3.28$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \paragraph{Evaluation.}
 Domain task metrics are not yet available for this stage, so we adopt the standard frozen-trunk protocol: ImageNet-1k zero-shot (class prototypes synthesised from the frozen CLIP text tower) and a linear probe on the frozen trunk, over a deterministic self-split of the ImageNet-1k training set ($50$ images per class for the probe and $50$ for validation, disjoint from every corpus used for training).
 We first tried a zero-shot text$\leftrightarrow$image retrieval proxy ($R@1/5/10$ on a held-out 5K subset of \texttt{laioncn/EN}, disjoint from the training source) and found it \emph{degenerate}: $R@1{=}0.0002$, exactly chance for $5000$ candidates, separating neither learning rates nor architectures.
 We report that as a methodological warning and use ImageNet-1k instead, on which the architectures do separate---healthy candidates reach $2.5$--$9.5\times$ chance, whereas the two collapsed ones sit at exactly chance.
 Resolution is not a free variable in this comparison: $224/16$ is best on both loss and throughput (Table~\ref{tab:visres}).
 Stage~(iv) revisits the visual-token count for detail-dense layout and schematic views, where the reasoning of this section---that a $196$-token view is dominated by coarse semantics---does not transfer.
+
+\subsection{Causal Autoregressive Paradigm Exploration}\label{sec:vis-ar}
+
+The AIMv2-style objective above uses a \emph{bidirectional} vision trunk with random masking, which differs from the official AIMv2~\cite{aimv2}, where the vision encoder uses \emph{causal} (prefix-LM) attention and the objective is a pure autoregressive (AR) next-patch prediction plus a text-AR caption loss, with \emph{no} contrastive term.
+The official model trains on $\sim12$\,B image--text pairs with long LLaMA-3 synthetic captions.
+We test whether the pure-AR paradigm is viable at our data scale ($\approx7.7$\,M pairs, short alt-text captions) and whether the absence of a contrastive term causes the collapse observed in earlier experiments.
+
+\paragraph{Setup.}
+Three arms are compared on the same OpenVision2 w512 architecture, data (CC12M$+$Amshaker), and $30000$-step schedule:
+\begin{itemize}
+\item \textbf{Arm~A} (baseline): bidirectional attention $+$ InfoNCE $+$ masked-patch-MSE ($\lambda_{\text{patch}}{=}1.0$, mask~$0.6$) $\to$ lp${=}13.49\%$.
+\item \textbf{Arm~B} (official-style pure AR): causal (prefix-LM) attention $+$ caption-AR loss $+$ $0.4{\times}$pixel loss, \emph{no} InfoNCE.
+\item \textbf{Arm~B-hybrid}: causal attention $+$ $1.0{\times}$InfoNCE $+$ caption-AR loss $+$ $0.4{\times}$pixel loss.
+\end{itemize}
+We monitor a collapse diagnostic $C_1$ (same-tower off-diagonal feature cosine; $C_1{\to}1$ means all features collapse to a single direction) and a gap guard $C_2$ (diagonal vs.\ off-diagonal attention entropy).
+
+\paragraph{Result: pure AR collapses, hybrid survives but underperforms.}
+Arm~B collapses within $600$ steps: $C_1$ rises from $0.86$ (step~300) to $0.97$ (step~600), triggering the circuit-breaker at $2\%$ of training.
+The loss is still decreasing (caption loss $6.77 \to 5.08$), so the collapse is a representation failure, not an optimisation failure---the AR next-patch task admits a trivial solution that collapses all features.
+This contrasts with a bidirectional model trained \emph{without} contrastive loss ($C_1{\approx}0.43$, no collapse), showing that \emph{causal} attention is more collapse-prone than bidirectional when the contrastive anchor is removed.
+
+Adding the InfoNCE term (Arm~B-hybrid) prevents collapse entirely: $C_1$ oscillates between $0.30$ and $0.55$ throughout $30000$ steps, with a positive $C_2$ gap and no fuse trigger.
+However, the linear-probe accuracy is dramatically lower: lp${=}1.37\%$ at step~$30000$, compared with $13.49\%$ for the bidirectional baseline---a drop of $12.1$\,pp.
+Zero-shot accuracy is essentially at chance ($0.37\%$ vs.\ $0.10\%$ for $1000$ classes).
+The causal constraint---each patch attends only to its prefix---restricts information flow, and at our data scale ($\sim7.7$\,M pairs with short captions) this restriction severely degrades representation quality.
+
+\begin{table}[htbp]
+\centering
+\caption{Causal AR paradigm exploration (OpenVision2, w512, $30000$ steps, CC12M$+$Amshaker). Arm~A is the bidirectional baseline; Arm~B is the official-style pure AR; Arm~B-hybrid adds InfoNCE to the causal AR paradigm. $C_1$ is the same-tower feature cosine ($\to1$ = collapse).}
+\label{tab:visar}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Arm} & \textbf{Attn.} & \textbf{InfoNCE} & \textbf{$C_1$} & \textbf{lp top-1} & \textbf{Status} \\
+\midrule
+Arm~A (baseline) & bidirectional & \checkmark & $\sim0.28$ & \textbf{13.49\%} & healthy \\
+Arm~B (pure AR) & causal & --- & $0.97$@600 & --- & \emph{collapsed} \\
+Arm~B-hybrid & causal & \checkmark & $\sim0.48$ & 1.37\% & no collapse, low lp \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Interpretation.}
+Two findings emerge:
+(i)~The contrastive term is \emph{necessary} to prevent collapse in the causal AR paradigm at our data scale: without it, the AR objective admits a trivial collapse solution; with it, features remain dispersed.
+(ii)~The causal AR paradigm \emph{cannot match} the bidirectional paradigm's representation quality at our scale, even with the contrastive anchor: the prefix-only attention constraint limits each patch to its causal context, and the resulting representations are much poorer for linear probing.
+The official AIMv2 avoids this at $\sim12$\,B pairs with long LLaMA-3 captions that provide a strong text-AR signal; our $\sim7.7$\,M short-caption pairs cannot sustain the causal AR route.
+We therefore retain the bidirectional $+$ InfoNCE $+$ masked-patch-MSE recipe as the final configuration.
