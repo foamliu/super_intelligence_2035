@@ -5,10 +5,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A ROUND-2 7×100 BLOCKED RE-RUN (Phase 3 sympy: cline-patched DONE ✅, codex [9/9] RUNNING; 27 in-scope blocked remain)
-已完成:       R227 SWEBENCH_COMPARE refreshed (57971B, 700/700, 236 resolved, 27 pending) · cline-patched/hermes/opencode/claude-code 100/100 DONE ✅ · Phase 1 non-sympy ALL DONE ✅ · Phase 3 sympy IN PROGRESS (cline DONE, codex RUNNING 9, dsh 6 + pi 12 pending) · 口径与并发 ✅ · trace report in doc root ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
-当前动作:     R227: Blocked re-run monitor — cline-patched COMPLETE (36 resolved, 100/100 scored ✅). codex sympy [9/9] RUNNING (PID 1951700, ~21min in, all 9 still classification=blocked in JSON). 236 resolved total (+1 since R226, cline 35→36). 27 in-scope remain (all sympy, all R2): codex 9(running), dsh 6, pi 12. Phase 3 order: codex(9 running) → dsh(6) → pi(12). quota_blocked=0, timeout=0 → NO parallel pollution ✅. SWEBENCH_COMPARE.html refreshed (57971B, 236 resolved). In-scope scored rates: pi 40.9%(88) > codex 37.4%(91) > cline 36.0%(100) = hermes 36.0%(100) > opencode 35.0%(100) > claude-code 34.0%(100) > dsh 26.6%(94).
-下一步:       ① Phase 3 sympy continues serial (~27 instances × ~10min = ~4.5h → ETA ~01:30 Oct 10). ② After all 27 re-run: refresh SWEBENCH_COMPARE.html → final 7×100 table. ③ Final report with complete data.
+PHASE:        H-A ROUND-2 7×100 BLOCKED RE-RUN (Phase 3 sympy: cline-patched DONE ✅, codex [9/9] RUNNING on 3/9; 25 in-scope blocked remain)
+已完成:       R228 SWEBENCH_COMPARE refreshed (57969B, 700/700, 236 resolved, 25 pending) · cline-patched/hermes/opencode/claude-code 100/100 DONE ✅ · Phase 1 non-sympy ALL DONE ✅ · Phase 3 sympy IN PROGRESS (cline DONE, codex RUNNING 9 [2 done, 3/9 active], dsh 6 + pi 12 pending) · 口径与并发 ✅ · trace report in doc root ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
+当前动作:     R228: Blocked re-run monitor — codex sympy [9/9] RUNNING (PID 1951700, ~65min in, on instance 3/9 sympy-14396, PID 2330753 ~103s). 2 codex instances done since R227 (9→7 blocked, scored 91→93, resolved unchanged 34). 236 resolved total (unchanged since R227). 25 in-scope remain (all sympy, all R2): codex 7(running), dsh 6, pi 12. Phase 3 order: codex(7 rem) → dsh(6) → pi(12). quota_blocked=0, timeout=0 → NO parallel pollution ✅. SWEBENCH_COMPARE.html refreshed (57969B, 236 resolved). In-scope scored rates: pi 40.9%(88) > codex 36.6%(93) > cline 36.0%(100) = hermes 36.0%(100) > opencode 35.0%(100) > claude-code 34.0%(100) > dsh 26.6%(94).
+下一步:       ① Phase 3 sympy continues serial (~25 instances × ~20min = ~8.3h → ETA ~06:00 Oct 10). ② After all 25 re-run: refresh SWEBENCH_COMPARE.html → final 7×100 table. ③ Final report with complete data.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -29,13 +29,13 @@ ERROR_COUNT:  0
 2. **codex 特例**：codex 在 R1 跑了 300 条超集（串行），其中 70 条与本轮 100-set 重叠 → codex 的 70 条"新跑"实际来自 **300 串行超集**，**非 R2 并行**。codex 全部 100 条均为串行。
 3. **监控指标**（本轮必须对比 R1 同 30 条）：`quota-blocked` / `timeout` / `no-patch` 率 → 若 R2 显著上升 ⇒ 判"并行污染" → 结论打折。SWEBENCH_COMPARE.html §2 监控表已生成。
 
-**R2 监控快照**（2026-10-09 20:53，R227 更新）：
+**R2 监控快照**（2026-10-09 21:38，R228 更新）：
 
 | 指标 | R1 (30 serial) | R2 (70 parallel, near done) | 判定 |
 |:--|:--|:--|:--|
 | **quota_blocked** | 0/210 (0%) | 0/700 (0%) | ✅ **NO gateway pollution** |
 | **timeout** | 0 (codex 2) | minimal (codex 3, claude-code 1 astropy) | ✅ 正常 |
-| **workdir_blocked** ⚠️NEW | **0/210 (0%)** | **27/700 (3.9%)** ↓ from 28(R226)↓ from 33(R225)↓ from 88(R207) | ⚠️ **PARALLEL POLLUTION (workdir)** — **FIX IN PROGRESS (rerun_blocked_optimized.sh: Phase 3 sympy — cline DONE ✅, codex [9/9] RUNNING; 27 remain)** |
+| **workdir_blocked** ⚠️NEW | **0/210 (0%)** | **25/700 (3.6%)** ↓ from 27(R227)↓ from 28(R226)↓ from 33(R225)↓ from 88(R207) | ⚠️ **PARALLEL POLLUTION (workdir)** — **FIX IN PROGRESS (rerun_blocked_optimized.sh: Phase 3 sympy — cline DONE ✅, codex [9/9] RUNNING on 3/9; 25 remain)** |
 | **no-patch (patch_applied=False)** | **0/210 (0%)** | **较高** (non-django/sympy repos) | ⚠️ eval env limitation |
 
 **⚠️ 新发现：workdir git-checkout 冲突 = 并行污染（R207 首次披露）**：
@@ -211,4 +211,5 @@ ERROR_COUNT:  0
 - 2026-10-09 19:02 —— **第二百二十四轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
 - 2026-10-09 19:39 —— **第二百二十五轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
 - 2026-10-09 20:18 —— **第二百二十六轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
-- 2026-10-09 20:53 —— **第二百二十七轮** —— 🔄 Blocked re-run monitor: cline-patched COMPLETE (36 resolved, 100/100 scored ✅ — sympy-15346 finished since R226). codex sympy [9/9] RUNNING (PID 1951700, etimes~1298s ≈ 21min, all 9 still classification=blocked in JSON). 236 resolved total (+1 since R226). 27 in-scope blocked remain (all sympy, all R2): codex 9(running), dsh 6, pi 12. Phase 3 order: codex(9 running) → dsh(6) → pi(12). quota_blocked=0, timeout=0 → NO parallel pollution ✅. SWEBENCH_COMPARE.html refreshed (57971B, 700/700, 236 resolved). In-scope scored rates: pi 40.9%(88) > codex 37.4%(91) > cline 36.0%(100) = hermes 36.0%(100) > opencode 35.0%(100) > claude-code 34.0%(100) > dsh 26.6%(94). Process: rerun_blocked_optimized.sh (PID 260306, ppid=1, etimes~37886s ≈ 10.5h) alive. Pushed ahead commit. Next: Phase 3 continues (~27 × ~10min = ~4.5h → ETA ~01:30 Oct 10). → commit+push. 📦 体积：TASK=32870B(32.1KB ⚠️) / MEMORY=~28KB(27.5KB ✓)（归档 0KB → daily-memories R226）。
+- 2026-10-09 20:53 —— **第二百二十七轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
+- 2026-10-09 21:38 —— **第二百二十八轮** —— 🔄 Blocked re-run monitor: codex sympy [9/9] RUNNING (PID 1951700, etimes~3921s ≈ 65min, on instance 3/9 sympy-14396 PID 2330753 ~103s). 2 codex instances done since R227 (blocked 9→7, scored 91→93, resolved unchanged 34 — 2 completed were NOT resolved). 236 resolved total (unchanged). 25 in-scope blocked remain (all sympy, all R2): codex 7(running), dsh 6, pi 12. Phase 3 order: codex(7 rem) → dsh(6) → pi(12). quota_blocked=0, timeout=0 → NO parallel pollution ✅. SWEBENCH_COMPARE.html refreshed (57969B, 700/700, 236 resolved, 25 blocked). ⑦ deliverables verified: 口径与并发 ✅ / trace report in doc root (38307B) ✅ / 复用-新跑 markers (104 occurrences) ✅ / monitoring table ✅. Process: rerun_blocked_optimized.sh (PID 260306, ppid=1, etimes~40509s ≈ 11.2h) alive. Next: Phase 3 continues (~25 × ~20min = ~8.3h → ETA ~06:00 Oct 10). → commit+push. 📦 体积：TASK=32870B(32.1KB ⚠️) / MEMORY=~28KB(27.5KB ✓)（归档 0KB）。
