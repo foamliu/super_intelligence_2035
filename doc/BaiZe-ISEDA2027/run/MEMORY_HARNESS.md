@@ -5,10 +5,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A ROUND-2 7×100 MONITORING (hermes 85/100, 15 rem) + SERIAL RE-RUN QUEUED (rerun_blocked_serial.sh waiting for hermes)
-已完成:       R208 rerun_blocked_serial.sh launched + git_clone_or_fetch fixed (git reset --hard) · R207 SWEBENCH_COMPARE.html (57602B, 685/700, 192 resolved) · 口径与并发 section ✅ · trace report in doc root ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
-当前动作:     R208: Hermes 85/100 (15 rem, all sympy, ~660s each → ~2.75h → ~12:00). 6/7 harnesses EXITED. FIX: git_clone_or_fetch patched with `git reset --hard HEAD` + `git clean -fd` before checkout (fixes 88 blocked). rerun_blocked_serial.sh LAUNCHED (setsid+nohup, PID 3079993) — waiting for hermes → clean workdirs → serial re-run 88 blocked. SWEBENCH_COMPARE.html refreshed (57602B). Current resolve rates (scored): pi 39.1%(69) > codex 37.4%(91) > opencode 35.0%(100) > hermes 35.3%(85) > cline 29.9%(87) > dsh 24.7%(89) > claude-code 23.7%(76).
-下一步:       ① Hermes finishes ~12:00 → rerun_blocked_serial.sh auto-starts serial re-run of 88 blocked. ② After re-run: refresh SWEBENCH_COMPARE.html → final 7×100 table. ③ Final report with complete data.
+PHASE:        H-A ROUND-2 7×100 MONITORING (hermes 87/100, 13 rem) + SERIAL RE-RUN QUEUED (rerun_blocked_serial.sh waiting for hermes)
+已完成:       R209 SWEBENCH_COMPARE.html refreshed (57658B, 687/700, 193 resolved) · R208 rerun_blocked_serial.sh launched + git_clone_or_fetch fixed · 口径与并发 section ✅ · trace report in doc root ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
+当前动作:     R209: Hermes 87/100 (13 rem, all sympy, on sympy__sympy-13895 ~16min in). 6/7 harnesses EXITED. rerun_blocked_serial.sh (PID 3079993) waiting for hermes → clean workdirs → serial re-run 88 blocked. SWEBENCH_COMPARE.html refreshed (57658B). Resolve rates (scored, 100-set): pi 39.1%(69) > codex 37.4%(91) > hermes 35.6%(87) > opencode 35.0%(100) > cline 29.9%(87) > dsh 24.7%(89) > claude-code 23.7%(76). Total resolved=193.
+下一步:       ① Hermes finishes ~13:00 → rerun_blocked_serial.sh auto-starts serial re-run of 88 blocked (cline=13, codex=9, claude-code=24, dsh=11, pi=31). ② After re-run: refresh SWEBENCH_COMPARE.html → final 7×100 table. ③ Final report with complete data.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -29,13 +29,13 @@ ERROR_COUNT:  0
 2. **codex 特例**：codex 在 R1 跑了 300 条超集（串行），其中 70 条与本轮 100-set 重叠 → codex 的 70 条"新跑"实际来自 **300 串行超集**，**非 R2 并行**。codex 全部 100 条均为串行。
 3. **监控指标**（本轮必须对比 R1 同 30 条）：`quota-blocked` / `timeout` / `no-patch` 率 → 若 R2 显著上升 ⇒ 判"并行污染" → 结论打折。SWEBENCH_COMPARE.html §2 监控表已生成。
 
-**R2 监控快照**（2026-10-09 09:04，R208 更新）：
+**R2 监控快照**（2026-10-09 09:40，R209 更新）：
 
 | 指标 | R1 (30 serial) | R2 (70 parallel, near done) | 判定 |
 |:--|:--|:--|:--|
-| **quota_blocked** | 0/210 (0%) | 0/683 (0%) | ✅ **NO gateway pollution** |
+| **quota_blocked** | 0/210 (0%) | 0/687 (0%) | ✅ **NO gateway pollution** |
 | **timeout** | 0 (codex 2) | minimal (codex 3, claude-code 1 astropy) | ✅ 正常 |
-| **workdir_blocked** ⚠️NEW | **0/210 (0%)** | **88/685 (12.8%)** | ⚠️ **PARALLEL POLLUTION (workdir)** — **FIX QUEUED** |
+| **workdir_blocked** ⚠️NEW | **0/210 (0%)** | **88/687 (12.8%)** | ⚠️ **PARALLEL POLLUTION (workdir)** — **FIX QUEUED (rerun_blocked_serial.sh waiting)** |
 | **no-patch (patch_applied=False)** | **0/210 (0%)** | **较高** (non-django/sympy repos) | ⚠️ eval env limitation |
 
 **⚠️ 新发现：workdir git-checkout 冲突 = 并行污染（R207 首次披露）**：
@@ -195,4 +195,5 @@ ERROR_COUNT:  0
 - 2026-10-09 07:05 —— **第二百零五轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
 - 2026-10-09 07:39 —— **第二百零六轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
 - 2026-10-09 08:13 —— **第二百零七轮** —— 🔄 Round-2 monitor + ⚠️ WORKDIR-BLOCKED DISCOVERY: opencode COMPLETED 100/100✅(35.0%). 6/7 harnesses EXITED, only hermes running (83/100, 17 rem). ⚠️ NEW: 88 workdir-blocked (ALL R2/parallel, 0 R1/serial) — git checkout conflicts from shared workdirs in 7-way parallel. Blocked: pi=31, claude-code=24, cline=13, dsh=11, codex=9, opencode=0, hermes=0. Resolve rates (scored): pi 39.1%(69) > codex 37.4%(91) > hermes 36.1%(83) > opencode 35.0%(100) > cline 29.9%(87) > dsh 24.7%(89) > claude-code 23.7%(76). SWEBENCH_COMPARE.html refreshed (57546B, 683/700, 192 resolved). quota_blocked=0 → NO gateway pollution ✅. BUT workdir_blocked=88 → ⚠️ PARALLEL POLLUTION (infra). ⑦ deliverables: 口径与并发 section updated ✅ / trace report in doc root ✅ / SWEBENCH_COMPARE 含 blk column ✅. Plan: hermes done → clean workdirs → serial re-run 88 blocked → final 7×100. → commit+push. 📦 体积：TASK=32870B(32.1KB ✓) / MEMORY=~27.7KB(27.1KB ✓)（归档 R196/R198/R200/R201/R202/R206 ~3.5KB → daily）。
-- 2026-10-09 09:04 —— **第二百零八轮** —— 🔧 FIX + LAUNCH serial re-run: ① Fixed `git_clone_or_fetch` in run_serial_kimi.py — added `git reset --hard HEAD` + `git clean -fd` before `git checkout` (prevents "Your local changes would be overwritten" when workdirs shared across harnesses). ② Created `rerun_blocked_serial.sh` — waits for hermes → cleans all workdirs → serially re-runs 88 blocked instances (5 harnesses: cline=13, codex=9, claude-code=24, dsh=11, pi=31). ③ LAUNCHED via setsid+nohup (PID 3079993, properly detached, survives cline session). Currently waiting for hermes (85/100, 15 rem all sympy, ETA ~12:00). ④ SWEBENCH_COMPARE.html refreshed (57602B, 685/700, 192 resolved). ⑤ ⑦ deliverables re-verified: 口径与并发 section ✅ / trace report in doc root (38307B) ✅ / 复用-新跑 markers (102) ✅ / monitoring table updated ✅. → commit+push. 📦 体积：TASK=32870B(32.1KB ✓) / MEMORY=~28.3KB(27.6KB ✓)（归档 0KB）。
+- 2026-10-09 09:04 —— **第二百零八轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
+- 2026-10-09 09:40 —— **第二百零九轮** —— 🔄 Round-2 monitor: Hermes 87/100 (13 rem, all sympy, on sympy__sympy-13895 ~16min in). 6/7 harnesses EXITED. rerun_blocked_serial.sh (PID 3079993) still waiting for hermes. SWEBENCH_COMPARE.html refreshed (57658B, 687/700 in-scope, 193 resolved). Resolve rates (scored, 100-set): pi 39.1%(69) > codex 37.4%(91) > hermes 35.6%(87) > opencode 35.0%(100) > cline 29.9%(87) > dsh 24.7%(89) > claude-code 23.7%(76). quota_blocked=0 → NO gateway pollution ✅. ⑦ deliverables verified: 口径与并发 section ✅ / trace report in doc root (38307B) ✅ / 复用-新跑 markers ✅ / monitoring table ✅. Hermes ETA ~13:00 (13 × ~660s). → commit+push. 📦 体积：TASK=32870B(32.1KB ✓) / MEMORY=~29KB(28.3KB ✓)（归档 R208 ~0.8KB → daily）。
