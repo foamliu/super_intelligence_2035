@@ -26,7 +26,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 </style></head><body>
 <h1>SWE-bench Round-2 · 7x100 Harness Cross-Eval Report</h1>
 <p><span class="model-badge">Model: kimi-k2.6-cloud</span> &nbsp; Gateway: <code>http://agi-gateway.cxmt.com/cloud/v1</code></p>
-<p><strong>Generated:</strong> 2026-10-09 08:19 | <strong>Scope:</strong> 100 instances (30 R1 reused + 70 new) x 7 | <strong>Concurrency:</strong> R1=serial(1), R2=7-parallel</p>
+<p><strong>Generated:</strong> 2026-10-09 09:04 | <strong>Scope:</strong> 100 instances (30 R1 reused + 70 new) x 7 | <strong>Concurrency:</strong> R1=serial(1), R2=7-parallel</p>
 <div class="caliber">
 <h2>Caliber &amp; Concurrency Disclosure (口径与并发)</h2>
 <p><strong>Per operator instruction 2026-10-08 (7th) — read before interpreting numbers.</strong></p>
@@ -50,9 +50,9 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <tr><td class='hname'>claude-code</td><td>76</td><td>18</td><td>58</td><td>0</td><td>24</td><td>18/76 (23.7%)</td><td>607s</td><td>✅ done</td></tr>
 <tr><td class='hname'>deepseek-harness</td><td>89</td><td>22</td><td>67</td><td>0</td><td>11</td><td>22/89 (24.7%)</td><td>425s</td><td>✅ done</td></tr>
 <tr><td class='hname'>Pi</td><td>69</td><td>27</td><td>42</td><td>0</td><td>31</td><td>27/69 (39.1%)</td><td>424s</td><td>✅ done</td></tr>
-<tr><td class='hname'>Hermes Agent</td><td>83</td><td>30</td><td>53</td><td>0</td><td>0</td><td>30/83 (36.1%)</td><td>682s</td><td>🔄 in progress (83/100)</td></tr>
+<tr><td class='hname'>Hermes Agent</td><td>85</td><td>30</td><td>55</td><td>0</td><td>0</td><td>30/85 (35.3%)</td><td>705s</td><td>🔄 in progress (85/100)</td></tr>
 </table>
-<div class="callout"><p><strong>Overall:</strong> 683 entries | 192 resolved</p></div>
+<div class="callout"><p><strong>Overall:</strong> 685 entries | 192 resolved</p></div>
 <h2>2. Monitoring: R1(30,serial) vs R2(new,parallel)</h2>
 <table>
 <tr><th>Harness</th><th>R1 Res/Sc</th><th>R1 Q</th><th>R1 B</th><th>R2 Res/Sc</th><th>R2 Q</th><th>R2 B</th></tr>
@@ -62,7 +62,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <tr><td class='hname'>claude-code</td><td>14/30</td><td>0</td><td>0</td><td>4/46</td><td>0</td><td>24</td></tr>
 <tr><td class='hname'>deepseek-harness</td><td>12/30</td><td>0</td><td>0</td><td>10/59</td><td>0</td><td>11</td></tr>
 <tr><td class='hname'>Pi</td><td>18/30</td><td>0</td><td>0</td><td>9/39</td><td>0</td><td>31</td></tr>
-<tr><td class='hname'>Hermes Agent</td><td>16/30</td><td>0</td><td>0</td><td>14/53</td><td>0</td><td>0</td></tr>
+<tr><td class='hname'>Hermes Agent</td><td>16/30</td><td>0</td><td>0</td><td>14/55</td><td>0</td><td>0</td></tr>
 </table>
 <h2>3. Instance-level Detail (100 x 7)</h2>
 <p>Legend: &#10004;=resolved &#10006;=patch-but-failed &#9728;=quota-blocked &#9888;=infra-blocked —=not run. <span class="r1tag">R1复用</span>=serial <span class="r2tag">R2新跑</span>=parallel</p>
@@ -136,8 +136,8 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <tr><td class='iid'>scikit-learn__scikit-learn-12471</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>375s</small></td><td class="resolved">&#10004;<br><small>768s</small></td><td class="resolved">&#10004;<br><small>581s</small></td><td class="resolved">&#10004;<br><small>409s</small></td><td class="resolved">&#10004;<br><small>365s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="resolved">&#10004;<br><small>788s</small></td></tr>
 <tr><td class='iid'>sphinx-doc__sphinx-10325</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>7s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>740s</small></td><td class="failed">&#10006;<br><small>805s</small></td><td class="failed">&#10006;<br><small>835s</small></td><td class="failed">&#10006;<br><small>568s</small></td><td class="failed">&#10006;<br><small>1399s</small></td></tr>
 <tr><td class='iid'>sphinx-doc__sphinx-10451</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>679s</small></td><td class="failed">&#10006;<br><small>1414s</small></td><td class="failed">&#10006;<br><small>639s</small></td><td class="failed">&#10006;<br><small>797s</small></td><td class="failed">&#10006;<br><small>957s</small></td><td class="failed">&#10006;<br><small>652s</small></td><td class="failed">&#10006;<br><small>885s</small></td></tr>
-<tr><td class='iid'>sphinx-doc__sphinx-11445</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>140s</small></td><td class="failed">&#10006;<br><small>868s</small></td><td class="failed">&#10006;<br><small>221s</small></td><td class="failed">&#10006;<br><small>442s</small></td><td class="failed">&#10006;<br><small>395s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="pending">—</td></tr>
-<tr><td class='iid'>sphinx-doc__sphinx-7686</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>706s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>878s</small></td><td class="failed">&#10006;<br><small>1268s</small></td><td class="failed">&#10006;<br><small>872s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="pending">—</td></tr>
+<tr><td class='iid'>sphinx-doc__sphinx-11445</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>140s</small></td><td class="failed">&#10006;<br><small>868s</small></td><td class="failed">&#10006;<br><small>221s</small></td><td class="failed">&#10006;<br><small>442s</small></td><td class="failed">&#10006;<br><small>395s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>1515s</small></td></tr>
+<tr><td class='iid'>sphinx-doc__sphinx-7686</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>706s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>878s</small></td><td class="failed">&#10006;<br><small>1268s</small></td><td class="failed">&#10006;<br><small>872s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>1800s</small></td></tr>
 <tr><td class='iid'>sympy__sympy-11400</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="resolved">&#10004;<br><small>1189s</small></td><td class="failed">&#10006;<br><small>192s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="pending">—</td></tr>
 <tr><td class='iid'>sympy__sympy-11870</td><td class='marker'><small class="r1tag">R1复用</small></td><td class="failed">&#10006;<br><small>589s</small></td><td class="failed">&#10006;<br><small>580s</small></td><td class="failed">&#10006;<br><small>297s</small></td><td class="failed">&#10006;<br><small>462s</small></td><td class="failed">&#10006;<br><small>114s</small></td><td class="failed">&#10006;<br><small>544s</small></td><td class="failed">&#10006;<br><small>638s</small></td></tr>
 <tr><td class='iid'>sympy__sympy-11897</td><td class='marker'><small class="r1tag">R1复用</small></td><td class="failed">&#10006;<br><small>598s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>533s</small></td><td class="failed">&#10006;<br><small>252s</small></td><td class="failed">&#10006;<br><small>486s</small></td><td class="failed">&#10006;<br><small>847s</small></td><td class="failed">&#10006;<br><small>143s</small></td></tr>
@@ -185,5 +185,5 @@ python3 gen_round2_compare.py</code></pre>
 </ol>
 </div>
 <hr>
-<p><small>BaiZe Harness H-A, Round-2 7x100, 2026-10-09 08:19. Model: kimi-k2.6-cloud. R1=serial(30), R2=parallel(70). Data: kimi_pilot_results.json (683 entries in 100-set).</small></p>
+<p><small>BaiZe Harness H-A, Round-2 7x100, 2026-10-09 09:04. Model: kimi-k2.6-cloud. R1=serial(30), R2=parallel(70). Data: kimi_pilot_results.json (685 entries in 100-set).</small></p>
 </body></html>

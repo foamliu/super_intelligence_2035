@@ -100,6 +100,10 @@ def git_clone_or_fetch(repo, base_commit, workdir):
                 lock.unlink()
             except OSError:
                 pass
+        # Force-clean workdir to prevent "Your local changes would be overwritten" errors
+        # when multiple harnesses share the same repo workdir (fixes 88 blocked instances)
+        run(["git", "reset", "--hard", "HEAD"], cwd=workdir, timeout=60)
+        run(["git", "clean", "-fd"], cwd=workdir, timeout=60)
         ok, out = git_fetch_retry(workdir, base_commit, max_retries=3, timeout=300)
         if not ok:
             out2, rc2 = run(["git", "checkout", base_commit], cwd=workdir, timeout=60)
