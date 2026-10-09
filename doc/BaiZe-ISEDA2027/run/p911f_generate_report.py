@@ -55,6 +55,7 @@ def gen_table(data,field,mf,bs):
     return rows
 
 def gen_svg(data,field,mf,bs,title,yl):
+    import math
     ctxs = sorted(CTX_LABELS.keys())
     W,H,M = 700,380,60
     pw,ph = W-2*M,H-2*M
@@ -63,13 +64,27 @@ def gen_svg(data,field,mf,bs,title,yl):
         pts = [(c,v) for c in ctxs if (v:=gv(data,mk,mf,c,bs,field)) is not None]
         series[mk] = pts; allv.extend(v for _,v in pts)
     if not allv: return "<p style='color:#888'>暂无数据</p>"
-    mx = max(allv)*1.1; x0,x1 = ctxs[0],ctxs[-1]
-    xp = lambda c: M+(c-x0)/(x1-x0)*pw if x1>x0 else M+pw/2
-    yp = lambda v: M+ph-(v-0)/(mx-0)*ph
+    mn_v = min(v for v in allv if v > 0) if any(v > 0 for v in allv) else 0.1
+    mx_v = max(allv)*1.15
+    # log-scale Y axis for throughput, linear for VRAM
+    use_log_y = field in ("prefill_tok_s","decode_tok_s","prefill_tok_s_perB","decode_tok_s_perB")
+    x0,x1 = ctxs[0],ctxs[-1]
+    # log-scale X axis (contexts are powers of 2)
+    lx0,lx1 = math.log2(x0), math.log2(x1)
+    xp = lambda c: M+(math.log2(c)-lx0)/(lx1-lx0)*pw if lx1>lx0 else M+pw/2
+    if use_log_y:
+        ly0,ly1 = math.log10(max(mn_v*0.8,0.1)), math.log10(mx_v)
+        yp = lambda v: M+ph-(math.log10(max(v,0.1))-ly0)/(ly1-ly0)*ph
+    else:
+        yp = lambda v: M+ph-(v-0)/(mx_v-0)*ph
     s = [f'<svg width="{W}" height="{H}" viewBox="0 0 {W} {H}" style="font-family:monospace;font-size:11px">']
     s.append(f'<rect x="{M}" y="{M}" width="{pw}" height="{ph}" fill="none" stroke="#ddd"/>')
     for i in range(5):
-        yv = mx*i/4; y = yp(yv)
+        if use_log_y:
+            yv = 10**(ly0+(ly1-ly0)*i/4)
+        else:
+            yv = mx_v*i/4
+        y = yp(yv)
         s.append(f'<line x1="{M}" y1="{y}" x2="{W-M}" y2="{y}" stroke="#eee"/>')
         s.append(f'<text x="{M-5}" y="{y+3}" text-anchor="end" fill="#666">{fmt(yv)}</text>')
     for c in ctxs:
@@ -77,7 +92,7 @@ def gen_svg(data,field,mf,bs,title,yl):
         s.append(f'<text x="{x}" y="{M+ph+18}" text-anchor="middle" fill="#666">{CTX_LABELS[c]}</text>')
     for mk in MODELS:
         pts = series[mk]
-        if len(pts)<2: continue
+        if len(pts)<1: continue
         path = " ".join(f"L{xp(c)},{yp(v)}" for c,v in pts)
         s.append(f'<path d="M{path[1:]}" fill="none" stroke="{M_COLOR[mk]}" stroke-width="2"/>')
         for c,v in pts: s.append(f'<circle cx="{xp(c)}" cy="{yp(v)}" r="3" fill="{M_COLOR[mk]}"/>')
@@ -92,16 +107,23 @@ def gen_svg(data,field,mf,bs,title,yl):
     return "\n".join(s)
 
 
+def gen_section(data, field, mf, bs, sec_num, title, subtitle, yl):
+    """Generate a complete HTML section: table + SVG chart for one (mf,bs,field)."""
+    rows = gen_table(data, field, mf, bs)
+    svg = gen_svg(data, field, mf, bs, f"{title} ({subtitle})", yl)
+    h = []
+    h.append(f"<h2>{sec_num}. {title}</h2><p>{subtitle}</p>")
+    h.append("<table><tr><th>上下文</th><th class='hybrid'>Hybrid 2.220B</th><th>Dense-Match</th><th>Dense-Ref</th><th>H/DM</th><th>H/DR</th></tr>")
+    for r in rows:
+        h.append(f"<tr><td>{r['ctx']}</td><td class='hybrid'>{r['hybrid_2.220b']}</td><td>{r['dense_matched_2.229b']}</td><td>{r['dense_ref_2.512b']}</td><td class='ratio'>{r['rdm']}</td><td class='ratio'>{r['rdr']}</td></tr>")
+    h.append("</table>")
+    h.append(f"<div class='svgc'>{svg}</div>")
+    return "\n".join(h)
+
+
 def generate_report():
     data = load_results()
     print(f"Loaded {len(data)} result cells")
-    mf, bs = 0.6, 1
-    prefill = gen_table(data,"prefill_tok_s",mf,bs)
-    decode = gen_table(data,"decode_tok_s",mf,bs)
-    vram = gen_table(data,"peak_vram_gb",mf,bs)
-    sp = gen_svg(data,"prefill_tok_s",mf,bs,"Prefill 吞吐量 vs 上下文 (bs=1, mf=0.6)","tok/s")
-    sd = gen_svg(data,"decode_tok_s",mf,bs,"Decode 吞吐量 vs 上下文 (bs=1, mf=0.6)","tok/s")
-    sv = gen_svg(data,"peak_vram_gb",mf,bs,"峰值显存 vs 上下文 (bs=1, mf=0.6)","GB")
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     css = "body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#2c3e50;line-height:1.6}h1{color:#1a1a2e;border-bottom:3px solid #e74c3c;padding-bottom:10px}h2{color:#1a1a2e;border-bottom:1px solid #bdc3c7;padding-bottom:5px;margin-top:30px}table{border-collapse:collapse;width:100%;margin:15px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}th{background:#2c3e50;color:#fff}tr:nth-child(even){background:#ecf0f1}.hybrid{color:#e74c3c;font-weight:bold}.ratio{color:#8e44ad;font-weight:bold}.note{background:#fff3cd;border-left:4px solid #ffc107;padding:10px 15px;margin:15px 0;border-radius:4px}.info{background:#d1ecf1;border-left:4px solid #17a2b8;padding:10px 15px;margin:15px 0;border-radius:4px}.svgc{text-align:center;margin:20px 0}footer{text-align:center;color:#7f8c8d;margin-top:40px;font-size:12px;border-top:1px solid #bdc3c7;padding-top:10px}code{background:#f4f4f4;padding:2px 6px;border-radius:3px}"
     h = []
@@ -109,38 +131,39 @@ def generate_report():
     h.append(f"<h1>BaiZe Mamba2-Hybrid 2.220B vs Dense Llama 推理性能对比报告</h1>")
     h.append(f"<p style='color:#7f8c8d'>生成时间：{now} · P-9.11-F · SGLang 0.5.9 · A100 80GB</p>")
     h.append(f"<div class='info'><strong>实验目的</strong>：在<strong>参数匹配</strong>条件下，公平对比 BaiZe Mamba2-Hybrid 2.220B 与 Dense Llama 的推理速度与显存效率。</div>")
-    # Table 1: Config
+
+    # Section 1: Config
     h.append("<h2>1. 模型配置对比</h2><table><tr><th>模型</th><th>总参数量</th><th>架构</th><th>层数</th><th>注意力层</th><th>KV Heads</th><th>参数差异</th></tr>")
     h.append("<tr><td class='hybrid'>BaiZe Mamba2-Hybrid</td><td>2,220,268,032</td><td>Nemotron-H (SSM+Attn)</td><td>56</td><td>4</td><td>4</td><td>基准</td></tr>")
     h.append("<tr><td>Dense Llama 36L (参数匹配)</td><td>2,228,897,792</td><td>Llama (Dense Attn)</td><td>36</td><td>36</td><td>2 (GQA)</td><td>+0.389%</td></tr>")
     h.append("<tr><td>Dense Llama 42L (参考)</td><td>2,512,285,696</td><td>Llama (Dense Attn)</td><td>42</td><td>42</td><td>4 (GQA)</td><td>+13.2%</td></tr></table>")
     h.append("<div class='note'><strong>公平性</strong>：Dense-Match 参数量与 Hybrid 仅差 0.389%。Dense-Match 权重<strong>随机初始化</strong>，仅用于速度/显存基准。所有模型同 SGLang/mem-frac/attention backend/WARMUP=1/REPEATS=3。</div>")
-    # Table 2: Prefill
-    h.append("<h2>2. Prefill 吞吐量 (tok/s)</h2><p>bs=1, mem-frac=0.6, WARMUP=1, REPEATS=3 (中位数)</p><table><tr><th>上下文</th><th class='hybrid'>Hybrid 2.220B</th><th>Dense-Match</th><th>Dense-Ref</th><th>H/DM</th><th>H/DR</th></tr>")
-    for r in prefill:
-        h.append(f"<tr><td>{r['ctx']}</td><td class='hybrid'>{r['hybrid_2.220b']}</td><td>{r['dense_matched_2.229b']}</td><td>{r['dense_ref_2.512b']}</td><td class='ratio'>{r['rdm']}</td><td class='ratio'>{r['rdr']}</td></tr>")
-    h.append("</table>")
-    h.append(f"<div class='svgc'>{sp}</div>")
-    # Table 3: Decode
-    h.append("<h2>3. Decode 吞吐量 (tok/s)</h2><table><tr><th>上下文</th><th class='hybrid'>Hybrid 2.220B</th><th>Dense-Match</th><th>Dense-Ref</th><th>H/DM</th><th>H/DR</th></tr>")
-    for r in decode:
-        h.append(f"<tr><td>{r['ctx']}</td><td class='hybrid'>{r['hybrid_2.220b']}</td><td>{r['dense_matched_2.229b']}</td><td>{r['dense_ref_2.512b']}</td><td class='ratio'>{r['rdm']}</td><td class='ratio'>{r['rdr']}</td></tr>")
-    h.append("</table>")
-    h.append(f"<div class='svgc'>{sd}</div>")
-    # Table 4: VRAM
-    h.append("<h2>4. 峰值显存 (GB)</h2><table><tr><th>上下文</th><th class='hybrid'>Hybrid</th><th>Dense-Match</th><th>Dense-Ref</th></tr>")
-    for r in vram:
-        h.append(f"<tr><td>{r['ctx']}</td><td class='hybrid'>{r['hybrid_2.220b']}</td><td>{r['dense_matched_2.229b']}</td><td>{r['dense_ref_2.512b']}</td></tr>")
-    h.append("</table>")
-    h.append(f"<div class='svgc'>{sv}</div>")
-    # Table 5: Max Context
-    h.append("<h2>5. 可服务上下文上限</h2><table><tr><th>模型</th><th>KV缓存/token</th><th>最大可服务上下文</th><th>受限原因</th></tr>")
+
+    # Sections 2-4: mf=0.6, bs=1 (main comparison)
+    h.append(gen_section(data, "prefill_tok_s", 0.6, 1, "2", "Prefill 吞吐量", "bs=1, mem-frac=0.6, WARMUP=1, REPEATS=3", "tok/s"))
+    h.append(gen_section(data, "decode_tok_s", 0.6, 1, "3", "Decode 吞吐量", "bs=1, mem-frac=0.6", "tok/s"))
+    h.append(gen_section(data, "peak_vram_gb", 0.6, 1, "4", "峰值显存", "bs=1, mem-frac=0.6", "GB"))
+
+    # Section 5: mf=0.85, bs=1 (memory fraction effect)
+    h.append(gen_section(data, "prefill_tok_s", 0.85, 1, "5", "Prefill 吞吐量 (高KV缓存)", "bs=1, mem-frac=0.85", "tok/s"))
+    h.append(gen_section(data, "decode_tok_s", 0.85, 1, "6", "Decode 吞吐量 (高KV缓存)", "bs=1, mem-frac=0.85", "tok/s"))
+
+    # Section 7: bs=8 batch throughput (mf=0.6)
+    h.append(gen_section(data, "prefill_tok_s", 0.6, 8, "7", "Prefill 吞吐量 (批量)", "bs=8, mem-frac=0.6 — 总吞吐量", "tok/s"))
+    h.append(gen_section(data, "decode_tok_s", 0.6, 8, "8", "Decode 吞吐量 (批量)", "bs=8, mem-frac=0.6 — 总吞吐量", "tok/s"))
+
+    # Section 9: bs=8 batch throughput (mf=0.85)
+    h.append(gen_section(data, "prefill_tok_s", 0.85, 8, "9", "Prefill 吞吐量 (批量+高KV)", "bs=8, mem-frac=0.85", "tok/s"))
+
+    # Section 10: Max Context
+    h.append("<h2>10. 可服务上下文上限</h2><table><tr><th>模型</th><th>KV缓存/token</th><th>最大可服务上下文</th><th>受限原因</th></tr>")
     h.append("<tr><td class='hybrid'>Hybrid 2.220B</td><td>~8 KB</td><td>见数据</td><td>仅4层Attention，SSM无KV</td></tr>")
     h.append("<tr><td>Dense-Match 2.229B</td><td>~36 KB</td><td>≤1M</td><td>36层Dense Attn，KV线性增长</td></tr>")
     h.append("<tr><td>Dense-Ref 2.512B</td><td>~86 KB</td><td>≤512K</td><td>42层+更大模型，KV更大</td></tr></table>")
     h.append("<div class='info'><strong>架构优势</strong>：Hybrid 56层中仅4层使用Attention，SSM层状态固定大小。Dense全部36/42层为Attention，KV随ctx线性增长——上下文越长，Dense显存劣势越大。</div>")
-    # Methodology
-    h.append("<h2>6. 方法学</h2><div class='note'><strong>环境</strong>：A100 80GB×3（每模型独占1GPU），SGLang 0.5.9，flashinfer，bf16。<br><strong>公平口径</strong>：同mem-frac/同backend/WARMUP=1/REPEATS=3/同prompt。<br><strong>高ctx优化</strong>：ctx>1M时仅测bs=1/repeats=1。<br><strong>timeout</strong>：max(600s,ctx/1000)，封顶1800s。<br><strong>Dense ctx上限</strong>：DM=1M, DR=512K（更高导致启动OOM）。<br><strong>数据完整性</strong>：所有数字来自实测，无估算。'—'=不可服务。</div>")
+
+    # Section 11: Methodology
+    h.append("<h2>11. 方法学</h2><div class='note'><strong>环境</strong>：A100 80GB×3（每模型独占1GPU），SGLang 0.5.9，flashinfer，bf16。<br><strong>公平口径</strong>：同mem-frac/同backend/WARMUP=1/REPEATS=3/同prompt。<br><strong>高ctx优化</strong>：ctx>1M时仅测bs=1/repeats=1；Dense模型ctx≥512K时仅测bs=1。<br><strong>timeout</strong>：max(600s,ctx/1000)，封顶1800s。<br><strong>Dense ctx上限</strong>：DM=1M, DR=512K（更高导致启动OOM）。<br><strong>数据完整性</strong>：所有数字来自实测，无估算。'—'=不可服务/未测。</div>")
     h.append(f"<footer>P-9.11-F Benchmark · BaiZe ISEDA 2027 · {now}</footer></body></html>")
     content = "\n".join(h)
     with open(REPORT_PATH,"w") as f: f.write(content)
