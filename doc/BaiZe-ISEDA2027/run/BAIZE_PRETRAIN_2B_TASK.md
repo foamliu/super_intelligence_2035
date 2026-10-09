@@ -17,71 +17,7 @@
 > 📦 §运维指令·2026-10-07（📊 交付：昨夜工作汇报 HTML）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：report_10_07_pretrain_overnight.html 已由 #164 交付(26.5KB,自包含,全自检过)。需要时再读。
 
 
-### 🆕🆕 运维指令 · 2026-10-09（⚡ **T3 提速验证：立即在 .29 空闲 GPU 上跑 C1/C2/C2+**）· **最高优先 — R3 BO 已完成，8 卡全空，P-8 暂缓，正是跑实验的时候** · 用户直令
-
-> **用户直令（2026-10-09）**：「T3 报告写了 2 天了还没跑，.29 全空，跑起来」
->
-> **现状**：
-> - .29 8×H100 **全空**（0 MiB / 0% util），R3 BO 已完成，P-8 暂缓令未撤 → **空窗期正好利用**
-> - T3 短名单（`report_pretrain_t3_train_speed_shortlist.html`）列了 C1–C5 候选，**一个都没跑**
-> - P-9.6② 已证明 FP8 在 M=65536 转正（s=1.21–1.24, 235K tok/s），但用的是 TP4（通信开销 -6% vs TP1 的 249K）
-> - **核心问题**：FP8 能不能在 **TP1**（无通信税）上转正？如果能，就能同时拿到 FP8 加速 + 长上下文 + >249K
-> - **关键阻碍**：TP1 下 MBS4 OOM（79.8GB），seq8192 OOM → M 上不去 → **recompute 是唯一可能解锁的杠杆**
->
-> **🔑 解冻 recompute**：此前 launcher 只暴露 MBS/TP/SP/seq/precision，recompute 属于「B 类冻结」。**本指令解冻**：允许你扩展 `pretrain_launcher.py` 添加 `--recompute-num-layers` 参数，在 recipe 的 `model_config()` 中设置 `recompute_granularity="full"` / `recompute_method="uniform"` / `recompute_num_layers=N`。改完 commit。
->
-> **测试顺序（按价值排序，每点 60 步，`--save-interval 0`，不存 ckpt）**：
-
-**Test 1（C2）: TP1·MBS4·seq4096·recompute·bf16 — recompute 能否解锁 MBS4 on TP1？**
-- 配置：TP=1, DP=8, MBS=4, seq=4096, GBS=1024, bf16, `--recompute-num-layers 28`（56 层的一半）
-- 基线对照：P-9.2 TP1·MBS4 无 recompute = OOM 79.8GB；P-9.7 TP1·MBS2 = 54.7GB / 249K tok/s
-- **判据**：VRAM < 80GB 且 60 步 rc=0 → **recompute 解锁成功**；OOM → recompute 不够，跳到 Test 4
-- 成本：~0.5 GPU·h
-- **如果成功**：报 ms/iter + tok/s + peak VRAM + loss（对比 P-9.7 baseline 16,841.9 ms/iter / 249K）
-
-**Test 2（C2+）: TP1·MBS4·seq8192·recompute·bf16 — M=32768 on TP1，命中 FP8 交叉点**
-- 配置：TP=1, DP=8, MBS=4, seq=8192, GBS=512, bf16, `--recompute-num-layers 28`
-- M = 4×8192 = 32768 = FP8 交叉点（P-9.4 微基准 M*≈30–32K）
-- **前提**：Test 1 成功才跑
-- **判据**：VRAM < 80GB 且 60 步 rc=0 → **M=32768 on TP1 落地**；OOM → seq8192 放不下，回退 Test 1 结果
-- 成本：~0.5 GPU·h
-
-**Test 3（C2+FP8）: TP1·MBS4·seq8192·recompute·FP8 — 🎯 梦幻配置**
-- 配置：同 Test 2 + `--precision bf16_with_fp8_delayed_scaling_mixed` + `CUDA_DEVICE_MAX_CONNECTIONS=1`
-- bf16 基线 = Test 2 的 ms/iter
-- **判据（预注册）**：`s = t_bf16 / t_fp8 > 1.05` → **FP8 在 TP1 转正** → P-8 最优配置 = 此配置
-- **如果 s > 1.05**：FP8 加速 + TP1 无通信税 + seq8192 长上下文 = **三合一**，可能 > 249K tok/s
-- **如果 s ≤ 1.05**：FP8 在 M=32768 也不够，定论 = TP1 上 FP8 不可行
-- 成本：~0.5 GPU·h
-
-**Test 4（C1）: TP1·MBS2·seq4096·FP8 — 快速确认（预期失败但便宜）**
-- 配置：TP=1, DP=8, MBS=2, seq=4096, GBS=1024, FP8, `CUDA_DEVICE_MAX_CONNECTIONS=1`
-- M = 2×4096 = 8192，远低于 FP8 交叉点 → **预期 s < 1.0**（P-9.4 微基准 M=8192 s≈0.90）
-- **为什么仍跑**：这是 P-8 baseline 配置（249K），如果 FP8 在这里意外不降速（s≈1.0），说明 FP8 overhead 可忽略，对 Test 3 的解读更有信心
-- 成本：~0.5 GPU·h
-- **可与 Test 1 并行跑**（Test 1 用 8 卡，Test 4 等 Test 1 结束后跑，或如果 Test 1 OOM 快速退出则立即接上）
-
-**总成本**：≤3 GPU·h（如果 Test 1 OOM → Test 2/3 跳过，只跑 Test 4 = 0.5h）
-
-**脚本**：照抄 `baize_p96b_fp8_e2e.sh` 模板，改 TP/MBS/seq/precision/recompute 参数。每个 test 一个 `/tmp/baize_t3_testN.log` + summary。
-
-**报告要求（跑完立即报）**：
-```
-T3 提速验证结果：
-- Test 1 (C2 recompute+MBS4 TP1): [OK/OOM] ms/iter=X tok/s=Y peak=ZGB
-- Test 2 (C2+ seq8192 M=32768 TP1): [OK/OOM] ms/iter=X tok/s=Y peak=ZGB  
-- Test 3 (C2+FP8 M=32768 TP1): s=X.XX [转正/不转正] ms/iter=X tok/s=Y
-- Test 4 (C1 FP8 TP1 MBS2): s=X.XX [预期<1.0] ms/iter=X tok/s=Y
-→ P-8 最优配置 = [结论]
-```
-
-**铁律**：
-- 🚫 不改 P-5b recipe 的超参（LR / arch / optimizer），只加 recompute
-- 🚫 不存 ckpt（`--save-interval 0`）
-- 🚫 不打断 .12 上的 data 分词 / vision R9 训练
-- ✅ 改 launcher 添加 recompute 参数 → commit
-- 每个测试 rc=0 或 OOM 都如实记录
-- 跑完 commit + push，前缀 `pretrain T3:`
+> 📦 §运维指令·2026-10-09（T3 提速验证：recompute+FP8）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：Test 1 (recompute28+MBS4 TP1) **OOM** 79.2GB — recompute 对 Mamba2-hybrid 无效（52/56 层 SSM 激活常量级，仅省 ~0.6GB）；Test 4 (FP8 TP1 MBS2 M=8192) **s=0.915** 228K tok/s（慢 9%）；Test 2&3 跳过。**P-8 最优 = TP1·MBS2·bf16 = 249K tok/s 确认**。需要时再读。
 
 
 > 📦 §运维指令·2026-10-08（R3 数据配比搜索）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：R3 6维搜索完成，r3_best_blend.txt 已生成，Stable段配比已回写 DATA_MIX_RECIPE.md。需要时再读。
