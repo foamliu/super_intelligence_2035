@@ -141,11 +141,12 @@ def benchmark_cell(base_url, model_name, model_path, context, batch, gen_len, gp
     prefill_tokens = actual_tok * batch
     for w in range(warmup):
         print(f"  [warmup {w+1}/{warmup}] ...", flush=True)
-        _single_run(url, payload, gpu_id, timeout=600)
+        req_timeout = min(max(600, context // 1000), 1800)  # 128K→600s, 2M→1800s(30min cap)
+        _single_run(url, payload, gpu_id, timeout=req_timeout)
         time.sleep(1)
     all_runs = []
     for r_idx in range(repeats):
-        raw = _single_run(url, payload, gpu_id, timeout=600)
+        raw = _single_run(url, payload, gpu_id, timeout=req_timeout)
         if raw.get("error"):
             print(f"  [run {r_idx+1}/{repeats}] ERROR: {raw['error']}", flush=True)
             all_runs.append(raw); continue
