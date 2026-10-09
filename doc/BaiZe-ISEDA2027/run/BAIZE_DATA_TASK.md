@@ -21,6 +21,61 @@
 > 📦 §运维指令·2026-10-07⑥配比实验收官总报告HTML（report_data_mix_summary.html 29KB）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：R1→s_step→R2→top-K全弧线报告已交付,ρ=−0.80排名反转+0.6pp不可分辨+88:8:4先验。需要时再读。
 
 
+### 🆕 运维指令 · 2026-10-09①（**UltraData-Code / UltraData-MATH 全量分词 —— P-8 数据层唯一阻塞**）· **用户直令** · 最高优先
+
+> **用户直令（2026-10-09）**：「data：开始 code/math 全量分词」
+> **背景**：R3 BO 已完成（best=#8 score=0.4032），P-8 数据就绪度核查（pretrain #231）发现 **Web 数据 ✅ 524B（5.9× 覆盖）**，但 **Code 🔴 缺口 25×**（仅 270M vs 需 6.76B）、**Math 🟠 缺口 7×**（仅 609M vs 需 4.36B）。**Code/Math 全量分词 = P-8 数据层唯一阻塞**，分词完成后即可解锁 P-8 启动。
+
+**① UltraData-Code 全量分词（本轮立刻启动）**
+
+- **原始数据路径**：`/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L3/`（11 语言子目录：py/cpp/js/...，合计 ~1.22TB）
+- **分词口径**（与既有 web shards 完全一致）：
+  - **tokenizer** = `tokenizer_eod`（DeepSeek-V4.1-Flash，`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/tokenizer_eod`）
+  - **脚本** = `preprocess_data.py`（复用既有分词管线，`run/data_pipeline/preprocess_text.sh` 有 code 示例）
+  - **mode** = `turns`（code/math 是对话轮次格式，`texts` 列 → turn-by-turn）
+  - **产出** = `.bin/.idx/.json`（Megatron-LM 格式，**不入 git**）
+  - **落盘** = `/nas_train/app.e0031982/datasets/baize-data/text/`，命名 `code_s{i}.bin/.idx/.json`（i=0,1,2,...）
+- **目标 token 量**：**≥ 6.76B**（Stable 段 5.76B + Decay 段 1.0B），1.22TB 原始 → 预估 ~30–40B token（**远超需求**，全量切完即可）
+- **并行化**（沿用 2026-10-07⑤ 已验证的并行分词方法）：
+  - 按语言子目录分片：每个语言（py/cpp/js/...）= 1 组 `preprocess_data.py` 进程；若单语言 parquet > 500 个，再按 parquet 子集拆分
+  - **起步 N = min(8, nproc/4)**（.12 当前 load~40/224 核，GPIC 下载是 I/O bound 不争 CPU → 可开 8 进程）
+  - 跑 ~10 min 看 load / NFS 吞吐 / GPIC 速率是否掉 → 再逐级加
+  - `setsid nohup` + log + `nice -n 10`（GPIC 下载优先级更高，分词不让它掉速）
+  - ⚠️ **别把 NFS 打满**（盯 GPIC 速率：当前 ~44 tar/h，若掉到 <30 tar/h 则减并发）
+
+**② UltraData-MATH 全量分词（与 ① 同时启动，或紧跟 ①）**
+
+- **原始数据路径**：`/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L1/CC-MAIN-*/`（15 个 CC-MAIN shard，~552GB）
+- **分词口径**：同 ①（同 tokenizer / 同 mode=turns / 同格式）
+- **落盘**：`/nas_train/app.e0031982/datasets/baize-data/text/`，命名 `math_s{i}.bin/.idx/.json`
+- **目标 token 量**：**≥ 4.36B**（Stable 段 3.96B + Decay 段 0.4B），552GB 原始 → 预估 ~15–25B token（**远超需求**）
+- **并行化**：按 CC-MAIN shard 分片，15 shard → 可开 8 进程（2 shard/进程），同 ① 的并发策略
+
+**③ 投料前污染扫描（分词完成后做）**
+- 对 Code/Math 新分词产物跑 `check_contamination.py`（blacklist = 6 快照并集 536 任务 / 193,295 13-gram + 10 8-gram）
+- 采样 ≥ 10K docs / 源 → 0 命中则可投料
+- 结果写入 `CONTAMINATION_CHECK.md`
+
+**④ 报告要求（每唤醒心跳必报）**
+- Code 分词：`code_s{i} 进度 N/总 shards，X 亿 token 已切，活 PID，ETA`
+- Math 分词：`math_s{i} 进度 N/总 shards，X 亿 token 已切，活 PID，ETA`
+- GPIC 下载：照常报（不受影响）
+- **分词全部完成后**：报「Code X.B tok / Math Y.B tok / P-8 数据层全就绪」→ 运维将评估 P-8 启动
+
+**⑤ 铁律（不变）**
+- 🚫 不 kill GPIC 下载（PID 144981 保持运行）
+- 🚫 不改 tokenizer / 不改 .bin/.idx 格式
+- 🚫 不入 git（.bin/.idx/.json 产物不入库）
+- 分词用 `nice -n 10`，GPIC 下载优先级更高
+- 心跳 ≤ 60 min 且每步 commit + push
+- TASK/MEMORY ≤ 32KB
+
+**⑥ 优先级排序**：本块 **最高优先** → GPIC 续下（照常）→ en_v1_4 排队（不启动）
+- Code/Math 分词 **可与 GPIC 下载并行**（分词 = CPU + NFS read，GPIC = NFS write + 网络，I/O 模式不同）
+
+> 📦 体积提醒：本块加入后 `BAIZE_DATA_TASK.md` ≈ 33KB → 若超 32KB，**先把已闭合的旧块（如 2026-10-07④ UltraX 续传块，已执行完毕）归档**到 `run/ARCHIVE_OPERATOR_DATA.md`（留 1 行指针），**不得删改/精简本块**。
+
+
 ### 🆕 运维指令 · 2026-10-07⑤（**① 分词加大并发（太慢）② `.29` 8 卡已空的口径 ③ 配比实验后的推进顺序**）· **用户直令** · 最高优先
 
 > **用户直令（2026-10-07 21:2x）**：①「**base 分词太慢，需要加大并发**」；②「**配比实验结束，`.29` 的卡空出来了吧？**」

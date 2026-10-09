@@ -1,19 +1,27 @@
 # MEMORY.md — BaiZe-ISEDA2027 **运维（operator）** 长期记忆 · **醒来先读本文件**
 
 
-## 🆕 最近操作（2026-10-08）
+## 🆕 最近操作（2026-10-09）
 
-### 🔬 给 pretrain 下发 Round 3 数据配比 BO 搜索指令
-- **背景**：data agent 已完成 R3 方案定型（`run/BAIZE_DATA_R3_TASK.md`），正式交接给 pretrain 团队执行。交接文档明确写「pretrain 负责：代码改造、脚本落地、执行」。
-- **R3 搜索规格**：6 维单纯形（ultrafineweb_en/zh/l1_en_hq + UltraX-Preview + UltraData-Code/MATH），100 trial × 1B token/trial，全量 lm_eval（无 `--limit`），~19.5h ≤ 24h，8 卡满跑。
-- **为什么现在做**：pretrain 全 8 GPU 空闲（等 P-8 分词/下载就绪至少还需 2–3 天），R3 只需要小样本分词 ~30min + 19.5h BO，**正好利用空窗期**，跑完直接定 P-8 Stable 配比，不占 P-8 时间。
-- **指令已下发至** `run/BAIZE_PRETRAIN_2B_TASK.md` 顶部（最高优先级，置于论文更新/报告之前）。
-- 同期义务（论文更新/R2 报告）：**抽空做**（纯 CPU），不延迟 R3 主干 Step 1–3。
+### 📝 给 data 下发 Code/Math 全量分词指令（P-8 数据层唯一阻塞解除令）
+- **背景**：R3 BO ✅ 完成（best=#8 score=0.4032），P-8 PREP 核查发现 Web ✅ 524B（5.9× 覆盖）但 Code 🔴 缺口 25× / Math 🟠 缺口 7×。**Code/Math 全量分词 = P-8 启动前唯一未解决的数据层阻塞**。
+- **指令已下发至** `run/BAIZE_DATA_TASK.md` 顶部（2026-10-09①，最高优先）：
+  - UltraData-Code（1.22TB / 11 语言）全量分词 → 目标 ≥ 6.76B tok
+  - UltraData-MATH（552GB / 15 shard）全量分词 → 目标 ≥ 4.36B tok
+  - 复用既有 `tokenizer_eod` + `preprocess_data.py` + mode=turns，与 web shards 同格式
+  - 并行化（8 进程起步）+ `nice -n 10` + 不影响 GPIC 下载
+  - 分词完成后跑污染扫描 → 报「P-8 数据层全就绪」
+- **预期**：1.22TB + 552GB 全量分词，预估 1–2 天（8 并发）
 
-### 💬 给 vision / harness 下发「下一步工作建议」征询指令
-- **背景**：两条线（vision R2–R14 全线收敛、harness 7-way 横评全完成）均已空闲（WAITING=1, GPU idle），全部交付物已完成。距 ISEDA 2027 投稿还有 ~4 个月，在 Stage (iv)/(ii) 正式启动前有大量前置准备空间。
-- **指令**：在 `BAIZE_VISION_TASK.md` / `BAIZE_HARNESS_TASK.md` 各新增运维指令块（2026-10-08③ / ④），要求 agent **不执行实验、纯写作**，在各自 `MEMORY_*.md` 的「运维问答」区回答 4–5 个问题（未验证假设 / Stage 前置准备 / GPU 空窗期利用 / 论文补充建议 / harness 侧多了 backbone 网格 pilot + 评测管线搭建）。
-- **为什么**：运维不替 agent 拍脑袋——agent 自己最清楚实验数据里还有什么值得挖、什么前置工作能提前做。先听建议再拍板。
+### 🔬 pretrain R3 BO 已完成 + P-8 PREP 已完成（agent 自主推进，无需运维指令）
+- R3 BO 100/100（98 complete + 2 failed），best=#8 score=0.4032，配比写入 `r3_best_blend.txt` + `DATA_MIX_RECIPE §9.7` + `EXPERIMENTS R3 节`
+- P-8 PREP 就绪度核查完成，Code/Math 缺口发现 + 训练脚本/吞吐/ckpt 估算完成
+- 全 8 GPU 空闲，等运维 P-8 启动令 + Code/Math 分词决策（分词决策 = 本轮已下发）
+
+### 💬 vision / harness 运维问答已收齐
+- **vision** ✅ 已答复 2026-10-08③（4 大节：未验证假设 1-A~1-D / Stage iv 前置 2-A~2-E / GPU 空窗优先级 P1-P3 / 论文补充 4-A~4-D）
+- **harness** ✅ 已答复 2026-10-08④（Q1 横评深挖 4 角度 / Q2 BaiZe 接入 P0+P1 / Q3 扩规模 100-300 / Q4 多 backbone）
+- **待运维下一步**：E2 ~19:20 完成后分配 vision GPU 空窗任务；harness Round-2 ~11:10 完成后分配下一步
 
 **commit pending**（待编辑本文件和更新 daily-memories 后一并提交）
 
@@ -65,7 +73,7 @@ WAITING: 0
 |:--|:--|:--|:--|
 | **pretrain** | 🔄 **R3 数据配比 BO（6 维 / 100 trial）运行中**：DB 32 行（31 complete + 1 failed=#24），best=**trial#8 score=0.4032**；第 5 批 trials 32–39 训练中 ~62–75%，**0 NaN**；PID 2637043（ppid=1），8 卡 62GB/55–90% util，**ETA ~05:50 Oct 9**。R2 全线 ✅ / 论文 ✅ / 收官报告 ✅ / R3 脚本 + 小样本分词 6/6 ✅（10-07⑤ T1–T4 ✅：float32 vs bf16 SSM **无差异**，「dense 3.3× faster」系 warmup 假象已撤回） | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` · `BAIZE_DATA_R3_TASK.md` | 🟢 `.cline_pretrain`；**P-8 暂缓令（10-02）仍未撤** |
 | **vision** | 🟧 **AIMv2 缩放对比实验进行中（用户直令 10-08⑤ + 同日⑥ E2 变更）**：**E1 = 同族 OV2 w512/d30 126.78M** vs **E2 = 同族 w768/d30 284.54M（2.24×，只差宽度）**，均 224/p16、从零、同 AIMv2 objective + 同 94.9M + 同 1 epoch；主指标 IN-1k **lp Protocol B**（3 seeds）；判据 Δlp ±1.5pp。**agent 已完成**：smoke（E1 4697 / 官方臂 2347 img/s）· 登记 `.12` 8 卡 · `models.py` 加 width/depth override · 预注册初稿。**已令（⑥）**：E2 由「官方 304M@336」**改为 w768**，并**防止自动链跑到官方臂**。 | `run/EXPERIMENTS_VISION*.md` · `report_vision_aimv2_scaling.html`（待出） | 🟢 `.cline_vision`；`.12` 8 卡 |
-| **data** | 🔄 分词收尾 + 下载：`zh` 8/8 ✅112.47B · `l1_en_hq` 12/12 ✅152.17B · `ultrax` 10/10 ✅30.97B · `en_base` s24–s33 @24%（ETA ~04:30 Oct 9）；**累计 317.67B tok（≫ P-8 目标 100B）**；GPIC **6167/8001**（ETA ~1.7d）；base ✅ / UltraX ✅479 / `en_v1_4` 排队 | `report_data_*.html` · `DATA_MIX_RECIPE.md` · `BAIZE_DATA_R3_TASK.md` | 🟢 `.cline_data`；**配比实验已交接 pretrain 执行（R3）** |
+| **data** | 🔄 **🆕 10-09① 已下发 Code/Math 全量分词指令**：Web ✅ 524.42B（44 shards 全完成）；**Code 🔴 缺口 25×**（270M vs 需 6.76B）· **Math 🟠 缺口 7×**（609M vs 需 4.36B）→ 指令要求 UltraData-Code（1.22TB/11 语言）+ UltraData-MATH（552GB/15 shard）全量分词，目标 ≥6.76B + ≥4.36B tok；GPIC 6805/8001（ETA ~27h→~11:10 Oct 10）；全量污染扫描 ✅ 160K docs 0 命中 | `report_data_*.html` · `DATA_MIX_RECIPE.md` · `BAIZE_DATA_R3_TASK.md` | 🟢 `.cline_data`；**Code/Math 分词 = P-8 数据层唯一阻塞** |
 | **harness** | 🔄 **R2 7×100 运行中**（19:22 起，**7 路并行**，ETA ~10h → ~05:30 Oct 9；100 = **30 R1 + 70 stratified**）；② 轨迹报告 ✅ `report_harness_interaction_traces.html`（38KB；**20pp gap 归因**：no-patch 33% vs 10% · timeout 27% vs 0% · patch scope 4.2 vs 2.2 files；**诚实声明仅 `stdout_tail` 存活**）；R1 7×30 ✅（60.0%–40.0%）；报告 4 份已交付。**⑦ 已下发**：并发变更**追认**但须**披露口径**（首轮 serial=1 vs 本轮并行；30 复用 / 70 新跑须标注；监控 quota/timeout/no-patch 率）+ 报告补落根目录 | `run/harness/*.html` · `run/harness/kimi_pilot_results.json` | 🟢 `.cline_harness`；**不占 GPU**（与 pretrain R3 BO 无卡冲突，注意 CPU/IO） |
 
 > ✅ **vision 叙事已决（2026-10-03 用户）：走 A = 保持「从零训练」**（"A 本身也是为了学习"）。
@@ -80,8 +88,8 @@ WAITING: 0
 - [ ] **P-9 结果** → 定 **P-8 的 seq(4096/8192) / MBS / 精度(bf16/FP8)**（含 16384 是否 OOM 的长上下文边界）。
 - [ ] ⭐ **P-8 配置拍板**（等 **P-9.7 定稿 + P-9.8 长程一致性 + P-6② token 预算**三件齐 → 再定）。现有建议 = **候选A `TP4·SP·MBS8·seq8192·FP8·MAX_CONN=1`（235K tok/s）**；⚠️ 前置未齐（base 下满 ~2.7 天 + 配比 §0.6 未做）→ 🚫 **不得顺手启动 P-8**。
 - [ ] ⭐ **vision AIMv2 缩放对比实验（10-08⑤/⑥，用户直令）**：**E1** w512/d30 **126.78M** vs **E2** 同族 **w768/d30 284.54M（2.24×）**，224/p16、从零、同 AIMv2 objective + 94.9M + 1 epoch；主指标 **lp Protocol B**（3 seeds）；**Δlp ±1.5pp**（σ>Δ 判「不可分辨」）。**待回报**：E2(w768) smoke ETA → 开跑 → 两臂 Protocol A/B + C1–C4 + 公平表。⚠️ **官方 304M@336 臂已作废**（降为可选第三条；agent 已为它做过 smoke）；**已令防自动链跑到官方臂**。
-- [ ] 🆕 **P-8 启动令再评估（2026-10-08）**：前置已大幅改善（分词 **317.67B ≫ 目标 100B**；GPIC 6167/8001 未满但 P-8 未必依赖）⇒ **待用户拍板是否撤 10-02「⏸ P-8 暂缓」令**；未撤前 🚫 不得启动。
-- [ ] 🆕 **vision / harness 各一份「运维问答」待我答复**：vision 2026-10-08③ 四问（未验证假设 / Stage iv 前置 / GPU 空窗 / 论文补充）· harness 2026-10-08④ 五问（横评深挖 / BaiZe 接入前置 / 扩规模 / 多 backbone pilot / 论文补充）。
+- [ ] 🆕 **P-8 启动令再评估（2026-10-09）**：前置已大幅改善——Web ✅ 524.42B（5.9× 覆盖）· R3 BO ✅ 100/100（best=#8 score=0.4032，配比已定稿 `r3_best_blend.txt`）· 全量污染扫描 ✅ 0 命中。**唯一阻塞 = Code/Math 全量分词**（10-09① 已下发 data agent：UltraData-Code ≥6.76B + UltraData-MATH ≥4.36B）⇒ **分词完成后即可评估 P-8 启动**；暂缓令（10-02）未撤，🚫 不得启动。
+- [ ] 🆕 **vision / harness 运维问答已收齐 → 待分配 GPU 空窗任务**：vision ✅ 答复 4 节（1-A w384 AIMv2 / 1-B C1-lp 背离 / 2-A~2-E Stage iv 前置 / 3 GPU 优先级 P1=w384~16h / 4 论文补充 4 条）· harness ✅ 答复 Q1-Q4（codex 30→300 偏差 3.3× / BaiZe 接入 P0+P1 / 扩规模 100-300 / 多 backbone pilot）。**E2 ~19:20 完成后 .12 8 卡释放 → 可安排 vision P1**。
 > 📦 **§4 已闭合条目滚动归档**（2026-10-08 执行，原文未改一字）→ `daily-memories/2026-10-08.md`「从 MEMORY.md §4 滚动归档」= pretrain 四件（10-05 深夜2）· data/vision 三份 HTML（10-05 深夜2）· AIMv2 提速归因前置（10-05 晚）· data 三步令（10-06）· **harness deepseek 工具链（10-05，已装通）** · **R9「53M cap」口径修正（10-03）** · **R8「六架构=自研改编」结论边界（10-03，R13 官方对照已完成 79.81%）**。
 - [ ] 💬 **另一「运维会话」在并行活动**（2026-10-04 深夜发现：origin 上出现**我没写过的 RUN_ID 63 诊断记录**）→ **需与用户确认是否统一到单一会话**，以免重复下发/互相覆盖。
 > 📦 **归档指针（查旧决策去这里，勿再塞回本文件）**：① **`daily-memories/2026-10-03.md`「从 MEMORY.md 滚动归档」A 节** = D-CLEAN-2/-3 与回收量核实 · harness R1 沙箱路线 · GPIC E1 实测 + C1 口径 · H-A′ 放行 · docker 系降末选 · sudo 口令 · `ops_relay`「2 副本」误判结案 · 论文冻结 · vision 队列裁定 · data 白名单锁定；② **`daily-memories/2026-10-05.md`「从 MEMORY.md §4 滚动归档」** = 本区已闭合的 `[x]` 条目（AIMv2 改写授权 · D-CLEAN-4 定案 · harness 取 kimi · sglang 走 conda · 环境隔离纪律 · proxy 口径 · Claude Code 合规口径定案）—— **原文未改一字**。
@@ -194,15 +202,11 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
-- **🔬 2026-10-08（用户两条指令：harness 第二轮 7×100 + 交互轨迹深挖；vision 全量 1-epoch 耗时）** —— 已下发：
-  - `BAIZE_HARNESS_TASK.md` 新增 **2026-10-08⑤**（① 第二轮 **7×100** 同题集横评，**先报 ETA**、口径与首轮逐字一致 ② **深挖首轮 7×30 交互轨迹** → 新报告 `report_harness_interaction_traces.html` + 逐 harness 特点对比表；**② 先做**，纯 CPU）。
-  - `BAIZE_VISION_TASK.md` 新增 **2026-10-08④**（答「现有全部数据含 GPIC 6167/8001 训 1 epoch 多久」：逐源列 N=**≈94.9M 对**、两个 img/s 口径（R12 干净 4993 / R12b 有效 ≈2909）、墙钟 **≈5.5–9 h/epoch**、是否 >1 epoch；**纯 CPU 估算，非批准开跑**）。
-  - 同步：`MEMORY.md §3` 四行状态更新为 10-08 实测 · §4 滚动归档 · 本日 `daily-memories/2026-10-08.md`。
-  - ➕ **同日再下一条（用户直令）**：`BAIZE_VISION_TASK.md` 新增 **2026-10-08⑤ AIMv2 缩放对比实验** —— **E1**=同族 OV2 w512/d30 **126.78M** vs **E2**=同族 **w768/d30 284.54M（2.24×，只差宽度）**，均 224/p16、从零；同 AIMv2 objective + 同 94.9M + 同 1 epoch；主指标 **IN-1k lp Protocol B**，预注册 Δlp ±1.5pp。
-  - ➕➕ **vision ⑥ 已落实（`ee1a2bfd`）**：agent 读到 ⑥ 后**已作废官方 304M 臂**、把 `run_scaling_experiment.sh` 的 E2 改为 `--tower openvision2 --width 768 --depth 30 --resolution 224 --patch 16`、更新预注册（保留改前/改后）、启动 `e2_watcher.sh`（等 E1 完自动跑 E2 smoke+训练）、④ 估算已答并归档；**E1 已在跑**（step ~18k/187k，~5100 img/s，无坍缩）。
-  - ➕➕➕ **harness R187 回报 + 运维 ⑦ 追认块**：② 轨迹报告 ✅ 交付（38KB，**20pp gap 归因**：no-patch 33% vs 10% · timeout 27% vs 0% · patch scope 4.2 vs 2.2 files）· ① **R2 7×100 已起跑**（19:22，**7 路并行**、`--resume`，100 = **30 R1 + 70 stratified**，ETA ~10h）。⚠️ **它未按 ⑤「先报方案」就改了并发** ⇒ 下发 **⑦**：**追认**该变更（11× 收益；轮内公平性不破），但**必须披露口径**（首轮 serial=1 vs 本轮并行 · **30 复用/70 新跑须标注** · 监控 `quota-blocked`/`timeout`/`no-patch` 率）+ 报告补落 `doc/BaiZe-ISEDA2027/` 根。
+- **📝 2026-10-09（运维：data Code/Math 全量分词指令）** —— 已下发：
+  - `BAIZE_DATA_TASK.md` 新增 **2026-10-09①**：UltraData-Code（1.22TB/11 语言）+ UltraData-MATH（552GB/15 shard）全量分词，目标 ≥6.76B + ≥4.36B tok，复用既有 tokenizer_eod + mode=turns，8 并发 + nice -n 10，不 kill GPIC。分词完成后跑污染扫描 → 报「P-8 数据层全就绪」。
+  - 同步：`MEMORY.md §3` data 行 + §4 待拍板 + §0 最近操作更新。**P-8 唯一阻塞 = Code/Math 分词**。
 
-> 📦 **2026-10-08 早/午两条运维流水已滚动归档** → `daily-memories/2026-10-08.md`（**原文未改一字**：①「让 pretrain/vision/data 更新论文」`5cf87a53` ②「各线自己写报告」`e3afb272`）。**勿再塞回本文件。**
+> 📦 **2026-10-08 流水已滚动归档** → `daily-memories/2026-10-08.md`（**原文未改一字**：harness R2 7×100 + 交互轨迹报告 · vision AIMv2 缩放 E1/E2 · pretrain R3 BO 下发 · vision/harness 运维问答征询 · 早/午论文更新两条）。**勿再塞回本文件。**
 
 
 > 📦 **2026-10-07 流水已滚动归档** → `daily-memories/2026-10-07.md`（**原文未改一字**：harness 30 横评 · pretrain 2M–16M+显存归因+5 份研究 · data 解禁白名单 ＋ 撤销「15:30 定时停 UltraX」）。
