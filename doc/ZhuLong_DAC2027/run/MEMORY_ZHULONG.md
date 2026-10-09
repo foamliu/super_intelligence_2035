@@ -178,55 +178,7 @@ WAITING: 1
 
 - [2026-10-08 07:37] [⏩ 已滚出] 🩾 C1.wo_retrieval r4 健康巡检 #4（仍在跑）详情已原文搬入 daily-memories/2026-10-08.md（§07:37，rolled-from-MEMORY 2026-10-08 08:18）。
 
-- [2026-10-08 08:59] [⏩ 已滚出] 🩾 C1.wo_retrieval r5 健康巡检 #1（仍在跑）详情已原文搬入 daily-memories/2026-10-08.md（§08:59，rolled-from-MEMORY 2026-10-08 09:33）。
-
-- [2026-10-08 09:33] [🩾 C1.wo_retrieval r5 健康巡检 #2（仍在跑）] [⏩ 已滚出] 详情已原文搬入 daily-memories/2026-10-08.md（§09:33，rolled-from-MEMORY 2026-10-08 11:42）。
-
-- [2026-10-08 10:09] [🩾 C1.wo_retrieval r5 健康巡检 #3（仍在跑）] [⏩ 已滚出] 详情已原文搬入 daily-memories/2026-10-08.md（§10:09，rolled-from-MEMORY 2026-10-08 11:42）。
-
-- [2026-10-08 10:48] [📝 国庆假期进展 HTML 报告] [⏩ 已滚出] 详情已原文搬入 daily-memories/2026-10-08.md（§10:48，rolled-from-MEMORY 2026-10-08 11:42）。
-
-- [2026-10-08 12:27] [🩾 巡检：报告已提交✅ + proxy 自检通过✅ + full r1 仍在跑 + 任务书归档] [⏩ 已滚出] 详情已原文搬入 daily-memories/2026-10-08.md（§12:27，rolled-from-MEMORY 2026-10-08 13:10）。
-
-- [2026-10-08 13:10] [🩾 C1.full r1 健康巡检 #1（仍在跑）] [⏩ 已滚出] 详情已原文搬入 daily-memories/2026-10-08.md（§13:10，rolled-from-MEMORY 2026-10-08 14:20）。
-
-- [2026-10-08 13:44] [🩾 C1.full r1 健康巡检 #2（仍在跑·grading 阶段）+ 补推 ahead1] [⏩ 已滚出] 详情已原文搬入 daily-memories/2026-10-08.md（§13:44，rolled-from-MEMORY 2026-10-08 14:20）。
-
-- [2026-10-08 15:04] [⏩ 已滚出] ❌→✅ C1.full r2 首启 EVAL_FAILED（缺四 override→158 Forbidden+grading crash）→重跑带 override→PID 1505377 运行中。详情已原文搬入 daily-memories/2026-10-08.md（§15:04，rolled-from-MEMORY 2026-10-08 16:15）。
-
-- [2026-10-08 15:39] [⏩ 已滚出] 🩾 C1.full r2 健康巡检 #1（仍在跑）详情已原文搬入 daily-memories/2026-10-08.md（§15:39，rolled-from-MEMORY 2026-10-08 16:15）。
-
-- [2026-10-08 16:15] [⏩ 已滚出] 🩾 C1.full r2 健康巡检 #2（仍在跑·~72min）+ 🚨论文树红线告警（git clean已消解）详情已原文搬入 daily-memories/2026-10-08.md（§16:15，rolled-from-MEMORY 2026-10-08 16:52）。
-
-- [2026-10-08 16:52] [🩾 C1.full r2 健康巡检 #3（仍在跑·~108min）+ proxy自检通过 + 论文树告警已消解] [⏩ 已滚出] 详情已原文搬入 daily-memories/2026-10-08.md（§16:52，rolled-from-MEMORY 2026-10-08 17:27）。
-
-- [2026-10-08 17:27] [⏩ 已滚出] 🩾 C1.full r2 健康巡检 #4（仍在跑·~143min）+ proxy自检通过 详情已原文搬入 daily-memories/2026-10-08.md（§17:27，rolled-from-MEMORY 2026-10-08 18:03）。
-
-- [2026-10-08 18:03] [⏩ 已滚出] 🩾 C1.full r2 健康巡检 #5（仍在跑·~180min·grading阶段）+ proxy自检通过 详情已原文搬入 daily-memories/2026-10-08.md（§18:03，rolled-from-MEMORY 2026-10-08 18:42）。
-
-- [2026-10-08 18:42] [⏩ 已滚出] 🩾 C1.full r2 巡检#6（仍在跑·~219min·grading）+ proxy✅ + infra端口订正 详情已原文搬入 daily-memories/2026-10-08.md（§18:42，rolled-from-MEMORY 2026-10-08 19:20）。
-
-- [2026-10-08 19:20] [⏩ 已滚出] 🩾 C1.full r2 巡检#7（仍在跑·~258min·grading外部执行）+ proxy自检通过 详情已原文搬入 daily-memories/2026-10-08.md（§19:20，rolled-from-MEMORY 2026-10-08 19:55）。
-
-- [2026-10-08 19:55] [⏩ 已滚出] 🩾 C1.full r2 巡检#8（仍在跑·~292min·grading外部执行）+ proxy自检通过 详情已原文搬入 daily-memories/2026-10-08.md（§19:55，rolled-from-MEMORY 2026-10-08 20:33）。
-
-- [2026-10-08 20:33] [⏩ 已滚出] 🩾 C1.full r2 巡检#9（仍在跑·~330min·grading外部执行）+ proxy自检通过 详情已原文搬入 daily-memories/2026-10-08.md（§20:33，rolled-from-MEMORY 2026-10-08 21:08）。
-
-- [2026-10-08 21:08] [⏩ 已滚出] 🩾 C1.full r2 巡检#10（仍在跑·~364min）详情已原文搬入 daily-memories/2026-10-08.md（§21:08）。
-
-- [2026-10-08 21:47] [🩾 C1.full r2 巡检#11（仍在跑·~402min·grading外部执行）+ proxy自检通过] [⏩ 已滚出] 详情已原文搬入 daily-memories/2026-10-08.md（§21:47，rolled-from-MEMORY 2026-10-08 23:08）。
-
-- [2026-10-08 23:08] [🩾 C1.full r3 巡检#1（仍在跑·~40min·generation阶段）+ proxy自检通过] [⏩ 已滚出] 详情已原文搬入 daily-memories/2026-10-08.md（§23:08，rolled-from-MEMORY 2026-10-09 00:49）。
-
-- [2026-10-08 23:42] [🩾 C1.full r3 巡检#2（仍在跑·~74min·generation阶段）+ proxy自检通过] [⏩ 已滚出] 详情已原文搬入 daily-memories/2026-10-08.md（§23:42，rolled-from-MEMORY 2026-10-09 00:49）。
-
-- [2026-10-09 00:16] [⏩ 已滚出] 🩾 C1.full r3 巡检#3（仍在跑·~108min·generation阶段）+ proxy自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§00:16，rolled-from-MEMORY 2026-10-09 02:08）。
-
-- [2026-10-09 00:49] [⏩ 已滚出] 🩾 C1.full r3 巡检#4（仍在跑·~141min·generation阶段）+ proxy/ops/legacy自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§00:49，rolled-from-MEMORY 2026-10-09 02:08）。
-
-- [2026-10-09 02:08] [⏩ 已滚出] ❌→✅ C1.full r4 首跑infra作废(ECONNRESET)→重跑启动+ops重启 详情已原文搬入 daily-memories/2026-10-09.md（§02:08，rolled-from-MEMORY 2026-10-09 02:20）。
-
-- [2026-10-09 02:20] [⏩ 已滚出] 🚨 BLOCKED: pro-fp4 403额度耗尽→r4两次infra作废→WAITING等恢复 详情已原文搬入 daily-memories/2026-10-09.md（§02:20）。
+- [2026-10-08 08:59 ~ 10-09 02:20] [⏩ 已滚出] 10-08~10-09早段流水（wo_retrieval r5巡检×3 / full r1巡检×2 / full r2首启EVAL_FAILED+巡检×11 / full r3巡检×4 / r4首跑infra作废 / pro-fp4 403 BLOCKED）全部详情见 daily-memories/2026-10-08.md 及 daily-memories/2026-10-09.md。
 
 - [2026-10-09 03:02] [⏩ 已滚出] 🚨 BLOCKED续: pro-fp4仍403→继续WAITING等恢复 详情已原文搬入 daily-memories/2026-10-09.md（§03:02）。
 
@@ -266,4 +218,6 @@ WAITING: 1
 
 - [2026-10-10 03:22] [⏩ 已滚出] ⠈ 巡检(r2-retest#3运行中·不动作)：109/158,0 Forbidden✅ 详情已原文搬入 daily-memories/2026-10-10.md（§03:22）。
 
-- [2026-10-10 03:59] ⠈ 巡检(r2-retest#3运行中·不动作)：pgrep '^bash scripts/run_cline_script'=PID3823605 有输出(elapsed 01:18:59)→eval仍在跑→什么都不做退出(§7步骤A)。eval健康：log /tmp/ABL_full_r2_retest3.log 15.3MB mtime 03:59(活跃增长)、grep '成功完成'126/158(进行中,~80%)、0 Forbidden✅。/home 8.8G✅;真loop PID3579323 environ https_proxy=http://172.19.92.23:13128✅;ops relay PID888464 alive✅(.last_run_id=26)。状态不变 STAGE=C1/CONFIG=full/ROUND=4/PHASE=running/WAITING=1/ERROR_COUNT=2。下轮第一件事：pgrep→有输出=巡检退出;无输出=收割r2-retest#3(grep -E 'pass \\(|评估结果汇总|timeout' /tmp/ABL_full_r2_retest3.log|tail -10)→判据timeout≤10且≥75%→r2'有效→替换r2→启r3-retest(log /tmp/ABL_full_r3_retest.log)→r3'有效→启r5(log /tmp/ABL_full_r5.log)→5/5=[r1=88.0,r2',r3',r4=81.0,r5]算mean±std→回填锚点→PHASE=just_finished。每轮最多重跑3次不达标→暂停WAITING=1等运维。
+- [2026-10-10 03:59] [⏩ 已滚出] ⠈ 巡检(r2-retest#3运行中·不动作)：126/158,0 Forbidden✅ 详情已原文搬入 daily-memories/2026-10-10.md（§03:59，rolled-from-MEMORY 2026-10-10 04:33）。
+
+- [2026-10-10 04:33] ⠈ 巡检(r2-retest#3运行中·不动作)：pgrep '^bash scripts/run_cline_script'=PID3823605 有输出(elapsed 01:52:10)→eval仍在跑→什么都不做退出(§7步骤A)。eval健康：log /tmp/ABL_full_r2_retest3.log 17.9MB mtime 04:33(活跃增长)、grep '成功完成'153/158(近完成,~97%,grading阶段)、0 Forbidden✅。/home 8.8G✅;loop PID59544 alive✅。状态不变 STAGE=C1/CONFIG=full/ROUND=4/PHASE=running/WAITING=1/ERROR_COUNT=2。下轮第一件事：pgrep→有输出=巡检退出;无输出=收割r2-retest#3(grep -E 'pass \\(|评估结果汇总|timeout' /tmp/ABL_full_r2_retest3.log|tail -10)→判据timeout≤10且≥75%→r2'有效→替换r2→启r3-retest(log /tmp/ABL_full_r3_retest.log)→r3'有效→启r5(log /tmp/ABL_full_r5.log)→5/5=[r1=88.0,r2',r3',r4=81.0,r5]算mean±std→回填锚点→PHASE=just_finished。每轮最多重跑3次不达标→暂停WAITING=1等运维。
