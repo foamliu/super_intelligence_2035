@@ -18567,11 +18567,32 @@
     "harness": "pi",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tlib/matplotlib/__init__.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tlib/matplotlib/__init__.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 684.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_matplotlib__matplotlib-22711.json",
+      "stdout_tail": "otlib__matplotlib-22711\n[run_single] base_commit=f670fe78795b18eb1118707721852209cd77ad51\n[run_single] ps_len=3533\n[run_single] git reset --hard f670fe78795b18eb1118707721852209cd77ad51\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=684.0s ==\n[run_single] model_patch: 2458 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_matplotlib__matplotlib-22711.json\n[run_single] cleanup: git reset --hard f670fe78795b18eb1118707721852209cd77ad51\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "matplotlib__matplotlib-23299",
@@ -19173,11 +19194,32 @@
     "harness": "pi",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tlib/matplotlib/backend_bases.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tlib/matplotlib/backend_bases.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 184.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_matplotlib__matplotlib-23314.json",
+      "stdout_tail": "lotlib__matplotlib-23314\n[run_single] base_commit=97fc1154992f64cfb2f86321155a7404efeb2d8a\n[run_single] ps_len=943\n[run_single] git reset --hard 97fc1154992f64cfb2f86321155a7404efeb2d8a\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=184.1s ==\n[run_single] model_patch: 1212 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_matplotlib__matplotlib-23314.json\n[run_single] cleanup: git reset --hard 97fc1154992f64cfb2f86321155a7404efeb2d8a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "matplotlib__matplotlib-23476",
@@ -21924,11 +21966,32 @@
     "harness": "pi",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsklearn/utils/__init__.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsklearn/utils/__init__.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 605.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-11040.json",
+      "stdout_tail": "__scikit-learn-11040\n[run_single] base_commit=96a02f3934952d486589dddd3f00b40d5a5ab5f2\n[run_single] ps_len=747\n[run_single] git reset --hard 96a02f3934952d486589dddd3f00b40d5a5ab5f2\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=605.0s ==\n[run_single] model_patch: 3517 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-11040.json\n[run_single] cleanup: git reset --hard 96a02f3934952d486589dddd3f00b40d5a5ab5f2\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 44,
+        "p2p_total": 44
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "scikit-learn__scikit-learn-11281",
