@@ -13,9 +13,9 @@
 - **用户直令（2026-10-09③）**：Code/Math 停掉重头来（每个目录全切）· Ultra-FineWeb-L3 也加入分词 · 224 核别只开 8 并发（**放开**）· 核实 Ultra-FineWeb 197GB→.bin 2.0TB 是否合理 · **不要创造新名字**（只按原始 6 目录）。
 - **已下发** `run/BAIZE_DATA_TASK.md`（10-09③ 覆盖②）：三目录全量分词（Ultra-FineWeb-L3 1764/1.8TB + UltraData-Code 1121/1.2TB + UltraData-Math 1823/515GB）· 并发 20–50/源 · 心跳按 6 目录报盘点。
 
-### 🔬 pretrain：队列已清空（R3 / P-8 PREP / T3 全 ✅）
-- R3 BO ✅ 100/100（best=#8 score=0.4032）· R3 收官报告 ✅ · P-8 PREP（就绪度核查）✅ · **T3 ✅ 完成**：**P-8 最优配置 = `TP1·MBS2·bf16 = 249K tok/s`**；FP8 在 TP1 s=0.915 不能提速；recompute 对 SSM 无效（52/56 层是 SSM）。
-- `.29` 8×H100 全空；**P-8 唯一阻塞 = Code/Math 全量分词 + 暂缓令（10-02）**。→ 已下发「提 3 个实验 idea」征询（见上）。
+### 🔬 pretrain：队列已清空（R3 报告 ✅ / P-8 PREP ✅ / **T3 ✅ → P-8 最优 = `TP1·MBS2·bf16` 249K**；FP8 不能提速、recompute 对 SSM 无效）
+- `.29` 8 卡全空；**P-8 唯一阻塞 = 暂缓令**（数据已够：web 524B / code 128.6B / math 170.7B）。已下发「提 3 idea」+「公平对比盘点」两块。
+- **#251 已回报**：3 idea（①P-8 彩排续跑 ②P-8 44B 下限档 ③R3 配比迁移 A/B）+ **建议立即起 P-8**（详见 `MEMORY_PRETRAIN_2B.md`「运维问答」）。
 
 ### 💬 vision / harness 运维问答已收齐
 - **vision** ✅ 答复 2026-10-08③（未验证假设 / Stage iv 前置 / GPU 空窗优先级 / 论文补充）· **harness** ✅ 答复 2026-10-08④（横评深挖 / BaiZe 接入前置 / 扩规模 / 多 backbone / 论文补充）。
@@ -83,7 +83,8 @@ WAITING: 0
 
 ## 4. 待拍板 / 我欠的答复
 
-- [ ] 🆕 **pretrain 的 3 个实验 idea 征询（2026-10-09 下发）**：等 pretrain 在 `MEMORY_PRETRAIN_2B.md`「运维问答 · 2026-10-09」回报 3 个 idea + 排序理由 + 「是否直接起 P-8」的建议 → 再拍板「撤不撤 P-8 暂缓令 / 先做哪个」。
+- [ ] 🆕 **BaiZe vs MiniCPM5「公平对比」盘点（2026-10-09 下发）**：等 pretrain 回报 C1–C6 落实度 + 权威版本。
+- [x] **pretrain 3 idea 征询（2026-10-09）**：✅ 已回报 #251；待拍板「撤暂缓令 / 先做哪个」。
 - [ ] **P-9 结果** → 定 **P-8 的 seq(4096/8192) / MBS / 精度(bf16/FP8)**（含 16384 是否 OOM 的长上下文边界）。
 - [ ] ⭐ **P-8 配置拍板**（等 **P-9.7 定稿 + P-9.8 长程一致性 + P-6② token 预算**三件齐 → 再定）。现有建议 = **候选A `TP4·SP·MBS8·seq8192·FP8·MAX_CONN=1`（235K tok/s）**；⚠️ 前置未齐（base 下满 ~2.7 天 + 配比 §0.6 未做）→ 🚫 **不得顺手启动 P-8**。
 - [ ] ⭐ **vision AIMv2 缩放对比实验（10-08⑤/⑥，用户直令）**：**E1** w512/d30 **126.78M** vs **E2** 同族 **w768/d30 284.54M（2.24×）**，224/p16、从零、同 AIMv2 objective + 94.9M + 1 epoch；主指标 **lp Protocol B**（3 seeds）；**Δlp ±1.5pp**（σ>Δ 判「不可分辨」）。**待回报**：E2(w768) smoke ETA → 开跑 → 两臂 Protocol A/B + C1–C4 + 公平表。⚠️ **官方 304M@336 臂已作废**（降为可选第三条；agent 已为它做过 smoke）；**已令防自动链跑到官方臂**。
@@ -201,7 +202,9 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
-- **💡 2026-10-09（用户令：征询 pretrain 的 3 个实验 idea）**——用户令「询问 pretrain 有什么 idea，提 3 个实验 idea 按价值从高到低排序」。处置：① 通读 pretrain 现状（R3/P-8 PREP/T3 全完成，8 卡全空，P-8 卡在 Code·Math 分词 + 暂缓令）；② 在 `run/BAIZE_PRETRAIN_2B_TASK.md` **顶部**新增最高优先块（纯写作零 GPU，提 3 idea + 6 项要素 + 排序理由 + 「是否直接起 P-8」建议）；③ 同步本文件 §🆕/§4/§9 + `daily-memories/2026-10-09.md`。**agent 回报判据**：`MEMORY_PRETRAIN_2B.md` 新增「运维问答 · 2026-10-09」小节，含 3 idea + 排序 + 一句话建议。
+- **💡 2026-10-09（征询 pretrain 的 3 个实验 idea）** 已下发 `BAIZE_PRETRAIN_2B_TASK.md` 顶部块（纯写作零 GPU）；**已回报 #251**（3 idea + 建议立即起 P-8）——详见 §🆕 与 `daily-memories/2026-10-09.md`。
+
+- **🔎 2026-10-09（排查 BaiZe-2B vs MiniCPM5-2B 公平对比 + HTML）**——已下发顶部块（纯写作零 GPU：盘点产物 / 自评 C1–C6 / 指认权威版本 / 必要时合并 HTML）。运维先行核实：research1=方法学报告；实测 HTML 齐全（`BAIZE_2B_ARCH_RESULT.html` · `report_pretrain_p911_sglang.html` · `report_pretrain_longctx_infer_cost.html` §7 公平重做 128K hybrid 2.80×）。
 
 - **📦 2026-10-09（T3 提速下发 / data 指令③）原文已滚动归档** → `daily-memories/2026-10-09.md`（**原文未改一字**）。**勿再塞回本文件。**
 

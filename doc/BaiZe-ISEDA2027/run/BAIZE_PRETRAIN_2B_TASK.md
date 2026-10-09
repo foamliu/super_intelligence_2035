@@ -1,6 +1,30 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-09（🔎 自查：BaiZe-2B vs MiniCPM5-2B 有没有做过「公平对比」+ HTML 产出盘点）· 用户直令 · 高优先
+
+> **用户令**：「重读你自己的报告 `report_pretrain_research1_fair_eval`，之前有没有给 **BaiZe-2B** 和 **MiniCPM5-2B** 做过**公平的对比**，有没有 **html 报告产出**？」
+> **纯写作 · 零 GPU**。只引已落盘结果（`EXPERIMENTS_*` / `run/p911e_results/*.json` / 现成 HTML），🚫 不许编数、不许起进程。
+
+**① 盘点（逐个列，别笼统）**：列出**所有**「BaiZe-2B（hybrid 2.220B）vs MiniCPM5-2B（dense 2.512B / `p3_dense`）」的对比产物 —— **文件名 + 相对路径 + 生成日期 + 覆盖维度**（loss / 训练吞吐 / 推理 prefill·decode / 长 ctx 成本 / 显存）。
+
+**② 厘清 `research1` 的定位**：明确 `report_pretrain_research1_fair_eval.html` 是**方法学/协议**报告（记录 5 个 confounder + 公平协议 C1–C6），还是**含实测**？
+
+**③ 公平性逐条自评（核心）**：对照你自己在 research1 里定的 **C1–C6**，逐条标「**已执行 / 部分 / 未执行**」，并**明确指出目前仍未被控制的 confounder**：
+- C1 对齐 `--mem-fraction-static` · C2 标注 SSM dtype · C3 tokenizer 精确计数 · C4 bs 扫描 {1,4,8,32} · C5 参数归一化（tok/s per B） · C6 prefill/decode 分离。
+
+**④ 给结论 + 指认权威版本**：
+- 我们**到底有没有**一次「公平的」BaiZe-2B vs MiniCPM5-2B 对比？**有** ⇒ 指认**唯一权威版本**（HTML 路径 + 关键数字，如 128K hybrid 2.80×）；
+- **没有一次完整公平版** ⇒ 列清**缺哪些格**，并说明要补什么。
+
+**⑤ 产出**：
+- 若公平对比**分散在多个 HTML、缺一份合并版** ⇒ 在**纯写作**范围内产出 `report_pretrain_baize_vs_minicpm5_fair.html`（自包含、零外链、数据只引已落盘结果）；
+- 若已足够 ⇒ 明确写「**无需新报告**」并给出权威链接清单。
+
+**⑥ 纪律**：🚫 零 GPU · 🚫 不启动训练/P-8 · 🚫 不 kill watchdog · 🚫 不许闭门造车（可引用官方仓库/论文原文，贴 URL）。回报位置：`MEMORY_PRETRAIN_2B.md` 新增「🗣️ 运维问答 · 2026-10-09（BaiZe vs MiniCPM5 公平对比盘点）」；commit 前缀 `pretrain 问答: …`。
+
+---
+
 ### 🆕 运维指令 · 2026-10-09（💡 征询：让 pretrain 提 3 个实验 idea，按价值从高到低排序）· 用户直令 · 最高优先
 
 > **用户令**：「询问一下 pretrain，看它有什么 idea。让它提 3 个实验 idea，按照价值从高到低排序。」
