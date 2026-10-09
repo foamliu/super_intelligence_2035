@@ -24,12 +24,62 @@
 
 ---
 
-## RUN_ID 23 — 🔬 测试新 key + deepseek-v4-pro-cloud 是否可绕过 pro-fp4 的 403（6 组合）
+## RUN_ID 24 — 🚨 诊断：agent 4.5h 无心跳，检查 loop/eval 进程 + r4 日志状态
+
+**背景**：agent 自 09:54 commit 后无心跳，MEMORY/daily-memories 均未更新。r4 batch b2026_1009_094504 PID 3302534 仍标「运行中」，但已跑 4.5h（远超正常 30-40min）。需诊断 loop 进程是否存活、eval 是否卡住/已结束、r4 log 内容。
+
+```bash
+# RUN_ID 24 — read-only diagnostic: check loop/eval process status + r4 log
+echo "== RUN_ID 24: diagnostic @ $(date '+%F %T') =="
+
+echo "== 1. zhulong_loop process (PID 3579323 expected) =="
+ps -eo pid,ppid,etime,state,cmd | grep -E 'zhulong_loop|3579323' | grep -v grep | cut -c1-140
+
+echo "== 2. eval process (PID 3302534 expected) =="
+ps -eo pid,ppid,etime,state,cmd | grep -E 'run_cline_script|3302534' | grep -v grep | cut -c1-140
+
+echo "== 3. any cline processes alive? =="
+pgrep -af cline | grep -v grep | cut -c1-140
+
+echo "== 4. r4 log tail (last 20 lines) =="
+timeout 10 tail -20 /tmp/ABL_full_r4.log 2>&1
+
+echo "== 5. r4 log size + grep PASS_RATE/timeout/pass =="
+timeout 10 wc -l /tmp/ABL_full_r4.log 2>&1
+timeout 10 grep -cE 'timeout|timed.?out' /tmp/ABL_full_r4.log 2>&1
+timeout 10 grep -E 'PASS_RATE|pass \(|评估结果汇总' /tmp/ABL_full_r4.log 2>&1 | tail -5
+
+echo "== 6. ops relay alive? (PID 888464) =="
+ps -eo pid,ppid,etime,state,cmd | grep -E 'ops_relay|888464' | grep -v grep | cut -c1-140
+
+echo "== 7. /home disk space =="
+df -h /home 2>&1 | tail -2
+
+echo "== 8. pro-fp4 still 200? (new key quick check) =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/cloud/v1/chat/completions \
+  -H "Authorization: Bearer 02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e" \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -3
+
+echo "== 9. sandbox ports reachable? =="
+for p in 8650 8651 8652 8654; do
+  echo -n "port $p: "; timeout 5 curl -s -o /dev/null -w '%{http_code}' http://10.129.32.75:$p 2>&1; echo
+done
+
+echo "== DONE =="
+```
+
+> 本块纯只读诊断（ps/grep/df/curl），不改文件不动进程。总超时 <120s。
+
+---
+
+## RUN_ID 23 — 🔬 测试新 key + deepseek-v4-pro-cloud 是否可绕过 pro-fp4 的 403（6 组合）【已执行·已归档】
 
 **背景**：pro-fp4 额度 HTTP 403 阻塞 C1.full r4/r5（已复检 9 次未恢复）。用户提供新 key（e13f4f37）+ 模型名 deepseek-v4-pro-cloud，问能否绕过。本块纯只读 curl，测 6 个组合以区分 403 根因 = key 额度 / 模型额度 / endpoint 差异。
 
-```bash
-# RUN_ID 23 — read-only: test new key + pro-cloud vs pro-fp4 (6 combos, all --noproxy direct)
+```text
+# RUN_ID 23 — ARCHIVED (already executed, see outbox.md RUN_ID 23)
 echo "== RUN_ID 23: key/model/endpoint test =="; timeout 10 date '+%F %T'
 OLDKEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
 NEWKEY="02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e"
