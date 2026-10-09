@@ -24,11 +24,64 @@
 
 ---
 
+## RUN_ID 22 — 🔬 测试新 key + deepseek-v4-pro-cloud 是否可绕过 pro-fp4 的 403（6 组合）
+
+**背景**：pro-fp4 额度 HTTP 403 阻塞 C1.full r4/r5（已复检 9 次未恢复）。用户提供新 key（e13f4f37）+ 模型名 deepseek-v4-pro-cloud，问能否绕过。本块纯只读 curl，测 6 个组合以区分 403 根因 = key 额度 / 模型额度 / endpoint 差异。
+
+```bash
+# RUN_ID 22 — read-only: test new key + pro-cloud vs pro-fp4 (6 combos, all --noproxy direct)
+echo "== RUN_ID 22: key/model/endpoint test =="; timeout 10 date '+%F %T'
+OLDKEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
+NEWKEY="02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e"
+
+echo "== 1. NEW key + pro-cloud @ /cloud/v1 (user suggestion) =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/cloud/v1/chat/completions \
+  -H "Authorization: Bearer $NEWKEY" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-cloud","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -5
+
+echo "== 2. NEW key + pro-fp4 @ /cloud/v1 (does new key fix 403 for ORIGINAL model?) =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/cloud/v1/chat/completions \
+  -H "Authorization: Bearer $NEWKEY" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -5
+
+echo "== 3. NEW key + pro-fp4 @ /v1 (original pro-fp4 endpoint) =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/v1/chat/completions \
+  -H "Authorization: Bearer $NEWKEY" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -5
+
+echo "== 4. OLD key + pro-fp4 @ /cloud/v1 (confirm 403 baseline) =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/cloud/v1/chat/completions \
+  -H "Authorization: Bearer $OLDKEY" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -5
+
+echo "== 5. OLD key + pro-fp4 @ /v1 (original endpoint baseline) =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/v1/chat/completions \
+  -H "Authorization: Bearer $OLDKEY" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -5
+
+echo "== 6. NEW key + pro-cloud @ /v1 (is cloud model also on /v1?) =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/v1/chat/completions \
+  -H "Authorization: Bearer $NEWKEY" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-cloud","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -5
+
+echo "== DONE =="
+```
+
+> 本块纯只读 curl，不改文件不动进程。每条 timeout 15，总超时小于120s。
+
+---
+
 ## RUN_ID 21 — 🔍 只读：评测侧怎么调 cline + 把防作弊 hook 装到哪（为“评测对象也隔离 config dir”定位改动点）
 
 **目标**（用户/运维）：让**合并线的评测对象**也用**独立配置目录**（hook 装到那里），使 `~/.cline` 保持干净 → **合并线与 legacy 彻底互不干扰**。本块**只读**定位：`run_cli.sh` / `run_cline_script.sh` 里 ① cline 的调用点；② hook 的安装/移除点；③ 是否已支持 `--config` / `CLINE_CONFIG_DIR`；④ 评测模型的 auth 在哪设。
 
-```bash
+```text
 # RUN_ID 21 — read-only: eval-side cline invocation + hook install (for config-dir isolation)
 GP=/nasdata/app.e0031982/code/eda_fastmcp
 echo "== 0. TIME =="; timeout 10 date '+%F %T'; timeout 10 hostname
