@@ -186,6 +186,10 @@ error: error: unknown option '-b'
 
 ## 9. 流水（倒序）
 
+- **2026-10-09（运维经任务书下发：pro-fp4 key 已恢复 + 暂不启动 r4 沙盒重启中）** —— ops 中继 RUN_ID 23 实测确认 403 = 旧 key 额度耗尽（新 key `e13f4f37` + pro-fp4 + /cloud/v1 = HTTP 200，网关返回 `model: deepseek-v4-pro-260813` = 同一后端模型）。用户告知沙盒正在重启，要求 agent 暂不启动 r4。
+  - **落地**：在 `run/ZHULONG_TASK.md` 运维指令区置顶（常驻规程之后）新增 `### 🆕 运维指令 · 2026-10-09 — ✅ pro-fp4 403 已解决（换 key）+ 🚫 暂不启动 r4（沙盒重启中）`。指令要点：① 用新 key `cline auth` eval backbone（保持 `deepseek-v4-pro-fp4` + `/cloud/v1`，写入隔离 config dir）；② `curl --noproxy '*'` 复检确认 200；③ 🚫 **不启动 r4**（沙盒重启中）；④ 更新 MEMORY `PHASE=ready` / `WAITING=1` / 基座行标注 key 已恢复；⑤ 等运维「沙盒就绪·可开跑」通知再启动 r4。红线 = 不改模型名 / 不用 /v1 / r1-r3 全有效 / 不启动 eval。
+  - ⏭ 待推送：`git pull --rebase --autostash` → `git add -- doc/ZhuLong_DAC2027/run/ZHULONG_TASK.md doc/ZhuLong_DAC2027/MEMORY.md` → `git commit` → `git push`。agent 下轮 `git pull` 即取到指令。
+
 - **2026-10-09（运维经 ops 中继测新 key + deepseek-v4-pro-cloud 能否绕过 pro-fp4 403）** —— 用户问「用新 key（`e13f4f37`）+ 模型名 `deepseek-v4-pro-cloud` 可否绕过 pro-fp4 的 403，模型是一样的」。pro-fp4 403 已阻塞 C1.full r4/r5 达 9 次复检未恢复。
   - **分析**：论文 `6_exp.tex` 第 76 行写的是泛称 `DeepSeek-V4-Pro`（非 `pro-fp4`），但操作代码全程用 `deepseek-v4-pro-fp4`。`fp4`（4-bit 量化）vs `cloud`（云端全精度？）很可能是**不同部署/量化**，若混入 r1/r2/r3（均用 pro-fp4）的 5-run mean±std 会有一致性风险。需先实测区分 403 根因 = key 额度 / 模型额度 / endpoint 差异。
   - **落地**：在 `run/ops/inbox.md` 置顶新增 `RUN_ID 22`（6 组合 curl `--noproxy '*'` 直连测试：① 新key+pro-cloud@/cloud/v1 ② 新key+pro-fp4@/cloud/v1 ③ 新key+pro-fp4@/v1 ④ 旧key+pro-fp4@/cloud/v1 ⑤ 旧key+pro-fp4@/v1 ⑥ 新key+pro-cloud@/v1）；旧 RUN_ID 21 降级 `text`；RUN_ID 21→22。**纯只读 curl**，不改文件不动进程。

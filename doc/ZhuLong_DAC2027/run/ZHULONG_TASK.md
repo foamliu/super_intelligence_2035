@@ -38,7 +38,57 @@
 > ⏱️ **判死判据（硬）**：**心跳文件 >60min 无新提交 ⇒ 按卡死处理**（不再等你）。**你干得再多，心跳不动 = 仍会被判死。**
 
 
-### 🆕 运维指令 · 2026-10-08（二）— 🔧 git 操作超时：确保 loop 进程带 https_proxy（常驻·每次唤醒自检）
+### 🆕 运维指令 · 2026-10-09 — ✅ pro-fp4 403 已解决（换 key）+ 🚫 暂不启动 r4（沙盒重启中）
+
+> **来源**：用户 2026-10-09。经 ops 中继 RUN_ID 23 在 36.15 实测（6 组合 curl `--noproxy '*'` 直连），已确认 403 根因 = **旧 key 额度耗尽**（非模型级、非 endpoint 级）。新 key 可恢复 pro-fp4。
+
+**实测证据**（`run/ops/outbox.md` RUN_ID 23，2026-10-09 09:06:53）：
+
+| # | key | model | endpoint | HTTP | 网关返回 model |
+|:--|:--|:--|:--|:--|:--|
+| ① | 新 `e13f4f37` | pro-cloud | /cloud/v1 | **200** ✅ | `deepseek-v4-pro-260813` |
+| ② | 新 `e13f4f37` | **pro-fp4** | /cloud/v1 | **200** ✅ | `deepseek-v4-pro-260813` |
+| ③ | 新 `e13f4f37` | pro-fp4 | /v1 | 403 ❌ | — |
+| ④ | 旧 `c2759d74` | pro-fp4 | /cloud/v1 | 403 ❌ | — |
+| ⑤ | 旧 `c2759d74` | pro-fp4 | /v1 | 403 ❌ | — |
+
+**关键结论**：
+1. **组合 ② = 200** → 新 key + **原模型名 `deepseek-v4-pro-fp4`** + **原 endpoint `/cloud/v1`** 即可恢复。**模型名和 endpoint 都不用改**，只换 key。
+2. 网关对 pro-cloud 和 pro-fp4 返回的 `model` 字段**都是 `deepseek-v4-pro-260813`** → **同一个后端模型**，r1/r2/r3（均用 pro-fp4）**全部保持有效**，无需重跑。
+3. `/v1` 端点对两个 key 都 403 → **必须用 `/cloud/v1`**。
+
+**本次唤醒的动作（按顺序）**：
+
+1. **用新 key 重新 `cline auth` eval backbone**（写入 eval 隔离 config dir，与 Phase B 同机制）：
+   ```bash
+   cline auth -p openai \
+     -k 02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e \
+     -b http://agi-gateway.cxmt.com/cloud/v1 \
+     -m deepseek-v4-pro-fp4
+   ```
+   - ⚠️ 与 Phase B 同理：auth 写入 eval 侧隔离 config dir（`CLI_DATA_DIR=.cline_prof4_eval/data` 或你实际用的隔离目录），**不要污染编排 agent 的 `~/.cline`**。
+   - auth 完成后，用新 key `curl --noproxy '*'` 直连复检 pro-fp4 `chat/completions` → 确认 **HTTP 200 + 真 JSON**（应看到 `model: deepseek-v4-pro-260813`）。
+
+2. **🚫 暂不启动 r4**：用户告知**沙盒（sandbox）正在重启**，此刻启动评测会失败。**只做 auth + 复检 + 更新 MEMORY，不启动 eval、不 run `scripts/run_cline_script`。**
+
+3. **更新 MEMORY 状态头**：
+   - `基座` 行：eval backbone `deepseek-v4-pro-fp4` → **已恢复 HTTP 200（新 key `e13f4f37`）✅**
+   - `PHASE`：从 `blocked` 改为 **`ready`（pro-fp4 已恢复，但沙盒重启中，等运维通知开跑）**
+   - `WAITING`：保持 **1**（等运维通知沙盒就绪后再启动 r4）
+   - `ERROR_COUNT`：不变
+   - 成绩表 `C1.full` 行：r4 状态改为 **「待启动（key 已恢复，沙盒重启中，等运维通知）」**
+   - **下轮第一件事**改为：`curl --noproxy '*'` 新 key 直连 pro-fp4 → 确认仍 200 → **检查运维指令区是否有「沙盒就绪·可开跑」通知** → 有则重跑 r4（四 override：`EVAL_FW_DIR` + `CLI_DATA_DIR=.cline_prof4_eval/data` + `PYTHON` + `https_proxy`），无则继续 WAITING=1。
+
+4. **commit + push**（按常驻规程）：`git pull --rebase --autostash` → `git add -- doc/ZhuLong_DAC2027/run doc/ZhuLong_DAC2027/ZhuLong_DAC2027` → `git commit -m "zhulong C1.full: pro-fp4 key 已恢复(HTTP 200)→PHASE=ready, 沙盒重启中暂不启动r4"` → `git push origin main`。
+
+**红线**：
+- 🚫 **不要启动 r4/r5**（沙盒重启中，会失败作废）。
+- 🚫 **不要改模型名**（保持 `deepseek-v4-pro-fp4`，网关已证实 200）。
+- 🚫 **不要用 `/v1` 端点**（403）。
+- ✅ r1/r2/r3 **全部有效**（同一后端模型 `deepseek-v4-pro-260813`），无需重跑。
+- ✅ 等运维在指令区发「沙盒就绪·可开跑」通知后再启动 r4。
+
+
 
 > **来源**：用户 2026-10-08 观察。`zhulong_loop.sh` 的 git fetch/push 经常超时，根因 = **loop 进程环境里没有 `https_proxy`**（脚本本身不 export 代理，完全继承启动 shell 的环境；而脚本只在调 cline 时 `env -u` 剥代理——内网网关不该走代理——但 **git 访问 GitHub 是外网，必须走代理**）。
 
