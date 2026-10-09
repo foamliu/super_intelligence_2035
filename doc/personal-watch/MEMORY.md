@@ -14,7 +14,7 @@ WAITING: 0
 - 我是 `doc/personal-watch` 的 **supervisor（观察哨长）**：**不亲自采集**，只**派活、巡检、汇总、拍板**。
 - **下达通道** = 各任务书的 `## 🔧 运维指令区（OPERATOR NOTES）`（**改文件 + git commit/push**）。
 - **查看通道** = 读各线的 `run/MEMORY_*.md` 顶部「进度快照」+ `run/` 产物（`git pull` 即可，**不登录服务器**）。
-- 我当前指挥的线：**news**（任务书 `run/WATCH_NEWS_TASK.md`；**当前 P0 = 第 11 批「新闻信号 → 资产价格」十年滞后相关 + 每日两报**，全文规格 `run/NEWS_PRICE_SIGNAL_SPEC.md`）· **research**（任务书 `run/WATCH_RESEARCH_TASK.md`）。
+- 我当前指挥的线：**news**（任务书 `run/WATCH_NEWS_TASK.md`；**当前 P0 = 第 12 批「把第 11 批『新闻信号 → 资产价格』研究收口为自包含 HTML 报告」+ 第 11 批（十年滞后相关 + 每日两报）**，全文规格 `run/NEWS_PRICE_SIGNAL_SPEC.md`）· **research**（任务书 `run/WATCH_RESEARCH_TASK.md`）。
 - 上级 = 用户（作者刘杨/Foam）；本哨位的**服务对象是《超级智能2035》的写作与修订**。
 
 ---
@@ -411,3 +411,15 @@ WAITING: 0
 - 📦 **顺手滚动**：MEMORY.md 把 10-05 重复段（原文已在 `daily-memories/2026-10-05.md`）**归档为指针**（≈-6KB）。
 - ⚠️ **债务**：MEMORY.md 滚动**仍未达标**（仍 >32KB）→ 下轮把 **§9 的 2026-10-03/10-04 流水**按日期滚动进 `daily-memories/2026-10-0X.md`。
 - **commit**：`supervisor 派活: 第11批 新闻信号×资产价格(十年·滞后相关·每日两报) + 规格文件`（本文件与规格同批提交）。
+
+---
+
+## 🎯 2026-10-09（用户直派：**news 出「新闻 × 资产价格」相关性研究的 HTML 报告 + 问有无结论**）
+
+- **用户原话**：「**让 news 做新闻和资产价格相关性的研究，生成 html 报告，有没有结论。**」
+- **处置（已下发 · 第 12 批 · P0）**：在 `run/WATCH_NEWS_TASK.md`「运维指令区」**置顶新增第 12 批块** + 改写「📊 当前指令」表首行 —— **不改代码、不改规格**，**只派活**；commit + push 后 news loop 下一轮（**2026-10-10 06:00**）自然读到。
+  - **✅ 第 11 批研究已完成**（R1–R5，产物 `news/signal/`：`lag_corr.csv` 23,940 格 + `LAG_CORR.md` + `FINDINGS.md` + `BOOTSTRAP.md` + `LATEST_SIGNALS.md` + `AM_PM_CHECK.md` + `daily/*.md`）⇒ 第 12 批**只做「收口成 HTML」**：**主交付 `run/news/signal/REPORT.html`**（**自包含**、无外链、离线可开；范式对齐 `news/API_COMPARISON.html` / `research/daily/*.html`）；建议生成器 `make_report_html.py`（确定性、可复现，跑完登记 `INDEX_FILES.md`）。
+  - **报告必备 8 小节**：结论 / 方法口径 / 全网格总账 / 各频率 top 格（标 `exploratory`）/ 数据覆盖表 / 局限 / 免责红线（顶+底）/ 可复现性。
+  - **🚫 硬约束**：不重跑研究、**不新增统计**（新增分析须先补 `PREREG.md` 修订）· 因果措辞禁 · 点位/仓位/择时禁 · **负面结果照写**。
+- **🧾（对用户的答复）有没有结论 = 有，且是负面结论**：全网格 23,940 格，**FDR 后 `q<0.10` = 0、`stable` = 0**；未校正 `p<0.05` = 1217（5.08% ≈ 随机基线）⇒ **「未发现稳定滞后相关」= 本批有效结论**（`FINDINGS.md` / `LAG_CORR.md` / `BOOTSTRAP.md` 三处一致；块自助 20 随机格中 19 格 CI 跨 0）。**非因果 · 非投资建议 · ❄️ L3 冻结。**
+- **commit**：`supervisor 派活: 第12批 news 新闻×资产价格研究 HTML 报告`。
