@@ -200,7 +200,7 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
-- **⚗️ 2026-10-09（Muon vs AdamW 下发 + 更正）**——空档=`.12`（~22:30）。**已更正：NeMo/Megatron 支持 Muon**（`core.optimizer.muon`/`emerging_optimizers`；MBridge 有 Muon recipe；blog 2026-04 实测）⇒ 非从零实现，三步核查→A/B（~8 GPU·h）。
+- **⚗️ 2026-10-09（Muon vs AdamW 下发 + 更正）**——空档=`.12`。**已更正：NeMo/Megatron 支持 Muon**（`core.optimizer.muon`/`emerging_optimizers`；MBridge 有 Muon recipe；blog 2026-04 实测）⇒ 三步核查→A/B。
 
 - **🌙 2026-10-09（夜班填空：`.29` 剩余卡跑 T1/T2/T3；不含 P-8）**——T1 长上下文适配 4096→8192（Stage ii 前置）/ T2 等参 Dense 训练侧 / T3 R3 配比迁移 A/B。
 
