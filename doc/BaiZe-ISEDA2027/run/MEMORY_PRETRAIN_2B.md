@@ -2,11 +2,12 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **状态核查 #241（2026-10-09 13:01）** — R3 全量分词进行中(110进程, .bin=989GB, ETA~3-4h→~16-17:00)。P-8 暂缓令未撤。全 8 GPU 空闲。等运维撤销暂缓令 + 分词完成
-- PHASE: **状态核查 #241（2026-10-09 13:01, .29）**：git up-to-date 0/0（无新运维指令）。R3 全量分词 110/110进程活(.bin=989GB, 0 .idx, ETA~3-4h→~16-17:00)；GPIC 7019/8001(ETA~20h→~09:00Oct10)。P-8 暂缓令未撤 + 分词未完成 → 不可启动。全 8 GPU 空闲 ✅。⭐ 下次唤醒：查分词完成状态 → 等运维 P-8 启动令。
+- STAGE: **状态核查 #242（2026-10-09 13:37）** — R3 全量分词进行中(110进程, .bin=989GB, ETA~3-4h→~16-17:00)。P-8 暂缓令未撤。全 8 GPU 空闲。等运维撤销暂缓令 + 分词完成
+- PHASE: **状态核查 #242（2026-10-09 13:37, .29）**：git up-to-date 0/0（无新运维指令）。R3 全量分词 110/110进程活(.bin=989GB, 0 .idx, ETA~3-4h→~16-17:00)；GPIC 7019/8001(ETA~20h→~09:00Oct10)。P-8 暂缓令未撤 + 分词未完成 → 不可启动。全 8 GPU 空闲 ✅。⭐ 下次唤醒：查分词完成状态 → 等运维 P-8 启动令。
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。全 8 GPU 空闲（0 MiB/0%）✅。**P-8 暂缓令未撤**。📦 体积：TASK=24295B(23.7KB) / MEMORY=20.7KB（均 ≤32KB ✅）。🚫绝不 kill watchdog loop
-- 🩺 **本唤醒推进 = 状态核查 #241（2026-10-09 13:01, .29）**：① git fetch → up to date 0/0（工作区仅 harness modified, 非本线；无新本线运维指令）。② GPU 核验：全 8 GPU 0MiB/0% ✅，无 compute apps。③ data agent 进度(MEMORY_DATA 唤醒257@12:56)：R3全量分词 110/110进程活(0 error, ppid=1✅, .bin=989GB(l3=366+code=286+math=337), rate~6.5GB/min, 0 .idx, ETA~3-4h→~16-17:00)；GPIC 7019/8001(+32, ~48tar/h, ETA~20h→~09:00Oct10)；web✅524.43B；污染扫描✅160K docs 0命中。④ P-8 暂缓令(10-02)未撤 + 分词未完成 → P-8 不可启动。⑤ watchdog PID 1391466 ✅(etimes~414K=4.8d)。⑥ 体积自检：TASK=24295B(23.7KB) / MEMORY=20685B(20.2KB) 均 ≤32KB ✅ 无需归档。→ 下一步：查分词完成状态 → 等运维 P-8 启动令。WAITING=1。git：本次 push。
+- 轮询状态：30min 长轮询。全 8 GPU 空闲（0 MiB/0%）✅。**P-8 暂缓令未撤**。📦 体积：TASK=24295B(23.7KB) / MEMORY=20.5KB（均 ≤32KB ✅）。🚫绝不 kill watchdog loop
+- 🩺 **本唤醒推进 = 状态核查 #242（2026-10-09 13:37, .29）**：① git fetch → up to date 0/0（工作区仅 harness modified/untracked, 非本线；无新本线运维指令）。② GPU 核验：全 8 GPU 0MiB/0% ✅，无 compute apps。③ data agent 进度(MEMORY_DATA 唤醒257@12:56)：R3全量分词 110/110进程活(0 error, ppid=1✅, .bin=989GB(l3=366+code=286+math=337), rate~6.5GB/min, 0 .idx, ETA~3-4h→~16-17:00)；GPIC 7019/8001(+32, ~48tar/h, ETA~20h→~09:00Oct10)；web✅524.43B；污染扫描✅160K docs 0命中。④ P-8 暂缓令(10-02)未撤 + 分词未完成 → P-8 不可启动。⑤ watchdog PID 1391466 ✅(etimes~416K=4.8d)。⑥ 体积自检：TASK=24295B(23.7KB) / MEMORY=20941B(20.5KB) 均 ≤32KB ✅ 无需归档。→ 下一步：查分词完成状态 → 等运维 P-8 启动令。WAITING=1。git：本次 push。
+> 📦 **[已归档] #241 流水（2026-10-09 13:01, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词110进程/.bin=989GB/ETA~3-4h, P-8暂缓令未撤。需要时再读。**
 > 📦 **[已归档] #240 流水（2026-10-09 12:28, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词110进程/.bin=736GB/ETA~6-8h, P-8暂缓令未撤。需要时再读。**
 > 📦 **[已归档] #239 流水（2026-10-09 11:53, 状态核查+T3归档）→ daily-memories/2026-10-09.md；结论：T3运维块已归档(TASK→23.7KB), R3分词24.5%/110进程/.bin=538GB, GPU全空, P-8暂缓令未撤。需要时再读。**
 > 📦 **[已归档] #238 流水（2026-10-09 11:11, T3提速验证完成）→ daily-memories/2026-10-09.md；结论：Test1 OOM/recompute无效, Test4 FP8 s=0.915, P-8最优=TP1·MBS2·bf16=249K。需要时再读。**
