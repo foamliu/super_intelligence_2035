@@ -24,9 +24,12 @@
 ### 🆕 运维指令 · 2026-10-09①（**UltraData-Code / UltraData-MATH 全量分词 —— P-8 数据层唯一阻塞**）· **用户直令** · 最高优先
 
 > **用户直令（2026-10-09）**：「data：开始 code/math 全量分词」
-> **背景**：R3 BO 已完成（best=#8 score=0.4032），P-8 数据就绪度核查（pretrain #231）发现 **Web 数据 ✅ 524B（5.9× 覆盖）**，但 **Code 🔴 缺口 25×**（仅 270M vs 需 6.76B）、**Math 🟠 缺口 7×**（仅 609M vs 需 4.36B）。**Code/Math 全量分词 = P-8 数据层唯一阻塞**，分词完成后即可解锁 P-8 启动。
+> **背景**：R3 BO 已完成（best=#8 score=0.4032），P-8 数据就绪度核查（pretrain #231）发现 **Web 数据 ✅ 524B（5.9× 覆盖，全部 parquet 已切完）**，但 **Code 🔴 缺口 25×**（仅 270M vs 需 6.76B）、**Math 🟠 缺口 7×**（仅 609M vs 需 4.36B）。**Code/Math 全量分词 = P-8 数据层唯一阻塞**，分词完成后即可解锁 P-8 启动。
+> **口径**：与 web shards（en_base 2048 parquet→10 shard、zh 256 parquet→8 shard 等）**完全一致——全量 = 切完所有原始 parquet 文件**，不设 token 上限/下限。6.76B/4.36B 是 P-8 训练消耗量（参考），不是分词截止线。
 
 **① UltraData-Code 全量分词（本轮立刻启动）**
+
+> ⚠️ **「全量」= 把 UltraData-Code 所有 parquet 文件全部分词**，与 web shards（en_base 2048 parquet→10 shard、zh 256 parquet→8 shard 等）口径完全一致——**切完所有原始文件为止，不设 token 上限/下限**。6.76B 是 P-8 训练的消耗量（参考），不是分词截止线。
 
 - **原始数据路径**：`/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L3/`（11 语言子目录：py/cpp/js/...，合计 ~1.22TB）
 - **分词口径**（与既有 web shards 完全一致）：
@@ -35,7 +38,7 @@
   - **mode** = `turns`（code/math 是对话轮次格式，`texts` 列 → turn-by-turn）
   - **产出** = `.bin/.idx/.json`（Megatron-LM 格式，**不入 git**）
   - **落盘** = `/nas_train/app.e0031982/datasets/baize-data/text/`，命名 `code_s{i}.bin/.idx/.json`（i=0,1,2,...）
-- **目标 token 量**：**≥ 6.76B**（Stable 段 5.76B + Decay 段 1.0B），1.22TB 原始 → 预估 ~30–40B token（**远超需求**，全量切完即可）
+  - **预估产出**：1.22TB 原始 → 预估 ~30–40B token（远超 P-8 需求 6.76B，与 web 一样留充足余量）
 - **并行化**（沿用 2026-10-07⑤ 已验证的并行分词方法）：
   - 按语言子目录分片：每个语言（py/cpp/js/...）= 1 组 `preprocess_data.py` 进程；若单语言 parquet > 500 个，再按 parquet 子集拆分
   - **起步 N = min(8, nproc/4)**（.12 当前 load~40/224 核，GPIC 下载是 I/O bound 不争 CPU → 可开 8 进程）
@@ -45,10 +48,12 @@
 
 **② UltraData-MATH 全量分词（与 ① 同时启动，或紧跟 ①）**
 
+> ⚠️ 同 ①：**「全量」= 把 UltraData-MATH 所有 parquet 文件全部分词**，不设 token 上限/下限。4.36B 是 P-8 消耗量（参考），不是截止线。
+
 - **原始数据路径**：`/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L1/CC-MAIN-*/`（15 个 CC-MAIN shard，~552GB）
 - **分词口径**：同 ①（同 tokenizer / 同 mode=turns / 同格式）
 - **落盘**：`/nas_train/app.e0031982/datasets/baize-data/text/`，命名 `math_s{i}.bin/.idx/.json`
-- **目标 token 量**：**≥ 4.36B**（Stable 段 3.96B + Decay 段 0.4B），552GB 原始 → 预估 ~15–25B token（**远超需求**）
+- **预估产出**：552GB 原始 → 预估 ~15–25B token（远超 P-8 需求 4.36B，与 web 一样留充足余量）
 - **并行化**：按 CC-MAIN shard 分片，15 shard → 可开 8 进程（2 shard/进程），同 ① 的并发策略
 
 **③ 投料前污染扫描（分词完成后做）**
