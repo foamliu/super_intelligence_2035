@@ -1,0 +1,56 @@
+  [RESUME] Skipping 88 completed for claude-code
+Serial kimi eval: harness=claude-code model=kimi-k2.6-cloud
+  Total=12 Pending=12 Skip=88 Concurrency=1
+
+############################################################
+# [1/12] claude-code x sympy__sympy-11400
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-11400 for claude-code
+
+[RUN] claude-code on sympy__sympy-11400 ...
+  [EVAL] claude-code on sympy__sympy-11400 ...
+  => sympy__sympy-11400 | claude-code | resolved
+
+############################################################
+# [2/12] claude-code x sympy__sympy-13773
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-13773 for claude-code
+
+[RUN] claude-code on sympy__sympy-13773 ...
+  [EVAL] claude-code on sympy__sympy-13773 ...
+  => sympy__sympy-13773 | claude-code | patch-but-failed
+
+############################################################
+# [3/12] claude-code x sympy__sympy-13915
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-13915 for claude-code
+
+[RUN] claude-code on sympy__sympy-13915 ...
+  [EVAL] claude-code on sympy__sympy-13915 ...
+  => sympy__sympy-13915 | claude-code | patch-but-failed
+
+############################################################
+# [4/12] claude-code x sympy__sympy-14308
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-14308 for claude-code
+
+[RUN] claude-code on sympy__sympy-14308 ...
+  [EVAL] claude-code on sympy__sympy-14308 ...
+  => sympy__sympy-14308 | claude-code | patch-but-failed
+
+############################################################
+# [5/12] claude-code x sympy__sympy-14317
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-14317 for claude-code
+
+[RUN] claude-code on sympy__sympy-14317 ...
