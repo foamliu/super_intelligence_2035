@@ -7,10 +7,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 7×300 RUNNING — BLOCK=0 CONFIRMED ✅ (798 current-run results, 0 blocked; N=1 monitoring)
-已完成:       ① 7×100 HTML report delivered ✅ · ②-A code fix done (per-harness workdir + rootfs flock) ✅ · ②-B resource check done ✅ · GPU29_ALLOC.md registered ✅ · launch_7x300.sh created ✅ · Smoke test PASSED ✅ · Old blocked re-run killed ✅ · 7×300 LAUNCHED ✅ · BLOCK=0 CONFIRMED in current run ✅
-当前动作:     R231: 7×300 monitoring at 01:01 (47 min since launch). ALL 7 processes alive (etimes ~2580s). Progress: 928/2100 total (44.2%), of which 798 have wall>0 (actually run) with **0 blocked**. 130 pre-existing blocked (wall=0) being re-run by --resume: codex 114 (86 already re-run, 0 new blocked), pi 12, deepseek 4, cline-patched 1 (astropy proxy 503). New 300-set results: cline 4, codex 86, hermes 4, opencode 7, claude-code 4, deepseek 4, pi 5 — ALL 0 blocked. Resources: load 7.17/96cores, 1069G free RAM, /dev/shm 1004G avail (1% used).
-下一步:       ① Continue monitoring — wait for ~30 new results per non-codex harness to fully confirm block=0 at scale → ② If block=0 holds → scale to N=2 (per-instance-workdir) for throughput → ③ codex: 28 pre-existing blocked remaining to re-run → ④ Each harness completes → refresh + commit → ⑤ Final: blocked=0 required. ETA ~35-42h wall (N=1).
+PHASE:        H-A 7×300 RUNNING — BLOCK=0 CONFIRMED ✅ (828 current-run results, 0 blocked; N=1 monitoring; 956/2100=45.5%)
+已完成:       ① 7×100 HTML report delivered ✅ · ②-A code fix done (per-harness workdir + rootfs flock) ✅ · ②-B resource check done ✅ · GPU29_ALLOC.md registered ✅ · launch_7x300.sh created ✅ · Smoke test PASSED ✅ · Old blocked re-run killed ✅ · 7×300 LAUNCHED ✅ · BLOCK=0 CONFIRMED in current run ✅ (R231+R232)
+当前动作:     R232: 7×300 monitoring at 01:43 (87 min since 00:14 launch). ALL 7 processes alive (etimes ~5260s). Progress: 956/2100 total (45.5%), of which 828 have wall>0 (actually run) with **0 blocked** ✅. 128 pre-existing blocked (wall=0) being re-run by --resume (was 130 at R231 → 2 already fixed → resolved/pbf). Per-harness pending: codex 109 (blocked re-runs), pi 203, deepseek 196, cline 192, hermes 192, claude-code 191, opencode 187. Rate: ~28 new entries in 42 min (~0.67/min). Resources: load 7.84/96cores, 1046G free RAM, /dev/shm 1004G avail (1% used), GPU idle.
+下一步:       ① Continue monitoring — block=0 holding strong (828 wall>0 entries, 0 blocked) → ② If block=0 holds after ~30 more per harness → scale to N=2 (per-instance-workdir) → ③ codex: 109 blocked re-runs remaining → ④ Each harness completes → refresh + commit → ⑤ Final: blocked=0 required. ETA ~32h (hermes bottleneck, 192 pending × ~726s avg).
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
