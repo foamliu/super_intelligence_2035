@@ -59,6 +59,7 @@
 
 **⑦ 交付**：① `report_vision_scaling_fair.html`（or 在同报告内新开 §15「公平重跑」节，二选一，说明清楚）；② `EXPERIMENTS_VISION.md` 新节（**预注册在前、结果在后**，含 ②④ 的 lr 轨迹与两臂 `total_shards=` 原文）；③ `MEMORY_VISION.md`「scaling fair rerun」小节 + 心跳；④ commit+push（前缀 `vision scaling fair: …`）+ `WAITING=1`；🚫 不 `git add -A`。
 > ⏱️ **cost 估**：E1fair ≈ 5.2–5.7h（旧 E1 实测）＋ E2fair ≈ 5.2–9.1h（旧 E2 实测，NFS 波动）＋ eval ≈ 3.5h/2 臂 ⇒ **总计 ~14–18h 墙钟**（`.12` 8 卡）。**若 `.12` 被别的任务占用**：按 `GPU12_ALLOC.md` 优先序（vision 训练臂 > pretrain 推理评测）**先申请、不抢占**；等不到就**如实报「无卡未起」+ 脚本就绪**，别改配方凑合。
+> ⚠️ **存储为 SSD（用户裁定 2026-10-09）**：**IO/NFS 争用不作为推迟 E1fair 的理由** —— 按计划起跑即可，吞吐波动如实记录（别因此等待/降配）。
 > 📦 体积：本块加完请自检 `wc -c`，**>32KB 先把已闭合块搬 `ARCHIVE_OPERATOR_VISION.md`**（只搬迁、留指针）。
 
 ---
