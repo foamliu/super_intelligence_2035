@@ -202,6 +202,12 @@ def main():
     ap.add_argument('--steps', type=int, default=3000)
     ap.add_argument('--lr', type=float, default=3e-3)
     ap.add_argument('--warmup', type=int, default=20)
+    ap.add_argument('--scheduler', choices=['const', 'cosine'], default='const',
+                    help='const=warmup→constant (legacy); cosine=warmup→cosine decay to --min-lr '
+                         '(2026-10-09⑨ fair rerun). Default const ensures old commands are unaffected.')
+    ap.add_argument('--min-lr', type=float, default=5e-5,
+                    help='minimum lr for cosine scheduler (= 10%% of --lr by default). '
+                         'Only used when --scheduler=cosine; ignored for const.')
     ap.add_argument('--loss', choices=['clip', 'siglip', 'localloss', 'coca', 'aimv2', 'aimv2_ar'], default='clip',
                     help='clip=InfoNCE (R9/R10 baseline); siglip=SigLIP bidirectional sigmoid (R11-L arm2); '
                          'localloss=InfoNCE local_loss=True per-rank pool (R11-L arm3); '
@@ -429,13 +435,25 @@ def main():
             print(f'[resume] OK: resuming at step={start_step} → will train to step={args.steps} '
                   f'({args.steps - start_step} new steps). resumed_loss={_resumed_loss}', flush=True)
 
+    _total = args.steps  # use the full --steps (not remaining), per 2026-10-09⑨
+
     def lr_at(s):
         w = args.warmup
-        return args.lr * (s / max(1, w)) if s < w else args.lr
+        if s < w:
+            return args.lr * (s / max(1, w))
+        if args.scheduler == 'cosine':
+            p = (s - w) / max(1, _total - w)
+            return args.min_lr + 0.5 * (args.lr - args.min_lr) * (1 + math.cos(math.pi * p))
+        return args.lr  # const
 
     def lora_lr_at(s):
         w = args.warmup
-        return args.lora_lr * (s / max(1, w)) if s < w else args.lora_lr
+        if s < w:
+            return args.lora_lr * (s / max(1, w))
+        if args.scheduler == 'cosine':
+            p = (s - w) / max(1, _total - w)
+            return max(args.min_lr * 0.1, 1e-6) + 0.5 * (args.lora_lr - max(args.min_lr * 0.1, 1e-6)) * (1 + math.cos(math.pi * p))
+        return args.lora_lr  # const
 
     # rank-sliced shard list (disjoint reads across ranks).
     # Multi-source: --data accepts comma-separated globs (CC12M + Amshaker both wds .txt).
@@ -477,10 +495,25 @@ def main():
     log(f'[start] tower={args.tower} lr={args.lr} warmup={args.warmup} bs={args.batch_size} '
         f'world={world_size} steps={args.steps} res={args.resolution} patch={args.patch} '
         f"seed={args.seed} shards={len(my_shards)}/rank objective={_OBJ} "
+        f'scheduler={args.scheduler} min_lr={args.min_lr} '
         f'text={args.text_finetune}-CLIP-768(r={args.lora_rank},a={args.lora_alpha},lr={args.lora_lr}) '
         f'negatives={args.batch_size*world_size} '
         f'data_source={args.data_source} caption_type={args.caption_type} '
         f'total_shards={len(all_shards)}')
+
+    # ---- lr 4-point self-check (cosine only) — written to train.log as evidence ----
+    if is_main and args.scheduler == 'cosine':
+        _s0, _sw, _sh, _sl = 0, args.warmup, _total // 2, _total - 1
+        log(f'[lr-selfcheck] scheduler=cosine lr={args.lr} warmup={args.warmup} '
+            f'min_lr={args.min_lr} steps={_total}')
+        log(f'[lr-selfcheck] lr@step0={lr_at(_s0):.8f}  lr@warmup({args.warmup})={lr_at(_sw):.8f}  '
+            f'lr@50%({_sh})={lr_at(_sh):.8f}  lr@last({_sl})={lr_at(_sl):.8f}')
+        # verify monotonic decrease after warmup
+        _mid = (args.warmup + _sh) // 2
+        if not (lr_at(_sw) >= lr_at(_mid) >= lr_at(_sh) >= lr_at(_sl)):
+            log('[lr-selfcheck] WARNING: lr not monotonically decreasing after warmup — check schedule!')
+        else:
+            log('[lr-selfcheck] OK: lr monotonically decreasing after warmup')
 
 # ---- fixed probe batch (rank 0): precompute once; text is FROZEN so T is constant ----
     if is_main:
@@ -513,6 +546,7 @@ def main():
                        'patch': args.patch, 'steps': step,
                        'loss': _LOSS_KEY,
                        'embed_dim': EMBED, 'lr': args.lr, 'warmup': args.warmup,
+                       'scheduler': args.scheduler, 'min_lr': args.min_lr,
                        'batch_size': args.batch_size, 'world_size': world_size,
                        'seed': args.seed,
                        'objective': _OBJ,
