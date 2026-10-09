@@ -2,11 +2,12 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **状态核查 #245（2026-10-09 15:22）** — R3 全量分词进行中(109进程, .bin=1.76TB, 1 .idx, ETA~12-18h→~22:00-04:00Oct10)。P-8 暂缓令未撤。全 8 GPU 空闲。等运维撤销暂缓令 + 分词完成
-- PHASE: **状态核查 #245（2026-10-09 15:22, .29）**：git ahead 1(auto-commit, 远端已合并; 无新运维指令)。R3 全量分词 109/110进程活(.bin=1.76TB(l3=649+code=509+math=602), 1 .idx[l3_s39✅], rate~6.4GB/min, ETA~12-18h→~22:00-04:00Oct10)；GPIC 7106/8001(ETA~20h→~11:00Oct10)。P-8 暂缓令未撤 + 分词未完成 → 不可启动。全 8 GPU 空闲 ✅。⭐ 下次唤醒：查分词完成状态 → 等运维 P-8 启动令。
+- STAGE: **R3 收官报告 #246（2026-10-09 16:10）** — R3 HTML 报告 `report_pretrain_r3_data_mix.html` 已生成(52.6KB, 8内联SVG, DB真实数据)。P-8 暂缓令未撤。全 8 GPU 空闲。等运维撤销暂缓令
+- PHASE: **R3 收官报告 #246（2026-10-09 16:10, .29）**：运维指令(10-09 R3报告)已执行——`doc/BaiZe-ISEDA2027/report_pretrain_r3_data_mix.html` 52.6KB / 8节(TL;DR/实验设计/Top-5/关键发现/与先验R2对比/P-8建议/局限/图表) / 8张内联SVG(score直方图/top-5堆叠条形/best#8 per-task/R2vsR3对比/Web:Code:Math比例) / 10张表 / 零外链 / DB真实数据生成(mix_search_eval_r3.db 98 complete trials)。⚠️ DB位于`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/mix_search/`(非run/下0B空壳)。P-8 暂缓令未撤。全 8 GPU 空闲 ✅。⭐ 下次唤醒：查分词完成状态 → 等运维 P-8 启动令。
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。全 8 GPU 空闲（0 MiB/0%）✅。**P-8 暂缓令未撤**。📦 体积：TASK=25.0KB / MEMORY=21.4KB（均 ≤32KB ✅）。🚫绝不 kill watchdog loop
-- 🩺 **本唤醒推进 = 状态核查 #245（2026-10-09 15:22, .29）**：① git fetch → ahead 1(auto-commit 58f86c68, 远端已 pull --rebase 合并; harness modified 非本线不碰; 无新本线运维指令)。② GPU 核验：全 8 GPU 0MiB/0% ✅，无 compute apps。③ data agent 进度(MEMORY_DATA 唤醒260@14:54)：R3全量分词 109/110进程活(0 error, ppid=1✅, .bin=1.76TB(l3=649+code=509+math=602), rate~6.4GB/min, 1 .idx[l3_s39✅], runtime=4.5h, ETA~12-18h→~22:00-04:00Oct10)；GPIC 7106/8001(ETA~20h→~11:00Oct10)；web✅524.43B；污染扫描✅160K docs 0命中。④ P-8 暂缓令(10-02)未撤 + 分词未完成 → P-8 不可启动。⑤ watchdog PID 1391466 ✅(etimes~440K=5.1d)。⑥ 体积自检：TASK=25537B(25.0KB) / MEMORY=21888B(21.4KB) 均 ≤32KB ✅ 无需归档。→ 下一步：查分词完成状态 → 等运维 P-8 启动令。WAITING=1。git：本次 push。
+- 轮询状态：30min 长轮询。全 8 GPU 空闲（0 MiB/0%）✅。**P-8 暂缓令未撤**。📦 体积：TASK=28.2KB / MEMORY=21.5KB（均 ≤32KB ✅）。🚫绝不 kill watchdog loop
+- 🩺 **本唤醒推进 = R3 收官报告 #246（2026-10-09 16:10, .29）**：① git fetch → 0/0 ✅（无新运维指令; 工作区仅 untracked report_pretrain_r3_data_mix.html）。② 运维指令执行：R3 HTML 报告 `report_pretrain_r3_data_mix.html` 已生成(52.6KB, 8节, 8内联SVG, 10表, 零外链, 自包含)。③ DB 查询：`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/mix_search/mix_search_eval_r3.db`(81920B, 100 trials: 98 complete + 2 failed #25/#49)。从 DB 提取 98 scores 生成直方图 + top-5 per-task scores 生成柱状图。④ 报告数据源：r3_best_blend.txt + DATA_MIX_RECIPE.md §9.7 + EXPERIMENTS_PRETRAIN_2B_ROUND2.md R3节 + DB(只读查询, 不写库)。⑤ GPU 核验：全 8 GPU 0MiB/0% ✅。⑥ watchdog PID 1391466 ✅。⑦ 体积自检：TASK=28892B(28.2KB) / MEMORY=22004B(21.5KB) 均 ≤32KB ✅ 无需归档。→ 下一步：查分词完成状态 → 等运维 P-8 启动令。WAITING=1。git：本次 push。
+> 📦 **[已归档] #245 流水（2026-10-09 15:22, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git ahead 1(已合并), R3分词109进程/.bin=1.76TB/ETA~12-18h, P-8暂缓令未撤。需要时再读。**
 > 📦 **[已归档] #244 流水（2026-10-09 14:45, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词109进程/.bin=1.49TB/ETA~12-18h, P-8暂缓令未撤, 一并提交TASK.md T3 recipe。需要时再读。**
 > 📦 **[已归档] #243 流水（2026-10-09 14:10, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词110进程/.bin=1.3TB/ETA~2-4h, P-8暂缓令未撤。需要时再读。**
 > 📦 **[已归档] #242 流水（2026-10-09 13:37, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词110进程/.bin=989GB/ETA~3-4h, P-8暂缓令未撤。需要时再读。**
