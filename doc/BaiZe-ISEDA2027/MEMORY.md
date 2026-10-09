@@ -3,11 +3,10 @@
 
 ## 🆕 最近操作（2026-10-09）
 
-### 💡 征询 pretrain 的 3 个实验 idea（用户直令）
-- **用户令**：「询问一下 pretrain，看它有什么 idea。让它提 3 个实验 idea，按照价值从高到低排序。」
-- **背景**：pretrain 队列已清空（R3 BO ✅ / R3 报告 ✅ / P-8 PREP ✅ / T3 ✅，P-8 最优配置已定 `TP1·MBS2·bf16 = 249K`），`.29` 8 卡全空；P-8 卡在 Code/Math 分词 + 暂缓令；用户正评估是否撤暂缓令直接起 P-8。
-- **已下发** `run/BAIZE_PRETRAIN_2B_TASK.md` **顶部块**（最高优先）：要求 pretrain **纯写作、零 GPU**，提 3 个实验 idea **按价值从高到低排序**，每个写全 6 项（名称 / 依据 / 成本 / 可检验判据 / 风险依赖 / 对齐谁），**并必须回答**「若撤暂缓令，你建议立即起 P-8 还是先做哪个 idea，为什么」。
-- **回报位置**：`MEMORY_PRETRAIN_2B.md`「🗣️ 运维问答 · 2026-10-09（提 3 个实验 idea）」；前缀 `pretrain 问答: …`。
+### 💡🔎📊 pretrain 三连（2026-10-09）
+- **3 个实验 idea 征询** → **已回报 #251**（①P-8 彩排续跑 ②P-8 44B 下限档 ③R3 配比迁移 A/B + 建议**立即起 P-8**）。
+- **公平对比盘点**（自评 C1–C6）→ 待回报。
+- **📊 补测 + 中文对比报告**（用户直令）：BaiZe-Hybrid 2.220B ⚔ **参数匹配 Dense Llama**（对手换成同参数，非 2.512B），SGLang，**ctx ×2 直到 hybrid 也 OOM**，出 `report_pretrain_baize_vs_dense_fair_zh.html`。已下发顶部块。
 
 ### 📝 给 data 下发指令 ③（停②重头来 + 全量分词 + 放开并发）
 - **用户直令（2026-10-09③）**：Code/Math 停掉重头来（每个目录全切）· Ultra-FineWeb-L3 也加入分词 · 224 核别只开 8 并发（**放开**）· 核实 Ultra-FineWeb 197GB→.bin 2.0TB 是否合理 · **不要创造新名字**（只按原始 6 目录）。
@@ -15,7 +14,6 @@
 
 ### 🔬 pretrain：队列已清空（R3 报告 ✅ / P-8 PREP ✅ / **T3 ✅ → P-8 最优 = `TP1·MBS2·bf16` 249K**；FP8 不能提速、recompute 对 SSM 无效）
 - `.29` 8 卡全空；**P-8 唯一阻塞 = 暂缓令**（数据已够：web 524B / code 128.6B / math 170.7B）。已下发「提 3 idea」+「公平对比盘点」两块。
-- **#251 已回报**：3 idea（①P-8 彩排续跑 ②P-8 44B 下限档 ③R3 配比迁移 A/B）+ **建议立即起 P-8**（详见 `MEMORY_PRETRAIN_2B.md`「运维问答」）。
 
 ### 💬 vision / harness 运维问答已收齐
 - **vision** ✅ 答复 2026-10-08③（未验证假设 / Stage iv 前置 / GPU 空窗优先级 / 论文补充）· **harness** ✅ 答复 2026-10-08④（横评深挖 / BaiZe 接入前置 / 扩规模 / 多 backbone / 论文补充）。
@@ -83,6 +81,7 @@ WAITING: 0
 
 ## 4. 待拍板 / 我欠的答复
 
+- [ ] 🆕 **BaiZe-Hybrid（参数匹配 Dense）中文对比报告（2026-10-09 下发，最高优先）**：先报「参数匹配方案 + 矩阵 + ETA」→ 补测 → 出 `report_pretrain_baize_vs_dense_fair_zh.html`。
 - [ ] 🆕 **BaiZe vs MiniCPM5「公平对比」盘点（2026-10-09 下发）**：等 pretrain 回报 C1–C6 落实度 + 权威版本。
 - [x] **pretrain 3 idea 征询（2026-10-09）**：✅ 已回报 #251；待拍板「撤暂缓令 / 先做哪个」。
 - [ ] **P-9 结果** → 定 **P-8 的 seq(4096/8192) / MBS / 精度(bf16/FP8)**（含 16384 是否 OOM 的长上下文边界）。
@@ -201,6 +200,8 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **📊 2026-10-09（补测 + 中文对比报告：BaiZe-Hybrid 2.220B vs 参数匹配 Dense）**——已下发顶部块（最高优先）：对手换参数匹配 dense（≈2.220B）· SGLang · ctx ×2 到 hybrid OOM · 公平口径一致 · 出 `report_pretrain_baize_vs_dense_fair_zh.html` · 先报矩阵+ETA。
 
 - **💡 2026-10-09（征询 pretrain 的 3 个实验 idea）** 已下发 `BAIZE_PRETRAIN_2B_TASK.md` 顶部块（纯写作零 GPU）；**已回报 #251**（3 idea + 建议立即起 P-8）——详见 §🆕 与 `daily-memories/2026-10-09.md`。
 
