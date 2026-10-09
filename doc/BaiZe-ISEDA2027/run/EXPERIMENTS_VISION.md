@@ -629,3 +629,70 @@ Under the AIMv2-style dense objective at a fixed 1-epoch budget over 95.8M image
 | GPU memory (est.) | ~16.5 GB | ~24.9 GB (1.51×) | Consequence of width |
 
 - **Evidence**: E1 train log `/nas_train/.../scaling_E1_ov2_w512_d30_p16_224/train.log`; E2 train log `/nas_train/.../scaling_E2_ov2_w768_d30_p16_224/train.log`; E1 eval `/tmp/scaling_e1_eval.log`; E2 eval `/tmp/scaling_e2_eval.log`; E1 ProtA re-run `/tmp/e2_post_watcher.log`; HTML report `doc/BaiZe-ISEDA2027/report_vision_aimv2_scaling.html`.
+
+---
+
+## 🔬 Scaling Fair Rerun (2026-10-09⑨) — Schedule-Corrected Two-Arm Width Sweep
+
+> ⛔ **The §7 results above are SUPERSEDED.** Both arms used `--lr 3e-3 --warmup 20` (warmup = 20/187101 = 0.01% of total steps), a schedule originally designed for 30k-step short runs. At 187k steps, this is effectively no warmup + high constant lr — which may systematically disadvantage the wider E2 arm. This rerun uses a proper cosine schedule with adequate warmup.
+
+### 8.1 Pre-Registration (registered 2026-10-09, before training)
+
+**Question**: Under the AIMv2-style dense objective, does widening the vision tower from 512→768 (126.78M→284.54M, 2.24×) improve frozen-trunk linear-probe top-1 on IN-1k, at a fixed 1-epoch budget — when the learning-rate schedule is fair (adequate warmup + cosine decay)?
+
+**Arms** (only `--width` differs):
+
+| Dimension | E1fair (w512) | E2fair (w768) | Controlled? |
+|:--|:--|:--|:--|
+| Parameters | 126.78M | 284.54M (2.24×) | Varied (intended) |
+| Width / Depth | 512 / 30 | 768 / 30 | Width only |
+| Patch / Resolution | 16 / 224 | 16 / 224 | ✅ Identical |
+| Training steps | 187,101 | 187,101 | ✅ Identical (explicit) |
+| **lr** | **5e-4** | **5e-4** | ✅ Identical (was 3e-3) |
+| **warmup** | **2000** (1.07%) | **2000** (1.07%) | ✅ Identical (was 20 = 0.01%) |
+| **scheduler** | **cosine → min_lr** | **cosine → min_lr** | ✅ Identical (was const) |
+| **min_lr** | **5e-5** | **5e-5** | ✅ Identical (was N/A) |
+| Batch size | 512 (64×8) | 512 (64×8) | ✅ Identical |
+| Seed | 1234 | 1234 | ✅ Identical |
+| Objective | AIMv2 (mask=0.6, 1:1) | AIMv2 (mask=0.6, 1:1) | ✅ Identical |
+| Data snapshot | `data_snapshot_20261009.txt` (7437 GPIC tars frozen) + CC12M + Amshaker | Same | ✅ Identical |
+| **total_shards** | **10787** | **10787** | ✅ Byte-identical |
+| Output dir | `scaling_E1fair_ov2_w512_d30_p16_224` | `scaling_E2fair_ov2_w768_d30_p16_224` | New (old preserved) |
+
+**lr trajectory self-check** (from E1fair `train.log`):
+```
+[lr-selfcheck] scheduler=cosine lr=0.0005 warmup=2000 min_lr=5e-05 steps=187101
+[lr-selfcheck] lr@step0=0.00000000  lr@warmup(2000)=0.00050000  lr@50%(93550)=0.00027882  lr@last(187100)=0.00005000
+[lr-selfcheck] OK: lr monotonically decreasing after warmup
+```
+
+**[start] line** (from E1fair `train.log`):
+```
+[start] tower=openvision2 lr=0.0005 warmup=2000 bs=64 world=8 steps=187101 res=224 patch=16 seed=1234 shards=1349/rank objective=AIMv2-style(MIM+InfoNCE) scheduler=cosine min_lr=5e-05 text=frozen-CLIP-768(r=8,a=16.0,lr=0.0001) negatives=512 data_source=mixed caption_type=all total_shards=10787
+```
+
+**Judgment criteria** (pre-registered, unchanged from 2026-10-08⑤):
+- Δlp = lp(E2fair_ProtB) − lp(E1fair_ProtB)
+- Δ ≥ +1.5pp → supports scaling claim (original conclusion was schedule artifact)
+- |Δ| ≤ 1.5pp → not supported (indistinguishable at this budget)
+- Δ ≤ −1.5pp → bigger is worse (confirmed even under fair schedule)
+- σ > |Δ| → indistinguishable (report 3-seed σ)
+- Single budget point does NOT constitute a scaling law (written into Limitations)
+
+**Evaluation**: Protocol B (`--probe-full-train`, 3 seeds 0/1/2 → mean±σ) + Protocol A. Old arms' checkpoints are NOT re-evaluated.
+
+**Schedule comparison** (old vs new):
+
+| Property | Old (§7, superseded) | New (§8, this rerun) |
+|:--|:--|:--|
+| lr | 3e-3 | 5e-4 |
+| warmup steps | 20 (0.01% of 187k) | 2000 (1.07% of 187k) |
+| Schedule | Constant (no decay) | Cosine → min_lr |
+| min_lr | N/A | 5e-5 (10% of lr) |
+| Data | Glob (GPIC grew 6233→6754 between arms) | Frozen snapshot (7437 tars, identical) |
+
+### 8.2 Results
+
+> 🔄 **Training in progress** — E1fair running (step ~35400/187101, ~4900 img/s, no collapse, cosine active). E2fair + eval chained automatically via `bothfair` mode. Results will be filled in upon completion (~17:40 Oct 10 estimated).
+
+*(To be completed)*
