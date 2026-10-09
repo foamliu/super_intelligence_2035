@@ -115,8 +115,8 @@ def benchmark_model(model_key, gpu_id, mem_frac, contexts, batches, ctx_max, war
                 results.append(r)
                 of = os.path.join(RESULT_DIR, f"bench_{model_key}_gpu{gpu_id}_mf{mem_frac}_ctx{ctx}_bs{bs}.json")
                 with open(of,"w") as f: json.dump(r, f, indent=2)
-                if r.get("error") and any(k in str(r["error"]).lower() for k in ("memory","oom","timeout","timed out","too long")):
-                    print(f"  [STOP] {r['error'][:80]} at ctx={ctx} — stopping higher ctx", flush=True); oom = True; break
+                if r.get("error") and any(k in str(r["error"]).lower() for k in ("memory","oom","timeout","timed out","too long","exceeds","rejected","server_rejected")):
+                    print(f"  [STOP] {r['error'][:100]} at ctx={ctx} — stopping higher ctx", flush=True); oom = True; break
                 time.sleep(2)
     finally:
         kill_server(si)

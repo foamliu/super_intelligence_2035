@@ -119,7 +119,12 @@ def _single_run(url, payload, gpu_id, timeout=600):
         raw["peak_vram_gb"] = sampler.peak()
         raw["total_completion_tokens"] = total_tokens
         raw["vram_samples"] = len(sampler.samples)
-        raw["error"] = None
+        # --- Validate: SGLang returns HTTP 200 with 1 token when input exceeds max_total_num_tokens ---
+        expected_tokens = payload.get("max_tokens", 0) * len(payload.get("prompt", []))
+        if expected_tokens > 0 and total_tokens < expected_tokens * 0.5:
+            raw["error"] = f"server_rejected: only {total_tokens}/{expected_tokens} completion tokens (input may exceed max_total_num_tokens)"
+        else:
+            raw["error"] = None
     except Exception as e:
         sampler.stop()
         raw["error"] = f"{type(e).__name__}: {e}"
