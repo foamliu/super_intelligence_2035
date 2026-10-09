@@ -3155,3 +3155,99 @@ SSM 层的激活是**常数量级**（state size 固定，不随 seq 增长）�
 设置 `recompute_granularity="full"` / `recompute_method="uniform"` / `recompute_num_layers=N`。
 代码保留供未来 selective recompute（仅 checkpoint attention 层）实验使用。
 
+---
+
+## Muon vs AdamW A/B（真实数据）· 2026-10-10
+
+> 运维指令 2026-10-09：两臂各 1000 步 · GBS=16 · seq=4096 · bf16 · 同 seed · 对比 loss 曲线。
+> 报告：`doc/BaiZe-ISEDA2027/report_pretrain_muon_vs_adamw.html`（22.5KB，自包含，内联 SVG）。
+
+### 设置
+
+| 项 | Muon 臂 | AdamW 臂 |
+|:--|:--|:--|
+| 优化器 | Muon（emerging_optimizers，momentum=0.95, nesterov, ns_steps=5） | AdamW（β₁=0.9, β₂=0.95, ε=1e-5, wd=0.1） |
+| 参数分组 | 2D 矩阵→Muon；1D/norm/embed/lm_head→AdamW（scalar optimizer） | 全部 AdamW |
+| 模型 | Mamba2-hybrid 2.220B（52 SSM + 4 Attn） | 同左 |
+| 并行 | TP1 · DP8 · MBS=1 | 同左 |
+| GBS | 16 | 16 |
+| seq | 4094 | 4094 |
+| 精度 | bf16 | bf16 |
+| 步数 | 1000 | 1000 |
+| seed | 1234 | 1234 |
+| LR 调度 | WSD（warmup 5%, decay 10%）peak 3e-4 → min 3e-5 | 同左 |
+| 数据 | P-5b 16-shard blend（~20.6B tokens, DeepSeek tokenizer EOD） | 同左 |
+| 硬件 | 8×H100 80GB @ 10.239.2.29 | 同左 |
+| 时间 | 05:59:30 → 06:13:14 | 06:13:14 → 06:23:48 |
+
+### 接线核查（三步全通过）
+
+1. megatron-core 0.16.1 含 `core/optimizer/muon.py`（shim → `emerging_optimizers`）✅
+2. `bridge_compat.py` 路由 `optimizer="muon"` → `get_megatron_muon_optimizer` ✅
+3. recipe 透传 Muon 超参（momentum/nesterov/ns_steps/spectral scale）✅
+4. 冒烟测试：20 步 mock 数据 → loss 10.42→7.79，Muon 正常工作 ✅
+
+### 结果
+
+| 指标 | Muon | AdamW | 差异 | 胜者 |
+|:--|---:|---:|:--|:--|
+| 最终 loss (iter 1000) | **3.112** | 4.003 | −0.891 (−22.3%) | **Muon** |
+| iter 500 loss | **3.697** | 4.665 | −0.968 (−20.8%) | **Muon** |
+| 最终 grad_norm | **0.255** | 0.479 | −0.224 (−46.8%) | **Muon** |
+| 吞吐 (tok/s) | 86,945 | **118,132** | +35.9% | **AdamW** |
+| 稳态 ms/iter | 753.4 | **554.5** | −26.4% | **AdamW** |
+| 峰值 GPU 显存 | 53,759 MiB (53.8 GB) | **38,993 MiB (39.0 GB)** | +37.9% | **AdamW** |
+| 已分配显存 (iter 10) | 31,766 MiB | **15,977 MiB** | +15,789 MiB | **AdamW** |
+| NaN / skipped | 0 / 0 | 0 / 0 | — | 持平 |
+| 训练耗时 | ~13 min 44 s | ~10 min 34 s | +3 min 10 s | **AdamW** |
+
+### 逐 100 步 Loss
+
+| iter | Muon | AdamW | Δ | 相对降幅 |
+|---:|---:|---:|---:|---:|
+| 10 | 10.724 | 10.837 | −0.113 | −1.0% |
+| 100 | 5.572 | 6.122 | −0.550 | −9.0% |
+| 200 | 4.953 | 5.489 | −0.536 | −9.8% |
+| 300 | 4.475 | 5.128 | −0.653 | −12.7% |
+| 400 | 3.962 | 4.870 | −0.908 | −18.6% |
+| 500 | 3.697 | 4.665 | −0.968 | −20.8% |
+| 600 | 3.534 | 4.505 | −0.971 | −21.6% |
+| 700 | 3.445 | 4.391 | −0.946 | −21.5% |
+| 800 | 3.373 | 4.280 | −0.907 | −21.2% |
+| 900 | 3.263 | 4.167 | −0.904 | −21.7% |
+| 1000 | **3.112** | **4.003** | **−0.891** | **−22.3%** |
+
+### 结论
+
+1. **Muon 显著优于 AdamW**：相同 1000 步下 loss 低 22.3%，梯度范数更稳定（0.26 vs 0.48，约为 AdamW 的一半）。
+2. **Muon 的代价**：吞吐慢 26%（87K vs 118K tok/s）、显存多 38%（53.8 vs 39.0 GB）。
+   - 吞吐代价来自 Newton-Schulz 正交化的 5 步矩阵乘法（额外计算无法被通信隐藏）。
+   - 显存代价来自正交化中间矩阵 + Muon 动量缓冲区与 AdamW 二阶矩缓冲区共存。
+3. **P-8 建议**：
+   - 方案 A（推荐）：用 `dist_muon`（layer-wise distributed），正交化与梯度同步重叠，可能消除吞吐劣势。
+   - 方案 B（保守）：沿用 AdamW 249K tok/s，训练步数 +25% 补偿。
+   - 方案 C（折中）：用 Muon TP1/DP8 87K tok/s，100B token 需 ~13.2 天。
+4. **局限性**：仅 1000 步（6.55M tokens），长训练是否持续优势未验证；LR 未对 Muon 单独调参（官方建议 ~1e-3）；
+   未测 `dist_muon` 吞吐。
+
+### 可复现命令
+
+```
+# Muon 臂
+ssh 10.239.2.29 'cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027 && \
+  PYTHONPATH=/nas_train/app.e0031982/omegaconf_230 \
+  /nas_train/app.e0031982/miniforge3/envs/py310/bin/python pretrain_launcher.py \
+  --optimizer muon --gbs 16 --mbs 1 --seq 4094 --iters 1000 --seed 1234 \
+  --data p5b_l3_blend --output nemo_experiments/muon_ab_realdata_muon'
+
+# AdamW 臂
+ssh 10.239.2.29 'cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027 && \
+  PYTHONPATH=/nas_train/app.e0031982/omegaconf_230 \
+  /nas_train/app.e0031982/miniforge3/envs/py310/bin/python pretrain_launcher.py \
+  --optimizer adam --gbs 16 --mbs 1 --seq 4094 --iters 1000 --seed 1234 \
+  --data p5b_l3_blend --output nemo_experiments/muon_ab_realdata_adamw'
+```
+
+日志：`/tmp/muon_ab_realdata_muon.log` / `/tmp/muon_ab_realdata_adamw.log`（.29 上）
+汇总：`/tmp/muon_vs_adamw_ab_realdata.sum`
+

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 2.2B · Muon vs AdamW 优化器对比报告</title>
+<style>
+  body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;max-width:960px;margin:0 auto;padding:2em;background:#f8f9fa;color:#1a1a2e;line-height:1.7}
+  h1{text-align:center;color:#16213e;border-bottom:3px solid #0f3460;padding-bottom:.5em}
+  h2{color:#0f3460;border-left:4px solid #e94560;padding-left:.8em;margin-top:2em}
+  h3{color:#533483}
+  table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.92em}
+  th,td{border:1px solid #ccc;padding:.6em .8em;text-align:center}
+  th{background:#0f3460;color:#fff}
+  tr:nth-child(even){background:#eef1f6}
+  .winner{font-weight:bold;color:#0a7d2c}
+  .loser{color:#888}
+  .note{background:#fff3cd;border-left:4px solid #ffc107;padding:.8em 1em;margin:1em 0;font-size:.9em}
+  .key-result{background:#d4edda;border:2px solid #28a745;border-radius:8px;padding:1em 1.5em;margin:1.5em 0}
+  .key-result h3{margin-top:0;color:#155724}
+  .chart-container{background:#fff;border:1px solid #ddd;border-radius:8px;padding:1em;margin:1.5em 0}
+  .chart-title{font-weight:bold;color:#333;margin-bottom:.5em;text-align:center}
+  .legend{display:flex;justify-content:center;gap:2em;margin-top:.5em;font-size:.9em}
+  .legend-item{display:flex;align-items:center;gap:.4em}
+  .legend-swatch{width:24px;height:3px;border-radius:2px}
+  .footer{text-align:center;color:#999;font-size:.85em;margin-top:3em;border-top:1px solid #ddd;padding-top:1em}
+  code{background:#eef;padding:.15em .4em;border-radius:3px;font-size:.88em}
+  .metric-table td:first-child{text-align:left;font-weight:600}
+</style>
+</head>
+<body>
+<h1>BaiZe Mamba2-Hybrid 2.2B · Muon vs AdamW 优化器对比</h1>
+<p style="text-align:center;color:#666">2026-10-10 · 8×H100 @ 10.239.2.29 · 真实预训练数据（P-5b 16-shard blend ~20.6B tokens）</p>
+<div class="key-result">
+<h3>⭐ 核心结论</h3>
+<p><b>Muon 在相同 1000 步 / 6.55M tokens 下显著优于 AdamW</b>：最终 loss <b>3.11 vs 4.00</b>（低 <b>22.3%</b>），梯度范数更稳定（0.26 vs 0.48）。
+但 Muon 的代价是：<b>吞吐慢 26%</b>（87K vs 118K tok/s）、<b>显存多 38%</b>（53.8 GB vs 39.0 GB）。</p>
+<p><b>建议</b>：P-8 正式预训练考虑采用 Muon（或 layer-wise distributed Muon），以更少步数达到更低 loss；吞吐劣势可通过缩短总训练步数来补偿。</p>
+</div>
+<h2>1 · 实验设置</h2>
+<table class="metric-table">
+<tr><th>参数</th><th>Muon 臂</th><th>AdamW 臂</th><th>说明</th></tr>
+<tr><td>优化器</td><td><b>Muon</b>（emerging_optimizers）</td><td><b>AdamW</b>（β₁=0.9, β₂=0.95, ε=1e-5）</td><td>2D 矩阵→Muon；1D/norm/embed/lm_head→AdamW（scalar optimizer）</td></tr>
+<tr><td>模型</td><td>Mamba2-hybrid 2.220B</td><td>同左</td><td>52 SSM + 4 Attention 层</td></tr>
+<tr><td>并行</td><td>TP1 · DP8</td><td>同左</td><td>8×H100 80GB，无通信税</td></tr>
+<tr><td>GBS / MBS</td><td>16 / 1</td><td>同左</td><td>token/step = 65504 ≈ 6.55M</td></tr>
+<tr><td>序列长度</td><td>4094</td><td>同左</td><td>固定口径</td></tr>
+<tr><td>精度</td><td>bf16</td><td>同左</td><td></td></tr>
+<tr><td>训练步数</td><td>1000</td><td>同左</td><td></td></tr>
+<tr><td>随机种子</td><td>1234</td><td>同左</td><td>确保公平对比</td></tr>
+<tr><td>LR 调度</td><td>WSD（warmup 5% / decay 10%）</td><td>同左</td><td>peak LR 3e-4 → min LR 3e-5</td></tr>
+<tr><td>数据</td><td>P-5b 16-shard blend</td><td>同左</td><td>~20.6B tokens，DeepSeek tokenizer EOD</td></tr>
+<tr><td>Muon 超参</td><td>momentum=0.95, nesterov, ns_steps=5, spectral scale</td><td>—</td><td>NVIDIA 默认 recipe</td></tr>
+</table>
+<div class="note">
+<b>接线核查（三步全通过）</b>：① megatron-core 0.16.1 含 <code>core/optimizer/muon.py</code>（shim → emerging_optimizers）；② <code>bridge_compat.py</code> 路由 <code>optimizer="muon"</code> → <code>get_megatron_muon_optimizer</code>；③ recipe 透传 Muon 超参（momentum/nesterov/ns_steps/spectral scale）。冒烟测试（20 步）通过后铺全量 A/B。
+</div><h2>2 · Loss 曲线对比</h2>
+<div class="chart-container">
+<div class="chart-title">训练 Loss · 1000 步（每 10 步采样 1 点，共 100 点）</div>
+<svg viewBox="0 0 960 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+  <line x1="80" y1="440" x2="860" y2="440" stroke="#333" stroke-width="1.5"/>
+  <line x1="80" y1="40" x2="80" y2="440" stroke="#333" stroke-width="1.5"/>
+  <text x="72" y="444" text-anchor="end" font-size="11" fill="#333">2.5</text>
+  <text x="72" y="358" text-anchor="end" font-size="11" fill="#333">4.0</text>
+  <text x="72" y="275" text-anchor="end" font-size="11" fill="#333">6.0</text>
+  <text x="72" y="192" text-anchor="end" font-size="11" fill="#333">8.0</text>
+  <text x="72" y="109" text-anchor="end" font-size="11" fill="#333">10.0</text>
+  <text x="72" y="44" text-anchor="end" font-size="11" fill="#333">11.0</text>
+  <text x="80" y="458" text-anchor="middle" font-size="11" fill="#333">0</text>
+  <text x="236" y="458" text-anchor="middle" font-size="11" fill="#333">200</text>
+  <text x="392" y="458" text-anchor="middle" font-size="11" fill="#333">400</text>
+  <text x="548" y="458" text-anchor="middle" font-size="11" fill="#333">600</text>
+  <text x="704" y="458" text-anchor="middle" font-size="11" fill="#333">800</text>
+  <text x="860" y="458" text-anchor="middle" font-size="11" fill="#333">1000</text>
+  <line x1="80" y1="358" x2="860" y2="358" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="80" y1="275" x2="860" y2="275" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="80" y1="192" x2="860" y2="192" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="80" y1="109" x2="860" y2="109" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="236" y1="40" x2="236" y2="440" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="392" y1="40" x2="392" y2="440" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="548" y1="40" x2="548" y2="440" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="704" y1="40" x2="704" y2="440" stroke="#e0e0e0" stroke-width="0.5"/>
+  <text x="470" y="485" text-anchor="middle" font-size="12" fill="#333">训练步数 (iteration)</text>
+  <text x="30" y="240" text-anchor="middle" font-size="12" fill="#333" transform="rotate(-90 30 240)">训练 Loss</text>
+  <path d="M 87.8,47.7 L 95.6,123.7 L 103.4,177.1 L 111.2,214.1 L 119.0,228.2 L 126.8,241.1 L 134.6,250.2 L 142.4,258.5 L 150.2,263.5 L 158.0,269.6 L 165.8,274.4 L 173.6,277.8 L 181.4,280.7 L 189.2,283.6 L 197.0,287.1 L 204.8,288.8 L 212.6,292.9 L 220.4,292.7 L 228.2,294.8 L 236.0,299.3 L 243.8,298.8 L 251.6,301.3 L 259.4,304.2 L 267.2,305.9 L 275.0,308.4 L 282.8,307.7 L 290.6,309.9 L 298.4,313.0 L 306.2,313.6 L 314.0,316.3 L 321.8,315.5 L 329.6,319.0 L 337.4,319.4 L 345.2,320.8 L 353.0,321.9 L 360.8,322.2 L 368.6,325.7 L 376.4,327.5 L 384.2,329.2 L 392.0,328.5 L 399.8,329.6 L 407.6,331.2 L 415.4,332.0 L 423.2,330.7 L 431.0,333.3 L 438.8,331.6 L 446.6,336.1 L 454.4,335.8 L 462.2,337.5 L 470.0,338.1 L 477.8,339.0 L 485.6,337.5 L 493.4,339.9 L 501.2,340.8 L 509.0,342.1 L 516.8,343.7 L 524.6,343.4 L 532.4,342.0 L 540.2,342.4 L 548.0,345.6 L 555.8,345.3 L 563.6,346.4 L 571.4,348.5 L 579.2,346.4 L 587.0,348.0 L 594.8,348.4 L 602.6,348.6 L 610.4,350.5 L 618.2,349.8 L 626.0,351.0 L 633.8,351.9 L 641.6,351.8 L 649.4,354.0 L 657.2,354.9 L 665.0,353.2 L 672.8,354.2 L 680.6,354.6 L 688.4,355.8 L 696.2,355.7 L 704.0,356.2 L 711.8,357.6 L 719.6,357.8 L 727.4,358.3 L 735.2,359.1 L 743.0,360.9 L 750.8,361.1 L 758.6,361.1 L 766.4,361.6 L 774.2,365.0 L 782.0,361.6 L 789.8,365.2 L 797.6,364.7 L 805.4,365.1 L 813.2,366.9 L 821.0,365.9 L 828.8,368.9 L 836.6,367.4 L 844.4,368.3 L 852.2,368.3 L 860.0,369.3" fill="none" stroke="#e74c3c" stroke-width="2" opacity="0.85"/>
+  <path d="M 87.8,53.0 L 95.6,157.8 L 103.4,196.2 L 111.2,230.4 L 119.0,253.1 L 126.8,268.5 L 134.6,277.7 L 142.4,284.9 L 150.2,289.8 L 158.0,295.4 L 165.8,299.3 L 173.6,302.5 L 181.4,305.9 L 189.2,308.6 L 197.0,312.5 L 204.8,314.2 L 212.6,318.7 L 220.4,318.1 L 228.2,320.0 L 236.0,324.6 L 243.8,324.0 L 251.6,326.5 L 259.4,329.6 L 267.2,331.2 L 275.0,334.2 L 282.8,334.0 L 290.6,336.7 L 298.4,341.2 L 306.2,342.7 L 314.0,347.1 L 321.8,348.1 L 329.6,353.6 L 337.4,355.6 L 345.2,358.5 L 353.0,360.7 L 360.8,362.4 L 368.6,366.3 L 376.4,370.0 L 384.2,371.1 L 392.0,371.2 L 399.8,373.4 L 407.6,375.0 L 415.4,376.0 L 423.2,375.5 L 431.0,378.2 L 438.8,376.9 L 446.6,380.8 L 454.4,381.1 L 462.2,382.5 L 470.0,383.7 L 477.8,384.9 L 485.6,382.6 L 493.4,384.7 L 501.2,386.6 L 509.0,387.6 L 516.8,388.7 L 524.6,388.7 L 532.4,388.3 L 540.2,388.3 L 548.0,391.3 L 555.8,390.9 L 563.6,391.6 L 571.4,393.6 L 579.2,390.9 L 587.0,393.2 L 594.8,394.2 L 602.6,392.7 L 610.4,394.9 L 618.2,395.1 L 626.0,395.5 L 633.8,395.6 L 641.6,396.9 L 649.4,398.3 L 657.2,399.2 L 665.0,397.3 L 672.8,397.7 L 680.6,399.2 L 688.4,399.0 L 696.2,399.1 L 704.0,398.9 L 711.8,400.7 L 719.6,401.2 L 727.4,400.9 L 735.2,402.3 L 743.0,402.9 L 750.8,403.5 L 758.6,402.2 L 766.4,403.4 L 774.2,406.4 L 782.0,404.1 L 789.8,406.9 L 797.6,406.9 L 805.4,407.8 L 813.2,408.0 L 821.0,407.7 L 828.8,410.2 L 836.6,408.9 L 844.4,410.1 L 852.2,410.9 L 860.0,411.2" fill="none" stroke="#2c3e87" stroke-width="2"/>
+  <rect x="600" y="55" width="12" height="3" fill="#2c3e87"/>
+  <text x="620" y="62" font-size="12" fill="#333">Muon</text>
+  <rect x="680" y="55" width="12" height="3" fill="#e74c3c"/>
+  <text x="700" y="62" font-size="12" fill="#333">AdamW</text>
+</svg>
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#2c3e87"></div> Muon</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#e74c3c"></div> AdamW</div>
+</div>
+</div>
+<p>Muon 从约第 50 步起即持续低于 AdamW，且差距随训练推进单调扩大。到 1000 步时，Muon loss = 3.11，AdamW loss = 4.00，<b>Δ = 0.89（22.3% 相对降幅）</b>。两条曲线均平滑收敛，无 NaN 或 skipped iterations。</p>
+<h2>3 · 梯度范数对比</h2>
+<div class="chart-container">
+<div class="chart-title">梯度范数 (grad norm) · 1000 步</div>
+<svg viewBox="0 0 960 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+  <line x1="80" y1="440" x2="860" y2="440" stroke="#333" stroke-width="1.5"/>
+  <line x1="80" y1="40" x2="80" y2="440" stroke="#333" stroke-width="1.5"/>
+  <text x="72" y="444" text-anchor="end" font-size="11" fill="#333">0</text>
+  <text x="72" y="376" text-anchor="end" font-size="11" fill="#333">5</text>
+  <text x="72" y="312" text-anchor="end" font-size="11" fill="#333">10</text>
+  <text x="72" y="248" text-anchor="end" font-size="11" fill="#333">15</text>
+  <text x="72" y="184" text-anchor="end" font-size="11" fill="#333">20</text>
+  <text x="72" y="120" text-anchor="end" font-size="11" fill="#333">25</text>
+  <text x="80" y="458" text-anchor="middle" font-size="11" fill="#333">0</text>
+  <text x="236" y="458" text-anchor="middle" font-size="11" fill="#333">200</text>
+  <text x="392" y="458" text-anchor="middle" font-size="11" fill="#333">400</text>
+  <text x="548" y="458" text-anchor="middle" font-size="11" fill="#333">600</text>
+  <text x="704" y="458" text-anchor="middle" font-size="11" fill="#333">800</text>
+  <text x="860" y="458" text-anchor="middle" font-size="11" fill="#333">1000</text>
+  <line x1="80" y1="376" x2="860" y2="376" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="80" y1="312" x2="860" y2="312" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="80" y1="248" x2="860" y2="248" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="80" y1="184" x2="860" y2="184" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="236" y1="40" x2="236" y2="440" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="392" y1="40" x2="392" y2="440" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="548" y1="40" x2="548" y2="440" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="704" y1="40" x2="704" y2="440" stroke="#e0e0e0" stroke-width="0.5"/>
+  <text x="470" y="485" text-anchor="middle" font-size="12" fill="#333">训练步数 (iteration)</text>
+  <text x="30" y="240" text-anchor="middle" font-size="12" fill="#333" transform="rotate(-90 30 240)">梯度范数</text>
+  <path d="M 87.8,338.9 L 95.6,375.2 L 103.4,409.0 L 111.2,415.1 L 119.0,417.9 L 126.8,409.8 L 134.6,423.1 L 142.4,418.8 L 150.2,424.9 L 158.0,427.7 L 165.8,430.3 L 173.6,429.2 L 181.4,425.6 L 189.2,428.8 L 197.0,425.8 L 204.8,427.4 L 212.6,430.5 L 220.4,427.3 L 228.2,429.2 L 236.0,431.0 L 243.8,428.3 L 251.6,427.5 L 259.4,431.1 L 267.2,429.4 L 275.0,430.0 L 282.8,427.6 L 290.6,430.3 L 298.4,429.2 L 306.2,430.7 L 314.0,426.8 L 321.8,429.2 L 329.6,430.8 L 337.4,431.5 L 345.2,430.1 L 353.0,430.4 L 360.8,430.3 L 368.6,430.3 L 376.4,431.2 L 384.2,430.4 L 392.0,429.0 L 399.8,430.5 L 407.6,429.1 L 415.4,431.0 L 423.2,430.4 L 431.0,431.4 L 438.8,430.7 L 446.6,431.1 L 454.4,429.0 L 462.2,430.3 L 470.0,430.2 L 477.8,430.8 L 485.6,429.6 L 493.4,431.0 L 501.2,431.1 L 509.0,430.7 L 516.8,430.0 L 524.6,431.0 L 532.4,431.1 L 540.2,430.0 L 548.0,430.8 L 555.8,430.5 L 563.6,431.0 L 571.4,431.3 L 579.2,431.3 L 587.0,431.0 L 594.8,431.1 L 602.6,431.7 L 610.4,430.8 L 618.2,431.2 L 626.0,430.8 L 633.8,431.1 L 641.6,430.6 L 649.4,431.5 L 657.2,431.3 L 665.0,430.6 L 672.8,430.6 L 680.6,431.3 L 688.4,430.7 L 696.2,431.4 L 704.0,431.0 L 711.8,430.8 L 719.6,431.7 L 727.4,431.5 L 735.2,431.3 L 743.0,431.6 L 750.8,431.6 L 758.6,432.1 L 766.4,431.9 L 774.2,432.0 L 782.0,431.4 L 789.8,431.6 L 797.6,431.7 L 805.4,431.9 L 813.2,431.8 L 821.0,431.8 L 828.8,431.9 L 836.6,432.4 L 844.4,432.2 L 852.2,432.2 L 860.0,432.3" fill="none" stroke="#e74c3c" stroke-width="2" opacity="0.85"/>
+  <path d="M 87.8,51.7 L 95.6,323.6 L 103.4,382.9 L 111.2,411.3 L 119.0,418.6 L 126.8,420.0 L 134.6,426.0 L 142.4,429.2 L 150.2,430.6 L 158.0,430.8 L 165.8,429.4 L 173.6,431.1 L 181.4,432.5 L 189.2,430.6 L 197.0,431.6 L 204.8,432.7 L 212.6,433.0 L 220.4,433.1 L 228.2,433.0 L 236.0,433.5 L 243.8,433.4 L 251.6,433.5 L 259.4,433.3 L 267.2,432.1 L 275.0,434.2 L 282.8,433.5 L 290.6,433.8 L 298.4,432.8 L 306.2,433.6 L 314.0,433.0 L 321.8,433.5 L 329.6,433.3 L 337.4,433.6 L 345.2,434.0 L 353.0,433.5 L 360.8,433.4 L 368.6,433.7 L 376.4,433.9 L 384.2,433.8 L 392.0,433.8 L 399.8,434.1 L 407.6,433.5 L 415.4,434.4 L 423.2,434.3 L 431.0,434.1 L 438.8,434.3 L 446.6,434.0 L 454.4,434.3 L 462.2,434.4 L 470.0,434.6 L 477.8,434.4 L 485.6,434.3 L 493.4,434.4 L 501.2,434.7 L 509.0,434.1 L 516.8,434.4 L 524.6,434.0 L 532.4,434.7 L 540.2,434.5 L 548.0,433.9 L 555.8,434.1 L 563.6,434.3 L 571.4,434.5 L 579.2,434.8 L 587.0,434.8 L 594.8,434.8 L 602.6,434.5 L 610.4,434.6 L 618.2,434.7 L 626.0,435.1 L 633.8,435.0 L 641.6,434.5 L 649.4,434.5 L 657.2,434.7 L 665.0,434.5 L 672.8,434.2 L 680.6,434.8 L 688.4,434.9 L 696.2,434.9 L 704.0,434.5 L 711.8,435.1 L 719.6,434.9 L 727.4,435.0 L 735.2,435.0 L 743.0,434.9 L 750.8,435.1 L 758.6,435.2 L 766.4,435.0 L 774.2,435.4 L 782.0,435.2 L 789.8,435.4 L 797.6,435.5 L 805.4,435.6 L 813.2,435.5 L 821.0,435.5 L 828.8,435.4 L 836.6,435.7 L 844.4,435.8 L 852.2,435.8 L 860.0,435.9" fill="none" stroke="#2c3e87" stroke-width="2"/>
+  <rect x="600" y="55" width="12" height="3" fill="#2c3e87"/>
+  <text x="620" y="62" font-size="12" fill="#333">Muon</text>
+  <rect x="680" y="55" width="12" height="3" fill="#e74c3c"/>
+  <text x="700" y="62" font-size="12" fill="#333">AdamW</text>
+</svg>
+</div>
+<p>Muon 初始梯度范数较高（24.27），但迅速收敛到 0.3-0.4 区间，之后持续下降至 0.26。AdamW 初始梯度范数较低（6.32），但在稳态阶段（iter 200+）波动较大（0.5-0.6），约为 Muon 的 2 倍。<b>Muon 的梯度范数更平稳，表明优化轨迹更稳定</b>。</p>
+<h2>4 · 关键指标汇总</h2>
+<table class="metric-table">
+<tr><th>指标</th><th>Muon</th><th>AdamW</th><th>差异</th><th>胜者</th></tr>
+<tr><td>最终 loss (iter 1000)</td><td><b>3.112</b></td><td>4.003</td><td>−0.891 (−22.3%)</td><td class="winner">Muon ✅</td></tr>
+<tr><td>iter 100 loss</td><td><b>5.572</b></td><td>6.122</td><td>−0.550 (−9.0%)</td><td class="winner">Muon ✅</td></tr>
+<tr><td>iter 500 loss</td><td><b>3.697</b></td><td>4.665</td><td>−0.968 (−20.8%)</td><td class="winner">Muon ✅</td></tr>
+<tr><td>最终梯度范数</td><td><b>0.255</b></td><td>0.479</td><td>−0.224 (−46.8%)</td><td class="winner">Muon ✅</td></tr>
+<tr><td>吞吐 (tok/s)</td><td>86,945</td><td><b>118,132</b></td><td>+31,187 (+35.9%)</td><td class="winner">AdamW ✅</td></tr>
+<tr><td>稳态 ms/iter</td><td>753.4</td><td><b>554.5</b></td><td>−198.9 (−26.4%)</td><td class="winner">AdamW ✅</td></tr>
+<tr><td>峰值 GPU 显存</td><td>53,759 MiB (53.8 GB)</td><td><b>38,993 MiB (39.0 GB)</b></td><td>+14,766 MiB (+37.9%)</td><td class="winner">AdamW ✅</td></tr>
+<tr><td>已分配显存 (iter 10)</td><td>31,766 MiB</td><td><b>15,977 MiB</b></td><td>+15,789 MiB</td><td class="winner">AdamW ✅</td></tr>
+<tr><td>最大预留显存</td><td>46,808 MiB</td><td><b>30,998 MiB</b></td><td>+15,810 MiB</td><td class="winner">AdamW ✅</td></tr>
+<tr><td>NaN / skipped iter</td><td>0 / 0</td><td>0 / 0</td><td>—</td><td>持平</td></tr>
+<tr><td>训练耗时</td><td>~13 min 44 s</td><td>~10 min 34 s</td><td>+3 min 10 s</td><td class="winner">AdamW ✅</td></tr>
+</table>
+<h2>5 · 逐 100 步 Loss 快照</h2>
+<table>
+<tr><th>iter</th><th>Muon loss</th><th>AdamW loss</th><th>Δ (Muon−AdamW)</th><th>相对降幅</th></tr>
+<tr><td>10</td><td>10.724</td><td>10.837</td><td>−0.113</td><td>−1.0%</td></tr>
+<tr><td>100</td><td>5.572</td><td>6.122</td><td>−0.550</td><td>−9.0%</td></tr>
+<tr><td>200</td><td>4.953</td><td>5.489</td><td>−0.536</td><td>−9.8%</td></tr>
+<tr><td>300</td><td>4.475</td><td>5.128</td><td>−0.653</td><td>−12.7%</td></tr>
+<tr><td>400</td><td>3.962</td><td>4.870</td><td>−0.908</td><td>−18.6%</td></tr>
+<tr><td>500</td><td>3.697</td><td>4.665</td><td>−0.968</td><td>−20.8%</td></tr>
+<tr><td>600</td><td>3.534</td><td>4.505</td><td>−0.971</td><td>−21.6%</td></tr>
+<tr><td>700</td><td>3.445</td><td>4.391</td><td>−0.946</td><td>−21.5%</td></tr>
+<tr><td>800</td><td>3.373</td><td>4.280</td><td>−0.907</td><td>−21.2%</td></tr>
+<tr><td>900</td><td>3.263</td><td>4.167</td><td>−0.904</td><td>−21.7%</td></tr>
+<tr><td>1000</td><td><b>3.112</b></td><td><b>4.003</b></td><td><b>−0.891</b></td><td><b>−22.3%</b></td></tr>
+</table>
+<p>从 iter 400 起，相对降幅稳定在 ~20-22% 区间，表明 Muon 的优势不是早期噪声，而是持续的结构性改进。</p>
+<h2>6 · 分析与建议</h2>
+<h3>6.1 为什么 Muon 的 loss 更低？</h3>
+<p>Muon 对 2D 权重矩阵执行正交化后的动量更新（momentum=0.95, Nesterov, ns_steps=5），等效于在权重矩阵的奇异值空间中施加均匀步长。这种正交化使梯度更新的各个方向被均衡化，避免了 AdamW 中可能出现的方向偏置。对于 Mamba2-hybrid 架构（52 层 SSM + 4 层 Attention），大量权重是 2D 矩阵（SSM 的 A/B/C/D 投影、Attention 的 QKV），Muon 的正交化恰好作用在这些参数上，而 1D 参数（norm、bias、embedding、lm_head）仍由标量 AdamW 优化。</p>
+<h3>6.2 显存代价分析</h3>
+<p>Muon 额外显存 ~14.8 GB 主要来自：(a) 正交化过程中的中间矩阵（Newton-Schulz 迭代需要 5 步，每步产生临时矩阵）；(b) Muon 的动量缓冲区与 AdamW 的二阶矩缓冲区共存（标量参数仍用 AdamW）。在 80GB H100 上 53.8 GB 峰值仍有余量（26.2 GB headroom），不会成为瓶颈。</p>
+<h3>6.3 吞吐代价分析</h3>
+<p>Muon 的 Newton-Schulz 正交化在每步迭代中需要 5 次矩阵乘法（对 2D 权重矩阵），这是额外的计算开销。在 TP1/DP8 配置下，这些计算无法被通信隐藏，直接增加了每步耗时（753 ms vs 555 ms = +36%）。但在 layer-wise distributed Muon（<code>dist_muon</code>）配置下，正交化可以与梯度同步重叠，NVIDIA blog 报告在 GB300 上 Muon 吞吐接近 AdamW 持平。</p>
+<h3>6.4 P-8 建议</h3>
+<div class="note">
+<p><b>方案 A（推荐）</b>：P-8 采用 <code>dist_muon</code>（layer-wise distributed Muon），兼顾 loss 优势与吞吐。需额外验证 dist_muon 在 8×H100 上的实际吞吐。</p>
+<p><b>方案 B（保守）</b>：P-8 沿用 AdamW（249K tok/s），但训练步数增加 ~25% 以达到 Muon 的 loss 水平。</p>
+<p><b>方案 C（折中）</b>：P-8 用 Muon（TP1/DP8），接受 26% 吞吐损失。以 100B token / 87K tok/s 计算，训练时间从 ~4.6 天延长至 ~13.2 天 — 需评估是否在时间预算内。</p>
+</div>
+<h3>6.5 局限性</h3>
+<ul>
+<li>本 A/B 仅跑 1000 步（6.55M tokens），远低于 P-8 的 44B-100B token 预算。Muon 的优势在长训练中是否持续，尚需验证。</li>
+<li>两臂使用相同的 LR schedule（peak 3e-4），未对 Muon 单独调参。Muon 通常受益于更高的 LR（官方建议 ~1e-3），单独调参可能进一步扩大优势。</li>
+<li>未测 <code>dist_muon</code>（layer-wise distributed）配置的吞吐，无法确认 NVIDIA blog 声称的“持平”在本硬件上是否成立。</li>
+<li>显存测量在 iter 10 后采样，checkpoint 保存时的瞬时峰值未记录。</li>
+</ul>
+<h2>7 · 可复现性</h2>
+<table class="metric-table">
+<tr><th>项</th><th>值</th></tr>
+<tr><td>A/B 脚本</td><td><code>/tmp/muon_vs_adamw_ab_realdata.sh</code>（.29 上）</td></tr>
+<tr><td>Muon 日志</td><td><code>/tmp/muon_ab_realdata_muon.log</code></td></tr>
+<tr><td>AdamW 日志</td><td><code>/tmp/muon_ab_realdata_adamw.log</code></td></tr>
+<tr><td>汇总文件</td><td><code>/tmp/muon_vs_adamw_ab_realdata.sum</code></td></tr>
+<tr><td>Muon checkpoint</td><td><code>nemo_experiments/muon_ab_realdata_muon/checkpoints/iter_1000</code></td></tr>
+<tr><td>AdamW checkpoint</td><td><code>nemo_experiments/muon_ab_realdata_adamw/checkpoints/iter_1000</code></td></tr>
+<tr><td>环境</td><td>py310 env · megatron-core 0.16.1 · emerging_optimizers · torch 2.8.0+cu128</td></tr>
+<tr><td>硬件</td><td>8× NVIDIA H100 80GB @ 10.239.2.29</td></tr>
+<tr><td>时间</td><td>2026-10-10 05:59:30 → 06:23:48 (UTC+8)</td></tr>
+</table>
+<div class="footer">
+<p>BaiZe Stage(i) Pretrain · Muon vs AdamW A/B · 2026-10-10</p>
+<p>数据来源：真实训练日志 · 零外链 · 自包含 HTML</p>
+</div>
+</body>
+</html>

@@ -43,77 +43,15 @@
 
 ---
 
-### 🆕 运维确认 · 2026-10-09（✅ **GO**：#252 门控通过 → 开跑「参数匹配 Dense」对比基准）· 最高优先
-
-> **复核通过**：#252 方案 OK —— Dense Llama L=36/H=2048/I=6144 → **2,228,897,792（+0.389%，±1% ✅）**；矩阵 7ctx×2mf(0.6/0.85)×2bs(1/8)×WARMUP1/REP3；ETA 6–10h；**`.29` 全 8 卡可用**（P-8 未启动，2–4 卡并行推理即可）。**放行，开跑。**
-
-**🖐 两处必须修正/收口（写进报告方法学节）：**
-1. 🚨 **warmup 归因口径是错的** —— #252 写「128K **bs1=1591 vs bs8=447796**（281×）= 冷启动」：这是 **bs 效应**，不是 warmup，**混了两个变量**。
-   → warmup 必须用**同一 bs** 的 `WARMUP=0 vs WARMUP=1` 对照来证（现成证据：`report_p911e_t1t2_comparison.html` §4，**bs=1** 下 128K 1,591→38,942 = **24.5×**）。**请用同-bs 冷/热对照**给结论，别再用 281×。
-2. **ctx 上限要真到 hybrid OOM** —— 8M 未必够（历史：hybrid **2M 可服务 / 4M@0.85 超时**）。→ **持续 ×2 直到 hybrid 真正不可服务为止**（可到 16M/32M），并**分三类标注**：**OOM / TIMED-OUT / 请求被拒**。取"首次不可服务"为边界。
-
-**其余**：按 #252 执行；结论落到 `report_pretrain_baize_vs_dense_fair_zh.html`（**中文**、自包含、零外链、**表格 ≤5 张**）；分阶段 commit（前缀 `pretrain 对比: …`）；先跑通 1 个 ctx 档确认管线再铺全矩阵。
-**纪律**：🚫 不启动 P-8 · 🚫 不改 P-5b recipe / 不回训 · 🚫 不 kill watchdog · 推理用 `vllm` env。
+> 📦 §运维确认·2026-10-09（✅ GO：#252 门控通过）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：对比报告 report_pretrain_baize_vs_dense_fair_zh.html 23.7KB 已生成。需要时再读。
 
 ---
 
-### 🆕 运维指令 · 2026-10-09（📊 补测 + **中文**对比报告：BaiZe-Hybrid 2.220B ⚔ **参数匹配的 Dense Llama**，SGLang，ctx **持续 ×2 直到 hybrid 也 OOM**）· 用户直令 · **最高优先**
-
-> **用户令原文**：「请 pretrain **按需补测**，做一个**完善的、中文的**对比报告 html。对比 BaiZe Mamba2-Hybrid 2.220B 与**一个同样大小的 Dense Llama**（MiniCPM5-2B 参数量 2.512B 比前者大，**对比不公平**）。**上下文持续 ×2 直到 BaiZe Mamba2-Hybrid 2.220B 也 OOM**，推理框架用 **SGLang**，对比表格**不需要很多，但要清晰有说服力**。」
-> ⚠️ **纯推理 + 写报告**；🚫 **不启动 P-8**、🚫 不改 P-5b recipe / 不回训、🚫 不 kill watchdog。用 `.29` 8 卡。
-
-**① 核心修正：换「参数匹配」的对手臂（这是本次重点）**
-- **主对手臂 = 参数匹配的 Dense Llama（总参数 ≈ 2.220B，±1%）**，标准 Llama（dense attention + SwiGLU）。
-  - 构建：按其参数预算配一个 Llama（层数 / hidden / FFN 自算），使 `sum(numel()) ≈ 2,220,268,032`（对齐 hybrid）。
-  - **可用随机初始化**（本次比的是**速度 / 显存**，与权重值无关）——**但必须在报告中显式标注**「权重随机初始化，仅用于速度/显存基准」。
-  - 若能复用 `p3_dense`（2.512B）**按比例缩到 2.220B** 并沿用同 tokenizer，优先。
-- **原 `p3_dense`（MiniCPM5-2B，2.512B）降为「参考臂」**（附录/脚注），用来佐证「未做参数匹配时**偏袒 dense 约 13%**」。
-- **公平口径（硬性，全部两臂一致）**：同 SGLang 版本 · **同 `--mem-fraction-static`** · 同 attention backend（flashinfer）· **WARMUP≥1 / REPEATS≥3（取 median）** · 同 prompt（tokenizer 精确计数、两臂同长度）· 同 bs · 显式标 SSM dtype · **prefill / decode 分离** · 报 **per-B 归一化**（tok/s per B）。
-
-**② ctx 扫描：**持续 ×2，直到 **hybrid 自己 OOM**
-- 128K → 256K → 512K → 1M → 2M → 4M → 8M …**每档 ×2**；**直到 BaiZe-Hybrid 2.220B 自己 OOM / 不可服务**才停。
-- 🚨 **不得因为 dense 先挂就停** —— 上一版 dense@512K「失败」是 **`mem-frac=0.3` 的 KV 池（455K tokens）** 产物，**不是架构结论**。
-- 每档记录：**prefill tok/s / TTFT / decode tok/s / e2e / 峰值显存 / pool tokens / status**；**明确标出两臂各自 OOM 边界**。
-- ⚠️ 为让 hybrid 真能 OOM，**mem-frac 要取合理值**（建议 ≥0.6，可对 {0.6, 0.85} 各扫一遍）；**同一档两臂必须同 mem-frac**。超单卡可服务范围时**如实标 TIMED OUT / 不可服务**。
-
-**③ 按需补测（用户已授权）**
-- 补齐上表缺格：②的参数匹配臂 / 更高 ctx / mem-frac 档 / bs∈{1,8} 至少两档。
-- 若某格不可行（OOM/超时），**如实标注，🚫 绝不许外推编数**。
-- 顺带：用 **profiler / sglang 日志** 对上一版「WARMUP 造成 24×」的归因**给出证据或修正**（它是本次"公平性"叙事的依据）。
-
-**④ 产出：一份完善的中文 HTML**
-- 文件：`report_pretrain_baize_vs_dense_fair_zh.html`（落 `doc/BaiZe-ISEDA2027/`）。
-- **中文**、自包含、**零外链**、内联 CSS + SVG；**表格少而精**（建议 ≤5 张：① 公平口径对照 ② 参数匹配表 ③ ctx×速度主表 ④ 显存/容量表 ⑤ OOM 边界表）——**清晰、有说服力**。
-- 图**必须由真实数据**生成；🚫 严禁文生图编数据；位图 JPEG 长边 ≤1280 q85。
-- 结论**诚实**：写明哪些格不可得、mem-frac 取值的影响、随机初始化的局限。
-
-**⑤ 门控（先报后跑）**：**第一步 = 先报「参数匹配方案 + 测试矩阵 + ETA + 占用卡」**，再开跑；分阶段 commit（前缀 `pretrain 对比: …`）。
-
-**⑥ 纪律**：🚫 不启动 P-8 · 🚫 不改 P-5b recipe/不回训 · 🚫 不 kill watchdog · 环境隔离（推理用 `vllm` env）· 收尾按「收尾铁律」。
+> 📦 §运维指令·2026-10-09（📊 补测+中文对比报告：参数匹配 Dense vs Hybrid）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：参数匹配 Dense Llama 2.229B vs Hybrid 2.220B SGLang 对比完成，ctx 扫到 hybrid OOM，报告 23.7KB/5表。需要时再读。
 
 ---
 
-### 🆕 运维指令 · 2026-10-09（🔎 自查：BaiZe-2B vs MiniCPM5-2B 有没有做过「公平对比」+ HTML 产出盘点）· 用户直令 · 高优先
-
-> **用户令**：「重读你自己的报告 `report_pretrain_research1_fair_eval`，之前有没有给 **BaiZe-2B** 和 **MiniCPM5-2B** 做过**公平的对比**，有没有 **html 报告产出**？」
-> **纯写作 · 零 GPU**。只引已落盘结果（`EXPERIMENTS_*` / `run/p911e_results/*.json` / 现成 HTML），🚫 不许编数、不许起进程。
-
-**① 盘点（逐个列，别笼统）**：列出**所有**「BaiZe-2B（hybrid 2.220B）vs MiniCPM5-2B（dense 2.512B / `p3_dense`）」的对比产物 —— **文件名 + 相对路径 + 生成日期 + 覆盖维度**（loss / 训练吞吐 / 推理 prefill·decode / 长 ctx 成本 / 显存）。
-
-**② 厘清 `research1` 的定位**：明确 `report_pretrain_research1_fair_eval.html` 是**方法学/协议**报告（记录 5 个 confounder + 公平协议 C1–C6），还是**含实测**？
-
-**③ 公平性逐条自评（核心）**：对照你自己在 research1 里定的 **C1–C6**，逐条标「**已执行 / 部分 / 未执行**」，并**明确指出目前仍未被控制的 confounder**：
-- C1 对齐 `--mem-fraction-static` · C2 标注 SSM dtype · C3 tokenizer 精确计数 · C4 bs 扫描 {1,4,8,32} · C5 参数归一化（tok/s per B） · C6 prefill/decode 分离。
-
-**④ 给结论 + 指认权威版本**：
-- 我们**到底有没有**一次「公平的」BaiZe-2B vs MiniCPM5-2B 对比？**有** ⇒ 指认**唯一权威版本**（HTML 路径 + 关键数字，如 128K hybrid 2.80×）；
-- **没有一次完整公平版** ⇒ 列清**缺哪些格**，并说明要补什么。
-
-**⑤ 产出**：
-- 若公平对比**分散在多个 HTML、缺一份合并版** ⇒ 在**纯写作**范围内产出 `report_pretrain_baize_vs_minicpm5_fair.html`（自包含、零外链、数据只引已落盘结果）；
-- 若已足够 ⇒ 明确写「**无需新报告**」并给出权威链接清单。
-
-**⑥ 纪律**：🚫 零 GPU · 🚫 不启动训练/P-8 · 🚫 不 kill watchdog · 🚫 不许闭门造车（可引用官方仓库/论文原文，贴 URL）。回报位置：`MEMORY_PRETRAIN_2B.md` 新增「🗣️ 运维问答 · 2026-10-09（BaiZe vs MiniCPM5 公平对比盘点）」；commit 前缀 `pretrain 问答: …`。
+> 📦 §运维指令·2026-10-09（🔎 自查：BaiZe vs MiniCPM5 公平对比盘点）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：C1-C6 逐条自评完成。需要时再读。
 
 ---
 
