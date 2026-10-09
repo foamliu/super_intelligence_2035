@@ -8,10 +8,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:--|:--|
-| STAGE | `C1`（Phase B 4/4✅；C1 pure_llm/rag/wo_retrieval 5/5✅；**full 锚点 r1=88.0%✅保留 r2=59.5%❌作废(39 timeouts,需复测) r3=63.3%❌作废(需复测) r4🔄运行中(b2026_1009_184955 PID 1843923,沙盒已修复重跑,四override齐全+canary hook live)**）|
-| CONFIG | `full`（C1 第4臂=锚点；r1=88.0%✅保留 r2=59.5%❌作废(39 timeouts)→复测 r3=63.3%❌作废→复测 **r4🔄运行中(batch b2026_1009_184955 PID 1843923,沙盒已修复重跑,四override在/proc/environ核验✅)** 新key e13f4f37+/cloud/v1 pro-fp4 HTTP 200✅）|
+| STAGE | `C1`（Phase B 4/4✅；C1 pure_llm/rag/wo_retrieval 5/5✅；**full 锚点 r1=88.0%✅保留 r2=59.5%❌作废→r2-retest🔄运行中 r3=63.3%❌作废→待复测 r4=81.0%✅有效(128/158,4 timeouts)**）|
+| CONFIG | `full`（C1 第4臂=锚点；r1=88.0%✅保留 r2=59.5%❌作废→r2-retest🔄运行中 r3=63.3%❌作废→待复测 **r4=81.0%✅有效(128/158,4 timeouts,b2026_1009_184955)** 新key e13f4f37+/cloud/v1 pro-fp4 HTTP 200✅）|
 | ROUND | 4 |
-| PHASE | `running`（✅沙盒已修复，C1.full r4 已重跑启动[运维2026-10-09五指令]。batch b2026_1009_184955, PID 1843923[setsid PPID=1], -p 8 -n 全量158题。四override已/proc/environ核验✅(EVAL_FW_DIR+CLI_DATA_DIR=.cline_prof4_eval/data+PYTHON+https_proxy)。canary:PreToolUse hook已部署~/.cline/hooks✅live。三项前置复检全过：①pro-fp4新key e13f4f37+/cloud/v1 HTTP=200 model=deepseek-v4-pro-260813✅ ②沙箱8650/8651/8652/8654全404✅可达且清理成功(非上次卡死态) ③eval IDLE✅(无残留run_cline_script/run_eval.py)。**下轮第一件事**：①pgrep'^bash scripts/run_cline_script'→有输出=巡检不动作退出; 无输出=收割r4(grep PASS_RATE/timeout /tmp/ABL_full_r4.log)→记Pass@1+timeout数→判据 timeout≤10且≥75%→r4有效→依序重跑 r2-retest→r3-retest→r5(同override,log /tmp/ABL_full_r2_retest.log/r3_retest/r5)→5/5算mean±std→回填锚点→PHASE=just_finished。②proxy自检：tr'\\0''\\n'</proc/3579323/environ|grep https_proxy）|
+| PHASE | `running`（✅r4收割完成=81.0%(128/158,**4 timeouts**,0 exec_err,0 Forbidden)✅有效[判据timeout≤10且≥75%全过]→r2-retest🔄已启动。batch b2026_1009_220517, PID 2734360[setsid], -p 8 -n 全量158题, 四override✅(/proc/environ核验), canary hook live(run_cli.sh自动部署PreToolUse 10242B)。**下轮第一件事**：pgrep'^bash scripts/run_cline_script'→有输出=巡检退出; 无输出=收割r2-retest(grep -E'pass \\(|评估结果汇总|timeout'/tmp/ABL_full_r2_retest.log|tail -10)→判据timeout≤10且≥75%→r2'有效→替换r2=59.5%→启r3-retest(log /tmp/ABL_full_r3_retest.log)→r3'有效→启r5(log /tmp/ABL_full_r5.log)→5/5=[r1=88.0,r2',r3',r4=81.0,r5]算mean±std→回填锚点→PHASE=just_finished。每轮最多重跑3次不达标→暂停WAITING=1等运维。proxy自检通过(loop PID3579323 https_proxy✅)）|
 | WAITING | 1 |
 | ERROR_COUNT | 2（C1.full r2 首启缺四override→158 Forbidden=config失败非infra,已重跑恢复[但该r2=59.5%现因39 timeouts被运维2026-10-09三判❌作废,需复测]; r4 连续2次infra作废(pro-fp4 403额度耗尽)非eval失败不计ERROR_COUNT。r2/r3 作废属服务不稳定非config失败,不计ERROR_COUNT）|
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
@@ -28,7 +28,7 @@ WAITING: 1
 | C1 | pure_llm | 5/5 ✅ | ✅ 10.5±1.9%（复用 legacy：[8.2,9.5,10.1,11.4,13.3]）|
 | C1 | rag | 5/5 ✅ | **71.8±2.5%** [70.3,72.2,69.6,70.9,75.9]（r5=75.9% 120/158 batch 2026_1007_202448, 151 ok/7 fail/0 exec_err, 0 Forbidden ✅；legacy 68.2±7.4% 作废→本线重跑）|
 | C1 | wo_retrieval | 5/5 ✅ | **81.0±4.5%** [74.1,86.1,81.6,79.7,83.5]（r1=74.1% 复用 legacy；r2=86.1% 136/158 b2026_1007_221959；r3=81.6% 129/158 b2026_1008_015818；r4=79.7% 126/158 b2026_1008_0507；r5=83.5% 132/158 b2026_1008_081817 147ok/8fail/0exec_err 0 Forbidden✅ 全程）|
-| C1 | full（锚点）| r1✅+r2❌作废+r3❌作废+r4🔄运行中 | r1=88.0% 139/158 b2026_1008_114702 150ok/7fail/0exec_err 0 Forbidden✅**保留**; r2=59.5% 94/158 b2026_1008_150357 **❌作废(39 timeouts→r2-retest)**; r3=63.3% 100/158 b2026_1008_222842 **❌作废(→r3-retest)**; r4 b2026_1009_184955 PID 1843923 **🔄运行中（沙盒已修复重跑,四override✅,canary hook live,8worker/158题已开跑）**(旧r4 b2026_1009_094504 PID3302534 ❌作废 沙盒坏了运维已kill) |
+| C1 | full（锚点）| r1✅+r2❌作废→r2-retest🔄+r3❌作废→待复测+r4✅ | r1=88.0% 139/158 b2026_1008_114702 150ok/7fail/0exec_err 0 Forbidden✅**保留**; r2=59.5% 94/158 b2026_1008_150357 **❌作废(39 timeouts→r2-retest)**; r3=63.3% 100/158 b2026_1008_222842 **❌作废(→r3-retest)**; r4=81.0% 128/158 b2026_1009_184955 **✅有效(4 timeouts,0 exec_err,0 Forbidden)**; r2-retest🔄运行中(b2026_1009_220517 PID2734360 四override✅ canary hook live) |
 | C2 | phi_k10 | 1-5/5 | ⬜（探路 75.3%）|
 | C2 | phi_k3 | 1-5/5 | ⬜（探路 69.0%）|
 | C2 | phi_k1 | 1-5/5 | ⬜（探路 60.8%）|
@@ -246,35 +246,6 @@ WAITING: 1
 
 - [2026-10-09 09:01] [⏩ 已滚出] 🚨 BLOCKED续(第11次复检)：pro-fp4 直连仍 HTTP 403 → 继续 WAITING=1 详情已原文搬入 daily-memories/2026-10-09.md（§09:01，rolled-from-MEMORY 2026-10-09 09:45）。
 
-- [2026-10-09 09:45] [⏩ 已滚出] ✅ pro-fp4 已恢复(新key e13f4f37 HTTP 200)→eval backbone re-auth→C1.full r4 启动(b2026_1009_094504 PID 3302534, 四override齐全, 0 Forbidden✅) 详情已原文搬入 daily-memories/2026-10-09.md（§09:45）。
-- [2026-10-09 10:25] [⏩ 已滚出] 巡检 r4 运行中 + 收到运维2026-10-09(三)复测指令→已更新MEMORY复测流程 详情已原文搬入 daily-memories/2026-10-09.md（§10:25）。
+- [2026-10-09 09:45~21:23] [⠈ 已滚出] r4启动→12次巡检→沙盒故障kill→standby→修复→重跑r4→4次巡检。全部详情见 daily-memories/2026-10-09.md（§09:45~§21:23）。
 
-- [2026-10-09 11:04] [⏩ 已滚出] 🩾 C1.full r4 巡检#2（仍在跑·~1h19m·generation阶段）+ 自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§11:04）。
-- [2026-10-09 11:38] [⏩ 已滚出] 🩾 C1.full r4 巡检#3（仍在跑·~1h54m·generation阶段·task137）+ 自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§11:38）。
-- [2026-10-09 12:12] [⏩ 已滚出] C1.full r4 巡检#4（仍在跑·~2h27m·task156/158）详情已原文搬入 daily-memories/2026-10-09.md（§12:12）。
-- [2026-10-09 12:45] [⏩ 已滑出] C1.full r4 巡检#5（仍在跑·~3h00m·generation阶段）+ 自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§12:45）。
-- [2026-10-09 13:23] [⏩ 已滚出] C1.full r4 巡检#6（仍在跑·~3h38m·task120）+ 自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§13:23）。
-- [2026-10-09 13:59] [⏩ 已滚出] C1.full r4 巡检#7（仍在跑·~4h15m·task120）+ 自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§13:59）。
-- [2026-10-09 14:37] [⏩ 已滚出] C1.full r4 巡检#8（仍在跑·~4h52m·task142 generation阶段）+ 自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§14:37）。
-- [2026-10-09 15:14] [⏩ 已滚出] 🩾 C1.full r4 巡检#9（仍在跑·~5h29m·grading阶段·gen 140ok/12fail/6timeout）+ 全自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§15:14）。
-
-- [2026-10-09 15:52] [⏩ 已滚出] 🩾 C1.full r4 巡检#10（仍在跑·~6h08m·grading阶段·run_eval.py etime 1h12m）+ 全自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§15:52）。
-
-- [2026-10-09 16:29] [⏩ 已滚出] 🩾 C1.full r4 巡检#11（仍在跑·~6h44m·grading阶段·run_eval.py 611439 etime 1h48m 沙箱执行140脚本中）+ 全自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§16:29）。
-
-- [2026-10-09 17:38] [🛑 PHASE=standby·已滚出] 收运维2026-10-09(四)「沙盒坏了,r4已kill,待命」→PHASE=standby/WAITING=1,未启eval。详情见 daily-memories/2026-10-09.md（§17:38）。
-- [2026-10-09 17:03] [⏩ 已滚出] 🩾 C1.full r4 巡检#12（仍在跑·~7h19m·grading阶段）+ 全自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§17:03，rolled-from-MEMORY 2026-10-09 17:38）。
-
-- [2026-10-09 18:13] [🛑 PHASE=standby 续·已滚出] 运维指令区无「沙盒已修复」新通知→继续WAITING=1,未启eval,全自检通过。详情见 daily-memories/2026-10-09.md（§18:13）。
-
-- [2026-10-09 18:50] [⏩ 已滚出] ✅ PHASE=running 沙盒已修复·重跑r4启动(b2026_1009_184955 PID1843923,四override✅,canary hook live) 详情已原文搬入 daily-memories/2026-10-09.md（§18:50）。
-
-- [2026-10-09 19:26] [⏩ 已滚出] 🩾 C1.full r4 巡检#1（重启后·仍在跑·~36m·generation阶段）+ 全自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§19:26）。
-
-- [2026-10-09 20:06] [⏩ 已滚出] 🩾 C1.full r4 巡检#2（重启后·仍在跑·~1h17m·generation阶段）+ 全自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§20:06）。
-
-- [2026-10-09 20:46] [⏩ 已滚出] 🩾 C1.full r4 巡检#3（重启后·仍在跑·~1h57m·generation阶段·0真实Forbidden·loop PID假匹配陷阱已记录）+ 全自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§20:46）。
-
-- [2026-10-09 21:23] 🩾 C1.full r4 巡检#4（重启后·仍在跑·~2h34m·generation阶段·log活跃未静默）+ 全自检通过。`pgrep '^bash scripts/run_cline_script'`→PID1843923(etime02:33:56,PPID=1 setsid✅)仍在跑→巡检不动作退出(§7步骤A:pgrep有输出→什么都不做退出)。r4 environ四override全在✅(EVAL_FW_DIR+CLI_DATA_DIR=.cline_prof4_eval/data+PYTHON+https_proxy)。log 22.9MB**活跃**(21:25:02 mtime=当前时间→**未静默**, 区别于上次被kill的旧r4沙盒卡死时log沉默2h+)→tail显示agent run_code工具调用+"Auto compacting messages"→**仍generation阶段**。⚠️grep'grading'=5行但逐条核验均**agent推理文本噪声**(agent讨论"grading happens/grading collects from reference_pdk"),非真实grading阶段标记→仍generation。无pass(xx.x%)/PASS_RATE/评估结果汇总行→未出结果。**0真实Forbidden/403**✅:grep -cE'Forbidden|403'=8均为假匹配(403k=403KB截断/坐标数字片段); grep -cE'timed.?out'=135亦agent推理文本噪声非最终超时统计。PID77800=`python main.py`=FastMCP工具服务器(非grading进程);无真实run_eval.py grading进程。全自检：loop真实PID=3579323(environ含https_proxy✅,⚠️pgrep -f陷阱见§20:46); /home8.6G(98%)✅; 沙箱8650/8651/8652/8654全404✅; ops relay alive✅(.last_run_id=26); git clean✅(## main...origin/main)。状态不变 STAGE=C1/CONFIG=full/ROUND=4/PHASE=running/WAITING=1/ERROR_COUNT=2。下轮第一件事(不变)：pgrep→有输出=巡检退出; 无输出=收割r4(grep -E'pass \(|PASS_RATE|评估结果汇总|timeout'/tmp/ABL_full_r4.log|tail -10)→记Pass@1+timeout数→判据timeout≤10且≥75%→r4有效→依序重跑r2-retest→r3-retest→r5(同override,log /tmp/ABL_full_r2_retest.log/r3_retest/r5)→5/5=[r1=88.0,r2',r3',r4,r5]算mean±std→回填锚点→PHASE=just_finished。每轮最多重跑3次,3次不达标→暂停WAITING=1等运维。详情见 daily-memories/2026-10-09.md（§21:23）。
-
-
+- [2026-10-09 22:00] ✅ r4收割=81.0%(128/158,**4 timeouts**,0 exec_err,0 Forbidden)✅有效(timeout≤10且≥75%)→r2-retest已启动(batch b2026_1009_220517 PID2734360 四override✅ canary hook live log /tmp/ABL_full_r2_retest.log)。收割证据：log尾评估结果汇总 1009: 128/158 pass (81.0%)+统计: 成功[154]/超时[4]/失败[0]+生成状态统计: {'success':144,'failure':0,'timeout':4,'fail':10}。环境复检全过(eval IDLE✅ /home 8.6G✅ 沙箱850/8651/8652/8654全404✅ .env=full✅ EDA_MCP_TOOLS_DISABLED不含核心4工具✅ pro-fp4 providers.json key=e13f4f37✅)。canary：hook源 scripts/cline_hooks/PreToolUse 10242B✅ run_cli.sh自动部署→r2-retest启动后 ~/.cline/hooks/PreToolUse=10242B✅live。全自检：loop PID3579323 https_proxy✅; ops relay alive✅(.last_run_id=26); git clean✅。状态 STAGE=C1/CONFIG=full/ROUND=4/PHASE=running/WAITING=1/ERROR_COUNT=2。下轮第一件事：pgrep→有输出=巡检退出;无输出=收割r2-retest→判据tag timeout≤10且≥75%→r2'有效→替换r2=59.5%→r3-retest→r5→5/5=[r1=88.0,r2',r3',r4=81.0,r5]算mean±std→回填锚点→PHASE=just_finished。详情见 daily-memories/2026-10-09.md（§22:00）。
