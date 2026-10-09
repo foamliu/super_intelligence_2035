@@ -45,17 +45,17 @@ WAITING: 0
 
 ---
 
-## 3. 在途任务（截至 2026-10-04）
+## 3. 在途任务（状态实况 · 更新于 2026-10-09）
 
 | 线 | 脚本 / 任务书 / 记忆 | 在飞 | 状态 |
 |:--|:--|:--|:--|
-| **合并消融线（新 · 正式）** | `run/zhulong_loop.sh` · `run/ZHULONG_TASK.md` · `run/MEMORY_ZHULONG.md` | **未启动** | 🟠 `PHASE=init`、`WAITING=1`（仅 bootstrap 一条流水）；等 **infra 三项前置校验** + **起始点拍板** |
-| 旧 S1 保真度线（legacy） | `run/ablation_run_task_s1_full.md` · `run/MEMORY_s1_full.md` | 10-03 曾活动 | ⬜ **只读历史**；与合并线**待衔接**（旧 5-run：`omega_low` r1=81.6 / r2=82.3，r3 infra 作废） |
-| 旧组件线（legacy） | `run/ablation_run_task_component_s2_full.md` · `run/MEMORY_component_full.md` | 10-04 曾活动 | ⬜ **只读历史**；可能**仍在服务器上跑**（`pure_llm`→`rag`→`wo_retrieval`），**待与 36.15 旧 agent 冲突一并处置** |
-| 旧 S2 1-shot 探路线 | `run/ablation_run_task_s2_1shot.md` · `run/MEMORY_s2_1shot.md` | 已出探路值 | ⬜ 只读历史 |
-| **ops 中继** | `run/zhulong_ops_relay.sh` · `run/ops/` | 🟢 **在跑**（36.15，自 15:20） | ⚠️ **疑似两个进程**（PID `1071337` / `1239220`，待查 ppid）；**RUN_ID 1 已执行**（16:53，结果见 `outbox.md`） |
+| **合并消融线（新 · 正式）** | `run/zhulong_loop.sh` · `run/ZHULONG_TASK.md` · `run/MEMORY_ZHULONG.md` | 🟢 **在跑**（36.15 · loop PID 3579323 · proxy 自检通过） | **`STAGE=C1` · `CONFIG=full`(锚点) · `ROUND=4` · `PHASE=standby` · `WAITING=1`**。已完成 **Phase B 4/4** ＋ **C1 前三臂 5/5**（`pure_llm` 10.5±1.9 / `rag` 71.8±2.5 / `wo_retrieval` 81.0±4.5）；**卡在锚点 `C1.full`**（r1=88.0% 保留 · r2=59.5%/r3=63.3% 作废待复测 · r4 因沙盒故障被 kill 作废）→ **已下发「沙盒修复·重跑 r4」(五)**；**C2/S1 未开始** |
+| 旧 S1 保真度线（legacy） | `run/ablation_run_task_s1_full.md` · `run/MEMORY_s1_full.md` | 10-03 曾活动 | ⬜ **只读历史**；旧 5-run 可复用：`omega_low` 82.8±1.0 / `readback_binary` 66.2±16.1 / `readback_none` 73.3±2.2（是否延续由任务书定） |
+| 旧组件线（legacy） | `run/ablation_run_task_component_s2_full.md` · `run/MEMORY_component_full.md` | 10-04 曾活动 | ⬜ **只读历史**；数据已由合并线接管（`pure_llm` 复用 / `rag` 重跑 / `wo_retrieval` 复用 r1）。⚠️ **其 loop 存活存疑**（见 §4） |
+| 旧 S2 1-shot 探路线 | `run/ablation_run_task_s2_1shot.md` · `run/MEMORY_s2_1shot.md` | 已出探路值 | ⬜ 只读历史（`k10`/`k3`/`k1`/`lagged` 1-shot 探路）；5-run 未跑 |
+| **ops 中继** | `run/zhulong_ops_relay.sh` · `run/ops/` | 🟢 **在跑** | 单实例（第二条是子进程）；`.last_run_id`=**26**（最新 RUN_ID 25/26 = kill 沙盒故障的 r4） |
 
-> ⚠️ **三处口径需要运维收敛**：① 合并线是否从 `S1.omega_low ROUND=1` 起跑，还是延续旧 S1（`ROUND=3`，复用 r1/r2）？② 36.15「旧 agent」与合并线的切换方式；③ 10-04 报告记「环境冻结」但任务书记「冻结令已解除」——**以任务书为准，冻结解除**（见 §9 流水）。
+> ✅ **历史口径已收敛**：起始点 = 从 `C1.wo_retrieval R2` 起（**已越过**）；「冻结令」已解除；「36.15 旧 agent 冲突」已由合并线接管处置。
 
 ### 3.1 🆕 36.15 环境摸底结果（**RUN_ID 1，2026-10-04 16:53，host=`hfeg0tedaap02`**）
 
@@ -104,19 +104,18 @@ error: error: unknown option '-b'
 
 ## 4. 待拍板 / 我欠的答复
 
-- [ ] **起始点**：合并线从 `S1.omega_low ROUND=1` 起，还是延续旧 S1（`CONFIG=omega_low, ROUND=3`，把 r1=81.6 / r2=82.3 写进成绩表、不重跑）？——**须运维在任务书指令区填实**。
-- [x] **infra 三项校验（RUN_ID 1+2）**：① 🔴 `/home` **99% / 6G 可用 → FAIL**；② ✅ 四端口 OPEN；③ ✅ `run_code` 实为 `tools/run_code.py`（存在）。
-- [ ] 🔴 **`/home`（硬阻塞）**：需 ≥ ~8G。实测**大头是别的用户**（`app.e0023936` 71G · `app.e0025768` 41G …），**我们自己 <7.2G** → 选项：(a) 只清自己可回收缓存（可能不够）；(b) 把评测产物从 `/home` 改到 `/nasdata`（377G 富余）；(c) 找系统管理员/其他用户。**待拍板。**
-- [x] ✅ **loop 已重启并修复**（RUN_ID 6 重启清掉非法 `-b`；RUN_ID 8 `cline auth` 修 `openAiBaseUrl`→`/cloud/v1`）→ **agent 已于 2026-10-04 21:54 首次被唤醒**。
-- [x] ✅ **relay 无副本**（第二条是子进程）；✅ **端口口径**以 `8664/8665/8653/8669` 为准。
-- [x] ✅ **ops 中继健康**（RUN_ID 1–8 全 `exit=0`）；此前"卡死"系误判（heavy 版 17:05:57 已跑完，只是 push 重试）。
-- [x] ✅ **`MEMORY_ZHULONG.md` 顶部已置 `WAITING: 1`**（21:44），避免 60s 空转烧 token。
-- [ ] **处置顺序**：`/home` → 定起始点 → 修 `WAITING` → 重启 loop → 开跑。
-- [ ] **36.15 旧 agent 冲突**：旧线（S1 / 组件）与新合并线**不能并发**；何时、如何停旧启新？
-- [x] ✅ **启动 ops 中继** —— 已在 36.15 运行且健康（RUN_ID 1–8 全 `exit=0`）；运维已可用它远程探查/下发命令。
-- [ ] 🔴 **接管 legacy 组件线（standalone 非 git `/nasdata/app.e0031982/code/ZhuLong_DAC2027`）**：两进程（组件 loop `2455466` + conductor `1381975`）**均已空转**（沙箱阻断 / `Forbidden`，详见 §9）。方案：① 停两进程；② harvest（`pure_llm×5` / `wo_retrieval r1=74.1%` 保留，`rag×5` 重跑）；③ 由合并线续跑余下臂。**待拍板。**
-- [ ] **Phase B 模型 key 是否仍有效**（`glm-5.2` / `deepseek-v4-flash` / `kimi-k2.6-cloud` / `doubao-seed-2.0-pro-cloud`，见任务书 §6）——启动 Phase B 前须核。
-- [ ] **RAG recall 端口错配**（`.env` 9012 死 / 9006 健康 = `chroma_db_v20260522`）是否修？——现为 r1/r2 的既存降级条件（BM25-only fallback）。**投稿前须闭环或如实披露**。
+- [x] ✅ **起始点**：已定为 **从 `C1.wo_retrieval R2` 起**（任务书 (四)），**已越过**；现推进至 `C1.full` 锚点。
+- [x] ✅ **infra 前置校验（RUN_ID 1+2 首测）**：① `/home` 曾 99%/6G → **已解除（见下）**；② ✅ 端口（**口径订正**：以 `.env` 实际 `8650,8651,8652,8654`@`10.129.32.75` 为准，旧 `8664/8665/8653/8669` 作废）；③ ✅ `run_code` = `tools/run_code.py`。
+- [x] ✅ **`/home` 阻塞已解除（用户 2026-10-09）**：**`/home` 已不再阻塞**。且我方产物/缓存多落 `/nasdata`（`~/eda_code_eval` 等为 symlink→`/nasdata`），`/nasdata` 长期 ~370G 富余 → **不再作为前置硬门槛**。
+- [x] ✅ **loop 已重启并修复**（RUN_ID 6 清 `-b`；RUN_ID 8 `cline auth` 修 `openAiBaseUrl`→`/cloud/v1`）→ agent 2026-10-04 21:54 首次被唤醒。
+- [x] ✅ **relay 单实例**（第二条是子进程）；✅ **端口口径**已订正（见上）；✅ **ops 中继健康**（RUN_ID 1–26 全 `exit=0`；当前 `.last_run_id`=26）。
+- [x] ✅ **`MEMORY_ZHULONG.md` 顶部已置 `WAITING: 1`**，避免 60s 空转烧 token。
+- [x] ✅ **处置顺序**：已全部落地（起始点已越、`WAITING` 已修、loop 已重启、**已开跑**）。
+- [x] ✅ **36.15「旧 agent」冲突已处置**：由合并线接管（组件线数据复用/重跑，见 §3）；起始点已越过。
+- [x] ✅ **启动 ops 中继**（健康；RUN_ID 25/26 = kill 沙盒故障的 r4）。
+- [x] ⚠️ **接管 legacy 组件线**：数据已由合并线接管（`pure_llm` 复用 / `rag` 重跑 / `wo_retrieval` 复用 r1）。**遗留存疑**：用户称 10/4 已关停，但 agent 侧 10-09 `pgrep` 仍报组件 loop `2455466` alive → **待核实**（若在跑，确认 non-mid-eval 以免抢 infra）。
+- [x] ✅ **Phase B 模型 key**：已全部验证有效（Phase B 4/4 完成）。
+- [ ] **RAG recall 端口错配**（`.env` 9012 死 / 9006 健康 = `chroma_db_v20260522`）是否修？——既存降级条件（BM25-only fallback）。**投稿前须闭环或如实披露**。
 - [ ] **`tab:omega` 的 (H)/(H+E)/(L)**：锚点复用规则下 (H)/(F) 由 `C1.full` 复用；`(H+E)` 已定**不做**；`(L)` 由 `omega_low` 提供——确认无遗漏。
 - [ ] **RQ3（SKILL / Tcl 切片）** 是否纳入本轮（依赖最重，任务书列为最后）。
 
@@ -186,6 +185,10 @@ error: error: unknown option '-b'
 
 ## 9. 流水（倒序）
 
+- **2026-10-09（用户确认：`/home` 不再阻塞 → 收敛 §3/§4）** —— 用户通知「**`/home` 已不再阻塞**」。据此把 §4 的 `/home` 硬阻塞项**结项**；并顺手把 §3「在途任务」/§4 待拍板 中 10-04 的过期态（「合并线未启动」「起始点待定」「36.15 旧 agent 冲突」「接管 legacy」「Phase B key 待核」等）一并收敛到**当前实况**（进度 = Phase B 4/4 ＋ C1 前三臂 5/5，卡在锚点 `C1.full`）。
+  - **落地**：`MEMORY.md` §3 表格重写（截至 2026-10-09 实况）、§4 待拍板收敛（`/home` ✅ 解除；遗留 **legacy loop 存活存疑** 一项待核）、本文件 §9 记本条 + 当日 `daily-memories/2026-10-09.md` 追加。
+  - ⏭ 待推送。
+
 - **2026-10-09（运维经任务书下发：✅ 沙盒已修复·可重跑 C1.full r4）** —— 用户 2026-10-09 晚通知「沙盒已修复·可重跑 r4」。此前 r4（batch `b2026_1009_094504`）因沙盒故障 grading 异常慢（`run_eval.py` 跑满 2h35m+ 未出结果）已被运维经 ops RUN_ID 25/26 kill，判 ❌作废；agent 置 `PHASE=standby` 待命。
   - **落地**：在 `run/ZHULONG_TASK.md` 运维指令区**置顶**新增 `### 🆕 运维指令 · 2026-10-09（五）— ✅ 沙盒已修复，可重跑 C1.full r4【本次唤醒优先动作】`（置于常驻规程之后、(四) 之前），并把 (四) 标题标为「【已被(五)取代·历史】」。指令要点：① **三项前置复检**（pro-fp4 直连 200[新 key `e13f4f37` + `/cloud/v1`] / 沙盒端口 8650-8654@10.129.32.75 可达 / eval IDLE 无残留）**全过才开跑**；② 启动 C1.full r4（同臂 full 不切 `set_ablation`，**四 override 齐全**：`EVAL_FW_DIR` + `CLI_DATA_DIR=.cline_prof4_eval/data` + `PYTHON` + `https_proxy`），启动后核验 `/proc/<pid>/environ`；③ canary 确认反作弊 hook live；④ 更新 MEMORY `PHASE=running`；⑤ commit+push。
   - **r4 收割后接 (三) 复测流程**：收割记 Pass@1 + timeout 数 → 判据 `timeout ≤ 10 且 Pass@1 ≥ 75%` 则 r4 有效 → 依序重跑 `r2-retest` → `r3-retest` → `r5`（每轮同判据，最多 3 次，不达标暂停等运维）→ 5-run `[r1=88.0, r2', r3', r4, r5]` 算 mean±std 回填锚点 5 表。
@@ -210,53 +213,7 @@ error: error: unknown option '-b'
   - **决策树**：若 ②/③=200 → 403 是 key 级问题，换 key 即可、模型不变、r1-r3 保持有效（最优）；若 ①=200 但 ②/③=403 → 403 是模型级问题，pro-cloud 是不同模型，需评估是否重跑全部 5 轮或继续等；若 ③=200 但 ②=403 → endpoint 差异，用 /v1 即可。
   - ⏭ **待推送**：`git pull --rebase --autostash` → `git add -- doc/ZhuLong_DAC2027/run/ops/inbox.md doc/ZhuLong_DAC2027/MEMORY.md` → `git commit -m "zhulong 运维: ops RUN_ID 22 测新key+pro-cloud能否绕过pro-fp4 403"` → `git push origin main`。push 后中继 ~20s 内执行，结果追加到 `run/ops/outbox.md` 末尾。
 
-- **2026-10-08（运维经任务书提醒 agent：loop git 超时 = 缺 https_proxy）** —— 用户观察到 `zhulong_loop.sh` git 操作经常超时。经核对脚本源码确认根因：**loop 脚本自身不 `export https_proxy`**，完全继承启动 shell 环境；脚本只在调 cline 时 `env -u` 剥代理（内网网关不该走代理），但 **git 访问 GitHub 是外网、必须走代理** → loop 进程若启动时没带 `https_proxy=http://172.19.92.23:13128`，`git fetch/push` 就超时。
-  - 落地：在 `run/ZHULONG_TASK.md` 运维指令区**置顶**（`(一)` 报告块之前）新增 `### 🆕 运维指令 · 2026-10-08（二）— 🔧 git 操作超时：确保 loop 进程带 https_proxy（常驻·每次唤醒自检）`。指令含：① `/proc/<pid>/environ` 自检命令；② 缺代理则 `pkill` + `export https_proxy` + `setsid` 重启的修复步骤；③ 红线（不改脚本源码 / 重启带 setsid / 常驻自检）。
-  - ⏭ 待提交推送（任务书 + 本文件 + 日流水）。
+- **2026-10-08 运维流水已滚动归档（2026-10-09）** —— 10-08 两条（loop git 超时=缺 https_proxy 的提醒 + 派 agent 写国庆假期 HTML 报告）已**原文**搬入 `daily-memories/2026-10-08.md`。
 
-- **2026-10-08（运维经任务书派 ZhuLong agent 写「国庆假期试验进展」HTML 报告）** —— 用户下达「安排 ZhuLong agent 写 html 报告，汇报假期试验进展」。
-  - 处置：按 SOP 同步读取 `run/MEMORY_ZHULONG.md`（状态头/看板/成绩表）+ `run/ZHULONG_TASK.md` 运维指令区 + `run/ops/outbox.md`，确认假期进度：**Phase B 4/4 ✅**（glm-5.2 83.3±3.1 / deepseek-v4-flash 16.7±12.3 / kimi-k2.6-cloud 77.0±1.6 / doubao-seed-2.0-pro-cloud 63.8±1.4）；**C1** pure_llm 5/5（10.5±1.9 复用 legacy）· rag 5/5（71.8±2.5 本线重跑）· wo_retrieval 4/5（r5 运行中 PID 198350）· full 待跑；C2/S1 未启动。
-  - 落地：在 `run/ZHULONG_TASK.md` 运维指令区**置顶**新增 `### 🆕 运维指令 · 2026-10-08（一）— 📝 写一份「国庆假期试验进展」HTML 报告【本次唤醒优先动作】`（新块放在常驻规程之后、`(八)` 块之前）。指令要点：产物 = 自包含 HTML，路径 `run/reports/report_2026-10-08_holiday.html`；数据来源限 `MEMORY_ZHULONG.md` 成绩表 + `run/daily-memories/` + `outbox.md` + 任务书 §0；8 个必含小节（概览/进度总览表/Phase B 专题/C1 专题/关键事件时间线/infra 状态/下一步/页脚）；红线 = 不得臆造数字、不动 `ops/` 与论文树、不 `git add -A`、写完仍 commit+push 心跳+日报。
-  - ⚠️ **本沙箱限制**：当前会话 `run_commands` 被全量拦截（`ACCESS RESTRICTED`，与 s2_1shot 期沙箱阻断同因），**无法在此执行 `git commit/push`**。任务书文件改动已落盘到工作副本，**待具备 shell/git 能力的环境提交推送**后，36.15 的 `zhulong_loop.sh` 下轮 `git pull` 才能取到该指令。
-  - ⏭ 待办（具备 git 能力时）：`git pull --rebase --autostash` → `git add -- doc/ZhuLong_DAC2027/run/ZHULONG_TASK.md doc/ZhuLong_DAC2027/MEMORY.md doc/ZhuLong_DAC2027/daily-memories/2026-10-08.md` → `git commit -m "zhulong 运维: 派 agent 写国庆假期进展 HTML 报告"` → `git push origin main`。push 成功后观察 `run/MEMORY_ZHULONG.md` 心跳 + `run/reports/report_2026-10-08_holiday.html` 是否出现。
+- **2026-10-01～10-05 早期运维流水已滚动归档（2026-10-09）** —— 早期流水（10-04 环境摸底 RUN_ID 1/2/3/4、中继抢救、接管尽调、10-05「中继卡死」澄清等）已**原文**搬入 `daily-memories/2026-10-04.md` 与 `daily-memories/2026-10-05.md`（滚动以保 ≤32KB）。
 
-- **2026-10-05（"中继卡死"实为**盲**；未杀任何进程；合并线 agent 已自主工作）** ——
-  - ✅ 用户到公司后中继/loop 恢复：`RUN_ID 20` 于 **11:04:10** 执行，输出证实 **legacy loop 一直活着**（PID `2455466`，etimes≈44h）→ 昨晚 `RUN_ID 18` **从未执行**（`.last_run_id` 直接 17→20）→ **"停 legacy"根本没发生、零进程损失**。真因 = **36.15 的 GitHub 通道整夜不通**（relay 活着却拉不到 inbox；loop 也推不出），**不是我 kill 的**。
-  - ✅ 合并线 agent 连续 2 轮工作：**11:13** 执行(五)保活检查 + infra 复检（pro-fp4 **HTTP 403 额度耗尽**、glm-5.2 200、四端口 OPEN、`/nasdata` 377G 富余）；**11:25 自主把试验次序改为 `B → C1 → C2 → S1`**（Phase B 4 模型用独立 key/endpoint，不受 pro-fp4 限制）。commit `ad685df`。
-  - ⚠️ **待运维裁**：① agent **越权改了任务书「运维指令区」**（新增「（六）」；规则明文禁 agent 改本节）；② **Phase B 与 legacy 并发共用 infra**（eda_fastmcp/MCP/.env/端口）的撞车风险；③ `~/.cline/data/settings/providers.json` 三不匹配（glm-key + pro-fp4 模型 + `/v1`）= latent Forbidden 隐患。
-- **2026-10-04（22:1x 侦察 + 接管尽调：查明"另一个 agent"= legacy 组件线，两进程均已空转）** —— 用户告知另有 agent 在 `/nasdata/app.e0031982/code/ZhuLong_DAC2027` 跑任务，要求观摩、理解、准备接管。经 ops 中继 **RUN_ID 10–14** 只读侦察：
-  - **身份**：**legacy 组件线**（旧「Phase 1 组件消融 + Phase 2 S2 Φ」5-run 线），跑在**独立、非 git** 的项目副本 `/nasdata/app.e0031982/code/ZhuLong_DAC2027`（与 git 仓库 `super_intelligence_2035/doc/ZhuLong_DAC2027` 平行）。
-  - **两个 driver 都空转**：① `ablation_run_loop_component_s2_full.sh`（PID 2455466，`MODEL=deepseek-v4-pro-fp4`，30min/轮）—— 其 cline 会话**连续 ≥4 周期被沙箱阻断**（`run_commands`→ACCESS RESTRICTED），无法推进；② `ablation_run_conductor_serial.sh`（PID 1381975，**已跑 3.3 天**）—— 日志每 30min `error: Forbidden`，**3.3 天零产出**。
-  - **已产出的真实数据（接管应 harvest）**：`pure_llm ×5 = 10.5±1.9%`、`rag ×5 = 68.2±7.4%`（**BM25 降级态，需重跑**）、`wo_retrieval r1 = 74.1%`（117/158，10-04 14:40 已跑完，但 agent 被阻断读不到）；另有 1-shot：full 84.8 / k10 75.3 / k3 69.0 / k1 60.8 / lagged 80.4·84.2 / omega_low r2 82.3。
-  - **冲突**：两线共用同一评测 infra（eda_fastmcp + MCP 8090 + `.env`），**不能并发跑 eval**；合并线（git、glm-5.2 编排）本就设计为**取代** legacy 线。
-  - ⚠️ **更正（用户 22:2x 澄清）**：上面说的"沙箱阻断"**实为防作弊 PreToolUse hook 污染** —— 评测前脚本把 hook 拷进 `~/.cline/hooks`（禁 `run_commands`），而编排 agent 与评测对象**共用 `~/.cline`**（启动时未指定独立 `--data-dir`）→ 整轮评测（3–4h）内编排 agent 每 30min 唤醒都被拦。**非故障、是当前设计已知现象**；根治见 §7-16。→ **接管方案须补一项：给合并线编排 agent 独立 `--data-dir`，与评测对象的 `~/.cline` 隔离。**
-  - **接管方案（待拍板）**：停 legacy 两进程 → harvest 有效数据 → 由合并线续跑余下臂。
-- **2026-10-04（19:0x–21:54 运维亲自经 ops 中继打通整条链路：中继正常 + loop 修复 + agent 终被唤醒）** ——
-  - ✅ **中继"恢复正常"**（此前"RUN_ID 4 卡死"系**误判**）：亲手实测 `run/ops/outbox.md` RUN_ID 1–8 **全部 `exit=0`**；RUN_ID 4 heavy 其实 **17:05:57 就跑完**，只是 `push` 反复失败在重试。**反思**：把"push 失败"错当成"卡死"，并据错误判断写了"抢救中继"指令。
-  - 🔴 **发现 loop 静默失效（比 `-b` 更深一层）**：RUN_ID 5/6 实测 —— 运行中的 loop 是**旧版**（`error: unknown option '-b'`，累计 **352** 次，cline 从未真正运行）→ RUN_ID 6 重启 loop 后 `-b` 消除，但**新 loop 改报 `error: Forbidden`**。
-  - ✅ **定位并修复 Forbidden**（RUN_ID 7/8）：`curl -H "Authorization: Bearer <key>" http://agi-gateway.cxmt.com/cloud/v1/models` = **HTTP 200**（key 有效、网关可达），但 cline `globalState.json` 的 `openAiBaseUrl` = **`http://agi-gateway.cxmt.com/v1`（错）** —— glm-5.2 需 **`/cloud/v1`**（对照 `baize_data_loop.sh` §46 教训）。`cline auth -p openai -k <key> -b http://agi-gateway.cxmt.com/cloud/v1 -m glm-5.2` → "Provider configured: openai-compatible (glm-5.2)" → 重启 loop → **agent 首次被唤醒**（loop 日志出现真实推理）。
-  - 落地：dispatch `c588835`/`864eb86`/`2e4fa8c`/`0ca6cb2`；结果 `0638999`/`33089f2`/`bfedfc7`/`5be7be1`。任务书新增「（三）中继已恢复·勿再抢救」；`MEMORY_ZHULONG.md` 顶部置 `WAITING: 1`。
-  - ⏭ 待办：agent 已在跑，将做 infra 校验；**`/home` 处置 + 起始点**仍待拍板。
-- **2026-10-04（运维不在场 → 经任务书派 agent 抢救中继）** —— 用户告知**无法登录服务器**（不在公司），但 ZhuLong agent 应仍可被任务书驱动 → 指令我**把中继救回来**。
-  - 落地：在 `run/ZHULONG_TASK.md` 运维指令区**置顶**新增 **`### 🚨 运维指令 · 2026-10-04（二）【本次唤醒的首要动作】抢救 ops 中继`**（`18587bf`）：
-    ① `pkill -f zhulong_ops_relay.sh` + `pkill -f 'du -sh -L'` → ② `git pull` + `setsid bash zhulong_ops_relay.sh` 重启 → ③ 在 `MEMORY_ZHULONG.md` 流水回报；**明确授权 agent 本次可动中继进程**（突破既有"agent 不要碰 ops/"），但**不许改 `ops/` 文件**。
-    另附**可选**：重启 `zhulong_loop.sh` 以清 `-b`（谨慎，会中断其自身会话）。
-  - ⚠️ **前提风险**：该指令只有**agent 真的被唤醒**才生效。而 RUN_ID 2 证据显示**运行中的 loop 仍报 `-b`**（旧脚本被 bash 整段缓存）→ 若它一直没吃到新版脚本，则 **task book 改动会一直躺着**，仍需**人工重启 loop**（唯一能远程解卡的手段 = 中继/loop 重启，而我们已无中继）。**观察点**：中继恢复后 `outbox.md` 应出现 RUN_ID 4（轻量版）结果。
-- **2026-10-04（RUN_ID 3 我方 home 盘点 → 结论：清不出空间；RUN_ID 4 重块卡死中继）** ——
-  - ✅ **RUN_ID 3（17:01）**：`/home/app.e0031982` 同文件系统**仅 3.8M**；`.cache`/`.cline`/`.npm`/`.local`/`.vscode-server` 的 `du -x` 全 **0**、`eda_code_eval`（87 批次）也是 **0** → **疑似 symlink 到 `/nasdata`**。→ **自己 home 清不出 ≥8G**，`/home` 满纯属别的用户。
-  - ⚠️ **RUN_ID 4（17:03）我写的重块卡死中继**（`du -sh -L` 跟随 symlink + 未 `timeout` 的 `df`）→ 已**重写为轻量版**（`a450ead`）+ heavy 版降级 `text`；坑入 §7-14。**恢复**：等 `du -L` 结束，或 `pkill -f zhulong_ops_relay.sh` 后重启（会自动补跑轻量 RUN_ID 4）。
-  - 待拍板收敛为：`/home` 选项 (b)/(c) + 起始点。
-- **2026-10-04（RUN_ID 2 聚焦诊断 → 收敛为"唯一硬阻塞 = `/home`"）** —— 经 ops 中继跑只读诊断（`outbox.md` RUN_ID 2，16:57，exit=0）：
-  - ✅ **loop 确实在跑**（PID `1069304`，ppid=1，etimes≈97min）；**磁盘上的 `zhulong_loop.sh` 已是新版**（112 行 `-P openai-compatible`，**无 `-b`**）→ **运行进程没吃到新脚本 → 重启即修复**（loop 日志 16:57 仍在报 `-b`，`unknown option` 计数 **69**、`Forbidden` 0）。
-  - ✅ **relay 不是副本**：`1245242`（ppid=`1071337`、etimes=0）= 真 relay fork 的**子进程**（同 BaiZe §3.5 结论）。
-  - ✅ **`run_code` 存在**：`tools/run_code.py`（+ `server/sandbox_server/exec_code.py`），非 shell 脚本（RUN_ID 1 探针误报）。
-  - ✅ **端口**以 `8664/8665/8653/8669` 为准（`.env` 里 `PROXY_PORTS=8650-8654` 未监听 = 陈旧行）。
-  - 🔴 **`/home` 99%（6G）= 唯一硬阻塞**，且**大头是别的用户**（`app.e0023936` 71G · `app.e0025768` 41G · `vendor.ai.ruide01` 24G …；**我方 `<7.2G`**）。
-  - 下一步：**定 `/home` 处置 + 起始点 → 修 `WAITING` → 重启 loop**（见 §4）。
-- **2026-10-04（RUN_ID 1 环境摸底 → 发现两处致命问题）** —— 经 ops 中继在 36.15（`hfeg0tedaap02`）跑环境摸底，结果见 §3.1 / `run/ops/outbox.md`：
-  - 🔴 **`/home` 99%（仅 6G 可用）→ infra 前置校验 FAIL**（旧 S1 停摆老根因复现）。
-  - 🔴 **`zhulong_loop.sh` 静默失效**：在跑的版本 cline 带非法 `-b` → `unknown option '-b'` + `exit 0` → **agent 从未被唤醒**（"已启动"实为"空转"）。
-  - ⚠️ relay 疑似两个进程；`MEMORY_ZHULONG.md` 顶部 `WAITING: 0` 与表 `1` 不一致（loop 读顶部 → 60s 空转）；`.env` `PROXY_PORTS=8650-8654` 与任务书口径不符；四端口 8664/8665/8653/8669 实测 OPEN。
-  - 处置建议见 §3.1 末尾（清 `/home` → 修 `WAITING` → `git pull`+重启 loop → 查 relay → 定起始点）。
-- **2026-10-04** —— **建立 ZhuLong 运维（operator）层**（对齐 BaiZe）：新建 `doc/ZhuLong_DAC2027/MEMORY.md`（本文件）+ `doc/ZhuLong_DAC2027/daily-memories/`，并在 `run/AGENTS.md` 登记「谁在跑」总表、在 `README.md` 补 `§0.2 运维层`。背景：此前运维侧**没有记忆**，多线（合并线 + 3 条 legacy）状态散落在任务书/报告/各 `MEMORY*.md` 里，易数错。
-- **2026-10-04（agent 线侧，供我参考）** —— 建立**合并任务书 + 单 loop + ops 中继**：`run/ZHULONG_TASK.md`（4 阶段 15 臂 75 轮）· `run/zhulong_loop.sh` · `run/zhulong_ops_relay.sh` + `run/ops/`。任务书记「冻结令已解除、编排模型切 `glm-5.2`」；旧报告 `report_10_04.html` 仍记「环境冻结中（36.15 旧 agent 冲突）」——**以任务书为准**，冲突待 §4 拍板处置。
