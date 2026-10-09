@@ -545,6 +545,6 @@ pretraining, not comparable"**.
 | E1 training (187,101 steps) | ✅ **DONE** — 187101/187101 steps, loss=1.3036, 6060 img/s, no collapse, vision.pt=487MB (completed 04:22 Oct 9) |
 | E1 evaluation (Protocol B, 3 seeds) | ✅ **DONE** — **lp = 29.35 ± 0.00%** (seeds 0/1/2: 29.34/29.35/29.35) |
 | E1 evaluation (Protocol A) | ❌ Failed (sympy 1.5.1) → 🟧 **Re-run queued** in e2_post_watcher.sh (sympy 1.14.0 now installed) |
-| E2 training (187,101 steps) | 🟧 **RUNNING** — PID 764635, step 150,160/187101 (80.2%), avg ~3500 img/s (NFS easing, ms/iter~149), loss_ema=2.09 (decreasing from ~5.0), C1=0.3968 C2_gap=+0.1138 C4=OK, 15 ckpts (10k–150k), ETA ~17:20 Oct 9 |
+| E2 training (187,101 steps) | 🟧 **RUNNING** — PID 764635, step 166,740/187101 (89.1%), avg ~2300 img/s (NFS variable, ms/iter~220), loss_ema=1.92 (decreasing from ~5.0), C1=0.4365 C2_gap=+0.1088 C4=OK, 16 ckpts (10k–160k), ETA ~18:10 Oct 9 |
 | E2 evaluation (Protocol B+A) | ⏸ Auto-eval by `e2` mode after training; safety-net watcher also scheduled |
 | Report (HTML) | ⏸ Pending — after E2 eval |
