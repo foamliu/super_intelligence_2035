@@ -7731,11 +7731,32 @@
     "harness": "codex",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/core/basic.py\n\tsympy/plotting/plot.py\nPlease commit your changes or stash them before you switch branches.\nAbo"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/core/basic.py\n\tsympy/plotting/plot.py\nPlease commit your changes or stash them before you switch branches.\nAbo",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 534.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-14396.json",
+      "stdout_tail": "alse wall=534.5s ==\n[stderr tail] ...2026-10-09T13:35:25.959723Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 2107 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-14396.json\n[run_single] cleanup: git reset --hard f35ad6411f86a15dd78db39c29d1e5291f66f9b5\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 44,
+        "p2p_total": 44
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "sympy__sympy-14774",
@@ -7743,11 +7764,32 @@
     "harness": "codex",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/core/basic.py\n\tsympy/core/function.py\n\tsympy/core/power.py\n\tsympy/plotting/plot.py\nPlease commit your changes "
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/core/basic.py\n\tsympy/core/function.py\n\tsympy/core/power.py\n\tsympy/plotting/plot.py\nPlease commit your changes ",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 105.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-14774.json",
+      "stdout_tail": "False wall=105.0s ==\n[stderr tail] ...2026-10-09T13:45:56.526350Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 584 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-14774.json\n[run_single] cleanup: git reset --hard 8fc63c2d71752389a44367b8ef4aba8a91af6a45\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 114,
+        "p2p_total": 114
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "sympy__sympy-14817",
@@ -7755,11 +7797,32 @@
     "harness": "codex",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/core/basic.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/core/basic.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 1800.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-14817.json",
+      "stdout_tail": "ue wall=1800.0s ==\n[stderr tail] ...b'2026-10-09T13:48:36.421218Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-14817.json\n[run_single] cleanup: git reset --hard 0dbdc0ea83d339936da175f8c3a97d0d6bafb9f8\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 111,
+        "p2p_total": 111
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "sympy__sympy-15011",
@@ -7767,11 +7830,32 @@
     "harness": "codex",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/assumptions/sathandlers.py\n\tsympy/core/basic.py\n\tsympy/core/containers.py\n\tsympy/plotting/plot.py\n\tsympy/print"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/assumptions/sathandlers.py\n\tsympy/core/basic.py\n\tsympy/core/containers.py\n\tsympy/plotting/plot.py\n\tsympy/print",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 1800.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-15011.json",
+      "stdout_tail": "ue wall=1800.0s ==\n[stderr tail] ...b'2026-10-09T14:19:39.268571Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-15011.json\n[run_single] cleanup: git reset --hard b7c5ba2bf3ffd5cf453b25af7c8ddd9a639800cb\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 53,
+        "p2p_total": 53
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "sympy__sympy-15308",
@@ -7779,11 +7863,32 @@
     "harness": "codex",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git fetch failed: fatal: unable to access 'https://github.com/sympy/sympy/': Received HTTP code 503 from proxy after CONNECT\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git fetch failed: fatal: unable to access 'https://github.com/sympy/sympy/': Received HTTP code 503 from proxy after CONNECT\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 664.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-15308.json",
+      "stdout_tail": "alse wall=664.5s ==\n[stderr tail] ...2026-10-09T14:51:13.107078Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 1359 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-15308.json\n[run_single] cleanup: git reset --hard fb59d703e6863ed803c98177b59197b5513332e9\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 120,
+        "p2p_total": 120
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "sympy__sympy-15345",
@@ -7791,11 +7896,32 @@
     "harness": "codex",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git fetch failed: fatal: unable to access 'https://github.com/sympy/sympy/': Received HTTP code 503 from proxy after CONNECT\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git fetch failed: fatal: unable to access 'https://github.com/sympy/sympy/': Received HTTP code 503 from proxy after CONNECT\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 436.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-15345.json",
+      "stdout_tail": "alse wall=436.7s ==\n[stderr tail] ...2026-10-09T15:03:04.493402Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 1615 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-15345.json\n[run_single] cleanup: git reset --hard 9ef28fba5b4d6d0168237c9c005a550e6dc27d81\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 8,
+        "p2p_total": 8
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "sympy__sympy-15346",
