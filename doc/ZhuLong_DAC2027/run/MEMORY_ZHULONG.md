@@ -8,10 +8,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:--|:--|
-| STAGE | `C1`（Phase B 4/4✅；C1 pure_llm/rag/wo_retrieval 5/5✅；**full 锚点 r1=88.0%✅保留 r2=59.5%❌作废(39 timeouts,需复测) r3=63.3%❌作废(需复测) r4 运行中(b2026_1009_094504,新key e13f4f37)**）|
-| CONFIG | `full`（C1 第4臂=锚点；r1=88.0%✅保留 r2=59.5%❌作废(39 timeouts)→复测 r3=63.3%❌作废→复测 **r4 运行中** b2026_1009_094504 PID 3302534 新key e13f4f37+/cloud/v1 pro-fp4 已恢复HTTP 200）|
+| STAGE | `C1`（Phase B 4/4✅；C1 pure_llm/rag/wo_retrieval 5/5✅；**full 锚点 r1=88.0%✅保留 r2=59.5%❌作废(39 timeouts,需复测) r3=63.3%❌作废(需复测) r4❌作废(沙盒坏了,运维已kill,待命)**）|
+| CONFIG | `full`（C1 第4臂=锚点；r1=88.0%✅保留 r2=59.5%❌作废(39 timeouts)→复测 r3=63.3%❌作废→复测 **r4❌作废(沙盒坏了,运维已kill ops RUN_ID 25,待命)** b2026_1009_094504 PID 3302534 新key e13f4f37+/cloud/v1 pro-fp4 已恢复HTTP 200）|
 | ROUND | 4 |
-| PHASE | `running`（C1.full r4 **grading阶段**：run_eval.py child 611439 沙箱执行140脚本中(~2h22m, 14:41起算); generation已完成 140ok/12fail/**6 timeout**(≤10✅,待PASS_RATE≥75%判定)。0 Forbidden✅ infra /home10G✅ 沙箱8650-8654全404✅ loop3579323(proxy✅) ops✅ git clean✅ app.log活跃(16:35)。**下轮第一件事**：pgrep→running=巡检退出; done→收割r4(grep pass/PASS_RATE+timeout数)→判据(timeout≤10且≥75%)→有效→retest r2(/tmp/ABL_full_r2_retest.log)→r3(/tmp/ABL_full_r3_retest.log)→r5→mean±std([r1=88.0,r2',r3',r4,r5])→just_finished→回填5表→C2; 作废→WAITING=1复检）|
+| PHASE | `standby`（🛑沙盒坏了，r4 已被运维 kill[ops RUN_ID 25 kill PID 3302534+run_eval.py 子进程]，待命等运维通知「沙盒已修复·可重跑 r4」。🚫不启动任何 eval。自检：pgrep'^bash scripts/run_cline_script'=无输出✅(r4已kill确认); infra /home9.4G✅ 沙箱8650-8654全404✅ loop3579323(proxy✅) ops✅(last_run_id=26) git clean✅。**下轮第一件事**：①检查运维指令区是否有「沙盒已修复·可重跑 r4」通知→有则重跑 r4(四override: EVAL_FW_DIR+CLI_DATA_DIR=.cline_prof4_eval/data+PYTHON+https_proxy, 新key e13f4f37+/cloud/v1 pro-fp4, -p 8 -n 全量158题); 无则继续 WAITING=1 待命。②pgrep'^bash scripts/run_cline_script'→无输出=确认r4已kill✅）|
 | WAITING | 1 |
 | ERROR_COUNT | 2（C1.full r2 首启缺四override→158 Forbidden=config失败非infra,已重跑恢复[但该r2=59.5%现因39 timeouts被运维2026-10-09三判❌作废,需复测]; r4 连续2次infra作废(pro-fp4 403额度耗尽)非eval失败不计ERROR_COUNT。r2/r3 作废属服务不稳定非config失败,不计ERROR_COUNT）|
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
@@ -28,7 +28,7 @@ WAITING: 1
 | C1 | pure_llm | 5/5 ✅ | ✅ 10.5±1.9%（复用 legacy：[8.2,9.5,10.1,11.4,13.3]）|
 | C1 | rag | 5/5 ✅ | **71.8±2.5%** [70.3,72.2,69.6,70.9,75.9]（r5=75.9% 120/158 batch 2026_1007_202448, 151 ok/7 fail/0 exec_err, 0 Forbidden ✅；legacy 68.2±7.4% 作废→本线重跑）|
 | C1 | wo_retrieval | 5/5 ✅ | **81.0±4.5%** [74.1,86.1,81.6,79.7,83.5]（r1=74.1% 复用 legacy；r2=86.1% 136/158 b2026_1007_221959；r3=81.6% 129/158 b2026_1008_015818；r4=79.7% 126/158 b2026_1008_0507；r5=83.5% 132/158 b2026_1008_081817 147ok/8fail/0exec_err 0 Forbidden✅ 全程）|
-| C1 | full（锚点）| r1✅+r2❌作废+r3❌作废+r4 grading中 | r1=88.0% 139/158 b2026_1008_114702 150ok/7fail/0exec_err 0 Forbidden✅**保留**; r2=59.5% 94/158 b2026_1008_150357 **❌作废(39 timeouts→r2-retest)**; r3=63.3% 100/158 b2026_1008_222842 **❌作废(→r3-retest)**; r4 b2026_1009_094504 PID 3302534 **grading阶段**(gen 140ok/12fail/6timeout, run_eval.py执行中) 0 Forbidden✅(判据:timeout≤10且≥75%) |
+| C1 | full（锚点）| r1✅+r2❌作废+r3❌作废+r4❌作废(沙盒坏) | r1=88.0% 139/158 b2026_1008_114702 150ok/7fail/0exec_err 0 Forbidden✅**保留**; r2=59.5% 94/158 b2026_1008_150357 **❌作废(39 timeouts→r2-retest)**; r3=63.3% 100/158 b2026_1008_222842 **❌作废(→r3-retest)**; r4 b2026_1009_094504 PID 3302534 **❌作废（沙盒坏了，运维已 kill ops RUN_ID 25，待命）**(gen 140ok/12fail/6timeout 未完成 grading) |
 | C2 | phi_k10 | 1-5/5 | ⬜（探路 75.3%）|
 | C2 | phi_k3 | 1-5/5 | ⬜（探路 69.0%）|
 | C2 | phi_k1 | 1-5/5 | ⬜（探路 60.8%）|
@@ -48,7 +48,7 @@ WAITING: 1
 | C1.pure_llm | 10.5 ± 1.9% | [8.2, 9.5, 10.1, 11.4, 13.3]（复用 legacy）|
 | C1.wo_retrieval | **81.0 ± 4.5%** | [74.1, 86.1, 81.6, 79.7, 83.5]（r1=74.1% 复用 legacy；r2=86.1% 136/158 b2026_1007_221959 149ok/4fail/0exec_err 0 Forbidden✅；r3=81.6% 129/158 b2026_1008_015818 146ok/7fail/0exec_err 0 Forbidden✅；r4=79.7% 126/158 b2026_1008_0507 145ok/10fail/0exec_err 0 Forbidden✅；r5=83.5% 132/158 b2026_1008_081817 147ok/8fail/0exec_err 0 Forbidden✅；旧 r2 作废 0/158 pro-fp4 403 不计数）|
 | C1.rag | **71.8 ± 2.5%** | [70.3, 72.2, 69.6, 70.9, 75.9]（r1=70.3% 111/158 b2026_1007_112101；r2=72.2% 114/158 b2026_1007_131535；r3=69.6% 110/158 b2026_1007_163343；r4=70.9% 112/158 b2026_1007_183007；r5=75.9% 120/158 b2026_1007_202448, 151 ok/7 fail/0 exec_err, 0 Forbidden ✅ 全程；旧 r3 作废 b2026_1007_151301 0/158 不计数；legacy 68.2±7.4% 作废）|
-| C1.full（锚点）| ⍌ 4/5 进行中 | r1=88.0%（139/158, 150 ok/7 fail/0 exec_err, 0 Forbidden ✅, batch b2026_1008_114702）；r2=59.5%（94/158, 140 ok/14 fail/0 exec_err, 0 Forbidden ✅, ⚠️39 timeouts, batch b2026_1008_150357）；r3=63.3%（100/158, 150 ok/5 fail/0 exec_err, 0 Forbidden ✅, batch b2026_1008_222842）；r4 运行中 b2026_1009_094504 PID 3302534（新key e13f4f37+/cloud/v1 re-auth后重启, 0 Forbidden ✅）|
+| C1.full（锚点）| ⍌ 4/5 进行中 | r1=88.0%（139/158, 150 ok/7 fail/0 exec_err, 0 Forbidden ✅, batch b2026_1008_114702）；r2=59.5%（94/158, 140 ok/14 fail/0 exec_err, 0 Forbidden ✅, ⚠️39 timeouts, batch b2026_1008_150357）；r3=63.3%（100/158, 150 ok/5 fail/0 exec_err, 0 Forbidden ✅, batch b2026_1008_222842）；r4 ❌作废（沙盒坏了，运维已 kill PID 3302534 ops RUN_ID 25，待命；gen 140ok/12fail/6timeout 未完成 grading；新key e13f4f37+/cloud/v1 re-auth后启动, 0 Forbidden ✅）|
 
 ## 操作流水
 - [2026-10-09 01:28] [⏩ 已滚出] ✅ C1.full r3 收割 63.3%→r4 启动（四 override PID 649691 batch 2026_1009_012854）+ proxy/ops/legacy自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§01:28，rolled-from-MEMORY 2026-10-09 07:45）。
@@ -262,6 +262,7 @@ WAITING: 1
 
 - [2026-10-09 16:29] [⏩ 已滚出] 🩾 C1.full r4 巡检#11（仍在跑·~6h44m·grading阶段·run_eval.py 611439 etime 1h48m 沙箱执行140脚本中）+ 全自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§16:29）。
 
-- [2026-10-09 17:03] [🩾 C1.full r4 巡检#12（仍在跑·~7h19m·**grading阶段**·run_eval.py 611439 etime 2h22m 沙箱执行140脚本中）+ 全自检通过] pgrep → PID 3302534 仍在跑(etime 07:18:46, State=Ss, ppid=1✅); 子进程 611439=run_eval.py(etime 02:22:17, State=S); log 25.3MB last write 14:41:34(grading阶段正常无新输出, run_eval.py stdout缓冲); app.log 171MB last write 16:35(沙箱活跃✅); grep PASS_RATE/评估结果汇总=0 尚无最终结果。generation: 140ok/12fail/6timeout(6≤10✅,待PASS_RATE≥75%)。r4仍在跑未收割→本轮=巡检,不动作,不打断r4。自检：loop 3579323(ppid=1) environ含 https_proxy=http://172.19.92.23:13128 ✅; 沙箱8650-8654全404✅ /home 10G(98%)✅(≥8G) git `## main...origin/main` clean✅ ops relay alive✅。记忆维护：MEMORY 34746B>32KB→滚出巡检#11(16:29)为1行指针(原文在daily §16:29)。状态：STAGE=C1/CONFIG=full/ROUND=4/PHASE=running/WAITING=1/ERROR_COUNT=2。下轮第一件事(不变)：pgrep→有输出=巡检退出; 无输出→收割r4→判据(timeout≤10且≥75%)→有效→retest r2(/tmp/ABL_full_r2_retest.log)→r3(/tmp/ABL_full_r3_retest.log)→r5→mean±std([r1=88.0,r2',r3',r4,r5])→just_finished→回填5表→C2。
+- [2026-10-09 17:38] [🛑 PHASE=standby] 收到运维 2026-10-09(四)指令「沙盒坏了，r4 已 kill，待命」。pgrep'^bash scripts/run_cline_script'=无输出✅(r4 已被运维 ops RUN_ID 25 kill 确认)。🚫未启动任何 eval。更新 MEMORY：PHASE→standby, WAITING=1, C1.full r4→❌作废(沙盒坏了,运维已kill,待命)。自检：loop 3579323(ppid=1,proxy✅) 沙箱8650-8654全404✅ /home9.4G✅ ops✅(last_run_id=26) git clean✅。下轮第一件事：查运维指令区有无「沙盒已修复·可重跑r4」→有则重跑r4(四override+新key e13f4f37+/cloud/v1 pro-fp4); 无则继续 WAITING=1 待命。详情见 daily-memories/2026-10-09.md（§17:38）。
+- [2026-10-09 17:03] [⏩ 已滚出] 🩾 C1.full r4 巡检#12（仍在跑·~7h19m·grading阶段）+ 全自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§17:03，rolled-from-MEMORY 2026-10-09 17:38）。
 
 
