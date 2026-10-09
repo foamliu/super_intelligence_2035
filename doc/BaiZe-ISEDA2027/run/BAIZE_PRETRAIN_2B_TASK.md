@@ -1,6 +1,29 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维调整 · 2026-10-09（🔁 只用 `.29` + 改序：**① 对比基准 → ② Muon vs AdamW**；撤下 T1/T2/T3）· 用户直令 · **最高优先（覆盖下方 ⚗️Muon 与 🌙夜班 两块）**
+
+> **用户令**：「pretrain 的实验都安排在 `.29`，`.12` 我会安排 vision 的实验。实验次序调一下：**1) 参数匹配对比基准；2) Muon vs AdamW（各自 1000 步，GBS=16，seq=4096，对比 loss）**。」
+
+**① 机器改动**
+- **所有 pretrain 实验一律在 `.29`**。🚫 **不要去 `.12`**（`.12` 归 vision）。
+- ⇒ 撤销下方 ⚗️ 块里「占 `.12` + 登记 `GPU12_ALLOC.md`」的要求。
+
+**② 次序**：**① 参数匹配对比基准**（`report_pretrain_baize_vs_dense_fair_zh.html`）**→ ② Muon vs AdamW**。
+
+**③ Muon vs AdamW（用户给定口径，取代 ⚗️ 块的 Step 1）**
+- **两臂各 1000 步 · GBS=16 · seq=4096 · bf16 · 同 seed**；**对比 loss 曲线**（附 grad-norm / 吞吐 / 显存）。
+- 仍**先做接线三步核查**：本地 `megatron-core 0.16.1` 是否含 `muon.py`/`emerging_optimizers` → 缺则 `pip install emerging_optimizers`（环境隔离）→ `pretrain_launcher.py`/`recipe.py` 透传 `optimizer=muon`/`dist_muon`。**参数分组：2D 矩阵→Muon；1D/norm/embed/lm_head/SSM 标量→AdamW**。
+- 先跑通 smoke（1 卡小步）再铺两臂；跑不通即如实报「卡在哪」，不熬夜 debug。
+
+**④ 撤下「其它实验」**（用户：「其它实验有价值吗，我还没看出来」）
+- 🚫 **T1 长上下文适配 / T2 等参 Dense 训练侧 / T3 R3 配比迁移 A/B 一律不做**，**留作 backlog**（理由：T3 landscape 平坦→大概率 null；T2 属论文润色；T1 服务 Stage (ii)、宜用 P-8 真基座）。
+- ⇒ 撤销下方 🌙 块的全部内容。
+
+**纪律**：🚫 不启动 P-8 · 🚫 不 kill watchdog · 分阶段 commit（`pretrain 对比:` / `pretrain Muon:`）。
+
+---
+
 ### 🆕 运维更正 · 2026-10-09（✅ **NeMo/Megatron 支持 Muon** —— 更正上条「未接入」的旧判断）· 最高优先
 
 > **更正**：上条「Muon 未接入 / 实现风险」引的是 `run/EXPERIMENTS.md` 里 **S3-03 的旧结论（已过时）**。**查官方原文后**（2026-10-09）：
@@ -12,41 +35,11 @@
 
 ---
 
-### 🆕 运维指令 · 2026-10-09（⚗️ 新实验：**Muon vs AdamW** · 用 `.12` 空档）· 用户直令 · 高优先
-
-> 用户问「还想试验 Muon vs Adam 对比，有空档吗」。**空档 = `.12`**：`.29` 今晚已满（对比基准 + 夜班 T1/T2/T3）；**`.12` 在 vision E2 评测结束后（~21:30–22:30 Oct9）空出 8×H100**。
-> ⚠️ **前置：Muon 未接入**（S3-03 当年因「实现风险」取消；脚本全 `--optimizer adam`；launcher 无 optimizer flag）⇒ 本任务 = **探针 → A/B**。
-
-**Step 0 可行性探针（≤1 GPU·h）**：核 `megatron-core 0.16.1` 是否支持 Muon（`--optimizer muon` / `dist_muon` + `--muon-*`）+ `pretrain_launcher.py` 能否透传 + **hybrid/Mamba provider 下能否跑**；小步 smoke（**2D 矩阵→Muon；1D/norm/embed/lm_head/SSM 标量→AdamW**）。**跑不通 ⇒ 如实报「不支持 + 卡在哪」即停**（🚫 不熬夜 debug）。
-
-**Step 1 A/B（2 臂）**：**AdamW**（基线 `--lr 1e-3` WSD）**vs Muon**（先 **3 点 LR 迷你扫描**定 Muon LR，避免"LR 未调=假负"）；**其余全同**（8 卡 / seq4096 / GBS1024 / 5000 步 / bf16 / seed1234），各 ≈4 GPU·h ⇒ **≈8 GPU·h**。**判据**：Muon `loss@5000 ≤ AdamW` 且 **Δloss > 0.07**（2σ；P-2 实测 σ=0.035）；报 grad-norm / 吞吐 / 显存。**诚实交代**：5000 步是**短地平线早期快照**（与全项目口径一致），非收敛结论。
-
-**纪律**：占 `.12` 须先在 `run/GPU12_ALLOC.md` 登记一行（vision 交还后）；🚫 不启动 P-8 · 🚫 不 kill watchdog/vision 进程 · 分阶段 commit（前缀 `pretrain Muon:`）。
+> 📦 **§运维指令·2026-10-09（⚗️ Muon vs AdamW · 原 `.12` 方案）已被上方「🔁 运维调整」覆盖** → 原文见 `run/ARCHIVE_OPERATOR_PRETRAIN.md`（2026-10-09 搬运，**原文未改**）。
 
 ---
 
-### 🆕 运维指令 · 2026-10-09（🌙 夜班填空：用 `.29` 剩余卡跑高价值实验 · **不含 P-8**）· 用户直令 · 最高优先
-
-> **用户令**：「20:45→明早 08:30 这个[对比]实验填不满 `.29` 的卡，还有其他高价值实验吗？」
-> **窗口**：~11.75h ≈ 94 GPU·h；对比基准占 2–4 卡 ⇒ **剩约 4–6 卡空 ~11h**。⚠️ **不启动 P-8、不动暂缓令**（P-8 彩排另行等用户点头）。
-
-**第 0 步**：先查对比基准占哪几张卡 → **只用剩余卡**；卡不足按 **T1→T2→T3 排队**，对比基准一释放即接力。**每项先报「占卡 + ETA」再跑。**
-
-**T1（先做 · 最便宜）· 长上下文适配 4096→8192 阶梯续训**
-- 从 `p3_hybrid/iter_0005000` HF ckpt 续训到 **seq=8192**（按 B1：`max_pos→131072` + `rope_theta 5e5/1e6` ABF，**每次只改一个变量**）。
-- 成本 **~5–15 GPU·h**；判据：**8 常识集降幅 <10%** 且 loss 平滑（README 风险 #3 阈值）。
-- 对齐：**Stage (ii) SFT/RL 硬前置** / 论文 §4。**这是最该先做的**。
-
-**T2（便宜）· 参数匹配 Dense 的「训练侧」对比**
-- 用今晚刚配的**等参 Dense Llama（2,228,897,792）**，**同配方**跑 **5000 步**，与 `p3_hybrid` 的 5000 步 loss 对齐比。
-- 成本 **~4 GPU·h**；判据：hybrid loss ≤ 等参 dense（把 R2 的"等参优势"从 2.512B 修正到**真等参**）。
-
-**T3（填空余量）· R3 配比迁移 A/B**
-- 全模型 2.22B：R3 best #8 **vs** 先验 88:8:4，各 **2.5B token**（~600 步）。
-- 成本 **~44 GPU·h**（4 卡 ~11h）；判据：R3 ≤ 先验（可迁移）/ |Δloss|<0.03（平坦）/ 先验胜（**负面发现**）。
-- 对齐：论文 §4 data mixing / `DATA_MIX_RECIPE §9.7`。
-
-**纪律**：🚫 不启动 P-8 · 🚫 不 kill watchdog · 🚫 不打乱对比基准的卡 · 分阶段 commit（前缀 `pretrain 夜班: …`）· 收尾按「收尾铁律」。
+> 📦 **§运维指令·2026-10-09（🌙 夜班填空 T1/T2/T3）已被上方「🔁 运维调整」**取消**（用户看不出价值）** → 原文见 `run/ARCHIVE_OPERATOR_PRETRAIN.md`（2026-10-09 搬运，**原文未改**）。backlog：T1 长上下文 / T2 等参 Dense 训练侧 / T3 R3 配比迁移。
 
 ---
 

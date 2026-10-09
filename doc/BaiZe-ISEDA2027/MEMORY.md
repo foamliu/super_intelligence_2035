@@ -4,13 +4,13 @@
 ## 🆕 最近操作（2026-10-09）
 
 ### 💡🔎📊🌙 pretrain 五连（2026-10-09）
-- **3 idea** ✅ · **公平盘点** → 待回报 · **📊 补测/中文对比** → **✅ GO** · **🌙 夜班填空** · **⚗️ Muon vs AdamW** → 已下发。
+- **3 idea** ✅ · **公平盘点** 待回报 · **📊 对比基准** ✅ GO · **🌙 夜班** ❌撤销 · **⚗️ Muon** 已下发 · **🔁 调整**（只用 `.29`/改序）。
 
 ### 📝 给 data 下发指令 ③（停②重头来 + 全量分词 + 放开并发）
 - **用户直令（2026-10-09③）**：Code/Math 停掉重头来（每个目录全切）· Ultra-FineWeb-L3 也加入分词 · 224 核别只开 8 并发（**放开**）· 核实 Ultra-FineWeb 197GB→.bin 2.0TB 是否合理 · **不要创造新名字**（只按原始 6 目录）。
 - **已下发** `run/BAIZE_DATA_TASK.md`（10-09③ 覆盖②）：三目录全量分词（Ultra-FineWeb-L3 1764/1.8TB + UltraData-Code 1121/1.2TB + UltraData-Math 1823/515GB）· 并发 20–50/源 · 心跳按 6 目录报盘点。
 
-### 🔬 pretrain（2026-10-09）：T3 ✅ → **P-8 最优 = `TP1·MBS2·bf16` 249K**；**唯一阻塞 = 暂缓令**。今晚跑：对比基准、夜班 T1/T2/T3、⚗️Muon（`.12`）。
+### 🔬 pretrain（2026-10-09）：T3 ✅ → **P-8 最优 = `TP1·MBS2·bf16` 249K**；**唯一阻塞 = 暂缓令**。今晚跑：① 对比基准 → ② Muon vs AdamW（`.29`）。
 
 ### 💬 vision / harness 运维问答已收齐
 - **vision** ✅ 答复 2026-10-08③（未验证假设 / Stage iv 前置 / GPU 空窗优先级 / 论文补充）· **harness** ✅ 答复 2026-10-08④（横评深挖 / BaiZe 接入前置 / 扩规模 / 多 backbone / 论文补充）。
@@ -79,8 +79,8 @@ WAITING: 0
 ## 4. 待拍板 / 我欠的答复
 
 - [~] 🆕 **BaiZe-Hybrid（参数匹配 Dense）中文对比报告**：✅ #252 门控已交付 → **GO 放行**（修 warmup 归因 + ctx×2 到 hybrid OOM）→ 出 `..._fair_zh.html`。
-- [ ] 🆕 **夜班填空（2026-10-09）**：T1 长上下文(4096→8192) / T2 等参 Dense 训练侧 / T3 R3 配比迁移 A/B —— `.29` 剩余卡。
-- [ ] 🆕 **Muon vs AdamW**：`.12` 空档（~22:30）；**已更正：NeMo/Megatron 支持 Muon** ⇒ 三步核查→A/B ~8 GPU·h。
+- [x] ~~夜班填空 T1/T2/T3~~ **已撤销**（用户看不出价值；留 backlog）。
+- [ ] 🆕 **Muon vs AdamW**：**`.29`**（非 `.12`）；**1000 步 / GBS=16 / seq4096 / 比 loss**；先接线三步核查（NeMo 支持 Muon）。
 - [ ] 🆕 **BaiZe vs MiniCPM5「公平对比」盘点**：等 pretrain 回报 C1–C6 + 权威版本。
 - [x] **pretrain 3 idea 征询（2026-10-09）**：✅ 已回报 #251；待拍板「撤暂缓令 / 先做哪个」。
 - [ ] **P-9 结果** → 定 **P-8 的 seq(4096/8192) / MBS / 精度(bf16/FP8)**（含 16384 是否 OOM 的长上下文边界）。
@@ -200,11 +200,13 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
-- **⚗️ 2026-10-09（Muon vs AdamW 下发 + 更正）**——空档=`.12`。**已更正：NeMo/Megatron 支持 Muon**（`core.optimizer.muon`/`emerging_optimizers`；MBridge 有 Muon recipe；blog 2026-04 实测）⇒ 三步核查→A/B。
+- **🔁 2026-10-09（改序+改机+砍实验）**——用户令：pretrain 全在 `.29`（`.12` 归 vision）；次序 ① 对比基准 → ② Muon vs AdamW（**1000 步/GBS16/seq4096 比 loss**）；**T1/T2/T3 撤下**（价值存疑，留 backlog）。
+
+- **⚗️ 2026-10-09（Muon 下发 + 更正）**——**NeMo/Megatron 支持 Muon**（`core.optimizer.muon`/`emerging_optimizers`；MBridge 有 Muon recipe）⇒ 非从零实现。
 
 - **🌙 2026-10-09（夜班填空：`.29` 剩余卡跑 T1/T2/T3；不含 P-8）**——T1 长上下文适配 4096→8192（Stage ii 前置）/ T2 等参 Dense 训练侧 / T3 R3 配比迁移 A/B。
 
-- **✅ 2026-10-09（GO：#252 门控通过）**——Dense L=36→2,228,897,792(+0.389%)·ETA 6-10h。令修：① warmup 归因用同-bs 冷/热对照 ② ctx×2 到 hybrid 不可服务。
+- **✅ 2026-10-09（GO：#252）**——Dense L=36→2,228,897,792(+0.389%)。令修：① warmup 归因用同-bs 冷/热对照 ② ctx×2 到 hybrid 不可服务。
 
 - **💡 2026-10-09（征询 pretrain 的 3 个实验 idea）** 已下发 `BAIZE_PRETRAIN_2B_TASK.md` 顶部块（纯写作零 GPU）；**已回报 #251**（3 idea + 建议立即起 P-8）——详见 §🆕 与 `daily-memories/2026-10-09.md`。
 
