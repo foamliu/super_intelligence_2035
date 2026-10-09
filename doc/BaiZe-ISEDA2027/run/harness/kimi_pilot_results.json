@@ -24755,5 +24755,170 @@
       }
     },
     "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-15308",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 140.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-15308.json",
+      "stdout_tail": "rixSymbol\n[\u2713] Add tests for the fix\n\u001b[0m\n\u001b[0m$ \u001b[0mpython -c \"\nfrom sympy import *\nfrom sympy.matrices import MatrixSymbol, Trace\nX = MatrixSymbol('X', 2, 2)\nY = MatrixSymbol('Y', 2, 2)\nprint(repr(latex(Trace(X + Y))))\n\"\n'\\\\operatorname{tr}\\\\left(X + Y\\\\right)'\n\u001b[0m\n\n[run_single] model_patch: 1264 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-15308.json\n[run_single] cleanup: git reset --hard fb59d703e6863ed803c98177b59197b5513332e9\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 120,
+        "p2p_total": 120
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-15345",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 77.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-15345.json",
+      "stdout_tail": "======================= 12 passed in 0.30s ==============================\n\u001b[0m\n\u001b[0m$ \u001b[0mcd /dev/shm/harness_work/workdirs/sympy_sympy && python -c \"\nfrom sympy import symbols, mathematica_code, Max\nx = symbols('x')\nprint(mathematica_code(Max(x,2)))\n\"\nMax[2, x]\n\u001b[0m\n\n[run_single] model_patch: 1448 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-15345.json\n[run_single] cleanup: git reset --hard 9ef28fba5b4d6d0168237c9c005a550e6dc27d81\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 8,
+        "p2p_total": 8
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sphinx-doc__sphinx-10325",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sphinx-doc__sphinx-10325"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 1398.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_sphinx-doc__sphinx-10325.json",
+      "stdout_tail": "__sphinx-10325\n[run_single] base_commit=7bdc11e87c7d86dcc2a087eccb7a7c129a473415\n[run_single] ps_len=1132\n[run_single] git reset --hard 7bdc11e87c7d86dcc2a087eccb7a7c129a473415\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=1398.4s ==\n[run_single] model_patch: 3012 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_sphinx-doc__sphinx-10325.json\n[run_single] cleanup: git reset --hard 7bdc11e87c7d86dcc2a087eccb7a7c129a473415\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 5
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-15346",
+    "repo": "sympy/sympy",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 314.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-15346.json",
+      "stdout_tail": "      [100%]\n24 passed, 1 xfailed in 9.24s\n\u001b[0m\n\u001b[0m$ \u001b[0mpython -m pytest sympy/simplify/tests/test_fu.py sympy/simplify/tests/test_simplify.py -x -q\n............................x........................x................   [100%]\n68 passed, 2 xfailed in 10.09s\n\u001b[0m\n\n[run_single] model_patch: 2065 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_sympy__sympy-15346.json\n[run_single] cleanup: git reset --hard 9ef28fba5b4d6d0168237c9c005a550e6dc27d81\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 22,
+        "p2p_total": 22
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sphinx-doc__sphinx-10451",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sphinx-doc__sphinx-10325"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 885.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_sphinx-doc__sphinx-10451.json",
+      "stdout_tail": "c__sphinx-10451\n[run_single] base_commit=195e911f1dab04b8ddeacbe04b7d214aaf81bb0b\n[run_single] ps_len=1662\n[run_single] git reset --hard 195e911f1dab04b8ddeacbe04b7d214aaf81bb0b\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=885.1s ==\n[run_single] model_patch: 2452 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_sphinx-doc__sphinx-10451.json\n[run_single] cleanup: git reset --hard 195e911f1dab04b8ddeacbe04b7d214aaf81bb0b\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 0,
+        "p2p_total": 80
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]

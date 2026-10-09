@@ -5,10 +5,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A ROUND-2 7×100 RUNNING 🔄 (2 procs alive) + 口径与并发 MONITORING: quota_blocked=0 ALL → NO parallel pollution ✅ + ⑦ deliverables ✅
-已完成:       R206 SWEBENCH_COMPARE.html refreshed (57393B, 677/700, 189 resolved) ✅ · R205 · R204 · R203 · R202 · R201 · R200 · R199 · R188 口径与并发 section ✅ · trace report in doc root ✅ · Round-2 restarted (5 parallel) ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
-当前动作:     R206: 2 procs ALIVE (opencode on sympy-15011, hermes on sphinx-10325). 5 harnesses DONE: cline 100/100✅(26.0%), codex 100/100✅(34.0%), pi 100/100✅(27.0%), dsh 100/100✅(22.0%), claude-code 100/100✅(18.0%). 2 running: opencode 96/100(33.3%, 4 rem), hermes 81/100(37.0% leading, 19 rem). SWEBENCH_COMPARE.html refreshed (57393B, 677/700, 189 resolved). quota_blocked=0 ALL ✅. ⑦ deliverables verified ✅.
-下一步:       Continue monitoring Round-2; refresh SWEBENCH_COMPARE.html when harnesses complete. ETA: opencode 4 rem × ~600s ≈ 40min → ~08:20; hermes 19 rem × ~660s ≈ 3.5h → ~11:10. Final 7×100 table when all done.
+PHASE:        H-A ROUND-2 7×100 MONITORING (1 proc alive: hermes) + ⚠️ WORKDIR-BLOCKED DISCOVERY (88 blocked, all R2 parallel)
+已完成:       R207 SWEBENCH_COMPARE.html refreshed (57546B, 683/700, 192 resolved) · R206 · R205 · R188 口径与并发 section ✅ · trace report in doc root ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
+当前动作:     R207: opencode COMPLETED 100/100✅(35.0%). 6/7 harnesses EXITED. Only hermes running (83/100, 17 rem). ⚠️ NEW: 88 workdir-blocked instances (all R2, 0 R1) — git checkout conflicts from shared workdirs in parallel mode. Blocked: pi=31, claude-code=24, cline=13, dsh=11, codex=9, opencode=0, hermes=0. Resolve rates (on scored): pi 39.1% > codex 37.4% > hermes 36.1% > opencode 35.0% > cline 29.9% > dsh 24.7% > claude-code 23.7%.
+下一步:       ① Wait for hermes (17 rem × ~660s ≈ 3h → ~11:00). ② After hermes done: clean workdirs + re-run 88 blocked in serial. ③ Final 7×100 table + report.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -29,13 +29,21 @@ ERROR_COUNT:  0
 2. **codex 特例**：codex 在 R1 跑了 300 条超集（串行），其中 70 条与本轮 100-set 重叠 → codex 的 70 条"新跑"实际来自 **300 串行超集**，**非 R2 并行**。codex 全部 100 条均为串行。
 3. **监控指标**（本轮必须对比 R1 同 30 条）：`quota-blocked` / `timeout` / `no-patch` 率 → 若 R2 显著上升 ⇒ 判"并行污染" → 结论打折。SWEBENCH_COMPARE.html §2 监控表已生成。
 
-**R2 监控快照**（2026-10-09 07:05，R205 更新）：
+**R2 监控快照**（2026-10-09 08:13，R207 更新）：
 
-| 指标 | R1 (30 serial) | R2 (70 parallel, in progress) | 判定 |
+| 指标 | R1 (30 serial) | R2 (70 parallel, near done) | 判定 |
 |:--|:--|:--|:--|
-| **quota_blocked** | 0/210 (0%) | 0/666 (0%) | ✅ **NO parallel pollution** |
+| **quota_blocked** | 0/210 (0%) | 0/683 (0%) | ✅ **NO gateway pollution** |
 | **timeout** | 0 (codex 2) | minimal (codex 3, claude-code 1 astropy) | ✅ 正常 |
+| **workdir_blocked** ⚠️NEW | **0/210 (0%)** | **88/683 (12.9%)** | ⚠️ **PARALLEL POLLUTION (workdir)** |
 | **no-patch (patch_applied=False)** | **0/210 (0%)** | **较高** (non-django/sympy repos) | ⚠️ eval env limitation |
+
+**⚠️ 新发现：workdir git-checkout 冲突 = 并行污染（R207 首次披露）**：
+1. **88 个 workdir-blocked 实例**（全部 R2/并行，0 个 R1/串行）→ 确认是**并行执行**导致的。
+2. **根因**：7 个 harness 共享同一 repo workdir（如 `/dev/shm/harness_work/workdirs/django_django`），当 harness A 修改文件后 harness B 尝试 `git checkout` 到不同 commit 时失败（"Your local changes would be overwritten"）。
+3. **影响**：pi 受影响最大（31 blocked，仅 69/100 实际运行），claude-code 次之（24 blocked，76/100）。opencode 未受影响（0 blocked，100/100）。
+4. **对 resolve rate 的影响**：blocked 实例不计入 scored 分母，所以 rate 不被拉低；但**覆盖率降低**意味着 rate 基于更小样本。
+5. **修复计划**：hermes 完成后，清理 workdirs + 串行重跑 88 个 blocked 实例。
 
 **🔬 关键发现：R2 resolve-rate 下降 = 实例集组成偏差，NOT 并行污染**：
 1. **R1 = 仅 django(15) + sympy(15)** → 两个最易 repo（codex 300-full: django 29%, sympy 8%）
@@ -88,49 +96,15 @@ ERROR_COUNT:  0
 **④ 成本-性能 Pareto**：Pi（60.0%, 275s）vs deepseek-harness（40.0%, 293s）wall time 接近但差 20pp。依据：per-harness avg_wall_s + resolve rate。
 **⑤ "Nobody solved" 12 条作为难度基准**：12/30=40% 实例 7 个 harness 全失败，定义为「hard」实例。依据：instance-level ALL/NONE/SOME = 8/12/10。
 
-## 🆕 第一百九十六轮速览（2026-10-09 01:35）— ⑦ SWEBENCH_COMPARE 刷新 (53167B/520entries/156resolved) + Round-2 进度监控
+> 📦 R196（2026-10-09 01:35）已归档 → daily-memories-harness/2026-10-09.md。结论：SWEBENCH_COMPARE 53167B/520entries/156resolved，quota_blocked=0。需要时再读。
 
-- 📋 **运维指令 2026-10-08⑦ 持续执行**：口径与并发 section ✅ · trace report in doc root ✅ · SWEBENCH_COMPARE.html 含 R1复用/R2新跑 标记列 + 口径 disclosure + §2 监控表 ✅
-- 📊 **Round-2 进度**（01:35）：codex 100/100✅ · pi 74/100(43.3% 领先) · hermes 52/100(43.1%) · cline 73/100(40.4%) · opencode 73/100(35.0%) · dsh 74/100(29.0%) · claude-code 74/100(26.4%)（7 processes running）
-- 📊 **SWEBENCH_COMPARE.html**：53167B，520/700 entries in 100-set，156 resolved。R1=30/30 all reused，R2 in-progress。
-- 🔬 **⑦ 监控结论**：quota_blocked=0 ALL → **NO parallel pollution** confirmed ✅。R2 resolve-rate 差异 = 实例集组成偏差 + eval 环境限制（非 django/sympy patch_applied=False），非并发争用。
-- ⏱️ **ETA**：bottleneck hermes 48 R2 remaining × ~700s ≈ 9.3h → ~11:00 Oct9；其他 harness 26-27 remaining × ~500s → ~05:00
-- 📦 体积：TASK=32870B(32.1KB ✓) / MEMORY=~30KB（本轮归档 R183/R186 → daily-memories）
+> 📦 R198（2026-10-09 02:47）已归档 → daily-memories-harness/2026-10-09.md。结论：SWEBENCH_COMPARE 55001B/586entries/164resolved，quota_blocked=0。需要时再读。
 
-## 🆕 第一百九十八轮速览（2026-10-09 02:47）— ⑦ SWEBENCH_COMPARE 刷新 (55001B/586entries/164resolved) + Round-2 进度监控
+> 📦 R200（2026-10-09 04:10）已归档 → daily-memories-harness/2026-10-09.md。结论：SWEBENCH_COMPARE 55942B/621entries/166resolved，5 procs alive，quota_blocked=0。需要时再读。
 
-- 📊 **Round-2 进度**（02:47）：codex 100/100✅(38.2%) · hermes 61/100(45.0% 领先) · pi 87/100(40.3%) · cline 84/100(36.7%) · opencode 84/100(32.8%) · dsh 86/100(26.1%) · claude-code 84/100(23.3%)（6 procs running, etimes~26375s≈7.3h）
-- 📊 **SWEBENCH_COMPARE.html**：55001B，586/700 in-scope，164 resolved。R1=30/30 reused，R2 in-progress。
-- 🔬 **⑦ 监控**：quota_blocked=0 ALL → NO parallel pollution ✅。R2 resolve-rate 差异 = 实例集组成偏差 + eval 环境限制。
-- ⏱️ **ETA**：bottleneck hermes 39 rem × ~659s ≈ 7.1h → ~10:00 Oct9；其他 13-16 rem → ~04:15-05:15
-- 📦 体积：TASK=32870B(32.1KB ✓) / MEMORY=~31KB（归档 R191/R188 → daily-memories）
+> 📦 R202（2026-10-09 05:19）已归档 → daily-memories-harness/2026-10-09.md。结论：SWEBENCH_COMPARE 56175B/631entries/177resolved，5 procs alive，quota_blocked=0。需要时再读。
 
-## 🆕 第二百轮速览（2026-10-09 04:10）— ⑦ 进程存活确认 + SWEBENCH_COMPARE 刷新 (55942B/621entries/166resolved) + Round-2 进度监控
-
-- ✅ **进程存活确认**：5 个 run_serial_kimi.py 父进程 ALIVE（ppid=1, etimes~2420s≈40min）：cline-patched(4037322) · opencode(4038920) · claude-code(4039024) · dsh(4039199) · hermes(4039300)。各有活跃子进程（run_single.py / r1_eval.py）在跑。
-- 📊 **Round-2 进度**（04:10）：codex 100/100✅(34.0%) · pi 100/100✅(27.0%) · hermes 64/100(42.2% 领先) · cline 88/100(25.0%) · opencode 88/100(25.0%) · dsh 93/100(20.4%) · claude-code 88/100(17.0%)（5 procs running）
-- 📊 **SWEBENCH_COMPARE.html**：55942B，621/700 in-scope，166 resolved。R1=30/30 reused，R2 in-progress。含 R1复用/R2新跑 标记列 ✅
-- 🔬 **⑦ 监控**：quota_blocked=0 ALL → NO parallel pollution ✅。R2 resolve-rate 差异 = 实例集组成偏差 + eval 环境限制。
-- ⏱️ **ETA**：bottleneck hermes 36 rem × ~659s ≈ 6.6h → ~10:50 Oct9；其他 7-12 rem → ~05:00-06:00
-- 📦 体积：TASK=32870B(32.1KB) / MEMORY=28278B(27.6KB ✓)
-
-## 🆕 第二百零二轮速览（2026-10-09 05:19）— ⑦ 进程存活确认 + SWEBENCH_COMPARE 刷新 (56175B/631entries/177resolved) + Round-2 进度监控
-
-- ✅ **进程存活确认**：5 个 run_serial_kimi.py 父进程 ALIVE（ppid=1, etimes~6640s≈1.8h）：cline-patched(4037322) · opencode(4038920) · claude-code(4039024) · dsh(4039199) · hermes(4039300)。各有活跃子进程（run_single.py）在跑。
-- 📊 **Round-2 进度**（05:19）：codex 100/100✅(34.0%) · pi 100/100✅(27.0%) · hermes 72/100(40.0% 领先, 28 rem) · dsh 95/100(21.5%, 5 rem) · cline 88/100(27.3%, 12 rem) · opencode 88/100(27.3%, 12 rem) · claude-code 88/100(17.0%, 12 rem)（5 procs running）
-- 📊 **SWEBENCH_COMPARE.html**：56175B，631/700 in-scope，177 resolved。R1=30/30 reused，R2 in-progress。含 R1复用/R2新跑 标记列 ✅
-- 🔬 **⑦ 监控**：quota_blocked=0 ALL → NO parallel pollution ✅。timeout=0 ALL ✅。R2 resolve-rate 差异 = 实例集组成偏差 + eval 环境限制。
-- ⏱️ **ETA**：bottleneck hermes 28 rem × ~659s ≈ 5.1h → ~10:25 Oct9；cline/claude-code/opencode 12 rem × ~550s → ~07:00；dsh 5 rem × ~426s → ~05:50
-- 📦 体积：TASK=32870B(32.1KB) / MEMORY=~30.5KB(29.8KB ✓)（归档 0KB）
-
-## 🆕 第二百零一轮速览（2026-10-09 04:43）— ⑦ 进程存活确认 + SWEBENCH_COMPARE 刷新 (56090B/627entries/172resolved) + Round-2 进度监控
-
-- ✅ **进程存活确认**：5 个 run_serial_kimi.py 父进程 ALIVE（ppid=1, etimes~4540s≈1.3h since R199 restart）：cline-patched(4037322) · opencode(4038920) · claude-code(4039024) · dsh(4039199) · hermes(4039300)。各有活跃子进程（run_single.py + bun/cline/claude-code）在跑。
-- 📊 **Round-2 进度**（04:43）：codex 100/100✅(34.0%) · pi 100/100✅(27.0%) · hermes 70/100(40.0% 领先, 30 rem) · cline 88/100(27.3%, 12 rem) · opencode 88/100(27.3%, 12 rem) · dsh 93/100(21.5%, 7 rem) · claude-code 88/100(17.0%, 12 rem)（5 procs running）
-- 📊 **SWEBENCH_COMPARE.html**：56090B，627/700 in-scope，172 resolved。R1=30/30 reused，R2 in-progress。含 R1复用/R2新跑 标记列 + 口径 disclosure ✅
-- 🔬 **⑦ 监控**：quota_blocked=0 ALL → NO parallel pollution ✅。R2 resolve-rate 差异 = 实例集组成偏差 + eval 环境限制。
-- ⏱️ **ETA**：bottleneck hermes 30 rem × ~659s ≈ 5.5h → ~10:15 Oct9；其他 7-12 rem → ~05:30-06:30
-- 📦 体积：TASK=32870B(32.1KB ✓) / MEMORY=~29.5KB(28.8KB ✓)（归档 0KB）
+> 📦 R201（2026-10-09 04:43）已归档 → daily-memories-harness/2026-10-09.md。结论：SWEBENCH_COMPARE 56090B/627entries/172resolved，5 procs alive，quota_blocked=0。需要时再读。
 
 > 📦 R183/R186（2026-10-08 16:38~17:30，health-check + Q&A delivered）已滚动归档至 `daily-memories-harness/2026-10-08.md`。结论：5 questions answered (Q1-Q5)，all deliverables verified intact。需要时再读。
 
@@ -219,4 +193,5 @@ ERROR_COUNT:  0
 - 2026-10-09 05:55 —— **第二百零三轮** —— 已归档（同下）→ daily-memories-harness/2026-10-09.md。
 - 2026-10-09 06:30 —— **第二百零四轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
 - 2026-10-09 07:05 —— **第二百零五轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
-- 2026-10-09 07:39 —— **第二百零六轮** —— 🔄 Round-2 progress monitor: cline-patched COMPLETED (95→100/100✅, 26 resolved, 26.0%). 2 procs ALIVE (opencode on sympy-15011, hermes on sphinx-10325). 5 harnesses DONE: cline 100/100✅(26.0%), codex 100/100✅(34.0%), pi 100/100✅(27.0%), dsh 100/100✅(22.0%), claude-code 100/100✅(18.0%). 2 running: opencode 96/100(33.3%, 4 rem), hermes 81/100(37.0% leading, 19 rem). SWEBENCH_COMPARE.html refreshed (57393B, 677/700, 189 resolved). Progress since R205: cline+5→DONE, opencode+5, hermes+1. quota_blocked=0 ALL → NO parallel pollution ✅. ⑦ deliverables verified: 口径与并发 section ✅ / trace report in doc root (38307B) ✅ / 复用-新跑 markers ✅ / monitoring table ✅. ETA: opencode 4 rem × ~600s ≈ 40min → ~08:20; hermes 19 rem × ~660s ≈ 3.5h → ~11:10. → commit+push. 📦 体积：TASK=32870B(32.1KB ✓) / MEMORY=~30.8KB(30.1KB ✓)（归档 R205 ~0.6KB → daily-memories-harness/2026-10-09.md）。
+- 2026-10-09 07:39 —— **第二百零六轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
+- 2026-10-09 08:13 —— **第二百零七轮** —— 🔄 Round-2 monitor + ⚠️ WORKDIR-BLOCKED DISCOVERY: opencode COMPLETED 100/100✅(35.0%). 6/7 harnesses EXITED, only hermes running (83/100, 17 rem). ⚠️ NEW: 88 workdir-blocked (ALL R2/parallel, 0 R1/serial) — git checkout conflicts from shared workdirs in 7-way parallel. Blocked: pi=31, claude-code=24, cline=13, dsh=11, codex=9, opencode=0, hermes=0. Resolve rates (scored): pi 39.1%(69) > codex 37.4%(91) > hermes 36.1%(83) > opencode 35.0%(100) > cline 29.9%(87) > dsh 24.7%(89) > claude-code 23.7%(76). SWEBENCH_COMPARE.html refreshed (57546B, 683/700, 192 resolved). quota_blocked=0 → NO gateway pollution ✅. BUT workdir_blocked=88 → ⚠️ PARALLEL POLLUTION (infra). ⑦ deliverables: 口径与并发 section updated ✅ / trace report in doc root ✅ / SWEBENCH_COMPARE 含 blk column ✅. Plan: hermes done → clean workdirs → serial re-run 88 blocked → final 7×100. → commit+push. 📦 体积：TASK=32870B(32.1KB ✓) / MEMORY=~27.7KB(27.1KB ✓)（归档 R196/R198/R200/R201/R202/R206 ~3.5KB → daily）。
