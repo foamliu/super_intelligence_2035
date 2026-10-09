@@ -7929,11 +7929,32 @@
     "harness": "codex",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git fetch failed: fatal: unable to access 'https://github.com/sympy/sympy/': Received HTTP code 503 from proxy after CONNECT\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git fetch failed: fatal: unable to access 'https://github.com/sympy/sympy/': Received HTTP code 503 from proxy after CONNECT\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 1800.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-15346.json",
+      "stdout_tail": "ue wall=1800.0s ==\n[stderr tail] ...b'2026-10-09T15:11:02.112772Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_sympy__sympy-15346.json\n[run_single] cleanup: git reset --hard 9ef28fba5b4d6d0168237c9c005a550e6dc27d81\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 22,
+        "p2p_total": 22
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "sympy__sympy-15609",
@@ -23499,11 +23520,32 @@
     "harness": "deepseek-harness",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdoc/ext/docscrape.py\n\tdoc/ext/numpydoc.py\n\tsympy/assumptions/sathandlers.py\n\tsympy/core/basic.py\n\tsympy/core/contain"
+      "ok": true,
+      "msg": "init+shallow fetch"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdoc/ext/docscrape.py\n\tdoc/ext/numpydoc.py\n\tsympy/assumptions/sathandlers.py\n\tsympy/core/basic.py\n\tsympy/core/contain",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 545.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sympy__sympy-11400.json",
+      "stdout_tail": "ngle] base_commit=8dcb12a6cf500e8738d6729ab954a261758f49ca\n[run_single] ps_len=318\n[run_single] git reset --hard 8dcb12a6cf500e8738d6729ab954a261758f49ca\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=545.4s ==\n[run_single] model_patch: 2331 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sympy__sympy-11400.json\n[run_single] cleanup: git reset --hard 8dcb12a6cf500e8738d6729ab954a261758f49ca\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 29,
+        "p2p_total": 29
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "sympy__sympy-13773",
@@ -23511,11 +23553,32 @@
     "harness": "deepseek-harness",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/core/basic.py\n\tsympy/core/expr.py\n\tsympy/core/function.py\n\tsympy/matrices/common.py\n\tsympy/matrices/matrices.p"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/core/basic.py\n\tsympy/core/expr.py\n\tsympy/core/function.py\n\tsympy/matrices/common.py\n\tsympy/matrices/matrices.p",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 788.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sympy__sympy-13773.json",
+      "stdout_tail": "ngle] base_commit=7121bdf1facdd90d05b6994b4c2e5b2865a4638a\n[run_single] ps_len=656\n[run_single] git reset --hard 7121bdf1facdd90d05b6994b4c2e5b2865a4638a\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=788.0s ==\n[run_single] model_patch: 3679 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_sympy__sympy-13773.json\n[run_single] cleanup: git reset --hard 7121bdf1facdd90d05b6994b4c2e5b2865a4638a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 69,
+        "p2p_total": 69
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "sympy__sympy-13895",
@@ -26927,6 +26990,72 @@
         "f2p_total": 1,
         "p2p_pass": 22,
         "p2p_total": 22
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-13033",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+shallow fetch"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 1080.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-13033.json",
+      "stdout_tail": "sertSequenceEqual(\n+            Reference.objects.order_by('article__author_id'),\n+            [r4, r3, r2, r1],\n+        )\n+\n     def test_order_by_f_expression(self):\n         self.assertQuerysetEqual(\n             Article.objects.order_by(F('headline')), [\n\u001b[0m\n\n[run_single] model_patch: 2116 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-13033.json\n[run_single] cleanup: git reset --hard a59de6e89e8dc1f3e71c9a5a5bbceb373ea5247e\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 26,
+        "p2p_total": 26
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "django__django-13158",
+    "repo": "django/django",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 831.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-13158.json",
+      "stdout_tail": "'t break anything\n\u001b[0m\n\u001b[0m$ \u001b[0mcd /dev/shm/harness_work/workdirs/opencode/django_django && git diff --stat\ndjango/db/models/sql/compiler.py     |  2 ++\n tests/queries/test_qs_combinators.py | 27 +++++++++++++++++++++++++++\n 2 files changed, 29 insertions(+)\n\u001b[0m\n\n[run_single] model_patch: 2592 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_django__django-13158.json\n[run_single] cleanup: git reset --hard 7af8f4127397279d19ef7c7899e93018274e2f9b\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 29,
+        "p2p_total": 29
       }
     },
     "classification": "resolved"
