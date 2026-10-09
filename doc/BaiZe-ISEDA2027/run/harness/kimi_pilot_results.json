@@ -22659,11 +22659,32 @@
     "harness": "pi",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsphinx/ext/autodoc/typehints.py\n\ttests/roots/test-ext-autodoc/target/typehints.py\n\ttests/test_ext_autodoc_configs.py"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsphinx/ext/autodoc/typehints.py\n\ttests/roots/test-ext-autodoc/target/typehints.py\n\ttests/test_ext_autodoc_configs.py",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sphinx-doc__sphinx-10325"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 927.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_sphinx-doc__sphinx-7686.json",
+      "stdout_tail": "e_id=sphinx-doc__sphinx-7686\n[run_single] base_commit=752d3285d250bbaf673cff25e83f03f247502021\n[run_single] ps_len=1327\n[run_single] git reset --hard 752d3285d250bbaf673cff25e83f03f247502021\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=927.4s ==\n[run_single] model_patch: 4373 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_sphinx-doc__sphinx-7686.json\n[run_single] cleanup: git reset --hard 752d3285d250bbaf673cff25e83f03f247502021\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "sphinx-doc__sphinx-10451",
@@ -23682,11 +23703,32 @@
     "harness": "claude-code",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/vector/tests/test_printing.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/vector/tests/test_printing.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 1025.8,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-11400.json",
+      "stdout_tail": "-11400\n[run_single] base_commit=8dcb12a6cf500e8738d6729ab954a261758f49ca\n[run_single] ps_len=318\n[run_single] git reset --hard 8dcb12a6cf500e8738d6729ab954a261758f49ca\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=1025.6s ==\n[run_single] model_patch: 2694 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-11400.json\n[run_single] cleanup: git reset --hard 8dcb12a6cf500e8738d6729ab954a261758f49ca\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 29,
+        "p2p_total": 29
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "sympy__sympy-13773",
