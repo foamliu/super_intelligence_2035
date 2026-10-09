@@ -693,6 +693,6 @@ Under the AIMv2-style dense objective at a fixed 1-epoch budget over 95.8M image
 
 ### 8.2 Results
 
-> 🔄 **Training in progress** — E1fair running (step ~35400/187101, ~4900 img/s, no collapse, cosine active). E2fair + eval chained automatically via `bothfair` mode. Results will be filled in upon completion (~17:40 Oct 10 estimated).
+> 🔄 **Training in progress** — E1fair running (step ~54210/187101 ≈ 29%, ~4900 img/s, loss~0.45, C1=0.49 C2_gap=+0.19 C4=OK, no collapse, lr=4.17e-04 cosine active). E2fair + eval chained automatically via `bothfair` mode (PID 2670216). Checkpoints saved at steps 10000/20000/30000/40000/50000. Results will be filled in upon completion (~18:00 Oct 10 estimated).
 
 *(To be completed)*
