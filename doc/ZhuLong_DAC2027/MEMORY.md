@@ -186,6 +186,12 @@ error: error: unknown option '-b'
 
 ## 9. 流水（倒序）
 
+- **2026-10-09（运维经 ops 中继测新 key + deepseek-v4-pro-cloud 能否绕过 pro-fp4 403）** —— 用户问「用新 key（`e13f4f37`）+ 模型名 `deepseek-v4-pro-cloud` 可否绕过 pro-fp4 的 403，模型是一样的」。pro-fp4 403 已阻塞 C1.full r4/r5 达 9 次复检未恢复。
+  - **分析**：论文 `6_exp.tex` 第 76 行写的是泛称 `DeepSeek-V4-Pro`（非 `pro-fp4`），但操作代码全程用 `deepseek-v4-pro-fp4`。`fp4`（4-bit 量化）vs `cloud`（云端全精度？）很可能是**不同部署/量化**，若混入 r1/r2/r3（均用 pro-fp4）的 5-run mean±std 会有一致性风险。需先实测区分 403 根因 = key 额度 / 模型额度 / endpoint 差异。
+  - **落地**：在 `run/ops/inbox.md` 置顶新增 `RUN_ID 22`（6 组合 curl `--noproxy '*'` 直连测试：① 新key+pro-cloud@/cloud/v1 ② 新key+pro-fp4@/cloud/v1 ③ 新key+pro-fp4@/v1 ④ 旧key+pro-fp4@/cloud/v1 ⑤ 旧key+pro-fp4@/v1 ⑥ 新key+pro-cloud@/v1）；旧 RUN_ID 21 降级 `text`；RUN_ID 21→22。**纯只读 curl**，不改文件不动进程。
+  - **决策树**：若 ②/③=200 → 403 是 key 级问题，换 key 即可、模型不变、r1-r3 保持有效（最优）；若 ①=200 但 ②/③=403 → 403 是模型级问题，pro-cloud 是不同模型，需评估是否重跑全部 5 轮或继续等；若 ③=200 但 ②=403 → endpoint 差异，用 /v1 即可。
+  - ⏭ **待推送**：`git pull --rebase --autostash` → `git add -- doc/ZhuLong_DAC2027/run/ops/inbox.md doc/ZhuLong_DAC2027/MEMORY.md` → `git commit -m "zhulong 运维: ops RUN_ID 22 测新key+pro-cloud能否绕过pro-fp4 403"` → `git push origin main`。push 后中继 ~20s 内执行，结果追加到 `run/ops/outbox.md` 末尾。
+
 - **2026-10-08（运维经任务书提醒 agent：loop git 超时 = 缺 https_proxy）** —— 用户观察到 `zhulong_loop.sh` git 操作经常超时。经核对脚本源码确认根因：**loop 脚本自身不 `export https_proxy`**，完全继承启动 shell 环境；脚本只在调 cline 时 `env -u` 剥代理（内网网关不该走代理），但 **git 访问 GitHub 是外网、必须走代理** → loop 进程若启动时没带 `https_proxy=http://172.19.92.23:13128`，`git fetch/push` 就超时。
   - 落地：在 `run/ZHULONG_TASK.md` 运维指令区**置顶**（`(一)` 报告块之前）新增 `### 🆕 运维指令 · 2026-10-08（二）— 🔧 git 操作超时：确保 loop 进程带 https_proxy（常驻·每次唤醒自检）`。指令含：① `/proc/<pid>/environ` 自检命令；② 缺代理则 `pkill` + `export https_proxy` + `setsid` 重启的修复步骤；③ 红线（不改脚本源码 / 重启带 setsid / 常驻自检）。
   - ⏭ 待提交推送（任务书 + 本文件 + 日流水）。
