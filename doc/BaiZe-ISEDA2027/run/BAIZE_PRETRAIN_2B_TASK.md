@@ -1,6 +1,39 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-09（📄 R3 数据配比搜索收官报告 HTML）· 用户直令 · 高优先
+
+> **用户令**：「pretrain 今早做完了第三轮数据配比试验，给它下发指令，让它生成 html 报告。」
+> ⚠️ R3 BO 已 ✅ 100/100 收尾（#8 score=0.4032），交付物（`r3_best_blend.txt` / `DATA_MIX_RECIPE.md §9.7` / `EXPERIMENTS R3 节` / `mix_search_eval_r3.db`）均已就位——**只差一份 HTML 报告**。只写报告，不重跑任何实验。
+
+**① 交付**：`report_pretrain_r3_data_mix.html`（落 `doc/BaiZe-ISEDA2027/`）
+
+**② 数据源（只读，全部已就绪）**
+- `run/r3_best_blend.txt`（best #8 + Top-5 摘要 + score 统计 + key findings）
+- `run/DATA_MIX_RECIPE.md` §9.7（R3 spec 表 + Top-5 结果表 + 4 条关键结论 + P-8 推荐）
+- `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` R3 节
+- `nemo_experiments/mix_search/mix_search_eval_r3.db`（100 trials / 98 complete；如需复算**只读查询**，不写库）
+
+**③ 格式（沿用 house style，照 `report_pretrain_r2_final.html`）**
+- **自包含**：内联 CSS + 数据图优先**内联 SVG**；**零外链**；**HTML 本体 ≤200KB**。
+- 曲线/柱状图由 **DB 真实数据生成**；🚫 严禁文生图「编」数据图。
+- 位图一律 JPEG、长边 ≤1280、q85、落本地并 commit。
+
+**④ 建议 8 节**
+1. **TL;DR**（3–5 条）：R2 3 维 → R3 6 维下钻；best #8 score=0.4032；Web:Code:Math≈89:6:4（code 从先验 8% 降到 6%）；landscape 平坦（top-5 Δ=0.0053）；推荐 best #8 或 top-5 avg。
+2. **实验设计**：目标 = 为 P-8 Stable 段定 6 源配比；proxy d=128/L=14 ≈18.36M（不换代理）；6 维单纯形 + 各维边界；GBS=16·MBS=16·seq=2048·LR=3e-3·WSD·D=1B token/trial；objective = 全量 lm_eval 8 常识任务（无 `--limit`，73106 requests）；100 trials / ~19.5h / 8 卡。
+3. **Top-5 结果表**（rank / trial / score / en / zh / l1_en_hq / ultrax / code / math，+ top-5 avg 行）。
+4. **关键发现**：l1_en_hq（高质量英文 web）一致高 = **质量 > 数量**；zh 方差极大（3.2%–33.4%）未被 BO 稳定识别；ultrax 稳定 ~10%；landscape 平坦 → 精确配比影响很小。
+5. **与先验/R2 对比**：先验 88:8:4 → R3 落到 ~89:6:4；R2(3 维, --limit 500, 0.5B) → R3(6 维, 全量, 1B) 的口径升级与增量。
+6. **对 P-8 的建议**：主选 best #8（en=16.8/zh=32.0/l1=32.4/ultrax=8.0/code=6.4/math=4.4）；稳健选 top-5 avg；「合理范围即可，无需过度优化配比」。⚠️ 只给**回填建议**，🚫 不改 `.tex` / `main.tex`（论文回填由外部统一做）。
+7. **局限与诚实交代**：18.36M 代理 / 1B token per trial / landscape 平坦 / 2 failed trials（#25、#49）/ 单 seed=1234 / lm_eval 8 常识集只是代理指标（非下游 EDA pass@1）。
+8. **图**（内联 SVG）：score 分布直方图（98 complete）/ Top-5 柱状对比 / best #8 的 8 任务逐项得分 / R3 vs R2 对比。
+
+**⑤ 纪律**
+- 🚫 **不新增实验、不改 R3 已固化数字/结论**；只读 DB 不重跑。
+- 🚫 **不启动 P-8**（10-02 暂缓令未撤）；🚫 不 kill watchdog `baize_pretrain_loop.sh`。
+- 收尾按「收尾铁律」commit+push（提交前缀 `pretrain R3收官: …`），更新 `MEMORY_PRETRAIN_2B.md` + `run/daily-memories/`。
+
 > 📦 **历史运维指令已归档** → `run/ARCHIVE_OPERATOR_PRETRAIN.md`（已执行完 / 已作废的块；**需要时再读**，不要读进上下文）。
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_PRETRAIN_2B.md` / `daily-memories/` / `EXPERIMENTS_*`）。本节为「无」时按下方 Round 2 默认顺序推进。⚠️ **唯一例外（2026-10-06）**：按「📉 体积维护规程」，agent **可把「已闭合」的运维块/旧正文【原文】搬入** `run/ARCHIVE_OPERATOR_PRETRAIN.md`（**只搬迁、留 1 行指针**；不新增/不改写任何指令）。
