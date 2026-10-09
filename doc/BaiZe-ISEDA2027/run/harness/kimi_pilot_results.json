@@ -25428,11 +25428,32 @@
     "harness": "claude-code",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/physics/vector/printing.py\n\tsympy/printing/latex.py\n\tsympy/printing/tests/test_latex.py\nPlease commit your cha"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/physics/vector/printing.py\n\tsympy/printing/latex.py\n\tsympy/printing/tests/test_latex.py\nPlease commit your cha",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 408.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-15308.json",
+      "stdout_tail": "y-15308\n[run_single] base_commit=fb59d703e6863ed803c98177b59197b5513332e9\n[run_single] ps_len=294\n[run_single] git reset --hard fb59d703e6863ed803c98177b59197b5513332e9\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=408.2s ==\n[run_single] model_patch: 1710 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-15308.json\n[run_single] cleanup: git reset --hard fb59d703e6863ed803c98177b59197b5513332e9\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 119,
+        "p2p_total": 120
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "sympy__sympy-15345",
@@ -25440,11 +25461,32 @@
     "harness": "claude-code",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/physics/vector/printing.py\n\tsympy/printing/latex.py\n\tsympy/printing/tests/test_latex.py\nPlease commit your cha"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/physics/vector/printing.py\n\tsympy/printing/latex.py\n\tsympy/printing/tests/test_latex.py\nPlease commit your cha",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 404.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-15345.json",
+      "stdout_tail": "y-15345\n[run_single] base_commit=9ef28fba5b4d6d0168237c9c005a550e6dc27d81\n[run_single] ps_len=269\n[run_single] git reset --hard 9ef28fba5b4d6d0168237c9c005a550e6dc27d81\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=403.9s ==\n[run_single] model_patch: 1684 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-15345.json\n[run_single] cleanup: git reset --hard 9ef28fba5b4d6d0168237c9c005a550e6dc27d81\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 8,
+        "p2p_total": 8
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "sympy__sympy-15346",
@@ -25452,11 +25494,32 @@
     "harness": "claude-code",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/physics/vector/printing.py\n\tsympy/printing/latex.py\n\tsympy/printing/tests/test_latex.py\nPlease commit your cha"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/physics/vector/printing.py\n\tsympy/printing/latex.py\n\tsympy/printing/tests/test_latex.py\nPlease commit your cha",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 1390.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-15346.json",
+      "stdout_tail": "-15346\n[run_single] base_commit=9ef28fba5b4d6d0168237c9c005a550e6dc27d81\n[run_single] ps_len=1159\n[run_single] git reset --hard 9ef28fba5b4d6d0168237c9c005a550e6dc27d81\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=1389.7s ==\n[run_single] model_patch: 607 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-15346.json\n[run_single] cleanup: git reset --hard 9ef28fba5b4d6d0168237c9c005a550e6dc27d81\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 22,
+        "p2p_total": 22
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "sympy__sympy-14774",
