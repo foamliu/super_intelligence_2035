@@ -86,12 +86,13 @@ def kill_server(pi):
     time.sleep(5)
 
 def benchmark_model(model_key, gpu_id, mem_frac, contexts, batches, ctx_max, warmup=1, repeats=3, port_base=30000):
+    mi = MODELS[model_key]
     port = find_free_port(start=port_base, end=port_base+20)
     eff_ctx_max = mi.get("ctx_max", ctx_max)  # use model-specific limit if set
     si = start_sglang_server(model_key, gpu_id, mem_frac, eff_ctx_max, port)
     if si is None:
         return {"model": model_key, "mem_frac": mem_frac, "error": "server_failed", "results": []}
-    proc, base_url, lf = si; mi = MODELS[model_key]; results = []; oom = False
+    proc, base_url, lf = si; results = []; oom = False
     try:
         for ctx in contexts:
             if oom: break
