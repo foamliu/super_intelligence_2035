@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 25 -->
+<!-- RUN_ID: 26 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,13 +24,13 @@
 
 ---
 
-## RUN_ID 25 — 🛑 用户直令：沙盒坏了，停掉 r4（kill eval 进程树），待命
+## RUN_ID 26 — 🛑 用户直令：沙盒坏了，停掉 r4（kill eval 进程树），待命
 
-**背景**：用户 2026-10-09 17:00 通知「沙盒坏了，下发指令把 r4 停下来，待命」。r4 grading 阶段异常缓慢（r1=8min/150脚本 vs r4=1h48m+/140脚本，13×+慢），log 沉默 2h+，沙盒性能退化/卡住。需 kill r4 整个进程树（主进程 + run_eval.py 子进程 + 所有 worker），确认干净退出，然后待命。
+**背景**：用户 2026-10-09 17:00 通知「沙盒坏了，下发指令把 r4 停下来，待命」。r4 grading 阶段异常缓慢（r1=8min/150脚本 vs r4=1h48m+/140脚本，13×+慢），log 沉默 2h+，沙盒端口 8650/8651/8652/8654 全部无响应（RUN_ID 24 诊断已确认沙盒坏了）。需 kill r4 整个进程树（主进程 PID 3302534 + run_eval.py 子进程 PID 611439 + 所有 worker），确认干净退出，然后待命。
 
 ```bash
-# RUN_ID 25 — KILL r4 process tree + verify clean + standby
-echo "== RUN_ID 25: kill r4 @ $(date '+%F %T') =="
+# RUN_ID 26 — KILL r4 process tree + verify clean + standby
+echo "== RUN_ID 26: kill r4 @ $(date '+%F %T') =="
 
 echo "== 1. BEFORE kill: r4 process tree =="
 ps -eo pid,ppid,etime,state,cmd | grep -E '3302534|run_cline_script|run_eval' | grep -v grep | cut -c1-140
