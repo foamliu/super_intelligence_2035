@@ -247,7 +247,9 @@ WAITING: 1
 - [2026-10-09 09:01] [⏩ 已滚出] 🚨 BLOCKED续(第11次复检)：pro-fp4 直连仍 HTTP 403 → 继续 WAITING=1 详情已原文搬入 daily-memories/2026-10-09.md（§09:01，rolled-from-MEMORY 2026-10-09 09:45）。
 
 - [2026-10-09 09:45] [⏩ 已滚出] ✅ pro-fp4 已恢复(新key e13f4f37 HTTP 200)→eval backbone re-auth→C1.full r4 启动(b2026_1009_094504 PID 3302534, 四override齐全, 0 Forbidden✅) 详情已原文搬入 daily-memories/2026-10-09.md（§09:45）。
-- [2026-10-09 10:25] [巡检 r4 运行中 + 收到运维2026-10-09(三)复测指令→已更新MEMORY复测流程] `pgrep '^bash scripts/run_cline_script'`→**PID 3302534 仍在跑**(r4 ~40min, log 7.8MB, 中途 `grep -c timeout`=66 但属执行期日志非最终grading口径,不预判)。**收到运维新指令(2026-10-09 三)**：r2=59.5%(39 timeouts)❌作废需复测、r3=63.3%❌作废需复测、r1=88.0%✅保留。复测流程=r4收割(判据 timeout≤10且≥75%)→r4有效则重跑r2(r2-retest,log /tmp/ABL_full_r2_retest.log)→重跑r3(r3-retest,log /tmp/ABL_full_r3_retest.log)→跑r5→5/5算mean±std(最终=[r1=88.0%,r2',r3',r4,r5])。**r4仍在跑未收割→本轮=巡检,不动作**,仅更新MEMORY状态头/看板/下轮第一件事为复测流程。**自检**：loop 3579323(ppid=1) environ含https_proxy✅自检通过; ops relay 888464✅/legacy 2455466✅; git `## main...origin/main` clean✅。**状态**：STAGE=C1/CONFIG=full/ROUND=4/PHASE=running/WAITING=1/ERROR_COUNT=2。**下轮第一件事**：pgrep→有输出=巡检退出; 无输出→收割r4(grep pass/PASS_RATE+timeout数)→按判据(timeout≤10且≥75%)判定r4有效/作废→有效则重跑r2(r2-retest,四override,新key e13f4f37+/cloud/v1 pro-fp4)→依复测流程推进。
+- [2026-10-09 10:25] [⏩ 已滚出] 巡检 r4 运行中 + 收到运维2026-10-09(三)复测指令→已更新MEMORY复测流程 详情已原文搬入 daily-memories/2026-10-09.md（§10:25）。
+
+- [2026-10-09 11:04] [🩾 C1.full r4 巡检#2（仍在跑·~1h19m·generation阶段）+ proxy/ops/legacy自检通过] `pgrep '^bash scripts/run_cline_script'`→**PID 3302534 仍在跑**(etime 01:19:07, State=S, log 14.1MB/last write 11:03, 当前 task EDA-Eval-PyAether-126 generation阶段, `grep -cE 'timeout'`=186 属执行期日志非最终grading口径,不预判)。r4仍在跑未收割→**本轮=巡检,不动作,不打断r4**。**自检**：loop 3579323(ppid=1) environ含https_proxy✅自检通过; ops relay 888464✅/legacy 2455466✅; git `## main...origin/main` clean✅。**状态**：STAGE=C1/CONFIG=full/ROUND=4/PHASE=running/WAITING=1/ERROR_COUNT=2。**下轮第一件事**(不变)：pgrep→有输出=巡检退出; 无输出→收割r4(`grep -E 'pass \\(|PASS_RATE' /tmp/ABL_full_r4.log|tail -5`+记timeout数)→按判据(timeout≤10且≥75%)判定r4有效/作废→有效则重跑r2(r2-retest,四override,新key e13f4f37+/cloud/v1 pro-fp4,log /tmp/ABL_full_r2_retest.log)→依复测流程推进。
 
 
 
