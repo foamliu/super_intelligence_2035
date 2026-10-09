@@ -10,3 +10,14 @@ Serial kimi eval: harness=claude-code model=kimi-k2.6-cloud
 [SETUP] django__django-12284 for claude-code
 
 [RUN] claude-code on django__django-12284 ...
+  [EVAL] claude-code on django__django-12284 ...
+  => django__django-12284 | claude-code | resolved
+
+############################################################
+# [2/12] claude-code x django__django-12286
+############################################################
+
+============================================================
+[SETUP] django__django-12286 for claude-code
+
+[RUN] claude-code on django__django-12286 ...

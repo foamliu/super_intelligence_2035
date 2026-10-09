@@ -1,0 +1,23 @@
+  [RESUME] Skipping 87 completed for cline-patched
+Serial kimi eval: harness=cline-patched model=kimi-k2.6-cloud
+  Total=8 Pending=8 Skip=87 Concurrency=1
+
+############################################################
+# [1/8] cline-patched x django__django-12308
+############################################################
+
+============================================================
+[SETUP] django__django-12308 for cline-patched
+
+[RUN] cline-patched on django__django-12308 ...
+  [EVAL] cline-patched on django__django-12308 ...
+  => django__django-12308 | cline-patched | patch-but-failed
+
+############################################################
+# [2/8] cline-patched x django__django-12453
+############################################################
+
+============================================================
+[SETUP] django__django-12453 for cline-patched
+
+[RUN] cline-patched on django__django-12453 ...
