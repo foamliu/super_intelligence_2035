@@ -21999,11 +21999,32 @@
     "harness": "pi",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsklearn/utils/__init__.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsklearn/utils/__init__.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 160.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-11281.json",
+      "stdout_tail": "arn__scikit-learn-11281\n[run_single] base_commit=4143356c3c51831300789e4fdf795d83716dbab6\n[run_single] ps_len=552\n[run_single] git reset --hard 4143356c3c51831300789e4fdf795d83716dbab6\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=160.0s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-11281.json\n[run_single] cleanup: git reset --hard 4143356c3c51831300789e4fdf795d83716dbab6\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 43,
+        "p2p_total": 43
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "scikit-learn__scikit-learn-12471",
@@ -22011,11 +22032,32 @@
     "harness": "pi",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsklearn/utils/__init__.py\n\tsklearn/utils/multiclass.py\n\tsklearn/utils/validation.py\nPlease commit your changes or st"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsklearn/utils/__init__.py\n\tsklearn/utils/multiclass.py\n\tsklearn/utils/validation.py\nPlease commit your changes or st",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 283.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-12471.json",
+      "stdout_tail": "_scikit-learn-12471\n[run_single] base_commit=02dc9ed680e7f53f1b0d410dcdd37341c7958eb1\n[run_single] ps_len=2145\n[run_single] git reset --hard 02dc9ed680e7f53f1b0d410dcdd37341c7958eb1\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=282.6s ==\n[run_single] model_patch: 2642 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_scikit-learn__scikit-learn-12471.json\n[run_single] cleanup: git reset --hard 02dc9ed680e7f53f1b0d410dcdd37341c7958eb1\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 53,
+        "p2p_total": 53
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "scikit-learn__scikit-learn-10297",
@@ -22584,11 +22626,32 @@
     "harness": "pi",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsphinx/ext/autodoc/typehints.py\n\ttests/roots/test-ext-autodoc/target/typehints.py\n\ttests/test_ext_autodoc_configs.py"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsphinx/ext/autodoc/typehints.py\n\ttests/roots/test-ext-autodoc/target/typehints.py\n\ttests/test_ext_autodoc_configs.py",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sphinx-doc__sphinx-10325"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 529.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_sphinx-doc__sphinx-11445.json",
+      "stdout_tail": "id=sphinx-doc__sphinx-11445\n[run_single] base_commit=71db08c05197545944949d5aa76cd340e7143627\n[run_single] ps_len=1791\n[run_single] git reset --hard 71db08c05197545944949d5aa76cd340e7143627\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=529.4s ==\n[run_single] model_patch: 2078 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_sphinx-doc__sphinx-11445.json\n[run_single] cleanup: git reset --hard 71db08c05197545944949d5aa76cd340e7143627\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 0,
+        "p2p_total": 8
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "sphinx-doc__sphinx-7686",
