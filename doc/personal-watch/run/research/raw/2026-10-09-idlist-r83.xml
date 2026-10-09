@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/2B3y/jVWgFBWvuHDeNWkuc8j+uo</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.12466,2610.11351&amp;start=0&amp;max_results=10</title>
+  <updated>2026-10-09T10:03:42Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=10&amp;id_list=2610.12466,2610.11351" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>10</opensearch:itemsPerPage>
+  <opensearch:totalResults>2</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.11351v1</id>
+    <title>Deception by Omission: Language Models Knowingly Hide Their Mistakes</title>
+    <updated>2026-10-08T06:45:02Z</updated>
+    <link href="https://arxiv.org/abs/2610.11351v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.11351v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) increasingly act as agents with little human oversight, so potential mistakes they make can go unnoticed. Users then depend on the model to report what went wrong. An honest model discloses its mistakes, while a deceptive one conceals them. However, it is unclear how current LLMs behave in such situations. In this study, we prefill LLM trajectories with synthetic mistakes. The trajectories resemble real deployments in chat and agentic settings. Models fail to disclose their mistake in 36.4% of chat and 67.1% of agentic rollouts. In 2.4% and 5.3% of rollouts, respectively, they are aware of the mistake in their chain of thought but still deceptively conceal it. Rates vary by model: for instance, Gemini 3.5 Flash knowingly conceals mistakes in up to 19.9% of agentic rollouts. In 11.9% of chat and 51.8% of agentic rollouts, models show no awareness of mistakes, even though they reliably spot them when reviewing the same transcript as an outside observer. Our results show that, as agents take on more tasks with less oversight, users cannot rely on them to self-report possible mistakes. Developers should instead use independent monitors that review agent trajectories, or specifically train models to check their past actions and disclose what they find.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T06:45:02Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Lucas Florin</name>
+    </author>
+    <author>
+      <name>Amelie Knecht</name>
+    </author>
+    <author>
+      <name>Ulysse Schaller</name>
+    </author>
+    <author>
+      <name>Thilo Hagendorff</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.12466v1</id>
+    <title>On the estimation and validity of AI time horizons---a statistical look at the METR plot</title>
+    <updated>2026-10-08T17:59:50Z</updated>
+    <link href="https://arxiv.org/abs/2610.12466v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.12466v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>METR's 50\% time horizon measures the human completion time of software tasks that an AI solves with 50\% probability, allowing AI capabilities to be expressed in interpretable units. On 228 tasks and 26 AIs, we recompute the time horizons using splines and item-response theory to relax the assumption that the AI difficulty of a task depends linearly on the log of human time. Our fitted spline can be interpreted as a function that \emph{converts} human time to AI difficulty; it is nearly flat in a region from 2--30 min but close to linear elsewhere. Hence, a time-horizon jump from 3 min to 30 min is much easier than one from 30 min to 5 hours despite the same multiplier of $10 \times$. Overall, we contribute time-horizon point estimates that perform better under a cross-validated suite of proper scoring rules, as well as diagnostic plots for assessing time horizons' construct validity. We suggest that time horizons be interpreted together with the diagnostic plots, especially as new time-horizon-based benchmarks are proposed or existing ones grow to include longer tasks.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T17:59:50Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Drew T. Nguyen</name>
+    </author>
+    <author>
+      <name>William Fithian</name>
+    </author>
+  </entry>
+</feed>

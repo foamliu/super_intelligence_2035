@@ -1173,3 +1173,20 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **台账**：`research/SEEN.md` **+523 行** → 台账行 **2293 条（收录 174 / 候选 2119，其中 RSS 补充候选 1027）**；`research/papers.jsonl` **+3** → **174 行**。
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮**无长期工具代码改动**（`rss_discover_r82.py` / `update_r82.py` 为一次性留证/入账脚本，非长期工具）。
 - **下轮预期**：**本地 `2026-10-09 18:00`**（P0「晚 2」轮）：① 复验批次是否刷新（`2026-10-08` 提交批预计在本日 UTC 00:00 前后公告）；② 补 **2 篇「科普」** 并**修订**早报 3 篇；③ 在 `2026-10-09.html` 追加 `## 晚报变更说明（AM → PM）`，进度改为 **5/5**。
+
+### 9.85 第八十三轮（本地 2026-10-09 18:00 时窗 · **P0 第 4 批第 5 轮 · 「晚 2」轮 · 当日收口**）：`2026-10-08` 批刷新 → **+211（收录 2 / 候选 209）**，当日日报收口 **5/5**
+
+> 🎯 **P0 第 4 批口径**：每天 5 篇（早 3 + 晚 2）。**本日 18:00 = PM 轮**，补 **2 篇「科普」**（第 4/5 篇）并修订早报（`research/daily/2026-10-09.html` 收口 5/5 + `## 晚报变更说明（AM → PM）`）。
+
+- **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-09T10:00:52Z`，证据 `research/raw/2026-10-09-probe-r83.{json,log}`）：
+  - **arXiv API**：`HTTP 200` + `application/atom+xml; charset=utf-8`，**公告批次已刷新为 `2026-10-08`**：`total_results` `629290` → **`630048`**、最新样本 `published=2026-10-08T17:59:58Z`（`2610.12470 / 2610.12469 / 2610.12468`）→ ✅ **可达**，较第八十二轮刷新；
+  - **HF Daily Papers**：`ok=false`，`Network is unreachable` → ❌ **不可达**（**如实记录，不伪造 `hf_daily`**）；
+  - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml`，`items=230 / 302 / 472` → ✅ **工作日有内容**。
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=daily`，窗口 72h**，`generated=2026-10-09T10:01:54Z`，证据 `research/raw/2026-10-09-fetch-r83.json`）：**15/15 查询 `ok`**（均 `attempts=1`，无重试），**kept 211 / dropped 352** → **新增 211 条**（**收录 2 / 候选 209**）；`per_query` 明细见证据文件（`sweep-cs-5cats` kept 40、`llm-large-language-model` 38、`mm-vision-language` 36、`mm-multimodal` 30 …）。
+- **权威复核（单条 `id_list`，实测证据）**：`id_list=2610.12466,2610.11351`（本轮 `HTTP/2 200` + `application/atom+xml; charset=utf-8` + 2 `<entry>` + 含 `published`，证据 `research/raw/2026-10-09-idlist-r83.{xml,headers}`）：`2610.12466`（`published=2026-10-08T17:59:50Z`，cs.AI，作者 Drew T. Nguyen / William Fithian）/ `2610.11351`（`published=2026-10-08T06:45:02Z`，cs.CL，作者 Lucas Florin / Amelie Knecht / Ulysse Schaller / Thilo Hagendorff）。
+- **产出（P0 交付）**：`research/daily/2026-10-09.html`（**自包含单文件**，**晚报收口 5/5**：早报 3 篇借鉴 + 晚报 2 篇科普 + `## 晚报变更说明（AM → PM）`）→ 同步更新 `research/daily/index.html`（2026-10-09 行 3/5 → 5/5）与 `research/INDEX.md`。
+- **晚报 2 篇科普**：`2610.12466` *On the estimation and validity of AI time horizons---a statistical look at the METR plot*（cs.AI）/ `2610.11351` *Deception by Omission: Language Models Knowingly Hide Their Mistakes*（cs.CL）。
+- **台账**：`research/SEEN.md` **+211 行** → 台账行 **2504 条（收录 176 / 候选 2328，其中 RSS 补充候选 1027）**；`research/papers.jsonl` **+2** → **176 行**。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮**无长期工具代码改动**（`update_r83.py` 为一次性入账脚本，非长期工具）。
+- **下轮预期**：**本地 `2026-10-10 06:00`**（P0「早 3」轮）：① 复验批次（下一个工作日公告批）；② 出当日 **3 篇借鉴**；③ 生成 `research/daily/2026-10-10.html`（3/5）。
+
