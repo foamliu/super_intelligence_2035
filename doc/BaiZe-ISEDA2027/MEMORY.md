@@ -3,15 +3,21 @@
 
 ## 🆕 最近操作（2026-10-09）
 
-### 📝 给 data 下发 Code/Math 全量分词指令（P-8 数据层唯一阻塞解除令）
-- **背景**：R3 BO ✅ 完成（best=#8 score=0.4032），P-8 PREP 核查发现 Web ✅ 524B（5.9× 覆盖）但 Code 🔴 缺口 25× / Math 🟠 缺口 7×。**Code/Math 全量分词 = P-8 启动前唯一未解决的数据层阻塞**。
-- **指令已下发至** `run/BAIZE_DATA_TASK.md` 顶部（2026-10-09①，最高优先）：
-  - UltraData-Code（1.22TB / 11 语言）全量分词 → 切完所有 parquet（预估 ~30–40B tok）
-  - UltraData-MATH（552GB / 15 shard）全量分词 → 切完所有 parquet（预估 ~15–25B tok）
-  - 复用既有 `tokenizer_eod` + `preprocess_data.py` + mode=turns，与 web shards 同格式
-  - 并行化（8 进程起步）+ `nice -n 10` + 不影响 GPIC 下载
-  - 分词完成后跑污染扫描 → 报「P-8 数据层全就绪」
-- **预期**：1.22TB + 552GB 全量分词，预估 1–2 天（8 并发）
+### 📝 给 data 下发全量分词指令 ②（修正①：扩大至所有已下载数据，用户直令「绝不偷工减料」）
+- **用户直令（2026-10-09②）**：「没人说P-8需要多少数据，要我看MiniCPM5用多少，P-8就训多少。请绝对不要偷工减料，下载多少，分词多少！！」
+- **①指令的三个严重错误（已修正）**：
+  1. **6.76B/4.36B 是运维自己编的**——不是用户要求，不是 MiniCPM5 规格，全部删除
+  2. **Code 只给了 L3（560 parquet / 564GB），遗漏了 L2（561 parquet / 570GB）**——一半 Code 数据没切
+  3. **Math 只给了 L1（1485 parquet / 342GB），遗漏了 L2-preview（138 parquet / 59GB）+ L3（200 parquet / 115GB）**
+  4. **Ultra-FineWeb-L3（1764 parquet / 1.8TB / ~690B token）完全没提**——MiniCPM5 base 训练核心数据
+- **MiniCPM5 训练数据参考**：base/mid = Ultra-FineWeb + Ultra-FineWeb-L3 + UltraX + UltraData-Code(L2+L3) + UltraData-Math(L1+L2+L3)；Code L2≈400B + L3≈150B；L3 web≈690B
+- **②指令已下发至** `run/BAIZE_DATA_TASK.md`（2026-10-09②，覆盖①）：
+  - ① Code L3 + Math L1 已在跑（7+4进程），保持不动
+  - 新增：Code L2（561 parquet / 570GB）→ `code_l2_s{i}`
+  - 新增：Math L2-preview（138 parquet / 59GB）→ `math_l2_s{i}` + Math L3（200 parquet / 115GB）→ `math_l3_s{i}`
+  - 新增：Ultra-FineWeb-L3（1764 parquet / 1.8TB / 4 config）→ `l3_{en|zh}_{qa|multi}_s{i}`
+  - 合计新增 2749 parquet / ~3.1TB / 预估 ~1000B+ token（L3 web 690B + Code L2 ~400B + Math L2+L3 ~15B）
+  - 口径：下载多少分词多少，绝不偷工减料，不设上限/下限
 
 ### 🔬 pretrain R3 BO 已完成 + P-8 PREP 已完成（agent 自主推进，无需运维指令）
 - R3 BO 100/100（98 complete + 2 failed），best=#8 score=0.4032，配比写入 `r3_best_blend.txt` + `DATA_MIX_RECIPE §9.7` + `EXPERIMENTS R3 节`
@@ -73,7 +79,7 @@ WAITING: 0
 |:--|:--|:--|:--|
 | **pretrain** | 🔄 **R3 数据配比 BO（6 维 / 100 trial）运行中**：DB 32 行（31 complete + 1 failed=#24），best=**trial#8 score=0.4032**；第 5 批 trials 32–39 训练中 ~62–75%，**0 NaN**；PID 2637043（ppid=1），8 卡 62GB/55–90% util，**ETA ~05:50 Oct 9**。R2 全线 ✅ / 论文 ✅ / 收官报告 ✅ / R3 脚本 + 小样本分词 6/6 ✅（10-07⑤ T1–T4 ✅：float32 vs bf16 SSM **无差异**，「dense 3.3× faster」系 warmup 假象已撤回） | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` · `BAIZE_DATA_R3_TASK.md` | 🟢 `.cline_pretrain`；**P-8 暂缓令（10-02）仍未撤** |
 | **vision** | 🟧 **AIMv2 缩放对比实验进行中（用户直令 10-08⑤ + 同日⑥ E2 变更）**：**E1 = 同族 OV2 w512/d30 126.78M** vs **E2 = 同族 w768/d30 284.54M（2.24×，只差宽度）**，均 224/p16、从零、同 AIMv2 objective + 同 94.9M + 同 1 epoch；主指标 IN-1k **lp Protocol B**（3 seeds）；判据 Δlp ±1.5pp。**agent 已完成**：smoke（E1 4697 / 官方臂 2347 img/s）· 登记 `.12` 8 卡 · `models.py` 加 width/depth override · 预注册初稿。**已令（⑥）**：E2 由「官方 304M@336」**改为 w768**，并**防止自动链跑到官方臂**。 | `run/EXPERIMENTS_VISION*.md` · `report_vision_aimv2_scaling.html`（待出） | 🟢 `.cline_vision`；`.12` 8 卡 |
-| **data** | 🔄 **🆕 10-09① 已下发 Code/Math 全量分词指令**：Web ✅ 524.42B（44 shards 全完成，全部 parquet 切完）；**Code 🔴 缺口 25×**（270M vs 需 6.76B）· **Math 🟠 缺口 7×**（609M vs 需 4.36B）→ 指令要求 UltraData-Code（1.22TB/11 语言）+ UltraData-MATH（552GB/15 shard）**全量分词**（与 web 同口径：切完所有 parquet 为止，不设 token 上限/下限）；GPIC 6829/8001（ETA ~28h→~12:15 Oct 10）；全量污染扫描 ✅ 160K docs 0 命中 | `report_data_*.html` · `DATA_MIX_RECIPE.md` · `BAIZE_DATA_R3_TASK.md` | 🟢 `.cline_data`；**Code/Math 分词 = P-8 数据层唯一阻塞** |
+| **data** | 🔄 **🆕 10-09② 已下发全量分词修正指令（覆盖①）**：Web ✅ 524.42B（44 shards 全完成）；Code L3 🔄 跑中（7进程）+ **L2 新增**（561 parquet / 570GB）；Math L1 🔄 跑中（4进程）+ **L2-preview 新增**（138 / 59GB）+ **L3 新增**（200 / 115GB）；**Ultra-FineWeb-L3 新增**（1764 parquet / 1.8TB / ~690B tok —— ①完全遗漏）；合计新增 2749 parquet / ~3.1TB；口径=下载多少分词多少，绝不偷工减料（用户直令）；~~6.76B/4.36B~~ 作废（运维自编，非用户/MiniCPM5 规格）；GPIC 6829/8001（ETA ~28h）；全量污染扫描 ✅ 160K docs 0 命中 | `report_data_*.html` · `DATA_MIX_RECIPE.md` · `BAIZE_DATA_R3_TASK.md` | 🟢 `.cline_data`；**全量分词 = P-8 数据层唯一阻塞** |
 | **harness** | 🔄 **R2 7×100 运行中**（19:22 起，**7 路并行**，ETA ~10h → ~05:30 Oct 9；100 = **30 R1 + 70 stratified**）；② 轨迹报告 ✅ `report_harness_interaction_traces.html`（38KB；**20pp gap 归因**：no-patch 33% vs 10% · timeout 27% vs 0% · patch scope 4.2 vs 2.2 files；**诚实声明仅 `stdout_tail` 存活**）；R1 7×30 ✅（60.0%–40.0%）；报告 4 份已交付。**⑦ 已下发**：并发变更**追认**但须**披露口径**（首轮 serial=1 vs 本轮并行；30 复用 / 70 新跑须标注；监控 quota/timeout/no-patch 率）+ 报告补落根目录 | `run/harness/*.html` · `run/harness/kimi_pilot_results.json` | 🟢 `.cline_harness`；**不占 GPU**（与 pretrain R3 BO 无卡冲突，注意 CPU/IO） |
 
 > ✅ **vision 叙事已决（2026-10-03 用户）：走 A = 保持「从零训练」**（"A 本身也是为了学习"）。
@@ -202,9 +208,9 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
-- **📝 2026-10-09（运维：data Code/Math 全量分词指令）** —— 已下发：
-  - `BAIZE_DATA_TASK.md` 新增 **2026-10-09①**：UltraData-Code（1.22TB/11 语言）+ UltraData-MATH（552GB/15 shard）全量分词（与 web 同口径：切完所有 parquet 为止，不设 token 上限/下限），复用既有 tokenizer_eod + mode=turns，8 并发 + nice -n 10，不 kill GPIC。分词完成后跑污染扫描 → 报「P-8 数据层全就绪」。
-  - 同步：`MEMORY.md §3` data 行 + §4 待拍板 + §0 最近操作更新。**P-8 唯一阻塞 = Code/Math 分词**。
+- **📝 2026-10-09（运维：全量分词 ② 修正 —— 用户直令「绝不偷工减料」）** —— 已下发：
+  - `BAIZE_DATA_TASK.md` 新增 **2026-10-09②**（覆盖①）：用户指出 ① 有三个严重错误——① 6.76B/4.36B 是运维自编（非用户/MiniCPM5 规格）→ 删除；② Code 遗漏 L2（561 parquet / 570GB）→ 补；③ Math 遗漏 L2-preview + L3（338 parquet / 174GB）→ 补；④ Ultra-FineWeb-L3（1764 parquet / 1.8TB / ~690B tok）完全没提 → 补。MiniCPM5 训练数据 = Ultra-FineWeb + Ultra-FineWeb-L3 + UltraX + Code(L2+L3) + Math(L1+L2+L3)。口径=下载多少分词多少，不设上限/下限。①已跑的 Code L3（7进程）+ Math L1（4进程）保持不动。
+  - 同步：`MEMORY.md §0` + §3 data 行 + §9 流水更新。**P-8 唯一阻塞 = 全量分词（含 L3 web + Code L2 + Math L2/L3）**。
 
 > 📦 **2026-10-08 流水已滚动归档** → `daily-memories/2026-10-08.md`（**原文未改一字**：harness R2 7×100 + 交互轨迹报告 · vision AIMv2 缩放 E1/E2 · pretrain R3 BO 下发 · vision/harness 运维问答征询 · 早/午论文更新两条）。**勿再塞回本文件。**
 

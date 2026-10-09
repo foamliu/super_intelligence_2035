@@ -21,58 +21,98 @@
 > 📦 §运维指令·2026-10-07⑥配比实验收官总报告HTML（report_data_mix_summary.html 29KB）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：R1→s_step→R2→top-K全弧线报告已交付,ρ=−0.80排名反转+0.6pp不可分辨+88:8:4先验。需要时再读。
 
 
-### 🆕 运维指令 · 2026-10-09①（**UltraData-Code / UltraData-MATH 全量分词 —— P-8 数据层唯一阻塞**）· **用户直令** · 最高优先
+### 🆕🆕 运维指令 · 2026-10-09②（**修正①：全量口径扩大至所有已下载数据 —— 用户直令「绝不偷工减料」**）· **用户直令** · 最高优先 · 覆盖①
 
-> **用户直令（2026-10-09）**：「data：开始 code/math 全量分词」
-> **背景**：R3 BO 已完成（best=#8 score=0.4032），P-8 数据就绪度核查（pretrain #231）发现 **Web 数据 ✅ 524B（5.9× 覆盖，全部 parquet 已切完）**，但 **Code 🔴 缺口 25×**（仅 270M vs 需 6.76B）、**Math 🟠 缺口 7×**（仅 609M vs 需 4.36B）。**Code/Math 全量分词 = P-8 数据层唯一阻塞**，分词完成后即可解锁 P-8 启动。
-> **口径**：与 web shards（en_base 2048 parquet→10 shard、zh 256 parquet→8 shard 等）**完全一致——全量 = 切完所有原始 parquet 文件**，不设 token 上限/下限。6.76B/4.36B 是 P-8 训练消耗量（参考），不是分词截止线。
+> **用户直令（2026-10-09②）**：「没人说P-8需要多少数据，要我看MiniCPM5用多少，P-8就训多少。请绝对不要偷工减料，下载多少，分词多少！！」
+>
+> **①指令的三个严重错误（已作废）**：
+> 1. **6.76B/4.36B 是运维自己编的**，不是用户要求，不是 MiniCPM5 规格——**全部删除，永不引用**。
+> 2. **Code 只给了 L3 路径（560 parquet / 564GB），遗漏了 L2（561 parquet / 570GB）**——一半 Code 数据没切。
+> 3. **Math 只给了 L1 路径（1485 parquet / 342GB），遗漏了 L2-preview（138 parquet / 59GB）+ L3（200 parquet / 115GB）**。
+>
+> **MiniCPM5 训练数据（P-8 参考基准，来源：HF 模型卡 + arXiv 2602.09003）**：
+> MiniCPM5-2B 的 base/mid 训练数据 = **Ultra-FineWeb + Ultra-FineWeb-L3 + UltraX-Preview + UltraData-Code（L2+L3）+ UltraData-Math（L1+L2+L3）**。
+> - UltraData-Code：L2 ≈400B tok + L3 ≈150B tok
+> - Ultra-FineWeb-L3：≈690B tok（en 467B + zh 223B）
+> - 后训练 SFT：400B tok（UltraData-SFT-2605，Stage(ii) 不在本轮）
+> - **P-8 与 MiniCPM5 同源同量，用多少切多少。**
+>
+> **已落盘数据全量清单（下载了多少，就分词多少）**：
 
-**① UltraData-Code 全量分词（本轮立刻启动）**
+| 数据源 | 层级 | parquet 数 | 磁盘 | 已分词? | 落盘命名 |
+|:---|:---|---:|---:|:---:|:---|
+| Ultra-FineWeb base en | — | 2048 | 2.66TB | ✅ s24-s33 | `*_s{24..33}` |
+| Ultra-FineWeb base zh | — | 256 | 301GB | ✅ s4-s11 | `*_s{4..11}` |
+| Ultra-FineWeb-L1 en_hq | — | 6000 | 478GB | ✅ s12-s23 | `*_s{12..23}` |
+| Ultra-FineWeb base subset | — | 48 | — | ✅ s0-s3 | `*_s{0..3}` |
+| UltraX-Preview | — | 479 | — | ✅ s34-s43 | `*_s{34..43}` |
+| **Ultra-FineWeb-L3 en_qa** | — | 616 | — | ❌ **NEW** | `l3_en_qa_s{i}` |
+| **Ultra-FineWeb-L3 en_multi** | — | 552 | — | ❌ **NEW** | `l3_en_multi_s{i}` |
+| **Ultra-FineWeb-L3 zh_qa** | — | 310 | — | ❌ **NEW** | `l3_zh_qa_s{i}` |
+| **Ultra-FineWeb-L3 zh_multi** | — | 286 | — | ❌ **NEW** | `l3_zh_multi_s{i}` |
+| **UltraData-Code L2** | L2 | 561 | 570GB | ❌ **NEW** | `code_l2_s{i}` |
+| UltraData-Code L3 | L3 | 560 | 564GB | 🔄 s0-s10 跑中 | `code_s{i}` |
+| UltraData-Math L1 | L1 | 1485 | 342GB | 🔄 s0-s3 跑中 | `math_s{i}` |
+| **UltraData-Math L2-preview** | L2 | 138 | 59GB | ❌ **NEW** | `math_l2_s{i}` |
+| **UltraData-Math L3** | L3 | 200 | 115GB | ❌ **NEW** | `math_l3_s{i}` |
+| **合计待新增** | | **2749** | **~3.1TB** | | |
 
-> ⚠️ **「全量」= 把 UltraData-Code 所有 parquet 文件全部分词**，与 web shards（en_base 2048 parquet→10 shard、zh 256 parquet→8 shard 等）口径完全一致——**切完所有原始文件为止，不设 token 上限/下限**。6.76B 是 P-8 训练的消耗量（参考），不是分词截止线。
+> **口径（覆盖①一切旧写法）**：**下载了多少 parquet 就分词多少 parquet——全量 = 切完所有已落盘的原始文件，绝不偷工减料，不跳过、不采样、不截断、不设 token 上限/下限。** ①已启动的 Code-L3（7进程）和 Math-L1（4进程）继续跑，**本指令新增所有 ❌ NEW 部分。**
 
-- **原始数据路径**：`/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L3/`（11 语言子目录：py/cpp/js/...，合计 ~1.22TB）
-- **分词口径**（与既有 web shards 完全一致）：
-  - **tokenizer** = `tokenizer_eod`（DeepSeek-V4.1-Flash，`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/tokenizer_eod`）
-  - **脚本** = `preprocess_data.py`（复用既有分词管线，`run/data_pipeline/preprocess_text.sh` 有 code 示例）
-  - **mode** = `turns`（code/math 是对话轮次格式，`texts` 列 → turn-by-turn）
-  - **产出** = `.bin/.idx/.json`（Megatron-LM 格式，**不入 git**）
-  - **落盘** = `/nas_train/app.e0031982/datasets/baize-data/text/`，命名 `code_s{i}.bin/.idx/.json`（i=0,1,2,...）
-  - **预估产出**：1.22TB 原始 → 预估 ~30–40B token（远超 P-8 需求 6.76B，与 web 一样留充足余量）
-- **并行化**（沿用 2026-10-07⑤ 已验证的并行分词方法）：
-  - 按语言子目录分片：每个语言（py/cpp/js/...）= 1 组 `preprocess_data.py` 进程；若单语言 parquet > 500 个，再按 parquet 子集拆分
-  - **起步 N = min(8, nproc/4)**（.12 当前 load~40/224 核，GPIC 下载是 I/O bound 不争 CPU → 可开 8 进程）
-  - 跑 ~10 min 看 load / NFS 吞吐 / GPIC 速率是否掉 → 再逐级加
-  - `setsid nohup` + log + `nice -n 10`（GPIC 下载优先级更高，分词不让它掉速）
-  - ⚠️ **别把 NFS 打满**（盯 GPIC 速率：当前 ~44 tar/h，若掉到 <30 tar/h 则减并发）
+**① UltraData-Code 全量分词 = L2 + L3（合计 1121 parquet / ~1.13TB）**
 
-**② UltraData-MATH 全量分词（与 ① 同时启动，或紧跟 ①）**
+- **L3（已在跑，保持不动）**：`/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L3/`（560 parquet / 564GB / 11 语言：py/cpp/js/cs/go/java/php/rb/rs/r/sh）→ 当前 code_s0–s10 继续
+- **L2（本指令新增，立即启动）**：`/nas_inference/app.e0031982/datasets/openbmb/UltraData-Code/data/UltraData-Code-L2/`（561 parquet / 570GB / 11 语言：py/cpp/js/cs/go/java/php/rb/rust/r/sh）
+  - **落盘** = `/nas_train/app.e0031982/datasets/baize-data/text/`，命名 `code_l2_s{i}.bin/.idx/.json`
+  - **分词口径**：同 L3 — tokenizer=`tokenizer_eod` / `--mode content --text-column full_content` / Megatron-LM `.bin/.idx/.json` / **不入 git**
+  - **并行化**：按语言子目录分片（11 语言 → 7–11 进程），`setsid nohup` + `nice -n 10`；起步 N=min(8, nproc/4)，盯 GPIC 速率不掉
 
-> ⚠️ 同 ①：**「全量」= 把 UltraData-MATH 所有 parquet 文件全部分词**，不设 token 上限/下限。4.36B 是 P-8 消耗量（参考），不是截止线。
+**② UltraData-Math 全量分词 = L1 + L2-preview + L3（合计 1823 parquet / ~516GB）**
 
-- **原始数据路径**：`/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L1/CC-MAIN-*/`（15 个 CC-MAIN shard，~552GB）
-- **分词口径**：同 ①（同 tokenizer / 同 mode=turns / 同格式）
-- **落盘**：`/nas_train/app.e0031982/datasets/baize-data/text/`，命名 `math_s{i}.bin/.idx/.json`
-- **预估产出**：552GB 原始 → 预估 ~15–25B token（远超 P-8 需求 4.36B，与 web 一样留充足余量）
-- **并行化**：按 CC-MAIN shard 分片，15 shard → 可开 8 进程（2 shard/进程），同 ① 的并发策略
+- **L1（已在跑，保持不动）**：`/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L1/CC-MAIN-*/`（1485 parquet / 342GB / 99 CC-MAIN shards）→ 当前 math_s0–s3 继续
+- **L2-preview（本指令新增）**：`/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L2-preview/`（138 parquet / 59GB）
+  - **落盘** = `math_l2_s{i}.bin/.idx/.json` / `--mode content --text-column content` / `nice -n 10`
+- **L3（本指令新增）**：`/nas_inference/app.e0031982/datasets/openbmb/UltraData-Math/data/UltraData-Math-L3/`（200 parquet / 115GB / 4 子目录：Conversation-Synthetic / Multi-Style-Synthetic / QA-Synthetic / Textbook-Exercise-Synthetic）
+  - **落盘** = `math_l3_s{i}.bin/.idx/.json`
+  - **分词口径**：先 smoke test 1 parquet 确认 text column（可能 `content` 或 `text`），再批量切
+  - **并行化**：4 子目录 → 4 进程起步
 
-**③ 投料前污染扫描（分词完成后做）**
-- 对 Code/Math 新分词产物跑 `check_contamination.py`（blacklist = 6 快照并集 536 任务 / 193,295 13-gram + 10 8-gram）
+**③ Ultra-FineWeb-L3 全量分词（1764 parquet / 1.8TB / ~690B token —— ①完全遗漏，MiniCPM5 base 训练核心数据）**
+
+> ⚠️ **这是最大遗漏**：Ultra-FineWeb-L3 是 MiniCPM5 base/mid 训练核心数据源之一（≈690B token），已在盘上 1764 parquet / 1.8TB，①完全没提。
+
+- **原始数据路径**：`/nas_inference/app.e0031982/datasets/openbmb/Ultra-FineWeb-L3/data/`
+  - `ultrafineweb_en_l3/qa/`（616 parquet）→ `l3_en_qa_s{i}`
+  - `ultrafineweb_en_l3/multi_style/`（552 parquet）→ `l3_en_multi_s{i}`
+  - `ultrafineweb_zh_l3/qa/`（310 parquet）→ `l3_zh_qa_s{i}`
+  - `ultrafineweb_zh_l3/multi_style/`（286 parquet）→ `l3_zh_multi_s{i}`
+  - 合计 1764 parquet / 1.8TB / ≈690B token
+- **分词口径**：与既有 web shards（en_base / zh / l1_en_hq / ultrax）完全一致 — tokenizer=`tokenizer_eod` / `--mode content` / 先 smoke test 确认 text column
+  - **落盘** = `/nas_train/app.e0031982/datasets/baize-data/text/`，命名如上
+- **并行化**：4 config 各开 2–4 进程起步（en_qa 616→4进程；en_multi 552→4；zh_qa 310→2；zh_multi 286→2），同 ① 并发策略
+
+**④ 投料前污染扫描（所有分词完成后做）**
+- 对所有新分词产物（Code L2+L3 / Math L1+L2+L3 / L3 web）跑 `check_contamination.py`（blacklist = 6 快照并集 536 任务 / 193,295 13-gram + 10 8-gram）
 - 采样 ≥ 10K docs / 源 → 0 命中则可投料
 - 结果写入 `CONTAMINATION_CHECK.md`
 
-**④ 报告要求（每唤醒心跳必报）**
-- Code 分词：`code_s{i} 进度 N/总 shards，X 亿 token 已切，活 PID，ETA`
-- Math 分词：`math_s{i} 进度 N/总 shards，X 亿 token 已切，活 PID，ETA`
-- GPIC 下载：照常报（不受影响）
-- **分词全部完成后**：报「Code X.B tok / Math Y.B tok / P-8 数据层全就绪」→ 运维将评估 P-8 启动
+**⑤ 报告要求（每唤醒心跳必报）**
+- Code L3：`code_s{i} 进度，X 亿 tok，活 PID，ETA`（已有）
+- Code L2：`code_l2_s{i} 进度，X 亿 tok，活 PID，ETA`（新增）
+- Math L1：`math_s{i} 进度，X 亿 tok，活 PID，ETA`（已有）
+- Math L2-preview：`math_l2_s{i} 进度，X 亿 tok，ETA`（新增）
+- Math L3：`math_l3_s{i} 进度，X 亿 tok，ETA`（新增）
+- L3 web：`l3_{en|zh}_{qa|multi}_s{i} 进度，X 亿 tok，ETA`（新增）
+- GPIC 下载：照常报
+- **分词全部完成后**：报「Code L2+L3 X.B tok / Math L1+L2+L3 Y.B tok / L3 web Z.B tok / web 已有 524.42B / **合计 W.B tok** / P-8 数据层全就绪」→ 运维将评估 P-8 启动
 
-**⑤ 铁律（不变）**
+**⑥ 铁律（不变）**
 - 🚫 不 kill GPIC 下载（PID 144981 保持运行）
 - 🚫 不改 tokenizer / 不改 .bin/.idx 格式
 - 🚫 不入 git（.bin/.idx/.json 产物不入库）
 - 分词用 `nice -n 10`，GPIC 下载优先级更高
 - 心跳 ≤ 60 min 且每步 commit + push
+- 🚫 **绝不偷工减料**：每个 parquet 文件都要切完，不跳过、不采样、不截断、不设上限/下限
 - TASK/MEMORY ≤ 32KB
 
 **⑥ 优先级排序**：本块 **最高优先** → GPIC 续下（照常）→ en_v1_4 排队（不启动）
