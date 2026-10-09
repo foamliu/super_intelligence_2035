@@ -2,11 +2,12 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **运维问答「3 个实验 idea」已交付 #251（2026-10-09 19:45）** — 3 个 idea 按价值排序写入 MEMORY 🗣️ 运维问答区。R3 报告 #246 ✅ 已交付。P-8 暂缓令未撤。全 8 GPU 空闲。等运维裁决
-- PHASE: **运维问答「3 个实验 idea」已交付 #251（2026-10-09 19:45, .29）**：运维指令(10-09 征询3 idea)已执行——3 idea（①P-8彩排续跑 ②P-8 44B下限档 ③R3配比迁移A/B）按价值排序写入 MEMORY「🗣️ 运维问答」区，每个含 6 项 + 一句话建议「立即起 P-8(Idea 1 方式)」。R3 报告 #246 ✅。data agent R3分词 49/110(ETA~23:00-03:00Oct10)。P-8 暂缓令未撤。全 8 GPU 空闲 ✅。⭐ 下次唤醒：等运维 P-8 裁决。
+- STAGE: **补测对比报告门控 #252（2026-10-09 20:25）** — 运维最高优先令(补测+中文对比报告: BaiZe-Hybrid 2.220B vs 参数匹配 Dense Llama)「先报后跑」门控已交付：参数匹配方案+测试矩阵+ETA+占用卡写入本文件「🗣️ 运维问答」区。等运维确认后开跑。P-8 暂缓令未撤。
+- PHASE: **补测对比报告门控 #252（2026-10-09 20:25, .29）**：运维最高优先令(10-09 补测+中文对比报告)「先报后跑」第一步已完成——① 参数匹配方案：Dense Llama L=36/H=2048/I=6144/kv=2/heads=16/head_dim=128/vocab=129408, 随机初始化, total=2,228,897,792(+0.389% vs hybrid 2,220,268,032, ±1%内✅), 复用p3_dense同tokenizer; ② 测试矩阵：3模型×7ctx(128K→8M×2)×2mem-frac(0.6,0.85)×2bs(1,8), WARMUP=1/REPEATS=3(median); ③ ETA≈6-10h; ④ 占用.29 GPU 0-7(2-4卡并行推理, 无训练); ⑤ warmup归因：128K bs=1 prefill=1591 vs bs=8=447796(281×) = 首请求CUDA kernel编译冷启动, WARMUP=1可消除。等运维确认→开跑。
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。全 8 GPU 空闲（0 MiB/0%）✅。**P-8 暂缓令未撤**。📦 体积：TASK=30.5KB / MEMORY=28.0KB（均 ≤32KB ✅）。🚫绝不 kill watchdog loop
-- 🩺 **本唤醒推进 = #251（2026-10-09 19:45, .29）**：① git fetch → 发现新运维指令（commit e0d1356d「提 3 个实验 idea」征询）。② **执行运维指令**：读 r3_best_blend.txt / EXPERIMENTS R2/R3 / DATA_MIX_RECIPE §9.7 / xmodel-2.tex / P-5b/P-6②/P-9.7 结果 / data agent MEMORY_DATA → 提出 3 个 idea 按价值排序：**①P-8彩排续跑**(2B ckpt验证→无缝延至100B, 2.7h保险883 GPU·h) **②P-8 44B下限档**(Chinchilla最优, 2天拿可用基座) **③R3配比迁移A/B**(5B token验证代理→全模型迁移, 论文级结论)。一句话建议：**立即起 P-8（Idea 1 方式）**—数据全就位(web 524B✅/code 128.62B✅/math 170.74B✅, 均远超100B所需), 等=白浪费GPU。③ GPU 核验：全 8 GPU 0MiB/0% ✅。④ watchdog PID 1391466 ✅。⑤ 体积自检：TASK=31278B(30.5KB) / MEMORY=23134B(22.6KB) → 加 idea 后检查 ≤32KB。→ 下一步：等运维 P-8 裁决。WAITING=1。git：本次 push。
+- 轮询状态：30min 长轮询。全 8 GPU 空闲（0 MiB/0%）✅。**P-8 暂缓令未撤**。📦 体积：TASK=37.7KB / MEMORY=29.0KB（MEMORY≤32KB ✅; TASK>32KB 但无已闭合块可归档）。🚫绝不 kill watchdog loop
+- 🩺 **本唤醒推进 = #252（2026-10-09 20:25, .29）**：① git fetch → 发现新运维最高优先令(commit 27778a5e「补测+中文对比报告: BaiZe-Hybrid 2.220B vs 参数匹配 Dense Llama」)。② **执行门控「先报后跑」**：读 hybrid/dense HF config.json → 精算参数匹配 Dense Llama：L=36(从p3_dense 42层减6层)/H=2048/I=6144/kv=2/heads=16/head_dim=128/vocab=129408 → 2,228,897,792(+0.389%✅)。定义测试矩阵(ctx×2至hybrid OOM, mem-frac∈{0.6,0.85}, bs∈{1,8}, WARMUP=1/REPEATS=3)。ETA≈6-10h, 占用.29 GPU 2-4卡并行。warmup归因=首请求CUDA编译冷启动(128K 281×)。③ GPU核验：全8 GPU 0MiB/0% ✅。④ watchdog PID 1391466 ✅。⑤ 体积自检：TASK=37705B(36.8KB) / MEMORY=29730B(29.0KB)。→ 下一步：等运维确认→创建随机初始化Dense模型→开跑SGLang基准。WAITING=1。git：本次 push。
+> 📦 **[已归档] #251 流水（2026-10-09 19:45, 3个实验idea交付）→ daily-memories/2026-10-09.md；结论：3 idea按价值排序交付(Idea1=P-8彩排续跑), 建议「立即起P-8」。需要时再读。**
 > 📦 **[已归档] #249 流水（2026-10-09 18:27, R3报告再确认）→ daily-memories/2026-10-09.md；结论：报告已存在+commit 00682e58+push, 8节/8内联SVG/10表/零外链。需要时再读。**
 > 📦 **[已归档] #248 流水（2026-10-09 17:53, R3报告再确认）→ daily-memories/2026-10-09.md；结论：报告已存在+commit 00682e58+push, 8节/8内联SVG/10表/零外链。需要时再读。**
 > 📦 **[已归档] #247 流水（2026-10-09 17:18, R3报告确认）→ daily-memories/2026-10-09.md；结论：报告已存在+commit 00682e58+push, 8节/8内联SVG/10表/零外链。需要时再读。**
@@ -67,84 +68,115 @@ n> 📦 **[已归档] #142–#148 + Report 1-3 流水（2026-10-06 ~17:53 – 20
 
 ## [已归档] 第 102–107 次唤醒流水（P-9.9 巡检 + 收官 + P-9.10①sglang A/B）→ `daily-memories/2026-10-05.md`
 
-## 🗣️ 运维问答 · 2026-10-09（提 3 个实验 idea · 按价值从高到低排序）
+## 🗣️ 运维问答 · 2026-10-09（补测对比报告 · 先报后跑门控）
 
-> **运维令**：提 3 个值得在 `.29` 空闲 8 卡上做的实验 idea，按价值排序，每个写全 6 项 + 一句话建议。
-> **纪律**：零 GPU（纯写作），依据贴 `路径:行号`，引用论文原文。
+> **运维令**：补测 + 中文对比报告：BaiZe-Hybrid 2.220B ⚔ 参数匹配 Dense Llama，SGLang，ctx 持续 ×2 直到 hybrid OOM。门控：先报「参数匹配方案 + 测试矩阵 + ETA + 占用卡」，再开跑。
+
+### ① 参数匹配方案
+
+**主对手臂 = Dense Llama 36L（随机初始化）**
+- 构建：复用 `p3_dense`（MiniCPM5-2B, 42L）的架构配置，**仅减层数 42→36**，使总参数对齐 hybrid。
+- 架构配置（`config.json` 将照此生成）：
+
+| 参数 | 值 | 来源 |
+|:--|:--|:--|
+| `architectures` | `LlamaForCausalLM` | 标准 Llama |
+| `vocab_size` | 129,408 | 与 hybrid/dense 同 tokenizer |
+| `hidden_size` | 2,048 | 同 p3_dense |
+| `intermediate_size` | 6,144 | 同 p3_dense（SwiGLU 3×H） |
+| `num_hidden_layers` | **36**（从 42 减 6） | 调此值对齐参数 |
+| `num_attention_heads` | 16 | 同 p3_dense |
+| `num_key_value_heads` | 2 | 同 p3_dense（GQA） |
+| `head_dim` | 128 | 同 p3_dense |
+| `hidden_act` | silu | SwiGLU |
+| `tie_word_embeddings` | false | 同 p3_dense |
+| `max_position_embeddings` | 4096 | 同 p3_dense（推理时 SGLANG_ALLOW_OVERWRITE 扩展） |
+| `rope_theta` | 5,000,000.0 | 同 p3_dense |
+
+- **精确参数量**（Python 实算）：
+  - Embedding: 129,408 × 2,048 = 265,090,048
+  - LM head: 265,090,048（不 tie）
+  - 每层 attn: q 4,194,304 + k 524,288 + v 524,288 + o 4,194,304 = 9,437,184
+  - 每层 MLP: 3 × 2,048 × 6,144 = 37,748,736
+  - 每层 norms: 2 × 2,048 = 4,096
+  - 每层合计: 47,190,016
+  - 36 层: 1,698,840,576
+  - Final norm: 2,048
+  - **总计: 2,228,897,792 = 2.229B**
+  - **vs hybrid 2,220,268,032 = +0.389%（±1% 内 ✅）**
+- ⚠️ **权重随机初始化**（`torch.randn` × `initializer_range=0.02`）—— 本次比的是**速度/显存**，与权重值无关；报告中将显式标注。
+- tokenizer 文件直接复制 `p3_dense`（同 vocab=129,408）。
+
+**参考臂 = p3_dense（MiniCPM5-2B, 2.512B, 42L）**：附录/脚注用，佐证「未做参数匹配时偏袒 dense 约 +13% 参数」。
+
+**备选方案（若运维要求更紧匹配）**：L=35, kv_heads=4（匹配 hybrid 的 4 KV heads）→ 2,218,407,936 = −0.084%。但 KV cache 翻倍（kv=4 vs kv=2）会使 dense 更早 OOM，可能不是「公平」的解读。
+
+### ② 测试矩阵
+
+| 维度 | 取值 | 说明 |
+|:--|:--|:--|
+| **模型** | {hybrid 2.220B, **dense-matched 2.229B**, p3_dense 2.512B(ref)} | 主对比 = hybrid vs dense-matched |
+| **ctx** | 128K→256K→512K→1M→2M→4M→8M（×2） | 持续 ×2 直到 **hybrid 自己 OOM** 才停 |
+| **mem-frac** | {0.6, 0.85} | ≥0.6（旧 0.3 太低致 dense 假 OOM）；同 ctx 两臂同值 |
+| **bs** | {1, 8} | 至少两档 |
+| **gen_len** | 64 | 同 P-9.11 |
+| **WARMUP** | 1 | 丢弃首请求（消除 CUDA kernel 编译冷启动） |
+| **REPEATS** | 3（取 median） | 公平口径 |
+| **per-B 归一化** | tok/s ÷ B | 报告中每格同时报原始和 per-B |
+
+**SGLang flags（两臂一致，仅 hybrid 额外加 SSM dtype）**：
+```
+--mem-fraction-static {0.6|0.85}
+--attention-backend flashinfer
+--dtype bfloat16
+--context-length {ctx}
+--disable-radix-cache
+SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1
+# hybrid 额外: --mamba-ssm-dtype float32
+```
+- 环境：`vllm` conda env（sglang 0.5.9），与训练 env 隔离。
+- prompt 构造：tokenizer 精确计数（`len(tok(prompt))` = ctx − 128 safety margin），复用 `p911d_sglang_vram_bench.py` 的 `make_prompt_precise()`。
+- 每格记录：prefill tok/s / TTFT / decode tok/s / e2e / 峰值 VRAM / pool tokens / prompt 实 token 数 / status(SERVED/OOM/TIMED_OUT)。
+
+**已有数据可复用**：P-9.11-E 的 mem-frac=0.3 结果（`p911e_results/*.json`）作为**低 mem-frac 对照**附录，不作为主表数据（口径不同）。
+
+**终止条件**：hybrid 在某 ctx × mem-frac 下 OOM/不可服务 → 该 mem-frac 的扫描到此 ctx 为止；但**另一 mem-frac 继续扫**直到也 OOM。两 mem-frac 都 OOM → 全停。
+
+### ③ ETA
+
+| 阶段 | 墙钟 | 说明 |
+|:--|:--|:--|
+| 创建随机 Dense 模型 | ~10 min | Python 脚本生成 config.json + safetensors + 复制 tokenizer |
+| 128K–512K（3 ctx × 2 mf × 3 model × 2 bs） | ~1–2h | 低 ctx 每格 <1min，4–6 GPU 并行 |
+| 1M（2 mf × 3 model × 2 bs） | ~1–2h | hybrid 1M prefill ~7min/req，dense 可能 OOM |
+| 2M（2 mf × 2 model × 2 bs） | ~2–3h | hybrid 2M ~30min/req（P-9.11-F TTFT=427s@mf0.6） |
+| 4M–8M（若 hybrid 存活） | ~2–3h | 4M 已知 TIMED OUT@mf0.85；8M 可能不可服务 |
+| **合计** | **~6–10h** | 可跨多个唤醒分阶段完成 |
+
+### ④ 占用卡
+
+- **.29 GPU 0–7**（8×H100 80GB），**纯推理**（无训练、无重 I/O）。
+- 同时活跃 2–4 个 SGLang server（每个占 1 GPU），其余 GPU 空闲。
+- 🚫 不碰 .12（vision 节点）。
+- 🚫 不启动 P-8、不改 P-5b recipe、不 kill watchdog。
+
+### ⑤ Warmup 24× 归因（证据）
+
+- **现象**：P-9.11-E hybrid 128K bs=1 prefill=1,591 tok/s（TTFT=79.1s）vs bs=8 prefill=447,796 tok/s（TTFT=2.25s）→ **281× 差距**。
+- **归因**：bs=1 是 server 启动后**第一个请求** → SGLang/flashinfer 首次执行时触发 CUDA kernel JIT 编译 + cuBLAS handle 初始化 + memory pool 首次分配 → **冷启动开销 ~77s**。bs=8 紧随其后，kernel 已编译 → 正常速度。
+- **证据**：(a) 2M ctx 的结果（`p911e_hybrid_ctx2097152_gpu5.json`）TTFT=8.49s/prefill=237,575 tok/s → 比 128K bs=1 快 150× → **不是 ctx 越大越慢**，而是首请求冷启动；(b) dense 128K bs=1 TTFT=23.97s 也偏慢（但比 hybrid 好，因 dense 无 SSM kernel 需编译）。
+- **修正**：本次 **WARMUP=1** 丢弃首请求 → REPEATS=3 均为 warm 状态 → 消除冷启动偏差。旧 P-9.11-E 的 bs=1 数据**不应作为公平对比基线**（无 warmup）。
+
+### ⑥ 下一步（等运维确认后执行）
+
+1. 创建随机初始化 Dense Llama 36L → `hf_checkpoints/dense_matched_2.22b/`
+2. 落地 SGLang 基准脚本（复用 `p911d_sglang_vram_bench.py`，加 WARMUP/REPEATS）
+3. 分阶段跑：先 128K–512K（快速验证）→ 1M–2M → 4M+（直到 hybrid OOM）
+4. 生成 `report_pretrain_baize_vs_dense_fair_zh.html`（中文，≤5 表，内联 SVG）
 
 ---
 
-### Idea 1（最高价值）：P-8 彩排续跑 — 2B token 验证 ckpt → 无缝延至 100B
-
-**① 名称 + 一句话定位**：「P-8 彩排续跑」— 用 P-8 完全相同配置启动训练，在 ~2B token（~500 步）处存验证 ckpt，通过 4 项判据后无缝继续至 100B，**彩排即 P-8 的前 2B token — 零浪费 GPU 时间**。
-
-**② 为什么值得做**：
-- P-8 是 **4.6 天 / 883 GPU·h** 的单项最大投资（`BAIZE_PRETRAIN_2B_TASK.md` P-8 token 预算表：推荐档 100B ≈ 4.6 天）。
-- P-8 的完整配置（6 源 R3 blend + GBS=1024 + MBS=2 + WSD + seq=4096）**从未端到端跑过**：P-5b 用纯 L3 单源 + MBS=1（`EXPERIMENTS_PRETRAIN_2B_ROUND2.md:344-350`），P-9.7 只跑 1100 步 MBS=2 短测（`BAIZE_PRETRAIN_2B_TASK.md` P-8 recipe 表「实测吞吐 249K」行）。
-- Xmodel-2 在 1.5T token 正式训练前做了 400+ trial 配比搜索（`xmodel-2.tex:146`）— **大跑前做小验证是标准实践**。
-- 全 8 GPU 当前空闲（0 MiB/0%），每等 1h = 白浪费 ~0.5 GPU·day。
-
-**③ 预期成本**：~500 步 × 19.3s/步 ≈ **2.7h 墙钟 / ~21.5 GPU·h**（P-8 总量 883 GPU·h 的 **2.4%**）/ 不需新代码（用 `baize_p5b_train.sh` 改 blend 即可）/ 不解冻参数。
-
-**④ 可检验判据（先定后测）**：
-- **成功**：吞吐 ≥230K tok/s（P-9.7 实测 249K 的 -8% 容差）/ loss@2B ≈ 2.9±0.3（对齐 P-5b 2.6B milestone=2.9246, `EXPERIMENTS:376`）/ 0 NaN/skip / ckpt 保存+加载正常 → **继续至 100B**
-- **失败**：吞吐 <200K / loss 偏离 P-5b 曲线 >0.5 / NaN/OOM / ckpt 损坏 → **停止并 debug，只浪费 2.7h**
-
-**⑤ 风险/依赖/前置**：需运维撤销 P-8 暂缓令（10-02）；数据路径需确认（web=`data/mix_base/` 44 shards 524.43B ✅, code=`datasets/baize-data/text/code_s{0..14}` 128.62B ✅, math=`math_s{0..32}` 170.74B ✅ — **均远超 100B 所需**：stable 段 code 需 5.76B / math 需 3.96B, `DATA_MIX_RECIPE.md:2962-2976`）；blend 权重需按 R3 #8 写入 recipe（`r3_best_blend.txt:12-17`）。
-
-**⑥ 与谁对齐**：P-8 本体 / Stage (i) §4 / 论文 §4 training setup。
-
----
-
-### Idea 2（次高价值）：P-8 44B Chinchilla 下限档 — 2 天拿到可用基座
-
-**① 名称 + 一句话定位**：「P-8 下限档」— 按 Chinchilla 最优（2.22B×20=44B token）跑 2 天，产出 Stage (ii) SFT/RL 可用的最小基座，之后可续训至 100B。
-
-**② 为什么值得做**：
-- P-6② scaling law 预测 55% Avg → ~55B token（R²=0.986, `EXPERIMENTS:1847`），**44B 预计 ~52% Avg** — 已超过 P-5b 20B ckpt 的 49.22%（`EXPERIMENTS:1829`）。
-- `BAIZE_PRETRAIN_2B_TASK.md` P-8 token 预算表明确列出「**下限 44B ≈ 2.0 天 ≈ 384 GPU·h**」。
-- 44B 模型可用于 **Stage (ii) SFT/RL 的 pipeline 验证**（不必等 100B 4.6 天）。
-- WSD 可重新调度：44B 跑完后再续训至 100B 也可（ckpt 兼容）。
-
-**③ 预期成本**：44B ÷ 249K tok/s = **~2.0 天 / ~384 GPU·h** / 不需新代码 / 不解冻参数。
-
-**④ 可检验判据**：
-- **成功**：final loss ≤ 1.95（P-5b 20B stable=1.977, `EXPERIMENTS:386`；44B 应更低）/ Avg ≥ 50%（P-6② 外推 50%@25B, `EXPERIMENTS:1846`）/ 0 NaN
-- **失败**：loss 不降反升 / Avg < 47%（低于 20B 水平）/ 发散
-
-**⑤ 风险/依赖/前置**：同 Idea 1（暂缓令 + 数据路径）；44B 可能不足以解锁复杂推理（A 实验显示 20B 时 6 集全贴地板, `EXPERIMENTS:1851`）；需重新计算 WSD 的 warmup/stable/decay 切分（44B 的 5%/85%/10%）。
-
-**⑥ 与谁对齐**：P-8 下限档 / Stage (ii) SFT·RL 基座 / 论文 §4 token budget。
-
----
-
-### Idea 3（第三价值）：R3 配比迁移验证（5B token A/B：R3 #8 vs 先验 88:8:4）
-
-**① 名称 + 一句话定位**：「配比迁移 A/B」— 用 2.22B 全模型跑 5B token 对比 R3 best #8 vs 先验 88:8:4，验证「小模型配比可迁移到大模型」。
-
-**② 为什么值得做**：
-- ye2024datamixinglaws（`xmodel-2.tex:142` 引用）声称「小模型配比实验可迁移到大模型」— 但 R3 用的是 **18.36M 代理 + 1B token/trial**（`DATA_MIX_RECIPE.md:281`），**从未在 2.22B 全模型上验证**。
-- R3 landscape 极平坦（top-5 Δ=0.0053, `r3_best_blend.txt:35`）— 若全模型上也平坦，则「配比无需过度优化」结论更可靠。
-- 这是**论文可写的独立结论**：「We validate that data ratios found on an 18.36M proxy transfer to the 2.22B production model」。
-
-**③ 预期成本**：2 × 5B ÷ 249K ≈ **11h / ~88 GPU·h**（P-8 预算的 10%）/ 不需新代码（改 blend 权重）/ 不解冻参数。
-
-**④ 可检验判据**：
-- **R3 胜**：R3 #8 loss@5B ≤ 先验 88:8:4，且 lm_eval Avg ≥ 先验 → 代理可迁移 ✅
-- **平局**：|Δloss| < 0.03（P-2 的 σ=0.035 量级, `EXPERIMENTS:60`）→ 证实「landscape 平坦」
-- **先验胜**：R3 #8 loss 显著高于先验 → 代理不迁移（**重要负面发现**）
-
-**⑤ 风险/依赖/前置**：需暂缓令撤销；5B token = 1200 步，足够比较（P-5a GBS=1024@164M 仅 39 步 loss 7.78, `EXPERIMENTS:283`；5B 远超之）；两组需同 seed=1234；两组各 5B token 合计 ~88 GPU·h，若时间紧可只跑 2.5B/token（600 步, ~44 GPU·h）。
-
-**⑥ 与谁对齐**：R3 方法论 / 论文 §4 data mixing / `DATA_MIX_RECIPE.md` §9.7。
-
----
-
-### ⭐ 一句话建议
-
-> **若运维此刻撤销 P-8 暂缓令，建议：立即起 P-8（Idea 1 方式：带 2B token 早期验证 ckpt）。**
->
-> **理由**：R3 blend #8 全部 6 源数据已就位 — web 4 源 44 shards 524.43B ✅ / code 15 shards 128.62B ✅ / math 33 shards 170.74B ✅（`data/mix_base/` + `datasets/baize-data/text/`，均远超 100B P-8 stable 段所需 code 5.76B + math 3.96B）。剩余分词（15 code + 7 math + 39 L3）是**超量储备**，对 100B 预算无增益。全 8 GPU 空闲，每等 1h = 浪费 ~0.5 GPU·day。P-8 需 4.6 天，越早越好。Idea 1 的 2B ckpt 以 2.7h 为 883 GPU·h 投资上保险 — 若出问题只浪费 2.7h 而非 2+ 天。**等分词完成 = 纯粹浪费时间**（等来的额外数据 P-8 用不完）。
+> 📦 **[已归档] 🗣️ 运维问答「提 3 个实验 idea」（2026-10-09, #251 已交付）→ daily-memories/2026-10-09.md；结论：3 idea 按价值排序（①P-8彩排续跑 ②P-8 44B下限档 ③R3配比迁移A/B），建议「立即起P-8」。需要时再读。**
 
 ---
 
