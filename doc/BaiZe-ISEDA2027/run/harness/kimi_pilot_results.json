@@ -25362,11 +25362,32 @@
     "harness": "claude-code",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/printing/tests/test_latex.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/printing/tests/test_latex.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 1262.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-14817.json",
+      "stdout_tail": "-14817\n[run_single] base_commit=0dbdc0ea83d339936da175f8c3a97d0d6bafb9f8\n[run_single] ps_len=2010\n[run_single] git reset --hard 0dbdc0ea83d339936da175f8c3a97d0d6bafb9f8\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=1262.0s ==\n[run_single] model_patch: 755 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-14817.json\n[run_single] cleanup: git reset --hard 0dbdc0ea83d339936da175f8c3a97d0d6bafb9f8\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 111,
+        "p2p_total": 111
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "sympy__sympy-15011",
@@ -25374,11 +25395,32 @@
     "harness": "claude-code",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/printing/latex.py\n\tsympy/printing/tests/test_latex.py\nPlease commit your changes or stash them before you swit"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsympy/printing/latex.py\n\tsympy/printing/tests/test_latex.py\nPlease commit your changes or stash them before you swit",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 697.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-15011.json",
+      "stdout_tail": "y-15011\n[run_single] base_commit=b7c5ba2bf3ffd5cf453b25af7c8ddd9a639800cb\n[run_single] ps_len=711\n[run_single] git reset --hard b7c5ba2bf3ffd5cf453b25af7c8ddd9a639800cb\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=696.8s ==\n[run_single] model_patch: 1179 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_sympy__sympy-15011.json\n[run_single] cleanup: git reset --hard b7c5ba2bf3ffd5cf453b25af7c8ddd9a639800cb\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 53,
+        "p2p_total": 53
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "sympy__sympy-15308",
