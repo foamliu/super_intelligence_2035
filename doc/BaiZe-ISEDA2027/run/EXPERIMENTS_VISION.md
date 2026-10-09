@@ -693,32 +693,32 @@ Under the AIMv2-style dense objective at a fixed 1-epoch budget over 95.8M image
 
 ### 8.2 Results
 
-> 🔄 **Training in progress** — E1fair running (step ~87650/187101 ≈ 47%, ~2400-3500 img/s (NFS fluctuation), loss_ema~0.33, C1=0.5042 C2_gap=+0.1886 C4=OK, no collapse, lr=3.01e-04 cosine active decaying). E2fair + eval chained automatically via `bothfair` mode (PID 2670216). Checkpoints saved at steps 10000–80000 (8 ckpts, 487MB each). Results will be filled in upon completion (~19:00 Oct 10 estimated).
+> 🔄 **Training in progress** — E1fair running (step ~104110/187101 ≈ 55.6%, ~5100 img/s avg (range 2580-6330, NFS fluctuation), loss_ema~0.34, C1=0.6516 C2_gap=+0.1563 C4=OK, no collapse, lr=2.39e-04 cosine active decaying). E2fair + eval chained automatically via `bothfair` mode (PID 2670216, etimes~15967s). Checkpoints saved at steps 10000–100000 (10 ckpts, 487MB each). Results will be filled in upon completion (~19:30 Oct 10 estimated).
 
-#### 8.2.1 E1fair Progress Snapshot (2026-10-10 01:59)
+#### 8.2.1 E1fair Progress Snapshot (2026-10-10 02:50)
 
 | Metric | Value |
 |:--|:--|
-| Current step | 87650 / 187101 (46.9%) |
-| Elapsed | ~3.6h (since 22:24 Oct 9) |
-| Avg ms/iter | ~147ms (range 147–278ms, NFS-dependent) |
-| Avg image/s | ~3400 (range 1843–3474, NFS fluctuation) |
-| Loss (EMA) | 0.3291 (down from 7.33@step10) |
-| C1 (off-diag cosine) | 0.5042 (threshold 0.95) ✅ |
-| C2 gap | +0.1886 (positive = healthy) ✅ |
+| Current step | 104110 / 187101 (55.6%) |
+| Elapsed | ~4.4h (since 22:24 Oct 9) |
+| Avg ms/iter | ~100ms (range 81–198ms, NFS-dependent) |
+| Avg image/s | ~5100 (range 2580–6330, NFS fluctuation) |
+| Loss (EMA) | 0.3365 (down from 7.33@step10) |
+| C1 (off-diag cosine) | 0.6516 (threshold 0.95) ✅ |
+| C2 gap | +0.1563 (positive = healthy) ✅ |
 | C4 (loss decreasing) | OK ✅ |
-| lr (current) | 3.01e-04 (cosine decaying from 5e-4 peak) ✅ |
-| Fusing events | 0 (245 PROBE events, all C4=OK) ✅ |
-| Checkpoints | 8 (step10000–80000, 487MB each, 3.9GB total) |
-| GPU | 8× ~16.5GB/card, 7/8 at 100% util (GPU3 momentary dips, 343W confirmed active) |
+| lr (current) | 2.39e-04 (cosine decaying, past 50% pt) ✅ |
+| Fusing events | 0 (all PROBE events C4=OK) ✅ |
+| Checkpoints | 10 (step10000–100000, 487MB each, 4.9GB total) |
+| GPU | 8× ~16.5GB/card, 60-96% util, temps 40-46°C |
 
 **lr trajectory verification** (from `train.log`):
 ```
 [lr-selfcheck] lr@step0=0.00000000  lr@warmup(2000)=0.00050000  lr@50%(93550)=0.00027882  lr@last(187100)=0.00005000
 [lr-selfcheck] OK: lr monotonically decreasing after warmup
 ```
-At step 87650, lr=3.01e-04 — correctly between 50% point (2.79e-4@93550) and warmup peak (5e-4@2000), confirming cosine decay is active and tracking correctly.
+At step 104110, lr=2.39e-04 — past the 50% point (2.79e-4@93550), correctly decaying toward min_lr (5e-5@187100), confirming cosine decay is active and tracking correctly.
 
-**ETA**: E1fair done ~06:00 → E1 eval ~3.5h → E2fair ~5.5h → E2 eval ~3.5h → **all done ~19:00 Oct 10**.
+**ETA**: E1fair done ~06:20 → E1 eval ~3.5h → E2fair ~5.5h → E2 eval ~3.5h → **all done ~19:30 Oct 10**.
 
 *(Results to be filled in upon completion)*
