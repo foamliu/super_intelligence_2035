@@ -15906,11 +15906,32 @@
     "harness": "claude-code",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\ttests/aggregation/tests.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\ttests/aggregation/tests.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 528.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-12284.json",
+      "stdout_tail": "12284\n[run_single] base_commit=c5e373d48cbdd923575956fed477b63d66d9603f\n[run_single] ps_len=880\n[run_single] git reset --hard c5e373d48cbdd923575956fed477b63d66d9603f\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=528.3s ==\n[run_single] model_patch: 2699 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-12284.json\n[run_single] cleanup: git reset --hard c5e373d48cbdd923575956fed477b63d66d9603f\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 31,
+        "p2p_total": 31
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "django__django-12286",
@@ -15918,11 +15939,32 @@
     "harness": "claude-code",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\ttests/aggregation/tests.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\ttests/aggregation/tests.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 394.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-12286.json",
+      "stdout_tail": "12286\n[run_single] base_commit=979f61abd322507aafced9627702362e541ec34e\n[run_single] ps_len=741\n[run_single] git reset --hard 979f61abd322507aafced9627702362e541ec34e\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=394.5s ==\n[run_single] model_patch: 2533 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-12286.json\n[run_single] cleanup: git reset --hard 979f61abd322507aafced9627702362e541ec34e\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 7,
+        "p2p_total": 7
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "django__django-12308",
@@ -15930,11 +15972,32 @@
     "harness": "claude-code",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\ttests/aggregation/tests.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\ttests/aggregation/tests.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 664.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-12308.json",
+      "stdout_tail": "12308\n[run_single] base_commit=2e0f04507b17362239ba49830d26fec504d46978\n[run_single] ps_len=459\n[run_single] git reset --hard 2e0f04507b17362239ba49830d26fec504d46978\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=663.6s ==\n[run_single] model_patch: 1779 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-12308.json\n[run_single] cleanup: git reset --hard 2e0f04507b17362239ba49830d26fec504d46978\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 20,
+        "p2p_total": 20
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "django__django-12453",
@@ -15942,11 +16005,32 @@
     "harness": "claude-code",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\ttests/aggregation/tests.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\ttests/aggregation/tests.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 96.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-12453.json",
+      "stdout_tail": "12453\n[run_single] base_commit=b330b918e979ea39a21d47b61172d112caf432c3\n[run_single] ps_len=2906\n[run_single] git reset --hard b330b918e979ea39a21d47b61172d112caf432c3\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=96.2s ==\n[run_single] model_patch: 1023 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_django__django-12453.json\n[run_single] cleanup: git reset --hard b330b918e979ea39a21d47b61172d112caf432c3\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 5,
+        "p2p_total": 5
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "django__django-12453",
@@ -25115,6 +25199,72 @@
         "f2p_total": 1,
         "p2p_pass": 62,
         "p2p_total": 62
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-13971",
+    "repo": "sympy/sympy",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 178.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_sympy__sympy-13971.json",
+      "stdout_tail": "_id=sympy__sympy-13971\n[run_single] base_commit=84c125972ad535b2dfb245f8d311d347b45e5b8a\n[run_single] ps_len=515\n[run_single] git reset --hard 84c125972ad535b2dfb245f8d311d347b45e5b8a\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=178.2s ==\n[run_single] model_patch: 2683 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_sympy__sympy-13971.json\n[run_single] cleanup: git reset --hard 84c125972ad535b2dfb245f8d311d347b45e5b8a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 102,
+        "p2p_total": 102
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-14024",
+    "repo": "sympy/sympy",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 1,
+      "wall_s": 1800.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_sympy__sympy-14024.json",
+      "stdout_tail": "ce_id=sympy__sympy-14024\n[run_single] base_commit=b17abcb09cbcee80a90f6750e0f9b53f0247656c\n[run_single] ps_len=685\n[run_single] git reset --hard b17abcb09cbcee80a90f6750e0f9b53f0247656c\n[run_single] running hermes ...\n== harness=hermes rc=-1 timed_out=True wall=1800.0s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_sympy__sympy-14024.json\n[run_single] cleanup: git reset --hard b17abcb09cbcee80a90f6750e0f9b53f0247656c\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 83,
+        "p2p_total": 83
       }
     },
     "classification": "patch-but-failed"
