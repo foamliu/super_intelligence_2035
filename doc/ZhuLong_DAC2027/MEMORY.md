@@ -186,6 +186,10 @@ error: error: unknown option '-b'
 
 ## 9. 流水（倒序）
 
+- **2026-10-09（运维经任务书下发：沙盒已就绪·可开跑 C1.full r4）** —— 用户通知「沙盒重启完成，可以继续」。pro-fp4 key 已在上条指令中恢复（新 key `e13f4f37` HTTP 200），agent 应已完成 auth + `PHASE=ready`。
+  - **落地**：在 `run/ZHULONG_TASK.md` 运维指令区置顶新增 `### 🆕 运维指令 · 2026-10-09（二）— ✅ 沙盒已就绪，可开跑 C1.full r4【本次唤醒优先动作】`（放在上一条 pro-fp4 key 指令之前，上一条标记「已完成·已归档」）。指令要点：① 三项前置复检（pro-fp4 直连 200 / 沙盒端口 404 可达 / eval IDLE）全过才开跑；② 启动 C1.full r4（四 override 齐全：`EVAL_FW_DIR` + `CLI_DATA_DIR=.cline_prof4_eval/data` + `PYTHON` + `https_proxy`）；③ 更新 MEMORY `PHASE=running`；④ commit+push。红线 = 保持新 key + pro-fp4 + /cloud/v1 / r1-r3 全有效 / 三项复检任一不过不开跑。
+  - ⏭ 待推送后 agent 下轮 `git pull` 取到指令 → 复检 → 开跑 r4。
+
 - **2026-10-09（运维经任务书下发：pro-fp4 key 已恢复 + 暂不启动 r4 沙盒重启中）** —— ops 中继 RUN_ID 23 实测确认 403 = 旧 key 额度耗尽（新 key `e13f4f37` + pro-fp4 + /cloud/v1 = HTTP 200，网关返回 `model: deepseek-v4-pro-260813` = 同一后端模型）。用户告知沙盒正在重启，要求 agent 暂不启动 r4。
   - **落地**：在 `run/ZHULONG_TASK.md` 运维指令区置顶（常驻规程之后）新增 `### 🆕 运维指令 · 2026-10-09 — ✅ pro-fp4 403 已解决（换 key）+ 🚫 暂不启动 r4（沙盒重启中）`。指令要点：① 用新 key `cline auth` eval backbone（保持 `deepseek-v4-pro-fp4` + `/cloud/v1`，写入隔离 config dir）；② `curl --noproxy '*'` 复检确认 200；③ 🚫 **不启动 r4**（沙盒重启中）；④ 更新 MEMORY `PHASE=ready` / `WAITING=1` / 基座行标注 key 已恢复；⑤ 等运维「沙盒就绪·可开跑」通知再启动 r4。红线 = 不改模型名 / 不用 /v1 / r1-r3 全有效 / 不启动 eval。
   - ⏭ 待推送：`git pull --rebase --autostash` → `git add -- doc/ZhuLong_DAC2027/run/ZHULONG_TASK.md doc/ZhuLong_DAC2027/MEMORY.md` → `git commit` → `git push`。agent 下轮 `git pull` 即取到指令。

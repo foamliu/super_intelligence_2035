@@ -38,7 +38,47 @@
 > ⏱️ **判死判据（硬）**：**心跳文件 >60min 无新提交 ⇒ 按卡死处理**（不再等你）。**你干得再多，心跳不动 = 仍会被判死。**
 
 
-### 🆕 运维指令 · 2026-10-09 — ✅ pro-fp4 403 已解决（换 key）+ 🚫 暂不启动 r4（沙盒重启中）
+### 🆕 运维指令 · 2026-10-09（二）— ✅ 沙盒已就绪，可开跑 C1.full r4【本次唤醒优先动作】
+
+> **来源**：用户 2026-10-09 通知「沙盒重启完成，可以继续」。
+> **前提**：上一条指令（pro-fp4 key 已恢复）应已被 agent 执行完毕——eval backbone 已用新 key `e13f4f37` auth、`PHASE=ready`、`WAITING=1`。
+
+**本次唤醒的动作（按顺序）**：
+
+1. **前置复检（3 项，全过才开跑）**：
+   - (a) `curl --noproxy '*'` 新 key 直连 pro-fp4 `chat/completions` → 确认 **HTTP 200 + 真 JSON**（`model: deepseek-v4-pro-260813`）。若仍 403 → 不开跑，回 `WAITING=1`，在 MEMORY 记「pro-fp4 又 403」。
+   - (b) 沙盒端口可达：`curl -s -o /dev/null -w '%{http_code}' http://10.129.32.75:8650`（及 8651/8652/8654）→ 期望 **404**（可达）。若全 timeout/拒绝 → 沙盒未就绪，不开跑，回 `WAITING=1`。
+   - (c) eval IDLE：`pgrep '^bash scripts/run_cline_script'` → 期望**无输出**（无残留 eval）。若有残留 → 先等其结束，不开跑。
+
+2. **启动 C1.full r4**（三项复检全过后）：
+   - 切臂配置（若尚未切到 `full`）：`set_ablation` → `full`（run_code ON + 检索 ON + self-expl ON = 全开）。
+   - 启动 eval，**四 override 必须齐全**（r2 曾因缺这些而全 Forbidden）：
+     ```
+     EVAL_FW_DIR=<eda_fastmcp 路径>
+     CLI_DATA_DIR=.cline_prof4_eval/data   # eval 隔离 config dir（新 key auth 写入处）
+     PYTHON=<正确 python 路径>
+     https_proxy=http://172.19.92.23:13128  # git push 需要
+     ```
+   - 命令格式同前序轮次（`scripts/run_cline_script.sh` + `-p 8 -n` + 全量 158 题）。
+   - 记录 batch ID + PID 到 MEMORY。
+
+3. **更新 MEMORY**：
+   - `PHASE` → `running`
+   - `WAITING` → `1`（eval 运行中，等下轮收割）
+   - `ROUND` → `4`（已是 4，确认不变）
+   - 成绩表 `C1.full` 行：r4 状态 → **「运行中（batch XXX, PID XXX）」**
+   - **下轮第一件事**：`pgrep '^bash scripts/run_cline_script'` → 有输出则巡检（不动作退出）；无输出则 `grep PASS_RATE` 收割 r4 → 记成绩 → 启 r5 → 5/5 后算 mean±std → `PHASE=just_finished` → 回填 5 张表锚点行 → 进入 C2。
+
+4. **commit + push**（按常驻规程）。
+
+**红线**：
+- ✅ 沙盒**已就绪**，可以开跑（用户已确认）。
+- 🚫 仍保持 `deepseek-v4-pro-fp4` + `/cloud/v1` + 新 key `e13f4f37`（不要回退旧 key、不要换模型名）。
+- ✅ r1/r2/r3 全部有效，只跑 r4 → r5。
+- 🚫 三项前置复检任一不过 → **不开跑**，回 `WAITING=1` 并在 MEMORY 记原因。
+
+
+### 🆕 运维指令 · 2026-10-09 — ✅ pro-fp4 403 已解决（换 key）+ 🚫 暂不启动 r4（沙盒重启中）【已完成·已归档】
 
 > **来源**：用户 2026-10-09。经 ops 中继 RUN_ID 23 在 36.15 实测（6 组合 curl `--noproxy '*'` 直连），已确认 403 根因 = **旧 key 额度耗尽**（非模型级、非 endpoint 级）。新 key 可恢复 pro-fp4。
 
