@@ -2,11 +2,12 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **R3 收官报告已交付 #247（2026-10-09 17:18）** — `report_pretrain_r3_data_mix.html` 52.6KB 已生成并 commit(00682e58)+push ✅。本次唤醒确认报告完好（8节/8内联SVG/10表/零外链/DB真实数据）。P-8 暂缓令未撤。全 8 GPU 空闲。等运维撤销暂缓令
-- PHASE: **R3 收官报告已交付 #247（2026-10-09 17:18, .29）**：运维指令(10-09 R3报告)已于 #246 执行完毕——`doc/BaiZe-ISEDA2027/report_pretrain_r3_data_mix.html` 52.6KB / 8节 / 8内联SVG / 10表 / 零外链 / DB真实数据。本次 #247 为 loop 重触发：确认报告已存在+已commit(00682e58)+已push(git 0/0)。data agent R3分词仍在进行(80/110活, 2.56TB, ETA~21:00-23:00)。P-8 暂缓令未撤。全 8 GPU 空闲 ✅。⭐ 下次唤醒：查分词完成状态 → 等运维 P-8 启动令。
+- STAGE: **R3 收官报告已交付 #247（2026-10-09 17:18）** — `report_pretrain_r3_data_mix.html` 52.6KB 已生成并 commit(00682e58)+push ✅。本次 #248 为 loop 重触发：报告完好确认（8节/8内联SVG/10表/零外链/DB真实数据）。P-8 暂缓令未撤。全 8 GPU 空闲。等运维撤销暂缓令
+- PHASE: **R3 收官报告已交付 #247（2026-10-09 17:18, .29）**：运维指令(10-09 R3报告)已于 #246 执行完毕——`doc/BaiZe-ISEDA2027/report_pretrain_r3_data_mix.html` 52.6KB / 8节 / 8内联SVG / 10表 / 零外链 / DB真实数据。#247/#248 为 loop 重触发：确认报告已存在+已commit(00682e58)+已push(git 0/0)。data agent R3分词仍在进行(76/110活, .bin=2.8TB, ETA~22:00-02:00Oct10)。P-8 暂缓令未撤。全 8 GPU 空闲 ✅。⭐ 下次唤醒：查分词完成状态 → 等运维 P-8 启动令。
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。全 8 GPU 空闲（0 MiB/0%）✅。**P-8 暂缓令未撤**。📦 体积：TASK=28.2KB / MEMORY=22.0KB（均 ≤32KB ✅）。🚫绝不 kill watchdog loop
-- 🩺 **本唤醒推进 = #247（2026-10-09 17:18, .29）**：① git fetch → 0/0 ✅（无新运维指令; 工作区仅 harness 线 modified 文件, 非本线不碰）。② **R3 报告确认**：`report_pretrain_r3_data_mix.html` 已于 #246 生成(53862B/52.6KB) + commit 00682e58 + push ✅。逐行审读 683 行 HTML：8 节(TL;DR/实验设计/Top-5/关键发现/与先验R2对比/P-8建议/局限/图表) / 8 内联SVG(score直方图/top-5堆叠条形/best#8 per-task/R2vsR3对比/Web:Code:Math比例) / 10 表 / 零外链 / 自包含 / 内联CSS。报告数据源：r3_best_blend.txt + DATA_MIX_RECIPE.md §9.7 + EXPERIMENTS_PRETRAIN_2B_ROUND2.md R3节 + DB(只读)。③ GPU 核验：全 8 GPU 0MiB/0% ✅。④ watchdog PID 1391466 ✅。⑤ 体积自检：TASK=28892B(28.2KB) / MEMORY=22523B(22.0KB) 均 ≤32KB ✅ 无需归档。→ 下一步：查分词完成状态 → 等运维 P-8 启动令。WAITING=1。git：本次 push。
+- 轮询状态：30min 长轮询。全 8 GPU 空闲（0 MiB/0%）✅。**P-8 暂缓令未撤**。📦 体积：TASK=28.2KB / MEMORY=22.1KB（均 ≤32KB ✅）。🚫绝不 kill watchdog loop
+- 🩺 **本唤醒推进 = #248（2026-10-09 17:53, .29）**：① git fetch → 0/0 ✅（无新运维指令; 工作区仅 harness 线 modified 文件, 非本线不碰）。② **R3 报告再确认**：`report_pretrain_r3_data_mix.html` 已于 #246 生成(53862B/52.6KB) + commit 00682e58 + push ✅。grep 核验：8 `<svg>` / 10 `<table>` / 8 节(TL;DR/实验设计/Top-5/关键发现/与先验R2对比/P-8建议/局限/图表) / 零外链(8个http均为SVG xmlns声明) / 自包含 / 内联CSS。③ GPU 核验：全 8 GPU 0MiB/0% ✅。④ watchdog PID 1391466 ✅。⑤ 体积自检：TASK=28892B(28.2KB) / MEMORY=22662B(22.1KB) 均 ≤32KB ✅ 无需归档。⑥ data agent 唤醒264@17:42：R3分词76/110活(.bin=2.8TB, ETA~4-8h→22:00-02:00Oct10), GPIC=7233/8001(ETA~14.5h→08:00Oct10)。→ 下一步：查分词完成状态 → 等运维 P-8 启动令。WAITING=1。git：本次 push。
+> 📦 **[已归档] #247 流水（2026-10-09 17:18, R3报告确认）→ daily-memories/2026-10-09.md；结论：报告已存在+commit 00682e58+push, 8节/8内联SVG/10表/零外链。需要时再读。**
 > 📦 **[已归档] #246 流水（2026-10-09 16:10, R3收官报告生成）→ daily-memories/2026-10-09.md；结论：R3 HTML 报告 52.6KB 已生成+commit 00682e58+push, 8节/8内联SVG/10表/零外链/DB真实数据。需要时再读。**
 > 📦 **[已归档] #245 流水（2026-10-09 15:22, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git ahead 1(已合并), R3分词109进程/.bin=1.76TB/ETA~12-18h, P-8暂缓令未撤。需要时再读。**
 > 📦 **[已归档] #244 流水（2026-10-09 14:45, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词109进程/.bin=1.49TB/ETA~12-18h, P-8暂缓令未撤, 一并提交TASK.md T3 recipe。需要时再读。**
