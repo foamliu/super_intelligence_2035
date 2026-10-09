@@ -2,11 +2,12 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **状态核查 #243（2026-10-09 14:10）** — R3 全量分词进行中(110进程, .bin=1.3TB, 0 .idx, ETA~2-4h→~16-18:00)。P-8 暂缓令未撤。全 8 GPU 空闲。等运维撤销暂缓令 + 分词完成
-- PHASE: **状态核查 #243（2026-10-09 14:10, .29）**：git up-to-date 0/0（无新运维指令）。R3 全量分词 110/110进程活(.bin=1.3TB(l3=458+code=358+math=421), 0 .idx, rate~8GB/min, ETA~2-4h→~16-18:00)；GPIC 7175/8001(ETA~3.4h→~17:00)。P-8 暂缓令未撤 + 分词未完成 → 不可启动。全 8 GPU 空闲 ✅。⭐ 下次唤醒：查分词完成状态 → 等运维 P-8 启动令。
+- STAGE: **状态核查 #244（2026-10-09 14:45）** — R3 全量分词进行中(109进程, .bin=1.49TB, 1 .idx, ETA~12-18h→~22:00-04:00Oct10)。P-8 暂缓令未撤。全 8 GPU 空闲。等运维撤销暂缓令 + 分词完成
+- PHASE: **状态核查 #244（2026-10-09 14:45, .29）**：git up-to-date 0/0（无新运维指令；TASK.md 有前次 T3 recipe 未提交→本次一并提交）。R3 全量分词 109/110进程活(l3_s39完工退出, .bin=1.49TB(l3=551+code=431+math=509), 1 .idx, rate~5.1GB/min, ETA~12-18h→~22:00-04:00Oct10)；GPIC 7075/8001(ETA~20h→~10:30Oct10)。P-8 暂缓令未撤 + 分词未完成 → 不可启动。全 8 GPU 空闲 ✅。⭐ 下次唤醒：查分词完成状态 → 等运维 P-8 启动令。
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。全 8 GPU 空闲（0 MiB/0%）✅。**P-8 暂缓令未撤**。📦 体积：TASK=24295B(23.7KB) / MEMORY=20.7KB（均 ≤32KB ✅）。🚫绝不 kill watchdog loop
-- 🩺 **本唤醒推进 = 状态核查 #243（2026-10-09 14:10, .29）**：① git fetch → up to date 0/0（工作区仅 harness modified/untracked, 非本线；无新本线运维指令）。② GPU 核验：全 8 GPU 0MiB/0% ✅，无 compute apps。③ data agent 进度(MEMORY_DATA 唤醒258@13:35, commit a5a8a2e7)：R3全量分词 110/110进程活(0 error, ppid=1✅, .bin=1.3TB(l3=458+code=358+math=421), rate~8GB/min, 0 .idx, ETA~4-6h→~16-18:00)；GPIC 7175/8001(+156, ~240tar/h, ETA~3.4h→~17:00)；web✅524.43B；污染扫描✅160K docs 0命中。④ P-8 暂缓令(10-02)未撤 + 分词未完成 → P-8 不可启动。⑤ watchdog PID 1391466 ✅(etimes~432K=5.0d)。⑥ 体积自检：TASK=24295B(23.7KB) / MEMORY=21171B(20.7KB) 均 ≤32KB ✅ 无需归档。→ 下一步：查分词完成状态 → 等运维 P-8 启动令。WAITING=1。git：本次 push。
+- 轮询状态：30min 长轮询。全 8 GPU 空闲（0 MiB/0%）✅。**P-8 暂缓令未撤**。📦 体积：TASK=25537B(25.0KB) / MEMORY=20.9KB（均 ≤32KB ✅）。🚫绝不 kill watchdog loop
+- 🩺 **本唤醒推进 = 状态核查 #244（2026-10-09 14:45, .29）**：① git fetch → up to date 0/0（工作区有 TASK.md[T3 recipe, 前次未提交]+harness modified, 非本线；无新本线运维指令）。② GPU 核验：全 8 GPU 0MiB/0% ✅，无 compute apps。③ data agent 进度(MEMORY_DATA 唤醒259@14:12)：R3全量分词 109/110进程活(l3_s39完工退出, 0 error, ppid=1✅, .bin=1.49TB(l3=551+code=431+math=509), rate~5.1GB/min, 1 .idx[l3_s39✅], ETA~12-18h→~22:00-04:00Oct10)；GPIC 7075/8001(纠正w258误计7175, +88, ~45tar/h, ETA~20h→~10:30Oct10)；web✅524.43B；污染扫描✅160K docs 0命中。④ P-8 暂缓令(10-02)未撤 + 分词未完成 → P-8 不可启动。⑤ watchdog PID 1391466 ✅(etimes~435K=5.0d)。⑥ 体积自检：TASK=25537B(25.0KB) / MEMORY=21448B(20.9KB) 均 ≤32KB ✅ 无需归档。→ 下一步：查分词完成状态 → 等运维 P-8 启动令。WAITING=1。git：本次 push（含 TASK.md T3 recipe 提交）。
+> 📦 **[已归档] #243 流水（2026-10-09 14:10, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词110进程/.bin=1.3TB/ETA~2-4h, P-8暂缓令未撤。需要时再读。**
 > 📦 **[已归档] #242 流水（2026-10-09 13:37, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词110进程/.bin=989GB/ETA~3-4h, P-8暂缓令未撤。需要时再读。**
 > 📦 **[已归档] #241 流水（2026-10-09 13:01, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词110进程/.bin=989GB/ETA~3-4h, P-8暂缓令未撤。需要时再读。**
 > 📦 **[已归档] #240 流水（2026-10-09 12:28, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词110进程/.bin=736GB/ETA~6-8h, P-8暂缓令未撤。需要时再读。**
