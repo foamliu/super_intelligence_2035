@@ -2245,3 +2245,78 @@ hfeg0tedaap02
 /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:100:                cp "${CLI_DATA_DIR}/settings/models.json" "${worker_dir}/data/settings/" 2>/dev/null || true
 == DONE ==
 ```
+
+---
+
+## RUN_ID 23 · 2026-10-09 09:06:53 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 23 — read-only: test new key + pro-cloud vs pro-fp4 (6 combos, all --noproxy direct)
+echo "== RUN_ID 23: key/model/endpoint test =="; timeout 10 date '+%F %T'
+OLDKEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
+NEWKEY="02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e"
+
+echo "== 1. NEW key + pro-cloud @ /cloud/v1 (user suggestion) =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/cloud/v1/chat/completions \
+  -H "Authorization: Bearer $NEWKEY" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-cloud","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -5
+
+echo "== 2. NEW key + pro-fp4 @ /cloud/v1 (does new key fix 403 for ORIGINAL model?) =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/cloud/v1/chat/completions \
+  -H "Authorization: Bearer $NEWKEY" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -5
+
+echo "== 3. NEW key + pro-fp4 @ /v1 (original pro-fp4 endpoint) =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/v1/chat/completions \
+  -H "Authorization: Bearer $NEWKEY" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -5
+
+echo "== 4. OLD key + pro-fp4 @ /cloud/v1 (confirm 403 baseline) =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/cloud/v1/chat/completions \
+  -H "Authorization: Bearer $OLDKEY" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -5
+
+echo "== 5. OLD key + pro-fp4 @ /v1 (original endpoint baseline) =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/v1/chat/completions \
+  -H "Authorization: Bearer $OLDKEY" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -5
+
+echo "== 6. NEW key + pro-cloud @ /v1 (is cloud model also on /v1?) =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/v1/chat/completions \
+  -H "Authorization: Bearer $NEWKEY" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-cloud","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -5
+
+echo "== DONE =="
+```
+
+**输出**
+```
+== RUN_ID 23: key/model/endpoint test ==
+2026-10-09 09:06:53
+== 1. NEW key + pro-cloud @ /cloud/v1 (user suggestion) ==
+{"id":"2026100909065453969ee2f45d4dcd","object":"chat.completion","created":1791508013,"model":"deepseek-v4-pro-260813","choices":[{"index":0,"message":{"role":"assistant","content":"","reasoning_content":"We need answer user says \"Say OK\". Need"},"finish_reason":"length"}],"usage":{"completion_tokens":10,"prompt_tokens":85,"total_tokens":95,"completion_tokens_details":{"reasoning_tokens":10},"prompt_tokens_details":{}}}
+HTTP=200 TIME=1.516131s SIZE=426B
+== 2. NEW key + pro-fp4 @ /cloud/v1 (does new key fix 403 for ORIGINAL model?) ==
+{"id":"202610090906557bd900533f364ce8","object":"chat.completion","created":1791508015,"model":"deepseek-v4-pro-260813","choices":[{"index":0,"message":{"role":"assistant","content":"","reasoning_content":"We need answer user says \"Say OK\". We"},"finish_reason":"length"}],"usage":{"completion_tokens":10,"prompt_tokens":85,"total_tokens":95,"completion_tokens_details":{"reasoning_tokens":10},"prompt_tokens_details":{}}}
+HTTP=200 TIME=1.077044s SIZE=424B
+== 3. NEW key + pro-fp4 @ /v1 (original pro-fp4 endpoint) ==
+
+HTTP=403 TIME=0.006868s SIZE=0B
+== 4. OLD key + pro-fp4 @ /cloud/v1 (confirm 403 baseline) ==
+
+HTTP=403 TIME=0.009244s SIZE=0B
+== 5. OLD key + pro-fp4 @ /v1 (original endpoint baseline) ==
+
+HTTP=403 TIME=0.005693s SIZE=0B
+== 6. NEW key + pro-cloud @ /v1 (is cloud model also on /v1?) ==
+
+HTTP=403 TIME=0.004393s SIZE=0B
+== DONE ==
+```

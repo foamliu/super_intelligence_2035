@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 22 -->
+<!-- RUN_ID: 23 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,13 +24,13 @@
 
 ---
 
-## RUN_ID 22 — 🔬 测试新 key + deepseek-v4-pro-cloud 是否可绕过 pro-fp4 的 403（6 组合）
+## RUN_ID 23 — 🔬 测试新 key + deepseek-v4-pro-cloud 是否可绕过 pro-fp4 的 403（6 组合）
 
 **背景**：pro-fp4 额度 HTTP 403 阻塞 C1.full r4/r5（已复检 9 次未恢复）。用户提供新 key（e13f4f37）+ 模型名 deepseek-v4-pro-cloud，问能否绕过。本块纯只读 curl，测 6 个组合以区分 403 根因 = key 额度 / 模型额度 / endpoint 差异。
 
 ```bash
-# RUN_ID 22 — read-only: test new key + pro-cloud vs pro-fp4 (6 combos, all --noproxy direct)
-echo "== RUN_ID 22: key/model/endpoint test =="; timeout 10 date '+%F %T'
+# RUN_ID 23 — read-only: test new key + pro-cloud vs pro-fp4 (6 combos, all --noproxy direct)
+echo "== RUN_ID 23: key/model/endpoint test =="; timeout 10 date '+%F %T'
 OLDKEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
 NEWKEY="02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e"
 
