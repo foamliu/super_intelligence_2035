@@ -1,6 +1,31 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-09（🌙 夜班填空：用 `.29` 剩余卡跑高价值实验 · **不含 P-8**）· 用户直令 · 最高优先
+
+> **用户令**：「20:45→明早 08:30 这个[对比]实验填不满 `.29` 的卡，还有其他高价值实验吗？」
+> **窗口**：~11.75h ≈ 94 GPU·h；对比基准占 2–4 卡 ⇒ **剩约 4–6 卡空 ~11h**。⚠️ **不启动 P-8、不动暂缓令**（P-8 彩排另行等用户点头）。
+
+**第 0 步**：先查对比基准占哪几张卡 → **只用剩余卡**；卡不足按 **T1→T2→T3 排队**，对比基准一释放即接力。**每项先报「占卡 + ETA」再跑。**
+
+**T1（先做 · 最便宜）· 长上下文适配 4096→8192 阶梯续训**
+- 从 `p3_hybrid/iter_0005000` HF ckpt 续训到 **seq=8192**（按 B1：`max_pos→131072` + `rope_theta 5e5/1e6` ABF，**每次只改一个变量**）。
+- 成本 **~5–15 GPU·h**；判据：**8 常识集降幅 <10%** 且 loss 平滑（README 风险 #3 阈值）。
+- 对齐：**Stage (ii) SFT/RL 硬前置** / 论文 §4。**这是最该先做的**。
+
+**T2（便宜）· 参数匹配 Dense 的「训练侧」对比**
+- 用今晚刚配的**等参 Dense Llama（2,228,897,792）**，**同配方**跑 **5000 步**，与 `p3_hybrid` 的 5000 步 loss 对齐比。
+- 成本 **~4 GPU·h**；判据：hybrid loss ≤ 等参 dense（把 R2 的"等参优势"从 2.512B 修正到**真等参**）。
+
+**T3（填空余量）· R3 配比迁移 A/B**
+- 全模型 2.22B：R3 best #8 **vs** 先验 88:8:4，各 **2.5B token**（~600 步）。
+- 成本 **~44 GPU·h**（4 卡 ~11h）；判据：R3 ≤ 先验（可迁移）/ |Δloss|<0.03（平坦）/ 先验胜（**负面发现**）。
+- 对齐：论文 §4 data mixing / `DATA_MIX_RECIPE §9.7`。
+
+**纪律**：🚫 不启动 P-8 · 🚫 不 kill watchdog · 🚫 不打乱对比基准的卡 · 分阶段 commit（前缀 `pretrain 夜班: …`）· 收尾按「收尾铁律」。
+
+---
+
 ### 🆕 运维确认 · 2026-10-09（✅ **GO**：#252 门控通过 → 开跑「参数匹配 Dense」对比基准）· 最高优先
 
 > **复核通过**：#252 方案 OK —— Dense Llama L=36/H=2048/I=6144 → **2,228,897,792（+0.389%，±1% ✅）**；矩阵 7ctx×2mf(0.6/0.85)×2bs(1/8)×WARMUP1/REP3；ETA 6–10h；**`.29` 全 8 卡可用**（P-8 未启动，2–4 卡并行推理即可）。**放行，开跑。**
@@ -103,38 +128,7 @@
 
 ---
 
-### 🆕 运维指令 · 2026-10-09（📄 R3 数据配比搜索收官报告 HTML）· 用户直令 · 高优先
-
-> **用户令**：「pretrain 今早做完了第三轮数据配比试验，给它下发指令，让它生成 html 报告。」
-> ⚠️ R3 BO 已 ✅ 100/100 收尾（#8 score=0.4032），交付物（`r3_best_blend.txt` / `DATA_MIX_RECIPE.md §9.7` / `EXPERIMENTS R3 节` / `mix_search_eval_r3.db`）均已就位——**只差一份 HTML 报告**。只写报告，不重跑任何实验。
-
-**① 交付**：`report_pretrain_r3_data_mix.html`（落 `doc/BaiZe-ISEDA2027/`）
-
-**② 数据源（只读，全部已就绪）**
-- `run/r3_best_blend.txt`（best #8 + Top-5 摘要 + score 统计 + key findings）
-- `run/DATA_MIX_RECIPE.md` §9.7（R3 spec 表 + Top-5 结果表 + 4 条关键结论 + P-8 推荐）
-- `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` R3 节
-- `nemo_experiments/mix_search/mix_search_eval_r3.db`（100 trials / 98 complete；如需复算**只读查询**，不写库）
-
-**③ 格式（沿用 house style，照 `report_pretrain_r2_final.html`）**
-- **自包含**：内联 CSS + 数据图优先**内联 SVG**；**零外链**；**HTML 本体 ≤200KB**。
-- 曲线/柱状图由 **DB 真实数据生成**；🚫 严禁文生图「编」数据图。
-- 位图一律 JPEG、长边 ≤1280、q85、落本地并 commit。
-
-**④ 建议 8 节**
-1. **TL;DR**（3–5 条）：R2 3 维 → R3 6 维下钻；best #8 score=0.4032；Web:Code:Math≈89:6:4（code 从先验 8% 降到 6%）；landscape 平坦（top-5 Δ=0.0053）；推荐 best #8 或 top-5 avg。
-2. **实验设计**：目标 = 为 P-8 Stable 段定 6 源配比；proxy d=128/L=14 ≈18.36M（不换代理）；6 维单纯形 + 各维边界；GBS=16·MBS=16·seq=2048·LR=3e-3·WSD·D=1B token/trial；objective = 全量 lm_eval 8 常识任务（无 `--limit`，73106 requests）；100 trials / ~19.5h / 8 卡。
-3. **Top-5 结果表**（rank / trial / score / en / zh / l1_en_hq / ultrax / code / math，+ top-5 avg 行）。
-4. **关键发现**：l1_en_hq（高质量英文 web）一致高 = **质量 > 数量**；zh 方差极大（3.2%–33.4%）未被 BO 稳定识别；ultrax 稳定 ~10%；landscape 平坦 → 精确配比影响很小。
-5. **与先验/R2 对比**：先验 88:8:4 → R3 落到 ~89:6:4；R2(3 维, --limit 500, 0.5B) → R3(6 维, 全量, 1B) 的口径升级与增量。
-6. **对 P-8 的建议**：主选 best #8（en=16.8/zh=32.0/l1=32.4/ultrax=8.0/code=6.4/math=4.4）；稳健选 top-5 avg；「合理范围即可，无需过度优化配比」。⚠️ 只给**回填建议**，🚫 不改 `.tex` / `main.tex`（论文回填由外部统一做）。
-7. **局限与诚实交代**：18.36M 代理 / 1B token per trial / landscape 平坦 / 2 failed trials（#25、#49）/ 单 seed=1234 / lm_eval 8 常识集只是代理指标（非下游 EDA pass@1）。
-8. **图**（内联 SVG）：score 分布直方图（98 complete）/ Top-5 柱状对比 / best #8 的 8 任务逐项得分 / R3 vs R2 对比。
-
-**⑤ 纪律**
-- 🚫 **不新增实验、不改 R3 已固化数字/结论**；只读 DB 不重跑。
-- 🚫 **不启动 P-8**（10-02 暂缓令未撤）；🚫 不 kill watchdog `baize_pretrain_loop.sh`。
-- 收尾按「收尾铁律」commit+push（提交前缀 `pretrain R3收官: …`），更新 `MEMORY_PRETRAIN_2B.md` + `run/daily-memories/`。
+> 📦 **§运维指令·2026-10-09（📄 R3 数据配比搜索收官报告 HTML）已闭合（#246 报告已交付）** → 原文见 `run/ARCHIVE_OPERATOR_PRETRAIN.md`（2026-10-09 搬运，**原文未改**）。**结论**：`report_pretrain_r3_data_mix.html` 52.6KB 已生成 + commit 00682e58 + push。
 
 > 📦 **历史运维指令已归档** → `run/ARCHIVE_OPERATOR_PRETRAIN.md`（已执行完 / 已作废的块；**需要时再读**，不要读进上下文）。
 
