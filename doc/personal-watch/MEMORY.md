@@ -14,7 +14,7 @@ WAITING: 0
 - 我是 `doc/personal-watch` 的 **supervisor（观察哨长）**：**不亲自采集**，只**派活、巡检、汇总、拍板**。
 - **下达通道** = 各任务书的 `## 🔧 运维指令区（OPERATOR NOTES）`（**改文件 + git commit/push**）。
 - **查看通道** = 读各线的 `run/MEMORY_*.md` 顶部「进度快照」+ `run/` 产物（`git pull` 即可，**不登录服务器**）。
-- 我当前指挥的线：**news**（任务书 `run/WATCH_NEWS_TASK.md`；**当前 P0 = 第 12 批「把第 11 批『新闻信号 → 资产价格』研究收口为自包含 HTML 报告」+ 第 11 批（十年滞后相关 + 每日两报）**，全文规格 `run/NEWS_PRICE_SIGNAL_SPEC.md`）· **research**（任务书 `run/WATCH_RESEARCH_TASK.md`）。
+- 我当前指挥的线：**news**（任务书 `run/WATCH_NEWS_TASK.md`；**当前 P0 = 第 12 批「把第 11 批『新闻信号 → 资产价格』研究收口为自包含 HTML 报告」+ 第 11 批（十年滞后相关 + 每日两报）**，全文规格 `run/NEWS_PRICE_SIGNAL_SPEC.md`）· **research**（任务书 `run/WATCH_RESEARCH_TASK.md`；**P0 = 第 4 批（每天 5 篇 → 日报 HTML）+ 第 5 批（每天 18:00 从当日 TOP-5 挑 TOP-1 → 分镜脚本 `research/video/SCENES/MM_DD.html`）**）。
 - 上级 = 用户（作者刘杨/Foam）；本哨位的**服务对象是《超级智能2035》的写作与修订**。
 
 ---
@@ -423,3 +423,15 @@ WAITING: 0
   - **🚫 硬约束**：不重跑研究、**不新增统计**（新增分析须先补 `PREREG.md` 修订）· 因果措辞禁 · 点位/仓位/择时禁 · **负面结果照写**。
 - **🧾（对用户的答复）有没有结论 = 有，且是负面结论**：全网格 23,940 格，**FDR 后 `q<0.10` = 0、`stable` = 0**；未校正 `p<0.05` = 1217（5.08% ≈ 随机基线）⇒ **「未发现稳定滞后相关」= 本批有效结论**（`FINDINGS.md` / `LAG_CORR.md` / `BOOTSTRAP.md` 三处一致；块自助 20 随机格中 19 格 CI 跨 0）。**非因果 · 非投资建议 · ❄️ L3 冻结。**
 - **commit**：`supervisor 派活: 第12批 news 新闻×资产价格研究 HTML 报告`。
+
+## 🎬 2026-10-09（用户直派：**research 每天 18:00 出《论文两分钟》分镜脚本 HTML**）
+
+- **用户原话**：「**明天开始让 research 在 6PM 这次唤醒，找 TOP-5 paper 中挑 TOP-1，制作《论文两分钟》分镜脚本 html。目录 SCENES，每天的分镜脚本放在这个目录下以 MM_DD.html 命名。**」
+- **处置（已下发 · research 第 5 批 · P0）**：改 `run/WATCH_RESEARCH_TASK.md`「运维指令区」**置顶新增「第 5 批」块** + 改写「📊 当前指令 / 优先级覆盖」表；**新建目录契约** `run/research/video/SCENES/README.md`。**只改任务书/文档，不改代码** → commit + push 后 research loop 下一轮（**2026-10-10 06:00**，首执行在 **10-10 18:00**）读到。
+  - **触发**：**自 2026-10-10 起，每天 `18:00`（6PM）唤醒**执行一次（06:00 轮不做）。
+  - **输入**：当日 `research/daily/<YYYY-MM-DD>.html` 的 **5 篇**（AM 3 + PM 2，18:00 已齐）。
+  - **挑 TOP-1**：用**目的 2「科普」口径**（大众能懂 + 传播力 + 可讲清 + 有来源），**不是「借鉴」口径**；脚本须写明「为什么选它」。
+  - **交付**：`run/research/video/SCENES/MM_DD.html`（**自包含 HTML**；`MM_DD` = 本地日期，如 `10_10.html`）；逐镜含 `镜号/时间轴/口播/画面(自绘)/字幕/音效/时长`；五段结构 `钩子→问题→方法→结果→意义`；口播 350–450 字；必带标题/作者/**arXiv 链接**/「论文解读」标注/免责。顺手维护 `SCENES/index.html`。
+  - **红线**：🚫 不盗用论文原图 · 🚫 不夸大（须指出处）· 🚫 不编造数据 · 🚫 不为话题性曲解 · 📦 大文件不入 git · 只 add 本线文件。**V3（生成视频）仍待用户确认工具链 ⇒ 不做**。
+  - **档期**：**18:00 时窗内先收口 P0 第 4 批（5/5），再出分镜**；额度紧张时本批 > 常态增量采集。
+- **commit**：`supervisor 派活: research 第5批 每日18:00 分镜脚本 HTML (SCENES/MM_DD.html)`。
