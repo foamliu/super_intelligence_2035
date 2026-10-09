@@ -1,0 +1,34 @@
+{
+  "model": "default",
+  "ctx": 2097152,
+  "batch": 1,
+  "gen_len": 64,
+  "prompt_tokens_actual": 2016370,
+  "warmup": 1,
+  "repeats": 1,
+  "ttft_s": 218.7112,
+  "prefill_tok_s": 9219.3,
+  "decode_tok_s": 49.5,
+  "e2e_latency_s": 220.0054,
+  "peak_vram_gb": 78.23,
+  "total_completion_tokens": 64,
+  "vram_samples": 891,
+  "all_runs": [
+    {
+      "ttft_s": 218.7112,
+      "e2e_latency_s": 220.0054,
+      "peak_vram_gb": 78.23,
+      "total_completion_tokens": 64,
+      "vram_samples": 891,
+      "error": null,
+      "prefill_tok_s": 9219.3,
+      "decode_tok_s": 49.5
+    }
+  ],
+  "error": null,
+  "mem_frac": 0.75,
+  "model_arch": "nemotron_h",
+  "ssm_dtype": "float32",
+  "prefill_tok_s_perB": 9219.3,
+  "decode_tok_s_perB": 49.5
+}

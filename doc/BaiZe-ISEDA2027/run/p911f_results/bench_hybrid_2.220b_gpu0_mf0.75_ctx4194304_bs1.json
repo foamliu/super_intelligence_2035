@@ -1,0 +1,23 @@
+{
+  "model": "default",
+  "ctx": 4194304,
+  "batch": 1,
+  "gen_len": 64,
+  "prompt_tokens_actual": 4032862,
+  "warmup": 1,
+  "repeats": 1,
+  "error": "server_rejected: only 1/64 completion tokens (input may exceed max_total_num_tokens)",
+  "all_runs": [
+    {
+      "ttft_s": 10.644876774400473,
+      "e2e_latency_s": 10.645204979926348,
+      "peak_vram_gb": 78.232421875,
+      "total_completion_tokens": 1,
+      "vram_samples": 42,
+      "error": "server_rejected: only 1/64 completion tokens (input may exceed max_total_num_tokens)"
+    }
+  ],
+  "mem_frac": 0.75,
+  "model_arch": "nemotron_h",
+  "ssm_dtype": "float32"
+}
