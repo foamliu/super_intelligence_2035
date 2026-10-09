@@ -1190,3 +1190,25 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮**无长期工具代码改动**（`update_r83.py` 为一次性入账脚本，非长期工具）。
 - **下轮预期**：**本地 `2026-10-10 06:00`**（P0「早 3」轮）：① 复验批次（下一个工作日公告批）；② 出当日 **3 篇借鉴**；③ 生成 `research/daily/2026-10-10.html`（3/5）。
 
+### 9.86 第八十四轮（本地 2026-10-10 06:00 时窗 · **P0 第 4 批第 6 轮 · 新一日「早 3」轮**）：API 关键词增量 0（**当日新提交批尚未公告**）→ **RSS 补充发现 +547（收录 3 / 候选 544）**
+
+> 🎯 **P0 第 4 批口径**：每天 5 篇（早 3 + 晚 2）。**本日 06:00 = AM 轮**，出 **3 篇「借鉴」**（第 1/2/3 篇）；18:00 轮补 **2 篇「科普」** 并修订、收口 5/5。
+
+- **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-09T22:07:18Z`，证据 `research/raw/2026-10-10-probe-r84.{json,log}`）：
+  - **arXiv API**：`HTTP 200` + `application/atom+xml; charset=utf-8`，**公告批次仍为 `2026-10-08`**：`total_results` 仍 **`630048`**、最新样本 `published=2026-10-08T17:59:58Z`（`2610.12470 / 2610.12469 / 2610.12468`）→ ✅ **可达**（与第八十三轮一致，未刷新）；
+  - **HF Daily Papers**：`ok=false`，`Network is unreachable` → ❌ **不可达**（**如实记录，不伪造 `hf_daily`**）；
+  - **arXiv RSS（cs.CL / cs.CV / cs.LG）**：`HTTP 200` + `application/rss+xml`，`items=230 / 302 / 472` → ✅ **工作日有内容**。
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=daily`，窗口 72h**，`generated=2026-10-09T22:01:12Z`，证据 `research/raw/2026-10-10-fetch-r84.json`）：**15/15 查询 `ok`**（均 `attempts=1`，无重试），**kept 0 / dropped 600**（均 `already in SEEN` 或 `stale > 72h`）。
+- **结论（API 侧）**：**当日新提交批（`2026-10-09`）尚未公告** —— arXiv 于 ~20:00 ET ≈ UTC 00:00 公告，本轮唤醒时（UTC `2026-10-09T22:0x`）距其约 2h → **关键词增量 0 新增，属正常**（**非「无数据」**）；实际批次按 R2′ 标注为 **`2026-10-08`**。
+- **补充发现（RSS · 工作日补充源，R1′ 许可范围）** —— **本轮 P0 取数的实际来源，已落盘留证**：
+  1. 拉取 6 个分类 RSS（cs.CL / cs.CV / cs.LG / cs.AI / cs.MM / cs.SE），汇总 **1552** 条 item → **1130 个唯一 arXiv ID** → `research/raw/2026-10-10-rss-r84.json`（`generated=2026-10-09T22:05:00Z`）；
+  2. 与 `research/SEEN.md`（当时 **2504 条**）去重 → **891 个**「不在本台账」的 arXiv ID；其中 **651 个为 `2610/2609.*`**（当前公告批次）；
+  3. 因「**RSS ≠ 证据**」（无 `published` 权威字段），对 651 个 ID 走 **arXiv API `id_list` 批量复核**（`max_results=40`/批，限速 ≥3s；一次性脚本 `research/raw/rss_discover_r84.py`）：**651/651 返回、`fails=0`**，全部 `HTTP 200` + `application/atom+xml` + 含 `published`；
+  4. 按 §0.1 窗口（≤72h）筛选 → **547 条**入账：**收录 3 / 候选（RSS补充）544**；
+  5. 精选 3 篇另存权威单条元数据（`id_list=2610.12274,2610.11548,2610.11214`，本轮 `HTTP 200` + `application/atom+xml` + 含 `published`，证据 `research/raw/2026-10-10-idlist-cand-r84.xml`）：`2610.12274`（`2026-10-08T16:36:39Z`，cs.CL，`comment` 空）/ `2610.11548`（`2026-10-08T09:12:45Z`，cs.LG，`comment` 空）/ `2610.11214`（`2026-10-08T04:12:49Z`，cs.LG，`comment` 空）。
+- **产出（P0 交付）**：`research/daily/2026-10-10.html`（**自包含单文件**，早报 3 篇 = 3 借鉴；页头「早报」+ 进度 **3/5**；附录含 I→V 口径链条 + 15 查询明细表 + 口径护栏）→ 同步更新 `research/daily/index.html` 与 `research/INDEX.md`。
+- **早报 3 篇借鉴**：`2610.12274` *HarnessSQL: Harness-Native Training for SQL Agents in Realistic Database Environments*（cs.CL，ZhuLong：agent harness + generate–execute–refine + 执行奖励 RL）/ `2610.11548` *Conditional Transfer from Controlled Pretraining Mixtures to Code*（cs.LG，BaiZe：预训练数据配比，diagnostic/teachable/transfer 三信号）/ `2610.11214` *Bridging KV-Cache Quantization and Linear Attention: From Theory to Pretrained Weight Migration*（cs.LG，BaiZe：高效推理 / 线性注意力 / Transformer→RAM-Net 权重迁移）。
+- **台账**：`research/SEEN.md` **+547 行** → 台账行 **3051 条（收录 179 / 候选 2872，其中 RSS 补充候选 1571）**；`research/papers.jsonl` **+3** → **179 行**。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮**无长期工具代码改动**（`rss_discover_r84.py` / `update_r84.py` 为一次性留证/入账脚本，非长期工具）。
+- **下轮预期**：**本地 `2026-10-10 18:00`**（P0「晚 2」轮 · 当日收口）：① 复验批次是否刷新（`2026-10-09` 提交批预计在本日 UTC 00:00 前后公告）；② 补 **2 篇「科普」** 并**修订**早报 3 篇；③ 在 `2026-10-10.html` 追加 `## 晚报变更说明（AM → PM）`，进度改为 **5/5**；④ 完成 **第 5 批 P0**：从当日 5 篇挑 TOP-1 → `research/video/SCENES/10_10.html` 分镜脚本。
+

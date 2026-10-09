@@ -1,0 +1,547 @@
+2610.10620	2026-10-07T08:32:07Z	cs.CR	When AI Finds Hidden Messages, Does It Report?
+2610.10616	2026-10-07T07:26:51Z	cs.LG	When Routing Reveals Membership: Privacy Leakage from MoE Router Telemetry
+2610.10612	2026-10-07T07:10:11Z	cs.CR	PyCache Trap: The Inspection-Execution Gap in Agent Skill Scanners
+2610.10625	2026-10-07T10:48:43Z	cs.CR	Safe at One Loop, Risky at Another: Aligning Safety Across Recurrent Depths in Looped Language Models
+2610.10621	2026-10-07T08:48:37Z	cs.LG	Self-Organization from Constrained Geometric Radiation
+2610.10613	2026-10-07T07:13:20Z	cs.LG	Temporal transformer CAN encoder with federated lightweight heads for anomaly detection
+2610.10600	2026-10-06T22:58:21Z	stat.ML	The optimal information complexity of VC learning
+2610.10604	2026-10-07T02:11:30Z	cs.SE	Beyond Type-checking: Towards Holistic Evaluation of Formal Specification Generation
+2610.10626	2026-10-07T11:05:39Z	cs.LG	Exact SO(3)-Equivariant Isotropic Kernels for Rotation-Robust Neural Dynamics
+2610.10623	2026-10-07T08:54:30Z	cs.LG	Recurrent Self-Improvement: Dynamic Cross-Loop On-Policy Distillation for Looped Language Models
+2610.10624	2026-10-07T08:55:27Z	cs.SD	SAVU-BENCH: A Real-World Benchmark for Spatial Audio-Visual Understanding
+2610.10617	2026-10-07T07:27:16Z	cs.CR	MRCert: Towards Post-deployment Patch Robustness Certification for Adversarially Patched Samples via Type-specific Masking
+2610.10615	2026-10-07T07:23:47Z	stat.ML	JevForest: Path Voting for Budgeted Feature Acquisition
+2610.10622	2026-10-07T08:52:08Z	cs.GR	WorldBench: Evaluating LLMs on Three.js Voxel World Generation
+2610.10619	2026-10-07T07:58:04Z	cs.SE	TestJack: Should you trust the results in coding benchmarks? Agentic Coding Benchmarks Auditing via Evaluator Evolution
+2610.10611	2026-10-07T06:47:49Z	cs.AI	Verification and Self-Improvement in Agentic AI: Foundations and Limits
+2610.10697	2026-10-07T18:00:06Z	quant-ph	On linearity or non-linearity in machine learning for quantum chaotic dynamics
+2610.10663	2026-10-07T17:41:45Z	cs.SD	BEANS-Next and ROOTS: Broadening Audio-Language Capabilities for Bioacoustics
+2610.10657	2026-10-07T16:42:55Z	cs.LG	Beyond Owls: Subliminal Learning Can Transfer Learned Capabilities and Backdoors
+2610.10656	2026-10-07T16:25:20Z	cs.SE	Can LLMs Simulate Novice Programmers' Misconceptions?
+2610.10648	2026-10-07T15:38:18Z	cs.LG	Leakage-Controlled Multimodal Learning for Diagnosis and Progression Prediction in Alzheimer's Disease Research
+2610.10644	2026-10-07T15:09:07Z	cs.CR	SoK: Failure Modes in Common Criteria Product Evaluation - A Taxonomy and Design-for-Evaluability Guidance
+2610.10630	2026-10-07T13:05:15Z	cs.LG	Phase-HDC: Replacing Optimizer History with Gradient Thresholds in Discrete Phase Learning
+2610.10703	2026-10-07T18:00:07Z	cs.CV	Seeing Through the Glare: A Multi-Source Benchmark and Ocular-Adaptive Pixel MeanFlow for Eyeglass Reflection Removal
+2610.10662	2026-10-07T17:16:21Z	cs.LG	Teaching PPG How not Who: Fixed-Effects Distillation from ECG
+2610.10655	2026-10-07T16:24:07Z	cs.LG	Nullify: Null-Space Activation Steering for Training-Free LLM Unlearning
+2610.10650	2026-10-07T15:51:01Z	cs.CL	Large Language Model-Assisted Preparation of Transportation Management Plans: A Case Study with WisDOT WisTMP System
+2610.10642	2026-10-07T14:49:21Z	stat.ML	From Log-Odds to Shapley Values: An Explanatory Geometry for the Weighted Naive Bayes Classifier
+2610.10770	2026-10-07T18:30:17Z	cs.HC	AI-Mediated Self: How HCI Defines and Relates to the Self
+2610.10722	2026-10-07T18:04:19Z	cs.CV	LinSlot: Exploiting Linear Representation hypothesis for unsupervised attribute discovery from slot based object representation
+2610.10758	2026-10-07T18:22:55Z	cs.CL	Clarify, Then Focus: Statement Normalization for Conversation Analytics at Scale
+2610.10742	2026-10-07T18:10:56Z	cs.CR	BRANCH: Bypassing Multi-Scanner AI Guardrails
+2610.10740	2026-10-07T18:09:55Z	cs.LG	Conversational Task Disambiguation over Tabular Data: Leakage-Aware Formulation, Benchmark Suite, and Training
+2610.10738	2026-10-07T18:08:40Z	cs.CL	Lossy Compressive Text Autoencoders
+2610.10633	2026-10-07T13:25:54Z	cs.SE	Has LLM Screening Performance Stalled in Software Engineering Systematic Reviews?
+2610.10639	2026-10-07T14:27:58Z	cs.LG	Visible Reasoning Is Not a Universal Optimizer: Persona- and Thinking-Dependent Effects in Analytics Code Generation
+2610.10761	2026-10-07T18:24:13Z	stat.ML	What can linear attention learn from nonlinear teachers in-context?
+2610.10760	2026-10-07T18:24:11Z	cs.CV	DOGS: Design-Space Sampling for Prompt-Driven Logo Generation
+2610.10759	2026-10-07T18:23:30Z	cs.CV	MESSENGER: Memory-Enhanced Sequential Scene Flow Estimation via Autoregressive Next-Frame Forecasting
+2610.10735	2026-10-07T18:07:15Z	cs.CR	DITTO: A Context-aware Pickle-based Pre-Trained Model Scanner for Effective Security Audits
+2610.10651	2026-10-07T15:58:54Z	cs.LG	Beyond the Ergodic Wall: A Discrete Geometric Physics Sandbox for Analysing AI Scaling Limits and Complexity Collapse
+2610.10646	2026-10-07T15:19:54Z	cs.RO	Masked Generative Motion Planning with Geometry-Guided Token Search
+2610.10636	2026-10-07T14:07:41Z	cs.LG	D-SLR: The Disjoint Row-Sparse plus Low-Rank Decomposition
+2610.10628	2026-10-07T11:23:11Z	cs.SE	Agent4RE: A Self-Refining Multi-agent Framework for End-to-End Software Requirements Engineering and Benchmarking
+2610.10627	2026-10-07T11:17:37Z	cs.LG	Sample-Efficiency of Kolmogorov-Arnold Networks
+2610.10640	2026-10-07T14:32:37Z	math.ST	How Many Directions Must a Truncated Diffusion Sampler Retain? Matching Bounds Under Power-Law Spectra
+2610.10776	2026-10-07T18:32:31Z	cs.LG	NEMORA: Neural Equivariant Multipole Operators for Long-Range Atomistic Learning
+2610.10631	2026-10-07T13:09:45Z	cs.SE	Ruleless Digital Twins: Toward Declarative Decision-Making Through Standardized Frameworks and Technologies
+2610.10666	2026-10-07T17:59:07Z	cs.LG	Explaining the Saliency Map Sparsity of Adversarially-Trained Neural Networks
+2610.10768	2026-10-07T18:29:31Z	cs.CE	Strategic Investment Decision Making for Value Creation in Energy Transition: A Reinforcement Learning Approach
+2610.10727	2026-10-07T18:05:13Z	q-fin.CP	Deep Learning vs. Statistical Models for Multi-Horizon Price Forecasting of Second-Hand Electronics: A Systematic Benchmark
+2610.10690	2026-10-07T18:00:02Z	cs.LG	Learning infinite context windows in recurrent architectures via spatial neural computing
+2610.10659	2026-10-07T17:02:09Z	cs.SE	Applying Security by Design at the Point of Execution: How Governed Security Requirements Affect the Security of AI-Generated Code
+2610.10653	2026-10-07T15:59:28Z	cs.LG	PXtal: Learning to Align Powder X-Ray Diffraction and Crystal Structures under Information Asymmetry across Modalities
+2610.10629	2026-10-07T12:33:48Z	cs.AI	The Harness as the Only Mutable Surface: Compliance-Bounded Self-Evolution of LLM Agents in Credit Pipelines, with a Measured Admission Gate
+2610.10724	2026-10-07T18:04:45Z	cs.CL	Cognitive Thermometers: Machine Learning and Logical Complexity
+2610.10933	2026-10-07T21:41:46Z	cs.LG	Rethinking the Tradeoff Between Temporal Encoding and Nonlinear Computation in Spiking Language Models
+2610.10931	2026-10-07T21:40:56Z	cs.LG	Coefficient Calibration as Selection Pressure in Symbolic Regression
+2610.10920	2026-10-07T21:19:47Z	cs.LG	Language Models for Page-Level Layout Decisions in E-commerce Search
+2610.10897	2026-10-07T20:55:30Z	cs.LG	Gen-PINNs: Generative Adversarial Physics Informed Neural Networks for solving partial differential equations
+2610.10809	2026-10-07T19:12:45Z	cs.LG	Evaluating Rubric Generation with Interventional Transfer
+2610.10875	2026-10-07T20:22:00Z	cs.LG	Barron Optimal Transport I: Generative Modeling
+2610.10871	2026-10-07T20:17:13Z	cs.CL	Sparse Attention Is Matrix Approximation, Not Choosing from a Bag of Values
+2610.10867	2026-10-07T20:12:41Z	cs.LG	Shape irregularity of Life-Like Network Automaton rules as an indicator of classification performance
+2610.10865	2026-10-07T20:10:07Z	cs.CL	Disentangling Linguistic and Paralinguistic Information with Routed Sparse Autoencoders
+2610.10823	2026-10-07T19:25:59Z	cs.CV	Velocity Scaling in Flow Matching
+2610.10807	2026-10-07T19:09:10Z	cs.LG	Symbolic Density Estimators for Unnormalized Distributions
+2610.10805	2026-10-07T19:05:31Z	cs.AI	Whose Ground Truth? Embracing Ambiguity in Human-Centered AI
+2610.10946	2026-10-07T21:52:18Z	cs.CL	AI4Fire: Evaluating Large Language Models on Wildfire Tasks
+2610.10942	2026-10-07T21:46:10Z	cs.AI	StoreBench: A Live-Commerce Environment for Evaluating and Training Autonomous Operator Agents
+2610.10919	2026-10-07T21:18:29Z	cs.DB	Implementation Guidelines for Data Quality Metrics
+2610.10912	2026-10-07T21:11:23Z	cs.RO	When Listening Becomes Easier: Scrubbing Visual Cues for Shortcut-Free VLAs
+2610.10893	2026-10-07T20:51:59Z	cs.CV	Less from More: Reinforcing Sparse Video Reasoning from Dense References
+2610.10889	2026-10-07T20:42:54Z	cs.CV	SPLIT-RL: Staged Perception-Language Reasoning Training with Claim-Level Advantages
+2610.10878	2026-10-07T20:29:29Z	cs.CL	Stochastic Teacher Intervention for Agentic On-Policy Distillation
+2610.10859	2026-10-07T20:03:49Z	cs.CV	Enabling Preference-driven Unlearning in Few-step Distilled Text-to-Image Diffusion Models
+2610.10844	2026-10-07T19:50:36Z	cs.CR	When Flaws Cascade: Understanding Vulnerabilities and Exploitation Chains in JavaScript Engines
+2610.10833	2026-10-07T19:35:08Z	cs.AI	On the Clock: Towards Punctual and Productive Time-Budgeted AI Agents
+2610.10793	2026-10-07T18:51:43Z	stat.ML	Calibrating Ambiguity Set via Diagnostic Transport for Distributionally Robust Optimization
+2610.10787	2026-10-07T18:45:56Z	cs.RO	NavGPT-3: Harnessing Context in a Hierarchical Navigation Runtime
+2610.10832	2026-10-07T19:34:53Z	cs.LG	MotherTree: Meta-learning on synthetic data improves decision tree training
+2610.10924	2026-10-07T21:27:35Z	cs.AR	The Missing Fourth Term for the Emulation Tensor Memory Equilibrium (TME) Model: The Residue Deconstruction Cost
+2610.10870	2026-10-07T20:16:18Z	stat.ML	Transformed Samplers with Variance Reduction
+2610.10862	2026-10-07T20:08:25Z	cs.CE	A mesh-based neural energy method for the simulation of heterogeneous composites
+2610.10857	2026-10-07T20:01:27Z	cs.AI	Self-Supervised Keyframe Discovery for Horizon-Invariant Behavior Cloning
+2610.10850	2026-10-07T19:54:13Z	cs.LG	Similar Predictive Fit but Different Latent Dynamics: Characterizing Learned Dynamical Structure in Personalized Models of Brain Disorders
+2610.10848	2026-10-07T19:51:59Z	cs.LG	Amortized Off-Policy Evaluation for LLMs
+2610.10932	2026-10-07T21:41:33Z	cs.LG	World-Model Policy Arbiter for Goal-Conditioned Reinforcement Learning
+2610.10926	2026-10-07T21:28:46Z	cs.LG	Adaptive Multi-Discriminator WGAN Framework for Resource-Constrained Internet of Vehicles Using Reinforcement Learning and Game Theory
+2610.10899	2026-10-07T20:55:58Z	cs.LG	How Hackable Is Your Speech Quality Metric? A Corrected Protocol, a Benchmark, and What Patching Buys
+2610.10829	2026-10-07T19:32:03Z	stat.ML	Conformal Prediction under Partial Verification
+2610.10810	2026-10-07T19:15:58Z	cs.RO	Diagnosing and Recovering from Observation-Space Shift at Long-Horizon Skill Seams
+2610.10795	2026-10-07T18:52:18Z	cs.LG	How Many Repeated Pairwise Comparisons Are Needed for Ranking under Heterogeneity?
+2610.10778	2026-10-07T18:33:00Z	cs.LG	MemoWM: How World Models Change What Agents Need to Remember
+2610.10929	2026-10-07T21:35:01Z	cs.CR	Speedbumps: Rejection Attacks on Speculative Decoding
+2610.10934	2026-10-07T21:42:18Z	cs.RO	Higher-Order Morphology Priors for Quadruped Reinforcement Learning Under Actuator Degradation
+2610.10962	2026-10-07T22:28:28Z	cs.RO	iAm.md: Robot Skill Self-Assessment through Agentic Introspection for Unknown Open-Vocabulary Domains
+2610.10961	2026-10-07T22:28:22Z	cs.SE	Cross-Provider Review as a Runtime Contract for Coding Agents: A Controlled Pilot and Fault-Injection Study
+2610.10957	2026-10-07T22:19:36Z	cs.LG	TRACE: A Governance Framework for Measuring Explainability Debt in Production AI Systems
+2610.11064	2026-10-08T01:25:16Z	cs.LG	Measuring and Mitigating Solution Mode Collapse in RLVR
+2610.11049	2026-10-08T01:01:46Z	cs.CV	SatFix: Absolute Visual Localization of UAVs in Satellite Maps from a Single Oblique Image
+2610.11025	2026-10-08T00:19:01Z	cs.HC	Intent Graph: Navigating the Analytical Reasoning Space for Exploratory Data Analysis
+2610.11015	2026-10-07T23:55:27Z	cs.CL	Prompts versus Rules: Auditing and Controlling Speech Naturalness Behaviors in Voice User Simulators
+2610.11000	2026-10-07T23:35:02Z	cs.LG	Low-rank tensor structure of precipitation and its application to satellite-reference merging
+2610.11022	2026-10-08T00:14:28Z	physics.ao-ph	A Graph Neural Network for Global Daily Fire Radiative Power Prediction at Medium-Range Lead Times
+2610.11065	2026-10-08T01:25:48Z	cs.LG	CityDeploy-Bench: Benchmarking Physics-Grounded Spatial Set Planning for Multi-Transmitter Network Deployment
+2610.11031	2026-10-08T00:24:00Z	cs.IT	Language Modeling is Monotone Compression
+2610.10996	2026-10-07T23:33:05Z	cs.LG	Invariant-Measure Reasoners: Stable Representations for Latent Reasoning
+2610.10991	2026-10-07T23:24:52Z	cs.CV	Region-Aware CLS Token Augmentation for Fine-Grained Image Retrieval
+2610.10971	2026-10-07T22:43:56Z	cs.CL	When Citations Mislead? A Claim-Level Benchmark for Legal Hallucination Detection
+2610.10969	2026-10-07T22:41:15Z	cs.LG	ASPIRE: Saddle-Point Discovery through Set Prediction and Physical Refinement
+2610.10947	2026-10-07T21:52:33Z	cs.LG	RH-Detect: A Unified Benchmark for Reward Hacking Detection
+2610.10954	2026-10-07T22:14:01Z	cs.AI	Learning How to Search for Plans with Exponentially Less Space
+2610.10975	2026-10-07T22:56:55Z	cs.LG	Optimizing Large Language Models with Chained LMOs
+2610.11060	2026-10-08T01:16:38Z	cs.CV	AffordDrive3D: Affordance-Aware World-Action Modeling with Spatial Understanding
+2610.11037	2026-10-08T00:43:09Z	cs.CV	Transforming Image Editors into Video Editors
+2610.11033	2026-10-08T00:25:25Z	cs.CL	FedAlphaEdit: Null-Space-Aligned Merging for Collaborative Knowledge Editing
+2610.11008	2026-10-07T23:46:37Z	physics.soc-ph	Why LLM Agents Favor Their Group: Stakes, Observed Norms, and Reputation
+2610.10989	2026-10-07T23:21:55Z	cs.LG	Multi-Bandwidth Distribution Matching Distillation: On the Equivalence of Distribution Matching Distillation and Drifting Models
+2610.10984	2026-10-07T23:16:32Z	cs.CV	Fluid-Gen-Zero: Grounding Pretrained Video Generators in Physics without Training
+2610.10978	2026-10-07T23:02:20Z	cs.SE	Probabilistic Sensing, Deterministic Authority: Admitting Model-Produced Observations into Sufficiency-Checked Governance Contracts
+2610.10965	2026-10-07T22:35:28Z	cs.LG	Spectrally Targeted Muon
+2610.11058	2026-10-08T01:15:14Z	cs.CV	Refine Connections, Close the Gap: A Reliable Enhancement Framework for Driving Scene Topology
+2610.11041	2026-10-08T00:48:37Z	cs.SE	Following Breadcrumbs in Code: What Accidentally Committed Ad-Hoc Logs Reveal about Developer Comprehension
+2610.11023	2026-10-08T00:15:43Z	cs.CV	Expression-Diverse References for Identity-Preserving Video Generation
+2610.11011	2026-10-07T23:49:39Z	cs.CV	PCAsplat: Gaussian Splatting with Local PCA Regularization
+2610.11004	2026-10-07T23:36:58Z	physics.plasm-ph	Reconstruction of Multiscale Plasma Dynamics Across Operating Regimes
+2610.10998	2026-10-07T23:33:07Z	cs.LG	F$^3$NO: Frequency-Decomposed Finite-Time Flow-map Neural Operators with Cross-Scale Conditioning
+2610.10988	2026-10-07T23:21:49Z	cs.CL	Back in Style: A Sociolinguistic Approach to Authoring and Measuring Persona Fidelity in User Simulation
+2610.10972	2026-10-07T22:49:17Z	cs.LG	Transferability of Learned States in Neural PDE Solvers
+2610.10960	2026-10-07T22:26:35Z	cs.CV	LVSPM: Long Sequence View Synthesis and Pose Estimation Model
+2610.10974	2026-10-07T22:55:15Z	cs.LG	Budgeted Multi-Source Counterfactual Annotation for Off-Policy Evaluation
+2610.11007	2026-10-07T23:44:32Z	cs.AI	Curating Always-Loaded Context for LLM Agents: A Capacitated Assortment Model with Censored Feedback
+2610.10959	2026-10-07T22:24:54Z	cs.CV	GPU-Accelerated Computation of Persistent Homology for Topological Analysis of Image Data
+2610.10952	2026-10-07T22:09:32Z	cs.LG	SPD-MetaFormer is what you need for small-data brain decoding
+2610.11039	2026-10-08T00:45:46Z	cs.CV	Rendering-Free Lookahead for Question-Guided Active Vision
+2610.11170	2026-10-08T03:25:22Z	cs.LG	SACQ: Structured Decoding with Memory-Conditioned Refinement for Long-Horizon Forecasting
+2610.11163	2026-10-08T03:22:59Z	cs.CR	Characterizing Statistical Separability in TP-CRIV for Probabilistic AI Models
+2610.11139	2026-10-08T03:06:10Z	stat.ML	Accelerating Non-Smooth and Heavy-Tailed Sampling
+2610.11135	2026-10-08T02:59:20Z	cs.CL	Can a System-One LLM Perform Knowledge Tracing When Few or No Learners Are Logged?
+2610.11134	2026-10-08T02:58:29Z	cs.LG	QUILT: Rethinking Sparse-Attention Prefill through Shared Query Execution
+2610.11115	2026-10-08T02:39:24Z	cs.LG	Dynamics as Code: On Model Compression via Dynamic System
+2610.11104	2026-10-08T02:19:51Z	cs.CV	Skeleton-Guided Progressive Test-Time Adaptation for Thin Curvilinear Structures
+2610.11074	2026-10-08T01:32:09Z	cs.LG	Optimally Pacing Budget Spending and Learning
+2610.11136	2026-10-08T03:05:08Z	cs.CL	The "10th Juror": Open-Set Standpoint Screening for Bureaucratic Bias Detection
+2610.11118	2026-10-08T02:43:51Z	cs.AI	OpenProblemBench: Benchmarking AI on Open Problems in the Foundational Theoretical Sciences
+2610.11138	2026-10-08T03:05:47Z	cs.CV	IntrinSync: Joint Intrinsic Decomposition and Reciprocal Rendering
+2610.11179	2026-10-08T03:38:29Z	cs.SE	Who Pays the Review Cost? Triage, Fairness, and Accountability in AI-authored Pull Requests
+2610.11174	2026-10-08T03:31:49Z	cs.CV	IntactWorld: Joint World Modeling with Intact Features
+2610.11117	2026-10-08T02:43:05Z	cs.CV	MCL: Meta Convolution Layer
+2610.11113	2026-10-08T02:35:56Z	cs.CV	DiscoVL: Unveiling Disentangled C ross-Modal Representation Learning via Orthogonal Adversarial Regularization for V ision-Language Models
+2610.11085	2026-10-08T01:53:39Z	cs.LG	DaCe-DT: Data-Centric Offline Multi-Task Reinforcement Learning via Adaptive Prompts and Trajectory Correction for Heterogeneous Tasks
+2610.11076	2026-10-08T01:35:48Z	cs.LG	Stability-Plasticity Balance via Singular-Vector Selection in LLM Continual Learning
+2610.11067	2026-10-08T01:26:50Z	cs.CV	Diffusion Meta-Prompting and Steering for Generalizable Foundation Model Adaptation
+2610.11161	2026-10-08T03:20:48Z	cs.CV	VGGTWorld-VLA: Intent-Conditioned 3D World Evolution for Autonomous Driving
+2610.11155	2026-10-08T03:16:45Z	cs.AI	Social Pain Disrupts Emotion-Action Brain-State Dynamics in Adolescents with Non-Suicidal Self-Injury
+2610.11153	2026-10-08T03:15:12Z	cs.CV	CARE: Constrained Attention Refinement for Fine-Grained Visual Classification via Teacher-Student Distillation
+2610.11149	2026-10-08T03:12:12Z	cs.CV	A Unified Score Matching Paradigm for Video Anomaly Detection and Anticipation
+2610.11146	2026-10-08T03:11:02Z	cs.LG	Ranking Prior Alignment for Credit Risk Modeling: When Do External Priors Matter?
+2610.11111	2026-10-08T02:33:37Z	cs.CL	Lapras: Latent Reasoning for Time Series Language Models
+2610.11086	2026-10-08T01:57:18Z	cs.CV	Contrast Enhancement or Noise Reduction? On Improving Cervical Cancer Classification
+2610.11082	2026-10-08T01:44:31Z	stat.ML	A General $\widetildeΩ(\sqrt{T γ_T})$ Lower Bound for Kernel Bandits
+2610.11070	2026-10-08T01:30:35Z	cs.CV	No Distillation Needed: Single-Pass Real-Time Talking Heads via Acausal Noise Shaping
+2610.11169	2026-10-08T03:25:22Z	cs.SE	Skill Constellations: Tracing the Supply Chain of Agent Skills on GitHub
+2610.11168	2026-10-08T03:25:12Z	cs.RO	PMTRM: Pseudo-Memory Temporal Re-encoding Module for Embodied Policy Learning
+2610.11165	2026-10-08T03:23:39Z	cs.LG	CARE: A Lightweight Plug-in Gated Correction and Uncertainty-aware Module for Long-term Time Series Forecasting
+2610.11164	2026-10-08T03:23:26Z	cs.LG	RideBench: A Large-Scale Exogenous-Aware Benchmark for Ride-Hailing Time Series Forecasting
+2610.11152	2026-10-08T03:15:00Z	cs.LG	Do LLMs Learn from Rewards in Context? : Rethinking the role of reward in In-Context Reinforcement Learning
+2610.11073	2026-10-08T01:31:58Z	cs.SE	IRONPROOF: COBOL-to-Python Transpilation with SMT-Based Equivalence Checking
+2610.11184	2026-10-08T03:42:02Z	cs.CV	WorldFact-Bench: Beyond Image-Internal Plausibility to Image-World Consistency
+2610.11181	2026-10-08T03:40:14Z	cs.CV	MATE4D: Matrix-Guided Editable 4D Generation from a Single Image
+2610.11175	2026-10-08T03:32:42Z	cs.RO	Higher-Order Action Supervision Makes A Strong Policy Class
+2610.11162	2026-10-08T03:22:02Z	cs.CV	AutoAdapt: Reliable Few-Shot Adaptation under Clinical Distribution Shifts
+2610.11133	2026-10-08T02:58:09Z	cs.LG	Machine Learning Optimization for Enhanced OS Fingerprinting
+2610.11128	2026-10-08T02:54:48Z	cs.AI	Balancing Reference Guidance and Free Generation in Trajectory Rollouts for Reasoning RL
+2610.11096	2026-10-08T02:11:43Z	cs.CV	Continuous Ground-Truth Construction and a Recovery Policy for Air--Water Robotic Tracking
+2610.11288	2026-10-08T05:52:04Z	cs.LG	Memorization and Malign Generalization in Conditional Diffusion Models with Random Features
+2610.11275	2026-10-08T05:38:01Z	cs.CL	Phonological Interference in Multilingual Speech Models
+2610.11264	2026-10-08T05:19:04Z	cs.CV	LR-V2X: Loss-Resilient Collaborative Perception under Low-Bandwidth Communication
+2610.11238	2026-10-08T04:40:24Z	cs.CV	Attributing HOW, Not Just WHICH: Counterfactual Response Trajectories for Diffusion Models
+2610.11236	2026-10-08T04:35:35Z	cs.LG	Low-Cost Sensor Calibration for Indoor Air Quality Monitoring: A Dataset, Evaluation Scenarios, and a Lightweight Model
+2610.11229	2026-10-08T04:30:54Z	cs.LG	SteerCast: Retrieval-Based Latent Steering for Decoder-Only Time Series Forecasting
+2610.11228	2026-10-08T04:27:52Z	cs.LG	Multimodal Graph Retrieval-Augmented Sequential Recommendation via Collaborative Filtering Paths
+2610.11201	2026-10-08T04:04:52Z	cs.DC	PageWeaver: KV-Guided Query Unions for Sparse Attention
+2610.11196	2026-10-08T04:00:47Z	cs.SD	Selective Listening: Mechanism-Guided Control of Audio Influence in Large Audio-Language Models
+2610.11188	2026-10-08T03:45:28Z	cs.AI	What to Admit and How to Present: Governing Persistent Memory in LLM Agents
+2610.11281	2026-10-08T05:48:31Z	cs.LG	How to post-train on a surrogate: Envelope sampling mitigates reward hacking
+2610.11185	2026-10-08T03:43:28Z	cs.LG	Predictive Multiplicity in Cell-Fate Assignment: Label-Free Rashomon Sets and the Limits of Per-Cell Certification
+2610.11294	2026-10-08T05:59:52Z	cs.AI	ORDO: Operation-level Round-aware Dynamic Ordering for MIP Presolve
+2610.11286	2026-10-08T05:50:40Z	cs.CV	When Scene Text Hijacks the Scene: Uncovering, Exploiting, and Mitigating Rendered-Text Semantic Leakage in Image Generation Models
+2610.11261	2026-10-08T05:14:48Z	quant-ph	Q-Capsule: A Localized Capsule-Based Quantum Neural Architecture for Barren Plateau Mitigation
+2610.11257	2026-10-08T05:09:43Z	cs.LG	Residual spectral instabilities in representation learning
+2610.11237	2026-10-08T04:37:07Z	cs.CV	Breaking the Group Size Barrier: Parameter-Efficient Group Dance Generation with Chain-of-Dancers
+2610.11216	2026-10-08T04:13:05Z	cs.LG	The Lattice of Transition Laws
+2610.11195	2026-10-08T03:58:37Z	quant-ph	Retromorphic Testing of Quantum Compiler Passes
+2610.11205	2026-10-08T04:06:50Z	cs.CV	Dissecting Representation Structure in Vision Transformers: A Rigorous Architectural Study
+2610.11198	2026-10-08T04:02:21Z	cs.CV	3DTexMOR: 3D Gaussian Multi-Object Removal via Texture-Space Inpainting
+2610.11187	2026-10-08T03:44:39Z	cs.CV	RGBD-to-3D Object Mesh Refinement via Depth Matching and Symmetry Propagation
+2610.11270	2026-10-08T05:27:02Z	cs.CL	Gated Memory: Admission-Controlled Memory Formation for Conversational AI
+2610.11253	2026-10-08T05:01:30Z	cs.AI	LLM-IDEA: Identifiability-Driven Experimental Agent for Autonomous Discovery of Mechanistic World Models
+2610.11241	2026-10-08T04:42:25Z	cs.CV	TAP3D: Thermal-Assisted 3D Human Point Clouds
+2610.11223	2026-10-08T04:19:47Z	cs.RO	SafeInferCom: Safe Inference-Time Compute via Verifier-Guided Mid-Generation Intervention for Robotic Task Planning
+2610.11287	2026-10-08T05:50:50Z	cs.CL	REMORY: Learning Residual Memory for Context Compaction
+2610.11283	2026-10-08T05:49:24Z	cs.RO	Being-M0.7: A Latent World-Action Model for Humanoid Robots
+2610.11252	2026-10-08T04:56:10Z	cs.LG	Neuro-Memory Fuzzy Inference System for Mimicking Human-like Car Following Behavior
+2610.11247	2026-10-08T04:52:05Z	cs.LG	Why On-Policy Distillation Sometimes Fails: Vanishing Learning Signals
+2610.11289	2026-10-08T05:52:14Z	cs.AI	Open-ended Scientific Discovery with Possibilistic Reasoning
+2610.11214	2026-10-08T04:12:49Z	cs.LG	Bridging KV-Cache Quantization and Linear Attention: From Theory to Pretrained Weight Migration
+2610.11231	2026-10-08T04:31:36Z	cs.AI	Harness Compilation: Which Decisions Should a Small Vision-Language Model Keep?
+2610.11206	2026-10-08T04:06:50Z	cs.LG	Do Flatter Minima Drive Better Generalization? An Algorithmic Separation in Grokking
+2610.11291	2026-10-08T05:54:03Z	cs.CL	When Do We Need On-Policy Distillation? Distilling on Offline Student Rollouts Is Often Better
+2610.11284	2026-10-08T05:49:50Z	cs.AR	DynaTE: Accelerating Diffusion LLMs via Dynamic Token Execution
+2610.11226	2026-10-08T04:22:29Z	cs.AI	When Lower Reconstruction Loss Hurts: Distributionally Robust Refinement for Low-Bit LLM Quantization
+2610.11222	2026-10-08T04:19:41Z	q-bio.QM	Cross-species representation learning aligns mouse and human neural dynamics and tracks clinical drug efficacy
+2610.11221	2026-10-08T04:19:38Z	cs.RO	How Firm Should a Grasp Be?
+2610.11218	2026-10-08T04:13:58Z	cs.CR	BRACE: Differential Privacy for Dense Associative Memory with LSR Energy
+2610.11384	2026-10-08T07:16:00Z	cs.AI	Environmental Feedback Modeling Matters: Rethinking Feedback Treatment in Agentic Hindsight Self-Distillation
+2610.11380	2026-10-08T07:12:36Z	cs.AI	Equal Path Cost, Unequal Output Effects: Understanding Perturbation Propagation in Diffusion Models
+2610.11364	2026-10-08T06:56:53Z	cs.CV	FlyMark: Training-Free Invisible Watermarking of 3D Gaussian Splatting via a Fruit Fly Connectome
+2610.11361	2026-10-08T06:51:59Z	cs.SD	SepGen: Multi-Stem Audio-Video Separation and Generation in a Single Model
+2610.11358	2026-10-08T06:49:28Z	cs.AI	RaReCache: Bridging the Gap in Cross-Model KV Cache Reuse via Rank disagreement-based Selective Recomputation
+2610.11354	2026-10-08T06:47:41Z	cs.CL	AdaptEvo: Adaptive Agent Learning with Evolving Supervision
+2610.11317	2026-10-08T06:23:01Z	cs.AI	DivMoE: Fine-Grained MoE Upcycling via Cross-Domain Expert Composition
+2610.11407	2026-10-08T07:36:24Z	stat.ML	Beyond Distributional Fidelity: Causal-Penalized Diffusion for Synthetic Tabular Data
+2610.11381	2026-10-08T07:12:47Z	cs.CV	EvoKnow: Continual Knowledge Evolution for AI-Generated Image Detection
+2610.11376	2026-10-08T07:07:55Z	cs.CV	CRISP: Fixing Flying Pixels in Latent LiDAR Generation via Diffusion Decoding
+2610.11355	2026-10-08T06:47:48Z	cs.AI	Writing for the Reviewer: Defensive Writing in GPT Models
+2610.11320	2026-10-08T06:23:21Z	cs.CV	It's Always 10:10: Reference Images Break a Bias That Prompts Only Dent
+2610.11313	2026-10-08T06:19:10Z	cs.LG	NP-Hardness of Minimizing Neurons in Two-Hidden-Layer ReLU Neural Networks
+2610.11310	2026-10-08T06:15:36Z	cs.CV	FloorSAV: Elucidating Spatial Audio-Visual Context with 2D Floormap for AV-LLMs
+2610.11302	2026-10-08T06:09:04Z	cs.CV	iCATS: Fast Video Generation via Interaction-Aware Sparse Attention and Timestep-Adaptive Sparsity
+2610.11300	2026-10-08T06:07:44Z	cs.SE	Characterizing Overconfident Failure in LLM-Based Code Generation
+2610.11349	2026-10-08T06:44:45Z	cs.LG	Sample-Efficient Generative Conformal Prediction
+2610.11401	2026-10-08T07:33:59Z	cs.RO	WAM-Cache: Staleness-Bounded KV Reuse for Efficient World Action Models
+2610.11352	2026-10-08T06:45:24Z	cs.AI	RL-ARC: Calibrating Large Reasoning Models via Reasoning-guided Uncertainty
+2610.11344	2026-10-08T06:39:07Z	cs.AI	EvoSim: Learning to Model, Modeling to Learn
+2610.11342	2026-10-08T06:37:03Z	cs.CV	Point-Focused Attention Meets Context-Scan State Space: Robust Biological Visual Perception for Point Cloud Representation
+2610.11334	2026-10-08T06:31:37Z	cs.AI	ReCast: Attribution-Oriented Step Representation Learning for LLM-Based Agent Systems
+2610.11333	2026-10-08T06:29:28Z	cs.AI	TokenBank: Financial Infrastructure for AI Services
+2610.11328	2026-10-08T06:26:43Z	cs.AI	Mine Odyssey: Benchmarking Spatial Agentic Intelligence in the Wild
+2610.11370	2026-10-08T07:03:17Z	cs.AI	RIT-RAG: Navigating Document Corpora with Retrieval-Induced Trees
+2610.11366	2026-10-08T06:58:30Z	cs.LG	SpatialOPSD: Self-Distilling Spatial Intelligence from Verified Coding Agent Traces
+2610.11347	2026-10-08T06:41:40Z	cs.CV	EgoPhys: Estimating Peak Contact Force and Mechanical Work from Egocentric Manipulation Video
+2610.11306	2026-10-08T06:12:23Z	cs.CV	Collaboratively Guided Adversarial Robust Distillation with Teacher-Favorable Examples
+2610.11356	2026-10-08T06:48:13Z	cs.CV	Adaptive Adversarial Augmentation for Controllable Face Synthesis
+2610.11403	2026-10-08T07:34:58Z	cs.LG	Learning from Hetero Density for Cryo-EM Protein Reconstruction
+2610.11399	2026-10-08T07:30:43Z	cs.AI	Estimating great expectations under autoregressive language models with potentials
+2610.11392	2026-10-08T07:22:36Z	cs.AI	TypedBench: A Benchmark for Calibration, Framing Sensitivity, and Cost in System One Decision Models
+2610.11389	2026-10-08T07:19:51Z	cs.CL	Fact over Fiction: Detection of Pathological Hallucinations in Sinhala-to-English Neural Machine Translation
+2610.11382	2026-10-08T07:13:10Z	cs.RO	PlanWAM: Planning-Shaped Future Representations for End-to-End Autonomous Driving
+2610.11362	2026-10-08T06:52:13Z	cs.LG	Bernoulli Flow Models: Self-Consistent Generative Modeling for Binary Data
+2610.11345	2026-10-08T06:40:18Z	cs.AI	SynCo: Data Synthesis Co-Training for Self-Evolving LLMs via Multi-Agent Reinforcement Learning
+2610.11337	2026-10-08T06:33:08Z	cs.FL	Type-Checking for Pattern-Based Tree Transformations
+2610.11332	2026-10-08T06:28:38Z	cs.CL	ReCal: Calibrating Structured Pruning for On-Policy Distillation Recovery
+2610.11318	2026-10-08T06:23:09Z	cs.AI	Finsler Flow Matching: Dynamics-Aware Geodesic Interpolation for Single-Snapshot Trajectory Inference
+2610.11296	2026-10-08T06:03:29Z	cs.CV	Spatial-Frequency-Aware Implicit Neural Representation of Multidimensional Signals via MLP-KAN Fusion
+2610.11444	2026-10-08T08:01:36Z	cs.CV	Learning to Retrieve: Internalizing Memory Retrieval for Video World Models
+2610.11442	2026-10-08T08:00:52Z	cs.LG	MotiveMob: Motivation as Semantic Action for Closed-Loop Human Mobility Generation
+2610.11436	2026-10-08T07:59:48Z	cs.CL	Adversarial Cues in Decision Models Used as Judges: The Role of Request Presentation
+2610.11410	2026-10-08T07:40:44Z	cs.AI	Cognition-Oriented Emotion Tracing from Causes to Consequences in Real-World Social Scenes
+2610.11527	2026-10-08T08:56:53Z	cs.AI	AtomWorld-Mirror: Macro-Step World Modeling of Critical Evolution Backbones for Materials Dynamics
+2610.11498	2026-10-08T08:38:01Z	cs.CV	Parametric Trajectory Distillation for Few-Step Video Generation
+2610.11489	2026-10-08T08:31:43Z	cs.CV	Beyond Resolution: Object-to-Image Ratio Mismatch in Instance Retrieval
+2610.11472	2026-10-08T08:21:31Z	cs.AI	From Chain-of-Thought to Loops: Non-Autoregressive Latent Reasoning via Looped Transformers
+2610.11537	2026-10-08T09:07:01Z	quant-ph	An Efficient Quantum Circuit for Flow Model Execution Using Quantum Neural Networks
+2610.11502	2026-10-08T08:40:41Z	cs.AI	Fed-GRPO: Reward-Signal-Driven Federated Group Relative Policy Optimization
+2610.11500	2026-10-08T08:40:24Z	physics.optics	Learning qBIC Resonances across Metasurface Families in Dielectric Fourier Space
+2610.11456	2026-10-08T08:09:47Z	cs.AI	SpikeSSL: A Universal Spike Inference Framework with Dynamics-Informed State-Space Layers
+2610.11423	2026-10-08T07:48:55Z	cs.LG	Policy Alignment: New Signals for Membership Auditing in On-Policy Distillation
+2610.11458	2026-10-08T08:11:37Z	cs.LG	Generative Adversarial Loops
+2610.11450	2026-10-08T08:04:18Z	cs.AI	Tracing the Thoughts of a Coding Agent Playing ARC-AGI-3: Lessons for Continual Learning
+2610.11431	2026-10-08T07:55:08Z	cs.CV	EchoDiST: Self-distillation-based joint learning for diffusion-conditioned echocardiographic myocardial motion estimation
+2610.11422	2026-10-08T07:48:53Z	eess.SY	Causal-fate dynamics of unrealized influence
+2610.11415	2026-10-08T07:45:27Z	cs.GT	Refinement as a Service: Algorithmic Predictor Refinement
+2610.11408	2026-10-08T07:38:43Z	cs.LG	MC-TRCM: Observation-Aware Recursive Fusion for Incomplete Mobile and Wearable Mental-Health Feature Views
+2610.11534	2026-10-08T09:03:00Z	cs.CV	HAND: A Biologically-Inspired Activation Function that Improves Generalisation and Sample Efficiency in Image Classification
+2610.11523	2026-10-08T08:55:10Z	cs.LG	When to Intervene? State-Aware Sparse Manipulation in Federated Reinforcement Learning
+2610.11519	2026-10-08T08:52:55Z	cs.CL	Residual Advantage: Student-Relative Teacher Guidance for RL with Verifiable Rewards
+2610.11514	2026-10-08T08:50:31Z	cs.SE	SSCBench: Evaluating the Evidential Validity of Fault-Injection Tests for Tool-Using LLM Agents
+2610.11454	2026-10-08T08:09:17Z	cs.LG	Zatom-2: Multitask Pretraining on Atomistic Data for Generative Modeling across Domains
+2610.11451	2026-10-08T08:04:22Z	cs.CL	SAIL: Scientific Agentic Intelligence via a Science-Aware Loop
+2610.11424	2026-10-08T07:51:21Z	cs.AI	Why machines will still not rule the world
+2610.11412	2026-10-08T07:43:20Z	cs.CV	Fresco++: Frequency-Guided and Canonical-Consistent Optimization for Fine-Grained Head Avatar Modeling
+2610.11504	2026-10-08T08:42:45Z	cs.AI	The Operator Mismatch Problem: Deploying BEV Perception with Portable GPU Compute
+2610.11483	2026-10-08T08:26:52Z	cs.AI	BridgeGuard: Explicit Safety Drift for Diffusion-based Autonomous Driving
+2610.11480	2026-10-08T08:25:49Z	cs.RO	RoboAware: Learning to Coordinate Embodied Skills from Counterfactual Outcomes
+2610.11459	2026-10-08T08:12:13Z	stat.ML	Feature Space Adaptation for Effortless Gaussian Process Flows
+2610.11506	2026-10-08T08:43:10Z	cs.LG	Compactness and Consistency: A Conjoint Framework for Deep Graph Clustering
+2610.11496	2026-10-08T08:35:40Z	cs.CV	Stop My Dancing! Understanding, Detecting and Attributing Motion-Aware Deepfake Videos
+2610.11479	2026-10-08T08:25:41Z	cs.CV	Conditional Residual Prediction: Improving Autoregressive Video Diffusion without a Bidirectional Teacher
+2610.11475	2026-10-08T08:22:35Z	cs.LG	Rare Gate Disagreements Can Limit Plasticity: When Gradient Flow Mispredicts Finite-Batch SGD
+2610.11467	2026-10-08T08:17:45Z	cs.CR	GROB: A Multi-Agent Architecture for Public-Trace Investigation of Candidate Agentic Activity
+2610.11464	2026-10-08T08:13:53Z	cs.AI	Who Verifies the Verifier? Co-Evolving Inspectable Graders with Self-Improving Agents
+2610.11433	2026-10-08T07:56:45Z	cs.CV	DLC: A Metric-Guided Dynamic Loss Controller for Multi-Objective Training
+2610.11520	2026-10-08T08:53:41Z	cs.CL	When Can You Prune Your Network? A Study of Intermediate Neurons in Multilingual Speech Parsing
+2610.11486	2026-10-08T08:29:21Z	stat.ML	PSI-SINDy: Post-Selection Inference for Sparse Identification of Nonlinear Dynamics
+2610.11631	2026-10-08T10:08:56Z	cs.RO	Neural Networks for Temporal Pattern Recognition and Dynamic Arm Gesture Speed Estimation for Robot Control
+2610.11627	2026-10-08T10:05:57Z	cs.LG	Beyond Action Entropy: Quotient-Space Exploration for Genome-Scale Metabolic Model Repair
+2610.11613	2026-10-08T09:55:05Z	cs.AI	AgentEvolver: System-Wide Self-Evolution Through Task Execution
+2610.11586	2026-10-08T09:35:15Z	cs.CL	Measuring Cultural Alignment Beyond the Average: A Framework for Evaluating Maternal-Health LLM Interactions in Indian Contexts
+2610.11573	2026-10-08T09:28:31Z	cs.AI	Memory Type Varies: Empowering LLM Agents for Long-Term Memory with Diverse Strategies
+2610.11566	2026-10-08T09:24:56Z	cs.CL	Incremental Open-Ended Deep Research with Structured Harness
+2610.11580	2026-10-08T09:31:44Z	cs.LG	Uncertainty-Aware Optimization for Physics-Aware Highway Trajectory Prediction
+2610.11618	2026-10-08T09:58:32Z	cs.SE	PolyCodeEval: Benchmarking Multilingual Code Generation from Functions to Repositories
+2610.11612	2026-10-08T09:54:56Z	cs.CV	PointVGGT: Zero-Shot Multiview RGB-D Point Cloud Registration with Visual Geometry Foundation Priors
+2610.11572	2026-10-08T09:27:17Z	cs.CV	PAM-ToD: Plug-and-Play Appearance Modeling for Cross-Time-of-Day 3D Gaussian Splatting
+2610.11567	2026-10-08T09:25:01Z	cs.LG	Sera: Semantic Representation Aggregation for Reliable and Interpretable Battery Health Forecasting
+2610.11561	2026-10-08T09:23:28Z	cs.AI	Workerville: Towards an Organizational Behavior Account of Agent Safety
+2610.11560	2026-10-08T09:22:55Z	cs.CV	Hankel Subspace Self-Supervised Learning for Parallel MRI Reconstruction
+2610.11559	2026-10-08T09:21:49Z	cs.CL	SWE-Journey: Towards More Realistic Evaluation of Coding Assistants through Long-Horizon, Multi-Turn Interaction
+2610.11549	2026-10-08T09:14:39Z	cs.LG	$C_4$-Equivariant Flow Matching on Anisotropic Power-Diagram Graphs for Microstructure Generation
+2610.11548	2026-10-08T09:12:45Z	cs.LG	Conditional Transfer from Controlled Pretraining Mixtures to Code
+2610.11544	2026-10-08T09:12:02Z	cs.CL	Prosody-to-Text: Predicting text from low-pass filtered speech
+2610.11538	2026-10-08T09:08:45Z	stat.ML	LAIR-Net: Leaky Alignment-Impulse Residual Networks for Tabular Regression
+2610.11608	2026-10-08T09:51:31Z	cs.CV	S$^3$Geo: Structure-Semantic Synergistic Learning for Cross-View Geo-Localization
+2610.11584	2026-10-08T09:33:23Z	stat.ML	Embedding-Bias in Conditional Independence Testing
+2610.11583	2026-10-08T09:33:19Z	cs.RO	SDPAD: A Fully Spike-Driven Pipeline for End-to-End Autonomous Driving
+2610.11577	2026-10-08T09:31:28Z	cs.RO	CoCam4D: Geometry-Aware Cooperative 4D Perception for Camera-Only Autonomous Driving
+2610.11575	2026-10-08T09:31:19Z	cs.CL	Smoothing the Top-k Exposure Boundary for Sparse Mixture-of-Experts
+2610.11546	2026-10-08T09:12:13Z	cs.NE	Learning to Orchestrate Evolutionary Search: Progression-Aware Deep Reinforcement Learning for Dynamic DE-CMA-ES Coordination in Optimization and Structural Model Updating
+2610.11539	2026-10-08T09:09:33Z	cs.HC	Design Creativity Bench: Measuring creativity in LLM-Generated UI
+2610.11617	2026-10-08T09:58:23Z	cs.CV	TAM: Task-Aware Memory Distillation for Efficient Spatiotemporal Prediction
+2610.11593	2026-10-08T09:42:27Z	cs.SE	Runnable Commit Untangling for Coding Agents
+2610.11579	2026-10-08T09:31:38Z	cs.CV	SV-TAD: Native Sparse Convs for Efficient Temporal Action Detection
+2610.11570	2026-10-08T09:26:21Z	cs.AI	Scaling to Tens of Thousands of Test-Time Iterations with Loop-Native Attention Residuals
+2610.11556	2026-10-08T09:20:22Z	cs.CR	SoK: Are LLMs Reliable at Source Code Recovery? A Taxonomy and Empirical Evaluation
+2610.11555	2026-10-08T09:18:53Z	cs.LG	Best of Both Worlds in Federated LSA: Speedup When Possible, Personalization Always
+2610.11551	2026-10-08T09:15:01Z	cs.LG	New Lower Bound and Upper Bounds on the Regret for Online Sparse Linear Regression
+2610.11605	2026-10-08T09:49:39Z	cs.LG	NanoProof: Open and Efficient Automated Theorem Proving in Lean 4
+2610.11547	2026-10-08T09:12:37Z	cs.CV	OX-NeRF: 3D X-ray Tomography Reconstruction from Sparse Views Using Implicit Neural Representation
+2610.11628	2026-10-08T10:06:26Z	stat.ML	Minimax Gaussian Mechanisms for Continual Machine Unlearning
+2610.11621	2026-10-08T10:00:26Z	cs.LG	Constructing Structured Decision Sources for Consensus-Based Pseudo-Label Learning
+2610.11620	2026-10-08T09:59:16Z	cs.AI	Where to Adapt Matters: Layer-Selective Fine-Tuning for Capability Retention
+2610.11619	2026-10-08T09:58:46Z	math.OC	Randomized Transport Maps for Model-Free Policy-Gradient Mean-Field Control
+2610.11602	2026-10-08T09:47:18Z	cs.CR	Where Do the Tokens Go? Understanding and Reducing Costs in LLM Agents for Vulnerability Discovery
+2610.11543	2026-10-08T09:11:17Z	cs.CL	Learning the Loop, Not Just the Page: Execution-Grounded Loop Learning for Web Generation
+2610.11692	2026-10-08T11:02:14Z	cs.LG	Can Jev be Your Q or Policy in Reinforcement Learning?
+2610.11669	2026-10-08T10:43:37Z	cs.CV	Perceptually Grounded and Semantics-Aware Evaluation for Holistic Co-Speech Gesture Generation
+2610.11668	2026-10-08T10:40:32Z	stat.ML	$σ$Transfer: Uncertainty Transfer from Small to Large Networks under $μ\mathrm{P}$
+2610.11663	2026-10-08T10:37:33Z	cs.AI	Constrained Command-Conditioned Reinforcement Learning with Bandit Strategy Selection in Real-Time Strategy Games
+2610.11744	2026-10-08T11:34:22Z	cs.LG	The Ball and the Box: Two Geometries of Computation in Superposition
+2610.11743	2026-10-08T11:34:22Z	cs.LG	TraceRelay: Attention-Aligned Recurrence over Rolling Traces
+2610.11734	2026-10-08T11:28:56Z	cs.LG	Timer-M1: A Multivariate Time Series Foundation Model via Learning Primitives
+2610.11732	2026-10-08T11:27:49Z	cs.AI	MemTrial: Learning When to Trust Memory in LLM Portfolio Agents
+2610.11716	2026-10-08T11:19:23Z	cs.LG	4-Tensor Attention Model for Semantic Physical Reality
+2610.11695	2026-10-08T11:06:29Z	cs.CL	Structured Sentiment Analysis Using Sequence Labeling as Dependency Graph Parsing
+2610.11690	2026-10-08T11:00:34Z	cs.GT	Epistemic Disturbance in the Graph Model for Conflict Resolution: State-Preserving Actions, Four-Valued Assessments, and the Distinction between Capability and Intention
+2610.11638	2026-10-08T10:15:55Z	cs.CL	UXBench Pro: Benchmarking Personalized User Experience in Multi-Turn Dialogue Interactions
+2610.11634	2026-10-08T10:13:24Z	cs.CR	LTBD: Learnable Trust-Boundary Delimiters for Prompt Injection Defense
+2610.11737	2026-10-08T11:31:19Z	cs.LG	Uncovering and Fixing Collider Bias in Bayesian PINNs
+2610.11735	2026-10-08T11:31:06Z	cs.AI	Onboard Marine Anomaly Detection on $Φ$sat-2: From Simulation-Based Development to In-Orbit Demonstration
+2610.11730	2026-10-08T11:26:26Z	cs.LG	Spectral Weight Decay: Inducing Low-Rank Structure in Neural Network Weights
+2610.11707	2026-10-08T11:12:57Z	cs.AI	DeltaReplay: Task-Relative Memory Reuse for Mobile GUI Agents
+2610.11706	2026-10-08T11:12:45Z	cs.LG	Does an Illumination Prior Help Face-Swap Detection? A Controlled Study of Temporal Self-Blended Images
+2610.11696	2026-10-08T11:06:51Z	cs.AI	A 3D Characterization Framework for Intelligent Sequential Decision Making
+2610.11683	2026-10-08T10:55:41Z	cs.LG	Camera-Noise Residuals for Face-Swap Detection: Redundant, Not Complementary, and Why
+2610.11665	2026-10-08T10:39:10Z	cs.LG	Evi-VN: Hard Region Guided Virtual Node Evidence Injection for GNN-Based Fraud Detection
+2610.11662	2026-10-08T10:36:41Z	cs.AI	Lamarck's Driving School: Discovering Autonomous Driving Training Strategies through Evolutionary Competition
+2610.11659	2026-10-08T10:36:00Z	cs.CL	DIAL-OPD: Learning More from Fewer Tokens in On-Policy Distillation
+2610.11655	2026-10-08T10:33:29Z	cs.AI	Harness Evolution Hits a Ceiling: When Weight Training Should Begin
+2610.11650	2026-10-08T10:25:33Z	cs.IR	SkillContrast: Difference-Guided Text Selection for Agent Skill Reranking
+2610.11641	2026-10-08T10:18:25Z	cs.CV	Revisiting Handcrafted Minutiae Detection: A Simple and Effective Open Source Baseline for Modern Fingerprint Workflows
+2610.11727	2026-10-08T11:25:50Z	cs.SE	MAP4CS: A Multi-dimensional Data Pruning Framework for Efficient Code Retriever Fine-tuning
+2610.11694	2026-10-08T11:05:48Z	q-bio.QM	Elucidating the Space of Enzymatic Reaction: A Unified Benchmark and Pretrained Model
+2610.11653	2026-10-08T10:30:02Z	cs.GR	Tabula Rasa: Monte Carlo estimation of unit-variance noise with controlled spatio-temporal correlation
+2610.11651	2026-10-08T10:26:13Z	cs.AI	Evidence-Traceable Dynamic Interviewer Architecture for Expertise-Adaptive Qualitative Interviews Using Local LLMs
+2610.11725	2026-10-08T11:24:55Z	cs.SE	Implementing the Spec Growth Engine: Preventing Spec-Code Divergence, and Growing the Spec with Agents
+2610.11738	2026-10-08T11:31:29Z	cs.AI	Scalable AI Uncertainty Quantification via Generalized Laplace Active Subspaces
+2610.11670	2026-10-08T10:47:19Z	cs.LG	Early Signatures of Memorization in Diffusion Models via Basin Geometry and Cyclic Denoising
+2610.11704	2026-10-08T11:10:56Z	cs.AI	Intervention anchors and scientific verification in synthetic vascular predictive representations
+2610.11697	2026-10-08T11:07:04Z	cs.LG	What is the goal of unsupervised machine learning?
+2610.11656	2026-10-08T10:33:54Z	cs.CV	DisFace3DNet: Explainable Facial Attractiveness Prediction via 3D Component Disentanglement
+2610.11647	2026-10-08T10:20:47Z	cs.SE	One Skill Too Many: How Co-Installed Skills Conflict in Coding Agents
+2610.11646	2026-10-08T10:20:43Z	cs.CL	Phonologically Informed Tokenization for German Speech Recognition: A Cross-Domain Study
+2610.11740	2026-10-08T11:33:50Z	cs.LG	Correlational Training of Morphological Neural Networks
+2610.11724	2026-10-08T11:24:44Z	cs.LG	Addressing Overcommitment in the Reasoning of Gendered Economic Memes under Multimodal Ambiguity
+2610.11850	2026-10-08T12:37:12Z	cs.CV	VEDJE: Video-Efficient Discriminative Joint Encoder for Scalable Video-Text Retrieval
+2610.11790	2026-10-08T12:03:45Z	cs.CL	Easy to anticipate, hard to compute: boundary dependence finds the computed outputs that entropy patching misses
+2610.11781	2026-10-08T11:59:42Z	cs.CV	Skill-V: Verifiable Self-Evolving Skill Library for Interactive Agents
+2610.11772	2026-10-08T11:53:59Z	math.ST	Optimal random quantisers for spherically symmetric distributions
+2610.11761	2026-10-08T11:44:58Z	cs.LG	RAGenome: Scaling Retrieval-Based Genomic Language Models to Long Contexts
+2610.11759	2026-10-08T11:44:46Z	quant-ph	Beyond QAOA: A Review of AI and Quantum Computing for Adaptive Combinatorial Optimization
+2610.11754	2026-10-08T11:42:23Z	cs.AI	What Output-Only Review Cannot Verify: Study Contracts for Research Agents
+2610.11862	2026-10-08T12:40:14Z	cs.AI	LEVER: Adaptive Cost-Aware Proof Search Over AND/OR Graphs
+2610.11866	2026-10-08T12:42:27Z	cs.LG	Understanding Latent-Dimension Scaling in Dynamical-System Learning through Spectral Reliability
+2610.11858	2026-10-08T12:38:51Z	cs.SE	Trajectory-Guided Fault Localization for Agent Skill Evolution
+2610.11857	2026-10-08T12:38:48Z	cs.CV	Pose-Free Feed-Forward 3D Inpainting via Learnable Mask Attention and Support Token Refinement
+2610.11825	2026-10-08T12:25:15Z	cs.LG	Self-Supervised Speech Representations for Cross-Speaker Dysarthria Detection During Awake Craniotomy
+2610.11783	2026-10-08T12:00:24Z	cs.LG	In-Ride Alcohol-Impairment Detection in E-Scooterists with False-Alarm Control
+2610.11784	2026-10-08T12:00:43Z	cs.LG	Compile the Table: Query-Calibrated Operator Compression for Tabular In-Context Learning
+2610.11876	2026-10-08T12:49:54Z	cs.CV	Relative Patch Response Learning for Generalizable AI-Generated Image Detection
+2610.11869	2026-10-08T12:44:53Z	stat.ML	Learning structured linear dynamical systems from missing observations
+2610.11803	2026-10-08T12:11:35Z	cs.LG	PRAXIS: Learning Dynamics of Self-Improving Models with Symbolic Archives
+2610.11801	2026-10-08T12:10:48Z	cs.SE	ObliVul: Alert-Conditioned Safety Obligation Modeling and Bidirectional Counterfactual Validation for Code Vulnerability Detection
+2610.11791	2026-10-08T12:04:46Z	cs.CV	Phase-aware video generation for physics-grounded dynamics and interactions
+2610.11768	2026-10-08T11:50:51Z	eess.SY	Narrow and Deep: An Ontology Tower as the Knowledge of an LLM Agent for an Industrial Equipment System
+2610.11756	2026-10-08T11:42:57Z	cs.CV	Memory Forcing: Attendable Mid-Horizon History for Streaming Video Generation
+2610.11755	2026-10-08T11:42:26Z	cs.LG	SR-TTA: Spatial-Redundancy Test-Time Adaptation for Interference-Robust Respiration Sensing
+2610.11750	2026-10-08T11:40:13Z	cs.AI	Where Draft Trees Lose Target Mass: Exit-Guided Speculative Decoding
+2610.11746	2026-10-08T11:35:09Z	cs.CV	Streaming-Aware Diffusion for Real-Time Video Super-Resolution via Cross-Step Attention
+2610.11853	2026-10-08T12:38:14Z	cs.LG	DADP: Dynamic Activity-Dependent Pruning, A Reverse Hebbian-Inspired Structural Pruning Method
+2610.11798	2026-10-08T12:09:57Z	stat.ML	Softmax Attention on Gaussian Mixtures: Linear When It Can, Selective When It Must
+2610.11775	2026-10-08T11:55:25Z	cs.AI	RouterInterp: Understanding Superposed Specialisation in Mixture of Experts Routing
+2610.11773	2026-10-08T11:54:04Z	cs.AI	Safe Actions Alone Do Not Ensure Safe Agents: Identifying Unfulfilled Obligations with Guard Models
+2610.11748	2026-10-08T11:39:01Z	cs.AR	DEX: Digit-Level Early Exit for Energy-Efficient MSDF Neural Network Inference
+2610.11875	2026-10-08T12:48:14Z	cs.DC	NosRacer: Dynamic Detection of Race Conditions in On-Device Network Operating Systems
+2610.11863	2026-10-08T12:41:08Z	stat.ML	Conditional Kernel Stein Discrepancy
+2610.11877	2026-10-08T12:50:23Z	cs.AI	How Is Automated Research Evaluated? A Survey of Benchmarks and Evaluation Practices
+2610.11835	2026-10-08T12:27:58Z	cs.SE	On the Risks of using LLM-Generated Tests for Regression Testing
+2610.11815	2026-10-08T12:21:06Z	cs.CV	Fast Pose Tracking of Rigid Objects with Compact Pose Graph Optimization
+2610.11794	2026-10-08T12:06:54Z	cs.AI	Memento 3: Model-Based Recursive Self-Improvement through Reflective Rulebooks
+2610.11787	2026-10-08T12:03:06Z	cs.CL	From Sparse Representations to Behavioral Insights for Multimodal Depression Assessment
+2610.11776	2026-10-08T11:56:07Z	cs.CL	DPPM: Dual-Path Parametric Memory for Personalized Language Models
+2610.11770	2026-10-08T11:52:10Z	cs.CV	From Video Clips to Creation Trajectory: Sora100K for AI-Native Video Creation
+2610.11751	2026-10-08T11:41:13Z	cs.CV	Dino Forcing Flow Models: Do not denoise what you can predict
+2610.11834	2026-10-08T12:27:47Z	cs.LG	Recovery Guarantees for Posterior Sampling of One-Bit Compressed Sensing
+2610.11976	2026-10-08T13:52:24Z	stat.ML	Efficient quadratic entropy with distance sketches
+2610.11957	2026-10-08T13:41:10Z	cs.LG	Stochastic Grouping Conformal Prediction for Effective Subgroup Reliability
+2610.11953	2026-10-08T13:39:40Z	cs.LG	Interval-valued SHAP in Tree-Based Models
+2610.11942	2026-10-08T13:33:23Z	cs.CV	Right Screen, Wrong Transition: World Models as Verifiers for GUI Agents
+2610.11896	2026-10-08T13:04:03Z	cs.LG	Automated Assembly Instruction Generation from CAD Models Using Grounded Large Language Models: A Human-in-the-Loop Framework
+2610.12033	2026-10-08T14:26:19Z	cs.RO	Traceable World State: A Provenance-Aware State Representation and Deterministic Replay Framework for Robotic Systems
+2610.11989	2026-10-08T13:58:39Z	cs.AI	MetaOPD: Meta-Learned Token Weighting for On-Policy Distillation
+2610.12050	2026-10-08T14:35:27Z	cs.CR	Protecting CPU AI On Edge TEEs: WebAssembly's Promise and Practical Challenges
+2610.12035	2026-10-08T14:27:02Z	stat.ML	Efficient and Generalizable Archetypal Analysis for Discrete Data
+2610.12023	2026-10-08T14:20:46Z	cs.AI	InterviewPlayground: A Simulation Environment for Evaluating AI Interviewers
+2610.12016	2026-10-08T14:12:34Z	cs.LG	CausalDreamer: Learning Predictive World Models with Latent Disentanglement
+2610.12008	2026-10-08T14:10:16Z	cs.AI	Complexity of Grounded Semantics and Preferred Semantics in Finitary Argumentation Frameworks
+2610.12003	2026-10-08T14:07:20Z	cs.AI	An Interpretable Approach to PDE Solution Discovery via Structural Experience Distillation
+2610.12002	2026-10-08T14:06:26Z	cs.LG	Agentic-TTT: Training test-time policy for test-time training
+2610.11923	2026-10-08T13:19:57Z	q-bio.NC	Neural Decoding as Cognitive Inference
+2610.11906	2026-10-08T13:08:25Z	stat.ML	RobustLDS: Learning linear dynamical systems under adversarial corruptions
+2610.12067	2026-10-08T14:45:56Z	physics.chem-ph	MAST: Motif-Augmented Diffusion with Search Tree for Spectroscopic Molecular Structure Elucidation
+2610.12005	2026-10-08T14:09:27Z	cs.LG	Test-Time Compute for Tabular Foundation Models: Mechanisms, Gains, and Limits
+2610.11956	2026-10-08T13:40:48Z	cs.RO	Reliability-Aware Future Conditioning for Temporally Robust Robot Manipulation
+2610.11914	2026-10-08T13:12:37Z	cs.LG	Puffin: Probabilistic Learning of Spatial Detail From Coarse Observations
+2610.11908	2026-10-08T13:09:09Z	cs.DB	Cost-Aware Mixture-of-Experts Coordination for Model Markets
+2610.12009	2026-10-08T14:10:51Z	physics.comp-ph	Ghost tasking for parametrized Gaussian Processes solving linear differential equations
+2610.12064	2026-10-08T14:44:32Z	cs.CL	ILM: An AI-Powered Storytelling Educational Tool
+2610.12069	2026-10-08T14:47:30Z	cs.CV	LIVIN: Benchmarking Spatial and Embodied Intelligence in Digital Twins of Lived-In Homes
+2610.12039	2026-10-08T14:28:47Z	cs.LG	MPGE: A Multi-Perspective Graph Explainer for Molecular Classification Explanation
+2610.11967	2026-10-08T13:45:54Z	cs.CV	Learning Which Correspondences to Trust: Confidence-Weighted Event-Camera Localization in LiDAR Maps
+2610.12052	2026-10-08T14:36:38Z	stat.ML	Diffusion Removes Langevin's Conditioning Dependence: A Sharp Gaussian Analysis
+2610.11966	2026-10-08T13:45:51Z	cs.AI	MindFlow: Mind Supernet Powered Thinking Flows for Research Idea Innovation
+2610.11963	2026-10-08T13:44:53Z	cs.SE	Can LLMs Fix It Without Code? Toward Automated Verification of No-Code Bug Fixes
+2610.11959	2026-10-08T13:41:53Z	cs.CL	MiMo-V2.6: Scaling Reinforcement Learning Towards Self-Improvement
+2610.11945	2026-10-08T13:34:31Z	cs.RO	TACROSS: An Efficient and Low-Cost Scalable Human Touch System Across Heterogeneous Tactile Sensors for Dexterous Robot Learning
+2610.11920	2026-10-08T13:17:59Z	cs.CL	Event-Centric Memory with Query-Aware Graph Augmentation for Long-Term Conversational Agents
+2610.11889	2026-10-08T12:59:07Z	cs.SE	Evaluating Exact Output and Checkpoint-State Prediction in Real Programs
+2610.11922	2026-10-08T13:19:46Z	cs.IR	Project Greenhouse: Progress Toward Fully Open and Sovereign Agentic Search
+2610.12073	2026-10-08T14:50:08Z	cs.RO	A Minimal Optical-Flow Representation for Vision-Based Tactile Rotation Classification in Robotic Manipulation Across Gravity Domains
+2610.12056	2026-10-08T14:39:31Z	cs.AI	Structure Tax: How Structured Output affects LLMs Performance
+2610.12048	2026-10-08T14:34:26Z	cs.CV	Do Not Train Away Uncertainty: Early Uncertainty Anchored Calibration
+2610.11994	2026-10-08T14:02:49Z	cs.SE	Neural Network Verification for Deep Joint Source-Channel Coding
+2610.11984	2026-10-08T13:57:16Z	cs.LG	Example-driven Parametrisations for Bayesian Shape Optimisation
+2610.11947	2026-10-08T13:35:04Z	stat.ML	Score-Based Learning of Cluster DAGs from Interventions
+2610.12213	2026-10-08T16:01:37Z	stat.ML	ISBO: Scalable Spatio-Temporal Bayesian Optimization with Log Gaussian Cox Process Models via the INLA-SPDE Approach
+2610.12207	2026-10-08T15:57:45Z	cs.CL	SciTBERT: A family of chronologically consistent language models for scientific and technological language processing
+2610.12163	2026-10-08T15:39:53Z	cs.LG	Scalable Hierarchical Graph Generation via Soft Community Structure
+2610.12137	2026-10-08T15:24:29Z	cs.CR	Poster: A Preliminary Study of LLM Distillation Inference
+2610.12132	2026-10-08T15:22:38Z	cond-mat.soft	A structure-preserving neural density functional for the ions of a polymer electrolyte
+2610.12124	2026-10-08T15:16:56Z	cs.AI	Use and Disuse: Intent-Structured Experience Consolidation for Memory and Learning in LLM Agents
+2610.12119	2026-10-08T15:16:16Z	cs.LG	Using Weisfeiler-Leman Features for Algorithm Selection in Constraint Optimisation
+2610.12114	2026-10-08T15:11:16Z	cs.AI	Universal Textual Teaching for LLMs
+2610.12144	2026-10-08T15:29:37Z	cs.CL	Language-Specific Effects of Tokenizer Choice in Multilingual Language Models
+2610.12190	2026-10-08T15:50:57Z	cs.LG	DataSense-Bench: The First Step Toward an AI Scientist
+2610.12150	2026-10-08T15:34:26Z	cs.LG	Bayesian Optimisation under State-Preservation Constraints
+2610.12149	2026-10-08T15:33:06Z	cs.SE	Reliability Characterization for N-version Object Detection
+2610.12135	2026-10-08T15:23:39Z	cs.AI	Q-Shaped Options for Hierarchical Reinforcement Learning
+2610.12133	2026-10-08T15:22:50Z	cs.CL	Rehearse Everything, Remember Nothing: Attic-KV Rehearses What Will Be Read
+2610.12115	2026-10-08T15:11:41Z	cs.LG	Credal Machine Learning for Risk-Averse Decision Making
+2610.12172	2026-10-08T15:43:08Z	cs.RO	Unifying Policy Learning and State Prediction through Spatial Language Modeling
+2610.12161	2026-10-08T15:39:09Z	cs.LG	When KL Regularization Misfires in Group Policy Optimization
+2610.12086	2026-10-08T14:57:35Z	cs.AI	EvoAlloc: A Self-Evolving Resource Allocation Agent for Efficient Program Evolution
+2610.12076	2026-10-08T14:52:53Z	cs.LG	Exploiting Gradients in Bayesian Inference of Expensive Simulators
+2610.12189	2026-10-08T15:50:43Z	cs.LG	Just Weather Scoring: Efficient End-to-end Nowcasting with Distributional Diffusion
+2610.12106	2026-10-08T15:05:58Z	cs.CR	Could LLM Watermark Detection be Public?
+2610.12214	2026-10-08T16:01:37Z	cs.SD	DiffuPlex: Accelerating Full-Duplex Spoken Dialog Models via Rolling Masked Diffusion
+2610.12212	2026-10-08T16:01:08Z	cs.AI	When Has a Bayesian Neural Network Sampled Enough? Adaptive Inference Time with Statistical Guarantees
+2610.12211	2026-10-08T16:00:23Z	cs.LG	Verification with Transfer: Exact Information Frontiers and Their Price in Calls
+2610.12201	2026-10-08T15:56:28Z	eess.AS	SteerablePlex: Can We Steer Full-Duplex Models?
+2610.12182	2026-10-08T15:48:00Z	cs.CV	AI-Based On-Board Maritime Object Detection for Earth Observation Payload Data Reduction on Versal Embedded Hardware
+2610.12176	2026-10-08T15:44:02Z	cs.AI	Recursive Self-Improvement through Multi-Agent Self-Supervision
+2610.12168	2026-10-08T15:42:27Z	cs.AI	Learning to Plan by Looking Back: Hindsight Hierarchies for Training Reasoning Models
+2610.12156	2026-10-08T15:36:56Z	cs.CV	Connected Self Forcing: Beyond Local Learning in Video Autoregression
+2610.12113	2026-10-08T15:11:13Z	cs.LG	A Geometric Approach to Soft Actor-Critic with Zonotopes for Locomotion Learning
+2610.12102	2026-10-08T15:03:29Z	cs.LG	Few-Step Generation via Data-Space Iteration
+2610.12094	2026-10-08T15:01:45Z	stat.ML	Differentiable Systematic Resampling for Variational Sequential Monte Carlo
+2610.12096	2026-10-08T15:01:56Z	cs.LG	SCORE: Spectral Correlation Estimation for Multivariate Gaussians
+2610.12200	2026-10-08T15:53:36Z	stat.ML	Quickest Change Detection with Diffusion-Integrated Scores
+2610.12183	2026-10-08T15:48:07Z	cs.LG	A Closer Look at Agentic BBO: Benchmarking LLM Agents for Black-Box Optimization
+2610.12167	2026-10-08T15:41:16Z	cs.LG	Is Real-World Training Data Necessary for Generalist Graph Anomaly Detection?
+2610.12153	2026-10-08T15:36:00Z	cs.LG	Toward Optimal Regret in Adversarial MDPs with Stochastic Hard Constraints
+2610.12129	2026-10-08T15:22:00Z	cs.AI	An Investigation of Model Coherence: Narrow Finetunes Contradict Themselves Under Resampling
+2610.12085	2026-10-08T14:57:33Z	cs.AI	Is Memorization Context-Sensitive? Prefix-Based Extraction Beyond Isolated Prefixes
+2610.12083	2026-10-08T14:55:29Z	cs.CL	All Verdicts are Not Equal: Rethinking LLM Judge Reliability
+2610.12362	2026-10-08T17:26:55Z	cs.LG	Closing the Horizon Gap in Policy Optimization for Adversarial MDPs
+2610.12349	2026-10-08T17:19:10Z	cs.LG	SplitJEPA: Learning Invariant and Variant Latent Worlds without Reconstruction
+2610.12343	2026-10-08T17:15:58Z	cs.CV	Reasoning-Informed Visual Editing
+2610.12307	2026-10-08T16:54:40Z	cs.CV	BudgetPix: Compute-Adaptive Tokenization for Pixel-Space Image Diffusion
+2610.12304	2026-10-08T16:53:45Z	cs.AI	Looking Inside LLMs: Small-World Connectivity as a Signature of Reasoning Performance
+2610.12299	2026-10-08T16:50:04Z	cs.CV	Multi-Agent Egocentric World Model with Fine-Grained Embodied Interaction
+2610.12289	2026-10-08T16:44:39Z	cs.SE	TestPrism: Rethinking Test Evaluation Beyond a Single Reference
+2610.12265	2026-10-08T16:31:56Z	cs.LG	AdaptLSTM: Efficient Adaptive Online Learning for Cloud Workload Forecasting under Distribution Drift
+2610.12249	2026-10-08T16:24:17Z	cs.RO	Real-Time Motion Planning with Dynamic Hazards: Classical vs. Learning-Based Methods
+2610.12244	2026-10-08T16:22:42Z	cs.LG	RIFT: Relative Isolation From Trees For Anomaly Detection
+2610.12235	2026-10-08T16:18:54Z	cs.CL	Language Models as AI Research World Models
+2610.12325	2026-10-08T17:06:23Z	cs.AI	Prior or Feedback? What an LLM Uses When Adapting Neural Operators
+2610.12363	2026-10-08T17:27:12Z	cs.AI	HANS: A Handwritten Answer Sheet Dataset for Noisy Hybrid Document Parsing
+2610.12332	2026-10-08T17:11:49Z	stat.ML	Prediction-Powered Data Fusion for Treatment Effect Estimation
+2610.12281	2026-10-08T16:38:32Z	q-bio.GN	Unlocking the Regulatory Genome by ARGUS: An Evidence-Constrained Agentic Framework for Interpreting Single Nucleotide Variants
+2610.12232	2026-10-08T16:16:58Z	cs.LG	Training on the Future: A Delay-Aware Audit of Test-Time Adaptation for Time-Series Forecasting
+2610.12229	2026-10-08T16:15:46Z	cs.CV	VibeEdit: Image Editing with Canvas Instructions
+2610.12358	2026-10-08T17:23:25Z	math.PR	Subspace Uncertainty and Sharp Sampling Thresholds on the Boolean Cube
+2610.12340	2026-10-08T17:15:19Z	cs.LG	Ambient Discrete Diffusion: Using the Wrong Data at the Right Time for Data Efficient Learning
+2610.12303	2026-10-08T16:53:32Z	cs.AI	Learning Probabilistic Logic Programs with Functional Gradient Guided Language Models
+2610.12292	2026-10-08T16:46:43Z	cs.AI	One Word Opens the Gate: The Option-Channel Attack on Typed Decision Models as Agent Guardrails
+2610.12256	2026-10-08T16:26:03Z	cs.CV	Syn-Omni: Structured Specialization and Progressive Collaboration for Omnimodal Embeddings
+2610.12250	2026-10-08T16:24:41Z	cs.SD	How Much Audio Is Left In An Embedding? An Inversion Audit Of Audio Encoders
+2610.12230	2026-10-08T16:16:06Z	cs.CV	From Prompting to Composing: A Spatial Canvas Interface for Poster Generation
+2610.12216	2026-10-08T16:02:48Z	cs.CV	Stride Independent Patching for Deep Learning
+2610.12247	2026-10-08T16:23:43Z	cs.LG	Batch Before You Lift: Scalable Topological Deep Learning on Large Graphs
+2610.12282	2026-10-08T16:39:39Z	cs.CV	Slot3R: Set-Associative Spatial Memory for Streaming 3D Reconstruction
+2610.12336	2026-10-08T17:13:09Z	cs.MS	asdex: Automatic Sparse Differentiation in JAX
+2610.12293	2026-10-08T16:47:33Z	hep-ph	Machine Learning Meets High-Energy Nuclear Physics: From Pattern Recognition to Physics-Integrated Discovery
+2610.12333	2026-10-08T17:11:54Z	cs.CV	RiCo: Neural Simulation of Rigid-Body Interactions via Local Contact Reasoning
+2610.12367	2026-10-08T17:27:53Z	cs.CL	Which Skill to Distill? SGUID: Selecting a Compact Skill Bank for Model-Skill Co-Evolution
+2610.12360	2026-10-08T17:25:06Z	cs.AI	Accurate but Not Humble: Evaluating Epistemic Humility in LLM Agents under Knowledge Conflict
+2610.12341	2026-10-08T17:15:48Z	cs.AI	Can AI Agents Learn Their Way to the Top? Evaluating Heuristic Learning in a Long-Running Game Agent Competition
+2610.12328	2026-10-08T17:08:11Z	cs.LG	Composite Online-to-Nonconvex Conversion with Optimal Oracle Complexity
+2610.12316	2026-10-08T17:00:57Z	cs.CV	Controllable Exaggeration for Generative Motion Models via Training-Time Adaptation and Inference-Time Guidance
+2610.12306	2026-10-08T16:54:16Z	cs.AI	A Structural Theory of Cognitive Representation and Problem Solving,Contexts, Invariance, and the Knowledge Space
+2610.12274	2026-10-08T16:36:39Z	cs.CL	HarnessSQL: Harness-Native Training for SQL Agents in Realistic Database Environments
+2610.12243	2026-10-08T16:21:51Z	cs.IR	NativeScope: Relation-Localized Retrieval over Native Topology with a Correct Anchor
+2610.12236	2026-10-08T16:19:07Z	q-bio.BM	La-Ribo: RNA Co-Design via Geometry-Latent Flow Matching
+2610.12240	2026-10-08T16:21:19Z	cs.LG	AdaCast: Conditional Parameter Generation for Adaptive Time Series Forecasting
+2610.12388	2026-10-08T17:38:56Z	cs.CV	GenIA: Generative Reconstruction with Test-Time Input Alignment
+2610.12376	2026-10-08T17:32:32Z	cs.CL	Latent Core Tokenizer: Compress, but Meaningfully
+2610.12386	2026-10-08T17:38:04Z	cs.RO	ARC: A Reasoning Recipe for Robot Foundation Models
+2610.12393	2026-10-08T17:39:45Z	cs.AI	HRIL: Learning Multimodal Synergy via Higher-Order Tensor Modeling
+2610.12369	2026-10-08T17:29:08Z	cs.RO	Embodied Turing Machines: Stateful Code for Robot Recursive Self-Improvement
+2610.12370	2026-10-08T17:30:23Z	cs.LG	Bilevel optimization for data-driven learning of Koopman embeddings using kernel-based autoencoders
+2610.12397	2026-10-08T17:41:31Z	cs.LG	Prospective Prediction of OOD Degradation from Source-Side Training Dynamics
+2610.12391	2026-10-08T17:39:12Z	cs.AI	GeoReform: Reflective Formalization Evolution for Multimodal Geometry Problem Solving
+2610.12379	2026-10-08T17:33:16Z	cs.LG	Marformer: A Transformer for Predicting Missing Data Distributions
+2610.12375	2026-10-08T17:32:08Z	cs.AI	OnTrack: Real-Time Monitoring and Intervention in LLM Agent Trajectories via Streaming Structure-Aware Optimal Transport
+2610.12374	2026-10-08T17:32:00Z	cs.CV	AgentGarten: Code Worlds for Evolving Agents
