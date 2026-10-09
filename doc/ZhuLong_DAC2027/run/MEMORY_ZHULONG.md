@@ -8,10 +8,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:--|:--|
-| STAGE | `C1`（Phase B 4/4✅；C1 pure_llm/rag/wo_retrieval 5/5✅；**full 锚点 r1=88.0%✅保留 r2=59.5%❌作废(39 timeouts,需复测) r3=63.3%❌作废(需复测) r4❌作废(沙盒坏了,运维已kill,待命)**）|
-| CONFIG | `full`（C1 第4臂=锚点；r1=88.0%✅保留 r2=59.5%❌作废(39 timeouts)→复测 r3=63.3%❌作废→复测 **r4❌作废(沙盒坏了,运维已kill ops RUN_ID 25,待命)** b2026_1009_094504 PID 3302534 新key e13f4f37+/cloud/v1 pro-fp4 已恢复HTTP 200）|
+| STAGE | `C1`（Phase B 4/4✅；C1 pure_llm/rag/wo_retrieval 5/5✅；**full 锚点 r1=88.0%✅保留 r2=59.5%❌作废(39 timeouts,需复测) r3=63.3%❌作废(需复测) r4🔄运行中(b2026_1009_184955 PID 1843923,沙盒已修复重跑,四override齐全+canary hook live)**）|
+| CONFIG | `full`（C1 第4臂=锚点；r1=88.0%✅保留 r2=59.5%❌作废(39 timeouts)→复测 r3=63.3%❌作废→复测 **r4🔄运行中(batch b2026_1009_184955 PID 1843923,沙盒已修复重跑,四override在/proc/environ核验✅)** 新key e13f4f37+/cloud/v1 pro-fp4 HTTP 200✅）|
 | ROUND | 4 |
-| PHASE | `standby`（🛑沙盒坏了，r4 已被运维 kill[ops RUN_ID 25 kill PID 3302534+run_eval.py 子进程]，待命等运维通知「沙盒已修复·可重跑 r4」。🚫不启动任何 eval。自检：pgrep'^bash scripts/run_cline_script'=无输出✅(r4已kill确认); infra /home9.4G✅ 沙箱8650-8654全404✅ loop3579323(proxy✅) ops✅(last_run_id=26) git clean✅。**下轮第一件事**：①检查运维指令区是否有「沙盒已修复·可重跑 r4」通知→有则重跑 r4(四override: EVAL_FW_DIR+CLI_DATA_DIR=.cline_prof4_eval/data+PYTHON+https_proxy, 新key e13f4f37+/cloud/v1 pro-fp4, -p 8 -n 全量158题); 无则继续 WAITING=1 待命。②pgrep'^bash scripts/run_cline_script'→无输出=确认r4已kill✅）|
+| PHASE | `running`（✅沙盒已修复，C1.full r4 已重跑启动[运维2026-10-09五指令]。batch b2026_1009_184955, PID 1843923[setsid PPID=1], -p 8 -n 全量158题。四override已/proc/environ核验✅(EVAL_FW_DIR+CLI_DATA_DIR=.cline_prof4_eval/data+PYTHON+https_proxy)。canary:PreToolUse hook已部署~/.cline/hooks✅live。三项前置复检全过：①pro-fp4新key e13f4f37+/cloud/v1 HTTP=200 model=deepseek-v4-pro-260813✅ ②沙箱8650/8651/8652/8654全404✅可达且清理成功(非上次卡死态) ③eval IDLE✅(无残留run_cline_script/run_eval.py)。**下轮第一件事**：①pgrep'^bash scripts/run_cline_script'→有输出=巡检不动作退出; 无输出=收割r4(grep PASS_RATE/timeout /tmp/ABL_full_r4.log)→记Pass@1+timeout数→判据 timeout≤10且≥75%→r4有效→依序重跑 r2-retest→r3-retest→r5(同override,log /tmp/ABL_full_r2_retest.log/r3_retest/r5)→5/5算mean±std→回填锚点→PHASE=just_finished。②proxy自检：tr'\\0''\\n'</proc/3579323/environ|grep https_proxy）|
 | WAITING | 1 |
 | ERROR_COUNT | 2（C1.full r2 首启缺四override→158 Forbidden=config失败非infra,已重跑恢复[但该r2=59.5%现因39 timeouts被运维2026-10-09三判❌作废,需复测]; r4 连续2次infra作废(pro-fp4 403额度耗尽)非eval失败不计ERROR_COUNT。r2/r3 作废属服务不稳定非config失败,不计ERROR_COUNT）|
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
@@ -28,7 +28,7 @@ WAITING: 1
 | C1 | pure_llm | 5/5 ✅ | ✅ 10.5±1.9%（复用 legacy：[8.2,9.5,10.1,11.4,13.3]）|
 | C1 | rag | 5/5 ✅ | **71.8±2.5%** [70.3,72.2,69.6,70.9,75.9]（r5=75.9% 120/158 batch 2026_1007_202448, 151 ok/7 fail/0 exec_err, 0 Forbidden ✅；legacy 68.2±7.4% 作废→本线重跑）|
 | C1 | wo_retrieval | 5/5 ✅ | **81.0±4.5%** [74.1,86.1,81.6,79.7,83.5]（r1=74.1% 复用 legacy；r2=86.1% 136/158 b2026_1007_221959；r3=81.6% 129/158 b2026_1008_015818；r4=79.7% 126/158 b2026_1008_0507；r5=83.5% 132/158 b2026_1008_081817 147ok/8fail/0exec_err 0 Forbidden✅ 全程）|
-| C1 | full（锚点）| r1✅+r2❌作废+r3❌作废+r4❌作废(沙盒坏) | r1=88.0% 139/158 b2026_1008_114702 150ok/7fail/0exec_err 0 Forbidden✅**保留**; r2=59.5% 94/158 b2026_1008_150357 **❌作废(39 timeouts→r2-retest)**; r3=63.3% 100/158 b2026_1008_222842 **❌作废(→r3-retest)**; r4 b2026_1009_094504 PID 3302534 **❌作废（沙盒坏了，运维已 kill ops RUN_ID 25，待命）**(gen 140ok/12fail/6timeout 未完成 grading) |
+| C1 | full（锚点）| r1✅+r2❌作废+r3❌作废+r4🔄运行中 | r1=88.0% 139/158 b2026_1008_114702 150ok/7fail/0exec_err 0 Forbidden✅**保留**; r2=59.5% 94/158 b2026_1008_150357 **❌作废(39 timeouts→r2-retest)**; r3=63.3% 100/158 b2026_1008_222842 **❌作废(→r3-retest)**; r4 b2026_1009_184955 PID 1843923 **🔄运行中（沙盒已修复重跑,四override✅,canary hook live,8worker/158题已开跑）**(旧r4 b2026_1009_094504 PID3302534 ❌作废 沙盒坏了运维已kill) |
 | C2 | phi_k10 | 1-5/5 | ⬜（探路 75.3%）|
 | C2 | phi_k3 | 1-5/5 | ⬜（探路 69.0%）|
 | C2 | phi_k1 | 1-5/5 | ⬜（探路 60.8%）|
@@ -48,7 +48,7 @@ WAITING: 1
 | C1.pure_llm | 10.5 ± 1.9% | [8.2, 9.5, 10.1, 11.4, 13.3]（复用 legacy）|
 | C1.wo_retrieval | **81.0 ± 4.5%** | [74.1, 86.1, 81.6, 79.7, 83.5]（r1=74.1% 复用 legacy；r2=86.1% 136/158 b2026_1007_221959 149ok/4fail/0exec_err 0 Forbidden✅；r3=81.6% 129/158 b2026_1008_015818 146ok/7fail/0exec_err 0 Forbidden✅；r4=79.7% 126/158 b2026_1008_0507 145ok/10fail/0exec_err 0 Forbidden✅；r5=83.5% 132/158 b2026_1008_081817 147ok/8fail/0exec_err 0 Forbidden✅；旧 r2 作废 0/158 pro-fp4 403 不计数）|
 | C1.rag | **71.8 ± 2.5%** | [70.3, 72.2, 69.6, 70.9, 75.9]（r1=70.3% 111/158 b2026_1007_112101；r2=72.2% 114/158 b2026_1007_131535；r3=69.6% 110/158 b2026_1007_163343；r4=70.9% 112/158 b2026_1007_183007；r5=75.9% 120/158 b2026_1007_202448, 151 ok/7 fail/0 exec_err, 0 Forbidden ✅ 全程；旧 r3 作废 b2026_1007_151301 0/158 不计数；legacy 68.2±7.4% 作废）|
-| C1.full（锚点）| ⍌ 4/5 进行中 | r1=88.0%（139/158, 150 ok/7 fail/0 exec_err, 0 Forbidden ✅, batch b2026_1008_114702）；r2=59.5%（94/158, 140 ok/14 fail/0 exec_err, 0 Forbidden ✅, ⚠️39 timeouts, batch b2026_1008_150357）；r3=63.3%（100/158, 150 ok/5 fail/0 exec_err, 0 Forbidden ✅, batch b2026_1008_222842）；r4 ❌作废（沙盒坏了，运维已 kill PID 3302534 ops RUN_ID 25，待命；gen 140ok/12fail/6timeout 未完成 grading；新key e13f4f37+/cloud/v1 re-auth后启动, 0 Forbidden ✅）|
+| C1.full（锚点）| ⍌ 4/5 进行中 | r1=88.0%（139/158, 150 ok/7 fail/0 exec_err, 0 Forbidden ✅, batch b2026_1008_114702）；r2=59.5%（94/158, 140 ok/14 fail/0 exec_err, 0 Forbidden ✅, ⚠️39 timeouts, batch b2026_1008_150357）❌作废→r2-retest；r3=63.3%（100/158, 150 ok/5 fail/0 exec_err, 0 Forbidden ✅, batch b2026_1008_222842）❌作废→r3-retest；r4 🔄运行中（沙盒已修复重跑, batch b2026_1009_184955, PID 1843923, 四override✅, canary hook live, 8worker/158题已开跑；旧r4 b2026_1009_094504 PID3302534 ❌作废 沙盒坏了运维已kill gen 140ok/12fail/6timeout 未完成 grading）|
 
 ## 操作流水
 - [2026-10-09 01:28] [⏩ 已滚出] ✅ C1.full r3 收割 63.3%→r4 启动（四 override PID 649691 batch 2026_1009_012854）+ proxy/ops/legacy自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§01:28，rolled-from-MEMORY 2026-10-09 07:45）。
@@ -266,5 +266,7 @@ WAITING: 1
 - [2026-10-09 17:03] [⏩ 已滚出] 🩾 C1.full r4 巡检#12（仍在跑·~7h19m·grading阶段）+ 全自检通过 详情已原文搬入 daily-memories/2026-10-09.md（§17:03，rolled-from-MEMORY 2026-10-09 17:38）。
 
 - [2026-10-09 18:13] [🛑 PHASE=standby 续] 唤醒→查运维指令区无「沙盒已修复·可重跑r4」新通知（最新仍为2026-10-09四=待命）→继续 WAITING=1。pgrep'^bash scripts/run_cline_script'=无输出✅(r4仍被kill确认,无残留)。🚫未启动任何 eval。全自检：loop PID3579323(ppid=1, environ含 https_proxy=http://172.19.92.23:13128✅) /home 9.4G(98%)✅(≥8G) 沙箱8650/8651/8652/8654全404✅(可达≠沙盒可用) ops✅(.last_run_id=26) git `## main...origin/main` clean✅。状态不变 STAGE=C1/CONFIG=full/ROUND=4/PHASE=standby/WAITING=1/ERROR_COUNT=2。下轮第一件事(不变)：查运维指令区有无「沙盒已修复·可重跑r4」→有则重跑r4(四override: EVAL_FW_DIR+CLI_DATA_DIR=.cline_prof4_eval/data+PYTHON+https_proxy, 新key e13f4f37+/cloud/v1 pro-fp4, -p 8 -n 158题); 无则继续 WAITING=1 待命。详情见 daily-memories/2026-10-09.md（§18:13）。
+
+- [2026-10-09 18:50] [✅ PHASE=running] 收到运维2026-10-09(五)指令「沙盒已修复·可重跑r4」→三项前置复检全过：①pro-fp4新key e13f4f37+/cloud/v1 curl HTTP=200 model=deepseek-v4-pro-260813✅ ②沙箱8650/8651/8652/8654全404✅ ③eval IDLE✅(pgrep run_cline_script/run_eval.py无真实进程; 前次pgrep命中=本cline agent自身cmdline含任务书文本的误报)。auth核验：.cline_prof4_eval/data providers.json model=deepseek-v4-pro-fp4 baseUrl=/cloud/v1 key含e13f4f37✅。启动 C1.full r4：batch b2026_1009_184955, PID 1843923(setsid PPID=1), -p 8 -n 全量158题, log /tmp/ABL_full_r4.log(旧killed log备份为/tmp/ABL_full_r4_killed_b2026_1009_094504.log)。四override已/proc/1843923/environ核验✅(EVAL_FW_DIR+CLI_DATA_DIR=.cline_prof4_eval/data+PYTHON+https_proxy)。canary：PreToolUse hook已部署~/.cline/hooks/PreToolUse(10242B)✅live。沙箱8650-8654清理全成功(非上次卡死态)。8worker已领task001-008开跑。proxy自检：真loop PID3579323 environ含 https_proxy=http://172.19.92.23:13128✅(前次误读为本cline PID)。infra /home9.3G✅ ops✅(last_run_id=26) git clean✅。状态 STAGE=C1/CONFIG=full/ROUND=4/PHASE=running/WAITING=1/ERROR_COUNT=2。下轮第一件事：pgrep'^bash scripts/run_cline_script'→有输出=巡检退出; 无输出=收割r4(grep PASS_RATE/timeout)→判据 timeout≤10且≥75%→r4有效→依序重跑 r2-retest→r3-retest→r5→5/5算mean±std→回填锚点→PHASE=just_finished。详情见 daily-memories/2026-10-09.md（§18:50）。
 
 
