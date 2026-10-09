@@ -12,11 +12,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅web分词完成(524.43B tok)+✅全量污染扫描清洁(160K docs全0)+GPIC 6987/8001(ETA~21h)+🔄R3全量分词110进程(112min runtime,.bin=736GB growing,nice-10,ppid=1✅,0 error,0 .idx,ETA~6-8h→~16-18:00)
+PHASE:        ✅web分词完成(524.43B tok)+✅全量污染扫描清洁(160K docs全0)+GPIC 7019/8001(ETA~20h)+🔄R3全量分词110进程(152min runtime,.bin=989GB growing,nice-10,ppid=1✅,0 error,0 .idx,ETA~3-4h→~16:00-17:00)
 已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43; s_step归因(MBS16:8.6×,166ms); Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); zh分词8/8✅(112.47B); 论文更新(4+5节,main.pdf 0err); l1_en_hq分词12/12✅(152.17B); ultrax分词s34-s43✅(30.97B); en_base分词s24-s33✅(206.76B); ✅投料前污染采样扫描(10K docs,0命中); ✅全量污染扫描(30 parquet×5K=150K docs,0命中,累计160K docs全0命中); ✅④Ultra-FineWeb核实(197GB=nas_inference小副本≠tokenization源,524.43B×4B=2.1T≈2.0T .bin✅)
-当前动作:     唤醒256(12:16@.12) R3全量分词监控:110进程全活(0 error,ppid=1✅),runtime=112min,.bin=736GB(l3=40+code=30+math=40 shards),rate~6.6GB/min,0 .idx(未完工),ETA~6-8h→~16-18:00;GPIC=6987/8001(+27,~47tar/h,活✅,ETA~21h→~09:00Oct10)
-下一步:       ①R3全量分词监控(110进程,ETA~6-8h)→全部完成后跑污染扫描→报"P-8数据层全就绪"; ②GPIC续下(6987/8001,ETA~21h); ③en_v1_4排队等运维放行
-阻塞:         R3全量分词进行中(110进程,ETA~6-8h→~16-18:00); GPIC下载进行中(6987/8001,ETA~21h); en_v1_4排队等运维放行
+当前动作:     唤醒257(12:56@.12) R3全量分词监控:110进程全活(0 error,ppid=1✅),runtime=152min,.bin=989GB(l3=366+code=286+math=337),rate~6.5GB/min,0 .idx(未完工),ETA~3-4h→~16:00-17:00;GPIC=7019/8001(+32,~48tar/h,活✅,ETA~20h→~09:00Oct10)
+下一步:       ①R3全量分词监控(110进程,ETA~3-4h)→全部完成后跑污染扫描→报"P-8数据层全就绪"; ②GPIC续下(7019/8001,ETA~20h); ③en_v1_4排队等运维放行
+阻塞:         R3全量分词进行中(110进程,ETA~3-4h→~16:00-17:00); GPIC下载进行中(7019/8001,ETA~20h); en_v1_4排队等运维放行
 ERROR_COUNT:  1
 ```
 
@@ -30,6 +30,7 @@ ERROR_COUNT:  1
 > 📦 唤醒225-226 原文已归档 → `daily-memories-data/2026-10-08.md`（含l1_en_hq s12-s15完成+en_base起步+ultrax s34-s42完成+GPIC巡检）
 > 📦 唤醒253-255 原文已归档 → `daily-memories-data/2026-10-09.md`（含运维指令③执行:kill34旧进程+删46产物+smoke test 7源+核实197GB+创建run_tokenize_r3.sh+启动110进程+6目录盘点）
 
+- [12:56] **唤醒257**：①本机=`.12`,load=147/224。②R3分词巡检:**110/110进程全活**(40 l3+30 code+40 math,ppid=1✅,**0 error**),runtime=152min(10:24启动),.bin=**989GB**(l3=366GB/40shards+code=286GB/30shards+math=337GB/40shards),rate~6.5GB/min(736→989GB in 40min),per-shard~8.4-9.5GB,**0 .idx**(未完工),staging=4708 parquet symlinks,disk 42T free✅。③GPIC=**7019**/8001(+32 since 12:16,~48tar/h,活PID144981,latest=07018.tar,128test✅,ETA~20h→~09:00Oct10)。④base✅全满(l1_en_hq 6000+zh 256+en 2048)。⑤**全量盘点(6原始目录)**:1.Ultra-FineWeb base=3.2TB/8792pq(✅44shards/524.43B tok/2.0T .bin BaiZe/data/mix_base/)|2.Ultra-FineWeb-L3=1.8T/1764pq(🔄R3 40proc,.bin=366GB)|3.UltraData-Code=1.2T/1121pq(🔄R3 30proc,.bin=286GB)|4.UltraData-Math=515G/1823pq(🔄R3 40proc,.bin=337GB)|5.UltraData-SFT-2605=298G/1504jsonl(✅20.96B tok/79G BaiZe/data/mix_sft_tok/)|6.UltraData-SFT-Agent-2609=51G/50jsonl(✅8.04B tok/30G BaiZe/data/mix_sft_agent_tok/)。⑥已完成数据完整性确认:mix_base=2.0T/44.bin✅,mix_sft_tok=79G/4.bin✅,mix_sft_agent_tok=30G/4.bin✅。下载线心跳：base✅全满|GPIC 7019/8001(活PID144981,+32,~48tar/h,ETA~20h→~09:00Oct10)|R3分词 110/110进程活(.bin=989GB,0.idx,ETA~3-4h→~16:00-17:00)|web分词 44/44✅(524.43B)|全量污染扫描✅(160K docs,0命中)。📦体积：TASK=27.9KB✅/MEMORY=24.3KB✅(无需归档)。
 - [12:16] **唤醒256**：①本机=`.12`,load=144/224。②R3分词巡检:**110/110进程全活**(40 l3+30 code+40 math,ppid=1✅,**0 error**),runtime=112min(10:24启动),.bin=**736GB**(l3≈40shards~290GB+code≈30shards~225GB+math≈40shards~221GB),rate~6.6GB/min,per-proc~1.0-1.7MB/s,**0 .idx**(未完工),disk 43T free✅。③GPIC=**6987**/8001(+27 since 11:41,~47tar/h,活PID144981,latest=06987.tar@12:15,128test✅,ETA~21h→~09:00Oct10)。④base✅全满(l1_en_hq 6000/6000+zh 256/256+en 2048/2048)。⑤**全量盘点(6原始目录)**:1.Ultra-FineWeb base=3.2TB/8792pq(✅44shards/524.43B tok/2.0T .bin mix_base/)|2.Ultra-FineWeb-L3=1.8T/1764pq(🔄R3 40进程,.bin~290GB)|3.UltraData-Code=1.2T/1121pq(🔄R3 30进程,.bin~225GB)|4.UltraData-Math=515G/1823pq(🔄R3 40进程,.bin~221GB)|5.UltraData-SFT-2605=298G/1504jsonl(✅20.96B tok/79G mix_sft_tok/)|6.UltraData-SFT-Agent-2609=51G/50jsonl(✅8.04B tok/30G mix_sft_agent_tok/)。⑥④核实结论(253已确认):197GB=/nas_inference小只读副本≠分词源,524.43B×4B=2.1T≈2.0T .bin✅合理。下载线心跳：base✅全满|GPIC 6987/8001(活PID144981,+27,~47tar/h,ETA~21h→~09:00Oct10)|R3分词 110/110进程活(.bin=736GB,0.idx,ETA~6-8h→~16-18:00)|web分词 44/44✅(524.43B)|全量污染扫描✅(160K docs,0命中)。📦体积：TASK=27.3KB✅/MEMORY=归档后~17KB✅(归档唤醒253-255+243-244+s_step实验→daily-memories,释放~9KB)。
 
 > 📦 唤醒227-233 原文已归档 → `daily-memories-data/2026-10-08.md`（含l1_en_hq s18-s19完成+en_base起步+ETA纠正+GPIC巡检全链）
@@ -118,11 +119,11 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **✅web分词完成(524.43B tok) + ✅全量污染扫描完成(160K docs,0命中) + GPIC 6987/8001(ETA~21h→~09:00Oct10) + 🔄R3全量分词110进程(.bin=736GB,0.idx,ETA~6-8h→~16-18:00)** |
-| WAITING | 1（R3分词ETA~6-8h→~16-18:00; GPIC 6987/8001 ETA~21h→~09:00Oct10; en_v1_4排队等放行） |
+| PHASE | **✅web分词完成(524.43B tok) + ✅全量污染扫描完成(160K docs,0命中) + GPIC 7019/8001(ETA~20h→~09:00Oct10) + 🔄R3全量分词110进程(.bin=989GB,0.idx,ETA~3-4h→~16:00-17:00)** |
+| WAITING | 1（R3分词ETA~3-4h→~16:00-17:00; GPIC 7019/8001 ETA~20h→~09:00Oct10; en_v1_4排队等放行） |
 | ERROR_COUNT | 1（s9崩溃重启后已完成） |
 | 节点 | `10.239.2.12`（GPIC下载PID=144981活, .12 GPU全忙vision R9, .29 GPU全空, R3分词110进程nice-10） |
-| 更新 | 2026-10-09 12:16 |
+| 更新 | 2026-10-09 12:56 |
 
 ## 看板（按推荐执行顺序）
 
