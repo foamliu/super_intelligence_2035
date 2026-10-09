@@ -39,7 +39,7 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <body>
 <p class="note">Pre-registered scaling experiment <strong>2026-10-08⑥ → 2026-10-09</strong> — two-arm width sweep under the AIMv2 dense objective. Related: <a href="report_vision_final_20261008.html">full-line final summary</a> · <a href="report_vision_lp_protocol.html">lp evaluation protocol</a> · <a href="report_vision_aimv2_official_vs_ours.html">official vs ours</a>.</p>
 <h1>AIMv2 Scaling Experiment: Does a Bigger Model Score Higher?</h1>
-<p class="note">Generated: 2026-10-09 · Agent: vision · Protocol: Pre-registered two-arm comparison (E1 vs E2) · PHASE: <span class="tag tag-pending">eval in progress</span> · All training numbers verified against raw training logs</p>
+<p class="note">Generated: 2026-10-09 · Agent: vision · Protocol: Pre-registered two-arm comparison (E1 vs E2) · PHASE: <span class="tag tag-ok">✅ complete</span> · All training numbers verified against raw training logs</p>
 <h2>1. TL;DR</h2>
 <div class="card tldr">
 <ul>
@@ -47,7 +47,9 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <li><strong>Design:</strong> Pre-registered two-arm comparison — <strong>only width differs</strong> (512→768); depth (30), patch (16), resolution (224), objective, data, optimizer, and step count (187,101) are all identical. This is a clean model-scaling axis.</li>
 <li><strong>Training:</strong> Both arms completed 187,101 steps with <strong>no collapse</strong> (C1 &lt; 0.5, C2_gap &gt; 0, C4=OK throughout). E1 final loss=1.3036; E2 final loss=1.9992 (higher loss but larger model capacity — loss values are not directly comparable across widths).</li>
 <li><strong>E1 Protocol B result:</strong> lp = <strong>29.35 ± 0.00%</strong> (3 seeds: 29.34 / 29.35 / 29.35).</li>
-<li><strong>E2 Protocol B result:</strong> <span class="tag tag-pending">evaluation in progress</span> — streaming IN-1k features through 294 parquet files (51/294 done at time of writing). ETA ~22:00–22:30.</li>
+<li><strong>E2 Protocol B result:</strong> lp = <strong>23.76 ± 0.04%</strong> (3 seeds: 23.74 / 23.82 / 23.73).</li>
+<li><strong>Result:</strong> Δlp = 23.76 − 29.35 = <strong class="bad">−5.59 pp</strong> (σ = 0.04, σ ≪ |Δ|). <span class="tag tag-fail">Δ ≤ −1.5 pp → Bigger is WORSE</span>. The larger model (2.24× params) scores <em>significantly lower</em> at the same 1-epoch budget — confirming the data-limited regime finding from R9/R10 that widening is negative.</li>
+<li><strong>Protocol A (secondary):</strong> E1 = 19.70%, E2 = 15.59%, Δ = −4.11 pp — same direction, consistent across both protocols.</li>
 <li><strong>Pre-registered judgment:</strong> Δlp = lp(E2) − lp(E1). If Δ ≥ +1.5pp → supports scaling claim; |Δ| ≤ 1.5pp → not supported; Δ ≤ −1.5pp → bigger is worse; σ > |Δ| → indistinguishable. <strong>No post-hoc changes to criteria.</strong></li>
 </ul>
 </div>
@@ -218,28 +220,31 @@ code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF 
 <table>
 <tr><th>Arm</th><th>Seed 0</th><th>Seed 1</th><th>Seed 2</th><th>Mean ± σ</th><th>Status</th></tr>
 <tr><td class="best">E1 (w512)</td><td>29.34%</td><td>29.35%</td><td>29.35%</td><td class="best">29.35 ± 0.00%</td><td><span class="tag tag-ok">done</span></td></tr>
-<tr><td>E2 (w768)</td><td colspan="3"><span class="note">evaluation in progress — streaming 294 parquet files (51/294 at time of writing)</span></td><td>—</td><td><span class="tag tag-pending">running</span></td></tr>
+<tr><td class="bad">E2 (w768)</td><td>23.74%</td><td>23.82%</td><td>23.73%</td><td class="bad">23.76 ± 0.04%</td><td><span class="tag tag-ok">done</span></td></tr>
 </table>
 <h3>7.2 Protocol A (secondary) — BaiZe internal protocol</h3>
 <table>
 <tr><th>Arm</th><th>Protocol A</th><th>Status</th></tr>
-<tr><td>E1 (w512)</td><td>—</td><td><span class="tag tag-pending">queued (sympy fix applied)</span></td></tr>
-<tr><td>E2 (w768)</td><td>—</td><td><span class="tag tag-pending">queued (auto-chained)</span></td></tr>
+<tr><td class="best">E1 (w512)</td><td class="best">19.70%</td><td><span class="tag tag-ok">done</span></td></tr>
+<tr><td>E2 (w768)</td><td>15.59%</td><td><span class="tag tag-ok">done</span></td></tr>
 </table>
-<p class="note">Protocol A initially failed due to sympy 1.5.1 ImportError (<code>equal_valued</code>). Fixed by upgrading to sympy 1.14.0. Re-run queued in <code>e2_post_watcher.sh</code> — will execute after E2 Protocol B completes.</p>
+<p class="note">Protocol A initially failed due to sympy 1.5.1 ImportError (<code>equal_valued</code>). Fixed by upgrading to sympy 1.14.0. E1 Protocol A re-run by <code>e2_post_watcher.sh</code> at 20:30; E2 Protocol A ran in the auto-chained eval. Both completed 2026-10-09.</p>
 </div>
 
 <h2>8. Scaling Claim Judgment</h2>
 <div class="card">
-<p><strong>Δlp = lp(E2_ProtB_mean) − lp(E1_ProtB_mean) = ? − 29.35%</strong></p>
-<p class="note">Judgment pending E2 Protocol B evaluation. The pre-registered threshold (±1.5pp) and outcome categories were locked before training — no post-hoc changes.</p>
+<p><strong>Δlp = lp(E2_ProtB_mean) − lp(E1_ProtB_mean) = 23.76% − 29.35% = <span class="bad">−5.59 pp</span></strong> (σ = 0.04 pp, σ ≪ |Δ|)</p>
+<p>The pre-registered threshold (±1.5pp) and outcome categories were locked before training — no post-hoc changes.</p>
 <table>
 <tr><th>Outcome</th><th>Condition</th><th>Status</th></tr>
-<tr><td>Supports scaling claim</td><td>Δ ≥ +1.5 pp</td><td><span class="tag tag-pending">pending</span></td></tr>
-<tr><td>Not supported</td><td>|Δ| ≤ 1.5 pp</td><td><span class="tag tag-pending">pending</span></td></tr>
-<tr><td>Bigger is worse</td><td>Δ ≤ −1.5 pp</td><td><span class="tag tag-pending">pending</span></td></tr>
-<tr><td>Indistinguishable</td><td>σ > |Δ|</td><td><span class="tag tag-pending">pending</span></td></tr>
+<tr><td>Supports scaling claim</td><td>Δ ≥ +1.5 pp</td><td><span class="tag tag-fail">✗ not met</span></td></tr>
+<tr><td>Not supported</td><td>|Δ| ≤ 1.5 pp</td><td><span class="tag tag-fail">✗ not met</span></td></tr>
+<tr><td class="bad">Bigger is worse</td><td>Δ ≤ −1.5 pp</td><td><span class="tag tag-ok">✓ Δ = −5.59 pp</span></td></tr>
+<tr><td>Indistinguishable</td><td>σ > |Δ|</td><td><span class="tag tag-fail">✗ σ = 0.04 ≪ 5.59</span></td></tr>
 </table>
+<div class="card" style="border-left:4px solid var(--red);margin-top:1em">
+<p><strong>Conclusion:</strong> Under the AIMv2-style dense objective at a fixed 1-epoch budget over 95.8M image–caption pairs, widening the vision tower from 512→768 (126.78M→284.54M, 2.24× params) <strong class="bad">decreases</strong> frozen-trunk linear-probe top-1 by <strong>5.59 pp</strong> (29.35% → 23.76%, Protocol B). This is consistent with R9/R10's finding that in the data-limited regime (~100M pairs, 1 epoch), the model-size marginal effect is negative — the smaller tower is more sample-efficient. The result holds across both evaluation protocols (Protocol A: −4.11 pp, same direction). <strong>Two points do not constitute a scaling law</strong> — this is a single-budget-point observation, not a curve.</p>
+</div>
 </div>
 
 <h2>9. Reference Line (🚩 not comparable)</h2>

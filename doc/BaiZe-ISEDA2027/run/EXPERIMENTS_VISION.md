@@ -544,8 +544,88 @@ pretraining, not comparable"**.
 | sympy fix (2026-10-09) | ✅ sympy 1.5.1→1.14.0 (copied from vllm conda env) — fixes `equal_valued`/`core.sorting`/`core.traversal`/`core.parameters` ImportError that blocked Protocol A eval |
 | E1 training (187,101 steps) | ✅ **DONE** — 187101/187101 steps, loss=1.3036, 6060 img/s, no collapse, vision.pt=487MB (completed 04:22 Oct 9) |
 | E1 evaluation (Protocol B, 3 seeds) | ✅ **DONE** — **lp = 29.35 ± 0.00%** (seeds 0/1/2: 29.34/29.35/29.35) |
-| E1 evaluation (Protocol A) | ❌ Failed (sympy 1.5.1) → 🟧 **Re-run queued** in e2_post_watcher.sh (sympy 1.14.0 now installed) |
+| E1 evaluation (Protocol A) | ✅ **DONE** — lp = **19.70%** (re-run by e2_post_watcher.sh at 20:30, sympy 1.14.0 fix applied) |
 | E2 training (187,101 steps) | ✅ **DONE** — 187101/187101 steps, total=40867.4s (~11.35h), steady_image_s=4414.6, final_loss=1.9992, no collapse (C1=0.4302 C2_gap=+0.1110 C4=OK), vision.pt=1.07GB (completed 18:12 Oct 9). ⚠️ Training time 5.4× E1 due to NFS contention (not model size: 2.24× params but throughput limited by NFS 2000–4600 img/s vs E1's 6060) |
-| E2 evaluation (Protocol B+A) | 🟧 **RUNNING** — Protocol B streaming 51/294 parquet files (~41min in, 3.5× slower than E1 due to NFS evening contention). ETA ~22:00–22:30. Auto-chained by `run_scaling_experiment.sh e2` mode |
-| E1 evaluation (Protocol A re-run) | ⏸ Queued in `e2_post_watcher.sh` (PID 808492) — will run after E2 eval completes; sympy 1.14.0 now installed |
-| Report (HTML) | 🟧 **Draft created** — `report_vision_aimv2_scaling.html` (23KB): all training data + SVG charts filled, eval results placeholders pending. Will finalize after all evals complete |
+| E2 evaluation (Protocol B, 3 seeds) | ✅ **DONE** — **lp = 23.76 ± 0.04%** (seeds 0/1/2: 23.74/23.82/23.73) |
+| E2 evaluation (Protocol A) | ✅ **DONE** — lp = **15.59%** |
+| E1 evaluation (Protocol A re-run) | ✅ **DONE** — lp = **19.70%** (e2_post_watcher.sh, 20:30–20:41) |
+| Report (HTML) | ✅ **DONE** — `report_vision_aimv2_scaling.html` (~26KB): all training data + SVG charts + eval results + judgment filled. |
+
+---
+
+### 7. Results — AIMv2 Scaling Experiment (✅ ALL DONE, 2026-10-09)
+
+> Pre-registered two-arm width sweep under AIMv2 dense objective. E1 = w512/d30 (126.78M), E2 = w768/d30 (284.54M, 2.24×). Only width differs; all else identical (depth=30, patch=16, res=224, AIMv2 loss mask_ratio=0.6 contrast:patch=1:1, frozen CLIP-768 text tower, AdamW lr=3e-3, bs512, seed=1234, steps=187101, data=GPIC 6238 tar + CC12M 1100 + Amshaker 2250 ≈ 95.8M pairs). Both arms from scratch.
+
+#### 7.1 Training Summary
+
+| Metric | E1 (w512, 126.78M) | E2 (w768, 284.54M) | Ratio |
+|:--|--:|--:|--:|
+| Steps | 187,101 | 187,101 | 1.00× |
+| Total wall time | 7,500.3 s (~2.08 h) | 40,867.4 s (~11.35 h) | 5.45× (NFS-confounded) |
+| Steady img/s | 6,059.6 | 4,414.6 | 0.73× |
+| ms/step (steady) | ~84.2 | ~114.8 | 1.36× (fair compute) |
+| Per-sample time | 0.165 ms | 0.227 ms | 1.37× |
+| Final loss | 1.3036 | 1.9992 | — (not comparable across widths) |
+| Final C1 (cosine off-diag) | 0.4242 | 0.4302 | — |
+| Final C2_gap | +0.1299 | +0.1110 | — |
+| C4 (loss decreasing) | OK | OK | — |
+| Collapse? | ❌ No (C1<0.5, C2_gap>0) | ❌ No (C1<0.5, C2_gap>0) | — |
+| Checkpoint size | 487 MB | 1,090 MB | 2.24× |
+
+> ⚠️ E2's 5.45× wall time is dominated by NFS I/O contention (E2 ran during peak hours 06:51–18:12; E1 ran overnight 19:29–04:22). The fair compute comparison is ms/step: 1.36× for 2.24× params — sub-linear, consistent with width being mostly matmul-bound.
+
+#### 7.2 Evaluation Results
+
+**Protocol B (primary — mainstream alignment):** SGD+momentum 0.9, cosine, 5-epoch warmup, 90 epochs, mini-batch 1024, IN-1k full train (1.28M images), IN-1k official val (50k), IN mean/std, 3 seeds (0, 1, 2) → mean ± σ.
+
+| Arm | Seed 0 | Seed 1 | Seed 2 | **Mean ± σ** |
+|:--|--:|--:|--:|--:|
+| **E1 (w512, 126.78M)** | 29.34% | 29.35% | 29.35% | **29.35 ± 0.00%** |
+| **E2 (w768, 284.54M)** | 23.74% | 23.82% | 23.73% | **23.76 ± 0.04%** |
+
+**Protocol A (secondary — BaiZe internal):** AdamW lr=3e-3, full-batch, 100 epochs, probe 50/class, self-split val, CLIP norm, seed 0.
+
+| Arm | Protocol A lp top-1 |
+|:--|--:|
+| E1 (w512) | 19.70% |
+| E2 (w768) | 15.59% |
+
+#### 7.3 Pre-registered Judgment
+
+**Δlp = lp(E2_ProtB) − lp(E1_ProtB) = 23.76% − 29.35% = −5.59 pp** (σ = 0.04 pp, σ ≪ |Δ|)
+
+| Outcome | Condition | Met? |
+|:--|:--|:--|
+| Supports scaling claim | Δ ≥ +1.5 pp | ❌ No |
+| Not supported | \|Δ\| ≤ 1.5 pp | ❌ No |
+| **Bigger is worse** | **Δ ≤ −1.5 pp** | **✅ Δ = −5.59 pp** |
+| Indistinguishable | σ > \|Δ\| | ❌ No (σ = 0.04 ≪ 5.59) |
+
+Protocol A confirms same direction: Δ(ProtA) = 15.59 − 19.70 = −4.11 pp.
+
+#### 7.4 Conclusion
+
+Under the AIMv2-style dense objective at a fixed 1-epoch budget over 95.8M image–caption pairs, widening the vision tower from 512→768 (126.78M→284.54M, 2.24× params) **decreases** frozen-trunk linear-probe top-1 by **5.59 pp** (Protocol B) / **4.11 pp** (Protocol A). This is consistent with R9/R10's finding that in the data-limited regime (~100M pairs, 1 epoch), the model-size marginal effect is **negative** — the smaller tower is more sample-efficient. The result is robust: (a) 3-seed σ = 0.04 pp ≪ |Δ| = 5.59 pp, (b) both protocols agree on direction, (c) neither arm collapsed (C1 < 0.5, C2_gap > 0, C4 = OK throughout).
+
+⚠️ **Two points do NOT constitute a scaling law** — this is a single-budget-point observation. R9/R10 established the (N, M) scaling surface with 11+ points; this experiment tests one point on that surface under the AIMv2 objective and confirms the negative M-marginal at this budget.
+
+#### 7.5 Fairness Table
+
+| Dimension | E1 (w512) | E2 (w768) | Controlled? |
+|:--|:--|:--|:--|
+| Parameters | 126.78M | 284.54M (2.24×) | Varied (intended) |
+| Depth | 30 | 30 | ✅ Identical |
+| Patch / resolution | 16 / 224 | 16 / 224 | ✅ Identical |
+| Image tokens | 196 | 196 | ✅ Identical |
+| Training steps | 187,101 | 187,101 | ✅ Identical |
+| Training pairs | 95.8M | 95.8M | ✅ Identical |
+| Objective | AIMv2 dense (mask=0.6, 1:1) | AIMv2 dense (mask=0.6, 1:1) | ✅ Identical |
+| Optimizer / lr | AdamW 3e-3 | AdamW 3e-3 | ✅ Identical |
+| Batch size | 512 | 512 | ✅ Identical |
+| Seed | 1234 | 1234 | ✅ Identical |
+| Compute (ms/step) | 84.2 | 114.8 (1.36×) | Consequence of width |
+| Wall time | 7,500 s | 40,867 s (5.45×) | NFS-confounded |
+| GPU memory (est.) | ~16.5 GB | ~24.9 GB (1.51×) | Consequence of width |
+
+- **Evidence**: E1 train log `/nas_train/.../scaling_E1_ov2_w512_d30_p16_224/train.log`; E2 train log `/nas_train/.../scaling_E2_ov2_w768_d30_p16_224/train.log`; E1 eval `/tmp/scaling_e1_eval.log`; E2 eval `/tmp/scaling_e2_eval.log`; E1 ProtA re-run `/tmp/e2_post_watcher.log`; HTML report `doc/BaiZe-ISEDA2027/report_vision_aimv2_scaling.html`.
