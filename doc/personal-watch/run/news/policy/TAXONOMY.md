@@ -1,6 +1,6 @@
 # TAXONOMY — 政策动作分类体系（N3-1 ③④）
 
-> **生成**：2026-10-08 18:20 ｜ 脚本：`news/policy/taxonomy.py` ｜ 语料：`news/archive/*.jsonl.gz`
+> **生成**：2026-10-09 18:10 ｜ 脚本：`news/policy/taxonomy.py` ｜ 语料：`news/archive/*.jsonl.gz`
 
 > ⚠️ **口径**：类别**由 `EDA.md` 归纳**（触发词 = EDA §4 动作词），**计数来自真实语料**；本表只做**描述性统计**，**不预测、不表态**。
 

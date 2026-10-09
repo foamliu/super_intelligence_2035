@@ -19,8 +19,15 @@ news/signal/am_pm_check.py — 早报观察 → 今日实际 · **首次机械�
 ⚠️ 口径：**非因果 · 非投资建议**；单日 n=21 ⇒ **不构成任何结论**，只做**符号一致性**的如实记录。
 🚫 禁用「影响/导致/利好/利空/冲击」；🚫 无点位预测 / 仓位 / 择时（L3 冻结）。
 
+🛡 **台账护栏（2026-10-09 · R5 新增）**：同一 as-of 的 `k=1` 复核是**一次性**的 ——
+  价格末日一旦越过该目标位（早报 as-of 的**下一个交易日**），写死对齐口径 `d0 == asof` 便不再命中
+  ⇒ 本轮 **0 对照格**。此时**默认不覆盖** `AM_PM_CHECK.md` 中已有的**实核**结果
+  （🚫 绝不用「无可对照格」的 null 表覆盖实核台账 —— §4-9 台账诚信），只打印提示并原样返回；
+  确需覆盖时显式加 `--force`。
+
 用法：
-  python3 news/signal/am_pm_check.py            # 写 AM_PM_CHECK.md 并打印
+  python3 news/signal/am_pm_check.py            # 写 AM_PM_CHECK.md 并打印（0 格时保护既有台账）
+  python3 news/signal/am_pm_check.py --force    # 强制覆盖（含 0 格情形）
 """
 from __future__ import annotations
 
@@ -72,6 +79,8 @@ def last_two(code):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=OUT_MD)
+    ap.add_argument("--force", action="store_true",
+                    help="本轮 0 对照格时仍覆盖输出（默认：保留既有实核台账，🚫 不用 null 覆盖，§4-9）")
     args = ap.parse_args()
 
     asof, flagged = load_flagged()
@@ -149,6 +158,15 @@ def main() -> int:
                 L.append(f"| {code} | {an} | {cf:.4g} | {'↑' if pred > 0 else '↓'} | "
                          f"{'↑' if act > 0 else '↓'} | {rr:+.4%} |")
         L.append("")
+
+    # 🛡 台账护栏（§4-9）：若本轮 0 对照格，而既有台账含实核结果 ⇒ 不覆盖，只提示。
+    total_n = sum(len(dd) for _n, _z, dd in detail)
+    if total_n == 0 and not args.force and os.path.exists(args.out):
+        prev = open(args.out, encoding="utf-8").read()
+        if re.search(r"^\|[^|\n]*\|[^|\n]*\|\s*[1-9]\d*\s*\|", prev, re.M):
+            print("[am_pm_check] ⚠ 本轮 0 对照格（价格末日已越过 as-of 的 k=1 目标位）"
+                  "⇒ 保留既有实核台账、不覆盖（§4-9 台账诚信）。确需覆盖请加 --force。")
+            return 0
 
     with open(args.out, "w", encoding="utf-8") as f:
         f.write("\n".join(L) + "\n")

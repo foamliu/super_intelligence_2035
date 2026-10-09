@@ -457,3 +457,34 @@
 | 2026-10-08 | OpenAI's revenue is reportedly $20 billion less than previously projected | TechCrunch | news(报道口径·数字不确·留档待佐证) | https://techcrunch.com/2026/10/08/openais-revenue-is-reportedly-20-billion-less-than-previously-projected/ |
 | 2026-10-08 | Ben Affleck is an AI nerd, and the internet is impressed | TechCrunch | feature(名人花边·非具体事件·防重不收) | https://techcrunch.com/2026/10/08/ben-affleck-is-an-ai-nerd-and-the-internet-is-impressed/ |
 | 2026-10-08 | Pretend you're sitting at Elizabeth Holmes' desk on this weirdly detailed website | TechCrunch | feature(趣味站·非 AI 事件·防重不收) | https://techcrunch.com/2026/10/08/pretend-youre-sitting-at-elizabeth-holmes-desk-on-this-weirdly-detailed-website/ |
+| 2026-10-09 | TRAE终于把Code和Work合并了 | 量子位 | news | https://www.qbitai.com/2026/10/502426.html |
+| 2026-10-09 | 联想天禧自研代码智能体TianxiCode斩获SWE-bench-Live全球第一 | 量子位（厂商口径·PR 稿·量子位获授权转载） | news | https://www.qbitai.com/2026/10/502422.html |
+| 2026-10-09 | 字节找到了DeepSeek时强时弱的原因 | 量子位（论文报道口径·arXiv 2609.36322） | news | https://www.qbitai.com/2026/10/502364.html |
+| 2026-10-09 | 清华具身模型登顶全球第一！突围GPT-6、英伟达，不靠外挂和额外数据 | 量子位（公司/榜单口径） | news | https://www.qbitai.com/2026/10/502125.html |
+| 2026-10-09 | openJiuwen发布并开源企业级AgentOS，加速智能体规模落地企业 | 量子位（厂商口径·量子位获授权刊载） | news | https://www.qbitai.com/2026/10/502106.html |
+| 2026-10-09 | 豆包工作上新：支持画布功能，模型再更新 | IT之家 | news | https://www.ithome.com/1/011/068.htm |
+| 2026-10-09 | Anthropic Claude 现已支持数据仪表板与解释性动画功能 | IT之家 | news | https://www.ithome.com/1/010/962.htm |
+| 2026-10-09 | 《柳叶刀》研究表明：AI 有望改善医患关系 | 量子位（论文报道口径） | news | https://www.qbitai.com/2026/10/502359.html |
+| 2026-10-08 | President Trump awards Big Tech donors with nation's highest science prizes | TechCrunch | news(科技政策/人物·非 AI 具体事件·防重不收) | https://techcrunch.com/2026/10/08/president-trump-awards-big-tech-donors-with-nations-highest-science-prizes/ |
+| 2026-10-09 | 特朗普向马斯克、黄仁勋等人颁发美国国家科学奖章，先给自己颁了个奖 | IT之家 | news(科技政策/人物·非 AI 具体事件·防重不收·与 TechCrunch 同事件交叉印证) | https://www.ithome.com/1/010/979.htm |
+| 2026-10-09 | 消息称人形机器人租赁价格大跳水，日租金跌破千元 | IT之家（据《科创板日报》） | data(具身智能产业·AI 相关·本轮未展开·留档可回收) | https://www.ithome.com/1/011/054.htm |
+| 2026-10-09 | 华为：狭窄小路会车时，乾崑智驾 ADS 不会直接退出辅助驾驶 | IT之家 | news(智驾·AI 相关·本轮未展开·留档可回收) | https://www.ithome.com/1/011/020.htm |
+| 2026-10-09 | Omdia 数据：全球 PC 出货量 2026Q3 下滑 21%，存储器已占物料成本近四成 | IT之家 | data(行业数据·非 AI 具体事件·留档) | https://www.ithome.com/1/011/016.htm |
+| 2026-10-09 | 极米记得 AI 显示眼镜 MemoMind One 超前预约开启：蔡司定制光学镜片、哈曼联合调音 | IT之家 | news(AI 硬件·预约·本轮未展开·留档可回收) | https://www.ithome.com/1/010/967.htm |
+| 2026-10-09 | 0.2秒急停、秒级重规划！因果智能走进真实世界 | 量子位 | news(具身智能·公司展示稿·无第三方基准·留档可回收) | https://www.qbitai.com/2026/10/502411.html |
+| 2026-10-09 | 灵巧操作头号玩家：Sharpa把指尖「触觉」进化到全面「体感」 | 量子位 | news(具身智能·公司展示稿·留档可回收) | https://www.qbitai.com/2026/10/502330.html |
+| 2026-10-09 | 代码造世界，扩散绘现实：AgentGarten让智能体在实时试炼场中边玩边进化 | 量子位 | news(Agent 训练环境·论文/项目·留档可回收) | https://www.qbitai.com/2026/10/502096.html |
+| 2026-10-09 | 尊界深夜回应“刹车踏板断裂”，懂车帝再发声 | 量子位 | news(汽车质量·非 AI·防重不收) | https://www.qbitai.com/2026/10/502114.html |
+| 2026-10-09 | 广汽集团公布 9 月份产销快报：本田销量同比下降 86.02%，丰田下降 28.37% | IT之家 | news(汽车产销·非 AI·防重不收) | https://www.ithome.com/1/011/078.htm |
+| 2026-10-09 | 尊界客服称 V800 制动踏板支架底座 11 月陆续启动免费升级：未发运车辆将直接优化部件，明确不是“召回” | IT之家 | news(汽车质量·非 AI·防重不收) | https://www.ithome.com/1/011/077.htm |
+| 2026-10-09 | 全部金属：比亚迪郑羽公布仰望制动踏板材质，称踏板力执行 2500N 企业标准 | IT之家 | news(汽车质量·非 AI·防重不收·边界条目 18:13 CST) | https://www.ithome.com/1/011/087.htm |
+| 2026-10-09 | 国家广播电视总局：9 月处理电视剧侵权账号 181 个，清理侵权链接 339 万条 | IT之家 | news(版权治理·非 AI·防重不收) | https://www.ithome.com/1/011/076.htm |
+| 2026-10-09 | 懂车帝发内部通告整顿工作？知情人士：假的 | IT之家 | news(辟谣·非 AI·防重不收) | https://www.ithome.com/1/011/073.htm |
+| 2026-10-09 | 打击倒卖副卡：山姆会员商店拟限制亲友卡绑定，新规预计 10 月 16 日生效 | IT之家 | news(零售规则·非 AI·防重不收) | https://www.ithome.com/1/011/075.htm |
+| 2026-10-09 | 今晚 20:00 京东 11.11 全面开抢：家居家电 3C 数码年内好价，OPPO N6 折叠屏国补 10% | IT之家 | news(电商促销·非 AI·防重不收) | https://www.ithome.com/1/010/921.htm |
+| 2026-10-09 | 小米智能摄像机 3 开售：500 万像素、6 种 AI 灵敏检测，首销 179 元 | IT之家 | product(AI 检测仅为卖点·非 AI 具体事件·防重不收) | https://www.ithome.com/1/010/994.htm |
+| 2026-10-09 | 开源电子书管理器 Calibre 9.16 发布：新增 Kokoro 语音，改进 PDF 支持 | IT之家 | tool(非 AI 具体事件·防重不收) | https://www.ithome.com/1/010/987.htm |
+| 2026-10-09 | 受权发布丨中共中央 国务院关于发展新质生产力的意见 | 央视网 | news(产业政策·非 AI 具体事件·防重不收·边界条目 18:08 CST) | https://news.cctv.com/2026/10/09/ARTI24AWSZbFnFfmOKH0dAID261009.shtml |
+| 2026-10-09 | 权益类基金成立门槛拟降至5000万元 | 中新网 | news(金融监管·非 AI 范畴·防重不收·边界条目 18:00 CST) | https://www.chinanews.com.cn/cj/2026/10-09/10709781.shtml |
+| 2026-10-09 | 锚定3.5万亿！东莞以系统思维亮出先进制造业升级新“解法” | 中新网 | news(产业规划·非 AI 范畴·防重不收·边界条目 18:11 CST) | https://www.chinanews.com.cn/cj/2026/10-09/10709775.shtml |
+

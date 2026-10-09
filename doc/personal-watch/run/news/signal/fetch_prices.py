@@ -35,7 +35,7 @@ PRICE_DIR = os.path.join(HERE, "prices")
 
 UA = "Mozilla/5.0 (compatible; PersonalWatch/1.0)"
 START = "2016-01-01"
-END = "2026-10-08"          # 区间末 = 采集日（规格 §1.1「能取到的最晚为准」）
+END = "2026-10-09"          # 区间末 = 采集日（规格 §1.1「能取到的最晚为准」；R5 晚报轮）
 RATE = 1.0          # 限速（秒）
 RETRY = 3
 TIMEOUT = 30
