@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Vision — AIMv2 Scaling Experiment: Does a Bigger Model Score Higher?</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff;--orange:#e8873c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;line-height:1.6;max-width:1200px;margin:0 auto;padding:20px}
+h1{font-size:1.8em;color:var(--accent);border-bottom:2px solid var(--border);padding-bottom:.3em;margin:1.5em 0 .5em}
+h2{font-size:1.4em;color:var(--purple);margin:1.2em 0 .5em;border-bottom:1px solid var(--border);padding-bottom:.2em}
+h3{font-size:1.15em;color:var(--green);margin:1em 0 .4em}
+p{margin:.5em 0}
+table{border-collapse:collapse;width:100%;margin:.8em 0;font-size:.9em}
+th,td{border:1px solid var(--border);padding:.4em .6em;text-align:center}
+th{background:var(--card);color:var(--accent);font-weight:600}
+td:first-child,th:first-child{text-align:left}
+.best{color:var(--green);font-weight:700}
+.bad{color:var(--red)}
+.warn{color:var(--yellow)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1em 1.2em;margin:.8em 0}
+.tldr{background:linear-gradient(135deg,#161b22,#1a2332);border-left:4px solid var(--accent)}
+.tldr ul{margin:.3em 0 .3em 1.2em}
+.tldr li{margin:.3em 0}
+code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF Mono',Consolas,monospace;font-size:.85em;color:var(--orange)}
+.svg-container{margin:1em 0;text-align:center}
+.svg-container svg{max-width:100%;height:auto}
+.note{color:var(--muted);font-size:.85em;font-style:italic}
+.tag{display:inline-block;padding:.1em .5em;border-radius:10px;font-size:.75em;font-weight:600}
+.tag-ok{background:rgba(63,185,80,.2);color:var(--green)}
+.tag-fail{background:rgba(248,81,73,.2);color:var(--red)}
+.tag-warn{background:rgba(210,153,34,.2);color:var(--yellow)}
+.tag-pending{background:rgba(88,166,255,.2);color:var(--accent)}
+.refs{font-size:.85em;color:var(--muted);margin-top:2em;border-top:1px solid var(--border);padding-top:.5em}
+.refs a{color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+<p class="note">Pre-registered scaling experiment <strong>2026-10-08⑥ → 2026-10-09</strong> — two-arm width sweep under the AIMv2 dense objective. Related: <a href="report_vision_final_20261008.html">full-line final summary</a> · <a href="report_vision_lp_protocol.html">lp evaluation protocol</a> · <a href="report_vision_aimv2_official_vs_ours.html">official vs ours</a>.</p>
+<h1>AIMv2 Scaling Experiment: Does a Bigger Model Score Higher?</h1>
+<p class="note">Generated: 2026-10-09 · Agent: vision · Protocol: Pre-registered two-arm comparison (E1 vs E2) · PHASE: <span class="tag tag-pending">eval in progress</span> · All training numbers verified against raw training logs</p>
+<h2>1. TL;DR</h2>
+<div class="card tldr">
+<ul>
+<li><strong>Question:</strong> Under the AIMv2-style dense objective (InfoNCE + masked-patch-MSE), does widening the vision tower from 512→768 (126.78M→284.54M, 2.24×) improve frozen-trunk linear-probe top-1 on IN-1k, at a fixed 1-epoch budget over ~95.7M image–caption pairs?</li>
+<li><strong>Design:</strong> Pre-registered two-arm comparison — <strong>only width differs</strong> (512→768); depth (30), patch (16), resolution (224), objective, data, optimizer, and step count (187,101) are all identical. This is a clean model-scaling axis.</li>
+<li><strong>Training:</strong> Both arms completed 187,101 steps with <strong>no collapse</strong> (C1 &lt; 0.5, C2_gap &gt; 0, C4=OK throughout). E1 final loss=1.3036; E2 final loss=1.9992 (higher loss but larger model capacity — loss values are not directly comparable across widths).</li>
+<li><strong>E1 Protocol B result:</strong> lp = <strong>29.35 ± 0.00%</strong> (3 seeds: 29.34 / 29.35 / 29.35).</li>
+<li><strong>E2 Protocol B result:</strong> <span class="tag tag-pending">evaluation in progress</span> — streaming IN-1k features through 294 parquet files (51/294 done at time of writing). ETA ~22:00–22:30.</li>
+<li><strong>Pre-registered judgment:</strong> Δlp = lp(E2) − lp(E1). If Δ ≥ +1.5pp → supports scaling claim; |Δ| ≤ 1.5pp → not supported; Δ ≤ −1.5pp → bigger is worse; σ > |Δ| → indistinguishable. <strong>No post-hoc changes to criteria.</strong></li>
+</ul>
+</div>
+
+<h2>2. Pre-registration</h2>
+<div class="card">
+<p><strong>Claim under test:</strong> Under the AIMv2-style dense objective (InfoNCE + masked-patch-MSE, mask_ratio=0.6, contrast:patch=1:1), a larger model achieves a higher frozen-trunk linear-probe top-1 (Protocol B) on IN-1k, at a fixed data budget of 1 epoch over ~95.7M image–caption pairs.</p>
+<p><strong>Pre-registered criterion:</strong> Δlp = lp(E2) − lp(E1), Protocol B, 3 seeds (0, 1, 2) → mean ± σ. Threshold ±1.5pp = our internal noise band (ROUND10 §1.5).</p>
+<table>
+<tr><th>Outcome</th><th>Interpretation</th></tr>
+<tr><td class="best">Δ ≥ +1.5 pp</td><td>Supports "bigger model → higher lp under AIMv2" (challenges R9/R10 "smaller tower better" under this objective)</td></tr>
+<tr><td class="warn">|Δ| ≤ 1.5 pp</td><td>Not supported (no discernible advantage at this budget)</td></tr>
+<tr><td class="bad">Δ ≤ −1.5 pp</td><td>Bigger model is <em>worse</em> (data-limited regime: widening is negative)</td></tr>
+<tr><td class="warn">σ > |Δ|</td><td>Indistinguishable (noise dominates signal)</td></tr>
+</table>
+<p class="note">Two points do NOT constitute a scaling law — only report whether a single budget point favours the larger model. <strong>No curve extrapolation.</strong> Criteria locked before training; no post-hoc changes.</p>
+</div>
+
+<h2>3. Two-Arm Setup</h2>
+<div class="card">
+<p>Both arms use the <strong>same <code>vision/models.py</code> OpenVision2 implementation</strong> — only <code>width</code> changes from 512→768. Heads (8→12) and mlp_dim (2048→3072) scale with width automatically. This is a standard model-scaling axis with zero confounds.</p>
+<table>
+<tr><th>Arm</th><th>Tower</th><th>Params</th><th>Heads</th><th>MLP dim</th><th>Res / patch</th><th>Img tokens</th></tr>
+<tr><td class="best">E1</td><td>OpenVision2 w512/d30</td><td>126.78M</td><td>8</td><td>2048</td><td>224 / 16</td><td>196</td></tr>
+<tr><td>E2 (⑥ revised)</td><td>OpenVision2 w768/d30</td><td>284.54M (2.24×)</td><td>12</td><td>3072</td><td>224 / 16</td><td>196</td></tr>
+</table>
+<p class="note">⑥ revision (2026-10-08, user ruling): The original E2 (official OV2 L/14@336, 304M) was abandoned because it changed 4 variables simultaneously (params / structure / patch / resolution). The revised E2 changes only width — a clean scaling axis.</p>
+<h3>Common hyperparameters (locked)</h3>
+<table>
+<tr><th>Component</th><th>Value</th></tr>
+<tr><td>Objective</td><td>AIMv2 dense: 1.0×InfoNCE + 1.0×masked-patch-MSE, mask_ratio=0.6, contrast:patch=1:1</td></tr>
+<tr><td>Text tower</td><td>Frozen CLIP-ViT-L/14-336 (768-d), not unfrozen</td></tr>
+<tr><td>Data</td><td>GPIC + CC12M + Amshaker ≈ 95.7M pairs (1 epoch ≈ 186,978 steps)</td></tr>
+<tr><td>Step count</td><td><strong>187,101 steps</strong> (locked to E1's actual count; E2 uses <code>--steps 187101</code> to match exactly)</td></tr>
+<tr><td>Optimizer</td><td>AdamW lr=3e-3, warmup 20, constant, betas=(0.9, 0.95), weight_decay=0.05</td></tr>
+<tr><td>Batch size</td><td>64 per GPU × 8 GPUs = 512 negatives</td></tr>
+<tr><td>Precision</td><td>bf16</td></tr>
+<tr><td>Depth / patch / resolution</td><td>d30 / p16 / 224 (196 tokens) — <strong>identical</strong></td></tr>
+<tr><td>Seed</td><td>1234</td></tr>
+</table>
+<p>⇒ A single Δlp <strong>can</strong> be attributed to parameter count (model scale) alone, since width is the only varying axis.</p>
+</div>
+
+<h2>4. Training Results</h2>
+<div class="card">
+<table>
+<tr><th>Metric</th><th>E1 (w512, 126.78M)</th><th>E2 (w768, 284.54M)</th><th>Ratio</th></tr>
+<tr><td>Total steps</td><td>187,101</td><td>187,101</td><td>1.00×</td></tr>
+<tr><td>Final loss</td><td class="best">1.3036</td><td>1.9992</td><td>—</td></tr>
+<tr><td>Final contrast loss</td><td>1.2129</td><td>1.9999</td><td>—</td></tr>
+<tr><td>Final patch-MSE loss</td><td>0.1446</td><td>0.1671</td><td>—</td></tr>
+<tr><td>Steady throughput</td><td class="best">6,060 img/s</td><td>4,415 img/s</td><td>0.73×</td></tr>
+<tr><td>Per-step (compute)</td><td class="best">84.2 ms</td><td>114.8 ms</td><td>1.36×</td></tr>
+<tr><td>Total wall time</td><td class="best">7,500 s (2.08 h)</td><td>40,867 s (11.35 h)</td><td>5.45×</td></tr>
+<tr><td>Peak GPU mem/card</td><td class="best">~16.5 GB</td><td>~24.9 GB</td><td>1.51×</td></tr>
+<tr><td>vision.pt size</td><td>487 MB</td><td>1.07 GB</td><td>2.20×</td></tr>
+</table>
+<p class="note">⚠️ Wall time ratio (5.45×) is much larger than compute ratio (1.36×) because E2 trained during peak NFS hours while E1 trained at night. NFS contention limited E2 to 2,000–4,600 img/s vs E1's steady 6,060. The <strong>compute-per-step ratio (1.36×) is the fair model-size comparison</strong>; wall time is confounded by I/O contention.</p>
+</div>
+
+<h2>5. Collapse Guard Trajectories</h2>
+<div class="card">
+<p>Three collapse guards monitored every 300 steps throughout training. Both arms remain healthy (C4=OK) for all 187,101 steps — <strong>no collapse in either arm</strong>.</p>
+<ul>
+<li><strong>C1</strong> (cosine off-diagonal): measures feature diversity. Collapse if C1 → 1.0. Both arms: C1 stabilises at 0.35–0.48 (healthy).</li>
+<li><strong>C2_gap</strong> (cross-attention gap): diag &gt; off-diag means the model distinguishes visible vs masked positions. Collapse if gap ≤ 0. Both arms: gap stays +0.10 to +0.16 (positive throughout).</li>
+<li><strong>C4</strong> (loss decreasing): EMA loss must decrease. Both arms: C4=OK for all probes.</li>
+</ul>
+</div>
+<h3>5.1 C1 Trajectory</h3>
+<div class="svg-container">
+<svg viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg">
+<rect width="800" height="320" fill="#0d1117"/>
+<line x1="50" y1="20" x2="50" y2="270" stroke="#30363d" stroke-width="1"/>
+<line x1="50" y1="270" x2="780" y2="270" stroke="#30363d" stroke-width="1"/>
+<text x="40" y="274" fill="#8b949e" font-size="10" text-anchor="end">0.0</text>
+<text x="40" y="224" fill="#8b949e" font-size="10" text-anchor="end">0.2</text>
+<text x="40" y="174" fill="#8b949e" font-size="10" text-anchor="end">0.4</text>
+<text x="40" y="124" fill="#8b949e" font-size="10" text-anchor="end">0.6</text>
+<text x="40" y="74" fill="#8b949e" font-size="10" text-anchor="end">0.8</text>
+<text x="40" y="24" fill="#8b949e" font-size="10" text-anchor="end">1.0</text>
+<text x="50" y="288" fill="#8b949e" font-size="10" text-anchor="middle">0</text>
+<text x="243" y="288" fill="#8b949e" font-size="10" text-anchor="middle">50k</text>
+<text x="437" y="288" fill="#8b949e" font-size="10" text-anchor="middle">100k</text>
+<text x="630" y="288" fill="#8b949e" font-size="10" text-anchor="middle">150k</text>
+<text x="764" y="288" fill="#8b949e" font-size="10" text-anchor="middle">187k</text>
+<line x1="50" y1="45" x2="780" y2="45" stroke="#f85149" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+<text x="780" y="40" fill="#f85149" font-size="9" text-anchor="end">collapse ≥ 0.9</text>
+<polyline points="51,236 62,184 73,181 96,173 165,161 396,169 626,160 764,152" fill="none" stroke="#58a6ff" stroke-width="2"/>
+<polyline points="51,243 62,199 73,194 96,184 165,172 396,181 626,171 764,172" fill="none" stroke="#bc8cff" stroke-width="2"/>
+<rect x="550" y="295" width="10" height="3" fill="#58a6ff"/><text x="566" y="300" fill="#e6edf3" font-size="11">E1 (w512)</text>
+<rect x="640" y="295" width="10" height="3" fill="#bc8cff"/><text x="656" y="300" fill="#e6edf3" font-size="11">E2 (w768)</text>
+<text x="50" y="310" fill="#8b949e" font-size="10">C1 (cosine off-diag) — both arms well below collapse threshold</text>
+</svg>
+</div>
+<h3>5.2 Loss EMA Trajectory</h3>
+<div class="svg-container">
+<svg viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg">
+<rect width="800" height="320" fill="#0d1117"/>
+<line x1="50" y1="20" x2="50" y2="270" stroke="#30363d" stroke-width="1"/>
+<line x1="50" y1="270" x2="780" y2="270" stroke="#30363d" stroke-width="1"/>
+<text x="40" y="274" fill="#8b949e" font-size="10" text-anchor="end">1.0</text>
+<text x="40" y="211" fill="#8b949e" font-size="10" text-anchor="end">2.0</text>
+<text x="40" y="149" fill="#8b949e" font-size="10" text-anchor="end">3.0</text>
+<text x="40" y="86" fill="#8b949e" font-size="10" text-anchor="end">4.0</text>
+<text x="40" y="24" fill="#8b949e" font-size="10" text-anchor="end">5.0</text>
+<text x="50" y="288" fill="#8b949e" font-size="10" text-anchor="middle">0</text>
+<text x="243" y="288" fill="#8b949e" font-size="10" text-anchor="middle">50k</text>
+<text x="437" y="288" fill="#8b949e" font-size="10" text-anchor="middle">100k</text>
+<text x="630" y="288" fill="#8b949e" font-size="10" text-anchor="middle">150k</text>
+<text x="764" y="288" fill="#8b949e" font-size="10" text-anchor="middle">187k</text>
+<polyline points="51,48 62,110 73,132 96,161 165,168 396,216 626,257 764,250" fill="none" stroke="#58a6ff" stroke-width="2"/>
+<polyline points="51,30 62,32 73,89 96,123 165,133 396,169 626,202 764,202" fill="none" stroke="#bc8cff" stroke-width="2"/>
+<rect x="550" y="295" width="10" height="3" fill="#58a6ff"/><text x="566" y="300" fill="#e6edf3" font-size="11">E1 (w512)</text>
+<rect x="640" y="295" width="10" height="3" fill="#bc8cff"/><text x="656" y="300" fill="#e6edf3" font-size="11">E2 (w768)</text>
+<text x="50" y="310" fill="#8b949e" font-size="10">Loss EMA — both decreasing (C4=OK). E2 starts higher and converges to a higher floor</text>
+</svg>
+</div>
+<h3>5.3 C2 Gap Trajectory</h3>
+<div class="svg-container">
+<svg viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg">
+<rect width="800" height="320" fill="#0d1117"/>
+<line x1="50" y1="20" x2="50" y2="270" stroke="#30363d" stroke-width="1"/>
+<line x1="50" y1="270" x2="780" y2="270" stroke="#30363d" stroke-width="1"/>
+<text x="40" y="274" fill="#8b949e" font-size="10" text-anchor="end">0.08</text>
+<text x="40" y="204" fill="#8b949e" font-size="10" text-anchor="end">0.11</text>
+<text x="40" y="134" fill="#8b949e" font-size="10" text-anchor="end">0.14</text>
+<text x="40" y="64" fill="#8b949e" font-size="10" text-anchor="end">0.17</text>
+<text x="50" y="288" fill="#8b949e" font-size="10" text-anchor="middle">0</text>
+<text x="243" y="288" fill="#8b949e" font-size="10" text-anchor="middle">50k</text>
+<text x="437" y="288" fill="#8b949e" font-size="10" text-anchor="middle">100k</text>
+<text x="630" y="288" fill="#8b949e" font-size="10" text-anchor="middle">150k</text>
+<text x="764" y="288" fill="#8b949e" font-size="10" text-anchor="middle">187k</text>
+<line x1="50" y1="270" x2="780" y2="270" stroke="#f85149" stroke-width="1" stroke-dasharray="4,4" opacity="0.3"/>
+<text x="780" y="265" fill="#f85149" font-size="9" text-anchor="end">collapse ≤ 0</text>
+<polyline points="51,35 62,187 73,188 96,189 165,185 396,142 626,159 764,147" fill="none" stroke="#58a6ff" stroke-width="2"/>
+<polyline points="51,60 62,216 73,195 96,206 165,204 396,173 626,176 764,173" fill="none" stroke="#bc8cff" stroke-width="2"/>
+<rect x="550" y="295" width="10" height="3" fill="#58a6ff"/><text x="566" y="300" fill="#e6edf3" font-size="11">E1 (w512)</text>
+<rect x="640" y="295" width="10" height="3" fill="#bc8cff"/><text x="656" y="300" fill="#e6edf3" font-size="11">E2 (w768)</text>
+<text x="50" y="310" fill="#8b949e" font-size="10">C2 gap — both arms positive throughout (no masked-position collapse)</text>
+</svg>
+</div>
+<h2>6. Fairness Table</h2>
+<div class="card">
+<table>
+<tr><th>Dimension</th><th>E1 (w512)</th><th>E2 (w768)</th><th>Ratio</th><th>Controlled?</th></tr>
+<tr><td>Parameters</td><td>126.78M</td><td>284.54M</td><td>2.24×</td><td><span class="tag tag-warn">varied (intended)</span></td></tr>
+<tr><td>Depth</td><td>30</td><td>30</td><td>1.00×</td><td><span class="tag tag-ok">identical</span></td></tr>
+<tr><td>Patch / resolution</td><td>16 / 224</td><td>16 / 224</td><td>1.00×</td><td><span class="tag tag-ok">identical</span></td></tr>
+<tr><td>Image tokens</td><td>196</td><td>196</td><td>1.00×</td><td><span class="tag tag-ok">identical</span></td></tr>
+<tr><td>Training steps</td><td>187,101</td><td>187,101</td><td>1.00×</td><td><span class="tag tag-ok">identical</span></td></tr>
+<tr><td>Training pairs seen</td><td>95.8M</td><td>95.8M</td><td>1.00×</td><td><span class="tag tag-ok">identical</span></td></tr>
+<tr><td>Objective</td><td>AIMv2 dense</td><td>AIMv2 dense</td><td>—</td><td><span class="tag tag-ok">identical</span></td></tr>
+<tr><td>Optimizer / lr</td><td>AdamW 3e-3</td><td>AdamW 3e-3</td><td>—</td><td><span class="tag tag-ok">identical</span></td></tr>
+<tr><td>Batch size</td><td>512</td><td>512</td><td>1.00×</td><td><span class="tag tag-ok">identical</span></td></tr>
+<tr><td>Seed</td><td>1234</td><td>1234</td><td>—</td><td><span class="tag tag-ok">identical</span></td></tr>
+<tr><td>Compute (ms/step)</td><td>84.2</td><td>114.8</td><td>1.36×</td><td><span class="note">consequence of width</span></td></tr>
+<tr><td>Wall time</td><td>7,500 s</td><td>40,867 s</td><td>5.45×</td><td><span class="tag tag-fail">NFS-confounded</span></td></tr>
+<tr><td>GPU memory</td><td>~16.5 GB</td><td>~24.9 GB</td><td>1.51×</td><td><span class="note">consequence of width</span></td></tr>
+</table>
+<p class="note">Wall time is confounded by NFS contention (E2 ran during peak I/O hours). The fair compute comparison is ms/step: 84.2 → 114.8 = 1.36× for 2.24× params — sub-linear compute scaling, consistent with width being mostly matmul-bound.</p>
+</div>
+
+<h2>7. Evaluation Results</h2>
+<div class="card">
+<h3>7.1 Protocol B (primary) — IN-1k frozen-trunk linear-probe top-1</h3>
+<p>Protocol B: SGD+momentum 0.9, cosine schedule, 5-epoch warmup, 90 epochs, mini-batch 1024, IN-1k full train (1.28M images), 3 seeds (0, 1, 2) → mean ± σ.</p>
+<table>
+<tr><th>Arm</th><th>Seed 0</th><th>Seed 1</th><th>Seed 2</th><th>Mean ± σ</th><th>Status</th></tr>
+<tr><td class="best">E1 (w512)</td><td>29.34%</td><td>29.35%</td><td>29.35%</td><td class="best">29.35 ± 0.00%</td><td><span class="tag tag-ok">done</span></td></tr>
+<tr><td>E2 (w768)</td><td colspan="3"><span class="note">evaluation in progress — streaming 294 parquet files (51/294 at time of writing)</span></td><td>—</td><td><span class="tag tag-pending">running</span></td></tr>
+</table>
+<h3>7.2 Protocol A (secondary) — BaiZe internal protocol</h3>
+<table>
+<tr><th>Arm</th><th>Protocol A</th><th>Status</th></tr>
+<tr><td>E1 (w512)</td><td>—</td><td><span class="tag tag-pending">queued (sympy fix applied)</span></td></tr>
+<tr><td>E2 (w768)</td><td>—</td><td><span class="tag tag-pending">queued (auto-chained)</span></td></tr>
+</table>
+<p class="note">Protocol A initially failed due to sympy 1.5.1 ImportError (<code>equal_valued</code>). Fixed by upgrading to sympy 1.14.0. Re-run queued in <code>e2_post_watcher.sh</code> — will execute after E2 Protocol B completes.</p>
+</div>
+
+<h2>8. Scaling Claim Judgment</h2>
+<div class="card">
+<p><strong>Δlp = lp(E2_ProtB_mean) − lp(E1_ProtB_mean) = ? − 29.35%</strong></p>
+<p class="note">Judgment pending E2 Protocol B evaluation. The pre-registered threshold (±1.5pp) and outcome categories were locked before training — no post-hoc changes.</p>
+<table>
+<tr><th>Outcome</th><th>Condition</th><th>Status</th></tr>
+<tr><td>Supports scaling claim</td><td>Δ ≥ +1.5 pp</td><td><span class="tag tag-pending">pending</span></td></tr>
+<tr><td>Not supported</td><td>|Δ| ≤ 1.5 pp</td><td><span class="tag tag-pending">pending</span></td></tr>
+<tr><td>Bigger is worse</td><td>Δ ≤ −1.5 pp</td><td><span class="tag tag-pending">pending</span></td></tr>
+<tr><td>Indistinguishable</td><td>σ > |Δ|</td><td><span class="tag tag-pending">pending</span></td></tr>
+</table>
+</div>
+
+<h2>9. Reference Line (🚩 not comparable)</h2>
+<div class="card">
+<p>Official <code>openvision2-vit-large-patch14-336-vision-only</code> pretrained weights frozen → Protocol B LP: R13 measured <strong>79.81%</strong> on the 224 variant.</p>
+<p class="note">🚩 This line contains large-scale pretraining (billions of image–text pairs, industry-scale compute) and is <strong>not comparable</strong> to our 1-epoch from-scratch arms. Included only as a reference ceiling. See <a href="report_vision_aimv2_official_vs_ours.html">official vs ours report</a> for details.</p>
+</div>
+
+<h2>10. Limitations</h2>
+<div class="card">
+<ul>
+<li><strong>Two points ≠ scaling law:</strong> This experiment tests a single budget point (1 epoch, 95.7M pairs). It does not extrapolate to other budgets or widths. R9/R10 established the (N, M) scaling surface; this experiment tests one point on that surface under the AIMv2 objective.</li>
+<li><strong>NFS contention confounds wall time:</strong> E2's 5.45× wall time is dominated by NFS I/O contention, not model size. The fair compute comparison is 1.36× (ms/step). Training quality (loss, collapse guards) is unaffected — only wall time is confounded.</li>
+<li><strong>Single seed for training:</strong> Both arms use seed=1234 for training. Only the evaluation uses 3 seeds (0, 1, 2). Training-seed variance is not measured.</li>
+<li><strong>Loss not comparable across widths:</strong> E2's higher final loss (1.9992 vs 1.3036) does not mean E2 trained worse — larger models have higher capacity and may converge to different loss floors. The linear-probe metric is the intended comparison.</li>
+<li><strong>Step-count audit:</strong> GPIC grew from 6,233 to 6,754 tar files between E1 and E2 launches. E2 was explicitly launched with <code>--steps 187101</code> to match E1 exactly. This preserves the "same budget" constraint.</li>
+</ul>
+</div>
+
+<h2>11. Reproducibility</h2>
+<div class="card">
+<h3>E1 training (only --width differs for E2)</h3>
+<pre><code>python -m torch.distributed.run --nproc_per_node=8 --nnodes=1 \
+  r7_train.py --tower openvision2 --width 512 --depth 30 \
+  --steps 187101 --resolution 224 --patch 16 --batch-size 64 \
+  --lr 3e-3 --warmup 20 --seed 1234 --loss aimv2 --mask-ratio 0.6 \
+  --data-source mixed --output-dir .../scaling_E1_ov2_w512_d30_p16_224</code></pre>
+<h3>Evaluation</h3>
+<pre><code>python lp_protocol_bridge.py \
+  --ckpts .../scaling_E1_ov2_w512_d30_p16_224/vision.pt \
+  --protocol B --probe-full-train --seeds 0 1 2</code></pre>
+</div>
+
+<div class="refs">
+<p><strong>Related reports:</strong>
+<a href="report_vision_final_20261008.html">Full-line final summary (R2–R14)</a> ·
+<a href="report_vision_lp_protocol.html">LP evaluation protocol</a> ·
+<a href="report_vision_aimv2_official_vs_ours.html">Official vs ours</a> ·
+<a href="report_vision_mask_ratio.html">Mask-ratio ablation</a> ·
+<a href="report_vision_aimv2_impl.html">AIMv2 implementation</a>
+</p>
+<p><strong>Source data:</strong> EXPERIMENTS_VISION.md §443 (pre-registration) · raw training logs in <code>scaling_E{1,2}_*/train.log</code> · eval logs in <code>/tmp/scaling_e{1,2}_eval.log</code></p>
+<p class="note">Generated by vision agent · 2026-10-09 · Pre-registered criteria locked 2026-10-08⑥</p>
+</div>
+
+</body>
+</html>

@@ -546,6 +546,6 @@ pretraining, not comparable"**.
 | E1 evaluation (Protocol B, 3 seeds) | ✅ **DONE** — **lp = 29.35 ± 0.00%** (seeds 0/1/2: 29.34/29.35/29.35) |
 | E1 evaluation (Protocol A) | ❌ Failed (sympy 1.5.1) → 🟧 **Re-run queued** in e2_post_watcher.sh (sympy 1.14.0 now installed) |
 | E2 training (187,101 steps) | ✅ **DONE** — 187101/187101 steps, total=40867.4s (~11.35h), steady_image_s=4414.6, final_loss=1.9992, no collapse (C1=0.4302 C2_gap=+0.1110 C4=OK), vision.pt=1.07GB (completed 18:12 Oct 9). ⚠️ Training time 5.4× E1 due to NFS contention (not model size: 2.24× params but throughput limited by NFS 2000–4600 img/s vs E1's 6060) |
-| E2 evaluation (Protocol B+A) | 🟧 **RUNNING** — Protocol B (3 seeds, 90 ep) started ~18:12, PID 767552 (child of 764635). ETA ~2–3h. Auto-chained by `run_scaling_experiment.sh e2` mode |
+| E2 evaluation (Protocol B+A) | 🟧 **RUNNING** — Protocol B streaming 51/294 parquet files (~41min in, 3.5× slower than E1 due to NFS evening contention). ETA ~22:00–22:30. Auto-chained by `run_scaling_experiment.sh e2` mode |
 | E1 evaluation (Protocol A re-run) | ⏸ Queued in `e2_post_watcher.sh` (PID 808492) — will run after E2 eval completes; sympy 1.14.0 now installed |
-| Report (HTML) | ⏸ Pending — after all evals complete |
+| Report (HTML) | 🟧 **Draft created** — `report_vision_aimv2_scaling.html` (23KB): all training data + SVG charts filled, eval results placeholders pending. Will finalize after all evals complete |
