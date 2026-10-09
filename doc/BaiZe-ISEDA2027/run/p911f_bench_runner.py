@@ -20,11 +20,14 @@ DENSE_REF_PATH = "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/
 
 MODELS = {
     "hybrid_2.220b": {"path": HYBRID_PATH, "arch": "nemotron_h",
-                      "ssm_dtype": "float32", "extra_flags": ["--mamba-ssm-dtype","float32"]},
+                      "ssm_dtype": "float32", "extra_flags": ["--mamba-ssm-dtype","float32"],
+                      "ctx_max": 8388608},   # 8M — hybrid can handle this (SSM layers have no KV)
     "dense_matched_2.229b": {"path": DENSE_MATCHED_PATH, "arch": "llama",
-                             "ssm_dtype": None, "extra_flags": []},
+                             "ssm_dtype": None, "extra_flags": [],
+                             "ctx_max": 1048576},  # 1M — dense 36L×2kv uses ~36KB/tok
     "dense_ref_2.512b": {"path": DENSE_REF_PATH, "arch": "llama",
-                         "ssm_dtype": None, "extra_flags": []},
+                         "ssm_dtype": None, "extra_flags": [],
+                         "ctx_max": 524288},   # 512K — 42L×4kv even more KV per token
 }
 
 def find_free_port(start=30000, end=30020):
@@ -84,13 +87,17 @@ def kill_server(pi):
 
 def benchmark_model(model_key, gpu_id, mem_frac, contexts, batches, ctx_max, warmup=1, repeats=3, port_base=30000):
     port = find_free_port(start=port_base, end=port_base+20)
-    si = start_sglang_server(model_key, gpu_id, mem_frac, ctx_max, port)
+    eff_ctx_max = mi.get("ctx_max", ctx_max)  # use model-specific limit if set
+    si = start_sglang_server(model_key, gpu_id, mem_frac, eff_ctx_max, port)
     if si is None:
         return {"model": model_key, "mem_frac": mem_frac, "error": "server_failed", "results": []}
     proc, base_url, lf = si; mi = MODELS[model_key]; results = []; oom = False
     try:
         for ctx in contexts:
             if oom: break
+            if ctx > eff_ctx_max:
+                print(f"\n  [SKIP] ctx={ctx} > model ctx_max={eff_ctx_max} — stopping", flush=True)
+                break
             eff_batches = [b for b in batches if ctx <= 1048576 or b == 1]  # skip bs=8 for ctx>1M
             eff_repeats = repeats if ctx <= 1048576 else 1  # reduce repeats for ctx>1M
             for bs in eff_batches:
