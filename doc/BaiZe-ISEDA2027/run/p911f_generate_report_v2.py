@@ -163,7 +163,7 @@ def generate_report():
         rv = gv(data,"dense_ref_2.512b",0.6,ctx,8,"prefill_tok_s")
         h.append(f"<tr><td>{CTX_LABELS[ctx]}</td><td class='hybrid'>{fmt(hv)}</td><td>{fmt(dv)}</td><td>{fmt(rv)}</td><td class='ratio'>{ratio(hv,dv)}</td><td class='ratio'>{ratio(hv,rv)}</td></tr>")
     h.append("</table>")
-    h.append("<div class='note'><strong>补充</strong>：Dense-Match 在 mf=0.6 下已确认可服务至 1M(prefill=2,351 tok/s, decode=64.9 tok/s, VRAM=59.04GB)。mf=0.85 下同样可服务至 1M(速度差异<0.2%)。2M 测试进行中。</div>")
+    h.append("<div class='note'><strong>补充</strong>：Dense-Match 在 mf=0.6 下已确认可服务至 1M(prefill=2,351 tok/s, decode=64.9 tok/s, VRAM=59.04GB)。mf=0.85 下同样可服务至 1M(速度差异<0.2%)。2M 不可服务(输入>max_total_num_tokens~1.23M)。</div>")
 
 
     # Table 4: VRAM/capacity
@@ -180,7 +180,7 @@ def generate_report():
     dv128 = gv(data,"dense_matched_2.229b",0.6,131072,1,"peak_vram_gb")
     dv512 = gv(data,"dense_matched_2.229b",0.6,524288,1,"peak_vram_gb")
     dv1m = gv(data,"dense_matched_2.229b",0.6,1048576,1,"peak_vram_gb")
-    h.append(f"<tr><td rowspan='2'>Dense-Match</td><td>0.6</td><td>{vf(dv128)}</td><td>{vf(dv512)}</td><td>{vf(dv1m,'(1M)')}</td><td>随ctx增长(KV O(n))</td><td>~2.4M</td></tr>")
+    h.append(f"<tr><td rowspan='2'>Dense-Match</td><td>0.6</td><td>{vf(dv128)}</td><td>{vf(dv512)}</td><td>{vf(dv1m,'(1M)')}</td><td>随ctx增长(KV O(n))</td><td>~1.23M</td></tr>")
     dv85 = gv(data,"dense_matched_2.229b",0.85,131072,1,"peak_vram_gb")
     h.append(f"<tr><td>0.85</td><td>{vf(dv85)}</td><td>78.60</td><td>—</td><td>随ctx增长</td><td>~1.8M</td></tr>")
     rv128 = gv(data,"dense_ref_2.512b",0.6,131072,1,"peak_vram_gb")
@@ -202,12 +202,8 @@ def generate_report():
     dm2m = gv(data,"dense_matched_2.229b",0.6,2097152,1,"prefill_tok_s")
     if dm1m:
         dm_last = "1M(bs=1)"
-        if dm2m is not None:
-            dm_fail = "2M(已测被拒)"
-            dm_reason = "输入>max_total_num_tokens"
-        else:
-            dm_fail = "2M(待测)"
-            dm_reason = "runner进行中"
+        dm_fail = "2M"
+        dm_reason = "输入>max_total_num_tokens(~1.23M)"
     else:
         dm_last = "512K(bs=1)"
         dm_fail = "1M"
@@ -217,7 +213,7 @@ def generate_report():
     h.append("<tr><td rowspan='2'>Dense-Ref</td><td>0.6</td><td>512K(bs=1)</td><td>1M</td><td>请求被拒</td><td>输入>max_total_num_tokens(~1.05M)</td></tr>")
     h.append("<tr><td>0.85</td><td>512K(bs=1)</td><td>1M</td><td>请求被拒</td><td>ctx>服务器context_length=512K</td></tr>")
     h.append("</table>")
-    h.append("<div class='danger'><strong>边界结论</strong>：Hybrid mf=0.6 可服务至<strong>2M</strong>，4M被拒(输入超过KV池)。Dense-Match 仅512K-1M(取决于mem-frac)，为Hybrid的1/4~1/2。Dense-Ref 512K即到顶。失败类型=请求被拒(SGLang HTTP 200+1 token,非OOM非超时)。本次无TIMED-OUT类型。</div>")
+    h.append("<div class='danger'><strong>边界结论</strong>：Hybrid mf=0.6 可服务至<strong>2M</strong>，4M被拒(输入超过KV池)。Dense-Match 仅1M，为Hybrid的1/2。Dense-Ref 512K即到顶。失败类型=请求被拒(SGLang HTTP 200+1 token,非OOM非超时)。本次无TIMED-OUT类型。</div>")
 
     # Warmup correction
     h.append("<h2>附: Warmup 归因修正</h2>")
@@ -225,12 +221,12 @@ def generate_report():
 
     # Methodology
     h.append("<h2>方法学</h2>")
-    h.append("<div class='info'>硬件: H100 80GB x8(.29), 每模型独占1GPU(TP=1)。软件: SGLang 0.5.9+flashinfer 0.6.3+bf16(vllm env,与训练env隔离)。<br>公平口径: 同mem-frac=0.6/同backend/WARMUP=1/REPEATS=3(中位数)/同prompt(tokenizer精确计数)。<br>高ctx: ctx>1M仅bs=1/REPEATS=1; Dense ctx>=512K仅bs=1。timeout: max(600s,ctx/1000)封顶1800s。<br>数据完整性: SGLang输入超max_total_num_tokens时返回HTTP 200+1token(非错误),已通过token计数校验检测并标记server_rejected。所有数字实测,无估算。'—'=不可服务/未测/被拒。<br>Hybrid mf=0.75: --disable-cuda-graph释放~10.85GB。decode不可与mf=0.6直接对比(CUDA graph影响decode极大,prefill不受影响)。<br>Dense-Match权重: 随机初始化(torch.randn x 0.02),仅速度/显存基准。<br>Dense-Match mf=0.6 1M数据已确认(prefill=2,351,decode=64.9,VRAM=59.04)。2M数据runner进行中。</div>")
+    h.append("<div class='info'>硬件: H100 80GB x8(.29), 每模型独占1GPU(TP=1)。软件: SGLang 0.5.9+flashinfer 0.6.3+bf16(vllm env,与训练env隔离)。<br>公平口径: 同mem-frac=0.6/同backend/WARMUP=1/REPEATS=3(中位数)/同prompt(tokenizer精确计数)。<br>高ctx: ctx>1M仅bs=1/REPEATS=1; Dense ctx>=512K仅bs=1。timeout: max(600s,ctx/1000)封顶1800s。<br>数据完整性: SGLang输入超max_total_num_tokens时返回HTTP 200+1token(非错误),已通过token计数校验检测并标记server_rejected。所有数字实测,无估算。'—'=不可服务/未测/被拒。<br>Hybrid mf=0.75: --disable-cuda-graph释放~10.85GB。decode不可与mf=0.6直接对比(CUDA graph影响decode极大,prefill不受影响)。<br>Dense-Match权重: 随机初始化(torch.randn x 0.02),仅速度/显存基准。<br>Dense-Match mf=0.6: 1M可服务(prefill=2,351,decode=64.9,VRAM=59.04), 2M不可服务(输入>max_total_num_tokens~1.23M)。</div>")
 
     # Conclusions
     h.append("<h2>结论</h2>")
-    h.append("<div class='success'><strong>1. Hybrid prefill优势显著且随ctx扩大</strong>: 128K 2.40x, 256K 3.67x, 512K 5.19x。52层SSM O(n)线性扫描 vs 36层Attn O(n^2)。<br><strong>2. Hybrid decode优势扩大</strong>: 128K 1.38x, 256K 1.65x, 512K 2.03x。SSM decode O(1) vs Attn decode O(n) KV读取。<br><strong>3. Hybrid显存恒定</strong>: ~73.5GB不随ctx变化(SSM O(1)), Dense显存随ctx线性增长(KV O(n))。<br><strong>4. Hybrid可服务2M上下文</strong>, Dense-Match仅512K-1M, Dense-Ref仅512K。Hybrid长上下文能力是Dense的2-4倍。</div>")
-    h.append("<div class='note'><strong>5. Hybrid代价</strong>: 52层SSM float32状态占较多显存, mf=0.85时OOM(无法用CUDA graph)。固定显存开销换取O(1)计算复杂度和O(1)显存增长。<br><strong>6. 局限性</strong>: Dense-Match权重随机初始化; Hybrid用--disable-cuda-graph(decode可能偏慢); Dense-Match mf=0.6 2M数据runner进行中(1M已确认可服务)。</div>")
+    h.append("<div class='success'><strong>1. Hybrid prefill优势显著且随ctx扩大</strong>: 128K 2.40x, 256K 3.67x, 512K 5.19x。52层SSM O(n)线性扫描 vs 36层Attn O(n^2)。<br><strong>2. Hybrid decode优势扩大</strong>: 128K 1.38x, 256K 1.65x, 512K 2.03x。SSM decode O(1) vs Attn decode O(n) KV读取。<br><strong>3. Hybrid显存恒定</strong>: ~73.5GB不随ctx变化(SSM O(1)), Dense显存随ctx线性增长(KV O(n))。<br><strong>4. Hybrid可服务2M上下文</strong>, Dense-Match仅1M, Dense-Ref仅512K。Hybrid长上下文能力是Dense-Match的2倍。</div>")
+    h.append("<div class='note'><strong>5. Hybrid代价</strong>: 52层SSM float32状态占较多显存, mf=0.85时OOM(无法用CUDA graph)。固定显存开销换取O(1)计算复杂度和O(1)显存增长。<br><strong>6. 局限性</strong>: Dense-Match权重随机初始化; Hybrid用--disable-cuda-graph(decode可能偏慢); Dense-Match mf=0.6 2M不可服务(1M已确认可服务, 2M输入>max_total_num_tokens~1.23M)。</div>")
 
     h.append(f"<footer>P-9.11-F · BaiZe ISEDA 2027 · {now} · 数据全部实测,无估算无外推</footer></body></html>")
     content = "\n".join(h)
