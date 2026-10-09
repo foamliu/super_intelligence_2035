@@ -54,3 +54,14 @@ Serial kimi eval: harness=claude-code model=kimi-k2.6-cloud
 [SETUP] sympy__sympy-14317 for claude-code
 
 [RUN] claude-code on sympy__sympy-14317 ...
+  [EVAL] claude-code on sympy__sympy-14317 ...
+  => sympy__sympy-14317 | claude-code | patch-but-failed
+
+############################################################
+# [6/12] claude-code x sympy__sympy-14396
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-14396 for claude-code
+
+[RUN] claude-code on sympy__sympy-14396 ...

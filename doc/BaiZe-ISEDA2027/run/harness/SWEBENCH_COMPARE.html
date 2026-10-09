@@ -26,7 +26,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 </style></head><body>
 <h1>SWE-bench Round-2 · 7x100 Harness Cross-Eval Report</h1>
 <p><span class="model-badge">Model: kimi-k2.6-cloud</span> &nbsp; Gateway: <code>http://agi-gateway.cxmt.com/cloud/v1</code></p>
-<p><strong>Generated:</strong> 2026-10-09 17:51 | <strong>Scope:</strong> 100 instances (30 R1 reused + 70 new) x 7 | <strong>Concurrency:</strong> R1=serial(1), R2=7-parallel</p>
+<p><strong>Generated:</strong> 2026-10-09 18:26 | <strong>Scope:</strong> 100 instances (30 R1 reused + 70 new) x 7 | <strong>Concurrency:</strong> R1=serial(1), R2=7-parallel</p>
 <div class="caliber">
 <h2>Caliber &amp; Concurrency Disclosure (口径与并发)</h2>
 <p><strong>Per operator instruction 2026-10-08 (7th) — read before interpreting numbers.</strong></p>
@@ -47,19 +47,19 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <tr><td class='hname'>cline-patched</td><td>95</td><td>32</td><td>63</td><td>0</td><td>5</td><td>32/95 (33.7%)</td><td>540s</td><td>✅ done</td></tr>
 <tr><td class='hname'>codex</td><td>91</td><td>34</td><td>57</td><td>0</td><td>9</td><td>34/91 (37.4%)</td><td>981s</td><td>✅ done</td></tr>
 <tr><td class='hname'>opencode</td><td>100</td><td>35</td><td>65</td><td>0</td><td>0</td><td>35/100 (35.0%)</td><td>449s</td><td>✅ done</td></tr>
-<tr><td class='hname'>claude-code</td><td>92</td><td>28</td><td>64</td><td>0</td><td>8</td><td>28/92 (30.4%)</td><td>596s</td><td>✅ done</td></tr>
+<tr><td class='hname'>claude-code</td><td>95</td><td>30</td><td>65</td><td>0</td><td>5</td><td>30/95 (31.6%)</td><td>601s</td><td>✅ done</td></tr>
 <tr><td class='hname'>deepseek-harness</td><td>94</td><td>25</td><td>69</td><td>0</td><td>6</td><td>25/94 (26.6%)</td><td>415s</td><td>✅ done</td></tr>
 <tr><td class='hname'>Pi</td><td>88</td><td>36</td><td>52</td><td>0</td><td>12</td><td>36/88 (40.9%)</td><td>441s</td><td>✅ done</td></tr>
 <tr><td class='hname'>Hermes Agent</td><td>100</td><td>36</td><td>64</td><td>0</td><td>0</td><td>36/100 (36.0%)</td><td>754s</td><td>✅ done</td></tr>
 </table>
-<div class="callout"><p><strong>Overall:</strong> 700 entries | 226 resolved</p></div>
+<div class="callout"><p><strong>Overall:</strong> 700 entries | 228 resolved</p></div>
 <h2>2. Monitoring: R1(30,serial) vs R2(new,parallel)</h2>
 <table>
 <tr><th>Harness</th><th>R1 Res/Sc</th><th>R1 Q</th><th>R1 B</th><th>R2 Res/Sc</th><th>R2 Q</th><th>R2 B</th></tr>
 <tr><td class='hname'>cline-patched</td><td>18/30</td><td>0</td><td>0</td><td>14/65</td><td>0</td><td>5</td></tr>
 <tr><td class='hname'>codex</td><td>14/30</td><td>0</td><td>0</td><td>20/61</td><td>0</td><td>9</td></tr>
 <tr><td class='hname'>opencode</td><td>15/30</td><td>0</td><td>0</td><td>20/70</td><td>0</td><td>0</td></tr>
-<tr><td class='hname'>claude-code</td><td>14/30</td><td>0</td><td>0</td><td>14/62</td><td>0</td><td>8</td></tr>
+<tr><td class='hname'>claude-code</td><td>14/30</td><td>0</td><td>0</td><td>16/65</td><td>0</td><td>5</td></tr>
 <tr><td class='hname'>deepseek-harness</td><td>12/30</td><td>0</td><td>0</td><td>13/64</td><td>0</td><td>6</td></tr>
 <tr><td class='hname'>Pi</td><td>18/30</td><td>0</td><td>0</td><td>18/58</td><td>0</td><td>12</td></tr>
 <tr><td class='hname'>Hermes Agent</td><td>16/30</td><td>0</td><td>0</td><td>20/70</td><td>0</td><td>0</td></tr>
@@ -160,9 +160,9 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <tr><td class='iid'>sympy__sympy-13971</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>588s</small></td><td class="failed">&#10006;<br><small>115s</small></td><td class="failed">&#10006;<br><small>61s</small></td><td class="resolved">&#10004;<br><small>81s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="resolved">&#10004;<br><small>178s</small></td></tr>
 <tr><td class='iid'>sympy__sympy-14024</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>770s</small></td><td class="failed">&#10006;<br><small>1658s</small></td><td class="failed">&#10006;<br><small>1001s</small></td><td class="failed">&#10006;<br><small>1475s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>1800s</small></td></tr>
 <tr><td class='iid'>sympy__sympy-14308</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>1360s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>341s</small></td><td class="failed">&#10006;<br><small>904s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>1800s</small></td></tr>
-<tr><td class='iid'>sympy__sympy-14317</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>524s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>312s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>905s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>1800s</small></td></tr>
-<tr><td class='iid'>sympy__sympy-14396</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="resolved">&#10004;<br><small>282s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="resolved">&#10004;<br><small>206s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>1s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="resolved">&#10004;<br><small>495s</small></td></tr>
-<tr><td class='iid'>sympy__sympy-14774</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="resolved">&#10004;<br><small>130s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="resolved">&#10004;<br><small>77s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="resolved">&#10004;<br><small>53s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="resolved">&#10004;<br><small>120s</small></td></tr>
+<tr><td class='iid'>sympy__sympy-14317</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>524s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>312s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>905s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>1800s</small></td></tr>
+<tr><td class='iid'>sympy__sympy-14396</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="resolved">&#10004;<br><small>282s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="resolved">&#10004;<br><small>206s</small></td><td class="resolved">&#10004;<br><small>498s</small></td><td class="failed">&#10006;<br><small>1s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="resolved">&#10004;<br><small>495s</small></td></tr>
+<tr><td class='iid'>sympy__sympy-14774</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="resolved">&#10004;<br><small>130s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="resolved">&#10004;<br><small>77s</small></td><td class="resolved">&#10004;<br><small>20s</small></td><td class="resolved">&#10004;<br><small>53s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="resolved">&#10004;<br><small>120s</small></td></tr>
 <tr><td class='iid'>sympy__sympy-14817</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>722s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="resolved">&#10004;<br><small>381s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>168s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>616s</small></td></tr>
 <tr><td class='iid'>sympy__sympy-15011</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="resolved">&#10004;<br><small>205s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="resolved">&#10004;<br><small>432s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>1800s</small></td></tr>
 <tr><td class='iid'>sympy__sympy-15308</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>140s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>238s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>274s</small></td></tr>
@@ -185,5 +185,5 @@ python3 gen_round2_compare.py</code></pre>
 </ol>
 </div>
 <hr>
-<p><small>BaiZe Harness H-A, Round-2 7x100, 2026-10-09 17:51. Model: kimi-k2.6-cloud. R1=serial(30), R2=parallel(70). Data: kimi_pilot_results.json (700 entries in 100-set).</small></p>
+<p><small>BaiZe Harness H-A, Round-2 7x100, 2026-10-09 18:26. Model: kimi-k2.6-cloud. R1=serial(30), R2=parallel(70). Data: kimi_pilot_results.json (700 entries in 100-set).</small></p>
 </body></html>
