@@ -1,6 +1,19 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-09（⚗️ 新实验：**Muon vs AdamW** · 用 `.12` 空档）· 用户直令 · 高优先
+
+> 用户问「还想试验 Muon vs Adam 对比，有空档吗」。**空档 = `.12`**：`.29` 今晚已满（对比基准 + 夜班 T1/T2/T3）；**`.12` 在 vision E2 评测结束后（~21:30–22:30 Oct9）空出 8×H100**。
+> ⚠️ **前置：Muon 未接入**（S3-03 当年因「实现风险」取消；脚本全 `--optimizer adam`；launcher 无 optimizer flag）⇒ 本任务 = **探针 → A/B**。
+
+**Step 0 可行性探针（≤1 GPU·h）**：核 `megatron-core 0.16.1` 是否支持 Muon（`--optimizer muon` / `dist_muon` + `--muon-*`）+ `pretrain_launcher.py` 能否透传 + **hybrid/Mamba provider 下能否跑**；小步 smoke（**2D 矩阵→Muon；1D/norm/embed/lm_head/SSM 标量→AdamW**）。**跑不通 ⇒ 如实报「不支持 + 卡在哪」即停**（🚫 不熬夜 debug）。
+
+**Step 1 A/B（2 臂）**：**AdamW**（基线 `--lr 1e-3` WSD）**vs Muon**（先 **3 点 LR 迷你扫描**定 Muon LR，避免"LR 未调=假负"）；**其余全同**（8 卡 / seq4096 / GBS1024 / 5000 步 / bf16 / seed1234），各 ≈4 GPU·h ⇒ **≈8 GPU·h**。**判据**：Muon `loss@5000 ≤ AdamW` 且 **Δloss > 0.07**（2σ；P-2 实测 σ=0.035）；报 grad-norm / 吞吐 / 显存。**诚实交代**：5000 步是**短地平线早期快照**（与全项目口径一致），非收敛结论。
+
+**纪律**：占 `.12` 须先在 `run/GPU12_ALLOC.md` 登记一行（vision 交还后）；🚫 不启动 P-8 · 🚫 不 kill watchdog/vision 进程 · 分阶段 commit（前缀 `pretrain Muon:`）。
+
+---
+
 ### 🆕 运维指令 · 2026-10-09（🌙 夜班填空：用 `.29` 剩余卡跑高价值实验 · **不含 P-8**）· 用户直令 · 最高优先
 
 > **用户令**：「20:45→明早 08:30 这个[对比]实验填不满 `.29` 的卡，还有其他高价值实验吗？」
