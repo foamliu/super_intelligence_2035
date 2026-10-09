@@ -2822,3 +2822,97 @@ port 8652:
 port 8654: 
 == DONE ==
 ```
+
+---
+
+## RUN_ID 26 · 2026-10-09 17:17:26 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 26 — KILL r4 process tree + verify clean + standby
+echo "== RUN_ID 26: kill r4 @ $(date '+%F %T') =="
+
+echo "== 1. BEFORE kill: r4 process tree =="
+ps -eo pid,ppid,etime,state,cmd | grep -E '3302534|run_cline_script|run_eval' | grep -v grep | cut -c1-140
+
+echo "== 2. KILL r4 main process (PID 3302534) + children =="
+kill -TERM 3302534 2>&1; echo "kill -TERM 3302534 exit=$?"
+sleep 3
+# kill any remaining children (run_eval.py etc.)
+pkill -TERM -P 3302534 2>&1; echo "pkill -P 3302534 exit=$?"
+sleep 2
+# force kill if still alive
+kill -KILL 3302534 2>&1; echo "kill -KILL 3302534 exit=$?"
+pkill -KILL -P 3302534 2>&1; echo "pkill -KILL -P 3302534 exit=$?"
+sleep 1
+
+echo "== 3. KILL any stray run_eval.py from this batch =="
+pkill -KILL -f 'run_eval.py.*2026_1009_094504' 2>&1; echo "pkill run_eval exit=$?"
+pkill -KILL -f 'run_cline_script.*ABL_full_r4' 2>&1; echo "pkill run_cline exit=$?"
+sleep 1
+
+echo "== 4. AFTER kill: verify no r4 processes remain =="
+ps -eo pid,ppid,etime,state,cmd | grep -E '3302534|run_cline_script|run_eval' | grep -v grep | cut -c1-140
+echo "(empty above = clean kill ✅)"
+
+echo "== 5. r4 log final state =="
+timeout 10 wc -l /tmp/ABL_full_r4.log 2>&1
+timeout 10 tail -5 /tmp/ABL_full_r4.log 2>&1
+
+echo "== 6. zhulong_loop still alive? (PID 3579323 - DO NOT KILL) =="
+ps -eo pid,ppid,etime,state,cmd | grep '3579323' | grep -v grep | cut -c1-140
+echo "(loop should be alive - we only killed eval, not loop)"
+
+echo "== 7. sandbox ports status =="
+for p in 8650 8651 8652 8654; do
+  echo -n "port $p: "; timeout 5 curl -s -o /dev/null -w '%{http_code}' http://10.129.32.75:$p 2>&1; echo
+done
+
+echo "== 8. pro-fp4 new key still 200? =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/cloud/v1/chat/completions \
+  -H "Authorization: Bearer 02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e" \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -3
+
+echo "== DONE — r4 killed, standby =="
+```
+
+**输出**
+```
+== RUN_ID 26: kill r4 @ 2026-10-09 17:17:26 ==
+== 1. BEFORE kill: r4 process tree ==
+ 611439 3302534    02:35:52 S /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python scripts/run_eval.py -g completed_code_generation_2026_1
+3302534       1    07:32:21 S bash scripts/run_cline_script.sh -p 8 -n
+== 2. KILL r4 main process (PID 3302534) + children ==
+kill -TERM 3302534 exit=0
+pkill -P 3302534 exit=1
+/tmp/tmp.eJQUwZuaB5: line 14: kill: (3302534) - No such process
+kill -KILL 3302534 exit=1
+pkill -KILL -P 3302534 exit=1
+== 3. KILL any stray run_eval.py from this batch ==
+pkill run_eval exit=0
+pkill run_cline exit=1
+== 4. AFTER kill: verify no r4 processes remain ==
+(empty above = clean kill ✅)
+== 5. r4 log final state ==
+225895 /tmp/ABL_full_r4.log
+2026-10-09 14:41:34,177 - INFO - 从 /nasdata/app.e0031982/code/EDA-Eval-Framework/../../../../home/app.e0031982/eda_code_eval/completed_code_generation_2026_1009_094504.jsonl 流式读取生成的代码...
+2026-10-09 14:41:34,178 - INFO - 开始组装脚本...
+组装脚本:   0%|          | 0/158 [00:00<?, ?it/s]组装脚本:  37%|███▋      | 59/158 [00:00<00:00, 557.60it/s]组装脚本:  84%|████████▍ | 133/158 [00:00<00:00, 661.38it/s]组装脚本: 100%|██████████| 158/158 [00:00<00:00, 703.69it/s]
+2026-10-09 14:41:34,410 - INFO - 成功组装并保存了 140 个脚本到 /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_solutions
+2026-10-09 14:41:34,410 - INFO - --- [阶段2] 完成：所有脚本已准备就绪，可以进行外部执行。 ---
+== 6. zhulong_loop still alive? (PID 3579323 - DO NOT KILL) ==
+1380774 3579323       09:44 S sleep 1800
+3579323       1  2-23:02:29 S bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+(loop should be alive - we only killed eval, not loop)
+== 7. sandbox ports status ==
+port 8650: 
+port 8651: 
+port 8652: 
+port 8654: 
+== 8. pro-fp4 new key still 200? ==
+{"id":"202610091717554fb1bf1646804e28","object":"chat.completion","created":1791537474,"model":"deepseek-v4-pro-260813","choices":[{"index":0,"message":{"role":"assistant","content":"","reasoning_content":"We need answer user: \"Say OK\". Need"},"finish_reason":"length"}],"usage":{"completion_tokens":10,"prompt_tokens":85,"total_tokens":95,"completion_tokens_details":{"reasoning_tokens":10},"prompt_tokens_details":{}}}
+HTTP=200 TIME=1.119255s SIZE=422B
+== DONE — r4 killed, standby ==
+```
