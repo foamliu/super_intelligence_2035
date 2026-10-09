@@ -4,7 +4,7 @@
 ## 🆕 最近操作（2026-10-09）
 
 ### 💡🔎📊🌙 pretrain 五连（2026-10-09）
-- **3 idea** → #251 已回报 · **公平盘点** → 待回报 · **📊 补测/中文对比** → **✅ GO** · **🌙 夜班填空** · **⚗️ Muon vs AdamW** → 已下发。
+- **3 idea** ✅ · **公平盘点** → 待回报 · **📊 补测/中文对比** → **✅ GO** · **🌙 夜班填空** · **⚗️ Muon vs AdamW** → 已下发。
 
 ### 📝 给 data 下发指令 ③（停②重头来 + 全量分词 + 放开并发）
 - **用户直令（2026-10-09③）**：Code/Math 停掉重头来（每个目录全切）· Ultra-FineWeb-L3 也加入分词 · 224 核别只开 8 并发（**放开**）· 核实 Ultra-FineWeb 197GB→.bin 2.0TB 是否合理 · **不要创造新名字**（只按原始 6 目录）。
@@ -80,7 +80,7 @@ WAITING: 0
 
 - [~] 🆕 **BaiZe-Hybrid（参数匹配 Dense）中文对比报告**：✅ #252 门控已交付 → **GO 放行**（修 warmup 归因 + ctx×2 到 hybrid OOM）→ 出 `..._fair_zh.html`。
 - [ ] 🆕 **夜班填空（2026-10-09）**：T1 长上下文(4096→8192) / T2 等参 Dense 训练侧 / T3 R3 配比迁移 A/B —— `.29` 剩余卡。
-- [ ] 🆕 **Muon vs AdamW**：`.12` 空档（~22:30）；**已更正：NeMo/Megatron 支持 Muon**（核 0.16.1 + `emerging_optimizers` + launcher 透传）⇒ 三步核查→A/B ~8 GPU·h。
+- [ ] 🆕 **Muon vs AdamW**：`.12` 空档（~22:30）；**已更正：NeMo/Megatron 支持 Muon** ⇒ 三步核查→A/B ~8 GPU·h。
 - [ ] 🆕 **BaiZe vs MiniCPM5「公平对比」盘点**：等 pretrain 回报 C1–C6 + 权威版本。
 - [x] **pretrain 3 idea 征询（2026-10-09）**：✅ 已回报 #251；待拍板「撤暂缓令 / 先做哪个」。
 - [ ] **P-9 结果** → 定 **P-8 的 seq(4096/8192) / MBS / 精度(bf16/FP8)**（含 16384 是否 OOM 的长上下文边界）。
@@ -200,7 +200,7 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
-- **⚗️ 2026-10-09（Muon vs AdamW 下发 + 更正）**——空档=`.12`（~22:30）。**已更正：NeMo/Megatron-Core 支持 Muon**（`core.optimizer.muon`/`emerging_optimizers`/`layer_wise_optimizer`；MBridge 有 Muon recipe；blog 2026-04 已实测）⇒ **非从零实现**，三步核查（版本/装 `emerging_optimizers`/launcher 透传）→ A/B（~8 GPU·h）。
+- **⚗️ 2026-10-09（Muon vs AdamW 下发 + 更正）**——空档=`.12`（~22:30）。**已更正：NeMo/Megatron 支持 Muon**（`core.optimizer.muon`/`emerging_optimizers`；MBridge 有 Muon recipe；blog 2026-04 实测）⇒ 非从零实现，三步核查→A/B（~8 GPU·h）。
 
 - **🌙 2026-10-09（夜班填空：`.29` 剩余卡跑 T1/T2/T3；不含 P-8）**——T1 长上下文适配 4096→8192（Stage ii 前置）/ T2 等参 Dense 训练侧 / T3 R3 配比迁移 A/B。
 
