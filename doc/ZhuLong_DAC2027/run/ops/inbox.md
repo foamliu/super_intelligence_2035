@@ -24,12 +24,70 @@
 
 ---
 
-## RUN_ID 24 — 🚨 诊断：agent 4.5h 无心跳，检查 loop/eval 进程 + r4 日志状态
+## RUN_ID 25 — 🛑 用户直令：沙盒坏了，停掉 r4（kill eval 进程树），待命
+
+**背景**：用户 2026-10-09 17:00 通知「沙盒坏了，下发指令把 r4 停下来，待命」。r4 grading 阶段异常缓慢（r1=8min/150脚本 vs r4=1h48m+/140脚本，13×+慢），log 沉默 2h+，沙盒性能退化/卡住。需 kill r4 整个进程树（主进程 + run_eval.py 子进程 + 所有 worker），确认干净退出，然后待命。
+
+```bash
+# RUN_ID 25 — KILL r4 process tree + verify clean + standby
+echo "== RUN_ID 25: kill r4 @ $(date '+%F %T') =="
+
+echo "== 1. BEFORE kill: r4 process tree =="
+ps -eo pid,ppid,etime,state,cmd | grep -E '3302534|run_cline_script|run_eval' | grep -v grep | cut -c1-140
+
+echo "== 2. KILL r4 main process (PID 3302534) + children =="
+kill -TERM 3302534 2>&1; echo "kill -TERM 3302534 exit=$?"
+sleep 3
+# kill any remaining children (run_eval.py etc.)
+pkill -TERM -P 3302534 2>&1; echo "pkill -P 3302534 exit=$?"
+sleep 2
+# force kill if still alive
+kill -KILL 3302534 2>&1; echo "kill -KILL 3302534 exit=$?"
+pkill -KILL -P 3302534 2>&1; echo "pkill -KILL -P 3302534 exit=$?"
+sleep 1
+
+echo "== 3. KILL any stray run_eval.py from this batch =="
+pkill -KILL -f 'run_eval.py.*2026_1009_094504' 2>&1; echo "pkill run_eval exit=$?"
+pkill -KILL -f 'run_cline_script.*ABL_full_r4' 2>&1; echo "pkill run_cline exit=$?"
+sleep 1
+
+echo "== 4. AFTER kill: verify no r4 processes remain =="
+ps -eo pid,ppid,etime,state,cmd | grep -E '3302534|run_cline_script|run_eval' | grep -v grep | cut -c1-140
+echo "(empty above = clean kill ✅)"
+
+echo "== 5. r4 log final state =="
+timeout 10 wc -l /tmp/ABL_full_r4.log 2>&1
+timeout 10 tail -5 /tmp/ABL_full_r4.log 2>&1
+
+echo "== 6. zhulong_loop still alive? (PID 3579323 - DO NOT KILL) =="
+ps -eo pid,ppid,etime,state,cmd | grep '3579323' | grep -v grep | cut -c1-140
+echo "(loop should be alive - we only killed eval, not loop)"
+
+echo "== 7. sandbox ports status =="
+for p in 8650 8651 8652 8654; do
+  echo -n "port $p: "; timeout 5 curl -s -o /dev/null -w '%{http_code}' http://10.129.32.75:$p 2>&1; echo
+done
+
+echo "== 8. pro-fp4 new key still 200? =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/cloud/v1/chat/completions \
+  -H "Authorization: Bearer 02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e" \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -3
+
+echo "== DONE — r4 killed, standby =="
+```
+
+> ⚠️ 本块 kill r4 eval 进程树（PID 3302534 + 子进程），**不 kill zhulong_loop（PID 3579323）**、不 kill ops relay、不 kill legacy loop。kill 后验证干净退出 + 沙盒/pro-fp4 状态。总超时 <60s。
+
+---
+
+## RUN_ID 24 — 🚨 诊断：agent 4.5h 无心跳，检查 loop/eval 进程 + r4 日志状态【已执行·已归档】
 
 **背景**：agent 自 09:54 commit 后无心跳，MEMORY/daily-memories 均未更新。r4 batch b2026_1009_094504 PID 3302534 仍标「运行中」，但已跑 4.5h（远超正常 30-40min）。需诊断 loop 进程是否存活、eval 是否卡住/已结束、r4 log 内容。
 
-```bash
-# RUN_ID 24 — read-only diagnostic: check loop/eval process status + r4 log
+```text
+# RUN_ID 24 — ARCHIVED (already executed, see outbox.md RUN_ID 24)
 echo "== RUN_ID 24: diagnostic @ $(date '+%F %T') =="
 
 echo "== 1. zhulong_loop process (PID 3579323 expected) =="
