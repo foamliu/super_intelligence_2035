@@ -2,11 +2,12 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **P-9.11-F 对比报告生成（2026-10-10 01:22, .29）** — mf=0.6 数据已收（hybrid 128K-2M, DM 128K-1M, DR 128K-512K）。DM mf=0.6 1M 刚落地（prefill=2,351,decode=64.9,VRAM=59.04）。DM mf=0.6 2M runner 进行中。报告 `report_pretrain_baize_vs_dense_fair_zh.html` 已生成（23.6KB, 5表+warmup修正+SVG）。
-- PHASE: **P-9.11-F 报告收尾**：① 5 表齐：公平口径/参数匹配/ctx×速度/显存容量/OOM边界。② warmup 归因已修正（281×→24.5×, 同bs=1 WARMUP=0 vs 1）。③ 1M prefill H/DM=6.64×, decode H/DM=2.46×。④ DM mf=0.6 2M 待测。⑤ 报告脚本 `p911f_generate_report_v2.py`。→ 下一步：等 2M 数据 → 重生成报告 → commit。
+- STAGE: **P-9.11-F 对比报告已完成并 commit（2026-10-10 02:00, .29）** — 报告 `report_pretrain_baize_vs_dense_fair_zh.html` 已更新（21.9KB, 5表+SVG）。关键修正：① DM mf=0.6 2M **不可服务**（输入>max_total_num_tokens~1.23M, 此前误标"待测"）。② 架构优势 = **2×**（Hybrid 2M vs DM 1M, 此前误报 4×）。③ VRAM(128K) DM mf=0.6 = 59.02GB（修正自 52.36, 非标准服务器配置）。④ DM 128K bs=1/bs=8 基准数据已入库（prefill=16,385.6/130,205.2, decode=223.7/9.8, 3 runs each）。commit eb675dc8, push ✅。
+- PHASE: **P-9.11-F 对比报告 ✅ 完成** → 下一步：**Muon vs AdamW A/B 实验**。方案：smoke test `--optimizer muon` vs `--optimizer adamw`, 各 1000 steps, GBS=16, seq=4096, bf16, 同 seed → 对比 loss 曲线。Muon 已在 `bridge_compat.py` 中接线（`optimizer="muon"` → `get_megatron_muon_optimizer`）。
 - ERROR_COUNT: 0
 - 轮询状态：30min 长轮询。3 GPU 占用（hybrid GPU0 mf=0.75 / DM GPU1 mf=0.85 / DR GPU2 mf=0.85）。**P-8 暂缓令未撤**。📦 体积：MEMORY≈30KB ≤32KB ✅。🚫绝不 kill watchdog loop
-- 🩺 **本唤醒推进 = P-9.11-F 对比报告生成（2026-10-10 01:22, .29）**：① DM mf=0.6 1M 数据落地（prefill=2,351,decode=64.9,VRAM=59.04），确认 Dense-Match 可服务至 1M。② 生成 `p911f_generate_report_v2.py` + `p911f_check_results.py`。③ 报告 `report_pretrain_baize_vs_dense_fair_zh.html` 生成（23.6KB, 5表+warmup修正+3SVG）。④ warmup 归因修正：281×（bs1 vs bs8, 混变量）→ 24.5×（同bs=1, WARMUP=0 vs 1）。⑤ DM mf=0.6 2M runner 进行中。→ 下一步：等 2M → 重生成报告 → commit。
+- 🩺 **本唤醒推进 = P-9.11-F 报告修正+commit（2026-10-10 02:00, .29）**：① DM 128K mf=0.6 bs=1/bs=8 基准完成（3 runs each, GPU0 确认）。② 发现 DM mf=0.6 可服务至 1M（prefill=2,351, decode=64.9），2M **不可服务**（max_total_num_tokens~1.23M < 2M）。③ 报告 `p911f_generate_report_v2.py` 修正：OOM 边界表 DM 2M "待测"→"不可服务"、架构优势 4×→2×、VRAM(128K) 52.36→59.02、max_total ~2.4M→~1.23M。④ commit eb675dc8 + push ✅。⑤ `.gitignore` 添加 `hf_checkpoints/`（4.2GB）。→ 下一步：Muon vs AdamW A/B 实验。
+> 📦 **[已归档] #252 流水（2026-10-10 01:22, P-9.11-F 报告生成）→ daily-memories/2026-10-10.md；结论：DM 1M 数据落地, 报告 v2 生成(23.6KB/5表/SVG), warmup 修正 281×→24.5×, DM 2M 待测。需要时再读。**
 > 📦 **[已归档] #251 流水（2026-10-09 19:45, 3个实验idea交付）→ daily-memories/2026-10-09.md；结论：3 idea按价值排序交付(Idea1=P-8彩排续跑), 建议「立即起P-8」。需要时再读。**
 > 📦 **[已归档] #249 流水（2026-10-09 18:27, R3报告再确认）→ daily-memories/2026-10-09.md；结论：报告已存在+commit 00682e58+push, 8节/8内联SVG/10表/零外链。需要时再读。**
 > 📦 **[已归档] #248 流水（2026-10-09 17:53, R3报告再确认）→ daily-memories/2026-10-09.md；结论：报告已存在+commit 00682e58+push, 8节/8内联SVG/10表/零外链。需要时再读。**
