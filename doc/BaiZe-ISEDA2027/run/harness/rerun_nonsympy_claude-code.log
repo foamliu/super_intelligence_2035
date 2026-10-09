@@ -1,0 +1,12 @@
+  [RESUME] Skipping 76 completed for claude-code
+Serial kimi eval: harness=claude-code model=kimi-k2.6-cloud
+  Total=12 Pending=12 Skip=76 Concurrency=1
+
+############################################################
+# [1/12] claude-code x django__django-12284
+############################################################
+
+============================================================
+[SETUP] django__django-12284 for claude-code
+
+[RUN] claude-code on django__django-12284 ...

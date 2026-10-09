@@ -5,10 +5,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A ROUND-2 7×100 MONITORING (hermes 87/100, 13 rem) + SERIAL RE-RUN QUEUED (rerun_blocked_serial.sh waiting for hermes)
-已完成:       R209 SWEBENCH_COMPARE.html refreshed (57658B, 687/700, 193 resolved) · R208 rerun_blocked_serial.sh launched + git_clone_or_fetch fixed · 口径与并发 section ✅ · trace report in doc root ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
-当前动作:     R209: Hermes 87/100 (13 rem, all sympy, on sympy__sympy-13895 ~16min in). 6/7 harnesses EXITED. rerun_blocked_serial.sh (PID 3079993) waiting for hermes → clean workdirs → serial re-run 88 blocked. SWEBENCH_COMPARE.html refreshed (57658B). Resolve rates (scored, 100-set): pi 39.1%(69) > codex 37.4%(91) > hermes 35.6%(87) > opencode 35.0%(100) > cline 29.9%(87) > dsh 24.7%(89) > claude-code 23.7%(76). Total resolved=193.
-下一步:       ① Hermes finishes ~13:00 → rerun_blocked_serial.sh auto-starts serial re-run of 88 blocked (cline=13, codex=9, claude-code=24, dsh=11, pi=31). ② After re-run: refresh SWEBENCH_COMPARE.html → final 7×100 table. ③ Final report with complete data.
+PHASE:        H-A ROUND-2 7×100 BLOCKED RE-RUN (Phase 1 non-sympy RUNNING + hermes 88/100 finishing)
+已完成:       R210 optimized re-run launched (Phase 1 non-sympy=44 running, Phase 3 sympy=44 after hermes) · R209 SWEBENCH_COMPARE.html (57686B, 688/700, 193 resolved) · 口径与并发 section ✅ · trace report in doc root ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
+当前动作:     R210: Killed old rerun_blocked_serial.sh → launched rerun_blocked_optimized.sh (PID 260306, ppid=1). Phase 1: non-sympy blocked re-run STARTED (claude-code 12 django instances running now). Hermes 88/100 (12 rem, all sympy, on sympy__sympy-13915 ~25min in). 6/7 harnesses EXITED. SWEBENCH_COMPARE.html refreshed (57686B, 688/700, 193 resolved). Resolve rates (scored): pi 39.1%(69) > codex 37.4%(91) > hermes 35.6%(87) > opencode 35.0%(100) > cline 29.9%(87) > dsh 24.7%(89) > claude-code 23.7%(76).
+下一步:       ① Phase 1 (non-sympy 44 blocked) runs ~8h parallel with hermes → hermes finishes ~12:30 → Phase 3 (sympy 44 blocked) starts → ~8h more. ② After all 88 re-run: refresh SWEBENCH_COMPARE.html → final 7×100 table. ③ Final report with complete data.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -35,7 +35,7 @@ ERROR_COUNT:  0
 |:--|:--|:--|:--|
 | **quota_blocked** | 0/210 (0%) | 0/687 (0%) | ✅ **NO gateway pollution** |
 | **timeout** | 0 (codex 2) | minimal (codex 3, claude-code 1 astropy) | ✅ 正常 |
-| **workdir_blocked** ⚠️NEW | **0/210 (0%)** | **88/687 (12.8%)** | ⚠️ **PARALLEL POLLUTION (workdir)** — **FIX QUEUED (rerun_blocked_serial.sh waiting)** |
+| **workdir_blocked** ⚠️NEW | **0/210 (0%)** | **88/688 (12.8%)** | ⚠️ **PARALLEL POLLUTION (workdir)** — **FIX IN PROGRESS (rerun_blocked_optimized.sh: Phase 1 non-sympy=44 running, Phase 3 sympy=44 after hermes)** |
 | **no-patch (patch_applied=False)** | **0/210 (0%)** | **较高** (non-django/sympy repos) | ⚠️ eval env limitation |
 
 **⚠️ 新发现：workdir git-checkout 冲突 = 并行污染（R207 首次披露）**：
@@ -43,7 +43,7 @@ ERROR_COUNT:  0
 2. **根因**：7 个 harness 共享同一 repo workdir（如 `/dev/shm/harness_work/workdirs/django_django`），当 harness A 修改文件后 harness B 尝试 `git checkout` 到不同 commit 时失败（"Your local changes would be overwritten"）。
 3. **影响**：pi 受影响最大（31 blocked，仅 69/100 实际运行），claude-code 次之（24 blocked，76/100）。opencode 未受影响（0 blocked，100/100）。
 4. **对 resolve rate 的影响**：blocked 实例不计入 scored 分母，所以 rate 不被拉低；但**覆盖率降低**意味着 rate 基于更小样本。
-5. **修复计划**：hermes 完成后，清理 workdirs + 串行重跑 88 个 blocked 实例。**R208 已启动 `rerun_blocked_serial.sh`（setsid+nohup）**：等待 hermes 完成 → 清理所有 workdirs → 串行重跑 88 blocked。同时已修复 `git_clone_or_fetch` 添加 `git reset --hard HEAD` + `git clean -fd`（防止未来 checkout 冲突）。
+5. **修复计划（R210 优化版）**：hermes 的 12 个剩余实例全是 sympy → **44 个非 sympy blocked 可立即与 hermes 并行重跑**（不同 workdir 无冲突），**44 个 sympy blocked 等 hermes 完成后串行重跑**。R210 已 kill 旧 `rerun_blocked_serial.sh` → 启动 `rerun_blocked_optimized.sh`（PID 260306, ppid=1）：Phase 1 非 sympy=44 正在跑（claude-code 12 django 优先），Phase 3 sympy=44 等 hermes。预计总时长 ~16h（vs 旧方案 18h，省 ~2h hermes 等待时间）。`git_clone_or_fetch` 已含 `git reset --hard HEAD` + `git clean -fd`（逐实例清理，防止 checkout 冲突）。
 
 **🔬 关键发现：R2 resolve-rate 下降 = 实例集组成偏差，NOT 并行污染**：
 1. **R1 = 仅 django(15) + sympy(15)** → 两个最易 repo（codex 300-full: django 29%, sympy 8%）
@@ -196,4 +196,5 @@ ERROR_COUNT:  0
 - 2026-10-09 07:39 —— **第二百零六轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
 - 2026-10-09 08:13 —— **第二百零七轮** —— 🔄 Round-2 monitor + ⚠️ WORKDIR-BLOCKED DISCOVERY: opencode COMPLETED 100/100✅(35.0%). 6/7 harnesses EXITED, only hermes running (83/100, 17 rem). ⚠️ NEW: 88 workdir-blocked (ALL R2/parallel, 0 R1/serial) — git checkout conflicts from shared workdirs in 7-way parallel. Blocked: pi=31, claude-code=24, cline=13, dsh=11, codex=9, opencode=0, hermes=0. Resolve rates (scored): pi 39.1%(69) > codex 37.4%(91) > hermes 36.1%(83) > opencode 35.0%(100) > cline 29.9%(87) > dsh 24.7%(89) > claude-code 23.7%(76). SWEBENCH_COMPARE.html refreshed (57546B, 683/700, 192 resolved). quota_blocked=0 → NO gateway pollution ✅. BUT workdir_blocked=88 → ⚠️ PARALLEL POLLUTION (infra). ⑦ deliverables: 口径与并发 section updated ✅ / trace report in doc root ✅ / SWEBENCH_COMPARE 含 blk column ✅. Plan: hermes done → clean workdirs → serial re-run 88 blocked → final 7×100. → commit+push. 📦 体积：TASK=32870B(32.1KB ✓) / MEMORY=~27.7KB(27.1KB ✓)（归档 R196/R198/R200/R201/R202/R206 ~3.5KB → daily）。
 - 2026-10-09 09:04 —— **第二百零八轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
-- 2026-10-09 09:40 —— **第二百零九轮** —— 🔄 Round-2 monitor: Hermes 87/100 (13 rem, all sympy, on sympy__sympy-13895 ~16min in). 6/7 harnesses EXITED. rerun_blocked_serial.sh (PID 3079993) still waiting for hermes. SWEBENCH_COMPARE.html refreshed (57658B, 687/700 in-scope, 193 resolved). Resolve rates (scored, 100-set): pi 39.1%(69) > codex 37.4%(91) > hermes 35.6%(87) > opencode 35.0%(100) > cline 29.9%(87) > dsh 24.7%(89) > claude-code 23.7%(76). quota_blocked=0 → NO gateway pollution ✅. ⑦ deliverables verified: 口径与并发 section ✅ / trace report in doc root (38307B) ✅ / 复用-新跑 markers ✅ / monitoring table ✅. Hermes ETA ~13:00 (13 × ~660s). → commit+push. 📦 体积：TASK=32870B(32.1KB ✓) / MEMORY=~29KB(28.3KB ✓)（归档 R208 ~0.8KB → daily）。
+- 2026-10-09 09:40 —— **第二百零九轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
+- 2026-10-09 10:22 —— **第二百一十轮** —— 🚀 OPTIMIZED BLOCKED RE-RUN: Killed old rerun_blocked_serial.sh (PID 3079993, was just waiting for hermes) → created + launched rerun_blocked_optimized.sh (PID 260306, ppid=1, setsid detached). **Key optimization**: hermes's 12 remaining = ALL sympy → 44 non-sympy blocked (django/matplotlib/sklearn/sphinx) can re-run NOW in parallel with hermes (different workdirs, no conflict). 44 sympy blocked wait for hermes (Phase 3). Split: non-sympy = claude-code 12 + cline 8 + dsh 5 + pi 19 = 44; sympy = claude-code 12 + cline 5 + codex 9 + dsh 6 + pi 12 = 44. Phase 1 STARTED (claude-code 12 django running). Hermes 88/100 (12 rem, on sympy__sympy-13915 ~25min). SWEBENCH_COMPARE.html refreshed (57686B, 688/700, 193 resolved). 口径与并发 section updated with R210 optimization. ETA: Phase 1 ~8h (parallel hermes), Phase 3 ~8h after hermes → total ~16h (vs 18h old plan). → commit+push. 📦 体积：TASK=32870B(32.1KB ✓) / MEMORY=~29.5KB(28.8KB ✓)（归档 R208/R209 ~1.5KB → daily）。

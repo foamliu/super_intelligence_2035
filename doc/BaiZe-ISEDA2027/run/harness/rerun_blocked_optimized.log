@@ -1,0 +1,17 @@
+[Fri Oct  9 10:21:56 AM CST 2026] === Optimized blocked re-run: Phase 1 (non-sympy) + Phase 3 (sympy after hermes) ===
+[Fri Oct  9 10:21:56 AM CST 2026] Blocked split:
+  Non-sympy (Phase 1, starts now):
+    claude-code: 12
+    cline-patched: 8
+    deepseek-harness: 5
+    pi: 19
+    TOTAL: 44
+  Sympy (Phase 3, after hermes):
+    claude-code: 12
+    cline-patched: 5
+    codex: 9
+    deepseek-harness: 6
+    pi: 12
+    TOTAL: 44
+[Fri Oct  9 10:21:56 AM CST 2026] === Phase 1: Non-sympy blocked re-run (parallel with hermes) ===
+[Fri Oct  9 10:21:57 AM CST 2026] Phase 1: Re-running claude-code: 12 non-sympy blocked (serial)...
