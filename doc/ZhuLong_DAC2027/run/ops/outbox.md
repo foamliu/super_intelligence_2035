@@ -2148,3 +2148,100 @@ hfeg0tedaap02
 /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:100:                cp "${CLI_DATA_DIR}/settings/models.json" "${worker_dir}/data/settings/" 2>/dev/null || true
 == DONE ==
 ```
+
+---
+
+## RUN_ID 22 · 2026-10-09 08:27:10 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 21 — read-only: eval-side cline invocation + hook install (for config-dir isolation)
+GP=/nasdata/app.e0031982/code/eda_fastmcp
+echo "== 0. TIME =="; timeout 10 date '+%F %T'; timeout 10 hostname
+echo "== 1. run_cli.sh: hook + cline + config refs =="
+timeout 15 grep -nE 'seed_cline_hooks|cline/hooks|PreToolUse|--config|CLINE_CONFIG_DIR|--data-dir|--hooks-dir' "$GP/scripts/run_cli.sh" 2>/dev/null | head -40 | cut -c1-190
+echo "== 2. run_cli.sh: cline invocation lines =="
+timeout 15 grep -nE '(^|[^-])cline ' "$GP/scripts/run_cli.sh" 2>/dev/null | head -20 | cut -c1-190
+echo "== 3. run_cline_script.sh: cline/config/hook refs =="
+timeout 15 grep -nE 'cline|--config|CLINE_CONFIG_DIR|PreToolUse|hooks|run_cli\.sh' "$GP/scripts/run_cline_script.sh" 2>/dev/null | head -30 | cut -c1-190
+echo "== 4. which scripts mention cline or PreToolUse =="
+timeout 20 grep -rlnE '(^|[^-])cline |PreToolUse' "$GP/scripts" 2>/dev/null | head -20 | cut -c1-160
+echo "== 5. eval auth / model refs =="
+timeout 15 grep -nE 'cline auth|models\.json|providers\.json|openAiBaseUrl|MODEL=|CLINE_MODEL' "$GP/scripts/run_cli.sh" "$GP/scripts/run_cline_script.sh" 2>/dev/null | head -20 | cut -c1-190
+echo "== DONE =="
+```
+
+**输出**
+```
+== 0. TIME ==
+2026-10-09 08:27:10
+hfeg0tedaap02
+== 1. run_cli.sh: hook + cline + config refs ==
+95:            # cline 3.0 额外配置（--data-dir 创建空 settings，需手动复制）
+121:# 部署 denylist hook 到 Cline 默认 hooks 目录 (~/.cline/hooks)。
+122:# cline 3.0.51 的 hook 发现跟随 --config（默认 ~/.cline），即 <config-dir>/hooks；
+123:# --hooks-dir 只设置 CLINE_HOOKS_DIR 环境变量、不被 resolveHooksConfigSearchPaths
+124:# 消费，故必须部署到 ~/.cline/hooks/ 才能生效。源码放 scripts/cline_hooks/ 版本受控。
+125:seed_cline_hooks() {
+126:    local src="${SCRIPT_DIR}/cline_hooks/PreToolUse"
+131:    local dst="${HOME}/.cline/hooks/PreToolUse"
+135:    print_info "已部署沙盒 hook 到 ${HOME}/.cline/hooks/"
+138:seed_cline_hooks
+208:            data_dir_flag="--data-dir ${CLI_ISOLATION_DIR}/worker_${worker_slot}/data"
+285:        # cline 3.0 不用 CLINE_DIR，改为 execute_task 中通过 --data-dir 传递
+366:rm -f "${HOME}/.cline/hooks/PreToolUse"
+367:print_info "已移除沙盒 hook (${HOME}/.cline/hooks/PreToolUse)"
+== 2. run_cli.sh: cline invocation lines ==
+15:# CLI 命令 (由 CLI_AGENT 环境变量控制: cline | zhulong)
+67:            # cline 3.0：清理 sessions 和 db
+95:            # cline 3.0 额外配置（--data-dir 创建空 settings，需手动复制）
+122:# cline 3.0.51 的 hook 发现跟随 --config（默认 ~/.cline），即 <config-dir>/hooks；
+192:    # 为 cline 创建 ws 空 workspace：已存在则删除重建，确保 agent 从空目录开始、
+205:        # cline 3.0：默认 act+auto-approve，无需 -y -a
+285:        # cline 3.0 不用 CLINE_DIR，改为 execute_task 中通过 --data-dir 传递
+365:# 生成结束后移除沙盒 hook，避免影响宿主其它 cline 使用（hook 仅评测期生效）
+== 3. run_cline_script.sh: cline/config/hook refs ==
+4:# 执行器: cline / zhulong (由 CLI_AGENT 环境变量控制)
+22:# CLI 执行器选择: cline (默认) | zhulong
+23:export CLI_AGENT=${CLI_AGENT:-cline}
+44:readonly CLI_SCRIPT="${SCRIPT_DIR}/run_cli.sh"
+48:readonly FORMAT_OUTPUT_SCRIPT="pyAether-eval/script/format_cline_cli_output.py"
+294:    # 导出环境变量供 run_cli.sh 使用
+358:        _step_copy_trace_cline "$trace_dst"
+370:    # 从 cline task 目录提取 benchmark task ID（如 EDA-Eval-PyAether-007）
+418:        trace_src="$HOME/.cline/data/tasks"
+422:                local cline_id=$(basename "$task_dir")
+423:                local resolved_id=$(resolve_benchmark_task_id "$task_dir" "$cline_id")
+426:                if [[ "$resolved_id" != "$cline_id" ]]; then
+443:                local cline_id=$(basename "$task_dir")
+444:                local resolved_id=$(resolve_benchmark_task_id "$task_dir" "$cline_id")
+447:                if [[ "$resolved_id" != "$cline_id" ]]; then
+461:# --- cline 3.0 trace 收集 ---
+463:_step_copy_trace_cline() {
+468:    # 从 cline 3.0 session 中解析 benchmark task ID
+470:    resolve_benchmark_task_id_cline() {
+499:        local sessions_dir="$HOME/.cline/data/sessions"
+504:                local resolved_id=$(resolve_benchmark_task_id_cline "$msg_file")
+531:                local resolved_id=$(resolve_benchmark_task_id_cline "$msg_file")
+547:        print_warning "未找到 cline session trace 文件，跳过"
+549:        print_success "cline trace 拷贝完成: ${copied} 个对话记录 (其中 ${renamed} 个重命名为 benchmark ID) -> ${trace_dst}"
+633:    run_python_script "scripts/sediment/evaluate_skills.py" "--skills-dir=$HOME/.cline/skills" "--layer" "1" "--block" || true
+644:    run_python_script "scripts/sediment/evaluate_skills.py" "--skills-dir=$HOME/.cline/skills" "--prune" || true
+== 4. which scripts mention cline or PreToolUse ==
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/README.md
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script_skill.sh
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/trace_reader.py
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/__pycache__/set_s2_phi.cpython-312.pyc
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/__pycache__/trace_phi_meta.cpython-312.pyc
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script_tcl.sh
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/cline_hooks/PreToolUse
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/cline_hooks/__pycache__/PreToolUsecpython-312.pyc
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/trace_phi_meta.py
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/set_s2_phi.py
+== 5. eval auth / model refs ==
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:99:                cp "${CLI_DATA_DIR}/settings/providers.json" "${worker_dir}/data/settings/" 2>/dev/null || true
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh:100:                cp "${CLI_DATA_DIR}/settings/models.json" "${worker_dir}/data/settings/" 2>/dev/null || true
+== DONE ==
+```
