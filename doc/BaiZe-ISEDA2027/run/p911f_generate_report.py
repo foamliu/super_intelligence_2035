@@ -170,7 +170,7 @@ def generate_report():
     h.append("<tr><td>0.75*</td><td>3,792,700 (~3.8M)</td><td>2M (bs=1)</td><td>*--disable-cuda-graph，4M仍超max_total_num_tokens</td></tr>")
     h.append("<tr><td>0.85</td><td colspan='2' style='color:#e74c3c'>OOM — SSM float32状态占72GB + CUDA graph缓冲区不足</td><td>SSM状态显存开销</td></tr>")
     h.append("<tr><td rowspan='2'>Dense-Match 2.229B</td><td>0.6</td><td>1,233,460 (~1.2M)</td><td>512K (bs=1实测)</td><td>36层Dense Attn KV线性增长</td></tr>")
-    h.append("<tr><td>0.85</td><td>待确认</td><td>1M (bs=1, 服务器ctx上限)</td><td>服务器context_length=1M</td></tr>")
+    h.append("<tr><td>0.85</td><td>1,805,689 (~1.8M)</td><td>1M (bs=1, 服务器ctx上限)</td><td>服务器context_length=1M</td></tr>")
     h.append("<tr><td rowspan='2'>Dense-Ref 2.512B</td><td>0.6</td><td>1,050,035 (~1.05M)</td><td>512K (bs=1实测)</td><td>42层Dense Attn，KV更大</td></tr>")
     h.append("<tr><td>0.85</td><td>1,540,517 (~1.5M)</td><td>512K (服务器ctx上限)</td><td>服务器context_length=512K</td></tr></table>")
     h.append("<div class='info'><strong>架构优势</strong>：Hybrid 56层中仅4层使用Attention，SSM层状态固定大小。在相同GPU(A100 80GB)上，Hybrid可服务<strong>2M上下文</strong>，是Dense-Match的<strong>4倍</strong>、Dense-Ref的<strong>4倍</strong>。<br><strong>SSM显存代价</strong>：Hybrid的52层Mamba2 SSM状态以float32存储，占用~72GB显存。mf=0.85时CUDA graph缓冲区OOM；mf=0.75需禁用CUDA graph(--disable-cuda-graph)以释放10.85GB——这是Hybrid架构的已知trade-off。<br><strong>mf=0.75 vs 0.6</strong>：禁用CUDA graph后max_total_num_tokens从2.98M升至3.79M（+27%），prefill吞吐不变（~39K tok/s），但decode吞吐因kernel launch开销下降~6×（53 vs 310 tok/s）。</div>")
