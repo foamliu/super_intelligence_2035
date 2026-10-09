@@ -1,0 +1,65 @@
+  [RESUME] Skipping 89 completed for deepseek-harness
+Serial kimi eval: harness=deepseek-harness model=kimi-k2.6-cloud
+  Total=5 Pending=5 Skip=89 Concurrency=1
+
+############################################################
+# [1/5] deepseek-harness x django__django-12184
+############################################################
+
+============================================================
+[SETUP] django__django-12184 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-12184 ...
+  [EVAL] deepseek-harness on django__django-12184 ...
+  => django__django-12184 | deepseek-harness | resolved
+
+############################################################
+# [2/5] deepseek-harness x django__django-12284
+############################################################
+
+============================================================
+[SETUP] django__django-12284 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-12284 ...
+  [EVAL] deepseek-harness on django__django-12284 ...
+  => django__django-12284 | deepseek-harness | patch-but-failed
+
+############################################################
+# [3/5] deepseek-harness x django__django-12286
+############################################################
+
+============================================================
+[SETUP] django__django-12286 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-12286 ...
+  [EVAL] deepseek-harness on django__django-12286 ...
+  => django__django-12286 | deepseek-harness | resolved
+
+############################################################
+# [4/5] deepseek-harness x django__django-12589
+############################################################
+
+============================================================
+[SETUP] django__django-12589 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-12589 ...
+  [EVAL] deepseek-harness on django__django-12589 ...
+  => django__django-12589 | deepseek-harness | patch-but-failed
+
+############################################################
+# [5/5] deepseek-harness x django__django-12708
+############################################################
+
+============================================================
+[SETUP] django__django-12708 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-12708 ...
+  [EVAL] deepseek-harness on django__django-12708 ...
+  => django__django-12708 | deepseek-harness | resolved
+
+============================================================
+SUMMARY: deepseek-harness x kimi-k2.6-cloud
+============================================================
+  resolved: 25/100 (25.0%)
+  patch-but-failed: 69/100 (69.0%)
+  blocked: 6/100 (6.0%)

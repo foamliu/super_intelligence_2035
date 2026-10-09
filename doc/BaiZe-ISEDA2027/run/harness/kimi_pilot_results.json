@@ -13716,11 +13716,32 @@
     "harness": "pi",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdocs/howto/deployment/checklist.txt\n\tdocs/ref/settings.txt\n\tdocs/releases/3.0.txt\nPlease commit your changes or stas"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdocs/howto/deployment/checklist.txt\n\tdocs/ref/settings.txt\n\tdocs/releases/3.0.txt\nPlease commit your changes or stas",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 1131.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11797.json",
+      "stdout_tail": "nstance_id=django__django-11797\n[run_single] base_commit=3346b78a8a872286a245d1e77ef4718fc5e6be1a\n[run_single] ps_len=756\n[run_single] git reset --hard 3346b78a8a872286a245d1e77ef4718fc5e6be1a\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=1130.3s ==\n[run_single] model_patch: 1672 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11797.json\n[run_single] cleanup: git reset --hard 3346b78a8a872286a245d1e77ef4718fc5e6be1a\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 38,
+        "p2p_total": 38
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "django__django-11815",
@@ -13761,11 +13782,32 @@
     "harness": "pi",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdocs/howto/deployment/checklist.txt\n\tdocs/ref/settings.txt\n\tdocs/releases/3.0.txt\n\ttests/file_storage/tests.py\n\ttest"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdocs/howto/deployment/checklist.txt\n\tdocs/ref/settings.txt\n\tdocs/releases/3.0.txt\n\ttests/file_storage/tests.py\n\ttest",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 473.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11815.json",
+      "stdout_tail": "nstance_id=django__django-11815\n[run_single] base_commit=e02f67ef2d03d48128e7a118bf75f0418e24e8ac\n[run_single] ps_len=1601\n[run_single] git reset --hard e02f67ef2d03d48128e7a118bf75f0418e24e8ac\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=473.1s ==\n[run_single] model_patch: 5539 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11815.json\n[run_single] cleanup: git reset --hard e02f67ef2d03d48128e7a118bf75f0418e24e8ac\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 44,
+        "p2p_total": 44
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "django__django-11848",
@@ -13872,11 +13914,32 @@
     "harness": "pi",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/conf/global_settings.py\n\tdocs/howto/deployment/checklist.txt\n\tdocs/ref/settings.txt\n\tdocs/releases/3.0.txt\n\tt"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/conf/global_settings.py\n\tdocs/howto/deployment/checklist.txt\n\tdocs/ref/settings.txt\n\tdocs/releases/3.0.txt\n\tt",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 334.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11848.json",
+      "stdout_tail": "instance_id=django__django-11848\n[run_single] base_commit=f0adf3b9b7a19cdee05368ff0c0c2d087f011180\n[run_single] ps_len=626\n[run_single] git reset --hard f0adf3b9b7a19cdee05368ff0c0c2d087f011180\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=333.9s ==\n[run_single] model_patch: 3133 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_django__django-11848.json\n[run_single] cleanup: git reset --hard f0adf3b9b7a19cdee05368ff0c0c2d087f011180\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 43,
+        "p2p_total": 43
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "django__django-10914",
@@ -17112,11 +17175,32 @@
     "harness": "deepseek-harness",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/migrations/autodetector.py\n\tdjango/utils/http.py\n\ttests/migrations/test_autodetector.py\nPlease commit your"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tdjango/db/migrations/autodetector.py\n\tdjango/utils/http.py\n\ttests/migrations/test_autodetector.py\nPlease commit your",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 338.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-12708.json",
+      "stdout_tail": "gle] base_commit=447980e72ac01da1594dd3373a03ba40b7ee6f80\n[run_single] ps_len=959\n[run_single] git reset --hard 447980e72ac01da1594dd3373a03ba40b7ee6f80\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=338.2s ==\n[run_single] model_patch: 752 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_django__django-12708.json\n[run_single] cleanup: git reset --hard 447980e72ac01da1594dd3373a03ba40b7ee6f80\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 101,
+        "p2p_total": 101
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "django__django-12747",
@@ -25949,6 +26033,39 @@
         "f2p_total": 1,
         "p2p_pass": 8,
         "p2p_total": 8
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "sympy__sympy-15346",
+    "repo": "sympy/sympy",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 1430.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_sympy__sympy-15346.json",
+      "stdout_tail": "id=sympy__sympy-15346\n[run_single] base_commit=9ef28fba5b4d6d0168237c9c005a550e6dc27d81\n[run_single] ps_len=1159\n[run_single] git reset --hard 9ef28fba5b4d6d0168237c9c005a550e6dc27d81\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=1430.1s ==\n[run_single] model_patch: 561 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_sympy__sympy-15346.json\n[run_single] cleanup: git reset --hard 9ef28fba5b4d6d0168237c9c005a550e6dc27d81\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 22,
+        "p2p_total": 22
       }
     },
     "classification": "resolved"
