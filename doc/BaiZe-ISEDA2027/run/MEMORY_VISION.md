@@ -4,10 +4,13 @@ WAITING: 1
 
 ## 状态头
 
+> 🔁 **2026-10-09 晚（运维直令 · 最高优先）**：scaling E1/E2 的 **schedule 公平性**被复核推翻 —— 旧两臂 `--lr 3e-3 --warmup 20` 在 **187,101 步**下 warmup 仅 **0.01%**（该配方原为 **30k 短跑**设计）⇒ **「Bigger is WORSE (Δlp=−5.59pp)」不可信、作废重做**。**新任务：`BAIZE_VISION_TASK.md` 顶部 `2026-10-09⑨`**（`warmup=2000` / `lr=5e-4` / **cosine** / `min_lr=5e-5`；两臂**必须同一冻结数据快照**；输出 `scaling_E{1,2}fair_ov2_w{512,768}_d30_p16_224` **不覆盖旧结果**；旧报告加「⛔ 结论已被取代」横幅）。
+> 🔴 **注意**：`r9_train.py` **现在不支持 cosine**（`lr_at` = warmup 后恒定）⇒ **先加 `--scheduler {const,cosine}` + `--min-lr`（默认值不变）并打印 lr 四点自检**，再开全量；`smoke_cos` 需预检两臂 `total_shards=` 一致。
+
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ **🔬 Scaling ALL DONE — E1(w512,126.78M) vs E2(w768,284.54M), 同AIMv2/同187101步/bs512. Δlp=−5.59pp (Bigger is WORSE)** — E1: ProtB=29.35±0.00%, ProtA=19.70%. E2: ProtB=23.76±0.04%, ProtA=15.59%. Both no collapse (C1<0.5, C2_gap>0, C4=OK). ✅ HTML report finalized(~26KB). ✅ EXPERIMENTS_VISION §7 results added. |
-| WAITING | 1（🔬 scaling 实验全部完成 ✅ — E1 ProtB=29.35% E2 ProtB=23.76% Δ=−5.59pp「更大模型更差」与R9/R10一致. HTML报告+EXPERIMENTS_VISION已更新. 待 commit+push 后去睡） |
+| PHASE | ✅ **🔬 Scaling E1/E2 旧结论已作废（schedule 不公平）→ 🔁 公平重跑令待执行** — 旧: E1(w512,126.78M) vs E2(w768,284.54M), 同AIMv2/同187101步/bs512, Δlp=−5.59pp。**⚠️ 该 Δ 建立在 `--lr 3e-3 --warmup 20`（187k 步 ⇒ warmup 0.01%，近等于无）之上，无法归因于「规模」** ⇒ 按 `BAIZE_VISION_TASK.md` 2026-10-09⑨ 重跑：`warmup=2000`/`lr=5e-4`/cosine/`min_lr=5e-5`、两臂同数据、新目录 `scaling_E{1,2}fair_*`。**下一步：先给 `r9_train.py` 加 cosine 支持 + `smoke_cos` 预检 → E1fair → E2fair → 双协议 eval → 新报告 + 旧报告加取代横幅。** |
+| WAITING | 1（🔁 **scaling 公平重跑令已下发、待执行** —— 旧 Δlp=−5.59pp「更大模型更差」因 `3e-3/warmup 20`@187k 步 schedule 不公平而**作废**；按 `BAIZE_VISION_TASK.md` 2026-10-09⑨ 重跑 `5e-4/2000/cosine/5e-5`、两臂同数据快照、新目录 `scaling_E{1,2}fair_*`） |
 | ERROR_COUNT | 8（①~⑤ 同前 ⑥ AIMv2.forward() return_patch修复 ⑦ E1 DataLoader bus error@step131490 ⑧ **step-count mismatch caught**: GPIC grew 6233→6754 tar between E1/E2 launches; E2 would train 6.8% longer. Fixed by explicit `--steps 187101`. Also: sympy 1.5.1 incompatible with torch 2.8.0 → fixed by copying sympy 1.14.0 from vllm conda env） |
 | BUDGET_USED | R2–R12 ≈215 + R12b(106.4) + lp bridge(5.8) + mask-ratio(78.4+0.5) + weight-ratio(~65.4+0.5) + ④ AIMv2 AR Arm B(2.1) + Arm B-hybrid(~24) ≈ **累计 ~498 GPU·h** + scaling E1(~2.1h×8=~17 GPU·h) + E2(~11.4h×8=~91 GPU·h) + evals(~3h×1 GPU) ≈ **~609 GPU·h** |
 | 更新 | **2026-10-09 20:42（ALL EVALS DONE）**: ✅ E2 ProtB eval DONE@20:29: lp=23.76±0.04% (seeds 0/1/2: 23.74/23.82/23.73). ✅ E2 ProtA DONE: lp=15.59%. ✅ E1 ProtA re-run DONE@20:41 by e2_post_watcher.sh: lp=19.70%. ✅ **Δlp(ProtB)=23.76−29.35=−5.59pp → 「Bigger is WORSE」(Δ≤−1.5pp, σ=0.04≪|Δ|)**. ✅ Protocol A confirms: Δ(ProtA)=15.59−19.70=−4.11pp same direction. ✅ HTML report updated (all placeholders filled, ~26KB). ✅ EXPERIMENTS_VISION.md §7 results section added (training summary, eval results, judgment, fairness table). 📦 体积：MEMORY=29.2KB / TASK=31.9KB（均≤32KB✅） |
@@ -185,7 +188,10 @@ WAITING: 1
 
 - `vision/r12_throughput_bench.sh`（bs 扫描）+ `r12_throughput_bench_128_256.sh` + `r12_throughput_bench_nw.sh`
 - 日志：`/tmp/bench_bs{64,128,256}.log` + `/tmp/bench_nw{12,16}.log`
+
 ## 本唤醒流水
+
+- [2026-10-09 晚 · 运维] 🔁 **scaling 公平性重跑令下发（用户直令）**：复核 `report_vision_aimv2_scaling.html` §11 复现命令 ⇒ 两臂 `--lr 3e-3 --warmup 20` 在 **187,101 步**下 warmup = **20/187101 = 0.01%**（原为 30k 短跑配方，见 `ARCHIVE_OPERATOR_VISION.md` 2026-10-05 全量训练块）⇒ 「Bigger is WORSE (Δlp=−5.59pp)」**不能归因于规模，作废重做**。已下发 `BAIZE_VISION_TASK.md` 顶部 **2026-10-09⑨**：① 配方 `warmup=2000` / `lr=5e-4` / **cosine** / `min_lr=5e-5`，其余（bs512/seed1234/224/p16/d30/AIMv2/mratio0.6/`--steps 187101`）不动，唯一差异仍 `--width`；② **`r9_train.py` 必须新增 `--scheduler {const,cosine}` + `--min-lr`**（现 `lr_at` 是 warmup 后恒定，写 `cosine` 也是假的），并打印 lr 四点自检入 `train.log`；③ **两臂同一冻结 tar 快照**（`snapshot_gpic` → `data_snapshot_20261009.txt`，`smoke_cos` 预检 `total_shards=` 两臂相同）；④ 新输出目录 `scaling_E{1,2}fair_ov2_w{512,768}_d30_p16_224`，**旧结果原地保留不覆盖**；⑤ 旧报告顶部加「⛔ 结论已被取代」横幅；⑥ 判据沿用 ⑤（±1.5pp / 3-seed σ / 单点≠scaling law）；⑦ 体积：TASK 32,179→29,520B（先把 2026-10-08⑥ 搬入 `ARCHIVE_OPERATOR_VISION.md` 并留指针），加 ⑨ 后 37,134B **超 32KB ⇒ 本块归档后需再滚**。`GPU12_ALLOC.md` 申请区+1 行、流水+1 行。**ETA ~14–18h 墙钟（`.12` 8 卡）。** ⚠️ 本块由运维代发（agent 只做 volume 搬迁，不改指令）。
 
 > 📦 15 条 R12b 巡检流水(10-06 12:33–23:57)已归档 → daily-memories-vision/2026-10-06.md（2026-10-07 13:00 滚动）
 > 📦 5 条 R12b 巡检#17-19 + 完成 + eval(10-07 00:33–03:07)已归档 → daily-memories-vision/2026-10-07.md（2026-10-08 03:23 滚动）

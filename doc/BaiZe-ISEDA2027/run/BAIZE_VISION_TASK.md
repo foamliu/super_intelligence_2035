@@ -7,71 +7,66 @@
 
 ---
 
-### 🆕 运维指令 · 2026-10-08⑥（⚙️ **E2 变更：作废「官方 OV2 L/14@336」臂 → 改用同族 w768/d30**）· **用户裁定** · **最高优先 —— 读本区请先读本块**
+### 🆕 运维指令 · 2026-10-09⑨（🔁 **公平性重跑：E1/E2 原结论作废重做 —— `warmup=2000` / `lr=5e-4` / cosine / `min_lr=5e-5`，两臂**必须同数据**）· **用户直令** · **最高优先 —— 读本区请先读本块**
 
-> **背景**：你在 `329bdf8d` 按 ⑤ 的**初版**做了 smoke（E2 = 官方 GELU ViT w1024/d24 / 304.2M / 336/p14 = **2347 img/s, ETA ~11.2h**）并写了预注册。**用户随后裁定：这条官方臂一次改了 4 个变量（参数量 / 结构 / patch / 分辨率），证明不了「模型规模」这个因果** ⇒ **E2 改为同族 `w768`**。
-> ⚠️ **⑤ 里「E2 = 官方 OV2 L/14@336（304M）」整段作废**；**本块优先于 ⑤**（⑤ 其余部分照旧有效）。
+> **背景（为什么要重跑）**：你交付的 `report_vision_aimv2_scaling.html` 结论是 **「bigger is worse」(Δlp = −5.59pp, 29.35% → 23.76%, Protocol B)**。运维复核 **§11 复现命令**后发现：**两臂的 `--lr 3e-3 --warmup 20` 完全相同**，而 E1 报告原文的 `--steps 187101` 意味着 warmup 只占 **20/187101 = 0.01%**；该 `3e-3 / warmup 20` 配方本是 **30k 短跑**设计（`ARchive_OPERATOR_VISION.md` §2026-10-05 全量训练块），**被原样搬到 187k 步长跑 + 更宽模型上**。⇒ **无法排除「E2 被这个近无 warmup 的高 lr schedule 系统性拖累」** ⇒ **现有 Δlp 不能归因于「规模」，原结论不安全。**
+> 🔑 **用户直令**：**把昨天的两个实验重跑一遍**，并按下面的配方与「**E1 用什么数据 E2 就用什么数据**」执行。
 
-**① 新的 E2（E1 完全不变）**
+**① 新配方（两臂**逐字**相同，唯一差异仍是 `--width`）**
 
-| | 塔 | 参数 | 结构 | 分辨率/patch | 图 token |
-|:--|:--|--:|:--|:--|--:|
-| **E1（不变）** | OV2 **w512/d30** | 126.78M | patch16 | 224 | 196 |
-| **E2（改）** | **同族 OV2 w768/d30**（`vision/models.py` 同一实现，**只把 `width` 512→768**，`heads`/`mlp_dim` 随 width 缩放） | **284.54M**（2.24×） | patch16 | 224 | 196 |
+| 轴 | 旧（作废） | **新（本块）** |
+|:--|:--|:--|
+| `--lr` | `3e-3` | **`5e-4`** |
+| `--warmup` | `20`（0.01%，近等于无） | **`2000`（≈1.07%）** |
+| 调度 | **恒定**（`r9_train.py:432` 阶跃后平走） | **cosine → `min_lr`** |
+| `min_lr` | 无此概念 | **`5e-5`**（= `--lr` 的 10%） |
+| 其余 | bs64×8=512 / seed 1234 / 224 / p16 / d30 / AIMv2 / mratio 0.6 / plw 1.0 / cw 1.0 / `--steps 187101` | **全部不动** |
+| `--width` | E1 `512` / E2 `768` | **E1 `512` / E2 `768`**（唯一差异，不得再引入第二处不同）|
 
-- 出处：`WIDTH_PARAMS`（实测 `sum(numel())`，`run/vision/r10_scaling2d.py:21-27`）= `768: 284_540_928`；同值见 `EXPERIMENTS_VISION_ROUND9.md:16-18`。
-- 🔑 **成本利好**：R9 实测 224/p16 下 **w768 吞吐 ≈ w512**（2978 vs 2938 img/s，NFS 受限）⇒ **新 E2 的 ETA ≈ E1**（远快于官方臂的 11.2h）。**请重跑一次 w768 smoke 确认**（几分钟）。
-- 🔴 **两臂仍必须从零训练**；其余（AIMv2 objective / 94.9M / 1 epoch / bs512 / lr / seed / 冻结文本塔 / 224 / p16）**一律不动**。
+**② 🔴 第一件事：`r9_train.py` 不支持 cosine —— 必须先加代码（否则你写 `--scheduler cosine` 也是假的）**
+- 现状：`run/vision/r9_train.py:432-434` `lr_at(s) = lr*(s/warmup) if s<warmup else lr` = **warmup 后恒定**；全仓唯一现成 cosine 实现在 `run/vision/train.py:55-61`（`base_lr`→`min_lr` 半余弦）与 `run/vision/lp_protocol_bridge.py:170-174`。
+- 要做：
+  1. `ap.add_argument('--scheduler', choices=['const','cosine'], default='const')` + `ap.add_argument('--min-lr', type=float, default=5e-5)`（**默认值保证旧命令零影响**）；
+  2. `lr_at` 改为：`s<warmup ⇒ lr*s/warmup`；否则 cosine 时 `min_lr + 0.5*(lr-min_lr)*(1+cos(pi*(s-warmup)/(steps-warmup)))`，`const` 时维持现状；**`steps` 用 `args.steps`（=187101，非剩余步数）**；
+  3. **把 lora 分支（`:436-438`）同步改**（本实验 `text_finetune` 默认关，但别留半截 bug）；
+  4. **`cosine` 分支起跑前打印 `lr@step0 / lr@warmup / lr@50% / lr@last` 四点自检**写进 `train.log`（这是本实验**最重要**的证据：证明曲线真的生效，别只信命令行）；
+  5. `py_compile` 后**用 `smoke_cos`（见 ③.1）验证 lr 轨迹**再开全量。
 
-**② 你要做的（按序）**
-1. **E1（w512）若已在跑 ⇒ 不要动它**（E1 口径前后一致，继续即可）。
-2. 🚨 **不要启动官方 304M 臂**；并**检查 `run_scaling_experiment.sh`（及任何 chain）里的 E2 段并改掉** —— **防止自动链跑到官方臂**（这是本次变更的主要风险）。
-3. **重跑 E2(w768) smoke** → 报实测 img/s 与 ETA。
-4. **改写预注册**（`EXPERIMENTS_VISION.md`）：E2 臂由「官方 304M@336」改为「同族 w768」，**注明这是 2026-10-08 用户裁定修订**（保留"改前/改后"各一行，**别抹掉历史**）。
-5. 开跑 E2 → 两臂各 1 epoch → Protocol B lp（3 seeds → mean±σ）→ C1–C4 → 公平表。
+**③ ③ 两臂**同一份数据**（用户原话：「**确保实验数据一致，E1 用什么数据 E2 就用什么数据**」）**
+1. **先把 tar 清单冻结成文件**（`run_scaling_experiment.sh:34-47` 现在是**启动时 `ls` 现算** ⇒ $GPIC_N 在 E1 与 E2 之间会变（E1 报告 §10 已记 6233→6754）；`r9_train.py:443-452` **原生支持**用 `.txt` 快照替代 glob）：
+   `bash run_scaling_experiment.sh snapshot_gpic` → 生成 `run/vision/data_snapshot_20261009.txt`（一行一个绝对 tar 路径）。
+2. **两臂都改成**：`--data "$SNAP,<cc12m_glob>,<amsh_glob>"`（CC12M/Amshaker 若不在增长可留 glob，但**在 train.log 的 `[start]` 行必须打印 `total_shards=` 与逐源条数** ⇒ 两臂必须**逐字相同**）；
+3. `--data-source mixed --caption-type all`、`--patch 16 --resolution 224 --loss aimv2 --mask-ratio 0.6 --patch-loss-weight 1.0 --contrast-weight 1.0` **两臂不动**；
+4. `--steps`：**两臂显式写同一个 `--steps 187101`**（不许让脚本用 `EPOCH_STEPS` 现算——那会把「数据变多」混进来）；
+5. **`smoke_cos` 含预检**：**比对两臂 `[start]` 行的 `total_shards=` 是否相同**，不同即停、如实报（不许「差不多」）。
 
-**③ 官方 304M 臂的处置**：你已做完 smoke（2347 img/s）与部分预注册 —— **不浪费**，列作**可选第三条臂（🚩 非本 claim 证据）**，**是否跑由运维/用户另定**；🚫 **不得**把它当作 E2 交付。
+**④ 第二条铁律：**🚫 不许覆盖旧结果**
+- **两个新输出目录**（旧 `scaling_E1_ov2_w512_d30_p16_224` / `scaling_E2_ov2_w768_d30_p16_224` 是**历史证据**，**原地保留**，🚫 不删 ckpt、🚫 清目录）：
+  `scaling_E1fair_ov2_w512_d30_p16_224` / `scaling_E2fair_ov2_w768_d30_p16_224`（`OUTROOT` 同）；
+- 日志另开：`/tmp/scaling_e1fair.log` / `/tmp/scaling_e2fair.log`；eval 日志 `/tmp/scaling_{e1fair,e2fair}_eval.log`；
+- **新目录的 `train.log` 里必须能定位到 `lr=` / `warmup=` / `min_lr=` / `scheduler=cosine` / `total_shards=`**（交付时逐条引用原文）。
 
-**④ 判据不变**：**Δlp = lp(E2_w768) − lp(E1)**；**≥ +1.5pp 支持** / |Δ| ≤ 1.5pp 不支持 / ≤ −1.5pp 反向；**同时报 3-seed σ**（σ>Δ 判「不可分辨」）；**单预算点不构成 scaling law**。
-**⑤ 交付不变**：`report_vision_aimv2_scaling.html` + `EXPERIMENTS_VISION` 新节；commit+push（前缀 `vision scaling: …`）+ 心跳 + `WAITING=1`；🚫 不 `git add -A`；🚫 不删 ckpt。
-> 📦 体积：加块后请自检 `wc -c`，>32KB 先归档已闭合块。
+**⑤ 执行顺序**
+1. 改 `r9_train.py`（②）+ 改脚本（③ `e1fair`/`e2fair`/`smoke_cos` 模式）；`py_compile` 两个文件；**先跑 `smoke_cos`（30 步 ×2 臂，几分钟）→ 报 lr 四点自检 + 两臂 shard 数**；
+2. **开跑 E1fair**（先跑它：它是新的**参照**）→ 报实测 img/s 与 ETA；
+3. E1fair 完成后**紧接 E2fair**（同脚本 chain，或 watcher）；两臂 `--steps` 一致；
+4. 两臂完成后 eval：**Protocol B（`--probe-full-train --seeds 0 1 2` → mean±σ）+ Protocol A**，**对旧两臂的 ckpt 不要重跑**；
+5. 占 `.12` 前在 `GPU12_ALLOC.md` 申请区**追加一行**（8 GPU，预计 2×~5.2h 训练 + ~3.5h eval）。
+
+**⑥ 判据（沿用 2026-10-08⑤，不新造规则）**：**Δlp = lp(E2fair) − lp(E1fair)**；**≥ +1.5pp 支持** / |Δ| ≤ 1.5pp 不支持 / **≤ −1.5pp 反向**；**必须同时报 3-seed σ**（σ>|Δ| 判「不可分辨」）；**单预算点不构成 scaling law**（照旧写进 Limitations）。
+- 🚨 **旧结论处置（硬要求）**：在 `report_vision_aimv2_scaling.html` **顶部加一条醒目的「⛔ 结论已被取代」横幅**（指向新报告），**不许静默改数字**；旧报告作为**「schedule 敏感性证据」**保留（附表：旧配方 `3e-3/20/const` vs 新配方 `5e-4/2000/cosine/5e-5` 的 lr 轨迹对比）；
+- 若新 Δlp 仍 ≤ −1.5pp ⇒ 才可写「在大 lr/short-budget 之外的**公平 schedule**下，更大模型仍更差」；若落入 ±1.5 ⇒ 写「**在该预算下两规模不可分辨**」（且必须与 R9/R10 的「数据受限区」结论并读）；若 ≥ +1.5 ⇒ 写「**原结论是 schedule 伪影**」。
+
+**⑦ 交付**：① `report_vision_scaling_fair.html`（or 在同报告内新开 §15「公平重跑」节，二选一，说明清楚）；② `EXPERIMENTS_VISION.md` 新节（**预注册在前、结果在后**，含 ②④ 的 lr 轨迹与两臂 `total_shards=` 原文）；③ `MEMORY_VISION.md`「scaling fair rerun」小节 + 心跳；④ commit+push（前缀 `vision scaling fair: …`）+ `WAITING=1`；🚫 不 `git add -A`。
+> ⏱️ **cost 估**：E1fair ≈ 5.2–5.7h（旧 E1 实测）＋ E2fair ≈ 5.2–9.1h（旧 E2 实测，NFS 波动）＋ eval ≈ 3.5h/2 臂 ⇒ **总计 ~14–18h 墙钟**（`.12` 8 卡）。**若 `.12` 被别的任务占用**：按 `GPU12_ALLOC.md` 优先序（vision 训练臂 > pretrain 推理评测）**先申请、不抢占**；等不到就**如实报「无卡未起」+ 脚本就绪**，别改配方凑合。
+> 📦 体积：本块加完请自检 `wc -c`，**>32KB 先把已闭合块搬 `ARCHIVE_OPERATOR_VISION.md`**（只搬迁、留指针）。
+
+---
+
+> 📦 **2026-10-08⑥（E2 变更：作废官方 OV2 L/14@336 臂 → 改用同族 w768/d30）已闭合归档** → `run/ARCHIVE_OPERATOR_VISION.md`「📦 归档：2026-10-08⑥ E2 变更」。**执行结果**：E1(w512) 未打断继续跑完；E2(w768/d30, 284.54M) 已跑完 187101 步 + eval；`run_scaling_experiment.sh` 已核验无官方 304M 臂残留；预注册已改写。**⚠️ 但该 E1/E2 配方的 lr/warmup 公平性已被 2026-10-09 复核定性问题 ⇒ 见下方最新块。**
 
 
-### 🆕 运维指令 · 2026-10-08⑤（🔬 **缩放对比实验：AIMv2 objective 下「更大模型 ⇒ 更高分」**）· **用户直令** · 最高优先
-
-> **用户原话（2026-10-08 晚）**：「安排 vision 做对比实验。实验数据：GPIC 6167 tar × 12,639 = 77.9M + CC12M 11.0M + Amshaker 5.95M ≈ **94.9M**。
-> **实验一**：模型使用现有模型（100 多 M 参数）；**实验二**：模型采用 OpenVision2 架构 `openvision2-vit-large-patch14-336-vision-only`（304M 参数）。
-> **实验目的**：证明在 **AIMv2-style dense objective** 下，更大的模型可以得到更高的分数（**LP Protocol B** 主流对齐）。」
-> ⚠️ **本块【升级 / 覆盖】2026-10-08④**：④ 的「1 epoch 估算」**仍须先交**（作为 ETA 报备），但**不再是终点 —— 现在是真跑**；④ 里「未批准不得起训练」一句**在本块范围内作废**。
-> 🟢 **资源**：`.12` 8×H100 现全空闲（你 #R14 已核验）；**先在 `GPU12_ALLOC.md` 登记**再开跑。
-
-**① 两臂（口径逐字一致，只差「塔」）**
-
-| | 塔 | 参数 | 结构 | 分辨率/patch | 图 token |
-|:--|:--|--:|:--|:--|--:|
-| **E1（实验一）** | 现用 `vision/models.py` 的 **OpenVision2 w512/d30** | **126.8M** | patch16（我们自研） | 224 | 196 |
-| **E2（实验二）** | **同族 OpenVision2 w768/d30**（`vision/models.py` 同一实现，**只把 `width` 512 → 768**；`heads`/`mlp_dim` 随 width 同步缩放） | **284.5M** | patch16（我们自研） | 224 | 196 |
-
-- **共同（不许动）**：**AIMv2 dense objective = BP-1**（`--loss aimv2`：双向 ViT + 随机掩码 `mask_ratio=0.6`，`contrast:patch = 1:1`，冻结 `clip-vit-large-patch14-336` 文本塔 768-d）；**同数据 = 上述 94.9M**（GPIC **6167** tar `all` + CC12M + Amshaker）；**同预算 = 1 epoch（94.9M 样本）**；同 optim/lr/seed/bs（沿用 R12b 生产配方：bs512 / 8 卡）。
-- 🔴 **两臂都「从零训练」**（随机初始化）。**只有「同 objective + 同数据 + 同预算 + 从零 + 只差宽度」才能把差异归因到「模型规模」**。⚠️ **若你判断用户其实想要「用官方预训练权重做初始化/冻结」⇒ 先停手、回报我确认**（那样只能证明「大预训练模型更强」，**证明不了本 claim**）。
-- **⚙️ 运维 2026-10-08 修订（用户裁定）**：E2 原写「官方 OV2 `L/14@336`（304M）」，但那样**同时改了 4 个变量**（参数量 / 结构 / patch / 分辨率）⇒ 用户同意**改用同族 `w768`**，**只差「宽度」一个轴**（属标准缩放轴）。**原「官方 336」臂若仍要，另作第三条臂再议**（那属 R13 的「官方 vs 自研」话题，非本 claim）。
-
-**② 评测**：**主指标 = IN-1k frozen-trunk lp top-1, Protocol B**（`vision/lp_protocol_bridge.py --protocol B --probe-full-train`，**3 seeds → mean ± σ**）；**辅报** Protocol A（与 R9–R14 对照）+ **坍缩判据 C1/C2/C4**；**必给公平表**：`params / 训练 token / 每步耗时 / 每样本耗时 / 峰值显存`（R13 先例）。
-**参照线（可选、🚩 非可比）**：官方 `...p14-336-vision-only` **预训练权重冻结** → Protocol B lp（R13 在 **224 变体**上已测 **79.81%**，可直接引用；若要 336 变体则补测，~1.2 GB 下载 + 纯评测）——**必须标「含大规模预训练，非可比」**。
-
-**③ 预注册判据（先写后测，不许事后改）**：**Δlp = lp(E2) − lp(E1)**（Protocol B 主指标）
-- **Δ ≥ +1.5 pp** ⇒ 支持「AIMv2 下**更大模型更优**」（推翻 R9/R10「小塔更优」在该 objective 下的适用性）；
-- **|Δ| ≤ 1.5 pp** ⇒ **不支持**；**Δ ≤ −1.5 pp** ⇒ 更大**反而更差**（数据受限区加宽仍负收益）。
-- ⚠️ 阈值 ±1.5 pp = 你自己的噪声带（`ROUND10 §1.5`）；**同时报 3-seed σ**，**σ > Δ 判「不可分辨」**。
-- ⚠️ **两点不构成 scaling law** —— 只报「单预算点上大模型是否更优」，**不得外推曲线**。
-
-**④ 顺序**：① `GPU12_ALLOC.md` 登记 8 卡 → ② **smoke test 测两臂吞吐、报 ETA** ⚠️ **R9 实测：同为 224/p16 时 w768 吞吐 ≈ w512**（2978.2 vs 2938.6 img/s，nw2，`EXPERIMENTS_VISION_ROUND9.md:16-18`）⇒ **两臂 ETA 应基本同量级**（以你本次 smoke 实测为准；若 w768 显著慢到总 ETA > 48h ⇒ 先回报再定「同步缩预算」）→ ③ 写预注册进 `EXPERIMENTS_VISION` → ④ 开跑。
-
-**⑤ 口径说明（写进报告）**：改用同族 w768 后，**E1 vs E2 只差「宽度」**（**126.78M → 284.54M = 2.24×**）；`width` 同时决定 hidden dim / heads / mlp_dim，是**标准模型缩放轴**，可直接作为「模型规模」的对照（报告里写明）。其余（objective / 数据 / 1 epoch / 优化器 / lr / seed / 分辨率 224 / patch 16 / 冻结文本塔）**全部相同**。⚠️ 仍须注明：**单预算点 × 单 seed 的 Δlp 不构成 scaling law**。
-
-**⑥ 交付**：`report_vision_aimv2_scaling.html`（house style，内联 SVG，零外链，≤200 KB）+ `EXPERIMENTS_VISION` 新增一节（预注册判据 / 两臂表 / Protocol A·B / C1–C4 / 混淆声明）。
-**收尾**：commit+push（前缀 `vision scaling: …`）+ 心跳 + `WAITING=1`；🚫 不 `git add -A`；🚫 不删 ckpt。
-> 📦 体积提醒：本块加入后 `BAIZE_VISION_TASK.md` ≈36 KB ⇒ **收尾前先归档已闭合旧块**（照「📉 体积维护规程」，只搬迁、留 1 行指针）。
+> 📦 **2026-10-08⑤（🔬 缩放对比实验：AIMv2 objective 下「更大模型 ⇒ 更高分」）已闭合归档** → `run/ARCHIVE_OPERATOR_VISION.md`「📦 归档：2026-10-08⑤ 缩放对比实验」。**执行结果**：E1(OV2 w512/d30, 126.78M) vs E2(同族 w768/d30, 284.54M)，同 AIMv2 objective / 同 187101 步 / bs512，Protocol B lp **29.35% vs 23.76%，Δlp = −5.59pp**（Protocol A 同向 −4.11pp）。⚠️ **该 Δ 建立在 `--lr 3e-3 --warmup 20`（187k 步下 warmup 仅 0.01%，近等于无 warmup）之上 ⇒ 公平性存疑，结论已作废，见本区顶部 2026-10-09⑨ 的公平重跑令。**
 
 
 ### 🆕 运维指令 · 2026-10-08④（📐 **回答：用「现有全部数据（含 GPIC 6167/8001）」训练 1 epoch 需要多久**）· **用户直问** · 高优先
