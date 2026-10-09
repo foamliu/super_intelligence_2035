@@ -2,11 +2,11 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **R3 收官报告已交付 #246（2026-10-09 16:10）** — `report_pretrain_r3_data_mix.html` 52.6KB 已生成并 commit(00682e58)+push ✅。#247–#249 为 loop 重触发：报告完好确认（8节/8内联SVG/10表/零外链/DB真实数据）。P-8 暂缓令未撤。全 8 GPU 空闲。等运维撤销暂缓令
-- PHASE: **R3 收官报告已交付 #246（2026-10-09 16:10, .29）**：运维指令(10-09 R3报告)已于 #246 执行完毕——`doc/BaiZe-ISEDA2027/report_pretrain_r3_data_mix.html` 52.6KB / 8节 / 8内联SVG / 10表 / 零外链 / DB真实数据。#247–#249 为 loop 重触发：确认报告已存在+已commit(00682e58)+已push(git 0/0)。data agent R3分词仍在进行(76/110活, .bin=2.8TB, ETA~22:00-02:00Oct10)。P-8 暂缓令未撤。全 8 GPU 空闲 ✅。⭐ 下次唤醒：查分词完成状态 → 等运维 P-8 启动令。
+- STAGE: **运维问答「3 个实验 idea」已交付 #251（2026-10-09 19:45）** — 3 个 idea 按价值排序写入 MEMORY 🗣️ 运维问答区。R3 报告 #246 ✅ 已交付。P-8 暂缓令未撤。全 8 GPU 空闲。等运维裁决
+- PHASE: **运维问答「3 个实验 idea」已交付 #251（2026-10-09 19:45, .29）**：运维指令(10-09 征询3 idea)已执行——3 idea（①P-8彩排续跑 ②P-8 44B下限档 ③R3配比迁移A/B）按价值排序写入 MEMORY「🗣️ 运维问答」区，每个含 6 项 + 一句话建议「立即起 P-8(Idea 1 方式)」。R3 报告 #246 ✅。data agent R3分词 49/110(ETA~23:00-03:00Oct10)。P-8 暂缓令未撤。全 8 GPU 空闲 ✅。⭐ 下次唤醒：等运维 P-8 裁决。
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。全 8 GPU 空闲（0 MiB/0%）✅。**P-8 暂缓令未撤**。📦 体积：TASK=28.2KB / MEMORY=22.3KB（均 ≤32KB ✅）。🚫绝不 kill watchdog loop
-- 🩺 **本唤醒推进 = #250（2026-10-09 19:03, .29）**：① git fetch → 0/0 ✅（无新运维指令; 工作区仅 harness 线 modified 文件, 非本线不碰）。② **R3 报告再确认**：`report_pretrain_r3_data_mix.html` 已于 #246 生成(53862B/52.6KB) + commit 00682e58 + push ✅。grep 核验：8 `<svg>` / 10 `<table>` / 8 节(s1–s8) / 零外链(8个http均为SVG xmlns命名空间) / 自包含 / 内联CSS。DB 确认：`run/mix_search_eval_r3.db` 存在 ✅。③ GPU 核验：全 8 GPU 0MiB/0% ✅（nvidia-smi 无 compute apps）。④ watchdog PID 1391466 ✅。⑤ 体积自检：TASK=28892B(28.2KB) / MEMORY=22991B(22.4KB) 均 ≤32KB ✅ 无需归档。→ 下一步：等运维 P-8 启动令。WAITING=1。git：本次 push。
+- 轮询状态：30min 长轮询。全 8 GPU 空闲（0 MiB/0%）✅。**P-8 暂缓令未撤**。📦 体积：TASK=30.5KB / MEMORY=28.0KB（均 ≤32KB ✅）。🚫绝不 kill watchdog loop
+- 🩺 **本唤醒推进 = #251（2026-10-09 19:45, .29）**：① git fetch → 发现新运维指令（commit e0d1356d「提 3 个实验 idea」征询）。② **执行运维指令**：读 r3_best_blend.txt / EXPERIMENTS R2/R3 / DATA_MIX_RECIPE §9.7 / xmodel-2.tex / P-5b/P-6②/P-9.7 结果 / data agent MEMORY_DATA → 提出 3 个 idea 按价值排序：**①P-8彩排续跑**(2B ckpt验证→无缝延至100B, 2.7h保险883 GPU·h) **②P-8 44B下限档**(Chinchilla最优, 2天拿可用基座) **③R3配比迁移A/B**(5B token验证代理→全模型迁移, 论文级结论)。一句话建议：**立即起 P-8（Idea 1 方式）**—数据全就位(web 524B✅/code 128.62B✅/math 170.74B✅, 均远超100B所需), 等=白浪费GPU。③ GPU 核验：全 8 GPU 0MiB/0% ✅。④ watchdog PID 1391466 ✅。⑤ 体积自检：TASK=31278B(30.5KB) / MEMORY=23134B(22.6KB) → 加 idea 后检查 ≤32KB。→ 下一步：等运维 P-8 裁决。WAITING=1。git：本次 push。
 > 📦 **[已归档] #249 流水（2026-10-09 18:27, R3报告再确认）→ daily-memories/2026-10-09.md；结论：报告已存在+commit 00682e58+push, 8节/8内联SVG/10表/零外链。需要时再读。**
 > 📦 **[已归档] #248 流水（2026-10-09 17:53, R3报告再确认）→ daily-memories/2026-10-09.md；结论：报告已存在+commit 00682e58+push, 8节/8内联SVG/10表/零外链。需要时再读。**
 > 📦 **[已归档] #247 流水（2026-10-09 17:18, R3报告确认）→ daily-memories/2026-10-09.md；结论：报告已存在+commit 00682e58+push, 8节/8内联SVG/10表/零外链。需要时再读。**
@@ -66,6 +66,87 @@ n> 📦 **[已归档] #142–#148 + Report 1-3 流水（2026-10-06 ~17:53 – 20
 
 
 ## [已归档] 第 102–107 次唤醒流水（P-9.9 巡检 + 收官 + P-9.10①sglang A/B）→ `daily-memories/2026-10-05.md`
+
+## 🗣️ 运维问答 · 2026-10-09（提 3 个实验 idea · 按价值从高到低排序）
+
+> **运维令**：提 3 个值得在 `.29` 空闲 8 卡上做的实验 idea，按价值排序，每个写全 6 项 + 一句话建议。
+> **纪律**：零 GPU（纯写作），依据贴 `路径:行号`，引用论文原文。
+
+---
+
+### Idea 1（最高价值）：P-8 彩排续跑 — 2B token 验证 ckpt → 无缝延至 100B
+
+**① 名称 + 一句话定位**：「P-8 彩排续跑」— 用 P-8 完全相同配置启动训练，在 ~2B token（~500 步）处存验证 ckpt，通过 4 项判据后无缝继续至 100B，**彩排即 P-8 的前 2B token — 零浪费 GPU 时间**。
+
+**② 为什么值得做**：
+- P-8 是 **4.6 天 / 883 GPU·h** 的单项最大投资（`BAIZE_PRETRAIN_2B_TASK.md` P-8 token 预算表：推荐档 100B ≈ 4.6 天）。
+- P-8 的完整配置（6 源 R3 blend + GBS=1024 + MBS=2 + WSD + seq=4096）**从未端到端跑过**：P-5b 用纯 L3 单源 + MBS=1（`EXPERIMENTS_PRETRAIN_2B_ROUND2.md:344-350`），P-9.7 只跑 1100 步 MBS=2 短测（`BAIZE_PRETRAIN_2B_TASK.md` P-8 recipe 表「实测吞吐 249K」行）。
+- Xmodel-2 在 1.5T token 正式训练前做了 400+ trial 配比搜索（`xmodel-2.tex:146`）— **大跑前做小验证是标准实践**。
+- 全 8 GPU 当前空闲（0 MiB/0%），每等 1h = 白浪费 ~0.5 GPU·day。
+
+**③ 预期成本**：~500 步 × 19.3s/步 ≈ **2.7h 墙钟 / ~21.5 GPU·h**（P-8 总量 883 GPU·h 的 **2.4%**）/ 不需新代码（用 `baize_p5b_train.sh` 改 blend 即可）/ 不解冻参数。
+
+**④ 可检验判据（先定后测）**：
+- **成功**：吞吐 ≥230K tok/s（P-9.7 实测 249K 的 -8% 容差）/ loss@2B ≈ 2.9±0.3（对齐 P-5b 2.6B milestone=2.9246, `EXPERIMENTS:376`）/ 0 NaN/skip / ckpt 保存+加载正常 → **继续至 100B**
+- **失败**：吞吐 <200K / loss 偏离 P-5b 曲线 >0.5 / NaN/OOM / ckpt 损坏 → **停止并 debug，只浪费 2.7h**
+
+**⑤ 风险/依赖/前置**：需运维撤销 P-8 暂缓令（10-02）；数据路径需确认（web=`data/mix_base/` 44 shards 524.43B ✅, code=`datasets/baize-data/text/code_s{0..14}` 128.62B ✅, math=`math_s{0..32}` 170.74B ✅ — **均远超 100B 所需**：stable 段 code 需 5.76B / math 需 3.96B, `DATA_MIX_RECIPE.md:2962-2976`）；blend 权重需按 R3 #8 写入 recipe（`r3_best_blend.txt:12-17`）。
+
+**⑥ 与谁对齐**：P-8 本体 / Stage (i) §4 / 论文 §4 training setup。
+
+---
+
+### Idea 2（次高价值）：P-8 44B Chinchilla 下限档 — 2 天拿到可用基座
+
+**① 名称 + 一句话定位**：「P-8 下限档」— 按 Chinchilla 最优（2.22B×20=44B token）跑 2 天，产出 Stage (ii) SFT/RL 可用的最小基座，之后可续训至 100B。
+
+**② 为什么值得做**：
+- P-6② scaling law 预测 55% Avg → ~55B token（R²=0.986, `EXPERIMENTS:1847`），**44B 预计 ~52% Avg** — 已超过 P-5b 20B ckpt 的 49.22%（`EXPERIMENTS:1829`）。
+- `BAIZE_PRETRAIN_2B_TASK.md` P-8 token 预算表明确列出「**下限 44B ≈ 2.0 天 ≈ 384 GPU·h**」。
+- 44B 模型可用于 **Stage (ii) SFT/RL 的 pipeline 验证**（不必等 100B 4.6 天）。
+- WSD 可重新调度：44B 跑完后再续训至 100B 也可（ckpt 兼容）。
+
+**③ 预期成本**：44B ÷ 249K tok/s = **~2.0 天 / ~384 GPU·h** / 不需新代码 / 不解冻参数。
+
+**④ 可检验判据**：
+- **成功**：final loss ≤ 1.95（P-5b 20B stable=1.977, `EXPERIMENTS:386`；44B 应更低）/ Avg ≥ 50%（P-6② 外推 50%@25B, `EXPERIMENTS:1846`）/ 0 NaN
+- **失败**：loss 不降反升 / Avg < 47%（低于 20B 水平）/ 发散
+
+**⑤ 风险/依赖/前置**：同 Idea 1（暂缓令 + 数据路径）；44B 可能不足以解锁复杂推理（A 实验显示 20B 时 6 集全贴地板, `EXPERIMENTS:1851`）；需重新计算 WSD 的 warmup/stable/decay 切分（44B 的 5%/85%/10%）。
+
+**⑥ 与谁对齐**：P-8 下限档 / Stage (ii) SFT·RL 基座 / 论文 §4 token budget。
+
+---
+
+### Idea 3（第三价值）：R3 配比迁移验证（5B token A/B：R3 #8 vs 先验 88:8:4）
+
+**① 名称 + 一句话定位**：「配比迁移 A/B」— 用 2.22B 全模型跑 5B token 对比 R3 best #8 vs 先验 88:8:4，验证「小模型配比可迁移到大模型」。
+
+**② 为什么值得做**：
+- ye2024datamixinglaws（`xmodel-2.tex:142` 引用）声称「小模型配比实验可迁移到大模型」— 但 R3 用的是 **18.36M 代理 + 1B token/trial**（`DATA_MIX_RECIPE.md:281`），**从未在 2.22B 全模型上验证**。
+- R3 landscape 极平坦（top-5 Δ=0.0053, `r3_best_blend.txt:35`）— 若全模型上也平坦，则「配比无需过度优化」结论更可靠。
+- 这是**论文可写的独立结论**：「We validate that data ratios found on an 18.36M proxy transfer to the 2.22B production model」。
+
+**③ 预期成本**：2 × 5B ÷ 249K ≈ **11h / ~88 GPU·h**（P-8 预算的 10%）/ 不需新代码（改 blend 权重）/ 不解冻参数。
+
+**④ 可检验判据**：
+- **R3 胜**：R3 #8 loss@5B ≤ 先验 88:8:4，且 lm_eval Avg ≥ 先验 → 代理可迁移 ✅
+- **平局**：|Δloss| < 0.03（P-2 的 σ=0.035 量级, `EXPERIMENTS:60`）→ 证实「landscape 平坦」
+- **先验胜**：R3 #8 loss 显著高于先验 → 代理不迁移（**重要负面发现**）
+
+**⑤ 风险/依赖/前置**：需暂缓令撤销；5B token = 1200 步，足够比较（P-5a GBS=1024@164M 仅 39 步 loss 7.78, `EXPERIMENTS:283`；5B 远超之）；两组需同 seed=1234；两组各 5B token 合计 ~88 GPU·h，若时间紧可只跑 2.5B/token（600 步, ~44 GPU·h）。
+
+**⑥ 与谁对齐**：R3 方法论 / 论文 §4 data mixing / `DATA_MIX_RECIPE.md` §9.7。
+
+---
+
+### ⭐ 一句话建议
+
+> **若运维此刻撤销 P-8 暂缓令，建议：立即起 P-8（Idea 1 方式：带 2B token 早期验证 ckpt）。**
+>
+> **理由**：R3 blend #8 全部 6 源数据已就位 — web 4 源 44 shards 524.43B ✅ / code 15 shards 128.62B ✅ / math 33 shards 170.74B ✅（`data/mix_base/` + `datasets/baize-data/text/`，均远超 100B P-8 stable 段所需 code 5.76B + math 3.96B）。剩余分词（15 code + 7 math + 39 L3）是**超量储备**，对 100B 预算无增益。全 8 GPU 空闲，每等 1h = 浪费 ~0.5 GPU·day。P-8 需 4.6 天，越早越好。Idea 1 的 2B ckpt 以 2.7h 为 883 GPU·h 投资上保险 — 若出问题只浪费 2.7h 而非 2+ 天。**等分词完成 = 纯粹浪费时间**（等来的额外数据 P-8 用不完）。
+
+---
 
 ## 关键笔记（运维常驻参考）
 - seq_length=**4094**（固定口径，非 4096）；改 seq 必须同时改 provider（recipe 已穿透）。
