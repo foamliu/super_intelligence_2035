@@ -26,7 +26,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 </style></head><body>
 <h1>SWE-bench Round-2 · 7x100 Harness Cross-Eval Report</h1>
 <p><span class="model-badge">Model: kimi-k2.6-cloud</span> &nbsp; Gateway: <code>http://agi-gateway.cxmt.com/cloud/v1</code></p>
-<p><strong>Generated:</strong> 2026-10-09 14:07 | <strong>Scope:</strong> 100 instances (30 R1 reused + 70 new) x 7 | <strong>Concurrency:</strong> R1=serial(1), R2=7-parallel</p>
+<p><strong>Generated:</strong> 2026-10-09 14:44 | <strong>Scope:</strong> 100 instances (30 R1 reused + 70 new) x 7 | <strong>Concurrency:</strong> R1=serial(1), R2=7-parallel</p>
 <div class="caliber">
 <h2>Caliber &amp; Concurrency Disclosure (口径与并发)</h2>
 <p><strong>Per operator instruction 2026-10-08 (7th) — read before interpreting numbers.</strong></p>
@@ -49,10 +49,10 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <tr><td class='hname'>opencode</td><td>100</td><td>35</td><td>65</td><td>0</td><td>0</td><td>35/100 (35.0%)</td><td>449s</td><td>✅ done</td></tr>
 <tr><td class='hname'>claude-code</td><td>88</td><td>27</td><td>61</td><td>0</td><td>12</td><td>27/88 (30.7%)</td><td>587s</td><td>✅ done</td></tr>
 <tr><td class='hname'>deepseek-harness</td><td>94</td><td>25</td><td>69</td><td>0</td><td>6</td><td>25/94 (26.6%)</td><td>415s</td><td>✅ done</td></tr>
-<tr><td class='hname'>Pi</td><td>72</td><td>29</td><td>43</td><td>0</td><td>28</td><td>29/72 (40.3%)</td><td>434s</td><td>✅ done</td></tr>
+<tr><td class='hname'>Pi</td><td>75</td><td>30</td><td>45</td><td>0</td><td>25</td><td>30/75 (40.0%)</td><td>440s</td><td>✅ done</td></tr>
 <tr><td class='hname'>Hermes Agent</td><td>100</td><td>36</td><td>64</td><td>0</td><td>0</td><td>36/100 (36.0%)</td><td>754s</td><td>✅ done</td></tr>
 </table>
-<div class="callout"><p><strong>Overall:</strong> 700 entries | 218 resolved</p></div>
+<div class="callout"><p><strong>Overall:</strong> 700 entries | 219 resolved</p></div>
 <h2>2. Monitoring: R1(30,serial) vs R2(new,parallel)</h2>
 <table>
 <tr><th>Harness</th><th>R1 Res/Sc</th><th>R1 Q</th><th>R1 B</th><th>R2 Res/Sc</th><th>R2 Q</th><th>R2 B</th></tr>
@@ -61,7 +61,7 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <tr><td class='hname'>opencode</td><td>15/30</td><td>0</td><td>0</td><td>20/70</td><td>0</td><td>0</td></tr>
 <tr><td class='hname'>claude-code</td><td>14/30</td><td>0</td><td>0</td><td>13/58</td><td>0</td><td>12</td></tr>
 <tr><td class='hname'>deepseek-harness</td><td>12/30</td><td>0</td><td>0</td><td>13/64</td><td>0</td><td>6</td></tr>
-<tr><td class='hname'>Pi</td><td>18/30</td><td>0</td><td>0</td><td>11/42</td><td>0</td><td>28</td></tr>
+<tr><td class='hname'>Pi</td><td>18/30</td><td>0</td><td>0</td><td>12/45</td><td>0</td><td>25</td></tr>
 <tr><td class='hname'>Hermes Agent</td><td>16/30</td><td>0</td><td>0</td><td>20/70</td><td>0</td><td>0</td></tr>
 </table>
 <h2>3. Instance-level Detail (100 x 7)</h2>
@@ -91,9 +91,9 @@ pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; ov
 <tr><td class='iid'>django__django-11848</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>512s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>558s</small></td><td class="failed">&#10006;<br><small>1091s</small></td><td class="failed">&#10006;<br><small>1190s</small></td><td class="resolved">&#10004;<br><small>334s</small></td><td class="failed">&#10006;<br><small>367s</small></td></tr>
 <tr><td class='iid'>django__django-11905</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>219s</small></td><td class="failed">&#10006;<br><small>405s</small></td><td class="failed">&#10006;<br><small>751s</small></td><td class="failed">&#10006;<br><small>1092s</small></td><td class="failed">&#10006;<br><small>1048s</small></td><td class="failed">&#10006;<br><small>1153s</small></td><td class="failed">&#10006;<br><small>549s</small></td></tr>
 <tr><td class='iid'>django__django-11910</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>528s</small></td><td class="resolved">&#10004;<br><small>1614s</small></td><td class="failed">&#10006;<br><small>895s</small></td><td class="failed">&#10006;<br><small>1800s</small></td><td class="failed">&#10006;<br><small>1435s</small></td><td class="failed">&#10006;<br><small>1639s</small></td><td class="failed">&#10006;<br><small>1801s</small></td></tr>
-<tr><td class='iid'>django__django-11964</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>1801s</small></td><td class="resolved">&#10004;<br><small>910s</small></td><td class="failed">&#10006;<br><small>1375s</small></td><td class="failed">&#10006;<br><small>729s</small></td><td class="failed">&#10006;<br><small>190s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>1801s</small></td></tr>
-<tr><td class='iid'>django__django-11999</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="resolved">&#10004;<br><small>496s</small></td><td class="resolved">&#10004;<br><small>929s</small></td><td class="failed">&#10006;<br><small>506s</small></td><td class="failed">&#10006;<br><small>663s</small></td><td class="failed">&#10006;<br><small>107s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>455s</small></td></tr>
-<tr><td class='iid'>django__django-12113</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>662s</small></td><td class="failed">&#10006;<br><small>1013s</small></td><td class="failed">&#10006;<br><small>978s</small></td><td class="failed">&#10006;<br><small>1309s</small></td><td class="failed">&#10006;<br><small>92s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>1801s</small></td></tr>
+<tr><td class='iid'>django__django-11964</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>1801s</small></td><td class="resolved">&#10004;<br><small>910s</small></td><td class="failed">&#10006;<br><small>1375s</small></td><td class="failed">&#10006;<br><small>729s</small></td><td class="failed">&#10006;<br><small>190s</small></td><td class="failed">&#10006;<br><small>917s</small></td><td class="failed">&#10006;<br><small>1801s</small></td></tr>
+<tr><td class='iid'>django__django-11999</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="resolved">&#10004;<br><small>496s</small></td><td class="resolved">&#10004;<br><small>929s</small></td><td class="failed">&#10006;<br><small>506s</small></td><td class="failed">&#10006;<br><small>663s</small></td><td class="failed">&#10006;<br><small>107s</small></td><td class="resolved">&#10004;<br><small>294s</small></td><td class="failed">&#10006;<br><small>455s</small></td></tr>
+<tr><td class='iid'>django__django-12113</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>662s</small></td><td class="failed">&#10006;<br><small>1013s</small></td><td class="failed">&#10006;<br><small>978s</small></td><td class="failed">&#10006;<br><small>1309s</small></td><td class="failed">&#10006;<br><small>92s</small></td><td class="failed">&#10006;<br><small>544s</small></td><td class="failed">&#10006;<br><small>1801s</small></td></tr>
 <tr><td class='iid'>django__django-12125</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="failed">&#10006;<br><small>3s</small></td><td class="resolved">&#10004;<br><small>1127s</small></td><td class="failed">&#10006;<br><small>1189s</small></td><td class="failed">&#10006;<br><small>865s</small></td><td class="resolved">&#10004;<br><small>1026s</small></td><td class="infblocked">&#9888;<br><small>—</small></td><td class="failed">&#10006;<br><small>1801s</small></td></tr>
 <tr><td class='iid'>django__django-12184</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="resolved">&#10004;<br><small>211s</small></td><td class="resolved">&#10004;<br><small>872s</small></td><td class="resolved">&#10004;<br><small>811s</small></td><td class="resolved">&#10004;<br><small>346s</small></td><td class="resolved">&#10004;<br><small>388s</small></td><td class="resolved">&#10004;<br><small>507s</small></td><td class="failed">&#10006;<br><small>472s</small></td></tr>
 <tr><td class='iid'>django__django-12284</td><td class='marker'><small class="r2tag">R2新跑</small></td><td class="resolved">&#10004;<br><small>973s</small></td><td class="resolved">&#10004;<br><small>1488s</small></td><td class="resolved">&#10004;<br><small>333s</small></td><td class="resolved">&#10004;<br><small>529s</small></td><td class="failed">&#10006;<br><small>206s</small></td><td class="resolved">&#10004;<br><small>459s</small></td><td class="failed">&#10006;<br><small>457s</small></td></tr>
@@ -185,5 +185,5 @@ python3 gen_round2_compare.py</code></pre>
 </ol>
 </div>
 <hr>
-<p><small>BaiZe Harness H-A, Round-2 7x100, 2026-10-09 14:07. Model: kimi-k2.6-cloud. R1=serial(30), R2=parallel(70). Data: kimi_pilot_results.json (700 entries in 100-set).</small></p>
+<p><small>BaiZe Harness H-A, Round-2 7x100, 2026-10-09 14:44. Model: kimi-k2.6-cloud. R1=serial(30), R2=parallel(70). Data: kimi_pilot_results.json (700 entries in 100-set).</small></p>
 </body></html>

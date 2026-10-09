@@ -5,10 +5,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A ROUND-2 7×100 BLOCKED RE-RUN (Phase 1 non-sympy: pi [4/19] RUNNING; Phase 3 sympy=44 pending after pi)
-已完成:       R216 SWEBENCH_COMPARE refreshed (57995B, 700/700, 218 resolved) · hermes 100/100 DONE ✅ · opencode 100/100 DONE ✅ · dsh Phase 1 DONE · cline Phase 1 DONE · claude-code Phase 1 DONE · 口径与并发 section ✅ · trace report in doc root ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
-当前动作:     R216: Phase 1 non-sympy re-run — pi on [4/19] django-11964 (PID 1370421, running, etimes~1884s). Hermes FINISHED (100/100, 36 resolved, sympy-15346 resolved). DSH Phase 1 DONE (25/94=26.6%, 6 sympy blocked remain). 61 blocked remaining (down from 64). SWEBENCH_COMPARE.html refreshed (57995B, 700/700, 218 resolved). In-scope scored rates: pi 39.4%(71) > codex 37.4%(91) > hermes 36.0%(100) > opencode 35.0%(100) > cline 33.7%(95) > claude-code 30.7%(88) > dsh 26.6%(94).
-下一步:       ① pi Phase 1 finishes (~15 rem non-sympy, ~2.5h) → Phase 2 (hermes done, instant) → Phase 3 sympy=44 serial (claude-code 12 + cline 5 + codex 9 + dsh 6 + pi 12) → ~7.3h → final ~00:00 Oct 10. ② After all 61 re-run: refresh SWEBENCH_COMPARE.html → final 7×100 table. ③ Final report with complete data.
+PHASE:        H-A ROUND-2 7×100 BLOCKED RE-RUN (Phase 1 non-sympy: pi [5/19] RUNNING; Phase 3 sympy=44 pending after pi)
+已完成:       R217 SWEBENCH_COMPARE refreshed (57991B, 700/700, 219 resolved) · hermes 100/100 DONE ✅ · opencode 100/100 DONE ✅ · dsh Phase 1 DONE · cline Phase 1 DONE · claude-code Phase 1 DONE · 口径与并发 section ✅ · trace report in doc root ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
+当前动作:     R217: Phase 1 non-sympy re-run — pi on [5/19] django-11999 (PID 1370421, ppid=260306, etimes~4262s). Pi unblocked 4 instances since R216 (29→25 blocked, 71→75 scored, +2 resolved). 57 blocked remaining (down from 61). SWEBENCH_COMPARE.html refreshed (57991B, 700/700, 219 resolved). In-scope scored rates: pi 40.0%(75) > codex 37.4%(91) > hermes 36.0%(100) > opencode 35.0%(100) > cline 33.7%(95) > claude-code 30.7%(88) > dsh 26.6%(94).
+下一步:       ① pi Phase 1 finishes (~14 rem non-sympy, ~4h) → Phase 3 sympy=44 serial (claude-code 12 + cline 5 + codex 9 + dsh 6 + pi 12) → ~7h → final ~02:00 Oct 10. ② After all 57 re-run: refresh SWEBENCH_COMPARE.html → final 7×100 table. ③ Final report with complete data.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -29,13 +29,13 @@ ERROR_COUNT:  0
 2. **codex 特例**：codex 在 R1 跑了 300 条超集（串行），其中 70 条与本轮 100-set 重叠 → codex 的 70 条"新跑"实际来自 **300 串行超集**，**非 R2 并行**。codex 全部 100 条均为串行。
 3. **监控指标**（本轮必须对比 R1 同 30 条）：`quota-blocked` / `timeout` / `no-patch` 率 → 若 R2 显著上升 ⇒ 判"并行污染" → 结论打折。SWEBENCH_COMPARE.html §2 监控表已生成。
 
-**R2 监控快照**（2026-10-09 14:05，R216 更新）：
+**R2 监控快照**（2026-10-09 14:44，R217 更新）：
 
 | 指标 | R1 (30 serial) | R2 (70 parallel, near done) | 判定 |
 |:--|:--|:--|:--|
 | **quota_blocked** | 0/210 (0%) | 0/699 (0%) | ✅ **NO gateway pollution** |
 | **timeout** | 0 (codex 2) | minimal (codex 3, claude-code 1 astropy) | ✅ 正常 |
-| **workdir_blocked** ⚠️NEW | **0/210 (0%)** | **61/699 (8.7%)** ↓ from 64(R215)↓ from 88(R207) | ⚠️ **PARALLEL POLLUTION (workdir)** — **FIX IN PROGRESS (rerun_blocked_optimized.sh: Phase 1 non-sympy — claude-code DONE, cline-patched DONE, dsh DONE, pi [4/19] running; Phase 3 sympy=44 after pi)** |
+| **workdir_blocked** ⚠️NEW | **0/210 (0%)** | **57/699 (8.2%)** ↓ from 61(R216)↓ from 88(R207) | ⚠️ **PARALLEL POLLUTION (workdir)** — **FIX IN PROGRESS (rerun_blocked_optimized.sh: Phase 1 non-sympy — claude-code DONE, cline-patched DONE, dsh DONE, pi [5/19] running; Phase 3 sympy=44 after pi)** |
 | **no-patch (patch_applied=False)** | **0/210 (0%)** | **较高** (non-django/sympy repos) | ⚠️ eval env limitation |
 
 **⚠️ 新发现：workdir git-checkout 冲突 = 并行污染（R207 首次披露）**：
@@ -204,3 +204,4 @@ ERROR_COUNT:  0
 - 2026-10-09 12:53 —— **第二百一十四轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
 - 2026-10-09 13:28 —— **第二百一十五轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
 - 2026-10-09 14:05 —— **第二百一十六轮** —— 🔄 Blocked re-run monitor: Hermes FINISHED (100/100, 36 resolved, sympy-15346 resolved — PID 4039300 gone). DSH Phase 1 DONE (5/5 non-sympy, 25/94=26.6%, 6 sympy blocked remain). Cline Phase 1 DONE (8/8, 32/95=33.7%, 5 sympy blocked). Claude-code Phase 1 DONE (12/12, 27/88=30.7%, 12 sympy blocked). Pi Phase 1 RUNNING [4/19] django-11964 (PID 1370421, ppid=260306, etimes~1884s). 61 blocked remaining (down from 64). SWEBENCH_COMPARE.html refreshed (57995B, 700/700, 218 resolved). In-scope scored rates: pi 39.4%(71) > codex 37.4%(91) > hermes 36.0%(100) > opencode 35.0%(100) > cline 33.7%(95) > claude-code 30.7%(88) > dsh 26.6%(94). quota_blocked=0 → NO gateway pollution ✅. ⑦ deliverables verified: 口径与并发 ✅ / trace report in doc root (38307B) ✅ / 复用-新跑 markers ✅ / monitoring table ✅. Process: rerun_blocked_optimized.sh (PID 260306, ppid=1) alive. Next: pi Phase 1 finishes (~2.5h) → Phase 3 sympy=44 serial (~7.3h) → final ~00:00 Oct 10. → commit+push. 📦 体积：TASK=32870B(32.1KB ⚠️) / MEMORY=~30KB(29.3KB ✓)。
+- 2026-10-09 14:44 —— **第二百一十七轮** —— 🔄 Blocked re-run monitor: pi Phase 1 RUNNING [5/19] django-11999 (PID 1370421, ppid=260306, etimes~4262s, child PID 1915563 on django-12125). Pi unblocked 4 instances since R216 (29→25 blocked, 71→75 scored, +2 resolved → 30 resolved). 57 blocked remaining (down from 61). SWEBENCH_COMPARE.html refreshed (57991B, 700/700, 219 resolved). In-scope scored rates: pi 40.0%(75) > codex 37.4%(91) > hermes 36.0%(100) > opencode 35.0%(100) > cline 33.7%(95) > claude-code 30.7%(88) > dsh 26.6%(94). quota_blocked=0 → NO gateway pollution ✅. ⑦ deliverables verified: 口径与并发 ✅ / trace report in doc root (38307B) ✅ / 复用-新跑 markers ✅ / monitoring table ✅. Process: rerun_blocked_optimized.sh (PID 260306, ppid=1, etimes~15700s) alive. Next: pi Phase 1 finishes (~14 rem, ~4h) → Phase 3 sympy=44 serial (~7h) → final ~02:00 Oct 10. → commit+push. 📦 体积：TASK=32870B(32.1KB ⚠️) / MEMORY=~30.5KB(29.8KB ✓)。

@@ -43,3 +43,14 @@ Serial kimi eval: harness=pi model=kimi-k2.6-cloud
 [SETUP] django__django-11964 for pi
 
 [RUN] pi on django__django-11964 ...
+  [EVAL] pi on django__django-11964 ...
+  => django__django-11964 | pi | patch-but-failed
+
+############################################################
+# [5/19] pi x django__django-11999
+############################################################
+
+============================================================
+[SETUP] django__django-11999 for pi
+
+[RUN] pi on django__django-11999 ...
