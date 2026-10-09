@@ -186,6 +186,10 @@ error: error: unknown option '-b'
 
 ## 9. 流水（倒序）
 
+- **2026-10-09（运维经任务书下发：C1.full r2/r3 复测——模型服务不稳定致大量 timeout）** —— 用户观察 r1=88.0%(0 timeout) vs r2=59.5%(39 timeouts) vs r3=63.3%，成绩剧烈波动 = 模型服务不稳定（非 full 臂真实能力），要求复测 r2/r3。
+  - **落地**：在 `run/ZHULONG_TASK.md` 运维指令区置顶新增 `### 🆕 运维指令 · 2026-10-09（三）— 🔄 C1.full r2/r3 复测`。判定：r1 保留(0 timeout)、r2/r3 作废(服务不稳定)。流程：① r4 不打断跑完 → 收割检查 timeout → 判据(timeout≤10 且成绩≥75%)；② r4 有效则重跑 r2(batch r2-retest) → ③ 重跑 r3(batch r3-retest) → ④ 跑 r5 → ⑤ 5 个有效 run[r1,r2',r3',r4,r5]算 mean±std。每轮最多重跑 3 次，3 次不达标暂停等运维。红线 = r4 不打断 / r2/r3 作废 / r1 保留 / 新 key 不回退。
+  - ⏭ 待推送后 agent 下轮 `git pull` 取到指令 → r4 跑完后按复测流程执行。
+
 - **2026-10-09（运维经任务书下发：沙盒已就绪·可开跑 C1.full r4）** —— 用户通知「沙盒重启完成，可以继续」。pro-fp4 key 已在上条指令中恢复（新 key `e13f4f37` HTTP 200），agent 应已完成 auth + `PHASE=ready`。
   - **落地**：在 `run/ZHULONG_TASK.md` 运维指令区置顶新增 `### 🆕 运维指令 · 2026-10-09（二）— ✅ 沙盒已就绪，可开跑 C1.full r4【本次唤醒优先动作】`（放在上一条 pro-fp4 key 指令之前，上一条标记「已完成·已归档」）。指令要点：① 三项前置复检（pro-fp4 直连 200 / 沙盒端口 404 可达 / eval IDLE）全过才开跑；② 启动 C1.full r4（四 override 齐全：`EVAL_FW_DIR` + `CLI_DATA_DIR=.cline_prof4_eval/data` + `PYTHON` + `https_proxy`）；③ 更新 MEMORY `PHASE=running`；④ commit+push。红线 = 保持新 key + pro-fp4 + /cloud/v1 / r1-r3 全有效 / 三项复检任一不过不开跑。
   - ⏭ 待推送后 agent 下轮 `git pull` 取到指令 → 复检 → 开跑 r4。

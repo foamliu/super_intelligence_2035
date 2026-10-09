@@ -38,7 +38,56 @@
 > ⏱️ **判死判据（硬）**：**心跳文件 >60min 无新提交 ⇒ 按卡死处理**（不再等你）。**你干得再多，心跳不动 = 仍会被判死。**
 
 
-### 🆕 运维指令 · 2026-10-09（二）— ✅ 沙盒已就绪，可开跑 C1.full r4【本次唤醒优先动作】
+### 🆕 运维指令 · 2026-10-09（三）— 🔄 C1.full r2/r3 复测（模型服务不稳定致大量 timeout）【本次唤醒优先动作】
+
+> **来源**：用户 2026-10-09 观察。C1.full 锚点 r1=88.0%（0 timeout）vs r2=59.5%（**39 timeouts**）vs r3=63.3%，成绩剧烈波动 = **模型服务不稳定**（大量 timeout 拉低通过率），**非 full 臂真实能力**。用户要求复测 r2/r3。
+> **当前状态**：r4 正在跑（batch `b2026_1009_094504`，PID `3302534`，09:45 启动），**不要打断**。
+
+**判定**：
+- ✅ r1=88.0%（139/158, 0 timeout）= **有效，保留**（服务正常期跑的）
+- ❌ r2=59.5%（94/158, **39 timeouts**）= **作废，需复测**（服务不稳定）
+- ❌ r3=63.3%（100/158, 成绩异常低）= **作废，需复测**（疑似服务不稳定，收割时确认 timeout 数量）
+- ⏳ r4 = 正在跑，收割后按下方判据判定
+
+**复测流程（r4 跑完后按顺序执行）**：
+
+1. **收割 r4**（`pgrep` 无输出后 `grep -E 'pass \(|PASS_RATE|timeout' /tmp/ABL_full_r4.log | tail -10`）：
+   - 记录 r4 成绩 + **timeout 数量**。
+   - **判据**：timeout ≤10 **且** 成绩 ≥75% → r4 有效，说明服务已稳定 → 进入步骤 2。
+   - 若 r4 timeout >10 或成绩 <75% → **服务仍不稳定** → r4 也作废 → 在 MEMORY 记「r4 仍有 X timeouts，服务不稳定」→ `WAITING=1`，等下轮复检服务稳定性（`curl` 新 key 直连测延迟 + 连续 3 次确认无 timeout）→ 服务稳定后从 r4 重跑。
+
+2. **重跑 r2**（r4 判定有效后）：
+   - 同臂 `full`，四 override 齐全（`EVAL_FW_DIR` + `CLI_DATA_DIR=.cline_prof4_eval/data` + `PYTHON` + `https_proxy`），新 key `e13f4f37` + `/cloud/v1` + `deepseek-v4-pro-fp4`。
+   - batch ID 记为 `r2-retest`，log 记为 `/tmp/ABL_full_r2_retest.log`。
+   - 收割后检查 timeout：**timeout ≤10 且成绩 ≥75%** → r2' 有效，替换 r2=59.5%。若 timeout >10 或成绩 <75% → 重跑（最多 3 次），3 次仍不达标 → 在 MEMORY 记「r2 复测 3 次仍未达标（X timeouts, Y%）」→ 暂停，等运维指示。
+
+3. **重跑 r3**（r2' 有效后）：
+   - 同上配置，batch ID 记为 `r3-retest`，log `/tmp/ABL_full_r3_retest.log`。
+   - 同样判据：timeout ≤10 且成绩 ≥75% → r3' 有效，替换 r3=63.3%。否则重跑（最多 3 次）。
+
+4. **跑 r5**（r3' 有效后）：
+   - 同上配置，batch ID 记为 `r5`。
+   - 同样判据：timeout ≤10 且成绩 ≥75% → r5 有效。
+
+5. **5/5 完成 → 算 mean±std**：
+   - 最终 5 个有效 run = [r1=88.0%, r2', r3', r4, r5]（r2' r3' 为复测值，替换原 r2/r3）。
+   - `PHASE=just_finished` → 回填 5 张表锚点行 → 进入 C2。
+
+**更新 MEMORY（每次收割后）**：
+- 成绩表 `C1.full` 行：r2 标注「❌作废(39 timeouts)→复测中」→ 复测后替换为 r2'=X%（Y timeouts）；r3 同理。
+- **下轮第一件事**：`pgrep '^bash scripts/run_cline_script'` → 有输出 = 巡检退出；无输出 = 按上方流程收割当前轮次 → 检查 timeout → 按判据决定下一步。
+- 每轮收割**必须记录 timeout 数量**（grep `timeout` 或 `timed?out` 或 log 里的 timeout 统计行）。
+
+**红线**：
+- ✅ r4 正在跑，**不打断**。
+- 🚫 r2=59.5% / r3=63.3% **作废**，不参与最终 mean±std（服务不稳定）。
+- ✅ r1=88.0% **保留**（0 timeout，服务正常）。
+- ✅ 每轮判据 = timeout ≤10 **且** 成绩 ≥75%（两个条件都满足才算有效）。
+- 🚫 若复测 3 次仍不达标 → **不要继续盲跑**，暂停记 MEMORY 等运维指示。
+- 🚫 仍保持新 key `e13f4f37` + `deepseek-v4-pro-fp4` + `/cloud/v1`（不要回退）。
+
+
+### 🆕 运维指令 · 2026-10-09（二）— ✅ 沙盒已就绪，可开跑 C1.full r4【已完成·已归档】
 
 > **来源**：用户 2026-10-09 通知「沙盒重启完成，可以继续」。
 > **前提**：上一条指令（pro-fp4 key 已恢复）应已被 agent 执行完毕——eval backbone 已用新 key `e13f4f37` auth、`PHASE=ready`、`WAITING=1`。
