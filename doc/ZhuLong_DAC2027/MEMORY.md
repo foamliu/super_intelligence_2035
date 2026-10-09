@@ -186,6 +186,12 @@ error: error: unknown option '-b'
 
 ## 9. 流水（倒序）
 
+- **2026-10-09（运维经任务书下发：✅ 沙盒已修复·可重跑 C1.full r4）** —— 用户 2026-10-09 晚通知「沙盒已修复·可重跑 r4」。此前 r4（batch `b2026_1009_094504`）因沙盒故障 grading 异常慢（`run_eval.py` 跑满 2h35m+ 未出结果）已被运维经 ops RUN_ID 25/26 kill，判 ❌作废；agent 置 `PHASE=standby` 待命。
+  - **落地**：在 `run/ZHULONG_TASK.md` 运维指令区**置顶**新增 `### 🆕 运维指令 · 2026-10-09（五）— ✅ 沙盒已修复，可重跑 C1.full r4【本次唤醒优先动作】`（置于常驻规程之后、(四) 之前），并把 (四) 标题标为「【已被(五)取代·历史】」。指令要点：① **三项前置复检**（pro-fp4 直连 200[新 key `e13f4f37` + `/cloud/v1`] / 沙盒端口 8650-8654@10.129.32.75 可达 / eval IDLE 无残留）**全过才开跑**；② 启动 C1.full r4（同臂 full 不切 `set_ablation`，**四 override 齐全**：`EVAL_FW_DIR` + `CLI_DATA_DIR=.cline_prof4_eval/data` + `PYTHON` + `https_proxy`），启动后核验 `/proc/<pid>/environ`；③ canary 确认反作弊 hook live；④ 更新 MEMORY `PHASE=running`；⑤ commit+push。
+  - **r4 收割后接 (三) 复测流程**：收割记 Pass@1 + timeout 数 → 判据 `timeout ≤ 10 且 Pass@1 ≥ 75%` 则 r4 有效 → 依序重跑 `r2-retest` → `r3-retest` → `r5`（每轮同判据，最多 3 次，不达标暂停等运维）→ 5-run `[r1=88.0, r2', r3', r4, r5]` 算 mean±std 回填锚点 5 表。
+  - **红线**：r1=88.0% 保留 / r2/r3 作废待复测 / 保持新 key + `deepseek-v4-pro-fp4` + `/cloud/v1` / 复检任一不过不得开跑。
+  - ⏭ **待推送后 agent 下轮 `git pull` 取到指令 → 复检 → 开跑 r4。**
+
 - **2026-10-09（运维经任务书下发：C1.full r2/r3 复测——模型服务不稳定致大量 timeout）** —— 用户观察 r1=88.0%(0 timeout) vs r2=59.5%(39 timeouts) vs r3=63.3%，成绩剧烈波动 = 模型服务不稳定（非 full 臂真实能力），要求复测 r2/r3。
   - **落地**：在 `run/ZHULONG_TASK.md` 运维指令区置顶新增 `### 🆕 运维指令 · 2026-10-09（三）— 🔄 C1.full r2/r3 复测`。判定：r1 保留(0 timeout)、r2/r3 作废(服务不稳定)。流程：① r4 不打断跑完 → 收割检查 timeout → 判据(timeout≤10 且成绩≥75%)；② r4 有效则重跑 r2(batch r2-retest) → ③ 重跑 r3(batch r3-retest) → ④ 跑 r5 → ⑤ 5 个有效 run[r1,r2',r3',r4,r5]算 mean±std。每轮最多重跑 3 次，3 次不达标暂停等运维。红线 = r4 不打断 / r2/r3 作废 / r1 保留 / 新 key 不回退。
   - ⏭ 待推送后 agent 下轮 `git pull` 取到指令 → r4 跑完后按复测流程执行。

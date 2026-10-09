@@ -38,7 +38,48 @@
 > ⏱️ **判死判据（硬）**：**心跳文件 >60min 无新提交 ⇒ 按卡死处理**（不再等你）。**你干得再多，心跳不动 = 仍会被判死。**
 
 
-### 🆕 运维指令 · 2026-10-09（四）— 🛑 沙盒坏了，r4 已被运维 kill，待命不要重跑【本次唤醒优先动作】
+### 🆕 运维指令 · 2026-10-09（五）— ✅ 沙盒已修复，可重跑 C1.full r4【本次唤醒优先动作】
+
+> **来源**：用户 2026-10-09 晚通知「沙盒已修复·可重跑 r4」。**取代（四）的待命状态**（(四) 降级为历史）。
+> **背景**：r4（batch `b2026_1009_094504`）因沙盒故障 grading 异常慢（`run_eval.py` 跑满 2h35m+ 未出结果）被运维 kill（ops RUN_ID 25/26），判 **❌作废**；**r1=88.0% 保留**，**r2=59.5% / r3=63.3% 作废待复测**。
+
+**本次唤醒的动作（按顺序）**：
+
+1. **三项前置复检（全过才开跑；任一不过 → 不启动，`WAITING=1` 原地等，并把不过项写进 MEMORY）**：
+   - ① **pro-fp4 直连 200**：新 key `e13f4f37` + `deepseek-v4-pro-fp4` + `http://agi-gateway.cxmt.com/cloud/v1`，`curl --noproxy '*'` 实测 HTTP=200（网关应回 `model: deepseek-v4-pro-260813`）。
+   - ② **沙盒端口可达**（以 `.env` 实际为准：`PROXY_PORTS=8650,8651,8652,8654` @ `SANDBOX_HOST=10.129.32.75`；旧 `8664/8665/8653/8669@127.0.0.1` 已作废）：逐端口探测**非超时/可连**。
+   - ③ **eval IDLE**：`pgrep -f '^bash scripts/run_cline_script'` **无输出** 且 `pgrep -f run_eval.py` **无输出**（确认 r4 已彻底 kill、无残留）。
+
+2. **启动 C1.full r4**（同臂 `full`，**不切 `set_ablation`**）—— **四 override 必带**：
+   ```bash
+   cd /nasdata/app.e0031982/code/eda_fastmcp
+   export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+   export CLI_DATA_DIR=/nasdata/app.e0031982/.cline_prof4_eval/data
+   export PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python
+   export https_proxy=http://172.19.92.23:13128
+   setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_full_r4.log 2>&1 < /dev/null &
+   ```
+   - 启动后**立刻核验四 override 已在 `/proc/<pid>/environ` 生效**（缺 override 会导致 158 Forbidden + grading crash，见 r2 首启教训）。
+
+3. **canary**：本批开跑前确认反作弊 hook live（一次应被拒的调用**确实被拒**；未被拒 → 立即停、本批作废）。
+
+4. **更新 MEMORY 状态头**：`PHASE=running`、`WAITING=1`、`CONFIG=full`、`ROUND=4`；成绩表 `C1.full` 的 r4 行恢复为「运行中」。
+
+5. **commit + push**（按常驻规程）。
+
+**r4 收割后 → 回到（三）的复测流程**：
+- 收割：`grep -E 'pass \(|PASS_RATE|评估结果汇总|timeout' /tmp/ABL_full_r4.log | tail -10` → 记录 **Pass@1 + timeout 数**。
+- **判据**：`timeout ≤ 10 且 Pass@1 ≥ 75%` → r4 **有效** → 依序重跑 **`r2-retest` → `r3-retest` → `r5`**（同臂同 override，log `/tmp/ABL_full_r2_retest.log` / `r3_retest` / `r5`）；每轮同判据，**最多重跑 3 次**，3 次仍不达标 → 暂停 `WAITING=1` 等运维。
+- 全部有效后：5-run = `[r1=88.0, r2', r3', r4, r5]` → 算 mean±std → 回填 5 张表锚点 → `PHASE=just_finished`。
+
+**红线**：
+- ✅ **r1=88.0% 保留**；r2/r3 **作废待复测**（不写进最终 mean±std）。
+- ✅ 保持新 key `e13f4f37` + `deepseek-v4-pro-fp4` + `/cloud/v1`（**不回退旧 key / 不改模型名 / 不用 `/v1`**）。
+- 🚫 **三项前置复检任一不过 → 不得开跑**。
+- 🚫 不新启别的臂 / 不改 `.env` 臂 / 不碰 `ops/`。
+
+
+### 🆕 运维指令 · 2026-10-09（四）— 🛑 沙盒坏了，r4 已被运维 kill，待命不要重跑【已被(五)取代·历史】
 
 > **来源**：用户 2026-10-09 17:00 通知「沙盒坏了，把 r4 停下来，待命」。
 > **已执行**：运维已通过 ops 中继 RUN_ID 25 kill 了 r4 进程树（PID 3302534 + run_eval.py 子进程）。
