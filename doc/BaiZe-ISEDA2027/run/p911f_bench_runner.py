@@ -82,8 +82,8 @@ def kill_server(pi):
         except: pass
     time.sleep(5)
 
-def benchmark_model(model_key, gpu_id, mem_frac, contexts, batches, ctx_max, warmup=1, repeats=3):
-    port = find_free_port()
+def benchmark_model(model_key, gpu_id, mem_frac, contexts, batches, ctx_max, warmup=1, repeats=3, port_base=30000):
+    port = find_free_port(start=port_base, end=port_base+20)
     si = start_sglang_server(model_key, gpu_id, mem_frac, ctx_max, port)
     if si is None:
         return {"model": model_key, "mem_frac": mem_frac, "error": "server_failed", "results": []}
@@ -121,6 +121,7 @@ def main():
     ap.add_argument("--mem-fracs", type=float, nargs="+", default=[0.6,0.85])
     ap.add_argument("--models", nargs="+", default=list(MODELS.keys()))
     ap.add_argument("--ctx-max", type=int, default=8388608)
+    ap.add_argument("--port-base", type=int, default=30000, help="port range start (use 30000+gpu*100 for parallel runs)")
     args = ap.parse_args()
     ALL_CTXS = [131072,262144,524288,1048576,2097152,4194304,8388608]
     ALL_BATCHES = [1,8]
@@ -142,7 +143,7 @@ def main():
     for mk in models:
         for mf in mem_fracs:
             print(f"\n{'='*60}\n  MODEL: {mk} | MF: {mf}\n{'='*60}")
-            res = benchmark_model(mk, args.gpu_id, mf, contexts, batches, ctx_max, warmup=args.warmup, repeats=args.repeats)
+            res = benchmark_model(mk, args.gpu_id, mf, contexts, batches, ctx_max, warmup=args.warmup, repeats=args.repeats, port_base=args.port_base)
             all_results.append(res)
             cf = os.path.join(RESULT_DIR, f"combined_{mk}_mf{mf}.json")
             with open(cf,"w") as f: json.dump(res, f, indent=2)
