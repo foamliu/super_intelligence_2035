@@ -12,11 +12,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅web分词完成(524.43B)+✅全量污染扫描清洁(160K docs全0)+GPIC 7528/8001(ETA~11h→~11:00Oct10)+🔄R3全量分词72/110done(38活,.bin=4.7TB,nice-10,ppid=1✅,0 fatal,72.idx[17l3+15code+40math✅,~624B tok],ETA~3-8h→~03:00-08:00Oct10)
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43; s_step归因(MBS16:8.6×,166ms); Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); zh分词8/8✅(112.47B); 论文更新(4+5节,main.pdf 0err); l1_en_hq分词12/12✅(152.17B); ultrax分词s34-s43✅(30.97B); en_base分词s24-s33✅(206.76B); ✅投料前污染采样扫描(10K docs,0命中); ✅全量污染扫描(30 parquet×5K=150K docs,0命中,累计160K docs全0命中); ✅④Ultra-FineWeb核实(197GB=nas_inference小副本≠tokenization源,524.43B×4B=2.1T≈2.0T .bin✅); ✅R3 math全完工(40/40=274.92B tok); R3 72/110done(17l3=~220B+15code=128.62B+40math=274.92B=~624B tok,38进程继续)
-当前动作:     唤醒273(00:12@.12) R3全量分词监控:72/110done(38活=23l3+15code+0math,ppid=1✅,0 fatal error,nice=10),runtime=13.85h(10:23启动),.bin=4.7TB(l3=2.3T+code=1.5T+math=1.1T,含growing),72.idx+72.json(l3=17[~220B]+code=15[128.62B]+math=40[274.92B]=~624B tok),math✅40/40done,code 15/30done(15rem→~3-5h),l3 17/40done(23rem→~5-8h),load=91/224,disk 38T free✅,ETA~3-8h→~03:00-08:00Oct10;GPIC=7528/8001(+39 since 23:19,~44tar/h,活PID144981[ppid=3525273],latest=07527.tar@00:12,128test✅,0.incomplete,ETA~11h→~11:00Oct10)
-下一步:       ①R3全量分词监控(72/110done,38活,math✅40/40,code15rem→~3-5h,l3 23rem→~5-8h,总体ETA~3-8h→~03:00-08:00Oct10)→全部完成后跑污染扫描→报"P-8数据层全就绪"; ②GPIC续下(7528/8001,ETA~11h→~11:00Oct10); ③en_v1_4排队等运维放行
-阻塞:         R3全量分词进行中(72/110done,38活,ETA~3-8h→~03:00-08:00Oct10); GPIC下载进行中(7528/8001,ETA~11h→~11:00Oct10); en_v1_4排队等运维放行
+PHASE:        ✅web分词完成(524.43B)+✅全量污染扫描清洁(160K docs全0)+GPIC 7561/8001(ETA~10h→~11:00Oct10)+🔄R3全量分词81/110done(29活,.bin=4.9TB,nice-10,ppid=1✅,0 fatal,81.idx[26l3+15code+40math✅,794.10B tok],所有110shard已全启动,ETA~2-5h→~03:00-06:00Oct10)
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43; s_step归因(MBS16:8.6×,166ms); Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); zh分词8/8✅(112.47B); 论文更新(4+5节,main.pdf 0err); l1_en_hq分词12/12✅(152.17B); ultrax分词s34-s43✅(30.97B); en_base分词s24-s33✅(206.76B); ✅投料前污染采样扫描(10K docs,0命中); ✅全量污染扫描(30 parquet×5K=150K docs,0命中,累计160K docs全0命中); ✅④Ultra-FineWeb核实(197GB=nas_inference小副本≠tokenization源,524.43B×4B=2.1T≈2.0T .bin✅); ✅R3 math全完工(40/40=274.92B tok); R3 81/110done(26l3=390.56B+15code=128.62B+40math=274.92B=794.10B tok,29进程继续,0 unstarted)
+当前动作:     唤醒274(00:55@.12) R3全量分词监控:81/110done(29活=14l3+15code+0math,ppid=1✅,0 fatal error,nice=10),runtime=14.6h(10:23启动),.bin=4.9TB(l3=2.4T+code=1.5T+math=1.1T,含growing),81.idx+81.json(l3=26[390.56B]+code=15[128.62B]+math=40[274.92B]=794.10B tok),math✅40/40done,code 15/30done(15rem→~2-4h),l3 26/40done(14rem→~1-2h),所有110shard已全启动(0 unstarted),load=77/224,disk 38T free✅,ETA~2-5h→~03:00-06:00Oct10;GPIC=7561/8001(+33 since 00:12,~46tar/h,活PID144981[ppid=3525273],latest=07560.tar@00:55,128test✅,0.incomplete,ETA~10h→~11:00Oct10)
+下一步:       ①R3全量分词监控(81/110done,29活,所有110已全启动,math✅40/40,code15rem→~2-4h,l3 14rem→~1-2h,总体ETA~2-5h→~03:00-06:00Oct10)→全部完成后跑污染扫描→报"P-8数据层全就绪"; ②GPIC续下(7561/8001,ETA~10h→~11:00Oct10); ③en_v1_4排队等运维放行(GPIC完成后,预计10-10上午,用户操作)
+阻塞:         R3全量分词进行中(81/110done,29活,ETA~2-5h→~03:00-06:00Oct10); GPIC下载进行中(7561/8001,ETA~10h→~11:00Oct10); en_v1_4排队等运维放行(GPIC完成后)
 ERROR_COUNT:  1
 ```
 
@@ -33,6 +33,8 @@ ERROR_COUNT:  1
 
 > 📦 唤醒259 原文已归档 → `daily-memories-data/2026-10-09.md`（含R3 109/110进程巡检+l3_s39完工+GPIC纠正误计+6目录盘点+ETA重估1.404T tok→5.6TB .bin）
 > 📦 唤醒260-261 原文已归档 → `daily-memories-data/2026-10-09.md`（含R3 102-109进程巡检+.bin 1.49→2.0TB+8.idx[1l3+7math]+GPIC 7106→7137+ETA 10-15h）
+- [00:55] **唤醒274**：①本机=`.12`,load=77/224。②R3分词巡检:**81/110done**(29活=14l3+15code+0math,ppid=1✅,0 fatal error,nice=10),runtime=14.6h,.bin=**4.9TB**(l3=2.4T+code=1.5T+math=1.1T,含growing),**81.idx+81.json**(l3=26[390.56B]+code=15[128.62B]+math=40[274.92B]=**794.10B tok**),**math✅40/40done**,code 15/30done(15rem,15活→~2-4h),l3 26/40done(14rem,14活→~1-2h),**所有110shard已全启动(0 unstarted)**,disk 38T free✅。③GPIC=**7561**/8001(+33 since 00:12,~46tar/h,活PID144981[ppid=3525273],latest=07560.tar@00:55,128test✅,**0.incomplete**,ETA~10h→~11:00Oct10)。④6目录盘点:base✅524.43B/2.0T|L3🔄26/40(390.56B,.bin=2.4T growing)|Code🔄15/30(128.62B,.bin=1.5T growing)|Math✅40/40(274.92B,1.1T)|SFT✅20.96B/79G|Agent✅8.04B/30G。⑤l3 progress:00:12→00:55(+9shards in 43min=~4.8min/shard)→14rem=~70min→~02:05;code 15活(72G .bin growing,比l3大→~2-4h)。下载线心跳：base✅全满|GPIC 7561/8001(活PID144981,+33,~46tar/h,ETA~10h→~11:00Oct10)|R3 81/110done(.bin=4.9T,794.10B tok,所有110已全启动,ETA~2-5h→~03:00-06:00Oct10)。📦体积：TASK=28.0KB/MEMORY=22.6KB(均≤32KB✅,无需归档)
+
 - [00:12] **唤醒273**：①本机=`.12`,load=91/224。②R3分词巡检:**72/110done**(38活=23l3+15code+0math,ppid=1✅,**0 fatal error**,nice=10),runtime=13.85h(10:23启动),.bin=**4.7TB**(l3=2.3T+code=1.5T+math=1.1T,含growing),**72.idx+72.json**(l3=17[~220B]+code=15[128.62B]+math=40[274.92B]=**~624B tok**),**math✅40/40done**,code 15/30done(15rem→~3-5h),l3 17/40done(23rem→~5-8h),disk 38T free✅,6 code log有warning(序列>1M token,非fatal)。③GPIC=**7528**/8001(+39 since 23:19,~44tar/h,活PID144981[ppid=3525273],latest=07527.tar@00:12,128test✅,**0.incomplete**,ETA~11h→~11:00Oct10)。④**6目录全量盘点**:[1]Ultra-FineWeb(base)=3.2T/8792pq→✅524.43B/2.0T(mix_base/44shards);[2]Ultra-FineWeb-L3=1.8T/1764pq→🔄17/40(~220B,.bin=2.3T含growing);[3]UltraData-Code=1.2T/1121pq→🔄15/30(128.62B,.bin=1.5T含growing);[4]UltraData-Math=515G/1823pq→✅40/40(274.92B,.bin=1.1T);[5]UltraData-SFT-2605=298G/1504jsonl→✅20.96B/79G;[6]UltraData-SFT-Agent-2609=51G/50jsonl→✅8.04B/30G。下载线心跳：base✅全满|GPIC 7528/8001(活PID144981,+39,~44tar/h,ETA~11h→~11:00Oct10)|R3 72/110done(.bin=4.7T,~624B tok,math✅,ETA~3-8h→~03:00-08:00Oct10)。📦体积：TASK=28.0KB/MEMORY=21.4KB(均≤32KB✅,无需归档)
 
 - [23:19] **唤醒272**：①本机=`.12`,load=98/224。②R3分词巡检:**60/110done**(52活=33l3+15code+2math,ppid=1✅,**0 fatal error**,nice=10),runtime=12.9h(10:23启动),.bin=**4.5TB**(l3=2.33T+code=1.47T+math=1.09T,含growing),**60.idx+60.json**(l3=7[88.44B]+code=15[128.62B]+math=38[237.01B]=**454.08B tok**),math 38/40done(2rem:s37/s38→~30min),code 15/30done(15rem→~2-4h),l3 7/40done(33rem→~3-6h),disk 39T free✅,0 Traceback。③GPIC=**7489**/8001(+36 since 22:32,~46tar/h,活PID144981[ppid=3525273],latest=07488.tar@23:21,128test✅,**1.incomplete(active,downloading 07489)**,ETA~11h→~10:25Oct10)。④**6目录全量盘点**:[1]Ultra-FineWeb(base)=3.2T/8792pq→✅524.43B/2.0T(BaiZe/data/mix_base/44shards);[2]Ultra-FineWeb-L3=1.8T/1764pq→🔄7/40(88.44B,.bin=2.33T含growing);[3]UltraData-Code=1.2T/1121pq→🔄15/30(128.62B,.bin=1.47T含growing);[4]UltraData-Math=515G/1823pq→🔄38/40(237.01B,.bin=1.09T);[5]UltraData-SFT-2605=298G/1504jsonl→✅20.96B/79G;[6]UltraData-SFT-Agent-2609=51G/50jsonl→✅8.04B/30G。⑤④核实已闭合:197GB=nas_inference小副本≠源,524.43B×4B=2.1T≈2.0T✅。⑥math_s39完工(+1 since 22:32),l3完成s26-s31+s39=7shards,code完成s15-s29=15shards。下载线心跳：base✅全满|GPIC 7489/8001(活PID144981,+36,~46tar/h,ETA~11h→~10:25Oct10)|R3 60/110done(.bin=4.5T,454.08B tok,ETA~3-6h→~02:00-05:00Oct10)。📦体积：TASK=28.0KB/MEMORY=29.0KB(均≤32KB✅,无需归档)
@@ -137,11 +139,11 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **✅web分词完成(524.43B tok) + ✅全量污染扫描完成(160K docs,0命中) + GPIC 7489/8001(ETA~11h→~10:25Oct10) + 🔄R3全量分词60/110done(52活,.bin=4.5TB,60.idx[7l3+15code+38math,454.08B tok],ETA~3-6h→~02:00-05:00Oct10)** |
-| WAITING | 1（R3分词ETA~3-6h→~02:00-05:00Oct10; GPIC 7489/8001 ETA~11h→~10:25Oct10; en_v1_4排队等放行） |
+| PHASE | **✅web分词完成(524.43B tok) + ✅全量污染扫描完成(160K docs,0命中) + GPIC 7561/8001(ETA~10h→~11:00Oct10) + 🔄R3全量分词81/110done(29活,.bin=4.9TB,81.idx[26l3+15code+40math✅,794.10B tok],所有110已全启动,ETA~2-5h→~03:00-06:00Oct10)** |
+| WAITING | 1（R3分词ETA~2-5h→~03:00-06:00Oct10; GPIC 7561/8001 ETA~10h→~11:00Oct10; en_v1_4排队等放行GPIC完成后） |
 | ERROR_COUNT | 1（s9崩溃重启后已完成） |
-| 节点 | `10.239.2.12`（GPIC下载PID=144981活, .12 GPU全忙vision R9, .29 GPU全空, R3分词52进程nice-10） |
-| 更新 | 2026-10-09 23:19 |
+| 节点 | `10.239.2.12`（GPIC下载PID=144981活, .12 GPU全忙vision R9, .29 GPU全忙pretrain, R3分词29进程nice-10） |
+| 更新 | 2026-10-10 00:55 |
 
 ## 看板（按推荐执行顺序）
 
