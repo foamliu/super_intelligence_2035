@@ -18,10 +18,17 @@
   - ⑤ 每次心跳按 6 个目录报盘点表
 - **②的错误**：保留②已跑进程不动 → 用户要求停掉重头来；仍用 L2/L3 等新名字 → 用户要求只按 6 个原始目录
 
-### 🔬 pretrain R3 BO 已完成 + P-8 PREP 已完成（agent 自主推进，无需运维指令）
+### 🔬 pretrain R3 BO 已完成 + P-8 PREP 已完成 + T3 提速验证已下发
 - R3 BO 100/100（98 complete + 2 failed），best=#8 score=0.4032，配比写入 `r3_best_blend.txt` + `DATA_MIX_RECIPE §9.7` + `EXPERIMENTS R3 节`
 - P-8 PREP 就绪度核查完成，Code/Math 缺口发现 + 训练脚本/吞吐/ckpt 估算完成
-- 全 8 GPU 空闲，等运维 P-8 启动令 + Code/Math 分词决策（分词决策 = 本轮已下发）
+- **🆕 T3 提速验证已下发（2026-10-09，用户直令）**：.29 8 卡全空 → 立即跑 T3 短名单实验：
+  - Test 1 (C2): TP1·MBS4·recompute → 能否解锁 MBS4 on TP1（此前 OOM 79.8GB）
+  - Test 2 (C2+): TP1·MBS4·seq8192·recompute → M=32768 命中 FP8 交叉点
+  - Test 3 (C2+FP8): 同 Test2 + FP8 → 🎯 梦幻配置（FP8+TP1无通信税+长上下文）
+  - Test 4 (C1): TP1·MBS2·FP8 → 快速确认（预期 s<1.0）
+  - **解冻 recompute**：允许扩展 launcher 添加 `--recompute-num-layers`
+  - 总成本 ≤3 GPU·h，跑完定 P-8 最优配置
+- 全 8 GPU 空闲，等 T3 实验完成 + P-8 启动令 + Code/Math 分词完成
 
 ### 💬 vision / harness 运维问答已收齐
 - **vision** ✅ 已答复 2026-10-08③（4 大节：未验证假设 1-A~1-D / Stage iv 前置 2-A~2-E / GPU 空窗优先级 P1-P3 / 论文补充 4-A~4-D）
@@ -76,7 +83,7 @@ WAITING: 0
 
 | 线 | 在飞 | 预期产物 | 状态 |
 |:--|:--|:--|:--|
-| **pretrain** | 🔄 **R3 数据配比 BO（6 维 / 100 trial）运行中**：DB 32 行（31 complete + 1 failed=#24），best=**trial#8 score=0.4032**；第 5 批 trials 32–39 训练中 ~62–75%，**0 NaN**；PID 2637043（ppid=1），8 卡 62GB/55–90% util，**ETA ~05:50 Oct 9**。R2 全线 ✅ / 论文 ✅ / 收官报告 ✅ / R3 脚本 + 小样本分词 6/6 ✅（10-07⑤ T1–T4 ✅：float32 vs bf16 SSM **无差异**，「dense 3.3× faster」系 warmup 假象已撤回） | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` · `BAIZE_DATA_R3_TASK.md` | 🟢 `.cline_pretrain`；**P-8 暂缓令（10-02）仍未撤** |
+| **pretrain** | 🔄 **🆕 10-09 T3 提速验证已下发（用户直令）**：.29 8 卡全空，R3 BO ✅ 100/100（best=#8 score=0.4032）；T3 短名单 4 个测试（C2 recompute+MBS4 / C2+ seq8192 M=32768 / C2+FP8 梦幻配置 / C1 FP8 TP1 MBS2）；**解冻 recompute**（允许扩展 launcher）；总成本 ≤3 GPU·h；P-9.6② 已证 FP8 在 M=65536 转正(s=1.21,235K)但 TP4 有通信税 → T3 测 TP1 无税能否更优；R2 ✅ / 论文 ✅ / 收官报告 ✅ | `run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md` · `report_pretrain_t3_train_speed_shortlist.html` | 🟢 `.cline_pretrain`；**P-8 暂缓令（10-02）仍未撤** |
 | **vision** | 🟧 **AIMv2 缩放对比实验进行中（用户直令 10-08⑤ + 同日⑥ E2 变更）**：**E1 = 同族 OV2 w512/d30 126.78M** vs **E2 = 同族 w768/d30 284.54M（2.24×，只差宽度）**，均 224/p16、从零、同 AIMv2 objective + 同 94.9M + 同 1 epoch；主指标 IN-1k **lp Protocol B**（3 seeds）；判据 Δlp ±1.5pp。**agent 已完成**：smoke（E1 4697 / 官方臂 2347 img/s）· 登记 `.12` 8 卡 · `models.py` 加 width/depth override · 预注册初稿。**已令（⑥）**：E2 由「官方 304M@336」**改为 w768**，并**防止自动链跑到官方臂**。 | `run/EXPERIMENTS_VISION*.md` · `report_vision_aimv2_scaling.html`（待出） | 🟢 `.cline_vision`；`.12` 8 卡 |
 | **data** | 🔄 **🆕 10-09③ 已下发（覆盖②）**：停掉②Code/Math进程+删产物重头来；三个目录全量分词=Ultra-FineWeb-L3(1764/1.8TB)+UltraData-Code(1121/1.2TB)+UltraData-Math(1823/515GB)；并发放开224核(每源20-50进程)；Ultra-FineWeb(197GB→.bin 2.0TB)需data核实；按6个原始目录报盘点；Ultra-FineWeb✅524.42B+SFT✅29B已完成；GPIC 6829/8001(ETA~28h)；污染扫描✅160K 0命中 | `report_data_*.html` · `DATA_MIX_RECIPE.md` · `BAIZE_DATA_R3_TASK.md` | 🟢 `.cline_data`；**全量分词 = P-8 数据层唯一阻塞** |
 | **harness** | 🔄 **R2 7×100 运行中**（19:22 起，**7 路并行**，ETA ~10h → ~05:30 Oct 9；100 = **30 R1 + 70 stratified**）；② 轨迹报告 ✅ `report_harness_interaction_traces.html`（38KB；**20pp gap 归因**：no-patch 33% vs 10% · timeout 27% vs 0% · patch scope 4.2 vs 2.2 files；**诚实声明仅 `stdout_tail` 存活**）；R1 7×30 ✅（60.0%–40.0%）；报告 4 份已交付。**⑦ 已下发**：并发变更**追认**但须**披露口径**（首轮 serial=1 vs 本轮并行；30 复用 / 70 新跑须标注；监控 quota/timeout/no-patch 率）+ 报告补落根目录 | `run/harness/*.html` · `run/harness/kimi_pilot_results.json` | 🟢 `.cline_harness`；**不占 GPU**（与 pretrain R3 BO 无卡冲突，注意 CPU/IO） |
@@ -206,6 +213,11 @@ WAITING: 0
 ---
 
 ## 9. 流水（倒序）
+
+- **📝 2026-10-09（运维：pretrain T3 提速验证 —— 用户直令「跑起来」）** —— 已下发：
+  - `BAIZE_PRETRAIN_2B_TASK.md` 新增 **2026-10-09 T3 提速验证**（最高优先）：.29 8 卡全空，R3 BO 已完成，P-8 暂缓 → 立即跑 T3 短名单 4 个测试。① **解冻 recompute**（允许扩展 launcher 添加 `--recompute-num-layers`，此前 B 类冻结）；② Test 1 (C2) TP1·MBS4·recompute·bf16 → 能否解锁 MBS4 on TP1（此前 OOM 79.8GB）；③ Test 2 (C2+) TP1·MBS4·seq8192·recompute → M=32768 命中 FP8 交叉点；④ Test 3 (C2+FP8) 同 Test2+FP8 → 🎯 梦幻配置（FP8+TP1 无通信税+长上下文，可能 >249K）；⑤ Test 4 (C1) TP1·MBS2·FP8 → 快速确认（预期 s<1.0）。总成本 ≤3 GPU·h。判据 s>1.05=FP8 转正。
+  - **背景**：P-9.6② 已证 FP8 在 M=65536 转正(s=1.21, 235K)但用 TP4(通信税 -6%)；T3 测 TP1(无通信税)能否更优。recompute 是唯一可能解锁 MBS4 on TP1 的杠杆。
+  - 同步：`MEMORY.md §0` + §3 pretrain 行 + §9 流水更新。
 
 - **📝 2026-10-09（运维：指令 ③ —— 停②重头来 + 放开并发 + 核实 Ultra-FineWeb）** —— 已下发：
   - `BAIZE_DATA_TASK.md` 新增 **2026-10-09③**（覆盖②）：① 停掉②的 Code/Math 分词进程，删部分产物，从头来；② 三个目录全量分词=Ultra-FineWeb-L3(1764/1.8TB)+UltraData-Code(1121/1.2TB)+UltraData-Math(1823/515GB)，不挑不漏；③ 并发放开 224 核（每源 20–50 进程，不必保守到 8）；④ data agent 核实 Ultra-FineWeb 197GB→.bin 2.0TB 是否合理；⑤ 按原始 6 个目录报盘点，不创造新名字。②的错误=保留已跑进程不动(用户要停掉重来)+仍用L2/L3新名字(用户要求只按6个目录)。
