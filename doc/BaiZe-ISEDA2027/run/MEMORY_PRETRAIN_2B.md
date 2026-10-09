@@ -5,8 +5,9 @@ WAITING: 1
 - STAGE: **Muon vs AdamW A/B ✅ 完成**（2026-10-10 06:23）— Muon loss 3.11 vs AdamW 4.00（−22.3%），但 Muon 吞吐 87K vs AdamW 118K tok/s（−26%），显存 53.8GB vs 39.0GB（+38%）。报告 `report_pretrain_muon_vs_adamw.html` 已生成（22.5KB）。两步运维指令（①对比基准 ②Muon vs AdamW）均已完成。
 - PHASE: **两步运维指令均完成 → converged**，等待运维下一步指令
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。**全 8 GPU 空闲**（A/B 已完成 06:23）。**P-8 暂缓令未撤**。📦 体积：TASK=38KB(>32KB,本轮归档中) / MEMORY=30KB ≤32KB ✅。🚫绝不 kill watchdog loop
-- 🩺 **本唤醒推进 = Muon vs AdamW A/B 结果回收 + 报告生成（2026-10-10, .29）**：① 确认 A/B 已完成（06:23:48）：Muon rc=0 loss=3.112 tok/s=86945 VRAM=53.8GB；AdamW rc=0 loss=4.003 tok/s=118132 VRAM=39.0GB。② 提取 100 点 loss/grad_norm 曲线，生成 SVG 图表。③ 生成 `report_pretrain_muon_vs_adamw.html`（22.5KB，7节，2内联SVG，4表，自包含零外链）。④ 结果写入 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md`（Muon vs AdamW 节）。⑤ TASK 归档：38KB>32KB → 归档已完成运维块。→ 下一步：等运维下一步指令（P-8？dist_muon 验证？）。
+- 轮询状态：30min 长轮询。**全 8 GPU 空闲**（.29, 07:21 核验）。**P-8 暂缓令未撤**。📦 体积：TASK=30.1KB ≤32KB ✅ / MEMORY=29.0KB ≤32KB ✅。🚫绝不 kill watchdog loop
+- 🩺 **本唤醒推进 = 状态核查 #255（2026-10-10 07:21, .29 全8GPU空闲）**：① git fetch → 0/0 ✅（无新运维指令, TASK 无变更; 工作区仅 harness 线 kimi_pilot_results.json modified, 非本线不碰）。② GPU 核验：.29 GPU0-7 全 0MiB/0% ✅。③ 两步运维指令均已完成（①对比基准 report_pretrain_baize_vs_dense_fair_zh.html ✅ ②Muon vs AdamW A/B ✅ commit f53ec86d）。④ watchdog PID 1391466 ✅。⑤ 体积自检：TASK=30.1KB / MEMORY=29.0KB 均 ≤32KB ✅ 无需归档。→ 下一步：等待运维下一步指令（P-8 启动令？dist_muon 验证？）。WAITING=1。
+> 📦 **[已归档] #254 流水（2026-10-10 06:50, Muon vs AdamW A/B 结果回收+报告+TASK归档）→ daily-memories/2026-10-10.md；结论：Muon loss 3.11 vs AdamW 4.00(−22.3%), 吞吐 87K vs 118K(−26%), VRAM 53.8 vs 39.0GB(+38%), 报告 22.5KB 已 commit f53ec86d+push。需要时再读。**
 > 📦 **[已归档] #252 流水（2026-10-10 01:22, P-9.11-F 报告生成）→ daily-memories/2026-10-10.md；结论：DM 1M 数据落地, 报告 v2 生成(23.6KB/5表/SVG), warmup 修正 281×→24.5×, DM 2M 待测。需要时再读。**
 > 📦 **[已归档] #251 流水（2026-10-09 19:45, 3个实验idea交付）→ daily-memories/2026-10-09.md；结论：3 idea按价值排序交付(Idea1=P-8彩排续跑), 建议「立即起P-8」。需要时再读。**
 > 📦 **[已归档] #249 流水（2026-10-09 18:27, R3报告再确认）→ daily-memories/2026-10-09.md；结论：报告已存在+commit 00682e58+push, 8节/8内联SVG/10表/零外链。需要时再读。**
