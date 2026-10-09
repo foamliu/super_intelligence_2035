@@ -80,7 +80,7 @@ WAITING: 0
 
 - [~] 🆕 **BaiZe-Hybrid（等参 Dense）中文对比报告**：✅ #252 → **GO**（修 warmup 归因 + ctx×2 到 hybrid OOM）→ `..._fair_zh.html`。
 - [x] ~~夜班填空 T1/T2/T3~~ **已撤销**（用户看不出价值；留 backlog）。
-- [ ] 🆕 **Muon vs AdamW**：**`.29`**（非 `.12`）；**1000 步 / GBS=16 / seq4096 / 比 loss**；先接线三步核查（NeMo 支持 Muon）。
+- [ ] 🆕 **Muon vs AdamW**：**`.29`**；**1000 步/GBS16/seq4096/比 loss**；先接线（NeMo 支持 Muon）。
 - [ ] 🆕 **BaiZe vs MiniCPM5「公平对比」盘点**：等 pretrain 回报 C1–C6 + 权威版本。
 - [x] **pretrain 3 idea 征询（2026-10-09）**：✅ 已回报 #251；待拍板「撤暂缓令 / 先做哪个」。
 - [ ] **P-9 结果** → 定 **P-8 的 seq(4096/8192) / MBS / 精度(bf16/FP8)**（含 16384 是否 OOM 的长上下文边界）。
