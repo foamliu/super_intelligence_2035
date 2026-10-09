@@ -8,6 +8,8 @@
 > **汇率 10/10 末日仍为 2026-10-08**（**源侧当日价尚未发布** ⇒ 如实停在上日，🚫 不补造、只等源）。
 > `lag_corr.csv` 重跑后**仍与 R1/R2/R3/R4 逐字节一致**（sha256 `83d3bf349be52251…`，**第 5 次可复现性通过**）。
 > 🛡 `am_pm_check.py` R5 新增**台账护栏**（0 对照格时默认拒写）⇒ 复跑**未覆盖** R3 的 63 格实核台账。
+> 📄 **本批收口产物**：`signal/REPORT.html`（自包含单文件 · 无外链）＋ 生成器 `signal/make_report_html.py`
+> （**只读既有产物**：`lag_corr.csv` / `FINDINGS.md` / `BOOTSTRAP.md` / `prices/*.json`；**确定性**，连跑逐字节一致）。
 
 ## A. 代码 · 文档 · 生成物
 
@@ -17,6 +19,8 @@
 | `signal/lag_corr.py`（代码） | 574 | 27381 | `06c0d60bafba2e92` | git |
 | `signal/signal_snapshot.py`（代码） | 104 | 4751 | `c82e42b942999b32` | git |
 | `signal/make_findings.py`（代码） | 148 | 9528 | `398048e02ec4a2ad` | git |
+| `signal/make_report_html.py`（代码 · 报告生成器） | 493 | 30335 | `5267afab883100a6` | git |
+| `signal/REPORT.html`（**第11批收口报告** · 自包含单文件） | 234 | 30150 | `29a03cd0cd41e7ec` | git |
 | `signal/block_boot.py`（代码） | 287 | 14639 | `d0ec0a0f782397cf` | git |
 | `signal/am_pm_check.py`（代码 🛡R5护栏） | 179 | 9188 | `88b2023d1e37ce49` | git |
 | `signal/PREREG.md`（**先于结果**） | 139 | 10346 | `967d7a43619c26c2` | git |
