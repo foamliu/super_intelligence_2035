@@ -1,0 +1,64 @@
+  [RESUME] Skipping 95 completed for cline-patched
+Serial kimi eval: harness=cline-patched model=kimi-k2.6-cloud
+  Total=5 Pending=5 Skip=95 Concurrency=1
+
+############################################################
+# [1/5] cline-patched x sympy__sympy-11400
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-11400 for cline-patched
+
+[RUN] cline-patched on sympy__sympy-11400 ...
+  [EVAL] cline-patched on sympy__sympy-11400 ...
+  => sympy__sympy-11400 | cline-patched | resolved
+
+############################################################
+# [2/5] cline-patched x sympy__sympy-15011
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15011 for cline-patched
+
+[RUN] cline-patched on sympy__sympy-15011 ...
+  [EVAL] cline-patched on sympy__sympy-15011 ...
+  => sympy__sympy-15011 | cline-patched | resolved
+
+############################################################
+# [3/5] cline-patched x sympy__sympy-15308
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15308 for cline-patched
+
+[RUN] cline-patched on sympy__sympy-15308 ...
+  [EVAL] cline-patched on sympy__sympy-15308 ...
+  => sympy__sympy-15308 | cline-patched | patch-but-failed
+
+############################################################
+# [4/5] cline-patched x sympy__sympy-15345
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15345 for cline-patched
+
+[RUN] cline-patched on sympy__sympy-15345 ...
+  [EVAL] cline-patched on sympy__sympy-15345 ...
+  => sympy__sympy-15345 | cline-patched | resolved
+
+############################################################
+# [5/5] cline-patched x sympy__sympy-15346
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15346 for cline-patched
+
+[RUN] cline-patched on sympy__sympy-15346 ...
+  [EVAL] cline-patched on sympy__sympy-15346 ...
+  => sympy__sympy-15346 | cline-patched | resolved
+
+============================================================
+SUMMARY: cline-patched x kimi-k2.6-cloud
+============================================================
+  resolved: 36/100 (36.0%)
+  patch-but-failed: 64/100 (64.0%)

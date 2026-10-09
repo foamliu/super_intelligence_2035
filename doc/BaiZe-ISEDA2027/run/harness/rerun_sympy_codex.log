@@ -1,0 +1,12 @@
+  [RESUME] Skipping 174 completed for codex
+Serial kimi eval: harness=codex model=kimi-k2.6-cloud
+  Total=9 Pending=9 Skip=174 Concurrency=1
+
+############################################################
+# [1/9] codex x sympy__sympy-14308
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-14308 for codex
+
+[RUN] codex on sympy__sympy-14308 ...
