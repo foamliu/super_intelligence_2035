@@ -1,0 +1,34 @@
+  [RESUME] Skipping 94 completed for deepseek-harness
+Serial kimi eval: harness=deepseek-harness model=kimi-k2.6-cloud
+  Total=6 Pending=6 Skip=94 Concurrency=1
+
+############################################################
+# [1/6] deepseek-harness x sympy__sympy-11400
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-11400 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-11400 ...
+  [EVAL] deepseek-harness on sympy__sympy-11400 ...
+  => sympy__sympy-11400 | deepseek-harness | resolved
+
+############################################################
+# [2/6] deepseek-harness x sympy__sympy-13773
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-13773 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-13773 ...
+  [EVAL] deepseek-harness on sympy__sympy-13773 ...
+  => sympy__sympy-13773 | deepseek-harness | patch-but-failed
+
+############################################################
+# [3/6] deepseek-harness x sympy__sympy-13895
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-13895 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-13895 ...
