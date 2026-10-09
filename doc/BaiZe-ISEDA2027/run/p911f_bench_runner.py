@@ -20,7 +20,7 @@ DENSE_REF_PATH = "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/
 
 MODELS = {
     "hybrid_2.220b": {"path": HYBRID_PATH, "arch": "nemotron_h",
-                      "ssm_dtype": "float32", "extra_flags": ["--mamba-ssm-dtype","float32"],
+                      "ssm_dtype": "float32", "extra_flags": ["--mamba-ssm-dtype","float32","--disable-cuda-graph"],
                       "ctx_max": 8388608},   # 8M — hybrid can handle this (SSM layers have no KV)
     "dense_matched_2.229b": {"path": DENSE_MATCHED_PATH, "arch": "llama",
                              "ssm_dtype": None, "extra_flags": [],
