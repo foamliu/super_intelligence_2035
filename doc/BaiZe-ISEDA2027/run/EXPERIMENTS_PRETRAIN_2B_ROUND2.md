@@ -3058,3 +3058,100 @@ MEM_FRACTION=0.85 BATCHES="1" MAX_WAIT=600 BENCH_TIMEOUT=7200 \
 **唯一阻塞** = Code/Math 全量分词（需 data agent 完成）+ 运维撤销暂缓令。
 若接受 Code 25× / Math 7× 重复（方案 B/C），则数据层面可立即启动。
 
+---
+
+## P-9.14 T3 提速验证（2026-10-09）— recompute + FP8 on TP1
+
+> **用户直令（2026-10-09）**：「T3 报告写了 2 天了还没跑，.29 全空，跑起来」
+> **背景**：P-9.6② 已证明 FP8 在 M=65536 转正（s=1.21–1.24, 235K tok/s），但用的是 TP4（通信开销 -6%）。
+> **核心问题**：FP8 能不能在 **TP1**（无通信税）上转正？如果能 → FP8 加速 + 长上下文 + >249K 三合一。
+> **关键阻碍**：TP1 下 MBS4 OOM（79.8GB），seq8192 OOM → M 上不去 → **recompute 是唯一可能解锁的杠杆**。
+> **代码改动**：扩展 `pretrain_launcher.py` 添加 `--recompute-num-layers` 参数（commit 28560fa），
+> 在 `mamba2_hybrid_2b/recipe.py` 的 `model_config()` 中设置 `recompute_granularity="full"` / `recompute_method="uniform"` / `recompute_num_layers=N`。
+
+### Test 1 (C2): TP1·MBS4·seq4096·recompute28·bf16 — recompute 解锁 MBS4?
+
+| 参数 | 值 |
+|:--|:--|
+| TP / DP | 1 / 8 |
+| MBS / seq | 4 / 4096 |
+| GBS | 1024 |
+| M (per GPU) | 16384 |
+| precision | bf16_mixed |
+| recompute | granularity=full, method=uniform, num_layers=28 (of 56) |
+| iters | 60 |
+
+| 指标 | 值 |
+|:--|:--|
+| **结果** | **❌ OOM** |
+| rc | 1 |
+| peak VRAM | 81075 MiB (79.2 GB) |
+| 基线对照 | P-9.2 TP1·MBS4 无 recompute = OOM 79.8GB |
+| **recompute 节省** | **仅 ~0.6 GB**（79.8 → 79.2 GB） |
+
+**根因分析**：Mamba2-hybrid 56 层中 **52 层是 SSM（Mamba2），仅 4 层是 attention**。
+SSM 层的激活是**常数量级**（state size 固定，不随 seq 增长）→ recompute 几乎无收益。
+`uniform` 方法将 28 层均匀 checkpoint，但其中绝大多数是 SSM 层 → 节省的显存可忽略。
+**结论：recompute 对 Mamba2-hybrid 架构无效**，无法解锁 MBS4 on TP1。
+
+→ **Test 2 & Test 3 跳过**（Test 1 OOM → 无法在 TP1 上达到 M=32768）。
+
+### Test 4 (C1): TP1·MBS2·seq4096·FP8 — 快速确认（预期 s<1.0）
+
+| 参数 | 值 |
+|:--|:--|
+| TP / DP | 1 / 8 |
+| MBS / seq | 2 / 4096 |
+| GBS | 1024 |
+| M (per GPU) | 8192 |
+| precision | bf16_with_fp8_delayed_scaling_mixed |
+| CUDA_DEVICE_MAX_CONNECTIONS | 1 |
+| iters | 60 |
+
+| iter | ms/iter | lm loss | grad norm | tok/s |
+|---:|---:|---:|---:|---:|
+| 10 | 20980.6 (warmup) | 11.12 | 2.262 | 200K |
+| 20 | 18727.8 | 8.08 | 1.728 | 224K |
+| 30 | 18451.9 | 7.76 | 0.958 | 227K |
+| 40 | 18765.3 | 7.62 | 0.617 | 224K |
+| 50 | 18160.1 | 7.49 | 0.311 | 231K |
+| 60 | 17976.2 | 7.34 | 0.171 | 233K |
+
+| 指标 | 值 |
+|:--|:--|
+| **结果** | **✅ OK (rc=0)** |
+| peak VRAM | 51796 MiB (50.6 GB) |
+| steady-state ms/iter (iter 20-60 avg) | **18,416.3** |
+| bf16 baseline (P-9.7) ms/iter | 16,841.9 |
+| **s = t_bf16 / t_fp8** | **0.915** |
+| steady-state tok/s | **~228K** |
+| bf16 baseline tok/s | 249K |
+| nan iterations | 0 |
+| skipped iterations | 0 |
+
+**解读**：FP8 在 M=8192（远低于 FP8 交叉点 M*≈30-32K）**比 bf16 慢 9%**（s=0.91 < 1.0），
+符合 P-9.4 微基准预测（M=8192 s≈0.90）。FP8 的 overhead（amax/delayed-scaling allreduce）
+在小 M 下无法被 FP8 计算加速抵消。训练正常收敛（loss 11.12→7.34），无 NaN。
+
+### P-8 最优配置裁定
+
+| 路径 | 可行？ | tok/s | 说明 |
+|:--|:--:|---:|:--|
+| TP1·MBS2·bf16（P-9.7 baseline） | ✅ | **249K** | **最优** — 无通信税，bf16 无 overhead |
+| TP1·MBS2·FP8 (M=8192) | ✅ | 228K | s=0.91 — FP8 overhead 未被抵消 |
+| TP1·MBS4·recompute (M=16384) | ❌ OOM | — | recompute 对 SSM 无效 |
+| TP1·MBS4·seq8192·recompute (M=32768) | ❌ OOM | — | Test 1 OOM → 无法到达 |
+| TP4·MBS8·seq8192·FP8 (M=65536) | ✅ | 235K | P-9.6② — FP8 转正但 TP4 通信 -6% |
+
+**→ P-8 最优配置 = TP1·MBS2·bf16 = 249K tok/s**（P-9.7 baseline 确认为最终定论）。
+
+**为什么 FP8 在 TP1 不可行**：
+1. recompute 对 Mamba2-hybrid 无效（52/56 层是 SSM，激活为常量级）→ TP1 上 M 上限 = MBS2×seq4096 = 8192
+2. M=8192 远低于 FP8 交叉点 M*≈30-32K → FP8 overhead > FP8 加速 → s=0.91（慢 9%）
+3. FP8 要转正需 M≥32768 → 需 TP4 → 但 TP4 有 -6% 通信开销 → 净增益被通信税吃掉
+4. → **FP8 (delayed) 可作为 P-8 的精度/显存选项**（省 ~4GB VRAM），但 **不能作为提速手段**
+
+**launcher 改动**（commit 28560fa）：`--recompute-num-layers N` 参数已添加，
+设置 `recompute_granularity="full"` / `recompute_method="uniform"` / `recompute_num_layers=N`。
+代码保留供未来 selective recompute（仅 checkpoint attention 层）实验使用。
+

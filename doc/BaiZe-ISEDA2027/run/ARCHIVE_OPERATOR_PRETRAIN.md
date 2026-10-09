@@ -877,3 +877,133 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 
 **④ 铁律**：🚫 不 kill 别人进程 / 不强占卡；不改 P-5b recipe、不回训、不存 ckpt；🚫 绝不 kill watchdog loop；如实记 OOM/未测。
 > 📦 **体积提醒**：本块加入后 `BAIZE_PRETRAIN_2B_TASK.md` 约 **≈33KB（>32KB）** ⇒ **本轮收尾前先把已闭合旧块归档到 ≤32KB 再提交**（确切字节以你自己 `wc -c` 为准；未到 40KB 红线）。
+
+---
+
+> 📦 归档时间：2026-10-09（pretrain agent 自行归档，T3 完成后收尾）
+
+### 🆕 运维指令 · 2026-10-08（🔬 **数据配比 Round 3 搜索：接收 data agent 交接，在 P-8 前跑完**）· **R3 已完成 — 归档至 git 历史**
+
+> **背景**：data agent 已完成 R3 方案定型，正式交接给 pretrain 团队执行。
+> **交接文档**：`run/BAIZE_DATA_R3_TASK.md`（👈 **你启动前先通读此文**，以下是指令摘要）。
+> **为什么现在做、而不是等 P-8 再搜**：P-8 的前置（全量分词 + GPIC 下载）至少还需要 2–3 天；
+> 而 R3 只需要小样本分词（~30 分钟）+ 100 trial BO（~19.5h），**8 卡空闲期正好利用**，
+> 跑完直接决定 P-8 的 Stable 段配比，**不占 P-8 启动后的时间**。
+
+**① R3 vs R2 的本质区别**
+| 对比项 | R2（已完成） | R3（本次） |
+|:--|:--|:--|
+| 搜索空间 | 3 维 `base:code:math` | **6 维** `ultrafineweb_en / ultrafineweb_zh / ultrafineweb_l1_en_hq / UltraX-Preview / UltraData-Code / UltraData-MATH` |
+| 评测 | `--limit 500`（sampled） | **全量** 73106 requests（无 `--limit`） |
+| trial 数 | 200 | **100**（预算压缩到 ≤24h） |
+| D/trial | 0.5B | **1B**（信噪比更高） |
+| 代理规模 | d=128/L=14 (18.36M) | **同**（不换代理） |
+| 前置 | 已有 8 源分词 bin | 需跑 **小样本分词**（6 源 × 2 parquet，~30 min） |
+
+**② 执行顺序（对照交接文档 §6）**
+
+```text
+Step 0  ⭐ 先通读 run/BAIZE_DATA_R3_TASK.md（尤其是 §5 代码改造规格 + §3.2 小样本分词路径）
+Step 1  备份 R2 脚本 → 改出 baize_mix_optuna_r3.py（按 §5 改造）
+        - 搜索空间从 3-dim 改为 6-dim（6 个单源名）
+        - 新增 build_blend_stable() 函数
+        - objective = lm_eval 全量 8 任务均分（无 --limit）
+        - 沿用 Optuna TPE+MedianPruner + MBS=16 + GBS=16 + seq=2048 + D=1B
+Step 2  跑 baize_tokenize_r3_sources.sh（6 源小样本分词, ~30 min）
+        - 数据源位置见交接文档 §3.1 Table
+        - 每源取 2 parquet（路径已列出），参考 baize_mix_tokenize_base.sh
+        - 输出到 {BASE}/data/r3_sources/
+Step 3  python baize_mix_optuna_r3.py --phase stable --n-trials 100 \\
+            --gpus 0,1,2,3,4,5,6,7   # ~19.5h（8 卡满）
+Step 4  等 100 trial 完成（第 13 轮最后 4-trial 收尾）
+Step 5  top-K（K≥5）全量 lm_eval 验证
+Step 6  输出 r3_best_blend.txt → 供 P-8 Stable 热身引用
+```
+
+**③ 关键改动点（相对于 R2 的 `baize_mix_optuna_r2.py`）**
+- 搜索空间：`ultrafineweb_en, ultrafineweb_zh, ultrafineweb_l1_en_hq, ultrax_preview, ultradata_code, ultradata_math`
+- 不搜索 `decay` 段（Decay 段保持 R2 的 3-dim 原样，R3 只搜 Stable）
+- 每 trial D=1B 而非 0.5B（训练步数 30518 步 @ MBS=16, GBS=16, seq=2048）
+- `lm_eval` 不加 `--limit`（全量 73106 requests，~3.6 分钟/trial）
+- 末轮不足 8 trial 时 `--gpus` 改传实际空闲卡号
+
+**④ 预算确认（交接文档 §2 实测锚点）**
+| 操作 | 单 trial | 100 trial |
+|:--|:--|:--|
+| 训练 (1B tok, MBS=16, 166ms/step) | 84.4 min | — |
+| HF 转换 | 2 min | — |
+| 全量 lm_eval（8 任务, 无 limit） | 3.6 min | — |
+| 单 trial 合计 | ~90 min | — |
+| 100 ÷ 8 GPU = 13 轮 × 90min | — | **~19.5h ≤ 24h** ✅ |
+
+**⑤ 同期义务（不冲突的，可后台并行）**
+- 论文更新（纯 CPU 工作）：等 R3 跑起来之后（Step 3 已启动、稳态运行后），**抽空做**，不占 GPU。
+- R2 收官报告（纯 CPU 自包含 HTML 写作）：同理，R3 跑起来之后抽空做，不占 GPU。
+- ⚠️ **不得因写论文/报告而延迟 Step 1–3**：R3 的主干是先改代码 + 分词 + 起跑，**写报告是后台 CPU 活**。
+
+**⑥ 收尾**
+- R3 搜索完成后（r3_best_blend.txt 已生成），把结果回写到 `DATA_MIX_RECIPE.md` 更新 Stable 段推荐配比。
+- 在 `MEMORY_PRETRAIN_2B.md` 记录 R3 结论 + best trial 详情。
+- **不 kill loop**：跑完后 `WAITING=1` 回原位等 P-8 启动令。
+
+> 📦 本块加入后 TASK 约 28KB，仍 ≤32KB ✅。
+
+### 🆕 运维指令 · 2026-10-08（📝 **更新论文 LaTeX：把 R2 实测数据写入 `4_llm_pretrain.tex` / `3_architecture.tex`**）· **用户直令：各线自己更新论文** · 高优先
+
+> **用户令**：「让 pretrain，vision 和 data 更新一下论文。」
+> ⚠️ **不要代笔写 LaTeX** —— 你只负责把你自己的实验数据填入对应的 `.tex` 文件，然后编译 `main.pdf`。
+> ⚠️ **论文在 `BaiZe-ISEDA2027/` 目录下，与任务书同在一个 repo** —— 你直接可见可改。
+
+**① 当前论文中 `4_llm_pretrain.tex` 已有 R1（S1–S5）的基础数据，但 R2 的大量新结果完全没有反映**。你需要审阅 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md`，判断哪些值得写入论文。
+
+**② 建议更新的内容（自行判断，不一定要全写）：**
+1. **长上下文能力**（B1 实验）：1M PPL=55.42 无退化 → 可补入 §4.2 或新增一段，说明 hybrid 的 long-context 优势（只需 4 层 attention 可见状态增长）。
+2. **推理成本对比**（P-9.11 系列）：128K–256K 下 hybrid vs dense 加速比 2.8–4.3×（prefill 1.7–3.3×，decode 2.2–2.6×）→ 强化 Table~8 或新增一段。
+3. **FP8 训练可行性**（P-9.8/P-9.9）：delayed FP8 可用于 P-8，但 tensorwise FP8 因 T1/T4 失败 → 可加一句预算说明。
+4. **更新 Table~8（tab:archcomp）**：若有新的更精确的数据（如 decode gap 在 sglang 下的实测），可更新。
+5. **Training throughput 数据**：P-9.7 定稿的 249K tok/s 可更新到相关位置。
+
+**③ 格式纪律**
+- 🚫 **不改 § 编号、不改 label、不改 cross-ref** —— 只更新数字、表格行、段落描述。
+- ✅ **可以加子节**（`\subsection{...}`）/ 加段落 / 加表 / 加图 —— 但 label 和 cross-ref 不能冲突。
+- **编译前先 `cd doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027 && rm -f main.aux main.bbl main.blg main.log`，然后 `pdflatex main && bibtex main && pdflatex main && pdflatex main`，确认 0 error。
+- 编译后的 `main.pdf` **一起 commit**（审稿人看 PDF）。
+- **git 前缀**：`pretrain 论文更新: ...`
+
+**④ 本块不撤销之前的报告任务** —— 写报告和更新论文是两件事，**都要做**。
+- 推荐顺序：**先更新论文（简短任务），再写报告（深度任务）**。
+
+> 📦 本块加入后 TASK 约 24KB，仍 ≤32KB ✅。
+
+
+### 🆕 运维指令 · 2026-10-08（📄 **R2 全线实验收官总报告 HTML**）· **用户直令：各线自己写报告** · 高优先
+
+> **用户令**：「把任务下发给各 agent，由 agent 自己写报告，不要替代他们写。」
+> ⚠️ **本线 R2 所有实验已完成**（P-1~P-9.13 全 ✅），长期空转心跳不是正事。**用户点名要 agent 自己写报告**。
+
+**① 交付**：`report_pretrain_r2_final.html`（落 `doc/BaiZe-ISEDA2027/`）
+
+**② 格式（沿用 house style）**
+- **自包含**：内联 CSS + **数据图优先内联 SVG**；**零外链**；**HTML 本体 ≤200KB**。
+- 位图一律 **JPEG、长边 ≤1280、q85**、单图 ≤400KB/总量 ≤4MB、**落本地并 commit**；🚫 严禁外链、🚫 严禁用文生图「编」数据图（曲线必须由 **真实实测数据** 生成）。
+- 若引用已有报告（如 `BAIZE_PRETRAIN_RESULT.html` / `report_pretrain_research{1..5}.html`），只给链接指针，**不重复贴全文**。
+
+**③ 建议 10 节**
+1. **TL;DR**（3–5 条：架构锁定为 hybrid 56L/4-attn，LR 1e-3 WSD，val loss 2.2054，hybrid vs dense 加速比 2.8–4.3×@128K–256K，FP8 裁定为 delayed 可用于 P-8）；
+2. **实验设计总览**：R1（架构搜索 S0–S5）→ R2（P-1~P-9.13），各阶段目的与预算；
+3. **架构选型**：dense vs hybrid vs 其他，**hybrid 锁定为正式架构**（附 P-3 5000 步对比 + B1 1M PPL=55.42 无退化）；
+4. **超参搜索**：P-1 LR 扫描（1e-3 最优）+ P-2 3-seed 复现（2.6739±0.0469）+ P-4 退火消融；
+5. **FP8 裁定**：P-9.8 armA/armB + P-9.9 tensorwise → 结论：delayed FP8 可用于 P-8；
+6. **长上下文能力**：P-9.11 系列（2M served / 4M timeout / 显存归因）+ 推理成本矩阵；
+7. **提速实验**：T1 bf16-SSM（无差异 1.00×）/ T2 公平对比 / T3 短名单（C1 FP8-TP1 / C2 recompute+MBS4）/ T4 效果短名单（Q1 100B tokens / Q2 data mixture）；
+8. **复杂推理**：A 36/36（BBH 峰值 14.26%@2.62B）/ B ABF（+2.71pp）/ D VRAM 5.35GB 恒定；
+9. **对 P-8 的建议**：配方 88:8:4 / FP8 delayed / hybrid 架构 / 数据就绪条件；
+10. **局限与诚实交代**：655M token 代理实验 / 未收敛 / 单 seed 方差 / 待正式训练验证。
+
+**④ 纪律**
+- **数字必须真**：每个数字可由 `EXPERIMENTS_PRETRAIN_2B_ROUND2.md` / 原始日志复算；
+- **结论跑完即固化**：不新增实验、不改已有结论；
+- **收尾按「收尾铁律」commit+push**（前缀 `pretrain R2收官: …`）；
+- 写完本报告后，**不要回到空转心跳** —— 改做 **P-8 前置预研**（若运维尚未撤暂缓令，预研 P-8 recipe / 数据配方复算 / 训练脚本核验）。
+
+> 📦 本块加入后 TASK 约 23KB，仍 ≤32KB ✅。如需归档，只归档下方已闭合旧块。
