@@ -5,10 +5,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A ROUND-2 7×100 BLOCKED RE-RUN (Phase 1 non-sympy cline-patched RUNNING + hermes 95/100 finishing)
-已完成:       R213 SWEBENCH_COMPARE refreshed (57877B, 695/700, 205 resolved) · claude-code Phase 1 non-sympy DONE (12 re-run) · R210 optimized re-run · 口径与并发 section ✅ · trace report in doc root ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
-当前动作:     R213: Phase 1 non-sympy re-run — claude-code DONE (12/12), cline-patched at [2/8] django (PID 3357823, etimes~849s). Hermes 95/100 (5 rem, all sympy, PID 4039300, etimes~31703s). 75 blocked remaining (down from 79). SWEBENCH_COMPARE.html refreshed (57877B, 695/700, 205 resolved). In-scope scored rates: pi 39.1%(69) > codex 37.4%(91) > hermes 35.8%(95) > opencode 35.0%(100) > claude-code 30.7%(88) > cline 29.5%(88) > dsh 24.7%(89).
-下一步:       ① Phase 1 (cline-patched 6 rem + dsh 5 + pi 19 = 30 non-sympy) continues parallel with hermes → hermes finishes ~14:00 → Phase 3 (sympy 44 blocked) starts → ~18h serial. ② After all 75 re-run: refresh SWEBENCH_COMPARE.html → final 7×100 table. ③ Final report with complete data.
+PHASE:        H-A ROUND-2 7×100 BLOCKED RE-RUN (Phase 1 non-sympy cline-patched [6/8] RUNNING + hermes 96/100 finishing)
+已完成:       R214 SWEBENCH_COMPARE refreshed (57904B, 696/700, 209 resolved) · claude-code Phase 1 DONE · cline-patched Phase 1 [5/8] done · R210 optimized re-run · 口径与并发 section ✅ · trace report in doc root ✅ · H-B 7-way/3-way · 7×30 R1 COMPLETE
+当前动作:     R214: Phase 1 non-sympy re-run — cline-patched at [6/8] django (PID 3357823, etimes~2966s, on django__django-12708). Hermes 96/100 (4 rem, all sympy, PID 4039300, etimes~33820s). 71 blocked re-run remaining (down from 75). SWEBENCH_COMPARE.html refreshed (57904B, 696/700, 209 resolved). In-scope scored rates: pi 39.1%(69) > codex 37.4%(91) > hermes 35.4%(96) > opencode 35.0%(100) > cline 32.6%(92) > claude-code 30.7%(88) > dsh 24.7%(89).
+下一步:       ① Phase 1 (cline-patched 2 rem + dsh 5 + pi 19 = 26 non-sympy) continues parallel with hermes → hermes finishes ~14:00 → Phase 3 (sympy 44 blocked) starts → ~18h serial. ② After all 71 re-run: refresh SWEBENCH_COMPARE.html → final 7×100 table. ③ Final report with complete data.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -29,13 +29,13 @@ ERROR_COUNT:  0
 2. **codex 特例**：codex 在 R1 跑了 300 条超集（串行），其中 70 条与本轮 100-set 重叠 → codex 的 70 条"新跑"实际来自 **300 串行超集**，**非 R2 并行**。codex 全部 100 条均为串行。
 3. **监控指标**（本轮必须对比 R1 同 30 条）：`quota-blocked` / `timeout` / `no-patch` 率 → 若 R2 显著上升 ⇒ 判"并行污染" → 结论打折。SWEBENCH_COMPARE.html §2 监控表已生成。
 
-**R2 监控快照**（2026-10-09 12:17，R213 更新）：
+**R2 监控快照**（2026-10-09 12:53，R214 更新）：
 
 | 指标 | R1 (30 serial) | R2 (70 parallel, near done) | 判定 |
 |:--|:--|:--|:--|
-| **quota_blocked** | 0/210 (0%) | 0/695 (0%) | ✅ **NO gateway pollution** |
+| **quota_blocked** | 0/210 (0%) | 0/696 (0%) | ✅ **NO gateway pollution** |
 | **timeout** | 0 (codex 2) | minimal (codex 3, claude-code 1 astropy) | ✅ 正常 |
-| **workdir_blocked** ⚠️NEW | **0/210 (0%)** | **75/695 (10.8%)** ↓ from 79(R212)↓ from 88(R207) | ⚠️ **PARALLEL POLLUTION (workdir)** — **FIX IN PROGRESS (rerun_blocked_optimized.sh: Phase 1 non-sympy — claude-code DONE 12/12, cline-patched [2/8] running; Phase 3 sympy=44 after hermes)** |
+| **workdir_blocked** ⚠️NEW | **0/210 (0%)** | **71/696 (10.2%)** ↓ from 75(R213)↓ from 88(R207) | ⚠️ **PARALLEL POLLUTION (workdir)** — **FIX IN PROGRESS (rerun_blocked_optimized.sh: Phase 1 non-sympy — claude-code DONE 12/12, cline-patched [5/8] done; Phase 3 sympy=44 after hermes)** |
 | **no-patch (patch_applied=False)** | **0/210 (0%)** | **较高** (non-django/sympy repos) | ⚠️ eval env limitation |
 
 **⚠️ 新发现：workdir git-checkout 冲突 = 并行污染（R207 首次披露）**：
@@ -199,5 +199,6 @@ ERROR_COUNT:  0
 - 2026-10-09 09:40 —— **第二百零九轮** —— 已归档 → daily-memories-harness/2026-10-09.md。
 - 2026-10-09 10:22 —— **第二百一十轮** —— 已归档 → daily-memories-harness/2026-10-09.md（🚀 OPTIMIZED BLOCKED RE-RUN: killed old serial script → launched rerun_blocked_optimized.sh. Phase 1 non-sympy=44 parallel with hermes, Phase 3 sympy=44 after. Hermes 88/100, 12 rem. SWEBENCH_COMPARE 57686B 688/700 193 resolved）。需要时再读。
 - 2026-10-09 11:01 —— **第二百一十一轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
-- 2026-10-09 11:37 —— **第二百一十二轮** —— 🔄 Blocked re-run monitor: Phase 1 non-sympy re-run IN PROGRESS — claude-code at [9/12] django (PID 260327, etimes~4654s, on django__django-12908). Hermes 92/100 (8 rem, all sympy, on sympy__sympy-14317, PID 4039300, etimes~29406s). 79 blocked remaining (down from 88: claude-code non-sympy 9/12 done, +1 resolved since R211). SWEBENCH_COMPARE.html refreshed (57768B, 692/700, 200 resolved). In-scope scored rates: pi 39.1%(69) > codex 37.4%(91) > opencode 35.0%(100) > hermes 34.8%(92) > cline 29.9%(87) > claude-code 28.2%(85) > dsh 24.7%(89). quota_blocked=0 → NO gateway pollution ✅. ⑦ deliverables verified: 口径与并发 ✅ / trace report in doc root (38307B) ✅ / 复用-新跑 markers ✅ / monitoring table ✅. Processes: rerun_blocked_optimized.sh (PID 260306, ppid=1) + hermes (PID 4039300, ppid=1) both alive & progressing. ETA: Phase 1 remaining ~3h (cline/dsh/pi non-sympy after claude-code), hermes ~1.5h, Phase 3 sympy=44 ~18h serial → final ~Oct10 06:00. → commit+push. 📦 体积：TASK=32870B(32.1KB, marginal) / MEMORY=~30KB(29.3KB ✓)（归档 R211 ~0.3KB → daily-memories）。
-- 2026-10-09 12:17 —— **第二百一十三轮** —— 🔄 Blocked re-run monitor: claude-code Phase 1 non-sympy DONE (12/12 re-run, all now resolved/pbf, 0 non-sympy blocked remaining). cline-patched Phase 1 at [2/8] django (PID 3357823, etimes~849s, on django__django-12453). Hermes 95/100 (5 rem, all sympy, PID 4039300, etimes~31703s). 75 blocked remaining (down from 79). SWEBENCH_COMPARE.html refreshed (57877B, 695/700, 205 resolved). In-scope scored rates: pi 39.1%(69) > codex 37.4%(91) > hermes 35.8%(95) > opencode 35.0%(100) > claude-code 30.7%(88) > cline 29.5%(88) > dsh 24.7%(89). quota_blocked=0 → NO gateway pollution ✅. ⑦ deliverables verified: 口径与并发 ✅ / trace report in doc root (38307B) ✅ / 复用-新跑 markers ✅ / monitoring table ✅. Processes: rerun_blocked_optimized.sh (PID 260306) + hermes (PID 4039300) + cline-patched rerun (PID 3357823) all alive & progressing. ETA: cline-patched 6 rem ~1h, then dsh 5 ~40min, then pi 19 ~2.5h → hermes ~1h → Phase 3 sympy=44 ~18h serial → final ~Oct10 08:00. → commit+push. 📦 体积：TASK=32870B(32.1KB, marginal ⚠️) / MEMORY=~30KB(29.2KB ✓)。
+- 2026-10-09 11:37 —— **第二百一十二轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
+- 2026-10-09 12:17 —— **第二百一十三轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
+- 2026-10-09 12:53 —— **第二百一十四轮** —— 🔄 Blocked re-run monitor: cline-patched Phase 1 at [6/8] django (PID 3357823, etimes~2966s, on django__django-12708). [5/8] done: django-12308 pbf, django-12453/12497/12589 scored, django-12700 resolved. Hermes 96/100 (4 rem, all sympy, PID 4039300, etimes~33820s, on sympy__sympy-15011). 71 blocked re-run remaining (down from 75). SWEBENCH_COMPARE.html refreshed (57904B, 696/700, 209 resolved). In-scope scored rates: pi 39.1%(69) > codex 37.4%(91) > hermes 35.4%(96) > opencode 35.0%(100) > cline 32.6%(92) > claude-code 30.7%(88) > dsh 24.7%(89). quota_blocked=0 → NO gateway pollution ✅. ⑦ deliverables verified: 口径与并发 ✅ / trace report in doc root (38307B) ✅ / 复用-新跑 markers ✅ / monitoring table ✅. Processes: rerun_blocked_optimized.sh (PID 260306) + hermes (PID 4039300) + cline-patched rerun (PID 3357823) all alive & progressing. ETA: cline-patched 2 rem ~30min → dsh 5 ~40min → pi 19 ~2.5h → hermes ~1h → Phase 3 sympy=44 ~18h serial → final ~Oct10 08:00. → commit+push. 📦 体积：TASK=32870B(32.1KB, marginal ⚠️) / MEMORY=~30KB(29.4KB ✓)。

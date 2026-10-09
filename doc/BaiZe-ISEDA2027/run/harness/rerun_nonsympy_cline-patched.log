@@ -21,3 +21,47 @@ Serial kimi eval: harness=cline-patched model=kimi-k2.6-cloud
 [SETUP] django__django-12453 for cline-patched
 
 [RUN] cline-patched on django__django-12453 ...
+  [EVAL] cline-patched on django__django-12453 ...
+  => django__django-12453 | cline-patched | resolved
+
+############################################################
+# [3/8] cline-patched x django__django-12497
+############################################################
+
+============================================================
+[SETUP] django__django-12497 for cline-patched
+
+[RUN] cline-patched on django__django-12497 ...
+  [EVAL] cline-patched on django__django-12497 ...
+  => django__django-12497 | cline-patched | resolved
+
+############################################################
+# [4/8] cline-patched x django__django-12589
+############################################################
+
+============================================================
+[SETUP] django__django-12589 for cline-patched
+
+[RUN] cline-patched on django__django-12589 ...
+  [EVAL] cline-patched on django__django-12589 ...
+  => django__django-12589 | cline-patched | resolved
+
+############################################################
+# [5/8] cline-patched x django__django-12700
+############################################################
+
+============================================================
+[SETUP] django__django-12700 for cline-patched
+
+[RUN] cline-patched on django__django-12700 ...
+  [EVAL] cline-patched on django__django-12700 ...
+  => django__django-12700 | cline-patched | resolved
+
+############################################################
+# [6/8] cline-patched x django__django-12708
+############################################################
+
+============================================================
+[SETUP] django__django-12708 for cline-patched
+
+[RUN] cline-patched on django__django-12708 ...
