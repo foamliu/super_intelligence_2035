@@ -157,18 +157,26 @@ def generate_report():
     # Section 9: bs=8 batch throughput (mf=0.85)
     h.append(gen_section(data, "prefill_tok_s", 0.85, 8, "9", "Prefill 吞吐量 (批量+高KV)", "bs=8, mem-frac=0.85", "tok/s"))
 
-    # Section 10: Max Context
-    h.append("<h2>10. 可服务上下文上限（实测）</h2><table><tr><th>模型</th><th>mem-frac</th><th>max_total_num_tokens</th><th>最大可服务上下文</th><th>受限原因</th></tr>")
-    h.append("<tr><td class='hybrid' rowspan='2'>Hybrid 2.220B</td><td>0.6</td><td>2,979,164 (~3M)</td><td>2M (bs=1)</td><td>仅4层Attention KV + 52层SSM状态(float32)占用~72GB</td></tr>")
-    h.append("<tr><td>0.85</td><td colspan='2' style='color:#e74c3c'>OOM — SSM float32状态占72GB，85% KV池分配失败</td><td>SSM状态显存开销</td></tr>")
+    # Section 10-11: mf=0.75, bs=1 (hybrid only — --disable-cuda-graph)
+    h.append(gen_section(data, "prefill_tok_s", 0.75, 1, "10", "Prefill 吞吐量 (Hybrid mf=0.75)", "bs=1, mem-frac=0.75, Hybrid仅此一列（Dense无mf=0.75数据）", "tok/s"))
+    h.append(gen_section(data, "decode_tok_s", 0.75, 1, "11", "Decode 吞吐量 (Hybrid mf=0.75)", "bs=1, mem-frac=0.75 ⚠️ --disable-cuda-graph：decode受kernel launch开销影响，不可与mf=0.6直接对比", "tok/s"))
+
+    # Section 12: bs=8 batch throughput (mf=0.75, hybrid only)
+    h.append(gen_section(data, "prefill_tok_s", 0.75, 8, "12", "Prefill 吞吐量 (Hybrid mf=0.75 批量)", "bs=8, mem-frac=0.75, Hybrid仅此一列", "tok/s"))
+
+    # Section 13: Max Context
+    h.append("<h2>13. 可服务上下文上限（实测）</h2><table><tr><th>模型</th><th>mem-frac</th><th>max_total_num_tokens</th><th>最大可服务上下文</th><th>受限原因</th></tr>")
+    h.append("<tr><td class='hybrid' rowspan='3'>Hybrid 2.220B</td><td>0.6</td><td>2,979,164 (~3M)</td><td>2M (bs=1)</td><td>仅4层Attention KV + 52层SSM状态(float32)占用~72GB</td></tr>")
+    h.append("<tr><td>0.75*</td><td>3,792,700 (~3.8M)</td><td>2M (bs=1)</td><td>*--disable-cuda-graph，4M仍超max_total_num_tokens</td></tr>")
+    h.append("<tr><td>0.85</td><td colspan='2' style='color:#e74c3c'>OOM — SSM float32状态占72GB + CUDA graph缓冲区不足</td><td>SSM状态显存开销</td></tr>")
     h.append("<tr><td rowspan='2'>Dense-Match 2.229B</td><td>0.6</td><td>1,233,460 (~1.2M)</td><td>512K (bs=1实测)</td><td>36层Dense Attn KV线性增长</td></tr>")
     h.append("<tr><td>0.85</td><td>待确认</td><td>1M (bs=1, 服务器ctx上限)</td><td>服务器context_length=1M</td></tr>")
     h.append("<tr><td rowspan='2'>Dense-Ref 2.512B</td><td>0.6</td><td>1,050,035 (~1.05M)</td><td>512K (bs=1实测)</td><td>42层Dense Attn，KV更大</td></tr>")
     h.append("<tr><td>0.85</td><td>1,540,517 (~1.5M)</td><td>512K (服务器ctx上限)</td><td>服务器context_length=512K</td></tr></table>")
-    h.append("<div class='info'><strong>架构优势</strong>：Hybrid 56层中仅4层使用Attention，SSM层状态固定大小。在相同GPU(A100 80GB)上，Hybrid可服务<strong>2M上下文</strong>，是Dense-Match的<strong>4倍</strong>、Dense-Ref的<strong>4倍</strong>。<br><strong>SSM显存代价</strong>：Hybrid的52层Mamba2 SSM状态以float32存储，占用~72GB显存，导致mf=0.85时KV池分配OOM——这是Hybrid架构的已知trade-off。</div>")
+    h.append("<div class='info'><strong>架构优势</strong>：Hybrid 56层中仅4层使用Attention，SSM层状态固定大小。在相同GPU(A100 80GB)上，Hybrid可服务<strong>2M上下文</strong>，是Dense-Match的<strong>4倍</strong>、Dense-Ref的<strong>4倍</strong>。<br><strong>SSM显存代价</strong>：Hybrid的52层Mamba2 SSM状态以float32存储，占用~72GB显存。mf=0.85时CUDA graph缓冲区OOM；mf=0.75需禁用CUDA graph(--disable-cuda-graph)以释放10.85GB——这是Hybrid架构的已知trade-off。<br><strong>mf=0.75 vs 0.6</strong>：禁用CUDA graph后max_total_num_tokens从2.98M升至3.79M（+27%），prefill吞吐不变（~39K tok/s），但decode吞吐因kernel launch开销下降~6×（53 vs 310 tok/s）。</div>")
 
-    # Section 11: Methodology
-    h.append("<h2>11. 方法学</h2><div class='note'><strong>环境</strong>：A100 80GB×3（每模型独占1GPU），SGLang 0.5.9，flashinfer，bf16。<br><strong>公平口径</strong>：同mem-frac/同backend/WARMUP=1/REPEATS=3/同prompt。<br><strong>高ctx优化</strong>：ctx>1M时仅测bs=1/repeats=1；Dense模型ctx≥512K时仅测bs=1。<br><strong>timeout</strong>：max(600s,ctx/1000)，封顶1800s。<br><strong>数据完整性</strong>：SGLang在输入超过max_total_num_tokens时返回HTTP 200+1 token（非错误），已通过token计数校验检测并标记为server_rejected。所有数字来自实测，无估算。'—'=不可服务/未测/被拒绝。<br><strong>Hybrid mf=0.85</strong>：SSM float32状态占~72GB显存，KV池分配OOM，仅mf=0.6可运行。<br><strong>Dense ctx上限</strong>：DM=1M, DR=512K（更高导致启动OOM或超过服务器context_length）。</div>")
+    # Section 14: Methodology
+    h.append("<h2>14. 方法学</h2><div class='note'><strong>环境</strong>：A100 80GB×3（每模型独占1GPU），SGLang 0.5.9，flashinfer，bf16。<br><strong>公平口径</strong>：同mem-frac/同backend/WARMUP=1/REPEATS=3/同prompt。<br><strong>高ctx优化</strong>：ctx>1M时仅测bs=1/repeats=1；Dense模型ctx≥512K时仅测bs=1；Hybrid模型ctx≥1M时仅测bs=1。<br><strong>timeout</strong>：max(600s,ctx/1000)，封顶1800s。<br><strong>数据完整性</strong>：SGLang在输入超过max_total_num_tokens时返回HTTP 200+1 token（非错误），已通过token计数校验检测并标记为server_rejected。所有数字来自实测，无估算。'—'=不可服务/未测/被拒绝。<br><strong>Hybrid mf=0.75</strong>：SSM float32状态占~72GB，mf=0.85和mf=0.75(含CUDA graph)均OOM。使用--disable-cuda-graph跳过graph捕获以释放10.85GB。⚠️<strong>decode数据不可与mf=0.6直接对比</strong>（CUDA graph对decode影响极大，prefill不受影响）。<br><strong>Hybrid mf=0.85</strong>：完全OOM，无数据。<br><strong>Dense ctx上限</strong>：DM=1M, DR=512K（更高导致启动OOM或超过服务器context_length）。</div>")
     h.append(f"<footer>P-9.11-F Benchmark · BaiZe ISEDA 2027 · {now}</footer></body></html>")
     content = "\n".join(h)
     with open(REPORT_PATH,"w") as f: f.write(content)
