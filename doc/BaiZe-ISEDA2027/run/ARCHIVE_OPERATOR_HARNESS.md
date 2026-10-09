@@ -602,3 +602,47 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 
 **执行结论**：Q1–Q4 已在 R184 回答（commit 27859f2e 2026-10-08 17:26），写进 MEMORY_HARNESS.md「运维问答」小节。Q5 未单独作答（已融入 Q1–Q4 建议）。
 
+## 📦 归档：2026-10-08⑤ / ⑦（R2 口径披露与并发追认 + 7×100 起跑令）
+
+> **归档时间 2026-10-09**（原块位于 `BAIZE_HARNESS_TASK.md` 运维指令区，已闭合；**原文照录**）。**执行结果**：⑤ → 7×100 全跑完（7 harness × 100 = 700 entries）；⑦ → 「口径与并发」节已写入 `MEMORY_HARNESS.md` ✅、`report_harness_interaction_traces.html` 已落 `doc/BaiZe-ISEDA2027/` 根目录 ✅、SWEBENCH_COMPARE 已加「复用/新跑」标记列 ✅、监控表（quota/timeout/workdir-blocked/no-patch）已生成 ✅。⚠️ 由此暴露的 `workdir git-checkout 冲突`（88 例 blocked）已在 R210+ 修复中，并成为 2026-10-09⑧ 的并发硬约束来源。
+
+### 🆕 运维指令 · 2026-10-08⑤（**① 启动第二轮 7×100 横评 ② 深挖第一轮 7×30 的「交互轨迹」→ 列表对比各 harness 特点**）· **用户直令** · 最高优先
+
+> **用户令（2026-10-08 晚）**：「**① 启动第二轮 7×100 横评；② 深入分析第一轮 7×30 横评的交互轨迹，列表对比各 harness 的特点。**」
+> 现状（运维已核）：7-way × 30 全完成（cline-patched 60.0% · Pi 60.0% · Hermes 53.3% · opencode 50.0% · codex 46.7% · claude-code 43.3% · deepseek-harness 40.0%），**无运行中 chain**。数据 = `run/harness/kimi_pilot_results.json`（480 entries）。
+
+**① 第二轮：7 harness × 100 条（同一固定题集）**
+- **题集**：**固定 100 条 SWE-bench Lite**，**7 个 harness 全部跑同一份**（🚫 不许各自换题）。**选法先写进 MEMORY 再跑**，给**可复现的选取规则**（如按 `instance_id` 排序取前 100，或 django/sympy 各 N 条…），并**明确标注是否包含第一轮的 30 条**（**建议包含** ⇒ 两轮直接可比）。
+- **口径必须与第一轮逐字一致**（否则两轮不可比）：同 backbone `kimi-k2.6-cloud`、**同并发设置**、同沙箱、同 `PreToolUse`/anti-cheat、同判据。**若为压缩 ETA 想改并发 ⇒ 先报方案，不得擅自改口径。**
+- **7 harness**：`cline-patched` · `codex` · `opencode` · `claude-code` · `deepseek-harness` · `pi` · `hermes`。
+- **⭐ 先报 ETA 再全速跑**：第一轮 210 run ≈ 34h 串行 ⇒ 700 run 同速 ≈ **4.5–5 天**。**第一个动作 = 用实测 s/inst 算总 ETA 并写进心跳**；然后 `--resume` 增量跑，**每完成一个 harness 即刷新 + commit**。
+- **交付**：`SWEBENCH_COMPARE.html` → **7 行 × 100 条** + 汇总表（scored/resolved/pbf/quota-blocked/rate）+ 口径表。
+- **铁律**：🚫 不删 `kimi_pilot_results.json`（保留第一轮 210 entries，可 `--resume`）；🚫 不打断正在跑的 chain。
+
+**② 深挖第一轮「交互轨迹」+ 逐 harness 特点对比表（纯 CPU，本块先做）**
+- **数据源**：`kimi_pilot_results.json` 的 `harness_result` 字段（已知含 `stdout_tail` / `eval` / `wall_s` / `returncode`）。**第一件事 = 盘点「轨迹还剩多少」**：逐字段列可用信息；**若完整逐轮交互（每轮 prompt/工具调用/输出）已被 `/dev/shm` 清掉 ⇒ 如实写「仅 `stdout_tail` 可用 / 需重跑才有完整轨迹」**（🚫 不得猜、不得编）。
+- **产出 A**：**7 行 × N 列「harness 特点对比表」**（HTML，house style，内联 SVG，零外链，≤200KB）。列建议：**启动方式/入口 · 交互轮次与自主性 · 工具调用风格与频次 · 是否用执行反馈闭环 · 平均 `wall_s` · 典型失败模式 · patch 规模 · resolved 率**。**每格数字/结论须可由 JSON 或源码 `path:line` 复算**。
+- **产出 B**：回答「**为何同 backbone 下差 20pp（40.0%–60.0%）？是 harness 架构差异，还是交互轨迹差异？**」——**证据化**归因，不许泛泛。
+- **交付**：`report_harness_interaction_traces.html`（新）+ 刷新 `HARNESS_7WAY_COMPARISON.html` 相关节。
+
+**顺序**：**② 先做**（纯 CPU/写作，不占串行槽）→ **① 同步报 ETA 并起跑**（后台 `--resume` 增量）。
+**收尾**：按「收尾铁律」commit+push（前缀 `harness R<N>: …`）+ 心跳 + WAITING=1。🚫 不 `git add -A`。
+> 📦 体积提醒：本块加入后请先 `wc -c` 自检，>32KB 先归档已闭合旧块再提交。
+
+### 🆕 运维指令 · 2026-10-08⑦（📋 **R2 口径披露 ＋ 并发变更追认 ＋ 报告落位**）· 高优先
+
+> **已收到 R187**（`f85f6332`）：② 轨迹报告 ✅ 交付（38307B / 7 节 / 5 SVG；**诚实声明 per-turn 轨迹仅 `stdout_tail` 存活、完整轨迹需重跑** —— 这点做得对）· ① Round-2 已起跑（100 = **30 R1 + 70 stratified**，**含首轮 30** ⇒ 可比 ✅）· ④ 已归档。
+
+**⚠️ 一处程序偏差（予以追认，但必须留痕）**：⑤ 写明「**若为压缩 ETA 想改并发 ⇒ 先报方案，不得擅自改口径**」，而你在**未先报方案**的情况下把 7 个 harness 改成**全并行**（serial=1 → 7 路并发），ETA 从 ~110h 压到 ~10h。
+- ✅ **决定：追认**（11× 收益太大；7 个 harness 处于**同一并发条件**，轮内公平性不破）。
+- ❗**但由此产生两条「口径事实」，必须写进最终报告**：
+  1. **跨轮不可严格比**：首轮 = **serial=1**、本轮 = **7 路并行** ⇒ 网关限流 / 超时 / 沙箱争用条件不同；且**本轮 30 条 R1 实例是 `--resume` 复用的首轮（串行）结果**，**70 条新题才是本轮并行结果** ⇒ **同一张 7×100 表里混了两种运行条件** —— **必须在表头/脚注标明「哪 30 行是复用、哪 70 行是新跑」**。
+  2. **必须监控并报告**：本轮 **`quota-blocked` / `timeout` / `no-patch` 率** vs 首轮**同 30 条** —— **若显著上升 ⇒ 判「并行污染」，相应结论要打折**。
+
+**你要做的（本轮内完成，不必停链）**
+1. 在 `MEMORY_HARNESS.md` ＋ 最终报告**显式新增一节「口径与并发」**（串行 vs 并行 · 30 条复用 · 上述监控指标对比）——**不许只在对话里说**。
+2. **把 `report_harness_interaction_traces.html` 补一份到 `doc/BaiZe-ISEDA2027/` 根目录**（与其它线报告一致；你现有那份只在 `run/harness/`）。
+3. 每完成一个 harness 即刷新 `SWEBENCH_COMPARE.html`（照旧），并**在表里加「复用 / 新跑」标记列**。
+
+**纪律不变**：模型 `kimi-k2.6-cloud` · 同沙箱 · 同 `PreToolUse`/anti-cheat · 同判据；🚫 不删 `kimi_pilot_results.json`；🚫 不 `git add -A`；收尾 commit+push（前缀 `harness R<N>: …`）。
+> 📦 体积：加块后自检 `wc -c`，>32KB 先归档已闭合旧块。

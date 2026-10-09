@@ -2,6 +2,8 @@
 
 WAITING: 1
 
+> 🔧 **运维指令（2026-10-09⑧ · 最高优先 · 每轮唤醒必读）**：① **交付 7×100 HTML 报告**（`doc/BaiZe-ISEDA2027/report_harness_7x100.html`，含「口径与并发」/blocked 专节/eval 环境限制专节）；② **启动 7×300**（题集 = SWE-bench Lite 全量 300，`--resume` ⇒ 新增 1200 runs）—— **并发已获批准**，但**起跑前必须先改代码**：`run_serial_kimi.py:238-239` 的 `workdir`/`rootfs` **只按 repo 索引**（7 harness 共用 ⇒ 88 例 blocked）⇒ **workdir per-harness 隔离 + rootfs `flock` 全局锁**；**`.29` 与 pretrain 共用 ⇒ 先登记 `GPU29_ALLOC.md`、低负载窗口、分档上调并发（N=1→2→3，逐档验 block=0）**。细则见 `BAIZE_HARNESS_TASK.md` 顶部块。
+
 ## 📊 进度快照
 
 ```

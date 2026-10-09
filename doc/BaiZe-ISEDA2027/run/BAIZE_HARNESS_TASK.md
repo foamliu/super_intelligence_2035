@@ -11,47 +11,46 @@
 
 > 本节由**外部运维**通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停**。
 > **agent 禁止修改本节**。本节为「无」时，按下方默认顺序自主推进。
-### 🆕 运维指令 · 2026-10-08⑦（📋 **R2 口径披露 ＋ 并发变更追认 ＋ 报告落位**）· 高优先
 
-> **已收到 R187**（`f85f6332`）：② 轨迹报告 ✅ 交付（38307B / 7 节 / 5 SVG；**诚实声明 per-turn 轨迹仅 `stdout_tail` 存活、完整轨迹需重跑** —— 这点做得对）· ① Round-2 已起跑（100 = **30 R1 + 70 stratified**，**含首轮 30** ⇒ 可比 ✅）· ④ 已归档。
+### 🆕 运维指令 · 2026-10-09⑧（① **7×100 HTML 报告** ② **启动 7×300 —— 并发已批准，附三条硬约束**）· **用户直令** · 最高优先
 
-**⚠️ 一处程序偏差（予以追认，但必须留痕）**：⑤ 写明「**若为压缩 ETA 想改并发 ⇒ 先报方案，不得擅自改口径**」，而你在**未先报方案**的情况下把 7 个 harness 改成**全并行**（serial=1 → 7 路并发），ETA 从 ~110h 压到 ~10h。
-- ✅ **决定：追认**（11× 收益太大；7 个 harness 处于**同一并发条件**，轮内公平性不破）。
-- ❗**但由此产生两条「口径事实」，必须写进最终报告**：
-  1. **跨轮不可严格比**：首轮 = **serial=1**、本轮 = **7 路并行** ⇒ 网关限流 / 超时 / 沙箱争用条件不同；且**本轮 30 条 R1 实例是 `--resume` 复用的首轮（串行）结果**，**70 条新题才是本轮并行结果** ⇒ **同一张 7×100 表里混了两种运行条件** —— **必须在表头/脚注标明「哪 30 行是复用、哪 70 行是新跑」**。
-  2. **必须监控并报告**：本轮 **`quota-blocked` / `timeout` / `no-patch` 率** vs 首轮**同 30 条** —— **若显著上升 ⇒ 判「并行污染」，相应结论要打折**。
+> **用户原话**：「**1. 给这次 7x100 的实验写个 html 报告 2. 开始 7x300，按照经验，可以并发。**」
 
-**你要做的（本轮内完成，不必停链）**
-1. 在 `MEMORY_HARNESS.md` ＋ 最终报告**显式新增一节「口径与并发」**（串行 vs 并行 · 30 条复用 · 上述监控指标对比）——**不许只在对话里说**。
-2. **把 `report_harness_interaction_traces.html` 补一份到 `doc/BaiZe-ISEDA2027/` 根目录**（与其它线报告一致；你现有那份只在 `run/harness/`）。
-3. 每完成一个 harness 即刷新 `SWEBENCH_COMPARE.html`（照旧），并**在表里加「复用 / 新跑」标记列**。
+**① 7×100 报告（新交付物）**
+- 文件 `doc/BaiZe-ISEDA2027/report_harness_7x100.html`（house style：自包含 / 内联 SVG / 零外链 / ≤200KB）。
+- 必备节：**HERO** 一句话结论 · **实验设置**（7 harness 版本 / 沙箱 / 判据 / 超时 / 题集规则 = `instance_selection_100.json` 的 `selection_rule` 原文）· **⚠️ 口径与并发**（serial(R1) vs 7 路并行(R2)；30 条 `--resume` 复用 vs 70 条新跑，**每行标 `R1复用`/`R2新跑`**）· **主结果表** 7×(done/resolved/pbf/blocked/scored/rate)+汇总（当前 **236 / 439 / 25**）· **每 repo × 7 harness 细分** · **blocked 专节**（25 例**逐条**根因 + 修复过程，**不许吞**）· **eval 环境限制专节**（非 django/sympy repo 的 `patch_applied=False` ⇒ 那些 0 分**不代表 harness 能力**）· 失败模式 · wall-time vs rate · 结论与局限。
+- **每格数字须可复算**（给 JSON 字段口径或 `path:line`）；报告放 `doc/BaiZe-ISEDA2027/` 根。
 
-**纪律不变**：模型 `kimi-k2.6-cloud` · 同沙箱 · 同 `PreToolUse`/anti-cheat · 同判据；🚫 不删 `kimi_pilot_results.json`；🚫 不 `git add -A`；收尾 commit+push（前缀 `harness R<N>: …`）。
-> 📦 体积：加块后自检 `wc -c`，>32KB 先归档已闭合旧块。
+**② 7×300：题集与工作量**
+- **题集 = SWE-bench Lite 全量 300 条**（= codex 300-set 的 12 repo 全集），**7 harness 同一份**；100-set ⊂ 300-set ⇒ **`--resume` 复用已有 700 条**。**codex 已有全部 300（0 新跑）**，其余 6 家各 200 新跑 = **1200 runs**。
+- **先报 ETA 再全速**（照 ⑤ 规矩）。实测依据：100 条串行共 **112.8h**，per-harness avg wall 415–999s ⇒ 6×200 串行 ≈ 各 23–42h；**7 路并行 wall ≈ 42h（hermes 瓶颈）**；harness 内并发 N ⇒ **≈42/N h**。
 
+**②-A 🚨 起跑前必须改代码（三条缺一不可 —— 88 例 blocked 的根因就是路径没带 harness 维度）**
 
-### 🆕 运维指令 · 2026-10-08⑤（**① 启动第二轮 7×100 横评 ② 深挖第一轮 7×30 的「交互轨迹」→ 列表对比各 harness 特点**）· **用户直令** · 最高优先
+根因在 `run/harness/run_serial_kimi.py:238-239`：
+```
+238  workdir = WORKDIRS / instance["repo"].replace("/", "_")     # ← 只按 repo，7 harness 共用
+239  rootfs_path = ROOTFS_TEMPLATES.get(instance["repo"], ROOTFS_DIR / instance_id)  # ← 共用
+```
+1. **workdir 隔离（必做，1 行）** ⇒ `WORKDIRS / <harness> / repo.replace("/","_")`：根除「Your local changes would be overwritten by checkout」（当前 22/25 blocked）。
+2. **rootfs 全局锁（必做）**：`setup_rootfs()` 与 `eval_instance()` 是**唯二**碰共享 template testbed 的地方（`git fetch` 抢 `shallow.lock`）⇒ 用 `flock /nas_train/app.e0031982/harness_work/rootfs.lock` **只包这两段**；**agent 运行段保持无锁并行** ⇒ 吞吐不掉。🚫 不建议「每 harness 拷一份 rootfs」（`cp -a` ×7 harness ×12 repo 可能几百 GB）。
+3. **harness 内并发 >1 ⇒ workdir 必须细到 per-instance**（`WORKDIRS/<harness>/<instance_id>`），否则同 repo 并发仍撞。
 
-> **用户令（2026-10-08 晚）**：「**① 启动第二轮 7×100 横评；② 深入分析第一轮 7×30 横评的交互轨迹，列表对比各 harness 的特点。**」
-> 现状（运维已核）：7-way × 30 全完成（cline-patched 60.0% · Pi 60.0% · Hermes 53.3% · opencode 50.0% · codex 46.7% · claude-code 43.3% · deepseek-harness 40.0%），**无运行中 chain**。数据 = `run/harness/kimi_pilot_results.json`（480 entries）。
+**②-B 资源红线（`.29` 不是私有机器）**
+- harness 在 **`.29`**（`MEMORY_HARNESS.md:136`「.29 是 pretrain R2 训练机」），**pretrain 现在有活在跑** ⇒ **先在 `run/GPU29_ALLOC.md` 申请区追加一行**（7×300 / 预计 wall / CPU·内存·磁盘·网络档），**先到先得、🚫 不抢占**；起跑前先 `uptime` + `nvidia-smi` 核训练负载。
+- ⚠️ **`/dev/shm` 是 tmpfs（吃内存）**，而 `WORKDIRS` 就在里面；per-harness 隔离后克隆份数 ×7 ⇒ **起跑前 `df -h /dev/shm && free -g`，原文抄进心跳**；不够 ⇒ 降 N 或迁盘（NFS+git tmp_pack 老问题）。
+- **并发分档、逐档验**：N=1（7 路并行）→ 跑 30 条确认 **block=0** → N=2 → N=3；**任一档 block>0 立即停档并报根因**，🚫 不许带 block 硬冲。
 
-**① 第二轮：7 harness × 100 条（同一固定题集）**
-- **题集**：**固定 100 条 SWE-bench Lite**，**7 个 harness 全部跑同一份**（🚫 不许各自换题）。**选法先写进 MEMORY 再跑**，给**可复现的选取规则**（如按 `instance_id` 排序取前 100，或 django/sympy 各 N 条…），并**明确标注是否包含第一轮的 30 条**（**建议包含** ⇒ 两轮直接可比）。
-- **口径必须与第一轮逐字一致**（否则两轮不可比）：同 backbone `kimi-k2.6-cloud`、**同并发设置**、同沙箱、同 `PreToolUse`/anti-cheat、同判据。**若为压缩 ETA 想改并发 ⇒ 先报方案，不得擅自改口径。**
-- **7 harness**：`cline-patched` · `codex` · `opencode` · `claude-code` · `deepseek-harness` · `pi` · `hermes`。
-- **⭐ 先报 ETA 再全速跑**：第一轮 210 run ≈ 34h 串行 ⇒ 700 run 同速 ≈ **4.5–5 天**。**第一个动作 = 用实测 s/inst 算总 ETA 并写进心跳**；然后 `--resume` 增量跑，**每完成一个 harness 即刷新 + commit**。
-- **交付**：`SWEBENCH_COMPARE.html` → **7 行 × 100 条** + 汇总表（scored/resolved/pbf/quota-blocked/rate）+ 口径表。
-- **铁律**：🚫 不删 `kimi_pilot_results.json`（保留第一轮 210 entries，可 `--resume`）；🚫 不打断正在跑的 chain。
+**②-C 成功判据（硬）**
+- 收尾时 **`blocked` 必须 = 0**（`quota-blocked` 同算失败）；**>0 ⇒ 报告逐条列 `instance_id` + 根因原文**，🚫 不许「差不多」。
+- 口径逐字不变（同 backbone `kimi-k2.6-cloud` / 同沙箱 / 同判据 / 同 `PreToolUse`）。🚫 不删 `kimi_pilot_results.json`（`--resume` 靠它）；每完成一个 harness 即刷新 + commit（前缀 `harness R<N>: …`）。
 
-**② 深挖第一轮「交互轨迹」+ 逐 harness 特点对比表（纯 CPU，本块先做）**
-- **数据源**：`kimi_pilot_results.json` 的 `harness_result` 字段（已知含 `stdout_tail` / `eval` / `wall_s` / `returncode`）。**第一件事 = 盘点「轨迹还剩多少」**：逐字段列可用信息；**若完整逐轮交互（每轮 prompt/工具调用/输出）已被 `/dev/shm` 清掉 ⇒ 如实写「仅 `stdout_tail` 可用 / 需重跑才有完整轨迹」**（🚫 不得猜、不得编）。
-- **产出 A**：**7 行 × N 列「harness 特点对比表」**（HTML，house style，内联 SVG，零外链，≤200KB）。列建议：**启动方式/入口 · 交互轮次与自主性 · 工具调用风格与频次 · 是否用执行反馈闭环 · 平均 `wall_s` · 典型失败模式 · patch 规模 · resolved 率**。**每格数字/结论须可由 JSON 或源码 `path:line` 复算**。
-- **产出 B**：回答「**为何同 backbone 下差 20pp（40.0%–60.0%）？是 harness 架构差异，还是交互轨迹差异？**」——**证据化**归因，不许泛泛。
-- **交付**：`report_harness_interaction_traces.html`（新）+ 刷新 `HARNESS_7WAY_COMPARISON.html` 相关节。
+**③ 顺序**：**① 先交**（纯 CPU/写作，不占串行槽）→ **②-A 改码 + 30 条冒烟验 block=0 + 报 ETA** → ② 起跑。
+> 📦 本块加完请自检 `wc -c`（加前 TASK=27.6KB）；**收尾前 >32KB 必须先归档已闭合块**（只搬迁、留 1 行指针）。
 
-**顺序**：**② 先做**（纯 CPU/写作，不占串行槽）→ **① 同步报 ETA 并起跑**（后台 `--resume` 增量）。
-**收尾**：按「收尾铁律」commit+push（前缀 `harness R<N>: …`）+ 心跳 + WAITING=1。🚫 不 `git add -A`。
-> 📦 体积提醒：本块加入后请先 `wc -c` 自检，>32KB 先归档已闭合旧块再提交。
+> 📦 §运维指令 · 2026-10-08⑦（R2 口径披露 + 并发变更追认 + 报告落位）已归档 → `run/ARCHIVE_OPERATOR_HARNESS.md`；**结论**：口径与并发节、`report_harness_interaction_traces.html` 落根目录、复用/新跑标记列、监控表 **全部已交付**。需要时再读。
+
+> 📦 §运维指令 · 2026-10-08⑤（① 启动第二轮 7×100 横评 ② 深挖 7×30 交互轨迹）已归档 → `run/ARCHIVE_OPERATOR_HARNESS.md`；**结论**：① 7×100 全完成（236 resolved / 439 pbf / 25 blocked）；② 轨迹报告已交付（仅 `stdout_tail` 存活，已如实声明）。需要时再读。
 
 
 > 📦 §运维指令·2026-10-08④（下一步工作建议 Q&A）已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：Q1–Q4 已在 R184 回答（commit 27859f2e），写进 MEMORY_HARNESS.md「运维问答」小节。需要时再读。
