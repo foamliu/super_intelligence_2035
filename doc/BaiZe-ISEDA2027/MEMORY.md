@@ -10,7 +10,7 @@
 - **用户直令（2026-10-09③）**：Code/Math 停掉重头来（每个目录全切）· Ultra-FineWeb-L3 也加入分词 · 224 核别只开 8 并发（**放开**）· 核实 Ultra-FineWeb 197GB→.bin 2.0TB 是否合理 · **不要创造新名字**（只按原始 6 目录）。
 - **已下发** `run/BAIZE_DATA_TASK.md`（10-09③ 覆盖②）：三目录全量分词（Ultra-FineWeb-L3 1764/1.8TB + UltraData-Code 1121/1.2TB + UltraData-Math 1823/515GB）· 并发 20–50/源 · 心跳按 6 目录报盘点。
 
-### 🔬 pretrain（2026-10-09）：T3 ✅ → **P-8 最优 = `TP1·MBS2·bf16` 249K**；**唯一阻塞 = 暂缓令**。今晚跑：① 对比基准 → ② Muon vs AdamW（`.29`）。
+### 🔬 pretrain（2026-10-09）：T3 ✅ → **P-8 最优 = `TP1·MBS2·bf16` 249K**；阻塞 = 暂缓令。今晚：① 对比基准 → ② Muon（`.29`）。
 
 ### 💬 vision / harness 运维问答已收齐
 - **vision** ✅ 答复 2026-10-08③（未验证假设 / Stage iv 前置 / GPU 空窗优先级 / 论文补充）· **harness** ✅ 答复 2026-10-08④（横评深挖 / BaiZe 接入前置 / 扩规模 / 多 backbone / 论文补充）。
@@ -78,7 +78,7 @@ WAITING: 0
 
 ## 4. 待拍板 / 我欠的答复
 
-- [~] 🆕 **BaiZe-Hybrid（参数匹配 Dense）中文对比报告**：✅ #252 门控已交付 → **GO 放行**（修 warmup 归因 + ctx×2 到 hybrid OOM）→ 出 `..._fair_zh.html`。
+- [~] 🆕 **BaiZe-Hybrid（等参 Dense）中文对比报告**：✅ #252 → **GO**（修 warmup 归因 + ctx×2 到 hybrid OOM）→ `..._fair_zh.html`。
 - [x] ~~夜班填空 T1/T2/T3~~ **已撤销**（用户看不出价值；留 backlog）。
 - [ ] 🆕 **Muon vs AdamW**：**`.29`**（非 `.12`）；**1000 步 / GBS=16 / seq4096 / 比 loss**；先接线三步核查（NeMo 支持 Muon）。
 - [ ] 🆕 **BaiZe vs MiniCPM5「公平对比」盘点**：等 pretrain 回报 C1–C6 + 权威版本。
@@ -200,7 +200,7 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
-- **🔁 2026-10-09（改序+改机+砍实验）**——用户令：pretrain 全在 `.29`（`.12` 归 vision）；次序 ① 对比基准 → ② Muon vs AdamW（**1000 步/GBS16/seq4096 比 loss**）；**T1/T2/T3 撤下**（价值存疑，留 backlog）。
+- **🔁 2026-10-09（改序+改机+砍实验）**——用户令：pretrain 全在 `.29`；次序 ① 对比基准 → ② Muon（**1000 步/GBS16/seq4096 比 loss**）；**T1/T2/T3 撤下**（留 backlog）。
 
 - **⚗️ 2026-10-09（Muon 下发 + 更正）**——**NeMo/Megatron 支持 Muon**（`core.optimizer.muon`/`emerging_optimizers`；MBridge 有 Muon recipe）⇒ 非从零实现。
 
