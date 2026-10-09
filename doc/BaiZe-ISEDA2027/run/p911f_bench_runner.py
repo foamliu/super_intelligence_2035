@@ -99,9 +99,9 @@ def benchmark_model(model_key, gpu_id, mem_frac, contexts, batches, ctx_max, war
             if ctx > eff_ctx_max:
                 print(f"\n  [SKIP] ctx={ctx} > model ctx_max={eff_ctx_max} — stopping", flush=True)
                 break
-            if mi["arch"] == "dense":
+            if mi["arch"] == "llama":  # dense models (Llama arch)
                 eff_batches = [b for b in batches if ctx < 524288 or b == 1]  # dense: skip bs=8 for ctx>=512K (KV cache can't fit 4M tokens)
-            else:
+            else:  # hybrid models (Nemotron-H arch)
                 eff_batches = [b for b in batches if ctx < 1048576 or b == 1]  # hybrid: skip bs=8 for ctx>=1M (SSM scan too slow)
             eff_repeats = repeats if ctx <= 1048576 else 1  # reduce repeats for ctx>1M
             for bs in eff_batches:
