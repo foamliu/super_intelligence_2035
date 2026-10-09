@@ -90,7 +90,7 @@ def _single_run(url, payload, gpu_id, timeout=600):
     raw = {}
     try:
         t_start = time.perf_counter()
-        resp = requests.post(url, json=payload, stream=True, timeout=timeout)
+        resp = requests.post(url, json=payload, stream=True, timeout=timeout, proxies={"http": None, "https": None})
         resp.raise_for_status()
         ttft = None; total_tokens = 0; first_token_time = None
         for line in resp.iter_lines():

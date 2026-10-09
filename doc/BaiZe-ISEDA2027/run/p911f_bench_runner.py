@@ -42,7 +42,7 @@ def wait_for_server(url, timeout=600):
     deadline = time.time() + timeout
     while time.time() < deadline:
         try:
-            r = requests.get(f"{url}/v1/models", timeout=10)
+            r = requests.get(f"{url}/v1/models", timeout=10, proxies={"http": None, "https": None})
             if r.status_code == 200:
                 ids = [m["id"] for m in r.json().get("data", [])]
                 print(f"  [server] healthy, models={ids}", flush=True); return True
