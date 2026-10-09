@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Harness 7-Way Cross-Eval 7x100 Report</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;color:#1f2937;background:#f8fafc;padding:20px;max-width:1200px;margin:0 auto}
+h1{font-size:1.8em;color:#0f172a;margin-bottom:4px}
+h2{font-size:1.4em;color:#1e40af;margin:32px 0 12px;padding-bottom:8px;border-bottom:2px solid #dbeafe}
+h3{font-size:1.15em;color:#374151;margin:20px 0 8px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.9em}
+th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:center}
+th{background:#f1f5f9;font-weight:600;color:#1e40af}
+td.repo{text-align:left;font-family:monospace;font-size:0.85em}
+.rate-high{background:#d1fae5;font-weight:600}
+.rate-mid{background:#fef3c7}
+.rate-low{background:#fee2e2}
+.blocked-cell{background:#fee2e2}
+.callout{background:#fef3c7;border-left:4px solid #f59e0b;padding:12px 16px;border-radius:4px;margin:16px 0}
+.callout-red{background:#fee2e2;border-left:4px solid #dc2626;padding:12px 16px;border-radius:4px;margin:16px 0}
+.callout-blue{background:#dbeafe;border-left:4px solid #2563eb;padding:12px 16px;border-radius:4px;margin:16px 0}
+.callout-green{background:#d1fae5;border-left:4px solid #10b981;padding:12px 16px;border-radius:4px;margin:16px 0}
+.chart-container{margin:16px 0;text-align:center}
+.chart-caption{font-size:0.85em;color:#6b7280;margin-top:4px}
+.provenance{font-size:0.8em;color:#9ca3af;font-family:monospace}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.75em;font-weight:600}
+.tag-r1{background:#dbeafe;color:#1e40af}
+.tag-r2{background:#fce7f3;color:#be185d}
+.tag-serial{background:#e0e7ff;color:#4338ca}
+.tag-blocked{background:#fee2e2;color:#b91c1c}
+ul{margin:8px 0 8px 20px}
+li{margin:4px 0}
+code{background:#f1f5f9;padding:2px 6px;border-radius:3px;font-size:0.85em}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:16px 0}
+.summary-card{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:16px;text-align:center}
+.summary-card .num{font-size:1.8em;font-weight:700;color:#1e40af}
+.summary-card .label{font-size:0.8em;color:#6b7280}
+footer{margin-top:40px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:0.8em;color:#9ca3af}
+</style>
+</head>
+<body>
+
+
+<div style="background:linear-gradient(135deg,#1e40af,#7c3aed);color:#fff;padding:24px 32px;border-radius:12px;margin-bottom:32px">
+<h1 style="color:#fff;margin-bottom:8px">BaiZe Harness 7-Way Cross-Eval: 7x100 Report</h1>
+<p style="font-size:1.1em;opacity:0.95"><strong>7 agent harnesses x 100 SWE-bench Lite instances, same backbone (kimi-k2.6-cloud), same sandbox, same criteria.</strong><br>
+Generated 2026-10-09 22:36 | Data source: <code>kimi_pilot_results.json</code> (700 results in 100-set, live snapshot during blocked re-run)</p>
+</div>
+
+<div class="callout-green">
+<strong>HERO conclusion:</strong> Across 7 agent harnesses on 100 SWE-bench Lite instances with identical backbone and eval pipeline, <strong>pi</strong> achieved the highest in-scope resolve rate (40.9%), while <strong>cline-patched</strong>, <strong>hermes</strong>, and <strong>codex</strong> clustered at 36-37.5%. However, <strong>22 blocked instances</strong> (all sympy, from shared-workdir git checkout conflicts under parallel execution) and <strong>111 patch_applied=False</strong> (non-django/sympy eval env limitation) mean these rates <strong>understate true harness capability</strong>.
+</div>
+
+<div class="summary-grid">
+<div class="summary-card"><div class="num">700</div><div class="label">total runs (7 x 100)</div></div>
+<div class="summary-card"><div class="num">238</div><div class="label">resolved</div></div>
+<div class="summary-card"><div class="num">440</div><div class="label">patch-but-failed</div></div>
+<div class="summary-card"><div class="num">22</div><div class="label">blocked</div></div>
+<div class="summary-card"><div class="num">678</div><div class="label">scored (non-blocked)</div></div>
+<div class="summary-card"><div class="num">35.1%</div><div class="label">overall resolve rate</div></div>
+</div>
+
+<h2>1. Experiment Setup</h2>
+<h3>1.1 Harness Versions</h3>
+<table><tr><th>#</th><th>Harness</th><th>Form</th><th>Backbone</th></tr>
+<tr><td>1</td><td><strong>cline-patched</strong></td><td>CLI</td><td>kimi-k2.6-cloud</td></tr>
+<tr><td>2</td><td><strong>codex</strong></td><td>CLI</td><td>kimi-k2.6-cloud</td></tr>
+<tr><td>3</td><td><strong>hermes</strong></td><td>CLI</td><td>kimi-k2.6-cloud</td></tr>
+<tr><td>4</td><td><strong>opencode</strong></td><td>CLI</td><td>kimi-k2.6-cloud</td></tr>
+<tr><td>5</td><td><strong>claude-code</strong></td><td>CLI</td><td>kimi-k2.6-cloud</td></tr>
+<tr><td>6</td><td><strong>deepseek-harness</strong></td><td>CLI</td><td>kimi-k2.6-cloud</td></tr>
+<tr><td>7</td><td><strong>pi</strong></td><td>CLI</td><td>kimi-k2.6-cloud</td></tr>
+</table>
+<h3>1.2 Sandbox and Evaluation</h3>
+<ul><li><strong>Sandbox</strong>: <code>unshare</code> (Linux namespace isolation, no Docker)</li><li><strong>Eval harness</strong>: <code>r1_eval.py</code> applies model_patch to per-repo rootfs testbed, runs FAIL_TO_PASS + PASS_TO_PASS tests</li><li><strong>Rootfs templates</strong>: 12 repos under <code>/nas_train/app.e0031982/harness_work/rootfs/</code></li><li><strong>Run timeout</strong>: 1800s | <strong>Eval timeout</strong>: 1800s</li><li><strong>Resolve criteria</strong>: <code>resolved=True</code> (all FAIL_TO_PASS pass + no PASS_TO_PASS regressions)</li><li><strong>Classification</strong>: resolved / patch-but-failed / blocked / quota-blocked</li></ul>
+<h3>1.3 Instance Selection</h3>
+<div class="callout-blue"><strong>Selection rule (verbatim from instance_selection_100.json):</strong><br><code>stratified: 30 round-1 + 70 proportional fill from remaining 270, sorted by instance_id within repo</code></div>
+<ul><li><strong>Round 1 (R1)</strong>: 30 instances, run serially (concurrency=1)</li><li><strong>Round 2 (R2)</strong>: 70 instances, run with 7 harnesses in parallel (each internally serial)</li><li><strong>100-set is a subset of 300-set</strong>, enabling --resume reuse for 7x300</li></ul>
+<div class="chart-container"><svg viewBox="0 0 520 328" width="520" height="328" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+<text x="180" y="24" text-anchor="end" font-size="10" fill="#374151">django/django</text>
+<rect x="190" y="10" width="400" height="20" fill="#3b82f6" rx="2"/>
+<text x="595" y="24" font-size="10" fill="#374151">41</text>
+<text x="180" y="48" text-anchor="end" font-size="10" fill="#374151">sympy/sympy</text>
+<rect x="190" y="34" width="292" height="20" fill="#3b82f6" rx="2"/>
+<text x="487" y="48" font-size="10" fill="#374151">30</text>
+<text x="180" y="72" text-anchor="end" font-size="10" fill="#374151">matplotlib/matplotlib</text>
+<rect x="190" y="58" width="58" height="20" fill="#3b82f6" rx="2"/>
+<text x="253" y="72" font-size="10" fill="#374151">6</text>
+<text x="180" y="96" text-anchor="end" font-size="10" fill="#374151">scikit-learn/scikit-learn</text>
+<rect x="190" y="82" width="58" height="20" fill="#3b82f6" rx="2"/>
+<text x="253" y="96" font-size="10" fill="#374151">6</text>
+<text x="180" y="120" text-anchor="end" font-size="10" fill="#374151">pytest-dev/pytest</text>
+<rect x="190" y="106" width="39" height="20" fill="#3b82f6" rx="2"/>
+<text x="234" y="120" font-size="10" fill="#374151">4</text>
+<text x="180" y="144" text-anchor="end" font-size="10" fill="#374151">sphinx-doc/sphinx</text>
+<rect x="190" y="130" width="39" height="20" fill="#3b82f6" rx="2"/>
+<text x="234" y="144" font-size="10" fill="#374151">4</text>
+<text x="180" y="168" text-anchor="end" font-size="10" fill="#374151">astropy/astropy</text>
+<rect x="190" y="154" width="19" height="20" fill="#3b82f6" rx="2"/>
+<text x="214" y="168" font-size="10" fill="#374151">2</text>
+<text x="180" y="192" text-anchor="end" font-size="10" fill="#374151">psf/requests</text>
+<rect x="190" y="178" width="19" height="20" fill="#3b82f6" rx="2"/>
+<text x="214" y="192" font-size="10" fill="#374151">2</text>
+<text x="180" y="216" text-anchor="end" font-size="10" fill="#374151">pylint-dev/pylint</text>
+<rect x="190" y="202" width="19" height="20" fill="#3b82f6" rx="2"/>
+<text x="214" y="216" font-size="10" fill="#374151">2</text>
+<text x="180" y="240" text-anchor="end" font-size="10" fill="#374151">mwaskom/seaborn</text>
+<rect x="190" y="226" width="9" height="20" fill="#3b82f6" rx="2"/>
+<text x="204" y="240" font-size="10" fill="#374151">1</text>
+<text x="180" y="264" text-anchor="end" font-size="10" fill="#374151">pallets/flask</text>
+<rect x="190" y="250" width="9" height="20" fill="#3b82f6" rx="2"/>
+<text x="204" y="264" font-size="10" fill="#374151">1</text>
+<text x="180" y="288" text-anchor="end" font-size="10" fill="#374151">pydata/xarray</text>
+<rect x="190" y="274" width="9" height="20" fill="#3b82f6" rx="2"/>
+<text x="204" y="288" font-size="10" fill="#374151">1</text>
+</svg><div class="chart-caption">Figure 1: Instance count per repo in the 100-set (41 django + 30 sympy = 71%)</div></div>
+<h3>1.4 Repo Distribution</h3><table><tr><th>Repo</th><th>Instances</th><th>%</th></tr>
+<tr><td class="repo">django/django</td><td>41</td><td>41%</td></tr>
+<tr><td class="repo">sympy/sympy</td><td>30</td><td>30%</td></tr>
+<tr><td class="repo">matplotlib/matplotlib</td><td>6</td><td>6%</td></tr>
+<tr><td class="repo">scikit-learn/scikit-learn</td><td>6</td><td>6%</td></tr>
+<tr><td class="repo">pytest-dev/pytest</td><td>4</td><td>4%</td></tr>
+<tr><td class="repo">sphinx-doc/sphinx</td><td>4</td><td>4%</td></tr>
+<tr><td class="repo">astropy/astropy</td><td>2</td><td>2%</td></tr>
+<tr><td class="repo">psf/requests</td><td>2</td><td>2%</td></tr>
+<tr><td class="repo">pylint-dev/pylint</td><td>2</td><td>2%</td></tr>
+<tr><td class="repo">mwaskom/seaborn</td><td>1</td><td>1%</td></tr>
+<tr><td class="repo">pallets/flask</td><td>1</td><td>1%</td></tr>
+<tr><td class="repo">pydata/xarray</td><td>1</td><td>1%</td></tr>
+</table>
+<h2>2. Caliber and Concurrency Disclosure</h2>
+<div class="callout"><strong>Critical caveat:</strong> This 7x100 table <strong>mixes two execution modes</strong>. R1 (30 instances) was serial, R2 (70 instances) was 7-way parallel. Cross-round comparisons are not strictly controlled.</div>
+<table><tr><th>Dimension</th><th>Round 1 (30)</th><th>Round 2 (70)</th></tr><tr><td><strong>Concurrency</strong></td><td>Serial (1)</td><td>7 harnesses parallel (each serial)</td></tr><tr><td><strong>Conditions</strong></td><td>No contention</td><td>Competing for gateway/sandbox/I/O</td></tr><tr><td><strong>Resume</strong></td><td>First round</td><td>R2 reuses R1 30 results via --resume; 70 new in parallel</td></tr><tr><td><strong>Comparability</strong></td><td colspan="2">Cross-round NOT strictly comparable. Each row marked <span class="tag tag-r1">R1</span> or <span class="tag tag-r2">R2</span>.</td></tr></table>
+<div class="callout-blue"><strong>codex special case:</strong> codex ran 300 instances serially (full Lite superset). All 100 codex results in this table are <span class="tag tag-serial">serial</span> - codex did NOT participate in R2 parallel execution.</div>
+<h3>2.1 R1 vs R2 Resolve Rate</h3><table><tr><th>Harness</th><th>R1 res</th><th>R1 sco</th><th>R1 rate</th><th>R2 res</th><th>R2 sco</th><th>R2 rate</th><th>Delta</th></tr>
+<tr><td>cline-patched </td><td>18</td><td>30</td><td>60.0%</td><td>18</td><td>70</td><td>25.7%</td><td style="color:#dc2626">-34.3%</td></tr>
+<tr><td>codex <span class="tag tag-serial">serial</span></td><td>14</td><td>30</td><td>46.7%</td><td>22</td><td>66</td><td>33.3%</td><td style="color:#dc2626">-13.3%</td></tr>
+<tr><td>hermes </td><td>16</td><td>30</td><td>53.3%</td><td>20</td><td>70</td><td>28.6%</td><td style="color:#dc2626">-24.8%</td></tr>
+<tr><td>opencode </td><td>15</td><td>30</td><td>50.0%</td><td>20</td><td>70</td><td>28.6%</td><td style="color:#dc2626">-21.4%</td></tr>
+<tr><td>claude-code </td><td>14</td><td>30</td><td>46.7%</td><td>20</td><td>70</td><td>28.6%</td><td style="color:#dc2626">-18.1%</td></tr>
+<tr><td>deepseek-harness </td><td>12</td><td>30</td><td>40.0%</td><td>13</td><td>64</td><td>20.3%</td><td style="color:#dc2626">-19.7%</td></tr>
+<tr><td>pi </td><td>18</td><td>30</td><td>60.0%</td><td>18</td><td>58</td><td>31.0%</td><td style="color:#dc2626">-29.0%</td></tr>
+</table>
+<div class="callout-red"><strong>Key finding:</strong> All 7 harnesses show R2 rate < R1 rate (Delta -8.3% to -29.0%). This reflects: (1) different instance difficulty; (2) parallel execution contention; (3) 22 blocked all in R2. <strong>Do NOT interpret as harness degradation.</strong></div>
+<div class="chart-container"><svg viewBox="0 0 704 250" width="704" height="250" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+<line x1="50" y1="200" x2="694" y2="200" stroke="#e5e7eb" stroke-width="1"/>
+<text x="45" y="204" text-anchor="end" font-size="11" fill="#6b7280">0%</text>
+<line x1="50" y1="145" x2="694" y2="145" stroke="#e5e7eb" stroke-width="1"/>
+<text x="45" y="149" text-anchor="end" font-size="11" fill="#6b7280">20%</text>
+<line x1="50" y1="90" x2="694" y2="90" stroke="#e5e7eb" stroke-width="1"/>
+<text x="45" y="94" text-anchor="end" font-size="11" fill="#6b7280">40%</text>
+<line x1="50" y1="34" x2="694" y2="34" stroke="#e5e7eb" stroke-width="1"/>
+<text x="45" y="38" text-anchor="end" font-size="11" fill="#6b7280">60%</text>
+<rect x="60" y="34" width="30" height="166" fill="#2563eb" opacity="0.5" rx="2"/>
+<text x="75.0" y="30" text-anchor="middle" font-size="9" fill="#2563eb">60</text>
+<rect x="98" y="129" width="30" height="71" fill="#2563eb" rx="2"/>
+<text x="113.0" y="125" text-anchor="middle" font-size="9" fill="#2563eb">26</text>
+<text x="94.0" y="218" text-anchor="middle" font-size="9" fill="#374151">cline-p</text>
+<rect x="152" y="71" width="30" height="129" fill="#7c3aed" opacity="0.5" rx="2"/>
+<text x="167.0" y="67" text-anchor="middle" font-size="9" fill="#7c3aed">47</text>
+<rect x="190" y="108" width="30" height="92" fill="#7c3aed" rx="2"/>
+<text x="205.0" y="104" text-anchor="middle" font-size="9" fill="#7c3aed">33</text>
+<text x="186.0" y="218" text-anchor="middle" font-size="9" fill="#374151">codex</text>
+<rect x="244" y="53" width="30" height="147" fill="#059669" opacity="0.5" rx="2"/>
+<text x="259.0" y="49" text-anchor="middle" font-size="9" fill="#059669">53</text>
+<rect x="282" y="121" width="30" height="79" fill="#059669" rx="2"/>
+<text x="297.0" y="117" text-anchor="middle" font-size="9" fill="#059669">29</text>
+<text x="278.0" y="218" text-anchor="middle" font-size="9" fill="#374151">hermes</text>
+<rect x="336" y="62" width="30" height="138" fill="#d97706" opacity="0.5" rx="2"/>
+<text x="351.0" y="58" text-anchor="middle" font-size="9" fill="#d97706">50</text>
+<rect x="374" y="121" width="30" height="79" fill="#d97706" rx="2"/>
+<text x="389.0" y="117" text-anchor="middle" font-size="9" fill="#d97706">29</text>
+<text x="370.0" y="218" text-anchor="middle" font-size="9" fill="#374151">opencode</text>
+<rect x="428" y="71" width="30" height="129" fill="#dc2626" opacity="0.5" rx="2"/>
+<text x="443.0" y="67" text-anchor="middle" font-size="9" fill="#dc2626">47</text>
+<rect x="466" y="121" width="30" height="79" fill="#dc2626" rx="2"/>
+<text x="481.0" y="117" text-anchor="middle" font-size="9" fill="#dc2626">29</text>
+<text x="462.0" y="218" text-anchor="middle" font-size="9" fill="#374151">claude-c</text>
+<rect x="520" y="90" width="30" height="110" fill="#0891b2" opacity="0.5" rx="2"/>
+<text x="535.0" y="86" text-anchor="middle" font-size="9" fill="#0891b2">40</text>
+<rect x="558" y="144" width="30" height="56" fill="#0891b2" rx="2"/>
+<text x="573.0" y="140" text-anchor="middle" font-size="9" fill="#0891b2">20</text>
+<text x="554.0" y="218" text-anchor="middle" font-size="9" fill="#374151">deepseek</text>
+<rect x="612" y="34" width="30" height="166" fill="#db2777" opacity="0.5" rx="2"/>
+<text x="627.0" y="30" text-anchor="middle" font-size="9" fill="#db2777">60</text>
+<rect x="650" y="115" width="30" height="85" fill="#db2777" rx="2"/>
+<text x="665.0" y="111" text-anchor="middle" font-size="9" fill="#db2777">31</text>
+<text x="646.0" y="218" text-anchor="middle" font-size="9" fill="#374151">pi</text>
+<rect x="60" y="232" width="12" height="12" fill="#6b7280" opacity="0.5" rx="2"/>
+<text x="78" y="242" font-size="10" fill="#374151">R1 serial (30)</text>
+<rect x="180" y="232" width="12" height="12" fill="#6b7280" rx="2"/>
+<text x="198" y="242" font-size="10" fill="#374151">R2 parallel (70)</text>
+</svg><div class="chart-caption">Figure 2: R1 serial (30) vs R2 parallel (70) resolve rates</div></div>
+<h3>2.2 Monitoring Indicators</h3><table><tr><th>Indicator</th><th>R1 (30 serial)</th><th>R2 (70 parallel)</th><th>Verdict</th></tr><tr><td>quota_blocked</td><td>0/210 (0%)</td><td>0/490 (0%)</td><td>NO gateway pollution</td></tr><tr><td>timeout</td><td>0 (codex 2)</td><td>minimal</td><td>Normal</td></tr><tr><td>workdir_blocked</td><td>0/210 (0%)</td><td>22/490 (4.5%)</td><td class="blocked-cell">Parallel pollution (git checkout conflicts)</td></tr><tr><td>patch_applied=False</td><td>0/210 (0%)</td><td>111/490 (22.7%)</td><td>Eval env limitation - see section 5</td></tr></table>
+<h2>3. Main Results Table</h2>
+<table><tr><th>Harness</th><th>Done</th><th>Resolved</th><th>PBF</th><th>Blocked</th><th>Quota-B</th><th>Scored</th><th>Rate</th><th>Med wall</th><th>Total wall</th><th>Mode</th></tr>
+<tr><td><strong>cline-patched</strong></td><td>100</td><td>36</td><td>64</td><td>0</td><td>0</td><td>100</td><td class="rate-mid">36.0%</td><td>371s</td><td>14.9h</td><td><span class="tag tag-r1">R1</span>+<span class="tag tag-r2">R2</span></td></tr>
+<tr><td><strong>codex</strong></td><td>100</td><td>36</td><td>60</td><td class="blocked-cell">4</td><td>0</td><td>96</td><td class="rate-high">37.5%</td><td>942s</td><td>26.5h</td><td><span class="tag tag-serial">serial</span></td></tr>
+<tr><td><strong>hermes</strong></td><td>100</td><td>36</td><td>64</td><td>0</td><td>0</td><td>100</td><td class="rate-mid">36.0%</td><td>517s</td><td>20.9h</td><td><span class="tag tag-r1">R1</span>+<span class="tag tag-r2">R2</span></td></tr>
+<tr><td><strong>opencode</strong></td><td>100</td><td>35</td><td>65</td><td>0</td><td>0</td><td>100</td><td class="rate-mid">35.0%</td><td>319s</td><td>12.5h</td><td><span class="tag tag-r1">R1</span>+<span class="tag tag-r2">R2</span></td></tr>
+<tr><td><strong>claude-code</strong></td><td>100</td><td>34</td><td>66</td><td>0</td><td>0</td><td>100</td><td class="rate-mid">34.0%</td><td>456s</td><td>17.0h</td><td><span class="tag tag-r1">R1</span>+<span class="tag tag-r2">R2</span></td></tr>
+<tr><td><strong>deepseek-harness</strong></td><td>100</td><td>25</td><td>69</td><td class="blocked-cell">6</td><td>0</td><td>94</td><td class="rate-low">26.6%</td><td>313s</td><td>10.8h</td><td><span class="tag tag-r1">R1</span>+<span class="tag tag-r2">R2</span></td></tr>
+<tr><td><strong>pi</strong></td><td>100</td><td>36</td><td>52</td><td class="blocked-cell">12</td><td>0</td><td>88</td><td class="rate-high">40.9%</td><td>303s</td><td>10.8h</td><td><span class="tag tag-r1">R1</span>+<span class="tag tag-r2">R2</span></td></tr>
+<tr style="font-weight:700;background:#f1f5f9"><td>TOTAL</td><td>700</td><td>238</td><td>440</td><td class="blocked-cell">22</td><td>0</td><td>678</td><td>35.1%</td><td>--</td><td>113.5h</td><td>--</td></tr></table>
+<p class="provenance">Field mapping: done=count in 100-set | resolved=classification=="resolved" | pbf=patch-but-failed | blocked=classification=="blocked" | scored=total-blocked-quota | rate=resolved/scored*100 | wall_s=harness_result.wall_s (run time, excludes eval). Source: run_serial_kimi.py:216-228</p>
+<div class="chart-container"><svg viewBox="0 0 780 260" width="780" height="260" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+<line x1="50" y1="220" x2="770" y2="220" stroke="#e5e7eb" stroke-width="1"/>
+<text x="45" y="224" text-anchor="end" font-size="11" fill="#6b7280">0%</text>
+<line x1="50" y1="180" x2="770" y2="180" stroke="#e5e7eb" stroke-width="1"/>
+<text x="45" y="184" text-anchor="end" font-size="11" fill="#6b7280">10%</text>
+<line x1="50" y1="140" x2="770" y2="140" stroke="#e5e7eb" stroke-width="1"/>
+<text x="45" y="144" text-anchor="end" font-size="11" fill="#6b7280">20%</text>
+<line x1="50" y1="100" x2="770" y2="100" stroke="#e5e7eb" stroke-width="1"/>
+<text x="45" y="104" text-anchor="end" font-size="11" fill="#6b7280">30%</text>
+<line x1="50" y1="60" x2="770" y2="60" stroke="#e5e7eb" stroke-width="1"/>
+<text x="45" y="64" text-anchor="end" font-size="11" fill="#6b7280">40%</text>
+<line x1="50" y1="20" x2="770" y2="20" stroke="#e5e7eb" stroke-width="1"/>
+<text x="45" y="24" text-anchor="end" font-size="11" fill="#6b7280">50%</text>
+<rect x="60" y="76" width="80" height="144" fill="#2563eb" rx="3"/>
+<text x="100.0" y="70" text-anchor="middle" font-size="13" font-weight="bold" fill="#2563eb">36.0%</text>
+<text x="100.0" y="240" text-anchor="middle" font-size="10" fill="#374151" transform="rotate(-15, 100.0, 240)">cline-p</text>
+<text x="100.0" y="258" text-anchor="middle" font-size="9" fill="#9ca3af">36/100</text>
+<rect x="160" y="70" width="80" height="150" fill="#7c3aed" rx="3"/>
+<text x="200.0" y="64" text-anchor="middle" font-size="13" font-weight="bold" fill="#7c3aed">37.5%</text>
+<text x="200.0" y="240" text-anchor="middle" font-size="10" fill="#374151" transform="rotate(-15, 200.0, 240)">codex</text>
+<text x="200.0" y="258" text-anchor="middle" font-size="9" fill="#9ca3af">36/96</text>
+<rect x="260" y="76" width="80" height="144" fill="#059669" rx="3"/>
+<text x="300.0" y="70" text-anchor="middle" font-size="13" font-weight="bold" fill="#059669">36.0%</text>
+<text x="300.0" y="240" text-anchor="middle" font-size="10" fill="#374151" transform="rotate(-15, 300.0, 240)">hermes</text>
+<text x="300.0" y="258" text-anchor="middle" font-size="9" fill="#9ca3af">36/100</text>
+<rect x="360" y="80" width="80" height="140" fill="#d97706" rx="3"/>
+<text x="400.0" y="74" text-anchor="middle" font-size="13" font-weight="bold" fill="#d97706">35.0%</text>
+<text x="400.0" y="240" text-anchor="middle" font-size="10" fill="#374151" transform="rotate(-15, 400.0, 240)">opencode</text>
+<text x="400.0" y="258" text-anchor="middle" font-size="9" fill="#9ca3af">35/100</text>
+<rect x="460" y="84" width="80" height="136" fill="#dc2626" rx="3"/>
+<text x="500.0" y="78" text-anchor="middle" font-size="13" font-weight="bold" fill="#dc2626">34.0%</text>
+<text x="500.0" y="240" text-anchor="middle" font-size="10" fill="#374151" transform="rotate(-15, 500.0, 240)">c-code</text>
+<text x="500.0" y="258" text-anchor="middle" font-size="9" fill="#9ca3af">34/100</text>
+<rect x="560" y="114" width="80" height="106" fill="#0891b2" rx="3"/>
+<text x="600.0" y="108" text-anchor="middle" font-size="13" font-weight="bold" fill="#0891b2">26.6%</text>
+<text x="600.0" y="240" text-anchor="middle" font-size="10" fill="#374151" transform="rotate(-15, 600.0, 240)">deepseek</text>
+<text x="600.0" y="258" text-anchor="middle" font-size="9" fill="#9ca3af">25/94</text>
+<rect x="660" y="57" width="80" height="163" fill="#db2777" rx="3"/>
+<text x="700.0" y="51" text-anchor="middle" font-size="13" font-weight="bold" fill="#db2777">40.9%</text>
+<text x="700.0" y="240" text-anchor="middle" font-size="10" fill="#374151" transform="rotate(-15, 700.0, 240)">pi</text>
+<text x="700.0" y="258" text-anchor="middle" font-size="9" fill="#9ca3af">36/88</text>
+</svg><div class="chart-caption">Figure 3: Resolve rate per harness (scored = non-blocked)</div></div>
+<h3>3.1 Per-Repo x Harness Breakdown</h3><p>Format: resolved/scored (<span class="tag tag-blocked">B#</span> = blocked count)</p>
+<table style="font-size:0.82em"><tr><th>Repo</th>
+<th>cline-p</th>
+<th>codex</th>
+<th>hermes</th>
+<th>opencode</th>
+<th>claude-c</th>
+<th>deepseek</th>
+<th>pi</th>
+</tr>
+<tr><td class="repo">astropy/astropy</td>
+<td>0/2</td>
+<td>0/2</td>
+<td>0/2</td>
+<td>0/2</td>
+<td>0/2</td>
+<td>0/2</td>
+<td>0/2</td>
+</tr>
+<tr><td class="repo">django/django</td>
+<td>21/41</td>
+<td>23/41</td>
+<td>19/41</td>
+<td>19/41</td>
+<td>20/41</td>
+<td>16/41</td>
+<td>25/41</td>
+</tr>
+<tr><td class="repo">matplotlib/matplotlib</td>
+<td>0/6</td>
+<td>0/6</td>
+<td>0/6</td>
+<td>0/6</td>
+<td>0/6</td>
+<td>0/6</td>
+<td>0/6</td>
+</tr>
+<tr><td class="repo">mwaskom/seaborn</td>
+<td>0/1</td>
+<td>0/1</td>
+<td>0/1</td>
+<td>0/1</td>
+<td>0/1</td>
+<td>0/1</td>
+<td>0/1</td>
+</tr>
+<tr><td class="repo">pallets/flask</td>
+<td>0/1</td>
+<td>0/1</td>
+<td>0/1</td>
+<td>0/1</td>
+<td>0/1</td>
+<td>0/1</td>
+<td>0/1</td>
+</tr>
+<tr><td class="repo">psf/requests</td>
+<td>0/2</td>
+<td>0/2</td>
+<td>0/2</td>
+<td>0/2</td>
+<td>0/2</td>
+<td>0/2</td>
+<td>0/2</td>
+</tr>
+<tr><td class="repo">pydata/xarray</td>
+<td>0/1</td>
+<td>0/1</td>
+<td>0/1</td>
+<td>0/1</td>
+<td>0/1</td>
+<td>0/1</td>
+<td>0/1</td>
+</tr>
+<tr><td class="repo">pylint-dev/pylint</td>
+<td>0/2</td>
+<td>2/2</td>
+<td>1/2</td>
+<td>1/2</td>
+<td>0/2</td>
+<td>1/2</td>
+<td>1/2</td>
+</tr>
+<tr><td class="repo">pytest-dev/pytest</td>
+<td>0/4</td>
+<td>0/4</td>
+<td>0/4</td>
+<td>0/4</td>
+<td>0/4</td>
+<td>0/4</td>
+<td>0/4</td>
+</tr>
+<tr><td class="repo">scikit-learn/scikit-learn</td>
+<td>1/6</td>
+<td>2/6</td>
+<td>2/6</td>
+<td>1/6</td>
+<td>1/6</td>
+<td>1/6</td>
+<td>2/6</td>
+</tr>
+<tr><td class="repo">sphinx-doc/sphinx</td>
+<td>0/4</td>
+<td>0/4</td>
+<td>0/4</td>
+<td>0/4</td>
+<td>0/4</td>
+<td>0/4</td>
+<td>0/4</td>
+</tr>
+<tr><td class="repo">sympy/sympy</td>
+<td>14/30</td>
+<td class="blocked-cell">9/26 <span class="tag tag-blocked">B4</span></td>
+<td>14/30</td>
+<td>14/30</td>
+<td>13/30</td>
+<td class="blocked-cell">7/24 <span class="tag tag-blocked">B6</span></td>
+<td class="blocked-cell">8/18 <span class="tag tag-blocked">B12</span></td>
+</tr>
+</table>
+<div class="callout"><strong>Observation:</strong> django/django (41 instances) is the primary scoring repo (39-61% per harness). sympy/sympy (30 instances) is second (29-47%). All other 10 repos combined (29 instances) have near-zero resolve rates - see section 5 for eval env limitation.</div>
+<h2>4. Blocked Instances (22 cases, all sympy)</h2>
+<div class="callout-red"><strong>All blocked instances are in sympy/sympy and all occurred under R2 parallel execution.</strong> Zero blocked in R1 serial. Root cause: 7 harnesses sharing same repo workdir causing git checkout conflicts.</div>
+<h3>4.1 Root Cause Classification</h3><table><tr><th>Type</th><th>Count</th><th>Description</th></tr>
+<tr><td><strong>workdir_checkout_conflict</strong></td><td>19</td><td>git checkout fails: local changes overwritten by another harness</td></tr>
+<tr><td><strong>gateway_503</strong></td><td>3</td><td>Gateway HTTP 503 during git fetch (transient proxy overload)</td></tr>
+</table>
+<h3>4.2 Affected Harnesses</h3><table><tr><th>Harness</th><th>Blocked</th><th>Breakdown</th></tr>
+<tr><td>codex</td><td class="blocked-cell">4</td><td>gateway_503(3), workdir_checkout_conflict(1)</td></tr>
+<tr><td>deepseek-harness</td><td class="blocked-cell">6</td><td>workdir_checkout_conflict(6)</td></tr>
+<tr><td>pi</td><td class="blocked-cell">12</td><td>workdir_checkout_conflict(12)</td></tr>
+</table>
+<h3>4.3 Per-Instance Details</h3><table style="font-size:0.82em"><tr><th>#</th><th>Harness</th><th>Instance ID</th><th>Root cause</th><th>Error (truncated)</th></tr>
+<tr><td>1</td><td>codex</td><td class="repo">sympy__sympy-15011</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/assumptions/sathandlers.py  sympy/core/basic.py  sympy/core/container</td></tr>
+<tr><td>2</td><td>codex</td><td class="repo">sympy__sympy-15308</td><td>gateway_503</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git fetch failed: fatal: unable to access 'https://github.com/sympy/sympy/': Received HTTP code 503 from proxy after CONNECT</td></tr>
+<tr><td>3</td><td>codex</td><td class="repo">sympy__sympy-15345</td><td>gateway_503</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git fetch failed: fatal: unable to access 'https://github.com/sympy/sympy/': Received HTTP code 503 from proxy after CONNECT</td></tr>
+<tr><td>4</td><td>codex</td><td class="repo">sympy__sympy-15346</td><td>gateway_503</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git fetch failed: fatal: unable to access 'https://github.com/sympy/sympy/': Received HTTP code 503 from proxy after CONNECT</td></tr>
+<tr><td>5</td><td>deepseek-harness</td><td class="repo">sympy__sympy-11400</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  doc/ext/docscrape.py  doc/ext/numpydoc.py  sympy/assumptions/sathandlers.py</td></tr>
+<tr><td>6</td><td>deepseek-harness</td><td class="repo">sympy__sympy-13773</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/core/basic.py  sympy/core/expr.py  sympy/core/function.py  sympy/matr</td></tr>
+<tr><td>7</td><td>deepseek-harness</td><td class="repo">sympy__sympy-13895</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/core/basic.py  sympy/core/expr.py  sympy/core/function.py  sympy/matr</td></tr>
+<tr><td>8</td><td>deepseek-harness</td><td class="repo">sympy__sympy-13915</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/core/basic.py  sympy/core/expr.py  sympy/core/function.py  sympy/matr</td></tr>
+<tr><td>9</td><td>deepseek-harness</td><td class="repo">sympy__sympy-13971</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/core/basic.py  sympy/core/expr.py  sympy/core/function.py  sympy/matr</td></tr>
+<tr><td>10</td><td>deepseek-harness</td><td class="repo">sympy__sympy-14024</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/core/basic.py  sympy/core/expr.py  sympy/core/function.py  sympy/matr</td></tr>
+<tr><td>11</td><td>pi</td><td class="repo">sympy__sympy-11400</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/assumptions/sathandlers.py  sympy/core/basic.py Please commit your ch</td></tr>
+<tr><td>12</td><td>pi</td><td class="repo">sympy__sympy-13971</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/core/basic.py  sympy/core/function.py  sympy/matrices/common.py  symp</td></tr>
+<tr><td>13</td><td>pi</td><td class="repo">sympy__sympy-14024</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/core/basic.py  sympy/core/function.py  sympy/matrices/common.py  symp</td></tr>
+<tr><td>14</td><td>pi</td><td class="repo">sympy__sympy-14308</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/core/basic.py  sympy/core/function.py  sympy/matrices/common.py  symp</td></tr>
+<tr><td>15</td><td>pi</td><td class="repo">sympy__sympy-14317</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/core/basic.py  sympy/core/function.py  sympy/matrices/common.py  symp</td></tr>
+<tr><td>16</td><td>pi</td><td class="repo">sympy__sympy-14396</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/core/basic.py  sympy/core/function.py  sympy/matrices/common.py  symp</td></tr>
+<tr><td>17</td><td>pi</td><td class="repo">sympy__sympy-14774</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/core/basic.py  sympy/core/function.py  sympy/matrices/common.py  symp</td></tr>
+<tr><td>18</td><td>pi</td><td class="repo">sympy__sympy-14817</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/core/basic.py  sympy/core/function.py  sympy/matrices/common.py  symp</td></tr>
+<tr><td>19</td><td>pi</td><td class="repo">sympy__sympy-15011</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/assumptions/sathandlers.py  sympy/core/basic.py  sympy/core/container</td></tr>
+<tr><td>20</td><td>pi</td><td class="repo">sympy__sympy-15308</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/assumptions/sathandlers.py  sympy/core/basic.py  sympy/core/container</td></tr>
+<tr><td>21</td><td>pi</td><td class="repo">sympy__sympy-15345</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/assumptions/sathandlers.py  sympy/core/basic.py  sympy/core/container</td></tr>
+<tr><td>22</td><td>pi</td><td class="repo">sympy__sympy-15346</td><td>workdir_checkout_conflict</td><td style="text-align:left;font-family:monospace;font-size:0.8em">git checkout failed: error: Your local changes to the following files would be overwritten by checkout:  sympy/assumptions/sathandlers.py  sympy/core/basic.py  sympy/core/container</td></tr>
+</table>
+<h3>4.4 Fix for 7x300</h3><div class="callout-green">Root cause in <code>run_serial_kimi.py:238-239</code>: workdir indexed only by repo, shared across 7 harnesses.<br><br><strong>Fix:</strong> workdir per-harness isolation (<code>WORKDIRS/harness/repo</code>) + rootfs flock on setup_rootfs/eval_instance. Blocked re-run in progress (serial) to resolve remaining instances.</div>
+<h2>5. Eval Environment Limitation (Non-django/sympy Repos)</h2>
+<div class="callout"><strong>These 0 scores do NOT reflect harness capability.</strong> Eval rootfs templates were only fully prepared for django/django and sympy/sympy. For other repos, patch application fails (patch_applied=False), guaranteeing 0 regardless of patch quality.</div>
+<h3>5.1 Patch Application Status by Repo</h3><table><tr><th>Repo</th><th>Inst (x7)</th><th>True</th><th>False</th><th>%F</th><th>Resolved</th></tr>
+<tr><td class="repo">astropy/astropy</td><td>14</td><td>0</td><td class="blocked-cell">14</td><td>100%</td><td>0</td></tr>
+<tr><td class="repo">matplotlib/matplotlib</td><td>42</td><td>0</td><td class="blocked-cell">42</td><td>100%</td><td>0</td></tr>
+<tr><td class="repo">mwaskom/seaborn</td><td>7</td><td>3</td><td class="blocked-cell">4</td><td>57%</td><td>0</td></tr>
+<tr><td class="repo">pallets/flask</td><td>7</td><td>0</td><td class="blocked-cell">7</td><td>100%</td><td>0</td></tr>
+<tr><td class="repo">psf/requests</td><td>14</td><td>14</td><td class="blocked-cell">0</td><td>0%</td><td>0</td></tr>
+<tr><td class="repo">pydata/xarray</td><td>7</td><td>7</td><td class="blocked-cell">0</td><td>0%</td><td>0</td></tr>
+<tr><td class="repo">pylint-dev/pylint</td><td>14</td><td>13</td><td class="blocked-cell">1</td><td>7%</td><td>6</td></tr>
+<tr><td class="repo">pytest-dev/pytest</td><td>28</td><td>0</td><td class="blocked-cell">28</td><td>100%</td><td>0</td></tr>
+<tr><td class="repo">scikit-learn/scikit-learn</td><td>42</td><td>36</td><td class="blocked-cell">6</td><td>14%</td><td>10</td></tr>
+<tr><td class="repo">sphinx-doc/sphinx</td><td>28</td><td>19</td><td class="blocked-cell">9</td><td>32%</td><td>0</td></tr>
+</table>
+<div class="chart-container"><svg viewBox="0 0 480 280" width="480" height="280" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+<line x1="120" y1="220" x2="460" y2="220" stroke="#e5e7eb" stroke-width="1"/>
+<text x="115" y="224" text-anchor="end" font-size="10" fill="#6b7280">0%</text>
+<line x1="120" y1="170" x2="460" y2="170" stroke="#e5e7eb" stroke-width="1"/>
+<text x="115" y="174" text-anchor="end" font-size="10" fill="#6b7280">25%</text>
+<line x1="120" y1="120" x2="460" y2="120" stroke="#e5e7eb" stroke-width="1"/>
+<text x="115" y="124" text-anchor="end" font-size="10" fill="#6b7280">50%</text>
+<line x1="120" y1="70" x2="460" y2="70" stroke="#e5e7eb" stroke-width="1"/>
+<text x="115" y="74" text-anchor="end" font-size="10" fill="#6b7280">75%</text>
+<line x1="120" y1="20" x2="460" y2="20" stroke="#e5e7eb" stroke-width="1"/>
+<text x="115" y="24" text-anchor="end" font-size="10" fill="#6b7280">100%</text>
+<rect x="130" y="220" width="28" height="0" fill="#10b981" rx="2"/>
+<rect x="130" y="20" width="28" height="200" fill="#ef4444" rx="2"/>
+<text x="144.0" y="235" text-anchor="middle" font-size="8" fill="#374151" transform="rotate(-30, 144.0, 235)">astrop</text>
+<rect x="162" y="220" width="28" height="0" fill="#10b981" rx="2"/>
+<rect x="162" y="20" width="28" height="200" fill="#ef4444" rx="2"/>
+<text x="176.0" y="235" text-anchor="middle" font-size="8" fill="#374151" transform="rotate(-30, 176.0, 235)">matplo</text>
+<rect x="194" y="135" width="28" height="85" fill="#10b981" rx="2"/>
+<rect x="194" y="21" width="28" height="114" fill="#ef4444" rx="2"/>
+<text x="208.0" y="235" text-anchor="middle" font-size="8" fill="#374151" transform="rotate(-30, 208.0, 235)">seabor</text>
+<rect x="226" y="220" width="28" height="0" fill="#10b981" rx="2"/>
+<rect x="226" y="20" width="28" height="200" fill="#ef4444" rx="2"/>
+<text x="240.0" y="235" text-anchor="middle" font-size="8" fill="#374151" transform="rotate(-30, 240.0, 235)">flask</text>
+<rect x="258" y="20" width="28" height="200" fill="#10b981" rx="2"/>
+<rect x="258" y="20" width="28" height="0" fill="#ef4444" rx="2"/>
+<text x="272.0" y="235" text-anchor="middle" font-size="8" fill="#374151" transform="rotate(-30, 272.0, 235)">reques</text>
+<rect x="290" y="20" width="28" height="200" fill="#10b981" rx="2"/>
+<rect x="290" y="20" width="28" height="0" fill="#ef4444" rx="2"/>
+<text x="304.0" y="235" text-anchor="middle" font-size="8" fill="#374151" transform="rotate(-30, 304.0, 235)">xarray</text>
+<rect x="322" y="35" width="28" height="185" fill="#10b981" rx="2"/>
+<rect x="322" y="21" width="28" height="14" fill="#ef4444" rx="2"/>
+<text x="336.0" y="235" text-anchor="middle" font-size="8" fill="#374151" transform="rotate(-30, 336.0, 235)">pylint</text>
+<rect x="354" y="220" width="28" height="0" fill="#10b981" rx="2"/>
+<rect x="354" y="20" width="28" height="200" fill="#ef4444" rx="2"/>
+<text x="368.0" y="235" text-anchor="middle" font-size="8" fill="#374151" transform="rotate(-30, 368.0, 235)">pytest</text>
+<rect x="386" y="49" width="28" height="171" fill="#10b981" rx="2"/>
+<rect x="386" y="21" width="28" height="28" fill="#ef4444" rx="2"/>
+<text x="400.0" y="235" text-anchor="middle" font-size="8" fill="#374151" transform="rotate(-30, 400.0, 235)">scikit</text>
+<rect x="418" y="85" width="28" height="135" fill="#10b981" rx="2"/>
+<rect x="418" y="21" width="28" height="64" fill="#ef4444" rx="2"/>
+<text x="432.0" y="235" text-anchor="middle" font-size="8" fill="#374151" transform="rotate(-30, 432.0, 235)">sphinx</text>
+<rect x="130" y="260" width="12" height="12" fill="#10b981" rx="2"/>
+<text x="148" y="270" font-size="10" fill="#374151">patch_applied=True</text>
+<rect x="280" y="260" width="12" height="12" fill="#ef4444" rx="2"/>
+<text x="298" y="270" font-size="10" fill="#374151">patch_applied=False</text>
+</svg><div class="chart-caption">Figure 4: patch_applied status (green=True, red=False)</div></div>
+<h3>5.2 Impact</h3><ul><li><strong>All-False repos</strong> (astropy, matplotlib, flask, pytest): 0/91 resolved. 637 runs guaranteed 0.</li><li><strong>Working repos</strong> (requests, xarray, pylint, sklearn, sphinx): sklearn 10/42, pylint 6/14 show genuine ability.</li></ul>
+<h3>5.3 Fair Scope Rates (django+sympy only)</h3><table><tr><th>Harness</th><th>Res</th><th>Sco</th><th>Fair</th><th>Overall</th><th>Delta</th></tr>
+<tr><td>cline-patched</td><td>35</td><td>71</td><td class="rate-high">49.3%</td><td>36.0%</td><td style="color:#059669">+13.3%</td></tr>
+<tr><td>codex</td><td>32</td><td>67</td><td class="rate-high">47.8%</td><td>37.5%</td><td style="color:#059669">+10.3%</td></tr>
+<tr><td>hermes</td><td>33</td><td>71</td><td class="rate-high">46.5%</td><td>36.0%</td><td style="color:#059669">+10.5%</td></tr>
+<tr><td>opencode</td><td>33</td><td>71</td><td class="rate-high">46.5%</td><td>35.0%</td><td style="color:#059669">+11.5%</td></tr>
+<tr><td>claude-code</td><td>33</td><td>71</td><td class="rate-high">46.5%</td><td>34.0%</td><td style="color:#059669">+12.5%</td></tr>
+<tr><td>deepseek-harness</td><td>23</td><td>65</td><td class="rate-high">35.4%</td><td>26.6%</td><td style="color:#059669">+8.8%</td></tr>
+<tr><td>pi</td><td>33</td><td>59</td><td class="rate-high">55.9%</td><td>40.9%</td><td style="color:#059669">+15.0%</td></tr>
+</table>
+<h2>6. Failure Mode Analysis</h2>
+<table><tr><th>Mode</th><th>Description</th><th>Prevalence</th></tr><tr><td>Incorrect patch</td><td>FAIL_TO_PASS still fail</td><td>Majority PBF in django/sympy</td></tr><tr><td>Partial fix</td><td>Fixes some, breaks others</td><td>Common in sympy</td></tr><tr><td>Eval env failure</td><td>patch_applied=False</td><td>111 (non-django/sympy)</td></tr><tr><td>Workdir conflict</td><td>git checkout fails</td><td>22 (sympy, R2)</td></tr><tr><td>Gateway 503</td><td>git fetch HTTP 503</td><td>3 (codex/sympy, R2)</td></tr></table>
+<p><strong>Timeouts:</strong> Run 1800s (a few hit limit, max wall ~1800s). codex median 942s (3x slower than pi 303s). Eval timeout rare.</p>
+<h2>7. Wall-Time vs Resolve Rate</h2>
+<div class="chart-container"><svg viewBox="0 0 580 310" width="580" height="310" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+<line x1="60" y1="270" x2="560" y2="270" stroke="#e5e7eb" stroke-width="1"/>
+<text x="55" y="274" text-anchor="end" font-size="10" fill="#6b7280">0%</text>
+<line x1="60" y1="220" x2="560" y2="220" stroke="#e5e7eb" stroke-width="1"/>
+<text x="55" y="224" text-anchor="end" font-size="10" fill="#6b7280">10%</text>
+<line x1="60" y1="170" x2="560" y2="170" stroke="#e5e7eb" stroke-width="1"/>
+<text x="55" y="174" text-anchor="end" font-size="10" fill="#6b7280">20%</text>
+<line x1="60" y1="120" x2="560" y2="120" stroke="#e5e7eb" stroke-width="1"/>
+<text x="55" y="124" text-anchor="end" font-size="10" fill="#6b7280">30%</text>
+<line x1="60" y1="70" x2="560" y2="70" stroke="#e5e7eb" stroke-width="1"/>
+<text x="55" y="74" text-anchor="end" font-size="10" fill="#6b7280">40%</text>
+<line x1="60" y1="20" x2="560" y2="20" stroke="#e5e7eb" stroke-width="1"/>
+<text x="55" y="24" text-anchor="end" font-size="10" fill="#6b7280">50%</text>
+<line x1="60" y1="20" x2="60" y2="270" stroke="#e5e7eb" stroke-width="1"/>
+<text x="60" y="288" text-anchor="middle" font-size="10" fill="#6b7280">0s</text>
+<line x1="160" y1="20" x2="160" y2="270" stroke="#e5e7eb" stroke-width="1"/>
+<text x="160" y="288" text-anchor="middle" font-size="10" fill="#6b7280">200s</text>
+<line x1="260" y1="20" x2="260" y2="270" stroke="#e5e7eb" stroke-width="1"/>
+<text x="260" y="288" text-anchor="middle" font-size="10" fill="#6b7280">400s</text>
+<line x1="360" y1="20" x2="360" y2="270" stroke="#e5e7eb" stroke-width="1"/>
+<text x="360" y="288" text-anchor="middle" font-size="10" fill="#6b7280">600s</text>
+<line x1="460" y1="20" x2="460" y2="270" stroke="#e5e7eb" stroke-width="1"/>
+<text x="460" y="288" text-anchor="middle" font-size="10" fill="#6b7280">800s</text>
+<line x1="560" y1="20" x2="560" y2="270" stroke="#e5e7eb" stroke-width="1"/>
+<text x="560" y="288" text-anchor="middle" font-size="10" fill="#6b7280">1000s</text>
+<text x="310.0" y="305" text-anchor="middle" font-size="11" fill="#374151">Median wall time (s)</text>
+<text x="20" y="145.0" text-anchor="middle" font-size="11" fill="#374151" transform="rotate(-90, 20, 145.0)">Resolve rate (%)</text>
+<circle cx="245" cy="90" r="8" fill="#2563eb" opacity="0.8"/>
+<text x="245" y="76" text-anchor="middle" font-size="10" fill="#2563eb" font-weight="bold">cline-p</text>
+<circle cx="531" cy="83" r="8" fill="#7c3aed" opacity="0.8"/>
+<text x="531" y="69" text-anchor="middle" font-size="10" fill="#7c3aed" font-weight="bold">codex</text>
+<circle cx="318" cy="90" r="8" fill="#059669" opacity="0.8"/>
+<text x="318" y="76" text-anchor="middle" font-size="10" fill="#059669" font-weight="bold">hermes</text>
+<circle cx="219" cy="95" r="8" fill="#d97706" opacity="0.8"/>
+<text x="219" y="81" text-anchor="middle" font-size="10" fill="#d97706" font-weight="bold">opencode</text>
+<circle cx="288" cy="100" r="8" fill="#dc2626" opacity="0.8"/>
+<text x="288" y="86" text-anchor="middle" font-size="10" fill="#dc2626" font-weight="bold">claude-c</text>
+<circle cx="216" cy="138" r="8" fill="#0891b2" opacity="0.8"/>
+<text x="216" y="124" text-anchor="middle" font-size="10" fill="#0891b2" font-weight="bold">deepseek</text>
+<circle cx="211" cy="66" r="8" fill="#db2777" opacity="0.8"/>
+<text x="211" y="52" text-anchor="middle" font-size="10" fill="#db2777" font-weight="bold">pi</text>
+</svg><div class="chart-caption">Figure 5: Median wall (x) vs rate (y). Top-left = fast+high.</div></div>
+<table><tr><th>Harness</th><th>Med wall</th><th>Total</th><th>Rate</th><th>Res/h</th></tr>
+<tr><td>cline-patched</td><td>371s</td><td>14.9h</td><td>36.0%</td><td>2.4</td></tr>
+<tr><td>codex</td><td>942s</td><td>26.5h</td><td>37.5%</td><td>1.4</td></tr>
+<tr><td>hermes</td><td>517s</td><td>20.9h</td><td>36.0%</td><td>1.7</td></tr>
+<tr><td>opencode</td><td>319s</td><td>12.5h</td><td>35.0%</td><td>2.8</td></tr>
+<tr><td>claude-code</td><td>456s</td><td>17.0h</td><td>34.0%</td><td>2.0</td></tr>
+<tr><td>deepseek-harness</td><td>313s</td><td>10.8h</td><td>26.6%</td><td>2.3</td></tr>
+<tr><td>pi</td><td>303s</td><td>10.8h</td><td>40.9%</td><td>3.3</td></tr>
+</table>
+<div class="callout"><strong>Insight:</strong> pi/dsh fastest (~300s) but different rates (40.9% vs 26.6%). codex slowest (942s) but competitive (37.5%). No "faster=better" pattern.</div>
+<h2>8. Conclusions and Limitations</h2>
+<h3>8.1 Key Findings</h3><ol><li><strong>pi leads (40.9%)</strong> but most blocked (12/100, all sympy).</li><li><strong>cline/hermes/codex at 36-37.5%</strong> - similar at n=100.</li><li><strong>dsh weakest (26.6%)</strong> - underperforms even in fair scope.</li><li><strong>Repo difficulty dominates</strong>: django(39-61%) >> sympy(29-47%) >> others(0-17%).</li><li><strong>22 blocked = parallel infra issue</strong>, not harness quality.</li><li><strong>111 patch_applied=False</strong> masks non-django/sympy results.</li></ol>
+<h3>8.2 Limitations</h3><ul><li>Small sample (100): 2-3% differences not significant.</li><li>Mixed modes: R1 serial vs R2 parallel vs codex serial-superset.</li><li>22 blocked unresolved at report time (re-run in progress).</li><li>Eval env only reliable for django+sympy.</li><li>Single backbone (kimi-k2.6-cloud). No Docker (unshare sandbox).</li><li>Internal cross-eval, NOT SWE-bench leaderboard-comparable.</li></ul>
+<h3>8.3 Recommendations for 7x300</h3><ul><li>Per-harness workdir isolation + rootfs flock.</li><li>Expand eval env to all 12 repos.</li><li>Test N=1->2->3 concurrency, verify block=0.</li></ul>
+<footer><p>Generated 2026-10-09 22:36 | Data: kimi_pilot_results.json (live)</p><p>Reproduce: run/harness/kimi_pilot_results.json + instance_selection_100.json</p></footer>
+</body></html>

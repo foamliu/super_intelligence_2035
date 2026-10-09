@@ -9,7 +9,7 @@ Key differences from run_pilot_batch.py:
   5. Quota discipline: on 429, PAUSE and wait for window reset.
 """
 from __future__ import annotations
-import argparse, json, os, re, subprocess, sys, time
+import argparse, fcntl, json, os, re, subprocess, sys, time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -19,6 +19,7 @@ WORKDIRS = Path("/dev/shm/harness_work/workdirs")
 ROOTFS_DIR = HARNESS_WORK / "rootfs"
 LOGS_EVAL = HARNESS_WORK / "logs_eval"
 SUMMARY_PATH = HERE / "kimi_pilot_results.json"
+ROOTFS_LOCK_PATH = HARNESS_WORK / "rootfs.lock"  # global flock for shared rootfs templates
 
 ROOTFS_TEMPLATES = {
     "django/django":              ROOTFS_DIR / "django__django-10914",
@@ -228,14 +229,21 @@ def classify_result(hres):
     return "patch-but-failed"
 
 
-def process_instance_for_harness(instance_id, harness, do_setup=True, do_run=True, do_eval=True):
+def process_instance_for_harness(instance_id, harness, do_setup=True, do_run=True, do_eval=True,
+                                  per_instance_workdir=False):
     inst_json = INSTANCES_DIR / f"{instance_id}.json"
     if not inst_json.exists():
         return {"instance_id": instance_id, "harness": harness, "error": "instance JSON not found"}
     instance = json.loads(inst_json.read_text())
     results = {"instance_id": instance_id, "repo": instance["repo"],
                "harness": harness, "model": MODEL_NAME}
-    workdir = WORKDIRS / instance["repo"].replace("/", "_")
+    # --- ②-A fix: per-harness workdir isolation (eliminates git checkout conflicts) ---
+    # N=1 (serial within harness): per-harness/repo is sufficient
+    # N>1 (concurrent within harness): use per-instance workdir to avoid same-repo collisions
+    if per_instance_workdir:
+        workdir = WORKDIRS / harness / instance_id
+    else:
+        workdir = WORKDIRS / harness / instance["repo"].replace("/", "_")
     rootfs_path = ROOTFS_TEMPLATES.get(instance["repo"], ROOTFS_DIR / instance_id)
 
     if do_setup:
@@ -246,7 +254,14 @@ def process_instance_for_harness(instance_id, harness, do_setup=True, do_run=Tru
             results["blocked"] = msg
             results["classification"] = "blocked"
             return results
-        ok, msg = setup_rootfs(instance, rootfs_path)
+        # --- ②-A fix: rootfs global flock — only lock setup_rootfs (shared template testbed) ---
+        # agent run segment stays lock-free for throughput
+        with open(ROOTFS_LOCK_PATH, "w") as lockf:
+            fcntl.flock(lockf, fcntl.LOCK_EX)
+            try:
+                ok, msg = setup_rootfs(instance, rootfs_path)
+            finally:
+                fcntl.flock(lockf, fcntl.LOCK_UN)
         results["rootfs_setup"] = {"ok": ok, "msg": msg}
         if not ok:
             results["blocked"] = f"rootfs: {msg}"
@@ -262,7 +277,13 @@ def process_instance_for_harness(instance_id, harness, do_setup=True, do_run=Tru
             if has_patch:
                 run_id = f"R1_KIMI_{harness.replace('-', '_').upper()}_{instance_id.replace('-', '_')}"
                 print(f"  [EVAL] {harness} on {instance_id} ...")
-                eok, eres = eval_instance(instance_id, pred_file, rootfs_path, run_id)
+                # --- ②-A fix: rootfs global flock — only lock eval_instance (shared template testbed) ---
+                with open(ROOTFS_LOCK_PATH, "w") as lockf:
+                    fcntl.flock(lockf, fcntl.LOCK_EX)
+                    try:
+                        eok, eres = eval_instance(instance_id, pred_file, rootfs_path, run_id)
+                    finally:
+                        fcntl.flock(lockf, fcntl.LOCK_UN)
                 hres["eval"] = eres
             else:
                 hres["eval"] = {"skipped": "no patch produced"}
@@ -333,6 +354,8 @@ def main():
     ap.add_argument("--run-only", action="store_true")
     ap.add_argument("--eval-only", action="store_false", dest="do_eval")
     ap.add_argument("--resume", action="store_true")
+    ap.add_argument("--per-instance-workdir", action="store_true",
+                    help="Use per-instance workdir (WORKDIRS/harness/instance_id) for N>1 concurrency")
     args = ap.parse_args()
 
     if args.all_prepared:
@@ -360,7 +383,8 @@ def main():
 
     for idx, iid in enumerate(pending, 1):
         print(f"\n{'#'*60}\n# [{idx}/{len(pending)}] {args.harness} x {iid}\n{'#'*60}")
-        res = process_instance_for_harness(iid, args.harness, do_setup, do_run, args.do_eval)
+        res = process_instance_for_harness(iid, args.harness, do_setup, do_run, args.do_eval,
+                                            per_instance_workdir=args.per_instance_workdir)
         found = False
         for i, r in enumerate(all_results):
             if r.get("instance_id") == iid and r.get("harness") == args.harness:
