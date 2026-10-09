@@ -1,6 +1,17 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维更正 · 2026-10-09（✅ **NeMo/Megatron 支持 Muon** —— 更正上条「未接入」的旧判断）· 最高优先
+
+> **更正**：上条「Muon 未接入 / 实现风险」引的是 `run/EXPERIMENTS.md` 里 **S3-03 的旧结论（已过时）**。**查官方原文后**（2026-10-09）：
+> - **Megatron-Core** 有 `core/optimizer/muon.py`（shim → `emerging_optimizers`）+ `core/optimizer/emerging_optimizers` + `layer_wise_optimizer`（`dist_` 前缀 = layer-wise **distributed** Muon）。
+> - **Megatron-Bridge（NeMo）** 有 Muon recipe：`bridge/recipes/utils/optimizer_utils.py`（含 `muon_extra_scale_factor` / `muon_scalar_optimizer`＝嵌入/偏置/norm 的标量优化器）。
+> - **NVIDIA blog（2026-04-22）**：Muon 经 **Emerging-Optimizers** 库进入 Megatron-Core；**NeMo Megatron Bridge 26.02** 已实测 Muon 吞吐（GB300 上近 AdamW 持平）。
+> ⇒ **探针改为「三步核查」，不再当"从零实现"**：① 本地 `megatron-core 0.16.1` 是否含 `muon.py`/`emerging_optimizers`；② `megatron.bridge` 版本是否有 Muon recipe（`optimizer_utils`）；③ **缺则 `pip install emerging_optimizers`**（注意环境隔离）；④ 在 `pretrain_launcher.py` + `mamba2_hybrid_2b/recipe.py` 透传 `optimizer=muon`/`dist_muon` + muon 参数。**跑通即进 A/B。**
+> ℹ️ 官方对大规模 Muon 推荐 **layer-wise distributed optimizer**（整层分给各 DP rank，避免正交化时的额外通信）。
+
+---
+
 ### 🆕 运维指令 · 2026-10-09（⚗️ 新实验：**Muon vs AdamW** · 用 `.12` 空档）· 用户直令 · 高优先
 
 > 用户问「还想试验 Muon vs Adam 对比，有空档吗」。**空档 = `.12`**：`.29` 今晚已满（对比基准 + 夜班 T1/T2/T3）；**`.12` 在 vision E2 评测结束后（~21:30–22:30 Oct9）空出 8×H100**。
@@ -113,31 +124,7 @@
 
 ---
 
-### 🆕 运维指令 · 2026-10-09（💡 征询：让 pretrain 提 3 个实验 idea，按价值从高到低排序）· 用户直令 · 最高优先
-
-> **用户令**：「询问一下 pretrain，看它有什么 idea。让它提 3 个实验 idea，按照价值从高到低排序。」
-> **背景**：R3 BO ✅ 100/100、R3 收官报告 ✅、P-8 PREP ✅、T3 ✅（**P-8 最优配置已定为 `TP1·MBS2·bf16 = 249K tok/s`**）——**.29 8×H100 现全空**。P-8 唯一阻塞 = Code/Math 全量分词（进行中）+ **暂缓令（10-02）未撤**。**用户正在评估是否撤销暂缓令、直接启动 P-8** ⇒ 先听 pretrain 自己最清楚的判断。
-
-**① 任务（纯写作 · 零 GPU）**
-- 提出 **3 个** 值得在 `.29` 空闲 8 卡上做的实验 idea，**按价值从高到低排序**（第 1 个 = 你认为最值得做的）。
-- idea **可以**是「直接启动 P-8 本身」，**也可以**是 P-8 之前的小实验（彩排 / 长上下文适配 / 下游评测 / 别的）——**但必须给出排序理由**。
-
-**② 每个 idea 必须写全 6 项**
-1. **名称 + 一句话定位**
-2. **为什么值得做**（**贴依据**：`路径:行号` / 已有实验结论 / README·论文的哪条诉求；🚫 不许凭印象）
-3. **预期成本**（GPU·h / 墙钟 / 卡数 / 是否需新代码或解冻参数）
-4. **可检验判据（先定后测）**——写清「什么结果算成功 / 失败」
-5. **风险 / 依赖 / 前置**
-6. **与谁对齐**（P-8 / Stage (ii) SFT·RL / 论文哪一节）
-
-**③ 必须回答的一句话（放在 3 个 idea 之后）**
-- 「**若运维此刻撤销 P-8 暂缓令，你建议：立即起 P-8 ／ 先做哪个 idea ／ 等 Code·Math 分词完成——为什么？**」
-
-**④ 纪律**
-- 🚫 **零 GPU**：只读现有产物 + 推理，**不许起任何训练/评测进程**；🚫 不启动 P-8；🚫 不 kill watchdog `baize_pretrain_loop.sh`。
-- 🚫 **不许闭门造车**：凡涉及「别人怎么做 / 某评测某架构该怎么做」的结论，**必须读官方仓库或论文原文**（能 `git clone` 就 clone）。
-- 写进 `MEMORY_PRETRAIN_2B.md` 的「🗣️ 运维问答 · 2026-10-09（提 3 个实验 idea）」小节；若 MEMORY 超 32KB，先按体积规程滚动归档。
-- 收尾按「收尾铁律」commit+push（前缀 `pretrain 问答: …`），更新 `run/daily-memories/`。
+> 📦 **§运维指令·2026-10-09（💡 提 3 个实验 idea）已闭合（#251 已交付：①P-8 彩排 ②P-8 44B 下限 ③R3 配比迁移，+ 建议立即起 P-8）** → 原文见 `run/ARCHIVE_OPERATOR_PRETRAIN.md`（2026-10-09 搬运，**原文未改**）。
 
 ---
 

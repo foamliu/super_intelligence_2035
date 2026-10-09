@@ -10,7 +10,7 @@
 - **用户直令（2026-10-09③）**：Code/Math 停掉重头来（每个目录全切）· Ultra-FineWeb-L3 也加入分词 · 224 核别只开 8 并发（**放开**）· 核实 Ultra-FineWeb 197GB→.bin 2.0TB 是否合理 · **不要创造新名字**（只按原始 6 目录）。
 - **已下发** `run/BAIZE_DATA_TASK.md`（10-09③ 覆盖②）：三目录全量分词（Ultra-FineWeb-L3 1764/1.8TB + UltraData-Code 1121/1.2TB + UltraData-Math 1823/515GB）· 并发 20–50/源 · 心跳按 6 目录报盘点。
 
-### 🔬 pretrain（2026-10-09）：T3 ✅ → **P-8 最优 = `TP1·MBS2·bf16` 249K**；**唯一阻塞 = 暂缓令**（数据够）。今晚跑：对比基准（`.29`）+ 夜班 T1/T2/T3 + ⚗️Muon（`.12`）。
+### 🔬 pretrain（2026-10-09）：T3 ✅ → **P-8 最优 = `TP1·MBS2·bf16` 249K**；**唯一阻塞 = 暂缓令**。今晚跑：对比基准、夜班 T1/T2/T3、⚗️Muon（`.12`）。
 
 ### 💬 vision / harness 运维问答已收齐
 - **vision** ✅ 答复 2026-10-08③（未验证假设 / Stage iv 前置 / GPU 空窗优先级 / 论文补充）· **harness** ✅ 答复 2026-10-08④（横评深挖 / BaiZe 接入前置 / 扩规模 / 多 backbone / 论文补充）。
@@ -80,7 +80,7 @@ WAITING: 0
 
 - [~] 🆕 **BaiZe-Hybrid（参数匹配 Dense）中文对比报告**：✅ #252 门控已交付 → **GO 放行**（修 warmup 归因 + ctx×2 到 hybrid OOM）→ 出 `..._fair_zh.html`。
 - [ ] 🆕 **夜班填空（2026-10-09）**：T1 长上下文(4096→8192) / T2 等参 Dense 训练侧 / T3 R3 配比迁移 A/B —— `.29` 剩余卡。
-- [ ] 🆕 **Muon vs AdamW**：`.12` 空档（~22:30）；**Muon 未接入** ⇒ 探针 → A/B（~8 GPU·h）；判据 Δloss>0.07。
+- [ ] 🆕 **Muon vs AdamW**：`.12` 空档（~22:30）；**已更正：NeMo/Megatron 支持 Muon**（核 0.16.1 + `emerging_optimizers` + launcher 透传）⇒ 三步核查→A/B ~8 GPU·h。
 - [ ] 🆕 **BaiZe vs MiniCPM5「公平对比」盘点**：等 pretrain 回报 C1–C6 + 权威版本。
 - [x] **pretrain 3 idea 征询（2026-10-09）**：✅ 已回报 #251；待拍板「撤暂缓令 / 先做哪个」。
 - [ ] **P-9 结果** → 定 **P-8 的 seq(4096/8192) / MBS / 精度(bf16/FP8)**（含 16384 是否 OOM 的长上下文边界）。
@@ -200,7 +200,7 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
-- **⚗️ 2026-10-09（Muon vs AdamW 下发）**——空档=`.12`（~22:30 vision 让卡；`.29` 已满）；**前置 Muon 未接入**（S3-03 曾取消）⇒ 探针→A/B（~8 GPU·h），判据 Δloss>0.07。
+- **⚗️ 2026-10-09（Muon vs AdamW 下发 + 更正）**——空档=`.12`（~22:30）。**已更正：NeMo/Megatron-Core 支持 Muon**（`core.optimizer.muon`/`emerging_optimizers`/`layer_wise_optimizer`；MBridge 有 Muon recipe；blog 2026-04 已实测）⇒ **非从零实现**，三步核查（版本/装 `emerging_optimizers`/launcher 透传）→ A/B（~8 GPU·h）。
 
 - **🌙 2026-10-09（夜班填空：`.29` 剩余卡跑 T1/T2/T3；不含 P-8）**——T1 长上下文适配 4096→8192（Stage ii 前置）/ T2 等参 Dense 训练侧 / T3 R3 配比迁移 A/B。
 
