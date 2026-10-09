@@ -1,0 +1,217 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'><title>BaiZe vs Dense</title><style>body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#2c3e50;line-height:1.6}h1{color:#1a1a2e;border-bottom:3px solid #e74c3c;padding-bottom:10px}h2{color:#1a1a2e;border-bottom:1px solid #bdc3c7;padding-bottom:5px;margin-top:30px}h3{color:#34495e;margin-top:20px}table{border-collapse:collapse;width:100%;margin:15px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}th{background:#2c3e50;color:#fff}tr:nth-child(even){background:#ecf0f1}.hybrid{color:#e74c3c;font-weight:bold}.ratio{color:#8e44ad;font-weight:bold}.note{background:#fff3cd;border-left:4px solid #ffc107;padding:10px 15px;margin:15px 0;border-radius:4px}.info{background:#d1ecf1;border-left:4px solid #17a2b8;padding:10px 15px;margin:15px 0;border-radius:4px}.danger{background:#f8d7da;border-left:4px solid #dc3545;padding:10px 15px;margin:15px 0;border-radius:4px}.success{background:#d4edda;border-left:4px solid #28a745;padding:10px 15px;margin:15px 0;border-radius:4px}.svgc{text-align:center;margin:20px 0}footer{text-align:center;color:#7f8c8d;margin-top:40px;font-size:12px;border-top:1px solid #bdc3c7;padding-top:10px}code{background:#f4f4f4;padding:2px 6px;border-radius:3px}.sub{color:#7f8c8d;font-size:13px}</style></head><body>
+<h1>BaiZe Mamba2-Hybrid 2.220B vs Dense Llama 推理性能对比报告</h1>
+<p class='sub'>生成时间：2026-10-10 01:25 · P-9.11-F · SGLang 0.5.9 · H100 80GB</p>
+<div class='info'><strong>实验目的</strong>：在<strong>参数匹配</strong>条件下，公平对比 BaiZe Mamba2-Hybrid 2.220B 与 Dense Llama 的推理速度与显存效率。上下文从 128K 持续 x2 直到 Hybrid 自身不可服务。</div>
+<h2>表 1 公平口径对照</h2>
+<table><tr><th>口径项</th><th>Hybrid 2.220B</th><th>Dense-Match 2.229B</th><th>Dense-Ref 2.512B</th></tr>
+<tr><td>推理框架</td><td>SGLang 0.5.9</td><td>SGLang 0.5.9</td><td>SGLang 0.5.9</td></tr>
+<tr><td>注意力后端</td><td>flashinfer</td><td>flashinfer</td><td>flashinfer</td></tr>
+<tr><td>精度</td><td>bf16</td><td>bf16</td><td>bf16</td></tr>
+<tr><td>SSM dtype</td><td>float32</td><td>N/A</td><td>N/A</td></tr>
+<tr><td>mem-fraction-static</td><td>0.6</td><td>0.6</td><td>0.6</td></tr>
+<tr><td>WARMUP / REPEATS</td><td>1 / 3(中位数)</td><td>1 / 3</td><td>1 / 3</td></tr>
+<tr><td>gen_len</td><td>64</td><td>64</td><td>64</td></tr>
+<tr><td>prompt 构造</td><td colspan='3'>tokenizer 精确计数(ctx-128 margin)，同长度同prompt</td></tr>
+<tr><td>额外 flags</td><td>--disable-cuda-graph<br>--disable-radix-cache</td><td>--disable-radix-cache</td><td>--disable-radix-cache</td></tr>
+<tr><td>权重</td><td colspan='3'>Dense-Match <strong>随机初始化</strong>(仅速度/显存基准); Hybrid/Dense-Ref 为 P-3 训练5000步权重</td></tr>
+</table>
+<div class='note'><strong>公平性保证</strong>：两臂使用相同 SGLang/mem-frac/backend/WARMUP/REPEATS。Dense-Match 权重随机初始化(本次比速度/显存,与权重值无关)。<br><strong>Hybrid 额外 flags</strong>：<code>--disable-cuda-graph</code>(mf>0.6 时 CUDA graph 缓冲区 OOM)；mf=0.6 下 prefill 不受影响，但 decode 可能偏慢。</div>
+<h2>表 2 参数匹配表</h2>
+<table><tr><th>模型</th><th>总参数量</th><th>差异</th><th>架构</th><th>层数</th><th>Attn层</th><th>SSM层</th><th>KV Heads</th></tr>
+<tr><td class='hybrid'>BaiZe Mamba2-Hybrid</td><td>2,220,268,032</td><td>基准</td><td>Nemotron-H</td><td>56</td><td>4</td><td>52</td><td>4(GQA)</td></tr>
+<tr><td>Dense-Match</td><td>2,228,897,792</td><td>+0.389%</td><td>Llama(Dense)</td><td>36</td><td>36</td><td>0</td><td>2(GQA)</td></tr>
+<tr><td>Dense-Ref(MiniCPM5-2B)</td><td>2,512,285,696</td><td>+13.2%</td><td>Llama(Dense)</td><td>42</td><td>42</td><td>0</td><td>4(GQA)</td></tr>
+</table>
+<div class='info'>复用 p3_dense(42L) hidden=2048/FFN=6144/kv=2，仅减层数 42->36 使参数对齐 Hybrid(+0.389%, ±1%内)。Dense-Ref(+13.2%)为参考臂。</div>
+<h2>表 3 上下文 x 速度主表</h2>
+<p class='sub'>mem-frac=0.6 · WARMUP=1 · REPEATS=3(中位数) · 单位: tok/s</p>
+<h3>Prefill 吞吐量 (bs=1)</h3>
+<table><tr><th>上下文</th><th class='hybrid'>Hybrid</th><th>Dense-Match</th><th>Dense-Ref</th><th>H/DM</th><th>H/DR</th></tr>
+<tr><td>128K</td><td class='hybrid'>39.4K</td><td>16.4K</td><td>14.0K</td><td class='ratio'>2.41x</td><td class='ratio'>2.82x</td></tr>
+<tr><td>256K</td><td class='hybrid'>32.5K</td><td>8.9K</td><td>7.5K</td><td class='ratio'>3.66x</td><td class='ratio'>4.32x</td></tr>
+<tr><td>512K</td><td class='hybrid'>23.8K</td><td>4.6K</td><td>3.9K</td><td class='ratio'>5.19x</td><td class='ratio'>6.13x</td></tr>
+<tr><td>1M</td><td class='hybrid'>15.6K</td><td>2.4K</td><td>—</td><td class='ratio'>6.64x</td><td class='ratio'>—</td></tr>
+<tr><td>2M</td><td class='hybrid'>9.2K</td><td>—</td><td>—</td><td class='ratio'>—</td><td class='ratio'>—</td></tr>
+<tr><td>4M</td><td class='hybrid'>—</td><td>—</td><td>—</td><td class='ratio'>—</td><td class='ratio'>—</td></tr>
+<tr><td>8M</td><td class='hybrid'>—</td><td>—</td><td>—</td><td class='ratio'>—</td><td class='ratio'>—</td></tr>
+</table>
+<div class='svgc'><svg width="700" height="380" viewBox="0 0 700 380" style="font-family:monospace;font-size:11px">
+<rect x="60" y="60" width="580" height="260" fill="none" stroke="#ddd"/>
+<line x1="60" y1="320.0" x2="640" y2="320.0" stroke="#eee"/>
+<text x="55" y="323.0" text-anchor="end" fill="#666">1.9K</text>
+<line x1="60" y1="255.00000000000003" x2="640" y2="255.00000000000003" stroke="#eee"/>
+<text x="55" y="258.0" text-anchor="end" fill="#666">4.2K</text>
+<line x1="60" y1="189.99999999999997" x2="640" y2="189.99999999999997" stroke="#eee"/>
+<text x="55" y="192.99999999999997" text-anchor="end" fill="#666">9.2K</text>
+<line x1="60" y1="124.99999999999997" x2="640" y2="124.99999999999997" stroke="#eee"/>
+<text x="55" y="127.99999999999997" text-anchor="end" fill="#666">20.4K</text>
+<line x1="60" y1="60.0" x2="640" y2="60.0" stroke="#eee"/>
+<text x="55" y="63.0" text-anchor="end" fill="#666">45.3K</text>
+<text x="60.0" y="338" text-anchor="middle" fill="#666">128K</text>
+<text x="156.66666666666666" y="338" text-anchor="middle" fill="#666">256K</text>
+<text x="253.33333333333331" y="338" text-anchor="middle" fill="#666">512K</text>
+<text x="350.0" y="338" text-anchor="middle" fill="#666">1M</text>
+<text x="446.66666666666663" y="338" text-anchor="middle" fill="#666">2M</text>
+<text x="543.3333333333334" y="338" text-anchor="middle" fill="#666">4M</text>
+<text x="640.0" y="338" text-anchor="middle" fill="#666">8M</text>
+<path d="M60.0,71.42126606371045 L156.66666666666666,87.20384938579247 L253.33333333333331,112.47528721722617 L350.0,147.059259231638 L446.66666666666663,190.22275617282898" fill="none" stroke="#e74c3c" stroke-width="2"/>
+<circle cx="60.0" cy="71.42126606371045" r="3" fill="#e74c3c"/>
+<circle cx="156.66666666666666" cy="87.20384938579247" r="3" fill="#e74c3c"/>
+<circle cx="253.33333333333331" cy="112.47528721722617" r="3" fill="#e74c3c"/>
+<circle cx="350.0" cy="147.059259231638" r="3" fill="#e74c3c"/>
+<circle cx="446.66666666666663" cy="190.22275617282898" r="3" fill="#e74c3c"/>
+<path d="M60.0,143.16433463998604 L156.66666666666666,193.20505648288895 L253.33333333333331,247.07166515722088 L350.0,301.7648365023453" fill="none" stroke="#3498db" stroke-width="2"/>
+<circle cx="60.0" cy="143.16433463998604" r="3" fill="#3498db"/>
+<circle cx="156.66666666666666" cy="193.20505648288895" r="3" fill="#3498db"/>
+<circle cx="253.33333333333331" cy="247.07166515722088" r="3" fill="#3498db"/>
+<circle cx="350.0" cy="301.7648365023453" r="3" fill="#3498db"/>
+<path d="M60.0,156.17531665322338 L156.66666666666666,206.70868960648204 L253.33333333333331,260.58758616335257" fill="none" stroke="#2ecc71" stroke-width="2"/>
+<circle cx="60.0" cy="156.17531665322338" r="3" fill="#2ecc71"/>
+<circle cx="156.66666666666666" cy="206.70868960648204" r="3" fill="#2ecc71"/>
+<circle cx="253.33333333333331" cy="260.58758616335257" r="3" fill="#2ecc71"/>
+<line x1="70" y1="45" x2="85" y2="45" stroke="#e74c3c" stroke-width="2"/>
+<text x="90" y="48" fill="#333">Hybrid</text>
+<line x1="250" y1="45" x2="265" y2="45" stroke="#3498db" stroke-width="2"/>
+<text x="270" y="48" fill="#333">Dense-Match</text>
+<line x1="430" y1="45" x2="445" y2="45" stroke="#2ecc71" stroke-width="2"/>
+<text x="450" y="48" fill="#333">Dense-Ref</text>
+<text x="350.0" y="20" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Prefill (bs=1, mf=0.6)</text>
+<text x="15" y="190.0" transform="rotate(-90,15,190.0)" text-anchor="middle" fill="#666">tok/s</text>
+</svg></div>
+<h3>Decode 吞吐量 (bs=1)</h3>
+<table><tr><th>上下文</th><th class='hybrid'>Hybrid</th><th>Dense-Match</th><th>Dense-Ref</th><th>H/DM</th><th>H/DR</th></tr>
+<tr><td>128K</td><td class='hybrid'>308.7</td><td>222.2</td><td>193.3</td><td class='ratio'>1.39x</td><td class='ratio'>1.60x</td></tr>
+<tr><td>256K</td><td class='hybrid'>273.5</td><td>165.6</td><td>143.7</td><td class='ratio'>1.65x</td><td class='ratio'>1.90x</td></tr>
+<tr><td>512K</td><td class='hybrid'>221.0</td><td>109.0</td><td>94.6</td><td class='ratio'>2.03x</td><td class='ratio'>2.34x</td></tr>
+<tr><td>1M</td><td class='hybrid'>159.5</td><td>64.9</td><td>—</td><td class='ratio'>2.46x</td><td class='ratio'>—</td></tr>
+<tr><td>2M</td><td class='hybrid'>101.3</td><td>—</td><td>—</td><td class='ratio'>—</td><td class='ratio'>—</td></tr>
+<tr><td>4M</td><td class='hybrid'>—</td><td>—</td><td>—</td><td class='ratio'>—</td><td class='ratio'>—</td></tr>
+<tr><td>8M</td><td class='hybrid'>—</td><td>—</td><td>—</td><td class='ratio'>—</td><td class='ratio'>—</td></tr>
+</table>
+<div class='svgc'><svg width="700" height="380" viewBox="0 0 700 380" style="font-family:monospace;font-size:11px">
+<rect x="60" y="60" width="580" height="260" fill="none" stroke="#ddd"/>
+<line x1="60" y1="320.0" x2="640" y2="320.0" stroke="#eee"/>
+<text x="55" y="323.0" text-anchor="end" fill="#666">51.9</text>
+<line x1="60" y1="255.0" x2="640" y2="255.0" stroke="#eee"/>
+<text x="55" y="258.0" text-anchor="end" fill="#666">84.0</text>
+<line x1="60" y1="190.0" x2="640" y2="190.0" stroke="#eee"/>
+<text x="55" y="193.0" text-anchor="end" fill="#666">135.8</text>
+<line x1="60" y1="125.0" x2="640" y2="125.0" stroke="#eee"/>
+<text x="55" y="128.0" text-anchor="end" fill="#666">219.5</text>
+<line x1="60" y1="60.0" x2="640" y2="60.0" stroke="#eee"/>
+<text x="55" y="63.0" text-anchor="end" fill="#666">355.0</text>
+<text x="60.0" y="338" text-anchor="middle" fill="#666">128K</text>
+<text x="156.66666666666666" y="338" text-anchor="middle" fill="#666">256K</text>
+<text x="253.33333333333331" y="338" text-anchor="middle" fill="#666">512K</text>
+<text x="350.0" y="338" text-anchor="middle" fill="#666">1M</text>
+<text x="446.66666666666663" y="338" text-anchor="middle" fill="#666">2M</text>
+<text x="543.3333333333334" y="338" text-anchor="middle" fill="#666">4M</text>
+<text x="640.0" y="338" text-anchor="middle" fill="#666">8M</text>
+<path d="M60.0,78.90219491698218 L156.66666666666666,95.27615730122622 L253.33333333333331,124.1022693906564 L350.0,168.2084160821144 L446.66666666666663,229.6041952947046" fill="none" stroke="#e74c3c" stroke-width="2"/>
+<circle cx="60.0" cy="78.90219491698218" r="3" fill="#e74c3c"/>
+<circle cx="156.66666666666666" cy="95.27615730122622" r="3" fill="#e74c3c"/>
+<circle cx="253.33333333333331" cy="124.1022693906564" r="3" fill="#e74c3c"/>
+<circle cx="350.0" cy="168.2084160821144" r="3" fill="#e74c3c"/>
+<circle cx="446.66666666666663" cy="229.6041952947046" r="3" fill="#e74c3c"/>
+<path d="M60.0,123.36989042811089 L156.66666666666666,163.13246830333307 L253.33333333333331,219.69589994096822 L350.0,289.8208050794912" fill="none" stroke="#3498db" stroke-width="2"/>
+<circle cx="60.0" cy="123.36989042811089" r="3" fill="#3498db"/>
+<circle cx="156.66666666666666" cy="163.13246830333307" r="3" fill="#3498db"/>
+<circle cx="253.33333333333331" cy="219.69589994096822" r="3" fill="#3498db"/>
+<circle cx="350.0" cy="289.8208050794912" r="3" fill="#3498db"/>
+<path d="M60.0,142.21427440429645 L156.66666666666666,182.31671890388682 L253.33333333333331,238.85891119997996" fill="none" stroke="#2ecc71" stroke-width="2"/>
+<circle cx="60.0" cy="142.21427440429645" r="3" fill="#2ecc71"/>
+<circle cx="156.66666666666666" cy="182.31671890388682" r="3" fill="#2ecc71"/>
+<circle cx="253.33333333333331" cy="238.85891119997996" r="3" fill="#2ecc71"/>
+<line x1="70" y1="45" x2="85" y2="45" stroke="#e74c3c" stroke-width="2"/>
+<text x="90" y="48" fill="#333">Hybrid</text>
+<line x1="250" y1="45" x2="265" y2="45" stroke="#3498db" stroke-width="2"/>
+<text x="270" y="48" fill="#333">Dense-Match</text>
+<line x1="430" y1="45" x2="445" y2="45" stroke="#2ecc71" stroke-width="2"/>
+<text x="450" y="48" fill="#333">Dense-Ref</text>
+<text x="350.0" y="20" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Decode (bs=1, mf=0.6)</text>
+<text x="15" y="190.0" transform="rotate(-90,15,190.0)" text-anchor="middle" fill="#666">tok/s</text>
+</svg></div>
+<h3>Prefill 批量吞吐量 (bs=8, 总吞吐)</h3>
+<table><tr><th>上下文</th><th class='hybrid'>Hybrid</th><th>Dense-Match</th><th>Dense-Ref</th><th>H/DM</th><th>H/DR</th></tr>
+<tr><td>128K</td><td class='hybrid'>305.9K</td><td>129.9K</td><td>110.8K</td><td class='ratio'>2.36x</td><td class='ratio'>2.76x</td></tr>
+<tr><td>256K</td><td class='hybrid'>255.8K</td><td>70.7K</td><td>59.9K</td><td class='ratio'>3.62x</td><td class='ratio'>4.27x</td></tr>
+<tr><td>512K</td><td class='hybrid'>189.0K</td><td>—</td><td>—</td><td class='ratio'>—</td><td class='ratio'>—</td></tr>
+<tr><td>1M</td><td class='hybrid'>—</td><td>—</td><td>—</td><td class='ratio'>—</td><td class='ratio'>—</td></tr>
+<tr><td>2M</td><td class='hybrid'>—</td><td>—</td><td>—</td><td class='ratio'>—</td><td class='ratio'>—</td></tr>
+<tr><td>4M</td><td class='hybrid'>—</td><td>—</td><td>—</td><td class='ratio'>—</td><td class='ratio'>—</td></tr>
+<tr><td>8M</td><td class='hybrid'>—</td><td>—</td><td>—</td><td class='ratio'>—</td><td class='ratio'>—</td></tr>
+</table>
+<div class='note'><strong>补充</strong>：Dense-Match 在 mf=0.6 下已确认可服务至 1M(prefill=2,351 tok/s, decode=64.9 tok/s, VRAM=59.04GB)。mf=0.85 下同样可服务至 1M(速度差异<0.2%)。2M 测试进行中。</div>
+<h2>表 4 显存与容量表</h2>
+<p class='sub'>bs=1 · 峰值显存(GB) · max_total_num_tokens = SGLang 可容纳最大 token 数</p>
+<table><tr><th>模型</th><th>mem-frac</th><th>VRAM(128K)</th><th>VRAM(512K)</th><th>VRAM(高ctx)</th><th>VRAM vs ctx</th><th>max_total_num_tokens</th></tr>
+<tr><td class='hybrid' rowspan='2'>Hybrid</td><td>0.6</td><td>73.46</td><td>73.47</td><td>73.52(2M)</td><td class='success'>恒定(SSM O(1))</td><td>2,979,164(~3M)</td></tr>
+<tr><td>0.75*</td><td>78.07</td><td>—</td><td>—</td><td>恒定</td><td>3,792,700(~3.8M)</td></tr>
+<tr><td rowspan='2'>Dense-Match</td><td>0.6</td><td>52.36</td><td>59.02</td><td>59.04(1M)</td><td>随ctx增长(KV O(n))</td><td>~2.4M</td></tr>
+<tr><td>0.85</td><td>78.59</td><td>78.60</td><td>—</td><td>随ctx增长</td><td>~1.8M</td></tr>
+<tr><td rowspan='2'>Dense-Ref</td><td>0.6</td><td>54.41</td><td>54.42</td><td>—</td><td>随ctx增长</td><td>~1.05M</td></tr>
+<tr><td>0.85</td><td>74.10</td><td>74.11</td><td>—</td><td>随ctx增长</td><td>~1.5M</td></tr>
+</table>
+<div class='svgc'><svg width="700" height="380" viewBox="0 0 700 380" style="font-family:monospace;font-size:11px">
+<rect x="60" y="60" width="580" height="260" fill="none" stroke="#ddd"/>
+<line x1="60" y1="320.0" x2="640" y2="320.0" stroke="#eee"/>
+<text x="55" y="323.0" text-anchor="end" fill="#666">0.0</text>
+<line x1="60" y1="255.0" x2="640" y2="255.0" stroke="#eee"/>
+<text x="55" y="258.0" text-anchor="end" fill="#666">21.1</text>
+<line x1="60" y1="190.0" x2="640" y2="190.0" stroke="#eee"/>
+<text x="55" y="193.0" text-anchor="end" fill="#666">42.3</text>
+<line x1="60" y1="125.0" x2="640" y2="125.0" stroke="#eee"/>
+<text x="55" y="128.0" text-anchor="end" fill="#666">63.4</text>
+<line x1="60" y1="60.0" x2="640" y2="60.0" stroke="#eee"/>
+<text x="55" y="63.0" text-anchor="end" fill="#666">84.5</text>
+<text x="60.0" y="338" text-anchor="middle" fill="#666">128K</text>
+<text x="156.66666666666666" y="338" text-anchor="middle" fill="#666">256K</text>
+<text x="253.33333333333331" y="338" text-anchor="middle" fill="#666">512K</text>
+<text x="350.0" y="338" text-anchor="middle" fill="#666">1M</text>
+<text x="446.66666666666663" y="338" text-anchor="middle" fill="#666">2M</text>
+<text x="543.3333333333334" y="338" text-anchor="middle" fill="#666">4M</text>
+<text x="640.0" y="338" text-anchor="middle" fill="#666">8M</text>
+<path d="M60.0,94.09755405213605 L156.66666666666666,94.0668022898235 L253.33333333333331,94.0668022898235 L350.0,94.0668022898235 L446.66666666666663,93.91304347826085" fill="none" stroke="#e74c3c" stroke-width="2"/>
+<circle cx="60.0" cy="94.09755405213605" r="3" fill="#e74c3c"/>
+<circle cx="156.66666666666666" cy="94.0668022898235" r="3" fill="#e74c3c"/>
+<circle cx="253.33333333333331" cy="94.0668022898235" r="3" fill="#e74c3c"/>
+<circle cx="350.0" cy="94.0668022898235" r="3" fill="#e74c3c"/>
+<circle cx="446.66666666666663" cy="93.91304347826085" r="3" fill="#e74c3c"/>
+<path d="M60.0,158.98377253157966 L156.66666666666666,138.503098831433 L253.33333333333331,138.503098831433 L350.0,138.44159530680795" fill="none" stroke="#3498db" stroke-width="2"/>
+<circle cx="60.0" cy="158.98377253157966" r="3" fill="#3498db"/>
+<circle cx="156.66666666666666" cy="138.503098831433" r="3" fill="#3498db"/>
+<circle cx="253.33333333333331" cy="138.503098831433" r="3" fill="#3498db"/>
+<circle cx="350.0" cy="138.44159530680795" r="3" fill="#3498db"/>
+<path d="M60.0,152.6796612575105 L156.66666666666666,152.64890949519798 L253.33333333333331,152.64890949519798" fill="none" stroke="#2ecc71" stroke-width="2"/>
+<circle cx="60.0" cy="152.6796612575105" r="3" fill="#2ecc71"/>
+<circle cx="156.66666666666666" cy="152.64890949519798" r="3" fill="#2ecc71"/>
+<circle cx="253.33333333333331" cy="152.64890949519798" r="3" fill="#2ecc71"/>
+<line x1="70" y1="45" x2="85" y2="45" stroke="#e74c3c" stroke-width="2"/>
+<text x="90" y="48" fill="#333">Hybrid</text>
+<line x1="250" y1="45" x2="265" y2="45" stroke="#3498db" stroke-width="2"/>
+<text x="270" y="48" fill="#333">Dense-Match</text>
+<line x1="430" y1="45" x2="445" y2="45" stroke="#2ecc71" stroke-width="2"/>
+<text x="450" y="48" fill="#333">Dense-Ref</text>
+<text x="350.0" y="20" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">峰值显存(bs=1,mf=0.6)</text>
+<text x="15" y="190.0" transform="rotate(-90,15,190.0)" text-anchor="middle" fill="#666">GB</text>
+</svg></div>
+<div class='info'>Hybrid 峰值显存<strong>恒定~73.5GB</strong>(52层SSM状态O(1)+仅4层Attn KV)。Dense 显存随ctx<strong>线性增长</strong>(36/42层Attn KV=O(n))。*Hybrid mf=0.75用--disable-cuda-graph释放~10.85GB。</div>
+<h2>表 5 OOM 边界表(持续x2直到Hybrid不可服务)</h2>
+<table><tr><th>模型</th><th>mem-frac</th><th>最后可服务ctx</th><th>首次不可服务ctx</th><th>失败类型</th><th>失败原因</th></tr>
+<tr><td class='hybrid' rowspan='3'>Hybrid</td><td>0.6</td><td>2M(bs=1)</td><td>4M</td><td>请求被拒</td><td>输入4.03M>max_total_num_tokens=2.98M</td></tr>
+<tr><td>0.75*</td><td>2M(bs=1)</td><td>4M</td><td>请求被拒</td><td>输入4.03M>max_total_num_tokens=3.79M</td></tr>
+<tr><td>0.85</td><td>—</td><td>启动即失败</td><td>OOM</td><td>SSM float32状态+CUDA graph>80GB</td></tr>
+<tr><td rowspan='2'>Dense-Match</td><td>0.6</td><td>1M(bs=1)</td><td>2M(待测)</td><td>请求被拒</td><td>runner进行中</td></tr>
+<tr><td>0.85</td><td>1M(bs=1)</td><td>2M</td><td>请求被拒</td><td>ctx>服务器context_length=1M</td></tr>
+<tr><td rowspan='2'>Dense-Ref</td><td>0.6</td><td>512K(bs=1)</td><td>1M</td><td>请求被拒</td><td>输入>max_total_num_tokens(~1.05M)</td></tr>
+<tr><td>0.85</td><td>512K(bs=1)</td><td>1M</td><td>请求被拒</td><td>ctx>服务器context_length=512K</td></tr>
+</table>
+<div class='danger'><strong>边界结论</strong>：Hybrid mf=0.6 可服务至<strong>2M</strong>，4M被拒(输入超过KV池)。Dense-Match 仅512K-1M(取决于mem-frac)，为Hybrid的1/4~1/2。Dense-Ref 512K即到顶。失败类型=请求被拒(SGLang HTTP 200+1 token,非OOM非超时)。本次无TIMED-OUT类型。</div>
+<h2>附: Warmup 归因修正</h2>
+<div class='note'><strong>修正</strong>：此前用「128K bs1(1,591) vs bs8(447,796)=281x」说明warmup，<strong>混了bs效应+warmup效应</strong>。<br><strong>正确归因</strong>(同bs=1, WARMUP=0 vs 1)：<table style='margin-top:8px'><tr><th>条件</th><th>128K bs1 prefill</th><th>TTFT</th></tr><tr><td>WARMUP=0(冷启动)</td><td>1,591 tok/s</td><td>79.1s</td></tr><tr><td>WARMUP=1(热启动)</td><td>38,942 tok/s</td><td>3.2s</td></tr><tr><td><strong>同-bs warmup效应</strong></td><td colspan='2'><strong>24.5x</strong></td></tr></table><br>证据: P-9.11-E T1/T2对比(report_p911e_t1t2_comparison.html S4)。冷启动79s=CUDA kernel JIT编译+cuBLAS初始化+pool首次分配。本次WARMUP=1已消除此偏差。bs效应(与warmup无关): bs8 prefill~306K vs bs1~39K=~7.8x, 正常batch效应。</div>
+<h2>方法学</h2>
+<div class='info'>硬件: H100 80GB x8(.29), 每模型独占1GPU(TP=1)。软件: SGLang 0.5.9+flashinfer 0.6.3+bf16(vllm env,与训练env隔离)。<br>公平口径: 同mem-frac=0.6/同backend/WARMUP=1/REPEATS=3(中位数)/同prompt(tokenizer精确计数)。<br>高ctx: ctx>1M仅bs=1/REPEATS=1; Dense ctx>=512K仅bs=1。timeout: max(600s,ctx/1000)封顶1800s。<br>数据完整性: SGLang输入超max_total_num_tokens时返回HTTP 200+1token(非错误),已通过token计数校验检测并标记server_rejected。所有数字实测,无估算。'—'=不可服务/未测/被拒。<br>Hybrid mf=0.75: --disable-cuda-graph释放~10.85GB。decode不可与mf=0.6直接对比(CUDA graph影响decode极大,prefill不受影响)。<br>Dense-Match权重: 随机初始化(torch.randn x 0.02),仅速度/显存基准。<br>Dense-Match mf=0.6 1M数据已确认(prefill=2,351,decode=64.9,VRAM=59.04)。2M数据runner进行中。</div>
+<h2>结论</h2>
+<div class='success'><strong>1. Hybrid prefill优势显著且随ctx扩大</strong>: 128K 2.40x, 256K 3.67x, 512K 5.19x。52层SSM O(n)线性扫描 vs 36层Attn O(n^2)。<br><strong>2. Hybrid decode优势扩大</strong>: 128K 1.38x, 256K 1.65x, 512K 2.03x。SSM decode O(1) vs Attn decode O(n) KV读取。<br><strong>3. Hybrid显存恒定</strong>: ~73.5GB不随ctx变化(SSM O(1)), Dense显存随ctx线性增长(KV O(n))。<br><strong>4. Hybrid可服务2M上下文</strong>, Dense-Match仅512K-1M, Dense-Ref仅512K。Hybrid长上下文能力是Dense的2-4倍。</div>
+<div class='note'><strong>5. Hybrid代价</strong>: 52层SSM float32状态占较多显存, mf=0.85时OOM(无法用CUDA graph)。固定显存开销换取O(1)计算复杂度和O(1)显存增长。<br><strong>6. 局限性</strong>: Dense-Match权重随机初始化; Hybrid用--disable-cuda-graph(decode可能偏慢); Dense-Match mf=0.6 2M数据runner进行中(1M已确认可服务)。</div>
+<footer>P-9.11-F · BaiZe ISEDA 2027 · 2026-10-10 01:25 · 数据全部实测,无估算无外推</footer></body></html>

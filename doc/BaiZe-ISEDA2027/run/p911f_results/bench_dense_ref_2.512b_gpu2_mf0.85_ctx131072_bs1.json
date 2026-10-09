@@ -1,0 +1,54 @@
+{
+  "model": "default",
+  "ctx": 131072,
+  "batch": 1,
+  "gen_len": 64,
+  "prompt_tokens_actual": 125908,
+  "warmup": 1,
+  "repeats": 3,
+  "ttft_s": 9.0112,
+  "prefill_tok_s": 13972.4,
+  "decode_tok_s": 194.1,
+  "e2e_latency_s": 9.3405,
+  "peak_vram_gb": 74.1,
+  "total_completion_tokens": 64,
+  "vram_samples": 40,
+  "all_runs": [
+    {
+      "ttft_s": 9.0112,
+      "e2e_latency_s": 9.3405,
+      "peak_vram_gb": 74.1,
+      "total_completion_tokens": 64,
+      "vram_samples": 38,
+      "error": null,
+      "prefill_tok_s": 13972.4,
+      "decode_tok_s": 194.4
+    },
+    {
+      "ttft_s": 9.0001,
+      "e2e_latency_s": 9.3298,
+      "peak_vram_gb": 74.1,
+      "total_completion_tokens": 64,
+      "vram_samples": 40,
+      "error": null,
+      "prefill_tok_s": 13989.6,
+      "decode_tok_s": 194.1
+    },
+    {
+      "ttft_s": 9.0617,
+      "e2e_latency_s": 9.3924,
+      "peak_vram_gb": 74.1,
+      "total_completion_tokens": 64,
+      "vram_samples": 38,
+      "error": null,
+      "prefill_tok_s": 13894.5,
+      "decode_tok_s": 193.5
+    }
+  ],
+  "error": null,
+  "mem_frac": 0.85,
+  "model_arch": "llama",
+  "ssm_dtype": null,
+  "prefill_tok_s_perB": 13972.4,
+  "decode_tok_s_perB": 194.1
+}

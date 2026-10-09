@@ -1,0 +1,54 @@
+{
+  "model": "default",
+  "ctx": 262144,
+  "batch": 1,
+  "gen_len": 64,
+  "prompt_tokens_actual": 251939,
+  "warmup": 1,
+  "repeats": 3,
+  "ttft_s": 7.758,
+  "prefill_tok_s": 32474.8,
+  "decode_tok_s": 273.5,
+  "e2e_latency_s": 7.992,
+  "peak_vram_gb": 73.47,
+  "total_completion_tokens": 64,
+  "vram_samples": 36,
+  "all_runs": [
+    {
+      "ttft_s": 7.8325,
+      "e2e_latency_s": 8.0665,
+      "peak_vram_gb": 73.47,
+      "total_completion_tokens": 64,
+      "vram_samples": 36,
+      "error": null,
+      "prefill_tok_s": 32165.8,
+      "decode_tok_s": 273.5
+    },
+    {
+      "ttft_s": 7.7464,
+      "e2e_latency_s": 7.9814,
+      "peak_vram_gb": 73.47,
+      "total_completion_tokens": 64,
+      "vram_samples": 31,
+      "error": null,
+      "prefill_tok_s": 32523.3,
+      "decode_tok_s": 272.4
+    },
+    {
+      "ttft_s": 7.758,
+      "e2e_latency_s": 7.992,
+      "peak_vram_gb": 73.47,
+      "total_completion_tokens": 64,
+      "vram_samples": 31,
+      "error": null,
+      "prefill_tok_s": 32474.8,
+      "decode_tok_s": 273.5
+    }
+  ],
+  "error": null,
+  "mem_frac": 0.6,
+  "model_arch": "nemotron_h",
+  "ssm_dtype": "float32",
+  "prefill_tok_s_perB": 32474.8,
+  "decode_tok_s_perB": 273.5
+}
