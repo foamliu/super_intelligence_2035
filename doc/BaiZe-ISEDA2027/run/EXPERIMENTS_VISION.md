@@ -908,7 +908,7 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 | E1fair (baseline) | 62.34 ± 0.01% | 49.70% | 34.10% | 37.68% | — | — |
 | V1 (res 336) | ⏸ deferred (user: "明天再说") | — | — | — | — | — |
 | V2 (Muon) | **N/A — COLLAPSED** (C1=0.9569@step4200) | N/A | N/A | N/A | N/A | ❌ Muon incompatible with contrastive loss |
-| V3 (full data) | 🔄 training (step ~84.7k/230k ~37%, ETA ~10:35 Oct 11) | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
+| V3 (full data) | 🔄 training (step ~106.5k/230k ~46%, ETA ~13:30 Oct 11, healthy C1=0.49) | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
 
 ### 9.4 ④ Epoch Scaling (operator instruction 2026-10-10 ④ · most decision-relevant)
 
