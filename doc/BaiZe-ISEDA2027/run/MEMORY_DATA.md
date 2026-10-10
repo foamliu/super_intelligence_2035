@@ -12,11 +12,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅GPIC下载全部完成!(train 8000/8000+val 32/32+test 128/128+ref_stats 5/5)+✅R3全量分词110/110DONE(1483.91B tok/5.94TB)+✅R3投料前污染扫描30/30DONE(60K docs,0命中)→P-8数据层全就绪→等运维投料指示+en_v1_4等用户放行
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43; s_step归因(MBS16:8.6×,166ms); Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); zh分词8/8✅(112.47B); 论文更新(4+5节,main.pdf 0err); l1_en_hq分词12/12✅(152.17B); ultrax分词s34-s43✅(30.97B); en_base分词s24-s33✅(206.76B); ✅投料前污染采样扫描(10K docs,0命中); ✅全量污染扫描(30 parquet×5K=150K docs,0命中); ✅④Ultra-FineWeb核实; ✅R3全量分词110/110DONE(1483.91B tok/5.94TB); ✅R3投料前污染扫描30/30DONE(60K docs,0命中,累计220K docs全0命中)→P-8数据层全就绪; ✅GPIC下载全部完成(train 8000+val 32+test 128+ref_stats 5)
-当前动作:     唤醒294(14:31@.12) GPIC下载全部完成!(train✅8000/8000+val✅32/32+test✅128/128+ref_stats✅5/5,README确认"32 tars for validation");下载进程活(PID2159116 child of 3525273,while true循环仅校验已下完文件);P-8数据层全就绪(R3分词110/110✅+污染扫描220K docs 0命中✅);load=38.66/224,disk 83%37T free✅;git fetch(proxy)=up to date(HEAD=7a882bf0 data en_v1_4放行时点确认);体积TASK=28.5KB/MEMORY=20.9KB均✅
-下一步:       ①报运维"GPIC下载全部完成→en_v1_4放行条件已满足"→等用户改白名单后下指令启动en_v1_4(data不自行启动); ②P-8数据层全就绪→等运维投料指示
-阻塞:         en_v1_4排队等用户改白名单(GPIC已完成,放行条件已满足); P-8投料等运维指示
+PHASE:        🔄en_v1_4下载已启动(运维指令2026-10-10用户直令,PID1490375,499/56461 parquet,snapshot 1/110 CC-MAIN-2013-20)+✅GPIC全完成+✅R3全量分词110/110+✅污染扫描220K docs 0命中→P-8数据层全就绪
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43; s_step归因(MBS16:8.6×,166ms); Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); zh分词8/8✅(112.47B); 论文更新(4+5节,main.pdf 0err); l1_en_hq分词12/12✅(152.17B); ultrax分词s34-s43✅(30.97B); en_base分词s24-s33✅(206.76B); ✅投料前污染采样扫描(10K docs,0命中); ✅全量污染扫描(30 parquet×5K=150K docs,0命中); ✅④Ultra-FineWeb核实; ✅R3全量分词110/110DONE(1483.91B tok/5.94TB); ✅R3投料前污染扫描30/30DONE(60K docs,0命中,累计220K docs全0命中)→P-8数据层全就绪; ✅GPIC下载全部完成(train 8000+val 32+test 128+ref_stats 5); 🔄en_v1_4下载已启动(PID1490375,499/56461 parquet,snapshot 1/110)
+当前动作:     唤醒295(15:20@.12) en_v1_4下载已启动(PID1490375,ppid=1,setsid daemon);用户直令重启en_v1_4;hf download CLI因list_repo_tree(64K+文件)超时→改用Python脚本per-file下载(download_en_v1_4.py);当前snapshot 1/110 CC-MAIN-2013-20(488→499/512 parquet,+11 files/2min);110 snapshots×~512 files=56461 total/6.75TB;disk 83%37T free✅;load~38/224;GPIC进程活(PID636100校验循环);体积TASK=30.1KB✅/MEMORY=20.4KB✅
+下一步:       ①监控en_v1_4下载进度(每唤醒检查PID/parquet计数/.incomplete/磁盘); ②下满56461/56461后必经check_contamination.py再报"en_v1_4下载完成"; ③P-8投料等运维指示
+阻塞:         en_v1_4下载进行中(ETA数天,6.75TB/56461 files); P-8投料等运维指示
 ERROR_COUNT:  1
 ```
 
@@ -44,7 +44,7 @@ ERROR_COUNT:  1
 
 > 📦 唤醒271-272 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3分词59-60/110巡检+GPIC 7453-7489+6目录盘点）
 
-- [14:31] **唤醒294**：①本机=`.12`,load=38.66/224。②**GPIC下载全部完成!** train✅8000/8000(00000-07999)+val✅32/32(00000-00031,README确认"32 tars for validation")+test✅128/128+reference_stats✅5npz,0.incomplete。下载进程活(PID2159116 child of 3525273 `bash download_it_pairs.sh`,while true循环仅校验已下完文件,无新下载)。③P-8数据层全就绪(R3分词110/110✅[l3=40+code=30+math=40]+污染扫描220K docs 0命中✅),无活分词/扫描进程。④R3产物110/110在盘:.bin=5.5TB(l3=40+code=30+math=40 shards)。⑤git fetch(proxy)=up to date(HEAD=7a882bf0 `指令: data en_v1_4 放行时点确认`,无data新指令)。⑥📦体积:TASK=28.5KB✅/MEMORY=20.9KB✅(无需归档)。⑦disk:/nas_train 83%(37T free)。⑧下一步:报运维"GPIC下载全部完成→en_v1_4放行条件已满足"→等用户改白名单→P-8投料等运维指示。下载线心跳：base✅全满|GPIC✅全满(train 8000+val 32+test 128)|P-8数据层✅全就绪。
+- [15:20] **唤醒295**：①本机=`.12`,load~38/224。②**en_v1_4下载已启动!**(运维指令2026-10-10用户直令"重启en_v1_4下载")。GPIC已完成→放行条件满足。③`hf download --include 'data/ultrafineweb_en_v1_4/*'`失败:`ValueError: min() arg is an empty sequence`(list_repo_tree对64K+文件递归超时)。④改用Python脚本`download_en_v1_4.py`:per-snapshot非递归list→per-file hf_hub_download,绕过snapshot_download全量list。⑤PID=1490375(ppid=1,setsid daemon),110 snapshots,当前1/110 CC-MAIN-2013-20(488→499/512 parquet,+11 files/2min,0 .incomplete)。⑥GPIC进程活(PID636100校验循环,不kill)。⑦disk:37T free✅。⑧📦体积:TASK=30.1KB✅/MEMORY=20.4KB✅(无需归档)。下载线心跳：base✅全满|GPIC✅全满|en_v1_4🔄499/56461(1/110,PID1490375)|P-8数据层✅全就绪。
 
 > 📦 唤醒293 原文已归档 → `daily-memories-data/2026-10-10.md`（含GPIC train 8000完成+val 14下载中+P-8全就绪+6目录盘点）
 
