@@ -1,0 +1,151 @@
+{
+  "n": 8,
+  "http": 200,
+  "content_type": "application/atom+xml; charset=utf-8",
+  "entries": [
+    {
+      "id": "2610.10620v1",
+      "published": "2026-10-07T08:32:07Z",
+      "updated": "2026-10-07T08:32:07Z",
+      "primary": "cs.CR",
+      "title": "When AI Finds Hidden Messages, Does It Report?",
+      "authors": [
+        "William Guey",
+        "Rashik Jahangir",
+        "Pierrick Bougault",
+        "Vitor D. de Moura",
+        "Wei Zhang",
+        "José O. Gomes"
+      ],
+      "comment": "2 figures, 8 tables. Data and code (v1.0.0): https://github.com/williamguey/ai-hidden-message-reporting",
+      "journal_ref": "",
+      "summary": "When an assistant encounters a message for another AI, does it tell its user? Four fixed model-provider deployments perform simulated source tasks in 1,280 ordinary-note and 128 enhanced-note sessions. Harmless and harmful messages have matched plaintext and ROT13 versions, with no-message controls. Observers receive no decoder or decoded meaning; a requested reference code incentivizes inspection. Asking for reports increases rule-detected notifications identifying another AI as recipient by 53.1 percentage points for harmless ROT13 messages and 54.7 for harmful ones. This is a joint inspection, recognition, and notification effect; missing-response bounds are 38.3--77.3 and 36.7--78.1 points. Model-based trace checks identify eleven ordinary plaintext cases where agents interpret the message but do not notify their user. Seven encoded omissions are verified with enhanced notes; ordinary encoded omissions remain unverified. Seven simulated filename disclosures coexist with accurate review-status answers, and two answers use a planted false count. Interpretation, notification, and authorized task performance are distinct outcomes."
+    },
+    {
+      "id": "2610.12363v1",
+      "published": "2026-10-08T17:27:12Z",
+      "updated": "2026-10-08T17:27:12Z",
+      "primary": "cs.AI",
+      "title": "HANS: A Handwritten Answer Sheet Dataset for Noisy Hybrid Document Parsing",
+      "authors": [
+        "Xiazhen Wu",
+        "Wansong Qin",
+        "Yangbin Zheng",
+        "Liangda Fang",
+        "Zhan Li",
+        "Xiujie Huang",
+        "Liushen Zhou",
+        "Quanlong Guan"
+      ],
+      "comment": "",
+      "journal_ref": "",
+      "summary": "Intelligent grading and automated scoring technologies constitute critical infrastructure for smart education. However, existing document parsing and handwriting recognition benchmarks are predominantly designed for well-structured printed documents or isolated mathematical expressions, lacking datasets that capture the complex characteristics inherent to student answer sheets, including multi-line derivation processes, heterogeneous mixtures of text and mathematical formulae, and noise artifacts such as strikethroughs. To address this gap, we introduce HANS, the first dataset explicitly constructed for real-world educational scenarios, encompassing mathematical expressions, natural language text, hand-drawn tables, and diverse noise patterns including corrections and deletions, accompanied by fine-grained annotations that establish a reliable foundation for robust recognition research. Building upon HANS, we propose NA-GOT, an end-to-end framework that achieves two-stage noise suppression through a lightweight noise suppression module operating at the feature level, complemented by a noiseaware attention mechanism incorporated into the decoding stage. Experimental results demonstrate that HANS poses substantial challenges to existing methods, while NA-GOT achieves significant improvements in both accuracy and stability for answer process recognition. The dataset will be made publicly available upon publication."
+    },
+    {
+      "id": "2610.11320v1",
+      "published": "2026-10-08T06:23:21Z",
+      "updated": "2026-10-08T06:23:21Z",
+      "primary": "cs.CV",
+      "title": "It's Always 10:10: Reference Images Break a Bias That Prompts Only Dent",
+      "authors": [
+        "Luca Cazzaniga"
+      ],
+      "comment": "16 pages, 5 figures, 6 tables. Data and code: doi:10.5281/zenodo.23224681",
+      "journal_ref": "",
+      "summary": "Text-to-image models appear to reproduce the habits of the photographs they learned from. Analog clocks are an extreme case: in advertising, watches almost always show 10:10, and generated clocks return to 10:10 even when another time is requested. We measure this bias and test three ways of overcoming it on 52 models available on the Magnific platform, with a replication on Higgsfield. Every image shows three identical clocks that must show 2:35, 6:50 and 11:20. The description of the object is fixed and only the request about the time changes: no time (A), the time in digits (B), the hand positions described by construction relative to the dial numerals (C), or the same description plus a drawn reference dial (D). Two AI readers read all 1,799 images blind from coded copies, with a third reader and the author settling disagreements (dial-level agreement 96.0% and 97.3%). With no time requested, 67% of the images have all three clocks at 10:10. On the 20 current models, all three clocks are correct in 34% of the images with digits, 30% with the hands described in words and 75% with the reference dial (D-B: +37 points, 95% CI +28 to +45); we found no evidence that describing the hands in words beats the digits (C-B: -4 points, CI -10 to +1). The replication on the 12 models shared by both platforms gives the same picture (B 54%, C 50%, D 81%). Writing the time reduces the bias but leaves two thirds of the images of the 20 current models with at least one wrong clock; adding a drawn reference raises full accuracy to three quarters and almost eliminates images entirely at 10:10. We release all images, prompts, raw readings and a script that recomputes every result."
+    },
+    {
+      "id": "2610.11783v1",
+      "published": "2026-10-08T12:00:24Z",
+      "updated": "2026-10-08T12:00:24Z",
+      "primary": "cs.LG",
+      "title": "In-Ride Alcohol-Impairment Detection in E-Scooterists with False-Alarm Control",
+      "authors": [
+        "Marco Capuccini",
+        "Rahul Rajendra Pai"
+      ],
+      "comment": "",
+      "journal_ref": "",
+      "summary": "Shared e-scooter services have become a widely adopted urban transport mode. While most users ride responsibly, alcohol intoxication stands out among the factors contributing to severe crashes. Nonetheless, countermeasures remain limited to single-point reaction tests and night bans that suspend the service altogether. This paper proposes a new approach in which onboard sensors evaluate the rider as the trip unfolds, raising an alarm as soon as enough evidence of impairment has accumulated. Specifically, we introduce a detector that operates on inertial and throttle measurements, with a provable bound on the rate of false alarms. Experiments on sensor data from 141 rides, in which 25 participants rode while sober and at two target blood alcohol concentration levels, confirm that the bound holds, whereas baselines and ablations either exceed it or lose detection performance, and in some cases delay the alarm. At a bound of 0.023, the detector identifies 91% of the rides performed at the higher concentration and 50% of those at the lower one, with median detection times of 25 and 27 seconds, respectively. We further show that an embedded implementation meets the real-time requirement, making mitigation actions feasible onboard, without requiring data to leave the vehicle. Overall, this work lays the ground for interventions that reach impaired riders as soon as possible, sparing the sober ones the burden of a pre-ride test or the suspension of the service at night, while letting operators budget false alarms against user experience."
+    },
+    {
+      "id": "2610.12230v1",
+      "published": "2026-10-08T16:16:06Z",
+      "updated": "2026-10-08T16:16:06Z",
+      "primary": "cs.CV",
+      "title": "From Prompting to Composing: A Spatial Canvas Interface for Poster Generation",
+      "authors": [
+        "Yitong Wang",
+        "Fangyun Wei",
+        "Jinjing Zhao",
+        "Sirui Zhang",
+        "Hongyang Zhang",
+        "Dong Chen",
+        "Bo Dai",
+        "Yan Lu"
+      ],
+      "comment": "Project page: https://snowflakewang.github.io/Compo-Page/ GitHub: https://github.com/snowflakewang/Compo",
+      "journal_ref": "",
+      "summary": "Text prompting is an indirect interface for poster generation, requiring users to encode inherently two-dimensional composition intent into a one-dimensional sequence of words. We introduce a Spatial Canvas Interface that enables users to directly compose generation intent in space through four complementary binding types: semantic, identity, text, and pixel, together with Text Specifications for individual elements and global appearance. Based on this interface, we develop Compo, a poster generation model adapted from a pretrained image editing model to understand Spatial Canvas inputs and Text Specifications. Compo supports both direct inference, where users explicitly construct the canvas, and agentic mode, where a high-level request is automatically translated into a planned Spatial Canvas. To train Compo, we develop a scalable pipeline that automatically constructs supervision data for different binding types and their combinations, enabling efficient adaptation without training a specialized poster generator from scratch. We further introduce a benchmark that evaluates adherence to individual binding types and their joint composition. Experiments show that Compo achieves stronger compositional controllability than both general-purpose image generation models and dedicated poster generation systems while maintaining high visual quality. By decoupling intent specification from visual generation, our work shifts poster generation from prompting toward composing."
+    },
+    {
+      "id": "2610.10946v1",
+      "published": "2026-10-07T21:52:18Z",
+      "updated": "2026-10-07T21:52:18Z",
+      "primary": "cs.CL",
+      "title": "AI4Fire: Evaluating Large Language Models on Wildfire Tasks",
+      "authors": [
+        "Yue Zhao",
+        "Xiyang Hu",
+        "Zuobin Xiong",
+        "Zhangyu Wang",
+        "Ruolin Li"
+      ],
+      "comment": "51 pages. Code: https://github.com/yzhao062/AI4Fire",
+      "journal_ref": "",
+      "summary": "Large language models (LLMs) are entering wildfire management, where overstated evaluations can cost property and lives. How do they perform on wildfire tasks, with and without grounding? Bare means a model receives the task input alone. Grounded means it also receives one task-specific addition: for smoke detection, a smoke-free reference frame from the same camera. AI4Fire runs six core models bare and grounded on five wildfire tasks, zero-shot; a sweep adds 29 more. Our literature search on fire tasks found 138 works; none combines this roster, task coverage, and paired bare and grounded runs. We report three findings. (1) Grounding helped most where the addition carried the answer: a read-only SQL tool lifted every core model's database accuracy from at most 16 to at least 88 percent. (2) Simple rules were hard to beat: no core model outperformed repeating today's staffing count, and two open-weight models mostly copied the median of similar earlier fire-days, a worse forecast. (3) Public releases carry hazards: a fire-danger column separates the holdout perfectly, and 67 aerial fire frames carry smoldering or fire-free labels read from a clipped thermal maximum. We release prompts, responses, scores, code, and the survey record."
+    },
+    {
+      "id": "2610.12189v1",
+      "published": "2026-10-08T15:50:43Z",
+      "updated": "2026-10-08T15:50:43Z",
+      "primary": "cs.LG",
+      "title": "Just Weather Scoring: Efficient End-to-end Nowcasting with Distributional Diffusion",
+      "authors": [
+        "Jannik Wiese",
+        "Johannes Schusterbauer",
+        "Tommaso Martorella",
+        "Björn Ommer"
+      ],
+      "comment": "Project Page: https://compvis.github.io/jws",
+      "journal_ref": "",
+      "summary": "Generative diffusion models are well-suited for probabilistic precipitation nowcasting, but existing approaches often rely on separately trained compression or deterministic forecasting components and remain costly at inference due to iterative denoising. We introduce Just Weather Scoring (JWS), a single-stage, end-to-end diffusion model which addresses both issues by forecasting directly in radar space and enabling few-step generation. Radar-space modeling greatly simplifies training and inference and eliminates uncertainty arising from lossy compression. JWS combines Masked Asynchronous Diffusion, a timestep-sampling scheme that preserves clean context while adapting diffusion training to high-dimensional spatio-temporal data, with a simple scoring-rule objective that aligns training with probabilistic forecasting and unlocks few-step generation. On the SEVIR and MeteoNet benchmarks, JWS achieves state-of-the-art probabilistic forecasting performance at reduced training and inference cost. Even our smallest model remains competitive using substantially fewer parameters and more than 17x faster inference."
+    },
+    {
+      "id": "2610.11945v1",
+      "published": "2026-10-08T13:34:31Z",
+      "updated": "2026-10-08T13:34:31Z",
+      "primary": "cs.RO",
+      "title": "TACROSS: An Efficient and Low-Cost Scalable Human Touch System Across Heterogeneous Tactile Sensors for Dexterous Robot Learning",
+      "authors": [
+        "Bo Chen",
+        "Huanzhang Hu",
+        "Junyang Ma",
+        "Bo Yue",
+        "Fangdi Yu",
+        "Haijier Chen",
+        "Xianxin Lai",
+        "Shuyu Pan",
+        "Zhen Yang",
+        "Xiaoquan Sun",
+        "Wenze Cui",
+        "Zhongliang Jiang",
+        "Shaopeng Liu",
+        "Jiayu Chen"
+      ],
+      "comment": "",
+      "journal_ref": "",
+      "summary": "Collecting tactile demonstrations on robots is costly and slow, motivating the use of lower-cost human tactile gloves for scalable data collection. However, human capacitive/piezoresistive gloves and robotic tactile sensors differ fundamentally in transduction principle, sensor layout, spatial resolution, and dynamic response, making alignment of raw sensor channels ill-posed. To address this problem, we present TACROSS, a scalable system for learning from human touch and transferring it to robots that bridges this heterogeneity by aligning tactile streams at the level of contact events rather than raw sensor values. The hardware component of TACROSS integrates a piezoresistive glove with five layers and a cost of USD 10.86 with 285 sensing points. To align contact semantics, we design canonicalizers and residual adapters that map heterogeneous signals into a shared tactile latent with 256 dimensions via a temporal Transformer with attention across fingers. We further introduce a robot-grounded policy learning scheme in which robot demonstrations provide the sole source of ground-truth action supervision, while human demonstrations support tactile representation learning and provide confidence-weighted auxiliary supervision through valid retargeted hand targets. We evaluate our system on four contact-rich manipulation tasks. Compared to conventional teleoperation, our proposed system achieves a 3.5-fold efficiency improvement while reducing demonstration acquisition equipment cost by 95.7%. We will open-source the TACROSS hardware and software system and publicly release a tactile dataset comprising over 150 hours of recordings. Project page: https://tacross-touch-project.github.io/."
+    }
+  ]
+}

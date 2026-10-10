@@ -1212,3 +1212,32 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮**无长期工具代码改动**（`rss_discover_r84.py` / `update_r84.py` 为一次性留证/入账脚本，非长期工具）。
 - **下轮预期**：**本地 `2026-10-10 18:00`**（P0「晚 2」轮 · 当日收口）：① 复验批次是否刷新（`2026-10-09` 提交批预计在本日 UTC 00:00 前后公告）；② 补 **2 篇「科普」** 并**修订**早报 3 篇；③ 在 `2026-10-10.html` 追加 `## 晚报变更说明（AM → PM）`，进度改为 **5/5**；④ 完成 **第 5 批 P0**：从当日 5 篇挑 TOP-1 → `research/video/SCENES/10_10.html` 分镜脚本。
 
+
+### 9.87 第八十五轮（本地 2026-10-10 18:00 时窗 · **P0 第 4 批第 8 轮 · 「晚 2」轮 · 当日收口 + 第 5 批 P0**）：**周六无新批**（API 增量 0）→ **晚报 2 篇「科普」从 AM 候选池精选 + 单条权威复核**；当日日报收口 **5/5** + 分镜脚本交付
+
+> **时点**：本地 `2026-10-10 18:00`（= UTC `2026-10-10T10:00`）为 **周六**。arXiv **周末不公告**（工作日 20:00 ET ≈ UTC 00:00 公告），故**无新批次可刷**——**`kept 0` 属时点正常现象，非「无数据」**。
+
+- **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-10T10:00:14Z`）：
+
+  | 源 | 端点 | 实测结果 | 判定 |
+  |:--|:--|:--|:--|
+  | arXiv API | `https://export.arxiv.org/api/query` | `HTTP 200`，`application/atom+xml; charset=utf-8`，`totalResults=630048`，最新样本 `published=2026-10-08T17:59:58Z` | ✅ 可达（**批次仍 `2026-10-08`，与 AM 完全一致 → 未刷新**） |
+  | HF Daily Papers | `https://huggingface.co/api/daily_papers` | `ok=false`，`Network is unreachable` | ❌ 不可达（**不伪造 `hf_daily`**） |
+  | arXiv RSS（cs.CL/CV/LG） | `https://rss.arxiv.org/rss/<cat>` | `HTTP 200`，`application/rss+xml`，`items=0 / 0 / 0` | ⚠️ **周末空 feed（如实记录，非失败）** |
+
+  证据：`research/raw/2026-10-10-probe-r85.{json,log}`（**本轮实时 `--probe`，无重试**）。
+
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=weekend_batch`，窗口 120h**，`generated=2026-10-10T10:00:13Z`）：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600**（均 `already in SEEN` 或 `stale > 120h`）→ **0 新增**。因 **PM 无新批**，当晚 2 篇「科普」**取自 AM 已入账的 547 条窗口内候选池**（`2610.11320` / `2610.10620`），**不改用 RSS 发现**（周末 RSS 为空）。证据：`research/raw/2026-10-10-fetch-r85.json`。
+
+- **精选权威复核（`id_list`）**：对晚报 2 篇走 **arXiv API 单条复核**（`id_list=2610.11320,2610.10620`，一次性脚本 `research/raw/fetch_abs_r85.py`）→ **8/8 返回**（含 2 篇），全部 `HTTP 200` + `application/atom+xml` + 有 `published`、`comment`（证据 `research/raw/2026-10-10-idlist-kp-r85.json`）：
+  - `2610.11320` *It's Always 10:10: Reference Images Break a Bias That Prompts Only Dent*（`2026-10-08T06:23:21Z`，cs.CV，`comment`: `16 pages, 5 figures, 6 tables. Data and code: doi:10.5281/zenodo.23224681`）；
+  - `2610.10620` *When AI Finds Hidden Messages, Does It Report?*（`2026-10-07T08:32:07Z`，cs.CR，`comment`: `2 figures, 8 tables. Data and code (v1.0.0): https://github.com/williamguey/ai-hidden-message-reporting`）。
+  - **去重复核**：两 ID 均**不在**任何 `daily/*.html`；检出时在 `SEEN.md` 状态为「候选」→ **无重复**。
+
+- **产出（P0 交付①）**：`research/daily/2026-10-10.html` **收口 5/5** —— 早 3 篇「借鉴」（`2610.12274` / `2610.11548` / `2610.11214`，**未下架**）+ 晚 2 篇「科普」（`2610.11320` / `2610.10620`）；页头「早报 3/5」→「晚报 5/5」；新增 `## 晚报变更说明（AM → PM）`（锚点 `#pm-change`）= 6 项变更表 + 口径不变声明；附录 A 补 **PM 三轮**（I 取源复验 / II 关键词增量 / III 精选权威复核）行，附录 C 更新窗口与标签口径；统一 AM 2 篇作者书写口径（前 3 + et al.）→ 同步 `research/daily/index.html`（2026-10-10 行 → 晚报 5/5）与 `research/INDEX.md`（收录 3 → **5**）。
+
+- **产出（P0 交付② · 第 5 批）**：`research/video/SCENES/10_10.html` —— **《论文两分钟》分镜脚本**（当日 TOP-1 = `2610.11320`）：固定五段（**钩子 0–10s / 问题 10–30s / 方法 30–80s / 结果 80–105s / 意义 105–120s**）、共 **8 镜**、口播 **≈445 字**（目标 350–450）；逐镜含 镜号 + 时间轴 + 段 + 口播 + 画面(自绘) + 字幕 + 音效 + 时长；含**英文原题逐字** + 作者 + `arxiv.org/abs/2610.11320` 链接 + 「论文解读 · 非官方 · 非结论」免责 + 「为什么选它」+ 合规红线自检（**不盗用论文原图**、不夸大、不编造数据）；并**首建** `research/video/SCENES/index.html`（按日倒序索引）。
+
+- **台账**：`research/SEEN.md` **行数不变（3,051 条）**，2 篇状态 **候选 → 收录** → **收录 181 / 候选 2870（其中 RSS 补充候选 507）**；`research/papers.jsonl` **+2 → 181 行**。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮**无长期工具代码改动**（`fetch_abs_r85.py` 为一次性复核脚本）。
+- **下轮预期**：**本地 `2026-10-11 06:00`**（P0「早 3」轮 · 新一日 AM）：① 复验批次（`2026-10-10` 提交批预计周日晚 ~UTC 00:00 公告）；② 若仍周末无批则继续走 **RSS 发现 + `id_list` 复核**；③ 交付次日报 HTML（早报 3/5）。

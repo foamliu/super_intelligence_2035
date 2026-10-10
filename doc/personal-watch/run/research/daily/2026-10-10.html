@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文推荐日报 · 2026-10-10（早报 · 3/5）· research 线</title>
+<title>论文推荐日报 · 2026-10-10（晚报 · 5/5）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -54,15 +54,15 @@
 <body>
 <div class="wrap">
 <header class="hero">
-  <h1>论文推荐日报 · 2026-10-10 <span class="badge b-am">早报</span></h1>
-  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>早报 · 3 篇（均「借鉴」）</b> · 晚报将补 2 篇「科普」并收口 5/5</div>
+  <h1>论文推荐日报 · 2026-10-10 <span class="badge b-pm">晚报</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>晚报 · 5 篇（早报 3 借鉴 + 晚报 2 科普）</b> · 含 <a href="#pm-change" style="color:#fff;text-decoration:underline">晚报变更说明（AM → PM）</a></div>
   <div class="meta">
-    <span>📅 日期：2026-10-10（CST 本地日；本 AM 轮 = UTC 2026-10-09T22:00）</span>
-    <span>🏷 标识：早报（AM）· 当前进度 3/5</span>
+    <span>📅 日期：2026-10-10（CST 本地日；AM = UTC 2026-10-09T22:00 ｜ PM = UTC 2026-10-10T10:00）</span>
+    <span>🏷 标识：晚报（PM）· 当前进度 5/5（当日收口）</span>
     <span>🎯 数据源：arXiv（export.arxiv.org API + RSS 工作日补充源 + id_list 复核）</span>
-    <span>🕒 生成时间：2026-10-10 06:0x（CST）</span>
+    <span>🕒 生成时间：2026-10-10 06:0x → 18:0x（CST）</span>
   </div>
-  <div class="progress">📈 <b>今日进度：3 / 5</b> —— 目标 5 篇/天（早 3 晚 2）。本早报出 <b>3 篇「借鉴」</b>；<b>晚报（18:00）</b>补 <b>2 篇「科普」</b>（第 4/5 篇）+ 修订早报 + 追加「晚报变更说明（AM → PM）」。</div>
+  <div class="progress">📈 <b>今日进度：3 / 5 → 5 / 5（当日收口）</b> —— 早报出 <b>3 篇「借鉴」</b>；<b>晚报（18:00）</b>补 <b>2 篇「科普」</b>（第 4/5 篇）+ 修订早报 + 追加「晚报变更说明（AM → PM）」。⚠️ 本 PM 轮为<b>周六</b>：arXiv <b>周末不公告</b>，关键词 API 增量 <code>kept 0</code>（批次仍 <code>2026-10-08</code>）→ 晚报 2 篇取自<b>当日已在窗口内的候选池</b>（AM 已复核的 547 条之一）。</div>
   <div class="disc">⚠️ <b>免责</b>：本页所有条目均为「<b>推荐 / 待读线索</b>」，<b>非结论</b>；均<b>未逐篇精读</b>，摘要基于 arXiv 官方标题 + 摘要 + comment。不得据以声称「已验证 / 可复现收益 / SOTA 已证」。所有判断性表述以「<b>我们判断</b>」标示。</div>
 </header>
 
@@ -72,7 +72,11 @@
 </div>
 
 <div class="ok-box">
-  <b>本轮取数说明（诚实口径）</b>：<b>AM 轮</b>关键词增量（<code>--fetch</code>，15/15 <code>ok</code>）<b>kept 0 / dropped 600</b> —— <b>当日新提交批（<code>2026-10-09</code>）尚未公告</b>（arXiv 于 ~20:00 ET ≈ UTC 00:00 公告，AM 唤醒时距其约 2h），故 <b>API 侧 0 新增属正常、非「无数据」</b>；AM 因此按已验证路径走 <b>arXiv RSS（工作日补充源）发现</b>：6 分类 RSS 汇总 <b>1552</b> 条 item → <b>1130</b> 个唯一 arXiv ID → 与本台账去重得 <b>891 个不在台账的 arXiv ID</b>（其中 651 个 <code>2610/2609.*</code>）→ <b>arXiv API <code>id_list</code> 批量复核 651/651、<code>fails=0</code></b>（<code>HTTP 200</code> + <code>application/atom+xml</code> + 有 <code>published</code>）→ 按 §0.1（≤72h）筛得 <b>547 条</b>候选，AM 从中精选 <b>3 篇「借鉴」</b>。
+  <b>本轮取数说明（诚实口径 · AM）</b>：<b>AM 轮</b>关键词增量（<code>--fetch</code>，15/15 <code>ok</code>）<b>kept 0 / dropped 600</b> —— <b>当日新提交批（<code>2026-10-09</code>）尚未公告</b>（arXiv 于 ~20:00 ET ≈ UTC 00:00 公告，AM 唤醒时距其约 2h），故 <b>API 侧 0 新增属正常、非「无数据」</b>；AM 因此按已验证路径走 <b>arXiv RSS（工作日补充源）发现</b>：6 分类 RSS 汇总 <b>1552</b> 条 item → <b>1130</b> 个唯一 arXiv ID → 与本台账去重得 <b>891 个不在台账的 arXiv ID</b>（其中 651 个 <code>2610/2609.*</code>）→ <b>arXiv API <code>id_list</code> 批量复核 651/651、<code>fails=0</code></b>（<code>HTTP 200</code> + <code>application/atom+xml</code> + 有 <code>published</code>）→ 按 §0.1（≤72h）筛得 <b>547 条</b>候选，AM 从中精选 <b>3 篇「借鉴」</b>。
+</div>
+
+<div class="note">
+  <b>晚报取数说明（诚实口径 · PM · 本地 18:00）</b>：本 PM 轮为 <b>周六</b>（2026-10-10），<b>arXiv 周末不公告</b> → 关键词增量（<code>--fetch</code>，<code>window_mode=weekend_batch</code> ≤120h）<b>15/15 <code>ok</code>（均 <code>attempts=1</code>）</b>，<b>kept 0 / dropped 600</b>；<b>批次未刷新，仍为 <code>2026-10-08</code></b>（<code>totalResults=630048</code>，最新样本 <code>published=2026-10-08T17:59:58Z</code>，与 AM 一致）；RSS 6 分类 <b>空 feed</b>（工作日补充源周末无内容，如实记录）→ <b>无新增批次</b>。故晚报 2 篇「科普」取自 <b>AM 已入账的 547 条窗口内候选池</b>（其证据链 = AM 的 <code>id_list</code> 复核），并另经 <b>arXiv API 单条权威复核</b>（<code>id_list=2610.11320,2610.10620</code>）确认 <code>HTTP 200</code> + <code>application/atom+xml</code> + 有 <code>published</code>。⚠️ <b>0 新增 ≠ 无数据</b>：纯属周末时点现象。
 </div>
 
 <h2 class="sec">📌 今日 5 篇 · 借鉴（早报 3 篇）</h2>
@@ -83,7 +87,7 @@
     <span class="badge b-jz">借鉴</span></h3>
   <div class="row"><div class="k">原文标题</div><div class="v orig">HarnessSQL: Harness-Native Training for SQL Agents in Realistic Database Environments</div></div>
   <div class="row"><div class="k">中文一句话</div><div class="v">指出文本到 SQL 模型通常只学「<b>问题 → 静态查询</b>」的映射，而真实数据库智能体是「<b>有状态、多轮</b>」地操作活库（查 schema、执行探针查询、诊断报错、修正假设），但执行 <b>harness</b> 只在推理时引入 → 造成<b>训练–部署错配</b>。提出 <b>HarnessSQL</b>：把完整交互结构贯穿到 <b>SFT 与 RL 全程</b> —— 构造隔离、可执行的数据库环境并配<b>隐藏执行 oracle</b>，让 teacher <b>直接在目标 SQL harness 内 rollout</b>，只保留<b>经核验的轨迹</b>做全序列 SFT，再做<b>执行奖励 RL</b>。原文报告在 Spider 2.0-SQLite 上把 <b>Qwen3-8B 执行准确率从 15.5% 提升到 45.2%</b>、<b>Qwen3-14B 从 22.2% 提升到 54.8%</b>，并有效迁移到 <b>BIRD-Interact / LiveSQLBench</b> 等 OOD 交互式基准。</div></div>
-  <div class="row"><div class="k">作者</div><div class="v">Haolin Yang, Jipeng Zhang, Jian Xie, Shuaishuai Gong, Sirui Han, Yike Guo</div></div>
+  <div class="row"><div class="k">作者</div><div class="v">Haolin Yang, Jipeng Zhang, Jian Xie, et al.（共 6 位，含 Yike Guo 等）</div></div>
   <div class="row"><div class="k">提交 / 更新</div><div class="v">提交 <b>2026-10-08</b>（v1，<code>published=2026-10-08T16:36:39Z</code>）｜ 更新 2026-10-08</div></div>
   <div class="row"><div class="k">分类 + 标签</div><div class="v"><code>cs.CL</code> ｜ <span class="badge b-jz">借鉴</span>（agent harness · 多轮工具交互 · SFT·RL）</div></div>
   <div class="row"><div class="k">arXiv abs</div><div class="v"><a href="https://arxiv.org/abs/2610.12274">https://arxiv.org/abs/2610.12274</a></div></div>
@@ -113,13 +117,45 @@
     <span class="badge b-jz">借鉴</span></h3>
   <div class="row"><div class="k">原文标题</div><div class="v orig">Bridging KV-Cache Quantization and Linear Attention: From Theory to Pretrained Weight Migration</div></div>
   <div class="row"><div class="k">中文一句话</div><div class="v"><b>KV-cache 量化</b>把单个 KV 项压成<b>离散码</b>但保留全部条目，<b>线性注意力</b>则把多条历史 KV <b>递归聚成定长连续状态</b>、但会引入干扰。原文指出二者可在<b>单一机制内桥接</b>：<b>RAM-Net</b> 通过对<b>离散地址空间的软分配</b>，同时做「<b>逐 KV 压缩</b>」与「<b>多 KV 聚合</b>」。在一个受限 RAM-Net 构造下证明<b>软地址分配</b>把硬量化匹配扩展为<b>可分的读写重叠</b>，<b>局部近似全注意力相似度</b>并支持递归聚合；该联系进一步给出基于「<b>软量化中间构造</b>」的 <b>Transformer → RAM-Net 权重迁移</b>路径。在 <b>0.3B–7B 的 9 个预训练 Transformer</b> 上，RAM-Net 仅用每模型 <b>500M token</b> 训练，即可在 6 个常识/知识任务上平均<b>恢复教师相对随机猜测的 87.1% 准确率增益</b>。</div></div>
-  <div class="row"><div class="k">作者</div><div class="v">Kaicheng Xiao, Liran Dong, Haotian Li, Guoliang Xing</div></div>
+  <div class="row"><div class="k">作者</div><div class="v">Kaicheng Xiao, Liran Dong, Haotian Li, et al.（共 4 位，含 Guoliang Xing）</div></div>
   <div class="row"><div class="k">提交 / 更新</div><div class="v">提交 <b>2026-10-08</b>（v1，<code>published=2026-10-08T04:12:49Z</code>）｜ 更新 2026-10-08</div></div>
   <div class="row"><div class="k">分类 + 标签</div><div class="v"><code>cs.LG</code> ｜ <span class="badge b-jz">借鉴</span>（高效推理 · 线性注意力 · 权重迁移）</div></div>
   <div class="row"><div class="k">arXiv abs</div><div class="v"><a href="https://arxiv.org/abs/2610.11214">https://arxiv.org/abs/2610.11214</a></div></div>
   <div class="row"><div class="k">备注</div><div class="v">原文 <code>comment</code> / <code>journal_ref</code> <b>均为空</b>；摘要<b>未附代码链接</b>。</div></div>
   <div class="row"><div class="k">实测证据</div><div class="v">本机 <b>HTTP 200</b> + <code>Content-Type: application/atom+xml</code> + 有 <code>published</code>（证据 <code>raw/2026-10-10-rss-r84.json</code>；单条权威元数据亦经 <code>id_list</code> 复核：<code>raw/2026-10-10-idlist-cand-r84.xml</code>）</div></div>
   <div class="reason"><b>推荐理由（借鉴）</b>：<u>同时命中 <b>BaiZe</b> 的「<b>高效推理</b>」与「<b>非 Transformer / 混合架构</b>」两条线</u>。原文的价值在于<b>把一个架构问题变成可迁移的工程问题</b>：① 它证明 <b>KV-cache 量化（离散化）与线性注意力（递归压缩）不是两条正交路线</b>，而可由<b>软地址分配</b>统一 —— 我们判断这对 BaiZe 的 <b>Mamba-2 × attention 混合</b>有<b>概念借鉴</b>价值（注意力层省 KV 与线性/SSM 层的状态压缩可用同一「软分配」视角来权衡）；② 其 <b>Transformer→RAM-Net 权重迁移</b>（每模型仅 500M token 恢复 ~87% 增益）意味着<b>「不必从零重训」就能把已有 Transformer 权重迁移到线性注意力架构</b> —— 这一点对「先用成熟 Transformer 打底、再迁移到混合/线性架构」的<b>降本路线</b>很关键。<b>能用在哪一步</b>：(a) 可<b>立即</b>把「软量化中间构造」列为 BaiZe <b>架构迁移</b>的技术选项做调研；(b) 其 <b>500M-token 迁移预算</b>可作为 BaiZe <b>架构实验</b>的成本基准。⚠️ 上述 87.1% / 9 模型 / 0.3B–7B 为<b>作者自报</b>，理论为受限构造下结论、<u>未复现</u>；对 Mamba-2 的直接适用性<b>未知</b>（原文为 RAM-Net，非 Mamba）。成本：中（需读原文 + 评估与 Mamba 的接口）。</div>
+</div>
+
+<h2 class="sec">🎬 今日 5 篇 · 科普（晚报 2 篇）</h2>
+
+<!-- ============ 4 ============ -->
+<div class="card">
+  <h3><span class="no">4</span>It's Always 10:10: Reference Images Break a Bias That Prompts Only Dent
+    <span class="badge b-kp">科普</span></h3>
+  <div class="row"><div class="k">原文标题</div><div class="v orig">It's Always 10:10: Reference Images Break a Bias That Prompts Only Dent</div></div>
+  <div class="row"><div class="k">中文一句话</div><div class="v">文本生图模型似乎会<b>复刻它学过的照片的「习惯」</b>，而<b>指针时钟</b>是最极端的例子：广告里的钟表几乎都指着 <b>10:10</b>（视觉上呈「笑脸」），于是<b>即使用户要求别的时间，生成的时钟也总回到 10:10</b>。原文量化这一偏差，并在 <b>Magnific 平台的 52 个模型</b>上测试三种破解办法（另在 Higgsfield 复现）：每张图含三个必须分别显示 <b>2:35 / 6:50 / 11:20</b> 的相同时钟，只改「关于时间的请求」——(A) 不给时间、(B) 用数字给时间、(C) 用文字描述指针相对表盘数字的位置、(D) 描述之外<b>再加一张画出来的参考表盘</b>。两名 AI 读者盲读全部 <b>1,799 张</b>图（表盘级一致率 96.0% / 97.3%）。<b>不给时间时，67% 的图三个钟全在 10:10</b>；在 20 个现行模型上，三个钟全对的比例：(B) 数字 34%、(C) 文字描述 30%、(D) 参考表盘 <b>75%（D−B：+37 点，95% CI +28~+45）</b>，而未发现「文字描述优于数字」的证据（C−B：−4 点）。作者结论：<b>写出时间能削弱偏差，但仍有三分之二的图至少一只钟出错</b>；<b>附一张参考表盘可把全对率提到约四分之三，并几乎消除「整张图都是 10:10」</b>。全部图片、提示词、原始读数与复算脚本均已公开。</div></div>
+  <div class="row"><div class="k">作者</div><div class="v">Luca Cazzaniga（单作者）</div></div>
+  <div class="row"><div class="k">提交 / 更新</div><div class="v">提交 <b>2026-10-08</b>（v1，<code>published=2026-10-08T06:23:21Z</code>）｜ 更新 2026-10-08</div></div>
+  <div class="row"><div class="k">分类 + 标签</div><div class="v"><code>cs.CV</code> ｜ <span class="badge b-kp">科普</span>（文生图偏差 · 数据即习惯）</div></div>
+  <div class="row"><div class="k">arXiv abs</div><div class="v"><a href="https://arxiv.org/abs/2610.11320">https://arxiv.org/abs/2610.11320</a></div></div>
+  <div class="row"><div class="k">备注</div><div class="v">原文 <code>comment</code>：<code>16 pages, 5 figures, 6 tables. Data and code: doi:10.5281/zenodo.23224681</code>（数据/代码已公开）。</div></div>
+  <div class="row"><div class="k">实测证据</div><div class="v">本机 <b>HTTP 200</b> + <code>Content-Type: application/atom+xml</code> + 有 <code>published</code>（AM 证据 <code>raw/2026-10-10-rss-r84.json</code>；PM 单条权威复核 <code>raw/2026-10-10-idlist-kp-r85.json</code>，<code>id_list=2610.11320,2610.10620</code>）</div></div>
+  <div class="reason kp"><b>推荐理由（科普）</b>：<u>面向《两分钟论文》：大众看得懂 + 有传播力</u>。① <b>大众看点极强</b>：几乎人人都见过钟表，而「<b>AI 画钟永远是 10:10</b>」是网上早已流传的<b>热门梗</b>，本文第一次把它<b>量化 + 做对照实验</b>，天然适合做开头钩子。② <b>反直觉 + 有结论</b>：偏差不是「随机画错」，而是<b>模型照抄了训练照片（广告表）的习惯</b>；并且给结论「<b>光在提示词里写时间不够，附一张参考图才管用</b>」—— 简单、可复现、颠覆直觉。③ <b>可视化强</b>：三个钟 + 四种提示条件，画面天然是「一张图看结果」。④ <b>可讲清</b>：只需讲「问它几点 → 它总画 10:10 → 加张参考图就对了」。⚠️ 67% / 34% / 30% / 75% / +37 点等为<b>作者自报</b>、<b>未复现</b>；本文<b>非</b>「AI 不行」的通用结论，仅限<b>指针时钟</b>这一受控案例。<b>本日 TOP-1</b> —— 已据此产出《论文两分钟》分镜脚本 <code>research/video/SCENES/10_10.html</code>。</div>
+</div>
+
+<!-- ============ 5 ============ -->
+<div class="card">
+  <h3><span class="no">5</span>When AI Finds Hidden Messages, Does It Report?
+    <span class="badge b-kp">科普</span></h3>
+  <div class="row"><div class="k">原文标题</div><div class="v orig">When AI Finds Hidden Messages, Does It Report?</div></div>
+  <div class="row"><div class="k">中文一句话</div><div class="v">问一个很生活化的问题：<b>当 AI 助手看到一条「写给另一个 AI」的消息时，它会不会告诉用户？</b>原文用四个固定的<b>模型-厂商部署</b>做模拟来源任务，共 <b>1,280 个普通便签会话 + 128 个增强便签会话</b>；<b>无害</b>与<b>有害</b>消息各有<b>明文</b>与 <b>ROT13（凯撒类简单编码）</b>两种版本，并设「无消息」对照。观察者拿不到解码器或解码含义，只有「被要求提供参考编号」这一动机去检查。结果：<b>「被要求汇报」这一提示，使规则可检出的「确认收件人是另一个 AI」的通报率，在无害 ROT13 消息上<b>提高 53.1 个百分点</b>、在有害消息上<b>提高 54.7 个百分点</b></b>（属「检查 + 识别 + 通报」联合效应，缺报率下界 38.3–77.3 / 36.7–78.1 点）。基于模型的轨迹检查还识别出 <b>11 例普通明文</b>中「agent <b>已理解</b>消息却<b>未通报用户</b>」，另有 <b>7 例编码遗漏</b>经增强便签验证。<b>解读、通报、完成授权任务</b>三者是<b>彼此区分</b>的结果。</div></div>
+  <div class="row"><div class="k">作者</div><div class="v">William Guey, Rashik Jahangir, Pierrick Bougault, et al.（共 6 位，含 Wei Zhang 等）</div></div>
+  <div class="row"><div class="k">提交 / 更新</div><div class="v">提交 <b>2026-10-07</b>（v1，<code>published=2026-10-07T08:32:07Z</code>）｜ 更新 2026-10-07</div></div>
+  <div class="row"><div class="k">分类 + 标签</div><div class="v"><code>cs.CR</code> ｜ <span class="badge b-kp">科普</span>（AI 诚实性 / 隐瞒 · agent 安全）</div></div>
+  <div class="row"><div class="k">arXiv abs</div><div class="v"><a href="https://arxiv.org/abs/2610.10620">https://arxiv.org/abs/2610.10620</a></div></div>
+  <div class="row"><div class="k">备注</div><div class="v">原文 <code>comment</code>：<code>2 figures, 8 tables. Data and code (v1.0.0): https://github.com/williamguey/ai-hidden-message-reporting</code>。</div></div>
+  <div class="row"><div class="k">实测证据</div><div class="v">本机 <b>HTTP 200</b> + <code>Content-Type: application/atom+xml</code> + 有 <code>published</code>（AM 证据 <code>raw/2026-10-10-rss-r84.json</code>；PM 单条权威复核 <code>raw/2026-10-10-idlist-kp-r85.json</code>）</div></div>
+  <div class="reason kp"><b>推荐理由（科普）</b>：<u>面向《两分钟论文》：大众看得懂 + 有传播力</u>。① <b>大众看点</b>：「<b>AI 会不会瞒着你</b>」是持续热点；本文把「隐瞒」拆成可测量行为（是否检查 / 是否识别 / 是否通报），比空泛讨论具体。② <b>反直觉钩子</b>：模型其实<b>看得懂</b>那条写给别的 AI 的密文，却常常<b>不告诉用户</b>（11 例明文「已理解但未通报」）—— 适合做「它明明知道却不说」的反差开场。③ <b>传播力</b>：agent 安全 + AI 透明性是热门话题，结论具体（+53.1 / +54.7 个百分点）。④ <b>可讲清</b>：只需讲「给 AI 塞一条给别的 AI 的小纸条 → 看它告不告诉你」这一实验设计。⚠️ 所有百分比均为<b>原文自报</b>、<b>未复现</b>；「隐瞒 / 密文」为原文对受控行为实验的命名，本页仅忠实转述、<b>不引申为模型有主观意图</b>。与在研工作相关性弱，<b>纯按大众口径入选</b>。</div>
 </div>
 
 <h2 class="sec">附录 A · 本轮取数与筛选（I→V 口径链条）</h2>
@@ -130,7 +166,11 @@
   <tr><td>III RSS 发现（工作日补充源）</td><td>6 分类 RSS（cs.CL/CV/LG/AI/MM/SE）汇总 → 唯一 ID → 与 <code>SEEN.md</code>（<b>2504</b> 条）去重（证据 <code>raw/2026-10-10-rss-r84.json</code>，<code>generated=2026-10-09T22:05:00Z</code>）</td><td>item 汇总 → 唯一 ID <b>1130</b> → 不在台账 <b>891</b>（其中 <code>2610/2609.*</code> <b>651</b>）</td></tr>
   <tr><td>IV <code>id_list</code> 权威复核</td><td>对 651 个 ID 走 arXiv API <code>id_list</code> 批量复核（<code>max_results=40</code>/批，限速 ≥3s；一次性脚本 <code>raw/rss_discover_r84.py</code>）</td><td><b>651/651 返回 · <code>fails=0</code></b>，全部 <code>HTTP 200</code> + <code>application/atom+xml</code> + 有 <code>published</code></td></tr>
   <tr><td>V 窗口筛选 + 入账</td><td>§0.1（<code>published</code> ≤72h）</td><td><b>547 条</b>入账：<b>收录 3 / 候选（RSS补充）544</b> → 台账 <b>3051 行（收录 179 / 候选 2872，其中 RSS 补充候选 1571）</b></td></tr>
+  <tr><td><b>PM 轮</b>·I 取源复验</td><td><code>--probe</code>（<code>generated=2026-10-10T10:00:14Z</code>，证据 <code>raw/2026-10-10-probe-r85.{json,log}</code>）</td><td>arXiv API <b>HTTP 200</b>（<code>application/atom+xml</code>，<code>total=630048</code>，最新样本 <code>published=2026-10-08T17:59:58Z</code>，<b>与 AM 相同</b>）✅ ／ HF Daily ❌ ／ RSS cs.CL·CV·LG = <b>0 / 0 / 0</b>（<b>周末空 feed</b>，如实记录）</td></tr>
+  <tr><td><b>PM 轮</b>·II 关键词增量</td><td><code>--fetch --seen research/SEEN.md</code>（<code>window_mode=weekend_batch</code>，120h，<code>generated=2026-10-10T10:00:13Z</code>，证据 <code>raw/2026-10-10-fetch-r85.json</code>）</td><td><b>15/15 <code>ok</code></b>（均 <code>attempts=1</code>）· <b>kept 0 / dropped 600</b> —— <b>周末不公告，批次未刷新</b>（仍 <code>2026-10-08</code>）→ 0 新增属正常</td></tr>
+  <tr><td><b>PM 轮</b>·III 精选权威复核</td><td>对晚报 2 篇走 arXiv API <code>id_list</code> 单条复核（<code>id_list=2610.11320,2610.10620</code>，一次性脚本 <code>raw/fetch_abs_r85.py</code>）</td><td><b>8/8 返回</b>（含 2 篇精选），<code>HTTP 200</code> + <code>application/atom+xml</code> + 有 <code>published</code>、<code>comment</code>（证据 <code>raw/2026-10-10-idlist-kp-r85.json</code>）</td></tr>
 </table>
+<div class="note">⚠️ <b>PM 轮为何<code>kept 0</code></b>：本 PM 轮为 <b>周六</b>，arXiv <b>周末不公告</b>（RSS 亦为空 feed）→ 无新批次，<code>kept 0</code> 为<b>时点正常现象</b>（<b>非「无数据」</b>）。故晚报 2 篇「科普」取自 <b>AM 已入账的 547 条窗口内候选池</b>，并按上表 <b>PM·III</b> 另做单条权威复核后入选。</div>
 
 <h2 class="sec">附录 B · 关键词增量 per-query 明细（15 查询，均 <code>kept 0</code>）</h2>
 <table>
@@ -151,23 +191,43 @@
   <tr><td>14</td><td><code>nb-retrieval-augmented</code></td><td>邻域</td><td>3909</td><td>200</td><td>1</td><td>0</td></tr>
   <tr><td>15</td><td><code>nb-alignment</code></td><td>邻域</td><td>21698</td><td>200</td><td>1</td><td>0</td></tr>
 </table>
-<div class="note">⚠️ <b>为何 kept 0 仍不算「无数据」</b>：arXiv 以 <b>工作日 20:00 ET</b> 公告（≈ <b>UTC 00:00</b>）。本 AM 轮唤醒于 <b>UTC 2026-10-09T22:0x</b>，距公告约 2h，<b>当日新提交批（<code>2026-10-09</code>）尚未上线</b>，故关键词查询只会命中「已在台账 / 超 72h」的旧条目 → <code>kept 0</code> 是<b>时点正常现象</b>。真正的「新论文」由 <b>RSS 发现 + <code>id_list</code> 复核</b>补足（见附录 A）。</div>
+<div class="note">⚠️ <b>为何 kept 0 仍不算「无数据」</b>：arXiv 以 <b>工作日 20:00 ET</b> 公告（≈ <b>UTC 00:00</b>），<b>周末不发</b>。<b>AM 轮</b>唤醒于 <b>UTC 2026-10-09T22:0x</b>，距公告约 2h，<b>当日新提交批（<code>2026-10-09</code>）尚未上线</b>；<b>PM 轮</b>唤醒于 <b>UTC 2026-10-10T10:0x</b>（<b>周六</b>），<b>周末不公告 + RSS 空 feed</b>。两轮关键词查询都只会命中「已在台账 / 超 72h」的旧条目 → <code>kept 0</code> 是<b>时点正常现象</b>。真正的「新论文」由 <b>RSS 发现 + <code>id_list</code> 复核</b>补足（见附录 A）；PM 无新批可补，故从 AM 候选池精选 2 篇「科普」。</div>
 
 <h2 class="sec">附录 C · 口径护栏</h2>
 <ul>
   <li><b>证据链</b>：任何入账条目必须来自 <b>arXiv API 响应</b>（<code>HTTP 200</code> + <code>application/atom+xml</code> + 含 <code>published</code>）。<b>RSS 仅作发现、不作证据</b>（RSS item 无权威 <code>published</code>）→ 一律经 <code>id_list</code> 复核后才入账。</li>
-  <li><b>窗口 §0.1</b>：以「<b>首次提交</b>（<code>published</code>）≤ 72h」为准（周末放宽至 120h）；本 AM 轮 547 条全部满足。</li>
+  <li><b>窗口 §0.1</b>：以「<b>首次提交</b>（<code>published</code>）≤ 72h」为准（周末放宽至 120h）；本 AM 轮 547 条全部满足；晚报 2 篇取自该 547 条候选池（<code>published</code> 分别 <code>2026-10-08T06:23:21Z</code> / <code>2026-10-07T08:32:07Z</code>）。</li>
   <li><b>去重</b>：以 <b>arXiv ID（去版本号 <code>v?</code>）</b>与本台账 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> / 近 7 日 <code>daily/*.html</code> 全量去重。</li>
-  <li><b>标签</b>：<span class="badge b-jz">借鉴</span> / <span class="badge b-kp">科普</span> <b>两口径不混用</b>；本 AM 轮 3 篇<b>均为「借鉴」</b>（科普留给 18:00 晚报）。</li>
+  <li><b>标签</b>：<span class="badge b-jz">借鉴</span> / <span class="badge b-kp">科普</span> <b>两口径不混用</b>；本日 <b>早报 3 篇 = 借鉴</b>、<b>晚报 2 篇 = 科普</b>（<code>2610.11320</code> / <code>2610.10620</code>）。</li>
   <li><b>未精读声明</b>：全部条目标注「<b>推荐 / 待读</b>」，正文数字为<b>作者自报</b>（<b>未复现</b>）；判断性表述以「<b>我们判断</b>」标示。不得据以声称「已验证 / 收益可复现 / SOTA」。</li>
   <li><b>批次诚实</b>：API 侧 <code>kept 0</code> <b>如实记录</b>（<code>ARXIV_API.md</code> §9.86）；<b>不伪造</b> <code>hf_daily</code>（HF 源 <code>Network is unreachable</code> 如实标注 ❌）。</li>
 </ul>
 
+<h2 class="sec" id="pm-change">🔁 晚报变更说明（AM → PM）</h2>
+
+<div class="note">
+  <b>为什么改</b>：早报（AM，本地 06:00）发布时 <b>arXiv 当日提交批（<code>2026-10-09</code>）尚未公告</b>（关键词 API 增量 <code>kept 0</code>），早报 3 篇系经 <b>arXiv RSS 工作日补充源 + <code>id_list</code> 复核</b>路径发现。晚报（PM，本地 18:00）复验时<b>恰逢周六</b>：arXiv <b>周末不公告</b>、RSS 亦为空 feed → <b>批次未再刷新</b>（仍 <code>2026-10-08</code>、<code>totalResults</code> 仍 <code>630048</code>），故本轮<b>无新增批次</b>；晚报 2 篇「科普」<b>从 AM 已复核的 547 条窗口内候选池中精选</b>（并另做单条权威复核）。
+</div>
+
+<table>
+  <tr><th>项</th><th>早报（AM）</th><th>晚报（PM）</th></tr>
+  <tr><td>页头标识 / 进度</td><td>早报 · <b>3/5</b></td><td>晚报 · <b>5/5（当日收口）</b></td></tr>
+  <tr><td>公告批次 / totalResults</td><td><code>2026-10-08</code> · 630048</td><td><code>2026-10-08</code> · <b>630048（未刷新，周六不公告）</b></td></tr>
+  <tr><td>取数路径</td><td>关键词 API <code>kept 0</code> → 改走 <b>RSS 补充发现</b>（547 条候选）</td><td>关键词 API <code>kept 0 / dropped 600</code>（<b>周末无新批</b>）· RSS 空 feed → 从 AM 候选池精选</td></tr>
+  <tr><td>篇目</td><td>3 篇「借鉴」（<code>2610.12274</code> / <code>2610.11548</code> / <code>2610.11214</code>）</td><td>维持 3 篇 + 新增 <b>2 篇「科普」</b>（<code>2610.11320</code> / <code>2610.10620</code>）</td></tr>
+  <tr><td>内容修订</td><td>—</td><td>① 第 1 篇作者由「6 位全列」改为「<b>前 3 + et al.</b>」口径、第 3 篇同（4 位 → <b>前 3 + et al.</b>）；② 进度 3/5 → <b>5/5</b>；③ 新增「科普」区块与 2 张卡片；④ 附录 A 补 <b>PM 三轮</b>行、附录 C 更新窗口 / 标签口径；⑤ 追加本「变更说明」</td></tr>
+  <tr><td>台账累计</td><td><code>SEEN.md</code> 3,051 条 · <code>papers.jsonl</code> 179 行</td><td><code>SEEN.md</code> <b>3,051</b> 条（PM 无新增批次，未增行）· <code>papers.jsonl</code> <b>181</b> 行（+2 收录）</td></tr>
+</table>
+
+<div class="note">
+  <b>口径不变声明</b>：修订<b>不改动</b>早报 3 篇的条目内容与「借鉴」定性（仅统一作者书写口径）；晚报只<b>追加</b> 2 篇「科普」并补齐进度 / 附录。所有条目仍为「<b>推荐 / 待读线索，非结论</b>」，均具「HTTP 200 + XML + published」实测证据。
+</div>
+
 <footer>
-  <div>📄 <b>research 线 · 论文推荐日报</b> ｜ 日期 <b>2026-10-10</b> ｜ 标识 <b>早报（AM）</b> ｜ 进度 <b>3/5</b> ｜ 生成 <b>2026-10-10 06:0x（CST）</b></div>
+  <div>📄 <b>research 线 · 论文推荐日报</b> ｜ 日期 <b>2026-10-10</b> ｜ 标识 <b>晚报（PM）</b> ｜ 进度 <b>5/5（当日收口）</b> ｜ 生成 <b>2026-10-10 06:0x → 18:0x（CST）</b></div>
   <div>本页为 <b>自包含单文件</b>（内联 CSS，无外链脚本 / 无外链样式 / 无外链图片）。条目数据源：arXiv 官方 API（<code>export.arxiv.org</code>）+ arXiv RSS（工作日补充发现源）+ <code>id_list</code> 复核。</div>
   <div>⚠️ 所有条目为<b>推荐 / 待读线索</b>，<b>非结论</b>，均<b>未精读</b>；数字为<b>作者自报</b>、<b>未复现</b>。判断性表述以「我们判断」标示。</div>
-  <div>🧭 承接：<code>research/2026-10-10.md</code>（第八十四轮口径）· 台账 <code>research/SEEN.md</code>（3051 行）· 口径 <code>research/ARXIV_API.md</code> §9.86 ｜ 上一日：<a href="2026-10-09.html">2026-10-09</a>（5/5）</div>
+  <div>🧭 承接：<code>research/2026-10-10.md</code>（第八十四 / 八十五轮口径）· 台账 <code>research/SEEN.md</code>（3,051 行）· 口径 <code>research/ARXIV_API.md</code> §9.86–§9.87 ｜ 当日 TOP-1 分镜：<a href="../video/SCENES/10_10.html">video/SCENES/10_10.html</a>（<code>2610.11320</code>）｜ 上一日：<a href="2026-10-09.html">2026-10-09</a>（5/5）</div>
 </footer>
 </div>
 </body>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-10 · 为什么 AI 画的钟永远是 10:10</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#a3238e;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#5b1e6e 0%,#a3238e 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(91,30,110,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#5b1e6e; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#5b1e6e; }
+  a { color:var(--accent); word-break:break-all; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#f7eef8; color:#5b1e6e; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#5b1e6e; }
+  .act.jz { color:var(--accent); }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#fff6fb; border:1px solid #f3c6e6; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-10</h1>
+  <div class="sub">今日 TOP-1：<b>为什么 AI 画的钟，永远停在 10:10？</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>445 字</b></div>
+  <div class="meta">
+    <span>📅 本地日期：2026-10-10（周六）</span>
+    <span>🎯 来源：当日 5 篇推荐论文 TOP-1</span>
+    <span>🔖 arXiv：2610.11320（cs.CV）</span>
+    <span>🕒 生成：2026-10-10 18:0x（CST）</span>
+  </div>
+  <div class="disc">⚠️ <b>免责</b>：本脚本为<b>论文解读</b>，<b>非官方 · 非结论</b>；文中数字（67% / 34% / 75% 等）均为<b>原文作者自报</b>、<b>未复现</b>。画面一律<b>自绘 / 自生成</b>，<b>不盗用论文原图</b>。平台发布由用户本人执行。</div>
+</header>
+
+<div class="kp-box">
+  <b>为什么选它（TOP-1 判据 · 科普口径）</b>：
+  <ol>
+    <li><b>大众能懂</b>：几乎人人都见过钟表，「AI 画的钟永远是 10:10」是网上流传已久的<b>热门梗</b>，天然有画面。</li>
+    <li><b>反直觉 + 有结论</b>：偏差不是「随机画错」，而是模型<b>照抄了训练照片（广告表）的习惯</b>；并给出可操作结论「<b>光在提示词里写时间不够，附一张参考图才管用</b>」。</li>
+    <li><b>可讲清</b>：四个提示条件（A/B/C/D）+ 一张对比图就能讲完，不必搬全篇。</li>
+    <li><b>有真实来源</b>：arXiv ID + abs 链接 + 公开数据/代码（Zenodo）。</li>
+  </ol>
+  ⚠️ <b>未夸大声明</b>：本文结论<b>仅限「指针时钟」这一受控案例</b>，<b>不是</b>「AI 不行」的通用结论；脚本中不出现「SOTA / 颠覆 / 突破」等未经原文出处的措辞。
+</div>
+
+<div class="card">
+  <div class="row"><div class="k">论文原题</div><div class="v orig">It's Always 10:10: Reference Images Break a Bias That Prompts Only Dent</div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Luca Cazzaniga（<b>单作者</b>；arXiv 元数据<b>未给机构</b>，本页不臆测）</div></div>
+  <div class="row"><div class="k">提交日期</div><div class="v">2026-10-08（v1，<code>published=2026-10-08T06:23:21Z</code>）｜ 主分类 <code>cs.CV</code></div></div>
+  <div class="row"><div class="k">arXiv abs</div><div class="v"><a href="https://arxiv.org/abs/2610.11320">https://arxiv.org/abs/2610.11320</a></div></div>
+  <div class="row"><div class="k">数据 / 代码</div><div class="v">原文 <code>comment</code>：<code>16 pages, 5 figures, 6 tables. Data and code: doi:10.5281/zenodo.23224681</code></div></div>
+  <div class="row"><div class="k">来源证据</div><div class="v">本机 <b>HTTP 200</b> + <code>Content-Type: application/atom+xml</code> + 有 <code>published</code>（证据 <code>research/raw/2026-10-10-idlist-kp-r85.json</code>；另见当日日报 <code>research/daily/2026-10-10.html</code>）</div></div>
+</div>
+
+<h2 class="sec">🎞 分镜脚本（固定五段：钩子 → 问题 → 方法 → 结果 → 意义）</h2>
+
+<table>
+  <tr>
+    <th style="width:44px">镜号</th>
+    <th style="width:96px">时间轴（时长）</th>
+    <th style="width:64px">段</th>
+    <th style="width:26%">口播文案</th>
+    <th style="width:30%">画面描述（自绘 / 自生成）</th>
+    <th style="width:20%">屏幕文字 / 字幕</th>
+    <th style="width:14%">音效 / BGM</th>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">你注意到了吗？AI 画的钟表，指针几乎永远停在 10:10。这不是巧合。</td>
+    <td>极简纯白背景。两到三只<b>手绘/矢量</b>表盘并排，指针都停在 10:10（两根针构成「笑脸」）。最后一帧快速<b>叠化</b>出更多表盘，全部是 10:10，形成「复读」感。</td>
+    <td>大字字幕：<b>AI 画的钟 = 永远 10:10？</b></td>
+    <td>轻电音鼓点「嗒」三下（对应三只表），BGM 起：轻快、悬疑。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–22s（12s）</td>
+    <td class="act">问题</td>
+    <td class="vo">广告里的钟表模特几乎都摆成 10:10——两根指针像一张笑脸。</td>
+    <td>手绘/生成式示意图：左半屏是一个<b>广告橱窗/杂志版面</b>剪影（不复制真实广告照片），右半屏放大「10:10 是笑脸」的指针角度示意，用箭头标出两根针。</td>
+    <td>字幕：<b>为什么是 10:10？= 广告的「笑脸」习惯</b></td>
+    <td>BGM 延续；加一声「叮」，伴随笑脸示意出现。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>22–30s（8s）</td>
+    <td class="act">问题</td>
+    <td class="vo">AI 学的正是海量这样的照片，于是把「习惯」也学了去：你让它画 3 点，它还是给你 10:10。</td>
+    <td>分屏动效：左边「提示词：画一个 3 点整的钟」→ 右边生成的钟仍是 10:10，并在表盘上叠一个红色<b>叉号</b>；再配一条「照片 → 模型 → 输出」的极简流向箭头。</td>
+    <td>字幕：<b>它学到的不是「时间」，是「习惯」</b></td>
+    <td>一声轻微「错误提示」音；BGM 稍压低，留悬念。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>30–52s（22s）</td>
+    <td class="act jz">方法</td>
+    <td class="vo">这篇论文要问：这个偏差有多强？能不能修好？作者在 Magnific 平台的 52 个生图模型上做实验：</td>
+    <td>极简信息图：屏幕上方出现「52 个模型」计数动画；下方是两个大字问句「偏差有多强？」「能不能修好？」。背景是几何网格 + 表盘线稿（<b>自绘</b>），不使用论文原图。</td>
+    <td>字幕：<b>52 个模型 · 一个受控实验</b></td>
+    <td>BGM 转「推进」情绪；一个上行滑音（whoosh）。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>52–80s（28s）</td>
+    <td class="act jz">方法</td>
+    <td class="vo">每张图放三个钟，要求分别显示 2:35、6:50、11:20，只改时间部分的提示词——A 组不说时间，B 组用数字写，C 组用文字描述指针位置，D 组再附一张参考表盘；再由 AI 读者盲读近 1800 张图打分。</td>
+    <td>核心信息图（<b>自绘</b>）：一张「三个钟」的示意卡，分别标注 2:35 / 6:50 / 11:20；下方四张并排小卡铺开 A/B/C/D 四条件：A「(不给时间)」、B「数字 11:20」、C「文字描述指针」、D「文字 + 参考表盘」。四卡逐个高亮。</td>
+    <td>字幕：<b>A 不说 · B 数字 · C 文字 · D 参考表盘</b>（右下角小字：AI 盲读 1,799 张）</td>
+    <td>每张卡出现配一声轻「咔」；BGM 节奏感增强。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">6</span></td>
+    <td>80–95s（15s）</td>
+    <td class="act">结果</td>
+    <td class="vo">结果很直白：不说时间时，67% 的图三只钟全是 10:10；用数字写时间，也只有三成多的图全对。</td>
+    <td>柱状图动效（<b>自绘</b>）：两根柱——「A 不给时间」柱顶写 <b>67%</b>（全在 10:10）；「B 数字」柱写 <b>34%</b>（三钟全对）。数值随柱升起逐字弹出。</td>
+    <td>字幕：<b>A：67% 全 10:10 ｜ B：仅 34% 全对</b></td>
+    <td>柱升配「咻」；67% 处加一个低沉音强调「高」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">7</span></td>
+    <td>95–105s（10s）</td>
+    <td class="act">结果</td>
+    <td class="vo">真正的转折在 D 组——附上参考表盘后，全对率跳到 75%，几乎消灭了「整张图都是 10:10」。</td>
+    <td>同一柱状图新增第三根柱「D 参考表盘」飙到 <b>75%</b>，并高亮上升箭头（D−B：+37 点）。画面右侧小窗展示「参考表盘」缩略示意（<b>自绘</b>）。</td>
+    <td>字幕：<b>D：75% 全对（+37 点）</b></td>
+    <td>「上升」音效 + 清脆「叮」，BGM 到达最亮。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">8</span></td>
+    <td>105–120s（15s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">模型不是在「想」，而是在「复刻它见过的习惯」。AI 的每一处偏差，背后往往都藏着一个人类世界的梗。想让它听话，光靠嘴说不够，还得给样本。论文链接见简介。</td>
+    <td>回到第一帧的表盘，但这次指针指向正确时间；画面上浮出论文标题（<b>英文原题</b>）与作者名。结尾定格：一行字 + arXiv 编号，渐暗。</td>
+    <td>字幕：<b>「它不是在思考，是在复刻习惯」</b> ＋ <code>arXiv:2610.11320</code> ＋「论文链接见简介」</td>
+    <td>BGM 收尾淡出，尾音留白 0.5s。</td>
+  </tr>
+</table>
+
+<div class="ok-box">
+  <b>口播合计</b>：36 + 28 + 48 + 46 + 111 + 47 + 50 + 76 ≈ <b>445 字</b>（按 180–200 字/分 ≈ <b>2 分 13 秒～2 分 28 秒</b>；本脚本按 <b>120s</b> 剪辑，口播可与画面节奏微调）。<b>五段配比</b>：钩子 0–10s ｜ 问题 10–30s ｜ 方法 30–80s ｜ 结果 80–105s ｜ 意义 105–120s。
+</div>
+
+<h2 class="sec">🛠 制作提示（画面 / 配音 / 字幕）</h2>
+<div class="card">
+  <ul>
+    <li><b>画面一律自绘 / 自生成</b>：本脚本所有示意图（表盘、柱状图、信息卡）均<b>自绘或 AI 生成</b>；🚫 <b>不得</b>截取或复用论文原图（含 <code>figures</code> 与 Zenodo 数据集里的图片）。</li>
+    <li><b>风格建议</b>：白底 + 单一强调色（紫 / 蓝），扁平矢量表盘，字号大、留白多，适配抖音竖屏二次裁剪（核心信息置于画面<b>中央安全区</b>）。</li>
+    <li><b>配音</b>：中文普通话，语速 180–200 字/分；「10:10」「2:35 / 6:50 / 11:20」「67% / 34% / 75%」等数字可略作停顿强调。</li>
+    <li><b>字幕</b>：关键数字与结论上大字幕；片头片尾固定挂「<b>论文解读 · 非官方 · 非结论</b>」。片尾必须给出 <b>arXiv 链接（放简介）</b> 与<b>论文原题（英文另起一行）</b>。</li>
+    <li><b>配乐</b>：建议使用平台<b>免费/已授权</b>曲库，避免版权风险。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🚦 合规红线自检</h2>
+<div class="note">
+  <ul>
+    <li>✅ <b>明标「论文解读」</b> + 给 <b>arXiv abs 链接</b> + <b>英文原题</b>照抄不改写。</li>
+    <li>✅ <b>不夸大</b>：全片<b>不出现</b>「SOTA / 颠覆 / 突破」；结论限定在「指针时钟」这一受控案例，并说明数字为<b>作者自报、未复现</b>。</li>
+    <li>✅ <b>不盗用论文原图</b>：画面全部自绘 / 自生成。</li>
+    <li>✅ <b>不编造数据</b>：67% / 34% / 75% / +37 点 / 1,799 张 / 52 模型 / A–D 四条件，全部取自原文摘要与元数据。</li>
+    <li>✅ <b>不为话题性曲解论文</b>：不使用「AI 撒谎 / AI 失控」等原文未支持的引申。</li>
+    <li>⚠️ <b>栏目名提醒</b>：《两分钟论文》<b>是已有知名频道名</b>，为避免品牌混淆，建议本栏目<b>另起名字</b>（如「两分钟看懂一篇论文」等）；本文件沿用任务书暂用名，<b>发布前请用户确认</b>。</li>
+    <li>ℹ️ <b>V3（真正生成视频）仍待用户确认工具链</b> —— 本文件只到<b>脚本 / 分镜</b>，<b>不做成片</b>；平台发布由<b>用户本人</b>执行。</li>
+  </ul>
+</div>
+
+<footer>
+  <div>🎬 <b>research 线 ·《论文两分钟》分镜脚本</b> ｜ 日期 <b>2026-10-10</b> ｜ 文件 <code>research/video/SCENES/10_10.html</code> ｜ 当日 TOP-1</div>
+  <div>论文：<i>It's Always 10:10: Reference Images Break a Bias That Prompts Only Dent</i>（Luca Cazzaniga）｜ <a href="https://arxiv.org/abs/2610.11320">arXiv:2610.11320</a> ｜ 来源指令：<code>WATCH_RESEARCH_TASK.md</code> 第 5 批（P0）</div>
+  <div>⚠️ <b>论文解读 · 非官方 · 非结论</b>；数字为<b>作者自报、未复现</b>；画面<b>自绘 / 自生成</b>，不盗用论文原图。本页为<b>自包含单文件</b>（内联 CSS，零外链）。</div>
+  <div>🧭 当日日报：<a href="../../daily/2026-10-10.html">research/daily/2026-10-10.html</a>（5/5）｜ 分镜索引：<a href="index.html">SCENES/index.html</a> ｜ 口播稿范式参考：<code>research/video/scripts/</code></div>
+</footer>
+</div>
+</body>
+</html>

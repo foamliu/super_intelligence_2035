@@ -2833,7 +2833,7 @@
 | 2026-10-10 | 2610.11333 | TokenBank: Financial Infrastructure for AI Services | cs.AI | 候选 |
 | 2026-10-10 | 2610.11332 | ReCal: Calibrating Structured Pruning for On-Policy Distillation Recovery | cs.CL | 候选 |
 | 2026-10-10 | 2610.11328 | Mine Odyssey: Benchmarking Spatial Agentic Intelligence in the Wild | cs.AI | 候选 |
-| 2026-10-10 | 2610.11320 | It's Always 10:10: Reference Images Break a Bias That Prompts Only Dent | cs.CV | 候选 |
+| 2026-10-10 | 2610.11320 | It's Always 10:10: Reference Images Break a Bias That Prompts Only Dent | cs.CV | 收录 |
 | 2026-10-10 | 2610.11318 | Finsler Flow Matching: Dynamics-Aware Geodesic Interpolation for Single-Snapshot Trajectory Inference | cs.AI | 候选 |
 | 2026-10-10 | 2610.11317 | DivMoE: Fine-Grained MoE Upcycling via Cross-Domain Expert Composition | cs.AI | 候选 |
 | 2026-10-10 | 2610.11313 | NP-Hardness of Minimizing Neurons in Two-Hidden-Layer ReLU Neural Networks | cs.LG | 候选 |
@@ -3047,7 +3047,7 @@
 | 2026-10-10 | 2610.10623 | Recurrent Self-Improvement: Dynamic Cross-Loop On-Policy Distillation for Looped Language Models | cs.LG | 候选 |
 | 2026-10-10 | 2610.10622 | WorldBench: Evaluating LLMs on Three.js Voxel World Generation | cs.GR | 候选 |
 | 2026-10-10 | 2610.10621 | Self-Organization from Constrained Geometric Radiation | cs.LG | 候选 |
-| 2026-10-10 | 2610.10620 | When AI Finds Hidden Messages, Does It Report? | cs.CR | 候选 |
+| 2026-10-10 | 2610.10620 | When AI Finds Hidden Messages, Does It Report? | cs.CR | 收录 |
 | 2026-10-10 | 2610.10619 | TestJack: Should you trust the results in coding benchmarks? Agentic Coding Benchmarks Auditing via Evaluator Evolution | cs.SE | 候选 |
 | 2026-10-10 | 2610.10617 | MRCert: Towards Post-deployment Patch Robustness Certification for Adversarially Patched Samples via Type-specific Masking | cs.CR | 候选 |
 | 2026-10-10 | 2610.10616 | When Routing Reveals Membership: Privacy Leakage from MoE Router Telemetry | cs.LG | 候选 |
