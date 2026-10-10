@@ -19,7 +19,8 @@
    - ✅ **但 Muon 无需自行实现**：**直接用上游 `emerging_optimizers`**（`pip install emerging_optimizers`；**Megatron-Core 的 `core/optimizer/muon.py` 就是它的 shim**）接入 `r9_train.py`（torch.optim 风格 API）。**参考 pretrain 最近的 dist_muon 实验**：`run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md`「**dist_muon 实测验证（三路对比）**」节 · `doc/BaiZe-ISEDA2027/report_pretrain_muon_vs_adamw.html §8`。
    - **超参基线（照 pretrain）**：Muon = `momentum=0.95` / **nesterov** / `ns_steps=5`；AdamW 对照 = `β=(0.9,0.95)`、`ε`、`wd=0.1`（`r9_train.py` 现值 `betas=(0.9,0.95), eps=1e-6`）。
    - **LR**：pretrain 的 `dist_muon` **沿用与 AdamW 相同的 `lr=1e-3`（未单独扫 LR）** ⇒ vision **可先沿用 `lr=5e-4`**；但**仍做小规模 lr 探针**（如 ~200–500 步 ×2 点）作保险，loss 轨迹异常再扫；**记录探针协议**。
-   - ⚠️ **「layer-wise distributed `dist_muon`」的严格语义**（整层分给各 DP rank、正交化与梯度同步重叠）**在纯 DDP 下拿不到**；若必须复刻该语义 ⇒ 需把该臂**迁到 Megatron-Bridge 栈**（成本大）→ **列为可选：先报可行性/成本，待运维拍板**，🚫 **不要擅自迁移**。
+   - ⚠️ **「layer-wise distributed `dist_muon`」的严格语义**（整层分给各 DP rank、正交化与梯度同步重叠）**在纯 DDP 下拿不到**；若必须复刻该语义 ⇒ 需把该臂**迁到 Megatron-Bridge 栈**（成本大）。
+   - ➡️ **本轮执行口径（用户 2026-10-10 确认「好的」）**：**V2 按 (A) 库级 Muon 执行** —— 即 **`emerging_optimizers` 接入现有 DDP trainer**；**(B) 严格 `dist_muon` 本轮只报「可行性 + 成本」**，🚫 **不实施**（待运维拍板再定）。
 3. **V3 · 全量数据**：**GPIC 已全量完成**（train 8000 + val 32 + test 128）⇒ 用**当前全量**训练。
    - **明确列出所用子集与规模**，并与 baseline 的 `total_shards=10787` 快照对比。
    - 步数保持 **187,101**（若改则说明理由）。
