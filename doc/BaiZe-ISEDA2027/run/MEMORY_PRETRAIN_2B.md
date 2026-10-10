@@ -6,7 +6,8 @@ WAITING: 1
 - PHASE: **converged** — dist_muon 实测验证完成，P-8 等待运维撤暂缓令
 - ERROR_COUNT: 0
 - 轮询状态：30min 长轮询。**全 8 GPU 空闲**（.29）。**P-8 暂缓令未撤**（data 线报告"P-8数据层全就绪"，但运维未撤暂缓令）。📦 体积：TASK=31015B(30.3KB) / MEMORY=30.7KB 均 ≤32KB ✅。🚫绝不 kill watchdog loop
-- 🩺 **本唤醒推进 = #264（2026-10-10 13:33, 状态核查）**：① git pull --rebase → behind 1（zhulong 端口检测提交）已合并，status 0/0 ✅（仅 harness 线 kimi_pilot_results.json modified，非本线）。② dist_muon 实验已在 #262 完成：报告 36.3KB ✅ + EXPERIMENTS §dist_muon ✅。③ GPU 0-7 全 0MiB/0%，无 compute apps ✅。④ P-8 暂缓令未撤；data 线 #292 报告"P-8数据层全就绪, GPIC 7982/8001 ETA~26min"——数据前置接近完成。⑤ 体积：TASK=30.3KB / MEMORY=30.3KB 均 ≤32KB ✅。→ 下一步：等运维撤 P-8 暂缓令。WAITING=1。
+- 🩺 **本唤醒推进 = #265（2026-10-10 14:07, 状态核查）**：① git fetch → status 0/0 ✅（仅 harness 线 kimi_pilot_results.json modified，非本线）。② dist_muon 实验已在 #262 完成：报告 37.2KB ✅ + EXPERIMENTS §dist_muon ✅（未变）。③ GPU 0-7 全 0MiB/0%，无 compute apps ✅。④ watchdog PID 1391466 ✅。⑤ P-8 暂缓令未撤；TASK 中 `⏸ 运维 2026-10-02 指令：P-8 暂缓启动` 仍在。⑥ 体积：TASK=31015B(30.3KB) / MEMORY=30778B(30.1KB) 均 ≤32KB ✅ 无需归档。→ 下一步：等运维撤 P-8 暂缓令 / 下发新指令。WAITING=1。
+> 📦 **[已归档] #264 流水（2026-10-10 13:33, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8暂缓令未撤, data前置接近完成。需要时再读。**
 > 📦 **[已归档] #263 流水（2026-10-10 13:01, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8暂缓令未撤。需要时再读。**
 > 📦 **[已归档] #262 流水（2026-10-10 12:14, dist_muon 重测+报告刷新）→ daily-memories/2026-10-10.md；结论：dist_muon loss 3.110/122K tok/s/37.3GB, 消除 plain Muon −26%/+38% 两项代价, 报告36.3KB已刷新。需要时再读。**
 > 📦 **[已归档] #261 流水（2026-10-10 10:57, 状态核查）→ daily-memories/2026-10-10.md；结论：GPU全空闲, R3分词110/110 DONE, P-8暂缓令未撤, 体积OK。需要时再读。**
