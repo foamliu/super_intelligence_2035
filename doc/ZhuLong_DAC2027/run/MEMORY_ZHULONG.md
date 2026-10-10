@@ -168,75 +168,13 @@ WAITING: 1
 
 - [2026-10-08 01:19] [⏩ 已滚出] 🩾 C1.wo_retrieval r2 健康巡检 #5（仍在跑）详情已原文搬入 daily-memories/2026-10-08.md（rolled-from-MEMORY 2026-10-08 19:55）。
 
-- [2026-10-08 01:58] [✅ C1.wo_retrieval r2 收割 86.1%→r3 启动] §7 步骤 A（PHASE=running）：`pgrep '^bash scripts/run_cline_script'`→**无输出**（r2 PID 3132954 gone, log mtime 01:23, size 31.8MB）→ 进入打分。**打分**：`grep -E 'pass \(|PASS_RATE|评估结果汇总' /tmp/ABL_wo_retrieval_r2.log`→PASS_RATE=0.8608 / **136/158 pass (86.1%)** / generated 149 ok/4 fail/0 exec_err, **0 Forbidden✅**, batch 2026_1007_221959。**r2=86.1%** ✅。**核验**：`grep -c Forbidden`=0✅；ACCESS RESTRICTED 990×（反作弊 hook live✅ canary PASS）；pro-fp4 mentions 12290 / other-model leak 0✅；run_code 6312 calls（wo_retrieval: 検索 OFF / run_code ON✅）。**.env wo_retrieval 态确认**：line226 EDA_MCP_TOOLS_DISABLED=clean_workdir,probe_pyAether_code,cimi_search,cimi_fetch,vqa,query_memory_bank,**get_api_details,search_apis,search_apis_by_keyword**（検索3件套 OFF✅ / run_code 不在禁用表→ON✅）→ 同臂不切 set_ablation。ROUND 2→3≤5→启 r3。**r3 启动**（复用 r2 姿势 + 显式 https_proxy）：`cd $BASE_DIR && export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework && export CLI_DATA_DIR=/nasdata/app.e0031982/.cline_prof4_eval/data && export PYTHON=$BASE_DIR/venv/bin/python && export https_proxy=http://172.19.92.23:13128 && setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_wo_retrieval_r3.log 2>&1 < /dev/null &`→**PID 3591824**（ppid=1 setsid detached✅，stat=Ss）batch **2026_1008_0158** 8worker/158/-n，log=/tmp/ABL_wo_retrieval_r3.log。**canary+验证**：① /proc/3591824/environ 四 override✅ EVAL_FW_DIR/CLI_DATA_DIR=.cline_prof4_eval/data/PYTHON/https_proxy=172.19.92.23:13128；② 0 Forbidden✅；③ ACCESS RESTRICTED 30×（反作弊 hook live✅ canary PASS）；④ pro-fp4 mentions 96 / other-model leak 0✅；⑤ log 178KB 活跃增长✅（run_code 66 calls，wo_retrieval 検索 OFF / run_code ON✅）。**infra**：8653/8664/8665/8669/8090/9006 全 OPEN✅ /nasdata 368G free✅ /home 99%/5.7G（非阻断，我方产物落 /nasdata）。**运维复检**：legacy 组件 loop PID 2455466 alive✅（指令五满足）；ops relay PID 2665949 alive✅（`.last_run_id`=21=inbox RUN_ID 21，无新指令，指令八满足）；zhulong_loop PID 3579323 alive✅；conductor 未触碰（红线）。**已收割**：Phase B 4/4✅；C1.pure_llm 5/5=10.5±1.9%✅；C1.rag 5/5=71.8±2.5%✅；C1.wo_retrieval r1=74.1%/r2=86.1%✅，r3 运行中。**状态**：STAGE=C1 / CONFIG=wo_retrieval / ROUND=3 / PHASE=running / WAITING=1 / ERROR_COUNT=0。退出等下轮唤醒 harvest r3（pgrep 无输出→grep PASS_RATE /tmp/ABL_wo_retrieval_r3.log 取 r3 Pass@1→记成绩→ROUND≤5 启 r4，⚠️ r4/r5 启动必带 EVAL_FW_DIR override + CLI_DATA_DIR pro-fp4 隔离 + https_proxy）。
+- [2026-10-08 ~ 10-10 10:18] [⏩ 已滚出] 10-08~10-10 早段流水（wo_retrieval r3-r5巡检 / full r1-r3 / r2-retest#1~#5 / pro-fp4 403 BLOCKED×11 / 换专属沙盒指令(一)→(二)）全部详情见 daily-memories/2026-10-08.md ~ daily-memories/2026-10-10.md。
 
-- [2026-10-08 04:31] [⏩ 已滚出] 🩾 C1.wo_retrieval r3 健康巡检 #4（仍在跑）详情已原文搬入 daily-memories/2026-10-08.md（rolled-from-MEMORY 2026-10-08 05:05）。
-
-- [2026-10-08 05:45] [⏩ 已滚出] 🩾 C1.wo_retrieval r4 健康巡检 #1（仍在跑）详情已原文搬入 daily-memories/2026-10-08.md（rolled-from-MEMORY 2026-10-08 07:01）。
-
-- [2026-10-08 06:24] [⏩ 已滚出] 🩾 C1.wo_retrieval r4 健康巡检 #2（仍在跑）详情已原文搬入 daily-memories/2026-10-08.md（rolled-from-MEMORY 2026-10-08 07:01）。
-
-- [2026-10-08 07:01] [⏩ 已滚出] 🩾 C1.wo_retrieval r4 健康巡检 #3（仍在跑）详情已原文搬入 daily-memories/2026-10-08.md（§07:01，rolled-from-MEMORY 2026-10-08 08:18）。
-
-- [2026-10-08 07:37] [⏩ 已滚出] 🩾 C1.wo_retrieval r4 健康巡检 #4（仍在跑）详情已原文搬入 daily-memories/2026-10-08.md（§07:37，rolled-from-MEMORY 2026-10-08 08:18）。
-
-- [2026-10-08 08:59 ~ 10-09 02:20] [⏩ 已滚出] 10-08~10-09早段流水（wo_retrieval r5巡检×3 / full r1巡检×2 / full r2首启EVAL_FAILED+巡检×11 / full r3巡检×4 / r4首跑infra作废 / pro-fp4 403 BLOCKED）全部详情见 daily-memories/2026-10-08.md 及 daily-memories/2026-10-09.md。
-
-- [2026-10-09 03:02] [⏩ 已滚出] 🚨 BLOCKED续: pro-fp4仍403→继续WAITING等恢复 详情已原文搬入 daily-memories/2026-10-09.md（§03:02）。
-
-- [2026-10-09 03:40] [⏩ 已滚出] 🚨 BLOCKED续: pro-fp4仍403→继续WAITING等恢复(第3次复检) 详情已原文搬入 daily-memories/2026-10-09.md（§03:40）。
-
-- [2026-10-09 04:16] [⏩ 已滚出] 🚨 BLOCKED续: pro-fp4仍403→继续WAITING等恢复(第4次复检) 详情已原文搬入 daily-memories/2026-10-09.md（§04:16）。
-- [2026-10-09 04:49] [⏩ 已滚出] 🚨 BLOCKED续：pro-fp4仍403→继续WAITING等恢复(第4次复检后) 详情已原文搬入 daily-memories/2026-10-09.md（§04:49）。
-- [2026-10-09 05:24] [⏩ 已滚出] 🚨 BLOCKED续(第5次复检)：pro-fp4 直连仍 HTTP 403 → 继续 WAITING=1；⚠️发现代理伪装 200+HTML 假阳性 详情已原文搬入 daily-memories/2026-10-09.md（§05:24，rolled-from-MEMORY 2026-10-09 06:00）。
-
-- [2026-10-09 06:00] [⏩ 已滚出] 🚨 BLOCKED续(第6次复检)：pro-fp4 直连仍 HTTP 403 → 继续 WAITING=1，状态不变 + proxy自检方法订正(取真loop PID) 详情已原文搬入 daily-memories/2026-10-09.md（§06:00，rolled-from-MEMORY 2026-10-09 06:37）。
-
-- [2026-10-09 06:37] [⏩ 已滚出] 🚨 BLOCKED续(第7次复检)：pro-fp4 直连仍 HTTP 403 → 继续 WAITING=1，状态不变 + proxy自检通过(真loop PID3579323) 详情已原文搬入 daily-memories/2026-10-09.md（§06:37，rolled-from-MEMORY 2026-10-09 07:10）。
-
-- [2026-10-09 07:45] [⏩ 已滚出] 🚨 BLOCKED续(第9次复检)：pro-fp4 直连仍 HTTP 403 → 继续 WAITING=1，状态不变 详情已原文搬入 daily-memories/2026-10-09.md（§07:45，rolled-from-MEMORY 2026-10-09 08:25）。
-
-- [2026-10-09 08:25] [⏩ 已滚出] 🚨 BLOCKED续(第10次复检)：pro-fp4 直连仍 HTTP 403 → 继续 WAITING=1，状态不变 详情已原文搬入 daily-memories/2026-10-09.md（§08:25，rolled-from-MEMORY 2026-10-09 09:01）。
-
-- [2026-10-09 09:01] [⏩ 已滚出] 🚨 BLOCKED续(第11次复检)：pro-fp4 直连仍 HTTP 403 → 继续 WAITING=1 详情已原文搬入 daily-memories/2026-10-09.md（§09:01，rolled-from-MEMORY 2026-10-09 09:45）。
-
-- [2026-10-09 09:45~21:23] [⠈ 已滚出] r4启动→12次巡检→沙盒故障kill→standby→修复→重跑r4→4次巡检。全部详情见 daily-memories/2026-10-09.md（§09:45~§21:23）。
-
-- [2026-10-09 22:00] [⏩ 已滚出] ✅ r4收割=81.0%(128/158,4 timeouts)✅有效→r2-retest#1已启动。详情已原文搬入 daily-memories/2026-10-09.md（§22:00）。
-
-- [2026-10-09 22:44] [⏩ 已滚出] ⚠️→✅ r2-retest#1收割=❌作废[infra]→infra恢复→重跑r2-retest#2 详情已原文搬入 daily-memories/2026-10-09.md（§22:44，rolled-from-MEMORY 2026-10-10 00:05）。
-
-- [2026-10-09 23:27] [⏩ 已滚出] ⠈ 巡检(r2-retest#2运行中)：pgrep=PID2946594→eval仍在跑→退出。87/158 详情已原文搬入 daily-memories/2026-10-09.md（§23:27，rolled-from-MEMORY 2026-10-10 00:05）。
-
-- [2026-10-10 00:05] [⏩ 已滚出] ⠈ 巡检(r2-retest#2运行中·不动作)：114/158 进行中 详情已原文搬入 daily-memories/2026-10-10.md（§00:05，rolled-from-MEMORY 2026-10-10 00:48）。
-
-- [2026-10-10 00:48] [⏩ 已滚出] ⠈ 巡检(r2-retest#2运行中·不动作)：135/158 进行中 详情已原文搬入 daily-memories/2026-10-10.md（§00:48）。
-
-- [2026-10-10 01:22] [⏩ 已滚出] ⠈ 巡检(r2-retest#2运行中·不动作)：151/158近完成 详情已原文搬入 daily-memories/2026-10-10.md（§01:22）。
-
-- [2026-10-10 02:01] [⏩ 已滚出] ⠈ 巡检(r2-retest#2·cline跑完进入grading·不动作) 详情已原文搬入 daily-memories/2026-10-10.md（§02:01）。
-
-- [2026-10-10 02:35] [⏩ 已滚出] ✅ r2-retest#2收割=69.6%❌未达75%→三项前置复检全过→r2-retest#3已启动 详情已原文搬入 daily-memories/2026-10-10.md（§02:35）。
-
-- [2026-10-10 03:22] [⏩ 已滚出] ⠈ 巡检(r2-retest#3运行中·不动作)：109/158,0 Forbidden✅ 详情已原文搬入 daily-memories/2026-10-10.md（§03:22）。
-
-- [2026-10-10 03:59] [⏩ 已滚出] ⠈ 巡检(r2-retest#3运行中·不动作)：126/158,0 Forbidden✅ 详情已原文搬入 daily-memories/2026-10-10.md（§03:59，rolled-from-MEMORY 2026-10-10 04:33）。
-
-- [2026-10-10 04:33] [⏩ 已滚出] ⠈ 巡检(r2-retest#3运行中·不动作) 详情已原文搬入 daily-memories/2026-10-10.md（§04:33）。
-
-- [2026-10-10 05:09] [⠈ 已滚出] ⠈ 巡检(r2-retest#3运行中·grading阶段·不动作) 详情已原文搬入 daily-memories/2026-10-10.md（§05:09，rolled-from-MEMORY 2026-10-10 07:01）。
-
-- [2026-10-10 06:21] [⏩ 已滚出] ✅ r2-retest#3收割=❌作废(infra:grading 4端口全150s超时,无PASS_RATE)→infra复检全过→r2-retest#4已启动(PID459294) 详情已原文搬入 daily-memories/2026-10-10.md（§06:21）。下轮第一件事：pgrep→有输出=巡检退出;无输出=收割r2-retest#4(grep -E 'pass \\(|评估结果汇总|timeout' /tmp/ABL_full_r2_retest4.log|tail -10)→判据timeout≤10且≥75%→r2'有效→替换r2→启r3-retest→r3'有效→启r5→5/5=[r1=88.0,r2',r3',r4=81.0,r5]算mean±std→回填锚点→PHASE=just_finished。
-
-- [2026-10-10 07:01] [⠈ 已滚出] ⠈ 巡检(r2-retest#4运行中·code-gen阶段·不动作) 详情已原文搬入 daily-memories/2026-10-10.md（§07:01，rolled-from-MEMORY 2026-10-10 07:39）。
-
-- [2026-10-10 07:39] [⠈ 已滚出] ⠈ 巡检(r2-retest#4运行中·code-gen阶段·不动作)：129/158 详情已原文搬入 daily-memories/2026-10-10.md（§07:39）。
-- [2026-10-10 08:13] [⠈ 已滚出] ⠈ 巡检(r2-retest#4运行中·code-gen 141/158·不动作) 详情已原文搬入 daily-memories/2026-10-10.md（§08:13）。
-- [2026-10-10 08:48] [⠈ 已滚出] ⠈ 巡检(r2-retest#4运行中·grading阶段·不动作) 详情已原文搬入 daily-memories/2026-10-10.md（§08:48）。
-- [2026-10-10 09:25] [⏩ 已滚出] ⠈ r2-retest#4收割=68.4%❌未达75%→infra②不过(8654宕)→WAITING=1 详情已原文搬入 daily-memories/2026-10-10.md（§09:25，rolled-from-MEMORY 2026-10-10 12:52）。〔换专属沙盒后作废〕
-- [2026-10-10 10:18] [⏩ 已滚出] ⠈ port8654恢复→三项全过→r2-retest#5启动(PID1471081) 详情已原文搬入 daily-memories/2026-10-10.md（§10:18，rolled-from-MEMORY 2026-10-10 12:52）。〔换专属沙盒后被ops kill作废〕
 - [2026-10-10 11:36] 🔄 运维指令(一)换专属沙盒：全部C1.full作废→三项前置复检(①pro-fp4 HTTP=200✅curl 1.3s ②新端口8663/8666/8667/8670全CLOSED❌Connection refused,HTTP=000 ③eval IDLE✅r2-retest#5被ops kill,ps无残留,无Pass@1)→**pre-check②不过→不启动r1→WAITING=1等新沙盒恢复**。.env已改为8663/8666/8667/8670+e0031982_1~4@10.129.32.75。旧端口8650-8654仍OPEN(404)但红线🚫禁回退。/home=5.4G⚠️。状态更新 ROUND=1/ERROR_COUNT=0(归零)/全部C1.full成绩作废。下轮第一件事：复检8663/8666/8667/8670全OPEN→canary→启C1.full r1(四override,log /tmp/ABL_full_r1.log);仍CLOSED→WAITING=1。
 - [2026-10-10 12:15] [⏩ 已滚出] ⠈ 复检(端口仍全CLOSED·不动作) 同§12:52口径复检（端口仍全CLOSED,状态不变）详情见 daily-memories/2026-10-10.md（§12:52）。
 - [2026-10-10 12:52] [⏩ 已滚出] ⠈ 复检(端口仍全CLOSED·不动作·第3次) 详情已搬入 daily-memories/2026-10-10.md（§12:52）。
 - [2026-10-10 13:27] ⠈ 复检(端口部分恢复·不动作·第4次)：三项前置复检 ①pro-fp4 HTTP=200✅(1.18s,key e13f4f37+/cloud/v1) ②**8667=404(OPEN✅新恢复!)，8663/8666/8670仍CLOSED❌(HTTP=000)**→仅1/4端口OPEN，需4/4才能并行分片→旧端口8650-8654仍OPEN(404)红线🚫禁回退 ③eval IDLE✅(pgrep无输出) → **pre-check②不过(3/4 CLOSED)→不启动r1→WAITING=1**。真loop PID3579323(PPID=1)environ https_proxy✅。/home=5.6G⚠️(99%满,低于8G)。.env确认=8663/8666/8667/8670+e0031982_1~4@10.129.32.75。状态不变 STAGE=C1/CONFIG=full/ROUND=1/PHASE=running/WAITING=1/ERROR_COUNT=0。**进展**：8667自12:52后恢复(沙盒正逐端口上线)。下轮第一件事：复检8663/8666/8670→全OPEN+三项全过→canary→启C1.full r1(四override,log /tmp/ABL_full_r1.log);仍有CLOSED→继续WAITING=1。
 - [2026-10-10 14:04] ✅ 三前置全过→C1.full r1 已启动(PID2518857)：①pro-fp4 HTTP=200✅(1.29s,full key 02_...e13f4f37-836a-...+/cloud/v1) ②**新端口 8663/8666/8667/8670 全 OPEN✅(全 HTTP=404,非超时)**@10.129.32.75(13:27 仅 8667 OPEN→14:04 全恢复) ③eval IDLE✅(pgrep '^bash scripts/run_cline_script'无输出;r2-retest#4 已 kill 确认)。四 override 核验 /proc/2518857/environ 全在(EVAL_FW_DIR/CLI_DATA_DIR/PYTHON/https_proxy)✅。.env=8663/8666/8667/8670+e0031982_1~4✅。log /tmp/ABL_full_r1.log 已 3093 行/0 Forbidden✅/0 pass(尚在 code-gen 阶段)。真loop PID3579323 environ https_proxy✅(自检通过无需重启)。/home=5.5G⚠️(99%满,非三前置项)。状态不变 STAGE=C1/CONFIG=full/ROUND=1/PHASE=running/WAITING=1/ERROR_COUNT=0。下轮第一件事：pgrep→有输出=巡检退出;无输出=收割 r1(grep -E 'pass \(\|评估结果汇总\|timeout' /tmp/ABL_full_r1.log\|tail -10)→判据 timeout≤10 且 Pass@1≥75%→有效→启 r2(/tmp/ABL_full_r2.log)→r3→r4→r5→5/5 算 mean±std→回填锚点→PHASE=just_finished。
+- [2026-10-10 15:35] 🔄 运维指令(二)执行：r1=88.0%✅保留作锚点（不重跑），r2/r3/r4/r5 旧成绩全作废→换专属沙盒 8663/8666/8667/8670 workdir e0031982_1~4 重跑。exec_code.py+run_on_sandbox.py 已 patch 加 host 字段（新沙盒必需）。沙盒实测 4/4 全过✅（run_code 实跑 print("hello")→4端口全 successful✅）。C1.full r2_new 已启动(PID2953852,batch2026_1010_153503,log /tmp/ABL_full_r2_new.log)：四 override /proc/2953852/environ✅ / .env=8663/8666/8667/8670✅ / 0 Forbidden✅ / ACCESS RESTRICTED=10 canary PASS✅ / 0 host-error✅。状态 ROUND=2/PHASE=running/WAITING=1/ERROR_COUNT=0。
+
+- [2026-10-10 16:55] ⠈ 巡检(r2_new 运行中·code-gen 阶段·不动作)：eval PID2953852 alive, log 132688 行/mtime 16:55(活跃), 0 Forbidden✅, 0 host-error✅, ACCESS RESTRICTED=601(canary live✅), 149 MCP timeout(60s,code-gen 正常重试), 0 pass(尚未 grading)。四 override /proc/2953852/environ✅。真loop PID3579323 environ https_proxy✅(自检通过)。状态不变 STAGE=C1/CONFIG=full/ROUND=2/PHASE=running/WAITING=1/ERROR_COUNT=0。下轮第一件事：pgrep→有输出=巡检退出;无输出=收割 r2_new(grep -E 'pass \\(|PASS_RATE|评估结果汇总|timeout' /tmp/ABL_full_r2_new.log|tail -10)→判据 timeout≤10 且 Pass@1≥75%→有效→启 r3_new(log /tmp/ABL_full_r3_new.log)→r4_new→r5_new→5/5=[r1=88.0(保留),r2_new,r3_new,r4_new,r5_new]算 mean±std→回填锚点→PHASE=just_finished。
