@@ -12,11 +12,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅R3全量分词110/110DONE(1483.91B tok/5.94TB)+✅R3投料前污染扫描30/30DONE(60K docs,0命中)→P-8数据层全就绪+GPIC train 7944/8001(99.3%,ETA~57tar)
+PHASE:        ✅R3全量分词110/110DONE(1483.91B tok/5.94TB)+✅R3投料前污染扫描30/30DONE(60K docs,0命中)→P-8数据层全就绪+GPIC train 7946/8001(99.3%,ETA~55tar,~18h→Oct11 06:00)
 已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43; s_step归因(MBS16:8.6×,166ms); Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); zh分词8/8✅(112.47B); 论文更新(4+5节,main.pdf 0err); l1_en_hq分词12/12✅(152.17B); ultrax分词s34-s43✅(30.97B); en_base分词s24-s33✅(206.76B); ✅投料前污染采样扫描(10K docs,0命中); ✅全量污染扫描(30 parquet×5K=150K docs,0命中); ✅④Ultra-FineWeb核实; ✅R3全量分词110/110DONE(1483.91B tok/5.94TB); ✅R3投料前污染扫描30/30DONE(60K docs,0命中,累计220K docs全0命中)→P-8数据层全就绪
-当前动作:     唤醒289(11:24@.12) R3投料前污染扫描✅30/30DONE(L3 10+Code 10+Math 10=30 parquet×2K=60K docs,0命中,contam_scan_r3.log+summary已生成),CONTAMINATION_CHECK.md已更新(累计220K docs 0命中→P-8数据层全就绪);GPIC train=7944/8001(+3 since 288,活PID144981[ppid=3525273],latest=07943.tar,128test✅,ETA~57tar);load=40/224,disk 83%37T free✅;6目录盘点:①Ultra-FineWeb 197G/162pq✅524.43B ②L3 1.8T/1764pq✅40/40=658.91B/2.64T ③Code 1.2T/1121pq✅30/30=550.07B/2.20T ④Math 515G/1823pq✅40/40=274.92B/1.10T ⑤SFT-2605 298G/1504jsonl✅20.96B ⑥SFT-Agent 51G/50jsonl✅8.04B
-下一步:       ①GPIC续下(train 7944/8001,~57tar remaining,ETA~19h@~3/h); ②en_v1_4排队等运维放行(GPIC完成后,用户操作); ③P-8数据层全就绪→等运维指示投料
-阻塞:         GPIC下载进行中(train 7944/8001,~57tar remaining); en_v1_4排队等GPIC完成+用户放行
+当前动作:     唤醒290(11:59@.12) P-8数据层全就绪(R3分词110/110✅+污染扫描220K docs 0命中✅,无活分词/扫描进程);GPIC train=7946/8001(+2 since 289,活PID144981[ppid=3525273,etimes~5.7d],latest=07945.tar,128test✅,55tar remaining,rate~3/h,ETA~18h→Oct11~06:00);load=40/224,disk 83%37T free✅;无新运维指令(git fetch=up to date);体积TASK=28.7KB/MEMORY=29.1KB均✅;6目录盘点同289(全完成)
+下一步:       ①GPIC续下(train 7946/8001,~55tar remaining,ETA~18h→Oct11~06:00); ②en_v1_4排队等运维放行(GPIC完成后,用户操作); ③P-8数据层全就绪→等运维指示投料
+阻塞:         GPIC下载进行中(train 7946/8001,~55tar remaining); en_v1_4排队等GPIC完成+用户放行
 ERROR_COUNT:  1
 ```
 
@@ -44,9 +44,11 @@ ERROR_COUNT:  1
 
 > 📦 唤醒271-272 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3分词59-60/110巡检+GPIC 7453-7489+6目录盘点）
 
-- [11:24] **唤醒289**：①本机=`.12`,load=40.11/224。②R3投料前污染扫描:**✅30/30DONE**(原24/30因set -e早退,补扫6 files[L3 en_qa+en_ms + Math L2p×2 + L3×2],**全部0命中**,30 parquet×2K=60K docs,contam_scan_r3.log+summary已生成),CONTAMINATION_CHECK.md已更新(新增R3扫描3行+累计小结:base 10K+全量150K+R3 60K=**220K docs全0命中→P-8数据层全就绪**)。③**GPIC train=7944/8001**(+3 since 288@10:33,活PID144981[ppid=3525273],latest=07943.tar,**128test✅**,1.incomplete,~57tar remaining,rate~3/h→ETA~19h)。④git fetch(proxy)=up to date(无data新指令,最新commit=7a1120b4 vision 11:09)。⑤6目录盘点:①Ultra-FineWeb 197G/162pq✅524.43B ②L3 1.8T/1764pq✅40/40=658.91B/2.64T ③Code 1.2T/1121pq✅30/30=550.07B/2.20T ④Math 515G/1823pq✅40/40=274.92B/1.10T ⑤SFT-2605 298G/1504jsonl✅20.96B ⑥SFT-Agent 51G/50jsonl✅8.04B。⑥📦体积:TASK=28.7KB/MEMORY=28.4KB✅(无需归档)。下载线心跳：base✅全满|GPIC train 7944/8001(活PID144981,+3,~3tar/h,ETA~19h)|R3✅110/110DONE+contam scan✅30/30(220K docs 0命中→P-8数据层全就绪)。
+- [11:59] **唤醒290**：①本机=`.12`,load=40.16/224。②P-8数据层全就绪(R3分词110/110✅+污染扫描220K docs 0命中✅),无活分词/扫描进程。③**GPIC train=7946/8001**(+2 since 289@11:24,活PID144981[ppid=3525273,etimes~5.7d],latest=07945.tar,**128test✅**,55tar remaining,rate~3/h,ETA~18h→Oct11~06:00)。④git fetch(proxy)=up to date(无data新指令)。⑤📦体积:TASK=28.7KB✅/MEMORY=29.1KB✅(无需归档)。⑥disk:/nas_train 83%(37T free),/nas_inference 79%(9.5T free)。⑦下一步:GPIC续下→en_v1_4排队→等运维投料指示。下载线心跳：base✅全满|GPIC train 7946/8001(活PID144981,+2,~3tar/h,ETA~18h→Oct11 06:00)|P-8数据层✅全就绪。
 
-- [10:33] **唤醒288**：①本机=`.12`,load=39.69/224。②R3分词巡检:**✅110/110DONE**(+1 since 287,**code_s8✅COMPLETE**=33.24B tok/10.26M docs/133GB .bin/.idx/.json all finalized at 10:08,process gone),**0活进程**,110.idx+110.json(L3=40[658.91B]+Code=30[**550.07B**]+Math=40[274.92B]=**1483.91B**),.bin=**5.94TB**(L3=2.64T+Code=2.20T+Math=1.10T),disk 83%37T free✅。③**R3投料前污染扫描已启动**(PID1757345,setsid,30files×2K=60K docs,5/30files done[4 L3+1 L3_zh],**0命中**,log=contam_scan_r3.log,ETA~30min)。④**GPIC train=7941/8001**(+2 since 287@09:57,活PID144981[ppid=3525273],latest=07940.tar,**128test✅**,ETA~1h→~11:30)。⑤**6目录盘点**:①Ultra-FineWeb 197G/162pq✅524.43B(产物已清) ②L3 1.8T/1764pq✅40/40=658.91B/2.64T ③Code 1.2T/1121pq✅30/30=550.07B/2.20T ④Math 515G/1823pq✅40/40=274.92B/1.10T ⑤SFT-2605 298G/1504jsonl✅20.96B(产物已清) ⑥SFT-Agent 51G/50jsonl✅8.04B(产物已清)。⑥📦体积:TASK=28.0KB/MEMORY=27.1KB✅(无需归档)。下载线心跳：base✅全满|GPIC train 7941/8001(活PID144981,+2,ETA~1h→~11:30)|R3✅110/110DONE(1483.91B tok/5.94TB,contam scan running 5/30 0命中)。
+> 📦 唤醒288 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3 110/110DONE+contam scan启动+GPIC 7941/8001）
+
+- [11:24] **唤醒289**：①本机=`.12`,load=40.11/224。②R3投料前污染扫描:**✅30/30DONE**(原24/30因set -e早退,补扫6 files[L3 en_qa+en_ms + Math L2p×2 + L3×2],**全部0命中**,30 parquet×2K=60K docs,contam_scan_r3.log+summary已生成),CONTAMINATION_CHECK.md已更新(新增R3扫描3行+累计小结:base 10K+全量150K+R3 60K=**220K docs全0命中→P-8数据层全就绪**)。③**GPIC train=7944/8001**(+3 since 288@10:33,活PID144981[ppid=3525273],latest=07943.tar,**128test✅**,1.incomplete,~57tar remaining,rate~3/h→ETA~19h)。④git fetch(proxy)=up to date(无data新指令,最新commit=7a1120b4 vision 11:09)。⑤6目录盘点:①Ultra-FineWeb 197G/162pq✅524.43B ②L3 1.8T/1764pq✅40/40=658.91B/2.64T ③Code 1.2T/1121pq✅30/30=550.07B/2.20T ④Math 515G/1823pq✅40/40=274.92B/1.10T ⑤SFT-2605 298G/1504jsonl✅20.96B ⑥SFT-Agent 51G/50jsonl✅8.04B。⑥📦体积:TASK=28.7KB/MEMORY=28.4KB✅(无需归档)。下载线心跳：base✅全满|GPIC train 7944/8001(活PID144981,+3,~3tar/h,ETA~19h)|R3✅110/110DONE+contam scan✅30/30(220K docs 0命中→P-8数据层全就绪)。
 
 - [09:57] **唤醒287**：①本机=`.12`,load=41.14/224。②R3分词巡检:**109/110done**(+1 since 286,**code_s9✅COMPLETE**=34.49B tok/9.49M docs/137.8GB .bin/.idx/.json all finalized,process gone at~09:56),**1活=1code**[s8(PID3752686,.bin=131.9GB=95.7%of s10 ref,mtime actively writing)],ppid=1✅,0 fatal,nice=10,stat=RNl,runtime=23.6h(10:23 Oct9启动),.bin=**5.5TB**(l3=2.4T+code=2.0T+math=1.1T,code含growing),**109.idx+109.json**(l3=40[658.91B]+code=29done[**516.83B**]+math=40[274.92B]=**1450.66B done**+1code growing[~35B est]=**~1486B total**),L3✅40/40,math✅40/40,**code 29/30done**,1rem:s8 **all PHP**(s8=131.9G/137.8G ref=95.7%,ETA~1h→~11:00),disk 83%38T free✅。③**GPIC train=7939/8001**(+19 since 286@09:08,~42tar/h,活PID144981[ppid=3525273],latest=07938.tar,**128test✅**,0.incomplete,ETA~1.5h→~11:20)。④run_contam_scan_r3.sh就绪(30files×2K=60K docs,待code 30/30后启动→写CONTAMINATION_CHECK.md→报"P-8数据层全就绪")。⑤**6目录盘点**:①Ultra-FineWeb 197G/162pq✅524.43B(产物已清) ②L3 1.8T/1764pq✅40/40=658.91B ③Code 1.2T/1121pq🔄29/30=516.83B+growing ④Math 515G/1823pq✅40/40=274.92B ⑤SFT-2605 298G/1504jsonl✅20.96B(产物已清) ⑥SFT-Agent 51G/50jsonl✅8.04B(产物已清)。⑥git fetch(proxy)=up to date(无data新指令)。⑦📦体积:TASK=28.0KB/MEMORY=27.2KB✅(无需归档)。下载线心跳：base✅全满|GPIC train 7939/8001(活PID144981,+19,~42tar/h,ETA~1.5h→~11:20)|R3 109/110done(.bin=5.5T,1450.66B+growing tok,L3✅+Math✅,code 1活 ETA:s8~1h→~11:00)。
 
@@ -162,11 +164,11 @@ ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilizati
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | **✅R3全量分词110/110DONE(1483.91B tok/5.94TB) + ✅R3投料前污染扫描30/30DONE(60K docs,0命中) → P-8数据层全就绪 + GPIC train 7944/8001(ETA~57tar)** |
-| WAITING | 1（P-8数据层全就绪; GPIC train 7944/8001 ~57tar remaining; en_v1_4排队等放行GPIC完成后） |
+| PHASE | **✅R3全量分词110/110DONE(1483.91B tok/5.94TB) + ✅R3投料前污染扫描30/30DONE(60K docs,0命中) → P-8数据层全就绪 + GPIC train 7946/8001(ETA~55tar,~18h)** |
+| WAITING | 1（P-8数据层全就绪; GPIC train 7946/8001 ~55tar remaining; en_v1_4排队等放行GPIC完成后） |
 | ERROR_COUNT | 1（s9崩溃重启后已完成） |
 | 节点 | `10.239.2.12`（GPIC下载PID=144981活, .12 GPU全忙vision R9, .29 GPU全忙pretrain, R3分词全完成0活进程, contam scan已完成） |
-| 更新 | 2026-10-10 11:24 |
+| 更新 | 2026-10-10 11:59 |
 
 ## 看板（按推荐执行顺序）
 
