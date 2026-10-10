@@ -908,7 +908,7 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 | E1fair (baseline) | 62.34 ± 0.01% | 49.70% | 34.10% | 37.68% | — | — |
 | V1 (res 336) | ⏸ deferred (user: "明天再说") | — | — | — | — | — |
 | V2 (Muon) | **N/A — COLLAPSED** (C1=0.9569@step4200) | N/A | N/A | N/A | N/A | ❌ Muon incompatible with contrastive loss |
-| V3 (full data) | 🔄 training (step ~70.2k/230k ~30%, ETA ~10:30 Oct 11) | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
+| V3 (full data) | 🔄 training (step ~84.7k/230k ~37%, ETA ~10:35 Oct 11) | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
 
 ### 9.4 ④ Epoch Scaling (operator instruction 2026-10-10 ④ · most decision-relevant)
 
@@ -942,7 +942,7 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 
 **Cost**: 2ep ~80 GPU·h / ~10h wall; 4ep ~160 GPU·h / ~20h wall.
 
-**Status**: ⏳ Pending V3 eval completion. Watcher `v3_eval_watcher.sh` will auto-eval V3; next agent wake launches ④-2ep after V3 results collected.
+**Status**: ⏳ Pending V3 eval completion. Watcher `v3_eval_watcher.sh` will auto-eval V3; **chained watcher `post_v3_chain.sh` launched 2026-10-11 05:19** (PID 117389) — will auto-run: ② ×5 probe on E1fair → ④-2ep training → ④-2ep eval. Scripts ready: `run_e4_2ep.sh` (374,202 steps, E1fair snapshot total_shards=10787), `run_probe_x5.sh` (×5 epochs + wd/LR sweep on E1fair ckpt).
 
 ### 9.6 ① Same-Model Zero-Shot + ② k-NN Probe Results (E1fair, 2026-10-11)
 
