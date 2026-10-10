@@ -6,15 +6,17 @@ WAITING: 1
 
 > 🆕 **2026-10-10 晚（运维直令 · 最高优先）**：外部评审质疑 E1fair ProtB=62.34% 偏低 → 运维下发 ③→①→②→④ 顺序指令。**③ 口径修订**（✅ DONE）+ **① 同模型 zero-shot eval**（✅ DONE: E1fair 34.10%, E2fair 35.45%）+ **② k-NN probe 对照**（✅ DONE: k=20→37.68%）+ **变体实验 V2(Muon)→V3(全量数据)→V1(分辨率暂缓)**。
 > 🔴 **V2 Muon COLLAPSED at ALL tested LRs** (2026-10-11): lr=5e-4 collapsed@step2100 (C1→0.99), lr=1e-4 collapsed@step4200 (C1→0.9569). 14 PROBE points show monotonic C1 rise (0.18→0.96, zero reversals). Root cause: Newton-Schulz orthogonalization amplifies contrastive collapse mode. AdamW's per-parameter adaptive scaling naturally damps this. ❌ **Muon incompatible with AIMv2-style contrastive+reconstruction objective**. C2 guard bug also found & fixed (`gap<=0.005`→`abs(gap)<=0.005`, r9_train.py:909). Full collapse analysis in `EXPERIMENTS_VISION.md §9.2`.
-> ✅ **V3 Full GPIC Data TRAINING LAUNCHED (02:06 Oct 11)**: 230,598 steps (1 epoch of 118.1M pairs), AdamW, same fair recipe as E1fair. Screen `v3_fulldata`. Step 1330: loss=3.40, contrast=3.25, ~5175 img/s, lr=3.33e-04 (warmup). ETA ~13:30 Oct 11 (~11.5h). All 8 GPUs at 60-79% util. Healthy — loss decreasing normally, no collapse signs.
+> ✅ **V3 Full GPIC Data TRAINING HEALTHY** (02:06 Oct 11 launch): 230,598 steps (1 epoch of 118.1M pairs), AdamW, same fair recipe. Screen `v3_fulldata`. **Step ~21k/230k (~9%)**, loss=0.37, C1=0.40, C2_gap=+0.18, ~5200 img/s, lr=4.94e-04 (warmup done). ETA ~08:40 Oct 11 (~6h remaining). All 8 GPUs 53-91% util. **No collapse** — C1 stable ~0.38-0.42, loss_ema decreasing 0.46→0.38.
+> ✅ **V3 eval watcher launched** (`v3_eval_watcher.sh`): monitors training process, auto-runs ProtB(3 seeds)+ProtA+zero-shot+k-NN when training completes. Log: `/tmp/v3_eval_watcher.log`.
+> ✅ **④ epoch scaling pre-registered** in `EXPERIMENTS_VISION.md §9.4`: 2ep(374,202 steps) first, 4ep(748,404) if 2ep≥70%. Pre-registered criteria: ≥70%→budget insufficient; ~63% flat→feature ceiling. Pending V3 eval completion.
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **V3 full GPIC data training running** (launched 02:06 Oct 11). 230,598 steps, ETA ~13:30. ③①② DONE. V2 Muon ❌ COLLAPSED (3 attempts, all LRs). **Next**: V3 eval → ④ epoch scaling. |
-| WAITING | 1（🔄 V3 full data training in progress (step 1330/230598, ~5175 img/s, loss=3.40 healthy). V2 Muon collapsed at all LRs (C1→0.9569). Awaiting V3 results.） |
-| ERROR_COUNT | 12（①~⑨ 同前 ⑩ V2 Muon lr=5e-4 collapse ⑪ C2 guard bug ⑫ **V2 Muon lr=1e-4 collapse@step4200** (C1=0.9569, 3rd attempt also collapsed — Muon fundamentally incompatible with contrastive loss)） |
-| BUDGET_USED | ~609 GPU·h (previous) + V2 Muon 3 attempts+eval(~3 GPU·h) + V3 full data(~11.5h×8=~92) ≈ **~704 GPU·h** |
-| 更新 | **2026-10-11 02:06（V3 full data launched after V2 Muon collapse）**: V2 Muon lr=1e-4 3rd attempt collapsed@step4200 (C1=0.9569>0.95, guard fired). 14 PROBE points: monotonic C1 rise 0.18→0.96, zero reversals. Loss decreasing (7.39→7.30) but features collapsing. Root cause: Newton-Schulz orthogonalization amplifies contrastive collapse. Eval on collapsed ckpt killed (wasting GPU). V3 full data launched: 230,598 steps, 118.1M pairs, AdamW, same fair recipe. Step 1330: loss=3.40, ~5175 img/s, healthy. 📦 体积：TASK=35.4KB(>32KB,需归档) / MEMORY=check |
+| PHASE | 🔄 **V3 full data training step ~21k/230k (~9%), healthy**. V3 eval watcher running. ④ epoch scaling pre-registered. ③①② DONE. V2 Muon ❌ COLLAPSED. **Next**: V3 eval (auto) → collect results → ④-2ep launch. |
+| WAITING | 1（🔄 V3 training ~9% done, ETA ~08:40 Oct 11. Eval watcher running. Next wake: check V3 eval results → update §9.5 → launch ④-2ep.） |
+| ERROR_COUNT | 12（①~⑨ 同前 ⑩ V2 Muon lr=5e-4 collapse ⑪ C2 guard bug ⑫ V2 Muon lr=1e-4 collapse@step4200） |
+| BUDGET_USED | ~704 GPU·h (V3 full data ~92 GPU·h in progress) |
+| 更新 | **2026-10-11 02:53（V3 training healthy at step ~21k + eval watcher launched + ④ pre-registered）**: V3 step 20860/230598, loss=0.37, C1=0.40, C2_gap=+0.18, ~5200 img/s, no collapse. Created `v3_eval_watcher.sh` (auto-evals ProtB/A/zs/kNN when training done). Pre-registered ④ epoch scaling §9.4 (2ep=374,202 steps, 4ep=748,404). 📦 体积：TASK=31.6KB / MEMORY=26.2KB（均在限内） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
@@ -270,6 +272,7 @@ WAITING: 1
 
 - [00:15 Oct11] **V1 Muon lr=5e-4 training LAUNCHED** (later collapsed at step 2100, see below).
 - [01:23 Oct11] **✅ C2 guard bug FIXED → V1 Muon lr=1e-4 2nd relaunch**: 🔴 C2 guard bug found: `gap <= 0.005` (r9_train.py:909) catches ALL negative gaps — but `gap = diag - off`, negative gap means off-diagonal > diagonal = model IS learning (not collapse). lr=1e-4 1st run was killed at step 2100 by this false alarm (step 2100 = first probe after warmup=2000). ✅ Fixed to `abs(gap) <= 0.005` (py_compile verified). ✅ Old screen `v2_muon` killed, old outputs (vision_fused.pt + train.log) cleaned. ✅ Re-launched in screen `v2_muon` (01:23). Step 140: loss=7.39, contrast=6.31, patch_mse=1.08. Step 300 PROBE: C1=0.1755, C2_gap=-0.0023 (diag=0.0026, off=0.0049 — off>diag, learning). ~2740 img/s, ~200ms/iter, ETA ~11:00 Oct 11 (~9.9h). Guard activates at step≥2000; if |gap|>0.005 by then → safe for full 187k steps.
+- [02:53 Oct11] **V3 training healthy at step ~21k/230k + eval watcher launched + ④ pre-registered**: V3 loss=0.37, C1=0.40, C2_gap=+0.18, ~5200 img/s, no collapse (C1 stable 0.38-0.42). Created `v3_eval_watcher.sh` (auto-evals ProtB/A/zs/kNN when training done, log `/tmp/v3_eval_watcher.log`). Pre-registered ④ epoch scaling in `EXPERIMENTS_VISION.md §9.4` (2ep=374,202 steps → if ≥70% launch 4ep; ~63% flat → feature ceiling). V3 ETA ~08:40 Oct 11. 📦 TASK=31.6KB / MEMORY=26.2KB（均在限内）.
 
 ## 历史条目已滚动归档（2026-10-03 / 2026-10-06）
 

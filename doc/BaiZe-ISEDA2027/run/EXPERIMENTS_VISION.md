@@ -908,4 +908,38 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 | E1fair (baseline) | 62.34 ± 0.01% | 49.70% | — | — |
 | V1 (res 336) | ⏸ deferred (user: "明天再说") | — | — | — |
 | V2 (Muon) | **N/A — COLLAPSED** (C1=0.9569@step4200) | N/A | N/A | ❌ Muon incompatible with contrastive loss |
-| V3 (full data) | 🔄 training (ETA ~13:30 Oct 11) | ⏳ | ⏳ | ⏳ |
+| V3 (full data) | 🔄 training (step ~21k/230k, ETA ~08:40 Oct 11) | ⏳ | ⏳ | ⏳ |
+
+### 9.4 ④ Epoch Scaling (operator instruction 2026-10-10 ④ · most decision-relevant)
+
+> **Question**: Is E1fair ProtB=62.34% a budget limitation or a feature/objective ceiling?
+> **Design**: Same data/target/protocol/schedule as E1fair, only increase epoch count.
+> E1fair = 1 epoch (187,101 steps, 95.8M pairs). Test 2-epoch and (if needed) 4-epoch.
+
+| Field | Value |
+|:--|:--|
+| **Tested variable** | Epoch count: 1 → 2 (→ 4 if 2-epoch is informative) |
+| ④-2ep steps | **374,202** (= 2 × 187,101) |
+| ④-4ep steps | **748,404** (= 4 × 187,101), only if 2ep warrants |
+| Data | E1fair frozen snapshot (total_shards=10787, 95.8M pairs), **NOT** V3 full data |
+| Schedule | lr=5e-4, warmup=2000, cosine, min_lr=5e-5 (same as E1fair) |
+| Everything else | Identical to §9.0 baseline (AdamW, seed 1234, w512/d30, 224/p16, AIMv2-style) |
+| Output dir | `scaling_E4_2ep_ov2_w512_d30_p16_224` (and `_4ep_` if needed) |
+| Eval | ProtB 3 seeds + ProtA + zero-shot + k-NN (same suite as E1fair) |
+| GPU schedule | **After V3 eval completes** (shared .12 8-card) |
+
+**Pre-registered criteria**:
+- **Positive (2ep Δlp ≥ +7.66pp → lp ≥ 70%)**: Budget insufficient → 62.34% is NOT the ceiling. Launch 4ep to map trajectory.
+- **Moderate (2ep Δlp +1.5~7.66pp)**: Some gain from more training, diminishing returns. Decision pending.
+- **Null (|Δlp| < 1.5pp)**: 1 epoch is sufficient → feature/objective quality is the bottleneck, not budget.
+- **Negative (Δlp ≤ −1.5pp)**: More epochs hurt (overfitting on 95.8M pairs) → keep 1 epoch.
+
+**If 2ep ≥ 70%**: Launch 4ep (748,404 steps, ~18h, ~144 GPU·h) to complete lp-vs-epoch curve.
+**If 2ep < 70% but > 63.84%**: Report as "moderate gain, diminishing returns", do NOT launch 4ep unless operator requests.
+**If 2ep ~63% (flat)**: Conclude "feature/objective quality ceiling at this data scale" → no 4ep needed.
+
+**⚠️ Risk**: R12b precedent (2ep on 69.7M = 18.81% < R11-G 1ep on 18.5M = 19.76%) suggests multi-epoch on small data can overfit. However, E1fair data (95.8M) is 5.2× larger than R12b (18.5M) and uses AIMv2-style objective, so overfitting risk is lower.
+
+**Cost**: 2ep ~80 GPU·h / ~10h wall; 4ep ~160 GPU·h / ~20h wall.
+
+**Status**: ⏳ Pending V3 eval completion. Watcher `v3_eval_watcher.sh` will auto-eval V3; next agent wake launches ④-2ep after V3 results collected.
