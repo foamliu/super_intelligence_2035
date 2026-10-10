@@ -50189,5 +50189,38 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "scikit-learn__scikit-learn-15535",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 377.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_scikit-learn__scikit-learn-15535.json",
+      "stdout_tail": "           random_state.randint(0, 10, i))\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[\u2713] Find mutual_info_score and related input validation code\n[\u2713] Identify root cause of regression for object-dtype string arrays\n[\u2713] Implement minimal fix\n[\u2713] Run tests to verify fix\n\u001b[0m\n\n[run_single] model_patch: 3481 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_scikit-learn__scikit-learn-15535.json\n[run_single] cleanup: git reset --hard 70b0ddea992c01df1a41588fa9e2d130fb6b13f8\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 8,
+        "f2p_total": 8,
+        "p2p_pass": 52,
+        "p2p_total": 52
+      }
+    },
+    "classification": "resolved"
   }
 ]
