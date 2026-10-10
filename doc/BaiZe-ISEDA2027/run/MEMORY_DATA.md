@@ -12,18 +12,19 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🔄en_v1_4下载进行中(PID2535486,2769/56461 parquet,6/110 snapshots(5done+200/513in-progress),228GB,parallel 24+hf_transfer,实测8.9MB/s(38min avg),ETA~8.5天)+🔄85M部分完成(PID2171453,7715/12124 parquet=63.6%,27T/46.66T=57.8%,sa1b+zero250m未开始,obelics3851/5803=66%,实测13.2MB/s(38min avg),ETA~17天,用户自管)+✅GPIC全完成+✅R3全量分词110/110+✅污染扫描220K docs 0命中→P-8数据层全就绪
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43; s_step归因(MBS16:8.6×,166ms); Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); zh分词8/8✅(112.47B); 论文更新(4+5节,main.pdf 0err); l1_en_hq分词12/12✅(152.17B); ultrax分词s34-s43✅(30.97B); en_base分词s24-s33✅(206.76B); ✅投料前污染采样扫描(10K docs,0命中); ✅全量污染扫描(30 parquet×5K=150K docs,0命中); ✅④Ultra-FineWeb核实; ✅R3全量分词110/110DONE(1483.91B tok/5.94TB); ✅R3投料前污染扫描30/30DONE(60K docs,0命中,累计220K docs全0命中)→P-8数据层全就绪; ✅GPIC下载全部完成(train 8000+val 32+test 128+ref_stats 5); 🔄en_v1_4下载进行中(PID2535486,2769/56461,228GB,6/110 snapshots,parallel 24+hf_transfer,~8.9MB/s,ETA~8.5天); 🔄85M部分完成(PID2171453,7715/12124=63.6%,27T/46.66T=57.8%,sa1b+zero250m未开始,~13.2MB/s,ETA~17天,用户自管)
-当前动作:     唤醒304(21:33@.12) 并发下载巡检(85M+en_v1_4各自速度/ETA):85M PID2171453活(ppid=2000875,~79min),本地7715 parquet/27T(coyo1940✅+datacomp575✅+imagenet82✅+laioncn562✅+mint705✅+obelics3851/5803=66%部分,sa1b0+zero250m0未开始),1 .incomplete obelics/EN/part51(2.9GB,mtime21:33活跃),/proc/io write_bytes=58.5GB,25s采样Δ1.11GB→44.4MB/s(burst),38min avgΔ30.2GB→13.2MB/s,ETA~17天(19.66TB@13.2MB/s);en_v1_4 PID2535486活(ppid=1,~4.1h),2769 parquet/228GB/0 .incomplete,6/110 snapshots(5done+200/513 in snapshot6),/proc/io write_bytes=143.7GB,25s采样Δ807MB→30.8MB/s(burst),38min avgΔ20.3GB→8.9MB/s,log~6fpm+proxy 503自愈,ETA~8.5天(6.52TB@8.9MB/s字节口径)/~6.2天(53,692files@6fpm文件口径);争用38min avg合计~22.1MB/s;GPIC parent 3525273活(etimes=799408s,post-complete recheck);R3✅110/110;disk 37T free/83%;load 8.59/8.21/11.62;📦TASK=29.0KB✅/MEMORY=30.3KB✅
+PHASE:        🔄en_v1_4下载进行中(PID2535486,3026/56461 parquet,6/110 snapshots(5done+450/513in-progress),248GB,parallel 24+hf_transfer,实测9.6MB/s(38min avg),ETA~7.8天)+🔄85M部分完成(PID2171453,7721/12124 parquet=63.7%,27T/46.66T=57.8%,sa1b+zero250m未开始,obelics3857/5803=66%,实测11.1MB/s(38min avg),ETA~20天,用户自管)+✅GPIC全完成(8160tar)+✅R3全量分词110/110+✅污染扫描220K docs 0命中→P-8数据层全就绪
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43; s_step归因(MBS16:8.6×,166ms); Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); zh分词8/8✅(112.47B); 论文更新(4+5节,main.pdf 0err); l1_en_hq分词12/12✅(152.17B); ultrax分词s34-s43✅(30.97B); en_base分词s24-s33✅(206.76B); ✅投料前污染采样扫描(10K docs,0命中); ✅全量污染扫描(30 parquet×5K=150K docs,0命中); ✅④Ultra-FineWeb核实; ✅R3全量分词110/110DONE(1483.91B tok/5.94TB); ✅R3投料前污染扫描30/30DONE(60K docs,0命中,累计220K docs全0命中)→P-8数据层全就绪; ✅GPIC下载全部完成(8160tar,train8000+val32+test128); 🔄en_v1_4下载进行中(PID2535486,3026/56461,248GB,6/110snapshots,~9.6MB/s,ETA~7.8天); 🔄85M部分完成(PID2171453,7721/12124=63.7%,27T/46.66T=57.8%,sa1b+zero250m未开始,~11.1MB/s,ETA~20天,用户自管)
+当前动作:     唤醒305(22:11@.12) 并发下载巡检(85M+en_v1_4各自速度/ETA):85M PID2171453活(ppid=2000875,~115min),本地7721 parquet/27T(coyo1940✅+datacomp575✅+imagenet82✅+laioncn562✅+mint705✅+obelics3857/5803=66%部分,sa1b0+zero250m0未开始),0 .incomplete,/proc/io write_bytes=83.9GB,47s采样Δ1.61GB→34.3MB/s(burst),38min avgΔ25.4GB→11.1MB/s,ETA~20天(19.66TB@11.1MB/s);en_v1_4 PID2535486活(ppid=1,~4.7h),3026 parquet/248GB/0 .incomplete,6/110 snapshots(5done+450/513 in snapshot6),/proc/io write_bytes=165.5GB,47s采样Δ537MB→11.4MB/s(burst),38min avgΔ21.8GB→9.6MB/s,log~6.4fpm,ETA~7.8天(6.5TB@9.6MB/s字节口径)/~5.8天(53,435files@6.4fpm文件口径);争用38min avg合计~20.7MB/s;GPIC✅8160tar(12T)@/nas_inference;R3✅110/110;disk 37T free/83%;load 6.52/7.35/7.91;📦TASK=29.0KB✅/MEMORY=30.9KB✅(归档~5KB→daily-memories-data/2026-10-10.md)
 下一步:       ①监控en_v1_4+85M下载进度(每唤醒检查PID/parquet/.incomplete/磁盘); ②85M剩余~19.66TB含sa1b5.09T+zero250m4.77T+obelics~9.35T(用户自管,data线仅巡检); ③en_v1_4下满56461后必经check_contamination.py再报"en_v1_4下载完成"; ④P-8投料等运维指示
-阻塞:         en_v1_4下载进行中(ETA~8.5天@8.9MB/s,53692 remaining,~6.52TB); 85M下载进行中(ETA~17天@13.2MB/s,~19.66TB remaining,用户自管); P-8投料等运维指示
+阻塞:         en_v1_4下载进行中(ETA~7.8天@9.6MB/s,53435 remaining,~6.5TB); 85M下载进行中(ETA~20天@11.1MB/s,~19.66TB remaining,用户自管); P-8投料等运维指示
 ERROR_COUNT:  1
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [21:33] **唤醒304**(21:33@.12) 并发下载巡检:85M PID2171453活(~79min),7715 parquet/27T(obelics3851/5803=66%,sa1b+zero250m未开始),25s采样44.4MB/s(burst)/38min avg13.2MB/s,ETA~17天;en_v1_4 PID2535486活(~4.1h),2769 parquet/228GB,6/110 snapshots,25s采样30.8MB/s(burst)/38min avg8.9MB/s,ETA~8.5天;争用avg~22.1MB/s;GPIC parent活(post-complete);disk37T free;📦TASK=29.0KB✅/MEMORY=30.3KB✅
+> [22:11] **唤醒305**(22:11@.12) 并发下载巡检:85M PID2171453活(~115min),7721 parquet/27T(obelics3857/5803=66%,sa1b+zero250m未开始),47s采样34.3MB/s(burst)/38min avg11.1MB/s,ETA~20天;en_v1_4 PID2535486活(~4.7h),3026 parquet/248GB,6/110 snapshots(5done+450/513),47s采样11.4MB/s(burst)/38min avg9.6MB/s,log~6.4fpm,ETA~7.8天;争用avg~20.7MB/s;GPIC✅8160tar@/nas_inference;disk37T free;📦TASK=29.0KB✅/MEMORY=30.9KB✅(归档~5KB)
+> 📦 唤醒304 原文已归档 → `daily-memories-data/2026-10-10.md`（含并发下载巡检85M/en_v1_4各自速度ETA第二次采样+85M总量更正表更新）
 > 📦 唤醒303 原文已归档 → `daily-memories-data/2026-10-10.md`（含运维令更正85M总量46.7TB+并发下载巡检85M/en_v1_4各自速度ETA+HfApi逐子集核实表）
 > 📦 唤醒185-190 已归档 → `daily-memories-data/2026-10-07.md`（含BO方向bug调查全链+UltraX启动+zh分词启动详情）
 > 📦 唤醒201-203 已归档 → `daily-memories-data/2026-10-08.md`（含report_data_mix_summary.html产出+zh分词8进程启动+GPIC巡检）
@@ -142,59 +143,7 @@ ERROR_COUNT:  1
 | ⑤ | 下载白名单 | ✅ 停 en_v1_4，只下 l1_en_hq+zh+GPIC | 10-03 |
 | ⑥-⑦ | D-CLEAN-4 + LLaVA ckpt | ✅ 盘点：本用户可回收 ≈11.4TiB(含 LLaVA-OV 22TiB iter ckpt)，待运维拍板 | 10-04 |
 | ⑧ | LIT_IDEAS HTML | ✅ 产出 `LIT_IDEAS_2026-10-05.html`（52 entries/0 unverified/62% turnover），含成本专章+ISEDA投稿要求(4-6页) | 10-04 |
-### ⑨ 🔴 配比实验可行性核查（2026-10-05 运维分卡指令 · §0.6-B）— ✅ 可行性核查完成，⏳ 等 GPU2-7
-
-> 运维 2026-10-05 批准：`.29` GPU2-7（6 卡）归 data 跑配比实验，与 pretrain 推理评测并行。**起跑前置 = 先等 P-9.8 armB(FP8) 跑完**。
-
-**① GPU2-7 核查（10:26 实测原文）**：
-```
-ssh 10.239.2.29 'nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv'
-→ 8 个 python 进程各 ~72GB，PID 4044610-4044617
-ssh 10.239.2.29 'nvidia-smi --query-gpu=index,memory.used,memory.total,utilization.gpu --format=csv'
-→ 8 卡各 100% util / ~72GB used
-```
-**结论**：❌ **GPU2-7 当前不空** —— P-9.8 armB 已于 ~09:49 完成，但 pretrain 随即启动 **P-9.9**（tensorwise FP8 1000 步跑，PID 4044534，~10:02 起，**占满 8 卡**，ETA ~15:00）。**不 kill（铁律）**，等 P-9.9 完。
-
-**② 脚本/recipe 核查（✅ 全部就位）**：
-- `run/baize_p5b_train.sh`：8 卡 TP1/DP8 模板（GBS=1024/seq=4094/WSD/bf16）—— **已复制为** `run/baize_mix_train_template.sh`（改为 6 卡 TP1/DP6，CUDA_VISIBLE_DEVICES=2,3,4,5,6,7）
-- `code/BaiZe-ISEDA2027/pretrain_launcher.py`：✅ 支持 `--train-data-path` blend `[w, prefix, w2, prefix2, ...]`
-- `code/BaiZe-ISEDA2027/mamba2_hybrid_2b/preprocess_data.py`：✅ parquet→.bin/.idx（需 `*.snappy.parquet` 后缀；base 文件名是 `*.parquet`→已用软链加 `.snappy` 后缀解决）
-
-**③ 训练数据 .bin/.idx 核查（.29 上）**：
-| 源 | 状态 | 路径 | token 估 |
-|:--|:--|:--|--:|
-| `p5b_l3` (L3 web) | ✅ 16 片 | `data/p5b_l3/p5b_l3_train_s{0..15}.bin` | ~20.6B |
-| `anneal_code` | ✅ | `data/anneal_code.bin` (345M) | ~180M |
-| `anneal_math2` | ✅ | `data/anneal_math2.bin` (1.7G) | ~860M |
-| `ultrafineweb_l3_qa_700m` | ✅ | `data/ultrafineweb_l3_qa_700m.bin` (2.97G) | ~1.5B |
-| `tokenizer_eod` | ✅ | `data/tokenizer_eod` | — |
-| **base (ultrafineweb_en)** | 🔜 **分词中** | `data/mix_base/mix_base_train_s{0..3}` | ~21B（48 parquet→4 shard，4 进程并行 @ 10:32 起） |
-| **SFT-2605** | ❌ 未分词 | `/nas_inference/.../UltraData-SFT-2605/data/` (1504 jsonl, 298G) | 需写 jsonl→text 转换器（chat 格式，preprocess_data.py 只认 parquet content 列） |
-| **SFT-Agent-2609** | ❌ 未分词 | `/nas_inference/.../UltraData-SFT-Agent-2609/` (50 shard, 51G) | 同上 |
-
-**④ 环境（✅）**：`PYTHONPATH=/nas_train/app.e0031982/omegaconf_230`；python=`/nas_train/app.e0031982/miniforge3/envs/py310/bin`；tokenizer=`/nas_train/app.e0031982/models/DeepSeek-V4.1-Flash`；ssh .29 免密 ✅。
-
-**⑤ 已创建脚本**：`run/baize_mix_tokenize_base.sh`（base 分词，已启动）+ `run/baize_mix_train_template.sh`（6 卡训练模板，待 GPU 就绪）。
-
-**⑥ 下一步**：base 分词完成（ETA ~1-2h）→ 汇总 token 数 → P-9.9 完成（~15:00）→ GPU2-7 空 → 起 Stable 段 S0a 臂（base:code:math=88:8:4, 5000 步）→ ckpt→HF→lm_eval Table 2（8 集）。
-
-### ⑩ 运维三问（2026-10-07）— ✅ 已答（唤醒185,11:43@.12,只答不动）
-
-**① base 下完后 GPIC 加快？→ 没有显著加速。** base 完成于 08:16。GPIC tar 计数（按 mtime）：≤06:00=4846, ≤08:16=4945, ≤11:44=5103。前(06:00→08:16,2.27h)：99 tar→**43.6 tar/h**；后(08:16→11:44,3.47h)：158 tar→**45.5 tar/h**。差异+4.4%（噪声范围）→**没加速**。GPIC 走 stanford-vision-lab CDN（与 base 的 openbmb 独立）。剩余 2898 tar @~45.5/h→ETA~63.7h≈2.7天。
-
-**② base 还有其它数据待下载？→ 下载已全部结束。** 白名单：`en` 2048/2048✅(2.66TB,R1) · `l1_en_hq` 6000/6000✅(478GB,08:16) · `zh` 256/256✅(301GB) · GPIC 5103/8001(下载中)+128/128✅。白名单外(纪律不下载)：`en_v1_4`(stale 0-byte .incomplete **已清理**) · `UltraX-Preview`(未下)。**一句话：base「下载」已全部结束(3 config 全满)，只剩 GPIC 在下；后续 P-8 备料是「分词扩展 22.05B→~100B tok」不是下载。**
-
-**③ Round2 BO 为什么变慢？→ 没有变慢。** 波派发：8 trial 同时派发(8 GPU 各 1)，~38min 后同时完成→burst of 8 + 38min gap。波间 gap 稳定 37-40min(12 波全程一致)，rate=**12.5/h**。每 trial=train ~30min(15258步@MBS16/D=0.5B)+lm_eval 8集 ~8min(--limit 500)。vmstat .29:**wa=0**,iowait=0,CPU idle 87-94%→**无 I/O 争用**；harness 跑 /dev/shm 不抢 NFS。14 fail 全早期(t0-t13)，修复后连续 91✅。**结论：BO 没变慢，12.5/h 稳定；"变慢"印象来自 8 卡波派发的 bursty 节奏。** 95 remaining→ETA~7.6h→~19:20。
-
-## 状态头
-
-| 字段 | 值 |
-|:---|:---|
-| PHASE | **🔄en_v1_4下载进行中(PID2535486,2533/56461 parquet,208GB,parallel 24+hf_transfer,~9.6MB/s,ETA~6-8天) + 🔄85M部分完成(PID2171453,7708/12124=63.6%,27T/46.66T=57.8%,sa1b+zero250m未开始,~16.8MB/s,ETA~13-19天,用户自管) + ✅R3全量分词110/110DONE(1483.91B tok/5.5TB) + ✅R3投料前污染扫描30/30DONE(60K docs,0命中) → P-8数据层全就绪 + ✅GPIC全完成(8000/32/128)** |
-| WAITING | 1（P-8数据层全就绪; en_v1_4下载进行中2533/56461,ETA~6-8天; 85M部分完成7708/12124=63.6%,ETA~13-19天,用户自管; P-8投料等运维指示） |
-| ERROR_COUNT | 1（s9崩溃重启后已完成） |
-| 节点 | `10.239.2.12`（en_v1_4下载PID=2535486活, 85M下载PID=2171453活, GPIC download_it_pairs.sh PID=3525273 idle, .12 GPU全忙vision R9, .29 GPU全忙pretrain, R3分词全完成0活进程, contam scan已完成） |
-| 更新 | 2026-10-10 20:55 |
+> 📦 §⑨ 配比实验可行性核查 + §⑩ 运维三问 + 旧状态头（2026-10-05~07）已归档 → `daily-memories-data/2026-10-10.md`（唤醒305归档）；**结论**：⑨GPU2-7当时被P-9.8/9.9占满(现已释放)⑩三问已答(GPIC无加速/base下载全满/BO波次锯齿非I/O)。需要时再读。
 
 ## 看板（按推荐执行顺序）
 
