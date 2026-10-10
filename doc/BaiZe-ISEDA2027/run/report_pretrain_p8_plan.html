@@ -1,0 +1,139 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'><title>P-8 正式预训练计划书（44B）</title><style>body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#2c3e50;line-height:1.6}h1{color:#1a1a2e;border-bottom:3px solid #e74c3c;padding-bottom:10px}h2{color:#1a1a2e;border-bottom:1px solid #bdc3c7;padding-bottom:5px;margin-top:30px}table{border-collapse:collapse;width:100%;margin:15px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}th{background:#2c3e50;color:#fff}tr:nth-child(even){background:#ecf0f1}.green{color:#27ae60;font-weight:bold}.amber{color:#e67e22;font-weight:bold}.red{color:#e74c3c;font-weight:bold}.note{background:#fff3cd;border-left:4px solid #ffc107;padding:10px 15px;margin:15px 0;border-radius:4px}.info{background:#d1ecf1;border-left:4px solid #17a2b8;padding:10px 15px;margin:15px 0;border-radius:4px}.ok{background:#d4efdf;border-left:4px solid #27ae60;padding:10px 15px;margin:15px 0;border-radius:4px}.svgc{text-align:center;margin:20px 0}footer{text-align:center;color:#7f8c8d;margin-top:40px;font-size:12px;border-top:1px solid #bdc3c7;padding-top:10px}code{background:#f4f4f4;padding:2px 6px;border-radius:3px}small{color:#7f8c8d}</style></head><body>
+<h1>P-8 正式预训练计划书 · BaiZe Mamba2-Hybrid 2.220B</h1>
+<p style='color:#7f8c8d'>生成时间：2026-10-10 · 启动档 <strong class='red'>44B token</strong> · 状态：<span class='amber'>待撤暂缓令</span> · 8×H100 @ 10.239.2.29</p>
+
+<div class='info'><strong>TL;DR</strong>：P-8 是 Stage (i) 的正式预训练——<strong>从零</strong>训练 Mamba2-hybrid 2.220B，吃掉真实语料（base + L3 + code + math + SFT 退火）。<strong>44B token</strong>（≈2.0 天）是本次启动档（Chinchilla 下限）；优化器用 <code>dist_muon</code>，LR=1e-3 / WSD，<strong>Stable 段 88:8:4</strong> 与 <strong>Decay 段 64% SFT</strong> 两段各配一套比。数据层已全就绪，唯一卡点是运维的「P-8 暂缓令」尚未撤销。</div>
+
+<h2>1. 模型与并行配置</h2>
+<table><tr><th>项</th><th>值</th><th>来源</th></tr>
+<tr><td>架构</td><td>Mamba2-hybrid 2.220B（<code>--arch mamba2</code>，52 SSM + 4 Attn，56 层）</td><td>P-3</td></tr>
+<tr><td>并行</td><td>TP1 · DP8（无通信税）</td><td>P-9.7</td></tr>
+<tr><td>MBS × seq</td><td>2 × 4096（M = 8192）</td><td>P-9.7</td></tr>
+<tr><td>GBS</td><td>1024</td><td>P-5a / P-5b</td></tr>
+<tr><td>精度</td><td>bf16（FP8 在 TP1 上 s=0.91，已弃）</td><td>T3 Test 4</td></tr>
+<tr><td>实测吞吐</td><td>249K tok/s（last-100 步，1100 步长跑）</td><td>P-9.7</td></tr>
+</table>
+<div class='note'><strong>FP8 死路</strong>：TP1 上 M 上限 = MBS2×seq4096 = 8192，M ≪ FP8 交叉点 M*≈30–32K → overhead &gt; 加速。转正需 TP4 但通信税 −6% 吃掉净增益 → <strong>bf16·TP1·MBS2 即最终最优</strong>。</div>
+
+<h2>2. 优化器：dist_muon（默认定稿）</h2>
+<table><tr><th>优化器</th><th>loss@1000</th><th>吞吐</th><th>峰值显存</th><th>判定</th></tr>
+<tr><td class='green'>dist_muon（layer-wise distributed）</td><td class='green'>3.110</td><td>122K tok/s</td><td>37.3GB</td><td class='green'>✅ 默认</td></tr>
+<tr><td>plain Muon</td><td>3.11</td><td>87K（−26%↓）</td><td>53.8GB（+38%↓）</td><td>两项代价已消除</td></tr>
+<tr><td>AdamW 对照</td><td>4.00</td><td>118K</td><td>39.0GB</td><td>loss 落后 22.3%</td></tr>
+</table>
+<p>dist_muon 通过 layer-wise 分布式通信复用，<strong>同时拿到 Muon 的 loss 收敛优势（−22.3%）与接近 AdamW 的吞吐/显存</strong>，是 P-8 唯一默认优化器（已写入任务书最佳实践）。</p>
+
+<h2>3. 学习率调度（WSD）</h2>
+<p>LR = <strong>1e-3</strong> / min_lr = <strong>1e-5</strong>，调度 = <strong>WSD</strong>（warmup → stable → decay），比例 <strong>5%·85%·10%</strong>。warmup 线性 0→1e-3，stable 恒 1e-3，decay 线性 1e-3→1e-5。</p>
+<table><tr><th>档</th><th>总步数</th><th>warmup(5%)</th><th>stable(85%)</th><th>decay(10%)</th></tr>
+<tr><td class='red'>44B（启动档）</td><td class='red'>10,490</td><td>524</td><td>8,917</td><td>1,049</td></tr>
+<tr><td>100B（推荐）</td><td>23,842</td><td>1,192</td><td>20,266</td><td>2,384</td></tr>
+<tr><td>200B（上限）</td><td>47,684</td><td>2,384</td><td>40,532</td><td>4,768</td></tr>
+</table>
+<p><small>token/step = GBS1024 × seq4096 = 4,194,304 ≈ 4.19M。P-5b 在 GBS=1024 下 20B=4,770 步实测 warmup 238 / decay 477，验证 5%/10% 比例口径；任务书第 224/244 行的旧「warmup 250 / decay 500」是 Round 1 小规模残值，P-8 按比例换算不用旧值。</small></p>
+
+<div class='svgc'><svg width="760" height="260" viewBox="0 0 760 260" style="font-family:monospace;font-size:11px">
+<rect x="80" y="40" width="620" height="170" fill="none" stroke="#ddd"/>
+<line x1="80" y1="182.5" x2="700" y2="182.5" stroke="#eee"/>
+<text x="74" y="186" text-anchor="end" fill="#666">1e-5</text>
+<line x1="80" y1="40.0" x2="700" y2="40.0" stroke="#eee"/>
+<text x="74" y="44" text-anchor="end" fill="#666">1e-3</text>
+<path d="M80,182.5 C200,182.5 260,40 260,40 L596.5,40 L700,182.5" fill="none" stroke="#e74c3c" stroke-width="2"/>
+<line x1="260" y1="40" x2="260" y2="210" stroke="#e74c3c" stroke-dasharray="4 3" stroke-width="1"/>
+<line x1="596.5" y1="40" x2="596.5" y2="210" stroke="#e74c3c" stroke-dasharray="4 3" stroke-width="1"/>
+<text x="170" y="228" text-anchor="middle" fill="#333">warmup</text>
+<text x="170" y="200" text-anchor="middle" fill="#666">524 步 (5%)</text>
+<text x="428" y="228" text-anchor="middle" fill="#333">stable (恒 1e-3)</text>
+<text x="428" y="200" text-anchor="middle" fill="#666">8,917 步 (85%)</text>
+<text x="648" y="228" text-anchor="middle" fill="#333">decay</text>
+<text x="648" y="200" text-anchor="middle" fill="#666">1,049 步 (10%)</text>
+<text x="390" y="20" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">LR 调度曲线（WSD，44B = 10,490 步）</text>
+</svg></div>
+
+<h2>4. Token 预算与墙钟</h2>
+<table><tr><th>档位</th><th>token</th><th>墙钟</th><th>GPU·h</th><th>说明</th></tr>
+<tr><td class='red'>下限（本轮启动）</td><td class='red'>44B</td><td>≈2.0 天</td><td>≈390</td><td>Chinchilla 最优（2.22B × 20）</td></tr>
+<tr><td>推荐</td><td>100B</td><td>≈4.6 天</td><td>≈883</td><td>超 Chinchilla ≈2.3×，贴合推理效率卖点</td></tr>
+<tr><td>上限</td><td>200B</td><td>≈9.3 天</td><td>≈1,786</td><td>时间仍充裕</td></tr>
+<tr><td>不计入</td><td>690B</td><td>≈32 天</td><td>≈6,144</td><td>/nas_train 仅 32T，勿选</td></tr>
+</table>
+<div class='note'><strong>选择 44B 的理由</strong>：P-5b 曲线显示 stable 段到 20B 仍缓降未变平，但 44B 满足 Chinchilla 下限、墙钟仅 ≈2 天，可快速产出「可评测的完整预训练模型」供 Stage (ii)/(iii) 与 P-6 能力曲线使用；如中途时间富余可在同配比下续训至 100B。</div>
+<h2>5. 数据配方（WSD 两段各配一套比）</h2>
+<p>核心：<strong>不是全程单一配比</strong>。Stable 段吃 web 主体打 token 量、拉常识；Decay 段把 <strong>SFT 数据压到 64%</strong> 做「带 SFT 的退火」——SFT 不是训完再单独做，而是直接喂进预训练 decay 段（模糊 Stage i/ii 边界，Xmodel-2 实测 60–69% 最优）。</p>
+
+<h3>5.1 Stable 段（~36B，web:code:math = 88:8:4）</h3>
+<table><tr><th>源</th><th>占比</th><th>44B 下 token</th><th>说明</th></tr>
+<tr><td>web 主体（Ultra-FineWeb base，<strong>en_v1_4 为大头</strong> + en 等）</td><td class='red'>~88%</td><td class='red'>~31.7B</td><td>UltraX-Preview 与 base 重叠不下载，主体=纯 base</td></tr>
+<tr><td>UltraData-Code</td><td>~8%</td><td>~2.9B</td><td>StarCoder/The Stack 同级</td></tr>
+<tr><td>UltraData-Math</td><td>~4%</td><td>~1.4B</td><td>预训练格式数学</td></tr>
+</table>
+
+<h3>5.2 Decay 段（~8B，SFT 64%）</h3>
+<table><tr><th>源</th><th>占比</th><th>44B 下 token</th><th>说明</th></tr>
+<tr><td>SFT-Mixed（UltraData-SFT-2605 + SFT-Agent-2609）</td><td class='red'>~64%</td><td class='red'>~5.1B</td><td>内部 5 类 Math/Code/Logic/Knowledge/Commonsense 各 20%（≈1.02B）</td></tr>
+<tr><td>Ultra-FineWeb-L3（web）</td><td>~24%</td><td>~1.9B</td><td>高质量合成 QA</td></tr>
+<tr><td>UltraData-Code</td><td>~8%</td><td>~0.64B</td><td>—</td></tr>
+<tr><td>UltraData-Math</td><td>~4%</td><td>~0.32B</td><td>—</td></tr>
+</table>
+
+<div class='svgc'><svg width="780" height="300" viewBox="0 0 780 300" style="font-family:monospace;font-size:11px">
+<text x="390" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">P-8 数据配方 token 分配（44B）</text>
+<text x="128" y="44" text-anchor="middle" fill="#555">Stable ≈ 36B（88:8:4）</text>
+<text x="620" y="44" text-anchor="middle" fill="#555">Decay ≈ 8B（SFT 64%）</text>
+<rect x="28" y="55" width="200" height="150" fill="#2e86c1"/><text x="128" y="120" text-anchor="middle" fill="#fff" font-size="12">base 88%</text><text x="128" y="136" text-anchor="middle" fill="#fff" font-size="11">≈31.7B</text>
+<rect x="28" y="205" width="200" height="18" fill="#27ae60"/><text x="128" y="219" text-anchor="middle" fill="#fff" font-size="10">code 8% ≈2.9B</text>
+<rect x="28" y="223" width="200" height="9" fill="#f1c40f"/><text x="128" y="231" text-anchor="middle" fill="#2c3e50" font-size="9">math 4% ≈1.4B</text>
+<rect x="552" y="55" width="136" height="150" fill="#e67e22"/><text x="620" y="120" text-anchor="middle" fill="#fff" font-size="12">SFT 64%</text><text x="620" y="136" text-anchor="middle" fill="#fff" font-size="11">≈5.1B</text>
+<rect x="552" y="205" width="136" height="50" fill="#8e44ad"/><text x="620" y="236" text-anchor="middle" fill="#fff" font-size="10">L3 24% ≈1.9B</text>
+<rect x="552" y="255" width="136" height="16" fill="#27ae60"/><text x="620" y="267" text-anchor="middle" fill="#fff" font-size="9">code 8% ≈0.64B</text>
+<rect x="552" y="271" width="136" height="12" fill="#f1c40f"/><text x="620" y="281" text-anchor="middle" fill="#2c3e50" font-size="9">math 4% ≈0.32B</text>
+</svg></div>
+
+<div class='note'><strong>口径提醒</strong>：上述 88:8:4（stable）与 64% SFT（decay）是「配比 BO 实验收官后保留的先验锚点」——BO 结论为「ρ=−0.80 排名反转 + 0.6pp 不可分辨」，即未能找到显著优于先验的配比，故沿用先验。任务书 P-8 配方表旧写 86:10:4 需勘误统一为 88:8:4。</div>
+
+<h2>6. 数据就绪清单</h2>
+<table><tr><th>数据</th><th>状态</th><th>说明</th></tr>
+<tr><td>R3 分词</td><td class='green'>✅ 110/110</td><td>全语料已切分 .bin/.idx</td></tr>
+<tr><td>污染扫描</td><td class='green'>✅ 30/30</td><td>check_contamination.py 通过（与 EDA-Eval 不同源 + 跨集去重）</td></tr>
+<tr><td>Ultra-FineWeb-L3 / Code / Math / SFT-2605</td><td class='green'>✅ 就绪</td><td>L3 1764 parquet · SFT-2605 1504/1504 逐字节一致</td></tr>
+<tr><td>Ultra-FineWeb base（含 en_v1_4 主主体 6.75TB）</td><td class='amber'>🟠 下载中</td><td>en_v1_4 已于 2026-10-10 重启下载（56,461 文件）</td></tr>
+</table>
+
+<h2>7. Checkpoint 与磁盘策略</h2>
+<table><tr><th>项</th><th>值</th></tr>
+<tr><td>保存策略</td><td>final + 每 10% 一个（供 Stage (ii) 选起点 + P-6 画能力曲线）</td></tr>
+<tr><td>ckpt 数量（44B）</td><td>10 个阶段点 + final = 11 个</td></tr>
+<tr><td>单 ckpt 体积</td><td>≈30GB（2.22B 含优化器状态）</td></tr>
+<tr><td>总占用</td><td>≈330GB（/nas_train 37T free，无压力）</td></tr>
+</table>
+
+<h2>8. 训练纪律</h2>
+<ul>
+<li>从零开始，<strong>不加载任何预训练权重</strong>；真实语料，非 742M 小分片。</li>
+<li>WSD 完整走完，<strong>decay 尾段必须真的吃到 SFT 退火混合</strong>。</li>
+<li>每 500 步记 train loss / val loss / grad norm / tok/s / GPU 独占核验。</li>
+<li>禁在 P-8 期间叠加重 I/O 或抢卡任务（vision / data 侧避让）。</li>
+<li>NaN / 发散 / OOM 一律记录并保留 ckpt 与日志，<strong>不静默重启掩盖</strong>。</li>
+<li><strong>MaxLogit / Q-K 谱范数监控（建议预案）</strong>：Muon 全秩正交更新可能抬升注意力谱范数，建议每 N 步记录 per-head Q/K 谱范数 + logits 最大值，超阈值按 μ(·) 归一化干预（MuonClip），防长训练 logits 爆炸。</li>
+</ul>
+
+<h2>9. 启动前置清单</h2>
+<table><tr><th>前置</th><th>状态</th></tr>
+<tr><td>数据层全就绪（R3 分词 + 污染 + GPIC 完成）</td><td class='green'>✅</td></tr>
+<tr><td>优化器默认 dist_muon 定稿</td><td class='green'>✅</td></tr>
+<tr><td>配方 88:8:4 + 64% SFT 口径统一（勘误任务书 86:10:4）</td><td class='amber'>⚠️ 待勘误</td></tr>
+<tr><td>token 预算最终上报（选 44B）</td><td class='amber'>⚠️ 待写入 MEMORY</td></tr>
+<tr><td>en_v1_4（base 主体）下载完成并入料</td><td class='amber'>🟠 下载中</td></tr>
+<tr><td>⚠️ P-8 暂缓令撤销</td><td class='red'>🔴 未撤（唯一硬卡点）</td></tr>
+</table>
+
+<h2>10. 风险与失败处理</h2>
+<table><tr><th>风险</th><th>处置</th></tr>
+<tr><td>Muon 长跑 MaxLogit 爆炸</td><td>启用 QK-Clip 干预预案（见 §8）</td></tr>
+<tr><td>loss 发散 / NaN</td><td>保留 ckpt+日志如实上报，不静默重启；必要时回退 AdamW 参照</td></tr>
+<tr><td>吞吐低于 249K 参考值</td><td>查 GPU 争用 / profiler 归因，P-8 期间独占 8 卡</td></tr>
+<tr><td>磁盘不足</td><td>ckpt 每 10% 存 1 个已够，330GB 预留充足；必要时清理旧 ckpt 仅留 final+里程碑</td></tr>
+</table>
+
+<footer>生成时间：2026-10-10 · P-8 正式预训练计划书 · 来源：BAIZE_PRETRAIN_2B_TASK.md / DATA_MIX_RECIPE.md / EXPERIMENTS_PRETRAIN_2B_ROUND2.md · 待撤暂缓令后生效</footer>
+</body></html>
