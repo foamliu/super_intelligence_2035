@@ -693,32 +693,57 @@ Under the AIMv2-style dense objective at a fixed 1-epoch budget over 95.8M image
 
 ### 8.2 Results
 
-> 🔄 **Training in progress** — E1fair running (step ~140370/187101 ≈ 75.0%, ~2600 img/s avg (range 1959–4009, NFS fluctuation), loss_ema~0.19, C1=0.5082 C2_gap=+0.1970 C4=OK, no collapse, lr=1.17e-04 cosine active decaying). E2fair + eval chained automatically via `bothfair` mode (PID 2670216, etimes~22804s ~6.3h). Checkpoints saved at steps 10000–140000 (14 ckpts, 510MB each). Results will be filled in upon completion (~19:50 Oct 10 estimated).
+> 🔄 **E1fair COMPLETE (train + ProtB eval). E2fair PENDING.** E1fair training: 187101 steps, 31936.6s (~8.87h), final_loss=0.2545, no collapse, steady 3774.5 img/s. E1fair Protocol B: **lp=62.34±0.01%** (seeds 62.34/62.33/62.36). E1fair Protocol A ⏳ running. E2fair train+eval auto-chained via bothfair (PID 2670216). ETA all done ~20:00 Oct 10.
 
-#### 8.2.1 E1fair Progress Snapshot (2026-10-10 04:43)
+#### 8.2.1 E1fair Training — ✅ Complete (2026-10-10 07:17)
 
 | Metric | Value |
 |:--|:--|
-| Current step | 140370 / 187101 (75.0%) |
-| Elapsed | ~6.3h (since 22:24 Oct 9) |
-| Avg ms/iter | ~200ms (range 127–274ms, NFS-dependent) |
-| Avg image/s | ~2600 (range 1959–4009, NFS fluctuation) |
-| Loss (EMA) | 0.1950 (down from 7.33@step10) |
-| C1 (off-diag cosine) | 0.5082 (threshold 0.95) ✅ |
-| C2 gap | +0.1970 (positive = healthy) ✅ |
-| C4 (loss decreasing) | OK ✅ |
-| lr (current) | 1.17e-04 (cosine decaying, past 50% pt) ✅ |
-| Fusing events | 0 (467 PROBE events ALL C4=OK) ✅ |
-| Checkpoints | 14 (step10000–140000, 510MB each, 7.1GB total) |
-| GPU | 8× ~16.5GB/card, 63-100% util, temps 35-40°C |
+| Status | ✅ COMPLETE (exit 0, 07:17:19 Oct 10) |
+| Total steps | 187,101 |
+| Wall time | 31,936.6s (~8.87h) |
+| Final loss | 0.2545 |
+| Steady throughput | 3,774.5 img/s |
+| Collapse check | No collapse (623 PROBE events, all C4=OK, 0 fusing) |
+| lr@end | 5.00e-05 (cosine → min_lr correct) |
+| Checkpoints | 18 (step 10k–180k) + final vision.pt (509MB) |
 
 **lr trajectory verification** (from `train.log`):
 ```
 [lr-selfcheck] lr@step0=0.00000000  lr@warmup(2000)=0.00050000  lr@50%(93550)=0.00027882  lr@last(187100)=0.00005000
 [lr-selfcheck] OK: lr monotonically decreasing after warmup
 ```
-At step 140370, lr=1.17e-04 — well past the 50% point (2.79e-4@93550), correctly decaying toward min_lr (5e-5@187100), confirming cosine decay is active and tracking correctly.
 
-**ETA**: E1fair done ~07:20 → E1 eval ~3.5h → E2fair ~5.2h → E2 eval ~3.5h → **all done ~19:50 Oct 10**.
+**[start] line** (from `train.log`):
+```
+[start] tower=openvision2 lr=0.0005 warmup=2000 bs=64 world=8 steps=187101 res=224 patch=16 seed=1234 shards=1349/rank objective=AIMv2-style(MIM+InfoNCE) scheduler=cosine min_lr=5e-05 text=frozen-CLIP-768(r=8,a=16.0,lr=0.0001) negatives=512 data_source=mixed caption_type=all total_shards=10787
+```
 
-*(Results to be filled in upon completion)*
+#### 8.2.2 E1fair Protocol B Evaluation — ✅ Complete (2026-10-10 ~09:30)
+
+| Metric | Value |
+|:--|:--|
+| Protocol | B (SGD+cosine 90ep, bs1024, IN-1k full train 1.28M → official val 50k, IN norm) |
+| Seeds | 3 (0, 1, 2) |
+| lp_top1 (seed 0) | 62.34% |
+| lp_top1 (seed 1) | 62.33% |
+| lp_top1 (seed 2) | 62.36% |
+| **lp_top1 (mean ± σ)** | **62.34 ± 0.01%** |
+| Old E1 (unfair schedule) | 29.35% |
+| **Δ (fair vs old)** | **+33.0pp** — schedule was the bottleneck |
+
+**Eval log evidence** (from `/tmp/scaling_e1fair_eval.log`):
+```
+[BRIDGE] B seed=0: lp_top1=0.6234 (62.34%)
+[BRIDGE] B seed=1: lp_top1=0.6233 (62.33%)
+[BRIDGE] B seed=2: lp_top1=0.6236 (62.36%)
+[BRIDGE] B: lp_top1=0.6234±0.0001 (62.34±0.01%)
+```
+
+#### 8.2.3 E2fair — ⏳ Pending
+
+Smoke test passed (total_shards=10787, matches E1fair). Full training auto-starts after E1fair Protocol A completes. ETA ~5.2h train + ~3.5h eval.
+
+#### 8.2.4 Δlp Comparison — ⏳ Pending
+
+Δlp = lp(E2fair_ProtB) − lp(E1fair_ProtB) = ⏳ − 62.34%. E2fair Protocol B result needed. ETA ~20:00 Oct 10.
