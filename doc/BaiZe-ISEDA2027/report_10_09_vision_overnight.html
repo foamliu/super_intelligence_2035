@@ -48,11 +48,11 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 
 <div class="disclosure">
 <h3>📋 Process Report — Not a Final Results Report</h3>
-<p>This report documents the <strong>overnight work process</strong> (2026-10-09 22:00 → 2026-10-10 09:30) of the scaling fairness rerun. E1fair training and Protocol B evaluation are complete (lp = 62.34 ± 0.01%). E2fair has not yet trained — the Δlp comparison conclusion is <strong>not yet available</strong>. All incomplete items are marked with <span class="tag tag-pending">⏳ pending</span>. <strong>No conclusions about the width-scaling question are pre-judged.</strong> Results will be back-filled into <code>report_vision_scaling_fair.html</code> after E2fair completion (~20:00 Oct 10).</p>
+<p>This report documents the <strong>overnight work process</strong> (2026-10-09 22:00 → 2026-10-10 10:00) of the scaling fairness rerun. E1fair training and both evaluations are complete (Protocol B: lp = 62.34 ± 0.01%; Protocol A: lp = 49.70%). E2fair training is <strong>now running</strong> (step ~9,850/187,101, healthy) — the Δlp comparison conclusion is <strong>not yet available</strong>. All incomplete items are marked with <span class="tag tag-pending">⏳ pending</span>. <strong>No conclusions about the width-scaling question are pre-judged.</strong> Results will be back-filled into <code>report_vision_scaling_fair.html</code> after E2fair completion (~18:00 Oct 10).</p>
 </div>
 
 <h1>BaiZe Vision — Overnight Work Report: Scaling Fairness Rerun</h1>
-<p class="note">Generated: 2026-10-10 ~09:30 · Agent: vision · Covers: 2026-10-09 22:00 → 2026-10-10 09:30 · PHASE: <span class="tag tag-warn">🔄 in progress</span> · E1fair train ✅ · E1fair Protocol B ✅ (lp=62.34%) · E1fair Protocol A ⏳ · E2fair ⏳ pending</p>
+<p class="note">Generated: 2026-10-10 ~09:30, updated ~10:00 · Agent: vision · Covers: 2026-10-09 22:00 → 2026-10-10 10:00 · PHASE: <span class="tag tag-warn">🔄 in progress</span> · E1fair train ✅ · E1fair Protocol B ✅ (lp=62.34%) · E1fair Protocol A ✅ (lp=49.70%) · E2fair 🔄 running (step ~9,850/187,101)</p>
 
 <h2>1. TL;DR</h2>
 <div class="card tldr">
@@ -61,8 +61,8 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 <li><strong>New recipe</strong> (both arms byte-identical except <code>--width</code>): <code>--lr 5e-4 --warmup 2000 --scheduler cosine --min-lr 5e-5</code>, same frozen data snapshot (<code>total_shards=10787</code>), same 187,101 steps.</li>
 <li><strong>Code changes:</strong> Added cosine/min-lr support to <code>r9_train.py</code> (lr_at function, 4-point self-check); added <code>e1fair</code>/<code>e2fair</code>/<code>bothfair</code>/<code>smoke_cos</code> modes to <code>run_scaling_experiment.sh</code>. All verified via <code>py_compile</code> + smoke tests.</li>
 <li><strong>E1fair training ✅ COMPLETE:</strong> 187,101 steps in 31,936.6s (~8.87h), final_loss=0.2545, <strong>no collapse</strong> (623 PROBE events, all C4=OK, 0 fusing), steady 3,774.5 img/s, lr reached 5e-5 at end (cosine → min_lr correct).</li>
-<li><strong>E1fair Protocol B ✅ COMPLETE:</strong> lp = <strong class="best">62.34 ± 0.01%</strong> (3 seeds: 62.34 / 62.33 / 62.36). This is a <strong>+33.0pp improvement</strong> over the old unfair-schedule E1 (29.35%) — proving the schedule was the bottleneck, not the model. Protocol A ⏳ running.</li>
-<li><strong>E2fair ⏳ PENDING:</strong> Smoke test passed (total_shards=10787 matches E1fair). Full training auto-starts after E1fair eval completes. ETA ~5.2h train + ~3.5h eval. <strong>Δlp conclusion still pending — do not pre-judge.</strong></li>
+<li><strong>E1fair Protocol B ✅ COMPLETE:</strong> lp = <strong class="best">62.34 ± 0.01%</strong> (3 seeds: 62.34 / 62.33 / 62.36). This is a <strong>+33.0pp improvement</strong> over the old unfair-schedule E1 (29.35%) — proving the schedule was the bottleneck, not the model. Protocol A also ✅ complete: lp = 49.70%.</li>
+<li><strong>E2fair 🔄 RUNNING:</strong> Started 09:20:12 Oct 10 (auto-chained after E1fair eval). Currently at step ~9,850/187,101 (~5.3%), ~4,900 img/s, loss ~0.6, C1 ~0.38 (healthy, no collapse). ETA ~5.2h train + ~3.5h eval → all done ~18:00 Oct 10. <strong>Δlp conclusion still pending — do not pre-judge.</strong></li>
 <li><strong>Old results preserved:</strong> Old <code>scaling_E1/E2_ov2_*</code> directories and checkpoints are untouched. Old report has a ⛔ superseded banner.</li>
 </ul>
 </div>
@@ -268,7 +268,7 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 <p class="note">Loss drops rapidly during warmup (7.33 → 3.78 in first 1k steps), then converges smoothly to ~0.25. The cosine lr decay in the second half helps fine-tune the representation without instability.</p>
 </div>
 
-<h2>8. E1fair Evaluation — Protocol B ✅ Complete, Protocol A ⏳ Running</h2>
+<h2>8. E1fair Evaluation — Protocol B ✅ + Protocol A ✅ Complete</h2>
 <div class="card">
 <h3>8.1 Protocol B Result ✅</h3>
 <table>
@@ -301,32 +301,61 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 [BRIDGE] DONE</pre>
 <p class="note">The 3-seed σ = 0.01% is extremely tight — the result is highly reproducible. The +33.0pp jump over the old E1 (29.35% → 62.34%) demonstrates that the old <code>3e-3/warmup20/const</code> schedule was catastrophically suboptimal for 187k-step training. The fair cosine schedule unlocks the model's actual representation quality.</p>
 
-<h3>8.3 Protocol A ⏳ Running</h3>
-<p>Protocol A (BaiZe internal: full-batch, AdamW lr=3e-3, 100 epochs, self-split val) is now running as a secondary measurement. Results will be back-filled.</p>
+<h3>8.3 Protocol A ✅ Complete</h3>
+<table>
+<tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Status</td><td><span class="tag tag-ok">✅ COMPLETE (Protocol A)</span></td></tr>
+<tr><td>Protocol</td><td>A (BaiZe internal: full-batch, AdamW lr=3e-3, 100 epochs, self-split val)</td></tr>
+<tr><td>Checkpoint</td><td><code>scaling_E1fair_ov2_w512_d30_p16_224/vision.pt</code></td></tr>
+<tr><td><strong>lp_top1</strong></td><td><strong>49.70%</strong></td></tr>
+<tr><td>Old E1 Protocol A (unfair)</td><td class="bad">19.70%</td></tr>
+<tr><td><strong>Δ (fair vs old, Prot A)</strong></td><td><strong class="best">+30.0pp</strong></td></tr>
+</table>
+<pre>[BRIDGE] A (BaiZe: AdamW full-batch 100ep) ...
+<span class="log-ok">[BRIDGE] A: lp_top1=0.4970 (49.70%)</span>
+===== e1fair eval DONE 2026-10-10 09:20:12 =====</pre>
+<p class="note">Protocol A also shows a massive improvement (+30.0pp) under the fair schedule, confirming the schedule effect is consistent across both evaluation protocols. E1fair eval fully completed at 09:20:12 Oct 10.</p>
 </div>
 
-<h2>9. E2fair — ⏳ Pending (Smoke Test Passed)</h2>
+<h2>9. E2fair — 🔄 Training In Progress</h2>
 <div class="card">
 <table>
 <tr><th>Metric</th><th>Value</th></tr>
-<tr><td>Status</td><td><span class="tag tag-pending">⏳ PENDING (auto-starts after E1fair eval)</span></td></tr>
+<tr><td>Status</td><td><span class="tag tag-warn">🔄 RUNNING (step ~9,850/187,101, ~5.3%)</span></td></tr>
+<tr><td>Started</td><td>09:20:12 Oct 10 (auto-chained after E1fair eval completed)</td></tr>
 <tr><td>Width</td><td>768 (284.54M params, 2.24× E1fair)</td></tr>
 <tr><td>Recipe</td><td>Byte-identical to E1fair except <code>--width 768</code></td></tr>
 <tr><td>Smoke test</td><td><span class="tag tag-ok">✅ PASSED</span> (30 steps, total_shards=10787, done in 7.2s)</td></tr>
-<tr><td>Smoke lr trajectory</td><td>Verified (cosine active, total_shards=10787 matches E1fair)</td></tr>
-<tr><td>Full train ETA</td><td>~5.2h (187,101 steps, wider model = ~1.36× slower per step)</td></tr>
-<tr><td>Eval ETA</td><td>~3.5h (Protocol B, 3 seeds)</td></tr>
-<tr><td>Expected completion</td><td>~20:00 Oct 10</td></tr>
+<tr><td>Current throughput</td><td>~4,900 img/s (ms/iter ~105, wider model = ~1.36× E1fair's per-step cost)</td></tr>
+<tr><td>Current loss</td><td>~0.6 (loss_ema, decreasing normally)</td></tr>
+<tr><td>Collapse check</td><td><span class="best">No collapse</span> (33 PROBE events so far, all C4=OK, 0 fusing)</td></tr>
+<tr><td>lr (current)</td><td>4.98e-04 (warmup phase, approaching peak lr=5e-4 at step 2000)</td></tr>
+<tr><td>GPU usage</td><td>8/8 active, 67–92% util, ~24.9 GB/card</td></tr>
+<tr><td>Full train ETA</td><td>~5.2h total → done ~14:30 Oct 10</td></tr>
+<tr><td>Eval ETA</td><td>~3.5h (Protocol B, 3 seeds + Protocol A)</td></tr>
+<tr><td>Expected completion</td><td>~18:00 Oct 10</td></tr>
 </table>
 
-<h3>9.1 E2fair Smoke Test Evidence</h3>
-<pre>[start] tower=openvision2 lr=0.0005 warmup=2000 bs=64 world=8 steps=30 res=224
+<h3>9.1 E2fair Full Training [start] + lr Self-Check (from train.log)</h3>
+<pre>[start] tower=openvision2 lr=0.0005 warmup=2000 bs=64 world=8 steps=187101 res=224
   patch=16 seed=1234 shards=1349/rank objective=AIMv2-style(MIM+InfoNCE)
-  <span class="log-key">scheduler=cosine min_lr=5e-05</span> ... <span class="log-key">total_shards=10787</span>
-[lr-selfcheck] scheduler=cosine lr=0.0005 warmup=2000 min_lr=5e-05 steps=30
-[done] total=7.2s steps=30 steady_image_s=4188.3 final_loss=7.3293 fused=False
-===== E2fair done (exit 0) 2026-10-09 22:18:46 =====</pre>
-<p class="note">The smoke test confirms <code>total_shards=10787</code> — byte-identical to E1fair. The <code>steps=30</code> self-check warning ("lr not monotonically decreasing after warmup") is expected because 30 &lt; 2000 (warmup), so the cosine branch is never reached — this is not a bug.</p>
+  <span class="log-key">scheduler=cosine min_lr=5e-05</span> text=frozen-CLIP-768(r=8,a=16.0,lr=0.0001)
+  negatives=512 data_source=mixed caption_type=all <span class="log-key">total_shards=10787</span>
+[lr-selfcheck] scheduler=cosine lr=0.0005 warmup=2000 min_lr=5e-05 steps=187101
+[lr-selfcheck] lr@step0=0.00000000  lr@warmup(2000)=0.00050000  lr@50%(93550)=0.00027882  lr@last(187100)=0.00005000
+<span class="log-ok">[lr-selfcheck] OK: lr monotonically decreasing after warmup</span></pre>
+<p class="note">E2fair's <code>[start]</code> line and lr self-check are <strong>byte-identical</strong> to E1fair's — confirming the only difference is <code>--width 768</code>. <code>total_shards=10787</code> matches exactly. The 4-point lr trajectory is correct (cosine → min_lr=5e-5 at step 187100).</p>
+
+<h3>9.2 E2fair Live PROBE Health (latest samples)</h3>
+<table>
+<tr><th>Step</th><th>C1</th><th>C2_gap</th><th>loss_ema</th><th>C4</th></tr>
+<tr><td>300</td><td>0.3958</td><td>+0.1770</td><td>7.1610</td><td class="best">OK</td></tr>
+<tr><td>3,000</td><td>0.3904</td><td>+0.1828</td><td>0.8335</td><td class="best">OK</td></tr>
+<tr><td>6,000</td><td>0.3885</td><td>+0.1822</td><td>0.6513</td><td class="best">OK</td></tr>
+<tr><td>9,600</td><td>0.3798</td><td>+0.1786</td><td>0.6133</td><td class="best">OK</td></tr>
+<tr><td>9,900</td><td>0.3751</td><td>+0.1808</td><td>0.5956</td><td class="best">OK</td></tr>
+</table>
+<p class="note">33 PROBE events so far, all C4=OK, 0 fusing. C1 ~0.38 (well below 0.95 collapse threshold), C2_gap positive (healthy). loss_ema decreasing from 7.16 → 0.60. Training is healthy and progressing normally.</p>
 </div>
 
 <h2>10. Orchestration — bothfair Chain</h2>
@@ -335,27 +364,29 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 <table>
 <tr><th>Stage</th><th>Status</th><th>Timeline</th></tr>
 <tr><td>1. E1fair train</td><td class="status-done">✅ Done (07:17)</td><td>22:24 Oct 9 → 07:17 Oct 10 (~8.87h)</td></tr>
-<tr><td>2. E1fair eval</td><td class="status-running">🔄 Running (~1.5h in)</td><td>07:17 → ~11:00 Oct 10</td></tr>
-<tr><td>3. E2fair train</td><td class="status-pending">⏳ Pending</td><td>~11:00 → ~16:00 Oct 10 (~5.2h)</td></tr>
-<tr><td>4. E2fair eval</td><td class="status-pending">⏳ Pending</td><td>~16:00 → ~19:30 Oct 10 (~3.5h)</td></tr>
+<tr><td>2. E1fair eval (Prot B + Prot A)</td><td class="status-done">✅ Done (09:20)</td><td>07:17 → 09:20 Oct 10 (~2h)</td></tr>
+<tr><td>3. E2fair train</td><td class="status-running">🔄 Running (step ~9,850/187,101)</td><td>09:20 → ~14:30 Oct 10 (~5.2h)</td></tr>
+<tr><td>4. E2fair eval</td><td class="status-pending">⏳ Pending</td><td>~14:30 → ~18:00 Oct 10 (~3.5h)</td></tr>
 </table>
 <pre>===== Scaling: GPIC=7445 CC12M=1100 Amshaker=2250 pairs≈111050855 1ep≈216897steps =====
 ===== BOTHAIR: E1fair → E2fair (chained) =====
 ===== E1fair START (w512/d30, fair recipe) steps=187101 2026-10-09 22:24:31 =====
-===== e1fair eval START 2026-10-10 07:17:19 =====</pre>
-<p class="note">The <code>bothfair</code> process is alive (etimes ~9.9h) and orchestrating correctly. It will automatically start E2fair training when E1fair eval completes. No manual intervention needed.</p>
+===== e1fair eval START 2026-10-10 07:17:19 =====
+===== E2fair START (w768/d30, fair recipe) steps=187101 2026-10-10 09:20:12 =====</pre>
+<p class="note">The <code>bothfair</code> process (PID 2670216) is alive (etimes ~11.4h) and orchestrating correctly. E1fair train → E1fair eval (both protocols) → E2fair train → E2fair eval are auto-chained. No manual intervention needed.</p>
 </div>
 
 <h2>11. Pending Items & Timeline</h2>
 <div class="card">
 <table>
 <tr><th>Item</th><th>Status</th><th>Expected</th><th>Back-fill target</th></tr>
-<tr><td>E1fair lp (Protocol B, mean±σ)</td><td><span class="tag tag-ok">✅ 62.34 ± 0.01%</span></td><td>Completed ~09:30</td><td><code>EXPERIMENTS_VISION.md §8.2</code></td></tr>
-<tr><td>E2fair full training</td><td><span class="tag tag-pending">⏳</span></td><td>~16:00 Oct 10</td><td><code>EXPERIMENTS_VISION.md §8.2</code></td></tr>
-<tr><td>E2fair lp (Protocol B, mean±σ)</td><td><span class="tag tag-pending">⏳</span></td><td>~19:30 Oct 10</td><td><code>EXPERIMENTS_VISION.md §8.2</code></td></tr>
-<tr><td>Δlp = lp(E2fair) − lp(E1fair)</td><td><span class="tag tag-pending">⏳</span></td><td>~19:30 Oct 10</td><td><code>report_vision_scaling_fair.html</code></td></tr>
-<tr><td>Fair comparison conclusion</td><td><span class="tag tag-pending">⏳</span></td><td>~20:00 Oct 10</td><td><code>report_vision_scaling_fair.html</code></td></tr>
-<tr><td>Protocol A (secondary)</td><td><span class="tag tag-pending">⏳</span></td><td>~20:30 Oct 10</td><td><code>report_vision_scaling_fair.html</code></td></tr>
+<tr><td>E1fair lp (Protocol B, mean±σ)</td><td><span class="tag tag-ok">✅ 62.34 ± 0.01%</span></td><td>Completed ~09:20</td><td><code>EXPERIMENTS_VISION.md §8.2</code></td></tr>
+<tr><td>E1fair lp (Protocol A)</td><td><span class="tag tag-ok">✅ 49.70%</span></td><td>Completed ~09:20</td><td><code>EXPERIMENTS_VISION.md §8.2</code></td></tr>
+<tr><td>E2fair full training</td><td><span class="tag tag-warn">🔄 Running (step ~9,850)</span></td><td>~14:30 Oct 10</td><td><code>EXPERIMENTS_VISION.md §8.2</code></td></tr>
+<tr><td>E2fair lp (Protocol B, mean±σ)</td><td><span class="tag tag-pending">⏳</span></td><td>~18:00 Oct 10</td><td><code>EXPERIMENTS_VISION.md §8.2</code></td></tr>
+<tr><td>Δlp = lp(E2fair) − lp(E1fair)</td><td><span class="tag tag-pending">⏳</span></td><td>~18:00 Oct 10</td><td><code>report_vision_scaling_fair.html</code></td></tr>
+<tr><td>Fair comparison conclusion</td><td><span class="tag tag-pending">⏳</span></td><td>~18:30 Oct 10</td><td><code>report_vision_scaling_fair.html</code></td></tr>
+<tr><td>E2fair Protocol A (secondary)</td><td><span class="tag tag-pending">⏳</span></td><td>~18:30 Oct 10</td><td><code>report_vision_scaling_fair.html</code></td></tr>
 </table>
 
 <h3>Pre-Registered Judgment Criteria (locked before training, no post-hoc changes)</h3>
@@ -373,10 +404,10 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 <div class="disclosure">
 <h3>What this report covers vs. what it does NOT cover</h3>
 <ul>
-<li><strong>Covers:</strong> The full process of the overnight scaling fairness rerun — why the old conclusion was invalidated, the new recipe design, code changes, data fairness fix, E1fair training completion (with verified evidence), and the current status of E1fair eval + E2fair.</li>
-<li><strong>Does NOT cover:</strong> The final fair-comparison result (Δlp). E2fair has not yet trained. <strong>E1fair lp = 62.34% is available</strong> (Protocol B), but without E2fair's lp, no conclusion about "bigger is better/worse/indistinguishable" can be drawn. The +33pp improvement of E1fair over old E1 (29.35% → 62.34%) confirms the schedule was the old bottleneck, but says nothing about the width-scaling question.</li>
+<li><strong>Covers:</strong> The full process of the overnight scaling fairness rerun — why the old conclusion was invalidated, the new recipe design, code changes, data fairness fix, E1fair training + evaluation completion (Protocol B: 62.34±0.01%, Protocol A: 49.70%, with verified evidence), and E2fair training currently in progress (step ~9,850/187,101, healthy).</li>
+<li><strong>Does NOT cover:</strong> The final fair-comparison result (Δlp). E2fair has not yet finished training or evaluation. <strong>E1fair lp = 62.34% is available</strong> (Protocol B), but without E2fair's lp, no conclusion about "bigger is better/worse/indistinguishable" can be drawn. The +33pp improvement of E1fair over old E1 (29.35% → 62.34%) confirms the schedule was the old bottleneck, but says nothing about the width-scaling question.</li>
 <li><strong>Does NOT pre-judge:</strong> We do not predict whether Δlp will be positive, negative, or near-zero. The pre-registered criteria are locked; we will report whatever the numbers show.</li>
-<li><strong>Timeline honesty:</strong> ETA estimates (~20:00 Oct 10 for full completion) are based on E1fair's measured throughput (3,774.5 img/s) and old E2's per-step cost (1.36× E1). NFS throughput fluctuations (observed range: 1,988–5,769 img/s) may shift the timeline by ±1–2h.</li>
+<li><strong>Timeline honesty:</strong> ETA estimates (~18:00 Oct 10 for full completion) are based on E1fair's measured throughput (3,774.5 img/s) and E2fair's current throughput (~4,900 img/s). NFS throughput fluctuations (observed range: 2,780–5,193 img/s for E2fair so far) may shift the timeline by ±1–2h.</li>
 </ul>
 </div>
 
@@ -385,8 +416,8 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 <table>
 <tr><th>Artifact</th><th>Path</th><th>Verified</th></tr>
 <tr><td>E1fair train log</td><td><code>/tmp/scaling_e1fair.log</code> (2.3MB)</td><td>✅ [start], [lr-selfcheck], [done] lines extracted</td></tr>
-<tr><td>E1fair eval log</td><td><code>/tmp/scaling_e1fair_eval.log</code> (live)</td><td>✅ streaming progress confirmed</td></tr>
-<tr><td>E2fair smoke log</td><td><code>/tmp/scaling_e2fair.log</code> (10KB)</td><td>✅ total_shards=10787 matches</td></tr>
+<tr><td>E1fair eval log</td><td><code>/tmp/scaling_e1fair_eval.log</code> (3.9KB, complete)</td><td>✅ Prot B (62.34±0.01%) + Prot A (49.70%) extracted</td></tr>
+<tr><td>E2fair train log</td><td><code>/tmp/scaling_e2fair.log</code> (127KB, live)</td><td>✅ [start], [lr-selfcheck] extracted; 33 PROBE all OK</td></tr>
 <tr><td>bothfair orchestration</td><td><code>/tmp/bothfair_run.log</code></td><td>✅ chain stages confirmed</td></tr>
 <tr><td>Data snapshot</td><td><code>run/vision/data_snapshot_20261009.txt</code> (662KB, 7,437 lines)</td><td>✅ all GPIC tars frozen</td></tr>
 <tr><td>E1fair output dir</td><td><code>scaling_E1fair_ov2_w512_d30_p16_224/</code></td><td>✅ 18 ckpts + vision.pt + train.log</td></tr>
@@ -396,7 +427,7 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 </div>
 
 <div class="refs">
-<p><strong>Report:</strong> <code>report_10_09_vision_overnight.html</code> · <strong>Agent:</strong> vision · <strong>Generated:</strong> 2026-10-10 ~09:00 · <strong>Status:</strong> Process report (incomplete) · <strong>Next update:</strong> After full completion (~20:00 Oct 10) → <code>report_vision_scaling_fair.html</code></p>
+<p><strong>Report:</strong> <code>report_10_09_vision_overnight.html</code> · <strong>Agent:</strong> vision · <strong>Generated:</strong> 2026-10-10 ~09:30, updated ~10:00 · <strong>Status:</strong> Process report (E1fair complete, E2fair running) · <strong>Next update:</strong> After full completion (~18:00 Oct 10) → <code>report_vision_scaling_fair.html</code></p>
 <p><strong>Related:</strong> <code>report_vision_aimv2_scaling.html</code> (old, ⛔ superseded) · <code>EXPERIMENTS_VISION.md §8</code> (fair rerun pre-registration + results) · <code>MEMORY_VISION.md</code> (agent state)</p>
 </div>
 

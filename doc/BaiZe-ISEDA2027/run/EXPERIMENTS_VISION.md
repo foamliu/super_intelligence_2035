@@ -693,7 +693,7 @@ Under the AIMv2-style dense objective at a fixed 1-epoch budget over 95.8M image
 
 ### 8.2 Results
 
-> 🔄 **E1fair COMPLETE (train + ProtB eval). E2fair PENDING.** E1fair training: 187101 steps, 31936.6s (~8.87h), final_loss=0.2545, no collapse, steady 3774.5 img/s. E1fair Protocol B: **lp=62.34±0.01%** (seeds 62.34/62.33/62.36). E1fair Protocol A ⏳ running. E2fair train+eval auto-chained via bothfair (PID 2670216). ETA all done ~20:00 Oct 10.
+> 🔄 **E1fair COMPLETE (train + ProtB + ProtA eval). E2fair TRAINING IN PROGRESS.** E1fair training: 187101 steps, 31936.6s (~8.87h), final_loss=0.2545, no collapse, steady 3774.5 img/s. E1fair Protocol B: **lp=62.34±0.01%** (seeds 62.34/62.33/62.36). E1fair Protocol A: **lp=49.70%** (old unfair E1 ProtA=19.70%, Δ=+30.0pp). E2fair training started 09:20:12 Oct 10, currently at step ~9,850/187,101 (~5.3%), ~4,900 img/s, 33 PROBE all OK, no collapse. bothfair (PID 2670216) auto-chaining. ETA: E2fair train done ~14:30 → E2fair eval ~3.5h → all done ~18:00 Oct 10.
 
 #### 8.2.1 E1fair Training — ✅ Complete (2026-10-10 07:17)
 
@@ -740,10 +740,35 @@ Under the AIMv2-style dense objective at a fixed 1-epoch budget over 95.8M image
 [BRIDGE] B: lp_top1=0.6234±0.0001 (62.34±0.01%)
 ```
 
-#### 8.2.3 E2fair — ⏳ Pending
+#### 8.2.3 E1fair Protocol A Evaluation — ✅ Complete (2026-10-10 09:20)
 
-Smoke test passed (total_shards=10787, matches E1fair). Full training auto-starts after E1fair Protocol A completes. ETA ~5.2h train + ~3.5h eval.
+| Metric | Value |
+|:--|:--|
+| Protocol | A (BaiZe internal: full-batch, AdamW lr=3e-3, 100 epochs, self-split val) |
+| lp_top1 | **49.70%** |
+| Old E1 Protocol A (unfair schedule) | 19.70% |
+| **Δ (fair vs old, Prot A)** | **+30.0pp** |
 
-#### 8.2.4 Δlp Comparison — ⏳ Pending
+**Eval log evidence** (from `/tmp/scaling_e1fair_eval.log`):
+```
+[BRIDGE] A (BaiZe: AdamW full-batch 100ep) ...
+[BRIDGE] A: lp_top1=0.4970 (49.70%)
+===== e1fair eval DONE 2026-10-10 09:20:12 =====
+```
 
-Δlp = lp(E2fair_ProtB) − lp(E1fair_ProtB) = ⏳ − 62.34%. E2fair Protocol B result needed. ETA ~20:00 Oct 10.
+#### 8.2.4 E2fair — 🔄 Training In Progress
+
+E2fair training started 09:20:12 Oct 10 (auto-chained after E1fair eval completed). Currently at step ~9,850/187,101 (~5.3%), ~4,900 img/s, loss_ema ~0.6, 33 PROBE events all C4=OK, 0 fusing, no collapse. GPU: 8/8 active, 67–92% util, ~24.9 GB/card. lr=4.98e-04 (warmup phase). ETA: train done ~14:30 Oct 10 (~5.2h total) → eval ~3.5h → all done ~18:00 Oct 10.
+
+**E2fair [start] line** (from `/tmp/scaling_e2fair.log`):
+```
+[start] tower=openvision2 lr=0.0005 warmup=2000 bs=64 world=8 steps=187101 res=224 patch=16 seed=1234 shards=1349/rank objective=AIMv2-style(MIM+InfoNCE) scheduler=cosine min_lr=5e-05 text=frozen-CLIP-768(r=8,a=16.0,lr=0.0001) negatives=512 data_source=mixed caption_type=all total_shards=10787
+[lr-selfcheck] lr@step0=0.00000000  lr@warmup(2000)=0.00050000  lr@50%(93550)=0.00027882  lr@last(187100)=0.00005000
+[lr-selfcheck] OK: lr monotonically decreasing after warmup
+```
+
+E2fair's `[start]` line and lr self-check are byte-identical to E1fair's — confirming only `--width 768` differs. `total_shards=10787` matches exactly.
+
+#### 8.2.5 Δlp Comparison — ⏳ Pending
+
+Δlp = lp(E2fair_ProtB) − lp(E1fair_ProtB) = ⏳ − 62.34%. E2fair Protocol B result needed. ETA ~18:00 Oct 10.
