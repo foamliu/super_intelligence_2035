@@ -899,13 +899,17 @@ def main():
                 f'loss_early={loss_early if loss_early is None else round(loss_early,4)} '
                 f'C4={"OK" if c4_ok else "FAIL"}')
 
-            # R5.2 fusing thresholds
-            if c1 > 0.95:
-                fused, fuse_reason = True, f'C1 collapse (offdiag={c1:.4f}>0.95)@step{step}'
-            elif args.c2_collapse_guard and gap <= 0.005:
-                fused, fuse_reason = True, f'C2 no-gap (gap={gap:+.4f}~0)@step{step}'
-            elif not c4_ok:
-                fused, fuse_reason = True, f'C4 loss-not-decreasing (ema={loss_ema:.4f} vs early={loss_early:.4f})@step{step}'
+            # R5.2 fusing thresholds — skip during warmup (step < _c4_init_step).
+            # At low lr the model hasn't learned enough for collapse detection
+            # to be meaningful: C1/C2 near init values → false alarms (e.g. C2_gap
+            # ≈0 simply because diag≈off≈0, not because of actual collapse).
+            if step >= _c4_init_step:
+                if c1 > 0.95:
+                    fused, fuse_reason = True, f'C1 collapse (offdiag={c1:.4f}>0.95)@step{step}'
+                elif args.c2_collapse_guard and gap <= 0.005:
+                    fused, fuse_reason = True, f'C2 no-gap (gap={gap:+.4f}~0)@step{step}'
+                elif not c4_ok:
+                    fused, fuse_reason = True, f'C4 loss-not-decreasing (ema={loss_ema:.4f} vs early={loss_early:.4f})@step{step}'
 
         # periodic checkpoint (R9.3 stage-2 needs a ckpt every 10k; also crash resilience)
         if args.save_every and step and step % args.save_every == 0:
