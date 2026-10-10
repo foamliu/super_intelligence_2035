@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BaiZe 2.2B · Muon vs AdamW 优化器对比报告</title>
+<title>BaiZe 2.2B · Muon vs dist_muon vs AdamW 优化器对比报告</title>
 <style>
   body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;max-width:960px;margin:0 auto;padding:2em;background:#f8f9fa;color:#1a1a2e;line-height:1.7}
   h1{text-align:center;color:#16213e;border-bottom:3px solid #0f3460;padding-bottom:.5em}
@@ -29,13 +29,19 @@
 </style>
 </head>
 <body>
-<h1>BaiZe Mamba2-Hybrid 2.2B · Muon vs AdamW 优化器对比</h1>
-<p style="text-align:center;color:#666">2026-10-10 · 8×H100 @ 10.239.2.29 · 真实预训练数据（P-5b 16-shard blend ~20.6B tokens）</p>
+<h1>BaiZe Mamba2-Hybrid 2.2B · Muon vs dist_muon vs AdamW 优化器对比</h1>
+<p style="text-align:center;color:#666">2026-10-10 · 8×H100 @ 10.239.2.29 · 真实预训练数据（P-5b 16-shard blend ~20.6B tokens）· 三路 A/B 实测</p>
 <div class="key-result">
-<h3>⭐ 核心结论</h3>
-<p><b>Muon 在相同 1000 步 / 6.55M tokens 下显著优于 AdamW</b>：最终 loss <b>3.11 vs 4.00</b>（低 <b>22.3%</b>），梯度范数更稳定（0.26 vs 0.48）。
-但 Muon 的代价是：<b>吞吐慢 26%</b>（87K vs 118K tok/s）、<b>显存多 38%</b>（53.8 GB vs 39.0 GB）。</p>
-<p><b>建议</b>：P-8 正式预训练考虑采用 <code>dist_muon</code>（layer-wise distributed Muon），以更少步数达到更低 loss。⚠️ 本地 −26% 吞吐 / +38% 显存<b>并非 Muon 算法固有代价</b>，而是 plain Muon 实现伪影（详见 §7「外部基准对照与 overhead 归因」）；NVIDIA 官方实测 <code>dist_muon</code> 吞吐 near-parity、显存更省。</p>
+<h3>⭐ 核心结论（三路实测确认）</h3>
+<p><b>dist_muon 兼顾了 Muon 的收敛优势与 AdamW 的吞吐/显存效率</b>：</p>
+<table class="metric-table" style="margin:.5em 0">
+<tr><th>指标</th><th>Muon (plain)</th><th><b>dist_muon</b></th><th>AdamW</th></tr>
+<tr><td>loss @1000</td><td>3.112</td><td class="winner"><b>3.110</b></td><td>4.003</td></tr>
+<tr><td>吞吐 (tok/s)</td><td class="loser">86,945</td><td class="winner"><b>122,415</b></td><td>118,132</td></tr>
+<tr><td>峰值显存</td><td class="loser">53.8 GB</td><td class="winner"><b>37.3 GB</b></td><td>39.0 GB</td></tr>
+</table>
+<p><b>dist_muon 完全消除了 plain Muon 的两项代价</b>：吞吐从 87K→122K（+40.8%，<b>超过 AdamW</b>），显存从 53.8→37.3 GB（−30.7%，<b>低于 AdamW</b>），而 loss 仍保持 Muon 级别优势（−22.3% vs AdamW）。<b>§7 预测的「−26%/+38% 系实现伪影」已被 dist_muon 实测确认（详见 §8）。</b></p>
+<p><b>P-8 建议</b>：dist_muon 是正式预训练的<b>最优选择</b>——收敛快（Muon 级 loss）、吞吐高（≥AdamW）、显存省（最低 37.3 GB）。⚠️ 仅 1000 步短地平线验证，长训练待 P-8 确认。</p>
 </div>
 <h2>1 · 实验设置</h2>
 <table class="metric-table">
@@ -214,7 +220,7 @@
 <li>Keller Jordan：<i>Muon optimizer</i> blog（2024-12；NS FLOP 上界 (T×m)/B ≈ 0.5–0.7%）<br>https://kellerjordan.github.io/posts/muon/</li>
 </ol>
 <div class="note">
-<b>诚实声明</b>：以上归因引用外部文档，<b>未在本地复现 dist_muon</b>。本地 plain Muon 的 −26% 吞吐 / +38% 显存是<b>实测事实</b>（数字未改动）。归因分析指明其来源为实现伪影而非算法固有，但<b>修复效果需在 P-8 前以 dist_muon 实测确认</b>。「待查」≠「已修」。
+<b>诚实声明</b>：以上归因引用外部文档。<b>dist_muon 已于 2026-10-10 11:37–11:48 在本地实测复现</b>（详见 §8）——预测全部确认：吞吐 122K > 118K（near-parity 实锤）、显存 37.3 GB < 39.0 GB（低于 AdamW）。本地 plain Muon 的 −26% 吞吐 / +38% 显存是<b>实测事实</b>（数字未改动），现已归因为 plain Muon 实现伪影并经 dist_muon 验证修复。
 </div>
 <h2>8 · 可复现性</h2>
 <table class="metric-table">

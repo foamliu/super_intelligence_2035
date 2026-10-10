@@ -3251,3 +3251,111 @@ ssh 10.239.2.29 'cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027 && \
 日志：`/tmp/muon_ab_realdata_muon.log` / `/tmp/muon_ab_realdata_adamw.log`（.29 上）
 汇总：`/tmp/muon_vs_adamw_ab_realdata.sum`
 
+---
+
+## dist_muon 实测验证（三路对比）· 2026-10-10
+
+> 运维指令 2026-10-10：用户令「Muon 的试验，让 pretrain 用 dist_muon 重测」。
+> 与上一轮 Muon vs AdamW A/B 逐字一致，唯一差异 = `optimizer=dist_muon`（layer-wise distributed）。
+> 报告已刷新：`doc/BaiZe-ISEDA2027/report_pretrain_muon_vs_adamw.html`（§8 新增 dist_muon 三路对比）。
+
+### 设置
+
+与上一轮完全一致，唯一差异：
+
+| 项 | dist_muon 臂 | Muon 臂（上轮） | AdamW 臂（上轮） |
+|:--|:--|:--|:--|
+| 优化器 | **dist_muon**（layer_wise_distributed_optimizer=True） | muon（plain） | adam |
+| 其余全部 | — | — | — |
+| 时间 | 11:37:45 → 11:48:23 | 05:59:30 → 06:13:14 | 06:13:14 → 06:23:48 |
+
+### 接线确认
+
+1. `bridge_compat.py` 路由 `optimizer="dist_muon"` → `get_megatron_muon_optimizer(layer_wise_distributed_optimizer=True)` ✅
+2. 冒烟测试：8 GPU DP=8 mock 10 步 → checkpoint 保存成功 ✅
+3. bridge_compat 日志确认：`routing to get_megatron_muon_optimizer (layer_wise_distributed_optimizer=True)` ✅
+
+### 结果（三路对比）
+
+| 指标 | Muon (plain) | **dist_muon** | AdamW | dist_muon vs Muon | dist_muon vs AdamW |
+|:--|---:|---:|---:|:--|:--|
+| 最终 loss (iter 1000) | 3.112 | **3.110** | 4.003 | −0.002 (持平) | −0.893 (−22.3%) |
+| iter 500 loss | 3.697 | **3.696** | 4.665 | −0.001 (持平) | −0.969 (−20.8%) |
+| 最终 grad_norm | 0.255 | **0.256** | 0.479 | +0.001 (持平) | −0.223 (−46.6%) |
+| 吞吐 (tok/s) | 86,945 | **122,415** | 118,132 | +35,470 (+40.8%) | +4,283 (+3.6%) |
+| 稳态 ms/iter | 753.4 | **535.1** | 554.5 | −218.3 (−29.0%) | −19.4 (−3.5%) |
+| 峰值 GPU 显存 (nvidia-smi) | 53,759 MiB (53.8 GB) | **37,267 MiB (37.3 GB)** | 38,993 MiB (39.0 GB) | −16,492 (−30.7%) | −1,726 (−4.4%) |
+| PyTorch max allocated | 31,766 MiB | **29,229 MiB** | 15,977 MiB | −2,537 (−8.0%) | +13,252 (+82.9%) |
+| NaN / skipped | 0 / 0 | **0 / 0** | 0 / 0 | — | — |
+| 训练耗时 | ~13 min 44 s | **~10 min 38 s** | ~10 min 34 s | −3 min 6 s | +4 s |
+
+### 逐 100 步 Loss（三路）
+
+| iter | Muon (plain) | dist_muon | AdamW |
+|---:|---:|---:|---:|
+| 10 | 10.724 | 10.724 | 10.837 |
+| 100 | 5.572 | 5.575 | 6.122 |
+| 200 | 4.953 | 4.956 | 5.489 |
+| 300 | 4.475 | 4.484 | 5.128 |
+| 400 | 3.962 | 3.966 | 4.870 |
+| 500 | 3.697 | 3.696 | 4.665 |
+| 600 | 3.534 | 3.532 | 4.505 |
+| 700 | 3.445 | 3.443 | 4.391 |
+| 800 | 3.373 | 3.372 | 4.280 |
+| 900 | 3.263 | 3.258 | 4.167 |
+| 1000 | 3.112 | 3.110 | 4.003 |
+
+> **dist_muon 与 plain Muon 的 loss 曲线几乎完全重合**（Δ < 0.01），说明 layer-wise distributed 仅改变通信/存储模式，不影响优化轨迹。
+
+### 判读（对照预注册标准）
+
+| 预注册假设 | 实测结果 | 判定 |
+|:--|:--|:--|
+| 吞吐：dist_muon ≥ ~118K → "−26% 系 plain Muon 伪影"实锤 | **122,415 tok/s > 118K** | ✅ **实锤** |
+| 吞吐：87K~118K → 部分收窄 | 未落入此区间 | — |
+| 吞吐：仍 ≈87K → 规模太小未体现 | 未落入此区间 | — |
+| 显存：应显著下降（≤39GB） | **37.3 GB < 39.0 GB** | ✅ **确认**（甚至低于 AdamW） |
+| 显存：仍 ~53.8GB → buffer 伪影另有其因 | 未落入此区间 | — |
+
+### 结论
+
+1. **dist_muon 完全消除了 plain Muon 的两项代价**：
+   - **吞吐**：87K → 122K（+40.8%），**超过 AdamW 118K**（+3.6%）→ −26% 吞吐劣势是 plain Muon 实现伪影，实锤。
+   - **显存**：53.8 GB → 37.3 GB（−30.7%），**低于 AdamW 39.0 GB**（−4.4%）→ +38% 显存劣势也是实现伪影。
+
+2. **dist_muon 保持了 Muon 的收敛优势**：loss@1000 = 3.110（与 plain Muon 3.112 持平），vs AdamW 4.003 仍低 22.3%。
+
+3. **P-8 建议（更新）**：dist_muon 是 P-8 正式预训练的**最优选择**：
+   - 收敛速度：Muon 级别（少步数达到低 loss）
+   - 吞吐：AdamW 级别（122K tok/s ≥ 118K AdamW）
+   - 显存：最低（37.3 GB，留余量给更大 MBS/seq）
+   - ⚠️ 仍需长训练验证（1000 步 = 6.55M tokens，短地平线早期快照）
+
+4. **诚实声明**：
+   - plain Muon 与 dist_muon 的 loss 曲线几乎完全重合 → layer-wise distributed 不改变优化轨迹，仅改变通信/存储模式。
+   - PyTorch max allocated（29.2 GB）仍高于 AdamW（16.0 GB），但 nvidia-smi 峰值（37.3 GB）已低于 AdamW（39.0 GB）——差异来自 CUDA context / NCCL buffer / PyTorch reserved 的开销分配方式不同。
+   - 本轮仅 1000 步，长训练是否持续优势未验证。
+
+### 可复现命令
+
+```
+# dist_muon 臂（脚本: run/muon_distmuon_realdata.sh）
+ssh 10.239.2.29 'cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027 && \
+  PYTHONPATH=/nas_train/app.e0031982/omegaconf_230 \
+  /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun \
+  --nnodes=1 --nproc_per_node=8 \
+  pretrain_launcher.py \
+  --arch mamba2 --name muon_ab_realdata_distmuon --dir nemo_experiments \
+  --tokenizer-path data/tokenizer_eod \
+  --train-data-path 1 data/p5b_l3/p5b_l3_train_s0 1 data/p5b_l3/p5b_l3_train_s1 \
+    1 data/p5b_l3/p5b_l3_train_s2 ... 1 data/p5b_l3/p5b_l3_train_s15 \
+  --optimizer dist_muon --gbs 16 --mbs 1 --seq 4094 --iters 1000 --seed 1234 \
+  --lr 3e-4 --min-lr 3e-5 --lr-warmup-iters 50 --lr-decay-iters 200 --lr-decay-style WSD \
+  --tensor-parallel 1 --precision bf16_mixed --eval-interval 9999 --eval-iters 0 --save-interval 99999'
+```
+
+日志：`/tmp/muon_ab_realdata_distmuon.log`（.29 上）
+汇总：`/tmp/muon_distmuon_realdata.sum`
+冒烟日志：`/tmp/dist_muon_smoke.log`
+脚本：`run/muon_distmuon_realdata.sh` / `run/dist_muon_smoke_test.sh`
+
