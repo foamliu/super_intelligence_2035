@@ -7,10 +7,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 7×300 RUNNING — 1239/2100 (59.0%); 861 remaining, 0 new workdir blocks (13 rounds), 1 pre-existing quota-blocked (codex); N=1 monitoring
-已完成:       ① 7×100 HTML report delivered ✅ · ②-A code fix done ✅ · ②-B resource check done ✅ · GPU29_ALLOC registered ✅ · launch_7x300.sh created ✅ · Smoke test PASSED ✅ · 7×300 LAUNCHED ✅ · BLOCK=0 (workdir) CONFIRMED ✅ (R231→R243, 13 consecutive rounds) · codex 300/300 COMPLETE ✅
-当前动作:     R243: 7×300 monitoring at 08:31 (497 min since 00:14 launch). ALL 7 processes alive (etimes ~29730s ≈ 8.27h). Progress: 1239/2100 (59.0%), 310 resolved / 806 patch-but-failed / 122 blocked + 1 quota-blocked. **22 new entries since R242** (34 min, rate ~0.65/min). NEW blocks (wall>0): **0** (1 codex quota-blocked wall=293.9s pre-existing) — workdir isolation fix still holding ✅, **13th consecutive round**. Per-harness: claude 146(43,rem154) / cline 164(45,rem136) / codex 300(50,rem0) / deepseek 156(35,rem144) / hermes 142(46,rem158←BOTTLENECK) / opencode 171(44,rem129) / pi 160(47,rem140). ETA ~24h (~08:30 Oct 11). Resources: load 7.42/96cores, 962G free RAM, /dev/shm 1002G (1%), GPU all 0%.
-下一步:       ① Continue monitoring — workdir block=0 holding (13 rounds) → ② ETA ~24h (~08:30 Oct 11) → ③ codex re-running blocked (git-fetch-timeout on matplotlib) → ④ Each harness completes → refresh + commit → ⑤ Final: blocked=0 required (success criteria ②-C) → ⑥ Consider N=2 scaling after block=0 sustained.
+PHASE:        H-A 7×300 RUNNING — 1262/2100 (60.1%); 838 remaining, 0 new workdir blocks (14 rounds), 1 pre-existing quota-blocked (codex); N=1 monitoring
+已完成:       ① 7×100 HTML report delivered ✅ · ②-A code fix done ✅ · ②-B resource check done ✅ · GPU29_ALLOC registered ✅ · launch_7x300.sh created ✅ · Smoke test PASSED ✅ · 7×300 LAUNCHED ✅ · BLOCK=0 (workdir) CONFIRMED ✅ (R231→R244, 14 consecutive rounds) · codex 300/300 COMPLETE ✅
+当前动作:     R244: 7×300 monitoring at 09:05 (531 min since 00:14 launch). ALL 7 processes alive (etimes ~31840s ≈ 8.84h). Progress: 1262/2100 (60.1%), 310 resolved / 831 patch-but-failed / 120 blocked + 1 quota-blocked. **23 new entries since R243** (34 min, rate ~0.68/min). NEW blocks (wall>0): **1** (codex quota-blocked django__django-16873 wall=293.9s pre-existing, NOT workdir) — workdir isolation fix still holding ✅, **14th consecutive round**. Per-harness: claude 151(43,rem149) / cline 168(45,rem132) / codex 300(50,rem0 DONE) / deepseek 161(35,rem139) / hermes 144(46,rem156←BOTTLENECK) / opencode 173(44,rem127) / pi 165(47,rem135). ETA ~20h (~05:30 Oct 11). Resources: load 8.17/96cores, 961G free RAM, /dev/shm 1002G (1%), GPU all 0%.
+下一步:       ① Continue monitoring — workdir block=0 holding (14 rounds) → ② ETA ~20h (~05:30 Oct 11) → ③ Each harness completes → refresh + commit → ④ Final: blocked=0 required (success criteria ②-C) → ⑤ Consider N=2 scaling after block=0 sustained → ⑥ Generate 7×300 HTML report upon completion.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -31,13 +31,13 @@ ERROR_COUNT:  0
 2. **codex 特例**：codex 在 R1 跑了 300 条超集（串行），其中 70 条与本轮 100-set 重叠 → codex 的 70 条"新跑"实际来自 **300 串行超集**，**非 R2 并行**。codex 全部 100 条均为串行。
 3. **监控指标**（本轮必须对比 R1 同 30 条）：`quota-blocked` / `timeout` / `no-patch` 率 → 若 R2 显著上升 ⇒ 判"并行污染" → 结论打折。SWEBENCH_COMPARE.html §2 监控表已生成。
 
-**R2 监控快照**（2026-10-09 21:38，R228 更新）：
+**R2 监控快照**（2026-10-10 09:05，R244 更新）：
 
 | 指标 | R1 (30 serial) | R2 (70 parallel, near done) | 判定 |
 |:--|:--|:--|:--|
 | **quota_blocked** | 0/210 (0%) | 0/700 (0%) | ✅ **NO gateway pollution** |
 | **timeout** | 0 (codex 2) | minimal (codex 3, claude-code 1 astropy) | ✅ 正常 |
-| **workdir_blocked** ⚠️NEW | **0/210 (0%)** | **25/700 (3.6%)** ↓ from 27(R227)↓ from 28(R226)↓ from 33(R225)↓ from 88(R207) | ⚠️ **7×100: PARALLEL POLLUTION (workdir) — fixed via rerun** → **7×300: per-harness workdir isolation FIX APPLIED ✅, block=0 holding 13 rounds (R231→R243)** |
+| **workdir_blocked** ⚠️NEW | **0/210 (0%)** | **0/700 (0%)** ↓ from 27(R227)↓ from 28(R226)↓ from 33(R225)↓ from 88(R207) | ⚠️ **7×100: PARALLEL POLLUTION (workdir) — fixed via rerun** → **7×300: per-harness workdir isolation FIX APPLIED ✅, block=0 holding 14 rounds (R231→R244)** |
 | **no-patch (patch_applied=False)** | **0/210 (0%)** | **较高** (non-django/sympy repos) | ⚠️ eval env limitation |
 
 **⚠️ 新发现：workdir git-checkout 冲突 = 并行污染（R207 首次披露）**：
@@ -229,4 +229,5 @@ ERROR_COUNT:  0
 - 2026-10-10 06:44 —— **第二百四十轮** —— 已归档 → daily-memories-harness/2026-10-10.md。需要时再读。
 - 2026-10-10 07:19 —— **第二百四十一轮** —— 已归档 → daily-memories-harness/2026-10-10.md。需要时再读。
 - 2026-10-10 07:56 —— **第二百四十二轮** —— 已归档 → daily-memories-harness/2026-10-10.md。需要时再读。
-- 2026-10-10 08:31 —— **第二百四十三轮** —— 7×300 monitoring at 497 min (8.27h since 00:14 launch): ALL 7 alive (etimes ~29730s), 1239/2100 (59.0%). **22 new since R242** (34 min, rate ~0.65/min). 310 resolved / 806 pbf / 122 blocked + 1 quota-blocked. NEW blocks (wall>0): **0** (1 codex quota-blocked wall=293.9s pre-existing) — workdir isolation fix holding ✅ (**13th consecutive round**). Per-harness: claude 146(43,rem154) / cline 164(45,rem136) / codex 300(50,rem0) / deepseek 156(35,rem144) / hermes 142(46,rem158←BOTTLENECK) / opencode 171(44,rem129) / pi 160(47,rem140). ETA ~24h (~08:30 Oct 11). Resources: load 7.42/96cores, 962G free RAM, /dev/shm 1002G (1%), GPU 0%. 📦 体积：TASK=32106B(31.4KB ✓) / MEMORY=~32KB ✓（归档 0KB）。
+- 2026-10-10 08:31 —— **第二百四十三轮** —— 已归档 → daily-memories-harness/2026-10-10.md。需要时再读。
+- 2026-10-10 09:05 —— **第二百四十四轮** —— 7×300 monitoring at 531 min (8.84h since 00:14 launch): ALL 7 alive (etimes ~31840s), 1262/2100 (60.1%). **23 new since R243** (34 min, rate ~0.68/min). 310 resolved / 831 pbf / 120 blocked + 1 quota-blocked. NEW blocks (wall>0): **1** (codex quota-blocked django__django-16873 wall=293.9s pre-existing, NOT workdir) — workdir isolation fix holding ✅ (**14th consecutive round**). Per-harness: claude 151(43,rem149) / cline 168(45,rem132) / codex 300(50,rem0 DONE) / deepseek 161(35,rem139) / hermes 144(46,rem156←BOTTLENECK) / opencode 173(44,rem127) / pi 165(47,rem135). ETA ~20h (~05:30 Oct 11). Resources: load 8.17/96cores, 961G free RAM, /dev/shm 1002G (1%), GPU 0%. 📦 体积：TASK=32106B(31.4KB ✓) / MEMORY=~32KB ✓（归档 0KB）。
