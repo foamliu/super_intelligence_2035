@@ -48,11 +48,11 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 
 <div class="disclosure">
 <h3>📋 Process Report — Not a Final Results Report</h3>
-<p>This report documents the <strong>overnight work process</strong> (2026-10-09 22:00 → 2026-10-10 15:25) of the scaling fairness rerun. E1fair training and both evaluations are complete (Protocol B: lp = 62.34 ± 0.01%; Protocol A: lp = 49.70%). E2fair training is <strong>now running</strong> (step ~128,100/187,101 (~68.5%), healthy, 427 PROBE all OK, no collapse) — the Δlp comparison conclusion is <strong>not yet available</strong>. All incomplete items are marked with <span class="tag tag-pending">⏳ pending</span>. <strong>No conclusions about the width-scaling question are pre-judged.</strong> Results will be back-filled into <code>report_vision_scaling_fair.html</code> after E2fair completion (~21:00 Oct 10).</p>
+<p>This report documents the <strong>overnight work process</strong> (2026-10-09 22:00 → 2026-10-10 16:05) of the scaling fairness rerun. E1fair training and both evaluations are complete (Protocol B: lp = 62.34 ± 0.01%; Protocol A: lp = 49.70%). E2fair training is <strong>now running</strong> (step ~139,360/187,101 (~74.5%), healthy, 465 PROBE all OK, no collapse) — the Δlp comparison conclusion is <strong>not yet available</strong>. All incomplete items are marked with <span class="tag tag-pending">⏳ pending</span>. <strong>No conclusions about the width-scaling question are pre-judged.</strong> Results will be back-filled into <code>report_vision_scaling_fair.html</code> after E2fair completion (~22:00 Oct 10).</p>
 </div>
 
 <h1>BaiZe Vision — Overnight Work Report: Scaling Fairness Rerun</h1>
-<p class="note">Generated: 2026-10-10 ~09:30, updated ~15:25 · Agent: vision · Covers: 2026-10-09 22:00 → 2026-10-10 15:25 · PHASE: <span class="tag tag-warn">🔄 in progress</span> · E1fair train ✅ · E1fair Protocol B ✅ (lp=62.34%) · E1fair Protocol A ✅ (lp=49.70%) · E2fair 🔄 running (step ~128,100/187,101, ~68.5%)</p>
+<p class="note">Generated: 2026-10-10 ~09:30, updated ~16:05 · Agent: vision · Covers: 2026-10-09 22:00 → 2026-10-10 16:05 · PHASE: <span class="tag tag-warn">🔄 in progress</span> · E1fair train ✅ · E1fair Protocol B ✅ (lp=62.34%) · E1fair Protocol A ✅ (lp=49.70%) · E2fair 🔄 running (step ~139,360/187,101, ~74.5%)</p>
 
 <h2>1. TL;DR</h2>
 <div class="card tldr">
@@ -62,7 +62,7 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 <li><strong>Code changes:</strong> Added cosine/min-lr support to <code>r9_train.py</code> (lr_at function, 4-point self-check); added <code>e1fair</code>/<code>e2fair</code>/<code>bothfair</code>/<code>smoke_cos</code> modes to <code>run_scaling_experiment.sh</code>. All verified via <code>py_compile</code> + smoke tests.</li>
 <li><strong>E1fair training ✅ COMPLETE:</strong> 187,101 steps in 31,936.6s (~8.87h), final_loss=0.2545, <strong>no collapse</strong> (623 PROBE events, all C4=OK, 0 fusing), steady 3,774.5 img/s, lr reached 5e-5 at end (cosine → min_lr correct).</li>
 <li><strong>E1fair Protocol B ✅ COMPLETE:</strong> lp = <strong class="best">62.34 ± 0.01%</strong> (3 seeds: 62.34 / 62.33 / 62.36). This is a <strong>+33.0pp improvement</strong> over the old unfair-schedule E1 (29.35%) — proving the schedule was the bottleneck, not the model. Protocol A also ✅ complete: lp = 49.70%.</li>
-<li><strong>E2fair 🔄 RUNNING:</strong> Started 09:20:12 Oct 10 (auto-chained after E1fair eval). Currently at step ~128,100/187,101 (~68.5%), ~4,750–5,250 img/s, loss_ema ~0.10–0.39, C1 ~0.44–0.54 (healthy, no collapse, 427 PROBE all OK). lr=1.54e-04 (cosine decay progressing correctly). ETA ~1.6h remaining train → done ~17:00 + ~3.5h eval → all done ~21:00 Oct 10. <strong>Δlp conclusion still pending — do not pre-judge.</strong></li>
+<li><strong>E2fair 🔄 RUNNING:</strong> Started 09:20:12 Oct 10 (auto-chained after E1fair eval). Currently at step ~139,360/187,101 (~74.5%), ~2,250–5,200 img/s (NFS throughput fluctuating), loss_ema ~0.11–0.35, C1 ~0.44–0.65 (healthy, no collapse, 465 PROBE all OK). lr=1.20e-04 (cosine decay progressing correctly). ETA ~2.3h remaining train → done ~18:30 + ~3.5h eval → all done ~22:00 Oct 10. <strong>Δlp conclusion still pending — do not pre-judge.</strong></li>
 <li><strong>Old results preserved:</strong> Old <code>scaling_E1/E2_ov2_*</code> directories and checkpoints are untouched. Old report has a ⛔ superseded banner.</li>
 </ul>
 </div>
@@ -321,19 +321,19 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 <div class="card">
 <table>
 <tr><th>Metric</th><th>Value</th></tr>
-<tr><td>Status</td><td><span class="tag tag-warn">🔄 RUNNING (step ~128,100/187,101, ~68.5%)</span></td></tr>
+<tr><td>Status</td><td><span class="tag tag-warn">🔄 RUNNING (step ~139,360/187,101, ~74.5%)</span></td></tr>
 <tr><td>Started</td><td>09:20:12 Oct 10 (auto-chained after E1fair eval completed)</td></tr>
 <tr><td>Width</td><td>768 (284.54M params, 2.24× E1fair)</td></tr>
 <tr><td>Recipe</td><td>Byte-identical to E1fair except <code>--width 768</code></td></tr>
 <tr><td>Smoke test</td><td><span class="tag tag-ok">✅ PASSED</span> (30 steps, total_shards=10787, done in 7.2s)</td></tr>
-<tr><td>Current throughput</td><td>~4,750–5,250 img/s (ms/iter ~103, wider model = ~1.36× E1fair's per-step cost)</td></tr>
-<tr><td>Current loss</td><td>~0.10–0.39 (loss_ema range at steps 120k–128k, decreasing normally from 7.16)</td></tr>
-<tr><td>Collapse check</td><td><span class="best">No collapse</span> (427 PROBE events so far, all C4=OK, 0 fusing)</td></tr>
-<tr><td>lr (current)</td><td>1.54e-04 (cosine decay in progress, 5e-4 peak → 5e-5 at end; verified at 68.5% progress)</td></tr>
+<tr><td>Current throughput</td><td>~2,250–5,200 img/s (NFS throughput fluctuating; ms/iter ~120–230, wider model = ~1.36× E1fair's per-step cost)</td></tr>
+<tr><td>Current loss</td><td>~0.11–0.36 (loss_ema range at steps 130k–139k, decreasing normally from 7.16)</td></tr>
+<tr><td>Collapse check</td><td><span class="best">No collapse</span> (465 PROBE events so far, all C4=OK, 0 fusing)</td></tr>
+<tr><td>lr (current)</td><td>1.20e-04 (cosine decay in progress, 5e-4 peak → 5e-5 at end; verified at 74.5% progress)</td></tr>
 <tr><td>GPU usage</td><td>8/8 at ~100% util, ~24.9 GB/card, temps 39–47°C</td></tr>
-<tr><td>Full train ETA</td><td>~1.6h remaining → done ~17:00 Oct 10</td></tr>
+<tr><td>Full train ETA</td><td>~2.3h remaining → done ~18:30 Oct 10</td></tr>
 <tr><td>Eval ETA</td><td>~3.5h (Protocol B, 3 seeds + Protocol A)</td></tr>
-<tr><td>Expected completion</td><td>~21:00 Oct 10</td></tr>
+<tr><td>Expected completion</td><td>~22:00 Oct 10</td></tr>
 </table>
 
 <h3>9.1 E2fair Full Training [start] + lr Self-Check (from train.log)</h3>
@@ -412,8 +412,21 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 <tr><td>126,300</td><td>0.4450</td><td>+0.2057</td><td>0.1000</td><td class="best">OK</td></tr>
 <tr><td>127,200</td><td>0.4770</td><td>+0.2024</td><td>0.1178</td><td class="best">OK</td></tr>
 <tr><td>128,100</td><td>0.5374</td><td>+0.1906</td><td>0.2573</td><td class="best">OK</td></tr>
+<tr><td>129,600</td><td>0.4614</td><td>+0.2060</td><td>0.1608</td><td class="best">OK</td></tr>
+<tr><td>130,500</td><td>0.5074</td><td>+0.1944</td><td>0.2264</td><td class="best">OK</td></tr>
+<tr><td>131,400</td><td>0.4451</td><td>+0.2089</td><td>0.1152</td><td class="best">OK</td></tr>
+<tr><td>132,300</td><td>0.4621</td><td>+0.2045</td><td>0.1128</td><td class="best">OK</td></tr>
+<tr><td>133,200</td><td>0.4916</td><td>+0.1990</td><td>0.1846</td><td class="best">OK</td></tr>
+<tr><td>133,800</td><td>0.5221</td><td>+0.1931</td><td>0.2059</td><td class="best">OK</td></tr>
+<tr><td>134,700</td><td>0.5638</td><td>+0.1826</td><td>0.3462</td><td class="best">OK</td></tr>
+<tr><td>135,600</td><td>0.5222</td><td>+0.1896</td><td>0.1999</td><td class="best">OK</td></tr>
+<tr><td>136,500</td><td>0.4960</td><td>+0.1949</td><td>0.1582</td><td class="best">OK</td></tr>
+<tr><td>137,400</td><td>0.4907</td><td>+0.1991</td><td>0.1713</td><td class="best">OK</td></tr>
+<tr><td>138,300</td><td>0.5086</td><td>+0.1976</td><td>0.2593</td><td class="best">OK</td></tr>
+<tr><td>139,200</td><td>0.5209</td><td>+0.1931</td><td>0.2860</td><td class="best">OK</td></tr>
+<tr><td>139,500</td><td>0.4944</td><td>+0.1999</td><td>0.2165</td><td class="best">OK</td></tr>
 </table>
-<p class="note">427 PROBE events so far, all C4=OK, 0 fusing. C1 stable around ~0.44–0.54 (well below 0.95 collapse threshold), C2_gap consistently positive (~0.19–0.21, healthy diagonal dominance). loss_ema decreasing smoothly from 7.16 → ~0.10–0.39. Occasional C1 spikes (e.g. 0.6646 at step 63300, 0.5374 at step 128100) are transient and return to baseline — not a collapse signal. Training is healthy and progressing normally at 68.5% — the wider E2 arm (284.54M) shows no instability under the fair cosine schedule.</p>
+<p class="note">465 PROBE events so far, all C4=OK, 0 fusing. C1 stable around ~0.44–0.65 (well below 0.95 collapse threshold), C2_gap consistently positive (~0.18–0.21, healthy diagonal dominance). loss_ema decreasing smoothly from 7.16 → ~0.11–0.36. Occasional C1 spikes (e.g. 0.6646 at step 63300, 0.6504 at step 134100, 0.5374 at step 128100) are transient and return to baseline — not a collapse signal. Training is healthy and progressing normally at 74.5% — the wider E2 arm (284.54M) shows no instability under the fair cosine schedule.</p>
 </div>
 
 <h2>10. Orchestration — bothfair Chain</h2>
@@ -423,15 +436,15 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 <tr><th>Stage</th><th>Status</th><th>Timeline</th></tr>
 <tr><td>1. E1fair train</td><td class="status-done">✅ Done (07:17)</td><td>22:24 Oct 9 → 07:17 Oct 10 (~8.87h)</td></tr>
 <tr><td>2. E1fair eval (Prot B + Prot A)</td><td class="status-done">✅ Done (09:20)</td><td>07:17 → 09:20 Oct 10 (~2h)</td></tr>
-<tr><td>3. E2fair train</td><td class="status-running">🔄 Running (step ~128,100/187,101, ~68.5%)</td><td>09:20 → ~17:00 Oct 10 (~7.7h)</td></tr>
-<tr><td>4. E2fair eval</td><td class="status-pending">⏳ Pending</td><td>~17:00 → ~21:00 Oct 10 (~3.5h)</td></tr>
+<tr><td>3. E2fair train</td><td class="status-running">🔄 Running (step ~139,360/187,101, ~74.5%)</td><td>09:20 → ~18:30 Oct 10 (~9.2h)</td></tr>
+<tr><td>4. E2fair eval</td><td class="status-pending">⏳ Pending</td><td>~18:30 → ~22:00 Oct 10 (~3.5h)</td></tr>
 </table>
 <pre>===== Scaling: GPIC=7445 CC12M=1100 Amshaker=2250 pairs≈111050855 1ep≈216897steps =====
 ===== BOTHAIR: E1fair → E2fair (chained) =====
 ===== E1fair START (w512/d30, fair recipe) steps=187101 2026-10-09 22:24:31 =====
 ===== e1fair eval START 2026-10-10 07:17:19 =====
 ===== E2fair START (w768/d30, fair recipe) steps=187101 2026-10-10 09:20:12 =====</pre>
-<p class="note">The <code>bothfair</code> process (PID 2670216) is alive (etimes ~17h) and orchestrating correctly. E1fair train → E1fair eval (both protocols) → E2fair train → E2fair eval are auto-chained. No manual intervention needed. GPU: 8/8 at ~100% util, ~24.9 GB/card, temps 39–47°C.</p>
+<p class="note">The <code>bothfair</code> process (PID 2670216) is alive (etimes ~17.7h) and orchestrating correctly. E1fair train → E1fair eval (both protocols) → E2fair train → E2fair eval are auto-chained. No manual intervention needed. GPU: 8/8 at ~100% util, ~24.9 GB/card, temps 39–47°C.</p>
 </div>
 
 <h2>11. Pending Items & Timeline</h2>
@@ -440,7 +453,7 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 <tr><th>Item</th><th>Status</th><th>Expected</th><th>Back-fill target</th></tr>
 <tr><td>E1fair lp (Protocol B, mean±σ)</td><td><span class="tag tag-ok">✅ 62.34 ± 0.01%</span></td><td>Completed ~09:20</td><td><code>EXPERIMENTS_VISION.md §8.2</code></td></tr>
 <tr><td>E1fair lp (Protocol A)</td><td><span class="tag tag-ok">✅ 49.70%</span></td><td>Completed ~09:20</td><td><code>EXPERIMENTS_VISION.md §8.2</code></td></tr>
-<tr><td>E2fair full training</td><td><span class="tag tag-warn">🔄 Running (step ~128,100, ~68.5%)</span></td><td>~17:00 Oct 10</td><td><code>EXPERIMENTS_VISION.md §8.2</code></td></tr>
+<tr><td>E2fair full training</td><td><span class="tag tag-warn">🔄 Running (step ~139,360, ~74.5%)</span></td><td>~18:30 Oct 10</td><td><code>EXPERIMENTS_VISION.md §8.2</code></td></tr>
 <tr><td>E2fair lp (Protocol B, mean±σ)</td><td><span class="tag tag-pending">⏳</span></td><td>~21:00 Oct 10</td><td><code>EXPERIMENTS_VISION.md §8.2</code></td></tr>
 <tr><td>Δlp = lp(E2fair) − lp(E1fair)</td><td><span class="tag tag-pending">⏳</span></td><td>~21:00 Oct 10</td><td><code>report_vision_scaling_fair.html</code></td></tr>
 <tr><td>Fair comparison conclusion</td><td><span class="tag tag-pending">⏳</span></td><td>~22:30 Oct 10</td><td><code>report_vision_scaling_fair.html</code></td></tr>
@@ -462,7 +475,7 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 <div class="disclosure">
 <h3>What this report covers vs. what it does NOT cover</h3>
 <ul>
-<li><strong>Covers:</strong> The full process of the overnight scaling fairness rerun — why the old conclusion was invalidated, the new recipe design, code changes, data fairness fix, E1fair training + evaluation completion (Protocol B: 62.34±0.01%, Protocol A: 49.70%, with verified evidence), and E2fair training currently in progress (step ~128,100/187,101 (~68.5%), healthy, 427 PROBE all OK, no collapse, lr=1.54e-04 cosine).</li>
+<li><strong>Covers:</strong> The full process of the overnight scaling fairness rerun — why the old conclusion was invalidated, the new recipe design, code changes, data fairness fix, E1fair training + evaluation completion (Protocol B: 62.34±0.01%, Protocol A: 49.70%, with verified evidence), and E2fair training currently in progress (step ~139,360/187,101 (~74.5%), healthy, 465 PROBE all OK, no collapse, lr=1.20e-04 cosine).</li>
 <li><strong>Does NOT cover:</strong> The final fair-comparison result (Δlp). E2fair has not yet finished training or evaluation. <strong>E1fair lp = 62.34% is available</strong> (Protocol B), but without E2fair's lp, no conclusion about "bigger is better/worse/indistinguishable" can be drawn. The +33pp improvement of E1fair over old E1 (29.35% → 62.34%) confirms the schedule was the old bottleneck, but says nothing about the width-scaling question.</li>
 <li><strong>Does NOT pre-judge:</strong> We do not predict whether Δlp will be positive, negative, or near-zero. The pre-registered criteria are locked; we will report whatever the numbers show.</li>
 <li><strong>Timeline honesty:</strong> ETA estimates (~21:00 Oct 10 for full completion) are based on E1fair's measured throughput (3,774.5 img/s) and E2fair's current throughput (~4,750–5,250 img/s). NFS throughput fluctuations (observed range: 4,700–5,250 img/s for E2fair so far) may shift the timeline by ±1–2h.</li>
@@ -475,7 +488,7 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 <tr><th>Artifact</th><th>Path</th><th>Verified</th></tr>
 <tr><td>E1fair train log</td><td><code>/tmp/scaling_e1fair.log</code> (2.3MB)</td><td>✅ [start], [lr-selfcheck], [done] lines extracted</td></tr>
 <tr><td>E1fair eval log</td><td><code>/tmp/scaling_e1fair_eval.log</code> (3.9KB, complete)</td><td>✅ Prot B (62.34±0.01%) + Prot A (49.70%) extracted</td></tr>
-<tr><td>E2fair train log</td><td><code>/tmp/scaling_e2fair.log</code> (live, ~1.6MB)</td><td>✅ [start], [lr-selfcheck] extracted; 427 PROBE all OK</td></tr>
+<tr><td>E2fair train log</td><td><code>/tmp/scaling_e2fair.log</code> (live, ~1.8MB)</td><td>✅ [start], [lr-selfcheck] extracted; 465 PROBE all OK</td></tr>
 <tr><td>bothfair orchestration</td><td><code>/tmp/bothfair_run.log</code></td><td>✅ chain stages confirmed</td></tr>
 <tr><td>Data snapshot</td><td><code>run/vision/data_snapshot_20261009.txt</code> (662KB, 7,437 lines)</td><td>✅ all GPIC tars frozen</td></tr>
 <tr><td>E1fair output dir</td><td><code>scaling_E1fair_ov2_w512_d30_p16_224/</code></td><td>✅ 18 ckpts + vision.pt + train.log</td></tr>
@@ -485,7 +498,7 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 </div>
 
 <div class="refs">
-<p><strong>Report:</strong> <code>report_10_09_vision_overnight.html</code> · <strong>Agent:</strong> vision · <strong>Generated:</strong> 2026-10-10 ~09:30, updated ~15:25 · <strong>Status:</strong> Process report (E1fair complete, E2fair running at ~68.5%) · <strong>Next update:</strong> After full completion (~21:00 Oct 10) → <code>report_vision_scaling_fair.html</code></p>
+<p><strong>Report:</strong> <code>report_10_09_vision_overnight.html</code> · <strong>Agent:</strong> vision · <strong>Generated:</strong> 2026-10-10 ~09:30, updated ~16:05 · <strong>Status:</strong> Process report (E1fair complete, E2fair running at ~74.5%) · <strong>Next update:</strong> After full completion (~22:00 Oct 10) → <code>report_vision_scaling_fair.html</code></p>
 <p><strong>Related:</strong> <code>report_vision_aimv2_scaling.html</code> (old, ⛔ superseded) · <code>EXPERIMENTS_VISION.md §8</code> (fair rerun pre-registration + results) · <code>MEMORY_VISION.md</code> (agent state)</p>
 </div>
 
