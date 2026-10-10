@@ -21,6 +21,34 @@
 > 📦 §运维指令·2026-10-07⑥配比实验收官总报告HTML（report_data_mix_summary.html 29KB）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：R1→s_step→R2→top-K全弧线报告已交付,ρ=−0.80排名反转+0.6pp不可分辨+88:8:4先验。需要时再读。
 
 
+### 🆕 运维指令 · 2026-10-10（巡检并发下载 `85M` + `en_v1_4` · 回报各自速度/ETA）· 用户直令 · 最高优先
+
+> **用户令（2026-10-10 傍晚）**：「我在同时下载 **85M** 和 **en_v1_4**，请看下**各自下载速度**和 **ETA**。」
+
+**① 背景**
+- **`en_v1_4`** = `openbmb/Ultra-FineWeb` · `data/ultrafineweb_en_v1_4/`（**56,461 文件 / 6.75TB**）——本轮由 data 线 parallel 脚本 `run/data_pipeline/download_en_v1_4.py` 下载（PID **2535486**，24 workers + hf_transfer，落盘 `/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/`）。
+- **`85M`** = `mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M`（此前 §0.7.A 曾停；**用户当前另行在同时下载**）。
+
+**② 执行（纯巡检，不改动任何下载）**
+1. **判活**：`pgrep -af 'hf download|download_en_v1_4|LLaVA|Ultra-FineWeb'`（各留原文；确认两路进程是否都在）。
+2. **两路各自取证**（**每路都要**）：
+   - 已落盘：`find <dir> -name '*.parquet' | wc -l` + `du -sh <dir>`（**间隔 60–120s 取两次求增量**，⚠️ **不用总比例估**）；
+   - 在途：`*.incomplete` 字节增长（`ls -l --time-style=+%H:%M` 两次）或 `/proc/<pid>/io` 的 `write_bytes` 6s 增量；
+   - log 尾部：`tail -n 5` 对应日志（`en_v1_4` → `/tmp/en_v1_4_dl.log`；`85M` → 其自身 `nohup`/`hf` 日志）。
+3. **算速度 + ETA**（分路，给 **± 区间**）：
+   - **`en_v1_4`**：速度（**files/min** 与 **MB/s** 双口径）→ ETA = 剩余文件/字节 ÷ 速度。
+   - **`85M`**：同上 —— ⚠️ 85M 是**图像+文本 parquet，单件体积与 en_v1_4 量级差异大**，**ETA 必须按字节算，不能按文件数比例**。
+   - **注明争用**：两条同时跑 = **共享出口带宽**，故实测速度 = **争用后速度**；若能推断「单跑」速度，一并给出对比。
+
+**③ 纪律**
+- **只读巡检**：**不 kill / 不重启 / 不改并发**。**唯一例外** = 某路**僵死**（`write_bytes` 长时间 0 **且** PID 已死）→ 才按既定纪律 kill + **同命令**续传，并标「**已重启**」+ 新 PID。
+- 外网命令**显式带 proxy**；每条可能慢的命令带 `timeout`；**不对大目录做全树遍历**（`find` 限深度 / 限定子目录）。
+- 判活**不许用文件数比例估**，用**字节增量** / `/proc/io`。
+
+**④ 回写**：本指令块下贴「**两路各自：PID / 已落盘 / 实测速度 / ETA**」表；同步更新 `MEMORY_DATA.md` 心跳与 `daily-memories-data/2026-10-10.md`。
+
+**⑤ 体积**：若 TASK 超 32KB，按「体积维护规程」把已闭合旧块原文搬入 `ARCHIVE_OPERATOR_DATA.md`（只搬迁留指针）。
+
 ### 🆕 运维指令 · 2026-10-10（🔄 重启 `en_v1_4` 下载）· 用户直令 · 最高优先
 
 > **用户令（2026-10-10）**：「给 data 下指令，重启 en_v1_4 下载。」
