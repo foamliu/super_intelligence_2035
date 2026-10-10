@@ -853,8 +853,13 @@ def main():
         step += 1
         li = cur_loss.item()
         loss_ema = li if loss_ema is None else 0.98 * loss_ema + 0.02 * li
-        if step == 50:
+        # Set loss_early reference AFTER warmup (not step 50) so C4 doesn't
+        # false-alarm during warmup when lr is too low for loss to decrease.
+        # For warmup < 50 (e.g. old 30k runs), fall back to step 50 (unchanged).
+        _c4_init_step = max(args.warmup, 50)
+        if step == _c4_init_step:
             loss_early = loss_ema
+            log(f'[c4-init] loss_early={loss_ema:.4f} set at step={step} (warmup={args.warmup})')
 
         if step % args.log_every == 0 or step == args.steps:
             avg_dt = float(np.mean(roll[-args.log_every:]))
