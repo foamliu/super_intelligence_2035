@@ -1,6 +1,24 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-10（🚀 撤 P-8 暂缓令 · 按计划书启动 P-8【44B】）· 用户直令 · 最高优先
+
+> **用户令**：「pretrain：按此执行 P-8。」—— 本指令**撤销 P-8 暂缓令（10-02）**，按 `report_pretrain_p8_plan.html`（commit cb3f54c2）正式启动 Stage (i) 预训练。
+
+**① 对象**：从零训 Mamba2-hybrid 2.220B，真实语料，**44B token**（Chinchilla 下限，≈2.0 天 @ 249K tok/s）。
+
+**② 参数**（`pretrain_launcher.py`，TP1·DP8·8 卡独占）：`--arch mamba2 --tensor-parallel 1 --seq-length 4096 --global-batch-size 1024 --micro-batch-size 2 --precision bf16_mixed --optimizer dist_muon --lr 1e-3 --min-lr 1e-5 --lr-decay-style WSD --lr-warmup-iters 524 --lr-decay-iters 1049 --train-iters 10490 --save-interval 1049 --seed 1234`（端口/master_addr/数据路径按 operator 真实入口；`layer_wise_distributed_optimizer=True`）。
+
+**③ 数据（WSD 两段各配一套比，与数据段同步切换）**：Stable ~36B = **web 88 : code 8 : math 4**（web=base，用已分词存量 en_base 206.76B + l1_en_hq 152.17B + zh 112.47B ≈502B，web 需求仅 31.7B 已覆盖 → **en_v1_4 非 44B 档阻塞项，无需等下载完成**）；Decay ~8B = **SFT 64%**（SFT-2605 + SFT-Agent-2609，内部 5 类各 20%）+ L3 24% + code 8% + math 4%。
+
+**④ 随本指令生效的勘误（已订正任务书 §输入表 / §训练要求）**：配比 `86:10:4`→`88:8:4`、stable 主体 `L3`→`base`；warmup/decay 由绝对 `250/500` 改**比例 5%/10%**（44B 档 = 524/1049 步）。
+
+**⑤ 纪律**：从零（🚫 不加载任何权重）· WSD 完整走完（decay 尾段吃到 SFT 退火混合）· 每 500 步记 loss/val/grad_norm/tok/s/GPU 独占 · 禁叠加重 I/O（vision/data 避让）· NaN/发散/OOM 如实记录+留 ckpt+日志不静默重启 · 建议挂 MaxLogit/QK 谱范数监控（超阈值 μ(·) 归一化 = MuonClip 预案）。
+
+**⑥ 启动前最后核查**：8 卡独占无争用（nvidia-smi 全 0）/ 数据 bin·idx 路径与配比一致 / dist_muon layer-wise 生效 / 磁盘预留 ≥400GB（ckpt 11×~30GB）/ 启动后报 PID + 首 500 步 loss/tok/s。
+
+**⑦ 输出**：loss 曲线 + 每 10% ckpt 路径 + final 8 集 lm_eval（Table 2 常识）；commit 前缀 `pretrain P-8:`。en_v1_4 下满后并入后续 100B 档（另行再令）。
+
 ### 🆕 运维指令 · 2026-10-10（✅ dist_muon 定为 P-8 默认优化器 · 最佳实践）· 用户直令 · 最高优先
 
 > **用户令**：「pretrain 可以将 dist_muon 写进任务书的最佳实践区，以后作为默认设置。」
@@ -13,28 +31,7 @@
 
 **④ 诚实声明**：仅 1000 步（6.55M tokens）短地平线；长训练是否持续优势**待 P-8 长跑验证**（若长跑吞吐/显存仍持平 AdamW 且 loss 占优即坐实）。
 
-### 🆕 运维指令 · 2026-10-10（⚗️ dist_muon 重测：Muon A/B 用 layer-wise 分布式重跑）· 用户直令 · 最高优先（先于下方两个报告块执行；跑完把结果并进「刷新 Muon 报告」）
-
-> **用户令**：「Muon 的试验，让 pretrain 用 dist_muon 重测。」
-
-**① 目标**：上一轮 Muon A/B 用的是 `optimizer=muon`（**plain**）。改成 `optimizer=dist_muon`（layer-wise distributed），其余全部不变，验证「−26% 吞吐 / +38% 显存」是否被 dist_muon 收窄/消除。
-
-**② 实验口径（与上一轮逐字一致，唯一差异 = optimizer）**
-- 臂：**`dist_muon`**（新增）；对照直接用**上一轮已测**的 `muon`（loss 3.112 / 87K / 53.8GB）与 `adamw`（4.003 / 118K / 39.0GB），**不重跑历史两臂**。
-- 参数：`--gbs 16 --mbs 1 --seq 4094 --iters 1000 --seed 1234 --data p5b_l3_blend`，.29 8 卡（GPU0-7）、bf16、TP=1 ⇒ **DP=8（>1 ✅，layer-wise 前提满足）**。
-- output：`nemo_experiments/muon_ab_realdata_distmuon`。
-
-**③ 接线（沿用上次「三步核查」结论；dist_muon 已在 bridge_compat 支持）**
-- 确认 `bridge_compat.py` 路由 `optimizer="dist_muon"` → layer-wise distributed（整层分给各 DP rank + `--use-distributed-optimizer` 语义）。
-- **先 1 卡/短步 smoke**（loss 正常下降、无 NaN/报错），再铺 dist_muon 臂 1000 步。
-
-**④ 必测指标（对照上一轮三数字）**：loss@1000 / tok/s / peak VRAM / grad_norm / 0 NaN·0 skip。预期 dist_muon 因 optimizer state 分片，**VRAM 应显著低于 53.8GB、甚至 ≤39GB**。
-
-**⑤ 判读预注册（先定后测，避免事后合理化）**
-- 吞吐：dist_muon ≥ ~118K →「−26% 系 plain Muon 通信/实现伪影」实锤；87K~118K → 部分收窄；仍 ≈87K → 在 8×H100/2.2B/65M 规模下未体现 NVIDIA 的 GB300 near-parity（诚实记录，注明规模差异）。
-- 显存：应显著下降（≤39GB）；若仍 ~53.8GB → buffer 伪影另有其因，列为待查。
-
-**⑥ 纪律**：🚫 不启动 P-8 · 🚫 不 kill watchdog · 跑不通（dist_muon 接线/报错）**如实报「卡在哪」，不熬夜 debug** · 分阶段 commit（前缀 `pretrain dist_muon:`）· 跑完把三路对比写进 EXPERIMENTS，并**刷新 `report_pretrain_muon_vs_adamw.html`**（衔接下方「刷新报告」块）· 若 TASK 超 32KB 按规程自行归档已闭合旧块。
+> 📦 §运维指令·2026-10-10（⚗️ dist_muon 重测）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：dist_muon = loss 3.110 / 122,415 tok/s / 37.3GB，plain Muon「−26% 吞吐 / +38% 显存」两项代价全消除，已定为 P-8 默认优化器（见上方「默认优化器」块）。需要时再读。
 > 📦 §运维指令·2026-10-10（📄 刷新 Muon 报告：overhead 归因+外部基准对照）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：报告 §7 已加「外部基准对照与 overhead 归因」，−26%/+38% 归因为 plain Muon 实现伪影非算法固有，dist_muon 预期 near-parity，P-8 方案A 升级为 NVIDIA 实证支撑+显存待查。需要时再读。
 
 > 📦 §运维指令·2026-10-10（📄 昨夜工作汇报 HTML）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：report_10_09_pretrain_overnight.html 11.6KB 已生成，含两项实验汇总+P-8 启示。需要时再读。
@@ -221,7 +218,7 @@
 | 项 | 来自 |
 |:--|:--|
 | **GBS** | P-5a 的 GBS×LR 扫描结论（若无右移则沿用 GBS=8；若 P-5a 指向更优大 GBS 则采用并注明） |
-| **LR / 调度 / 退火配比** | Round 1 胜出配置（LR 1e-3 / WSD / warmup 250 / decay 500 / min_lr 1e-5 / L3(86%)+code(10%)+math(4%)）；若 P-5a 给出新 LR 则改用并注明 |
+| **LR / 调度 / 退火配比** | ⚠️ 2026-10-10 勘误：warmup/decay 按 **比例 5%/10%**（44B 档=524/1049 步，非旧 250/500）；LR=1e-3 / min_lr=1e-5（P-5a 确认 1e-3 全局极小值）；stable 配比 **88:8:4**（web=base 88% + code 8% + math 4%）、decay 配比 **SFT 64% + L3 24% + code 8% + math 4%**（见 DATA_MIX_RECIPE） |
 | **token 预算** | ⭐ **由 P-5b 的 loss-vs-tokens 曲线决定**（曲线何时变平 → 就在那附近取预算） |
 | **精度** | 若 P-4 证明 FP8 对本架构确有加速且**不劣化 loss**，可用 FP8；否则 bf16。**必须记录采用与否及理由** |
 
@@ -241,7 +238,7 @@
 
 1. **从零开始**（不加载任何预训练权重），**真实语料**（`Ultra-FineWeb-L3` 全量 en 子集 + code + math 退火配比），
    **不是** `ultrafineweb_l3_qa_700m` 那个 742M 小分片 —— **本次必须跑真正的全量语料**。
-2. **WSD 完整走完**：warmup 250 → stable → **decay 尾段必须真的吃到退火混合**（这是 Stage (i) 的核心配方之一）。
+2. **WSD 完整走完**：warmup 5% → stable → **decay 尾段必须真的吃到退火混合**（SFT 64% 退火，Stage (i) 核心配方；44B 档 = warmup 524 → stable → decay 1049 步）。
 3. **checkpoint 规划**：至少保留 `final` + **每 10% 一个**（供 Stage (ii) 选起点、供 P-6 画能力曲线）。
    ⚠️ 每个 ckpt（2.22B 含 AdamW 状态）≈ **~30 GB**；**`/nas_train` 只剩 32T**，先算好 ckpt 留存策略与清理时机。
 4. **训练中每 500 步**记 `train loss` / `val loss` / `grad norm` / `tok/s` / **GPU 独占核验**。

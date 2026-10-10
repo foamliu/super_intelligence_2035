@@ -1333,3 +1333,24 @@ T3 提速验证结果：
 **④ 必含「对 P-8 的启示」**：① DM 对比 → BaiZe 长上下文服务能力佐证；② Muon → **loss 质量更好但吞吐/显存有代价**，P-8 是否采 Muon/dist_muon 的取舍（只记结论，不启动 P-8）。
 
 **⑤ 纪律**：🚫 不启动 P-8（10-02 暂缓令未撤）· 🚫 不 kill watchdog · 只汇总已固化数字、不新增实验 · 收尾按「收尾铁律」commit+push（前缀 `pretrain 昨夜报告:`）· 若 TASK 超 32KB，按规程自行归档已闭合旧块（含上方「运维调整/运维更正」两块）。
+
+---
+
+## 📦 §运维指令·2026-10-10（⚗️ dist_muon 重测）→ 自 TASK 归档
+
+> 结论：dist_muon = loss 3.110 / 122,415 tok/s / 37.3GB，plain Muon「−26% 吞吐 / +38% 显存」两项代价全消除 → 定为 P-8 默认优化器。
+
+### 原指令全文
+**用户令**：「Muon 的试验，让 pretrain 用 dist_muon 重测。」
+
+**① 目标**：上一轮 Muon A/B 用的是 `optimizer=muon`（plain）。改成 `optimizer=dist_muon`（layer-wise distributed），验证「−26% 吞吐 / +38% 显存」是否被收窄/消除。
+
+**② 口径**：臂 dist_muon（新增）；对照直接用已测的 muon（loss 3.112 / 87K / 53.8GB）与 adamw（4.003 / 118K / 39.0GB）。参数 `--gbs 16 --mbs 1 --seq 4094 --iters 1000 --seed 1234 --data p5b_l3_blend`，.29 8 卡、bf16、TP=1 ⇒ DP=8。output `nemo_experiments/muon_ab_realdata_distmuon`。
+
+**③ 接线**：`bridge_compat.py` 路由 `optimizer="dist_muon"` → layer-wise distributed（整层分给各 DP rank + `--use-distributed-optimizer` 语义）。先 1 卡/短步 smoke，再铺 1000 步。
+
+**④ 指标**：loss@1000 / tok/s / peak VRAM / grad_norm / 0 NaN·0 skip。预期 VRAM 显著低于 53.8GB、甚至 ≤39GB。
+
+**⑤ 判读预注册**：吞吐 ≥118K →「−26% 系 plain Muon 通信/实现伪影」实锤；87K~118K → 部分收窄；仍 ≈87K → 规模差异如实记录。显存应 ≤39GB。
+
+**⑥ 纪律**：🚫 不启动 P-8 · 🚫 不 kill watchdog · 如实报卡点 · 跑完写 EXPERIMENTS + 刷新 `report_pretrain_muon_vs_adamw.html`。
