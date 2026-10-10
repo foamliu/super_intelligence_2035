@@ -861,28 +861,51 @@ same step after warmup).
 - **Null (|Δlp| < 1.5pp)**: No benefit → keep AdamW.
 - **Negative (Δlp ≤ −1.5pp ProtB)**: Muon hurts → revert.
 
-### 9.3 V3: Full GPIC Data (single variable: data snapshot)
+**RESULT: 🔴 COLLAPSED — Muon causes contrastive collapse at all tested LRs** (2026-10-11)
+
+Three launch attempts, all collapsed:
+
+| Attempt | LR | Collapse step | C1 at collapse | Root cause |
+|:--|:--|:--|:--|:--|
+| 1st | 5e-4 | 2,100 | 0.99 | Muon orthogonalization amplifies contrastive collapse |
+| 2nd | 1e-4 | 2,100 | (false alarm) | **C2 guard bug** `gap<=0.005` fired on negative gap. Fixed: `abs(gap)<=0.005` |
+| 3rd | 1e-4 | 4,200 | 0.9569 | **Real collapse** (slower but same mode as 1st) |
+
+**C1 trajectory (3rd attempt, lr=1e-4, 14 PROBE points, zero reversals)**:
+step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 2100→0.74, 2400→0.82, 2700→0.86, 3000→0.89, 3300→0.92, 3600→0.93, 3900→0.95, **4200→0.9569** (C1>0.95 guard fired).
+
+**Key observations**: (1) C1 rise is monotonic and accelerating (0.18→0.96 in 3,900 steps). (2) Loss IS decreasing (7.39→7.30) — model reduces reconstruction loss but features collapse. (3) C2_gap always negative (off-diagonal>diagonal) — C2 guard never fires; only C1 catches it. (4) C4 always OK. (5) 5× lower LR delays but does not prevent collapse (2,100→4,200 steps, same endpoint). (6) **Root cause**: Newton-Schulz orthogonalization forces unit-norm gradients, amplifying the dominant collapse direction. AdamW's per-parameter adaptive scaling naturally damps this.
+
+**Verdict**: ❌ **Muon incompatible with AIMv2-style contrastive+reconstruction objective** at all tested LRs. Δlp cannot be computed (collapsed C1=0.9569 → near-constant features → lp≈chance). Eval terminated to free GPU for V3. Cost: ~3 GPU·h wasted (×8 GPUs). C2 guard bug fixed (r9_train.py:909: `gap<=0.005`→`abs(gap)<=0.005`).
+
+### 9.3 V3: Full GPIC Data (single variable: data snapshot + steps)
 
 | Field | Value |
 |:--|:--|
 | **Tested variable** | GPIC: 7437 tars → 8000 tars (full download completed 2026-10-10) |
 | Snapshot file | `data_snapshot_20261010_full.txt` (8000 GPIC train tars) |
-| Steps | 187,101 (same as baseline, per operator instruction — does NOT scale) |
-| Everything else | Identical to §9.0 baseline |
+| Steps | **230,598** (1 epoch of full data, calculated by data volume) |
+| Step formula | `⌈118,065,500 / (64 × 8 × 1)⌉ = 230,598` |
+| Data composition | GPIC 8000×12,639=101.1M + CC12M 11.0M + Amshaker 5.95M = **118.1M pairs** |
+| Epoch count | 1 (same as baseline E1fair epoch count) |
+| Everything else | Identical to §9.0 baseline (lr=5e-4, warmup=2000, cosine, min_lr=5e-5, AdamW, seed 1234) |
 | Output dir | `scaling_V3_fulldata_ov2_w512_d30_p16_224` |
+| Status | 🔄 **Training launched 2026-10-11 02:06** (screen `v3_fulldata`), ETA ~13:30 Oct 11 |
 
-**Hypothesis**: More unique data (7.6% more GPIC) → more diverse examples → higher lp.
+**⚠️ Disclosure**: This arm changes **both** data volume (+7.6% GPIC) **and** step count (+23.2%) relative to baseline. Conclusion = "**full-data recipe (data+steps combined) vs baseline**", NOT "pure data ablation".
+
+**Hypothesis**: More unique data + more steps (full 1 epoch) → higher lp.
 
 **Pre-registered criteria**:
-- **Positive (Δlp ≥ +1.5pp ProtB)**: More data beneficial at fixed steps.
-- **Null (|Δlp| < 1.5pp)**: No benefit from 7.6% more data.
-- **Negative (Δlp ≤ −1.5pp ProtB)**: More data hurts (less repetition) → keep 7437.
+- **Positive (Δlp ≥ +1.5pp ProtB)**: Full-data recipe beneficial → adopt.
+- **Null (|Δlp| < 1.5pp)**: No benefit from 7.6% more data + 23% more steps.
+- **Negative (Δlp ≤ −1.5pp ProtB)**: Full-data recipe hurts → keep 7437 snapshot.
 
-### 9.5 Results Table (TO BE FILLED)
+### 9.5 Results Table
 
 | Variant | ProtB (3-seed) | ProtA | Δlp vs E1fair | Verdict |
 |:--|:--|:--|:--|:--|
 | E1fair (baseline) | 62.34 ± 0.01% | 49.70% | — | — |
-| V1 (res 336) | ⏳ | ⏳ | ⏳ | ⏳ |
-| V2 (Muon) | ⏳ | ⏳ | ⏳ | ⏳ |
-| V3 (full data) | ⏳ | ⏳ | ⏳ | ⏳ |
+| V1 (res 336) | ⏸ deferred (user: "明天再说") | — | — | — |
+| V2 (Muon) | **N/A — COLLAPSED** (C1=0.9569@step4200) | N/A | N/A | ❌ Muon incompatible with contrastive loss |
+| V3 (full data) | 🔄 training (ETA ~13:30 Oct 11) | ⏳ | ⏳ | ⏳ |

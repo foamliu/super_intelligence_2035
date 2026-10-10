@@ -214,12 +214,35 @@ def linear_probe_mainstream(Xtr, ytr, Xva, yva, device,
     return (pred == yva).float().mean().item()
 
 
+def knn_probe(Xtr, ytr, Xva, yva, k=5, device='cuda'):
+    """k-NN probe: classify each val image by majority vote of k nearest train
+    images in cosine-similarity space. No training needed — pure feature
+    quality test.  Added 2026-10-10 (② probe ablation)."""
+    Xtr_n = torch.nn.functional.normalize(Xtr.float(), dim=-1).to(device)
+    Xva_n = torch.nn.functional.normalize(Xva.float(), dim=-1).to(device)
+    correct, total = 0, Xva_n.shape[0]
+    bs = 500
+    for i in range(0, total, bs):
+        batch = Xva_n[i:i + bs]
+        sim = batch @ Xtr_n.T
+        topk_idx = sim.topk(k, dim=1).indices
+        topk_labels = ytr[topk_idx.cpu()]
+        for j in range(topk_labels.shape[0]):
+            vals, counts = torch.unique(topk_labels[j], return_counts=True)
+            pred = vals[counts.argmax()]
+            if pred == yva[i + j]:
+                correct += 1
+        if i % 5000 == 0:
+            print(f'    [knn k={k}] {i}/{total}...', flush=True)
+    return correct / total
+
+
 def main():
     ap = argparse.ArgumentParser(
         description='LP protocol bridging eval (A=BaiZe, B=mainstream)',
         formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--ckpts', nargs='+', required=True)
-    ap.add_argument('--protocol', choices=['A', 'B', 'both'], default='both')
+    ap.add_argument('--protocol', choices=['A', 'B', 'both', 'knn'], default='both')
     ap.add_argument('--probe-full-train', action='store_true',
                     help='B: use full IN-1k train (1.28M). Heavy I/O.')
     ap.add_argument('--probe-per-class', type=int, default=200,
@@ -232,6 +255,12 @@ def main():
     ap.add_argument('--warmup-epochs', type=int, default=None)
     ap.add_argument('--batch-size', type=int, default=1024)
     ap.add_argument('--lr', type=float, default=None)
+    ap.add_argument('--weight-decay', type=float, default=0.0,
+                    help='B: weight decay for SGD/AdamW (default 0)')
+    ap.add_argument('--knn', action='store_true',
+                    help='Run k-NN probe (k=5,10,20) on val set')
+    ap.add_argument('--knn-k', type=int, nargs='+', default=[5, 10, 20],
+                    help='k values for k-NN probe')
     ap.add_argument('--size', type=int, default=224)
     ap.add_argument('--bs-encode', type=int, default=128)
     ap.add_argument('--gpu', type=int, default=0)
@@ -287,6 +316,7 @@ def main():
         print(f'[BRIDGE] ckpt={ckpt}', flush=True)
         ckpt_result = {'ckpt': ckpt, 'A': None, 'B': None}
         vision = load_vision(ckpt, device)
+        Iv_B = None  # shared between Protocol B and k-NN
 
         # Protocol A
         if args.protocol in ('A', 'both'):
@@ -332,6 +362,7 @@ def main():
                 lp_B = linear_probe_mainstream(
                     Pp_B, Pl_B, Iv_B, B_val_labels, device,
                     epochs=epochs, batch_size=args.batch_size, lr=lr,
+                    momentum=0.9, weight_decay=args.weight_decay,
                     warmup_epochs=warmup, optimizer=args.optimizer, seed=seed)
                 lp_B_runs.append(lp_B)
                 print(f'[BRIDGE] B seed={seed}: lp_top1={lp_B:.4f} '
@@ -346,7 +377,46 @@ def main():
                 'mean': lp_B_mean, 'std': lp_B_std, 'runs': lp_B_runs,
                 'optimizer': args.optimizer, 'epochs': epochs,
                 'batch_size': args.batch_size, 'probe_n': Pp_B.shape[0]}
-            del Iv_B, Pp_B, Pl_B
+            del Pp_B, Pl_B
+            torch.cuda.empty_cache()
+
+        # k-NN probe (② probe ablation, added 2026-10-10)
+        if args.knn or args.protocol == 'knn':
+            print('[BRIDGE] k-NN probe ...', flush=True)
+            # Encode val features if not already done by Protocol B
+            if Iv_B is not None:
+                Iv_knn = Iv_B  # reuse
+                B_val_labels_knn = B_val_labels
+            else:
+                if B_val_imgs is None:
+                    print('  [knn] Loading official val (IN norm) ...', flush=True)
+                    B_val_imgs, B_val_labels = load_official_val(
+                        size=args.size, norm='imagenet')
+                    B_val_labels = B_val_labels.to(device)
+                Iv_knn = encode_images(vision, B_val_imgs, device,
+                                       args.bs_encode).float()
+                B_val_labels_knn = B_val_labels
+            # Encode train subset for k-NN reference
+            print(f'  [knn] Loading train subset (50/class, IN norm) ...', flush=True)
+            knn_tr_imgs, knn_tr_labels = load_probe_train_subset(
+                per_class=50, size=args.size, norm='imagenet')
+            Xtr_knn = encode_images(vision, knn_tr_imgs, device,
+                                    args.bs_encode).float()
+            Pl_knn = knn_tr_labels.to(device)
+            knn_results = {}
+            for k in args.knn_k:
+                acc = knn_probe(Xtr_knn, Pl_knn, Iv_knn,
+                                B_val_labels_knn, k=k, device=device)
+                print(f'[BRIDGE] k-NN k={k}: top1={acc:.4f} ({acc*100:.2f}%)',
+                      flush=True)
+                knn_results[f'k{k}'] = acc
+            ckpt_result['knn'] = knn_results
+            del Xtr_knn, Pl_knn
+            if Iv_B is None:
+                del Iv_knn
+            else:
+                del Iv_B
+                Iv_B = None
             torch.cuda.empty_cache()
 
         if ckpt_result['A'] is not None and ckpt_result['B'] is not None:
@@ -372,6 +442,9 @@ def main():
         d = f'{r["delta"]*100:+.2f}pp' if 'delta' in r else '—'
         print(f'{r["ckpt"].split("/")[-1]:<40} {a:>12} {b:>18} {d:>10}',
               flush=True)
+        if 'knn' in r:
+            knn_str = '  '.join(f'k{k}={v*100:.2f}%' for k, v in r['knn'].items())
+            print(f'  {"k-NN:":<40} {knn_str}', flush=True)
     print('=' * 72, flush=True)
     print('[BRIDGE] DONE', flush=True)
 

@@ -771,3 +771,146 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 **⑥ 交付**：`report_vision_aimv2_scaling.html`（house style，内联 SVG，零外链，≤200 KB）+ `EXPERIMENTS_VISION` 新增一节（预注册判据 / 两臂表 / Protocol A·B / C1–C4 / 混淆声明）。
 **收尾**：commit+push（前缀 `vision scaling: …`）+ 心跳 + `WAITING=1`；🚫 不 `git add -A`；🚫 不删 ckpt。
 > 📦 体积提醒：本块加入后 `BAIZE_VISION_TASK.md` ≈36 KB ⇒ **收尾前先归档已闭合旧块**（照「📉 体积维护规程」，只搬迁、留 1 行指针）。
+
+
+---
+
+## 📦 归档：2026-10-10 Scaling fair rerun 成果报告 HTML（2026-10-11 归档）
+
+### 🆕 运维指令 · 2026-10-10（📄 **Scaling fair rerun 成果报告 HTML**）· 用户直令 · **最高优先**
+
+> **用户令（2026-10-10 晚）**：「**vision：Scaling fair rerun 成果出 html 报告。**」
+
+**① 交付**：**`report_vision_scaling_fair.html`**（落 `doc/BaiZe-ISEDA2027/`）—— **独立、自包含**（内联 SVG，**零外部 CDN/依赖**）。即 `2026-10-09⑨` 块 `⑦①` 的**正选**交付物（此前你选了「并入昨夜报告 §15」；**用户现明确要求独立成果报告**）。
+
+**② 内容（建议结构）**
+1. **TL;DR / 结论**：**Δlp（Protocol B）= +0.17pp → 不可分辨**（在 ±1.5pp 内）；**旧「Bigger is WORSE，Δlp=−5.59pp」= schedule 伪影**。
+2. **公平配置表**：两臂 **除 `--width` 外逐字节相同** —— 187,101 步 · `lr=5e-4` · `warmup=2000` · `cosine` · `min_lr=5e-5` · **同一冻结快照 `total_shards=10787`**。
+3. **结果表**：E1fair（w512）与 E2fair（w768）的 **ProtA / ProtB**（3 seeds，mean ± σ）。
+4. **预注册判据 vs 实测**：判定表（含 **±1.5pp** 阈值）。
+5. **旧 vs 新对照**：旧配方 `3e-3 / warmup20 / const` vs 新配方 `5e-4 / warmup2000 / cosine / 5e-5` 的 **lr 轨迹对比图**（SVG）。
+6. **结论 / 局限**；**7. 证据索引**（路径 + 原始输出片段）。
+
+**③ 一致性**：数字须与 `report_10_09_vision_overnight.html`、`EXPERIMENTS_VISION.md §8.2` **完全一致**（同一事实来源）；`report_vision_aimv2_scaling.html` 的 ⛔ 横幅**指向本报告**。
+
+**④ 边界**：**纯写作，不占 GPU**。
+**⑤ 收尾**：`git pull --rebase` → **只 `add` 本线文件** → `commit -m "vision 成果报告: scaling fair rerun HTML"` → `push`。
+
+
+---
+
+## 📦 归档：2026-10-10 昨夜工作汇报 HTML（2026-10-11 归档）
+
+### 🆕 运维指令 · 2026-10-10（📄 昨夜工作汇报 HTML）· 用户直令 · 高优先
+
+> **用户令**：「关于昨晚的工作，请 vision 写 html 报告。」
+
+**① 交付**：`report_10_09_vision_overnight.html`（落 `doc/BaiZe-ISEDA2027/`）
+
+**② 内容 = 昨夜（10-09 夜 → 10-10 晨）scaling 公平性重跑 全程**（即 ⑨ 块的工作；**仍进行中 → 未完成项用 ⏳ 明确标注，不得虚报/预判结论**）
+1. **旧结论作废原因**：旧两臂 `--lr 3e-3 --warmup 20` 在 187101 步下 warmup 仅 0.01%（本是 30k 短跑配方）→「Bigger is WORSE (Δlp=−5.59pp)」不可归因于「规模」→ 作废重做（旧报告已加 ⛔ 横幅）。
+2. **新配方**（两臂逐字相同、唯一差异 `--width`）：`--lr 5e-4 --warmup 2000 --scheduler cosine --min-lr 5e-5`；两臂同一冻结 GPIC 快照（total_shards=10787）。
+3. **代码修复**：`r9_train.py` 加 cosine/min-lr 支持；`run_scaling_experiment.sh` 加 e1fair/e2fair/bothfair 模式；smoke_cos 通过。
+4. **E1fair ✅ 完成**（187101 步 · ~8.87h · loss=0.2545 · 无坍缩 · 3774.5 img/s · lr=5e-5@end cosine 正确）+ **E1fair eval ⏳ 进行中**（Protocol B，3 seeds，ETA ~11:00，lp 待回填）。
+5. **⏳ 未完成（先写占位 + 待回填标记）**：E2fair train（ETA ~5.2h）· E2fair eval · 最终两臂 lp（Protocol B mean±σ）· 公平对比结论 —— 全部标「⏳ 待 ~20:00 Oct10 完成后回填」。
+
+**③ 格式（house style）**：自包含 · 内联 CSS + 内联 SVG · 零外链 · ≤200KB。
+
+**④ 必含「诚实交代」**：本报告为昨晚工作**过程汇报**，最终公平对比数字未出，只记录到 E1fair 完成 + E1fair eval 进行中，其余明确待回填，**不预判结论**。
+
+**⑤ 纪律**：🚫 不打断正在跑的 bothfair 链（PID 2670216）· 只写报告不重跑 · 收尾按「收尾铁律」commit+push（前缀 `vision 昨夜报告:`）· 若 TASK 超 32KB，按规程自行归档（⑨ 块本身仍活跃不可归档，只归档其下已闭合旧块）。
+
+
+---
+
+## 📦 归档：2026-10-09⑨ 公平性重跑（2026-10-11 归档）
+
+### 🆕 运维指令 · 2026-10-09⑨（🔁 **公平性重跑：E1/E2 原结论作废重做 —— `warmup=2000` / `lr=5e-4` / cosine / `min_lr=5e-5`，两臂**必须同数据**）· **用户直令** · **最高优先 —— 读本区请先读本块**
+
+> **背景（为什么要重跑）**：你交付的 `report_vision_aimv2_scaling.html` 结论是 **「bigger is worse」(Δlp = −5.59pp, 29.35% → 23.76%, Protocol B)**。运维复核 **§11 复现命令**后发现：**两臂的 `--lr 3e-3 --warmup 20` 完全相同**，而 E1 报告原文的 `--steps 187101` 意味着 warmup 只占 **20/187101 = 0.01%**；该 `3e-3 / warmup 20` 配方本是 **30k 短跑**设计（`ARchive_OPERATOR_VISION.md` §2026-10-05 全量训练块），**被原样搬到 187k 步长跑 + 更宽模型上**。⇒ **无法排除「E2 被这个近无 warmup 的高 lr schedule 系统性拖累」** ⇒ **现有 Δlp 不能归因于「规模」，原结论不安全。**
+> 🔑 **用户直令**：**把昨天的两个实验重跑一遍**，并按下面的配方与「**E1 用什么数据 E2 就用什么数据**」执行。
+
+**① 新配方（两臂**逐字**相同，唯一差异仍是 `--width`）**
+
+| 轴 | 旧（作废） | **新（本块）** |
+|:--|:--|:--|
+| `--lr` | `3e-3` | **`5e-4`** |
+| `--warmup` | `20`（0.01%，近等于无） | **`2000`（≈1.07%）** |
+| 调度 | **恒定**（`r9_train.py:432` 阶跃后平走） | **cosine → `min_lr`** |
+| `min_lr` | 无此概念 | **`5e-5`**（= `--lr` 的 10%） |
+| 其余 | bs64×8=512 / seed 1234 / 224 / p16 / d30 / AIMv2 / mratio 0.6 / plw 1.0 / cw 1.0 / `--steps 187101` | **全部不动** |
+| `--width` | E1 `512` / E2 `768` | **E1 `512` / E2 `768`**（唯一差异，不得再引入第二处不同）|
+
+**② 🔴 第一件事：`r9_train.py` 不支持 cosine —— 必须先加代码（否则你写 `--scheduler cosine` 也是假的）**
+- 现状：`run/vision/r9_train.py:432-434` `lr_at(s) = lr*(s/warmup) if s<warmup else lr` = **warmup 后恒定**；全仓唯一现成 cosine 实现在 `run/vision/train.py:55-61`（`base_lr`→`min_lr` 半余弦）与 `run/vision/lp_protocol_bridge.py:170-174`。
+- 要做：
+  1. `ap.add_argument('--scheduler', choices=['const','cosine'], default='const')` + `ap.add_argument('--min-lr', type=float, default=5e-5)`（**默认值保证旧命令零影响**）；
+  2. `lr_at` 改为：`s<warmup ⇒ lr*s/warmup`；否则 cosine 时 `min_lr + 0.5*(lr-min_lr)*(1+cos(pi*(s-warmup)/(steps-warmup)))`，`const` 时维持现状；**`steps` 用 `args.steps`（=187101，非剩余步数）**；
+  3. **把 lora 分支（`:436-438`）同步改**（本实验 `text_finetune` 默认关，但别留半截 bug）；
+  4. **`cosine` 分支起跑前打印 `lr@step0 / lr@warmup / lr@50% / lr@last` 四点自检**写进 `train.log`（这是本实验**最重要**的证据：证明曲线真的生效，别只信命令行）；
+  5. `py_compile` 后**用 `smoke_cos`（见 ③.1）验证 lr 轨迹**再开全量。
+
+**③ ③ 两臂**同一份数据**（用户原话：「**确保实验数据一致，E1 用什么数据 E2 就用什么数据**」）**
+1. **先把 tar 清单冻结成文件**（`run_scaling_experiment.sh:34-47` 现在是**启动时 `ls` 现算** ⇒ $GPIC_N 在 E1 与 E2 之间会变（E1 报告 §10 已记 6233→6754）；`r9_train.py:443-452` **原生支持**用 `.txt` 快照替代 glob）：
+   `bash run_scaling_experiment.sh snapshot_gpic` → 生成 `run/vision/data_snapshot_20261009.txt`（一行一个绝对 tar 路径）。
+2. **两臂都改成**：`--data "$SNAP,<cc12m_glob>,<amsh_glob>"`（CC12M/Amshaker 若不在增长可留 glob，但**在 train.log 的 `[start]` 行必须打印 `total_shards=` 与逐源条数** ⇒ 两臂必须**逐字相同**）；
+3. `--data-source mixed --caption-type all`、`--patch 16 --resolution 224 --loss aimv2 --mask-ratio 0.6 --patch-loss-weight 1.0 --contrast-weight 1.0` **两臂不动**；
+4. `--steps`：**两臂显式写同一个 `--steps 187101`**（不许让脚本用 `EPOCH_STEPS` 现算——那会把「数据变多」混进来）；
+5. **`smoke_cos` 含预检**：**比对两臂 `[start]` 行的 `total_shards=` 是否相同**，不同即停、如实报（不许「差不多」）。
+
+**④ 第二条铁律：**🚫 不许覆盖旧结果**
+- **两个新输出目录**（旧 `scaling_E1_ov2_w512_d30_p16_224` / `scaling_E2_ov2_w768_d30_p16_224` 是**历史证据**，**原地保留**，🚫 不删 ckpt、🚫 清目录）：
+  `scaling_E1fair_ov2_w512_d30_p16_224` / `scaling_E2fair_ov2_w768_d30_p16_224`（`OUTROOT` 同）；
+- 日志另开：`/tmp/scaling_e1fair.log` / `/tmp/scaling_e2fair.log`；eval 日志 `/tmp/scaling_{e1fair,e2fair}_eval.log`；
+- **新目录的 `train.log` 里必须能定位到 `lr=` / `warmup=` / `min_lr=` / `scheduler=cosine` / `total_shards=`**（交付时逐条引用原文）。
+
+**⑤ 执行顺序**
+1. 改 `r9_train.py`（②）+ 改脚本（③ `e1fair`/`e2fair`/`smoke_cos` 模式）；`py_compile` 两个文件；**先跑 `smoke_cos`（30 步 ×2 臂，几分钟）→ 报 lr 四点自检 + 两臂 shard 数**；
+2. **开跑 E1fair**（先跑它：它是新的**参照**）→ 报实测 img/s 与 ETA；
+3. E1fair 完成后**紧接 E2fair**（同脚本 chain，或 watcher）；两臂 `--steps` 一致；
+4. 两臂完成后 eval：**Protocol B（`--probe-full-train --seeds 0 1 2` → mean±σ）+ Protocol A**，**对旧两臂的 ckpt 不要重跑**；
+5. 占 `.12` 前在 `GPU12_ALLOC.md` 申请区**追加一行**（8 GPU，预计 2×~5.2h 训练 + ~3.5h eval）。
+
+**⑥ 判据（沿用 2026-10-08⑤，不新造规则）**：**Δlp = lp(E2fair) − lp(E1fair)**；**≥ +1.5pp 支持** / |Δ| ≤ 1.5pp 不支持 / **≤ −1.5pp 反向**；**必须同时报 3-seed σ**（σ>|Δ| 判「不可分辨」）；**单预算点不构成 scaling law**（照旧写进 Limitations）。
+- 🚨 **旧结论处置（硬要求）**：在 `report_vision_aimv2_scaling.html` **顶部加一条醒目的「⛔ 结论已被取代」横幅**（指向新报告），**不许静默改数字**；旧报告作为**「schedule 敏感性证据」**保留（附表：旧配方 `3e-3/20/const` vs 新配方 `5e-4/2000/cosine/5e-5` 的 lr 轨迹对比）；
+- 若新 Δlp 仍 ≤ −1.5pp ⇒ 才可写「在大 lr/short-budget 之外的**公平 schedule**下，更大模型仍更差」；若落入 ±1.5 ⇒ 写「**在该预算下两规模不可分辨**」（且必须与 R9/R10 的「数据受限区」结论并读）；若 ≥ +1.5 ⇒ 写「**原结论是 schedule 伪影**」。
+
+**⑦ 交付**：① `report_vision_scaling_fair.html`（or 在同报告内新开 §15「公平重跑」节，二选一，说明清楚）；② `EXPERIMENTS_VISION.md` 新节（**预注册在前、结果在后**，含 ②④ 的 lr 轨迹与两臂 `total_shards=` 原文）；③ `MEMORY_VISION.md`「scaling fair rerun」小节 + 心跳；④ commit+push（前缀 `vision scaling fair: …`）+ `WAITING=1`；🚫 不 `git add -A`。
+> ⏱️ **cost 估**：E1fair ≈ 5.2–5.7h（旧 E1 实测）＋ E2fair ≈ 5.2–9.1h（旧 E2 实测，NFS 波动）＋ eval ≈ 3.5h/2 臂 ⇒ **总计 ~14–18h 墙钟**（`.12` 8 卡）。**若 `.12` 被别的任务占用**：按 `GPU12_ALLOC.md` 优先序（vision 训练臂 > pretrain 推理评测）**先申请、不抢占**；等不到就**如实报「无卡未起」+ 脚本就绪**，别改配方凑合。
+> ⚠️ **存储为 SSD（用户裁定 2026-10-09）**：**IO/NFS 争用不作为推迟 E1fair 的理由** —— 按计划起跑即可，吞吐波动如实记录（别因此等待/降配）。
+> 📦 体积：本块加完请自检 `wc -c`，**>32KB 先把已闭合块搬 `ARCHIVE_OPERATOR_VISION.md`**（只搬迁、留指针）。
+
+---
+
+## 📦 归档：2026-10-10 运维征询（下一步工作建议）· 已回答 → MEMORY_VISION.md「运维问答」节
+
+### 🆕 运维征询 · 2026-10-10（❓ **下一步工作建议**）· 用户直令 · 高优先
+
+> **用户令（2026-10-10 晚）**：「**询问 vision，对于下一步工作，有什么建议。**」
+> **背景（请据此作答）**：`Scaling fair rerun` **已全部完成** —— **Δlp（ProtB）= +0.17pp → 不可分辨**（旧「−5.59pp / Bigger is WORSE」＝ **schedule 伪影**，已盖棺）。`.12` 8 卡**已释放**；GPIC 全量完成；`report_vision_scaling_fair.html` 已另派（下方块）。
+
+**请给出「下一步工作建议」，按价值排序**；每条**必须**含：
+1. **要回答的问题**（一句话） 2. **依据**（前序实验/报告 路径或文献） 3. **实验设计**（臂 / 数据 / 步数 / 卡数 / 时长）
+4. **判据**（预注册，含阈值） 5. **成本**（GPU·h + 墙钟） 6. **依赖/前置** 7. **风险**
+
+**建议覆盖（但不限于）**
+- **(a) Stage (iv) MLLM 对齐前置**：此前 `§2-A~2-E`（Projector 设计 / 分辨率-patch token 消融 / 冻结 vs 解冻框架 / 特征缓存 / 数据配对）——**哪些已做、哪些该做、优先级**。
+- **(b) `w384` AIMv2-style**（此前 `1-A`，P1≈16 GPU·h）：结合「塔越小越高」+ 本次公平结论，**还值不值得**？
+- **(c) C1-lp 背离**（此前 `1-B`）：contrast 权重 vs lp 的 trade-off，**是否优先**？
+- **(d) 224→336 分辨率/patch token 消融**（此前 `1-D`）：对**版图 VQA**（BaiZe 核心场景）的必要性。
+- **(e) 论文**：本次**公平性翻案**如何在 §VI 呈现（是否需补章 / scaling 曲线重拟合 / 抑或写「schedule 敏感性」教训）。
+- **(f) 其他未验证假设**（负结果亦有价值）。
+
+**产出**：写入 `run/MEMORY_VISION.md` 的「运维问答 · 2026-10-10」节 **（或** 本块下）。**纯写作、不占 GPU**。
+> ℹ️ 本条与下方「成果报告」块**都要做**（征询可先答，报告仍须交付）。
+
+---
+
+## 📦 归档：必做修正 C1/C2 · 均已完成（C1 口径修订=③ DONE, C2 限定已在报告中）
+
+### 2. 🚩 必做修正（**最高优先 · 纯 CPU · 与 R14/E1 合并做**）
+
+| # | 修正 | 要点 |
+|:--|:--|:--|
+| **C1** | **数据量口径** | `r9_scaling.py:158` 的「本地 53M 上限」是 **`--local-cap-m default=53.0`＝假设、非实测**。按 DATA_RESEARCH 实测（GPIC **5 tar=53,637 图 → ~10,727/tar × 8000 ≈ 86M**）外推 → **本地全量上限 ≈103M**（GPIC 86M + CC12M 11M + Amshaker 6M）。→ 用**真实 cap 重算** R9 所有 "×N 缺口"（含 "226× the 53M cap"）；报告中**统一三类分母**：**R9 用过 18.5M / 盘上现有 ≈29M / 本地全量 ≈103M**，并标注**数据仍在下载（动态值）**。 |
+| **C2** | **R8 结论加限定** | R8 的 6 架构**全是自研 from-scratch 等参改编**（`run/vision/models.py` 头行自证；R8 亦标「等参改编（非官方模型）」）→ **「SSM 坍缩」只能表述为「我们 recipe（冻结语义文本塔 + InfoNCE）下、我们自研改编版的坍缩」**，🚫 **不得**推广成「官方 MambaEye/DeepEncoderV2 会坍缩」。 |
