@@ -1,6 +1,18 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-10（✅ dist_muon 定为 P-8 默认优化器 · 最佳实践）· 用户直令 · 最高优先
+
+> **用户令**：「pretrain 可以将 dist_muon 写进任务书的最佳实践区，以后作为默认设置。」
+
+**① 结论依据（dist_muon 三路实测 #262）**：dist_muon = loss 3.110 / **122,415 tok/s**（> AdamW 118K）/ **37.3GB**（< AdamW 39.0GB）—— plain Muon 的「−26% 吞吐 / +38% 显存」两项代价**全部消除**，且保留 Muon 收敛优势（loss 比 AdamW 低 22.3%）。
+
+**② 默认设置**：P-8 及后续正式训练，**优化器默认 `dist_muon`**（`layer_wise_distributed_optimizer=True`）。
+
+**③ LR 口径**：Muon 官方建议 **~1e-3**；A/B 三路验证用 **3e-4**（与 AdamW 同 LR 保证公平）。P-8 配方 LR=1e-3 **恰好贴合 Muon 官方建议** → **保留 1e-3，不改**。
+
+**④ 诚实声明**：仅 1000 步（6.55M tokens）短地平线；长训练是否持续优势**待 P-8 长跑验证**（若长跑吞吐/显存仍持平 AdamW 且 loss 占优即坐实）。
+
 ### 🆕 运维指令 · 2026-10-10（⚗️ dist_muon 重测：Muon A/B 用 layer-wise 分布式重跑）· 用户直令 · 最高优先（先于下方两个报告块执行；跑完把结果并进「刷新 Muon 报告」）
 
 > **用户令**：「Muon 的试验，让 pretrain 用 dist_muon 重测。」
@@ -194,7 +206,8 @@
 > | seq | 4096 | P-9.7 |
 > | 精度 | **bf16**（FP8 在 TP1 上 s=0.91 慢 9%，不用） | T3 Test 4 |
 > | GBS | 1024 | P-5b / P-5a |
-> | LR / 调度 | 1e-3 / WSD / warmup 5% / decay 10% | P-5a |
+> | **优化器** | **`dist_muon`**（layer-wise distributed，**默认**） | dist_muon 三路实测 #262 |
+> | LR / 调度 | 1e-3 / WSD / warmup 5% / decay 10%（Muon 官方建议 ~1e-3；A/B 验证用 3e-4 公平对照） | P-5a |
 > | recompute | 不用（对 Mamba2-hybrid 无效：52/56 层 SSM 激活常量级，仅省 ~0.6GB） | T3 Test 1 |
 > | **实测吞吐** | **249K tok/s**（last-100 步均值，1100 步长跑确认） | P-9.7 |
 >
