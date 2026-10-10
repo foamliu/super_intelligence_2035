@@ -13,7 +13,7 @@ WAITING: 1
 | WAITING | 1（🔁 **E1fair TRAIN+EVAL DONE (ProtB=62.34±0.01%, ProtA=49.70%). E2fair TRAIN DONE (loss=0.1579, no collapse, 623 PROBE OK). E2fair EVAL RUNNING (Protocol B, 3 seeds, started 18:38:35).** bothfair PID 2670216 alive. Next wake: collect E2fair eval lp results, fill §8.2 Δlp, write report_vision_scaling_fair.html） |
 | ERROR_COUNT | 8（①~⑤ 同前 ⑥ AIMv2.forward() return_patch修复 ⑦ E1 DataLoader bus error@step131490 ⑧ **step-count mismatch caught**: GPIC grew 6233→6754 tar between E1/E2 launches; E2 would train 6.8% longer. Fixed by explicit `--steps 187101`. Also: sympy 1.5.1 incompatible with torch 2.8.0 → fixed by copying sympy 1.14.0 from vllm conda env） |
 | BUDGET_USED | R2–R12 ≈215 + R12b(106.4) + lp bridge(5.8) + mask-ratio(78.4+0.5) + weight-ratio(~65.4+0.5) + ④ AIMv2 AR Arm B(2.1) + Arm B-hybrid(~24) ≈ **累计 ~498 GPU·h** + scaling E1(~2.1h×8=~17 GPU·h) + E2(~11.4h×8=~91 GPU·h) + evals(~3h×1 GPU) ≈ **~609 GPU·h** |
-| 更新 | **2026-10-10 19:54（📄 报告更新：E2fair eval 进度 151/294 files）**: ✅ `report_10_09_vision_overnight.html` 更新（52.5KB, footer+evidence index updated: eval 151/294 files streamed, 658k/1.28M images @19:53). E2fair eval (Protocol B, 3 seeds, PID 3493177, started 18:38:35) still running — seed 0 training phase. bothfair PID 2670216 alive. ETA ~20:40 Oct 10. 📦 体积：TASK=34.2KB / MEMORY=33.0KB（均超32KB但⑨块活跃不可归档，<40KB红线） |
+| 更新 | **2026-10-10 20:28（📄 报告更新：E2fair eval 进度 251/294 files）**: ✅ `report_10_09_vision_overnight.html` 更新（52.8KB, disclosure+TL;DR+evidence index+footer updated: eval 251/294 files streamed, 1,093,816/1,281,167 images @20:28). E2fair eval (Protocol B, 3 seeds, PID 3493177, etimes~6654s) still running — seed 0 training phase. bothfair PID 2670216 alive. ETA ~20:40 Oct 10. 📦 体积：TASK=34.2KB / MEMORY=32.8KB（均超32KB但⑨块活跃不可归档，<40KB红线） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
@@ -220,7 +220,11 @@ WAITING: 1
 
 - [15:25 Oct10] **📄 报告更新至 E2fair ~68.5%**: ✅ `report_10_09_vision_overnight.html` 更新（42.3KB）：E2fair 进度 step~128100/187101 (~68.5%), 427 PROBE all OK, no collapse, C1~0.44–0.54, lr=1.54e-04 cosine, 15 new PROBE table rows (115.5k/116.4k/117.3k/118.2k/119.1k/120k/120.9k/121.8k/122.7k/123.6k/124.5k/125.4k/126.3k/127.2k/128.1k), throughput ~4750–5250 img/s, ETA train~17:00/eval~21:00. 🚫 未打断 bothfair (PID 2670216, etimes~17h) 或 E2fair (PID 429544). 📦 体积：TASK=34.2KB / MEMORY=31.5KB（TASK超32KB但无新可归档块，MEMORY≤32KB✅）
 
-- [16:46 Oct10] **📄 报告更新至 E2fair ~80.8%**: ✅ `report_10_09_vision_overnight.html` 更新（45.7KB）：E2fair 进度 step~151150/187101 (~80.8%), 503 PROBE all OK, no collapse, C1~0.44–0.65, lr=9.06e-05 cosine, 21 new PROBE table rows (145.2k/145.5k/145.8k/146.1k/146.4k/146.7k/147k/147.3k/147.6k/147.9k/148.2k/148.5k/148.8k/149.1k/149.4k/149.7k/150k/150.3k/150.6k/150.9k), throughput ~2200–5250 img/s (NFS fluctuating), ETA train~18:00/eval~21:30. 🚫 未打断 bothfair (PID 2670216, etimes~18.4h) 或 E2fair (PID 429544). 📦 体积：TASK=34.2KB / MEMORY=31.5KB（TASK超32KB但无新可归档块，MEMORY≤32KB✅）
+- [16:46 Oct10] **📄 报告更新至 E2fair ~80.8%**: ✅ `report_10_09_vision_overnight.html` 更新（45.7KB）：E2fair 进度 step~151150/187101 (~80.8%), 503 PROBE all OK, no collapse, C1~0.44–0.65, lr=9.06e-05 cosine, 21 new PROBE table rows, throughput ~2200–5250 img/s (NFS fluctuating), ETA train~18:00/eval~21:30. 🚫 未打断 bothfair (PID 2670216). 📦 体积：TASK=34.2KB / MEMORY=31.5KB
+
+- [18:45 Oct10] **📄 报告更新：E2fair TRAIN DONE + EVAL START**: ✅ E2fair 训练完成（187101 步, 33468.6s, final_loss=0.1579, no collapse, 623 PROBE OK, 3996.8 img/s）→ E2fair eval 自动启动（Protocol B, 3 seeds, PID 3493177, started 18:38:35）。报告更新至 52.5KB（新增 E2fair [done] 原文、PROBE 表 11 行、训练对比表、orchestration table、pending items）。📦 体积：TASK=34.2KB / MEMORY=32.8KB
+
+- [20:28 Oct10] **📄 报告更新：E2fair eval 进度 251/294 files**: ✅ `report_10_09_vision_overnight.html` 更新（52.8KB）：disclosure+TL;DR+evidence index+footer 更新（eval 251/294 files, 1,093,816/1,281,167 images @20:28）。E2fair eval PID 3493177 alive (etimes~6654s ~1.85h), seed 0 training phase。ETA ~20:40 Oct 10。🚫 未打断 bothfair (PID 2670216) 或 eval (PID 3493177)。📦 体积：TASK=34.2KB / MEMORY=32.8KB（均超32KB但⑨块活跃不可归档，<40KB红线）
 
 ## 历史条目已滚动归档（2026-10-03 / 2026-10-06）
 
