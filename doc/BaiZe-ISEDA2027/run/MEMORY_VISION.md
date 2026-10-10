@@ -9,11 +9,11 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔁 **Scaling fair rerun: E1fair TRAIN+EVAL DONE → E2fair TRAINING (step ~115840/187101, ~61.9%, healthy, ~4900–5100 img/s)** via bothfair (PID 2670216). E1fair: 187101 steps, 31936.6s (~8.87h), final_loss=0.2545, no collapse, steady 3774.5 img/s. E1fair ProtB: **lp=62.34±0.01%** (+33.0pp vs old 29.35%). E1fair ProtA: **lp=49.70%** (+30.0pp vs old 19.70%). E2fair: 386 PROBE all OK, no collapse, C1~0.44–0.49, lr=1.95e-04 (cosine). ETA: E2fair train done ~17:00 → E2 eval ~3.5h → **all done ~20:30 Oct10** |
-| WAITING | 1（🔁 **E1fair TRAIN+EVAL DONE (ProtB=62.34±0.01%, ProtA=49.70%). E2fair TRAINING (step ~115840/187101, ~61.9%, healthy, 386 PROBE OK, no collapse).** bothfair PID 2670216 alive. Next wake: collect E2fair eval lp results, fill §8.2 Δlp, write report_vision_scaling_fair.html） |
+| PHASE | 🔁 **Scaling fair rerun: E1fair TRAIN+EVAL DONE → E2fair TRAINING (step ~128100/187101, ~68.5%, healthy, ~4750–5250 img/s)** via bothfair (PID 2670216). E1fair: 187101 steps, 31936.6s (~8.87h), final_loss=0.2545, no collapse, steady 3774.5 img/s. E1fair ProtB: **lp=62.34±0.01%** (+33.0pp vs old 29.35%). E1fair ProtA: **lp=49.70%** (+30.0pp vs old 19.70%). E2fair: 427 PROBE all OK, no collapse, C1~0.44–0.54, lr=1.54e-04 (cosine). ETA: E2fair train done ~17:00 → E2 eval ~3.5h → **all done ~21:00 Oct10** |
+| WAITING | 1（🔁 **E1fair TRAIN+EVAL DONE (ProtB=62.34±0.01%, ProtA=49.70%). E2fair TRAINING (step ~128100/187101, ~68.5%, healthy, 427 PROBE OK, no collapse).** bothfair PID 2670216 alive. Next wake: collect E2fair eval lp results, fill §8.2 Δlp, write report_vision_scaling_fair.html） |
 | ERROR_COUNT | 8（①~⑤ 同前 ⑥ AIMv2.forward() return_patch修复 ⑦ E1 DataLoader bus error@step131490 ⑧ **step-count mismatch caught**: GPIC grew 6233→6754 tar between E1/E2 launches; E2 would train 6.8% longer. Fixed by explicit `--steps 187101`. Also: sympy 1.5.1 incompatible with torch 2.8.0 → fixed by copying sympy 1.14.0 from vllm conda env） |
 | BUDGET_USED | R2–R12 ≈215 + R12b(106.4) + lp bridge(5.8) + mask-ratio(78.4+0.5) + weight-ratio(~65.4+0.5) + ④ AIMv2 AR Arm B(2.1) + Arm B-hybrid(~24) ≈ **累计 ~498 GPU·h** + scaling E1(~2.1h×8=~17 GPU·h) + E2(~11.4h×8=~91 GPU·h) + evals(~3h×1 GPU) ≈ **~609 GPU·h** |
-| 更新 | **2026-10-10 14:50（📄 报告更新至 E2fair ~61.9%）**: ✅ `report_10_09_vision_overnight.html` 更新（40.9KB, E2fair 进度 step~115840/187101 ~61.9%, 386 PROBE all OK, 8 new PROBE table rows 104k/106k/108k/110k/112k/114k/115k, lr=1.95e-04 cosine verified, ETA train~17:00/eval~20:30）。🔄 **E2fair TRAINING** (PID 429544, step ~115840/187101, ~4900–5100 img/s, 386 PROBE all OK, C1~0.44–0.49, lr=1.95e-04 cosine, no collapse). 📦 体积：TASK=34.2KB / MEMORY=31.0KB（TASK超32KB但无新可归档块，MEMORY≤32KB✅） |
+| 更新 | **2026-10-10 15:25（📄 报告更新至 E2fair ~68.5%）**: ✅ `report_10_09_vision_overnight.html` 更新（42.3KB, E2fair 进度 step~128100/187101 ~68.5%, 427 PROBE all OK, 15 new PROBE table rows 115.5k–128.1k, lr=1.54e-04 cosine verified, ETA train~17:00/eval~21:00）。🔄 **E2fair TRAINING** (PID 429544, step ~128100/187101, ~4750–5250 img/s, 427 PROBE all OK, C1~0.44–0.54, lr=1.54e-04 cosine, no collapse). 📦 体积：TASK=34.2KB / MEMORY=31.5KB（TASK超32KB但无新可归档块，MEMORY≤32KB✅） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
@@ -217,6 +217,8 @@ WAITING: 1
 - [13:00 Oct10] **📄 报告更新至 E2fair ~42.2%**: ✅ `report_10_09_vision_overnight.html` 更新（39KB）：E2fair 进度 step~78900/187101 (~42.2%), 262 PROBE all OK, no collapse, C1~0.47–0.56, lr=3.35e-04 cosine, 4 new PROBE rows (69k/72k/75k/78.6k), GPU 7/8 100% util, ETA train~17:50/eval~21:30. 🚫 未打断 bothfair (PID 2670216, etimes~14.5h) 或 E2fair (PID 429544). 📦 体积：TASK=34.2KB / MEMORY=30.5KB（TASK超32KB但无新可归档块，MEMORY≤32KB✅）
 
 - [14:50 Oct10] **📄 报告更新至 E2fair ~61.9%**: ✅ `report_10_09_vision_overnight.html` 更新（40.9KB）：E2fair 进度 step~115840/187101 (~61.9%), 386 PROBE all OK, no collapse, C1~0.44–0.49, lr=1.95e-04 cosine, 8 new PROBE table rows (104k/106k/108k/110k/112k/114k/115k), throughput ~4900–5100 img/s, ETA train~17:00/eval~20:30. 🚫 未打断 bothfair (PID 2670216, etimes~16.4h) 或 E2fair (PID 429544). 📦 体积：TASK=34.2KB / MEMORY=31.0KB（TASK超32KB但无新可归档块，MEMORY≤32KB✅）
+
+- [15:25 Oct10] **📄 报告更新至 E2fair ~68.5%**: ✅ `report_10_09_vision_overnight.html` 更新（42.3KB）：E2fair 进度 step~128100/187101 (~68.5%), 427 PROBE all OK, no collapse, C1~0.44–0.54, lr=1.54e-04 cosine, 15 new PROBE table rows (115.5k/116.4k/117.3k/118.2k/119.1k/120k/120.9k/121.8k/122.7k/123.6k/124.5k/125.4k/126.3k/127.2k/128.1k), throughput ~4750–5250 img/s, ETA train~17:00/eval~21:00. 🚫 未打断 bothfair (PID 2670216, etimes~17h) 或 E2fair (PID 429544). 📦 体积：TASK=34.2KB / MEMORY=31.5KB（TASK超32KB但无新可归档块，MEMORY≤32KB✅）
 
 ## 历史条目已滚动归档（2026-10-03 / 2026-10-06）
 
