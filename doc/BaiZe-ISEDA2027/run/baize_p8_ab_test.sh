@@ -68,7 +68,7 @@ run_arm() {
         echo "GPU $GPU_BUSY busy - previous arm may not have exited" | tee -a "$summary"
         return 1
     fi
-    start_vram_monitor "$vram_log"
+    start_vram_monitor "$vram_log" &
     VRAM_PID=$!
     cd "$BASE" || return 1
     "$PY/torchrun" --nnodes=1 --nproc_per_node="$NP" \
@@ -79,7 +79,7 @@ run_arm() {
         --train-data-path $BLEND \
         --tensor-parallel "$TP" \
         --train-iters "$ITERS_AB" --global-batch-size "$gbs" --micro-batch-size "$mbs" --seq-length "$SEQ" \
-        --eval-interval 0 --eval-iters 0 --save-interval 0 \
+        --eval-interval 9999 --eval-iters 0 --save-interval 0 \
         --lr "$LR" --min-lr "$MIN_LR" \
         --lr-warmup-iters "$WARMUP_AB" --lr-decay-iters "$DECAY_AB" --lr-decay-style WSD \
         --seed 1234 --precision bf16_mixed --optimizer dist_muon > "$train_log" 2>&1

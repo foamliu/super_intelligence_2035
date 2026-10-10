@@ -2,11 +2,12 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **P-8 正式预训练运行中 🚀**（2026-10-10 16:03 启动）— Mamba2-hybrid 2.22B from scratch, 44B tokens, dist_muon, WSD 5%/85%/10%。**暂停监控器运行正常**（PID 799219）：自动等 step 1050 → 暂停 P-8 → 启动 A/B。
-- PHASE: **p8_training_ab_pending** — stable phase running, step 970/10490, loss 2.959↓, 0 NaN ✅。warmup 已完成(step524 LR=1e-3)，ETA step 1050 ≈ 21:02（~22min 后自动暂停+ckpt+A/B）。
+- STAGE: **P-8 已暂停 · A/B 测试运行中 ⚗️** — P-8 step1050 loss2.925, ckpt@1049 已存。A/B 脚本两 bug 修复后 21:21 重启，Arm A(MBS=2/GBS=1024) 训练中。
+- PHASE: **p8_ab_testing** — Arm A running, GPU ~51GB/card, VRAM peak 51953MiB。ETA: Arm A ~85min → sleep60s → Arm B ~85min → **决策点≈24:12**。
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。**全 8 GPU 占用**（.29, 52-53GB/card, 83-100% util）。P-8 训练 PID 3620653(bash)/3620665(torchrun)/3620770(pretrain_launcher)。暂停监控器 PID 799219。📦 体积：TASK=31.6KB / MEMORY=31.8KB（均 ≤32KB ✅）。🚫绝不 kill 训练进程或 watchdog loop
-- 🩺 **本唤醒推进 = #275（2026-10-10 20:40, P-8 监控·step970·ETA~22min到暂停点）**：① P-8 step 970/10490, loss 2.959↓ (step840=3.037→step970=2.959, 稳态每10步降~0.006), warmup 完成 LR=1.0e-3(step524), 0 NaN/0 skipped ✅, 稳态 16.9s/step=249K tok/s, GPU 52-53GB/card, 83-100% util, grad_norm 0.20-0.30 稳定, 595 TFLOP/s/GPU。② 暂停监控器 PID 799219 运行正常：日志 "Current step: 970, waiting for 1050..." 每30s轮询 ✅。③ 磁盘 37T free ✅（无 ckpt 尚存，首个 ckpt 在 step 1049≈21:02）。④ ETA：step1050≈(1050-970)×16.9≈22min≈21:02 → 暂停+ckpt≈5min → A/B Arm A≈85min→Arm B≈85min → **决策点≈24:00**。⑤ 无需干预：全自动。git pull --rebase 成功（fast-forward 1 commit，ZhuLong 文件）。→ 下一步：下次唤醒检查 A/B 是否已启动/完成→按三判据(吞吐B≥A×1.12/VRAM≤76GB/loss一致)决策。WAITING=1。
+- 轮询状态：30min 长轮询。**全 8 GPU 占用**（.29, ~51GB/card）。A/B 脚本 PID 1669415(ppid=1, setsid 持久)。P-8 ckpt@1049 已存。📦 体积：TASK=31.6KB / MEMORY=31.8KB（均 ≤32KB ✅）。🚫绝不 kill watchdog loop(PID 1391466)
+- 🩺 **本唤醒推进 = #276（2026-10-10 21:22, A/B 测试 bug 修复+重启）**：① P-8 于 21:02:54 到达 step1050(loss2.925447), ckpt@1049 保存✅, 暂停监控器 SIGTERM 停训✅, GPU 释放✅。② A/B 脚本 **两 bug**：㊀ `start_vram_monitor` 缺 `&` → 前台死循环卡住 torchrun(空转11min, GPU 全0)；㊁ `--eval-interval 0` → Megatron `train_iters//eval_interval` ZeroDivisionError。两 bug 均已修复(`start_vram_monitor ... &` + `--eval-interval 9999`)。③ A/B 于 21:21:29 用 setsid 成功重启(ppid=1), Arm A 训练中, GPU ~51GB/card(与 P-8 baseline 一致), VRAM peak 51953MiB, torchrun 运行正常。④ ETA: Arm A 300步×~17s≈85min → sleep60s → Arm B 300步≈85min → 决策点≈24:12。⑤ 判据: B≥A×1.12 吞吐 / B≤76GB VRAM / loss@300 一致 → 切 MBS=3/GBS=1032(10409步从零); 否则恢复 MBS=2/GBS=1024(10490步,从ckpt@1049续)。git pull --rebase 成功。→ 下一步：下次唤醒检查 A/B 结果→按三判据决策→重启 P-8。WAITING=1。
+> 📦 **[已归档] #275 流水（2026-10-10 20:40, P-8 监控·step970）→ daily-memories/2026-10-10.md；结论：P-8 step970 loss2.959, ETA step1050≈21:02。需要时再读。**
 > 📦 **[已归档] #274 流水（2026-10-10 20:05, P-8 监控+暂停/A/B全链路复核）→ daily-memories/2026-10-10.md；结论：P-8 step840 loss3.037, 暂停/A/B全链路复核通过, ETA step1050≈21:02。需要时再读。**
 > 📦 **[已归档] #273 流水（2026-10-10 19:31, P-8 监控+暂停/A/B脚本复核）→ daily-memories/2026-10-10.md；结论：P-8 step720 loss3.13, 暂停/A/B脚本复核通过, ETA step1050≈21:02。需要时再读。**
 > 📦 **[已归档] #272 流水（2026-10-10 18:56, P-8 监控+脚本/数据核查）→ daily-memories/2026-10-10.md；结论：P-8 step590 loss3.278, 脚本/数据全核查通过, ETA step1050≈21:05。需要时再读。**
