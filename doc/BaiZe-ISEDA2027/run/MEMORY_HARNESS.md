@@ -7,10 +7,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 7×300 RUNNING — 1327/2100 (63.2%); 773 remaining, 0 new workdir blocks (18 rounds), 115 blocked (rootfs git-fetch 503/timeout, NOT workdir) + 4 quota-blocked; N=1 monitoring
-已完成:       ① 7×100 HTML report delivered ✅ · ②-A code fix done ✅ · ②-B resource check done ✅ · GPU29_ALLOC registered ✅ · launch_7x300.sh created ✅ · Smoke test PASSED ✅ · 7×300 LAUNCHED ✅ · BLOCK=0 (workdir) CONFIRMED ✅ (R231→R248, 18 consecutive rounds) · codex 300/300 COMPLETE ✅
-当前动作:     R248: 7×300 monitoring at 11:30 (676 min since 00:14 launch, 11.3h). ALL 7 alive (etimes ~40520s), all have active child processes (run_single.py). 1327/2100 (63.2%), +18 since R247 (34 min, rate ~0.53/min). 310 resolved / 897 pbf / 115 blocked + 4 quota-blocked + 1 no-patch. **Block root cause = rootfs git-fetch failures** (HTTP 503 from proxy, shallow.lock contention, fetch timeout) — NOT workdir conflicts → workdir isolation fix holding ✅ (**18th consecutive round**). Per-harness: claude 164(43,rem136) / cline 181(45,rem119) / codex 300(50,DONE,re-running 85 blk) / deepseek 171(35,rem129) / hermes 151(46,rem149←BOTTLENECK) / opencode 186(44,rem114) / pi 174(47,rem126). ETA ~11h (~22:30 Oct 10, hermes bottleneck at 13.4/h). Resources: load 6.80/96cores, 954G free RAM, /dev/shm 1001G (1%), GPU all 0%.
-下一步:       ① Continue monitoring — workdir block=0 holding (18 rounds) → ② ETA ~11h (~22:30 Oct 10, hermes bottleneck) → ③ Each harness completes → refresh + commit → ④ Final: re-run remaining blocked (rootfs 503/timeout) until blocked=0 (success criteria ②-C) → ⑤ Generate 7×300 HTML report upon completion.
+PHASE:        H-A 7×300 RUNNING — 1344/2100 (64.0%); 1227 done (resolved+pbf), 873 remaining, 0 new workdir blocks (19 rounds), 112 blocked (rootfs git-fetch 503, NOT workdir) + 4 quota-blocked + 1 no-patch; N=1 monitoring
+已完成:       ① 7×100 HTML report delivered ✅ · ②-A code fix done ✅ · ②-B resource check done ✅ · GPU29_ALLOC registered ✅ · launch_7x300.sh created ✅ · Smoke test PASSED ✅ · 7×300 LAUNCHED ✅ · BLOCK=0 (workdir) CONFIRMED ✅ (R231→R249, 19 consecutive rounds) · codex 300/300 COMPLETE ✅
+当前动作:     R249: 7×300 monitoring at 12:07 (713 min since 00:14 launch, 11.9h). ALL 7 alive (etimes ~42820s), all have active child processes (run_single.py). 1344/2100 (64.0%), +17 since R248 (37 min, ~0.46/min). 311 resolved / 916 pbf / 112 blocked + 4 quota-blocked + 1 no-patch. **Block root cause = rootfs git-fetch failures** (HTTP 503 from proxy) — NOT workdir conflicts → workdir isolation fix holding ✅ (**19th consecutive round**, block=0 from workdir). Per-harness: claude 164(43,rem136) / cline 182(45,rem118) / codex 217(51,DONE,re-running 82 blk,rem83) / deepseek 164(35,rem136) / hermes 152(46,rem148←BOTTLENECK) / opencode 186(44,rem114) / pi 162(47,rem138). ETA ~8.5h (~20:30 Oct 10 overall; hermes ~23:40 at 12.8/h). Resources: load 7.03/96cores, 945G free RAM, /dev/shm 1001G (1%), GPU all 0%.
+下一步:       ① Continue monitoring — workdir block=0 holding (19 rounds) → ② ETA ~8.5h (~20:30 Oct 10 overall; hermes bottleneck ~23:40) → ③ Each harness completes → refresh + commit → ④ Final: re-run remaining blocked (rootfs 503/timeout) until blocked=0 (success criteria ②-C) → ⑤ Generate 7×300 HTML report upon completion.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -31,14 +31,14 @@ ERROR_COUNT:  0
 2. **codex 特例**：codex 在 R1 跑了 300 条超集（串行），其中 70 条与本轮 100-set 重叠 → codex 的 70 条"新跑"实际来自 **300 串行超集**，**非 R2 并行**。codex 全部 100 条均为串行。
 3. **监控指标**（本轮必须对比 R1 同 30 条）：`quota-blocked` / `timeout` / `no-patch` 率 → 若 R2 显著上升 ⇒ 判"并行污染" → 结论打折。SWEBENCH_COMPARE.html §2 监控表已生成。
 
-**R2 监控快照**（2026-10-10 11:30，R248 更新）：
+**R2 监控快照**（2026-10-10 12:07，R249 更新）：
 
 | 指标 | R1 (30 serial) | R2 (70 parallel) / 7×300 | 判定 |
 |:--|:--|:--|:--|
-| **quota_blocked** | 0/210 (0%) | 4/1327 (0.3%) — codex+opencode+cline+pi | ⚠️ API quota, NOT workdir — acceptable |
+| **quota_blocked** | 0/210 (0%) | 4/1344 (0.3%) — codex+opencode+cline+pi | ⚠️ API quota, NOT workdir — acceptable |
 | **timeout** | 0 (codex 2) | minimal (codex 3, claude-code 1 astropy) | ✅ 正常 |
-| **workdir_blocked** | **0/210 (0%)** | **0 (R231→R248, 18 rounds)** | ✅ **per-harness workdir isolation FIX HOLDING** |
-| **rootfs_blocked** ⚠️NEW | 0 | **115** (git-fetch 503/timeout/shallow.lock) | ⚠️ network/infra, NOT workdir — re-run at end |
+| **workdir_blocked** | **0/210 (0%)** | **0 (R231→R249, 19 rounds)** | ✅ **per-harness workdir isolation FIX HOLDING** |
+| **rootfs_blocked** ⚠️NEW | 0 | **112** (git-fetch 503 from proxy) | ⚠️ network/infra, NOT workdir — re-run at end |
 | **no-patch** | 0/210 (0%) | 1 (deepseek) | ⚠️ eval env limitation |
 
 **⚠️ 新发现：workdir git-checkout 冲突 = 并行污染（R207 首次披露）**：
@@ -226,4 +226,5 @@ ERROR_COUNT:  0
 - 2026-10-10 09:40 —— **第二百四十五轮** —— 已归档 → daily-memories-harness/2026-10-10.md。需要时再读。
 - 2026-10-10 10:19 —— **第二百四十六轮** —— 已归档 → daily-memories-harness/2026-10-10.md。需要时再读。
 > 📦 R247 (2026-10-10 10:55, 7×300 monitoring 62.3%) 已归档 → daily-memories-harness/2026-10-10.md。需要时再读。
-- 2026-10-10 11:30 —— **第二百四十八轮** —— 7×300 monitoring at 676 min (11.3h since 00:14): ALL 7 alive (etimes ~40520s), all have active child processes (run_single.py + harness children). 1327/2100 (63.2%), +18 since R247 (34 min, ~0.53/min). 310 resolved / 897 pbf / 115 blocked + 4 quota-blocked + 1 no-patch. Workdir isolation fix holding ✅ (**18th consecutive round**, block=0 from workdir). Rootfs blocked=115 (git-fetch 503/timeout, NOT workdir) → re-run at end. Per-harness: claude 164(43,rem136) / cline 181(45,rem119) / codex 300(50,DONE,re-running 85 blk) / deepseek 171(35,rem129) / hermes 151(46,rem149←BOTTLENECK) / opencode 186(44,rem114) / pi 174(47,rem126). Active: cline→matplotlib-23987, codex→sympy-24909, hermes→django-15695, deepseek→django-16816. ETA ~11h (~22:30 Oct 10, hermes 13.4/h). Resources: load 6.80/96cores, 954G free RAM, /dev/shm 1001G (1%), GPU 0%. 📦 体积：TASK=32106B(31.4KB ✓) / MEMORY=~30KB ✓（归档 ~3KB → daily）。
+- 2026-10-10 11:30 —— **第二百四十八轮** —— 已归档 → daily-memories-harness/2026-10-10.md。需要时再读。
+- 2026-10-10 12:07 —— **第二百四十九轮** —— 7×300 monitoring at 713 min (11.9h since 00:14): ALL 7 alive (etimes ~42820s), all have active child processes (run_single.py). 1344/2100 (64.0%), +17 since R248 (37 min, ~0.46/min). 311 resolved / 916 pbf / 112 blocked + 4 quota-blocked + 1 no-patch. Workdir isolation fix holding ✅ (**19th consecutive round**, block=0 from workdir). Rootfs blocked=112 (git-fetch 503, NOT workdir) → re-run at end. Per-harness: claude 164(43,rem136) / cline 182(45,rem118) / codex 217(51,DONE,re-running 82 blk,rem83) / deepseek 164(35,rem136) / hermes 152(46,rem148←BOTTLENECK) / opencode 186(44,rem114) / pi 162(47,rem138). Active: cline→matplotlib-24970, codex→pytest-7432, hermes→django-15738, deepseek→django-16820, pi→matplotlib-23563, opencode→matplotlib-25433, claude→django-16408. ETA ~8.5h (~20:30 Oct 10 overall; hermes ~23:40 at 12.8/h). Resources: load 7.03/96cores, 945G free RAM, /dev/shm 1001G (1%), GPU 0%. 📦 体积：TASK=32106B(31.4KB ✓) / MEMORY=~30.6KB ✓。
