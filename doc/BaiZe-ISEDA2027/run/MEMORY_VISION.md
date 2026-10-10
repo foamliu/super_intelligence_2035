@@ -5,16 +5,17 @@ WAITING: 1
 ## 状态头
 
 > 🆕 **2026-10-10 晚（运维直令 · 最高优先）**：外部评审质疑 E1fair ProtB=62.34% 偏低 → 运维下发 ③→①→②→④ 顺序指令。**③ 口径修订**（零 GPU）+ **① 同模型 zero-shot eval**（✅ DONE）+ **② k-NN probe 对照**（✅ DONE）+ **变体实验 V1(Muon)→V2(全量数据)→V3(分辨率暂缓)**。
-> ✅ **V1 Muon training IN PROGRESS**: 2026-10-11 00:13 launch, lr=5e-4, 187,101 steps, optimizer=muon (momentum=0.95, nesterov, ns_steps=5, 2D→Muon/1D→AdamW), ETA ~10h. Screen session `v2_muon`. Smoke test passed (30 steps, loss=7.37 stable, ~2550 img/s).
-> ⚠️ **Script bug fixed**: `run_scaling_experiment.sh` line 419 `${3:-5e-4}` → `${4:-5e-4}` (was passing NW=6 as lr!). First launch had lr=6 (killed immediately, no damage).
+> ✅ **V1 Muon training IN PROGRESS (re-launched 00:26)**: lr=5e-4, 187,101 steps, optimizer=muon (momentum=0.95, nesterov, ns_steps=5, 2D→Muon/1D→AdamW), ETA ~10:20 Oct 11. Screen `v2_muon`. At step ~410, loss=7.50 (warmup, lr=1.0e-4 ramping to 5e-4@step2000), ~2800 img/s, all 8 GPUs 80-97% util.
+> ⚠️ **Script bug fixed**: `run_scaling_experiment.sh` line 419 `${3:-5e-4}` → `${4:-5e-4}` (was passing NW=6 as lr!).
+> ⚠️ **C2 false-alarm bug fixed** (2026-10-11): First V1 Muon launch auto-fused at step 300 — C2_gap=-0.0049 ≤ 0.005 guard fired during warmup (both diag/off near zero at init → gap≈0 is normal, not collapse). Fix: C1/C2/C4 guards now skipped when `step < _c4_init_step` (= max(warmup,50)=2000), consistent with C4 fix. Verified: re-launched training passes step 300 PROBE with no fuse. Committed.
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **V1 Muon training running** (2026-10-11 00:13, 187,101 steps, ETA ~10:00). ③①② DONE: ③ 口径修订(report updated), ① zero-shot eval (E1fair top1=34.10%/top5=65.53%, E2fair top1=35.45%/top5=67.15%, ΔZS=+1.35pp), ② k-NN probe (k=5:34.43%, k=10:37.14%, k=20:37.68%). Baseline E1fair: ProtB=62.34±0.01%, ProtA=49.70%. **Next**: ④ epoch scaling (after V1 Muon). |
+| PHASE | 🔄 **V1 Muon training running (re-launched 00:26)**, 187,101 steps, ETA ~10:20 Oct 11. Two false-alarm bugs fixed: ① C4 loss_early set at step 50 during warmup → now at max(warmup,50)=2000; ② C2_gap≤0.005 guard fired at step 300 during warmup (diag/off≈0 at init) → now skipped when step<warmup. ③①② DONE: ③ 口径修订, ① zero-shot (E1fair 34.10%, E2fair 35.45%, ΔZS=+1.35pp), ② k-NN (k=20:37.68%). Baseline E1fair: ProtB=62.34±0.01%. **Next**: ④ epoch scaling (after V1 Muon completes). |
 | WAITING | 1（🔄 V1 Muon full training in progress. ③①② all complete. ④ epoch scaling pending after V1. Awaiting V1 results for report update.） |
 | ERROR_COUNT | 9（①~⑧ 同前 ⑨ **numpy/transformers version mismatch**: vision agent installed `emerging_optimizers` → pulled transformers 4.56.1 → needs `numpy.dtypes` → numpy 1.23.5 lacked it. **Fixed**: numpy upgraded to 1.26.4. Also: `run_scaling_experiment.sh` lr arg bug `${3→4}` fixed） |
 | BUDGET_USED | ~609 GPU·h (previous) + V1 Muon smoke(~0.01h) + V1 Muon full(~9.7h×8=~78 GPU·h) ≈ **~687 GPU·h** |
-| 更新 | **2026-10-11 00:15（V1 Muon training launched）**: ✅ numpy 1.26.4 installed (fixes transformers 4.56.1 `numpy.dtypes` crash). ✅ V2 smoke test passed (30 steps, loss=7.37, optimizer=muon confirmed, ~2550 img/s). ✅ Script bug fixed (lr=6→5e-4). ✅ V1 Muon full training launched: `bash run_scaling_experiment.sh v2 187101 6`, screen `v2_muon`, steps 10-90 confirmed loss=7.37 stable, lr warmup correct (2.5e-6→2.25e-5), ~2700 img/s. 📦 体积：TASK=check / MEMORY=check after edit |
+| 更新 | **2026-10-11 00:30（V1 Muon training re-launched after C2 fix）**: ✅ C2 false-alarm bug found & fixed: C2_gap≤0.005 guard fired at step 300 during warmup (diag=0.0026, off=0.0075, gap=-0.0049 — near-zero is normal at init, not collapse). Fix: C1/C2/C4 guards skipped when step < _c4_init_step(=max(warmup,50)=2000). Committed. ✅ Training re-launched 00:26 in screen `v2_muon`, step 410 confirmed past step 300 trap, loss=7.50, lr=1.0e-4 (warming up), ~2800 img/s, all 8 GPUs active. 📦 体积：TASK=check / MEMORY=check |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
