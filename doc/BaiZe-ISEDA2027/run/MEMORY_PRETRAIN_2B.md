@@ -5,8 +5,9 @@ WAITING: 1
 - STAGE: **dist_muon 重测完成 ✅**（2026-10-10 11:48）— 三路对比：dist_muon loss 3.110 / 122K tok/s / 37.3GB，消除 plain Muon 两项代价。P-8 暂缓令未撤。
 - PHASE: **converged** — dist_muon 实测验证完成，P-8 等待运维撤暂缓令
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。**全 8 GPU 空闲**（.29）。**P-8 暂缓令未撤**。📦 体积：TASK=31015B(30.3KB) / MEMORY=31059B(30.3KB) 均 ≤32KB ✅。🚫绝不 kill watchdog loop
-- 🩺 **本唤醒推进 = #262（2026-10-10 12:14, dist_muon 重测+报告刷新）**：① git fetch → status 0/0 ✅。② **dist_muon 重测**（用户直令）：smoke 10步 ✅ + realdata 1000步 ✅（rc=0, 0 NaN）。**结果**：loss@1000=3.110 / tok/s=122,415 / peak VRAM=37.3GB。vs plain Muon(3.112/87K/53.8GB)：吞吐+40.8%, 显存−30.7%。vs AdamW(4.003/118K/39.0GB)：loss−22.3%, 吞吐+3.6%, 显存−4.4%。bridge_compat layer_wise=True ✅。预注册判据全通过。③ **EXPERIMENTS 追加** dist_muon 三路对比节 ✅。④ **HTML 报告刷新** 28.6→36.3KB（§8 新增+§7 更新）✅。⑤ GPU 全空闲 ✅。⑥ 体积：TASK=30.3KB / MEMORY=30.3KB 均 ≤32KB ✅。→ 下一步：等运维撤 P-8 暂缓令。WAITING=1。
+- 轮询状态：30min 长轮询。**全 8 GPU 空闲**（.29）。**P-8 暂缓令未撤**。📦 体积：TASK=31015B(30.3KB) / MEMORY=31KB 均 ≤32KB ✅。🚫绝不 kill watchdog loop
+- 🩺 **本唤醒推进 = #263（2026-10-10 13:01, 状态核查）**：① git fetch → status 0/0 ✅（仅 harness 线 kimi_pilot_results.json modified，非本线）。② dist_muon 实验已在 #262 完成：报告 36.3KB ✅ + EXPERIMENTS §dist_muon ✅。③ GPU 0-7 全 0MiB/0%，无 compute apps ✅。④ P-8 暂缓令未撤。⑤ 体积：TASK=30.3KB / MEMORY=30.3KB 均 ≤32KB ✅。→ 下一步：等运维撤 P-8 暂缓令。WAITING=1。
+> 📦 **[已归档] #262 流水（2026-10-10 12:14, dist_muon 重测+报告刷新）→ daily-memories/2026-10-10.md；结论：dist_muon loss 3.110/122K tok/s/37.3GB, 消除 plain Muon −26%/+38% 两项代价, 报告36.3KB已刷新。需要时再读。**
 > 📦 **[已归档] #261 流水（2026-10-10 10:57, 状态核查）→ daily-memories/2026-10-10.md；结论：GPU全空闲, R3分词110/110 DONE, P-8暂缓令未撤, 体积OK。需要时再读。**
 > 📦 **[已归档] #260 流水（2026-10-10 10:19, 状态核查+TASK归档）→ daily-memories/2026-10-10.md；结论：两项运维指令均已完成(commit 9fb2c7f8), TASK归档2块→27.9KB。需要时再读。**
 > 📦 **[已归档] #259 流水（2026-10-10 09:44, 补推确认+心跳修正）→ daily-memories/2026-10-10.md；结论：9fb2c7f8 已成功推送, 上轮「push失败」更正为「已推送」。需要时再读。**
