@@ -3831,3 +3831,63 @@ env: ‘cline’: No such file or directory
 [loop] 2026-10-10 20:47:35 WAITING=1 (eval running / infra not ready) → sleep 1800s
 == DONE (hook deleted / eval stopped / loop restarted) ==
 ```
+
+---
+
+## RUN_ID 30 · 2026-10-10 20:48:43 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 30 — fix loop PATH (cline@~/.bun/bin) + ensure single loop
+echo "== RUN_ID 30 @ $(date '+%F %T') host=$(hostname) =="
+cd /nasdata/app.e0031982/code/super_intelligence_2035 2>/dev/null || cd /nas_train/app.e0031982/code/super_intelligence_2035 || true
+
+echo "== 1. locate cline =="
+ls -l ~/.bun/bin/cline 2>&1 | cut -c1-160
+ls -l ~/.local/bin/cline 2>&1 | cut -c1-160
+
+echo "== 2. BEFORE: all loops =="
+ps -eo pid,ppid,etime,cmd | grep 'zhulong_loop.sh' | grep -v grep | cut -c1-160
+
+echo "== 3. stop ALL loops =="
+pkill -f 'zhulong_loop.sh' 2>&1; echo "pkill exit=$?"; sleep 3
+ps -eo pid,cmd | grep 'zhulong_loop.sh' | grep -v grep | cut -c1-160
+echo "(empty above = all stopped)"
+
+echo "== 4. restart ONE loop with correct PATH =="
+export PATH="$HOME/.bun/bin:$HOME/.local/bin:$PATH"
+export https_proxy=http://172.19.92.23:13128
+export http_proxy=http://172.19.92.23:13128
+echo "cline -> $(command -v cline)"
+setsid bash doc/ZhuLong_DAC2027/run/zhulong_loop.sh > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+sleep 8
+echo "-- loops now (expect exactly 1) --"; ps -eo pid,ppid,etime,cmd | grep 'zhulong_loop.sh' | grep -v grep | cut -c1-160
+echo "-- loop log tail --"; tail -6 /tmp/zhulong_loop.log 2>&1 | cut -c1-200
+echo "== DONE =="
+```
+
+**输出**
+```
+== RUN_ID 30 @ 2026-10-10 20:48:43 host=hfeg0tedaap02 ==
+== 1. locate cline ==
+ls: cannot access '/home/app.e0031982/.bun/bin/cline': No such file or directory
+-rwxr-x--- 1 app.e0031982 app.adm 148957504 Aug  7 09:19 /home/app.e0031982/.local/bin/cline
+== 2. BEFORE: all loops ==
+ 296761       1       01:09 bash doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+ 296949       1       01:08 bash doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+== 3. stop ALL loops ==
+pkill exit=0
+(empty above = all stopped)
+== 4. restart ONE loop with correct PATH ==
+cline -> /home/app.e0031982/.local/bin/cline
+-- loops now (expect exactly 1) --
+ 303182  302847       00:03 bash doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+-- loop log tail --
+And[0m[2m **[0m[2m([0m[2m三)**[0m[2m which says[0m[2m to stop zhulong[0m[2m +[0m[2m test sandbox ports individually[0m[2m.
+
+Let me read[0m[2m the current state files[0m[2m first:[0m[2m MEMORY_ZHULONG[0m[2m.md, the[0m[2m daily memory, and[0m[2m check current[0m[2m process[0m[2m status[0m[2m.
+
+Let me start[0m[2m by reading the MEMORY[0m[2m file and checking[0m[2m process[0m[2m status[0m[2m.[0m
+I'll start by reading the current state and gathering context. Let me read the memory file, daily memory, and check the current process status in parallel.
+== DONE ==
+```
