@@ -1,44 +1,10 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
-### 🆕 运维指令 · 2026-10-10（📄 刷新 Muon 报告：吞吐/显存代价的归因 + 外部基准对照）· 用户直令 · 最高优先（先于下方「昨夜报告」块执行，昨夜报告照此口径引用）
+> 📦 §运维指令·2026-10-10（📄 刷新 Muon 报告：overhead 归因+外部基准对照）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：报告 §7 已加「外部基准对照与 overhead 归因」，−26%/+38% 归因为 plain Muon 实现伪影非算法固有，dist_muon 预期 near-parity，P-8 方案A 升级为 NVIDIA 实证支撑+显存待查。需要时再读。
 
-> **用户令**：「请 pretrain 刷新 Muon 报告，调研一下通过 NeMo 的 Muon 实现，结果吞吐 −26%、显存 +38% 是否正常。」
-> ⚠️ 运维已完成调研（结论在 ②）。**你只负责把归因写进报告，不重跑实验、不改已实测数字。**
+> 📦 §运维指令·2026-10-10（📄 昨夜工作汇报 HTML）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：report_10_09_pretrain_overnight.html 11.6KB 已生成，含两项实验汇总+P-8 启示。需要时再读。
 
-**① 交付**：刷新 `doc/BaiZe-ISEDA2027/report_pretrain_muon_vs_adamw.html`（加一节「外部基准对照与 overhead 归因」+ 更新 P-8 建议）。
-
-**② 调研结论（运维已查证，直接引用，答案 = 都不正常）**
-- **吞吐 −26% ≠ Muon 固有代价**：NVIDIA 官方博客（2026-04-22）在 GB300 NVL72 上测得 Muon 吞吐 **near-parity** to AdamW（NeMo Megatron Bridge 26.02）。关键差异 = **layer-wise distributed optimizer（`dist_muon`：整层分给各 DP rank，正交化零额外通信）** + 分布式 Newton-Schulz（duplicated/distributed/blockwise）。理论 NS 计算开销仅 ~0.5–0.7%（Keller Jordan 博客：NanoGPT ~0.7% / Llama-405B ~0.5%）。→ 本地 −26% 主因 = **用的 plain Muon、非 dist_muon**（正交化与梯度同步未重叠、未用分布式 NS 模式），**属本地实现伪影，非算法固有**。
-- **显存 +38% 与理论方向相反**：Muon 理论**更省** —— 每 2D 参数只存一个 momentum（4B），AdamW 存 m+v（8B）→ optimizer-state 省 **~45%**；端到端 peak memory 实测反而**降 ~9%**（PyTorch DeepSpeed blog：Qwen2.5-3B fine-tune 34.5→31.4 GiB）。→ 本地 +38% 是最可能 = **Muon 动量缓冲区 与 标量参数走 AdamW 的二阶矩缓冲区并存 / buffer 未复用**（报告已记此疑点，见 EXPERIMENTS §3225），**属实现伪影，应标注「待查」**。
-- 来源（写进报告，带 URL）：
-  1. NVIDIA blog：https://developer.nvidia.com/blog/advancing-emerging-optimizers-for-accelerated-llm-training-with-nvidia-megatron
-  2. arXiv 2502.16982《Muon is Scalable for LLM Training》（Moonshot/UCLA；distributed Muon 并行策略）
-  3. arXiv 2505.02222《Practical Efficiency of Muon for Pretraining》（第 2.1.1 节：Muon 内存最省，仅存 first moment）
-  4. Keller Jordan《Muon optimizer》blog（2024-12；NS FLOP 上界 (T×m)/B ≈0.5–0.7%）
-
-**③ 报告改动要求**
-- **保留全部已实测数字**（loss 3.112 vs 4.003 · 吞吐 87K vs 118K · 显存 53.8 vs 39.0GB）不变。
-- 把「代价/局限」改写为「**overhead 归因与外部基准对照**」：明确 −26% 吞吐 / +38% 显存 **都不是 Muon 固有代价**；给预期（dist_muon 下吞吐预计收窄至 near-parity；显存应转正为省 ~45% optimizer-state）。
-- P-8 建议同步更新：方案 A（dist_muon layer-wise）从「可能消除」升级为「**NVIDIA near-parity 实证支撑**」；显存伪影列为「**P-8 前待查项**」（换 dist_muon 后复测显存，验证 buffer 复用）。
-- 诚实声明：本归因引用外部文档、**未在本地复现 dist_muon**；「待查」≠「已修」。
-
-**④ 纪律**：🚫 不启动 P-8 · 🚫 不 kill watchdog · 只改报告不改实验 · 收尾按「收尾铁律」commit+push（前缀 `pretrain Muon刷新:`）· 若 TASK 超 32KB，按规程自行归档已闭合旧块。
-### 🆕 运维指令 · 2026-10-10（📄 昨夜工作汇报 HTML）· 用户直令 · 高优先
-
-> **用户令**：「关于昨晚的工作，请 pretrain 写 html 报告。」
-
-**① 交付**：`report_10_09_pretrain_overnight.html`（落 `doc/BaiZe-ISEDA2027/`）
-
-**② 内容 = 昨夜（10-09 夜 → 10-10 晨）两项工作汇总**（均 ✅ 完成、各已有详报 → **本报告做「昨夜汇报」汇总 + 指针，不重复贴全文**）
-1. **① 参数匹配对比基准（P-9.11-F，Dense-Match vs Hybrid/BaiZe）**：DM 可服务至 1M（prefill 2,351 / decode 64.9）· **2M 不可服务**（输入 > max_total_num_tokens≈1.23M）· 架构优势 **2×**（Hybrid 2M vs DM 1M）· warmup 归因修正 281×→24.5× · VRAM(128K) 52.36→59.02GB 修正。→ 详报 `report_pretrain_baize_vs_dense_fair_zh.html`（指针）。
-2. **② Muon vs AdamW A/B**（各 1000 步 · GBS16 · seq4094 · bf16 · 同 seed）：Muon loss **3.112** vs AdamW **4.003**（**−22.3%**）· 吞吐 87K vs 118K tok/s（**−26%**）· 显存 53.8 vs 39.0GB（**+38%**）· 均 rc=0 / 0 NaN / 0 skip。→ 详报 `report_pretrain_muon_vs_adamw.html`（指针）。
-
-**③ 格式（house style）**：自包含 · 内联 CSS + 内联 SVG · 零外链 · ≤200KB；已有详报只给指针。
-
-**④ 必含「对 P-8 的启示」**：① DM 对比 → BaiZe 长上下文服务能力佐证；② Muon → **loss 质量更好但吞吐/显存有代价**，P-8 是否采 Muon/dist_muon 的取舍（只记结论，不启动 P-8）。
-
-**⑤ 纪律**：🚫 不启动 P-8（10-02 暂缓令未撤）· 🚫 不 kill watchdog · 只汇总已固化数字、不新增实验 · 收尾按「收尾铁律」commit+push（前缀 `pretrain 昨夜报告:`）· 若 TASK 超 32KB，按规程自行归档已闭合旧块（含上方「运维调整/运维更正」两块）。
 > 📦 §运维调整·2026-10-09（🔁 只用 `.29` + 改序①对比→②Muon；撤下 T1/T2/T3）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：两步均✅完成（①对比基准 ②Muon A/B），T1/T2/T3 留 backlog。需要时再读。
 
 > 📦 §运维更正·2026-10-09（✅ NeMo/Megatron 支持 Muon，更正「未接入」旧判断）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：Megatron-Core 0.16.1 含 muon.py + emerging_optimizers，bridge 有 Muon recipe，三步核查全通过。需要时再读。

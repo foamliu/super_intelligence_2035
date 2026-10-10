@@ -5,8 +5,9 @@ WAITING: 1
 - STAGE: **Muon 报告刷新 + 昨夜汇报 ✅ 完成+已推送**（2026-10-10）— Muon loss 3.11 vs AdamW 4.00（−22.3%），吞吐 87K vs 118K（−26%），显存 53.8 vs 39.0GB（+38%）。两份报告均已 commit 9fb2c7f8 + push ✅。
 - PHASE: **converged** — 两份报告刷新/生成完成并已推送，等待运维下一步指令
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。**全 8 GPU 空闲**（.29, 09:44 核验）。**P-8 暂缓令未撤**。📦 体积：TASK=33233B(32.5KB, 略超32KB, <40KB红线) / MEMORY=30756B(30.0KB) ≤32KB ✅。🚫绝不 kill watchdog loop
-- 🩺 **本唤醒推进 = #259（2026-10-10 09:44, 补推确认+心跳修正）**：① git fetch → status 0/0 ✅（工作区仅 harness 线 kimi_pilot_results.json modified, 非本线不碰）。② **补推确认**：reflog 显示 #258 commit aaa00ca0 → amend → 9fb2c7f8 已成功推送（其他 agent pull --rebase 已拉入, git log 见 9fb2c7f8 在 main 上, status 0/0）→ **上轮「push 失败」记录更正为「已推送」**。③ GPU 核验：.29 GPU0-7 全 0MiB/0% ✅。④ 体积自检：TASK=33233B(32.5KB) / MEMORY=30756B(30.0KB)。→ 下一步：等待运维下一步指令。WAITING=1。git：本次 push。
+- 轮询状态：30min 长轮询。**全 8 GPU 空闲**（.29）。**P-8 暂缓令未撤**。📦 体积：TASK=28589B(27.9KB) / MEMORY=30403B(29.6KB) 均 ≤32KB ✅。🚫绝不 kill watchdog loop
+- 🩺 **本唤醒推进 = #260（2026-10-10 10:19, 状态核查+TASK归档）**：① git fetch → status 0/0 ✅（无新运维指令；工作区仅 harness 线 kimi_pilot_results.json modified, 非本线不碰）。② **两项运维指令均已完成**（#258 commit 9fb2c7f8 已推送确认）：Muon 报告 §7 含外部基准对照+overhead 归因 ✅；昨夜汇报 HTML 11.6KB 含 P-8 启示 ✅。③ **TASK 归档**：两块 2026-10-10 运维指令已闭合→原文搬入 ARCHIVE_OPERATOR_PRETRAIN.md + 留指针，TASK 33.2KB→27.9KB ✅。④ 体积自检：TASK=28589B(27.9KB) / MEMORY=30403B(29.6KB) 均 ≤32KB ✅。→ 下一步：等待运维下一步指令。WAITING=1。git：本次 push。
+> 📦 **[已归档] #259 流水（2026-10-10 09:44, 补推确认+心跳修正）→ daily-memories/2026-10-10.md；结论：9fb2c7f8 已成功推送, 上轮「push失败」更正为「已推送」。需要时再读。**
 > 📦 **[已归档] #258 流水（2026-10-10, Muon报告刷新+昨夜汇报+TASK归档）→ daily-memories/2026-10-10.md；结论：两份报告(Muon 28.6KB+昨夜 11.6KB)已生成+commit 9fb2c7f8+push ✅, TASK归档2块。需要时再读。**
 > 📦 **[已归档] #257 流水（2026-10-10 08:26, 状态核查）→ daily-memories/2026-10-10.md；结论：GPU全空闲, git 0/0, 两步运维指令均完成, 无需归档。需要时再读。**
 > 📦 **[已归档] #254 流水（2026-10-10 06:50, Muon vs AdamW A/B 结果回收+报告+TASK归档）→ daily-memories/2026-10-10.md；结论：Muon loss 3.11 vs AdamW 4.00(−22.3%), 吞吐 87K vs 118K(−26%), VRAM 53.8 vs 39.0GB(+38%), 报告 22.5KB 已 commit f53ec86d+push。需要时再读。**
