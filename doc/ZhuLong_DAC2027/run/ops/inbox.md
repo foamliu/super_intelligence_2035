@@ -184,6 +184,20 @@ PYEOF
 done
 
 echo
+echo "=========== 3.7 其它可能受昨晚改动影响的本地状态（只读，不改）==========="
+for r in "$EDA" /nasdata/app.e0031982/code/EDA-Eval-Framework; do
+  [ -d "$r/.git" ] || { echo "   [$r] 非 git 仓库，跳过"; continue; }
+  echo "   [$r] status --porcelain（前 8 行）:"
+  timeout 60 git -C "$r" status --porcelain 2>/dev/null | head -8 | sed 's/^/      /' | cut -c1-140
+  echo "   [$r] stash list（前 3 行）:"
+  timeout 60 git -C "$r" stash list 2>/dev/null | head -3 | sed 's/^/      /' | cut -c1-140
+done
+echo "   -- ~/.cline* 近 24h 被改过的 json（有界扫描，仅列出）--"
+timeout 60 find ~/.cline ~/.cline_prof4_eval -maxdepth 3 -name '*.json' -newermt '24 hours ago' 2>/dev/null | head -10 | cut -c1-150
+echo "   -- ~/.cline/hooks 内容（删除前已由 ②记录；此处为 3.6 之后状态）--"
+timeout 20 ls -l ~/.cline/hooks/ 2>&1 | cut -c1-140
+
+echo
 echo "=========== 4. 写新 .env：端口集 8650/8651/8652/8654 + RAG 9006 ==========="
 HEAD_SE=$(timeout 60 git -C "$EDA" show HEAD:.env 2>/dev/null | sed -n 's/^[[:space:]]*SANDBOX_ENDPOINTS=//p' | tail -1)
 CUR_SE=$(sed -n 's/^[[:space:]]*SANDBOX_ENDPOINTS=//p' "$ENVF" 2>/dev/null | tail -1)
