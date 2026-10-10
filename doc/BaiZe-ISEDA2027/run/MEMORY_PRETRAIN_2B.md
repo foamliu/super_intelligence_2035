@@ -5,8 +5,9 @@ WAITING: 1
 - STAGE: **dist_muon 重测完成 ✅**（2026-10-10 11:48）— 三路对比：dist_muon loss 3.110 / 122K tok/s / 37.3GB，消除 plain Muon 两项代价。P-8 暂缓令未撤。
 - PHASE: **converged** — dist_muon 实测验证完成，P-8 等待运维撤暂缓令
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。**全 8 GPU 空闲**（.29）。**P-8 暂缓令未撤**。📦 体积：TASK=31015B(30.3KB) / MEMORY=31KB 均 ≤32KB ✅。🚫绝不 kill watchdog loop
-- 🩺 **本唤醒推进 = #263（2026-10-10 13:01, 状态核查）**：① git fetch → status 0/0 ✅（仅 harness 线 kimi_pilot_results.json modified，非本线）。② dist_muon 实验已在 #262 完成：报告 36.3KB ✅ + EXPERIMENTS §dist_muon ✅。③ GPU 0-7 全 0MiB/0%，无 compute apps ✅。④ P-8 暂缓令未撤。⑤ 体积：TASK=30.3KB / MEMORY=30.3KB 均 ≤32KB ✅。→ 下一步：等运维撤 P-8 暂缓令。WAITING=1。
+- 轮询状态：30min 长轮询。**全 8 GPU 空闲**（.29）。**P-8 暂缓令未撤**（data 线报告"P-8数据层全就绪"，但运维未撤暂缓令）。📦 体积：TASK=31015B(30.3KB) / MEMORY=30.7KB 均 ≤32KB ✅。🚫绝不 kill watchdog loop
+- 🩺 **本唤醒推进 = #264（2026-10-10 13:33, 状态核查）**：① git pull --rebase → behind 1（zhulong 端口检测提交）已合并，status 0/0 ✅（仅 harness 线 kimi_pilot_results.json modified，非本线）。② dist_muon 实验已在 #262 完成：报告 36.3KB ✅ + EXPERIMENTS §dist_muon ✅。③ GPU 0-7 全 0MiB/0%，无 compute apps ✅。④ P-8 暂缓令未撤；data 线 #292 报告"P-8数据层全就绪, GPIC 7982/8001 ETA~26min"——数据前置接近完成。⑤ 体积：TASK=30.3KB / MEMORY=30.3KB 均 ≤32KB ✅。→ 下一步：等运维撤 P-8 暂缓令。WAITING=1。
+> 📦 **[已归档] #263 流水（2026-10-10 13:01, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8暂缓令未撤。需要时再读。**
 > 📦 **[已归档] #262 流水（2026-10-10 12:14, dist_muon 重测+报告刷新）→ daily-memories/2026-10-10.md；结论：dist_muon loss 3.110/122K tok/s/37.3GB, 消除 plain Muon −26%/+38% 两项代价, 报告36.3KB已刷新。需要时再读。**
 > 📦 **[已归档] #261 流水（2026-10-10 10:57, 状态核查）→ daily-memories/2026-10-10.md；结论：GPU全空闲, R3分词110/110 DONE, P-8暂缓令未撤, 体积OK。需要时再读。**
 > 📦 **[已归档] #260 流水（2026-10-10 10:19, 状态核查+TASK归档）→ daily-memories/2026-10-10.md；结论：两项运维指令均已完成(commit 9fb2c7f8), TASK归档2块→27.9KB。需要时再读。**
@@ -30,9 +31,7 @@ WAITING: 1
 > 📦 **[已归档] #238 流水（2026-10-09 11:11, T3提速验证完成）→ daily-memories/2026-10-09.md；结论：Test1 OOM/recompute无效, Test4 FP8 s=0.915, P-8最优=TP1·MBS2·bf16=249K。需要时再读。**
 > 📦 **[已归档] #237 流水（2026-10-09 10:08, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, GPIC 6872/8001, 分词36进程进行中, P-8暂缓令未撤。需要时再读。**
 > 📦 **[已归档] #236 流水（2026-10-09 09:34, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, GPIC 6839/8001, Code/Math分词范围扩大中(11→36进程), P-8暂缓令未撤。需要时再读。**
-> 📦 **[已归档] #235 流水（2026-10-09 09:00, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, GPIC 6839/8001, Code/Math分词已启动(.bin growing), P-8暂缓令未撤。需要时再读。**
-> 📦 **[已归档] #234 流水（2026-10-09 08:27, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, GPIC 6805/8001, Code/Math分词仍无进展, P-8暂缓令未撤。需要时再读。**
-> 📦 **[已归档] #233 流水（2026-10-09 07:52, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, GPIC 6780/8001, Code/Math分词无进展, P-8暂缓令未撤。需要时再读。**
+
 > 📦 **[已归档] #232 流水（2026-10-09 07:19, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, GPIC 6759/8001, Code/Math分词无进展, P-8暂缓令未撤。需要时再读。**
 > 📦 **[已归档] #231 流水（2026-10-09 06:41, P-8 前置预研完成）→ daily-memories/2026-10-09.md；结论：P-8 PREP 五节写入 EXPERIMENTS, Web 524B✅ / Code 270M🔴 / Math 609M🟠, 训练脚本可改, 100B≈12.5d。需要时再读。**
 > 📦 **[已归档] #230 流水（2026-10-09 06:00, R3 BO 收尾）→ daily-memories/2026-10-09.md；结论：DB=100行(98 complete+2 failed), best=#8 score=0.4032, 全交付物写入, R3 全部完成。需要时再读。**
