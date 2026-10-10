@@ -222,7 +222,84 @@
 <div class="note">
 <b>诚实声明</b>：以上归因引用外部文档。<b>dist_muon 已于 2026-10-10 11:37–11:48 在本地实测复现</b>（详见 §8）——预测全部确认：吞吐 122K > 118K（near-parity 实锤）、显存 37.3 GB < 39.0 GB（低于 AdamW）。本地 plain Muon 的 −26% 吞吐 / +38% 显存是<b>实测事实</b>（数字未改动），现已归因为 plain Muon 实现伪影并经 dist_muon 验证修复。
 </div>
-<h2>8 · 可复现性</h2>
+<h2>8 · dist_muon 实测验证（三路对比）</h2>
+<p>运维指令 2026-10-10：用户令「Muon 的试验，让 pretrain 用 dist_muon 重测」。与 §1–§6 的 A/B 逐字一致，唯一差异 = <code>optimizer=dist_muon</code>（layer-wise distributed）。<b>预注册判据在测试前确定</b>（§8.4），避免事后合理化。</p>
+<h3>8.1 设置</h3>
+<table class="metric-table">
+<tr><th>项</th><th>dist_muon 臂</th><th>与上轮差异</th></tr>
+<tr><td>优化器</td><td><b>dist_muon</b>（layer_wise_distributed_optimizer=True）</td><td>唯一差异：muon→dist_muon</td></tr>
+<tr><td>模型 / 并行 / GBS / MBS / seq / 精度 / 步数 / seed / LR / 数据</td><td>全部相同</td><td>与 §1 逐字一致</td></tr>
+<tr><td>时间</td><td>11:37:45 → 11:48:23（~10 min 38 s）</td><td>—</td></tr>
+</table>
+<div class="note">
+<b>接线确认</b>：<code>bridge_compat.py</code> 日志输出 <code>routing to get_megatron_muon_optimizer (layer_wise_distributed_optimizer=True)</code> ✅。冒烟测试（8 GPU DP=8 mock 10 步）通过 ✅。
+</div>
+<h3>8.2 三路对比</h3>
+<table class="metric-table">
+<tr><th>指标</th><th>Muon (plain)</th><th><b>dist_muon</b></th><th>AdamW</th><th>dist_muon vs Muon</th><th>dist_muon vs AdamW</th></tr>
+<tr><td style="text-align:left">最终 loss (iter 1000)</td><td>3.112</td><td class="winner"><b>3.110</b></td><td>4.003</td><td>−0.002 (持平)</td><td>−0.893 (−22.3%)</td></tr>
+<tr><td style="text-align:left">iter 500 loss</td><td>3.697</td><td class="winner"><b>3.696</b></td><td>4.665</td><td>−0.001 (持平)</td><td>−0.969 (−20.8%)</td></tr>
+<tr><td style="text-align:left">最终 grad_norm</td><td>0.255</td><td><b>0.256</b></td><td>0.479</td><td>+0.001 (持平)</td><td>−0.223 (−46.6%)</td></tr>
+<tr><td style="text-align:left">吞吐 (tok/s)</td><td class="loser">86,945</td><td class="winner"><b>122,415</b></td><td>118,132</td><td>+40.8%</td><td>+3.6%</td></tr>
+<tr><td style="text-align:left">稳态 ms/iter</td><td class="loser">753.4</td><td class="winner"><b>535.1</b></td><td>554.5</td><td>−29.0%</td><td>−3.5%</td></tr>
+<tr><td style="text-align:left">峰值显存 (nvidia-smi)</td><td class="loser">53.8 GB</td><td class="winner"><b>37.3 GB</b></td><td>39.0 GB</td><td>−30.7%</td><td>−4.4%</td></tr>
+<tr><td style="text-align:left">NaN / skipped</td><td>0 / 0</td><td><b>0 / 0</b></td><td>0 / 0</td><td>—</td><td>—</td></tr>
+<tr><td style="text-align:left">训练耗时</td><td>~13 min 44 s</td><td><b>~10 min 38 s</b></td><td>~10 min 34 s</td><td>−3 min 6 s</td><td>+4 s</td></tr>
+</table>
+<h3>8.3 Loss 曲线（三路）</h3>
+<div class="chart-container">
+<div class="chart-title">训练 Loss · 1000 步（每 100 步采样，三路对比）</div>
+<svg viewBox="0 0 960 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+  <line x1="80" y1="440" x2="860" y2="440" stroke="#333" stroke-width="1.5"/>
+  <line x1="80" y1="40" x2="80" y2="440" stroke="#333" stroke-width="1.5"/>
+  <text x="72" y="444" text-anchor="end" font-size="11" fill="#333">2.5</text>
+  <text x="72" y="358" text-anchor="end" font-size="11" fill="#333">4.0</text>
+  <text x="72" y="275" text-anchor="end" font-size="11" fill="#333">6.0</text>
+  <text x="72" y="192" text-anchor="end" font-size="11" fill="#333">8.0</text>
+  <text x="72" y="109" text-anchor="end" font-size="11" fill="#333">10.0</text>
+  <text x="80" y="458" text-anchor="middle" font-size="11" fill="#333">0</text>
+  <text x="236" y="458" text-anchor="middle" font-size="11" fill="#333">200</text>
+  <text x="392" y="458" text-anchor="middle" font-size="11" fill="#333">400</text>
+  <text x="548" y="458" text-anchor="middle" font-size="11" fill="#333">600</text>
+  <text x="704" y="458" text-anchor="middle" font-size="11" fill="#333">800</text>
+  <text x="860" y="458" text-anchor="middle" font-size="11" fill="#333">1000</text>
+  <line x1="80" y1="358" x2="860" y2="358" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="80" y1="275" x2="860" y2="275" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="80" y1="192" x2="860" y2="192" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="80" y1="109" x2="860" y2="109" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="236" y1="40" x2="236" y2="440" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="392" y1="40" x2="392" y2="440" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="548" y1="40" x2="548" y2="440" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="704" y1="40" x2="704" y2="440" stroke="#e0e0e0" stroke-width="0.5"/>
+  <polyline points="88,53 158,100 236,163 314,207 392,241 470,265 548,282 626,296 704,308 782,318 860,327" fill="none" stroke="#e94560" stroke-width="2.5" stroke-linejoin="round"/>
+  <polyline points="88,53 158,294 236,324 314,347 392,371 470,384 548,391 626,396 704,399 782,404 860,411" fill="none" stroke="#0f3460" stroke-width="2.5" stroke-linejoin="round"/>
+  <polyline points="88,53 158,295 236,324 314,347 392,371 470,384 548,391 626,396 704,399 782,404 860,411" fill="none" stroke="#0a7d2c" stroke-width="2.5" stroke-dasharray="6,3" stroke-linejoin="round"/>
+  <text x="870" y="415" font-size="10" fill="#0a7d2c">dist_muon</text>
+  <text x="870" y="327" font-size="10" fill="#e94560">AdamW</text>
+</svg>
+<div class="legend">
+<div class="legend-item"><div class="legend-swatch" style="background:#0f3460"></div>Muon (plain)</div>
+<div class="legend-item"><div class="legend-swatch" style="background:#0a7d2c"></div>dist_muon (虚线)</div>
+<div class="legend-item"><div class="legend-swatch" style="background:#e94560"></div>AdamW</div>
+</div>
+</div>
+<p style="text-align:center;font-size:.9em;color:#666"><b>dist_muon 与 plain Muon 的 loss 曲线几乎完全重合</b>（Δ &lt; 0.01），说明 layer-wise distributed 仅改变通信/存储模式，不影响优化轨迹。</p>
+<h3>8.4 预注册判据 vs 实测</h3>
+<table class="metric-table">
+<tr><th>预注册假设</th><th>实测结果</th><th>判定</th></tr>
+<tr><td style="text-align:left">吞吐 ≥ ~118K → "−26% 系 plain Muon 伪影"实锤</td><td><b>122,415 tok/s &gt; 118K</b></td><td class="winner">✅ 实锤</td></tr>
+<tr><td style="text-align:left">吞吐 87K~118K → 部分收窄</td><td>未落入此区间</td><td>—</td></tr>
+<tr><td style="text-align:left">吞吐仍 ≈87K → 规模太小未体现</td><td>未落入此区间</td><td>—</td></tr>
+<tr><td style="text-align:left">显存应显著下降（≤39GB）</td><td><b>37.3 GB &lt; 39.0 GB</b></td><td class="winner">✅ 确认（低于 AdamW）</td></tr>
+</table>
+<h3>8.5 结论</h3>
+<ol style="line-height:2">
+<li><b>dist_muon 完全消除了 plain Muon 的两项代价</b>：吞吐 +40.8%（超过 AdamW）、显存 −30.7%（低于 AdamW），而 loss 保持 Muon 级别优势（−22.3% vs AdamW）。</li>
+<li><b>§7 预测全部确认</b>：「−26% 吞吐 / +38% 显存系 plain Muon 实现伪影」由 dist_muon 实测验证——layer-wise distributed 将正交化通信开销消除，optimizer state 分片将显存降至 AdamW 以下。</li>
+<li><b>P-8 最优 = dist_muon</b>：收敛快（Muon 级 loss）+ 吞吐高（≥ AdamW）+ 显存省（37.3 GB，可支持更大 MBS/seq）。</li>
+<li><b>诚实声明</b>：仅 1000 步短地平线验证，长训练待 P-8 确认。PyTorch max allocated 仍高于 AdamW，但 nvidia-smi 峰值已低于 AdamW。</li>
+</ol>
+<h2>9 · 可复现性</h2>
 <table class="metric-table">
 <tr><th>项</th><th>值</th></tr>
 <tr><td>A/B 脚本</td><td><code>/tmp/muon_vs_adamw_ab_realdata.sh</code>（.29 上）</td></tr>
@@ -231,12 +308,16 @@
 <tr><td>汇总文件</td><td><code>/tmp/muon_vs_adamw_ab_realdata.sum</code></td></tr>
 <tr><td>Muon checkpoint</td><td><code>nemo_experiments/muon_ab_realdata_muon/checkpoints/iter_1000</code></td></tr>
 <tr><td>AdamW checkpoint</td><td><code>nemo_experiments/muon_ab_realdata_adamw/checkpoints/iter_1000</code></td></tr>
+<tr><td><b>dist_muon 脚本</b></td><td><code>run/muon_distmuon_realdata.sh</code> + <code>run/dist_muon_smoke_test.sh</code></td></tr>
+<tr><td><b>dist_muon 日志</b></td><td><code>/tmp/muon_ab_realdata_distmuon.log</code> + <code>/tmp/dist_muon_smoke.log</code></td></tr>
+<tr><td><b>dist_muon 汇总</b></td><td><code>/tmp/muon_distmuon_realdata.sum</code></td></tr>
+<tr><td><b>dist_muon checkpoint</b></td><td><code>nemo_experiments/muon_ab_realdata_distmuon/checkpoints/iter_1000</code></td></tr>
 <tr><td>环境</td><td>py310 env · megatron-core 0.16.1 · emerging_optimizers · torch 2.8.0+cu128</td></tr>
 <tr><td>硬件</td><td>8× NVIDIA H100 80GB @ 10.239.2.29</td></tr>
-<tr><td>时间</td><td>2026-10-10 05:59:30 → 06:23:48 (UTC+8)</td></tr>
+<tr><td>时间</td><td>2026-10-10 05:59:30 → 06:23:48（Muon/AdamW）· 11:37:45 → 11:48:23（dist_muon）(UTC+8)</td></tr>
 </table>
 <div class="footer">
-<p>BaiZe Stage(i) Pretrain · Muon vs AdamW A/B · 2026-10-10</p>
+<p>BaiZe Stage(i) Pretrain · Muon vs dist_muon vs AdamW 三路对比 · 2026-10-10</p>
 <p>数据来源：真实训练日志 · 零外链 · 自包含 HTML</p>
 </div>
 </body>
