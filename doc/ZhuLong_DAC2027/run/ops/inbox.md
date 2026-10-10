@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 29 -->
+<!-- RUN_ID: 30 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,44 @@
 
 ---
 
+## RUN_ID 30 — 🔧 修 loop PATH（cline@~/.bun/bin）+ 去重保证单个 loop
+
+**背景**：RUN_ID 29 重启的 loop 日志报 `env: 'cline': No such file or directory`（中继非交互 env 缺 `~/.bun/bin`）→ loop **静默失效**；且出现 **2 个 loop 进程**。本条：停全部 loop → 带 `~/.bun/bin` PATH 重启**单个** loop，并校验 `cline` 可解析、loop 能真正拉起 cline。
+
+```bash
+# RUN_ID 30 — fix loop PATH (cline@~/.bun/bin) + ensure single loop
+echo "== RUN_ID 30 @ $(date '+%F %T') host=$(hostname) =="
+cd /nasdata/app.e0031982/code/super_intelligence_2035 2>/dev/null || cd /nas_train/app.e0031982/code/super_intelligence_2035 || true
+
+echo "== 1. locate cline =="
+ls -l ~/.bun/bin/cline 2>&1 | cut -c1-160
+ls -l ~/.local/bin/cline 2>&1 | cut -c1-160
+
+echo "== 2. BEFORE: all loops =="
+ps -eo pid,ppid,etime,cmd | grep 'zhulong_loop.sh' | grep -v grep | cut -c1-160
+
+echo "== 3. stop ALL loops =="
+pkill -f 'zhulong_loop.sh' 2>&1; echo "pkill exit=$?"; sleep 3
+ps -eo pid,cmd | grep 'zhulong_loop.sh' | grep -v grep | cut -c1-160
+echo "(empty above = all stopped)"
+
+echo "== 4. restart ONE loop with correct PATH =="
+export PATH="$HOME/.bun/bin:$HOME/.local/bin:$PATH"
+export https_proxy=http://172.19.92.23:13128
+export http_proxy=http://172.19.92.23:13128
+echo "cline -> $(command -v cline)"
+setsid bash doc/ZhuLong_DAC2027/run/zhulong_loop.sh > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+sleep 8
+echo "-- loops now (expect exactly 1) --"; ps -eo pid,ppid,etime,cmd | grep 'zhulong_loop.sh' | grep -v grep | cut -c1-160
+echo "-- loop log tail --"; tail -6 /tmp/zhulong_loop.log 2>&1 | cut -c1-200
+echo "== DONE =="
+```
+
 ## RUN_ID 29 — 🛑 删防作弊 hook + 停评测 + 重启 zhulong loop + 采集 timeout 取证
 
 **背景**：用户令「先用 ops 中继：① 删 `~/.cline/hooks/PreToolUse` ② 停下评测 ③ 重启 zhulong loop（重启前把唤醒周期降到 30min —— 经确认 `SLEEP_WAIT=1800s` 本就是 30min，无需改）」，并要求排查连续多日的评测 timeout 根因。
 
-```bash
+```text
 # RUN_ID 29 — del hook + stop eval + restart loop + timeout evidence
 echo "== RUN_ID 29 @ $(date '+%F %T') host=$(hostname) =="
 cd /nasdata/app.e0031982/code/super_intelligence_2035 2>/dev/null || cd /nas_train/app.e0031982/code/super_intelligence_2035 || true
