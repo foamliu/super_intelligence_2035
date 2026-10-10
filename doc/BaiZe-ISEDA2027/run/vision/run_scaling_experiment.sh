@@ -416,7 +416,7 @@ case "$MODE" in
             echo "ERROR: snapshot file $SNAPSHOT_FILE not found. Run 'snapshot_gpic' first." >&2
             exit 1
         fi
-        run_v2_muon "$STEPS" "$NW" "${3:-5e-4}"; rc=$?
+        run_v2_muon "$STEPS" "$NW" "${4:-5e-4}"; rc=$?
         [ "$STEPS" -gt 1000 ] && [ $rc -eq 0 ] && run_eval v2 "$OUTROOT/scaling_V2_muon_ov2_w512_d30_p16_224" final
         ;;
     v3)
