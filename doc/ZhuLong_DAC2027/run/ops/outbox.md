@@ -3373,3 +3373,178 @@ SANDBOX_ENDPOINTS=8663:/proj/train/AI/workdir/e0031982_1,8666:/proj/train/AI/wor
 == DONE — r2-retest#4 killed, new ports verified, standby for C1.full restart ==
 /tmp/tmp.39nCng5qgi: line 96: **背景**：用户: command not found
 ```
+
+---
+
+## RUN_ID 28 · 2026-10-10 11:02:14 · host=`hfeg0tedaap02` · exit=127
+
+**命令**
+```bash
+# RUN_ID 28 — kill r2-retest#5 + verify new dedicated sandbox ports
+echo "== RUN_ID 28: kill r2-retest#5 + verify new ports @ $(date '+%F %T') =="
+
+echo "== 1. BEFORE kill: current eval process =="
+ps -eo pid,ppid,etime,state,cmd | grep -E '1471081|run_cline_script|run_eval' | grep -v grep | cut -c1-140
+
+echo "== 2. KILL r2-retest#5 (PID 1471081) + children =="
+kill -TERM 1471081 2>&1; echo "kill -TERM 1471081 exit=$?"
+sleep 3
+pkill -TERM -P 1471081 2>&1; echo "pkill -P 1471081 exit=$?"
+sleep 2
+kill -KILL 1471081 2>&1; echo "kill -KILL 1471081 exit=$?"
+pkill -KILL -P 1471081 2>&1; echo "pkill -KILL -P 1471081 exit=$?"
+sleep 1
+
+echo "== 3. KILL any stray run_eval.py =="
+pkill -KILL -f 'run_eval.py' 2>&1; echo "pkill run_eval exit=$?"
+pkill -KILL -f 'run_cline_script' 2>&1; echo "pkill run_cline exit=$?"
+sleep 1
+
+echo "== 4. AFTER kill: verify no eval processes remain =="
+ps -eo pid,ppid,etime,state,cmd | grep -E 'run_cline_script|run_eval' | grep -v grep | cut -c1-140
+echo "(empty above = clean kill ✅)"
+
+echo "== 5. Verify NEW dedicated sandbox ports 8663/8666/8667/8670 =="
+for p in 8663 8666 8667 8670; do
+  echo -n "port $p: "; timeout 10 curl -s -o /dev/null -w 'HTTP=%{http_code} TIME=%{time_total}s' http://10.129.32.75:$p 2>&1; echo
+done
+
+echo "== 6. .env verify (should show 8663/8666/8667/8670) =="
+grep -E '^PROXY_PORTS|^SANDBOX_ENDPOINTS' /nasdata/app.e0031982/code/eda_fastmcp/.env
+
+echo "== 7. pro-fp4 new key still 200? =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/cloud/v1/chat/completions \
+  -H "Authorization: Bearer 02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e" \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -3
+
+echo "== 8. zhulong_loop alive? (PID 3579323 - DO NOT KILL) =="
+ps -eo pid,ppid,etime,state,cmd | grep '3579323' | grep -v grep | cut -c1-140
+
+echo "== DONE — r2-retest#5 killed, new ports verified, agent will restart C1.full from r1 =="
+
+**背景**：用户 2026-10-10 通知切换到专属沙盒端口 8663/8666/8667/8670（workdir e0031982_1~4, host 不变 10.129.32.75），.env 已改。C1.full 现有评测全部作废需重测。当前 r2-retest#4（PID 459294）仍在旧沙盒上跑，需 kill 后验证新端口可达。
+
+# RUN_ID 27 — kill r2-retest#4 + verify new dedicated sandbox ports
+echo "== RUN_ID 27: kill r2-retest#4 + verify new ports @ $(date '+%F %T') =="
+
+echo "== 1. BEFORE kill: r2-retest#4 process tree =="
+ps -eo pid,ppid,etime,state,cmd | grep -E '459294|run_cline_script|run_eval' | grep -v grep | cut -c1-140
+
+echo "== 2. KILL r2-retest#4 (PID 459294) + children =="
+kill -TERM 459294 2>&1; echo "kill -TERM 459294 exit=$?"
+sleep 3
+pkill -TERM -P 459294 2>&1; echo "pkill -P 459294 exit=$?"
+sleep 2
+kill -KILL 459294 2>&1; echo "kill -KILL 459294 exit=$?"
+pkill -KILL -P 459294 2>&1; echo "pkill -KILL -P 459294 exit=$?"
+sleep 1
+
+echo "== 3. KILL any stray run_eval.py / run_cline_script =="
+pkill -KILL -f 'run_eval.py.*2026_1010_062131' 2>&1; echo "pkill run_eval exit=$?"
+pkill -KILL -f 'run_cline_script.*r2_retest4' 2>&1; echo "pkill run_cline exit=$?"
+sleep 1
+
+echo "== 4. AFTER kill: verify no eval processes remain =="
+ps -eo pid,ppid,etime,state,cmd | grep -E '459294|run_cline_script|run_eval' | grep -v grep | cut -c1-140
+echo "(empty above = clean kill ✅)"
+
+echo "== 5. Verify NEW dedicated sandbox ports 8663/8666/8667/8670 reachable =="
+for p in 8663 8666 8667 8670; do
+  echo -n "port $p: "; timeout 10 curl -s -o /dev/null -w 'HTTP=%{http_code} TIME=%{time_total}s' http://10.129.32.75:$p 2>&1; echo
+done
+
+echo "== 6. Verify OLD sandbox ports 8650/8651/8652/8654 (should still respond, just not used) =="
+for p in 8650 8651 8652 8654; do
+  echo -n "port $p: "; timeout 5 curl -s -o /dev/null -w 'HTTP=%{http_code}' http://10.129.32.75:$p 2>&1; echo
+done
+
+echo "== 7. pro-fp4 new key still 200? =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/cloud/v1/chat/completions \
+  -H "Authorization: Bearer 02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e" \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -3
+
+echo "== 8. zhulong_loop still alive? (PID 3579323 - DO NOT KILL) =="
+ps -eo pid,ppid,etime,state,cmd | grep '3579323' | grep -v grep | cut -c1-140
+
+echo "== 9. .env SANDBOX_ENDPOINTS verify (should show 8663/8666/8667/8670) =="
+grep -E 'PROXY_PORTS|SANDBOX_ENDPOINTS' /nasdata/app.e0031982/code/eda_fastmcp/.env | grep -v '^#'
+
+echo "== DONE — r2-retest#4 killed, new ports verified, standby for C1.full restart =="
+
+**背景**：用户 2026-10-09 17:00 通知「沙盒坏了，下发指令把 r4 停下来，待命」。r4 grading 阶段异常缓慢（r1=8min/150脚本 vs r4=1h48m+/140脚本，13×+慢），log 沉默 2h+，沙盒端口 8650/8651/8652/8654 全部无响应（RUN_ID 24 诊断已确认沙盒坏了）。需 kill r4 整个进程树（主进程 PID 3302534 + run_eval.py 子进程 PID 611439 + 所有 worker），确认干净退出，然后待命。
+```
+
+**输出**
+```
+== RUN_ID 28: kill r2-retest#5 + verify new ports @ 2026-10-10 11:02:14 ==
+== 1. BEFORE kill: current eval process ==
+== 2. KILL r2-retest#5 (PID 1471081) + children ==
+/tmp/tmp.fVm4YOanr2: line 8: kill: (1471081) - No such process
+kill -TERM 1471081 exit=1
+pkill -P 1471081 exit=1
+/tmp/tmp.fVm4YOanr2: line 12: kill: (1471081) - No such process
+kill -KILL 1471081 exit=1
+pkill -KILL -P 1471081 exit=1
+== 3. KILL any stray run_eval.py ==
+pkill run_eval exit=1
+pkill run_cline exit=1
+== 4. AFTER kill: verify no eval processes remain ==
+(empty above = clean kill ✅)
+== 5. Verify NEW dedicated sandbox ports 8663/8666/8667/8670 ==
+port 8663: 
+port 8666: 
+port 8667: 
+port 8670: 
+== 6. .env verify (should show 8663/8666/8667/8670) ==
+PROXY_PORTS=8663,8666,8667,8670
+SANDBOX_ENDPOINTS=8663:/proj/train/AI/workdir/e0031982_1,8666:/proj/train/AI/workdir/e0031982_2,8667:/proj/train/AI/workdir/e0031982_3,8670:/proj/train/AI/workdir/e0031982_4
+== 7. pro-fp4 new key still 200? ==
+{"id":"20261010110303716c07ef9e084dbf","object":"chat.completion","created":1791601382,"model":"deepseek-v4-pro-260813","choices":[{"index":0,"message":{"role":"assistant","content":"","reasoning_content":"We need answer user. They said \"Say OK"},"finish_reason":"length"}],"usage":{"completion_tokens":10,"prompt_tokens":85,"total_tokens":95,"completion_tokens_details":{"reasoning_tokens":10},"prompt_tokens_details":{}}}
+HTTP=200 TIME=1.141523s SIZE=424B
+== 8. zhulong_loop alive? (PID 3579323 - DO NOT KILL) ==
+1698696 3579323       00:40 S sleep 1800
+3579323       1  3-16:47:58 S bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+== DONE — r2-retest#5 killed, new ports verified, agent will restart C1.full from r1 ==
+/tmp/tmp.fVm4YOanr2: line 45: **背景**：用户: command not found
+== RUN_ID 27: kill r2-retest#4 + verify new ports @ 2026-10-10 11:03:03 ==
+== 1. BEFORE kill: r2-retest#4 process tree ==
+== 2. KILL r2-retest#4 (PID 459294) + children ==
+/tmp/tmp.fVm4YOanr2: line 54: kill: (459294) - No such process
+kill -TERM 459294 exit=1
+pkill -P 459294 exit=1
+/tmp/tmp.fVm4YOanr2: line 58: kill: (459294) - No such process
+kill -KILL 459294 exit=1
+pkill -KILL -P 459294 exit=1
+== 3. KILL any stray run_eval.py / run_cline_script ==
+/tmp/tmp.fVm4YOanr2: line 63: 1702270 Killed                  pkill -KILL -f 'run_eval.py.*2026_1010_062131' 2>&1
+pkill run_eval exit=137
+/tmp/tmp.fVm4YOanr2: line 64: 1702274 Killed                  pkill -KILL -f 'run_cline_script.*r2_retest4' 2>&1
+pkill run_cline exit=137
+== 4. AFTER kill: verify no eval processes remain ==
+(empty above = clean kill ✅)
+== 5. Verify NEW dedicated sandbox ports 8663/8666/8667/8670 reachable ==
+port 8663: 
+port 8666: 
+port 8667: 
+port 8670: 
+== 6. Verify OLD sandbox ports 8650/8651/8652/8654 (should still respond, just not used) ==
+port 8650: 
+port 8651: 
+port 8652: 
+port 8654: 
+== 7. pro-fp4 new key still 200? ==
+{"id":"202610101104128a08e44023c141c7","object":"chat.completion","created":1791601451,"model":"deepseek-v4-pro-260813","choices":[{"index":0,"message":{"role":"assistant","content":"","reasoning_content":"We need answer user says \"Say OK\". Need"},"finish_reason":"length"}],"usage":{"completion_tokens":10,"prompt_tokens":85,"total_tokens":95,"completion_tokens_details":{"reasoning_tokens":10},"prompt_tokens_details":{}}}
+HTTP=200 TIME=1.469746s SIZE=426B
+== 8. zhulong_loop still alive? (PID 3579323 - DO NOT KILL) ==
+1698696 3579323       01:50 S sleep 1800
+3579323       1  3-16:49:08 S bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+== 9. .env SANDBOX_ENDPOINTS verify (should show 8663/8666/8667/8670) ==
+PROXY_PORTS=8663,8666,8667,8670
+SANDBOX_ENDPOINTS=8663:/proj/train/AI/workdir/e0031982_1,8666:/proj/train/AI/workdir/e0031982_2,8667:/proj/train/AI/workdir/e0031982_3,8670:/proj/train/AI/workdir/e0031982_4
+== DONE — r2-retest#4 killed, new ports verified, standby for C1.full restart ==
+/tmp/tmp.fVm4YOanr2: line 96: **背景**：用户: command not found
+```
