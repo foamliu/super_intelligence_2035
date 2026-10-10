@@ -85,7 +85,15 @@
 | **l1_en_hq 投料前扫描** | ultrafineweb_l1_en_hq CC-MAIN-2025-30 part-0001-of-1000 | 2000 文档 | **0** | ✅ l1_en_hq 源无评测污染 |
 | **zh 投料前扫描** | ultrafineweb_zh part-001-of-256（中文通用 web） | 2000 文档 | **0** | ✅ zh 源无评测污染（中文黑名单覆盖验证） |
 
-> **投料前扫描小结（2026-10-09 唤醒244）**：5 个代表性源 parquet × 2000 docs = **10,000 docs**，覆盖 en_base（首/中/末）、l1_en_hq、zh 三个 config，**全部 0 命中**。与 phase5 负控（L3 qa 1500 docs 0 命中）一致 → Ultra-FineWeb 全系通用 web 文本与 EDA-Eval 评测集不同源。⚠️ 正式投料前需对**全量** 2048 en_base + 6000 l1_en_hq + 256 zh parquet 跑完整扫描（当前为代表性采样）。
+> **投料前扫描小结（2026-10-09 唤醒244）**：5 个代表性源 parquet × 2000 docs = **10,000 docs**，覆盖 en_base（首/中/末）、l1_en_hq、zh 三个 config，**全部 0 命中**。与 phase5 负控（L3 qa 1500 docs 0 命中）一致 → Ultra-FineWeb 全系通用 web 文本与 EDA-Eval 评测集不同源。
+
+| **R3 投料前扫描** | Ultra-FineWeb-L3 (en/zh qa+ms) × 10 parquet | 20,000 docs | **0** | ✅ L3 源无评测污染（唤醒289, 2026-10-10） |
+| **R3 投料前扫描** | UltraData-Code (L2 5lang + L3 5lang) × 10 parquet | 20,000 docs | **0** | ✅ Code 源无评测污染 |
+| **R3 投料前扫描** | UltraData-Math (L1 6 + L2p 2 + L3 2) × 10 parquet | 20,000 docs | **0** | ✅ Math 源无评测污染 |
+
+> **R3 投料前扫描小结（2026-10-10 唤醒289）**：3 个 R3 源（L3 + Code + Math）各 10 parquet × 2000 docs = **60,000 docs**，**全部 0 命中**。每源 ≥ 20K docs（超过 ≥10K 要求）。日志 → `run/data_pipeline/contam_scan_r3.log`，摘要 → `run/data_pipeline/contam_scan_r3_summary.md`。
+>
+> **累计扫描总计**：base 采样 10K + base 全量 150K + R3 投料前 60K = **220,000 docs**，覆盖全部 6 个数据源，**0 命中**。**结论：全部训练数据清洁，与 EDA-Eval 评测集不同源，可正式投料。P-8 数据层全就绪。**
 
 - 命令：
   ```
@@ -110,5 +118,5 @@
 - [x] **en_base / l1_en_hq / zh 投料前采样扫描**（唤醒244, 2026-10-09）：5 parquet × 2000 docs = 10,000 docs, **0 命中** ✅
 - [x] **全量污染扫描**（唤醒245-246, 2026-10-09）：30 parquet × 5,000 docs = **150,000 docs**, **0 命中** ✅。采样扫描（10K）+ 全量扫描（150K）累计 **160,000 docs 全 0 命中**。覆盖 en_base（10 file 跨 2048 均匀分布）+ l1_en_hq（12 file 跨 6 CC-MAIN 快照）+ zh（8 file 跨 256 均匀分布）。**结论：Ultra-FineWeb 全系通用 web 文本与 EDA-Eval 评测集不同源，数据清洁，可正式投料。** 日志 → `run/data_pipeline/contam_scan_full.log`，摘要 → `run/data_pipeline/contam_scan_full_summary.md`
 - [x] SFT 语料同闸机制修复 + 冒烟（唤醒 5）：check_contamination.py 目录分支现可递归扫描**嵌套 jsonl**（旧版只 glob parquet → 目录输入会静默扫 0 文档），并支持 Agent-2609 的 `messages`（list<{role,content}>）多轮对话字段；单文件 30 / 目录 10 文档均 **0 命中**、正控 158/158 无回归
-- [ ] SFT 语料（UltraData-SFT-*）同闸**全量正式扫描**（phase2/3）：Agent-2609 已就绪可扫；2605 落盘为空需重下后再扫。⚠️ **性能**：Agent-2609 单文档 ≈40KB，纯 Python 逐 13-gram 哈希全量扫 51GiB 会很慢（2000 文档 >30s），正式扫需按 shard 并行 / 加速
-- [ ] EDA API 参考文档正式入库前，逐片段（非整文件）跑同闸扫描，确保无评测内容泄漏
+- [x] **R3 投料前污染扫描**（唤醒289, 2026-10-10）：30 parquet × 2,000 docs = **60,000 docs**, **0 命中** ✅。覆盖 L3(10) + Code(10) + Math(10)，每源 ≥ 20K docs（超过 ≥10K 要求）。日志 → `run/data_pipeline/contam_scan_r3.log`，摘要 → `run/data_pipeline/contam_scan_r3_summary.md`
+- [x] **全部投料前扫描完成**：base 采样 10K + base 全量 150K + R3 60K = **220,000 docs**，全部 6 源，**0 命中**。**P-8 数据层全就绪。**

@@ -57,3 +57,75 @@ Sources: L3(10) + Code(10) + Math(10) = 30 files × 2K docs = 60K docs
 [done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/contam_r3_UltraData-Code-L3-rs-part-00001-of-00007.md
   → docs=2000 hits=0
 --- Math_L1: UltraData-Math-L1-CC-MAIN-2014-15-part-0001-of-15.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/contam_r3_UltraData-Math-L1-CC-MAIN-2014-15-part-0001-of-15.md
+  → docs=2000 hits=0
+--- Math_L1: UltraData-Math-L1-CC-MAIN-2014-23-part-0001-of-15.parquet ---
+  → docs=2000 hits=0
+--- Math_L1: UltraData-Math-L1-CC-MAIN-2014-35-part-0001-of-15.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/contam_r3_UltraData-Math-L1-CC-MAIN-2014-35-part-0001-of-15.md
+  → docs=2000 hits=0
+--- Math_L1: UltraData-Math-L1-CC-MAIN-2014-41-part-0001-of-15.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/contam_r3_UltraData-Math-L1-CC-MAIN-2014-41-part-0001-of-15.md
+  → docs=2000 hits=0
+--- Math_L1: UltraData-Math-L1-CC-MAIN-2014-42-part-0001-of-15.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/contam_r3_UltraData-Math-L1-CC-MAIN-2014-42-part-0001-of-15.md
+  → docs=2000 hits=0
+--- Math_L1: UltraData-Math-L1-CC-MAIN-2015-11-part-0001-of-15.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/contam_r3_UltraData-Math-L1-CC-MAIN-2015-11-part-0001-of-15.md
+  → docs=2000 hits=0
+
+=== COMPLETING REMAINING 6 FILES ===
+Start: Sat Oct 10 11:16:59 AM CST 2026
+--- L3_en_qa: part-00410-37dc9f21-f87f-4f43-8dd2-134424f1537a-c000.snappy.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/contam_r3_rem_part-00410-37dc9f21-f87f-4f43-8dd2-134424f1537a-c000.snappy.md
+  → docs=2000 hits=0
+--- L3_en_ms: part-00000-f36f5a53-4a77-434b-b9bc-67ed69b93fe2-c000.snappy.parquet ---
+
+=== COMPLETING REMAINING 6 FILES ===
+Start: Sat Oct 10 11:18:04 AM CST 2026
+--- L3_en_qa: part-00410-37dc9f21-f87f-4f43-8dd2-134424f1537a-c000.snappy.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/contam_r3_rem_part-00410-37dc9f21-f87f-4f43-8dd2-134424f1537a-c000.snappy.md
+  → docs= hits=
+--- L3_en_ms: part-00000-f36f5a53-4a77-434b-b9bc-67ed69b93fe2-c000.snappy.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/contam_r3_rem_part-00000-f36f5a53-4a77-434b-b9bc-67ed69b93fe2-c000.snappy.md
+  → docs= hits=
+--- Math_L2p: UltraData-Math-L2-part-00001-of-00138.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/contam_r3_rem_UltraData-Math-L2-part-00001-of-00138.md
+  → docs= hits=
+--- Math_L2p: UltraData-Math-L2-part-00002-of-00138.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/contam_r3_rem_UltraData-Math-L2-part-00002-of-00138.md
+  → docs= hits=
+--- Math_L3: UltraData-Math-L3-QA-Synthetic-part-0000-of-50.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/contam_r3_rem_UltraData-Math-L3-QA-Synthetic-part-0000-of-50.md
+  → docs= hits=
+--- Math_L3: UltraData-Math-L3-Conversation-Synthetic-part-0000-of-50.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/contam_r3_rem_UltraData-Math-L3-Conversation-Synthetic-part-0000-of-50.md
+  → docs= hits=
+
+=== REMAINING 6 FILES DONE ===
+Additional files: 6 / docs: 0 / hits: 0
+End: Sat Oct 10 11:19:40 AM CST 2026
+
+=== COMPLETING REMAINING 6 FILES ===
+Start: Sat Oct 10 11:21:05 AM CST 2026
+--- L3_en_qa: part-00410-37dc9f21-f87f-4f43-8dd2-134424f1537a-c000.snappy.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/cr3r_part-00410-37dc9f21-f87f-4f43-8dd2-134424f1537a-c000.snappy.md
+  -> docs= hits=
+--- L3_en_ms: part-00000-f36f5a53-4a77-434b-b9bc-67ed69b93fe2-c000.snappy.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/cr3r_part-00000-f36f5a53-4a77-434b-b9bc-67ed69b93fe2-c000.snappy.md
+  -> docs= hits=
+--- Math_L2p: UltraData-Math-L2-part-00001-of-00138.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/cr3r_UltraData-Math-L2-part-00001-of-00138.md
+  -> docs= hits=
+--- Math_L2p: UltraData-Math-L2-part-00002-of-00138.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/cr3r_UltraData-Math-L2-part-00002-of-00138.md
+  -> docs= hits=
+--- Math_L3: UltraData-Math-L3-QA-Synthetic-part-0000-of-50.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/cr3r_UltraData-Math-L3-QA-Synthetic-part-0000-of-50.md
+  -> docs= hits=
+--- Math_L3: UltraData-Math-L3-Conversation-Synthetic-part-0000-of-50.parquet ---
+[done] 扫描 2000 文档 / 命中 0；报告写入 /tmp/cr3r_UltraData-Math-L3-Conversation-Synthetic-part-0000-of-50.md
+  -> docs= hits=
+
+=== ALL DONE: 30 files / 48000 docs / 0 hits ===
+End: Sat Oct 10 11:22:43 AM CST 2026
