@@ -2,11 +2,12 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **P-8 正式预训练运行中 🚀**（2026-10-10 16:03 启动）— Mamba2-hybrid 2.22B from scratch, 44B tokens, dist_muon, WSD 5%/85%/10%。**暂停监控器已修复并重启**（PID 799219）：自动等 step 1050 → 暂停 P-8 → 启动 A/B。
-- PHASE: **p8_training_ab_pending** — stable phase running, step ~460/10490, loss 3.49↓, 0 NaN ✅。暂停监控器 step 解析 bug 已修复, ETA step 1050 ≈ 21:00。
+- STAGE: **P-8 正式预训练运行中 🚀**（2026-10-10 16:03 启动）— Mamba2-hybrid 2.22B from scratch, 44B tokens, dist_muon, WSD 5%/85%/10%。**暂停监控器运行正常**（PID 799219）：自动等 step 1050 → 暂停 P-8 → 启动 A/B。
+- PHASE: **p8_training_ab_pending** — stable phase running, step ~590/10490, loss 3.28↓, 0 NaN ✅。warmup 已完成(step524 LR=1e-3)，ETA step 1050 ≈ 21:05。
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。**全 8 GPU 占用**（.29, 52-53GB/card, 98-100% util）。P-8 训练 PID 3620653(bash)/3620665(torchrun)。暂停监控器 PID 799219。📦 体积：TASK=31.6KB / MEMORY=30.9KB（均 ≤32KB ✅, 归档6条旧指针）。🚫绝不 kill 训练进程或 watchdog loop
-- 🩺 **本唤醒推进 = #271（2026-10-10 18:17, P-8 监控 + 暂停监控器 step 解析 bug 修复）**：① P-8 step 460/10490, loss 3.492↓ (step10=11.73→step460=3.492), 0 NaN/0 skipped ✅, 稳态 16.8s/step=249K tok/s, GPU 52-53GB/card, 98-100% util。② **🔴 发现暂停监控器 step 解析 bug**：baize_p8_pause_at_1049.sh line43 sed `.*iteration *\([0-9]*\)` 因 `.*` 贪婪匹配到行尾"elapsed time per iteration (ms)"→ 永远返回空 → "Current step: ?" ×75次 → A/B 永不触发。**✅ 已修复**：改用 `grep -oE 'iteration +[0-9]+/' | tail -1 | grep -oE '[0-9]+'`, kill 旧 PID 2243639 → 重启 PID 799219 → 首次输出 "Current step: 460" ✅。③ ETA step 1050 ≈ 21:00（(1050-460)×16.8s≈2.75h）。④ 体积：MEMORY 32.0KB→归档6条旧指针→<32KB。→ 下一步：监控器自动执行暂停+A/B；下次唤醒检查 A/B 结果→判据决策→恢复/切换 P-8。WAITING=1。
+- 轮询状态：30min 长轮询。**全 8 GPU 占用**（.29, 52-53GB/card, 98-100% util）。P-8 训练 PID 3620653(bash)/3620770-77(torchrun workers)。暂停监控器 PID 799219。📦 体积：TASK=31.6KB / MEMORY=30.9KB（均 ≤32KB ✅）。🚫绝不 kill 训练进程或 watchdog loop
+- 🩺 **本唤醒推进 = #272（2026-10-10 18:56, P-8 监控 + 脚本/数据路径核查）**：① P-8 step 590/10490, loss 3.278↓ (step10=11.73→step590=3.278), warmup 完成 LR=1.0e-3(step524), 0 NaN/0 skipped ✅, 稳态 16.85s/step=249K tok/s, GPU 52-53GB/card, 98-100% util, grad_norm 0.25-0.48 稳定。② 暂停监控器 PID 799219 运行正常：日志 "Current step: 590, waiting for 1050..." 每30s轮询 ✅。③ **脚本/数据全核查**：baize_p8_pause_at_1049.sh（5阶段：等step→暂停P-8→等GPU空→验ckpt→启A/B）✅；baize_p8_ab_test.sh（Arm A: MBS=2/GBS=1024, Arm B: MBS=3/GBS=1032, 各300步, 同seed=1234/同数据/同LR=1e-3/dist_muon, VRAM monitor 5s轮询, save-interval=0）✅；数据路径全存在（44 mix_base shards + code + math）✅；A/B blend 与 P-8 一致 ✅。④ ETA：step1050≈(1050-590)×16.85≈2.15h≈21:05 → A/B≈300×2×17s+60s≈2.85h≈23:55 → 决策恢复/切换。⑤ 无需干预：全自动。→ 下一步：下次唤醒检查 A/B 结果→按三判据决策。WAITING=1。
+> 📦 **[已归档] #271 流水（2026-10-10 18:17, P-8 监控 + 暂停监控器 step 解析 bug 修复）→ daily-memories/2026-10-10.md；结论：P-8 step460 loss3.49, 暂停监控器step解析bug修复, PID799219重启, ETA step1050≈21:00。需要时再读。**
 > 📦 **[已归档] #270 流水（2026-10-10 17:39, P-8 监控+A/B脚本修复+暂停监控器部署）→ daily-memories/2026-10-10.md；结论：P-8 step320 loss3.86, A/B脚本结构缺陷修复, 暂停监控器创建(后step解析bug→#271修复)。需要时再读。**
 > 📦 **[已归档] #269 流水（2026-10-10 17:00, P-8 监控 + MBS A/B 脚本准备）→ daily-memories/2026-10-10.md；结论：P-8 step190 loss4.90, baize_p8_ab_test.sh 创建（后有现发现结构缺陷并修复）。需要时再读。**
 > 📦 **[已归档] #268 流水（2026-10-10 16:18, P-8 启动+首 40 步）→ daily-memories/2026-10-10.md；结论：P-8 16:03 启动, step40 loss=8.38, 248K tok/s, 0 NaN, GPU 52-53GB, baize_p8_decay.sh 已创建。需要时再读。**
