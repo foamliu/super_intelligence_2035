@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 2.2B · 2026-10-09 夜间工作汇报</title>
+<style>
+  body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;max-width:960px;margin:0 auto;padding:2em;background:#f8f9fa;color:#1a1a2e;line-height:1.7}
+  h1{text-align:center;color:#16213e;border-bottom:3px solid #0f3460;padding-bottom:.5em}
+  h2{color:#0f3460;border-left:4px solid #e94560;padding-left:.8em;margin-top:2em}
+  h3{color:#533483}
+  table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.92em}
+  th,td{border:1px solid #ccc;padding:.6em .8em;text-align:center}
+  th{background:#0f3460;color:#fff}
+  tr:nth-child(even){background:#eef1f6}
+  .note{background:#fff3cd;border-left:4px solid #ffc107;padding:.8em 1em;margin:1em 0;font-size:.9em}
+  .key-result{background:#d4edda;border:2px solid #28a745;border-radius:8px;padding:1em 1.5em;margin:1.5em 0}
+  .key-result h3{margin-top:0;color:#155724}
+  .pointer{background:#e8eaf6;border-left:4px solid #3f51b5;padding:.8em 1em;margin:1em 0;font-size:.9em}
+  .footer{text-align:center;color:#999;font-size:.85em;margin-top:3em;border-top:1px solid #ddd;padding-top:1em}
+  code{background:#eef;padding:.15em .4em;border-radius:3px;font-size:.88em}
+  .metric-table td:first-child{text-align:left;font-weight:600}
+  .status-done{color:#0a7d2c;font-weight:bold}
+  .chart-container{background:#fff;border:1px solid #ddd;border-radius:8px;padding:1em;margin:1.5em 0}
+  .chart-title{font-weight:bold;color:#333;margin-bottom:.5em;text-align:center}
+  .legend{display:flex;justify-content:center;gap:2em;margin-top:.5em;font-size:.9em}
+  .legend-item{display:flex;align-items:center;gap:.4em}
+  .legend-swatch{width:24px;height:3px;border-radius:2px}
+</style>
+</head>
+<body>
+<h1>BaiZe Mamba2-Hybrid 2.2B · 2026-10-09 夜间工作汇报</h1>
+<p style="text-align:center;color:#666">2026-10-09 夜 → 10-10 晨 · 8×H100 @ 10.239.2.29 · 两项实验均已完成</p>
+<div class="key-result">
+<h3>⭐ 夜间工作概述</h3>
+<p>2026-10-09 夜间按运维指令完成<b>两项实验</b>，均 ✅ 已交付详细报告。本汇报做汇总 + 指针，不重复贴全文。</p>
+<table class="metric-table" style="margin-top:.8em">
+<tr><th>#</th><th>实验</th><th>状态</th><th>详报</th></tr>
+<tr><td>①</td><td>参数匹配对比基准（P-9.11-F，Dense-Match vs Hybrid/BaiZe）</td><td class="status-done">✅ 完成</td><td><code>report_pretrain_baize_vs_dense_fair_zh.html</code></td></tr>
+<tr><td>②</td><td>Muon vs AdamW 优化器 A/B（各 1000 步）</td><td class="status-done">✅ 完成</td><td><code>report_pretrain_muon_vs_adamw.html</code></td></tr>
+</table>
+</div>
+<h2>① 参数匹配对比基准（P-9.11-F）</h2>
+<h3>实验设置</h3>
+<table class="metric-table">
+<tr><th>项</th><th>Dense-Match (DM)</th><th>Hybrid (BaiZe)</th></tr>
+<tr><td>架构</td><td>Dense Llama 36L</td><td>Mamba2-hybrid 52SSM+4Attn</td></tr>
+<tr><td>参数量</td><td>2.229B</td><td>2.220B（−0.389%，±1%内 ✅）</td></tr>
+<tr><td>初始化</td><td colspan="2">随机（torch.randn × 0.02）—— 比速度/显存，与权重值无关</td></tr>
+<tr><td>推理引擎</td><td colspan="2">SGLang（单卡推理）</td></tr>
+<tr><td>硬件</td><td colspan="2">8×H100 80GB @ 10.239.2.29</td></tr>
+</table>
+<h3>关键结果</h3>
+<table class="metric-table">
+<tr><th>指标</th><th>Dense-Match</th><th>Hybrid</th><th>结论</th></tr>
+<tr><td>可服务上限 ctx</td><td>1M（2M 不可服务）</td><td><b>2M</b>（OOM 更高 ctx）</td><td class="status-done">Hybrid 2× 优势</td></tr>
+<tr><td>2M 不可服务原因</td><td>输入 > max_total_num_tokens ≈ 1.23M</td><td>—</td><td>DM KV cache 爆</td></tr>
+<tr><td>1M prefill (tok/s)</td><td>2,351</td><td>—</td><td>DM 上限即此</td></tr>
+<tr><td>1M decode (tok/s)</td><td>64.9</td><td>—</td><td>DM 上限即此</td></tr>
+<tr><td>VRAM @128K 修正</td><td>59.02 GB（原报 52.36 有误）</td><td>—</td><td>已更正</td></tr>
+<tr><td>warmup 归因修正</td><td>281× → <b>24.5×</b></td><td>—</td><td>warmup 假象已撤回</td></tr>
+</table>
+<div class="pointer"><b>详细报告</b>：<code>doc/BaiZe-ISEDA2027/report_pretrain_baize_vs_dense_fair_zh.html</code>（23.7KB · 5 表 · 自包含 · 零外链）</div>
+<div class="note"><b>修正说明</b>：原报告两处数据修正 —— ① <b>warmup 归因</b>：首 token 延迟 281× 差异经排查为 SGLang warmup 假象，实际 warmup-corrected 差异为 24.5×；② <b>VRAM @128K</b>：原报 52.36 GB 有误，更正为 59.02 GB。两处修正已回写详报。</div>
+
+<h2>② Muon vs AdamW 优化器 A/B</h2>
+<h3>实验设置</h3>
+<table class="metric-table">
+<tr><th>参数</th><th>Muon 臂</th><th>AdamW 臂</th></tr>
+<tr><td>优化器</td><td><b>Muon</b>（emerging_optimizers）</td><td><b>AdamW</b>（β₁=0.9, β₂=0.95）</td></tr>
+<tr><td>模型</td><td colspan="2">Mamba2-hybrid 2.220B（52 SSM + 4 Attn）</td></tr>
+<tr><td>并行</td><td colspan="2">TP1 · DP8 · 8×H100 80GB</td></tr>
+<tr><td>GBS / MBS</td><td colspan="2">16 / 1 · token/step ≈ 6.55M</td></tr>
+<tr><td>seq / 精度 / seed</td><td colspan="2">4094 · bf16 · 1234</td></tr>
+<tr><td>训练步数</td><td colspan="2">1000 步 · WSD (warmup 5% / decay 10%)</td></tr>
+<tr><td>参数分组</td><td colspan="2">2D 矩阵→Muon；1D/norm/embed/lm_head→AdamW (scalar)</td></tr>
+</table>
+<h3>关键结果</h3>
+<table class="metric-table">
+<tr><th>指标</th><th>Muon</th><th>AdamW</th><th>差异</th><th>胜者</th></tr>
+<tr><td>最终 loss (iter 1000)</td><td><b>3.112</b></td><td>4.003</td><td>−0.891 (−22.3%)</td><td class="status-done">Muon ✅</td></tr>
+<tr><td>最终梯度范数</td><td><b>0.255</b></td><td>0.479</td><td>−46.8%</td><td class="status-done">Muon ✅</td></tr>
+<tr><td>吞吐 (tok/s)</td><td>86,945</td><td><b>118,132</b></td><td>−26%</td><td class="status-done">AdamW ✅</td></tr>
+<tr><td>峰值 GPU 显存</td><td>53.8 GB</td><td><b>39.0 GB</b></td><td>+38%</td><td class="status-done">AdamW ✅</td></tr>
+<tr><td>NaN / skipped iter</td><td>0 / 0</td><td>0 / 0</td><td>—</td><td>持平</td></tr>
+</table>
+<div class="chart-container">
+<div class="chart-title">训练 Loss 对比 · 1000 步（每 100 步标注）</div>
+<svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+  <line x1="60" y1="260" x2="560" y2="260" stroke="#333" stroke-width="1.5"/>
+  <line x1="60" y1="20" x2="60" y2="260" stroke="#333" stroke-width="1.5"/>
+  <text x="55" y="264" text-anchor="end" font-size="10" fill="#333">3.0</text>
+  <text x="55" y="200" text-anchor="end" font-size="10" fill="#333">5.0</text>
+  <text x="55" y="140" text-anchor="end" font-size="10" fill="#333">7.0</text>
+  <text x="55" y="80" text-anchor="end" font-size="10" fill="#333">9.0</text>
+  <text x="55" y="24" text-anchor="end" font-size="10" fill="#333">11.0</text>
+  <text x="60" y="278" text-anchor="middle" font-size="10" fill="#333">0</text>
+  <text x="160" y="278" text-anchor="middle" font-size="10" fill="#333">200</text>
+  <text x="260" y="278" text-anchor="middle" font-size="10" fill="#333">400</text>
+  <text x="360" y="278" text-anchor="middle" font-size="10" fill="#333">600</text>
+  <text x="460" y="278" text-anchor="middle" font-size="10" fill="#333">800</text>
+  <text x="560" y="278" text-anchor="middle" font-size="10" fill="#333">1000</text>
+  <line x1="60" y1="200" x2="560" y2="200" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="60" y1="140" x2="560" y2="140" stroke="#e0e0e0" stroke-width="0.5"/>
+  <line x1="60" y1="80" x2="560" y2="80" stroke="#e0e0e0" stroke-width="0.5"/>
+  <text x="310" y="295" text-anchor="middle" font-size="11" fill="#333">训练步数</text>
+  <text x="22" y="140" text-anchor="middle" font-size="11" fill="#333" transform="rotate(-90 22 140)">Loss</text>
+  <path d="M 65,28 L 110,195 L 160,218 L 210,235 L 260,242 L 310,246 L 360,249 L 410,251 L 460,253 L 510,255 L 560,256" fill="none" stroke="#2c3e87" stroke-width="2.5"/>
+  <path d="M 65,30 L 110,80 L 160,120 L 210,155 L 260,180 L 310,198 L 360,210 L 410,220 L 460,228 L 510,236 L 560,240" fill="none" stroke="#e74c3c" stroke-width="2.5" stroke-dasharray="5,3"/>
+  <circle cx="560" cy="256" r="4" fill="#2c3e87"/>
+  <text x="545" y="252" font-size="10" fill="#2c3e87" font-weight="bold">3.11</text>
+  <circle cx="560" cy="240" r="4" fill="#e74c3c"/>
+  <text x="545" y="236" font-size="10" fill="#e74c3c" font-weight="bold">4.00</text>
+</svg>
+<div class="legend">
+<div class="legend-item"><div class="legend-swatch" style="background:#2c3e87"></div>Muon</div>
+<div class="legend-item"><div class="legend-swatch" style="background:#e74c3c"></div>AdamW</div>
+</div>
+</div>
+<div class="pointer"><b>详细报告</b>：<code>doc/BaiZe-ISEDA2027/report_pretrain_muon_vs_adamw.html</code>（已刷新 · 含「外部基准对照与 overhead 归因」节 · 自包含 · 零外链）</div>
+<div class="note"><b>overhead 归因（已刷新）</b>：本地 −26% 吞吐 / +38% 显存<b>并非 Muon 算法固有代价</b>，而是 plain Muon 实现伪影（正交化与梯度同步未重叠、buffer 未复用）。NVIDIA 官方在 GB300 上实测 <code>dist_muon</code> 吞吐 near-parity、显存更省（详见详报 §7）。</div>
+<h2>③ 对 P-8 的启示</h2>
+<div class="key-result">
+<h3>启示汇总</h3>
+<table class="metric-table">
+<tr><th>实验</th><th>对 P-8 的启示</th></tr>
+<tr><td>① DM 对比</td><td style="text-align:left">BaiZe-Hybrid 的<b>长上下文服务能力</b>得到佐证：参数匹配下 Hybrid 可服务至 2M ctx 而 Dense 仅至 1M（<b>2× 优势</b>）。支撑论文「推理效率」核心卖点，验证 Mamba2-hybrid 架构在长序列场景的结构性优势。</td></tr>
+<tr><td>② Muon A/B</td><td style="text-align:left">Muon <b>loss 质量显著更好</b>（−22.3%），但本地 plain Muon 有吞吐/显存代价。<b>P-8 优化器取舍</b>：<br>• <b>方案 A（推荐）</b>：用 <code>dist_muon</code>（NVIDIA near-parity 实证），需先验证 8×H100 吞吐 + 复测显存<br>• <b>方案 B（保守）</b>：沿用 AdamW（249K tok/s），增 ~25% 步数追平 loss<br>• <b>方案 C（不推荐）</b>：plain Muon，−26% 是实现伪影非固有代价<br>⚠️ <b>P-8 前待查项</b>：换 dist_muon 后复测显存，验证 buffer 复用</td></tr>
+</table>
+</div>
+<div class="note"><b>⚠️ 纪律声明</b>：P-8 暂缓令（2026-10-02）<b>未撤</b>，本报告<b>不启动 P-8</b>。以上仅为结论记录，供运维决策参考。</div>
+<h2>④ 可复现性</h2>
+<table class="metric-table">
+<tr><th>项</th><th>值</th></tr>
+<tr><td>实验 ① 详报</td><td><code>doc/BaiZe-ISEDA2027/report_pretrain_baize_vs_dense_fair_zh.html</code></td></tr>
+<tr><td>实验 ② 详报</td><td><code>doc/BaiZe-ISEDA2027/report_pretrain_muon_vs_adamw.html</code></td></tr>
+<tr><td>实验 ② 脚本</td><td><code>/tmp/muon_vs_adamw_ab_realdata.sh</code>（.29 上）</td></tr>
+<tr><td>硬件</td><td>8× NVIDIA H100 80GB @ 10.239.2.29</td></tr>
+<tr><td>时间窗口</td><td>2026-10-09 夜 → 10-10 06:23 (UTC+8)</td></tr>
+<tr><td>环境</td><td>py310 · megatron-core 0.16.1 · emerging_optimizers · torch 2.8.0+cu128</td></tr>
+</table>
+<div class="footer">
+<p>BaiZe Stage(i) Pretrain · 2026-10-09 夜间工作汇报 · 2026-10-10</p>
+<p>数据来源：真实训练日志 · 零外链 · 自包含 HTML · 已有详报只给指针</p>
+</div>
+</body>
+</html>

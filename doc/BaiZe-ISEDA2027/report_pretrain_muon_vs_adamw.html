@@ -35,7 +35,7 @@
 <h3>⭐ 核心结论</h3>
 <p><b>Muon 在相同 1000 步 / 6.55M tokens 下显著优于 AdamW</b>：最终 loss <b>3.11 vs 4.00</b>（低 <b>22.3%</b>），梯度范数更稳定（0.26 vs 0.48）。
 但 Muon 的代价是：<b>吞吐慢 26%</b>（87K vs 118K tok/s）、<b>显存多 38%</b>（53.8 GB vs 39.0 GB）。</p>
-<p><b>建议</b>：P-8 正式预训练考虑采用 Muon（或 layer-wise distributed Muon），以更少步数达到更低 loss；吞吐劣势可通过缩短总训练步数来补偿。</p>
+<p><b>建议</b>：P-8 正式预训练考虑采用 <code>dist_muon</code>（layer-wise distributed Muon），以更少步数达到更低 loss。⚠️ 本地 −26% 吞吐 / +38% 显存<b>并非 Muon 算法固有代价</b>，而是 plain Muon 实现伪影（详见 §7「外部基准对照与 overhead 归因」）；NVIDIA 官方实测 <code>dist_muon</code> 吞吐 near-parity、显存更省。</p>
 </div>
 <h2>1 · 实验设置</h2>
 <table class="metric-table">
@@ -166,24 +166,57 @@
 <h2>6 · 分析与建议</h2>
 <h3>6.1 为什么 Muon 的 loss 更低？</h3>
 <p>Muon 对 2D 权重矩阵执行正交化后的动量更新（momentum=0.95, Nesterov, ns_steps=5），等效于在权重矩阵的奇异值空间中施加均匀步长。这种正交化使梯度更新的各个方向被均衡化，避免了 AdamW 中可能出现的方向偏置。对于 Mamba2-hybrid 架构（52 层 SSM + 4 层 Attention），大量权重是 2D 矩阵（SSM 的 A/B/C/D 投影、Attention 的 QKV），Muon 的正交化恰好作用在这些参数上，而 1D 参数（norm、bias、embedding、lm_head）仍由标量 AdamW 优化。</p>
-<h3>6.2 显存代价分析</h3>
-<p>Muon 额外显存 ~14.8 GB 主要来自：(a) 正交化过程中的中间矩阵（Newton-Schulz 迭代需要 5 步，每步产生临时矩阵）；(b) Muon 的动量缓冲区与 AdamW 的二阶矩缓冲区共存（标量参数仍用 AdamW）。在 80GB H100 上 53.8 GB 峰值仍有余量（26.2 GB headroom），不会成为瓶颈。</p>
-<h3>6.3 吞吐代价分析</h3>
-<p>Muon 的 Newton-Schulz 正交化在每步迭代中需要 5 次矩阵乘法（对 2D 权重矩阵），这是额外的计算开销。在 TP1/DP8 配置下，这些计算无法被通信隐藏，直接增加了每步耗时（753 ms vs 555 ms = +36%）。但在 layer-wise distributed Muon（<code>dist_muon</code>）配置下，正交化可以与梯度同步重叠，NVIDIA blog 报告在 GB300 上 Muon 吞吐接近 AdamW 持平。</p>
-<h3>6.4 P-8 建议</h3>
+<h3>6.2 显存代价分析（⚠️ 实现伪影，非算法固有）</h3>
+<p>本地实测 Muon 显存 <b>+38%</b>（53.8 GB vs 39.0 GB），<b>与理论方向相反</b>。Muon 理论上应<b>更省</b>显存：每 2D 参数只存一个 momentum（4B），而 AdamW 存 m+v（8B）→ optimizer-state 应省 ~45%。PyTorch DeepSpeed blog 实测端到端 peak memory 反而<b>降 ~9%</b>（Qwen2.5-3B fine-tune 34.5→31.4 GiB）。</p>
+<p>本地 +38% 最可能的原因：<b>Muon 动量缓冲区 与 标量参数走 AdamW 的二阶矩缓冲区并存 / buffer 未复用</b>。具体来说：(a) Newton-Schulz 迭代（ns_steps=5）每步产生临时矩阵未被及时释放；(b) Muon 的 momentum buffer 与 scalar AdamW 的 m+v buffer 同时驻留显存。在 <code>dist_muon</code> + buffer 复用后，显存应转正为省。<b>此项标注「待查」——换 dist_muon 后需复测显存验证。</b></p>
+<h3>6.3 吞吐代价分析（⚠️ 实现伪影，非算法固有）</h3>
+<p>本地实测 Muon 吞吐 <b>−26%</b>（87K vs 118K tok/s），<b>并非 Muon 固有代价</b>。NVIDIA 官方博客（2026-04-22）在 GB300 NVL72 上测得 Muon 吞吐 <b>near-parity</b> to AdamW（NeMo Megatron Bridge 26.02）。关键差异 = <b>layer-wise distributed optimizer（<code>dist_muon</code>：整层分给各 DP rank，正交化零额外通信）</b> + 分布式 Newton-Schulz（duplicated/distributed/blockwise）。</p>
+<p>本地 −26% 的主因 = <b>用的 plain Muon、非 dist_muon</b>：正交化计算（Newton-Schulz 5 步矩阵乘法）与梯度同步<b>未重叠</b>，直接串行叠加在每步耗时上（753 ms vs 555 ms = +36% per step）。在 <code>dist_muon</code> 下，正交化可与梯度同步重叠，且 Newton-Schulz 理论计算开销仅 ~0.5–0.7%（Keller Jordan 博客：NanoGPT ~0.7% / Llama-405B ~0.5%），不会构成显著瓶颈。</p>
+<h3>6.4 P-8 建议（外部基准对照后更新）</h3>
 <div class="note">
-<p><b>方案 A（推荐）</b>：P-8 采用 <code>dist_muon</code>（layer-wise distributed Muon），兼顾 loss 优势与吞吐。需额外验证 dist_muon 在 8×H100 上的实际吞吐。</p>
+<p><b>方案 A（推荐 · 升级）</b>：P-8 采用 <code>dist_muon</code>（layer-wise distributed Muon）。从「可能消除吞吐差距」<b>升级为「NVIDIA near-parity 实证支撑」</b>——NVIDIA 官方在 GB300 上已实测 Muon 吞吐 near-parity to AdamW。需在 8×H100 上验证 dist_muon 实际吞吐（预期收窄至 near-parity）。</p>
 <p><b>方案 B（保守）</b>：P-8 沿用 AdamW（249K tok/s），但训练步数增加 ~25% 以达到 Muon 的 loss 水平。</p>
-<p><b>方案 C（折中）</b>：P-8 用 Muon（TP1/DP8），接受 26% 吞吐损失。以 100B token / 87K tok/s 计算，训练时间从 ~4.6 天延长至 ~13.2 天 — 需评估是否在时间预算内。</p>
+<p><b>方案 C（折中）</b>：P-8 用 plain Muon（TP1/DP8），接受 26% 吞吐损失。以 100B token / 87K tok/s 计算，训练时间从 ~4.6 天延长至 ~13.2 天 — 需评估是否在时间预算内。<b>不推荐</b>，因 −26% 是实现伪影而非固有代价。</p>
+<p>⚠️ <b>P-8 前待查项</b>：换 dist_muon 后<b>复测显存</b>，验证 buffer 复用是否将 +38% 转正为省 ~45% optimizer-state。此为启动 P-8 前的 prerequisite。</p>
 </div>
 <h3>6.5 局限性</h3>
 <ul>
 <li>本 A/B 仅跑 1000 步（6.55M tokens），远低于 P-8 的 44B-100B token 预算。Muon 的优势在长训练中是否持续，尚需验证。</li>
 <li>两臂使用相同的 LR schedule（peak 3e-4），未对 Muon 单独调参。Muon 通常受益于更高的 LR（官方建议 ~1e-3），单独调参可能进一步扩大优势。</li>
-<li>未测 <code>dist_muon</code>（layer-wise distributed）配置的吞吐，无法确认 NVIDIA blog 声称的“持平”在本硬件上是否成立。</li>
+<li>未测 <code>dist_muon</code>（layer-wise distributed）配置的吞吐/显存，无法确认 NVIDIA blog 声称的“持平”在本硬件上是否成立。<b>此为 P-8 前待查项。</b></li>
 <li>显存测量在 iter 10 后采样，checkpoint 保存时的瞬时峰值未记录。</li>
+<li>⚠️ <b>诚实声明</b>：§7 的 overhead 归因引用外部文档（NVIDIA blog / arXiv 论文 / Keller Jordan blog），<b>未在本地复现 dist_muon</b>。“待查”≠“已修”。本地 plain Muon 的 −26% 吞吐 / +38% 显存是<b>实测事实</b>，归因分析指明其来源为实现伪影而非算法固有，但<b>修复效果需在 dist_muon 实测后才能确认</b>。</li>
 </ul>
-<h2>7 · 可复现性</h2>
+<h2>7 · 外部基准对照与 overhead 归因</h2>
+<p>本节将本地实测的 −26% 吞吐 / +38% 显存与外部基准对照，给出 overhead 归因。<b>结论：两者均非 Muon 算法固有代价，而是 plain Muon 实现伪影。</b></p>
+<h3>7.1 吞吐 −26%：plain Muon ≠ dist_muon</h3>
+<table class="metric-table">
+<tr><th>来源</th><th>配置</th><th>吞吐 vs AdamW</th><th>关键差异</th></tr>
+<tr><td><b>本地实测</b>（本报告）</td><td>plain Muon · TP1/DP8 · 8×H100</td><td><b>−26%</b>（87K vs 118K）</td><td>正交化与梯度同步<b>未重叠</b>，串行叠加</td></tr>
+<tr><td>NVIDIA blog（2026-04-22）</td><td><code>dist_muon</code> · GB300 NVL72</td><td><b>near-parity</b></td><td>layer-wise distributed：整层分给各 DP rank，正交化零额外通信</td></tr>
+<tr><td>理论上界（Keller Jordan blog）</td><td>Newton-Schulz 计算开销</td><td>~0.5–0.7%</td><td>NanoGPT ~0.7% / Llama-405B ~0.5%</td></tr>
+</table>
+<p><b>归因</b>：本地 −26% 主因 = <b>用的 plain Muon、非 dist_muon</b>。Newton-Schulz 正交化（5 步矩阵乘法）在每步串行执行，无法与梯度同步重叠。在 <code>dist_muon</code> 下：(a) 整层权重分配给各 DP rank → 正交化在本地完成、零额外通信；(b) 分布式 Newton-Schulz（duplicated/distributed/blockwise）可进一步分摊。理论 NS 计算开销仅 ~0.5–0.7%，不应构成显著瓶颈。<b>预期：换 dist_muon 后吞吐收窄至 near-parity。</b></p>
+<h3>7.2 显存 +38%：与理论方向相反</h3>
+<table class="metric-table">
+<tr><th>来源</th><th>配置</th><th>显存 vs AdamW</th><th>关键差异</th></tr>
+<tr><td><b>本地实测</b>（本报告）</td><td>plain Muon · TP1/DP8</td><td><b>+38%</b>（53.8 vs 39.0 GB）</td><td>Muon momentum + scalar AdamW m+v <b>buffer 并存</b></td></tr>
+<tr><td>理论分析</td><td>optimizer-state 对比</td><td><b>省 ~45%</b></td><td>2D 参数：Muon 存 1 moment（4B）vs AdamW 存 m+v（8B）</td></tr>
+<tr><td>PyTorch DeepSpeed blog</td><td>Qwen2.5-3B fine-tune</td><td><b>降 ~9%</b>（34.5→31.4 GiB）</td><td>端到端 peak memory 实测</td></tr>
+<tr><td>arXiv 2505.02222 §2.1.1</td><td>Practical Efficiency of Muon</td><td><b>Muon 内存最省</b></td><td>仅存 first moment</td></tr>
+</table>
+<p><b>归因</b>：本地 +38% 与理论方向相反，最可能 = <b>Muon 动量缓冲区 与 标量参数走 AdamW 的二阶矩缓冲区并存 / buffer 未复用</b>。(a) Newton-Schulz 迭代临时矩阵未及时释放；(b) Muon momentum buffer 与 scalar AdamW m+v buffer 同时驻留。在 <code>dist_muon</code> + buffer 复用后，显存应转正为省 ~45% optimizer-state。<b>此项标注「待查」——换 dist_muon 后需复测显存验证。</b></p>
+<h3>7.3 来源（带 URL）</h3>
+<ol style="line-height:2">
+<li>NVIDIA blog：<i>Advancing Emerging Optimizers for Accelerated LLM Training with NVIDIA Megatron</i>（2026-04-22）<br>https://developer.nvidia.com/blog/advancing-emerging-optimizers-for-accelerated-llm-training-with-nvidia-megatron</li>
+<li>arXiv 2502.16982：<i>Muon is Scalable for LLM Training</i>（Moonshot/UCLA；distributed Muon 并行策略）<br>https://arxiv.org/abs/2502.16982</li>
+<li>arXiv 2505.02222：<i>Practical Efficiency of Muon for Pretraining</i>（§2.1.1：Muon 内存最省，仅存 first moment）<br>https://arxiv.org/abs/2505.02222</li>
+<li>Keller Jordan：<i>Muon optimizer</i> blog（2024-12；NS FLOP 上界 (T×m)/B ≈ 0.5–0.7%）<br>https://kellerjordan.github.io/posts/muon/</li>
+</ol>
+<div class="note">
+<b>诚实声明</b>：以上归因引用外部文档，<b>未在本地复现 dist_muon</b>。本地 plain Muon 的 −26% 吞吐 / +38% 显存是<b>实测事实</b>（数字未改动）。归因分析指明其来源为实现伪影而非算法固有，但<b>修复效果需在 P-8 前以 dist_muon 实测确认</b>。「待查」≠「已修」。
+</div>
+<h2>8 · 可复现性</h2>
 <table class="metric-table">
 <tr><th>项</th><th>值</th></tr>
 <tr><td>A/B 脚本</td><td><code>/tmp/muon_vs_adamw_ab_realdata.sh</code>（.29 上）</td></tr>

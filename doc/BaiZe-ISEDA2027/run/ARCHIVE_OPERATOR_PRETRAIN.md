@@ -1,3 +1,40 @@
+---
+
+### 🆕 运维调整 · 2026-10-09（🔁 只用 `.29` + 改序：**① 对比基准 → ② Muon vs AdamW**；撤下 T1/T2/T3）· 用户直令 · **最高优先（覆盖下方 ⚗️Muon 与 🌙夜班 两块）**
+
+> **用户令**：「pretrain 的实验都安排在 `.29`，`.12` 我会安排 vision 的实验。实验次序调一下：**1) 参数匹配对比基准；2) Muon vs AdamW（各自 1000 步，GBS=16，seq=4096，对比 loss）**。」
+
+**① 机器改动**
+- **所有 pretrain 实验一律在 `.29`**。🚫 **不要去 `.12`**（`.12` 归 vision）。
+- ⇒ 撤销下方 ⚗️ 块里「占 `.12` + 登记 `GPU12_ALLOC.md`」的要求。
+
+**② 次序**：**① 参数匹配对比基准**（`report_pretrain_baize_vs_dense_fair_zh.html`）**→ ② Muon vs AdamW**。
+
+**③ Muon vs AdamW（用户给定口径，取代 ⚗️ 块的 Step 1）**
+- **两臂各 1000 步 · GBS=16 · seq=4096 · bf16 · 同 seed**；**对比 loss 曲线**（附 grad-norm / 吞吐 / 显存）。
+- 仍**先做接线三步核查**：本地 `megatron-core 0.16.1` 是否含 `muon.py`/`emerging_optimizers` → 缺则 `pip install emerging_optimizers`（环境隔离）→ `pretrain_launcher.py`/`recipe.py` 透传 `optimizer=muon`/`dist_muon`。**参数分组：2D 矩阵→Muon；1D/norm/embed/lm_head/SSM 标量→AdamW**。
+- 先跑通 smoke（1 卡小步）再铺两臂；跑不通即如实报「卡在哪」，不熬夜 debug。
+
+**④ 撤下「其它实验」**（用户：「其它实验有价值吗，我还没看出来」）
+- 🚫 **T1 长上下文适配 / T2 等参 Dense 训练侧 / T3 R3 配比迁移 A/B 一律不做**，**留作 backlog**（理由：T3 landscape 平坦→大概率 null；T2 属论文润色；T1 服务 Stage (ii)、宜用 P-8 真基座）。
+- ⇒ 撤销下方 🌙 块的全部内容。
+
+**纪律**：🚫 不启动 P-8 · 🚫 不 kill watchdog · 分阶段 commit（`pretrain 对比:` / `pretrain Muon:`）。
+
+---
+
+### 🆕 运维更正 · 2026-10-09（✅ **NeMo/Megatron 支持 Muon** —— 更正上条「未接入」的旧判断）· 最高优先
+
+> **更正**：上条「Muon 未接入 / 实现风险」引的是 `run/EXPERIMENTS.md` 里 **S3-03 的旧结论（已过时）**。**查官方原文后**（2026-10-09）：
+> - **Megatron-Core** 有 `core/optimizer/muon.py`（shim → `emerging_optimizers`）+ `core/optimizer/emerging_optimizers` + `layer_wise_optimizer`（`dist_` 前缀 = layer-wise **distributed** Muon）。
+> - **Megatron-Bridge（NeMo）** 有 Muon recipe：`bridge/recipes/utils/optimizer_utils.py`（含 `muon_extra_scale_factor` / `muon_scalar_optimizer`＝嵌入/偏置/norm 的标量优化器）。
+> - **NVIDIA blog（2026-04-22）**：Muon 经 **Emerging-Optimizers** 库进入 Megatron-Core；**NeMo Megatron Bridge 26.02** 已实测 Muon 吞吐（GB300 上近 AdamW 持平）。
+> ⇒ **探针改为「三步核查」，不再当"从零实现"**：① 本地 `megatron-core 0.16.1` 是否含 `muon.py`/`emerging_optimizers`；② `megatron.bridge` 版本是否有 Muon recipe（`optimizer_utils`）；③ **缺则 `pip install emerging_optimizers`**（注意环境隔离）；④ 在 `pretrain_launcher.py` + `mamba2_hybrid_2b/recipe.py` 透传 `optimizer=muon`/`dist_muon` + muon 参数。**跑通即进 A/B。**
+> ℹ️ 官方对大规模 Muon 推荐 **layer-wise distributed optimizer**（整层分给各 DP rank，避免正交化时的额外通信）。
+
+> 📦 2026-10-10 从 BAIZE_PRETRAIN_2B_TASK.md 搬入（两步运维指令均✅完成后归档，原文未改）。
+
+---
 # ARCHIVE — 历史运维指令（源自 BAIZE_PRETRAIN_2B_TASK.md）
 
 > 运维 2026-10-05「任务书瘦身」时移出（**原文未改**，不改任何结论）。仅当需要查历史指令细节时再读。
