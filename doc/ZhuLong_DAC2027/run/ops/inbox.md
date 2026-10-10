@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 26 -->
+<!-- RUN_ID: 27 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,12 +24,64 @@
 
 ---
 
-## RUN_ID 26 — 🛑 用户直令：沙盒坏了，停掉 r4（kill eval 进程树），待命
+## RUN_ID 27 — 🛑 kill r2-retest#4 + 验证新专属沙盒端口 8663/8666/8667/8670
+
+**背景**：用户 2026-10-10 通知切换到专属沙盒端口 8663/8666/8667/8670（workdir e0031982_1~4, host 不变 10.129.32.75），.env 已改。C1.full 现有评测全部作废需重测。当前 r2-retest#4（PID 459294）仍在旧沙盒上跑，需 kill 后验证新端口可达。
+
+```bash
+# RUN_ID 27 — kill r2-retest#4 + verify new dedicated sandbox ports
+echo "== RUN_ID 27: kill r2-retest#4 + verify new ports @ $(date '+%F %T') =="
+
+echo "== 1. BEFORE kill: r2-retest#4 process tree =="
+ps -eo pid,ppid,etime,state,cmd | grep -E '459294|run_cline_script|run_eval' | grep -v grep | cut -c1-140
+
+echo "== 2. KILL r2-retest#4 (PID 459294) + children =="
+kill -TERM 459294 2>&1; echo "kill -TERM 459294 exit=$?"
+sleep 3
+pkill -TERM -P 459294 2>&1; echo "pkill -P 459294 exit=$?"
+sleep 2
+kill -KILL 459294 2>&1; echo "kill -KILL 459294 exit=$?"
+pkill -KILL -P 459294 2>&1; echo "pkill -KILL -P 459294 exit=$?"
+sleep 1
+
+echo "== 3. KILL any stray run_eval.py / run_cline_script =="
+pkill -KILL -f 'run_eval.py.*2026_1010_062131' 2>&1; echo "pkill run_eval exit=$?"
+pkill -KILL -f 'run_cline_script.*r2_retest4' 2>&1; echo "pkill run_cline exit=$?"
+sleep 1
+
+echo "== 4. AFTER kill: verify no eval processes remain =="
+ps -eo pid,ppid,etime,state,cmd | grep -E '459294|run_cline_script|run_eval' | grep -v grep | cut -c1-140
+echo "(empty above = clean kill ✅)"
+
+echo "== 5. Verify NEW dedicated sandbox ports 8663/8666/8667/8670 reachable =="
+for p in 8663 8666 8667 8670; do
+  echo -n "port $p: "; timeout 10 curl -s -o /dev/null -w 'HTTP=%{http_code} TIME=%{time_total}s' http://10.129.32.75:$p 2>&1; echo
+done
+
+echo "== 6. Verify OLD sandbox ports 8650/8651/8652/8654 (should still respond, just not used) =="
+for p in 8650 8651 8652 8654; do
+  echo -n "port $p: "; timeout 5 curl -s -o /dev/null -w 'HTTP=%{http_code}' http://10.129.32.75:$p 2>&1; echo
+done
+
+echo "== 7. pro-fp4 new key still 200? =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/cloud/v1/chat/completions \
+  -H "Authorization: Bearer 02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e" \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -3
+
+echo "== 8. zhulong_loop still alive? (PID 3579323 - DO NOT KILL) =="
+ps -eo pid,ppid,etime,state,cmd | grep '3579323' | grep -v grep | cut -c1-140
+
+echo "== 9. .env SANDBOX_ENDPOINTS verify (should show 8663/8666/8667/8670) =="
+grep -E 'PROXY_PORTS|SANDBOX_ENDPOINTS' /nasdata/app.e0031982/code/eda_fastmcp/.env | grep -v '^#'
+
+echo "== DONE — r2-retest#4 killed, new ports verified, standby for C1.full restart =="
 
 **背景**：用户 2026-10-09 17:00 通知「沙盒坏了，下发指令把 r4 停下来，待命」。r4 grading 阶段异常缓慢（r1=8min/150脚本 vs r4=1h48m+/140脚本，13×+慢），log 沉默 2h+，沙盒端口 8650/8651/8652/8654 全部无响应（RUN_ID 24 诊断已确认沙盒坏了）。需 kill r4 整个进程树（主进程 PID 3302534 + run_eval.py 子进程 PID 611439 + 所有 worker），确认干净退出，然后待命。
 
-```bash
-# RUN_ID 26 — KILL r4 process tree + verify clean + standby
+```text
+# RUN_ID 26 — ARCHIVED (already executed, see outbox.md RUN_ID 26)
 echo "== RUN_ID 26: kill r4 @ $(date '+%F %T') =="
 
 echo "== 1. BEFORE kill: r4 process tree =="
