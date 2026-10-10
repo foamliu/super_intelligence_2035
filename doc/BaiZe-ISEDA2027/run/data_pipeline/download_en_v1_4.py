@@ -17,7 +17,7 @@ LOCAL_DIR = "/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb"
 BASE_PATH = "data/ultrafineweb_en_v1_4"
 MAX_RETRIES = 5
 RETRY_SLEEP = 30
-MAX_WORKERS = 8
+MAX_WORKERS = 24
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s",
                     datefmt="%Y-%m-%d %H:%M:%S", stream=sys.stdout)
