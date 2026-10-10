@@ -7908,11 +7908,32 @@
     "harness": "codex",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git fetch failed: fatal: unable to access 'https://github.com/scikit-learn/scikit-learn/': Received HTTP code 503 from proxy after CONNECT\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git fetch failed: fatal: unable to access 'https://github.com/scikit-learn/scikit-learn/': Received HTTP code 503 from proxy after CONNECT\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 1,
+      "wall_s": 1800.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_scikit-learn__scikit-learn-13584.json",
+      "stdout_tail": "s ==\n[stderr tail] ...b'2026-10-10T06:46:05.538563Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_scikit-learn__scikit-learn-13584.json\n[run_single] cleanup: git reset --hard 0e3c1879b06d839171b7d0a607d71bbb19a966a9\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 6,
+        "p2p_pass": 3,
+        "p2p_total": 3
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "scikit-learn__scikit-learn-13779",
@@ -7920,11 +7941,32 @@
     "harness": "codex",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git fetch failed: fatal: unable to access 'https://github.com/scikit-learn/scikit-learn/': Received HTTP code 503 from proxy after CONNECT\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git fetch failed: fatal: unable to access 'https://github.com/scikit-learn/scikit-learn/': Received HTTP code 503 from proxy after CONNECT\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 193.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_scikit-learn__scikit-learn-13779.json",
+      "stdout_tail": "0s ==\n[stderr tail] ...2026-10-10T07:17:30.069318Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 1900 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_scikit-learn__scikit-learn-13779.json\n[run_single] cleanup: git reset --hard b34751b7ed02b2cfcc36037fb729d4360480a299\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 2,
+        "f2p_total": 2,
+        "p2p_pass": 18,
+        "p2p_total": 18
+      }
+    },
+    "classification": "resolved"
   },
   {
     "instance_id": "scikit-learn__scikit-learn-14087",
@@ -7932,11 +7974,32 @@
     "harness": "codex",
     "model": "kimi-k2.6-cloud",
     "workdir_setup": {
-      "ok": false,
-      "msg": "git fetch failed: fatal: unable to access 'https://github.com/scikit-learn/scikit-learn/': Received HTTP code 503 from proxy after CONNECT\n"
+      "ok": true,
+      "msg": "existing workdir updated"
     },
-    "blocked": "git fetch failed: fatal: unable to access 'https://github.com/scikit-learn/scikit-learn/': Received HTTP code 503 from proxy after CONNECT\n",
-    "classification": "blocked"
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template scikit-learn__scikit-learn-10297"
+    },
+    "harness_result": {
+      "harness": "codex",
+      "returncode": 0,
+      "wall_s": 1331.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_codex_scikit-learn__scikit-learn-14087.json",
+      "stdout_tail": "1s ==\n[stderr tail] ...2026-10-10T07:30:13.951845Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 2506 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_codex_scikit-learn__scikit-learn-14087.json\n[run_single] cleanup: git reset --hard a5743ed36fbd3fbc8e351bdab16561fbfca7dfa1\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 3,
+        "p2p_pass": 171,
+        "p2p_total": 172
+      }
+    },
+    "classification": "patch-but-failed"
   },
   {
     "instance_id": "scikit-learn__scikit-learn-14092",
@@ -45572,5 +45635,593 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-25311",
+    "repo": "matplotlib/matplotlib",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 316.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_matplotlib__matplotlib-25311.json",
+      "stdout_tail": "ase_commit=430fb1db88843300fb4baae3edc499bbfe073b0c\n[run_single] ps_len=908\n[run_single] git reset --hard 430fb1db88843300fb4baae3edc499bbfe073b0c\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=316.2s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_matplotlib__matplotlib-25311.json\n[run_single] cleanup: git reset --hard 430fb1db88843300fb4baae3edc499bbfe073b0c\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-25332",
+    "repo": "matplotlib/matplotlib",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git fetch failed: fatal: unable to access 'https://github.com/matplotlib/matplotlib/': Received HTTP code 503 from proxy after CONNECT\n"
+    },
+    "blocked": "git fetch failed: fatal: unable to access 'https://github.com/matplotlib/matplotlib/': Received HTTP code 503 from proxy after CONNECT\n",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "pylint-dev__pylint-7993",
+    "repo": "pylint-dev/pylint",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template pylint-dev__pylint-5859"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 189.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_pylint-dev__pylint-7993.json",
+      "stdout_tail": "mand PASSED\n\n============================== 2 passed in 2.14s ===============================\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[\u2713] Investigate the msg-template parsing bug in pylint/reporters/text.py\n[\u2713] Identify root cause and implement fix\n[\u2713] Verify fix with a test\n\u001b[0m\n\n[run_single] model_patch: 2174 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_pylint-dev__pylint-7993.json\n[run_single] cleanup: git reset --hard e90702074e68e20dc8e5df5013ee3ecf22139c3e\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 1,
+        "f2p_total": 1,
+        "p2p_pass": 10,
+        "p2p_total": 10
+      }
+    },
+    "classification": "resolved"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-24265",
+    "repo": "matplotlib/matplotlib",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template matplotlib__matplotlib-18869"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 0,
+      "wall_s": 317.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_matplotlib__matplotlib-24265.json",
+      "stdout_tail": "n_single] base_commit=e148998d9bed9d1b53a91587ad48f9bb43c7737f\n[run_single] ps_len=1248\n[run_single] git reset --hard e148998d9bed9d1b53a91587ad48f9bb43c7737f\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=316.9s ==\n[run_single] model_patch: 1704 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_matplotlib__matplotlib-24265.json\n[run_single] cleanup: git reset --hard e148998d9bed9d1b53a91587ad48f9bb43c7737f\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-25433",
+    "repo": "matplotlib/matplotlib",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git fetch failed: \n[TIMEOUT]"
+    },
+    "blocked": "git fetch failed: \n[TIMEOUT]",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "pallets__flask-5063",
+    "repo": "pallets/flask",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template pallets__flask-4045"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 493.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_pallets__flask-5063.json",
+      "stdout_tail": " instance_id=pallets__flask-5063\n[run_single] base_commit=182ce3dd15dfa3537391c3efaf9c3ff407d134d4\n[run_single] ps_len=2039\n[run_single] git reset --hard 182ce3dd15dfa3537391c3efaf9c3ff407d134d4\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=493.8s ==\n[run_single] model_patch: 5348 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_pallets__flask-5063.json\n[run_single] cleanup: git reset --hard 182ce3dd15dfa3537391c3efaf9c3ff407d134d4\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 50,
+        "p2p_total": 54
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "psf__requests-2317",
+    "repo": "psf/requests",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+shallow fetch"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template psf__requests-1963"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 67.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_psf__requests-2317.json",
+      "stdout_tail": "ngle] instance_id=psf__requests-2317\n[run_single] base_commit=091991be0da19de9108dbe5e3752917fea3d7fdc\n[run_single] ps_len=841\n[run_single] git reset --hard 091991be0da19de9108dbe5e3752917fea3d7fdc\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=67.0s ==\n[run_single] model_patch: 831 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_psf__requests-2317.json\n[run_single] cleanup: git reset --hard 091991be0da19de9108dbe5e3752917fea3d7fdc\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 4,
+        "f2p_total": 8,
+        "p2p_pass": 102,
+        "p2p_total": 133
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "pydata__xarray-4248",
+    "repo": "pydata/xarray",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template pydata__xarray-3364"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 1235.1,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_pydata__xarray-4248.json",
+      "stdout_tail": "d): Deprecated: \"providerOptions key 'openai-compatible'\". Use 'openaiCompatible' instead.\n      at BY (/$bunfs/root/chunk-nd6m62hc.js:26:48090)\n      at cZ (/$bunfs/root/chunk-nd6m62hc.js:26:48389)\n      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)\n\n\n[run_single] model_patch: 9092 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_pydata__xarray-4248.json\n[run_single] cleanup: git reset --hard 98dc1f4ea18738492e074e9e51ddfed5cd30ab94\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 18,
+        "p2p_total": 18
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-16229",
+    "repo": "django/django",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 1,
+      "wall_s": 1800.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-16229.json",
+      "stdout_tail": "=django__django-16229\n[run_single] base_commit=04b15022e8d1f49af69d8a1e6cd678f31f1280ff\n[run_single] ps_len=1259\n[run_single] git reset --hard 04b15022e8d1f49af69d8a1e6cd678f31f1280ff\n[run_single] running hermes ...\n== harness=hermes rc=-1 timed_out=True wall=1800.1s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-16229.json\n[run_single] cleanup: git reset --hard 04b15022e8d1f49af69d8a1e6cd678f31f1280ff\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 21
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-16255",
+    "repo": "django/django",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 208.7,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-16255.json",
+      "stdout_tail": "jango__django-16255\n[run_single] base_commit=444b6da7cc229a58a2c476a52e45233001dc7073\n[run_single] ps_len=1566\n[run_single] git reset --hard 444b6da7cc229a58a2c476a52e45233001dc7073\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=208.4s ==\n[run_single] model_patch: 3032 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-16255.json\n[run_single] cleanup: git reset --hard 444b6da7cc229a58a2c476a52e45233001dc7073\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 36
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-16379",
+    "repo": "django/django",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 0,
+      "wall_s": 340.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-16379.json",
+      "stdout_tail": "jango__django-16379\n[run_single] base_commit=1d0fa848e084cad62d0bb6bde3b51e4862558e57\n[run_single] ps_len=1083\n[run_single] git reset --hard 1d0fa848e084cad62d0bb6bde3b51e4862558e57\n[run_single] running hermes ...\n== harness=hermes rc=0 timed_out=False wall=340.0s ==\n[run_single] model_patch: 1364 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-16379.json\n[run_single] cleanup: git reset --hard 1d0fa848e084cad62d0bb6bde3b51e4862558e57\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 2,
+        "p2p_pass": 0,
+        "p2p_total": 362
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "django__django-16400",
+    "repo": "django/django",
+    "harness": "hermes",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914"
+    },
+    "harness_result": {
+      "harness": "hermes",
+      "returncode": 1,
+      "wall_s": 1800.3,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-16400.json",
+      "stdout_tail": "=django__django-16400\n[run_single] base_commit=0bd2c0c9015b53c41394a1c0989afbfd94dc2830\n[run_single] ps_len=2354\n[run_single] git reset --hard 0bd2c0c9015b53c41394a1c0989afbfd94dc2830\n[run_single] running hermes ...\n== harness=hermes rc=-1 timed_out=True wall=1800.0s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_hermes_django__django-16400.json\n[run_single] cleanup: git reset --hard 0bd2c0c9015b53c41394a1c0989afbfd94dc2830\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 63
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "pytest-dev__pytest-5227",
+    "repo": "pytest-dev/pytest",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+shallow fetch"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template pytest-dev__pytest-11143"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 392.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_pytest-dev__pytest-5227.json",
+      "stdout_tail": "280, limit=10]\u001b[0m\n\u001b[0m\u2192 \u001b[0mRead testing/logging/test_reporting.py\u001b[90m [offset=565, limit=20]\u001b[0m\n\u001b[0m\u2192 \u001b[0mRead testing/logging/test_reporting.py\u001b[90m [offset=615, limit=10]\u001b[0m\n\u001b[0m\u2192 \u001b[0mRead testing/logging/test_reporting.py\u001b[90m [offset=523, limit=18]\u001b[0m\n\n[run_single] model_patch: 4562 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_pytest-dev__pytest-5227.json\n[run_single] cleanup: git reset --hard 2051e30b9b596e944524ccb787ed20f9f5be93e3\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "psf__requests-2674",
+    "repo": "psf/requests",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template psf__requests-1963"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 149.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_psf__requests-2674.json",
+      "stdout_tail": "le] instance_id=psf__requests-2674\n[run_single] base_commit=0be38a0c37c59c4b66ce908731da15b401655113\n[run_single] ps_len=510\n[run_single] git reset --hard 0be38a0c37c59c4b66ce908731da15b401655113\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=149.1s ==\n[run_single] model_patch: 1400 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_psf__requests-2674.json\n[run_single] cleanup: git reset --hard 0be38a0c37c59c4b66ce908731da15b401655113\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 5,
+        "f2p_total": 12,
+        "p2p_pass": 116,
+        "p2p_total": 142
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-24334",
+    "repo": "matplotlib/matplotlib",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git fetch failed: \n[TIMEOUT]"
+    },
+    "blocked": "git fetch failed: \n[TIMEOUT]",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-25442",
+    "repo": "matplotlib/matplotlib",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git fetch failed: \n[TIMEOUT]"
+    },
+    "blocked": "git fetch failed: \n[TIMEOUT]",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-24970",
+    "repo": "matplotlib/matplotlib",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git fetch failed: fatal: unable to access 'https://github.com/matplotlib/matplotlib/': Received HTTP code 503 from proxy after CONNECT\n"
+    },
+    "blocked": "git fetch failed: fatal: unable to access 'https://github.com/matplotlib/matplotlib/': Received HTTP code 503 from proxy after CONNECT\n",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "psf__requests-3362",
+    "repo": "psf/requests",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template psf__requests-1963"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 390.4,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_psf__requests-3362.json",
+      "stdout_tail": "le] instance_id=psf__requests-3362\n[run_single] base_commit=36453b95b13079296776d11b09cab2567ea3e703\n[run_single] ps_len=531\n[run_single] git reset --hard 36453b95b13079296776d11b09cab2567ea3e703\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=390.2s ==\n[run_single] model_patch: 1875 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_psf__requests-3362.json\n[run_single] cleanup: git reset --hard 36453b95b13079296776d11b09cab2567ea3e703\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 72,
+        "p2p_total": 75
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "pydata__xarray-4493",
+    "repo": "pydata/xarray",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template pydata__xarray-3364"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 730.2,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_pydata__xarray-4493.json",
+      "stdout_tail": "d): Deprecated: \"providerOptions key 'openai-compatible'\". Use 'openaiCompatible' instead.\n      at BY (/$bunfs/root/chunk-nd6m62hc.js:26:48090)\n      at cZ (/$bunfs/root/chunk-nd6m62hc.js:26:48389)\n      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)\n\n\n[run_single] model_patch: 2837 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_pydata__xarray-4493.json\n[run_single] cleanup: git reset --hard a5f53e203c52a7605d5db799864046471115d04f\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 0,
+        "p2p_total": 1689
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "pytest-dev__pytest-5413",
+    "repo": "pytest-dev/pytest",
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template pytest-dev__pytest-11143"
+    },
+    "harness_result": {
+      "harness": "opencode",
+      "returncode": 0,
+      "wall_s": 627.6,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_opencode_pytest-dev__pytest-5413.json",
+      "stdout_tail": "=20]\u001b[0m\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[\u2713] Explore codebase to find pytest.raises and ExceptionInfo definitions\n[\u2713] Implement __str__ on ExceptionInfo to return str(self.value)\n[\u2713] Find and update/add tests for this behavior\n[\u2713] Run relevant tests to verify the fix\n\u001b[0m\n\n[run_single] model_patch: 1262 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_opencode_pytest-dev__pytest-5413.json\n[run_single] cleanup: git reset --hard 450d2646233c670654744d3d24330b69895bb9d2\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "pydata__xarray-5131",
+    "repo": "pydata/xarray",
+    "harness": "cline-patched",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template pydata__xarray-3364"
+    },
+    "harness_result": {
+      "harness": "cline-patched",
+      "returncode": 0,
+      "wall_s": 80.9,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_pydata__xarray-5131.json",
+      "stdout_tail": "d): Deprecated: \"providerOptions key 'openai-compatible'\". Use 'openaiCompatible' instead.\n      at BY (/$bunfs/root/chunk-nd6m62hc.js:26:48090)\n      at cZ (/$bunfs/root/chunk-nd6m62hc.js:26:48389)\n      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)\n\n\n[run_single] model_patch: 1568 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_cline_patched_pydata__xarray-5131.json\n[run_single] cleanup: git reset --hard e56905889c836c736152b11a7e6117a229715975\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": true,
+        "patch_applied": true,
+        "f2p_pass": 10,
+        "f2p_total": 10,
+        "p2p_pass": 24,
+        "p2p_total": 24
+      }
+    },
+    "classification": "resolved"
   }
 ]
