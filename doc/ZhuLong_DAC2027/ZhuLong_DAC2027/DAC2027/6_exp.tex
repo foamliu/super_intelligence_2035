@@ -29,7 +29,7 @@ RQ1 and RQ2 test the framework's structural claims; RQ3 tests whether they follo
 
 \subsubsection{Benchmark and Evaluation Protocol}
 
-We evaluate ZhuLong on \textbf{EDA-Eval-PyAether}, a benchmark of 158 real-world PyAether scripting tasks. Following the evaluation protocol defined in Section~\ref{sec:benchmark}, we adopt \textbf{Pass@1} (execution success rate) as the primary metric. Each task is evaluated in a single trace: the agent may iterate \emph{within} that trace through the belief update $\Phi$ (Section~\ref{sec:agent-workflow}), but a task is never restarted across traces; the timeout is set to 2500 seconds per execution. Every tool call is additionally mediated by a file-based \texttt{PreToolUse} hook---a JSON-in/JSON-out script dispatched by Cline's hook engine from the configured hooks directory---that enforces a tool whitelist, blocks shell and code-search tools, and confines all file access to a fresh, empty working directory; on each call it allows the call, rewrites it to a harmless no-op (\texttt{overrideInput}), or rejects it with an error message (\texttt{cancel}), with MCP tool calls passing through, so neither a task's own assertions nor any project copy of a solution is reachable from the workspace. The hook is identical in every configuration reported here and is thus part of the fixed protocol rather than a variable; it is also what makes the baselines interpretable. Traces terminated by the hook are identified separately so that they are not read as capability failures. To assess statistical reliability given the modest benchmark size (158 tasks), each configuration is evaluated over five independent runs with reshuffled task orderings and fresh agent contexts, and accuracy is reported as mean $\pm$ standard deviation over those runs. Quantities aggregated over traces rather than over runs---read-back counts, activation ratios and tool-call totals---are given as single aggregates over the pooled traces, without run-level dispersion; effect sizes ($\Delta$) are computed from the mean values in the same table. The dominant sandbox-execution effect ($+[TBD]$ pp) exceeds the spread by an order of magnitude, whereas the smaller self-exploration effect ($+[TBD]$ pp) is treated as a complementary gain rather than a headline result, consistent with the theoretical account in Section~\ref{sec:grounding-theory}. All figures in this section are provisional, obtained on the PyAether-only slice, and will be regenerated on the full EDA-Scripting-Bench (Section~\ref{sec:benchmark}).
+We evaluate ZhuLong on \textbf{EDA-Eval-PyAether}, a benchmark of 158 real-world PyAether scripting tasks. Following the evaluation protocol defined in Section~\ref{sec:benchmark}, we adopt \textbf{Pass@1} (execution success rate) as the primary metric. Each task is evaluated in a single trace: the agent may iterate \emph{within} that trace through the belief update $\Phi$ (Section~\ref{sec:agent-workflow}), but a task is never restarted across traces; the timeout is set to 2500 seconds per execution. Every tool call is additionally mediated by a file-based \texttt{PreToolUse} hook---a JSON-in/JSON-out script dispatched by Cline's hook engine from the configured hooks directory---that enforces a tool whitelist, blocks shell and code-search tools, and confines all file access to a fresh, empty working directory; on each call it allows the call, rewrites it to a harmless no-op (\texttt{overrideInput}), or rejects it with an error message (\texttt{cancel}), with MCP tool calls passing through, so neither a task's own assertions nor any project copy of a solution is reachable from the workspace. The hook is identical in every configuration reported here and is thus part of the fixed protocol rather than a variable; it is also what makes the baselines interpretable. Traces terminated by the hook are identified separately so that they are not read as capability failures. To assess statistical reliability given the modest benchmark size (158 tasks), each configuration is evaluated over five independent runs with reshuffled task orderings and fresh agent contexts, and accuracy is reported as mean $\pm$ standard deviation over those runs. Quantities aggregated over traces rather than over runs---read-back counts, activation ratios and tool-call totals---are given as single aggregates over the pooled traces, without run-level dispersion; effect sizes ($\Delta$) are computed from the mean values in the same table. The dominant sandbox-execution effect ($+[TBD]$ pp) exceeds the spread by an order of magnitude, consistent with the theoretical account in Section~\ref{sec:grounding-theory}. All figures in this section are provisional, obtained on the PyAether-only slice, and will be regenerated on the full EDA-Scripting-Bench (Section~\ref{sec:benchmark}).
 % 评测集与评估协议。我们在\textbf{EDA-Eval-PyAether}上评估ZhuLong，该评测集包含158个真实PyAether脚本任务。
 % 遵循第\ref{sec:benchmark}节定义的评估协议，我们采用\textbf{Pass@1}（执行成功率）作为主要指标。
 % 每个任务只在单条trace上评测：智能体可在该trace内通过信念更新$\Phi$（第\ref{sec:agent-workflow}节）反复迭代，
@@ -43,33 +43,30 @@ We evaluate ZhuLong on \textbf{EDA-Eval-PyAether}, a benchmark of 158 real-world
 
 \subsubsection{Baselines and ZhuLong Variants}
 
-To isolate the contribution of each component, we establish two baselines and three ZhuLong variants, as shown in Table~\ref{tab:configurations}. Read against the framework of Section~\ref{sec:grounding-theory}, the table's columns name the components a harness supplies: retrieval and documentation are the observation channel $\Omega$, the sandbox is the effector through which an action reaches the live design, and self-exploration is offline enrichment of the documentation that $\Omega$ can return. ZhuLong variants default to vector retrieval using a name+description index; S1 varies the fidelity of that index explicitly, and S2 adds a bound on the belief update $\Phi$, which this table does not vary.
-% 基线与ZhuLong变体。按第~\ref{sec:grounding-theory}节的框架解读，表中三列就是框架所提供的三个组件：
-% 检索与文档是观测通道$\Omega$，沙盒是使动作抵达实时设计的执行器，自探索则是对$\Omega$可返回文档的离线增强。
+To isolate the contribution of each component, we establish two baselines and two ZhuLong variants, as shown in Table~\ref{tab:configurations}. Read against the framework of Section~\ref{sec:grounding-theory}, the table's columns name the components a harness supplies: retrieval and documentation are the observation channel $\Omega$, the sandbox is the effector through which an action reaches the live design. ZhuLong variants default to vector retrieval using a name+description index; S1 varies the fidelity of that index explicitly, and S2 adds a bound on the belief update $\Phi$, which this table does not vary.
+% 基线与ZhuLong变体。按第~\ref{sec:grounding-theory}节的框架解读，表中两列就是框架所提供的两个组件：
+% 检索与文档是观测通道$\Omega$，沙盒是使动作抵达实时设计的执行器。
 % ZhuLong变体默认使用名称+描述索引进行向量检索；S1显式改变该索引的保真度，S2则对信念更新$\Phi$加界——这是本表未涉及的组件。
 
-These columns name components that are realized at the harness boundary rather than inside the agent. The presence of each observable capability is switched by a tool-registration toggle---a single disabled-list in the server environment spanning the four core tools \texttt{search\_apis}, \texttt{search\_apis\_by\_keyword}, \texttt{get\_api\_details} and \texttt{run\_code}: a disabled tool simply disappears from the agent's tool set, while every enabled tool keeps a byte-identical implementation across all arms. The sandbox executor is removed by unregistering \texttt{run\_code}; retrieval is removed by unregistering the three retrieval tools; the anti-leak \texttt{PreToolUse} hook stays loaded in every arm; and the self-exploration toggle swaps the enriched knowledge base rather than any runtime tool.
-% 这些列命名的组件在框架边界实现，而非智能体内部。每个可观测能力的有无由一个"工具注册开关"切换——服务器环境里的单一禁用清单，覆盖核心 4 工具（search_apis / search_apis_by_keyword / get_api_details / run_code）：被禁用的工具从智能体工具集中消失，而每个启用的工具在各臂之间保持逐字一致的实现。关沙盒=取消注册 run_code；关检索=取消注册三个检索工具；反作弊 PreToolUse hook 每个臂始终装载；自探索开关替换增强知识库，而非任何运行时工具。
+These columns name components that are realized at the harness boundary rather than inside the agent. The presence of each observable capability is switched by a tool-registration toggle---a single disabled-list in the server environment spanning the four core tools \texttt{search\_apis}, \texttt{search\_apis\_by\_keyword}, \texttt{get\_api\_details} and \texttt{run\_code}: a disabled tool simply disappears from the agent's tool set, while every enabled tool keeps a byte-identical implementation across all arms. The sandbox executor is removed by unregistering \texttt{run\_code}; retrieval is removed by unregistering the three retrieval tools; the anti-leak \texttt{PreToolUse} hook stays loaded in every arm.
+% 这些列命名的组件在框架边界实现，而非智能体内部。每个可观测能力的有无由一个"工具注册开关"切换——服务器环境里的单一禁用清单，覆盖核心 4 工具（search_apis / search_apis_by_keyword / get_api_details / run_code）：被禁用的工具从智能体工具集中消失，而每个启用的工具在各臂之间保持逐字一致的实现。关沙盒=取消注册 run_code；关检索=取消注册三个检索工具；反作弊 PreToolUse hook 每个臂始终装载。
 
 \begin{table}[htbp]
 \centering
 \caption{Configurations and their components}
 \label{tab:configurations}
-\begin{tabular}{lccc}
+\begin{tabular}{lcc}
 \toprule
-\textbf{Configuration} & \textbf{Retrieval} & \textbf{Sandbox} & \textbf{Self-Expl.} \\
+\textbf{Configuration} & \textbf{Retrieval} & \textbf{Sandbox} \\
 \midrule
-Baseline 1 (Pure LLM) & \ding{55} & \ding{55} & \ding{55} \\
-Baseline 2 (RAG) & \ding{51} & \ding{55} & \ding{55} \\
-ZhuLong w/o Self-Expl. & \ding{51} & \ding{51} & \ding{55} \\
-ZhuLong w/o Sandbox & \ding{51} & \ding{55} & \ding{51} \\
-ZhuLong w/o Retrieval & \ding{55} & \ding{51} & \ding{51} \\
-\textbf{ZhuLong} (Full) & \ding{51} & \ding{51} & \ding{51} \\
+Baseline 1 (Pure LLM) & \ding{55} & \ding{55} \\
+Baseline 2 (RAG) & \ding{51} & \ding{55} \\
+ZhuLong w/o Retrieval & \ding{55} & \ding{51} \\
+\textbf{ZhuLong} (Full) & \ding{51} & \ding{51} \\
 \bottomrule
 \end{tabular}
 \end{table}
 % 表：配置及其组件。ZhuLong（完整）为完整系统，其余为消融变体。
-% Self-Expl. = Self-Exploration mechanism.
 
 \subsubsection{LLM Backbones}
 
@@ -94,11 +91,9 @@ The framework of Section~\ref{sec:grounding-theory} fixes what each study must v
 \multicolumn{3}{l}{\textit{Progressive build-up (vs. previous row)}} \\
 Baseline 1: Pure LLM & 10.5 $\pm$ 1.9 & — \\
 Baseline 2: RAG & 71.8 $\pm$ 2.5 & +61.3 pp \\
-ZhuLong w/o Self-Expl. & [TBD] $\pm$ [TBD] & +[TBD] pp \\
 \textbf{ZhuLong} (Full) & \textbf{84.8 $\pm$ [TBD]} & \textbf{+[TBD] pp} \\
 \midrule
 \multicolumn{3}{l}{\textit{Component ablation (vs. ZhuLong Full)}} \\
-ZhuLong w/o Self-Expl. & [TBD] $\pm$ [TBD] & -[TBD] pp \\
 ZhuLong w/o Sandbox & [TBD] $\pm$ [TBD] & -[TBD] pp \\
 ZhuLong w/o Retrieval & 81.0 $\pm$ 4.5 & -3.8 pp \\
 \bottomrule
@@ -113,10 +108,10 @@ ZhuLong w/o Retrieval & 81.0 $\pm$ 4.5 & -3.8 pp \\
 
 Principle 2 predicts that with the model fixed, accuracy is bounded by the fidelity of the observation channel $\Omega$. We vary $\Omega$ along the two axes through which it receives information, holding the LLM fixed in both.
 
-\textbf{Documentation axis.} Table~\ref{tab:omega} holds the agent loop, the effector and the LLM fixed, and changes only how faithfully the environment's API facts are exposed: no observation at all; a low-fidelity index built from API names alone; a high-fidelity index that adds descriptions, BM25 term matching, abbreviation expansion and synonym redirect; and the high-fidelity index further enriched by offline self-exploration (Section~\ref{sec:selfdoc}).
+\textbf{Documentation axis.} Table~\ref{tab:omega} holds the agent loop, the effector and the LLM fixed, and changes only how faithfully the environment's API facts are exposed: no observation at all; a low-fidelity index built from API names alone; a high-fidelity index that adds descriptions, BM25 term matching, abbreviation expansion and synonym redirect.
 % 文档轴。表~\ref{tab:omega}固定智能体循环、执行器与LLM，只改变环境的API事实被暴露的保真度：
 % 无观测；仅由API名称构建的低保真索引；加入描述、BM25词项匹配、缩写展开与同义词重定向的高保真索引；
-% 以及在高保真索引上再经离线自探索增强（第~\ref{sec:selfdoc}节）。
+
 
 \begin{table}[htbp]
 \centering
@@ -130,20 +125,18 @@ Principle 2 predicts that with the model fixed, accuracy is bounded by the fidel
 (N) No observation & Baseline 1 (Pure LLM) & 10.5 $\pm$ 1.9 \\
 (L) Low fidelity & name-only index & 82.8 $\pm$ 1.0 \\
 (H) High fidelity & \shortstack[l]{+ description, BM25,\\ abbreviations, synonyms} & 71.8 $\pm$ 2.5 \\
-\shortstack[l]{(H+E) High fidelity,\\ self-explored} & \textbf{ZhuLong} (Full) & 84.8 $\pm$ [TBD] \\
 \bottomrule
 \end{tabular}
 \end{table}
 % 表：Ω保真度阶梯（文档轴）。固定LLM、执行器与循环，仅改变API事实暴露的保真度。
-% 注：ICML 稿中同一阶梯报告为 (N)=0.0%、(L)=59.5%、(H)=87.3%——与本表的 (N)/(H+E) 口径不同，
+% 注：ICML 稿中同一阶梯报告为 (N)=0.0%、(L)=59.5%、(H)=87.3%——与本表的 (N)/(H) 口径不同，
 % 需先统一配置定义与评测协议，再决定引用哪一组数值。
 
-The documentation axis yields a non-monotone ordering: the low-fidelity rung (L) at 82.8 $\pm$ 1.0\% exceeds the high-fidelity rung (H) at 71.8 $\pm$ 2.5\%. This is not an artifact of the index---it reflects the presence of the effector. Rung (L) couples a name-only index with the full execution loop (sandbox and read-back), whereas (H) is the RAG baseline whose retrieval is high-fidelity but whose effector is absent. The comparison therefore isolates the effector's dominance over documentation fidelity: even a coarse index, once the agent can execute and observe results, outperforms a rich index used only for static retrieval. The top rung (H+E) adds self-exploration to reach 84.8\%, a further +13.0~pp over (H).
+The documentation axis yields a non-monotone ordering: the low-fidelity rung (L) at 82.8 $\pm$ 1.0\% exceeds the high-fidelity rung (H) at 71.8 $\pm$ 2.5\%. This is not an artifact of the index---it reflects the presence of the effector. Rung (L) couples a name-only index with the full execution loop (sandbox and read-back), whereas (H) is the RAG baseline whose retrieval is high-fidelity but whose effector is absent. The comparison therefore isolates the effector's dominance over documentation fidelity: even a coarse index, once the agent can execute and observe results, outperforms a rich index used only for static retrieval.
 % 文档轴呈现非单调排序：低保真档(L)82.8±1.0%高于高保真档(H)71.8±2.5%。
 % 这并非索引问题，而是执行器在场与否的差异：(L)的name-only索引配完整执行闭环，
 % (H)为RAG基线（高保真检索但无执行器）。该对比说明执行器对文档保真度的支配地位：
 % 即使粗糙索引，一旦可执行可观测，也优于仅用于静态检索的丰富索引。
-% 最高档(H+E)加自探索达84.8%，较(H)再增+13.0pp。
 
 \textbf{Read-back axis.} The second axis is how much of the live state execution returns. Section~\ref{sec:bayesian} predicts that accuracy tracks this fidelity with the LLM held fixed; we therefore compare three closed-loop variants that differ only here: (N) \emph{no observation}---the agent predicts from the prior alone; (B) \emph{binary feedback}---\texttt{run\_code} reports only pass/fail; and (F) \emph{full observation}---stdout, exception traces, per-assertion outcomes, and queried state are returned (the default). The framework predicts a monotone gain from (N) to (F); the measured ordering, however, is B $<$ N $<$ F, a result we analyze below.
 % 回读轴。第二条轴是执行返回多少实时状态信息。第~\ref{sec:bayesian}节预测固定LLM时准确率随该保真度变化，
@@ -177,51 +170,6 @@ The results break the expected monotone ordering: (B) binary feedback (66.2 $\pm
 % 可能确认错误假设；无反馈则迫使智能体回退到检索支撑的先验——在执行器与高保真索引仍生效时该先验已足够强。
 % 全观测通过暴露具体错误（类型不匹配、状态缺失、返回值错误）消除歧义，将二值判定转为可操作证据，恢复顶部预期排序。
 % N→F差距(73.3%→84.8%，+11.5pp)衡量"信息性"观测的实操价值，而(B)臂警示部分反馈可能不如无反馈。
-
-\textbf{The self-exploration rung.} The top rung of Table~\ref{tab:omega} adds constraints discovered offline by counterfactual experimentation (Section~\ref{sec:selfdoc}). Per the framework this enriches only the L1--L3 facts the observation channel can return, so it should move the result less than the channel's own fidelity does. Removing it while keeping retrieval and the effector reduces Pass@1 from 84.8\% to [TBD]\%, a drop of [TBD] percentage points. In the absence of the effector the same mechanism improves Pass@1 from 71.8\% (RAG) to [TBD]\%, a gain of [TBD] percentage points---so the same prior-side enrichment is worth more when the observation channel is weaker, consistent with its being bounded by observation rather than substituting for it.
-% 自探索档。表~\ref{tab:omega}的最高档加入经离线反事实实验发现的约束（第~\ref{sec:selfdoc}节）。
-% 按框架，它只丰富观测通道可返回的L1–L3事实，因此其效应应小于通道自身保真度带来的效应。
-% 保留检索与执行器而移除它，Pass@1从84.8\%降至[TBD]\%（-[TBD]pp）。
-% 无执行器时同一机制把Pass@1从71.8\%（RAG）提升至[TBD]\%（+[TBD]pp）——
-% 同一先验侧增强在观测通道更弱时价值更大，与"它被观测所界定而非替代观测"一致。
-
-Beyond accuracy, this rung also changes efficiency. Table~\ref{tab:selfdoc-efficiency} compares tool usage with and without self-exploration. With self-exploration enabled the agent produces more traces (243 vs. 220) because it persists longer with better documentation, yet total tool calls drop by 13.9\% and average calls per trace decrease by 22.1\%.
-
-\begin{table}[htbp]
-\centering
-\caption{Overall tool usage: with vs. without self-exploration}
-\label{tab:selfdoc-efficiency}
-\begin{tabular}{lcc}
-\toprule
-\textbf{Metric} & \textbf{w/o Self-Expl.} & \textbf{ZhuLong (Full)} \\
-\midrule
-Traces & 220 & 243 (+10.5\%) \\
-\#Calls & 6,791 & 5,845 (-13.9\%) \\
-Avg/Trace & 30.9 & 24.1 (-22.1\%) \\
-\midrule
-Change & — & \textbf{-946 (-13.9\%)} \\
-\bottomrule
-\end{tabular}
-\end{table}
-% 表：整体工具使用情况：启用与未启用API自探索的对比。
-
-The reduction is most pronounced in \texttt{run\_code} (27.0\%, see Table~\ref{tab:tool-breakdown}), indicating that enriched documentation reduces trial-and-error executions. Calls to \texttt{search\_apis} decrease by 12.2\%, while \texttt{get\_api\_details} increase by 9.0\%---a behavioral shift toward more thorough reading before coding.
-
-\begin{table}[htbp]
-\centering
-\caption{Tool-wise call count breakdown}
-\label{tab:tool-breakdown}
-\begin{tabular}{lcc}
-\toprule
-\textbf{Tool} & \textbf{w/o Self-Expl.} & \textbf{ZhuLong (Full)} \\
-\midrule
-\texttt{search\_apis} & 3,203 & 2,812 (-12.2\%) \\
-\texttt{get\_api\_details} & 1,151 & 1,255 (+9.0\%) \\
-\texttt{run\_code} & 2,437 & 1,778 (-27.0\%) \\
-\bottomrule
-\end{tabular}
-\end{table}
-% 表：各工具调用次数明细。
 
 \subsubsection{S2: The closed loop (RQ2)}
 \label{sec:closed-loop}
@@ -275,7 +223,7 @@ $\Phi$ unbounded (default) & 84.8 $\pm$ [TBD] & [TBD] \\
 \subsubsection{S3: The prior axis, the contrast arm of RQ1}
 \label{sec:k-axis}
 
-Principle 1 separates knowledge from belief: the frozen prior should bound what a harness can achieve, without substituting for observation. Table~\ref{tab:llm-comparison} changes only $\mathcal{K}$---the LLM itself---with the harness held fixed. We adopt DeepSeek-V4-Pro as the primary backbone across all experiments in this paper, based on a practical trade-off between model capability and inference cost: its performance is sufficiently strong to support the key findings from both our main experiments and ablation studies, while its cost remains manageable for running the complete set of configurations reported in this work. The quantitative results in Table~\ref{tab:llm-comparison} are provisional and will be re-measured on the full EDA-Scripting-Bench; the qualitative finding that the underlying model remains a decisive factor---even with retrieval, sandbox, and self-exploration in place---is consistent across backbones.
+Principle 1 separates knowledge from belief: the frozen prior should bound what a harness can achieve, without substituting for observation. Table~\ref{tab:llm-comparison} changes only $\mathcal{K}$---the LLM itself---with the harness held fixed. We adopt DeepSeek-V4-Pro as the primary backbone across all experiments in this paper, based on a practical trade-off between model capability and inference cost: its performance is sufficiently strong to support the key findings from both our main experiments and ablation studies, while its cost remains manageable for running the complete set of configurations reported in this work. The quantitative results in Table~\ref{tab:llm-comparison} are provisional and will be re-measured on the full EDA-Scripting-Bench; the qualitative finding that the underlying model remains a decisive factor---even with retrieval and sandbox in place---is consistent across backbones.
 % S3：$\mathcal{K}$轴（原则1）。原则1把知识与信念解耦：冻结先验应当界定框架能达到的上限，而不替代观测。
 % 表~\ref{tab:llm-comparison}仅改变$\mathcal{K}$（即LLM本身），框架保持不变。
 
