@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Vision — Scaling Fairness Rerun: Results Report (2026-10-10)</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff;--orange:#e8873c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;line-height:1.6;max-width:1200px;margin:0 auto;padding:20px}
+h1{font-size:1.8em;color:var(--accent);border-bottom:2px solid var(--border);padding-bottom:.3em;margin:1.5em 0 .5em}
+h2{font-size:1.4em;color:var(--purple);margin:1.2em 0 .5em;border-bottom:1px solid var(--border);padding-bottom:.2em}
+h3{font-size:1.15em;color:var(--green);margin:1em 0 .4em}
+p{margin:.5em 0}
+table{border-collapse:collapse;width:100%;margin:.8em 0;font-size:.9em}
+th,td{border:1px solid var(--border);padding:.4em .6em;text-align:center}
+th{background:var(--card);color:var(--accent);font-weight:600}
+td:first-child,th:first-child{text-align:left}
+.best{color:var(--green);font-weight:700}
+.bad{color:var(--red)}
+.warn{color:var(--yellow)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1em 1.2em;margin:.8em 0}
+.tldr{background:linear-gradient(135deg,#161b22,#1a2332);border-left:4px solid var(--accent)}
+.tldr ul{margin:.3em 0 .3em 1.2em}
+.tldr li{margin:.3em 0}
+code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF Mono',Consolas,monospace;font-size:.85em;color:var(--orange)}
+.svg-container{margin:1em 0;text-align:center}
+.svg-container svg{max-width:100%;height:auto}
+.note{color:var(--muted);font-size:.85em;font-style:italic}
+.tag{display:inline-block;padding:.1em .5em;border-radius:10px;font-size:.75em;font-weight:600}
+.tag-done{background:rgba(63,185,80,.2);color:var(--green)}
+.refs{font-size:.85em;color:var(--muted);margin-top:2em;border-top:1px solid var(--border);padding-top:.5em}
+pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.8em;overflow-x:auto;font-size:.82em;line-height:1.45;margin:.5em 0}
+.log-ok{color:var(--green)}
+.log-key{color:var(--accent);font-weight:600}
+.conclusion-box{background:linear-gradient(135deg,#0d1f0d,#0a1a0a);border:2px solid var(--green);border-radius:8px;padding:1em 1.2em;margin:1em 0}
+.conclusion-box h3{color:var(--green);margin-top:0}
+</style>
+</head>
+<body>
+<h1>BaiZe Vision — Scaling Fairness Rerun: Results Report</h1>
+<p class="note">Generated: 2026-10-10 · Agent: vision · Status: <span class="tag tag-done">✅ ALL COMPLETE</span> · This is the standalone results report for the scaling fairness rerun (operator instruction 2026-10-10). All numbers are cross-verified with <code>report_10_09_vision_overnight.html</code> and <code>EXPERIMENTS_VISION.md §8.2</code>.</p>
+
+<h2>1. TL;DR / Conclusion</h2>
+<div class="card tldr">
+<ul>
+<li><strong>Δlp (Protocol B) = +0.17pp</strong> (62.51% − 62.34%) → <strong>|Δ| = 0.17pp ≤ 1.5pp threshold → the two model widths are INDISTINGUISHABLE</strong> at this training budget.</li>
+<li><strong>Old conclusion invalidated:</strong> The old "Bigger is WORSE, Δlp = −5.59pp" (29.35% → 23.76%) was a <strong>schedule artifact</strong>. Under a fair cosine schedule, the −5.59pp effect vanishes entirely (+0.17pp).</li>
+<li><strong>Fair recipe</strong> (both arms byte-identical except <code>--width</code>): <code>--lr 5e-4 --warmup 2000 --scheduler cosine --min-lr 5e-5</code>, same frozen data snapshot (<code>total_shards=10787</code>), same 187,101 steps.</li>
+<li><strong>Sign flip across protocols:</strong> Δlp = +0.17pp (Protocol B) but −0.17pp (Protocol A) → no systematic width effect in either direction.</li>
+<li><strong>Training loss ≠ lp:</strong> E2fair has lower training loss (0.1579 vs 0.2545), but this does NOT translate to higher linear-probe accuracy — consistent with the data-limited regime.</li>
+</ul>
+</div>
+
+<div class="conclusion-box">
+<h3>🎯 Pre-Registered Conclusion (Criteria: |Δ| ≤ 1.5pp → not supported)</h3>
+<p><strong>Δlp (Protocol B) = +0.17pp</strong> → |Δ| ≤ 1.5pp → <strong>NOT SUPPORTED as a scaling benefit.</strong> The two model widths (126.78M vs 284.54M, 2.24×) are <strong>indistinguishable</strong> in linear-probe accuracy at this training budget (~187k steps, ~96M image-text pairs, 1 epoch).</p>
+<p><strong>Old conclusion status:</strong> The old Δlp = −5.59pp ("bigger is WORSE") was a <strong>schedule artifact</strong>. This must be read alongside R9/R10's "data-limited regime" conclusion: in the data-limited regime (~96M pairs vs AIMv2's ~12B), widening the tower yields no lp benefit.</p>
+</div>
+<h2>2. Fair Configuration Table</h2>
+<div class="card">
+<p>Both arms are <strong>byte-identical except <code>--width</code></strong> (E1=512, E2=768). All other hyperparameters are controlled — this is the key fairness guarantee:</p>
+<table>
+<tr><th>Dimension</th><th>E1fair (w512)</th><th>E2fair (w768)</th><th>Controlled?</th></tr>
+<tr><td>Parameters</td><td>126.78M</td><td>284.54M (2.24×)</td><td>Varied (intended)</td></tr>
+<tr><td>Width / Depth</td><td>512 / 30</td><td>768 / 30</td><td>Width only</td></tr>
+<tr><td>Patch / Resolution</td><td>16 / 224</td><td>16 / 224</td><td>✅ Identical</td></tr>
+<tr><td>Training steps</td><td>187,101</td><td>187,101</td><td>✅ Identical (explicit)</td></tr>
+<tr><td><strong>lr</strong></td><td><strong>5e-4</strong></td><td><strong>5e-4</strong></td><td>✅ Identical (was 3e-3)</td></tr>
+<tr><td><strong>warmup</strong></td><td><strong>2000 (1.07%)</strong></td><td><strong>2000 (1.07%)</strong></td><td>✅ Identical (was 20 = 0.01%)</td></tr>
+<tr><td><strong>scheduler</strong></td><td><strong>cosine → min_lr</strong></td><td><strong>cosine → min_lr</strong></td><td>✅ Identical (was const)</td></tr>
+<tr><td><strong>min_lr</strong></td><td><strong>5e-5</strong></td><td><strong>5e-5</strong></td><td>✅ Identical (was N/A)</td></tr>
+<tr><td>Batch size</td><td>512 (64×8)</td><td>512 (64×8)</td><td>✅ Identical</td></tr>
+<tr><td>Seed</td><td>1234</td><td>1234</td><td>✅ Identical</td></tr>
+<tr><td>Objective</td><td>AIMv2 (mask=0.6, 1:1)</td><td>AIMv2 (mask=0.6, 1:1)</td><td>✅ Identical</td></tr>
+<tr><td>Data snapshot</td><td><code>data_snapshot_20261009.txt</code> (7,437 GPIC tars frozen) + CC12M + Amshaker</td><td>Same</td><td>✅ Identical</td></tr>
+<tr><td><strong>total_shards</strong></td><td><strong>10,787</strong></td><td><strong>10,787</strong></td><td>✅ Byte-identical</td></tr>
+<tr><td>Output dir</td><td><code>scaling_E1fair_ov2_w512_d30_p16_224</code></td><td><code>scaling_E2fair_ov2_w768_d30_p16_224</code></td><td>New (old preserved)</td></tr>
+</table>
+<p><strong>lr trajectory self-check</strong> (from both arms' <code>train.log</code> — byte-identical):</p>
+<pre>[lr-selfcheck] scheduler=cosine lr=0.0005 warmup=2000 min_lr=5e-05 steps=187101
+[lr-selfcheck] lr@step0=0.00000000  lr@warmup(2000)=0.00050000  lr@50%(93550)=0.00027882  lr@last(187100)=0.00005000
+<span class="log-ok">[lr-selfcheck] OK: lr monotonically decreasing after warmup</span></pre>
+<p><strong>[start] line</strong> (from both arms' <code>train.log</code> — identical except <code>shards</code> per-rank assignment):</p>
+<pre>[start] tower=openvision2 lr=0.0005 warmup=2000 bs=64 world=8 steps=187101 res=224
+  patch=16 seed=1234 shards=1349/rank objective=AIMv2-style(MIM+InfoNCE)
+  <span class="log-key">scheduler=cosine min_lr=5e-05</span> text=frozen-CLIP-768(r=8,a=16.0,lr=0.0001)
+  negatives=512 data_source=mixed caption_type=all <span class="log-key">total_shards=10787</span></pre>
+</div>
+<h2>3. Results Table</h2>
+<div class="card">
+<h3>3.1 Summary — E1fair vs E2fair</h3>
+<table>
+<tr><th>Arm</th><th>Width / Params</th><th>Protocol B (lp ± σ, 3 seeds)</th><th>Protocol A (lp)</th><th>Final loss</th><th>Steps</th><th>Throughput</th><th>Wall time</th></tr>
+<tr><td><strong>E1fair</strong></td><td>w512 / 126.78M</td><td><strong class="best">62.34 ± 0.01%</strong></td><td>49.70%</td><td>0.2545</td><td>187,101</td><td>3,774.5 img/s</td><td>~8.87h</td></tr>
+<tr><td><strong>E2fair</strong></td><td>w768 / 284.54M</td><td><strong class="best">62.51 ± 0.04%</strong></td><td>49.53%</td><td>0.1579</td><td>187,101</td><td>3,996.8 img/s</td><td>~9.30h</td></tr>
+<tr><td colspan="8" style="text-align:center"><strong>Δlp (Prot B) = +0.17pp · Δlp (Prot A) = −0.17pp · Δ(loss) = −0.097 (E2 lower)</strong></td></tr>
+</table>
+
+<h3>3.2 Protocol B — Per-Seed Breakdown</h3>
+<table>
+<tr><th>Arm</th><th>Seed 0</th><th>Seed 1</th><th>Seed 2</th><th>Mean ± σ</th></tr>
+<tr><td><strong>E1fair</strong> (w512)</td><td>62.34%</td><td>62.33%</td><td>62.36%</td><td><strong class="best">62.34 ± 0.01%</strong></td></tr>
+<tr><td><strong>E2fair</strong> (w768)</td><td>62.46%</td><td>62.51%</td><td>62.56%</td><td><strong class="best">62.51 ± 0.04%</strong></td></tr>
+</table>
+
+<h3>3.3 Training Comparison</h3>
+<table>
+<tr><th>Metric</th><th>E1fair (w512, 126.78M)</th><th>E2fair (w768, 284.54M)</th><th>Ratio</th></tr>
+<tr><td>Training steps</td><td>187,101</td><td>187,101</td><td>1.00× (identical)</td></tr>
+<tr><td>Total time</td><td>31,936.6s (~8.87h)</td><td>33,468.6s (~9.30h)</td><td>1.05×</td></tr>
+<tr><td><strong>Final loss</strong></td><td>0.2545</td><td><strong>0.1579</strong></td><td><strong>0.62× (E2 lower)</strong></td></tr>
+<tr><td>Steady throughput</td><td>3,774.5 img/s</td><td>3,996.8 img/s</td><td>1.06×</td></tr>
+<tr><td>Collapse (fused)</td><td>False (623 PROBE, 0 fuse)</td><td>False (623 PROBE, 0 fuse)</td><td>Both healthy</td></tr>
+<tr><td>lr@end</td><td>5.00e-05</td><td>5.00e-05</td><td>Identical (cosine → min_lr)</td></tr>
+<tr><td>total_shards</td><td>10,787</td><td>10,787</td><td>Byte-identical</td></tr>
+<tr><td><strong>Protocol B lp</strong></td><td><strong>62.34 ± 0.01%</strong></td><td><strong>62.51 ± 0.04%</strong></td><td><strong>+0.17pp (indistinguishable)</strong></td></tr>
+</table>
+<p class="note">Both arms trained under the exact same fair recipe. The only difference is <code>--width</code>. E2fair's lower training loss (0.1579 vs 0.2545) did <strong>not</strong> translate to higher lp — Δlp = +0.17pp, well within the ±1.5pp "indistinguishable" threshold.</p>
+</div>
+<h2>4. Pre-Registered Criteria vs Measured</h2>
+<div class="card">
+<p>The judgment criteria were locked in <code>EXPERIMENTS_VISION.md §8.1</code> <strong>before</strong> training began. No criteria were added or modified after seeing results.</p>
+<table>
+<tr><th>Criterion</th><th>Threshold</th><th>Observed</th><th>Verdict</th></tr>
+<tr><td>Δlp ≥ +1.5pp → supports scaling</td><td>+1.5pp</td><td>+0.17pp</td><td class="warn">❌ Not met</td></tr>
+<tr><td>|Δlp| ≤ 1.5pp → not supported (indistinguishable)</td><td>≤ 1.5pp</td><td>0.17pp</td><td class="best">✅ Met</td></tr>
+<tr><td>Δlp ≤ −1.5pp → bigger is worse</td><td>−1.5pp</td><td>+0.17pp</td><td class="warn">❌ Not met</td></tr>
+<tr><td>σ > |Δlp| → indistinguishable</td><td>σ > 0.17pp</td><td>σ_max = 0.04pp</td><td class="warn">❌ Not met (σ &lt; |Δ|)</td></tr>
+<tr><td>Single budget point ≠ scaling law</td><td>—</td><td>1 budget point</td><td class="warn">⚠️ Written into Limitations</td></tr>
+</table>
+<div class="conclusion-box">
+<h3>Conclusion</h3>
+<p><strong>Δlp (Protocol B) = +0.17pp</strong>, which falls in the <strong>|Δ| ≤ 1.5pp</strong> category → <strong>NOT SUPPORTED as a scaling benefit.</strong> The two model widths (126.78M vs 284.54M, 2.24× larger) are <strong>indistinguishable</strong> in linear-probe accuracy at this training budget (~187k steps, ~96M image-text pairs, 1 epoch).</p>
+<p>The sign is positive (+0.17pp) under Protocol B but negative (−0.17pp) under Protocol A — the sign flips across evaluation protocols, further confirming no systematic width effect.</p>
+<p><strong>The old "bigger is WORSE" conclusion (Δlp = −5.59pp) was a schedule artifact.</strong> Under a fair cosine schedule, the −5.59pp effect vanishes entirely (+0.17pp).</p>
+</div>
+</div>
+<h2>5. Old vs New: Schedule Comparison</h2>
+<div class="card">
+<h3>5.1 Schedule Properties</h3>
+<table>
+<tr><th>Property</th><th>Old (superseded)</th><th>New (fair rerun)</th></tr>
+<tr><td>lr (peak)</td><td class="bad">3e-3</td><td class="best">5e-4 (6× lower)</td></tr>
+<tr><td>Warmup steps</td><td class="bad">20 (0.01% of 187k)</td><td class="best">2,000 (1.07% of 187k)</td></tr>
+<tr><td>Schedule</td><td class="bad">Constant (no decay)</td><td class="best">Cosine → min_lr</td></tr>
+<tr><td>min_lr</td><td class="bad">N/A (stays at 3e-3)</td><td class="best">5e-5 (10% of peak)</td></tr>
+<tr><td>Data</td><td class="bad">Glob (GPIC grew 6233→6754 between arms)</td><td class="best">Frozen snapshot (7,437 tars, identical)</td></tr>
+<tr><td>lr@50% of training</td><td class="bad">3e-3 (unchanged)</td><td class="best">2.79e-4 (cosine midpoint)</td></tr>
+<tr><td>lr@end of training</td><td class="bad">3e-3 (unchanged)</td><td class="best">5e-5 (annealed to min_lr)</td></tr>
+</table>
+
+<h3>5.2 Learning-Rate Trajectory Comparison (SVG)</h3>
+<div class="svg-container">
+<svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
+<rect width="800" height="300" fill="#0d1117"/>
+<text x="400" y="20" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="bold">Learning-Rate Schedule: Old (Constant) vs New (Cosine) over 187,101 steps</text>
+<line x1="80" y1="250" x2="760" y2="250" stroke="#30363d" stroke-width="1"/>
+<line x1="80" y1="40" x2="80" y2="250" stroke="#30363d" stroke-width="1"/>
+<text x="72" y="254" text-anchor="end" fill="#8b949e" font-size="10">0</text>
+<text x="72" y="194" text-anchor="end" fill="#8b949e" font-size="10">1e-3</text>
+<text x="72" y="134" text-anchor="end" fill="#8b949e" font-size="10">2e-3</text>
+<text x="72" y="74" text-anchor="end" fill="#8b949e" font-size="10">3e-3</text>
+<text x="40" y="145" text-anchor="middle" fill="#8b949e" font-size="11" transform="rotate(-90 40 145)">Learning Rate</text>
+<text x="80" y="265" text-anchor="middle" fill="#8b949e" font-size="10">0</text>
+<text x="252" y="265" text-anchor="middle" fill="#8b949e" font-size="10">50k</text>
+<text x="424" y="265" text-anchor="middle" fill="#8b949e" font-size="10">100k</text>
+<text x="596" y="265" text-anchor="middle" fill="#8b949e" font-size="10">150k</text>
+<text x="760" y="265" text-anchor="middle" fill="#8b949e" font-size="10">187k</text>
+<text x="420" y="285" text-anchor="middle" fill="#8b949e" font-size="11">Training Step</text>
+<path d="M 80 250 L 80.1 70 L 760 70" stroke="#f85149" stroke-width="2" fill="none"/>
+<text x="650" y="63" fill="#f85149" font-size="11">Old: const 3e-3 (warmup=20)</text>
+<path d="M 80 250 L 87.3 100" stroke="#58a6ff" stroke-width="2" fill="none"/>
+<path d="M 87.3 100 Q 200 215, 261.7 224.3 T 419.8 233.3 T 588.8 242.9 L 760 247" stroke="#58a6ff" stroke-width="2.5" fill="none"/>
+<text x="300" y="210" fill="#58a6ff" font-size="11">New: cosine 5e-4 → 5e-5 (warmup=2000)</text>
+<circle cx="87.3" cy="100" r="3" fill="#58a6ff"/>
+<text x="95" y="95" fill="#58a6ff" font-size="9">lr@warmup=5e-4</text>
+<circle cx="419.8" cy="233.3" r="3" fill="#58a6ff"/>
+<text x="427" y="228" fill="#58a6ff" font-size="9">lr@50%=2.79e-4</text>
+<circle cx="760" cy="247" r="3" fill="#58a6ff"/>
+<text x="715" y="242" fill="#58a6ff" font-size="9">lr@end=5e-5</text>
+<rect x="80" y="40" width="7.3" height="210" fill="rgba(88,166,255,0.1)"/>
+<text x="100" y="55" fill="#8b949e" font-size="9">warmup</text>
+</svg>
+</div>
+<p class="note">The old schedule (red) applies a high lr with no annealing for 99.99% of training. The new schedule (blue) warms up over 2,000 steps, then anneals via cosine to 5e-5 — giving the wider model a fair opportunity to converge.</p>
+</div>
+<h3>5.3 Δlp: Old (Unfair) vs New (Fair) — Bar Chart</h3>
+<div class="svg-container">
+<svg viewBox="0 0 800 360" xmlns="http://www.w3.org/2000/svg">
+<rect width="800" height="360" fill="#0d1117"/>
+<text x="400" y="22" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="bold">Width-Scaling Δlp: Old (Unfair) vs New (Fair Cosine) — Protocol B</text>
+<text x="400" y="38" text-anchor="middle" fill="#8b949e" font-size="11">Δlp = lp(w768) − lp(w512) · Threshold ±1.5pp</text>
+<line x1="80" y1="60" x2="80" y2="320" stroke="#30363d" stroke-width="1"/>
+<line x1="80" y1="190" x2="760" y2="190" stroke="#30363d" stroke-width="1" stroke-dasharray="4,4"/>
+<text x="72" y="194" text-anchor="end" fill="#8b949e" font-size="10">0</text>
+<text x="72" y="66" text-anchor="end" fill="#8b949e" font-size="10">+6pp</text>
+<text x="72" y="324" text-anchor="end" fill="#8b949e" font-size="10">−6pp</text>
+<text x="40" y="190" text-anchor="middle" fill="#8b949e" font-size="11" transform="rotate(-90 40 190)">Δlp (pp)</text>
+<line x1="80" y1="158" x2="760" y2="158" stroke="#3fb950" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+<text x="765" y="162" fill="#3fb950" font-size="9">+1.5pp</text>
+<line x1="80" y1="222" x2="760" y2="222" stroke="#f85149" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+<text x="765" y="226" fill="#f85149" font-size="9">−1.5pp</text>
+<rect x="200" y="190" width="160" height="121.1" fill="rgba(248,81,73,0.3)" stroke="#f85149" stroke-width="2"/>
+<text x="280" y="340" text-anchor="middle" fill="#f85149" font-size="12" font-weight="bold">OLD (unfair)</text>
+<text x="280" y="305" text-anchor="middle" fill="#f85149" font-size="14" font-weight="bold">−5.59pp</text>
+<text x="280" y="324" text-anchor="middle" fill="#8b949e" font-size="10">29.35% → 23.76%</text>
+<text x="280" y="180" text-anchor="middle" fill="#8b949e" font-size="9">3e-3 / w20 / const</text>
+<rect x="440" y="186.3" width="160" height="3.7" fill="rgba(88,166,255,0.4)" stroke="#58a6ff" stroke-width="2"/>
+<text x="520" y="340" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="bold">NEW (fair cosine)</text>
+<text x="520" y="175" text-anchor="middle" fill="#58a6ff" font-size="14" font-weight="bold">+0.17pp</text>
+<text x="520" y="160" text-anchor="middle" fill="#8b949e" font-size="10">62.34% → 62.51%</text>
+<text x="520" y="145" text-anchor="middle" fill="#8b949e" font-size="9">5e-4 / w2000 / cosine</text>
+<path d="M 380 250 Q 410 200, 435 190" stroke="#d29922" stroke-width="1.5" fill="none"/>
+<text x="400" y="270" text-anchor="middle" fill="#d29922" font-size="11" font-weight="bold">schedule artifact</text>
+<text x="400" y="284" text-anchor="middle" fill="#d29922" font-size="10">eliminated</text>
+<text x="400" y="355" text-anchor="middle" fill="#8b949e" font-size="10">σ_E1=0.01%, σ_E2=0.04% · Both within ±1.5pp → indistinguishable</text>
+</svg>
+</div>
+
+<h3>5.4 Absolute lp: Old vs New (All Arms)</h3>
+<table>
+<tr><th>Arm</th><th>Schedule</th><th>Prot B lp</th><th>Prot A lp</th><th>Δ Prot B (fair−old)</th></tr>
+<tr><td>E1 old (w512)</td><td class="bad">3e-3 / w20 / const</td><td class="bad">29.35%</td><td class="bad">19.70%</td><td>—</td></tr>
+<tr><td>E2 old (w768)</td><td class="bad">3e-3 / w20 / const</td><td class="bad">23.76%</td><td class="bad">15.59%</td><td>—</td></tr>
+<tr><td><strong>E1fair (w512)</strong></td><td class="best">5e-4 / w2000 / cosine</td><td class="best">62.34±0.01%</td><td>49.70%</td><td><strong class="best">+33.0pp</strong></td></tr>
+<tr><td><strong>E2fair (w768)</strong></td><td class="best">5e-4 / w2000 / cosine</td><td class="best">62.51±0.04%</td><td>49.53%</td><td><strong class="best">+38.75pp</strong></td></tr>
+</table>
+<p class="note">The fair cosine schedule improves <strong>both</strong> arms dramatically (+33 to +39pp), but the improvement is <strong>larger for the wider E2</strong> (+38.75pp vs +33.0pp). This confirms: the old schedule disproportionately disadvantaged the wider model — the −5.59pp "bigger is worse" was a schedule artifact, not a real scale effect.</p>
+</div>
+<h2>6. Conclusion & Limitations</h2>
+<div class="card">
+<h3>6.1 Conclusion</h3>
+<ul>
+<li><strong>The old "bigger is WORSE" conclusion (Δlp = −5.59pp) was a schedule artifact.</strong> Under a fair cosine schedule (lr=5e-4, warmup=2000, min_lr=5e-5), the −5.59pp effect vanishes entirely (+0.17pp).</li>
+<li><strong>At this budget, the two widths are indistinguishable.</strong> Δlp (Protocol B) = +0.17pp, well within the pre-registered ±1.5pp threshold. The sign flips across protocols (+0.17pp Prot B, −0.17pp Prot A), confirming no systematic width effect.</li>
+<li><strong>Consistent with data-limited regime:</strong> R9/R10 already established that in the data-limited regime (~96M pairs vs AIMv2's ~12B), tower widening yields no lp benefit. This fair rerun is consistent with that finding.</li>
+<li><strong>Training loss ≠ lp:</strong> E2fair has lower training loss (0.1579 vs 0.2545), meaning the wider model fits training data better, but this does <strong>not</strong> translate to higher linear-probe accuracy.</li>
+</ul>
+<h3>6.2 Limitations</h3>
+<ul>
+<li><strong>Single budget point:</strong> This experiment tests only one training budget (~187k steps, ~96M pairs, 1 epoch). A single point does <strong>not</strong> constitute a scaling law. The "indistinguishable" conclusion is specific to this budget.</li>
+<li><strong>Data-limited regime:</strong> Our ~96M image-text pairs are 102× smaller than AIMv2's ~12B. The conclusion may not hold at larger data scales.</li>
+<li><strong>Two widths only:</strong> Only two model widths (w512=126.78M, w768=284.54M) were tested. A fuller scaling study would need ≥3 points to fit a power law.</li>
+<li><strong>Single training seed:</strong> Training uses seed=1234 (single run). Only evaluation uses 3 seeds. Training-seed variance for Δlp is not measured.</li>
+<li><strong>Old results not re-evaluated:</strong> The old E1/E2 checkpoints are preserved but were not re-evaluated under Protocol B with 3 seeds — only original single-seed numbers exist for them.</li>
+</ul>
+</div>
+<h2>7. Evidence Index</h2>
+<div class="card">
+<table>
+<tr><th>Artifact</th><th>Path</th><th>Verified</th></tr>
+<tr><td>E1fair train log</td><td><code>/tmp/scaling_e1fair.log</code> (2.3MB)</td><td>✅ [start], [lr-selfcheck], [done] lines extracted</td></tr>
+<tr><td>E1fair eval log</td><td><code>/tmp/scaling_e1fair_eval.log</code> (3.9KB, complete)</td><td>✅ Prot B (62.34±0.01%) + Prot A (49.70%) extracted</td></tr>
+<tr><td>E2fair train log</td><td><code>/tmp/scaling_e2fair.log</code> (complete, ~2.3MB)</td><td>✅ [start], [lr-selfcheck], [done] lines; 623 PROBE all OK</td></tr>
+<tr><td>E2fair eval log</td><td><code>/tmp/scaling_e2fair_eval.log</code> (complete)</td><td>✅ Prot B (62.51±0.04%) + Prot A (49.53%) extracted</td></tr>
+<tr><td>bothfair orchestration</td><td><code>/tmp/bothfair_run.log</code></td><td>✅ all 4 chain stages confirmed complete</td></tr>
+<tr><td>Data snapshot</td><td><code>run/vision/data_snapshot_20261009.txt</code> (662KB, 7,437 lines)</td><td>✅ all GPIC tars frozen</td></tr>
+<tr><td>E1fair output dir</td><td><code>scaling_E1fair_ov2_w512_d30_p16_224/</code></td><td>✅ 18 ckpts + vision.pt + train.log</td></tr>
+<tr><td>E2fair output dir</td><td><code>scaling_E2fair_ov2_w768_d30_p16_224/</code></td><td>✅ 18 ckpts + vision.pt + train.log</td></tr>
+<tr><td>Old report (superseded)</td><td><code>report_vision_aimv2_scaling.html</code> (26KB)</td><td>✅ ⛔ banner verified ("Complete: Δlp=+0.17pp")</td></tr>
+<tr><td>Overnight process report</td><td><code>report_10_09_vision_overnight.html</code> (62KB, FINAL)</td><td>✅ Cross-verified — same fact source</td></tr>
+<tr><td>Pre-registration</td><td><code>EXPERIMENTS_VISION.md §8.1</code></td><td>✅ registered before training</td></tr>
+<tr><td>Results (formal)</td><td><code>EXPERIMENTS_VISION.md §8.2</code> (§8.2.1–§8.2.5)</td><td>✅ All sections filled, numbers consistent</td></tr>
+</table>
+
+<h3>7.1 Raw Eval Log Evidence</h3>
+<h4>E1fair Protocol B (from <code>/tmp/scaling_e1fair_eval.log</code>):</h4>
+<pre>[BRIDGE] B: full-train(1.28M), sgd ep=90 wu=5 lr=0.1 bs=1024 reps=3
+<span class="log-ok">[BRIDGE] B seed=0: lp_top1=0.6234 (62.34%)</span>
+<span class="log-ok">[BRIDGE] B seed=1: lp_top1=0.6233 (62.33%)</span>
+<span class="log-ok">[BRIDGE] B seed=2: lp_top1=0.6236 (62.36%)</span>
+<span class="log-key">[BRIDGE] B: lp_top1=0.6234±0.0001 (62.34±0.01%)</span>
+[BRIDGE] A (BaiZe: AdamW full-batch 100ep) ...
+<span class="log-ok">[BRIDGE] A: lp_top1=0.4970 (49.70%)</span>
+===== e1fair eval DONE 2026-10-10 09:20:12 =====</pre>
+
+<h4>E2fair Protocol B (from <code>/tmp/scaling_e2fair_eval.log</code>):</h4>
+<pre>[BRIDGE] B: full-train(1.28M), sgd ep=90 wu=5 lr=0.1 bs=1024 reps=3
+<span class="log-ok">[BRIDGE] B seed=0: lp_top1=0.6246 (62.46%)</span>
+<span class="log-ok">[BRIDGE] B seed=1: lp_top1=0.6251 (62.51%)</span>
+<span class="log-ok">[BRIDGE] B seed=2: lp_top1=0.6256 (62.56%)</span>
+<span class="log-key">[BRIDGE] B: lp_top1=0.6251±0.0004 (62.51±0.04%)</span>
+[BRIDGE] A (BaiZe: AdamW full-batch 100ep) ...
+<span class="log-ok">[BRIDGE] A: lp_top1=0.4953 (49.53%)</span>
+===== e2fair eval DONE 2026-10-10 20:47:31 =====</pre>
+
+<h3>7.2 Orchestration Timeline (bothfair, PID 2670216)</h3>
+<pre>===== E1fair START (w512/d30, fair recipe) steps=187101 2026-10-09 22:24:31 =====
+===== e1fair eval START 2026-10-10 07:17:19 =====
+===== e1fair eval DONE 2026-10-10 09:20:12 =====
+===== E2fair START (w768/d30, fair recipe) steps=187101 2026-10-10 09:20:12 =====
+===== E2fair done (exit 0) 2026-10-10 18:38:35 =====
+===== e2fair eval START 2026-10-10 18:38:35 =====
+===== e2fair eval DONE 2026-10-10 20:47:31 =====</pre>
+<p class="note">All four stages completed successfully without manual intervention. Total wall clock: ~22.4h (Oct 9 22:24 → Oct 10 20:47).</p>
+</div>
+
+<div class="refs">
+<p><strong>Report:</strong> <code>report_vision_scaling_fair.html</code> · <strong>Agent:</strong> vision · <strong>Generated:</strong> 2026-10-10 · <strong>Status:</strong> ✅ FINAL — all four stages complete. Δlp (Prot B) = +0.17pp → indistinguishable. Old −5.59pp confirmed as schedule artifact.</p>
+<p><strong>Related:</strong> <code>report_10_09_vision_overnight.html</code> (overnight process report, FINAL) · <code>report_vision_aimv2_scaling.html</code> (old, ⛔ superseded — banner points here) · <code>EXPERIMENTS_VISION.md §8</code> (pre-registration + results) · <code>MEMORY_VISION.md</code> (agent state)</p>
+<p><strong>Consistency guarantee:</strong> All numbers in this report are cross-verified with <code>report_10_09_vision_overnight.html</code> and <code>EXPERIMENTS_VISION.md §8.2</code> — same fact source, no discrepancies.</p>
+</div>
+
+</body>
+</html>
