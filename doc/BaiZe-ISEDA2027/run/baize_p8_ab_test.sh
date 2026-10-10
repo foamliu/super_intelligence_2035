@@ -48,7 +48,11 @@ start_vram_monitor() {
         sleep 5
     done
 }
+
 stop_vram_monitor() {
+    [ -n "$VRAM_PID" ] && kill "$VRAM_PID" 2>/dev/null
+    VRAM_PID=""
+}
 
 # ========== Run one arm ==========
 run_arm() {
@@ -89,6 +93,7 @@ run_arm() {
         awk '{for(i=1;i<=NF;i++){if($i~/max_per_gpu=/){gsub(/max_per_gpu=/,"",$i);gsub(/MiB/,"",$i);v=$i+0;if(v>max)max=v}}} END{print "  peak_VRAM="max"MiB ("max/1024"GB)"}' "$vram_log" | tee -a "$summary"
     fi
     return $rc
+}
 
 # ========== Pre-flight: GPU must be free (P-8 paused) ==========
 echo "===== P-8 MBS A/B test @ $(date '+%F %T') =====" | tee "$LOGDIR/baize_p8_ab.log"
@@ -117,10 +122,4 @@ echo "Arm B(MBS=3/GBS=1032) rc=${ARM_B_RC}" | tee -a "$LOGDIR/baize_p8_ab.log"
 echo "Criteria: 1)tok/s B>=A*1.12  2)peakVRAM B<=76GB  3)loss@300 consistent" | tee -a "$LOGDIR/baize_p8_ab.log"
 echo "If pass: P-8 switch MBS=3/GBS=1032, 10409 steps/warmup520/decay1041/save1041" | tee -a "$LOGDIR/baize_p8_ab.log"
 echo "If fail: restore MBS=2/GBS=1024 original (10490/524/1049/1049)" | tee -a "$LOGDIR/baize_p8_ab.log"
-
-}
-
-    [ -n "$VRAM_PID" ] && kill "$VRAM_PID" 2>/dev/null
-    VRAM_PID=""
-}
 
