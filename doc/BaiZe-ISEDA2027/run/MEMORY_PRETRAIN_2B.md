@@ -2,11 +2,12 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **Muon 报告刷新 + 昨夜汇报 ✅ 完成**（2026-10-10）— Muon loss 3.11 vs AdamW 4.00（−22.3%），但 Muon 吞吐 87K vs AdamW 118K tok/s（−26%），显存 53.8GB vs 39.0GB（+38%）。报告 `report_pretrain_muon_vs_adamw.html` 已生成（22.5KB, 已刷新至28.6KB）。两步运维指令（①对比基准 ②Muon vs AdamW）均已完成 → 本轮加做报告刷新+昨夜汇报。
-- PHASE: **两份报告刷新/生成完成 → converged**，等待运维下一步指令
+- STAGE: **Muon 报告刷新 + 昨夜汇报 ✅ 完成+已推送**（2026-10-10）— Muon loss 3.11 vs AdamW 4.00（−22.3%），吞吐 87K vs 118K（−26%），显存 53.8 vs 39.0GB（+38%）。两份报告均已 commit 9fb2c7f8 + push ✅。
+- PHASE: **converged** — 两份报告刷新/生成完成并已推送，等待运维下一步指令
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。**全 8 GPU 空闲**（.29, 08:26 核验）。**P-8 暂缓令未撤**。📦 体积：TASK=32.5KB（略超32KB, 已归档2块, <40KB红线）/ MEMORY=29.7KB ≤32KB ✅。🚫绝不 kill watchdog loop
-- 🩺 **本唤醒推进 = #258（2026-10-10, Muon报告刷新+昨夜汇报+TASK归档）**：① git fetch → 0/0 ✅。② **运维指令·2026-10-10 两项交付**：(a) 刷新 `report_pretrain_muon_vs_adamw.html` → 加 §7「外部基准对照与 overhead 归因」(28.6KB) — −26%吞吐/+38%显存均标注为 plain Muon 实现伪影非算法固有, 引 NVIDIA blog/arXiv 2502.16982/2505.02222/Keller Jordan blog; P-8建议方案A升级为「NVIDIA near-parity 实证支撑」, 显存列为「P-8 前待查项」, 加诚实声明; (b) 生成 `report_10_09_pretrain_overnight.html` (11.6KB) — 汇总①DM对比(hybrid 2M vs DM 1M, 2×优势) ②Muon A/B(loss 3.11 vs 4.00, −22.3%), 含 P-8启示节。③ **TASK归档**：运维调整/运维更正两块(2026-10-09)搬入 ARCHIVE_OPERATOR_PRETRAIN.md + 留1行指针。④ 体积自检：TASK=33233B(32.5KB) / MEMORY=30429B(29.7KB)。→ 下一步：等待运维下一步指令。WAITING=1。git：commit aaa00ca0 ✅ 但 push 失败（HTTP 503 proxy, 重试1次仍失败）→ **下一轮唤醒第一件事补推**。
+- 轮询状态：30min 长轮询。**全 8 GPU 空闲**（.29, 09:44 核验）。**P-8 暂缓令未撤**。📦 体积：TASK=33233B(32.5KB, 略超32KB, <40KB红线) / MEMORY=30756B(30.0KB) ≤32KB ✅。🚫绝不 kill watchdog loop
+- 🩺 **本唤醒推进 = #259（2026-10-10 09:44, 补推确认+心跳修正）**：① git fetch → status 0/0 ✅（工作区仅 harness 线 kimi_pilot_results.json modified, 非本线不碰）。② **补推确认**：reflog 显示 #258 commit aaa00ca0 → amend → 9fb2c7f8 已成功推送（其他 agent pull --rebase 已拉入, git log 见 9fb2c7f8 在 main 上, status 0/0）→ **上轮「push 失败」记录更正为「已推送」**。③ GPU 核验：.29 GPU0-7 全 0MiB/0% ✅。④ 体积自检：TASK=33233B(32.5KB) / MEMORY=30756B(30.0KB)。→ 下一步：等待运维下一步指令。WAITING=1。git：本次 push。
+> 📦 **[已归档] #258 流水（2026-10-10, Muon报告刷新+昨夜汇报+TASK归档）→ daily-memories/2026-10-10.md；结论：两份报告(Muon 28.6KB+昨夜 11.6KB)已生成+commit 9fb2c7f8+push ✅, TASK归档2块。需要时再读。**
 > 📦 **[已归档] #257 流水（2026-10-10 08:26, 状态核查）→ daily-memories/2026-10-10.md；结论：GPU全空闲, git 0/0, 两步运维指令均完成, 无需归档。需要时再读。**
 > 📦 **[已归档] #254 流水（2026-10-10 06:50, Muon vs AdamW A/B 结果回收+报告+TASK归档）→ daily-memories/2026-10-10.md；结论：Muon loss 3.11 vs AdamW 4.00(−22.3%), 吞吐 87K vs 118K(−26%), VRAM 53.8 vs 39.0GB(+38%), 报告 22.5KB 已 commit f53ec86d+push。需要时再读。**
 > 📦 **[已归档] #252 流水（2026-10-10 01:22, P-9.11-F 报告生成）→ daily-memories/2026-10-10.md；结论：DM 1M 数据落地, 报告 v2 生成(23.6KB/5表/SVG), warmup 修正 281×→24.5×, DM 2M 待测。需要时再读。**
