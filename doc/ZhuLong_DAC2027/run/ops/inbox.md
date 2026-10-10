@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 30 -->
+<!-- RUN_ID: 31 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,44 @@
 
 ---
 
+## RUN_ID 31 — 🔎 验证 EDA_MCP_PORT=8090 是否被继承（中继是「非交互 bash」，不读 ~/.bashrc）
+
+**背景**：用户 2026-10-10 指出 MCP 端口 = **8090**（非 18889），并说已在 36.15 `~/.bashrc` 设置该环境变量"应该可以继承"。但 **RUN_ID 29 已证明中继（非交互 bash）不读 `~/.bashrc`**（loop 找不到 `cline`）。本块核实：中继 env / `.bashrc` / loop environ / MCP 监听 / cline MCP 配置。
+
+```bash
+# RUN_ID 31 — verify EDA_MCP_PORT=8090 inheritance
+echo "== RUN_ID 31 @ $(date '+%F %T') host=$(hostname) =="
+
+echo "== 1. relay env (non-interactive bash) =="
+echo "EDA_MCP_PORT=[${EDA_MCP_PORT:-<UNSET>}]"
+echo "PATH=[$PATH]" | cut -c1-200
+
+echo "== 2. ~/.bashrc has EDA_MCP_PORT? =="
+grep -n 'EDA_MCP_PORT' ~/.bashrc 2>&1 | cut -c1-160
+
+echo "== 3. MCP server listening on 8090? =="
+ss -lntp 2>/dev/null | grep -E ':8090' | cut -c1-160
+timeout 10 pgrep -af 'eda_fastmcp|main.py' | cut -c1-160
+
+echo "== 4. eda_fastmcp/.env port =="
+grep -nE '^#?[[:space:]]*EDA_MCP_PORT' /nasdata/app.e0031982/code/eda_fastmcp/.env 2>&1 | cut -c1-120
+
+echo "== 5. restarted loop environ (has EDA_MCP_PORT? PATH ok?) =="
+LPID=$(pgrep -f 'zhulong_loop.sh' | head -1); echo "loop pid=${LPID:-<none>}"
+[ -n "${LPID:-}" ] && tr '\0' '\n' < /proc/$LPID/environ 2>/dev/null | grep -E 'EDA_MCP_PORT|^PATH=' | cut -c1-220
+
+echo "== 6. which port does cline's MCP config point to? =="
+grep -rnE '8090|pyAether|eda_fastmcp' ~/.cline/data/settings/ 2>/dev/null | cut -c1-160 | head -8
+grep -rnE '8090|pyAether|eda_fastmcp' /nasdata/app.e0031982/.cline_zhulong/ 2>/dev/null | cut -c1-160 | head -8
+
+echo "== DONE =="
+```
+
 ## RUN_ID 30 — 🔧 修 loop PATH（cline@~/.bun/bin）+ 去重保证单个 loop
 
 **背景**：RUN_ID 29 重启的 loop 日志报 `env: 'cline': No such file or directory`（中继非交互 env 缺 `~/.bun/bin`）→ loop **静默失效**；且出现 **2 个 loop 进程**。本条：停全部 loop → 带 `~/.bun/bin` PATH 重启**单个** loop，并校验 `cline` 可解析、loop 能真正拉起 cline。
 
-```bash
+```text
 # RUN_ID 30 — fix loop PATH (cline@~/.bun/bin) + ensure single loop
 echo "== RUN_ID 30 @ $(date '+%F %T') host=$(hostname) =="
 cd /nasdata/app.e0031982/code/super_intelligence_2035 2>/dev/null || cd /nas_train/app.e0031982/code/super_intelligence_2035 || true
