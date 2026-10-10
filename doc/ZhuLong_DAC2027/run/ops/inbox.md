@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 28 -->
+<!-- RUN_ID: 29 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,73 @@
 
 ---
 
+## RUN_ID 29 — 🛑 删防作弊 hook + 停评测 + 重启 zhulong loop + 采集 timeout 取证
+
+**背景**：用户令「先用 ops 中继：① 删 `~/.cline/hooks/PreToolUse` ② 停下评测 ③ 重启 zhulong loop（重启前把唤醒周期降到 30min —— 经确认 `SLEEP_WAIT=1800s` 本就是 30min，无需改）」，并要求排查连续多日的评测 timeout 根因。
+
+```bash
+# RUN_ID 29 — del hook + stop eval + restart loop + timeout evidence
+echo "== RUN_ID 29 @ $(date '+%F %T') host=$(hostname) =="
+cd /nasdata/app.e0031982/code/super_intelligence_2035 2>/dev/null || cd /nas_train/app.e0031982/code/super_intelligence_2035 || true
+echo "cwd=$(pwd)"
+
+echo "== 1. BEFORE: eval / loop state =="
+ps -eo pid,ppid,etime,state,cmd | grep -E 'run_cline_script|run_eval|zhulong_loop' | grep -v grep | cut -c1-160
+
+echo "== 2. DELETE anti-cheat hook ~/.cline/hooks/PreToolUse =="
+ls -la ~/.cline/hooks/ 2>&1 | cut -c1-160
+if [ -e ~/.cline/hooks/PreToolUse ]; then
+  echo "type=$(stat -c '%F' ~/.cline/hooks/PreToolUse 2>/dev/null)"
+  rm -rf ~/.cline/hooks/PreToolUse 2>&1; echo "rm exit=$?"
+else
+  echo "(PreToolUse not present)"
+fi
+echo "-- after --"; ls -la ~/.cline/hooks/ 2>&1 | cut -c1-160
+
+echo "== 3. STOP eval (r2_new2 retry#1) =="
+pkill -TERM -f 'run_cline_script' 2>&1; echo "pkill -TERM run_cline exit=$?"
+pkill -TERM -f 'run_eval.py' 2>&1; echo "pkill -TERM run_eval exit=$?"
+sleep 4
+pkill -KILL -f 'run_cline_script' 2>&1; echo "pkill -KILL run_cline exit=$?"
+pkill -KILL -f 'run_eval.py' 2>&1; echo "pkill -KILL run_eval exit=$?"
+sleep 2
+echo "-- after: expect empty --"
+ps -eo pid,ppid,etime,cmd | grep -E 'run_cline_script|run_eval' | grep -v grep | cut -c1-160
+
+echo "== 4. EVIDENCE: timeout / MCP / hook in eval logs =="
+for f in /tmp/ABL_full_r2_new2.log /tmp/ABL_full_r2_new.log; do
+  [ -f "$f" ] || { echo "$f (missing)"; continue; }
+  echo "--- $f : $(wc -l < "$f") lines / $(du -h "$f" | cut -f1) ---"
+  echo "timeout(all)=$(grep -c -i 'timeout' "$f")  MCP-32001=$(grep -c '32001' "$f")  ACCESS_RESTRICTED=$(grep -c 'ACCESS RESTRICTED' "$f")  Forbidden=$(grep -c 'Forbidden' "$f")"
+  echo "PASS_RATE lines:"; grep -E 'PASS_RATE|评估结果汇总' "$f" | tail -3 | cut -c1-200
+  echo "sample timeout lines:"; grep -i 'timeout' "$f" | head -3 | cut -c1-200
+  echo "last 5 lines:"; tail -5 "$f" | cut -c1-200
+done
+
+echo "== 5. Port TCP connect probe (9 ports, 10.129.32.75) =="
+for p in 8663 8666 8667 8670 8650 8651 8652 8653 8654; do
+  (timeout 5 bash -c "echo > /dev/tcp/10.129.32.75/$p" 2>/dev/null && echo "port $p: TCP-OPEN") || echo "port $p: CLOSED/UNREACHABLE"
+done
+
+echo "== 6. RESTART zhulong loop (SLEEP_WAIT should be 1800=30min) =="
+grep -E '^SLEEP_BUSY=|^SLEEP_WAIT=|^CLINE_TIMEOUT=' doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+pkill -f 'zhulong_loop.sh' 2>&1; echo "pkill loop exit=$?"; sleep 3
+ps -eo pid,cmd | grep 'zhulong_loop.sh' | grep -v grep | cut -c1-160
+export https_proxy=http://172.19.92.23:13128
+export http_proxy=http://172.19.92.23:13128
+setsid bash doc/ZhuLong_DAC2027/run/zhulong_loop.sh > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+sleep 4
+echo "-- new loop --"; ps -eo pid,ppid,etime,cmd | grep 'zhulong_loop.sh' | grep -v grep | cut -c1-160
+echo "-- loop log tail --"; tail -3 /tmp/zhulong_loop.log 2>&1 | cut -c1-200
+
+echo "== DONE (hook deleted / eval stopped / loop restarted) =="
+```
+
 ## RUN_ID 28 — 🛑 kill r2-retest#5 (PID 1471081, 旧沙盒) + 验证新专属端口 8663/8666/8667/8670
 
 **背景**：agent 在读新指令前已启动 r2-retest#5（PID 1471081, ~10:19, 旧沙盒 8650-8654）。.env 已改为新端口 8663/8666/8667/8670。需 kill r2-retest#5 让 agent 发现 IDLE → 读 2026-10-10(一) 指令 → 从 r1 重测。同时验证新端口可达。
 
-```bash
+```text
 # RUN_ID 28 — kill r2-retest#5 + verify new dedicated sandbox ports
 echo "== RUN_ID 28: kill r2-retest#5 + verify new ports @ $(date '+%F %T') =="
 
