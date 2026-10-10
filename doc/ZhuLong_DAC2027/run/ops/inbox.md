@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 27 -->
+<!-- RUN_ID: 28 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,7 +24,54 @@
 
 ---
 
-## RUN_ID 27 — 🛑 kill r2-retest#4 + 验证新专属沙盒端口 8663/8666/8667/8670
+## RUN_ID 28 — 🛑 kill r2-retest#5 (PID 1471081, 旧沙盒) + 验证新专属端口 8663/8666/8667/8670
+
+**背景**：agent 在读新指令前已启动 r2-retest#5（PID 1471081, ~10:19, 旧沙盒 8650-8654）。.env 已改为新端口 8663/8666/8667/8670。需 kill r2-retest#5 让 agent 发现 IDLE → 读 2026-10-10(一) 指令 → 从 r1 重测。同时验证新端口可达。
+
+```bash
+# RUN_ID 28 — kill r2-retest#5 + verify new dedicated sandbox ports
+echo "== RUN_ID 28: kill r2-retest#5 + verify new ports @ $(date '+%F %T') =="
+
+echo "== 1. BEFORE kill: current eval process =="
+ps -eo pid,ppid,etime,state,cmd | grep -E '1471081|run_cline_script|run_eval' | grep -v grep | cut -c1-140
+
+echo "== 2. KILL r2-retest#5 (PID 1471081) + children =="
+kill -TERM 1471081 2>&1; echo "kill -TERM 1471081 exit=$?"
+sleep 3
+pkill -TERM -P 1471081 2>&1; echo "pkill -P 1471081 exit=$?"
+sleep 2
+kill -KILL 1471081 2>&1; echo "kill -KILL 1471081 exit=$?"
+pkill -KILL -P 1471081 2>&1; echo "pkill -KILL -P 1471081 exit=$?"
+sleep 1
+
+echo "== 3. KILL any stray run_eval.py =="
+pkill -KILL -f 'run_eval.py' 2>&1; echo "pkill run_eval exit=$?"
+pkill -KILL -f 'run_cline_script' 2>&1; echo "pkill run_cline exit=$?"
+sleep 1
+
+echo "== 4. AFTER kill: verify no eval processes remain =="
+ps -eo pid,ppid,etime,state,cmd | grep -E 'run_cline_script|run_eval' | grep -v grep | cut -c1-140
+echo "(empty above = clean kill ✅)"
+
+echo "== 5. Verify NEW dedicated sandbox ports 8663/8666/8667/8670 =="
+for p in 8663 8666 8667 8670; do
+  echo -n "port $p: "; timeout 10 curl -s -o /dev/null -w 'HTTP=%{http_code} TIME=%{time_total}s' http://10.129.32.75:$p 2>&1; echo
+done
+
+echo "== 6. .env verify (should show 8663/8666/8667/8670) =="
+grep -E '^PROXY_PORTS|^SANDBOX_ENDPOINTS' /nasdata/app.e0031982/code/eda_fastmcp/.env
+
+echo "== 7. pro-fp4 new key still 200? =="
+timeout 15 curl --noproxy '*' -s -w '\nHTTP=%{http_code} TIME=%{time_total}s SIZE=%{size_download}B\n' \
+  -X POST http://agi-gateway.cxmt.com/cloud/v1/chat/completions \
+  -H "Authorization: Bearer 02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e" \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-fp4","messages":[{"role":"user","content":"Say OK"}],"max_tokens":10}' 2>&1 | tail -3
+
+echo "== 8. zhulong_loop alive? (PID 3579323 - DO NOT KILL) =="
+ps -eo pid,ppid,etime,state,cmd | grep '3579323' | grep -v grep | cut -c1-140
+
+echo "== DONE — r2-retest#5 killed, new ports verified, agent will restart C1.full from r1 =="
 
 **背景**：用户 2026-10-10 通知切换到专属沙盒端口 8663/8666/8667/8670（workdir e0031982_1~4, host 不变 10.129.32.75），.env 已改。C1.full 现有评测全部作废需重测。当前 r2-retest#4（PID 459294）仍在旧沙盒上跑，需 kill 后验证新端口可达。
 
