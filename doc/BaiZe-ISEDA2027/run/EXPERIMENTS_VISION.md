@@ -756,9 +756,9 @@ Under the AIMv2-style dense objective at a fixed 1-epoch budget over 95.8M image
 ===== e1fair eval DONE 2026-10-10 09:20:12 =====
 ```
 
-#### 8.2.4 E2fair — 🔄 Training In Progress
+#### 8.2.4 E2fair — ✅ Training Complete (2026-10-10 18:38) + ✅ Evaluation Complete (2026-10-10 20:47)
 
-E2fair training started 09:20:12 Oct 10 (auto-chained after E1fair eval completed). Currently at step ~9,850/187,101 (~5.3%), ~4,900 img/s, loss_ema ~0.6, 33 PROBE events all C4=OK, 0 fusing, no collapse. GPU: 8/8 active, 67–92% util, ~24.9 GB/card. lr=4.98e-04 (warmup phase). ETA: train done ~14:30 Oct 10 (~5.2h total) → eval ~3.5h → all done ~18:00 Oct 10.
+E2fair training completed at 18:38:35 Oct 10 (exit 0, 187,101 steps, final_loss=0.1579, 623 PROBE all OK, no collapse, 3,996.8 img/s). E2fair evaluation completed at 20:47:31 Oct 10 (Protocol B: 3 seeds; Protocol A: 1 seed).
 
 **E2fair [start] line** (from `/tmp/scaling_e2fair.log`):
 ```
@@ -769,6 +769,22 @@ E2fair training started 09:20:12 Oct 10 (auto-chained after E1fair eval complete
 
 E2fair's `[start]` line and lr self-check are byte-identical to E1fair's — confirming only `--width 768` differs. `total_shards=10787` matches exactly.
 
-#### 8.2.5 Δlp Comparison — ⏳ Pending
+**E2fair Evaluation Results** (from `/tmp/scaling_e2fair_eval.log`):
+- Protocol B (3-seed mean±σ): **62.51 ± 0.04%** (seeds: 62.46%, 62.51%, 62.56%)
+- Protocol A: **49.53%**
+- Old E2 (unfair schedule): Prot B = 23.76%, Prot A = 15.59%
+- Δ Prot B (fair − old) = +38.75pp; Δ Prot A (fair − old) = +33.94pp
 
-Δlp = lp(E2fair_ProtB) − lp(E1fair_ProtB) = ⏳ − 62.34%. E2fair Protocol B result needed. ETA ~18:00 Oct 10.
+#### 8.2.5 Δlp Comparison — ✅ Complete (2026-10-10 20:47)
+
+Δlp = lp(E2fair_ProtB) − lp(E1fair_ProtB) = 62.51% − 62.34% = **+0.17pp**
+
+| Metric | E1fair (w512) | E2fair (w768) | Δ |
+|:--|:--|:--|:--|
+| Protocol B (3-seed) | 62.34 ± 0.01% | 62.51 ± 0.04% | **+0.17pp** |
+| Protocol A | 49.70% | 49.53% | −0.17pp |
+| Final loss | 0.2545 | 0.1579 | −0.097 (E2 lower) |
+
+**Pre-registered verdict**: |Δlp| = 0.17pp ≤ 1.5pp → **NOT SUPPORTED as a scaling benefit.** The two widths are **indistinguishable** at this budget. The sign flips across protocols (+0.17pp Prot B, −0.17pp Prot A), confirming no systematic width effect.
+
+**The old "bigger is WORSE" conclusion (Δlp = −5.59pp) was a schedule artifact.** Under the fair cosine schedule, the −5.59pp effect vanishes entirely (+0.17pp). The fair schedule improved both arms dramatically (+33pp E1, +38.75pp E2), with E2 improving more — directly confirming the old `3e-3/warmup20/const` disproportionately hurt the wider model.
