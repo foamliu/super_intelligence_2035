@@ -5,8 +5,9 @@ WAITING: 1
 - STAGE: **dist_muon 重测完成 ✅**（2026-10-10 11:48）— 三路对比：dist_muon loss 3.110 / 122K tok/s / 37.3GB，消除 plain Muon 两项代价。P-8 暂缓令未撤。
 - PHASE: **converged** — dist_muon 实测验证完成，P-8 等待运维撤暂缓令
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。**全 8 GPU 空闲**（.29）。**P-8 暂缓令未撤**（data 线报告"P-8数据层全就绪"，但运维未撤暂缓令）。📦 体积：TASK=31015B(30.3KB) / MEMORY=30.7KB 均 ≤32KB ✅。🚫绝不 kill watchdog loop
-- 🩺 **本唤醒推进 = #265（2026-10-10 14:07, 状态核查）**：① git fetch → status 0/0 ✅（仅 harness 线 kimi_pilot_results.json modified，非本线）。② dist_muon 实验已在 #262 完成：报告 37.2KB ✅ + EXPERIMENTS §dist_muon ✅（未变）。③ GPU 0-7 全 0MiB/0%，无 compute apps ✅。④ watchdog PID 1391466 ✅。⑤ P-8 暂缓令未撤；TASK 中 `⏸ 运维 2026-10-02 指令：P-8 暂缓启动` 仍在。⑥ 体积：TASK=31015B(30.3KB) / MEMORY=30778B(30.1KB) 均 ≤32KB ✅ 无需归档。→ 下一步：等运维撤 P-8 暂缓令 / 下发新指令。WAITING=1。
+- 轮询状态：30min 长轮询。**全 8 GPU 空闲**（.29）。**P-8 暂缓令未撤**（data 线 #294 报告"P-8数据层全就绪+en_v1_4放行条件已满足"，但运维未撤暂缓令）。📦 体积：TASK=32257B(31.5KB) / MEMORY=31.0KB 均 ≤32KB ✅。🚫绝不 kill watchdog loop
+- 🩺 **本唤醒推进 = #266（2026-10-10 14:40, 状态核查）**：① git fetch → status 0/0 ✅（仅 harness 线 kimi_pilot_results.json modified，非本线）。② dist_muon 实验已在 #262 完成：报告 ✅ + EXPERIMENTS ✅（未变）。③ GPU 0-7 全 0MiB/0%，无 compute apps ✅。④ watchdog PID 1391466 ✅。⑤ P-8 暂缓令未撤；TASK 无新运维指令（最新 TASK commit=08d3a149 dist_muon默认）。⑥ data 线 #294 报告 GPIC下载全部完成+P-8数据层全就绪 → **P-8 数据前置已满足**，但仍需运维**显式撤暂缓令**才能启动。⑦ 体积：TASK=32257B(31.5KB) / MEMORY=30986B(30.3KB) 均 ≤32KB ✅ 无需归档。→ 下一步：等运维撤 P-8 暂缓令 / 下发新指令。WAITING=1。
+> 📦 **[已归档] #265 流水（2026-10-10 14:07, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8暂缓令未撤, 无新指令。需要时再读。**
 > 📦 **[已归档] #264 流水（2026-10-10 13:33, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8暂缓令未撤, data前置接近完成。需要时再读。**
 > 📦 **[已归档] #263 流水（2026-10-10 13:01, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8暂缓令未撤。需要时再读。**
 > 📦 **[已归档] #262 流水（2026-10-10 12:14, dist_muon 重测+报告刷新）→ daily-memories/2026-10-10.md；结论：dist_muon loss 3.110/122K tok/s/37.3GB, 消除 plain Muon −26%/+38% 两项代价, 报告36.3KB已刷新。需要时再读。**
