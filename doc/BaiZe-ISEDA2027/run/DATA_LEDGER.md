@@ -15,7 +15,7 @@
 | 通用文本·退火 | UltraData-Code | **1121 parquet / 1.22 TB**，≈**411B token**（L2 355B + L3 56B） | ✅ 已下载 | 退火 code |
 | 通用文本·退火 | UltraData-Math | **1823 parquet / 552 GB**，≈**303B token**（L1 184B + L2p 32B + L3 87B） | ✅ 已下载 | 退火 math |
 | 通用文本·SFT | UltraData-SFT-2605 / -Agent-2609 | **2605 ✅ 已下满（1504 jsonl / 318,990,252,711 B = 318.99GB，与 HF 官方清单逐字节一致；0 .incomplete）**；Agent-2609=jsonl 50shard/51GiB | ✅ 就绪 | Stage(ii) SFT |
-| 通用多模态 | LLaVA-OneVision-1.5 Mid-85M | **HF总量=12,124files/46.66TB（8子集：coyo1940+datacomp575+imagenet82+laioncn562+mint705+obelics5803+sa1b1147+zero250m1310，HfApi核实2026-10-10）**；本地已下=**7,721parquet/27T（57.8%）**：6子集完成(coyo+datacomp+imagenet+laioncn+mint+obelics部分3857/5803)，**sa1b+zero250m未开始** | 🔄 下载中（PID2171453,~11.1MB/s,剩余~19.66TB,ETA~20天,用户自管） | 视觉编码器 + MLLM 对齐 |
+| 通用多模态 | LLaVA-OneVision-1.5 Mid-85M | **HF总量=12,124files/46.66TB（8子集：coyo1940+datacomp575+imagenet82+laioncn562+mint705+obelics5803+sa1b1147+zero250m1310，HfApi核实2026-10-10）**；本地已下=**7,749parquet/27T（57.9%）**：6子集完成(coyo+datacomp+imagenet+laioncn+mint+obelics部分3885/5803)，**sa1b+zero250m未开始** | 🔄 下载中（PID2171453,~11.9MB/s,剩余~19.66TB,ETA~19天,用户自管） | 视觉编码器 + MLLM 对齐 |
 | 通用多模态·已派生 | baize-vision/en500k | 25 tar / **68.59 GiB** | ✅ 已就绪 | Stage(iii) 四架构对比（完成） |
 | 通用多模态·已派生 | baize-vision/eval5k | 1 tar / **1.27 GiB**（laioncn/EN） | ✅ 已就绪 | 检索代理评估（held-out） |
 | **领域（EDA）** | PyAether/SKILL API 参考文档（`eda_fastmcp/docs/`）、EDA 工具文档、开源 HDL | **已确认来源 ≈45MB 纯文本**（API 参考文档） | 🟡 待授权确认 + 待入库 | Stage(ii) 领域退火 + SFT（最关键） |
