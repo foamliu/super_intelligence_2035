@@ -38,52 +38,65 @@
 > ⏱️ **判死判据（硬）**：**心跳文件 >60min 无新提交 ⇒ 按卡死处理**（不再等你）。**你干得再多，心跳不动 = 仍会被判死。**
 
 
-### 🆕 运维指令 · 2026-10-10（一）— 🔄 切换专属沙盒 + C1.full 全部作废从头重测 r1→r5【本次唤醒优先动作】
+### 🆕 运维指令 · 2026-10-10（二）— 🔄 专属沙盒就绪：先测试新端口 → 保留 r1 锚点 → 重跑 r2→r3→r4→r5【本次唤醒优先动作】
 
-> **来源**：用户 2026-10-10 通知「切换专属沙盒端口 8663/8666/8667/8670（workdir e0031982_1~4, host 不变 10.129.32.75），现有评测全部重测」。
-> **已执行**：运维已改 `.env`（`PROXY_PORTS=8663,8666,8667,8670` + `SANDBOX_ENDPOINTS=8663:e0031982_1,8666:e0031982_2,8667:e0031982_3,8670:e0031982_4`），ops RUN_ID 27 kill r2-retest#4 + 验证新端口可达。
-> **取代**：所有 2026-10-09 指令（二/三/四/五）全部降级为历史。C1.full **全部成绩作废**（r1=88.0% / r4=81.0% / r2/r3 全部复测结果），**从 r1 开始重跑 5 轮**。
+> **来源**：用户 2026-10-10 通知「4 个端口都配置好了，现在重启 full 的 r2-r5 以及后续试验，可以先测试一下」。
+> **核心决策**：**r1=88.0% 保留作锚点**（0 timeout、沙盒正常时跑的，不受旧沙盒间歇故障影响）。**只重跑 r2/r3/r4/r5**（均在旧不稳定沙盒上跑过，全部作废）。先做**沙盒端口实测**（非 curl 端口可达，而是**实跑一次 run_code** 确认沙盒能执行代码），全过才启动 r2。
+> **已执行**：运维已改 `.env`（`PROXY_PORTS=8663,8666,8667,8670` + `SANDBOX_ENDPOINTS=8663:e0031982_1,8666:e0031982_2,8667:e0031982_3,8670:e0031982_4`）；ops RUN_ID 27/28 已 kill r2-retest#4/#5 + .env 已验证为新端口。
+> **取代**：2026-10-10(一)「全部作废从 r1 开始」**作废**——改为本条「保留 r1，重跑 r2-r5」。所有 2026-10-09 指令降级历史。
 
 **本次唤醒的动作（按顺序）**：
 
-1. **确认 r2-retest#4 已被 kill**：`pgrep '^bash scripts/run_cline_script'` → 期望**无输出**。若有残留 → `kill -KILL` 清理。
+1. **确认 eval IDLE**：`pgrep '^bash scripts/run_cline_script'` → 期望**无输出**。若有残留 → `kill -KILL` 清理。
 
 2. **三项前置复检（全过才开跑）**：
-   - ① **pro-fp4 直连 200**：新 key `e13f4f37` + `deepseek-v4-pro-fp4` + `/cloud/v1` → HTTP 200 ✅
-   - ② **新专属沙盒端口可达**：`.env` 已改为 `8663/8666/8667/8670` @ `10.129.32.75` → 逐端口 curl 非 timeout ✅（ops RUN_ID 27 已验证）
+   - ① **pro-fp4 直连 200**：新 key `e13f4f37` + `deepseek-v4-pro-fp4` + `/cloud/v1` → HTTP 200 ✅（ops RUN_ID 28 已验证 HTTP=200）
+   - ② **新专属沙盒端口实测**（**重点**——不是 curl 端口可达，而是**实跑一次 run_code**）：
+     - `.env` 已改为 `8663/8666/8667/8670` @ `10.129.32.75`（workdir `e0031982_1~4`）。
+     - **实测方法**：用 `run_code` MCP 工具向**每个端口**发一个最简 pyAether 请求（如 `print("hello from port 8663")`），确认**返回非空 response 且 error_log 为空**。4 端口逐一测。
+     - **判据**：4/4 端口均能执行代码并返回正常 response → ✅ 通过；任一端口返回空/超时/error → ❌ 不通过 → `WAITING=1` 报告哪个端口挂了，等运维。
    - ③ **eval IDLE**：`pgrep '^bash scripts/run_cline_script'` 无输出 ✅
 
-3. **更新 MEMORY 状态头**：
-   - `ROUND` → **1**（从头开始）
+3. **沙盒实测全过 → 更新 MEMORY 状态头**：
+   - `ROUND` → **2**（从 r2 开始重跑，r1 保留）
    - `PHASE` → **`running`**
    - `WAITING` → **1**
-   - 成绩表 `C1.full` 行 → **全部清空作废**（r1=88.0% / r4=81.0% / r2/r3 全部标 ❌作废·换专属沙盒重测）
+   - 成绩表 `C1.full` 行：
+     - **r1=88.0% ✅ 保留**（锚点，不动）
+     - **r2=59.5% / r2-retest#1~#5 / r3=63.3% / r4=81.0% → 全部标 ❌作废·换专属沙盒重测**
    - 注明：旧沙盒 8650-8654 已弃用，新沙盒 8663/8666/8667/8670 workdir e0031982_1~4
 
-4. **启动 C1.full r1**（从头重测，四 override 必带）：
+4. **启动 C1.full r2 重测**（r2-retest on new sandbox，四 override 必带）：
    ```bash
    cd /nasdata/app.e0031982/code/eda_fastmcp
    export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
    export CLI_DATA_DIR=/nasdata/app.e0031982/.cline_prof4_eval/data
    export PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python
    export https_proxy=http://172.19.92.23:13128
-   setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_full_r1.log 2>&1 < /dev/null &
+   setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_full_r2_new.log 2>&1 < /dev/null &
    ```
-   - 启动后立刻核验四 override 在 `/proc/<pid>/environ` 生效 + `.env` 读到新端口 8663/8666/8667/8670。
+   - 启动后立刻核验：① 四 override 在 `/proc/<pid>/environ` 生效；② `.env` 读到新端口 8663/8666/8667/8670（不是旧 8650-8654）；③ 0 Forbidden。
 
-5. **commit + push**。
+5. **canary**：本批开跑前确认反作弊 hook live（一次应被拒的调用确实被拒；未被拒 → 立即停、本批作废）。
 
-**r1 收割后 → 依次推进 r2→r3→r4→r5**：
-- 收割：`grep -E 'pass \\(|PASS_RATE|评估结果汇总|timeout' /tmp/ABL_full_r1.log | tail -10` → 记 Pass@1 + timeout。
-- **判据**：`timeout ≤ 10 且 Pass@1 ≥ 75%` → 有效 → 启下一轮（log `/tmp/ABL_full_r2.log` → `r3` → `r4` → `r5`）。
+6. **commit + push**。
+
+**r2 收割后 → 依次推进 r3→r4→r5**：
+- 收割：`grep -E 'pass \\(|PASS_RATE|评估结果汇总|timeout' /tmp/ABL_full_r2_new.log | tail -10` → 记 Pass@1 + timeout。
+- **判据**：`timeout ≤ 10 且 Pass@1 ≥ 75%` → 有效 → 启下一轮（log `/tmp/ABL_full_r3_new.log` → `r4_new` → `r5_new`）。
 - 每轮同判据，**最多重跑 3 次**不达标 → 暂停 `WAITING=1` 等运维。
-- **5/5 全部有效** → 算 mean±std = `[r1, r2, r3, r4, r5]` → 回填 5 张表锚点 → `PHASE=just_finished` → 进 C2。
+- **4 轮全部有效** → 5-run = `[r1=88.0(保留), r2_new, r3_new, r4_new, r5_new]` → 算 mean±std → 回填 5 张表锚点 → `PHASE=just_finished` → 进 C2。
 
 **红线**：
+- ✅ **r1=88.0% 保留**（0 timeout，沙盒正常时跑的，不重跑）。
+- 🚫 r2/r3/r4/r5 **全部旧成绩作废**（旧不稳定沙盒上跑的，全部重测）。
 - 🚫 **不回退旧沙盒**（8650-8654 已弃用）。
-- 🚫 **不保留任何旧成绩**（全部在旧不稳定沙盒上跑的，全部作废）。
 - ✅ 保持新 key `e13f4f37` + `deepseek-v4-pro-fp4` + `/cloud/v1`。
+- ✅ **沙盒实测必须 4/4 全过才开跑**（任一端口挂 → WAITING 报告，不将就）。
 - ✅ B 阶段 + C1 其他 3 臂（pure_llm/rag/wo_retrieval）**不受影响**（已 5/5 ✅ 完成，不在沙盒切换范围）。
+
+
+### 🆕 运维指令 · 2026-10-10（一）— 🔄 切换专属沙盒 + C1.full 全部作废从头重测 r1→r5【已被(二)取代·历史】
 
 
 ### 🆕 运维指令 · 2026-10-09（五）— ✅ 沙盒已修复，可重跑 C1.full r4【已被 2026-10-10(一) 取代·历史】
