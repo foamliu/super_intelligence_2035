@@ -1,0 +1,737 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/PF6bCgZwwr0as/rCVWMK7yrHF6c</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.11959,2610.10878,2610.11247,2610.10690,2610.11226,2610.12176,2610.12086,2610.11858,2610.12376,2610.10871&amp;start=0&amp;max_results=40</title>
+  <updated>2026-10-10T22:02:13Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=40&amp;id_list=2610.11959,2610.10878,2610.11247,2610.10690,2610.11226,2610.12176,2610.12086,2610.11858,2610.12376,2610.10871" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>40</opensearch:itemsPerPage>
+  <opensearch:totalResults>10</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.12376v1</id>
+    <title>Latent Core Tokenizer: Compress, but Meaningfully</title>
+    <updated>2026-10-08T17:32:32Z</updated>
+    <link href="https://arxiv.org/abs/2610.12376v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.12376v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Tokenizers are commonly optimized for compression, but a compact vocabulary does not necessarily distribute its capacity evenly across languages. We introduce the Latent Core Tokenizer (LCT), a language-agnostic approach that separates structural discovery from vocabulary construction. LCT uses Minimum Description Length, entropy-based boundary signals, and morphotactic constraints to identify reusable linguistic units before constructing a shared vocabulary. Across 104 languages with a 200K-token vocabulary, LCT achieves lower fertility and higher MorphScore than BPE, Unigram, and parity-aware BPE, while maintaining comparable cross-lingual disparity in tokenization cost. Across four multilingual downstream benchmarks, LCT improves aggregate score by 1.48, 1.83, and 2.00 points over BPE, Unigram, and parity-aware BPE, respectively. Our findings show that compression alone does not predict representation quality and highlight the importance of morphology-driven structural discovery and how frequency is used to allocate the final vocabulary across languages.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T17:32:32Z</published>
+    <arxiv:comment>Under review</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Felermino D. M. A. Ali</name>
+    </author>
+    <author>
+      <name>Millicent Ochieng</name>
+    </author>
+    <author>
+      <name>Ogbemi Ekwejunor-Etchie</name>
+    </author>
+    <author>
+      <name>Ade Famoti</name>
+    </author>
+    <author>
+      <name>Jacki O'Neill</name>
+    </author>
+    <author>
+      <name>Debjit Paul</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.10871v1</id>
+    <title>Sparse Attention Is Matrix Approximation, Not Choosing from a Bag of Values</title>
+    <updated>2026-10-07T20:17:13Z</updated>
+    <link href="https://arxiv.org/abs/2610.10871v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.10871v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) achieve strong performance across many domains, but their efficiency is limited by the quadratic cost of attention with respect to prompt length. Sparse attention reduces this cost by retaining only a small fraction of query-key interactions to approximate the full attention matrix. However, existing methods are trapped in a mathematically wrong view: they simply keep large scalar entries or high-mass regions of the attention matrix. This treats the attention matrix as a bag of values, ignoring that it is used as a structured matrix whose entries jointly determine the attention output through multiplication with value vectors. We argue that this is the core conceptual issue: sparse attention should be formulated as matrix approximation, not as blindly choosing the largest values from a bag of entries. Based on this view, we propose Matrix Approximation Sparse Attention (MASA). MASA replaces raw attention-mass ranking with a closed-form score that measures how much each sparse unit reduces matrix-product approximation error. As a theory-grounded plug-in correction, MASA can be added to existing sparse attention frameworks without changing their sparse kernels or budgets. Extensive experiments across multiple sparse attention methods, benchmarks, and LLM backbones show consistent accuracy gains, supporting both MASA and the matrix-approximation view of sparse attention.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-07T20:17:13Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Fang Wan</name>
+    </author>
+    <author>
+      <name>Xufeng Liu</name>
+    </author>
+    <author>
+      <name>Fan Li</name>
+    </author>
+    <author>
+      <name>Yi Liu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.11858v1</id>
+    <title>Trajectory-Guided Fault Localization for Agent Skill Evolution</title>
+    <updated>2026-10-08T12:38:51Z</updated>
+    <link href="https://arxiv.org/abs/2610.11858v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.11858v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Agent skills provide reusable guidance for code agents, but incomplete or unsuitable guidance can impair task execution. To reduce the manual effort of skill refinement, recent approaches use LLMs to generate revisions from execution feedback. However, grounding these revisions in explicit behavioral evidence remains challenging. To address this gap, we propose SkillMorph, a skill-evolution approach based on trajectory-guided fault localization in agent skills. Its core idea is to link execution evidence to specific skill contents before generating revisions. Specifically, SkillMorph compares failure and success evidence in abstracted trajectories across repeated runs and tasks, incorporating changes between evolution loops to identify suspicious actions. It then uses these suspicious actions to localize edit sites in the skills and generate corresponding revisions. Experiments on SWE-Skills-Bench and CannBot show that the skills evolved by SkillMorph consistently achieve higher trial-level accuracy and execution consistency than the original skills and those from four existing skill-evolution methods. We have also applied SkillMorph to automated kernel generation with an AI operator-development team, which has accepted 6 skill-revision pull requests.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T12:38:51Z</published>
+    <arxiv:comment>20 pages, 3 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Yu Ge</name>
+    </author>
+    <author>
+      <name>Linna Xie</name>
+    </author>
+    <author>
+      <name>Zhong Li</name>
+    </author>
+    <author>
+      <name>Yu Pei</name>
+    </author>
+    <author>
+      <name>Tian Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.10878v1</id>
+    <title>Stochastic Teacher Intervention for Agentic On-Policy Distillation</title>
+    <updated>2026-10-07T20:29:29Z</updated>
+    <link href="https://arxiv.org/abs/2610.10878v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.10878v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>On-policy distillation (OPD) efficiently transfers capabilities from a stronger teacher to a student language model through dense token-level supervision on student-generated rollouts and has shown promise on complex tasks such as mathematical reasoning. However, in multi-turn agentic tasks, student decisions shape subsequent observations, causing early errors to accumulate across turns. The resulting trajectories can drift away from the teacher's rollout distribution, making the teacher's token-level supervision less reliable or even counterproductive for OPD training. To address this issue, we introduce STI-OPD, a stochastic teacher intervention framework for multi-turn agentic OPD. During multi-turn interaction, STI-OPD uses teacher intervention guided by teacher-student policy discrepancy to replace the student's proposed action with a teacher-generated one to maximize the acquisition of reliable supervision. We further develop a stochastic intervention strategy, addressing the limitations of previous threshold-based or fixed-schedule approaches, that estimates policy discrepancy using KL divergence and maps it to an intervention probability. By sampling whether to intervene from this probability, STI-OPD adaptively balances teacher control with student exploration. To learn from the resulting mixed-policy trajectories, we introduce an Importance-Weighted Reverse KL objective that corrects the token sampling mismatch between teacher-generated responses and the student policy to preserve the original OPD objective. Across tool-integrated reasoning and long-horizon interaction, STI-OPD outperforms the strongest prior OPD baseline on every evaluated benchmark and student size. Ablations further show that both discrepancy-guided intervention and importance weighting contribute to these gains.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-07T20:29:29Z</published>
+    <arxiv:comment>Work in progress</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Junnan Liu</name>
+    </author>
+    <author>
+      <name>Linhao Luo</name>
+    </author>
+    <author>
+      <name>Zhijun Chen</name>
+    </author>
+    <author>
+      <name>Qianren Mao</name>
+    </author>
+    <author>
+      <name>Thuy-Trang Vu</name>
+    </author>
+    <author>
+      <name>Gholamreza Haffari</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.12086v1</id>
+    <title>EvoAlloc: A Self-Evolving Resource Allocation Agent for Efficient Program Evolution</title>
+    <updated>2026-10-08T14:57:35Z</updated>
+    <link href="https://arxiv.org/abs/2610.12086v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.12086v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>LLM-based program evolution relies on evaluation feedback to guide the iterative search for high-performing programs. However, evaluation is often computationally expensive, making it essential to allocate limited resources to candidates that can most effectively advance the search. Existing LLM-based methods typically rely on fixed allocation strategies throughout the search, potentially wasting resources on low-value candidates while overlooking promising ones. We propose EvoAlloc, a self-evolving resource-allocation agent that learns from search experience to revise its strategy for allocating computational resources across candidates. EvoAlloc periodically consolidates prior search and allocation outcomes into reusable experience, which informs subsequent strategy revisions. It further uses a counterfactual exploration mechanism to occasionally evaluate candidates denied resources by the allocator, revealing their outcomes to enrich its experience for future strategy updates. Across coding and agent-harness optimization benchmarks, EvoAlloc requires 59-82% fewer full evaluations and 61-89% fewer total LLM tokens to reach baseline-level performance. Moreover, under the same full-evaluation budget, EvoAlloc achieves 8.7-12.0% higher final performance.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T14:57:35Z</published>
+    <arxiv:comment>31 pages, 11 figures, 9 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Yanning Dai</name>
+    </author>
+    <author>
+      <name>Yuhui Wang</name>
+    </author>
+    <author>
+      <name>Nanbo Li</name>
+    </author>
+    <author>
+      <name>Wenyi Wang</name>
+    </author>
+    <author>
+      <name>Jürgen Schmidhuber</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.11247v1</id>
+    <title>Why On-Policy Distillation Sometimes Fails: Vanishing Learning Signals</title>
+    <updated>2026-10-08T04:52:05Z</updated>
+    <link href="https://arxiv.org/abs/2610.11247v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.11247v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>On-policy distillation (OPD) enables effective capability transfer between language models, yet the mechanisms underlying its failures are not fully understood. Across code generation and mathematical reasoning, OPD with larger-scale teachers exhibits early loss plateaus, with an average final loss reduction of 25.1% after 200 updates, compared with 96.2% for self-RL teachers, obtained by further reinforcement learning (RL) training of the initial student. To understand this difference, we analyze OPD as an idealized continuous-time dynamical system in the small-learning-rate limit. Our training-log diagnostics associate these plateaus with an early decline in a gradient-based learning-signal proxy while substantial loss remains; these measurements do not establish why the underlying gradient weakens. We further prove a local recovery guarantee for teachers sufficiently close to the initial student in a shared parameterization under regularity conditions, offering a conditional explanation for the success of self-RL teachers in our experiments. Across runs with and without loss plateaus, we observe small relative parameter changes (0.025-0.098%) and high similarity between the student's representations before and after OPD (linear CKA $&gt;0.98$ across layers). These observations suggest that limited representation adaptation may contribute to learning-signal collapse, a hypothesis that remains to be tested. Code is available at https://github.com/leizhao7/opd-learning-signals.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T04:52:05Z</published>
+    <arxiv:comment>50 pages. Code: https://github.com/leizhao7/opd-learning-signals</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Lei Zhao</name>
+    </author>
+    <author>
+      <name>Qichao Zhao</name>
+    </author>
+    <author>
+      <name>Bowen Zuo</name>
+    </author>
+    <author>
+      <name>Qishi Zhan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.12176v1</id>
+    <title>Recursive Self-Improvement through Multi-Agent Self-Supervision</title>
+    <updated>2026-10-08T15:44:02Z</updated>
+    <link href="https://arxiv.org/abs/2610.12176v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.12176v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Recursive self-improvement (RSI) of a model on non-verifiable tasks, such as open-ended research, faces a supervision bottleneck when its outputs exceed what even human experts can reliably assess, leaving the model itself (optimizee) as the best available optimizer and evaluator. However, a single model instance struggles to critique and improve its own complex reasoning under this homogeneous loop. To address this, we propose Multi-Agent Self-Supervision (MASS), an RSI method that alternates between evolutionary workflow optimization and supervised fine-tuning on self-generated trajectories. Guided by early findings that multi-agent topologies excel at complex reasoning, MASS prompts a single base model to iteratively propose, execute, and self-evaluate multi-agent workflows. Through an evolutionary search constrained by structural guardrails, the model optimizes these computational-graph-like orchestrations, discovering the most effective distinct roles and information routing for a given task. Over two MASS cycles with Qwen3.6-27B, the model achieves 1.2-1.6x higher performance per output tokens on four open-ended public benchmarks. Because the improved model subsequently acts as a better optimizer and evaluator, this alternating framework enables a continuous, recursive bootstrapping of the model's capabilities. Moreover, multi-agent traces are also more training-efficient: a student trained on them outperforms a single-agent student trained on 1.4x more training tokens. These findings suggest that jointly learning orchestration and bounded subagent execution from multi-agent trajectories can provide an effective signal for RSI.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T15:44:02Z</published>
+    <arxiv:comment>39 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Hyunin Lee</name>
+    </author>
+    <author>
+      <name>Jinglue Xu</name>
+    </author>
+    <author>
+      <name>Jeffrey Seely</name>
+    </author>
+    <author>
+      <name>Donghyun Lee</name>
+    </author>
+    <author>
+      <name>Somayeh Sojoudi</name>
+    </author>
+    <author>
+      <name>Matei Zaharia</name>
+    </author>
+    <author>
+      <name>Yujin Tang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.10690v1</id>
+    <title>Learning infinite context windows in recurrent architectures via spatial neural computing</title>
+    <updated>2026-10-07T18:00:02Z</updated>
+    <link href="https://arxiv.org/abs/2610.10690v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.10690v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Recurrent neural networks (RNNs) offer linear-time scaling with sequence length while requiring only constant memory, yet they struggle to capture long-range dependencies due to vanishing gradients and limited receptive fields. To address these limitations, we introduce a second-order recurrent model in which the standard neuron-to-neuron communication is replaced by a spatially evolving field governed by (discretized) partial differential equations. Drawing inspiration from the role of cortical waves in brain computation, this mechanism allows structured spatiotemporal patterns to serve as an implicit, high-capacity memory. We show that the resulting model is equivalent to a structured infinite-order RNN in which the current state depends explicitly on its entire history of past states, yielding an effectively unbounded receptive field with a fixed number of parameters. We further derive constructive conditions to ensure marginal stability, constraining the gradient spectrum on the unit circle and thereby eliminating vanishing and exploding gradients. Empirically, the proposed architecture outperforms other recurrent models on long-horizon benchmarks while using substantially fewer parameters, demonstrating that spatial dynamics can effectively bridge the gap between efficient inference and long-term memory.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="eess.SY" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="q-bio.NC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-07T18:00:02Z</published>
+    <arxiv:comment>12 pages, 4 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Aleix Salvador-Pomarol</name>
+    </author>
+    <author>
+      <name>Arthur N. Montanari</name>
+    </author>
+    <author>
+      <name>Earl K. Miller</name>
+    </author>
+    <author>
+      <name>Adilson E. Motter</name>
+    </author>
+    <author>
+      <name>Jorge Cortés</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.11959v1</id>
+    <title>MiMo-V2.6: Scaling Reinforcement Learning Towards Self-Improvement</title>
+    <updated>2026-10-08T13:41:53Z</updated>
+    <link href="https://arxiv.org/abs/2610.11959v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.11959v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Reinforcement learning (RL) is the central training paradigm for advancing large foundation models towards self-improvement. This report introduces the MiMo-V2.6 series, an omni-modal family that pushes the frontier of model intelligence by scaling RL compute. Prior to RL, we conduct mid-training on a broad multimodal corpus to provide ample exploration space, and build a solid infrastructure on the pretrained hybrid-SWA architecture to support subsequent scale-up. We scale RL compute along three dimensions: (1) larger batches and higher throughput, with an asynchronous training that consumes 1,568 samples and 2.7-3.7B tokens per step at context lengths of up to 1M; (2) more diverse and complex environments, spanning code, general, visual, and cyber domains under a mixture of agent harnesses; and (3) more grader compute, via groupwise agentic grading that yields more accurate reward signals for long-horizon tasks and steers the model towards shorter, more token-efficient solutions. To keep training stable at scale, we freeze the MoE router and establish a multi-layer defense against reward hacking. We further build infrastructure for mixed-task agentic RL, including a unified trajectory representation, high-concurrency multi-framework rollout, decoupled control and data planes, and training-inference consistency. We open-source the training dynamics, RL environments, and RL framework to facilitate reproduction and further research on scaled RL and model self-improvement.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T13:41:53Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Xiaomi LLM-Core Team</name>
+    </author>
+    <author>
+      <name> :</name>
+    </author>
+    <author>
+      <name>Zongming Qiao</name>
+    </author>
+    <author>
+      <name>Ziyue Hua</name>
+    </author>
+    <author>
+      <name>Zirui Ou</name>
+    </author>
+    <author>
+      <name>Zihao Yue</name>
+    </author>
+    <author>
+      <name>Zihan Jiang</name>
+    </author>
+    <author>
+      <name>Zhuo Huang</name>
+    </author>
+    <author>
+      <name>Zhiyang Chen</name>
+    </author>
+    <author>
+      <name>Zhixian Zheng</name>
+    </author>
+    <author>
+      <name>Zhipeng Xu</name>
+    </author>
+    <author>
+      <name>Zhengrui Ma</name>
+    </author>
+    <author>
+      <name>Yuyang Hu</name>
+    </author>
+    <author>
+      <name>Yuhang Dong</name>
+    </author>
+    <author>
+      <name>Yuechen Zhang</name>
+    </author>
+    <author>
+      <name>Yudong Wang</name>
+    </author>
+    <author>
+      <name>Yuanxin Liu</name>
+    </author>
+    <author>
+      <name>Yixin Yang</name>
+    </author>
+    <author>
+      <name>Yishuo Cai</name>
+    </author>
+    <author>
+      <name>Yikai Zhao</name>
+    </author>
+    <author>
+      <name>Yihan Yan</name>
+    </author>
+    <author>
+      <name>Yifan Zhang</name>
+    </author>
+    <author>
+      <name>Yifan Song</name>
+    </author>
+    <author>
+      <name>Xiyu Wei</name>
+    </author>
+    <author>
+      <name>Xing Zhang</name>
+    </author>
+    <author>
+      <name>Xin Zhang</name>
+    </author>
+    <author>
+      <name>Xiaoqian Liu</name>
+    </author>
+    <author>
+      <name>Xiaodong Ji</name>
+    </author>
+    <author>
+      <name>Xiangwei Deng</name>
+    </author>
+    <author>
+      <name>Xueyu Guo</name>
+    </author>
+    <author>
+      <name>Wenhan Ma</name>
+    </author>
+    <author>
+      <name>Weimin Xiong</name>
+    </author>
+    <author>
+      <name>Weikun Wang</name>
+    </author>
+    <author>
+      <name>Weiji Zhuang</name>
+    </author>
+    <author>
+      <name>Shuo Liu</name>
+    </author>
+    <author>
+      <name>Shuhuai Ren</name>
+    </author>
+    <author>
+      <name>Shuhao Gu</name>
+    </author>
+    <author>
+      <name>Shimao Chen</name>
+    </author>
+    <author>
+      <name>Shijie Cao</name>
+    </author>
+    <author>
+      <name>Shihua Yu</name>
+    </author>
+    <author>
+      <name>Shicheng Li</name>
+    </author>
+    <author>
+      <name>Shengjie Zhou</name>
+    </author>
+    <author>
+      <name>Shaolei Zhang</name>
+    </author>
+    <author>
+      <name>Rang Li</name>
+    </author>
+    <author>
+      <name>Qiying Wang</name>
+    </author>
+    <author>
+      <name>Qingkai Fang</name>
+    </author>
+    <author>
+      <name>Qianli Chen</name>
+    </author>
+    <author>
+      <name>Minzheng Wang</name>
+    </author>
+    <author>
+      <name>Liwen Wang</name>
+    </author>
+    <author>
+      <name>Linli Yao</name>
+    </author>
+    <author>
+      <name>Linghao Zhang</name>
+    </author>
+    <author>
+      <name>Liangyu Cheng</name>
+    </author>
+    <author>
+      <name>Liang Zhao</name>
+    </author>
+    <author>
+      <name>Lei Li</name>
+    </author>
+    <author>
+      <name>Jinhao Dong</name>
+    </author>
+    <author>
+      <name>Jinyu Xiang</name>
+    </author>
+    <author>
+      <name>Jianyu Wei</name>
+    </author>
+    <author>
+      <name>Jiangshan Duo</name>
+    </author>
+    <author>
+      <name>Huaqiu Liu</name>
+    </author>
+    <author>
+      <name>Huanjie Fan</name>
+    </author>
+    <author>
+      <name>Hongyi Guan</name>
+    </author>
+    <author>
+      <name>Hongshen Xu</name>
+    </author>
+    <author>
+      <name>Hao Tian</name>
+    </author>
+    <author>
+      <name>Hanyu Li</name>
+    </author>
+    <author>
+      <name>Hailin Zhang</name>
+    </author>
+    <author>
+      <name>Gang Wang</name>
+    </author>
+    <author>
+      <name>Fuli Luo</name>
+    </author>
+    <author>
+      <name>Feng Wei</name>
+    </author>
+    <author>
+      <name>Dong Zhang</name>
+    </author>
+    <author>
+      <name>Dawei Zhu</name>
+    </author>
+    <author>
+      <name>Chiheng Lou</name>
+    </author>
+    <author>
+      <name>Chenhong He</name>
+    </author>
+    <author>
+      <name>Chenhao He</name>
+    </author>
+    <author>
+      <name>Chenghua Liu</name>
+    </author>
+    <author>
+      <name>Bowen Ye</name>
+    </author>
+    <author>
+      <name>Bowen Shen</name>
+    </author>
+    <author>
+      <name>Boshen Xu</name>
+    </author>
+    <author>
+      <name>Bo Yang</name>
+    </author>
+    <author>
+      <name>Bingquan Xia</name>
+    </author>
+    <author>
+      <name>Bangjun Xiao</name>
+    </author>
+    <author>
+      <name>Baixuan Xu</name>
+    </author>
+    <author>
+      <name>Zhouxiang Mao</name>
+    </author>
+    <author>
+      <name>Zhiyang Zhang</name>
+    </author>
+    <author>
+      <name>Zhixiang Xu</name>
+    </author>
+    <author>
+      <name>Zhenru Lin</name>
+    </author>
+    <author>
+      <name>Zhengju Tang</name>
+    </author>
+    <author>
+      <name>Zhaojun Huang</name>
+    </author>
+    <author>
+      <name>Yuzhe Weng</name>
+    </author>
+    <author>
+      <name>Yuxing Xiang</name>
+    </author>
+    <author>
+      <name>Yuxiao Li</name>
+    </author>
+    <author>
+      <name>Yuheng Yang</name>
+    </author>
+    <author>
+      <name>Yuhang Wang</name>
+    </author>
+    <author>
+      <name>Yuchen Liu</name>
+    </author>
+    <author>
+      <name>Yuanyuan Tian</name>
+    </author>
+    <author>
+      <name>Yuanliang Dong</name>
+    </author>
+    <author>
+      <name>Yu Cheng</name>
+    </author>
+    <author>
+      <name>Yongzhe He</name>
+    </author>
+    <author>
+      <name>Yongshun Liang</name>
+    </author>
+    <author>
+      <name>Yong Wang</name>
+    </author>
+    <author>
+      <name>Yiyan Wang</name>
+    </author>
+    <author>
+      <name>Yitian Gong</name>
+    </author>
+    <author>
+      <name>Yijie Zhang</name>
+    </author>
+    <author>
+      <name>Yanshu Xin</name>
+    </author>
+    <author>
+      <name>Xun Zhang</name>
+    </author>
+    <author>
+      <name>Xingjian Zhao</name>
+    </author>
+    <author>
+      <name>Wenyu Yang</name>
+    </author>
+    <author>
+      <name>Wenshan Huang</name>
+    </author>
+    <author>
+      <name>Wenhao Li</name>
+    </author>
+    <author>
+      <name>Tingwei Huang</name>
+    </author>
+    <author>
+      <name>Tianyu Yu</name>
+    </author>
+    <author>
+      <name>Tianyang Lu</name>
+    </author>
+    <author>
+      <name>Taoyu Yang</name>
+    </author>
+    <author>
+      <name>Sinan Du</name>
+    </author>
+    <author>
+      <name>Shutong Tian</name>
+    </author>
+    <author>
+      <name>Shulin Du</name>
+    </author>
+    <author>
+      <name>Shengfan Wang</name>
+    </author>
+    <author>
+      <name>Shanchuan Fang</name>
+    </author>
+    <author>
+      <name>Qihao Zhang</name>
+    </author>
+    <author>
+      <name>Qibin Yang</name>
+    </author>
+    <author>
+      <name>Qian Yu</name>
+    </author>
+    <author>
+      <name>Qian Tu</name>
+    </author>
+    <author>
+      <name>Pengrong Xie</name>
+    </author>
+    <author>
+      <name>Peipei Wang</name>
+    </author>
+    <author>
+      <name>Peidian Li</name>
+    </author>
+    <author>
+      <name>Minkun Guo</name>
+    </author>
+    <author>
+      <name>Mingchen Shao</name>
+    </author>
+    <author>
+      <name>Luohan Gao</name>
+    </author>
+    <author>
+      <name>Lijie Wang</name>
+    </author>
+    <author>
+      <name>Liang Shi</name>
+    </author>
+    <author>
+      <name>Kaiqi Chen</name>
+    </author>
+    <author>
+      <name>Kaiming Liu</name>
+    </author>
+    <author>
+      <name>Kaifei Wang</name>
+    </author>
+    <author>
+      <name>Kai Yang</name>
+    </author>
+    <author>
+      <name>Jinlong Xue</name>
+    </author>
+    <author>
+      <name>Jiechen Zhang</name>
+    </author>
+    <author>
+      <name>Jiaxuan Liu</name>
+    </author>
+    <author>
+      <name>Hongxu An</name>
+    </author>
+    <author>
+      <name>Hao Peng</name>
+    </author>
+    <author>
+      <name>Hanglong Lü</name>
+    </author>
+    <author>
+      <name>Guonan Wang</name>
+    </author>
+    <author>
+      <name>Feiyu Yang</name>
+    </author>
+    <author>
+      <name>Fanyu Cao</name>
+    </author>
+    <author>
+      <name>Fangyue Liu</name>
+    </author>
+    <author>
+      <name>Fan Cui</name>
+    </author>
+    <author>
+      <name>Cong Wang</name>
+    </author>
+    <author>
+      <name>Chun Chen</name>
+    </author>
+    <author>
+      <name>Chenxu Bai</name>
+    </author>
+    <author>
+      <name>Chengxuan Zhu</name>
+    </author>
+    <author>
+      <name>Chenghua Wang</name>
+    </author>
+    <author>
+      <name>Boyi Zeng</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.11226v1</id>
+    <title>When Lower Reconstruction Loss Hurts: Distributionally Robust Refinement for Low-Bit LLM Quantization</title>
+    <updated>2026-10-08T04:22:29Z</updated>
+    <link href="https://arxiv.org/abs/2610.11226v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.11226v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Weight-only post-training quantization (PTQ) relies heavily on reconstruction loss minimization to preserve model quality at low precision. We show that the weights favored by minimizing this loss need not yield better model performance on new tasks. In fact, we find that lower reconstruction loss can even degrade model performance on the same calibration data. Our analysis further shows that weights with lower reconstruction loss on calibration data can have higher loss than other weights when the distribution of input activations changes. Motivated by these observations and our analysis, we propose Distributionally Robust Quantization (DRQ), a post-hoc refinement process that minimizes worst-case reconstruction loss over a constrained set of input activation distributions. DRQ refines the integer codes representing quantized weights within the existing quantization grid, keeping quantization parameters and inference operators unchanged. Extensive experiments show that DRQ improves models quantized by six representative PTQ methods, including AWQ, GPTQ, and ParoQuant, and delivers gains across both dense and mixture-of-experts large language models. These results establish DRQ as a general post-hoc refinement framework for weight-only PTQ, achieving better downstream performance without adding inference overhead.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T04:22:29Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Yanlong Zhao</name>
+    </author>
+    <author>
+      <name>Xiaoyuan Cheng</name>
+    </author>
+    <author>
+      <name>Huihang Liu</name>
+    </author>
+    <author>
+      <name>Baihua He</name>
+    </author>
+    <author>
+      <name>Xinyu Zhang</name>
+    </author>
+    <author>
+      <name>Harrison Bo Hua Zhu</name>
+    </author>
+    <author>
+      <name>Wenlong Chen</name>
+    </author>
+    <author>
+      <name>Li Zeng</name>
+    </author>
+    <author>
+      <name>Zhuo Sun</name>
+    </author>
+  </entry>
+</feed>

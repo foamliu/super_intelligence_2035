@@ -1241,3 +1241,32 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **台账**：`research/SEEN.md` **行数不变（3,051 条）**，2 篇状态 **候选 → 收录** → **收录 181 / 候选 2870（其中 RSS 补充候选 507）**；`research/papers.jsonl` **+2 → 181 行**。
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮**无长期工具代码改动**（`fetch_abs_r85.py` 为一次性复核脚本）。
 - **下轮预期**：**本地 `2026-10-11 06:00`**（P0「早 3」轮 · 新一日 AM）：① 复验批次（`2026-10-10` 提交批预计周日晚 ~UTC 00:00 公告）；② 若仍周末无批则继续走 **RSS 发现 + `id_list` 复核**；③ 交付次日报 HTML（早报 3/5）。
+
+### 9.88 第八十六轮（本地 2026-10-11 06:00 时窗 · **P0 第 4 批第 9 轮 · 新一日「早 3」轮**）：**周日无新批**（API 增量 0）+ RSS 空 feed → **早报 3 篇「借鉴」从第八十四轮 547 条窗口内候选池精选 + 单条权威复核**；日报交付 **3/5**
+
+> **时点**：本地 `2026-10-11 06:00`（= UTC `2026-10-10T22:00`，周六晚）为 **周日**。arXiv **周末不公告**（工作日 20:00 ET ≈ UTC 00:00 公告），故**无新批次可刷**——**`kept 0` 属时点正常现象，非「无数据」**。
+
+- **取源复验（R1′）** `--probe --config research/queries.json`（`generated=2026-10-10T22:00:19Z`）：
+
+  | 源 | 端点 | 实测结果 | 判定 |
+  |:--|:--|:--|:--|
+  | arXiv API | `https://export.arxiv.org/api/query` | `HTTP 200`，`application/atom+xml; charset=utf-8`，`totalResults=630048`，最新样本 `published=2026-10-08T17:59:58Z`（样本 `2610.12470 / 2610.12469 / 2610.12468`） | ✅ 可达（**批次仍 `2026-10-08`，与第八十四/八十五轮完全一致 → 未刷新**） |
+  | HF Daily Papers | `https://huggingface.co/api/daily_papers` | `ok=false`，`Network is unreachable` | ❌ 不可达（**不伪造 `hf_daily`**） |
+  | arXiv RSS（cs.CL/CV/LG） | `https://rss.arxiv.org/rss/<cat>` | `HTTP 200`，`application/rss+xml`，`items=0 / 0 / 0` | ⚠️ **周末空 feed（如实记录，非失败）** |
+
+  证据：`research/raw/2026-10-11-probe-r86.{json,log}`（**本轮实时 `--probe`，无重试**）。
+
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=weekend_batch`，窗口 120h**，`generated=2026-10-10T22:01:20Z`）：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600**（均 `already in SEEN` 或 `stale > 120h`）→ **0 新增**。因 **AM 无新批 + RSS 空 feed**，早报 3 篇「借鉴」**取自第八十四轮已入账的 547 条窗口内候选池**（证据 `research/raw/2026-10-10-rss-r84.json`）。证据：`research/raw/2026-10-11-fetch-r86.json`。
+
+- **精选权威复核（`id_list`）**：对早报 3 篇走 **arXiv API `id_list` 单条复核**（`id_list=2610.11959,2610.11247,2610.11226`；另取 10 条候选）→ **3/3 返回（10/10 亦返回）**，全部 `HTTP 200` + `application/atom+xml; charset=utf-8` + 有 `published`（证据 `research/raw/2026-10-11-idlist-cand-r86.{xml,headers}` / `research/raw/2026-10-11-idlist-r86.xml`）：
+  - `2610.11959` *MiMo-V2.6: Scaling Reinforcement Learning Towards Self-Improvement*（`2026-10-08T13:41:53Z`，cs.CL，共 150 位署名，`comment` 空）；
+  - `2610.11247` *Why On-Policy Distillation Sometimes Fails: Vanishing Learning Signals*（`2026-10-08T04:52:05Z`，cs.LG，`comment`: `50 pages. Code: https://github.com/leizhao7/opd-learning-signals`）；
+  - `2610.11226` *When Lower Reconstruction Loss Hurts: Distributionally Robust Refinement for Low-Bit LLM Quantization*（`2026-10-08T04:22:29Z`，cs.AI，`comment` 空）。
+  - **去重复核**：3 个 ID 均**不在**任何 `daily/*.html`；检出时在 `SEEN.md` 状态为「候选」→ **无重复**。
+
+- **产出**：`research/daily/2026-10-11.html`（**自包含单文件**，**早报 3/5** = 3 篇「借鉴」）：① `2610.11959` MiMo-V2.6（扩 RL 算力三维 → BaiZe 后训练 + ZhuLong agent harness）；② `2610.11247` OPD 学习信号坍缩（大教师 25.1% vs self-RL 教师 96.2% → BaiZe 蒸馏 + ZhuLong agentic 蒸馏）；③ `2610.11226` DRQ 分布鲁棒量化精修（→ BaiZe 高效推理）；页头「早报」+ 进度 **3/5** + 附录 = I→V 口径链条 + 15 查询明细表 + 口径护栏 → 同步 `research/daily/index.html`（新增 2026-10-11 行 = 早报 3/5）与 `research/INDEX.md`（收录 3 → **3**，行 `3|0`）。
+
+- **台账**：`research/SEEN.md` **行数不变（3,051 条）**，3 篇状态 **候选 → 收录** → **收录 184 / 候选 2867**；`research/papers.jsonl` **+3 → 184 行**。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮**无长期工具代码改动**（`raw/2026-10-11-idlist-*.xml` 为一次性留证）。
+- **下轮预期**：**本地 `2026-10-11 18:00`**（P0「晚 2」轮 · 当日收口）：① 复验批次是否刷新（`2026-10-09/10` 提交批预计周日晚 ~UTC 00:00 起陆续公告；若仍周末无批则继续走 **RSS 发现 + `id_list` 复核**）；② 补 **2 篇「科普」**并修订早报 3 篇；③ 追加 `## 晚报变更说明（AM → PM）`，进度 → **5/5**；④ 第 5 批 P0：`research/video/SCENES/10_11.html` 分镜脚本。
+

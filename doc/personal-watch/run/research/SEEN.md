@@ -2628,7 +2628,7 @@
 | 2026-10-10 | 2610.11967 | Learning Which Correspondences to Trust: Confidence-Weighted Event-Camera Localization in LiDAR Maps | cs.CV | 候选 |
 | 2026-10-10 | 2610.11966 | MindFlow: Mind Supernet Powered Thinking Flows for Research Idea Innovation | cs.AI | 候选 |
 | 2026-10-10 | 2610.11963 | Can LLMs Fix It Without Code? Toward Automated Verification of No-Code Bug Fixes | cs.SE | 候选 |
-| 2026-10-10 | 2610.11959 | MiMo-V2.6: Scaling Reinforcement Learning Towards Self-Improvement | cs.CL | 候选 |
+| 2026-10-10 | 2610.11959 | MiMo-V2.6: Scaling Reinforcement Learning Towards Self-Improvement | cs.CL | 收录 |
 | 2026-10-10 | 2610.11957 | Stochastic Grouping Conformal Prediction for Effective Subgroup Reliability | cs.LG | 候选 |
 | 2026-10-10 | 2610.11956 | Reliability-Aware Future Conditioning for Temporally Robust Robot Manipulation | cs.RO | 候选 |
 | 2026-10-10 | 2610.11953 | Interval-valued SHAP in Tree-Based Models | cs.LG | 候选 |
@@ -2858,7 +2858,7 @@
 | 2026-10-10 | 2610.11257 | Residual spectral instabilities in representation learning | cs.LG | 候选 |
 | 2026-10-10 | 2610.11253 | LLM-IDEA: Identifiability-Driven Experimental Agent for Autonomous Discovery of Mechanistic World Models | cs.AI | 候选 |
 | 2026-10-10 | 2610.11252 | Neuro-Memory Fuzzy Inference System for Mimicking Human-like Car Following Behavior | cs.LG | 候选 |
-| 2026-10-10 | 2610.11247 | Why On-Policy Distillation Sometimes Fails: Vanishing Learning Signals | cs.LG | 候选 |
+| 2026-10-10 | 2610.11247 | Why On-Policy Distillation Sometimes Fails: Vanishing Learning Signals | cs.LG | 收录 |
 | 2026-10-10 | 2610.11241 | TAP3D: Thermal-Assisted 3D Human Point Clouds | cs.CV | 候选 |
 | 2026-10-10 | 2610.11238 | Attributing HOW, Not Just WHICH: Counterfactual Response Trajectories for Diffusion Models | cs.CV | 候选 |
 | 2026-10-10 | 2610.11237 | Breaking the Group Size Barrier: Parameter-Efficient Group Dance Generation with Chain-of-Dancers | cs.CV | 候选 |
@@ -2866,7 +2866,7 @@
 | 2026-10-10 | 2610.11231 | Harness Compilation: Which Decisions Should a Small Vision-Language Model Keep? | cs.AI | 候选 |
 | 2026-10-10 | 2610.11229 | SteerCast: Retrieval-Based Latent Steering for Decoder-Only Time Series Forecasting | cs.LG | 候选 |
 | 2026-10-10 | 2610.11228 | Multimodal Graph Retrieval-Augmented Sequential Recommendation via Collaborative Filtering Paths | cs.LG | 候选 |
-| 2026-10-10 | 2610.11226 | When Lower Reconstruction Loss Hurts: Distributionally Robust Refinement for Low-Bit LLM Quantization | cs.AI | 候选 |
+| 2026-10-10 | 2610.11226 | When Lower Reconstruction Loss Hurts: Distributionally Robust Refinement for Low-Bit LLM Quantization | cs.AI | 收录 |
 | 2026-10-10 | 2610.11223 | SafeInferCom: Safe Inference-Time Compute via Verifier-Guided Mid-Generation Intervention for Robotic Task Planning | cs.RO | 候选 |
 | 2026-10-10 | 2610.11222 | Cross-species representation learning aligns mouse and human neural dynamics and tracks clinical drug efficacy | q-bio.QM | 候选 |
 | 2026-10-10 | 2610.11221 | How Firm Should a Grasp Be? | cs.RO | 候选 |
