@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 31 -->
+<!-- RUN_ID: 32 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,11 +24,224 @@
 
 ---
 
+## RUN_ID 32 — 🛑 停评测 + 删 hook + `.env` 回退(stash) + 换端口集 `8650/8651/8652/8654` + RAG→`9006` + 实测 + 重启 `eda_fastmcp` + 起动 C1.full r2
+
+**用户令（2026-10-11 上午）**：「用 ops relay 发布指令：**停掉当前评测**，**删除 `~/.cline/hooks/PreToolUse`**，把 **`eda_fastmcp/.env` 本地改动 stash**，**把昨晚做的改动回退**。**测试/应用端口 `8650`、`8651`、`8652`、`8654`**，修改 `.env`，**ragrecall 端口重新设为 9006**，**重启 full r2-r5 及后续评测**。」
+
+**背景（为什么换回旧端口集）**：(八) 的 4 个新端口（`8663/8666/8667/8670`）在 **10-11 早间再次全部挂死**（0 字节 / 超时），`8670` 还进了 license 断路器（83 consecutive）→ r2_new（batch `2026_1010_234408`）code-gen 跑完 146/158/2 fail，但 **eval Steps 5–7.1 未跑 = 无 official Pass@1**。而 (六) 实测**旧 4 端口 `8650/8651/8652/8654` 全健康 3/3 @0.01s**；RAG recall 端口 `9012` 已死、`9006` 健康（`chroma_db_v20260522`）。⇒ **换回旧端口集 + 修 RAG 端口 + 重启 r2–r5**。
+
+**本块动作（幂等；旧的第一块已降级为 text 围栏）**：
+1. **停评测**（只杀评测侧进程：用 `/proc/PID/environ` 的 `EVAL_FW_DIR|CLI_DATA_DIR` 签名 + 锚定 `^bash scripts/run_cline_script`，**绝不误杀编排侧 cline**——任务书全文在它 cmdline 里）。
+2. **删 `~/.cline/hooks/PreToolUse`**（先 `ls`/`stat`，后 `ls` 复核；⚠️ 每轮 eval 启动会自动重新部署，见 ⑦ 核验）。
+3. **`.env` 备份 + `git stash push -- .env`**（= 回退昨晚端口改动；备份落 `/tmp/eda_fastmcp.env.bak.*`）。
+4. **写新 `.env`**：`PROXY_PORTS=8650,8651,8652,8654` + `SANDBOX_ENDPOINTS`（**优先沿用 git HEAD 既有映射**，取不到才用 `t0002997_1..4` 兜底并标「待核」）+ `RAG_RECALL_URL=http://localhost:9006/recall`。
+5. **重启 `eda_fastmcp`**（MCP `:8090`）并核验。
+6. **4 端口双测**：TCP 连通 + `run_code` 实跑（非 curl 端口可达）。
+7. **仅当「eval 未在跑」且「4/4 健康」**才起动 C1.full r2（四 override + `log=/tmp/ABL_full_r2_8650set.log`）；否则**不启、只报**（沿用 (八)⑤ 硬闸）。
+8. **环境核验 + 披露**：loop / MCP / RAG `9006` / `df` / `cline_mcp_settings.json` 的 `timeout` 快照。
+
+**边界**：🚫 不动 `timeout:180`（(八)③ 遗留，仍生效——见 ⑧ 快照；如需回退请另发指令）；🚫 不动 RAG/Memory 服务本体；🚫 不 `git add -A`。
+
+```bash
+# ═══ RUN_ID 32 — ZhuLong：停评测 + 删 hook + .env 回退(stash) + 端口集换 8650/8651/8652/8654 + RAG→9006 + 实测 + (4/4 健康才) 重启 MCP + 起动 C1.full r2 ═══
+echo "== RUN_ID 32 @ $(date '+%F %T') host=$(hostname) =="
+EDA=/nasdata/app.e0031982/code/eda_fastmcp
+ENVF=$EDA/.env
+SHOST=10.129.32.75
+TS=$(date '+%Y%m%d_%H%M%S')
+LOG=/tmp/ABL_full_r2_8650set.log
+PORTS="8650 8651 8652 8654"
+
+# ── 评测侧进程判定：env 里有 EVAL_FW_DIR / CLI_DATA_DIR / SANDBOX_CONFIG_JSON 才算评测侧 ──
+is_eval_proc() {
+  n=$(tr '\0' '\n' < /proc/$1/environ 2>/dev/null | grep -cE '^(EVAL_FW_DIR|CLI_DATA_DIR|EVAL_SANDBOX_WORKERS|SANDBOX_CONFIG_JSON)=')
+  [ "${n:-0}" -gt 0 ]
+}
+my_pg=$(ps -o pgid= -p $$ 2>/dev/null | tr -d ' ')
+
+echo
+echo "=========== 1. 停掉当前评测（幂等）==========="
+echo "-- BEFORE：候选进程（含排除理由）--"
+CAND=""
+for p in $(timeout 20 pgrep -f 'run_cline_script|run_eval\.py|run_on_sandbox' 2>/dev/null); do
+  case "$p" in "$$"|"$PPID") continue;; esac
+  cl=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | cut -c1-110)
+  case "$cl" in
+    *zhulong_loop*|*ZHULONG_TASK*)
+      echo "   SKIP(编排侧) pid=$p $cl"; continue;;
+  esac
+  if is_eval_proc "$p" || echo "$cl" | grep -q '^bash scripts/run_cline_script'; then
+    CAND="$CAND $p"; echo "   KILL-TARGET pid=$p $cl"
+  else
+    echo "   SKIP(无评测侧签名) pid=$p $cl"
+  fi
+done
+[ -z "$CAND" ] && echo "   （无候选 = 当前没有评测在跑）"
+for round in TERM KILL; do
+  for p in $CAND; do
+    [ -d /proc/$p ] || continue
+    pg=$(ps -o pgid= -p "$p" 2>/dev/null | tr -d ' ')
+    if [ -n "$pg" ] && [ "$pg" != "1" ] && [ "$pg" != "$my_pg" ]; then
+      timeout 30 kill -$round -"$pg" 2>/dev/null
+    else
+      timeout 30 kill -$round "$p" 2>/dev/null
+    fi
+  done
+  [ "$round" = "TERM" ] && sleep 8
+done
+sleep 3
+LEFT=0
+for p in $(timeout 20 pgrep -f 'run_cline_script|run_eval\.py|run_on_sandbox' 2>/dev/null); do
+  case "$p" in "$$"|"$PPID") continue;; esac
+  cl=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | cut -c1-110)
+  case "$cl" in *zhulong_loop*|*ZHULONG_TASK*) continue;; esac
+  if is_eval_proc "$p" || echo "$cl" | grep -q '^bash scripts/run_cline_script'; then
+    LEFT=$((LEFT+1)); echo "   ⚠️ 残留 pid=$p $cl"
+  fi
+done
+echo "   AFTER：评测侧残留计数=$LEFT （0 = 已停干净）"
+EVAL_ALIVE=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)
+echo "   仍存活的评测编排进程数（锚定匹配）= $EVAL_ALIVE"
+
+echo
+echo "=========== 2. 删除 ~/.cline/hooks/PreToolUse ==========="
+echo "-- BEFORE --"
+timeout 20 ls -l ~/.cline/hooks/ 2>&1 | cut -c1-140
+timeout 20 stat -c '%n %s bytes mtime=%y' ~/.cline/hooks/PreToolUse 2>&1 | cut -c1-160
+timeout 20 rm -f ~/.cline/hooks/PreToolUse; echo "   rm exit=$?"
+echo "-- AFTER（应为空或不存在）--"
+timeout 20 ls -l ~/.cline/hooks/ 2>&1 | cut -c1-140
+echo "-- 参考：eval 侧 hooks 目录（run_cli.sh 的部署目标）--"
+timeout 20 ls -l ~/.cline_prof4_eval/data/hooks/ 2>&1 | cut -c1-140
+
+echo
+echo "=========== 3. eda_fastmcp/.env —— 备份 + git stash（回退昨晚改动）==========="
+echo "-- 3.1 .env 关键行（改动前）--"
+timeout 20 grep -nE '^[[:space:]]*(export[[:space:]]+)?(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST|RAG_RECALL_URL|EDA_MCP_PORT)=' "$ENVF" 2>&1 | cut -c1-260
+echo "-- 3.2 git 状态（eda_fastmcp 仓库）--"
+timeout 60 git -C "$EDA" status --porcelain 2>&1 | head -12 | cut -c1-120
+echo "   .env 是否被 git 跟踪：$(timeout 60 git -C "$EDA" ls-files .env 2>/dev/null | head -1)"
+echo "-- 3.3 git HEAD 版 .env 关键行（= stash 回退后的目标基线）--"
+timeout 60 git -C "$EDA" show HEAD:.env 2>/dev/null | grep -nE '^[[:space:]]*(export[[:space:]]+)?(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST|RAG_RECALL_URL)=' | cut -c1-280
+echo "-- 3.4 备份 + stash --"
+timeout 30 cp -p "$ENVF" "/tmp/eda_fastmcp.env.bak.$TS" && echo "   backup=/tmp/eda_fastmcp.env.bak.$TS"
+timeout 60 git -C "$EDA" stash push -m "RUN_ID32: stash .env (回退昨晚端口改动) @ $TS" -- .env 2>&1 | cut -c1-160
+echo "   stash exit=$?"
+timeout 30 git -C "$EDA" stash list 2>&1 | head -3 | cut -c1-140
+echo "-- 3.5 .env 关键行（stash 回退后，应 = HEAD 基线）--"
+timeout 20 grep -nE '^[[:space:]]*(export[[:space:]]+)?(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST|RAG_RECALL_URL)=' "$ENVF" 2>&1 | cut -c1-260
+
+echo
+echo "=========== 4. 写新 .env：端口集 8650/8651/8652/8654 + RAG 9006 ==========="
+HEAD_SE=$(timeout 60 git -C "$EDA" show HEAD:.env 2>/dev/null | sed -n 's/^[[:space:]]*SANDBOX_ENDPOINTS=//p' | tail -1)
+CUR_SE=$(sed -n 's/^[[:space:]]*SANDBOX_ENDPOINTS=//p' "$ENVF" 2>/dev/null | tail -1)
+SRC_SE="${CUR_SE:-$HEAD_SE}"
+NEW_SE=$(printf '%s' "$SRC_SE" | tr ',' '\n' | grep -E '^(8650|8651|8652|8654):' | tr '\n' ',' | sed 's/,$//')
+SE_SRC="来自 .env/HEAD 既有映射"
+if [ -z "$NEW_SE" ] || [ "$(printf '%s' "$NEW_SE" | tr ',' '\n' | grep -c ':')" -ne 4 ]; then
+  NEW_SE="8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4"
+  SE_SRC="⚠️ 兜底默认值（.env/HEAD 无可用映射）→ 必须人工核对 workdir"
+fi
+echo "   SANDBOX_ENDPOINTS 来源 = $SE_SRC"
+echo "   SANDBOX_ENDPOINTS 新值 = $NEW_SE"
+grep -vE '^[[:space:]]*(export[[:space:]]+)?(PROXY_PORTS|SANDBOX_ENDPOINTS|RAG_RECALL_URL)=' "$ENVF" > "$ENVF.tmp32"
+cat >> "$ENVF.tmp32" <<EOF
+PROXY_PORTS=8650,8651,8652,8654
+SANDBOX_ENDPOINTS=$NEW_SE
+RAG_RECALL_URL=http://localhost:9006/recall
+EOF
+timeout 30 mv "$ENVF.tmp32" "$ENVF"; echo "   写入 exit=$?"
+timeout 30 cp -p "$ENVF" "/tmp/eda_fastmcp.env.RUNID32.$TS" && echo "   新 .env 副本=/tmp/eda_fastmcp.env.RUNID32.$TS"
+echo "-- 4.1 校验（关键行，应各 1 行）--"
+timeout 20 grep -nE '^[[:space:]]*(export[[:space:]]+)?(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST|RAG_RECALL_URL)=' "$ENVF" 2>&1 | cut -c1-300
+echo "   行数：PROXY_PORTS=$(timeout 20 grep -cE '^PROXY_PORTS=' "$ENVF") SANDBOX_ENDPOINTS=$(timeout 20 grep -cE '^SANDBOX_ENDPOINTS=' "$ENVF") RAG_RECALL_URL=$(timeout 20 grep -cE '^RAG_RECALL_URL=' "$ENVF")"
+echo "-- 4.2 diff（备份 vs 现在，仅关键行）--"
+timeout 20 diff <(grep -E '^(PROXY_PORTS|SANDBOX_ENDPOINTS|RAG_RECALL_URL)=' "/tmp/eda_fastmcp.env.bak.$TS" 2>/dev/null) <(grep -E '^(PROXY_PORTS|SANDBOX_ENDPOINTS|RAG_RECALL_URL)=' "$ENVF" 2>/dev/null) | cut -c1-320
+
+echo
+echo "=========== 5. 重启 eda_fastmcp（MCP :8090）+ 核验 ==========="
+echo "-- BEFORE --"
+timeout 20 ss -lntp 2>/dev/null | grep -E ':8090' | cut -c1-150
+timeout 20 pgrep -af 'python main\.py' 2>/dev/null | grep -v 'cline' | cut -c1-130 | head -3
+( cd "$EDA" && timeout 120 bash scripts/stop.sh ) >/tmp/eda_stop_runid32.log 2>&1; echo "   stop.sh exit=$?"
+sleep 3
+( cd "$EDA" && timeout 180 bash scripts/start.sh ) >/tmp/eda_start_runid32.log 2>&1; echo "   start.sh exit=$?"
+timeout 20 tail -3 /tmp/eda_start_runid32.log 2>/dev/null | cut -c1-170
+sleep 5
+echo "-- AFTER --"
+timeout 20 ss -lntp 2>/dev/null | grep -E ':8090' | cut -c1-150
+timeout 20 pgrep -af 'python main\.py' 2>/dev/null | grep -v 'cline' | cut -c1-130 | head -3
+
+echo
+echo "=========== 6. 4 端口实测（TCP + run_code 实跑）==========="
+OK=0
+if [ "$EVAL_ALIVE" -gt 0 ]; then
+  echo "   ⏭ eval 仍在跑（EVAL_ALIVE=$EVAL_ALIVE）→ 跳过 run_code 探测（端口被占，探测结果不可判）"
+else
+  for p in $PORTS; do
+    if timeout 5 bash -c "echo > /dev/tcp/$SHOST/$p" 2>/dev/null; then tcp="OK"; else tcp="CLOSED"; fi
+    body=$(timeout 25 curl -s -m 12 -X POST "http://$SHOST:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+    n=${#body}
+    if [ "$n" -gt 0 ]; then rc="OK"; OK=$((OK+1)); else rc="FAIL(0byte)"; fi
+    echo "   port $p : TCP=$tcp  run_code=$rc  resp_len=$n  | $(printf '%s' "$body" | cut -c1-90)"
+  done
+fi
+echo "   ▶ 健康端口数 = $OK / 4"
+
+echo
+echo "=========== 7. 起动 C1.full r2（硬闸：EVAL_ALIVE=0 且 4/4 健康）==========="
+if [ "$EVAL_ALIVE" -eq 0 ] && [ "$OK" -eq 4 ]; then
+  ( cd "$EDA"
+    export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+    export CLI_DATA_DIR=/nasdata/app.e0031982/.cline_prof4_eval/data
+    export PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python
+    export https_proxy=http://172.19.92.23:13128
+    setsid bash scripts/run_cline_script.sh -p 8 -n > "$LOG" 2>&1 < /dev/null &
+  )
+  echo "   已下发 setsid 起动，等待 20s 后核验 ..."
+  sleep 20
+  NEW=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | head -1)
+  echo "   新 eval PID=${NEW:-<none>}"
+  if [ -n "$NEW" ]; then
+    echo "   -- 四 override 核验（/proc/$NEW/environ）--"
+    timeout 20 tr '\0' '\n' < /proc/$NEW/environ 2>/dev/null | grep -E '^(EVAL_FW_DIR|CLI_DATA_DIR|PYTHON|https_proxy)=' | cut -c1-170
+    echo "   -- 反作弊 hook 是否被本轮重新部署（删完必检）--"
+    timeout 20 ls -l ~/.cline/hooks/PreToolUse 2>&1 | cut -c1-140
+    timeout 20 ls -l ~/.cline_prof4_eval/data/hooks/PreToolUse 2>&1 | cut -c1-140
+  fi
+  echo "   -- log head（前 45 行）--"
+  timeout 20 head -45 "$LOG" 2>/dev/null | cut -c1-180
+else
+  echo "   ⛔ 未起动 eval（EVAL_ALIVE=$EVAL_ALIVE，健康端口=$OK/4）—— 按 (八)⑤ 硬闸：不健康不开跑，等运维裁定"
+fi
+
+echo
+echo "=========== 8. 环境核验 + 披露快照 ==========="
+echo "-- loop --"
+LPID=$(timeout 20 pgrep -f 'zhulong_loop\.sh' 2>/dev/null | head -1)
+echo "   loop pid=${LPID:-<none>}"
+[ -n "${LPID:-}" ] && timeout 20 tr '\0' '\n' < /proc/$LPID/environ 2>/dev/null | grep -E '^https_proxy=' | cut -c1-90
+echo "-- RAG recall 9006 --"
+timeout 20 ss -lntp 2>/dev/null | grep -E ':9006' | cut -c1-150
+timeout 20 curl -s -m 8 -o /dev/null -w '   http_code=%{http_code} (400/404/405 = 服务在，连通 OK)\n' http://localhost:9006/recall 2>&1
+echo "-- 磁盘（<8G = 起跑前须复核）--"
+timeout 20 df -BG /home /nasdata /tmp 2>/dev/null | cut -c1-120
+echo "-- 披露快照：(八)③ 的 cline_mcp_settings.json timeout（本块不改，仍生效）--"
+for f in ~/.cline/data/settings/cline_mcp_settings.json ~/.cline_prof4_eval/data/settings/cline_mcp_settings.json; do
+  echo "   $f -> $(timeout 20 grep -oE '"timeout"[[:space:]]*:[[:space:]]*[0-9]+' "$f" 2>/dev/null | head -1)"
+done
+echo "-- .env 最终关键行 --"
+timeout 20 grep -nE '^(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST|RAG_RECALL_URL)=' "$ENVF" 2>&1 | cut -c1-300
+
+echo
+echo "== DONE — RUN_ID 32（停评测 / 删hook / stash回退 / .env 换 8650-8654+RAG9006 / 重启MCP / 实测 / 起 r2）=="
+```
+
 ## RUN_ID 31 — 🔎 验证 EDA_MCP_PORT=8090 是否被继承（中继是「非交互 bash」，不读 ~/.bashrc）
 
 **背景**：用户 2026-10-10 指出 MCP 端口 = **8090**（非 18889），并说已在 36.15 `~/.bashrc` 设置该环境变量"应该可以继承"。但 **RUN_ID 29 已证明中继（非交互 bash）不读 `~/.bashrc`**（loop 找不到 `cline`）。本块核实：中继 env / `.bashrc` / loop environ / MCP 监听 / cline MCP 配置。
 
-```bash
+```text
 # RUN_ID 31 — verify EDA_MCP_PORT=8090 inheritance
 echo "== RUN_ID 31 @ $(date '+%F %T') host=$(hostname) =="
 

@@ -38,39 +38,44 @@
 > ⏱️ **判死判据（硬）**：**心跳文件 >60min 无新提交 ⇒ 按卡死处理**（不再等你）。**你干得再多，心跳不动 = 仍会被判死。**
 
 
-### 🧭 本轮（2026-10-10 晚）执行顺序 —— **排查已完成 → 现在执行 `(八)`（按 B′）**
+### 🧭 本轮（2026-10-11 上午）执行顺序 —— **换回旧 4 端口 + 修 RAG 端口 → 由 ops RUN_ID 32 直接推进 r2–r5**
 
-> ✅ **`(四)`+`(六)` 已完成**：根因 = **`8667` 瞬态挂死**（**现已恢复**，9 端口复测 3/3@0.01s✅）+ **客户端 60s 太短**；`(六)` **4-vs-9 判别未见加端口收益**。
-> ➡️ **现在执行 `(八)`（用户裁定「按 B′」）**：**保留当前 4 端口**（`.env` 不动）+ **`cline_mcp_settings.json` 加 `"timeout": 180`** → **重跑 `r2→r5`**。
-> ❌ **`(七)` 作废**（「剔除 8667 + 补 8650–8654」的前提已被 `(六)` 推翻）；`(六)` 已完成、`(三)` 已由 relay 完成 —— **均勿重复**。
+> ❌ **`(八)` 已被 `(九)` 取代**：其「保留 4 端口 `8663/8666/8667/8670`」在 **10-11 早间再次全挂**（0 字节/超时 + `8670` license 断路器），导致 r2_new **eval Steps 5–7.1 未跑 → 无 official Pass@1**。
+> ➡️ **现在按 `(九)` 执行**：**.env 端口集换回 `8650/8651/8652/8654`**（`(六)` 实测全健康 3/3@0.01s）+ **`RAG_RECALL_URL` → `9006`** + **删 `~/.cline/hooks/PreToolUse`** + **`.env` 本地改动 `git stash` 回退** → **重跑 r2–r5**。
+> ✅ **以上动作已由 ops 中继 `RUN_ID 32` 代做**（停评测 / 删 hook / stash / 改 `.env` / 重启 `eda_fastmcp` / 4 端口实测 / **4/4 健康才起动 r2**）——**你只读证据 + 接管推进，🚫 不要重复执行**。
+> ❌ **`(七)`/`(六)`/`(四)`/`(三)` 均已完成或已作废，勿重复**。
 
-### 🆕 运维指令 · 2026-10-10（八）— ✅ **按 B′ 执行**：保留 4 端口 + `cline_mcp_settings.json` `"timeout": 180` + 重跑 r2–r5【最高优先 · 覆盖 (七)/(六)】
+### 🆕 运维指令 · 2026-10-11（九）— 🔄 换回旧 4 端口（`8650/8651/8652/8654`）+ RAG→`9006` + 删 hook + `.env` 回退；已由 **ops RUN_ID 32** 代做 → 你从收割/推进接手【最高优先 · 覆盖 (八)】
 
-> **用户令（2026-10-10 晚）**：「zhulong：**用当前 4 端口重跑 r2–r5**；**`cline_mcp_settings.json` 加 `"timeout": 180`（防再挂时 60s 太短）**；**不必配 9 端口**。」
-> **依据（`(四)`+`(六)` 实测）**：timeout 根因 = **`8667` 瞬态挂死**（**现已恢复**：9 端口复测 3/3@0.01s ✅）+ **客户端默认 60s 太短**；`(六)` **4-vs-9 判别未见加端口收益**。
+> **用户令（2026-10-11 上午）**：「停掉当前评测；删 `~/.cline/hooks/PreToolUse`；`eda_fastmcp/.env` 本地改动 stash（回退昨晚改动）；**测试/应用端口 `8650`、`8651`、`8652`、`8654`**；改 `.env`；**ragrecall 端口重新设为 9006**；**重启 full r2-r5 及后续评测**。」
+> **执行方式**：**已由 ops 中继 `RUN_ID 32` 代做** —— 停评测 / 删 hook / `.env` 备份+`git stash` / 写新 `.env` / 重启 `eda_fastmcp` / 4 端口实测 / **（4/4 健康才）起动 r2**。**🚫 不要再重复这些动作**（尤其不要重复起动 r2）。
 
-**① 确认停**：`pgrep '^bash scripts/run_cline_script'` / `pgrep run_eval.py` **均无输出**。
+**① 先读证据**：`git pull` 后读 `run/ops/outbox.md` **末尾 RUN_ID 32 节**，看三件事：
+- **(a) 4 端口实测**：`TCP + run_code` 逐端口结果（应 4/4 OK）；
+- **(b) `.env` 最终关键行**：应为 `PROXY_PORTS=8650,8651,8652,8654` + `RAG_RECALL_URL=http://localhost:9006/recall`（`SANDBOX_ENDPOINTS` 以 outbox 打印为准）；
+- **(c) r2 是否已起动**：新 eval PID / log 路径（预期 `/tmp/ABL_full_r2_8650set.log`）/ 四 override / **反作弊 hook 是否被本轮重新部署**。
 
-**② `.env` 不动（覆盖 `(七)②`）**
-- 保持 **`PROXY_PORTS=8663,8666,8667,8670`**（**当前 4 端口**，含已恢复的 `8667`）。
-- 🚫 **不补 `8650–8654`**（判别未见收益 + 借用 `t0002997` workdir 风险）。
+**② 状态记账（先改状态头，再干活）**
+- `CONFIG` 仍 = `full`（锚点）；`ROUND` = **2**；**`.env` 臂配置不动**（无需 `set_ablation`）。
+- **`r2_new`（batch `2026_1010_234408`）判 ❌作废**：code-gen 146/158 完成但 **eval 未跑 = 无 official Pass@1**，且其端口集已废弃。**log / batch 目录保留作证据，不并入成绩**。
+- **`r1=88.0%` 保留**为锚点（不重跑）。
+- **端口口径更新**：当前沙箱 = **`8650/8651/8652/8654` @ `10.129.32.75`**（workdir 以 `.env` 的 `SANDBOX_ENDPOINTS` 为准）。
+- ⚠️ **环境改动披露**（写进结果报告「披露」节）：`.env` 端口集回退（`8663/8666/8667/8670` → `8650/8651/8652/8654`）+ `RAG_RECALL_URL` 指向 `9006`（原 `9012` 已死）+ 删 `~/.cline/hooks/PreToolUse` + `cline_mcp_settings.json` 的 `"timeout": 180`（`(八)`③，**本次保留未回退**）。
 
-**③ 加 MCP 客户端超时（唯一环境改动）**
-- `~/.cline/data/settings/cline_mcp_settings.json` 的 `pyAether_MCP_server` 项：加 **`"timeout": 180`**（**180 秒**）= 服务端 `SANDBOX_TIMEOUT=150s` 之上留余量。
-- ⚠️ **先核对字段名/单位与现有 schema** 再改；**贴改动前后原文**（脱敏 token）。
-- ⚠️ 属**评测环境改动**（影响评测对象的 cline）⇒ **须在结果报告「披露」节写明**。
+**③ 分支动作**
+- **若 outbox 显示 r2 已起动**：
+  - **先核反作弊**：`ls -l ~/.cline/hooks/PreToolUse`（或 `~/.cline_prof4_eval/data/hooks/PreToolUse`）+ 新 log 是否出现「已部署沙盒 hook」+ log 内 `ACCESS RESTRICTED` 是否 >0。**未部署 → 立即停本批、判作废、回报**（防作弊是硬约束，canary 不过不得计入成绩）。
+  - `pgrep -f '^bash scripts/run_cline_script'` **有输出** → 巡检退出（log 增长 / 0 Forbidden / timeout 计数 / `ACCESS RESTRICTED`）；**无输出** → 收割。
+- **若 outbox 显示未起动**（存在不健康端口 / 已有 eval 在跑）：`WAITING=1` 原地等，把不健康端口的原文回报运维，**不得带病开跑**。
 
-**④ 重启（如生效需重启）+ 核验**：按既定流程重启 `eda_fastmcp`；核验 `ss -lntp | grep 8090` + `grep -E 'PROXY_PORTS' .env`（**贴行确认仍是 4 端口**）。
+**④ 收割 / 推进（判据不变）**：`grep -E 'pass \(|PASS_RATE|评估结果汇总|timeout' /tmp/ABL_full_r2_8650set.log | tail -10` → **`timeout ≤ 10` 且 `Pass@1 ≥ 75%`** → r2 有效 → 依次 **r3 → r4 → r5**（同臂 `full`，**四 override 必带**：`EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework` + `CLI_DATA_DIR=/nasdata/app.e0031982/.cline_prof4_eval/data` + `PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python` + `https_proxy=http://172.19.92.23:13128`；log `/tmp/ABL_full_r3_8650set.log` → `r4` → `r5`）。
+- **每轮开跑前**：4 端口 `run_code` 复检（4/4 才开跑）+ **`df -BG /home` ≥8G**；任一轮不达标 → 最多重跑 3 次 → 仍不达标 → `WAITING=1` 回报。
+- **5/5** = `[r1=88.0(保留), r2, r3, r4, r5]` → 算 mean±std → **回填 5 张表锚点** → `PHASE=just_finished` → 进 `C2.phi_k10`。
 
-**⑤ 开跑前硬闸（每轮都做）**：对 **4 端口**各 `run_code` 1 次 → **4/4 健康才开跑**；任一不健康 → **停、回报**（防 `8667` 再挂）。
+**⑤ 产出**：outbox RUN_ID 32 已贴 (a)(b)(c)；你补 **各轮 `Pass@1 / timeout`** + **「timeout × 端口」表** + **hook/反作弊复核结论**。
 
-**⑥ 重跑 r2→r5（本块授权起动）**
-- 依次 `r2_new → r3_new → r4_new → r5_new`；判据 **`timeout ≤ 10` 且 `Pass@1 ≥ 75%`**（每轮最多重跑 3 次）。
-- **必带 instrumentation**：每次 `run_code` 记 **`port` + `latency(ms)` + `timeout?(Y/N)`** → 各轮产出 **「timeout × 端口」分布表**。
-- 5/5 完成 → `[r1=88.0(保留), r2..r5]` 算 mean±std → 回填 5 张表锚点 → 进 C2。
-
-**⑦ 产出**：本块下贴 —— ③ 改动前后原文 + ④ 核验行 + ⑤ 的 **4 端口自检表（每轮）** + ⑥ 各轮 `Pass@1 / timeout` + **「timeout × 端口」表**。
-**⑧ 备注**：若 `r2_new` 仍出现**大量 task-level timeout** → 回报（届时再议重负载 4-vs-9 判别 / 端口剔除）。
+### 🆕 运维指令 · 2026-10-10（八）— ✅ 按 B′ 执行：保留 4 端口 + `cline_mcp_settings.json` `"timeout": 180` + 重跑 r2–r5【已被 `(九)` 取代 · 已归档】
+> ⎩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-11）。
 
 ### 🆕 运维指令 · 2026-10-10（七）— ✅ 按 A 执行：剔除 8667 + 补入 8650–8654 + 调高 MCP timeout → 重跑 r2–r5【已被 (八) 取代·已归档】
 > ⎩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-11）。
