@@ -49,7 +49,7 @@ WAITING: 0
 
 | 线 | 脚本 / 任务书 / 记忆 | 在飞 | 状态 |
 |:--|:--|:--|:--|
-| **合并消融线（新 · 正式）** | `run/zhulong_loop.sh` · `run/ZHULONG_TASK.md` · `run/MEMORY_ZHULONG.md` | 🟢 **在跑**（36.15 · loop PID 3579323 · proxy 自检通过） | **`STAGE=C1` · `CONFIG=full`(锚点) · `ROUND=4` · `PHASE=standby` · `WAITING=1`**。已完成 **Phase B 4/4** ＋ **C1 前三臂 5/5**（`pure_llm` 10.5±1.9 / `rag` 71.8±2.5 / `wo_retrieval` 81.0±4.5）；**卡在锚点 `C1.full`**（r1=88.0% 保留 · r2=59.5%/r3=63.3% 作废待复测 · r4 因沙盒故障被 kill 作废）→ **已下发「沙盒修复·重跑 r4」(五)**；**C2/S1 未开始** |
+| **合并消融线（新 · 正式）** | `run/zhulong_loop.sh` · `run/ZHULONG_TASK.md` · `run/MEMORY_ZHULONG.md` | 🟢 **在跑**（36.15 · loop PID 3579323 · proxy 自检通过） | **`STAGE=C1` · `CONFIG=full`(锚点) · `ROUND=4` · `PHASE=standby` · `WAITING=1`**。已完成 **Phase B 4/4** ＋ **C1 前三臂 5/5**（`pure_llm` 10.5±1.9 / `rag` 71.8±2.5 / `wo_retrieval` 81.0±4.5）；**卡在锚点 `C1.full`**（r1=88.0% 保留 · r2=59.5%/r3=63.3% 作废待复测 · r4 因沙盒故障被 kill 作废）→ **10-10 晚已下发 (三)：先停 zhulong + 逐一实测 9 端口（新 8663/8666/8667/8670 + 旧 8650–8654）**（用户令：停 + 测端口 + 探旧 range）；**r2_new2 人为中止判 ❌作废**；**C2/S1 未开始** |
 | 旧 S1 保真度线（legacy） | `run/ablation_run_task_s1_full.md` · `run/MEMORY_s1_full.md` | 10-03 曾活动 | ⬜ **只读历史**；旧 5-run 可复用：`omega_low` 82.8±1.0 / `readback_binary` 66.2±16.1 / `readback_none` 73.3±2.2（是否延续由任务书定） |
 | 旧组件线（legacy） | `run/ablation_run_task_component_s2_full.md` · `run/MEMORY_component_full.md` | 10-04 曾活动 | ⬜ **只读历史**；数据已由合并线接管（`pure_llm` 复用 / `rag` 重跑 / `wo_retrieval` 复用 r1）。⚠️ **其 loop 存活存疑**（见 §4） |
 | 旧 S2 1-shot 探路线 | `run/ablation_run_task_s2_1shot.md` · `run/MEMORY_s2_1shot.md` | 已出探路值 | ⬜ 只读历史（`k10`/`k3`/`k1`/`lagged` 1-shot 探路）；5-run 未跑 |
