@@ -49,38 +49,11 @@
 
 **⑤ 体积**：若 TASK 超 32KB，按「体积维护规程」把已闭合旧块原文搬入 `ARCHIVE_OPERATOR_DATA.md`（只搬迁留指针）。
 
-### 🆕 运维指令 · 2026-10-10（🔄 重启 `en_v1_4` 下载）· 用户直令 · 最高优先
+> 📦 §运维指令·2026-10-10（🔄重启en_v1_4下载）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：en_v1_4已重启(PID2535486,parallel 24+hf_transfer),GPIC✅全完成→放行条件满足。需要时再读。
 
-> **用户令（2026-10-10）**：「给 data 下指令，重启 en_v1_4 下载。」
+> 📦 §运维口径·2026-10-10（en_v1_4放行·用户再确认）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：GPIC完成即满足放行条件,data不自行启动(由运维/用户改白名单后下指令)。需要时再读。
 
-**① 背景**：GPIC 已全部完成（train 8000/8000 + val 32/32 + test 128/128，唤醒 #294）→ `en_v1_4` 放行条件已满足。`en_v1_4` = Ultra-FineWeb base 的 4 config 之一（`data/ultrafineweb_en_v1_4/`，CC-MAIN-110 快照），**56,461 文件 / 6.75TB** = base 主体，是 P-8 主预训练语料（86% 档）的核心组成。之前被 10-03 白名单停用，现已放行。
-
-**② 执行（立即启动，config 级 `--include` 续传）**：
-```bash
-setsid -f nohup hf download --repo-type dataset openbmb/Ultra-FineWeb \
-  --local-dir /nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb \
-  --include 'data/ultrafineweb_en_v1_4/*' \
-  > /tmp/en_v1_4_dl.log 2>&1
-```
-- 落盘 `/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/`（沿用 base-en 复用路径，勿改回 `/nas_inference`）。
-- 公开数据集（apache-2.0），无需 token。
-- 有 `.incomplete` 则从断点续传，**不删 `.incomplete`**。
-
-**③ 纪律**：判活按 `.incomplete` 字节增长 / `/proc/io write` / log 尾部；僵死即 `kill` + **同命令**重启续传，报告标「已重启」+ 新 PID。磁盘 37T free ✅。下满 56,461/56,461 后**必经 `check_contamination.py`**（EDA-Eval 不同源 + 跨集去重）再报「`en_v1_4` 下载完成」。🚫 本轮**只下 en_v1_4**（zh / l1_en_hq 早已下完分词，无需再动）。
-
-**④ 体积**：若 TASK 超 32KB，按「体积维护规程」把已闭合旧块原文搬入 `ARCHIVE_OPERATOR_DATA.md`（只搬迁留指针），不新增/改写历史指令。
-
-### 🆕 运维口径 · 2026-10-10（`en_v1_4` 放行 · **用户再确认**）· 最高优先
-
-> **用户令（2026-10-10）**：「GPIC 若结束，即可放行 en_v1_4。」—— 放行时点从「预计 10-10 上午」收敛为「**GPIC 完成即满足放行条件**」（GPIC 当前 7982/8001，ETA ~13:34）。放行操作仍由运维/用户改下载白名单后下指令；**data 仍不自行启动** `en_v1_4`。
-
-### 🆕 运维口径 · 2026-10-09④（`en_v1_4` 放行时点 · **用户裁定**）· 最高优先
-
-> **用户裁定（2026-10-09）**：`en_v1_4` **在 GPIC 下载完成之后再放行**；时点预计 **2026-10-10 上午**（GPIC 当前 7418/8001，ETA ~10:48 Oct10），**由用户本人操作**。
-
-- ⇒ data **不要再把 `en_v1_4` 列进「阻塞」** —— 它**不是**「P-8 数据层就绪」的前置条件；`阻塞` 栏只留真实阻塞项（R3 分词 / GPIC）。
-- ⇒ **不要自行启动 `en_v1_4` 下载**（白名单未改前仍属停用项）。放行由运维/用户改白名单后**单独**下指令。
-- 其余一切不变 —— **③ 块继续有效**（R3 全量分词 → 污染扫描 → 报「P-8 数据层就绪」；GPIC 续下）。
+> 📦 §运维口径·2026-10-09④（en_v1_4放行时点·用户裁定）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：en_v1_4在GPIC完成后放行(已被10-10块取代执行)。需要时再读。
 
 
 ### 🆕🆕🆕 运维指令 · 2026-10-09③（**停②：停掉Code/Math重头来 + 加Ultra-FineWeb-L3 + 放开并发**）· **用户直令** · 最高优先 · 覆盖②
