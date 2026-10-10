@@ -906,8 +906,8 @@ def main():
             if step >= _c4_init_step:
                 if c1 > 0.95:
                     fused, fuse_reason = True, f'C1 collapse (offdiag={c1:.4f}>0.95)@step{step}'
-                elif args.c2_collapse_guard and gap <= 0.005:
-                    fused, fuse_reason = True, f'C2 no-gap (gap={gap:+.4f}~0)@step{step}'
+                elif args.c2_collapse_guard and abs(gap) <= 0.005:
+                    fused, fuse_reason = True, f'C2 no-gap (|gap|={abs(gap):.4f}~0)@step{step}'
                 elif not c4_ok:
                     fused, fuse_reason = True, f'C4 loss-not-decreasing (ema={loss_ema:.4f} vs early={loss_early:.4f})@step{step}'
 

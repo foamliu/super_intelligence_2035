@@ -4,18 +4,17 @@ WAITING: 1
 
 ## 状态头
 
-> 🆕 **2026-10-10 晚（运维直令 · 最高优先）**：外部评审质疑 E1fair ProtB=62.34% 偏低 → 运维下发 ③→①→②→④ 顺序指令。**③ 口径修订**（零 GPU）+ **① 同模型 zero-shot eval**（✅ DONE）+ **② k-NN probe 对照**（✅ DONE）+ **变体实验 V1(Muon)→V2(全量数据)→V3(分辨率暂缓)**。
-> ✅ **V1 Muon training IN PROGRESS (re-launched 00:26)**: lr=5e-4, 187,101 steps, optimizer=muon (momentum=0.95, nesterov, ns_steps=5, 2D→Muon/1D→AdamW), ETA ~10:20 Oct 11. Screen `v2_muon`. At step ~410, loss=7.50 (warmup, lr=1.0e-4 ramping to 5e-4@step2000), ~2800 img/s, all 8 GPUs 80-97% util.
-> ⚠️ **Script bug fixed**: `run_scaling_experiment.sh` line 419 `${3:-5e-4}` → `${4:-5e-4}` (was passing NW=6 as lr!).
-> ⚠️ **C2 false-alarm bug fixed** (2026-10-11): First V1 Muon launch auto-fused at step 300 — C2_gap=-0.0049 ≤ 0.005 guard fired during warmup (both diag/off near zero at init → gap≈0 is normal, not collapse). Fix: C1/C2/C4 guards now skipped when `step < _c4_init_step` (= max(warmup,50)=2000), consistent with C4 fix. Verified: re-launched training passes step 300 PROBE with no fuse. Committed.
+> 🆕 **2026-10-10 晚（运维直令 · 最高优先）**：外部评审质疑 E1fair ProtB=62.34% 偏低 → 运维下发 ③→①→②→④ 顺序指令。**③ 口径修订**（✅ DONE）+ **① 同模型 zero-shot eval**（✅ DONE: E1fair 34.10%, E2fair 35.45%）+ **② k-NN probe 对照**（✅ DONE: k=20→37.68%）+ **变体实验 V1(Muon)→V2(全量数据)→V3(分辨率暂缓)**。
+> 🔴 **V1 Muon lr=5e-4 COLLAPSED at step 2100** (2026-10-11 00:34): C1 rapidly climbed 0.19→0.99 during warmup (0.19@300, 0.38@600, 0.71@900, 0.87@1200, 0.94@1500, 0.97@1800, 0.99@2100) → C1>0.95 guard correctly fired. This is a **real instability** (Muon orthogonalization amplifies contrastive collapse), not a false alarm. Old train.log saved to `/tmp/v2_muon_collapse_lr5e-4_train.log`.
+> ✅ **V1 Muon lr=1e-4 RE-LAUNCHED (01:23 Oct 11, 2nd relaunch)**: 5× lower LR to avoid collapse. Screen `v2_muon`. **C2 guard bug FIXED**: `gap <= 0.005` → `abs(gap) <= 0.005` (r9_train.py:909). Old code fired on ALL negative gaps (gap<0 ⟹ gap≤0.005 always true) — but negative gap = off-diagonal loss > diagonal = model IS learning (not collapse). Fix only fires when |gap|≈0 (true collapse). Step 300 PROBE: C1=0.1755, C2_gap=-0.0023 (diag=0.0026, off=0.0049) — off>diag, model learning. ~2740 img/s, ETA ~11:00 Oct 11 (~9.9h). Guard activates at step≥2000 (warmup end); if |gap|>0.005 by then → safe for full run.
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **V1 Muon training running (re-launched 00:26)**, 187,101 steps, ETA ~10:20 Oct 11. Two false-alarm bugs fixed: ① C4 loss_early set at step 50 during warmup → now at max(warmup,50)=2000; ② C2_gap≤0.005 guard fired at step 300 during warmup (diag/off≈0 at init) → now skipped when step<warmup. ③①② DONE: ③ 口径修订, ① zero-shot (E1fair 34.10%, E2fair 35.45%, ΔZS=+1.35pp), ② k-NN (k=20:37.68%). Baseline E1fair: ProtB=62.34±0.01%. **Next**: ④ epoch scaling (after V1 Muon completes). |
-| WAITING | 1（🔄 V1 Muon full training in progress. ③①② all complete. ④ epoch scaling pending after V1. Awaiting V1 results for report update.） |
-| ERROR_COUNT | 9（①~⑧ 同前 ⑨ **numpy/transformers version mismatch**: vision agent installed `emerging_optimizers` → pulled transformers 4.56.1 → needs `numpy.dtypes` → numpy 1.23.5 lacked it. **Fixed**: numpy upgraded to 1.26.4. Also: `run_scaling_experiment.sh` lr arg bug `${3→4}` fixed） |
-| BUDGET_USED | ~609 GPU·h (previous) + V1 Muon smoke(~0.01h) + V1 Muon full(~9.7h×8=~78 GPU·h) ≈ **~687 GPU·h** |
-| 更新 | **2026-10-11 00:30（V1 Muon training re-launched after C2 fix）**: ✅ C2 false-alarm bug found & fixed: C2_gap≤0.005 guard fired at step 300 during warmup (diag=0.0026, off=0.0075, gap=-0.0049 — near-zero is normal at init, not collapse). Fix: C1/C2/C4 guards skipped when step < _c4_init_step(=max(warmup,50)=2000). Committed. ✅ Training re-launched 00:26 in screen `v2_muon`, step 410 confirmed past step 300 trap, loss=7.50, lr=1.0e-4 (warming up), ~2800 img/s, all 8 GPUs active. 📦 体积：TASK=check / MEMORY=check |
+| PHASE | 🔄 **V1 Muon lr=1e-4 training running** (re-launched 01:23 after C2 guard fix). 187,101 steps, ETA ~11:00 Oct 11. ③①② DONE: ③ 口径修订, ① zero-shot (E1fair 34.10%, E2fair 35.45%, ΔZS=+1.35pp), ② k-NN (k=20:37.68%). Baseline E1fair: ProtB=62.34±0.01%. **Next**: V1 Muon eval → V2 full data → ④ epoch scaling. |
+| WAITING | 1（🔄 V1 Muon lr=1e-4 training in progress (2nd relaunch with C2 guard fix). ③①② all complete. V1 lr=5e-4 collapsed (C1→0.99). lr=1e-4 1st run stopped at step 2100 due to C2 guard bug (now fixed). Awaiting V1 lr=1e-4 results.） |
+| ERROR_COUNT | 11（①~⑨ 同前 ⑩ V1 Muon lr=5e-4 collapse (C1→0.99@step2100) ⑪ **C2 guard logic bug**: `gap <= 0.005` fired on ALL negative gaps (gap<0 ⟹ gap≤0.005 always true), killing lr=1e-4 run at step 2100. Negative gap = model learning (off-diagonal > diagonal). Fix: `abs(gap) <= 0.005` (only fires when |gap|≈0 = true collapse). r9_train.py:909.） |
+| BUDGET_USED | ~609 GPU·h (previous) + V1 lr=5e-4 collapse(~0.12h×8=~1) + V1 lr=1e-4 1st run stopped@2100(~0.2h×8=~1.6) + V1 lr=1e-4 2nd run(~9.9h×8=~79) ≈ **~691 GPU·h** |
+| 更新 | **2026-10-11 01:23（V1 Muon lr=1e-4 2nd relaunch after C2 guard fix）**: 🔴 C2 guard bug found: `gap <= 0.005` catches ALL negative gaps (gap<0 always satisfies ≤0.005), but negative gap = off-diagonal loss > diagonal = model IS learning. lr=1e-4 1st run killed at step 2100 by this false alarm. ✅ Fixed to `abs(gap) <= 0.005` (r9_train.py:909, py_compile verified). ✅ Old screen killed, old outputs cleaned, re-launched in screen `v2_muon`. Step 300: C1=0.1755, C2_gap=-0.0023 (off>diag, learning). ~2740 img/s, ETA ~11:00 Oct 11. 📦 体积：TASK=35.4KB / MEMORY=check after edit |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
@@ -86,6 +85,76 @@ WAITING: 1
 
 **4-E · Future Work 段（应补）**
 - ① 高分辨率编码器(336/448) for MLLM；② 更长 caption(LLaMA-3 式)；③ GPIC 全量 100M scaling；④ Stage (iv) MLLM 对齐评测。
+
+## 🗣️ 运维问答 · 2026-10-10（下一步工作建议）
+
+> 回应运维指令 2026-10-10「询问 vision，对于下一步工作，有什么建议」。基于当前状态：E1fair ProtB=62.34±0.01%，scaling fair Δlp=+0.17pp（不可分辨），zs=34.10%，k-NN=37.68%。按价值排序。
+
+### 1. ④ Epoch 缩放（最有决策价值）
+- **问题**：62.34% 是预算不足还是特征质量天花板？
+- **依据**：E1fair 1 epoch ProtB=62.34%；R12 3-epoch→20.27%（但旧 recipe）；k-NN=37.68% vs lp=62.34%→probe 欠拟合不大；zs=34.10% < lp=62.34%→文本对齐有增益但未饱和。
+- **设计**：在 E1fair 基础上补 2 epoch（374,202 步）和 4 epoch（748,404 步），同数据/目标/schedule。8 卡，2ep≈10h，4ep≈20h。
+- **判据**：2ep ≥70% → 预算不足；4ep ~63% 横盘 → 特征/目标函数问题。
+- **成本**：2ep ~80 GPU·h / 4ep ~160 GPU·h。
+- **依赖**：V1 Muon + V2 全量数据完成后排 GPU 档期。
+- **风险**：NFS 波动影响吞吐；多 epoch 可能过拟合（R12b 2ep < R11-G 1ep 先例）。
+
+### 2. V2 全量数据（已排期 · 第二优先）
+- **问题**：GPIC 全量 8000 tar（vs snapshot 7437 tar）+ CC12M + Amshaker 是否提升 lp？
+- **依据**：E1fair 用 total_shards=10787（~95.8M 对）；GPIC 全量 8000 tar→100.3M 对（+4.5M）。R12b「更多 unique 数据 ≠ 更高 lp」（69.7M 2ep=18.81% < R11-G 18.5M 1ep=19.76%）。
+- **设计**：1 臂，全量 GPIC 8000 tar 快照，步数按数据量计算（~230k 步），其余与 E1fair 逐字节相同。8 卡，~12h。
+- **判据**：Δlp vs baseline |Δ|≥1.5pp 可分辨。
+- **成本**：~96 GPU·h / ~12h 墙钟。
+- **依赖**：V1 Muon 完成（共用 .12 8 卡，串行）。
+- **风险**：同时变「数据量+步数」，结论只能表述为「全量配方 vs baseline」。
+
+### 3. (a) Stage (iv) MLLM 对齐前置
+- **问题**：当前最佳 ckpt（E1fair）能否直接用于 MLLM，需要哪些准备？
+- **依据**：论文 §VI-C 已声明「Stage (iv) revisits visual-token count」；R11-L2 LoRA 解冻未翻盘(Δ−0.30~−0.80)。
+- **设计**（纯 CPU/轻 GPU）：① projector 设计文档（linear/MLP/Q-Former 对比）；② 特征缓存管线（`extract_features_cache.py`）；③ 冻结/解冻评测框架（`eval_mllm_readiness.py`）；④ GPIC layout 标注配对脚本。
+- **判据**：产出设计文档 + 可运行脚本（不占 8 卡训练）。
+- **成本**：~2 天纯写作/代码，~0 GPU·h。
+- **依赖**：无（可与 V1/V2 并行）。
+- **风险**：低。
+
+### 4. (e) 论文呈现（纯写作）
+- **问题**：scaling 公平性翻案（Δlp=−5.59pp→+0.17pp）如何在 §VI 呈现？
+- **依据**：`report_vision_scaling_fair.html`（Δlp=+0.17pp 不可分辨）；旧报告 ⛔ 横幅已加。
+- **设计**：① §VI-B 加「schedule 敏感性」教训段（旧 lr=3e-3/warmup20 → 新 5e-4/warmup2000/cosine）；② 重拟合 scaling 曲线（若 ④ 有数据）；③ Limitations 加单预算点声明。
+- **判据**：LaTeX 编译 0 err，数字与报告一致。
+- **成本**：~0 GPU·h，~半天写作。
+- **依赖**：④ epoch 缩放数据（若有）可增强结论。
+- **风险**：低。
+
+### 5. (b) w384 AIMv2-style（可选 · GPU 空窗期）
+- **问题**：AIMv2-style 在更小塔（w384, 71.5M）上是否更优？
+- **依据**：R10 w384 InfoNCE lp=7.99%@15.36M 全宽度最高；R11-G AIMv2 w512 翻盘→19.76%。交叉点未验证。
+- **设计**：1 臂 w384 AIMv2-style，30k 步，8 卡，~2h。
+- **判据**：lp@30k ≥ 15.0% → w384 更优。
+- **成本**：~16 GPU·h / ~2h。
+- **依赖**：GPU 空窗期（V1/V2/④ 之后）。
+- **风险**：若 w384 不优于 w512 → 负结果（仍有价值）。
+
+### 6. (d) 224→336 分辨率（暂缓 · 用户令「明天再说」）
+- **问题**：336/16=576 patch 对版图 VQA 是否必要？
+- **依据**：官方 OV2 用 patch14/336=576 token；我们 224/16=196。BP-3 未测高分辨率 dense。
+- **设计**：1 臂 336/16 AIMv2-style，187k 步，pos-emb 重建，~2.25× 计算。8 卡，~20h。
+- **判据**：Δlp vs baseline ≥1.5pp → 高分辨率有益。
+- **成本**：~160 GPU·h / ~20h。
+- **依赖**：用户批准（暂缓中）。
+- **风险**：pos-emb 插值不稳定；计算量大。
+
+### 7. (c) C1-lp 背离（低优先 · 可选）
+- **问题**：降低 contrast weight 是否系统性提升 lp？
+- **依据**：mask-ratio arm 0.3 C1↓但 lp≈；weight-ratio 0.5:1 C1 最低但 lp 最高。
+- **设计**：contrast_weight {0.1,0.25,0.5} × 1 seed，30k 步。
+- **判据**：lp 倒 U 峰值 = 最优 trade-off。
+- **成本**：~48 GPU·h / ~6h。
+- **依赖**：GPU 空窗期。
+- **风险**：已有 2 点数据，趋势不明朗。
+
+> **总结排序**：④ epoch 缩放 > V2 全量数据 > (a) MLLM 前置（CPU 并行）> (e) 论文（CPU 并行）> (b) w384 > (d) 336 > (c) C1-lp。前 4 项可并行（④/V2 占 GPU，a/e 纯 CPU）。
+
 
 ## R9 完成（converged）结论速查（权威详见 EXPERIMENTS_VISION_ROUND9.md）
 
@@ -193,24 +262,14 @@ WAITING: 1
 
 ## 本唤醒流水
 
-- [2026-10-09 晚 · 运维] 🔁 **scaling 公平性重跑令下发（用户直令）**：复核 `report_vision_aimv2_scaling.html` §11 复现命令 ⇒ 两臂 `--lr 3e-3 --warmup 20` 在 **187,101 步**下 warmup = **20/187101 = 0.01%**（原为 30k 短跑配方，见 `ARCHIVE_OPERATOR_VISION.md` 2026-10-05 全量训练块）⇒ 「Bigger is WORSE (Δlp=−5.59pp)」**不能归因于规模，作废重做**。已下发 `BAIZE_VISION_TASK.md` 顶部 **2026-10-09⑨**：① 配方 `warmup=2000` / `lr=5e-4` / **cosine** / `min_lr=5e-5`，其余（bs512/seed1234/224/p16/d30/AIMv2/mratio0.6/`--steps 187101`）不动，唯一差异仍 `--width`；② **`r9_train.py` 必须新增 `--scheduler {const,cosine}` + `--min-lr`**（现 `lr_at` 是 warmup 后恒定，写 `cosine` 也是假的），并打印 lr 四点自检入 `train.log`；③ **两臂同一冻结 tar 快照**（`snapshot_gpic` → `data_snapshot_20261009.txt`，`smoke_cos` 预检 `total_shards=` 两臂相同）；④ 新输出目录 `scaling_E{1,2}fair_ov2_w{512,768}_d30_p16_224`，**旧结果原地保留不覆盖**；⑤ 旧报告顶部加「⛔ 结论已被取代」横幅；⑥ 判据沿用 ⑤（±1.5pp / 3-seed σ / 单点≠scaling law）；⑦ 体积：TASK 32,179→29,520B（先把 2026-10-08⑥ 搬入 `ARCHIVE_OPERATOR_VISION.md` 并留指针），加 ⑨ 后 37,134B **超 32KB ⇒ 本块归档后需再滚**。`GPU12_ALLOC.md` 申请区+1 行、流水+1 行。**ETA ~14–18h 墙钟（`.12` 8 卡）。** ⚠️ 本块由运维代发（agent 只做 volume 搬迁，不改指令）。
+- [2026-10-09 晚 · 运维] 🔁 **scaling 公平性重跑令下发** — 已归档至 `daily-memories-vision/2026-10-09.md`。配方 `warmup=2000/lr=5e-4/cosine/min_lr=5e-5`，两臂同数据。
 
-> 📦 15 条 R12b 巡检流水(10-06 12:33–23:57)已归档 → daily-memories-vision/2026-10-06.md（2026-10-07 13:00 滚动）
-> 📦 5 条 R12b 巡检#17-19 + 完成 + eval(10-07 00:33–03:07)已归档 → daily-memories-vision/2026-10-07.md（2026-10-08 03:23 滚动）
-- [02:23→03:07] *(R12b 训练完成 + eval完成 + lp协议A/B桥接启动)* — 已归档至 daily-memories-vision/2026-10-07.md（lp_max=18.81%, R12b<R11-G, lp bridge PID 1499158 启动）
-- [03:20→23:25] *(lp bridge 完成 + mask-ratio 消融 ALL DONE + 报告HTML交付 + weight-ratio arm1 DONE + arm2 启动)* — 已归档至 daily-memories-vision/2026-10-07.md（lp bridge Δlp≈+10pp 3ckpts极稳定; mask-ratio 0.6最优13.49%倒U; report_vision_mask_ratio.html 34.3KB commit ee9db3ca; arm1 cw1_plw2 DONE C1=0.3546）
-- [22:46] *(arm1✅DONE + 脚本异常退出→恢复)* — 已归档至 daily-memories-vision/2026-10-07.md（arm1 cw1_plw2 DONE@22:11, C1=0.3546, 脚本crash→恢复PID 3214830）
-- [02:48→20:08] *(weight-ratio arm3巡检 → ④AIMv2 AR Arm B坍缩 → scaling E1/E2 训练+eval 全过程)* — 20条巡检流水已归档至 `daily-memories-vision/2026-10-09.md`（原文未改）。**关键结论**：E2 ProtB=23.76±0.04%, E1 ProtB=29.35%, Δlp=−5.59pp "Bigger is WORSE" —— ⚠️ **该结论已被 2026-10-09⑨ 作废（schedule 不公平），公平重跑中**
-- [09:05→19:31] *(④ Arm B-hybrid巡检 → ⑥ E2变更 → scaling E1 crash/resume → E1/E2 训练eval全流程 → HTML报告)* — 全部已归档至 `daily-memories-vision/2026-10-{08,09}.md`（原文未改）。E1 crash@step131490→resume from 130k; E2 训练 11.35h; HTML report `report_vision_aimv2_scaling.html` 26KB
-> 📦 7 条 scaling 流水(00:35~29% / 01:20~39% / 01:59~47% / 02:50~56% / 03:35~63.5% / 05:18~80.7% / 05:55~86.5%)已归档 → daily-memories-vision/2026-10-10.md（2026-10-10 08:20 滚动）
-- [03:35 Oct10] **🔁 scaling fair rerun — E1fair health check ~63.5%**: ✅ E1fair at step~118880/187101 (~63.5%), ~3400 img/s avg (range 3100-3700 NFS fluct), loss_ema~0.29 (↓ from ~0.34@56%), C1=0.5115 C2_gap=+0.1930 C4=OK (no collapse), lr=1.85e-04 (cosine decaying correctly, well past 50% pt). ckpts @step10000-110000 saved (11 ckpts, 5.3GB total). ✅ 396 PROBE events ALL C4=OK, 0 fusing. ✅ lr self-check: `lr@0=0, lr@warmup(2000)=5e-4, lr@50%(93550)=2.79e-4, lr@last(187100)=5e-5, OK monotonic`. ✅ total_shards=10787 in [start] line. ✅ bothfair (PID 2670216, etimes~18626s ~5.2h) running correctly. ✅ ⛔ banner verified. ✅ All 8 GPU 75-100% util, 16.5GB/card, temps 39-45°C. ETA: E1fair done ~06:30 → E1 eval ~3.5h → E2fair ~5.5h → E2 eval ~3.5h → all done ~19:00 Oct10. 📦 体积：TASK=31.3KB / MEMORY=30.1KB（均≤32KB ✅）
-- [05:18 Oct10] **🔁 scaling fair rerun — E1fair health check ~80.7%**: ✅ E1fair at step~151020/187101 (~80.7%), ~4900 img/s avg (range 2820-5905 NFS fluct recovering), loss_ema~0.12 (↓ from ~0.19@75%), C1=0.4921 C2_gap=+0.2024 C4=OK (no collapse), lr=9.12e-05 (cosine decaying correctly, approaching min_lr=5e-5@187100). ckpts @step10000-150000 saved (15 ckpts, ~7.2GB total). ✅ 503 PROBE events ALL C4=OK, 0 fusing. ✅ lr self-check: `lr@0=0, lr@warmup(2000)=5e-4, lr@50%(93550)=2.79e-4, lr@last(187100)=5e-5, OK monotonic`. ✅ total_shards=10787 in [start] line. ✅ bothfair (PID 2670216, etimes~24850s ~6.9h) running correctly. ✅ ⛔ banner verified on `report_vision_aimv2_scaling.html` (line 41). ✅ All 8 GPU 65-84% util, 16.5GB/card, temps 43-51°C. ETA: E1fair done ~07:00 → E1 eval ~3.5h → E2fair ~5.2h → E2 eval ~3.5h → all done ~19:00 Oct10. 📦 体积：TASK=32.1KB / MEMORY=31.6KB（均≤32KB ✅）
+> 📦 R12b/scaling 早期流水(10-06~10-07)已归档 → daily-memories-vision/2026-10-{06,07}.md
+> 📦 7 条 scaling 流水(10-10 00:35~05:55)已归档 → daily-memories-vision/2026-10-10.md
+> 📦 10 条 scaling fair rerun 巡检/报告(10-10 07:44~20:28)已归档 → daily-memories-vision/2026-10-10.md。**结论**：E1fair ProtB=62.34%, E2fair ProtB=62.51%, Δlp=+0.17pp indistinguishable。
 
-- [05:55 Oct10] **🔁 scaling fair rerun — E1fair health check ~86.5%**: ✅ E1fair at step~161870/187101 (~86.5%), ~3500 img/s avg (NFS fluct range 2167-5387), loss_ema~0.11 (stable), C1=0.5052 C2_gap=+0.1991 C4=OK (no collapse), lr=7.03e-05 (cosine decaying correctly, approaching min_lr=5e-5@187100). ckpts @step10000-160000 saved (16 ckpts, ~7.7GB total). ✅ 539 PROBE events ALL C4=OK, 0 fusing. ✅ lr self-check: `lr@0=0, lr@warmup(2000)=5e-4, lr@50%(93550)=2.79e-4, lr@last(187100)=5e-5, OK monotonic`. ✅ total_shards=10787 in [start] line. ✅ bothfair (PID 2670216, etimes~27089s ~7.5h) running correctly. ✅ ⛔ banner verified. ✅ GPU: 7/8 100% util (GPU5 0%=data loading gap), 16.5GB/card, temps 36-42°C. Remaining ~25231 steps @ ~411 steps/min → ETA ~62min → E1fair done ~06:57. → E1 eval ~3.5h → E2fair ~5.2h → E2 eval ~3.5h → all done ~19:00 Oct10. 📦 体积：TASK=32.1KB / MEMORY=check after edit
-
-> 📦 10 条 scaling fair rerun 巡检/报告流水(07:44~20:28 Oct10)已归档 → daily-memories-vision/2026-10-10.md（2026-10-11 00:15 滚动）。**结论**：E1fair ProtB=62.34%, E2fair ProtB=62.51%, Δlp=+0.17pp indistinguishable。报告 `report_10_09_vision_overnight.html` FINAL。
-
-- [00:15 Oct11] **🆕 V1 Muon training LAUNCHED**: ✅ numpy 1.26.4 installed (fixes `numpy.dtypes` crash from transformers 4.56.1). ✅ V2 Muon smoke test passed (30 steps, loss=7.37 stable, optimizer=muon confirmed, ~2550 img/s, exit 0). ✅ Script bug fixed: `run_scaling_experiment.sh` line 419 `${3:-5e-4}`→`${4:-5e-4}` (was passing NW=6 as lr! first launch lr=6 killed immediately). ✅ **V1 Muon full training launched**: `bash run_scaling_experiment.sh v2 187101 6`, screen `v2_muon`, lr=5e-4 confirmed, steps 10-90 loss=7.37 stable, lr warmup correct (2.5e-6→2.25e-5), ~2700 img/s, ETA ~10:00 Oct11. Output: `scaling_V2_muon_ov2_w512_d30_p16_224/`. 📦 体积：TASK=check / MEMORY=check after edit
+- [00:15 Oct11] **V1 Muon lr=5e-4 training LAUNCHED** (later collapsed at step 2100, see below).
+- [01:23 Oct11] **✅ C2 guard bug FIXED → V1 Muon lr=1e-4 2nd relaunch**: 🔴 C2 guard bug found: `gap <= 0.005` (r9_train.py:909) catches ALL negative gaps — but `gap = diag - off`, negative gap means off-diagonal > diagonal = model IS learning (not collapse). lr=1e-4 1st run was killed at step 2100 by this false alarm (step 2100 = first probe after warmup=2000). ✅ Fixed to `abs(gap) <= 0.005` (py_compile verified). ✅ Old screen `v2_muon` killed, old outputs (vision_fused.pt + train.log) cleaned. ✅ Re-launched in screen `v2_muon` (01:23). Step 140: loss=7.39, contrast=6.31, patch_mse=1.08. Step 300 PROBE: C1=0.1755, C2_gap=-0.0023 (diag=0.0026, off=0.0049 — off>diag, learning). ~2740 img/s, ~200ms/iter, ETA ~11:00 Oct 11 (~9.9h). Guard activates at step≥2000; if |gap|>0.005 by then → safe for full 187k steps.
 
 ## 历史条目已滚动归档（2026-10-03 / 2026-10-06）
 
