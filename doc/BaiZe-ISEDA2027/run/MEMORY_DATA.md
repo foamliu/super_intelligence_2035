@@ -12,11 +12,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🔄en_v1_4下载进行中(PID2535486,1444/56461 parquet,117GB,snapshot 3/110 CC-MAIN-2014-10,parallel 24 workers+hf_transfer,~6.5 files/min,ETA~5.9天)+✅GPIC全完成+✅R3全量分词110/110+✅污染扫描220K docs 0命中→P-8数据层全就绪
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43; s_step归因(MBS16:8.6×,166ms); Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); zh分词8/8✅(112.47B); 论文更新(4+5节,main.pdf 0err); l1_en_hq分词12/12✅(152.17B); ultrax分词s34-s43✅(30.97B); en_base分词s24-s33✅(206.76B); ✅投料前污染采样扫描(10K docs,0命中); ✅全量污染扫描(30 parquet×5K=150K docs,0命中); ✅④Ultra-FineWeb核实; ✅R3全量分词110/110DONE(1483.91B tok/5.94TB); ✅R3投料前污染扫描30/30DONE(60K docs,0命中,累计220K docs全0命中)→P-8数据层全就绪; ✅GPIC下载全部完成(train 8000+val 32+test 128+ref_stats 5); 🔄en_v1_4下载进行中(PID2535486,1444/56461 parquet,117GB,parallel 24+hf_transfer,~6.5 files/min,ETA~5.9天)
-当前动作:     唤醒299(18:09@.12) en_v1_4巡检:PID2535486活(ppid=1,41min),snapshot 3/110 CC-MAIN-2014-10 downloading(263done+137skip/513),1444/56461 total(+267 since wake298),117GB,~6.5 files/min(24 workers),0 fail,0 .lock,0 .incomplete(clean),ETA~5.9天;GPIC✅;R3✅110/110;disk 37T free✅;load~38/224
-下一步:       ①监控en_v1_4下载进度(每唤醒检查PID/parquet/.incomplete/磁盘); ②下满56461后必经check_contamination.py再报"en_v1_4下载完成"; ③P-8投料等运维指示
-阻塞:         en_v1_4下载进行中(ETA~5.9天@6.5 files/min,55017 remaining,6.75TB/56461 files); P-8投料等运维指示
+PHASE:        🔄en_v1_4下载进行中(PID2535486,1703/56461 parquet,138GB,snapshot 4/110 CC-MAIN-2014-15,parallel 24 workers+hf_transfer,~8-10MB/s,ETA~5-8天)+85M并发下载中(PID2000876,7684/12124 parquet,26.6/46.66TB,~12MB/s,ETA~19天)+✅GPIC全完成+✅R3全量分词110/110+✅污染扫描220K docs 0命中→P-8数据层全就绪
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43; s_step归因(MBS16:8.6×,166ms); Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); zh分词8/8✅(112.47B); 论文更新(4+5节,main.pdf 0err); l1_en_hq分词12/12✅(152.17B); ultrax分词s34-s43✅(30.97B); en_base分词s24-s33✅(206.76B); ✅投料前污染采样扫描(10K docs,0命中); ✅全量污染扫描(30 parquet×5K=150K docs,0命中); ✅④Ultra-FineWeb核实; ✅R3全量分词110/110DONE(1483.91B tok/5.94TB); ✅R3投料前污染扫描30/30DONE(60K docs,0命中,累计220K docs全0命中)→P-8数据层全就绪; ✅GPIC下载全部完成(train 8000+val 32+test 128+ref_stats 5); 🔄en_v1_4下载进行中(PID2535486,1703/56461,138GB,parallel 24+hf_transfer,~8-10MB/s,ETA~5-8天); 🔍85M巡检(PID2000876,7684/12124,26.6/46.66TB,~12MB/s,ETA~19天,用户自管)
+当前动作:     唤醒300(18:43@.12) 并发下载巡检(用户令"85M+en_v1_4各自速度/ETA"):en_v1_4 PID2535486活(ppid=1,75min),snapshot 4/110 CC-MAIN-2014-15(150/513),1703/56461 total(+9 in 90s),138GB,实测~7.8MB/s瞬时/~10.2MB/s均值,~7-9 fpm,ETA~5-8天;85M PID2000876活(ppid=2000875 bash download.sh,197min),7684/12124 parquet(63%),26.6/46.66TB(57%),实测~11.8MB/s,剩余~20TB(obelics部分+sa1b+zero250m未开始),ETA~19天;争用合计~21MB/s(168Mbps);GPIC✅;R3✅110/110;disk 37T free✅;load~38/224
+下一步:       ①监控en_v1_4下载进度(每唤醒检查PID/parquet/.incomplete/磁盘); ②下满56461后必经check_contamination.py再报"en_v1_4下载完成"; ③85M由用户自管(data线仅巡检); ④P-8投料等运维指示
+阻塞:         en_v1_4下载进行中(ETA~5-8天@8-10MB/s,54758 remaining,6.60TB); P-8投料等运维指示
 ERROR_COUNT:  1
 ```
 
@@ -43,6 +43,8 @@ ERROR_COUNT:  1
 > 📦 唤醒280 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3 97/110巡检+code 17/30+GPIC 7757/8001+体积归档）
 
 > 📦 唤醒271-272 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3分词59-60/110巡检+GPIC 7453-7489+6目录盘点）
+
+- [18:43] **唤醒300**：①本机=`.12`,load~38/224。②**并发下载巡检**(用户令"85M+en_v1_4各自速度/ETA"):en_v1_4 PID2535486活(ppid=1,75min),snapshot 4/110 CC-MAIN-2014-15(150/513 done),1703/56461 parquet(+9 in 90s T1→T2),138GB,/proc/io write_bytes delta=704MB/90s→~7.8MB/s瞬时/~10.2MB/s均值,~7-9 fpm,0 .incomplete,ETA~5-8天(字节口径~7.4天保守,文件口径~4.7天乐观);85M PID2000876活(ppid=2000875 bash download.sh retry-loop,197min),7684/12124 parquet(63%),26.6/46.66TB(57%),/proc/io write_bytes delta=1.06GB/90s→~11.8MB/s,tree cache总量46.66TB/12124files,剩余~20TB(mint部分+obelics部分+sa1b 5.09TB未开始+zero250m 4.76TB未开始),ETA~19天;争用合计~21MB/s(168Mbps);0 .incomplete both。③GPIC✅全完成(8000+32+128,PID3525273 idle)。④R3✅110/110。⑤disk 37T free✅。⑥📦体积:TASK=32.8KB⚠️(略超32KB,未超40KB红线,本轮不归档)/MEMORY=23.5KB✅。下载线心跳：base✅全满|GPIC✅全满|en_v1_4🔄1703/56461(4/110,PID2535486,parallel 24+hf_transfer,~8MB/s,ETA~5-8天)|85M🔄7684/12124(63%,PID2000876,~12MB/s,ETA~19天)|P-8数据层✅全就绪。
 
 - [18:09] **唤醒299**：①本机=`.12`,load~38/224。②**en_v1_4巡检**:PID2535486活(ppid=1,elapsed~41min),log最新18:06:48 progress 263done+0fail+137skip/513(snapshot 3/110 CC-MAIN-2014-10),1444/56461 total parquet(+267 since wake298),117GB,rate~6.5 files/min(24 workers,稳定中),0 .lock+0 .incomplete(clean),ETA~5.9天(55017 remaining@6.5 fpm)。③每文件~90MB,24 workers带宽~9.4MB/s(网络bound)。④GPIC✅全完成(PID3525273 idle,子PID1317113为relay巡检)。⑤R3✅110/110(0活进程,5.5TB in baize-data/text/)。⑥disk 37T free✅。⑦📦体积:TASK=30.1KB✅/MEMORY=22.7KB✅(无需归档)。下载线心跳：base✅全满|GPIC✅全满|en_v1_4🔄1444/56461(3/110,PID2535486,parallel 24+hf_transfer,~6.5fpm,ETA~5.9天)|P-8数据层✅全就绪。
 
