@@ -2,11 +2,12 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **P-8 正式预训练运行中 🚀**（2026-10-10 16:03 启动）— Mamba2-hybrid 2.22B from scratch, 44B tokens, dist_muon, WSD 5%/85%/10%。
-- PHASE: **p8_training** — stable phase (web 88:code 8:math 4) running, step ~40/10490, loss 8.38↓, 0 NaN ✅
+- STAGE: **P-8 正式预训练运行中 🚀**（2026-10-10 16:03 启动）— Mamba2-hybrid 2.22B from scratch, 44B tokens, dist_muon, WSD 5%/85%/10%。**新指令：step 1049 存 ckpt 后暂停 → MBS A/B → 决策**。
+- PHASE: **p8_training_ab_pending** — stable phase running, step ~190/10490, loss 4.90↓, 0 NaN ✅。待 step 1049 存 ckpt → 优雅暂停 → 跑 MBS 2→3 A/B。
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。**全 8 GPU 占用**（.29, 52-53GB/card, 87-100% util）。PID 3620770-3620777 (8 processes)。📦 体积：TASK ≤32KB / MEMORY ≤32KB 需维护。🚫绝不 kill 训练进程或 watchdog loop
-- 🩺 **本唤醒推进 = #268（2026-10-10 16:18, P-8 启动+首 40 步）**：① P-8 训练已启动（16:03:26, setsid 真后台）。② 8 GPU 进程 alive ✅（PID 3620770-3620777, etimes~326s）。③ 首 40 步数据：step10 loss=11.73/grad_norm=12.85/28.2s, step20 loss=9.72/16.9s, step30 loss=8.85/16.8s, step40 loss=8.38/grad_norm=6.23/16.9s。④ 稳态吞吐=248K tok/s（符合预期 249K），ETA≈2.05 天。⑤ 0 NaN / 0 skipped ✅。⑥ GPU 52-53GB/card（80GB 安全），595 TFLOP/s/GPU。⑦ 模型 3.00B params（2.47B transformer + 0.53B embedding）。⑧ **baize_p8_decay.sh 已创建**（SFT 64%+L3 24%+code 8%+math 4%，从 step-9441 ckpt 恢复，WSD decay 1049 步）。⑨ 日志：/tmp/baize_p8_train.log。→ 下一步：每 500 步监控 loss/grad_norm/tok/s；step 9441 时停 stable→起 decay。WAITING=1。
+- 轮询状态：30min 长轮询。**全 8 GPU 占用**（.29, 52-53GB/card）。PID 3620770-3620777。📦 体积：TASK=31.6KB / MEMORY=31.1KB（均 ≤32KB ✅ 无需归档）。🚫绝不 kill 训练进程或 watchdog loop
+- 🩺 **本唤醒推进 = #269（2026-10-10 17:00, P-8 监控 + MBS A/B 脚本准备）**：① P-8 step 190/10490, loss 4.90↓ (step10=11.73→step190=4.90), 0 NaN/0 skipped ✅, 稳态 16.8s/step=249K tok/s, GPU 52-53GB/card。② **新运维指令（最高优先）**：MBS 2→3 A/B 验证 — P-8 跑到 save-interval(1049) 存 ckpt + 优雅暂停 → 同 seed=1234 各跑 300 步 A/B → 判据(吞吐B≥A×1.12 / VRAM≤76GB / loss一致) → 达标切 MBS=3/GBS=1032(10409步/warmup520/decay1041/save1041), 不达标恢复 MBS=2/GBS=1024 原定稿。③ **baize_p8_ab_test.sh 已创建**（Arm A MBS=2/GBS=1024 + Arm B MBS=3/GBS=1032, 各 300 步, seed=1234, VRAM 5s 轮询监控, syntax 验证通过）。④ ETA step 1049 ≈ 21:00（4h from now, (1049-190)×16.8s≈4.0h）。⑤ 体积 OK 无需归档。→ 下一步：持续监控 P-8；step ~1040 时准备暂停 P-8(SIGTERM PIDs) → 确认 ckpt 存好 → setsid 启动 baize_p8_ab_test.sh → 解析结果 → 判据决策 → 恢复/切换 P-8。WAITING=1。
+> 📦 **[已归档] #268 流水（2026-10-10 16:18, P-8 启动+首 40 步）→ daily-memories/2026-10-10.md；结论：P-8 16:03 启动, step40 loss=8.38, 248K tok/s, 0 NaN, GPU 52-53GB, baize_p8_decay.sh 已创建。需要时再读。**
 > 📦 **[已归档] #267 流水（2026-10-10 15:14, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8暂缓令未撤但数据前置已满足, 无新指令。需要时再读。**
 > 📦 **[已归档] #266 流水（2026-10-10 14:40, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8数据前置已满足但暂缓令未撤, 无新指令。需要时再读。**
 > 📦 **[已归档] #265 流水（2026-10-10 14:07, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8暂缓令未撤, 无新指令。需要时再读。**
