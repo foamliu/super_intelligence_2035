@@ -1,7 +1,7 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
-### 🆕 运维指令 · 2026-10-10（🧪 **三变体实验：分辨率 / 优化器 / 全量数据**）· 用户直令 · **最高优先**
+### 🆕 运维指令 · 2026-10-10（🧪 **变体实验：① 优化器 AdamW→Muon → ② 全量数据 GPIC+CC12M+Amshaker；③ 分辨率暂缓**）· 用户直令 · **最高优先**
 
 > **用户令（2026-10-10 晚）**：「vision：**用 `E1fair`(w512) 做 baseline** 做下列几组实验：**① 224→336 分辨率/patch token 消融**；**② 优化器 adamw → `dist_muon`**；**③ GPIC 已下载完，用全量数据**。因为 **baseline `E1fair` 已存在，因此只需跑三个变体**。」
 
@@ -10,20 +10,21 @@
 - Baseline 指标：**ProtB lp = 62.34±0.01%**（3 seeds）· ProtA = 49.70%。
 - **判据（预注册）**：各变体 vs baseline 的 **Δlp（Protocol B，3 seeds）**；**|Δlp| < 1.5pp 判「不可分辨」**（沿用既有口径）。
 
-**② 三个变体（各 1 臂；除被检验的单一变量外，与 baseline 逐字节相同）**
-1. **V1 · 分辨率 / patch token：224 → 336**（保持 **p16** ⇒ patch 数 196 → **441**）。
-   - ⚠️ pos-emb 需随分辨率重建（**from scratch 训练**，非插值）；⚠️ **算力 ≈2.25×/step**（(336/224)²）⇒ 预估墙钟 **~20h**（baseline 8.87h）。
-   - （若你判断 **p14@336=576 token** 更合理，可选它并**说明理由**；但**只跑 1 个分辨率臂**。）
-2. **V2 · 优化器：AdamW → Muon（`dist_muon` 语义）**。
+**② 执行次序与变体（用户 2026-10-10 晚调整）** —— **先 `1`（Muon）→ 再 `2`（全量数据）；`3`（分辨率）暂缓**。各 1 臂；除被检验的单一变量外，与 baseline 逐字节相同。
+
+1. **V1 · 优化器：AdamW → Muon**【**本轮第一优先** · 原 V2】
    - 🔎 **框架事实（运维已核实 · 用户 2026-10-10 追问）**：`r9_train.py` = **纯 PyTorch DDP**（`dist.init_process_group('nccl')` + `torch.nn.parallel.DistributedDataParallel` + `torch.optim.AdamW`；`python -m torch.distributed.run --nproc_per_node=8`）—— **不是 Megatron-LM / NeMo** ⇒ **没有现成的 `dist_muon` 开关**（`dist_muon` 是 **Megatron-Core** 的 layer-wise distributed 优化器，vision 栈里不存在）。
    - ✅ **但 Muon 无需自行实现**：**直接用上游 `emerging_optimizers`**（`pip install emerging_optimizers`；**Megatron-Core 的 `core/optimizer/muon.py` 就是它的 shim**）接入 `r9_train.py`（torch.optim 风格 API）。**参考 pretrain 最近的 dist_muon 实验**：`run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md`「**dist_muon 实测验证（三路对比）**」节 · `doc/BaiZe-ISEDA2027/report_pretrain_muon_vs_adamw.html §8`。
    - **超参基线（照 pretrain）**：Muon = `momentum=0.95` / **nesterov** / `ns_steps=5`；AdamW 对照 = `β=(0.9,0.95)`、`ε`、`wd=0.1`（`r9_train.py` 现值 `betas=(0.9,0.95), eps=1e-6`）。
    - **LR**：pretrain 的 `dist_muon` **沿用与 AdamW 相同的 `lr=1e-3`（未单独扫 LR）** ⇒ vision **可先沿用 `lr=5e-4`**；但**仍做小规模 lr 探针**（如 ~200–500 步 ×2 点）作保险，loss 轨迹异常再扫；**记录探针协议**。
    - ⚠️ **「layer-wise distributed `dist_muon`」的严格语义**（整层分给各 DP rank、正交化与梯度同步重叠）**在纯 DDP 下拿不到**；若必须复刻该语义 ⇒ 需把该臂**迁到 Megatron-Bridge 栈**（成本大）。
    - ➡️ **本轮执行口径（用户 2026-10-10 确认「好的」）**：**V2 按 (A) 库级 Muon 执行** —— 即 **`emerging_optimizers` 接入现有 DDP trainer**；**(B) 严格 `dist_muon` 本轮只报「可行性 + 成本」**，🚫 **不实施**（待运维拍板再定）。
-3. **V3 · 全量数据**：**GPIC 已全量完成**（train 8000 + val 32 + test 128）⇒ 用**当前全量**训练。
-   - **明确列出所用子集与规模**，并与 baseline 的 `total_shards=10787` 快照对比。
-   - 步数保持 **187,101**（若改则说明理由）。
+2. **V2 · 全量数据：`GPIC 全量` + `CC12M` + `Amshaker`**【原 V3 · 扩展 · **本轮第二优先**】
+   - **数据构成（用户令）**：**GPIC 全量**（train 8000 + val 32 + test 128）**＋ `CC12M` ＋ `Amshaker`**。**逐项列明各子集规模**（样本数 / tar 数 / 字节），并与 baseline 的 `total_shards=10787` 快照做**对比表**。
+   - **步数按数据量计算**（用户令，**允许 > 187,101**）：**给出公式与代入值** —— 例如 `steps ≈ ⌈(总样本 × epoch) / (MBS × world_size × grad_accum)⌉`，并说明所取 `epoch` 数及其依据。
+   - ⚠️ **披露**：本臂相对 baseline **同时变了「数据量」与「步数」** ⇒ 结论只能表述为「**全量配方（数据+步数整体） vs baseline**」，🚫 **不得表述成「纯数据消融」**；若成本允许，**可选**附一条**同步数（187,101）对照**做部分归因。
+3. **V3 · 分辨率 224 → 336**：⏸ **暂缓（用户 2026-10-10：「明天再说」）** ⇒ **本轮不跑**。
+   - （设计备案：保持 **p16** ⇒ patch 数 196→**441**；pos-emb 重建；**≈2.25× 计算 / ~20h**；若认为 **p14@336=576 token** 更合理须说明理由。）
 
 **③ 执行要求**
 - **预注册先行**：每变体的**臂定义 / 判据 / 阈值**先写入 `EXPERIMENTS_VISION.md` 新节（**结果后填**）。
