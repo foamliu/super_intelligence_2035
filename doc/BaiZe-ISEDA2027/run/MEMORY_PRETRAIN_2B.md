@@ -2,11 +2,12 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **Muon 报告刷新 + 昨夜汇报 ✅ 完成+已推送**（2026-10-10）— Muon loss 3.11 vs AdamW 4.00（−22.3%），吞吐 87K vs 118K（−26%），显存 53.8 vs 39.0GB（+38%）。两份报告均已 commit 9fb2c7f8 + push ✅。
-- PHASE: **converged** — 两份报告刷新/生成完成并已推送，等待运维下一步指令
+- STAGE: **P-8 前置接近就绪：R3 分词 110/110 DONE ✅**（2026-10-10）— R3 全量分词 1483.91B tok/5.94TB .bin 完成，污染扫描进行中(5/30,0命中)，GPIC 7941/8001(ETA~1h)。P-8 暂缓令未撤。等待运维启动令。
+- PHASE: **converged** — R3 分词完成，P-8 前置仅剩污染扫描+GPIC，等待运维撤暂缓令
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。**全 8 GPU 空闲**（.29）。**P-8 暂缓令未撤**。📦 体积：TASK=28589B(27.9KB) / MEMORY=30403B(29.6KB) 均 ≤32KB ✅。🚫绝不 kill watchdog loop
-- 🩺 **本唤醒推进 = #260（2026-10-10 10:19, 状态核查+TASK归档）**：① git fetch → status 0/0 ✅（无新运维指令；工作区仅 harness 线 kimi_pilot_results.json modified, 非本线不碰）。② **两项运维指令均已完成**（#258 commit 9fb2c7f8 已推送确认）：Muon 报告 §7 含外部基准对照+overhead 归因 ✅；昨夜汇报 HTML 11.6KB 含 P-8 启示 ✅。③ **TASK 归档**：两块 2026-10-10 运维指令已闭合→原文搬入 ARCHIVE_OPERATOR_PRETRAIN.md + 留指针，TASK 33.2KB→27.9KB ✅。④ 体积自检：TASK=28589B(27.9KB) / MEMORY=30403B(29.6KB) 均 ≤32KB ✅。→ 下一步：等待运维下一步指令。WAITING=1。git：本次 push。
+- 轮询状态：30min 长轮询。**全 8 GPU 空闲**（.29）。**P-8 暂缓令未撤**。📦 体积：TASK=28589B(27.9KB) / MEMORY=30665B(29.9KB) 均 ≤32KB ✅。🚫绝不 kill watchdog loop
+- 🩺 **本唤醒推进 = #261（2026-10-10 10:57, 状态核查）**：① git fetch → status 0/0 ✅（无新运维指令；工作区仅 harness/vision/data 线文件 modified, 非本线不碰）。② **GPU 核验**：本机=.29, GPU0-7 全 0MiB/0%, 无 compute apps ✅。③ **P-8 前置核查**（读 data agent MEMORY_DATA 唤醒288@10:33）：**R3 全量分词 110/110 DONE ✅**（1483.91B tok/5.94TB .bin，code_s8 最后完工@10:08）；污染扫描进行中(PID1757345,5/30files,0命中,ETA~30min)；GPIC train 7941/8001(ETA~1h→~11:30)；base ✅全满+配比方案✅(88:8:4) → **P-8 数据层接近就绪，仅剩污染扫描收尾**。④ watchdog PID 1391466 ✅。⑤ **体积自检**：TASK=28589B(27.9KB) / MEMORY=30665B(29.9KB) 均 ≤32KB ✅ 无需归档。→ 下一步：等待运维撤 P-8 暂缓令 / 污染扫描完成。WAITING=1。git：本次 push。
+> 📦 **[已归档] #260 流水（2026-10-10 10:19, 状态核查+TASK归档）→ daily-memories/2026-10-10.md；结论：两项运维指令均已完成(commit 9fb2c7f8), TASK归档2块→27.9KB。需要时再读。**
 > 📦 **[已归档] #259 流水（2026-10-10 09:44, 补推确认+心跳修正）→ daily-memories/2026-10-10.md；结论：9fb2c7f8 已成功推送, 上轮「push失败」更正为「已推送」。需要时再读。**
 > 📦 **[已归档] #258 流水（2026-10-10, Muon报告刷新+昨夜汇报+TASK归档）→ daily-memories/2026-10-10.md；结论：两份报告(Muon 28.6KB+昨夜 11.6KB)已生成+commit 9fb2c7f8+push ✅, TASK归档2块。需要时再读。**
 > 📦 **[已归档] #257 流水（2026-10-10 08:26, 状态核查）→ daily-memories/2026-10-10.md；结论：GPU全空闲, git 0/0, 两步运维指令均完成, 无需归档。需要时再读。**
