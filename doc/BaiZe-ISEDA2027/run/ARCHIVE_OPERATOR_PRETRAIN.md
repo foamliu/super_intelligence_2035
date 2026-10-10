@@ -1354,3 +1354,19 @@ T3 提速验证结果：
 **⑤ 判读预注册**：吞吐 ≥118K →「−26% 系 plain Muon 通信/实现伪影」实锤；87K~118K → 部分收窄；仍 ≈87K → 规模差异如实记录。显存应 ≤39GB。
 
 **⑥ 纪律**：🚫 不启动 P-8 · 🚫 不 kill watchdog · 如实报卡点 · 跑完写 EXPERIMENTS + 刷新 `report_pretrain_muon_vs_adamw.html`。
+
+---
+
+## 📦 §运维指令·2026-10-10（✅ dist_muon 默认优化器）→ 自 TASK 归档
+
+> 结论：dist_muon = loss 3.110 / 122,415 tok/s / 37.3GB，plain Muon「−26% 吞吐 / +38% 显存」两项代价全消除 → 写入配方表 §优化器为 P-8 默认，LR 1e-3 保留。
+
+**用户令**：「pretrain 可以将 dist_muon 写进任务书的最佳实践区，以后作为默认设置。」
+
+**① 结论依据（三路实测 #262）**：dist_muon = loss 3.110 / 122,415 tok/s（>AdamW 118K）/ 37.3GB（<AdamW 39.0GB），plain Muon 两项代价全消除，保留 Muon 收敛优势（loss −22.3%）。
+
+**② 默认设置**：P-8 及后续正式训练优化器默认 `dist_muon`（`layer_wise_distributed_optimizer=True`）。
+
+**③ LR 口径**：Muon 官方建议 ~1e-3；A/B 验证用 3e-4 公平对照；P-8 配方 LR=1e-3 贴合官方建议 → 保留不改。
+
+**④ 诚实声明**：仅 1000 步短地平线；长训练是否持续优势待 P-8 长跑验证。

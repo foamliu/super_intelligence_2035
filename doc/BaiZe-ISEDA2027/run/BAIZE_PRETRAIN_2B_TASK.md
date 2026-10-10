@@ -1,6 +1,20 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-10（⚗️ MBS 2→3 A/B 验证 · 候选 GBS=1032）· 用户直令 · 最高优先
+
+> **用户令**：「好的 GBS=1032，其它按你的建议执行。」—— P-8【44B】启动后、跑出首个 ckpt 前，先做 MBS 2 vs 3 临门 A/B，**达标才切换，不打断已存 ckpt**。
+
+**① 背景**：P-8 实测显存 51/79GB（dist_muon 释放余量），MBS 2→3 有机会提速；但 GBS=1024 非 24 倍数 → 候选 **GBS=1032**（43×24，最贴原 1024）。
+
+**② 执行**：① P-8 跑到最近 save-interval 点**保存 ckpt + 优雅暂停**。② 同 seed=1234 / 同数据各跑 **300 步**：臂 A `--micro-batch-size 2 --global-batch-size 1024`（基线）；臂 B `--micro-batch-size 3 --global-batch-size 1032`（候选）。③ 按④判据决策。
+
+**③ 预注册判据（三全过才切）**：① 吞吐 **B ≥ A×1.12**（A≈249K → B≥279K，last-100 步均值）② 峰值显存 **B ≤ 76GB**（OOM 直接判负，nvidia-smi 全程记 max）③ **loss@300 与 A 一致**（无 NaN/发散/抬升）。
+
+**④ 决策**：达标 → P-8 切 **MBS=3/GBS=1032**，重算 44B = **10,409 步 / warmup 520 / decay 1041 / save 1041**（token/step=4,227,072）；已跑不足 ~1K 步则**从零重启**（口径最干净），否则从暂停点按剩余 token 续（记录切换点+两侧口径）。不达标 → **恢复 MBS=2/GBS=1024** 原定稿（10,490/524/1049/1049），原数字全不变。
+
+**⑤ 纪律**：🚫 不 kill watchdog · commit 前缀 `pretrain P-8:` · 达到判据才动正式长跑 · 若 TASK 超 32KB 按规程自行归档。
+
 ### 🆕 运维指令 · 2026-10-10（🚀 撤 P-8 暂缓令 · 按计划书启动 P-8【44B】）· 用户直令 · 最高优先
 
 > **用户令**：「pretrain：按此执行 P-8。」—— 本指令**撤销 P-8 暂缓令（10-02）**，按 `report_pretrain_p8_plan.html`（commit cb3f54c2）正式启动 Stage (i) 预训练。
@@ -19,26 +33,9 @@
 
 **⑦ 输出**：loss 曲线 + 每 10% ckpt 路径 + final 8 集 lm_eval（Table 2 常识）；commit 前缀 `pretrain P-8:`。en_v1_4 下满后并入后续 100B 档（另行再令）。
 
-### 🆕 运维指令 · 2026-10-10（✅ dist_muon 定为 P-8 默认优化器 · 最佳实践）· 用户直令 · 最高优先
+> 📦 §2026-10-10（✅dist_muon默认 + ⚗️dist_muon重测 + 📄刷新Muon报告 + 📄昨夜报告）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：dist_muon=loss3.110/122,415tok/s/37.3GB（plain Muon −26%吞吐/+38%显存 全消除→P-8默认，LR 1e-3 保留）；Muon报告§7补外部基准+overhead归因；昨夜报告11.6KB。
 
-> **用户令**：「pretrain 可以将 dist_muon 写进任务书的最佳实践区，以后作为默认设置。」
-
-**① 结论依据（dist_muon 三路实测 #262）**：dist_muon = loss 3.110 / **122,415 tok/s**（> AdamW 118K）/ **37.3GB**（< AdamW 39.0GB）—— plain Muon 的「−26% 吞吐 / +38% 显存」两项代价**全部消除**，且保留 Muon 收敛优势（loss 比 AdamW 低 22.3%）。
-
-**② 默认设置**：P-8 及后续正式训练，**优化器默认 `dist_muon`**（`layer_wise_distributed_optimizer=True`）。
-
-**③ LR 口径**：Muon 官方建议 **~1e-3**；A/B 三路验证用 **3e-4**（与 AdamW 同 LR 保证公平）。P-8 配方 LR=1e-3 **恰好贴合 Muon 官方建议** → **保留 1e-3，不改**。
-
-**④ 诚实声明**：仅 1000 步（6.55M tokens）短地平线；长训练是否持续优势**待 P-8 长跑验证**（若长跑吞吐/显存仍持平 AdamW 且 loss 占优即坐实）。
-
-> 📦 §运维指令·2026-10-10（⚗️ dist_muon 重测）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：dist_muon = loss 3.110 / 122,415 tok/s / 37.3GB，plain Muon「−26% 吞吐 / +38% 显存」两项代价全消除，已定为 P-8 默认优化器（见上方「默认优化器」块）。需要时再读。
-> 📦 §运维指令·2026-10-10（📄 刷新 Muon 报告：overhead 归因+外部基准对照）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：报告 §7 已加「外部基准对照与 overhead 归因」，−26%/+38% 归因为 plain Muon 实现伪影非算法固有，dist_muon 预期 near-parity，P-8 方案A 升级为 NVIDIA 实证支撑+显存待查。需要时再读。
-
-> 📦 §运维指令·2026-10-10（📄 昨夜工作汇报 HTML）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：report_10_09_pretrain_overnight.html 11.6KB 已生成，含两项实验汇总+P-8 启示。需要时再读。
-
-> 📦 §运维调整·2026-10-09（🔁 只用 `.29` + 改序①对比→②Muon；撤下 T1/T2/T3）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：两步均✅完成（①对比基准 ②Muon A/B），T1/T2/T3 留 backlog。需要时再读。
-
-> 📦 §运维更正·2026-10-09（✅ NeMo/Megatron 支持 Muon，更正「未接入」旧判断）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：Megatron-Core 0.16.1 含 muon.py + emerging_optimizers，bridge 有 Muon recipe，三步核查全通过。需要时再读。
+> 📦 §2026-10-09（🔁只用.29+改序 / ✅NeMo支持Muon）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：对比基准+Muon A/B完成，T1/T2/T3留backlog；Megatron-Core 0.16.1含muon.py，三步核查通过。
 
 ---
 
