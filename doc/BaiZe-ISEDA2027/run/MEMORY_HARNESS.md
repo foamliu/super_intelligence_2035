@@ -7,10 +7,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 7×300 RUNNING — 1217/2100 (58.0%); 883 remaining, 0 new workdir blocks (12 rounds), 1 pre-existing quota-blocked (codex); N=1 monitoring
-已完成:       ① 7×100 HTML report delivered ✅ · ②-A code fix done ✅ · ②-B resource check done ✅ · GPU29_ALLOC registered ✅ · launch_7x300.sh created ✅ · Smoke test PASSED ✅ · 7×300 LAUNCHED ✅ · BLOCK=0 (workdir) CONFIRMED ✅ (R231→R242, 12 consecutive rounds) · codex 300/300 COMPLETE ✅
-当前动作:     R242: 7×300 monitoring at 07:56 (462 min since 00:14 launch). ALL 7 processes alive (etimes ~27540s ≈ 7.65h). Progress: 1217/2100 (58.0%), 310 resolved / 782 patch-but-failed / 124 blocked + 1 quota-blocked. **25 new entries since R241** (36 min, rate ~0.69/min). NEW blocks (wall>0): **0** (1 codex quota-blocked wall=293.9s is pre-existing pattern) — workdir isolation fix still holding ✅, **12th consecutive round**. codex 300/300 COMPLETE (96 blocked re-runs in progress, 117 git-fetch-timeout workdir_setup failures on matplotlib repos = pre-existing). Per-harness: claude 144(43,rem156) / cline 159(45,rem141) / codex 300(50,rem0,blk rerun) / deepseek 150(35,rem150) / hermes 141(46,rem159←BOTTLENECK) / opencode 168(44,rem132) / pi 155(47,rem145). ETA ~24h (~08:00 Oct 11). Resources: load 6.48/96cores, 958G free RAM, /dev/shm 1002G (1%), nvidia-smi all GPU 0%.
-下一步:       ① Continue monitoring — workdir block=0 holding (12 rounds) → ② ETA ~24h (~08:00 Oct 11) → ③ codex re-running 96 blocked (git-fetch-timeout on matplotlib) → ④ Each harness completes → refresh + commit → ⑤ Final: blocked=0 required (success criteria ②-C) → ⑥ Consider N=2 scaling after block=0 sustained.
+PHASE:        H-A 7×300 RUNNING — 1239/2100 (59.0%); 861 remaining, 0 new workdir blocks (13 rounds), 1 pre-existing quota-blocked (codex); N=1 monitoring
+已完成:       ① 7×100 HTML report delivered ✅ · ②-A code fix done ✅ · ②-B resource check done ✅ · GPU29_ALLOC registered ✅ · launch_7x300.sh created ✅ · Smoke test PASSED ✅ · 7×300 LAUNCHED ✅ · BLOCK=0 (workdir) CONFIRMED ✅ (R231→R243, 13 consecutive rounds) · codex 300/300 COMPLETE ✅
+当前动作:     R243: 7×300 monitoring at 08:31 (497 min since 00:14 launch). ALL 7 processes alive (etimes ~29730s ≈ 8.27h). Progress: 1239/2100 (59.0%), 310 resolved / 806 patch-but-failed / 122 blocked + 1 quota-blocked. **22 new entries since R242** (34 min, rate ~0.65/min). NEW blocks (wall>0): **0** (1 codex quota-blocked wall=293.9s pre-existing) — workdir isolation fix still holding ✅, **13th consecutive round**. Per-harness: claude 146(43,rem154) / cline 164(45,rem136) / codex 300(50,rem0) / deepseek 156(35,rem144) / hermes 142(46,rem158←BOTTLENECK) / opencode 171(44,rem129) / pi 160(47,rem140). ETA ~24h (~08:30 Oct 11). Resources: load 7.42/96cores, 962G free RAM, /dev/shm 1002G (1%), GPU all 0%.
+下一步:       ① Continue monitoring — workdir block=0 holding (13 rounds) → ② ETA ~24h (~08:30 Oct 11) → ③ codex re-running blocked (git-fetch-timeout on matplotlib) → ④ Each harness completes → refresh + commit → ⑤ Final: blocked=0 required (success criteria ②-C) → ⑥ Consider N=2 scaling after block=0 sustained.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -37,7 +37,7 @@ ERROR_COUNT:  0
 |:--|:--|:--|:--|
 | **quota_blocked** | 0/210 (0%) | 0/700 (0%) | ✅ **NO gateway pollution** |
 | **timeout** | 0 (codex 2) | minimal (codex 3, claude-code 1 astropy) | ✅ 正常 |
-| **workdir_blocked** ⚠️NEW | **0/210 (0%)** | **25/700 (3.6%)** ↓ from 27(R227)↓ from 28(R226)↓ from 33(R225)↓ from 88(R207) | ⚠️ **7×100: PARALLEL POLLUTION (workdir) — fixed via rerun** → **7×300: per-harness workdir isolation FIX APPLIED ✅, block=0 holding 12 rounds (R231→R242)** |
+| **workdir_blocked** ⚠️NEW | **0/210 (0%)** | **25/700 (3.6%)** ↓ from 27(R227)↓ from 28(R226)↓ from 33(R225)↓ from 88(R207) | ⚠️ **7×100: PARALLEL POLLUTION (workdir) — fixed via rerun** → **7×300: per-harness workdir isolation FIX APPLIED ✅, block=0 holding 13 rounds (R231→R243)** |
 | **no-patch (patch_applied=False)** | **0/210 (0%)** | **较高** (non-django/sympy repos) | ⚠️ eval env limitation |
 
 **⚠️ 新发现：workdir git-checkout 冲突 = 并行污染（R207 首次披露）**：
@@ -228,4 +228,5 @@ ERROR_COUNT:  0
 - 2026-10-10 06:06 —— **第二百三十九轮** —— 已归档 → daily-memories-harness/2026-10-10.md。需要时再读。
 - 2026-10-10 06:44 —— **第二百四十轮** —— 已归档 → daily-memories-harness/2026-10-10.md。需要时再读。
 - 2026-10-10 07:19 —— **第二百四十一轮** —— 已归档 → daily-memories-harness/2026-10-10.md。需要时再读。
-- 2026-10-10 07:56 —— **第二百四十二轮** —— 7×300 monitoring at 462 min (7.65h since 00:14 launch): ALL 7 alive (etimes ~27540s), 1217/2100 (58.0%). **25 new since R241** (36 min, rate ~0.69/min). 310 resolved / 782 pbf / 124 blocked + 1 quota-blocked. NEW blocks (wall>0): **0** (1 codex quota-blocked wall=293.9s pre-existing) — workdir isolation fix holding ✅ (**12th consecutive round**). codex 300/300 done, re-running 96 blocked (117 git-fetch-timeout on matplotlib). Per-harness: claude 144(43,rem156) / cline 159(45,rem141) / codex 300(50,rem0) / deepseek 150(35,rem150) / hermes 141(46,rem159←BOTTLENECK) / opencode 168(44,rem132) / pi 155(47,rem145). ETA ~24h (~08:00 Oct 11). Resources: load 6.48/96cores, 958G free RAM, /dev/shm 1002G (1%), GPU 0%. 📦 体积：TASK=32106B(31.4KB ✓) / MEMORY=~32KB ✓（归档 0KB）。
+- 2026-10-10 07:56 —— **第二百四十二轮** —— 已归档 → daily-memories-harness/2026-10-10.md。需要时再读。
+- 2026-10-10 08:31 —— **第二百四十三轮** —— 7×300 monitoring at 497 min (8.27h since 00:14 launch): ALL 7 alive (etimes ~29730s), 1239/2100 (59.0%). **22 new since R242** (34 min, rate ~0.65/min). 310 resolved / 806 pbf / 122 blocked + 1 quota-blocked. NEW blocks (wall>0): **0** (1 codex quota-blocked wall=293.9s pre-existing) — workdir isolation fix holding ✅ (**13th consecutive round**). Per-harness: claude 146(43,rem154) / cline 164(45,rem136) / codex 300(50,rem0) / deepseek 156(35,rem144) / hermes 142(46,rem158←BOTTLENECK) / opencode 171(44,rem129) / pi 160(47,rem140). ETA ~24h (~08:30 Oct 11). Resources: load 7.42/96cores, 962G free RAM, /dev/shm 1002G (1%), GPU 0%. 📦 体积：TASK=32106B(31.4KB ✓) / MEMORY=~32KB ✓（归档 0KB）。
