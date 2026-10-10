@@ -1,6 +1,25 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-10（📄 **Scaling fair rerun 成果报告 HTML**）· 用户直令 · **最高优先**
+
+> **用户令（2026-10-10 晚）**：「**vision：Scaling fair rerun 成果出 html 报告。**」
+
+**① 交付**：**`report_vision_scaling_fair.html`**（落 `doc/BaiZe-ISEDA2027/`）—— **独立、自包含**（内联 SVG，**零外部 CDN/依赖**）。即 `2026-10-09⑨` 块 `⑦①` 的**正选**交付物（此前你选了「并入昨夜报告 §15」；**用户现明确要求独立成果报告**）。
+
+**② 内容（建议结构）**
+1. **TL;DR / 结论**：**Δlp（Protocol B）= +0.17pp → 不可分辨**（在 ±1.5pp 内）；**旧「Bigger is WORSE，Δlp=−5.59pp」= schedule 伪影**。
+2. **公平配置表**：两臂 **除 `--width` 外逐字节相同** —— 187,101 步 · `lr=5e-4` · `warmup=2000` · `cosine` · `min_lr=5e-5` · **同一冻结快照 `total_shards=10787`**。
+3. **结果表**：E1fair（w512）与 E2fair（w768）的 **ProtA / ProtB**（3 seeds，mean ± σ）。
+4. **预注册判据 vs 实测**：判定表（含 **±1.5pp** 阈值）。
+5. **旧 vs 新对照**：旧配方 `3e-3 / warmup20 / const` vs 新配方 `5e-4 / warmup2000 / cosine / 5e-5` 的 **lr 轨迹对比图**（SVG）。
+6. **结论 / 局限**；**7. 证据索引**（路径 + 原始输出片段）。
+
+**③ 一致性**：数字须与 `report_10_09_vision_overnight.html`、`EXPERIMENTS_VISION.md §8.2` **完全一致**（同一事实来源）；`report_vision_aimv2_scaling.html` 的 ⛔ 横幅**指向本报告**。
+
+**④ 边界**：**纯写作，不占 GPU**。
+**⑤ 收尾**：`git pull --rebase` → **只 `add` 本线文件** → `commit -m "vision 成果报告: scaling fair rerun HTML"` → `push`。
+
 ### 🆕 运维指令 · 2026-10-10（📄 昨夜工作汇报 HTML）· 用户直令 · 高优先
 
 > **用户令**：「关于昨晚的工作，请 vision 写 html 报告。」
