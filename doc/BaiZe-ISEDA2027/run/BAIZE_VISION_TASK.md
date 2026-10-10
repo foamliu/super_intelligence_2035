@@ -1,6 +1,24 @@
 # BAIZE_VISION_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-10（📄 昨夜工作汇报 HTML）· 用户直令 · 高优先
+
+> **用户令**：「关于昨晚的工作，请 vision 写 html 报告。」
+
+**① 交付**：`report_10_09_vision_overnight.html`（落 `doc/BaiZe-ISEDA2027/`）
+
+**② 内容 = 昨夜（10-09 夜 → 10-10 晨）scaling 公平性重跑 全程**（即 ⑨ 块的工作；**仍进行中 → 未完成项用 ⏳ 明确标注，不得虚报/预判结论**）
+1. **旧结论作废原因**：旧两臂 `--lr 3e-3 --warmup 20` 在 187101 步下 warmup 仅 0.01%（本是 30k 短跑配方）→「Bigger is WORSE (Δlp=−5.59pp)」不可归因于「规模」→ 作废重做（旧报告已加 ⛔ 横幅）。
+2. **新配方**（两臂逐字相同、唯一差异 `--width`）：`--lr 5e-4 --warmup 2000 --scheduler cosine --min-lr 5e-5`；两臂同一冻结 GPIC 快照（total_shards=10787）。
+3. **代码修复**：`r9_train.py` 加 cosine/min-lr 支持；`run_scaling_experiment.sh` 加 e1fair/e2fair/bothfair 模式；smoke_cos 通过。
+4. **E1fair ✅ 完成**（187101 步 · ~8.87h · loss=0.2545 · 无坍缩 · 3774.5 img/s · lr=5e-5@end cosine 正确）+ **E1fair eval ⏳ 进行中**（Protocol B，3 seeds，ETA ~11:00，lp 待回填）。
+5. **⏳ 未完成（先写占位 + 待回填标记）**：E2fair train（ETA ~5.2h）· E2fair eval · 最终两臂 lp（Protocol B mean±σ）· 公平对比结论 —— 全部标「⏳ 待 ~20:00 Oct10 完成后回填」。
+
+**③ 格式（house style）**：自包含 · 内联 CSS + 内联 SVG · 零外链 · ≤200KB。
+
+**④ 必含「诚实交代」**：本报告为昨晚工作**过程汇报**，最终公平对比数字未出，只记录到 E1fair 完成 + E1fair eval 进行中，其余明确待回填，**不预判结论**。
+
+**⑤ 纪律**：🚫 不打断正在跑的 bothfair 链（PID 2670216）· 只写报告不重跑 · 收尾按「收尾铁律」commit+push（前缀 `vision 昨夜报告:`）· 若 TASK 超 32KB，按规程自行归档（⑨ 块本身仍活跃不可归档，只归档其下已闭合旧块）。
 > 📦 **历史运维指令已归档** → `run/ARCHIVE_OPERATOR_VISION.md`（已执行完 / 已作废的块；**需要时再读**，不要读进上下文）。
 
 > 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_VISION.md` / `EXPERIMENTS_VISION*` / `daily-memories-vision/` / `vision/`）。⚠️ **唯一例外（2026-10-06）**：按「📉 体积维护规程」，agent **可把「已闭合」的运维块/旧正文【原文】搬入** `run/ARCHIVE_OPERATOR_VISION.md`（**只搬迁、留 1 行指针**；不新增/不改写任何指令）。

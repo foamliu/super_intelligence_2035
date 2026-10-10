@@ -1,6 +1,21 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-10（📄 昨夜工作汇报 HTML）· 用户直令 · 高优先
+
+> **用户令**：「关于昨晚的工作，请 pretrain 写 html 报告。」
+
+**① 交付**：`report_10_09_pretrain_overnight.html`（落 `doc/BaiZe-ISEDA2027/`）
+
+**② 内容 = 昨夜（10-09 夜 → 10-10 晨）两项工作汇总**（均 ✅ 完成、各已有详报 → **本报告做「昨夜汇报」汇总 + 指针，不重复贴全文**）
+1. **① 参数匹配对比基准（P-9.11-F，Dense-Match vs Hybrid/BaiZe）**：DM 可服务至 1M（prefill 2,351 / decode 64.9）· **2M 不可服务**（输入 > max_total_num_tokens≈1.23M）· 架构优势 **2×**（Hybrid 2M vs DM 1M）· warmup 归因修正 281×→24.5× · VRAM(128K) 52.36→59.02GB 修正。→ 详报 `report_pretrain_baize_vs_dense_fair_zh.html`（指针）。
+2. **② Muon vs AdamW A/B**（各 1000 步 · GBS16 · seq4094 · bf16 · 同 seed）：Muon loss **3.112** vs AdamW **4.003**（**−22.3%**）· 吞吐 87K vs 118K tok/s（**−26%**）· 显存 53.8 vs 39.0GB（**+38%**）· 均 rc=0 / 0 NaN / 0 skip。→ 详报 `report_pretrain_muon_vs_adamw.html`（指针）。
+
+**③ 格式（house style）**：自包含 · 内联 CSS + 内联 SVG · 零外链 · ≤200KB；已有详报只给指针。
+
+**④ 必含「对 P-8 的启示」**：① DM 对比 → BaiZe 长上下文服务能力佐证；② Muon → **loss 质量更好但吞吐/显存有代价**，P-8 是否采 Muon/dist_muon 的取舍（只记结论，不启动 P-8）。
+
+**⑤ 纪律**：🚫 不启动 P-8（10-02 暂缓令未撤）· 🚫 不 kill watchdog · 只汇总已固化数字、不新增实验 · 收尾按「收尾铁律」commit+push（前缀 `pretrain 昨夜报告:`）· 若 TASK 超 32KB，按规程自行归档已闭合旧块（含上方「运维调整/运维更正」两块）。
 ### 🆕 运维调整 · 2026-10-09（🔁 只用 `.29` + 改序：**① 对比基准 → ② Muon vs AdamW**；撤下 T1/T2/T3）· 用户直令 · **最高优先（覆盖下方 ⚗️Muon 与 🌙夜班 两块）**
 
 > **用户令**：「pretrain 的实验都安排在 `.29`，`.12` 我会安排 vision 的实验。实验次序调一下：**1) 参数匹配对比基准；2) Muon vs AdamW（各自 1000 步，GBS=16，seq=4096，对比 loss）**。」
