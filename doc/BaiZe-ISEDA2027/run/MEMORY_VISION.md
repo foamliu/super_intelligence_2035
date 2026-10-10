@@ -6,18 +6,18 @@ WAITING: 1
 
 > 🆕 **2026-10-10 晚（运维直令 · 最高优先）**：外部评审质疑 E1fair ProtB=62.34% 偏低 → 运维下发 ③→①→②→④ 顺序指令。**③ 口径修订**（✅ DONE）+ **① 同模型 zero-shot eval**（✅ DONE: E1fair 34.10%, E2fair 35.45%）+ **② k-NN probe 对照**（✅ DONE: k=20→37.68%）+ **变体实验 V2(Muon)→V3(全量数据)→V1(分辨率暂缓)**。
 > 🔴 **V2 Muon COLLAPSED at ALL tested LRs** (2026-10-11): lr=5e-4 collapsed@step2100 (C1→0.99), lr=1e-4 collapsed@step4200 (C1→0.9569). 14 PROBE points show monotonic C1 rise (0.18→0.96, zero reversals). Root cause: Newton-Schulz orthogonalization amplifies contrastive collapse mode. AdamW's per-parameter adaptive scaling naturally damps this. ❌ **Muon incompatible with AIMv2-style contrastive+reconstruction objective**. C2 guard bug also found & fixed (`gap<=0.005`→`abs(gap)<=0.005`, r9_train.py:909). Full collapse analysis in `EXPERIMENTS_VISION.md §9.2`.
-> ✅ **V3 Full GPIC Data TRAINING HEALTHY** (02:06 Oct 11 launch): 230,598 steps (1 epoch of 118.1M pairs), AdamW, same fair recipe. Screen `v3_fulldata`. **Step ~70.2k/230k (~30%)**, loss=0.28, C1=0.50, C2_gap=+0.19, ~5100 img/s, lr=4.10e-04 (cosine active). ETA ~10:30 Oct 11 (~5.8h remaining). 7 checkpoints saved (step 10k–70k). **No collapse** — C1 stable ~0.38-0.50, loss_ema decreasing.
-> ✅ **V3 eval watcher running** (`v3_eval_watcher.sh`, PID 1928152): monitors training, auto-runs ProtB(3 seeds)+ProtA+zero-shot+k-NN when done. Log: `/tmp/v3_eval_watcher.log` (last: step 68680 at 04:37).
+> ✅ **V3 Full GPIC Data TRAINING HEALTHY** (02:06 Oct 11 launch): 230,598 steps (1 epoch of 118.1M pairs), AdamW, same fair recipe. Screen `v3_fulldata`. **Step ~95.4k/230k (~41%)**, loss=0.19, C1=0.49, C2_gap=+0.19, ~3000 img/s (NFS variance), lr=3.39e-04 (cosine active). ETA ~11:15 Oct 11 (~5.4h remaining). 9 checkpoints saved (step 10k–90k). **No collapse** — C1 stable ~0.44-0.51, loss_ema ~0.19 decreasing, C4=OK all probes.
+> ✅ **V3 eval watcher running** (`v3_eval_watcher.sh`, PID 1928152): monitors training, auto-runs ProtB(3 seeds)+ProtA+zero-shot+k-NN when done. Log: `/tmp/v3_eval_watcher.log` (last: step 95050 at 05:52).
 > ✅ **④ epoch scaling pre-registered** in `EXPERIMENTS_VISION.md §9.4`: 2ep(374,202 steps) first, 4ep(748,404) if 2ep≥70%. Pending V3 eval completion.
 > ✅ **①② results documented** in `EXPERIMENTS_VISION.md §9.6`: ① zs pathway (ReadoutHead→768-d→cosine sim with frozen CLIP text tower), E1fair zs=34.10%, E2fair=35.45%, lp−zs=+28pp. ② k-NN k=20=37.68%. **② gap**: ×5 epochs probe + wd/LR sweep NOT yet run (GPU blocked by V3) — pending after V3 completes.
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **V3 full data training step ~84.7k/230k (~37%), healthy**. Chained watcher `post_v3_chain.sh` (PID 117389) launched: auto-runs ② ×5 probe → ④-2ep train → ④-2ep eval after V3. V2 Muon ❌ COLLAPSED. **Next**: collect automated results from /tmp/post_v3_chain.log. |
-| WAITING | 1（🔄 V3 training ~37%, ETA ~10:35 Oct 11. Chained watcher runs ② probe → ④-2ep train → eval automatically. Next wake: check /tmp/post_v3_chain.log.） |
+| PHASE | 🔄 **V3 full data training step ~95.4k/230k (~41%), healthy**. Chained watcher `post_v3_chain.sh` (PID 117389) running: auto-runs ② ×5 probe → ④-2ep train → ④-2ep eval after V3. V2 Muon ❌ COLLAPSED. **Next**: collect automated results from /tmp/post_v3_chain.log. |
+| WAITING | 1（🔄 V3 training ~41%, ETA ~11:15 Oct 11. Chained watcher runs ② probe → ④-2ep train → eval automatically. Next wake: check /tmp/post_v3_chain.log.） |
 | ERROR_COUNT | 12（①~⑨ 同前 ⑩ V2 Muon lr=5e-4 collapse ⑪ C2 guard bug ⑫ V2 Muon lr=1e-4 collapse@step4200） |
-| BUDGET_USED | ~704 GPU·h (V3 ~92 GPU·h in progress, ④-2ep ~80 GPU·h queued) |
-| 更新 | **2026-10-11 05:20（V3 health check + chained watcher launched）**: V3 step 84650/230598 (~37%), loss=0.28, C1=0.51, C2_gap=+0.19, ~5100 img/s, no collapse. 8 checkpoints (10k-80k). Created 3 scripts: `run_e4_2ep.sh` (④-2ep, 374,202 steps, E1fair snapshot), `run_probe_x5.sh` (② ×5 epochs + wd/LR sweep on E1fair), `post_v3_chain.sh` (chained watcher PID 117389). Chain: wait V3 eval → ② probe → ④-2ep train → ④-2ep eval. All automated. 📦 体积：TASK=31.6KB / MEMORY=~29KB（均在限内） |
+| BUDGET_USED | ~704 GPU·h (V3 ~50 GPU·h consumed so far, ④-2ep ~80 GPU·h queued) |
+| 更新 | **2026-10-11 05:53（V3 health check）**: V3 step 95430/230598 (~41%), loss=0.19, C1=0.49, C2_gap=+0.19, ~3000 img/s, lr=3.39e-04, no collapse. 9 checkpoints (10k-90k). All 8 GPUs active (~16.5GB/81.5GB each). Watchers: v3_eval_watcher (PID 1928152) + post_v3_chain (PID 117389) both running. ETA ~11:15 Oct 11. 📦 体积：TASK=31.6KB / MEMORY=~30KB（均在限内） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
