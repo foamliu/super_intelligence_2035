@@ -1,6 +1,28 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-10（⚗️ dist_muon 重测：Muon A/B 用 layer-wise 分布式重跑）· 用户直令 · 最高优先（先于下方两个报告块执行；跑完把结果并进「刷新 Muon 报告」）
+
+> **用户令**：「Muon 的试验，让 pretrain 用 dist_muon 重测。」
+
+**① 目标**：上一轮 Muon A/B 用的是 `optimizer=muon`（**plain**）。改成 `optimizer=dist_muon`（layer-wise distributed），其余全部不变，验证「−26% 吞吐 / +38% 显存」是否被 dist_muon 收窄/消除。
+
+**② 实验口径（与上一轮逐字一致，唯一差异 = optimizer）**
+- 臂：**`dist_muon`**（新增）；对照直接用**上一轮已测**的 `muon`（loss 3.112 / 87K / 53.8GB）与 `adamw`（4.003 / 118K / 39.0GB），**不重跑历史两臂**。
+- 参数：`--gbs 16 --mbs 1 --seq 4094 --iters 1000 --seed 1234 --data p5b_l3_blend`，.29 8 卡（GPU0-7）、bf16、TP=1 ⇒ **DP=8（>1 ✅，layer-wise 前提满足）**。
+- output：`nemo_experiments/muon_ab_realdata_distmuon`。
+
+**③ 接线（沿用上次「三步核查」结论；dist_muon 已在 bridge_compat 支持）**
+- 确认 `bridge_compat.py` 路由 `optimizer="dist_muon"` → layer-wise distributed（整层分给各 DP rank + `--use-distributed-optimizer` 语义）。
+- **先 1 卡/短步 smoke**（loss 正常下降、无 NaN/报错），再铺 dist_muon 臂 1000 步。
+
+**④ 必测指标（对照上一轮三数字）**：loss@1000 / tok/s / peak VRAM / grad_norm / 0 NaN·0 skip。预期 dist_muon 因 optimizer state 分片，**VRAM 应显著低于 53.8GB、甚至 ≤39GB**。
+
+**⑤ 判读预注册（先定后测，避免事后合理化）**
+- 吞吐：dist_muon ≥ ~118K →「−26% 系 plain Muon 通信/实现伪影」实锤；87K~118K → 部分收窄；仍 ≈87K → 在 8×H100/2.2B/65M 规模下未体现 NVIDIA 的 GB300 near-parity（诚实记录，注明规模差异）。
+- 显存：应显著下降（≤39GB）；若仍 ~53.8GB → buffer 伪影另有其因，列为待查。
+
+**⑥ 纪律**：🚫 不启动 P-8 · 🚫 不 kill watchdog · 跑不通（dist_muon 接线/报错）**如实报「卡在哪」，不熬夜 debug** · 分阶段 commit（前缀 `pretrain dist_muon:`）· 跑完把三路对比写进 EXPERIMENTS，并**刷新 `report_pretrain_muon_vs_adamw.html`**（衔接下方「刷新报告」块）· 若 TASK 超 32KB 按规程自行归档已闭合旧块。
 > 📦 §运维指令·2026-10-10（📄 刷新 Muon 报告：overhead 归因+外部基准对照）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：报告 §7 已加「外部基准对照与 overhead 归因」，−26%/+38% 归因为 plain Muon 实现伪影非算法固有，dist_muon 预期 near-parity，P-8 方案A 升级为 NVIDIA 实证支撑+显存待查。需要时再读。
 
 > 📦 §运维指令·2026-10-10（📄 昨夜工作汇报 HTML）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：report_10_09_pretrain_overnight.html 11.6KB 已生成，含两项实验汇总+P-8 启示。需要时再读。
