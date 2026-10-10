@@ -5,8 +5,9 @@ WAITING: 1
 - STAGE: **Muon vs AdamW A/B ✅ 完成**（2026-10-10 06:23）— Muon loss 3.11 vs AdamW 4.00（−22.3%），但 Muon 吞吐 87K vs AdamW 118K tok/s（−26%），显存 53.8GB vs 39.0GB（+38%）。报告 `report_pretrain_muon_vs_adamw.html` 已生成（22.5KB）。两步运维指令（①对比基准 ②Muon vs AdamW）均已完成。
 - PHASE: **两步运维指令均完成 → converged**，等待运维下一步指令
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。**全 8 GPU 空闲**（.29, 07:54 核验）。**P-8 暂缓令未撤**。📦 体积：TASK=30.8KB ≤32KB ✅ / MEMORY=30.0KB ≤32KB ✅。🚫绝不 kill watchdog loop
-- 🩺 **本唤醒推进 = 状态核查 #256（2026-10-10 07:54, .29 全8GPU空闲）**：① git fetch → 0/0 ✅（无新运维指令, TASK 无变更; 工作区仅 harness 线 kimi_pilot_results.json modified, 非本线不碰）。② GPU 核验：.29 GPU0-7 全 0MiB/0% ✅。③ 两步运维指令均已完成（①对比基准 report_pretrain_baize_vs_dense_fair_zh.html ✅ ②Muon vs AdamW A/B ✅ commit f53ec86d）。④ watchdog PID 1391466 ✅。⑤ 体积自检：TASK=30.8KB / MEMORY=30.0KB 均 ≤32KB ✅ 无需归档。→ 下一步：等待运维下一步指令（P-8 启动令？dist_muon 验证？）。WAITING=1。
+- 轮询状态：30min 长轮询。**全 8 GPU 空闲**（.29, 08:26 核验）。**P-8 暂缓令未撤**。📦 体积：TASK=30.8KB ≤32KB ✅ / MEMORY=30.2KB ≤32KB ✅。🚫绝不 kill watchdog loop
+- 🩺 **本唤醒推进 = 状态核查 #257（2026-10-10 08:26, .29 全8GPU空闲）**：① git fetch → 0/0 ✅（无新运维指令, TASK 无变更; 工作区仅 harness 线 kimi_pilot_results.json modified, 非本线不碰）。② GPU 核验：.29 GPU0-7 全 0MiB/0% ✅。③ 两步运维指令均已完成（①对比基准 report_pretrain_baize_vs_dense_fair_zh.html ✅ ②Muon vs AdamW A/B ✅ commit f53ec86d）。④ watchdog PID 1391466 ✅（etimes=484154s ~5.6d）。⑤ 体积自检：TASK=30.8KB / MEMORY=30.2KB 均 ≤32KB ✅ 无需归档。→ 下一步：等待运维下一步指令（P-8 启动令？dist_muon 验证？）。WAITING=1。
+> 📦 **[已归档] #256 流水（2026-10-10 07:54, 状态核查）→ daily-memories/2026-10-10.md；结论：GPU全空闲, git 0/0, 两步运维指令均完成, 无需归档。需要时再读。**
 > 📦 **[已归档] #255 流水（2026-10-10 07:21, 状态核查）→ daily-memories/2026-10-10.md；结论：GPU全空闲, git 0/0, 两步运维指令均完成, 无需归档。需要时再读。**
 > 📦 **[已归档] #254 流水（2026-10-10 06:50, Muon vs AdamW A/B 结果回收+报告+TASK归档）→ daily-memories/2026-10-10.md；结论：Muon loss 3.11 vs AdamW 4.00(−22.3%), 吞吐 87K vs 118K(−26%), VRAM 53.8 vs 39.0GB(+38%), 报告 22.5KB 已 commit f53ec86d+push。需要时再读。**
 > 📦 **[已归档] #252 流水（2026-10-10 01:22, P-9.11-F 报告生成）→ daily-memories/2026-10-10.md；结论：DM 1M 数据落地, 报告 v2 生成(23.6KB/5表/SVG), warmup 修正 281×→24.5×, DM 2M 待测。需要时再读。**
