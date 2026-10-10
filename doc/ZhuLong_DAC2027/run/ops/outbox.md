@@ -4045,3 +4045,98 @@ PATH=/home/app.e0031982/.bun/bin:/home/app.e0031982/.local/bin:/home/app.e003198
 /nasdata/app.e0031982/.cline_zhulong/data/sessions/1791169967705_okj8l/1791169967705_okj8l.messages.json:212:              "result": "=== zhulong_loop (merged l
 == DONE ==
 ```
+
+---
+
+## RUN_ID 31 · 2026-10-10 20:59:10 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 31 — verify EDA_MCP_PORT=8090 inheritance
+echo "== RUN_ID 31 @ $(date '+%F %T') host=$(hostname) =="
+
+echo "== 1. relay env (non-interactive bash) =="
+echo "EDA_MCP_PORT=[${EDA_MCP_PORT:-<UNSET>}]"
+echo "PATH=[$PATH]" | cut -c1-200
+
+echo "== 2. ~/.bashrc has EDA_MCP_PORT? =="
+grep -n 'EDA_MCP_PORT' ~/.bashrc 2>&1 | cut -c1-160
+
+echo "== 3. MCP server listening on 8090? =="
+ss -lntp 2>/dev/null | grep -E ':8090' | cut -c1-160
+timeout 10 pgrep -af 'eda_fastmcp|main.py' | cut -c1-160
+
+echo "== 4. eda_fastmcp/.env port =="
+grep -nE '^#?[[:space:]]*EDA_MCP_PORT' /nasdata/app.e0031982/code/eda_fastmcp/.env 2>&1 | cut -c1-120
+
+echo "== 5. restarted loop environ (has EDA_MCP_PORT? PATH ok?) =="
+LPID=$(pgrep -f 'zhulong_loop.sh' | head -1); echo "loop pid=${LPID:-<none>}"
+[ -n "${LPID:-}" ] && tr '\0' '\n' < /proc/$LPID/environ 2>/dev/null | grep -E 'EDA_MCP_PORT|^PATH=' | cut -c1-220
+
+echo "== 6. which port does cline's MCP config point to? =="
+grep -rnE '8090|pyAether|eda_fastmcp' ~/.cline/data/settings/ 2>/dev/null | cut -c1-160 | head -8
+grep -rnE '8090|pyAether|eda_fastmcp' /nasdata/app.e0031982/.cline_zhulong/ 2>/dev/null | cut -c1-160 | head -8
+
+echo "== DONE =="
+```
+
+**输出**
+```
+== RUN_ID 31 @ 2026-10-10 20:59:10 host=hfeg0tedaap02 ==
+== 1. relay env (non-interactive bash) ==
+EDA_MCP_PORT=[<UNSET>]
+PATH=[:/home/app.e0031982/.bun/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin]
+== 2. ~/.bashrc has EDA_MCP_PORT? ==
+136:export EDA_MCP_PORT=8090
+== 3. MCP server listening on 8090? ==
+LISTEN 0      2048              0.0.0.0:8090       0.0.0.0:*    users:(("python",pid=2933041,fd=3))          
+77800 python main.py
+302684 cline --config /nasdata/app.e0031982/.cline_zhulong -c /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run --auto-approve true -m 
+303189 cline --config /nasdata/app.e0031982/.cline_zhulong -c /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run --auto-approve true -m 
+354208 timeout 10 pgrep -af eda_fastmcp|main.py
+407751 /home/app.e0041392/sandbox_fastmcp/.venv/bin/python /home/app.e0041392/sandbox_fastmcp/main.py
+490382 /home/app.t0002596/miniforge3/envs/py310_env/bin/python /home/app.t0002596/devops/eda_fastmcp/main.py
+824373 .venv/bin/python3 main.py
+1136643 /home/app.e0023936/miniforge3/envs/py310_env/bin/python /home/app.t0002643/devops/eda_fastmcp/main.py
+1531391 python main.py
+1653293 python main.py
+1680200 /home/app.t0002965/eda_fastmcp/.venv/bin/python /home/app.t0002965/eda_fastmcp/main.py
+1743813 python main.py
+1745842 python main.py
+1814323 python main.py
+2241387 python main.py
+2278536 python main.py
+2312201 python ./app/main.py
+2425434 python /home/app.t0002147/zhulong_mcp_self_evolution/eda_fastmcp/main.py
+2482675 tail -f /home/app.t0002147/mcp_0917/eda_fastmcp/logs/app.log
+2691602 /home/app.e0023936/miniforge3/envs/py310_env/bin/python /home/app.e0023936/devops/2026-07-05/eda_fastmcp/main.py
+2825718 tmux new -s eda_fastmcp_ser
+2873402 python /home/app.t0002147/eda_fastmcp_tcl/eda_fastmcp/tcl_kb/eda_api_recall.py
+2933041 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python /nasdata/app.e0031982/code/eda_fastmcp/main.py
+2947084 python main.py
+3278615 /home/app.e0023936/miniforge3/envs/py310_env/bin/python /home/app.e0023936/devops/eda_aether_sandbox/main.py
+3314704 python /nasdata/app.t0002997/app.t0002997/proj_new/eda_fastmcp/main.py
+3820519 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python -m uvicorn eda_api_recall:app --host 0.0.0.0 --port 9006 --log-level info
+4081461 python /home/app.t0002147/mcp_0917/eda_fastmcp/main.py
+4166747 /bin/bash -l -c cd /home/app.t0002638/eda_fastmcp && EDA_MCP_PORT=8661 nohup /home/app.e0023936/miniforge3/envs/py310_env/bin/python main.py > /tmp/eda_
+4166749 /home/app.e0023936/miniforge3/envs/py310_env/bin/python main.py
+== 4. eda_fastmcp/.env port ==
+30:# EDA_MCP_PORT=19999 
+31:EDA_MCP_PORT=${EDA_MCP_PORT:=8090}
+== 5. restarted loop environ (has EDA_MCP_PORT? PATH ok?) ==
+loop pid=302684
+PATH=/home/app.e0031982/.bun/bin:/home/app.e0031982/.local/bin:/home/app.e0031982/.local/node-20/bin:/home/app.e0031982/.bun/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/s
+== 6. which port does cline's MCP config point to? ==
+/home/app.e0031982/.cline/data/settings/cline_mcp_settings.json:3:    "pyAether_MCP_server": {
+/home/app.e0031982/.cline/data/settings/cline_mcp_settings.json:4:      "url": "http://10.251.36.15:8090/sse",
+/home/app.e0031982/.cline/data/settings/cline_mcp_settings.json:10:        "run_pyAether_code_tool"
+/nasdata/app.e0031982/.cline_zhulong/data/sessions/1791169967705_okj8l/1791169967705_okj8l.messages.json:19:          "text": "<user_input mode=\"act\"># ZHULON
+/nasdata/app.e0031982/.cline_zhulong/data/sessions/1791169967705_okj8l/1791169967705_okj8l.messages.json:83:              "result": "total 628\ndrwxr-x--- 6 app
+/nasdata/app.e0031982/.cline_zhulong/data/sessions/1791169967705_okj8l/1791169967705_okj8l.messages.json:167:              "result": " 1 | # MEMORY_ZHULONG.md �
+/nasdata/app.e0031982/.cline_zhulong/data/sessions/1791169967705_okj8l/1791169967705_okj8l.messages.json:178:              "result": "  1 | # daily-memories —
+/nasdata/app.e0031982/.cline_zhulong/data/sessions/1791169967705_okj8l/1791169967705_okj8l.messages.json:197:              "result": "=== legacy component loop 
+/nasdata/app.e0031982/.cline_zhulong/data/sessions/1791169967705_okj8l/1791169967705_okj8l.messages.json:202:              "result": "=== ops relay ===\n3186967
+/nasdata/app.e0031982/.cline_zhulong/data/sessions/1791169967705_okj8l/1791169967705_okj8l.messages.json:207:              "result": "=== conductor serial ===\n
+/nasdata/app.e0031982/.cline_zhulong/data/sessions/1791169967705_okj8l/1791169967705_okj8l.messages.json:212:              "result": "=== zhulong_loop (merged l
+== DONE ==
+```
