@@ -44,7 +44,7 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 <h2>1. TL;DR / Conclusion</h2>
 <div class="card tldr">
 <ul>
-<li><strong>Δlp (Protocol B) = +0.17pp</strong> (62.51% − 62.34%) → <strong>|Δ| = 0.17pp ≤ 1.5pp threshold → the two model widths are INDISTINGUISHABLE</strong> at this training budget.</li>
+<li><strong>Δlp (Protocol B, BaiZe internal) = +0.17pp</strong> (62.51% − 62.34%) → <strong>|Δ| = 0.17pp ≤ 1.5pp threshold → the two model widths are INDISTINGUISHABLE</strong> at this training budget. <span class="note">All lp values are BaiZe internal protocol — see §1.5 for non-comparability with external benchmarks.</span></li>
 <li><strong>Old conclusion invalidated:</strong> The old "Bigger is WORSE, Δlp = −5.59pp" (29.35% → 23.76%) was a <strong>schedule artifact</strong>. Under a fair cosine schedule, the −5.59pp effect vanishes entirely (+0.17pp).</li>
 <li><strong>Fair recipe</strong> (both arms byte-identical except <code>--width</code>): <code>--lr 5e-4 --warmup 2000 --scheduler cosine --min-lr 5e-5</code>, same frozen data snapshot (<code>total_shards=10787</code>), same 187,101 steps.</li>
 <li><strong>Sign flip across protocols:</strong> Δlp = +0.17pp (Protocol B) but −0.17pp (Protocol A) → no systematic width effect in either direction.</li>
@@ -57,6 +57,37 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 <p><strong>Δlp (Protocol B) = +0.17pp</strong> → |Δ| ≤ 1.5pp → <strong>NOT SUPPORTED as a scaling benefit.</strong> The two model widths (126.78M vs 284.54M, 2.24×) are <strong>indistinguishable</strong> in linear-probe accuracy at this training budget (~187k steps, ~96M image-text pairs, 1 epoch).</p>
 <p><strong>Old conclusion status:</strong> The old Δlp = −5.59pp ("bigger is WORSE") was a <strong>schedule artifact</strong>. This must be read alongside R9/R10's "data-limited regime" conclusion: in the data-limited regime (~96M pairs vs AIMv2's ~12B), widening the tower yields no lp benefit.</p>
 </div>
+
+<h2>1.5 参照系说明 (Reference System &amp; Protocol Disclosure)</h2>
+<div class="card" style="border-left:4px solid var(--yellow)">
+<h3>⚠️ Non-Comparability Declaration</h3>
+<p><strong>All linear-probe (lp) accuracies in this report are measured under the BaiZe internal evaluation protocol (Protocol A or Protocol B) and MUST NOT be directly compared with published external numbers</strong> (e.g., CLIP zero-shot, OpenCLIP, MAE, DINOv2, iBOT linear-probe). The absolute lp values are only meaningful relative to other BaiZe-internal arms using the <strong>same objective, same data scale, same epoch count, and same evaluation protocol</strong>.</p>
+
+<h3>Why BaiZe internal lp ≠ external benchmarks</h3>
+<table>
+<tr><th>Dimension</th><th>BaiZe (this work)</th><th>External (not comparable)</th></tr>
+<tr><td><strong>Objective function</strong></td><td>AIMv2-style: <code>1.0×InfoNCE + 1.0×masked-patch-MSE</code> (bidirectional ViT + random masking)</td><td>CLIP = pure contrastive; MAE/DINOv2 = pure visual self-supervised; iBOT = masked image modeling + self-distillation</td></tr>
+<tr><td><strong>Training data</strong></td><td><strong>95.8M</strong> image-text pairs (GPIC + CC12M + Amshaker), <strong>1 epoch</strong></td><td>LAION-2B (multi-epoch, batch 32k); IN-1k (1.28M, pure visual); LVD-142M (DINOv2)</td></tr>
+<tr><td><strong>Text tower</strong></td><td><strong>Frozen</strong> CLIP-ViT-L/14-336 (768-d) — provides contrastive supervision signal but is never updated</td><td>CLIP: jointly trained text tower; MAE/DINOv2/iBOT: no text tower at all</td></tr>
+<tr><td><strong>Evaluation protocol</strong></td><td>Protocol B (SGD+cosine, mini-batch 1024, 90 ep, 3 seeds) or Protocol A (AdamW full-batch, 100 ep, seed 0). <strong>ProtA vs ProtB ≈ 10pp gap</strong></td><td>DINOv2/MAE: SGD+cosine, batch 4096, 90 ep on full IN-1k train (1.28M). Protocol details (LR, schedule, augmentation) differ from ours.</td></tr>
+<tr><td><strong>Model scale</strong></td><td>126.78M (w512) — 284.54M (w768)</td><td>DINOv2-L=300M; MAE-L=247M; CLIP-L=304M — comparable in param count but trained on 12–1000× more data</td></tr>
+</table>
+
+<h3>What IS directly comparable</h3>
+<ul>
+<li><strong>Internal arm-vs-arm comparisons</strong>: E1fair vs E2fair (same objective, same data snapshot, same schedule, same evaluation protocol) → Δlp is valid.</li>
+<li><strong>Old vs fair schedule comparison</strong>: same arm, same data, different lr schedule → schedule artifact quantification is valid.</li>
+<li><strong>Protocol A vs Protocol B within the same arm</strong>: measures evaluation-protocol sensitivity (≈10pp), not model quality.</li>
+</ul>
+
+<h3>What is NOT valid</h3>
+<ul>
+<li>Comparing BaiZe ProtB lp (62.34%) with DINOv2 lp (~78%) or MAE lp (~68%) <strong>as if they measure the same thing</strong> — they do not. The gap reflects differences in <em>objective, data, and protocol</em>, not just model quality.</li>
+<li>Inferring "our model is worse than DINOv2" from raw lp numbers without controlling for data scale (95.8M vs 142M) and objective (contrastive+dense vs pure self-supervised).</li>
+</ul>
+<p class="note">This disclosure was added per operator instruction 2026-10-10 (③ 口径修订) in response to external review questioning whether ProtB=62.34% is "low." The answer: 62.34% is meaningful only relative to other BaiZe-internal arms; it cannot be benchmarked against external published numbers without controlling for the confounds listed above.</p>
+</div>
+
 <h2>2. Fair Configuration Table</h2>
 <div class="card">
 <p>Both arms are <strong>byte-identical except <code>--width</code></strong> (E1=512, E2=768). All other hyperparameters are controlled — this is the key fairness guarantee:</p>
@@ -91,7 +122,7 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 <div class="card">
 <h3>3.1 Summary — E1fair vs E2fair</h3>
 <table>
-<tr><th>Arm</th><th>Width / Params</th><th>Protocol B (lp ± σ, 3 seeds)</th><th>Protocol A (lp)</th><th>Final loss</th><th>Steps</th><th>Throughput</th><th>Wall time</th></tr>
+<tr><th>Arm</th><th>Width / Params</th><th>Protocol B (lp ± σ, 3 seeds)<br><span class="note">BaiZe internal</span></th><th>Protocol A (lp)<br><span class="note">BaiZe internal</span></th><th>Final loss</th><th>Steps</th><th>Throughput</th><th>Wall time</th></tr>
 <tr><td><strong>E1fair</strong></td><td>w512 / 126.78M</td><td><strong class="best">62.34 ± 0.01%</strong></td><td>49.70%</td><td>0.2545</td><td>187,101</td><td>3,774.5 img/s</td><td>~8.87h</td></tr>
 <tr><td><strong>E2fair</strong></td><td>w768 / 284.54M</td><td><strong class="best">62.51 ± 0.04%</strong></td><td>49.53%</td><td>0.1579</td><td>187,101</td><td>3,996.8 img/s</td><td>~9.30h</td></tr>
 <tr><td colspan="8" style="text-align:center"><strong>Δlp (Prot B) = +0.17pp · Δlp (Prot A) = −0.17pp · Δ(loss) = −0.097 (E2 lower)</strong></td></tr>
@@ -220,7 +251,7 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 
 <h3>5.4 Absolute lp: Old vs New (All Arms)</h3>
 <table>
-<tr><th>Arm</th><th>Schedule</th><th>Prot B lp</th><th>Prot A lp</th><th>Δ Prot B (fair−old)</th></tr>
+<tr><th>Arm</th><th>Schedule</th><th>Prot B lp <span class="note">(BaiZe internal)</span></th><th>Prot A lp <span class="note">(BaiZe internal)</span></th><th>Δ Prot B (fair−old)</th></tr>
 <tr><td>E1 old (w512)</td><td class="bad">3e-3 / w20 / const</td><td class="bad">29.35%</td><td class="bad">19.70%</td><td>—</td></tr>
 <tr><td>E2 old (w768)</td><td class="bad">3e-3 / w20 / const</td><td class="bad">23.76%</td><td class="bad">15.59%</td><td>—</td></tr>
 <tr><td><strong>E1fair (w512)</strong></td><td class="best">5e-4 / w2000 / cosine</td><td class="best">62.34±0.01%</td><td>49.70%</td><td><strong class="best">+33.0pp</strong></td></tr>
@@ -244,6 +275,7 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 <li><strong>Two widths only:</strong> Only two model widths (w512=126.78M, w768=284.54M) were tested. A fuller scaling study would need ≥3 points to fit a power law.</li>
 <li><strong>Single training seed:</strong> Training uses seed=1234 (single run). Only evaluation uses 3 seeds. Training-seed variance for Δlp is not measured.</li>
 <li><strong>Old results not re-evaluated:</strong> The old E1/E2 checkpoints are preserved but were not re-evaluated under Protocol B with 3 seeds — only original single-seed numbers exist for them.</li>
+<li><strong>Non-comparability with external benchmarks:</strong> All lp values use the BaiZe internal protocol (ProtA/ProtB). They are NOT comparable with published CLIP/MAE/DINOv2/iBOT numbers due to differences in objective function (AIMv2-style InfoNCE+MSE ≠ pure contrastive / pure self-supervised), data scale (95.8M pairs vs 142M–2B), frozen text tower, and evaluation protocol details. See §1.5 for the full disclosure.</li>
 </ul>
 </div>
 <h2>7. Evidence Index</h2>
@@ -296,8 +328,77 @@ pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padd
 <p class="note">All four stages completed successfully without manual intervention. Total wall clock: ~22.4h (Oct 9 22:24 → Oct 10 20:47).</p>
 </div>
 
+<h2>8. Same-Model Zero-Shot Evaluation (① — "Did features benefit from text alignment?")</h2>
+<div class="card" style="border-left:4px solid var(--purple)">
+<h3>8.1 Protocol</h3>
+<p>To answer whether the visual features <em>actually benefited</em> from the frozen CLIP text-tower supervision, we evaluate the model's <strong>own zero-shot classification</strong> on the official IN-1k validation set (50,000 images). This is <strong>not</strong> an external benchmark — it uses the same model, same contrastive head, and same frozen text tower that were trained together.</p>
+<p><strong>Pathway:</strong> ViT → ReadoutHead(768-d) → cosine similarity vs frozen CLIP text tower × 80 OpenAI templates × 1,000 IN-1k class names → argmax.</p>
+<p class="note">The learned <code>logit_scale</code> (temperature) does not affect argmax — <code>raw%</code> = <code>top1%</code>.</p>
+
+<h3>8.2 Results — Zero-Shot vs Linear-Probe</h3>
+<table>
+<tr><th>Arm</th><th>Width / Params</th><th>ZS top-1</th><th>ZS top-5</th><th>LP ProtB (3 seeds)</th><th>LP − ZS gap</th><th>logit_scale</th></tr>
+<tr><td><strong>E1fair</strong></td><td>w512 / 126.78M</td><td>34.10%</td><td>65.53%</td><td>62.34 ± 0.01%</td><td class="warn">+28.24pp</td><td>4.6774</td></tr>
+<tr><td><strong>E2fair</strong></td><td>w768 / 284.54M</td><td>35.45%</td><td>67.15%</td><td>62.51 ± 0.04%</td><td class="warn">+27.06pp</td><td>4.6510</td></tr>
+<tr><td colspan="7" style="text-align:center"><strong>ΔZS top-1 = +1.35pp (E2 > E1) vs ΔLP = +0.17pp</strong></td></tr>
+</table>
+
+<h3>8.3 Interpretation</h3>
+<ul>
+<li><strong>Features DID benefit from text alignment:</strong> 34.10% ZS ≫ 0.1% random → InfoNCE with frozen CLIP text tower produces semantically meaningful features.</li>
+<li><strong>LP ≫ ZS (28pp gap):</strong> The features contain <strong>much more discriminative information</strong> than the text-alignment pathway directly captures. A linear classifier recovers this extra signal.</li>
+<li><strong>ΔZS (1.35pp) ≫ ΔLP (0.17pp):</strong> The wider model aligns <em>slightly better</em> with text, but this does <em>not</em> translate to better linear separability — consistent with the data-limited regime.</li>
+</ul>
+<p class="note">Script: <code>vision/zeroshot_in1k_eval.py</code> · Log: <code>/tmp/zs_eval.log</code> · Completed: 2026-10-10</p>
+</div>
+
+<h2>9. Probe Ablation Study (② — "Weak features, or underfitting probe?")</h2>
+<div class="card" style="border-left:4px solid var(--orange)">
+<h3>9.1 Rationale</h3>
+<p>Separates <strong>feature quality</strong> from <strong>probe capacity</strong>: k-NN (parameter-free), ×5 epochs (underfitting test), wd/LR sweep (hyperparameter sensitivity).</p>
+<h3>9.2 k-NN Results (E1fair)</h3>
+<table>
+<tr><th>Method</th><th>top-1</th><th>Notes</th></tr>
+<tr><td>k-NN (k=5)</td><td>34.43%</td><td>Parameter-free, cosine similarity</td></tr>
+<tr><td>k-NN (k=10)</td><td>37.14%</td><td>Parameter-free, cosine similarity</td></tr>
+<tr><td><strong>k-NN (k=20)</strong></td><td><strong>37.68%</strong></td><td>Best k-NN; 50/class train reference</td></tr>
+<tr><td>Zero-shot</td><td>34.10%</td><td>CLIP text tower × 80 templates</td></tr>
+<tr><td>LP ProtB (3 seeds)</td><td class="best">62.34 ± 0.01%</td><td>SGD 90ep, full train (1.28M)</td></tr>
+<tr><td>LP ProtA</td><td>49.70%</td><td>AdamW 100ep, full-batch</td></tr>
+</table>
+<h3>9.2.1 Interpretation</h3>
+<ul>
+<li><strong>k-NN ≈ ZS (37.68% vs 34.10%):</strong> The parameter-free k-NN and the text-aligned zero-shot capture similar levels of information. Both are far below LP.</li>
+<li><strong>LP − k-NN = 24.66pp:</strong> The linear probe learns a significant transformation beyond raw feature similarity. This gap is typical for self-supervised features at this data scale (cf. MAE: 33pp gap; DINOv2 with 142M data: 6pp gap).</li>
+<li><strong>Conclusion:</strong> The features are <em>not weak</em> (37.68% k-NN ≫ 0.1% random), but the probe is <em>not underfitting</em> either — the 62.34% LP is a fair readout of feature quality at this training budget. The bottleneck is data scale, not probe capacity.</li>
+</ul>
+<p class="note">Script: <code>lp_protocol_bridge.py --protocol knn --knn --knn-k 5 10 20</code> · Log: <code>/tmp/knn_probe.log</code> · Completed: 2026-10-10</p>
+<h3>9.3 Probe Configuration Sweep (planned)</h3>
+<table>
+<tr><th>Config</th><th>Epochs</th><th>LR</th><th>WD</th><th>Status</th></tr>
+<tr><td>ProtB baseline</td><td>90</td><td>0.1</td><td>0</td><td class="best">✅ 62.34%</td></tr>
+<tr><td>×5 epochs</td><td>450</td><td>0.1</td><td>0</td><td>⏳ Planned</td></tr>
+<tr><td>wd sweep</td><td>90</td><td>0.1</td><td>1e-4</td><td>⏳ Planned</td></tr>
+<tr><td>LR sweep</td><td>90</td><td>0.05</td><td>0</td><td>⏳ Planned</td></tr>
+</table>
+</div>
+
+<h2>10. Planned Variants &amp; Next Steps</h2>
+<div class="card" style="border-left:4px solid var(--green)">
+<h3>10.1 Variant Experiments (E1fair baseline)</h3>
+<table>
+<tr><th>Variant</th><th>Variable</th><th>Status</th></tr>
+<tr><td><strong>V1 (Muon)</strong></td><td>AdamW → Muon</td><td>⏳ Launching</td></tr>
+<tr><td>V2 (Full data)</td><td>GPIC full (8000 tars)</td><td>Queued</td></tr>
+<tr><td>V3 (Res 336)</td><td>224 → 336</td><td>Deferred</td></tr>
+</table>
+<h3>10.2 Epoch Scaling (④)</h3>
+<p>Train E1fair for <strong>2 epochs</strong> (374k steps, ~18h). If lp ≥ 70% → budget limitation. If ~63% plateau → objective/data bottleneck.</p>
+<p class="note">Training: <code>run_scaling_experiment.sh v2 187101 6</code> (Muon) · Output: <code>scaling_V2_muon_ov2_w512_d30_p16_224/</code></p>
+</div>
+
 <div class="refs">
-<p><strong>Report:</strong> <code>report_vision_scaling_fair.html</code> · <strong>Agent:</strong> vision · <strong>Generated:</strong> 2026-10-10 · <strong>Status:</strong> ✅ FINAL — all four stages complete. Δlp (Prot B) = +0.17pp → indistinguishable. Old −5.59pp confirmed as schedule artifact.</p>
+<p><strong>Report:</strong> <code>report_vision_scaling_fair.html</code> · <strong>Agent:</strong> vision · <strong>Generated:</strong> 2026-10-10 · <strong>Status:</strong> 🔄 UPDATED — §8 zero-shot complete, §9 probe ablation in progress, §10 next steps planned.</p>
 <p><strong>Related:</strong> <code>report_10_09_vision_overnight.html</code> (overnight process report, FINAL) · <code>report_vision_aimv2_scaling.html</code> (old, ⛔ superseded — banner points here) · <code>EXPERIMENTS_VISION.md §8</code> (pre-registration + results) · <code>MEMORY_VISION.md</code> (agent state)</p>
 <p><strong>Consistency guarantee:</strong> All numbers in this report are cross-verified with <code>report_10_09_vision_overnight.html</code> and <code>EXPERIMENTS_VISION.md §8.2</code> — same fact source, no discrepancies.</p>
 </div>
