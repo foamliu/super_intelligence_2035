@@ -2,11 +2,12 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **P-8 正式预训练运行中 🚀**（2026-10-10 16:03 启动）— Mamba2-hybrid 2.22B from scratch, 44B tokens, dist_muon, WSD 5%/85%/10%。**暂停监控器已部署**（PID 2243639）：自动等 step 1050 → 暂停 P-8 → 启动 A/B。
-- PHASE: **p8_training_ab_pending** — stable phase running, step ~320/10490, loss 3.86↓, 0 NaN ✅。暂停监控器后台运行中, ETA step 1049 ≈ 21:00。
+- STAGE: **P-8 正式预训练运行中 🚀**（2026-10-10 16:03 启动）— Mamba2-hybrid 2.22B from scratch, 44B tokens, dist_muon, WSD 5%/85%/10%。**暂停监控器已修复并重启**（PID 799219）：自动等 step 1050 → 暂停 P-8 → 启动 A/B。
+- PHASE: **p8_training_ab_pending** — stable phase running, step ~460/10490, loss 3.49↓, 0 NaN ✅。暂停监控器 step 解析 bug 已修复, ETA step 1050 ≈ 21:00。
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。**全 8 GPU 占用**（.29, 52-53GB/card, 98-100% util）。P-8 训练 PID 3620653(bash)/3620665(torchrun)。暂停监控器 PID 2243639。📦 体积：TASK=31.6KB / MEMORY=31.6KB（均 ≤32KB ✅ 无需归档）。🚫绝不 kill 训练进程或 watchdog loop
-- 🩺 **本唤醒推进 = #270（2026-10-10 17:39, P-8 监控 + A/B脚本修复 + 暂停监控器部署）**：① P-8 step 320/10490, loss 3.861↓ (step10=11.73→step320=3.861), 0 NaN/0 skipped ✅, 稳态 16.9s/step=249K tok/s, GPU 52-53GB/card, 98-100% util。② **🔴 发现 A/B 脚本严重结构缺陷**：baize_p8_ab_test.sh 的 stop_vram_monitor() 的 { 未闭合 → run_arm() 被嵌套在 stop_vram_monitor 内部 → 所有 pre-flight+main 代码被困在未调用的嵌套函数中 → 脚本运行时什么都不做。**✅ 已修复**：重写函数结构, 3 个函数正确闭合为顶层函数, pre-flight+main 移至顶层, bash -n ✅。③ **✅ 创建暂停监控器 baize_p8_pause_at_1049.sh**：PID 2243639 后台运行, 每 30s 轮询等 step 1050 → SIGTERM P-8 进程组 → 等待 GPU 全空 → 验证 ckpt → 自动启动 baize_p8_ab_test.sh。④ ETA step 1049 ≈ 21:00（(1049-320)×16.9s≈3.4h）。⑤ 体积 OK 无需归档。→ 下一步：暂停监控器自动执行暂停+A/B；下次唤醒检查 A/B 结果 → 判据决策 → 恢复/切换 P-8。WAITING=1。
+- 轮询状态：30min 长轮询。**全 8 GPU 占用**（.29, 52-53GB/card, 98-100% util）。P-8 训练 PID 3620653(bash)/3620665(torchrun)。暂停监控器 PID 799219。📦 体积：TASK=31.6KB / MEMORY=30.9KB（均 ≤32KB ✅, 归档6条旧指针）。🚫绝不 kill 训练进程或 watchdog loop
+- 🩺 **本唤醒推进 = #271（2026-10-10 18:17, P-8 监控 + 暂停监控器 step 解析 bug 修复）**：① P-8 step 460/10490, loss 3.492↓ (step10=11.73→step460=3.492), 0 NaN/0 skipped ✅, 稳态 16.8s/step=249K tok/s, GPU 52-53GB/card, 98-100% util。② **🔴 发现暂停监控器 step 解析 bug**：baize_p8_pause_at_1049.sh line43 sed `.*iteration *\([0-9]*\)` 因 `.*` 贪婪匹配到行尾"elapsed time per iteration (ms)"→ 永远返回空 → "Current step: ?" ×75次 → A/B 永不触发。**✅ 已修复**：改用 `grep -oE 'iteration +[0-9]+/' | tail -1 | grep -oE '[0-9]+'`, kill 旧 PID 2243639 → 重启 PID 799219 → 首次输出 "Current step: 460" ✅。③ ETA step 1050 ≈ 21:00（(1050-460)×16.8s≈2.75h）。④ 体积：MEMORY 32.0KB→归档6条旧指针→<32KB。→ 下一步：监控器自动执行暂停+A/B；下次唤醒检查 A/B 结果→判据决策→恢复/切换 P-8。WAITING=1。
+> 📦 **[已归档] #270 流水（2026-10-10 17:39, P-8 监控+A/B脚本修复+暂停监控器部署）→ daily-memories/2026-10-10.md；结论：P-8 step320 loss3.86, A/B脚本结构缺陷修复, 暂停监控器创建(后step解析bug→#271修复)。需要时再读。**
 > 📦 **[已归档] #269 流水（2026-10-10 17:00, P-8 监控 + MBS A/B 脚本准备）→ daily-memories/2026-10-10.md；结论：P-8 step190 loss4.90, baize_p8_ab_test.sh 创建（后有现发现结构缺陷并修复）。需要时再读。**
 > 📦 **[已归档] #268 流水（2026-10-10 16:18, P-8 启动+首 40 步）→ daily-memories/2026-10-10.md；结论：P-8 16:03 启动, step40 loss=8.38, 248K tok/s, 0 NaN, GPU 52-53GB, baize_p8_decay.sh 已创建。需要时再读。**
 > 📦 **[已归档] #267 流水（2026-10-10 15:14, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8暂缓令未撤但数据前置已满足, 无新指令。需要时再读。**
@@ -22,12 +23,7 @@ WAITING: 1
 > 📦 **[已归档] #257 流水（2026-10-10 08:26, 状态核查）→ daily-memories/2026-10-10.md；结论：GPU全空闲, git 0/0, 两步运维指令均完成, 无需归档。需要时再读。**
 > 📦 **[已归档] #254 流水（2026-10-10 06:50, Muon vs AdamW A/B 结果回收+报告+TASK归档）→ daily-memories/2026-10-10.md；结论：Muon loss 3.11 vs AdamW 4.00(−22.3%), 吞吐 87K vs 118K(−26%), VRAM 53.8 vs 39.0GB(+38%), 报告 22.5KB 已 commit f53ec86d+push。需要时再读。**
 > 📦 **[已归档] #252 流水（2026-10-10 01:22, P-9.11-F 报告生成）→ daily-memories/2026-10-10.md；结论：DM 1M 数据落地, 报告 v2 生成(23.6KB/5表/SVG), warmup 修正 281×→24.5×, DM 2M 待测。需要时再读。**
-> 📦 **[已归档] #251 流水（2026-10-09 19:45, 3个实验idea交付）→ daily-memories/2026-10-09.md；结论：3 idea按价值排序交付(Idea1=P-8彩排续跑), 建议「立即起P-8」。需要时再读。**
-> 📦 **[已归档] #249 流水（2026-10-09 18:27, R3报告再确认）→ daily-memories/2026-10-09.md；结论：报告已存在+commit 00682e58+push, 8节/8内联SVG/10表/零外链。需要时再读。**
-> 📦 **[已归档] #248 流水（2026-10-09 17:53, R3报告再确认）→ daily-memories/2026-10-09.md；结论：报告已存在+commit 00682e58+push, 8节/8内联SVG/10表/零外链。需要时再读。**
-> 📦 **[已归档] #247 流水（2026-10-09 17:18, R3报告确认）→ daily-memories/2026-10-09.md；结论：报告已存在+commit 00682e58+push, 8节/8内联SVG/10表/零外链。需要时再读。**
-> 📦 **[已归档] #246 流水（2026-10-09 16:10, R3收官报告生成）→ daily-memories/2026-10-09.md；结论：R3 HTML 报告 52.6KB 已生成+commit 00682e58+push, 8节/8内联SVG/10表/零外链/DB真实数据。需要时再读。**
-> 📦 **[已归档] #245 流水（2026-10-09 15:22, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git ahead 1(已合并), R3分词109进程/.bin=1.76TB/ETA~12-18h, P-8暂缓令未撤。需要时再读。**
+
 > 📦 **[已归档] #244 流水（2026-10-09 14:45, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词109进程/.bin=1.49TB/ETA~12-18h, P-8暂缓令未撤, 一并提交TASK.md T3 recipe。需要时再读。**
 > 📦 **[已归档] #243 流水（2026-10-09 14:10, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词110进程/.bin=1.3TB/ETA~2-4h, P-8暂缓令未撤。需要时再读。**
 > 📦 **[已归档] #242 流水（2026-10-09 13:37, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词110进程/.bin=989GB/ETA~3-4h, P-8暂缓令未撤。需要时再读。**

@@ -40,7 +40,11 @@ while true; do
     fi
 
     # Print current step
-    CUR_STEP=$(grep 'iteration' "$TRAIN_LOG" 2>/dev/null | tail -1 | sed -n 's/.*iteration *\([0-9]*\).*/\1/p')
+    # Bug fix: old sed 's/.*iteration *\([0-9]*\).*/\1/p' was greedy — .* matched
+    # up to the LAST "iteration" in the line ("elapsed time per iteration (ms)"),
+    # which is NOT followed by digits → always returned empty.
+    # New approach: grep -oE extracts "iteration <spaces> <digits>/" directly.
+    CUR_STEP=$(grep -oE 'iteration +[0-9]+/' "$TRAIN_LOG" 2>/dev/null | tail -1 | grep -oE '[0-9]+')
     echo "  [$(date '+%T')] Current step: ${CUR_STEP:-?}, waiting for ${TARGET_STEP}..."
     sleep 30
 done
