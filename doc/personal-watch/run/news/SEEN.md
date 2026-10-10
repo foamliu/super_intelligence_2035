@@ -503,3 +503,25 @@
 | 2026-10-10 | 传英伟达将不再向 GeForce 游戏显卡分配 GB202 | IT之家 | news(据爆料·未证实·防重不收) | https://www.ithome.com/1/011/397.htm |
 | 2026-10-10 | 2026 巴黎车展新设“智驾实验室”公开体验活动，仅小鹏、特斯拉两家企业参与 | IT之家 | news(展会预告·非 AI 具体事件·防重不收) | https://www.ithome.com/1/011/393.htm |
 | 2026-10-10 | 上海劳力士大师赛：辛纳晋级八强 | 中新网 | news(体育·非 AI·防重不收) | https://www.chinanews.com.cn/ty/2026/10-10/10710601.shtml |
+
+| 2026-10-11 | Investigating unintended model actions in our evaluations and internal use | Anthropic（官方报告·标注 10-09） | news | https://www.anthropic.com/research/investigating-unintended-model-actions |
+| 2026-10-11 | AI model submitted false tip about unsolved murder, Philadelphia police say | 6abc/WPVI（费城警方口径·10-10 15:25 CST） | news(同事件·**补收**：更早报道落于第八十三轮窗口) | https://6abc.com/post/anthropic-ai-model-submitted-false-tip-unsolved-murder-philadelphia-police-say/19925243/ |
+| 2026-10-11 | Anthropic discloses 2 months old fake tip to police among new rogue AI incidents | Reuters（经 HN 50035550·40 分·10-11 02:10 CST） | news(同事件) | https://www.reuters.com/world/us/anthropic-ai-model-submits-false-homicide-tip-police-website-2026-10-09/ |
+| 2026-10-11 | An Anthropic AI model sent a false homicide tip to the police | TechCrunch（经 HN 50025713·10-10 03:44 CST） | news(同事件·上轮窗口**漏收**) | https://techcrunch.com/2026/10/09/an-anthropic-ai-model-sent-a-false-homicide-tip-to-philadelphia-police/ |
+| 2026-10-11 | Anthropic Model Submitted a False Homicide Tip to Philadelphia Police | Engadget（经 HN 50028365·10-10 08:52 CST） | news(同事件·上轮窗口**漏收**) | https://www.engadget.com/2282713/an-anthropic-model-submitted-a-false-homicide-tip-to-philadelphia-police/ |
+| 2026-10-11 | 我国食品安全法修订草案公开征求意见，涉及 AI 监管、校园食品安全等 | IT之家（据央视新闻） | news | https://www.ithome.com/1/011/500.htm |
+| 2026-10-11 | 因违反生成式 AI 使用规定：清华大学徐宁博士被撤销尼康 2026 显微视频竞赛冠军资格 | IT之家（综合 BBC 报道） | news | https://www.ithome.com/1/011/504.htm |
+| 2026-10-11 | 腾讯元器将于 11 月 9 日停止服务，所创建智能体将不再可用 | IT之家 | news | https://www.ithome.com/1/011/530.htm |
+| 2026-10-11 | Nvidia in talks to acquire US 'open' model startup Reflection AI | FT（经 HN 50035886·首页·87 分·10-11 02:48 CST） | news | https://www.ft.com/content/052610c5-22b4-4dd4-932e-b7f9f0628b6a |
+| 2026-10-11 | Nvidia in talks to acquire Reflection AI (makers of Beam) | Bloomberg Law（转 FT·经 HN 50035862） | news(同事件) | https://news.bloomberglaw.com/mergers-and-acquisitions/nvidia-in-talks-to-acquire-reflection-ai-ft |
+| 2026-10-11 | Nicolas Cage Says He's 'Probably Not' Working With Amazon Again After Refusing to Sign AI Waiver for 'Spider-Noir' | Variety（经 HN·10-11 00:54 CST） | news | https://variety.com/2026/tv/news/nicolas-cage-ai-waiver-amazon-spider-noir-1236907564/ |
+| 2026-10-11 | Nvidia reportedly halts GeForce RTX 5090 production in favor of data center GPUs | Tom's Hardware（经 HN 50036910·10-11 04:36 CST） | 留档(硬件·与 IT之家 011/513 **同事件**) | https://www.tomshardware.com/pc-components/gpus/nvidia-reportedly-halts-geforce-rtx-5090-production-in-favor-of-ai-data-center-and-professional-gpus-impending-supply-drought-expected-to-drive-up-prices-rtx-5080-24gb-rumored-as-new-gaming-flagship |
+| 2026-10-11 | 消息称英伟达计划以 24GB 显存 GeForce RTX 5080 显卡取代现有 16GB 版本 | IT之家 | 留档(据爆料·硬件·不追量未展开) | https://www.ithome.com/1/011/513.htm |
+| 2026-10-11 | 铭凡首款无风扇全闪 AI NAS 机型 S5 将于 10 月中下旬国行开售 | IT之家 | 留档(产品·AI 仅为产品名·不追量未展开) | https://www.ithome.com/1/011/521.htm |
+| 2026-10-11 | 吉利首款 AI 全地形硬核 SUV：银河战舰 700 全球上市 | IT之家 | 留档(营销口径·不追量未展开) | https://www.ithome.com/1/011/509.htm |
+| 2026-10-11 | 土耳其将自 11 月起禁止 15 岁以下未成年人使用社交媒体 | IT之家（中新网同事件） | 留档(平台治理·非 AI 具体事件) | https://www.ithome.com/1/011/517.htm |
+| 2026-10-11 | 阻击安森美，Cirrus Logic 抢购 Synaptics | IT之家 | 留档(半导体并购·非 AI 具体事件) | https://www.ithome.com/1/011/536.htm |
+| 2026-10-11 | 立讯精密被列入美国 337 调查，官方回应称相关产品处于客户验证阶段未进入量产状态 | IT之家 | 留档(贸易救济·非 AI 具体事件) | https://www.ithome.com/1/011/527.htm |
+| 2026-10-11 | 长鑫技术新突破，融合 4F² 架构等先进技术的 DDR5 RDIMM 产品预计年底亮相 | IT之家 | 留档(存储·非 AI 具体事件) | https://www.ithome.com/1/011/494.htm |
+| 2026-10-11 | 特斯拉FSD，在欧洲被打回原形 | 量子位 | 留档(10-10 14:59 CST·落于上轮窗口·不追计) | https://www.qbitai.com/2026/10/502467.html |
+

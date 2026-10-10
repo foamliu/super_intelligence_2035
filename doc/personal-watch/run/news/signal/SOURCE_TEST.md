@@ -1,6 +1,6 @@
 # SOURCE_TEST — 价格源实测表（第11批 · R1）
 
-> 生成：2026-10-10 18:06:11（`fetch_prices.py`；运行机 = 本仓库所在机 · 中国网络）
+> 生成：2026-10-11 06:05:51（`fetch_prices.py`；运行机 = 本仓库所在机 · 中国网络）
 > 列：类别 / code / 名称 / HTTP / Content-Type / 首日 / 末日 / 行数。**含失败项**。
 
 | 类别 | code | 名称 | HTTP | Content-Type | 首日 | 末日 | 行数 |
