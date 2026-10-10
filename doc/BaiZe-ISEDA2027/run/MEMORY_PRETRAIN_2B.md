@@ -2,11 +2,12 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **P-8 已暂停 · A/B 测试 Arm A 运行中 ⚗️** — Arm A step120/300 loss5.22, 249K tok/s, peak VRAM 52.3GB/card, 0 NaN。ETA Arm A 完≈22:46 → Arm B → 决策≈00:12。
-- PHASE: **p8_ab_testing** — Arm A(MBS=2/GBS=1024) running step120/300, GPU ~52GB/card 98-100%util, VRAM peak 53559MiB。ETA: Arm A ~50min → sleep60s → Arm B ~85min → **决策点≈00:12**。
+- STAGE: **P-8 已暂停 · A/B 测试 Arm A 运行中 ⚗️** — Arm A step260/300 loss4.09, 248K tok/s, peak VRAM 52.3GB/card, 0 NaN。ETA Arm A 完≈22:46 → Arm B → 决策≈00:12。
+- PHASE: **p8_ab_testing** — Arm A(MBS=2/GBS=1024) running step260/300, GPU ~52GB/card 98-100%util, VRAM peak 53559MiB。ETA: Arm A ~11min → sleep60s → Arm B ~85min → **决策点≈00:12**。
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。**全 8 GPU 占用**（.29, ~52GB/card）。A/B 脚本 PID 1669415(ppid=1, setsid 持久)。P-8 ckpt@1049 已存。📦 体积：TASK=31.6KB / MEMORY≈28KB（归档 4917B → daily-memories/2026-10-08.md）。🚫绝不 kill watchdog loop(PID 1391466)
-- 🩺 **本唤醒推进 = #277（2026-10-10 21:57, A/B Arm A 进度监控）**：① git fetch+status 0/0 ✅（无新运维指令；工作区仅 harness/vision 文件 modified，非本线不碰）。② **A/B Arm A 健康**：step120/300, loss 10.76→5.22（健康↓）, 0 NaN, grad_norm 0.40-6.83, step_time avg 16.8s, tok/s=1024×4094/16.807≈**249K**（与 P-8 baseline 精确一致）。③ **VRAM**：peak 53559MiB=52.3GB/card（远低于 76GB 阈值 ✅）。④ torchrun PID 1670506 alive, 8 worker PIDs 1680044-1680051 全在, GPU 98-100%util。⑤ **ETA**：Arm A 剩 180步×16.8s≈50min→~22:46 → sleep60s → Arm B 300步≈85min→~00:12 决策。⑥ **体积自检**：TASK=32372B(31.6KB) / MEMORY=32719B(31.95KB)→归档 #191-#203(4917B)后≈28KB ✅。→ 下一步：下次唤醒查 Arm A 结果+Arm B 进度→按三判据决策→重启 P-8。WAITING=1。
+- 轮询状态：30min 长轮询。**全 8 GPU 占用**（.29, ~52GB/card）。A/B 脚本 PID 1669415(ppid=1, setsid 持久)。P-8 ckpt@1049 已存。📦 体积：TASK=31.6KB / MEMORY≈23KB。🚫绝不 kill watchdog loop(PID 1391466)
+- 🩺 **本唤醒推进 = #278（2026-10-10 22:37, A/B Arm A 进度监控·step260）**：① git fetch+status 0/0 ✅（无新运维指令；工作区仅 harness 线 kimi_pilot_results.json modified，非本线不碰）。② **A/B Arm A 健康**：step260/300, loss 5.89→4.09（step10→260，健康↓）, 0 NaN, grad_norm 0.128-0.398, step_time avg 16902ms=16.9s, **tok/s=248,026**（last-26 data points avg，与 P-8 baseline 249K 一致 ✅）。③ **VRAM**：peak 53559MiB=52.3GB/card（远低于 76GB 阈值 ✅）。④ torchrun PID 1670506 alive, 8 worker PIDs 1680044-1680051 全在, GPU 98-100%util。⑤ **ETA**：Arm A 剩 40步×16.9s≈11min→~22:48 → sleep60s → Arm B 300步×~17s≈85min→~00:14 决策。⑥ **体积自检**：TASK=32372B(31.6KB) / MEMORY=23731B(23.2KB) ✅ 均≤32KB。→ 下一步：下次唤醒查 Arm A 是否完成+Arm B 是否在跑/完成→按三判据（吞吐B≥A×1.12 / VRAM B≤76GB / loss@300一致）决策→重启 P-8（达标→MBS3/GBS1032 从零重启，不达标→MBS2/GBS1024 恢复原定稿）。WAITING=1。
+> 📦 **[已归档] #277 流水（2026-10-10 21:57, A/B Arm A 进度监控·step120）→ daily-memories/2026-10-10.md；结论：Arm A step120/300 loss5.22, 249K tok/s, VRAM 52.3GB, 0 NaN, ETA Arm A完≈22:46。需要时再读。**
 > 📦 **[已归档] #276 流水（2026-10-10 21:22, A/B bug 修复+重启）→ daily-memories/2026-10-10.md；结论：P-8 step1050 loss2.925/ckpt@1049, A/B 两 bug 修复后 21:21 重启, Arm A 训练中。需要时再读。**
 > 📦 **[已归档] #275 流水（2026-10-10 20:40, P-8 监控·step970）→ daily-memories/2026-10-10.md；结论：P-8 step970 loss2.959, ETA step1050≈21:02。需要时再读。**
 > 📦 **[已归档] #274 流水（2026-10-10 20:05, P-8 监控+暂停/A/B全链路复核）→ daily-memories/2026-10-10.md；结论：P-8 step840 loss3.037, 暂停/A/B全链路复核通过, ETA step1050≈21:02。需要时再读。**
