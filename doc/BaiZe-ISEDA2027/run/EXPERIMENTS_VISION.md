@@ -903,12 +903,12 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 
 ### 9.5 Results Table
 
-| Variant | ProtB (3-seed) | ProtA | Δlp vs E1fair | Verdict |
-|:--|:--|:--|:--|:--|
-| E1fair (baseline) | 62.34 ± 0.01% | 49.70% | — | — |
-| V1 (res 336) | ⏸ deferred (user: "明天再说") | — | — | — |
-| V2 (Muon) | **N/A — COLLAPSED** (C1=0.9569@step4200) | N/A | N/A | ❌ Muon incompatible with contrastive loss |
-| V3 (full data) | 🔄 training (step ~21k/230k, ETA ~08:40 Oct 11) | ⏳ | ⏳ | ⏳ |
+| Variant | ProtB (3-seed) | ProtA | Zero-shot | k-NN (k=20) | Δlp vs E1fair | Verdict |
+|:--|:--|:--|:--|:--|:--|:--|
+| E1fair (baseline) | 62.34 ± 0.01% | 49.70% | 34.10% | 37.68% | — | — |
+| V1 (res 336) | ⏸ deferred (user: "明天再说") | — | — | — | — | — |
+| V2 (Muon) | **N/A — COLLAPSED** (C1=0.9569@step4200) | N/A | N/A | N/A | N/A | ❌ Muon incompatible with contrastive loss |
+| V3 (full data) | 🔄 training (step ~52.5k/230k, ETA ~08:00 Oct 11) | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
 
 ### 9.4 ④ Epoch Scaling (operator instruction 2026-10-10 ④ · most decision-relevant)
 
@@ -943,3 +943,56 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 **Cost**: 2ep ~80 GPU·h / ~10h wall; 4ep ~160 GPU·h / ~20h wall.
 
 **Status**: ⏳ Pending V3 eval completion. Watcher `v3_eval_watcher.sh` will auto-eval V3; next agent wake launches ④-2ep after V3 results collected.
+
+### 9.6 ① Same-Model Zero-Shot + ② k-NN Probe Results (E1fair, 2026-10-11)
+
+> Operator instruction 2026-10-10 ①②. Zero/light GPU. Answers: ① "did features benefit from
+> text alignment?" and ② "is the probe underfitting, or are features genuinely limited?"
+
+#### ① Same-Model Zero-Shot — Pathway Construction
+
+| Component | Detail |
+|:--|:--|
+| **Vision pathway** | OpenVision2 w512/d30 ViT → ReadoutHead (LayerNorm + mean-pool + Linear(512→768)) → 768-d image features. This head was trained via InfoNCE to align with the frozen CLIP text tower's 768-d space. |
+| **Text pathway** | Frozen CLIP-ViT-L/14-336 text tower (768-d), loaded from `/nas_train/app.e0031982/models/openai/clip-vit-large-patch14-336`. `get_text_features(ids)` → 768-d text embedding. |
+| **Class prompts** | 1000 IN-1k class names × 80 OpenAI templates (from `open_clip.IMAGENET_CLASSNAMES` + `OPENAI_IMAGENET_TEMPLATES`), averaged per class, L2-normalized → (1000, 768) text class embeddings. |
+| **Classification** | `cosine_sim(image_features, text_class_embeddings)` → argmax. Temperature = `logit_scale` from checkpoint (learned during training). |
+| **Eval set** | Official IN-1k validation (50k images, 14 parquet files, labels 0–999). |
+| **Normalization** | ImageNet mean/std (same as Protocol B). |
+| **Script** | `vision/zeroshot_in1k_eval.py` |
+
+#### ① Results: lp vs zs Comparison
+
+| Checkpoint | Zero-shot top-1 | lp (ProtB, 3-seed) | Δ(lp − zs) |
+|:--|:--|:--|:--|
+| E1fair (w512/d30, 126.8M) | **34.10%** | 62.34 ± 0.01% | **+28.24pp** |
+| E2fair (w768/d30, 284.5M) | **35.45%** | 62.51 ± 0.04% | **+27.06pp** |
+
+**Interpretation**:
+- **lp ≫ zs (+28pp)**: Features DO benefit from text alignment — the InfoNCE training aligns image features with the CLIP text space, enabling above-chance zero-shot classification (34.10% vs 0.1% random). However, the learned linear probe extracts **significantly more** discriminative information (+28.24pp) than direct text-similarity classification.
+- The large lp−zs gap suggests the vision encoder learned rich features **beyond** what the text-aligned space directly provides — the dense reconstruction objective (masked-patch-MSE) contributes representation quality that the contrastive alignment alone does not capture.
+- E2fair zs (35.45%) > E1fair zs (34.10%) by +1.35pp, consistent with larger model capacity, but the lp gap is only +0.17pp (indistinguishable) — the wider model's extra capacity helps zero-shot text alignment but not linear probe.
+- **Chance baseline**: 1/1000 = 0.1%. Both zs (34.10%) and lp (62.34%) are far above chance.
+
+#### ② k-NN Probe Results (partial — ×5 epochs + wd/LR sweep pending)
+
+| Probe type | E1fair top-1 | vs lp (62.34%) | vs zs (34.10%) |
+|:--|:--|:--|:--|
+| k-NN (k=20) | **37.68%** | −24.66pp | +3.58pp |
+| ×5 epochs probe (450ep) | ⏳ NOT RUN (GPU blocked by V3) | — | — |
+| wd/LR sweep | ⏳ NOT RUN (GPU blocked by V3) | — | — |
+
+**Interpretation (k-NN only)**:
+- **k-NN (37.68%) < lp (62.34%)**: The linear probe extracts significantly more than nearest-neighbor matching. This is expected for high-dimensional features (linear classifiers generally outperform k-NN).
+- **k-NN (37.68%) > zs (34.10%)**: Nearest-neighbor in the learned feature space slightly outperforms zero-shot text classification, confirming the feature space has reasonable class structure beyond just text alignment.
+- **The large lp − k-NN gap (24.66pp)** could indicate: (a) the linear probe finds discriminative directions that k-NN misses (normal for high-dim spaces), OR (b) the 90-epoch probe is still underfitting and more epochs would raise lp further. **The ×5 epochs test (450ep) is needed to distinguish these — pending GPU availability.**
+
+**② Gap — ×5 epochs probe + wd/LR sweep**: The `probe_comparison_eval.py` script supports ×5 epochs (450 instead of 90) and wd/LR micro-sweep, but these have NOT been run on E1fair. All 8 GPUs are occupied by V3 full-data training (ETA ~08:00–10:00 Oct 11). Plan: run after V3 completes (~1 GPU·h, light).
+
+#### Combined ①② Summary
+
+| Question | Answer | Evidence |
+|:--|:--|:--|
+| Did features benefit from text alignment? | **Yes** — zs=34.10% ≫ chance 0.1%, and lp=62.34% ≫ zs=34.10% (+28pp) | ① table above |
+| Is the probe underfitting? | **Inconclusive** — k-NN=37.68% < lp=62.34% is expected, but ×5 epochs test not yet run | ② table above; ×5 pending |
+| Is 62.34% a feature quality ceiling or probe limitation? | **Partially answered** — k-NN confirms reasonable feature quality (37.68%), but the probe underfitting question requires the ×5 epochs test | ② pending |
