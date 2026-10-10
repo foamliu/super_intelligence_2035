@@ -21,6 +21,33 @@
 > 📦 §运维指令·2026-10-07⑥配比实验收官总报告HTML（report_data_mix_summary.html 29KB）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：R1→s_step→R2→top-K全弧线报告已交付,ρ=−0.80排名反转+0.6pp不可分辨+88:8:4先验。需要时再读。
 
 
+### 🆕 运维指令 · 2026-10-10（**更正**：85M 总量 = 46.7TB，否 7701/27T）· 用户直令 · 最高优先
+
+> **用户核实（2026-10-10 晚）**：HF 官方页明写 **`Total file size: 46.7 TB`** ——
+> https://huggingface.co/datasets/mvp-lab/LLaVA-OneVision-1.5-Mid-Training-85M
+
+**① 事实（运维已用 HF API 复核）**
+- 仓库顶层 = **8 个子集目录**：`coyo` · `datacomp1b` · `imagenet` · `laioncn` · `mint` · `obelics` · **`sa1b`** · **`zero250m`**（+ `.gitattributes`/`README.md`）。
+- 官方总量 **≈ 46.7 TB**（约 **12,124 parquet**）。
+
+**② 唤醒 302 的「更正 7701/27T」❌ 作废 —— 两处口径错误**
+1. **漏子集**：302 的 per-subdir 只列了 **6 个**（coyo+datacomp1b+imagenet+laioncn+mint+obelics = 7701），**把 `sa1b`(≈5.09TB) 与 `zero250m`(≈4.76TB) 整个漏掉**（≈9.85TB）。
+2. **混淆「已下」与「总量」**：`du=27T` 是**本地已下载字节**，**不是仓库总量**。以「本地 `.metadata`/已下 parquet 计数」当分母 ⇒ 必然把「未开始」误判成「已完成」。
+
+**③ 正确口径（请据此重算并落表）**
+- **总量 ≈ 46.66 TB / ~12,124 files**（分母用 **HF 仓库总量**，❌ 不用本地 `.metadata` 计数）。
+- 本地已下 ≈ **27 TB ≈ 57%**；**剩余 ≈ 20 TB**。
+- **ETA（@12–16.6MB/s）≈ 14–25 天**（保守 8MB/s → ≈29 天）⇒ **不是「10–30 分钟」**。
+
+**④ 执行**
+1. 用 HF API 逐子集核实 —— `HfApi().list_repo_tree(repo, recursive=True)` 或 `/tree/main?recursive=true`，统计 **8 个子集各自的【文件数 / 字节】**，落一张表：`子集 | 总量 | 已下 | 剩余 | 是否已开始`。
+2. **明确纠正** `MEMORY_DATA.md` 心跳 + `daily-memories-data/2026-10-10.md` 里的「85M 100% / 27T / ETA 10–30min」写法；`sa1b`/`zero250m` 若**未开始**须标「未开始」，**不得计入已完成**。
+3. 重报 **85M 真实进度% + ETA**（分母 = 仓库总量）。
+
+**⑤ 纪律不变**：**只读巡检，不 kill / 不重启 / 不改并发**（85M 由**用户自管**，data 线仅巡检；除僵死按既定纪律处理）。
+
+> 📌 教训（记进本轮流水）：`huggingface_hub` 的**本地 `.metadata` / 已下文件计数 = 已下载进度**，**≠ 仓库总量**；总量必须取自 **HF 仓库 tree/API**。
+
 ### 🆕 运维指令 · 2026-10-10（巡检并发下载 `85M` + `en_v1_4` · 回报各自速度/ETA）· 用户直令 · 最高优先
 
 > **用户令（2026-10-10 傍晚）**：「我在同时下载 **85M** 和 **en_v1_4**，请看下**各自下载速度**和 **ETA**。」
