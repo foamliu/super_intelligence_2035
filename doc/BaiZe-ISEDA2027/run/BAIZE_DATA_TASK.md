@@ -83,78 +83,7 @@
 > 📦 §运维口径·2026-10-09④（en_v1_4放行时点·用户裁定）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：en_v1_4在GPIC完成后放行(已被10-10块取代执行)。需要时再读。
 
 
-### 🆕🆕🆕 运维指令 · 2026-10-09③（**停②：停掉Code/Math重头来 + 加Ultra-FineWeb-L3 + 放开并发**）· **用户直令** · 最高优先 · 覆盖②
-
-> **用户直令（2026-10-09③）**：
-> 1. Code/Math 刚开始才切了一部分，**停掉，重新来**——每个目录所有文件全切，不挑不漏
-> 2. Ultra-FineWeb-L3 也加入分词
-> 3. 一共 224 个核，**为什么一个数据源只能 8 并发？放开**
-> 4. Ultra-FineWeb 目录只剩 197GB，分词 .bin 却有 2.0TB——**data agent 核实是否合理，回报**
-> 5. 不要创造新名字（如 "Code L2"），**就按原始 6 个目录来**
-
-**① 立即停止当前 Code/Math 分词进程**
-- `kill` 所有 `preprocess_data.py` / `preprocess_data_cm.py` 进程
-- 删除 ② 启动的部分产物（`baize-data/text/code_s*.bin/.idx/.json`、`math_s*.bin/.idx/.json`），从头来
-- 报告：已 kill 几个 PID，已删哪些文件
-
-**② 三个目录全量分词（每个目录下所有文件，不挑不漏，不设上限/下限）**
-
-| 目录 | 文件数 | 磁盘 | 原始路径 | 落盘命名 |
-|:---|---:|---:|:---|:---|
-| `Ultra-FineWeb-L3` | 1,764 parquet | 1.8 TB | `/nas_inference/.../Ultra-FineWeb-L3/data/` | `l3_s{i}` |
-| `UltraData-Code` | 1,121 parquet | 1.2 TB | `/nas_inference/.../UltraData-Code/data/` | `code_s{i}` |
-| `UltraData-Math` | 1,823 parquet | 515 GB | `/nas_inference/.../UltraData-Math/data/` | `math_s{i}` |
-
-- **口径**：每个目录下**所有** parquet 文件全切，不按子目录挑拣，不设上限/下限
-- **tokenizer** = `tokenizer_eod`（DeepSeek-V4.1-Flash + EOD）
-- **格式** = Megatron-LM `.bin/.idx/.json`（int32，4 字节/token），**不入 git**
-- **落盘** = `/nas_train/app.e0031982/datasets/baize-data/text/`
-- 每个目录先 smoke test 1 个 parquet 确认 text column 名（`content` / `text` / `full_content` 等），再批量切
-
-**③ 并发：放开用满 224 核**
-- 224 核可用，**每个数据源可以开 20–50 并发**（按文件数分配进程，每个进程处理一个子目录或一组 parquet）
-- 三个目录合计可以跑 **60–100+ 进程**
-- `nice -n 10`（GPIC 下载优先级更高），但**不必保守到 8**
-- GPIC 下载是网络 I/O bound，分词是 CPU bound，**不争资源**
-- 监控 load / NFS 吞吐 / GPIC 速率（若 GPIC 掉到 <30 tar/h 才减并发）
-
-**④ Ultra-FineWeb 197GB → 2.0TB .bin 核实（data agent 必须回报）**
-- 目录 `Ultra-FineWeb` 当前只剩 162 parquet / 197GB
-- 分词产物 `mix_base/` 有 44 shards / 2.0TB / 524.43B token
-- **data agent 回报**：
-  1. Ultra-FineWeb 原始下载到底多少 GB？（查历史记录 / HF 缓存）
-  2. 是否分词后删除了大部分原始 parquet？197GB 是残留还是全部？
-  3. 524.43B token 对应的原始数据量是多少？
-  4. 197GB → 2.0TB .bin 是否合理？（int32 = 4 字节/token，524.43B × 4 ≈ 2.1TB）
-
-**⑤ 全量盘点（每唤醒心跳必报，按原始 6 个目录）**
-- 每个目录报：原始多少 GB / 多少文件 / 分词多少 token / .bin 多少 GB / 是否对应
-- 三个正在切的：报进度、token 数、活 PID、ETA
-- GPIC 下载：照常报
-
-| 目录 | 原始 | 文件 | 分词状态 | 已切 token | .bin |
-|:---|---:|---:|:---|---:|---:|
-| `Ultra-FineWeb` | 197 GB（?） | 162 parquet | ✅ 完成 | 524.43 B | 2.0 TB |
-| `Ultra-FineWeb-L3` | 1.8 TB | 1,764 parquet | ❌ 未开始 | 0 | 0 |
-| `UltraData-Code` | 1.2 TB | 1,121 parquet | 🔄 重来 | 0 | 0 |
-| `UltraData-Math` | 515 GB | 1,823 parquet | 🔄 重来 | 0 | 0 |
-| `UltraData-SFT-2605` | 298 GB | 1,504 jsonl | ✅ 完成 | 20.96 B | 79 GB |
-| `UltraData-SFT-Agent-2609` | 51 GB | 50 jsonl | ✅ 完成 | 8.04 B | 30 GB |
-
-**⑥ 投料前污染扫描（所有分词完成后做）**
-- 对所有新分词产物跑 `check_contamination.py`（blacklist = 6 快照并集 536 任务 / 193,295 13-gram + 10 8-gram）
-- 采样 ≥ 10K docs / 源 → 0 命中则可投料
-- 结果写入 `CONTAMINATION_CHECK.md`
-
-**⑦ 铁律（不变）**
-- 🚫 不 kill GPIC 下载（PID 144981 保持运行）
-- 🚫 不改 tokenizer / 不改 .bin/.idx 格式
-- 🚫 不入 git（.bin/.idx/.json 产物不入库）
-- 🚫 不挑不漏：每个目录所有文件都切
-- 分词用 `nice -n 10`，心跳 ≤ 60 min 且每步 commit + push
-- TASK/MEMORY ≤ 32KB
-
-> 📦 ② 已归档至 git 历史（commit 0dd41843），本块覆盖②。
+> 📦 §运维指令·2026-10-09③（停②:停掉Code/Math重头来+加Ultra-FineWeb-L3+放开并发）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：全7项完成✅(①kill34旧进程+删46产物 ②R3全量分词110/110 DONE(1483.91B tok/5.94TB) ③并发110进程 ④197GB→2.0TB核实合理(524.43B×4≈2.1TB) ⑤6目录盘点全✅ ⑥污染扫描30/30 DONE(60K docs,0命中) ⑦铁律已遵守)。需要时再读。
 
 
 > 📦 §运维指令·2026-10-07⑤（分词加大并发+.29 8卡空口径+推进顺序）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：分词并发化已完成(zh 8进程→全 web 44 shards 524.42B tok),.29 8卡空已确认,推进顺序被2026-10-09②覆盖。需要时再读。
