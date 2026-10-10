@@ -34,6 +34,150 @@ EMBED = 768
 CLIP_PATH = '/nas_train/app.e0031982/models/openai/clip-vit-large-patch14-336'
 
 
+# ---- Muon optimizer (2026-10-10 V2 variant) ---- #
+# Standalone implementation since emerging_optimizers is not pip-installed in vision env.
+# Reference: Keller Jordan, "Muon" (github.com/KellerJordan/Muon)
+# Pretrain line used: emerging_optimizers.Muon (momentum=0.95, nesterov, ns_steps=5)
+#   via Megatron-Core shim (core/optimizer/muon.py → emerging_optimizers).
+# Parameter grouping convention: 2D weight matrices → Muon; 1D (norms, biases,
+#   embeddings, logit_scale) → AdamW (scalar optimizer), per pretrain dist_muon.
+
+def zeropower_via_newtonschulz5(G, steps=5, eps=1e-7):
+    """Newton-Schulz iteration approximating the matrix sign function (= orthogonal
+    factor U@V^T of the SVD).  Quintic polynomial coefficients from Keller Jordan.
+
+    G: gradient tensor with ndim >= 2.  Returns an orthogonalized update of the
+    same shape, with spectral norm ≈ 1.  For ndim > 2 (e.g. conv weights), the
+    tensor is reshaped to 2D (out_features, prod(rest)), orthogonalized, then
+    reshaped back.
+    """
+    assert G.ndim >= 2
+    a, b, c = (3.4445, -4.7750, 2.0315)
+    X = G.bfloat16()
+    original_shape = X.shape
+    # Flatten to 2D for matrices with ndim > 2 (conv weights etc.)
+    if X.ndim > 2:
+        X = X.reshape(X.size(0), -1)
+    # Transpose if tall matrix (ensures X @ X.T is the smaller one)
+    transposed = False
+    if X.size(0) > X.size(1):
+        X = X.transpose(0, 1)
+        transposed = True
+    # Normalise by Frobenius norm so entries are O(1)
+    X = X / (X.norm(dim=(-2, -1), keepdim=True) + eps)
+    for _ in range(steps):
+        A = X @ X.transpose(0, 1)
+        B = b * X + c * A @ X
+        X = a * X + B
+    if transposed:
+        X = X.transpose(0, 1)
+    # Reshape back to original shape
+    if len(original_shape) > 2:
+        X = X.reshape(original_shape)
+    return X
+
+
+class Muon(torch.optim.Optimizer):
+    """Muon optimizer for 2-D weight matrices.
+
+    Update rule (per 2-D parameter W with gradient g):
+      1.  momentum buffer: buf ← β·buf + g         (β = 0.95)
+      2.  Nesterov:         g  ← g + β·buf
+      3.  Orthogonalise:    u  ← newton_schulz(g,  ns_steps=5)
+      4.  Update:           W  ← W − lr · u
+    For 1-D parameters falls back to plain SGD-with-momentum (should not appear
+    if the hybrid MuonAdamW splitter is used, but included for safety).
+    """
+
+    def __init__(self, params, lr=0.02, momentum=0.95, nesterov=True,
+                 ns_steps=5, weight_decay=0.0):
+        defaults = dict(lr=lr, momentum=momentum, nesterov=nesterov,
+                        ns_steps=ns_steps, weight_decay=weight_decay)
+        super().__init__(params, defaults)
+
+    @torch.no_grad()
+    def step(self, closure=None):
+        loss = None
+        if closure is not None:
+            with torch.enable_grad():
+                loss = closure()
+
+        for group in self.param_groups:
+            lr = group['lr']
+            momentum = group['momentum']
+            nesterov = group['nesterov']
+            ns_steps = group['ns_steps']
+            wd = group['weight_decay']
+
+            for p in group['params']:
+                if p.grad is None:
+                    continue
+                g = p.grad
+
+                # 1-D fallback (plain momentum SGD)
+                if g.ndim < 2:
+                    state = self.state[p]
+                    if 'momentum_buffer' not in state:
+                        state['momentum_buffer'] = torch.zeros_like(g)
+                    buf = state['momentum_buffer']
+                    buf.mul_(momentum).add_(g)
+                    p.add_(buf, alpha=-lr)
+                    continue
+
+                # Decoupled weight decay
+                if wd > 0:
+                    p.mul_(1 - lr * wd)
+
+                state = self.state[p]
+                if 'momentum_buffer' not in state:
+                    state['momentum_buffer'] = torch.zeros_like(g)
+                buf = state['momentum_buffer']
+
+                buf.mul_(momentum).add_(g)
+                if nesterov:
+                    g = g.add(buf, alpha=momentum)
+                else:
+                    g = buf
+
+                # Newton-Schulz orthogonalization
+                g = zeropower_via_newtonschulz5(g, steps=ns_steps)
+
+                p.add_(g, alpha=-lr)
+
+        return loss
+
+
+class MuonAdamW:
+    """Hybrid optimizer: Muon for 2-D weights, AdamW for 1-D params.
+
+    ``param_groups`` is the concatenation of the Muon and AdamW group lists so
+    that existing LR-scheduling code (iterating ``opt.param_groups`` and setting
+    ``g['lr']``) continues to work unchanged.
+
+    Pretrain dist_muon convention: 2D matrices → Muon; 1D / norms / embed /
+    lm_head → AdamW (scalar optimizer).  Here logit_scale, biases, norms,
+    LoRA params → AdamW.
+    """
+
+    def __init__(self, muon_params, adamw_groups, lr,
+                 momentum=0.95, nesterov=True, ns_steps=5,
+                 adamw_betas=(0.9, 0.95), adamw_eps=1e-6):
+        self.muon = Muon(muon_params, lr=lr, momentum=momentum,
+                         nesterov=nesterov, ns_steps=ns_steps)
+        self.adamw = torch.optim.AdamW(adamw_groups, lr=lr,
+                                        betas=adamw_betas, eps=adamw_eps)
+        # Expose combined param_groups for LR scheduling
+        self.param_groups = self.muon.param_groups + self.adamw.param_groups
+
+    def step(self):
+        self.muon.step()
+        self.adamw.step()
+
+    def zero_grad(self, set_to_none=True):
+        self.muon.zero_grad(set_to_none=set_to_none)
+        self.adamw.zero_grad(set_to_none=set_to_none)
+
+
 def setup(rank, world_size):
     dist.init_process_group('nccl', rank=rank, world_size=world_size)
     torch.cuda.set_device(rank)
@@ -198,6 +342,10 @@ def main():
     ap.add_argument('--mlp-dim', type=int, default=None, help='vision mlp hidden override')
     ap.add_argument('--resolution', type=int, default=224)
     ap.add_argument('--patch', type=int, default=16)
+    ap.add_argument('--optimizer', choices=['adamw', 'muon'], default='adamw',
+                    help='adamw=torch.optim.AdamW (default, E1fair baseline); '
+                         'muon=Muon for 2D weight matrices + AdamW for 1D params (V2 variant, 2026-10-10). '
+                         'Muon: momentum=0.95, nesterov, ns_steps=5 (per pretrain dist_muon).')
     ap.add_argument('--batch-size', type=int, default=64)
     ap.add_argument('--steps', type=int, default=3000)
     ap.add_argument('--lr', type=float, default=3e-3)
@@ -391,7 +539,27 @@ def main():
     if text_trainable:
         opt_groups.append({'params': text.trainable_params(),
                            'lr': args.lora_lr, 'weight_decay': 0.0})
-    opt = torch.optim.AdamW(opt_groups, lr=args.lr, betas=(0.9, 0.95), eps=1e-6)
+
+    if args.optimizer == 'muon':
+        # V2 variant: Muon for 2-D weight matrices, AdamW for 1-D params.
+        # Split all trainable params by dimensionality (pretrain dist_muon convention).
+        _muon_params = [p for p in opt_params if p.requires_grad and p.ndim >= 2]
+        _adamw_params = [p for p in opt_params if not (p.requires_grad and p.ndim >= 2)]
+        _adamw_groups = [{'params': _adamw_params}]
+        if text_trainable:
+            _adamw_groups.append({'params': text.trainable_params(),
+                                  'lr': args.lora_lr, 'weight_decay': 0.0})
+        opt = MuonAdamW(_muon_params, _adamw_groups, lr=args.lr,
+                        momentum=0.95, nesterov=True, ns_steps=5,
+                        adamw_betas=(0.9, 0.95), adamw_eps=1e-6)
+        if is_main:
+            print(f'[optimizer] type=Muon+AdamW  muon_2d={len(_muon_params)} params  '
+                  f'adamw_1d={len(_adamw_params)} params  momentum=0.95 nesterov ns_steps=5 '
+                  f'lr={args.lr}', flush=True)
+    else:
+        opt = torch.optim.AdamW(opt_groups, lr=args.lr, betas=(0.9, 0.95), eps=1e-6)
+        if is_main:
+            print(f'[optimizer] type=AdamW lr={args.lr} betas=(0.9,0.95) eps=1e-6', flush=True)
 
     # ---- Resume from checkpoint (R12 续跑: continue training beyond the original --steps) ---- #
     start_step = 0
@@ -499,6 +667,7 @@ def main():
         f'text={args.text_finetune}-CLIP-768(r={args.lora_rank},a={args.lora_alpha},lr={args.lora_lr}) '
         f'negatives={args.batch_size*world_size} '
         f'data_source={args.data_source} caption_type={args.caption_type} '
+        f'optimizer={args.optimizer} '
         f'total_shards={len(all_shards)}')
 
     # ---- lr 4-point self-check (cosine only) — written to train.log as evidence ----
@@ -547,6 +716,7 @@ def main():
                        'loss': _LOSS_KEY,
                        'embed_dim': EMBED, 'lr': args.lr, 'warmup': args.warmup,
                        'scheduler': args.scheduler, 'min_lr': args.min_lr,
+                       'optimizer': args.optimizer,
                        'batch_size': args.batch_size, 'world_size': world_size,
                        'seed': args.seed,
                        'objective': _OBJ,

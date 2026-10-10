@@ -788,3 +788,101 @@ E2fair's `[start]` line and lr self-check are byte-identical to E1fair's — con
 **Pre-registered verdict**: |Δlp| = 0.17pp ≤ 1.5pp → **NOT SUPPORTED as a scaling benefit.** The two widths are **indistinguishable** at this budget. The sign flips across protocols (+0.17pp Prot B, −0.17pp Prot A), confirming no systematic width effect.
 
 **The old "bigger is WORSE" conclusion (Δlp = −5.59pp) was a schedule artifact.** Under the fair cosine schedule, the −5.59pp effect vanishes entirely (+0.17pp). The fair schedule improved both arms dramatically (+33pp E1, +38.75pp E2), with E2 improving more — directly confirming the old `3e-3/warmup20/const` disproportionately hurt the wider model.
+
+---
+
+## §9 Three-Variant Ablation vs E1fair Baseline (2026-10-10, PRE-REGISTRATION)
+
+> **Pre-registered before any results.** Each variant is byte-identical to the E1fair
+> baseline (w512/d30/p16, AIMv2 loss, mask-ratio 0.6, bs512, seed 1234, lr=5e-4,
+> warmup=2000, cosine→5e-5, 187,101 steps, same data snapshot total_shards=10787)
+> **except the single tested variable**. Baseline: **ProtB = 62.34 ± 0.01%,
+> ProtA = 49.70%**.
+
+### 9.0 Baseline Reference (E1fair)
+
+| Field | Value |
+|:--|:--|
+| Architecture | OpenVision2 w512/d30, patch16, 224px, 126.78M params |
+| Objective | AIMv2 (mask-ratio=0.6, patch-loss-weight=1.0, contrast-weight=1.0) |
+| Optimizer | AdamW (lr=5e-4, betas=(0.9,0.95), eps=1e-6) |
+| Schedule | warmup=2000 → cosine → min_lr=5e-5, total=187,101 steps |
+| Data | GPIC snapshot(7437 tars) + CC12M + Amshaker, total_shards=10787, 1 epoch |
+| Batch | 64/GPU × 8 GPU = 512 |
+| Seed | 1234 |
+| **ProtB (3-seed)** | **62.34 ± 0.01%** |
+| **ProtA** | **49.70%** |
+
+### 9.1 V1: Resolution 224 → 336 (single variable: `--resolution 336`)
+
+| Field | Value |
+|:--|:--|
+| **Tested variable** | Image resolution 224 → 336 (patch 16: 196 → 441 patches, ~2.25× tokens) |
+| Pos-emb | From scratch (not interpolation — different patch count) |
+| Compute | ~2.25× per step, ~20h wall clock (vs ~9h baseline) |
+| Everything else | Identical to §9.0 baseline |
+| Output dir | `scaling_V1_res336_ov2_w512_d30_p16_336` |
+
+**Hypothesis**: Higher resolution → denser patch supervision (576 vs 196 patches,
+mask 0.6 → 346 vs 118 masked tokens) → better fine-grained feature → higher lp.
+
+**Pre-registered criteria**:
+- **Positive (Δlp ≥ +1.5pp ProtB)**: 336 resolution is beneficial → adopt for Stage (iv).
+- **Null (|Δlp| < 1.5pp)**: No benefit at this budget → 224 is sufficient.
+- **Negative (Δlp ≤ −1.5pp ProtB)**: Higher resolution hurts (overfitting / insufficient
+  steps for 2.25× more tokens) → keep 224.
+
+**Termination condition**: Full 187,101 steps or divergence (loss > 2× baseline at
+same step after warmup).
+
+### 9.2 V2: Optimizer AdamW → Muon (single variable: `--optimizer muon`)
+
+| Field | Value |
+|:--|:--|
+| **Tested variable** | Optimizer: AdamW → Muon (Newton-Schulz orthogonalized momentum) |
+| Muon config | momentum=0.95, nesterov=True, ns_steps=5 (per pretrain dist_muon) |
+| Param grouping | 2D weight matrices → Muon; 1D params (norms, biases, logit_scale) → AdamW |
+| LR | 5e-4 (same as baseline; lr probe: 200 steps × {5e-4, 0.02} before full run) |
+| Everything else | Identical to §9.0 baseline |
+| Output dir | `scaling_V2_muon_ov2_w512_d30_p16_224` |
+
+**Implementation note**: `emerging_optimizers` not pip-installable in vision env
+(timed out). Standalone impl in `r9_train.py`: `zeropower_via_newtonschulz5()` +
+`Muon` class + `MuonAdamW` hybrid wrapper. Coefficients (a,b,c)=(3.4445,-4.7750,2.0315).
+
+**LR probe protocol** (pre-registered):
+1. 200 steps with lr=5e-4 (baseline LR) → record loss trajectory.
+2. 200 steps with lr=0.02 (standard Muon LR) → record loss trajectory.
+3. If lr=5e-4 loss decreasing at comparable rate to AdamW → use 5e-4.
+4. If lr=5e-4 flat/diverging → use 0.02 (or scan intermediate).
+
+**Pre-registered criteria**:
+- **Positive (Δlp ≥ +1.5pp ProtB)**: Muon beneficial → adopt.
+- **Null (|Δlp| < 1.5pp)**: No benefit → keep AdamW.
+- **Negative (Δlp ≤ −1.5pp ProtB)**: Muon hurts → revert.
+
+### 9.3 V3: Full GPIC Data (single variable: data snapshot)
+
+| Field | Value |
+|:--|:--|
+| **Tested variable** | GPIC: 7437 tars → 8000 tars (full download completed 2026-10-10) |
+| Snapshot file | `data_snapshot_20261010_full.txt` (8000 GPIC train tars) |
+| Steps | 187,101 (same as baseline, per operator instruction — does NOT scale) |
+| Everything else | Identical to §9.0 baseline |
+| Output dir | `scaling_V3_fulldata_ov2_w512_d30_p16_224` |
+
+**Hypothesis**: More unique data (7.6% more GPIC) → more diverse examples → higher lp.
+
+**Pre-registered criteria**:
+- **Positive (Δlp ≥ +1.5pp ProtB)**: More data beneficial at fixed steps.
+- **Null (|Δlp| < 1.5pp)**: No benefit from 7.6% more data.
+- **Negative (Δlp ≤ −1.5pp ProtB)**: More data hurts (less repetition) → keep 7437.
+
+### 9.5 Results Table (TO BE FILLED)
+
+| Variant | ProtB (3-seed) | ProtA | Δlp vs E1fair | Verdict |
+|:--|:--|:--|:--|:--|
+| E1fair (baseline) | 62.34 ± 0.01% | 49.70% | — | — |
+| V1 (res 336) | ⏳ | ⏳ | ⏳ | ⏳ |
+| V2 (Muon) | ⏳ | ⏳ | ⏳ | ⏳ |
+| V3 (full data) | ⏳ | ⏳ | ⏳ | ⏳ |

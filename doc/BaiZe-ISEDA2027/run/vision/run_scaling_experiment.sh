@@ -35,6 +35,8 @@ OUTROOT=/nas_train/app.e0031982/datasets/baize-vision/out
 # The snapshot file ensures both E1fair and E2fair train on byte-identical tars
 # (GPIC download is ongoing; $GPIC_N changes between arm launches).
 SNAPSHOT_FILE="$(dirname "$(readlink -f "$BASH_SOURCE[0]")")/data_snapshot_20261009.txt"
+# V3 full-data snapshot: 8000 GPIC tars (download completed 2026-10-10)
+SNAPSHOT_FULL="$(dirname "$(readlink -f "$BASH_SOURCE[0]")")/data_snapshot_20261010_full.txt"
 
 GPIC_N=$(ls $GPIC 2>/dev/null | wc -l)
 CC12M_N=$(ls $CC12M 2>/dev/null | wc -l)
@@ -143,6 +145,87 @@ run_e2fair() {
         --save-every 10000 --eval-data "$EVAL" >> "$LOG" 2>&1
     local rc=$?
     echo "===== E2fair done (exit $rc) $(date '+%F %T') =====" >> "$LOG"
+    return $rc
+}
+
+# ============================================================================
+# 2026-10-10 THREE-VARIANT EXPERIMENT (vs E1fair baseline)
+#   V1: resolution 224→336 (patch 16, 196→441 patches)
+#   V2: optimizer AdamW→Muon (Newton-Schulz orthogonalized momentum)
+#   V3: full GPIC data (8000 tars vs 7437 in E1fair snapshot)
+#   Each variant is byte-identical to E1fair except the single tested variable.
+#   Baseline: E1fair ProtB=62.34±0.01%, ProtA=49.70%.
+# ============================================================================
+
+run_v1_res336() {
+    local _steps="$1" _nw="$2"
+    local OUT="$OUTROOT/scaling_V1_res336_ov2_w512_d30_p16_336"
+    local LOG=/tmp/scaling_v1_res336.log
+    local FAIR_DATA="${SNAPSHOT_FILE},${CC12M},${AMSH}"
+    echo "===== V1 START (w512/d30, res=336/p16, fair recipe) steps=$_steps $(date '+%F %T') =====" | tee "$LOG"
+    echo "[V1] resolution 224→336, patch 16 (196→441 patches), from scratch" >> "$LOG"
+    echo "[V1] snapshot=$SNAPSHOT_FILE  data=$FAIR_DATA" >> "$LOG"
+    nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv >> "$LOG" 2>&1
+    "$PY" -m torch.distributed.run --nproc_per_node=8 --nnodes=1 \
+        --master_addr=$MASTER_ADDR --master_port=$((29800 + RANDOM % 1000)) \
+        r9_train.py --tower openvision2 --width 512 --depth 30 \
+        --steps "$_steps" --resolution 336 --patch 16 \
+        --batch-size 64 --lr 5e-4 --warmup 2000 --scheduler cosine --min-lr 5e-5 --seed 1234 \
+        --loss aimv2 --mask-ratio 0.6 --patch-loss-weight 1.0 --contrast-weight 1.0 \
+        --data "$FAIR_DATA" --data-source mixed --caption-type all --output-dir "$OUT" \
+        --log-every 10 --probe-every 300 --probe-n 128 --num-workers "$_nw" \
+        --save-every 10000 --eval-data "$EVAL" >> "$LOG" 2>&1
+    local rc=$?
+    echo "===== V1 done (exit $rc) $(date '+%F %T') =====" >> "$LOG"
+    return $rc
+}
+
+run_v2_muon() {
+    local _steps="$1" _nw="$2"
+    local _lr="${3:-5e-4}"
+    local OUT="$OUTROOT/scaling_V2_muon_ov2_w512_d30_p16_224"
+    local LOG=/tmp/scaling_v2_muon.log
+    local FAIR_DATA="${SNAPSHOT_FILE},${CC12M},${AMSH}"
+    echo "===== V2 START (w512/d30, optimizer=Muon, lr=$_lr, fair recipe) steps=$_steps $(date '+%F %T') =====" | tee "$LOG"
+    echo "[V2] optimizer AdamW→Muon (momentum=0.95, nesterov, ns_steps=5)" >> "$LOG"
+    echo "[V2] 2D weights→Muon, 1D params→AdamW (pretrain dist_muon convention)" >> "$LOG"
+    echo "[V2] snapshot=$SNAPSHOT_FILE  data=$FAIR_DATA  lr=$_lr" >> "$LOG"
+    nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv >> "$LOG" 2>&1
+    "$PY" -m torch.distributed.run --nproc_per_node=8 --nnodes=1 \
+        --master_addr=$MASTER_ADDR --master_port=$((29800 + RANDOM % 1000)) \
+        r9_train.py --tower openvision2 --width 512 --depth 30 \
+        --steps "$_steps" --resolution 224 --patch 16 \
+        --batch-size 64 --lr "$_lr" --warmup 2000 --scheduler cosine --min-lr 5e-5 --seed 1234 \
+        --optimizer muon \
+        --loss aimv2 --mask-ratio 0.6 --patch-loss-weight 1.0 --contrast-weight 1.0 \
+        --data "$FAIR_DATA" --data-source mixed --caption-type all --output-dir "$OUT" \
+        --log-every 10 --probe-every 300 --probe-n 128 --num-workers "$_nw" \
+        --save-every 10000 --eval-data "$EVAL" >> "$LOG" 2>&1
+    local rc=$?
+    echo "===== V2 done (exit $rc) $(date '+%F %T') =====" >> "$LOG"
+    return $rc
+}
+
+run_v3_fulldata() {
+    local _steps="$1" _nw="$2"
+    local OUT="$OUTROOT/scaling_V3_fulldata_ov2_w512_d30_p16_224"
+    local LOG=/tmp/scaling_v3_fulldata.log
+    local FULL_DATA="${SNAPSHOT_FULL},${CC12M},${AMSH}"
+    echo "===== V3 START (w512/d30, full GPIC data, fair recipe) steps=$_steps $(date '+%F %T') =====" | tee "$LOG"
+    echo "[V3] full GPIC data: 8000 tars (vs E1fair snapshot 7437 tars)" >> "$LOG"
+    echo "[V3] snapshot=$SNAPSHOT_FULL  data=$FULL_DATA" >> "$LOG"
+    nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv >> "$LOG" 2>&1
+    "$PY" -m torch.distributed.run --nproc_per_node=8 --nnodes=1 \
+        --master_addr=$MASTER_ADDR --master_port=$((29800 + RANDOM % 1000)) \
+        r9_train.py --tower openvision2 --width 512 --depth 30 \
+        --steps "$_steps" --resolution 224 --patch 16 \
+        --batch-size 64 --lr 5e-4 --warmup 2000 --scheduler cosine --min-lr 5e-5 --seed 1234 \
+        --loss aimv2 --mask-ratio 0.6 --patch-loss-weight 1.0 --contrast-weight 1.0 \
+        --data "$FULL_DATA" --data-source mixed --caption-type all --output-dir "$OUT" \
+        --log-every 10 --probe-every 300 --probe-n 128 --num-workers "$_nw" \
+        --save-every 10000 --eval-data "$EVAL" >> "$LOG" 2>&1
+    local rc=$?
+    echo "===== V3 done (exit $rc) $(date '+%F %T') =====" >> "$LOG"
     return $rc
 }
 
@@ -290,8 +373,85 @@ case "$MODE" in
         [ "$STEPS" -gt 1000 ] && [ $rc2 -eq 0 ] && run_eval e2fair "$OUTROOT/scaling_E2fair_ov2_w768_d30_p16_224" final
         echo "===== BOTHAIR done: E1fair rc=$rc1, E2fair rc=$rc2 ====="
         ;;
+    smoke_v1)
+        # V1 smoke test: 30 steps, resolution 336
+        echo "--- V1 smoke (30 steps, res=336) ---"
+        run_v1_res336 30 "$NW"
+        echo "--- V1 smoke done ---"
+        tail -30 /tmp/scaling_v1_res336.log
+        grep -E '\[start\]|\[optimizer\]|image/s|tokens/s|loss=' /tmp/scaling_v1_res336.log | tail -15
+        ;;
+    smoke_v2)
+        # V2 smoke test: 30 steps, Muon optimizer, lr=5e-4
+        echo "--- V2 smoke (30 steps, optimizer=Muon, lr=5e-4) ---"
+        run_v2_muon 30 "$NW" "5e-4"
+        echo "--- V2 smoke done ---"
+        tail -30 /tmp/scaling_v2_muon.log
+        grep -E '\[start\]|\[optimizer\]|image/s|tokens/s|loss=' /tmp/scaling_v2_muon.log | tail -15
+        ;;
+    smoke_v3)
+        # V3 smoke test: 30 steps, full GPIC data
+        if [ ! -f "$SNAPSHOT_FULL" ]; then
+            echo "ERROR: full snapshot $SNAPSHOT_FULL not found." >&2
+            exit 1
+        fi
+        echo "--- V3 smoke (30 steps, full GPIC data) ---"
+        run_v3_fulldata 30 "$NW"
+        echo "--- V3 smoke done ---"
+        tail -30 /tmp/scaling_v3_fulldata.log
+        grep -E '\[start\]|\[optimizer\]|image/s|tokens/s|loss=' /tmp/scaling_v3_fulldata.log | tail -15
+        ;;
+    v1)
+        # V1 full run: resolution 336 (patch 16 → 441 patches), ~2.25× compute, ~20h
+        if [ ! -f "$SNAPSHOT_FILE" ]; then
+            echo "ERROR: snapshot file $SNAPSHOT_FILE not found. Run 'snapshot_gpic' first." >&2
+            exit 1
+        fi
+        run_v1_res336 "$STEPS" "$NW"; rc=$?
+        [ "$STEPS" -gt 1000 ] && [ $rc -eq 0 ] && run_eval v1 "$OUTROOT/scaling_V1_res336_ov2_w512_d30_p16_336" final
+        ;;
+    v2)
+        # V2 full run: Muon optimizer, lr=5e-4 (after probe confirmation)
+        if [ ! -f "$SNAPSHOT_FILE" ]; then
+            echo "ERROR: snapshot file $SNAPSHOT_FILE not found. Run 'snapshot_gpic' first." >&2
+            exit 1
+        fi
+        run_v2_muon "$STEPS" "$NW" "${3:-5e-4}"; rc=$?
+        [ "$STEPS" -gt 1000 ] && [ $rc -eq 0 ] && run_eval v2 "$OUTROOT/scaling_V2_muon_ov2_w512_d30_p16_224" final
+        ;;
+    v3)
+        # V3 full run: full GPIC data (8000 tars)
+        if [ ! -f "$SNAPSHOT_FULL" ]; then
+            echo "ERROR: full snapshot $SNAPSHOT_FULL not found." >&2
+            exit 1
+        fi
+        run_v3_fulldata "$STEPS" "$NW"; rc=$?
+        [ "$STEPS" -gt 1000 ] && [ $rc -eq 0 ] && run_eval v3 "$OUTROOT/scaling_V3_fulldata_ov2_w512_d30_p16_224" final
+        ;;
+    allvariants)
+        # Serial chain: V3 → V1 → V2 (each ~9-20h on 8×H100)
+        if [ ! -f "$SNAPSHOT_FILE" ]; then
+            echo "ERROR: snapshot file $SNAPSHOT_FILE not found." >&2
+            exit 1
+        fi
+        if [ ! -f "$SNAPSHOT_FULL" ]; then
+            echo "ERROR: full snapshot $SNAPSHOT_FULL not found." >&2
+            exit 1
+        fi
+        echo "===== ALLVARIANTS: V3 → V1 → V2 (serial) ====="
+        echo "----- V3 (full GPIC data) -----"
+        run_v3_fulldata "$STEPS" "$NW"; rc3=$?
+        [ "$STEPS" -gt 1000 ] && [ $rc3 -eq 0 ] && run_eval v3 "$OUTROOT/scaling_V3_fulldata_ov2_w512_d30_p16_224" final
+        echo "----- V1 (resolution 336) -----"
+        run_v1_res336 "$STEPS" "$NW"; rc1=$?
+        [ "$STEPS" -gt 1000 ] && [ $rc1 -eq 0 ] && run_eval v1 "$OUTROOT/scaling_V1_res336_ov2_w512_d30_p16_336" final
+        echo "----- V2 (Muon optimizer) -----"
+        run_v2_muon "$STEPS" "$NW" "5e-4"; rc2=$?
+        [ "$STEPS" -gt 1000 ] && [ $rc2 -eq 0 ] && run_eval v2 "$OUTROOT/scaling_V2_muon_ov2_w512_d30_p16_224" final
+        echo "===== ALLVARIANTS done: V3 rc=$rc3, V1 rc=$rc1, V2 rc=$rc2 ====="
+        ;;
     *)
-        echo "Usage: bash run_scaling_experiment.sh {smoke|smoke_e1|smoke_e2|e1|resume_e1|e2|both|eval_final|snapshot_gpic|smoke_cos|e1fair|e2fair|bothfair} [steps] [nw] [ckpt_path]"
+        echo "Usage: bash run_scaling_experiment.sh {smoke|smoke_e1|smoke_e2|e1|resume_e1|e2|both|eval_final|snapshot_gpic|smoke_cos|e1fair|e2fair|bothfair|smoke_v1|smoke_v2|smoke_v3|v1|v2|v3|allvariants} [steps] [nw] [ckpt_path]"
         exit 1
         ;;
 esac
