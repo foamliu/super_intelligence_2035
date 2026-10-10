@@ -12,11 +12,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        ✅R3全量分词110/110DONE(1483.91B tok/5.94TB)+✅R3投料前污染扫描30/30DONE(60K docs,0命中)→P-8数据层全就绪+GPIC train 7957/8001(99.4%,ETA~44tar,~5h→Oct10~18:00)
+PHASE:        ✅R3全量分词110/110DONE(1483.91B tok/5.94TB)+✅R3投料前污染扫描30/30DONE(60K docs,0命中)→P-8数据层全就绪+GPIC train 7982/8001(99.8%,~19tar remaining,~44tar/h,ETA~26min→~13:34)
 已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43; s_step归因(MBS16:8.6×,166ms); Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); zh分词8/8✅(112.47B); 论文更新(4+5节,main.pdf 0err); l1_en_hq分词12/12✅(152.17B); ultrax分词s34-s43✅(30.97B); en_base分词s24-s33✅(206.76B); ✅投料前污染采样扫描(10K docs,0命中); ✅全量污染扫描(30 parquet×5K=150K docs,0命中); ✅④Ultra-FineWeb核实; ✅R3全量分词110/110DONE(1483.91B tok/5.94TB); ✅R3投料前污染扫描30/30DONE(60K docs,0命中,累计220K docs全0命中)→P-8数据层全就绪
-当前动作:     唤醒291(12:34@.12) P-8数据层全就绪(R3分词110/110✅+污染扫描220K docs 0命中✅,无活分词/扫描进程);GPIC train=7957/8001(+11 since 290@11:59,活PID144981[ppid=3525273,etimes~5.7d],latest=07956.tar@12:33,128test✅,44tar remaining,17tar/2h=8.5/h,ETA~5h→Oct10~18:00);load=37/224,disk 83%37T free✅;无新运维指令(git fetch=up to date);体积TASK=28.7KB/MEMORY=28.6KB均✅;6目录盘点同290(全完成)
-下一步:       ①GPIC续下(train 7957/8001,~44tar remaining,ETA~5h→Oct10~18:00); ②en_v1_4排队等运维放行(GPIC完成后,用户操作); ③P-8数据层全就绪→等运维指示投料
-阻塞:         GPIC下载进行中(train 7957/8001,~44tar remaining); en_v1_4排队等GPIC完成+用户放行
+当前动作:     唤醒292(13:08@.12) P-8数据层全就绪(R3分词110/110✅+污染扫描220K docs 0命中✅,无活分词/扫描进程);**GPIC train=7982/8001**(+25 since 291@12:34,活PID144981[ppid=3525273,etimes~5.8d],latest=07981.tar@13:09,128test✅,0.incomplete,19tar remaining,~44tar/h(5×加速from 8.5/h),ETA~26min→~13:34);load=38/224,disk 83%37T free✅;无新运维指令(git fetch=up to date);体积TASK=28.7KB/MEMORY=29.4KB均✅;6目录盘点同291(全完成)
+下一步:       ①GPIC即将完成(7982/8001,~19tar remaining,ETA~26min→~13:34)→GPIC完成后报"GPIC下载完成"→en_v1_4等用户放行; ②P-8数据层全就绪→等运维指示投料
+阻塞:         GPIC下载进行中(train 7982/8001,~19tar remaining,ETA~26min); en_v1_4排队等GPIC完成+用户放行
 ERROR_COUNT:  1
 ```
 
@@ -43,6 +43,8 @@ ERROR_COUNT:  1
 > 📦 唤醒280 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3 97/110巡检+code 17/30+GPIC 7757/8001+体积归档）
 
 > 📦 唤醒271-272 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3分词59-60/110巡检+GPIC 7453-7489+6目录盘点）
+
+- [13:08] **唤醒292**：①本机=`.12`,load=37.86/224。②P-8数据层全就绪(R3分词110/110✅+污染扫描220K docs 0命中✅),无活分词/扫描进程。③**GPIC train=7982/8001**(+25 since 291@12:34,活PID144981[ppid=3525273,etimes~5.8d],latest=07981.tar@13:09,**128test✅**,0.incomplete,19tar remaining,~44tar/h(**5×加速**from 8.5/h@291),ETA~26min→~13:34,**GPIC即将完成!**)。④git fetch(proxy)=up to date(无data新指令,最新commit=3c6913ef pretrain #263)。⑤📦体积:TASK=28.7KB✅/MEMORY=29.4KB✅(无需归档)。⑥disk:/nas_train 83%(37T free)。⑦下一步:GPIC即将完成→下轮唤醒大概率报"GPIC下载完成"→en_v1_4等用户放行→P-8数据层就绪等运维投料指示。下载线心跳：base✅全满|GPIC train 7982/8001(活PID144981,+25,~44tar/h,ETA~26min→~13:34)|P-8数据层✅全就绪。
 
 - [12:34] **唤醒291**：①本机=`.12`,load=37.11/224。②P-8数据层全就绪(R3分词110/110✅+污染扫描220K docs 0命中✅),无活分词/扫描进程。③**GPIC train=7957/8001**(+11 since 290@11:59,活PID144981[ppid=3525273,etimes~5.7d],latest=07956.tar@12:33,**128test✅**,44tar remaining,17tar/2h=8.5/h,ETA~5h→Oct10~18:00,**rate显著加速**从~3/h→~8.5/h)。④git fetch(proxy)=up to date(无data新指令)。⑤📦体积:TASK=28.7KB✅/MEMORY=28.6KB✅(无需归档)。⑥disk:/nas_train 83%(37T free)。⑦下一步:GPIC续下→en_v1_4排队→等运维投料指示。下载线心跳：base✅全满|GPIC train 7957/8001(活PID144981,+11,~8.5tar/h,ETA~5h→Oct10~18:00)|P-8数据层✅全就绪。
 - [11:59] **唤醒290**：①本机=`.12`,load=40.16/224。②P-8数据层全就绪(R3分词110/110✅+污染扫描220K docs 0命中✅),无活分词/扫描进程。③**GPIC train=7946/8001**(+2 since 289@11:24,活PID144981[ppid=3525273,etimes~5.7d],latest=07945.tar,**128test✅**,55tar remaining,rate~3/h,ETA~18h→Oct11~06:00)。④git fetch(proxy)=up to date(无data新指令)。⑤📦体积:TASK=28.7KB✅/MEMORY=29.1KB✅(无需归档)。⑥disk:/nas_train 83%(37T free),/nas_inference 79%(9.5T free)。⑦下一步:GPIC续下→en_v1_4排队→等运维投料指示。下载线心跳：base✅全满|GPIC train 7946/8001(活PID144981,+2,~3tar/h,ETA~18h→Oct11 06:00)|P-8数据层✅全就绪。
