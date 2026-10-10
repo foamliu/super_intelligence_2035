@@ -2,11 +2,12 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **dist_muon 重测完成 ✅**（2026-10-10 11:48）— 三路对比：dist_muon loss 3.110 / 122K tok/s / 37.3GB，消除 plain Muon 两项代价。P-8 暂缓令未撤。
-- PHASE: **converged** — dist_muon 实测验证完成，P-8 等待运维撤暂缓令
+- STAGE: **P-8 正式预训练运行中 🚀**（2026-10-10 16:03 启动）— Mamba2-hybrid 2.22B from scratch, 44B tokens, dist_muon, WSD 5%/85%/10%。
+- PHASE: **p8_training** — stable phase (web 88:code 8:math 4) running, step ~40/10490, loss 8.38↓, 0 NaN ✅
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。**全 8 GPU 空闲**（.29）。**P-8 暂缓令未撤**（data 线 #294 报告"P-8数据层全就绪+en_v1_4放行条件已满足"，但运维未撤暂缓令）。📦 体积：TASK=32257B(31.5KB) / MEMORY=31.0KB 均 ≤32KB ✅。🚫绝不 kill watchdog loop
-- 🩺 **本唤醒推进 = #267（2026-10-10 15:14, 状态核查）**：① git fetch → status 0/0 ✅（仅 harness/data 线文件 modified，非本线）。② dist_muon 实验已在 #262 完成：报告 ✅ + EXPERIMENTS ✅（未变）。③ GPU 0-7 全 0MiB/0%，无 compute apps ✅。④ watchdog PID 1391466 ✅。⑤ P-8 暂缓令未撤；TASK 无新运维指令（最新 TASK commit=08d3a149 dist_muon默认，自 #266 以来无变更）。⑥ data 线 #294 确认 P-8 数据层全就绪 → **数据前置已满足**，但仍需运维**显式撤暂缓令**才能启动 P-8。⑦ 体积：TASK=32257B(31.5KB) / MEMORY=31369B(30.6KB) 均 ≤32KB ✅ 无需归档。→ 下一步：等运维撤 P-8 暂缓令 / 下发新指令。WAITING=1。
+- 轮询状态：30min 长轮询。**全 8 GPU 占用**（.29, 52-53GB/card, 87-100% util）。PID 3620770-3620777 (8 processes)。📦 体积：TASK ≤32KB / MEMORY ≤32KB 需维护。🚫绝不 kill 训练进程或 watchdog loop
+- 🩺 **本唤醒推进 = #268（2026-10-10 16:18, P-8 启动+首 40 步）**：① P-8 训练已启动（16:03:26, setsid 真后台）。② 8 GPU 进程 alive ✅（PID 3620770-3620777, etimes~326s）。③ 首 40 步数据：step10 loss=11.73/grad_norm=12.85/28.2s, step20 loss=9.72/16.9s, step30 loss=8.85/16.8s, step40 loss=8.38/grad_norm=6.23/16.9s。④ 稳态吞吐=248K tok/s（符合预期 249K），ETA≈2.05 天。⑤ 0 NaN / 0 skipped ✅。⑥ GPU 52-53GB/card（80GB 安全），595 TFLOP/s/GPU。⑦ 模型 3.00B params（2.47B transformer + 0.53B embedding）。⑧ **baize_p8_decay.sh 已创建**（SFT 64%+L3 24%+code 8%+math 4%，从 step-9441 ckpt 恢复，WSD decay 1049 步）。⑨ 日志：/tmp/baize_p8_train.log。→ 下一步：每 500 步监控 loss/grad_norm/tok/s；step 9441 时停 stable→起 decay。WAITING=1。
+> 📦 **[已归档] #267 流水（2026-10-10 15:14, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8暂缓令未撤但数据前置已满足, 无新指令。需要时再读。**
 > 📦 **[已归档] #266 流水（2026-10-10 14:40, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8数据前置已满足但暂缓令未撤, 无新指令。需要时再读。**
 > 📦 **[已归档] #265 流水（2026-10-10 14:07, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8暂缓令未撤, 无新指令。需要时再读。**
 > 📦 **[已归档] #264 流水（2026-10-10 13:33, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8暂缓令未撤, data前置接近完成。需要时再读。**
