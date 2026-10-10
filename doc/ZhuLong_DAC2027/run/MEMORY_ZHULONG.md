@@ -11,7 +11,7 @@ WAITING: 1
 | STAGE | `C1`（Phase B 4/4✅；C1 pure_llm/rag/wo_retrieval 5/5✅；**full 锚点全部作废→换专属沙盒 8663/8666/8667/8670 从 r1 重跑**）|
 | CONFIG | `full`（C1 第4臂=锚点；**2026-10-10 运维指令(一)：换专属沙盒 8663/8666/8667/8670 workdir e0031982_1~4，全部旧成绩作废（旧沙盒 8650-8654 已弃用），从 r1 重跑 5 轮**。key e13f4f37+/cloud/v1 pro-fp4 HTTP 200✅）|
 | ROUND | 1 |
-| PHASE | `running`（**2026-10-10(一) 换专属沙盒**：全部 C1.full 作废→从 r1 重跑。**13:27 复检(第4次)**：①pro-fp4 HTTP=200✅(1.18s) ②**新端口部分恢复：8667=404(OPEN✅)，8663/8666/8670 仍 CLOSED❌(HTTP=000)**→需 4 端口全 OPEN 才能并行分片，仅 1/4→旧端口 8650-8654 仍 OPEN(404)但红线🚫禁回退 ③eval IDLE✅。**pre-check ②不过(3/4 CLOSED)→不启动 r1→WAITING=1 等剩余 3 端口恢复**。真loop PID3579323(PPID=1) environ https_proxy✅。/home=5.6G⚠️(99%满,低于 8G)。下轮第一件事：复检 8663/8666/8670→全 OPEN+三项全过→canary→启 C1.full r1(四 override,log /tmp/ABL_full_r1.log);仍有 CLOSED→继续 WAITING=1）|
+| PHASE | `running`（**2026-10-10(一) 换专属沙盒**：全部 C1.full 作废→从 r1 重跑。**14:04 三项前置复检全过→C1.full r1 已启动(PID2518857)**：①pro-fp4 HTTP=200✅(1.29s,full key ...e13f4f37-836a-...+/cloud/v1) ②**新端口 8663/8666/8667/8670 全 OPEN✅(全 HTTP=404,非超时)**@10.129.32.75 ③eval IDLE✅。四 override 已核验在 /proc/2518857/environ 生效(EVAL_FW_DIR/CLI_DATA_DIR/PYTHON/https_proxy)✅。.env=8663/8666/8667/8670+e0031982_1~4✅。log /tmp/ABL_full_r1.log 已 3093 行/0 Forbidden✅/0 pass(尚在 code-gen 阶段)。真loop PID3579323 environ https_proxy✅。/home=5.5G⚠️(99%满,低于 8G,非三前置项但留意)。下轮第一件事：pgrep→有输出=巡检退出;无输出=收割 r1(grep -E 'pass \(\|评估结果汇总\|timeout' /tmp/ABL_full_r1.log\|tail -10)→判据 timeout≤10 且 Pass@1≥75%→有效→启 r2(log /tmp/ABL_full_r2.log)→r3→r4→r5→5/5 算 mean±std→回填锚点→PHASE=just_finished）|
 | WAITING | 1 |
 | ERROR_COUNT | 0（**2026-10-10(一) 全部 C1.full 作废从头重跑，ERROR_COUNT 归零**。旧 r2 首启缺 override / r4 infra 作废 均不再相关）|
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
@@ -28,7 +28,7 @@ WAITING: 1
 | C1 | pure_llm | 5/5 ✅ | ✅ 10.5±1.9%（复用 legacy：[8.2,9.5,10.1,11.4,13.3]）|
 | C1 | rag | 5/5 ✅ | **71.8±2.5%** [70.3,72.2,69.6,70.9,75.9]（r5=75.9% 120/158 batch 2026_1007_202448, 151 ok/7 fail/0 exec_err, 0 Forbidden ✅；legacy 68.2±7.4% 作废→本线重跑）|
 | C1 | wo_retrieval | 5/5 ✅ | **81.0±4.5%** [74.1,86.1,81.6,79.7,83.5]（r1=74.1% 复用 legacy；r2=86.1% 136/158 b2026_1007_221959；r3=81.6% 129/158 b2026_1008_015818；r4=79.7% 126/158 b2026_1008_0507；r5=83.5% 132/158 b2026_1008_081817 147ok/8fail/0exec_err 0 Forbidden✅ 全程）|
-| C1 | full（锚点）| **全部作废→换专属沙盒重跑** | ❌2026-10-10(一) 运维指令：旧沙盒 8650-8654 已弃用，全部成绩作废（r1=88.0%/r4=81.0%/r2/r3 全部复测结果），换专属沙盒 8663/8666/8667/8670 workdir e0031982_1~4 从 r1 重跑 5 轮。新端口 8663/8666/8667/8670 当前全 CLOSED❌→WAITING=1 等恢复 |
+| C1 | full（锚点）| **r1 运行中** | 🔄2026-10-10(一) 换专属沙盒 8663/8666/8667/8670 workdir e0031982_1~4，旧沙盒 8650-8654 已弃用，全部旧成绩作废。**14:04 三前置全过→r1 已启(PID2518857,log /tmp/ABL_full_r1.log)** |
 | C2 | phi_k10 | 1-5/5 | ⬜（探路 75.3%）|
 | C2 | phi_k3 | 1-5/5 | ⬜（探路 69.0%）|
 | C2 | phi_k1 | 1-5/5 | ⬜（探路 60.8%）|
@@ -237,3 +237,4 @@ WAITING: 1
 - [2026-10-10 12:15] [⏩ 已滚出] ⠈ 复检(端口仍全CLOSED·不动作) 同§12:52口径复检（端口仍全CLOSED,状态不变）详情见 daily-memories/2026-10-10.md（§12:52）。
 - [2026-10-10 12:52] [⏩ 已滚出] ⠈ 复检(端口仍全CLOSED·不动作·第3次) 详情已搬入 daily-memories/2026-10-10.md（§12:52）。
 - [2026-10-10 13:27] ⠈ 复检(端口部分恢复·不动作·第4次)：三项前置复检 ①pro-fp4 HTTP=200✅(1.18s,key e13f4f37+/cloud/v1) ②**8667=404(OPEN✅新恢复!)，8663/8666/8670仍CLOSED❌(HTTP=000)**→仅1/4端口OPEN，需4/4才能并行分片→旧端口8650-8654仍OPEN(404)红线🚫禁回退 ③eval IDLE✅(pgrep无输出) → **pre-check②不过(3/4 CLOSED)→不启动r1→WAITING=1**。真loop PID3579323(PPID=1)environ https_proxy✅。/home=5.6G⚠️(99%满,低于8G)。.env确认=8663/8666/8667/8670+e0031982_1~4@10.129.32.75。状态不变 STAGE=C1/CONFIG=full/ROUND=1/PHASE=running/WAITING=1/ERROR_COUNT=0。**进展**：8667自12:52后恢复(沙盒正逐端口上线)。下轮第一件事：复检8663/8666/8670→全OPEN+三项全过→canary→启C1.full r1(四override,log /tmp/ABL_full_r1.log);仍有CLOSED→继续WAITING=1。
+- [2026-10-10 14:04] ✅ 三前置全过→C1.full r1 已启动(PID2518857)：①pro-fp4 HTTP=200✅(1.29s,full key 02_...e13f4f37-836a-...+/cloud/v1) ②**新端口 8663/8666/8667/8670 全 OPEN✅(全 HTTP=404,非超时)**@10.129.32.75(13:27 仅 8667 OPEN→14:04 全恢复) ③eval IDLE✅(pgrep '^bash scripts/run_cline_script'无输出;r2-retest#4 已 kill 确认)。四 override 核验 /proc/2518857/environ 全在(EVAL_FW_DIR/CLI_DATA_DIR/PYTHON/https_proxy)✅。.env=8663/8666/8667/8670+e0031982_1~4✅。log /tmp/ABL_full_r1.log 已 3093 行/0 Forbidden✅/0 pass(尚在 code-gen 阶段)。真loop PID3579323 environ https_proxy✅(自检通过无需重启)。/home=5.5G⚠️(99%满,非三前置项)。状态不变 STAGE=C1/CONFIG=full/ROUND=1/PHASE=running/WAITING=1/ERROR_COUNT=0。下轮第一件事：pgrep→有输出=巡检退出;无输出=收割 r1(grep -E 'pass \(\|评估结果汇总\|timeout' /tmp/ABL_full_r1.log\|tail -10)→判据 timeout≤10 且 Pass@1≥75%→有效→启 r2(/tmp/ABL_full_r2.log)→r3→r4→r5→5/5 算 mean±std→回填锚点→PHASE=just_finished。
