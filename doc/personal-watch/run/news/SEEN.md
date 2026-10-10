@@ -488,3 +488,18 @@
 | 2026-10-09 | 权益类基金成立门槛拟降至5000万元 | 中新网 | news(金融监管·非 AI 范畴·防重不收·边界条目 18:00 CST) | https://www.chinanews.com.cn/cj/2026/10-09/10709781.shtml |
 | 2026-10-09 | 锚定3.5万亿！东莞以系统思维亮出先进制造业升级新“解法” | 中新网 | news(产业规划·非 AI 范畴·防重不收·边界条目 18:11 CST) | https://www.chinanews.com.cn/cj/2026/10-09/10709775.shtml |
 
+| 2026-10-10 | 腾讯云开源内部自用 TeamAI 工具，支持跨 Agent 共享 Skill | IT之家 | news | https://www.ithome.com/1/011/432.htm |
+| 2026-10-10 | Cloudflare 推出开放权重决策 AI 模型 Clef-omni，新增支持音频 / 视频输入 | IT之家 | news | https://www.ithome.com/1/011/347.htm |
+| 2026-10-10 | 给 AI 植入广告涉“虚假宣传”，深圳一家 GEO 服务商被市场监管局处以 5 万元罚款 | IT之家 | news | https://www.ithome.com/1/011/394.htm |
+| 2026-10-10 | Meta 与多家伙伴合作推出 PAP 协议：规范个人智能体与企业服务交互方式 | IT之家 | news | https://www.ithome.com/1/011/392.htm |
+| 2026-10-10 | 中国企业首次：小鹏集团当选联合国自动驾驶工作组秘书长 | IT之家 | news | https://www.ithome.com/1/011/388.htm |
+| 2026-10-10 | 教育部：教师 AI 素养全覆盖培训启动 | IT之家 | news | https://www.ithome.com/1/011/400.htm |
+| 2026-10-10 | IMF：如应用得当，人工智能可以使全球经济年增速提高 0.5 个百分点 | IT之家 | news | https://www.ithome.com/1/011/407.htm |
+| 2026-10-10 | 国家科技重大专项在沪启动，深度融合中医“扶正祛邪”理论与 AI 决策系统 | 中新网 | news | https://www.chinanews.com.cn/jk/2026/10-10/10710598.shtml |
+| 2026-10-10 | 消息称 Meta 已搁置向 Anthropic 出租 AI 算力的计划 | IT之家 | news | https://www.ithome.com/1/011/431.htm |
+| 2026-10-10 | 多家数据中心选择落地芬兰：资源禀赋优秀，已吸引超 670 亿欧元投资 | IT之家 | news | https://www.ithome.com/1/011/441.htm |
+| 2026-10-10 | 网文实体书籍内曝出“AI 回复内容”，出版社回应将回收销毁已发出书籍、重新修订 | IT之家 | news(AI 出版纠纷·个案·本窗按不追量留档不收) | https://www.ithome.com/1/011/352.htm |
+| 2026-10-10 | 安卓版谷歌翻译酝酿 Smart assist：梳理语音表达后再翻译 | IT之家 | tool(媒体拆包发现·未上线·非 AI 具体事件·留档) | https://www.ithome.com/1/011/343.htm |
+| 2026-10-10 | 传英伟达将不再向 GeForce 游戏显卡分配 GB202 | IT之家 | news(据爆料·未证实·防重不收) | https://www.ithome.com/1/011/397.htm |
+| 2026-10-10 | 2026 巴黎车展新设“智驾实验室”公开体验活动，仅小鹏、特斯拉两家企业参与 | IT之家 | news(展会预告·非 AI 具体事件·防重不收) | https://www.ithome.com/1/011/393.htm |
+| 2026-10-10 | 上海劳力士大师赛：辛纳晋级八强 | 中新网 | news(体育·非 AI·防重不收) | https://www.chinanews.com.cn/ty/2026/10-10/10710601.shtml |
