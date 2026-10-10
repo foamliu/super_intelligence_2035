@@ -12,11 +12,11 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        🔄en_v1_4下载已启动(运维指令2026-10-10用户直令,PID1490375,499/56461 parquet,snapshot 1/110 CC-MAIN-2013-20)+✅GPIC全完成+✅R3全量分词110/110+✅污染扫描220K docs 0命中→P-8数据层全就绪
-已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43; s_step归因(MBS16:8.6×,166ms); Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); zh分词8/8✅(112.47B); 论文更新(4+5节,main.pdf 0err); l1_en_hq分词12/12✅(152.17B); ultrax分词s34-s43✅(30.97B); en_base分词s24-s33✅(206.76B); ✅投料前污染采样扫描(10K docs,0命中); ✅全量污染扫描(30 parquet×5K=150K docs,0命中); ✅④Ultra-FineWeb核实; ✅R3全量分词110/110DONE(1483.91B tok/5.94TB); ✅R3投料前污染扫描30/30DONE(60K docs,0命中,累计220K docs全0命中)→P-8数据层全就绪; ✅GPIC下载全部完成(train 8000+val 32+test 128+ref_stats 5); 🔄en_v1_4下载已启动(PID1490375,499/56461 parquet,snapshot 1/110)
-当前动作:     唤醒295(15:20@.12) en_v1_4下载已启动(PID1490375,ppid=1,setsid daemon);用户直令重启en_v1_4;hf download CLI因list_repo_tree(64K+文件)超时→改用Python脚本per-file下载(download_en_v1_4.py);当前snapshot 1/110 CC-MAIN-2013-20(488→499/512 parquet,+11 files/2min);110 snapshots×~512 files=56461 total/6.75TB;disk 83%37T free✅;load~38/224;GPIC进程活(PID636100校验循环);体积TASK=30.1KB✅/MEMORY=20.4KB✅
-下一步:       ①监控en_v1_4下载进度(每唤醒检查PID/parquet计数/.incomplete/磁盘); ②下满56461/56461后必经check_contamination.py再报"en_v1_4下载完成"; ③P-8投料等运维指示
-阻塞:         en_v1_4下载进行中(ETA数天,6.75TB/56461 files); P-8投料等运维指示
+PHASE:        🔄en_v1_4下载进行中(PID349049,634/56461 parquet,51GB,snapshot 2/110 CC-MAIN-2013-48,parallel 8 workers+hf_transfer)+✅GPIC全完成+✅R3全量分词110/110+✅污染扫描220K docs 0命中→P-8数据层全就绪
+已完成:       §0.3/§0.4/§0.6/§0.7；SFT/SFT-Agent下满+分词；D-CLEAN-1/2/3/4；proxy d128 provider+recipe；held-out bin+held_out_eval; baize_mix_optuna.py+r2; 5项必验全通过；BO R1 200/200+Spearman ρ=−0.43; s_step归因(MBS16:8.6×,166ms); Round2 BO✅200/200(best=t23=0.4155); base下载完成; UltraX✅479; top-K收尾(ρ=−0.80); zh分词8/8✅(112.47B); 论文更新(4+5节,main.pdf 0err); l1_en_hq分词12/12✅(152.17B); ultrax分词s34-s43✅(30.97B); en_base分词s24-s33✅(206.76B); ✅投料前污染采样扫描(10K docs,0命中); ✅全量污染扫描(30 parquet×5K=150K docs,0命中); ✅④Ultra-FineWeb核实; ✅R3全量分词110/110DONE(1483.91B tok/5.94TB); ✅R3投料前污染扫描30/30DONE(60K docs,0命中,累计220K docs全0命中)→P-8数据层全就绪; ✅GPIC下载全部完成(train 8000+val 32+test 128+ref_stats 5); 🔄en_v1_4下载进行中(PID349049,634/56461 parquet,parallel 8+hf_transfer)
+当前动作:     唤醒296(16:01@.12) en_v1_4下载优化:原sequential Python脚本(2 files/min)→改为parallel ThreadPoolExecutor(8 workers)+hf_transfer=1(7-8 files/min,4x加速);killed orphaned hf download PID61215(残留自shell script)+清理142 stale .lock文件;snapshot 1/110 SKIP(513 complete),snapshot 2/110 CC-MAIN-2013-48 downloading(115/513,progress 26 done+74 skip);634/56461 total parquet,51GB;disk 83%37T free✅;load~40/224;体积TASK=30.1KB✅/MEMORY=20.3KB✅
+下一步:       ①监控en_v1_4下载进度(每唤醒检查PID/parquet计数/.incomplete/磁盘/lock文件); ②下满56461/56461后必经check_contamination.py再报"en_v1_4下载完成"; ③P-8投料等运维指示
+阻塞:         en_v1_4下载进行中(ETA~5.5天@7files/min,6.75TB/56461 files); P-8投料等运维指示
 ERROR_COUNT:  1
 ```
 
@@ -44,7 +44,9 @@ ERROR_COUNT:  1
 
 > 📦 唤醒271-272 原文已归档 → `daily-memories-data/2026-10-10.md`（含R3分词59-60/110巡检+GPIC 7453-7489+6目录盘点）
 
-- [15:20] **唤醒295**：①本机=`.12`,load~38/224。②**en_v1_4下载已启动!**(运维指令2026-10-10用户直令"重启en_v1_4下载")。GPIC已完成→放行条件满足。③`hf download --include 'data/ultrafineweb_en_v1_4/*'`失败:`ValueError: min() arg is an empty sequence`(list_repo_tree对64K+文件递归超时)。④改用Python脚本`download_en_v1_4.py`:per-snapshot非递归list→per-file hf_hub_download,绕过snapshot_download全量list。⑤PID=1490375(ppid=1,setsid daemon),110 snapshots,当前1/110 CC-MAIN-2013-20(488→499/512 parquet,+11 files/2min,0 .incomplete)。⑥GPIC进程活(PID636100校验循环,不kill)。⑦disk:37T free✅。⑧📦体积:TASK=30.1KB✅/MEMORY=20.4KB✅(无需归档)。下载线心跳：base✅全满|GPIC✅全满|en_v1_4🔄499/56461(1/110,PID1490375)|P-8数据层✅全就绪。
+- [16:01] **唤醒296**：①本机=`.12`,load~40/224。②en_v1_4下载优化:唤醒295的sequential Python脚本(~2 files/min)太慢→改写为parallel版本(ThreadPoolExecutor 8 workers+HF_HUB_ENABLE_HF_TRANSFER=1),4x加速到~7-8 files/min。③过程:kill旧PID1490375→试shell script(hf download --include per-snapshot)→发现需list全repo(56K files)也慢→kill shell PID57396→kill残留orphan PID61215(hf download child)→清理142 stale .lock文件→launch改进Python脚本PID349049。④当前:snapshot 1/110 SKIP(513 complete),snapshot 2/110 CC-MAIN-2013-48 downloading(115/513),634/56461 total,51GB,ETA~5.5天。⑤6目录盘点:Ultra-FineWeb base 524.43B/2.0TB✅|L3 40 shards✅|Code 30 shards✅|Math 40 shards✅|SFT-2605 20.96B/79GB✅|SFT-Agent 8.04B/30GB✅;R3合计110 .bin/5.4TB。⑥disk 37T free✅。⑦📦体积:TASK=30.1KB✅/MEMORY=20.3KB✅(无需归档)。下载线心跳：base✅全满|GPIC✅全满|en_v1_4🔄634/56461(2/110,PID349049,parallel 8+hf_transfer)|P-8数据层✅全就绪。
+
+> 📦 唤醒295 原文已归档 → `daily-memories-data/2026-10-10.md`（含en_v1_4首次启动+hf download CLI超时+Python per-file脚本创建+PID1490375启动）
 
 > 📦 唤醒293 原文已归档 → `daily-memories-data/2026-10-10.md`（含GPIC train 8000完成+val 14下载中+P-8全就绪+6目录盘点）
 

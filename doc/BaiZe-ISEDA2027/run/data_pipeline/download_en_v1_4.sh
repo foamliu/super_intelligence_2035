@@ -9,7 +9,9 @@
 # NOTE: No `set -e` — we handle errors ourselves with retry logic
 export PATH="/nas_train/app.e0031982/miniforge3/envs/py310/bin:$PATH"
 export https_proxy=http://172.19.92.25:13128
+export http_proxy=http://172.19.92.25:13128
 export HF_HUB_DOWNLOAD_TIMEOUT=120
+export HF_HUB_ENABLE_HF_TRANSFER=1
 
 LOCAL_DIR="/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb"
 REPO="openbmb/Ultra-FineWeb"
