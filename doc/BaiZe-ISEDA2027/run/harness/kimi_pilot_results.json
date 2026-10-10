@@ -51455,5 +51455,83 @@
     },
     "blocked": "git fetch failed: \n[TIMEOUT]",
     "classification": "blocked"
+  },
+  {
+    "instance_id": "pytest-dev__pytest-5495",
+    "repo": "pytest-dev/pytest",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template pytest-dev__pytest-11143"
+    },
+    "harness_result": {
+      "harness": "claude-code",
+      "returncode": 1,
+      "wall_s": 355.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_claude_code_pytest-dev__pytest-5495.json",
+      "stdout_tail": "-5495\n[run_single] base_commit=1aefb24b37c30fba8fd79a744829ca16e252f340\n[run_single] ps_len=739\n[run_single] git reset --hard 1aefb24b37c30fba8fd79a744829ca16e252f340\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=354.8s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_claude_code_pytest-dev__pytest-5495.json\n[run_single] cleanup: git reset --hard 1aefb24b37c30fba8fd79a744829ca16e252f340\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "pytest-dev__pytest-5692",
+    "repo": "pytest-dev/pytest",
+    "harness": "claude-code",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsrc/_pytest/_code/source.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n"
+    },
+    "blocked": "git checkout failed: error: Your local changes to the following files would be overwritten by checkout:\n\tsrc/_pytest/_code/source.py\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
+    "classification": "blocked"
+  },
+  {
+    "instance_id": "pytest-dev__pytest-9359",
+    "repo": "pytest-dev/pytest",
+    "harness": "deepseek-harness",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template pytest-dev__pytest-11143"
+    },
+    "harness_result": {
+      "harness": "deepseek-harness",
+      "returncode": 0,
+      "wall_s": 486.0,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_pytest-dev__pytest-9359.json",
+      "stdout_tail": " base_commit=e2ee3144ed6e241dea8d96215fcdca18b3892551\n[run_single] ps_len=3402\n[run_single] git reset --hard e2ee3144ed6e241dea8d96215fcdca18b3892551\n[run_single] running deepseek-harness ...\n== harness=deepseek-harness rc=0 timed_out=False wall=485.7s ==\n[run_single] model_patch: 431 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_deepseek_harness_pytest-dev__pytest-9359.json\n[run_single] cleanup: git reset --hard e2ee3144ed6e241dea8d96215fcdca18b3892551\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": false,
+        "f2p_pass": 0,
+        "f2p_total": 0,
+        "p2p_pass": 0,
+        "p2p_total": 0
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]
