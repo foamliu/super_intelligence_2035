@@ -24,9 +24,11 @@
 
 ---
 
-## RUN_ID 32 — 🛑 停评测 + 删 hook + `.env` 回退(stash) + 换端口集 `8650/8651/8652/8654` + RAG→`9006` + 实测 + 重启 `eda_fastmcp` + 起动 C1.full r2
+## RUN_ID 32 — 🛑 停评测 + 删 hook + `.env` 回退(stash) + 换端口集 `8650/8651/8652/8654` + RAG→`9006` + 回退 `cline_mcp_settings.json` 的 `timeout:180` + 实测 + 重启 `eda_fastmcp` + 起动 C1.full r2
 
 **用户令（2026-10-11 上午）**：「用 ops relay 发布指令：**停掉当前评测**，**删除 `~/.cline/hooks/PreToolUse`**，把 **`eda_fastmcp/.env` 本地改动 stash**，**把昨晚做的改动回退**。**测试/应用端口 `8650`、`8651`、`8652`、`8654`**，修改 `.env`，**ragrecall 端口重新设为 9006**，**重启 full r2-r5 及后续评测**。」
+
+**用户追加令（2026-10-11，二段）**：「**昨晚的改动都是垃圾，全部回退。没有任何亮点。**」⇒ 本块**连同 `(八)`③ 在 `cline_mcp_settings.json` 加的 `"timeout": 180` 一并回退**（`r2_new` 那轮 timeout 427→10 的记录**不作为保留理由**，用户已否决）；before/after 快照见 **3.6** 与 **⑧**。
 
 **背景（为什么换回旧端口集）**：(八) 的 4 个新端口（`8663/8666/8667/8670`）在 **10-11 早间再次全部挂死**（0 字节 / 超时），`8670` 还进了 license 断路器（83 consecutive）→ r2_new（batch `2026_1010_234408`）code-gen 跑完 146/158/2 fail，但 **eval Steps 5–7.1 未跑 = 无 official Pass@1**。而 (六) 实测**旧 4 端口 `8650/8651/8652/8654` 全健康 3/3 @0.01s**；RAG recall 端口 `9012` 已死、`9006` 健康（`chroma_db_v20260522`）。⇒ **换回旧端口集 + 修 RAG 端口 + 重启 r2–r5**。
 
@@ -38,12 +40,13 @@
 5. **重启 `eda_fastmcp`**（MCP `:8090`）并核验。
 6. **4 端口双测**：TCP 连通 + `run_code` 实跑（非 curl 端口可达）。
 7. **仅当「eval 未在跑」且「4/4 健康」**才起动 C1.full r2（四 override + `log=/tmp/ABL_full_r2_8650set.log`）；否则**不启、只报**（沿用 (八)⑤ 硬闸）。
-8. **环境核验 + 披露**：loop / MCP / RAG `9006` / `df` / `cline_mcp_settings.json` 的 `timeout` 快照。
+8. **环境核验 + 披露**：loop / MCP / RAG `9006` / `df` / `cline_mcp_settings.json` 的 `timeout` **回退后**快照 + 备份清单。
+9. **（用户 10-11 追加令）回退 `cline_mcp_settings.json` 的 `"timeout": 180`**：两处（`~/.cline/data/settings/`、`~/.cline_prof4_eval/data/settings/`）先备份 → python **精确删 `timeout==180` 键**（其他 timeout 值保留）→ JSON 合法性校验 → before/after 快照 + 旧备份参考 `/tmp/*cline_mcp_settings*`。
 
-**边界**：🚫 不动 `timeout:180`（(八)③ 遗留，仍生效——见 ⑧ 快照；如需回退请另发指令）；🚫 不动 RAG/Memory 服务本体；🚫 不 `git add -A`。
+**边界**：✅ **`timeout:180` 本块回退**（用户 10-11：「昨晚的改动都是垃圾，全部回退，没有任何亮点」）；🚫 不动 RAG/Memory 服务本体；🚫 不 `git add -A`；🚫 不 `git pull/fetch`。
 
 ```bash
-# ═══ RUN_ID 32 — ZhuLong：停评测 + 删 hook + .env 回退(stash) + 端口集换 8650/8651/8652/8654 + RAG→9006 + 实测 + (4/4 健康才) 重启 MCP + 起动 C1.full r2 ═══
+# ═══ RUN_ID 32 — ZhuLong：停评测 + 删 hook + .env 回退(stash) + 端口集换 8650/8651/8652/8654 + RAG→9006 + 回退 cline_mcp_settings.json 的 timeout:180 + 实测 + (4/4 健康才) 重启 MCP + 起动 C1.full r2 ═══
 echo "== RUN_ID 32 @ $(date '+%F %T') host=$(hostname) =="
 EDA=/nasdata/app.e0031982/code/eda_fastmcp
 ENVF=$EDA/.env
@@ -130,6 +133,55 @@ echo "   stash exit=$?"
 timeout 30 git -C "$EDA" stash list 2>&1 | head -3 | cut -c1-140
 echo "-- 3.5 .env 关键行（stash 回退后，应 = HEAD 基线）--"
 timeout 20 grep -nE '^[[:space:]]*(export[[:space:]]+)?(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST|RAG_RECALL_URL)=' "$ENVF" 2>&1 | cut -c1-260
+
+echo
+echo "=========== 3.6 回退 cline_mcp_settings.json 的 \"timeout\": 180（用户 10-11 追加令：昨晚改动全部回退）==========="
+PY=$(command -v python3 || command -v python || true)
+echo "   python = ${PY:-<none>}"
+echo "-- 旧备份参考（(八) 若留过备份，可作还原依据）--"
+timeout 20 ls -lt /tmp/*cline_mcp_settings* 2>/dev/null | head -5 | cut -c1-150
+for f in ~/.cline/data/settings/cline_mcp_settings.json ~/.cline_prof4_eval/data/settings/cline_mcp_settings.json; do
+  echo "-- $f --"
+  if [ ! -f "$f" ]; then echo "   （不存在，跳过）"; continue; fi
+  timeout 20 stat -c '   BEFORE mtime=%y size=%s' "$f"
+  timeout 20 grep -oE '"timeout"[[:space:]]*:[[:space:]]*[0-9]+' "$f" | head -4 | sed 's/^/   BEFORE /'
+  BK="/tmp/cline_mcp_settings.$(echo "$f" | tr '/.' '__').bak.$TS"
+  timeout 30 cp -p "$f" "$BK" && echo "   backup=$BK"
+  if [ -z "$PY" ]; then
+    echo "   ⚠️ 无 python → 为免写坏 JSON，本文件不改（需人工处理）"
+  else
+    "$PY" - "$f" <<'PYEOF'
+import json, sys
+p = sys.argv[1]
+try:
+    d = json.load(open(p, encoding='utf-8'))
+except Exception as e:
+    print("   \u26a0 JSON \u89e3\u6790\u5931\u8d25\uff0c\u672a\u6539\uff1a", e); sys.exit(0)
+rem = []
+def walk(o, path=''):
+    if isinstance(o, dict):
+        for k in list(o.keys()):
+            if k == 'timeout' and isinstance(o[k], int) and o[k] == 180:
+                o.pop(k); rem.append(path + '/' + k + '=180')
+            else:
+                walk(o[k], path + '/' + k)
+    elif isinstance(o, list):
+        for i, v in enumerate(o):
+            walk(v, path + '/[%d]' % i)
+walk(d)
+if rem:
+    with open(p, 'w', encoding='utf-8') as fh:
+        fh.write(json.dumps(d, ensure_ascii=False, indent=2) + "\n")
+print("   removed timeout=180 keys =", len(rem), rem[:5])
+if not rem:
+    print("   (no timeout=180 found -> idempotent) ")
+PYEOF
+    echo "   python exit=$?"
+    timeout 20 "$PY" -c "import json,sys; json.load(open(sys.argv[1],encoding='utf-8')); print('   JSON 校验=OK')" "$f" 2>&1 | tail -1
+  fi
+  timeout 20 grep -oE '"timeout"[[:space:]]*:[[:space:]]*[0-9]+' "$f" | head -4 | sed 's/^/   AFTER /'
+  if timeout 20 grep -q '"timeout"' "$f"; then echo "   AFTER ⚠️ 仍有 timeout 键（见上；非 180 的值保留）"; else echo "   AFTER ✅ 已无任何 timeout 键"; fi
+done
 
 echo
 echo "=========== 4. 写新 .env：端口集 8650/8651/8652/8654 + RAG 9006 ==========="
@@ -226,15 +278,18 @@ timeout 20 ss -lntp 2>/dev/null | grep -E ':9006' | cut -c1-150
 timeout 20 curl -s -m 8 -o /dev/null -w '   http_code=%{http_code} (400/404/405 = 服务在，连通 OK)\n' http://localhost:9006/recall 2>&1
 echo "-- 磁盘（<8G = 起跑前须复核）--"
 timeout 20 df -BG /home /nasdata /tmp 2>/dev/null | cut -c1-120
-echo "-- 披露快照：(八)③ 的 cline_mcp_settings.json timeout（本块不改，仍生效）--"
+echo "-- 披露快照：cline_mcp_settings.json 的 timeout（本块已回退 timeout=180；输出为空 = 已无该键）--"
 for f in ~/.cline/data/settings/cline_mcp_settings.json ~/.cline_prof4_eval/data/settings/cline_mcp_settings.json; do
   echo "   $f -> $(timeout 20 grep -oE '"timeout"[[:space:]]*:[[:space:]]*[0-9]+' "$f" 2>/dev/null | head -1)"
+  timeout 20 stat -c '      mtime=%y' "$f" 2>/dev/null
 done
+echo "-- 回退备份清单（settings / .env）--"
+timeout 20 ls -lt /tmp/cline_mcp_settings* /tmp/eda_fastmcp.env*.bak.* /tmp/eda_fastmcp.env.RUNID32.* 2>/dev/null | head -8 | cut -c1-150
 echo "-- .env 最终关键行 --"
 timeout 20 grep -nE '^(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST|RAG_RECALL_URL)=' "$ENVF" 2>&1 | cut -c1-300
 
 echo
-echo "== DONE — RUN_ID 32（停评测 / 删hook / stash回退 / .env 换 8650-8654+RAG9006 / 重启MCP / 实测 / 起 r2）=="
+echo "== DONE — RUN_ID 32（停评测 / 删hook / stash回退 / .env 换 8650-8654+RAG9006 / 回退 timeout:180 / 重启MCP / 实测 / 起 r2）=="
 ```
 
 ## RUN_ID 31 — 🔎 验证 EDA_MCP_PORT=8090 是否被继承（中继是「非交互 bash」，不读 ~/.bashrc）

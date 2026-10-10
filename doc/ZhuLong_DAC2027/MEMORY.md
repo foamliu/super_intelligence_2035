@@ -49,9 +49,9 @@ WAITING: 0
 
 | 线 | 脚本 / 任务书 / 记忆 | 在飞 | 状态 |
 |:--|:--|:--|:--|
-| **合并消融线（新 · 正式）** | `run/zhulong_loop.sh` · `run/ZHULONG_TASK.md` · `run/MEMORY_ZHULONG.md` | 🟢 **在跑**（36.15 · loop PID `303182` · proxy✅；MCP `:8090` PID `1092071`） | 🆕 **2026-10-11 刷新**：`STAGE=C1` · `CONFIG=full`(锚点) · `ROUND=2` · `PHASE=blocked` · `WAITING=1`；进度 **36/75 轮**（B 4/4；C1 三臂 5/5：`pure_llm` 10.5±1.9 / `rag` 71.8±2.5 / `wo_retrieval` 81.0±4.5；**锚点 `C1.full` 仅 `r1=88.0%` 有效**）。**10-11 早间事件**：`(八)` 的 4 新端口 `8663/8666/8667/8670` **再次全部挂死**（0 字节/超时；`8670` 另触 license 断路器 83 consecutive）→ `r2_new`（batch `2026_1010_234408`）code-gen 146/158/2 fail，但 **eval Steps 5–7.1 未跑 = 无 official Pass@1** → **判 ❌作废**（log/batch 留作证据，不并入成绩）。**用户裁定 → 下发 `(九)`+ops `RUN_ID 32`**：换回**旧 4 端口 `8650/8651/8652/8654`**（`(六)` 实测 3/3@0.01s）+ `RAG_RECALL_URL`→**`9006`**（原 `9012` 已死）+ 删 `~/.cline/hooks/PreToolUse` + `.env` `git stash` 回退 + 重启 `eda_fastmcp` + **4/4 健康才起重跑 r2–r5**（log `/tmp/ABL_full_r2_8650set.log`）。⚠️ `timeout:180`（`(八)`③，两处 `cline_mcp_settings.json`）**本次保留未回退**（如需回退另发指令）。详见 `daily-memories/2026-10-11.md`。 |
+| **合并消融线（新 · 正式）** | `run/zhulong_loop.sh` · `run/ZHULONG_TASK.md` · `run/MEMORY_ZHULONG.md` | 🟢 **在跑**（36.15 · loop PID `303182` · proxy✅；MCP `:8090` PID `1092071`） | 🆕 **2026-10-11 刷新**：`STAGE=C1` · `CONFIG=full`(锚点) · `ROUND=2` · `PHASE=blocked` · `WAITING=1`；进度 **36/75 轮**（B 4/4；C1 三臂 5/5：`pure_llm` 10.5±1.9 / `rag` 71.8±2.5 / `wo_retrieval` 81.0±4.5；**锚点 `C1.full` 仅 `r1=88.0%` 有效**）。**10-11 事件**：`(八)` 的 4 新端口 `8663/8666/8667/8670` 再次全挂死（0 字节/超时；`8670` 触 license 断路器 83 consecutive）→ `r2_new`（batch `2026_1010_234408`）code-gen 146/158/2 fail、**eval 未跑 = 无 official Pass@1** → **❌作废**。**用户裁定 → `(九)`+ops `RUN_ID 32`**：换回**旧 4 端口 `8650/8651/8652/8654`**（`(六)` 实测 3/3）+ `RAG_RECALL_URL`→**`9006`**（`9012` 已死）+ 删 hook `PreToolUse` + `.env` stash + 重启 `eda_fastmcp` + **4/4 健康才起 r2–r5**（log `/tmp/ABL_full_r2_8650set.log`）。**用户二段令「昨晚改动全部回退、无亮点」⇒ `timeout:180`（`(八)`③ 两处 `cline_mcp_settings.json`）已随 RUN_ID 32「3.6 步」回退**（427→10 不作保留理由）。详见 `daily-memories/2026-10-11.md`。 |
 | 旧 legacy 线（S1 保真度 / 组件 / S2 1-shot 探路） | `MEMORY_s1_full.md` · `MEMORY_component_full.md` · `MEMORY_s2_1shot.md` | 只读历史 | ⬜ 均已由合并线接管或作废。**旧 5-run 可复用**：`omega_low` 82.8±1.0 / `readback_binary` 66.2±16.1 / `readback_none` 73.3±2.2；1-shot 探路：`k10` 75.3 / `k3` 69.0 / `k1` 60.8 / `lagged` 84.2（S2）。⚠️ 其 loop 存活存疑（见 §4「接管 legacy 组件线」）。**三行原文已归档** → `daily-memories/2026-10-11.md`。 |
-| **ops 中继** | `run/zhulong_ops_relay.sh` · `run/ops/` | 🟢 **在跑** | 单实例（第二条是子进程）；`.last_run_id`=**31**（RUN_ID 29/30/31 全 `exit=0`）；**RUN_ID 32 已于 2026-10-11 上午下发**（停评测/删 hook/`.env` stash/换端口集 `8650-8654`+RAG `9006`/重启 MCP/4 端口实测/**4/4 健康才起 r2**），结果见 `run/ops/outbox.md` 末尾。⚠️ 历史观察：outbox 里 RUN_ID 30/31 各出现**重复条目**（疑似两实例或 `.last_run_id` pull 竞态）⇒ 下发的块必须**幂等**（RUN_ID 32 已按幂等设计：重复执行不会二次起 eval）。 |
+| **ops 中继** | `run/zhulong_ops_relay.sh` · `run/ops/` | 🟢 **在跑** | 单实例（第二条是子进程）；`.last_run_id`=**31**（RUN_ID 29/30/31 全 `exit=0`）；**RUN_ID 32 已于 2026-10-11 上午下发**（停评测/删 hook/`.env` stash/换端口集 `8650-8654`+RAG `9006`/重启 MCP/4 端口实测/**4/4 健康才起 r2**）；**同日已就地修订本块（不新增 RUN_ID）：加「3.6 步」回退两处 `cline_mcp_settings.json` 的 `timeout:180`**（before/after 快照；`bash -n`=0、中继 guard 7 条正则 0 命中、python 回退逻辑本地 fixture 真跑通过）。⚠️ **推送后 ~40min 无回写、`.last_run_id` 仍 31 ⇒ 判「中继疑似失联」** ⇒ `(九)`⓪ 已授权 agent 代执行 + 重启中继。结果见 `run/ops/outbox.md` 末尾。⚠️ 历史观察：outbox 里 RUN_ID 30/31 各出现**重复条目**（疑似两实例或 `.last_run_id` pull 竞态）⇒ 下发的块必须**幂等**（RUN_ID 32 已按幂等设计：重复执行不会二次起 eval）。 |
 
 > ✅ **历史口径已收敛**：起始点 = 从 `C1.wo_retrieval R2` 起（**已越过**）；「冻结令」已解除；「36.15 旧 agent 冲突」已由合并线接管处置。
 
@@ -103,19 +103,19 @@ error: error: unknown option '-b'
 ## 4. 待拍板 / 我欠的答复
 
 - [x] ✅ **起始点**：已定为 **从 `C1.wo_retrieval R2` 起**（任务书 (四)），**已越过**；现推进至 `C1.full` 锚点。
-- [x] ✅ **infra 前置校验（RUN_ID 1+2 首测）**：① `/home` 曾 99%/6G → **已解除（见下）**；② ✅ 端口（**口径订正**：以 `.env` 实际 `8650,8651,8652,8654`@`10.129.32.75` 为准，旧 `8664/8665/8653/8669` 作废）；③ ✅ `run_code` = `tools/run_code.py`。
-- [x] ✅ **`/home` 阻塞已解除（用户 2026-10-09）**：**`/home` 已不再阻塞**。且我方产物/缓存多落 `/nasdata`（`~/eda_code_eval` 等为 symlink→`/nasdata`），`/nasdata` 长期 ~370G 富余 → **不再作为前置硬门槛**。
+- [x] ✅ **infra 前置校验**：① `/home` 曾 99%/6G → **已解除**；② ✅ 端口（口径：以 `.env` 实际 `8650,8651,8652,8654`@`10.129.32.75` 为准，旧 `8664/8665/8653/8669` 作废）；③ ✅ `run_code` = `tools/run_code.py`。
+- [x] ✅ **`/home` 阻塞已解除（用户 2026-10-09）**：产物/缓存多落 `/nasdata`（`~/eda_code_eval` 等为 symlink），`/nasdata` ~370G 富余 → **不再作为前置硬门槛**。
 - [x] ✅ **loop 已重启并修复**（RUN_ID 6 清 `-b`；RUN_ID 8 `cline auth` 修 `openAiBaseUrl`→`/cloud/v1`）→ agent 2026-10-04 21:54 首次被唤醒。
-- [x] ✅ **relay 单实例**（第二条是子进程）；✅ **端口口径**已订正（见上）；✅ **ops 中继健康**（RUN_ID 1–26 全 `exit=0`；当前 `.last_run_id`=26）。
+- [x] ✅ **relay 单实例**（第二条是子进程）；✅ **端口口径**已订正（见上）；✅ **ops 中继健康**（最新状态见 §3 行）。
 - [x] ✅ **`MEMORY_ZHULONG.md` 顶部已置 `WAITING: 1`**，避免 60s 空转烧 token。
-- [x] ✅ **处置顺序**：已全部落地（起始点已越、`WAITING` 已修、loop 已重启、**已开跑**）。
-- [x] ✅ **36.15「旧 agent」冲突已处置**：由合并线接管（组件线数据复用/重跑，见 §3）；起始点已越过。
-- [x] ✅ **启动 ops 中继**（健康；RUN_ID 25/26 = kill 沙盒故障的 r4）。
+- [x] ✅ **处置顺序**：已全部落地（起始点/`WAITING`/loop/已开跑）。
+- [x] ✅ **36.15「旧 agent」冲突已处置**：由合并线接管（见 §3）。
+- [x] ✅ **启动 ops 中继**（健康）。
 - [x] ⚠️ **接管 legacy 组件线**：数据已由合并线接管（`pure_llm` 复用 / `rag` 重跑 / `wo_retrieval` 复用 r1）。**遗留存疑**：用户称 10/4 已关停，但 agent 侧 10-09 `pgrep` 仍报组件 loop `2455466` alive → **待核实**（若在跑，确认 non-mid-eval 以免抢 infra）。
 - [x] ✅ **Phase B 模型 key**：已全部验证有效（Phase B 4/4 完成）。
-- [x] ✅ **RAG recall 端口已修（2026-10-11 用户令）**：ops `RUN_ID 32` 把 `.env` 的 `RAG_RECALL_URL` 设为 **`http://localhost:9006/recall`**（`9006` 健康 = `chroma_db_v20260522`；原 `9012` 已死）。⚠️ 仍须在结果报告**披露**该环境改动（此前它同时是「BM25-only fallback」的既存降级条件）。
-- [ ] **`"timeout": 180` 是否回退？** —— `(八)`③ 的评测环境改动，落在**两处** `cline_mcp_settings.json`（`~/.cline/data/settings/` + `~/.cline_prof4_eval/data/settings/`）。`(九)`/RUN_ID 32 **保留未回退**（它把 r2_new 的 task-level timeout 从 427 压到 10，是那轮唯一亮点；回退有复发风险）。若用户要「干净基线」→ 另发一条指令即可回退。**无论留否，都须在报告披露。**
-- [ ] **`/home` 100% 工单（用户可见的 infra 风险）**：394G 总量 / **3.4G 可用**（共享 FS、69 用户；我方 `app.e0031982` 只占 <7.2G，且 `~/.cline`/`~/.cache`/`~/.local`/`~/eda_code_eval` 全是 →`/nasdata` 符号链接）⇒ **不是我方能自修的**。当前不阻断本轮（产物落 `/nasdata`），但**起 r3 前须复检 ≥8G**，不足则不启、回报。
+- [x] ✅ **RAG recall 端口已修（2026-10-11 用户令）**：ops `RUN_ID 32` 设 `.env` `RAG_RECALL_URL=http://localhost:9006/recall`（`9006` 健康 = `chroma_db_v20260522`；`9012` 已死）。⚠️ 仍须在报告**披露**（它同时是「BM25-only fallback」的既存降级条件）。
+- [ ] ⏳ **`"timeout": 180` 回退（已随 RUN_ID 32「3.6 步」下发，待执行）** —— 两处 `cline_mcp_settings.json`（`~/.cline/data/settings/` + `~/.cline_prof4_eval/data/settings/`）。**用户 10-11 二段令：「昨晚的改动都是垃圾，全部回退，没有任何亮点」** ⇒ **推翻「保留」判断**（427→10 不作理由）：块内 python **精确删 `timeout==180` 键**（其余 timeout 保留）+ 备份 `/tmp/cline_mcp_settings.*.bak.*` + before/after 快照。执行后回填。**须在报告披露。**
+- [ ] **`/home` 100% 工单（用户可见 infra 风险）**：394G / **3.4G 可用**（共享 FS、69 用户；我方只占 <7.2G，`~/.cline`/`.cache`/`.local`/`~/eda_code_eval` 均 →`/nasdata`）⇒ **非我方所能修**。不阻断本轮，但**起 r3 前复检 ≥8G**，不足则不启、回报。
 - [ ] **`tab:omega` 的 (H)/(H+E)/(L)**：锚点复用规则下 (H)/(F) 由 `C1.full` 复用；`(H+E)` 已定**不做**；`(L)` 由 `omega_low` 提供——确认无遗漏。
 - [ ] **RQ3（SKILL / Tcl 切片）** 是否纳入本轮（依赖最重，任务书列为最后）。
 

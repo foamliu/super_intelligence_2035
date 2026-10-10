@@ -40,7 +40,7 @@
 
 ### 🧭 本轮（2026-10-11 上午）执行顺序 —— **换回旧 4 端口 + 修 RAG + 删 hook → 推进 r2–r5**
 
-> ➡️ **按 `(九)` 执行**（`.env` 端口集换回 `8650/8651/8652/8654` + `RAG_RECALL_URL`→`9006` + 删 `~/.cline/hooks/PreToolUse` + `.env` stash 回退 → 重跑 r2–r5）。
+> ➡️ **按 `(九)` 执行**（`.env` 端口集换回 `8650/8651/8652/8654` + `RAG_RECALL_URL`→`9006` + 删 `~/.cline/hooks/PreToolUse` + `.env` stash 回退 + **回退 `timeout:180`** → 重跑 r2–r5）。
 > ⚠️ **`(九)`⓪ 先自查「中继执行了没有」**（`outbox.md` 有无 RUN_ID 32）——**中继近 11h 无活动、已判「疑似失联」**；若确实失联，`(九)`⓪ 授权你**自己照 `run/ops/inbox.md` 的 RUN_ID 32 块执行**（含重启中继），别干等。
 > ❌ `(八)` 已被 `(九)` 取代；`(七)/(六)/(四)/(三)` 已完成或作废 —— **勿重复**。
 
@@ -51,12 +51,12 @@
 
 **⓪ 先自查「中继执行了没有」（30 秒，每次唤醒必做）**
 - `grep -c '^## RUN_ID 32' run/ops/outbox.md` **≥1** ⇒ 已执行 → 走 ①（并按 ① 复核 r2 是否已起）。
-- **= 0** 且 `git log -1 --format=%cd -- doc/ZhuLong_DAC2027/run/ops/inbox.md` 距今 **>30min** ⇒ **判中继失联** ⇒ **你自己照 `run/ops/inbox.md` 里 RUN_ID 32 那个 bash 块的 9 步执行**（原文即完整食谱：① 停评测——**只杀评测侧**，`pkill -f run_cline_script` 会误杀编排侧 cline；② 删 `~/.cline/hooks/PreToolUse`；③ `.env` 备份 + `git stash push -- .env`；④ 写 `PROXY_PORTS=8650,8651,8652,8654` + `SANDBOX_ENDPOINTS`（按 `.env`/HEAD 既有映射逐条核对，勿臆测 workdir）+ `RAG_RECALL_URL=http://localhost:9006/recall`；⑤ 重启 `eda_fastmcp`；⑥ 4 端口 `run_code` 实跑；⑦ **仅 4/4 健康才** 起 r2）。**执行完**：把 `inbox.md` 的 `<!-- RUN_ID: 32 -->` 置 **33**、并把该 bash 块降级为 text 围栏（占位，防中继复活后重复执行）；并顺手重启中继：`pgrep -af zhulong_ops_relay.sh`（无 → `env PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH" https_proxy=http://172.19.92.23:13128 setsid bash doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &`）。结论写进 `MEMORY_ZHULONG.md`。
+- **= 0** 且 `git log -1 --format=%cd -- doc/ZhuLong_DAC2027/run/ops/inbox.md` 距今 **>30min** ⇒ **判中继失联** ⇒ **你自己照 `run/ops/inbox.md` 里 RUN_ID 32 那个 bash 块的 9 步执行**（原文即完整食谱：① 停评测——**只杀评测侧**，`pkill -f run_cline_script` 会误杀编排侧 cline；② 删 `~/.cline/hooks/PreToolUse`；③ `.env` 备份 + `git stash push -- .env`；④ 写 `PROXY_PORTS=8650,8651,8652,8654` + `SANDBOX_ENDPOINTS`（按 `.env`/HEAD 既有映射逐条核对，勿臆测 workdir）+ `RAG_RECALL_URL=http://localhost:9006/recall`；⑤ 重启 `eda_fastmcp`；⑥ 4 端口 `run_code` 实跑；⑦ **仅 4/4 健康才** 起 r2；⑧ **回退两处 `cline_mcp_settings.json` 的 `timeout:180`**）。**执行完**：把 `inbox.md` 的 `<!-- RUN_ID: 32 -->` 置 **33**、并把该 bash 块降级为 text 围栏（占位，防中继复活后重复执行）；并顺手重启中继：`pgrep -af zhulong_ops_relay.sh`（无 → `env PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH" https_proxy=http://172.19.92.23:13128 setsid bash doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &`）。结论写进 `MEMORY_ZHULONG.md`。
 
 **① 若中继已执行 → 读 `outbox.md` 末尾 RUN_ID 32 的三件事**：(a) 4 端口实测结果；(b) `.env` 最终关键行（应 `PROXY_PORTS=8650,8651,8652,8654` + `RAG_RECALL_URL=http://localhost:9006/recall`）；(c) r2 是否已起（eval PID / log `/tmp/ABL_full_r2_8650set.log` / 四 override / **hook 是否被重新部署**）。
 
 **② 状态记账（先改状态头再干活）**：`CONFIG=full`(锚点) · `ROUND=2` · `.env` 臂配置不动；**`r2_new`（batch `2026_1010_234408`）判 ❌作废**（code-gen 146/158 但 **eval Steps 5–7.1 未跑 = 无 official Pass@1**；log/batch 留证，不并入成绩）；**`r1=88.0%` 保留**；**端口口径 = `8650/8651/8652/8654` @ `10.129.32.75`**。
-⚠️ **披露清单**（写进结果报告「披露」节）：`.env` 端口集回退 + `RAG_RECALL_URL`→`9006`（原 `9012` 死）+ 删 `~/.cline/hooks/PreToolUse` + `cline_mcp_settings.json` 的 `"timeout": 180`（`(八)`③，**本次保留未回退**）。
+⚠️ **披露清单**（写进结果报告「披露」节）：`.env` 端口集回退 + `RAG_RECALL_URL`→`9006`（原 `9012` 死）+ 删 `~/.cline/hooks/PreToolUse` + `cline_mcp_settings.json` 的 `"timeout": 180`（`(八)`③）—— **本轮已随 RUN_ID 32「3.6 步」一并回退**（用户 10-11 二段令：「昨晚的改动都是垃圾，全部回退，没有任何亮点」）。
 
 **③ 分支**：已起 → **先核反作弊**（`ls -l ~/.cline/hooks/PreToolUse` + 新 log 出现「已部署沙盒 hook」+ `ACCESS RESTRICTED` >0；**未部署 ⇒ 立即停本批、判作废、回报**）；随后 `pgrep -f '^bash scripts/run_cline_script'` **有输出=巡检退出**、**无输出=收割**。未起 → `WAITING=1` + 回报不健康端口原文，**不得带病开跑**。
 
