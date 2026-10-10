@@ -7,10 +7,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 7×300 RUNNING — 1780/2100 (84.8%); 405 resolved + 1269 pbf, 320 remaining, 0 new workdir blocks (49 rounds), 96 blocked (73 git-fetch/network + 23 legacy checkout, 0 new) + 7 quota-blocked + 3 no-patch; codex 300/300 COMPLETE + re-running blocked; N=1 monitoring
-已完成:       ① 7×100 HTML report delivered ✅ · ②-A code fix done ✅ · ②-B resource check done ✅ · GPU29_ALLOC registered ✅ · launch_7x300.sh created ✅ · Smoke test PASSED ✅ · 7×300 LAUNCHED ✅ · BLOCK=0 (workdir) CONFIRMED ✅ (R231→R279, 49 consecutive rounds) · codex 300/300 COMPLETE ✅ + re-running blocked
-当前动作:     R279: 7×300 monitoring at 06:05 (1791 min since 00:14 launch, 29.9h). ALL 7 alive (etimes ~107420s). 1780/2100 (84.8%), +10 since R278 (34 min, ~0.29/min). 405 resolved / 1269 pbf / 96 blocked (73 git-fetch/network [44 fetch_fail+29 timeout] + 23 legacy checkout, 0 new) + 7 qb + 3 np. Workdir isolation fix holding ✅ (49th round, 0 new checkout/overwrite blocks). Per-harness: cline 260(61,rem40,avg493s) / codex 300(65,rem0,RE-RUNNING,avg911s) / claude 241(57,rem59,avg590s) / opencode 268(66,rem32,avg445s) / deepseek 249(46,rem51,avg460s) / hermes 209(49,rem91←BOTTLENECK,avg760s,ETA~19h) / pi 253(61,rem47,avg456s). ETA hermes ~19h (~Oct 12 01:00 overall). Resources: load 16.71/16.60/16.76, 1824G avail RAM, /dev/shm 15G/1008G(2%), GPU 100% (pretrain R2, NOT harness).
-下一步:       ① Continue monitoring — workdir block=0 holding (49 rounds) → ② ETA hermes ~19h (~Oct 12 01:00; others 4-10h) → ③ Each harness completes → re-runs blocked automatically (codex already doing this) → ④ refresh + commit → ⑤ Final: ensure blocked=0 (success criteria ②-C) → ⑥ Generate 7×300 HTML report upon completion.
+PHASE:        H-A 7×300 RUNNING — 1790/2100 (85.2%); 409 resolved + 1277 pbf, 310 remaining, 0 new workdir blocks (50 rounds), 94 blocked (71 git-fetch/network + 22 legacy checkout + 1 other, 0 new) + 7 quota-blocked + 3 no-patch; codex 300/300 COMPLETE + re-running blocked; N=1 monitoring
+已完成:       ① 7×100 HTML report delivered ✅ · ②-A code fix done ✅ · ②-B resource check done ✅ · GPU29_ALLOC registered ✅ · launch_7x300.sh created ✅ · Smoke test PASSED ✅ · 7×300 LAUNCHED ✅ · BLOCK=0 (workdir) CONFIRMED ✅ (R231→R280, 50 consecutive rounds) · codex 300/300 COMPLETE ✅ + re-running blocked
+当前动作:     R280: 7×300 monitoring at 06:45 (1821 min since 00:14 launch, 30.4h). ALL 7 alive (etimes ~109670s). 1790/2100 (85.2%), +10 since R279 (40 min, ~0.25/min). 409 resolved / 1277 pbf / 94 blocked (71 git-fetch/network + 22 legacy checkout + 1 other, 0 new, −2 since R279 via codex re-runs) + 7 qb + 3 np. Workdir isolation fix holding ✅ (50th round, 0 new checkout/overwrite). Per-harness: cline 262(63,rem38,avg491s) / codex 300(65,rem0,RE-RUNNING,avg912s) / claude 242(57,rem58,avg593s) / opencode 270(67,rem30,avg448s) / deepseek 251(46,rem49,avg476s) / hermes 212(50,rem88←BOTTLENECK,avg752s,ETA~18h) / pi 253(61,rem47,avg460s). ETA hermes ~18h (~Oct 12 01:00 overall). Resources: load 17.16/17.58/17.73, 1823G avail RAM, /dev/shm 15G/1008G(2%), GPU 100% (pretrain R2, NOT harness).
+下一步:       ① Continue monitoring — workdir block=0 holding (50 rounds) → ② ETA hermes ~18h (~Oct 12 01:00; others 4-10h) → ③ Each harness completes → re-runs blocked automatically (codex already doing this, blocked −2) → ④ refresh + commit → ⑤ Final: ensure blocked=0 (success criteria ②-C) → ⑥ Generate 7×300 HTML report upon completion.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -31,14 +31,14 @@ ERROR_COUNT:  0
 2. **codex 特例**：codex 在 R1 跑了 300 条超集（串行），其中 70 条与本轮 100-set 重叠 → codex 的 70 条"新跑"实际来自 **300 串行超集**，**非 R2 并行**。codex 全部 100 条均为串行。
 3. **监控指标**（本轮必须对比 R1 同 30 条）：`quota-blocked` / `timeout` / `no-patch` 率 → 若 R2 显著上升 ⇒ 判"并行污染" → 结论打折。SWEBENCH_COMPARE.html §2 监控表已生成。
 
-**R2 监控快照**（2026-10-11 06:05，R279 更新）：
+**R2 监控快照**（2026-10-11 06:45，R280 更新）：
 
 | 指标 | R1 (30 serial) | R2 (70 parallel) / 7×300 | 判定 |
 |:--|:--|:--|:--|
-| **quota_blocked** | 0/210 (0%) | 7/1780 (0.4%) — all 7 harnesses | ⚠️ API quota, NOT workdir — acceptable |
-| **timeout** | 0 (codex 2) | 29 git-fetch TIMEOUT (workdir_setup) | ⚠️ network/infra — re-run at end |
-| **workdir_blocked** | **0/210 (0%)** | **23 legacy checkout (0 new R231→R279, 49 rounds)** | ✅ **per-harness workdir isolation FIX HOLDING** |
-| **git_fetch_blocked** | 0 | **73** (44 fetch_fail + 29 timeout, all workdir_setup git-fetch network fail) | ⚠️ network/infra, NOT workdir — re-run at end |
+| **quota_blocked** | 0/210 (0%) | 7/1790 (0.4%) — all 7 harnesses | ⚠️ API quota, NOT workdir — acceptable |
+| **timeout** | 0 (codex 2) | git-fetch TIMEOUT (workdir_setup) | ⚠️ network/infra — re-run at end |
+| **workdir_blocked** | **0/210 (0%)** | **22 legacy checkout (0 new R231→R280, 50 rounds)** | ✅ **per-harness workdir isolation FIX HOLDING** |
+| **git_fetch_blocked** | 0 | **71** (fetch_fail, all workdir_setup git-fetch network fail) | ⚠️ network/infra, NOT workdir — re-run at end |
 | **no-patch** | 0/210 (0%) | 3 (deepseek) | ⚠️ eval env limitation |
 
 **⚠️ 新发现：workdir git-checkout 冲突 = 并行污染（R207 首次披露）**：
@@ -228,4 +228,5 @@ ERROR_COUNT:  0
 > 📦 R269-R276 (2026-10-11 00:05~04:18, 7×300 monitoring 78.7%→83.4%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1670→1751/2100, 369→393 resolved, workdir block=0 (40→46 rounds), hermes ETA 23→22h。需要时再读。
 > 📦 R277 (2026-10-11 04:54, 7×300 monitoring 83.9%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1762/2100, 398 resolved, workdir block=0 (47 rounds), hermes ETA 18h。需要时再读。
 > 📦 R278 (2026-10-11 05:31, 7×300 monitoring 84.3%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1770/2100, 402 resolved, workdir block=0 (48 rounds), hermes ETA 17h。需要时再读。
-- 2026-10-11 06:05 —— **第二百七十九轮** —— 7×300 monitoring at 1791 min (29.9h): ALL 7 alive (etimes ~107420s). 1780/2100 (84.8%), +10 since R278 (34 min, ~0.29/min). 405 resolved / 1269 pbf / 96 blocked (73 git-fetch/network [44 fetch+29 timeout] + 23 legacy checkout, 0 new) + 7 qb + 3 np. Workdir fix holding ✅ (49th round, 0 new checkout/overwrite). Per-harness: cline 260(61,rem40,avg493s) / codex 300(65,rem0,RE-RUNNING,avg911s) / claude 241(57,rem59,avg590s) / opencode 268(66,rem32,avg445s) / deepseek 249(46,rem51,avg460s) / hermes 209(49,rem91←BOTTLENECK,avg760s,ETA~19h) / pi 253(61,rem47,avg456s). Resources: load 16.71/16.60/16.76, 1824G avail RAM, /dev/shm 15G/1008G(2%), GPU 100% (pretrain R2, NOT harness). 📦 体积：TASK=32106B(31.4KB ✓) / MEMORY≈32500B(31.7KB ✓)。
+> 📦 R279 (2026-10-11 06:05, 7×300 monitoring 84.8%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1780/2100, 405 resolved, workdir block=0 (49 rounds), hermes ETA 19h。需要时再读。
+- 2026-10-11 06:45 —— **第二百八十轮** —— 7×300 monitoring at 1821 min (30.4h): ALL 7 alive (etimes ~109670s). 1790/2100 (85.2%), +10 since R279 (40 min, ~0.25/min). 409 resolved / 1277 pbf / 94 blocked (71 git-fetch/network + 22 legacy checkout + 1 other, 0 new, −2 via codex re-runs) + 7 qb + 3 np. Workdir fix holding ✅ (50th round, 0 new checkout/overwrite). Per-harness: cline 262(63,rem38,avg491s) / codex 300(65,rem0,RE-RUNNING,avg912s) / claude 242(57,rem58,avg593s) / opencode 270(67,rem30,avg448s) / deepseek 251(46,rem49,avg476s) / hermes 212(50,rem88←BOTTLENECK,avg752s,ETA~18h) / pi 253(61,rem47,avg460s). Resources: load 17.16/17.58/17.73, 1823G avail RAM, /dev/shm 15G/1008G(2%), GPU 100% (pretrain R2, NOT harness). 📦 体积：TASK=32106B(31.4KB ✓) / MEMORY≈32100B(31.3KB ✓)。
