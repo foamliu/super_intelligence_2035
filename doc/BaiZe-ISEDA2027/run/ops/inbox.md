@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 89 -->
+<!-- RUN_ID: 90 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,13 +31,56 @@
 
 ---
 
+## RUN_ID 90 — 🧭 **只读：`/home` 45% 与 IT「空间不足」的差异归因 + 全盘大头 + `/tmp` 拆解**
+
+> **RUN_ID 89 实况**：`lv_home` **196G / 83G used / 104G avail / 45%**（inode 5%）—— **并非「满」**；而 `lv_root` 4% / `lv_usr` 27% / `lv_tmp` **41%（38G 已用）**。
+> ⇒ 必须查清 IT 看到的到底是什么：**① LVM 是否 thin pool 池满**（各 LV 有空间但池满 → 一样写不进去）**② 是否用户/目录配额超限** **③ `/home` 里**其他人的 home 占多少（本人仅 47G，全盘 83G ⇒ 另有 ~36G）。
+> 同时拆解两个新增大头：**`~/.local/share/opencode/opencode.db` 17.23G（今天仍在写）** 与 **`/tmp` 38G**。
+> 🚫 不删任何东西、不停服务、不动 harness/pipeline。
+
+```bash
+set -u
+echo "=== RUN_ID 90 · 只读：/home 差异归因 + 全盘大头 + /tmp 拆解 · $(date '+%F %T') · host=$(hostname) ==="
+U=/home/app.e0031982
+echo "--- A) LVM 实况（重点：thin pool 是否快满） ---"
+timeout 20 vgs 2>&1 | cut -c1-160
+timeout 20 pvs 2>&1 | cut -c1-160
+timeout 20 lvs -a -o lv_name,vg_name,lv_size,data_percent,metadata_percent,segtype 2>&1 | cut -c1-170
+echo "   -- thin/pool 相关段 --"
+timeout 20 lvs -a -o +devices 2>&1 | grep -iE 'thin|pool' | head -10 | cut -c1-170
+echo "--- B) 配额（若启用） ---"
+timeout 20 quota -s 2>&1 | head -8 | cut -c1-140
+timeout 20 repquota -s /home 2>&1 | head -12 | cut -c1-140
+echo "--- C) /home 全盘（含其它用户！只列不删） ---"
+timeout 70 du -hx --max-depth=1 /home 2>/dev/null | sort -rh | head -20 | cut -c1-140
+echo "--- D) /tmp 拆解（98G LV / 已用 38G） ---"
+timeout 45 du -hx --max-depth=1 /tmp 2>/dev/null | sort -rh | head -20 | cut -c1-140
+echo "   -- /tmp 大文件 >=500M --"
+timeout 35 find /tmp -xdev -maxdepth 2 -type f -size +500M -printf '%s\t%TY-%Tm-%Td\t%p\n' 2>/dev/null | sort -rn | head -15 | awk '{printf "%7.2fG  %s  %s\n", $1/1073741824, $2, $3}' | cut -c1-140
+echo "--- E) opencode.db（17.2G）归属 + 是否在写（别乱删） ---"
+ls -l "$U/.local/share/opencode/" 2>&1 | head -8 | cut -c1-140
+timeout 25 du -hx --max-depth=1 "$U/.local/share/opencode" 2>/dev/null | sort -rh | head -8 | cut -c1-140
+pgrep -af 'opencode' 2>/dev/null | cut -c1-140 | head -8
+echo "--- F) cline/其它大日志（可截断候选） ---"
+timeout 25 find "$U/.cline" -xdev -type f -size +200M -printf '%s\t%TY-%Tm-%Td\t%p\n' 2>/dev/null | sort -rn | head -10 | awk '{printf "%7.2fG  %s  %s\n", $1/1073741824, $2, $3}' | cut -c1-140
+echo "--- G) 已删除但仍被进程占用（>=512M） ---"
+( timeout 25 lsof +L1 2>/dev/null || echo '   (lsof 不可用/无权限)' ) | awk 'NR==1{print} $7+0>536870912 {printf "%7.2fG  %s pid=%s %s\n", $7/1073741824, $1, $2, $9}' | head -12 | cut -c1-140
+echo "--- H) relay 自检（88 空输出溯源） ---"
+ls -l /tmp/baize_ops_relay.log 2>/dev/null | cut -c1-160
+timeout 20 find /nas_train/app.e0031982 -maxdepth 4 -name 'ops_relay.sh' 2>/dev/null | head -3 | cut -c1-140
+echo "=== DONE 90 ==="
+```
+
+---
+
+
 ## RUN_ID 89 — 🔎 **自证：RUN_ID 88 为何零输出 + 精简重跑 `/home` 体检** · 只读
 
 > **现象**：RUN_ID 88（13:40:11，`exit=0`，host=`whag0pgpuap29`）**输出块为空**（85/86/87 都正常有输出）⇒ 抓取/执行通道疑似有坑，或块被「危险过滤」静默拦下。
 > **本块**：① 先打 sanity 行证明抓取通道 ✅；② 直接读 `ops_relay.sh` 的**取块 / 抓输出 / 危险过滤 / 超时**逻辑定位原因；③ 顺带把**精简版 `/home` 体检**再跑一次（大文件用 `maxdepth 4` 保证有界）。
 > 🚫 不删任何东西、不停服务。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 89 · 自证 + 精简 /home 体检 · $(date '+%F %T') · host=$(hostname) ==="
 R=/nas_train/app.e0031982/code/super_intelligence_2035
