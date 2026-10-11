@@ -27,16 +27,18 @@ PATTERNS=(
   "Basic [A-Za-z0-9+/]{20,}={0,2}"
 )
 
+# 已知良性（git remote / 文档里的示例域）—— 排除，避免误报
+EXCLUDE='(git@|@github[.]|@gitlab[.]|ssh://|https://[^ ]*@|noreply@)'
+
 total=0
 for p in "${PATTERNS[@]}"; do
   out="$(grep -rInE --exclude-dir=.git --exclude='check_pii.sh' --exclude='README.md' \
-            -e "$p" "${TARGETS[@]}" 2>/dev/null || true)"
+            -e "$p" "${TARGETS[@]}" 2>/dev/null | grep -vE "$EXCLUDE" || true)"
   n="$(printf '%s' "$out" | grep -c . || true)"
   if [ "${n:-0}" -gt 0 ]; then
     total=$((total + n))
-    echo "🚫 命中 [$p] × $n"
-    printf '%s\n' "$out" | head -5 \
-      | sed -E 's/([A-Za-z0-9%_\/+.-]{6})[A-Za-z0-9%_\/+.-]{6,}/\1…«REDACTED»/g' | sed 's/^/    /'
+    echo "🚫 命中 [$p] × $n —— 仅列位置（**不打印内容**，防二次泄露）："
+    printf '%s\n' "$out" | head -8 | sed -E 's/^([^:]*:[0-9]+):.*$/\1/' | sed 's/^/    /'
   fi
 done
 
