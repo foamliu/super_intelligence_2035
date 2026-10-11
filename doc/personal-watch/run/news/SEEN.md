@@ -541,3 +541,15 @@
 | 2026-10-11 | Why OpenAI's latest results dump has left mathematicians in shock | The Conversation（经 HN·4 分） | analysis | https://theconversation.com/is-this-the-mathocalypse-why-openais-latest-results-dump-has-left-mathematicians-in-shock-293837 |
 | 2026-10-11 | Build your own decision model | nishtahir.com（经 HN·227 分） | discussion(博客/教程) | https://nishtahir.com/build-your-own-decision-model/ |
 | 2026-10-11 | A new AI model that renders generative visuals of what you see | Weizmann Institute（经 HN·6 分） | 留档(研究发布·可回收) | https://www.weizmann.ac.il/pages/news/mathematics-and-computer-science/the-new-science-of-mind-reading |
+| 2026-10-11 | 跻身全球第一梯队：华为 × 华东师大联合研发时序预测基础模型，登顶国际权威时序测评双榜单 | IT之家（据华为云官方·16:30 CST） | news | https://www.ithome.com/1/011/631.htm |
+| 2026-10-11 | Qwen-Image-2.1 Pro 和 Turbo API 上线千问 AI 平台，将图像生成与编辑能力接入应用 | IT之家（据千问 AI 平台·16:06 CST） | news | https://www.ithome.com/1/011/622.htm |
+| 2026-10-11 | “第二代豆包手机”努比亚 NaviX Ultra「内测实验室」计划即将开启，10 月 14 日直播 | IT之家（15:39 CST） | news | https://www.ithome.com/1/011/617.htm |
+| 2026-10-11 | 马斯克称给信用卡拍照就能用 Grok Bot 购物，OpenAI 蒂博调侃“不如直接把卡发网上” | IT之家（15:39 CST·双方公开表态） | news | https://www.ithome.com/1/011/616.htm |
+| 2026-10-11 | 硅谷AI现状：谁有算力谁是爹（摘要行：马斯克连横 A 社，硅谷 VC 开始囤 GPU） | 量子位（13:22 CST·补收） | news | https://www.qbitai.com/2026/10/502585.html |
+| 2026-10-11 | 下架8个月，GPT-4o的拯救行动居然还在继续（摘要行：初代 4o 的 API 快照进入停用倒计时） | 量子位（13:18 CST·补收） | news | https://www.qbitai.com/2026/10/502550.html |
+| 2026-10-11 | DeepSeek Bot来了！民间版，DSH装个插件就能用 | 量子位（11:27 CST·补收·“民间版”非官方） | news | https://www.qbitai.com/2026/10/502544.html |
+| 2026-10-11 | 特朗普将 AI 人工智能改为 SI 超级智能后，马斯克宣布 SpaceXAI 官方账号正式更名 SpaceXSI | IT之家 | news(同事件·已在账 第十九轮 钛媒体 10-05 预告·本窗为落地) | https://www.ithome.com/1/011/620.htm |
+| 2026-10-11 | 王的猜想，刚刚扩展到四维 | 量子位（13:23 CST） | 留档(无摘要行·待回收) | https://www.qbitai.com/2026/10/502584.html |
+| 2026-10-11 | 丹麦 CPR 数据库泄露波及 880 万人信息，涉事公司管理员密码竟是“123456” | IT之家 | 留档(非 AI·安全事件) | https://www.ithome.com/1/011/648.htm |
+| 2026-10-11 | 四部门为汽车安全划定红线：明确汽车设计、可靠性验证试验管理，研发测试要包含两冬一夏 | IT之家 | 留档(非 AI·产业政策) | https://www.ithome.com/1/011/637.htm |
+
