@@ -119,6 +119,66 @@
 
 ---
 
+## 0.4 执行环境（腾讯云 Ubuntu · 桌面 / VNC / Chrome / CDP）— 2026-10-11 建
+
+> **用途**：给 recruit 线一台**常驻、可远控**的浏览器执行机（Boss 登录 + 自动化），把「**浏览器跑在哪**」与「**loop 跑在哪**」解耦。
+> **状态**：✅ 环境已装并**端到端验证**（2026-10-11 10:13）｜⚠️ **尚未做真实 Boss 登录**、**VM 上尚未装 Playwright/Puppeteer**。
+
+**① 主机事实**
+
+| 项 | 值 |
+|:--|:--|
+| 主机 | `106.54.228.191`（腾讯云 CVM `VM-0-6-ubuntu`）· **Ubuntu 24.04.4 LTS** · 内核 6.8 · amd64 |
+| 账号 | **`liuyang`**（在 `sudo` 组；`sudo -S` 输密码可取 root） |
+| 资源 | **2 vCPU / 3.6 GiB RAM + swap 6.0 GiB / 69 G 盘（用 9.4 G）**；虚拟显卡 Cirrus（**无 GPU** → 软件渲染） |
+| 同机共驻 | ⚠️ **personal-watch 的 cline hub daemon**（常驻 ~236 MB）→ 抢 2 vCPU/内存，**别在此机跑重活** |
+
+**② 已装 & 已验证（2026-10-11）**
+- **XFCE 4.18** 桌面（`:1`；`xlsclients` 可见 session/panel/Thunar/desktop）· **TigerVNC 1.13.1**（`:1 → 127.0.0.1:5901`，**仅绑本机**）
+- **Google Chrome 155.0.8059.39**（**可见** 与 **headless** 双模式均通，`/usr/bin/google-chrome`）
+- **CDP** `http://127.0.0.1:9222`（`DevTools listening…`；targets 含 `https://www.zhipin.com/`）
+- swap 1.9 G → **6.0 G**（`/swap2.img` 已写 fstab）；已关 `lightdm` / `cups` / `colord` / `ModemManager`，默认 target = `multi-user`
+- 实测占用：桌面 + Chrome 全开 ≈ **1.2 G / 3.7 G**（available ~2.5 G）
+
+**③ 访问方式（一律走 SSH 隧道；🚫 不开公网端口 / 安全组不开 5901·9222）**
+```bash
+ssh -N -L 5901:127.0.0.1:5901 -L 9222:127.0.0.1:9222 liuyang@106.54.228.191
+```
+- **VNC 客户端**连 `127.0.0.1:5901`，密码 **`hrvnc888`**（Windows 用 TigerVNC Viewer / RealVNC / TightVNC）
+- **CDP** 连 `http://127.0.0.1:9222`：Playwright `chromium.connect_over_cdp(url)` · Puppeteer `puppeteer.connect({browserURL})`
+
+**④ 两种模式（★ 共用同一 profile ⇒ 登录一次长期复用）**
+
+| 脚本（服务器 `~`） | 用途 | 备注 |
+|:--|:--|:--|
+| `~/hr_start.sh` | 确保 VNC 桌面在跑 | `vncserver :1 … -localhost yes` |
+| `~/hr_login.sh` | **登录模式**：VNC 桌面里开**可见** Chrome + CDP → **人工扫码/短信/滑块** | `DISPLAY=:1` |
+| `~/hr_headless.sh` | **自动化模式**：**headless** Chrome + CDP（省内存） | 无 DISPLAY |
+
+- 三者统一 `--user-data-dir=/home/liuyang/.hr-chrome-profile` ⇒ **登录态持久，切 headless 免再登**。
+- ⚠️ **同一时刻只能跑一个**（都要占 9222）。脚本已内置「先杀旧的」，但**清理必须用 `pkill -f '[r]emote-debugging-port=9222'`（括号技巧）**；直接 `pkill -f 'remote-debugging-port=9222'` 会**连执行命令的 shell 一起杀掉**（本次踩过，别改回去）。
+
+**⑤ 与 §0.3（cookie 注入）的关系**
+- §0.3 的「注入 `wt2/wbg/zp_at/bst` + **只认新标签**」= **playwright-mcp（Windows 侧）** 路径；
+- **本机路径** = **CDP + 持久 profile** ⇒ **优先「VNC 里人工登录一次」**，cookie 交给 profile；跨机迁移时才回退 cookie 注入。
+- **两条路径共用同一判据**：**必须新开标签读 `.chat-message-list`**（旧标签会骗人）。
+
+**⑥ 待办（未验证 / 待拍板）**
+- ⬜ **VM 装 driver**：Playwright/Puppeteer（用**系统 Chrome**：`channel=chrome` 或 `executablePath=/usr/bin/google-chrome`）；**当前 VM 上还没有 driver**。
+- ⬜ **真实 Boss 登录**（VNC 人工扫码）建立 `~/.hr-chrome-profile` 登录态；并复核 **Boss 页面时间 vs 本机时钟（差 ~8h）**。
+- ⬜ **开机自启**（`@reboot ~/hr_start.sh`）—— 待批。
+- ⬜ **免密 SSH**（Windows 侧公钥装到 VM）替代密码 —— 待批。
+- ⬜ **合规/风控口径**（Boss 反自动化；自动发消息可能违反 ToS / 封号）→ 需用户明确授权范围；**建议首期只读 + 草稿 + 人工确认发送**。
+
+**⑦ 凭据（⚠️ 私密 · 本仓库必须保持 private）**
+- SSH：`liuyang@106.54.228.191` / 密码 **`Ly3960405!`**
+- VNC：**`hrvnc888`**
+- ⚠️ 仓库可见性变更或人员变动 → **立即轮换**（`passwd` + `vncpasswd`）；🚫 **这两个不进 `recruit/` 产物、不进任何报告 HTML**；🚫 **不上传到 Boss/候选人可见的任何地方**。
+
+> 🧯 **故障速查**：连不上 → 先看隧道进程 + `vncserver -list`；Chrome 无 CDP → `tail /tmp/hr_chrome_headless.log`；桌面黑屏 → `tail ~/.vnc/*.log`；VM 内存吃紧 → `pkill -f '[r]emote-debugging-port=9222'` 关浏览器。
+
+---
+
 ## 1. 工作流（SOP · 默认顺序）
 
 > 每轮唤醒按 **继承（必做）→ 巡检 → 推进 → 收尾** 四步走。**额度紧张时**：至少做完 **第 1 步**（继承 + 状态汇报）。
@@ -130,8 +190,8 @@
 4. 若有**未答的运维提问** → **先答**再干活。
 
 **第 2 步 · 巡检（只读，确认现状）**
-5. `git -C <仓库根> status -sb`（确认干净 / 无别线在途文件）；
-6. 巡检 Boss：登录态是否有效（新标签读 `.chat-message-list`）；沟通列表**新招呼 / 新回复 / 新简历卡**；
+5. `git -C <仓库根> status -sb`（确认干净 / 无别线在途文件）；**顺带环境自检（§0.4）**：SSH 隧道可达？`vncserver -list` 有 `:1`？`curl -s 127.0.0.1:9222/json/version` 通？不通 → 按 §0.4「故障速查」处置并如实记；
+6. 巡检 Boss：登录态是否有效（**新开标签**读 `.chat-message-list`）——**走 §0.4 的「CDP + 持久 profile」路径**，或 §0.3 的「cookie 注入」路径（二选一见 §0.4⑤）；沟通列表**新招呼 / 新回复 / 新简历卡**；
 7. 复核 `$HR_DIR/发送记录.md` 尾部（最近批次是否「送达」、有无风控事件）。
 
 **第 3 步 · 推进（对外动作受 §3 闸门约束）**
@@ -206,6 +266,8 @@ doc/personal-watch/run/
 10. 🚫 **不在正文/快照/流水写以 `WAITING:` 开头的行**（会误触发 loop 长睡）。
 11. ✅ **可溯源**：每条结论能追到具体证据（Boss 会话 / 简历 / 台账行）。
 12. ⚠️ **时间以 Boss 页面时间为准**（本机时钟慢约 8 小时）；归档目录用 **Boss 日期**。
+13. 🚫 **环境红线（§0.4）**：VNC(`5901`) / CDP(`9222`) **只绑 `127.0.0.1`**，**一律走 SSH 隧道**；🚫 不开公网端口 / 不改绑定 / 不关防火墙；🚫 凭据（SSH/VNC 口令）**不进产物、不进报告 HTML**。
+14. 🚫 **VM 上不放 PII、不跑重活**：简历 PDF / `securityId` / cookie **不进 VM 的 git 工作副本**；VM 只做**浏览器执行**，**数据本体仍留 `$HR_DIR`**；该机仅 **2 vCPU/3.6 G 且与 cline daemon 共驻**。
 
 ---
 
@@ -227,5 +289,6 @@ doc/personal-watch/run/
 - **本项目总纲**：`../README.md`；**supervisor 记忆**：`../MEMORY.md`；**agent 总表**：`../AGENTS.md`。
 - **姊妹线**：`WATCH_NEWS_TASK.md` / `WATCH_RESEARCH_TASK.md` + `watch_news_loop.sh` / `watch_research_loop.sh`（范式与铁律来源）。
 - **继承源（规范）**：`$HR_DIR` = `C:\Users\liuyu\HR` —— `MEMORY.md` · `USER.md` · `AGENTS.md` · `DREAMS.md` · `memory/` · `发送记录.md` · `话术-最终版.md` · `screen.py` · `city_scan.py` · `候选人筛选报告.md`。
+- **执行环境（§0.4）**：腾讯云 Ubuntu `106.54.228.191`（`liuyang`）—— 服务器侧 `~/hr_start.sh` · `~/hr_login.sh` · `~/hr_headless.sh` · profile `~/.hr-chrome-profile` · `~/.vnc/`；隧道 `ssh -L 5901:… -L 9222:…`。
 - **环境变量**：`WATCH_HR_DIR`（覆盖 HR 工作区路径）；`WATCH_SCHEDULE_HOURS`（覆盖唤醒时窗）。
 
