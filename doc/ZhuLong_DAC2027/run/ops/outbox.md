@@ -5752,3 +5752,257 @@ EDA_RUNCODE_GUARDRAILS=false          # run_code 后置护栏（Python AST 检�
 /dev/mapper/vgroot-lv_home      394G  374G        4G 100% /home
 == DONE — RUN_ID 37（清冲突 + README 查 recall + MCP→8090 + 起 r2）==
 ```
+
+---
+
+## RUN_ID 38 · 2026-10-11 09:10:30 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# ═══ RUN_ID 38 — ZhuLong：停评测 + 口径改回 8650-8654/9006 + blame 取证 + MCP 8090 诊断 ═══
+echo "== RUN_ID 38 @ $(date '+%F %T') host=$(hostname) =="
+EDA=/nasdata/app.e0031982/code/eda_fastmcp
+FW=/nasdata/app.e0031982/code/EDA-Eval-Framework
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+SHOST=10.129.32.75; PORTS="8650 8651 8652 8654"
+TS=$(date '+%Y%m%d_%H%M%S')
+PY=$(command -v python3 || command -v python || true)
+
+echo; echo "=========== 1. 停评测（校验；有则停）==========="
+E=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)
+echo "   EVAL_ALIVE=$E"
+if [ "$E" -gt 0 ]; then timeout 30 pkill -f '^bash scripts/run_cline_script' 2>/dev/null; sleep 5; echo "   AFTER=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)"; fi
+
+echo; echo "=========== 2. 取证：是谁把上游改成 8656/8658/8661/8662 + 9010？==========="
+echo "-- eda_fastmcp/.env 最近 8 次提交 --"
+timeout 30 git -C "$EDA" log --format='%h | %an <%ae> | %cd | %s' --date=format:'%Y-%m-%d %H:%M' -8 -- .env 2>/dev/null | cut -c1-165
+echo "-- blame：这些行的归属（commit/author/date）--"
+timeout 40 git -C "$EDA" blame --date=format:'%Y-%m-%d %H:%M' -- .env 2>/dev/null | grep -nE '8656|8658|8661|8662|9010|9009' | head -8 | cut -c1-175
+echo "-- 当前 HEAD 提交的作者/时间 --"
+timeout 30 git -C "$EDA" log -3 --format='%h | %an <%ae> | %cd | %s' --date=format:'%Y-%m-%d %H:%M' 2>/dev/null | cut -c1-165
+echo "-- 刚 pull 到的 e51372ff 改了什么（前 12 个文件）--"
+timeout 30 git -C "$EDA" show --stat --oneline e51372ff 2>/dev/null | head -12 | cut -c1-140
+echo "-- Framework 侧同查（config.yaml 的端口/端点责任人）--"
+timeout 30 git -C "$FW" log --format='%h | %an <%ae> | %cd | %s' --date=format:'%Y-%m-%d %H:%M' -5 -- config.yaml 2>/dev/null | cut -c1-165
+timeout 40 git -C "$FW" blame --date=format:'%Y-%m-%d %H:%M' -- config.yaml 2>/dev/null | grep -nE '865[0-9]|866[0-9]|900[0-9]|9010' | head -6 | cut -c1-175
+
+echo; echo "=========== 3. 强制口径：.env 去重写死 8650-8654 / 9006 / 8090 ==========="
+timeout 30 cp -p "$EDA/.env" "/tmp/eda_fastmcp.env.canon.$TS" && echo "   备份=/tmp/eda_fastmcp.env.canon.$TS"
+echo "   改前关键行: "; timeout 20 grep -nE '^(PROXY_PORTS|SANDBOX_ENDPOINTS|RAG_RECALL_URL|RAG_RECALL_URL_LOCAL|MEMORY_VECTOR_URL|EDA_MCP_PORT)=' "$EDA/.env" | cut -c1-150
+SE=$(timeout 20 grep -E '^SANDBOX_ENDPOINTS=' "$EDA/.env" | tail -1 | sed 's/^SANDBOX_ENDPOINTS=//')
+echo "   保留的 SANDBOX_ENDPOINTS = $SE （⚠️ workdir 待人工核）"
+grep -vE '^[[:space:]]*(export[[:space:]]+)?(PROXY_PORTS|SANDBOX_ENDPOINTS|RAG_RECALL_URL|EDA_MCP_PORT)=' "$EDA/.env" > "$EDA/.env.tmp38"
+{ echo "PROXY_PORTS=8650,8651,8652,8654"; echo "SANDBOX_ENDPOINTS=$SE"; echo "RAG_RECALL_URL=http://localhost:9006/recall"; echo "EDA_MCP_PORT=8090"; } >> "$EDA/.env.tmp38"
+timeout 30 mv "$EDA/.env.tmp38" "$EDA/.env"; echo "   写入 exit=$?"
+echo "   改后（应各 1 行）: PROXY_PORTS=$(timeout 20 grep -cE '^PROXY_PORTS=' "$EDA/.env") SANDBOX_ENDPOINTS=$(timeout 20 grep -cE '^SANDBOX_ENDPOINTS=' "$EDA/.env") RAG_RECALL_URL=$(timeout 20 grep -cE '^RAG_RECALL_URL=' "$EDA/.env") EDA_MCP_PORT=$(timeout 20 grep -cE '^EDA_MCP_PORT=' "$EDA/.env")"
+timeout 20 grep -nE '^(PROXY_PORTS|SANDBOX_ENDPOINTS|RAG_RECALL_URL|EDA_MCP_PORT)=' "$EDA/.env" | cut -c1-165
+echo "   sh -n 校验: $( cd "$EDA" && timeout 20 sh -n .env 2>&1 | head -2 | cut -c1-140 )(空=OK)"
+timeout 30 git -C "$EDA" add .env 2>&1 | head -2; echo "   git add exit=$?"
+
+
+echo; echo "=========== 4. MCP 8090 诊断（为何『启动成功』却没在听）==========="
+echo "   监听: $(timeout 20 ss -lntp 2>/dev/null | grep -E ':(8090|18890)' | cut -c1-140 | tr '\n' '|')"
+echo "   进程: $(timeout 20 pgrep -af 'python main\.py' 2>/dev/null | grep -v cline | head -4 | cut -c1-110 | tr '\n' '|')"
+echo "   app.log 尾 20 行:"; timeout 20 tail -20 "$EDA/logs/app.log" 2>/dev/null | cut -c1-180
+echo "   pid 文件: $(timeout 20 ls -l "$EDA"/*.pid "$EDA"/logs/*.pid "$EDA"/run/*.pid 2>/dev/null | head -3 | cut -c1-130 | tr '\n' '|')"
+echo "   README 的 mcpServers 片段（看该用 /sse 还是 /mcp）:"; timeout 20 sed -n '74,96p' "$EDA/README.md" 2>/dev/null | cut -c1-175
+echo "   两处 cline_mcp_settings.json 的 url: $(timeout 20 grep -ohE 'http://[^\"]+' "$HOME/.cline/data/settings/cline_mcp_settings.json" "$EVALDATA/settings/cline_mcp_settings.json" 2>/dev/null | cut -c1-60 | tr '\n' '|')"
+echo "-- 重启 MCP（按用户令 8090）--"
+( cd "$EDA" && timeout 40 bash scripts/stop.sh ) > /tmp/eda_stop_runid38.log 2>&1; echo "   stop.sh exit=$?"; sleep 3
+( cd "$EDA" && export EDA_MCP_PORT=8090 && timeout 90 ./scripts/start.sh ) > /tmp/eda_start_runid38.log 2>&1; echo "   start.sh exit=$?"
+timeout 20 tail -12 /tmp/eda_start_runid38.log 2>/dev/null | cut -c1-180
+sleep 6
+MCP=$(timeout 20 ss -lntp 2>/dev/null | grep -c ':8090')
+echo "   :8090 监听数=$MCP  /health=$(timeout 15 curl -s -m 8 -o /dev/null -w '%{http_code}' http://localhost:8090/health 2>/dev/null)  /mcp=$(timeout 15 curl -s -m 8 -o /dev/null -w '%{http_code}' http://localhost:8090/mcp 2>/dev/null)"
+timeout 20 ss -lntp 2>/dev/null | grep -E ':(8090|18890)' | cut -c1-150
+
+echo; echo "=========== 5. 起 RAG recall API 到 9006（按 README 的脚本）==========="
+echo "   当前监听: $(timeout 20 ss -lntp 2>/dev/null | grep -E ':(9002|9006|9009|9010)' | cut -c1-120 | tr '\n' '|')"
+echo "   脚本端口逻辑（前 12 条）:"; timeout 20 grep -nE 'PORT|9002|9006|free|空闲|seq' "$EDA/scripts/start_recall_api.sh" 2>/dev/null | head -12 | cut -c1-165
+echo "   .env 生效 RAG_RECALL_URL=$(timeout 20 grep -E '^RAG_RECALL_URL=' "$EDA/.env" | tail -1 | cut -c1-90)"
+if timeout 20 ss -lntp 2>/dev/null | grep -q ':9006'; then
+  echo "   ✅ 9006 已在听（不重启）"
+else
+  echo "   ⚠️ 9006 未听 ⇒ 以 9006 起 start_recall_api.sh（同时注入 RAG_RECALL_PORT/RECALL_PORT=9006 两种命名以兼容）"
+  ( cd "$EDA" && setsid env RAG_RECALL_PORT=9006 RECALL_PORT=9006 bash scripts/start_recall_api.sh > "/tmp/recall_api_$TS.log" 2>&1 < /dev/null & )
+  sleep 12
+  timeout 20 tail -18 "/tmp/recall_api_$TS.log" 2>/dev/null | cut -c1-180
+  echo "   起后 9006 监听数=$(timeout 20 ss -lntp 2>/dev/null | grep -c ':9006')"
+fi
+echo "   探活: 9006/health=$(timeout 15 curl -s -m 8 -o /dev/null -w '%{http_code}' http://localhost:9006/health 2>/dev/null)  9006/recall=$(timeout 15 curl -s -m 8 -o /dev/null -w '%{http_code}' http://localhost:9006/recall 2>/dev/null)"
+
+echo; echo "=========== 6. 4 端口复核 + 快照（**本块不起 r2**）==========="
+OK=0
+for p in $PORTS; do
+  timeout 5 bash -c "echo > /dev/tcp/$SHOST/$p" 2>/dev/null && tcp=OK || tcp=CLOSED
+  body=$(timeout 25 curl -s -m 10 -X POST "http://$SHOST:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+  n=${#body}; if [ "$n" -gt 0 ]; then rc=OK; OK=$((OK+1)); else rc="FAIL(0byte)"; fi
+  echo "   port $p : TCP=$tcp run_code=$rc resp_len=$n"
+done
+echo "   ▶ 健康端口=$OK/4   EVAL_ALIVE=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)  （按用户令保持停机，**不起 r2**）"
+timeout 20 df -BG /home 2>/dev/null | tail -1 | cut -c1-110
+echo "== DONE — RUN_ID 38（停评测 + 口径改回 8650-8654/9006 + blame 取证 + MCP 8090 诊断）=="
+```
+
+**输出**
+```
+== RUN_ID 38 @ 2026-10-11 09:10:30 host=hfeg0tedaap02 ==
+
+=========== 1. 停评测（校验；有则停）===========
+   EVAL_ALIVE=0
+
+=========== 2. 取证：是谁把上游改成 8656/8658/8661/8662 + 9010？===========
+-- eda_fastmcp/.env 最近 8 次提交 --
+e51372ff | t0002997 <wenchuan.zhang@cxmt.com> | 2026-10-10 16:33 | 使用未增强文档，无自探索
+8db40001 | 陈熙元 <xiyuan.chen@cxmt.com> | 2026-10-10 14:25 | Merge branch master into host-gating-clean (Conflict resolved online)
+d8dafdf4 | xiyuan.chen <xiyuan.chen@cxmt.com> | 2026-10-08 10:27 | 优化代码，更新四种语言增强api 文档
+e29cbc15 | Yang Liu <paul.liu@cxmt.com> | 2026-09-30 10:23 | feat(tools): add text_to_image tool wrapping doubao-seedream-5.0-lite-cloud (disabled by default)
+cb5c402c | Yang Liu <paul.liu@cxmt.com> | 2026-09-30 09:30 | feat(ablation): S1 保真度轴 + S2 Φ 轴消融（hook/handler/检索降保真 + 元数据）
+f6f83e8c | 张文川 <wenchuan.zhang@cxmt.com> | 2026-09-22 13:35 | update .env
+aabe4630 | 张文川 <wenchuan.zhang@cxmt.com> | 2026-09-22 13:27 | Merge branch 'master' of ssh://devops.cxmt.com:8022/git/AIX/PAI/eda/eda_fastmcp
+172d7b1c | 张文川 <wenchuan.zhang@cxmt.com> | 2026-09-22 13:19 | 修改.env与一些文档
+-- blame：这些行的归属（commit/author/date）--
+71:d8dafdf42 (xiyuan.chen       2026-10-08 10:27  71) PROXY_PORTS=8656,8658,8661,8662
+104:d8dafdf42 (xiyuan.chen       2026-10-08 10:27 104) SANDBOX_ENDPOINTS=8656:/proj/train/AI/workdir/t0002441_9,8658:/proj/train/AI/workdir/t0002441_10,8661:/proj/train/AI/wor
+132:d8dafdf42 (xiyuan.chen       2026-10-08 10:27 132) RAG_RECALL_URL=http://localhost:9010/recall
+-- 当前 HEAD 提交的作者/时间 --
+e51372ff | t0002997 <wenchuan.zhang@cxmt.com> | 2026-10-10 16:33 | 使用未增强文档，无自探索
+8db40001 | 陈熙元 <xiyuan.chen@cxmt.com> | 2026-10-10 14:25 | Merge branch master into host-gating-clean (Conflict resolved online)
+343cce34 | Yang Liu <paul.liu@cxmt.com> | 2026-10-08 10:47 | feat: CLI_DATA_DIR 支持环境变量覆盖
+-- 刚 pull 到的 e51372ff 改了什么（前 12 个文件）--
+e51372ff 使用未增强文档，无自探索
+ .env | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+-- Framework 侧同查（config.yaml 的端口/端点责任人）--
+b867147 | xiyuan.chen <xiyuan.chen@cxmt.com> | 2026-10-08 16:55 | 四种语言独立，加入hook
+15a66da | xiyuan.chen <xiyuan.chen@cxmt.com> | 2026-09-28 10:57 | 删除冗余配置，更新prompt
+6b6cbf0 | xiyuan.chen <xiyuan.chen@cxmt.com> | 2026-09-24 16:45 | 合并多语言
+a8c03d4 | xiyuan.chen <xiyuan.chen@cxmt.com> | 2026-09-22 08:31 | 增加断点恢复功能
+af4de65 | Yang Liu <paul.liu@cxmt.com> | 2026-09-22 08:31 | fix: restore full 158-problem PyAether benchmark (was 2-problem test_version)
+29:15a66daa (xiyuan.chen 2026-09-28 10:57 29)   url: http://10.129.32.75:8656/v1/run_code
+
+=========== 3. 强制口径：.env 去重写死 8650-8654 / 9006 / 8090 ===========
+   备份=/tmp/eda_fastmcp.env.canon.20261011_091030
+   改前关键行: 
+71:PROXY_PORTS=8656,8658,8661,8662
+104:SANDBOX_ENDPOINTS=8656:/proj/train/AI/workdir/t0002441_9,8658:/proj/train/AI/workdir/t0002441_10,8661:/proj/train/AI/workdir/t0002441_11,8662:/pro
+132:RAG_RECALL_URL=http://localhost:9010/recall
+143:MEMORY_VECTOR_URL=http://localhost:9011
+144:RAG_RECALL_URL_LOCAL=http://localhost:9011/recall
+286:PROXY_PORTS=8650,8651,8652,8654
+287:SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/
+288:RAG_RECALL_URL=http://localhost:9006/recall
+289:EDA_MCP_PORT=8090
+   保留的 SANDBOX_ENDPOINTS = 8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4 （⚠️ workdir 待人工核）
+   写入 exit=0
+   改后（应各 1 行）: PROXY_PORTS=1 SANDBOX_ENDPOINTS=1 RAG_RECALL_URL=1 EDA_MCP_PORT=1
+283:PROXY_PORTS=8650,8651,8652,8654
+284:SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdi
+285:RAG_RECALL_URL=http://localhost:9006/recall
+286:EDA_MCP_PORT=8090
+   sh -n 校验: (空=OK)
+   git add exit=0
+
+=========== 4. MCP 8090 诊断（为何『启动成功』却没在听）===========
+   监听: LISTEN 0      2048              0.0.0.0:18890      0.0.0.0:*                                       |LISTEN 0      2048              0.0.0.0:8090       0.0.0.0:*    users:(("python",pid=3482137,fd=3))|
+   进程: 77800 python main.py|1531391 python main.py|1653293 python main.py|1743813 python main.py|
+   app.log 尾 20 行:
+[api_patch] Merged 521 patch entries into API_DATA
+INFO:     10.251.36.15:37160 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:37172 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:34730 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:34740 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:43250 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:56738 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:37012 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:40944 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:60308 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:57174 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:58320 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:58330 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:58336 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:58346 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:34340 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:58064 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:58072 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:58998 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     10.251.36.15:59000 - "GET /sse HTTP/1.1" 404 Not Found
+   pid 文件: 
+   README 的 mcpServers 片段（看该用 /sse 还是 /mcp）:
+./scripts/stop.sh
+```
+
+### 3. Cline CLI 配置
+
+Cline 通过 `~/.cline/data/settings/cline_mcp_settings.json` 连接 MCP server：
+
+```json
+{
+  "mcpServers": {
+    "pyAether_MCP_server": {
+      "url": "http://<本机IP>:18889/mcp",
+      "type": "streamableHttp",
+      "autoApprove": ["search_apis", "search_apis_by_keyword", "get_api_details", "run_code"]
+    }
+  }
+}
+```
+
+模型配置在 `~/.cline/data/settings/providers.json`（model id + apiKey + baseUrl）。`.env` 里有各模型配置（`DEEPSEEK_MODEL` / `GLM_MODEL` / `KIMI_MODEL` / `DOUB
+
+---
+
+   两处 cline_mcp_settings.json 的 url: http://10.251.36.15:8090/sse|
+-- 重启 MCP（按用户令 8090）--
+   stop.sh exit=0
+   start.sh exit=0
+[0;32mEDA MCP Server 启动中...[0m
+[0;32m============================================[0m
+项目目录: /nasdata/app.e0031982/code/eda_fastmcp
+监听地址: 0.0.0.0:8090
+传输协议: streamable-http
+遥测开关: false
+追踪端点: http://localhost:4318/v1/traces
+日志文件: /nasdata/app.e0031982/code/eda_fastmcp/logs/app.log
+[0;32mEDA MCP Server 启动成功[0m
+[0;32m============================================[0m
+访问地址: http://0.0.0.0:8090/mcp
+健康检查: http://0.0.0.0:8090/health
+   :8090 监听数=0  /health=000  /mcp=000
+LISTEN 0      2048              0.0.0.0:18890      0.0.0.0:*          
+
+=========== 5. 起 RAG recall API 到 9006（按 README 的脚本）===========
+   当前监听: LISTEN 0      2048              0.0.0.0:9010       0.0.0.0:*          |LISTEN 0      2048              0.0.0.0:9009       0.0.0.0:*          |LISTEN 0      2048              0.0.0.0:9002       0.0.0.0:*          |
+   脚本端口逻辑（前 12 条）:
+12:PORT_FILE="${KB_DIR}/.recall_api.port"
+15:DEFAULT_PORT=9002
+51:        old_port=$(cat "$PORT_FILE" 2>/dev/null || echo "unknown")
+52:        echo "[ERROR] 服务已在运行 (PID=$old_pid, PORT=$old_port)"
+56:        rm -f "$PID_FILE" "$PORT_FILE"
+60:# 自动检测可用端口（从 DEFAULT_PORT 开始）
+62:    for port in $(seq "$1" 10099); do
+71:PORT="${PORT:-$(find_port "$DEFAULT_PORT")}"
+72:if [[ -z "$PORT" ]]; then
+81:echo "  端口: $PORT"
+96:    --port "$PORT" \
+102:echo "$PORT" > "$PORT_FILE"
+   .env 生效 RAG_RECALL_URL=RAG_RECALL_URL=http://localhost:9006/recall
+   ⚠️ 9006 未听 ⇒ 以 9006 起 start_recall_api.sh（同时注入 RAG_RECALL_PORT/RECALL_PORT=9006 两种命名以兼容）
+[INFO] 启动 API 向量检索服务...
+  模型: /nasdata/app.e0023936/Octen-Embedding-4B
+  存储: /nasdata/app.e0031982/code/eda_fastmcp/kb/chroma_db_v20260522
+  集合: api_descriptions(pyAether/aether) + skill_descriptions(skill/virtuoso) + waveview_description(tcl/waveview) + innovus_description(tcl/innovus) [4 collection, 按 (lang, h
+  端口: 9006
+  线程: TORCH_NUM_THREADS=8
+   起后 9006 监听数=0
+   探活: 9006/health=000  9006/recall=000
+
+=========== 6. 4 端口复核 + 快照（**本块不起 r2**）===========
+   port 8650 : TCP=OK run_code=OK resp_len=106
+   port 8651 : TCP=OK run_code=OK resp_len=106
+   port 8652 : TCP=OK run_code=OK resp_len=106
+   port 8654 : TCP=OK run_code=OK resp_len=106
+   ▶ 健康端口=4/4   EVAL_ALIVE=0  （按用户令保持停机，**不起 r2**）
+/dev/mapper/vgroot-lv_home      394G  374G        4G 100% /home
+== DONE — RUN_ID 38（停评测 + 口径改回 8650-8654/9006 + blame 取证 + MCP 8090 诊断）==
+```
