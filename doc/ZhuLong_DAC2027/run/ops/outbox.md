@@ -7528,3 +7528,137 @@ Date:   Sat Oct 10 16:33:57 2026 +0800
 147:API_INFO_MERGED_FILE=./docs/API_INFO_MERGED_V2.json
 === DONE ===
 ```
+
+---
+
+## RUN_ID 48 · 2026-10-11 22:49:38 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 48 · 定论文档源/自探索（只读）
+echo "=== [0] host/time ==="; hostname; date '+%F %T'
+E=/nasdata/app.e0031982/code/eda_fastmcp
+R1=/tmp/ABL_full_r1.log
+
+echo "=== [1] r1 日志指纹（10-10 15:32）==="
+ls -l "$R1" 2>/dev/null
+for K in 'ACCESS RESTRICTED' '部署沙盒 hook' 'PreToolUse' 'Available tools' 'API_INFO_MERGED' 'EVOLVE' 'PROXY_PORTS=' 'RAG_RECALL_URL='; do
+  printf '  %-22s -> %s\n' "$K" "$(grep -ac "$K" "$R1" 2>/dev/null)"
+done
+echo "  --- r1 Available tools ---"; grep -aoE 'Available tools:.{0,620}' "$R1" 2>/dev/null | head -1
+echo "  --- r1 Pass@1 / timeout ---"; grep -aoE '[0-9]+/158 *pass|pass \([0-9.]+%\)|timeout[^ ]{0,6}[0-9]+' "$R1" 2>/dev/null | tail -6
+
+echo "=== [2] e51372ff 的 .env 4 行 diff 全文 ==="
+cd "$E" 2>/dev/null && git show e51372ff -- .env 2>/dev/null | head -45
+
+echo "=== [3] 当前 .env：文档源/自探索/回读/端口 ==="
+grep -nE 'API_INFO_MERGED_FILE|EVOLVE|RUN_CODE_FEEDBACK|PROXY_PORTS|RAG_RECALL_URL' "$E/.env" 2>/dev/null | cut -c1-200
+
+echo "=== [4] 「自探索」对应哪个变量（源码取证）==="
+grep -rniE 'self.?expl|evolve' "$E/scripts/run_cline_script.sh" "$E/main.py" 2>/dev/null | head -18 | cut -c1-180
+ls -l "$E"/docs/API_INFO_MERGED_V*.json 2>/dev/null
+
+echo "=== [5] r2–r5 日志里的文档源/evolve 指纹 ==="
+for F in /tmp/ABL_full_r2_8650set_failed_pydantic.log /tmp/ABL_full_r3_8650set.log /tmp/ABL_full_r4_8650set.log /tmp/ABL_full_r5_8650set.log; do
+  [ -f "$F" ] || continue
+  printf '  %-46s V2=%s V3=%s EVOLVE=%s\n' "$(basename "$F")" \
+   "$(grep -ac 'MERGED_V2' "$F" 2>/dev/null)" "$(grep -ac 'MERGED_V3' "$F" 2>/dev/null)" "$(grep -ac 'EVOLVE' "$F" 2>/dev/null)"
+done
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] host/time ===
+hfeg0tedaap02
+2026-10-11 22:49:38
+=== [1] r1 日志指纹（10-10 15:32）===
+-rw-r----- 1 app.e0031982 app.adm 15554185 Oct 10 15:32 /tmp/ABL_full_r1.log
+  ACCESS RESTRICTED      -> 676
+  部署沙盒 hook      -> 1
+  PreToolUse             -> 0
+  Available tools        -> 9
+  API_INFO_MERGED        -> 0
+  EVOLVE                 -> 0
+  PROXY_PORTS=           -> 0
+  RAG_RECALL_URL=        -> 0
+  --- r1 Available tools ---
+Available tools: read_files, search_codebase, run_commands, fetch_web_content, editor, ask_question, pyAether_MCP_server__get_api_details, pyAether_MCP_server__search_apis, pyAether_MCP_server__search_apis_by_keyword, pyAether_MCP_server__run_code, pyAether_MCP_server__text_to_image, spawn_agent, team_spawn_teammate, team_shutdown_teammate, team_status, team_task, team_run_task, team_cancel_run, team_list_runs, team_await_runs, team_send_message, team_broadcast, team_read_mailbox, team_mission_log, team_cleanup, team_create_outcome, team_attach_outcome_fragment, team_review_outcome_fragment, team_finalize_outcome, team_list_outc
+  --- r1 Pass@1 / timeout ---
+timeout[0m[2
+timeout[0m[2
+timeout[0m[2
+timeouts[0
+timeout[0m[2
+timeout[0m[2
+=== [2] e51372ff 的 .env 4 行 diff 全文 ===
+commit e51372ffdddbd3121b09bb3d5ee9b3d61d00b6d5
+Author: t0002997 <wenchuan.zhang@cxmt.com>
+Date:   Sat Oct 10 16:33:57 2026 +0800
+
+    使用未增强文档，无自探索
+
+diff --git a/.env b/.env
+index 3a646e8c..43e6ae5a 100644
+--- a/.env
++++ b/.env
+@@ -145,16 +145,16 @@ RAG_RECALL_URL_LOCAL=http://localhost:9011/recall
+ # 文件与数据路径配置
+ # =======================================================
+ # pyAether API 元数据的 JSON 文件路径
+-API_INFO_MERGED_FILE=./docs/API_INFO_MERGED_V3.json
++API_INFO_MERGED_FILE=./docs/API_INFO_MERGED_V2.json
+ # SKILL API 元数据的 JSON 文件目录
+ # SKILL_DATA_DIR=./docs/skill_data
+-SKILL_DATA_DIR=./docs/skill_data_selfexpl
++SKILL_DATA_DIR=./docs/skill_data
+ # Tcl (WaveView ACE) API 元数据 JSON 文件路径
+ # TCL_API_FILE=./docs/wv_ace_API_INFO.json
+-TCL_API_FILE=./docs/wv_ace_API_INFO_P2019_06_SP2.json
++TCL_API_FILE=./docs/wv_ace_API_INFO.json
+ # Innovus API 元数据 JSON 文件路径
+ # INNOVUS_API_FILE=./docs/innovus_API_INFO.json
+-INNOVUS_API_FILE=./docs/innovus_API_INFO_SELFEXPL.json
++INNOVUS_API_FILE=./docs/innovus_API_INFO.json
+ 
+ 
+ # 函数完整文档的 JSON 源文件
+=== [3] 当前 .env：文档源/自探索/回读/端口 ===
+69:# PROXY_PORTS=8664,8665,8653,8669,8668,8652
+70:# PROXY_PORTS=8650,8651,8652,8654
+131:# RAG_RECALL_URL=http://localhost:9002/recall
+133:# RAG_RECALL_URL=http://10.252.32.15:9001/recall
+141:RAG_RECALL_URL_LOCAL=http://localhost:9011/recall
+147:API_INFO_MERGED_FILE=./docs/API_INFO_MERGED_V2.json
+257:EDA_VALIDATOR_EVOLVE=true
+283:EDA_MCP_RUN_CODE_FEEDBACK=full
+284:PROXY_PORTS=8650,8651,8652,8654
+286:RAG_RECALL_URL=http://localhost:9006/recall
+=== [4] 「自探索」对应哪个变量（源码取证）===
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:66:EVOLVE_ENABLED=false
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:78:    echo "  -e, --evolve            开启自进化（Memory Bank 注入/更新、Skill 蒸馏）"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:97:            -e|--evolve)
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:98:                EVOLVE_ENABLED=true
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:123:    export EDA_EVOLVE_ENABLED="$EVOLVE_ENABLED"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:132:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:133:        print_info "自进化: 开启 (--evolve)"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:697:    # 挖掘全历史批次的 corner case。--apply 仅在 EDA_VALIDATOR_EVOLVE=true 时传:
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:703:    if [[ "$(python3 -c "import os;print((os.getenv('EDA_VALIDATOR_EVOLVE','false')).lower() in ('1','true','
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:710:        print_info "  (EDA_VALIDATOR_EVOLVE=false → 仅 report,不写 JSON;设 true 才 --apply)"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:749:    # can read self-evolved knowledge. It should run whenever L0 artifacts exist,
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:764:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:769:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:774:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:779:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:784:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:789:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:794:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+-rw-r----- 1 app.e0031982 app.adm  5979254 Sep 18 10:03 /nasdata/app.e0031982/code/eda_fastmcp/docs/API_INFO_MERGED_V2.json
+-rw-r----- 1 app.e0031982 app.adm 18132428 Sep 18 10:03 /nasdata/app.e0031982/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json
+=== [5] r2–r5 日志里的文档源/evolve 指纹 ===
+  ABL_full_r2_8650set_failed_pydantic.log        V2=0 V3=0 EVOLVE=0
+  ABL_full_r3_8650set.log                        V2=0 V3=0 EVOLVE=0
+  ABL_full_r4_8650set.log                        V2=0 V3=0 EVOLVE=0
+  ABL_full_r5_8650set.log                        V2=0 V3=0 EVOLVE=0
+=== DONE ===
+```
