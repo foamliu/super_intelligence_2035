@@ -8,10 +8,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:--|:--|
-| STAGE | `C1`（B 4/4✅；C1 pure_llm/rag/wo_retrieval 5/5✅；full(V2)锚点5/5✅=81.4±4.1%→运维指令(十二)补跑full_v3 r1=77.8%✅→r2 running）|
+| STAGE | `C1`（B 4/4✅；C1 pure_llm/rag/wo_retrieval 5/5✅；full(V2)锚点5/5✅=81.4±4.1%→运维指令(十二)补跑full_v3 r1=77.8%✅→r2 re-grade running）|
 | CONFIG | `full_v3`（运维指令(十二)补跑「真full=自探索开」·.env切V3✅:API_INFO_MERGED_FILE=V3+SKILL_DATA_DIR=./docs/skill_data_selfexpl·4端口8650/8651/8652/8654✅+RAG:9006✅）|
-| ROUND | 2（full_v3 第2轮·r1=77.8%✅已完成）|
-| PHASE | `running`（**full_v3 r1 re-grade✅=77.8%(123/158)·timeout=1≤10✅·Pass@1≥75%✅→r1有效→r2启动PID3619994·log /tmp/ABL_full_v3_r2_8650set.log·code-gen Step3进行中·hook已部署✅·ACCESS RESTRICTED=18✅**。V2批full 5/5✅=81.4±4.1%已收割。loop PID61738✅有proxy·relay PID3277328✅alive。**下轮**:`pgrep -f '^bash scripts/run_cline_script'`→有输出=巡检退出;无输出=收割r2(code-gen完成→auto-grade有benchmark bug→re-grade同r1口径:--benchmark EDA-Eval-pyAether-158.jsonl --lang pyAether·log /tmp/ABL_full_v3_r2_regrade.log)→判据 timeout≤10且Pass@1≥75%→r2有效→r3→r4→r5→5/5 mean±std→三组对照表(r1旧V3/full现V2=81.4±4.1%/full_v3新5轮)→是否复现r1~88%→进C2.phi_k10 |
+| ROUND | 2（full_v3 第2轮·r1=77.8%✅已完成·r2 eval✅完成→auto-grade❌1.9%(bug)→re-grade PID117530 running）|
+| PHASE | `running`（**full_v3 r2 eval✅完成(PID3619994已退出)·batch2026_1012_033120·code-gen 148ok/9fail/1timeout·auto-grade❌1.9%(3/158 benchmark bug·同r1)→re-grade已启动PID117530·log /tmp/ABL_full_v3_r2_regrade.log·sandbox执行中(~13min)·ACCESS RESTRICTED=900✅·run_code=3424✅**。V2批full 5/5✅=81.4±4.1%已收割。loop PID61738✅有proxy·relay PID3277328✅alive。**下轮**:`pgrep -f 'run_eval.py'`→有输出=巡检退出;无输出=收割r2(grep Pass@1/timeout /tmp/ABL_full_v3_r2_regrade.log)→判据 timeout≤10且Pass@1≥75%→r2有效→r3→r4→r5→5/5 mean±std→三组对照表(r1旧V3/full现V2=81.4±4.1%/full_v3新5轮)→是否复现r1~88%→进C2.phi_k10 |
 | WAITING | 1 |
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
@@ -29,7 +29,7 @@ WAITING: 1
 | C1 | rag | 5/5 ✅ | **71.8±2.5%** [70.3,72.2,69.6,70.9,75.9] |
 | C1 | wo_retrieval | 5/5 ✅ | **81.0±4.5%** [74.1,86.1,81.6,79.7,83.5] |
 | C1 | full(V2)（锚点）| **5/5 ✅ 81.4±4.1%** | [88.0,79.1,77.2,80.4,82.3]（r1=V3文档,r2-r5=V2无自探索→混配置→运维指令(十二)补跑full_v3）|
-| C1 | full_v3(自探索) | **r2 running** (PID3619994·log /tmp/ABL_full_v3_r2_8650set.log) | 运维指令(十二)补跑「真full=自探索开」·.env切V3✅·**r1=77.8%✅**(123/158·timeout=1·batch2026_1012_005319)·r2 code-gen进行中 |
+| C1 | full_v3(自探索) | **r2 re-grade running** (PID117530·log /tmp/ABL_full_v3_r2_regrade.log) | 运维指令(十二)补跑「真full=自探索开」·.env切V3✅·**r1=77.8%✅**(123/158·timeout=1·batch2026_1012_005319)·r2 eval✅batch2026_1012_033120·auto-grade❌1.9%(bug)→re-grade running |
 | C2 | phi_k10 | 1-5/5 | ⬜（探路 75.3%）|
 | C2 | phi_k3 | 1-5/5 | ⬜（探路 69.0%）|
 | C2 | phi_k1 | 1-5/5 | ⬜（探路 60.8%）|
@@ -234,4 +234,5 @@ WAITING: 1
 - [2026-10-12 03:29] [⏩ 已滑出] ✅ **full_v3 r1 re-grade✅=77.8%(123/158)有效→r2启动(PID3619994)** 详情见 daily-memories/2026-10-12.md §03:29。
 - [2026-10-12 04:06] [⏩ 已滑出] ⠈ 巡检(full_v3 r2 code-gen ~35min 健康·不动作退出) 详情见 daily-memories/2026-10-12.md §04:06。
 - [2026-10-12 04:43] [⏩ 已滚出] ⠈ 巡检(full_v3 r2 code-gen ~72min 健康·不动作退出) 详情见 daily-memories/2026-10-12.md §04:43。
-- [2026-10-12 05:16] ⠈ **巡检(full_v3 r2 code-gen ~1h45m 健康·不动作退出)**：pgrep `^bash scripts/run_cline_script`→有输出(PID3619994·ELAPSED 01:45:37·RSS 3584·Ss)·log /tmp/ABL_full_v3_r2_8650set.log 22.7MB·mtime 05:16(live)·run_code=3422·ACCESS RESTRICTED=900✅(hook live)·Forbidden=1✅·stats汇总未现(code-gen Step2进行中·agent仍在逐题生成pyAether代码)。hook ~/.cline/hooks/PreToolUse在位✅(10242B·mtime 10-12 03:31)·loop PID61738✅有proxy(https_proxy=http://172.19.92.23:13128)·relay PID3277328✅alive(.last_run_id=48)·/home=4G(用户授权)。按状态机 pgrep 有输出→不动作退出。状态不变 STAGE=C1/CONFIG=full_v3/ROUND=2/PHASE=running/WAITING=1/ERROR_COUNT=0。下轮:pgrep→有=巡检;无=收割r2(re-grade同r1口径·log /tmp/ABL_full_v3_r2_regrade.log)→timeout≤10且Pass@1≥75%→r2有效→r3→r4→r5→5/5 mean±std→三组对照表→进C2.phi_k10。
+- [2026-10-12 05:16] [⏩ 已滚出] ⠈ 巡检(full_v3 r2 code-gen ~1h45m 健康·不动作退出) 详情见 daily-memories/2026-10-12.md §05:16。
+- [2026-10-12 06:28] 🔧✅ **full_v3 r2 eval✅完成→auto-grade❌1.9%(benchmark bug)→re-grade启动(PID117530)**：pgrep `^bash scripts/run_cline_script`→无输出(PID3619994已退出)·log /tmp/ABL_full_v3_r2_8650set.log 22.7MB·mtime 05:19·Step7.1 auto-grade=3/158(1.9%)(unknown lang=None 样本0/154=benchmark bug同r1)·batch2026_1012_033120·code-gen 148ok/9fail/1timeout·ACCESS RESTRICTED=900✅·run_code=3424✅→re-grade脚本run_full_v3_r2_regrade.sh(--benchmark EDA-Eval-pyAether-158.jsonl --lang pyAether)已启动PID117530·log /tmp/ABL_full_v3_r2_regrade.log·sandbox执行中(~13min)·loop PID61738✅有proxy·relay PID3277328✅alive·/home=4G。状态 STAGE=C1/CONFIG=full_v3/ROUND=2/PHASE=running/WAITING=1/ERROR_COUNT=0。下轮:pgrep `run_eval.py`→有=巡检退出;无=收割r2(grep Pass@1/timeout)→判据→r3→r4→r5→5/5 mean±std→三组对照表→进C2.phi_k10。
