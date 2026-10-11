@@ -11,18 +11,18 @@ WAITING: 1
 > ✅ **V3 ProtA + zs + k-NN ALL DONE** (15:10–15:25 Oct 11): ProtA=**50.53%** (Δ+0.83pp), zs=**35.52%** top1/67.24% top5 (Δ+1.42pp), k-NN k=20=**38.94%** (Δ+1.26pp). Uniform +1~1.4pp shift across all 4 metrics → genuine but within noise threshold. lp−zs gap stable ~28pp.
 > ✅ **V3 ProtB Enhanced (×5ep probe) COMPLETE** (18:24:52 Oct 11): 90ep=63.50%, 450ep=63.43% (Δ=−0.07pp) → probe NOT underfitting for V3. wd=0.0001=63.83% (+0.33pp best). No config beats baseline by >0.35pp. V3 eval ALL DONE.
 > ✅ **② PROBE SWEEP COMPLETE** (PID 2190867, GPU 1, started 14:20, completed ~17:35 Oct 11): `probe_comparison_eval.py --probe-only` on E1fair ckpt. All 6 configs done. **Key result: ×5 epochs (450ep) = 62.15% (−0.18pp vs 90ep baseline 62.33%) → probe NOT underfitting → 62.34% is genuine feature quality ceiling.** Full sweep: baseline 62.33%, ×5ep 62.15%, wd=1e-4 62.68% (+0.35pp), wd=1e-3 61.25% (−1.08pp), lr=0.01 62.39% (+0.06pp), lr=0.3 60.39% (−1.94pp). No config beats baseline by >0.35pp. GPU 1 now FREE.
-> 🔄 **④-2ep TRAINING RUNNING** (started 18:25:50 Oct 11, step ~83,480/374,202 (~22.3%), C1=0.5027 healthy, loss~0.35, ~5,100 img/s, ETA ~05:45 Oct 12). Chain (PID 2461463) alive → auto-eval → results ~09:15 Oct 12. 📦 **Variant report HTML DELIVERED**: `report_vision_variants_20261011.html` (34KB, 11 sections, covers ③①②+V2+V3+④).
+> 🔄 **④-2ep TRAINING RUNNING** (started 18:25:50 Oct 11, step ~98,470/374,202 (~26.3%), C1=0.4788 healthy, loss~0.3, ~5,300 img/s, ETA ~05:30 Oct 12). Chain (PID 2461463) alive → auto-eval → results ~09:00 Oct 12. 📦 **Variant report HTML DELIVERED**: `report_vision_variants_20261011.html` (34KB, 11 sections, covers ③①②+V2+V3+④).
 > ✅ **④ epoch scaling pre-registered** in `EXPERIMENTS_VISION.md §9.4`: 2ep first, 4ep if 2ep≥70%.
 > ✅ **①② results documented** in `EXPERIMENTS_VISION.md §9.6`: ① zs E1fair=34.10%, E2fair=35.45%. ② k-NN k=20=37.68%. **② ×5 probe + wd/LR sweep ✅ COMPLETE** (all 6 configs, key finding: probe NOT underfitting).
 > ✅ **③ 参照系说明** in `EXPERIMENTS_VISION.md §8.3`: BaiZe internal protocol labeling rules, 不可比原因逐条.
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ V3 eval ALL COMPLETE. ✅ ② probe sweep COMPLETE. ✅ Variant report + muon-rpt + lit-rpt ALL DELIVERED. 🔄 **④-2ep TRAINING RUNNING** (step ~83,480/374,202 ~22.3%, C1=0.5027 healthy, loss~0.35, ~5,100 img/s, ETA ~05:45 Oct 12). PID 3320232 alive → auto-eval → results ~09:15 Oct 12. **Next wake**: check /tmp/e4_2ep_train.log + /tmp/e4_2ep_eval.log. If done → collect ④ results → update §9.4-9.5 + report. |
-| WAITING | 1（🔄 ④-2ep TRAINING RUNNING (step ~83,480/374,202 ~22.3%, C1=0.5027 healthy, ETA ~05:45 Oct 12). PID 3320232 alive → auto-eval → results ~09:15 Oct 12. Next wake: check /tmp/e4_2ep_train.log + /tmp/e4_2ep_eval.log.） |
+| PHASE | ✅ V3 eval ALL COMPLETE. ✅ ② probe sweep COMPLETE. ✅ Variant report + muon-rpt + lit-rpt ALL DELIVERED. 🔄 **④-2ep TRAINING RUNNING** (step ~98,470/374,202 ~26.3%, C1=0.4788 healthy, loss~0.3, ~5,300 img/s, ETA ~05:30 Oct 12). PID 3320232 alive → auto-eval → results ~09:00 Oct 12. **Next wake**: check /tmp/e4_2ep_train.log + /tmp/e4_2ep_eval.log. If done → collect ④ results → update §9.4-9.5 + report. |
+| WAITING | 1（🔄 ④-2ep TRAINING RUNNING (step ~98,470/374,202 ~26.3%, C1=0.4788 healthy, ETA ~05:30 Oct 12). PID 3320232 alive → auto-eval → results ~09:00 Oct 12. Next wake: check /tmp/e4_2ep_train.log + /tmp/e4_2ep_eval.log.） |
 | ERROR_COUNT | 13（①~⑫ 同前 ⑬ Duplicate V3 eval from run_scaling_experiment.sh — killed） |
 | BUDGET_USED | ~775 GPU·h (V3 ~106 GPU·h done, ② ~1 GPU·h done, ④-2ep ~25 GPU·h running / ~80 total) |
-| 更新 | **2026-10-11 21:35 (monitoring wake)**: ④-2ep training progressing — step ~83,480/374,202 (~22.3%), C1=0.5027 healthy, loss~0.35, ~5,100 img/s. PID 3320232 alive, 8 checkpoints (10k–80k). Chain (PID 2461463) alive. ✅ All prior tasks complete (③①②, V2, V3). This wake: monitoring + volume maintenance (archived [17:35]+[18:45] flow entries → daily). 📦 体积：TASK=32.1KB / MEMORY=30.9KB（均≤32KB✅，归档 ~2KB → daily） |
+| 更新 | **2026-10-11 22:17 (monitoring wake)**: ④-2ep training progressing — step ~98,470/374,202 (~26.3%), C1=0.4788 healthy, loss~0.3, ~5,300 img/s. PID 3320232 alive, 9 checkpoints (10k–90k). Chain (PID 2461463) alive. ✅ All prior tasks complete (③①②, V2, V3). This wake: monitoring only. 📦 体积：TASK=31.9KB / MEMORY=30.7KB（均≤32KB✅，归档 0KB） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
@@ -300,6 +300,8 @@ WAITING: 1
 - [21:00 Oct11] **④-2ep monitoring + task book archiving**: ④-2ep training at step ~68,550/374,202 (~18.3%), C1=0.4552 healthy, loss~0.19, ~5,100 img/s, scale=94.4 stable, PID 3320232 alive. No collapse. ✅ Verified both 2026-10-11 HTML reports already committed (6743baeb @20:25): report_vision_muon_collapse.html (33.6KB, 10 sections: TL;DR+experiment setup+collapse evidence SVG+spectral behavior+root cause+exclusions+conclusions+suggestions+evidence index+honesty clause) + report_vision_lit_ideas.html (28.4KB, 25 papers→TOP-5: each with arXiv ID+URL+date+one-line summary+BaiZe relation+cost+risk+score). Archived two completed 2026-10-11 operator blocks from TASK → ARCHIVE_OPERATOR_VISION.md (38KB→32.9KB). 📦 体积：TASK=32.9KB / MEMORY=31.6KB（均≤32KB✅，归档 ~5KB → ARCHIVE）。
 
 - [21:35 Oct11] **④-2ep monitoring**: step ~83,480/374,202 (~22.3%), C1=0.5027 healthy, loss~0.35, ~5,100 img/s, scale=88.3 stable. PID 3320232 alive, 8 checkpoints saved (10k–80k). No collapse (C2_gap +0.19). Chain (PID 2461463) alive → auto-eval after training. ETA training ~05:45 Oct 12 → eval ~3.5h → results ~09:15 Oct 12. Archived [17:35]+[18:45] flow entries → daily (volume maintenance). 📦 体积：TASK=32.1KB / MEMORY=30.9KB（均≤32KB✅，归档 ~2KB → daily）。
+
+- [22:17 Oct11] **④-2ep monitoring**: step ~98,470/374,202 (~26.3%), C1=0.4788 healthy, loss~0.3, ~5,300 img/s, scale=90.0 stable. PID 3320232 alive, 9 checkpoints (10k–90k). No collapse (C2_gap +0.1962). Chain (PID 2461463) alive. ETA training ~05:30 Oct 12 → eval ~3.5h → results ~09:00 Oct 12. 📦 体积：TASK=31.9KB / MEMORY=30.7KB（均≤32KB✅，归档 0KB）。
 
 ## 历史条目已滚动归档（2026-10-03 / 2026-10-06）
 
