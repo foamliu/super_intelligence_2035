@@ -35,7 +35,7 @@
 
 **⑤ 优先级**：本批 = **P0**；本线暂**无其他批次**，全部精力投入「完成成片」。
 
-**⑥ 经验并入（2026-10-11 · supervisor）**：把**同机 · 同 ComfyUI · 同 MCP 工具**且**已全片交付**的 `E:\code\stem_fest`（《如愿·看见》· 126 镜）实战经验并入本任务书 ⇒ **新增 §4**（分镜表口径 / H3 参数 / 资产管理 / prompt 三条禁令 / 音频六层 / 验收判据 / 音画钉长 / 跑批纪律）+ **展开版 `video/STEM_FEST_PLAYBOOK.md`**。**读完全文后先读 §4 再动手**（§4 与 §3 铁律**同级硬约束**）。
+**⑥ 经验并入（2026-10-11 · supervisor）**：把**同机 · 同 ComfyUI · 同 MCP 工具**且**已全片交付**的 `E:\code\stem_fest`（《如愿·看见》· 126 镜）实战经验并入本任务书 ⇒ **新增 §4**（分镜表口径 / H3 参数 / 资产管理 / prompt 三条禁令 / 音频六层 / 验收判据 / 音画钉长 / 跑批纪律）+ **展开版 `run/video/STEM_FEST_PLAYBOOK.md`**。**读完全文后先读 §4 再动手**（§4 与 §3 铁律**同级硬约束**）。
 
 ---
 
@@ -65,7 +65,7 @@
 > 🎯 **COMBO 工作流缓存**：项目 `workflows/` 下有 19 个 `.json`（Z-Image-Turbo 文生图 / **Minimax H3 I2V·R2V·T2V** / LongCat 图像编辑 / Qwen3-TTS / ACE-Step 文生音频 / Woosh 音效 / SeedVR2 超分 等）。**用 MCP 工具跑，不要自己拼 API**（工具已封装）。
 >
 > 🏭 **参考工程（同机 · 同 ComfyUI · 同 MCP 工具 · 已全片交付）**：`E:\code\stem_fest`（《如愿·看见》· 126 镜）。
-> 它的「怎么跑」已抽成 **§4 + `video/STEM_FEST_PLAYBOOK.md`**；**§4 没覆盖的先去这两处查**。
+> 它的「怎么跑」已抽成 **§4 + `run/video/STEM_FEST_PLAYBOOK.md`**；**§4 没覆盖的先去这两处查**。
 
 ---
 
@@ -108,7 +108,7 @@
 - ✅ **验收式陈述**：说"生成了"必须给 **路径 + 字节 + 时长**；说"对齐了"必须给**回读证据**（`sound_caption` / `qwen3_asr`）。🚫 不凭印象下结论。
 - ⏱️ **长任务**：优先 MCP 的**异步**（`wait=False` + `comfyui_get_result`）；**单条别超过本轮预算**（视频 5–15 min/条）。
 - 🖥️ **GPU = RTX 4090 · 16 GB** ⇒ `video_minimax_h3_i2v/r2v/t2v` 的 **`megapixels` 必须 ≤ 0.6**（≈1056×608；调到 0.92/720p **必 OOM**）；**要 1080p 请生成后用 `video_upscale_seedvr2` 超分**（帧数/音轨原样保留）。R2V 双参考图更吃显存，建议 0.4。
-- 📖 **§4 与本节同级、同为硬约束**：**prompt 三条禁令**（禁元信息 / 禁否定式 / 台词须匹配时长）· **定妆照 = 外形唯一权威** · **音频分层与电平纪律** · **拼接音画钉长** —— **违反即出废片**，详见 §4 与 `video/STEM_FEST_PLAYBOOK.md`。
+- 📖 **§4 与本节同级、同为硬约束**：**prompt 三条禁令**（禁元信息 / 禁否定式 / 台词须匹配时长）· **定妆照 = 外形唯一权威** · **音频分层与电平纪律** · **拼接音画钉长** —— **违反即出废片**，详见 §4 与 `run/video/STEM_FEST_PLAYBOOK.md`。
 - 🔒 **凭据**：`C:\Users\Administrator\.cline`（含 MCP 配置/密钥）**只读使用，绝不复制进任何仓 / 日志 / 报告**。
 - 🚫 **不改** `WATCH_VIDEO_TASK.md`（只读）与 loop / 注册脚本（由 supervisor 写）。
 
@@ -118,7 +118,7 @@
 
 > **来源**：`E:\code\stem_fest`（《如愿·看见》科技节短片 · **126 镜已全片交付**）—— 与本线**同一台机、同一套 ComfyUI + 同一批 MCP 工具**，
 > 它的 README/storyboard 是**踩满坑后固化**下来的操作规程。
-> 📖 **本节是精简版；全部命令块、实测数据、长篇推导 → `video/STEM_FEST_PLAYBOOK.md`（强烈建议首次动手前通读一遍）**。
+> 📖 **本节是精简版；全部命令块、实测数据、长篇推导 → `run/video/STEM_FEST_PLAYBOOK.md`（强烈建议首次动手前通读一遍）**。
 > ⚠️ **只照抄「参数 / 配方 / 判据 / 纪律」，不照搬它的剧情与视觉风格**（差异见 §4.9 与 playbook §10）。
 
 ### 4.1 分镜脚本表格 = 唯一权威（先读表，再动手）
@@ -245,7 +245,7 @@
 - **视觉/音频规范**：`ASSETS/半写实半水墨视觉规范.md` · `ASSETS/AI不拟人化视觉规范.md` · `ASSETS/配乐提示词规格.md`。
 - **MCP 工具说明**：`mcp_server/comfyui_tools.md`（及 `E:\code\stem_fest\mcp_server\`）。
 - **`stem_fest` 实战经验（本任务书 §4 的出处 / 展开版 · ★ 遇到配方/判据问题先查这里）**：
-  - `video/STEM_FEST_PLAYBOOK.md`（**本仓** · 已抽取的 11 节经验，含全部命令块/实测数据）
+  - `run/video/STEM_FEST_PLAYBOOK.md`（**本仓** · 已抽取的 11 节经验，含全部命令块/实测数据）
   - `E:\code\stem_fest\README.md`（§0 读图 · §0.5 出片即停 · §4 照抄参数 · §4.4 音频六层 · §4.5 能力地图 · §6 已知坑 · §7 生产流程）
   - `E:\code\stem_fest\storyboard.md`（分镜表范式：时长/运镜/景别/参考图/站位）
   - `E:\code\stem_fest\mcp_server\comfyui_tools.md`（工具参数/约束/实测数据权威）
