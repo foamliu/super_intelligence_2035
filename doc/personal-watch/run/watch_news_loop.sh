@@ -45,6 +45,9 @@ SLEEP_SHORT=60                  # 【仅旧模式】WAITING=0 / 失败重试：�
 SLEEP_LONG=1800                 # 【仅旧模式】WAITING=1（无近期待办）→ 睡 30 分钟（= BaiZe SLEEP_WAIT）
 # ── ⏰ 定时唤醒时窗（2026-10-07 用户令：每天 2 次 · 06:00 / 18:00 · 本地时区）──────
 SCHEDULE_HOURS="${WATCH_SCHEDULE_HOURS-6,18}"   # 逗号分隔的小时；**置空 ⇒ 回退旧模式**
+# ── ⏱ 间隔唤醒模式（2026-10-11 用户令：news 改为**每 30 分钟**一轮）
+#    **优先级：interval > schedule(6,18) > adaptive** —— 用 `WATCH_INTERVAL_MIN=30` 启动即生效。
+INTERVAL_MIN="${WATCH_INTERVAL_MIN-}"   # >0 ⇒ 间隔模式（分钟）；空 ⇒ 走 SCHEDULE_HOURS
 SLEEP_CHUNK=300                 # 时窗内分段睡：每 5 分钟刷新存活标记（零 token；可被 SIGTERM 立刻打断）
 SLEEP_RETRY=300                 # 时窗内 cline 失败后的重试等待
 SCHEDULE_RETRY_MAX=1            # 同一时窗内最多重试 1 次 ⇒ 之后等下个时窗（防 60s 死循环烧 token）
@@ -160,19 +163,44 @@ sleep_until_next_slot() {
     done
 }
 
+# ── ⏱ 睡一个间隔（分段睡；**不调用 cline ⇒ 零 token**；每段刷新存活标记）──
+sleep_interval() {
+    local secs remain chunk ticks=0
+    secs=$(( INTERVAL_MIN * 60 ))
+    [ "$secs" -le 0 ] && secs=1800
+    remain="$secs"
+    echo "[loop] $(date '+%F %T') ⏱ 间隔模式：每 ${INTERVAL_MIN} 分钟唤醒一次（下次 ≈ $(date -d "@$(( $(date +%s) + secs ))" '+%F %T')）"
+    while [ "$remain" -gt 0 ]; do
+        chunk="$SLEEP_CHUNK"
+        [ "$remain" -lt "$chunk" ] && chunk="$remain"
+        sleep "$chunk"
+        remain=$((remain - chunk))
+        date +%s > "$LOOP_HB" 2>/dev/null || true
+        ticks=$((ticks + 1))
+        if [ $((ticks % 6)) -eq 0 ]; then
+            echo "[loop] $(date '+%F %T') 💤 间隔等待中（剩余 $((remain / 60))min；未调 cline = 零 token）"
+        fi
+    done
+}
+
 # ── 启动横幅：让外部一眼看出「跑的是哪种模式 / 时窗」（中继据此核验）──
-if [ -n "$SCHEDULE_HOURS" ]; then
+if [ -n "$INTERVAL_MIN" ] && [ "$INTERVAL_MIN" -gt 0 ] 2>/dev/null; then
+    MODE_LABEL="interval:${INTERVAL_MIN}min"
+    echo "[loop] ⏱ 间隔模式已启用：每 ${INTERVAL_MIN} 分钟唤醒一次（interval > schedule(6,18) > adaptive）· 存活标记 = $LOOP_HB · 回退：去掉 WATCH_INTERVAL_MIN"
+elif [ -n "$SCHEDULE_HOURS" ]; then
+    MODE_LABEL="$SCHEDULE_HOURS"
     echo "[loop] ⏰ 定时模式已启用：唤醒时窗 = ${SCHEDULE_HOURS}（每天 2 次）· 存活标记 = $LOOP_HB · 回退：WATCH_SCHEDULE_HOURS= 置空"
     if _t=$(next_slot_epoch); then
         echo "[loop] ⏰ 时窗参考：此刻之后的下一个时窗 = $(date -d "@$_t" '+%F %T %Z')（首轮唤醒=立即执行；各轮跑完会实时重算）"
     fi
 else
+    MODE_LABEL="adaptive"
     echo "[loop] 🔁 旧模式（WAITING 自适应）：SLEEP_SHORT=${SLEEP_SHORT}s / SLEEP_LONG=${SLEEP_LONG}s"
 fi
 
 RETRY=0     # 本时窗内的致命错重试计数（定时模式用）
 while true; do
-    echo "[loop] $(date '+%F %T') wake up, invoking cline ... [mode=${SCHEDULE_HOURS:-adaptive}]"
+    echo "[loop] $(date '+%F %T') wake up, invoking cline ... [mode=${MODE_LABEL:-${INTERVAL_MIN:+interval:${INTERVAL_MIN}min}${INTERVAL_MIN:-${SCHEDULE_HOURS:-adaptive}}}]"
     FORCE_SHORT=0
     if [[ -f "$TASK_MD" ]]; then
         prompt="$(< "$TASK_MD")"
@@ -190,7 +218,10 @@ while true; do
     fi
     git_sync_and_push
     date +%s > "$LOOP_HB" 2>/dev/null || true       # 每轮唤醒回来都刷新存活标记
-    if [ -n "$SCHEDULE_HOURS" ]; then
+    if [ -n "$INTERVAL_MIN" ] && [ "$INTERVAL_MIN" -gt 0 ] 2>/dev/null; then
+        # ── ⏱ 间隔模式（优先级最高）──
+        sleep_interval
+    elif [ -n "$SCHEDULE_HOURS" ]; then
         # ── ⏰ 定时模式：每天 2 次（06:00 / 18:00）──
         if [ "$FORCE_SHORT" -eq 1 ]; then
             RETRY=$((RETRY + 1))
