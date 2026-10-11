@@ -1,0 +1,2353 @@
+  [RESUME] Skipping 88 completed for pi
+Serial kimi eval: harness=pi model=kimi-k2.6-cloud
+  Total=300 Pending=212 Skip=88 Concurrency=1
+
+############################################################
+# [1/212] pi x astropy__astropy-14365
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14365 for pi
+
+[RUN] pi on astropy__astropy-14365 ...
+  [EVAL] pi on astropy__astropy-14365 ...
+  => astropy__astropy-14365 | pi | patch-but-failed
+
+############################################################
+# [2/212] pi x astropy__astropy-14995
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14995 for pi
+
+[RUN] pi on astropy__astropy-14995 ...
+  [EVAL] pi on astropy__astropy-14995 ...
+  => astropy__astropy-14995 | pi | patch-but-failed
+
+############################################################
+# [3/212] pi x astropy__astropy-6938
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-6938 for pi
+
+[RUN] pi on astropy__astropy-6938 ...
+  [EVAL] pi on astropy__astropy-6938 ...
+  => astropy__astropy-6938 | pi | patch-but-failed
+
+############################################################
+# [4/212] pi x astropy__astropy-7746
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-7746 for pi
+
+[RUN] pi on astropy__astropy-7746 ...
+  [EVAL] pi on astropy__astropy-7746 ...
+  => astropy__astropy-7746 | pi | patch-but-failed
+
+############################################################
+# [5/212] pi x django__django-13033
+############################################################
+
+============================================================
+[SETUP] django__django-13033 for pi
+
+[RUN] pi on django__django-13033 ...
+  [EVAL] pi on django__django-13033 ...
+  => django__django-13033 | pi | resolved
+
+############################################################
+# [6/212] pi x django__django-13158
+############################################################
+
+============================================================
+[SETUP] django__django-13158 for pi
+
+[RUN] pi on django__django-13158 ...
+  [EVAL] pi on django__django-13158 ...
+  => django__django-13158 | pi | resolved
+
+############################################################
+# [7/212] pi x django__django-13220
+############################################################
+
+============================================================
+[SETUP] django__django-13220 for pi
+
+[RUN] pi on django__django-13220 ...
+  [EVAL] pi on django__django-13220 ...
+  => django__django-13220 | pi | patch-but-failed
+
+############################################################
+# [8/212] pi x django__django-13230
+############################################################
+
+============================================================
+[SETUP] django__django-13230 for pi
+
+[RUN] pi on django__django-13230 ...
+  [EVAL] pi on django__django-13230 ...
+  => django__django-13230 | pi | patch-but-failed
+
+############################################################
+# [9/212] pi x django__django-13265
+############################################################
+
+============================================================
+[SETUP] django__django-13265 for pi
+
+[RUN] pi on django__django-13265 ...
+  [EVAL] pi on django__django-13265 ...
+  => django__django-13265 | pi | patch-but-failed
+
+############################################################
+# [10/212] pi x django__django-13315
+############################################################
+
+============================================================
+[SETUP] django__django-13315 for pi
+
+[RUN] pi on django__django-13315 ...
+  [EVAL] pi on django__django-13315 ...
+  => django__django-13315 | pi | resolved
+
+############################################################
+# [11/212] pi x django__django-13321
+############################################################
+
+============================================================
+[SETUP] django__django-13321 for pi
+
+[RUN] pi on django__django-13321 ...
+  [EVAL] pi on django__django-13321 ...
+  => django__django-13321 | pi | patch-but-failed
+
+############################################################
+# [12/212] pi x django__django-13401
+############################################################
+
+============================================================
+[SETUP] django__django-13401 for pi
+
+[RUN] pi on django__django-13401 ...
+  [EVAL] pi on django__django-13401 ...
+  => django__django-13401 | pi | resolved
+
+############################################################
+# [13/212] pi x django__django-13447
+############################################################
+
+============================================================
+[SETUP] django__django-13447 for pi
+
+[RUN] pi on django__django-13447 ...
+  [EVAL] pi on django__django-13447 ...
+  => django__django-13447 | pi | patch-but-failed
+
+############################################################
+# [14/212] pi x django__django-13448
+############################################################
+
+============================================================
+[SETUP] django__django-13448 for pi
+
+[RUN] pi on django__django-13448 ...
+  [EVAL] pi on django__django-13448 ...
+  => django__django-13448 | pi | patch-but-failed
+
+############################################################
+# [15/212] pi x django__django-13551
+############################################################
+
+============================================================
+[SETUP] django__django-13551 for pi
+
+[RUN] pi on django__django-13551 ...
+  [EVAL] pi on django__django-13551 ...
+  => django__django-13551 | pi | resolved
+
+############################################################
+# [16/212] pi x django__django-13590
+############################################################
+
+============================================================
+[SETUP] django__django-13590 for pi
+
+[RUN] pi on django__django-13590 ...
+  [EVAL] pi on django__django-13590 ...
+  => django__django-13590 | pi | resolved
+
+############################################################
+# [17/212] pi x django__django-13658
+############################################################
+
+============================================================
+[SETUP] django__django-13658 for pi
+
+[RUN] pi on django__django-13658 ...
+  [EVAL] pi on django__django-13658 ...
+  => django__django-13658 | pi | resolved
+
+############################################################
+# [18/212] pi x django__django-13660
+############################################################
+
+============================================================
+[SETUP] django__django-13660 for pi
+
+[RUN] pi on django__django-13660 ...
+  [EVAL] pi on django__django-13660 ...
+  => django__django-13660 | pi | patch-but-failed
+
+############################################################
+# [19/212] pi x django__django-13710
+############################################################
+
+============================================================
+[SETUP] django__django-13710 for pi
+
+[RUN] pi on django__django-13710 ...
+  [EVAL] pi on django__django-13710 ...
+  => django__django-13710 | pi | patch-but-failed
+
+############################################################
+# [20/212] pi x django__django-13757
+############################################################
+
+============================================================
+[SETUP] django__django-13757 for pi
+
+[RUN] pi on django__django-13757 ...
+  [EVAL] pi on django__django-13757 ...
+  => django__django-13757 | pi | resolved
+
+############################################################
+# [21/212] pi x django__django-13768
+############################################################
+
+============================================================
+[SETUP] django__django-13768 for pi
+
+[RUN] pi on django__django-13768 ...
+  [EVAL] pi on django__django-13768 ...
+  => django__django-13768 | pi | patch-but-failed
+
+############################################################
+# [22/212] pi x django__django-13925
+############################################################
+
+============================================================
+[SETUP] django__django-13925 for pi
+
+[RUN] pi on django__django-13925 ...
+  [EVAL] pi on django__django-13925 ...
+  => django__django-13925 | pi | resolved
+
+############################################################
+# [23/212] pi x django__django-13933
+############################################################
+
+============================================================
+[SETUP] django__django-13933 for pi
+
+[RUN] pi on django__django-13933 ...
+  [EVAL] pi on django__django-13933 ...
+  => django__django-13933 | pi | resolved
+
+############################################################
+# [24/212] pi x django__django-13964
+############################################################
+
+============================================================
+[SETUP] django__django-13964 for pi
+
+[RUN] pi on django__django-13964 ...
+  [EVAL] pi on django__django-13964 ...
+  => django__django-13964 | pi | patch-but-failed
+
+############################################################
+# [25/212] pi x django__django-14016
+############################################################
+
+============================================================
+[SETUP] django__django-14016 for pi
+
+[RUN] pi on django__django-14016 ...
+  [EVAL] pi on django__django-14016 ...
+  => django__django-14016 | pi | resolved
+
+############################################################
+# [26/212] pi x django__django-14017
+############################################################
+
+============================================================
+[SETUP] django__django-14017 for pi
+
+[RUN] pi on django__django-14017 ...
+  [EVAL] pi on django__django-14017 ...
+  => django__django-14017 | pi | patch-but-failed
+
+############################################################
+# [27/212] pi x django__django-14155
+############################################################
+
+============================================================
+[SETUP] django__django-14155 for pi
+
+[RUN] pi on django__django-14155 ...
+  [EVAL] pi on django__django-14155 ...
+  => django__django-14155 | pi | patch-but-failed
+
+############################################################
+# [28/212] pi x django__django-14238
+############################################################
+
+============================================================
+[SETUP] django__django-14238 for pi
+
+[RUN] pi on django__django-14238 ...
+  [EVAL] pi on django__django-14238 ...
+  => django__django-14238 | pi | patch-but-failed
+
+############################################################
+# [29/212] pi x django__django-14382
+############################################################
+
+============================================================
+[SETUP] django__django-14382 for pi
+
+[RUN] pi on django__django-14382 ...
+  [EVAL] pi on django__django-14382 ...
+  => django__django-14382 | pi | patch-but-failed
+
+############################################################
+# [30/212] pi x django__django-14411
+############################################################
+
+============================================================
+[SETUP] django__django-14411 for pi
+
+[RUN] pi on django__django-14411 ...
+  [EVAL] pi on django__django-14411 ...
+  => django__django-14411 | pi | patch-but-failed
+
+############################################################
+# [31/212] pi x django__django-14534
+############################################################
+
+============================================================
+[SETUP] django__django-14534 for pi
+
+[RUN] pi on django__django-14534 ...
+  [EVAL] pi on django__django-14534 ...
+  => django__django-14534 | pi | patch-but-failed
+
+############################################################
+# [32/212] pi x django__django-14580
+############################################################
+
+============================================================
+[SETUP] django__django-14580 for pi
+
+[RUN] pi on django__django-14580 ...
+  [EVAL] pi on django__django-14580 ...
+  => django__django-14580 | pi | patch-but-failed
+
+############################################################
+# [33/212] pi x django__django-14608
+############################################################
+
+============================================================
+[SETUP] django__django-14608 for pi
+
+[RUN] pi on django__django-14608 ...
+  [EVAL] pi on django__django-14608 ...
+  => django__django-14608 | pi | patch-but-failed
+
+############################################################
+# [34/212] pi x django__django-14667
+############################################################
+
+============================================================
+[SETUP] django__django-14667 for pi
+
+[RUN] pi on django__django-14667 ...
+  [EVAL] pi on django__django-14667 ...
+  => django__django-14667 | pi | patch-but-failed
+
+############################################################
+# [35/212] pi x django__django-14672
+############################################################
+
+============================================================
+[SETUP] django__django-14672 for pi
+
+[RUN] pi on django__django-14672 ...
+  [EVAL] pi on django__django-14672 ...
+  => django__django-14672 | pi | patch-but-failed
+
+############################################################
+# [36/212] pi x django__django-14730
+############################################################
+
+============================================================
+[SETUP] django__django-14730 for pi
+
+[RUN] pi on django__django-14730 ...
+  [QUOTA] pi: quota exhausted, waiting 300s (retry 2/3)...
+  [EVAL] pi on django__django-14730 ...
+  => django__django-14730 | pi | patch-but-failed
+
+############################################################
+# [37/212] pi x django__django-14752
+############################################################
+
+============================================================
+[SETUP] django__django-14752 for pi
+
+[RUN] pi on django__django-14752 ...
+  [EVAL] pi on django__django-14752 ...
+  => django__django-14752 | pi | patch-but-failed
+
+############################################################
+# [38/212] pi x django__django-14787
+############################################################
+
+============================================================
+[SETUP] django__django-14787 for pi
+
+[RUN] pi on django__django-14787 ...
+  [EVAL] pi on django__django-14787 ...
+  => django__django-14787 | pi | patch-but-failed
+
+############################################################
+# [39/212] pi x django__django-14855
+############################################################
+
+============================================================
+[SETUP] django__django-14855 for pi
+
+[RUN] pi on django__django-14855 ...
+  [EVAL] pi on django__django-14855 ...
+  => django__django-14855 | pi | patch-but-failed
+
+############################################################
+# [40/212] pi x django__django-14915
+############################################################
+
+============================================================
+[SETUP] django__django-14915 for pi
+
+[RUN] pi on django__django-14915 ...
+  [EVAL] pi on django__django-14915 ...
+  => django__django-14915 | pi | patch-but-failed
+
+############################################################
+# [41/212] pi x django__django-14997
+############################################################
+
+============================================================
+[SETUP] django__django-14997 for pi
+
+[RUN] pi on django__django-14997 ...
+  [EVAL] pi on django__django-14997 ...
+  => django__django-14997 | pi | patch-but-failed
+
+############################################################
+# [42/212] pi x django__django-14999
+############################################################
+
+============================================================
+[SETUP] django__django-14999 for pi
+
+[RUN] pi on django__django-14999 ...
+  [EVAL] pi on django__django-14999 ...
+  => django__django-14999 | pi | patch-but-failed
+
+############################################################
+# [43/212] pi x django__django-15061
+############################################################
+
+============================================================
+[SETUP] django__django-15061 for pi
+
+[RUN] pi on django__django-15061 ...
+  [EVAL] pi on django__django-15061 ...
+  => django__django-15061 | pi | patch-but-failed
+
+############################################################
+# [44/212] pi x django__django-15202
+############################################################
+
+============================================================
+[SETUP] django__django-15202 for pi
+
+[RUN] pi on django__django-15202 ...
+  [EVAL] pi on django__django-15202 ...
+  => django__django-15202 | pi | patch-but-failed
+
+############################################################
+# [45/212] pi x django__django-15213
+############################################################
+
+============================================================
+[SETUP] django__django-15213 for pi
+
+[RUN] pi on django__django-15213 ...
+  [EVAL] pi on django__django-15213 ...
+  => django__django-15213 | pi | patch-but-failed
+
+############################################################
+# [46/212] pi x django__django-15252
+############################################################
+
+============================================================
+[SETUP] django__django-15252 for pi
+
+[RUN] pi on django__django-15252 ...
+  [EVAL] pi on django__django-15252 ...
+  => django__django-15252 | pi | patch-but-failed
+
+############################################################
+# [47/212] pi x django__django-15320
+############################################################
+
+============================================================
+[SETUP] django__django-15320 for pi
+
+[RUN] pi on django__django-15320 ...
+  [EVAL] pi on django__django-15320 ...
+  => django__django-15320 | pi | patch-but-failed
+
+############################################################
+# [48/212] pi x django__django-15347
+############################################################
+
+============================================================
+[SETUP] django__django-15347 for pi
+
+[RUN] pi on django__django-15347 ...
+  [EVAL] pi on django__django-15347 ...
+  => django__django-15347 | pi | patch-but-failed
+
+############################################################
+# [49/212] pi x django__django-15388
+############################################################
+
+============================================================
+[SETUP] django__django-15388 for pi
+
+[RUN] pi on django__django-15388 ...
+  [EVAL] pi on django__django-15388 ...
+  => django__django-15388 | pi | patch-but-failed
+
+############################################################
+# [50/212] pi x django__django-15400
+############################################################
+
+============================================================
+[SETUP] django__django-15400 for pi
+  => django__django-15400 | pi | blocked
+
+############################################################
+# [51/212] pi x django__django-15498
+############################################################
+
+============================================================
+[SETUP] django__django-15498 for pi
+  => django__django-15498 | pi | blocked
+
+############################################################
+# [52/212] pi x django__django-15695
+############################################################
+
+============================================================
+[SETUP] django__django-15695 for pi
+  => django__django-15695 | pi | blocked
+
+############################################################
+# [53/212] pi x django__django-15738
+############################################################
+
+============================================================
+[SETUP] django__django-15738 for pi
+
+[RUN] pi on django__django-15738 ...
+  [EVAL] pi on django__django-15738 ...
+  => django__django-15738 | pi | patch-but-failed
+
+############################################################
+# [54/212] pi x django__django-15781
+############################################################
+
+============================================================
+[SETUP] django__django-15781 for pi
+
+[RUN] pi on django__django-15781 ...
+  [EVAL] pi on django__django-15781 ...
+  => django__django-15781 | pi | patch-but-failed
+
+############################################################
+# [55/212] pi x django__django-15789
+############################################################
+
+============================================================
+[SETUP] django__django-15789 for pi
+
+[RUN] pi on django__django-15789 ...
+  [EVAL] pi on django__django-15789 ...
+  => django__django-15789 | pi | patch-but-failed
+
+############################################################
+# [56/212] pi x django__django-15790
+############################################################
+
+============================================================
+[SETUP] django__django-15790 for pi
+
+[RUN] pi on django__django-15790 ...
+  [EVAL] pi on django__django-15790 ...
+  => django__django-15790 | pi | patch-but-failed
+
+############################################################
+# [57/212] pi x django__django-15814
+############################################################
+
+============================================================
+[SETUP] django__django-15814 for pi
+
+[RUN] pi on django__django-15814 ...
+  [EVAL] pi on django__django-15814 ...
+  => django__django-15814 | pi | patch-but-failed
+
+############################################################
+# [58/212] pi x django__django-15819
+############################################################
+
+============================================================
+[SETUP] django__django-15819 for pi
+
+[RUN] pi on django__django-15819 ...
+  [EVAL] pi on django__django-15819 ...
+  => django__django-15819 | pi | patch-but-failed
+
+############################################################
+# [59/212] pi x django__django-15851
+############################################################
+
+============================================================
+[SETUP] django__django-15851 for pi
+
+[RUN] pi on django__django-15851 ...
+  [EVAL] pi on django__django-15851 ...
+  => django__django-15851 | pi | patch-but-failed
+
+############################################################
+# [60/212] pi x django__django-15902
+############################################################
+
+============================================================
+[SETUP] django__django-15902 for pi
+
+[RUN] pi on django__django-15902 ...
+  [EVAL] pi on django__django-15902 ...
+  => django__django-15902 | pi | patch-but-failed
+
+############################################################
+# [61/212] pi x django__django-15996
+############################################################
+
+============================================================
+[SETUP] django__django-15996 for pi
+
+[RUN] pi on django__django-15996 ...
+  [EVAL] pi on django__django-15996 ...
+  => django__django-15996 | pi | patch-but-failed
+
+############################################################
+# [62/212] pi x django__django-16041
+############################################################
+
+============================================================
+[SETUP] django__django-16041 for pi
+
+[RUN] pi on django__django-16041 ...
+  [EVAL] pi on django__django-16041 ...
+  => django__django-16041 | pi | patch-but-failed
+
+############################################################
+# [63/212] pi x django__django-16046
+############################################################
+
+============================================================
+[SETUP] django__django-16046 for pi
+
+[RUN] pi on django__django-16046 ...
+  [EVAL] pi on django__django-16046 ...
+  => django__django-16046 | pi | patch-but-failed
+
+############################################################
+# [64/212] pi x django__django-16139
+############################################################
+
+============================================================
+[SETUP] django__django-16139 for pi
+
+[RUN] pi on django__django-16139 ...
+  [EVAL] pi on django__django-16139 ...
+  => django__django-16139 | pi | patch-but-failed
+
+############################################################
+# [65/212] pi x django__django-16229
+############################################################
+
+============================================================
+[SETUP] django__django-16229 for pi
+
+[RUN] pi on django__django-16229 ...
+  [EVAL] pi on django__django-16229 ...
+  => django__django-16229 | pi | patch-but-failed
+
+############################################################
+# [66/212] pi x django__django-16255
+############################################################
+
+============================================================
+[SETUP] django__django-16255 for pi
+
+[RUN] pi on django__django-16255 ...
+  [EVAL] pi on django__django-16255 ...
+  => django__django-16255 | pi | patch-but-failed
+
+############################################################
+# [67/212] pi x django__django-16379
+############################################################
+
+============================================================
+[SETUP] django__django-16379 for pi
+
+[RUN] pi on django__django-16379 ...
+  [EVAL] pi on django__django-16379 ...
+  => django__django-16379 | pi | patch-but-failed
+
+############################################################
+# [68/212] pi x django__django-16400
+############################################################
+
+============================================================
+[SETUP] django__django-16400 for pi
+
+[RUN] pi on django__django-16400 ...
+  [EVAL] pi on django__django-16400 ...
+  => django__django-16400 | pi | patch-but-failed
+
+############################################################
+# [69/212] pi x django__django-16408
+############################################################
+
+============================================================
+[SETUP] django__django-16408 for pi
+
+[RUN] pi on django__django-16408 ...
+  [EVAL] pi on django__django-16408 ...
+  => django__django-16408 | pi | patch-but-failed
+
+############################################################
+# [70/212] pi x django__django-16527
+############################################################
+
+============================================================
+[SETUP] django__django-16527 for pi
+
+[RUN] pi on django__django-16527 ...
+  [EVAL] pi on django__django-16527 ...
+  => django__django-16527 | pi | patch-but-failed
+
+############################################################
+# [71/212] pi x django__django-16595
+############################################################
+
+============================================================
+[SETUP] django__django-16595 for pi
+
+[RUN] pi on django__django-16595 ...
+  [EVAL] pi on django__django-16595 ...
+  => django__django-16595 | pi | patch-but-failed
+
+############################################################
+# [72/212] pi x django__django-16816
+############################################################
+
+============================================================
+[SETUP] django__django-16816 for pi
+
+[RUN] pi on django__django-16816 ...
+  [EVAL] pi on django__django-16816 ...
+  => django__django-16816 | pi | patch-but-failed
+
+############################################################
+# [73/212] pi x django__django-16820
+############################################################
+
+============================================================
+[SETUP] django__django-16820 for pi
+
+[RUN] pi on django__django-16820 ...
+  [EVAL] pi on django__django-16820 ...
+  => django__django-16820 | pi | patch-but-failed
+
+############################################################
+# [74/212] pi x django__django-16873
+############################################################
+
+============================================================
+[SETUP] django__django-16873 for pi
+
+[RUN] pi on django__django-16873 ...
+  [QUOTA] pi: quota exhausted, waiting 300s (retry 2/3)...
+  [QUOTA] pi: quota exhausted, waiting 300s (retry 3/3)...
+  [EVAL] pi on django__django-16873 ...
+  => django__django-16873 | pi | quota-blocked
+
+############################################################
+# [75/212] pi x django__django-16910
+############################################################
+
+============================================================
+[SETUP] django__django-16910 for pi
+
+[RUN] pi on django__django-16910 ...
+  [EVAL] pi on django__django-16910 ...
+  => django__django-16910 | pi | patch-but-failed
+
+############################################################
+# [76/212] pi x django__django-17051
+############################################################
+
+============================================================
+[SETUP] django__django-17051 for pi
+
+[RUN] pi on django__django-17051 ...
+  [EVAL] pi on django__django-17051 ...
+  => django__django-17051 | pi | patch-but-failed
+
+############################################################
+# [77/212] pi x django__django-17087
+############################################################
+
+============================================================
+[SETUP] django__django-17087 for pi
+
+[RUN] pi on django__django-17087 ...
+  [EVAL] pi on django__django-17087 ...
+  => django__django-17087 | pi | patch-but-failed
+
+############################################################
+# [78/212] pi x matplotlib__matplotlib-23562
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23562 for pi
+
+[RUN] pi on matplotlib__matplotlib-23562 ...
+  [EVAL] pi on matplotlib__matplotlib-23562 ...
+  => matplotlib__matplotlib-23562 | pi | patch-but-failed
+
+############################################################
+# [79/212] pi x matplotlib__matplotlib-23563
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23563 for pi
+
+[RUN] pi on matplotlib__matplotlib-23563 ...
+  [EVAL] pi on matplotlib__matplotlib-23563 ...
+  => matplotlib__matplotlib-23563 | pi | patch-but-failed
+
+############################################################
+# [80/212] pi x matplotlib__matplotlib-23913
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23913 for pi
+
+[RUN] pi on matplotlib__matplotlib-23913 ...
+  [EVAL] pi on matplotlib__matplotlib-23913 ...
+  => matplotlib__matplotlib-23913 | pi | patch-but-failed
+
+############################################################
+# [81/212] pi x matplotlib__matplotlib-23964
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23964 for pi
+
+[RUN] pi on matplotlib__matplotlib-23964 ...
+  [EVAL] pi on matplotlib__matplotlib-23964 ...
+  => matplotlib__matplotlib-23964 | pi | patch-but-failed
+
+############################################################
+# [82/212] pi x matplotlib__matplotlib-23987
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23987 for pi
+
+[RUN] pi on matplotlib__matplotlib-23987 ...
+  [EVAL] pi on matplotlib__matplotlib-23987 ...
+  => matplotlib__matplotlib-23987 | pi | patch-but-failed
+
+############################################################
+# [83/212] pi x matplotlib__matplotlib-24149
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24149 for pi
+
+[RUN] pi on matplotlib__matplotlib-24149 ...
+  [EVAL] pi on matplotlib__matplotlib-24149 ...
+  => matplotlib__matplotlib-24149 | pi | patch-but-failed
+
+############################################################
+# [84/212] pi x matplotlib__matplotlib-24265
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24265 for pi
+
+[RUN] pi on matplotlib__matplotlib-24265 ...
+  [EVAL] pi on matplotlib__matplotlib-24265 ...
+  => matplotlib__matplotlib-24265 | pi | patch-but-failed
+
+############################################################
+# [85/212] pi x matplotlib__matplotlib-24334
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24334 for pi
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] pi on matplotlib__matplotlib-24334 ...
+  [EVAL] pi on matplotlib__matplotlib-24334 ...
+  => matplotlib__matplotlib-24334 | pi | patch-but-failed
+
+############################################################
+# [86/212] pi x matplotlib__matplotlib-24970
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24970 for pi
+
+[RUN] pi on matplotlib__matplotlib-24970 ...
+  [EVAL] pi on matplotlib__matplotlib-24970 ...
+  => matplotlib__matplotlib-24970 | pi | patch-but-failed
+
+############################################################
+# [87/212] pi x matplotlib__matplotlib-25079
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25079 for pi
+
+[RUN] pi on matplotlib__matplotlib-25079 ...
+  [EVAL] pi on matplotlib__matplotlib-25079 ...
+  => matplotlib__matplotlib-25079 | pi | patch-but-failed
+
+############################################################
+# [88/212] pi x matplotlib__matplotlib-25311
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25311 for pi
+
+[RUN] pi on matplotlib__matplotlib-25311 ...
+  [EVAL] pi on matplotlib__matplotlib-25311 ...
+  => matplotlib__matplotlib-25311 | pi | patch-but-failed
+
+############################################################
+# [89/212] pi x matplotlib__matplotlib-25332
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25332 for pi
+
+[RUN] pi on matplotlib__matplotlib-25332 ...
+  [EVAL] pi on matplotlib__matplotlib-25332 ...
+  => matplotlib__matplotlib-25332 | pi | patch-but-failed
+
+############################################################
+# [90/212] pi x matplotlib__matplotlib-25433
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25433 for pi
+
+[RUN] pi on matplotlib__matplotlib-25433 ...
+  [EVAL] pi on matplotlib__matplotlib-25433 ...
+  => matplotlib__matplotlib-25433 | pi | patch-but-failed
+
+############################################################
+# [91/212] pi x matplotlib__matplotlib-25442
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25442 for pi
+
+[RUN] pi on matplotlib__matplotlib-25442 ...
+  [EVAL] pi on matplotlib__matplotlib-25442 ...
+  => matplotlib__matplotlib-25442 | pi | patch-but-failed
+
+############################################################
+# [92/212] pi x matplotlib__matplotlib-25498
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25498 for pi
+
+[RUN] pi on matplotlib__matplotlib-25498 ...
+  [EVAL] pi on matplotlib__matplotlib-25498 ...
+  => matplotlib__matplotlib-25498 | pi | patch-but-failed
+
+############################################################
+# [93/212] pi x matplotlib__matplotlib-26011
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-26011 for pi
+
+[RUN] pi on matplotlib__matplotlib-26011 ...
+  [EVAL] pi on matplotlib__matplotlib-26011 ...
+  => matplotlib__matplotlib-26011 | pi | patch-but-failed
+
+############################################################
+# [94/212] pi x matplotlib__matplotlib-26020
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-26020 for pi
+
+[RUN] pi on matplotlib__matplotlib-26020 ...
+  [EVAL] pi on matplotlib__matplotlib-26020 ...
+  => matplotlib__matplotlib-26020 | pi | patch-but-failed
+
+############################################################
+# [95/212] pi x mwaskom__seaborn-3010
+############################################################
+
+============================================================
+[SETUP] mwaskom__seaborn-3010 for pi
+
+[RUN] pi on mwaskom__seaborn-3010 ...
+  [EVAL] pi on mwaskom__seaborn-3010 ...
+  => mwaskom__seaborn-3010 | pi | resolved
+
+############################################################
+# [96/212] pi x mwaskom__seaborn-3190
+############################################################
+
+============================================================
+[SETUP] mwaskom__seaborn-3190 for pi
+
+[RUN] pi on mwaskom__seaborn-3190 ...
+  [EVAL] pi on mwaskom__seaborn-3190 ...
+  => mwaskom__seaborn-3190 | pi | patch-but-failed
+
+############################################################
+# [97/212] pi x mwaskom__seaborn-3407
+############################################################
+
+============================================================
+[SETUP] mwaskom__seaborn-3407 for pi
+
+[RUN] pi on mwaskom__seaborn-3407 ...
+  [EVAL] pi on mwaskom__seaborn-3407 ...
+  => mwaskom__seaborn-3407 | pi | patch-but-failed
+
+############################################################
+# [98/212] pi x pallets__flask-4992
+############################################################
+
+============================================================
+[SETUP] pallets__flask-4992 for pi
+
+[RUN] pi on pallets__flask-4992 ...
+  [EVAL] pi on pallets__flask-4992 ...
+  => pallets__flask-4992 | pi | patch-but-failed
+
+############################################################
+# [99/212] pi x pallets__flask-5063
+############################################################
+
+============================================================
+[SETUP] pallets__flask-5063 for pi
+
+[RUN] pi on pallets__flask-5063 ...
+  [EVAL] pi on pallets__flask-5063 ...
+  => pallets__flask-5063 | pi | patch-but-failed
+
+############################################################
+# [100/212] pi x psf__requests-2317
+############################################################
+
+============================================================
+[SETUP] psf__requests-2317 for pi
+
+[RUN] pi on psf__requests-2317 ...
+  [EVAL] pi on psf__requests-2317 ...
+  => psf__requests-2317 | pi | patch-but-failed
+
+############################################################
+# [101/212] pi x psf__requests-2674
+############################################################
+
+============================================================
+[SETUP] psf__requests-2674 for pi
+
+[RUN] pi on psf__requests-2674 ...
+  [EVAL] pi on psf__requests-2674 ...
+  => psf__requests-2674 | pi | patch-but-failed
+
+############################################################
+# [102/212] pi x psf__requests-3362
+############################################################
+
+============================================================
+[SETUP] psf__requests-3362 for pi
+
+[RUN] pi on psf__requests-3362 ...
+  [EVAL] pi on psf__requests-3362 ...
+  => psf__requests-3362 | pi | patch-but-failed
+
+############################################################
+# [103/212] pi x psf__requests-863
+############################################################
+
+============================================================
+[SETUP] psf__requests-863 for pi
+
+[RUN] pi on psf__requests-863 ...
+  [EVAL] pi on psf__requests-863 ...
+  => psf__requests-863 | pi | patch-but-failed
+
+############################################################
+# [104/212] pi x pydata__xarray-4094
+############################################################
+
+============================================================
+[SETUP] pydata__xarray-4094 for pi
+
+[RUN] pi on pydata__xarray-4094 ...
+  [EVAL] pi on pydata__xarray-4094 ...
+  => pydata__xarray-4094 | pi | resolved
+
+############################################################
+# [105/212] pi x pydata__xarray-4248
+############################################################
+
+============================================================
+[SETUP] pydata__xarray-4248 for pi
+
+[RUN] pi on pydata__xarray-4248 ...
+  [EVAL] pi on pydata__xarray-4248 ...
+  => pydata__xarray-4248 | pi | patch-but-failed
+
+############################################################
+# [106/212] pi x pydata__xarray-4493
+############################################################
+
+============================================================
+[SETUP] pydata__xarray-4493 for pi
+
+[RUN] pi on pydata__xarray-4493 ...
+  [EVAL] pi on pydata__xarray-4493 ...
+  => pydata__xarray-4493 | pi | patch-but-failed
+
+############################################################
+# [107/212] pi x pydata__xarray-5131
+############################################################
+
+============================================================
+[SETUP] pydata__xarray-5131 for pi
+
+[RUN] pi on pydata__xarray-5131 ...
+  [EVAL] pi on pydata__xarray-5131 ...
+  => pydata__xarray-5131 | pi | resolved
+
+############################################################
+# [108/212] pi x pylint-dev__pylint-7080
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7080 for pi
+
+[RUN] pi on pylint-dev__pylint-7080 ...
+  [EVAL] pi on pylint-dev__pylint-7080 ...
+  => pylint-dev__pylint-7080 | pi | patch-but-failed
+
+############################################################
+# [109/212] pi x pylint-dev__pylint-7114
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7114 for pi
+
+[RUN] pi on pylint-dev__pylint-7114 ...
+  [EVAL] pi on pylint-dev__pylint-7114 ...
+  => pylint-dev__pylint-7114 | pi | patch-but-failed
+
+############################################################
+# [110/212] pi x pylint-dev__pylint-7228
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7228 for pi
+
+[RUN] pi on pylint-dev__pylint-7228 ...
+  [EVAL] pi on pylint-dev__pylint-7228 ...
+  => pylint-dev__pylint-7228 | pi | patch-but-failed
+
+############################################################
+# [111/212] pi x pylint-dev__pylint-7993
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7993 for pi
+
+[RUN] pi on pylint-dev__pylint-7993 ...
+  [EVAL] pi on pylint-dev__pylint-7993 ...
+  => pylint-dev__pylint-7993 | pi | patch-but-failed
+
+############################################################
+# [112/212] pi x pytest-dev__pytest-5227
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-5227 for pi
+
+[RUN] pi on pytest-dev__pytest-5227 ...
+  [EVAL] pi on pytest-dev__pytest-5227 ...
+  => pytest-dev__pytest-5227 | pi | patch-but-failed
+
+############################################################
+# [113/212] pi x pytest-dev__pytest-5413
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-5413 for pi
+
+[RUN] pi on pytest-dev__pytest-5413 ...
+  [EVAL] pi on pytest-dev__pytest-5413 ...
+  => pytest-dev__pytest-5413 | pi | patch-but-failed
+
+############################################################
+# [114/212] pi x pytest-dev__pytest-5495
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-5495 for pi
+
+[RUN] pi on pytest-dev__pytest-5495 ...
+  [EVAL] pi on pytest-dev__pytest-5495 ...
+  => pytest-dev__pytest-5495 | pi | patch-but-failed
+
+############################################################
+# [115/212] pi x pytest-dev__pytest-5692
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-5692 for pi
+
+[RUN] pi on pytest-dev__pytest-5692 ...
+  [EVAL] pi on pytest-dev__pytest-5692 ...
+  => pytest-dev__pytest-5692 | pi | patch-but-failed
+
+############################################################
+# [116/212] pi x pytest-dev__pytest-6116
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-6116 for pi
+
+[RUN] pi on pytest-dev__pytest-6116 ...
+  [EVAL] pi on pytest-dev__pytest-6116 ...
+  => pytest-dev__pytest-6116 | pi | patch-but-failed
+
+############################################################
+# [117/212] pi x pytest-dev__pytest-7168
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7168 for pi
+
+[RUN] pi on pytest-dev__pytest-7168 ...
+  [EVAL] pi on pytest-dev__pytest-7168 ...
+  => pytest-dev__pytest-7168 | pi | patch-but-failed
+
+############################################################
+# [118/212] pi x pytest-dev__pytest-7220
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7220 for pi
+
+[RUN] pi on pytest-dev__pytest-7220 ...
+  [EVAL] pi on pytest-dev__pytest-7220 ...
+  => pytest-dev__pytest-7220 | pi | patch-but-failed
+
+############################################################
+# [119/212] pi x pytest-dev__pytest-7373
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7373 for pi
+
+[RUN] pi on pytest-dev__pytest-7373 ...
+  [EVAL] pi on pytest-dev__pytest-7373 ...
+  => pytest-dev__pytest-7373 | pi | patch-but-failed
+
+############################################################
+# [120/212] pi x pytest-dev__pytest-7432
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7432 for pi
+
+[RUN] pi on pytest-dev__pytest-7432 ...
+  [EVAL] pi on pytest-dev__pytest-7432 ...
+  => pytest-dev__pytest-7432 | pi | patch-but-failed
+
+############################################################
+# [121/212] pi x pytest-dev__pytest-7490
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7490 for pi
+
+[RUN] pi on pytest-dev__pytest-7490 ...
+  [EVAL] pi on pytest-dev__pytest-7490 ...
+  => pytest-dev__pytest-7490 | pi | patch-but-failed
+
+############################################################
+# [122/212] pi x pytest-dev__pytest-8365
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-8365 for pi
+
+[RUN] pi on pytest-dev__pytest-8365 ...
+  [EVAL] pi on pytest-dev__pytest-8365 ...
+  => pytest-dev__pytest-8365 | pi | patch-but-failed
+
+############################################################
+# [123/212] pi x pytest-dev__pytest-8906
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-8906 for pi
+
+[RUN] pi on pytest-dev__pytest-8906 ...
+  [EVAL] pi on pytest-dev__pytest-8906 ...
+  => pytest-dev__pytest-8906 | pi | patch-but-failed
+
+############################################################
+# [124/212] pi x pytest-dev__pytest-9359
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-9359 for pi
+
+[RUN] pi on pytest-dev__pytest-9359 ...
+  [EVAL] pi on pytest-dev__pytest-9359 ...
+  => pytest-dev__pytest-9359 | pi | patch-but-failed
+
+############################################################
+# [125/212] pi x scikit-learn__scikit-learn-13142
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13142 for pi
+
+[RUN] pi on scikit-learn__scikit-learn-13142 ...
+  [EVAL] pi on scikit-learn__scikit-learn-13142 ...
+  => scikit-learn__scikit-learn-13142 | pi | resolved
+
+############################################################
+# [126/212] pi x scikit-learn__scikit-learn-13241
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13241 for pi
+
+[RUN] pi on scikit-learn__scikit-learn-13241 ...
+  [EVAL] pi on scikit-learn__scikit-learn-13241 ...
+  => scikit-learn__scikit-learn-13241 | pi | resolved
+
+############################################################
+# [127/212] pi x scikit-learn__scikit-learn-13439
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13439 for pi
+
+[RUN] pi on scikit-learn__scikit-learn-13439 ...
+  [EVAL] pi on scikit-learn__scikit-learn-13439 ...
+  => scikit-learn__scikit-learn-13439 | pi | resolved
+
+############################################################
+# [128/212] pi x scikit-learn__scikit-learn-13496
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13496 for pi
+
+[RUN] pi on scikit-learn__scikit-learn-13496 ...
+  [EVAL] pi on scikit-learn__scikit-learn-13496 ...
+  => scikit-learn__scikit-learn-13496 | pi | resolved
+
+############################################################
+# [129/212] pi x scikit-learn__scikit-learn-13497
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13497 for pi
+
+[RUN] pi on scikit-learn__scikit-learn-13497 ...
+  [EVAL] pi on scikit-learn__scikit-learn-13497 ...
+  => scikit-learn__scikit-learn-13497 | pi | patch-but-failed
+
+############################################################
+# [130/212] pi x scikit-learn__scikit-learn-13584
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13584 for pi
+
+[RUN] pi on scikit-learn__scikit-learn-13584 ...
+  [EVAL] pi on scikit-learn__scikit-learn-13584 ...
+  => scikit-learn__scikit-learn-13584 | pi | patch-but-failed
+
+############################################################
+# [131/212] pi x scikit-learn__scikit-learn-13779
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13779 for pi
+
+[RUN] pi on scikit-learn__scikit-learn-13779 ...
+  [EVAL] pi on scikit-learn__scikit-learn-13779 ...
+  => scikit-learn__scikit-learn-13779 | pi | resolved
+
+############################################################
+# [132/212] pi x scikit-learn__scikit-learn-14087
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14087 for pi
+
+[RUN] pi on scikit-learn__scikit-learn-14087 ...
+  [EVAL] pi on scikit-learn__scikit-learn-14087 ...
+  => scikit-learn__scikit-learn-14087 | pi | patch-but-failed
+
+############################################################
+# [133/212] pi x scikit-learn__scikit-learn-14092
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14092 for pi
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => scikit-learn__scikit-learn-14092 | pi | blocked
+
+############################################################
+# [134/212] pi x scikit-learn__scikit-learn-14894
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14894 for pi
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] pi on scikit-learn__scikit-learn-14894 ...
+  [EVAL] pi on scikit-learn__scikit-learn-14894 ...
+  => scikit-learn__scikit-learn-14894 | pi | resolved
+
+############################################################
+# [135/212] pi x scikit-learn__scikit-learn-14983
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14983 for pi
+
+[RUN] pi on scikit-learn__scikit-learn-14983 ...
+  [EVAL] pi on scikit-learn__scikit-learn-14983 ...
+  => scikit-learn__scikit-learn-14983 | pi | resolved
+
+############################################################
+# [136/212] pi x scikit-learn__scikit-learn-15512
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-15512 for pi
+
+[RUN] pi on scikit-learn__scikit-learn-15512 ...
+  [EVAL] pi on scikit-learn__scikit-learn-15512 ...
+  => scikit-learn__scikit-learn-15512 | pi | patch-but-failed
+
+############################################################
+# [137/212] pi x scikit-learn__scikit-learn-15535
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-15535 for pi
+
+[RUN] pi on scikit-learn__scikit-learn-15535 ...
+  [EVAL] pi on scikit-learn__scikit-learn-15535 ...
+  => scikit-learn__scikit-learn-15535 | pi | resolved
+
+############################################################
+# [138/212] pi x scikit-learn__scikit-learn-25500
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25500 for pi
+
+[RUN] pi on scikit-learn__scikit-learn-25500 ...
+  [EVAL] pi on scikit-learn__scikit-learn-25500 ...
+  => scikit-learn__scikit-learn-25500 | pi | patch-but-failed
+
+############################################################
+# [139/212] pi x scikit-learn__scikit-learn-25570
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25570 for pi
+
+[RUN] pi on scikit-learn__scikit-learn-25570 ...
+  [EVAL] pi on scikit-learn__scikit-learn-25570 ...
+  => scikit-learn__scikit-learn-25570 | pi | patch-but-failed
+
+############################################################
+# [140/212] pi x scikit-learn__scikit-learn-25638
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25638 for pi
+
+[RUN] pi on scikit-learn__scikit-learn-25638 ...
+  [EVAL] pi on scikit-learn__scikit-learn-25638 ...
+  => scikit-learn__scikit-learn-25638 | pi | patch-but-failed
+
+############################################################
+# [141/212] pi x scikit-learn__scikit-learn-25747
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25747 for pi
+
+[RUN] pi on scikit-learn__scikit-learn-25747 ...
+  [QUOTA] pi: quota exhausted, waiting 300s (retry 2/3)...
+  [EVAL] pi on scikit-learn__scikit-learn-25747 ...
+  => scikit-learn__scikit-learn-25747 | pi | patch-but-failed
+
+############################################################
+# [142/212] pi x sphinx-doc__sphinx-7738
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-7738 for pi
+
+[RUN] pi on sphinx-doc__sphinx-7738 ...
+  [EVAL] pi on sphinx-doc__sphinx-7738 ...
+  => sphinx-doc__sphinx-7738 | pi | patch-but-failed
+
+############################################################
+# [143/212] pi x sphinx-doc__sphinx-7975
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-7975 for pi
+
+[RUN] pi on sphinx-doc__sphinx-7975 ...
+  [EVAL] pi on sphinx-doc__sphinx-7975 ...
+  => sphinx-doc__sphinx-7975 | pi | patch-but-failed
+
+############################################################
+# [144/212] pi x sphinx-doc__sphinx-8273
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8273 for pi
+
+[RUN] pi on sphinx-doc__sphinx-8273 ...
+  [EVAL] pi on sphinx-doc__sphinx-8273 ...
+  => sphinx-doc__sphinx-8273 | pi | patch-but-failed
+
+############################################################
+# [145/212] pi x sphinx-doc__sphinx-8282
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8282 for pi
+
+[RUN] pi on sphinx-doc__sphinx-8282 ...
+  [EVAL] pi on sphinx-doc__sphinx-8282 ...
+  => sphinx-doc__sphinx-8282 | pi | patch-but-failed
+
+############################################################
+# [146/212] pi x sphinx-doc__sphinx-8435
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8435 for pi
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] pi on sphinx-doc__sphinx-8435 ...
+  [EVAL] pi on sphinx-doc__sphinx-8435 ...
+  => sphinx-doc__sphinx-8435 | pi | patch-but-failed
+
+############################################################
+# [147/212] pi x sphinx-doc__sphinx-8474
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8474 for pi
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] pi on sphinx-doc__sphinx-8474 ...
+  [EVAL] pi on sphinx-doc__sphinx-8474 ...
+  => sphinx-doc__sphinx-8474 | pi | patch-but-failed
+
+############################################################
+# [148/212] pi x sphinx-doc__sphinx-8506
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8506 for pi
+
+[RUN] pi on sphinx-doc__sphinx-8506 ...
+  [EVAL] pi on sphinx-doc__sphinx-8506 ...
+  => sphinx-doc__sphinx-8506 | pi | patch-but-failed
+
+############################################################
+# [149/212] pi x sphinx-doc__sphinx-8595
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8595 for pi
+
+[RUN] pi on sphinx-doc__sphinx-8595 ...
+  [EVAL] pi on sphinx-doc__sphinx-8595 ...
+  => sphinx-doc__sphinx-8595 | pi | patch-but-failed
+
+############################################################
+# [150/212] pi x sphinx-doc__sphinx-8627
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8627 for pi
+
+[RUN] pi on sphinx-doc__sphinx-8627 ...
+  [EVAL] pi on sphinx-doc__sphinx-8627 ...
+  => sphinx-doc__sphinx-8627 | pi | patch-but-failed
+
+############################################################
+# [151/212] pi x sphinx-doc__sphinx-8713
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8713 for pi
+
+[RUN] pi on sphinx-doc__sphinx-8713 ...
+  [EVAL] pi on sphinx-doc__sphinx-8713 ...
+  => sphinx-doc__sphinx-8713 | pi | patch-but-failed
+
+############################################################
+# [152/212] pi x sphinx-doc__sphinx-8721
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8721 for pi
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] pi on sphinx-doc__sphinx-8721 ...
+  [EVAL] pi on sphinx-doc__sphinx-8721 ...
+  => sphinx-doc__sphinx-8721 | pi | patch-but-failed
+
+############################################################
+# [153/212] pi x sphinx-doc__sphinx-8801
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8801 for pi
+
+[RUN] pi on sphinx-doc__sphinx-8801 ...
+  [EVAL] pi on sphinx-doc__sphinx-8801 ...
+  => sphinx-doc__sphinx-8801 | pi | patch-but-failed
+
+############################################################
+# [154/212] pi x sympy__sympy-11400
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-11400 for pi
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] pi on sympy__sympy-11400 ...
+  [EVAL] pi on sympy__sympy-11400 ...
+  => sympy__sympy-11400 | pi | resolved
+
+############################################################
+# [155/212] pi x sympy__sympy-13971
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-13971 for pi
+
+[RUN] pi on sympy__sympy-13971 ...
+  [EVAL] pi on sympy__sympy-13971 ...
+  => sympy__sympy-13971 | pi | resolved
+
+############################################################
+# [156/212] pi x sympy__sympy-14024
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-14024 for pi
+
+[RUN] pi on sympy__sympy-14024 ...
+  [EVAL] pi on sympy__sympy-14024 ...
+  => sympy__sympy-14024 | pi | resolved
+
+############################################################
+# [157/212] pi x sympy__sympy-14308
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-14308 for pi
+
+[RUN] pi on sympy__sympy-14308 ...
+  [EVAL] pi on sympy__sympy-14308 ...
+  => sympy__sympy-14308 | pi | patch-but-failed
+
+############################################################
+# [158/212] pi x sympy__sympy-14317
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-14317 for pi
+
+[RUN] pi on sympy__sympy-14317 ...
+  [EVAL] pi on sympy__sympy-14317 ...
+  => sympy__sympy-14317 | pi | patch-but-failed
+
+############################################################
+# [159/212] pi x sympy__sympy-14396
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-14396 for pi
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] pi on sympy__sympy-14396 ...
+  [EVAL] pi on sympy__sympy-14396 ...
+  => sympy__sympy-14396 | pi | resolved
+
+############################################################
+# [160/212] pi x sympy__sympy-14774
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-14774 for pi
+
+[RUN] pi on sympy__sympy-14774 ...
+  [EVAL] pi on sympy__sympy-14774 ...
+  => sympy__sympy-14774 | pi | resolved
+
+############################################################
+# [161/212] pi x sympy__sympy-14817
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-14817 for pi
+
+[RUN] pi on sympy__sympy-14817 ...
+  [EVAL] pi on sympy__sympy-14817 ...
+  => sympy__sympy-14817 | pi | patch-but-failed
+
+############################################################
+# [162/212] pi x sympy__sympy-15011
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15011 for pi
+
+[RUN] pi on sympy__sympy-15011 ...
+  [EVAL] pi on sympy__sympy-15011 ...
+  => sympy__sympy-15011 | pi | resolved
+
+############################################################
+# [163/212] pi x sympy__sympy-15308
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15308 for pi
+
+[RUN] pi on sympy__sympy-15308 ...
+  [EVAL] pi on sympy__sympy-15308 ...
+  => sympy__sympy-15308 | pi | patch-but-failed
+
+############################################################
+# [164/212] pi x sympy__sympy-15345
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15345 for pi
+
+[RUN] pi on sympy__sympy-15345 ...
+  [EVAL] pi on sympy__sympy-15345 ...
+  => sympy__sympy-15345 | pi | resolved
+
+############################################################
+# [165/212] pi x sympy__sympy-15346
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15346 for pi
+
+[RUN] pi on sympy__sympy-15346 ...
+  [EVAL] pi on sympy__sympy-15346 ...
+  => sympy__sympy-15346 | pi | resolved
+
+############################################################
+# [166/212] pi x sympy__sympy-15609
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15609 for pi
+
+[RUN] pi on sympy__sympy-15609 ...
+  [EVAL] pi on sympy__sympy-15609 ...
+  => sympy__sympy-15609 | pi | resolved
+
+############################################################
+# [167/212] pi x sympy__sympy-15678
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15678 for pi
+
+[RUN] pi on sympy__sympy-15678 ...
+  [EVAL] pi on sympy__sympy-15678 ...
+  => sympy__sympy-15678 | pi | resolved
+
+############################################################
+# [168/212] pi x sympy__sympy-16106
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16106 for pi
+
+[RUN] pi on sympy__sympy-16106 ...
+  [EVAL] pi on sympy__sympy-16106 ...
+  => sympy__sympy-16106 | pi | patch-but-failed
+
+############################################################
+# [169/212] pi x sympy__sympy-16281
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16281 for pi
+
+[RUN] pi on sympy__sympy-16281 ...
+  [EVAL] pi on sympy__sympy-16281 ...
+  => sympy__sympy-16281 | pi | patch-but-failed
+
+############################################################
+# [170/212] pi x sympy__sympy-16503
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16503 for pi
+
+[RUN] pi on sympy__sympy-16503 ...
+  [EVAL] pi on sympy__sympy-16503 ...
+  => sympy__sympy-16503 | pi | patch-but-failed
+
+############################################################
+# [171/212] pi x sympy__sympy-16792
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16792 for pi
+
+[RUN] pi on sympy__sympy-16792 ...
+  [EVAL] pi on sympy__sympy-16792 ...
+  => sympy__sympy-16792 | pi | resolved
+
+############################################################
+# [172/212] pi x sympy__sympy-16988
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16988 for pi
+
+[RUN] pi on sympy__sympy-16988 ...
+  [EVAL] pi on sympy__sympy-16988 ...
+  => sympy__sympy-16988 | pi | resolved
+
+############################################################
+# [173/212] pi x sympy__sympy-17022
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17022 for pi
+
+[RUN] pi on sympy__sympy-17022 ...
+  [EVAL] pi on sympy__sympy-17022 ...
+  => sympy__sympy-17022 | pi | resolved
+
+############################################################
+# [174/212] pi x sympy__sympy-17139
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17139 for pi
+
+[RUN] pi on sympy__sympy-17139 ...
+  [EVAL] pi on sympy__sympy-17139 ...
+  => sympy__sympy-17139 | pi | resolved
+
+############################################################
+# [175/212] pi x sympy__sympy-17630
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17630 for pi
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] pi on sympy__sympy-17630 ...
+  [EVAL] pi on sympy__sympy-17630 ...
+  => sympy__sympy-17630 | pi | resolved
+
+############################################################
+# [176/212] pi x sympy__sympy-17655
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17655 for pi
+
+[RUN] pi on sympy__sympy-17655 ...
+  [EVAL] pi on sympy__sympy-17655 ...
+  => sympy__sympy-17655 | pi | resolved
+
+############################################################
+# [177/212] pi x sympy__sympy-18057
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18057 for pi
+
+[RUN] pi on sympy__sympy-18057 ...
+  [EVAL] pi on sympy__sympy-18057 ...
+  => sympy__sympy-18057 | pi | resolved
+
+############################################################
+# [178/212] pi x sympy__sympy-18087
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18087 for pi
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] pi on sympy__sympy-18087 ...
+  [EVAL] pi on sympy__sympy-18087 ...
+  => sympy__sympy-18087 | pi | resolved
+
+############################################################
+# [179/212] pi x sympy__sympy-18189
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18189 for pi
+
+[RUN] pi on sympy__sympy-18189 ...
+  [EVAL] pi on sympy__sympy-18189 ...
+  => sympy__sympy-18189 | pi | resolved
+
+############################################################
+# [180/212] pi x sympy__sympy-18199
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18199 for pi
+
+[RUN] pi on sympy__sympy-18199 ...
+  [EVAL] pi on sympy__sympy-18199 ...
+  => sympy__sympy-18199 | pi | patch-but-failed
+
+############################################################
+# [181/212] pi x sympy__sympy-18532
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18532 for pi
+
+[RUN] pi on sympy__sympy-18532 ...
+  [EVAL] pi on sympy__sympy-18532 ...
+  => sympy__sympy-18532 | pi | patch-but-failed
+
+############################################################
+# [182/212] pi x sympy__sympy-18621
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18621 for pi
+
+[RUN] pi on sympy__sympy-18621 ...
+  [EVAL] pi on sympy__sympy-18621 ...
+  => sympy__sympy-18621 | pi | resolved
+
+############################################################
+# [183/212] pi x sympy__sympy-18698
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18698 for pi
+
+[RUN] pi on sympy__sympy-18698 ...
+  [EVAL] pi on sympy__sympy-18698 ...
+  => sympy__sympy-18698 | pi | resolved
+
+############################################################
+# [184/212] pi x sympy__sympy-18835
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18835 for pi
+
+[RUN] pi on sympy__sympy-18835 ...
+  [EVAL] pi on sympy__sympy-18835 ...
+  => sympy__sympy-18835 | pi | patch-but-failed
+
+############################################################
+# [185/212] pi x sympy__sympy-19007
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-19007 for pi
+
+[RUN] pi on sympy__sympy-19007 ...
+  [EVAL] pi on sympy__sympy-19007 ...
+  => sympy__sympy-19007 | pi | patch-but-failed
+
+############################################################
+# [186/212] pi x sympy__sympy-19254
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-19254 for pi
+
+[RUN] pi on sympy__sympy-19254 ...
+  [EVAL] pi on sympy__sympy-19254 ...
+  => sympy__sympy-19254 | pi | patch-but-failed
+
+############################################################
+# [187/212] pi x sympy__sympy-19487
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-19487 for pi
+
+[RUN] pi on sympy__sympy-19487 ...
+  [EVAL] pi on sympy__sympy-19487 ...
+  => sympy__sympy-19487 | pi | patch-but-failed
+
+############################################################
+# [188/212] pi x sympy__sympy-20049
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20049 for pi
+
+[RUN] pi on sympy__sympy-20049 ...
+  [EVAL] pi on sympy__sympy-20049 ...
+  => sympy__sympy-20049 | pi | patch-but-failed
+
+############################################################
+# [189/212] pi x sympy__sympy-20154
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20154 for pi
+
+[RUN] pi on sympy__sympy-20154 ...
+  [EVAL] pi on sympy__sympy-20154 ...
+  => sympy__sympy-20154 | pi | patch-but-failed
+
+############################################################
+# [190/212] pi x sympy__sympy-20212
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20212 for pi
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] pi on sympy__sympy-20212 ...
+  [EVAL] pi on sympy__sympy-20212 ...
+  => sympy__sympy-20212 | pi | resolved
+
+############################################################
+# [191/212] pi x sympy__sympy-20322
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20322 for pi
+
+[RUN] pi on sympy__sympy-20322 ...
+  [EVAL] pi on sympy__sympy-20322 ...
+  => sympy__sympy-20322 | pi | patch-but-failed
+
+############################################################
+# [192/212] pi x sympy__sympy-20442
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20442 for pi
+
+[RUN] pi on sympy__sympy-20442 ...
+  [EVAL] pi on sympy__sympy-20442 ...
+  => sympy__sympy-20442 | pi | resolved
+
+############################################################
+# [193/212] pi x sympy__sympy-20590
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20590 for pi
+
+[RUN] pi on sympy__sympy-20590 ...
+  [EVAL] pi on sympy__sympy-20590 ...
+  => sympy__sympy-20590 | pi | resolved
+
+############################################################
+# [194/212] pi x sympy__sympy-20639
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20639 for pi
+
+[RUN] pi on sympy__sympy-20639 ...
+  [EVAL] pi on sympy__sympy-20639 ...
+  => sympy__sympy-20639 | pi | patch-but-failed
+
+############################################################
+# [195/212] pi x sympy__sympy-21055
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21055 for pi
+
+[RUN] pi on sympy__sympy-21055 ...
+  [EVAL] pi on sympy__sympy-21055 ...
+  => sympy__sympy-21055 | pi | resolved
+
+############################################################
+# [196/212] pi x sympy__sympy-21171
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21171 for pi
+
+[RUN] pi on sympy__sympy-21171 ...
+  [EVAL] pi on sympy__sympy-21171 ...
+  => sympy__sympy-21171 | pi | patch-but-failed
+
+############################################################
+# [197/212] pi x sympy__sympy-21379
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21379 for pi
+
+[RUN] pi on sympy__sympy-21379 ...
+  [EVAL] pi on sympy__sympy-21379 ...
+  => sympy__sympy-21379 | pi | resolved
+
+############################################################
+# [198/212] pi x sympy__sympy-21612
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21612 for pi
+
+[RUN] pi on sympy__sympy-21612 ...
+  [EVAL] pi on sympy__sympy-21612 ...
+  => sympy__sympy-21612 | pi | patch-but-failed
+
+############################################################
+# [199/212] pi x sympy__sympy-21614
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21614 for pi
+
+[RUN] pi on sympy__sympy-21614 ...
+  [EVAL] pi on sympy__sympy-21614 ...
+  => sympy__sympy-21614 | pi | resolved
+
+############################################################
+# [200/212] pi x sympy__sympy-21627
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21627 for pi
+
+[RUN] pi on sympy__sympy-21627 ...
+  [EVAL] pi on sympy__sympy-21627 ...
+  => sympy__sympy-21627 | pi | patch-but-failed
+
+############################################################
+# [201/212] pi x sympy__sympy-21847
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21847 for pi
+
+[RUN] pi on sympy__sympy-21847 ...
+  [EVAL] pi on sympy__sympy-21847 ...
+  => sympy__sympy-21847 | pi | resolved
+
+############################################################
+# [202/212] pi x sympy__sympy-22005
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-22005 for pi
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => sympy__sympy-22005 | pi | blocked
+
+############################################################
+# [203/212] pi x sympy__sympy-22714
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-22714 for pi
+
+[RUN] pi on sympy__sympy-22714 ...
+  [EVAL] pi on sympy__sympy-22714 ...
+  => sympy__sympy-22714 | pi | resolved
+
+############################################################
+# [204/212] pi x sympy__sympy-22840
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-22840 for pi
+
+[RUN] pi on sympy__sympy-22840 ...
+  [EVAL] pi on sympy__sympy-22840 ...
+  => sympy__sympy-22840 | pi | patch-but-failed
+
+############################################################
+# [205/212] pi x sympy__sympy-23117
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-23117 for pi
+
+[RUN] pi on sympy__sympy-23117 ...
+  [EVAL] pi on sympy__sympy-23117 ...
+  => sympy__sympy-23117 | pi | resolved
+
+############################################################
+# [206/212] pi x sympy__sympy-23191
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-23191 for pi
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] pi on sympy__sympy-23191 ...
+  [EVAL] pi on sympy__sympy-23191 ...
+  => sympy__sympy-23191 | pi | patch-but-failed
+
+############################################################
+# [207/212] pi x sympy__sympy-23262
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-23262 for pi
+
+[RUN] pi on sympy__sympy-23262 ...
+  [QUOTA] pi: quota exhausted, waiting 300s (retry 2/3)...
+  [QUOTA] pi: quota exhausted, waiting 300s (retry 3/3)...
+  [EVAL] pi on sympy__sympy-23262 ...
+  => sympy__sympy-23262 | pi | quota-blocked
+
+############################################################
+# [208/212] pi x sympy__sympy-24066
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24066 for pi
+
+[RUN] pi on sympy__sympy-24066 ...
+  [EVAL] pi on sympy__sympy-24066 ...
+  => sympy__sympy-24066 | pi | resolved
+
+############################################################
+# [209/212] pi x sympy__sympy-24102
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24102 for pi
+
+[RUN] pi on sympy__sympy-24102 ...
+  [EVAL] pi on sympy__sympy-24102 ...
+  => sympy__sympy-24102 | pi | patch-but-failed
+
+############################################################
+# [210/212] pi x sympy__sympy-24152
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24152 for pi
+
+[RUN] pi on sympy__sympy-24152 ...
+  [EVAL] pi on sympy__sympy-24152 ...
+  => sympy__sympy-24152 | pi | resolved
+
+############################################################
+# [211/212] pi x sympy__sympy-24213
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24213 for pi
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] pi on sympy__sympy-24213 ...
+  [EVAL] pi on sympy__sympy-24213 ...
+  => sympy__sympy-24213 | pi | resolved
+
+############################################################
+# [212/212] pi x sympy__sympy-24909
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24909 for pi
+
+[RUN] pi on sympy__sympy-24909 ...
+  [EVAL] pi on sympy__sympy-24909 ...
+  => sympy__sympy-24909 | pi | patch-but-failed
+
+============================================================
+SUMMARY: pi x kimi-k2.6-cloud
+============================================================
+  resolved: 91/300 (30.3%)
+  patch-but-failed: 202/300 (67.3%)
+  quota-blocked: 2/300 (0.7%)
+  blocked: 5/300 (1.7%)

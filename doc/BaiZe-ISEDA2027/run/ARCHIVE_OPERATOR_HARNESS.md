@@ -646,3 +646,44 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 
 **纪律不变**：模型 `kimi-k2.6-cloud` · 同沙箱 · 同 `PreToolUse`/anti-cheat · 同判据；🚫 不删 `kimi_pilot_results.json`；🚫 不 `git add -A`；收尾 commit+push（前缀 `harness R<N>: …`）。
 > 📦 体积：加块后自检 `wc -c`，>32KB 先归档已闭合旧块。
+
+
+## 📦 归档：2026-10-09⑧（7×100 HTML 报告 + 启动 7×300 + 三条硬约束）— 2026-10-11 R303 归档自 BAIZE_HARNESS_TASK.md
+
+### 🆕 运维指令 · 2026-10-09⑧（① **7×100 HTML 报告** ② **启动 7×300 —— 并发已批准，附三条硬约束**）· **用户直令** · 最高优先
+
+> **用户原话**：「**1. 给这次 7x100 的实验写个 html 报告 2. 开始 7x300，按照经验，可以并发。**」
+
+**① 7×100 报告（新交付物）**
+- 文件 `doc/BaiZe-ISEDA2027/report_harness_7x100.html`（house style：自包含 / 内联 SVG / 零外链 / ≤200KB）。
+- 必备节：**HERO** 一句话结论 · **实验设置**（7 harness 版本 / 沙箱 / 判据 / 超时 / 题集规则 = `instance_selection_100.json` 的 `selection_rule` 原文）· **⚠️ 口径与并发**（serial(R1) vs 7 路并行(R2)；30 条 `--resume` 复用 vs 70 条新跑，**每行标 `R1复用`/`R2新跑`**）· **主结果表** 7×(done/resolved/pbf/blocked/scored/rate)+汇总（当前 **236 / 439 / 25**）· **每 repo × 7 harness 细分** · **blocked 专节**（25 例**逐条**根因 + 修复过程，**不许吞**）· **eval 环境限制专节**（非 django/sympy repo 的 `patch_applied=False` ⇒ 那些 0 分**不代表 harness 能力**）· 失败模式 · wall-time vs rate · 结论与局限。
+- **每格数字须可复算**（给 JSON 字段口径或 `path:line`）；报告放 `doc/BaiZe-ISEDA2027/` 根。
+
+**② 7×300：题集与工作量**
+- **题集 = SWE-bench Lite 全量 300 条**（= codex 300-set 的 12 repo 全集），**7 harness 同一份**；100-set ⊂ 300-set ⇒ **`--resume` 复用已有 700 条**。**codex 已有全部 300（0 新跑）**，其余 6 家各 200 新跑 = **1200 runs**。
+- **先报 ETA 再全速**（照 ⑤ 规矩）。实测依据：100 条串行共 **112.8h**，per-harness avg wall 415–999s ⇒ 6×200 串行 ≈ 各 23–42h；**7 路并行 wall ≈ 42h（hermes 瓶颈）**；harness 内并发 N ⇒ **≈42/N h**。
+
+**②-A 🚨 起跑前必须改代码（三条缺一不可 —— 88 例 blocked 的根因就是路径没带 harness 维度）**
+
+根因在 `run/harness/run_serial_kimi.py:238-239`：
+```
+238  workdir = WORKDIRS / instance["repo"].replace("/", "_")     # ← 只按 repo，7 harness 共用
+239  rootfs_path = ROOTFS_TEMPLATES.get(instance["repo"], ROOTFS_DIR / instance_id)  # ← 共用
+```
+1. **workdir 隔离（必做，1 行）** ⇒ `WORKDIRS / <harness> / repo.replace("/","_")`：根除「Your local changes would be overwritten by checkout」（当前 22/25 blocked）。
+2. **rootfs 全局锁（必做）**：`setup_rootfs()` 与 `eval_instance()` 是**唯二**碰共享 template testbed 的地方（`git fetch` 抢 `shallow.lock`）⇒ 用 `flock /nas_train/app.e0031982/harness_work/rootfs.lock` **只包这两段**；**agent 运行段保持无锁并行** ⇒ 吞吐不掉。🚫 不建议「每 harness 拷一份 rootfs」（`cp -a` ×7 harness ×12 repo 可能几百 GB）。
+3. **harness 内并发 >1 ⇒ workdir 必须细到 per-instance**（`WORKDIRS/<harness>/<instance_id>`），否则同 repo 并发仍撞。
+
+**②-B 资源红线（`.29` 不是私有机器）**
+- harness 在 **`.29`**（`MEMORY_HARNESS.md:136`「.29 是 pretrain R2 训练机」），**pretrain 现在有活在跑** ⇒ **先在 `run/GPU29_ALLOC.md` 申请区追加一行**（7×300 / 预计 wall / CPU·内存·磁盘·网络档），**先到先得、🚫 不抢占**；起跑前先 `uptime` + `nvidia-smi` 核训练负载。
+- ⚠️ **`/dev/shm` 是 tmpfs（吃内存）**，而 `WORKDIRS` 就在里面；per-harness 隔离后克隆份数 ×7 ⇒ **起跑前 `df -h /dev/shm && free -g`，原文抄进心跳**；不够 ⇒ 降 N 或迁盘（NFS+git tmp_pack 老问题）。
+- **并发分档、逐档验**：N=1（7 路并行）→ 跑 30 条确认 **block=0** → N=2 → N=3；**任一档 block>0 立即停档并报根因**，🚫 不许带 block 硬冲。
+
+**②-C 成功判据（硬）**
+- 收尾时 **`blocked` 必须 = 0**（`quota-blocked` 同算失败）；**>0 ⇒ 报告逐条列 `instance_id` + 根因原文**，🚫 不许「差不多」。
+- 口径逐字不变（同 backbone `kimi-k2.6-cloud` / 同沙箱 / 同判据 / 同 `PreToolUse`）。🚫 不删 `kimi_pilot_results.json`（`--resume` 靠它）；每完成一个 harness 即刷新 + commit（前缀 `harness R<N>: …`）。
+
+**③ 顺序**：**① 先交**（纯 CPU/写作，不占串行槽）→ **②-A 改码 + 30 条冒烟验 block=0 + 报 ETA** → ② 起跑。
+
+> **归档结论（2026-10-11）**：① 7×100 HTML 报告已交付 ✅（`report_harness_7x100.html`）；② 7×300 已启动 ✅（workdir 隔离修复 done, block=0 已验证, 2047/2100 = 97.5%, 554 resolved, 5 harness COMPLETE, hermes+claude-code 仍在跑）；②-C 成功判据待 7×300 完成后检查 blocked=0。本块已归档，7×300 监控继续在 MEMORY_HARNESS.md 顶部进行。
+
