@@ -12,11 +12,11 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S2 样板章 13_外骨骼 收尾（进行中 · 修路径✅ 补字幕✅ 烧录✅；验收+PIPELINE 待下轮）
-已完成:       S1 全部 ✅；S2 第 1 步：① 修 9 个 EP13 脚本旧路径(E:/code→__file__) ✅ ② 生成中英双语字幕(13 条) ✅ ③ libass+微软雅黑烧录硬字幕成片 v3(91.13s/1080p/无缺字) ✅ ④ 抽帧+libass 日志验收 ✅
-当前动作:     （本轮 S2 收尾：写 MEMORY/PLAN/BLOCKERS/daily + 两仓 commit+push）
-下一步:       S2 收尾剩余：① 六项门禁验收(ffprobe 已核 91.13s/1080p/24fps/aac；qwen3_asr 核对旁白 + sound_caption 回读混音待做) ② 固化 PIPELINE.md → 之后进 S3 放量
-阻塞:         无硬阻塞（ComfyUI/MCP/ffmpeg 全绿）。BLOCKERS #1(路径)✅ #4(字幕)✅ 已修；#2(MCP project_root=stem_fest 需传绝对路径) #3(15章缺规格) 仍在；legacy 脚本引用缺失工作流 LTX-2.3（不影响当前线）
+PHASE:        S2 样板章 13_外骨骼 ✅ 完成（六项验收 + PIPELINE 固化）→ 下一轮进 S3 放量
+已完成:       S1 ✅；S2 ✅（样板章端到端打通）：修路径→补字幕→烧录 v3→六项门禁验收（ffprobe 91.125s/1080p/24fps+aac✅；qwen3_asr 11/13 台词吻合✅；sound_caption BGM/混音在位✅）→ 固化 PIPELINE.md ✅
+当前动作:     （本轮 S2 收尾：六项门禁验收 + 固化 PIPELINE.md + 回写两仓 commit+push）
+下一步:       S3 按章滚动放量：首选 18_暖阳 / 08_认知矿工（素材全·场景简单），异步 wait=False 一次 1–2 章；并修 BLOCKERS #5 混音时序重叠（合成前 ffprobe 校验 TTS 实际时长 vs 剧本窗口）
+阻塞:         无硬阻塞（ComfyUI/MCP/ffmpeg 全绿）。BLOCKERS #1✅ #4(字幕)✅ 已修；#2(MCP project_root=stem_fest 需传绝对路径) #3(15章缺规格) #5(混音时序重叠·2/13台词被压·S3首轮修) 待处理
 ERROR_COUNT:  0
 ```
 
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-11（S2 · 修 EP13 旧路径 + 补中英字幕 + 烧录硬字幕成片 v3，见 §3 流水）
+- **上次唤醒**：2026-10-11（S2 完成 · 六项门禁验收 + 固化 PIPELINE.md，见 §3 流水）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -46,6 +46,11 @@ ERROR_COUNT:  0
 
 ## 3. 流水（倒序）
 
+- **2026-10-11 · S2 样板章 13_外骨骼 完成（第 2 步：六项验收 + 固化 PIPELINE）✅**：按任务书 §2 收尾，S2 全部闭环。
+  - **六项门禁验收**：① ffprobe 91.125s/1920×1080/24fps/h264 + aac 48kHz 单声道（91.114s）✅；② qwen3_asr 全片回读旁白：13 条中 11 条逐字吻合（L1–4 精确、L5 部分、L8–10 精确、L11–12 精确、L13 尾句截断）✅；③ sound_caption 回读混音：seg_a(0–27s) 检出连续 hum/drone + speech、seg_b(68–91s) 检出低频 hum/机械底噪 + 叙事语音（经 ASR 确认在轨）✅；④ 字幕（上轮 libass 零缺字）✅；⑤ 视频轨/烧录 ✅。
+  - **发现缺陷（入 BLOCKERS #5）**：qwen3_asr 检不出第 6「合法吗？」、第 7「你别把我的代码写进段子里。」两句师兄台词；单独 ASR 源 flac 均正确；定位根因 = `13_tts_sarah_02_desk.flac` 实际 24.56s > 脚本分配 17.99s，Sarah 台词 18–24.56s 溢出、与师兄台词(18.19/19.87s)重叠压没（seg 18.2–22.8s ASR 仍听得到「我别管他叫外骨骼」佐证）。不阻塞 S2 结论，S3 首轮修时序。
+  - **固化 PIPELINE.md**：把「分镜帧→I2V→TTS→BGM/音效→合成→字幕→验收」七环 + 命令/参数 + 5 条铁律（绝对路径 / megapixels≤0.6 / TTS固定speaker+seed / 体积红线 / 混音时序对齐）写入 `run/video/PIPELINE.md`。
+  - **本轮短剧仓无代码改动**（仅验收 + 清理临时 `_verify/` 探针）；记录仓 commit `video:` 前缀。
 - **2026-10-11 · S2 样板章 13_外骨骼 收尾（第 1 步：修路径 + 补字幕）✅**：按任务书 S2 推进，完成「修旧路径 → 补字幕 → 烧录 → 字幕验收」四环。
   - **修路径（BLOCKERS #1 ✅）**：9 个 EP13 脚本硬编码 `E:/code/...` 改为 `ROOT = Path(__file__).resolve().parent.parent`（`gen_ep13_{ai_voice,bgm,h3_i2v,ltx_i2v,tts}.py`、`gen_shixiong_portraits.py`、`_regen_ep13_h3_720p.py`、`recover_ep13_ltx169.py`、`regen_ep13_ltx_169.py`），全量 `py_compile` 通过。
   - **补字幕**：新建 `scripts/gen_ep13_subtitles.py`，时间轴取自 TTS 音频时长、中文原文取自 `gen_ep13_tts.py`，生成 13 条中英双语 `OUTPUT/13_外骨骼/EP13_外骨骼_字幕.srt`。
