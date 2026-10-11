@@ -1,6 +1,29 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 ## 🔧 运维指令区（OPERATOR NOTES）— **每次唤醒必须先读本区**
 
+### 🆕 运维指令 · 2026-10-11（📚 **文献借鉴报告**：从 research 线近期论文里找可借鉴 idea · 中文 HTML）· 用户直令 · 高优先
+
+> **用户原话（2026-10-11）**：「**pretrain** 看看**这几天 research 积累的论文**，看看有没有什么可以借鉴的 idea，**写个 html 报告（中文版）**。」
+> **性质**：**纯阅读 + 写作**（🚫 不占 `.29` 的 GPU、🚫 不打断 P-8 长跑、🚫 不改在飞配置）。**如需做验证实验 ⇒ 先写进报告「待验证」并列成本，经运维批准后再跑**。
+
+**① 交付物**：`doc/BaiZe-ISEDA2027/report_pretrain_lit_ideas.html`（**中文 · 自包含 · 内联 CSS/SVG · 零外链 · ≤200KB**）。
+
+**② 输入（先 `git pull`，再读）**
+- research 线近期日报（每天 5 篇）：**仓根相对** `doc/personal-watch/run/research/daily/2026-10-07.html` … `2026-10-11.html`（**共 25 篇**）。
+- 精选与台账：`doc/personal-watch/run/research/TOP_K.md` + `TOP_K.jsonl` · `papers.jsonl` · `TAKEAWAYS.md`。
+- 可对照本仓：`doc/BaiZe-ISEDA2027/LIT_IDEAS_2026-10-04.html` / `LIT_IDEAS_2026-10-05.html` + 本仓 `report_pretrain_*.html`。
+
+**③ 本线关注面**：预训练配方 · **优化器（Muon / MuonClip / hybrid optimizer）** · **架构（Mamba2 / SSM / hybrid）** · **长上下文**（位置编码 / 外推 / 推理成本）· 数据配比与课程 · scaling law · 训练稳定性（loss spike）· 吞吐与并行。
+
+**④ 每条 idea 必带（缺一不可）**：① 出处（**原题 + arXiv ID + URL + 日期**）② 一句话做了什么 ③ **与本线的关系**（**能用在 P-8 / 后续 100B 档 / 长上下文适配 / 优化器切换 的哪一步，具体到模块/实验**）④ **借鉴成本**（GPU·h / 墙钟 / 数据·权重依赖）⑤ **风险/不确定性** ⑥ **价签**（可行性 × 潜力 打分）。
+- **按「对本线的可执行价值」排序 · 给 TOP-5**；其余列附表。
+- **显著区分**「**已验证可借鉴**」vs「**仅灵感/未验证**」；🚫 不得拿二手/摘要页当一手；**每条须可溯源**。
+
+**⑤ 纪律**：🚫 不改 P-8 在飞配置/数值；🚫 不新跑实验（要验证先报运维并列成本）；commit 前缀 `pretrain lit-rpt:`；任务书 >32KB 自滚归档。
+
+---
+
+
 ### 🆕 运维指令 · 2026-10-10（⚗️ MBS 2→3 A/B 验证 · 候选 GBS=1032）· 用户直令 · 最高优先
 
 > **用户令**：「好的 GBS=1032，其它按你的建议执行。」—— P-8【44B】启动后、跑出首个 ckpt 前，先做 MBS 2 vs 3 临门 A/B，**达标才切换，不打断已存 ckpt**。
