@@ -21,25 +21,7 @@
 > 📦 §运维指令·2026-10-07⑥配比实验收官总报告HTML（report_data_mix_summary.html 29KB）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：R1→s_step→R2→top-K全弧线报告已交付,ρ=−0.80排名反转+0.6pp不可分辨+88:8:4先验。需要时再读。
 
 
-### 🆕 运维指令 · 2026-10-11（📚 **文献借鉴报告**：从 research 线近期论文里找可借鉴 idea · 中文 HTML）· 用户直令 · 高优先
-
-> **用户原话（2026-10-11）**：「**data** 看看**这几天 research 积累的论文**，看看有没有什么可以借鉴的 idea，**写个 html 报告（中文版）**。」
-> **性质**：**纯阅读 + 写作**（🚫 不占 GPU、🚫 不打断两路下载巡检、🚫 不做重 I/O）。
-
-**① 交付物**：`doc/BaiZe-ISEDA2027/report_data_lit_ideas.html`（**中文 · 自包含 · 内联 CSS/SVG · 零外链 · ≤200KB**）。
-
-**② 输入（先 `git pull`，再读）**
-- research 线近期日报（每天 5 篇）：**仓根相对** `doc/personal-watch/run/research/daily/2026-10-07.html` … `2026-10-11.html`（**共 25 篇**）。
-- 精选与台账：`doc/personal-watch/run/research/TOP_K.md` + `TOP_K.jsonl` · `papers.jsonl` · `TAKEAWAYS.md`。
-- 可对照本仓：`doc/BaiZe-ISEDA2027/LIT_IDEAS_2026-10-04.html` / `LIT_IDEAS_2026-10-05.html` + 本线 `run/DATA_RESEARCH.md`。
-
-**③ 本线关注面**：数据配比与课程（annealing）· 质量过滤 / 去重 / 污染检测 · 合成数据与改写 · tokenizer · 长上下文数据构造 · 多模态图文对与配对 · 数据规模 vs 质量。
-
-**④ 每条 idea 必带（缺一不可）**：① 出处（**原题 + arXiv ID + URL + 日期**）② 一句话做了什么 ③ **与本线的关系**（**能用在 P-8 投料配比 / R3 分词 / 污染扫描 / 后续档位 的哪一步，具体到源/脚本**）④ **借鉴成本**（GPU·h / 墙钟 / 数据依赖）⑤ **风险/不确定性** ⑥ **价签**（可行性 × 潜力 打分）。
-- **按「对本线的可执行价值」排序 · 给 TOP-5**；其余列附表。
-- **显著区分**「**已验证可借鉴**」vs「**仅灵感/未验证**」；🚫 不得拿二手/摘要页当一手；**每条须可溯源**。
-
-**⑤ 纪律**：🚫 不改下载白名单 / 不 kill 下载进程；🚫 不跑重 I/O；commit 前缀 `data lit-rpt:`；任务书 >32KB 自滚归档。
+> 📦 §运维指令·2026-10-11文献借鉴报告（report_data_lit_ideas.html 36KB, 25篇→TOP-5+3附录, commit c80c7a74）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：25篇arXiv日报筛出8条可借鉴,TOP-1=Conditional Transfer(2610.11548)三信号配比框架→P-8, TOP-4=Beyond Owls(2610.10657)污染检测盲区, 全25篇ID经papers.jsonl核实✅。需要时再读。
 
 ---
 

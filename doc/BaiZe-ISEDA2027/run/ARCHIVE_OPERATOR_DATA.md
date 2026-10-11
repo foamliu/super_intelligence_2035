@@ -1314,3 +1314,27 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 > 📦 ② 已归档至 git 历史（commit 0dd41843），本块覆盖②。
 > **执行结论**：①kill 34旧进程+删46产物✅ ②R3全量分词110/110DONE(1483.91B tok/5.94TB)✅ ③并发110进程(nice -n 10)✅ ④Ultra-FineWeb核实(197GB→2.0TB合理:524.43B×4≈2.1TB)✅ ⑤6目录盘点(全✅)✅ ⑥污染扫描30/30 DONE(60K docs,0命中,累计220K docs全0命中)✅ ⑦铁律已遵守✅。归档自BAIZE_DATA_TASK.md 2026-10-10(唤醒303)。
 
+---
+
+### 🆕 运维指令 · 2026-10-11（📚 **文献借鉴报告**：从 research 线近期论文里找可借鉴 idea · 中文 HTML）· 用户直令 · 高优先
+
+> **用户原话（2026-10-11）**：「**data** 看看**这几天 research 积累的论文**，看看有没有什么可以借鉴的 idea，**写个 html 报告（中文版）**。」
+> **性质**：**纯阅读 + 写作**（🚫 不占 GPU、🚫 不打断两路下载巡检、🚫 不做重 I/O）。
+
+**① 交付物**：`doc/BaiZe-ISEDA2027/report_data_lit_ideas.html`（**中文 · 自包含 · 内联 CSS/SVG · 零外链 · ≤200KB**）。
+
+**② 输入（先 `git pull`，再读）**
+- research 线近期日报（每天 5 篇）：**仓根相对** `doc/personal-watch/run/research/daily/2026-10-07.html` … `2026-10-11.html`（**共 25 篇**）。
+- 精选与台账：`doc/personal-watch/run/research/TOP_K.md` + `TOP_K.jsonl` · `papers.jsonl` · `TAKEAWAYS.md`。
+- 可对照本仓：`doc/BaiZe-ISEDA2027/LIT_IDEAS_2026-10-04.html` / `LIT_IDEAS_2026-10-05.html` + 本线 `run/DATA_RESEARCH.md`。
+
+**③ 本线关注面**：数据配比与课程（annealing）· 质量过滤 / 去重 / 污染检测 · 合成数据与改写 · tokenizer · 长上下文数据构造 · 多模态图文对与配对 · 数据规模 vs 质量。
+
+**④ 每条 idea 必带（缺一不可）**：① 出处（**原题 + arXiv ID + URL + 日期**）② 一句话做了什么 ③ **与本线的关系**（**能用在 P-8 投料配比 / R3 分词 / 污染扫描 / 后续档位 的哪一步，具体到源/脚本**）④ **借鉴成本**（GPU·h / 墙钟 / 数据依赖）⑤ **风险/不确定性** ⑥ **价签**（可行性 × 潜力 打分）。
+- **按「对本线的可执行价值」排序 · 给 TOP-5**；其余列附表。
+- **显著区分**「**已验证可借鉴**」vs「**仅灵感/未验证**」；🚫 不得拿二手/摘要页当一手；**每条须可溯源**。
+
+**⑤ 纪律**：🚫 不改下载白名单 / 不 kill 下载进程；🚫 不跑重 I/O；commit 前缀 `data lit-rpt:`；任务书 >32KB 自滚归档。
+
+> **执行结论**：report_data_lit_ideas.html（36KB 自包含中文 HTML）已生成并推送（commit c80c7a74）。覆盖 research 线 2026-10-07~10-11 共 25 篇 arXiv 日报 → TOP-5 可借鉴（Conditional Transfer 2610.11548 配比三信号 / CoTrace 2610.10426 数据配方 / MiMo-V2.6 2610.11959 多模态退火 / Beyond Owls 2610.10657 污染检测盲区 / OPD Fails 2610.11247 teacher选择）+ 3 附录 + 25 篇全量覆盖表 + 价签汇总 + 方法论口径。全 25 篇 arXiv ID 经 papers.jsonl 逐一核实✅。17/25 篇判定无关。唤醒338(2026-10-11 20:30)产出，唤醒339(2026-10-12 00:42)验证ID正确性后归档。归档自BAIZE_DATA_TASK.md 2026-10-12(唤醒339)。
+
