@@ -37,14 +37,15 @@ REL="doc/personal-watch/run"     # 本任务在仓库中的相对目录（只提
 MODEL="deepseek-flash"          # 调研+整理用 flash（便宜/快）；要更强可换 deepseek-v4-pro
 # 推理强度（cline `--thinking`）：none|low|medium|high|xhigh；省略=用 provider 默认。
 # ⚠️ deepseek-flash 的 provider 默认 effort 是 **high**（想得久/费 token）；
-#    新闻采集主要是"搜索 + 读 + 写摘要"，不需要深推理 → 默认 **low**；要更省可设 `none`。
-THINKING="low"
+#    新闻采集主要是"搜索 + 读 + 写摘要"，不需要深推理 → ⚠️ **2026-10-11 用户令：降为 `none`**（每天 6 轮唤醒，省 token 优先；文稿质量由任务书「第 13 批」的写作要求约束）。
+THINKING="none"
 CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟（与 BaiZe 一致）
 PUSH_INTERVAL=1800              # 每 30 分钟兜底同步一次（2026-10-06 由 18000/5h 缩短，与 BaiZe 一致；agent 每轮自己也会提交）
 SLEEP_SHORT=60                  # 【仅旧模式】WAITING=0 / 失败重试：短睡 1 分钟（= BaiZe SLEEP_BUSY）
 SLEEP_LONG=1800                 # 【仅旧模式】WAITING=1（无近期待办）→ 睡 30 分钟（= BaiZe SLEEP_WAIT）
 # ── ⏰ 定时唤醒时窗（2026-10-07 用户令：每天 2 次 · 06:00 / 18:00 · 本地时区）──────
-SCHEDULE_HOURS="${WATCH_SCHEDULE_HOURS-6,18}"   # 逗号分隔的小时；**置空 ⇒ 回退旧模式**
+SCHEDULE_HOURS="${WATCH_SCHEDULE_HOURS-07:00,09:30,12:00,15:00,18:00,21:30}"   # 逗号分隔的 **HH:MM**（也兼容纯小时）；**置空 ⇒ 回退旧模式**
+SLOT_COUNT=$(printf '%s' "$SCHEDULE_HOURS" | tr ',' '\n' | grep -c '[0-9]')   # 每天唤醒次数（用于日志/判活）
 # ── ⏱ 间隔唤醒模式（2026-10-11 用户令：news 改为**每 30 分钟**一轮）
 #    **优先级：interval > schedule(6,18) > adaptive** —— 用 `WATCH_INTERVAL_MIN=30` 启动即生效。
 INTERVAL_MIN="${WATCH_INTERVAL_MIN-}"   # >0 ⇒ 间隔模式（分钟）；空 ⇒ 走 SCHEDULE_HOURS
@@ -123,9 +124,12 @@ next_slot_epoch() {
     now=$(date +%s)
     local IFS=','
     for h in $SCHEDULE_HOURS; do
-        h="${h//[^0-9]/}"                       # 去掉空格等杂字符
+        h="${h//[^0-9:]/}"                      # 只留数字与冒号 ⇒ 支持 HH:MM
         [ -z "$h" ] && continue
-        h="$(printf '%02d:00' "$((10#$h))")"    # → 06:00（10# 防前导零被判成八进制）
+        case "$h" in
+            *:*) : ;;                                 # 已是 HH:MM，直接使用
+            *)   h="$(printf '%02d:00' "$((10#$h))")" ;;   # 纯小时 → HH:00（10# 防八进制）
+        esac
         if ! target=$(date -d "today $h" +%s 2>/dev/null); then continue; fi
         if [ "$target" -le "$now" ]; then       # 今天该时窗已过 ⇒ 顺延到明天
             # ⚠️ 必须写 "tomorrow $h"：GNU date 会把 "06:00 +1 day" 里的 `+1` 当成**时区偏移**（→ 13:00，实测踩过）
@@ -149,7 +153,7 @@ sleep_until_next_slot() {
     now=$(date +%s)
     remain=$((target - now))
     [ "$remain" -le 0 ] && remain=1
-    echo "[loop] $(date '+%F %T') ⏰ 定时模式：下次唤醒 = $(date -d "@$target" '+%F %T %Z')（$((remain / 60))min 后；每天 2 次 · 时窗 ${SCHEDULE_HOURS}）"
+    echo "[loop] $(date '+%F %T') ⏰ 定时模式：下次唤醒 = $(date -d "@$target" '+%F %T %Z')（$((remain / 60))min 后；每天 ${SLOT_COUNT} 次 · 时窗 ${SCHEDULE_HOURS}）"
     while [ "$remain" -gt 0 ]; do
         chunk="$SLEEP_CHUNK"
         [ "$remain" -lt "$chunk" ] && chunk="$remain"
@@ -189,7 +193,7 @@ if [ -n "$INTERVAL_MIN" ] && [ "$INTERVAL_MIN" -gt 0 ] 2>/dev/null; then
     echo "[loop] ⏱ 间隔模式已启用：每 ${INTERVAL_MIN} 分钟唤醒一次（interval > schedule(6,18) > adaptive）· 存活标记 = $LOOP_HB · 回退：去掉 WATCH_INTERVAL_MIN"
 elif [ -n "$SCHEDULE_HOURS" ]; then
     MODE_LABEL="$SCHEDULE_HOURS"
-    echo "[loop] ⏰ 定时模式已启用：唤醒时窗 = ${SCHEDULE_HOURS}（每天 2 次）· 存活标记 = $LOOP_HB · 回退：WATCH_SCHEDULE_HOURS= 置空"
+    echo "[loop] ⏰ 定时模式已启用：唤醒时窗 = ${SCHEDULE_HOURS}（每天 ${SLOT_COUNT} 次）· 存活标记 = $LOOP_HB · 回退：WATCH_SCHEDULE_HOURS= 置空"
     if _t=$(next_slot_epoch); then
         echo "[loop] ⏰ 时窗参考：此刻之后的下一个时窗 = $(date -d "@$_t" '+%F %T %Z')（首轮唤醒=立即执行；各轮跑完会实时重算）"
     fi
