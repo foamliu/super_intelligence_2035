@@ -1,0 +1,1317 @@
+  [RESUME] Skipping 183 completed for codex
+Serial kimi eval: harness=codex model=kimi-k2.6-cloud
+  Total=300 Pending=117 Skip=183 Concurrency=1
+
+############################################################
+# [1/117] codex x django__django-16041
+############################################################
+
+============================================================
+[SETUP] django__django-16041 for codex
+
+[RUN] codex on django__django-16041 ...
+  [EVAL] codex on django__django-16041 ...
+  => django__django-16041 | codex | patch-but-failed
+
+############################################################
+# [2/117] codex x django__django-16046
+############################################################
+
+============================================================
+[SETUP] django__django-16046 for codex
+
+[RUN] codex on django__django-16046 ...
+  [EVAL] codex on django__django-16046 ...
+  => django__django-16046 | codex | patch-but-failed
+
+############################################################
+# [3/117] codex x django__django-16139
+############################################################
+
+============================================================
+[SETUP] django__django-16139 for codex
+
+[RUN] codex on django__django-16139 ...
+  [EVAL] codex on django__django-16139 ...
+  => django__django-16139 | codex | patch-but-failed
+
+############################################################
+# [4/117] codex x django__django-16229
+############################################################
+
+============================================================
+[SETUP] django__django-16229 for codex
+
+[RUN] codex on django__django-16229 ...
+  [EVAL] codex on django__django-16229 ...
+  => django__django-16229 | codex | patch-but-failed
+
+############################################################
+# [5/117] codex x django__django-16255
+############################################################
+
+============================================================
+[SETUP] django__django-16255 for codex
+
+[RUN] codex on django__django-16255 ...
+  [EVAL] codex on django__django-16255 ...
+  => django__django-16255 | codex | patch-but-failed
+
+############################################################
+# [6/117] codex x django__django-16379
+############################################################
+
+============================================================
+[SETUP] django__django-16379 for codex
+
+[RUN] codex on django__django-16379 ...
+  [EVAL] codex on django__django-16379 ...
+  => django__django-16379 | codex | patch-but-failed
+
+############################################################
+# [7/117] codex x django__django-16400
+############################################################
+
+============================================================
+[SETUP] django__django-16400 for codex
+
+[RUN] codex on django__django-16400 ...
+  [EVAL] codex on django__django-16400 ...
+  => django__django-16400 | codex | patch-but-failed
+
+############################################################
+# [8/117] codex x django__django-16408
+############################################################
+
+============================================================
+[SETUP] django__django-16408 for codex
+
+[RUN] codex on django__django-16408 ...
+  [EVAL] codex on django__django-16408 ...
+  => django__django-16408 | codex | patch-but-failed
+
+############################################################
+# [9/117] codex x django__django-16527
+############################################################
+
+============================================================
+[SETUP] django__django-16527 for codex
+
+[RUN] codex on django__django-16527 ...
+  [EVAL] codex on django__django-16527 ...
+  => django__django-16527 | codex | patch-but-failed
+
+############################################################
+# [10/117] codex x django__django-16595
+############################################################
+
+============================================================
+[SETUP] django__django-16595 for codex
+
+[RUN] codex on django__django-16595 ...
+  [EVAL] codex on django__django-16595 ...
+  => django__django-16595 | codex | patch-but-failed
+
+############################################################
+# [11/117] codex x django__django-16816
+############################################################
+
+============================================================
+[SETUP] django__django-16816 for codex
+
+[RUN] codex on django__django-16816 ...
+  [EVAL] codex on django__django-16816 ...
+  => django__django-16816 | codex | patch-but-failed
+
+############################################################
+# [12/117] codex x django__django-16820
+############################################################
+
+============================================================
+[SETUP] django__django-16820 for codex
+
+[RUN] codex on django__django-16820 ...
+  [EVAL] codex on django__django-16820 ...
+  => django__django-16820 | codex | patch-but-failed
+
+############################################################
+# [13/117] codex x django__django-16873
+############################################################
+
+============================================================
+[SETUP] django__django-16873 for codex
+
+[RUN] codex on django__django-16873 ...
+  [QUOTA] codex: quota exhausted, waiting 300s (retry 2/3)...
+  [QUOTA] codex: quota exhausted, waiting 300s (retry 3/3)...
+  [EVAL] codex on django__django-16873 ...
+  => django__django-16873 | codex | quota-blocked
+
+############################################################
+# [14/117] codex x django__django-16910
+############################################################
+
+============================================================
+[SETUP] django__django-16910 for codex
+
+[RUN] codex on django__django-16910 ...
+  [EVAL] codex on django__django-16910 ...
+  => django__django-16910 | codex | patch-but-failed
+
+############################################################
+# [15/117] codex x django__django-17051
+############################################################
+
+============================================================
+[SETUP] django__django-17051 for codex
+
+[RUN] codex on django__django-17051 ...
+  [EVAL] codex on django__django-17051 ...
+  => django__django-17051 | codex | patch-but-failed
+
+############################################################
+# [16/117] codex x django__django-17087
+############################################################
+
+============================================================
+[SETUP] django__django-17087 for codex
+
+[RUN] codex on django__django-17087 ...
+  [EVAL] codex on django__django-17087 ...
+  => django__django-17087 | codex | patch-but-failed
+
+############################################################
+# [17/117] codex x matplotlib__matplotlib-23562
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23562 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] codex on matplotlib__matplotlib-23562 ...
+  [EVAL] codex on matplotlib__matplotlib-23562 ...
+  => matplotlib__matplotlib-23562 | codex | patch-but-failed
+
+############################################################
+# [18/117] codex x matplotlib__matplotlib-23563
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23563 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-23563 | codex | blocked
+
+############################################################
+# [19/117] codex x matplotlib__matplotlib-23913
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23913 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] codex on matplotlib__matplotlib-23913 ...
+  [EVAL] codex on matplotlib__matplotlib-23913 ...
+  => matplotlib__matplotlib-23913 | codex | patch-but-failed
+
+############################################################
+# [20/117] codex x matplotlib__matplotlib-23964
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23964 for codex
+
+[RUN] codex on matplotlib__matplotlib-23964 ...
+  [EVAL] codex on matplotlib__matplotlib-23964 ...
+  => matplotlib__matplotlib-23964 | codex | patch-but-failed
+
+############################################################
+# [21/117] codex x matplotlib__matplotlib-23987
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23987 for codex
+
+[RUN] codex on matplotlib__matplotlib-23987 ...
+  [EVAL] codex on matplotlib__matplotlib-23987 ...
+  => matplotlib__matplotlib-23987 | codex | patch-but-failed
+
+############################################################
+# [22/117] codex x matplotlib__matplotlib-24149
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24149 for codex
+
+[RUN] codex on matplotlib__matplotlib-24149 ...
+  [EVAL] codex on matplotlib__matplotlib-24149 ...
+  => matplotlib__matplotlib-24149 | codex | patch-but-failed
+
+############################################################
+# [23/117] codex x matplotlib__matplotlib-24265
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24265 for codex
+
+[RUN] codex on matplotlib__matplotlib-24265 ...
+  [EVAL] codex on matplotlib__matplotlib-24265 ...
+  => matplotlib__matplotlib-24265 | codex | patch-but-failed
+
+############################################################
+# [24/117] codex x matplotlib__matplotlib-24334
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24334 for codex
+
+[RUN] codex on matplotlib__matplotlib-24334 ...
+  [EVAL] codex on matplotlib__matplotlib-24334 ...
+  => matplotlib__matplotlib-24334 | codex | patch-but-failed
+
+############################################################
+# [25/117] codex x matplotlib__matplotlib-24970
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24970 for codex
+
+[RUN] codex on matplotlib__matplotlib-24970 ...
+  [EVAL] codex on matplotlib__matplotlib-24970 ...
+  => matplotlib__matplotlib-24970 | codex | patch-but-failed
+
+############################################################
+# [26/117] codex x matplotlib__matplotlib-25079
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25079 for codex
+
+[RUN] codex on matplotlib__matplotlib-25079 ...
+  [EVAL] codex on matplotlib__matplotlib-25079 ...
+  => matplotlib__matplotlib-25079 | codex | patch-but-failed
+
+############################################################
+# [27/117] codex x matplotlib__matplotlib-25311
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25311 for codex
+
+[RUN] codex on matplotlib__matplotlib-25311 ...
+  [EVAL] codex on matplotlib__matplotlib-25311 ...
+  => matplotlib__matplotlib-25311 | codex | patch-but-failed
+
+############################################################
+# [28/117] codex x matplotlib__matplotlib-25332
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25332 for codex
+
+[RUN] codex on matplotlib__matplotlib-25332 ...
+  [EVAL] codex on matplotlib__matplotlib-25332 ...
+  => matplotlib__matplotlib-25332 | codex | patch-but-failed
+
+############################################################
+# [29/117] codex x matplotlib__matplotlib-25433
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25433 for codex
+
+[RUN] codex on matplotlib__matplotlib-25433 ...
+  [EVAL] codex on matplotlib__matplotlib-25433 ...
+  => matplotlib__matplotlib-25433 | codex | patch-but-failed
+
+############################################################
+# [30/117] codex x matplotlib__matplotlib-25442
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25442 for codex
+
+[RUN] codex on matplotlib__matplotlib-25442 ...
+  [EVAL] codex on matplotlib__matplotlib-25442 ...
+  => matplotlib__matplotlib-25442 | codex | patch-but-failed
+
+############################################################
+# [31/117] codex x matplotlib__matplotlib-25498
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25498 for codex
+
+[RUN] codex on matplotlib__matplotlib-25498 ...
+  [EVAL] codex on matplotlib__matplotlib-25498 ...
+  => matplotlib__matplotlib-25498 | codex | patch-but-failed
+
+############################################################
+# [32/117] codex x matplotlib__matplotlib-26011
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-26011 for codex
+
+[RUN] codex on matplotlib__matplotlib-26011 ...
+  [EVAL] codex on matplotlib__matplotlib-26011 ...
+  => matplotlib__matplotlib-26011 | codex | patch-but-failed
+
+############################################################
+# [33/117] codex x matplotlib__matplotlib-26020
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-26020 for codex
+
+[RUN] codex on matplotlib__matplotlib-26020 ...
+  [EVAL] codex on matplotlib__matplotlib-26020 ...
+  => matplotlib__matplotlib-26020 | codex | patch-but-failed
+
+############################################################
+# [34/117] codex x pylint-dev__pylint-7228
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7228 for codex
+
+[RUN] codex on pylint-dev__pylint-7228 ...
+  [EVAL] codex on pylint-dev__pylint-7228 ...
+  => pylint-dev__pylint-7228 | codex | patch-but-failed
+
+############################################################
+# [35/117] codex x pylint-dev__pylint-7993
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7993 for codex
+
+[RUN] codex on pylint-dev__pylint-7993 ...
+  [EVAL] codex on pylint-dev__pylint-7993 ...
+  => pylint-dev__pylint-7993 | codex | resolved
+
+############################################################
+# [36/117] codex x pytest-dev__pytest-7373
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7373 for codex
+
+[RUN] codex on pytest-dev__pytest-7373 ...
+  [EVAL] codex on pytest-dev__pytest-7373 ...
+  => pytest-dev__pytest-7373 | codex | patch-but-failed
+
+############################################################
+# [37/117] codex x pytest-dev__pytest-7432
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7432 for codex
+
+[RUN] codex on pytest-dev__pytest-7432 ...
+  [EVAL] codex on pytest-dev__pytest-7432 ...
+  => pytest-dev__pytest-7432 | codex | patch-but-failed
+
+############################################################
+# [38/117] codex x pytest-dev__pytest-7490
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7490 for codex
+
+[RUN] codex on pytest-dev__pytest-7490 ...
+  [EVAL] codex on pytest-dev__pytest-7490 ...
+  => pytest-dev__pytest-7490 | codex | patch-but-failed
+
+############################################################
+# [39/117] codex x pytest-dev__pytest-8365
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-8365 for codex
+
+[RUN] codex on pytest-dev__pytest-8365 ...
+  [EVAL] codex on pytest-dev__pytest-8365 ...
+  => pytest-dev__pytest-8365 | codex | patch-but-failed
+
+############################################################
+# [40/117] codex x pytest-dev__pytest-8906
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-8906 for codex
+
+[RUN] codex on pytest-dev__pytest-8906 ...
+  [EVAL] codex on pytest-dev__pytest-8906 ...
+  => pytest-dev__pytest-8906 | codex | patch-but-failed
+
+############################################################
+# [41/117] codex x pytest-dev__pytest-9359
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-9359 for codex
+
+[RUN] codex on pytest-dev__pytest-9359 ...
+  [EVAL] codex on pytest-dev__pytest-9359 ...
+  => pytest-dev__pytest-9359 | codex | patch-but-failed
+
+############################################################
+# [42/117] codex x scikit-learn__scikit-learn-13142
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13142 for codex
+
+[RUN] codex on scikit-learn__scikit-learn-13142 ...
+  [EVAL] codex on scikit-learn__scikit-learn-13142 ...
+  => scikit-learn__scikit-learn-13142 | codex | resolved
+
+############################################################
+# [43/117] codex x scikit-learn__scikit-learn-13241
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13241 for codex
+
+[RUN] codex on scikit-learn__scikit-learn-13241 ...
+  [EVAL] codex on scikit-learn__scikit-learn-13241 ...
+  => scikit-learn__scikit-learn-13241 | codex | resolved
+
+############################################################
+# [44/117] codex x scikit-learn__scikit-learn-13439
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13439 for codex
+
+[RUN] codex on scikit-learn__scikit-learn-13439 ...
+  [EVAL] codex on scikit-learn__scikit-learn-13439 ...
+  => scikit-learn__scikit-learn-13439 | codex | resolved
+
+############################################################
+# [45/117] codex x scikit-learn__scikit-learn-13496
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13496 for codex
+
+[RUN] codex on scikit-learn__scikit-learn-13496 ...
+  [EVAL] codex on scikit-learn__scikit-learn-13496 ...
+  => scikit-learn__scikit-learn-13496 | codex | resolved
+
+############################################################
+# [46/117] codex x scikit-learn__scikit-learn-13497
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13497 for codex
+
+[RUN] codex on scikit-learn__scikit-learn-13497 ...
+  [EVAL] codex on scikit-learn__scikit-learn-13497 ...
+  => scikit-learn__scikit-learn-13497 | codex | patch-but-failed
+
+############################################################
+# [47/117] codex x scikit-learn__scikit-learn-13584
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13584 for codex
+
+[RUN] codex on scikit-learn__scikit-learn-13584 ...
+  [EVAL] codex on scikit-learn__scikit-learn-13584 ...
+  => scikit-learn__scikit-learn-13584 | codex | patch-but-failed
+
+############################################################
+# [48/117] codex x scikit-learn__scikit-learn-13779
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13779 for codex
+
+[RUN] codex on scikit-learn__scikit-learn-13779 ...
+  [EVAL] codex on scikit-learn__scikit-learn-13779 ...
+  => scikit-learn__scikit-learn-13779 | codex | resolved
+
+############################################################
+# [49/117] codex x scikit-learn__scikit-learn-14087
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14087 for codex
+
+[RUN] codex on scikit-learn__scikit-learn-14087 ...
+  [EVAL] codex on scikit-learn__scikit-learn-14087 ...
+  => scikit-learn__scikit-learn-14087 | codex | patch-but-failed
+
+############################################################
+# [50/117] codex x scikit-learn__scikit-learn-14092
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14092 for codex
+
+[RUN] codex on scikit-learn__scikit-learn-14092 ...
+  [EVAL] codex on scikit-learn__scikit-learn-14092 ...
+  => scikit-learn__scikit-learn-14092 | codex | resolved
+
+############################################################
+# [51/117] codex x scikit-learn__scikit-learn-14894
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14894 for codex
+
+[RUN] codex on scikit-learn__scikit-learn-14894 ...
+  [EVAL] codex on scikit-learn__scikit-learn-14894 ...
+  => scikit-learn__scikit-learn-14894 | codex | resolved
+
+############################################################
+# [52/117] codex x scikit-learn__scikit-learn-14983
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14983 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] codex on scikit-learn__scikit-learn-14983 ...
+  [EVAL] codex on scikit-learn__scikit-learn-14983 ...
+  => scikit-learn__scikit-learn-14983 | codex | patch-but-failed
+
+############################################################
+# [53/117] codex x scikit-learn__scikit-learn-15512
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-15512 for codex
+
+[RUN] codex on scikit-learn__scikit-learn-15512 ...
+  [EVAL] codex on scikit-learn__scikit-learn-15512 ...
+  => scikit-learn__scikit-learn-15512 | codex | patch-but-failed
+
+############################################################
+# [54/117] codex x scikit-learn__scikit-learn-15535
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-15535 for codex
+
+[RUN] codex on scikit-learn__scikit-learn-15535 ...
+  [EVAL] codex on scikit-learn__scikit-learn-15535 ...
+  => scikit-learn__scikit-learn-15535 | codex | resolved
+
+############################################################
+# [55/117] codex x scikit-learn__scikit-learn-25500
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25500 for codex
+
+[RUN] codex on scikit-learn__scikit-learn-25500 ...
+  [EVAL] codex on scikit-learn__scikit-learn-25500 ...
+  => scikit-learn__scikit-learn-25500 | codex | patch-but-failed
+
+############################################################
+# [56/117] codex x scikit-learn__scikit-learn-25570
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25570 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] codex on scikit-learn__scikit-learn-25570 ...
+  [EVAL] codex on scikit-learn__scikit-learn-25570 ...
+  => scikit-learn__scikit-learn-25570 | codex | patch-but-failed
+
+############################################################
+# [57/117] codex x scikit-learn__scikit-learn-25638
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25638 for codex
+
+[RUN] codex on scikit-learn__scikit-learn-25638 ...
+  [EVAL] codex on scikit-learn__scikit-learn-25638 ...
+  => scikit-learn__scikit-learn-25638 | codex | patch-but-failed
+
+############################################################
+# [58/117] codex x scikit-learn__scikit-learn-25747
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25747 for codex
+
+[RUN] codex on scikit-learn__scikit-learn-25747 ...
+  [EVAL] codex on scikit-learn__scikit-learn-25747 ...
+  => scikit-learn__scikit-learn-25747 | codex | patch-but-failed
+
+############################################################
+# [59/117] codex x sphinx-doc__sphinx-7738
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-7738 for codex
+
+[RUN] codex on sphinx-doc__sphinx-7738 ...
+  [EVAL] codex on sphinx-doc__sphinx-7738 ...
+  => sphinx-doc__sphinx-7738 | codex | patch-but-failed
+
+############################################################
+# [60/117] codex x sphinx-doc__sphinx-7975
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-7975 for codex
+
+[RUN] codex on sphinx-doc__sphinx-7975 ...
+  [EVAL] codex on sphinx-doc__sphinx-7975 ...
+  => sphinx-doc__sphinx-7975 | codex | patch-but-failed
+
+############################################################
+# [61/117] codex x sphinx-doc__sphinx-8273
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8273 for codex
+
+[RUN] codex on sphinx-doc__sphinx-8273 ...
+  [QUOTA] codex: quota exhausted, waiting 300s (retry 2/3)...
+  [EVAL] codex on sphinx-doc__sphinx-8273 ...
+  => sphinx-doc__sphinx-8273 | codex | patch-but-failed
+
+############################################################
+# [62/117] codex x sphinx-doc__sphinx-8282
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8282 for codex
+
+[RUN] codex on sphinx-doc__sphinx-8282 ...
+  [EVAL] codex on sphinx-doc__sphinx-8282 ...
+  => sphinx-doc__sphinx-8282 | codex | patch-but-failed
+
+############################################################
+# [63/117] codex x sphinx-doc__sphinx-8435
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8435 for codex
+
+[RUN] codex on sphinx-doc__sphinx-8435 ...
+  [EVAL] codex on sphinx-doc__sphinx-8435 ...
+  => sphinx-doc__sphinx-8435 | codex | patch-but-failed
+
+############################################################
+# [64/117] codex x sphinx-doc__sphinx-8474
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8474 for codex
+
+[RUN] codex on sphinx-doc__sphinx-8474 ...
+  [EVAL] codex on sphinx-doc__sphinx-8474 ...
+  => sphinx-doc__sphinx-8474 | codex | patch-but-failed
+
+############################################################
+# [65/117] codex x sphinx-doc__sphinx-8506
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8506 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] codex on sphinx-doc__sphinx-8506 ...
+  [EVAL] codex on sphinx-doc__sphinx-8506 ...
+  => sphinx-doc__sphinx-8506 | codex | patch-but-failed
+
+############################################################
+# [66/117] codex x sphinx-doc__sphinx-8595
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8595 for codex
+
+[RUN] codex on sphinx-doc__sphinx-8595 ...
+  [EVAL] codex on sphinx-doc__sphinx-8595 ...
+  => sphinx-doc__sphinx-8595 | codex | patch-but-failed
+
+############################################################
+# [67/117] codex x sphinx-doc__sphinx-8627
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8627 for codex
+
+[RUN] codex on sphinx-doc__sphinx-8627 ...
+  [EVAL] codex on sphinx-doc__sphinx-8627 ...
+  => sphinx-doc__sphinx-8627 | codex | patch-but-failed
+
+############################################################
+# [68/117] codex x sphinx-doc__sphinx-8713
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8713 for codex
+
+[RUN] codex on sphinx-doc__sphinx-8713 ...
+  [EVAL] codex on sphinx-doc__sphinx-8713 ...
+  => sphinx-doc__sphinx-8713 | codex | patch-but-failed
+
+############################################################
+# [69/117] codex x sphinx-doc__sphinx-8721
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8721 for codex
+
+[RUN] codex on sphinx-doc__sphinx-8721 ...
+  [EVAL] codex on sphinx-doc__sphinx-8721 ...
+  => sphinx-doc__sphinx-8721 | codex | patch-but-failed
+
+############################################################
+# [70/117] codex x sphinx-doc__sphinx-8801
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8801 for codex
+
+[RUN] codex on sphinx-doc__sphinx-8801 ...
+  [EVAL] codex on sphinx-doc__sphinx-8801 ...
+  => sphinx-doc__sphinx-8801 | codex | patch-but-failed
+
+############################################################
+# [71/117] codex x sympy__sympy-15609
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15609 for codex
+
+[RUN] codex on sympy__sympy-15609 ...
+  [EVAL] codex on sympy__sympy-15609 ...
+  => sympy__sympy-15609 | codex | resolved
+
+############################################################
+# [72/117] codex x sympy__sympy-15678
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15678 for codex
+
+[RUN] codex on sympy__sympy-15678 ...
+  [EVAL] codex on sympy__sympy-15678 ...
+  => sympy__sympy-15678 | codex | resolved
+
+############################################################
+# [73/117] codex x sympy__sympy-16106
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16106 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] codex on sympy__sympy-16106 ...
+  [EVAL] codex on sympy__sympy-16106 ...
+  => sympy__sympy-16106 | codex | patch-but-failed
+
+############################################################
+# [74/117] codex x sympy__sympy-16281
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16281 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] codex on sympy__sympy-16281 ...
+  [EVAL] codex on sympy__sympy-16281 ...
+  => sympy__sympy-16281 | codex | patch-but-failed
+
+############################################################
+# [75/117] codex x sympy__sympy-16503
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16503 for codex
+
+[RUN] codex on sympy__sympy-16503 ...
+  [EVAL] codex on sympy__sympy-16503 ...
+  => sympy__sympy-16503 | codex | patch-but-failed
+
+############################################################
+# [76/117] codex x sympy__sympy-16792
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16792 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] codex on sympy__sympy-16792 ...
+  [EVAL] codex on sympy__sympy-16792 ...
+  => sympy__sympy-16792 | codex | patch-but-failed
+
+############################################################
+# [77/117] codex x sympy__sympy-16988
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16988 for codex
+
+[RUN] codex on sympy__sympy-16988 ...
+  [EVAL] codex on sympy__sympy-16988 ...
+  => sympy__sympy-16988 | codex | resolved
+
+############################################################
+# [78/117] codex x sympy__sympy-17022
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17022 for codex
+
+[RUN] codex on sympy__sympy-17022 ...
+  [EVAL] codex on sympy__sympy-17022 ...
+  => sympy__sympy-17022 | codex | resolved
+
+############################################################
+# [79/117] codex x sympy__sympy-17139
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17139 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] codex on sympy__sympy-17139 ...
+  [EVAL] codex on sympy__sympy-17139 ...
+  => sympy__sympy-17139 | codex | resolved
+
+############################################################
+# [80/117] codex x sympy__sympy-17630
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17630 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => sympy__sympy-17630 | codex | blocked
+
+############################################################
+# [81/117] codex x sympy__sympy-17655
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17655 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => sympy__sympy-17655 | codex | blocked
+
+############################################################
+# [82/117] codex x sympy__sympy-18057
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18057 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] codex on sympy__sympy-18057 ...
+  [EVAL] codex on sympy__sympy-18057 ...
+  => sympy__sympy-18057 | codex | patch-but-failed
+
+############################################################
+# [83/117] codex x sympy__sympy-18087
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18087 for codex
+
+[RUN] codex on sympy__sympy-18087 ...
+  [EVAL] codex on sympy__sympy-18087 ...
+  => sympy__sympy-18087 | codex | patch-but-failed
+
+############################################################
+# [84/117] codex x sympy__sympy-18189
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18189 for codex
+
+[RUN] codex on sympy__sympy-18189 ...
+  [EVAL] codex on sympy__sympy-18189 ...
+  => sympy__sympy-18189 | codex | resolved
+
+############################################################
+# [85/117] codex x sympy__sympy-18199
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18199 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] codex on sympy__sympy-18199 ...
+  [EVAL] codex on sympy__sympy-18199 ...
+  => sympy__sympy-18199 | codex | patch-but-failed
+
+############################################################
+# [86/117] codex x sympy__sympy-18532
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18532 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] codex on sympy__sympy-18532 ...
+  [EVAL] codex on sympy__sympy-18532 ...
+  => sympy__sympy-18532 | codex | resolved
+
+############################################################
+# [87/117] codex x sympy__sympy-18621
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18621 for codex
+
+[RUN] codex on sympy__sympy-18621 ...
+  [EVAL] codex on sympy__sympy-18621 ...
+  => sympy__sympy-18621 | codex | resolved
+
+############################################################
+# [88/117] codex x sympy__sympy-18698
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18698 for codex
+
+[RUN] codex on sympy__sympy-18698 ...
+  [EVAL] codex on sympy__sympy-18698 ...
+  => sympy__sympy-18698 | codex | resolved
+
+############################################################
+# [89/117] codex x sympy__sympy-18835
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18835 for codex
+
+[RUN] codex on sympy__sympy-18835 ...
+  [EVAL] codex on sympy__sympy-18835 ...
+  => sympy__sympy-18835 | codex | patch-but-failed
+
+############################################################
+# [90/117] codex x sympy__sympy-19007
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-19007 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] codex on sympy__sympy-19007 ...
+  [EVAL] codex on sympy__sympy-19007 ...
+  => sympy__sympy-19007 | codex | patch-but-failed
+
+############################################################
+# [91/117] codex x sympy__sympy-19254
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-19254 for codex
+
+[RUN] codex on sympy__sympy-19254 ...
+  [EVAL] codex on sympy__sympy-19254 ...
+  => sympy__sympy-19254 | codex | patch-but-failed
+
+############################################################
+# [92/117] codex x sympy__sympy-19487
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-19487 for codex
+
+[RUN] codex on sympy__sympy-19487 ...
+  [EVAL] codex on sympy__sympy-19487 ...
+  => sympy__sympy-19487 | codex | patch-but-failed
+
+############################################################
+# [93/117] codex x sympy__sympy-20049
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20049 for codex
+
+[RUN] codex on sympy__sympy-20049 ...
+  [EVAL] codex on sympy__sympy-20049 ...
+  => sympy__sympy-20049 | codex | patch-but-failed
+
+############################################################
+# [94/117] codex x sympy__sympy-20154
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20154 for codex
+
+[RUN] codex on sympy__sympy-20154 ...
+  [EVAL] codex on sympy__sympy-20154 ...
+  => sympy__sympy-20154 | codex | resolved
+
+############################################################
+# [95/117] codex x sympy__sympy-20212
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20212 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] codex on sympy__sympy-20212 ...
+  [EVAL] codex on sympy__sympy-20212 ...
+  => sympy__sympy-20212 | codex | resolved
+
+############################################################
+# [96/117] codex x sympy__sympy-20322
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20322 for codex
+
+[RUN] codex on sympy__sympy-20322 ...
+  [EVAL] codex on sympy__sympy-20322 ...
+  => sympy__sympy-20322 | codex | patch-but-failed
+
+############################################################
+# [97/117] codex x sympy__sympy-20442
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20442 for codex
+
+[RUN] codex on sympy__sympy-20442 ...
+  [EVAL] codex on sympy__sympy-20442 ...
+  => sympy__sympy-20442 | codex | resolved
+
+############################################################
+# [98/117] codex x sympy__sympy-20590
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20590 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => sympy__sympy-20590 | codex | blocked
+
+############################################################
+# [99/117] codex x sympy__sympy-20639
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20639 for codex
+
+[RUN] codex on sympy__sympy-20639 ...
+  [EVAL] codex on sympy__sympy-20639 ...
+  => sympy__sympy-20639 | codex | patch-but-failed
+
+############################################################
+# [100/117] codex x sympy__sympy-21055
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21055 for codex
+
+[RUN] codex on sympy__sympy-21055 ...
+  [EVAL] codex on sympy__sympy-21055 ...
+  => sympy__sympy-21055 | codex | resolved
+
+############################################################
+# [101/117] codex x sympy__sympy-21171
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21171 for codex
+
+[RUN] codex on sympy__sympy-21171 ...
+  [EVAL] codex on sympy__sympy-21171 ...
+  => sympy__sympy-21171 | codex | patch-but-failed
+
+############################################################
+# [102/117] codex x sympy__sympy-21379
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21379 for codex
+
+[RUN] codex on sympy__sympy-21379 ...
+  [EVAL] codex on sympy__sympy-21379 ...
+  => sympy__sympy-21379 | codex | resolved
+
+############################################################
+# [103/117] codex x sympy__sympy-21612
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21612 for codex
+
+[RUN] codex on sympy__sympy-21612 ...
+  [EVAL] codex on sympy__sympy-21612 ...
+  => sympy__sympy-21612 | codex | patch-but-failed
+
+############################################################
+# [104/117] codex x sympy__sympy-21614
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21614 for codex
+
+[RUN] codex on sympy__sympy-21614 ...
+  [EVAL] codex on sympy__sympy-21614 ...
+  => sympy__sympy-21614 | codex | resolved
+
+############################################################
+# [105/117] codex x sympy__sympy-21627
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21627 for codex
+
+[RUN] codex on sympy__sympy-21627 ...
+  [EVAL] codex on sympy__sympy-21627 ...
+  => sympy__sympy-21627 | codex | patch-but-failed
+
+############################################################
+# [106/117] codex x sympy__sympy-21847
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21847 for codex
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] codex on sympy__sympy-21847 ...
+  [EVAL] codex on sympy__sympy-21847 ...
+  => sympy__sympy-21847 | codex | resolved
+
+############################################################
+# [107/117] codex x sympy__sympy-22005
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-22005 for codex
+
+[RUN] codex on sympy__sympy-22005 ...
+  [EVAL] codex on sympy__sympy-22005 ...
+  => sympy__sympy-22005 | codex | resolved
+
+############################################################
+# [108/117] codex x sympy__sympy-22714
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-22714 for codex
+
+[RUN] codex on sympy__sympy-22714 ...
+  [EVAL] codex on sympy__sympy-22714 ...
+  => sympy__sympy-22714 | codex | patch-but-failed
+
+############################################################
+# [109/117] codex x sympy__sympy-22840
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-22840 for codex
+
+[RUN] codex on sympy__sympy-22840 ...
+  [EVAL] codex on sympy__sympy-22840 ...
+  => sympy__sympy-22840 | codex | patch-but-failed
+
+############################################################
+# [110/117] codex x sympy__sympy-23117
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-23117 for codex
+
+[RUN] codex on sympy__sympy-23117 ...
+  [EVAL] codex on sympy__sympy-23117 ...
+  => sympy__sympy-23117 | codex | resolved
+
+############################################################
+# [111/117] codex x sympy__sympy-23191
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-23191 for codex
+
+[RUN] codex on sympy__sympy-23191 ...
+  [EVAL] codex on sympy__sympy-23191 ...
+  => sympy__sympy-23191 | codex | patch-but-failed
+
+############################################################
+# [112/117] codex x sympy__sympy-23262
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-23262 for codex
+
+[RUN] codex on sympy__sympy-23262 ...
+  [QUOTA] codex: quota exhausted, waiting 300s (retry 2/3)...
+  [QUOTA] codex: quota exhausted, waiting 300s (retry 3/3)...
+  [EVAL] codex on sympy__sympy-23262 ...
+  => sympy__sympy-23262 | codex | quota-blocked
+
+############################################################
+# [113/117] codex x sympy__sympy-24066
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24066 for codex
+
+[RUN] codex on sympy__sympy-24066 ...
+  [EVAL] codex on sympy__sympy-24066 ...
+  => sympy__sympy-24066 | codex | resolved
+
+############################################################
+# [114/117] codex x sympy__sympy-24102
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24102 for codex
+
+[RUN] codex on sympy__sympy-24102 ...
+  [EVAL] codex on sympy__sympy-24102 ...
+  => sympy__sympy-24102 | codex | patch-but-failed
+
+############################################################
+# [115/117] codex x sympy__sympy-24152
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24152 for codex
+
+[RUN] codex on sympy__sympy-24152 ...
+  [EVAL] codex on sympy__sympy-24152 ...
+  => sympy__sympy-24152 | codex | resolved
+
+############################################################
+# [116/117] codex x sympy__sympy-24213
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24213 for codex
+
+[RUN] codex on sympy__sympy-24213 ...
+  [EVAL] codex on sympy__sympy-24213 ...
+  => sympy__sympy-24213 | codex | resolved
+
+############################################################
+# [117/117] codex x sympy__sympy-24909
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24909 for codex
+
+[RUN] codex on sympy__sympy-24909 ...
+  [EVAL] codex on sympy__sympy-24909 ...
+  => sympy__sympy-24909 | codex | patch-but-failed
+
+============================================================
+SUMMARY: codex x kimi-k2.6-cloud
+============================================================
+  resolved: 80/300 (26.7%)
+  patch-but-failed: 214/300 (71.3%)
+  quota-blocked: 2/300 (0.7%)
+  blocked: 4/300 (1.3%)
