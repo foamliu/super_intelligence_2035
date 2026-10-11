@@ -2,26 +2,23 @@
 
 WAITING: 1
 
-> 🔧 **运维指令（2026-10-11 · 最高优先 · 每轮唤醒必读）**：**交付两份中文 HTML 报告** —— ① **文献借鉴报告**（`doc/BaiZe-ISEDA2027/report_harness_lit_ideas.html`，25 篇论文 TOP-5 ideas + 7 secondary，中文自包含）② **交互轨迹对比分析报告**（`doc/BaiZe-ISEDA2027/report_harness_trace_vs_cline.html`，7 harness vs cline 逐项对比 + TOP-8 改进意见）。**两份均已交付 ✅**（A=26.3KB, B=49.1KB，均 ≤200KB）。同时 **7×300 持续监控中**（2061/2100, 98.1%, 553 resolved, hermes 261/300 仍在跑）—— 细则见 `BAIZE_HARNESS_TASK.md` 顶部块。
+> 🔧 **运维指令（2026-10-11 · 最高优先 · 每轮唤醒必读）**：**交付两份中文 HTML 报告** —— ① **文献借鉴报告**（`doc/BaiZe-ISEDA2027/report_harness_lit_ideas.html`，25 篇论文 TOP-5 ideas + 7 secondary，中文自包含）② **交互轨迹对比分析报告**（`doc/BaiZe-ISEDA2027/report_harness_trace_vs_cline.html`，7 harness vs cline 逐项对比 + TOP-8 改进意见）。**两份均已交付 ✅**（A=26.9KB, B=50.2KB，均 ≤200KB）。同时 **7×300 持续监控中**（2063/2100, 98.2%, 554 resolved, hermes 263/300 仍在跑）—— 细则见 `BAIZE_HARNESS_TASK.md` 顶部块。
 
 ## 📊 进度快照
 
 ```
-PHASE:        H-B REPORTS DELIVERED ✅ + H-A 7×300 RUNNING — 2061/2100 (98.1%); 553 resolved; 6 harnesses 300/300 COMPLETE; hermes 261/300; 1 proc alive
-已完成:       ① 7×100 HTML report ✅ · ② 7×300 LAUNCHED + workdir fix ✅ · ③ 6 harnesses 300/300 COMPLETE ✅ (claude-code 刚完成 300/300) · ④ **2026-10-11 两份报告交付 ✅** — Report A (26.3KB) + Report B (49.1KB) · ⑤ Report B 刷新 ✅ (2061 entries, claude-code 300/300) · ⑥ TASK 归档 ✅
-当前动作:     R307: 7×300 monitoring — 2061/2100 (98.1%, +2 since R306), 553 resolved (same). 1 proc alive (hermes 261/300 rem39). claude-code COMPLETED 300/300 (78, 26.0%). Per-harness: cline 300(86,28.7%) / codex 300(80,26.7%) / opencode 300(87,29.0%) / deepseek 300(71,23.7%) / pi 300(91,30.3%✅BEST) / hermes 261(60,23.0%) / claude 300(78,26.0%). Report B regenerated w/ 2061 entries.
-下一步:       ① Continue monitoring hermes (261/300, ~39 rem) → ② When hermes finishes, generate final 7×300 HTML report → ③ Retry blocked w/ --resume → ④ Reports A+B done — await next operator instruction
+PHASE:        H-B REPORTS DELIVERED ✅ + H-A 7×300 RUNNING — 2063/2100 (98.2%); 554 resolved; 6 harnesses 300/300 COMPLETE; hermes 263/300; 1 proc alive
+已完成:       ① 7×100 HTML report ✅ · ② 7×300 LAUNCHED + workdir fix ✅ · ③ 6 harnesses 300/300 COMPLETE ✅ · ④ **2026-10-11 两份报告交付 ✅** — Report A (26.9KB) + Report B (50.2KB) · ⑤ Report B 刷新 ✅ (2061 entries) · ⑥ TASK 归档 ✅
+当前动作:     R308: 7×300 monitoring — 2063/2100 (98.2%, +2 since R307), 554 resolved (+1). 1 proc alive (hermes 263/300 rem37, PID 1473568 etimes=172ks≈48h). Per-harness: cline 300(86,28.7%) / codex 300(80,26.7%) / opencode 300(87,29.0%) / deepseek 300(71,23.7%) / pi 300(91,30.3%✅BEST) / hermes 263(61,23.2%) / claude 300(78,26.0%). All-7=263 (22 everybody / 172 nobody / 69 some).
+下一步:       ① Continue monitoring hermes (263/300, ~37 rem) → ② When hermes finishes, generate final 7×300 HTML report + refresh Report B → ③ Retry blocked w/ --resume → ④ Reports A+B done — await next operator instruction
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
 - [20:21] R302: **2026-10-11 两份报告交付 ✅** — Report A (26.3KB) + Report B (49.1KB). 关键发现：cline 99.5% PBF 含 transform error；pi 最佳 Pareto (30.1%, 363s)；codex 最差 (26.7%, 922s). gen_report_a.py + gen_report_b.py 入库.
-- [20:59] R303: 2047/2100 (97.5%), 554 resolved. pi completed 300/300 (92, 30.7% BEST). TASK 归档 ✅ (36.2KB→31.3KB).
- - [21:36] R304: 7×300 monitoring — 2050/2100 (97.6%, +3 since R303), 551 resolved. 2 procs alive (hermes 257/300 rem43, claude-code 293/300 rem7). Per-harness: cline 300(86,28.7%) / codex 300(80,26.7%) / opencode 300(87,29.0%) / deepseek 300(71,23.7%) / pi 300(91,30.3%) / hermes 257(60,23.3%) / claude 293(76,25.9%). **两份报告已验证 committed** (80f13f6b): A=26.9KB B=50.2KB, 均 ≤200KB ✅. kimi_pilot_results.json actively written by 2 running procs — skipping commit of harness/ dir this round. 📦 体积：TASK=32062B(31.3KB ✓) / MEMORY≈31.2KB(✓).
-- [22:15] R305: **Report B 刷新 ✅** — gen_report_b.py 动态化修复：entry count（2037→2054）、per-harness counts、all-7 breakdown（255→259）、hermes/claude-code 统计均改为 f-string 动态变量。Report B 重新生成（49.1KB）。Report A 未变（26.3KB，研究论文数据未变）。7×300: 2054/2100 (97.8%), 551 resolved, 2 procs alive (hermes 259/300 rem41, claude-code 295/300 rem5). kimi_pilot_results.json actively written — not committing. 📦 体积：TASK=32062B(31.3KB ✓) / MEMORY≈31.0KB(✓).
-- [22:51] R306: 7×300 monitoring — 2059/2100 (97.9%, +5 since R305), 553 resolved (+2). 2 procs alive (hermes 260/300 rem40, claude-code 299/300 rem1←almost done). Per-harness: cline 300(86,28.7%) / codex 300(80,26.7%) / opencode 300(87,29.0%) / deepseek 300(71,23.7%) / pi 300(91,30.3%✅BEST) / hermes 260(60,23.1%) / claude 299(78,26.1%). All-7=260 (21 everybody / 172 nobody / 67 some). Reports A+B verified committed (80f13f6b+776916c8). kimi_pilot_results.json actively written by 2 running procs — not committing harness/ dir this round. 📦 体积：TASK=32062B(31.3KB ✓) / MEMORY≈31700B(31.0KB ✓)。
-- [23:27] R307: 7×300 monitoring — 2061/2100 (98.1%, +2 since R306), 553 resolved (same). **claude-code COMPLETED 300/300** (78, 26.0%) — log confirms "resolved: 78/300 (26.0%)". 1 proc alive (hermes 261/300 rem39←BOTTLENECK, PID 1473568 etimes=170ks≈47h, currently eval sympy-17139). Per-harness: cline 300(86,28.7%) / codex 300(80,26.7%) / opencode 300(87,29.0%) / deepseek 300(71,23.7%) / pi 300(91,30.3%✅BEST) / hermes 261(60,23.0%) / claude 300(78,26.0%). **Report B 刷新 ✅** — regenerated w/ 2061 entries (was 2054), 49.1KB ≤200KB. R301-R303 旧流水已压缩. kimi_pilot_results.json actively written by hermes — not committing harness/ dir this round. 📦 体积：TASK=32062B(31.3KB ✓) / MEMORY≈31.0KB(✓)（归档 R301→daily, R302-R303 压缩）。
+- [20:59~23:27] R303-R307: 7×300 monitoring — 2047→2061/2100 (97.5%→98.1%), 554→553 resolved. pi completed 300/300 (91, 30.3% BEST). claude-code completed 300/300 (78, 26.0%). Report B refreshed to 2061 entries (49.1KB). TASK 归档 ✅ (36.2KB→31.3KB). hermes bottleneck (261/300).
+- [00:05] R308: 7×300 monitoring — 2063/2100 (98.2%, +2 since R307), 554 resolved (+1). 1 proc alive (hermes 263/300 rem37, PID 1473568 etimes=172ks≈48h, currently git-fetch sympy). Per-harness: cline 300(86,28.7%) / codex 300(80,26.7%) / opencode 300(87,29.0%) / deepseek 300(71,23.7%) / pi 300(91,30.3%✅BEST) / hermes 263(61,23.2%) / claude 300(78,26.0%). All-7=263 (22 everybody / 172 nobody / 69 some). Reports A+B verified committed (9d7cee51). kimi_pilot_results.json actively written by hermes — not committing harness/ dir this round. 📦 体积：TASK=32062B(31.3KB ✓) / MEMORY≈30.5KB(✓)（R303-R307 压缩）.
 
 ## ⚠️ 口径与并发 (Caliber & Concurrency Disclosure) — 2026-10-08⑦ 要求
 
