@@ -164,5 +164,6 @@ powershell -ExecutionPolicy Bypass -File "D:\Users\Administrator\code\super_inte
 > ⚙️ **可调参数**（loop 顶部 `param()`）：`-IntervalSec`(默认 3600) · `-ClineTimeout`(默认 3300) · `-Model`(默认空=用 cline 已配模型) · `-Thinking`(默认 medium) · `-RetrySec`(默认 600，cline 失败后重试等待)。
 > 🧵 **prompt 传递方式（本线特有 · 2026-10-11 实测踩坑）**：Windows 上**不能把任务书全文当命令行参数** —— 经 `cline.cmd`（批处理）会撞 **cmd.exe ~8KB 上限**（实测报「**命令行太长**」，cline 秒退 exit 1）。⇒ loop 改为 ① 直调 **`node.exe` + cline JS 入口**（绕过 cmd）② 只传**短指针 prompt**（含任务书绝对路径）。**因此 agent 每轮第一步必须自己读任务书全文**。
 > 🔁 **失败重试**：cline 退出码 ≠ 0 ⇒ `-RetrySec` 后**重试（最多连续 3 次）**，之后退回整点节律。
+> 🧑💻 **运行身份（2026-10-11 实测 · 关键）**：**必须用「当前用户 S4U」运行**（`register… -RunAsCurrentUser`），🚫 **不要用 SYSTEM** —— SYSTEM 下 `py -3.10` 报 **`No installed Python found!`**（Python 按**用户**注册）⇒ **MCP `comfyui-drama` / `web-search` 全部加载失败**（cline 日志 `[mcp] Failed to load …`），agent 只能退化成手拼 HTTP API。切到 S4U 后两个 MCP 均正常拉起。
 
 

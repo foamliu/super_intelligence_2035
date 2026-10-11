@@ -10,8 +10,9 @@
       powershell -ExecutionPolicy Bypass -File .\register_watch_video_task.ps1
       # 额外每天 10:00 也触发一次（机器若已在运行）
       powershell -ExecutionPolicy Bypass -File .\register_watch_video_task.ps1 -AtHour 10
-      # 以当前用户（S4U，无需密码、无人登录也能跑）运行 —— 若 SYSTEM 下环境有问题可用它
-      powershell -ExecutionPolicy Bypass -File .\register_watch_video_task.ps1 -AsSystem:$false
+      # 以当前用户（S4U，无需密码、无人登录也能跑）运行 —— **推荐**：
+      #   SYSTEM 下 `py -3.10` 报 “No installed Python found!”（Python 是按用户注册的）⇒ MCP（comfyui-drama/web-search）加载失败
+      powershell -ExecutionPolicy Bypass -File .\register_watch_video_task.ps1 -RunAsCurrentUser
       # 卸载
       powershell -ExecutionPolicy Bypass -File .\register_watch_video_task.ps1 -Unregister
 
@@ -25,7 +26,7 @@ param(
     [string]$TaskName   = 'WatchVideoLoop',
     [int]$BootDelaySec  = 45,
     [int]$AtHour        = -1,          # >=0 ⇒ 额外加一个「每天 AtHour:00」触发
-    [bool]$AsSystem     = $true,       # $true ⇒ SYSTEM（镜像 ComfyUI）；$false ⇒ 当前用户 S4U
+    [switch]$RunAsCurrentUser,         # 以【当前用户】运行（S4U，无人登录可跑、无需密码）；默认 = SYSTEM
     [switch]$Unregister
 )
 
@@ -72,7 +73,7 @@ if ($AtHour -ge 0) {
 }
 
 # ── 4) 身份：SYSTEM（镜像 ComfyUI）或 当前用户 S4U ──────────────────
-if ($AsSystem) {
+if (-not $RunAsCurrentUser) {
     $principal = New-ScheduledTaskPrincipal -UserId 'SYSTEM' -LogonType ServiceAccount -RunLevel Highest
     Write-Host "[i] 运行身份：SYSTEM（无人登录可跑；loop 内已把环境钉回 Administrator）"
 } else {
