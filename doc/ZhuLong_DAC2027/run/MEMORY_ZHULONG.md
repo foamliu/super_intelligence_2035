@@ -8,28 +8,28 @@ WAITING: 1
 
 | 字段 | 值 |
 |:--|:--|
-| STAGE | `C1`（Phase B 4/4✅；C1 pure_llm/rag/wo_retrieval 5/5✅；**full(V2) 锚点 5/5✅=81.4±4.1%**→【运维指令(十二)】**full_v3(自探索) r1 running**）|
-| CONFIG | `full_v3`（运维指令(十二)补跑「真full=自探索开启」；V2批full 5/5✅=81.4±4.1%已收割。full_v3 r1=running·batch2026_1012_005319·PID3005888·log /tmp/ABL_full_v3_r1_8650set.log·Step0-3✅·158 tasks✅·8 workers✅·hook已部署✅。.env切V3:set_ablation.py full→API_INFO_MERGED_FILE=V3✅+SKILL_DATA_DIR=./docs/skill_data_selfexpl✅+TCL/INNOVUS=selfexpl✅+4核心工具ON✅+feedback=full✅。MCP重启PID3000860@8090✅search_apis ON✅。4端口8650/8651/8652/8654@10.129.32.75✅+RAG:9006✅。/home=3.4G(<8G门槛·按用户(九)4G授权执行·已清.cline/data/logs释放2.4G旧日志)）|
+| STAGE | `C1`（B 4/4✅；C1 pure_llm/rag/wo_retrieval 5/5✅；full(V2)锚点5/5✅=81.4±4.1%→运维指令(十二)补跑full_v3 r1 running）|
+| CONFIG | `full_v3`（运维指令(十二)补跑「真full=自探索开」·.env切V3✅:API_INFO_MERGED_FILE=V3+SKILL_DATA_DIR=./docs/skill_data_selfexpl+TCL/INNOVUS=selfexpl+4核心工具ON+feedback=full·MCP PID3000860@8090✅search_apis ON·4端口8650/8651/8652/8654✅+RAG:9006✅）|
 | ROUND | 1（full_v3 第1轮）|
-| PHASE | `running`（**full_v3 r1 code-gen 运行中·PID3005888·batch2026_1012_005319·log /tmp/ABL_full_v3_r1_8650set.log**。V2批full 5/5✅=[88.0,79.1,77.2,80.4,82.3]→**81.4±4.1%**已收割。r5 re-grade✅130/158pass(82.3%)·timeout=1≤10✅(00:17完成)。.env切V3(自探索开)→MCP重启PID3000860→5项自检:①V3+skill_data_selfexpl✅②4端口4/4✅③MCP8090+search_apis ON✅④hook已部署(PreToolUse 10242B+「已部署沙盒hook」✅)⑤/home=3.4G<8G按4G授权。full_v3 r1已起:Step0-3✅·158 tasks·8 workers·hook✅·batch2026_1012_005319。loop PID61738✅有proxy·relay已死(.last_run_id=48)·/home=3.4G。**下轮**:`pgrep -f run_cline_script`→有输出=巡检退出;无输出=收割r1(code-gen完成→auto-grade会有benchmark bug→re-grade同r2-r5口径:--benchmark EDA-Eval-pyAether-158.jsonl --lang pyAether·log /tmp/ABL_full_v3_r1_regrade.log)→判据 timeout≤10且Pass@1≥75%→r1有效→r2→...→r5→5/5 mean±std→三组对照表(r1旧V3/full现V2=81.4±4.1%/full_v3新5轮)→进C2.phi_k10 |
+| PHASE | `running`（**full_v3 r1 code-gen 运行中·PID3005888·batch2026_1012_005319·log /tmp/ABL_full_v3_r1_8650set.log·9.4MB增长中**。V2批full 5/5✅=81.4±4.1%已收割。.env切V3+MCP重启+5项自检✅(⑤/home=4G按用户4G授权)。loop PID61738✅有proxy·relay PID3277328✅alive。**下轮**:`pgrep -f run_cline_script`→有输出=巡检退出;无输出=收割r1(auto-grade有benchmark bug→re-grade同r2-r5口径:`--benchmark EDA-Eval-pyAether-158.jsonl --lang pyAether`·log /tmp/ABL_full_v3_r1_regrade.log)→判据 timeout≤10且Pass@1≥75%→r1有效→r2→...→r5→5/5 mean±std→三组对照表(r1旧V3/full现V2=81.4±4.1%/full_v3新5轮)→是否复现r1~88%→进C2.phi_k10 |
 | WAITING | 1 |
-| ERROR_COUNT | 0（V2批full 5/5✅=81.4±4.1%；full_v3 r1 running）|
+| ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
-| 基座 | 编排=`glm-5.2`；eval backbone=`deepseek-v4-pro-fp4`（**✅已恢复 HTTP 200（新 key e13f4f37 + /cloud/v1）**；r1/r2/r3 用旧 key 9eed3da1 全部有效(同后端 deepseek-v4-pro-260813)，无需重跑；r4 起用新 key）|
+| 基座 | 编排=`glm-5.2`；eval backbone=`deepseek-v4-pro-fp4`（✅HTTP 200 新key e13f4f37 + /cloud/v1；r1-r3旧key 9eed3da1有效同后端 deepseek-v4-pro-260813, r4起新key）|
 
 ## 执行看板（15 臂 × 5 轮——已调换为 B→C1→C2→S1）
 
 | 阶段 | 臂 | 轮次 | 状态 |
 |:--|:--|:-:|:--|
-| B | glm-5.2 | 5/5 ✅ | **83.3±3.1%** [84.2,87.3,84.2,79.1,81.6]（r5=81.6% 129/158 batch 2026_1005_233928, 0 Forbidden ✅）|
-| B | deepseek-v4-flash | 5/5 ✅ | **16.7 ± 12.3%** [9.5,10.1,19.0,7.6,37.3]（r1=9.5%(15/158,b2026_1006_022818); r2=10.1%(16/158,b2026_1006_031227); r3=19.0%(30/158,b2026_1006_034557); r4=7.6%(12/158,15ok/143fail/0exec_err,b2026_1006_042140); r5=37.3%(59/158,67ok/90fail/0exec_err,b2026_1006_045811), 0 Forbidden ✅ 全程）|
-| B | kimi-k2.6-cloud | 5/5 ✅ | **77.0±1.6%** [79.1,76.6,77.2,74.7,77.2]（r5=77.2% 122/158 batch 2026_1006_230904, 137ok/21fail/0exec_err, 0 Forbidden ✅, kimi active ✅）|
-| B | doubao-seed-2.0-pro-cloud | 5/5 ✅ | **63.8±1.4%** [63.9,64.6,61.4,65.2,63.9]（r5=63.9% 101/158 b2026_1007_095002, 0 Forbidden ✅, doubao active ✅）|
+| B | glm-5.2 | 5/5 ✅ | **83.3±3.1%** [84.2,87.3,84.2,79.1,81.6] |
+| B | deepseek-v4-flash | 5/5 ✅ | **16.7±12.3%** [9.5,10.1,19.0,7.6,37.3] |
+| B | kimi-k2.6-cloud | 5/5 ✅ | **77.0±1.6%** [79.1,76.6,77.2,74.7,77.2] |
+| B | doubao-seed-2.0-pro-cloud | 5/5 ✅ | **63.8±1.4%** [63.9,64.6,61.4,65.2,63.9] |
 | C1 | pure_llm | 5/5 ✅ | ✅ 10.5±1.9%（复用 legacy：[8.2,9.5,10.1,11.4,13.3]）|
-| C1 | rag | 5/5 ✅ | **71.8±2.5%** [70.3,72.2,69.6,70.9,75.9]（r5=75.9% 120/158 batch 2026_1007_202448, 151 ok/7 fail/0 exec_err, 0 Forbidden ✅；legacy 68.2±7.4% 作废→本线重跑）|
-| C1 | wo_retrieval | 5/5 ✅ | **81.0±4.5%** [74.1,86.1,81.6,79.7,83.5]（r1=74.1% 复用 legacy；r2=86.1% 136/158 b2026_1007_221959；r3=81.6% 129/158 b2026_1008_015818；r4=79.7% 126/158 b2026_1008_0507；r5=83.5% 132/158 b2026_1008_081817 147ok/8fail/0exec_err 0 Forbidden✅ 全程）|
-| C1 | full(V2)（锚点）| **5/5 ✅ 81.4±4.1%** | r1=88.0%✅(139/158,b2026_1010_140631). r2=79.1%✅(125/158,timeout=3≤10,b2026_1011_112839). r3=77.2%✅(122/158,timeout=2≤10,b2026_1011_145925). r4=80.4%✅(127/158,timeout=4≤10,b2026_1011_181038). r5=82.3%✅(130/158,timeout=1≤10,b2026_1011_212324·re-grade✅00:17). **注**:r1用V3文档(10-10 15:32前),r2-r5用V2(无自探索,e51372ff 10-10 16:33改.env)→C1锚点混两种配置→【运维指令(十二)】补跑full_v3 |
-| C1 | full_v3(自探索) | **r1 running** (PID3005888·batch2026_1012_005319·log /tmp/ABL_full_v3_r1_8650set.log) | 运维指令(十二)补跑「真full=自探索开启」(V3文档+SKILL_DATA_DIR=./docs/skill_data_selfexpl). .env切V3✅·MCP重启PID3000860✅·5项自检4/5✅(⑤/home=3.4G<8G按4G授权). r1 code-gen进行中(Step0-3✅·158 tasks·8 workers·hook已部署✅) |
+| C1 | rag | 5/5 ✅ | **71.8±2.5%** [70.3,72.2,69.6,70.9,75.9] |
+| C1 | wo_retrieval | 5/5 ✅ | **81.0±4.5%** [74.1,86.1,81.6,79.7,83.5] |
+| C1 | full(V2)（锚点）| **5/5 ✅ 81.4±4.1%** | [88.0,79.1,77.2,80.4,82.3]（r1=V3文档,r2-r5=V2无自探索→混配置→运维指令(十二)补跑full_v3）|
+| C1 | full_v3(自探索) | **r1 running** (PID3005888·batch2026_1012_005319·log /tmp/ABL_full_v3_r1_8650set.log) | 运维指令(十二)补跑「真full=自探索开」·.env切V3✅·MCP重启✅·r1 code-gen进行中 |
 | C2 | phi_k10 | 1-5/5 | ⬜（探路 75.3%）|
 | C2 | phi_k3 | 1-5/5 | ⬜（探路 69.0%）|
 | C2 | phi_k1 | 1-5/5 | ⬜（探路 60.8%）|
@@ -43,23 +43,22 @@ WAITING: 1
 | 臂 | N=5 mean±std | 各轮原始值 |
 |:--|:-:|:--|
 | B.glm-5.2 | **83.3 ± 3.1%** | [84.2, 87.3, 84.2, 79.1, 81.6] |
-| B.deepseek-v4-flash | **16.7 ± 12.3%** | r1=9.5%（15/158, batch 2026_1006_022818）；r2=10.1%（16/158, batch 2026_1006_031227）；r3=19.0%（30/158, batch 2026_1006_034557）；r4=7.6%（12/158, 15 ok/143 fail/0 exec_err, 0 Forbidden ✅, batch 2026_1006_042140）；r5=37.3%（59/158, 67 ok/90 fail/0 exec_err, 0 Forbidden ✅, batch 2026_1006_045811）|
-| B.kimi-k2.6-cloud | **77.0 ± 1.6%** | [79.1, 76.6, 77.2, 74.7, 77.2]（r1=79.1% 125/158 b2026_1006_071809；r2=76.6% 121/158 b2026_1006_100626；r3=77.2% 122/158 b2026_1006_181646；r4=74.7% 118/158 b2026_1006_204422；r5=77.2% 122/158 b2026_1006_230904, 137 ok/21 fail/0 exec_err, 0 Forbidden ✅ 全程）|
-| B.doubao-seed-2.0-pro-cloud | **63.8 ± 1.4%** | [63.9, 64.6, 61.4, 65.2, 63.9]（r1=63.9% 101/158 b2026_1007_010601；r2=64.6% 102/158 b2026_1007_030335；r3=61.4% 97/158 b2026_1007_050414；r4=65.2% 103/158 b2026_1007_083426；r5=63.9% 101/158 b2026_1007_095002, 0 Forbidden ✅ 全程）|
+| B.deepseek-v4-flash | **16.7 ± 12.3%** | [9.5, 10.1, 19.0, 7.6, 37.3]（r1=9.5% b2026_1006_022818；r2=10.1% b2026_1006_031227；r3=19.0% b2026_1006_034557；r4=7.6% b2026_1006_042140；r5=37.3% b2026_1006_045811, 0 Forbidden✅）|
+| B.kimi-k2.6-cloud | **77.0 ± 1.6%** | [79.1, 76.6, 77.2, 74.7, 77.2]（b2026_1006_071809/100626/181646/204422/230904, 0 Forbidden✅）|
+| B.doubao-seed-2.0-pro-cloud | **63.8 ± 1.4%** | [63.9, 64.6, 61.4, 65.2, 63.9]（b2026_1007_010601/030335/050414/083426/095002, 0 Forbidden✅）|
 | C1.pure_llm | 10.5 ± 1.9% | [8.2, 9.5, 10.1, 11.4, 13.3]（复用 legacy）|
-| C1.wo_retrieval | **81.0 ± 4.5%** | [74.1, 86.1, 81.6, 79.7, 83.5]（r1=74.1% 复用 legacy；r2=86.1% 136/158 b2026_1007_221959 149ok/4fail/0exec_err 0 Forbidden✅；r3=81.6% 129/158 b2026_1008_015818 146ok/7fail/0exec_err 0 Forbidden✅；r4=79.7% 126/158 b2026_1008_0507 145ok/10fail/0exec_err 0 Forbidden✅；r5=83.5% 132/158 b2026_1008_081817 147ok/8fail/0exec_err 0 Forbidden✅；旧 r2 作废 0/158 pro-fp4 403 不计数）|
-| C1.rag | **71.8 ± 2.5%** | [70.3, 72.2, 69.6, 70.9, 75.9]（r1=70.3% 111/158 b2026_1007_112101；r2=72.2% 114/158 b2026_1007_131535；r3=69.6% 110/158 b2026_1007_163343；r4=70.9% 112/158 b2026_1007_183007；r5=75.9% 120/158 b2026_1007_202448, 151 ok/7 fail/0 exec_err, 0 Forbidden ✅ 全程；旧 r3 作废 b2026_1007_151301 0/158 不计数；legacy 68.2±7.4% 作废）|
-| C1.full(V2)（锚点）| **81.4 ± 4.1%** ✅ 5/5 | [88.0, 79.1, 77.2, 80.4, 82.3]（r1=88.0%✅保留(b2026_1010_140631·139/158,V3文档)；r2=79.1%✅(b2026_1011_112839·125/158·timeout=3·re-grade✅,V2文档)；r3=77.2%✅(b2026_1011_145925·122/158·timeout=2·re-grade✅,V2)；r4=80.4%✅(b2026_1011_181038·127/158·timeout=4·re-grade✅,V2)；r5=82.3%✅(b2026_1011_212324·130/158·timeout=1·re-grade✅@00:17,V2)。**注**:r1=V3文档(10-10 15:32前),r2-r5=V2无自探索(e51372ff 10-10 16:33)→混两种配置→运维指令(十二)补跑full_v3）|
-| C1.full_v3(自探索) | ⏳ r1 running | 运维指令(十二)补跑「真full」(V3文档+自探索)·.env切V3✅·MCP重启✅·r1(batch2026_1012_005319)code-gen进行中 |
+| C1.wo_retrieval | **81.0 ± 4.5%** | [74.1, 86.1, 81.6, 79.7, 83.5]（r1=74.1%复用legacy；r2=86.1% b2026_1007_221959；r3=81.6% b2026_1008_015818；r4=79.7% b2026_1008_0507；r5=83.5% b2026_1008_081817, 0 Forbidden✅；旧r2作废0/158 pro-fp4 403不计数）|
+| C1.rag | **71.8 ± 2.5%** | [70.3, 72.2, 69.6, 70.9, 75.9]（b2026_1007_112101/131535/163343/183007/202448, 0 Forbidden✅；旧r3作废b2026_1007_151301 0/158不计数；legacy 68.2±7.4%作废）|
+| C1.full(V2)（锚点）| **81.4 ± 4.1%** ✅ 5/5 | [88.0, 79.1, 77.2, 80.4, 82.3]（r1=88.0% b2026_1010_140631·V3文档；r2=79.1% b2026_1011_112839·V2·timeout=3；r3=77.2% b2026_1011_145925·V2·timeout=2；r4=80.4% b2026_1011_181038·V2·timeout=4；r5=82.3% b2026_1011_212324·V2·timeout=1·re-grade✅。**注**:r1=V3(10-10 15:32前),r2-r5=V2无自探索→混配置→运维指令(十二)补跑full_v3）|
+| C1.full_v3(自探索) | ⏳ r1 running | 运维指令(十二)补跑「真full」(V3+自探索)·r1(batch2026_1012_005319)code-gen进行中 |
 
 ## 操作流水
-- [2026-10-12 00:43] ✅✅ **r5 re-grade收割=82.3%✅→full(V2)5/5=81.4±4.1%→【运维指令(十二)】.env切V3(自探索)+MCP重启+full_v3 r1启动**：pgrep run_eval.py→无输出=re-grade已结束(00:17:57 exit=0). grep /tmp/ABL_full_r5_regrade.log→**130/158 pass(82.3%)·timeout=1≤10✅·Pass@1=82.3%≥75%✅→r5有效**. full(V2)5/5=[88.0,79.1,77.2,80.4,82.3]→**mean=81.4 std=4.1→81.4±4.1%**. r1=V3文档(10-10 15:32前)/r2-r5=V2无自探索(e51372ff 10-10 16:33)→C1锚点混两种配置→按运维指令(十二)补跑full_v3. **full_v3 setup**:①cp .env .env.bak_1791737447✅;②venv/bin/python scripts/set_ablation.py full→.env切V3:API_INFO_MERGED_FILE=V3✅+SKILL_DATA_DIR=./docs/skill_data_selfexpl✅+TCL/INNOVUS=selfexpl✅+4核心工具ON✅+feedback=full✅(diff确认4行改动);③pkill python main.py→stop旧MCP(3524971)→start.sh→新MCP PID3000860@8090✅search_apis ON✅;④5项自检:①V3+skill_data_selfexpl(ls✅18MB+10files)②4端口8650/8651/8652/8654=4/4OPEN✅③MCP8090+search_apis ON✅④hook已部署(PreToolUse 10242B+「已部署沙盒hook」✅)⑤/home=3.4G<8G→**按用户(九)4G授权执行**(已清.cline/data/logs释放2.4G旧日志·/home属其他用户373G无法再清);⑤**full_v3 r1启动**:`setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_full_v3_r1_8650set.log 2>&1 < /dev/null &`·PID3005888✅·batch2026_1012_005319·Step0-3✅·158 tasks✅·8 workers✅·hook✅·4端口清理✅. loop PID61738✅有proxy·relay已死(.last_run_id=48)·/home=3.4G. 状态 STAGE=C1/CONFIG=full_v3/ROUND=1/PHASE=running/WAITING=1/ERROR_COUNT=0. **下轮**:pgrep run_cline_script→有=巡检退出;无=收割r1(code-gen完成→auto-grade会有benchmark bug→re-grade同r2-r5口径:--benchmark EDA-Eval-pyAether-158.jsonl --lang pyAether·log /tmp/ABL_full_v3_r1_regrade.log)→判据 timeout≤10且Pass@1≥75%→r1有效→r2(log /tmp/ABL_full_v3_r2_8650set.log)→...→r5→5/5 mean±std→三组对照表(r1旧V3/full现V2=81.4±4.1%/full_v3新5轮)→是否复现r1~88%→进C2.phi_k10.
-- [2026-10-12 00:07] ✅ **r5 code-gen完成→auto-grade❌1.9%(benchmark bug)→re-grade启动(PID2836136)**：pgrep run_cline_script→无输出=r5 eval已结束(23:43)。r5(batch2026_1011_212324)code-gen✅：stats success=157/timeout=1/failure=0→158/158 done·timeout=1≤10✅。auto-grade❌1.9%(3/158)同根因(run_eval.py patch_config默认替换benchmark→154/158 lang=None未找到task_id→仅3脚本组装)。**修复=re-grade**：创建run/run_r5_grading.sh(--benchmark benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl --lang pyAether + EVAL_FW_DIR=/nasdata/.../EDA-Eval-Framework)→setsid启动→log /tmp/ABL_full_r5_regrade.log·PID2836136/2836139✅·**158加载✅(vs broken:3)·147脚本组装✅(vs broken:3)**→沙盒执行中(连接远程10.129.32.75:8650/8651/8652/8654全OPEN✅·~20min同r4)。r1=88.0%✅+r2=79.1%✅+r3=77.2%✅+r4=80.4%✅。relay已死(pgrep空·.last_run_id=48·outbox到RUN_ID48@22:49)·loop PID61738✅有proxy·/home=4G(用户授权)。状态 STAGE=C1/CONFIG=full/ROUND=5/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮第一件事**：pgrep -f run_eval.py→有输出=巡检退出;无输出=grep -E 'pass \(|PASS_RATE|通过率|评估结果汇总' /tmp/ABL_full_r5_regrade.log | tail -10→拿Pass@1→判据 timeout≤10且Pass@1≥75%→r5有效→5/5=[88.0,79.1,77.2,80.4,r5]mean±std→回填5表锚点→PHASE=just_finished→【按运维指令(十二)】先补跑5轮full_v3(自探索开启:API_INFO_MERGED_FILE=./docs/API_INFO_MERGED_V3.json+SKILL_DATA_DIR=./docs/skill_data_selfexpl)再进C2.phi_k10。
-- [2026-10-11 11:31] 🔄 **r2 re-run code-gen 启动·3项修复完成**：r2(batch2026_1011_083246)=5.7%(9/158)❌INVALIDATED。根因：.env有4个git merge marker(lines 68,100,129,281)→`syntax error near unexpected token '<<<'`→run_cline_script.sh(set -uo pipefail)早期退出→grading未自动跑→run_cli.sh孤儿用broken config续跑→仅301 run_code(r1有2679)→48题无code+65 AttributeError。**修复3项**：①EVAL_FW_DIR→/nasdata/.../EDA-Eval-Framework✅；②config.yaml benchmark→EDA-Eval-pyAether-158.jsonl✅；③PYTHON=venv/bin/python added to .env✅(首次re-run用system python→pydantic ModuleNotFoundError→killed→重跑)。r2 re-run启动：PID4046360·batch2026_1011_112839·log /tmp/ABL_full_r2_8650set.log·Step2 venv python✅·158 tasks✅·8 workers✅·ACCESS RESTRICTED=46·run_code=63(2min healthy)·0 pydantic error✅。旧r2 log renamed→_invalidated.log。4端口4/4✅·MCP:18890✅·RAG:9006✅。状态 STAGE=C1/CONFIG=full/ROUND=2/PHASE=running/WAITING=1/ERROR_COUNT=0。下轮:pgrep run_cline_script→有输出=巡检;无输出=收割Pass@1。
+- [2026-10-12 01:29] 🔎 **巡检(full_v3 r1 code-gen ~46min健康·不动作退出)**：pgrep run_cline_script→有输出(PID3005888)·log 9.4MB mtime 01:30(增长中)·batch2026_1012_005319。.env复检V3+selfexpl+4端口8650set+RAG:9006+FEEDBACK=full✅。MCP PID3000860@8090✅。loop PID61738✅有proxy·relay PID3277328✅alive·/home=4G(授权)。MEMORY归档3条旧流水+精简看板/状态头→<32KB。状态不变 STAGE=C1/CONFIG=full_v3/ROUND=1/PHASE=running/WAITING=1/ERROR_COUNT=0。下轮:pgrep→有=巡检;无=收割r1(re-grade:--benchmark EDA-Eval-pyAether-158.jsonl --lang pyAether·log /tmp/ABL_full_v3_r1_regrade.log)→timeout≤10且Pass@1≥75%→r1有效→r2→...→r5→三组对照表→进C2.phi_k10。
+- [2026-10-12 00:43] [⏩ 已滚出] ✅ r5 re-grade=82.3%→full(V2)5/5=81.4±4.1%→.env切V3+MCP重启+full_v3 r1启动 详情见 daily-memories/2026-10-12.md §00:43。
+- [2026-10-12 00:07] [⏩ 已滚出] ✅ r5 code-gen完成→auto-grade❌1.9%(benchmark bug)→re-grade启动 详情见 daily-memories/2026-10-12.md §00:07。
+- [2026-10-11 11:31] [⏩ 已滚出] 🔄 r2 re-run code-gen 启动·3项修复完成 详情见 daily-memories/2026-10-11.md §11:31。
 - [2026-10-10 21:45→15:35] [⏩ 已滚出] 5条(运维指令六/四/三·巡检·exec_code patch) 详情见 daily-memories/2026-10-10.md。
 - [2026-10-09 01:28] [⏩ 已滚出] ✅ C1.full r3 收割 63.3%→r4 启动 详情见 daily-memories/2026-10-09.md §01:28。
-- [2026-10-08 22:25] [⎩ 已滚出] ✅ C1.full r2 收割 59.5%→r3 启动 详情见 daily-memories/2026-10-08.md §22:25。
-- [2026-10-08 14:20] [✅ C1.full r1 收割 88.0%→r2 启动] [⎩ 已滚出] 详情已原文搬入 daily-memories/2026-10-08.md（§14:20，rolled-from-MEMORY 2026-10-09 01:28）。
 - [2026-10-08 11:42] [✅ C1.wo_retrieval r5 收割 83.5%→5/5=81.0±4.5%→切 C1.full 锚点 r1 启动] [⎩ 已滚出] 详情已原文搬入 daily-memories/2026-10-08.md（§11:42，rolled-from-MEMORY 2026-10-08 22:25）。
 - [2026-10-08 08:18] [✅ C1.wo_retrieval r4 收割 79.7%→r5 启动] [⎩ 已滚出] 详情已原文搬入 daily-memories/2026-10-08.md（§08:18，rolled-from-MEMORY 2026-10-08 11:42）。
 
