@@ -1,6 +1,68 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 40 -->
+<!-- RUN_ID: 41 -->
+
+## RUN_ID 41 — 🔎 **只读排查：C1「full」臂的 RAG(`9006`) 到底有没有生效**（用户 2026-10-11 直令）
+
+> **背景**：C1 锚点 `full` = r1 **88.0** / r2 **79.1** / r3 **77.2** / r4 **80.4**（mean **81.2%**）≈ `wo_retrieval` **81.0±4.5**（差 **0.2pp ≪ σ**），而 `rag` 仅 71.8% ⇒ **疑「full 的 retrieval 没生效」**。
+> **首要嫌疑**：① recall 启动脚本「**从 9002 起自动探测空闲端口**」（`outbox.md:7132` 记载当时 `.env` 指向 **9009**），而 `(九)`/`.env` 写的是 **9006** ⇒ **服务实际监听端口可能 ≠ `.env` 的 `RAG_RECALL_URL`**；② `run_cline_script.sh -n`（= 禁用 Memory Bank 注入）是否**把 RAG 一起关掉**。
+> **红线**：**r5 正在跑 ⇒ 本块 100% 只读** —— 🚫 不 kill / 不重启 / 不改 `.env` / 不碰 r5；每条命令 `timeout` 有界。
+
+```bash
+# RUN_ID 41 · 只读取证：RAG(9006) 是否真的活着、能召回、被调用
+echo "=== [0] host / time ==="; hostname; date '+%F %T'
+E=""
+for P in /nasdata/app.e0031982/code/eda_fastmcp /nas_train/app.e0031982/code/eda_fastmcp; do
+  [ -f "$P/.env" ] && E="$P" && break
+done
+echo "EDA=$E"
+
+echo "=== [1] .env RAG/端口相关行（原值）==="
+[ -n "$E" ] && grep -nE '^(PROXY_PORTS|SANDBOX_HOST|SANDBOX_ENDPOINTS|RAG_|MEMORY_VECTOR_URL|CLI_AGENT)' "$E/.env" 2>&1 | cut -c1-220
+
+echo "=== [2] 实际监听端口（80xx / 90xx 全扫）==="
+ss -lntp 2>/dev/null | grep -E ':(8[0-9]|9[0-9])[0-9][0-9]\b' | cut -c1-165 || echo "  (无)"
+
+echo "=== [3] recall / embedding 相关进程（含启动命令）==="
+pgrep -af 'recall|embed|faiss|vector' 2>/dev/null | cut -c1-190 || echo "  (无)"
+
+echo "=== [4] GET /health 逐候选端口（9002/9006/9009/9010）==="
+for P in 9002 9006 9009 9010; do
+  printf '  :%s -> ' "$P"
+  timeout 8 curl -s -o /tmp/rag_h_$P.txt -w 'http=%{http_code} t=%{time_total}s\n' "http://localhost:$P/health" || echo "FAIL/refused"
+  head -c 160 /tmp/rag_h_$P.txt 2>/dev/null; echo
+done
+
+echo "=== [5] 真实召回（POST /recall × 3；health 通 ≠ 能召回）==="
+for Q in 'SPICE 网表怎么写' 'DRAM 版图 DRC 规则' 'pytest 单元测试怎么写'; do
+  printf '  q=%s -> ' "$Q"
+  timeout 25 curl -s -X POST "http://localhost:9006/recall" -H 'Content-Type: application/json' \
+    -d "{\"query\":\"$Q\",\"top_k\":5}" -o /tmp/rag_rc.json -w 'http=%{http_code} t=%{time_total}s\n' || echo "FAIL"
+  head -c 260 /tmp/rag_rc.json 2>/dev/null; echo
+done
+
+echo "=== [6] MCP(eda_fastmcp) 端口/进程 ==="
+ss -lntp 2>/dev/null | grep -E ':(8090|18889|18890)\b' | cut -c1-150 || echo "  (未监听)"
+pgrep -af 'eda_fastmcp|uvicorn' 2>/dev/null | cut -c1-160 || echo "  (无)"
+
+echo "=== [7] r5 日志里 RAG/recall/refused 痕迹 ==="
+ls -l /tmp/ABL_full_r5_8650set.log 2>/dev/null | cut -c1-160
+echo -n "  recall|rag 命中行数: "; grep -cEi 'recall|rag' /tmp/ABL_full_r5_8650set.log 2>/dev/null || echo 0
+grep -nEi 'recall|rag|refused|Connection' /tmp/ABL_full_r5_8650set.log 2>/dev/null | tail -15 | cut -c1-200
+
+echo "=== [8] 评测侧 cline 会话里 recall 出现次数（轨迹证据）==="
+for D in "$HOME/.cline/data" "$HOME/.cline_prof4_eval/data" /root/.cline/data; do
+  [ -d "$D/sessions" ] || continue
+  echo "  -- $D/sessions"
+  echo -n "     含 recall 的会话文件数: "; grep -rl 'recall' "$D/sessions" 2>/dev/null | wc -l
+  grep -rl 'recall' "$D/sessions" 2>/dev/null | head -3 | sed 's/^/     /'
+done
+
+echo "=== [9] full vs wo_retrieval 的配置出处（只列文件，不下结论）==="
+[ -n "$E" ] && grep -rnE 'retriev|RAG_|top_k' "$E/.env" "$E/scripts/run_cline_script.sh" 2>/dev/null | head -25 | cut -c1-190
+echo "=== DONE ==="
+```
+
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
