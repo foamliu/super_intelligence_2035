@@ -6585,3 +6585,66 @@ LISTEN 0      2048              0.0.0.0:8090       0.0.0.0:*    users:(("python"
 /nasdata/app.e0031982/code/eda_fastmcp/.env:286:RAG_RECALL_URL=http://localhost:9006/recall
 === DONE ===
 ```
+
+---
+
+## RUN_ID 42 · 2026-10-11 22:13:41 · host=`hfeg0tedaap02` · exit=126
+
+**命令**
+```bash
+# RUN_ID 42 · 跟进：定位「评测侧 search_apis 不可用」的根因（只读）
+echo "=== [0] host/time ==="; hostname; date '+%F %T'
+E=/nasdata/app.e0031982/code/eda_fastmcp
+B=/home/app.e0031982/eda_code_eval
+
+echo "=== [1] r5 里 search_apis 报错原文（含 Available tools 全表）==="
+grep -a 'NoSuchToolError' /tmp/ABL_full_r5_8650set.log 2>/dev/null | head -2 | cut -c1-1500
+echo "--- 各「不可用工具名」计数 ---"
+grep -aoE "unavailable tool [\"']?[A-Za-z0-9_.-]+" /tmp/ABL_full_r5_8650set.log 2>/dev/null | sed 's/.*[ '\'']//' | sort | uniq -c | sort -rn | head
+
+echo "=== [2] 各臂日志对照：search_apis 不可用从哪一轮开始 ==="
+for F in /tmp/ABL_full_r*_8650set.log /tmp/ABL_wo_retrieval*_8650set.log /tmp/ABL_rag*_8650set.log; do
+  [ -f "$F" ] || continue
+  printf '  %-44s NoSuchTool=%-4s search_apis=%-4s recall=%s\n' "$(basename "$F")" \
+    "$(grep -ac 'NoSuchToolError' "$F" 2>/dev/null)" "$(grep -ac 'search_apis' "$F" 2>/dev/null)" "$(grep -ac 'recall' "$F" 2>/dev/null)"
+done
+
+echo "=== [3] 评测 worker 的 cline 数据目录 + 其 MCP 配置（server 名单）==="
+ls -d $B/*/cli_data/worker_*/data 2>/dev/null | head -2
+find $B -maxdepth 5 -name 'cline_mcp_settings.json' 2>/dev/null | head -4 | while read f; do
+  echo "  -- $f"
+  sed -n '1,60p' "$f" | tr -d '\n' | cut -c1-500; echo
+done
+
+echo "=== [4] 轨迹里 RAG 工具痕迹（修正路径）==="
+for D in $(ls -d $B/*/cli_data/worker_*/data 2>/dev/null | head -2); do
+  echo "  -- $D/sessions  (文件数=$(ls "$D/sessions" 2>/dev/null | wc -l))"
+  echo -n "     search_apis 命中文件数: "; grep -rl 'search_apis' "$D/sessions" 2>/dev/null | wc -l
+  echo -n "     recall 命中文件数:      "; grep -rl 'recall' "$D/sessions" 2>/dev/null | wc -l
+done
+
+echo "=== [5] MCP(8090) 实际暴露的工具清单（关键）==="
+timeout 12 curl -s -X POST http://localhost:8090/mcp -H 'Content-Type: application/json' \
+  -H 'Accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' 2>/dev/null | head -c 1200; echo
+echo "--- main.py 里注册的工具名 ---"
+grep -nE 'def (search_apis|recall|search_)|name=\"|@mcp.tool|tool\(' $E/main.py 2>/dev/null | head -25 | cut -c1-170
+
+echo "=== [6] 补测：真实召回（带 lang + host；修正 41 号的 422）==="
+for L in pyAether py python; do
+  printf '  lang=%-8s -> ' "$L"
+  timeout 25 curl -s -X POST "http://localhost:9006/recall" -H 'Content-Type: application/json' \
+    -d "{\"query\":\"如何写 SPICE 网表\",\"top_k\":5,\"lang\":\"$L\",\"host\":\"$HOSTNAME\"}" \
+    -o /tmp/rag_rc2.json -w 'http=%{http_code} t=%{time_total}s ' || echo FAIL
+  head -c 260 /tmp/rag_rc2.json 2>/dev/null; echo
+done
+
+echo "=== [7] full vs wo_retrieval 的臂开关出处 ==="
+grep -rn 'wo_retrieval\|no_retrieval\|retrieval\|RAG' "$E/scripts/run_cline_script.sh" "$E/scripts/run_eval.py" 2>/dev/null | head -20 | cut -c1-180
+echo "=== DONE ==="
+```
+
+**输出**
+```
+REFUSED: 命中危险模式 [:()[[:space:]]*\{]（如需强行执行，请人工在服务器上操作）
+```
