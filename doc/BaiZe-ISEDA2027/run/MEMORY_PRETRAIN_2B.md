@@ -2,11 +2,12 @@
 WAITING: 1
 
 ## 当前状态
-- STAGE: **P-8 stable 推进中（step5480, 从 iter_0003147 恢复后健康运行）** — 恢复后 step3150 loss=2.648(瞬态) → step4500 loss=2.532 → step5000 loss=2.503 → step5370 loss=2.487 → step5480 loss=2.491 LR=1e-3 stable ✅。loss 缓降趋平（step5300~5480 均值 ≈2.491）。`--lr-warmup-iters 0` 恢复成功无 re-warmup spike。吞吐 ~240K tok/s ✅（17.5s/step, ~573 TFLOP/s/GPU）。MBS=2/GBS=1024/dist_muon/bf16 不变。grad_norm 0.13~0.20 健康范围，0 NaN/0 skipped ✅。**ckpt@5245 ✅ 已保存(23:41)**, next@6294(~04:48)。
-- PHASE: **p8_stable_step5480** — P-8 stable 段健康推进中（52.3%, ~23.0B/44B token）。WSD(warmup=0): stable 0→9441, decay 9441→10490。关键里程碑：ckpt@1049 ✅ + ckpt@2098 ✅ + ckpt@3147 ✅ + ckpt@4196 ✅ + ckpt@5245 ✅(23:41) / **next ckpt@6294(~4h, ~04:48 10-12)** / **step9441 decay 切换点(~19.3h, ~20:05 10-12)** / step10490 完成(~24.4h, ~01:11 10-13)。GPU 8卡 52-55GB 97-100%util。torchrun 活跃(`baize_p8_resume.sh`, 13:42 启动, PID 1798657, etimes~40239s)。⚠️ **崩溃历史**：step3740 @13:07 /tmp 满→已修复恢复。
+- STAGE: **P-8 stable 推进中（step5610, 从 iter_0003147 恢复后健康运行）** — 恢复后 step3150 loss=2.648(瞬态) → step4500 loss=2.532 → step5000 loss=2.503 → step5370 loss=2.487 → step5480 loss=2.491 → step5610 loss=2.486 LR=1e-3 stable ✅。loss 缓降趋平（step5480~5610 均值 ≈2.489）。`--lr-warmup-iters 0` 恢复成功无 re-warmup spike。吞吐 ~240K tok/s ✅（17.3s/step, ~576 TFLOP/s/GPU）。MBS=2/GBS=1024/dist_muon/bf16 不变。grad_norm 0.13~0.20 健康范围，0 NaN/0 skipped ✅。**ckpt@5245 ✅ 已保存(23:41)**, next@6294(~04:48)。
+- PHASE: **p8_stable_step5610** — P-8 stable 段健康推进中（53.5%, ~23.5B/44B token）。WSD(warmup=0): stable 0→9441, decay 9441→10490。关键里程碑：ckpt@1049 ✅ + ckpt@2098 ✅ + ckpt@3147 ✅ + ckpt@4196 ✅ + ckpt@5245 ✅(23:41) / **next ckpt@6294(~3h, ~04:48 10-12)** / **step9441 decay 切换点(~18.5h, ~20:05 10-12)** / step10490 完成(~23.6h, ~01:11 10-13)。GPU 8卡 52-55GB 98-100%util。torchrun 活跃(`baize_p8_resume.sh`, 13:42 启动, PID 1798657, etimes~42356s)。⚠️ **崩溃历史**：step3740 @13:07 /tmp 满→已修复恢复。
 - ERROR_COUNT: 0
-- 轮询状态：30min 长轮询。**全 8 GPU 占用**（.29, 52-55GB/card 97-100%util）。⚠️ sklearn .pth 已禁用（.pth.bak_pretrain）。decay 切换预案：step9441 ckpt 保存后 → `pkill -f pretrain_launcher.*p8` → 等 30s → `setsid bash baize_p8_decay.sh &`。📦 体积：TASK=31246B(30.5KB) ✅ / MEMORY=~31.8KB ✅。🚫绝不 kill watchdog loop(PID 1391466)。⚠️ **/tmp 监控**：42% used(55G free) ✅ 稳定。
-- 🩺 **本唤醒推进 = #323（2026-10-12 ~00:52, P-8 监控·step5480 · stable 健康推进）**：① git fetch: up to date, 无新运维指令。② **P-8 ✅ 健康推进**：step5480/10490(52.3%, ~23.0B/44B) loss=2.491 stable@LR=1e-3, 8卡52-55GB 97-100%util(PID 1798657 etimes~40239s), 17.5s/step ~573 TFLOP/s/GPU, grad_norm 0.13~0.20, 0 NaN/0 skipped, 吞吐~240K tok/s ✅。ckpt@5245 ✅(23:41), next@6294(~04:48 10-12)。③ **/tmp ✅**：42% used(55G free) 稳定。④ **纪律**：🚫未跑任何实验, 🚫未改P-8配置。→ **下次唤醒**：① 查 P-8 进度 → ② step6294 确认 ckpt → ③ step9441 decay 切换 → ④ 体积自检。WAITING=1。
+- 轮询状态：30min 长轮询。**全 8 GPU 占用**（.29, 52-55GB/card 98-100%util）。⚠️ sklearn .pth 已禁用（.pth.bak_pretrain）。decay 切换预案：step9441 ckpt 保存后 → `pkill -f pretrain_launcher.*p8` → 等 30s → `setsid bash baize_p8_decay.sh &`。📦 体积：TASK=31246B(30.5KB) ✅ / MEMORY=~16.4KB ✅（本轮归档 #102~#298 指针→daily-memories 各日文件）。🚫绝不 kill watchdog loop(PID 1391466)。⚠️ **/tmp 监控**：42% used(55G free) ✅ 稳定。
+- 🩺 **本唤醒推进 = #324（2026-10-12 ~01:28, P-8 监控·step5610 · stable 健康推进）**：① git fetch: up to date, 无新运维指令。② **P-8 ✅ 健康推进**：step5610/10490(53.5%, ~23.5B/44B) loss=2.486 stable@LR=1e-3, 8卡52-55GB 98-100%util(PID 1798657 etimes~42356s ~11.8h), 17.3s/step ~576 TFLOP/s/GPU, grad_norm 0.13~0.20, 0 NaN/0 skipped, 吞吐~240K tok/s ✅。ckpt@5245 ✅(23:41), next@6294(~04:48)。③ **/tmp ✅**：42% used(55G free) 稳定。④ **纪律**：🚫未跑任何实验, 🚫未改P-8配置。→ **下次唤醒**：① 查 P-8 进度 → ② step6294 确认 ckpt → ③ step9441 decay 切换 → ④ 体积自检。WAITING=1。
+> 📦 **[已归档] #323 流水（2026-10-12 ~00:52, P-8 监控·step5480 · stable 健康推进）→ daily-memories/2026-10-12.md；结论：step5480 loss=2.491 stable@LR=1e-3, 240K tok/s ✅, ckpt@5245 ✅。需要时再读。**
 > 📦 **[已归档] #322 流水（2026-10-12 ~00:18, P-8 监控·step5370 · stable 健康推进）→ daily-memories/2026-10-12.md；结论：step5370 loss=2.487 stable@LR=1e-3, 240K tok/s ✅, ckpt@5245 ✅。需要时再读。**
 > 📦 **[已归档] #321 流水（2026-10-11 ~23:42, P-8 监控·step5245 · stable 健康推进·ckpt@5245 ✅）→ daily-memories/2026-10-11.md；结论：step5245 loss=2.494 stable@LR=1e-3, 240K tok/s ✅, ckpt@5245 ✅。需要时再读。**
 > 📦 **[已归档] #320 流水（2026-10-11 ~23:06, P-8 监控·step~5120 · stable 健康推进）→ daily-memories/2026-10-11.md；结论：step5120 loss=2.499 stable@LR=1e-3, 246K tok/s ✅, ckpt@4196 ✅。需要时再读。**
@@ -27,88 +28,7 @@ WAITING: 1
 > 📦 **[已归档] #301 流水（2026-10-11 11:55, P-8 进度监控·step3490）→ daily-memories/2026-10-11.md；结论：step3490 loss=2.575, stable@LR=1e-3, ckpt@3147 ✅, decay prep ✅。需要时再读。**
 > 📦 **[已归档] #300 流水（2026-10-11 11:21, P-8 进度监控·step3370）→ daily-memories/2026-10-11.md；结论：step3370 loss=2.590, stable@LR=1e-3, ckpt@3147 ✅, decay prep ✅。需要时再读。**
 > 📦 **[已归档] #299 流水（2026-10-11 10:47, P-8 进度监控·step3250）→ daily-memories/2026-10-11.md；结论：step3250 loss=2.596, stable@LR=1e-3, ckpt@3147 ✅, decay prep ✅。需要时再读。**
-> 📦 **[已归档] #298 流水（2026-10-11 10:12, P-8 进度监控·step3120）→ daily-memories/2026-10-11.md；结论：step3120 loss=2.607, stable@LR=1e-3, ckpt@2098 ✅, decay prep ✅。需要时再读。**
-> 📦 **[已归档] #296 流水（2026-10-11 09:03, P-8 进度监控·step2880）→ daily-memories/2026-10-11.md；结论：step2880 loss=2.630, stable@LR=1e-3, ckpt@2098 ✅, decay prep ✅。需要时再读。**
-> 📦 **[已归档] #295 流水（2026-10-11 08:30, P-8 进度监控·step2760）→ daily-memories/2026-10-11.md；结论：step2760 loss=2.645, stable@LR=1e-3, ckpt@2098 ✅, decay prep ✅。需要时再读。**
-> 📦 **[已归档] #294 流水（2026-10-11 07:57, P-8 进度监控·step2640）→ daily-memories/2026-10-11.md；结论：step2640 loss=2.653, stable@LR=1e-3, ckpt@2098 ✅, decay prep ✅。需要时再读。**
-> 📦 **[已归档] #293 流水（2026-10-11 07:23, P-8 进度监控·step2520）→ daily-memories/2026-10-11.md；结论：step2520 loss=2.671, stable@LR=1e-3, ckpt@2098 ✅, decay prep ✅。需要时再读。**
-> 📦 **[已归档] #291 流水（2026-10-11 06:16, P-8 进度监控·step2280）→ daily-memories/2026-10-11.md；结论：step2280 loss=2.704, stable@LR=1e-3, ckpt@2098 ✅, decay prep ✅。需要时再读。**
-> 📦 **[已归档] #288 流水（2026-10-11 04:35, P-8 进度监控·step1920）→ daily-memories/2026-10-11.md；结论：step1920 loss=2.761, stable@LR=1e-3, ckpt@1049 ✅, decay prep ✅。需要时再读。**
-> 📦 **[已归档] #287 流水（2026-10-11 04:00, P-8 进度监控·step1790）→ daily-memories/2026-10-11.md；结论：step1790 loss=2.787, stable@LR=1e-3, ckpt@1049 ✅, decay prep ✅。需要时再读。**
-> 📦 **[已归档] #286 流水（2026-10-11 03:25, P-8 进度监控·step1670）→ daily-memories/2026-10-11.md；结论：step1670 loss=2.815, re-warmup 完成✓, ckpt@1049 ✅, decay prep ✅。需要时再读。**
-> 📦 **[已归档] #285 流水（2026-10-11 02:49, P-8 进度监控·step1540）→ daily-memories/2026-10-11.md；结论：step1540 loss=2.803, re-warmup 93.7% done, ckpt@1049 ✅, decay prep ✅。需要时再读。**
-> 📦 **[已归档] #284 流水（2026-10-11 02:15, P-8 进度监控·step1420）→ daily-memories/2026-10-11.md；结论：step1420 loss=2.790, LR=7.08E-4 re-warmup 70.8%, ckpt@1049 ✅, decay prep ✅。需要时再读。**
-> 📦 **[已归档] #283 流水（2026-10-11 01:42, P-8 进度监控·step1300）→ daily-memories/2026-10-11.md；结论：step1300 loss=2.795, LR=4.79E-4 re-warmup 53%, ckpt@1049 ✅, decay prep ✅。需要时再读。**
-> 📦 **[已归档] #281 流水（2026-10-11 00:35, A/B 收官+决策记录+P-8 续跑启动+sklearn 修复）→ daily-memories/2026-10-11.md；结论：A/B MBS=3 FAIL(B/A=1.031<1.12)→恢复MBS=2/GBS=1024；P-8 续跑启动(ckpt@1049), sklearn .pth 修复, step1060 loss=2.928, re-warmup 开始。需要时再读。**
-> 📦 **[已归档] #280 流水（2026-10-10 23:45, A/B Arm B 监控·step200/300 · 决策已定）→ daily-memories/2026-10-11.md；结论：Arm B step200 B/A=1.0335(❌<1.12), 三判据吞吐FAIL/VRAM PASS/loss PASS, 决策恢复MBS=2/GBS=1024。需要时再读。**
-> 📦 **[已归档] #279 流水（2026-10-10 23:10, A/B Arm A 完成+Arm B 监控·step70）→ daily-memories/2026-10-10.md；结论：Arm A ✅ 249K tok/s/loss@300=3.980/52.3GB; Arm B step70 B/A=1.037 初步FAIL。需要时再读。**
-> 📦 **[已归档] #278 流水（2026-10-10 22:37, A/B Arm A 进度监控·step260）→ daily-memories/2026-10-10.md；结论：Arm A step260/300 loss4.09, 248K tok/s, VRAM 52.3GB, 0 NaN, ETA Arm A完≈22:46。需要时再读。**
-> 📦 **[已归档] #276 流水（2026-10-10 21:22, A/B bug 修复+重启）→ daily-memories/2026-10-10.md；结论：P-8 step1050 loss2.925/ckpt@1049, A/B 两 bug 修复后 21:21 重启, Arm A 训练中。需要时再读。**
-> 📦 **[已归档] #275 流水（2026-10-10 20:40, P-8 监控·step970）→ daily-memories/2026-10-10.md；结论：P-8 step970 loss2.959, ETA step1050≈21:02。需要时再读。**
-> 📦 **[已归档] #274 流水（2026-10-10 20:05, P-8 监控+暂停/A/B全链路复核）→ daily-memories/2026-10-10.md；结论：P-8 step840 loss3.037, 暂停/A/B全链路复核通过, ETA step1050≈21:02。需要时再读。**
-> 📦 **[已归档] #273 流水（2026-10-10 19:31, P-8 监控+暂停/A/B脚本复核）→ daily-memories/2026-10-10.md；结论：P-8 step720 loss3.13, 暂停/A/B脚本复核通过, ETA step1050≈21:02。需要时再读。**
-> 📦 **[已归档] #272 流水（2026-10-10 18:56, P-8 监控+脚本/数据核查）→ daily-memories/2026-10-10.md；结论：P-8 step590 loss3.278, 脚本/数据全核查通过, ETA step1050≈21:05。需要时再读。**
-> 📦 **[已归档] #271 流水（2026-10-10 18:17, P-8 监控 + 暂停监控器 step 解析 bug 修复）→ daily-memories/2026-10-10.md；结论：P-8 step460 loss3.49, 暂停监控器step解析bug修复, PID799219重启, ETA step1050≈21:00。需要时再读。**
-> 📦 **[已归档] #270 流水（2026-10-10 17:39, P-8 监控+A/B脚本修复+暂停监控器部署）→ daily-memories/2026-10-10.md；结论：P-8 step320 loss3.86, A/B脚本结构缺陷修复, 暂停监控器创建(后step解析bug→#271修复)。需要时再读。**
-> 📦 **[已归档] #269 流水（2026-10-10 17:00, P-8 监控 + MBS A/B 脚本准备）→ daily-memories/2026-10-10.md；结论：P-8 step190 loss4.90, baize_p8_ab_test.sh 创建（后有现发现结构缺陷并修复）。需要时再读。**
-> 📦 **[已归档] #268 流水（2026-10-10 16:18, P-8 启动+首 40 步）→ daily-memories/2026-10-10.md；结论：P-8 16:03 启动, step40 loss=8.38, 248K tok/s, 0 NaN, GPU 52-53GB, baize_p8_decay.sh 已创建。需要时再读。**
-> 📦 **[已归档] #267 流水（2026-10-10 15:14, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8暂缓令未撤但数据前置已满足, 无新指令。需要时再读。**
-> 📦 **[已归档] #266 流水（2026-10-10 14:40, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8数据前置已满足但暂缓令未撤, 无新指令。需要时再读。**
-> 📦 **[已归档] #265 流水（2026-10-10 14:07, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8暂缓令未撤, 无新指令。需要时再读。**
-> 📦 **[已归档] #264 流水（2026-10-10 13:33, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8暂缓令未撤, data前置接近完成。需要时再读。**
-> 📦 **[已归档] #263 流水（2026-10-10 13:01, 状态核查）→ daily-memories/2026-10-10.md；结论：dist_muon已完成, GPU全空闲, P-8暂缓令未撤。需要时再读。**
-> 📦 **[已归档] #262 流水（2026-10-10 12:14, dist_muon 重测+报告刷新）→ daily-memories/2026-10-10.md；结论：dist_muon loss 3.110/122K tok/s/37.3GB, 消除 plain Muon −26%/+38% 两项代价, 报告36.3KB已刷新。需要时再读。**
-> 📦 **[已归档] #261 流水（2026-10-10 10:57, 状态核查）→ daily-memories/2026-10-10.md；结论：GPU全空闲, R3分词110/110 DONE, P-8暂缓令未撤, 体积OK。需要时再读。**
-> 📦 **[已归档] #260 流水（2026-10-10 10:19, 状态核查+TASK归档）→ daily-memories/2026-10-10.md；结论：两项运维指令均已完成(commit 9fb2c7f8), TASK归档2块→27.9KB。需要时再读。**
-> 📦 **[已归档] #259 流水（2026-10-10 09:44, 补推确认+心跳修正）→ daily-memories/2026-10-10.md；结论：9fb2c7f8 已成功推送, 上轮「push失败」更正为「已推送」。需要时再读。**
-> 📦 **[已归档] #258 流水（2026-10-10, Muon报告刷新+昨夜汇报+TASK归档）→ daily-memories/2026-10-10.md；结论：两份报告(Muon 28.6KB+昨夜 11.6KB)已生成+commit 9fb2c7f8+push ✅, TASK归档2块。需要时再读。**
-> 📦 **[已归档] #257 流水（2026-10-10 08:26, 状态核查）→ daily-memories/2026-10-10.md；结论：GPU全空闲, git 0/0, 两步运维指令均完成, 无需归档。需要时再读。**
-> 📦 **[已归档] #254 流水（2026-10-10 06:50, Muon vs AdamW A/B 结果回收+报告+TASK归档）→ daily-memories/2026-10-10.md；结论：Muon loss 3.11 vs AdamW 4.00(−22.3%), 吞吐 87K vs 118K(−26%), VRAM 53.8 vs 39.0GB(+38%), 报告 22.5KB 已 commit f53ec86d+push。需要时再读。**
-> 📦 **[已归档] #252 流水（2026-10-10 01:22, P-9.11-F 报告生成）→ daily-memories/2026-10-10.md；结论：DM 1M 数据落地, 报告 v2 生成(23.6KB/5表/SVG), warmup 修正 281×→24.5×, DM 2M 待测。需要时再读。**
-
-> 📦 **[已归档] #244 流水（2026-10-09 14:45, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词109进程/.bin=1.49TB/ETA~12-18h, P-8暂缓令未撤, 一并提交TASK.md T3 recipe。需要时再读。**
-> 📦 **[已归档] #243 流水（2026-10-09 14:10, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词110进程/.bin=1.3TB/ETA~2-4h, P-8暂缓令未撤。需要时再读。**
-> 📦 **[已归档] #242 流水（2026-10-09 13:37, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词110进程/.bin=989GB/ETA~3-4h, P-8暂缓令未撤。需要时再读。**
-> 📦 **[已归档] #241 流水（2026-10-09 13:01, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词110进程/.bin=989GB/ETA~3-4h, P-8暂缓令未撤。需要时再读。**
-> 📦 **[已归档] #240 流水（2026-10-09 12:28, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, R3分词110进程/.bin=736GB/ETA~6-8h, P-8暂缓令未撤。需要时再读。**
-> 📦 **[已归档] #239 流水（2026-10-09 11:53, 状态核查+T3归档）→ daily-memories/2026-10-09.md；结论：T3运维块已归档(TASK→23.7KB), R3分词24.5%/110进程/.bin=538GB, GPU全空, P-8暂缓令未撤。需要时再读。**
-> 📦 **[已归档] #238 流水（2026-10-09 11:11, T3提速验证完成）→ daily-memories/2026-10-09.md；结论：Test1 OOM/recompute无效, Test4 FP8 s=0.915, P-8最优=TP1·MBS2·bf16=249K。需要时再读。**
-> 📦 **[已归档] #237 流水（2026-10-09 10:08, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, git up-to-date, GPIC 6872/8001, 分词36进程进行中, P-8暂缓令未撤。需要时再读。**
-> 📦 **[已归档] #236 流水（2026-10-09 09:34, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, GPIC 6839/8001, Code/Math分词范围扩大中(11→36进程), P-8暂缓令未撤。需要时再读。**
-
-> 📦 **[已归档] #232 流水（2026-10-09 07:19, 状态核查）→ daily-memories/2026-10-09.md；结论：GPU全空, GPIC 6759/8001, Code/Math分词无进展, P-8暂缓令未撤。需要时再读。**
-> 📦 **[已归档] #231 流水（2026-10-09 06:41, P-8 前置预研完成）→ daily-memories/2026-10-09.md；结论：P-8 PREP 五节写入 EXPERIMENTS, Web 524B✅ / Code 270M🔴 / Math 609M🟠, 训练脚本可改, 100B≈12.5d。需要时再读。**
-> 📦 **[已归档] #230 流水（2026-10-09 06:00, R3 BO 收尾）→ daily-memories/2026-10-09.md；结论：DB=100行(98 complete+2 failed), best=#8 score=0.4032, 全交付物写入, R3 全部完成。需要时再读。**
-> 📦 **[已归档] #229 流水（2026-10-09 05:28, R3 BO 监控）→ daily-memories/2026-10-09.md；结论：DB=97行, t97-99训练中@78-88%, ETA~05:49。需要时再读。**
-> 📦 **[已归档] #227 流水（2026-10-09 04:16, R3 BO 监控）→ daily-memories/2026-10-09.md；结论：DB=89行→97行, batch12(t89-96)全入库, 最后批(t97-99)起步, ETA~05:45。需要时再读。**
-> 📦 **[已归档] #226 流水（2026-10-09 03:42, R3 BO 监控）→ daily-memories/2026-10-09.md；结论：DB=89行, batch12(t89-96)训练中@46-61%, ETA~06:00。需要时再读。**
-> 📦 **[已归档] #225 流水（2026-10-09 03:05, R3 BO 监控）→ daily-memories/2026-10-09.md；结论：DB=89行, batch12(t90-95)起步@0.2-4.5%, ETA~06:00。需要时再读。**
-> 📦 **[已归档] #224 流水（2026-10-09 02:32, R3 BO 监控）→ daily-memories/2026-10-09.md；结论：DB=81行, batch11@62-79%, ETA~06:00。需要时再读。**
-> 📦 **[已归档] #223 流水（2026-10-09 01:56, R3 BO 监控）→ daily-memories/2026-10-09.md；结论：DB=81行, batch11起步@15-29%, ETA~06:10。需要时再读。**
-> 📦 **[已归档] #221 流水（2026-10-09 00:45, R3 BO 监控）→ daily-memories/2026-10-09.md；结论：DB=73行, batch10起步@31-45%, ETA~06:13。需要时再读。**
-> 📦 **[已归档] #220 流水（2026-10-09 00:09, R3 BO 监控）→ daily-memories/2026-10-09.md；结论：DB=65行→73行, batch9收尾, ETA~06:18。需要时再读。**
-> 📦 **[已归档] #222 流水（2026-10-09 01:21, R3 BO 监控）→ daily-memories/2026-10-09.md；结论：DB=73行, batch10@80-94%, ETA~06:08。需要时再读。**
-> 📦 **[已归档] #218 流水（2026-10-08 22:57, R3 BO 监控）→ daily-memories/2026-10-09.md；结论：DB=65行, batch9起步@2-15%, ahead 1补推。需要时再读。**
-> 📦 **[已归档] #217 流水（2026-10-08 22:22, R3 BO 监控）→ daily-memories/2026-10-09.md；结论：DB=57行, batch8@63-77%, ETA~06:27。需要时再读。**
-> 📦 **[已归档] #213 流水（2026-10-08 19:55, R3 BO 监控）→ daily-memories/2026-10-08.md；结论：DB=40行, batch6收尾@90-93%。需要时再读。**
-> 📦 **[已归档] #214–#216 流水（2026-10-08 20:28–21:43, R3 BO 进度监控 DB=49→57行）→ `daily-memories/2026-10-08.md`；结论：BO健康运行, batch7(t48-56)训练中, t0055 EADDRINUSE失败已由t0056替补。需要时再读。**
-> 📦 **[已归档] #209–#212 流水（2026-10-08 17:35–19:20, R3 BO 进度监控 DB=32→40行）→ `daily-memories/2026-10-08.md`；结论：BO健康, batch5→6训练中, ETA~05:45–05:50。需要时再读。**
-> 📦 **[已归档] #204, #205, #207, #208 流水（2026-10-08 14:39–17:01, R3 BO 监控 batch3-4）→ `daily-memories/2026-10-08.md`；结论：DB从16→24rows, Best=#8(0.4032)持续领先, 0 NaN, ETA~06:05 Oct9。需要时再读。**
-
-> 📦 **[已归档] #191–#203 流水（2026-10-08 06:22–14:05, R3 BO 监控+R2收官报告+状态核查）→ daily-memories/2026-10-08.md；结论：R3 BO 100-trial 搜索完成, R2 收官报告 46KB 已交付, P-8 仍不可启动。需要时再读。**
-> 📦 **[已归档] #184–#188 流水（2026-10-08 02:22–04:39, 状态核查, GPU空闲等P-8前置）→ daily-memories/2026-10-08.md；结论：均无新运维指令, P-8暂缓令未撤+分词未完成, 不可启动。需要时再读。**
-> 📦 **[已归档] #181–#183 流水（2026-10-08 00:38–01:49, 状态核查）→ `daily-memories/2026-10-08.md`；结论：均无新运维指令, P-8 仍不可启动。需要时再读。**
-> 📦 **[已归档] #149–#179 流水（2026-10-06 23:10 ~ 2026-10-07 23:33, 含 P-9.11-E/F + Report 4/5 + A 36/36 收官 + 状态核查）→ `daily-memories/2026-10-07.md`；结论均已写入 EXPERIMENTS_PRETRAIN_2B_ROUND2.md。需要时再读。**
-n> 📦 **[已归档] #142–#148 + Report 1-3 流水（2026-10-06 ~17:53 – 2026-10-07 ~14:30, B1 长ctx/P-9.11-D/A v2/研究 Report 1-3）→ `daily-memories/2026-10-07.md`；结论均已写入 EXPERIMENTS_PRETRAIN_2B_ROUND2.md。需要时再读。**
-
-> 📦 **[已归档] 第 139–141 次唤醒流水（A 复杂推理 v1/v2 + P-9.13 Step 2 提速收官）→ `daily-memories/2026-10-07.md`；结论均已写入 EXPERIMENTS_PRETRAIN_2B_ROUND2.md。需要时再读。**
-
-> 📦 **[已归档] 第 132–138 次唤醒流水（P-9.12 NCCL topo ✅ + P-9.13 提速扫描 + 空窗提案 #135 + 状态核查 #132–#134）→ `daily-memories/2026-10-07.md`；结论均已写入 EXPERIMENTS_PRETRAIN_2B_ROUND2.md。需要时再读。**
-
-> 📦 **[已归档] 第 110–135 次唤醒流水（P-9.5 profiler / P-9.10③ / P-9.11② / P-5b 8-set eval / P-6② scaling law / 状态核查 #128–#135）→ `daily-memories/2026-10-05.md` + `daily-memories/2026-10-06.md`；结论均已写入 EXPERIMENTS_PRETRAIN_2B_ROUND2.md。需要时再读。**
-
-
-## [已归档] 第 102–107 次唤醒流水（P-9.9 巡检 + 收官 + P-9.10①sglang A/B）→ `daily-memories/2026-10-05.md`
+> 📦 **[已归档] #102~#298 流水（2026-10-05 ~ 2026-10-11, 共 ~197 条）→ daily-memories/2026-10-05.md ~ 2026-10-11.md 各日文件；结论均已归档。需要时再读各日文件。**
 
 ## 🗣️ 运维问答 · 2026-10-09（补测对比报告 · 先报后跑门控）
 
