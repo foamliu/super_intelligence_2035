@@ -52,27 +52,13 @@
 - C1 锚点 `full` = r1 **88.0** / r2 **79.1** / r3 **77.2** / r4 **80.4**（mean **81.2%**）≈ `wo_retrieval` **81.0±4.5%**，而 `rag` 只有 **71.8±2.5%**、`pure_llm` 10.5%。
 - ⇒ **「full」相对「wo_retrieval」几乎没有增益**（≈0.2pp，远小于组内 σ）→ **强烈怀疑 full 的 retrieval 分支根本没生效**（否则 full 应明显 > wo_retrieval）。
 
-**② 首要嫌疑（运维已查到的线索，**先验证这两条**）**
-1. **端口漂移**：`run/ops/outbox.md:7132` 记载「recall 启动脚本**从 9002 起自动探测空闲端口**，当时 `.env` 指向 **9009**」；而 `(九)`/`.env` 实际写的是 **9006**（`outbox.md:9183`）。⇒ **服务实际监听的端口可能 ≠ `.env` 的 `RAG_RECALL_URL`**，客户端连不上就**静默降级**（MCP 侧多半吞掉异常，不报错）。
-2. **`-n` 的含义**：`README` 载跑法 `bash scripts/run_cline_script.sh -p 8 -n`，注 `-n = 禁用 Memory Bank 注入`。⇒ **需确认 `-n` 是否同时关掉了 RAG/recall 注入**（若关掉，full 与 wo_retrieval 的差异就只剩其它组件）。
-
-**②′ ⚡ 运维已实测（RUN_ID 41 · 2026-10-11 22:11 · **先读，别重复劳动**）**
-- ✅ **9006 是活的**：`GET /health` → **http=200** · model `/nasdata/app.e0023936/Octen-Embedding-4B` · `executor_ready:true` · collections `{api_descriptions:4049, skill_descriptions:5035, …}`；监听进程 = **本项目 venv** `.../eda_fastmcp/venv/bin/python -m uvicorn eda_api_recall:app --port 9006` ⇒ **「9006 没开」的假设不成立**。
-- ⚠️ **但服务严重冗余**：9001/9002/9003/9004/9009/9010/9011 上都有 `eda_api_recall` / `eda_api_recall_local`，其中 **9002 实测 http=500**；`.env` 另有 `RAG_RECALL_URL_LOCAL=http://localhost:9011/recall` 与 `MEMORY_VECTOR_URL=http://localhost:9011`（端口乱象本身是风险源）。
-- 🔴 **决定性线索**：`/tmp/ABL_full_r5_8650set.log` 里出现 **3×**
-  `Tool call search_apis was rejected before execution: AI_NoSuchToolError: Model tried to call unavailable tool 'search_apis'`
-  ⇒ **评测 agent「想用 RAG 但工具不可用」** —— 这一条已足以解释 `full ≈ wo_retrieval`。
-- 🎯 **靶心因此改为**：**为什么 `search_apis` 不在评测 agent 的工具表里？** 候选：① MCP(8090/18889/18890) 未连或工具名变了；② 协议改动（`/sse`→`/mcp`、`streamableHttp`）导致工具未暴露；③ 评测 worker 的 `cline_mcp_settings.json`（真实路径 `/home/app.e0031982/eda_code_eval/<batch>/cli_data/worker_*/data`）没配 RAG server；④ 该工具从未注册。**并给修复 + 重跑影响评估。**
-
-**②″ 🏁 运维已定论（RUN_ID 41/43/44/45 · 2026-10-11 22:35）—— 本调查已收口，🚫 不必再找 bug**
-- ✅ **9006 服务正常**：`/health` 200（`Octen-Embedding-4B` · `executor_ready:true` · collections 有数据）；**真实召回能返回内容**：`pyAether+aether` → `dbCreateRect` **5 条** / `hiGetCurrentWindow` **9 条**；`skill+virtuoso` → 3 / 6 条；服务端日志 `查询 'db_pt' 返回 3 条结果` 正常。（ⓘ 运维我先前用中文 query 得 `hits=0` 是**query 不匹配**，非服务问题。⚠️ 但 **`tcl+waveview` / `tcl+innovus` 两对返回 0 条** —— 后续若做 tcl 线需查这两个 collection 是否为空。）
-- ✅ **评测侧大量在用检索**：每轮 `search_apis` **成功调用 ~1800 次**（r2 1775 / r3 1803 / r4 1807 / r5 916）；**漏 MCP 前缀失败仅 18–30 次/轮（~1%）**；轨迹里 worker_1/2/3 分别 **18 / 26 / 15** 个会话含 `search_apis`，其中**出现空结果仅 2 / 0 / 1** ⇒ **RAG 返回的是非空内容，不是空转**。
-- ✅ **臂定义已确认**（`scripts/set_ablation.py`）：
-  - `full` = 检索 3 件套 **ON** + `run_code` **ON** + V3 增强文档 + 完整回读
-  - `wo_retrieval` = 检索 3 件套 **OFF** + `run_code` **ON**（与 `full` **唯一差异 = 检索**）
-  - `rag` = 检索 **ON** + `run_code` **OFF** ⇒ 它 71.8% 低是**因为没沙盒**，**不是检索的锅**
-- 🏁 **真实结论**：`full`(81.2%) vs `wo_retrieval`(81.0%) 的 **+0.2pp（≪σ）是「检索 3 件套在本设定下边际贡献≈0」的真实（弱）结果，不是服务/工具 bug**。最合理机制：**`run_code` 沙盒让 agent 能自己试错探索 API 用法 ⇒ 显式检索变冗余（功能重叠）**。
-- 🚫 **因此不要修任何东西**（不重启、不改 `.env`、不碰 r5）；本调查从「找 bug」**改为「写清结论 + 给论文措辞」**。
+**② ⚡ 运维已实测并定论（RUN_ID 41/43/44/45 · 2026-10-11 22:35）—— 🏁 本调查已收口，🚫 不必再找 bug**
+> ⓘ 最初两条怀疑**均已排除**：① 端口漂移（9006 与实际一致）；② `-n` = `EDA_MEMORY_INJECT_ENABLED=false`（**只关 Memory Bank 注入，不碰 RAG**）。
+- ✅ **9006 服务正常**：`/health` 200（`Octen-Embedding-4B` · `executor_ready:true` · collections 有数据）；**真实召回能返回内容**：`pyAether+aether` → `dbCreateRect` **5 条** / `hiGetCurrentWindow` **9 条**；`skill+virtuoso` → 3 / 6 条；服务端日志 `返回 3 条结果` 正常。⚠️ 仅 **`tcl+waveview` / `tcl+innovus` 两对返回 0 条**（后续做 tcl 线需查这两个 collection）。（ⓘ 运维先用中文 query 得 `hits=0` 属 query 不匹配；另 (lang,host) **必须成对**：`pyAether↔aether` · `skill↔virtuoso` · `tcl↔waveview` · `tcl↔innovus`。）
+- ✅ **评测侧大量在用检索**：每轮 `search_apis` **成功调用 ~1800 次**（r2 1775 / r3 1803 / r4 1807 / r5 916）；**漏 MCP 前缀失败仅 18–30 次/轮（~1%）**；轨迹 worker_1/2/3 各 **18 / 26 / 15** 个会话含 `search_apis`，**出现空结果仅 2 / 0 / 1** ⇒ **返回非空内容，不是空转**。
+- ✅ **臂定义已确认**（`scripts/set_ablation.py`）：`full` = 检索 3 件套 **ON** + `run_code` **ON** + V3 文档 + 完整回读；`wo_retrieval` = 检索 **OFF** + `run_code` **ON**（与 full **唯一差异 = 检索**）；`rag` = 检索 **ON** + `run_code` **OFF**（⇒ 它 71.8% 低**是因为没沙盒**，不是检索的锅）。
+- 🏁 **真实结论**：`full`(81.2%) vs `wo_retrieval`(81.0%) 的 **+0.2pp（≪σ）是「检索 3 件套边际贡献 ≈ 0」的真实（弱）结果，不是服务/工具 bug**。最合理机制：**`run_code` 沙盒让 agent 能自己试错探索 API ⇒ 显式检索冗余（功能重叠）**。
+- 🚫 **因此不要修任何东西**（不重启 / 不改 `.env` / 不碰 r5）。
 
 **③ 交付物** → `run/reports/RAG_AUDIT_2026-10-11.md`（新建）
 > ⚡ **注意**：(a)(b)(c) 的证据**运维已在上文 ②′/②″ 全部给全** ⇒ **你的任务 = ① 抽验复核（各 1 次即可，别重跑全套）② 把 (a)(b)(c)+②″ 收编成报告 ③ 重点写「**对 C1 表格/论文的措辞建议**」**：
@@ -81,20 +67,7 @@
 > - 建议措辞方向：「**在具备 `run_code` 沙盒自探索时，显式 API 检索（3 件套）的边际收益有限**」（并注明 tcl 两 collection 当前召回 0 条）。
 > - 可选后续（**只列建议、不启动**）：若要拆开检索/沙盒的耦合，可加一臂 `full` 但 `run_code` 回读降为 binary 等。
 
-**（以下为原始要求，证据已由运维补齐，仅供你对照）** → 写进 `run/reports/RAG_AUDIT_2026-10-11.md`
-- **(a) 9006 服务实测**：不能只给「TCP 通/端口监听」。必须给：
-  - `.env` 里 `RAG_RECALL_URL` / `RAG_RECALL_URL_LOCAL` / `RAG_DEFAULT_TOP_K` / `RAG_RECALL_TIMEOUT` / `MEMORY_VECTOR_URL` **原值**；
-  - **实际监听端口**（`ss -lntp`，含 80xx/90xx 全扫）+ **recall/embedding 进程**（含启动命令）；
-  - `GET /health` 逐候选端口（9002/9006/9009/9010）的 **http_code + 耗时 + 响应体前 200 字**；
-  - **≥3 次真实 `POST /recall`**（不同 query）的 **请求原文 + http_code + 耗时 + 返回条数 + 首条内容摘要** —— **`/health` 通 ≠ 能召回，必须给真实召回证据**。
-- **(b) 评测客户端「有没有用」**：
-  - 评测侧配置（`scripts/run_cline_script.sh` / `scripts/run_eval.py` / `cline_mcp_settings.json` / `.env`）里 **RAG 相关开关的 diff**；
-  - **`full` vs `wo_retrieval` 的配置差异逐行 diff**（这是本次最关键的一条 —— 若不 diff 就说不清 full 到底开没开 retrieval）；
-  - **`-n` 的确切语义**（读 `run_cline_script.sh` 源码引用行号）。
-- **(c) 交互轨迹证据（RAG 是否进入 prompt）**：
-  - 从 **cline 会话记录**（评测侧 `~/.cline/data/sessions/**`，或 MCP 服务日志）**grep `recall` / `RAG`**：给出 **调用次数（≥1 或 =0 都是结论）** + 至少 **1 条原始片段**；
-  - 若 RAG 走 **MCP 工具**，列出该工具名 + 本轮调用次数；
-  - 若能拿到：抽 1 条 task 的**实际注入内容**（证明召回文本进了 prompt，还是只是「调了但没用」）。
+> 📎 (a)(b)(c) 的**证据已由运维在 ② 给全**（服务实测 / 客户端是否调用 / 轨迹空-非空统计），**不再要 agent 重做**。
 
 **④ 必须回答的结论（写进 (a)(b)(c) 之后的「结论」节）**
 1. **9006 上到底有没有一个能召回的 RAG 服务？**（是/否 + 证据）
