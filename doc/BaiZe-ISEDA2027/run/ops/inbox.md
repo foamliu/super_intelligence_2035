@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 85 -->
+<!-- RUN_ID: 86 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,13 +31,74 @@
 
 ---
 
+## RUN_ID 86 — 🚑 **救援 ZhuLong 的 ops 中继（借本通道 2.29 → `ssh -p 3333` → 36.15）**
+
+> **背景（2026-10-11 运维）**：ZhuLong 的 ops 中继（`zhulong_ops_relay.sh` @ **36.15**）**自 10-10 20:59 起失联 ~11h** —— `.last_run_id` 停在 **31**，而运维已于 10-11 07:42 下发 **RUN_ID 32**（停评测 / 删 `~/.cline/hooks/PreToolUse` / `.env` stash 回退 / 端口集换 `8650-8654` / RAG→`9006` / **回退 `cline_mcp_settings.json` 的 `timeout:180`** / 4 端口实测 / **4/4 健康才起 r2**），**无人执行**。
+> **先例（本通道已成功过）**：**RUN_ID 83/84/85** 均用 `ssh -p 3333 -o BatchMode=yes app.e0031982@localhost` 从 **2.29（`whag0pgpuap29`）**直接操作 **36.15（`hfeg0tedaap02`）**（修 loop PATH+proxy 并重启）。见本 outbox 对应条目。
+> **本块只做两件事**：① **重启 ZhuLong 的 ops 中继**（它是通道，**不碰 loop**）；② 等它自己 `git_sync` 拉到、并开始执行 RUN_ID 32，随后打印**RUN_ID 32 的独有产物**作为执行中证据（`/tmp/*runid32*`、`.env` 关键行、MCP `:8090`、eval 进程、中继日志尾）。
+> **幂等**：重复执行只多 kill+重启一次中继；RUN_ID 32 的块自身按幂等设计。**不在此块内做任何 `git pull/fetch`**（避开「中继块内 git 卡管道」历史坑）。
+
+```bash
+set -u
+# ═══ RUN_ID 86 · 救援 ZhuLong ops 中继（2.29 → ssh -p 3333 → 36.15）· 2026-10-11 ═══
+echo "=== RUN_ID 86 · rescue ZhuLong ops relay · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- [0] 通道自检（本机 2.29）---"
+timeout 10 ss -lntp 2>/dev/null | grep -E ':3333' | cut -c1-140 || echo "   ⚠️ 本机未监听 3333（隧道②可能已断）"
+if timeout 8 bash -c "echo > /dev/tcp/127.0.0.1/3333" 2>/dev/null; then
+  ROUTE="tunnel(127.0.0.1:3333)"; TGT="-p 3333 app.e0031982@localhost"; echo "   127.0.0.1:3333 = OPEN ✅ → 走 SSH 隧道"
+elif timeout 8 bash -c "echo > /dev/tcp/10.251.36.15/22" 2>/dev/null; then
+  ROUTE="direct(10.251.36.15:22)"; TGT="app.e0031982@10.251.36.15"; echo "   直连 36.15:22 = OPEN ✅ → 走直连"
+else
+  echo "   ⛔ 隧道与直连皆不可达 ⇒ 需先在 172.19.195.133 上重启 SSH 隧道（start-tunnels.ps1）"
+  echo "=== DONE (no route) ==="; exit 0
+fi
+echo "--- [1..3] 经 $ROUTE 进 36.15 ---"
+timeout 240 ssh $TGT -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 -o ServerAliveInterval=15 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+EDA=/nasdata/app.e0031982/code/eda_fastmcp
+CDIR=/home/app.e0031982/.local/node-20/bin
+PX=http://172.19.92.23:13128
+OPS="$W/doc/ZhuLong_DAC2027/run/ops"
+echo "host=$(hostname)  $(date '+%F %T')"
+echo "--- [1] 只读现状 ---"
+ps -eo pid,etime,args | grep -E 'zhulong_ops_relay[.]sh|zhulong_loop[.]sh' | grep -v grep | cut -c1-140 || echo "   (relay 与 loop 都不在跑)"
+echo "   relay 旧日志尾:"; tail -6 /tmp/zhulong_ops_relay.log 2>/dev/null | cut -c1-180
+cd "$W" || { echo "   (NO repo)"; exit 1; }
+echo "   last_run_id=$(cat "$OPS/.last_run_id" 2>/dev/null)  inbox RUN_ID=$(sed -n 's/.*RUN_ID:[[:space:]]*\([0-9]\+\)/\1/p' "$OPS/inbox.md" | head -1)"
+echo "   inbox 首块行数=$(awk '/^```bash/{f=1;next} /^```/{if(f){exit}} f' "$OPS/inbox.md" | wc -l)  repo HEAD=$(git log --oneline -1 | cut -c1-60)"
+echo "--- [2] 重启 ops 中继（幂等；不碰 loop）---"
+cp -f /tmp/zhulong_ops_relay.log "/tmp/zhulong_ops_relay.log.bak.$(date +%s)" 2>/dev/null
+pkill -f 'zhulong_ops_relay[.]sh' 2>/dev/null; sleep 2
+export PATH="$CDIR:$HOME/.bun/bin:$PATH"; export https_proxy="$PX"; export http_proxy="$PX"
+setsid bash "$W/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh" > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
+sleep 8
+ps -eo pid,etime,args | grep 'zhulong_ops_relay[.]sh' | grep -v grep | cut -c1-140 || echo "   !! relay 未起来"
+echo "   新日志头:"; head -3 /tmp/zhulong_ops_relay.log | cut -c1-180
+echo "--- [3] 等中继自取并执行 RUN_ID 32（poll=20s，首轮即 fetch）---"
+sleep 75
+echo "   last_run_id now=$(cat "$OPS/.last_run_id" 2>/dev/null)（跑完才会变 32）"
+echo "   outbox 含 'RUN_ID 32' = $(grep -c 'RUN_ID 32' "$OPS/outbox.md" 2>/dev/null) 行"
+echo "   RUN_ID 32 独有产物（有 = 已在执行）:"
+ls -l /tmp/eda_stop_runid32.log /tmp/eda_start_runid32.log /tmp/eda_fastmcp.env.RUNID32.* /tmp/ABL_full_r2_8650set.log /tmp/eda_fastmcp.env.bak.* 2>/dev/null | tail -6 | cut -c1-170
+echo "   .env 关键行:"; grep -nE '^(PROXY_PORTS|SANDBOX_ENDPOINTS|RAG_RECALL_URL)=' "$EDA/.env" 2>/dev/null | cut -c1-200
+echo "   MCP :8090 ->"; ss -lntp 2>/dev/null | grep ':8090' | cut -c1-140 || echo "   (未监听)"
+echo "   eval 进程 ->"; pgrep -af '^bash scripts/run_cline_script' 2>/dev/null | cut -c1-120 || echo "   (无)"
+echo "   中继日志尾:"; tail -8 /tmp/zhulong_ops_relay.log | cut -c1-180
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
+
+---
+
 ## RUN_ID 85 — 🔧 **修好 ZhuLong(36.15) 的 loop：用【正确 PATH（含 cline）+ proxy】重启**（真因：当前 loop 是 RUN_ID 81「空 $NB」起的那次，PATH 丢了）
 
 > **诊断依据（RUN_ID 84 @18:12）**：仓库**正常**（`## main...origin/main`）、任务书在位、loop/relay 进程均活（etime 6.5h），**但日志每轮都是 `env: 'cline': No such file or directory`** ⇒ **空转 ~5h**（不是死，是**调不起 cline**）。
 > **已确认**：`cline` = **`/home/app.e0031982/.local/node-20/bin/cline`**（`bash -ic` 可解析）；`~/.bashrc:119` = `https_proxy=http://172.19.92.23:13128`。
 > **本块**：显式注入 **PATH（含该目录）+ proxy**，重启 `zhulong_loop.sh`（**🚫 不碰 relay**，它是通道）。重启前备份旧日志。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 85 · fix ZhuLong loop PATH+proxy $(date '+%F %T') ==="
 timeout 180 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 app.e0031982@localhost 'bash -s' <<'EOS' 2>&1 | cut -c1-190
