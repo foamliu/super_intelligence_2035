@@ -77,6 +77,37 @@ pkill -f 'watch_research_loop.sh'
 
 ---
 
+## 2.3 启动 recruit 线（**在持 Boss 登录态的那台机器上** · 🆕 2026-10-11 立线）
+
+> ⚠️ recruit 线要驱动 **浏览器（Boss 登录态 + playwright-mcp）** ⇒ **与 news/research 不同**，它**必须跑在持有 Boss 登录态的机器**上（当前 = 本 Windows 机）。
+> Windows 请用 **Git Bash / WSL**（需 GNU `date -d`）；`setsid` 在 Git Bash 可能没有 ⇒ 用 `nohup ... &`。
+
+```bash
+cd <仓库根>/doc/personal-watch/run
+git pull --rebase --autostash
+
+# Linux/WSL:
+setsid bash watch_recruit_loop.sh > /tmp/watch_recruit_loop.log 2>&1 < /dev/null &
+# Git Bash（无 setsid）:
+# nohup bash watch_recruit_loop.sh > /tmp/watch_recruit_loop.log 2>&1 &
+```
+
+**验证**（启动横幅第 3 行会打印 `🧬 继承源 HR_DIR=…`）：
+
+```bash
+pgrep -af 'watch_recruit_loop.sh'          # 应恰好 1 个进程
+tail -20 /tmp/watch_recruit_loop.log       # 看 [loop] 模式横幅 + 🧬 继承源自检
+```
+
+**停止**：`pkill -f watch_recruit_loop.sh`
+
+> 🧬 **继承源**：`$HR_DIR` = `C:\Users\liuyu\HR`（可用环境变量 `WATCH_HR_DIR` 覆盖）——
+> agent 唤醒先读该目录的 `MEMORY.md` / `USER.md` / `AGENTS.md` / `memory/`（记忆 + 能力），
+> 细见任务书 `WATCH_RECRUIT_TASK.md` §0。**原始数据/PII 留在 `$HR_DIR`，不进本仓库**。
+> ⚠️ **对外动作默认关闭**：采集/分级/复核/起草/归档自主；**发消息 / 抓简历 / 代点「同意·拒绝」需运维指令区显式授权一批**；**约面控件永不碰**。
+
+---
+
 ## 2.2 启动 **ops 中继**（⭐ 强烈建议：loop 停了也能远程运维）
 
 > **为什么**：worker loop 一旦**停了 / 撞额度 / OOM**，`git log` 上"什么都看不到"。

@@ -37,12 +37,12 @@
 | 项 | 值 |
 |:---|:---|
 | 建哨日 | **2026-10-03** |
-| 当前阶段 | **起步**：**news（新闻+回溯+分析）+ research（论文+TOP-K）** 两条线（**用户已定：暂不新增智能体**） |
-| 规划中的线 | ❌ **不新增**。新职能一律**并入既有线**（例：原 archive 线已并入 news）。 |
+| 当前阶段 | **三条线**：**news（新闻+回溯+分析）+ research（论文+TOP-K）** + 🆕 **recruit（Boss 招聘链路，继承 `C:\Users\liuyu\HR`）**（**2026-10-11 用户令新增第 3 条线**；原「暂不新增智能体」作废） |
+| 规划中的线 | 新线一律**以用户明确指令为准**（例：原 archive 线已并入 news；recruit 线 2026-10-11 立线）。 |
 
 ---
 
-## 3. Agent 线（**当前 2 条** · 用户已定"**暂不新增智能体**"）
+## 3. Agent 线（**当前 3 条** · 🆕 recruit 线 2026-10-11 立线）
 
 > **唯一权威**清单见 **`AGENTS.md`**（避免数错）。`run/` 下可能同时存在多个脚本，以 `AGENTS.md` 为准。
 
@@ -50,6 +50,7 @@
 |:---|:---|:---|:---|:---|:---|
 | **news** | `run/WATCH_NEWS_TASK.md` | `run/watch_news_loop.sh` | `run/MEMORY_NEWS.md` | `run/news/` | ✅ 运行中（54 条真新闻；**新增 ① 十年回溯 ② 价格相关性**） |
 | **research** | `run/WATCH_RESEARCH_TASK.md` | `run/watch_research_loop.sh` | `run/MEMORY_RESEARCH.md` | `run/research/` | ✅ 运行中（61 篇；**新增 TOP-K 排序**） |
+| **recruit** 🆕 | `run/WATCH_RECRUIT_TASK.md` | `run/watch_recruit_loop.sh` | `run/MEMORY_RECRUIT.md` | `run/recruit/` | 🆕 立线（**继承 `C:\Users\liuyu\HR`**；**对外动作默认关闭**，须跑在持 Boss 登录态的机器） |
 
 **news 线定位**：**三类产出，口径严格分开** ——
 ① **新闻日报** `run/news/`（§0.1：**≤72h 真新闻**）；
@@ -67,6 +68,13 @@
 - **目的 2 · 科普**：找有潜力的论文做 **《两分钟论文》** 科普视频，**发 B站/抖音 → 涨粉变现** → `research/video/SHORTLIST.md`（选题表）+ `research/video/scripts/<arXiv ID>.md`（两分钟中文口播稿）；（后续成片）。
 > ⚠️ **两个目的口径不同，选题必须分开**（勿混）。
 > 📧 **已登记未来职能**：给论文作者**发邮件**做学术交流 —— **未获用户批准前不得发送**。
+
+**recruit 线定位**（🆕 **2026-10-11 用户令立线**；**继承 `C:\Users\liuyu\HR` 的记忆与能力**）：
+- **目的**：把 `C:\Users\liuyu\HR` 的 **Boss 直聘招聘 agent** 收编为观察哨第 3 条线 —— **继承其记忆**（判定口径 / 达标者花名册 / 平台事实 / 铁律 / 教训 + 用户模型）与**能力**（Boss 页面操作 SOP + `screen.py`/`city_scan.py` + 话术库），并**常态化推进招聘链路**（采集 → 分级 → 复核口径 → 起草 → 收简历归档 → 交 HR）。
+- **单一权威**：`C:\Users\liuyu\HR` 仍是**规范活工作区**（原始数据 + 记忆 + 能力）；本仓库只放**编排 + 本线记忆摘要 + 指针 + 非 PII 产物**（不复制 HR 的 4 个记忆文件，避免两处权威打架）。
+- **⚠️ 对外动作闸门**：本线是**唯一有对外副作用**的线（给真人发消息）⇒ **默认保守**：采集/分级/复核/起草/归档/记忆 **自主**；**发消息 / 抓简历 / 代点「同意·拒绝」需运维指令区显式授权一批**；**约面控件永不碰**（面试由公司 HR 统一约）。
+- **运行位置**：**持 Boss 登录态 + playwright-mcp 的机器**（当前 = 本 Windows 机，用 Git Bash/WSL）—— 与跑在远端 Linux 的 news/research 不同。
+- 🚫 **PII 红线**：`boss_candidates.*`（含 `securityId`）、`简历/*.pdf`、`boss_chat*.png`、cookie **一律不入 git**。
 
 ---
 
@@ -93,6 +101,11 @@ doc/personal-watch/
     ├── MEMORY_RESEARCH.md         # research 运行时状态（含 WAITING）
     ├── daily-memories-research/   # research 每日流水
     ├── research/                  # research 产物（<date>.md + SEEN.md + INDEX.md + papers.jsonl + TOP_K.* + ARXIV_API.md + video/ + pdf/）
+    ├── WATCH_RECRUIT_TASK.md      # recruit 任务书（agent 只读；🆕 继承 C:\Users\liuyu\HR）
+    ├── watch_recruit_loop.sh      # recruit 循环脚本（定时 6,18；须跑在持 Boss 登录态的机器）
+    ├── MEMORY_RECRUIT.md          # recruit 运行时状态（含「🧬 继承摘要」指针）
+    ├── daily-memories-recruit/    # recruit 每日流水
+    ├── recruit/                   # recruit 产物（STATE.md + drafts/ + reports/；★ 只放非 PII，见 .gitignore）
     ├── ops_relay.sh               # ⭐ ops 中继（纯 bash、零 token 的命令通道；loop 停着也能运维）
     ├── ops/                       #   中继的 inbox.md（下发）/ outbox.md（结果）/ .last_run_id
     ├── DEPLOY_CHECKLIST.md        # 新机 bring-up · cline 配置重建 · 2 核加固 · systemd 自启

@@ -1,0 +1,47 @@
+# recruit/ · 红线兜底 —— 🚫 这些一律不进 git（PII / 凭据 / 大文件）
+# 与 $HR_DIR 规则一致：数据本体留在 HR 工作区，仓库里只放「账」。
+
+# ── 含凭据/PII 的采集数据（securityId 等）──
+boss_candidates.csv
+boss_candidates.json
+候选人筛选结果.csv
+*candidates*.csv
+*candidates*.json
+
+# ── 简历 / 附件（PII）──
+*.pdf
+简历/
+resume/
+cv/
+attachment/
+
+# ── 会话截图 / 图片 ──
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+
+# ── 待补充：大文件（简历 PDF 常见 >5MB）—— 台账走 files.md，本体走网盘 ──
+*.zip
+*.gz
+*.7z
+*.docx
+*.pptx
+*.mp4
+*.mov
+
+# ── 凭据（绝不入库）──
+*.cookie
+*cookies*.txt
+*securityId*
+.env
+keys.txt
+
+# ── 允许：文字产物 ──
+!README.md
+!STATE.md
+!drafts/**
+!reports/**
+!files.md
+!*.md

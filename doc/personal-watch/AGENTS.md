@@ -12,9 +12,13 @@
 |:---|:---|:---|:---|:---|:---|:---|
 | **news** 🆕 | `run/watch_news_loop.sh` | `run/WATCH_NEWS_TASK.md` + **P0 规格 `run/NEWS_PRICE_SIGNAL_SPEC.md`** | `run/MEMORY_NEWS.md` | `run/daily-memories-news/` | ⭐ **P0（2026-10-07 起）：新闻信号 → 资产价格** —— 十年多资产价格数据（**2026-10-07 晚用户修正：个股 ≥20 · 汇率 10 条 vs RMB · 大宗 7；无指数 / 无海外 / 无债券**）+ **滞后相关/预测力研究（先预注册）** → `run/news/signal/`（`PREREG.md` `lag_corr.csv` `LAG_CORR.md` `FINDINGS.md`）+ **每日两报**（**06:00 生成早报 / 18:00 优化晚报**）。<br>（P2 顺手，不追量）按关注清单常态化采集 AI 新闻 → `run/news/<date>.md` + `SEEN.md` | 🔄 运行中（P0 第 11 批刚派 R1）· ⏰ **定时唤醒：每天 2 次 06:00 / 18:00** |
 | **research** 🆕 | `run/watch_research_loop.sh` | `run/WATCH_RESEARCH_TASK.md` | `run/MEMORY_RESEARCH.md` | `run/daily-memories-research/` | ⭐ **P0（2026-10-07 起）：每天 5 篇推荐论文（早 3 / 晚 2）→ 日报 HTML** —— `run/research/daily/<date>.html`（**自包含**；**06:00 生成 3 篇 / 18:00 优化补齐 2 篇 + 晚报变更说明**；顺手维护 `daily/index.html`）。<br>（P1）**① 借鉴**：与 BaiZe/ZhuLong 相关的前沿研究 → `TOP_K.*` + `TAKEAWAYS.md`；**② 科普**：《两分钟论文》视频 → `video/SHORTLIST.md` + `video/scripts/*.md`（+ 后续成片） | ✅ 运行中（61 篇；**第 4 批「5 篇/天 · HTML」刚派**）· ⏰ **定时唤醒：每天 2 次 06:00 / 18:00** |
+| **recruit** 🆕 | `run/watch_recruit_loop.sh` | `run/WATCH_RECRUIT_TASK.md` | `run/MEMORY_RECRUIT.md` | `run/daily-memories-recruit/` | ⭐ **P0（2026-10-11 立线）：继承 `C:\Users\liuyu\HR` 的记忆与能力 + 常态化推进招聘链路** —— 采集 / 分级 / 复核口径 / 起草话术 / 归档 / 记忆回写（**自主**）；**对外动作（给候选人发消息 · 抓简历 · 代点「同意/拒绝」）默认关闭，需运维指令区显式授权一批**（**约面控件永不碰**）；产物 `recruit/STATE.md` + `recruit/drafts/` + `recruit/reports/` | 🆕 立线（待首轮唤醒）· ⏰ **定时唤醒：每天 2 次 06:00 / 18:00** · ⚠️ **须跑在持 Boss 登录态 + playwright-mcp 的机器**（当前 = 本 Windows 机，用 Git Bash/WSL） |
 
 > 🚫 **用户已定（2026-10-03）：暂不新增智能体。** 新职能**一律并入既有线**。
 > 例：原 **archive（历史回溯）线已并入 news**（职能 = `news/archive/` + `news/analysis/`），脚手架已删除。
+>
+> 🆕 **2026-10-11 用户令：新增第 3 条线 `recruit`**（继承 `C:\Users\liuyu\HR` 的记忆与能力，见 `run/WATCH_RECRUIT_TASK.md`）——
+> 故「暂不新增智能体」**自此作废**；**后续新线一律以用户明确指令为准**。
 >
 > 🔌 **运维通道（2026-10-05 新增）**：**ops 中继 `run/ops_relay.sh`**（纯 bash、零 token）——
 > supervisor 写 `run/ops/inbox.md` → 中继执行 → 结果进 `run/ops/outbox.md`。
@@ -24,7 +28,8 @@
 > 🛡 已加**单实例锁** `/tmp/watch_ops_relay.pid`（防双实例重复执行）；已修「只跑最大 RUN_ID → 静默跳过中间块」→ 现**按升序执行所有 pending 块**。
 >
 > 🎯 **两条线的长期目的**：**news → 三层「解耦」**：**L1 政治信号预警（核心）** / **L2 与股价的关联（探索性·非因果）** / **L3 算法交易（❄️ 冻结）**（见 `WATCH_NEWS_TASK.md` §0.0.0–§0.0.2）；
-> **research → ① 借鉴 BaiZe/ZhuLong ② 《两分钟论文》科普视频**（见 `WATCH_RESEARCH_TASK.md` §0）。
+> **research → ① 借鉴 BaiZe/ZhuLong ② 《两分钟论文》科普视频**（见 `WATCH_RESEARCH_TASK.md` §0）；
+> **recruit → 继承 `C:\Users\liuyu\HR` 记忆与能力 → 常态化推进招聘链路**（见 `WATCH_RECRUIT_TASK.md` §0，**唯一有对外副作用**的线 ⇒ 铁律最严）。
 
 > 🆕 **news 线（2026-10-03 新建）**：本哨位的**第一条线**。依赖**外网搜索**（MCP `web-search` / `search_news`）。
 > **不占 GPU、不登录训练机**；唯一资源是**网络请求**，注意控制频率与合规（见任务书铁律）。
