@@ -9087,3 +9087,105 @@ Let[0m[2m me start by reading[0m[2m the MEMORY[0m[2m_ZHULONG.md[0m[2m fi
 === DONE ===
 === ALL DONE ===
 ```
+
+---
+
+## RUN_ID 86 · 2026-10-11 08:07:31 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+# ═══ RUN_ID 86 · 救援 ZhuLong ops 中继（2.29 → ssh -p 3333 → 36.15）· 2026-10-11 ═══
+echo "=== RUN_ID 86 · rescue ZhuLong ops relay · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- [0] 通道自检（本机 2.29）---"
+timeout 10 ss -lntp 2>/dev/null | grep -E ':3333' | cut -c1-140 || echo "   ⚠️ 本机未监听 3333（隧道②可能已断）"
+if timeout 8 bash -c "echo > /dev/tcp/127.0.0.1/3333" 2>/dev/null; then
+  ROUTE="tunnel(127.0.0.1:3333)"; TGT="-p 3333 app.e0031982@localhost"; echo "   127.0.0.1:3333 = OPEN ✅ → 走 SSH 隧道"
+elif timeout 8 bash -c "echo > /dev/tcp/10.251.36.15/22" 2>/dev/null; then
+  ROUTE="direct(10.251.36.15:22)"; TGT="app.e0031982@10.251.36.15"; echo "   直连 36.15:22 = OPEN ✅ → 走直连"
+else
+  echo "   ⛔ 隧道与直连皆不可达 ⇒ 需先在 172.19.195.133 上重启 SSH 隧道（start-tunnels.ps1）"
+  echo "=== DONE (no route) ==="; exit 0
+fi
+echo "--- [1..3] 经 $ROUTE 进 36.15 ---"
+timeout 240 ssh $TGT -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 -o ServerAliveInterval=15 'bash -s' <<'EOS' 2>&1 | cut -c1-190
+set -u
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+EDA=/nasdata/app.e0031982/code/eda_fastmcp
+CDIR=/home/app.e0031982/.local/node-20/bin
+PX=http://172.19.92.23:13128
+OPS="$W/doc/ZhuLong_DAC2027/run/ops"
+echo "host=$(hostname)  $(date '+%F %T')"
+echo "--- [1] 只读现状 ---"
+ps -eo pid,etime,args | grep -E 'zhulong_ops_relay[.]sh|zhulong_loop[.]sh' | grep -v grep | cut -c1-140 || echo "   (relay 与 loop 都不在跑)"
+echo "   relay 旧日志尾:"; tail -6 /tmp/zhulong_ops_relay.log 2>/dev/null | cut -c1-180
+cd "$W" || { echo "   (NO repo)"; exit 1; }
+echo "   last_run_id=$(cat "$OPS/.last_run_id" 2>/dev/null)  inbox RUN_ID=$(sed -n 's/.*RUN_ID:[[:space:]]*\([0-9]\+\)/\1/p' "$OPS/inbox.md" | head -1)"
+echo "   inbox 首块行数=$(awk '/^```bash/{f=1;next} /^```/{if(f){exit}} f' "$OPS/inbox.md" | wc -l)  repo HEAD=$(git log --oneline -1 | cut -c1-60)"
+echo "--- [2] 重启 ops 中继（幂等；不碰 loop）---"
+cp -f /tmp/zhulong_ops_relay.log "/tmp/zhulong_ops_relay.log.bak.$(date +%s)" 2>/dev/null
+pkill -f 'zhulong_ops_relay[.]sh' 2>/dev/null; sleep 2
+export PATH="$CDIR:$HOME/.bun/bin:$PATH"; export https_proxy="$PX"; export http_proxy="$PX"
+setsid bash "$W/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh" > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
+sleep 8
+ps -eo pid,etime,args | grep 'zhulong_ops_relay[.]sh' | grep -v grep | cut -c1-140 || echo "   !! relay 未起来"
+echo "   新日志头:"; head -3 /tmp/zhulong_ops_relay.log | cut -c1-180
+echo "--- [3] 等中继自取并执行 RUN_ID 32（poll=20s，首轮即 fetch）---"
+sleep 75
+echo "   last_run_id now=$(cat "$OPS/.last_run_id" 2>/dev/null)（跑完才会变 32）"
+echo "   outbox 含 'RUN_ID 32' = $(grep -c 'RUN_ID 32' "$OPS/outbox.md" 2>/dev/null) 行"
+echo "   RUN_ID 32 独有产物（有 = 已在执行）:"
+ls -l /tmp/eda_stop_runid32.log /tmp/eda_start_runid32.log /tmp/eda_fastmcp.env.RUNID32.* /tmp/ABL_full_r2_8650set.log /tmp/eda_fastmcp.env.bak.* 2>/dev/null | tail -6 | cut -c1-170
+echo "   .env 关键行:"; grep -nE '^(PROXY_PORTS|SANDBOX_ENDPOINTS|RAG_RECALL_URL)=' "$EDA/.env" 2>/dev/null | cut -c1-200
+echo "   MCP :8090 ->"; ss -lntp 2>/dev/null | grep ':8090' | cut -c1-140 || echo "   (未监听)"
+echo "   eval 进程 ->"; pgrep -af '^bash scripts/run_cline_script' 2>/dev/null | cut -c1-120 || echo "   (无)"
+echo "   中继日志尾:"; tail -8 /tmp/zhulong_ops_relay.log | cut -c1-180
+echo "=== DONE ==="
+EOS
+echo "=== ALL DONE ==="
+```
+
+**输出**
+```
+=== RUN_ID 86 · rescue ZhuLong ops relay · 2026-10-11 08:07:31 · host=whag0pgpuap29 ===
+--- [0] 通道自检（本机 2.29）---
+LISTEN 0      128        127.0.0.1:3333       0.0.0.0:*                                                                                     
+   127.0.0.1:3333 = OPEN ✅ → 走 SSH 隧道
+--- [1..3] 经 tunnel(127.0.0.1:3333) 进 36.15 ---
+Warning: Permanently added '[localhost]:3333' (ED25519) to the list of known hosts.
+host=hfeg0tedaap02  2026-10-11 08:07:32
+--- [1] 只读现状 ---
+   relay 旧日志尾:
+[zhulong-relay] push FAILED (will retry next cycle)
+[zhulong-relay] RUN_ID=30 executed, exit=0, appended to outbox.
+[zhulong-relay] RUN_ID=30 executed, exit=0, appended to outbox.
+[zhulong-relay] RUN_ID=31 executed, exit=0, appended to outbox.
+[zhulong-relay] RUN_ID=31 executed, exit=0, appended to outbox.
+[zhulong-relay] push FAILED (will retry next cycle)
+   last_run_id=31  inbox RUN_ID=32 -->
+   inbox 首块行数=192  repo HEAD=b5e610cc zhulong 运维: 下发 (九)+ops RUN_ID 32 — 停�
+--- [2] 重启 ops 中继（幂等；不碰 loop）---
+3235758       00:08 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+3236126       00:03 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+   新日志头:
+[zhulong-relay] 2026-10-11 08:07:34 started. repo=/nasdata/app.e0031982/code/super_intelligence_2035  poll=20s  fetch_every=3x
+--- [3] 等中继自取并执行 RUN_ID 32（poll=20s，首轮即 fetch）---
+   last_run_id now=32（跑完才会变 32）
+   outbox 含 'RUN_ID 32' = 6 行
+   RUN_ID 32 独有产物（有 = 已在执行）:
+-rw-r----- 1 app.e0031982 app.adm 14035 Oct 10 23:43 /tmp/eda_fastmcp.env.bak.20261011_080738
+-rw-r--r-- 1 app.e0031982 app.adm 13948 Oct 11 08:07 /tmp/eda_fastmcp.env.RUNID32.20261011_080738
+-rw-r--r-- 1 app.e0031982 app.adm   531 Oct 11 08:07 /tmp/eda_start_runid32.log
+-rw-r--r-- 1 app.e0031982 app.adm   204 Oct 11 08:07 /tmp/eda_stop_runid32.log
+   .env 关键行:
+271:PROXY_PORTS=8650,8651,8652,8654
+272:SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4
+273:RAG_RECALL_URL=http://localhost:9006/recall
+   MCP :8090 ->
+   eval 进程 ->
+   中继日志尾:
+[zhulong-relay] 2026-10-11 08:07:34 started. repo=/nasdata/app.e0031982/code/super_intelligence_2035  poll=20s  fetch_every=3x
+[zhulong-relay] RUN_ID=32 executed, exit=0, appended to outbox.
+=== DONE ===
+=== ALL DONE ===
+```
