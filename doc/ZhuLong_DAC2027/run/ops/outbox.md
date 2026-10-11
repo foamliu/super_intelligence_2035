@@ -7375,3 +7375,156 @@ S .env
 === [8] r1 时段前后的 ops 记录（是否 legacy/复用）===
 === DONE ===
 ```
+
+---
+
+## RUN_ID 47 · 2026-10-11 22:45:30 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 47 · r1 溯源 + hook 指纹（只读）
+echo "=== [0] host/time ==="; hostname; date '+%F %T'
+B=/nasdata/app.e0031982/eda_code_eval
+E=/nasdata/app.e0031982/code/eda_fastmcp
+
+echo "=== [1] 真实 batch 列表（跟随 symlink）==="
+ls -ltL "$B" 2>/dev/null | head -20
+
+echo "=== [2] 所有 full 相关日志（看 r1 到底有没有、叫什么名）==="
+ls -lt /tmp/ABL_full* /tmp/*r1*8650* 2>/dev/null | head -20
+
+echo "=== [3] r1=88.0% 的溯源（记忆/日报/outbox 里的 batch id 与时间）==="
+grep -rn '88\.0' "$E/MEMORY.md" "$E"/daily-memories/*.md 2>/dev/null | head -8 | cut -c1-190
+grep -rn 'r1' "$E/MEMORY.md" 2>/dev/null | head -10 | cut -c1-190
+grep -aoE 'batch[ =]*20[0-9_]{8,}' /tmp/zhulong_ops_relay.log 2>/dev/null | tail -8
+grep -rn 'r1' doc/ZhuLong_DAC2027/run/daily-memories/*.md 2>/dev/null | head -8 | cut -c1-170
+
+echo "=== [4] 每轮反作弊 hook 指纹（有无 hook / ACCESS RESTRICTED 次数）==="
+for F in /tmp/ABL_full_r*8650set.log /tmp/ABL_full_r*8650set_failed_pydantic.log; do
+  [ -f "$F" ] || continue
+  printf '  %-52s ACCESS_RESTRICTED=%-6s 部署hook=%-5s PreToolUse=%-5s size=%s\n' \
+    "$(basename "$F")" "$(grep -ac 'ACCESS RESTRICTED' "$F" 2>/dev/null)" \
+    "$(grep -ac '部署沙盒 hook' "$F" 2>/dev/null)" "$(grep -ac 'PreToolUse' "$F" 2>/dev/null)" "$(stat -c %s "$F")"
+done
+echo "  --- 当前 hook 是否在位 ---"; ls -l ~/.cline/hooks/PreToolUse 2>/dev/null || echo "  (无 hook)"
+
+echo "=== [5] 每轮 Pass@1 / timeout（从 regrade 与主日志提取）==="
+for F in /tmp/ABL_full_r*regrade.log; do [ -f "$F" ] && { echo "  -- $(basename "$F")"; grep -aoE 'pass \([0-9.]+%\)|[0-9]+/[0-9]+ *pass|timeout[: =]*[0-9]+' "$F" 2>/dev/null | tail -4; }; done
+for F in /tmp/ABL_full_r[345]_8650set.log; do [ -f "$F" ] && { echo "  -- $(basename "$F")"; grep -aoE '[0-9]+/[0-9]+ *(pass|ok)|pass \([0-9.]+%\)|timeout[^ ]{0,6}[0-9]+' "$F" 2>/dev/null | tail -4; }; done
+
+echo "=== [6] 文档源切换证据（增强 vs 未增强）==="
+cd "$E" 2>/dev/null && { git show --stat e51372ff 2>/dev/null | head -12; echo "  --- 该 commit 改了什么 ---"; git show e51372ff --name-only 2>/dev/null | tail -6; }
+grep -n 'API_INFO_MERGED_FILE' "$E/.env" 2>/dev/null | cut -c1-200
+ls -l "$E"/doc/*.json 2>/dev/null | head -6
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] host/time ===
+hfeg0tedaap02
+2026-10-11 22:45:30
+=== [1] 真实 batch 列表（跟随 symlink）===
+total 49672
+drwxr-xr-x 7 app.e0031982 app.adm   4096 Oct 11 22:44 2026_1011_212324
+drwxr-xr-x 8 app.e0031982 app.adm   4096 Oct 11 20:29 2026_1011_181038
+-rw-r--r-- 1 app.e0031982 app.adm 330786 Oct 11 20:29 completed_code_generation_2026_1011_181038.jsonl
+-rw-r--r-- 1 app.e0031982 app.adm 326728 Oct 11 20:29 code_generation_2026_1011_181038.jsonl
+drwxr-xr-x 8 app.e0031982 app.adm   4096 Oct 11 17:23 2026_1011_145925
+-rw-r--r-- 1 app.e0031982 app.adm 352421 Oct 11 17:23 completed_code_generation_2026_1011_145925.jsonl
+-rw-r--r-- 1 app.e0031982 app.adm 348431 Oct 11 17:23 code_generation_2026_1011_145925.jsonl
+drwxr-xr-x 8 app.e0031982 app.adm   4096 Oct 11 13:54 2026_1011_112839
+-rw-r--r-- 1 app.e0031982 app.adm 354187 Oct 11 13:54 completed_code_generation_2026_1011_112839.jsonl
+-rw-r--r-- 1 app.e0031982 app.adm 350247 Oct 11 13:54 code_generation_2026_1011_112839.jsonl
+drwxr-xr-x 2 app.e0031982 app.adm   4096 Oct 11 11:25 2026_1011_112533
+-rw-r--r-- 1 app.e0031982 app.adm 269596 Oct 11 10:22 completed_code_generation_2026_1011_083246.jsonl
+-rw-r--r-- 1 app.e0031982 app.adm 263590 Oct 11 10:22 code_generation_2026_1011_083246.jsonl
+drwxr-xr-x 7 app.e0031982 app.adm   4096 Oct 11 10:22 2026_1011_085518
+drwxr-xr-x 7 app.e0031982 app.adm   4096 Oct 11 09:53 2026_1011_083246
+drwxr-xr-x 6 app.e0031982 app.adm   4096 Oct 11 07:06 2026_1010_153503
+drwxr-xr-x 6 app.e0031982 app.adm   4096 Oct 11 07:06 2026_1008_114702
+drwxr-x--- 8 app.e0031982 app.adm   4096 Oct 11 07:05 2026_1010_234408
+-rw-r----- 1 app.e0031982 app.adm 329998 Oct 11 07:05 completed_code_generation_2026_1010_234408.jsonl
+=== [2] 所有 full 相关日志（看 r1 到底有没有、叫什么名）===
+-rw-r--r-- 1 app.e0031982 app.adm 17534516 Oct 11 22:45 /tmp/ABL_full_r5_8650set.log
+-rw-r--r-- 1 app.e0031982 app.adm     6731 Oct 11 21:00 /tmp/ABL_full_r4_regrade.log
+-rw-r--r-- 1 app.e0031982 app.adm 24101506 Oct 11 20:30 /tmp/ABL_full_r4_8650set.log
+-rw-r--r-- 1 app.e0031982 app.adm     6791 Oct 11 18:08 /tmp/ABL_full_r3_regrade.log
+-rw-r--r-- 1 app.e0031982 app.adm 26398433 Oct 11 17:23 /tmp/ABL_full_r3_8650set.log
+-rw-r--r-- 1 app.e0031982 app.adm     6383 Oct 11 14:51 /tmp/ABL_full_r2_regrade.log
+-rw-r--r-- 1 app.e0031982 app.adm 27848447 Oct 11 13:54 /tmp/ABL_full_r2_8650set_failed_pydantic.log
+lrwxrwxrwx 1 app.e0031982 app.adm       44 Oct 11 11:31 /tmp/ABL_full_r2_8650set.log -> /tmp/ABL_full_r2_8650set_failed_pydantic.log
+-rw-r--r-- 1 app.e0031982 app.adm 27544470 Oct 11 11:16 /tmp/ABL_full_r2_8650set_invalidated.log
+-rw-r--r-- 1 app.e0031982 app.adm     6558 Oct 11 10:52 /tmp/ABL_full_r2_grading.log
+-rw-r--r-- 1 app.e0031982 app.adm  8990493 Oct 10 23:27 /tmp/ABL_full_r2_new.log
+-rw-r--r-- 1 app.e0031982 app.adm 17832100 Oct 10 20:51 /tmp/ABL_full_r2_new2.log
+-rw-r----- 1 app.e0031982 app.adm 15554185 Oct 10 15:32 /tmp/ABL_full_r1.log
+-rw-r--r-- 1 app.e0031982 app.adm 24619639 Oct 10 12:54 /tmp/ABL_full_r2_retest5.log
+-rw-r--r-- 1 app.e0031982 app.adm 21992009 Oct 10 09:10 /tmp/ABL_full_r2_retest4.log
+-rw-r--r-- 1 app.e0031982 app.adm 17995412 Oct 10 05:47 /tmp/ABL_full_r2_retest3.log
+-rw-r--r-- 1 app.e0031982 app.adm 22664456 Oct 10 02:02 /tmp/ABL_full_r2_retest2.log
+-rw-r--r-- 1 app.e0031982 app.adm   215293 Oct  9 22:35 /tmp/ABL_full_r2_retest.log
+-rw-r--r-- 1 app.e0031982 app.adm 23195354 Oct  9 21:55 /tmp/ABL_full_r4.log
+-rw-r--r-- 1 app.e0031982 app.adm 25272003 Oct  9 14:41 /tmp/ABL_full_r4_killed_b2026_1009_094504.log
+=== [3] r1=88.0% 的溯源（记忆/日报/outbox 里的 batch id 与时间）===
+28:- [2026-09-24 10:49] [bootstrap] 首次唤醒，无 MEMORY.md，判定全新开始。切换消融配置 `pure_llm`（核心 4 工具全关），重启 MCP 服务（端口 8090），启动
+doc/ZhuLong_DAC2027/run/daily-memories/2026-09-24.md:11:- [第六次唤醒 14:42] 前置校验发现后 3 条流水均为 ⚠️ 沙箱限制未处理 → 执行重试验
+doc/ZhuLong_DAC2027/run/daily-memories/2026-09-24.md:12:- [第七次唤醒 15:18] 前置校验：后 3 条流水中 ⚠️ 沙箱限制已在第六次唤醒解决（run_c
+doc/ZhuLong_DAC2027/run/daily-memories/2026-09-24.md:13:- [第八次唤醒] 前置校验：后 3 条流水无未处理 ❌/⚠️（沙箱限制第六次唤醒已解决�
+doc/ZhuLong_DAC2027/run/daily-memories/2026-09-24.md:14:- [第九次唤醒] 前置校验发现第八次唤醒 ⚠️（shell 再次被拦截、rag r1 未确认）未处�
+doc/ZhuLong_DAC2027/run/daily-memories/2026-09-24.md:15:- [第十次唤醒] 前置校验发现第八/九次唤醒 ⚠️（shell 被拦截、rag r1 状态未确认）未�
+doc/ZhuLong_DAC2027/run/daily-memories/2026-09-24.md:16:- [第十一次唤醒 17:26] 前置校验发现第八/九/十次唤醒 ⚠️（shell 被拦截、rag r1 状态未
+doc/ZhuLong_DAC2027/run/daily-memories/2026-09-24.md:17:- [第十二次唤醒] 前置校验：后 3 条流水无未处理 ❌/⚠️。PHASE=running → 步骤 A 检查�
+doc/ZhuLong_DAC2027/run/daily-memories/2026-09-24.md:18:- [第十三次唤醒 18:30] 前置校验：后 3 条流水无未处理 ❌/⚠️（rag r1=111/158=70.3% 已成�
+=== [4] 每轮反作弊 hook 指纹（有无 hook / ACCESS RESTRICTED 次数）===
+  ABL_full_r2_8650set.log                              ACCESS_RESTRICTED=937    部署hook=1     PreToolUse=1     size=44
+  ABL_full_r3_8650set.log                              ACCESS_RESTRICTED=954    部署hook=1     PreToolUse=1     size=26398433
+  ABL_full_r4_8650set.log                              ACCESS_RESTRICTED=911    部署hook=1     PreToolUse=1     size=24101506
+  ABL_full_r5_8650set.log                              ACCESS_RESTRICTED=710    部署hook=1     PreToolUse=0     size=17534795
+  ABL_full_r2_8650set_failed_pydantic.log              ACCESS_RESTRICTED=937    部署hook=1     PreToolUse=1     size=27848447
+  --- 当前 hook 是否在位 ---
+-rwxr-xr-x 1 app.e0031982 app.adm 10242 Oct 11 21:23 /home/app.e0031982/.cline/hooks/PreToolUse
+=== [5] 每轮 Pass@1 / timeout（从 regrade 与主日志提取）===
+  -- ABL_full_r2_regrade.log
+125/158 pass
+125/158 pass
+  -- ABL_full_r3_regrade.log
+122/158 pass
+122/158 pass
+  -- ABL_full_r4_regrade.log
+127/158 pass
+127/158 pass
+  -- ABL_full_r3_8650set.log
+timeout[0m[2
+timeout[0m[2
+3/158 pass
+3/158 pass
+  -- ABL_full_r4_8650set.log
+timeout[0m[2
+timeout,[0
+3/158 pass
+3/158 pass
+  -- ABL_full_r5_8650set.log
+timeout[0m[2
+timeout[0m[2
+timeout,[0
+timeout[0m[2
+=== [6] 文档源切换证据（增强 vs 未增强）===
+commit e51372ffdddbd3121b09bb3d5ee9b3d61d00b6d5
+Author: t0002997 <wenchuan.zhang@cxmt.com>
+Date:   Sat Oct 10 16:33:57 2026 +0800
+
+    使用未增强文档，无自探索
+
+ .env | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+  --- 该 commit 改了什么 ---
+Author: t0002997 <wenchuan.zhang@cxmt.com>
+Date:   Sat Oct 10 16:33:57 2026 +0800
+
+    使用未增强文档，无自探索
+
+.env
+147:API_INFO_MERGED_FILE=./docs/API_INFO_MERGED_V2.json
+=== DONE ===
+```
