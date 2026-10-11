@@ -1,5 +1,45 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
+<!-- RUN_ID: 48 -->
+
+## RUN_ID 48 — 🎯 **定论：r1 vs r2–r5 的「文档源 / 自探索」差异**（r1 日志已找到：`/tmp/ABL_full_r1.log`，**10-10 15:32**）
+
+> **47 的突破**：① r1 日志**存在但叫 `/tmp/ABL_full_r1.log`（10-10 15:32，无 `8650set` 后缀）** ⇒ r1 与 r2–r5 **不同命名/不同条件**；② `e51372ff` = **`2026-10-10 16:33:57`（t0002997）「使用未增强文档，无自探索」，改的是 `.env`（4 行）**，其中 `API_INFO_MERGED_FILE` → **`./docs/API_INFO_MERGED_V2.json`**；③ **16:33 > r1 的 15:32** ⇒ **r1 跑在该改动之前**、r2–r5 跑在**之后**；④ r2/r3/r4 日志 `ACCESS RESTRICTED` = **937/954/911**（防泄题 hook 生效），当前 hook 在位。
+> **本块就是把这条链钉死**（只读；r5 仍在跑）。
+
+```bash
+# RUN_ID 48 · 定论文档源/自探索（只读）
+echo "=== [0] host/time ==="; hostname; date '+%F %T'
+E=/nasdata/app.e0031982/code/eda_fastmcp
+R1=/tmp/ABL_full_r1.log
+
+echo "=== [1] r1 日志指纹（10-10 15:32）==="
+ls -l "$R1" 2>/dev/null
+for K in 'ACCESS RESTRICTED' '部署沙盒 hook' 'PreToolUse' 'Available tools' 'API_INFO_MERGED' 'EVOLVE' 'PROXY_PORTS=' 'RAG_RECALL_URL='; do
+  printf '  %-22s -> %s\n' "$K" "$(grep -ac "$K" "$R1" 2>/dev/null)"
+done
+echo "  --- r1 Available tools ---"; grep -aoE 'Available tools:.{0,620}' "$R1" 2>/dev/null | head -1
+echo "  --- r1 Pass@1 / timeout ---"; grep -aoE '[0-9]+/158 *pass|pass \([0-9.]+%\)|timeout[^ ]{0,6}[0-9]+' "$R1" 2>/dev/null | tail -6
+
+echo "=== [2] e51372ff 的 .env 4 行 diff 全文 ==="
+cd "$E" 2>/dev/null && git show e51372ff -- .env 2>/dev/null | head -45
+
+echo "=== [3] 当前 .env：文档源/自探索/回读/端口 ==="
+grep -nE 'API_INFO_MERGED_FILE|EVOLVE|RUN_CODE_FEEDBACK|PROXY_PORTS|RAG_RECALL_URL' "$E/.env" 2>/dev/null | cut -c1-200
+
+echo "=== [4] 「自探索」对应哪个变量（源码取证）==="
+grep -rniE 'self.?expl|evolve' "$E/scripts/run_cline_script.sh" "$E/main.py" 2>/dev/null | head -18 | cut -c1-180
+ls -l "$E"/docs/API_INFO_MERGED_V*.json 2>/dev/null
+
+echo "=== [5] r2–r5 日志里的文档源/evolve 指纹 ==="
+for F in /tmp/ABL_full_r2_8650set_failed_pydantic.log /tmp/ABL_full_r3_8650set.log /tmp/ABL_full_r4_8650set.log /tmp/ABL_full_r5_8650set.log; do
+  [ -f "$F" ] || continue
+  printf '  %-46s V2=%s V3=%s EVOLVE=%s\n' "$(basename "$F")" \
+   "$(grep -ac 'MERGED_V2' "$F" 2>/dev/null)" "$(grep -ac 'MERGED_V3' "$F" 2>/dev/null)" "$(grep -ac 'EVOLVE' "$F" 2>/dev/null)"
+done
+echo "=== DONE ==="
+```
+
 <!-- RUN_ID: 47 -->
 
 ## RUN_ID 47 — 🔧 **修正 RUN_ID 46 的三处失手 + 补齐 r1 溯源与「反作弊 hook 指纹」**（只读）
