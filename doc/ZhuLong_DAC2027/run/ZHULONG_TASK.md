@@ -56,6 +56,14 @@
 1. **端口漂移**：`run/ops/outbox.md:7132` 记载「recall 启动脚本**从 9002 起自动探测空闲端口**，当时 `.env` 指向 **9009**」；而 `(九)`/`.env` 实际写的是 **9006**（`outbox.md:9183`）。⇒ **服务实际监听的端口可能 ≠ `.env` 的 `RAG_RECALL_URL`**，客户端连不上就**静默降级**（MCP 侧多半吞掉异常，不报错）。
 2. **`-n` 的含义**：`README` 载跑法 `bash scripts/run_cline_script.sh -p 8 -n`，注 `-n = 禁用 Memory Bank 注入`。⇒ **需确认 `-n` 是否同时关掉了 RAG/recall 注入**（若关掉，full 与 wo_retrieval 的差异就只剩其它组件）。
 
+**②′ ⚡ 运维已实测（RUN_ID 41 · 2026-10-11 22:11 · **先读，别重复劳动**）**
+- ✅ **9006 是活的**：`GET /health` → **http=200** · model `/nasdata/app.e0023936/Octen-Embedding-4B` · `executor_ready:true` · collections `{api_descriptions:4049, skill_descriptions:5035, …}`；监听进程 = **本项目 venv** `.../eda_fastmcp/venv/bin/python -m uvicorn eda_api_recall:app --port 9006` ⇒ **「9006 没开」的假设不成立**。
+- ⚠️ **但服务严重冗余**：9001/9002/9003/9004/9009/9010/9011 上都有 `eda_api_recall` / `eda_api_recall_local`，其中 **9002 实测 http=500**；`.env` 另有 `RAG_RECALL_URL_LOCAL=http://localhost:9011/recall` 与 `MEMORY_VECTOR_URL=http://localhost:9011`（端口乱象本身是风险源）。
+- 🔴 **决定性线索**：`/tmp/ABL_full_r5_8650set.log` 里出现 **3×**
+  `Tool call search_apis was rejected before execution: AI_NoSuchToolError: Model tried to call unavailable tool 'search_apis'`
+  ⇒ **评测 agent「想用 RAG 但工具不可用」** —— 这一条已足以解释 `full ≈ wo_retrieval`。
+- 🎯 **靶心因此改为**：**为什么 `search_apis` 不在评测 agent 的工具表里？** 候选：① MCP(8090/18889/18890) 未连或工具名变了；② 协议改动（`/sse`→`/mcp`、`streamableHttp`）导致工具未暴露；③ 评测 worker 的 `cline_mcp_settings.json`（真实路径 `/home/app.e0031982/eda_code_eval/<batch>/cli_data/worker_*/data`）没配 RAG server；④ 该工具从未注册。**并给修复 + 重跑影响评估。**
+
 **③ 交付物（三项，缺一不可）** → 写进 `run/reports/RAG_AUDIT_2026-10-11.md`（新建）
 - **(a) 9006 服务实测**：不能只给「TCP 通/端口监听」。必须给：
   - `.env` 里 `RAG_RECALL_URL` / `RAG_RECALL_URL_LOCAL` / `RAG_DEFAULT_TOP_K` / `RAG_RECALL_TIMEOUT` / `MEMORY_VECTOR_URL` **原值**；
