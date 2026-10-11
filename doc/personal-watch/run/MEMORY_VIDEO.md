@@ -15,7 +15,7 @@ WAITING: 0
 PHASE:        S3 放量启动 ✅ → 18_暖阳 首轮：13 张基础图已产出（老周定妆×3 + 出租屋×2 + 车内×4 + 小晴×1 + 城市×2 + 道具×2）
 已完成:       S1 ✅；S2 ✅（样板章端到端）；S3 首轮 ✅：18_暖阳 13 张基础图（image_edit 8 张走老周01定妆 + zimage_t2i 5 张）+ 老周定妆 02/03 落库 + 固化 scripts/generate_ep18_t2i.py + OUTPUT/18_暖阳/frames/manifest.json
 当前动作:     （本轮 S3 首轮：18_暖阳 帧产出 + 固化脚本 + 回写 PLAN/MEMORY/日流水 + commit+push）
-下一步:       18_暖阳 续跑：TTS 台词 → video_minimax_h3_i2v 分镜视频 → 字幕/音效BGM → 合成；并修 BLOCKERS #5 混音时序（合成前 ffprobe 校验 TTS 实际时长 vs 剧本窗口）
+下一步:       18_暖阳 续跑：video_minimax_h3_i2v 分镜视频（**台词随 H3 一起出 · 🚫 不用 TTS**）→ 字幕/音效BGM → 合成（★ 音画钉长）；BLOCKERS #5 已作废
 阻塞:         无硬阻塞（ComfyUI/MCP/ffmpeg 全绿）。BLOCKERS #1✅ #4(字幕)✅ 已修；#2(MCP project_root=stem_fest 需传绝对路径·已照做) #3(15章缺规格) #5(混音时序重叠) 待处理
 ERROR_COUNT:  0
 ```
@@ -45,6 +45,10 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-11 · 纪律变更（用户令 · supervisor 落档）· 🚫 禁用 TTS ✅**：用户下令「**不要使用 TTS；视频中的人物对话全部由 MiniMax H3 随视频一起生成**」。已落文档：任务书 **运维指令区 ⑦ + §3 铁律 + §1 链路 + §4.5**；`video/PIPELINE.md` 按新口径改写（③ 环节＝随 H3 生成、⑤ 合成去掉 TTS 输入、⑥ 字幕时间轴改用镜头时长）；`STEM_FEST_PLAYBOOK.md` §5/§10 同步；`BLOCKERS.md` **#5 作废关闭**（根因消失）；`PLAN.md` 表头「旁白TTS」→「台词(H3)」＋状态列标注 EP13 音轨 legacy。
+  - **⇒ 影响**：**EP13 的 TTS 产物与 `synth_ep13` 的 TTS 混音 = legacy**（不再使用、不再混入成片）；**后续各章一律不生成、不混任何 TTS**，台词写进 H3 `prompt` 的 `Audio:`。
+  - **⇒ 新链路**：分镜帧 → **H3 I2V（台词同期生成）** → BGM/音效 → 合成（**音画钉长**）→ 字幕 → 验收（`qwen3_asr` 逐字核对**含多余语音**）。
 
 - **2026-10-11 · S3 首轮 · 18_暖阳 基础图产出 ✅**：进 S3 放量，首选 18_暖阳 开工。
   - **产出 13 张基础图**（`OUTPUT/18_暖阳/frames/`，`manifest.json` 间接入库）：老周定妆 02_半侧面沉思 / 03_落泪（image_edit，输入 01 正面定妆，seed 43/44，1312×736）+ 出租屋 2 + 车内 4（image_edit）+ 小晴头像 1 + 城市夜景 2 + 道具 2（zimage_t2i，1024×1024 / 1280×720）。
