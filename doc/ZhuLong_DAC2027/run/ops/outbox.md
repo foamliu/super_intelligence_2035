@@ -6648,3 +6648,123 @@ echo "=== DONE ==="
 ```
 REFUSED: 命中危险模式 [:()[[:space:]]*\{]（如需强行执行，请人工在服务器上操作）
 ```
+
+---
+
+## RUN_ID 43 · 2026-10-11 22:15:47 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 43 · 定位 search_apis 不可用根因（只读）
+echo "=== [0] host/time ==="; hostname; date '+%F %T'
+E=/nasdata/app.e0031982/code/eda_fastmcp
+B=/home/app.e0031982/eda_code_eval
+
+echo "=== [1] r5 里 NoSuchToolError 原文（含 Available tools 全表）==="
+grep -a 'NoSuchToolError' /tmp/ABL_full_r5_8650set.log 2>/dev/null | head -2 | cut -c1-1600
+echo "--- 被拒工具名计数 ---"
+grep -aoE "unavailable tool [A-Za-z0-9_.'-]+" /tmp/ABL_full_r5_8650set.log 2>/dev/null | sort | uniq -c | sort -rn | head
+
+echo "=== [2] 各臂日志对照：search_apis 从哪轮开始不可用 ==="
+for F in /tmp/ABL_full_r*_8650set.log /tmp/ABL_wo_retrieval*_8650set.log /tmp/ABL_rag*_8650set.log; do
+  [ -f "$F" ] || continue
+  printf '  %-46s NoSuchTool=%-4s search_apis=%-5s recall=%s\n' "$(basename "$F")" \
+    "$(grep -ac 'NoSuchToolError' "$F" 2>/dev/null)" "$(grep -ac 'search_apis' "$F" 2>/dev/null)" "$(grep -ac 'recall' "$F" 2>/dev/null)"
+done
+
+echo "=== [3] 评测 worker 数据目录 + 其 MCP 配置（server 名单）==="
+ls -d $B/*/cli_data/worker_*/data 2>/dev/null | head -2
+find $B -maxdepth 5 -name 'cline_mcp_settings.json' 2>/dev/null | head -4 | while read f; do
+  echo "  -- $f"; tr -d '\n' < "$f" | cut -c1-520; echo
+done
+
+echo "=== [4] 轨迹里 RAG 工具痕迹（正确路径）==="
+for D in $(ls -d $B/*/cli_data/worker_*/data 2>/dev/null | head -2); do
+  echo "  -- $D   sessions=$(ls "$D/sessions" 2>/dev/null | wc -l)"
+  echo -n "     search_apis 命中文件: "; grep -rl 'search_apis' "$D/sessions" 2>/dev/null | wc -l
+  echo -n "     recall 命中文件:      "; grep -rl 'recall' "$D/sessions" 2>/dev/null | wc -l
+done
+
+echo "=== [5] MCP(8090) 工具清单（GET，不传 JSON）==="
+timeout 10 curl -s http://localhost:8090/tools 2>/dev/null | head -c 900; echo
+timeout 10 curl -s http://localhost:8090/openapi.json 2>/dev/null | head -c 900; echo
+echo "--- main.py 注册的工具名 ---"
+grep -nE 'def [a-z_]+\(|@(mcp|app|server)\.(tool|post|get)|add_tool|Tool\(' "$E/main.py" 2>/dev/null | head -30 | cut -c1-170
+
+echo "=== [6] 补测真实召回（带 lang + host；修 41 号的 422）==="
+for L in pyAether py; do
+  printf '  lang=%-8s -> ' "$L"
+  timeout 25 curl -s -X POST "http://localhost:9006/recall" -H 'Content-Type: application/json' \
+    -d "{\"query\":\"如何写 SPICE 网表\",\"top_k\":5,\"lang\":\"$L\",\"host\":\"$HOSTNAME\"}" \
+    -o /tmp/rag_rc2.json -w 'http=%{http_code} t=%{time_total}s ' || echo FAIL
+  head -c 300 /tmp/rag_rc2.json 2>/dev/null; echo
+done
+
+echo "=== [7] full vs wo_retrieval 臂开关出处 ==="
+grep -rn 'wo_retrieval\|no_retrieval\|retrieval\|RAG\|top_k' "$E/scripts/run_cline_script.sh" "$E/scripts/run_eval.py" 2>/dev/null | head -25 | cut -c1-180
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] host/time ===
+hfeg0tedaap02
+2026-10-11 22:15:47
+=== [1] r5 里 NoSuchToolError 原文（含 Available tools 全表）===
+   [90m⎿ [0m[31merror: {"error":"Tool call search_apis was rejected before execution: AI_NoSuchToolError: Model tried to call unavailable tool 'search_apis'. Available tools: read_files, search_codebase, run_commands, fetch_web_content, editor, ask_question, pyAether_MCP_server__get_api_details, pyAether_MCP_server__search_apis, pyAether_MCP_server__search_apis_by_keyword, pyAether_MCP_server__run_code, spawn_agent, team_spawn_teammate, team_shutdown_teammate, team_status, team_task, team_run_task, team_cancel_run, team_list_runs, team_await_runs, team_send_message, team_broadcast, team_read_mailbox, team_mission_log, team_cleanup, team_create_outcome, team_attach_outcome_fragment, team_review_outcome_fragment, team_finalize_outcome, team_list_outcomes."}[0m
+   [90m⎿ [0m[31merror: {"error":"Tool call search_apis was rejected before execution: AI_NoSuchToolError: Model tried to call unavailable tool 'search_apis'. Available tools: read_files, search_codebase, run_commands, fetch_web_content, editor, ask_question, pyAether_MCP_server__get_api_details, pyAether_MCP_server__search_apis, pyAether_MCP_server__search_apis_by_keyword, pyAether_MCP_server__run_code, spawn_agent, team_spawn_teammate, team_shutdown_teammate, team_status, team_task, team_run_task, team_cancel_run, team_list_runs, team_await_runs, team_send_message, team_broadcast, team_read_mailbox, team_mission_log, team_cleanup, team_create_outcome, team_attach_outcome_fragment, team_review_outcome_fragment, team_finalize_outcome, team_list_outcomes."}[0m
+--- 被拒工具名计数 ---
+     17 unavailable tool 'search_apis'.
+      2 unavailable tool 'search_apis_by_keyword'.
+=== [2] 各臂日志对照：search_apis 从哪轮开始不可用 ===
+  ABL_full_r2_8650set.log                        NoSuchTool=18   search_apis=1879  recall=134
+  ABL_full_r3_8650set.log                        NoSuchTool=30   search_apis=1909  recall=95
+  ABL_full_r4_8650set.log                        NoSuchTool=28   search_apis=1919  recall=82
+  ABL_full_r5_8650set.log                        NoSuchTool=19   search_apis=980   recall=28
+=== [3] 评测 worker 数据目录 + 其 MCP 配置（server 名单）===
+/home/app.e0031982/eda_code_eval/2026_1008_114702/cli_data/worker_1/data
+/home/app.e0031982/eda_code_eval/2026_1008_114702/cli_data/worker_2/data
+=== [4] 轨迹里 RAG 工具痕迹（正确路径）===
+  -- /home/app.e0031982/eda_code_eval/2026_1008_114702/cli_data/worker_1/data   sessions=17
+     search_apis 命中文件: 35
+     recall 命中文件:      2
+  -- /home/app.e0031982/eda_code_eval/2026_1008_114702/cli_data/worker_2/data   sessions=25
+     search_apis 命中文件: 51
+     recall 命中文件:      1
+=== [5] MCP(8090) 工具清单（GET，不传 JSON）===
+Not Found
+Not Found
+--- main.py 注册的工具名 ---
+40:def _get_sandbox_pool():
+61:def _trace_key_from_ctx(ctx) -> object | None:
+87:async def _run_code_with_endpoint(code: str, lang: str, host: str, encoding: str, probe: bool, trace_key: object | None = None) -> dict[str, str]:
+145:@mcp.tool()
+146:async def get_api_details(
+173:@mcp.tool()
+174:async def search_apis(
+208:@mcp.tool()
+209:async def search_apis_by_keyword(query: str, lang: Literal["pyAether", "skill", "tcl"], host: Literal["aether", "virtuoso", "waveview", "innovus"], top_k: int = 5) ->
+237:@mcp.tool()
+238:async def run_code(
+317:@mcp.tool()
+318:async def clean_workdir(**kwargs):
+350:def health_check() -> dict[str, str]:
+355:@mcp.tool()
+356:async def query_memory_bank(query: str, scope: str = "all", top_k: int = 5, layers: list[str] | None = None) -> list[dict]:
+395:@mcp.tool()
+432:@mcp.tool()
+433:async def cimi_search(query: str, top_k: int = 5) -> list[dict]:
+452:@mcp.tool()
+453:async def cimi_fetch(url: str, max_length: int = 10000) -> dict[str, str]:
+472:@mcp.tool()
+473:async def vqa(image_path: str, query: str) -> dict[str, str]:
+494:@mcp.tool()
+495:async def text_to_image(
+607:    def _compute_enabled_set():
+635:    def _apply_tool_visibility():
+=== [6] 补测真实召回（带 lang + host；修 41 号的 422）===
+  lang=pyAether -> http=422 t=0.001293s {"detail":[{"type":"literal_error","loc":["body","host"],"msg":"Input should be 'aether', 'virtuoso', 'waveview' or 'innovus'","input":"hfeg0tedaap02","ctx":{"expected":"'aether', 'virtuoso', 'waveview' or 'innovus'"}}]}
+  lang=py       -> http=422 t=0.000756s {"detail":[{"type":"literal_error","loc":["body","lang"],"msg":"Input should be 'pyAether', 'skill' or 'tcl'","input":"py","ctx":{"expected":"'pyAether', 'skill' or 'tcl'"}},{"type":"literal_error","loc":["body","host"],"msg":"Input should be 'aether', 'virtuoso', 'waveview' or 'innovus'","input":"h
+=== [7] full vs wo_retrieval 臂开关出处 ===
+=== DONE ===
+```
