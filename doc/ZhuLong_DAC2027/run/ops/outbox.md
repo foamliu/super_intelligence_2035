@@ -4726,3 +4726,232 @@ Filesystem                 1G-blocks  Used Available Use% Mounted on
 
 == DONE — RUN_ID 33（MCP 诊断/重试 + 4 端口长超时实测 + loop 重启）==
 ```
+
+---
+
+## RUN_ID 34 · 2026-10-11 08:32:32 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# ═══ RUN_ID 34 — ZhuLong：MCP 启动确认 + RAG :9006 + 4 端口复检 → 带 4G 起跑 C1.full r2 ═══
+echo "== RUN_ID 34 @ $(date '+%F %T') host=$(hostname) =="
+EDA=/nasdata/app.e0031982/code/eda_fastmcp
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+LOG=/tmp/ABL_full_r2_8650set.log
+PORTS="8650 8651 8652 8654"
+SHOST=10.129.32.75
+TS=$(date '+%Y%m%d_%H%M%S')
+
+echo
+echo "=========== 0. 磁盘（用户已授权带 4G 起跑，仅记录）==========="
+timeout 20 df -BG /home /nasdata /tmp 2>/dev/null | cut -c1-120
+
+echo
+echo "=========== 1. MCP(eda_fastmcp)：现状 + 按用户令跑 start.sh + :18890 探活 ==========="
+timeout 20 ss -lntp 2>/dev/null | grep -E ':(8090|18890)' | cut -c1-150 || echo "   ⚠️ :8090/:18890 均未监听"
+timeout 20 pgrep -af 'python main\.py' 2>/dev/null | grep -v cline | cut -c1-130 | head -4
+echo "   :18890 http_code=$(timeout 15 curl -s -m 8 -o /dev/null -w '%{http_code}' http://localhost:18890/ 2>/dev/null) （非 000 = HTTP 层在）"
+echo "-- 按用户令执行 bash scripts/start.sh（幂等；报『端口 18890 已被占用』= 服务已在跑，属正常）--"
+( cd "$EDA" && timeout 120 bash scripts/start.sh ) > "/tmp/eda_start_runid34.log" 2>&1; echo "   start.sh exit=$?"
+timeout 20 tail -12 "/tmp/eda_start_runid34.log" 2>/dev/null | cut -c1-180
+sleep 3
+echo "-- AFTER --"
+timeout 20 ss -lntp 2>/dev/null | grep -E ':(8090|18890)' | cut -c1-150 || echo "   ⚠️ 仍未监听"
+timeout 20 pgrep -af 'python main\.py' 2>/dev/null | grep -v cline | cut -c1-130 | head -4
+
+echo
+echo "=========== 2. RAG recall :9006（在监听则只探活；未监听才按用户令重启）==========="
+if timeout 20 ss -lntp 2>/dev/null | grep -q ':9006'; then
+  echo "   ✅ :9006 已在监听（无需重启）"
+  timeout 20 ss -lntp 2>/dev/null | grep ':9006' | cut -c1-150
+else
+  echo "   ⚠️ :9006 未监听 ⇒ 执行 bash scripts/start_recalling_api.sh"
+  echo "   脚本: $(timeout 20 ls -l "$EDA/scripts/start_recalling_api.sh" 2>&1 | cut -c1-140)"
+  ( cd "$EDA" && setsid bash scripts/start_recalling_api.sh > "/tmp/rag_recall_$TS.log" 2>&1 < /dev/null & )
+  sleep 10
+  timeout 20 ss -lntp 2>/dev/null | grep ':9006' | cut -c1-150 || echo "   ⚠️ 起来后仍未监听"
+  timeout 20 tail -12 "/tmp/rag_recall_$TS.log" 2>/dev/null | cut -c1-180
+fi
+echo "   recall 探活 http_code=$(timeout 20 curl -s -m 10 -o /dev/null -w '%{http_code}' http://localhost:9006/recall 2>/dev/null) （400/403/404/405 = 服务在；000 = 不通）"
+
+echo
+echo "=========== 3. 4 sandbox 端口复检（TCP + run_code 实跑）==========="
+OK=0
+for p in $PORTS; do
+  if timeout 5 bash -c "echo > /dev/tcp/$SHOST/$p" 2>/dev/null; then tcp=OK; else tcp=CLOSED; fi
+  body=$(timeout 40 curl -s -m 30 -X POST "http://$SHOST:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+  n=${#body}
+  if [ "$n" -gt 0 ]; then rc=OK; OK=$((OK+1)); else rc="FAIL(0byte)"; fi
+  echo "   port $p : TCP=$tcp run_code=$rc resp_len=$n | $(printf '%s' "$body" | cut -c1-80)"
+done
+echo "   ▶ 健康端口 = $OK / 4"
+EVAL_ALIVE=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)
+echo "   eval 在跑？ EVAL_ALIVE=$EVAL_ALIVE"
+
+echo
+echo "=========== 4. 起动 C1.full r2（硬闸：EVAL_ALIVE=0 且 4/4；/home 门槛经用户授权放宽）==========="
+if [ "$EVAL_ALIVE" -eq 0 ] && [ "$OK" -eq 4 ]; then
+  ( cd "$EDA"
+    export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+    export CLI_DATA_DIR=/nasdata/app.e0031982/.cline_prof4_eval/data
+    export PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python
+    export https_proxy=http://172.19.92.23:13128
+    setsid bash scripts/run_cline_script.sh -p 8 -n > "$LOG" 2>&1 < /dev/null &
+  )
+  echo "   已下发 setsid 起动，等 20s 核验 ..."
+  sleep 20
+  NEW=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | head -1)
+  echo "   新 eval PID=${NEW:-<none>}"
+  if [ -n "$NEW" ]; then
+    echo "   -- 四 override（/proc/$NEW/environ）--"
+    timeout 20 tr '\0' '\n' < /proc/$NEW/environ 2>/dev/null | grep -E '^(EVAL_FW_DIR|CLI_DATA_DIR|PYTHON|https_proxy)=' | cut -c1-170
+    echo "   -- 反作弊 hook 是否被本轮重新部署（删完必检）--"
+    timeout 20 ls -l ~/.cline/hooks/PreToolUse 2>&1 | cut -c1-140
+    timeout 20 ls -l /nasdata/app.e0031982/.cline_prof4_eval/data/hooks/ 2>&1 | cut -c1-140
+  fi
+  echo "   -- log 头 45 行 --"; timeout 20 head -45 "$LOG" 2>/dev/null | cut -c1-180
+  echo "   -- log 尾 10 行 --"; timeout 20 tail -10 "$LOG" 2>/dev/null | cut -c1-180
+else
+  echo "   ⛔ 未起动（EVAL_ALIVE=$EVAL_ALIVE，健康端口=$OK/4）"
+fi
+
+echo
+echo "=========== 5. 快照 ==========="
+timeout 20 df -BG /home 2>/dev/null | cut -c1-120
+timeout 20 grep -nE '^(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST|RAG_RECALL_URL)=' "$EDA/.env" 2>/dev/null | cut -c1-260
+echo "   last_run_id=$(cat "$W/doc/ZhuLong_DAC2027/run/ops/.last_run_id" 2>/dev/null)"
+echo
+echo "== DONE — RUN_ID 34（MCP 确认 + RAG 9006 + 4 端口复检 + 起 r2）=="
+```
+
+**输出**
+```
+== RUN_ID 34 @ 2026-10-11 08:32:32 host=hfeg0tedaap02 ==
+
+=========== 0. 磁盘（用户已授权带 4G 起跑，仅记录）===========
+Filesystem                 1G-blocks  Used Available Use% Mounted on
+/dev/mapper/vgroot-lv_home      394G  374G        4G 100% /home
+10.251.9.180:/g0tedaap          527G  163G      365G  31% /nasdata
+/dev/mapper/vgroot-lv_tmp        49G   30G       18G  63% /tmp
+
+=========== 1. MCP(eda_fastmcp)：现状 + 按用户令跑 start.sh + :18890 探活 ===========
+LISTEN 0      2048              0.0.0.0:18890      0.0.0.0:*          
+77800 python main.py
+1531391 python main.py
+1653293 python main.py
+1743813 python main.py
+   :18890 http_code=404 （非 000 = HTTP 层在）
+-- 按用户令执行 bash scripts/start.sh（幂等；报『端口 18890 已被占用』= 服务已在跑，属正常）--
+   start.sh exit=1
+已加载配置文件: /nasdata/app.e0031982/code/eda_fastmcp/.env
+[0;32mEDA MCP Server 启动中...[0m
+[0;32m============================================[0m
+项目目录: /nasdata/app.e0031982/code/eda_fastmcp
+监听地址: 0.0.0.0:18890
+传输协议: sse
+遥测开关: false
+追踪端点: http://localhost:4318/v1/traces
+日志文件: /nasdata/app.e0031982/code/eda_fastmcp/logs/app.log
+[0;31m端口 18890 已被占用，请更换端口或先释放[0m
+LISTEN 0      2048              0.0.0.0:18890      0.0.0.0:*          
+-- AFTER --
+LISTEN 0      2048              0.0.0.0:18890      0.0.0.0:*          
+77800 python main.py
+1531391 python main.py
+1653293 python main.py
+1743813 python main.py
+
+=========== 2. RAG recall :9006（在监听则只探活；未监听才按用户令重启）===========
+   ⚠️ :9006 未监听 ⇒ 执行 bash scripts/start_recalling_api.sh
+   脚本: ls: cannot access '/nasdata/app.e0031982/code/eda_fastmcp/scripts/start_recalling_api.sh': No such file or directory
+bash: scripts/start_recalling_api.sh: No such file or directory
+   recall 探活 http_code=000 （400/403/404/405 = 服务在；000 = 不通）
+
+=========== 3. 4 sandbox 端口复检（TCP + run_code 实跑）===========
+   port 8650 : TCP=OK run_code=OK resp_len=106 | {"response":"The code execution was successful with output.","error_log":"","pri
+   port 8651 : TCP=OK run_code=OK resp_len=106 | {"response":"The code execution was successful with output.","error_log":"","pri
+   port 8652 : TCP=OK run_code=OK resp_len=106 | {"response":"The code execution was successful with output.","error_log":"","pri
+   port 8654 : TCP=OK run_code=OK resp_len=106 | {"response":"The code execution was successful with output.","error_log":"","pri
+   ▶ 健康端口 = 4 / 4
+   eval 在跑？ EVAL_ALIVE=0
+
+=========== 4. 起动 C1.full r2（硬闸：EVAL_ALIVE=0 且 4/4；/home 门槛经用户授权放宽）===========
+   已下发 setsid 起动，等 20s 核验 ...
+   新 eval PID=3335776
+   -- 四 override（/proc/3335776/environ）--
+EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+https_proxy=http://172.19.92.23:13128
+PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python
+CLI_DATA_DIR=/nasdata/app.e0031982/.cline_prof4_eval/data
+   -- 反作弊 hook 是否被本轮重新部署（删完必检）--
+-rwxr-xr-x 1 app.e0031982 app.adm 10242 Oct 11 08:32 /home/app.e0031982/.cline/hooks/PreToolUse
+ls: cannot access '/nasdata/app.e0031982/.cline_prof4_eval/data/hooks/': No such file or directory
+   -- log 头 45 行 --
+[0;34m[INFO][0m =============================================
+[0;34m[INFO][0m 启动自动化代码生成流水线: 2026-10-11 08:32:46
+[0;34m[INFO][0m 执行器: cline
+[0;34m[INFO][0m 并行度: 8
+[0;34m[INFO][0m 自进化: 关闭
+[0;34m[INFO][0m Memory Bank 注入: 禁用 (--no-memory-inject)
+[0;34m[INFO][0m =============================================
+[0;34m[INFO][0m [Step 0] 读取yaml配置文件...
+[0;34m[INFO][0m 文件路径: /nasdata/app.e0031982/code/eda_fastmcp/pyAether-eval/config.yaml
+[0;34m[INFO][0m Benchmark: EDA-Eval-PyAether-v20260311.jsonl
+[0;34m[INFO][0m [Step 1] 检查原始数据集...
+[0;32m[SUCCESS][0m 原始数据集检查完成
+[0;34m[INFO][0m 任务范围: 全量 158 题
+[0;34m[INFO][0m [Step 1.5] 跳过 Memory Bank 预热 (无 L0 artifacts，冷启动正常)
+[0;34m[INFO][0m [Step 2] 执行python脚本, 格式化评估任务...
+[0;34m[INFO][0m 执行: /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python pyAether-eval/script/format_eval_task.py --task_file=/nasdata/app.e0031982/code/eda_fastmcp/pyAethe
+[format_raw_task] Successfully parsed 158 tasks
+[merge_prompt_template2task] Format prompt 158 tasks (no memory bank data, 0/158 tasks got L1)
+[0;32m[SUCCESS][0m 格式化评估任务完成
+[0;34m[INFO][0m [Step 3] 启动 cline 批量处理...
+[0;34m[INFO][0m 已部署沙盒 hook 到 /home/app.e0031982/.cline/hooks/
+[0;34m[INFO][0m 并行模式: 已为 8 个 worker 创建隔离数据目录 (CLI=cline)
+[0;34m[INFO][0m ===== 批量任务开始执行 =====
+[0;34m[INFO][0m 并行度:   8
+[0;34m[INFO][0m 清理远端沙盒工作目录...
+[0;34m[INFO][0m 清理模式: lang=pyAether
+[0;34m[INFO][0m 多端口清理: 8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/
+[0;34m[INFO][0m   清理 10.129.32.75:8650 → /proj/train/AI/workdir/t0002997_1 (lang=pyAether)
+[0;32m[SUCCESS][0m   端口 8650 清理完成
+[0;34m[INFO][0m   清理 10.129.32.75:8651 → /proj/train/AI/workdir/t0002997_2 (lang=pyAether)
+[0;32m[SUCCESS][0m   端口 8651 清理完成
+[0;34m[INFO][0m   清理 10.129.32.75:8652 → /proj/train/AI/workdir/t0002997_3 (lang=pyAether)
+[0;32m[SUCCESS][0m   端口 8652 清理完成
+[0;34m[INFO][0m   清理 10.129.32.75:8654 → /proj/train/AI/workdir/t0002997_4 (lang=pyAether)
+[0;32m[SUCCESS][0m   端口 8654 清理完成
+[0;32m[SUCCESS][0m 多端口清理结束
+[0;34m[INFO][0m 任务来源:  /home/app.e0031982/eda_code_eval/2026_1011_083246/full_tasks
+[0;34m[INFO][0m 保存路径:  /home/app.e0031982/eda_code_eval/2026_1011_083246
+[0;34m[INFO][0m 任务数量： 158
+[0;34m[INFO][0m 开始时间： 2026-10-11 08:33:00
+[0;34m[INFO][0m 共享任务队列: 158 个任务，8 个 worker 动态领取
+[0;34m[INFO][0m === [worker-1] 开始任务 EDA-Eval-PyAether-001 ===
+[0;34m[INFO][0m === [worker-3] 开始任务 EDA-Eval-PyAether-002 ===
+[0;34m[INFO][0m === [worker-2] 开始任务 EDA-Eval-PyAether-003 ===
+[0;34m[INFO][0m === [worker-4] 开始任务 EDA-Eval-PyAether-004 ===
+   -- log 尾 10 行 --
+
+Wait[0m[2mcleanup[0m[2m
+-[0m[2m_mission[0m[2m, let[0m[2myA[0m[2mether_code[0m[2m_t[0m[2mool工具[0m[2m team_create[0m[2m_log,[0m[2m team_[0m[2mcleanup[0m[2m
+
+But[0m[2m those tools[0m[2m straightforward:[0m[2m me re[0m[2m-read.[0m[2m相关的文档[0m[2m、示例[0m[2m_outcome[0m[2m implement `[0m[2mfind_in[0m[2m
+-[0m[2m team_[0m[2mattach_out[0m[2mvalid_path[0m[2ms`[0m[2mcome_f[0m[2m folder
+
+[0m[2mLet me[0m[2m do this[0m[2m in[0m[2m aren't[0m[2m, team[0m[2m which[0m[2m_create_out[0m[2mcome,[0m[2mragment
+[0m[2m- team[0m[2m代码，[0m[2m以及 py[0m[2mAether[0m[2m [0m[2m returns paths[0m[2m parallel.[0m
+我先[2m in my[0m[2m available function[0m[2m_review[0m[2m team_[0m[2m The system[0m[2mattach_out[0m[2m that don[0m[2mcome_f[0m[2m list.[0m[2m I[0m
+
+=========== 5. 快照 ===========
+Filesystem                 1G-blocks  Used Available Use% Mounted on
+/dev/mapper/vgroot-lv_home      394G  374G        4G 100% /home
+62:SANDBOX_HOST=10.129.32.75
+271:PROXY_PORTS=8650,8651,8652,8654
+272:SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4
+273:RAG_RECALL_URL=http://localhost:9006/recall
+   last_run_id=33
+
+== DONE — RUN_ID 34（MCP 确认 + RAG 9006 + 4 端口复检 + 起 r2）==
+```
