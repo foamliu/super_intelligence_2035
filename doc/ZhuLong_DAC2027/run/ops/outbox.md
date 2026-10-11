@@ -4574,3 +4574,155 @@ Filesystem                 1G-blocks  Used Available Use% Mounted on
 
 == DONE — RUN_ID 32（停评测 / 删hook / stash回退 / .env 换 8650-8654+RAG9006 / 回退 timeout:180 / 重启MCP / 实测 / 起 r2）==
 ```
+
+---
+
+## RUN_ID 33 · 2026-10-11 08:11:57 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# ═══ RUN_ID 33 — ZhuLong：诊断 MCP 启动失败 + sandbox 4 端口 0 字节 + 重启已死的 loop ═══
+echo "== RUN_ID 33 @ $(date '+%F %T') host=$(hostname) =="
+EDA=/nasdata/app.e0031982/code/eda_fastmcp
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+CDIR=/home/app.e0031982/.local/node-20/bin
+PX=http://172.19.92.23:13128
+SHOST=10.129.32.75
+PORTS="8650 8651 8652 8654"
+TS=$(date '+%Y%m%d_%H%M%S')
+
+echo
+echo "=========== 1. MCP(:8090) 现状 + 上次 start.sh 失败真因（只读）==========="
+timeout 20 ss -lntp 2>/dev/null | grep -E ':8090' | cut -c1-150 || echo "   :8090 未监听"
+timeout 20 pgrep -af 'python main\.py' 2>/dev/null | grep -v cline | cut -c1-130 | head -3 || echo "   (无 python main.py 进程)"
+echo "-- RUN_ID 32 那次 /tmp/eda_start_runid32.log 尾部 25 行 --"
+timeout 20 tail -25 /tmp/eda_start_runid32.log 2>/dev/null | cut -c1-190
+
+echo
+echo "=========== 2. 幂等重试启动 MCP ==========="
+( cd "$EDA" && timeout 180 bash scripts/start.sh ) > "/tmp/eda_start_runid33.log" 2>&1; echo "   start.sh exit=$?"
+sleep 6
+echo "-- 新日志尾 20 行 --"
+timeout 20 tail -20 "/tmp/eda_start_runid33.log" 2>/dev/null | cut -c1-190
+echo "-- AFTER --"
+timeout 20 ss -lntp 2>/dev/null | grep -E ':8090' | cut -c1-150 || echo "   ⚠️ :8090 仍未监听"
+timeout 20 pgrep -af 'python main\.py' 2>/dev/null | grep -v cline | cut -c1-130 | head -3
+
+echo
+echo "=========== 3. sandbox 主机 $SHOST / 4 端口（TCP + HTTP 探活 + 长超时 run_code）==========="
+timeout 10 ping -c 2 -W 2 "$SHOST" 2>&1 | tail -2 | cut -c1-140
+for p in $PORTS; do
+  if timeout 5 bash -c "echo > /dev/tcp/$SHOST/$p" 2>/dev/null; then tcp=OK; else tcp=CLOSED; fi
+  code=$(timeout 20 curl -s -m 12 -o /dev/null -w '%{http_code}' "http://$SHOST:$p/" 2>/dev/null)
+  echo "   port $p : TCP=$tcp  http_get=$code"
+done
+echo "-- 8650 单口长超时（curl -m 60）run_code 实跑（判定「慢」还是「死」）--"
+body=$(timeout 80 curl -s -m 60 -X POST "http://$SHOST:8650/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+echo "   resp_len=${#body} | $(printf '%s' "$body" | cut -c1-170)"
+
+echo
+echo "=========== 4. 重启已死的 loop（正确 PATH(含 cline) + proxy；幂等，不动 relay）==========="
+timeout 20 pgrep -af 'zhulong_loop[.]sh' 2>/dev/null | grep -v pgrep | cut -c1-130 || echo "   (重启前 loop 不在跑)"
+export PATH="$CDIR:$HOME/.bun/bin:$PATH"; export https_proxy="$PX"; export http_proxy="$PX"
+command -v cline >/dev/null 2>&1 && echo "   cline OK -> $(command -v cline)" || echo "   ⚠️ cline 不在 PATH（loop 会空转，需人工处理）"
+timeout 30 cp -f /tmp/zhulong_loop.log "/tmp/zhulong_loop.log.bak.$TS" 2>/dev/null
+timeout 20 pkill -f 'zhulong_loop[.]sh' 2>/dev/null; sleep 2
+setsid bash "$W/doc/ZhuLong_DAC2027/run/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+sleep 8
+timeout 20 pgrep -af 'zhulong_loop[.]sh' 2>/dev/null | grep -v pgrep | cut -c1-130 || echo "   ⚠️ loop 未起来"
+echo "-- 新 loop 日志头 6 行（应见 wake up, invoking cline，且无 No such file）--"
+timeout 20 head -6 /tmp/zhulong_loop.log 2>/dev/null | cut -c1-180
+
+echo
+echo "=========== 5. 快照 ==========="
+timeout 20 df -BG /home /nasdata /tmp 2>/dev/null | cut -c1-120
+echo "-- .env 关键行 --"
+timeout 20 grep -nE '^(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST|RAG_RECALL_URL)=' "$EDA/.env" 2>/dev/null | cut -c1-260
+echo "-- 中继自身 --"
+timeout 20 pgrep -af 'zhulong_ops_relay[.]sh' 2>/dev/null | grep -v pgrep | cut -c1-130
+echo "   last_run_id=$(cat "$W/doc/ZhuLong_DAC2027/run/ops/.last_run_id" 2>/dev/null)"
+echo "   hook: $(timeout 20 ls -l ~/.cline/hooks/PreToolUse 2>&1 | cut -c1-120)"
+
+echo
+echo "== DONE — RUN_ID 33（MCP 诊断/重试 + 4 端口长超时实测 + loop 重启）=="
+```
+
+**输出**
+```
+== RUN_ID 33 @ 2026-10-11 08:11:57 host=hfeg0tedaap02 ==
+
+=========== 1. MCP(:8090) 现状 + 上次 start.sh 失败真因（只读）===========
+77800 python main.py
+1531391 python main.py
+1653293 python main.py
+-- RUN_ID 32 那次 /tmp/eda_start_runid32.log 尾部 25 行 --
+已加载配置文件: /nasdata/app.e0031982/code/eda_fastmcp/.env
+[0;32mEDA MCP Server 启动中...[0m
+[0;32m============================================[0m
+项目目录: /nasdata/app.e0031982/code/eda_fastmcp
+监听地址: 0.0.0.0:18890
+传输协议: sse
+遥测开关: false
+追踪端点: http://localhost:4318/v1/traces
+日志文件: /nasdata/app.e0031982/code/eda_fastmcp/logs/app.log
+[0;31m端口 18890 已被占用，请更换端口或先释放[0m
+LISTEN 0      2048              0.0.0.0:18890      0.0.0.0:*          
+
+=========== 2. 幂等重试启动 MCP ===========
+   start.sh exit=1
+-- 新日志尾 20 行 --
+已加载配置文件: /nasdata/app.e0031982/code/eda_fastmcp/.env
+[0;32mEDA MCP Server 启动中...[0m
+[0;32m============================================[0m
+项目目录: /nasdata/app.e0031982/code/eda_fastmcp
+监听地址: 0.0.0.0:18890
+传输协议: sse
+遥测开关: false
+追踪端点: http://localhost:4318/v1/traces
+日志文件: /nasdata/app.e0031982/code/eda_fastmcp/logs/app.log
+[0;31m端口 18890 已被占用，请更换端口或先释放[0m
+LISTEN 0      2048              0.0.0.0:18890      0.0.0.0:*          
+-- AFTER --
+77800 python main.py
+1531391 python main.py
+1653293 python main.py
+
+=========== 3. sandbox 主机 10.129.32.75 / 4 端口（TCP + HTTP 探活 + 长超时 run_code）===========
+2 packets transmitted, 2 received, 0% packet loss, time 1016ms
+rtt min/avg/max/mdev = 0.215/0.404/0.594/0.189 ms
+   port 8650 : TCP=OK  http_get=000
+   port 8651 : TCP=OK  http_get=000
+   port 8652 : TCP=OK  http_get=000
+   port 8654 : TCP=OK  http_get=000
+-- 8650 单口长超时（curl -m 60）run_code 实跑（判定「慢」还是「死」）--
+   resp_len=0 | 
+
+=========== 4. 重启已死的 loop（正确 PATH(含 cline) + proxy；幂等，不动 relay）===========
+   cline OK -> /home/app.e0031982/.local/node-20/bin/cline
+3261651 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+-- 新 loop 日志头 6 行（应见 wake up, invoking cline，且无 No such file）--
+[loop] 2026-10-11 08:13:55 wake up, invoking cline ...
+[2m[thinking] [0m[2mLet[0m[2m me analyze this task[0m[2m. The user has[0m[2m given[0m[2m me a large task[0m[2m book[0m[2m (ZH[0m[2mULONG[0m[2m_TASK.md) for[0m[
+
+Let[0m[2m me understand[0m[2m what[0m[2m I need to do[0m[2m:
+
+[0m[2m1. This[0m[2m is an[0m[2m automation[0m[2m agent for[0m[2m running[0m[2m EDA ablation[0m[2m evaluations
+
+=========== 5. 快照 ===========
+Filesystem                 1G-blocks  Used Available Use% Mounted on
+/dev/mapper/vgroot-lv_home      394G  374G        4G 100% /home
+10.251.9.180:/g0tedaap          527G  162G      365G  31% /nasdata
+/dev/mapper/vgroot-lv_tmp        49G   30G       18G  63% /tmp
+-- .env 关键行 --
+62:SANDBOX_HOST=10.129.32.75
+271:PROXY_PORTS=8650,8651,8652,8654
+272:SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4
+273:RAG_RECALL_URL=http://localhost:9006/recall
+-- 中继自身 --
+3235758 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+3254619 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh
+   last_run_id=32
+   hook: ls: cannot access '/home/app.e0031982/.cline/hooks/PreToolUse': No such file or directory
+
+== DONE — RUN_ID 33（MCP 诊断/重试 + 4 端口长超时实测 + loop 重启）==
+```
