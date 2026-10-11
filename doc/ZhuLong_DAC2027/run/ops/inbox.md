@@ -1,5 +1,51 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
+<!-- RUN_ID: 47 -->
+
+## RUN_ID 47 — 🔧 **修正 RUN_ID 46 的三处失手 + 补齐 r1 溯源与「反作弊 hook 指纹」**（只读）
+
+> **46 发现**：① `$B=/home/app.e0031982/eda_code_eval` 是 **symlink → `/nasdata/app.e0031982/eda_code_eval`**，我 `ls -lt "$B"` 没跟随 ⇒ [1]/[5]/[6] 全空；② **不存在 `/tmp/ABL_full_r1_8650set.log`** ⇒ **r1 不是在本轮端口集/条件下跑的**（强烈提示 r1 另有出处）；③ `ABL_full_r2_8650set.log` 是 **symlink → `..._failed_pydantic.log`（仅 44 B）**。
+> **另**：`eda_fastmcp` 仓库有 commit **`e51372ff 2026-10-10 使用未增强文档，无自探索`** ⇒ 与 r1 时段高度重合，是**头号候选**；且 `.env` 是 **skip-worktree（`S .env`）** ⇒ 其变更**不在 git 史**里。
+> **红线**：r5 仍在跑 ⇒ **100% 只读**。
+
+```bash
+# RUN_ID 47 · r1 溯源 + hook 指纹（只读）
+echo "=== [0] host/time ==="; hostname; date '+%F %T'
+B=/nasdata/app.e0031982/eda_code_eval
+E=/nasdata/app.e0031982/code/eda_fastmcp
+
+echo "=== [1] 真实 batch 列表（跟随 symlink）==="
+ls -ltL "$B" 2>/dev/null | head -20
+
+echo "=== [2] 所有 full 相关日志（看 r1 到底有没有、叫什么名）==="
+ls -lt /tmp/ABL_full* /tmp/*r1*8650* 2>/dev/null | head -20
+
+echo "=== [3] r1=88.0% 的溯源（记忆/日报/outbox 里的 batch id 与时间）==="
+grep -rn '88\.0' "$E/MEMORY.md" "$E"/daily-memories/*.md 2>/dev/null | head -8 | cut -c1-190
+grep -rn 'r1' "$E/MEMORY.md" 2>/dev/null | head -10 | cut -c1-190
+grep -aoE 'batch[ =]*20[0-9_]{8,}' /tmp/zhulong_ops_relay.log 2>/dev/null | tail -8
+grep -rn 'r1' doc/ZhuLong_DAC2027/run/daily-memories/*.md 2>/dev/null | head -8 | cut -c1-170
+
+echo "=== [4] 每轮反作弊 hook 指纹（有无 hook / ACCESS RESTRICTED 次数）==="
+for F in /tmp/ABL_full_r*8650set.log /tmp/ABL_full_r*8650set_failed_pydantic.log; do
+  [ -f "$F" ] || continue
+  printf '  %-52s ACCESS_RESTRICTED=%-6s 部署hook=%-5s PreToolUse=%-5s size=%s\n' \
+    "$(basename "$F")" "$(grep -ac 'ACCESS RESTRICTED' "$F" 2>/dev/null)" \
+    "$(grep -ac '部署沙盒 hook' "$F" 2>/dev/null)" "$(grep -ac 'PreToolUse' "$F" 2>/dev/null)" "$(stat -c %s "$F")"
+done
+echo "  --- 当前 hook 是否在位 ---"; ls -l ~/.cline/hooks/PreToolUse 2>/dev/null || echo "  (无 hook)"
+
+echo "=== [5] 每轮 Pass@1 / timeout（从 regrade 与主日志提取）==="
+for F in /tmp/ABL_full_r*regrade.log; do [ -f "$F" ] && { echo "  -- $(basename "$F")"; grep -aoE 'pass \([0-9.]+%\)|[0-9]+/[0-9]+ *pass|timeout[: =]*[0-9]+' "$F" 2>/dev/null | tail -4; }; done
+for F in /tmp/ABL_full_r[345]_8650set.log; do [ -f "$F" ] && { echo "  -- $(basename "$F")"; grep -aoE '[0-9]+/[0-9]+ *(pass|ok)|pass \([0-9.]+%\)|timeout[^ ]{0,6}[0-9]+' "$F" 2>/dev/null | tail -4; }; done
+
+echo "=== [6] 文档源切换证据（增强 vs 未增强）==="
+cd "$E" 2>/dev/null && { git show --stat e51372ff 2>/dev/null | head -12; echo "  --- 该 commit 改了什么 ---"; git show e51372ff --name-only 2>/dev/null | tail -6; }
+grep -n 'API_INFO_MERGED_FILE' "$E/.env" 2>/dev/null | cut -c1-200
+ls -l "$E"/doc/*.json 2>/dev/null | head -6
+echo "=== DONE ==="
+```
+
 <!-- RUN_ID: 46 -->
 
 ## RUN_ID 46 — 🔎 **取证：`full` r1=88.0% 为何显著高于 r2–r4（79.1/77.2/80.4）** —— 配置指纹 / 工具集 / 逐题翻转（只读）
