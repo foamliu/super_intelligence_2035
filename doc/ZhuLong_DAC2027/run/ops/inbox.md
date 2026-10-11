@@ -1,6 +1,56 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 43 -->
+<!-- RUN_ID: 44 -->
+
+## RUN_ID 44 — 🎯 **定论三问**：9006 能否真召回 · search_apis 成功/失败计数 · `full vs wo_retrieval` 臂定义在哪
+
+> **43 已得决定性证据**：r5 的 `Available tools` 全表里 **`pyAether_MCP_server__search_apis` 存在**（还有 `..._by_keyword` / `..._get_api_details` / `..._run_code`）⇒ **RAG 工具没缺**；失败是模型**漏了 `pyAether_MCP_server__` 前缀**（r2–r5 各 18–30 次/轮）。轨迹里 `search_apis` 命中 35/51 个会话文件 ⇒ **RAG 在被用**。
+> ⇒ 因此「9006 没开」✗、「RAG 未注册」✗ 都排除；**剩下最可能的解释：`wo_retrieval` 臂其实没有真的关掉检索（两臂配置相同）**，或「retrieval」在该臂命名里指的不是 `search_apis`。**本块就是要定这个论。**
+> **红线**：r5 仍在跑 ⇒ **100% 只读**。
+
+```bash
+# RUN_ID 44 · 定论三问（只读）
+echo "=== [0] host/time ==="; hostname; date '+%F %T'
+E=/nasdata/app.e0031982/code/eda_fastmcp
+B=/home/app.e0031982/eda_code_eval
+
+echo "=== [1] 真实召回（正确枚举 lang=pyAether|skill|tcl ; host=aether|virtuoso|waveview|innovus）==="
+for L in pyAether skill tcl; do
+  printf '  lang=%-8s host=aether -> ' "$L"
+  timeout 30 curl -s -X POST "http://localhost:9006/recall" -H 'Content-Type: application/json' \
+    -d "{\"query\":\"如何写 SPICE 网表\",\"top_k\":5,\"lang\":\"$L\",\"host\":\"aether\"}" \
+    -o /tmp/rag3.json -w 'http=%{http_code} t=%{time_total}s ' || echo FAIL
+  python3 -c "import json;d=json.load(open('/tmp/rag3.json'));r=d if isinstance(d,list) else (d.get('results') or d.get('hits') or d.get('data') or d);print('hits=',len(r) if isinstance(r,list) else r);print('  ',str(r)[:240])" 2>/dev/null || head -c 240 /tmp/rag3.json
+  echo
+done
+
+echo "=== [2] 各臂：带前缀成功调用 vs 漏前缀失败（每轮）==="
+for F in /tmp/ABL_full_r*_8650set.log /tmp/ABL_wo_retrieval*_8650set.log /tmp/ABL_rag*_8650set.log; do
+  [ -f "$F" ] || continue
+  printf '  %-40s ok(search_apis)=%-6s bad(unavailable)=%s\n' "$(basename "$F")" \
+    "$(grep -ac 'pyAether_MCP_server__search_apis' "$F" 2>/dev/null)" "$(grep -ac 'unavailable tool' "$F" 2>/dev/null)"
+done
+
+echo "=== [3] 抽查一次成功调用的返回（证明召回内容进了上下文）==="
+for D in $(ls -d $B/*/cli_data/worker_*/data 2>/dev/null | head -2); do
+  F=$(grep -rl 'pyAether_MCP_server__search_apis' "$D/sessions" 2>/dev/null | head -1)
+  [ -n "$F" ] && { echo "  -- $F"; grep -aoE 'pyAether_MCP_server__search_apis.{0,380}' "$F" 2>/dev/null | head -2; }
+done
+
+echo "=== [4] 「wo_retrieval」这个臂名到底在哪定义（全仓 grep）==="
+grep -rn 'wo_retrieval' "$E" "$B" 2>/dev/null | head -15 | cut -c1-200
+echo "--- E 目录 scripts/ 清单 ---"; ls -1 "$E/scripts" 2>/dev/null | head -25
+echo "--- run_cli.sh / run_cline_script.sh 里与臂/开关有关的行 ---"
+grep -nE 'ARM|arm|ABL|retriev|RAG|MEMORY|tool_visibility|enabled_set' "$E/scripts/run_cli.sh" "$E/scripts/run_cline_script.sh" 2>/dev/null | head -25 | cut -c1-190
+
+echo "=== [5] r5 现在跑的是哪个臂（命令行取证）==="
+ps -eo pid,etime,args 2>/dev/null | grep -E 'run_cli|run_cline_script|cline -c' | grep -v grep | head -4 | cut -c1-240
+
+echo "=== [6] main.py 的「工具可见性」开关（_apply_tool_visibility / _compute_enabled_set）==="
+sed -n '600,665p' "$E/main.py" 2>/dev/null | cut -c1-200
+echo "=== DONE ==="
+```
+
 
 ## RUN_ID 43 — 🔎 **重发 RUN_ID 42（42 被中继危险模式误拒：`:{`）** —— 定位「评测侧 `search_apis` 不可用」的根因（只读）
 
