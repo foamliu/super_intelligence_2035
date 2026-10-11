@@ -7275,3 +7275,103 @@ INFO:eda_api_recall:查询 'add power rings around the core area' (lang=innovus)
 DONE
 === DONE ===
 ```
+
+---
+
+## RUN_ID 46 · 2026-10-11 22:43:23 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 46 · r1 异常取证（只读）
+echo "=== [0] host/time ==="; hostname; date '+%F %T'
+B=/home/app.e0031982/eda_code_eval
+E=/nasdata/app.e0031982/code/eda_fastmcp
+
+echo "=== [1] 全部 batch 目录（时间倒序）==="
+ls -lt "$B" 2>/dev/null | head -18
+
+echo "=== [2] full 各轮 code-gen / re-grade 日志 ==="
+ls -lt /tmp/ABL_full_r*8650set.log /tmp/ABL_full_r*regrade.log 2>/dev/null | head -12
+
+echo "=== [3] r1 vs r2 的 Available tools 全表（逐字对照）==="
+for F in /tmp/ABL_full_r1_8650set.log /tmp/ABL_full_r2_8650set.log; do
+  [ -f "$F" ] || { echo "  (缺 $F)"; continue; }
+  echo "  --- $F  mtime=$(stat -c %y "$F" | cut -c1-19)  size=$(stat -c %s "$F")"
+  grep -aoE 'Available tools:.{0,700}' "$F" 2>/dev/null | head -1
+done
+
+echo "=== [4] 配置指纹（r1 vs r4）==="
+for F in /tmp/ABL_full_r1_8650set.log /tmp/ABL_full_r4_8650set.log; do
+  [ -f "$F" ] || continue
+  echo "  --- $F"
+  grep -aoiE 'RAG_RECALL_URL=[^ ]*|PROXY_PORTS=[^ ]*|API_INFO_MERGED_FILE[= ][^ ]*|EVOLVE_ENABLED=[^ ]*|MEMORY_INJECT_ENABLED=[^ ]*|PreToolUse|/sse|streamable' "$F" 2>/dev/null | sort | uniq -c | sort -rn | head -18
+done
+
+echo "=== [5] 各 batch 的生成产物（找出 r1 对应哪个 batch）==="
+for D in $(ls -dt "$B"/*/ 2>/dev/null | head -8); do
+  J=$(ls "$D"completed_code_generation_*.jsonl 2>/dev/null | head -1); [ -n "$J" ] || continue
+  echo "  -- $D"
+  echo "     $(basename "$J")  size=$(stat -c %s "$J")  mtime=$(stat -c %y "$J" | cut -c1-19)"
+  python3 -c "import json;d=[json.loads(l) for l in open('$J') if l.strip()];print('     n=',len(d),' sample_ids=',[ (x.get('instance_id') or x.get('task_id')) for x in d[:2] ])" 2>/dev/null
+done
+
+echo "=== [6] 逐题通过集差异（用 re-grade 产物/日志找 pass 清单）==="
+ls -lt "$B"/*/*.jsonl 2>/dev/null | head -12
+find "$B" -maxdepth 3 -name '*regrade*' -o -maxdepth 3 -name '*grade*' 2>/dev/null | head -12
+
+echo "=== [7] eda_fastmcp 仓库变更史 + .env 保护状态 ==="
+cd "$E" 2>/dev/null && { git log --date=short --pretty='%h %ad %s' -15 2>/dev/null; echo "  --- git ls-files -v .env ---"; git ls-files -v .env 2>/dev/null | head -2; echo "  --- .env 备份 ---"; ls -lt .env* 2>/dev/null | head -8; }
+
+echo "=== [8] r1 时段前后的 ops 记录（是否 legacy/复用）==="
+grep -aoiE 'r1[^,;]{0,80}(legacy|复用|resume)' /tmp/ABL_full_r1_8650set.log 2>/dev/null | head -5
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] host/time ===
+hfeg0tedaap02
+2026-10-11 22:43:23
+=== [1] 全部 batch 目录（时间倒序）===
+lrwxrwxrwx 1 app.e0031982 app.adm 35 Sep 30 08:48 /home/app.e0031982/eda_code_eval -> /nasdata/app.e0031982/eda_code_eval
+=== [2] full 各轮 code-gen / re-grade 日志 ===
+-rw-r--r-- 1 app.e0031982 app.adm 17225017 Oct 11 22:43 /tmp/ABL_full_r5_8650set.log
+-rw-r--r-- 1 app.e0031982 app.adm     6731 Oct 11 21:00 /tmp/ABL_full_r4_regrade.log
+-rw-r--r-- 1 app.e0031982 app.adm 24101506 Oct 11 20:30 /tmp/ABL_full_r4_8650set.log
+-rw-r--r-- 1 app.e0031982 app.adm     6791 Oct 11 18:08 /tmp/ABL_full_r3_regrade.log
+-rw-r--r-- 1 app.e0031982 app.adm 26398433 Oct 11 17:23 /tmp/ABL_full_r3_8650set.log
+-rw-r--r-- 1 app.e0031982 app.adm     6383 Oct 11 14:51 /tmp/ABL_full_r2_regrade.log
+lrwxrwxrwx 1 app.e0031982 app.adm       44 Oct 11 11:31 /tmp/ABL_full_r2_8650set.log -> /tmp/ABL_full_r2_8650set_failed_pydantic.log
+=== [3] r1 vs r2 的 Available tools 全表（逐字对照）===
+  (缺 /tmp/ABL_full_r1_8650set.log)
+  --- /tmp/ABL_full_r2_8650set.log  mtime=2026-10-11 11:31:21  size=44
+Available tools: read_files, search_codebase, run_commands, fetch_web_content, editor, ask_question, pyAether_MCP_server__get_api_details, pyAether_MCP_server__search_apis, pyAether_MCP_server__search_apis_by_keyword, pyAether_MCP_server__run_code, spawn_agent, team_spawn_teammate, team_shutdown_teammate, team_status, team_task, team_run_task, team_cancel_run, team_list_runs, team_await_runs, team_send_message, team_broadcast, team_read_mailbox, team_mission_log, team_cleanup, team_create_outcome, team_attach_outcome_fragment, team_review_outcome_fragment, team_finalize_outcome, team_list_outcomes."}[0m
+=== [4] 配置指纹（r1 vs r4）===
+  --- /tmp/ABL_full_r4_8650set.log
+      1 PreToolUse
+=== [5] 各 batch 的生成产物（找出 r1 对应哪个 batch）===
+=== [6] 逐题通过集差异（用 re-grade 产物/日志找 pass 清单）===
+=== [7] eda_fastmcp 仓库变更史 + .env 保护状态 ===
+e51372ff 2026-10-10 使用未增强文档，无自探索
+8db40001 2026-10-10 Merge branch master into host-gating-clean (Conflict resolved online)
+343cce34 2026-10-08 feat: CLI_DATA_DIR 支持环境变量覆盖
+d8dafdf4 2026-10-08 优化代码，更新四种语言增强api 文档
+e29cbc15 2026-09-30 feat(tools): add text_to_image tool wrapping doubao-seedream-5.0-lite-cloud (disabled by default)
+b2f8c294 2026-09-24 fix: 修正 cimi_fetch 请求字段 fetchUrl 与响应字段 output
+cb5c402c 2026-09-30 feat(ablation): S1 保真度轴 + S2 Φ 轴消融（hook/handler/检索降保真 + 元数据）
+096e4d2f 2026-09-24 契约迁移+门控: (lang,host) 全链路 + pyAether 专属能力 host 门控 + 审计文档
+5bdf4e87 2026-09-24 refactor: 防泄题 hook 升级为白名单 + workspace 沙箱
+b2eda64e 2026-09-24 feat: 新增 PreToolUse 防泄题 hook（黑名单拦截 benchmark 答案/判题）
+f6f83e8c 2026-09-22 update .env
+aabe4630 2026-09-22 Merge branch 'master' of ssh://devops.cxmt.com:8022/git/AIX/PAI/eda/eda_fastmcp
+172d7b1c 2026-09-22 修改.env与一些文档
+60bd50cb 2026-09-22 将 search_apis_by_keyword 默认打开
+e1923528 2026-09-22 refactor: 简化工具可见性日志，更新注释明确 EDA_MCP_TOOLS_DISABLED 覆盖核心工具的语义
+  --- git ls-files -v .env ---
+S .env
+  --- .env 备份 ---
+-rw-r--r-- 1 app.e0031982 app.adm 14868 Oct 11 11:28 .env
+-rw-r--r-- 1 app.e0031982 app.adm  7021 Oct 11 08:55 .env.readme
+=== [8] r1 时段前后的 ops 记录（是否 legacy/复用）===
+=== DONE ===
+```
