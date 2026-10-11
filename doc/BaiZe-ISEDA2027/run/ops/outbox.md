@@ -9544,3 +9544,121 @@ COMMAND       PID         USER   FD   TYPE DEVICE SIZE/OFF NLINK      NODE NAME
 -rw-r----- 1 app.e0031982 app.adm 5398 Oct 11 13:43 /tmp/baize_ops_relay.log
 === DONE 90 ===
 ```
+
+---
+
+## RUN_ID 91 · 2026-10-11 13:48:15 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 91 · 只读：/tmp 深挖 · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- A) 全盘扫描：列出所有 >=85% 的挂载 ---"
+df -h --output=source,size,used,avail,pcent,target 2>&1 | awk 'NR==1{print} $5+0>=85' | cut -c1-160
+echo "   -- 完整 df（前 30 行，含 tmpfs/overlay） --"
+df -hT 2>&1 | head -30 | cut -c1-160
+echo "--- A2) /tmp 权威数字 + inode + df/du 交叉核对 ---"
+df -BG /tmp 2>&1 | cut -c1-120
+df -i /tmp 2>&1 | cut -c1-120
+echo "   df_used=$(df -BG --output=used /tmp 2>/dev/null | tail -1 | tr -d ' G')G   du_bytes=$(timeout 60 du -sbx /tmp 2>/dev/null | cut -f1)"
+echo "--- B) /tmp 一层拆解（45s 界） ---"
+timeout 45 du -hx --max-depth=1 /tmp 2>/dev/null | sort -rh | head -25 | cut -c1-140
+echo "--- B2) /tmp 大文件 >=200M TOP30 ---"
+timeout 40 find /tmp -xdev -maxdepth 3 -type f -size +200M -printf '%s\t%TY-%Tm-%Td %TH:%TM\t%p\n' 2>/dev/null | sort -rn | head -30 | awk '{printf "%7.2fG  %s  %s\n", $1/1073741824, $2" "$3, $4}' | cut -c1-150
+echo "--- B3) 最近 120 分钟内在动的大文件（>=50M，找活跃写手） ---"
+timeout 40 find /tmp -xdev -maxdepth 3 -type f -mmin -120 -size +50M -printf '%s\t%TY-%Tm-%Td %TH:%TM\t%p\n' 2>/dev/null | sort -rn | head -20 | awk '{printf "%7.2fG  %s  %s\n", $1/1073741824, $2" "$3, $4}' | cut -c1-150
+echo "--- C) 隐藏占用：已删除但仍被进程持有（>=256M） ---"
+( timeout 25 lsof +L1 2>/dev/null || echo '   (lsof 不可用/无权限)' ) | awk 'NR==1{print} $7+0>268435456 {printf "%7.2fG  %s pid=%s %s\n", $7/1073741824, $1, $2, $9}' | head -15 | cut -c1-150
+echo "--- D) 谁在写（进程 + 容器 + 挂载） ---"
+pgrep -af 'harness|swe|harbor|opencode|download|baize|relay' 2>/dev/null | cut -c1-150 | head -15
+( command -v docker >/dev/null 2>&1 && timeout 20 docker ps --format '{{.ID}} {{.Image}} {{.Status}}' 2>&1 | head -10 ) || echo '   (无 docker / 不可用)'
+mount 2>/dev/null | grep -E ' /tmp |overlay|docker' | head -10 | cut -c1-150
+echo "--- E) sudo 可用性（用于复核 root 属主文件） ---"
+( timeout 10 sudo -n true 2>/dev/null && echo "   sudo -n OK" ) || echo "   no passwordless sudo（du 可能漏 root 属主文件）"
+echo "=== DONE 91 ==="
+```
+
+**输出**
+```
+=== RUN_ID 91 · 只读：/tmp 深挖 · 2026-10-11 13:48:15 · host=whag0pgpuap29 ===
+--- A) 全盘扫描：列出所有 >=85% 的挂载 ---
+Filesystem                                                                                    Size  Used Avail Use% Mounted on
+   -- 完整 df（前 30 行，含 tmpfs/overlay） --
+Filesystem                                                                                   Type   Size  Used Avail Use% Mounted on
+tmpfs                                                                                        tmpfs  202G  394M  202G   1% /run
+/dev/mapper/vgroot-lv_root                                                                   ext4   384G   13G  352G   4% /
+/dev/disk/by-id/dm-uuid-LVM-7REZHedvpF4bkkJNhmRZBzI5uNORjyT0tXXhvbSyDpfPi1ITi32wKNaWxz2MpChC ext4    98G   25G   69G  27% /usr
+tmpfs                                                                                        tmpfs 1008G   17G  992G   2% /dev/shm
+tmpfs                                                                                        tmpfs  5.0M     0  5.0M   0% /run/lock
+/dev/sdb2                                                                                    ext4   2.0G  346M  1.5G  19% /boot
+/dev/sdb1                                                                                    vfat   1.1G  6.1M  1.1G   1% /boot/efi
+/dev/mapper/vgroot-lv_home                                                                   ext4   196G   83G  104G  45% /home
+/dev/mapper/vgroot-lv_tmp                                                                    ext4    98G   39G   55G  42% /tmp
+/dev/mapper/vgroot-lv_var                                                                    ext4    98G  6.0G   87G   7% /var
+/dev/mapper/vgdata-lv_data                                                                   xfs    7.0T  532G  6.5T   8% /data
+10.239.23.31:/vol_CTE0_data01                                                                nfs    207T  172T   36T  83% /nas_train
+10.239.23.32:/vol_CTE0_data02                                                                nfs    108T   80T   29T  74% /nas_user
+10.239.23.32:/vol_CTE0_data03                                                                nfs     45T   36T  9.4T  80% /nas_inference
+10.239.23.32:/vol_CTE0_data04                                                                nfs     10T   14G  9.9T   1% /nas_env
+tmpfs                                                                                        tmpfs  202G  4.0K  202G   1% /run/user/6203
+tmpfs                                                                                        tmpfs  202G  4.0K  202G   1% /run/user/6218
+tmpfs                                                                                        tmpfs  202G  4.0K  202G   1% /run/user/6216
+--- A2) /tmp 权威数字 + inode + df/du 交叉核对 ---
+Filesystem                1G-blocks  Used Available Use% Mounted on
+/dev/mapper/vgroot-lv_tmp       98G   39G       55G  42% /tmp
+Filesystem                 Inodes  IUsed   IFree IUse% Mounted on
+/dev/mapper/vgroot-lv_tmp 6553600 162638 6390962    3% /tmp
+   df_used=39G   du_bytes=40800228095
+--- B) /tmp 一层拆解（45s 界） ---
+39G	/tmp
+27G	/tmp/claude-6218
+5.1G	/tmp/ov2_test
+671M	/tmp/torchinductor_app.e0031982
+277M	/tmp/dsh_sdk
+198M	/tmp/torchinductor_app.e0016372
+191M	/tmp/mpl360_env
+136M	/tmp/dsh_home
+121M	/tmp/test_env
+103M	/tmp/matplotlib
+96M	/tmp/django-upstream
+84M	/tmp/django-4.2
+80M	/tmp/p5b_tok_work_b2
+80M	/tmp/p5b_tok_work
+78M	/tmp/sphinx_pkgs
+74M	/tmp/test_workdir
+60M	/tmp/r3_tok_work
+57M	/tmp/sympy_latest
+54M	/tmp/sphinx-repo
+49M	/tmp/mpl363
+48M	/tmp/mpl_pkg
+48M	/tmp/mpl380
+48M	/tmp/mpl362
+45M	/tmp/mpl360
+45M	/tmp/mpl353
+--- B2) /tmp 大文件 >=200M TOP30 ---
+--- B3) 最近 120 分钟内在动的大文件（>=50M，找活跃写手） ---
+--- C) 隐藏占用：已删除但仍被进程持有（>=256M） ---
+COMMAND       PID         USER   FD   TYPE DEVICE SIZE/OFF NLINK      NODE NAME
+--- D) 谁在写（进程 + 容器 + 挂载） ---
+275875 tail -f /tmp/baize_ops_relay.log
+283114 /bin/bash -c cd /dev/shm/harness_work/workdirs/pi/sympy_sympy && python -m pytest sympy/ -q --ignore=sympy/testing/tests/test_pytest.py 2>&1 | 
+1025830 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python3 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness
+1026029 codex exec --cd /dev/shm/harness_work/workdirs/codex/sympy_sympy --model kimi-k2.6-cloud --sandbox workspace-write --skip-git-repo-check --jso
+1307655 python3 /nas_train/app.e0031982/harness_work/gw_proxy_dsh.py
+1391466 bash baize_pretrain_loop.sh
+1440700 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python3 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness
+1440729 bun run --preload /nas_train/app.e0031982/harness_work/builds/claude-code/plugins/bunBundleDev.ts --define MACRO.VERSION:"1.0.0-dev" --define 
+1473442 python3 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/run_serial_kimi.py --harness cline-patched --all-
+1473507 python3 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/run_serial_kimi.py --harness codex --all-prepared
+1473568 python3 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/run_serial_kimi.py --harness hermes --all-prepare
+1473632 python3 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/run_serial_kimi.py --harness opencode --all-prepa
+1480915 python3 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/run_serial_kimi.py --harness claude-code --all-pr
+1485539 python3 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/run_serial_kimi.py --harness deepseek-harness --a
+1485633 python3 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/run_serial_kimi.py --harness pi --all-prepared --
+permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.47/containers/json": dial unix /var/run/docker.sock: connect: permission denied
+/dev/mapper/vgroot-lv_tmp on /tmp type ext4 (rw,relatime,stripe=16)
+nsfs on /run/docker/netns/default type nsfs (rw)
+--- E) sudo 可用性（用于复核 root 属主文件） ---
+   no passwordless sudo（du 可能漏 root 属主文件）
+=== DONE 91 ===
+```
