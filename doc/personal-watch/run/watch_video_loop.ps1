@@ -24,10 +24,7 @@ param(
     [string]$Model = '',               # 空 ⇒ 用 cline 已配置的默认模型
     [string]$Thinking = 'medium',      # none|low|medium|high|xhigh（空 = provider 默认）
     [switch]$Once,                     # 只跑一轮后退出（调试）
-    [switch]$DryRun,                   # 不调用 cline（只走日志/心跳/git 同步；用于安全自检）
-    [int]$RetrySec = 600,              # 「启动类失败」后的重试等待（秒）
-    [int]$MaxRetry = 2,                # 「启动类失败」最多重试次数（0 = 关掉重试）
-    [int]$FastFailSec = 60             # 判定「启动类失败（秒退 ⇒ 几乎不耗 token）」的耗时上限
+    [switch]$DryRun                    # 不调用 cline（只走日志/心跳/git 同步；用于安全自检）
 )
 
 $ErrorActionPreference = 'Continue'
@@ -152,7 +149,6 @@ Write-Log "  USERPROFILE: $env:USERPROFILE"
 Touch-Hb
 
 # ── 6) 主循环 ───────────────────────────────────────────────────────────────
-$failStreak = 0
 while ($true) {
     $roundStart = Get-Date
     Write-Log "[loop] wake up, invoking cline ... [$($roundStart.ToString('yyyy-MM-dd HH:mm:ss'))]"
@@ -218,24 +214,12 @@ while ($true) {
 
     if ($Once) { Write-Log "[loop] -Once -> exit"; break }
 
-    # ── 失败处理：**只对「启动类失败（秒退）」重试** —— 那类失败几乎不耗 token；
-    #    「运行类失败」（真跑了一阵子）**一律不自动重试**（实测单轮 ≈1.6M input tokens，重试=纯烧钱）。
+    # ── 🚫 不重试（2026-10-11 用户明令）──────────────────────────────────────
+    #   已观察到的失败**全部是确定性/配置性**的：命令行过长 · cline/node 路径错 · 未登录/401 ·
+    #   模型名不存在 · provider 配置错 · 配置文件/目录不可读 …… **重试一次也解决不了，只会烧 token**
+    #   （实测单轮 ≈ 1.62M input tokens）。⇒ 失败只记日志 + 退回整点节律，由人来处理。
     if ($clineRc -ne 0 -and -not $DryRun) {
-        if ($dur -lt $FastFailSec) {
-            if ($failStreak -lt $MaxRetry) {
-                $failStreak++
-                Write-Log "[loop] 启动类失败（秒退 ${dur}s < ${FastFailSec}s, exit $clineRc）→ ${RetrySec}s 后重试 $failStreak/$MaxRetry（此类几乎不耗 token）"
-                Start-Sleep -Seconds $RetrySec
-                Touch-Hb
-                continue
-            }
-            Write-Log "[loop] 启动类失败已达重试上限 $MaxRetry → 退回整点节律；请查 $ClineOut 与 cline 日志"
-        } else {
-            Write-Log "[loop] ⚠️ 运行类失败（耗时 ${dur}s ≥ ${FastFailSec}s, exit $clineRc）→ **不自动重试**（防烧 token），退回整点节律"
-        }
-        $failStreak = 0
-    } else {
-        $failStreak = 0
+        Write-Log "[loop] ❌ cline 失败（耗时 ${dur}s, exit $clineRc）→ **不重试**；看 $ClineOut 与 C:\Users\Administrator\.cline\data\logs\cline.log，等下一个整点"
     }
 
     # 对齐整点：下一个整点（若已过/太近则顺延一小时），至少 60s
