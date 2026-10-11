@@ -1270,3 +1270,31 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮**无长期工具代码改动**（`raw/2026-10-11-idlist-*.xml` 为一次性留证）。
 - **下轮预期**：**本地 `2026-10-11 18:00`**（P0「晚 2」轮 · 当日收口）：① 复验批次是否刷新（`2026-10-09/10` 提交批预计周日晚 ~UTC 00:00 起陆续公告；若仍周末无批则继续走 **RSS 发现 + `id_list` 复核**）；② 补 **2 篇「科普」**并修订早报 3 篇；③ 追加 `## 晚报变更说明（AM → PM）`，进度 → **5/5**；④ 第 5 批 P0：`research/video/SCENES/10_11.html` 分镜脚本。
 
+
+### 9.89 第八十七轮（本地 2026-10-11 18:00 时窗 · **P0 第 4 批第 10 轮 · 「晚 2」轮 · 当日收口 + 第 5 批 P0**）：**周日无新批**（API 增量 0）+ RSS 空 feed → **晚报 2 篇「科普」从 AM 547 条窗口内候选池精选 + 单条权威复核**；当日日报收口 **5/5** + 分镜脚本交付
+
+> **时点**：本地 `2026-10-11 18:00`（= UTC `2026-10-11T10:00`）为 **周日**。arXiv **周末不公告**，故**无新批次可刷** —— **`kept 0` 属时点正常现象，非「无数据」**。
+
+- **取源复验（R1′）** `--probe --json`（`generated=2026-10-11T10:00:39Z`）：
+
+  | 源 | 端点 | 实测结果 | 判定 |
+  |:--|:--|:--|:--|
+  | arXiv API | `https://export.arxiv.org/api/query` | `HTTP 200`，`application/atom+xml; charset=utf-8`，`totalResults=630048`，最新样本 `published=2026-10-08T17:59:58Z` | ✅ 可达（**批次仍 `2026-10-08`，与 AM 第八十六轮完全一致 → 未刷新**） |
+  | HF Daily Papers | `https://huggingface.co/api/daily_papers` | `ok=false`，`Network is unreachable` | ❌ 不可达（**不伪造 `hf_daily`**） |
+  | arXiv RSS（cs.CL/CV/LG） | `https://rss.arxiv.org/rss/<cat>` | `HTTP 200`，`application/rss+xml`，`items=0 / 0 / 0` | ⚠️ **周末空 feed（如实记录，非失败）** |
+
+  证据：`research/raw/2026-10-11-probe-r87.log`（**本轮实时 `--probe`，无重试**）。
+
+- **增量取数** `--fetch --seen research/SEEN.md`（**`window_mode=weekend_batch`，窗口 120h**，`generated=2026-10-11T10:01:04Z`）：**15/15 查询 `ok`**（`attempts=1`，无重试），**kept 0 / dropped 600**（均 `already in SEEN` 或 `stale > 120h`）→ **0 新增**。因 **周日无新批 + RSS 空 feed**，晚报 2 篇「科普」**取自 AM 已复核的 547 条窗口内候选池**（证据 `research/raw/2026-10-10-rss-r84.json`）。证据：`research/raw/2026-10-11-fetch-r87.json`。
+
+- **精选权威复核（`id_list`）**：对晚报 2 篇走 **arXiv API `id_list` 单条复核**（`id_list=2610.10657,2610.11286`）→ **2/2 返回**，全部 `HTTP 200` + `application/atom+xml; charset=utf-8` + 有 `published`（证据 `research/raw/2026-10-11-idlist-cand2-r87.{xml,headers}`）：
+  - `2610.10657` *Beyond Owls: Subliminal Learning Can Transfer Learned Capabilities and Backdoors*（`2026-10-07T16:42:55Z`，cs.LG（次 cs.AI），4 位署名，`comment`: `Code: https://github.com/TruthfulAI-research/beyond_owls`）；
+  - `2610.11286` *When Scene Text Hijacks the Scene: Uncovering, Exploiting, and Mitigating Rendered-Text Semantic Leakage in Image Generation Models*（`2026-10-08T05:50:40Z`，cs.CV，6 位署名，`comment`: `To appear in the 2027 IEEE Symposium on Security and Privacy (IEEE S&P 2027)`）。
+  - **去重复核**：2 个 ID 均**不在**任何 `daily/*.html`；检出时在 `SEEN.md` 状态为「候选」→ **无重复**。
+
+- **产出**：`research/daily/2026-10-11.html`（**自包含单文件**，**晚报 5/5** = 早 3「借鉴」+ 晚 2「科普」）：新增 ④ `2610.10657` Beyond Owls（潜意识学习可迁移能力 / 后门 / 作弊倾向）与 ⑤ `2610.11286` When Scene Text Hijacks the Scene（画面文字语义泄漏）；页头由「早报 3/5」改为「晚报 5/5」+ 附录 A 增补 **附录 A′（PM 轮 I→V）** + 附录 C 更新窗口 / 标签口径 + 新增 **`## 晚报变更说明（AM → PM）`**（锚点 `#pm-change`）→ 同步 `research/daily/index.html`（2026-10-11 行更新为 5/5）与 `research/INDEX.md`。**当日 TOP-1 = `2610.10657`** → 交付第 5 批 P0 分镜脚本 `research/video/SCENES/10_11.html`（自包含单文件，8 镜 / 固定五段 / 口播 ≈432 字），并同步 `research/video/SCENES/index.html`（新增 10_11 行）。
+
+- **台账**：`research/SEEN.md` **行数不变（3,051 条）**，2 篇状态 **候选 → 收录** → **收录 186 / 候选 2865**；`research/papers.jsonl` **+2 → 186 行**。
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮**无长期工具代码改动**（`raw/2026-10-11-idlist-cand2-r87.xml` 为一次性留证）。
+- **下轮预期**：**本地 `2026-10-12 06:00`**（新一日「早 3」轮）：① 复验批次是否刷新（`2026-10-09/10` 提交批预计周日晚 ~UTC 00:00 起陆续公告）；② 若刷新则走标准 `--fetch` 增量取数，否则继续走 **RSS 发现 + `id_list` 复核**；③ 日报进度回到 **3/5**（新一日 AM）。
+
