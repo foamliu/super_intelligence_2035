@@ -19,7 +19,7 @@ ComfyUI / MCP `comfyui-drama` / ffmpeg 均可用（S1 自检全绿）。**本轮
   - `recover_ep13_ltx169.py` / `regen_ep13_ltx_169.py` / `_regen_ep13_h3_720p.py`
 - **修复**：统一改为 `Path(__file__).resolve().parent.parent`（参照 `generate_ep13_14_videos.py` 已用此法）。
 - **优先级**：S2 开工前必做（否则样板章收尾/放量无法复用脚本）。
-- **状态**：⏳ 待修（下一轮 S2 首步）。
+- **状态**：✅ 已修（2026-10-11 S2 · 9 个 EP13 脚本改 `Path(__file__).resolve().parent.parent`，全量 py_compile 通过）。
 
 ### #2 · MCP `comfyui-drama` 的 project_root 非短剧仓
 
@@ -37,9 +37,10 @@ ComfyUI / MCP `comfyui-drama` / ffmpeg 均可用（S1 自检全绿）。**本轮
 
 ### #4 · EP13 成片 v1 vs v2 时长不一致 + 字幕缺失
 
-- **现象**：`EP13_外骨骼_成片_v1.mp4` 107.7s / 47.3MB；`EP13_外骨骼_成片_v2.mp4` 91.1s / 58.1MB（均 1920×1080 · 24fps · h264+aac）。README Step4 的「字幕/调色/验收」仍 ❌。
-- **说明**：两版时长差 ~16.6s，需在 S2 核清（疑与 concat 镜头取舍 / `-shortest` 有关）；成片尚未加中英字幕。
+- **现象**：`EP13_外骨骼_成片_v1.mp4` 107.7s / 47.3MB；`EP13_外骨骼_成片_v2.mp4` 91.1s / 58.1MB（均 1920×1080 · 24fps · h264+aac）。字幕此前缺失。
+- **说明**：字幕 ✅ 已补（2026-10-11 S2）：新建 `scripts/gen_ep13_subtitles.py`，libass+微软雅黑烧录硬字幕 → `EP13_外骨骼_成片_v3_字幕.mp4`（91.13s / 1080p / 24fps / h264+aac，`-c:a copy` 保原音轨）。**残留**：v1 vs v2 时长差 ~16.6s 仍未核清（v3 基于 v2）。
 - **优先级**：S2 样板章收尾时处理。
+- **状态**：🟡 半解决 —— 字幕 ✅；v1/v2 时长差待下轮核清。
 
 ---
 
