@@ -1,5 +1,56 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
+<!-- RUN_ID: 45 -->
+
+## RUN_ID 45 — 🎯 **收官三问**：各臂「禁用清单」定义 · 召回是否真返回内容 · 轨迹里 `search_apis` 返回空/非空
+
+> **RUN_ID 44 已定论（22:16）**：① ✅ 每轮 **`search_apis` 成功调用 ~1800 次**（r2=1775 / r3=1803 / r4=1807 / r5=916），**漏前缀失败仅 18–30 次（~1%）** ⇒ **RAG 在 `full` 臂里被大量调用**，「RAG 没生效」**不成立**。② ✅ **臂定义找到**：`scripts/set_ablation.py:28` = **`wo_retrieval` = 检索 3 件套 OFF + run_code ON**；`main.py` 开关 = 单一禁用清单 **`EDA_MCP_TOOLS_DISABLED`**（核心 search/get/run 默认开）。③ ✅ `-n` = **`EDA_MEMORY_INJECT_ENABLED=false`**（关 Memory Bank 注入，**不是 RAG**）。
+> 🔴 **但冒出更可能的真因**：`POST /recall` 用**合法对**（`pyAether`+`aether`）→ **http=200 但 `hits=0`**（返回 `[]`）⇒ **检索可能根本没召回出内容**！若如此，`full`「调了 RAG 却拿到空结果」⇒ 自然 ≈ `wo_retrieval`。**本块就定这个。**
+> **注意** (lang,host) **必须成对**：`pyAether↔aether` · `skill↔virtuoso` · `tcl↔waveview` · `tcl↔innovus`。
+> **红线**：r5 仍在跑 ⇒ **100% 只读**。
+
+```bash
+# RUN_ID 45 · 收官三问（只读）
+echo "=== [0] host/time ==="; hostname; date '+%F %T'
+E=/nasdata/app.e0031982/code/eda_fastmcp
+B=/home/app.e0031982/eda_code_eval
+
+echo "=== [1] 臂定义：set_ablation.py（逐臂禁用清单）==="
+sed -n '1,140p' "$E/scripts/set_ablation.py" | cut -c1-200
+
+echo "=== [2] 当前 .env 的禁用清单/注入开关 ==="
+grep -nE 'EDA_MCP_TOOLS_DISABLED|EDA_MEMORY_INJECT|EDA_EVOLVE|RAG_' "$E/.env" | cut -c1-240
+
+echo "=== [3] 召回：4 组合法 pair × 3 个英文/代码 query（top_k=10）==="
+for P in pyAether:aether skill:virtuoso tcl:waveview tcl:innovus; do
+  L=${P%%:*}; H=${P##*:}
+  for Q in dbCreateRect 'how to create a rectangle in layout' hiGetCurrentWindow; do
+    printf '  %-8s %-9s q=%-36s -> ' "$L" "$H" "$Q"
+    timeout 25 curl -s -X POST "http://localhost:9006/recall" -H 'Content-Type: application/json' \
+      -d "{\"query\":\"$Q\",\"top_k\":10,\"lang\":\"$L\",\"host\":\"$H\"}" \
+      -o /tmp/r45.json -w 'http=%{http_code} ' || echo FAIL
+    python3 -c "import json;d=json.load(open('/tmp/r45.json'));r=d if isinstance(d,list) else (d.get('results') or d.get('hits') or d.get('data') or []);print('hits=',len(r))" 2>/dev/null || head -c 140 /tmp/r45.json
+  done
+done
+
+echo "=== [4] 轨迹里 search_apis 的返回：空 vs 非空（**关键证据**）==="
+for D in $(ls -d $B/*/cli_data/worker_*/data 2>/dev/null | head -3); do
+  [ -d "$D/sessions" ] || continue
+  echo "  -- $D"
+  echo -n "     含 search_apis 的会话文件数: "; grep -rl 'pyAether_MCP_server__search_apis' "$D/sessions" 2>/dev/null | wc -l
+  echo -n "     其中出现空结果(紧邻 [])的: "; grep -rlE 'search_apis[^]]*\[\]' "$D/sessions" 2>/dev/null | wc -l
+done
+echo "--- 抽 1 例 search_apis 调用+返回原文（≤2 段 × 600 字）---"
+F=$(grep -rl 'pyAether_MCP_server__search_apis' $(ls -d $B/*/cli_data/worker_*/data 2>/dev/null | head -1)/sessions 2>/dev/null | head -1)
+[ -n "$F" ] && { echo "  file=$F"; grep -aoE '"name":"pyAether_MCP_server__search_apis".{0,600}' "$F" 2>/dev/null | head -2; }
+
+echo "=== [5] recall 服务端最近日志 ==="
+ls -lt /tmp/*recall*.log 2>/dev/null | head -4
+for L in /tmp/eda_api_recall*.log /tmp/*recall*.log; do [ -f "$L" ] && { echo "  -- $L"; tail -10 "$L" | cut -c1-190; }; done
+echo "=== DONE ==="
+```
+
+
 <!-- RUN_ID: 44 -->
 
 ## RUN_ID 44 — 🎯 **定论三问**：9006 能否真召回 · search_apis 成功/失败计数 · `full vs wo_retrieval` 臂定义在哪
