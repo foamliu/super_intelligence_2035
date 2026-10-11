@@ -1,5 +1,59 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
+<!-- RUN_ID: 46 -->
+
+## RUN_ID 46 — 🔎 **取证：`full` r1=88.0% 为何显著高于 r2–r4（79.1/77.2/80.4）** —— 配置指纹 / 工具集 / 逐题翻转（只读）
+
+> **用途**：为任务书 **(十一) Deep dive** 采集证据（用户 2026-10-11 令：为什么 r1 得 88.0%）。
+> 候选原因：**① legacy 复用**（`wo_retrieval` 的 r1 就标注「复用 legacy 74.1%」）**② 工具集不同** **③ 配置指纹不同**（端口集 / doc 源 V2-V3 / hook / 协议）**④ 纯抽样噪声**。
+> **红线**：r5 仍在跑 ⇒ **100% 只读**（🚫 不 kill / 不重启 / 不改配置）。
+
+```bash
+# RUN_ID 46 · r1 异常取证（只读）
+echo "=== [0] host/time ==="; hostname; date '+%F %T'
+B=/home/app.e0031982/eda_code_eval
+E=/nasdata/app.e0031982/code/eda_fastmcp
+
+echo "=== [1] 全部 batch 目录（时间倒序）==="
+ls -lt "$B" 2>/dev/null | head -18
+
+echo "=== [2] full 各轮 code-gen / re-grade 日志 ==="
+ls -lt /tmp/ABL_full_r*8650set.log /tmp/ABL_full_r*regrade.log 2>/dev/null | head -12
+
+echo "=== [3] r1 vs r2 的 Available tools 全表（逐字对照）==="
+for F in /tmp/ABL_full_r1_8650set.log /tmp/ABL_full_r2_8650set.log; do
+  [ -f "$F" ] || { echo "  (缺 $F)"; continue; }
+  echo "  --- $F  mtime=$(stat -c %y "$F" | cut -c1-19)  size=$(stat -c %s "$F")"
+  grep -aoE 'Available tools:.{0,700}' "$F" 2>/dev/null | head -1
+done
+
+echo "=== [4] 配置指纹（r1 vs r4）==="
+for F in /tmp/ABL_full_r1_8650set.log /tmp/ABL_full_r4_8650set.log; do
+  [ -f "$F" ] || continue
+  echo "  --- $F"
+  grep -aoiE 'RAG_RECALL_URL=[^ ]*|PROXY_PORTS=[^ ]*|API_INFO_MERGED_FILE[= ][^ ]*|EVOLVE_ENABLED=[^ ]*|MEMORY_INJECT_ENABLED=[^ ]*|PreToolUse|/sse|streamable' "$F" 2>/dev/null | sort | uniq -c | sort -rn | head -18
+done
+
+echo "=== [5] 各 batch 的生成产物（找出 r1 对应哪个 batch）==="
+for D in $(ls -dt "$B"/*/ 2>/dev/null | head -8); do
+  J=$(ls "$D"completed_code_generation_*.jsonl 2>/dev/null | head -1); [ -n "$J" ] || continue
+  echo "  -- $D"
+  echo "     $(basename "$J")  size=$(stat -c %s "$J")  mtime=$(stat -c %y "$J" | cut -c1-19)"
+  python3 -c "import json;d=[json.loads(l) for l in open('$J') if l.strip()];print('     n=',len(d),' sample_ids=',[ (x.get('instance_id') or x.get('task_id')) for x in d[:2] ])" 2>/dev/null
+done
+
+echo "=== [6] 逐题通过集差异（用 re-grade 产物/日志找 pass 清单）==="
+ls -lt "$B"/*/*.jsonl 2>/dev/null | head -12
+find "$B" -maxdepth 3 -name '*regrade*' -o -maxdepth 3 -name '*grade*' 2>/dev/null | head -12
+
+echo "=== [7] eda_fastmcp 仓库变更史 + .env 保护状态 ==="
+cd "$E" 2>/dev/null && { git log --date=short --pretty='%h %ad %s' -15 2>/dev/null; echo "  --- git ls-files -v .env ---"; git ls-files -v .env 2>/dev/null | head -2; echo "  --- .env 备份 ---"; ls -lt .env* 2>/dev/null | head -8; }
+
+echo "=== [8] r1 时段前后的 ops 记录（是否 legacy/复用）==="
+grep -aoiE 'r1[^,;]{0,80}(legacy|复用|resume)' /tmp/ABL_full_r1_8650set.log 2>/dev/null | head -5
+echo "=== DONE ==="
+```
+
 <!-- RUN_ID: 45 -->
 
 ## RUN_ID 45 — 🎯 **收官三问**：各臂「禁用清单」定义 · 召回是否真返回内容 · 轨迹里 `search_apis` 返回空/非空
