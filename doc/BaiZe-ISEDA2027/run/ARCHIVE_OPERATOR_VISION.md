@@ -914,3 +914,61 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 |:--|:--|:--|
 | **C1** | **数据量口径** | `r9_scaling.py:158` 的「本地 53M 上限」是 **`--local-cap-m default=53.0`＝假设、非实测**。按 DATA_RESEARCH 实测（GPIC **5 tar=53,637 图 → ~10,727/tar × 8000 ≈ 86M**）外推 → **本地全量上限 ≈103M**（GPIC 86M + CC12M 11M + Amshaker 6M）。→ 用**真实 cap 重算** R9 所有 "×N 缺口"（含 "226× the 53M cap"）；报告中**统一三类分母**：**R9 用过 18.5M / 盘上现有 ≈29M / 本地全量 ≈103M**，并标注**数据仍在下载（动态值）**。 |
 | **C2** | **R8 结论加限定** | R8 的 6 架构**全是自研 from-scratch 等参改编**（`run/vision/models.py` 头行自证；R8 亦标「等参改编（非官方模型）」）→ **「SSM 坍缩」只能表述为「我们 recipe（冻结语义文本塔 + InfoNCE）下、我们自研改编版的坍缩」**，🚫 **不得**推广成「官方 MambaEye/DeepEncoderV2 会坍缩」。 |
+
+
+---
+
+### [ARCHIVED 2026-10-11] 运维指令 · 2026-10-11（📄 Muon 坍缩根因分析报告 + 📚 文献借鉴报告）— 已完成
+
+> 归档时间：2026-10-11 · 归档原因：两份 HTML 报告均已产出并提交（commit 6743baeb）
+> 结论：A. report_vision_muon_collapse.html（33.6KB, 10节, 内联SVG）· B. report_vision_lit_ideas.html（28.4KB, 25篇→TOP-5）
+
+### 🆕 运维指令 · 2026-10-11（📄 **Muon 坍缩（V2）根因分析报告** · 中文 HTML）· 用户直令 · 高优先
+
+> **用户原话（2026-10-11）**：「关于『**V2 Muon 在所有测试 LR 下均坍缩（lr=5e-4 collapsed@step2100、lr=1e-4 collapsed@step4200）→ Muon 与 AIMv2 式 contrastive+reconstruction 目标不兼容（`EXPERIMENTS_VISION.md §9.2`）**』这个问题，**写个 html 报告（中文版）**。」
+> **性质**：**纯分析 + 写作**（读已有日志 / 曲线 / `EXPERIMENTS_VISION.md §9.2` / ckpt 元数据）⇒ 🚫 **不占 GPU、不新跑实验、不打断在飞的 ④-2ep 训练**。
+
+**① 交付物**：`doc/BaiZe-ISEDA2027/report_vision_muon_collapse.html`
+- **中文 · 自包含单文件**（内联 CSS/SVG · **零外链** · 离线双击可开 · ≤200KB）；风格对齐本仓既有 `report_*.html`（HERO 一句话结论 + 分节 + 表格 + 内联 SVG 曲线）。
+
+> ⚠️ **与既有报告的关系**：本线 2026-10-11 已产出 **`report_vision_variants_20261011.html`**（**总览**：③①② + **V2 Muon** + V3 + ④）—— 本报告须是 **Muon 坍缩的「深化专版」**（**引用其结论 + 补足根因/谱范数/排除项/反证**），🚫 不得只是复制其 Muon 节。
+
+**② 必备节（逐节）**
+1. **TL;DR**：一句话 + 3–5 条要点 —— 讲清 **Muon 在 vision 栈上不可用** 的**确切边界**（哪些 LR、哪个 step 坍缩、是否与数据量/分辨率有关）。
+2. **实验设置**：V2 = 在 `E1fair`(w512) baseline 上**只换优化器 AdamW→Muon**，其余逐字节相同；列 LR（5e-4 / 1e-4）· schedule · 步数 · 数据（10787 shards）· 目标（AIMv2-style `InfoNCE + 1.0×masked-patch-MSE`）。
+3. **坍缩现象（实测证据）**：**C1 / C2_gap / loss / grad_norm 轨迹**（各 LR 一条内联 SVG 曲线）；**标出坍缩点**（5e-4@2100、1e-4@4200）；**给出「坍缩」的判定口径与阈值**（引 `EXPERIMENTS_VISION.md §9.2` 原文）；对照 **AdamW baseline 同量纲轨迹**（正常）。
+4. **Muon 的谱/范数行为**（能取到就给）：正交化更新（Newton–Schulz）后的 per-module 更新范数 / RMS / 与梯度余弦；**哪一层先崩**。
+5. **根因分析（核心）**：为什么 Muon 与「**InfoNCE + masked-patch-MSE 联合目标**」不兼容 —— 逐条机理假设并**标注「实测 / 推断」**：① 对比目标的梯度尺度·各向异性 vs Muon 逐模块正交化；② 两目标梯度尺度失衡被 Muon 放大；③ Muon 的 RMS 归一/仿射处理与**冻结文本塔 / InfoNCE 头**不匹配；④ warmup/LR 只是触发因素而非根因。
+6. **排除项（反证）**：是否 lr/schedule/warmup/数据 问题？（如 AdamW 同 lr 不坍缩 ⇒ 排除 lr；V3 全量数据是否也坍缩）逐条给依据。
+7. **结论与边界**：明确「Muon 在**本栈本目标**下不兼容」（🚫 **不要**泛化成「Muon 不行」）；与 pretrain 线 `dist_muon` **成功**的**对照**（差异：LLM 纯 CE vs 视觉 InfoNCE+重构）。
+8. **后续建议（可执行）**：MuonClip / 混合优化器 / 只对部分参数用 Muon / 换目标 等，各给 **成本 + 判据 + 风险**。
+9. **证据索引**：每条数字给 `path:line` 或日志字段（`EXPERIMENTS_VISION.md §9.2`、训练日志、ckpt 目录）。
+10. **诚实条款**：明写哪些是**实测**、哪些是**推断/未验证**；工具/日志缺口如实报。
+
+**③ 纪律**：🚫 不改已发布数值；🚫 不新跑 GPU；commit 前缀 `vision muon-rpt:`；任务书 >32KB 自滚归档。
+
+---
+
+### 🆕 运维指令 · 2026-10-11（📚 **文献借鉴报告**：从 research 线「这几天」积累的论文里找可借鉴 idea · 中文 HTML）· 用户直令 · 高优先
+
+> **用户原话（2026-10-11）**：「**vision** 看看**这几天 research 积累的论文**，看看有没有什么可以借鉴的 idea，**写个 html 报告（中文版）**。」
+> **性质**：**纯阅读 + 写作**（🚫 不占 GPU、🚫 不改实验、🚫 不打断在飞任务）。**如需做验证实验 ⇒ 先写进报告「待验证」并列成本，经运维批准后再跑**。
+
+**① 交付物**：`doc/BaiZe-ISEDA2027/report_vision_lit_ideas.html`（**中文 · 自包含 · 内联 CSS/SVG · 零外链 · ≤200KB**）。
+
+**② 输入（先 `git pull`，再读）**
+- research 线近期日报（每天 5 篇）：**仓根相对** `doc/personal-watch/run/research/daily/2026-10-07.html` … `2026-10-11.html`（**共 25 篇**）。
+- 精选与台账：`doc/personal-watch/run/research/TOP_K.md` + `TOP_K.jsonl` · `papers.jsonl` · `TAKEAWAYS.md`。
+- 本仓早期调研（可对照）：`doc/BaiZe-ISEDA2027/LIT_IDEAS_2026-10-04.html` / `LIT_IDEAS_2026-10-05.html`。
+
+**③ 本线关注面**：视觉编码器 · 自监督（对比·重构）· **优化器（Muon 及其变体）** · 分辨率·patch token · 图文数据与配对 · MLLM 对齐与 projector · Stage(iv) 前置。
+
+**④ 每条 idea 必带（缺一不可）**：① 出处（**原题 + arXiv ID + URL + 日期**）② 一句话做了什么 ③ **与本线的关系**（**能用在 BaiZe Stage(iii)/(iv) 的哪一步，具体到模块/实验**）④ **借鉴成本**（GPU·h / 墙钟 / 数据依赖）⑤ **风险/不确定性** ⑥ **价签**（可行性 × 潜力 打分）。
+- **按「对本线的可执行价值」排序 · 给 TOP-5**；其余列附表。
+- **显著区分**「**已验证可借鉴**」vs「**仅灵感/未验证**」；🚫 不得拿二手/摘要页当一手；**每条须可溯源**。
+
+**⑤ 纪律**：🚫 不改实验数值；🚫 不占 GPU；commit 前缀 `vision lit-rpt:`；任务书 >32KB 自滚归档。
+
+---
+
+
