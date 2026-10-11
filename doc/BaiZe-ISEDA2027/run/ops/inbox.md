@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 90 -->
+<!-- RUN_ID: 91 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,6 +31,43 @@
 
 ---
 
+## RUN_ID 91 — 🚨 **只读：`/tmp` 深挖（IT 报 `/tmp` 已满 >95%，而 13:43 实测仅 41%）**
+
+> **矛盾点**：RUN_ID 89（**13:43:29**，3 分钟前）实测 `lv_tmp` = **98G / 38G used / 56G avail / 41%**，且 `du -shx /tmp` = **38G**（与 `df` 一致 ⇒ 无属主/权限漏计）。
+> ⇒ 三种可能必须一次查清：**① `/tmp` 在这几分钟内被跑爆**（找"活跃写手"）**② 隐藏占用**（已删除但被进程持有 → `df` 记、`du` 不记）**③ IT 看的是另一台机器 / 另一个挂载（含容器内 `/tmp`）**。
+> 🚫 不删任何东西、不停服务、不动 harness/pipeline。
+
+```bash
+set -u
+echo "=== RUN_ID 91 · 只读：/tmp 深挖 · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- A) 全盘扫描：列出所有 >=85% 的挂载 ---"
+df -h --output=source,size,used,avail,pcent,target 2>&1 | awk 'NR==1{print} $5+0>=85' | cut -c1-160
+echo "   -- 完整 df（前 30 行，含 tmpfs/overlay） --"
+df -hT 2>&1 | head -30 | cut -c1-160
+echo "--- A2) /tmp 权威数字 + inode + df/du 交叉核对 ---"
+df -BG /tmp 2>&1 | cut -c1-120
+df -i /tmp 2>&1 | cut -c1-120
+echo "   df_used=$(df -BG --output=used /tmp 2>/dev/null | tail -1 | tr -d ' G')G   du_bytes=$(timeout 60 du -sbx /tmp 2>/dev/null | cut -f1)"
+echo "--- B) /tmp 一层拆解（45s 界） ---"
+timeout 45 du -hx --max-depth=1 /tmp 2>/dev/null | sort -rh | head -25 | cut -c1-140
+echo "--- B2) /tmp 大文件 >=200M TOP30 ---"
+timeout 40 find /tmp -xdev -maxdepth 3 -type f -size +200M -printf '%s\t%TY-%Tm-%Td %TH:%TM\t%p\n' 2>/dev/null | sort -rn | head -30 | awk '{printf "%7.2fG  %s  %s\n", $1/1073741824, $2" "$3, $4}' | cut -c1-150
+echo "--- B3) 最近 120 分钟内在动的大文件（>=50M，找活跃写手） ---"
+timeout 40 find /tmp -xdev -maxdepth 3 -type f -mmin -120 -size +50M -printf '%s\t%TY-%Tm-%Td %TH:%TM\t%p\n' 2>/dev/null | sort -rn | head -20 | awk '{printf "%7.2fG  %s  %s\n", $1/1073741824, $2" "$3, $4}' | cut -c1-150
+echo "--- C) 隐藏占用：已删除但仍被进程持有（>=256M） ---"
+( timeout 25 lsof +L1 2>/dev/null || echo '   (lsof 不可用/无权限)' ) | awk 'NR==1{print} $7+0>268435456 {printf "%7.2fG  %s pid=%s %s\n", $7/1073741824, $1, $2, $9}' | head -15 | cut -c1-150
+echo "--- D) 谁在写（进程 + 容器 + 挂载） ---"
+pgrep -af 'harness|swe|harbor|opencode|download|baize|relay' 2>/dev/null | cut -c1-150 | head -15
+( command -v docker >/dev/null 2>&1 && timeout 20 docker ps --format '{{.ID}} {{.Image}} {{.Status}}' 2>&1 | head -10 ) || echo '   (无 docker / 不可用)'
+mount 2>/dev/null | grep -E ' /tmp |overlay|docker' | head -10 | cut -c1-150
+echo "--- E) sudo 可用性（用于复核 root 属主文件） ---"
+( timeout 10 sudo -n true 2>/dev/null && echo "   sudo -n OK" ) || echo "   no passwordless sudo（du 可能漏 root 属主文件）"
+echo "=== DONE 91 ==="
+```
+
+---
+
+
 ## RUN_ID 90 — 🧭 **只读：`/home` 45% 与 IT「空间不足」的差异归因 + 全盘大头 + `/tmp` 拆解**
 
 > **RUN_ID 89 实况**：`lv_home` **196G / 83G used / 104G avail / 45%**（inode 5%）—— **并非「满」**；而 `lv_root` 4% / `lv_usr` 27% / `lv_tmp` **41%（38G 已用）**。
@@ -38,7 +75,7 @@
 > 同时拆解两个新增大头：**`~/.local/share/opencode/opencode.db` 17.23G（今天仍在写）** 与 **`/tmp` 38G**。
 > 🚫 不删任何东西、不停服务、不动 harness/pipeline。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 90 · 只读：/home 差异归因 + 全盘大头 + /tmp 拆解 · $(date '+%F %T') · host=$(hostname) ==="
 U=/home/app.e0031982
