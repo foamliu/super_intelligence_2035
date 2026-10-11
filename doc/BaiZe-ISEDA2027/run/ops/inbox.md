@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 87 -->
+<!-- RUN_ID: 88 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,6 +31,50 @@
 
 ---
 
+## RUN_ID 88 — 🏠 **只读：`/home` 空间体检（IT 报告 `.29` 本地盘满）** · 只列不删
+
+> **背景**：**IT 老师来电** —— `.29`（`10.239.2.29`）**本地盘 `/home` 空间不足**。
+> **上一次同类处置**：**2026-10-04（RUN_ID 41 已核验）** `/home` **171G/16G avail/92% → 196G/50G used/137G avail/27%**，**净回收 ≈121 GB**（根因 = **`HF_HOME` 改到 `/nas_train` 之前的旧 HF 缓存 78 G 残留在 `/home`**）。
+> **本块 = 纯只读勘察**（`df` + 有界 `du` + 大文件列举）；🚫 **不删任何东西**、🚫 不停服务、🚫 不整树 `du`。
+> **产出**：拿到「大头清单」后由运维列**批准删除清单**，再另下 RUN_ID 执行。
+> ⚠️ 每条命令都带 `timeout`（relay 单块总超时 600s）；输出一律 `cut -c1-140`。
+
+```bash
+set -u
+echo "=== RUN_ID 88 · 只读：/home 空间体检 · $(date '+%F %T') · host=$(hostname) ==="
+U=/home/app.e0031982
+echo "--- 0) 本地文件系统总览（排除 NFS） ---"
+df -hT -x nfs -x nfs4 2>&1 | cut -c1-140
+echo "--- 0b) /home 精确 GB 粒度 + inode ---"
+df -BG /home 2>&1 | cut -c1-120
+df -i  /home 2>&1 | cut -c1-120
+echo "--- 1) /home 顶层占用（只列不删） ---"
+timeout 60 du -hx --max-depth=1 /home 2>/dev/null | sort -rh | head -20 | cut -c1-140
+echo "--- 2) 本人目录一层占用（关键） ---"
+timeout 120 du -hx --max-depth=1 "$U" 2>/dev/null | sort -rh | head -30 | cut -c1-140
+echo "--- 3) .cache 细分 ---"
+timeout 45 du -hx --max-depth=1 "$U/.cache" 2>/dev/null | sort -rh | head -15 | cut -c1-140
+echo "--- 4) 大文件 TOP（>=500M，只列路径/大小/时间） ---"
+timeout 75 find "$U" -xdev -type f -size +500M -printf '%s\t%TY-%Tm-%Td %TH:%TM\t%p\n' 2>/dev/null | sort -rn | head -30 | awk '{printf "%8.2fG  %s  %s\n", $1/1073741824, $2" "$3, $4}' | cut -c1-140
+echo "--- 5) 大日志 / core dump / nohup（>=200M，多为可清候选） ---"
+timeout 45 find "$U" -xdev \( -name '*.log' -o -name 'core' -o -name 'core.*' -o -name 'nohup.out' \) -size +200M -printf '%s\t%TY-%Tm-%Td\t%p\n' 2>/dev/null | sort -rn | head -20 | awk '{printf "%8.2fG  %s  %s\n", $1/1073741824, $2, $3}' | cut -c1-140
+echo "--- 6) HF 缓存是否又落回 /home（2026-10-04 那次 121G 事故的根因） ---"
+echo "   HF_HOME=${HF_HOME:-<未设>} | HF_HUB_CACHE=${HF_HUB_CACHE:-<未设>} | HF_DATASETS_CACHE=${HF_DATASETS_CACHE:-<未设>}"
+ls -d "$U/.cache/huggingface" "$U/.cache/huggingface/hub" "$U/.cache/huggingface/datasets" 2>&1 | cut -c1-140
+timeout 30 find "$U/.cache/huggingface" -maxdepth 3 -type d -name 'blobs' 2>/dev/null | head -10 | cut -c1-140
+echo "--- 7) 已删除但仍被进程占用的文件（盘满常见隐形占用） ---"
+( timeout 30 lsof +L1 2>/dev/null || echo "   (lsof 不可用)" ) | awk 'NR==1{print} $7+0>1073741824 {printf "%8.2fG  %s pid=%s %s\n", $7/1073741824, $1, $2, $9}' | head -15 | cut -c1-140
+echo "--- 8) /tmp ---"
+timeout 30 du -shx /tmp 2>/dev/null | cut -c1-100
+timeout 30 find /tmp -maxdepth 1 -type f -size +200M -printf '%s\t%p\n' 2>/dev/null | sort -rn | head -10 | awk '{printf "%8.2fG  %s\n", $1/1073741824, $2}' | cut -c1-140
+echo "--- 9) 现场进程（只读：哪些别杀） ---"
+pgrep -af 'ops_relay|baize_.*loop|torchrun|pt_main_thread|sglang' 2>/dev/null | cut -c1-140 | head -12
+echo "=== DONE 88 ==="
+```
+
+---
+
+
 ## RUN_ID 87 — 🧾 只读：自证 RUN_ID 86 是否已执行 + 把「卡在本地未推」的 outbox 记录冲出来
 
 > **背景**：86（救援 ZhuLong ops 中继）下发后，**结果已实现** —— 远端 `doc/ZhuLong_DAC2027/run/ops/.last_run_id` 从 `31` → **`32`**，`outbox` 出现 `## RUN_ID 32 · 2026-10-11 08:07:38 · host=hfeg0tedaap02 · exit=0`，即 **ZhuLong 中继在 08:07:38 复活并执行了 32**。
@@ -38,7 +82,7 @@
 > **本块**：只读自证 + 触发一次 `run_once`，让 86 的记录随之 flush 到远端。
 > **不要**在这里动任何服务。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 87 · flush & self-prove RUN_ID 86 · $(date '+%F %T') · host=$(hostname) ==="
 R="$PWD"; [ -d "$R/doc/BaiZe-ISEDA2027/run/ops" ] || R="$(git rev-parse --show-toplevel 2>/dev/null || echo /nas_train/app.e0031982/code/super_intelligence_2035)"
