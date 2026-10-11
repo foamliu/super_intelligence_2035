@@ -44,6 +44,19 @@
 > ⚠️ **`(九)`⓪ 先自查「中继执行了没有」**（`outbox.md` 有无 RUN_ID 32）——**中继近 11h 无活动、已判「疑似失联」**；若确实失联，`(九)`⓪ 授权你**自己照 `run/ops/inbox.md` 的 RUN_ID 32 块执行**（含重启中继），别干等。
 > ❌ `(八)` 已被 `(九)` 取代；`(七)/(六)/(四)/(三)` 已完成或作废 —— **勿重复**。
 
+### 🆕 运维指令 · 2026-10-11（十二）— ✅ **r5 收割后、进 C2 之前：先补跑 5 轮「真正的 full」（自探索开启）**· 用户直令 · 最高优先
+
+> **用户令（2026-10-11）**：「**在当前 full 的 r5 跑完后，在后续任务开始前，先跑 5 轮「真实」full（自探索开启）配置。**」
+> **为什么（已取证 RUN_ID 46/47/48）**：**r1 = `/tmp/ABL_full_r1.log`（10-10 15:32，旧配置）**；而 `e51372ff`（**10-10 16:33** t0002997「**使用未增强文档，无自探索**」）改了 `.env` → `API_INFO_MERGED_FILE=./docs/API_INFO_MERGED_V2.json`；**r2–r5 全在该改动之后** ⇒ 实跑的是 **V2 未增强 + 无自探索**，而 `set_ablation.py` 里 **`full` 的定义 = V3 增强文档**（= 自探索开）⇒ **C1 锚点混了两种配置**（这也解释 r1 88.0 vs r2–r5 ≈79）。
+
+**① 顺序（硬）**：`r5 收割 + 判定` → **【本批】`full_v3` 5 轮** → 之后才进 `C2.phi_k10`（不另等指令）。
+**② 配置切到「真 full」**：`python scripts/set_ablation.py full`（托管 `API_INFO_MERGED_FILE`→**V3** + 检索 3 件套 ON + `run_code` ON + 完整回读）⇒ **必须 `bash scripts/stop.sh && bash scripts/start.sh` 重启 MCP 才生效**。
+**③ 开跑前 5 项自检（缺一不可，**原文贴进心跳**）**：① `.env` 的 `API_INFO_MERGED_FILE` = **V3**（并 `ls -l docs/API_INFO_MERGED_V3.json` 存在）；② 4 端口 `8650/8651/8652/8654` **4/4 健康**；③ MCP 8090 在听 + 工具含 `search_apis`；④ **反作弊 hook 在位**（`~/.cline/hooks/PreToolUse` + 新 log「已部署沙盒 hook」+ `ACCESS RESTRICTED` >0）—— 🚫 **未部署不得开跑**；⑤ `df -BG /home` ≥8G。
+**④ 跑法与判据**：与 r2–r5 **逐字同口径**（`bash scripts/run_cline_script.sh -p 8 -n` · 端口 8650-8654 · log **`/tmp/ABL_full_v3_r{1..5}_8650set.log`**）· 每轮 code-gen 后 **re-grade 同口径**（`--benchmark benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl --lang pyAether`；auto-grade 有 benchmark bug）· 判据 **timeout ≤10 且 Pass@1 ≥75%** ⇒ 该轮有效。
+**⑤ 交付**：`full_v3` 的 **N=5 mean±std** + **三组对照表**（`r1` 旧时代 V3 / `full` 现配 V2 = r2–r5 / **`full_v3` 新 5 轮**）+ **是否复现 r1 的 ~88%** 的结论。🚫 **不删**旧 batch/log（证据）；提交前缀 `zhulong full_v3:`。
+
+---
+
 ### 🆕 运维指令 · 2026-10-11（十一）— 📊 **Deep dive：为什么 `full` r1=88.0%** + 中文 HTML 报告 + 「轨迹问题·按修复收益降序」表 · 用户直令 · 高优先
 
 > **用户令**：「那**为什么 r1 得 88.0%**？请 ZhuLong agent **深入分析**，写一个 **html 调研报告（中文）**，把这个事情**落实**。对于**检查交互轨迹过程中发现的问题**，最后**按照修复收益从大到小列出表格**。」
@@ -67,30 +80,9 @@
 
 ---
 
-### 🆕 运维指令 · 2026-10-11（十）— 🔎 **充分排查：C1「full」臂里的 RAG(9006) 到底有没有生效**（用户直令 · 最高优先）
-
-> **用户原话（2026-10-11 晚）**：「**ZhuLong 怎么 full 的结果跟 wo_retrieval 很接近，是不是 9006 的 RAG 服务没开**，你安排测一下。一个是测一下 9006 端口的 RAG，一个是看下**评测客户端有没有用**，然后看下**评测的交互轨迹 RAG 是否起作用**，充分排查一下。」
-
-**① 疑虑**：C1 `full` = r1 88.0 / r2 79.1 / r3 77.2 / r4 80.4（mean 81.2%）≈ `wo_retrieval` 81.0±4.5%，而 `rag` 71.8%、`pure_llm` 10.5% ⇒ 疑「full 的 retrieval 未生效」。
-
-**② ⚡ 运维已实测并定论（RUN_ID 41/43/44/45 · 2026-10-11 22:35）—— 🏁 本调查已收口，🚫 不必再找 bug**
-> ⓘ 最初两条怀疑**均已排除**：① 端口漂移（9006 与实际一致）；② `-n` = `EDA_MEMORY_INJECT_ENABLED=false`（**只关 Memory Bank 注入，不碰 RAG**）。
-- ✅ **9006 服务正常**：`/health` 200（`Octen-Embedding-4B` · `executor_ready:true` · collections 有数据）；**真实召回能返回内容**：`pyAether+aether` → `dbCreateRect` **5 条** / `hiGetCurrentWindow` **9 条**；`skill+virtuoso` → 3 / 6 条；服务端日志 `返回 3 条结果` 正常。⚠️ 仅 **`tcl+waveview` / `tcl+innovus` 两对返回 0 条**（后续做 tcl 线需查这两个 collection）。（ⓘ 运维先用中文 query 得 `hits=0` 属 query 不匹配；另 (lang,host) **必须成对**：`pyAether↔aether` · `skill↔virtuoso` · `tcl↔waveview` · `tcl↔innovus`。）
-- ✅ **评测侧大量在用检索**：每轮 `search_apis` **成功调用 ~1800 次**（r2 1775 / r3 1803 / r4 1807 / r5 916）；**漏 MCP 前缀失败仅 18–30 次/轮（~1%）**；轨迹 worker_1/2/3 各 **18 / 26 / 15** 个会话含 `search_apis`，**出现空结果仅 2 / 0 / 1** ⇒ **返回非空内容，不是空转**。
-- ✅ **臂定义已确认**（`scripts/set_ablation.py`）：`full` = 检索 3 件套 **ON** + `run_code` **ON** + V3 文档 + 完整回读；`wo_retrieval` = 检索 **OFF** + `run_code` **ON**（与 full **唯一差异 = 检索**）；`rag` = 检索 **ON** + `run_code` **OFF**（⇒ 它 71.8% 低**是因为没沙盒**，不是检索的锅）。
-- 🏁 **真实结论**：`full`(81.2%) vs `wo_retrieval`(81.0%) 的 **+0.2pp（≪σ）是「检索 3 件套边际贡献 ≈ 0」的真实（弱）结果，不是服务/工具 bug**。最合理机制：**`run_code` 沙盒让 agent 能自己试错探索 API ⇒ 显式检索冗余（功能重叠）**。
-- 🚫 **因此不要修任何东西**（不重启 / 不改 `.env` / 不碰 r5）。
-
-**③ 交付物** → `run/reports/RAG_AUDIT_2026-10-11.md`（新建）
-> ⚡ **注意**：(a)(b)(c) 的证据**运维已在上文 ②′/②″ 全部给全** ⇒ **你的任务 = ① 抽验复核（各 1 次即可，别重跑全套）② 把 (a)(b)(c)+②″ 收编成报告 ③ 重点写「**对 C1 表格/论文的措辞建议**」**：
-> - `full` vs `wo_retrieval` 差异落在**噪声内** ⇒ 论文 🚫 **不得**宣称「检索带来提升」；
-> - `rag`(71.8) vs `full`(81.2) **同时变了两件（检索 + 沙盒 run_code）** ⇒ **不是干净单变量消融**，表格注里必须说明；
-> - 建议措辞方向：「**在具备 `run_code` 沙盒自探索时，显式 API 检索（3 件套）的边际收益有限**」（并注明 tcl 两 collection 当前召回 0 条）。
-> - 可选后续（**只列建议、不启动**）：若要拆开检索/沙盒的耦合，可加一臂 `full` 但 `run_code` 回读降为 binary 等。
-
-
-**④ (a)(b)(c) 证据已由运维给全** ⇒ 你只需 ① 抽验复核（各 1 次）② 把结论落进报告：**9006 能召回 ✅ / `full` 确实在调用检索 ✅（~1800 次/轮；空结果仅 2/0/1）/ 对 C1 表格的影响 = 按 ③ 的措辞建议写**。
-**⑤ 红线**：🚫 r5 在跑 ⇒ **只读**（不 kill / 不改 `.env` / 不重启）；证据铁律「贴原始命令 + 原始输出」🚫 不许用「TCP 通」代替「能召回」；收尾更新 `MEMORY_ZHULONG.md` + `daily-memories/<date>.md` + commit+push。
+### 🆕 运维指令 · 2026-10-11（十）— 🔎 RAG(9006) 排查【🏁 **已收口**】· 报告已交：`run/reports/RAG_AUDIT_2026-10-11.md`
+> **结论（RUN_ID 41/43/44/45 实测）**：① **9006 正常且能召回**（`pyAether+aether` → `dbCreateRect` 5 条 / `hiGetCurrentWindow` 9 条；`skill+virtuoso` → 3/6 条，⚠️ 仅 `tcl+waveview`/`tcl+innovus` 两对 **0 条**）；② 评测**大量在用检索**（`search_apis` **~1800 次/轮成功调用**；漏 MCP 前缀失败仅 ~1%；轨迹空结果仅 2/0/1）；③ 臂定义：`full` = 检索 ON + `run_code` ON + **V3 文档**；`wo_retrieval` = 检索 OFF；`rag` = 检索 ON + **`run_code` OFF**。
+> ⇒ **`full`≈`wo_retrieval` 是真实弱结果**（机制：`run_code` 沙盒使显式检索冗余），**不是 bug**；但 ⚠️ **`rag` vs `full` 非单变量**（同时动了检索+沙盒）⇒ 表格注须说明，🚫 **不得**宣称「检索带来提升」。本块全程只读。
 
 ---
 
