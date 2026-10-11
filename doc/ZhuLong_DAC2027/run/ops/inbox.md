@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 33 -->
+<!-- RUN_ID: 34 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,6 +24,106 @@
 
 ---
 
+## RUN_ID 34 — 🚀 起跑 r2：确认/启动 MCP(eda_fastmcp) + 确认/重启 RAG recall `:9006` + 4 端口复检 → **用户授权带 4G 起跑**
+
+> **用户令（2026-10-11）**：「**授权带 4G 起跑**。先要启动 MCP，在 `eda_fastmcp` 下边 `bash scripts/start.sh`；**rag recall 服务在本机(36.15)的 9006 端口（如果未监听也需重启 `bash scripts/start_recalling_api.sh`）**。」
+> **已知事实（RUN_ID 33 查明）**：36.15 的 MCP **实际监听 `:18890`**（启动横幅「监听地址: 0.0.0.0:18890」），**已在运行**（3 个 `python main.py`）⇒ `start.sh` 的 `exit=1` 只是因为日志报 **「端口 18890 已被占用」**（**不是故障**）。`:8090` 是 `~/.cline/data/settings/` 里的旧口径，与 eval 侧（`CLI_DATA_DIR=/nasdata/…/.cline_prof4_eval/data`）无关。
+> **本块**：① `df` 记录（用户已授权放宽 `/home` 门槛）→ ② MCP：现状 + 按用户令**照跑一次 `start.sh`** 并解读（占用=已在跑）+ `:18890` HTTP 探活 → ③ RAG：`:9006` 若在监听则只探活；**未监听才** `bash scripts/start_recalling_api.sh` → ④ 4 端口复检（TCP + `run_code` 实跑）→ ⑤ **仅当 EVAL_ALIVE=0 且 4/4 健康**才起 C1.full r2（四 override + `log=/tmp/ABL_full_r2_8650set.log`）+ 核验（新 PID / 四 override / **hook 是否重新部署** / log 头尾）→ ⑥ 快照。**`/home` 门槛经用户授权放宽，其余硬闸不变。**
+
+```bash
+# ═══ RUN_ID 34 — ZhuLong：MCP 启动确认 + RAG :9006 + 4 端口复检 → 带 4G 起跑 C1.full r2 ═══
+echo "== RUN_ID 34 @ $(date '+%F %T') host=$(hostname) =="
+EDA=/nasdata/app.e0031982/code/eda_fastmcp
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+LOG=/tmp/ABL_full_r2_8650set.log
+PORTS="8650 8651 8652 8654"
+SHOST=10.129.32.75
+TS=$(date '+%Y%m%d_%H%M%S')
+
+echo
+echo "=========== 0. 磁盘（用户已授权带 4G 起跑，仅记录）==========="
+timeout 20 df -BG /home /nasdata /tmp 2>/dev/null | cut -c1-120
+
+echo
+echo "=========== 1. MCP(eda_fastmcp)：现状 + 按用户令跑 start.sh + :18890 探活 ==========="
+timeout 20 ss -lntp 2>/dev/null | grep -E ':(8090|18890)' | cut -c1-150 || echo "   ⚠️ :8090/:18890 均未监听"
+timeout 20 pgrep -af 'python main\.py' 2>/dev/null | grep -v cline | cut -c1-130 | head -4
+echo "   :18890 http_code=$(timeout 15 curl -s -m 8 -o /dev/null -w '%{http_code}' http://localhost:18890/ 2>/dev/null) （非 000 = HTTP 层在）"
+echo "-- 按用户令执行 bash scripts/start.sh（幂等；报『端口 18890 已被占用』= 服务已在跑，属正常）--"
+( cd "$EDA" && timeout 120 bash scripts/start.sh ) > "/tmp/eda_start_runid34.log" 2>&1; echo "   start.sh exit=$?"
+timeout 20 tail -12 "/tmp/eda_start_runid34.log" 2>/dev/null | cut -c1-180
+sleep 3
+echo "-- AFTER --"
+timeout 20 ss -lntp 2>/dev/null | grep -E ':(8090|18890)' | cut -c1-150 || echo "   ⚠️ 仍未监听"
+timeout 20 pgrep -af 'python main\.py' 2>/dev/null | grep -v cline | cut -c1-130 | head -4
+
+echo
+echo "=========== 2. RAG recall :9006（在监听则只探活；未监听才按用户令重启）==========="
+if timeout 20 ss -lntp 2>/dev/null | grep -q ':9006'; then
+  echo "   ✅ :9006 已在监听（无需重启）"
+  timeout 20 ss -lntp 2>/dev/null | grep ':9006' | cut -c1-150
+else
+  echo "   ⚠️ :9006 未监听 ⇒ 执行 bash scripts/start_recalling_api.sh"
+  echo "   脚本: $(timeout 20 ls -l "$EDA/scripts/start_recalling_api.sh" 2>&1 | cut -c1-140)"
+  ( cd "$EDA" && setsid bash scripts/start_recalling_api.sh > "/tmp/rag_recall_$TS.log" 2>&1 < /dev/null & )
+  sleep 10
+  timeout 20 ss -lntp 2>/dev/null | grep ':9006' | cut -c1-150 || echo "   ⚠️ 起来后仍未监听"
+  timeout 20 tail -12 "/tmp/rag_recall_$TS.log" 2>/dev/null | cut -c1-180
+fi
+echo "   recall 探活 http_code=$(timeout 20 curl -s -m 10 -o /dev/null -w '%{http_code}' http://localhost:9006/recall 2>/dev/null) （400/403/404/405 = 服务在；000 = 不通）"
+
+echo
+echo "=========== 3. 4 sandbox 端口复检（TCP + run_code 实跑）==========="
+OK=0
+for p in $PORTS; do
+  if timeout 5 bash -c "echo > /dev/tcp/$SHOST/$p" 2>/dev/null; then tcp=OK; else tcp=CLOSED; fi
+  body=$(timeout 40 curl -s -m 30 -X POST "http://$SHOST:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+  n=${#body}
+  if [ "$n" -gt 0 ]; then rc=OK; OK=$((OK+1)); else rc="FAIL(0byte)"; fi
+  echo "   port $p : TCP=$tcp run_code=$rc resp_len=$n | $(printf '%s' "$body" | cut -c1-80)"
+done
+echo "   ▶ 健康端口 = $OK / 4"
+EVAL_ALIVE=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)
+echo "   eval 在跑？ EVAL_ALIVE=$EVAL_ALIVE"
+
+echo
+echo "=========== 4. 起动 C1.full r2（硬闸：EVAL_ALIVE=0 且 4/4；/home 门槛经用户授权放宽）==========="
+if [ "$EVAL_ALIVE" -eq 0 ] && [ "$OK" -eq 4 ]; then
+  ( cd "$EDA"
+    export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+    export CLI_DATA_DIR=/nasdata/app.e0031982/.cline_prof4_eval/data
+    export PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python
+    export https_proxy=http://172.19.92.23:13128
+    setsid bash scripts/run_cline_script.sh -p 8 -n > "$LOG" 2>&1 < /dev/null &
+  )
+  echo "   已下发 setsid 起动，等 20s 核验 ..."
+  sleep 20
+  NEW=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | head -1)
+  echo "   新 eval PID=${NEW:-<none>}"
+  if [ -n "$NEW" ]; then
+    echo "   -- 四 override（/proc/$NEW/environ）--"
+    timeout 20 tr '\0' '\n' < /proc/$NEW/environ 2>/dev/null | grep -E '^(EVAL_FW_DIR|CLI_DATA_DIR|PYTHON|https_proxy)=' | cut -c1-170
+    echo "   -- 反作弊 hook 是否被本轮重新部署（删完必检）--"
+    timeout 20 ls -l ~/.cline/hooks/PreToolUse 2>&1 | cut -c1-140
+    timeout 20 ls -l /nasdata/app.e0031982/.cline_prof4_eval/data/hooks/ 2>&1 | cut -c1-140
+  fi
+  echo "   -- log 头 45 行 --"; timeout 20 head -45 "$LOG" 2>/dev/null | cut -c1-180
+  echo "   -- log 尾 10 行 --"; timeout 20 tail -10 "$LOG" 2>/dev/null | cut -c1-180
+else
+  echo "   ⛔ 未起动（EVAL_ALIVE=$EVAL_ALIVE，健康端口=$OK/4）"
+fi
+
+echo
+echo "=========== 5. 快照 ==========="
+timeout 20 df -BG /home 2>/dev/null | cut -c1-120
+timeout 20 grep -nE '^(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST|RAG_RECALL_URL)=' "$EDA/.env" 2>/dev/null | cut -c1-260
+echo "   last_run_id=$(cat "$W/doc/ZhuLong_DAC2027/run/ops/.last_run_id" 2>/dev/null)"
+echo
+echo "== DONE — RUN_ID 34（MCP 确认 + RAG 9006 + 4 端口复检 + 起 r2）=="
+```
+
+---
+
 ## RUN_ID 33 — 🩺 跟进：诊断 `eda_fastmcp` 启动失败 + sandbox 4 端口「TCP 通但 `run_code` 0 字节」+ **重启已死的 loop**
 
 > **为什么发这一块（RUN_ID 32 的结果）**：32 已于 **2026-10-11 08:07:38 执行（host=`hfeg0tedaap02`，exit=0）**，做到：停评测（`残留=0`）/ 删 hook（本就已不存在）/ `.env` 备份 + `stash` 回退 / 写回 `PROXY_PORTS=8650,8651,8652,8654` + `RAG_RECALL_URL=9006` / **`timeout:180` 精确回退 1 处**（`~/.cline/data/settings/...`，`removed=1`、JSON OK；`~/.cline_prof4_eval/` 目录**已不存在**）/ 实测 4 端口。**但环境仍不健康**：
@@ -33,7 +133,7 @@
 > - `/home` **100%（4G 可用）**。
 > **本块**：① 读上次 `start.sh` 日志找真因 → ② 幂等重试启动 + 复核 `:8090` → ③ sandbox 主机与 4 端口：`ping` + TCP + **长超时（60s）单口实跑** + HTTP 探活 → ④ **用正确 PATH+proxy 重启 loop**（配方同 BaiZe RUN_ID 85）→ ⑤ 快照。**不带病开跑 r2。**
 
-```bash
+```text
 # ═══ RUN_ID 33 — ZhuLong：诊断 MCP 启动失败 + sandbox 4 端口 0 字节 + 重启已死的 loop ═══
 echo "== RUN_ID 33 @ $(date '+%F %T') host=$(hostname) =="
 EDA=/nasdata/app.e0031982/code/eda_fastmcp
