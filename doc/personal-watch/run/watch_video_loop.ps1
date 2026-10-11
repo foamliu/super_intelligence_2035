@@ -25,7 +25,9 @@ param(
     [string]$Thinking = 'medium',      # none|low|medium|high|xhigh（空 = provider 默认）
     [switch]$Once,                     # 只跑一轮后退出（调试）
     [switch]$DryRun,                   # 不调用 cline（只走日志/心跳/git 同步；用于安全自检）
-    [int]$RetrySec = 600               # cline 失败后的重试等待（秒）
+    [int]$RetrySec = 600,              # 「启动类失败」后的重试等待（秒）
+    [int]$MaxRetry = 2,                # 「启动类失败」最多重试次数（0 = 关掉重试）
+    [int]$FastFailSec = 60             # 判定「启动类失败（秒退 ⇒ 几乎不耗 token）」的耗时上限
 )
 
 $ErrorActionPreference = 'Continue'
@@ -81,6 +83,24 @@ function Write-Log([string]$m) {
     Write-Host $line
 }
 function Touch-Hb() { try { Set-Content -LiteralPath $HbFile -Value (Get-Date -Format o) -Encoding UTF8 } catch {} }
+
+# ── 3.5) 本轮 token 用量（best-effort：从 cline session json 读 metadata.usage）──
+function Write-RoundUsage([datetime]$Since) {
+    try {
+        $sessRoot = Join-Path $ClineData 'sessions'
+        if (-not (Test-Path -LiteralPath $sessRoot)) { return }
+        $j = Get-ChildItem -LiteralPath $sessRoot -Recurse -Filter '*.json' -ErrorAction SilentlyContinue |
+             Where-Object { $_.Name -notlike '*.messages.json' -and $_.LastWriteTime -ge $Since } |
+             Sort-Object LastWriteTime -Descending | Select-Object -First 1
+        if (-not $j) { return }
+        $o = Get-Content -LiteralPath $j.FullName -Raw -Encoding UTF8 | ConvertFrom-Json
+        $u = $o.metadata.usage
+        if ($u) {
+            Write-Log ("  [usage] session={0} exit={1} in={2} out={3} cacheRead={4}" -f `
+                $o.session_id, $o.exit_code, $u.inputTokens, $u.outputTokens, $u.cacheReadTokens)
+        }
+    } catch { }
+}
 
 # ── 4) 单仓兜底 git 同步（pull --rebase --autostash → 只加指定文件 → commit → push）──
 function Sync-Repo {
@@ -177,6 +197,7 @@ while ($true) {
                 & $exe @argv 2>&1 | Tee-Object -FilePath $ClineOut | Out-Null
                 $clineRc = $LASTEXITCODE
                 Write-Log "[loop] cline returned (exit $clineRc); out=$ClineOut"
+                Write-RoundUsage -Since $roundStart
             } catch {
                 $clineRc = 1
                 Write-Log "[loop] cline threw: $($_.Exception.Message)"
@@ -197,16 +218,21 @@ while ($true) {
 
     if ($Once) { Write-Log "[loop] -Once -> exit"; break }
 
-    # ── 失败重试：cline 失败 ⇒ 短睡重试（最多 3 次），避免白等一整小时 ──
+    # ── 失败处理：**只对「启动类失败（秒退）」重试** —— 那类失败几乎不耗 token；
+    #    「运行类失败」（真跑了一阵子）**一律不自动重试**（实测单轮 ≈1.6M input tokens，重试=纯烧钱）。
     if ($clineRc -ne 0 -and -not $DryRun) {
-        $failStreak++
-        if ($failStreak -lt 3) {
-            Write-Log "[loop] cline FAILED (exit $clineRc) -> retry in ${RetrySec}s (consecutive=$failStreak)"
-            Start-Sleep -Seconds $RetrySec
-            Touch-Hb
-            continue
+        if ($dur -lt $FastFailSec) {
+            if ($failStreak -lt $MaxRetry) {
+                $failStreak++
+                Write-Log "[loop] 启动类失败（秒退 ${dur}s < ${FastFailSec}s, exit $clineRc）→ ${RetrySec}s 后重试 $failStreak/$MaxRetry（此类几乎不耗 token）"
+                Start-Sleep -Seconds $RetrySec
+                Touch-Hb
+                continue
+            }
+            Write-Log "[loop] 启动类失败已达重试上限 $MaxRetry → 退回整点节律；请查 $ClineOut 与 cline 日志"
+        } else {
+            Write-Log "[loop] ⚠️ 运行类失败（耗时 ${dur}s ≥ ${FastFailSec}s, exit $clineRc）→ **不自动重试**（防烧 token），退回整点节律"
         }
-        Write-Log "[loop] 连续失败 $failStreak 次 -> 退回整点节律（防烧 token），计数清零"
         $failStreak = 0
     } else {
         $failStreak = 0
