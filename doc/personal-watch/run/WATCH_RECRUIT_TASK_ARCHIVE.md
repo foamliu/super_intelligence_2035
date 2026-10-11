@@ -21,3 +21,18 @@
 > **优先级**：本批 = **本线当前 P0**。额度/时间紧张时，**先做「继承 + 状态汇报」**（①②），再谈对外推进（③）。
 > **首次唤醒必须做**：写 `MEMORY_RECRUIT.md` 状态头 + 进度快照 + 1 条流水；写当日 `daily-memories-recruit/<YYYY-MM-DD>.md`；`git add` 本线文件 → commit → push（见 §5）。
 > **完成后**：更新 `MEMORY_RECRUIT.md`（快照 + 流水）+ 当日 `daily-memories-recruit/<date>.md` 心跳；commit → push（只加本线文件）。
+
+---
+
+## 归档块 B · 运维指令「第 2 批」（2026-10-11 · 融入本仓）— 已执行完毕，2026-10-11 supervisor 归档
+
+> ⚠️ 原文照搬；其要点已由任务书运维指令区 **1 行指针** 概括。
+
+### 🆕 运维指令 · 2026-10-11（**【第 2 批 · P0】把 HR 记忆与能力「融入」本仓 —— 去掉本地目录依赖**）· ⭐ **每轮先读**
+
+> **用户原话（2026-10-11）**：「把 `C:\Users\liuyu\recruit` 中 agent 的**任务和记忆融入**观察哨 agent loop……**融入的意思是信息融进来，不要再依赖原目录** —— 观察哨在腾讯云执行，根本看不到这个目录。」
+> **已做（supervisor）**：把 HR agent 的 **37 个记忆/任务/能力文件**（`MEMORY.md` · `USER.md` · `AGENTS.md` · `DREAMS.md` · `README.md` · `memory/*` · `发送记录.md` · 话术 · 报告 · 候选表 · `screen.py`/`city_scan.py` 等脚本）**整体复制进仓内 `recruit/hr/`**；任务书 / loop / `MEMORY_RECRUIT.md` / `recruit/README.md` 里**所有 `$HR_DIR`、`C:\...` 引用已改为仓内相对路径**。
+> **生效**：**`recruit/hr/`（仓内）= 唯一权威**；**原 `C:\Users\liuyu\HR` 目录不再参与**（离线 / 不可达都能跑）。**§0.4⑧ 的「VM 读不到 `$HR_DIR`」缺口就此关闭**。
+> 📌 **历史块路径换算**：本区「第 1 批」及更早出现的 `$HR_DIR/xxx` **一律读作仓内 `recruit/hr/xxx`**（老块不改，仅在此换算）。
+> **铁律不变**：🚫 **原始 PII/凭据不进仓** —— `boss_candidates.*`（含 `securityId`）、`简历/*.pdf`、`boss_chat*.png`、cookie **均未复制进本仓**（**第 4 批起：这些 PII 落在 VM 本地 `~/hr_resumes/`，仓外、不进 git**）。对外动作闸门见 §3 + 第 3/4 批。
+> **回写改向**：记忆更新**写仓内 `recruit/hr/`**（`MEMORY.md` / `memory/<date>.md` / `DREAMS.md`），**不再回写 `C:\...`**。

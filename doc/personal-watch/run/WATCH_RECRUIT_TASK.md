@@ -13,14 +13,20 @@
 > 本节由 **supervisor** 通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停 / 授权对外动作**。
 > **agent 禁止修改本节**。本节为「无」时，按下方默认顺序（§1）自主推进。
 
-### 🆕 运维指令 · 2026-10-11（**【第 2 批 · P0】把 HR 记忆与能力「融入」本仓 —— 去掉本地目录依赖**）· ⭐ **每轮先读**
+### 📦 [已归档] 运维指令 · 2026-10-11（**第 2 批 · P0：把 HR 记忆与能力「融入」本仓 —— 去掉本地目录依赖**）· ✅ **已执行完毕（原文见 `WATCH_RECRUIT_TASK_ARCHIVE.md`「归档块 B」）**
 
-> **用户原话（2026-10-11）**：「把 `C:\Users\liuyu\recruit` 中 agent 的**任务和记忆融入**观察哨 agent loop……**融入的意思是信息融进来，不要再依赖原目录** —— 观察哨在腾讯云执行，根本看不到这个目录。」
-> **已做（supervisor）**：把 HR agent 的 **37 个记忆/任务/能力文件**（`MEMORY.md` · `USER.md` · `AGENTS.md` · `DREAMS.md` · `README.md` · `memory/*` · `发送记录.md` · 话术 · 报告 · 候选表 · `screen.py`/`city_scan.py` 等脚本）**整体复制进仓内 `recruit/hr/`**；任务书 / loop / `MEMORY_RECRUIT.md` / `recruit/README.md` 里**所有 `$HR_DIR`、`C:\...` 引用已改为仓内相对路径**。
-> **生效**：**`recruit/hr/`（仓内）= 唯一权威**；**原 `C:\Users\liuyu\HR` 目录不再参与**（离线 / 不可达都能跑）。**§0.4⑧ 的「VM 读不到 `$HR_DIR`」缺口就此关闭**。
-> 📌 **历史块路径换算**：本区「第 1 批」及更早出现的 `$HR_DIR/xxx` **一律读作仓内 `recruit/hr/xxx`**（老块不改，仅在此换算）。
-> **铁律不变**：🚫 **原始 PII/凭据不进仓** —— `boss_candidates.*`（含 `securityId`）、`简历/*.pdf`、`boss_chat*.png`、cookie **均未复制**（仍只在原 Windows 目录）。对外动作闸门（§3）不变。
-> **回写改向**：记忆更新**写仓内 `recruit/hr/`**（`MEMORY.md` / `memory/<date>.md` / `DREAMS.md`），**不再回写 `C:\...`**。
+> **执行结论**：`recruit/hr/`（仓内）= **唯一权威**；原 `C:\Users\liuyu\HR` **不再参与**（离线 / 不可达都能跑）—— **§0.4⑧「VM 读不到 `$HR_DIR`」缺口已关闭**（R3/R4 双重复核）。🚫 **仅原始 PII/凭据未进仓**（**第 4 批起落 VM 本地 `~/hr_resumes/`，仓外**）。📌 **历史块路径换算**：本区「第 1 批」及更早出现的 `$HR_DIR/xxx` **一律读作仓内 `recruit/hr/xxx`**。记忆回写**写仓内 `recruit/hr/`**，**不再回写 `C:\...`**。
+
+### 🆕 运维指令 · 2026-10-11（**【第 4 批】📥 简历落地 = VM 本地 + ✉️ 凑批邮件发 `paul.liu@cxmt.com`**）· ⭐ **最高优先**
+
+> **用户原话（2026-10-11）**：「**VM 上不留 PII 这条禁令删掉**，**当然可以先下载到虚机**，然后**凑一波，邮件发给 paul.liu@cxmt.com**。」
+> **① 🔓 解除禁令**：**原「铁律 14：VM 上不放 PII」作废** —— **简历 PDF / `securityId` 等 PII 允许落在 VM 本地工作区**（`~/hr_resumes/`）。
+> **② 📂 落地目录**：`~/hr_resumes/<Boss日期>/`（**VM 本地，不入 git**，仓库外）；该目录只由本线读写，**不得 `git add`**。
+> **③ ✅ 允许动作（免授权，接第 3 批）**：**下载附件简历**（用既有 `recruit/hr/*.js` / CDP 能力）→ 校验（PDF 可读、页数、字节数）→ 归入 `~/hr_resumes/<日期>/` → **按 §0.2 口径判定**。
+> **④ ✉️ 凑批外发**：**攒够一批**（建议 **≥5 份 或 每周五** 先到为准）→ 打包 `resumes_<Boss日期>.zip`（**单封 ≤ 20MB，超出分包**）→ **邮件发 `paul.liu@cxmt.com`**（**收件人固定 = 刘杨，不得加第三方**）。
+> **⑤ ⏳ 邮件通道待 supervisor 提供**：VM **无 MTA**（仅 `python3 smtplib` 可用）且**仓内无任何 SMTP 配置/凭据** —— **在凭据下发前**：**照常下载简历 + 凑批 + 记账**，**邮件步骤挂起并标 ⏳**；🚫 **不得自造 SMTP / 不得改投他人地址 / 不得外发到公网邮箱**。
+> **⑥ 仍不变（红线）**：🚫 **PDF 本体不进 git**（≥5MB 一律不 `git add`）；✅ **台账入 git** —— `recruit/hr/发送记录.md` 追加：**Boss 日期 / 候选人姓名 / 本地路径 / 字节数 / sha256 / 邮件批次号**；🚫 不群发 / 不发微信号 / 不发外部邮箱。
+> **⑦ 解除后的边界**：VM 仅 **2 vCPU/3.6G 且与 cline daemon 共驻** → **不跑重活**（不解析大 PDF、不 OCR、不做版面还原）；本线在 VM 上**只做搬运 + 校验 + 打包 + 发信**。
 
 ### 🆕 运维指令 · 2026-10-11（**【第 3 批】🔓 对外动作闸门开放**：澄清 / 索要简历 / 同意·拒绝 **免授权**；**约面仍永不碰**）· ⭐ **最高优先 · 覆盖第 1 批的闸门条款**
 
@@ -96,7 +102,8 @@
 
 **③ 数据边界（红线 · 与 HR `AGENTS.md §11` / `MEMORY.md §七` 一致）**
 
-- 🚫 **未复制进仓（仍只在原 Windows 目录）**：`boss_candidates.csv/.json`、`候选人筛选结果.csv`（含真实 **`securityId`**）、`简历/*.pdf`、`boss_chat*.png`、`简历.7z`、一切 cookie/凭据、playwright `profile/`。
+- 🚫 **未复制进仓**：`boss_candidates.csv/.json`、`候选人筛选结果.csv`（含真实 **`securityId`**）、`简历/*.pdf`、`boss_chat*.png`、`简历.7z`、一切 cookie/凭据、playwright `profile/`。
+- 📥 **第 4 批改向（覆盖上条"仍只在原 Windows 目录"）**：这些 PII **落到 VM 本地 `~/hr_resumes/`（仓库外）** —— **允许**；**原 `C:\Users\liuyu\HR` 仍不参与运行**（仓内 `recruit/hr/` 仍是记忆/能力唯一权威）。
 - 📦 **单文件 ≥ 5MB**（简历 PDF 常见）：🚫 不 `git add`（含本仓库任何位置，含 `recruit/hr/`）；只登记 路径/字节数/sha256（同 research 线铁律）。
 - ✅ **已在仓内（可读）**：上表 ①② 的记忆 / 任务 / 能力 / 候选表（**均无凭据**）。
 
@@ -318,13 +325,13 @@ doc/personal-watch/run/
 5. 🚫 **不碰约面控件**；**不新建 context 操作 Boss**（登录态只在默认 context）。
 6. 🚫 **不批量拉简历接口**（`/wapi/zpgeek/resume/...` 返回 `code 7`）。
 7. 🚫 **凭据/PII 不进任何可能被提交的文件**：cookie、`securityId`、身份证/手机号/邮箱、简历原文 —— 🚫 写进 `MEMORY_RECRUIT.md` / 产物 / git。
-8. 📦 **体积红线（同 research 线）**：**单文件 ≥ 5MB 一律不进 git**（简历 PDF 常见）；只登记 路径/字节数/sha256/存放位置；**数据本体在「原 Windows HR 目录 / 外部盘」，账在 git**。
+8. 📦 **体积红线（同 research 线）**：**单文件 ≥ 5MB 一律不进 git**（简历 PDF 常见）；只登记 路径/字节数/sha256/存放位置；**数据本体在 VM 本地 `~/hr_resumes/`（第 4 批：仓库外、允许 PII），账在 git**。
 9. 🚫 **不 `git add -A`**：只加本线文件（`run/MEMORY_RECRUIT.md`、`run/recruit`、`run/daily-memories-recruit`）—— 共享工作副本，会卷入他人在途文件。
 10. 🚫 **不在正文/快照/流水写以 `WAITING:` 开头的行**（会误触发 loop 长睡）。
 11. ✅ **可溯源**：每条结论能追到具体证据（Boss 会话 / 简历 / 台账行）。
 12. ⚠️ **时间以 Boss 页面时间为准**（本机时钟慢约 8 小时）；归档目录用 **Boss 日期**。
 13. 🚫 **环境红线（§0.4）**：VNC(`5901`) / CDP(`9222`) **只绑 `127.0.0.1`**，**一律走 SSH 隧道**；🚫 不开公网端口 / 不改绑定 / 不关防火墙；🚫 凭据（SSH/VNC 口令）**不进产物、不进报告 HTML**。
-14. 🚫 **VM 上不放 PII、不跑重活**：简历 PDF / `securityId` / cookie **不进 VM 的 git 工作副本**（记忆/能力已在仓内 `recruit/hr/`，**均为非 PII**）；VM 只做**浏览器执行**，**原始数据本体仍留「原 Windows HR 目录」**；该机仅 **2 vCPU/3.6 G 且与 cline daemon 共驻**。
+14. 📥 **VM 本地可放 PII（第 4 批已解除禁令），但不跑重活**：✅ **简历 PDF / `securityId` / cookie 允许落在 VM 本地工作区 `~/hr_resumes/`（**仓库外**）**；🚫 但**一律不进 git**（含 VM 的 git 工作副本）；VM 只做**浏览器执行 + 搬运 + 校验 + 打包 + 发信**，**不跑重活**（不解析大 PDF / 不 OCR）；该机仅 **2 vCPU/3.6 G 且与 cline daemon 共驻**。
 
 ---
 
