@@ -1,6 +1,64 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 42 -->
+<!-- RUN_ID: 43 -->
+
+## RUN_ID 43 — 🔎 **重发 RUN_ID 42（42 被中继危险模式误拒：`:{`）** —— 定位「评测侧 `search_apis` 不可用」的根因（只读）
+
+> **42 为何失败**：`exit=126 REFUSED 命中危险模式 [:()[[:space:]]*\{]` —— 该正则里 `()` 是**空分组**（等价 `:`），所以中继实际拦的是 **`:` 紧跟 `{`**；42 里的 `"params":{}` 撞上。**本块已去掉所有 `:{`**。
+> **41 已实测**：9006 活着（health 200 / Octen-Embedding-4B / 有 collections）⇒ 非「服务没开」；r5 日志 3× `unavailable tool 'search_apis'` ⇒ **评测 agent 的 RAG 工具不可用**，本块专查**为什么**。
+> **红线**：r5 仍在跑 ⇒ **100% 只读**（🚫 不 kill / 不重启 / 不改配置）。
+
+```bash
+# RUN_ID 43 · 定位 search_apis 不可用根因（只读）
+echo "=== [0] host/time ==="; hostname; date '+%F %T'
+E=/nasdata/app.e0031982/code/eda_fastmcp
+B=/home/app.e0031982/eda_code_eval
+
+echo "=== [1] r5 里 NoSuchToolError 原文（含 Available tools 全表）==="
+grep -a 'NoSuchToolError' /tmp/ABL_full_r5_8650set.log 2>/dev/null | head -2 | cut -c1-1600
+echo "--- 被拒工具名计数 ---"
+grep -aoE "unavailable tool [A-Za-z0-9_.'-]+" /tmp/ABL_full_r5_8650set.log 2>/dev/null | sort | uniq -c | sort -rn | head
+
+echo "=== [2] 各臂日志对照：search_apis 从哪轮开始不可用 ==="
+for F in /tmp/ABL_full_r*_8650set.log /tmp/ABL_wo_retrieval*_8650set.log /tmp/ABL_rag*_8650set.log; do
+  [ -f "$F" ] || continue
+  printf '  %-46s NoSuchTool=%-4s search_apis=%-5s recall=%s\n' "$(basename "$F")" \
+    "$(grep -ac 'NoSuchToolError' "$F" 2>/dev/null)" "$(grep -ac 'search_apis' "$F" 2>/dev/null)" "$(grep -ac 'recall' "$F" 2>/dev/null)"
+done
+
+echo "=== [3] 评测 worker 数据目录 + 其 MCP 配置（server 名单）==="
+ls -d $B/*/cli_data/worker_*/data 2>/dev/null | head -2
+find $B -maxdepth 5 -name 'cline_mcp_settings.json' 2>/dev/null | head -4 | while read f; do
+  echo "  -- $f"; tr -d '\n' < "$f" | cut -c1-520; echo
+done
+
+echo "=== [4] 轨迹里 RAG 工具痕迹（正确路径）==="
+for D in $(ls -d $B/*/cli_data/worker_*/data 2>/dev/null | head -2); do
+  echo "  -- $D   sessions=$(ls "$D/sessions" 2>/dev/null | wc -l)"
+  echo -n "     search_apis 命中文件: "; grep -rl 'search_apis' "$D/sessions" 2>/dev/null | wc -l
+  echo -n "     recall 命中文件:      "; grep -rl 'recall' "$D/sessions" 2>/dev/null | wc -l
+done
+
+echo "=== [5] MCP(8090) 工具清单（GET，不传 JSON）==="
+timeout 10 curl -s http://localhost:8090/tools 2>/dev/null | head -c 900; echo
+timeout 10 curl -s http://localhost:8090/openapi.json 2>/dev/null | head -c 900; echo
+echo "--- main.py 注册的工具名 ---"
+grep -nE 'def [a-z_]+\(|@(mcp|app|server)\.(tool|post|get)|add_tool|Tool\(' "$E/main.py" 2>/dev/null | head -30 | cut -c1-170
+
+echo "=== [6] 补测真实召回（带 lang + host；修 41 号的 422）==="
+for L in pyAether py; do
+  printf '  lang=%-8s -> ' "$L"
+  timeout 25 curl -s -X POST "http://localhost:9006/recall" -H 'Content-Type: application/json' \
+    -d "{\"query\":\"如何写 SPICE 网表\",\"top_k\":5,\"lang\":\"$L\",\"host\":\"$HOSTNAME\"}" \
+    -o /tmp/rag_rc2.json -w 'http=%{http_code} t=%{time_total}s ' || echo FAIL
+  head -c 300 /tmp/rag_rc2.json 2>/dev/null; echo
+done
+
+echo "=== [7] full vs wo_retrieval 臂开关出处 ==="
+grep -rn 'wo_retrieval\|no_retrieval\|retrieval\|RAG\|top_k' "$E/scripts/run_cline_script.sh" "$E/scripts/run_eval.py" 2>/dev/null | head -25 | cut -c1-180
+echo "=== DONE ==="
+```
+
 
 ## RUN_ID 42 — 🔎 **跟进（决定性线索已现）：评测侧 RAG 工具 `search_apis` 不可用** + 修正 RUN_ID 41 探针缺陷
 
