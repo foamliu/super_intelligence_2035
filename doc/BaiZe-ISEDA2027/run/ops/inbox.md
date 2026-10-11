@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 91 -->
+<!-- RUN_ID: 92 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,13 +31,56 @@
 
 ---
 
+## RUN_ID 92 — 🧹 **只读：`/tmp` 清理前核查**（按 mtime 分桶 + 属主 + 活跃占用，为「批准删除清单」定量）
+
+> **背景（RUN_ID 90/91 已定位）**：**IT 报警 13:30 `/tmp` >95%**；13:43 实测 **38G/41%**、13:48 **39G/42%** ⇒ **瞬时报满、随后退潮 ~55G**。
+> **头号大户 = `/tmp/claude-6218` = 27G**（harness 的 **claude-code 臂** 临时目录；**该臂正在跑**，PID 1440729 bun/claude-code）。
+> **本块只做"定量核查"**：算出**按 mtime 分桶**各能安全回收多少（区分"活跃会话"与"死物"），供运维批「删哪些」。
+> 🚫 **本块不删任何东西**；🚫 不停服务、不动 harness。
+
+```bash
+set -u
+echo "=== RUN_ID 92 · 只读：/tmp 清理前核查 · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- A) /tmp 当前 ---"
+df -BG /tmp 2>&1 | cut -c1-120
+timeout 45 du -hx --max-depth=1 /tmp 2>/dev/null | sort -rh | head -20 | cut -c1-140
+echo "--- B) /tmp/claude-6218（27G，头号） ---"
+ls -ld /tmp/claude-6218 2>&1 | cut -c1-160
+timeout 40 du -hx --max-depth=1 /tmp/claude-6218 2>/dev/null | sort -rh | head -20 | cut -c1-150
+printf '   文件总数 = '; timeout 40 find /tmp/claude-6218 -type f 2>/dev/null | wc -l
+for d in 1 3 7 30; do
+  printf '   mtime > %2sd : ' "$d"
+  timeout 30 find /tmp/claude-6218 -type f -mtime +$d -printf '%s\n' 2>/dev/null | awk '{n++; s+=$1} END{printf "%8d files  %8.2f GB\n", n, s/1073741824}'
+done
+printf '   ★ 最近 30 分钟仍在写（活跃会话，勿删）: '
+timeout 30 find /tmp/claude-6218 -type f -mmin -30 2>/dev/null | wc -l
+echo "   -- claude 进程 --"
+pgrep -af 'claude' 2>/dev/null | cut -c1-150 | head -6
+echo "--- C) 其它候选（大小 + 顶层 mtime） ---"
+for p in ov2_test dsh_sdk dsh_home test_env test_workdir sympy_latest sphinx_pkgs sphinx-repo django-upstream django-4.2 p5b_tok_work r3_tok_work mpl360_env torchinductor_app.e0031982; do
+  [ -e "/tmp/$p" ] || continue
+  printf '   %-34s' "$p"
+  timeout 10 du -shx "/tmp/$p" 2>/dev/null | awk '{printf "%-8s", $1}'
+  timeout 8 stat -c 'mtime=%y' "/tmp/$p" 2>/dev/null | cut -c1-30
+  echo
+done
+echo "--- D) /tmp 顶层条目 mtime（找最老死物） ---"
+timeout 30 find /tmp -maxdepth 1 -printf '%TY-%Tm-%Td %TH:%TM  %y  %p\n' 2>/dev/null | sort | head -30 | cut -c1-150
+echo "--- E) 非本人属主条目（无 sudo 看不到的部分） ---"
+timeout 20 find /tmp -maxdepth 1 -not -user "$(id -u)" -printf '%u\t%TY-%Tm-%Td\t%p\n' 2>/dev/null | head -15 | cut -c1-150
+echo "=== DONE 92 ==="
+```
+
+---
+
+
 ## RUN_ID 91 — 🚨 **只读：`/tmp` 深挖（IT 报 `/tmp` 已满 >95%，而 13:43 实测仅 41%）**
 
 > **矛盾点**：RUN_ID 89（**13:43:29**，3 分钟前）实测 `lv_tmp` = **98G / 38G used / 56G avail / 41%**，且 `du -shx /tmp` = **38G**（与 `df` 一致 ⇒ 无属主/权限漏计）。
 > ⇒ 三种可能必须一次查清：**① `/tmp` 在这几分钟内被跑爆**（找"活跃写手"）**② 隐藏占用**（已删除但被进程持有 → `df` 记、`du` 不记）**③ IT 看的是另一台机器 / 另一个挂载（含容器内 `/tmp`）**。
 > 🚫 不删任何东西、不停服务、不动 harness/pipeline。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 91 · 只读：/tmp 深挖 · $(date '+%F %T') · host=$(hostname) ==="
 echo "--- A) 全盘扫描：列出所有 >=85% 的挂载 ---"
