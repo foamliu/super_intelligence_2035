@@ -6,7 +6,7 @@ WAITING: 1
 
 > 🆕 **2026-10-10 晚（运维直令 · 最高优先）**：外部评审质疑 E1fair ProtB=62.34% 偏低 → 运维下发 ③→①→②→④ 顺序指令。**③ 口径修订**（✅ DONE）+ **① 同模型 zero-shot eval**（✅ DONE: E1fair 34.10%, E2fair 35.45%）+ **② k-NN probe 对照**（✅ DONE: k=20→37.68%）+ **变体实验 V2(Muon)→V3(全量数据)→V1(分辨率暂缓)**。
 > 🔴 **V2 Muon COLLAPSED at ALL tested LRs** (2026-10-11): lr=5e-4 collapsed@step2100, lr=1e-4 collapsed@step4200. ❌ **Muon incompatible with AIMv2-style contrastive+reconstruction objective**. Full analysis in `EXPERIMENTS_VISION.md §9.2`.
-> ✅ **V3 Full GPIC Data TRAINING COMPLETE** (02:06–12:44 Oct 11): 230,598 steps (1 epoch of 118.1M pairs), AdamW, final_loss=0.1201, steady_img/s=2706.4, total=38,273s (~10.6h). 22 checkpoints (10k–220k) + final vision.pt (509MB). **No collapse** — C1 stable 0.52-0.55 throughout, C4=OK all 747 PROBE points.
+> ✅ **V3 Full GPIC Data TRAINING COMPLETE** (02:06–12:44 Oct 11): 230,598 steps (1 epoch of 118.1M pairs), AdamW, final_loss=0.1201, steady_img/s=2706.4, total=38,273s (~10.6h). 23 checkpoints (10k–230k) + final vision.pt (509MB). **No collapse** — C1 stable 0.50–0.53 throughout, C2_gap +0.19~+0.20, C4=OK all 768 PROBE points. total_shards=11,350 (vs E1fair 10,787).
 > 🔄 **V3 EVAL RUNNING** (started 12:47 Oct 11): `v3_eval_watcher.sh` (PID 1928152) running ProtB(3 seeds)→ProtA→zero-shot→k-NN on V3 ckpt. GPU 0 only (~2.2GB). Eval log: `/tmp/scaling_v3_eval.log`. **⚠️ Duplicate eval from `run_scaling_experiment.sh` KILLED** (PIDs 3411640/368057/2740813 + screen 2740811 all terminated) — only watcher eval remains.
 > ✅ **post_v3_chain.sh** (PID 117389) waiting for watcher to print 'V3 WATCHER + EVAL COMPLETE' → will auto-run: ② ×5 probe+wd/LR sweep (~1h) → ④-2ep training (374,202 steps, ~10h) → ④-2ep eval (~3.5h). Full chain ETA: eval ~3.5h → ② ~1h → ④-2ep ~10h → eval ~3.5h ⇒ ④-2ep results ~Oct 12 ~07:00.
 > ✅ **④ epoch scaling pre-registered** in `EXPERIMENTS_VISION.md §9.4`: 2ep first, 4ep if 2ep≥70%.
@@ -19,7 +19,7 @@ WAITING: 1
 | WAITING | 1（🔄 V3 eval ProtB running. Chain: eval→② probe→④-2ep train→eval. Next wake: check /tmp/v3_eval_watcher.log for 'COMPLETE' + /tmp/scaling_v3_eval.log for results.） |
 | ERROR_COUNT | 13（①~⑫ 同前 ⑬ Duplicate V3 eval from run_scaling_experiment.sh — killed） |
 | BUDGET_USED | ~750 GPU·h (V3 ~106 GPU·h total, ④-2ep ~80 GPU·h queued) |
-| 更新 | **2026-10-11 13:02（V3 training COMPLETE + eval running + duplicate killed)**: V3 training done: step 230598/230598, final_loss=0.1201, steady_img/s=2706.4, 10.6h, no collapse. V3 eval started 12:47 by watcher (PID 1928152→3609742), ProtB 3 seeds running on GPU 0. **Killed duplicate eval** from run_scaling_experiment.sh (PIDs 3411640 ProtB, 368057 ProtA, 2740813 script, screen 2740811) — was competing for GPU 0. Only watcher eval remains. post_v3_chain (PID 117389) waiting for 'V3 WATCHER + EVAL COMPLETE'. E1fair ckpt confirmed exists for ② probe. 📦 体积：TASK=32.0KB / MEMORY=30.2KB（均≤32KB✅, 无需归档） |
+| 更新 | **2026-10-11 13:42（V3 training done + eval running + EXPERIMENTS updated)**: V3 training ✅ done (230,598 steps, loss=0.1201, C1=0.50–0.53, 768 PROBE points all OK, no collapse). V3 eval 🔄 running (ProtB 3-seed, PID 3609742, ~55 min elapsed, GPU 0 only). post_v3_chain.sh (PID 117389) waiting for eval complete → ② probe → ④-2ep train → eval. Updated EXPERIMENTS_VISION.md §9.3/§9.5/§9.4 to reflect V3 training completion. All automation alive and healthy. 📦 体积：TASK=32.0KB / MEMORY=28.3KB（均≤32KB✅, 无需归档） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
@@ -282,6 +282,8 @@ WAITING: 1
 > 📦 3 条 V3 巡检流水(10-11 09:22~11:49, step 72%~92%)已归档 → daily-memories-vision/2026-10-11.md。**结论**：V3 healthy throughout, no collapse, all watchers alive.
 
 - [13:02 Oct11] **V3 TRAINING COMPLETE + eval started + duplicate eval killed**: V3 training finished: step 230598/230598, final_loss=0.1201, steady_img/s=2706.4, total=38,273s (~10.6h), vision.pt saved (509MB). No collapse (C1 stable 0.52-0.55, C4=OK all 747 PROBE points). v3_eval_watcher (PID 1928152) detected completion at 12:47:33, started ProtB(3 seeds) on GPU 0 (PID 3609742). **⚠️ Killed DUPLICATE eval** from run_scaling_experiment.sh (PIDs 3411640 ProtB, 368057 ProtA, 2740813 script, screen 2740811) — was competing for GPU 0. Only watcher eval remains (GPU 0: 4331→2167 MiB). post_v3_chain (PID 117389) waiting for 'V3 WATCHER + EVAL COMPLETE' → ② probe → ④-2ep train → eval. 📦 TASK=32.0KB / MEMORY=30.2KB（均≤32KB✅）.
+
+- [13:42 Oct11] **V3 eval status check + EXPERIMENTS_VISION.md updated**: V3 eval still running (ProtB 3-seed, PID 3609742, ~55 min elapsed, GPU 0: 2167 MiB). Eval log `/tmp/scaling_v3_eval.log` has 35 lines, no results yet (ProtB still streaming 1.28M IN-1k train images × 90 epochs × 3 seeds). Verified V3 training health from train.log: C1=0.50–0.53, C2_gap=+0.19~+0.20, C4=OK at all **768** PROBE points (corrected from 747), 23 checkpoints (10k–230k). total_shards=11,350 (vs E1fair 10,787, +563 GPIC tars = full 8000 vs 7437). Updated EXPERIMENTS_VISION.md §9.3 (training status→COMPLETE), §9.5 (results table V3 row→eval running), §9.4 (④ status→V3 done, chain proceeding). All automation alive: v3_eval_watcher (PID 1928152), post_v3_chain (PID 117389). GPUs 1–7 free. 📦 体积：TASK=32.0KB / MEMORY=28.3KB（均≤32KB✅, 无需归档）.
 
 ## 历史条目已滚动归档（2026-10-03 / 2026-10-06）
 

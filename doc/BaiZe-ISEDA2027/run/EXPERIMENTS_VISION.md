@@ -935,7 +935,7 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 | Epoch count | 1 (same as baseline E1fair epoch count) |
 | Everything else | Identical to §9.0 baseline (lr=5e-4, warmup=2000, cosine, min_lr=5e-5, AdamW, seed 1234) |
 | Output dir | `scaling_V3_fulldata_ov2_w512_d30_p16_224` |
-| Status | 🔄 **Training launched 2026-10-11 02:06** (screen `v3_fulldata`), ETA ~13:30 Oct 11 |
+| Status | ✅ **Training COMPLETE** (2026-10-11 02:06–12:44, 230,598/230,598 steps, final_loss=0.1201, steady_img/s=2706.4, total=38,273s ~10.6h). 22 checkpoints (10k–230k) + final vision.pt (509MB). **No collapse** — C1 stable 0.50–0.53 throughout, C2_gap +0.19~+0.20, C4=OK at all 768 PROBE points. total_shards=11,350 (vs E1fair 10,787, +563 GPIC tars). |
 
 **⚠️ Disclosure**: This arm changes **both** data volume (+7.6% GPIC) **and** step count (+23.2%) relative to baseline. Conclusion = "**full-data recipe (data+steps combined) vs baseline**", NOT "pure data ablation".
 
@@ -953,7 +953,7 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 | E1fair (baseline) | 62.34 ± 0.01% | 49.70% | 34.10% | 37.68% | — | — |
 | V1 (res 336) | ⏸ deferred (user: "明天再说") | — | — | — | — | — |
 | V2 (Muon) | **N/A — COLLAPSED** (C1=0.9569@step4200) | N/A | N/A | N/A | N/A | ❌ Muon incompatible with contrastive loss |
-| V3 (full data) | 🔄 training (step ~106.5k/230k ~46%, ETA ~13:30 Oct 11, healthy C1=0.49) | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
+| V3 (full data) | 🔄 **eval running** (ProtB 3-seed in progress, started 12:47 Oct 11, PID 3609742). Training ✅ done: 230,598 steps, loss=0.1201, C1=0.50–0.53, no collapse. | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
 
 ### 9.4 ④ Epoch Scaling (operator instruction 2026-10-10 ④ · most decision-relevant)
 
