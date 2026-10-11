@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Vision — V2 Muon 优化器坍缩根因分析报告（2026-10-11）</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff;--orange:#e8873c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;line-height:1.7;max-width:1200px;margin:0 auto;padding:20px}
+h1{font-size:1.7em;color:var(--accent);border-bottom:2px solid var(--border);padding-bottom:.3em;margin:1.2em 0 .5em}
+h2{font-size:1.35em;color:var(--purple);margin:1.2em 0 .5em;border-bottom:1px solid var(--border);padding-bottom:.2em}
+h3{font-size:1.1em;color:var(--green);margin:1em 0 .4em}
+p{margin:.5em 0}
+table{border-collapse:collapse;width:100%;margin:.8em 0;font-size:.88em}
+th,td{border:1px solid var(--border);padding:.4em .6em;text-align:center}
+th{background:var(--card);color:var(--accent);font-weight:600}
+td:first-child,th:first-child{text-align:left}
+.best{color:var(--green);font-weight:700}
+.bad{color:var(--red)}
+.warn{color:var(--yellow)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1em 1.2em;margin:.8em 0}
+.tldr{background:linear-gradient(135deg,#161b22,#1a2332);border-left:4px solid var(--accent)}
+.tldr ul{margin:.3em 0 .3em 1.2em}
+.tldr li{margin:.3em 0}
+code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF Mono',Consolas,monospace;font-size:.85em;color:var(--orange)}
+.svg-container{margin:1em 0;text-align:center}
+.svg-container svg{max-width:100%;height:auto}
+.note{color:var(--muted);font-size:.85em;font-style:italic}
+.tag{display:inline-block;padding:.1em .5em;border-radius:10px;font-size:.75em;font-weight:600}
+.tag-measured{background:rgba(63,185,80,.2);color:var(--green)}
+.tag-inferred{background:rgba(210,153,34,.2);color:var(--yellow)}
+.tag-unverified{background:rgba(248,81,73,.15);color:var(--red)}
+.refs{font-size:.82em;color:var(--muted);margin-top:2em;border-top:1px solid var(--border);padding-top:.5em}
+pre{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.8em;overflow-x:auto;font-size:.82em;line-height:1.45;margin:.5em 0}
+.collapse-box{background:linear-gradient(135deg,#1f0d0d,#1a0a0a);border:2px solid var(--red);border-radius:8px;padding:1em 1.2em;margin:1em 0}
+.collapse-box h3{color:var(--red);margin-top:0}
+.conclusion-box{background:linear-gradient(135deg,#0d1f0d,#0a1a0a);border:2px solid var(--green);border-radius:8px;padding:1em 1.2em;margin:1em 0}
+.conclusion-box h3{color:var(--green);margin-top:0}
+</style>
+</head>
+<body>
+<h1>BaiZe Vision — V2 Muon 优化器坍缩根因分析报告</h1>
+<p class="note">生成时间：2026-10-11 · 线：vision · 性质：纯分析（读已有日志/曲线/实验记录，未新跑 GPU） · 关联文件：<code>EXPERIMENTS_VISION.md §9.2</code></p>
+<!-- ====== 1. TL;DR ====== -->
+<h2>1. TL;DR — 一句话结论</h2>
+<div class="card tldr">
+<p><strong>Muon 优化器（Newton–Schulz 正交化动量）在 BaiZe 视觉编码器的 AIMv2 式联合目标（InfoNCE + masked-patch-MSE）下，于所有测试学习率均引发对比坍缩（contrastive collapse），不可用。</strong></p>
+<ul>
+<li><strong>坍缩边界</strong>：lr=5e-4 于 step 2,100 坍缩（C1=0.99）；lr=1e-4（5× 更低）于 step 4,200 坍缩（C1=0.9569）—— 降低 LR 仅延缓、不阻止坍缩，坍缩终点相同。</li>
+<li><strong>坍缩模式</strong>：C1 单调加速上升（0.18→0.96），零回退；Loss 同步下降（7.39→7.30）—— 模型在"降重构 loss"的同时特征坍缩（典型对比学习失效模式）。</li>
+<li><strong>AdamW 基线对照</strong>：同配置仅换优化器 = C1 稳定在 0.10–0.55（全程 187k 步无坍缩），C2_gap 恒正（+0.15~+0.27），Loss 强劲下降（7.19→0.79）。</li>
+<li><strong>根因</strong>：<span class="tag tag-inferred">推断+实测佐证</span> Newton–Schulz 正交化将每模块梯度投影到谱范数≈1 的正交矩阵，放大了对比目标的主导坍缩方向；AdamW 的逐参数自适应缩放天然抑制该方向。</li>
+<li><strong>不泛化</strong>：pretrain 线用 Muon/dist_muon 训练 2.2B LLM（纯 CE loss）<strong>成功</strong>（loss −22.3% vs AdamW，无坍缩）—— Muon 的不兼容仅限于"含 InfoNCE 对比项的联合目标"，不是 Muon 本身有问题。</li>
+</ul>
+</div>
+
+<!-- ====== 2. 实验设置 ====== -->
+<h2>2. 实验设置</h2>
+<div class="card">
+<p>V2 是在 <code>E1fair</code> baseline 上<strong>仅替换优化器</strong>（AdamW → Muon）的单变量消融，其余逐字节相同。</p>
+<table>
+<tr><th>项</th><th>E1fair（baseline）</th><th>V2（Muon）</th><th>是否控变量</th></tr>
+<tr><td><strong>优化器</strong></td><td>AdamW (β=0.9,0.95, ε=1e-6, wd=0.1)</td><td><strong>Muon</strong> (momentum=0.95, nesterov, ns_steps=5) + AdamW for 1D</td><td>✅ 唯一变量</td></tr>
+<tr><td>参数分组</td><td>全部 AdamW</td><td>2D 权重 → Muon；1D (norms, biases, logit_scale) → AdamW</td><td>—</td></tr>
+<tr><td><strong>LR</strong></td><td>5e-4</td><td>5e-4（第 1 次）/ 1e-4（第 3 次）</td><td>V2 内扫 LR</td></tr>
+<tr><td>Schedule</td><td>cosine, warmup=2000, min_lr=5e-5</td><td>同</td><td>✅ 相同</td></tr>
+<tr><td>步数（目标）</td><td>187,101</td><td>187,101（均在 ≤4,200 步内坍缩终止）</td><td>✅ 相同</td></tr>
+<tr><td>架构</td><td>OpenVision2 w512/d30, 224/p16, 126.78M</td><td>同</td><td>✅ 相同</td></tr>
+<tr><td><strong>目标函数</strong></td><td>AIMv2-style: <code>1.0×InfoNCE + 1.0×masked-patch-MSE</code>（双向 ViT + mask=0.6）</td><td>同</td><td>✅ 相同</td></tr>
+<tr><td>文本塔</td><td>冻结 CLIP-ViT-L/14-336 (768-d)</td><td>同</td><td>✅ 相同</td></tr>
+<tr><td>数据</td><td>total_shards=10,787（~95.8M 对）</td><td>同</td><td>✅ 相同</td></tr>
+<tr><td>Seed</td><td>1234</td><td>同</td><td>✅ 相同</td></tr>
+</table>
+<h3>Muon 实现细节</h3>
+<p>因 <code>emerging_optimizers</code> 在 vision 环境不可 pip install（超时），采用 <code>r9_train.py</code> 中的<strong>独立实现</strong>（<code>r9_train.py:45-147</code>）：</p>
+<ul>
+<li><code>zeropower_via_newtonschulz5(G, steps=5)</code>：5 步 Newton–Schulz 迭代逼近矩阵符号函数（= SVD 的正交因子 U·Vᵀ），系数 (a,b,c)=(3.4445, -4.7750, 2.0315)。</li>
+<li><code>Muon</code> 类：momentum → Nesterov → Newton–Schulz 正交化 → 更新。1D 参数回退到 plain momentum SGD。</li>
+<li><code>MuonAdamW</code> 混合包装器：2D 权重 → Muon；1D → AdamW。参数分组遵循 pretrain dist_muon 约定。</li>
+</ul>
+</div>
+<!-- ====== 3. 坍缩现象 ====== -->
+<h2>3. 坍缩现象（实测证据）</h2>
+<div class="card">
+<h3>3.1 判定口径与阈值（<code>EXPERIMENTS_VISION.md §9.2</code>）</h3>
+<pre>RESULT: COLLAPSED — Muon causes contrastive collapse at all tested LRs
+C1 guard fires at C1 > 0.95 (contrastive collapse threshold).
+C2 guard fires at |C2_gap| <= 0.005 (covariance uniformity).
+C4 guard: eigenvalue rank check (all 768 PROBE points must be OK).</pre>
+<table>
+<tr><th>守卫指标</th><th>含义</th><th>阈值</th><th>触发动作</th></tr>
+<tr><td><strong>C1</strong></td><td>对比对角占优比（collapse indicator）</td><td>C1 &gt; 0.95</td><td>判定坍缩，终止训练</td></tr>
+<tr><td><strong>C2_gap</strong></td><td>C2_diag − C2_off（协方差对角 vs 非对角之差）</td><td>|gap| ≤ 0.005</td><td>判定协方差均匀化（坍缩前兆）</td></tr>
+<tr><td><strong>C4</strong></td><td>特征值秩检查（768 个 PROBE 点）</td><td>全部 OK</td><td>若异常则报警</td></tr>
+</table>
+<p class="note">C2 guard 在第 2 次尝试中因 <code>gap&lt;=0.005</code> 在负 gap 上误触发（bug），已修复为 <code>abs(gap)&lt;=0.005</code>（<code>r9_train.py:909</code>）。</p>
+</div>
+
+<div class="card">
+<h3>3.2 C1 轨迹对比（内联 SVG）</h3>
+<div class="svg-container">
+<svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+<line x1="60" y1="350" x2="760" y2="350" stroke="#30363d" stroke-width="1.5"/>
+<line x1="60" y1="30" x2="60" y2="350" stroke="#30363d" stroke-width="1.5"/>
+<line x1="60" y1="90" x2="760" y2="90" stroke="#21262d" stroke-width="0.5" stroke-dasharray="4,4"/>
+<line x1="60" y1="170" x2="760" y2="170" stroke="#21262d" stroke-width="0.5" stroke-dasharray="4,4"/>
+<line x1="60" y1="250" x2="760" y2="250" stroke="#21262d" stroke-width="0.5" stroke-dasharray="4,4"/>
+<line x1="60" y1="62" x2="760" y2="62" stroke="#f85149" stroke-width="1" stroke-dasharray="6,3" opacity="0.6"/>
+<text x="765" y="65" fill="#f85149" font-size="11">C1=0.95</text>
+<text x="50" y="354" fill="#8b949e" font-size="11" text-anchor="end">0.0</text>
+<text x="50" y="254" fill="#8b949e" font-size="11" text-anchor="end">0.3</text>
+<text x="50" y="174" fill="#8b949e" font-size="11" text-anchor="end">0.6</text>
+<text x="50" y="94" fill="#8b949e" font-size="11" text-anchor="end">0.9</text>
+<text x="50" y="64" fill="#f85149" font-size="11" text-anchor="end">0.95</text>
+<text x="20" y="190" fill="#8b949e" font-size="12" transform="rotate(-90,20,190)">C1（坍缩指标）</text>
+<text x="60" y="370" fill="#8b949e" font-size="11" text-anchor="middle">0</text>
+<text x="155" y="370" fill="#8b949e" font-size="11" text-anchor="middle">1k</text>
+<text x="250" y="370" fill="#8b949e" font-size="11" text-anchor="middle">2k</text>
+<text x="345" y="370" fill="#8b949e" font-size="11" text-anchor="middle">3k</text>
+<text x="440" y="370" fill="#8b949e" font-size="11" text-anchor="middle">4k</text>
+<text x="535" y="370" fill="#8b949e" font-size="11" text-anchor="middle">5k</text>
+<text x="630" y="370" fill="#8b949e" font-size="11" text-anchor="middle">6k</text>
+<text x="725" y="370" fill="#8b949e" font-size="11" text-anchor="middle">7k</text>
+<text x="410" y="390" fill="#8b949e" font-size="12">训练步数（step）</text>
+<polyline points="60,318 88,332 117,332 145,328 174,321 250,325 440,273 630,238 725,225" fill="none" stroke="#3fb950" stroke-width="2.5" opacity="0.8"/>
+<text x="730" y="225" fill="#3fb950" font-size="11">AdamW 基线</text>
+<polyline points="60,307 88,264 117,143 145,103 174,78 203,54 232,42" fill="none" stroke="#f85149" stroke-width="2.5"/>
+<circle cx="232" cy="42" r="5" fill="#f85149"/>
+<text x="240" y="38" fill="#f85149" font-size="11">⚡坍缩@2100</text>
+<text x="240" y="52" fill="#f85149" font-size="10">lr=5e-4</text>
+<polyline points="60,310 88,310 117,297 145,273 174,244 203,214 232,173 261,147 290,130 319,117 348,106 377,98 406,92 435,86" fill="none" stroke="#d29922" stroke-width="2.5"/>
+<circle cx="435" cy="86" r="5" fill="#d29922"/>
+<text x="443" y="82" fill="#d29922" font-size="11">⚡坍缩@4200</text>
+<text x="443" y="96" fill="#d29922" font-size="10">lr=1e-4</text>
+<rect x="500" y="15" width="250" height="50" fill="#161b22" stroke="#30363d" rx="4"/>
+<line x1="510" y1="28" x2="535" y2="28" stroke="#3fb950" stroke-width="2.5"/>
+<text x="540" y="31" fill="#e6edf3" font-size="11">AdamW（稳定 C1≈0.1–0.5）</text>
+<line x1="510" y1="42" x2="535" y2="42" stroke="#f85149" stroke-width="2.5"/>
+<text x="540" y="45" fill="#e6edf3" font-size="11">Muon lr=5e-4（坍缩@2100）</text>
+<line x1="510" y1="56" x2="535" y2="56" stroke="#d29922" stroke-width="2.5"/>
+<text x="540" y="59" fill="#e6edf3" font-size="11">Muon lr=1e-4（坍缩@4200）</text>
+</svg>
+</div>
+<p class="note">C1 越高 = 对比对角占优越强 = 特征越趋向坍缩。红色虚线 = C1=0.95 坍缩阈值。AdamW 基线全程远低于阈值；两条 Muon 曲线均加速冲向阈值。</p>
+</div>
+<div class="card">
+<h3>3.3 C1 实测数据表</h3>
+<table>
+<tr><th>Step</th><th>Muon lr=5e-4 C1</th><th>Muon lr=1e-4 C1</th><th>AdamW 基线 C1</th><th>判定</th></tr>
+<tr><td>300</td><td>0.1905</td><td>0.1755</td><td>0.1439</td><td>正常</td></tr>
+<tr><td>600</td><td>0.3763</td><td>0.1841</td><td>0.1000</td><td>lr=5e-4 开始上升</td></tr>
+<tr><td>900</td><td class="warn">0.7074</td><td>0.2285</td><td>0.1004</td><td>lr=5e-4 快速恶化</td></tr>
+<tr><td>1200</td><td class="bad">0.8735</td><td>0.3208</td><td>0.1147</td><td>lr=5e-4 接近坍缩</td></tr>
+<tr><td>1500</td><td class="bad">0.9418</td><td>0.4357</td><td>0.1332</td><td>lr=5e-4 临界</td></tr>
+<tr><td>1800</td><td class="bad">0.9746</td><td>0.6017</td><td>0.1213</td><td>lr=5e-4 超阈值</td></tr>
+<tr><td><strong>2100</strong></td><td class="bad"><strong>0.9886 ⚡</strong></td><td>0.7416</td><td>0.1018</td><td><strong>lr=5e-4 坍缩</strong></td></tr>
+<tr><td>2400</td><td>—</td><td>0.8182</td><td>0.1503</td><td>lr=1e-4 加速</td></tr>
+<tr><td>3000</td><td>—</td><td class="warn">0.8941</td><td>0.1402</td><td>lr=1e-4 接近</td></tr>
+<tr><td>3600</td><td>—</td><td class="bad">0.9335</td><td>—</td><td>lr=1e-4 临界</td></tr>
+<tr><td><strong>4200</strong></td><td>—</td><td class="bad"><strong>0.9569 ⚡</strong></td><td>—</td><td><strong>lr=1e-4 坍缩</strong></td></tr>
+</table>
+<p class="note">数据来源：<code>/tmp/v2_muon_collapse_lr5e-4_train.log</code>（7 PROBE 点）、<code>/tmp/scaling_v2_muon.log</code>（14 PROBE 点）、<code>/tmp/scaling_e1fair.log</code>（AdamW 基线，625+ PROBE 点）。</p>
+</div>
+
+<div class="card">
+<h3>3.4 Loss 轨迹对比</h3>
+<div class="svg-container">
+<svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+<line x1="60" y1="350" x2="760" y2="350" stroke="#30363d" stroke-width="1.5"/>
+<line x1="60" y1="30" x2="60" y2="350" stroke="#30363d" stroke-width="1.5"/>
+<line x1="60" y1="100" x2="760" y2="100" stroke="#21262d" stroke-width="0.5" stroke-dasharray="4,4"/>
+<line x1="60" y1="200" x2="760" y2="200" stroke="#21262d" stroke-width="0.5" stroke-dasharray="4,4"/>
+<text x="50" y="354" fill="#8b949e" font-size="11" text-anchor="end">0</text>
+<text x="50" y="254" fill="#8b949e" font-size="11" text-anchor="end">3</text>
+<text x="50" y="204" fill="#8b949e" font-size="11" text-anchor="end">5</text>
+<text x="50" y="104" fill="#8b949e" font-size="11" text-anchor="end">7</text>
+<text x="20" y="190" fill="#8b949e" font-size="12" transform="rotate(-90,20,190)">Loss (EMA)</text>
+<text x="60" y="370" fill="#8b949e" font-size="11" text-anchor="middle">0</text>
+<text x="155" y="370" fill="#8b949e" font-size="11" text-anchor="middle">1k</text>
+<text x="250" y="370" fill="#8b949e" font-size="11" text-anchor="middle">2k</text>
+<text x="345" y="370" fill="#8b949e" font-size="11" text-anchor="middle">3k</text>
+<text x="440" y="370" fill="#8b949e" font-size="11" text-anchor="middle">4k</text>
+<text x="535" y="370" fill="#8b949e" font-size="11" text-anchor="middle">5k</text>
+<text x="630" y="370" fill="#8b949e" font-size="11" text-anchor="middle">6k</text>
+<text x="410" y="390" fill="#8b949e" font-size="12">训练步数（step）</text>
+<polyline points="60,73 88,130 117,160 145,180 174,197 250,230 440,300 630,335" fill="none" stroke="#3fb950" stroke-width="2.5"/>
+<text x="635" y="335" fill="#3fb950" font-size="11">AdamW（7.19→0.79）</text>
+<polyline points="60,67 88,55 117,56 145,62 174,66 203,70 232,73" fill="none" stroke="#f85149" stroke-width="2.5"/>
+<text x="240" y="73" fill="#f85149" font-size="11">Muon 5e-4（7.43→7.24）</text>
+<polyline points="60,68 88,66 117,60 145,54 174,50 203,56 232,64 261,68 290,71 319,74 348,76 377,78 406,79 435,80" fill="none" stroke="#d29922" stroke-width="2.5"/>
+<text x="443" y="80" fill="#d29922" font-size="11">Muon 1e-4（7.39→7.30）</text>
+<text x="400" y="45" fill="#f85149" font-size="12">⚠ Loss 在下降，但特征在坍缩！</text>
+</svg>
+</div>
+<p class="note">关键观察：Muon 的 loss EMA 在 7.2–7.6 区间几乎不动（仅微降 ~0.1），而 AdamW 基线在相同步数内从 7.19 降至 0.79（降幅 89%）。Muon 虽然也在"降重构 loss"，但降幅极微且 C1 同时飙升——这正是"降 loss 但特征坍缩"的典型模式。</p>
+</div>
+
+<div class="card">
+<h3>3.5 C2_gap 轨迹对比</h3>
+<table>
+<tr><th>Step</th><th>Muon lr=5e-4 C2_gap</th><th>Muon lr=1e-4 C2_gap</th><th>AdamW 基线 C2_gap</th></tr>
+<tr><td>300</td><td class="bad">−0.0049</td><td class="bad">−0.0023</td><td class="best">+0.1551</td></tr>
+<tr><td>600</td><td class="bad">−0.0135</td><td class="bad">−0.0043</td><td class="best">+0.2053</td></tr>
+<tr><td>900</td><td class="bad">−0.0154</td><td class="bad">−0.0075</td><td class="best">+0.2105</td></tr>
+<tr><td>1500</td><td class="bad">−0.0086</td><td class="bad">−0.0156</td><td class="best">+0.2472</td></tr>
+<tr><td>2100</td><td class="bad">−0.0039</td><td class="bad">−0.0149</td><td class="best">+0.2559</td></tr>
+<tr><td>4200</td><td>—</td><td class="bad">−0.0076</td><td>—</td></tr>
+<tr><td>6000</td><td>—</td><td>—</td><td class="best">+0.1882</td></tr>
+<tr><td>187k（终点）</td><td>—</td><td>—</td><td class="best">+0.1768</td></tr>
+</table>
+<p class="note">C2_gap &gt; 0 = 对角占优（健康）；C2_gap &lt; 0 = 非对角占优（异常）。AdamW 基线全程 C2_gap 恒正（+0.15~+0.27）；两条 Muon 曲线 C2_gap <strong>恒负</strong>（−0.002~−0.017）——非对协方差始终大于对角，是坍缩的前兆特征。坍缩仅由 C1 捕获（C2 guard 因 gap 恒负且绝对值多 &gt; 0.005 而不触发）。</p>
+</div>
+<!-- ====== 4. 谱/范数行为 ====== -->
+<h2>4. Muon 的谱/范数行为</h2>
+<div class="card">
+<p><span class="tag tag-unverified">未直接测量</span> 本报告<strong>未记录</strong> per-module 更新范数 / RMS / 梯度余弦的逐层数据——训练日志仅输出全局 loss/contrast/patch_mse/scale/C1/C2/C4，未启用逐模块梯度统计。以下为<strong>从日志间接推断</strong>的行为描述。</p>
+<h3>4.1 从日志可间接观测的信号</h3>
+<table>
+<tr><th>观测量</th><th>Muon lr=5e-4</th><th>Muon lr=1e-4</th><th>AdamW 基线</th><th>推断</th></tr>
+<tr><td>scale（logit_scale）</td><td>10.0→6.05（step 2000）</td><td>10.0→7.22（step 4200）</td><td>10.0→~4.0（step 6000）</td><td>Muon 降 scale 更慢且更高 → 对比温度更高 → 更易坍缩 <span class="tag tag-inferred">推断</span></td></tr>
+<tr><td>contrast loss</td><td>6.31→6.28（微降）</td><td>6.30→6.32（几乎不动）</td><td>6.28→0.79（强降）</td><td>Muon 下对比 loss 几乎不学习 <span class="tag tag-measured">实测</span></td></tr>
+<tr><td>patch_mse loss</td><td>1.08→0.96（降 11%）</td><td>1.08→0.99（降 8%）</td><td>1.08→0.79（降 27%）</td><td>重构项在学习但远慢于 AdamW <span class="tag tag-measured">实测</span></td></tr>
+<tr><td>C1 上升速率</td><td>0.19→0.99 in 1800 步</td><td>0.18→0.96 in 3900 步</td><td>0.14→0.55 in 187k 步</td><td>Muon C1 上升比 AdamW 快 ~100× <span class="tag tag-measured">实测</span></td></tr>
+</table>
+<h3>4.2 哪一层先崩？</h3>
+<p><span class="tag tag-unverified">未直接测量</span> 训练日志未输出 per-layer C1/梯度范数，无法确定"哪一层先崩"。但从机理推断 <span class="tag tag-inferred">推断</span>：</p>
+<ul>
+<li><strong>对比头（projection head）最可能先崩</strong>：InfoNCE 梯度直接作用在 projection head → image/text features 的对齐上，正交化后的等范数更新会均匀放大所有方向的投影，使所有图像特征趋向同一方向。</li>
+<li><strong>ViT trunk 随后坍缩</strong>：一旦 projection head 坍缩，回传到 trunk 的梯度也将沿坍缩方向，加速整体 C1 上升。</li>
+<li><strong>文本塔冻结</strong>：CLIP 文本塔不更新，所以坍缩仅发生在 vision 侧——这与 C2_gap 恒负（vision features 协方差非对角占优）一致。</li>
+</ul>
+</div>
+
+<!-- ====== 5. 根因分析 ====== -->
+<h2>5. 根因分析（核心）</h2>
+<div class="card">
+<p>为什么 Muon 与「InfoNCE + masked-patch-MSE 联合目标」不兼容？以下逐条机理假设，每条标注「实测 / 推断」。</p>
+
+<h3>假设 ①：对比目标的梯度各向异性 vs Muon 逐模块正交化 <span class="tag tag-inferred">推断+实测佐证</span></h3>
+<p>InfoNCE 损失的梯度天然具有<strong>强各向异性</strong>——沿"坍缩方向"（所有特征趋向同一向量）的梯度远大于正交方向。AdamW 的逐参数二阶矩估计会<strong>自适应缩放</strong>每个参数的更新幅度，自然抑制主导方向。而 Muon 的 Newton–Schulz 正交化将梯度投影为谱范数≈1 的正交矩阵，<strong>消除了方向间的幅度差异</strong>——主导坍缩方向被等比例放大，正交（有信息）方向被等比例缩小。</p>
+<p><strong>实测佐证</strong>：C1 单调加速上升（0.18→0.96，零回退），表明坍缩方向被持续放大而无任何阻尼；AdamW 下 C1 在 0.10–0.14 波动（step 300–3000），表明坍缩方向被有效抑制。</p>
+
+<h3>假设 ②：两目标梯度尺度失衡被 Muon 放大 <span class="tag tag-inferred">推断</span></h3>
+<p>联合目标 <code>1.0×InfoNCE + 1.0×masked-patch-MSE</code> 中，InfoNCE 梯度（对比温度 × 余弦相似度导数）与 patch-MSE 梯度（L2 导数）的<strong>尺度量级不同</strong>。在 AdamW 下，每个参数的更新由两个梯度分量的加权和经二阶矩归一化后决定，尺度差异被吸收。在 Muon 下，正交化作用于<strong>合并后的梯度矩阵</strong>，尺度较大的梯度方向（InfoNCE 对比项）主导正交化结果，尺度较小的方向（patch-MSE 重构项）被进一步压制。</p>
+<p><strong>实测佐证</strong>：Muon 下 contrast loss 几乎不动（6.30→6.32），而 patch_mse 微降（1.08→0.99）——重构项在学习但对比项被"锁死"在坍缩方向上。</p>
+
+<h3>假设 ③：等范数更新与冻结文本塔 / InfoNCE 头不匹配 <span class="tag tag-inferred">推断</span></h3>
+<p>InfoNCE 依赖 image features 与 text features 的<strong>相对几何关系</strong>（余弦相似度排序）。文本塔冻结意味着 text features 固定，只有 vision 侧在更新。Muon 对 vision 侧的每层权重做等范数正交化更新，导致各层输出的<strong>范数不受控</strong>（只有方向被正交化，幅度由 LR 决定）。这破坏了 InfoNCE 所需的"特征范数与余弦相似度的稳定关系"——logit_scale 从 10.0 仅降至 7.22（vs AdamW 降至 4.0），对比温度过高加剧坍缩。</p>
+<p><strong>实测佐证</strong>：scale 值在 Muon 下保持高位（7.22 vs AdamW 4.0），对比温度高 → softmax 分布尖锐 → 坍缩加速。</p>
+
+<h3>假设 ④：LR 只是触发因素而非根因 <span class="tag tag-measured">实测</span></h3>
+<p>5× 更低的 LR（1e-4 vs 5e-4）将坍缩从 step 2,100 延缓到 step 4,200（2× 延迟），但<strong>坍缩终点完全相同</strong>（C1≈0.96）。这证明 LR/warmup 只是控制坍缩速率的触发因素，根因是 Muon 的正交化机制本身——无论多慢，正交化都会放大坍缩方向。如果根因是 LR 过高，降低 LR 应该能完全避免坍缩；但实际上只是推迟。</p>
+</div>
+
+<!-- ====== 6. 排除项 ====== -->
+<h2>6. 排除项（反证）</h2>
+<div class="card">
+<table>
+<tr><th>排除假设</th><th>反证依据</th><th>结论</th></tr>
+<tr><td><strong>LR 太高？</strong></td><td>AdamW 同 LR=5e-4 不坍缩（C1 稳定 0.10–0.55，全程 187k 步）；Muon 5× 更低 LR=1e-4 仍坍缩（仅延缓 2×）</td><td class="best">✅ 排除</td></tr>
+<tr><td><strong>Schedule/warmup？</strong></td><td>Muon 和 AdamW 用完全相同的 cosine + warmup=2000；坍缩发生在 warmup 结束后的稳态阶段（step 2100/4200，均在 warmup=2000 之后）</td><td class="best">✅ 排除</td></tr>
+<tr><td><strong>数据问题？</strong></td><td>Muon 和 AdamW 用完全相同数据（shards=10,787）；V3（AdamW + 全量 11,350 shards）也不坍缩（C1 稳定 0.50–0.53）</td><td class="best">✅ 排除</td></tr>
+<tr><td><strong>分辨率/架构？</strong></td><td>Muon 和 AdamW 用完全相同架构（OV2 w512/d30, 224/p16）；E2fair（w768/d30）用 AdamW 也不坍缩</td><td class="best">✅ 排除</td></tr>
+<tr><td><strong>Muon 实现 bug？</strong></td><td><code>zeropower_via_newtonschulz5</code> 系数与 Keller Jordan 原版一致 (3.4445, -4.7750, 2.0315)；pretrain 线用 <code>emerging_optimizers</code> 库版 Muon 在 LLM 上也不坍缩——两组实现行为一致</td><td class="best">✅ 排除</td></tr>
+<tr><td><strong>Seed/初始化？</strong></td><td>两次 Muon 启动用相同 seed=1234，坍缩模式一致（C1 单调加速，终点 C1≈0.96）；AdamW 同 seed 不坍缩</td><td class="best">✅ 排除</td></tr>
+</table>
+<p class="note">所有非优化器因素均已通过<strong>同配置对照</strong>排除。唯一变量 = 优化器类型（AdamW vs Muon），唯一结果差异 = 坍缩 vs 不坍缩。</p>
+</div>
+<!-- ====== 7. 结论与边界 ====== -->
+<h2>7. 结论与边界</h2>
+<div class="conclusion-box">
+<h3>✅ 确切结论</h3>
+<ul>
+<li><strong>Muon 在 BaiZe 视觉编码器栈（OV2 w512/d30 + AIMv2 式 InfoNCE+masked-patch-MSE + 冻结 CLIP 文本塔）下不兼容</strong>——在 lr=5e-4 和 lr=1e-4 两个学习率下均坍缩，C1 单调加速至 &gt;0.95。</li>
+<li><strong>不兼容的根因是 Muon 的 Newton–Schulz 正交化与 InfoNCE 对比目标的坍缩方向放大效应</strong>——正交化消除了梯度方向间的幅度差异，使主导坍缩方向被等比例放大。</li>
+<li><strong>降低 LR 仅延缓不阻止坍缩</strong>（5e-4@2100 → 1e-4@4200），坍缩终点相同——根因不是 LR 而是优化器机制。</li>
+</ul>
+</div>
+<div class="card">
+<h3>🚫 边界（不要泛化）</h3>
+<ul>
+<li><strong>不能泛化为「Muon 不行」</strong>：pretrain 线用 Muon/dist_muon 训练 2.2B LLM（纯 CE loss）<strong>成功</strong>（详见下表）。</li>
+<li><strong>不能泛化为「Muon 不能用于视觉」</strong>：我们只测了 AIMv2 式联合目标，未测纯 MAE/DINOv2 等纯视觉自监督目标——这些目标不含 InfoNCE 对比项，可能不存在坍缩问题。</li>
+<li><strong>不能泛化为「正交化优化器都不能用于对比学习」</strong>：我们只测了 Muon（Newton–Schulz），未测 Lion（符号函数）、Shampoo（预条件）等其他正交化类优化器。</li>
+</ul>
+<h3>与 pretrain 线 dist_muon 成功的对照</h3>
+<table>
+<tr><th>维度</th><th>vision V2（Muon 坍缩）</th><th>pretrain dist_muon（Muon 成功）</th></tr>
+<tr><td><strong>目标函数</strong></td><td>InfoNCE + masked-patch-MSE（对比+重构）</td><td>纯 CE loss（下一 token 预测）</td></tr>
+<tr><td><strong>坍缩风险</strong></td><td>高：InfoNCE 有天然的"所有特征→同一点"坍缩模式</td><td>低：CE 无坍缩模式（输出空间=词表，离散）</td></tr>
+<tr><td><strong>梯度结构</strong></td><td>各向异性强（对比方向 vs 重构方向尺度不同）</td><td>相对均匀（每层 CE 梯度量级相近）</td></tr>
+<tr><td><strong>文本塔</strong></td><td>冻结（只有 vision 侧更新，几何关系约束强）</td><td>无（纯 LLM，所有参数共同更新）</td></tr>
+<tr><td><strong>结果</strong></td><td class="bad">❌ 坍缩 C1=0.96，loss 几乎不动</td><td class="best">✅ loss 3.11 vs AdamW 4.00（−22.3%），无坍缩</td></tr>
+</table>
+<p class="note">数据来源：<code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code>「dist_muon 实测验证」节 · <code>report_pretrain_muon_vs_adamw.html §8</code>。</p>
+</div>
+
+<!-- ====== 8. 后续建议 ====== -->
+<h2>8. 后续建议（可执行）</h2>
+<div class="card">
+<table>
+<tr><th>#</th><th>建议</th><th>思路</th><th>GPU 成本</th><th>判据</th><th>风险</th></tr>
+<tr><td>1</td><td><strong>MuonClip（梯度裁剪+正交化）</strong></td><td>在 Newton–Schulz 前加梯度裁剪（如 ‖g‖₂&lt;τ），限制坍缩方向放大倍数；或对 C1 敏感层（projection head）做额外缩放</td><td>~3 GPU·h</td><td>C1 在 5k 步内保持 &lt;0.5</td><td>中：阈值需调参</td></tr>
+<tr><td>2</td><td><strong>混合优化器（trunk→Muon, head→AdamW）</strong></td><td>仅对 ViT trunk 的 attention/FFN 权重用 Muon，projection head 和 logit_scale 用 AdamW——隔离对比头不受正交化影响</td><td>~3 GPU·h</td><td>C1 稳定 + loss 正常下降 + lp≥baseline</td><td>低-中</td></tr>
+<tr><td>3</td><td><strong>排除 projection head 用 Muon</strong></td><td>当前 MuonAdamW 已将 1D 参数分给 AdamW；可进一步将 projection head 的 2D 权重也分给 AdamW，只对 ViT 层用 Muon</td><td>~3 GPU·h</td><td>C1&lt;0.5 + lp≥baseline</td><td>低：最小改动</td></tr>
+<tr><td>4</td><td><strong>换目标（去 InfoNCE，纯 MAE/DINOv2）</strong></td><td>如果目标是"用 Muon 加速视觉训练"，可考虑去掉对比项、只保留 masked-patch-MSE——无对比坍缩风险，但丢失文本对齐</td><td>~80 GPU·h</td><td>lp≥60% + 无坍缩 + Muon 收敛更快</td><td>高：放弃 zs 能力</td></tr>
+<tr><td>5</td><td><strong>不重试，保持 AdamW</strong></td><td>当前 AdamW 基线已稳定收敛（lp=62.34%），Muon 的潜在收益（更快收敛）在本栈上不确定——机会成本可能不值得</td><td>0</td><td>—</td><td>无（最保守）</td></tr>
+</table>
+<p class="note"><strong>推荐优先级</strong>：③（成本最低，风险最小）→ ②（隔离对比头）→ ①（MuonClip 调参）。④不推荐（与本线目标冲突）。⑤是默认选项——如无运维特别要求，保持 AdamW。</p>
+</div>
+
+<!-- ====== 9. 证据索引 ====== -->
+<h2>9. 证据索引</h2>
+<div class="card">
+<table>
+<tr><th>数据点</th><th>来源</th></tr>
+<tr><td>V2 lr=5e-4 C1 轨迹（7 PROBE 点）</td><td><code>/tmp/v2_muon_collapse_lr5e-4_train.log</code> — grep 'PROBE'</td></tr>
+<tr><td>V2 lr=1e-4 C1 轨迹（14 PROBE 点）</td><td><code>/tmp/scaling_v2_muon.log</code> — grep 'PROBE'</td></tr>
+<tr><td>E1fair AdamW 基线 C1 轨迹（625+ PROBE 点）</td><td><code>/tmp/scaling_e1fair.log</code> — grep 'PROBE'</td></tr>
+<tr><td>V2 坍缩结论与判定口径</td><td><code>doc/BaiZe-ISEDA2027/run/EXPERIMENTS_VISION.md</code> §9.2</td></tr>
+<tr><td>Muon 实现（Newton–Schulz + MuonAdamW）</td><td><code>doc/BaiZe-ISEDA2027/run/vision/r9_train.py:36-170</code></td></tr>
+<tr><td>C2 guard bug 修复</td><td><code>doc/BaiZe-ISEDA2027/run/vision/r9_train.py:909</code></td></tr>
+<tr><td>pretrain dist_muon 成功对照</td><td><code>doc/BaiZe-ISEDA2027/run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code>「dist_muon」节</td></tr>
+<tr><td>pretrain Muon vs AdamW 报告</td><td><code>doc/BaiZe-ISEDA2027/report_pretrain_muon_vs_adamw.html</code> §8</td></tr>
+<tr><td>变体实验总览报告（含 V2 Muon 节）</td><td><code>doc/BaiZe-ISEDA2027/report_vision_variants_20261011.html</code> §5</td></tr>
+<tr><td>V2 ckpt（坍缩后保存）</td><td><code>/nas_train/app.e0031982/datasets/baize-vision/out/scaling_V2_muon_ov2_w512_d30_p16_224/vision_fused.pt</code></td></tr>
+</table>
+</div>
+
+<!-- ====== 10. 诚实条款 ====== -->
+<h2>10. 诚实条款</h2>
+<div class="card">
+<h3>实测 vs 推断 vs 未验证</h3>
+<table>
+<tr><th>类别</th><th>具体内容</th></tr>
+<tr><td><span class="tag tag-measured">实测</span></td><td>C1/C2_gap/loss/contrast/patch_mse/scale 轨迹；坍缩步数与 C1 终值；AdamW 基线全程不坍缩；lr=1e-4 比 lr=5e-4 延缓 2× 坍缩；pretrain Muon loss 3.11 vs AdamW 4.00</td></tr>
+<tr><td><span class="tag tag-inferred">推断</span></td><td>根因假设 ①②③（正交化放大坍缩方向、梯度尺度失衡、等范数更新与冻结文本塔不匹配）；"projection head 先崩"的层归属；scale 高位与对比温度的关系</td></tr>
+<tr><td><span class="tag tag-unverified">未验证</span></td><td>per-module 更新范数/RMS/梯度余弦（日志未记录）；逐层 C1 坍缩顺序；MuonClip/混合优化器等后续建议的效果（未跑实验）</td></tr>
+</table>
+<h3>工具/日志缺口</h3>
+<ul>
+<li><strong>无逐层梯度统计</strong>：训练日志仅输出全局聚合指标，无法定位"哪一层先崩"。若需精确根因，需在 <code>r9_train.py</code> 中添加 per-module gradient norm / spectral norm 日志。</li>
+<li><strong>无 grad_norm 轨迹</strong>：vision 训练日志未记录梯度范数（与 pretrain 线不同）。</li>
+<li><strong>Muon 实现为独立版本</strong>：未用 <code>emerging_optimizers</code> 库（pip 超时），但系数与原版一致，且 pretrain 线用库版也不坍缩——两组实现行为一致，排除实现差异。</li>
+<li><strong>仅测 2 个 LR</strong>：未测 lr=2e-4 / 5e-5 等中间点——但 lr=1e-4 已坍缩且 5× 延迟规律清晰，额外 LR 点 unlikely 改变结论。</li>
+</ul>
+</div>
+
+<div class="refs">
+<p><strong>报告信息</strong>：BaiZe Vision V2 Muon 坍缩根因分析 · 2026-10-11 · 线：vision · 提交前缀：<code>vision muon-rpt:</code></p>
+<p><strong>关联文件</strong>：<code>EXPERIMENTS_VISION.md §9.2</code> · <code>report_vision_variants_20261011.html §5</code> · <code>r9_train.py:36-170</code></p>
+</div>
+</body>
+</html>

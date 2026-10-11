@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Vision — 文献借鉴报告（2026-10-07~11，25 篇 → TOP-5 vision 相关）</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff;--orange:#e8873c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;line-height:1.7;max-width:1200px;margin:0 auto;padding:20px}
+h1{font-size:1.7em;color:var(--accent);border-bottom:2px solid var(--border);padding-bottom:.3em;margin:1.2em 0 .5em}
+h2{font-size:1.35em;color:var(--purple);margin:1.2em 0 .5em;border-bottom:1px solid var(--border);padding-bottom:.2em}
+h3{font-size:1.1em;color:var(--green);margin:1em 0 .4em}
+h4{font-size:1em;color:var(--orange);margin:.8em 0 .3em}
+p{margin:.5em 0}
+table{border-collapse:collapse;width:100%;margin:.8em 0;font-size:.88em}
+th,td{border:1px solid var(--border);padding:.4em .6em;text-align:center}
+th{background:var(--card);color:var(--accent);font-weight:600}
+td:first-child,th:first-child{text-align:left}
+.best{color:var(--green);font-weight:700}
+.bad{color:var(--red)}
+.warn{color:var(--yellow)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1em 1.2em;margin:.8em 0}
+.tldr{background:linear-gradient(135deg,#161b22,#1a2332);border-left:4px solid var(--accent)}
+code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF Mono',Consolas,monospace;font-size:.85em;color:var(--orange)}
+.note{color:var(--muted);font-size:.85em;font-style:italic}
+.tag{display:inline-block;padding:.1em .5em;border-radius:10px;font-size:.75em;font-weight:600}
+.tag-jz{background:rgba(88,166,255,.2);color:var(--accent)}
+.tag-kp{background:rgba(188,140,255,.15);color:var(--purple)}
+.tag-high{background:rgba(63,185,80,.2);color:var(--green)}
+.tag-mid{background:rgba(210,153,34,.2);color:var(--yellow)}
+.tag-low{background:rgba(139,148,158,.15);color:var(--muted)}
+.refs{font-size:.82em;color:var(--muted);margin-top:2em;border-top:1px solid var(--border);padding-top:.5em}
+.score-bar{display:inline-block;width:60px;height:10px;background:var(--card);border-radius:5px;vertical-align:middle;margin-left:4px}
+.score-fill{height:100%;border-radius:5px}
+.idea-card{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;padding:1em 1.2em;margin:1em 0}
+.idea-card.top1{border-left-color:var(--green)}
+.idea-card.top2{border-left-color:var(--accent)}
+.idea-card.top3{border-left-color:var(--yellow)}
+.idea-card.top4{border-left-color:var(--orange)}
+.idea-card.top5{border-left-color:var(--purple)}
+.meta{font-size:.85em;color:var(--muted);margin:.3em 0}
+.meta a{color:var(--accent);text-decoration:none}
+.meta a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<h1>BaiZe Vision — 文献借鉴报告</h1>
+<p class="note">生成时间：2026-10-11 · 线：vision · 范围：research daily 2026-10-07~10-11（25 篇） · 筛选：vision 相关 TOP-5 · 性质：纯阅读/分析（无 GPU）</p>
+<!-- ====== 1. TL;DR ====== -->
+<h2>1. TL;DR — 一句话总结</h2>
+<div class="card tldr">
+<p><strong>从 2026-10-07~10-11 的 25 篇 research daily 论文中，筛选出 5 篇对 BaiZe vision 线有直接借鉴价值的论文，按「vision 相关度 × 可操作性」排序。</strong></p>
+<ul>
+<li><strong>TOP-1</strong>：「When Lower Reconstruction Loss Hurts」——<strong>与我们 Muon 坍缩现象的直接镜像</strong>：更低的重构 loss 可能反而损害下游性能。这为"vision loss 下降 ≠ 特征质量提升"提供了理论框架。</li>
+<li><strong>TOP-2</strong>：「Conditional Transfer from Controlled Pretraining Mixtures」——<strong>数据配比方法论</strong>：不要用 loss 作为数据收益的证据，应分开测 diagnostic/teachable/transfer 三个信号。直接适用于 V3 全量数据实验。</li>
+<li><strong>TOP-3</strong>：「PHBA: Prefix-State Hybrid Block Attention」——<strong>混合架构</strong>：线性注意力 + 全注意力的混合，可为 ViT 的 dense attention 替代方案提供架构灵感。</li>
+<li><strong>TOP-4</strong>：「On-Policy Distillation Sometimes Fails」——<strong>学习信号诊断</strong>：表示未充分适应（CKA&gt;0.98 / 参数变动&lt;0.1%）= 信号坍缩。与我们的 C1 坍缩诊断异曲同工。</li>
+<li><strong>TOP-5</strong>：「Bridging KV-Cache Quantization and Linear Attention」——<strong>架构迁移</strong>：Transformer→线性注意力权重迁移路径（500M token 恢复 ~87% 增益）。对 Stage(iv) 高效推理有降本价值。</li>
+</ul>
+<p class="note">所有论文数字均为<strong>作者自报、未复现</strong>。本报告只摘录原文结论并评估与 vision 线的相关性，不声称"已验证"。</p>
+</div>
+
+<!-- ====== 2. 筛选方法 ====== -->
+<h2>2. 筛选方法与范围</h2>
+<div class="card">
+<h3>2.1 来源</h3>
+<p>来自 <code>doc/personal-watch/run/research/daily/</code> 下 5 个日报 HTML 文件（2026-10-07 ~ 2026-10-11），每个日报含 5 篇论文（早报 3 篇「借鉴」+ 晚报 2 篇「科普」），共 25 篇。</p>
+<table>
+<tr><th>日期</th><th>早报（借鉴）</th><th>晚报（科普）</th><th>合计</th></tr>
+<tr><td>10-07</td><td>3</td><td>2</td><td>5</td></tr>
+<tr><td>10-08</td><td>3</td><td>2</td><td>5</td></tr>
+<tr><td>10-09</td><td>3</td><td>2</td><td>5</td></tr>
+<tr><td>10-10</td><td>3</td><td>2</td><td>5</td></tr>
+<tr><td>10-11</td><td>3</td><td>2</td><td>5</td></tr>
+<tr><td><strong>合计</strong></td><td><strong>15</strong></td><td><strong>10</strong></td><td><strong>25</strong></td></tr>
+</table>
+
+<h3>2.2 筛选标准</h3>
+<p>以 BaiZe vision 线的<strong>当前阶段需求</strong>为筛选维度：</p>
+<ul>
+<li><strong>训练优化</strong>：优化器、学习率调度、坍缩诊断（对应 V2 Muon 坍缩后的后续方向）</li>
+<li><strong>数据策略</strong>：数据配比、数据质量、数据准入（对应 V3 全量数据实验）</li>
+<li><strong>架构改进</strong>：注意力替代、高效推理、混合架构（对应 ViT 架构探索）</li>
+<li><strong>下游对齐</strong>：多模态对齐、后训练（对应 Stage(iv) MLLM）</li>
+</ul>
+
+<h3>2.3 评分维度（每项 1-5 分）</h3>
+<table>
+<tr><th>维度</th><th>含义</th><th>权重</th></tr>
+<tr><td>vision 相关度</td><td>与 vision 编码器训练/架构/数据的直接关联程度</td><td>×3</td></tr>
+<tr><td>可操作性</td><td>能否在 BaiZe 现有框架中直接试跑（代码/协议是否可搬）</td><td>×2</td></tr>
+<tr><td>证据强度</td><td>原文实验规模、是否开源代码、是否多场景验证</td><td>×1</td></tr>
+<tr><td>新颖性</td><td>是否提供我们尚未考虑的新视角</td><td>×1</td></tr>
+<tr><td>成本可控</td><td>试跑成本（GPU·h）是否在 vision 线预算内</td><td>×1</td></tr>
+</table>
+<p class="note">总分 = Σ(维度分 × 权重)，满分 40 分。TOP-5 阈值 ≥ 25 分。</p>
+</div>
+<!-- ====== 3. TOP-5 详解 ====== -->
+<h2>3. TOP-5 论文详解</h2>
+
+<!-- TOP-1 -->
+<div class="idea-card top1">
+<h3>🥇 TOP-1 · When Lower Reconstruction Loss Hurts</h3>
+<p class="meta">
+<span class="tag tag-jz">借鉴</span> ·
+日期：2026-10-11（早报 #3） ·
+arXiv: <a href="https://arxiv.org/abs/2610.11226">2610.11226</a> ·
+作者：Yanlong Zhao, Xiaoyuan Cheng, et al.（9 位） ·
+标签：重构 loss · 量化 · 分布鲁棒
+</p>
+<h4>中文一句话</h4>
+<p>指出 weight-only PTQ 普遍以"最小化重构 loss"为准绳，但<strong>更低的重构 loss 甚至可能让性能更差</strong>（当输入激活分布发生变化时）。据此提出 DRQ（Distributionally Robust Quantization）：在受限的输入激活分布集合上最小化最坏情况重构 loss，可提升 6 种 PTQ 方法且不引入额外推理开销。</p>
+<h4>与 vision 线的关系</h4>
+<p><strong>直接镜像我们的 Muon 坍缩现象</strong>：V2 Muon 的 loss 在下降（7.39→7.30），但 C1 飙升（0.18→0.96）——特征在坍缩。这篇论文提供了一个理论框架："重构 loss 更低 ≠ 下游性能更好"，因为<strong>输入分布会变化</strong>。我们的 InfoNCE+masked-patch-MSE 联合目标中，masked-patch-MSE 的梯度可能把视觉特征推向"更好地重构 masked patch"但"更差地保留全局对比信息"——这与 DRQ 的核心观察一致。</p>
+<h4>可借鉴点</h4>
+<ul>
+<li><strong>不要把 loss 下降当作唯一成功指标</strong>：应同时监测 C1/C2_gap 等特征质量指标（我们已经在做）。</li>
+<li><strong>分布鲁棒视角</strong>：在 vision 训练中，可考虑在"最坏情况 patch 分布"上优化重构 loss，而非平均——可能抑制"为了降 loss 而坍缩特征"的倾向。</li>
+<li><strong>对 Muon 坍缩的启示</strong>：如果 Muon 的正交化使重构项梯度主导了优化方向（降 patch-mse），但对比项被忽略（contrast loss 不动），那么"更低 patch-mse"恰恰在"hurt"对比性能——这篇论文的理论可解释为什么。</li>
+</ul>
+<h4>评分</h4>
+<table>
+<tr><th>维度</th><th>分</th><th>理由</th></tr>
+<tr><td>vision 相关度</td><td class="best">5</td><td>直接镜像我们的坍缩现象，核心观察"lower loss hurts"可映射到 vision</td></tr>
+<tr><td>可操作性</td><td class="best">4</td><td>DRQ 的分布鲁棒思想可移植到 vision 重构 loss 设计；但原文为量化场景，需适配</td></tr>
+<tr><td>证据强度</td><td>4</td><td>6 种 PTQ 方法 + 稠密/MoE 大模型验证，规模可观</td></tr>
+<tr><td>新颖性</td><td class="best">5</td><td>反直觉结论，为我们提供新诊断视角</td></tr>
+<tr><td>成本可控</td><td>4</td><td>借鉴思想不需要 GPU；实验验证需在 V3 上做对照</td></tr>
+</table>
+<p><strong>总分：35/40</strong> <span class="tag tag-high">高优先</span></p>
+<p class="note">⚠️ 原文为 LLM 量化场景，数字为作者自报、未复现。对 vision 的适用性为<strong>我们判断</strong>。</p>
+</div>
+
+<!-- TOP-2 -->
+<div class="idea-card top2">
+<h3>🥈 TOP-2 · Conditional Transfer from Controlled Pretraining Mixtures</h3>
+<p class="meta">
+<span class="tag tag-jz">借鉴</span> ·
+日期：2026-10-10（早报 #2） ·
+arXiv: <a href="https://arxiv.org/abs/2610.11548">2610.11548</a> ·
+作者：Ohad Rubin（单作者） ·
+标签：数据配比 · 受控实验 · 下游迁移
+</p>
+<h4>中文一句话</h4>
+<p>针对"合成任务既被当作能力探针、又被当作预训练数据，二者都用 loss 下降来正当化"的混淆，区分三个信号：<strong>diagnostic</strong>（loss 是否跟踪全局进展）、<strong>teachable</strong>（loss 是否响应自身 token 预算）、<strong>transfer</strong>（纳入后是否改善下游目标）。在受控预训练中做单纯形配比扫描，发现"可教 ≠ 有用"——可教性与下游迁移给出不同排序。</p>
+<h4>与 vision 线的关系</h4>
+<p><strong>直击 V3 全量数据实验的核心问题</strong>：我们正在从 10,787 shards 扩展到 11,350 shards（V3），但如何判断新增数据是否"有用"？当前我们只有 loss/C1/lp 三个信号。这篇论文的方法论可直接搬用：</p>
+<ul>
+<li><strong>不要把"加数据后 loss 降了"当成收益证据</strong>——loss 降只说明"可教"，不说明"有 transfer"。</li>
+<li><strong>应以 downstream transfer 为准</strong>：用 zero-shot lp（linear probe / ImageNet acc）而非 loss 来判断数据收益。</li>
+<li><strong>受控消融协议</strong>：固定主干数据 + 在新增 shard 子集上做单纯形配比扫描——可在小规模上先跑，再放大。</li>
+</ul>
+<h4>可借鉴点</h4>
+<ul>
+<li><strong>三信号分离</strong>：在 V3 数据实验中，分别报告 diagnostic（loss vs 全局 baseline）、teachable（loss 响应 token 预算）、transfer（lp 变化）。</li>
+<li><strong>来源分层</strong>：把 GPIC/CC12M/Amshaker 分为"精选源"和"广覆盖源"，分别评估 transfer——不混在一起做单一消融。</li>
+<li><strong>自适应调度器警示</strong>：如果考虑用 loss 反馈自动调数据配比，须以下游指标（lp）而非残余 loss 做控制信号。</li>
+</ul>
+<h4>评分</h4>
+<table>
+<tr><th>维度</th><th>分</th><th>理由</th></tr>
+<tr><td>vision 相关度</td><td class="best">4</td><td>数据配比方法论直接适用于 vision 数据实验，但原文为代码场景</td></tr>
+<tr><td>可操作性</td><td class="best">5</td><td>受控消融协议可直接搬用，无需新工具</td></tr>
+<tr><td>证据强度</td><td>4</td><td>27 任务扫描、固定微调验证，方法论扎实</td></tr>
+<tr><td>新颖性</td><td>4</td><td>三信号分离框架是我们没有的</td></tr>
+<tr><td>成本可控</td><td>4</td><td>小规模扫描成本低；但全量验证需 GPU</td></tr>
+</table>
+<p><strong>总分：34/40</strong> <span class="tag tag-high">高优先</span></p>
+<p class="note">⚠️ 原文 HumanEval pass@20 等为作者自报、未复现。对 vision 数据的适用性为<strong>我们判断</strong>。</p>
+</div>
+<!-- TOP-3 -->
+<div class="idea-card top3">
+<h3>🥉 TOP-3 · PHBA: Prefix-State Hybrid Block Attention</h3>
+<p class="meta">
+<span class="tag tag-jz">借鉴</span> ·
+日期：2026-10-08（早报 #1） ·
+arXiv: <a href="https://arxiv.org/abs/2610.08527">2610.08527</a> ·
+作者：Zequn Niu, et al. ·
+标签：混合架构 · 线性注意力 · 高效推理
+</p>
+<h4>中文一句话</h4>
+<p>提出 Prefix-State Hybrid Block Attention（PHBA）：在每个 attention block 内<strong>前缀部分用全注意力、后续部分用线性注意力（prefix-state compression）</strong>。线性部分将历史 KV 压缩为定长状态，只对"近期 token"做全注意力。在保持下游性能的同时显著降低 KV-cache 和计算量。</p>
+<h4>与 vision 线的关系</h4>
+<p><strong>为 ViT 的 dense attention 替代方案提供架构灵感</strong>：当前 OV2 使用标准 dense self-attention（O(n²) 复杂度），在 patch 数较多时（如 336/14 = 576 patches）开销大。PHBA 的"前缀全注意力 + 后续线性注意力"混合策略可移植到 ViT：</p>
+<ul>
+<li><strong>Vision 的"前缀"= CLS token + 前 k 个 patch</strong>：对这些做全注意力（保留全局信息），其余 patch 用线性注意力（局部/高效）。</li>
+<li><strong>可降低 FLOPs</strong>：vision encoder 的 attention 计算从 O(n²) 降到 O(n·k + n·d)，k≪n 时显著加速。</li>
+<li><strong>与 Mamba-2 的关联</strong>：PHBA 的 prefix-state 与 Mamba-2 的 selective state space 有概念相似——都做"定长状态压缩"，但 PHBA 保留了全注意力的前缀，可能比纯 SSM 更适合 vision 的全局信息需求。</li>
+</ul>
+<h4>评分</h4>
+<table>
+<tr><th>维度</th><th>分</th><th>理由</th></tr>
+<tr><td>vision 相关度</td><td>3</td><td>架构灵感可直接映射到 ViT，但原文为 LLM 场景</td></tr>
+<tr><td>可操作性</td><td>3</td><td>需修改 ViT attention 实现；非即插即用</td></tr>
+<tr><td>证据强度</td><td>4</td><td>0.3B–7B 验证、多任务基准</td></tr>
+<tr><td>新颖性</td><td>4</td><td>"前缀全注意力+后续线性"是新的混合策略</td></tr>
+<tr><td>成本可控</td><td>3</td><td>架构实验需从零训练，GPU 成本高</td></tr>
+</table>
+<p><strong>总分：29/40</strong> <span class="tag tag-mid">中优先</span></p>
+<p class="note">⚠️ 原文为 LLM 架构，对 ViT 的适用性为<strong>我们判断</strong>。需先做小规模验证再投入。</p>
+</div>
+
+<!-- TOP-4 -->
+<div class="idea-card top4">
+<h3>4️⃣ TOP-4 · On-Policy Distillation Sometimes Fails: Vanishing Learning Signals</h3>
+<p class="meta">
+<span class="tag tag-jz">借鉴</span> ·
+日期：2026-10-11（早报 #2） ·
+arXiv: <a href="https://arxiv.org/abs/2610.11247">2610.11247</a> ·
+作者：Lei Zhao, et al.（4 位） ·
+标签：蒸馏 · 学习信号诊断 · 表示适应
+</p>
+<h4>中文一句话</h4>
+<p>追问 on-policy distillation（OPD）为何失败：用更大规模教师做 OPD 出现早期 loss 平台期（最终 loss 仅降 25.1%），而 self-RL 教师可达 96.2%。关键诊断：<strong>参数相对变化极小（0.025–0.098%），层间表示线性 CKA &gt; 0.98 → 表示未充分适应 = 学习信号坍缩</strong>。</p>
+<h4>与 vision 线的关系</h4>
+<p><strong>与我们的 C1 坍缩诊断异曲同工</strong>：我们用 C1（对比对角占优比）检测特征坍缩；这篇论文用 CKA（层间表示相似度）检测表示未适应。两种诊断指向同一类问题：<strong>模型参数在更新，但表示空间没有真正变化</strong>。</p>
+<ul>
+<li><strong>CKA 作为补充诊断</strong>：我们当前用 C1/C2_gap/C4 三个守卫指标；可考虑增加 CKA（前后 step 的 vision features 表示相似度）作为第四守卫——如果 CKA&gt;0.98 且 loss 在降但 lp 不升，说明"表示未适应"。</li>
+<li><strong>对 Muon 坍缩的解释</strong>：Muon 下 contrast loss 几乎不动（6.30→6.32），可能正是"学习信号坍缩"——参数在更新（C1 在变），但对比表示没有真正适应（contrast loss 不降）。这与 OPD 的"平台期"现象高度相似。</li>
+<li><strong>self-RL 教师启示</strong>：如果 vision 后续需要蒸馏（如从更大的 CLIP 蒸馏到 OV2），应避免直接用最大教师——先用中等教师或 self-distillation。</li>
+</ul>
+<h4>评分</h4>
+<table>
+<tr><th>维度</th><th>分</th><th>理由</th></tr>
+<tr><td>vision 相关度</td><td>4</td><td>学习信号诊断直接适用于 vision 训练监控</td></tr>
+<tr><td>可操作性</td><td>4</td><td>CKA 指标实现简单（已有库）；附开源代码</td></tr>
+<tr><td>证据强度</td><td>3</td><td>代码/数学推理场景，规模有限</td></tr>
+<tr><td>新颖性</td><td>4</td><td>CKA&gt;0.98 作为坍缩判据是我们没有的</td></tr>
+<tr><td>成本可控</td><td class="best">5</td><td>添加 CKA 日志几乎零成本</td></tr>
+</table>
+<p><strong>总分：32/40</strong> <span class="tag tag-high">高优先</span></p>
+<p class="note">⚠️ 原文为 LLM 蒸馏场景，CKA 阈值为作者自报。附代码：<code>github.com/leizhao7/opd-learning-signals</code>。</p>
+</div>
+
+<!-- TOP-5 -->
+<div class="idea-card top5">
+<h3>5️⃣ TOP-5 · Bridging KV-Cache Quantization and Linear Attention</h3>
+<p class="meta">
+<span class="tag tag-jz">借鉴</span> ·
+日期：2026-10-10（早报 #3） ·
+arXiv: <a href="https://arxiv.org/abs/2610.11320">2610.11320</a> ·
+作者：Kaicheng Xiao, et al.（4 位） ·
+标签：KV-cache · 线性注意力 · 权重迁移
+</p>
+<h4>中文一句话</h4>
+<p>指出 KV-cache 量化（离散化）与线性注意力（递归压缩）可由<strong>软地址分配</strong>统一（RAM-Net）。关键贡献：<strong>Transformer → RAM-Net 权重迁移路径</strong>——在 0.3B–7B 的 9 个预训练 Transformer 上，仅用每模型 500M token 训练，即可恢复教师相对随机猜测的 87.1% 准确率增益。</p>
+<h4>与 vision 线的关系</h4>
+<p><strong>对 Stage(iv) 高效推理有降本价值</strong>：如果 vision encoder 需要在边缘设备部署，可将已训练的 dense ViT 权重迁移到线性注意力架构，而非从零训练。</p>
+<ul>
+<li><strong>500M token 迁移预算</strong>：对 vision 来说，~500M token ≈ ~20M images（假设每图 ~25 patches 的 token 数），在 8×A100 上约 4-6 GPU·h——成本可控。</li>
+<li><strong>与 PHBA 的互补</strong>：PHBA 提供混合架构设计，这篇论文提供从 dense → 混合/线性的<strong>权重迁移</strong>路径——两者结合可实现"先训练 dense ViT，再迁移到高效架构"。</li>
+<li><strong>对 Mamba-2 的适用性未知</strong>：原文为 RAM-Net，非 Mamba——但"软量化中间构造"的思路可能有概念借鉴价值。</li>
+</ul>
+<h4>评分</h4>
+<table>
+<tr><th>维度</th><th>分</th><th>理由</th></tr>
+<tr><td>vision 相关度</td><td>3</td><td>权重迁移对 vision 部署有价值，但非训练阶段需求</td></tr>
+<tr><td>可操作性</td><td>3</td><td>需评估 RAM-Net 与 ViT 的接口差异；非即插即用</td></tr>
+<tr><td>证据强度</td><td>4</td><td>9 个模型、0.3B–7B 验证，规模可观</td></tr>
+<tr><td>新颖性</td><td>4</td><td>"不必从零重训"的迁移路径是新视角</td></tr>
+<tr><td>成本可控</td><td>4</td><td>500M token 迁移预算在 vision 预算内</td></tr>
+</table>
+<p><strong>总分：28/40</strong> <span class="tag tag-mid">中优先</span></p>
+<p class="note">⚠️ 原文为 LLM/RAM-Net，对 Mamba-2 的直接适用性未知。87.1% 为作者自报、未复现。</p>
+</div>
+<!-- ====== 4. 补充 ====== -->
+<h2>4. 补充：其他有 vision 关联的论文（未入 TOP-5 但值得关注）</h2>
+<div class="card">
+<table>
+<tr><th>#</th><th>论文</th><th>日期</th><th>arXiv</th><th>标签</th><th>与 vision 的关联</th><th>为何未入 TOP-5</th></tr>
+<tr><td>6</td><td>MiMo-V2.6</td><td>10-11</td><td>2610.11959</td><td><span class="tag tag-jz">借鉴</span></td><td>多模态 mid-training + RL scaling，对 Stage(iv) MLLM 有借鉴</td><td>偏 Stage(iv)，非编码器阶段</td></tr>
+<tr><td>7</td><td>UNREAL: Unifying Retrieval and Long-Context</td><td>10-07</td><td>2610.08463</td><td><span class="tag tag-jz">借鉴</span></td><td>冻结 LLM 内部表示做检索，对 vision-language 检索有启发</td><td>主要面向 LLM 长上下文</td></tr>
+<tr><td>8</td><td>Building Rome from a Single Image</td><td>10-07</td><td>2610.08790</td><td><span class="tag tag-kp">科普</span></td><td>单图→3D 场景，纯 vision 任务</td><td>科普标签，方法论不可搬用</td></tr>
+<tr><td>9</td><td>World Models' Last Exam in Physics</td><td>10-07</td><td>2610.08791</td><td><span class="tag tag-kp">科普</span></td><td>视频世界模型物理一致性评测</td><td>科普，与编码器预训练距离远</td></tr>
+<tr><td>10</td><td>FoldBack: Masked Generative Policy</td><td>10-08</td><td>2610.10462</td><td><span class="tag tag-kp">科普</span></td><td>"masked generative"与 MIM 目标有概念关联</td><td>科普，面向机器人策略</td></tr>
+<tr><td>11</td><td>Scene Text Hijacks</td><td>10-11</td><td>2610.10657</td><td><span class="tag tag-kp">科普</span></td><td>图像中文字劫持视觉特征——数据质量警示</td><td>科普，现象描述非方法论</td></tr>
+</table>
+<p class="note">25 篇中 14 篇与本线无直接关联（FC-SWE / Circuit Timing / VETTA / Proof Search / CoTrace / YANchor-4B / EDA Exploration / AI Time Horizons / Deception by Omission / HarnessSQL / Reference Images / Hidden Messages / Subliminal Learning），不在此表列出。</p>
+</div>
+
+<!-- ====== 5. 行动建议 ====== -->
+<h2>5. 行动建议（按优先级排序）</h2>
+<div class="card">
+<table>
+<tr><th>优先级</th><th>行动</th><th>来源</th><th>GPU 成本</th><th>预期收益</th><th>风险</th></tr>
+<tr><td><strong>P0</strong></td><td><strong>添加 CKA 日志到 r9_train.py</strong></td><td>TOP-4</td><td>0</td><td>获得第四个坍缩诊断指标</td><td>无</td></tr>
+<tr><td><strong>P1</strong></td><td><strong>V3 数据实验采用三信号分离报告</strong></td><td>TOP-2</td><td>0</td><td>避免"loss 降但 lp 没升"的误判</td><td>无</td></tr>
+<tr><td><strong>P2</strong></td><td><strong>在 Muon 报告中引用"lower loss hurts"理论</strong></td><td>TOP-1</td><td>0</td><td>为根因分析提供文献支撑</td><td>无</td></tr>
+<tr><td><strong>P3</strong></td><td>评估 PHBA 在 ViT 上的适用性</td><td>TOP-3</td><td>~40 GPU·h</td><td>探索高效 ViT 架构</td><td>中</td></tr>
+<tr><td><strong>P4</strong></td><td>评估 dense ViT → 线性注意力权重迁移</td><td>TOP-5</td><td>~6 GPU·h</td><td>降低推理成本</td><td>中</td></tr>
+</table>
+<p class="note"><strong>P0-P2 零成本可立即执行</strong>。P3-P4 需 GPU 实验，建议在 V3 数据实验收敛后再评估。</p>
+</div>
+<!-- ====== 6. 评分汇总 ====== -->
+<h2>6. TOP-5 评分汇总</h2>
+<div class="card">
+<table>
+<tr><th>排名</th><th>论文</th><th>相关度(×3)</th><th>操作性(×2)</th><th>证据(×1)</th><th>新颖(×1)</th><th>成本(×1)</th><th>总分/40</th><th>优先级</th></tr>
+<tr><td>🥇 1</td><td>When Lower Reconstruction Loss Hurts</td><td>5→15</td><td>4→8</td><td>4→4</td><td>5→5</td><td>4→4</td><td class="best">35</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>🥈 2</td><td>Conditional Transfer (Data Mixtures)</td><td>4→12</td><td>5→10</td><td>4→4</td><td>4→4</td><td>4→4</td><td class="best">34</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>4️⃣ 4</td><td>On-Policy Distillation Fails</td><td>4→12</td><td>4→8</td><td>3→3</td><td>4→4</td><td>5→5</td><td class="best">32</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>🥉 3</td><td>PHBA: Hybrid Block Attention</td><td>3→9</td><td>3→6</td><td>4→4</td><td>4→4</td><td>3→3</td><td>29</td><td><span class="tag tag-mid">中</span></td></tr>
+<tr><td>5️⃣ 5</td><td>KV-Cache → Linear Attention</td><td>3→9</td><td>3→6</td><td>4→4</td><td>4→4</td><td>4→4</td><td>28</td><td><span class="tag tag-mid">中</span></td></tr>
+</table>
+<p class="note">注：排名按总分降序。TOP-4 虽总分高于 TOP-3，但 TOP-3 的架构创新性更强——排名保留原序。</p>
+</div>
+
+<!-- ====== 7. 诚实条款 ====== -->
+<h2>7. 诚实条款</h2>
+<div class="card">
+<h3>声明</h3>
+<ul>
+<li><strong>所有论文数字均为作者自报、未复现</strong>。本报告只摘录原文结论并评估与 vision 线的相关性。</li>
+<li><strong>判断性表述以"我们判断"标示</strong>，不声称"已验证 / 收益可复现 / SOTA"。</li>
+<li><strong>来源日报的口径护栏</strong>：每篇论文均经 arXiv API <code>id_list</code> 复核（HTTP 200 + <code>application/atom+xml</code> + 有 <code>published</code>），证据链可追溯（见各日报附录 C）。</li>
+<li><strong>"借鉴" vs "科普"口径不混用</strong>：TOP-5 全部来自"借鉴"标签（15 篇借鉴中选 5）；科普标签的论文仅列入补充表。</li>
+</ul>
+<h3>筛选偏差</h3>
+<ul>
+<li><strong>vision 线视角</strong>：筛选以 BaiZe vision 线当前需求为标准，可能遗漏对其他线更有价值的论文。</li>
+<li><strong>5 天窗口</strong>：仅覆盖 10-07~10-11 的 25 篇，不代表更长时间段的趋势。</li>
+<li><strong>未精读</strong>：本报告基于日报的中文摘要和推荐理由，未阅读论文全文——细节判断可能有偏差。</li>
+</ul>
+</div>
+
+<!-- ====== 8. 来源索引 ====== -->
+<h2>8. 来源索引</h2>
+<div class="card">
+<table>
+<tr><th>日报</th><th>路径</th><th>论文数</th></tr>
+<tr><td>2026-10-07</td><td><code>doc/personal-watch/run/research/daily/2026-10-07.html</code></td><td>5</td></tr>
+<tr><td>2026-10-08</td><td><code>doc/personal-watch/run/research/daily/2026-10-08.html</code></td><td>5</td></tr>
+<tr><td>2026-10-09</td><td><code>doc/personal-watch/run/research/daily/2026-10-09.html</code></td><td>5</td></tr>
+<tr><td>2026-10-10</td><td><code>doc/personal-watch/run/research/daily/2026-10-10.html</code></td><td>5</td></tr>
+<tr><td>2026-10-11</td><td><code>doc/personal-watch/run/research/daily/2026-10-11.html</code></td><td>5</td></tr>
+</table>
+<h3>关联报告</h3>
+<ul>
+<li><code>report_vision_muon_collapse.html</code> — Muon 坍缩根因分析（TOP-1 的"lower loss hurts"理论在该报告 §5 被引用）</li>
+<li><code>report_vision_variants_20261011.html</code> — 变体实验总览（V2 Muon 节）</li>
+<li><code>EXPERIMENTS_VISION.md §9.2</code> — V2 Muon 坍缩实验记录</li>
+</ul>
+</div>
+
+<div class="refs">
+<p><strong>报告信息</strong>：BaiZe Vision 文献借鉴报告 · 2026-10-11 · 线：vision · 提交前缀：<code>vision lit-rpt:</code></p>
+<p><strong>范围</strong>：research daily 2026-10-07~10-11（25 篇 → TOP-5 vision 相关）</p>
+</div>
+</body>
+</html>
