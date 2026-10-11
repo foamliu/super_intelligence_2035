@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 88 -->
+<!-- RUN_ID: 89 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,6 +31,58 @@
 
 ---
 
+## RUN_ID 89 — 🔎 **自证：RUN_ID 88 为何零输出 + 精简重跑 `/home` 体检** · 只读
+
+> **现象**：RUN_ID 88（13:40:11，`exit=0`，host=`whag0pgpuap29`）**输出块为空**（85/86/87 都正常有输出）⇒ 抓取/执行通道疑似有坑，或块被「危险过滤」静默拦下。
+> **本块**：① 先打 sanity 行证明抓取通道 ✅；② 直接读 `ops_relay.sh` 的**取块 / 抓输出 / 危险过滤 / 超时**逻辑定位原因；③ 顺带把**精简版 `/home` 体检**再跑一次（大文件用 `maxdepth 4` 保证有界）。
+> 🚫 不删任何东西、不停服务。
+
+```bash
+set -u
+echo "=== RUN_ID 89 · 自证 + 精简 /home 体检 · $(date '+%F %T') · host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+[ -d "$R" ] || R="$PWD"
+O="$R/doc/BaiZe-ISEDA2027/run/ops"
+echo "--- A) sanity（证明本块确实执行且被抓取） ---"
+echo "SANITY-OK $(date '+%F %T') host=$(hostname) pid=$$"
+echo "   repo=$R  cwd=$PWD  .last_run_id=$(cat "$O/.last_run_id" 2>/dev/null)  hostname=$(hostname)"
+echo "--- B) ops_relay.sh 定位 + 关键逻辑 ---"
+RS=$(timeout 20 find /home/app.e0031982 -maxdepth 3 -name 'ops_relay.sh' 2>/dev/null | head -1)
+echo "   RS=${RS:-<未找到>}"
+if [ -n "${RS:-}" ]; then
+  wc -l "$RS" | cut -c1-80
+  echo "   -- 危险/过滤/超时/输出捕获相关行 --"
+  grep -nE 'danger|DANGER|forbid|Forbid|timeout|TIMEOUT|head -c|tail -c|20000|exit' "$RS" 2>/dev/null | head -25 | cut -c1-160
+  echo "   -- inbox_cmd_block 函数 --"
+  grep -n -A12 'inbox_cmd_block' "$RS" 2>/dev/null | head -22 | cut -c1-160
+fi
+echo "--- C) relay 日志（若有） ---"
+ls -lt /tmp/ops_relay* /tmp/*relay*.log 2>/dev/null | head -6 | cut -c1-160
+for L in $(ls -t /tmp/ops_relay*.log 2>/dev/null | head -1); do echo "   log=$L"; tail -40 "$L" 2>/dev/null | cut -c1-160; done
+echo "--- D) 【精简 /home 体检】 ---"
+U=/home/app.e0031982
+df -hT -x nfs -x nfs4 2>&1 | head -10 | cut -c1-140
+df -BG /home 2>&1 | cut -c1-120
+df -i /home 2>&1 | cut -c1-120
+echo "   --- D1 du 一层（120s 界） ---"
+timeout 120 du -hx --max-depth=1 "$U" 2>/dev/null | sort -rh | head -20 | cut -c1-140
+echo "   --- D2 定点 du（各 15s 界） ---"
+for p in .cache .cache/huggingface .cache/pip .cline .local .bun; do
+  printf '   %-24s' "$p"
+  timeout 15 du -shx "$U/$p" 2>/dev/null | awk '{print $1}' | cut -c1-24
+  echo
+done
+echo "   --- D3 大文件（>=1G，maxdepth 4，90s 界） ---"
+timeout 90 find "$U" -xdev -maxdepth 4 -type f -size +1G -printf '%s\t%TY-%Tm-%Td\t%p\n' 2>/dev/null | sort -rn | head -20 | awk '{printf "%7.2fG  %s  %s\n", $1/1073741824, $2, $3}' | cut -c1-140
+echo "   --- D4 /tmp + 现场进程 ---"
+timeout 20 du -shx /tmp 2>/dev/null | cut -c1-100
+pgrep -af 'ops_relay' 2>/dev/null | cut -c1-140 | head -5
+echo "=== DONE 89 ==="
+```
+
+---
+
+
 ## RUN_ID 88 — 🏠 **只读：`/home` 空间体检（IT 报告 `.29` 本地盘满）** · 只列不删
 
 > **背景**：**IT 老师来电** —— `.29`（`10.239.2.29`）**本地盘 `/home` 空间不足**。
@@ -39,7 +91,7 @@
 > **产出**：拿到「大头清单」后由运维列**批准删除清单**，再另下 RUN_ID 执行。
 > ⚠️ 每条命令都带 `timeout`（relay 单块总超时 600s）；输出一律 `cut -c1-140`。
 
-```bash
+```text
 set -u
 echo "=== RUN_ID 88 · 只读：/home 空间体检 · $(date '+%F %T') · host=$(hostname) ==="
 U=/home/app.e0031982
