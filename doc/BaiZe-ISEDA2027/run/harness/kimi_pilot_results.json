@@ -65918,5 +65918,38 @@
       }
     },
     "classification": "patch-but-failed"
+  },
+  {
+    "instance_id": "sympy__sympy-23191",
+    "repo": "sympy/sympy",
+    "harness": "pi",
+    "model": "kimi-k2.6-cloud",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400"
+    },
+    "harness_result": {
+      "harness": "pi",
+      "returncode": 0,
+      "wall_s": 1153.5,
+      "predictions_file": "/dev/shm/harness_work/workdirs/predictions_kimi_pi_sympy__sympy-23191.json",
+      "stdout_tail": " instance_id=sympy__sympy-23191\n[run_single] base_commit=fa9b4b140ec0eaf75a62c1111131626ef0f6f524\n[run_single] ps_len=1599\n[run_single] git reset --hard fa9b4b140ec0eaf75a62c1111131626ef0f6f524\n[run_single] running pi ...\n== harness=pi rc=0 timed_out=False wall=1153.2s ==\n[run_single] model_patch: 13842 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_kimi_pi_sympy__sympy-23191.json\n[run_single] cleanup: git reset --hard fa9b4b140ec0eaf75a62c1111131626ef0f6f524\n",
+      "quota_blocked": false,
+      "quota_retry": null,
+      "eval": {
+        "eval_rc": 0,
+        "resolved": false,
+        "patch_applied": true,
+        "f2p_pass": 0,
+        "f2p_total": 1,
+        "p2p_pass": 2,
+        "p2p_total": 3
+      }
+    },
+    "classification": "patch-but-failed"
   }
 ]
