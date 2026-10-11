@@ -940,7 +940,7 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 | ProtA | ✅ **50.53%** (done 15:10 Oct 11, rc=0). ΔProtA = +0.83pp vs E1fair (49.70%). |
 | Zero-shot | ✅ **35.52%** top1 / 67.24% top5 (done 15:18 Oct 11). Δzs = +1.42pp vs E1fair (34.10%). |
 | k-NN | ✅ k=5: 35.63%, k=10: 37.97%, k=20: **38.94%** (done 15:25 Oct 11). Δk-NN(k20) = +1.26pp vs E1fair (37.68%). |
-| ProtB Enhanced (×5ep) | 🔄 Running (PID 2155765, GPU 0, watcher child, at 191/294 train-encode ~65%, started ~15:39 Oct 11) |
+| ProtB Enhanced (×5ep) | 🔄 Probe training: 90ep baseline DONE, 450ep ×5 config at ep150/450 (PID 2155765, GPU 0, started ~15:39 Oct 11). Will complete V3 eval watcher → chain auto-launches ④-2ep. |
 
 **⚠️ Disclosure**: This arm changes **both** data volume (+7.6% GPIC) **and** step count (+23.2%) relative to baseline. Conclusion = "**full-data recipe (data+steps combined) vs baseline**", NOT "pure data ablation".
 
