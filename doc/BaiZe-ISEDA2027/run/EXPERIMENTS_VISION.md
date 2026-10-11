@@ -937,7 +937,10 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 | Output dir | `scaling_V3_fulldata_ov2_w512_d30_p16_224` |
 | Training status | ✅ **COMPLETE** (2026-10-11 02:06–12:44, 230,598/230,598 steps, final_loss=0.1201, steady_img/s=2706.4, total=38,273s ~10.6h). 22 checkpoints (10k–230k) + final vision.pt (509MB). **No collapse** — C1 stable 0.50–0.53 throughout, C2_gap +0.19~+0.20, C4=OK at all 768 PROBE points. total_shards=11,350 (vs E1fair 10,787, +563 GPIC tars). |
 | **ProtB result** | ✅ **63.52 ± 0.01%** (3 seeds: 63.53/63.52/63.51%, σ=0.0001). Eval done 14:54 Oct 11. **Δlp = +1.18pp** vs E1fair (62.34±0.01%). |
-| ProtA / zs / k-NN | 🔄 ProtA running (PID 376667); zs + k-NN queued after |
+| ProtA | ✅ **50.53%** (done 15:10 Oct 11, rc=0). ΔProtA = +0.83pp vs E1fair (49.70%). |
+| Zero-shot | ✅ **35.52%** top1 / 67.24% top5 (done 15:18 Oct 11). Δzs = +1.42pp vs E1fair (34.10%). |
+| k-NN | ✅ k=5: 35.63%, k=10: 37.97%, k=20: **38.94%** (done 15:25 Oct 11). Δk-NN(k20) = +1.26pp vs E1fair (37.68%). |
+| ProtB Enhanced (×5ep) | 🔄 Running (PID 2155765, GPU 0, watcher child, started ~15:39 Oct 11) |
 
 **⚠️ Disclosure**: This arm changes **both** data volume (+7.6% GPIC) **and** step count (+23.2%) relative to baseline. Conclusion = "**full-data recipe (data+steps combined) vs baseline**", NOT "pure data ablation".
 
@@ -950,6 +953,18 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 
 **Result (2026-10-11)**: Δlp = **+1.18pp** (63.52% vs 62.34%) → **Null** verdict. The +7.6% more GPIC data + 23% more steps did NOT produce a distinguishable improvement. The positive trend (+1.18pp) is within the pre-registered noise threshold (1.5pp). Consistent with R12b finding ("more unique data ≠ higher lp" at similar scale). The full-data recipe is safe to adopt (no harm) but does not justify the extra compute cost for the marginal gain.
 
+**V3 Cross-Metric Summary** (all metrics consistently +0.8~+1.4pp above E1fair):
+
+| Metric | E1fair | V3 | Δ |
+|:--|:--|:--|:--|
+| ProtB (3-seed) | 62.34±0.01% | 63.52±0.01% | +1.18pp |
+| ProtA | 49.70% | 50.53% | +0.83pp |
+| Zero-shot top-1 | 34.10% | 35.52% | +1.42pp |
+| k-NN (k=20) | 37.68% | 38.94% | +1.26pp |
+| lp−zs gap | +28.24pp | +28.00pp | −0.24pp (stable) |
+
+The uniform +1~1.4pp shift across all 4 independent metrics (ProtA/B, zs, k-NN) confirms V3 features are genuinely slightly better, not a probe artifact. The lp−zs gap remains ~28pp, confirming the dense reconstruction objective's contribution is stable regardless of data scale. However, all deltas are within the 1.5pp noise threshold → **Null verdict stands**: the +7.6% more data + 23% more steps is not a cost-effective improvement.
+
 ### 9.5 Results Table
 
 | Variant | ProtB (3-seed) | ProtA | Zero-shot | k-NN (k=20) | Δlp vs E1fair | Verdict |
@@ -957,7 +972,7 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 | E1fair (baseline) | 62.34 ± 0.01% | 49.70% | 34.10% | 37.68% | — | — |
 | V1 (res 336) | ⏸ deferred (user: "明天再说") | — | — | — | — | — |
 | V2 (Muon) | **N/A — COLLAPSED** (C1=0.9569@step4200) | N/A | N/A | N/A | N/A | ❌ Muon incompatible with contrastive loss |
-| V3 (full data) | **63.52 ± 0.01%** (seeds: 63.53/63.52/63.51%) | 🔄 running | ⏳ | ⏳ | **+1.18pp** | ✅ Null (|Δ|<1.5pp): full-data recipe indistinguishable from baseline |
+| V3 (full data) | **63.52 ± 0.01%** (seeds: 63.53/63.52/63.51%) | **50.53%** | **35.52%** | **38.94%** | **+1.18pp** | ✅ Null (|Δ|<1.5pp): full-data recipe indistinguishable from baseline |
 
 ### 9.4 ④ Epoch Scaling (operator instruction 2026-10-10 ④ · most decision-relevant)
 
@@ -991,7 +1006,7 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 
 **Cost**: 2ep ~80 GPU·h / ~10h wall; 4ep ~160 GPU·h / ~20h wall.
 
-**Status**: 🔄 V3 ProtB ✅ done (63.52±0.01%); V3 ProtA 🔄 running; ② ×5 probe 🔄 running (GPU 1). **Chain** `post_v3_chain_skip_probe.sh` (PID 2461463) waiting for V3 eval watcher to complete → will auto-launch ④-2ep training (374,202 steps, E1fair snapshot total_shards=10787, ~10h). Scripts ready: `run_e4_2ep.sh`.
+**Status**: 🔄 V3 eval nearly complete (ProtB ✅ 63.52±0.01%, ProtA ✅ 50.53%, zs ✅ 35.52%, k-NN ✅ 38.94%; ProtB Enhanced ×5ep 🔄 running PID 2155765 GPU 0). ② ×5 probe 🔄 running (PID 2190867, GPU 1, 116/294 files). **Chain** `post_v3_chain_skip_probe.sh` (PID 2461463) waiting for V3 eval watcher → will auto-launch ④-2ep training (374,202 steps, E1fair snapshot total_shards=10787, ~10h). Scripts ready: `run_e4_2ep.sh`.
 
 ### 9.6 ① Same-Model Zero-Shot + ② k-NN Probe Results (E1fair, 2026-10-11)
 
@@ -1016,6 +1031,7 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 |:--|:--|:--|:--|
 | E1fair (w512/d30, 126.8M) | **34.10%** | 62.34 ± 0.01% | **+28.24pp** |
 | E2fair (w768/d30, 284.5M) | **35.45%** | 62.51 ± 0.04% | **+27.06pp** |
+| V3 (full data, w512/d30) | **35.52%** | 63.52 ± 0.01% | **+28.00pp** |
 
 **Interpretation**:
 - **lp ≫ zs (+28pp)**: Features DO benefit from text alignment — the InfoNCE training aligns image features with the CLIP text space, enabling above-chance zero-shot classification (34.10% vs 0.1% random). However, the learned linear probe extracts **significantly more** discriminative information (+28.24pp) than direct text-similarity classification.
@@ -1025,11 +1041,13 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 
 #### ② k-NN Probe Results (partial — ×5 epochs + wd/LR sweep pending)
 
-| Probe type | E1fair top-1 | vs lp (62.34%) | vs zs (34.10%) |
-|:--|:--|:--|:--|
-| k-NN (k=20) | **37.68%** | −24.66pp | +3.58pp |
-| ×5 epochs probe (450ep) | 🔄 **RUNNING** (PID 2190867, GPU 1, started 14:20 Oct 11, encoding train features at 51/294 files) | — | — |
-| wd/LR sweep | 🔄 Queued (after ×5 epochs in same run) | — | — |
+| Probe type | E1fair top-1 | V3 top-1 | vs lp (E1fair 62.34%) | vs zs (E1fair 34.10%) |
+|:--|:--|:--|:--|:--|
+| k-NN (k=5) | ⏳ pending (×5 probe run) | 35.63% | — | — |
+| k-NN (k=10) | ⏳ pending | 37.97% | — | — |
+| k-NN (k=20) | **37.68%** | **38.94%** | −24.66pp | +3.58pp |
+| ×5 epochs probe (450ep) | 🔄 **RUNNING** (PID 2190867, GPU 1, started 14:20 Oct 11, encoding train features at 116/294 files) | 🔄 Running (PID 2155765, GPU 0, watcher child) | — | — |
+| wd/LR sweep | 🔄 Queued (after ×5 epochs in same run) | 🔄 Queued | — | — |
 
 **Interpretation (k-NN only)**:
 - **k-NN (37.68%) < lp (62.34%)**: The linear probe extracts significantly more than nearest-neighbor matching. This is expected for high-dimensional features (linear classifiers generally outperform k-NN).
