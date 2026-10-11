@@ -175,7 +175,20 @@ ssh -N -L 5901:127.0.0.1:5901 -L 9222:127.0.0.1:9222 liuyang@106.54.228.191
 - VNC：**`hrvnc888`**
 - ⚠️ 仓库可见性变更或人员变动 → **立即轮换**（`passwd` + `vncpasswd`）；🚫 **这两个不进 `recruit/` 产物、不进任何报告 HTML**；🚫 **不上传到 Boss/候选人可见的任何地方**。
 
-> 🧯 **故障速查**：连不上 → 先看隧道进程 + `vncserver -list`；Chrome 无 CDP → `tail /tmp/hr_chrome_headless.log`；桌面黑屏 → `tail ~/.vnc/*.log`；VM 内存吃紧 → `pkill -f '[r]emote-debugging-port=9222'` 关浏览器。
+**⑧ 本线 loop 的运行方式（2026-10-11 起 = **跑在 VM 上**）**
+
+- **启动**（服务器侧 launcher 已就位）：
+  ```bash
+  setsid nohup bash ~/start_recruit_loop.sh > /tmp/watch_recruit_loop.log 2>&1 < /dev/null &
+  ```
+  launcher 内已：`cd …/personal-watch/run` + **补 PATH**（`$HOME/.nvm/versions/node/v24.21.0/bin`；**否则 `cline: command not found`**）+ 默认 `WATCH_INTERVAL_MIN=30`。
+- **重启**：`pkill -f '[w]atch_recruit_loop.sh'`（**必须括号技巧**，否则连执行命令的 shell 一起杀）→ 再按上面启动。
+- **观测**：存活标记 `/tmp/watch_recruit_loop.hb`（30 min 内应持续刷新）· 主日志 `/tmp/watch_recruit_loop.log` · 本轮 cline 输出 `/tmp/watch_recruit_cline_last.log`。
+- **唤醒节律**：`WATCH_INTERVAL_MIN`（**临时 = 30**）> `WATCH_SCHEDULE_HOURS`（默认 `6,18`）> 自适应；**首轮唤醒=立即执行**，之后每 30 min 一次；相同脚本已支持**置空 `WATCH_INTERVAL_MIN=` 即回退**「早 6 晚 6」。
+- ⚠️ **【重要缺口】VM 上跑 loop ≠ 能读 `$HR_DIR`**：`$HR_DIR=C:\Users\liuyu\HR` 是 **Windows 路径**，Linux VM 上**不存在**（启动横幅会显示「存在：缺」）⇒ 唤醒时**只能用任务书 §0.2/§0.3 的内嵌摘要兜底**，且**无法回写 `$HR_DIR`**（§5 的「回写 HR」暂不可达）。
+  - **待拍板（三选一）**：① loop 跑 **Windows**（可读/写 `$HR_DIR`）+ 经 SSH 隧道驱动 VM 浏览器；② loop 跑 **VM**（能驱动浏览器）+ **把 `$HR_DIR` 同步到 VM**（注意与 HR「单一权威」铁律的冲突）；③ 维持现状（VM 跑 + 内嵌摘要只读兜底，**不做 HR 回写**）。
+
+> 🧯 **故障速查**：连不上 → 先看隧道进程 + `vncserver -list`；Chrome 无 CDP → `tail /tmp/hr_chrome_headless.log`；桌面黑屏 → `tail ~/.vnc/*.log`；VM 内存吃紧 → `pkill -f '[r]emote-debugging-port=9222'` 关浏览器；**loop 不起** → 看 `/tmp/watch_recruit_loop.log`（`cline: command not found` = PATH 没补）。
 
 ---
 
