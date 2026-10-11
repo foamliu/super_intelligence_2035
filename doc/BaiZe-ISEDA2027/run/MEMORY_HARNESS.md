@@ -7,10 +7,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 7×300 RUNNING — 1825/2100 (86.9%); 428 resolved + 1306 pbf, 275 remaining, 0 new workdir blocks (53 rounds), 81 blocked (70 git-fetch/network + 11 legacy checkout, 0 new) + 7 quota-blocked + 3 no-patch; codex 300/300 COMPLETE + re-running blocked; N=1 monitoring
-已完成:       ① 7×100 HTML report delivered ✅ · ②-A code fix done ✅ · ②-B resource check done ✅ · GPU29_ALLOC registered ✅ · launch_7x300.sh created ✅ · Smoke test PASSED ✅ · 7×300 LAUNCHED ✅ · BLOCK=0 (workdir) CONFIRMED ✅ (R231→R283, 53 consecutive rounds) · codex 300/300 COMPLETE ✅ + re-running blocked
-当前动作:     R283: 7×300 monitoring at 08:32 (1938 min since 00:14 launch, 32.3h). ALL 7 alive (etimes ~116222s). 1825/2100 (86.9%), +14 since R282 (36 min, ~0.39/min). 428 resolved / 1306 pbf / 81 blocked (70 git-fetch/network + 11 legacy checkout, 0 new, −2 since R282) + 7 qb + 3 np. Workdir isolation fix holding ✅ (53rd round, 0 new checkout/overwrite). Per-harness: cline 268(66,rem32) / codex 300(68,rem0,RE-RUNNING blocked) / claude 251(57,rem49) / opencode 276(70,rem24) / deepseek 256(48,rem44) / hermes 219(51,rem81←BOTTLENECK,ETA~17h) / pi 255(68,rem45). ETA hermes ~17h (~Oct 12 01:30 overall). Resources: load 16.35/17.10/17.16, 1816G avail RAM, /dev/shm 16G/993G(2%), GPU pretrain (NOT harness).
-下一步:       ① Continue monitoring — workdir block=0 holding (53 rounds) → ② ETA hermes ~17h (~Oct 12 01:30; others 3-9h) → ③ Each harness completes → re-runs blocked automatically (codex doing this, blocked −2) → ④ refresh + commit → ⑤ Final: ensure blocked=0 (success criteria ②-C) → ⑥ Generate 7×300 HTML report upon completion.
+PHASE:        H-A 7×300 RUNNING — 1833/2100 (87.3%); 432 resolved + 1310 pbf, 267 remaining, 0 new workdir blocks (54 rounds), 81 blocked (70 git-fetch/network + 11 legacy checkout, 0 new) + 7 quota-blocked + 3 no-patch; codex 300/300 COMPLETE + re-running blocked; N=1 monitoring
+已完成:       ① 7×100 HTML report delivered ✅ · ②-A code fix done ✅ · ②-B resource check done ✅ · GPU29_ALLOC registered ✅ · launch_7x300.sh created ✅ · Smoke test PASSED ✅ · 7×300 LAUNCHED ✅ · BLOCK=0 (workdir) CONFIRMED ✅ (R231→R284, 54 consecutive rounds) · codex 300/300 COMPLETE ✅ + re-running blocked
+当前动作:     R284: 7×300 monitoring at 09:07 (1973 min since 00:14 launch, 32.9h). ALL 7 alive (etimes ~118350s). 1833/2100 (87.3%), +8 since R283 (35 min, ~0.23/min). 432 resolved / 1310 pbf / 81 blocked (70 git-fetch/network + 11 legacy checkout, 0 new, same as R283) + 7 qb + 3 np. Workdir isolation fix holding ✅ (54th round, 0 new checkout/overwrite). Per-harness: cline 270(68,rem30) / codex 300(68,rem0,RE-RUNNING blocked) / claude 252(57,rem48) / opencode 278(72,rem22) / deepseek 257(48,rem43) / hermes 220(51,rem80←BOTTLENECK,ETA~16.8h) / pi 256(68,rem44). ETA hermes ~16.8h (~Oct 12 02:00 overall). Resources: load 17.76/17.62/17.06, 1814G avail RAM, /dev/shm 16G/993G(2%), GPU 100%/98% (pretrain R2, NOT harness).
+下一步:       ① Continue monitoring — workdir block=0 holding (54 rounds) → ② ETA hermes ~16.8h (~Oct 12 02:00; others 3-9h) → ③ Each harness completes → re-runs blocked automatically (codex doing this) → ④ refresh + commit → ⑤ Final: ensure blocked=0 (success criteria ②-C) → ⑥ Generate 7×300 HTML report upon completion.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -31,14 +31,14 @@ ERROR_COUNT:  0
 2. **codex 特例**：codex 在 R1 跑了 300 条超集（串行），其中 70 条与本轮 100-set 重叠 → codex 的 70 条"新跑"实际来自 **300 串行超集**，**非 R2 并行**。codex 全部 100 条均为串行。
 3. **监控指标**（本轮必须对比 R1 同 30 条）：`quota-blocked` / `timeout` / `no-patch` 率 → 若 R2 显著上升 ⇒ 判"并行污染" → 结论打折。SWEBENCH_COMPARE.html §2 监控表已生成。
 
-**R2 监控快照**（2026-10-11 07:56，R282 更新）：
+**R2 监控快照**（2026-10-11 09:07，R284 更新）：
 
 | 指标 | R1 (30 serial) | R2 (70 parallel) / 7×300 | 判定 |
 |:--|:--|:--|:--|
-| **quota_blocked** | 0/210 (0%) | 7/1811 (0.4%) — all 7 harnesses | ⚠️ API quota, NOT workdir — acceptable |
+| **quota_blocked** | 0/210 (0%) | 7/1833 (0.4%) — all 7 harnesses | ⚠️ API quota, NOT workdir — acceptable |
 | **timeout** | 0 (codex 2) | 29 git-fetch TIMEOUT (workdir_setup) | ⚠️ network/infra — re-run at end |
-| **workdir_blocked** | **0/210 (0%)** | **12 legacy checkout (0 new R231→R282, 52 rounds)** | ✅ **per-harness workdir isolation FIX HOLDING** |
-| **git_fetch_blocked** | 0 | **71** (fetch_fail, all workdir_setup git-fetch network fail) | ⚠️ network/infra, NOT workdir — re-run at end |
+| **workdir_blocked** | **0/210 (0%)** | **11 legacy checkout (0 new R231→R284, 54 rounds)** | ✅ **per-harness workdir isolation FIX HOLDING** |
+| **git_fetch_blocked** | 0 | **70** (fetch_fail, all 503 from proxy CONNECT) | ⚠️ network/infra, NOT workdir — re-run at end |
 | **no-patch** | 0/210 (0%) | 3 (deepseek) | ⚠️ eval env limitation |
 
 **⚠️ 新发现：workdir git-checkout 冲突 = 并行污染（R207 首次披露）**：
@@ -218,17 +218,9 @@ ERROR_COUNT:  0
 - 2026-10-09 21:38 —— **第二百二十八轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
 - 2026-10-09 23:20 —— **第二百二十九轮** —— 已归档 → daily-memories-harness/2026-10-09.md。需要时再读。
 > 📦 R230-R258 (2026-10-10 00:14~17:37, smoke test + 7×300 launch + monitoring 62%→71%) 已归档 → daily-memories-harness/2026-10-10.md。结论：7×300 launched 00:14, ALL 7 alive, workdir block=0 holding (R231→R258), progress 0→71.1% (1494/2100). 需要时再读。
-> 📦 R259-R260 (2026-10-10 18:13~18:49, 7×300 monitoring 72.0%→72.8%) 已归档 → daily-memories-harness/2026-10-10.md。结论：1528/2100, 334 resolved, workdir block=0 (30 rounds), hermes bottleneck ETA 26.0h。需要时再读。
-> 📦 R261-R262 (2026-10-10 19:24~19:58, 7×300 monitoring 73.6%→74.0%) 已归档 → daily-memories-harness/2026-10-10.md。结论：1555/2100, 340 resolved, workdir block=0 (32 rounds), hermes bottleneck ETA 26.0h。需要时再读。
-> 📦 R263-R264 (2026-10-10 20:34~21:07, 7×300 monitoring 74.9%→75.6%) 已归档 → daily-memories-harness/2026-10-10.md。结论：1588/2100, 346 resolved, workdir block=0 (34 rounds), hermes bottleneck ETA 25.2h。需要时再读。
-> 📦 R265 (2026-10-10 21:44, 7×300 monitoring 76.2%) 已归档 → daily-memories-harness/2026-10-10.md。结论：1601/2100, 352 resolved, workdir block=0 (35 rounds), hermes ETA 24.7h。需要时再读。
-> 📦 R266 (2026-10-10 22:19, 7×300 monitoring 76.9%) 已归档 → daily-memories-harness/2026-10-10.md。结论：1614/2100, 356 resolved, workdir block=0 (36 rounds), hermes ETA 24.3h。需要时再读。
-> 📦 R267 (2026-10-10 22:54, 7×300 monitoring 77.6%) 已归档 → daily-memories-harness/2026-10-10.md。结论：1629/2100, 358 resolved, workdir block=0 (37 rounds), hermes ETA 23.9h。需要时再读。
-> 📦 R268 (2026-10-10 23:29, 7×300 monitoring 78.2%) 已归档 → daily-memories-harness/2026-10-10.md。结论：1642/2100, 362 resolved, workdir block=0 (38 rounds), hermes ETA 23.7h。需要时再读。
+> 📦 R259-R268 (2026-10-10 18:13~23:29, 7×300 monitoring 72.0%→78.2%) 已归档 → daily-memories-harness/2026-10-10.md。结论：1528→1642/2100, 334→362 resolved, workdir block=0 (30→38 rounds), hermes ETA 26→23.7h。需要时再读。
 > 📦 R269-R276 (2026-10-11 00:05~04:18, 7×300 monitoring 78.7%→83.4%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1670→1751/2100, 369→393 resolved, workdir block=0 (40→46 rounds), hermes ETA 23→22h。需要时再读。
-> 📦 R277 (2026-10-11 04:54, 7×300 monitoring 83.9%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1762/2100, 398 resolved, workdir block=0 (47 rounds), hermes ETA 18h。需要时再读。
-> 📦 R278 (2026-10-11 05:31, 7×300 monitoring 84.3%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1770/2100, 402 resolved, workdir block=0 (48 rounds), hermes ETA 17h。需要时再读。
-> 📦 R279 (2026-10-11 06:05, 7×300 monitoring 84.8%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1780/2100, 405 resolved, workdir block=0 (49 rounds), hermes ETA 19h。需要时再读。
-> 📦 R280 (2026-10-11 06:45, 7×300 monitoring 85.2%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1790/2100, 409 resolved, workdir block=0 (50 rounds), hermes ETA 18h。需要时再读。
-> 📦 R281 (2026-10-11 07:18, 7×300 monitoring 85.7%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1800/2100, 413 resolved, workdir block=0 (51 rounds), blocked 90→83 trend, hermes ETA ~18h。需要时再读。
-- 2026-10-11 07:56 —— **第二百八十二轮** —— 7×300 monitoring at 1902 min (31.7h): ALL 7 alive (etimes ~114135s). 1811/2100 (86.2%), +11 since R281 (38 min, ~0.29/min). 422 resolved / 1296 pbf / 83 blocked (71 git-fetch/network + 12 legacy checkout, 0 new, −7 since R281 via codex re-runs) + 7 qb + 3 np. Workdir fix holding ✅ (52nd round, 0 new checkout/overwrite). Per-harness: cline 265(65,rem35,avg494s) / codex 300(68,rem0,RE-RUNNING,avg914s) / claude 249(57,rem51,avg590s) / opencode 273(69,rem27,avg451s) / deepseek 254(47,rem46,avg476s) / hermes 217(51,rem83←BOTTLENECK,avg754s,ETA~17.5h) / pi 253(65,rem47,avg458s). Blocked trend: 90→83 (R281→R282) — codex re-runs reducing blocked. ETA hermes ~17.5h → ~Oct 12 01:30 overall. Resources: load 18.63/17.38/16.98, 1818G avail RAM, /dev/shm 16G/1008G(2%), GPU 100%/97% (pretrain R2, NOT harness). 📦 体积：TASK=32106B(31.4KB ✓) / MEMORY≈32600B(31.8KB ✓)。
+> 📦 R277-R281 (2026-10-11 04:54~07:18, 7×300 monitoring 83.9%→85.7%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1762→1800/2100, 398→413 resolved, workdir block=0 (47→51 rounds), blocked 90→83 trend, hermes ETA 18h。需要时再读。
+> 📦 R282 (2026-10-11 07:56, 7×300 monitoring 86.2%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1811/2100, 422 resolved, workdir block=0 (52 rounds), blocked 83 (−7 via codex re-runs), hermes ETA ~17.5h。需要时再读。
+> 📦 R283 (2026-10-11 08:32, 7×300 monitoring 86.9%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1825/2100, 428 resolved, workdir block=0 (53 rounds), blocked 81 (−2), hermes ETA ~17h。需要时再读。
+- 2026-10-11 09:07 —— **第二百八十四轮** —— 7×300 monitoring at 1973 min (32.9h): ALL 7 alive (etimes ~118350s). 1833/2100 (87.3%), +8 since R283 (35 min, ~0.23/min). 432 resolved / 1310 pbf / 81 blocked (70 git-fetch/network 503 + 11 legacy checkout, 0 new, same as R283) + 7 qb + 3 np. Workdir fix holding ✅ (54th round, 0 new checkout/overwrite). Per-harness: cline 270(68,rem30) / codex 300(68,rem0,RE-RUNNING blocked) / claude 252(57,rem48) / opencode 278(72,rem22) / deepseek 257(48,rem43) / hermes 220(51,rem80←BOTTLENECK,avg~754s,ETA~16.8h) / pi 256(68,rem44). Blocked trend: 83→81→81 (R282→R283→R284, stable — codex re-runs ongoing). ETA hermes ~16.8h → ~Oct 12 02:00 overall. Resources: load 17.76/17.62/17.06, 1814G avail RAM, /dev/shm 16G/993G(2%), GPU 100%/98% (pretrain R2, NOT harness). 📦 体积：TASK=32106B(31.4KB ✓) / MEMORY≈32600B(31.8KB ✓)。
