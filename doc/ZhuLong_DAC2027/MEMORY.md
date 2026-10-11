@@ -96,7 +96,7 @@ WAITING: 0
 - [x] ✅ **Phase B 模型 key**：已全部验证有效（Phase B 4/4 完成）。
 - [x] ✅ **RAG recall 端口已修（2026-10-11 用户令）**：ops `RUN_ID 32` 设 `.env` `RAG_RECALL_URL=http://localhost:9006/recall`（`9006` 健康 = `chroma_db_v20260522`；`9012` 已死）。⚠️ 仍须在报告**披露**（它同时是「BM25-only fallback」的既存降级条件）。
 - [ ] ⏳ **`"timeout": 180` 回退 = 已执行（10-11 08:07:38，RUN_ID 32）** —— `removed timeout=180 keys = 1 ['/mcpServers/pyAether_MCP_server/timeout=180']`、`JSON 校验=OK`、`AFTER ✅ 已无任何 timeout 键`；`~/.cline_prof4_eval/` 目录**已不存在** ⇒ 只有 `~/.cline/data/settings/` 一处需回退（备份 `/tmp/cline_mcp_settings.*.bak.*`）。用户 10-11 令：「昨晚的改动都是垃圾，全部回退，没有任何亮点」。
-- [ ] **`/home` 100% 工单（用户可见 infra 风险）**：394G / **3.4G 可用**（共享 FS、69 用户；我方只占 <7.2G，`~/.cline`/`.cache`/`.local`/`~/eda_code_eval` 均 →`/nasdata`）⇒ **非我方所能修**。不阻断本轮，但**起 r3 前复检 ≥8G**，不足则不启、回报。
+- [ ] **`/home` 100% 工单（用户可见 infra 风险）**：394G / **4G 可用**（共享 FS、69 用户；我方 <7.2G 且均 →`/nasdata`）⇒ **非我方所能修**；**起跑前复检 ≥8G**，不足则不启、回报（**10-11 用户已授权带 4G 起 r2**）。
 - [ ] **`tab:omega` 的 (H)/(H+E)/(L)**：锚点复用规则下 (H)/(F) 由 `C1.full` 复用；`(H+E)` 已定**不做**；`(L)` 由 `omega_low` 提供——确认无遗漏。
 - [ ] **RQ3（SKILL / Tcl 切片）** 是否纳入本轮（依赖最重，任务书列为最后）。
 
