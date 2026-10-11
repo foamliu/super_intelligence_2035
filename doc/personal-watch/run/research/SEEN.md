@@ -2835,7 +2835,7 @@
 | 2026-10-10 | 2610.11328 | Mine Odyssey: Benchmarking Spatial Agentic Intelligence in the Wild | cs.AI | 候选 |
 | 2026-10-10 | 2610.11320 | It's Always 10:10: Reference Images Break a Bias That Prompts Only Dent | cs.CV | 收录 |
 | 2026-10-10 | 2610.11318 | Finsler Flow Matching: Dynamics-Aware Geodesic Interpolation for Single-Snapshot Trajectory Inference | cs.AI | 候选 |
-| 2026-10-10 | 2610.11317 | DivMoE: Fine-Grained MoE Upcycling via Cross-Domain Expert Composition | cs.AI | 候选 |
+| 2026-10-10 | 2610.11317 | DivMoE: Fine-Grained MoE Upcycling via Cross-Domain Expert Composition | cs.AI | 收录 |
 | 2026-10-10 | 2610.11313 | NP-Hardness of Minimizing Neurons in Two-Hidden-Layer ReLU Neural Networks | cs.LG | 候选 |
 | 2026-10-10 | 2610.11310 | FloorSAV: Elucidating Spatial Audio-Visual Context with 2D Floormap for AV-LLMs | cs.CV | 候选 |
 | 2026-10-10 | 2610.11306 | Collaboratively Guided Adversarial Robust Distillation with Teacher-Favorable Examples | cs.CV | 候选 |
@@ -2843,7 +2843,7 @@
 | 2026-10-10 | 2610.11300 | Characterizing Overconfident Failure in LLM-Based Code Generation | cs.SE | 候选 |
 | 2026-10-10 | 2610.11296 | Spatial-Frequency-Aware Implicit Neural Representation of Multidimensional Signals via MLP-KAN Fusion | cs.CV | 候选 |
 | 2026-10-10 | 2610.11294 | ORDO: Operation-level Round-aware Dynamic Ordering for MIP Presolve | cs.AI | 候选 |
-| 2026-10-10 | 2610.11291 | When Do We Need On-Policy Distillation? Distilling on Offline Student Rollouts Is Often Better | cs.CL | 候选 |
+| 2026-10-10 | 2610.11291 | When Do We Need On-Policy Distillation? Distilling on Offline Student Rollouts Is Often Better | cs.CL | 收录 |
 | 2026-10-10 | 2610.11289 | Open-ended Scientific Discovery with Possibilistic Reasoning | cs.AI | 候选 |
 | 2026-10-10 | 2610.11288 | Memorization and Malign Generalization in Conditional Diffusion Models with Random Features | cs.LG | 候选 |
 | 2026-10-10 | 2610.11287 | REMORY: Learning Residual Memory for Context Compaction | cs.CL | 候选 |
@@ -3048,7 +3048,7 @@
 | 2026-10-10 | 2610.10622 | WorldBench: Evaluating LLMs on Three.js Voxel World Generation | cs.GR | 候选 |
 | 2026-10-10 | 2610.10621 | Self-Organization from Constrained Geometric Radiation | cs.LG | 候选 |
 | 2026-10-10 | 2610.10620 | When AI Finds Hidden Messages, Does It Report? | cs.CR | 收录 |
-| 2026-10-10 | 2610.10619 | TestJack: Should you trust the results in coding benchmarks? Agentic Coding Benchmarks Auditing via Evaluator Evolution | cs.SE | 候选 |
+| 2026-10-10 | 2610.10619 | TestJack: Should you trust the results in coding benchmarks? Agentic Coding Benchmarks Auditing via Evaluator Evolution | cs.SE | 收录 |
 | 2026-10-10 | 2610.10617 | MRCert: Towards Post-deployment Patch Robustness Certification for Adversarially Patched Samples via Type-specific Masking | cs.CR | 候选 |
 | 2026-10-10 | 2610.10616 | When Routing Reveals Membership: Privacy Leakage from MoE Router Telemetry | cs.LG | 候选 |
 | 2026-10-10 | 2610.10615 | JevForest: Path Voting for Budgeted Feature Acquisition | stat.ML | 候选 |

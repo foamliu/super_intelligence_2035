@@ -1298,3 +1298,30 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮**无长期工具代码改动**（`raw/2026-10-11-idlist-cand2-r87.xml` 为一次性留证）。
 - **下轮预期**：**本地 `2026-10-12 06:00`**（新一日「早 3」轮）：① 复验批次是否刷新（`2026-10-09/10` 提交批预计周日晚 ~UTC 00:00 起陆续公告）；② 若刷新则走标准 `--fetch` 增量取数，否则继续走 **RSS 发现 + `id_list` 复核**；③ 日报进度回到 **3/5**（新一日 AM）。
 
+### 9.90 第八十八轮（本地 2026-10-12 06:00 时窗 · **P0 第 4 批「早 3」轮 · 新一日 AM 轮**）：**周一清晨（CST）= UTC 周日晚 → 无新批**（API 增量 0）+ RSS 空 feed → **早报 3 篇「借鉴」从 AM 547 条窗口内候选池精选 + 单条权威复核**
+
+- **时点判读**：本轮唤醒于本地 `2026-10-12 06:00`（CST）= **UTC `2026-10-11T22:00`（周日）**。arXiv **工作日 20:00 ET 公告、周末不发** → **周一（10-12）20:00 ET 的公告尚未落地** → **批次未刷新**（仍 `2026-10-08`），`kept 0` 为**时点正常现象**（**非「无数据」**）。
+
+- **R1′ 取源复验**（`python3 research/arxiv_fetch.py --probe`，`generated=2026-10-11T22:00:17Z`，证据 `research/raw/2026-10-12-probe-r88.log`）：
+  - **arXiv API** ✅ `HTTP 200` + `Content-Type: application/atom+xml; charset=utf-8` + 可解析 + 非空；`totalResults=630048`、最新样本 `published=2026-10-08T17:59:58Z` —— **与第八十四 / 八十五 / 八十六 / 八十七轮完全一致**（未刷新）；
+  - **HF Daily Papers** ❌ `Network is unreachable`（**不伪造** `hf_daily`）；
+  - **arXiv RSS**（cs.CL / cs.CV / cs.LG）**items = 0 / 0 / 0**（**周末空 feed**，如实记录）。
+
+- **增量取数**（`python3 research/arxiv_fetch.py --fetch --seen research/SEEN.md`，`window_mode=weekend_batch`，窗口 **120h**，`generated=2026-10-11T22:02:25Z`，证据 `research/raw/2026-10-12-fetch-r88-seen.{json,log}`）：**15/15 查询 `ok`**（均 `attempts=1`，**无重试**），**kept 0 / dropped 600** → **API 关键词 0 新增**（**周一公告未落地**）。per-query 命中：`sweep-cs-5cats` 630048 · `llm-large-language-model` 38920 · `llm-long-context` 1824 · `llm-scaling-law` 995 · `slm-small-language-model` 1075 · `slm-on-device` 10961 · `mm-vision-language` 17414 · `mm-multimodal` 16363 · `mm-csmm` 10202 · `agent-harness-title` 131 · `agent-swe-bench` 384 · `agent-tool-use` 1610 · `agent-csma-multiagent` 5928 · `nb-retrieval-augmented` 3909 · `nb-alignment` 21698。
+
+- **候选池承接**：本轮无新批可采 → 早报 3 篇取自**前轮 547 条窗口内候选池**（第八十四轮「RSS 发现 + `id_list` 复核」所得，证据 `research/raw/2026-10-10-rss-r84.json`）。
+
+- **精选权威复核（`id_list`）**：对早报 3 篇走 **arXiv API `id_list` 单条复核**（`id_list=2610.11317,2610.11291,2610.10619`）→ **3/3 返回**，另取 8 条候选 **8/8 返回**；全部 `HTTP 200` + `application/atom+xml; charset=utf-8` + 有 `published`（证据 `research/raw/2026-10-12-idlist-cand3-r88.{xml,headers}` · `research/raw/2026-10-12-idlist-cand-r88.xml`）：
+  - `2610.11317` *DivMoE: Fine-Grained MoE Upcycling via Cross-Domain Expert Composition*（`published=2026-10-08T06:23:01Z`，cs.AI（次 cs.LG），5 位署名 `Yuxuan Lou, Kai Yang, Geng Zhang, Yong Liu, Yang You`，`comment`/`journal_ref` 均为空）；
+  - `2610.11291` *When Do We Need On-Policy Distillation? Distilling on Offline Student Rollouts Is Often Better*（`published=2026-10-08T05:54:03Z`，cs.CL，11 位署名，`comment` 空）；
+  - `2610.10619` *TestJack: Should you trust the results in coding benchmarks? Agentic Coding Benchmarks Auditing via Evaluator Evolution*（`published=2026-10-07T07:58:04Z`，cs.SE（次 cs.AI），6 位署名含 `Koushik Sen, Dawn Song` 等，`comment` 空）。
+  - **去重复核**：3 个 ID 均**不在**任何 `daily/*.html`；检出时在 `SEEN.md` 状态为「候选」→ **无重复**。
+
+- **产出**：`research/daily/2026-10-12.html`（**自包含单文件**，**早报 3/5**，3 篇「借鉴」= `2610.11317` DivMoE / `2610.11291` Semi-OPD / `2610.10619` TestJack；含页头口径 note + 附录 A（I→V 口径链条）/ 附录 B（15 查询 per-query）/ 附录 C（口径护栏）+ footer）→ 同步 `research/daily/index.html`（新增 2026-10-12 行，3/5）与 `research/INDEX.md`。
+
+- **台账**：`research/SEEN.md` **行数不变（3,051 条）**，3 篇状态 **候选 → 收录** → **收录 189 / 候选 2862**；`research/papers.jsonl` **+3 → 189 行**。
+
+- **回归**：`research/test_arxiv_fetch.py` **49/49 PASS** · `research/test_top_k.py` **25/25 PASS**（均离线）；本轮**无长期工具代码改动**（`raw/2026-10-12-*.{json,xml,headers,log}` 为一次性留证，均远小于 5MB）。
+
+- **下轮预期**：**本地 `2026-10-12 18:00`**（当日「晚 2」轮）：① 复验批次是否刷新（**周一 20:00 ET 公告** = **本地 10-13 08:00** 前后才落地，故 **PM 轮大概率仍无新批**）；② 晚报 2 篇「科普」继续从 **547 条窗口内候选池** 精选 + 单条权威复核；③ 日报收口 **5/5**（新增 `## 晚报变更说明（AM → PM）`）。
+
