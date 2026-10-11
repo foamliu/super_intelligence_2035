@@ -791,6 +791,51 @@ E2fair's `[start]` line and lr self-check are byte-identical to E1fair's — con
 
 ---
 
+## §8.3 参照系说明（Reference System Explanation）— ③ 口径修订 (2026-10-10, operator instruction)
+
+> **目的**：明确哪些数字可直接比较、哪些不可同表，避免误导性横比。
+> **规则**：只有「同目标函数 + 同数据量级 + 同 epoch + 同评测协议」的**内部**基线才可直接比较。
+
+### 8.3.1 BaiZe Internal Protocol 标注规则
+
+凡出现**绝对 lp / zs / k-NN 数字**，必须标注所用的评测协议：
+
+| 标注 | 含义 | 适用场景 |
+|:--|:--|:--|
+| **BaiZe internal protocol (ProtB)** | SGD+momentum0.9+cosine, 90ep, mini-batch 1024, IN-1k full train, IN-1k val 50k, IN-1k norm, 3 seeds | 主结果（主流对齐，可与 DINOv2/MAE/iBOT 公开值横比） |
+| **BaiZe internal protocol (ProtA)** | AdamW lr=3e-3, full-batch, 100ep, probe 50/class, self-split val, CLIP norm, seed 0 | 旧实验（R2–R14 消融），相对排序有效但绝对数字偏低 ~10pp |
+| **External** | CLIP zs / OpenCLIP / MAE / DINOv2 / iBOT 等公开报告值 | 🚫 **不得与 BaiZe 数字同表**（见下） |
+
+### 8.3.2 不可比原因（逐条）
+
+| 维度 | BaiZe (本线) | 外部方法 | 不可比原因 |
+|:--|:--|:--|:--|
+| **目标函数** | AIMv2-style: `1.0×InfoNCE + 1.0×masked-patch-MSE`（双向 ViT + 随机掩码） | CLIP = 纯对比学习; MAE/DINOv2 = 纯视觉自监督（无文本塔）; iBOT = dense + self-distill | 目标函数不同 → 学到的表征空间性质不同 → lp 不可直接比较 |
+| **数据** | 图文对 **95.8M**（GPIC 7437 tar + CC12M + Amshaker），**1 epoch** | LAION-2B（多 epoch / batch 32k）; IN-1k / LVD-142M（纯视觉，无文本对） | 数据量级差 10–100×；数据类型不同（图文对 vs 纯图像） |
+| **文本塔** | **冻结** CLIP-ViT-L/14-336 (768-d)，不解冻 / 不用 LoRA | CLIP/OpenCLIP = 文本塔端到端训练; MAE/DINOv2 = 无文本塔 | 冻结文本塔限制了对比学习的对齐能力 → lp 上限不同 |
+| **评测协议** | ProtA vs ProtB 相差 **~10pp**（见 BP-3） | 公开 lp 通常用主流协议（≈ProtB） | 不同协议的绝对数字不可同表；ProtA 数字比主流低 ~10pp |
+| **训练规模** | ~118M 上限（从零训练，1 epoch） | AIMv2-L = 12B 样本; DINOv2 = LVD-142M / 多 epoch | 规模差 100× → 绝对 lp 不可比（本线渐近外推 ~25.1% ProtA） |
+
+### 8.3.3 可直接比较的范围
+
+| 可比 | 条件 | 示例 |
+|:--|:--|:--|
+| ✅ **内部横比（同协议）** | 同目标 + 同数据 + 同 epoch + 同协议 | E1fair ProtB vs E2fair ProtB; V3 ProtB vs E1fair ProtB; ④-2ep ProtB vs E1fair ProtB |
+| ✅ **内部纵比（同模型跨协议）** | 同 ckpt，不同协议 | E1fair ProtB (62.34%) vs E1fair ProtA (49.70%) vs E1fair zs (34.10%) vs E1fair k-NN (37.68%) |
+| ✅ **旧实验相对排序** | 同协议内排序 | R2–R14 消融的架构/loss/超参排名（ProtA/ProtB 排序一致） |
+| 🚫 **外部横比** | 不同目标/数据/规模 | BaiZe ProtB 62.34% vs CLIP zs / DINOv2 lp / MAE lp → **不可同表** |
+| ⚠️ **有条件外部参考** | 仅作量级参照，须加注 | "官方 OpenVision2 L/14 同口径 ProtA lp = 79.81% vs 从零 7.99%（差 ~10×，预训练规模差异）" |
+
+### 8.3.4 清理记录（2026-10-10 ③）
+
+以下外部数字比较已加不可比标注或从主表移除：
+- §R13（官方 vs 自研对照）：已标注「from-scratch 排名，勿并列」「如实标注」+ 结论边界声明（line 117–118）。
+- §R8（六架构评测）：Protocol A 已标注「BaiZe 内部协议」（line 140, 587, 747）。
+- §R11-G（scaling 曲线）：幂律外推 ~25.1% 标注为 ProtA（BaiZe internal），不作外部横比。
+- 本 §9 系列实验：所有 ProtB/ProtA 数字均标注协议名称；Δlp 仅在内部基线间计算。
+
+---
+
 ## §9 Three-Variant Ablation vs E1fair Baseline (2026-10-10, PRE-REGISTRATION)
 
 > **Pre-registered before any results.** Each variant is byte-identical to the E1fair
