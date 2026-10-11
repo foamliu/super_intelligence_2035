@@ -92,25 +92,24 @@ function Sync-Repo {
     Write-Log "  [git] sync: $Repo"
     Push-Location -LiteralPath $Repo
     try {
-        & git fetch origin --quiet 2>&1 | Out-Null
-        if ($LASTEXITCODE -ne 0) { Write-Log "  [git] fetch FAILED (network?) - skip repo"; return }
+        & git fetch origin --quiet 2>$null
+        if ($LASTEXITCODE -ne 0) { Write-Log "  [git] fetch FAILED (exit $LASTEXITCODE; network?) - skip repo"; return }
 
-        $po = (& git pull --rebase --autostash origin main 2>&1 | Out-String).Trim()
-        if ($po) { Write-Log ("  [git] " + ($po -replace "`r?`n", ' | ')) }
+        & git pull --rebase --autostash origin main --quiet 2>$null
+        if ($LASTEXITCODE -ne 0) { Write-Log "  [git] pull FAILED (exit $LASTEXITCODE) - continue" }
 
         foreach ($p in $AddPaths) {
-            if (Test-Path -LiteralPath (Join-Path $Repo $p)) { & git add -- $p 2>&1 | Out-Null }
+            if (Test-Path -LiteralPath (Join-Path $Repo $p)) { & git add -- $p 2>$null }
         }
         $staged = (& git diff --cached --name-only 2>$null)
         if ($staged) {
-            $msg = "$Prefix auto-sync $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
-            & git -c core.quotepath=false commit -m $msg 2>&1 | Out-String |
-                ForEach-Object { if ($_.Trim()) { Write-Log ("  [git] " + $_.Trim()) } }
+            & git -c core.quotepath=false commit -q -m "$Prefix auto-sync $(Get-Date -Format 'yyyy-MM-dd HH:mm')" 2>$null
+            Write-Log "  [git] committed $(@($staged).Count) file(s) (exit $LASTEXITCODE)"
         }
         $ahead = (& git rev-list --count origin/main..HEAD 2>$null)
         if ($ahead -and [int]$ahead -gt 0) {
-            $po2 = (& git push origin main 2>&1 | Out-String).Trim()
-            if ($po2) { Write-Log ("  [git] push: " + ($po2 -replace "`r?`n", ' | ')) }
+            & git push origin main --quiet 2>$null
+            Write-Log "  [git] pushed (ahead=$ahead -> 0, exit $LASTEXITCODE)"
         } else {
             Write-Log "  [git] nothing to push"
         }

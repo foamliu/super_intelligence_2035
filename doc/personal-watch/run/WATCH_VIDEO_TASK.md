@@ -159,5 +159,8 @@ powershell -ExecutionPolicy Bypass -File "D:\Users\Administrator\code\super_inte
 **判活**：`run/video/logs/watch_video_loop.hb`（mtime 每小时刷）+ 日志。
 
 > ⚠️ **改 loop / 任务书后须重启计划任务才生效**（脚本不会热重载）。
+> 🔤 **`.ps1` 必须存成「UTF-8 带 BOM」** —— 本机是 **Windows PowerShell 5.1 + GBK 默认编码**；**无 BOM 的 .ps1 会把中文注释读成乱码并直接报语法错**（本线立线时已踩过一次）。自检/补 BOM：`$f='…\watch_video_loop.ps1'; (Get-Content $f -Raw) | Set-Content -Encoding utf8 $f`（PS 5.1 的 `utf8` = 带 BOM）。
+> 🧪 **安全自检（不调 cline、不烧 token）**：`powershell -ExecutionPolicy Bypass -File "…\watch_video_loop.ps1" -Once -DryRun`（只走横幅/日志/心跳/git 同步）。
+> ⚙️ **可调参数**（loop 顶部 `param()`）：`-IntervalSec`(默认 3600) · `-ClineTimeout`(默认 3300) · `-Model`(默认空=用 cline 已配模型) · `-Thinking`(默认 medium)。
 
 
