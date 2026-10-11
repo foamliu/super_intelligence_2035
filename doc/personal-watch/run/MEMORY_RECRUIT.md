@@ -11,11 +11,11 @@ WAITING: 1
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-已完成:       [第 0 轮 · 立线] 建 scaffold + 继承规约 + 执行环境（§0.4）。[第 0 轮 · 追加] loop 起在 VM（`WATCH_INTERVAL_MIN=30` 临时节律；修 `cwd 错` + `PATH 缺 nvm bin`）。**[第 1 轮 · 2026-10-11 首轮唤醒]** ✅ 继承尝试（`$HR_DIR` 在 VM 不可达 → 用 §0.2/§0.3 内嵌摘要兜底，如实记）；✅ 环境自检（VNC `:1` ✅ · CDP `9222` ✅ · VM 时钟经 HTTP Date 核验正确）；✅ 新增只读巡检能力 `~/hr_cdp.js`（仅用 cline 自带 `ws`，零新依赖）；✅ **Boss 只读巡检**：登录态**有效（刘先生）**、在招岗位 **1**（AI+EDA研究员 DRAM · 上海 · 40-60K；另 2 岗已关闭）、**新招呼 157**、会话列表可见 ~40 条（活跃 10-09→09-28）；✅ 产出 `recruit/STATE.md` 现状快照。全程 **0 对外动作 / 未点会话 / 未抓简历**。
-当前动作:     第 1 轮（首轮唤醒）：继承 + 只读巡检 + 写 `STATE.md`；**未对候选人发任何消息、未点任何会话/控件**。
-下一步:       ① 等 supervisor 拍板 4 项阻塞（见 `recruit/STATE.md §五`：`$HR_DIR` 不可达 / loop 节律 / 157 积压策略 / `hr_cdp.js` 归入 §0.4）；② 若 `$HR_DIR` 可达（或授权同步副本）→ 读其记忆 + `发送记录.md` 尾部，跑 `screen.py`/`city_scan.py`；③ 授权后**才**发话术/抓简历（≤2-3 人/批 · 批间隔 ≥60min · 逐人定制）。
-本轮新增:     0 条采集（纯只读）＋ VM 侧工具 `~/hr_cdp.js`（不入 git）＋ `recruit/STATE.md` 首版；对外动作 **0**。
-阻塞:         ⚠️ `$HR_DIR` 在 VM 不可达（继承源缺失 → 内嵌摘要兜底；无法读 `发送记录.md`/跑脚本）· ⏳ 4 项待拍板（STATE §五）· ✅ 浏览器登录态已确认有效。
+已完成:       [第 0 轮 · 立线] 建 scaffold + 继承规约 + 执行环境（§0.4）。[第 0 轮 · 追加] loop 起在 VM（`WATCH_INTERVAL_MIN=30` 临时节律；修 `cwd 错` + `PATH 缺 nvm bin`）。[第 1 轮 · 2026-10-11 首轮唤醒] ✅ 继承尝试（`$HR_DIR` 在 VM 不可达 → §0.2/§0.3 内嵌摘要兜底）；✅ 环境自检 + 新增只读巡检 `~/hr_cdp.js`（零新依赖）；✅ Boss 只读巡检（登录有效·刘先生·在招 1 岗·新招呼 157·会话 ~40）；✅ `recruit/STATE.md` 首版。**[第 2 轮 · 2026-10-11]** ✅ 复核继承兜底（`$HR_DIR` 仍不可达）；✅ 环境自检全绿（VNC `:1`·CDP Chrome155·mem available 1.8G）；✅ Boss 只读复检（新标签 `.user-list` 在·40 条 `.geek-item-wrap`·登录**仍有效·刘先生**·**新招呼 157 未变**）；✅ 抽取可见会话首句 ~15 条（首句全为泛化招呼，**未见「一作+录用+顶会」证据**）；✅ 刷新 `STATE.md`。全程 **0 对外动作 / 未点会话 / 未抓简历**。
+当前动作:     第 2 轮：继承复核 + 环境/Boss 只读巡检 + 刷新 `STATE.md`；**未对候选人发任何消息、未点任何会话/控件**。
+下一步:       ① 等 supervisor 拍板 4 项阻塞（`recruit/STATE.md §五`：`$HR_DIR` 不可达 / loop 节律 / 157 积压策略 / `hr_cdp.js` 归入 §0.4）；② 若 `$HR_DIR` 可达（或授权同步副本）→ 读其记忆 + `发送记录.md` 尾部，跑 `screen.py`/`city_scan.py`；③ 授权后**才**发话术/抓简历（≤2-3 人/批 · 批间隔 ≥60min · 逐人定制）。
+本轮新增:     0 条采集（纯只读）＋ `STATE.md` 复检刷新；对外动作 **0**。
+阻塞:         ⚠️ `$HR_DIR` 在 VM 不可达（继承源缺失 → 内嵌摘要兜底）· ⏳ 4 项待拍板（STATE §五）· ✅ 浏览器登录态已确认有效（连续两轮）。
 ERROR_COUNT:  0
 ```
 
@@ -68,6 +68,8 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序，保留最近 ~20 条）
+
+- **2026-10-11（第 2 轮）** —— **继承复核 + 环境/Boss 只读巡检 + 刷新快照**（间隔节律下第二轮，`[mode=interval:30min]`）。**① 继承**：`WATCH_HR_DIR` 仍为空、`$HR_DIR=C:\Users\liuyu\HR` 在 VM 仍**不可达**（`find /home /root /mnt /srv` 无 HR 记忆/脚本）→ 沿用任务书 §0.2/§0.3 **内嵌摘要兜底**，如实记；未读 `发送记录.md`、未跑 `screen.py`/`city_scan.py`。**② 环境自检（§0.4）**：`vncserver -list`=`：1`（Xtigervnc，pid 2754851）✅；`curl 127.0.0.1:9222/json/version`=`Chrome/155.0.8059.39` ✅；Chrome `--user-data-dir=/home/liuyang/.hr-chrome-profile --remote-debugging-port=9222` ✅；`free -h` used 1.8G/3.6G、available 1.8G（健康）；`date`=`2026-10-11 11:08 CST` ✅。**③ Boss 只读巡检（新标签，未点会话）**：`newtab https://www.zhipin.com/web/chat/index` → `.user-list`=1、`.geek-item-wrap`=40；招聘端 **刘先生**；分类标签「全部 **新招呼(157)** 沟通中 已约面 已获取简历 已交换电话 已交换微信 收藏」—— **157 较上轮未变**。**④ 可见会话首句抽样（~15 条，仅列表摘要文字）**：最近活跃 **10-10（昨天）→ 09-30**；岗位多为 AI+EDA（DRAM）少数 大模型/Agent；首句**全为泛化招呼**（「非常感兴趣希望进一步沟通」「请问还在招吗」等），**无任何「一作+已录用+顶会」证据**（客观记录，未做判定）。**⑤ 产出**：刷新 `recruit/STATE.md`（顶部时间 + §二数字复检）。**对外动作 0；未点任何会话/控件、未抓简历、未回写 `$HR_DIR`。**
 
 - **2026-10-11（第 1 轮 · 首轮唤醒）** —— **继承 + 只读巡检 + 首次现状快照**。**① 继承**：在 loop 宿主机（腾讯云 VM，Linux）上，`$HR_DIR=C:\Users\liuyu\HR` **不可达**（无 Windows 挂载、全盘无 HR 记忆/脚本）→ **如实记**，按任务书 §0.2/§0.3 **内嵌摘要兜底**（本轮「已记得」= 任务书摘要本身）；**未能读** `MEMORY.md`/`USER.md`/`AGENTS.md`/`memory/`/`发送记录.md`/`话术-最终版.md`，**未能跑** `screen.py`/`city_scan.py`。**② 环境自检（§0.4）**：`vncserver -list` 有 `:1`（Xtigervnc）✅；`curl 127.0.0.1:9222/json/version` = Chrome 155 ✅；Chrome 进程 `--user-data-dir=/home/liuyang/.hr-chrome-profile --remote-debugging-port=9222`（可见桌面 `DISPLAY=:1`）✅；**VM 时钟经 HTTP `Date` 核验正确**（本机 `2026-10-11 11:04 CST` == `03:04 GMT`）—— 说明任务书「本机时钟慢 8h」**不适用本 VM**（疑指 Windows 控制机在 UTC）。**③ 新增能力**：自建 **`~/hr_cdp.js`**（极简 CDP 客户端，**仅用 cline 自带 `ws` 模块，零新依赖**；支持 `list`/`newtab`/`eval`；**不新建 context**，只 attach 既有浏览器）—— 补上「VM 侧只读巡检 driver」。**踩坑**：CDP WebSocket 若带 `Origin: https://www.zhipin.com` 头 → Chrome 拒（日志提示需 `--remote-allow-origins`）⇒ **连接不带 Origin 头即可**（本 helper 已这么做）。**④ Boss 只读巡检（新标签，未点会话）**：`https://www.zhipin.com/web/chat/index` **登录态有效**，招聘端显示 **刘先生**；`.user-list` 在、`.geek-item-wrap` 40 条；岗位：**AI+EDA研究员（DRAM设计方向）· 上海 · 40-60K · 在招** + 大模型/Agent算法工程师（关闭）+ 大模型预研实习生（关闭）；沟通页 **新招呼(157)**；会话列表可见 ~40 条，活跃 **10-09 → 09-28**。**⑤ 产出**：`recruit/STATE.md` 首版（非 PII 概述 + 4 项待拍板）。**对外动作 0；未点任何会话/控件、未抓简历、未回写 `$HR_DIR`**。
 
