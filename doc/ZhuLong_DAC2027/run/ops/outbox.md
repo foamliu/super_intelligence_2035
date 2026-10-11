@@ -4955,3 +4955,294 @@ Filesystem                 1G-blocks  Used Available Use% Mounted on
 
 == DONE — RUN_ID 34（MCP 确认 + RAG 9006 + 4 端口复检 + 起 r2）==
 ```
+
+---
+
+## RUN_ID 35 · 2026-10-11 08:54:33 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# ═══ RUN_ID 35 — ZhuLong：两仓库 git pull + MCP 改 8090（含 .env/评测侧配置）+ 4 端口复检 → 起 C1.full r2 ═══
+echo "== RUN_ID 35 @ $(date '+%F %T') host=$(hostname) =="
+EDA=/nasdata/app.e0031982/code/eda_fastmcp
+FW=/nasdata/app.e0031982/code/EDA-Eval-Framework
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+LOG=/tmp/ABL_full_r2_8650set.log
+PORTS="8650 8651 8652 8654"; SHOST=10.129.32.75
+EVALDATA=/nasdata/app.e0031982/.cline_prof4_eval/data
+HOMECFG=$HOME/.cline/data/settings/cline_mcp_settings.json
+TS=$(date '+%Y%m%d_%H%M%S')
+PY=$(command -v python3 || command -v python || true)
+
+echo; echo "=========== 0. 现状（含 RUN_ID 34 痕迹）+ eval 是否在跑 ==========="
+echo "   relay: $(timeout 20 pgrep -af 'zhulong_ops_relay[.]sh' 2>/dev/null | grep -v pgrep | head -2 | cut -c1-105)"
+echo "   loop : $(timeout 20 pgrep -af 'zhulong_loop[.]sh' 2>/dev/null | grep -v pgrep | head -1 | cut -c1-105)"
+echo "   last_run_id=$(cat "$W/doc/ZhuLong_DAC2027/run/ops/.last_run_id" 2>/dev/null)  inbox RUN_ID=$(sed -n 's/.*RUN_ID:[[:space:]]*\([0-9]\+\)/\1/p' "$W/doc/ZhuLong_DAC2027/run/ops/inbox.md" | head -1)"
+echo "   RUN_ID 34 痕迹（有=跑过）:"; timeout 20 ls -l /tmp/eda_start_runid34.log /tmp/rag_recall_*.log 2>/dev/null | tail -3 | cut -c1-150
+EVAL_ALIVE=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)
+echo "   EVAL_ALIVE=$EVAL_ALIVE"; timeout 20 df -BG /home 2>/dev/null | tail -1 | cut -c1-110
+
+echo; echo "=========== 1. 若有评测在跑 → 先停（MCP 端口要改）==========="
+if [ "$EVAL_ALIVE" -gt 0 ]; then
+  timeout 20 pgrep -af '^bash scripts/run_cline_script' 2>/dev/null | cut -c1-120
+  timeout 20 tail -5 "$LOG" 2>/dev/null | cut -c1-170
+  timeout 30 pkill -f '^bash scripts/run_cline_script' 2>/dev/null; sleep 4
+  echo "   AFTER EVAL_ALIVE=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)"
+else
+  echo "   （无 eval 在跑，跳过）"
+fi
+
+echo; echo "=========== 2. 两仓库 git pull（输出落文件 + timeout）==========="
+for R in "$FW" "$EDA"; do
+  echo "-- $R --"
+  if [ -d "$R/.git" ]; then
+    echo "   before: $(timeout 30 git -C "$R" log --oneline -1 2>&1 | cut -c1-90)"
+    timeout 30 git -C "$R" status --porcelain 2>/dev/null | head -5 | sed 's/^/     dirty: /' | cut -c1-120
+    ( cd "$R" && timeout 60 git pull --rebase --autostash > "/tmp/pull_$(basename "$R").$TS.log" 2>&1 ); echo "   pull exit=$?"
+    timeout 20 tail -6 "/tmp/pull_$(basename "$R").$TS.log" 2>/dev/null | cut -c1-170
+    echo "   after : $(timeout 30 git -C "$R" log --oneline -1 2>&1 | cut -c1-90)"
+  else
+    echo "   ⚠️ 非 git 仓库：$(timeout 20 ls -ld "$R" 2>&1 | cut -c1-120)"
+  fi
+done
+
+echo; echo "=========== 3. MCP 端口现状 + .env + 两处 cline_mcp_settings.json ==========="
+timeout 20 ss -lntp 2>/dev/null | grep -E ':(8090|18890)' | cut -c1-150 || echo "   :8090/:18890 都未监听"
+timeout 20 pgrep -af 'python main\.py' 2>/dev/null | grep -v cline | cut -c1-130 | head -5
+for p in $(timeout 20 pgrep -f 'python main\.py' 2>/dev/null | head -3); do
+  echo "   PID $p $(timeout 10 tr '\0' '\n' < /proc/$p/environ 2>/dev/null | grep -E '^EDA_MCP_PORT=' | cut -c1-30)"
+done
+echo "-- .env MCP 行 --"; timeout 20 grep -nE 'MCP_PORT' "$EDA/.env" 2>/dev/null | cut -c1-160
+for f in "$HOMECFG" "$EVALDATA/settings/cline_mcp_settings.json"; do
+  echo "   [$f] -> $(timeout 20 grep -oE 'http://[^\"]+' "$f" 2>/dev/null | head -2 | tr '\n' ' ' | cut -c1-130)"
+done
+
+
+echo; echo "=========== 4. .env 写死 EDA_MCP_PORT=8090 + 重启 MCP 到 8090 ==========="
+timeout 30 cp -p "$EDA/.env" "/tmp/eda_fastmcp.env.pre8090.$TS" && echo "   备份=/tmp/eda_fastmcp.env.pre8090.$TS"
+grep -vE '^[[:space:]]*(export[[:space:]]+)?EDA_MCP_PORT=' "$EDA/.env" > "$EDA/.env.tmp35" && printf 'EDA_MCP_PORT=8090\n' >> "$EDA/.env.tmp35" && timeout 30 mv "$EDA/.env.tmp35" "$EDA/.env"; echo "   .env 写入 exit=$?"
+timeout 20 grep -nE '^EDA_MCP_PORT=' "$EDA/.env" | cut -c1-120
+( cd "$EDA" && timeout 40 bash scripts/stop.sh ) > "/tmp/eda_stop_runid35.log" 2>&1; echo "   stop.sh exit=$?"
+timeout 20 tail -5 /tmp/eda_stop_runid35.log 2>/dev/null | cut -c1-170
+sleep 3
+echo "   stop 后监听数(8090+18890)=$(timeout 20 ss -lntp 2>/dev/null | grep -cE ':(8090|18890)')"
+( cd "$EDA" && export EDA_MCP_PORT=8090 && timeout 100 bash scripts/start.sh ) > "/tmp/eda_start_runid35.log" 2>&1; echo "   start.sh exit=$?"
+timeout 20 tail -14 /tmp/eda_start_runid35.log 2>/dev/null | cut -c1-180
+sleep 5
+echo "-- AFTER --"; timeout 20 ss -lntp 2>/dev/null | grep -E ':(8090|18890)' | cut -c1-150 || echo "   ⚠️ 都未监听"
+echo "   :8090 http_code=$(timeout 15 curl -s -m 8 -o /dev/null -w '%{http_code}' http://localhost:8090/ 2>/dev/null)"
+
+echo; echo "=========== 5. 评测侧 + 本机 cline_mcp_settings.json 的 MCP url 统一到 8090 ==========="
+if [ -z "$PY" ]; then echo "   ⚠️ 无 python ⇒ 跳过（人工处理）"; else
+for f in "$HOMECFG" "$EVALDATA/settings/cline_mcp_settings.json"; do
+  [ -f "$f" ] || { echo "   [$f] 不存在，跳过"; continue; }
+  timeout 30 cp -p "$f" "$f.bak8090.$TS" && echo "   backup=$f.bak8090.$TS"
+  "$PY" - "$f" <<'PYEOF'
+import json,sys,re
+p=sys.argv[1]
+try: d=json.load(open(p,encoding='utf-8'))
+except Exception as e: print("   \u26a0 JSON \u89e3\u6790\u5931\u8d25\uff0c\u672a\u6539:",e); sys.exit(0)
+n=0
+def walk(o):
+    global n
+    if isinstance(o,dict):
+        for k,v in list(o.items()):
+            if isinstance(v,str) and re.search(r':\d+/sse', v):
+                nv=re.sub(r':\d+(?=/sse)', ':8090', v)
+                if nv!=v: o[k]=nv; n+=1; print("   url:",v,"->",nv)
+            walk(v)
+    elif isinstance(o,list):
+        for v in o: walk(v)
+walk(d)
+if n: open(p,'w',encoding='utf-8').write(json.dumps(d,ensure_ascii=False,indent=2)+"\n")
+print("   changed urls =",n)
+PYEOF
+  echo "   python exit=$?"
+  timeout 20 "$PY" -c "import json,sys;json.load(open(sys.argv[1],encoding='utf-8'));print('   JSON 校验=OK')" "$f" 2>&1 | tail -1
+  timeout 20 grep -oE 'http://[^\"]+' "$f" 2>/dev/null | head -2 | cut -c1-140
+done
+fi
+
+echo; echo "=========== 6. 4 端口复检 → 起 C1.full r2（/home 门槛经用户授权放宽）==========="
+OK=0
+for p in $PORTS; do
+  timeout 5 bash -c "echo > /dev/tcp/$SHOST/$p" 2>/dev/null && tcp=OK || tcp=CLOSED
+  body=$(timeout 25 curl -s -m 10 -X POST "http://$SHOST:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+  n=${#body}; if [ "$n" -gt 0 ]; then rc=OK; OK=$((OK+1)); else rc="FAIL(0byte)"; fi
+  echo "   port $p : TCP=$tcp run_code=$rc resp_len=$n"
+done
+echo "   ▶ 健康端口=$OK/4 ; EVAL_ALIVE=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)"
+if [ "$OK" -eq 4 ] && [ "$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)" -eq 0 ]; then
+  ( cd "$EDA"
+    export EVAL_FW_DIR="$FW"
+    export CLI_DATA_DIR="$EVALDATA"
+    export PYTHON="$EDA/venv/bin/python"
+    export https_proxy=http://172.19.92.23:13128
+    setsid bash scripts/run_cline_script.sh -p 8 -n > "$LOG" 2>&1 < /dev/null &
+  )
+  echo "   已下发 setsid 起动，等 20s 核验 ..."; sleep 20
+  NEW=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | head -1)
+  echo "   新 eval PID=${NEW:-<none>}"
+  if [ -n "$NEW" ]; then
+    timeout 20 tr '\0' '\n' < /proc/$NEW/environ 2>/dev/null | grep -E '^(EVAL_FW_DIR|CLI_DATA_DIR|PYTHON|https_proxy)=' | cut -c1-170
+    echo "   hook(本机): $(timeout 20 ls -l ~/.cline/hooks/PreToolUse 2>&1 | cut -c1-130)"
+    echo "   hook(评测): $(timeout 20 ls -l "$EVALDATA/hooks/PreToolUse" 2>&1 | cut -c1-130)"
+  fi
+  timeout 20 head -30 "$LOG" 2>/dev/null | cut -c1-180
+else
+  echo "   ⛔ 未起动（健康端口=$OK/4）"
+fi
+echo; echo "== DONE — RUN_ID 35（两仓库 pull + MCP→8090 + .env/配置同步 + 起 r2）=="
+```
+
+**输出**
+```
+== RUN_ID 35 @ 2026-10-11 08:54:33 host=hfeg0tedaap02 ==
+
+=========== 0. 现状（含 RUN_ID 34 痕迹）+ eval 是否在跑 ===========
+   relay: 3277328 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay
+3431165 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_ops_relay
+   loop : 3261651 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+   last_run_id=34  inbox RUN_ID=35 -->
+   RUN_ID 34 痕迹（有=跑过）:
+-rw-r--r-- 1 app.e0031982 app.adm 531 Oct 11 08:32 /tmp/eda_start_runid34.log
+-rw-r--r-- 1 app.e0031982 app.adm  64 Oct 11 08:32 /tmp/rag_recall_20261011_083232.log
+   EVAL_ALIVE=1
+/dev/mapper/vgroot-lv_home      394G  374G        4G 100% /home
+
+=========== 1. 若有评测在跑 → 先停（MCP 端口要改）===========
+3335776 bash scripts/run_cline_script.sh -p 8 -n
+[0m[2m has different[0m[2m tools.[0m[2m Actually,[0m[2m reconsider the[0m[2m entire problem[0m[2mrequest"[0m[2mearched[0m[2m 0[0m[2m files"，[0m[2mTh
+
+OK[0m[2m to the[0m[2m,[0m[2m methods.
+
+[0m[2m in the[0m[2m说明没有[0m[2m索引任何[0m[2m same runtime[0m[2mActually,[0m[2m the doc[0m[2mstring[0m[2m获取的[0m[2m (1[0m[2m) copy[0m
+   AFTER EVAL_ALIVE=0
+
+=========== 2. 两仓库 git pull（输出落文件 + timeout）===========
+-- /nasdata/app.e0031982/code/EDA-Eval-Framework --
+   before: e1d6822 Merge branch 'master' of ssh://devops.cxmt.com:8022/git/AIX/PAI/eda/EDA-Eval-Frame
+     dirty:  M config.yaml
+     dirty:  M scripts/run_on_sandbox.py
+     dirty: ?? output_code_generation/generated_solutions/
+     dirty: ?? output_code_generation/generated_solutions_shard_0/
+     dirty: ?? output_code_generation/generated_solutions_shard_1/
+   pull exit=0
+ create mode 100644 scripts/cline_hooks/README.md
+ create mode 100644 scripts/merge_benchmarks.py
+ create mode 100644 tests/test_judge_execution.py
+Applying autostash resulted in conflicts.
+Your changes are safe in the stash.
+You can run "git stash pop" or "git stash drop" at any time.
+   after : b867147 四种语言独立，加入hook
+-- /nasdata/app.e0031982/code/eda_fastmcp --
+   before: 343cce34 feat: CLI_DATA_DIR 支持环境变量覆盖
+     dirty:  M .env
+     dirty:  M server/sandbox_server/exec_code.py
+     dirty: ?? cleanup_tmp_gt.sh
+     dirty: ?? run_monday_eval.sh
+     dirty: ?? scripts/stress_test_ports.py
+   pull exit=0
+ create mode 100644 test/test_probe_lang_host_gating.py
+ create mode 100644 test/test_runtime_registry.py
+ create mode 100644 utils/runtime_registry.py
+Applying autostash resulted in conflicts.
+Your changes are safe in the stash.
+You can run "git stash pop" or "git stash drop" at any time.
+   after : e51372ff 使用未增强文档，无自探索
+
+=========== 3. MCP 端口现状 + .env + 两处 cline_mcp_settings.json ===========
+LISTEN 0      2048              0.0.0.0:18890      0.0.0.0:*          
+77800 python main.py
+1531391 python main.py
+1653293 python main.py
+1743813 python main.py
+1745842 python main.py
+/tmp/tmp.V6iaZwsYuD: line 49: /proc/77800/environ: Permission denied
+   PID 77800 
+/tmp/tmp.V6iaZwsYuD: line 49: /proc/1531391/environ: Permission denied
+   PID 1531391 
+/tmp/tmp.V6iaZwsYuD: line 49: /proc/1653293/environ: Permission denied
+   PID 1653293 
+-- .env MCP 行 --
+39:# EDA_MCP_PORT=19999 
+40:EDA_MCP_PORT=18889
+   [/home/app.e0031982/.cline/data/settings/cline_mcp_settings.json] -> http://10.251.36.15:8090/sse 
+   [/nasdata/app.e0031982/.cline_prof4_eval/data/settings/cline_mcp_settings.json] -> http://10.251.36.15:8090/sse 
+
+=========== 4. .env 写死 EDA_MCP_PORT=8090 + 重启 MCP 到 8090 ===========
+   备份=/tmp/eda_fastmcp.env.pre8090.20261011_085433
+   .env 写入 exit=0
+297:EDA_MCP_PORT=8090
+   stop.sh exit=0
+[1;33m============================================[0m
+[1;33mEDA MCP Server 停止中...[0m
+[1;33m============================================[0m
+未找到 PID 文件
+[0;32m停止完成[0m
+   stop 后监听数(8090+18890)=1
+   start.sh exit=2
+/nasdata/app.e0031982/code/eda_fastmcp/.env: line 68: syntax error near unexpected token `<<<'
+-- AFTER --
+LISTEN 0      2048              0.0.0.0:18890      0.0.0.0:*          
+   :8090 http_code=000
+
+=========== 5. 评测侧 + 本机 cline_mcp_settings.json 的 MCP url 统一到 8090 ===========
+   backup=/home/app.e0031982/.cline/data/settings/cline_mcp_settings.json.bak8090.20261011_085433
+   changed urls = 0
+   python exit=0
+   JSON 校验=OK
+http://10.251.36.15:8090/sse
+   backup=/nasdata/app.e0031982/.cline_prof4_eval/data/settings/cline_mcp_settings.json.bak8090.20261011_085433
+   changed urls = 0
+   python exit=0
+   JSON 校验=OK
+http://10.251.36.15:8090/sse
+
+=========== 6. 4 端口复检 → 起 C1.full r2（/home 门槛经用户授权放宽）===========
+   port 8650 : TCP=OK run_code=OK resp_len=106
+   port 8651 : TCP=OK run_code=OK resp_len=106
+   port 8652 : TCP=OK run_code=OK resp_len=106
+   port 8654 : TCP=OK run_code=OK resp_len=106
+   ▶ 健康端口=4/4 ; EVAL_ALIVE=0
+   已下发 setsid 起动，等 20s 核验 ...
+   新 eval PID=3434607
+EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+https_proxy=http://172.19.92.23:13128
+PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python
+CLI_DATA_DIR=/nasdata/app.e0031982/.cline_prof4_eval/data
+   hook(本机): -rwxr-xr-x 1 app.e0031982 app.adm 10242 Oct 11 08:55 /home/app.e0031982/.cline/hooks/PreToolUse
+   hook(评测): ls: cannot access '/nasdata/app.e0031982/.cline_prof4_eval/data/hooks/PreToolUse': No such file or directory
+[0;34m[INFO][0m =============================================
+[0;34m[INFO][0m 启动自动化代码生成流水线: 2026-10-11 08:55:18
+[0;34m[INFO][0m 执行器: cline
+[0;34m[INFO][0m 并行度: 8
+[0;34m[INFO][0m 自进化: 关闭
+[0;34m[INFO][0m Memory Bank 注入: 禁用 (--no-memory-inject)
+[0;34m[INFO][0m =============================================
+[0;34m[INFO][0m [Step 0] 读取yaml配置文件...
+[0;34m[INFO][0m 文件路径: /nasdata/app.e0031982/code/eda_fastmcp/pyAether-eval/config.yaml
+[0;34m[INFO][0m Benchmark: EDA-Eval-PyAether-v20260311.jsonl
+[0;34m[INFO][0m [Step 1] 检查原始数据集...
+[0;32m[SUCCESS][0m 原始数据集检查完成
+[0;34m[INFO][0m 任务范围: 全量 158 题
+[0;34m[INFO][0m [Step 1.5] 跳过 Memory Bank 预热 (无 L0 artifacts，冷启动正常)
+[0;34m[INFO][0m [Step 2] 执行python脚本, 格式化评估任务...
+[0;34m[INFO][0m 执行: /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python pyAether-eval/script/format_eval_task.py --task_file=/nasdata/app.e0031982/code/eda_fastmcp/pyAethe
+[format_raw_task] Successfully parsed 158 tasks
+[merge_prompt_template2task] Format prompt 158 tasks (no memory bank data, 0/158 tasks got L1)
+[0;32m[SUCCESS][0m 格式化评估任务完成
+[0;34m[INFO][0m [Step 3] 启动 cline 批量处理...
+[0;34m[INFO][0m 已部署沙盒 hook 到 /home/app.e0031982/.cline/hooks/
+[0;34m[INFO][0m 并行模式: 已为 8 个 worker 创建隔离数据目录 (CLI=cline)
+[0;34m[INFO][0m ===== 批量任务开始执行 =====
+[0;34m[INFO][0m 并行度:   8
+[0;34m[INFO][0m 清理远端沙盒工作目录...
+/nasdata/app.e0031982/code/eda_fastmcp/.env: line 68: syntax error near unexpected token `<<<'
+[1;33m[WARNING][0m 沙盒清理失败，继续执行
+[0;34m[INFO][0m 任务来源:  /home/app.e0031982/eda_code_eval/2026_1011_085518/full_tasks
+[0;34m[INFO][0m 保存路径:  /home/app.e0031982/eda_code_eval/2026_1011_085518
+[0;34m[INFO][0m 任务数量： 158
+
+== DONE — RUN_ID 35（两仓库 pull + MCP→8090 + .env/配置同步 + 起 r2）==
+```
