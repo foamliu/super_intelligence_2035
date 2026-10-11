@@ -24,7 +24,8 @@ param(
     [string]$Model = '',               # 空 ⇒ 用 cline 已配置的默认模型
     [string]$Thinking = 'medium',      # none|low|medium|high|xhigh（空 = provider 默认）
     [switch]$Once,                     # 只跑一轮后退出（调试）
-    [switch]$DryRun                    # 不调用 cline（只走日志/心跳/git 同步；用于安全自检）
+    [switch]$DryRun,                   # 不调用 cline（只走日志/心跳/git 同步；用于安全自检）
+    [int]$RetrySec = 600               # cline 失败后的重试等待（秒）
 )
 
 $ErrorActionPreference = 'Continue'
@@ -131,39 +132,59 @@ Write-Log "  USERPROFILE: $env:USERPROFILE"
 Touch-Hb
 
 # ── 6) 主循环 ───────────────────────────────────────────────────────────────
+$failStreak = 0
 while ($true) {
     $roundStart = Get-Date
     Write-Log "[loop] wake up, invoking cline ... [$($roundStart.ToString('yyyy-MM-dd HH:mm:ss'))]"
     Touch-Hb
+    $clineRc = 0
 
     if (Test-Path -LiteralPath $TaskMd) {
-        $prompt = Get-Content -LiteralPath $TaskMd -Raw -Encoding UTF8
-        if (-not $prompt) { Write-Log "[loop] task book empty" }
-        if ($prompt.Length -gt 20000) { Write-Log "[loop] WARN: task book very long ($($prompt.Length) chars)" }
+        # ⚠️ **不把任务书全文当命令行参数** —— Windows 上会撞限制：
+        #    · 经 `cline.cmd`（批处理）→ cmd.exe ~8KB 上限（实测报「命令行太长」）
+        #    · 直调 node.exe 仍受 CreateProcess 32767 上限 + PS5.1 引号转义影响
+        #  ⇒ 用「**短指针 prompt**」把任务书**绝对路径**交给 cline，agent 自己读全文（更稳，且永远读到最新版）。
+        $prompt = (
+            '你在 personal-watch 的 video 线工作（基于 ComfyUI 制作视频）。',
+            '',
+            "【第一步·必做】用工具读取任务书全文（不要凭记忆）：$TaskMd",
+            '读完后严格按其中 §2 的 SOP 执行本轮工作（执行路线见 §1）。',
+            "结束时：更新 $MemoryMd + 追加 daily-memories-video/<date>.md + 两个仓各自 commit+push。",
+            '',
+            "【本轮提示】ComfyUI = http://127.0.0.1:8188（本机）；主战场仓 = $DramaRepo"
+        ) -join [Environment]::NewLine
 
-        $clineArgs = @(
-            '-c', $DramaRepo,
-            '--auto-approve', 'true',
-            '--config', $ClineCfg,
-            '--data-dir', $ClineData,
-            '-t', "$ClineTimeout"
-        )
-        if ($Model)    { $clineArgs += @('-m', $Model) }
-        if ($Thinking) { $clineArgs += @('--thinking', $Thinking) }
-        $clineArgs += $prompt
+        $baseArgs = @('-c', $DramaRepo, '--auto-approve', 'true', '--config', $ClineCfg, '--data-dir', $ClineData, '-t', "$ClineTimeout")
+        if ($Model)    { $baseArgs += @('-m', $Model) }
+        if ($Thinking) { $baseArgs += @('--thinking', $Thinking) }
+        $baseArgs += $prompt
+
+        # 优先直调 node.exe + cline JS（绕过 cmd.exe 长度限制）；否则退回 cline.cmd
+        $nodeExe = 'C:\Program Files\nodejs\node.exe'
+        $clineJs = Join-Path $AdminHome 'AppData\Roaming\npm\node_modules\cline\bin\cline'
+        if ((Test-Path -LiteralPath $nodeExe) -and (Test-Path -LiteralPath $clineJs)) {
+            $exe  = $nodeExe
+            $argv = @($clineJs) + $baseArgs
+        } else {
+            $exe  = $ClineCmd
+            $argv = $baseArgs
+        }
 
         if ($DryRun) {
-            Write-Log "[loop] DRY-RUN: skip cline invocation"
+            Write-Log "[loop] DRY-RUN: skip cline invocation (exe=$exe)"
         } else {
             try {
-                & $ClineCmd @clineArgs 2>&1 | Tee-Object -FilePath $ClineOut | Out-Null
-                Write-Log "[loop] cline returned (exit $LASTEXITCODE); out=$ClineOut"
+                & $exe @argv 2>&1 | Tee-Object -FilePath $ClineOut | Out-Null
+                $clineRc = $LASTEXITCODE
+                Write-Log "[loop] cline returned (exit $clineRc); out=$ClineOut"
             } catch {
-                Write-Log "[loop] cline FAILED: $($_.Exception.Message)"
+                $clineRc = 1
+                Write-Log "[loop] cline threw: $($_.Exception.Message)"
             }
         }
     } else {
         Write-Log "[loop] TASK book missing: $TaskMd"
+        $clineRc = 1
     }
 
     # 兜底 git 同步（本记录仓：只加 video 线文件；短剧仓：agent 自己 commit，loop 只 pull+push）
@@ -175,6 +196,21 @@ while ($true) {
     Write-Log "[loop] round done in ${dur}s"
 
     if ($Once) { Write-Log "[loop] -Once -> exit"; break }
+
+    # ── 失败重试：cline 失败 ⇒ 短睡重试（最多 3 次），避免白等一整小时 ──
+    if ($clineRc -ne 0 -and -not $DryRun) {
+        $failStreak++
+        if ($failStreak -lt 3) {
+            Write-Log "[loop] cline FAILED (exit $clineRc) -> retry in ${RetrySec}s (consecutive=$failStreak)"
+            Start-Sleep -Seconds $RetrySec
+            Touch-Hb
+            continue
+        }
+        Write-Log "[loop] 连续失败 $failStreak 次 -> 退回整点节律（防烧 token），计数清零"
+        $failStreak = 0
+    } else {
+        $failStreak = 0
+    }
 
     # 对齐整点：下一个整点（若已过/太近则顺延一小时），至少 60s
     $next = (Get-Date).Date.AddHours((Get-Date).Hour + 1)

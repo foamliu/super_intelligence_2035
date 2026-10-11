@@ -2,7 +2,7 @@
 
 > ⚠️ 本文件为**指令文件**，agent **只读**（禁止修改）。
 > 运行时状态写 `MEMORY_VIDEO.md` / `daily-memories-video/`；本线产物写 `video/`；**主战场 = 短剧项目仓**（见 §1）。
-> ⚠️ **本文件全文 = 每次唤醒的 prompt** → 保持精简（目标 ≤ 32KB，红线 40KB）；历史轮次归档到 `daily-memories-video/`，不进 prompt。
+> ⚠️ **本文件 = 每轮「必读」的指令文件**：loop 只把**绝对路径**交给 cline，**agent 必须先用工具读全文**再干活（Windows 命令行长度限制所致，见 §7）→ 保持精简（目标 ≤ 32KB，红线 40KB）；历史轮次归档到 `daily-memories-video/`，不进 prompt。
 > 🖥️ **本线与观察哨其他线不同：跑在 Windows 11 本机 `hx-c1000`（不是 Linux VM），无人在场（开机自启 + 无人登录）。**
 > 📄 姊妹线（范式与铁律来源）：`WATCH_NEWS_TASK.md` / `WATCH_RESEARCH_TASK.md` / `WATCH_RECRUIT_TASK.md`。
 
@@ -161,6 +161,8 @@ powershell -ExecutionPolicy Bypass -File "D:\Users\Administrator\code\super_inte
 > ⚠️ **改 loop / 任务书后须重启计划任务才生效**（脚本不会热重载）。
 > 🔤 **`.ps1` 必须存成「UTF-8 带 BOM」** —— 本机是 **Windows PowerShell 5.1 + GBK 默认编码**；**无 BOM 的 .ps1 会把中文注释读成乱码并直接报语法错**（本线立线时已踩过一次）。自检/补 BOM：`$f='…\watch_video_loop.ps1'; (Get-Content $f -Raw) | Set-Content -Encoding utf8 $f`（PS 5.1 的 `utf8` = 带 BOM）。
 > 🧪 **安全自检（不调 cline、不烧 token）**：`powershell -ExecutionPolicy Bypass -File "…\watch_video_loop.ps1" -Once -DryRun`（只走横幅/日志/心跳/git 同步）。
-> ⚙️ **可调参数**（loop 顶部 `param()`）：`-IntervalSec`(默认 3600) · `-ClineTimeout`(默认 3300) · `-Model`(默认空=用 cline 已配模型) · `-Thinking`(默认 medium)。
+> ⚙️ **可调参数**（loop 顶部 `param()`）：`-IntervalSec`(默认 3600) · `-ClineTimeout`(默认 3300) · `-Model`(默认空=用 cline 已配模型) · `-Thinking`(默认 medium) · `-RetrySec`(默认 600，cline 失败后重试等待)。
+> 🧵 **prompt 传递方式（本线特有 · 2026-10-11 实测踩坑）**：Windows 上**不能把任务书全文当命令行参数** —— 经 `cline.cmd`（批处理）会撞 **cmd.exe ~8KB 上限**（实测报「**命令行太长**」，cline 秒退 exit 1）。⇒ loop 改为 ① 直调 **`node.exe` + cline JS 入口**（绕过 cmd）② 只传**短指针 prompt**（含任务书绝对路径）。**因此 agent 每轮第一步必须自己读任务书全文**。
+> 🔁 **失败重试**：cline 退出码 ≠ 0 ⇒ `-RetrySec` 后**重试（最多连续 3 次）**，之后退回整点节律。
 
 
