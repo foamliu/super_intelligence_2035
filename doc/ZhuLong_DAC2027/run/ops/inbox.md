@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 36 -->
+<!-- RUN_ID: 37 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,13 +24,150 @@
 
 ---
 
+## RUN_ID 37 — 🧹 清 `pull --autostash` 留下的**冲突**（`.env` + 3 个代码文件）→ **读 README 按官方方式起 RAG recall** → MCP 起在 8090 → 停坏 r2 → 起新 r2
+
+> **为什么发这一块（RUN_ID 36 的结果）**：36 已执行（08:59:45，exit=0），查明：
+> - ⚠️ **`.env` 是未解决的冲突文件**：`<<<<<<< Updated upstream` / `=======` / `>>>>>>> Stashed changes` 共 **12 个标记**；上游把 `PROXY_PORTS` 写成 **`8656,8658,8661,8662`**、`RAG_RECALL_URL` 写成 **`http://localhost:9010/recall`**；我们的是 `8650,8651,8652,8654` + `9006`（**在文件里靠后 ⇒ 生效值是我们那套**）。36 只注释了 4 个 `<<<` 行，仍剩 `=======` ⇒ `start.sh exit=127`（`=======: command not found`）、`sh -n` 仍失败 ⇒ **MCP 没起在 8090**（我因此**正确地没起 r2**）。
+> - ⚠️ **RUN_ID 35 起的那次 r2（PID 3434607）仍活着**，日志里 **MCP 相关错误 51 条**（8090 上没有服务）⇒ 属坏批，需停。
+> - ⚠️ 另有 **3 个代码文件带冲突**：`EDA-Eval-Framework/{config.yaml, scripts/run_on_sandbox.py}`、`eda_fastmcp/server/sandbox_server/exec_code.py`（`UU`）。
+> **本块**：① 停坏 r2 → ② **清 `.env` 冲突**（只删标记行，保留双方内容 ⇒ 生效值仍是我们那套；备份 + **`sh -n` 校验** + `git add`）→ ③ **清 3 个代码文件冲突**（优先**上游** `git checkout --ours`，用 `git show HEAD:<f>` 的 **md5 核验**；否则回退 stash 版 `--theirs`；再 `py_compile`/YAML 解析 + `grep host` 确认补丁，`git add`）→ ④ **读 README**（用户要求）：在 `eda_fastmcp/README.md`、`scripts/README.md`、`docs/` 里找 **recall / memory_vector / chroma / 9006 / 9010 / 启动** 并打印 → ⑤ **按 README 方式起 RAG recall**（自适应：README 有命令就照做，`setsid`+落日志；起后验监听 + `/recall` 探活）→ ⑥ `stop.sh` → **`EDA_MCP_PORT=8090 bash scripts/start.sh`** → 验 `:8090` LISTEN/HTTP → ⑦ **MCP 就位 且 4/4** 才**起 r2** + 核验 → ⑧ 快照。
+
+```bash
+# ═══ RUN_ID 37 — ZhuLong：清 pull 冲突 + 按 README 起 RAG recall + MCP→8090 + 起 r2 ═══
+echo "== RUN_ID 37 @ $(date '+%F %T') host=$(hostname) =="
+EDA=/nasdata/app.e0031982/code/eda_fastmcp
+FW=/nasdata/app.e0031982/code/EDA-Eval-Framework
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+LOG=/tmp/ABL_full_r2_8650set.log
+PORTS="8650 8651 8652 8654"; SHOST=10.129.32.75
+EVALDATA=/nasdata/app.e0031982/.cline_prof4_eval/data
+TS=$(date '+%Y%m%d_%H%M%S')
+PY=$(command -v python3 || command -v python || true)
+
+echo; echo "=========== 1. 停掉坏 r2（MCP 缺失期起的）==========="
+OLD=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | head -1)
+if [ -n "$OLD" ]; then
+  echo "   PID=$OLD  log 行数=$(timeout 20 wc -l < "$LOG" 2>/dev/null)  MCP 错误=$(timeout 20 grep -ciE 'connection refused|ECONNREFUSED|8090' "$LOG" 2>/dev/null)"
+  timeout 30 pkill -f '^bash scripts/run_cline_script' 2>/dev/null; sleep 5
+  echo "   AFTER EVAL_ALIVE=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)"
+else
+  echo "   （无 eval 在跑）"
+fi
+
+echo; echo "=========== 2. 清 .env 冲突（只删标记行，保留双内容 ⇒ 生效值=靠后那套=我们的）==========="
+timeout 30 cp -p "$EDA/.env" "/tmp/eda_fastmcp.env.conflict.$TS" && echo "   备份=/tmp/eda_fastmcp.env.conflict.$TS"
+echo "   标记数(改前)=$(timeout 20 grep -cE '^(<<<<<<<|=======|>>>>>>>)' "$EDA/.env")"
+timeout 30 sed -i -E '/^(<<<<<<<|=======|>>>>>>>)/d' "$EDA/.env"; echo "   sed exit=$?"
+echo "   标记数(改后)=$(timeout 20 grep -cE '^(<<<<<<<|=======|>>>>>>>)' "$EDA/.env")  '<<<' 残留=$(timeout 20 grep -cE '<<<' "$EDA/.env")"
+echo "   sh -n 校验: $( cd "$EDA" && timeout 20 sh -n .env 2>&1 | head -3 | cut -c1-170 )  (空 = OK)"
+echo "   ✅ 关键行（重复时靠后者生效）:"
+timeout 20 grep -nE '^(EDA_MCP_PORT|PROXY_PORTS|RAG_RECALL_URL|SANDBOX_PORT_HTTP|SANDBOX_PORT_TCP|SANDBOX_HOST)=' "$EDA/.env" 2>/dev/null | cut -c1-150
+timeout 30 git -C "$EDA" add .env 2>&1 | head -2; echo "   git add .env exit=$?"
+echo "   EDA 剩余冲突: [$(timeout 30 git -C "$EDA" diff --name-only --diff-filter=U 2>/dev/null | tr '\n' ' ')]"
+
+echo; echo "=========== 3. 清 3 个代码文件冲突（优先上游；md5 核验）==========="
+for spec in "$FW:config.yaml" "$FW:scripts/run_on_sandbox.py" "$EDA:server/sandbox_server/exec_code.py"; do
+  R="${spec%%:*}"; F="${spec#*:}"
+  if timeout 30 git -C "$R" diff --name-only --diff-filter=U 2>/dev/null | grep -qx "$F"; then
+    echo "-- $R/$F --"
+    timeout 30 cp -p "$R/$F" "/tmp/conflict_$(basename "$R")_$(basename "$F").$TS" 2>/dev/null && echo "   backup=/tmp/conflict_$(basename "$R")_$(basename "$F").$TS"
+    timeout 30 git -C "$R" checkout --ours -- "$F" >/dev/null 2>&1
+    a=$(timeout 30 md5sum "$R/$F" 2>/dev/null | cut -d' ' -f1); b=$(timeout 30 git -C "$R" show HEAD:"$F" 2>/dev/null | md5sum | cut -d' ' -f1)
+    if [ "$a" = "$b" ]; then SIDE=upstream; echo "   ✅ 取【上游版】（md5 与 HEAD 一致）"
+    else SIDE=stash-ours; echo "   ⚠️ --ours≠HEAD ⇒ 改取 --theirs（我们的 stash 版）"; timeout 30 git -C "$R" checkout --theirs -- "$F" >/dev/null 2>&1; fi
+    echo "   选中侧=$SIDE  行数=$(timeout 20 wc -l < "$R/$F")  残留标记=$(timeout 20 grep -cE '^(<<<<<<<|=======|>>>>>>>)' "$R/$F")"
+    case "$F" in
+      *.py) echo "   py_compile: $( cd "$R" && timeout 30 "$PY" -m py_compile "$F" 2>&1 | head -2 | cut -c1-140 )(空=OK) host 命中=$(timeout 20 grep -c 'host' "$R/$F")";;
+      *.yaml|*.yml) echo "   yaml: $( cd "$R" && timeout 30 "$PY" -c "import yaml,sys;yaml.safe_load(open(sys.argv[1],encoding='utf-8'));print('OK')" "$F" 2>&1 | tail -1 | cut -c1-140 )";;
+    esac
+    timeout 30 git -C "$R" add "$F" 2>&1 | head -2; echo "   git add exit=$?"
+  else
+    echo "-- $R/$F : 无冲突，跳过"
+  fi
+done
+echo "   剩余冲突 FW=[$(timeout 30 git -C "$FW" diff --name-only --diff-filter=U 2>/dev/null | tr '\n' ' ')] EDA=[$(timeout 30 git -C "$EDA" diff --name-only --diff-filter=U 2>/dev/null | tr '\n' ' ')]"
+echo "   stash: FW=[$(timeout 30 git -C "$FW" stash list 2>/dev/null | head -2 | tr '\n' ' ')] EDA=[$(timeout 30 git -C "$EDA" stash list 2>/dev/null | head -3 | tr '\n' ' ')]"
+
+
+echo; echo "=========== 4. 读 README 找 RAG recall 启动方式（用户要求）==========="
+for f in "$EDA/README.md" "$EDA/scripts/README.md"; do
+  echo "---- $f ----"
+  timeout 25 grep -n -iE 'recall|memory_vector|chroma|9006|9010|启动|start' "$f" 2>/dev/null | head -18 | cut -c1-170
+done
+echo "---- docs/ 与 scripts/ 里的 recall 脚本 ----"
+timeout 25 grep -rn -iE 'start_recall|recalling|recall_api' "$EDA/docs" "$EDA/scripts" 2>/dev/null | head -10 | cut -c1-170
+timeout 25 ls -l "$EDA/scripts/" 2>/dev/null | grep -iE 'recall|rag|memory|vector|chroma|api' | cut -c1-150
+echo "---- README 中首个 recall 段落（±6 行）----"
+n=$(timeout 25 grep -n -iE 'recall' "$EDA/README.md" 2>/dev/null | head -1 | cut -d: -f1)
+[ -n "$n" ] && timeout 25 sed -n "$((n>3?n-3:1)),$((n+8))p" "$EDA/README.md" 2>/dev/null | cut -c1-175
+
+echo; echo "=========== 5. 起 RAG recall（自适应：先看是否已在听，再按 README）==========="
+echo "   监听: $(timeout 20 ss -lntp 2>/dev/null | grep -E ':(9006|9010)' | cut -c1-140)"
+echo "   生效 RAG_RECALL_URL=$(timeout 20 grep -E '^RAG_RECALL_URL=' "$EDA/.env" | tail -1 | cut -c1-90)"
+for s in start_recalling_api.sh start_recall_api.sh start_memory_vector.sh start_rag.sh; do
+  [ -f "$EDA/scripts/$s" ] && echo "   找到脚本: $EDA/scripts/$s"
+done
+if timeout 20 ss -lntp 2>/dev/null | grep -qE ':(9006|9010)'; then
+  echo "   ✅ 已在监听（只探活，不重启）"
+else
+  if [ -f "$EDA/scripts/start_recalling_api.sh" ]; then
+    ( cd "$EDA" && setsid bash scripts/start_recalling_api.sh > "/tmp/rag_recall_$TS.log" 2>&1 < /dev/null & ); sleep 10
+    timeout 20 tail -12 "/tmp/rag_recall_$TS.log" 2>/dev/null | cut -c1-175
+  else
+    echo "   ⚠️ 未找到 start_recalling_api.sh ⇒ 等 README 段落给出正确命令（见上）；本块不改动"
+  fi
+fi
+echo "   recall 探活: 9006=$(timeout 15 curl -s -m 8 -o /dev/null -w '%{http_code}' http://localhost:9006/recall 2>/dev/null) 9010=$(timeout 15 curl -s -m 8 -o /dev/null -w '%{http_code}' http://localhost:9010/recall 2>/dev/null)"
+
+echo; echo "=========== 6. 把 MCP 起在 8090（.env 已清干净后）==========="
+( cd "$EDA" && timeout 40 bash scripts/stop.sh ) > "/tmp/eda_stop_runid37.log" 2>&1; echo "   stop.sh exit=$?"; sleep 3
+( cd "$EDA" && export EDA_MCP_PORT=8090 && timeout 100 bash scripts/start.sh ) > "/tmp/eda_start_runid37.log" 2>&1; echo "   start.sh exit=$?"
+timeout 20 tail -14 "/tmp/eda_start_runid37.log" 2>/dev/null | cut -c1-180
+sleep 5
+MCP8090=$(timeout 20 ss -lntp 2>/dev/null | grep -c ':8090')
+echo "   :8090 监听数=$MCP8090  http_code=$(timeout 15 curl -s -m 8 -o /dev/null -w '%{http_code}' http://localhost:8090/ 2>/dev/null)"
+echo "   监听总览: $(timeout 20 ss -lntp 2>/dev/null | grep -E ':(8090|18890|9006|9010)' | cut -c1-120 | tr '\n' '|')"
+
+echo; echo "=========== 7. MCP 就位 + 4/4 → 起 r2 ==========="
+OK=0
+for p in $PORTS; do
+  timeout 5 bash -c "echo > /dev/tcp/$SHOST/$p" 2>/dev/null && tcp=OK || tcp=CLOSED
+  body=$(timeout 25 curl -s -m 10 -X POST "http://$SHOST:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+  n=${#body}; if [ "$n" -gt 0 ]; then rc=OK; OK=$((OK+1)); else rc="FAIL(0byte)"; fi
+  echo "   port $p : TCP=$tcp run_code=$rc resp_len=$n"
+done
+echo "   ▶ 健康端口=$OK/4   MCP:8090=$MCP8090   EVAL_ALIVE=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)"
+if [ "$MCP8090" -ge 1 ] && [ "$OK" -eq 4 ]; then
+  ( cd "$EDA"
+    export EVAL_FW_DIR="$FW"
+    export CLI_DATA_DIR="$EVALDATA"
+    export PYTHON="$EDA/venv/bin/python"
+    export https_proxy=http://172.19.92.23:13128
+    setsid bash scripts/run_cline_script.sh -p 8 -n > "$LOG" 2>&1 < /dev/null &
+  )
+  echo "   已下发 setsid 起动，等 20s 核验 ..."; sleep 20
+  NEW=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | head -1)
+  echo "   新 eval PID=${NEW:-<none>}"
+  [ -n "$NEW" ] && { timeout 20 tr '\0' '\n' < /proc/$NEW/environ 2>/dev/null | grep -E '^(EVAL_FW_DIR|CLI_DATA_DIR|PYTHON|https_proxy)=' | cut -c1-170; echo "   hook: $(timeout 20 ls -l ~/.cline/hooks/PreToolUse 2>&1 | cut -c1-120)"; }
+  echo "   log 头 20 行:"; timeout 20 head -20 "$LOG" 2>/dev/null | cut -c1-180
+  echo "   log 里 syntax error 计数=$(timeout 20 grep -c 'syntax error' "$LOG" 2>/dev/null)"
+else
+  echo "   ⛔ 未起 r2（MCP:8090=$MCP8090，健康端口=$OK/4）"
+fi
+echo; echo "=========== 8. 快照 ==========="
+timeout 20 df -BG /home 2>/dev/null | tail -1 | cut -c1-110
+echo "== DONE — RUN_ID 37（清冲突 + README 查 recall + MCP→8090 + 起 r2）=="
+```
+
+---
+
 ## RUN_ID 36 — 🔧 修 `.env` 语法错（`<<<`）→ **把 MCP 真正起在 8090** → 复检 4 端口 → 重启 r2
 
 > **为什么发这一块（RUN_ID 35 的结果）**：35 已执行（08:54:33，exit=0），做到了：**两仓库 `git pull` 成功**（Framework `e1d6822→b867147`「四种语言独立，加入hook」；eda_fastmcp `343cce34→e51372ff`「使用未增强文档，无自探索」）、`.env` 写死 `EDA_MCP_PORT=8090`、**两处 `cline_mcp_settings.json` 本来就已指向 `http://10.251.36.15:8090/sse`**（改写 0 处 ✓）、4 端口 **4/4 健康**、**已起 r2（PID 3434607，08:55，158 题 8 worker，hook 已部署）**。
 > **但两个坑**：① **`start.sh exit=2` —— `.env: line 68: syntax error near unexpected token '<<<'`**（该行**不是本块所加**，但被 `sh` 类宿主 source 时必炸）⇒ **MCP 没能起在 8090**（`:8090` http_code=000；`:18890` 上那个 LISTEN 进程属**别的用户**（`/proc/PID/environ: Permission denied` + `stop.sh` 报「未找到 PID 文件」）⇒ **不是我们的实例**）⇒ 而评测侧 cline 指向 **8090** ⇒ **两边对不上，刚起的 r2 很可能拿不到 MCP 工具**。② 两仓库 `pull --autostash` 均报 **「Applying autostash resulted in conflicts. Your changes are safe in the stash.」** ⇒ 本地补丁（`run_on_sandbox.py` / `exec_code.py` 的 host 字段等）**进了 stash 且未应用**，工作树可能有冲突痕迹。
 > **本块**：① 现状（r2 还活着吗 + log 尾看是否 MCP 失败）→ ② **`.env` 诊断 + 修**（打印 55–80 行、找 `<<<` 与冲突标记；把 `<<<` 行**注释掉**并备份，然后 **`sh -n .env` 校验**）→ ③ 两仓库 `status/stash` 只读体检（**不 pop、不动**，只报告）→ ④ `stop.sh` → **`EDA_MCP_PORT=8090 bash scripts/start.sh`** → 复核 **`:8090` LISTEN + HTTP** → ⑤ **MCP 真在 8090 后**：4 端口复检 → 停掉那个（MCP 缺失期起的）r2 → **重新起 r2** + 核验（新 PID / 四 override / hook / log 头）→ ⑥ 快照。
 
-```bash
+```text
 # ═══ RUN_ID 36 — ZhuLong：修 .env 的 <<< + MCP 起在 8090 + 重启 r2 ═══
 echo "== RUN_ID 36 @ $(date '+%F %T') host=$(hostname) =="
 EDA=/nasdata/app.e0031982/code/eda_fastmcp
