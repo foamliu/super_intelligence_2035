@@ -9189,3 +9189,73 @@ host=hfeg0tedaap02  2026-10-11 08:07:32
 === DONE ===
 === ALL DONE ===
 ```
+
+---
+
+## RUN_ID 87 · 2026-10-11 08:13:21 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 87 · flush & self-prove RUN_ID 86 · $(date '+%F %T') · host=$(hostname) ==="
+R="$PWD"; [ -d "$R/doc/BaiZe-ISEDA2027/run/ops" ] || R="$(git rev-parse --show-toplevel 2>/dev/null || echo /nas_train/app.e0031982/code/super_intelligence_2035)"
+O="$R/doc/BaiZe-ISEDA2027/run/ops"
+echo "   repo=$R"
+echo "   HEAD=$(git -C "$R" log --oneline -1 2>/dev/null | cut -c1-80)"
+echo "   local .last_run_id=$(cat "$O/.last_run_id" 2>/dev/null)   (若 = 86 而远端 = 85 ⇒ 正是 push 撞车)"
+echo "   outbox 本地计数: RUN_ID 85=$(grep -c '^## RUN_ID 85' "$O/outbox.md" 2>/dev/null)  RUN_ID 86=$(grep -c '^## RUN_ID 86' "$O/outbox.md" 2>/dev/null)"
+echo "   --- RUN_ID 86 段（本地）关键行 ---"
+awk '/^## RUN_ID 86/{f=1} f' "$O/outbox.md" 2>/dev/null | grep -nE 'route|OPEN|last_run_id|relay|RUN_ID 32 独有产物|ABL_full_r2|PROXY_PORTS|RAG_RECALL_URL|MCP :8090|ALL DONE|DONE' | head -25 | cut -c1-180
+echo "   --- 86 段最后 8 行 ---"
+awk '/^## RUN_ID 86/{f=1} f' "$O/outbox.md" 2>/dev/null | tail -8 | cut -c1-180
+echo "   --- git 状态（确认是否有『未推送』的 outbox 改动）---"
+git -C "$R" status --porcelain 2>/dev/null | head -6 | cut -c1-140
+echo "=== DONE 87 ==="
+```
+
+**输出**
+```
+=== RUN_ID 87 · flush & self-prove RUN_ID 86 · 2026-10-11 08:13:21 · host=whag0pgpuap29 ===
+   repo=/nas_train/app.e0031982/code/super_intelligence_2035
+   HEAD=d928dca0 ops-relay: result @ 2026-10-11 08:08:58
+   local .last_run_id=86   (若 = 86 而远端 = 85 ⇒ 正是 push 撞车)
+   outbox 本地计数: RUN_ID 85=1  RUN_ID 86=1
+   --- RUN_ID 86 段（本地）关键行 ---
+7:echo "=== RUN_ID 86 · rescue ZhuLong ops relay · $(date '+%F %T') · host=$(hostname) ==="
+11:  ROUTE="tunnel(127.0.0.1:3333)"; TGT="-p 3333 app.e0031982@localhost"; echo "   127.0.0.1:3333 = OPEN ✅ → 走 SSH 隧道"
+13:  ROUTE="direct(10.251.36.15:22)"; TGT="app.e0031982@10.251.36.15"; echo "   直连 36.15:22 = OPEN ✅ → 走直连"
+16:  echo "=== DONE (no route) ==="; exit 0
+28:ps -eo pid,etime,args | grep -E 'zhulong_ops_relay[.]sh|zhulong_loop[.]sh' | grep -v grep | cut -c1-140 || echo "   (relay 与 loop 都不在跑)"
+29:echo "   relay 旧日志尾:"; tail -6 /tmp/zhulong_ops_relay.log 2>/dev/null | cut -c1-180
+31:echo "   last_run_id=$(cat "$OPS/.last_run_id" 2>/dev/null)  inbox RUN_ID=$(sed -n 's/.*RUN_ID:[[:space:]]*\([0-9]\+\)/\1/p' "$OPS/inbox.md" | head -1)"
+34:cp -f /tmp/zhulong_ops_relay.log "/tmp/zhulong_ops_relay.log.bak.$(date +%s)" 2>/dev/null
+35:pkill -f 'zhulong_ops_relay[.]sh' 2>/dev/null; sleep 2
+37:setsid bash "$W/doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh" > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
+39:ps -eo pid,etime,args | grep 'zhulong_ops_relay[.]sh' | grep -v grep | cut -c1-140 || echo "   !! relay 未起来"
+40:echo "   新日志头:"; head -3 /tmp/zhulong_ops_relay.log | cut -c1-180
+43:echo "   last_run_id now=$(cat "$OPS/.last_run_id" 2>/dev/null)（跑完才会变 32）"
+45:echo "   RUN_ID 32 独有产物（有 = 已在执行）:"
+46:ls -l /tmp/eda_stop_runid32.log /tmp/eda_start_runid32.log /tmp/eda_fastmcp.env.RUNID32.* /tmp/ABL_full_r2_8650set.log /tmp/eda_fastmcp.env.bak.* 2>/dev/null | tail -6 | cut -c1
+47:echo "   .env 关键行:"; grep -nE '^(PROXY_PORTS|SANDBOX_ENDPOINTS|RAG_RECALL_URL)=' "$EDA/.env" 2>/dev/null | cut -c1-200
+48:echo "   MCP :8090 ->"; ss -lntp 2>/dev/null | grep ':8090' | cut -c1-140 || echo "   (未监听)"
+50:echo "   中继日志尾:"; tail -8 /tmp/zhulong_ops_relay.log | cut -c1-180
+51:echo "=== DONE ==="
+53:echo "=== ALL DONE ==="
+58:=== RUN_ID 86 · rescue ZhuLong ops relay · 2026-10-11 08:07:31 · host=whag0pgpuap29 ===
+61:   127.0.0.1:3333 = OPEN ✅ → 走 SSH 隧道
+66:   relay 旧日志尾:
+67:[zhulong-relay] push FAILED (will retry next cycle)
+68:[zhulong-relay] RUN_ID=30 executed, exit=0, appended to outbox.
+   --- 86 段最后 8 行 ---
+   MCP :8090 ->
+   eval 进程 ->
+   中继日志尾:
+[zhulong-relay] 2026-10-11 08:07:34 started. repo=/nasdata/app.e0031982/code/super_intelligence_2035  poll=20s  fetch_every=3x
+[zhulong-relay] RUN_ID=32 executed, exit=0, appended to outbox.
+=== DONE ===
+=== ALL DONE ===
+```
+   --- git 状态（确认是否有『未推送』的 outbox 改动）---
+ M doc/BaiZe-ISEDA2027/run/harness/kimi_pilot_results.json
+=== DONE 87 ===
+```
