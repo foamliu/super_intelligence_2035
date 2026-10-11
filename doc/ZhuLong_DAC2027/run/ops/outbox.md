@@ -6208,3 +6208,154 @@ LISTEN 0      2048              0.0.0.0:8090       0.0.0.0:*    users:(("python"
 /dev/mapper/vgroot-lv_home      394G  374G        4G 100% /home
 == DONE — RUN_ID 39（README 起 recall 9006 + MCP 8090 + 客户端 /mcp + canon 硬化）==
 ```
+
+---
+
+## RUN_ID 40 · 2026-10-11 09:24:57 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# ═══ RUN_ID 40 — ZhuLong：定位客户端配置来源；若在仓库则提交 /mcp 改动 ═══
+echo "== RUN_ID 40 @ $(date '+%F %T') host=$(hostname) =="
+EDA=/nasdata/app.e0031982/code/eda_fastmcp
+FW=/nasdata/app.e0031982/code/EDA-Eval-Framework
+EVALDATA=/nasdata/app.e0031982/.cline_prof4_eval/data
+HOMECFG=$HOME/.cline/data/settings/cline_mcp_settings.json
+SHOST=10.129.32.75; PORTS="8650 8651 8652 8654"
+TS=$(date '+%Y%m%d_%H%M%S'); PY=$(command -v python3 || command -v python || true)
+
+echo; echo "=========== 0. 现状 ==========="
+echo "   EVAL_ALIVE=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)   监听: $(timeout 20 ss -lntp 2>/dev/null | grep -E ':(8090|9006|18890)' | cut -c1-110 | tr '\n' '|')"
+for f in "$HOMECFG" "$EVALDATA/settings/cline_mcp_settings.json"; do
+  echo "   [$f] -> $(timeout 20 grep -ohE '"(url|type)": *"[^"]+"' "$f" 2>/dev/null | head -4 | tr '\n' ' ')"
+done
+
+echo; echo "=========== 1. 找「客户端配置从哪来」（仓库内模板/生成逻辑）==========="
+echo "-- 两仓库里提到 cline_mcp_settings / mcpServers 的文件 --"
+timeout 40 grep -rln -e 'cline_mcp_settings' -e 'mcpServers' "$FW" "$EDA" --include='*.py' --include='*.sh' --include='*.json' --include='*.md' --include='*.j2' --include='*.tmpl' 2>/dev/null | grep -v '\.git/' | head -15 | cut -c1-165
+echo "-- 这些文件里出现 /sse 或 streamableHttp 的行 --"
+timeout 40 grep -rn -e '/sse' -e 'streamableHttp' -e 'streamable_http' "$FW" "$EDA" --include='*.py' --include='*.sh' --include='*.json' --include='*.md' 2>/dev/null | grep -v '\.git/' | head -15 | cut -c1-175
+echo "-- run_cline_script.sh 里与配置/hook/数据目录 部署相关的行 --"
+timeout 30 grep -nE 'cline_mcp_settings|mcp|hook|CLI_DATA_DIR|settings|mkdir|cp ' "$EDA/scripts/run_cline_script.sh" 2>/dev/null | head -18 | cut -c1-175
+echo "-- 可能的模板文件（名字含 mcp/settings 的 json）--"
+timeout 30 find "$FW" "$EDA" -maxdepth 4 -name '*mcp*settings*.json' -o -maxdepth 4 -name 'cline_mcp_settings.json' 2>/dev/null | grep -v '\.git/' | head -10 | cut -c1-165
+
+
+echo; echo "=========== 2. 仓库内客户端配置/模板：就地改 /sse→/mcp 并【本地提交】==========="
+CH=0
+for R in "$FW" "$EDA"; do
+  for f in $(timeout 40 grep -rl 'mcpServers' "$R" --include='*.json' 2>/dev/null | grep -v '\.git/' | head -6); do
+    if timeout 20 grep -q '/sse' "$f" 2>/dev/null; then
+      echo "-- 命中: $f"
+      timeout 20 grep -nE '"url"|"type"|/sse' "$f" | head -5 | cut -c1-170
+      timeout 30 cp -p "$f" "/tmp/tpl_$(basename "$f").$TS"
+      timeout 30 sed -i -E 's#(:[0-9]+)/sse#\1/mcp#g' "$f"
+      if [ -n "$PY" ] && ! timeout 20 "$PY" -c "import json,sys;json.load(open(sys.argv[1],encoding='utf-8'))" "$f" 2>/dev/null; then
+        echo "   ⚠️ JSON 校验失败 ⇒ 回滚"; timeout 30 cp -p "/tmp/tpl_$(basename "$f").$TS" "$f"; continue
+      fi
+      timeout 30 git -C "$R" add "$f" 2>&1 | head -2
+      timeout 30 git -C "$R" commit -m "eval client: MCP endpoint /sse -> /mcp (streamable-http) per new README; port stays 8090 per ops canon" 2>&1 | tail -2 | cut -c1-150
+      echo "   commit=$(timeout 30 git -C "$R" log -1 --format='%h | %an | %cd | %s' --date=format:'%m-%d %H:%M' | cut -c1-135)"
+      CH=$((CH+1))
+    fi
+  done
+done
+echo "   ▶ 仓库内模板改动数 = $CH  （0 = 客户端配置不在仓库；纯运行时文件）"
+
+echo; echo "=========== 3. 运行时两处配置复核/补齐（应是 /mcp）==========="
+for f in "$HOMECFG" "$EVALDATA/settings/cline_mcp_settings.json"; do
+  [ -f "$f" ] || { echo "   [$f] 不存在，跳过"; continue; }
+  if timeout 20 grep -q '/sse' "$f" 2>/dev/null; then
+    timeout 30 cp -p "$f" "$f.bak40.$TS"; timeout 30 sed -i -E 's#(:[0-9]+)/sse#\1/mcp#g' "$f"; echo "   [$f] 已改 /sse→/mcp（备份 .bak40.$TS）"
+  else
+    echo "   [$f] 已是 /mcp（无需改）"
+  fi
+  echo "      -> $(timeout 20 grep -ohE '"(url|type)": *"[^"]+"' "$f" | head -4 | tr '\n' ' ' | cut -c1-140)"
+done
+
+echo; echo "=========== 4. 服务复核：MCP :8090 / recall :9006 / 4 端口 ==========="
+echo "   监听: $(timeout 20 ss -lntp 2>/dev/null | grep -E ':(8090|9006|18890)' | cut -c1-110 | tr '\n' '|')"
+echo "   MCP /health=$(timeout 15 curl -s -m 8 -o /dev/null -w '%{http_code}' http://localhost:8090/health 2>/dev/null)  /mcp=$(timeout 15 curl -s -m 8 -o /dev/null -w '%{http_code}' http://localhost:8090/mcp 2>/dev/null)"
+echo "   recall 9006 /health=$(timeout 15 curl -s -m 8 -o /dev/null -w '%{http_code}' http://localhost:9006/health 2>/dev/null)  /recall=$(timeout 15 curl -s -m 10 -o /dev/null -w '%{http_code}' http://localhost:9006/recall 2>/dev/null)"
+OK=0
+for p in $PORTS; do
+  timeout 5 bash -c "echo > /dev/tcp/$SHOST/$p" 2>/dev/null && tcp=OK || tcp=CLOSED
+  body=$(timeout 25 curl -s -m 10 -X POST "http://$SHOST:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+  n=${#body}; if [ "$n" -gt 0 ]; then rc=OK; OK=$((OK+1)); else rc="FAIL(0byte)"; fi
+  echo "   port $p : TCP=$tcp run_code=$rc resp_len=$n"
+done
+echo "   ▶ 健康端口=$OK/4  EVAL_ALIVE=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)（**不起 r2**）"
+timeout 20 df -BG /home 2>/dev/null | tail -1 | cut -c1-110
+echo "== DONE — RUN_ID 40（定位客户端配置来源 + 模板可提交则已本地提交 + 运行时复核）=="
+```
+
+**输出**
+```
+== RUN_ID 40 @ 2026-10-11 09:24:57 host=hfeg0tedaap02 ==
+
+=========== 0. 现状 ===========
+   EVAL_ALIVE=0   监听: LISTEN 0      2048              0.0.0.0:18890      0.0.0.0:*                                        |LISTEN 0      2048              0.0.0.0:9006       0.0.0.0:*    users:(("python",pid=3503518,fd=14))|LISTEN 0      2048              0.0.0.0:8090       0.0.0.0:*    users:(("python",pid=3524971,fd=3)) |
+   [/home/app.e0031982/.cline/data/settings/cline_mcp_settings.json] -> "url": "http://10.251.36.15:8090/mcp" "type": "streamableHttp" 
+   [/nasdata/app.e0031982/.cline_prof4_eval/data/settings/cline_mcp_settings.json] -> "url": "http://10.251.36.15:8090/mcp" "type": "streamableHttp" 
+
+=========== 1. 找「客户端配置从哪来」（仓库内模板/生成逻辑）===========
+-- 两仓库里提到 cline_mcp_settings / mcpServers 的文件 --
+/nasdata/app.e0031982/code/EDA-Eval-Framework/scripts/run_zhulong_batch.py
+/nasdata/app.e0031982/code/eda_fastmcp/.claude/skills/cline-harness-designer/SKILL.md
+/nasdata/app.e0031982/code/eda_fastmcp/.claude/skills/cline-harness-designer/docs/01-mcp.md
+/nasdata/app.e0031982/code/eda_fastmcp/README.md
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh
+/nasdata/app.e0031982/code/eda_fastmcp/venv/lib/python3.12/site-packages/mcp/cli/claude.py
+-- 这些文件里出现 /sse 或 streamableHttp 的行 --
+/nasdata/app.e0031982/code/eda_fastmcp/.claude/skills/cline-harness-designer/docs/01-mcp.md:23:| **Streamable HTTP** | 远程托管（推荐）| 集中部署、多客户端；
+/nasdata/app.e0031982/code/eda_fastmcp/.claude/skills/cline-harness-designer/docs/01-mcp.md:50:      "type": "streamableHttp",
+/nasdata/app.e0031982/code/eda_fastmcp/.claude/skills/cline-harness-designer/docs/01-mcp.md:70:- **显式指定 `type`**：省略会回退到 legacy `sse`，新服务务必写
+/nasdata/app.e0031982/code/eda_fastmcp/README.md:65:# 访问地址: http://<本机IP>:18889/mcp（streamable-http；若 EDA_MCP_TRANSPORT=sse 则为 /sse）
+/nasdata/app.e0031982/code/eda_fastmcp/README.md:86:      "type": "streamableHttp",
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/README.md:94:- SSE 地址：`http://<HOST>:<PORT>/sse`
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/start.sh:113:        printf "%-10s %s\n" "访问地址:" "http://${HOST}:${PORT}/sse"
+/nasdata/app.e0031982/code/eda_fastmcp/venv/lib/python3.12/site-packages/sse_starlette/sse.py:225:        # https://github.com/sysid/sse-starlette/pull/55#issuecomment-1732374
+/nasdata/app.e0031982/code/eda_fastmcp/venv/lib/python3.12/site-packages/mcp/client/session_group.py:29:from mcp.client.streamable_http import streamable_http_client
+/nasdata/app.e0031982/code/eda_fastmcp/venv/lib/python3.12/site-packages/mcp/client/session_group.py:52:    """Parameters for intializing a streamable_http_client."""
+/nasdata/app.e0031982/code/eda_fastmcp/venv/lib/python3.12/site-packages/mcp/client/session_group.py:323:                client = streamable_http_client(
+/nasdata/app.e0031982/code/eda_fastmcp/venv/lib/python3.12/site-packages/mcp/client/streamable_http.py:601:async def streamable_http_client(
+/nasdata/app.e0031982/code/eda_fastmcp/venv/lib/python3.12/site-packages/mcp/client/streamable_http.py:685:@deprecated("Use `streamable_http_client` instead.")
+/nasdata/app.e0031982/code/eda_fastmcp/venv/lib/python3.12/site-packages/mcp/client/streamable_http.py:717:        async with streamable_http_client(
+/nasdata/app.e0031982/code/eda_fastmcp/venv/lib/python3.12/site-packages/mcp/client/auth/oauth2.py:40:from mcp.client.streamable_http import MCP_PROTOCOL_VERSION
+-- run_cline_script.sh 里与配置/hook/数据目录 部署相关的行 --
+236:    mkdir -p "$batch_dir"
+246:        mkdir -p "$filter_dir"
+266:                cp "$src_file" "$filter_dir/"
+350:    mkdir -p "$trace_dst"
+440:            mkdir -p "$worker_trace_dst"
+506:                mkdir -p "$out_dir"
+508:                cp "$msg_file" "${out_dir}/"
+510:                cp "$msg_file" "${out_dir}/api_conversation_history.json"
+512:                [[ -f "$meta_file" ]] && cp "$meta_file" "${out_dir}/"
+533:                mkdir -p "$out_dir"
+534:                cp "$msg_file" "${out_dir}/"
+535:                cp "$msg_file" "${out_dir}/api_conversation_history.json"
+537:                [[ -f "$meta_file" ]] && cp "$meta_file" "${out_dir}/"
+-- 可能的模板文件（名字含 mcp/settings 的 json）--
+
+=========== 2. 仓库内客户端配置/模板：就地改 /sse→/mcp 并【本地提交】===========
+   ▶ 仓库内模板改动数 = 0  （0 = 客户端配置不在仓库；纯运行时文件）
+
+=========== 3. 运行时两处配置复核/补齐（应是 /mcp）===========
+   [/home/app.e0031982/.cline/data/settings/cline_mcp_settings.json] 已是 /mcp（无需改）
+      -> "url": "http://10.251.36.15:8090/mcp" "type": "streamableHttp" 
+   [/nasdata/app.e0031982/.cline_prof4_eval/data/settings/cline_mcp_settings.json] 已是 /mcp（无需改）
+      -> "url": "http://10.251.36.15:8090/mcp" "type": "streamableHttp" 
+
+=========== 4. 服务复核：MCP :8090 / recall :9006 / 4 端口 ===========
+   监听: LISTEN 0      2048              0.0.0.0:18890      0.0.0.0:*                                        |LISTEN 0      2048              0.0.0.0:9006       0.0.0.0:*    users:(("python",pid=3503518,fd=14))|LISTEN 0      2048              0.0.0.0:8090       0.0.0.0:*    users:(("python",pid=3524971,fd=3)) |
+   MCP /health=404  /mcp=406
+   recall 9006 /health=200  /recall=405
+   port 8650 : TCP=OK run_code=OK resp_len=106
+   port 8651 : TCP=OK run_code=OK resp_len=106
+   port 8652 : TCP=OK run_code=OK resp_len=106
+   port 8654 : TCP=OK run_code=OK resp_len=106
+   ▶ 健康端口=4/4  EVAL_ALIVE=0（**不起 r2**）
+/dev/mapper/vgroot-lv_home      394G  374G        4G 100% /home
+== DONE — RUN_ID 40（定位客户端配置来源 + 模板可提交则已本地提交 + 运行时复核）==
+```
