@@ -222,8 +222,7 @@ $\boldsymbol{\Delta}$ (pp) & $-0.36$ & $-3.27$ & $+0.31$ & $-3.28$ \\
 
 \paragraph{Evaluation.}
 Domain task metrics are not yet available for this stage, so we adopt the standard frozen-trunk protocol: ImageNet-1k zero-shot (class prototypes synthesised from the frozen CLIP text tower) and a linear probe on the frozen trunk, over a deterministic self-split of the ImageNet-1k training set ($50$ images per class for the probe and $50$ for validation, disjoint from every corpus used for training).
-We first tried a zero-shot text$\leftrightarrow$image retrieval proxy ($R@1/5/10$ on a held-out 5K subset of \texttt{laioncn/EN}, disjoint from the training source) and found it \emph{degenerate}: $R@1{=}0.0002$, exactly chance for $5000$ candidates, separating neither learning rates nor architectures.
-We report that as a methodological warning and use ImageNet-1k instead, on which the architectures do separate---healthy candidates reach $2.5$--$9.5\times$ chance, whereas the two collapsed ones sit at exactly chance.
+A retrieval proxy ($R@1$ on a held-out 5K subset of \texttt{laioncn/EN}) was degenerate ($R@1{=}0.0002$, exactly chance); we therefore use ImageNet-1k, on which architectures separate ($2.5$--$9.5\times$ chance vs.\ exactly chance for collapsed ones).
 Resolution is not a free variable in this comparison: $224/16$ is best on both loss and throughput (Table~\ref{tab:visres}).
 Stage~(iv) revisits the visual-token count for detail-dense layout and schematic views, where the reasoning of this section---that a $196$-token view is dominated by coarse semantics---does not transfer.
 
@@ -271,7 +270,12 @@ Arm~B-hybrid & causal & \checkmark & $\sim0.48$ & 1.37\% & no collapse, low lp \
 
 \paragraph{Interpretation.}
 Two findings emerge:
-(i)~The contrastive term is \emph{necessary} to prevent collapse in the causal AR paradigm at our data scale: without it, the AR objective admits a trivial collapse solution; with it, features remain dispersed.
-(ii)~The causal AR paradigm \emph{cannot match} the bidirectional paradigm's representation quality at our scale, even with the contrastive anchor: the prefix-only attention constraint limits each patch to its causal context, and the resulting representations are much poorer for linear probing.
-The official AIMv2 avoids this at $\sim12$\,B pairs with long LLaMA-3 captions that provide a strong text-AR signal; our $\sim7.7$\,M short-caption pairs cannot sustain the causal AR route.
-We therefore retain the bidirectional $+$ InfoNCE $+$ masked-patch-MSE recipe as the final configuration.
+(i)~The contrastive term is \emph{necessary} to prevent collapse in the causal AR paradigm at our data scale: without it, the AR objective admits a trivial collapse solution.
+(ii)~The causal AR paradigm \emph{cannot match} the bidirectional paradigm's representation quality at our scale, even with the contrastive anchor: prefix-only attention limits each patch to its causal context, degrading linear-probe accuracy.
+The official AIMv2 avoids this with $\sim12$\,B pairs and long LLaMA-3 captions; our $\sim7.7$\,M short-caption pairs cannot sustain the causal AR route.
+We retain the bidirectional $+$ InfoNCE $+$ masked-patch-MSE recipe.
+
+\paragraph{Optimizer ablation: Muon.}
+Replacing AdamW with the Muon optimizer (Newton--Schulz orthogonalized momentum) under the same AIMv2-style objective causes contrastive collapse at every tested learning rate ($C_1 {\to} 0.96$ within $4\,200$ steps at $\text{lr}{=}10^{-4}$; $2\,100$ steps at $5{\times}10^{-4}$), whereas the AdamW baseline trains stably for $187\,000$ steps ($C_1 {\approx} 0.1$--$0.5$).
+Reducing the learning rate delays but does not prevent collapse, indicating a structural incompatibility rather than a tuning failure.
+This is consistent with recent work showing that Muon's uniform spectral whitening---which drives all momentum singular values toward~1---amplifies noisy tail directions in low-rank or low-SNR gradient regimes~\cite{fan2026pion}, suggesting that the optimizer's applicability boundary is determined by gradient spectral shape rather than loss-function type.
