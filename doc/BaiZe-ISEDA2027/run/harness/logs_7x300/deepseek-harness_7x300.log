@@ -1,0 +1,2254 @@
+  [RESUME] Skipping 96 completed for deepseek-harness
+Serial kimi eval: harness=deepseek-harness model=kimi-k2.6-cloud
+  Total=300 Pending=204 Skip=96 Concurrency=1
+
+############################################################
+# [1/204] deepseek-harness x astropy__astropy-14365
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14365 for deepseek-harness
+
+[RUN] deepseek-harness on astropy__astropy-14365 ...
+  [EVAL] deepseek-harness on astropy__astropy-14365 ...
+  => astropy__astropy-14365 | deepseek-harness | patch-but-failed
+
+############################################################
+# [2/204] deepseek-harness x astropy__astropy-14995
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14995 for deepseek-harness
+
+[RUN] deepseek-harness on astropy__astropy-14995 ...
+  [EVAL] deepseek-harness on astropy__astropy-14995 ...
+  => astropy__astropy-14995 | deepseek-harness | patch-but-failed
+
+############################################################
+# [3/204] deepseek-harness x astropy__astropy-6938
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-6938 for deepseek-harness
+
+[RUN] deepseek-harness on astropy__astropy-6938 ...
+  [EVAL] deepseek-harness on astropy__astropy-6938 ...
+  => astropy__astropy-6938 | deepseek-harness | patch-but-failed
+
+############################################################
+# [4/204] deepseek-harness x astropy__astropy-7746
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-7746 for deepseek-harness
+
+[RUN] deepseek-harness on astropy__astropy-7746 ...
+  [EVAL] deepseek-harness on astropy__astropy-7746 ...
+  => astropy__astropy-7746 | deepseek-harness | patch-but-failed
+
+############################################################
+# [5/204] deepseek-harness x django__django-13033
+############################################################
+
+============================================================
+[SETUP] django__django-13033 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13033 ...
+  [EVAL] deepseek-harness on django__django-13033 ...
+  => django__django-13033 | deepseek-harness | resolved
+
+############################################################
+# [6/204] deepseek-harness x django__django-13158
+############################################################
+
+============================================================
+[SETUP] django__django-13158 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13158 ...
+  [EVAL] deepseek-harness on django__django-13158 ...
+  => django__django-13158 | deepseek-harness | resolved
+
+############################################################
+# [7/204] deepseek-harness x django__django-13220
+############################################################
+
+============================================================
+[SETUP] django__django-13220 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13220 ...
+  [EVAL] deepseek-harness on django__django-13220 ...
+  => django__django-13220 | deepseek-harness | patch-but-failed
+
+############################################################
+# [8/204] deepseek-harness x django__django-13230
+############################################################
+
+============================================================
+[SETUP] django__django-13230 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13230 ...
+  [EVAL] deepseek-harness on django__django-13230 ...
+  => django__django-13230 | deepseek-harness | patch-but-failed
+
+############################################################
+# [9/204] deepseek-harness x django__django-13265
+############################################################
+
+============================================================
+[SETUP] django__django-13265 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13265 ...
+  [EVAL] deepseek-harness on django__django-13265 ...
+  => django__django-13265 | deepseek-harness | patch-but-failed
+
+############################################################
+# [10/204] deepseek-harness x django__django-13315
+############################################################
+
+============================================================
+[SETUP] django__django-13315 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13315 ...
+  [EVAL] deepseek-harness on django__django-13315 ...
+  => django__django-13315 | deepseek-harness | resolved
+
+############################################################
+# [11/204] deepseek-harness x django__django-13321
+############################################################
+
+============================================================
+[SETUP] django__django-13321 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13321 ...
+  [EVAL] deepseek-harness on django__django-13321 ...
+  => django__django-13321 | deepseek-harness | patch-but-failed
+
+############################################################
+# [12/204] deepseek-harness x django__django-13401
+############################################################
+
+============================================================
+[SETUP] django__django-13401 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13401 ...
+  [EVAL] deepseek-harness on django__django-13401 ...
+  => django__django-13401 | deepseek-harness | resolved
+
+############################################################
+# [13/204] deepseek-harness x django__django-13447
+############################################################
+
+============================================================
+[SETUP] django__django-13447 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13447 ...
+  [EVAL] deepseek-harness on django__django-13447 ...
+  => django__django-13447 | deepseek-harness | patch-but-failed
+
+############################################################
+# [14/204] deepseek-harness x django__django-13448
+############################################################
+
+============================================================
+[SETUP] django__django-13448 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13448 ...
+  [EVAL] deepseek-harness on django__django-13448 ...
+  => django__django-13448 | deepseek-harness | patch-but-failed
+
+############################################################
+# [15/204] deepseek-harness x django__django-13551
+############################################################
+
+============================================================
+[SETUP] django__django-13551 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13551 ...
+  [EVAL] deepseek-harness on django__django-13551 ...
+  => django__django-13551 | deepseek-harness | resolved
+
+############################################################
+# [16/204] deepseek-harness x django__django-13590
+############################################################
+
+============================================================
+[SETUP] django__django-13590 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13590 ...
+  [EVAL] deepseek-harness on django__django-13590 ...
+  => django__django-13590 | deepseek-harness | patch-but-failed
+
+############################################################
+# [17/204] deepseek-harness x django__django-13658
+############################################################
+
+============================================================
+[SETUP] django__django-13658 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13658 ...
+  [EVAL] deepseek-harness on django__django-13658 ...
+  => django__django-13658 | deepseek-harness | resolved
+
+############################################################
+# [18/204] deepseek-harness x django__django-13660
+############################################################
+
+============================================================
+[SETUP] django__django-13660 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13660 ...
+  [EVAL] deepseek-harness on django__django-13660 ...
+  => django__django-13660 | deepseek-harness | patch-but-failed
+
+############################################################
+# [19/204] deepseek-harness x django__django-13710
+############################################################
+
+============================================================
+[SETUP] django__django-13710 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13710 ...
+  [EVAL] deepseek-harness on django__django-13710 ...
+  => django__django-13710 | deepseek-harness | patch-but-failed
+
+############################################################
+# [20/204] deepseek-harness x django__django-13757
+############################################################
+
+============================================================
+[SETUP] django__django-13757 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13757 ...
+  [EVAL] deepseek-harness on django__django-13757 ...
+  => django__django-13757 | deepseek-harness | resolved
+
+############################################################
+# [21/204] deepseek-harness x django__django-13768
+############################################################
+
+============================================================
+[SETUP] django__django-13768 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13768 ...
+  [EVAL] deepseek-harness on django__django-13768 ...
+  => django__django-13768 | deepseek-harness | patch-but-failed
+
+############################################################
+# [22/204] deepseek-harness x django__django-13925
+############################################################
+
+============================================================
+[SETUP] django__django-13925 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13925 ...
+  [EVAL] deepseek-harness on django__django-13925 ...
+  => django__django-13925 | deepseek-harness | patch-but-failed
+
+############################################################
+# [23/204] deepseek-harness x django__django-13933
+############################################################
+
+============================================================
+[SETUP] django__django-13933 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13933 ...
+  [EVAL] deepseek-harness on django__django-13933 ...
+  => django__django-13933 | deepseek-harness | resolved
+
+############################################################
+# [24/204] deepseek-harness x django__django-13964
+############################################################
+
+============================================================
+[SETUP] django__django-13964 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-13964 ...
+  [EVAL] deepseek-harness on django__django-13964 ...
+  => django__django-13964 | deepseek-harness | patch-but-failed
+
+############################################################
+# [25/204] deepseek-harness x django__django-14016
+############################################################
+
+============================================================
+[SETUP] django__django-14016 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-14016 ...
+  [EVAL] deepseek-harness on django__django-14016 ...
+  => django__django-14016 | deepseek-harness | resolved
+
+############################################################
+# [26/204] deepseek-harness x django__django-14017
+############################################################
+
+============================================================
+[SETUP] django__django-14017 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-14017 ...
+  [EVAL] deepseek-harness on django__django-14017 ...
+  => django__django-14017 | deepseek-harness | patch-but-failed
+
+############################################################
+# [27/204] deepseek-harness x django__django-14155
+############################################################
+
+============================================================
+[SETUP] django__django-14155 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-14155 ...
+  [EVAL] deepseek-harness on django__django-14155 ...
+  => django__django-14155 | deepseek-harness | patch-but-failed
+
+############################################################
+# [28/204] deepseek-harness x django__django-14238
+############################################################
+
+============================================================
+[SETUP] django__django-14238 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-14238 ...
+  [EVAL] deepseek-harness on django__django-14238 ...
+  => django__django-14238 | deepseek-harness | patch-but-failed
+
+############################################################
+# [29/204] deepseek-harness x django__django-14382
+############################################################
+
+============================================================
+[SETUP] django__django-14382 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-14382 ...
+  [EVAL] deepseek-harness on django__django-14382 ...
+  => django__django-14382 | deepseek-harness | patch-but-failed
+
+############################################################
+# [30/204] deepseek-harness x django__django-14411
+############################################################
+
+============================================================
+[SETUP] django__django-14411 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-14411 ...
+  [EVAL] deepseek-harness on django__django-14411 ...
+  => django__django-14411 | deepseek-harness | patch-but-failed
+
+############################################################
+# [31/204] deepseek-harness x django__django-14534
+############################################################
+
+============================================================
+[SETUP] django__django-14534 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-14534 ...
+  [EVAL] deepseek-harness on django__django-14534 ...
+  => django__django-14534 | deepseek-harness | patch-but-failed
+
+############################################################
+# [32/204] deepseek-harness x django__django-14580
+############################################################
+
+============================================================
+[SETUP] django__django-14580 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-14580 ...
+  [EVAL] deepseek-harness on django__django-14580 ...
+  => django__django-14580 | deepseek-harness | patch-but-failed
+
+############################################################
+# [33/204] deepseek-harness x django__django-14608
+############################################################
+
+============================================================
+[SETUP] django__django-14608 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-14608 ...
+  [EVAL] deepseek-harness on django__django-14608 ...
+  => django__django-14608 | deepseek-harness | patch-but-failed
+
+############################################################
+# [34/204] deepseek-harness x django__django-14667
+############################################################
+
+============================================================
+[SETUP] django__django-14667 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-14667 ...
+  [EVAL] deepseek-harness on django__django-14667 ...
+  => django__django-14667 | deepseek-harness | patch-but-failed
+
+############################################################
+# [35/204] deepseek-harness x django__django-14672
+############################################################
+
+============================================================
+[SETUP] django__django-14672 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-14672 ...
+  [EVAL] deepseek-harness on django__django-14672 ...
+  => django__django-14672 | deepseek-harness | patch-but-failed
+
+############################################################
+# [36/204] deepseek-harness x django__django-14730
+############################################################
+
+============================================================
+[SETUP] django__django-14730 for deepseek-harness
+  => django__django-14730 | deepseek-harness | blocked
+
+############################################################
+# [37/204] deepseek-harness x django__django-14752
+############################################################
+
+============================================================
+[SETUP] django__django-14752 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-14752 ...
+  [EVAL] deepseek-harness on django__django-14752 ...
+  => django__django-14752 | deepseek-harness | patch-but-failed
+
+############################################################
+# [38/204] deepseek-harness x django__django-14787
+############################################################
+
+============================================================
+[SETUP] django__django-14787 for deepseek-harness
+  => django__django-14787 | deepseek-harness | blocked
+
+############################################################
+# [39/204] deepseek-harness x django__django-14855
+############################################################
+
+============================================================
+[SETUP] django__django-14855 for deepseek-harness
+  => django__django-14855 | deepseek-harness | blocked
+
+############################################################
+# [40/204] deepseek-harness x django__django-14915
+############################################################
+
+============================================================
+[SETUP] django__django-14915 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-14915 ...
+  [EVAL] deepseek-harness on django__django-14915 ...
+  => django__django-14915 | deepseek-harness | patch-but-failed
+
+############################################################
+# [41/204] deepseek-harness x django__django-14997
+############################################################
+
+============================================================
+[SETUP] django__django-14997 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-14997 ...
+  [EVAL] deepseek-harness on django__django-14997 ...
+  => django__django-14997 | deepseek-harness | patch-but-failed
+
+############################################################
+# [42/204] deepseek-harness x django__django-14999
+############################################################
+
+============================================================
+[SETUP] django__django-14999 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-14999 ...
+  [EVAL] deepseek-harness on django__django-14999 ...
+  => django__django-14999 | deepseek-harness | patch-but-failed
+
+############################################################
+# [43/204] deepseek-harness x django__django-15061
+############################################################
+
+============================================================
+[SETUP] django__django-15061 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15061 ...
+  [EVAL] deepseek-harness on django__django-15061 ...
+  => django__django-15061 | deepseek-harness | patch-but-failed
+
+############################################################
+# [44/204] deepseek-harness x django__django-15202
+############################################################
+
+============================================================
+[SETUP] django__django-15202 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15202 ...
+  [EVAL] deepseek-harness on django__django-15202 ...
+  => django__django-15202 | deepseek-harness | patch-but-failed
+
+############################################################
+# [45/204] deepseek-harness x django__django-15213
+############################################################
+
+============================================================
+[SETUP] django__django-15213 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15213 ...
+  [EVAL] deepseek-harness on django__django-15213 ...
+  => django__django-15213 | deepseek-harness | patch-but-failed
+
+############################################################
+# [46/204] deepseek-harness x django__django-15252
+############################################################
+
+============================================================
+[SETUP] django__django-15252 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15252 ...
+  [EVAL] deepseek-harness on django__django-15252 ...
+  => django__django-15252 | deepseek-harness | patch-but-failed
+
+############################################################
+# [47/204] deepseek-harness x django__django-15320
+############################################################
+
+============================================================
+[SETUP] django__django-15320 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15320 ...
+  [EVAL] deepseek-harness on django__django-15320 ...
+  => django__django-15320 | deepseek-harness | patch-but-failed
+
+############################################################
+# [48/204] deepseek-harness x django__django-15347
+############################################################
+
+============================================================
+[SETUP] django__django-15347 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15347 ...
+  [EVAL] deepseek-harness on django__django-15347 ...
+  => django__django-15347 | deepseek-harness | patch-but-failed
+
+############################################################
+# [49/204] deepseek-harness x django__django-15388
+############################################################
+
+============================================================
+[SETUP] django__django-15388 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15388 ...
+  [EVAL] deepseek-harness on django__django-15388 ...
+  => django__django-15388 | deepseek-harness | patch-but-failed
+
+############################################################
+# [50/204] deepseek-harness x django__django-15400
+############################################################
+
+============================================================
+[SETUP] django__django-15400 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15400 ...
+  [EVAL] deepseek-harness on django__django-15400 ...
+  => django__django-15400 | deepseek-harness | patch-but-failed
+
+############################################################
+# [51/204] deepseek-harness x django__django-15498
+############################################################
+
+============================================================
+[SETUP] django__django-15498 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15498 ...
+  [EVAL] deepseek-harness on django__django-15498 ...
+  => django__django-15498 | deepseek-harness | patch-but-failed
+
+############################################################
+# [52/204] deepseek-harness x django__django-15695
+############################################################
+
+============================================================
+[SETUP] django__django-15695 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15695 ...
+  [EVAL] deepseek-harness on django__django-15695 ...
+  => django__django-15695 | deepseek-harness | patch-but-failed
+
+############################################################
+# [53/204] deepseek-harness x django__django-15738
+############################################################
+
+============================================================
+[SETUP] django__django-15738 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15738 ...
+  [EVAL] deepseek-harness on django__django-15738 ...
+  => django__django-15738 | deepseek-harness | patch-but-failed
+
+############################################################
+# [54/204] deepseek-harness x django__django-15781
+############################################################
+
+============================================================
+[SETUP] django__django-15781 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15781 ...
+  [EVAL] deepseek-harness on django__django-15781 ...
+  => django__django-15781 | deepseek-harness | patch-but-failed
+
+############################################################
+# [55/204] deepseek-harness x django__django-15789
+############################################################
+
+============================================================
+[SETUP] django__django-15789 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15789 ...
+  [EVAL] deepseek-harness on django__django-15789 ...
+  => django__django-15789 | deepseek-harness | patch-but-failed
+
+############################################################
+# [56/204] deepseek-harness x django__django-15790
+############################################################
+
+============================================================
+[SETUP] django__django-15790 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15790 ...
+  [EVAL] deepseek-harness on django__django-15790 ...
+  => django__django-15790 | deepseek-harness | patch-but-failed
+
+############################################################
+# [57/204] deepseek-harness x django__django-15814
+############################################################
+
+============================================================
+[SETUP] django__django-15814 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15814 ...
+  [EVAL] deepseek-harness on django__django-15814 ...
+  => django__django-15814 | deepseek-harness | patch-but-failed
+
+############################################################
+# [58/204] deepseek-harness x django__django-15819
+############################################################
+
+============================================================
+[SETUP] django__django-15819 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15819 ...
+  [EVAL] deepseek-harness on django__django-15819 ...
+  => django__django-15819 | deepseek-harness | patch-but-failed
+
+############################################################
+# [59/204] deepseek-harness x django__django-15851
+############################################################
+
+============================================================
+[SETUP] django__django-15851 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15851 ...
+  [EVAL] deepseek-harness on django__django-15851 ...
+  => django__django-15851 | deepseek-harness | patch-but-failed
+
+############################################################
+# [60/204] deepseek-harness x django__django-15902
+############################################################
+
+============================================================
+[SETUP] django__django-15902 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15902 ...
+  [EVAL] deepseek-harness on django__django-15902 ...
+  => django__django-15902 | deepseek-harness | patch-but-failed
+
+############################################################
+# [61/204] deepseek-harness x django__django-15996
+############################################################
+
+============================================================
+[SETUP] django__django-15996 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-15996 ...
+  [EVAL] deepseek-harness on django__django-15996 ...
+  => django__django-15996 | deepseek-harness | patch-but-failed
+
+############################################################
+# [62/204] deepseek-harness x django__django-16041
+############################################################
+
+============================================================
+[SETUP] django__django-16041 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-16041 ...
+  [EVAL] deepseek-harness on django__django-16041 ...
+  => django__django-16041 | deepseek-harness | patch-but-failed
+
+############################################################
+# [63/204] deepseek-harness x django__django-16046
+############################################################
+
+============================================================
+[SETUP] django__django-16046 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-16046 ...
+  [EVAL] deepseek-harness on django__django-16046 ...
+  => django__django-16046 | deepseek-harness | patch-but-failed
+
+############################################################
+# [64/204] deepseek-harness x django__django-16139
+############################################################
+
+============================================================
+[SETUP] django__django-16139 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-16139 ...
+  [EVAL] deepseek-harness on django__django-16139 ...
+  => django__django-16139 | deepseek-harness | patch-but-failed
+
+############################################################
+# [65/204] deepseek-harness x django__django-16229
+############################################################
+
+============================================================
+[SETUP] django__django-16229 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-16229 ...
+  [EVAL] deepseek-harness on django__django-16229 ...
+  => django__django-16229 | deepseek-harness | patch-but-failed
+
+############################################################
+# [66/204] deepseek-harness x django__django-16255
+############################################################
+
+============================================================
+[SETUP] django__django-16255 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-16255 ...
+  [EVAL] deepseek-harness on django__django-16255 ...
+  => django__django-16255 | deepseek-harness | patch-but-failed
+
+############################################################
+# [67/204] deepseek-harness x django__django-16379
+############################################################
+
+============================================================
+[SETUP] django__django-16379 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-16379 ...
+  [EVAL] deepseek-harness on django__django-16379 ...
+  => django__django-16379 | deepseek-harness | patch-but-failed
+
+############################################################
+# [68/204] deepseek-harness x django__django-16400
+############################################################
+
+============================================================
+[SETUP] django__django-16400 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-16400 ...
+  => django__django-16400 | deepseek-harness | no-patch
+
+############################################################
+# [69/204] deepseek-harness x django__django-16408
+############################################################
+
+============================================================
+[SETUP] django__django-16408 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-16408 ...
+  [EVAL] deepseek-harness on django__django-16408 ...
+  => django__django-16408 | deepseek-harness | patch-but-failed
+
+############################################################
+# [70/204] deepseek-harness x django__django-16527
+############################################################
+
+============================================================
+[SETUP] django__django-16527 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-16527 ...
+  [EVAL] deepseek-harness on django__django-16527 ...
+  => django__django-16527 | deepseek-harness | patch-but-failed
+
+############################################################
+# [71/204] deepseek-harness x django__django-16595
+############################################################
+
+============================================================
+[SETUP] django__django-16595 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-16595 ...
+  [EVAL] deepseek-harness on django__django-16595 ...
+  => django__django-16595 | deepseek-harness | patch-but-failed
+
+############################################################
+# [72/204] deepseek-harness x django__django-16816
+############################################################
+
+============================================================
+[SETUP] django__django-16816 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-16816 ...
+  [EVAL] deepseek-harness on django__django-16816 ...
+  => django__django-16816 | deepseek-harness | patch-but-failed
+
+############################################################
+# [73/204] deepseek-harness x django__django-16820
+############################################################
+
+============================================================
+[SETUP] django__django-16820 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-16820 ...
+  [EVAL] deepseek-harness on django__django-16820 ...
+  => django__django-16820 | deepseek-harness | patch-but-failed
+
+############################################################
+# [74/204] deepseek-harness x django__django-16873
+############################################################
+
+============================================================
+[SETUP] django__django-16873 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-16873 ...
+  [QUOTA] deepseek-harness: quota exhausted, waiting 300s (retry 2/3)...
+  [QUOTA] deepseek-harness: quota exhausted, waiting 300s (retry 3/3)...
+  [EVAL] deepseek-harness on django__django-16873 ...
+  => django__django-16873 | deepseek-harness | quota-blocked
+
+############################################################
+# [75/204] deepseek-harness x django__django-16910
+############################################################
+
+============================================================
+[SETUP] django__django-16910 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-16910 ...
+  [EVAL] deepseek-harness on django__django-16910 ...
+  => django__django-16910 | deepseek-harness | patch-but-failed
+
+############################################################
+# [76/204] deepseek-harness x django__django-17051
+############################################################
+
+============================================================
+[SETUP] django__django-17051 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-17051 ...
+  [EVAL] deepseek-harness on django__django-17051 ...
+  => django__django-17051 | deepseek-harness | patch-but-failed
+
+############################################################
+# [77/204] deepseek-harness x django__django-17087
+############################################################
+
+============================================================
+[SETUP] django__django-17087 for deepseek-harness
+
+[RUN] deepseek-harness on django__django-17087 ...
+  [EVAL] deepseek-harness on django__django-17087 ...
+  => django__django-17087 | deepseek-harness | patch-but-failed
+
+############################################################
+# [78/204] deepseek-harness x matplotlib__matplotlib-23562
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23562 for deepseek-harness
+
+[RUN] deepseek-harness on matplotlib__matplotlib-23562 ...
+  [EVAL] deepseek-harness on matplotlib__matplotlib-23562 ...
+  => matplotlib__matplotlib-23562 | deepseek-harness | patch-but-failed
+
+############################################################
+# [79/204] deepseek-harness x matplotlib__matplotlib-23563
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23563 for deepseek-harness
+
+[RUN] deepseek-harness on matplotlib__matplotlib-23563 ...
+  [EVAL] deepseek-harness on matplotlib__matplotlib-23563 ...
+  => matplotlib__matplotlib-23563 | deepseek-harness | patch-but-failed
+
+############################################################
+# [80/204] deepseek-harness x matplotlib__matplotlib-23913
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23913 for deepseek-harness
+
+[RUN] deepseek-harness on matplotlib__matplotlib-23913 ...
+  [EVAL] deepseek-harness on matplotlib__matplotlib-23913 ...
+  => matplotlib__matplotlib-23913 | deepseek-harness | patch-but-failed
+
+############################################################
+# [81/204] deepseek-harness x matplotlib__matplotlib-23964
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23964 for deepseek-harness
+
+[RUN] deepseek-harness on matplotlib__matplotlib-23964 ...
+  [EVAL] deepseek-harness on matplotlib__matplotlib-23964 ...
+  => matplotlib__matplotlib-23964 | deepseek-harness | patch-but-failed
+
+############################################################
+# [82/204] deepseek-harness x matplotlib__matplotlib-23987
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23987 for deepseek-harness
+
+[RUN] deepseek-harness on matplotlib__matplotlib-23987 ...
+  [EVAL] deepseek-harness on matplotlib__matplotlib-23987 ...
+  => matplotlib__matplotlib-23987 | deepseek-harness | patch-but-failed
+
+############################################################
+# [83/204] deepseek-harness x matplotlib__matplotlib-24149
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24149 for deepseek-harness
+
+[RUN] deepseek-harness on matplotlib__matplotlib-24149 ...
+  [EVAL] deepseek-harness on matplotlib__matplotlib-24149 ...
+  => matplotlib__matplotlib-24149 | deepseek-harness | patch-but-failed
+
+############################################################
+# [84/204] deepseek-harness x matplotlib__matplotlib-24265
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24265 for deepseek-harness
+
+[RUN] deepseek-harness on matplotlib__matplotlib-24265 ...
+  [EVAL] deepseek-harness on matplotlib__matplotlib-24265 ...
+  => matplotlib__matplotlib-24265 | deepseek-harness | patch-but-failed
+
+############################################################
+# [85/204] deepseek-harness x matplotlib__matplotlib-24334
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24334 for deepseek-harness
+
+[RUN] deepseek-harness on matplotlib__matplotlib-24334 ...
+  [EVAL] deepseek-harness on matplotlib__matplotlib-24334 ...
+  => matplotlib__matplotlib-24334 | deepseek-harness | patch-but-failed
+
+############################################################
+# [86/204] deepseek-harness x matplotlib__matplotlib-24970
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24970 for deepseek-harness
+
+[RUN] deepseek-harness on matplotlib__matplotlib-24970 ...
+  [EVAL] deepseek-harness on matplotlib__matplotlib-24970 ...
+  => matplotlib__matplotlib-24970 | deepseek-harness | patch-but-failed
+
+############################################################
+# [87/204] deepseek-harness x matplotlib__matplotlib-25079
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25079 for deepseek-harness
+
+[RUN] deepseek-harness on matplotlib__matplotlib-25079 ...
+  [EVAL] deepseek-harness on matplotlib__matplotlib-25079 ...
+  => matplotlib__matplotlib-25079 | deepseek-harness | patch-but-failed
+
+############################################################
+# [88/204] deepseek-harness x matplotlib__matplotlib-25311
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25311 for deepseek-harness
+
+[RUN] deepseek-harness on matplotlib__matplotlib-25311 ...
+  [EVAL] deepseek-harness on matplotlib__matplotlib-25311 ...
+  => matplotlib__matplotlib-25311 | deepseek-harness | patch-but-failed
+
+############################################################
+# [89/204] deepseek-harness x matplotlib__matplotlib-25332
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25332 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-25332 | deepseek-harness | blocked
+
+############################################################
+# [90/204] deepseek-harness x matplotlib__matplotlib-25433
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25433 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-25433 | deepseek-harness | blocked
+
+############################################################
+# [91/204] deepseek-harness x matplotlib__matplotlib-25442
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25442 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-25442 | deepseek-harness | blocked
+
+############################################################
+# [92/204] deepseek-harness x matplotlib__matplotlib-25498
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25498 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-25498 | deepseek-harness | blocked
+
+############################################################
+# [93/204] deepseek-harness x matplotlib__matplotlib-26011
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-26011 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-26011 | deepseek-harness | blocked
+
+############################################################
+# [94/204] deepseek-harness x matplotlib__matplotlib-26020
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-26020 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-26020 | deepseek-harness | blocked
+
+############################################################
+# [95/204] deepseek-harness x mwaskom__seaborn-3010
+############################################################
+
+============================================================
+[SETUP] mwaskom__seaborn-3010 for deepseek-harness
+
+[RUN] deepseek-harness on mwaskom__seaborn-3010 ...
+  [EVAL] deepseek-harness on mwaskom__seaborn-3010 ...
+  => mwaskom__seaborn-3010 | deepseek-harness | resolved
+
+############################################################
+# [96/204] deepseek-harness x mwaskom__seaborn-3190
+############################################################
+
+============================================================
+[SETUP] mwaskom__seaborn-3190 for deepseek-harness
+
+[RUN] deepseek-harness on mwaskom__seaborn-3190 ...
+  [EVAL] deepseek-harness on mwaskom__seaborn-3190 ...
+  => mwaskom__seaborn-3190 | deepseek-harness | patch-but-failed
+
+############################################################
+# [97/204] deepseek-harness x mwaskom__seaborn-3407
+############################################################
+
+============================================================
+[SETUP] mwaskom__seaborn-3407 for deepseek-harness
+
+[RUN] deepseek-harness on mwaskom__seaborn-3407 ...
+  [EVAL] deepseek-harness on mwaskom__seaborn-3407 ...
+  => mwaskom__seaborn-3407 | deepseek-harness | patch-but-failed
+
+############################################################
+# [98/204] deepseek-harness x pallets__flask-4992
+############################################################
+
+============================================================
+[SETUP] pallets__flask-4992 for deepseek-harness
+
+[RUN] deepseek-harness on pallets__flask-4992 ...
+  [EVAL] deepseek-harness on pallets__flask-4992 ...
+  => pallets__flask-4992 | deepseek-harness | patch-but-failed
+
+############################################################
+# [99/204] deepseek-harness x pallets__flask-5063
+############################################################
+
+============================================================
+[SETUP] pallets__flask-5063 for deepseek-harness
+
+[RUN] deepseek-harness on pallets__flask-5063 ...
+  [EVAL] deepseek-harness on pallets__flask-5063 ...
+  => pallets__flask-5063 | deepseek-harness | patch-but-failed
+
+############################################################
+# [100/204] deepseek-harness x psf__requests-2317
+############################################################
+
+============================================================
+[SETUP] psf__requests-2317 for deepseek-harness
+
+[RUN] deepseek-harness on psf__requests-2317 ...
+  [EVAL] deepseek-harness on psf__requests-2317 ...
+  => psf__requests-2317 | deepseek-harness | patch-but-failed
+
+############################################################
+# [101/204] deepseek-harness x psf__requests-2674
+############################################################
+
+============================================================
+[SETUP] psf__requests-2674 for deepseek-harness
+
+[RUN] deepseek-harness on psf__requests-2674 ...
+  [EVAL] deepseek-harness on psf__requests-2674 ...
+  => psf__requests-2674 | deepseek-harness | patch-but-failed
+
+############################################################
+# [102/204] deepseek-harness x psf__requests-3362
+############################################################
+
+============================================================
+[SETUP] psf__requests-3362 for deepseek-harness
+
+[RUN] deepseek-harness on psf__requests-3362 ...
+  [EVAL] deepseek-harness on psf__requests-3362 ...
+  => psf__requests-3362 | deepseek-harness | patch-but-failed
+
+############################################################
+# [103/204] deepseek-harness x psf__requests-863
+############################################################
+
+============================================================
+[SETUP] psf__requests-863 for deepseek-harness
+
+[RUN] deepseek-harness on psf__requests-863 ...
+  [EVAL] deepseek-harness on psf__requests-863 ...
+  => psf__requests-863 | deepseek-harness | patch-but-failed
+
+############################################################
+# [104/204] deepseek-harness x pydata__xarray-4094
+############################################################
+
+============================================================
+[SETUP] pydata__xarray-4094 for deepseek-harness
+
+[RUN] deepseek-harness on pydata__xarray-4094 ...
+  [EVAL] deepseek-harness on pydata__xarray-4094 ...
+  => pydata__xarray-4094 | deepseek-harness | patch-but-failed
+
+############################################################
+# [105/204] deepseek-harness x pydata__xarray-4248
+############################################################
+
+============================================================
+[SETUP] pydata__xarray-4248 for deepseek-harness
+
+[RUN] deepseek-harness on pydata__xarray-4248 ...
+  [EVAL] deepseek-harness on pydata__xarray-4248 ...
+  => pydata__xarray-4248 | deepseek-harness | patch-but-failed
+
+############################################################
+# [106/204] deepseek-harness x pydata__xarray-4493
+############################################################
+
+============================================================
+[SETUP] pydata__xarray-4493 for deepseek-harness
+
+[RUN] deepseek-harness on pydata__xarray-4493 ...
+  [EVAL] deepseek-harness on pydata__xarray-4493 ...
+  => pydata__xarray-4493 | deepseek-harness | patch-but-failed
+
+############################################################
+# [107/204] deepseek-harness x pydata__xarray-5131
+############################################################
+
+============================================================
+[SETUP] pydata__xarray-5131 for deepseek-harness
+
+[RUN] deepseek-harness on pydata__xarray-5131 ...
+  [EVAL] deepseek-harness on pydata__xarray-5131 ...
+  => pydata__xarray-5131 | deepseek-harness | resolved
+
+############################################################
+# [108/204] deepseek-harness x pylint-dev__pylint-7080
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7080 for deepseek-harness
+
+[RUN] deepseek-harness on pylint-dev__pylint-7080 ...
+  => pylint-dev__pylint-7080 | deepseek-harness | no-patch
+
+############################################################
+# [109/204] deepseek-harness x pylint-dev__pylint-7114
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7114 for deepseek-harness
+
+[RUN] deepseek-harness on pylint-dev__pylint-7114 ...
+  [EVAL] deepseek-harness on pylint-dev__pylint-7114 ...
+  => pylint-dev__pylint-7114 | deepseek-harness | patch-but-failed
+
+############################################################
+# [110/204] deepseek-harness x pylint-dev__pylint-7228
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7228 for deepseek-harness
+
+[RUN] deepseek-harness on pylint-dev__pylint-7228 ...
+  [EVAL] deepseek-harness on pylint-dev__pylint-7228 ...
+  => pylint-dev__pylint-7228 | deepseek-harness | patch-but-failed
+
+############################################################
+# [111/204] deepseek-harness x pylint-dev__pylint-7993
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7993 for deepseek-harness
+
+[RUN] deepseek-harness on pylint-dev__pylint-7993 ...
+  [EVAL] deepseek-harness on pylint-dev__pylint-7993 ...
+  => pylint-dev__pylint-7993 | deepseek-harness | patch-but-failed
+
+############################################################
+# [112/204] deepseek-harness x pytest-dev__pytest-5227
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-5227 for deepseek-harness
+
+[RUN] deepseek-harness on pytest-dev__pytest-5227 ...
+  [EVAL] deepseek-harness on pytest-dev__pytest-5227 ...
+  => pytest-dev__pytest-5227 | deepseek-harness | patch-but-failed
+
+############################################################
+# [113/204] deepseek-harness x pytest-dev__pytest-5413
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-5413 for deepseek-harness
+
+[RUN] deepseek-harness on pytest-dev__pytest-5413 ...
+  [EVAL] deepseek-harness on pytest-dev__pytest-5413 ...
+  => pytest-dev__pytest-5413 | deepseek-harness | patch-but-failed
+
+############################################################
+# [114/204] deepseek-harness x pytest-dev__pytest-5495
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-5495 for deepseek-harness
+
+[RUN] deepseek-harness on pytest-dev__pytest-5495 ...
+  [EVAL] deepseek-harness on pytest-dev__pytest-5495 ...
+  => pytest-dev__pytest-5495 | deepseek-harness | patch-but-failed
+
+############################################################
+# [115/204] deepseek-harness x pytest-dev__pytest-5692
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-5692 for deepseek-harness
+
+[RUN] deepseek-harness on pytest-dev__pytest-5692 ...
+  [EVAL] deepseek-harness on pytest-dev__pytest-5692 ...
+  => pytest-dev__pytest-5692 | deepseek-harness | patch-but-failed
+
+############################################################
+# [116/204] deepseek-harness x pytest-dev__pytest-6116
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-6116 for deepseek-harness
+
+[RUN] deepseek-harness on pytest-dev__pytest-6116 ...
+  [EVAL] deepseek-harness on pytest-dev__pytest-6116 ...
+  => pytest-dev__pytest-6116 | deepseek-harness | patch-but-failed
+
+############################################################
+# [117/204] deepseek-harness x pytest-dev__pytest-7168
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7168 for deepseek-harness
+
+[RUN] deepseek-harness on pytest-dev__pytest-7168 ...
+  [EVAL] deepseek-harness on pytest-dev__pytest-7168 ...
+  => pytest-dev__pytest-7168 | deepseek-harness | patch-but-failed
+
+############################################################
+# [118/204] deepseek-harness x pytest-dev__pytest-7220
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7220 for deepseek-harness
+
+[RUN] deepseek-harness on pytest-dev__pytest-7220 ...
+  [EVAL] deepseek-harness on pytest-dev__pytest-7220 ...
+  => pytest-dev__pytest-7220 | deepseek-harness | patch-but-failed
+
+############################################################
+# [119/204] deepseek-harness x pytest-dev__pytest-7373
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7373 for deepseek-harness
+
+[RUN] deepseek-harness on pytest-dev__pytest-7373 ...
+  [EVAL] deepseek-harness on pytest-dev__pytest-7373 ...
+  => pytest-dev__pytest-7373 | deepseek-harness | patch-but-failed
+
+############################################################
+# [120/204] deepseek-harness x pytest-dev__pytest-7432
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7432 for deepseek-harness
+
+[RUN] deepseek-harness on pytest-dev__pytest-7432 ...
+  [EVAL] deepseek-harness on pytest-dev__pytest-7432 ...
+  => pytest-dev__pytest-7432 | deepseek-harness | resolved
+
+############################################################
+# [121/204] deepseek-harness x pytest-dev__pytest-7490
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7490 for deepseek-harness
+
+[RUN] deepseek-harness on pytest-dev__pytest-7490 ...
+  [EVAL] deepseek-harness on pytest-dev__pytest-7490 ...
+  => pytest-dev__pytest-7490 | deepseek-harness | patch-but-failed
+
+############################################################
+# [122/204] deepseek-harness x pytest-dev__pytest-8365
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-8365 for deepseek-harness
+
+[RUN] deepseek-harness on pytest-dev__pytest-8365 ...
+  [EVAL] deepseek-harness on pytest-dev__pytest-8365 ...
+  => pytest-dev__pytest-8365 | deepseek-harness | patch-but-failed
+
+############################################################
+# [123/204] deepseek-harness x pytest-dev__pytest-8906
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-8906 for deepseek-harness
+
+[RUN] deepseek-harness on pytest-dev__pytest-8906 ...
+  [EVAL] deepseek-harness on pytest-dev__pytest-8906 ...
+  => pytest-dev__pytest-8906 | deepseek-harness | patch-but-failed
+
+############################################################
+# [124/204] deepseek-harness x pytest-dev__pytest-9359
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-9359 for deepseek-harness
+
+[RUN] deepseek-harness on pytest-dev__pytest-9359 ...
+  [EVAL] deepseek-harness on pytest-dev__pytest-9359 ...
+  => pytest-dev__pytest-9359 | deepseek-harness | patch-but-failed
+
+############################################################
+# [125/204] deepseek-harness x scikit-learn__scikit-learn-13142
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13142 for deepseek-harness
+
+[RUN] deepseek-harness on scikit-learn__scikit-learn-13142 ...
+  [EVAL] deepseek-harness on scikit-learn__scikit-learn-13142 ...
+  => scikit-learn__scikit-learn-13142 | deepseek-harness | resolved
+
+############################################################
+# [126/204] deepseek-harness x scikit-learn__scikit-learn-13241
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13241 for deepseek-harness
+
+[RUN] deepseek-harness on scikit-learn__scikit-learn-13241 ...
+  [EVAL] deepseek-harness on scikit-learn__scikit-learn-13241 ...
+  => scikit-learn__scikit-learn-13241 | deepseek-harness | patch-but-failed
+
+############################################################
+# [127/204] deepseek-harness x scikit-learn__scikit-learn-13439
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13439 for deepseek-harness
+
+[RUN] deepseek-harness on scikit-learn__scikit-learn-13439 ...
+  [EVAL] deepseek-harness on scikit-learn__scikit-learn-13439 ...
+  => scikit-learn__scikit-learn-13439 | deepseek-harness | resolved
+
+############################################################
+# [128/204] deepseek-harness x scikit-learn__scikit-learn-13496
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13496 for deepseek-harness
+
+[RUN] deepseek-harness on scikit-learn__scikit-learn-13496 ...
+  [EVAL] deepseek-harness on scikit-learn__scikit-learn-13496 ...
+  => scikit-learn__scikit-learn-13496 | deepseek-harness | resolved
+
+############################################################
+# [129/204] deepseek-harness x scikit-learn__scikit-learn-13497
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13497 for deepseek-harness
+
+[RUN] deepseek-harness on scikit-learn__scikit-learn-13497 ...
+  [EVAL] deepseek-harness on scikit-learn__scikit-learn-13497 ...
+  => scikit-learn__scikit-learn-13497 | deepseek-harness | patch-but-failed
+
+############################################################
+# [130/204] deepseek-harness x scikit-learn__scikit-learn-13584
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13584 for deepseek-harness
+
+[RUN] deepseek-harness on scikit-learn__scikit-learn-13584 ...
+  [EVAL] deepseek-harness on scikit-learn__scikit-learn-13584 ...
+  => scikit-learn__scikit-learn-13584 | deepseek-harness | resolved
+
+############################################################
+# [131/204] deepseek-harness x scikit-learn__scikit-learn-13779
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13779 for deepseek-harness
+
+[RUN] deepseek-harness on scikit-learn__scikit-learn-13779 ...
+  [EVAL] deepseek-harness on scikit-learn__scikit-learn-13779 ...
+  => scikit-learn__scikit-learn-13779 | deepseek-harness | resolved
+
+############################################################
+# [132/204] deepseek-harness x scikit-learn__scikit-learn-14087
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14087 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] deepseek-harness on scikit-learn__scikit-learn-14087 ...
+  [EVAL] deepseek-harness on scikit-learn__scikit-learn-14087 ...
+  => scikit-learn__scikit-learn-14087 | deepseek-harness | patch-but-failed
+
+############################################################
+# [133/204] deepseek-harness x scikit-learn__scikit-learn-14092
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14092 for deepseek-harness
+
+[RUN] deepseek-harness on scikit-learn__scikit-learn-14092 ...
+  [EVAL] deepseek-harness on scikit-learn__scikit-learn-14092 ...
+  => scikit-learn__scikit-learn-14092 | deepseek-harness | patch-but-failed
+
+############################################################
+# [134/204] deepseek-harness x scikit-learn__scikit-learn-14894
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14894 for deepseek-harness
+
+[RUN] deepseek-harness on scikit-learn__scikit-learn-14894 ...
+  [EVAL] deepseek-harness on scikit-learn__scikit-learn-14894 ...
+  => scikit-learn__scikit-learn-14894 | deepseek-harness | resolved
+
+############################################################
+# [135/204] deepseek-harness x scikit-learn__scikit-learn-14983
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14983 for deepseek-harness
+
+[RUN] deepseek-harness on scikit-learn__scikit-learn-14983 ...
+  [EVAL] deepseek-harness on scikit-learn__scikit-learn-14983 ...
+  => scikit-learn__scikit-learn-14983 | deepseek-harness | resolved
+
+############################################################
+# [136/204] deepseek-harness x scikit-learn__scikit-learn-15512
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-15512 for deepseek-harness
+
+[RUN] deepseek-harness on scikit-learn__scikit-learn-15512 ...
+  [EVAL] deepseek-harness on scikit-learn__scikit-learn-15512 ...
+  => scikit-learn__scikit-learn-15512 | deepseek-harness | patch-but-failed
+
+############################################################
+# [137/204] deepseek-harness x scikit-learn__scikit-learn-15535
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-15535 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] deepseek-harness on scikit-learn__scikit-learn-15535 ...
+  [EVAL] deepseek-harness on scikit-learn__scikit-learn-15535 ...
+  => scikit-learn__scikit-learn-15535 | deepseek-harness | resolved
+
+############################################################
+# [138/204] deepseek-harness x scikit-learn__scikit-learn-25500
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25500 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] deepseek-harness on scikit-learn__scikit-learn-25500 ...
+  [EVAL] deepseek-harness on scikit-learn__scikit-learn-25500 ...
+  => scikit-learn__scikit-learn-25500 | deepseek-harness | patch-but-failed
+
+############################################################
+# [139/204] deepseek-harness x scikit-learn__scikit-learn-25570
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25570 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] deepseek-harness on scikit-learn__scikit-learn-25570 ...
+  [EVAL] deepseek-harness on scikit-learn__scikit-learn-25570 ...
+  => scikit-learn__scikit-learn-25570 | deepseek-harness | patch-but-failed
+
+############################################################
+# [140/204] deepseek-harness x scikit-learn__scikit-learn-25638
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25638 for deepseek-harness
+
+[RUN] deepseek-harness on scikit-learn__scikit-learn-25638 ...
+  [EVAL] deepseek-harness on scikit-learn__scikit-learn-25638 ...
+  => scikit-learn__scikit-learn-25638 | deepseek-harness | patch-but-failed
+
+############################################################
+# [141/204] deepseek-harness x scikit-learn__scikit-learn-25747
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25747 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] deepseek-harness on scikit-learn__scikit-learn-25747 ...
+  [EVAL] deepseek-harness on scikit-learn__scikit-learn-25747 ...
+  => scikit-learn__scikit-learn-25747 | deepseek-harness | patch-but-failed
+
+############################################################
+# [142/204] deepseek-harness x sphinx-doc__sphinx-7738
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-7738 for deepseek-harness
+
+[RUN] deepseek-harness on sphinx-doc__sphinx-7738 ...
+  [EVAL] deepseek-harness on sphinx-doc__sphinx-7738 ...
+  => sphinx-doc__sphinx-7738 | deepseek-harness | patch-but-failed
+
+############################################################
+# [143/204] deepseek-harness x sphinx-doc__sphinx-7975
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-7975 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] deepseek-harness on sphinx-doc__sphinx-7975 ...
+  [EVAL] deepseek-harness on sphinx-doc__sphinx-7975 ...
+  => sphinx-doc__sphinx-7975 | deepseek-harness | patch-but-failed
+
+############################################################
+# [144/204] deepseek-harness x sphinx-doc__sphinx-8273
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8273 for deepseek-harness
+
+[RUN] deepseek-harness on sphinx-doc__sphinx-8273 ...
+  [EVAL] deepseek-harness on sphinx-doc__sphinx-8273 ...
+  => sphinx-doc__sphinx-8273 | deepseek-harness | patch-but-failed
+
+############################################################
+# [145/204] deepseek-harness x sphinx-doc__sphinx-8282
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8282 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] deepseek-harness on sphinx-doc__sphinx-8282 ...
+  [EVAL] deepseek-harness on sphinx-doc__sphinx-8282 ...
+  => sphinx-doc__sphinx-8282 | deepseek-harness | patch-but-failed
+
+############################################################
+# [146/204] deepseek-harness x sphinx-doc__sphinx-8435
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8435 for deepseek-harness
+
+[RUN] deepseek-harness on sphinx-doc__sphinx-8435 ...
+  => sphinx-doc__sphinx-8435 | deepseek-harness | no-patch
+
+############################################################
+# [147/204] deepseek-harness x sphinx-doc__sphinx-8474
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8474 for deepseek-harness
+
+[RUN] deepseek-harness on sphinx-doc__sphinx-8474 ...
+  [EVAL] deepseek-harness on sphinx-doc__sphinx-8474 ...
+  => sphinx-doc__sphinx-8474 | deepseek-harness | patch-but-failed
+
+############################################################
+# [148/204] deepseek-harness x sphinx-doc__sphinx-8506
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8506 for deepseek-harness
+
+[RUN] deepseek-harness on sphinx-doc__sphinx-8506 ...
+  [EVAL] deepseek-harness on sphinx-doc__sphinx-8506 ...
+  => sphinx-doc__sphinx-8506 | deepseek-harness | patch-but-failed
+
+############################################################
+# [149/204] deepseek-harness x sphinx-doc__sphinx-8595
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8595 for deepseek-harness
+
+[RUN] deepseek-harness on sphinx-doc__sphinx-8595 ...
+  [EVAL] deepseek-harness on sphinx-doc__sphinx-8595 ...
+  => sphinx-doc__sphinx-8595 | deepseek-harness | patch-but-failed
+
+############################################################
+# [150/204] deepseek-harness x sphinx-doc__sphinx-8627
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8627 for deepseek-harness
+
+[RUN] deepseek-harness on sphinx-doc__sphinx-8627 ...
+  [EVAL] deepseek-harness on sphinx-doc__sphinx-8627 ...
+  => sphinx-doc__sphinx-8627 | deepseek-harness | patch-but-failed
+
+############################################################
+# [151/204] deepseek-harness x sphinx-doc__sphinx-8713
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8713 for deepseek-harness
+
+[RUN] deepseek-harness on sphinx-doc__sphinx-8713 ...
+  [EVAL] deepseek-harness on sphinx-doc__sphinx-8713 ...
+  => sphinx-doc__sphinx-8713 | deepseek-harness | patch-but-failed
+
+############################################################
+# [152/204] deepseek-harness x sphinx-doc__sphinx-8721
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8721 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] deepseek-harness on sphinx-doc__sphinx-8721 ...
+  [EVAL] deepseek-harness on sphinx-doc__sphinx-8721 ...
+  => sphinx-doc__sphinx-8721 | deepseek-harness | patch-but-failed
+
+############################################################
+# [153/204] deepseek-harness x sphinx-doc__sphinx-8801
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8801 for deepseek-harness
+
+[RUN] deepseek-harness on sphinx-doc__sphinx-8801 ...
+  [EVAL] deepseek-harness on sphinx-doc__sphinx-8801 ...
+  => sphinx-doc__sphinx-8801 | deepseek-harness | patch-but-failed
+
+############################################################
+# [154/204] deepseek-harness x sympy__sympy-13895
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-13895 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-13895 ...
+  [EVAL] deepseek-harness on sympy__sympy-13895 ...
+  => sympy__sympy-13895 | deepseek-harness | patch-but-failed
+
+############################################################
+# [155/204] deepseek-harness x sympy__sympy-13915
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-13915 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-13915 ...
+  [EVAL] deepseek-harness on sympy__sympy-13915 ...
+  => sympy__sympy-13915 | deepseek-harness | patch-but-failed
+
+############################################################
+# [156/204] deepseek-harness x sympy__sympy-13971
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-13971 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-13971 ...
+  [EVAL] deepseek-harness on sympy__sympy-13971 ...
+  => sympy__sympy-13971 | deepseek-harness | resolved
+
+############################################################
+# [157/204] deepseek-harness x sympy__sympy-14024
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-14024 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => sympy__sympy-14024 | deepseek-harness | blocked
+
+############################################################
+# [158/204] deepseek-harness x sympy__sympy-15609
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15609 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => sympy__sympy-15609 | deepseek-harness | blocked
+
+############################################################
+# [159/204] deepseek-harness x sympy__sympy-15678
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15678 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] deepseek-harness on sympy__sympy-15678 ...
+  [EVAL] deepseek-harness on sympy__sympy-15678 ...
+  => sympy__sympy-15678 | deepseek-harness | resolved
+
+############################################################
+# [160/204] deepseek-harness x sympy__sympy-16106
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16106 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-16106 ...
+  [EVAL] deepseek-harness on sympy__sympy-16106 ...
+  => sympy__sympy-16106 | deepseek-harness | patch-but-failed
+
+############################################################
+# [161/204] deepseek-harness x sympy__sympy-16281
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16281 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-16281 ...
+  [EVAL] deepseek-harness on sympy__sympy-16281 ...
+  => sympy__sympy-16281 | deepseek-harness | patch-but-failed
+
+############################################################
+# [162/204] deepseek-harness x sympy__sympy-16503
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16503 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-16503 ...
+  => sympy__sympy-16503 | deepseek-harness | no-patch
+
+############################################################
+# [163/204] deepseek-harness x sympy__sympy-16792
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16792 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] deepseek-harness on sympy__sympy-16792 ...
+  [EVAL] deepseek-harness on sympy__sympy-16792 ...
+  => sympy__sympy-16792 | deepseek-harness | resolved
+
+############################################################
+# [164/204] deepseek-harness x sympy__sympy-16988
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16988 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] deepseek-harness on sympy__sympy-16988 ...
+  [EVAL] deepseek-harness on sympy__sympy-16988 ...
+  => sympy__sympy-16988 | deepseek-harness | patch-but-failed
+
+############################################################
+# [165/204] deepseek-harness x sympy__sympy-17022
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17022 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-17022 ...
+  [EVAL] deepseek-harness on sympy__sympy-17022 ...
+  => sympy__sympy-17022 | deepseek-harness | resolved
+
+############################################################
+# [166/204] deepseek-harness x sympy__sympy-17139
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17139 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-17139 ...
+  [EVAL] deepseek-harness on sympy__sympy-17139 ...
+  => sympy__sympy-17139 | deepseek-harness | resolved
+
+############################################################
+# [167/204] deepseek-harness x sympy__sympy-17630
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17630 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-17630 ...
+  [EVAL] deepseek-harness on sympy__sympy-17630 ...
+  => sympy__sympy-17630 | deepseek-harness | resolved
+
+############################################################
+# [168/204] deepseek-harness x sympy__sympy-17655
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17655 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-17655 ...
+  [EVAL] deepseek-harness on sympy__sympy-17655 ...
+  => sympy__sympy-17655 | deepseek-harness | resolved
+
+############################################################
+# [169/204] deepseek-harness x sympy__sympy-18057
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18057 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-18057 ...
+  [EVAL] deepseek-harness on sympy__sympy-18057 ...
+  => sympy__sympy-18057 | deepseek-harness | resolved
+
+############################################################
+# [170/204] deepseek-harness x sympy__sympy-18087
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18087 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-18087 ...
+  [EVAL] deepseek-harness on sympy__sympy-18087 ...
+  => sympy__sympy-18087 | deepseek-harness | resolved
+
+############################################################
+# [171/204] deepseek-harness x sympy__sympy-18189
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18189 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-18189 ...
+  [EVAL] deepseek-harness on sympy__sympy-18189 ...
+  => sympy__sympy-18189 | deepseek-harness | resolved
+
+############################################################
+# [172/204] deepseek-harness x sympy__sympy-18199
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18199 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-18199 ...
+  [EVAL] deepseek-harness on sympy__sympy-18199 ...
+  => sympy__sympy-18199 | deepseek-harness | patch-but-failed
+
+############################################################
+# [173/204] deepseek-harness x sympy__sympy-18532
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18532 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-18532 ...
+  [EVAL] deepseek-harness on sympy__sympy-18532 ...
+  => sympy__sympy-18532 | deepseek-harness | resolved
+
+############################################################
+# [174/204] deepseek-harness x sympy__sympy-18621
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18621 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-18621 ...
+  [EVAL] deepseek-harness on sympy__sympy-18621 ...
+  => sympy__sympy-18621 | deepseek-harness | patch-but-failed
+
+############################################################
+# [175/204] deepseek-harness x sympy__sympy-18698
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18698 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-18698 ...
+  [EVAL] deepseek-harness on sympy__sympy-18698 ...
+  => sympy__sympy-18698 | deepseek-harness | patch-but-failed
+
+############################################################
+# [176/204] deepseek-harness x sympy__sympy-18835
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18835 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-18835 ...
+  [EVAL] deepseek-harness on sympy__sympy-18835 ...
+  => sympy__sympy-18835 | deepseek-harness | patch-but-failed
+
+############################################################
+# [177/204] deepseek-harness x sympy__sympy-19007
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-19007 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-19007 ...
+  [EVAL] deepseek-harness on sympy__sympy-19007 ...
+  => sympy__sympy-19007 | deepseek-harness | patch-but-failed
+
+############################################################
+# [178/204] deepseek-harness x sympy__sympy-19254
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-19254 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-19254 ...
+  [EVAL] deepseek-harness on sympy__sympy-19254 ...
+  => sympy__sympy-19254 | deepseek-harness | patch-but-failed
+
+############################################################
+# [179/204] deepseek-harness x sympy__sympy-19487
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-19487 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-19487 ...
+  [EVAL] deepseek-harness on sympy__sympy-19487 ...
+  => sympy__sympy-19487 | deepseek-harness | patch-but-failed
+
+############################################################
+# [180/204] deepseek-harness x sympy__sympy-20049
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20049 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-20049 ...
+  [EVAL] deepseek-harness on sympy__sympy-20049 ...
+  => sympy__sympy-20049 | deepseek-harness | patch-but-failed
+
+############################################################
+# [181/204] deepseek-harness x sympy__sympy-20154
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20154 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-20154 ...
+  [EVAL] deepseek-harness on sympy__sympy-20154 ...
+  => sympy__sympy-20154 | deepseek-harness | patch-but-failed
+
+############################################################
+# [182/204] deepseek-harness x sympy__sympy-20212
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20212 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-20212 ...
+  [EVAL] deepseek-harness on sympy__sympy-20212 ...
+  => sympy__sympy-20212 | deepseek-harness | patch-but-failed
+
+############################################################
+# [183/204] deepseek-harness x sympy__sympy-20322
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20322 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-20322 ...
+  [EVAL] deepseek-harness on sympy__sympy-20322 ...
+  => sympy__sympy-20322 | deepseek-harness | patch-but-failed
+
+############################################################
+# [184/204] deepseek-harness x sympy__sympy-20442
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20442 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-20442 ...
+  [EVAL] deepseek-harness on sympy__sympy-20442 ...
+  => sympy__sympy-20442 | deepseek-harness | resolved
+
+############################################################
+# [185/204] deepseek-harness x sympy__sympy-20590
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20590 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-20590 ...
+  [EVAL] deepseek-harness on sympy__sympy-20590 ...
+  => sympy__sympy-20590 | deepseek-harness | patch-but-failed
+
+############################################################
+# [186/204] deepseek-harness x sympy__sympy-20639
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20639 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-20639 ...
+  [EVAL] deepseek-harness on sympy__sympy-20639 ...
+  => sympy__sympy-20639 | deepseek-harness | patch-but-failed
+
+############################################################
+# [187/204] deepseek-harness x sympy__sympy-21055
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21055 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-21055 ...
+  [EVAL] deepseek-harness on sympy__sympy-21055 ...
+  => sympy__sympy-21055 | deepseek-harness | resolved
+
+############################################################
+# [188/204] deepseek-harness x sympy__sympy-21171
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21171 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-21171 ...
+  [EVAL] deepseek-harness on sympy__sympy-21171 ...
+  => sympy__sympy-21171 | deepseek-harness | patch-but-failed
+
+############################################################
+# [189/204] deepseek-harness x sympy__sympy-21379
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21379 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-21379 ...
+  [EVAL] deepseek-harness on sympy__sympy-21379 ...
+  => sympy__sympy-21379 | deepseek-harness | patch-but-failed
+
+############################################################
+# [190/204] deepseek-harness x sympy__sympy-21612
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21612 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-21612 ...
+  [EVAL] deepseek-harness on sympy__sympy-21612 ...
+  => sympy__sympy-21612 | deepseek-harness | resolved
+
+############################################################
+# [191/204] deepseek-harness x sympy__sympy-21614
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21614 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-21614 ...
+  [EVAL] deepseek-harness on sympy__sympy-21614 ...
+  => sympy__sympy-21614 | deepseek-harness | resolved
+
+############################################################
+# [192/204] deepseek-harness x sympy__sympy-21627
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21627 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-21627 ...
+  [EVAL] deepseek-harness on sympy__sympy-21627 ...
+  => sympy__sympy-21627 | deepseek-harness | resolved
+
+############################################################
+# [193/204] deepseek-harness x sympy__sympy-21847
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21847 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-21847 ...
+  [EVAL] deepseek-harness on sympy__sympy-21847 ...
+  => sympy__sympy-21847 | deepseek-harness | resolved
+
+############################################################
+# [194/204] deepseek-harness x sympy__sympy-22005
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-22005 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-22005 ...
+  [EVAL] deepseek-harness on sympy__sympy-22005 ...
+  => sympy__sympy-22005 | deepseek-harness | resolved
+
+############################################################
+# [195/204] deepseek-harness x sympy__sympy-22714
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-22714 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-22714 ...
+  [EVAL] deepseek-harness on sympy__sympy-22714 ...
+  => sympy__sympy-22714 | deepseek-harness | resolved
+
+############################################################
+# [196/204] deepseek-harness x sympy__sympy-22840
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-22840 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-22840 ...
+  [EVAL] deepseek-harness on sympy__sympy-22840 ...
+  => sympy__sympy-22840 | deepseek-harness | resolved
+
+############################################################
+# [197/204] deepseek-harness x sympy__sympy-23117
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-23117 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-23117 ...
+  [EVAL] deepseek-harness on sympy__sympy-23117 ...
+  => sympy__sympy-23117 | deepseek-harness | resolved
+
+############################################################
+# [198/204] deepseek-harness x sympy__sympy-23191
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-23191 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-23191 ...
+  [EVAL] deepseek-harness on sympy__sympy-23191 ...
+  => sympy__sympy-23191 | deepseek-harness | resolved
+
+############################################################
+# [199/204] deepseek-harness x sympy__sympy-23262
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-23262 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-23262 ...
+  [QUOTA] deepseek-harness: quota exhausted, waiting 300s (retry 2/3)...
+  [QUOTA] deepseek-harness: quota exhausted, waiting 300s (retry 3/3)...
+  [EVAL] deepseek-harness on sympy__sympy-23262 ...
+  => sympy__sympy-23262 | deepseek-harness | quota-blocked
+
+############################################################
+# [200/204] deepseek-harness x sympy__sympy-24066
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24066 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-24066 ...
+  [EVAL] deepseek-harness on sympy__sympy-24066 ...
+  => sympy__sympy-24066 | deepseek-harness | resolved
+
+############################################################
+# [201/204] deepseek-harness x sympy__sympy-24102
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24102 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-24102 ...
+  [EVAL] deepseek-harness on sympy__sympy-24102 ...
+  => sympy__sympy-24102 | deepseek-harness | patch-but-failed
+
+############################################################
+# [202/204] deepseek-harness x sympy__sympy-24152
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24152 for deepseek-harness
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] deepseek-harness on sympy__sympy-24152 ...
+  [EVAL] deepseek-harness on sympy__sympy-24152 ...
+  => sympy__sympy-24152 | deepseek-harness | resolved
+
+############################################################
+# [203/204] deepseek-harness x sympy__sympy-24213
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24213 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-24213 ...
+  [EVAL] deepseek-harness on sympy__sympy-24213 ...
+  => sympy__sympy-24213 | deepseek-harness | resolved
+
+############################################################
+# [204/204] deepseek-harness x sympy__sympy-24909
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24909 for deepseek-harness
+
+[RUN] deepseek-harness on sympy__sympy-24909 ...
+  [EVAL] deepseek-harness on sympy__sympy-24909 ...
+  => sympy__sympy-24909 | deepseek-harness | patch-but-failed
+
+============================================================
+SUMMARY: deepseek-harness x kimi-k2.6-cloud
+============================================================
+  resolved: 71/300 (23.7%)
+  patch-but-failed: 212/300 (70.7%)
+  quota-blocked: 2/300 (0.7%)
+  no-patch: 4/300 (1.3%)
+  blocked: 11/300 (3.7%)

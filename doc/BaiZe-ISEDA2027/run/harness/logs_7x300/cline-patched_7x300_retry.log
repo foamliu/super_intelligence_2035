@@ -1,0 +1,60 @@
+  [RESUME] Skipping 296 completed for cline-patched
+Serial kimi eval: harness=cline-patched model=kimi-k2.6-cloud
+  Total=300 Pending=4 Skip=296 Concurrency=1
+
+############################################################
+# [1/4] cline-patched x astropy__astropy-6938
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-6938 for cline-patched
+
+[RUN] cline-patched on astropy__astropy-6938 ...
+  [EVAL] cline-patched on astropy__astropy-6938 ...
+  => astropy__astropy-6938 | cline-patched | patch-but-failed
+
+############################################################
+# [2/4] cline-patched x django__django-15320
+############################################################
+
+============================================================
+[SETUP] django__django-15320 for cline-patched
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] cline-patched on django__django-15320 ...
+  [EVAL] cline-patched on django__django-15320 ...
+  => django__django-15320 | cline-patched | patch-but-failed
+
+############################################################
+# [3/4] cline-patched x django__django-16873
+############################################################
+
+============================================================
+[SETUP] django__django-16873 for cline-patched
+
+[RUN] cline-patched on django__django-16873 ...
+  [QUOTA] cline-patched: quota exhausted, waiting 300s (retry 2/3)...
+  [QUOTA] cline-patched: quota exhausted, waiting 300s (retry 3/3)...
+  [EVAL] cline-patched on django__django-16873 ...
+  => django__django-16873 | cline-patched | quota-blocked
+
+############################################################
+# [4/4] cline-patched x sympy__sympy-23262
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-23262 for cline-patched
+
+[RUN] cline-patched on sympy__sympy-23262 ...
+  [QUOTA] cline-patched: quota exhausted, waiting 300s (retry 2/3)...
+  [QUOTA] cline-patched: quota exhausted, waiting 300s (retry 3/3)...
+  [EVAL] cline-patched on sympy__sympy-23262 ...
+  => sympy__sympy-23262 | cline-patched | quota-blocked
+
+============================================================
+SUMMARY: cline-patched x kimi-k2.6-cloud
+============================================================
+  resolved: 86/300 (28.7%)
+  patch-but-failed: 212/300 (70.7%)
+  quota-blocked: 2/300 (0.7%)
