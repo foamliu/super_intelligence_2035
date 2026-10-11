@@ -101,6 +101,7 @@
 - ✅ **每轮必须有「看得见的进展」**；真的做不了 → **如实写 `BLOCKERS.md`** 并说明下一步与所需资源。
 - ✅ **验收式陈述**：说"生成了"必须给 **路径 + 字节 + 时长**；说"对齐了"必须给**回读证据**（`sound_caption` / `qwen3_asr`）。🚫 不凭印象下结论。
 - ⏱️ **长任务**：优先 MCP 的**异步**（`wait=False` + `comfyui_get_result`）；**单条别超过本轮预算**（视频 5–15 min/条）。
+- 🖥️ **GPU = RTX 4090 · 16 GB** ⇒ `video_minimax_h3_i2v/r2v/t2v` 的 **`megapixels` 必须 ≤ 0.6**（≈1056×608；调到 0.92/720p **必 OOM**）；**要 1080p 请生成后用 `video_upscale_seedvr2` 超分**（帧数/音轨原样保留）。R2V 双参考图更吃显存，建议 0.4。
 - 🔒 **凭据**：`C:\Users\Administrator\.cline`（含 MCP 配置/密钥）**只读使用，绝不复制进任何仓 / 日志 / 报告**。
 - 🚫 **不改** `WATCH_VIDEO_TASK.md`（只读）与 loop / 注册脚本（由 supervisor 写）。
 
