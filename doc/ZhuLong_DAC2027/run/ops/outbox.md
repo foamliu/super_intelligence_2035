@@ -4140,3 +4140,437 @@ PATH=/home/app.e0031982/.bun/bin:/home/app.e0031982/.local/bin:/home/app.e003198
 /nasdata/app.e0031982/.cline_zhulong/data/sessions/1791169967705_okj8l/1791169967705_okj8l.messages.json:212:              "result": "=== zhulong_loop (merged l
 == DONE ==
 ```
+
+---
+
+## RUN_ID 32 · 2026-10-11 08:07:38 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# ═══ RUN_ID 32 — ZhuLong：停评测 + 删 hook + .env 回退(stash) + 端口集换 8650/8651/8652/8654 + RAG→9006 + 回退 cline_mcp_settings.json 的 timeout:180 + 实测 + (4/4 健康才) 重启 MCP + 起动 C1.full r2 ═══
+echo "== RUN_ID 32 @ $(date '+%F %T') host=$(hostname) =="
+EDA=/nasdata/app.e0031982/code/eda_fastmcp
+ENVF=$EDA/.env
+SHOST=10.129.32.75
+TS=$(date '+%Y%m%d_%H%M%S')
+LOG=/tmp/ABL_full_r2_8650set.log
+PORTS="8650 8651 8652 8654"
+
+# ── 评测侧进程判定：env 里有 EVAL_FW_DIR / CLI_DATA_DIR / SANDBOX_CONFIG_JSON 才算评测侧 ──
+is_eval_proc() {
+  n=$(tr '\0' '\n' < /proc/$1/environ 2>/dev/null | grep -cE '^(EVAL_FW_DIR|CLI_DATA_DIR|EVAL_SANDBOX_WORKERS|SANDBOX_CONFIG_JSON)=')
+  [ "${n:-0}" -gt 0 ]
+}
+my_pg=$(ps -o pgid= -p $$ 2>/dev/null | tr -d ' ')
+
+echo
+echo "=========== 1. 停掉当前评测（幂等）==========="
+echo "-- BEFORE：候选进程（含排除理由）--"
+CAND=""
+for p in $(timeout 20 pgrep -f 'run_cline_script|run_eval\.py|run_on_sandbox' 2>/dev/null); do
+  case "$p" in "$$"|"$PPID") continue;; esac
+  cl=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | cut -c1-110)
+  case "$cl" in
+    *zhulong_loop*|*ZHULONG_TASK*)
+      echo "   SKIP(编排侧) pid=$p $cl"; continue;;
+  esac
+  if is_eval_proc "$p" || echo "$cl" | grep -q '^bash scripts/run_cline_script'; then
+    CAND="$CAND $p"; echo "   KILL-TARGET pid=$p $cl"
+  else
+    echo "   SKIP(无评测侧签名) pid=$p $cl"
+  fi
+done
+[ -z "$CAND" ] && echo "   （无候选 = 当前没有评测在跑）"
+for round in TERM KILL; do
+  for p in $CAND; do
+    [ -d /proc/$p ] || continue
+    pg=$(ps -o pgid= -p "$p" 2>/dev/null | tr -d ' ')
+    if [ -n "$pg" ] && [ "$pg" != "1" ] && [ "$pg" != "$my_pg" ]; then
+      timeout 30 kill -$round -"$pg" 2>/dev/null
+    else
+      timeout 30 kill -$round "$p" 2>/dev/null
+    fi
+  done
+  [ "$round" = "TERM" ] && sleep 8
+done
+sleep 3
+LEFT=0
+for p in $(timeout 20 pgrep -f 'run_cline_script|run_eval\.py|run_on_sandbox' 2>/dev/null); do
+  case "$p" in "$$"|"$PPID") continue;; esac
+  cl=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | cut -c1-110)
+  case "$cl" in *zhulong_loop*|*ZHULONG_TASK*) continue;; esac
+  if is_eval_proc "$p" || echo "$cl" | grep -q '^bash scripts/run_cline_script'; then
+    LEFT=$((LEFT+1)); echo "   ⚠️ 残留 pid=$p $cl"
+  fi
+done
+echo "   AFTER：评测侧残留计数=$LEFT （0 = 已停干净）"
+EVAL_ALIVE=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)
+echo "   仍存活的评测编排进程数（锚定匹配）= $EVAL_ALIVE"
+
+echo
+echo "=========== 2. 删除 ~/.cline/hooks/PreToolUse ==========="
+echo "-- BEFORE --"
+timeout 20 ls -l ~/.cline/hooks/ 2>&1 | cut -c1-140
+timeout 20 stat -c '%n %s bytes mtime=%y' ~/.cline/hooks/PreToolUse 2>&1 | cut -c1-160
+timeout 20 rm -f ~/.cline/hooks/PreToolUse; echo "   rm exit=$?"
+echo "-- AFTER（应为空或不存在）--"
+timeout 20 ls -l ~/.cline/hooks/ 2>&1 | cut -c1-140
+echo "-- 参考：eval 侧 hooks 目录（run_cli.sh 的部署目标）--"
+timeout 20 ls -l ~/.cline_prof4_eval/data/hooks/ 2>&1 | cut -c1-140
+
+echo
+echo "=========== 3. eda_fastmcp/.env —— 备份 + git stash（回退昨晚改动）==========="
+echo "-- 3.1 .env 关键行（改动前）--"
+timeout 20 grep -nE '^[[:space:]]*(export[[:space:]]+)?(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST|RAG_RECALL_URL|EDA_MCP_PORT)=' "$ENVF" 2>&1 | cut -c1-260
+echo "-- 3.2 git 状态（eda_fastmcp 仓库）--"
+timeout 60 git -C "$EDA" status --porcelain 2>&1 | head -12 | cut -c1-120
+echo "   .env 是否被 git 跟踪：$(timeout 60 git -C "$EDA" ls-files .env 2>/dev/null | head -1)"
+echo "-- 3.3 git HEAD 版 .env 关键行（= stash 回退后的目标基线）--"
+timeout 60 git -C "$EDA" show HEAD:.env 2>/dev/null | grep -nE '^[[:space:]]*(export[[:space:]]+)?(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST|RAG_RECALL_URL)=' | cut -c1-280
+echo "-- 3.4 备份 + stash --"
+timeout 30 cp -p "$ENVF" "/tmp/eda_fastmcp.env.bak.$TS" && echo "   backup=/tmp/eda_fastmcp.env.bak.$TS"
+timeout 60 git -C "$EDA" stash push -m "RUN_ID32: stash .env (回退昨晚端口改动) @ $TS" -- .env 2>&1 | cut -c1-160
+echo "   stash exit=$?"
+timeout 30 git -C "$EDA" stash list 2>&1 | head -3 | cut -c1-140
+echo "-- 3.5 .env 关键行（stash 回退后，应 = HEAD 基线）--"
+timeout 20 grep -nE '^[[:space:]]*(export[[:space:]]+)?(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST|RAG_RECALL_URL)=' "$ENVF" 2>&1 | cut -c1-260
+
+echo
+echo "=========== 3.6 回退 cline_mcp_settings.json 的 \"timeout\": 180（用户 10-11 追加令：昨晚改动全部回退）==========="
+PY=$(command -v python3 || command -v python || true)
+echo "   python = ${PY:-<none>}"
+echo "-- 旧备份参考（(八) 若留过备份，可作还原依据）--"
+timeout 20 ls -lt /tmp/*cline_mcp_settings* 2>/dev/null | head -5 | cut -c1-150
+for f in ~/.cline/data/settings/cline_mcp_settings.json ~/.cline_prof4_eval/data/settings/cline_mcp_settings.json; do
+  echo "-- $f --"
+  if [ ! -f "$f" ]; then echo "   （不存在，跳过）"; continue; fi
+  timeout 20 stat -c '   BEFORE mtime=%y size=%s' "$f"
+  timeout 20 grep -oE '"timeout"[[:space:]]*:[[:space:]]*[0-9]+' "$f" | head -4 | sed 's/^/   BEFORE /'
+  BK="/tmp/cline_mcp_settings.$(echo "$f" | tr '/.' '__').bak.$TS"
+  timeout 30 cp -p "$f" "$BK" && echo "   backup=$BK"
+  if [ -z "$PY" ]; then
+    echo "   ⚠️ 无 python → 为免写坏 JSON，本文件不改（需人工处理）"
+  else
+    "$PY" - "$f" <<'PYEOF'
+import json, sys
+p = sys.argv[1]
+try:
+    d = json.load(open(p, encoding='utf-8'))
+except Exception as e:
+    print("   \u26a0 JSON \u89e3\u6790\u5931\u8d25\uff0c\u672a\u6539\uff1a", e); sys.exit(0)
+rem = []
+def walk(o, path=''):
+    if isinstance(o, dict):
+        for k in list(o.keys()):
+            if k == 'timeout' and isinstance(o[k], int) and o[k] == 180:
+                o.pop(k); rem.append(path + '/' + k + '=180')
+            else:
+                walk(o[k], path + '/' + k)
+    elif isinstance(o, list):
+        for i, v in enumerate(o):
+            walk(v, path + '/[%d]' % i)
+walk(d)
+if rem:
+    with open(p, 'w', encoding='utf-8') as fh:
+        fh.write(json.dumps(d, ensure_ascii=False, indent=2) + "\n")
+print("   removed timeout=180 keys =", len(rem), rem[:5])
+if not rem:
+    print("   (no timeout=180 found -> idempotent) ")
+PYEOF
+    echo "   python exit=$?"
+    timeout 20 "$PY" -c "import json,sys; json.load(open(sys.argv[1],encoding='utf-8')); print('   JSON 校验=OK')" "$f" 2>&1 | tail -1
+  fi
+  timeout 20 grep -oE '"timeout"[[:space:]]*:[[:space:]]*[0-9]+' "$f" | head -4 | sed 's/^/   AFTER /'
+  if timeout 20 grep -q '"timeout"' "$f"; then echo "   AFTER ⚠️ 仍有 timeout 键（见上；非 180 的值保留）"; else echo "   AFTER ✅ 已无任何 timeout 键"; fi
+done
+
+echo
+echo "=========== 3.7 其它可能受昨晚改动影响的本地状态（只读，不改）==========="
+for r in "$EDA" /nasdata/app.e0031982/code/EDA-Eval-Framework; do
+  [ -d "$r/.git" ] || { echo "   [$r] 非 git 仓库，跳过"; continue; }
+  echo "   [$r] status --porcelain（前 8 行）:"
+  timeout 60 git -C "$r" status --porcelain 2>/dev/null | head -8 | sed 's/^/      /' | cut -c1-140
+  echo "   [$r] stash list（前 3 行）:"
+  timeout 60 git -C "$r" stash list 2>/dev/null | head -3 | sed 's/^/      /' | cut -c1-140
+done
+echo "   -- ~/.cline* 近 24h 被改过的 json（有界扫描，仅列出）--"
+timeout 60 find ~/.cline ~/.cline_prof4_eval -maxdepth 3 -name '*.json' -newermt '24 hours ago' 2>/dev/null | head -10 | cut -c1-150
+echo "   -- ~/.cline/hooks 内容（删除前已由 ②记录；此处为 3.6 之后状态）--"
+timeout 20 ls -l ~/.cline/hooks/ 2>&1 | cut -c1-140
+
+echo
+echo "=========== 4. 写新 .env：端口集 8650/8651/8652/8654 + RAG 9006 ==========="
+HEAD_SE=$(timeout 60 git -C "$EDA" show HEAD:.env 2>/dev/null | sed -n 's/^[[:space:]]*SANDBOX_ENDPOINTS=//p' | tail -1)
+CUR_SE=$(sed -n 's/^[[:space:]]*SANDBOX_ENDPOINTS=//p' "$ENVF" 2>/dev/null | tail -1)
+SRC_SE="${CUR_SE:-$HEAD_SE}"
+NEW_SE=$(printf '%s' "$SRC_SE" | tr ',' '\n' | grep -E '^(8650|8651|8652|8654):' | tr '\n' ',' | sed 's/,$//')
+SE_SRC="来自 .env/HEAD 既有映射"
+if [ -z "$NEW_SE" ] || [ "$(printf '%s' "$NEW_SE" | tr ',' '\n' | grep -c ':')" -ne 4 ]; then
+  NEW_SE="8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4"
+  SE_SRC="⚠️ 兜底默认值（.env/HEAD 无可用映射）→ 必须人工核对 workdir"
+fi
+echo "   SANDBOX_ENDPOINTS 来源 = $SE_SRC"
+echo "   SANDBOX_ENDPOINTS 新值 = $NEW_SE"
+grep -vE '^[[:space:]]*(export[[:space:]]+)?(PROXY_PORTS|SANDBOX_ENDPOINTS|RAG_RECALL_URL)=' "$ENVF" > "$ENVF.tmp32"
+cat >> "$ENVF.tmp32" <<EOF
+PROXY_PORTS=8650,8651,8652,8654
+SANDBOX_ENDPOINTS=$NEW_SE
+RAG_RECALL_URL=http://localhost:9006/recall
+EOF
+timeout 30 mv "$ENVF.tmp32" "$ENVF"; echo "   写入 exit=$?"
+timeout 30 cp -p "$ENVF" "/tmp/eda_fastmcp.env.RUNID32.$TS" && echo "   新 .env 副本=/tmp/eda_fastmcp.env.RUNID32.$TS"
+echo "-- 4.1 校验（关键行，应各 1 行）--"
+timeout 20 grep -nE '^[[:space:]]*(export[[:space:]]+)?(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST|RAG_RECALL_URL)=' "$ENVF" 2>&1 | cut -c1-300
+echo "   行数：PROXY_PORTS=$(timeout 20 grep -cE '^PROXY_PORTS=' "$ENVF") SANDBOX_ENDPOINTS=$(timeout 20 grep -cE '^SANDBOX_ENDPOINTS=' "$ENVF") RAG_RECALL_URL=$(timeout 20 grep -cE '^RAG_RECALL_URL=' "$ENVF")"
+echo "-- 4.2 diff（备份 vs 现在，仅关键行）--"
+timeout 20 diff <(grep -E '^(PROXY_PORTS|SANDBOX_ENDPOINTS|RAG_RECALL_URL)=' "/tmp/eda_fastmcp.env.bak.$TS" 2>/dev/null) <(grep -E '^(PROXY_PORTS|SANDBOX_ENDPOINTS|RAG_RECALL_URL)=' "$ENVF" 2>/dev/null) | cut -c1-320
+
+echo
+echo "=========== 5. 重启 eda_fastmcp（MCP :8090）+ 核验 ==========="
+echo "-- BEFORE --"
+timeout 20 ss -lntp 2>/dev/null | grep -E ':8090' | cut -c1-150
+timeout 20 pgrep -af 'python main\.py' 2>/dev/null | grep -v 'cline' | cut -c1-130 | head -3
+( cd "$EDA" && timeout 120 bash scripts/stop.sh ) >/tmp/eda_stop_runid32.log 2>&1; echo "   stop.sh exit=$?"
+sleep 3
+( cd "$EDA" && timeout 180 bash scripts/start.sh ) >/tmp/eda_start_runid32.log 2>&1; echo "   start.sh exit=$?"
+timeout 20 tail -3 /tmp/eda_start_runid32.log 2>/dev/null | cut -c1-170
+sleep 5
+echo "-- AFTER --"
+timeout 20 ss -lntp 2>/dev/null | grep -E ':8090' | cut -c1-150
+timeout 20 pgrep -af 'python main\.py' 2>/dev/null | grep -v 'cline' | cut -c1-130 | head -3
+
+echo
+echo "=========== 6. 4 端口实测（TCP + run_code 实跑）==========="
+OK=0
+if [ "$EVAL_ALIVE" -gt 0 ]; then
+  echo "   ⏭ eval 仍在跑（EVAL_ALIVE=$EVAL_ALIVE）→ 跳过 run_code 探测（端口被占，探测结果不可判）"
+else
+  for p in $PORTS; do
+    if timeout 5 bash -c "echo > /dev/tcp/$SHOST/$p" 2>/dev/null; then tcp="OK"; else tcp="CLOSED"; fi
+    body=$(timeout 25 curl -s -m 12 -X POST "http://$SHOST:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+    n=${#body}
+    if [ "$n" -gt 0 ]; then rc="OK"; OK=$((OK+1)); else rc="FAIL(0byte)"; fi
+    echo "   port $p : TCP=$tcp  run_code=$rc  resp_len=$n  | $(printf '%s' "$body" | cut -c1-90)"
+  done
+fi
+echo "   ▶ 健康端口数 = $OK / 4"
+
+echo
+echo "=========== 7. 起动 C1.full r2（硬闸：EVAL_ALIVE=0 且 4/4 健康）==========="
+if [ "$EVAL_ALIVE" -eq 0 ] && [ "$OK" -eq 4 ]; then
+  ( cd "$EDA"
+    export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+    export CLI_DATA_DIR=/nasdata/app.e0031982/.cline_prof4_eval/data
+    export PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python
+    export https_proxy=http://172.19.92.23:13128
+    setsid bash scripts/run_cline_script.sh -p 8 -n > "$LOG" 2>&1 < /dev/null &
+  )
+  echo "   已下发 setsid 起动，等待 20s 后核验 ..."
+  sleep 20
+  NEW=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | head -1)
+  echo "   新 eval PID=${NEW:-<none>}"
+  if [ -n "$NEW" ]; then
+    echo "   -- 四 override 核验（/proc/$NEW/environ）--"
+    timeout 20 tr '\0' '\n' < /proc/$NEW/environ 2>/dev/null | grep -E '^(EVAL_FW_DIR|CLI_DATA_DIR|PYTHON|https_proxy)=' | cut -c1-170
+    echo "   -- 反作弊 hook 是否被本轮重新部署（删完必检）--"
+    timeout 20 ls -l ~/.cline/hooks/PreToolUse 2>&1 | cut -c1-140
+    timeout 20 ls -l ~/.cline_prof4_eval/data/hooks/PreToolUse 2>&1 | cut -c1-140
+  fi
+  echo "   -- log head（前 45 行）--"
+  timeout 20 head -45 "$LOG" 2>/dev/null | cut -c1-180
+else
+  echo "   ⛔ 未起动 eval（EVAL_ALIVE=$EVAL_ALIVE，健康端口=$OK/4）—— 按 (八)⑤ 硬闸：不健康不开跑，等运维裁定"
+fi
+
+echo
+echo "=========== 8. 环境核验 + 披露快照 ==========="
+echo "-- loop --"
+LPID=$(timeout 20 pgrep -f 'zhulong_loop\.sh' 2>/dev/null | head -1)
+echo "   loop pid=${LPID:-<none>}"
+[ -n "${LPID:-}" ] && timeout 20 tr '\0' '\n' < /proc/$LPID/environ 2>/dev/null | grep -E '^https_proxy=' | cut -c1-90
+echo "-- RAG recall 9006 --"
+timeout 20 ss -lntp 2>/dev/null | grep -E ':9006' | cut -c1-150
+timeout 20 curl -s -m 8 -o /dev/null -w '   http_code=%{http_code} (400/404/405 = 服务在，连通 OK)\n' http://localhost:9006/recall 2>&1
+echo "-- 磁盘（<8G = 起跑前须复核）--"
+timeout 20 df -BG /home /nasdata /tmp 2>/dev/null | cut -c1-120
+echo "-- 披露快照：cline_mcp_settings.json 的 timeout（本块已回退 timeout=180；输出为空 = 已无该键）--"
+for f in ~/.cline/data/settings/cline_mcp_settings.json ~/.cline_prof4_eval/data/settings/cline_mcp_settings.json; do
+  echo "   $f -> $(timeout 20 grep -oE '"timeout"[[:space:]]*:[[:space:]]*[0-9]+' "$f" 2>/dev/null | head -1)"
+  timeout 20 stat -c '      mtime=%y' "$f" 2>/dev/null
+done
+echo "-- 回退备份清单（settings / .env）--"
+timeout 20 ls -lt /tmp/cline_mcp_settings* /tmp/eda_fastmcp.env*.bak.* /tmp/eda_fastmcp.env.RUNID32.* 2>/dev/null | head -8 | cut -c1-150
+echo "-- .env 最终关键行 --"
+timeout 20 grep -nE '^(PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST|RAG_RECALL_URL)=' "$ENVF" 2>&1 | cut -c1-300
+
+echo
+echo "== DONE — RUN_ID 32（停评测 / 删hook / stash回退 / .env 换 8650-8654+RAG9006 / 回退 timeout:180 / 重启MCP / 实测 / 起 r2）=="
+```
+
+**输出**
+```
+== RUN_ID 32 @ 2026-10-11 08:07:38 host=hfeg0tedaap02 ==
+
+=========== 1. 停掉当前评测（幂等）===========
+-- BEFORE：候选进程（含排除理由）--
+/tmp/tmp.r3ihDxHK3K: line 23: /proc/3236136/cmdline: No such file or directory
+/tmp/tmp.r3ihDxHK3K: line 12: /proc/3236136/environ: No such file or directory
+   SKIP(无评测侧签名) pid=3236136 
+   （无候选 = 当前没有评测在跑）
+/tmp/tmp.r3ihDxHK3K: line 51: /proc/3236855/cmdline: No such file or directory
+/tmp/tmp.r3ihDxHK3K: line 12: /proc/3236855/environ: No such file or directory
+   AFTER：评测侧残留计数=0 （0 = 已停干净）
+   仍存活的评测编排进程数（锚定匹配）= 0
+
+=========== 2. 删除 ~/.cline/hooks/PreToolUse ===========
+-- BEFORE --
+total 0
+stat: cannot statx '/home/app.e0031982/.cline/hooks/PreToolUse': No such file or directory
+   rm exit=0
+-- AFTER（应为空或不存在）--
+total 0
+-- 参考：eval 侧 hooks 目录（run_cli.sh 的部署目标）--
+ls: cannot access '/home/app.e0031982/.cline_prof4_eval/data/hooks/': No such file or directory
+
+=========== 3. eda_fastmcp/.env —— 备份 + git stash（回退昨晚改动）===========
+-- 3.1 .env 关键行（改动前）--
+31:EDA_MCP_PORT=${EDA_MCP_PORT:=8090}
+53:SANDBOX_HOST=10.129.32.75
+59:PROXY_PORTS=8663,8666,8667,8670
+93:SANDBOX_ENDPOINTS=8663:/proj/train/AI/workdir/e0031982_1,8666:/proj/train/AI/workdir/e0031982_2,8667:/proj/train/AI/workdir/e0031982_3,8670:/proj/train/AI/workdir/e0031982_4
+120:RAG_RECALL_URL=http://localhost:9006/recall
+-- 3.2 git 状态（eda_fastmcp 仓库）--
+ M .env
+ M server/sandbox_server/exec_code.py
+?? cleanup_tmp_gt.sh
+?? run_monday_eval.sh
+?? scripts/stress_test_ports.py
+?? scripts/test_sandbox_ports.py
+   .env 是否被 git 跟踪：.env
+-- 3.3 git HEAD 版 .env 关键行（= stash 回退后的目标基线）--
+62:SANDBOX_HOST=10.129.32.75
+67:PROXY_PORTS=8664,8665,8653,8669
+98:SANDBOX_ENDPOINTS=8664:/proj/train/AI/workdir/t0002596_bak_1,8665:/proj/train/AI/workdir/t0002596_bak,8653:/proj/train/AI/workdir/t0002596_skill,8669:/proj/train/AI/workdir/t0002596
+126:RAG_RECALL_URL=http://localhost:9012/recall
+-- 3.4 备份 + stash --
+   backup=/tmp/eda_fastmcp.env.bak.20261011_080738
+Saved working directory and index state On master: RUN_ID32: stash .env (回退昨晚端口改动) @ 20261011_080738
+   stash exit=0
+stash@{0}: On master: RUN_ID32: stash .env (回退昨晚端口改动) @ 20261011_080738
+stash@{1}: WIP on master: 6d1f4a83 Merge branch 'master' of ssh://devops.cxmt.com:8022/git/AIX/PAI/eda/eda_fastmcp
+stash@{2}: WIP on master: 955266e2 set ablation script
+-- 3.5 .env 关键行（stash 回退后，应 = HEAD 基线）--
+62:SANDBOX_HOST=10.129.32.75
+67:PROXY_PORTS=8664,8665,8653,8669
+98:SANDBOX_ENDPOINTS=8664:/proj/train/AI/workdir/t0002596_bak_1,8665:/proj/train/AI/workdir/t0002596_bak,8653:/proj/train/AI/workdir/t0002596_skill,8669:/proj/train/AI/workdir/t0002596
+126:RAG_RECALL_URL=http://localhost:9012/recall
+
+=========== 3.6 回退 cline_mcp_settings.json 的 "timeout": 180（用户 10-11 追加令：昨晚改动全部回退）===========
+   python = /usr/bin/python3
+-- 旧备份参考（(八) 若留过备份，可作还原依据）--
+-- /home/app.e0031982/.cline/data/settings/cline_mcp_settings.json --
+   BEFORE mtime=2026-10-11 07:20:18.225054000 +0800 size=288
+   BEFORE "timeout": 180
+   backup=/tmp/cline_mcp_settings._home_app_e0031982__cline_data_settings_cline_mcp_settings_json.bak.20261011_080738
+   removed timeout=180 keys = 1 ['/mcpServers/pyAether_MCP_server/timeout=180']
+   python exit=0
+   JSON 校验=OK
+   AFTER ✅ 已无任何 timeout 键
+-- /home/app.e0031982/.cline_prof4_eval/data/settings/cline_mcp_settings.json --
+   （不存在，跳过）
+
+=========== 3.7 其它可能受昨晚改动影响的本地状态（只读，不改）===========
+   [/nasdata/app.e0031982/code/eda_fastmcp] status --porcelain（前 8 行）:
+       M server/sandbox_server/exec_code.py
+      ?? cleanup_tmp_gt.sh
+      ?? run_monday_eval.sh
+      ?? scripts/stress_test_ports.py
+      ?? scripts/test_sandbox_ports.py
+   [/nasdata/app.e0031982/code/eda_fastmcp] stash list（前 3 行）:
+      stash@{0}: On master: RUN_ID32: stash .env (回退昨晚端口改动) @ 20261011_080738
+      stash@{1}: WIP on master: 6d1f4a83 Merge branch 'master' of ssh://devops.cxmt.com:8022/git/AIX/PAI/eda/eda_fastmcp
+      stash@{2}: WIP on master: 955266e2 set ablation script
+   [/nasdata/app.e0031982/code/EDA-Eval-Framework] status --porcelain（前 8 行）:
+       M config.yaml
+       M scripts/run_on_sandbox.py
+      ?? output_code_generation/generated_solutions/
+      ?? output_code_generation/generated_solutions_shard_0/
+      ?? output_code_generation/generated_solutions_shard_1/
+      ?? output_code_generation/generated_solutions_shard_2/
+      ?? output_code_generation/generated_solutions_shard_3/
+      ?? output_evaluation/20260918_1714_app.e0031982/
+   [/nasdata/app.e0031982/code/EDA-Eval-Framework] stash list（前 3 行）:
+   -- ~/.cline* 近 24h 被改过的 json（有界扫描，仅列出）--
+   -- ~/.cline/hooks 内容（删除前已由 ②记录；此处为 3.6 之后状态）--
+total 0
+
+=========== 4. 写新 .env：端口集 8650/8651/8652/8654 + RAG 9006 ===========
+   SANDBOX_ENDPOINTS 来源 = ⚠️ 兜底默认值（.env/HEAD 无可用映射）→ 必须人工核对 workdir
+   SANDBOX_ENDPOINTS 新值 = 8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4
+   写入 exit=0
+   新 .env 副本=/tmp/eda_fastmcp.env.RUNID32.20261011_080738
+-- 4.1 校验（关键行，应各 1 行）--
+62:SANDBOX_HOST=10.129.32.75
+271:PROXY_PORTS=8650,8651,8652,8654
+272:SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4
+273:RAG_RECALL_URL=http://localhost:9006/recall
+   行数：PROXY_PORTS=1 SANDBOX_ENDPOINTS=1 RAG_RECALL_URL=1
+-- 4.2 diff（备份 vs 现在，仅关键行）--
+1,2c1,2
+< PROXY_PORTS=8663,8666,8667,8670
+< SANDBOX_ENDPOINTS=8663:/proj/train/AI/workdir/e0031982_1,8666:/proj/train/AI/workdir/e0031982_2,8667:/proj/train/AI/workdir/e0031982_3,8670:/proj/train/AI/workdir/e0031982_4
+---
+> PROXY_PORTS=8650,8651,8652,8654
+> SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4
+
+=========== 5. 重启 eda_fastmcp（MCP :8090）+ 核验 ===========
+-- BEFORE --
+77800 python main.py
+1531391 python main.py
+1653293 python main.py
+   stop.sh exit=0
+   start.sh exit=1
+日志文件: /nasdata/app.e0031982/code/eda_fastmcp/logs/app.log
+[0;31m端口 18890 已被占用，请更换端口或先释放[0m
+LISTEN 0      2048              0.0.0.0:18890      0.0.0.0:*          
+-- AFTER --
+77800 python main.py
+1531391 python main.py
+1653293 python main.py
+
+=========== 6. 4 端口实测（TCP + run_code 实跑）===========
+   port 8650 : TCP=OK  run_code=FAIL(0byte)  resp_len=0  | 
+   port 8651 : TCP=OK  run_code=FAIL(0byte)  resp_len=0  | 
+   port 8652 : TCP=OK  run_code=FAIL(0byte)  resp_len=0  | 
+   port 8654 : TCP=OK  run_code=FAIL(0byte)  resp_len=0  | 
+   ▶ 健康端口数 = 0 / 4
+
+=========== 7. 起动 C1.full r2（硬闸：EVAL_ALIVE=0 且 4/4 健康）===========
+   ⛔ 未起动 eval（EVAL_ALIVE=0，健康端口=0/4）—— 按 (八)⑤ 硬闸：不健康不开跑，等运维裁定
+
+=========== 8. 环境核验 + 披露快照 ===========
+-- loop --
+   loop pid=<none>
+-- RAG recall 9006 --
+   http_code=403 (400/404/405 = 服务在，连通 OK)
+-- 磁盘（<8G = 起跑前须复核）--
+Filesystem                 1G-blocks  Used Available Use% Mounted on
+/dev/mapper/vgroot-lv_home      394G  374G        4G 100% /home
+10.251.9.180:/g0tedaap          527G  162G      365G  31% /nasdata
+/dev/mapper/vgroot-lv_tmp        49G   30G       18G  63% /tmp
+-- 披露快照：cline_mcp_settings.json 的 timeout（本块已回退 timeout=180；输出为空 = 已无该键）--
+   /home/app.e0031982/.cline/data/settings/cline_mcp_settings.json -> 
+      mtime=2026-10-11 08:07:52.339876000 +0800
+   /home/app.e0031982/.cline_prof4_eval/data/settings/cline_mcp_settings.json -> 
+-- 回退备份清单（settings / .env）--
+-rw-r--r-- 1 app.e0031982 app.adm 13948 Oct 11 08:07 /tmp/eda_fastmcp.env.RUNID32.20261011_080738
+-rw-r----- 1 app.e0031982 app.adm   288 Oct 11 07:20 /tmp/cline_mcp_settings._home_app_e0031982__cline_data_settings_cline_mcp_settings_json.bak.20261
+-rw-r----- 1 app.e0031982 app.adm 14035 Oct 10 23:43 /tmp/eda_fastmcp.env.bak.20261011_080738
+-- .env 最终关键行 --
+62:SANDBOX_HOST=10.129.32.75
+271:PROXY_PORTS=8650,8651,8652,8654
+272:SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4
+273:RAG_RECALL_URL=http://localhost:9006/recall
+
+== DONE — RUN_ID 32（停评测 / 删hook / stash回退 / .env 换 8650-8654+RAG9006 / 回退 timeout:180 / 重启MCP / 实测 / 起 r2）==
+```
