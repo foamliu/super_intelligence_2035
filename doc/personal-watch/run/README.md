@@ -106,6 +106,44 @@ tail -20 /tmp/watch_recruit_loop.log       # [loop] 模式横幅（schedule/inte
 
 ---
 
+## 2.4 启动 video 线（⭐ **Windows 11 本机 `hx-c1000`** · 🆕 2026-10-11 立线）
+
+> 🖥️ **本线是观察哨唯一跑在 Windows 的线**：loop = **PowerShell**，由**计划任务**在**开机后**自动拉起（**无人登录**）；
+> 工具 = 本机 **ComfyUI**（`http://127.0.0.1:8188`，开机 +30s 自启）+ MCP `comfyui-drama`。
+> 🎯 使命 = **基于 ComfyUI 制作视频**；首个任务 = **完成《超级智能2035》视频制作**
+> （主战场仓 `D:\Users\Administrator\code\super_intelligence_2035_short_drama`）。
+
+**注册 / 启动（管理员 PowerShell）**：
+
+```powershell
+$run = 'D:\Users\Administrator\code\super_intelligence_2035\doc\personal-watch\run'
+# 注册计划任务（开机 +45s 自动拉起 loop；以 SYSTEM 运行，镜像既有 ComfyUI 任务）
+powershell -ExecutionPolicy Bypass -File "$run\register_watch_video_task.ps1"
+Start-ScheduledTask -TaskName WatchVideoLoop                 # 立即试跑一次
+powershell -ExecutionPolicy Bypass -File "$run\watch_video_loop.ps1" -Once   # 前台只跑一轮（调试）
+```
+
+**验证**：
+
+```powershell
+Get-ScheduledTask -TaskName WatchVideoLoop | Format-List TaskName,State
+Get-Content "$run\video\logs\watch_video_loop.log" -Tail 20 -Wait   # [loop] 唤醒日志
+Get-Content "$run\video\logs\watch_video_loop.hb"                   # 存活标记（每轮刷新）
+```
+
+**停止 / 卸载**：
+
+```powershell
+Stop-ScheduledTask -TaskName WatchVideoLoop
+powershell -ExecutionPolicy Bypass -File "$run\register_watch_video_task.ps1" -Unregister
+```
+
+> ⏰ **节律**：**每小时（对齐整点）唤醒**；`ClineTimeout`≈55 min，跑完 sleep 到下一个整点。
+> ⚠️ **两个仓**：任务书/记忆在**本仓** `doc/personal-watch/run/`；**主战场在短剧仓**（独立 git 仓）—— loop 两个仓都做兜底同步。
+> 🚫 **铁律**：不得 kill/重启 `ComfyUI` 服务；大文件（视频/音频/模型 ≥5 MB）不入 git。
+
+---
+
 ## 2.2 启动 **ops 中继**（⭐ 强烈建议：loop 停了也能远程运维）
 
 > **为什么**：worker loop 一旦**停了 / 撞额度 / OOM**，`git log` 上"什么都看不到"。

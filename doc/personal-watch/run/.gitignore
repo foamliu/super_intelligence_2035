@@ -54,3 +54,7 @@
 # —— 大体积原始抓取中间件（保留小 json，丢弃超大 json）——
 research/raw/*.large.json
 news/archive/fetch_raw/
+
+# ── video 线（2026-10-11）：loop 运行时日志 / 心跳（不入库；`video/PLAN.md` 等记录产物仍入库）
+video/logs/
+

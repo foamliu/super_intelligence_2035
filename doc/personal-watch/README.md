@@ -37,7 +37,7 @@
 | 项 | 值 |
 |:---|:---|
 | 建哨日 | **2026-10-03** |
-| 当前阶段 | **三条线**：**news（新闻+回溯+分析）+ research（论文+TOP-K）** + 🆕 **recruit（Boss 招聘链路；HR 记忆与能力已「融入本仓」`run/recruit/hr/`）**（**2026-10-11 用户令新增第 3 条线**；原「暂不新增智能体」作废） |
+| 当前阶段 | **四条线**：**news（新闻+回溯+分析）+ research（论文+TOP-K）** + 🆕 **recruit（Boss 招聘链路；HR 记忆与能力已「融入本仓」`run/recruit/hr/`）** + 🆕 **video（ComfyUI 视频制作 · **跑在 Win11 本机**）**（recruit / video 均 **2026-10-11 用户令**新增；原「暂不新增智能体」作废） |
 | 规划中的线 | 新线一律**以用户明确指令为准**（例：原 archive 线已并入 news；recruit 线 2026-10-11 立线）。 |
 
 ---
@@ -51,6 +51,8 @@
 | **news** | `run/WATCH_NEWS_TASK.md` | `run/watch_news_loop.sh` | `run/MEMORY_NEWS.md` | `run/news/` | ✅ 运行中（54 条真新闻；**新增 ① 十年回溯 ② 价格相关性**） |
 | **research** | `run/WATCH_RESEARCH_TASK.md` | `run/watch_research_loop.sh` | `run/MEMORY_RESEARCH.md` | `run/research/` | ✅ 运行中（61 篇；**新增 TOP-K 排序**） |
 | **recruit** 🆕 | `run/WATCH_RECRUIT_TASK.md` | `run/watch_recruit_loop.sh` | `run/MEMORY_RECRUIT.md` | `run/recruit/`（含 `hr/` 融入的记忆/能力） | ✅ 运行中（**跑在腾讯云 VM `106.54.228.191`**；**对外动作默认关闭**） |
+| **video** 🆕 | `run/WATCH_VIDEO_TASK.md` | `run/watch_video_loop.ps1`（**Windows 本机**） | `run/MEMORY_VIDEO.md` | `run/video/` | 🔄 **待首跑**（**2026-10-11 立线**；**跑在 Win11 本机 `hx-c1000`**；使命 = 基于 ComfyUI 制作视频，首任务 = 完成《超级智能2035》成片） |
+
 
 **news 线定位**：**三类产出，口径严格分开** ——
 ① **新闻日报** `run/news/`（§0.1：**≤72h 真新闻**）；
