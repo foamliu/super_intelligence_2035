@@ -76,6 +76,40 @@
 - **运行位置**：**持 Boss 登录态 + playwright-mcp 的机器**（当前 = 本 Windows 机，用 Git Bash/WSL）—— 与跑在远端 Linux 的 news/research 不同。
 - 🚫 **PII 红线**：`boss_candidates.*`（含 `securityId`）、`简历/*.pdf`、`boss_chat*.png`、cookie **一律不入 git**。
 
+### 3.1 启动 recruit loop（**本机 = 持 Boss 登录态 + playwright-mcp 的机器**）
+
+> ⚠️ **与 news / research 不同**：recruit 要驱动**浏览器**（Boss 登录态在 MCP 默认 context 里）⇒ **不能**跑在远端 Linux，必须跑在**持有 Boss 登录态的机器**上（当前 = 本 Windows 机）。
+> Windows 用 **Git Bash / WSL**（需 GNU `date -d`；Git Bash 无 `setsid`）。**改了 `watch_recruit_loop.sh` 后必须重启 loop 才生效。**
+
+```bash
+cd <仓库根>/doc/personal-watch/run
+git pull --rebase --autostash          # 共享工作副本，先同步
+
+# Linux / WSL：
+setsid bash watch_recruit_loop.sh > /tmp/watch_recruit_loop.log 2>&1 < /dev/null &
+# Git Bash（无 setsid）：
+# nohup bash watch_recruit_loop.sh > /tmp/watch_recruit_loop.log 2>&1 &
+```
+
+**验证**（启动横幅第 3 行即打印 `🧬 继承源 HR_DIR=…`，不必等首轮跑完）：
+
+```bash
+pgrep -af 'watch_recruit_loop.sh'      # 应恰好 1 个进程
+tail -20 /tmp/watch_recruit_loop.log   # 看 [loop] 模式横幅 + 🧬 继承源自检 + ⏰ 下次唤醒
+```
+
+**停止**：`pkill -f watch_recruit_loop.sh`
+
+| 项 | 值 |
+|:---|:---|
+| **继承源 `$HR_DIR`** | `C:\Users\liuyu\HR`（可用环境变量 **`WATCH_HR_DIR`** 覆盖）—— loop 启动会自检其 `MEMORY.md / USER.md / AGENTS.md` 是否存在 |
+| **唤醒节律** | 每天 2 次 **06:00 / 18:00**（`SCHEDULE_HOURS=6,18`，可用 **`WATCH_SCHEDULE_HOURS`** 覆盖；置空 ⇒ 回退 WAITING 自适应） |
+| **存活标记** | `/tmp/watch_recruit_loop.hb`（零 token，每 5 分钟刷新） |
+| **日志** | `/tmp/watch_recruit_loop.log` |
+| **⚠️ 对外动作** | **默认关闭** —— 发消息 / 抓简历 / 代点「同意·拒绝」需运维指令区**显式授权一批**；**约面控件永不碰** |
+
+> 完整调参见 `run/README.md §2.3`；本线的继承映射与红线见 `run/recruit/README.md` + `run/WATCH_RECRUIT_TASK.md §0`。
+
 ---
 
 ## 4. 目录结构
@@ -151,6 +185,7 @@ doc/personal-watch/
 ## 8. 待办 / 已知问题
 
 - [ ] **启动 news 线**（见 `run/README.md` 的启动命令）。
+- [ ] **启动 recruit 线**（🆕 见 **§3.1**；**须在持 Boss 登录态的机器**）—— 首轮唤醒读 `C:\Users\liuyu\HR` 记忆 + 巡检 Boss + 产出 `run/recruit/STATE.md`。
 - [ ] 确认 worker 运行主机是否可访问外网 / MCP `web-search`（搜索能力是 news 线的硬依赖）。
 - [ ] 待定：产出是否需要**周报合订**（把 7 天摘要合并成一份 `run/news/WEEKLY_<yyyy-Www>.md`）。
 - [ ] 待定：是否增设 **paper 线**（arXiv/顶会）与 **news 线**并行。
