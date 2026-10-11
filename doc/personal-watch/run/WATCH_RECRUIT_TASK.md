@@ -17,6 +17,12 @@
 
 > **执行结论**：`recruit/hr/`（仓内）= **唯一权威**；原 `C:\Users\liuyu\HR` **不再参与**（离线 / 不可达都能跑）—— **§0.4⑧「VM 读不到 `$HR_DIR`」缺口已关闭**（R3/R4 双重复核）。🚫 **仅原始 PII/凭据未进仓**（**第 4 批起落 VM 本地 `~/hr_resumes/`，仓外**）。📌 **历史块路径换算**：本区「第 1 批」及更早出现的 `$HR_DIR/xxx` **一律读作仓内 `recruit/hr/xxx`**。记忆回写**写仓内 `recruit/hr/`**，**不再回写 `C:\...`**。
 
+### 🆕 运维指令 · 2026-10-11（**【第 5 批】🧹 标签治理：复用 / 用完即关**）· ⭐ **每轮先读**
+
+> **用户原话**：「**招聘 agent loop 每次都在浏览器里新开一个 tab 打开 Boss 直聘，tab 会越来越多 —— 可否复用之前的 tab，或一次使用后把原来的 tab 关掉。**」
+> **① 🧰 已部署 `~/hr_tabs.py`**（零依赖 · 本机 CDP 9222）：`all` / `list [pat]`（默认 `zhipin.com`）/ **`prune [pat]`（只留 1 个匹配页、优先无 `?rN=` 的，关其余）** / `close-all [pat]`。**保护：绝不把页面关到 0。**
+> **② 硬性规程**：**① 每轮开始先 `python3 ~/hr_tabs.py prune`**（清掉上轮遗留的 `?rN=1`，**只留 1 个 Boss 页**）；**② 仍允许「新开标签」**（§0.3/§0.4 要求用**新标签**读 `.chat-message-list`，旧标签会骗人）—— **但本轮结束前必须再 `prune` 收口** ⇒ **同一时刻 Boss 标签 ≤1**；**③ 🚫 只关自己的**：**不得关 `toutiao.com` 标签**（**news 线**的，**共用同一 Chrome**），🚫 不要用「关全部」；**④ 🚫 不得 `pkill` / 重启 Chrome**（会打断 news 线的发布/评论）—— 清理只走 `hr_tabs.py`；**⑤ 每轮记忆记一行「本轮结束 Boss 标签数」**，判据 **≤1**（**持续 >3 ⇒ 记 ⚠️ 并当场纠正**）。
+
 ### 🆕 运维指令 · 2026-10-11（**【第 4 批】📥 简历落地 = VM 本地 + ✉️ 凑批邮件发 `paul.liu@cxmt.com`**）· ⭐ **最高优先**
 
 > **用户原话（2026-10-11）**：「**VM 上不留 PII 这条禁令删掉**，**当然可以先下载到虚机**，然后**凑一波，邮件发给 paul.liu@cxmt.com**。」
@@ -139,9 +145,9 @@
 
 ### 0.3 继承的能力摘要（**Boss 操作 SOP 精简** · 权威 = 仓内 `recruit/hr/AGENTS.md` · 细读以它为准）
 
-**环境**：浏览器 = `microsoft/playwright-mcp`（默认 context）；`screen.py`/`city_scan.py` = 纯标准库 Python；文件一律 UTF-8。
+**环境**：脚本一律 UTF-8；`screen.py` / `city_scan.py` = 纯标准库 Python。⚠️ **本线在 VM 上走 CDP + 持久 profile**（见 §0.4 ④）—— **旧 Playwright-MCP 的 cookie 注入路径已不用**（细节见 `recruit/hr/AGENTS.md`）。
 
-**登录注入铁律**：① cookie 用 `{name,value,url:'https://www.zhipin.com/'}` 形式；② 注入后**新开标签**访问 `https://www.zhipin.com/web/chat/index` 验证；③ 成功标志 = 出现沟通列表且 `.conversation-main` / `.chat-message-list` 齐全；④ **只看新标签里的 `.chat-message-list`，不要只看 URL**。
+**登录/验证铁律（沿用）**：**必须新开标签**访问 `https://www.zhipin.com/web/chat/index`；成功标志 = 出现沟通列表且 `.conversation-main` / `.chat-message-list` 齐全；**只看新标签里的 `.chat-message-list`，不要只看 URL**（旧标签会骗人）。
 
 **关键选择器（实测）**：会话列表 `.user-list`（虚拟滚动）· 会话项 `.geek-item-wrap` / 可点 `.geek-item` · 会话头 `.conversation-main` · 消息区 `.chat-message-list` · 输入框 `#boss-chat-editor-input` · 发送 `.submit-content .submit` · 弹窗 `.boss-popup__wrapper` · 附件简历入口（文本「点击预览附件简历」）。
 
@@ -187,14 +193,9 @@ ssh -N -L 5901:127.0.0.1:5901 -L 9222:127.0.0.1:9222 liuyang@106.54.228.191
 - 三者统一 `--user-data-dir=/home/liuyang/.hr-chrome-profile` ⇒ **登录态持久，切 headless 免再登**。
 - ⚠️ **同一时刻只能跑一个**（都要占 9222）。脚本已内置「先杀旧的」，但**清理必须用 `pkill -f '[r]emote-debugging-port=9222'`（括号技巧）**；直接 `pkill -f 'remote-debugging-port=9222'` 会**连执行命令的 shell 一起杀掉**（本次踩过，别改回去）。
 
-**⑤ 与 §0.2「平台事实」的关系**：§0.2 提到的 **cookie 注入（`wt2/wbg/zp_at/bst`）= playwright-mcp（Windows 侧）旧路径**；**本机 = CDP + 持久 profile**（**优先「VNC 里人工登录一次」**，跨机迁移才回退 cookie）。**两条路径共用同一判据：必须新开标签读 `.chat-message-list`**（旧标签会骗人）。
+**⑤ 与 §0.2「平台事实」的关系**：§0.2 的 **cookie 注入（`wt2/wbg/zp_at/bst`）= playwright-mcp（Windows 侧）旧路径**；**本机 = CDP + 持久 profile**（优先「VNC 人工登录一次」）。**同一判据：必须新开标签读 `.chat-message-list`**（旧标签会骗人）。
 
-**⑥ 待办（未验证 / 待拍板）**
-- ⬜ **VM 装 driver**：Playwright/Puppeteer（用**系统 Chrome**：`channel=chrome` 或 `executablePath=/usr/bin/google-chrome`）；**当前 VM 上还没有 driver**。
-- ⬜ **真实 Boss 登录**（VNC 人工扫码）建立 `~/.hr-chrome-profile` 登录态；并复核 **Boss 页面时间 vs 本机时钟（差 ~8h）**。
-- ⬜ **开机自启**（`@reboot ~/hr_start.sh`）—— 待批。
-- ⬜ **免密 SSH**（Windows 侧公钥装到 VM）替代密码 —— 待批。
-- ⬜ **合规/风控口径**（Boss 反自动化；自动发消息可能违反 ToS / 封号）→ 需用户明确授权范围；**建议首期只读 + 草稿 + 人工确认发送**。
+**⑥ 待办**：⬜ **开机自启**（`@reboot ~/hr_start.sh`）· ⬜ **免密 SSH** —— 均待批。~~VM 装 Playwright/Puppeteer driver~~ **不再需要**（本线走 `hr_cdp.js` / `hr_send.js` 的 CDP 路线）· ~~真实 Boss 登录~~ ✅ 已完成（登录态**连续七轮有效**）· ~~合规/风控授权口径~~ ✅ 已由**第 3 批（闸门开放）**回答。
 
 **⑦ 凭据（⚠️ 私密 · 本仓库必须保持 private）**
 - SSH：`liuyang@106.54.228.191` / 密码 **`Ly3960405!`**
@@ -207,12 +208,11 @@ ssh -N -L 5901:127.0.0.1:5901 -L 9222:127.0.0.1:9222 liuyang@106.54.228.191
   ```bash
   setsid nohup bash ~/start_recruit_loop.sh > /tmp/watch_recruit_loop.log 2>&1 < /dev/null &
   ```
-  launcher 内已：`cd …/personal-watch/run` + **补 PATH**（`$HOME/.nvm/versions/node/v24.21.0/bin`；**否则 `cline: command not found`**）+ 默认 `WATCH_INTERVAL_MIN=30`。
+  launcher 内已：`cd …/personal-watch/run` + **补 PATH**（`$HOME/.nvm/versions/node/v24.21.0/bin`；**否则 `cline: command not found`**）+ **`unset WATCH_INTERVAL_MIN`**（走 `SCHEDULE_HOURS` 时窗）。
 - **重启**：`pkill -f '[w]atch_recruit_loop.sh'`（**必须括号技巧**，否则连执行命令的 shell 一起杀）→ 再按上面启动。
 - **观测**：存活标记 `/tmp/watch_recruit_loop.hb`（30 min 内应持续刷新）· 主日志 `/tmp/watch_recruit_loop.log` · 本轮 cline 输出 `/tmp/watch_recruit_cline_last.log`。
-- **唤醒节律**：`WATCH_INTERVAL_MIN`（**临时 = 30**）> `WATCH_SCHEDULE_HOURS`（默认 `6,18`）> 自适应；**首轮唤醒=立即执行**，之后每 30 min 一次；相同脚本已支持**置空 `WATCH_INTERVAL_MIN=` 即回退**「早 6 晚 6」。
-- ✅ **【缺口已关闭 · 2026-10-11 第 2 批「融入本仓」】**：HR 记忆与能力**已整体复制进仓内 `recruit/hr/`** ⇒ **loop 跑在 VM（Linux）也能读全部记忆/任务/能力**（不再有「VM 读不到 `$HR_DIR`」问题），**回写目标改为仓内 `recruit/hr/`**（见 §5）。
-  - 📌 历史背景（保留）：此前 `$HR_DIR=C:\Users\liuyu\HR` 是 Windows 路径、VM 上不存在，只能靠 §0.2/§0.3 摘要兜底；**现以「融入本仓」解决**。
+- **唤醒节律（2026-10-11 用户令：降回每天 2 次）**：**`SCHEDULE_HOURS` 默认 `6,18` ⇒ 06:00 / 18:00**（**首轮唤醒=立即执行**）；优先级 `interval > schedule > adaptive`，**`WATCH_INTERVAL_MIN` 保留为备用但当前未启用**；置空 `WATCH_SCHEDULE_HOURS=` 可回退自适应。
+- ✅ **继承缺口已关闭**（2026-10-11「融入本仓」）：HR 记忆/能力**已整体复制进仓内 `recruit/hr/`** ⇒ **loop 跑在 VM 也能读全部**；**回写目标 = 仓内 `recruit/hr/`**（见 §5）。📌 历史：`$HR_DIR` 是 Windows 路径、VM 上不存在 —— **已被此方案取代**。
 
 > 🧯 **故障速查**：连不上 → 先看隧道进程 + `vncserver -list`；Chrome 无 CDP → `tail /tmp/hr_chrome_headless.log`；桌面黑屏 → `tail ~/.vnc/*.log`；VM 内存吃紧 → `pkill -f '[r]emote-debugging-port=9222'` 关浏览器；**loop 不起** → 看 `/tmp/watch_recruit_loop.log`（`cline: command not found` = PATH 没补）。
 
