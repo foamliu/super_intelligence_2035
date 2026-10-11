@@ -7,10 +7,10 @@ WAITING: 1
 ## 📊 进度快照
 
 ```
-PHASE:        H-A 7×300 RUNNING — 1871/2100 (89.1%); 452 resolved + 1332 pbf, 229 remaining, 0 new workdir blocks (58 rounds), 76 blocked (legacy wall=0) + 7 quota-blocked (all django__django-16873) + 4 no-patch; codex 300/300 COMPLETE + re-running blocked; N=1 monitoring
-已完成:       ① 7×100 HTML report delivered ✅ · ②-A code fix done ✅ · ②-B resource check done ✅ · GPU29_ALLOC registered ✅ · launch_7x300.sh created ✅ · Smoke test PASSED ✅ · 7×300 LAUNCHED ✅ · BLOCK=0 (workdir) CONFIRMED ✅ (R231→R288, 58 consecutive rounds) · codex 300/300 COMPLETE ✅ + re-running blocked
-当前动作:     R288: 7×300 monitoring at 11:25 (2111 min since 00:14 launch, 35.2h). ALL 7 alive (etimes ~126660s). 1871/2100 (89.1%), +8 since R287 (34 min, ~0.24/min). 452 resolved / 1332 pbf / 76 blocked (legacy wall=0) + 7 qb (ALL django__django-16873, API quota) + 4 np. Workdir isolation fix holding ✅ (58th round, 0 new checkout/overwrite, 0 new workdir blocks). Per-harness: cline 278(72,rem22) / codex 300(69,rem0,27 blk RE-RUNNING) / claude 258(59,rem42) / opencode 284(75,rem16) / deepseek 263(52,rem37) / hermes 226(53,rem74←BOTTLENECK,ETA~11.5h) / pi 262(72,rem38). Blocked trend: 77→76 (−1 legacy). ETA hermes ~11.5h → ~Oct 11 23:00. Resources: load 19.94/19.67/18.80, 1807G avail RAM, /dev/shm 16G/993G(2%), GPU 85-100% (pretrain R2, NOT harness).
-下一步:       ① Continue monitoring — workdir block=0 holding (58 rounds) → ② ETA hermes ~11.5h (~Oct 11 23:00; others 2-8h) → ③ Each harness completes → re-runs blocked automatically (codex doing this) → ④ refresh + commit → ⑤ Final: ensure blocked=0 (success criteria ②-C) → ⑥ Generate 7×300 HTML report upon completion.
+PHASE:        H-A 7×300 RUNNING — 1880/2100 (89.5%); 459 resolved + 1335 pbf, 220 remaining, 0 new workdir blocks (59 rounds), 75 blocked (11 legacy checkout + 64 git_fetch_fail) + 7 quota-blocked (all django__django-16873) + 4 no-patch; codex 300/300 COMPLETE + re-running blocked; N=1 monitoring
+已完成:       ① 7×100 HTML report delivered ✅ · ②-A code fix done ✅ · ②-B resource check done ✅ · GPU29_ALLOC registered ✅ · launch_7x300.sh created ✅ · Smoke test PASSED ✅ · 7×300 LAUNCHED ✅ · BLOCK=0 (workdir) CONFIRMED ✅ (R231→R289, 59 consecutive rounds) · codex 300/300 COMPLETE ✅ + re-running blocked
+当前动作:     R289: 7×300 monitoring at 12:01 (2151 min since 00:14 launch, 35.8h). ALL 7 alive (etimes ~128750s). 1880/2100 (89.5%), +9 since R288 (36 min, ~0.25/min). 459 resolved / 1335 pbf / 75 blocked (11 legacy checkout wall=0 + 64 git_fetch_fail) + 7 qb (ALL django__django-16873, API quota) + 4 np. Workdir isolation fix holding ✅ (59th round, 0 new checkout/overwrite, 0 new workdir blocks). Per-harness: cline 279(72,rem21) / codex 300(70,rem0,25 blk RE-RUNNING) / claude 259(60,rem41) / opencode 285(76,rem15) / deepseek 265(54,rem35) / hermes 229(54,rem71←BOTTLENECK,ETA~12.5h) / pi 263(73,rem37). Blocked trend: 76→75 (−1). ETA hermes ~12.5h → ~Oct 12 00:30. Resources: load 20.13/20.16/19.78, 1805G avail RAM, /dev/shm 16G/993G(2%), GPU 96-100% (pretrain R2, NOT harness).
+下一步:       ① Continue monitoring — workdir block=0 holding (59 rounds) → ② ETA hermes ~12.5h (~Oct 12 00:30; others 2-8h) → ③ Each harness completes → re-runs blocked automatically (codex doing this) → ④ refresh + commit → ⑤ Final: ensure blocked=0 (success criteria ②-C) — git_fetch_fail blocks re-run at end → ⑥ Generate 7×300 HTML report upon completion.
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
@@ -31,14 +31,14 @@ ERROR_COUNT:  0
 2. **codex 特例**：codex 在 R1 跑了 300 条超集（串行），其中 70 条与本轮 100-set 重叠 → codex 的 70 条"新跑"实际来自 **300 串行超集**，**非 R2 并行**。codex 全部 100 条均为串行。
 3. **监控指标**（本轮必须对比 R1 同 30 条）：`quota-blocked` / `timeout` / `no-patch` 率 → 若 R2 显著上升 ⇒ 判"并行污染" → 结论打折。SWEBENCH_COMPARE.html §2 监控表已生成。
 
-**R2 监控快照**（2026-10-11 11:25，R288 更新）：
+**R2 监控快照**（2026-10-11 12:01，R289 更新）：
 
 | 指标 | R1 (30 serial) | R2 (70 parallel) / 7×300 | 判定 |
 |:--|:--|:--|:--|
-| **quota_blocked** | 0/210 (0%) | 7/1871 (0.4%) — all django__django-16873 | ⚠️ API quota, NOT workdir — acceptable |
+| **quota_blocked** | 0/210 (0%) | 7/1880 (0.4%) — all django__django-16873 | ⚠️ API quota, NOT workdir — acceptable |
 | **timeout** | 0 (codex 2) | 29 git-fetch TIMEOUT (workdir_setup) | ⚠️ network/infra — re-run at end |
-| **workdir_blocked** | **0/210 (0%)** | **11 legacy checkout (0 new R231→R288, 58 rounds)** | ✅ **per-harness workdir isolation FIX HOLDING** |
-| **git_fetch_blocked** | 0 | **65** (fetch_fail, all 503 from proxy CONNECT) | ⚠️ network/infra, NOT workdir — re-run at end |
+| **workdir_blocked** | **0/210 (0%)** | **11 legacy checkout (0 new R231→R289, 59 rounds)** | ✅ **per-harness workdir isolation FIX HOLDING** |
+| **git_fetch_blocked** | 0 | **64** (fetch_fail, all 503 from proxy CONNECT) | ⚠️ network/infra, NOT workdir — re-run at end |
 | **no-patch** | 0/210 (0%) | 4 (deepseek) | ⚠️ eval env limitation |
 
 **⚠️ 新发现：workdir git-checkout 冲突 = 并行污染（R207 首次披露）**：
@@ -227,4 +227,5 @@ ERROR_COUNT:  0
 > 📦 R285 (2026-10-11 09:42, 7×300 monitoring 87.9%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1846/2100, 436 resolved, workdir block=0 (55 rounds), blocked 80, hermes ETA ~14.9h。需要时再读。
 > 📦 R286 (2026-10-11 10:17, 7×300 monitoring 88.3%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1855/2100, 439 resolved, workdir block=0 (56 rounds), blocked 78, hermes ETA ~12h。需要时再读。
 > 📦 R287 (2026-10-11 10:51, 7×300 monitoring 88.7%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1863/2100, 445 resolved, workdir block=0 (57 rounds), blocked 77+7qb, hermes ETA ~11.5h。需要时再读。
-- 2026-10-11 11:25 —— **第二百八十八轮** —— 7×300 monitoring at 2111 min (35.2h): ALL 7 alive (etimes ~126660s). 1871/2100 (89.1%), +8 since R287 (34 min, ~0.24/min). 452 resolved / 1332 pbf / 76 blocked (legacy wall=0) + 7 qb (ALL django__django-16873 API quota) + 4 np. NEW blocked (wall>0) = 7, all quota-blocked, 0 checkout/overwrite → Workdir fix holding ✅ (58th round, 0 new workdir blocks). Per-harness: cline 278(72,rem22) / codex 300(69,rem0,27 blk RE-RUNNING) / claude 258(59,rem42) / opencode 284(75,rem16) / deepseek 263(52,rem37) / hermes 226(53,rem74←BOTTLENECK,ETA~11.5h) / pi 262(72,rem38). Blocked trend: 77→76 (−1 legacy). ETA hermes ~11.5h → ~Oct 11 23:00. Resources: load 19.94/19.67/18.80, 1807G avail RAM, /dev/shm 16G/993G(2%), GPU 85-100% (pretrain R2). 📦 体积：TASK=32106B(31.4KB ✓) / MEMORY≈31600B(30.9KB ✓)。
+> 📦 R288 (2026-10-11 11:25, 7×300 monitoring 89.1%) 已归档 → daily-memories-harness/2026-10-11.md。结论：1871/2100, 452 resolved, workdir block=0 (58 rounds), blocked 76+7qb, hermes ETA ~11.5h。需要时再读。
+- 2026-10-11 12:01 —— **第二百八十九轮** —— 7×300 monitoring at 2151 min (35.8h): ALL 7 alive (etimes ~128750s). 1880/2100 (89.5%), +9 since R288 (36 min, ~0.25/min). 459 resolved / 1335 pbf / 75 blocked (11 legacy checkout + 64 git_fetch_fail) + 7 qb (ALL django__django-16873 API quota) + 4 np. NEW blocked (wall>0) = 7, all quota-blocked, 0 checkout/overwrite → Workdir fix holding ✅ (59th round, 0 new workdir blocks). Per-harness: cline 279(72,rem21) / codex 300(70,rem0,25 blk RE-RUNNING) / claude 259(60,rem41) / opencode 285(76,rem15) / deepseek 265(54,rem35) / hermes 229(54,rem71←BOTTLENECK,ETA~12.5h) / pi 263(73,rem37). Blocked trend: 76→75 (−1). ETA hermes ~12.5h → ~Oct 12 00:30. Resources: load 20.13/20.16/19.78, 1805G avail RAM, /dev/shm 16G/993G(2%), GPU 96-100% (pretrain R2). 📦 体积：TASK=32106B(31.4KB ✓) / MEMORY≈31850B(31.1KB ✓)。
