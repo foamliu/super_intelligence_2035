@@ -37,7 +37,7 @@
 | 项 | 值 |
 |:---|:---|
 | 建哨日 | **2026-10-03** |
-| 当前阶段 | **三条线**：**news（新闻+回溯+分析）+ research（论文+TOP-K）** + 🆕 **recruit（Boss 招聘链路，继承 `C:\Users\liuyu\HR`）**（**2026-10-11 用户令新增第 3 条线**；原「暂不新增智能体」作废） |
+| 当前阶段 | **三条线**：**news（新闻+回溯+分析）+ research（论文+TOP-K）** + 🆕 **recruit（Boss 招聘链路；HR 记忆与能力已「融入本仓」`run/recruit/hr/`）**（**2026-10-11 用户令新增第 3 条线**；原「暂不新增智能体」作废） |
 | 规划中的线 | 新线一律**以用户明确指令为准**（例：原 archive 线已并入 news；recruit 线 2026-10-11 立线）。 |
 
 ---
@@ -50,7 +50,7 @@
 |:---|:---|:---|:---|:---|:---|
 | **news** | `run/WATCH_NEWS_TASK.md` | `run/watch_news_loop.sh` | `run/MEMORY_NEWS.md` | `run/news/` | ✅ 运行中（54 条真新闻；**新增 ① 十年回溯 ② 价格相关性**） |
 | **research** | `run/WATCH_RESEARCH_TASK.md` | `run/watch_research_loop.sh` | `run/MEMORY_RESEARCH.md` | `run/research/` | ✅ 运行中（61 篇；**新增 TOP-K 排序**） |
-| **recruit** 🆕 | `run/WATCH_RECRUIT_TASK.md` | `run/watch_recruit_loop.sh` | `run/MEMORY_RECRUIT.md` | `run/recruit/` | 🆕 立线（**继承 `C:\Users\liuyu\HR`**；**对外动作默认关闭**，须跑在持 Boss 登录态的机器） |
+| **recruit** 🆕 | `run/WATCH_RECRUIT_TASK.md` | `run/watch_recruit_loop.sh` | `run/MEMORY_RECRUIT.md` | `run/recruit/`（含 `hr/` 融入的记忆/能力） | ✅ 运行中（**跑在腾讯云 VM `106.54.228.191`**；**对外动作默认关闭**） |
 
 **news 线定位**：**三类产出，口径严格分开** ——
 ① **新闻日报** `run/news/`（§0.1：**≤72h 真新闻**）；
@@ -69,46 +69,46 @@
 > ⚠️ **两个目的口径不同，选题必须分开**（勿混）。
 > 📧 **已登记未来职能**：给论文作者**发邮件**做学术交流 —— **未获用户批准前不得发送**。
 
-**recruit 线定位**（🆕 **2026-10-11 用户令立线**；**继承 `C:\Users\liuyu\HR` 的记忆与能力**）：
-- **目的**：把 `C:\Users\liuyu\HR` 的 **Boss 直聘招聘 agent** 收编为观察哨第 3 条线 —— **继承其记忆**（判定口径 / 达标者花名册 / 平台事实 / 铁律 / 教训 + 用户模型）与**能力**（Boss 页面操作 SOP + `screen.py`/`city_scan.py` + 话术库），并**常态化推进招聘链路**（采集 → 分级 → 复核口径 → 起草 → 收简历归档 → 交 HR）。
-- **单一权威**：`C:\Users\liuyu\HR` 仍是**规范活工作区**（原始数据 + 记忆 + 能力）；本仓库只放**编排 + 本线记忆摘要 + 指针 + 非 PII 产物**（不复制 HR 的 4 个记忆文件，避免两处权威打架）。
+**recruit 线定位**（🆕 **2026-10-11 用户令立线**；**HR 记忆与能力已「融入本仓」→ `run/recruit/hr/`**）：
+- **目的**：把原 HR 招聘 agent（`C:\Users\liuyu\HR`）的**记忆与能力整体搬进仓内**（`run/recruit/hr/`，**自包含**）→ 观察哨第 3 条线常态化推进招聘链路（采集 → 分级 → 复核口径 → 起草 → 收简历归档 → 交 HR）。
+- **唯一权威 = `run/recruit/hr/`（仓内）**：原 `C:\Users\liuyu\HR` **不再参与**（观察哨跑在腾讯云，读不到本地目录）。🚫 **原始 PII/凭据未搬**（`boss_candidates.*` 含 `securityId`、`简历/*.pdf`、`boss_chat*.png`、cookie）。
 - **⚠️ 对外动作闸门**：本线是**唯一有对外副作用**的线（给真人发消息）⇒ **默认保守**：采集/分级/复核/起草/归档/记忆 **自主**；**发消息 / 抓简历 / 代点「同意·拒绝」需运维指令区显式授权一批**；**约面控件永不碰**（面试由公司 HR 统一约）。
-- **运行位置**：**持 Boss 登录态 + playwright-mcp 的机器**（当前 = 本 Windows 机，用 Git Bash/WSL）—— 与跑在远端 Linux 的 news/research 不同。
-- 🚫 **PII 红线**：`boss_candidates.*`（含 `securityId`）、`简历/*.pdf`、`boss_chat*.png`、cookie **一律不入 git**。
+- **运行位置**：**腾讯云 Ubuntu `106.54.228.191`**（XFCE 桌面 + TigerVNC + Chrome + CDP；登录走 SSH 隧道 + VNC）—— 见任务书 §0.4。
 
-### 3.1 启动 recruit loop（**本机 = 持 Boss 登录态 + playwright-mcp 的机器**）
+### 3.1 启动 recruit loop（**腾讯云 Ubuntu VM `106.54.228.191`**）
 
-> ⚠️ **与 news / research 不同**：recruit 要驱动**浏览器**（Boss 登录态在 MCP 默认 context 里）⇒ **不能**跑在远端 Linux，必须跑在**持有 Boss 登录态的机器**上（当前 = 本 Windows 机）。
-> Windows 用 **Git Bash / WSL**（需 GNU `date -d`；Git Bash 无 `setsid`）。**改了 `watch_recruit_loop.sh` 后必须重启 loop 才生效。**
-
-```bash
-cd <仓库根>/doc/personal-watch/run
-git pull --rebase --autostash          # 共享工作副本，先同步
-
-# Linux / WSL：
-setsid bash watch_recruit_loop.sh > /tmp/watch_recruit_loop.log 2>&1 < /dev/null &
-# Git Bash（无 setsid）：
-# nohup bash watch_recruit_loop.sh > /tmp/watch_recruit_loop.log 2>&1 &
-```
-
-**验证**（启动横幅第 3 行即打印 `🧬 继承源 HR_DIR=…`，不必等首轮跑完）：
+> 🧬 **自包含**：记忆/能力在仓内 `run/recruit/hr/`，**不依赖任何本地目录**（原 `C:\Users\liuyu\HR` 不参与）。
+> 🖥️ loop 与浏览器都跑在该 VM（XFCE 桌面 + Chrome + CDP `127.0.0.1:9222`）。**改了 `watch_recruit_loop.sh` 后必须重启 loop 才生效。**
 
 ```bash
-pgrep -af 'watch_recruit_loop.sh'      # 应恰好 1 个进程
-tail -20 /tmp/watch_recruit_loop.log   # 看 [loop] 模式横幅 + 🧬 继承源自检 + ⏰ 下次唤醒
+# 登 VM（SSH 可同时转发 VNC(:5901)/CDP(:9222)，详见任务书 §0.4）
+ssh liuyang@106.54.228.191
+cd <仓库根>/doc/personal-watch/run          # 以 VM 上实际路径为准
+git pull --rebase --autostash                # 共享工作副本，先同步
+
+# 启动（脱离进程组；或用服务器侧 launcher ~/start_recruit_loop.sh）
+setsid nohup bash watch_recruit_loop.sh > /tmp/watch_recruit_loop.log 2>&1 < /dev/null &
+# 临时 30 分钟节律：
+#   WATCH_INTERVAL_MIN=30 setsid nohup bash watch_recruit_loop.sh > /tmp/watch_recruit_loop.log 2>&1 &
 ```
 
-**停止**：`pkill -f watch_recruit_loop.sh`
+**验证**：
+
+```bash
+pgrep -af '[w]atch_recruit_loop.sh'        # 应恰好 1 个进程
+tail -20 /tmp/watch_recruit_loop.log       # [loop] 模式横幅（schedule/interval）+ ⏰/⏱ 下次唤醒
+```
+
+**停止**（**必须用括号技巧**，否则会连「执行 kill 的 shell」一起杀）：`pkill -f '[w]atch_recruit_loop.sh'`
 
 | 项 | 值 |
 |:---|:---|
-| **继承源 `$HR_DIR`** | `C:\Users\liuyu\HR`（可用环境变量 **`WATCH_HR_DIR`** 覆盖）—— loop 启动会自检其 `MEMORY.md / USER.md / AGENTS.md` 是否存在 |
-| **唤醒节律** | 每天 2 次 **06:00 / 18:00**（`SCHEDULE_HOURS=6,18`，可用 **`WATCH_SCHEDULE_HOURS`** 覆盖；置空 ⇒ 回退 WAITING 自适应） |
-| **存活标记** | `/tmp/watch_recruit_loop.hb`（零 token，每 5 分钟刷新） |
-| **日志** | `/tmp/watch_recruit_loop.log` |
+| **记忆/能力（仓内）** | `run/recruit/hr/`（**自包含**；原 `C:\...` 不参与） |
+| **唤醒节律** | 定时 `6,18`（`WATCH_SCHEDULE_HOURS`）或临时 **`WATCH_INTERVAL_MIN`（如 30）**；优先级 `interval > schedule > adaptive` |
+| **存活标记 / 日志** | `/tmp/watch_recruit_loop.hb` · `/tmp/watch_recruit_loop.log` |
 | **⚠️ 对外动作** | **默认关闭** —— 发消息 / 抓简历 / 代点「同意·拒绝」需运维指令区**显式授权一批**；**约面控件永不碰** |
 
-> 完整调参见 `run/README.md §2.3`；本线的继承映射与红线见 `run/recruit/README.md` + `run/WATCH_RECRUIT_TASK.md §0`。
+> 环境（VNC / CDP / SSH 隧道 / 凭据）与故障速查见任务书 `run/WATCH_RECRUIT_TASK.md §0.4`；继承映射见 `run/recruit/README.md`。
 
 ---
 
@@ -135,11 +135,12 @@ doc/personal-watch/
     ├── MEMORY_RESEARCH.md         # research 运行时状态（含 WAITING）
     ├── daily-memories-research/   # research 每日流水
     ├── research/                  # research 产物（<date>.md + SEEN.md + INDEX.md + papers.jsonl + TOP_K.* + ARXIV_API.md + video/ + pdf/）
-    ├── WATCH_RECRUIT_TASK.md      # recruit 任务书（agent 只读；🆕 继承 C:\Users\liuyu\HR）
-    ├── watch_recruit_loop.sh      # recruit 循环脚本（定时 6,18；须跑在持 Boss 登录态的机器）
-    ├── MEMORY_RECRUIT.md          # recruit 运行时状态（含「🧬 继承摘要」指针）
+    ├── WATCH_RECRUIT_TASK.md      # recruit 任务书（agent 只读；HR 记忆/能力「融入本仓」）
+    ├── watch_recruit_loop.sh      # recruit 循环脚本（跑在腾讯云 VM；定时 6,18 / 间隔 WATCH_INTERVAL_MIN）
+    ├── MEMORY_RECRUIT.md          # recruit 运行时状态（含「🧬 继承摘要」）
     ├── daily-memories-recruit/    # recruit 每日流水
-    ├── recruit/                   # recruit 产物（STATE.md + drafts/ + reports/；★ 只放非 PII，见 .gitignore）
+    ├── recruit/                   # recruit 目录（★ 只放非 PII，见 .gitignore）
+    │   └── hr/                    #   ⭐ 融入的 HR agent 记忆/任务/能力（仓内权威，自包含）
     ├── ops_relay.sh               # ⭐ ops 中继（纯 bash、零 token 的命令通道；loop 停着也能运维）
     ├── ops/                       #   中继的 inbox.md（下发）/ outbox.md（结果）/ .last_run_id
     ├── DEPLOY_CHECKLIST.md        # 新机 bring-up · cline 配置重建 · 2 核加固 · systemd 自启
@@ -185,7 +186,7 @@ doc/personal-watch/
 ## 8. 待办 / 已知问题
 
 - [ ] **启动 news 线**（见 `run/README.md` 的启动命令）。
-- [ ] **启动 recruit 线**（🆕 见 **§3.1**；**须在持 Boss 登录态的机器**）—— 首轮唤醒读 `C:\Users\liuyu\HR` 记忆 + 巡检 Boss + 产出 `run/recruit/STATE.md`。
+- [ ] **启动 recruit 线**（🆕 见 **§3.1**；**跑在腾讯云 VM**）—— 唤醒读**仓内** `run/recruit/hr/` 记忆 + 巡检 Boss + 产出 `run/recruit/STATE.md`。
 - [ ] 确认 worker 运行主机是否可访问外网 / MCP `web-search`（搜索能力是 news 线的硬依赖）。
 - [ ] 待定：产出是否需要**周报合订**（把 7 天摘要合并成一份 `run/news/WEEKLY_<yyyy-Www>.md`）。
 - [ ] 待定：是否增设 **paper 线**（arXiv/顶会）与 **news 线**并行。

@@ -3,7 +3,7 @@
 > ⚠️ 本文件为**指令文件**，agent **只读**（禁止修改）。
 > 运行时状态写 `MEMORY_RECRUIT.md` / `daily-memories-recruit/`；产物写 `recruit/`。
 > ⚠️ **本文件全文 = 每次唤醒的 prompt** → 保持精简（目标 ≤ 32KB，红线 40KB）；历史轮次归档到 `daily-memories-recruit/`，不进 prompt。
-> 🧬 **继承来源**：`C:\Users\liuyu\HR`（刘杨的 Boss 直聘招聘工作区）—— 本线的**记忆与能力**自该目录继承（见 §0）。
+> 🧬 **继承来源已「融入本仓」**：原 HR 招聘 agent 的**记忆与能力**（`C:\Users\liuyu\HR` / 备份仓 `C:\Users\liuyu\recruit`）**已整体复制进 `recruit/hr/`** —— 本线**自包含**，**不依赖任何本地目录**（在腾讯云 VM 上照跑，见 §0）。
 > 📄 姊妹线（范式与铁律来源）：`WATCH_NEWS_TASK.md` + `WATCH_RESEARCH_TASK.md`；循环脚本以 `watch_research_loop.sh` 为模板。
 
 ---
@@ -12,6 +12,15 @@
 
 > 本节由 **supervisor** 通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停 / 授权对外动作**。
 > **agent 禁止修改本节**。本节为「无」时，按下方默认顺序（§1）自主推进。
+
+### 🆕 运维指令 · 2026-10-11（**【第 2 批 · P0】把 HR 记忆与能力「融入」本仓 —— 去掉本地目录依赖**）· ⭐ **每轮先读**
+
+> **用户原话（2026-10-11）**：「把 `C:\Users\liuyu\recruit` 中 agent 的**任务和记忆融入**观察哨 agent loop……**融入的意思是信息融进来，不要再依赖原目录** —— 观察哨在腾讯云执行，根本看不到这个目录。」
+> **已做（supervisor）**：把 HR agent 的 **37 个记忆/任务/能力文件**（`MEMORY.md` · `USER.md` · `AGENTS.md` · `DREAMS.md` · `README.md` · `memory/*` · `发送记录.md` · 话术 · 报告 · 候选表 · `screen.py`/`city_scan.py` 等脚本）**整体复制进仓内 `recruit/hr/`**；任务书 / loop / `MEMORY_RECRUIT.md` / `recruit/README.md` 里**所有 `$HR_DIR`、`C:\...` 引用已改为仓内相对路径**。
+> **生效**：**`recruit/hr/`（仓内）= 唯一权威**；**原 `C:\Users\liuyu\HR` 目录不再参与**（离线 / 不可达都能跑）。**§0.4⑧ 的「VM 读不到 `$HR_DIR`」缺口就此关闭**。
+> 📌 **历史块路径换算**：本区「第 1 批」及更早出现的 `$HR_DIR/xxx` **一律读作仓内 `recruit/hr/xxx`**（老块不改，仅在此换算）。
+> **铁律不变**：🚫 **原始 PII/凭据不进仓** —— `boss_candidates.*`（含 `securityId`）、`简历/*.pdf`、`boss_chat*.png`、cookie **均未复制**（仍只在原 Windows 目录）。对外动作闸门（§3）不变。
+> **回写改向**：记忆更新**写仓内 `recruit/hr/`**（`MEMORY.md` / `memory/<date>.md` / `DREAMS.md`），**不再回写 `C:\...`**。
 
 ### 🆕 运维指令 · 2026-10-11（**【第 1 批 · P0】立线：继承 HR 记忆与能力 + 常态化招聘推进**）· ⭐ **每轮先读**
 
@@ -29,7 +38,7 @@
 
 ## 0. 定位与目的
 
-> **recruit = 观察哨的第三条线：把 `C:\Users\liuyu\HR` 的 Boss 招聘 agent「收编」进来，继承其记忆与能力，并常态化、可溯源地继续推进招聘链路。**
+> **recruit = 观察哨的第三条线：把原 HR 招聘 agent 的记忆与能力「融入」本仓（`recruit/hr/`），并常态化、可溯源地继续推进招聘链路 —— 自包含、可在腾讯云 VM 上离线照跑。**
 
 - **服务对象**：**刘杨**（长鑫存储 **AI+EDA（DRAM 设计方向）预研负责人 / PI**）—— 为 AI+EDA 预研团队招 **大模型预研实习生 / 大模型 · Agent 算法工程师**。
 - **与另两条线的关系**：news 管「世界发生了什么」、research 管「研究界出了什么」、**recruit 管「把人招进来」**——**唯一一条有对外副作用（给真人发消息）的线**，故铁律最严（§4）。
@@ -37,38 +46,43 @@
 
 ### 0.1 记忆与能力继承（★ 核心）
 
-> **规范源（canonical）= `$HR_DIR` = `C:\Users\liuyu\HR`**。该目录是**活工作区**：既有**记忆**，又有**能力**，还有**敏感原始数据**。
-> 本仓库（`doc/personal-watch/run/`）**只放编排 + 本线记忆摘要 + 指针**；**不逐字复制** HR 的 4 个记忆文件（**同一事实只在一个地方有权威版本** —— HR `README.md §三` 铁律）。
+> **✅ 已「融入本仓」**：原 HR agent 工作区（`C:\Users\liuyu\HR`，备份仓 `C:\Users\liuyu\recruit`）的**记忆 + 任务 + 能力**已**整体复制**到 **`recruit/hr/`**（37 个文件 · ≈1.09 MB）。
+> **`recruit/hr/` = 本仓内唯一权威**；**原 `C:\...` 目录不再参与**（在腾讯云 VM 上离线照跑）。🚫 **唯一没搬的是原始 PII/凭据**（见 ③）。
 
-**① 记忆继承（唤醒先读）**
+**① 记忆（唤醒先读 · 仓内 `recruit/hr/`）**
 
-| 继承物 | 规范源（必读） | 作用 |
+| 继承物 | 仓内路径（必读） | 作用 |
 |:---|:---|:---|
-| 长期记忆 | `$HR_DIR/MEMORY.md` | 身份 / **判定口径** / 达标者花名册 / 平台事实 / 铁律 / 教训 |
-| 用户模型 | `$HR_DIR/USER.md` | 刘杨的**稳定偏好 / 沟通风格 / 授权边界**（directive 形式） |
-| 情景记忆 | `$HR_DIR/memory/<YYYY-MM-DD>.md` | 最近 2 天的观察 / 动作 / 原文 / 失败 |
-| 整理审核面 | `$HR_DIR/DREAMS.md` | 什么被提升进 `MEMORY.md`、取代了什么 |
-| 原始台账 | `$HR_DIR/发送记录.md` | 已发人员 / 原文 / 送达状态 / 风控（**只追加**） |
+| 长期记忆 | `recruit/hr/MEMORY.md` | 身份 / **判定口径** / 达标者花名册 / 平台事实 / 铁律 / 教训 |
+| 用户模型 | `recruit/hr/USER.md` | 刘杨的**稳定偏好 / 沟通风格 / 授权边界**（directive 形式） |
+| 情景记忆 | `recruit/hr/memory/<YYYY-MM-DD>.md` | 最近 2 天的观察 / 动作 / 原文 / 失败 |
+| 整理审核面 | `recruit/hr/DREAMS.md` | 什么被提升进 `MEMORY.md`、取代了什么 |
+| 原始台账 | `recruit/hr/发送记录.md` | 已发人员 / 原文 / 送达状态 / 风控（**只追加**） |
 
-**② 能力继承（照做）**
+**② 能力（照做 · 仓内 `recruit/hr/`）**
 
-| 能力 | 规范源 | 要点 |
+| 能力 | 仓内路径 | 要点 |
 |:---|:---|:---|
-| **Boss 页面操作 SOP** | `$HR_DIR/AGENTS.md` | 登录注入 / 切会话 / 读消息 / 发消息 / 下载简历 / 采集候选人（§0.3 为**精简摘要**，细读以源为准） |
-| 候选分级 | `$HR_DIR/screen.py` | `boss_candidates.csv` → `候选人筛选结果.csv/.md`（**仅关键词初筛，非达标判定**） |
-| 捞上海系 | `$HR_DIR/city_scan.py` | 从打招呼文本提上海系（地点零成本，转化最高） |
-| 话术库 | `$HR_DIR/话术-最终版.md` | PI 口吻 + 地点策略 + 上海系名单 |
-| 报告 | `$HR_DIR/候选人筛选报告.md` | 分级方法论 + 重点名单 + 风险提示 |
+| **Boss 页面操作 SOP** | `recruit/hr/AGENTS.md` | 登录注入 / 切会话 / 读消息 / 发消息 / 下载简历 / 采集候选人（§0.3 为**精简摘要**，细读以 `recruit/hr/AGENTS.md` 为准） |
+| 候选分级 | `recruit/hr/screen.py` | `boss_candidates.csv` → `候选人筛选结果.csv/.md`（**仅关键词初筛，非达标判定**） |
+| 捞上海系 | `recruit/hr/city_scan.py` | 从打招呼文本提上海系（地点零成本，转化最高） |
+| 建候选表 / 学校判定 | `recruit/hr/build_candidate_tables.py` · `recruit/hr/school_judge.py` | 由原始数据生成候选表 / 学校档判定 |
+| Boss 脚本（node） | `recruit/hr/*.js`（`boss_verify_login.js` · `scan_msgs.js` · `send_msg.js` · `ask_resume.js` · `download_resume.js` · `simple_resume_scan.js`） | ⚠️ **产物中无真实 cookie**（从 `process.env.BOSS_COOKIE` 读） |
+| 话术库 | `recruit/hr/话术-最终版.md` · `recruit/hr/话术模板.md` · `recruit/hr/S级论文录用确认-话术*.md` | PI 口吻 + 地点策略 + 上海系名单 |
+| 报告 / 候选表 | `recruit/hr/候选人筛选报告.md` · `recruit/hr/候选人筛选结果.md` · `recruit/hr/候选表-*.{md,csv}` · `recruit/hr/社招判定-简单简历.md` | 分级方法论 + 重点名单 + 风险提示 |
+| 工作区说明 | `recruit/hr/README.md` | 原 HR 工作区总纲（现为仓内文档） |
+
+> ℹ️ **目录全景**：`ls recruit/hr/`（+ `recruit/hr/memory/`）。**读哪个以本节表为准**；`recruit/hr/MEMORY.md`（长期）/`recruit/hr/USER.md`（用户）/`recruit/hr/AGENTS.md`（SOP）为**最高优先**。
 
 **③ 数据边界（红线 · 与 HR `AGENTS.md §11` / `MEMORY.md §七` 一致）**
 
-- 🚫 **不入 git**：`boss_candidates.csv/.json`、`候选人筛选结果.csv`（含真实 **`securityId`**）、`简历/*.pdf`、`boss_chat*.png`、一切 cookie/凭据。**数据本体留在 `$HR_DIR`，仓库里只放「账」**（清单：路径 / 字节数 / sha256 / 存放位置）。
-- 📦 **单文件 ≥ 5MB**（简历 PDF 常见）：🚫 不 `git add`（含本仓库任何位置）；只登记链接/路径（同 research 线铁律）。
-- ✅ 可入 git 的只有：任务书、loop、`MEMORY_RECRUIT.md`、`daily-memories-recruit/`、`recruit/` 下的**非 PII 概述/清单/报告**。
+- 🚫 **未复制进仓（仍只在原 Windows 目录）**：`boss_candidates.csv/.json`、`候选人筛选结果.csv`（含真实 **`securityId`**）、`简历/*.pdf`、`boss_chat*.png`、`简历.7z`、一切 cookie/凭据、playwright `profile/`。
+- 📦 **单文件 ≥ 5MB**（简历 PDF 常见）：🚫 不 `git add`（含本仓库任何位置，含 `recruit/hr/`）；只登记 路径/字节数/sha256（同 research 线铁律）。
+- ✅ **已在仓内（可读）**：上表 ①② 的记忆 / 任务 / 能力 / 候选表（**均无凭据**）。
 
-### 0.2 继承的长期记忆摘要（**内嵌快照** · 源 = `$HR_DIR/MEMORY.md` · 细读以源为准）
+### 0.2 继承的长期记忆摘要（**权威 = 仓内 `recruit/hr/MEMORY.md`** · 本节为速览）
 
-> 目的：即使 `$HR_DIR` 不可达，唤醒时也「已经记得」这些**稳定结论**。⚠️ 若与本快照冲突，**以 `$HR_DIR` 源为准**，并回来更新本快照。
+> **`recruit/hr/MEMORY.md` 是仓内唯一权威**（原 `C:\...` 目录不再参与）。本节是**更快读完的速览**；⚠️ 冲突时**以 `recruit/hr/MEMORY.md` 为准**，并回来同步本速览。
 
 **身份 / 岗位**
 - 招聘方 **长鑫存储**，Boss 招聘端显示 **刘先生**（userId `273356`）；沟通者 **刘杨 = AI+EDA 预研负责人 / PI（不是 HR）**。
@@ -103,7 +117,7 @@
 - **选择器写宽会误触**（曾对陈旧「同意/拒绝」卡误点）；**分档表没拿到时宁可留空**，不要填「看起来合理」的值。
 - **学校只是「在投」时的能力代理，绝不是达标门槛**。
 
-### 0.3 继承的能力摘要（**Boss 操作 SOP 精简** · 源 = `$HR_DIR/AGENTS.md` · 细读以源为准）
+### 0.3 继承的能力摘要（**Boss 操作 SOP 精简** · 权威 = 仓内 `recruit/hr/AGENTS.md` · 细读以它为准）
 
 **环境**：浏览器 = `microsoft/playwright-mcp`（默认 context）；`screen.py`/`city_scan.py` = 纯标准库 Python；文件一律 UTF-8。
 
@@ -185,8 +199,8 @@ ssh -N -L 5901:127.0.0.1:5901 -L 9222:127.0.0.1:9222 liuyang@106.54.228.191
 - **重启**：`pkill -f '[w]atch_recruit_loop.sh'`（**必须括号技巧**，否则连执行命令的 shell 一起杀）→ 再按上面启动。
 - **观测**：存活标记 `/tmp/watch_recruit_loop.hb`（30 min 内应持续刷新）· 主日志 `/tmp/watch_recruit_loop.log` · 本轮 cline 输出 `/tmp/watch_recruit_cline_last.log`。
 - **唤醒节律**：`WATCH_INTERVAL_MIN`（**临时 = 30**）> `WATCH_SCHEDULE_HOURS`（默认 `6,18`）> 自适应；**首轮唤醒=立即执行**，之后每 30 min 一次；相同脚本已支持**置空 `WATCH_INTERVAL_MIN=` 即回退**「早 6 晚 6」。
-- ⚠️ **【重要缺口】VM 上跑 loop ≠ 能读 `$HR_DIR`**：`$HR_DIR=C:\Users\liuyu\HR` 是 **Windows 路径**，Linux VM 上**不存在**（启动横幅会显示「存在：缺」）⇒ 唤醒时**只能用任务书 §0.2/§0.3 的内嵌摘要兜底**，且**无法回写 `$HR_DIR`**（§5 的「回写 HR」暂不可达）。
-  - **待拍板（三选一）**：① loop 跑 **Windows**（可读/写 `$HR_DIR`）+ 经 SSH 隧道驱动 VM 浏览器；② loop 跑 **VM**（能驱动浏览器）+ **把 `$HR_DIR` 同步到 VM**（注意与 HR「单一权威」铁律的冲突）；③ 维持现状（VM 跑 + 内嵌摘要只读兜底，**不做 HR 回写**）。
+- ✅ **【缺口已关闭 · 2026-10-11 第 2 批「融入本仓」】**：HR 记忆与能力**已整体复制进仓内 `recruit/hr/`** ⇒ **loop 跑在 VM（Linux）也能读全部记忆/任务/能力**（不再有「VM 读不到 `$HR_DIR`」问题），**回写目标改为仓内 `recruit/hr/`**（见 §5）。
+  - 📌 历史背景（保留）：此前 `$HR_DIR=C:\Users\liuyu\HR` 是 Windows 路径、VM 上不存在，只能靠 §0.2/§0.3 摘要兜底；**现以「融入本仓」解决**。
 
 > 🧯 **故障速查**：连不上 → 先看隧道进程 + `vncserver -list`；Chrome 无 CDP → `tail /tmp/hr_chrome_headless.log`；桌面黑屏 → `tail ~/.vnc/*.log`；VM 内存吃紧 → `pkill -f '[r]emote-debugging-port=9222'` 关浏览器；**loop 不起** → 看 `/tmp/watch_recruit_loop.log`（`cline: command not found` = PATH 没补）。
 
@@ -198,14 +212,14 @@ ssh -N -L 5901:127.0.0.1:5901 -L 9222:127.0.0.1:9222 liuyang@106.54.228.191
 
 **第 1 步 · 继承 + 状态（每轮必做）**
 1. 读 `MEMORY_RECRUIT.md` 顶部「进度快照」+「运维问答」；
-2. 读 `$HR_DIR/MEMORY.md` / `USER.md` / `AGENTS.md` / 最近 2 天 `memory/*.md`（**读不到就如实记，用 §0.2/§0.3 兜底**）；
-3. 读 `$HR_DIR/README.md` 待办 + `$HR_DIR/MEMORY.md §八 未决`（当前口径问题）；
+2. 读 `recruit/hr/MEMORY.md` / `recruit/hr/USER.md` / `recruit/hr/AGENTS.md` / 最近 2 天 `recruit/hr/memory/*.md`（**已在仓内、必可达**——这是主要记忆来源）；
+3. 读 `recruit/hr/README.md` 待办 + `recruit/hr/MEMORY.md §八 未决`（当前口径问题）；
 4. 若有**未答的运维提问** → **先答**再干活。
 
 **第 2 步 · 巡检（只读，确认现状）**
 5. `git -C <仓库根> status -sb`（确认干净 / 无别线在途文件）；**顺带环境自检（§0.4）**：SSH 隧道可达？`vncserver -list` 有 `:1`？`curl -s 127.0.0.1:9222/json/version` 通？不通 → 按 §0.4「故障速查」处置并如实记；
 6. 巡检 Boss：登录态是否有效（**新开标签**读 `.chat-message-list`）——**走 §0.4 的「CDP + 持久 profile」路径**，或 §0.3 的「cookie 注入」路径（二选一见 §0.4⑤）；沟通列表**新招呼 / 新回复 / 新简历卡**；
-7. 复核 `$HR_DIR/发送记录.md` 尾部（最近批次是否「送达」、有无风控事件）。
+7. 复核 `recruit/hr/发送记录.md` 尾部（最近批次是否「送达」、有无风控事件）。
 
 **第 3 步 · 推进（对外动作受 §3 闸门约束）**
 8. **自主可做**：采集候选人（页面上下文 fetch）→ `python screen.py` 分级 → `python city_scan.py` 捞上海系；
@@ -216,7 +230,7 @@ ssh -N -L 5901:127.0.0.1:5901 -L 9222:127.0.0.1:9222 liuyang@106.54.228.191
 
 **第 4 步 · 收尾（每轮必做，见 §5）**
 13. 更新 `MEMORY_RECRUIT.md`（进度快照 + 1 条流水）+ 当日 `daily-memories-recruit/<date>.md`；
-14. 需要刘杨决策的口径 → 写进 `MEMORY_RECRUIT.md`「待拍板」+ `$HR_DIR/README.md` 待办；
+14. 需要刘杨决策的口径 → 写进 `MEMORY_RECRUIT.md`「待拍板」+ `recruit/hr/README.md` 待办；
 15. `git add` **本线文件** → `commit` → `push`；`git status -sb` 自检。
 
 > 📧 **已登记未来职能**：给候选人发**邮件**做技术沟通 —— **未获用户批准前不得发送**（同 research 线）。
@@ -231,15 +245,22 @@ doc/personal-watch/run/
 ├── watch_recruit_loop.sh        # 本循环脚本（定时唤醒 6,18）
 ├── MEMORY_RECRUIT.md            # 本线运行时记忆（WAITING + 快照 + 运维问答 + 状态头 + 流水）
 ├── daily-memories-recruit/      # 本线每日流水（归档，不进 prompt）
-└── recruit/                     # 本线产物（★ 只放非 PII；见 .gitignore）
+└── recruit/                     # 本线目录（★ 只放非 PII；见 .gitignore）
     ├── README.md                #   产物说明 + 继承映射表
     ├── .gitignore               #   PII/凭据/大文件 红线兜底
     ├── STATE.md                 #   招聘现状快照（达标者数、批次进度、待办；非 PII 概述）
-    ├── drafts/                  #   话术草案（对外发送前；发送原文以 $HR_DIR/发送记录.md 为准）
-    └── reports/                 #   对外工作汇报 HTML（自包含）
+    ├── drafts/                  #   话术草案（对外发送前；发送原文以 recruit/hr/发送记录.md 为准）
+    ├── reports/                 #   对外工作汇报 HTML（自包含）
+    └── hr/                      # ⭐ 融入的 HR agent 记忆/任务/能力（仓内权威，自包含）
+        ├── MEMORY.md / USER.md / AGENTS.md / DREAMS.md / README.md
+        ├── memory/<YYYY-MM-DD>.md        #   情景记忆
+        ├── 发送记录.md                    #   台账（只追加）
+        ├── 话术-最终版.md / 话术模板.md / S级论文录用确认-话术*.md
+        ├── 候选人筛选报告.md / 候选人筛选结果.md / 候选表-*.{md,csv} / 社招判定-简单简历.md
+        └── screen.py / city_scan.py / build_candidate_tables.py / school_judge.py / *.js
 ```
 
-> **规范活工作区仍在 `$HR_DIR`**：原始采集数据、简历 PDF、台账 `发送记录.md`、话术库 —— **都不进本仓库**。本仓库只留**编排 + 账 + 概述**。
+> ✅ **记忆 / 任务 / 能力已入仓 `recruit/hr/`（自包含）**；🚫 **未入仓的只有原始 PII/凭据**（`boss_candidates.*` / `简历/*.pdf` / `boss_chat*.png` / cookie，仍只在原 Windows 目录）。loop 在**腾讯云 VM** 上跑，**不依赖任何本地目录**。
 
 **每轮必须提交**：`recruit/`（若有新产物）+ `MEMORY_RECRUIT.md` + `daily-memories-recruit/`。
 
@@ -255,7 +276,7 @@ doc/personal-watch/run/
 | 起草话术草案 → `recruit/drafts/` | ✅ 自主 | — | 只存草稿，**不发** |
 | 更新记忆 / 台账概述 / 汇报 HTML | ✅ 自主 | — | 非 PII |
 | **发消息给候选人** | 🚫 需授权 | ≤ **2–3 人/批**、**批间隔 ≥ 60 分钟**、**逐人定制** | 授权写法见 §运维指令区 |
-| **抓取候选人附件简历** | 🚫 需授权 | 仅抓**对方已发来**的简历 | 落 `$HR_DIR/简历/<Boss日期>/` |
+| **抓取候选人附件简历** | 🚫 需授权 | 仅抓**对方已发来**的简历 | 落 `简历/<Boss日期>/`（**不进 git**，见 §0.1③） |
 | **代点「同意」收简历卡** | 🚫 需授权 | 需**点名**授权 | 会改变对方会话状态 |
 | **代点「拒绝」** | 🚫 需授权 | 需**点名**授权 | 同上 |
 | **点「约面试 / 发送面试邀请」** | ⛔ **永不** | ⛔ **永不** | 面试由公司 HR 统一约，**草稿也不发** |
@@ -274,13 +295,13 @@ doc/personal-watch/run/
 5. 🚫 **不碰约面控件**；**不新建 context 操作 Boss**（登录态只在默认 context）。
 6. 🚫 **不批量拉简历接口**（`/wapi/zpgeek/resume/...` 返回 `code 7`）。
 7. 🚫 **凭据/PII 不进任何可能被提交的文件**：cookie、`securityId`、身份证/手机号/邮箱、简历原文 —— 🚫 写进 `MEMORY_RECRUIT.md` / 产物 / git。
-8. 📦 **体积红线（同 research 线）**：**单文件 ≥ 5MB 一律不进 git**（简历 PDF 常见）；只登记 路径/字节数/sha256/存放位置；**数据本体在 `$HR_DIR`，账在 git**。
+8. 📦 **体积红线（同 research 线）**：**单文件 ≥ 5MB 一律不进 git**（简历 PDF 常见）；只登记 路径/字节数/sha256/存放位置；**数据本体在「原 Windows HR 目录 / 外部盘」，账在 git**。
 9. 🚫 **不 `git add -A`**：只加本线文件（`run/MEMORY_RECRUIT.md`、`run/recruit`、`run/daily-memories-recruit`）—— 共享工作副本，会卷入他人在途文件。
 10. 🚫 **不在正文/快照/流水写以 `WAITING:` 开头的行**（会误触发 loop 长睡）。
 11. ✅ **可溯源**：每条结论能追到具体证据（Boss 会话 / 简历 / 台账行）。
 12. ⚠️ **时间以 Boss 页面时间为准**（本机时钟慢约 8 小时）；归档目录用 **Boss 日期**。
 13. 🚫 **环境红线（§0.4）**：VNC(`5901`) / CDP(`9222`) **只绑 `127.0.0.1`**，**一律走 SSH 隧道**；🚫 不开公网端口 / 不改绑定 / 不关防火墙；🚫 凭据（SSH/VNC 口令）**不进产物、不进报告 HTML**。
-14. 🚫 **VM 上不放 PII、不跑重活**：简历 PDF / `securityId` / cookie **不进 VM 的 git 工作副本**；VM 只做**浏览器执行**，**数据本体仍留 `$HR_DIR`**；该机仅 **2 vCPU/3.6 G 且与 cline daemon 共驻**。
+14. 🚫 **VM 上不放 PII、不跑重活**：简历 PDF / `securityId` / cookie **不进 VM 的 git 工作副本**（记忆/能力已在仓内 `recruit/hr/`，**均为非 PII**）；VM 只做**浏览器执行**，**原始数据本体仍留「原 Windows HR 目录」**；该机仅 **2 vCPU/3.6 G 且与 cline daemon 共驻**。
 
 ---
 
@@ -292,7 +313,7 @@ doc/personal-watch/run/
 - **任务书自己滚**：把**已闭合**的历史轮次 / 已执行完的运维块**【原文】搬入** `WATCH_RECRUIT_TASK_ARCHIVE.md`（**留 1 行指针**；**不新增/不改写任何指令**）。
 - **滚动**：把**较早的流水条目**（保留最近 ~20 条）**追加**到 `daily-memories-recruit/<条目日期>.md`（原文不改），再从 MEMORY 删除。
 - **顶部必须保留**：① `WAITING:` 行（**仍只出现一次**）② 状态头 /「进度快照」③ 「运维问答」④ 最近 ~20 条。
-- **回写 `$HR_DIR`**：招聘结论（新达标者 / 口径变化 / 教训）**同时**按 HR `AGENTS.md §10` 写回 `$HR_DIR`（`MEMORY.md` / `memory/<date>.md` / `DREAMS.md`）—— **一处权威，别处引用**。
+- **回写仓内 `recruit/hr/`（唯一权威）**：招聘结论（新达标者 / 口径变化 / 教训）按 HR `AGENTS.md §10` 写回 **`recruit/hr/MEMORY.md` / `recruit/hr/memory/<date>.md` / `recruit/hr/DREAMS.md`** —— **一处权威，别处引用**；🚫 **不再回写 `C:\...`**（原目录已不参与）。
 - **纪律**：归档**不改变任何结论**；`WAITING:` 纪律不变。
 
 ---
@@ -301,7 +322,7 @@ doc/personal-watch/run/
 
 - **本项目总纲**：`../README.md`；**supervisor 记忆**：`../MEMORY.md`；**agent 总表**：`../AGENTS.md`。
 - **姊妹线**：`WATCH_NEWS_TASK.md` / `WATCH_RESEARCH_TASK.md` + `watch_news_loop.sh` / `watch_research_loop.sh`（范式与铁律来源）。
-- **继承源（规范）**：`$HR_DIR` = `C:\Users\liuyu\HR` —— `MEMORY.md` · `USER.md` · `AGENTS.md` · `DREAMS.md` · `memory/` · `发送记录.md` · `话术-最终版.md` · `screen.py` · `city_scan.py` · `候选人筛选报告.md`。
-- **执行环境（§0.4）**：腾讯云 Ubuntu `106.54.228.191`（`liuyang`）—— 服务器侧 `~/hr_start.sh` · `~/hr_login.sh` · `~/hr_headless.sh` · profile `~/.hr-chrome-profile` · `~/.vnc/`；隧道 `ssh -L 5901:… -L 9222:…`。
-- **环境变量**：`WATCH_HR_DIR`（覆盖 HR 工作区路径）；`WATCH_SCHEDULE_HOURS`（覆盖唤醒时窗）。
+- **融入的 HR 记忆/能力（仓内权威 · 自包含）**：`recruit/hr/` —— `MEMORY.md` · `USER.md` · `AGENTS.md` · `DREAMS.md` · `README.md` · `memory/` · `发送记录.md` · `话术-最终版.md` · `screen.py` · `city_scan.py` · `候选人筛选报告.md` · 候选表 · 脚本（**原 `C:\Users\liuyu\HR` 已不再参与**）。
+- **执行环境（§0.4）**：腾讯云 Ubuntu `106.54.228.191`（`liuyang`）—— 服务器侧 `~/hr_start.sh` · `~/hr_login.sh` · `~/hr_headless.sh` · launcher `~/start_recruit_loop.sh` · profile `~/.hr-chrome-profile` · `~/.vnc/`；隧道 `ssh -L 5901:… -L 9222:…`。
+- **环境变量**：`WATCH_SCHEDULE_HOURS`（唤醒时窗）/ `WATCH_INTERVAL_MIN`（临时间隔节律）；~~`WATCH_HR_DIR`~~（**已废弃** —— 记忆/能力已入仓 `recruit/hr/`，无本地路径依赖）。
 

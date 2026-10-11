@@ -2,9 +2,10 @@
 # personal-watch（观察哨）· **recruit agent** 自动推进循环（Boss 直聘招聘链路：继承 HR 记忆与能力 + 常态化推进）
 # 让 cline 读任务书（WATCH_RECRUIT_TASK.md）连续推进，并每约 PUSH_INTERVAL 秒兜底做一次 git 同步 + commit + push。
 #
-# ⚠️ 运行位置（**与 news/research 不同**）：本线要驱动浏览器（Boss 登录态 + playwright-mcp），
-#    故 **必须跑在「持有 Boss 登录态的那台机器」上**（当前 = 本 Windows 机）。
-#    Windows 下请用 **Git Bash / WSL**（需要 GNU `date -d`）；`setsid` 在 Git Bash 可能没有 ⇒ 用 `nohup ... &`。
+# ⚠️ 运行位置（**2026-10-11 起 = 腾讯云 Ubuntu VM**）：本线 loop 跑在 `106.54.228.191`（`liuyang`），
+#    浏览器由该 VM 的 XFCE 桌面 + Chrome + CDP(`127.0.0.1:9222`) 提供（见任务书 §0.4）。
+#    **记忆/能力自包含在仓内 `recruit/hr/`** ⇒ 不依赖任何本地目录（含原 `C:\Users\liuyu\HR`）。
+#    服务器侧 launcher：`~/start_recruit_loop.sh`（已 `cd` 到 run/ + 补 nvm PATH）。
 #
 # ⏰ 唤醒节律（沿用 2026-10-07 用户令：每天 2 次 —— 06:00 / 18:00）：
 #   定时模式（**默认**，SCHEDULE_HOURS=6,18）：只在时窗边界调用 cline；其余时间**纯 bash 分段睡眠（零 token）**，
@@ -14,15 +15,13 @@
 #   旧模式（回退）：环境变量 `WATCH_SCHEDULE_HOURS=`（置空）⇒ 恢复 WAITING 自适应（0→60s 连续推进 / 1→1800s）。
 #   时窗内致命错：**最多重试 SCHEDULE_RETRY_MAX 次**，之后等下个时窗（🚫 不做 60s 死循环重试 —— 那会疯狂烧 token）。
 #
-# 启动方式（脱离进程组，防工具超时误杀；Linux/WSL）:
+# 启动方式（VM 上，脱离进程组防工具超时误杀）:
 #   cd <仓库根>/doc/personal-watch/run
-#   setsid bash watch_recruit_loop.sh > /tmp/watch_recruit_loop.log 2>&1 < /dev/null &
-# Git Bash（无 setsid）替代:
-#   cd <仓库根>/doc/personal-watch/run
-#   nohup bash watch_recruit_loop.sh > /tmp/watch_recruit_loop.log 2>&1 &
+#   setsid nohup bash watch_recruit_loop.sh > /tmp/watch_recruit_loop.log 2>&1 < /dev/null &
+#   （或直接用服务器侧 launcher：`setsid nohup bash ~/start_recruit_loop.sh > /tmp/watch_recruit_loop.log 2>&1 &`）
 #
-# 停止方式:
-#   pkill -f watch_recruit_loop.sh
+# 停止方式（**必须用括号技巧**，否则会连「执行该 kill 的 shell」一起杀）:
+#   pkill -f '[w]atch_recruit_loop.sh'
 #
 # ⚠️ 本脚本以 `watch_research_loop.sh`（已生产验证）为模板，沿用三处防坑 + 全部加固:
 #   1) push 前先 fetch + pull --rebase --autostash（只 push 不 pull，远端一旦前进就永久卡死）
