@@ -162,7 +162,8 @@ powershell -ExecutionPolicy Bypass -File "D:\Users\Administrator\code\super_inte
 > ⚠️ **改 loop / 任务书后须重启计划任务才生效**（脚本不会热重载）。
 > 🔤 **`.ps1` 必须存成「UTF-8 带 BOM」** —— 本机是 **Windows PowerShell 5.1 + GBK 默认编码**；**无 BOM 的 .ps1 会把中文注释读成乱码并直接报语法错**（本线立线时已踩过一次）。自检/补 BOM：`$f='…\watch_video_loop.ps1'; (Get-Content $f -Raw) | Set-Content -Encoding utf8 $f`（PS 5.1 的 `utf8` = 带 BOM）。
 > 🧪 **安全自检（不调 cline、不烧 token）**：`powershell -ExecutionPolicy Bypass -File "…\watch_video_loop.ps1" -Once -DryRun`（只走横幅/日志/心跳/git 同步）。
-> ⚙️ **可调参数**（loop 顶部 `param()`）：`-IntervalSec`(默认 3600) · `-ClineTimeout`(默认 3300) · `-Model`(默认空=用 cline 已配模型) · `-Thinking`(默认 medium) · `-RetrySec`(默认 600，cline 失败后重试等待)。
+> ⚙️ **可调参数**（loop 顶部 `param()`）：`-IntervalSec`(默认 3600) · `-ClineTimeout`(默认 3300) · `-Model`(默认空=用 cline 已配模型) · `-Thinking`(默认 medium) · `-RetrySec`(默认 600) · `-MaxRetry`(默认 2) · `-FastFailSec`(默认 60)。
+> ⏰ **节律 = 每小时（对齐整点）· 用户 2026-10-11 明确确认保留**，☑️ **已知代价并接受**：实测每轮 ≈1.62M input tokens ⇒ **≈39M input/天（24 轮）**。**🚫 后续 operator/agent 不要"顺手"改成低频**（要改须先问用户）。
 > 🧵 **prompt 传递方式（本线特有 · 2026-10-11 实测踩坑）**：Windows 上**不能把任务书全文当命令行参数** —— 经 `cline.cmd`（批处理）会撞 **cmd.exe ~8KB 上限**（实测报「**命令行太长**」，cline 秒退 exit 1）。⇒ loop 改为 ① 直调 **`node.exe` + cline JS 入口**（绕过 cmd）② 只传**短指针 prompt**（含任务书绝对路径）。**因此 agent 每轮第一步必须自己读任务书全文**。
 > 🔁 **失败处理（2026-10-11 修订 · 省 token）**：**只对「启动类失败」重试** —— 判据 = `exit≠0` **且本轮耗时 < `-FastFailSec`(默认 60s)**（秒退 ⇒ 几乎不耗 token），最多 `-MaxRetry`(默认 2) 次；**「运行类失败」（真跑了一阵子）一律不自动重试**，直接退回整点节律。⚠️ **实测单轮 ≈ 1.62M input tokens**（首轮 S1：`in 1,621,718 / out 32,874 / cacheRead 1,528,320`，5m35s）⇒ **盲目重试 = 纯烧钱**。每轮用量会写进 loop 日志 `[usage] …`。想更省可 `-MaxRetry 0` 关掉重试。
 > 🧑💻 **运行身份（2026-10-11 实测 · 关键）**：**必须用「当前用户 S4U」运行**（`register… -RunAsCurrentUser`），🚫 **不要用 SYSTEM** —— SYSTEM 下 `py -3.10` 报 **`No installed Python found!`**（Python 按**用户**注册）⇒ **MCP `comfyui-drama` / `web-search` 全部加载失败**（cline 日志 `[mcp] Failed to load …`），agent 只能退化成手拼 HTTP API。切到 S4U 后两个 MCP 均正常拉起。
