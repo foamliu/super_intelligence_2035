@@ -9,6 +9,8 @@
 **① 交付物**：`doc/BaiZe-ISEDA2027/report_vision_muon_collapse.html`
 - **中文 · 自包含单文件**（内联 CSS/SVG · **零外链** · 离线双击可开 · ≤200KB）；风格对齐本仓既有 `report_*.html`（HERO 一句话结论 + 分节 + 表格 + 内联 SVG 曲线）。
 
+> ⚠️ **与既有报告的关系**：本线 2026-10-11 已产出 **`report_vision_variants_20261011.html`**（**总览**：③①② + **V2 Muon** + V3 + ④）—— 本报告须是 **Muon 坍缩的「深化专版」**（**引用其结论 + 补足根因/谱范数/排除项/反证**），🚫 不得只是复制其 Muon 节。
+
 **② 必备节（逐节）**
 1. **TL;DR**：一句话 + 3–5 条要点 —— 讲清 **Muon 在 vision 栈上不可用** 的**确切边界**（哪些 LR、哪个 step 坍缩、是否与数据量/分辨率有关）。
 2. **实验设置**：V2 = 在 `E1fair`(w512) baseline 上**只换优化器 AdamW→Muon**，其余逐字节相同；列 LR（5e-4 / 1e-4）· schedule · 步数 · 数据（10787 shards）· 目标（AIMv2-style `InfoNCE + 1.0×masked-patch-MSE`）。
