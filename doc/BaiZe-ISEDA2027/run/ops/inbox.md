@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 86 -->
+<!-- RUN_ID: 87 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -31,6 +31,33 @@
 
 ---
 
+## RUN_ID 87 — 🧾 只读：自证 RUN_ID 86 是否已执行 + 把「卡在本地未推」的 outbox 记录冲出来
+
+> **背景**：86（救援 ZhuLong ops 中继）下发后，**结果已实现** —— 远端 `doc/ZhuLong_DAC2027/run/ops/.last_run_id` 从 `31` → **`32`**，`outbox` 出现 `## RUN_ID 32 · 2026-10-11 08:07:38 · host=hfeg0tedaap02 · exit=0`，即 **ZhuLong 中继在 08:07:38 复活并执行了 32**。
+> **但本通道远端 `.last_run_id` 仍为 `85`、outbox 无 `86`** ⇒ 高度怀疑：86 的执行结果**已在 2.29 本地写好，但 `git_publish` 的 push 与 ZhuLong 中继的 push 撞车失败**（脚本报 “push FAILED (will retry next cycle)”，而它只在下一次 `run_once` 结束时才重试）⇒ 记录一直没推上来。
+> **本块**：只读自证 + 触发一次 `run_once`，让 86 的记录随之 flush 到远端。
+> **不要**在这里动任何服务。
+
+```bash
+set -u
+echo "=== RUN_ID 87 · flush & self-prove RUN_ID 86 · $(date '+%F %T') · host=$(hostname) ==="
+R="$PWD"; [ -d "$R/doc/BaiZe-ISEDA2027/run/ops" ] || R="$(git rev-parse --show-toplevel 2>/dev/null || echo /nas_train/app.e0031982/code/super_intelligence_2035)"
+O="$R/doc/BaiZe-ISEDA2027/run/ops"
+echo "   repo=$R"
+echo "   HEAD=$(git -C "$R" log --oneline -1 2>/dev/null | cut -c1-80)"
+echo "   local .last_run_id=$(cat "$O/.last_run_id" 2>/dev/null)   (若 = 86 而远端 = 85 ⇒ 正是 push 撞车)"
+echo "   outbox 本地计数: RUN_ID 85=$(grep -c '^## RUN_ID 85' "$O/outbox.md" 2>/dev/null)  RUN_ID 86=$(grep -c '^## RUN_ID 86' "$O/outbox.md" 2>/dev/null)"
+echo "   --- RUN_ID 86 段（本地）关键行 ---"
+awk '/^## RUN_ID 86/{f=1} f' "$O/outbox.md" 2>/dev/null | grep -nE 'route|OPEN|last_run_id|relay|RUN_ID 32 独有产物|ABL_full_r2|PROXY_PORTS|RAG_RECALL_URL|MCP :8090|ALL DONE|DONE' | head -25 | cut -c1-180
+echo "   --- 86 段最后 8 行 ---"
+awk '/^## RUN_ID 86/{f=1} f' "$O/outbox.md" 2>/dev/null | tail -8 | cut -c1-180
+echo "   --- git 状态（确认是否有『未推送』的 outbox 改动）---"
+git -C "$R" status --porcelain 2>/dev/null | head -6 | cut -c1-140
+echo "=== DONE 87 ==="
+```
+
+---
+
 ## RUN_ID 86 — 🚑 **救援 ZhuLong 的 ops 中继（借本通道 2.29 → `ssh -p 3333` → 36.15）**
 
 > **背景（2026-10-11 运维）**：ZhuLong 的 ops 中继（`zhulong_ops_relay.sh` @ **36.15**）**自 10-10 20:59 起失联 ~11h** —— `.last_run_id` 停在 **31**，而运维已于 10-11 07:42 下发 **RUN_ID 32**（停评测 / 删 `~/.cline/hooks/PreToolUse` / `.env` stash 回退 / 端口集换 `8650-8654` / RAG→`9006` / **回退 `cline_mcp_settings.json` 的 `timeout:180`** / 4 端口实测 / **4/4 健康才起 r2**），**无人执行**。
@@ -38,7 +65,7 @@
 > **本块只做两件事**：① **重启 ZhuLong 的 ops 中继**（它是通道，**不碰 loop**）；② 等它自己 `git_sync` 拉到、并开始执行 RUN_ID 32，随后打印**RUN_ID 32 的独有产物**作为执行中证据（`/tmp/*runid32*`、`.env` 关键行、MCP `:8090`、eval 进程、中继日志尾）。
 > **幂等**：重复执行只多 kill+重启一次中继；RUN_ID 32 的块自身按幂等设计。**不在此块内做任何 `git pull/fetch`**（避开「中继块内 git 卡管道」历史坑）。
 
-```bash
+```text
 set -u
 # ═══ RUN_ID 86 · 救援 ZhuLong ops 中继（2.29 → ssh -p 3333 → 36.15）· 2026-10-11 ═══
 echo "=== RUN_ID 86 · rescue ZhuLong ops relay · $(date '+%F %T') · host=$(hostname) ==="
