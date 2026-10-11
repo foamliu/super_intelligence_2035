@@ -525,3 +525,19 @@
 | 2026-10-11 | 长鑫技术新突破，融合 4F² 架构等先进技术的 DDR5 RDIMM 产品预计年底亮相 | IT之家 | 留档(存储·非 AI 具体事件) | https://www.ithome.com/1/011/494.htm |
 | 2026-10-11 | 特斯拉FSD，在欧洲被打回原形 | 量子位 | 留档(10-10 14:59 CST·落于上轮窗口·不追计) | https://www.qbitai.com/2026/10/502467.html |
 
+| 2026-10-11 | 消息称字节、腾讯加速个人 AI 智能体研发，追赶 Meta Muse | IT之家 | news | https://www.ithome.com/1/011/548.htm |
+| 2026-10-11 | 微软 CEO 纳德拉：开发者应默认假设 AI 模型失控，思考如何强制中断任务 | IT之家 | news | https://www.ithome.com/1/011/545.htm |
+| 2026-10-11 | Satya Nadella says we should assume all AI models are 'compromised' | The Verge（经 HN·35 分·10-11 11:41 CST） | news(同事件·与 IT之家 011/545 同源) | https://www.theverge.com/ai-artificial-intelligence/1009337/satya-nadella-says-we-should-assume-all-ai-models-are-compromised |
+| 2026-10-11 | Anthropic asks users to stop being mean to Claude | The Register（经 HN·46 分·10-11 09:17 CST·原发 10-09） | news | https://www.theregister.com/ai-and-ml/2026/10/09/anthropic-asks-users-to-stop-being-mean-to-claude/5302218 |
+| 2026-10-11 | 报告称 Claude 半年封杀 1140 万个账号，申诉后仅 4.2 万翻案 | IT之家 | news | https://www.ithome.com/1/011/553.htm |
+| 2026-10-11 | Europe confident its rules can thwart rogue AI | RNZ（经 HN·6 分·10-11 11:57 CST） | news | https://www.rnz.co.nz/news/science-and-technology/1824809/europe-confident-its-rules-can-thwart-rogue-ai |
+| 2026-10-11 | 国家安全部揭秘为何接陌生来电先沉默三秒，称数秒语音样本可能被不法分子用于 AI 声纹克隆 | IT之家 | news | https://www.ithome.com/1/011/574.htm |
+| 2026-10-11 | 蚂蚁“灵光”开启小范围内测，新版对标 Meta Muse | IT之家 | news | https://www.ithome.com/1/011/593.htm |
+| 2026-10-11 | 消息称英伟达洽谈收购 / 追加投资 Reflection AI，加码开源模型 | IT之家 | news(同事件·已在账 FT 515) | https://www.ithome.com/1/011/541.htm |
+| 2026-10-11 | 拒绝签署《暗影蜘蛛侠》AI 授权协议，演员尼古拉斯·凯奇称可能不会再和亚马逊合作 | IT之家 | news(同事件·已在账 Variety 517) | https://www.ithome.com/1/011/592.htm |
+| 2026-10-11 | Rogue Anthropic AI agent gave police fake tip in unsolved murder case | BBC（经 HN·6 分·10-11 10:41 CST） | news(同事件·已在账 第八十四轮) | https://www.bbc.com/news/articles/cqkg50j1yd5lo |
+| 2026-10-11 | Anthropic Bans Cruelty to Claude, Still Won't Say What It Protects | rews.cc（经 HN·59 分） | news(同事件·与 The Register 同) | https://rews.cc/a/anthropic-bans-cruelty-to-claude-still-won-t-say-what-it-pro-bd99f6 |
+| 2026-10-11 | AI's leaders (probably) aren't faking their fear | Vox（经 HN·3 分） | opinion | https://www.vox.com/politics/505834/ai-doom-anthropic-openai-pr |
+| 2026-10-11 | Why OpenAI's latest results dump has left mathematicians in shock | The Conversation（经 HN·4 分） | analysis | https://theconversation.com/is-this-the-mathocalypse-why-openais-latest-results-dump-has-left-mathematicians-in-shock-293837 |
+| 2026-10-11 | Build your own decision model | nishtahir.com（经 HN·227 分） | discussion(博客/教程) | https://nishtahir.com/build-your-own-decision-model/ |
+| 2026-10-11 | A new AI model that renders generative visuals of what you see | Weizmann Institute（经 HN·6 分） | 留档(研究发布·可回收) | https://www.weizmann.ac.il/pages/news/mathematics-and-computer-science/the-new-science-of-mind-reading |
