@@ -1,6 +1,6 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 
-<!-- RUN_ID: 39 -->
+<!-- RUN_ID: 40 -->
 
 > **用法**：把命令写进下面的 ```bash 块 → 把 `RUN_ID` 加 1 → `git push`。
 > 中继（`zhulong_ops_relay.sh`）轮询到 `RUN_ID` 增大后执行，结果追加到 `ops/outbox.md`（只增不改）。
@@ -24,6 +24,89 @@
 
 ---
 
+## RUN_ID 40 — 🔎 定位「评测客户端 MCP 配置」的来源：是仓库模板就**就地提交**（`/sse`→`/mcp` + `"type":"streamableHttp"`），只是运行时文件则记录在案
+
+> **用户令（2026-10-11）**：「客户端随 mcp 服务端做了改动对吧，**改动在 `eda_fastmcp` 仓库吗**，如果是，**评测客户端改动可提交**。」
+> **已知**：① 协议改动（SSE → `streamable-http`、`/sse` → `/mcp`）**定义在 `eda_fastmcp` 仓库**（服务端代码 + 新版 README 的客户端片段 `url:http://<本机IP>:18889/mcp` + `"type":"streamableHttp"`）✓；② 两处实际客户端配置（`~/.cline/data/settings/cline_mcp_settings.json`、`/nasdata/…/.cline_prof4_eval/data/settings/cline_mcp_settings.json`）是 **36.15 上的运行时文件，不在任何 git 仓库里** ⇒ 若只是改这两处，**没有可提交的仓库改动**；③ **但如果 eval 是从仓库里的模板/生成逻辑部署这些配置**（`run_cline_script.sh` 会「为 8 个 worker 创建隔离数据目录」+「部署沙盒 hook」，说明存在部署逻辑），那**模板才是应提交的对象**。
+> **本块**：① 现状（eval 是否在跑 + 两处运行时配置实际 url/type + MCP/recall 监听）→ ② **找来源**：在两个仓库里 grep `cline_mcp_settings|mcpServers|/sse|streamableHttp|settings/` 并打印 `run_cline_script.sh` 里与配置/hook 部署相关的行 → ③ **若是仓库内模板**：就地改 `/sse`→`/mcp` 且补 `"type":"streamableHttp"`（备份 + JSON 校验）→ `git -C <该仓库> add <file> && git commit`（**本地提交，不 push 内网远端**）→ 打印 commit hash/stat → ④ 若 39 未把**运行时**两处改成 `/mcp`，本块补齐（备份 + JSON 校验）→ ⑤ 复核 MCP `:8090`（`/health`、`/mcp`）/ recall `:9006`（`/health`）/ 4 端口 → ⑥ 快照。**不起 r2**。
+
+```bash
+# ═══ RUN_ID 40 — ZhuLong：定位客户端配置来源；若在仓库则提交 /mcp 改动 ═══
+echo "== RUN_ID 40 @ $(date '+%F %T') host=$(hostname) =="
+EDA=/nasdata/app.e0031982/code/eda_fastmcp
+FW=/nasdata/app.e0031982/code/EDA-Eval-Framework
+EVALDATA=/nasdata/app.e0031982/.cline_prof4_eval/data
+HOMECFG=$HOME/.cline/data/settings/cline_mcp_settings.json
+SHOST=10.129.32.75; PORTS="8650 8651 8652 8654"
+TS=$(date '+%Y%m%d_%H%M%S'); PY=$(command -v python3 || command -v python || true)
+
+echo; echo "=========== 0. 现状 ==========="
+echo "   EVAL_ALIVE=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)   监听: $(timeout 20 ss -lntp 2>/dev/null | grep -E ':(8090|9006|18890)' | cut -c1-110 | tr '\n' '|')"
+for f in "$HOMECFG" "$EVALDATA/settings/cline_mcp_settings.json"; do
+  echo "   [$f] -> $(timeout 20 grep -ohE '"(url|type)": *"[^"]+"' "$f" 2>/dev/null | head -4 | tr '\n' ' ')"
+done
+
+echo; echo "=========== 1. 找「客户端配置从哪来」（仓库内模板/生成逻辑）==========="
+echo "-- 两仓库里提到 cline_mcp_settings / mcpServers 的文件 --"
+timeout 40 grep -rln -e 'cline_mcp_settings' -e 'mcpServers' "$FW" "$EDA" --include='*.py' --include='*.sh' --include='*.json' --include='*.md' --include='*.j2' --include='*.tmpl' 2>/dev/null | grep -v '\.git/' | head -15 | cut -c1-165
+echo "-- 这些文件里出现 /sse 或 streamableHttp 的行 --"
+timeout 40 grep -rn -e '/sse' -e 'streamableHttp' -e 'streamable_http' "$FW" "$EDA" --include='*.py' --include='*.sh' --include='*.json' --include='*.md' 2>/dev/null | grep -v '\.git/' | head -15 | cut -c1-175
+echo "-- run_cline_script.sh 里与配置/hook/数据目录 部署相关的行 --"
+timeout 30 grep -nE 'cline_mcp_settings|mcp|hook|CLI_DATA_DIR|settings|mkdir|cp ' "$EDA/scripts/run_cline_script.sh" 2>/dev/null | head -18 | cut -c1-175
+echo "-- 可能的模板文件（名字含 mcp/settings 的 json）--"
+timeout 30 find "$FW" "$EDA" -maxdepth 4 -name '*mcp*settings*.json' -o -maxdepth 4 -name 'cline_mcp_settings.json' 2>/dev/null | grep -v '\.git/' | head -10 | cut -c1-165
+
+
+echo; echo "=========== 2. 仓库内客户端配置/模板：就地改 /sse→/mcp 并【本地提交】==========="
+CH=0
+for R in "$FW" "$EDA"; do
+  for f in $(timeout 40 grep -rl 'mcpServers' "$R" --include='*.json' 2>/dev/null | grep -v '\.git/' | head -6); do
+    if timeout 20 grep -q '/sse' "$f" 2>/dev/null; then
+      echo "-- 命中: $f"
+      timeout 20 grep -nE '"url"|"type"|/sse' "$f" | head -5 | cut -c1-170
+      timeout 30 cp -p "$f" "/tmp/tpl_$(basename "$f").$TS"
+      timeout 30 sed -i -E 's#(:[0-9]+)/sse#\1/mcp#g' "$f"
+      if [ -n "$PY" ] && ! timeout 20 "$PY" -c "import json,sys;json.load(open(sys.argv[1],encoding='utf-8'))" "$f" 2>/dev/null; then
+        echo "   ⚠️ JSON 校验失败 ⇒ 回滚"; timeout 30 cp -p "/tmp/tpl_$(basename "$f").$TS" "$f"; continue
+      fi
+      timeout 30 git -C "$R" add "$f" 2>&1 | head -2
+      timeout 30 git -C "$R" commit -m "eval client: MCP endpoint /sse -> /mcp (streamable-http) per new README; port stays 8090 per ops canon" 2>&1 | tail -2 | cut -c1-150
+      echo "   commit=$(timeout 30 git -C "$R" log -1 --format='%h | %an | %cd | %s' --date=format:'%m-%d %H:%M' | cut -c1-135)"
+      CH=$((CH+1))
+    fi
+  done
+done
+echo "   ▶ 仓库内模板改动数 = $CH  （0 = 客户端配置不在仓库；纯运行时文件）"
+
+echo; echo "=========== 3. 运行时两处配置复核/补齐（应是 /mcp）==========="
+for f in "$HOMECFG" "$EVALDATA/settings/cline_mcp_settings.json"; do
+  [ -f "$f" ] || { echo "   [$f] 不存在，跳过"; continue; }
+  if timeout 20 grep -q '/sse' "$f" 2>/dev/null; then
+    timeout 30 cp -p "$f" "$f.bak40.$TS"; timeout 30 sed -i -E 's#(:[0-9]+)/sse#\1/mcp#g' "$f"; echo "   [$f] 已改 /sse→/mcp（备份 .bak40.$TS）"
+  else
+    echo "   [$f] 已是 /mcp（无需改）"
+  fi
+  echo "      -> $(timeout 20 grep -ohE '"(url|type)": *"[^"]+"' "$f" | head -4 | tr '\n' ' ' | cut -c1-140)"
+done
+
+echo; echo "=========== 4. 服务复核：MCP :8090 / recall :9006 / 4 端口 ==========="
+echo "   监听: $(timeout 20 ss -lntp 2>/dev/null | grep -E ':(8090|9006|18890)' | cut -c1-110 | tr '\n' '|')"
+echo "   MCP /health=$(timeout 15 curl -s -m 8 -o /dev/null -w '%{http_code}' http://localhost:8090/health 2>/dev/null)  /mcp=$(timeout 15 curl -s -m 8 -o /dev/null -w '%{http_code}' http://localhost:8090/mcp 2>/dev/null)"
+echo "   recall 9006 /health=$(timeout 15 curl -s -m 8 -o /dev/null -w '%{http_code}' http://localhost:9006/health 2>/dev/null)  /recall=$(timeout 15 curl -s -m 10 -o /dev/null -w '%{http_code}' http://localhost:9006/recall 2>/dev/null)"
+OK=0
+for p in $PORTS; do
+  timeout 5 bash -c "echo > /dev/tcp/$SHOST/$p" 2>/dev/null && tcp=OK || tcp=CLOSED
+  body=$(timeout 25 curl -s -m 10 -X POST "http://$SHOST:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+  n=${#body}; if [ "$n" -gt 0 ]; then rc=OK; OK=$((OK+1)); else rc="FAIL(0byte)"; fi
+  echo "   port $p : TCP=$tcp run_code=$rc resp_len=$n"
+done
+echo "   ▶ 健康端口=$OK/4  EVAL_ALIVE=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)（**不起 r2**）"
+timeout 20 df -BG /home 2>/dev/null | tail -1 | cut -c1-110
+echo "== DONE — RUN_ID 40（定位客户端配置来源 + 模板可提交则已本地提交 + 运行时复核）=="
+```
+
+---
+
 ## RUN_ID 39 — 📖 按**新版 README** 启动 **recall API(9006)** + **MCP(8090)**；并把口径 **`8650-8654` + `9006`** 升为硬红线（`skip-worktree` 保护 `.env`）
 
 > **用户令（2026-10-11）**：「`eda_fastmcp` 使用了别人的默认端口，**不代表我们要跟随**。我们的评测改回 **`8650-8654` + `9006`，决不允许偏离**。」+「拉取后启动逻辑可能变化，**查看更新的 README**，基于新版 README 启动 **recall api（端口=9006）** 和 **mcp（端口=8090）**。」
@@ -33,7 +116,7 @@
 > - 证据：MCP 起后 `:8090` **要等十几秒才真正 LISTEN**（38 里 5s 查为 0、稍后已 LISTEN）⇒ 本块一律**轮询等待**。
 > **本块**：① canon 复核 → ② **偏离排查**（`config.yaml:29 url:…:8656/v1/run_code` 等硬编码是否被 eval 真正使用，只读报告）→ ③ **MCP 8090**（轮询等 LISTEN + `/health`/`/mcp` 验证 + **按新版 README 把两处 `cline_mcp_settings.json` 改成 `:8090/mcp` + `streamableHttp`**，备份+JSON 校验）→ ④ **recall 9006**（`PORT=9006` 起、轮询等 LISTEN、`/health`）→ ⑤ **硬化**（`update-index --skip-worktree .env` + canon 锁文件）→ ⑥ 4 端口 + 快照。**不起 r2**（等运维令）。
 
-```bash
+```text
 # ═══ RUN_ID 39 — ZhuLong：按新版 README 起 recall(9006)+MCP(8090) + 口径硬红线 ═══
 echo "== RUN_ID 39 @ $(date '+%F %T') host=$(hostname) =="
 EDA=/nasdata/app.e0031982/code/eda_fastmcp
