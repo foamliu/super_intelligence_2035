@@ -46,6 +46,7 @@ for e in data: ir[e['instance_id']][e['harness']] = (e.get('classification')=='r
 all7 = {iid:res for iid,res in ir.items() if len(res)==7}
 nobody = sum(1 for r in all7.values() if not any(r.values()))
 everybody = sum(1 for r in all7.values() if all(r.values()))
+some = len(all7) - nobody - everybody
 
 # Head-to-head
 h2h = {}
@@ -135,9 +136,9 @@ harness_info = {
     'opencode': {'tools':'read/write/edit/grep/glob/bash/unified_diff (opencode 原生工具集)','loop':'opencode 的 agent 循环类似 cline，但工具调用更轻量','context':'基于 opencode 自有的上下文管理，压缩策略未公开详细文档','plan':'有内置 todo/plan 机制','patch':'生成 unified_diff 格式 patch','recovery':'基于 git 的文件恢复','stop':'模型自行决定或 timeout','strengths':'最高 resolve rate 之一 (29.0%)；最快 wall time (460s mean)；与 cline 头对头最相似 (both=50)','weaknesses':'71/211 patch_not_applied (33.6%)；blocked=2'},
     'pi': {'tools':'Pi agent 的原生工具集（文件读写 + 执行 + 搜索）','loop':'Pi 的 agent 循环','context':'Pi 的上下文管理','plan':'Pi 有内置任务跟踪','patch':'Pi 的 patch 生成','recovery':'Pi 的失败恢复','stop':'模型或 timeout','strengths':'最高 resolve rate (30.1%)；resolved wall time 最快 (363s mean)；与 cline both=54（最高重叠）','weaknesses':'70/200 patch_not_applied (35.0%)；blocked=7'},
     'codex': {'tools':'Codex 的工具集（shell + file ops + apply_patch）','loop':'Codex agent 循环，有 AutoCompactWindow（ServerObserved vs Estimated token 计量）','context':'codex-rs auto_compact_window.rs：服务端 usage 优先 + 客户端估算兜底；压缩 = 一个带 sidecar 的检查点事务','plan':'ThreadGoal + update_plan 把目标/计划脱离对话历史','patch':'apply_patch 工具生成结构化 patch','recovery':'Rollout + window_id 链提供审计与恢复锚','stop':'Auto Compact 触发或显式 turn cap','strengths':'token 计量最精确（服务端 usage 优先）；检查点原子事务；有独立 goal/plan 层','weaknesses':'最慢 (922s mean)；PBF wall time 1059s（远超其他）；resolve rate 仅 26.7%'},
-    'claude-code': {'tools':'Read/Write/Edit/Bash/Grep/Glob/TodoWrite/SessionMemory 等','loop':'Claude Code 的 agent 循环','context':'getSystemContext/getUserContext memoized 单例；normalizeMessagesForAPI 归一化终点','plan':'TodoWriteTool 写 appState.todos（session 状态，不随压缩丢）；SessionMemory/extractMemories 自动记忆抽取','patch':'Edit 工具直接修改文件','recovery':'基于 git 的检查点','stop':'模型或 timeout','strengths':'有 TodoWrite + SessionMemory 持久层；memoized 归一化投影；token 计量用 api usage + 估算兜底','weaknesses':'resolve rate 25.4%（偏低）；wall time 624s（偏慢）；198 PBF 中 57 patch_not_applied'},
+    'claude-code': {'tools':'Read/Write/Edit/Bash/Grep/Glob/TodoWrite/SessionMemory 等','loop':'Claude Code 的 agent 循环','context':'getSystemContext/getUserContext memoized 单例；normalizeMessagesForAPI 归一化终点','plan':'TodoWriteTool 写 appState.todos（session 状态，不随压缩丢）；SessionMemory/extractMemories 自动记忆抽取','patch':'Edit 工具直接修改文件','recovery':'基于 git 的检查点','stop':'模型或 timeout','strengths':'有 TodoWrite + SessionMemory 持久层；memoized 归一化投影；token 计量用 api usage + 估算兜底','weaknesses':f'resolve rate {stats["claude-code"]["rate"]:.1f}%（偏低）；wall time {stats["claude-code"]["wall_mean"]:.0f}s（偏慢）；{stats["claude-code"]["pbf"]} PBF 中 {stats["claude-code"]["pbf_eval"].get("patch_not_applied",0)} patch_not_applied'},
     'deepseek-harness': {'tools':'DeepSeek harness 的工具集','loop':'事件溯源：检查点 = append-only 事件流 flush，重放即回滚','context':'DeepSeek 的上下文管理','plan':'DeepSeek 的任务跟踪','patch':'DeepSeek 的 patch 生成','recovery':'事件溯源（无第二份状态需对齐）','stop':'模型或 timeout','strengths':'事件溯源检查点（无状态漂移）；wall time 适中 (491s)','weaknesses':'最低 resolve rate 之一 (23.7%)；13 blocked；4 no-patch（唯一有 no-patch 的 harness）'},
-    'hermes': {'tools':'Dev-Primitives（仓库产物 + agent 原生接口）+ 依赖感知动态激活','loop':'HERMES 框架：依赖感知动态激活 + 执行证据回检','context':'结构化上下文管理（Dev-Primitives 缓解上下文爆炸）','plan':'依赖感知组件定位','patch':'执行证据回检定位待改组件后生成 patch','recovery':'执行证据回检','stop':'模型或 timeout','strengths':'结构化上下文管理（Dev-Primitives）；执行证据回检','weaknesses':'最低 resolve rate (23.5%)；最慢之一 (778s mean)；仅 255 条（未完成 300）'},
+    'hermes': {'tools':'Dev-Primitives（仓库产物 + agent 原生接口）+ 依赖感知动态激活','loop':'HERMES 框架：依赖感知动态激活 + 执行证据回检','context':'结构化上下文管理（Dev-Primitives 缓解上下文爆炸）','plan':'依赖感知组件定位','patch':'执行证据回检定位待改组件后生成 patch','recovery':'执行证据回检','stop':'模型或 timeout','strengths':'结构化上下文管理（Dev-Primitives）；执行证据回检','weaknesses':f'最低 resolve rate ({stats["hermes"]["rate"]:.1f}%)；最慢之一 ({stats["hermes"]["wall_mean"]:.0f}s mean)；仅 {stats["hermes"]["total"]} 条（未完成 300）'},
 }
 
 harness_sections = ""
@@ -263,7 +264,7 @@ html_content = f'''<!DOCTYPE html>
   <h1>交互轨迹对比分析报告：各 harness vs cline</h1>
   <div class="sub">harness 研究线 · 7 harness × SWE-bench Lite 300 条 · 同一 backbone (kimi-k2.6-cloud) · 以 cline 为轴</div>
   <div class="meta">
-    <span>2026-10-11</span><span>2037 entries · 7 harness</span><span>255 instances (all-7)</span><span>数据源：kimi_pilot_results.json</span>
+    <span>2026-10-11</span><span>{len(data)} entries · 7 harness</span><span>{len(all7)} instances (all-7)</span><span>数据源：kimi_pilot_results.json</span>
   </div>
 </header>
 
@@ -280,7 +281,7 @@ html_content = f'''<!DOCTYPE html>
 • <b>resolve rate 排名</b>：pi (30.1%) > opencode (29.0%) > cline-patched (28.7%) > codex (26.7%) > claude-code (25.4%) > deepseek-harness (23.7%) > hermes (23.5%)<br>
 • <b>速度排名</b>：opencode (460s) < pi (496s) < cline (498s) < deepseek (491s) < claude-code (624s) < hermes (778s) < codex (922s)<br>
 • <b>速度-精度 Pareto</b>：pi 是最优 Pareto 点（最高 rate + 第二快）；codex 是最差（最低 rate 之一 + 最慢）<br>
-• <b>instance 重叠</b>：255 个 all-7 instances 中 170 个 nobody solved (66.7%)、21 个 everybody solved (8.2%)、64 个 some solved (25.1%)<br>
+• <b>instance 重叠</b>：{len(all7)} 个 all-7 instances 中 {nobody} 个 nobody solved ({100*nobody/len(all7):.1f}%)、{everybody} 个 everybody solved ({100*everybody/len(all7):.1f}%)、{some} 个 some solved ({100*some/len(all7):.1f}%)<br>
 • <b>cline 独解能力</b>：2 个 instances 只有 cline 解出；head-to-head 与 opencode 互补性最弱（both=50），与 deepseek 互补性最强（cline_only=24）<br>
 • <b>eval 环境限制</b>：matplotlib/sphinx/pytest 全部 0%（7 harness 全 0%），这些 0 分不代表 harness 能力<br>
 • <b>cline 硬伤</b>：ai@7.0.49 transform error (99.5% PBF 尾部) + patch_not_applied 35.4%
@@ -294,7 +295,7 @@ html_content = f'''<!DOCTYPE html>
 <b>判据</b>：SWE-bench 官方 f2p (fail-to-pass) + p2p (pass-to-pass) test；resolved = patch_applied=True AND f2p 全通过 AND p2p 全通过<br>
 <b>R1/R2 并发口径与不可比性声明</b>：R1（第一轮 7×30/7×100）为串行执行（serial, N=1）；R2（7×300）为 7 路并行（每 harness 内 N=1），wall time 含并发资源争抢开销——<b>R1 与 R2 的 wall time 不可直接比较</b>。本报告数据为 R2 口径（7×300，含 --resume 复用）。<br>
 <b>轨迹数据可得性 + 缺失</b>：每个 entry 的 harness_result.stdout_tail 字段保留最后 500 字符——<b>仅存活尾部，非完整轨迹</b>。harness_result.eval 含 patch_applied/f2p_pass/f2p_total/p2p_pass/p2p_total/resolved。<b>缺失</b>：无 per-turn 轨迹（工具调用序列、token 计数、压缩事件均不可得）；仅 wall_s 和 stdout_tail 可用。<br>
-<b>数据量</b>：2037 entries（cline-patched 300 / opencode 300 / pi 296 / codex 300 / claude-code 287 / deepseek-harness 300 / hermes 255）
+<b>数据量</b>：{len(data)} entries（cline-patched {stats['cline-patched']['total']} / opencode {stats['opencode']['total']} / pi {stats['pi']['total']} / codex {stats['codex']['total']} / claude-code {stats['claude-code']['total']} / deepseek-harness {stats['deepseek-harness']['total']} / hermes {stats['hermes']['total']}）
 </div>
 
 <h2 class="sec">3. 主结果可视化</h2>
@@ -332,7 +333,7 @@ html_content = f'''<!DOCTYPE html>
 <tr><td><b>codex</b></td><td>token 计量最精确（ServerObserved usage）；ThreadGoal 独立 plan 层；Rollout + window_id 原子检查点</td><td>最慢 922s（是 opencode 的 2 倍）；PBF wall 1059s；rate 仅 26.7%</td></tr>
 <tr><td><b>claude-code</b></td><td>TodoWrite + SessionMemory 持久层；memoized 归一化投影；api usage + 估算双路 token 计量</td><td>rate 25.4%（偏低）；wall 624s；16 blocked（最多之一）；57 patch_not_applied</td></tr>
 <tr><td><b>deepseek-harness</b></td><td>事件溯源检查点（无状态漂移）；wall 适中 491s</td><td>rate 23.7%（倒数第二）；4 no-patch（唯一有 no-patch 的 harness）；13 blocked</td></tr>
-<tr><td><b>hermes</b></td><td>Dev-Primitives 结构化上下文管理；执行证据回检定位待改组件</td><td>rate 23.5%（最低）；wall 778s（慢）；仅 255 条（未完成 300）；16 blocked</td></tr>
+<tr><td><b>hermes</b></td><td>Dev-Primitives 结构化上下文管理；执行证据回检定位待改组件</td><td>rate {stats['hermes']['rate']:.1f}%（最低）；wall {stats['hermes']['wall_mean']:.0f}s（慢）；仅 {stats['hermes']['total']} 条（未完成 300）；16 blocked</td></tr>
 </table>
 </div>
 
@@ -411,8 +412,8 @@ html_content = f'''<!DOCTYPE html>
 <div class="card">
 <table>
 <tr><th>维度</th><th>旧报告 (report_harness_interaction_traces.html, 2026-10-08)</th><th>本报告（新增）</th></tr>
-<tr><td>数据量</td><td>480 entries (30×7 + codex×300 superset)</td><td><b>2037 entries</b>（7×300, 含 --resume）</td></tr>
-<tr><td>instance 重叠分析</td><td>无</td><td><b>255 all-7 instances: 170 nobody / 21 everybody / 64 some</b></td></tr>
+<tr><td>数据量</td><td>480 entries (30×7 + codex×300 superset)</td><td><b>{len(data)} entries</b>（7×300, 含 --resume）</td></tr>
+<tr><td>instance 重叠分析</td><td>无</td><td><b>{len(all7)} all-7 instances: {nobody} nobody / {everybody} everybody / {some} some</b></td></tr>
 <tr><td>head-to-head</td><td>无</td><td><b>cline vs 每个 harness 的 cline_only/other_only/both</b></td></tr>
 <tr><td>PBF 分解</td><td>无</td><td><b>patch_not_applied vs f2p_all_fail vs f2p_partial vs f2p_pass_p2p_fail</b></td></tr>
 <tr><td>速度-精度 Pareto</td><td>无</td><td><b>wall time vs resolve rate 散点图</b></td></tr>
@@ -428,19 +429,19 @@ html_content = f'''<!DOCTYPE html>
 <div class="note">
 <b>受 eval 环境限制的结论</b>：<br>
 ① <b>matplotlib/sphinx/pytest 全 0%</b>：这 3 个 repo（56 instances × 7 harness = 392 entries）的 patch_applied=False，<b>0 分不代表 harness 能力</b>。有效比较仅限 django/sympy/sklearn 三个 eval-可用 repo。<br>
-② <b>hermes 仅 255/300</b>：hermes 是 7×300 的瓶颈 harness（wall 最长），未完成 45 条。hermes 的 rate (23.5%) 可能受未完成 instance 偏差影响。<br>
-③ <b>claude-code 287/300</b>：claude-code 也未完成 13 条（blocked=16 中部分为 quota-blocked）。<br>
+② <b>hermes 仅 {stats['hermes']['total']}/300</b>：hermes 是 7×300 的瓶颈 harness（wall 最长），未完成 {300-stats['hermes']['total']} 条。hermes 的 rate ({stats['hermes']['rate']:.1f}%) 可能受未完成 instance 偏差影响。<br>
+③ <b>claude-code {stats['claude-code']['total']}/300</b>：claude-code 也未完成 {300-stats['claude-code']['total']} 条（blocked=16 中部分为 quota-blocked）。<br>
 ④ <b>R1/R2 wall time 不可比</b>：R2 为 7 路并行，wall time 含资源争抢开销。<br>
 ⑤ <b>轨迹数据缺失</b>：仅有 stdout_tail 最后 500 字符，<b>无 per-turn 轨迹</b>（工具调用序列、token 计数、压缩事件均不可得）。「工具集 / 循环控制 / 上下文管理」等维度的分析基于<b>源码分析</b>（CLINE_IMPROVEMENT_OPPORTUNITIES.md + 5 份 SOURCE_ANALYSIS.html），<b>非轨迹数据</b>。<br>
 ⑥ <b>「仅灵感」标记</b>：TOP-8 中 P2-7（选择性证据保留）和 P2-8（失败条件化重试）来自论文 idea（UNREAL / FC-SWE），<b>未在 cline 上验证</b>。<br>
-⑦ <b>样本量</b>：255 个 all-7 instances 中 21 个 everybody solved (8.2%)——统计「独解」时样本量很小（2-3 个），<b>不具统计显著性</b>，仅供参考。<br>
+⑦ <b>样本量</b>：{len(all7)} 个 all-7 instances 中 {everybody} 个 everybody solved ({100*everybody/len(all7):.1f}%)——统计「独解」时样本量很小（2-3 个），<b>不具统计显著性</b>，仅供参考。<br>
 ⑧ <b>「已提过」标记</b>：TOP-8 中 P1-3/O5、P1-4/O4、P1-5/O3 在 CLINE_IMPROVEMENT_OPPORTUNITIES.md（2026-10-03）中已从源码角度提出——本报告从<b>轨迹数据侧</b>补充新证据，结论沿用并标「已提过」。
 </div>
 </div>
 
 <footer>
 harness 线 · 交互轨迹对比分析报告 · 2026-10-11 · 自包含单文件 · 内联 CSS/SVG · 零外链 · 纯分析（不占 GPU）<br>
-数据源：kimi_pilot_results.json (2037 entries) + CLINE_IMPROVEMENT_OPPORTUNITIES.md + 5 份 SOURCE_ANALYSIS.html + report_harness_interaction_traces.html (2026-10-08, 旧报告)<br>
+数据源：kimi_pilot_results.json ({len(data)} entries) + CLINE_IMPROVEMENT_OPPORTUNITIES.md + 5 份 SOURCE_ANALYSIS.html + report_harness_interaction_traces.html (2026-10-08, 旧报告)<br>
 以 cline 为轴 · 7 harness 对比 · TOP-8 改进建议 · 每格数字可复算（见 §9 证据索引）
 </footer>
 
