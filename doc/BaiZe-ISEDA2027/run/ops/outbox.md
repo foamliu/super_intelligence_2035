@@ -9302,3 +9302,122 @@ echo "=== DONE 88 ==="
 ```
 
 ```
+
+---
+
+## RUN_ID 89 · 2026-10-11 13:43:29 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 89 · 自证 + 精简 /home 体检 · $(date '+%F %T') · host=$(hostname) ==="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+[ -d "$R" ] || R="$PWD"
+O="$R/doc/BaiZe-ISEDA2027/run/ops"
+echo "--- A) sanity（证明本块确实执行且被抓取） ---"
+echo "SANITY-OK $(date '+%F %T') host=$(hostname) pid=$$"
+echo "   repo=$R  cwd=$PWD  .last_run_id=$(cat "$O/.last_run_id" 2>/dev/null)  hostname=$(hostname)"
+echo "--- B) ops_relay.sh 定位 + 关键逻辑 ---"
+RS=$(timeout 20 find /home/app.e0031982 -maxdepth 3 -name 'ops_relay.sh' 2>/dev/null | head -1)
+echo "   RS=${RS:-<未找到>}"
+if [ -n "${RS:-}" ]; then
+  wc -l "$RS" | cut -c1-80
+  echo "   -- 危险/过滤/超时/输出捕获相关行 --"
+  grep -nE 'danger|DANGER|forbid|Forbid|timeout|TIMEOUT|head -c|tail -c|20000|exit' "$RS" 2>/dev/null | head -25 | cut -c1-160
+  echo "   -- inbox_cmd_block 函数 --"
+  grep -n -A12 'inbox_cmd_block' "$RS" 2>/dev/null | head -22 | cut -c1-160
+fi
+echo "--- C) relay 日志（若有） ---"
+ls -lt /tmp/ops_relay* /tmp/*relay*.log 2>/dev/null | head -6 | cut -c1-160
+for L in $(ls -t /tmp/ops_relay*.log 2>/dev/null | head -1); do echo "   log=$L"; tail -40 "$L" 2>/dev/null | cut -c1-160; done
+echo "--- D) 【精简 /home 体检】 ---"
+U=/home/app.e0031982
+df -hT -x nfs -x nfs4 2>&1 | head -10 | cut -c1-140
+df -BG /home 2>&1 | cut -c1-120
+df -i /home 2>&1 | cut -c1-120
+echo "   --- D1 du 一层（120s 界） ---"
+timeout 120 du -hx --max-depth=1 "$U" 2>/dev/null | sort -rh | head -20 | cut -c1-140
+echo "   --- D2 定点 du（各 15s 界） ---"
+for p in .cache .cache/huggingface .cache/pip .cline .local .bun; do
+  printf '   %-24s' "$p"
+  timeout 15 du -shx "$U/$p" 2>/dev/null | awk '{print $1}' | cut -c1-24
+  echo
+done
+echo "   --- D3 大文件（>=1G，maxdepth 4，90s 界） ---"
+timeout 90 find "$U" -xdev -maxdepth 4 -type f -size +1G -printf '%s\t%TY-%Tm-%Td\t%p\n' 2>/dev/null | sort -rn | head -20 | awk '{printf "%7.2fG  %s  %s\n", $1/1073741824, $2, $3}' | cut -c1-140
+echo "   --- D4 /tmp + 现场进程 ---"
+timeout 20 du -shx /tmp 2>/dev/null | cut -c1-100
+pgrep -af 'ops_relay' 2>/dev/null | cut -c1-140 | head -5
+echo "=== DONE 89 ==="
+```
+
+**输出**
+```
+=== RUN_ID 89 · 自证 + 精简 /home 体检 · 2026-10-11 13:43:29 · host=whag0pgpuap29 ===
+--- A) sanity（证明本块确实执行且被抓取） ---
+SANITY-OK 2026-10-11 13:43:29 host=whag0pgpuap29 pid=1909130
+   repo=/nas_train/app.e0031982/code/super_intelligence_2035  cwd=/nas_train/app.e0031982/code/super_intelligence_2035  .last_run_id=88  hostname=whag0pgpuap29
+--- B) ops_relay.sh 定位 + 关键逻辑 ---
+   RS=<未找到>
+--- C) relay 日志（若有） ---
+-rw-r----- 1 app.e0031982 app.adm 5342 Oct 11 13:40 /tmp/baize_ops_relay.log
+--- D) 【精简 /home 体检】 ---
+Filesystem                                                                                   Type   Size  Used Avail Use% Mounted on
+tmpfs                                                                                        tmpfs  202G  394M  202G   1% /run
+/dev/mapper/vgroot-lv_root                                                                   ext4   384G   13G  352G   4% /
+/dev/disk/by-id/dm-uuid-LVM-7REZHedvpF4bkkJNhmRZBzI5uNORjyT0tXXhvbSyDpfPi1ITi32wKNaWxz2MpChC ext4    98G   25G   69G  27% /usr
+tmpfs                                                                                        tmpfs 1008G   16G  993G   2% /dev/shm
+tmpfs                                                                                        tmpfs  5.0M     0  5.0M   0% /run/lock
+/dev/sdb2                                                                                    ext4   2.0G  346M  1.5G  19% /boot
+/dev/sdb1                                                                                    vfat   1.1G  6.1M  1.1G   1% /boot/efi
+/dev/mapper/vgroot-lv_home                                                                   ext4   196G   83G  104G  45% /home
+/dev/mapper/vgroot-lv_tmp                                                                    ext4    98G   38G   56G  41% /tmp
+Filesystem                 1G-blocks  Used Available Use% Mounted on
+/dev/mapper/vgroot-lv_home      196G   83G      104G  45% /home
+Filesystem                   Inodes  IUsed    IFree IUse% Mounted on
+/dev/mapper/vgroot-lv_home 13107200 543642 12563558    5% /home
+   --- D1 du 一层（120s 界） ---
+47G	/home/app.e0031982
+22G	/home/app.e0031982/.local
+12G	/home/app.e0031982/.cache
+7.1G	/home/app.e0031982/.cline
+1.8G	/home/app.e0031982/.npm-global
+725M	/home/app.e0031982/.vscode-server
+646M	/home/app.e0031982/.triton
+606M	/home/app.e0031982/.npm
+601M	/home/app.e0031982/.hermes
+593M	/home/app.e0031982/.rustup
+365M	/home/app.e0031982/.bun
+113M	/home/app.e0031982/.codex
+109M	/home/app.e0031982/.claude
+108M	/home/app.e0031982/.config
+66M	/home/app.e0031982/.pi
+53M	/home/app.e0031982/chip-mllm
+21M	/home/app.e0031982/.cargo
+11M	/home/app.e0031982/.pyxbld
+5.3M	/home/app.e0031982/.texlive2021
+1.2M	/home/app.e0031982/.dsh
+   --- D2 定点 du（各 15s 界） ---
+   .cache                  12G
+
+   .cache/huggingface      0
+
+   .cache/pip              11G
+
+   .cline                  7.1G
+
+   .local                  22G
+
+   .bun                    365M
+
+   --- D3 大文件（>=1G，maxdepth 4，90s 界） ---
+  17.23G  2026-10-11  /home/app.e0031982/.local/share/opencode/opencode.db
+   2.60G  2026-10-11  /home/app.e0031982/.cline/data/logs/cline.log
+   1.62G  2026-10-11  /home/app.e0031982/.cline/data/logs/hub-daemon.log
+   --- D4 /tmp + 现场进程 ---
+38G	/tmp
+275875 tail -f /tmp/baize_ops_relay.log
+1909122 bash ops_relay.sh
+2489749 bash ops_relay.sh
+=== DONE 89 ===
+```
