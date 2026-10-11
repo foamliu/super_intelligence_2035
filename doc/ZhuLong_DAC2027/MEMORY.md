@@ -51,7 +51,7 @@ WAITING: 0
 |:--|:--|:--|:--|
 | **合并消融线（新 · 正式）** | `run/zhulong_loop.sh` · `run/ZHULONG_TASK.md` · `run/MEMORY_ZHULONG.md` | 🟢 **在跑**（36.15 · loop PID `303182` · proxy✅；MCP `:8090` PID `1092071`） | 🆕 **2026-10-11 刷新**：`STAGE=C1` · `CONFIG=full`(锚点) · `ROUND=2` · `PHASE=blocked` · `WAITING=1`；进度 **36/75 轮**（B 4/4；C1 三臂 5/5：`pure_llm` 10.5±1.9 / `rag` 71.8±2.5 / `wo_retrieval` 81.0±4.5；**锚点 `C1.full` 仅 `r1=88.0%` 有效**）。**10-11 事件**：`(八)` 的 4 新端口 `8663/8666/8667/8670` 再次全挂死（0 字节/超时；`8670` 触 license 断路器 83 consecutive）→ `r2_new`（batch `2026_1010_234408`）code-gen 146/158/2 fail、**eval 未跑 = 无 official Pass@1** → **❌作废**。**用户裁定 → `(九)`+ops `RUN_ID 32`**：换回**旧 4 端口 `8650/8651/8652/8654`**（`(六)` 实测 3/3）+ `RAG_RECALL_URL`→**`9006`**（`9012` 已死）+ 删 hook `PreToolUse` + `.env` stash + 重启 `eda_fastmcp` + **4/4 健康才起 r2–r5**（log `/tmp/ABL_full_r2_8650set.log`）。**用户二段令「昨晚改动全部回退、无亮点」⇒ `timeout:180`（`(八)`③ 两处 `cline_mcp_settings.json`）已随 RUN_ID 32「3.6 步」回退**（427→10 不作保留理由）。详见 `daily-memories/2026-10-11.md`。 |
 | 旧 legacy 线（S1 保真度 / 组件 / S2 1-shot 探路） | `MEMORY_s1_full.md` · `MEMORY_component_full.md` · `MEMORY_s2_1shot.md` | 只读历史 | ⬜ 均已由合并线接管或作废。**旧 5-run 可复用**：`omega_low` 82.8±1.0 / `readback_binary` 66.2±16.1 / `readback_none` 73.3±2.2；1-shot 探路：`k10` 75.3 / `k3` 69.0 / `k1` 60.8 / `lagged` 84.2（S2）。⚠️ 其 loop 存活存疑（见 §4「接管 legacy 组件线」）。**三行原文已归档** → `daily-memories/2026-10-11.md`。 |
-| **ops 中继** | `run/zhulong_ops_relay.sh` · `run/ops/` | 🟢 **在跑** | 单实例（第二条是子进程）；`.last_run_id`=**31**（RUN_ID 29/30/31 全 `exit=0`）；**RUN_ID 32 已于 2026-10-11 上午下发**（停评测/删 hook/`.env` stash/换端口集 `8650-8654`+RAG `9006`/重启 MCP/4 端口实测/**4/4 健康才起 r2**）；**同日已就地修订本块（不新增 RUN_ID）：加「3.6 步」回退两处 `cline_mcp_settings.json` 的 `timeout:180`**（before/after 快照；`bash -n`=0、中继 guard 7 条正则 0 命中、python 回退逻辑本地 fixture 真跑通过）。⚠️ **推送后 ~40min 无回写、`.last_run_id` 仍 31 ⇒ 判「中继疑似失联」** ⇒ `(九)`⓪ 已授权 agent 代执行 + 重启中继。结果见 `run/ops/outbox.md` 末尾。⚠️ 历史观察：outbox 里 RUN_ID 30/31 各出现**重复条目**（疑似两实例或 `.last_run_id` pull 竞态）⇒ 下发的块必须**幂等**（RUN_ID 32 已按幂等设计：重复执行不会二次起 eval）。 |
+| **ops 中继** | `run/zhulong_ops_relay.sh` · `run/ops/` | 🟢 **在跑（10-11 08:07:34 重启后）** | `.last_run_id`=**32**（**RUN_ID 32 于 10-11 08:07:38 执行完，exit=0**：停评测 / 删 hook / `.env` stash + 换 `8650-8654` + RAG `9006` / **回退 `timeout:180`（removed=1）**；但 `start.sh exit=1` + 4 端口 `run_code` 全 0 字节 ⇒ **0/4 健康 ⇒ 未起 r2**）。**RUN_ID 33（08:11 下发）落地待核**。⚠️ **「失联」真因 = GitHub/proxy 断（`push FAILED`）而非进程死**；救援 = **借 BaiZe 中继（跑在 2.29）经 `ssh -p 3333` 进 36.15 重启**（本次 BaiZe `RUN_ID 86`，先例 83/84/85）⇒ 复用细节见 §7 第 18/19 条 + `daily-memories/2026-10-11.md`。⚠️ outbox 里 RUN_ID 30/31 曾出现**重复条目** ⇒ 下发的块必须**幂等**（32 已按幂等设计）。 |
 
 > ✅ **历史口径已收敛**：起始点 = 从 `C1.wo_retrieval R2` 起（**已越过**）；「冻结令」已解除；「36.15 旧 agent 冲突」已由合并线接管处置。
 
@@ -71,31 +71,12 @@ WAITING: 0
 | **进程：zhulong_loop** | ✅ **在跑**（PID `1069304`，ppid=1，etimes≈97min）——但**在跑的进程是旧版**（cline 带 `-b`）；**磁盘上的脚本已是新版**（第 112 行 `-P openai-compatible`，无 `-b`）→ **只需重启即修复** | 🔴 **静默失效**（RUN_ID 2 修正） |
 | **进程：zhulong_ops_relay** | ✅ **单实例**：真 relay `1071337`（ppid=1）；另一 PID `1245242`（ppid=1071337、etimes=0）= 它 fork 的**子进程** → **不是副本**（与 BaiZe §3.5 结论一致） | ✅ 正常 |
 | **`.env` 当前臂** | `EDA_OMEGA_FIDELITY=high` · `EDA_RUNCODE_READBACK=full` · `EDA_PHI_BUDGET=0` · `EDA_PHI_LAGGED=0` · **`EDA_MCP_TOOLS_DISABLED` 含 `get_api_details,search_apis,search_api…`（检索关）** | 🔴 反映**上一个臂 = `wo_retrieval`（检索 OFF + run_code ON）**，`.env` 已被改（git ` M .env`） |
-| **端口** | ✅ 任务书口径正确：`ss` 实测监听 `8653/8664/8665/8668/8669/18890/9006`；`.env` 里 `PROXY_PORTS=8650-8654` 是**陈旧行**（未监听、未被使用） | ✅ 以 8664/8665/8653/8669 为准 |
+| **端口** | 本次摸底时监听的是 `8653/8664/8665/8668/8669/18890/9006` | ⚠️ **已作废**：现行 = `PROXY_PORTS=8650,8651,8652,8654`（见 §6） |
 | **机器负载 / `/home` 大头** | `/home` 下**多个其他用户**在跑 `eda_platform` / `eda_fastmcp` / sandbox bootstrap；**`/home` 大头是别的用户**（`app.e0023936` **71G** · `app.e0025768` 41G · `vendor.ai.ruide01` 24G · `app.t0002147/e0041392/e0030544` 各 16G …；**我们自己 `app.e0031982` <7.2G、不在 top-15**） | ⚠️ 高共享；**`/home` 满主因非本用户** → 自己可清空间有限 |
 
-**🔴 关键结论 —— zhulong_loop 静默失效（与 BaiZe 的 `Forbidden+exit0` 同类）**：
-
-```
-[loop] 2026-10-04 16:53:19 wake up, invoking cline ...
-error: error: unknown option '-b'
-[loop] 2026-10-04 16:53:20 cline returned (exit 0), checking git sync ...
-[loop] 2026-10-04 16:53:20 WAITING=0 (no blocker) → sleep 60s
-```
-
-- 36.15 上**正在跑的 `zhulong_loop.sh` 是旧版**，cline 调用里带**非法的 `-b`** → **cline 根本没运行**（`unknown option '-b'` 后直接 `exit 0`）→ **agent 从未被唤醒、任务书零推进**，却被 loop 当成成功。**当前"已启动"实为"空转"。**
-- 仓库版本早已修复（`c3d52e9` 删 `-b`、`81d6869` 改 `-P openai-compatible`）→ **需在 36.15 `git pull` 后重启 loop**（bash 增量读脚本，改运行中的脚本无效）。
-- 另：`MEMORY_ZHULONG.md` 顶部 `WAITING: 0`（loop 读这行）与状态表 `WAITING=1` 不一致 → loop 按"无阻塞"每 **60s** 空转（应 `1` → 30min）。**两处都要修。**
-
-> 处置建议（待拍板）：**① 评估 `/home`（🔴 大头是别的用户，自己可清空间有限）→ ② 定起始点（R1 起 / 延续 R3）→ ③ 重启 `zhulong_loop.sh`（磁盘已是新版）→ ④ 开跑。**
-
-**✅ RUN_ID 2 修正（2026-10-04 16:57，`outbox.md` RUN_ID 2）**：
-- loop **确实在跑**（PID `1069304`/ppid=1）；**磁盘脚本已是新版**（112 行 `-P openai-compatible`，无 `-b`）→ **重启即修复**（证明运行进程没吃到新脚本）。
-- relay **不是副本**（`1245242` 是 `1071337` fork 的子进程，etimes=0）。
-- `run_code` = `tools/run_code.py`（+ `exec_code.py`）→ **存在**（探针误报）。
-- 端口以 **8664/8665/8653/8669** 为准（`.env` 的 8650-8654 未监听 = 陈旧行）。
-- loop 日志：**`unknown option '-b'` 计数 69** · `Forbidden` 0 · **16:57 仍报错**。
-- **唯一硬阻塞 = `/home` 99%（6G）**，且**大头是别的用户** → 见 §4 待拍板。
+- **教训（RUN_ID 1 抓到，RUN_ID 2 复核）**：36.15 上**运行中的 loop 是旧版**（cline 调用带非法 `-b` → `error: unknown option '-b'` 后直接 `exit 0`）⇒ **cline 从未运行、agent 零唤醒、任务书零推进**，却被 loop 当成成功；修法 = **`git pull` + 重启 loop**（bash 增量读，改运行中的脚本无效）。另：`WAITING` 顶部行与状态表不一致 → loop 按"无阻塞"每 60s 空转（应 30min）。→ 详见 §7 第 10/13 条。
+- RUN_ID 2 复核结论：loop **确实在跑**、**磁盘脚本已是新版 ⇒ 重启即修复**；relay **非副本**（子 PID）；`run_code` = `tools/run_code.py`（探针误报）；日志 `unknown option '-b'` 计数 69 · `Forbidden` 0。
+- ⚠️ 本次摸底表里的**端口口径（8664/8665/8653/8669）与 `/home` 数字均已作废** —— 现行口径见 §6 与 §3 表格。
 
 
 ---
@@ -114,7 +95,7 @@ error: error: unknown option '-b'
 - [x] ⚠️ **接管 legacy 组件线**：数据已由合并线接管（`pure_llm` 复用 / `rag` 重跑 / `wo_retrieval` 复用 r1）。**遗留存疑**：用户称 10/4 已关停，但 agent 侧 10-09 `pgrep` 仍报组件 loop `2455466` alive → **待核实**（若在跑，确认 non-mid-eval 以免抢 infra）。
 - [x] ✅ **Phase B 模型 key**：已全部验证有效（Phase B 4/4 完成）。
 - [x] ✅ **RAG recall 端口已修（2026-10-11 用户令）**：ops `RUN_ID 32` 设 `.env` `RAG_RECALL_URL=http://localhost:9006/recall`（`9006` 健康 = `chroma_db_v20260522`；`9012` 已死）。⚠️ 仍须在报告**披露**（它同时是「BM25-only fallback」的既存降级条件）。
-- [ ] ⏳ **`"timeout": 180` 回退（已随 RUN_ID 32「3.6 步」下发，待执行）** —— 两处 `cline_mcp_settings.json`（`~/.cline/data/settings/` + `~/.cline_prof4_eval/data/settings/`）。**用户 10-11 二段令：「昨晚的改动都是垃圾，全部回退，没有任何亮点」** ⇒ **推翻「保留」判断**（427→10 不作理由）：块内 python **精确删 `timeout==180` 键**（其余 timeout 保留）+ 备份 `/tmp/cline_mcp_settings.*.bak.*` + before/after 快照。执行后回填。**须在报告披露。**
+- [ ] ⏳ **`"timeout": 180` 回退 = 已执行（10-11 08:07:38，RUN_ID 32）** —— `removed timeout=180 keys = 1 ['/mcpServers/pyAether_MCP_server/timeout=180']`、`JSON 校验=OK`、`AFTER ✅ 已无任何 timeout 键`；`~/.cline_prof4_eval/` 目录**已不存在** ⇒ 只有 `~/.cline/data/settings/` 一处需回退（备份 `/tmp/cline_mcp_settings.*.bak.*`）。用户 10-11 令：「昨晚的改动都是垃圾，全部回退，没有任何亮点」。
 - [ ] **`/home` 100% 工单（用户可见 infra 风险）**：394G / **3.4G 可用**（共享 FS、69 用户；我方只占 <7.2G，`~/.cline`/`.cache`/`.local`/`~/eda_code_eval` 均 →`/nasdata`）⇒ **非我方所能修**。不阻断本轮，但**起 r3 前复检 ≥8G**，不足则不启、回报。
 - [ ] **`tab:omega` 的 (H)/(H+E)/(L)**：锚点复用规则下 (H)/(F) 由 `C1.full` 复用；`(H+E)` 已定**不做**；`(L)` 由 `omega_low` 提供——确认无遗漏。
 - [ ] **RQ3（SKILL / Tcl 切片）** 是否纳入本轮（依赖最重，任务书列为最后）。
@@ -142,8 +123,8 @@ error: error: unknown option '-b'
 - **路径（两台服务器独立挂载）**：36.15（最终目标）前缀 `/nasdata/`，`BASE_DIR=/nasdata/app.e0031982/code/eda_fastmcp`；2.12（开发机）前缀 `/nas_train/`。旧 task book 里 `/nasdata/` 路径在 36.15 上**仍有效**。
 - **repo**：`git@github.com:foamliu/super_intelligence_2035.git`，分支 `main`；仓库根在共享工作副本。
 - **编排模型** = `glm-5.2`（`deepseek-v4-pro-fp4` 额度已耗尽，故换）；key 见 `run/zhulong_loop.sh`（**不在本文件重复明文**）。
-- **四 shard 端口**：`8664 / 8665 / 8653 / 8669`（⚠️ 但 36.15 `.env` 实际写的是 `PROXY_PORTS=8650,8651,8652,8654` —— **待核**）。
-- **36.15 = `hfeg0tedaap02`**（uid `app.e0031982`）；**`/home` 是独立 LV、极易满**（2026-10-04 实测 **99% / 6G 可用**）→ **开跑前必查 `/home`**。
+- **四 shard 端口 = `8650/8651/8652/8654`**（10-11 RUN_ID 32 实测写回；旧 `8664/8665/8653/8669` 与 `8663/8666/8667/8670` 均**作废**）。
+- **36.15 = `hfeg0tedaap02`**（uid `app.e0031982`，其 repo 在 `/nasdata/`）；**`/home` 独立 LV、极易满**（10-11 实测 **100% / 4G**；大头是别的用户）→ **开跑前必查**。
 - **锚点复用（跑一次多处引用，禁止重跑）**：`C1.full ×5` = `tab:main-ablation`(full) + `tab:omega`(H) + `tab:ablation-harness`(F) + `tab:phi-bound`(unbounded) + `tab:llm-comparison`(主基座)。
 - **不做**：`wo_sandbox` / `wo_selfexpl`（main-ablation 两行暂缓）· `(H+E)` 档 · `phi_unbounded`（≡ full）· 主基座模型消融臂（≡ full）。
 
@@ -168,9 +149,13 @@ error: error: unknown option '-b'
 
 15. **🔴 cline `error: Forbidden` = `openAiBaseUrl` 与模型不匹配**：2026-10-04 RUN_ID 7/8 —— 36.15 的 cline `globalState.json` 里 `openAiBaseUrl=http://agi-gateway.cxmt.com/v1`，而 **glm-5.2 必须用 `/cloud/v1`**（`/v1` → `Forbidden`）。且 loop 只传 `-k/-P`、**不提供 base URL**，必须靠 cline 配置（`cline auth -b ...`，或 BaiZe 那种隔离 `--data-dir`）。**修法**：`cline auth -p openai -k <key> -b http://agi-gateway.cxmt.com/cloud/v1 -m glm-5.2` → 重启 loop。**对照** `baize_data_loop.sh` §46（flash@/v1=200 但 @/cloud/v1=403）。
 
-16. **🔴 防作弊 hook 会误伤编排 agent（`~/.cline` 配置目录污染）**：评测对象是 cline；评测前脚本把 **PreToolUse hook 拷进 `~/.cline/hooks`**（评测结束删除），用于**禁止评测对象调用 `run_commands`**。若启动任务时**未指定独立 `--data-dir`**，则**评测对象 cline 与编排 agent（zhulong loop 的 cline）共用 `~/.cline`** → 编排 agent 在整轮评测（**3–4h**）内也被同一 hook 拦 `run_commands`（表现 = `ACCESS RESTRICTED`）。编排 loop 每 30min 唤醒 → 一轮评测内会连续被拦 **6–8 次**，**这是当前设计的正常现象，不是故障、也不是"沙箱"**。**根治**：给**编排 agent** 单独的 `--data-dir`（照 BaiZe `baize_data_loop.sh` 的隔离 `DATA_DIR` 做法），或在**评测时**给评测对象指定独立配置目录 —— 使两者 hooks/配置互不可见。**接管动作应包含此项。**（**RUN_ID 15 实测**：hook 目录 = `~/.cline/hooks`，与 `~/.cline/data` **平级**——不在 data 下；当前为**空**、mtime 14:39 → 已随 14:40 评测结束移除 → **此刻无评测在跑**；hook 源 = `eda_fastmcp/scripts/cline_hooks/`；`run_cline_script.sh` 未显式引用 hook/`--data-dir`；**尚无任何隔离配置目录**。⚠️ 另记：RUN_ID 8 的 `cline auth` 改的是**共享 `~/.cline`** → 对**其它共用该目录的线**（legacy 组件 loop）有连带影响——正是「共享配置目录」之害。）
+16. **🔴 防作弊 hook 会误伤编排 agent（`~/.cline` 配置目录污染）**：评测对象是 cline；评测前脚本把 **PreToolUse hook 拷进 `~/.cline/hooks`**（评测结束删除），用于**禁止评测对象调用 `run_commands`**。若启动任务时**未指定独立 `--data-dir`**，则**评测对象 cline 与编排 agent（zhulong loop 的 cline）共用 `~/.cline`** → 编排 agent 在整轮评测（**3–4h**）内也被同一 hook 拦 `run_commands`（表现 = `ACCESS RESTRICTED`）。编排 loop 每 30min 唤醒 → 一轮评测内会连续被拦 **6–8 次**，**这是当前设计的正常现象，不是故障、也不是"沙箱"**。**根治**：给**编排 agent** 单独的 `--data-dir`（照 BaiZe `baize_data_loop.sh` 的隔离 `DATA_DIR` 做法），或在**评测时**给评测对象指定独立配置目录 —— 使两者 hooks/配置互不可见。**接管动作应包含此项。**（hook 目录 = `~/.cline/hooks`（与 `~/.cline/data` 平级）；hook 源 = `eda_fastmcp/scripts/cline_hooks/`；⚠️ 该目录被多线共用 → `cline auth` 会**连带影响别的线**。）
 
 17. **🔴 relay 块内禁止 `git pull`/`git fetch`**（2026-10-04 RUN_ID 18 教训）：中继主循环的 `git_sync()` 已负责 `fetch + pull --rebase`；块内**再放 `git pull`** → 其网络子进程继承 stdout 管道，`timeout` 只杀 leader → 中继读不到 EOF、`.last_run_id` 停摆（**与 §7-14 同型**）。**接管/重启类块只做幂等动作**（`pkill` / `setsid`），**不要碰 git**。
+
+18. **🔴 中继「失联」先查日志，别等也别急着判死**（2026-10-11 实测，卡 **11h**）：远端 `.last_run_id`/`outbox` 长期不动**≠ 进程死**，常见真因 = **GitHub/proxy 断 → `git_sync` 失败 + `push FAILED (will retry next cycle)`**（证据在 `/tmp/zhulong_ops_relay.log` 尾部：日志停在最后一条 `RUN_ID=31 executed`）。**修法（本次已验证）**：`pkill -f 'zhulong_ops_relay[.]sh'` → `setsid` 重启并**显式注入 `PATH=$HOME/.local/node-20/bin:$HOME/.bun/bin:$PATH` + `https_proxy=http://172.19.92.23:13128`** ⇒ **30–60s 内自己 fetch 并补跑积压 RUN_ID**（本次 08:07:34 重启 → **08:07:38 执行完 RUN_ID 32，exit=0**）。
+
+19. **🟡 跨通道并发下发要错开 ≥30s；跨机救援桥 = BaiZe 中继（跑在 2.29）**：① 各中继的 `git_publish` 会**互相撞车** → push 失败后**记录只留本地、要等它下一次 `run_once` 才补推**（本次 BaiZe `RUN_ID 86` 的记录就是这样，远端 `.last_run_id` 一度停在 `85` 而本地已是 `86`，靠补发的只读 `RUN_ID 87` 才 flush 上来）⇒ 见「无回写」**先补发一个只读 RUN_ID 冲记录**，别马上判定中继死。② **36.15(A) ✗ 2.12(B) 不可直连**；但 **BaiZe 的 ops 中继跑在 2.29（`whag0pgpuap29`）**，块内 `timeout 240 ssh -p 3333 -o BatchMode=yes -o StrictHostKeyChecking=no app.e0031982@localhost 'bash -s' <<'EOS' … EOS 2>&1 | cut -c1-190` 即**在 36.15（`hfeg0tedaap02`）执行**（隧道② = 2.29 上 `-R 3333 → 36.15:22`）⇒ **ZhuLong 中继死了就用这条桥救**（先例 RUN_ID 83/84/85、10-11 的 86）。③ 桥块内**不写 `git pull/fetch`**（§7-17）、每条命令带 `timeout`、输出 `cut`。
 
 ---
 
@@ -185,9 +170,7 @@ error: error: unknown option '-b'
 
 ## 9. 流水（倒序）
 
-- **2026-10-09（用户确认：`/home` 不再阻塞 → 收敛 §3/§4）** —— 用户通知「**`/home` 已不再阻塞**」。据此把 §4 的 `/home` 硬阻塞项**结项**；并顺手把 §3「在途任务」/§4 待拍板 中 10-04 的过期态（「合并线未启动」「起始点待定」「36.15 旧 agent 冲突」「接管 legacy」「Phase B key 待核」等）一并收敛到**当前实况**（进度 = Phase B 4/4 ＋ C1 前三臂 5/5，卡在锚点 `C1.full`）。
-  - **落地**：`MEMORY.md` §3 表格重写（截至 2026-10-09 实况）、§4 待拍板收敛（`/home` ✅ 解除；遗留 **legacy loop 存活存疑** 一项待核）、本文件 §9 记本条 + 当日 `daily-memories/2026-10-09.md` 追加。
-  - ⏭ 待推送。
+- **2026-10-09（用户确认：`/home` 不再阻塞 → 收敛 §3/§4）** —— 用户通知「**`/home` 已不再阻塞**」。据此把 §4 的 `/home` 硬阻塞项**结项**，并把 §3/§4 中 10-04 的过期态（「合并线未启动」「起始点待定」「36.15 旧 agent 冲突」「接管 legacy」「Phase B key 待核」）一并收敛到当时实况（Phase B 4/4 ＋ C1 前三臂 5/5，卡锚点 `C1.full`）。
 
 - **2026-10-09（运维经任务书下发：✅ 沙盒已修复·可重跑 C1.full r4）** —— 用户 2026-10-09 晚通知「沙盒已修复·可重跑 r4」。此前 r4（batch `b2026_1009_094504`）因沙盒故障 grading 异常慢（`run_eval.py` 跑满 2h35m+ 未出结果）已被运维经 ops RUN_ID 25/26 kill，判 ❌作废；agent 置 `PHASE=standby` 待命。
   - **落地**：在 `run/ZHULONG_TASK.md` 运维指令区**置顶**新增 `### 🆕 运维指令 · 2026-10-09（五）— ✅ 沙盒已修复，可重跑 C1.full r4【本次唤醒优先动作】`（置于常驻规程之后、(四) 之前），并把 (四) 标题标为「【已被(五)取代·历史】」。指令要点：① **三项前置复检**（pro-fp4 直连 200[新 key `e13f4f37` + `/cloud/v1`] / 沙盒端口 8650-8654@10.129.32.75 可达 / eval IDLE 无残留）**全过才开跑**；② 启动 C1.full r4（同臂 full 不切 `set_ablation`，**四 override 齐全**：`EVAL_FW_DIR` + `CLI_DATA_DIR=.cline_prof4_eval/data` + `PYTHON` + `https_proxy`），启动后核验 `/proc/<pid>/environ`；③ canary 确认反作弊 hook live；④ 更新 MEMORY `PHASE=running`；⑤ commit+push。

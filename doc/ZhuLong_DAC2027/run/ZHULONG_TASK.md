@@ -53,6 +53,12 @@
 - `grep -c '^## RUN_ID 32' run/ops/outbox.md` **≥1** ⇒ 已执行 → 走 ①（并按 ① 复核 r2 是否已起）。
 - **= 0** ⇒ **判中继失联**（**判据**：中继**最后一次成功执行是 10-10 20:59 的 RUN_ID 31**，此后无回写；⚠️ **不要**拿 `inbox.md` 的 mtime 计时 —— 运维会**原地修订** RUN_ID 32 块，修订**不算**重新计时）⇒ **你自己照 `run/ops/inbox.md` 里 RUN_ID 32 那个 bash 块执行**（244 行/幂等；原文即完整食谱：① 停评测——**只杀评测侧**，`pkill -f run_cline_script` 会误杀编排侧 cline；② 删 `~/.cline/hooks/PreToolUse`；③ `.env` 备份 + `git stash push -- .env`；④ 写 `PROXY_PORTS=8650,8651,8652,8654` + `SANDBOX_ENDPOINTS`（按 `.env`/HEAD 既有映射逐条核对，勿臆测 workdir）+ `RAG_RECALL_URL=http://localhost:9006/recall`；⑤ 重启 `eda_fastmcp`；⑥ 4 端口 `run_code` 实跑；⑦ **仅 4/4 健康才** 起 r2；⑧ **回退两处 `cline_mcp_settings.json` 的 `timeout:180`**）。**执行完**：把 `inbox.md` 的 `<!-- RUN_ID: 32 -->` 置 **33**、并把该 bash 块降级为 text 围栏（占位，防中继复活后重复执行）；并顺手重启中继：`pgrep -af zhulong_ops_relay.sh`（无 → `env PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH" https_proxy=http://172.19.92.23:13128 setsid bash doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &`）。结论写进 `MEMORY_ZHULONG.md`。
 
+**🔧 infra 速记（2026-10-11 实战；复用细节见 `MEMORY.md` §7 第 18/19 条）**
+- **中继/loop「失联」≠ 进程死**：远端 `.last_run_id`/`outbox` 长期不动，多因 **GitHub/proxy 断 → `push FAILED (will retry next cycle)`**（看 `/tmp/zhulong_ops_relay.log` 尾）。**修法**：`pkill -f 'zhulong_ops_relay[.]sh'` → `setsid bash <脚本>`，**显式注入 `PATH=$HOME/.local/node-20/bin:$HOME/.bun/bin:$PATH` + `https_proxy=http://172.19.92.23:13128`** ⇒ 30–60s 内自 fetch 并补跑积压 RUN_ID（10-11 **08:07:34 重启 → 08:07:38 跑完 RUN_ID 32**）；**loop 同法**（RUN_ID 33 已重拉）。
+- **跨机救援桥 = BaiZe 中继（跑在 2.29）**：其块内 `timeout 240 ssh -p 3333 -o BatchMode=yes app.e0031982@localhost 'bash -s' <<'EOS' … EOS 2>&1 | cut -c1-190` 即**在 36.15 执行**（**36.15 ✗ 2.12 不可直连**；桥先例 RUN_ID 83/84/85/86）；**跨通道下发要错开 ≥30s**（push 撞车 → 记录只留本地，要下一次 run 才补推）。
+
+**📌 2026-10-11 08:2x 实况**：中继**已救活并执行完 RUN_ID 32（exit=0）**，但 `start.sh exit=1` + 4 端口 `run_code` 全 0 字节 ⇒ **0/4 健康 ⇒ 未起 r2**（硬闸生效）；**RUN_ID 33（08:11 下发：诊断 MCP 失败原因 + 长超时实测 + 重启 loop）结果待读** ⇒ **先 `tail` outbox 的 32/33 结果再动作，别重复重启 MCP。**
+
 **① 若中继已执行 → 读 `outbox.md` 末尾 RUN_ID 32 的三件事**：(a) 4 端口实测结果；(b) `.env` 最终关键行（应 `PROXY_PORTS=8650,8651,8652,8654` + `RAG_RECALL_URL=http://localhost:9006/recall`）；(c) r2 是否已起（eval PID / log `/tmp/ABL_full_r2_8650set.log` / 四 override / **hook 是否被重新部署**）。
 
 **② 状态记账（先改状态头再干活）**：`CONFIG=full`(锚点) · `ROUND=2` · `.env` 臂配置不动；**`r2_new`（batch `2026_1010_234408`）判 ❌作废**（code-gen 146/158 但 **eval Steps 5–7.1 未跑 = 无 official Pass@1**；log/batch 留证，不并入成绩）；**`r1=88.0%` 保留**；**端口口径 = `8650/8651/8652/8654` @ `10.129.32.75`**。
@@ -62,46 +68,35 @@
 
 **④ 收割/推进（判据不变）**：`grep -E 'pass \(|PASS_RATE|评估结果汇总|timeout' /tmp/ABL_full_r2_8650set.log | tail -10` → **`timeout ≤ 10` 且 `Pass@1 ≥ 75%`** ⇒ r2 有效 ⇒ r3→r4→r5（同臂 `full` + **四 override**（见 §6 与旧 `(八)`⑥）+ log `/tmp/ABL_full_r3_8650set.log`…；**每轮开跑前 4 端口复检 + `df -BG /home` ≥8G**；不达标最多重跑 3 次 → 仍不达标 `WAITING=1` 回报）→ 5/5 `[88.0, r2–r5]` 算 mean±std → 回填 5 表锚点 → `PHASE=just_finished` → 进 `C2.phi_k10`。产出：各轮 `Pass@1 / timeout` + **「timeout × 端口」表** + hook/canary 复核结论。
 
-### 🆕 运维指令 · 2026-10-10（八）— ✅ 按 B′ 执行：保留 4 端口 + `cline_mcp_settings.json` `"timeout": 180` + 重跑 r2–r5【已被 `(九)` 取代 · 已归档】
-> ⎩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-11）。
+### （八）10-10 — 保留 4 端口 + `"timeout": 180` + 重跑 r2–r5【已被 (九) 取代·已归档】
 
-### 🆕 运维指令 · 2026-10-10（七）— ✅ 按 A 执行：剔除 8667 + 补入 8650–8654 + 调高 MCP timeout → 重跑 r2–r5【已被 (八) 取代·已归档】
-> ⎩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-11）。
+### （七）10-10 — 剔除 8667 + 补 8650–8654 + 调高 MCP timeout【已被 (八) 取代·已归档】
 
-### 🆕 运维指令 · 2026-10-10（六）— ⚖️ 若 9 端口均健康 → 先判别「端口数是否真因」→ 再配全 9 端口重跑 r2–r5【已被 (七) 取代·已归档】
-> ⎩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-11）。
+### （六）10-10 — 若 9 端口健康先判别「端口数是否真因」【已被 (七) 取代·已归档】
 
-### 🆕 运维指令 · 2026-10-10（四）— 🔬 根因排查：连续多日评测 timeout【最高优先·已完成·已归档】
-> ⎩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-11）。
+### （四）10-10 — 根因排查：连续多日 timeout【已完成·已归档】
 
-### 🆕 运维指令 · 2026-10-10（三）— 🛑 先停 zhulong + 🔬 逐一实测沙盒端口【本次唤醒优先动作·已完成·已归档】
-> ⎩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-11）。
+### （三）10-10 — 先停 zhulong + 实测沙盒端口【已完成·已归档】
 
-### 🆕 运维指令 · 2026-10-10（二）— 🔄 专属沙盒就绪：先测试新端口 → 保留 r1 锚点 → 重跑 r2→r3→r4→r5【已被(三)/(四)取代·已归档】
-> ⎩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-10 20:49）。
+### （二）10-10 — 专属沙盒就绪：保 r1 → 重跑 r2–r5【已被 (三)/(四) 取代·已归档】
 
 
-### 🆕 运维指令 · 2026-10-10（一）— 🔄 切换专属沙盒 + C1.full 全部作废从头重测 r1→r5【已被(二)取代·历史】
+### （一）10-10 — 切专属沙盒 + C1.full 作废重测【已被 (二) 取代·历史】
 
 
 ### 🆕 运维指令 · 2026-10-09（五）— ✅ 沙盒已修复，可重跑 C1.full r4【已被 2026-10-10(一) 取代·已归档】
-> ⎩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-10 20:49）。
 
 
 ### 🆕 运维指令 · 2026-10-09（四）— 🛑 沙盒坏了，r4 已被运维 kill，待命不要重跑【已被(五)取代·历史】
-> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-10）。
 
 ### 🆕 运维指令 · 2026-10-09（三）— 🔄 C1.full r2/r3 复测（模型服务不稳定致大量 timeout）【已归档·被(四)取代】
-> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-10）。
 
 ### 🆕 运维指令 · 2026-10-09（二）— ✅ 沙盒已就绪，可开跑 C1.full r4【已完成·已归档】
-> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-10）。
 
 ### 🆕 运维指令 · 2026-10-09 — ✅ pro-fp4 403 已解决（换 key）+ 🚫 暂不启动 r4（沙盒重启中）【已完成·已归档】
-> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`（2026-10-10）。
 
 
-> **来源**：用户 2026-10-08 观察。`zhulong_loop.sh` 的 git fetch/push 经常超时，根因 = **loop 进程环境里没有 `https_proxy`**（脚本本身不 export 代理，完全继承启动 shell 的环境；而脚本只在调 cline 时 `env -u` 剥代理——内网网关不该走代理——但 **git 访问 GitHub 是外网，必须走代理**）。
+> **来源**：用户 2026-10-08 观察。根因 = **loop 进程环境里没有 `https_proxy`**（脚本不 export 代理、完全继承启动 shell；只在调 cline 时 `env -u` 剥代理，而 **git 访问 GitHub 必须走代理**）。
 
 **现状（已核对 `zhulong_loop.sh` 源码）**：
 - 脚本**无**任何 `export https_proxy=...` —— 代理靠启动 shell 注入。
@@ -165,10 +160,8 @@ http_proxy=http://172.19.92.23:13128
 > ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`。当前已推进至 C1.full r1。
 
 ### 🆕 运维指令 · 2026-10-04（三）— 中继已恢复 / loop RUN_ID 6 重启【已解决·已归档】
-> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`。
 
 ### 🚨 运维指令 · 2026-10-04（二）— 抢救 ops 中继【已解决·勿再执行·已归档】
-> ⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`。
 ### 🆕 运维指令 · 2026-10-04：环境迁移 + 合并执行方式 + ops 中继独立
 
 > 本次把 4 个 phase（S1 保真度 / 组件 / S2 Φ / 模型）**合并进本单一任务书 + 单一 loop**，不再按 `ablation_run_conductor_serial.sh` 拆 3 个 task book + 4 个 loop。**执行顺序不变**（README §8）：S1 → 组件 → S2 Φ → 模型。
