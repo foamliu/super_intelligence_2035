@@ -5246,3 +5246,221 @@ CLI_DATA_DIR=/nasdata/app.e0031982/.cline_prof4_eval/data
 
 == DONE — RUN_ID 35（两仓库 pull + MCP→8090 + .env/配置同步 + 起 r2）==
 ```
+
+---
+
+## RUN_ID 36 · 2026-10-11 08:59:45 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# ═══ RUN_ID 36 — ZhuLong：修 .env 的 <<< + MCP 起在 8090 + 重启 r2 ═══
+echo "== RUN_ID 36 @ $(date '+%F %T') host=$(hostname) =="
+EDA=/nasdata/app.e0031982/code/eda_fastmcp
+FW=/nasdata/app.e0031982/code/EDA-Eval-Framework
+W=/nasdata/app.e0031982/code/super_intelligence_2035
+LOG=/tmp/ABL_full_r2_8650set.log
+PORTS="8650 8651 8652 8654"; SHOST=10.129.32.75
+EVALDATA=/nasdata/app.e0031982/.cline_prof4_eval/data
+TS=$(date '+%Y%m%d_%H%M%S')
+
+echo; echo "=========== 0. 现状：r2 是否活着 + 是否因 MCP 缺失而失败 ==========="
+EVAL_ALIVE=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)
+echo "   EVAL_ALIVE=$EVAL_ALIVE  PID=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | head -1)"
+echo "   log 行数=$(timeout 20 wc -l < "$LOG" 2>/dev/null)  mtime=$(timeout 20 stat -c '%y' "$LOG" 2>/dev/null | cut -c1-30)"
+echo "   log 尾 12 行:"; timeout 20 tail -12 "$LOG" 2>/dev/null | cut -c1-180
+echo "   MCP 连接相关错误计数: $(timeout 20 grep -ciE 'connection refused|ECONNREFUSED|8090|mcp' "$LOG" 2>/dev/null)"
+echo "   :8090/:18890 -> $(timeout 20 ss -lntp 2>/dev/null | grep -cE ':(8090|18890)') 个监听"
+echo "   df /home: $(timeout 20 df -BG /home 2>/dev/null | tail -1 | cut -c1-110)"
+
+echo; echo "=========== 1. .env 诊断（55-80 行 / 找 <<< 与冲突标记）==========="
+timeout 20 sed -n '55,80p' "$EDA/.env" | cat -n | cut -c1-170
+echo "   '<<<' 行: $(timeout 20 grep -nE '<<<' "$EDA/.env" 2>/dev/null | head -3 | cut -c1-150)"
+echo "   冲突标记数: $(timeout 20 grep -cE '^(<<<<<<<|=======|>>>>>>>)' "$EDA/.env" 2>/dev/null)"
+echo "   POSIX 校验(sh -n): $( cd "$EDA" && timeout 20 sh -n .env 2>&1 | head -3 | cut -c1-170 )"
+
+echo; echo "=========== 2. 修 .env：把含 <<< 的行注释掉（备份 + 校验）==========="
+timeout 30 cp -p "$EDA/.env" "/tmp/eda_fastmcp.env.fix36.$TS" && echo "   备份=/tmp/eda_fastmcp.env.fix36.$TS"
+timeout 30 sed -i -E 's/^([^#].*<<<.*)$/# [RUNID36-DISABLED-NONPOSIX] \1/' "$EDA/.env"; echo "   sed exit=$?"
+echo "   剩余 '<<<'（未注释）: $(timeout 20 grep -cE '^[^#].*<<<' "$EDA/.env" 2>/dev/null)"
+timeout 20 grep -nE 'RUNID36-DISABLED' "$EDA/.env" | cut -c1-170
+echo "   改后 .env MCP 行: $(timeout 20 grep -nE '^EDA_MCP_PORT=' "$EDA/.env" | cut -c1-80)"
+echo "   改后 POSIX 校验(sh -n): $( cd "$EDA" && timeout 20 sh -n .env 2>&1 | head -3 | cut -c1-170 )  (空 = OK)"
+
+echo; echo "=========== 3. 两仓库体检（只读：冲突/ stash / 关键补丁）==========="
+for R in "$FW" "$EDA"; do
+  echo "-- $R --"
+  timeout 30 git -C "$R" status --porcelain 2>/dev/null | head -8 | sed 's/^/   /' | cut -c1-130
+  echo "   冲突标记文件: $(timeout 30 git -C "$R" diff --name-only --diff-filter=U 2>/dev/null | head -3 | tr '\n' ' ')"
+  echo "   stash: $(timeout 30 git -C "$R" stash list 2>/dev/null | head -2 | cut -c1-110)"
+done
+echo "   Framework run_on_sandbox.py 是否含 host 字段: $(timeout 20 grep -c 'host' "$FW/scripts/run_on_sandbox.py" 2>/dev/null)"
+echo "   eda_fastmcp exec_code.py 是否含 host 字段: $(timeout 20 grep -c 'host' "$EDA/server/sandbox_server/exec_code.py" 2>/dev/null)"
+
+
+echo; echo "=========== 4. 按用户令把 MCP 起在 8090 ==========="
+( cd "$EDA" && timeout 40 bash scripts/stop.sh ) > "/tmp/eda_stop_runid36.log" 2>&1; echo "   stop.sh exit=$?"
+sleep 3
+( cd "$EDA" && export EDA_MCP_PORT=8090 && timeout 100 bash scripts/start.sh ) > "/tmp/eda_start_runid36.log" 2>&1; echo "   start.sh exit=$?"
+timeout 20 tail -16 "/tmp/eda_start_runid36.log" 2>/dev/null | cut -c1-180
+sleep 5
+echo "-- AFTER --"; timeout 20 ss -lntp 2>/dev/null | grep -E ':(8090|18890)' | cut -c1-150 || echo "   ⚠️ 都未监听"
+MCP8090=$(timeout 20 ss -lntp 2>/dev/null | grep -c ':8090')
+echo "   :8090 监听数=$MCP8090  http_code=$(timeout 15 curl -s -m 8 -o /dev/null -w '%{http_code}' http://localhost:8090/ 2>/dev/null)"
+echo "   本机 PID 文件/进程: $(timeout 20 pgrep -af 'python main\.py' 2>/dev/null | grep -v cline | head -3 | cut -c1-120)"
+
+echo; echo "=========== 5. MCP 就位后：4 端口复检 → 重启 r2 ==========="
+OK=0
+for p in $PORTS; do
+  timeout 5 bash -c "echo > /dev/tcp/$SHOST/$p" 2>/dev/null && tcp=OK || tcp=CLOSED
+  body=$(timeout 25 curl -s -m 10 -X POST "http://$SHOST:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"code":"print(1)","lang":"pyAether","host":"aether"}' 2>/dev/null)
+  n=${#body}; if [ "$n" -gt 0 ]; then rc=OK; OK=$((OK+1)); else rc="FAIL(0byte)"; fi
+  echo "   port $p : TCP=$tcp run_code=$rc resp_len=$n"
+done
+echo "   ▶ 健康端口=$OK/4"
+if [ "$MCP8090" -ge 1 ] && [ "$OK" -eq 4 ]; then
+  OLD=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | head -1)
+  if [ -n "$OLD" ]; then
+    echo "   停掉 MCP 缺失期起的旧 r2: PID=$OLD"; timeout 20 tail -4 "$LOG" 2>/dev/null | cut -c1-170
+    timeout 30 pkill -f '^bash scripts/run_cline_script' 2>/dev/null; sleep 5
+    echo "   AFTER EVAL_ALIVE=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | wc -l)"
+  fi
+  ( cd "$EDA"
+    export EVAL_FW_DIR="$FW"
+    export CLI_DATA_DIR="$EVALDATA"
+    export PYTHON="$EDA/venv/bin/python"
+    export https_proxy=http://172.19.92.23:13128
+    setsid bash scripts/run_cline_script.sh -p 8 -n > "$LOG" 2>&1 < /dev/null &
+  )
+  echo "   已下发 setsid 起动，等 20s 核验 ..."; sleep 20
+  NEW=$(timeout 20 pgrep -f '^bash scripts/run_cline_script' 2>/dev/null | head -1)
+  echo "   新 eval PID=${NEW:-<none>}"
+  if [ -n "$NEW" ]; then
+    timeout 20 tr '\0' '\n' < /proc/$NEW/environ 2>/dev/null | grep -E '^(EVAL_FW_DIR|CLI_DATA_DIR|PYTHON|https_proxy)=' | cut -c1-170
+    echo "   hook(本机): $(timeout 20 ls -l ~/.cline/hooks/PreToolUse 2>&1 | cut -c1-130)"
+  fi
+  echo "   log 头 22 行:"; timeout 20 head -22 "$LOG" 2>/dev/null | cut -c1-180
+  echo "   log 里 .env 语法错是否再现: $(timeout 20 grep -c 'syntax error' "$LOG" 2>/dev/null)"
+else
+  echo "   ⛔ 未起 r2（MCP:8090=$MCP8090，健康端口=$OK/4）"
+fi
+echo; echo "=========== 6. 快照 ==========="
+timeout 20 df -BG /home 2>/dev/null | tail -1 | cut -c1-110
+timeout 20 grep -nE '^(EDA_MCP_PORT|PROXY_PORTS|RAG_RECALL_URL)=' "$EDA/.env" 2>/dev/null | cut -c1-140
+echo "== DONE — RUN_ID 36（修 .env <<< + MCP→8090 + 重启 r2）=="
+```
+
+**输出**
+```
+== RUN_ID 36 @ 2026-10-11 08:59:45 host=hfeg0tedaap02 ==
+
+=========== 0. 现状：r2 是否活着 + 是否因 MCP 缺失而失败 ===========
+   EVAL_ALIVE=1  PID=3434607
+   log 行数=27774  mtime=2026-10-11 08:59:45.928727075 
+   log 尾 12 行:
+[0m[2m"The '[0m[2mmisc[0m[2m[thinking] [0m[2mThe[0m[2m everything.[0m[2m Let me[0m[2m check if[0m[2m' environment[0m[2m_agent[0m[2m variable parameter[0m[2m �
+
+让我[0m[2m there's[0m[2m" =[0m[2m进程执行[0m[2m actually,[0m[2m I can[0m[2m a different[0m[2m try[0m[2m way.
+
+[0m[2m尝试 team[0m[2m file is[0m[2m created.[0m[2m a parameter[0m[2m Now let[0m[2m_spawn[0m[2m命令字符串[0m[2m
+2[0m[2m. [0m[2m等待[0m[2m_[0m[2m wasting effort[0m[2m. But[0m[2m if I[0m[2m进程终止[0m[2m can[0m[2m
+3[0m[2m. [0m[2m named "[0m[2mmisc[0m[2m" ([0m[2m to read[0m[2mteamm[0m[2m me verify[0m[2mate [0m[2m看看。
+
+[0m[2mmaybe an[0m[2m a directory[0m[2mLet me[0m[2m as[0m[2m by reading[0m[2m try the[0m[2m it back[0m[2m "environment[0m[2m捕获并[0m[2m variable"[0m[2m. Al
+4[0m[2m should[0m[2m get the[0m[2m actual API[0m[2m docs,[0m[2m让我先[0m[2m测试[0m[2m a "[0m[2mfile"[0m[2m and[0m[2m read_files[0m[2m tool to[0m[2m tha
+
+这是[0m[2m it'll[0m[2m error,[0m[2m directory structure[0m[2m. Actually[0m[2m vars for[0m[2m the O[0m[2mGE job[0m[2m validate the[0m[2m code at[0m[2m least fo
+   MCP 连接相关错误计数: 51
+   :8090/:18890 -> 1 个监听
+   df /home: /dev/mapper/vgroot-lv_home      394G  374G        4G 100% /home
+
+=========== 1. .env 诊断（55-80 行 / 找 <<< 与冲突标记）===========
+     1	MCP_SERVICE_VERSION=1.0.0
+     2	# 部署环境标识（production / staging / development）
+     3	DEPLOYMENT_ENV=production
+     4	
+     5	
+     6	# 沙箱服务器配置 - 远程代码执行环境
+     7	# =======================================================
+     8	# 远程 pyAether 沙箱主机 IP 地址
+     9	SANDBOX_HOST=10.129.32.75
+    10	
+    11	# 代理监听端口列表 (逗号分隔, 每个端口 1:1 映射到沙箱同名端口)
+    12	# 为空时自动从 SANDBOX_ENDPOINTS 提取端口号 (向后兼容)
+    13	# 注: 当前代码未直接读取此变量(实际由 SANDBOX_ENDPOINTS 驱动)；此处保持与 SANDBOX_ENDPOINTS 一致，便于端口对照。
+    14	<<<<<<< Updated upstream
+    15	# PROXY_PORTS=8664,8665,8653,8669,8668,8652
+    16	=======
+    17	>>>>>>> Stashed changes
+    18	# PROXY_PORTS=8650,8651,8652,8654
+    19	PROXY_PORTS=8656,8658,8661,8662
+    20	
+    21	# 沙箱 HTTP API 服务端口 - 用于 /v1/run_code 接口
+    22	SANDBOX_PORT_HTTP=8657
+    23	
+    24	# 沙箱 TCP 端口 - 用于 Socket 协议发送代码执行请求
+    25	SANDBOX_PORT_TCP=8668
+    26	# 沙箱连接超时时间（秒），同时用于 HTTP 和 TCP Socket 连接
+   '<<<' 行: 68:<<<<<<< Updated upstream
+103:<<<<<<< Updated upstream
+135:<<<<<<< Updated upstream
+   冲突标记数: 12
+   POSIX 校验(sh -n): .env: 68: Syntax error: redirection unexpected
+
+=========== 2. 修 .env：把含 <<< 的行注释掉（备份 + 校验）===========
+   备份=/tmp/eda_fastmcp.env.fix36.20261011_085945
+   sed exit=0
+   剩余 '<<<'（未注释）: 0
+68:# [RUNID36-DISABLED-NONPOSIX] <<<<<<< Updated upstream
+103:# [RUNID36-DISABLED-NONPOSIX] <<<<<<< Updated upstream
+135:# [RUNID36-DISABLED-NONPOSIX] <<<<<<< Updated upstream
+290:# [RUNID36-DISABLED-NONPOSIX] <<<<<<< Updated upstream
+   改后 .env MCP 行: 297:EDA_MCP_PORT=8090
+   改后 POSIX 校验(sh -n): .env: 71: Syntax error: redirection unexpected  (空 = OK)
+
+=========== 3. 两仓库体检（只读：冲突/ stash / 关键补丁）===========
+-- /nasdata/app.e0031982/code/EDA-Eval-Framework --
+   UU config.yaml
+   UU scripts/run_on_sandbox.py
+   冲突标记文件: config.yaml scripts/run_on_sandbox.py 
+   stash: stash@{0}: autostash
+-- /nasdata/app.e0031982/code/eda_fastmcp --
+   UU .env
+   UU server/sandbox_server/exec_code.py
+   ?? cleanup_tmp_gt.sh
+   ?? run_monday_eval.sh
+   ?? scripts/stress_test_ports.py
+   ?? scripts/test_sandbox_ports.py
+   冲突标记文件: .env server/sandbox_server/exec_code.py 
+   stash: stash@{0}: autostash
+stash@{1}: On master: RUN_ID32: stash .env (回退昨晚端口改动) @ 20261011_080738
+   Framework run_on_sandbox.py 是否含 host 字段: 11
+   eda_fastmcp exec_code.py 是否含 host 字段: 22
+
+=========== 4. 按用户令把 MCP 起在 8090 ===========
+   stop.sh exit=0
+   start.sh exit=127
+/nasdata/app.e0031982/code/eda_fastmcp/.env: line 70: =======: command not found
+-- AFTER --
+LISTEN 0      2048              0.0.0.0:18890      0.0.0.0:*          
+   :8090 监听数=0  http_code=000
+   本机 PID 文件/进程: 77800 python main.py
+1531391 python main.py
+1653293 python main.py
+
+=========== 5. MCP 就位后：4 端口复检 → 重启 r2 ===========
+   port 8650 : TCP=OK run_code=OK resp_len=106
+   port 8651 : TCP=OK run_code=OK resp_len=106
+   port 8652 : TCP=OK run_code=OK resp_len=106
+   port 8654 : TCP=OK run_code=OK resp_len=106
+   ▶ 健康端口=4/4
+   ⛔ 未起 r2（MCP:8090=0，健康端口=4/4）
+
+=========== 6. 快照 ===========
+/dev/mapper/vgroot-lv_home      394G  374G        4G 100% /home
+73:PROXY_PORTS=8656,8658,8661,8662
+136:RAG_RECALL_URL=http://localhost:9010/recall
+293:PROXY_PORTS=8650,8651,8652,8654
+295:RAG_RECALL_URL=http://localhost:9006/recall
+297:EDA_MCP_PORT=8090
+== DONE — RUN_ID 36（修 .env <<< + MCP→8090 + 重启 r2）==
+```
