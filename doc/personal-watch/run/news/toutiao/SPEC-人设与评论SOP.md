@@ -135,6 +135,16 @@
 5. **回自己帖的评论**：只回**真实提问 / 理性讨论**（≤3 条/轮；随机 30–90s；逐条不同）。🚫 不吵架 / 不引战 / 不人身 / 不删他人评论。
 6. **记账 + 回写**：见 §6。
 
+### 4.1 发布页实测（2026-10-11 21:30 轮 · 已复核）
+
+- **编辑器** = `div.ProseMirror[contenteditable=true]`（微头条发布页 `mp.toutiao.com/profile_v4/weitoutiao/publish`）。
+- **段落**：⚠️ **`Input.insertText` 直插含 `\n` 的整段文本 ⇒ 生成「文本段 / 空段」交替**（实测 4 段文本 → `pCount=7`）。
+  ✅ **可用做法**：**逐段** `typetext '.ProseMirror' "<段>"` + **段间** `keys "Enter"`（实测 4 段 → `pCount=4`，字数 233 与稿一致）。
+  重新输入前用 `keys "Ctrl+A,Backspace"` 全选清空（先 `eval` `.focus()`）。
+- **声明（§9）**：`.byte-checkbox` 三项 = 「头条首发」（默认勾选）/「个人观点，仅供参考」/「**引用AI**」；**单项互斥** ⇒ 取 **「引用AI」**（作品页显示「作品声明：内容由AI生成」）。
+- **发布按钮** = `button.byte-btn-primary`（文案「发布」，**无 `.disable`**）⇒ `click()` 后页面自动跳 `mp.toutiao.com/profile_v4/weitoutiao`，**列表首条**即新帖（当刻多显示「**审核中**」，约 10–15 min 转「**已发布**」）。
+
+
 ---
 
 ## §5 ★ 引流评论 SOP（到别人爆款下简短评论）
@@ -152,12 +162,15 @@
 - **风控即停（硬）**：**评论被删 / 被屏蔽 / 「评论失败，请稍后重试」连续 2 次** → **立刻停本轮全部评论动作**，记台账；**下轮只发文不评论**；**连续两轮如此 → 记 ⚠️ 待 supervisor 决策**。
 - **不做**：不刷楼 · 不顶帖 · 不连发 · 不跨帖复用同一句。
 
-### 5.1 🧩 评论框操作机制（**2026-10-11 18:00 轮实测 · 已 4 条复核**）
+### 5.1 🧩 评论框操作机制（**2026-10-11 18:00 轮实测 + 🔧 21:30 轮修正 · 已 9 条复核**）
 
 > 文章页与微头条页**共用同一套评论组件**，选择器可直接复用；**但输入必须按下面的方式派发事件**。
 
 - **输入框** = `.comment-textarea`（placeholder「说点什么吧...」）；**提交按钮** = `.ttp-comment-input button.submit-btn`（初始带 `.disable` 类）。
-- ⚠️ **关键坑（已复现）**：**仅 `Input.insertText`、或仅改 `value`，都不会激活提交按钮** ⇒ 必须在 textarea 上**依次派发** `beforeinput` / `input` / `keyup` / `change` **InputEvent**，`.disable` 才会移除、按钮方可点击。
+- ⚠️ **关键坑（2026-10-11 18:00 轮已复现）**：**仅 `Input.insertText`、或仅改 `value`，都不会激活提交按钮**。
+  - **🔧 21:30 轮实测修正（口径更新 · 以本条为准）**：文本到位后**仅派发** `beforeinput` / `input` / `keyup` / `change` **合成事件**，`button.submit-btn` **仍带 `.disable`**（实测 `btnCls = "submit-btn disable"`）⇒ **不足以激活**。
+    ✅ **可用做法**：**真实按键逐字输入** —— CDP `Input.dispatchKeyEvent({type:'keyDown', text:'<char>', unmodifiedText:'<char>', key:'<char>'})` + `keyUp`（助手命令 `~/news_cdp.js typetext "<selector>" "<text>"`）；实测输入 37 字后 `btnCls = "submit-btn"`（`.disable` 已移除）、点击即成功。
+    清空/重来用 `~/news_cdp.js keys "Ctrl+A,Backspace"`（先 `eval` 令目标框 `.focus()`）。
 - ✅ **成功判据（三取二）**：① 提交后输入框**清空**；② 评论列表**顶部**出现本号评论（作者 = 本号昵称）；③ 该帖**评论计数 +1**。
 - ⚠️ **字数口径**：输入框按**字符数**计数（标点 / 字母均计入）⇒ **≤40 字**按字符算。
 - 🧹 评论完成后**逐个关闭**自建标签页（`/json/close`），每轮结束 `hr_tabs.py prune toutiao.com`（只留 1 个头条页）。

@@ -553,3 +553,24 @@
 | 2026-10-11 | 丹麦 CPR 数据库泄露波及 880 万人信息，涉事公司管理员密码竟是“123456” | IT之家 | 留档(非 AI·安全事件) | https://www.ithome.com/1/011/648.htm |
 | 2026-10-11 | 四部门为汽车安全划定红线：明确汽车设计、可靠性验证试验管理，研发测试要包含两冬一夏 | IT之家 | 留档(非 AI·产业政策) | https://www.ithome.com/1/011/637.htm |
 
+| 2026-10-11 | Hacker used ARTEX AI and Claude agents to target South Korean banks | BleepingComputer | news | https://www.bleepingcomputer.com/news/security/hacker-used-artex-ai-and-claude-agents-to-target-south-korean-banks/ |
+| 2026-10-11 | OpenAI agents tried to hack Wikipedia tools and flooded it with traffic | Ars Technica | news | https://arstechnica.com/security/2026/10/openai-agents-tried-to-hack-wikipedia-tools-and-flooded-it-with-traffic/ |
+| 2026-10-11 | AWS AgentCore security undone by prompt requesting credentials | The Register | news | https://www.theregister.com/security/2026/10/09/aws-agentcore-security-undone-by-prompt-requesting-credentials/5302436 |
+| 2026-10-11 | VRChat 更新创作者指南：禁止 AI 生成误导性地图/角色缩略图 | IT之家 | news | https://www.ithome.com/1/011/678.htm |
+| 2026-10-11 | Using AI for Just 10 Minutes Erodes Your Ability to Persist at Hard Things | UC Berkeley (VC Research) | news | https://vcresearch.berkeley.edu/news/using-ai-just-10-minutes-erodes-your-ability-persist-hard-things |
+| 2026-10-11 | AI is creating a 'human premium' for art created by people | BBC News | news | https://www.bbc.com/news/articles/c5vgjm3gk7rzo |
+| 2026-10-11 | GPT-6 Astra performs unsanctioned supply-chain attacks in simulations | AISI (UK AI Security Institute) | 留档(超 72h·原发 09-28) | https://www.aisi.gov.uk/blog/gpt-6-astra-performs-unsanctioned-supply-chain-attacks-in-simulations |
+| 2026-10-11 | Evaluating Whether GPT-6 Astra Performs Unsanctioned Supply-Chain Attacks | arXiv | 留档(paper·与上同事件) | https://arxiv.org/abs/2609.38415 |
+| 2026-10-11 | Nicolas Cage says he won't work with Amazon again over AI dispute | LA Times | 留档(同事件已在账·第八十四轮 Variety) | https://www.latimes.com/entertainment-arts/business/story/2026-10-10/nicolas-cage-says-he-wont-work-with-amazon-again-over-ai-dispute |
+| 2026-10-11 | Fixated on AI, the world has forgotten it is staring at nuclear annihilation | The Guardian (Comment is Free) | 留档(opinion·涉核军备) | https://www.theguardian.com/commentisfree/2026/oct/11/ai-annihilation-advanced-nuclear-weapons |
+| 2026-10-11 | "Robot" Is a Social Construct: Why Your Dishwasher Is Not a Robot | robotgirlgang.com | 留档(opinion/discussion) | https://robotgirlgang.com/2026/10/08/robot-is-a-social-construct-why-your-dishwasher-is-not-a-robot/ |
+| 2026-10-11 | AI Engineering Maturity Model: 5 Stages for Teams | augmentcode.com | 留档(analysis) | https://www.augmentcode.com/guides/ai-engineering-maturity-model |
+| 2026-10-11 | Risk Watch 2026-W41: MCP servers that tell your agent "dont tell the user" | semantik.tech | 留档(analysis) | https://semantik.tech/risk-watch/2026-w41 |
+| 2026-10-11 | Building a VMM from scratch, #0: Why BoxLite is replacing libkrun | blog.boxlite.ai | 留档(技术博客) | https://blog.boxlite.ai/building-a-vmm-from-scratch-0-why-boxlite-is-replacing-libkrun |
+| 2026-10-11 | AI Can Cut Film Budgets by Up to 40%, Says 'The Outlaws' Director Kang Yoon-Sung | Variety | 留档(个人言论) | https://variety.com/2026/tv/festivals/netflix-ai-300-titles-kang-yoon-sung-40-percent-budget-busan-1236907359/ |
+| 2026-10-11 | An exploratory study of hallucination in Qwen 3.8-27B and GPT-OSS-20B | GitHub | 留档(paper) | https://github.com/alitenes2020-sys/Repository-name-llama-hallucination |
+| 2026-10-11 | Training LLMs to write tools generalized beyond self use | tool-use-smith.github.io | 留档(paper) | https://tool-use-smith.github.io/ |
+| 2026-10-11 | Twelve killed and 300 injured in attack on airport in Saudi capital Riyadh | BBC News | 留档(非 AI·突发伤亡·不收) | https://www.bbc.com/news/articles/cw33x4y8k82no |
+| 2026-10-11 | Taiwan man won lawsuit but jailed for using robot vacuum to record wife's affair | SCMP | 留档(司法个案·不收) | https://www.scmp.com/news/people-culture/trending-china/article/3365381/taiwan-man-wins-lawsuit-gets-jailed-using-robot-vacuum-record-wifes-affair |
+| 2026-10-11 | Sudden drop in Cloudflare bot traffic after strike on Yandex datacenter | Cloudflare Radar（HN 50041619 / 50042046 / 50042896） | 留档(非 AI·武装冲突关联·不收) | https://radar.cloudflare.com/bots/as13238?dateRange=7d |
+
