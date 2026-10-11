@@ -107,11 +107,11 @@ def git_clone_or_fetch(repo, base_commit, workdir):
         run(["git", "clean", "-fd"], cwd=workdir, timeout=60)
         ok, out = git_fetch_retry(workdir, base_commit, max_retries=3, timeout=300)
         if not ok:
-            out2, rc2 = run(["git", "checkout", base_commit], cwd=workdir, timeout=60)
+            out2, rc2 = run(["git", "checkout", "-f", base_commit], cwd=workdir, timeout=60)
             if rc2 == 0:
                 return True, f"fetch errored but checkout ok: {out[:80]}"
             return False, f"git fetch failed: {out[:200]}"
-        out, rc = run(["git", "checkout", base_commit], cwd=workdir, timeout=60)
+        out, rc = run(["git", "checkout", "-f", base_commit], cwd=workdir, timeout=60)
         if rc != 0:
             return False, f"git checkout failed: {out[:200]}"
         return True, "existing workdir updated"
@@ -121,11 +121,11 @@ def git_clone_or_fetch(repo, base_commit, workdir):
         run(["git", "remote", "add", "origin", url], cwd=workdir, timeout=30)
         ok, out = git_fetch_retry(workdir, base_commit, max_retries=3, timeout=300)
         if not ok:
-            out2, rc2 = run(["git", "checkout", base_commit], cwd=workdir, timeout=60)
+            out2, rc2 = run(["git", "checkout", "-f", base_commit], cwd=workdir, timeout=60)
             if rc2 == 0:
                 return True, f"fetch errored but checkout ok: {out[:80]}"
             return False, f"git fetch base_commit failed: {out[:200]}"
-        out, rc = run(["git", "checkout", base_commit], cwd=workdir, timeout=60)
+        out, rc = run(["git", "checkout", "-f", base_commit], cwd=workdir, timeout=60)
         if rc != 0:
             return False, f"git checkout failed: {out[:200]}"
         return True, "init+shallow fetch"
