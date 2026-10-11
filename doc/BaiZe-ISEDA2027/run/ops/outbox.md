@@ -9662,3 +9662,180 @@ nsfs on /run/docker/netns/default type nsfs (rw)
    no passwordless sudo（du 可能漏 root 属主文件）
 === DONE 91 ===
 ```
+
+---
+
+## RUN_ID 92 · 2026-10-11 13:53:39 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 92 · 只读：/tmp 清理前核查 · $(date '+%F %T') · host=$(hostname) ==="
+echo "--- A) /tmp 当前 ---"
+df -BG /tmp 2>&1 | cut -c1-120
+timeout 45 du -hx --max-depth=1 /tmp 2>/dev/null | sort -rh | head -20 | cut -c1-140
+echo "--- B) /tmp/claude-6218（27G，头号） ---"
+ls -ld /tmp/claude-6218 2>&1 | cut -c1-160
+timeout 40 du -hx --max-depth=1 /tmp/claude-6218 2>/dev/null | sort -rh | head -20 | cut -c1-150
+printf '   文件总数 = '; timeout 40 find /tmp/claude-6218 -type f 2>/dev/null | wc -l
+for d in 1 3 7 30; do
+  printf '   mtime > %2sd : ' "$d"
+  timeout 30 find /tmp/claude-6218 -type f -mtime +$d -printf '%s\n' 2>/dev/null | awk '{n++; s+=$1} END{printf "%8d files  %8.2f GB\n", n, s/1073741824}'
+done
+printf '   ★ 最近 30 分钟仍在写（活跃会话，勿删）: '
+timeout 30 find /tmp/claude-6218 -type f -mmin -30 2>/dev/null | wc -l
+echo "   -- claude 进程 --"
+pgrep -af 'claude' 2>/dev/null | cut -c1-150 | head -6
+echo "--- C) 其它候选（大小 + 顶层 mtime） ---"
+for p in ov2_test dsh_sdk dsh_home test_env test_workdir sympy_latest sphinx_pkgs sphinx-repo django-upstream django-4.2 p5b_tok_work r3_tok_work mpl360_env torchinductor_app.e0031982; do
+  [ -e "/tmp/$p" ] || continue
+  printf '   %-34s' "$p"
+  timeout 10 du -shx "/tmp/$p" 2>/dev/null | awk '{printf "%-8s", $1}'
+  timeout 8 stat -c 'mtime=%y' "/tmp/$p" 2>/dev/null | cut -c1-30
+  echo
+done
+echo "--- D) /tmp 顶层条目 mtime（找最老死物） ---"
+timeout 30 find /tmp -maxdepth 1 -printf '%TY-%Tm-%Td %TH:%TM  %y  %p\n' 2>/dev/null | sort | head -30 | cut -c1-150
+echo "--- E) 非本人属主条目（无 sudo 看不到的部分） ---"
+timeout 20 find /tmp -maxdepth 1 -not -user "$(id -u)" -printf '%u\t%TY-%Tm-%Td\t%p\n' 2>/dev/null | head -15 | cut -c1-150
+echo "=== DONE 92 ==="
+```
+
+**输出**
+```
+=== RUN_ID 92 · 只读：/tmp 清理前核查 · 2026-10-11 13:53:39 · host=whag0pgpuap29 ===
+--- A) /tmp 当前 ---
+Filesystem                1G-blocks  Used Available Use% Mounted on
+/dev/mapper/vgroot-lv_tmp       98G   39G       55G  42% /tmp
+39G	/tmp
+27G	/tmp/claude-6218
+5.1G	/tmp/ov2_test
+671M	/tmp/torchinductor_app.e0031982
+277M	/tmp/dsh_sdk
+198M	/tmp/torchinductor_app.e0016372
+191M	/tmp/mpl360_env
+136M	/tmp/dsh_home
+121M	/tmp/test_env
+103M	/tmp/matplotlib
+96M	/tmp/django-upstream
+84M	/tmp/django-4.2
+80M	/tmp/p5b_tok_work_b2
+80M	/tmp/p5b_tok_work
+78M	/tmp/sphinx_pkgs
+74M	/tmp/test_workdir
+60M	/tmp/r3_tok_work
+57M	/tmp/sympy_latest
+54M	/tmp/sphinx-repo
+49M	/tmp/mpl363
+--- B) /tmp/claude-6218（27G，头号） ---
+drwxr-x--- 28 app.e0031982 app.adm 4096 Oct 11 09:12 /tmp/claude-6218
+27G	/tmp/claude-6218/-dev-shm-harness-work-workdirs-claude-code-sympy-sympy
+27G	/tmp/claude-6218
+2.2M	/tmp/claude-6218/-dev-shm-harness-work-workdirs-django-django
+1.4M	/tmp/claude-6218/-dev-shm-harness-work-workdirs-claude-code-django-django
+452K	/tmp/claude-6218/-dev-shm-harness-work-workdirs-sympy-sympy
+224K	/tmp/claude-6218/-dev-shm-harness-work-workdirs-claude-code-scikit-learn-scikit-learn
+132K	/tmp/claude-6218/-dev-shm-harness-work-workdirs-claude-code-sphinx-doc-sphinx
+100K	/tmp/claude-6218/-dev-shm-harness-work-workdirs-claude-code-pytest-dev-pytest
+76K	/tmp/claude-6218/-nas-train-app-e0031982-harness-work-workdirs-django--django-10914
+72K	/tmp/claude-6218/-dev-shm-harness-work-workdirs-pytest-dev-pytest
+60K	/tmp/claude-6218/-dev-shm-harness-work-workdirs-scikit-learn-scikit-learn
+60K	/tmp/claude-6218/-dev-shm-harness-work-workdirs-claude-code-matplotlib-matplotlib
+56K	/tmp/claude-6218/-dev-shm-harness-work-workdirs-matplotlib-matplotlib
+52K	/tmp/claude-6218/-dev-shm-harness-work-workdirs-pylint-dev-pylint
+36K	/tmp/claude-6218/-dev-shm-harness-work-workdirs-sphinx-doc-sphinx
+36K	/tmp/claude-6218/-dev-shm-harness-work-workdirs-claude-code-pylint-dev-pylint
+36K	/tmp/claude-6218/-dev-shm-harness-work-workdirs-claude-code-pydata-xarray
+36K	/tmp/claude-6218/-dev-shm-harness-work-workdirs-claude-code-psf-requests
+36K	/tmp/claude-6218/-dev-shm-harness-work-workdirs-claude-code-astropy-astropy
+28K	/tmp/claude-6218/-dev-shm-harness-work-workdirs-claude-code-mwaskom-seaborn
+   文件总数 = 31
+   mtime >  1d :       14 files      0.00 GB
+   mtime >  3d :        1 files      0.00 GB
+   mtime >  7d :        0 files      0.00 GB
+   mtime > 30d :        0 files      0.00 GB
+   ★ 最近 30 分钟仍在写（活跃会话，勿删）: 0
+   -- claude 进程 --
+1480915 python3 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/run_serial_kimi.py --harness claude-code --all-pr
+2440050 node /home/app.e0031982/.local/bin/cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve true -
+2440057 /home/app.e0031982/.npm/_npx/672d321ee4ba2150/node_modules/cline/bin/.cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-
+2622592 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python3 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness
+2623127 bun run --preload /nas_train/app.e0031982/harness_work/builds/claude-code/plugins/bunBundleDev.ts --define MACRO.VERSION:"1.0.0-dev" --define 
+--- C) 其它候选（大小 + 顶层 mtime） ---
+   ov2_test                          5.1G    mtime=2026-07-31 17:42:36.1521
+
+   dsh_sdk                           277M    mtime=2026-10-07 10:36:07.5131
+
+   dsh_home                          136M    mtime=2026-10-07 10:40:53.0650
+
+   test_env                          121M    mtime=2026-10-08 19:29:22.2607
+
+   test_workdir                      74M     mtime=2026-10-08 21:52:51.6006
+
+   sympy_latest                      57M     mtime=2026-10-09 05:48:31.7496
+
+   sphinx_pkgs                       78M     mtime=2026-10-11 05:33:25.9848
+
+   sphinx-repo                       54M     mtime=2026-10-11 05:03:56.2136
+
+   django-upstream                   96M     mtime=2026-10-10 05:15:51.0291
+
+   django-4.2                        84M     mtime=2026-10-10 02:22:26.6936
+
+   p5b_tok_work                      80M     mtime=2026-10-02 06:24:56.5310
+
+   r3_tok_work                       60M     mtime=2026-10-08 10:53:40.9420
+
+   mpl360_env                        191M    mtime=2026-10-10 14:17:00.9016
+
+   torchinductor_app.e0031982        671M    mtime=2026-10-11 13:43:38.2291
+
+--- D) /tmp 顶层条目 mtime（找最老死物） ---
+2026-01-30 13:11  d  /tmp/.font-unix
+2026-01-30 13:11  d  /tmp/.ICE-unix
+2026-01-30 13:11  d  /tmp/systemd-private-f055cc4d49a64443960f29061d04e1cb-chrony.service-0cyUlE
+2026-01-30 13:11  d  /tmp/systemd-private-f055cc4d49a64443960f29061d04e1cb-lldpd.service-OzK5Ha
+2026-01-30 13:11  d  /tmp/systemd-private-f055cc4d49a64443960f29061d04e1cb-ModemManager.service-ukUpfg
+2026-01-30 13:11  d  /tmp/systemd-private-f055cc4d49a64443960f29061d04e1cb-systemd-logind.service-JrNKbe
+2026-01-30 13:11  d  /tmp/systemd-private-f055cc4d49a64443960f29061d04e1cb-systemd-resolved.service-Uifrww
+2026-01-30 13:11  d  /tmp/.Test-unix
+2026-01-30 13:11  d  /tmp/.X11-unix
+2026-01-30 13:11  d  /tmp/.XIM-unix
+2026-01-30 13:12  d  /tmp/hsperfdata_root
+2026-01-30 13:12  d  /tmp/ningweb.7008.3951550933029798862
+2026-01-30 13:12  d  /tmp/ningweb-docbase.7008.7859082193882949449
+2026-01-30 13:12  d  /tmp/snap-private-tmp
+2026-01-30 13:12  f  /tmp/data.mdb
+2026-01-30 13:12  f  /tmp/lock.mdb
+2026-01-30 18:36  d  /tmp/systemd-private-f055cc4d49a64443960f29061d04e1cb-upower.service-R5Q8eB
+2026-02-03 21:57  d  /tmp/tmp_2yrp5oo
+2026-02-03 21:57  d  /tmp/tmp32bnclaq
+2026-02-03 21:57  d  /tmp/tmp8iioyxuz
+2026-02-03 21:57  d  /tmp/tmpbz97shfy
+2026-02-03 21:57  d  /tmp/tmpci_ns_o5
+2026-02-03 21:57  d  /tmp/tmpeb_olrje
+2026-02-03 21:57  d  /tmp/tmpfaqhdcjp
+2026-02-03 21:57  d  /tmp/tmpksxj5y2e
+2026-02-03 21:57  d  /tmp/tmpp5z4s93b
+2026-02-03 21:57  d  /tmp/tmp_q082mpc
+2026-02-03 21:57  d  /tmp/tmpt244wm21
+2026-02-03 21:57  d  /tmp/tmpud9rj0l1
+2026-02-03 21:57  d  /tmp/tmpv128zccv
+--- E) 非本人属主条目（无 sudo 看不到的部分） ---
+root	2026-10-11	/tmp
+root	2026-01-30	/tmp/lock.mdb
+root	2026-01-30	/tmp/data.mdb
+app.e0016372	2026-09-07	/tmp/code-3a2a8f6b-6e37-4dfb-996e-4b7527278e59
+app.e0020597	2026-09-07	/tmp/.9adb4abfe6effdbf-00000000.so
+app.e0020597	2026-09-07	/tmp/.bcdbcfbff4b5b2ec-00000001.so
+root	2026-09-09	/tmp/qwen3_vl_v029.py
+app.e0016372	2026-09-20	/tmp/docker_run_vl.sh
+app.e0016372	2026-09-16	/tmp/uv-5d26ce6d7e631573.lock
+app.e0016372	2026-09-16	/tmp/pi-bash-f23cbafbcfa938b8.log
+root	2026-09-09	/tmp/qwen3_5_v029.py
+app.e0016372	2026-09-18	/tmp/check.out
+app.e0016372	2026-09-18	/tmp/pp.log
+app.e0016372	2026-09-18	/tmp/base.log
+app.e0016372	2026-09-18	/tmp/pi-bash-43c279e0fba350cd.log
+=== DONE 92 ===
+```
