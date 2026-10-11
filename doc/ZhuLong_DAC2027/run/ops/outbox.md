@@ -6768,3 +6768,209 @@ Not Found
 === [7] full vs wo_retrieval 臂开关出处 ===
 === DONE ===
 ```
+
+---
+
+## RUN_ID 44 · 2026-10-11 22:16:53 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 44 · 定论三问（只读）
+echo "=== [0] host/time ==="; hostname; date '+%F %T'
+E=/nasdata/app.e0031982/code/eda_fastmcp
+B=/home/app.e0031982/eda_code_eval
+
+echo "=== [1] 真实召回（正确枚举 lang=pyAether|skill|tcl ; host=aether|virtuoso|waveview|innovus）==="
+for L in pyAether skill tcl; do
+  printf '  lang=%-8s host=aether -> ' "$L"
+  timeout 30 curl -s -X POST "http://localhost:9006/recall" -H 'Content-Type: application/json' \
+    -d "{\"query\":\"如何写 SPICE 网表\",\"top_k\":5,\"lang\":\"$L\",\"host\":\"aether\"}" \
+    -o /tmp/rag3.json -w 'http=%{http_code} t=%{time_total}s ' || echo FAIL
+  python3 -c "import json;d=json.load(open('/tmp/rag3.json'));r=d if isinstance(d,list) else (d.get('results') or d.get('hits') or d.get('data') or d);print('hits=',len(r) if isinstance(r,list) else r);print('  ',str(r)[:240])" 2>/dev/null || head -c 240 /tmp/rag3.json
+  echo
+done
+
+echo "=== [2] 各臂：带前缀成功调用 vs 漏前缀失败（每轮）==="
+for F in /tmp/ABL_full_r*_8650set.log /tmp/ABL_wo_retrieval*_8650set.log /tmp/ABL_rag*_8650set.log; do
+  [ -f "$F" ] || continue
+  printf '  %-40s ok(search_apis)=%-6s bad(unavailable)=%s\n' "$(basename "$F")" \
+    "$(grep -ac 'pyAether_MCP_server__search_apis' "$F" 2>/dev/null)" "$(grep -ac 'unavailable tool' "$F" 2>/dev/null)"
+done
+
+echo "=== [3] 抽查一次成功调用的返回（证明召回内容进了上下文）==="
+for D in $(ls -d $B/*/cli_data/worker_*/data 2>/dev/null | head -2); do
+  F=$(grep -rl 'pyAether_MCP_server__search_apis' "$D/sessions" 2>/dev/null | head -1)
+  [ -n "$F" ] && { echo "  -- $F"; grep -aoE 'pyAether_MCP_server__search_apis.{0,380}' "$F" 2>/dev/null | head -2; }
+done
+
+echo "=== [4] 「wo_retrieval」这个臂名到底在哪定义（全仓 grep）==="
+grep -rn 'wo_retrieval' "$E" "$B" 2>/dev/null | head -15 | cut -c1-200
+echo "--- E 目录 scripts/ 清单 ---"; ls -1 "$E/scripts" 2>/dev/null | head -25
+echo "--- run_cli.sh / run_cline_script.sh 里与臂/开关有关的行 ---"
+grep -nE 'ARM|arm|ABL|retriev|RAG|MEMORY|tool_visibility|enabled_set' "$E/scripts/run_cli.sh" "$E/scripts/run_cline_script.sh" 2>/dev/null | head -25 | cut -c1-190
+
+echo "=== [5] r5 现在跑的是哪个臂（命令行取证）==="
+ps -eo pid,etime,args 2>/dev/null | grep -E 'run_cli|run_cline_script|cline -c' | grep -v grep | head -4 | cut -c1-240
+
+echo "=== [6] main.py 的「工具可见性」开关（_apply_tool_visibility / _compute_enabled_set）==="
+sed -n '600,665p' "$E/main.py" 2>/dev/null | cut -c1-200
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] host/time ===
+hfeg0tedaap02
+2026-10-11 22:16:53
+=== [1] 真实召回（正确枚举 lang=pyAether|skill|tcl ; host=aether|virtuoso|waveview|innovus）===
+  lang=pyAether host=aether -> http=200 t=0.138331s hits= 0
+   []
+
+  lang=skill    host=aether -> http=400 t=0.001120s hits= {'detail': "Invalid (lang, host) pair: lang='skill', host='aether'. Valid pairs: [['pyAether', 'aether'], ['skill', 'virtuoso'], ['tcl', 'waveview'], ['tcl', 'innovus']]"}
+   {'detail': "Invalid (lang, host) pair: lang='skill', host='aether'. Valid pairs: [['pyAether', 'aether'], ['skill', 'virtuoso'], ['tcl', 'waveview'], ['tcl', 'innovus']]"}
+
+  lang=tcl      host=aether -> http=400 t=0.001161s hits= {'detail': "Invalid (lang, host) pair: lang='tcl', host='aether'. Valid pairs: [['pyAether', 'aether'], ['skill', 'virtuoso'], ['tcl', 'waveview'], ['tcl', 'innovus']]"}
+   {'detail': "Invalid (lang, host) pair: lang='tcl', host='aether'. Valid pairs: [['pyAether', 'aether'], ['skill', 'virtuoso'], ['tcl', 'waveview'], ['tcl', 'innovus']]"}
+
+=== [2] 各臂：带前缀成功调用 vs 漏前缀失败（每轮）===
+  ABL_full_r2_8650set.log                  ok(search_apis)=1775   bad(unavailable)=18
+  ABL_full_r3_8650set.log                  ok(search_apis)=1803   bad(unavailable)=30
+  ABL_full_r4_8650set.log                  ok(search_apis)=1807   bad(unavailable)=28
+  ABL_full_r5_8650set.log                  ok(search_apis)=916    bad(unavailable)=23
+=== [3] 抽查一次成功调用的返回（证明召回内容进了上下文）===
+  -- /home/app.e0031982/eda_code_eval/2026_1008_114702/cli_data/worker_1/data/sessions/1791431340795_cy8sh/1791431340795_cy8sh.messages.json
+pyAether_MCP_server__search_apis",
+pyAether_MCP_server__search_apis",
+  -- /home/app.e0031982/eda_code_eval/2026_1008_114702/cli_data/worker_2/data/sessions/1791431340807_5599w/1791431340807_5599w.messages.json
+pyAether_MCP_server__search_apis, pyAether_MCP_server__search_apis_by_keyword, pyAether_MCP_server__run_code, pyAether_MCP_server__text_to_image, spawn_agent, team_spawn_teammate, team_shutdown_teammate, team_status, team_task, team_run_task, team_cancel_run, team_list_runs, team_await_runs, team_send_message, team_broadcast, team_read_mailbox, team_mission_log, team_cleanup, team_create_outcome, team_attach_
+pyAether_MCP_server__search_apis, pyAether_MCP_server__search_apis_by_keyword, pyAether_MCP_server__run_code, pyAether_MCP_server__text_to_image, spawn_agent, team_spawn_teammate, team_shutdown_teammate, team_status, team_task, team_run_task, team_cancel_run, team_list_runs, team_await_runs, team_send_message, team_broadcast, team_read_mailbox, team_mission_log, team_cleanup, team_create_outcome, team_attach_
+=== [4] 「wo_retrieval」这个臂名到底在哪定义（全仓 grep）===
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/set_ablation.py:28:    wo_retrieval    检索 3 件套 OFF + run_code ON (E06 w/o Retrieval, 文档源不触达保持不变)
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/set_ablation.py:108:    "wo_retrieval": {
+/nasdata/app.e0031982/code/eda_fastmcp/MEMORY.md:4:- CONFIG: wo_retrieval
+/nasdata/app.e0031982/code/eda_fastmcp/MEMORY.md:15:| 3 | `wo_retrieval` | 检索 3 件套关、run_code 开 | 1 | ✅ 81.65% (129/158) |
+/nasdata/app.e0031982/code/eda_fastmcp/MEMORY.md:24:| wo_retrieval | 1 | 81.65% (129/158) | batch 2026_0924_183010 |
+/nasdata/app.e0031982/code/eda_fastmcp/MEMORY.md:29:- [2026-09-28 05:15] [reconcile] 唤醒发现 MEMORY.md 自 09-24 起未更新（仅 bootstrap 一条），但组件消融（第 1~3 批）已于 09
+/nasdata/app.e0031982/code/eda_fastmcp/MEMORY.md:30:- [2026-09-28 06:16] [wake] 前置校验：流水后 3 条无未处理 ❌/⚠️。PHASE=done_all → 步骤 C「什么都不做，退出」。组�
+/nasdata/app.e0031982/code/eda_fastmcp/daily-memories/2026-09-24.md:3:- [2026-09-24 10:49] [bootstrap] 首次唤醒：无 MEMORY.md / daily-memories，判定全新开始。当前 .env 原为 wo_retrie
+/nasdata/app.e0031982/code/eda_fastmcp/daily-memories/2026-09-28.md:3:- [2026-09-28 05:15] [reconcile] 唤醒恢复：读 MEMORY.md（原为 pure_llm/r1/running，仅 bootstrap 一条流水）+ daily-
+/nasdata/app.e0031982/code/eda_fastmcp/daily-memories/2026-09-28.md:4:- [2026-09-28 06:16] [wake] 前置校验：流水后 3 条无未处理 ❌/⚠️。PHASE=done_all → 步骤 C「什么都不做�
+/home/app.e0031982/eda_code_eval/2026_1011_085518/cli_data/worker_2/data/sessions/1791683811631_oiakw/expert1__BXfFhZ.messages.json:1772:              "result": "/tmp/ABL_kimi-k2.6-cloud_r1.log\n/tmp/
+--- E 目录 scripts/ 清单 ---
+clean_sandbox.sh
+cline_hooks
+common.sh
+dev
+merge_retry_results.sh
+preload_innovus_design.py
+__pycache__
+README.md
+reset_memory_bank.sh
+run_cline_script.sh
+run_cline_script_skill.sh
+run_cline_script_tcl.sh
+run_cli.sh
+run_eval.py
+run_pipeline.sh
+sediment
+set_ablation.py
+set_s1_fidelity.py
+set_s2_phi.py
+start_recall_api.sh
+start_recall_local.sh
+start.sh
+stop_recall_api.sh
+stop_recall_local.sh
+stop.sh
+--- run_cli.sh / run_cline_script.sh 里与臂/开关有关的行 ---
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:66:EVOLVE_ENABLED=false
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:67:MEMORY_INJECT_ENABLED=true
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:98:                EVOLVE_ENABLED=true
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:102:                MEMORY_INJECT_ENABLED=false
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:123:    export EDA_EVOLVE_ENABLED="$EVOLVE_ENABLED"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:124:    export EDA_MEMORY_INJECT_ENABLED="$MEMORY_INJECT_ENABLED"
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:132:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:137:    if [[ "$MEMORY_INJECT_ENABLED" == false ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:764:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:769:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:774:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:779:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:784:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:789:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:794:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:799:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+/nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh:809:    if [[ "$EVOLVE_ENABLED" == true ]]; then
+=== [5] r5 现在跑的是哪个臂（命令行取证）===
+2181703       55:12 bash scripts/run_cline_script.sh -p 8 -n
+2182539       55:00 bash /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh
+2182854       54:58 bash /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh
+2182855       54:58 bash /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh
+=== [6] main.py 的「工具可见性」开关（_apply_tool_visibility / _compute_enabled_set）===
+        "probe_pyAether_code":      False,  # 默认关闭——Round2 显示 probe 118次多为过度验证开销，C1 改 P1-4 后不再需要。需要时从 EDA_MCP_TOOLS_DISABLED 里移除该项
+        "cimi_search":              False,   # Web 搜索，默认关闭
+        "cimi_fetch":               False,   # Web 页面抓取，默认关闭
+        "vqa":                      False,   # 图像问答(kimi-k2.6-cloud)，默认关闭
+        "text_to_image":           False,   # 文生图(doubao-seedream-5.0-lite-cloud)，默认关闭
+    }
+
+    def _compute_enabled_set():
+        """单一禁用清单语义：列进 EDA_MCP_TOOLS_DISABLED 即关闭，移除即开启。
+
+        开关来源只有这一份清单 + 两条硬规则：
+          - 核心工具（search/get/run）：始终开启，除非被写进禁用清单
+          - query_memory_bank：由 L1 知识库自动检测（有知识才开），可被禁用清单覆盖关闭
+          - 其余工具（clean_workdir/probe_pyAether_code/cimi_*/vqa）：
+            默认由 .env 的 EDA_MCP_TOOLS_DISABLED 预填为禁用，移除即开启
+        """
+        core_tools = {"get_api_details", "search_apis", "search_apis_by_keyword", "run_code"}
+
+        disabled_str = os.getenv("EDA_MCP_TOOLS_DISABLED", "").strip()
+        disabled_set = {t.strip() for t in disabled_str.split(",") if t.strip()}
+
+        enabled_set = set()
+        for tool_name in _TOOL_DEFAULTS:
+            if tool_name in disabled_set:
+                continue                        # 禁用清单里的 → 关闭
+            if tool_name in core_tools:
+                enabled_set.add(tool_name)      # 核心常开
+            elif tool_name == "query_memory_bank":
+                if _l1_has_content:
+                    enabled_set.add(tool_name)  # L1 有知识才开
+            else:
+                enabled_set.add(tool_name)      # 其余工具不在禁用清单即开
+
+        return enabled_set, disabled_set
+
+    def _apply_tool_visibility():
+        """Apply EDA_MCP_TOOLS_DISABLED (single denylist)."""
+        enabled_set, disabled_set = _compute_enabled_set()
+        if disabled_set:
+            log.info(
+                "Tool visibility: disabled tools (EDA_MCP_TOOLS_DISABLED): "
+                + ", ".join(sorted(disabled_set))
+            )
+        else:
+            log.info("Tool visibility: nothing disabled (all tools enabled)")
+
+        for tool_name in _TOOL_DEFAULTS:
+            if tool_name not in enabled_set:
+                mcp.remove_tool(tool_name)
+                log.info(f"  Tool disabled: {tool_name}")
+
+    _apply_tool_visibility()
+
+    # 打印工具状态
+    enabled_set_final, _ = _compute_enabled_set()
+    log.info("Tool visibility config:")
+    for _name in _TOOL_DEFAULTS:
+        _is_on = _name in enabled_set_final
+        status = "ON" if _is_on else "OFF"
+        log.info(f"  {_name:30s} {status}")
+    if _l1_has_content:
+        log.info("  (L1 knowledge detected: evolve read-tools auto-enabled)")
+    else:
+        log.info("  (L1 knowledge empty: evolve read-tools auto-disabled — cold-start or first run)")
+
+    mcp.run(transport=os.getenv("EDA_MCP_TRANSPORT", "sse"))
+=== DONE ===
+```
