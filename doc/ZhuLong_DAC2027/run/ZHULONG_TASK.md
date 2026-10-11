@@ -57,7 +57,7 @@
 - **中继/loop「失联」≠ 进程死**：远端 `.last_run_id`/`outbox` 长期不动，多因 **GitHub/proxy 断 → `push FAILED (will retry next cycle)`**（看 `/tmp/zhulong_ops_relay.log` 尾）。**修法**：`pkill -f 'zhulong_ops_relay[.]sh'` → `setsid bash <脚本>`，**显式注入 `PATH=$HOME/.local/node-20/bin:$HOME/.bun/bin:$PATH` + `https_proxy=http://172.19.92.23:13128`** ⇒ 30–60s 内自 fetch 并补跑积压 RUN_ID（10-11 **08:07:34 重启 → 08:07:38 跑完 RUN_ID 32**）；**loop 同法**（RUN_ID 33 已重拉）。
 - **跨机救援桥 = BaiZe 中继（跑在 2.29）**：其块内 `timeout 240 ssh -p 3333 -o BatchMode=yes app.e0031982@localhost 'bash -s' <<'EOS' … EOS 2>&1 | cut -c1-190` 即**在 36.15 执行**（**36.15 ✗ 2.12 不可直连**；桥先例 RUN_ID 83/84/85/86）；**跨通道下发要错开 ≥30s**（push 撞车 → 记录只留本地，要下一次 run 才补推）。
 
-**📌 2026-10-11 08:2x 实况**：中继**已救活并执行完 RUN_ID 32（exit=0）**，但 `start.sh exit=1` + 4 端口 `run_code` 全 0 字节 ⇒ **0/4 健康 ⇒ 未起 r2**（硬闸生效）；**RUN_ID 33（08:11 下发：诊断 MCP 失败原因 + 长超时实测 + 重启 loop）结果待读** ⇒ **先 `tail` outbox 的 32/33 结果再动作，别重复重启 MCP。**
+**📌 2026-10-11 08:2x 实况**：中继已救活并跑完 **RUN_ID 32/33**（exit=0）；`bash scripts/start.sh` **仍 exit=1**（`:8090` 未监听，但 `python main.py` 有 3 个进程在），4 端口在 08:14 实测 `run_code` 0 字节、**08:2x 已恢复 4/4 健康**（以 agent 自查为准）；**loop 已于 08:13:55 重启**（`cline OK`）。⇒ **唯一硬阻塞 = `/home` 100%（4G < 8G 门槛）** ⇒ 未起 r2、`WAITING=1` 回报；**在运维裁定「可否带 4G 起跑」前不要开跑。**
 
 **① 若中继已执行 → 读 `outbox.md` 末尾 RUN_ID 32 的三件事**：(a) 4 端口实测结果；(b) `.env` 最终关键行（应 `PROXY_PORTS=8650,8651,8652,8654` + `RAG_RECALL_URL=http://localhost:9006/recall`）；(c) r2 是否已起（eval PID / log `/tmp/ABL_full_r2_8650set.log` / 四 override / **hook 是否被重新部署**）。
 
