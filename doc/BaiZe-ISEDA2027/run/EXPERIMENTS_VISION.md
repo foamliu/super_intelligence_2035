@@ -940,7 +940,7 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 | ProtA | ✅ **50.53%** (done 15:10 Oct 11, rc=0). ΔProtA = +0.83pp vs E1fair (49.70%). |
 | Zero-shot | ✅ **35.52%** top1 / 67.24% top5 (done 15:18 Oct 11). Δzs = +1.42pp vs E1fair (34.10%). |
 | k-NN | ✅ k=5: 35.63%, k=10: 37.97%, k=20: **38.94%** (done 15:25 Oct 11). Δk-NN(k20) = +1.26pp vs E1fair (37.68%). |
-| ProtB Enhanced (×5ep) | 🔄 Probe training: 90ep baseline DONE, 450ep ×5 config at ep150/450 (PID 2155765, GPU 0, started ~15:39 Oct 11). Will complete V3 eval watcher → chain auto-launches ④-2ep. |
+| ProtB Enhanced (×5ep) | ✅ **COMPLETE** (18:24:52 Oct 11): 90ep=**63.50%**, 450ep=**63.43%** (Δ=−0.07pp) → probe NOT underfitting for V3 too. wd=0.0001=**63.83%** (+0.33pp best), lr=0.01=63.51%, wd=0.001=62.18%, lr=0.3=62.20%. No config beats 90ep baseline by >0.35pp → confirms V3 feature quality is genuine. |
 
 **⚠️ Disclosure**: This arm changes **both** data volume (+7.6% GPIC) **and** step count (+23.2%) relative to baseline. Conclusion = "**full-data recipe (data+steps combined) vs baseline**", NOT "pure data ablation".
 
@@ -1006,7 +1006,7 @@ The uniform +1~1.4pp shift across all 4 independent metrics (ProtA/B, zs, k-NN) 
 
 **Cost**: 2ep ~80 GPU·h / ~10h wall; 4ep ~160 GPU·h / ~20h wall.
 
-**Status**: 🔄 V3 eval nearly complete (ProtB ✅ 63.52±0.01%, ProtA ✅ 50.53%, zs ✅ 35.52%, k-NN ✅ 38.94%; ProtB Enhanced ×5ep 🔄 running PID 2155765 GPU 0, 191/294 train-encode ~65%). ✅ **② ×5 probe COMPLETE** — all 6 configs done: baseline 62.33%, ×5ep 62.15% (−0.18pp), wd=1e-4 62.68% (+0.35pp), wd=1e-3 61.25% (−1.08pp), lr=0.01 62.39% (+0.06pp), lr=0.3 60.39% (−1.94pp). **Key ② finding**: NO config beats baseline by >0.35pp → probe NOT underfitting → **62.34% is genuine feature quality ceiling**. **Chain** `post_v3_chain_skip_probe.sh` (PID 2461463) waiting for V3 eval watcher → will auto-launch ④-2ep training (374,202 steps, E1fair snapshot total_shards=10787, ~10h). Scripts ready: `run_e4_2ep.sh`.
+**Status**: ✅ V3 eval ALL COMPLETE (ProtB ✅ 63.52±0.01%, ProtA ✅ 50.53%, zs ✅ 35.52%, k-NN ✅ 38.94%, ProtB ×5ep ✅ 63.43% (Δ=−0.07pp → probe NOT underfitting for V3)). ✅ **② ×5 probe COMPLETE** (E1fair): baseline 62.33%, ×5ep 62.15% (−0.18pp), wd=1e-4 62.68% (+0.35pp), wd=1e-3 61.25% (−1.08pp), lr=0.01 62.39% (+0.06pp), lr=0.3 60.39% (−1.94pp). **Key ② finding**: NO config beats baseline by >0.35pp → probe NOT underfitting → **62.34% is genuine feature quality ceiling**. 🔄 **④-2ep TRAINING RUNNING** (started 18:25:50 Oct 11, step ~8,520/374,202, C1=0.3534 healthy, loss=0.60–0.75, ~5,000 img/s, ETA ~05:00 Oct 12). Chain `post_v3_chain_skip_probe.sh` (PID 2461463) will auto-eval after training completes (ProtB 3-seed + ProtA + zs + k-NN, ~3.5h → results ~08:30 Oct 12).
 
 ### 9.6 ① Same-Model Zero-Shot + ② k-NN Probe Results (E1fair, 2026-10-11)
 
