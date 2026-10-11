@@ -1,0 +1,2214 @@
+  [RESUME] Skipping 102 completed for opencode
+Serial kimi eval: harness=opencode model=kimi-k2.6-cloud
+  Total=300 Pending=198 Skip=102 Concurrency=1
+
+############################################################
+# [1/198] opencode x astropy__astropy-14365
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14365 for opencode
+
+[RUN] opencode on astropy__astropy-14365 ...
+  [EVAL] opencode on astropy__astropy-14365 ...
+  => astropy__astropy-14365 | opencode | patch-but-failed
+
+############################################################
+# [2/198] opencode x astropy__astropy-14995
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14995 for opencode
+
+[RUN] opencode on astropy__astropy-14995 ...
+  [EVAL] opencode on astropy__astropy-14995 ...
+  => astropy__astropy-14995 | opencode | patch-but-failed
+
+############################################################
+# [3/198] opencode x astropy__astropy-6938
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-6938 for opencode
+
+[RUN] opencode on astropy__astropy-6938 ...
+  [EVAL] opencode on astropy__astropy-6938 ...
+  => astropy__astropy-6938 | opencode | patch-but-failed
+
+############################################################
+# [4/198] opencode x astropy__astropy-7746
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-7746 for opencode
+
+[RUN] opencode on astropy__astropy-7746 ...
+  [EVAL] opencode on astropy__astropy-7746 ...
+  => astropy__astropy-7746 | opencode | patch-but-failed
+
+############################################################
+# [5/198] opencode x django__django-13220
+############################################################
+
+============================================================
+[SETUP] django__django-13220 for opencode
+
+[RUN] opencode on django__django-13220 ...
+  [EVAL] opencode on django__django-13220 ...
+  => django__django-13220 | opencode | patch-but-failed
+
+############################################################
+# [6/198] opencode x django__django-13230
+############################################################
+
+============================================================
+[SETUP] django__django-13230 for opencode
+
+[RUN] opencode on django__django-13230 ...
+  [EVAL] opencode on django__django-13230 ...
+  => django__django-13230 | opencode | patch-but-failed
+
+############################################################
+# [7/198] opencode x django__django-13265
+############################################################
+
+============================================================
+[SETUP] django__django-13265 for opencode
+
+[RUN] opencode on django__django-13265 ...
+  [EVAL] opencode on django__django-13265 ...
+  => django__django-13265 | opencode | patch-but-failed
+
+############################################################
+# [8/198] opencode x django__django-13315
+############################################################
+
+============================================================
+[SETUP] django__django-13315 for opencode
+
+[RUN] opencode on django__django-13315 ...
+  [EVAL] opencode on django__django-13315 ...
+  => django__django-13315 | opencode | resolved
+
+############################################################
+# [9/198] opencode x django__django-13321
+############################################################
+
+============================================================
+[SETUP] django__django-13321 for opencode
+
+[RUN] opencode on django__django-13321 ...
+  [EVAL] opencode on django__django-13321 ...
+  => django__django-13321 | opencode | patch-but-failed
+
+############################################################
+# [10/198] opencode x django__django-13401
+############################################################
+
+============================================================
+[SETUP] django__django-13401 for opencode
+
+[RUN] opencode on django__django-13401 ...
+  [EVAL] opencode on django__django-13401 ...
+  => django__django-13401 | opencode | patch-but-failed
+
+############################################################
+# [11/198] opencode x django__django-13447
+############################################################
+
+============================================================
+[SETUP] django__django-13447 for opencode
+
+[RUN] opencode on django__django-13447 ...
+  [EVAL] opencode on django__django-13447 ...
+  => django__django-13447 | opencode | patch-but-failed
+
+############################################################
+# [12/198] opencode x django__django-13448
+############################################################
+
+============================================================
+[SETUP] django__django-13448 for opencode
+
+[RUN] opencode on django__django-13448 ...
+  [EVAL] opencode on django__django-13448 ...
+  => django__django-13448 | opencode | patch-but-failed
+
+############################################################
+# [13/198] opencode x django__django-13551
+############################################################
+
+============================================================
+[SETUP] django__django-13551 for opencode
+  => django__django-13551 | opencode | blocked
+
+############################################################
+# [14/198] opencode x django__django-13590
+############################################################
+
+============================================================
+[SETUP] django__django-13590 for opencode
+
+[RUN] opencode on django__django-13590 ...
+  [EVAL] opencode on django__django-13590 ...
+  => django__django-13590 | opencode | resolved
+
+############################################################
+# [15/198] opencode x django__django-13658
+############################################################
+
+============================================================
+[SETUP] django__django-13658 for opencode
+
+[RUN] opencode on django__django-13658 ...
+  [EVAL] opencode on django__django-13658 ...
+  => django__django-13658 | opencode | resolved
+
+############################################################
+# [16/198] opencode x django__django-13660
+############################################################
+
+============================================================
+[SETUP] django__django-13660 for opencode
+
+[RUN] opencode on django__django-13660 ...
+  [EVAL] opencode on django__django-13660 ...
+  => django__django-13660 | opencode | patch-but-failed
+
+############################################################
+# [17/198] opencode x django__django-13710
+############################################################
+
+============================================================
+[SETUP] django__django-13710 for opencode
+
+[RUN] opencode on django__django-13710 ...
+  [EVAL] opencode on django__django-13710 ...
+  => django__django-13710 | opencode | patch-but-failed
+
+############################################################
+# [18/198] opencode x django__django-13757
+############################################################
+
+============================================================
+[SETUP] django__django-13757 for opencode
+
+[RUN] opencode on django__django-13757 ...
+  [EVAL] opencode on django__django-13757 ...
+  => django__django-13757 | opencode | resolved
+
+############################################################
+# [19/198] opencode x django__django-13768
+############################################################
+
+============================================================
+[SETUP] django__django-13768 for opencode
+
+[RUN] opencode on django__django-13768 ...
+  [EVAL] opencode on django__django-13768 ...
+  => django__django-13768 | opencode | patch-but-failed
+
+############################################################
+# [20/198] opencode x django__django-13925
+############################################################
+
+============================================================
+[SETUP] django__django-13925 for opencode
+
+[RUN] opencode on django__django-13925 ...
+  [EVAL] opencode on django__django-13925 ...
+  => django__django-13925 | opencode | resolved
+
+############################################################
+# [21/198] opencode x django__django-13933
+############################################################
+
+============================================================
+[SETUP] django__django-13933 for opencode
+
+[RUN] opencode on django__django-13933 ...
+  [EVAL] opencode on django__django-13933 ...
+  => django__django-13933 | opencode | resolved
+
+############################################################
+# [22/198] opencode x django__django-13964
+############################################################
+
+============================================================
+[SETUP] django__django-13964 for opencode
+
+[RUN] opencode on django__django-13964 ...
+  [EVAL] opencode on django__django-13964 ...
+  => django__django-13964 | opencode | patch-but-failed
+
+############################################################
+# [23/198] opencode x django__django-14016
+############################################################
+
+============================================================
+[SETUP] django__django-14016 for opencode
+
+[RUN] opencode on django__django-14016 ...
+  [EVAL] opencode on django__django-14016 ...
+  => django__django-14016 | opencode | resolved
+
+############################################################
+# [24/198] opencode x django__django-14017
+############################################################
+
+============================================================
+[SETUP] django__django-14017 for opencode
+
+[RUN] opencode on django__django-14017 ...
+  [EVAL] opencode on django__django-14017 ...
+  => django__django-14017 | opencode | patch-but-failed
+
+############################################################
+# [25/198] opencode x django__django-14155
+############################################################
+
+============================================================
+[SETUP] django__django-14155 for opencode
+
+[RUN] opencode on django__django-14155 ...
+  [EVAL] opencode on django__django-14155 ...
+  => django__django-14155 | opencode | patch-but-failed
+
+############################################################
+# [26/198] opencode x django__django-14238
+############################################################
+
+============================================================
+[SETUP] django__django-14238 for opencode
+
+[RUN] opencode on django__django-14238 ...
+  [EVAL] opencode on django__django-14238 ...
+  => django__django-14238 | opencode | patch-but-failed
+
+############################################################
+# [27/198] opencode x django__django-14382
+############################################################
+
+============================================================
+[SETUP] django__django-14382 for opencode
+
+[RUN] opencode on django__django-14382 ...
+  [EVAL] opencode on django__django-14382 ...
+  => django__django-14382 | opencode | patch-but-failed
+
+############################################################
+# [28/198] opencode x django__django-14411
+############################################################
+
+============================================================
+[SETUP] django__django-14411 for opencode
+
+[RUN] opencode on django__django-14411 ...
+  [EVAL] opencode on django__django-14411 ...
+  => django__django-14411 | opencode | patch-but-failed
+
+############################################################
+# [29/198] opencode x django__django-14534
+############################################################
+
+============================================================
+[SETUP] django__django-14534 for opencode
+
+[RUN] opencode on django__django-14534 ...
+  [EVAL] opencode on django__django-14534 ...
+  => django__django-14534 | opencode | patch-but-failed
+
+############################################################
+# [30/198] opencode x django__django-14580
+############################################################
+
+============================================================
+[SETUP] django__django-14580 for opencode
+
+[RUN] opencode on django__django-14580 ...
+  [EVAL] opencode on django__django-14580 ...
+  => django__django-14580 | opencode | patch-but-failed
+
+############################################################
+# [31/198] opencode x django__django-14608
+############################################################
+
+============================================================
+[SETUP] django__django-14608 for opencode
+
+[RUN] opencode on django__django-14608 ...
+  [EVAL] opencode on django__django-14608 ...
+  => django__django-14608 | opencode | patch-but-failed
+
+############################################################
+# [32/198] opencode x django__django-14667
+############################################################
+
+============================================================
+[SETUP] django__django-14667 for opencode
+
+[RUN] opencode on django__django-14667 ...
+  [EVAL] opencode on django__django-14667 ...
+  => django__django-14667 | opencode | patch-but-failed
+
+############################################################
+# [33/198] opencode x django__django-14672
+############################################################
+
+============================================================
+[SETUP] django__django-14672 for opencode
+
+[RUN] opencode on django__django-14672 ...
+  [EVAL] opencode on django__django-14672 ...
+  => django__django-14672 | opencode | patch-but-failed
+
+############################################################
+# [34/198] opencode x django__django-14730
+############################################################
+
+============================================================
+[SETUP] django__django-14730 for opencode
+
+[RUN] opencode on django__django-14730 ...
+  [EVAL] opencode on django__django-14730 ...
+  => django__django-14730 | opencode | patch-but-failed
+
+############################################################
+# [35/198] opencode x django__django-14752
+############################################################
+
+============================================================
+[SETUP] django__django-14752 for opencode
+
+[RUN] opencode on django__django-14752 ...
+  [EVAL] opencode on django__django-14752 ...
+  => django__django-14752 | opencode | patch-but-failed
+
+############################################################
+# [36/198] opencode x django__django-14787
+############################################################
+
+============================================================
+[SETUP] django__django-14787 for opencode
+
+[RUN] opencode on django__django-14787 ...
+  [EVAL] opencode on django__django-14787 ...
+  => django__django-14787 | opencode | patch-but-failed
+
+############################################################
+# [37/198] opencode x django__django-14855
+############################################################
+
+============================================================
+[SETUP] django__django-14855 for opencode
+
+[RUN] opencode on django__django-14855 ...
+  [EVAL] opencode on django__django-14855 ...
+  => django__django-14855 | opencode | patch-but-failed
+
+############################################################
+# [38/198] opencode x django__django-14915
+############################################################
+
+============================================================
+[SETUP] django__django-14915 for opencode
+
+[RUN] opencode on django__django-14915 ...
+  [EVAL] opencode on django__django-14915 ...
+  => django__django-14915 | opencode | patch-but-failed
+
+############################################################
+# [39/198] opencode x django__django-14997
+############################################################
+
+============================================================
+[SETUP] django__django-14997 for opencode
+
+[RUN] opencode on django__django-14997 ...
+  [EVAL] opencode on django__django-14997 ...
+  => django__django-14997 | opencode | patch-but-failed
+
+############################################################
+# [40/198] opencode x django__django-14999
+############################################################
+
+============================================================
+[SETUP] django__django-14999 for opencode
+
+[RUN] opencode on django__django-14999 ...
+  [EVAL] opencode on django__django-14999 ...
+  => django__django-14999 | opencode | patch-but-failed
+
+############################################################
+# [41/198] opencode x django__django-15061
+############################################################
+
+============================================================
+[SETUP] django__django-15061 for opencode
+
+[RUN] opencode on django__django-15061 ...
+  [EVAL] opencode on django__django-15061 ...
+  => django__django-15061 | opencode | patch-but-failed
+
+############################################################
+# [42/198] opencode x django__django-15202
+############################################################
+
+============================================================
+[SETUP] django__django-15202 for opencode
+
+[RUN] opencode on django__django-15202 ...
+  [EVAL] opencode on django__django-15202 ...
+  => django__django-15202 | opencode | patch-but-failed
+
+############################################################
+# [43/198] opencode x django__django-15213
+############################################################
+
+============================================================
+[SETUP] django__django-15213 for opencode
+
+[RUN] opencode on django__django-15213 ...
+  [EVAL] opencode on django__django-15213 ...
+  => django__django-15213 | opencode | patch-but-failed
+
+############################################################
+# [44/198] opencode x django__django-15252
+############################################################
+
+============================================================
+[SETUP] django__django-15252 for opencode
+
+[RUN] opencode on django__django-15252 ...
+  [EVAL] opencode on django__django-15252 ...
+  => django__django-15252 | opencode | patch-but-failed
+
+############################################################
+# [45/198] opencode x django__django-15320
+############################################################
+
+============================================================
+[SETUP] django__django-15320 for opencode
+
+[RUN] opencode on django__django-15320 ...
+  [EVAL] opencode on django__django-15320 ...
+  => django__django-15320 | opencode | patch-but-failed
+
+############################################################
+# [46/198] opencode x django__django-15347
+############################################################
+
+============================================================
+[SETUP] django__django-15347 for opencode
+
+[RUN] opencode on django__django-15347 ...
+  [EVAL] opencode on django__django-15347 ...
+  => django__django-15347 | opencode | patch-but-failed
+
+############################################################
+# [47/198] opencode x django__django-15388
+############################################################
+
+============================================================
+[SETUP] django__django-15388 for opencode
+
+[RUN] opencode on django__django-15388 ...
+  [EVAL] opencode on django__django-15388 ...
+  => django__django-15388 | opencode | patch-but-failed
+
+############################################################
+# [48/198] opencode x django__django-15400
+############################################################
+
+============================================================
+[SETUP] django__django-15400 for opencode
+
+[RUN] opencode on django__django-15400 ...
+  [EVAL] opencode on django__django-15400 ...
+  => django__django-15400 | opencode | patch-but-failed
+
+############################################################
+# [49/198] opencode x django__django-15498
+############################################################
+
+============================================================
+[SETUP] django__django-15498 for opencode
+
+[RUN] opencode on django__django-15498 ...
+  [EVAL] opencode on django__django-15498 ...
+  => django__django-15498 | opencode | patch-but-failed
+
+############################################################
+# [50/198] opencode x django__django-15695
+############################################################
+
+============================================================
+[SETUP] django__django-15695 for opencode
+
+[RUN] opencode on django__django-15695 ...
+  [EVAL] opencode on django__django-15695 ...
+  => django__django-15695 | opencode | patch-but-failed
+
+############################################################
+# [51/198] opencode x django__django-15738
+############################################################
+
+============================================================
+[SETUP] django__django-15738 for opencode
+
+[RUN] opencode on django__django-15738 ...
+  [EVAL] opencode on django__django-15738 ...
+  => django__django-15738 | opencode | patch-but-failed
+
+############################################################
+# [52/198] opencode x django__django-15781
+############################################################
+
+============================================================
+[SETUP] django__django-15781 for opencode
+
+[RUN] opencode on django__django-15781 ...
+  [EVAL] opencode on django__django-15781 ...
+  => django__django-15781 | opencode | patch-but-failed
+
+############################################################
+# [53/198] opencode x django__django-15789
+############################################################
+
+============================================================
+[SETUP] django__django-15789 for opencode
+
+[RUN] opencode on django__django-15789 ...
+  [EVAL] opencode on django__django-15789 ...
+  => django__django-15789 | opencode | patch-but-failed
+
+############################################################
+# [54/198] opencode x django__django-15790
+############################################################
+
+============================================================
+[SETUP] django__django-15790 for opencode
+
+[RUN] opencode on django__django-15790 ...
+  [EVAL] opencode on django__django-15790 ...
+  => django__django-15790 | opencode | patch-but-failed
+
+############################################################
+# [55/198] opencode x django__django-15814
+############################################################
+
+============================================================
+[SETUP] django__django-15814 for opencode
+
+[RUN] opencode on django__django-15814 ...
+  [EVAL] opencode on django__django-15814 ...
+  => django__django-15814 | opencode | patch-but-failed
+
+############################################################
+# [56/198] opencode x django__django-15819
+############################################################
+
+============================================================
+[SETUP] django__django-15819 for opencode
+
+[RUN] opencode on django__django-15819 ...
+  [EVAL] opencode on django__django-15819 ...
+  => django__django-15819 | opencode | patch-but-failed
+
+############################################################
+# [57/198] opencode x django__django-15851
+############################################################
+
+============================================================
+[SETUP] django__django-15851 for opencode
+
+[RUN] opencode on django__django-15851 ...
+  [EVAL] opencode on django__django-15851 ...
+  => django__django-15851 | opencode | patch-but-failed
+
+############################################################
+# [58/198] opencode x django__django-15902
+############################################################
+
+============================================================
+[SETUP] django__django-15902 for opencode
+
+[RUN] opencode on django__django-15902 ...
+  [EVAL] opencode on django__django-15902 ...
+  => django__django-15902 | opencode | patch-but-failed
+
+############################################################
+# [59/198] opencode x django__django-15996
+############################################################
+
+============================================================
+[SETUP] django__django-15996 for opencode
+
+[RUN] opencode on django__django-15996 ...
+  [EVAL] opencode on django__django-15996 ...
+  => django__django-15996 | opencode | patch-but-failed
+
+############################################################
+# [60/198] opencode x django__django-16041
+############################################################
+
+============================================================
+[SETUP] django__django-16041 for opencode
+  => django__django-16041 | opencode | blocked
+
+############################################################
+# [61/198] opencode x django__django-16046
+############################################################
+
+============================================================
+[SETUP] django__django-16046 for opencode
+
+[RUN] opencode on django__django-16046 ...
+  [EVAL] opencode on django__django-16046 ...
+  => django__django-16046 | opencode | patch-but-failed
+
+############################################################
+# [62/198] opencode x django__django-16139
+############################################################
+
+============================================================
+[SETUP] django__django-16139 for opencode
+
+[RUN] opencode on django__django-16139 ...
+  [EVAL] opencode on django__django-16139 ...
+  => django__django-16139 | opencode | patch-but-failed
+
+############################################################
+# [63/198] opencode x django__django-16229
+############################################################
+
+============================================================
+[SETUP] django__django-16229 for opencode
+
+[RUN] opencode on django__django-16229 ...
+  [EVAL] opencode on django__django-16229 ...
+  => django__django-16229 | opencode | patch-but-failed
+
+############################################################
+# [64/198] opencode x django__django-16255
+############################################################
+
+============================================================
+[SETUP] django__django-16255 for opencode
+
+[RUN] opencode on django__django-16255 ...
+  [EVAL] opencode on django__django-16255 ...
+  => django__django-16255 | opencode | patch-but-failed
+
+############################################################
+# [65/198] opencode x django__django-16379
+############################################################
+
+============================================================
+[SETUP] django__django-16379 for opencode
+
+[RUN] opencode on django__django-16379 ...
+  [EVAL] opencode on django__django-16379 ...
+  => django__django-16379 | opencode | patch-but-failed
+
+############################################################
+# [66/198] opencode x django__django-16400
+############################################################
+
+============================================================
+[SETUP] django__django-16400 for opencode
+
+[RUN] opencode on django__django-16400 ...
+  [EVAL] opencode on django__django-16400 ...
+  => django__django-16400 | opencode | patch-but-failed
+
+############################################################
+# [67/198] opencode x django__django-16408
+############################################################
+
+============================================================
+[SETUP] django__django-16408 for opencode
+
+[RUN] opencode on django__django-16408 ...
+  [EVAL] opencode on django__django-16408 ...
+  => django__django-16408 | opencode | patch-but-failed
+
+############################################################
+# [68/198] opencode x django__django-16527
+############################################################
+
+============================================================
+[SETUP] django__django-16527 for opencode
+
+[RUN] opencode on django__django-16527 ...
+  [EVAL] opencode on django__django-16527 ...
+  => django__django-16527 | opencode | patch-but-failed
+
+############################################################
+# [69/198] opencode x django__django-16595
+############################################################
+
+============================================================
+[SETUP] django__django-16595 for opencode
+
+[RUN] opencode on django__django-16595 ...
+  [EVAL] opencode on django__django-16595 ...
+  => django__django-16595 | opencode | patch-but-failed
+
+############################################################
+# [70/198] opencode x django__django-16816
+############################################################
+
+============================================================
+[SETUP] django__django-16816 for opencode
+
+[RUN] opencode on django__django-16816 ...
+  [EVAL] opencode on django__django-16816 ...
+  => django__django-16816 | opencode | patch-but-failed
+
+############################################################
+# [71/198] opencode x django__django-16820
+############################################################
+
+============================================================
+[SETUP] django__django-16820 for opencode
+
+[RUN] opencode on django__django-16820 ...
+  [EVAL] opencode on django__django-16820 ...
+  => django__django-16820 | opencode | patch-but-failed
+
+############################################################
+# [72/198] opencode x django__django-16873
+############################################################
+
+============================================================
+[SETUP] django__django-16873 for opencode
+
+[RUN] opencode on django__django-16873 ...
+  [QUOTA] opencode: quota exhausted, waiting 300s (retry 2/3)...
+  [QUOTA] opencode: quota exhausted, waiting 300s (retry 3/3)...
+  [EVAL] opencode on django__django-16873 ...
+  => django__django-16873 | opencode | quota-blocked
+
+############################################################
+# [73/198] opencode x django__django-16910
+############################################################
+
+============================================================
+[SETUP] django__django-16910 for opencode
+
+[RUN] opencode on django__django-16910 ...
+  [EVAL] opencode on django__django-16910 ...
+  => django__django-16910 | opencode | patch-but-failed
+
+############################################################
+# [74/198] opencode x django__django-17051
+############################################################
+
+============================================================
+[SETUP] django__django-17051 for opencode
+
+[RUN] opencode on django__django-17051 ...
+  [EVAL] opencode on django__django-17051 ...
+  => django__django-17051 | opencode | patch-but-failed
+
+############################################################
+# [75/198] opencode x django__django-17087
+############################################################
+
+============================================================
+[SETUP] django__django-17087 for opencode
+
+[RUN] opencode on django__django-17087 ...
+  [EVAL] opencode on django__django-17087 ...
+  => django__django-17087 | opencode | patch-but-failed
+
+############################################################
+# [76/198] opencode x matplotlib__matplotlib-23562
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23562 for opencode
+
+[RUN] opencode on matplotlib__matplotlib-23562 ...
+  [EVAL] opencode on matplotlib__matplotlib-23562 ...
+  => matplotlib__matplotlib-23562 | opencode | patch-but-failed
+
+############################################################
+# [77/198] opencode x matplotlib__matplotlib-23563
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23563 for opencode
+
+[RUN] opencode on matplotlib__matplotlib-23563 ...
+  [EVAL] opencode on matplotlib__matplotlib-23563 ...
+  => matplotlib__matplotlib-23563 | opencode | patch-but-failed
+
+############################################################
+# [78/198] opencode x matplotlib__matplotlib-23913
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23913 for opencode
+
+[RUN] opencode on matplotlib__matplotlib-23913 ...
+  [EVAL] opencode on matplotlib__matplotlib-23913 ...
+  => matplotlib__matplotlib-23913 | opencode | patch-but-failed
+
+############################################################
+# [79/198] opencode x matplotlib__matplotlib-23964
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23964 for opencode
+
+[RUN] opencode on matplotlib__matplotlib-23964 ...
+  [EVAL] opencode on matplotlib__matplotlib-23964 ...
+  => matplotlib__matplotlib-23964 | opencode | patch-but-failed
+
+############################################################
+# [80/198] opencode x matplotlib__matplotlib-23987
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23987 for opencode
+
+[RUN] opencode on matplotlib__matplotlib-23987 ...
+  [EVAL] opencode on matplotlib__matplotlib-23987 ...
+  => matplotlib__matplotlib-23987 | opencode | patch-but-failed
+
+############################################################
+# [81/198] opencode x matplotlib__matplotlib-24149
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24149 for opencode
+
+[RUN] opencode on matplotlib__matplotlib-24149 ...
+  [EVAL] opencode on matplotlib__matplotlib-24149 ...
+  => matplotlib__matplotlib-24149 | opencode | patch-but-failed
+
+############################################################
+# [82/198] opencode x matplotlib__matplotlib-24265
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24265 for opencode
+
+[RUN] opencode on matplotlib__matplotlib-24265 ...
+  [EVAL] opencode on matplotlib__matplotlib-24265 ...
+  => matplotlib__matplotlib-24265 | opencode | patch-but-failed
+
+############################################################
+# [83/198] opencode x matplotlib__matplotlib-24334
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24334 for opencode
+
+[RUN] opencode on matplotlib__matplotlib-24334 ...
+  [EVAL] opencode on matplotlib__matplotlib-24334 ...
+  => matplotlib__matplotlib-24334 | opencode | patch-but-failed
+
+############################################################
+# [84/198] opencode x matplotlib__matplotlib-24970
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24970 for opencode
+
+[RUN] opencode on matplotlib__matplotlib-24970 ...
+  [EVAL] opencode on matplotlib__matplotlib-24970 ...
+  => matplotlib__matplotlib-24970 | opencode | patch-but-failed
+
+############################################################
+# [85/198] opencode x matplotlib__matplotlib-25079
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25079 for opencode
+
+[RUN] opencode on matplotlib__matplotlib-25079 ...
+  [EVAL] opencode on matplotlib__matplotlib-25079 ...
+  => matplotlib__matplotlib-25079 | opencode | patch-but-failed
+
+############################################################
+# [86/198] opencode x matplotlib__matplotlib-25311
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25311 for opencode
+
+[RUN] opencode on matplotlib__matplotlib-25311 ...
+  [EVAL] opencode on matplotlib__matplotlib-25311 ...
+  => matplotlib__matplotlib-25311 | opencode | patch-but-failed
+
+############################################################
+# [87/198] opencode x matplotlib__matplotlib-25332
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25332 for opencode
+
+[RUN] opencode on matplotlib__matplotlib-25332 ...
+  [EVAL] opencode on matplotlib__matplotlib-25332 ...
+  => matplotlib__matplotlib-25332 | opencode | patch-but-failed
+
+############################################################
+# [88/198] opencode x matplotlib__matplotlib-25433
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25433 for opencode
+
+[RUN] opencode on matplotlib__matplotlib-25433 ...
+  [EVAL] opencode on matplotlib__matplotlib-25433 ...
+  => matplotlib__matplotlib-25433 | opencode | patch-but-failed
+
+############################################################
+# [89/198] opencode x matplotlib__matplotlib-25442
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25442 for opencode
+
+[RUN] opencode on matplotlib__matplotlib-25442 ...
+  [EVAL] opencode on matplotlib__matplotlib-25442 ...
+  => matplotlib__matplotlib-25442 | opencode | patch-but-failed
+
+############################################################
+# [90/198] opencode x matplotlib__matplotlib-25498
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25498 for opencode
+
+[RUN] opencode on matplotlib__matplotlib-25498 ...
+  [EVAL] opencode on matplotlib__matplotlib-25498 ...
+  => matplotlib__matplotlib-25498 | opencode | patch-but-failed
+
+############################################################
+# [91/198] opencode x matplotlib__matplotlib-26011
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-26011 for opencode
+
+[RUN] opencode on matplotlib__matplotlib-26011 ...
+  [EVAL] opencode on matplotlib__matplotlib-26011 ...
+  => matplotlib__matplotlib-26011 | opencode | patch-but-failed
+
+############################################################
+# [92/198] opencode x matplotlib__matplotlib-26020
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-26020 for opencode
+
+[RUN] opencode on matplotlib__matplotlib-26020 ...
+  [EVAL] opencode on matplotlib__matplotlib-26020 ...
+  => matplotlib__matplotlib-26020 | opencode | patch-but-failed
+
+############################################################
+# [93/198] opencode x mwaskom__seaborn-3010
+############################################################
+
+============================================================
+[SETUP] mwaskom__seaborn-3010 for opencode
+
+[RUN] opencode on mwaskom__seaborn-3010 ...
+  [EVAL] opencode on mwaskom__seaborn-3010 ...
+  => mwaskom__seaborn-3010 | opencode | resolved
+
+############################################################
+# [94/198] opencode x mwaskom__seaborn-3190
+############################################################
+
+============================================================
+[SETUP] mwaskom__seaborn-3190 for opencode
+
+[RUN] opencode on mwaskom__seaborn-3190 ...
+  [EVAL] opencode on mwaskom__seaborn-3190 ...
+  => mwaskom__seaborn-3190 | opencode | patch-but-failed
+
+############################################################
+# [95/198] opencode x mwaskom__seaborn-3407
+############################################################
+
+============================================================
+[SETUP] mwaskom__seaborn-3407 for opencode
+
+[RUN] opencode on mwaskom__seaborn-3407 ...
+  [EVAL] opencode on mwaskom__seaborn-3407 ...
+  => mwaskom__seaborn-3407 | opencode | patch-but-failed
+
+############################################################
+# [96/198] opencode x pallets__flask-4992
+############################################################
+
+============================================================
+[SETUP] pallets__flask-4992 for opencode
+
+[RUN] opencode on pallets__flask-4992 ...
+  [EVAL] opencode on pallets__flask-4992 ...
+  => pallets__flask-4992 | opencode | patch-but-failed
+
+############################################################
+# [97/198] opencode x pallets__flask-5063
+############################################################
+
+============================================================
+[SETUP] pallets__flask-5063 for opencode
+
+[RUN] opencode on pallets__flask-5063 ...
+  [EVAL] opencode on pallets__flask-5063 ...
+  => pallets__flask-5063 | opencode | patch-but-failed
+
+############################################################
+# [98/198] opencode x psf__requests-2317
+############################################################
+
+============================================================
+[SETUP] psf__requests-2317 for opencode
+
+[RUN] opencode on psf__requests-2317 ...
+  [EVAL] opencode on psf__requests-2317 ...
+  => psf__requests-2317 | opencode | patch-but-failed
+
+############################################################
+# [99/198] opencode x psf__requests-2674
+############################################################
+
+============================================================
+[SETUP] psf__requests-2674 for opencode
+
+[RUN] opencode on psf__requests-2674 ...
+  [EVAL] opencode on psf__requests-2674 ...
+  => psf__requests-2674 | opencode | patch-but-failed
+
+############################################################
+# [100/198] opencode x psf__requests-3362
+############################################################
+
+============================================================
+[SETUP] psf__requests-3362 for opencode
+
+[RUN] opencode on psf__requests-3362 ...
+  [EVAL] opencode on psf__requests-3362 ...
+  => psf__requests-3362 | opencode | patch-but-failed
+
+############################################################
+# [101/198] opencode x psf__requests-863
+############################################################
+
+============================================================
+[SETUP] psf__requests-863 for opencode
+
+[RUN] opencode on psf__requests-863 ...
+  [EVAL] opencode on psf__requests-863 ...
+  => psf__requests-863 | opencode | patch-but-failed
+
+############################################################
+# [102/198] opencode x pydata__xarray-4094
+############################################################
+
+============================================================
+[SETUP] pydata__xarray-4094 for opencode
+
+[RUN] opencode on pydata__xarray-4094 ...
+  [EVAL] opencode on pydata__xarray-4094 ...
+  => pydata__xarray-4094 | opencode | resolved
+
+############################################################
+# [103/198] opencode x pydata__xarray-4248
+############################################################
+
+============================================================
+[SETUP] pydata__xarray-4248 for opencode
+
+[RUN] opencode on pydata__xarray-4248 ...
+  [EVAL] opencode on pydata__xarray-4248 ...
+  => pydata__xarray-4248 | opencode | patch-but-failed
+
+############################################################
+# [104/198] opencode x pydata__xarray-4493
+############################################################
+
+============================================================
+[SETUP] pydata__xarray-4493 for opencode
+
+[RUN] opencode on pydata__xarray-4493 ...
+  [EVAL] opencode on pydata__xarray-4493 ...
+  => pydata__xarray-4493 | opencode | patch-but-failed
+
+############################################################
+# [105/198] opencode x pydata__xarray-5131
+############################################################
+
+============================================================
+[SETUP] pydata__xarray-5131 for opencode
+
+[RUN] opencode on pydata__xarray-5131 ...
+  [EVAL] opencode on pydata__xarray-5131 ...
+  => pydata__xarray-5131 | opencode | resolved
+
+############################################################
+# [106/198] opencode x pylint-dev__pylint-7080
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7080 for opencode
+
+[RUN] opencode on pylint-dev__pylint-7080 ...
+  [EVAL] opencode on pylint-dev__pylint-7080 ...
+  => pylint-dev__pylint-7080 | opencode | patch-but-failed
+
+############################################################
+# [107/198] opencode x pylint-dev__pylint-7114
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7114 for opencode
+
+[RUN] opencode on pylint-dev__pylint-7114 ...
+  [EVAL] opencode on pylint-dev__pylint-7114 ...
+  => pylint-dev__pylint-7114 | opencode | patch-but-failed
+
+############################################################
+# [108/198] opencode x pylint-dev__pylint-7228
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7228 for opencode
+
+[RUN] opencode on pylint-dev__pylint-7228 ...
+  [EVAL] opencode on pylint-dev__pylint-7228 ...
+  => pylint-dev__pylint-7228 | opencode | patch-but-failed
+
+############################################################
+# [109/198] opencode x pylint-dev__pylint-7993
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7993 for opencode
+
+[RUN] opencode on pylint-dev__pylint-7993 ...
+  [EVAL] opencode on pylint-dev__pylint-7993 ...
+  => pylint-dev__pylint-7993 | opencode | resolved
+
+############################################################
+# [110/198] opencode x pytest-dev__pytest-5227
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-5227 for opencode
+
+[RUN] opencode on pytest-dev__pytest-5227 ...
+  [EVAL] opencode on pytest-dev__pytest-5227 ...
+  => pytest-dev__pytest-5227 | opencode | patch-but-failed
+
+############################################################
+# [111/198] opencode x pytest-dev__pytest-5413
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-5413 for opencode
+
+[RUN] opencode on pytest-dev__pytest-5413 ...
+  [EVAL] opencode on pytest-dev__pytest-5413 ...
+  => pytest-dev__pytest-5413 | opencode | patch-but-failed
+
+############################################################
+# [112/198] opencode x pytest-dev__pytest-5495
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-5495 for opencode
+
+[RUN] opencode on pytest-dev__pytest-5495 ...
+  [EVAL] opencode on pytest-dev__pytest-5495 ...
+  => pytest-dev__pytest-5495 | opencode | patch-but-failed
+
+############################################################
+# [113/198] opencode x pytest-dev__pytest-5692
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-5692 for opencode
+
+[RUN] opencode on pytest-dev__pytest-5692 ...
+  [EVAL] opencode on pytest-dev__pytest-5692 ...
+  => pytest-dev__pytest-5692 | opencode | patch-but-failed
+
+############################################################
+# [114/198] opencode x pytest-dev__pytest-6116
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-6116 for opencode
+
+[RUN] opencode on pytest-dev__pytest-6116 ...
+  [EVAL] opencode on pytest-dev__pytest-6116 ...
+  => pytest-dev__pytest-6116 | opencode | patch-but-failed
+
+############################################################
+# [115/198] opencode x pytest-dev__pytest-7168
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7168 for opencode
+
+[RUN] opencode on pytest-dev__pytest-7168 ...
+  [EVAL] opencode on pytest-dev__pytest-7168 ...
+  => pytest-dev__pytest-7168 | opencode | patch-but-failed
+
+############################################################
+# [116/198] opencode x pytest-dev__pytest-7220
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7220 for opencode
+
+[RUN] opencode on pytest-dev__pytest-7220 ...
+  [EVAL] opencode on pytest-dev__pytest-7220 ...
+  => pytest-dev__pytest-7220 | opencode | patch-but-failed
+
+############################################################
+# [117/198] opencode x pytest-dev__pytest-7373
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7373 for opencode
+
+[RUN] opencode on pytest-dev__pytest-7373 ...
+  [EVAL] opencode on pytest-dev__pytest-7373 ...
+  => pytest-dev__pytest-7373 | opencode | patch-but-failed
+
+############################################################
+# [118/198] opencode x pytest-dev__pytest-7432
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7432 for opencode
+
+[RUN] opencode on pytest-dev__pytest-7432 ...
+  [EVAL] opencode on pytest-dev__pytest-7432 ...
+  => pytest-dev__pytest-7432 | opencode | patch-but-failed
+
+############################################################
+# [119/198] opencode x pytest-dev__pytest-7490
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7490 for opencode
+
+[RUN] opencode on pytest-dev__pytest-7490 ...
+  [EVAL] opencode on pytest-dev__pytest-7490 ...
+  => pytest-dev__pytest-7490 | opencode | patch-but-failed
+
+############################################################
+# [120/198] opencode x pytest-dev__pytest-8365
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-8365 for opencode
+
+[RUN] opencode on pytest-dev__pytest-8365 ...
+  [EVAL] opencode on pytest-dev__pytest-8365 ...
+  => pytest-dev__pytest-8365 | opencode | patch-but-failed
+
+############################################################
+# [121/198] opencode x pytest-dev__pytest-8906
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-8906 for opencode
+
+[RUN] opencode on pytest-dev__pytest-8906 ...
+  [EVAL] opencode on pytest-dev__pytest-8906 ...
+  => pytest-dev__pytest-8906 | opencode | patch-but-failed
+
+############################################################
+# [122/198] opencode x pytest-dev__pytest-9359
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-9359 for opencode
+
+[RUN] opencode on pytest-dev__pytest-9359 ...
+  [EVAL] opencode on pytest-dev__pytest-9359 ...
+  => pytest-dev__pytest-9359 | opencode | patch-but-failed
+
+############################################################
+# [123/198] opencode x scikit-learn__scikit-learn-13142
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13142 for opencode
+
+[RUN] opencode on scikit-learn__scikit-learn-13142 ...
+  [EVAL] opencode on scikit-learn__scikit-learn-13142 ...
+  => scikit-learn__scikit-learn-13142 | opencode | resolved
+
+############################################################
+# [124/198] opencode x scikit-learn__scikit-learn-13241
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13241 for opencode
+
+[RUN] opencode on scikit-learn__scikit-learn-13241 ...
+  [EVAL] opencode on scikit-learn__scikit-learn-13241 ...
+  => scikit-learn__scikit-learn-13241 | opencode | resolved
+
+############################################################
+# [125/198] opencode x scikit-learn__scikit-learn-13439
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13439 for opencode
+
+[RUN] opencode on scikit-learn__scikit-learn-13439 ...
+  [EVAL] opencode on scikit-learn__scikit-learn-13439 ...
+  => scikit-learn__scikit-learn-13439 | opencode | resolved
+
+############################################################
+# [126/198] opencode x scikit-learn__scikit-learn-13496
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13496 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on scikit-learn__scikit-learn-13496 ...
+  [EVAL] opencode on scikit-learn__scikit-learn-13496 ...
+  => scikit-learn__scikit-learn-13496 | opencode | resolved
+
+############################################################
+# [127/198] opencode x scikit-learn__scikit-learn-13497
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13497 for opencode
+
+[RUN] opencode on scikit-learn__scikit-learn-13497 ...
+  [EVAL] opencode on scikit-learn__scikit-learn-13497 ...
+  => scikit-learn__scikit-learn-13497 | opencode | patch-but-failed
+
+############################################################
+# [128/198] opencode x scikit-learn__scikit-learn-13584
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13584 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on scikit-learn__scikit-learn-13584 ...
+  [EVAL] opencode on scikit-learn__scikit-learn-13584 ...
+  => scikit-learn__scikit-learn-13584 | opencode | resolved
+
+############################################################
+# [129/198] opencode x scikit-learn__scikit-learn-13779
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13779 for opencode
+
+[RUN] opencode on scikit-learn__scikit-learn-13779 ...
+  [EVAL] opencode on scikit-learn__scikit-learn-13779 ...
+  => scikit-learn__scikit-learn-13779 | opencode | resolved
+
+############################################################
+# [130/198] opencode x scikit-learn__scikit-learn-14087
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14087 for opencode
+
+[RUN] opencode on scikit-learn__scikit-learn-14087 ...
+  [EVAL] opencode on scikit-learn__scikit-learn-14087 ...
+  => scikit-learn__scikit-learn-14087 | opencode | patch-but-failed
+
+############################################################
+# [131/198] opencode x scikit-learn__scikit-learn-14092
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14092 for opencode
+
+[RUN] opencode on scikit-learn__scikit-learn-14092 ...
+  [EVAL] opencode on scikit-learn__scikit-learn-14092 ...
+  => scikit-learn__scikit-learn-14092 | opencode | resolved
+
+############################################################
+# [132/198] opencode x scikit-learn__scikit-learn-14894
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14894 for opencode
+
+[RUN] opencode on scikit-learn__scikit-learn-14894 ...
+  [EVAL] opencode on scikit-learn__scikit-learn-14894 ...
+  => scikit-learn__scikit-learn-14894 | opencode | resolved
+
+############################################################
+# [133/198] opencode x scikit-learn__scikit-learn-14983
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14983 for opencode
+
+[RUN] opencode on scikit-learn__scikit-learn-14983 ...
+  [EVAL] opencode on scikit-learn__scikit-learn-14983 ...
+  => scikit-learn__scikit-learn-14983 | opencode | resolved
+
+############################################################
+# [134/198] opencode x scikit-learn__scikit-learn-15512
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-15512 for opencode
+
+[RUN] opencode on scikit-learn__scikit-learn-15512 ...
+  [EVAL] opencode on scikit-learn__scikit-learn-15512 ...
+  => scikit-learn__scikit-learn-15512 | opencode | patch-but-failed
+
+############################################################
+# [135/198] opencode x scikit-learn__scikit-learn-15535
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-15535 for opencode
+
+[RUN] opencode on scikit-learn__scikit-learn-15535 ...
+  [EVAL] opencode on scikit-learn__scikit-learn-15535 ...
+  => scikit-learn__scikit-learn-15535 | opencode | resolved
+
+############################################################
+# [136/198] opencode x scikit-learn__scikit-learn-25500
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25500 for opencode
+
+[RUN] opencode on scikit-learn__scikit-learn-25500 ...
+  [EVAL] opencode on scikit-learn__scikit-learn-25500 ...
+  => scikit-learn__scikit-learn-25500 | opencode | patch-but-failed
+
+############################################################
+# [137/198] opencode x scikit-learn__scikit-learn-25570
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25570 for opencode
+
+[RUN] opencode on scikit-learn__scikit-learn-25570 ...
+  [EVAL] opencode on scikit-learn__scikit-learn-25570 ...
+  => scikit-learn__scikit-learn-25570 | opencode | patch-but-failed
+
+############################################################
+# [138/198] opencode x scikit-learn__scikit-learn-25638
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25638 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on scikit-learn__scikit-learn-25638 ...
+  [EVAL] opencode on scikit-learn__scikit-learn-25638 ...
+  => scikit-learn__scikit-learn-25638 | opencode | patch-but-failed
+
+############################################################
+# [139/198] opencode x scikit-learn__scikit-learn-25747
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25747 for opencode
+
+[RUN] opencode on scikit-learn__scikit-learn-25747 ...
+  [EVAL] opencode on scikit-learn__scikit-learn-25747 ...
+  => scikit-learn__scikit-learn-25747 | opencode | patch-but-failed
+
+############################################################
+# [140/198] opencode x sphinx-doc__sphinx-7738
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-7738 for opencode
+
+[RUN] opencode on sphinx-doc__sphinx-7738 ...
+  [EVAL] opencode on sphinx-doc__sphinx-7738 ...
+  => sphinx-doc__sphinx-7738 | opencode | patch-but-failed
+
+############################################################
+# [141/198] opencode x sphinx-doc__sphinx-7975
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-7975 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sphinx-doc__sphinx-7975 ...
+  [EVAL] opencode on sphinx-doc__sphinx-7975 ...
+  => sphinx-doc__sphinx-7975 | opencode | patch-but-failed
+
+############################################################
+# [142/198] opencode x sphinx-doc__sphinx-8273
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8273 for opencode
+
+[RUN] opencode on sphinx-doc__sphinx-8273 ...
+  [EVAL] opencode on sphinx-doc__sphinx-8273 ...
+  => sphinx-doc__sphinx-8273 | opencode | patch-but-failed
+
+############################################################
+# [143/198] opencode x sphinx-doc__sphinx-8282
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8282 for opencode
+
+[RUN] opencode on sphinx-doc__sphinx-8282 ...
+  [EVAL] opencode on sphinx-doc__sphinx-8282 ...
+  => sphinx-doc__sphinx-8282 | opencode | patch-but-failed
+
+############################################################
+# [144/198] opencode x sphinx-doc__sphinx-8435
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8435 for opencode
+
+[RUN] opencode on sphinx-doc__sphinx-8435 ...
+  [EVAL] opencode on sphinx-doc__sphinx-8435 ...
+  => sphinx-doc__sphinx-8435 | opencode | patch-but-failed
+
+############################################################
+# [145/198] opencode x sphinx-doc__sphinx-8474
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8474 for opencode
+
+[RUN] opencode on sphinx-doc__sphinx-8474 ...
+  [EVAL] opencode on sphinx-doc__sphinx-8474 ...
+  => sphinx-doc__sphinx-8474 | opencode | patch-but-failed
+
+############################################################
+# [146/198] opencode x sphinx-doc__sphinx-8506
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8506 for opencode
+
+[RUN] opencode on sphinx-doc__sphinx-8506 ...
+  [EVAL] opencode on sphinx-doc__sphinx-8506 ...
+  => sphinx-doc__sphinx-8506 | opencode | patch-but-failed
+
+############################################################
+# [147/198] opencode x sphinx-doc__sphinx-8595
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8595 for opencode
+
+[RUN] opencode on sphinx-doc__sphinx-8595 ...
+  [EVAL] opencode on sphinx-doc__sphinx-8595 ...
+  => sphinx-doc__sphinx-8595 | opencode | patch-but-failed
+
+############################################################
+# [148/198] opencode x sphinx-doc__sphinx-8627
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8627 for opencode
+
+[RUN] opencode on sphinx-doc__sphinx-8627 ...
+  [EVAL] opencode on sphinx-doc__sphinx-8627 ...
+  => sphinx-doc__sphinx-8627 | opencode | patch-but-failed
+
+############################################################
+# [149/198] opencode x sphinx-doc__sphinx-8713
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8713 for opencode
+
+[RUN] opencode on sphinx-doc__sphinx-8713 ...
+  [EVAL] opencode on sphinx-doc__sphinx-8713 ...
+  => sphinx-doc__sphinx-8713 | opencode | patch-but-failed
+
+############################################################
+# [150/198] opencode x sphinx-doc__sphinx-8721
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8721 for opencode
+
+[RUN] opencode on sphinx-doc__sphinx-8721 ...
+  [EVAL] opencode on sphinx-doc__sphinx-8721 ...
+  => sphinx-doc__sphinx-8721 | opencode | patch-but-failed
+
+############################################################
+# [151/198] opencode x sphinx-doc__sphinx-8801
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8801 for opencode
+
+[RUN] opencode on sphinx-doc__sphinx-8801 ...
+  [EVAL] opencode on sphinx-doc__sphinx-8801 ...
+  => sphinx-doc__sphinx-8801 | opencode | patch-but-failed
+
+############################################################
+# [152/198] opencode x sympy__sympy-15609
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15609 for opencode
+
+[RUN] opencode on sympy__sympy-15609 ...
+  [EVAL] opencode on sympy__sympy-15609 ...
+  => sympy__sympy-15609 | opencode | resolved
+
+############################################################
+# [153/198] opencode x sympy__sympy-15678
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15678 for opencode
+
+[RUN] opencode on sympy__sympy-15678 ...
+  [EVAL] opencode on sympy__sympy-15678 ...
+  => sympy__sympy-15678 | opencode | resolved
+
+############################################################
+# [154/198] opencode x sympy__sympy-16106
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16106 for opencode
+
+[RUN] opencode on sympy__sympy-16106 ...
+  [EVAL] opencode on sympy__sympy-16106 ...
+  => sympy__sympy-16106 | opencode | resolved
+
+############################################################
+# [155/198] opencode x sympy__sympy-16281
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16281 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-16281 ...
+  [EVAL] opencode on sympy__sympy-16281 ...
+  => sympy__sympy-16281 | opencode | patch-but-failed
+
+############################################################
+# [156/198] opencode x sympy__sympy-16503
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16503 for opencode
+
+[RUN] opencode on sympy__sympy-16503 ...
+  [EVAL] opencode on sympy__sympy-16503 ...
+  => sympy__sympy-16503 | opencode | patch-but-failed
+
+############################################################
+# [157/198] opencode x sympy__sympy-16792
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16792 for opencode
+
+[RUN] opencode on sympy__sympy-16792 ...
+  [EVAL] opencode on sympy__sympy-16792 ...
+  => sympy__sympy-16792 | opencode | resolved
+
+############################################################
+# [158/198] opencode x sympy__sympy-16988
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16988 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-16988 ...
+  [EVAL] opencode on sympy__sympy-16988 ...
+  => sympy__sympy-16988 | opencode | patch-but-failed
+
+############################################################
+# [159/198] opencode x sympy__sympy-17022
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17022 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-17022 ...
+  [EVAL] opencode on sympy__sympy-17022 ...
+  => sympy__sympy-17022 | opencode | resolved
+
+############################################################
+# [160/198] opencode x sympy__sympy-17139
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17139 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-17139 ...
+  [EVAL] opencode on sympy__sympy-17139 ...
+  => sympy__sympy-17139 | opencode | resolved
+
+############################################################
+# [161/198] opencode x sympy__sympy-17630
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17630 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => sympy__sympy-17630 | opencode | blocked
+
+############################################################
+# [162/198] opencode x sympy__sympy-17655
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17655 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => sympy__sympy-17655 | opencode | blocked
+
+############################################################
+# [163/198] opencode x sympy__sympy-18057
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18057 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-18057 ...
+  [EVAL] opencode on sympy__sympy-18057 ...
+  => sympy__sympy-18057 | opencode | resolved
+
+############################################################
+# [164/198] opencode x sympy__sympy-18087
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18087 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-18087 ...
+  [EVAL] opencode on sympy__sympy-18087 ...
+  => sympy__sympy-18087 | opencode | patch-but-failed
+
+############################################################
+# [165/198] opencode x sympy__sympy-18189
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18189 for opencode
+
+[RUN] opencode on sympy__sympy-18189 ...
+  [EVAL] opencode on sympy__sympy-18189 ...
+  => sympy__sympy-18189 | opencode | resolved
+
+############################################################
+# [166/198] opencode x sympy__sympy-18199
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18199 for opencode
+
+[RUN] opencode on sympy__sympy-18199 ...
+  [EVAL] opencode on sympy__sympy-18199 ...
+  => sympy__sympy-18199 | opencode | patch-but-failed
+
+############################################################
+# [167/198] opencode x sympy__sympy-18532
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18532 for opencode
+
+[RUN] opencode on sympy__sympy-18532 ...
+  [EVAL] opencode on sympy__sympy-18532 ...
+  => sympy__sympy-18532 | opencode | patch-but-failed
+
+############################################################
+# [168/198] opencode x sympy__sympy-18621
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18621 for opencode
+
+[RUN] opencode on sympy__sympy-18621 ...
+  [EVAL] opencode on sympy__sympy-18621 ...
+  => sympy__sympy-18621 | opencode | resolved
+
+############################################################
+# [169/198] opencode x sympy__sympy-18698
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18698 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-18698 ...
+  [EVAL] opencode on sympy__sympy-18698 ...
+  => sympy__sympy-18698 | opencode | resolved
+
+############################################################
+# [170/198] opencode x sympy__sympy-18835
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18835 for opencode
+
+[RUN] opencode on sympy__sympy-18835 ...
+  [EVAL] opencode on sympy__sympy-18835 ...
+  => sympy__sympy-18835 | opencode | patch-but-failed
+
+############################################################
+# [171/198] opencode x sympy__sympy-19007
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-19007 for opencode
+
+[RUN] opencode on sympy__sympy-19007 ...
+  [EVAL] opencode on sympy__sympy-19007 ...
+  => sympy__sympy-19007 | opencode | resolved
+
+############################################################
+# [172/198] opencode x sympy__sympy-19254
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-19254 for opencode
+
+[RUN] opencode on sympy__sympy-19254 ...
+  [EVAL] opencode on sympy__sympy-19254 ...
+  => sympy__sympy-19254 | opencode | patch-but-failed
+
+############################################################
+# [173/198] opencode x sympy__sympy-19487
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-19487 for opencode
+
+[RUN] opencode on sympy__sympy-19487 ...
+  [EVAL] opencode on sympy__sympy-19487 ...
+  => sympy__sympy-19487 | opencode | patch-but-failed
+
+############################################################
+# [174/198] opencode x sympy__sympy-20049
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20049 for opencode
+
+[RUN] opencode on sympy__sympy-20049 ...
+  [EVAL] opencode on sympy__sympy-20049 ...
+  => sympy__sympy-20049 | opencode | resolved
+
+############################################################
+# [175/198] opencode x sympy__sympy-20154
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20154 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-20154 ...
+  [EVAL] opencode on sympy__sympy-20154 ...
+  => sympy__sympy-20154 | opencode | resolved
+
+############################################################
+# [176/198] opencode x sympy__sympy-20212
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20212 for opencode
+
+[RUN] opencode on sympy__sympy-20212 ...
+  [EVAL] opencode on sympy__sympy-20212 ...
+  => sympy__sympy-20212 | opencode | resolved
+
+############################################################
+# [177/198] opencode x sympy__sympy-20322
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20322 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-20322 ...
+  [EVAL] opencode on sympy__sympy-20322 ...
+  => sympy__sympy-20322 | opencode | patch-but-failed
+
+############################################################
+# [178/198] opencode x sympy__sympy-20442
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20442 for opencode
+
+[RUN] opencode on sympy__sympy-20442 ...
+  [EVAL] opencode on sympy__sympy-20442 ...
+  => sympy__sympy-20442 | opencode | resolved
+
+############################################################
+# [179/198] opencode x sympy__sympy-20590
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20590 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-20590 ...
+  [EVAL] opencode on sympy__sympy-20590 ...
+  => sympy__sympy-20590 | opencode | resolved
+
+############################################################
+# [180/198] opencode x sympy__sympy-20639
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20639 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-20639 ...
+  [EVAL] opencode on sympy__sympy-20639 ...
+  => sympy__sympy-20639 | opencode | patch-but-failed
+
+############################################################
+# [181/198] opencode x sympy__sympy-21055
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21055 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-21055 ...
+  [EVAL] opencode on sympy__sympy-21055 ...
+  => sympy__sympy-21055 | opencode | resolved
+
+############################################################
+# [182/198] opencode x sympy__sympy-21171
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21171 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-21171 ...
+  [EVAL] opencode on sympy__sympy-21171 ...
+  => sympy__sympy-21171 | opencode | patch-but-failed
+
+############################################################
+# [183/198] opencode x sympy__sympy-21379
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21379 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-21379 ...
+  [EVAL] opencode on sympy__sympy-21379 ...
+  => sympy__sympy-21379 | opencode | resolved
+
+############################################################
+# [184/198] opencode x sympy__sympy-21612
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21612 for opencode
+
+[RUN] opencode on sympy__sympy-21612 ...
+  [EVAL] opencode on sympy__sympy-21612 ...
+  => sympy__sympy-21612 | opencode | resolved
+
+############################################################
+# [185/198] opencode x sympy__sympy-21614
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21614 for opencode
+
+[RUN] opencode on sympy__sympy-21614 ...
+  [EVAL] opencode on sympy__sympy-21614 ...
+  => sympy__sympy-21614 | opencode | resolved
+
+############################################################
+# [186/198] opencode x sympy__sympy-21627
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21627 for opencode
+
+[RUN] opencode on sympy__sympy-21627 ...
+  [EVAL] opencode on sympy__sympy-21627 ...
+  => sympy__sympy-21627 | opencode | resolved
+
+############################################################
+# [187/198] opencode x sympy__sympy-21847
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21847 for opencode
+
+[RUN] opencode on sympy__sympy-21847 ...
+  [EVAL] opencode on sympy__sympy-21847 ...
+  => sympy__sympy-21847 | opencode | resolved
+
+############################################################
+# [188/198] opencode x sympy__sympy-22005
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-22005 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-22005 ...
+  [EVAL] opencode on sympy__sympy-22005 ...
+  => sympy__sympy-22005 | opencode | resolved
+
+############################################################
+# [189/198] opencode x sympy__sympy-22714
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-22714 for opencode
+
+[RUN] opencode on sympy__sympy-22714 ...
+  [EVAL] opencode on sympy__sympy-22714 ...
+  => sympy__sympy-22714 | opencode | resolved
+
+############################################################
+# [190/198] opencode x sympy__sympy-22840
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-22840 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => sympy__sympy-22840 | opencode | blocked
+
+############################################################
+# [191/198] opencode x sympy__sympy-23117
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-23117 for opencode
+
+[RUN] opencode on sympy__sympy-23117 ...
+  [EVAL] opencode on sympy__sympy-23117 ...
+  => sympy__sympy-23117 | opencode | resolved
+
+############################################################
+# [192/198] opencode x sympy__sympy-23191
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-23191 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-23191 ...
+  [EVAL] opencode on sympy__sympy-23191 ...
+  => sympy__sympy-23191 | opencode | patch-but-failed
+
+############################################################
+# [193/198] opencode x sympy__sympy-23262
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-23262 for opencode
+
+[RUN] opencode on sympy__sympy-23262 ...
+  [QUOTA] opencode: quota exhausted, waiting 300s (retry 2/3)...
+  [QUOTA] opencode: quota exhausted, waiting 300s (retry 3/3)...
+  [EVAL] opencode on sympy__sympy-23262 ...
+  => sympy__sympy-23262 | opencode | quota-blocked
+
+############################################################
+# [194/198] opencode x sympy__sympy-24066
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24066 for opencode
+
+[RUN] opencode on sympy__sympy-24066 ...
+  [EVAL] opencode on sympy__sympy-24066 ...
+  => sympy__sympy-24066 | opencode | resolved
+
+############################################################
+# [195/198] opencode x sympy__sympy-24102
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24102 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-24102 ...
+  [EVAL] opencode on sympy__sympy-24102 ...
+  => sympy__sympy-24102 | opencode | patch-but-failed
+
+############################################################
+# [196/198] opencode x sympy__sympy-24152
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24152 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-24152 ...
+  [EVAL] opencode on sympy__sympy-24152 ...
+  => sympy__sympy-24152 | opencode | resolved
+
+############################################################
+# [197/198] opencode x sympy__sympy-24213
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24213 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-24213 ...
+  [QUOTA] opencode: quota exhausted, waiting 300s (retry 2/3)...
+  [EVAL] opencode on sympy__sympy-24213 ...
+  => sympy__sympy-24213 | opencode | resolved
+
+############################################################
+# [198/198] opencode x sympy__sympy-24909
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24909 for opencode
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] opencode on sympy__sympy-24909 ...
+  [EVAL] opencode on sympy__sympy-24909 ...
+  => sympy__sympy-24909 | opencode | patch-but-failed
+
+============================================================
+SUMMARY: opencode x kimi-k2.6-cloud
+============================================================
+  resolved: 86/300 (28.7%)
+  patch-but-failed: 207/300 (69.0%)
+  quota-blocked: 2/300 (0.7%)
+  blocked: 5/300 (1.7%)
