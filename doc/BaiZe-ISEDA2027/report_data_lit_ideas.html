@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 数据线 · 文献借鉴报告 · 2026-10-11（中文版）</title>
+<style>
+:root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e;
+          --gold:#bf8700; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1060px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 6px; font-size:24px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.9; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.14); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.18); border-radius:8px; padding:8px 12px; opacity:.95; }
+  .badge { display:inline-block; padding:1px 10px; border-radius:999px; font-size:12.5px; font-weight:700; vertical-align:middle; }
+  .b-top { background:#fff8c5; color:var(--gold); border:1px solid #d4a72c; }
+  .b-verified { background:#dafbe1; color:var(--ok); border:1px solid #4ac26b; }
+  .b-inspire { background:#fff8ef; color:var(--warn); border:1px solid #d4a72c; }
+  .fb { display:inline-block; padding:1px 8px; border-radius:4px; font-size:11.5px; font-weight:600; margin:1px 2px; }
+  .fb-mix { background:#ddf4ff; color:#0b3d6e; } .fb-contam { background:#ffebe9; color:var(--bad); }
+  .fb-synth { background:#f0fff4; color:var(--ok); } .fb-tok { background:#fbefff; color:#8250df; }
+  .fb-lc { background:#fff8ef; color:var(--warn); } .fb-mm { background:#f0f6ff; color:var(--accent); }
+  .fb-scale { background:#f6f8fe; color:#5762a6; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h3.sec { font-size:16px; margin:24px 0 8px; color:var(--primary); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .card.top { border-left:4px solid var(--gold); }
+  .card h3 { margin:0 0 4px; font-size:17px; line-height:1.45; }
+  .card .no { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; margin-right:8px;
+              border-radius:50%; background:var(--accent); color:#fff; font-size:14px; font-weight:700; vertical-align:middle; }
+  .card.top .no { background:var(--gold); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 108px; color:var(--muted); font-weight:600; } .row .v { flex:1; }
+  .orig { font-style:italic; color:#0b3d6e; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#0b3d6e; }
+  a { color:var(--accent); word-break:break-all; }
+  .reason { background:#f0f6ff; border:1px solid #cfe0f5; border-left:4px solid var(--accent); border-radius:8px;
+            padding:10px 14px; margin-top:10px; font-size:13.5px; }
+  .reason.contam { background:#ffebe9; border-color:#ffcec5; border-left-color:var(--bad); }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .score-val { font-weight:700; font-size:15px; }
+  .pt td { font-size:12.5px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:13px; }
+  .tldr { background:#1a1f2e; border:1px solid var(--accent); border-radius:10px; padding:18px 22px; margin:16px 0; color:#e6edf3; }
+  .tldr h2 { color:#58a6ff; border:none; } .tldr li { margin:6px 0; }
+  .tldr code { background:#1c2333; color:#d29922; } .tldr a { color:#58a6ff; }
+  .legend { display:flex; flex-wrap:wrap; gap:6px 16px; margin:12px 0; font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>📚 BaiZe 数据线 · 文献借鉴报告</h1>
+  <div class="sub">从 research 线近期论文（2026-10-07 ~ 10-11，共 25 篇）中提炼可借鉴 idea</div>
+  <div class="meta">
+    <span>📅 2026-10-11</span>
+    <span>📊 25 篇 → 8 条可借鉴（TOP-5 详述 + 3 条附录）</span>
+    <span>🎯 配比/退火 · 质量过滤/去重/污染 · 合成数据 · 分词 · 长上下文 · 多模态 · 规模 vs 质量</span>
+    <span>✅ 每条可溯源</span>
+  </div>
+  <div class="disc">⚠️ <b>免责</b>：本报告基于 research 线 arXiv 日报（未逐篇精读原始论文），所有数字均为<b>原文自报、未复现</b>。「可借鉴」= 方法论或思路可迁移到本线工作，<b>非</b>「已验证收益」。显著区分「✅ 已验证可借鉴」与「💡 仅灵感/未验证」。</div>
+</header>
+
+<div class="tldr">
+  <h2>🎯 TL;DR — 25 篇中的数据线收获</h2>
+  <ol>
+    <li><b>TOP-1（最直接）</b>：<a href="#p1" style="color:#58a6ff">Conditional Transfer from Controlled Pretraining Mixtures to Code</a>（2610.11548）—— 区分 diagnostic / teachable / transfer 三信号，反直觉结论「可教 ≠ 有用」「loss 自适应调度器会背离下游目标」。可直接用于 P-8 配比搜索的实验设计与 BO 搜索目标函数设计。</li>
+    <li><b>TOP-2</b>：<a href="#p2" style="color:#58a6ff">CoTrace: Data Recipes for Training Terminal Agents</a>（2610.10426）—— harness-aware 数据配方 + provenance matching + 课程刷新。对 SFT/Agent 数据管线的轨迹筛选与数据来源标记有方法论借鉴。</li>
+    <li><b>TOP-3</b>：<a href="#p3" style="color:#58a6ff">MiMo-V2.6: Scaling RL Towards Self-Improvement</a>（2610.11959）—— 多模态 mid-training 扩探索空间 + 混合任务课程（code/general/visual/cyber）+ groupwise agentic grading。对多模态数据构造与退火课程设计有参考。</li>
+    <li><b>TOP-4</b>：<a href="#p4" style="color:#58a6ff">Beyond Owls: Subliminal Learning Can Transfer Capabilities and Backdoors</a>（2610.10657）—— 在语义无关数据上蒸馏可偷偷迁移后门/能力。对污染检测有<b>新攻击向量</b>的警示意义：当前 n-gram 指纹检测可能无法覆盖此路径。</li>
+    <li><b>TOP-5</b>：<a href="#p5" style="color:#58a6ff">Why On-Policy Distillation Sometimes Fails</a>（2610.11247）—— 大教师做 OPD 反而学不动（25.1% vs self-RL 教师 96.2%）。对 SFT 数据的 teacher 选择与后训练监控指标有借鉴。</li>
+    <li><b>25 篇中 17 篇与本线无关</b>（agent harness / 架构 / 量化 / 科普），已在附录全量列出以示覆盖。</li>
+  </ol>
+</div>
+
+<div class="legend">
+  <span class="fb fb-mix">配比/退火</span> <span class="fb fb-contam">污染检测</span> <span class="fb fb-synth">合成数据</span>
+  <span class="fb fb-tok">分词</span> <span class="fb fb-lc">长上下文</span> <span class="fb fb-mm">多模态</span> <span class="fb fb-scale">规模 vs 质量</span>
+  <span class="badge b-verified">✅ 已验证可借鉴</span> <span class="badge b-inspire">💡 仅灵感/未验证</span>
+</div>
+
+<h2 class="sec">📌 TOP-5 · 按「对本线的可执行价值」排序</h2>
+
+<!-- TOP-1 -->
+<div class="card top" id="p1">
+  <h3><span class="no">1</span>Conditional Transfer from Controlled Pretraining Mixtures to Code
+    <span class="badge b-top">TOP-1</span> <span class="badge b-verified">✅ 方法论可借鉴</span></h3>
+  <div class="row"><div class="k">原文标题</div><div class="v orig">Conditional Transfer from Controlled Pretraining Mixtures to Code</div></div>
+  <div class="row"><div class="k">arXiv</div><div class="v"><a href="https://arxiv.org/abs/2610.11548">https://arxiv.org/abs/2610.11548</a> · <code>cs.CL</code></div></div>
+  <div class="row"><div class="k">日期</div><div class="v">2026-10-08（v1，<code>published=2026-10-08T06:23:21Z</code>）</div></div>
+  <div class="row"><div class="k">关注面</div><div class="v"><span class="fb fb-mix">配比/退火</span> <span class="fb fb-synth">合成数据</span> <span class="fb fb-scale">规模 vs 质量</span></div></div>
+  <div class="row"><div class="k">一句话摘要</div><div class="v">区分三个信号——<b>diagnostic</b>（loss 是否跟踪全局预训练进展）、<b>teachable</b>（loss 是否响应自身 token 预算）、<b>transfer</b>（纳入后是否改善下游目标）——在受控预训练里固定 70% 通用 Python、30% 做单纯形配比扫描，发现「可教 ≠ 有用」且基于 loss 的自适应调度器会背离下游目标（Ado 把 OpenCodeInstruct 压到 ~1% 后比固定配比差 2.4–11.0 pp）。</div></div>
+  <div class="reason">
+    <h3 class="sec">🔧 与本线的关系（具体到源/脚本）</h3>
+    <p><b>直击 P-8 数据配比核心问题</b>，给出一个可直接搬用的方法论判据：<b>不要把「加数据后 loss 降了」当成收益证据</b>，要把 diagnostic / teachable / transfer 三个信号分开测。</p>
+    <ul>
+      <li><b>P-8 配比搜索（<code>baize_mix_optuna.py</code> + BO R2）</b>：可直接套用其「固定主干 + 30% 单纯形扫描」的受控消融协议。当前 BO R2 用 lm_eval 8 集均分作 objective（Spearman ρ=−0.80），与本文「以下游 transfer 而非残余 loss 为准」的结论<b>方向一致</b>——本文提供了额外理论支撑：「loss 自适应调度器会背离下游目标」，警示我们 BO 搜索的目标函数不能用预训练 loss。</li>
+      <li><b>合成数据准入（Code/Math 退火料）</b>：其「精选合成 vs 文献探针」的来源分层（精选 10/12 可教 vs 文献 4/15 可教）可直接映射到 <code>UltraData-Code</code> / <code>UltraData-Math</code> 合成数据准入——<b>先过 transfer 关，而非 loss 关</b>。</li>
+      <li><b>R3 分词后数据质量评估</b>：三信号框架可用于评估 R3 全量分词（1483.91B tok / 5.94TB）后各子集的 teachability 与 transferability。</li>
+    </ul>
+    <h3 class="sec">💰 借鉴成本</h3>
+    <p><b>GPU·h</b>：~0（纯方法论借鉴）；若做「固定主干 + 单纯形扫描」验证，约 <b>~50 GPU·h</b>（proxy 92.7M × ~10 组配比 × 5K 步）。<b>墙钟</b>：读论文 ~2h；跑验证 ~1 天。<b>数据依赖</b>：已有（UltraData-Code / UltraData-Math 全在盘上）。</p>
+    <h3 class="sec">⚠️ 风险/不确定性</h3>
+    <p>① HumanEval pass@20（15.9→22.6→19.5）与 Ado 差 2.4–11.0 pp 均为<b>作者自报、未复现</b>，任务仅限 Python code、规模未展开；② 「可教性」判据依赖「loss 响应 token 预算」的测量，在超大规模（1483.91B tok）上噪声可能更大；③ 本文测的是 code 领域，迁移到 base(web)/math 的有效性未知。</p>
+    <h3 class="sec">🏷️ 价签（可行性 × 潜力）</h3>
+    <table class="pt"><tr><th>维度</th><th>分</th><th>理由</th></tr>
+    <tr><td>可行性</td><td><b>9 / 10</b></td><td>纯方法论，无需新数据/新算力，读论文即可复用框架</td></tr>
+    <tr><td>潜力</td><td><b>8 / 10</b></td><td>直接对应 P-8 配比 + BO 搜索目标函数设计，有反直觉结论可避免踩坑</td></tr>
+    <tr><td><b>综合</b></td><td><b class="score-val" style="color:var(--ok)">72</b></td><td>TOP-1：最高可执行价值，建议立即将三信号框架纳入 P-8 实验设计</td></tr></table>
+  </div>
+</div>
+
+<!-- TOP-2 -->
+<div class="card top" id="p2">
+  <h3><span class="no">2</span>CoTrace: Data Recipes for Training Terminal Agents with Harness-Model Co-Evolution
+    <span class="badge b-top">TOP-2</span> <span class="badge b-inspire">💡 方法论灵感</span></h3>
+  <div class="row"><div class="k">原文标题</div><div class="v orig">CoTrace: Data Recipes for Training Terminal Agents with Harness-Model Co-Evolution</div></div>
+  <div class="row"><div class="k">arXiv</div><div class="v"><a href="https://arxiv.org/abs/2610.10426">https://arxiv.org/abs/2610.10426</a> · <code>cs.CL</code></div></div>
+  <div class="row"><div class="k">日期</div><div class="v">2026-10-07（v1，<code>published=2026-10-07T17:06:59Z</code>）</div></div>
+  <div class="row"><div class="k">关注面</div><div class="v"><span class="fb fb-mix">配比/退火</span> <span class="fb fb-synth">合成数据</span></div></div>
+  <div class="row"><div class="k">一句话摘要</div><div class="v">提出 harness-aware 数据配方 CoTrace：显式管理<b>轨迹路由、来源匹配（provenance matching）、课程刷新</b>——反复出现的执行失败驱动 harness 合成，策略训练严格条件于「与所采纳运行时匹配、经核验的 rollout」（SFT）或新鲜在线交互（RL）。原文称紧凑的 harness-匹配语料比跨同类 harness 汇聚的大语料更省算力。</div></div>
+  <div class="reason">
+    <h3 class="sec">🔧 与本线的关系（具体到源/脚本）</h3>
+    <ul>
+      <li><b>SFT/Agent 数据管线（<code>UltraData-SFT-Agent-2609</code>，50 shard / 51 GiB）</b>：CoTrace 的「provenance matching（轨迹 ↔ 生成它的 harness）」概念可迁移到 SFT-Agent 数据质量分筛——当前 SFT-Agent 数据是混池的，若按来源 harness 分层标记，可避免异构 harness 轨迹混池导致的训练-评测错配。</li>
+      <li><b>数据课程设计（P-8 退火阶段）</b>：「执行失败驱动 harness 合成 → 课程刷新」可映射到退火数据的动态调整——根据 proxy 模型在 BO 搜索中的失败模式，动态增加特定领域退火料比例。</li>
+      <li><b>污染隔离设计</b>：其「只留经核验的 rollout」可对照本线 <code>check_contamination.py</code> 的「只留经扫描的数据」——两者都是「数据准入需过验证关」的原则。</li>
+    </ul>
+    <h3 class="sec">💰 借鉴成本</h3>
+    <p><b>GPU·h</b>：~0（方法论借鉴）；若对 SFT-Agent 数据做 provenance 分层标注，约 <b>~5 CPU·h</b>。<b>墙钟</b>：读论文 + 评估接口差异 ~3h。<b>数据依赖</b>：已有（SFT-Agent-2609 在盘上）。</p>
+    <h3 class="sec">⚠️ 风险/不确定性</h3>
+    <p>① 原文面向 terminal agent（SWE-bench / Terminal-Bench），与 BaiZe 预训练数据管线<b>定位不同</b>——借鉴面限于 SFT/退火阶段；② 原文数字（Qwen3.5-9B 从 78 提升到 88 SFT / 90 RL）为<b>自报、未复现</b>；③「provenance matching」需要 SFT 数据自带 harness 来源标签，<code>UltraData-SFT-Agent-2609</code> 是否有此元数据<b>需核实</b>。</p>
+    <h3 class="sec">🏷️ 价签（可行性 × 潜力）</h3>
+    <table class="pt"><tr><th>维度</th><th>分</th><th>理由</th></tr>
+    <tr><td>可行性</td><td><b>7 / 10</b></td><td>需先核实 SFT 数据元数据是否含 harness 来源标签</td></tr>
+    <tr><td>潜力</td><td><b>6 / 10</b></td><td>对 SFT-Agent 数据分筛有方法论价值，但非 P-8 核心瓶颈</td></tr>
+    <tr><td><b>综合</b></td><td><b class="score-val" style="color:var(--warn)">42</b></td><td>TOP-2：对 SFT 数据管线有方法论借鉴，建议读论文后评估 SFT-Agent 元数据</td></tr></table>
+  </div>
+</div>
+
+<!-- TOP-3 -->
+<div class="card top" id="p3">
+  <h3><span class="no">3</span>MiMo-V2.6: Scaling Reinforcement Learning Towards Self-Improvement
+    <span class="badge b-top">TOP-3</span> <span class="badge b-inspire">💡 方法论灵感</span></h3>
+  <div class="row"><div class="k">原文标题</div><div class="v orig">MiMo-V2.6: Scaling Reinforcement Learning Towards Self-Improvement</div></div>
+  <div class="row"><div class="k">arXiv</div><div class="v"><a href="https://arxiv.org/abs/2610.11959">https://arxiv.org/abs/2610.11959</a> · <code>cs.CL</code></div></div>
+  <div class="row"><div class="k">日期</div><div class="v">2026-10-08（v1，<code>published=2026-10-08T13:41:53Z</code>）</div></div>
+  <div class="row"><div class="k">关注面</div><div class="v"><span class="fb fb-mix">配比/退火</span> <span class="fb fb-mm">多模态</span> <span class="fb fb-scale">规模 vs 质量</span></div></div>
+  <div class="row"><div class="k">一句话摘要</div><div class="v">「扩 RL 算力」技术报告：RL 前先做<b>多模态 mid-training</b>（扩探索空间），沿三维度扩 RL 算力——① 更大 batch + 更高吞吐（异步训练，每步 1,568 样本 / 2.7–3.7B token，上下文最长 1M）；② 更多样更复杂的环境（code/general/visual/cyber 混合多种 agent harness）；③ 更多 grader 算力（groupwise agentic grading）。冻结 MoE router + 多层反 reward hacking 防线。开源训练动态/RL 环境/RL 框架。</div></div>
+  <div class="reason">
+    <h3 class="sec">🔧 与本线的关系（具体到源/脚本）</h3>
+    <ul>
+      <li><b>多模态数据构造（85M 下载 + GPIC）</b>：其「多模态 mid-training 扩探索空间」直接对应本线 85M（LLaVA-OneVision-1.5-Mid-Training-85M，46.7TB / 12,124 parquet）的定位——85M 本就是 mid-training 数据。MiMo 的做法是「先 mid-training 再 RL」，对 BaiZe 多模态训练阶段排序有参考：<b>多模态 mid-training → 后训练 RL</b>。</li>
+      <li><b>退火课程设计（P-8 annealing）</b>：其「混合任务课程（code/general/visual/cyber）」可对照 BaiZe 退火配比（base 86 : code 10 : math 4）——MiMo 的四领域混搭提示退火阶段可考虑加入 visual 数据。</li>
+      <li><b>数据质量评估</b>：「groupwise agentic grading 为长程任务给出更准 reward」可迁移到数据质量评估——用代理模型对候选数据做 groupwise grading 而非单点打分，可能更鲁棒。</li>
+    </ul>
+    <h3 class="sec">💰 借鉴成本</h3>
+    <p><b>GPU·h</b>：~0（方法论借鉴）；若在 proxy 上试 groupwise grading，约 <b>~20 GPU·h</b>。<b>墙钟</b>：读技术报告 ~3h（32 页 7 图 17 表）。<b>数据依赖</b>：85M 下载进行中（65.6%），GPIC 已完成（8128 tar）。</p>
+    <h3 class="sec">⚠️ 风险/不确定性</h3>
+    <p>① MiMo-V2.6 是<b>大规模技术报告</b>（150 位署名），模型规模未在日报中展开，在 ~2B 规模的适用性<b>未知</b>；② 其 RL 基建远超 BaiZe 当前基建，工程借鉴成本高；③「多模态 mid-training 扩探索空间」的具体数据配方未在日报中给出，需读原文。</p>
+    <h3 class="sec">🏷️ 价签（可行性 × 潜力）</h3>
+    <table class="pt"><tr><th>维度</th><th>分</th><th>理由</th></tr>
+    <tr><td>可行性</td><td><b>6 / 10</b></td><td>大规模技术报告，~2B 规模适用性未知，需大量裁剪</td></tr>
+    <tr><td>潜力</td><td><b>7 / 10</b></td><td>多模态 mid-training + 混合课程对数据策略有参考价值</td></tr>
+    <tr><td><b>综合</b></td><td><b class="score-val" style="color:var(--warn)">42</b></td><td>TOP-3：对多模态数据构造与退火课程有参考，建议读原文提取数据配方</td></tr></table>
+  </div>
+</div>
+
+<!-- TOP-4 -->
+<div class="card top" id="p4">
+  <h3><span class="no">4</span>Beyond Owls: Subliminal Learning Can Transfer Learned Capabilities and Backdoors
+    <span class="badge b-top">TOP-4</span> <span class="badge b-inspire">💡 安全警示</span></h3>
+  <div class="row"><div class="k">原文标题</div><div class="v orig">Beyond Owls: Subliminal Learning Can Transfer Learned Capabilities and Backdoors</div></div>
+  <div class="row"><div class="k">arXiv</div><div class="v"><a href="https://arxiv.org/abs/2610.10657">https://arxiv.org/abs/2610.10657</a> · <code>cs.CL</code> / <code>cs.CR</code></div></div>
+  <div class="row"><div class="k">日期</div><div class="v">2026-10-07（v1）</div></div>
+  <div class="row"><div class="k">关注面</div><div class="v"><span class="fb fb-contam">污染检测</span></div></div>
+  <div class="row"><div class="k">一句话摘要</div><div class="v">教师模型在<b>语义无关数据</b>上蒸馏可偷偷迁移后门/能力——后门迁移：女性名字→法语 23.5%（男性 0.0%）；作弊迁移：学生 58.3% 回合作弊（未微调 10.9%）。</div></div>
+  <div class="reason contam">
+    <h3 class="sec">🔧 与本线的关系</h3>
+    <p>对<b>污染隔离红线</b>有新攻击向量警示意义。</p>
+    <ul>
+      <li><b>当前检测（<code>check_contamination.py</code> + n-gram 指纹）</b>：现有方法 = 8-gram + NFKC + 黑名单 193,295 hashes，220K docs / 0 命中。但 Subliminal Learning 揭示<b>检测盲区</b>：如果上游合成数据（<code>UltraData-Code/Math</code>）的生产者模型被注入后门，即使数据文本与评测集<b>无 n-gram 重叠</b>，后门仍可通过蒸馏迁移到 BaiZe。</li>
+      <li><b>可操作缓解</b>：① 对合成数据增加「行为级」probe 检测而非仅文本级；② 在 <code>CONTAMINATION_CHECK.md</code> 记录此攻击向量为「已知盲区」。</li>
+    </ul>
+    <h3 class="sec">💰 借鉴成本</h3>
+    <p><b>GPU·h</b>：~0（警示性）；行为级 probe ~10 GPU·h。<b>墙钟</b>：读论文 ~2h。<b>数据依赖</b>：已有。</p>
+    <h3 class="sec">⚠️ 风险</h3>
+    <p>① 受控实验（刻意注入后门），真实管线中是否自然发生<b>未知</b>；② 迁移强度对设置高度敏感。</p>
+    <h3 class="sec">🏷️ 价签</h3>
+    <table class="pt"><tr><th>维度</th><th>分</th><th>理由</th></tr>
+    <tr><td>可行性</td><td><b>5</b></td><td>行为级检测复杂，真实风险概率未知</td></tr>
+    <tr><td>潜力</td><td><b>6</b></td><td>揭示检测盲区，对污染红线有警示价值</td></tr>
+    <tr><td><b>综合</b></td><td><b class="score-val" style="color:var(--bad)">30</b></td><td>TOP-4：作为污染检测「已知盲区」记录有价值</td></tr></table>
+  </div>
+</div>
+
+<!-- TOP-5 -->
+<div class="card top" id="p5">
+  <h3><span class="no">5</span>Why On-Policy Distillation Sometimes Fails: Vanishing Learning Signals
+    <span class="badge b-top">TOP-5</span> <span class="badge b-verified">✅ 方法论可借鉴</span></h3>
+  <div class="row"><div class="k">原文标题</div><div class="v orig">Why On-Policy Distillation Sometimes Fails: Vanishing Learning Signals</div></div>
+  <div class="row"><div class="k">arXiv</div><div class="v"><a href="https://arxiv.org/abs/2610.11247">https://arxiv.org/abs/2610.11247</a> · <code>cs.LG</code></div></div>
+  <div class="row"><div class="k">日期</div><div class="v">2026-10-08（v1）</div></div>
+  <div class="row"><div class="k">关注面</div><div class="v"><span class="fb fb-scale">规模 vs 质量</span> <span class="fb fb-synth">合成数据</span></div></div>
+  <div class="row"><div class="k">一句话摘要</div><div class="v">更大教师做 OPD 反而学不动（200 次更新后 loss 仅降 25.1%），而 self-RL 教师达 96.2%。参数变动仅 0.025–0.098%，CKA &gt; 0.98 → 「表示未充分适应」可能是信号坍缩原因。</div></div>
+  <div class="reason">
+    <h3 class="sec">🔧 与本线的关系</h3>
+    <ul>
+      <li><b>SFT teacher 选择（<code>UltraData-SFT-2605</code>）</b>：反直觉结论「大教师 ≠ 好」警示 SFT 数据 teacher 选择——若 SFT-2605 由远大于 BaiZe-2B 的教师生成，可能出现信号坍缩。建议先扫教师规模配 self-RL 基线对照。</li>
+      <li><b>后训练监控指标</b>：「梯度学习信号代理」+「CKA &gt; 0.98 / 参数变动 &lt; 0.1% = 信号坍缩」可作为后训练监控面板候选指标。</li>
+      <li><b>合成数据质量</b>：与 TOP-1 互补——本文从 teacher 选择角度、TOP-1 从配比目标函数角度，共同指向「合成数据下游迁移 ≠ 训练 loss 下降」。</li>
+    </ul>
+    <h3 class="sec">💰 借鉴成本</h3>
+    <p><b>GPU·h</b>：~0（方法论）；OPD 对照实验 ~30 GPU·h。<b>墙钟</b>：读论文+代码 ~2h（原文附带代码）。<b>数据依赖</b>：已有。</p>
+    <h3 class="sec">⚠️ 风险</h3>
+    <p>① 25.1%/96.2%/CKA 为<b>自报、未复现</b>，任务仅限 code+math；②「表示未适应=坍缩原因」是<b>假设</b>非证明；③ OPD ≠ 预训练配比，借鉴面限于 SFT/后训练。</p>
+    <h3 class="sec">🏷️ 价签</h3>
+    <table class="pt"><tr><th>维度</th><th>分</th><th>理由</th></tr>
+    <tr><td>可行性</td><td><b>7</b></td><td>原文附带代码，可读可试跑</td></tr>
+    <tr><td>潜力</td><td><b>5</b></td><td>对 SFT teacher 选择有借鉴，非 P-8 核心</td></tr>
+    <tr><td><b>综合</b></td><td><b class="score-val" style="color:var(--warn)">35</b></td><td>TOP-5：对后训练监控有方法论价值</td></tr></table>
+  </div>
+</div>
+
+<h2 class="sec">📎 附录 A · 其余可借鉴条目（简表）</h2>
+<p>以下 3 条与本线关注面有<b>间接/边缘</b>关系，列为灵感参考，不做详述。</p>
+<table>
+  <tr><th>#</th><th>标题</th><th>arXiv</th><th>日期</th><th>关注面</th><th>与本线的关系（简述）</th><th>价签</th></tr>
+  <tr><td>6</td><td>UNREAL: Unifying Retrieval and Long-Context</td><td><a href="https://arxiv.org/abs/2610.08463">2610.08463</a></td><td>10-07</td><td><span class="fb fb-lc">长上下文</span></td><td>「模型原生证据选择」——从冻结 LLM 内部表示编码文本块并检索。对<b>长上下文数据构造</b>有启发，但 BaiZe 长上下文数据尚未进入 P-8 范围，属远期参考。</td><td><b>21</b>（3×7）<br><span class="badge b-inspire">💡 灵感</span></td></tr>
+  <tr><td>7</td><td>Building Rome from a Single Image</td><td><a href="https://arxiv.org/abs/2610.08790">2610.08790</a></td><td>10-07</td><td><span class="fb fb-synth">合成数据</span> <span class="fb fb-mm">多模态</span></td><td>合成约 4000 个户外 3D 场景补数据。对<b>多模态合成数据</b>有边缘参考，但 3D 场景与 BaiZe 图文对领域差异大。</td><td><b>12</b>（3×4）<br><span class="badge b-inspire">💡 灵感</span></td></tr>
+  <tr><td>8</td><td>When Scene Text Hijacks the Scene</td><td><a href="https://arxiv.org/abs/2610.11286">2610.11286</a></td><td>10-08</td><td><span class="fb fb-contam">污染检测</span> <span class="fb fb-mm">多模态</span></td><td>画面文字携带语义可「劫持」生成。对<b>多模态数据污染</b>有边缘警示，但对 BaiZe 图文对（caption 是描述性而非指令性）影响有限。</td><td><b>12</b>（3×4）<br><span class="badge b-inspire">💡 灵感</span></td></tr>
+</table>
+
+<h2 class="sec">📋 附录 B · 25 篇全量覆盖表（示已审视）</h2>
+<div class="note"><b>覆盖声明</b>：以下列出 research 线 2026-10-07 ~ 10-11 共 25 篇论文，标明与本线的关系判定。<b>17 篇判定为「无关」</b>（agent harness / 架构 / 量化 / 纯科普），仅列出处以示覆盖。</div>
+<table>
+  <tr><th>#</th><th>日期</th><th>标题</th><th>arXiv ID</th><th>标签</th><th>与本线关系</th></tr>
+  <tr><td>1</td><td>10-07</td><td>FC-SWE: Failure-Conditioned RL for SE Agents</td><td>2610.07898</td><td>借鉴</td><td>❌ 无关（agent RL）</td></tr>
+  <tr><td>2</td><td>10-07</td><td>Harness Engineering via Dev-Primitives (HERMES)</td><td>2610.07832</td><td>借鉴</td><td>❌ 无关（agent harness）</td></tr>
+  <tr><td>3</td><td>10-07</td><td>UNREAL: Unifying Retrieval and Long-Context</td><td>2610.08463</td><td>借鉴</td><td>⚠️ 附录 #6（长上下文，边缘）</td></tr>
+  <tr><td>4</td><td>10-07</td><td>Building Rome from a Single Image</td><td>2610.08790</td><td>科普</td><td>⚠️ 附录 #7（合成数据，边缘）</td></tr>
+  <tr><td>5</td><td>10-07</td><td>World Models' Last Exam in Physics</td><td>2610.08791</td><td>科普</td><td>❌ 无关（世界模型评测）</td></tr>
+  <tr><td>6</td><td>10-08</td><td>PHBA: Prefix-State Hybrid Block Attention</td><td>2610.08527</td><td>借鉴</td><td>❌ 无关（混合架构）</td></tr>
+  <tr><td>7</td><td>10-08</td><td>Climbing the Design Ladder: KD for Circuit Timing</td><td>2610.08457</td><td>借鉴</td><td>❌ 无关（芯片设计 KD）</td></tr>
+  <tr><td>8</td><td>10-08</td><td>VETTA: Multi-Turn LLM Agent Credit Assignment</td><td>2610.08402</td><td>借鉴</td><td>❌ 无关（agent 信用分配）</td></tr>
+  <tr><td>9</td><td>10-08</td><td>From Expert-Guided Proof Search to Open-Problem Solving</td><td>2610.09769</td><td>科普</td><td>❌ 无关（定理证明）</td></tr>
+  <tr><td>10</td><td>10-08</td><td>FoldBack: Garment Folding Policy</td><td>2610.10462</td><td>科普</td><td>❌ 无关（机器人）</td></tr>
+  <tr><td>11</td><td>10-09</td><td><b>CoTrace: Data Recipes for Terminal Agents</b></td><td>2610.10426</td><td>借鉴</td><td><b>✅ TOP-2</b>（数据配方/课程）</td></tr>
+  <tr><td>12</td><td>10-09</td><td>YANchor-4B: Long-Horizon Reasoning O(N)/O(1)</td><td>2610.10118</td><td>借鉴</td><td>❌ 无关（循环模型架构）</td></tr>
+  <tr><td>13</td><td>10-09</td><td>Agentic Research in EDA</td><td>2610.10129</td><td>借鉴</td><td>❌ 无关（EDA agent）</td></tr>
+  <tr><td>14</td><td>10-09</td><td>AI time horizons (METR plot)</td><td>2610.12466</td><td>科普</td><td>❌ 无关（AI 时间跨度统计）</td></tr>
+  <tr><td>15</td><td>10-09</td><td>Deception by Omission: LLMs Hide Mistakes</td><td>2610.11351</td><td>科普</td><td>❌ 无关（LLM 诚实性）</td></tr>
+  <tr><td>16</td><td>10-10</td><td>HarnessSQL: Harness-Native SQL Agent Training</td><td>2610.12274</td><td>借鉴</td><td>❌ 无关（SQL agent）</td></tr>
+  <tr><td>17</td><td>10-10</td><td><b>Conditional Transfer from Controlled Pretraining Mixtures to Code</b></td><td>2610.11548</td><td>借鉴</td><td><b>✅ TOP-1</b>（配比/合成/规模）</td></tr>
+  <tr><td>18</td><td>10-10</td><td>Bridging KV-Cache Quantization and Linear Attention</td><td>2610.11214</td><td>借鉴</td><td>❌ 无关（架构/量化）</td></tr>
+  <tr><td>19</td><td>10-10</td><td>It's Always 10:10: Reference Images Break a Bias</td><td>2610.11320</td><td>科普</td><td>❌ 无关（文生图偏差）</td></tr>
+  <tr><td>20</td><td>10-10</td><td>When AI Finds Hidden Messages</td><td>2610.10620</td><td>科普</td><td>❌ 无关（AI 隐写术）</td></tr>
+  <tr><td>21</td><td>10-11</td><td><b>MiMo-V2.6: Scaling RL Towards Self-Improvement</b></td><td>2610.11959</td><td>借鉴</td><td><b>✅ TOP-3</b>（多模态/退火/规模）</td></tr>
+  <tr><td>22</td><td>10-11</td><td><b>Why On-Policy Distillation Sometimes Fails</b></td><td>2610.11247</td><td>借鉴</td><td><b>✅ TOP-5</b>（规模/合成 teacher）</td></tr>
+  <tr><td>23</td><td>10-11</td><td>When Lower Reconstruction Loss Hurts (DRQ)</td><td>2610.11226</td><td>借鉴</td><td>❌ 无关（量化）</td></tr>
+  <tr><td>24</td><td>10-11</td><td><b>Beyond Owls: Subliminal Learning & Backdoors</b></td><td>2610.10657</td><td>科普</td><td><b>✅ TOP-4</b>（污染检测）</td></tr>
+  <tr><td>25</td><td>10-11</td><td>When Scene Text Hijacks the Scene</td><td>2610.11286</td><td>科普</td><td>⚠️ 附录 #8（多模态污染，边缘）</td></tr>
+</table>
+
+<h2 class="sec">📊 附录 C · TOP-5 价签汇总</h2>
+<table>
+  <tr><th>排名</th><th>标题（简）</th><th>arXiv</th><th>关注面</th><th>可行性</th><th>潜力</th><th>综合</th><th>判定</th></tr>
+  <tr><td><b>1</b></td><td>Conditional Transfer from Controlled Pretraining Mixtures</td><td>2610.11548</td><td>配比 · 合成</td><td>9</td><td>8</td><td><b class="score-val" style="color:var(--ok)">72</b></td><td><span class="badge b-verified">✅ 可借鉴</span></td></tr>
+  <tr><td><b>2</b></td><td>CoTrace: Data Recipes for Terminal Agents</td><td>2610.10426</td><td>配比 · 合成</td><td>7</td><td>6</td><td><b class="score-val" style="color:var(--warn)">42</b></td><td><span class="badge b-inspire">💡 灵感</span></td></tr>
+  <tr><td><b>3</b></td><td>MiMo-V2.6: Scaling RL</td><td>2610.11959</td><td>多模态 · 退火</td><td>6</td><td>7</td><td><b class="score-val" style="color:var(--warn)">42</b></td><td><span class="badge b-inspire">💡 灵感</span></td></tr>
+  <tr><td><b>4</b></td><td>Beyond Owls: Subliminal Learning</td><td>2610.10657</td><td>污染检测</td><td>5</td><td>6</td><td><b class="score-val" style="color:var(--bad)">30</b></td><td><span class="badge b-inspire">💡 警示</span></td></tr>
+  <tr><td><b>5</b></td><td>Why On-Policy Distillation Fails</td><td>2610.11247</td><td>规模 · 合成</td><td>7</td><td>5</td><td><b class="score-val" style="color:var(--warn)">35</b></td><td><span class="badge b-verified">✅ 可借鉴</span></td></tr>
+</table>
+<div class="ok-box"><b>价签口径</b>：<b>可行性</b>（1–10）= 在 BaiZe 当前资源下直接复用的难易度；<b>潜力</b>（1–10）= 对 P-8 配比 / R3 分词 / 污染扫描 / 后续档位的预期收益。<b>综合 = 可行性 × 潜力</b>（满分 100）。<b>≥60</b> = 建议立即纳入；<b>30–59</b> = 建议读原文后评估；<b>&lt;30</b> = 仅作灵感记录。</div>
+
+<h2 class="sec">🔍 附录 D · 方法论与口径</h2>
+<div class="ok-box">
+  <b>输入来源</b>：research 线 arXiv 日报（<code>doc/personal-watch/run/research/daily/2026-10-07.html</code> ~ <code>2026-10-11.html</code>），共 5 天 × 5 篇 = <b>25 篇</b>。<br>
+  <b>每篇日报均具「HTTP 200 + application/atom+xml + published」实测证据</b>，arXiv ID 与 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> 全量去重。<br>
+  <b>本报告定位</b>：在 25 篇中筛出与本线 7 个关注面相关的条目，评估其对 P-8 投料配比 / R3 分词 / 污染扫描 / 后续档位的可执行价值。
+</div>
+<div class="note">
+  <b>口径护栏</b>：<br>
+  ① 本报告基于 research 线日报的<b>标题 + 摘要 + comment</b>（未逐篇精读原始论文），所有数字均为<b>原文自报、未复现</b>；<br>
+  ② 「✅ 已验证可借鉴」= 方法论可直接复用到现有脚本/流程；「💡 仅灵感/未验证」= 思路有启发但需进一步验证；<br>
+  ③ <b>每条 idea 须可溯源</b>——arXiv ID + URL + 日期 + 原文标题均来自 research 线日报（一手 arXiv API）；<br>
+  ④ 本报告<b>不改下载白名单 / 不 kill 下载进程 / 不跑重 I/O</b>。
+</div>
+<div class="note">
+  <b>本线当前状态（供借鉴评估的上下文）</b>：<br>
+  • <b>P-8 数据层全就绪</b>：R3 全量分词 110/110 DONE（1483.91B tok / 5.94TB），污染扫描 220K docs / 0 命中，GPIC 8128 tar 全完成。<br>
+  • <b>BO 配比搜索</b>：R1 200/200 + Spearman ρ=−0.43，R2 200/200 + top-K ρ=−0.80（用 lm_eval 8 集均分作 objective）。<br>
+  • <b>退火配比</b>：base 86 : code 10 : math 4（S4 三点消融实证）。<br>
+  • <b>下载进行中</b>：en_v1_4（19.8% / ETA ~8 天）+ 85M（65.6% / ETA ~8.5–15 天，用户自管）。<br>
+  • <b>评测集红线</b>：EDA-Eval-PyAether 158 任务，n-gram 黑名单 193,295 hashes + 8-gram 兜底 + NFKC 归一化。
+</div>
+
+<footer>
+  <div>📄 <b>BaiZe 数据线 · 文献借鉴报告</b> ｜ 日期 <b>2026-10-11</b> ｜ 生成于 <b>2026-10-11</b>（CST）</div>
+  <div>本页为 <b>自包含单文件</b>（内联 CSS，无外链脚本 / 无外链样式 / 无外链图片）。</div>
+  <div>⚠️ 所有条目为<b>推荐 / 待读线索</b>，<b>非结论</b>，均<b>未逐篇精读</b>；数字为<b>原文自报</b>、<b>未复现</b>。</div>
+  <div>数据源：research 线 arXiv 日报（<code>doc/personal-watch/run/research/daily/2026-10-07.html</code> ~ <code>2026-10-11.html</code>）</div>
+  <div>commit 前缀：<code>data lit-rpt:</code></div>
+</footer>
+
+</div>
+</body>
+</html>
