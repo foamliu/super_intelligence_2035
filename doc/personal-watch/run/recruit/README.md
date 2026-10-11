@@ -5,10 +5,42 @@
 > 🖥️ 本线 loop 跑在 **腾讯云 Ubuntu `106.54.228.191`**（浏览器走该机 Chrome + CDP，见任务书 §0.4）。
 > 🚫 **本目录只放非 PII**；原始 PII/凭据（`securityId` / 简历 PDF / 截图 / cookie）**未入仓**（见 `.gitignore`）。
 
+## 🖥️ 执行环境（腾讯云 VM · **已就绪 2026-10-11**）
+
+> 本线的**浏览器执行侧 + loop 宿主机** = 腾讯云 Ubuntu。环境已装并**端到端验证**；详见任务书 **`../../WATCH_RECRUIT_TASK.md §0.4`**（本节为速览）。⚠️ **尚未做真实 Boss 登录**（登录态由 VNC 人工扫码建立，落 `~/.hr-chrome-profile`）。
+
+| 项 | 值 |
+|:--|:--|
+| 主机 / 账号 | `106.54.228.191`（腾讯云 CVM `VM-0-6-ubuntu`）· **Ubuntu 24.04.4 LTS** · 用户 **`liuyang`**（`sudo` 组） |
+| 资源 | **2 vCPU / 3.6 GiB RAM + swap 6.0 GiB / 69 G 盘**；虚拟显卡（无 GPU → 软件渲染）；⚠️ 与 personal-watch 的 cline daemon **共驻** |
+| 桌面 | **XFCE 4.18**（`:1`）· **TigerVNC 1.13.1**（`:1 → 127.0.0.1:5901`，**仅绑本机**） |
+| 浏览器 | **Google Chrome 155.0.8059.39**（可见 + headless 双模式）· **CDP `127.0.0.1:9222`** |
+| 已关服务 | `lightdm` / `cups` / `colord` / `ModemManager`；默认 target `multi-user` |
+
+**访问（一律 SSH 隧道；🚫 不开公网端口 / 安全组不开 5901·9222）**
+```bash
+ssh -N -L 5901:127.0.0.1:5901 -L 9222:127.0.0.1:9222 liuyang@106.54.228.191
+```
+VNC 客户端连 `127.0.0.1:5901`（口令见任务书 §0.4⑦）；CDP 连 `http://127.0.0.1:9222`（Playwright `connect_over_cdp` / Puppeteer `connect{browserURL}`）。
+
+**两种模式（★ 共用 profile `~/.hr-chrome-profile` ⇒ 登录一次长期复用）**
+
+| 服务器脚本 | 用途 |
+|:--|:--|
+| `~/hr_start.sh` | 确保 VNC 桌面在跑 |
+| `~/hr_login.sh` | **登录模式**：桌面里开**可见** Chrome + CDP → 人工扫码/短信/滑块 |
+| `~/hr_headless.sh` | **自动化模式**：**headless** Chrome + CDP（省内存） |
+| `~/start_recruit_loop.sh` | **本线 loop 启动器**：`cd` 到 `run/` + 补 PATH（nvm bin）+ `WATCH_INTERVAL_MIN=30` |
+
+> ⚠️ 同一时刻**只跑一个 Chrome**（都占 9222）；清理必须用 `pkill -f '[r]emote-debugging-port=9222'`（**括号技巧**，否则会连执行命令的 shell 一起杀）。
+> 🔁 **loop 重启**：`pkill -f '[w]atch_recruit_loop.sh'` → `setsid nohup bash ~/start_recruit_loop.sh > /tmp/watch_recruit_loop.log 2>&1 < /dev/null &`；存活标记 `/tmp/watch_recruit_loop.hb`。
+> ⏱ **节律**：当前 **`WATCH_INTERVAL_MIN=30`（每 30 min，临时）**；置空即回退任务书默认的 **06:00/18:00**。
+
 ## 目录约定
 
 | 路径 | 内容 | 入 git |
 |:---|:---|:---:|
+| `hr/` | ⭐ **融入的 HR agent 记忆 / 任务 / 能力**（含**姓名级**候选表与台账 —— 见下方「数据边界」） | ✅ |
 | `STATE.md` | **招聘现状快照**（达标者数 / 批次进度 / 待办；**非 PII 概述**） | ✅ |
 | `drafts/` | **话术草案**（对外发送前；实际发送原文以 `$HR_DIR/发送记录.md` 为准） | ✅ |
 | `reports/` | **对外工作汇报 HTML**（自包含 · 内联 CSS · 零外链 · 离线可开） | ✅ |
@@ -42,19 +74,16 @@
 | 话术库 | `recruit/hr/话术-最终版.md` · `recruit/hr/话术模板.md` · `recruit/hr/S级论文录用确认-话术*.md` | PI 口吻 + 地点策略 + 上海系名单 |
 | 报告 / 候选表 | `recruit/hr/候选人筛选报告.md` · `recruit/hr/候选人筛选结果.md` · `recruit/hr/候选表-*.{md,csv}` · `recruit/hr/社招判定-简单简历.md` | 分级方法论 + 重点名单 + 风险提示 |
 
-## 📁 目录约定
+## ⚠️ 数据边界（红线 · **2026-10-11 supervisor 拍板：「接受姓名级入库」**）
 
-| 路径 | 内容 | 入 git |
-|:---|:---|:---:|
-| `hr/` | ⭐ **融入的 HR agent 记忆/任务/能力**（见上表） | ✅ |
-| `STATE.md` | 招聘现状快照（非 PII 概述） | ✅ |
-| `drafts/` | 话术草案（实际发送原文以 `hr/发送记录.md` 为准） | ✅ |
-| `reports/` | 对外工作汇报 HTML（自包含） | ✅ |
-| `files.md`（可选） | 大文件清单（路径 / 字节数 / sha256 / 存放位置） | ✅ |
+> **背景**：原 HR 工作区已整体融入本仓（`recruit/hr/`），含**候选人姓名 / 学校 / 期望薪资 / 分级判定 / 沟通台账**。
+> **裁定**：**接受「姓名级」数据入库**（⚠️ 前提：**本仓库必须保持 private**）。本条**取代**旧口径「PII 一律不入库」。
 
-## ⚠️ 数据边界（红线 · 与 HR `AGENTS.md §11` / `MEMORY.md §七` 一致）
+**✅ 允许入库**：候选人**姓名** · 学校/学历/专业 · 期望薪资 · 分级与判定结论 · 打招呼/沟通**摘要** · 已发消息台账（`hr/发送记录.md`）· 候选表（`hr/候选表-*.{csv,md}`）· HR 记忆与脚本。
 
-- 🚫 **未入仓（仅存于原 Windows 目录）**：`boss_candidates.csv/.json`（含真实 **`securityId`**）、`候选人筛选结果.csv`、`简历/*.pdf`、`boss_chat*.png`、`简历.7z`、一切 cookie/凭据、playwright `profile/`。
+**🚫 仍然禁止入库（**值级**凭据 / 直接标识符）**：
+`cookie` **值**（`wt2`/`wbg`/`zp_at`/`bst` 的取值） · **`securityId` / `geekId` 的取值**（⚠️ 作为**字段名 / 规则文本**出现是允许的，值不行） · 身份证号 · **手机号** · **邮箱地址** · **简历 PDF / 简历原文** · **聊天截图**（`*.png/jpg`） · 浏览器 `profile/` · 网络抓包（`*.har`） · 任何密钥 / token。
+
 - 📦 **单文件 ≥ 5MB**（简历 PDF 常见）：🚫 不 `git add`（含 `hr/`）；只登记 `files.md`（路径 / 字节数 / sha256 / 存放位置）。
-- ✅ **记忆/能力在 `recruit/hr/`，账在 git；原始数据本体仍在「原 Windows 目录 / 外部盘」**。
+- ✅ **入库前自检（必做）**：`bash recruit/check_pii.sh` —— 扫**值级**匹配（cookie/ID 赋值 · 手机号 · 邮箱 · 私钥 · Basic 认证）；**命中即停、人工复核**。
 - 🚫 **对外动作**：默认关闭 —— 发消息 / 抓简历 / 代点「同意·拒绝」需运维指令区**显式授权一批**；**约面控件永不碰**（见任务书 §3）。

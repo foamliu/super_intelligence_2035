@@ -38,6 +38,20 @@ attachment/
 .env
 keys.txt
 
+# ── 2026-10-11 补（「姓名级入库」口径下的新增风险面）──
+*.har                 # 网络抓包常含 cookie
+*.har.gz
+profile/              # playwright / chrome 浏览器 profile
+*/profile/
+*chrome-profile*/
+*.sqlite
+*.db
+*_cookie*
+*凭据*
+*私钥*
+*.pem
+*.key
+
 # ── 允许：文字产物 ──
 !README.md
 !STATE.md
