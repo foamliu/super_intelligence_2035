@@ -74,9 +74,9 @@ WAITING: 0
 | **端口** | 本次摸底时监听的是 `8653/8664/8665/8668/8669/18890/9006` | ⚠️ **已作废**：现行 = `PROXY_PORTS=8650,8651,8652,8654`（见 §6） |
 | **机器负载 / `/home` 大头** | `/home` 下**多个其他用户**在跑 `eda_platform` / `eda_fastmcp` / sandbox bootstrap；**`/home` 大头是别的用户**（`app.e0023936` **71G** · `app.e0025768` 41G · `vendor.ai.ruide01` 24G · `app.t0002147/e0041392/e0030544` 各 16G …；**我们自己 `app.e0031982` <7.2G、不在 top-15**） | ⚠️ 高共享；**`/home` 满主因非本用户** → 自己可清空间有限 |
 
-- **教训（RUN_ID 1 抓到，RUN_ID 2 复核）**：36.15 上**运行中的 loop 是旧版**（cline 调用带非法 `-b` → `error: unknown option '-b'` 后直接 `exit 0`）⇒ **cline 从未运行、agent 零唤醒、任务书零推进**，却被 loop 当成成功；修法 = **`git pull` + 重启 loop**（bash 增量读，改运行中的脚本无效）。另：`WAITING` 顶部行与状态表不一致 → loop 按"无阻塞"每 60s 空转（应 30min）。→ 详见 §7 第 10/13 条。
-- RUN_ID 2 复核结论：loop **确实在跑**、**磁盘脚本已是新版 ⇒ 重启即修复**；relay **非副本**（子 PID）；`run_code` = `tools/run_code.py`（探针误报）；日志 `unknown option '-b'` 计数 69 · `Forbidden` 0。
-- ⚠️ 本次摸底表里的**端口口径（8664/8665/8653/8669）与 `/home` 数字均已作废** —— 现行口径见 §6 与 §3 表格。
+- **教训（RUN_ID 1 抓到，RUN_ID 2 复核）**：运行的 loop 是**旧版**（cline 带非法 `-b` → `unknown option '-b'` 后 `exit 0`）⇒ **cline 从未运行、agent 零唤醒**，却被当成功；修法 = **`git pull` + 重启 loop**（bash 增量读，改运行中的脚本无效）。`WAITING` 顶部行与状态表不一致 → loop 60s 空转（应 30min）。→ 详见 §7-10/13。
+- RUN_ID 2 复核：loop 确实在跑、**磁盘脚本已是新版 ⇒ 重启即修复**；relay 非副本（子 PID）；`run_code` = `tools/run_code.py`（探针误报）；日志 `unknown option '-b'` 计数 69、`Forbidden` 0。
+- ⚠️ 本摸底表的端口/`/home` 数字**已作废**（现行见 §6 与 §3 表）。
 
 
 ---
@@ -114,7 +114,7 @@ WAITING: 0
 8. **infra 作废规则**：license 耗尽 / 端口宕 / 磁盘 <8G → **不计数**、记 `⚠️ infra`、`WAITING=1` 原地复检；**绝不拿作废批冒充有效分**。
 9. **git**：只 add 自己动的文件；远端高频抢占时用**后台重试循环**（`fetch → rebase --autostash → push`）。
 
-10. **🔴 端口口径红线（2026-10-11 用户令「决不允许偏离」）**：我方评测固定 = **`PROXY_PORTS=8650,8651,8652,8654`** + **`SANDBOX_ENDPOINTS=8650..8654 → /proj/train/AI/workdir/t0002997_1..4`** + **`RAG_RECALL_URL=http://localhost:9006/recall`** + **`EDA_MCP_PORT=8090`**。⚠️ 上游 `eda_fastmcp` 的默认值（`8656/8658/8661/8662` + `9010`，出自 **`xiyuan.chen <xiyuan.chen@cxmt.com>` 2026-10-08 `d8dafdf4`**「优化代码，更新四种语言增强api 文档」，对应**他自己的** workdir `t0002441_9..12`）**是他的沙盒分配，我们不跟随**。**任何 `git pull` 后必须复检这 4 项**（`sh -n .env` + 每键**恰 1 行**，去重）；`.env` 已加 `git update-index --skip-worktree` 保护 + canon 锁文件 `/nasdata/app.e0031982/eda_fastmcp.env.canon.lock`。MCP 客户端（两处 `cline_mcp_settings.json`）须按新版 README：`url=…:8090/mcp` + `"type":"streamableHttp"`。
+10. **🔴 端口口径红线（2026-10-11 用户令「决不允许偏离」）**：我方评测固定 = **`PROXY_PORTS=8650,8651,8652,8654`** + **`SANDBOX_ENDPOINTS=8650..8654 → /proj/train/AI/workdir/t0002997_1..4`** + **`RAG_RECALL_URL=http://localhost:9006/recall`** + **`EDA_MCP_PORT=8090`**。⚠️ 上游 `eda_fastmcp` 的默认值（`8656/8658/8661/8662` + `9010`，出自 **`xiyuan.chen <xiyuan.chen@cxmt.com>` 2026-10-08 `d8dafdf4`**「优化代码，更新四种语言增强api 文档」，对应**他自己的** workdir `t0002441_9..12`）**是他的沙盒分配，我们不跟随**。**任何 `git pull` 后必须复检这 4 项**（`sh -n .env` + 每键**恰 1 行**，去重）；`.env` 已加 `git update-index --skip-worktree` 保护 + canon 锁文件 `/nasdata/app.e0031982/eda_fastmcp.env.canon.lock`。MCP 客户端（两处 `cline_mcp_settings.json`）按新版 README：`…:8090/mcp` + `"type":"streamableHttp"`。
 
 ---
 
