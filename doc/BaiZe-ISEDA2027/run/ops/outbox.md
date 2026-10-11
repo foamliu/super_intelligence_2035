@@ -9259,3 +9259,46 @@ echo "=== DONE 87 ==="
  M doc/BaiZe-ISEDA2027/run/harness/kimi_pilot_results.json
 === DONE 87 ===
 ```
+
+---
+
+## RUN_ID 88 · 2026-10-11 13:40:11 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 88 · 只读：/home 空间体检 · $(date '+%F %T') · host=$(hostname) ==="
+U=/home/app.e0031982
+echo "--- 0) 本地文件系统总览（排除 NFS） ---"
+df -hT -x nfs -x nfs4 2>&1 | cut -c1-140
+echo "--- 0b) /home 精确 GB 粒度 + inode ---"
+df -BG /home 2>&1 | cut -c1-120
+df -i  /home 2>&1 | cut -c1-120
+echo "--- 1) /home 顶层占用（只列不删） ---"
+timeout 60 du -hx --max-depth=1 /home 2>/dev/null | sort -rh | head -20 | cut -c1-140
+echo "--- 2) 本人目录一层占用（关键） ---"
+timeout 120 du -hx --max-depth=1 "$U" 2>/dev/null | sort -rh | head -30 | cut -c1-140
+echo "--- 3) .cache 细分 ---"
+timeout 45 du -hx --max-depth=1 "$U/.cache" 2>/dev/null | sort -rh | head -15 | cut -c1-140
+echo "--- 4) 大文件 TOP（>=500M，只列路径/大小/时间） ---"
+timeout 75 find "$U" -xdev -type f -size +500M -printf '%s\t%TY-%Tm-%Td %TH:%TM\t%p\n' 2>/dev/null | sort -rn | head -30 | awk '{printf "%8.2fG  %s  %s\n", $1/1073741824, $2" "$3, $4}' | cut -c1-140
+echo "--- 5) 大日志 / core dump / nohup（>=200M，多为可清候选） ---"
+timeout 45 find "$U" -xdev \( -name '*.log' -o -name 'core' -o -name 'core.*' -o -name 'nohup.out' \) -size +200M -printf '%s\t%TY-%Tm-%Td\t%p\n' 2>/dev/null | sort -rn | head -20 | awk '{printf "%8.2fG  %s  %s\n", $1/1073741824, $2, $3}' | cut -c1-140
+echo "--- 6) HF 缓存是否又落回 /home（2026-10-04 那次 121G 事故的根因） ---"
+echo "   HF_HOME=${HF_HOME:-<未设>} | HF_HUB_CACHE=${HF_HUB_CACHE:-<未设>} | HF_DATASETS_CACHE=${HF_DATASETS_CACHE:-<未设>}"
+ls -d "$U/.cache/huggingface" "$U/.cache/huggingface/hub" "$U/.cache/huggingface/datasets" 2>&1 | cut -c1-140
+timeout 30 find "$U/.cache/huggingface" -maxdepth 3 -type d -name 'blobs' 2>/dev/null | head -10 | cut -c1-140
+echo "--- 7) 已删除但仍被进程占用的文件（盘满常见隐形占用） ---"
+( timeout 30 lsof +L1 2>/dev/null || echo "   (lsof 不可用)" ) | awk 'NR==1{print} $7+0>1073741824 {printf "%8.2fG  %s pid=%s %s\n", $7/1073741824, $1, $2, $9}' | head -15 | cut -c1-140
+echo "--- 8) /tmp ---"
+timeout 30 du -shx /tmp 2>/dev/null | cut -c1-100
+timeout 30 find /tmp -maxdepth 1 -type f -size +200M -printf '%s\t%p\n' 2>/dev/null | sort -rn | head -10 | awk '{printf "%8.2fG  %s\n", $1/1073741824, $2}' | cut -c1-140
+echo "--- 9) 现场进程（只读：哪些别杀） ---"
+pgrep -af 'ops_relay|baize_.*loop|torchrun|pt_main_thread|sglang' 2>/dev/null | cut -c1-140 | head -12
+echo "=== DONE 88 ==="
+```
+
+**输出**
+```
+
+```
