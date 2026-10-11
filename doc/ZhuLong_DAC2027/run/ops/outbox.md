@@ -6359,3 +6359,229 @@ echo "== DONE — RUN_ID 40（定位客户端配置来源 + 模板可提交则�
 /dev/mapper/vgroot-lv_home      394G  374G        4G 100% /home
 == DONE — RUN_ID 40（定位客户端配置来源 + 模板可提交则已本地提交 + 运行时复核）==
 ```
+
+---
+
+## RUN_ID 41 · 2026-10-11 22:11:33 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 41 · 只读取证：RAG(9006) 是否真的活着、能召回、被调用
+echo "=== [0] host / time ==="; hostname; date '+%F %T'
+E=""
+for P in /nasdata/app.e0031982/code/eda_fastmcp /nas_train/app.e0031982/code/eda_fastmcp; do
+  [ -f "$P/.env" ] && E="$P" && break
+done
+echo "EDA=$E"
+
+echo "=== [1] .env RAG/端口相关行（原值）==="
+[ -n "$E" ] && grep -nE '^(PROXY_PORTS|SANDBOX_HOST|SANDBOX_ENDPOINTS|RAG_|MEMORY_VECTOR_URL|CLI_AGENT)' "$E/.env" 2>&1 | cut -c1-220
+
+echo "=== [2] 实际监听端口（80xx / 90xx 全扫）==="
+ss -lntp 2>/dev/null | grep -E ':(8[0-9]|9[0-9])[0-9][0-9]\b' | cut -c1-165 || echo "  (无)"
+
+echo "=== [3] recall / embedding 相关进程（含启动命令）==="
+pgrep -af 'recall|embed|faiss|vector' 2>/dev/null | cut -c1-190 || echo "  (无)"
+
+echo "=== [4] GET /health 逐候选端口（9002/9006/9009/9010）==="
+for P in 9002 9006 9009 9010; do
+  printf '  :%s -> ' "$P"
+  timeout 8 curl -s -o /tmp/rag_h_$P.txt -w 'http=%{http_code} t=%{time_total}s\n' "http://localhost:$P/health" || echo "FAIL/refused"
+  head -c 160 /tmp/rag_h_$P.txt 2>/dev/null; echo
+done
+
+echo "=== [5] 真实召回（POST /recall × 3；health 通 ≠ 能召回）==="
+for Q in 'SPICE 网表怎么写' 'DRAM 版图 DRC 规则' 'pytest 单元测试怎么写'; do
+  printf '  q=%s -> ' "$Q"
+  timeout 25 curl -s -X POST "http://localhost:9006/recall" -H 'Content-Type: application/json' \
+    -d "{\"query\":\"$Q\",\"top_k\":5}" -o /tmp/rag_rc.json -w 'http=%{http_code} t=%{time_total}s\n' || echo "FAIL"
+  head -c 260 /tmp/rag_rc.json 2>/dev/null; echo
+done
+
+echo "=== [6] MCP(eda_fastmcp) 端口/进程 ==="
+ss -lntp 2>/dev/null | grep -E ':(8090|18889|18890)\b' | cut -c1-150 || echo "  (未监听)"
+pgrep -af 'eda_fastmcp|uvicorn' 2>/dev/null | cut -c1-160 || echo "  (无)"
+
+echo "=== [7] r5 日志里 RAG/recall/refused 痕迹 ==="
+ls -l /tmp/ABL_full_r5_8650set.log 2>/dev/null | cut -c1-160
+echo -n "  recall|rag 命中行数: "; grep -cEi 'recall|rag' /tmp/ABL_full_r5_8650set.log 2>/dev/null || echo 0
+grep -nEi 'recall|rag|refused|Connection' /tmp/ABL_full_r5_8650set.log 2>/dev/null | tail -15 | cut -c1-200
+
+echo "=== [8] 评测侧 cline 会话里 recall 出现次数（轨迹证据）==="
+for D in "$HOME/.cline/data" "$HOME/.cline_prof4_eval/data" /root/.cline/data; do
+  [ -d "$D/sessions" ] || continue
+  echo "  -- $D/sessions"
+  echo -n "     含 recall 的会话文件数: "; grep -rl 'recall' "$D/sessions" 2>/dev/null | wc -l
+  grep -rl 'recall' "$D/sessions" 2>/dev/null | head -3 | sed 's/^/     /'
+done
+
+echo "=== [9] full vs wo_retrieval 的配置出处（只列文件，不下结论）==="
+[ -n "$E" ] && grep -rnE 'retriev|RAG_|top_k' "$E/.env" "$E/scripts/run_cline_script.sh" 2>/dev/null | head -25 | cut -c1-190
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] host / time ===
+hfeg0tedaap02
+2026-10-11 22:11:33
+EDA=/nasdata/app.e0031982/code/eda_fastmcp
+=== [1] .env RAG/端口相关行（原值）===
+63:SANDBOX_HOST=10.129.32.75
+135:RAG_DEFAULT_TOP_K=5
+137:RAG_RECALL_TIMEOUT=25
+140:MEMORY_VECTOR_URL=http://localhost:9011
+141:RAG_RECALL_URL_LOCAL=http://localhost:9011/recall
+198:CLI_AGENT=cline
+284:PROXY_PORTS=8650,8651,8652,8654
+285:SANDBOX_ENDPOINTS=8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4
+286:RAG_RECALL_URL=http://localhost:9006/recall
+=== [2] 实际监听端口（80xx / 90xx 全扫）===
+LISTEN 0      2048              0.0.0.0:8321       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:8667       0.0.0.0:*                                        
+LISTEN 0      128               0.0.0.0:8668       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:8661       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:8655       0.0.0.0:*                                        
+LISTEN 0      128               0.0.0.0:8652       0.0.0.0:*                                        
+LISTEN 0      128               0.0.0.0:8501       0.0.0.0:*                                        
+LISTEN 0      100               0.0.0.0:8900       0.0.0.0:*                                        
+LISTEN 0      5                 0.0.0.0:8932       0.0.0.0:*                                        
+LISTEN 0      512               0.0.0.0:8892       0.0.0.0:*                                        
+LISTEN 0      512               0.0.0.0:8893       0.0.0.0:*                                        
+LISTEN 0      512               0.0.0.0:8879       0.0.0.0:*                                        
+LISTEN 0      512               0.0.0.0:8877       0.0.0.0:*                                        
+LISTEN 0      512               0.0.0.0:8787       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:8801       0.0.0.0:*                                        
+LISTEN 0      4096              0.0.0.0:9098       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:9082       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:9010       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:9011       0.0.0.0:*                                        
+LISTEN 0      4096              0.0.0.0:9008       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:9009       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:9002       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:9003       0.0.0.0:*                                        
+LISTEN 0      511               0.0.0.0:9000       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:9001       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:9006       0.0.0.0:*    users:(("python",pid=3503518,fd=14))
+LISTEN 0      2048              0.0.0.0:9007       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:9004       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:9005       0.0.0.0:*                                        
+LISTEN 0      511               0.0.0.0:8181       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:8090       0.0.0.0:*    users:(("python",pid=3524971,fd=3)) 
+LISTEN 0      2048              0.0.0.0:8091       0.0.0.0:*                                        
+LISTEN 0      4096              0.0.0.0:8088       0.0.0.0:*                                        
+LISTEN 0      4096              0.0.0.0:8089       0.0.0.0:*                                        
+LISTEN 0      4096              0.0.0.0:8082       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:8080       0.0.0.0:*                                        
+LISTEN 0      5                 0.0.0.0:8081       0.0.0.0:*                                        
+LISTEN 125    2048              0.0.0.0:8087       0.0.0.0:*                                        
+LISTEN 0      4096              0.0.0.0:8084       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:8085       0.0.0.0:*                                        
+LISTEN 0      5                 0.0.0.0:8072       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:8079       0.0.0.0:*                                        
+LISTEN 0      4096              0.0.0.0:8123       0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:8099       0.0.0.0:*                                        
+LISTEN 0      5                 0.0.0.0:8008       0.0.0.0:*                                        
+LISTEN 0      5                 0.0.0.0:8000       0.0.0.0:*                                        
+LISTEN 0      4096            127.0.0.1:8888       0.0.0.0:*                                        
+LISTEN 0      2048            127.0.0.1:8083       0.0.0.0:*                                        
+LISTEN 0      128                  [::]:8501          [::]:*                                        
+LISTEN 0      511                     *:8878             *:*                                        
+LISTEN 0      511                     *:8866             *:*                                        
+LISTEN 0      4096                    *:9090             *:*                                        
+LISTEN 0      128                     *:9234             *:*                                        
+LISTEN 0      4096                    *:8078             *:*                                        
+=== [3] recall / embedding 相关进程（含启动命令）===
+1861672 /home/app.t0002147/miniforge3/envs/eda-fastmcp/bin/python eda_api_recall.py
+2109334 /home/app.t0002596/miniforge3/envs/py310_env/bin/python -m uvicorn eda_api_recall_local:app --host 0.0.0.0 --port 9003 --log-level info
+2137879 /home/app.t0002596/miniforge3/envs/py310_env/bin/python -m uvicorn eda_api_recall:app --host 0.0.0.0 --port 9001 --log-level info
+2284864 timeout 2500 cline -c /home/app.e0031982/eda_code_eval/2026_1011_212324/code/EDA-Eval-PyAether-080/ws --data-dir /home/app.e0031982/eda_code_eval/2026_1011_212324/cli_data/worker_5/d
+2284865 cline -c /home/app.e0031982/eda_code_eval/2026_1011_212324/code/EDA-Eval-PyAether-080/ws --data-dir /home/app.e0031982/eda_code_eval/2026_1011_212324/cli_data/worker_5/data -t 2500 �
+2402551 python -m uvicorn eda_api_recall:app --host 0.0.0.0 --port 9002 --log-level info
+2421515 python -m uvicorn eda_api_recall_local:app --host 0.0.0.0 --port 9004 --log-level info
+2442053 python -m uvicorn eda_api_recall:app --host 0.0.0.0 --port 9010 --log-level info
+2444298 python -m uvicorn eda_api_recall_local:app --host 0.0.0.0 --port 9011 --log-level info
+2873402 python /home/app.t0002147/eda_fastmcp_tcl/eda_fastmcp/tcl_kb/eda_api_recall.py
+3214713 /usr/bin/ssh -o SendEnv=GIT_PROTOCOL -p 8022 git@devops.cxmt.com git-upload-pack '/git/AI/MLM/eda/data_embed.git'
+3309152 python -m uvicorn eda_api_recall:app --host 0.0.0.0 --port 9009 --log-level info
+3503518 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python -m uvicorn eda_api_recall:app --host 0.0.0.0 --port 9006 --log-level info
+=== [4] GET /health 逐候选端口（9002/9006/9009/9010）===
+  :9002 -> http=500 t=0.001996s
+Internal Server Error
+  :9006 -> http=200 t=1.148358s
+{"status":"ok","model":"/nasdata/app.e0023936/Octen-Embedding-4B","executor_ready":true,"collections":{"api_descriptions":4049,"skill_descriptions":5035,"wavevi
+  :9009 -> http=200 t=0.752509s
+{"status":"ok","model":"/nasdata/app.e0023936/Octen-Embedding-4B","executor_ready":true,"collections":{"api_descriptions":4049,"skill_descriptions":5035,"wavevi
+  :9010 -> http=200 t=0.004415s
+{"status":"ok","model":"/nasdata/app.e0023936/Octen-Embedding-4B","executor_ready":true,"collections":{"api_descriptions":4049,"skill_descriptions":5035,"wavevi
+=== [5] 真实召回（POST /recall × 3；health 通 ≠ 能召回）===
+  q=SPICE 网表怎么写 -> http=422 t=0.001335s
+{"detail":[{"type":"missing","loc":["body","lang"],"msg":"Field required","input":{"query":"SPICE 网表怎么写","top_k":5}},{"type":"missing","loc":["body","host"],"msg":"Field required","input":{"query":"SPICE 网表怎么写","top_k":5}}]}
+  q=DRAM 版图 DRC 规则 -> http=422 t=0.001199s
+{"detail":[{"type":"missing","loc":["body","lang"],"msg":"Field required","input":{"query":"DRAM 版图 DRC 规则","top_k":5}},{"type":"missing","loc":["body","host"],"msg":"Field required","input":{"query":"DRAM 版图 DRC 规则","top_k":5}}]}
+  q=pytest 单元测试怎么写 -> http=422 t=0.000901s
+{"detail":[{"type":"missing","loc":["body","lang"],"msg":"Field required","input":{"query":"pytest 单元测试怎么写","top_k":5}},{"type":"missing","loc":["body","host"],"msg":"Field required","input":{"query":"pytest 单元测试怎么写","top_k":5}}]}
+=== [6] MCP(eda_fastmcp) 端口/进程 ===
+LISTEN 0      2048              0.0.0.0:18890      0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:18889      0.0.0.0:*                                        
+LISTEN 0      2048              0.0.0.0:8090       0.0.0.0:*    users:(("python",pid=3524971,fd=3)) 
+490382 /home/app.t0002596/miniforge3/envs/py310_env/bin/python /home/app.t0002596/devops/eda_fastmcp/main.py
+1136643 /home/app.e0023936/miniforge3/envs/py310_env/bin/python /home/app.t0002643/devops/eda_fastmcp/main.py
+1614381 /home/app.e0025768/venv/bin/python /home/app.e0025768/venv/bin/uvicorn main:app --host 0.0.0.0 --port 8079 --reload
+1680200 /home/app.t0002965/eda_fastmcp/.venv/bin/python /home/app.t0002965/eda_fastmcp/main.py
+1827734 python /home/app.t0002147/mcp_0917/eda_fastmcp/main.py
+1860077 /usr/local/bin/python /usr/local/bin/uvicorn open_webui.main:app --host 0.0.0.0 --port 8080 --forwarded-allow-ips *
+1860083 /usr/local/bin/python /usr/local/bin/uvicorn open_webui.main:app --host 0.0.0.0 --port 8080 --forwarded-allow-ips *
+2109334 /home/app.t0002596/miniforge3/envs/py310_env/bin/python -m uvicorn eda_api_recall_local:app --host 0.0.0.0 --port 9003 --log-level info
+2137879 /home/app.t0002596/miniforge3/envs/py310_env/bin/python -m uvicorn eda_api_recall:app --host 0.0.0.0 --port 9001 --log-level info
+2182539 bash /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh
+2182854 bash /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh
+2182855 bash /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh
+2182857 bash /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh
+2182858 bash /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh
+2182859 bash /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh
+2182864 bash /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh
+2182865 bash /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh
+2182869 bash /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh
+2402551 python -m uvicorn eda_api_recall:app --host 0.0.0.0 --port 9002 --log-level info
+2421515 python -m uvicorn eda_api_recall_local:app --host 0.0.0.0 --port 9004 --log-level info
+2425434 python /home/app.t0002147/zhulong_mcp_self_evolution/eda_fastmcp/main.py
+2442053 python -m uvicorn eda_api_recall:app --host 0.0.0.0 --port 9010 --log-level info
+2444298 python -m uvicorn eda_api_recall_local:app --host 0.0.0.0 --port 9011 --log-level info
+2482675 tail -f /home/app.t0002147/mcp_0917/eda_fastmcp/logs/app.log
+2691602 /home/app.e0023936/miniforge3/envs/py310_env/bin/python /home/app.e0023936/devops/2026-07-05/eda_fastmcp/main.py
+2825718 tmux new -s eda_fastmcp_ser
+2873402 python /home/app.t0002147/eda_fastmcp_tcl/eda_fastmcp/tcl_kb/eda_api_recall.py
+3309152 python -m uvicorn eda_api_recall:app --host 0.0.0.0 --port 9009 --log-level info
+3314704 python /nasdata/app.t0002997/app.t0002997/proj_new/eda_fastmcp/main.py
+3503518 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python -m uvicorn eda_api_recall:app --host 0.0.0.0 --port 9006 --log-level info
+3524971 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python /nasdata/app.e0031982/code/eda_fastmcp/main.py
+4166747 /bin/bash -l -c cd /home/app.t0002638/eda_fastmcp && EDA_MCP_PORT=8661 nohup /home/app.e0023936/miniforge3/envs/py310_env/bin/python main.py > /tmp/eda_
+=== [7] r5 日志里 RAG/recall/refused 痕迹 ===
+-rw-r--r-- 1 app.e0031982 app.adm 11255866 Oct 11 22:11 /tmp/ABL_full_r5_8650set.log
+  recall|rag 命中行数: 68
+102039:[0m[2m-[0m[2m I didn[0m[2m't do[0m[2m, line[0m[2m, polygon[0m[2m, ellipse[0m[2m), what[0m[2m **inst[0m[2mTerm**[0m[2m (emy[0m[2m db[0m[2mOpenLib[0m[2m purpose?[0m[2m
+102524:Actually[0m[2m, I[0m[2m [0m[2m recall that[0m[2m to create[0m[2m a proper[0m[2m short error[0m[2m, I[0m[2m need two[0m[2m pins of[0m[2mAether[0m[2m a symbol[0m[2m，验�
+103086:[0m[2mActually,[0m[2m最新的几个[0m[2m rectangle on[0m[2m the specified[0m[2mLet me[0m[2m more pragmatic[0m[2m[thinking] [0m[2m清理[0m[2m layer[0m[2m task [0m[2m目�
+103321:I[0m[2m/connections[0m[2m created correctly[0m[2m can use[0m[2m = db[0m[2mOpenCV[0m[2m).
+103346:[0m[2m之前的 run[0m[2m_commands[0m[2m 显示[0m[2m ls ./[0m[2mpyA[0m[2mether_code[0m[2m 和[0m[2m ls .[0m[2m 被[0m[2m probably no[0m[2m connection ([0m[2mor some[0m
+103419:The[0m[2m. There[0m[2m's also[0m[2m original path[0m[2m点：[0m[2m simpler idea[0m[2m: maybe[0m[2m segments are[0m[2m deleted after[0m[2m处理 vector[0m[2m the new[0m[2m
+103512:[0m[2m7.[0m[2m "The[0m[2mA"[0m[2m original path[0m[2m segments are[0m[2m at (-[0m[2m90,[0m[2m20)[0m[2m via db[0m[2mCrt[0m[2m deleted after[0m[2m the[0m[2m, polys[0m[
+104390:   [90m⎿ [0m[31merror: {"error":"Tool call search_apis was rejected before execution: AI_NoSuchToolError: Model tried to call unavailable tool 'search_apis'. Available tools: read_files, s
+104392:   [90m⎿ [0m[31merror: {"error":"Tool call search_apis was rejected before execution: AI_NoSuchToolError: Model tried to call unavailable tool 'search_apis'. Available tools: read_files, s
+104394:   [90m⎿ [0m[31merror: {"error":"Tool call search_apis was rejected before execution: AI_NoSuchToolError: Model tried to call unavailable tool 'search_apis'. Available tools: read_files, s
+106110:-[0m[2m..." and[0m[2m，然后[0m[2mCreateC[0m[2m test_s[0m[2mDF(l[0m[2mib,[0m[2m传入 cv[0m[2m）。但[0m[2m为了测试[0m[2m18 is[0m[2m NOT a[0m[2m the second[0m[
+106789:- `[2mHmm[0m[2m 尝试[0m[2m创建同名[0m[2m库，[0m[2m发现[0m[2m lib.[0m[2mdefs[0m[2m actually wait[0m[2m, in[0m[2mattr`.[0m[2m Wait,[0m[2m `has[0m[2mattr(m[0m[
+107119:让我[0m[2m看看 run[0m[2m_commands[0m[2m [0m[2m的 C[0m[2mWD [0m[2m是什么[0m[2m，通过[0m[2m运行 p[0m[2m whole file[0m[2m too deep[0m[2m. Let[0m[2m, cell[0m[
+107154:[0m[2mAlso,[0m[2m I recall[0m[2m the em[0m[2myDesign[0m[2m has[0m[2m properties like[0m[2m `.inst[0m[2mances`[0m[2m (from[0m[2m dbC[0m[2mrtText[0m[2m uses.[0m[2mDispla
+108020:[0m[2mNow let[0m[2m（含[0m[2m, I[0m[2m recall from[0m[2m2/[0m[2meda_code[0m[2m me also[0m[2m_eval[0m[2m if __[0m[2mname__[0m[2m）来[0m[2m the em[0m[2myPoint[0m[2
+=== [8] 评测侧 cline 会话里 recall 出现次数（轨迹证据）===
+=== [9] full vs wo_retrieval 的配置出处（只列文件，不下结论）===
+/nasdata/app.e0031982/code/eda_fastmcp/.env:131:# RAG_RECALL_URL=http://localhost:9002/recall
+/nasdata/app.e0031982/code/eda_fastmcp/.env:133:# RAG_RECALL_URL=http://10.252.32.15:9001/recall
+/nasdata/app.e0031982/code/eda_fastmcp/.env:135:RAG_DEFAULT_TOP_K=5
+/nasdata/app.e0031982/code/eda_fastmcp/.env:137:RAG_RECALL_TIMEOUT=25
+/nasdata/app.e0031982/code/eda_fastmcp/.env:141:RAG_RECALL_URL_LOCAL=http://localhost:9011/recall
+/nasdata/app.e0031982/code/eda_fastmcp/.env:286:RAG_RECALL_URL=http://localhost:9006/recall
+=== DONE ===
+```
