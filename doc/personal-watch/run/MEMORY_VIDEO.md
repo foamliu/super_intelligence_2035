@@ -12,11 +12,11 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量启动 ✅ → 18_暖阳 首轮：13 张基础图已产出（老周定妆×3 + 出租屋×2 + 车内×4 + 小晴×1 + 城市×2 + 道具×2）
-已完成:       S1 ✅；S2 ✅（样板章端到端）；S3 首轮 ✅：18_暖阳 13 张基础图（image_edit 8 张走老周01定妆 + zimage_t2i 5 张）+ 老周定妆 02/03 落库 + 固化 scripts/generate_ep18_t2i.py + OUTPUT/18_暖阳/frames/manifest.json
-当前动作:     （本轮 S3 首轮：18_暖阳 帧产出 + 固化脚本 + 回写 PLAN/MEMORY/日流水 + commit+push）
+PHASE:        S3 放量 ✅ → 18_暖阳 续跑：13 张基础图 + 53 条台词已固化（ep18_dialogue.py · 🚫 禁用 TTS）；下一步 H3 I2V
+已完成:       S1 ✅；S2 ✅（样板章端到端）；S3 首轮 ✅（18_暖阳 13 张基础图）；S3 续跑 ✅（53 条台词固化 ep18_dialogue.py + TTS 作废·按用户令禁用 TTS）
+当前动作:     （本轮 S3 续跑：误按旧口径跑 TTS → 落档发现用户令禁用 TTS → 中止 TTS + 固化台词源 ep18_dialogue.py + 回写 PLAN/MEMORY/日流水 + commit+push）
 下一步:       18_暖阳 续跑：video_minimax_h3_i2v 分镜视频（**台词随 H3 一起出 · 🚫 不用 TTS**）→ 字幕/音效BGM → 合成（★ 音画钉长）；BLOCKERS #5 已作废
-阻塞:         无硬阻塞（ComfyUI/MCP/ffmpeg 全绿）。BLOCKERS #1✅ #4(字幕)✅ 已修；#2(MCP project_root=stem_fest 需传绝对路径·已照做) #3(15章缺规格) #5(混音时序重叠) 待处理
+阻塞:         无硬阻塞（ComfyUI/MCP/ffmpeg 全绿）。BLOCKERS #1✅ #4(字幕)✅ #5✅(已作废) 已修；#2(MCP project_root=stem_fest 需传绝对路径·已照做) #3(15章缺规格) 待处理
 ERROR_COUNT:  0
 ```
 
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-11（S3 首轮 · 18_暖阳 13 张基础图产出 + 固化 generate_ep18_t2i.py，见 §3 流水）
+- **上次唤醒**：2026-10-11（S3 续跑 · 18_暖阳 53 条台词固化 ep18_dialogue.py；用户令禁用 TTS → TTS 作废）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -50,6 +50,11 @@ ERROR_COUNT:  0
   - **⇒ 影响**：**EP13 的 TTS 产物与 `synth_ep13` 的 TTS 混音 = legacy**（不再使用、不再混入成片）；**后续各章一律不生成、不混任何 TTS**，台词写进 H3 `prompt` 的 `Audio:`。
   - **⇒ 新链路**：分镜帧 → **H3 I2V（台词同期生成）** → BGM/音效 → 合成（**音画钉长**）→ 字幕 → 验收（`qwen3_asr` 逐字核对**含多余语音**）。
 
+- **2026-10-11 · S3 续跑 · 18_暖阳 台词固化（53 条）+ TTS 作废 ✅**：S3 续跑 18_暖阳 第二棒。
+  - **固化**：`scripts/ep18_dialogue.py`（5 角色 · 53 条台词/旁白原文 + 表演指令，唯一对话来源）；py_compile 通过。
+  - **中止 TTS**：本轮误按旧口径跑 TTS（`gen_ep18_tts.py` 已产出 41/53 条 FLAC），落档发现**用户令禁用 TTS**（人物对话全部由 H3 随视频生成）⇒ 已 kill 进程、删除 `gen_ep18_tts.py`/`verify_ep18_tts.py` 及 `OUTPUT/18_暖阳/audio/` TTS 产物；台词转由 `ep18_dialogue.py` 供给 H3 `Audio:`。
+  - **口径**：台词随 H3 生成（写进 prompt 的 `Audio:`）；⛔ 禁用 `qwen3_tts` 及任何 TTS（PIPELINE 铁律 3）。
+  - **下一步**：`gen_ep18_h3_i2v.py` 分镜视频（台词写进 H3 prompt 的 `Audio:`，随 H3 一起出）→ 字幕/音效BGM → 合成（★ 音画钉长）。
 - **2026-10-11 · S3 首轮 · 18_暖阳 基础图产出 ✅**：进 S3 放量，首选 18_暖阳 开工。
   - **产出 13 张基础图**（`OUTPUT/18_暖阳/frames/`，`manifest.json` 间接入库）：老周定妆 02_半侧面沉思 / 03_落泪（image_edit，输入 01 正面定妆，seed 43/44，1312×736）+ 出租屋 2 + 车内 4（image_edit）+ 小晴头像 1 + 城市夜景 2 + 道具 2（zimage_t2i，1024×1024 / 1280×720）。
   - **老周定妆扩展**：`02_半侧面沉思.png` / `03_落泪.png` 落库 `ASSETS/CHARACTERS/07_老周/`（与 01 正面定妆并列，跨第 18/39 集复用）。
