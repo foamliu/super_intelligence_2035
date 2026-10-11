@@ -9,6 +9,8 @@
 # ⏰ 唤醒节律（沿用 2026-10-07 用户令：每天 2 次 —— 06:00 / 18:00）：
 #   定时模式（**默认**，SCHEDULE_HOURS=6,18）：只在时窗边界调用 cline；其余时间**纯 bash 分段睡眠（零 token）**，
 #     每 SLEEP_CHUNK 秒刷新存活标记 /tmp/watch_recruit_loop.hb（供外部判活）—— 目的就是「**别再烧用户自己的 token**」。
+#   ⏱ **间隔模式（临时）**：环境变量 `WATCH_INTERVAL_MIN=<分钟>` ⇒ 固定每 N 分钟唤醒一次
+#     （**优先级最高**：interval > schedule(6,18) > adaptive；置空即回退）。
 #   旧模式（回退）：环境变量 `WATCH_SCHEDULE_HOURS=`（置空）⇒ 恢复 WAITING 自适应（0→60s 连续推进 / 1→1800s）。
 #   时窗内致命错：**最多重试 SCHEDULE_RETRY_MAX 次**，之后等下个时窗（🚫 不做 60s 死循环重试 —— 那会疯狂烧 token）。
 #
@@ -55,7 +57,17 @@ SCHEDULE_HOURS="${WATCH_SCHEDULE_HOURS-6,18}"   # 逗号分隔的小时；**置�
 SLEEP_CHUNK=300                 # 时窗内分段睡：每 5 分钟刷新存活标记（零 token；可被 SIGTERM 立刻打断）
 SLEEP_RETRY=300                 # 时窗内 cline 失败后的重试等待
 SCHEDULE_RETRY_MAX=1            # 同一时窗内最多重试 1 次 ⇒ 之后等下个时窗（防 60s 死循环烧 token）
+# ── ⏱ 间隔唤醒（**临时模式**：`WATCH_INTERVAL_MIN=30` ⇒ 每 30 分钟唤醒一次；**优先级最高**；置空即回退「时窗 / 自适应」）──
+INTERVAL_MIN="${WATCH_INTERVAL_MIN-}"
 LOOP_HB="/tmp/watch_recruit_loop.hb"   # 零 token 存活标记：loop 活着、只是在等时窗
+# 模式判定（优先级）：interval > schedule(6,18) > adaptive
+if [ -n "${INTERVAL_MIN:-}" ] && [ "${INTERVAL_MIN:-0}" -gt 0 ] 2>/dev/null; then
+    MODE="interval"
+elif [ -n "$SCHEDULE_HOURS" ]; then
+    MODE="schedule"
+else
+    MODE="adaptive"
+fi
 MEMORY="$SCRIPT_DIR/MEMORY_RECRUIT.md"
 LAST_PUSH="/tmp/watch_recruit_last_push"
 CLINE_LOG="/tmp/watch_recruit_cline_last.log"   # cline 本轮输出，用于检测"报错却 exit 0"
@@ -167,8 +179,28 @@ sleep_until_next_slot() {
     done
 }
 
+# ── ⏱ 间隔模式：固定每 INTERVAL_MIN 分钟唤醒一次（同样分段睡 + 零 token + 刷新存活标记）──
+sleep_until_next_interval() {
+    local secs=$(( INTERVAL_MIN * 60 ))
+    local remain=$secs chunk ticks=0
+    echo "[loop] $(date '+%F %T') ⏱ 间隔模式：每 ${INTERVAL_MIN} 分钟唤醒一次（下次 ≈ $(date -d "@$(( $(date +%s) + secs ))" '+%F %T %Z')）"
+    while [ "$remain" -gt 0 ]; do
+        chunk="$SLEEP_CHUNK"
+        [ "$remain" -lt "$chunk" ] && chunk="$remain"
+        sleep "$chunk"
+        remain=$((remain - chunk))
+        date +%s > "$LOOP_HB" 2>/dev/null || true      # 零 token 存活标记
+        ticks=$((ticks + 1))
+        if [ $((ticks % (1800 / SLEEP_CHUNK))) -eq 0 ]; then
+            echo "[loop] $(date '+%F %T') ⏱ 间隔等待中（剩余 $((remain / 60))min；未调 cline = 零 token）"
+        fi
+    done
+}
+
 # ── 启动横幅：让外部一眼看出「跑的是哪种模式 / 时窗」（中继据此核验）──
-if [ -n "$SCHEDULE_HOURS" ]; then
+if [ "$MODE" = "interval" ]; then
+    echo "[loop] ⏱ 间隔模式已启用：每 ${INTERVAL_MIN} 分钟唤醒一次 · 存活标记 = $LOOP_HB · 回退：WATCH_INTERVAL_MIN= 置空"
+elif [ "$MODE" = "schedule" ]; then
     echo "[loop] ⏰ 定时模式已启用：唤醒时窗 = ${SCHEDULE_HOURS}（每天 2 次）· 存活标记 = $LOOP_HB · 回退：WATCH_SCHEDULE_HOURS= 置空"
     if _t=$(next_slot_epoch); then
         echo "[loop] ⏰ 时窗参考：此刻之后的下一个时窗 = $(date -d "@$_t" '+%F %T %Z')（首轮唤醒=立即执行；各轮跑完会实时重算）"
@@ -186,7 +218,7 @@ fi
 
 RETRY=0     # 本时窗内的致命错重试计数（定时模式用）
 while true; do
-    echo "[loop] $(date '+%F %T') wake up, invoking cline ... [mode=${SCHEDULE_HOURS:-adaptive}]"
+    echo "[loop] $(date '+%F %T') wake up, invoking cline ... [mode=${MODE}${INTERVAL_MIN:+:${INTERVAL_MIN}min}]"
     FORCE_SHORT=0
     if [[ -f "$TASK_MD" ]]; then
         prompt="$(< "$TASK_MD")"
@@ -204,19 +236,23 @@ while true; do
     fi
     git_sync_and_push
     date +%s > "$LOOP_HB" 2>/dev/null || true       # 每轮唤醒回来都刷新存活标记
-    if [ -n "$SCHEDULE_HOURS" ]; then
-        # ── ⏰ 定时模式：每天 2 次（06:00 / 18:00）──
+    if [ "$MODE" = "schedule" ] || [ "$MODE" = "interval" ]; then
+        # ── ⏰ 定时（每天 2 次 06:00/18:00）/ ⏱ 间隔（每 30min）──
         if [ "$FORCE_SHORT" -eq 1 ]; then
             RETRY=$((RETRY + 1))
             if [ "$RETRY" -le "$SCHEDULE_RETRY_MAX" ]; then
-                echo "[loop] $(date '+%F %T') ⚠️ cline 失败/报错 → 本时窗内重试 ${RETRY}/${SCHEDULE_RETRY_MAX}（sleep ${SLEEP_RETRY}s 后立刻重试）"
+                echo "[loop] $(date '+%F %T') ⚠️ cline 失败/报错 → 本轮内重试 ${RETRY}/${SCHEDULE_RETRY_MAX}（sleep ${SLEEP_RETRY}s 后立刻重试）"
                 sleep "$SLEEP_RETRY"
                 continue
             fi
-            echo "[loop] $(date '+%F %T') 🛑 已达本时窗重试上限（${SCHEDULE_RETRY_MAX}）→ 不再重试（防死循环烧 token），等下一个时窗"
+            echo "[loop] $(date '+%F %T') 🛑 已达重试上限（${SCHEDULE_RETRY_MAX}）→ 不再重试（防死循环烧 token），等下一个唤醒"
         fi
-        RETRY=0                                     # 无致命错（或重试已耗尽）⇒ 清零，睡到下一个时窗
-        sleep_until_next_slot
+        RETRY=0                                     # 无致命错（或重试已耗尽）⇒ 清零，睡到下一次唤醒
+        if [ "$MODE" = "interval" ]; then
+            sleep_until_next_interval
+        else
+            sleep_until_next_slot
+        fi
     else
         # ── 旧模式（WAITING 自适应；仅当 WATCH_SCHEDULE_HOURS 被置空）──
         if [ "$FORCE_SHORT" -eq 1 ]; then
