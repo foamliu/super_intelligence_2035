@@ -114,6 +114,8 @@ WAITING: 0
 8. **infra 作废规则**：license 耗尽 / 端口宕 / 磁盘 <8G → **不计数**、记 `⚠️ infra`、`WAITING=1` 原地复检；**绝不拿作废批冒充有效分**。
 9. **git**：只 add 自己动的文件；远端高频抢占时用**后台重试循环**（`fetch → rebase --autostash → push`）。
 
+10. **🔴 端口口径红线（2026-10-11 用户令「决不允许偏离」）**：我方评测固定 = **`PROXY_PORTS=8650,8651,8652,8654`** + **`SANDBOX_ENDPOINTS=8650..8654 → /proj/train/AI/workdir/t0002997_1..4`** + **`RAG_RECALL_URL=http://localhost:9006/recall`** + **`EDA_MCP_PORT=8090`**。⚠️ 上游 `eda_fastmcp` 的默认值（`8656/8658/8661/8662` + `9010`，出自 **`xiyuan.chen <xiyuan.chen@cxmt.com>` 2026-10-08 `d8dafdf4`**「优化代码，更新四种语言增强api 文档」，对应**他自己的** workdir `t0002441_9..12`）**是他的沙盒分配，我们不跟随**。**任何 `git pull` 后必须复检这 4 项**（`sh -n .env` + 每键**恰 1 行**，去重）；`.env` 已加 `git update-index --skip-worktree` 保护 + canon 锁文件 `/nasdata/app.e0031982/eda_fastmcp.env.canon.lock`。MCP 客户端（两处 `cline_mcp_settings.json`）须按新版 README：`url=…:8090/mcp` + `"type":"streamableHttp"`。
+
 ---
 
 ## 6. 关键事实（写给未来的我）
