@@ -6974,3 +6974,304 @@ stop.sh
     mcp.run(transport=os.getenv("EDA_MCP_TRANSPORT", "sse"))
 === DONE ===
 ```
+
+---
+
+## RUN_ID 45 · 2026-10-11 22:35:03 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 45 · 收官三问（只读）
+echo "=== [0] host/time ==="; hostname; date '+%F %T'
+E=/nasdata/app.e0031982/code/eda_fastmcp
+B=/home/app.e0031982/eda_code_eval
+
+echo "=== [1] 臂定义：set_ablation.py（逐臂禁用清单）==="
+sed -n '1,140p' "$E/scripts/set_ablation.py" | cut -c1-200
+
+echo "=== [2] 当前 .env 的禁用清单/注入开关 ==="
+grep -nE 'EDA_MCP_TOOLS_DISABLED|EDA_MEMORY_INJECT|EDA_EVOLVE|RAG_' "$E/.env" | cut -c1-240
+
+echo "=== [3] 召回：4 组合法 pair × 3 个英文/代码 query（top_k=10）==="
+for P in pyAether:aether skill:virtuoso tcl:waveview tcl:innovus; do
+  L=${P%%:*}; H=${P##*:}
+  for Q in dbCreateRect 'how to create a rectangle in layout' hiGetCurrentWindow; do
+    printf '  %-8s %-9s q=%-36s -> ' "$L" "$H" "$Q"
+    timeout 25 curl -s -X POST "http://localhost:9006/recall" -H 'Content-Type: application/json' \
+      -d "{\"query\":\"$Q\",\"top_k\":10,\"lang\":\"$L\",\"host\":\"$H\"}" \
+      -o /tmp/r45.json -w 'http=%{http_code} ' || echo FAIL
+    python3 -c "import json;d=json.load(open('/tmp/r45.json'));r=d if isinstance(d,list) else (d.get('results') or d.get('hits') or d.get('data') or []);print('hits=',len(r))" 2>/dev/null || head -c 140 /tmp/r45.json
+  done
+done
+
+echo "=== [4] 轨迹里 search_apis 的返回：空 vs 非空（**关键证据**）==="
+for D in $(ls -d $B/*/cli_data/worker_*/data 2>/dev/null | head -3); do
+  [ -d "$D/sessions" ] || continue
+  echo "  -- $D"
+  echo -n "     含 search_apis 的会话文件数: "; grep -rl 'pyAether_MCP_server__search_apis' "$D/sessions" 2>/dev/null | wc -l
+  echo -n "     其中出现空结果(紧邻 [])的: "; grep -rlE 'search_apis[^]]*\[\]' "$D/sessions" 2>/dev/null | wc -l
+done
+echo "--- 抽 1 例 search_apis 调用+返回原文（≤2 段 × 600 字）---"
+F=$(grep -rl 'pyAether_MCP_server__search_apis' $(ls -d $B/*/cli_data/worker_*/data 2>/dev/null | head -1)/sessions 2>/dev/null | head -1)
+[ -n "$F" ] && { echo "  file=$F"; grep -aoE '"name":"pyAether_MCP_server__search_apis".{0,600}' "$F" 2>/dev/null | head -2; }
+
+echo "=== [5] recall 服务端最近日志 ==="
+ls -lt /tmp/*recall*.log 2>/dev/null | head -4
+for L in /tmp/eda_api_recall*.log /tmp/*recall*.log; do [ -f "$L" ] && { echo "  -- $L"; tail -10 "$L" | cut -c1-190; }; done
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] host/time ===
+hfeg0tedaap02
+2026-10-11 22:35:03
+=== [1] 臂定义：set_ablation.py（逐臂禁用清单）===
+#!/usr/bin/env python3
+"""Switch EDA MCP core-tool visibility for component ablation (第 1~3 批).
+
+通过写 .env 的 EDA_MCP_TOOLS_DISABLED(单一禁用清单) 控制核心 4 工具
+(get_api_details / search_apis / search_apis_by_keyword / run_code) 的开关。
+
+当前 main.py 采用「单一禁用清单」语义:
+  - 核心 4 工具默认开启, 名字只要出现在 EDA_MCP_TOOLS_DISABLED 里即关闭。
+  - 其余工具(clean_workdir / query_memory_bank / probe_pyAether_code / cimi_* / vqa)
+    不在本脚本托管范围, 沿用 .env 里既有的禁用状态(称为基线), set_ablation 不改动它们。
+
+因此本脚本只托管「核心 4 工具是否被禁用」这一件事: 运行时读取现有清单里
+非核心工具的部分作为基线, 再按目标配置把应禁用的核心工具并入。
+
+改完必须重启 MCP 服务才会生效:
+
+    bash scripts/stop.sh && bash scripts/start.sh
+
+用法:
+    python scripts/set_ablation.py <CONFIG>
+
+CONFIG 取值(核心 4 工具开关 × 文档源 × run_code 回读模式):
+    full            检索 3 件套 ON + run_code ON + V3 文档 + 完整回读 (E01, 主系统默认)
+    pure_llm        核心 4 工具全关 (裸 LLM, E02)
+    rag             检索 3 件套 ON + run_code OFF + V3 增强文档 (E05 w/o Sandbox)
+    rag_raw         检索 3 件套 ON + run_code OFF + V2 原始文档 (E03 RAG 基线, E✗)
+    wo_selfexpl     检索 3 件套 ON + run_code ON + V2 原始文档 (E04 w/o Self-Expl., E✗)
+    wo_retrieval    检索 3 件套 OFF + run_code ON (E06 w/o Retrieval, 文档源不触达保持不变)
+    readback_binary 全工具 ON + V3 文档 + run_code 仅返回 PASS/FAIL (E08 回读轴 (B))
+
+除核心工具开关外, 本脚本同时托管两个 .env 变量:
+    API_INFO_MERGED_FILE        pyAether 文档源(V2 原始 / V3 自探索增强), 进程内读取
+    EDA_MCP_RUN_CODE_FEEDBACK   run_code 回读保真度(full / binary, main.py 启动时读取)
+两者均需重启 MCP 生效。doc=None 的配置不改动 API_INFO_MERGED_FILE(保持现状)。
+"""
+
+import os
+import sys
+
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ENV_PATH = os.path.join(PROJECT_DIR, ".env")
+
+DISABLED_ENV = "EDA_MCP_TOOLS_DISABLED"
+# 文档源(自探索消融轴: V2 原始 vs V3 自探索增强) — 进程内读取(query_file/keyword_search)
+DOC_ENV = "API_INFO_MERGED_FILE"
+DOC_FILES = {
+    "V2": "./docs/API_INFO_MERGED_V2.json",
+    "V3": "./docs/API_INFO_MERGED_V3.json",
+}
+# 非 pyAether 三语言文档源(20260930 D1 完成后纳入托管, 与 DOC_ENV 同轴联动):
+#   doc=V3(E✓) -> selfexpl 增强版; doc=V2(E✗) -> raw 原始版; doc=None -> 不触碰。
+# 此前三变量为"环境态", E04/E03 会以 pyAether V2 + 三语言增强版的混合口径运行, 已修正。
+DOC_ENVS = {
+    "SKILL_DATA_DIR": {
+        "raw": "./docs/skill_data",
+        "selfexpl": "./docs/skill_data_selfexpl",
+    },
+    "TCL_API_FILE": {
+        "raw": "./docs/wv_ace_API_INFO.json",
+        "selfexpl": "./docs/wv_ace_API_INFO_P2019_06_SP2.json",
+    },
+    "INNOVUS_API_FILE": {
+        "raw": "./docs/innovus_API_INFO.json",
+        "selfexpl": "./docs/innovus_API_INFO_SELFEXPL.json",
+    },
+}
+# run_code 回读保真度(论文 S1 回读轴) — main.py 启动时读取
+FEEDBACK_ENV = "EDA_MCP_RUN_CODE_FEEDBACK"
+# 废弃变量(main.py 已不再读取), 切换时顺手清理, 避免残留误导
+DEPRECATED_ENVS = ("EDA_MCP_CORE_TOOLS", "EDA_MCP_TOOLS_ENABLED")
+
+# 核心 4 工具(本脚本托管的消融对象), 固定顺序用于稳定、可读的输出
+CORE_TOOLS = ["get_api_details", "search_apis", "search_apis_by_keyword", "run_code"]
+CORE_SET = set(CORE_TOOLS)
+
+# 每个配置: core_disabled = 需禁用的核心工具; doc = 文档源(None=不改); feedback = 回读模式
+CONFIGS = {
+    "full": {
+        "core_disabled": set(),
+        "doc": "V3",
+        "feedback": "full",
+        "desc": "检索 3 件套 ON + run_code ON + V3 文档 + 完整回读 (E01, 主系统默认)",
+    },
+    "pure_llm": {
+        "core_disabled": {"get_api_details", "search_apis", "search_apis_by_keyword", "run_code"},
+        "doc": None,
+        "feedback": "full",
+        "desc": "核心 4 工具全关 (裸 LLM, E02)",
+    },
+    "rag": {
+        "core_disabled": {"run_code"},
+        "doc": "V3",
+        "feedback": "full",
+        "desc": "检索 3 件套 ON + run_code OFF + V3 增强文档 (E05 w/o Sandbox)",
+    },
+    "rag_raw": {
+        "core_disabled": {"run_code"},
+        "doc": "V2",
+        "feedback": "full",
+        "desc": "检索 3 件套 ON + run_code OFF + V2 原始文档 (E03 RAG 基线, E✗)",
+    },
+    "wo_selfexpl": {
+        "core_disabled": set(),
+        "doc": "V2",
+        "feedback": "full",
+        "desc": "检索 3 件套 ON + run_code ON + V2 原始文档 (E04 w/o Self-Expl., E✗)",
+    },
+    "wo_retrieval": {
+        "core_disabled": {"get_api_details", "search_apis", "search_apis_by_keyword"},
+        "doc": None,
+        "feedback": "full",
+        "desc": "检索 3 件套 OFF + run_code ON (E06 w/o Retrieval)",
+    },
+    "readback_binary": {
+        "core_disabled": set(),
+        "doc": "V3",
+        "feedback": "binary",
+        "desc": "全工具 ON + V3 文档 + run_code 仅 PASS/FAIL (E08 回读轴 (B))",
+    },
+}
+
+
+def _is_comment(line):
+    return line.lstrip().startswith("#")
+
+
+def _normalize(line):
+    """去掉缩进与可能的前导 '#'，返回变量名(= 之前的文本)。"""
+    s = line.strip()
+    if s.startswith("#"):
+        s = s[1:].lstrip()
+    return s.split("=", 1)[0]
+
+
+def _parse_value(line):
+    """返回赋值行 '=' 之后的值(去首尾空白); 非激活赋值行返回 None。"""
+    if _is_comment(line) or "=" not in line:
+        return None
+    return line.split("=", 1)[1].strip()
+
+=== [2] 当前 .env 的禁用清单/注入开关 ===
+131:# RAG_RECALL_URL=http://localhost:9002/recall
+133:# RAG_RECALL_URL=http://10.252.32.15:9001/recall
+135:RAG_DEFAULT_TOP_K=5
+137:RAG_RECALL_TIMEOUT=25
+141:RAG_RECALL_URL_LOCAL=http://localhost:9011/recall
+228:# EDA_MCP_TOOLS_DISABLED = 当前被禁用的 MCP 工具（逗号分隔）
+242:EDA_MCP_TOOLS_DISABLED=clean_workdir,probe_pyAether_code,cimi_search,cimi_fetch,vqa,text_to_image,query_memory_bank
+286:RAG_RECALL_URL=http://localhost:9006/recall
+=== [3] 召回：4 组合法 pair × 3 个英文/代码 query（top_k=10）===
+  pyAether aether    q=dbCreateRect                         -> http=200 hits= 5
+  pyAether aether    q=how to create a rectangle in layout  -> http=200 hits= 1
+  pyAether aether    q=hiGetCurrentWindow                   -> http=200 hits= 9
+  skill    virtuoso  q=dbCreateRect                         -> http=200 hits= 3
+  skill    virtuoso  q=how to create a rectangle in layout  -> http=200 hits= 1
+  skill    virtuoso  q=hiGetCurrentWindow                   -> http=200 hits= 6
+  tcl      waveview  q=dbCreateRect                         -> http=200 hits= 0
+  tcl      waveview  q=how to create a rectangle in layout  -> http=200 hits= 0
+  tcl      waveview  q=hiGetCurrentWindow                   -> http=200 hits= 0
+  tcl      innovus   q=dbCreateRect                         -> http=200 hits= 0
+  tcl      innovus   q=how to create a rectangle in layout  -> http=200 hits= 0
+  tcl      innovus   q=hiGetCurrentWindow                   -> http=200 hits= 0
+=== [4] 轨迹里 search_apis 的返回：空 vs 非空（**关键证据**）===
+  -- /home/app.e0031982/eda_code_eval/2026_1008_114702/cli_data/worker_1/data
+     含 search_apis 的会话文件数: 18
+     其中出现空结果(紧邻 [])的: 2
+  -- /home/app.e0031982/eda_code_eval/2026_1008_114702/cli_data/worker_2/data
+     含 search_apis 的会话文件数: 26
+     其中出现空结果(紧邻 [])的: 0
+  -- /home/app.e0031982/eda_code_eval/2026_1008_114702/cli_data/worker_3/data
+     含 search_apis 的会话文件数: 15
+     其中出现空结果(紧邻 [])的: 1
+--- 抽 1 例 search_apis 调用+返回原文（≤2 段 × 600 字）---
+  file=/home/app.e0031982/eda_code_eval/2026_1008_114702/cli_data/worker_1/data/sessions/1791431340795_cy8sh/1791431340795_cy8sh.messages.json
+=== [5] recall 服务端最近日志 ===
+-rw-r--r-- 1 app.e0031982 app.adm   632 Oct 11 09:11 /tmp/recall_api_20261011_091030.log
+-rw-r--r-- 1 app.e0031982 app.adm    64 Oct 11 08:32 /tmp/rag_recall_20261011_083232.log
+-rw-r--r-- 1 app.t0002147 app.adm  4698 Sep 20 10:18 /tmp/test_recall_mcp.log
+-rw-r--r-- 1 app.t0002147 app.adm  3674 Sep 20 09:14 /tmp/eda_recall.log
+  -- /tmp/eda_recall.log
+INFO:eda_api_recall:查询 'db_pt' (lang=innovus) 返回 3 条结果
+INFO:     127.0.0.1:34942 - "POST /recall HTTP/1.1" 200 OK
+
+
+Batches: 100%|██████████| 1/1 [00:00<00:00,  1.59it/s][A[ABatches: 100%|██████████| 1/1 [00:00<00:00,  1.59it/s]
+INFO:eda_api_recall:查询 'setSiMode' (lang=innovus) 返回 3 条结果
+INFO:     127.0.0.1:34932 - "POST /recall HTTP/1.1" 200 OK
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.16it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.
+INFO:eda_api_recall:查询 'dbGet' (lang=innovus) 返回 5 条结果
+INFO:     127.0.0.1:42824 - "POST /recall HTTP/1.1" 200 OK
+  -- /tmp/install_recall.log
+  Attempting uninstall: click
+    Found existing installation: click 8.3.1
+    Uninstalling click-8.3.1:
+      Successfully uninstalled click-8.3.1
+  Attempting uninstall: aiohttp
+    Found existing installation: aiohttp 3.13.3
+    Uninstalling aiohttp-3.13.3:
+      Successfully uninstalled aiohttp-3.13.3
+Successfully installed aiohttp-3.14.3 bcrypt-5.0.0 build-1.6.1 chromadb-1.5.9 click-8.5.0 cloudpickle-3.1.2 durationpy-0.11 flatbuffers-25.12.19 hf-xet-1.6.0 httptools-0.8.0 huggingface-hub-
+ALL_INSTALL_DONE
+  -- /tmp/rag_recall_20261011_083232.log
+bash: scripts/start_recalling_api.sh: No such file or directory
+  -- /tmp/recall_api_20261011_091030.log
+  存储: /nasdata/app.e0031982/code/eda_fastmcp/kb/chroma_db_v20260522
+  集合: api_descriptions(pyAether/aether) + skill_descriptions(skill/virtuoso) + waveview_description(tcl/waveview) + innovus_description(tcl/innovus) [4 collection, 按 (lang, host) 路�
+  端口: 9006
+  线程: TORCH_NUM_THREADS=8
+[OK] 服务已启动 (PID=3503518, PORT=9006)
+      检索: http://localhost:9006/recall
+      健康: http://localhost:9006/health
+      文档: http://localhost:9006/docs
+
+更新 .env: RAG_RECALL_URL=http://localhost:9006/recall
+  -- /tmp/start_recall2.log
+  集合: api_descriptions(pyAether) + skill_descriptions(skill) [双 collection, 按 lang 路由]
+  端口: 9006
+  线程: TORCH_NUM_THREADS=8
+[OK] 服务已启动 (PID=3761714, PORT=9006)
+      检索: http://localhost:9006/recall
+      健康: http://localhost:9006/health
+      文档: http://localhost:9006/docs
+
+更新 .env: RAG_RECALL_URL=http://localhost:9006/recall
+EXIT_CODE=0
+  -- /tmp/start_recall.log
+[INFO] 启动 API 向量检索服务...
+  模型: /nasdata/app.e0023936/Octen-Embedding-4B
+  存储: /nasdata/app.e0031982/code/eda_fastmcp/kb/chroma_db_v3_full
+  集合: api_descriptions(pyAether) + skill_descriptions(skill) [双 collection, 按 lang 路由]
+  端口: 9006
+  线程: TORCH_NUM_THREADS=8
+[ERROR] 服务启动超时，查看日志: /nasdata/app.e0031982/code/eda_fastmcp/kb/recall_api.log
+        PID 文件: /nasdata/app.e0031982/code/eda_fastmcp/kb/.recall_api.pid
+EXIT_CODE=1
+  -- /tmp/test_recall_mcp.log
+INFO:eda_api_recall:查询 'add power rings around the core area' (lang=innovus) 返回 5 条结果
+
+=== lang=innovus query='add power rings around the core area' -> 5 results ===
+   addRing                          sim=0.7272  Creates rings for specified nets around the core boundary or selected blocks and groups of
+   setAddRingMode                   sim=0.7150  Sets global variables for block rings and core rings when you use the addRing command.
+   addPowerSwitch                   sim=0.5970  Supports five type of cells: switch cells, filler cells, corner cells (for the ring style 
+   initCoreRow                      sim=0.5888  Regenerates rows for the core area and the power domains in a design. The rows are based o
+   addStripe                        sim=0.5773  Creates power stripes within the specified area. If the router encounters an obstruction, 
+
+DONE
+=== DONE ===
+```
