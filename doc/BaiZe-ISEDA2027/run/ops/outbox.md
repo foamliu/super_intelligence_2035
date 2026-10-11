@@ -9421,3 +9421,126 @@ Filesystem                   Inodes  IUsed    IFree IUse% Mounted on
 2489749 bash ops_relay.sh
 === DONE 89 ===
 ```
+
+---
+
+## RUN_ID 90 · 2026-10-11 13:45:38 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 90 · 只读：/home 差异归因 + 全盘大头 + /tmp 拆解 · $(date '+%F %T') · host=$(hostname) ==="
+U=/home/app.e0031982
+echo "--- A) LVM 实况（重点：thin pool 是否快满） ---"
+timeout 20 vgs 2>&1 | cut -c1-160
+timeout 20 pvs 2>&1 | cut -c1-160
+timeout 20 lvs -a -o lv_name,vg_name,lv_size,data_percent,metadata_percent,segtype 2>&1 | cut -c1-170
+echo "   -- thin/pool 相关段 --"
+timeout 20 lvs -a -o +devices 2>&1 | grep -iE 'thin|pool' | head -10 | cut -c1-170
+echo "--- B) 配额（若启用） ---"
+timeout 20 quota -s 2>&1 | head -8 | cut -c1-140
+timeout 20 repquota -s /home 2>&1 | head -12 | cut -c1-140
+echo "--- C) /home 全盘（含其它用户！只列不删） ---"
+timeout 70 du -hx --max-depth=1 /home 2>/dev/null | sort -rh | head -20 | cut -c1-140
+echo "--- D) /tmp 拆解（98G LV / 已用 38G） ---"
+timeout 45 du -hx --max-depth=1 /tmp 2>/dev/null | sort -rh | head -20 | cut -c1-140
+echo "   -- /tmp 大文件 >=500M --"
+timeout 35 find /tmp -xdev -maxdepth 2 -type f -size +500M -printf '%s\t%TY-%Tm-%Td\t%p\n' 2>/dev/null | sort -rn | head -15 | awk '{printf "%7.2fG  %s  %s\n", $1/1073741824, $2, $3}' | cut -c1-140
+echo "--- E) opencode.db（17.2G）归属 + 是否在写（别乱删） ---"
+ls -l "$U/.local/share/opencode/" 2>&1 | head -8 | cut -c1-140
+timeout 25 du -hx --max-depth=1 "$U/.local/share/opencode" 2>/dev/null | sort -rh | head -8 | cut -c1-140
+pgrep -af 'opencode' 2>/dev/null | cut -c1-140 | head -8
+echo "--- F) cline/其它大日志（可截断候选） ---"
+timeout 25 find "$U/.cline" -xdev -type f -size +200M -printf '%s\t%TY-%Tm-%Td\t%p\n' 2>/dev/null | sort -rn | head -10 | awk '{printf "%7.2fG  %s  %s\n", $1/1073741824, $2, $3}' | cut -c1-140
+echo "--- G) 已删除但仍被进程占用（>=512M） ---"
+( timeout 25 lsof +L1 2>/dev/null || echo '   (lsof 不可用/无权限)' ) | awk 'NR==1{print} $7+0>536870912 {printf "%7.2fG  %s pid=%s %s\n", $7/1073741824, $1, $2, $9}' | head -12 | cut -c1-140
+echo "--- H) relay 自检（88 空输出溯源） ---"
+ls -l /tmp/baize_ops_relay.log 2>/dev/null | cut -c1-160
+timeout 20 find /nas_train/app.e0031982 -maxdepth 4 -name 'ops_relay.sh' 2>/dev/null | head -3 | cut -c1-140
+echo "=== DONE 90 ==="
+```
+
+**输出**
+```
+=== RUN_ID 90 · 只读：/home 差异归因 + 全盘大头 + /tmp 拆解 · 2026-10-11 13:45:38 · host=whag0pgpuap29 ===
+--- A) LVM 实况（重点：thin pool 是否快满） ---
+  WARNING: Running as a non-root user. Functionality may be unavailable.
+  /run/lock/lvm/P_global:aux: open failed: Permission denied
+  WARNING: Running as a non-root user. Functionality may be unavailable.
+  /run/lock/lvm/P_global:aux: open failed: Permission denied
+  WARNING: Running as a non-root user. Functionality may be unavailable.
+  /run/lock/lvm/P_global:aux: open failed: Permission denied
+   -- thin/pool 相关段 --
+--- B) 配额（若启用） ---
+timeout: failed to run command ‘quota’: No such file or directory
+timeout: failed to run command ‘repquota’: No such file or directory
+--- C) /home 全盘（含其它用户！只列不删） ---
+61G	/home
+47G	/home/app.e0031982
+12G	/home/app.e0016421
+1.9G	/home/app.e0022971
+916M	/home/app.e0016372
+263M	/home/app.t0002310
+257M	/home/app.e0020597
+3.2M	/home/app.e0030209
+56K	/home/app.e0030265
+52K	/home/app.e0030758
+32K	/home/app.t0002373
+24K	/home/app.e0027673
+20K	/home/app.e0026822
+20K	/home/app.e0021019
+16K	/home/lost+found
+16K	/home/app.t0002965
+16K	/home/app.e0025692
+16K	/home/app.e0020613
+16K	/home/app.e0019919
+16K	/home/app.e0013625
+--- D) /tmp 拆解（98G LV / 已用 38G） ---
+39G	/tmp
+27G	/tmp/claude-6218
+5.1G	/tmp/ov2_test
+671M	/tmp/torchinductor_app.e0031982
+277M	/tmp/dsh_sdk
+198M	/tmp/torchinductor_app.e0016372
+191M	/tmp/mpl360_env
+136M	/tmp/dsh_home
+121M	/tmp/test_env
+103M	/tmp/matplotlib
+96M	/tmp/django-upstream
+84M	/tmp/django-4.2
+80M	/tmp/p5b_tok_work_b2
+80M	/tmp/p5b_tok_work
+78M	/tmp/sphinx_pkgs
+74M	/tmp/test_workdir
+60M	/tmp/r3_tok_work
+57M	/tmp/sympy_latest
+54M	/tmp/sphinx-repo
+49M	/tmp/mpl363
+   -- /tmp 大文件 >=500M --
+--- E) opencode.db（17.2G）归属 + 是否在写（别乱删） ---
+total 18129872
+drwxr-x---  2 app.e0031982 app.adm        4096 Oct  4 09:21 log
+-rw-r-----  1 app.e0031982 app.adm 18502631424 Oct 11 13:39 opencode.db
+-rw-r-----  1 app.e0031982 app.adm       32768 Oct 11 13:39 opencode.db-shm
+-rw-r-----  1 app.e0031982 app.adm    62298552 Oct 11 13:39 opencode.db-wal
+drwxr-x---  2 app.e0031982 app.adm        4096 Oct  4 08:55 repos
+drwxr-x--- 15 app.e0031982 app.adm        4096 Oct  9 02:42 snapshot
+drwxr-x---  2 app.e0031982 app.adm        4096 Oct 11 12:17 tool-output
+18G	/home/app.e0031982/.local/share/opencode
+75M	/home/app.e0031982/.local/share/opencode/snapshot
+29M	/home/app.e0031982/.local/share/opencode/log
+5.7M	/home/app.e0031982/.local/share/opencode/tool-output
+4.0K	/home/app.e0031982/.local/share/opencode/repos
+1473632 python3 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/run_serial_kimi.py --harness opencode -
+2050139 /usr/lib/git-core/git --shallow-file /dev/shm/harness_work/workdirs/opencode/sympy_sympy/.git/shallow.lock index-pack --stdin --fix-
+--- F) cline/其它大日志（可截断候选） ---
+   2.60G  2026-10-11  /home/app.e0031982/.cline/data/logs/cline.log
+   1.62G  2026-10-11  /home/app.e0031982/.cline/data/logs/hub-daemon.log
+   0.55G  2026-10-04  /home/app.e0031982/.cline/data/logs/hooks.jsonl
+   0.54G  2026-10-11  /home/app.e0031982/.cline/data/db/session-search.db
+--- G) 已删除但仍被进程占用（>=512M） ---
+COMMAND       PID         USER   FD   TYPE DEVICE SIZE/OFF NLINK      NODE NAME
+--- H) relay 自检（88 空输出溯源） ---
+-rw-r----- 1 app.e0031982 app.adm 5398 Oct 11 13:43 /tmp/baize_ops_relay.log
+=== DONE 90 ===
+```
