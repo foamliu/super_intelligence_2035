@@ -64,7 +64,24 @@
   ⇒ **评测 agent「想用 RAG 但工具不可用」** —— 这一条已足以解释 `full ≈ wo_retrieval`。
 - 🎯 **靶心因此改为**：**为什么 `search_apis` 不在评测 agent 的工具表里？** 候选：① MCP(8090/18889/18890) 未连或工具名变了；② 协议改动（`/sse`→`/mcp`、`streamableHttp`）导致工具未暴露；③ 评测 worker 的 `cline_mcp_settings.json`（真实路径 `/home/app.e0031982/eda_code_eval/<batch>/cli_data/worker_*/data`）没配 RAG server；④ 该工具从未注册。**并给修复 + 重跑影响评估。**
 
-**③ 交付物（三项，缺一不可）** → 写进 `run/reports/RAG_AUDIT_2026-10-11.md`（新建）
+**②″ 🏁 运维已定论（RUN_ID 41/43/44/45 · 2026-10-11 22:35）—— 本调查已收口，🚫 不必再找 bug**
+- ✅ **9006 服务正常**：`/health` 200（`Octen-Embedding-4B` · `executor_ready:true` · collections 有数据）；**真实召回能返回内容**：`pyAether+aether` → `dbCreateRect` **5 条** / `hiGetCurrentWindow` **9 条**；`skill+virtuoso` → 3 / 6 条；服务端日志 `查询 'db_pt' 返回 3 条结果` 正常。（ⓘ 运维我先前用中文 query 得 `hits=0` 是**query 不匹配**，非服务问题。⚠️ 但 **`tcl+waveview` / `tcl+innovus` 两对返回 0 条** —— 后续若做 tcl 线需查这两个 collection 是否为空。）
+- ✅ **评测侧大量在用检索**：每轮 `search_apis` **成功调用 ~1800 次**（r2 1775 / r3 1803 / r4 1807 / r5 916）；**漏 MCP 前缀失败仅 18–30 次/轮（~1%）**；轨迹里 worker_1/2/3 分别 **18 / 26 / 15** 个会话含 `search_apis`，其中**出现空结果仅 2 / 0 / 1** ⇒ **RAG 返回的是非空内容，不是空转**。
+- ✅ **臂定义已确认**（`scripts/set_ablation.py`）：
+  - `full` = 检索 3 件套 **ON** + `run_code` **ON** + V3 增强文档 + 完整回读
+  - `wo_retrieval` = 检索 3 件套 **OFF** + `run_code` **ON**（与 `full` **唯一差异 = 检索**）
+  - `rag` = 检索 **ON** + `run_code` **OFF** ⇒ 它 71.8% 低是**因为没沙盒**，**不是检索的锅**
+- 🏁 **真实结论**：`full`(81.2%) vs `wo_retrieval`(81.0%) 的 **+0.2pp（≪σ）是「检索 3 件套在本设定下边际贡献≈0」的真实（弱）结果，不是服务/工具 bug**。最合理机制：**`run_code` 沙盒让 agent 能自己试错探索 API 用法 ⇒ 显式检索变冗余（功能重叠）**。
+- 🚫 **因此不要修任何东西**（不重启、不改 `.env`、不碰 r5）；本调查从「找 bug」**改为「写清结论 + 给论文措辞」**。
+
+**③ 交付物** → `run/reports/RAG_AUDIT_2026-10-11.md`（新建）
+> ⚡ **注意**：(a)(b)(c) 的证据**运维已在上文 ②′/②″ 全部给全** ⇒ **你的任务 = ① 抽验复核（各 1 次即可，别重跑全套）② 把 (a)(b)(c)+②″ 收编成报告 ③ 重点写「**对 C1 表格/论文的措辞建议**」**：
+> - `full` vs `wo_retrieval` 差异落在**噪声内** ⇒ 论文 🚫 **不得**宣称「检索带来提升」；
+> - `rag`(71.8) vs `full`(81.2) **同时变了两件（检索 + 沙盒 run_code）** ⇒ **不是干净单变量消融**，表格注里必须说明；
+> - 建议措辞方向：「**在具备 `run_code` 沙盒自探索时，显式 API 检索（3 件套）的边际收益有限**」（并注明 tcl 两 collection 当前召回 0 条）。
+> - 可选后续（**只列建议、不启动**）：若要拆开检索/沙盒的耦合，可加一臂 `full` 但 `run_code` 回读降为 binary 等。
+
+**（以下为原始要求，证据已由运维补齐，仅供你对照）** → 写进 `run/reports/RAG_AUDIT_2026-10-11.md`
 - **(a) 9006 服务实测**：不能只给「TCP 通/端口监听」。必须给：
   - `.env` 里 `RAG_RECALL_URL` / `RAG_RECALL_URL_LOCAL` / `RAG_DEFAULT_TOP_K` / `RAG_RECALL_TIMEOUT` / `MEMORY_VECTOR_URL` **原值**；
   - **实际监听端口**（`ss -lntp`，含 80xx/90xx 全扫）+ **recall/embedding 进程**（含启动命令）；
