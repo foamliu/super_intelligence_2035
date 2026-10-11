@@ -27,8 +27,10 @@ PATTERNS=(
   "Basic [A-Za-z0-9+/]{20,}={0,2}"
 )
 
-# 已知良性（git remote / 文档里的示例域）—— 排除，避免误报
-EXCLUDE='(git@|@github[.]|@gitlab[.]|ssh://|https://[^ ]*@|noreply@)'
+# 已知良性（git remote / 文档里的示例域 / **本线运维方自有邮箱**）—— 排除，避免误报
+#   · paul.liu@cxmt.com   = 刘杨（git identity + 邮件收件人；任务书内已存在）
+#   · foamliu@yeah.net    = 本线发件账号（chapters_v1_1/ZHIHU.md 已公开）
+EXCLUDE='(git@|@github[.]|@gitlab[.]|ssh://|https://[^ ]*@|noreply@|paul[.]liu@cxmt[.]com|foamliu@yeah[.]net)'
 
 total=0
 for p in "${PATTERNS[@]}"; do
