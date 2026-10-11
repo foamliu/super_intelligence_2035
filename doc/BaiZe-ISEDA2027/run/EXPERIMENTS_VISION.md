@@ -935,7 +935,9 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 | Epoch count | 1 (same as baseline E1fair epoch count) |
 | Everything else | Identical to §9.0 baseline (lr=5e-4, warmup=2000, cosine, min_lr=5e-5, AdamW, seed 1234) |
 | Output dir | `scaling_V3_fulldata_ov2_w512_d30_p16_224` |
-| Status | ✅ **Training COMPLETE** (2026-10-11 02:06–12:44, 230,598/230,598 steps, final_loss=0.1201, steady_img/s=2706.4, total=38,273s ~10.6h). 22 checkpoints (10k–230k) + final vision.pt (509MB). **No collapse** — C1 stable 0.50–0.53 throughout, C2_gap +0.19~+0.20, C4=OK at all 768 PROBE points. total_shards=11,350 (vs E1fair 10,787, +563 GPIC tars). |
+| Training status | ✅ **COMPLETE** (2026-10-11 02:06–12:44, 230,598/230,598 steps, final_loss=0.1201, steady_img/s=2706.4, total=38,273s ~10.6h). 22 checkpoints (10k–230k) + final vision.pt (509MB). **No collapse** — C1 stable 0.50–0.53 throughout, C2_gap +0.19~+0.20, C4=OK at all 768 PROBE points. total_shards=11,350 (vs E1fair 10,787, +563 GPIC tars). |
+| **ProtB result** | ✅ **63.52 ± 0.01%** (3 seeds: 63.53/63.52/63.51%, σ=0.0001). Eval done 14:54 Oct 11. **Δlp = +1.18pp** vs E1fair (62.34±0.01%). |
+| ProtA / zs / k-NN | 🔄 ProtA running (PID 376667); zs + k-NN queued after |
 
 **⚠️ Disclosure**: This arm changes **both** data volume (+7.6% GPIC) **and** step count (+23.2%) relative to baseline. Conclusion = "**full-data recipe (data+steps combined) vs baseline**", NOT "pure data ablation".
 
@@ -946,6 +948,8 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 - **Null (|Δlp| < 1.5pp)**: No benefit from 7.6% more data + 23% more steps.
 - **Negative (Δlp ≤ −1.5pp ProtB)**: Full-data recipe hurts → keep 7437 snapshot.
 
+**Result (2026-10-11)**: Δlp = **+1.18pp** (63.52% vs 62.34%) → **Null** verdict. The +7.6% more GPIC data + 23% more steps did NOT produce a distinguishable improvement. The positive trend (+1.18pp) is within the pre-registered noise threshold (1.5pp). Consistent with R12b finding ("more unique data ≠ higher lp" at similar scale). The full-data recipe is safe to adopt (no harm) but does not justify the extra compute cost for the marginal gain.
+
 ### 9.5 Results Table
 
 | Variant | ProtB (3-seed) | ProtA | Zero-shot | k-NN (k=20) | Δlp vs E1fair | Verdict |
@@ -953,7 +957,7 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 | E1fair (baseline) | 62.34 ± 0.01% | 49.70% | 34.10% | 37.68% | — | — |
 | V1 (res 336) | ⏸ deferred (user: "明天再说") | — | — | — | — | — |
 | V2 (Muon) | **N/A — COLLAPSED** (C1=0.9569@step4200) | N/A | N/A | N/A | N/A | ❌ Muon incompatible with contrastive loss |
-| V3 (full data) | 🔄 **eval running** (ProtB 3-seed in progress, started 12:47 Oct 11, PID 3609742). Training ✅ done: 230,598 steps, loss=0.1201, C1=0.50–0.53, no collapse. | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
+| V3 (full data) | **63.52 ± 0.01%** (seeds: 63.53/63.52/63.51%) | 🔄 running | ⏳ | ⏳ | **+1.18pp** | ✅ Null (|Δ|<1.5pp): full-data recipe indistinguishable from baseline |
 
 ### 9.4 ④ Epoch Scaling (operator instruction 2026-10-10 ④ · most decision-relevant)
 
@@ -987,7 +991,7 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 
 **Cost**: 2ep ~80 GPU·h / ~10h wall; 4ep ~160 GPU·h / ~20h wall.
 
-**Status**: ⏳ Pending V3 eval completion. Watcher `v3_eval_watcher.sh` will auto-eval V3; **chained watcher `post_v3_chain.sh` launched 2026-10-11 05:19** (PID 117389) — will auto-run: ② ×5 probe on E1fair → ④-2ep training → ④-2ep eval. Scripts ready: `run_e4_2ep.sh` (374,202 steps, E1fair snapshot total_shards=10787), `run_probe_x5.sh` (×5 epochs + wd/LR sweep on E1fair ckpt).
+**Status**: 🔄 V3 ProtB ✅ done (63.52±0.01%); V3 ProtA 🔄 running; ② ×5 probe 🔄 running (GPU 1). **Chain** `post_v3_chain_skip_probe.sh` (PID 2461463) waiting for V3 eval watcher to complete → will auto-launch ④-2ep training (374,202 steps, E1fair snapshot total_shards=10787, ~10h). Scripts ready: `run_e4_2ep.sh`.
 
 ### 9.6 ① Same-Model Zero-Shot + ② k-NN Probe Results (E1fair, 2026-10-11)
 
@@ -1024,15 +1028,15 @@ step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 
 | Probe type | E1fair top-1 | vs lp (62.34%) | vs zs (34.10%) |
 |:--|:--|:--|:--|
 | k-NN (k=20) | **37.68%** | −24.66pp | +3.58pp |
-| ×5 epochs probe (450ep) | ⏳ NOT RUN (GPU blocked by V3) | — | — |
-| wd/LR sweep | ⏳ NOT RUN (GPU blocked by V3) | — | — |
+| ×5 epochs probe (450ep) | 🔄 **RUNNING** (PID 2190867, GPU 1, started 14:20 Oct 11, encoding train features at 51/294 files) | — | — |
+| wd/LR sweep | 🔄 Queued (after ×5 epochs in same run) | — | — |
 
 **Interpretation (k-NN only)**:
 - **k-NN (37.68%) < lp (62.34%)**: The linear probe extracts significantly more than nearest-neighbor matching. This is expected for high-dimensional features (linear classifiers generally outperform k-NN).
 - **k-NN (37.68%) > zs (34.10%)**: Nearest-neighbor in the learned feature space slightly outperforms zero-shot text classification, confirming the feature space has reasonable class structure beyond just text alignment.
 - **The large lp − k-NN gap (24.66pp)** could indicate: (a) the linear probe finds discriminative directions that k-NN misses (normal for high-dim spaces), OR (b) the 90-epoch probe is still underfitting and more epochs would raise lp further. **The ×5 epochs test (450ep) is needed to distinguish these — pending GPU availability.**
 
-**② Gap — ×5 epochs probe + wd/LR sweep**: The `probe_comparison_eval.py` script supports ×5 epochs (450 instead of 90) and wd/LR micro-sweep, but these have NOT been run on E1fair. All 8 GPUs are occupied by V3 full-data training (ETA ~08:00–10:00 Oct 11). Plan: run after V3 completes (~1 GPU·h, light).
+**② Gap — ×5 epochs probe + wd/LR sweep**: The `probe_comparison_eval.py` script supports ×5 epochs (450 instead of 90) and wd/LR micro-sweep. **Now running** on GPU 1 (PID 2190867, started 14:20 Oct 11) in parallel with V3 eval on GPU 0. Log: `/tmp/probe_x5_parallel.log`. Results pending.
 
 #### Combined ①② Summary
 
