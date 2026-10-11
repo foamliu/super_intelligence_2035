@@ -39,9 +39,8 @@ CWD="$SCRIPT_DIR"
 GIT_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo "$SCRIPT_DIR/../../..")"
 REL="doc/personal-watch/run"     # 本任务在仓库中的相对目录（只提交这里的文件）
 
-# ── 继承源：刘杨的 Boss 招聘活工作区（规范记忆 + 能力 + 原始数据都在这里，**不进本仓库**）──
-#    任务书 §0 要求 agent 唤醒先读 $HR_DIR 的记忆；存在性仅作提示，不存在时 agent 用任务书内嵌摘要兜底。
-HR_DIR="${WATCH_HR_DIR-C:/Users/liuyu/HR}"
+# ── 继承源（`$HR_DIR`）**不再由 loop 处理**：loop 只负责唤醒，记忆/能力的可达性由任务书 §0 规定，
+#    缺省时 agent 用 §0.2/§0.3 内嵌摘要兜底。此处不再打印/自检（避免误导为"功能依赖"）。──
 
 # ⚠️ 模型名用 DeepSeek 官方 API 的**规范 ID**（2026-10-03 实测）：
 #     `deepseek-flash`（1M ctx，text+image）/ `deepseek-v4-pro`（1M ctx，text）。
@@ -208,13 +207,7 @@ elif [ "$MODE" = "schedule" ]; then
 else
     echo "[loop] 🔁 旧模式（WAITING 自适应）：SLEEP_SHORT=${SLEEP_SHORT}s / SLEEP_LONG=${SLEEP_LONG}s"
 fi
-echo "[loop] 🧬 继承源 HR_DIR=$HR_DIR · 存在：$( [ -d "$HR_DIR" ] && echo 有 || echo 缺 ) · 可用 WATCH_HR_DIR 覆盖"
-if [ -d "$HR_DIR" ]; then
-    _mem="缺"; [ -f "$HR_DIR/MEMORY.md" ] && _mem="有"
-    _usr="缺"; [ -f "$HR_DIR/USER.md" ] && _usr="有"
-    _agn="缺"; [ -f "$HR_DIR/AGENTS.md" ] && _agn="有"
-    echo "[loop] 🧬 继承源自检：MEMORY.md=$_mem · USER.md=$_usr · AGENTS.md=$_agn"
-fi
+# （原「🧬 继承源自检」横幅已移除：loop 对 $HR_DIR 无功能依赖，可达性交由 agent 按任务书 §0 处理。）
 
 RETRY=0     # 本时窗内的致命错重试计数（定时模式用）
 while true; do
