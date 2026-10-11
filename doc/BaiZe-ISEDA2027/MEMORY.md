@@ -1,22 +1,15 @@
 # MEMORY.md — BaiZe-ISEDA2027 **运维（operator）** 长期记忆 · **醒来先读本文件**
 
 
-## 🆕 最近操作（2026-10-09）
+## 🆕 最近操作（2026-10-11）
 
-### 💡🔎📊🌙 pretrain 五连（2026-10-09）
-- **3 idea** ✅ · **公平盘点** 待回报 · **📊 对比基准** ✅ GO · **🌙 夜班** ❌撤销 · **⚗️ Muon** 已下发 · **🔁 调整**（只用 `.29`/改序）。
-
-### 📝 给 data 下发指令 ③（停②重头来 + 全量分词 + 放开并发）
-- **用户直令（2026-10-09③）**：Code/Math 停掉重头来（每个目录全切）· Ultra-FineWeb-L3 也加入分词 · 224 核别只开 8 并发（**放开**）· 核实 Ultra-FineWeb 197GB→.bin 2.0TB 是否合理 · **不要创造新名字**（只按原始 6 目录）。
-- **已下发** `run/BAIZE_DATA_TASK.md`（10-09③ 覆盖②）：三目录全量分词（Ultra-FineWeb-L3 1764/1.8TB + UltraData-Code 1121/1.2TB + UltraData-Math 1823/515GB）· 并发 20–50/源 · 心跳按 6 目录报盘点。
-
-### 🔬 pretrain（2026-10-09）：T3 ✅ → **P-8 最优 = `TP1·MBS2·bf16` 249K**；阻塞 = 暂缓令。今晚：① 对比基准 → ② Muon（`.29`）。
-
-### 💬 vision / harness 运维问答已收齐
-- **vision** ✅ 答复 2026-10-08③（未验证假设 / Stage iv 前置 / GPU 空窗优先级 / 论文补充）· **harness** ✅ 答复 2026-10-08④（横评深挖 / BaiZe 接入前置 / 扩规模 / 多 backbone / 论文补充）。
-- **待运维下一步**：E2 完成后分配 vision GPU 空窗任务；harness Round-2 完成后分配下一步。
-
-**commit pending**（待编辑本文件和更新 daily-memories 后一并提交）
+### 📋 四项运维指令下发（用户直令 · 2026-10-11 晚）
+- **用户令**：「① vision 写『V2 Muon 全 LR 坍缩』分析报告（中文 HTML）；② vision/pretrain/data/harness 看近期 research 论文找可借鉴 idea，各写中文 HTML 报告；③ harness 分析各 harness 交互轨迹、以 cline 为轴写对比分析报告 + 对 cline 的改进意见（中文 HTML）；④ research 开启邮件沟通权限，联系论文作者请教，以改进 BaiZe/ZhuLong 研发」。
+- **已下发**（commit `a4285bc6`）：`run/BAIZE_VISION_TASK.md`（Muon 报告 + 文献报告）· `BAIZE_PRETRAIN_2B_TASK.md` / `BAIZE_DATA_TASK.md`（各 1 文献报告）· `BAIZE_HARNESS_TASK.md`（文献报告 + `report_harness_trace_vs_cline.html`）· `personal-watch/run/WATCH_RESEARCH_TASK.md`（**邮件权限** + 新建 `RESEARCH_MAIL_SPEC.md`）· `WATCH_RECRUIT_TASK.md`（**共享发件通道澄清**：HR 收件人红线仅约束 recruit）。
+- **口径**：文献来源 = research 线 `daily/2026-10-07..11.html`（25 篇）+ `TOP_K.*` + `papers.jsonl`；报告均**中文·自包含·零外链**；**纯阅读/分析，不占 GPU、不打断在飞任务**。
+- **邮件权限**：复用 recruit `~/hr_mail.py` + `~/.hr_smtp`（`foamliu@yeah.net`，凭据仓外）；每轮 ≤3 封；**首 3 封试运行须运维复核**；台账 `research/mail/发送记录.md`；红线见 `RESEARCH_MAIL_SPEC.md §8`。
+- **体积**：research 任务书一度 44,992B 越 40KB 红线 ⇒ 抽规格文件 + 压归档块 → 40,914B ✅；recruit 40,835B ✅；4 本 BaiZe 任务书 32–38KB ✅。
+- **流水**：见 `daily-memories/2026-10-11.md`。
 
 WAITING: 0
 
@@ -78,16 +71,9 @@ WAITING: 0
 
 ## 4. 待拍板 / 我欠的答复
 
-- [~] 🆕 **BaiZe-Hybrid（等参 Dense）中文对比报告**：✅ #252 → **GO**（修 warmup 归因 + ctx×2 到 hybrid OOM）→ `..._fair_zh.html`。
-- [x] ~~夜班填空 T1/T2/T3~~ **已撤销**（用户看不出价值；留 backlog）。
-- [ ] 🆕 **Muon vs AdamW**：**`.29`**；**1000 步/GBS16/seq4096/比 loss**；先接线（NeMo 支持 Muon）。
-- [ ] 🆕 **BaiZe vs MiniCPM5「公平对比」盘点**：等 pretrain 回报 C1–C6 + 权威版本。
-- [x] **pretrain 3 idea 征询（2026-10-09）**：✅ 已回报 #251；待拍板「撤暂缓令 / 先做哪个」。
-- [ ] **P-9 结果** → 定 **P-8 的 seq(4096/8192) / MBS / 精度(bf16/FP8)**（含 16384 是否 OOM 的长上下文边界）。
-- [ ] ⭐ **P-8 配置拍板**（等 **P-9.7 定稿 + P-9.8 长程一致性 + P-6② token 预算**三件齐 → 再定）。现有建议 = **候选A `TP4·SP·MBS8·seq8192·FP8·MAX_CONN=1`（235K tok/s）**；⚠️ 前置未齐（base 下满 ~2.7 天 + 配比 §0.6 未做）→ 🚫 **不得顺手启动 P-8**。
-- [ ] ⭐ **vision AIMv2 缩放对比实验（10-08⑤/⑥，用户直令）**：**E1** w512/d30 **126.78M** vs **E2** 同族 **w768/d30 284.54M（2.24×）**，224/p16、从零、同 AIMv2 objective + 94.9M + 1 epoch；主指标 **lp Protocol B**（3 seeds）；**Δlp ±1.5pp**（σ>Δ 判「不可分辨」）。**待回报**：E2(w768) smoke ETA → 开跑 → 两臂 Protocol A/B + C1–C4 + 公平表。⚠️ **官方 304M@336 臂已作废**（降为可选第三条；agent 已为它做过 smoke）；**已令防自动链跑到官方臂**。
-- [ ] 🆕 **P-8 启动令再评估（2026-10-09）**：前置已大幅改善——Web ✅ 524.42B（5.9× 覆盖）· R3 BO ✅ 100/100（best=#8 score=0.4032，配比已定稿 `r3_best_blend.txt`）· 全量污染扫描 ✅ 0 命中。**唯一阻塞 = Code/Math 全量分词**（10-09① 已下发 data agent：UltraData-Code + UltraData-MATH 全量分词，切完所有 parquet 为止）⇒ **分词完成后即可评估 P-8 启动**；暂缓令（10-02）未撤，🚫 不得启动。
-- [ ] 🆕 **vision / harness 运维问答已收齐 → 待分配 GPU 空窗任务**：vision ✅ 答复 4 节（1-A w384 AIMv2 / 1-B C1-lp 背离 / 2-A~2-E Stage iv 前置 / 3 GPU 优先级 P1=w384~16h / 4 论文补充 4 条）· harness ✅ 答复 Q1-Q4（codex 30→300 偏差 3.3× / BaiZe 接入 P0+P1 / 扩规模 100-300 / 多 backbone pilot）。**E2 ~19:20 完成后 .12 8 卡释放 → 可安排 vision P1**。
+- [x] 📦 **已闭合（2026-10-11 滚动归档）**：BaiZe-Hybrid 等参 Dense 中文对比报告（✅ `report_pretrain_baize_vs_dense_fair_zh.html`）· 夜班填空 T1/T2/T3（已撤销）· Muon vs AdamW（✅ 已完成，`dist_muon` 为 P-8 默认）· BaiZe vs MiniCPM5 公平对比盘点（✅ 报告已交付）· pretrain 3-idea 征询（✅ #251）· P-9 结果→P-8 seq/MBS/精度 · P-8 配置拍板（✅ P-8 已于 10-10 启动）—— 原文见 `daily-memories/2026-10-11.md`「从 MEMORY.md §4 滚动归档（二）」。
+- [x] 📦 **已闭合（2026-10-11 滚动归档）**：**vision AIMv2 缩放 E1/E2**（已收官：Δlp(ProtB)=+0.17pp → 不可分辨）· **P-8 启动令再评估**（P-8 已于 10-10 按计划启动）—— 原文见 `daily-memories/2026-10-11.md`「从 MEMORY.md §4 滚动归档」。
+- [x] 📦 **已闭合（2026-10-11 滚动归档）**：vision / harness 运维问答（已收齐并答复；后续 GPU 空窗任务已分别派为 vision「变体实验 + 外部评审回应」与 harness「7×300」）—— 原文见 `daily-memories/2026-10-11.md`「从 MEMORY.md §4 滚动归档（二）」。
 > 📦 **§4 已闭合条目滚动归档**（2026-10-08 执行，原文未改一字）→ `daily-memories/2026-10-08.md`「从 MEMORY.md §4 滚动归档」= pretrain 四件（10-05 深夜2）· data/vision 三份 HTML（10-05 深夜2）· AIMv2 提速归因前置（10-05 晚）· data 三步令（10-06）· **harness deepseek 工具链（10-05，已装通）** · **R9「53M cap」口径修正（10-03）** · **R8「六架构=自研改编」结论边界（10-03，R13 官方对照已完成 79.81%）**。
 - [ ] 💬 **另一「运维会话」在并行活动**（2026-10-04 深夜发现：origin 上出现**我没写过的 RUN_ID 63 诊断记录**）→ **需与用户确认是否统一到单一会话**，以免重复下发/互相覆盖。
 > 📦 **归档指针（查旧决策去这里，勿再塞回本文件）**：① **`daily-memories/2026-10-03.md`「从 MEMORY.md 滚动归档」A 节** = D-CLEAN-2/-3 与回收量核实 · harness R1 沙箱路线 · GPIC E1 实测 + C1 口径 · H-A′ 放行 · docker 系降末选 · sudo 口令 · `ops_relay`「2 副本」误判结案 · 论文冻结 · vision 队列裁定 · data 白名单锁定；② **`daily-memories/2026-10-05.md`「从 MEMORY.md §4 滚动归档」** = 本区已闭合的 `[x]` 条目（AIMv2 改写授权 · D-CLEAN-4 定案 · harness 取 kimi · sglang 走 conda · 环境隔离纪律 · proxy 口径 · Claude Code 合规口径定案）—— **原文未改一字**。
@@ -200,19 +186,7 @@ WAITING: 0
 
 ## 9. 流水（倒序）
 
-- **🔁 2026-10-09（改序+改机+砍实验）**——用户令：pretrain 全在 `.29`；次序 ① 对比基准 → ② Muon（**1000 步/GBS16/seq4096 比 loss**）；**T1/T2/T3 撤下**（留 backlog）。
-
-- **⚗️ 2026-10-09（Muon 下发 + 更正）**——**NeMo/Megatron 支持 Muon**（`core.optimizer.muon`/`emerging_optimizers`；MBridge 有 Muon recipe）⇒ 非从零实现。
-
-- **🌙 2026-10-09（夜班填空：`.29` 剩余卡跑 T1/T2/T3；不含 P-8）**——T1 长上下文适配 4096→8192（Stage ii 前置）/ T2 等参 Dense 训练侧 / T3 R3 配比迁移 A/B。
-
-- **✅ 2026-10-09（GO：#252）**——Dense L=36→2,228,897,792(+0.389%)。令修：① warmup 归因用同-bs 冷/热对照 ② ctx×2 到 hybrid 不可服务。
-
-- **💡 2026-10-09（征询 pretrain 的 3 个实验 idea）** 已下发 `BAIZE_PRETRAIN_2B_TASK.md` 顶部块（纯写作零 GPU）；**已回报 #251**（3 idea + 建议立即起 P-8）——详见 §🆕 与 `daily-memories/2026-10-09.md`。
-
-- **🔎 2026-10-09（排查 BaiZe-2B vs MiniCPM5-2B 公平对比 + HTML）**——已下发顶部块（纯写作零 GPU：盘点产物 / 自评 C1–C6 / 指认权威版本 / 必要时合并 HTML）。运维先行核实：research1=方法学报告；实测 HTML 齐全（`BAIZE_2B_ARCH_RESULT.html` · `report_pretrain_p911_sglang.html` · `report_pretrain_longctx_infer_cost.html` §7 公平重做 128K hybrid 2.80×）。
-
-- **📦 2026-10-09（T3 提速下发 / data 指令③）原文已滚动归档** → `daily-memories/2026-10-09.md`（**原文未改一字**）。**勿再塞回本文件。**
+- **📦 2026-10-09 全部 §9 流水已滚动归档**（2026-10-11 执行 · **原文未改一字**：改序/砍实验 · Muon 下发+NeMo 支持更正 · 夜班 T1/T2/T3 · GO #252 Dense L=36 · 3-idea 征询 · BaiZe-2B vs MiniCPM5 公平对比核查）→ `daily-memories/2026-10-11.md`「从 MEMORY.md §9 滚动归档」。**勿再塞回本文件。**
 
 > 📦 **2026-10-08 流水已滚动归档** → `daily-memories/2026-10-08.md`（**原文未改一字**：harness R2 7×100 + 交互轨迹报告 · vision AIMv2 缩放 E1/E2 · pretrain R3 BO 下发 · vision/harness 运维问答征询 · 早/午论文更新两条）。**勿再塞回本文件。**
 
