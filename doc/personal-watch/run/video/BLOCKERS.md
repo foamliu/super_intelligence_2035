@@ -59,8 +59,9 @@ ComfyUI / MCP `comfyui-drama` / ffmpeg 均可用（S1 自检全绿）。**本轮
 - **根因（脚本 bug）**：`generate_ep18_t2i.py` 的 `_detect_comfyui_base()` 先查不存在的 `E:/ComfyUI`；ComfyUI 实际根 = `E:\code\ComfyUI` ⇒ 旧脚本产出从未落到本仓。
 - **修复**：`_detect_comfyui_base()` 改为优先 `E:/code/ComfyUI`（本机实际根）。
 - **再生**：后台跑 `generate_ep18_t2i.py`（13 帧 = image_edit×8 + zimage×5，ComfyUI 队列已确认提交 client_id `ep18_*`）；截至 2026-10-12 已核验首帧 `18_laozhou_02_profile_thinking.png` = 2041498B，其余进行中。
+- **核验（2026-10-12）**：13/13 帧全部落盘（字节 1.40–2.27 MB），`_gen.log` 显示「完成: 13/13」。
 - **教训**：产出必须「路径+字节」核验后再写『已完成』；`.gitignore` 下的二进制不能当跨机持久化依据。
-- **状态**：🟠 再生中（脚本已修 + 后台执行 + 首帧已核验）。
+- **状态**：✅ 已闭环（2026-10-12 · 13/13 帧核验落盘；后续 H3 I2V 已启动）。
 
 
 ---

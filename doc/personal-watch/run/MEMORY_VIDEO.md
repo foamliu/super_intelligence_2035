@@ -12,11 +12,11 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 ✅ → 18_暖阳 续跑：帧缺失已定位+再生中（OUTPUT 空·脚本路径 bug 已修）；下一步 H3 I2V
-已完成:       S1 ✅；S2 ✅（样板章端到端）；S3 首轮 ✅（18_暖阳 13 帧规格固化 generate_ep18_t2i.py）；S3 续跑 ✅（53 条台词固化 ep18_dialogue.py + TTS 作废·按用户令禁用 TTS）；S3 续跑 ✅（盘点发现 13 帧缺失 → 修脚本路径 bug → 后台再生）
-当前动作:     （本轮：git 同步+自检全绿 → 盘点发现 OUTPUT/18_暖阳 空（13 帧缺失）→ 修 _detect_comfyui_base() 路径 bug → 后台再生成 13 帧，首帧已核验 → 回写 PLAN/MEMORY/日流水 + commit+push）
-下一步:       帧再生成收尾（核验 13/13 帧字节）→ video_minimax_h3_i2v 分镜视频（**台词随 H3 一起出 · 🚫 不用 TTS**）→ 字幕/音效BGM → 合成（★ 音画钉长）
-阻塞:         无硬阻塞（ComfyUI/MCP/ffmpeg 全绿）。BLOCKERS #1✅ #4(字幕)✅ #5✅(已作废) 已修；#6(OUTPUT 帧缺失→已修+再生中) 处理中；#2(MCP project_root) #3(15章缺规格) 待处理
+PHASE:        S3 放量 ✅ → 18_暖阳 I2V 启动：13/13 帧核验到位 → 固化 gen_ep18_h3_i2v.py（首批 6 镜）→ SHOT-01 成片 + 5 镜排队中
+已完成:       S1 ✅；S2 ✅（样板章端到端）；S3 18_暖阳 13 帧再生 ✅（13/13 核验落盘）；S3 H3 I2V 固化脚本 + 首批 6 镜（1 成片 + 5 排队）
+当前动作:     （本轮：git 同步+自检 → 核验 13/13 帧字节 → 写 gen_ep18_h3_i2v.py（mp=0.6/steps=4）→ py_compile+dry-run → MCP 生成 SHOT-01 成片（4.458s/1056×608/h264+aac 已 ffprobe 核验）→ 排队 SHOT-02/04/05/08/14 异步 → 回写 + commit+push）
+下一步:       收 5 镜异步结果（comfyui_get_result + ffprobe 核验）→ 补其余镜（需 车间主任/前妻 定妆、手机UI、数据流 T2V）→ 字幕/音效BGM → 合成（★ 音画钉长）
+阻塞:         无硬阻塞。BLOCKERS #6(OUTPUT 帧缺失) 已闭环；#2(MCP project_root) #3(15章缺规格) 待处理。剩余镜需补资产：车间主任/前妻定妆、手机UI、数据流
 ERROR_COUNT:  0
 ```
 
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-12（S3 续跑 · 盘点发现 18_暖阳 13 帧缺失 → 修 generate_ep18_t2i.py 路径 bug → 后台再生，首帧已核验）
+- **上次唤醒**：2026-10-12（S3 续跑 · 核验 13/13 帧 → 固化 gen_ep18_h3_i2v.py → 出 SHOT-01 成片 + 5 镜异步排队）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,14 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-12 · S3 续跑 · 18_暖阳 帧核验 + H3 I2V 启动（首批 6 镜）✅**：核验 13/13 帧全落盘 → 固化 I2V 脚本 → 出 SHOT-01 成片 + 5 镜异步排队。
+  - **帧核验（验收式陈述）**：`OUTPUT/18_暖阳/frames/` 13 张 PNG 全部落盘，字节 1.40–2.27 MB（`_gen.log` 显示「完成: 13/13」）。
+  - **固化**：新建 `scripts/gen_ep18_h3_i2v.py`（首批 6 镜 SHOT-01/02/04/05/08/14，mp=0.6/steps=4，台词写进 prompt `Audio:` 随 H3 出，🚫 无 TTS；`--dry-run`/`--shot`/`--limit`）；`py_compile` + `--dry-run` 通过。补 gen_ep13 缺口：显式设 megapixels=0.6 + 帧自动上传 ComfyUI input。
+  - **出片（验收式陈述）**：MCP `video_minimax_h3_i2v` 跑 SHOT-01（seed 1801）→ `EP18_SHOT-01_H3_00001_.mp4` 1232.8KB，ffprobe 核验 = h264 1056×608 24fps 4.458s + aac 4.45s（**4s→4.46s 与 §4.1 `17k+5` 量化吻合**）。H3 在 16GB 卡正常加载（无 OOM）。
+  - **异步排队（下轮收）**：SHOT-02 `05deec0a…` / SHOT-04 `f6bfdf3e…` / SHOT-05 `443802df…` / SHOT-08 `31d1065c…` / SHOT-14 `56c48997…`（均 `wait=False`，用 `comfyui_get_result` 取回）。
+  - ⚠️ **MCP 工具返回值里的 `audio_note` 仍写「角色配音用 qwen3_tts」= 过期文案**，与本线「禁用 TTS」口径冲突，**忽略之**（台词已写进 H3 prompt 的 `Audio:`）。
+  - **下一步**：收 5 镜 + ffprobe 核验 → 补其余镜（需 车间主任/前妻 定妆、手机 UI、数据流 T2V）→ 字幕/音效BGM → 合成（★ 音画钉长）。
 
 - **2026-10-12 · S3 续跑 · 18_暖阳 帧缺失盘点 + 修 bug 再生 ✅**：git 同步+自检全绿后盘点，发现 MEMORY 声称的「13 张基础图」**未落盘**。
   - **核证（验收式陈述）**：`OUTPUT/18_暖阳/` 空（仅空 `frames/` 目录，0 张 PNG）；`OUTPUT/` 整体 .gitignore ⇒ 二进制产出从未 commit、跨机丢失。仅 `ASSETS/CHARACTERS/07_老周/` 3 张定妆在盘。
