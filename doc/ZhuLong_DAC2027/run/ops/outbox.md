@@ -8095,3 +8095,44 @@ The [Web failure matrix](tests/profiles/web/tests/web-failure-matrix.expected.e2
 /nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-api-settings-controller/README.md:26:Mount this package as a Loader entry in a profile that serves browser configuration. The entry registers both namespaces independently of their providers so a missing provider produces a named configuration error at invocation. Its generated descriptors enter the strict Typert registry, while the settings and credential Definitions remain plain Cordis Services with no wire obligations of their own.
 === DONE ===
 ```
+
+---
+
+## RUN_ID 55 · 2026-10-12 11:15:32 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 55 · opencode 端到端验证
+NPMBIN="$(npm prefix -g)/bin"
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] opencode --version ==="; "$NPMBIN/opencode" --version 2>&1 | head -2
+echo "=== [2] opencode run 端到端 (timeout 150s) ==="
+cd /tmp
+timeout 150 "$NPMBIN/opencode" run "Reply with exactly: OK" 2>&1 | tail -40
+echo "pipeline_rc=$?"
+echo "=== [3] 最终状态核对 ==="
+echo "opencode bin: $("$NPMBIN/opencode" --version 2>&1 | head -1)"
+echo "dsh bin: $(ls -la "$NPMBIN/dsh" 2>/dev/null | awk '{print $9, $10, $11}')"
+echo "opencode.json: $(test -s ~/.config/opencode/opencode.json && echo PRESENT || echo MISSING)"
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] ===
+hfeg0tedaap02
+2026-10-12 11:15:32
+=== [1] opencode --version ===
+1.19.0
+=== [2] opencode run 端到端 (timeout 150s) ===
+[0m
+> build · deepseek-v4-pro-cloud
+[0m
+OK
+pipeline_rc=0
+=== [3] 最终状态核对 ===
+opencode bin: 1.19.0
+dsh bin: /nasdata/app.e0031982/.local/node-20/bin/dsh -> ../lib/node_modules/@deepseek-ai/dsh/lib/bin.js
+opencode.json: PRESENT
+=== DONE ===
+```
