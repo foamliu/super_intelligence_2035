@@ -1,0 +1,85 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'><title>BaiZe 项目日报 · 2026-10-12</title><style>body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#2c3e50;line-height:1.6}h1{color:#1a1a2e;border-bottom:3px solid #e74c3c;padding-bottom:10px}h2{color:#1a1a2e;border-bottom:1px solid #bdc3c7;padding-bottom:5px;margin-top:30px}table{border-collapse:collapse;width:100%;margin:15px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}th{background:#2c3e50;color:#fff}tr:nth-child(even){background:#ecf0f1}.green{color:#27ae60;font-weight:bold}.amber{color:#e67e22;font-weight:bold}.red{color:#e74c3c;font-weight:bold}.blue{color:#2980b9;font-weight:bold}.note{background:#fff3cd;border-left:4px solid #ffc107;padding:10px 15px;margin:15px 0;border-radius:4px}.info{background:#d1ecf1;border-left:4px solid #17a2b8;padding:10px 15px;margin:15px 0;border-radius:4px}.ok{background:#d4efdf;border-left:4px solid #27ae60;padding:10px 15px;margin:15px 0;border-radius:4px}.warn{background:#fdebd0;border-left:4px solid #e67e22;padding:10px 15px;margin:15px 0;border-radius:4px}footer{text-align:center;color:#7f8c8d;margin-top:40px;font-size:12px;border-top:1px solid #bdc3c7;padding-top:10px}code{background:#f4f4f4;padding:2px 6px;border-radius:3px}.li{text-align:left}</style></head><body>
+<h1>BaiZe 项目日报 · 2026-10-12</h1>
+<p style='color:#7f8c8d'>生成时间：2026-10-12 ~10:00 · 覆盖六线：pretrain / vision / harness / data / zhulong / news</p>
+
+<div class='info'><strong>TL;DR</strong>：<strong>P-8 预训练已推进至 70.3%</strong>（step 7380/10490，loss 2.435 平稳下降，~251K tok/s，7 个 ckpt 已存），今晚 ~19:30 进入 decay 退火段，预计 <strong>10-13 凌晨 ~00:20 跑完 44B</strong>。vision 的 scaling 重做已<strong>全部收尾到评测</strong>（V3 ProtB=63.52%，Δ+1.18pp=Null verdict，probe sweep 证实 62.34% 是特征质量天花板）。harness 7×300 冲到 <strong>99.7%</strong>，6/7 完成、只差 hermes 294/300。data 的 en_v1_4 下到 30.0%。</div>
+
+<h2>1. 各线状态总览</h2>
+<table><tr><th>线</th><th>阶段</th><th>最新进展</th><th>状态</th></tr>
+<tr><td class='blue'>pretrain</td><td>P-8 稳定段</td><td>step 7380/10490（70.3%），loss 2.435↓，251K tok/s</td><td class='green'>🚀 运行中</td></tr>
+<tr><td class='blue'>vision</td><td>④-2ep 训练 + 评测收尾</td><td>V3 ProtB 63.52% 已完成；④-2ep 92.7%</td><td class='green'>✅ 训练中</td></tr>
+<tr><td class='blue'>harness</td><td>7×300 收尾</td><td>2094/2100（99.7%），6/7 完成，hermes 294/300</td><td class='green'>✅ 收尾</td></tr>
+<tr><td class='blue'>data</td><td>投料下载并行</td><td>en_v1_4 30.0% / 85M 66.5%</td><td class='amber'>🟠 下载中</td></tr>
+<tr><td class='blue'>zhulong</td><td>full_v3 r3</td><td>re-grade 140/141</td><td class='green'>✅ 运行中</td></tr>
+<tr><td class='blue'>news</td><td>常态化采集</td><td>累计 241 条</td><td class='green'>✅ 运行中</td></tr>
+</table>
+
+<h2>2. Pretrain —— P-8 推进至 70.3% ✅</h2>
+<div class='ok'><strong>44B 预训练过半</strong>：P-8 从零训练的 Mamba2-hybrid 2.22B 已跑到 step 7380/10490（≈30.9B/44B token），loss 一路平稳下降至 <strong>2.435</strong>（LR=1e-3 stable，grad_norm 0.12–0.19，0 NaN）。</div>
+<table><tr><th>项</th><th>值</th></tr>
+<tr><td>进度</td><td>step 7380/10490（70.3%，~30.9B/44B token）；loss 现 2.435（step7250=2.440 → 7380=2.435）</td></tr>
+<tr><td>吞吐 / 算力</td><td>~251K tok/s（~16.7s/step，~602 TFLOP/s/GPU）；8 卡 52–55GB / 97–100% util</td></tr>
+<tr><td>checkpoint</td><td>ckpt@7343 ✅ 已存；累计 7 个（1049/2098/3147/4196/5245/6294/7343，各 ~4.2GB）；next@8392（~14:40）</td></tr>
+<tr><td>调度（WSD）</td><td>warmup=0 · stable 0→9441 · decay 9441→10490</td></tr>
+<tr><td>配方</td><td>MBS2 · GBS1024 · seq4096 · dist_muon · bf16</td></tr>
+</table>
+<div class='warn'><strong>事故记录（已闭环）</strong>：step3740 曾因 <code>/tmp</code> 满崩溃，已修复并从 ckpt@3147 恢复，恢复后无 re-warmup spike（<code>--lr-warmup-iters 0</code>），现健康推进。</div>
+<div class='note'><strong>后续时间线</strong>：decay 切换点 <strong>step9441 ≈ 今晚 ~19:30</strong>（切 SFT 64% 退火混合，数据/脚本已核实就绪）→ 整体完成 step10490 ≈ <strong>10-13 凌晨 ~00:20</strong>。届时出 final 8 集 lm_eval（Table 2 常识）。</div>
+
+<h2>3. Vision —— Scaling 重做收尾 + ④-2ep 训练 ✅</h2>
+<div class='ok'><strong>评测系列全部完成，结论清晰</strong>：E1fair=62.34% 是基线天花板，V3（全数据）与基线无统计差别，probe 无欠拟合。</div>
+<table><tr><th>项</th><th>结果</th></tr>
+<tr><td>E1fair（基线）</td><td class='blue'>ProtB 62.34±0.01%（+33.0pp，已翻案）</td></tr>
+<tr><td>V3 ProtB</td><td>63.52±0.01%（Δlp=+1.18pp）→ <strong>Null verdict</strong>（|Δ|&lt;1.5pp）</td></tr>
+<tr><td>V3 其余指标</td><td>ProtA 50.53%（+0.83pp）· zero-shot 35.52%（+1.42pp）· k-NN 38.94%（+1.26pp）—— 统一 +1~1.4pp 但均未过阈值</td></tr>
+<tr><td>② Prober sweep</td><td>×5ep（450ep）=62.15%（−0.18pp）→ <strong>probe 未欠拟合，62.34% 是特征质量天花板</strong>；无配置 +&gt;0.35pp</td></tr>
+<tr><td>V3 Enhanced ×5ep</td><td>90ep=63.50% / 450ep=63.43%（Δ=−0.07pp）→ 同样无欠拟合</td></tr>
+</table>
+<div class='note'><strong>④-2ep TRAINING（18:25 10-11 起）</strong>：step ~347,100/374,202（<strong>92.7%</strong>）；C1 在 epoch2 升到 0.55–0.61（ep1 0.50–0.53）——对比对齐增强的<strong>正面信号</strong>；~2,900–5,500 img/s；ETA ~10:25 训练完 → auto-eval 链出 ProtB/ProtA/zs/k-NN 结果 ~14:00。</div>
+
+<h2>4. Harness —— 7×300 冲线（99.7%）✅</h2>
+<table><tr><th>harness</th><th>resolved</th><th>%</th><th>状态</th></tr>
+<tr><td class='blue'>pi</td><td>91/300</td><td class='green'>30.3% 🏆 BEST</td><td>300/300 ✅</td></tr>
+<tr><td>opencode</td><td>87</td><td>29.0%</td><td>300/300 ✅</td></tr>
+<tr><td>cline</td><td>86</td><td>28.7%</td><td>300/300 ✅</td></tr>
+<tr><td>codex</td><td>80</td><td>26.7%</td><td>300/300 ✅</td></tr>
+<tr><td>hermes</td><td>78</td><td>26.5%</td><td class='amber'>294/300（rem6 sympy）</td></tr>
+<tr><td>claude</td><td>78</td><td>26.0%</td><td>300/300 ✅</td></tr>
+<tr><td>deepseek</td><td>71</td><td>23.7%</td><td>300/300 ✅</td></tr>
+</table>
+<div class='ok'><strong>整体 2094/2100（99.7%），571 resolved</strong>。workdir 隔离保持 0 阻塞。Report A（26.9KB）+ Report B（50.2KB）已于 10-11 交付，Report B 已刷新至 2094 entries。仅剩 hermes 6 条 sympy（PID 1473568，ETA 1–2h）→ 完成后生成最终 7×300 报告 + 重试 blocked 至零。</div>
+
+<h2>5. Data —— 双路并行下载</h2>
+<table><tr><th>项</th><th>进度</th><th>速率 / ETA</th><th>归属</th></tr>
+<tr><td>en_v1_4（CC-MAIN 110 快照）</td><td class='blue'>16936/56461（30.0%，34/110 snapshots，1.5TB）</td><td>13.6MB/s · ~3.5–4.5 天</td><td>data 线</td></tr>
+<tr><td>85M 多模态（sa1b/zero250m/obelics…）</td><td class='blue'>8061/12124（66.5%，~28T/46.66T）</td><td>11.2MB/s · ~19 天（sa1b+zero250m 未开始）</td><td>用户自管（data 线仅巡检）</td></tr>
+<tr><td>GPIC</td><td class='green'>✅ 8160 tar</td><td>——</td><td>data 线</td></tr>
+<tr><td>R3 分词</td><td class='green'>✅ 110/110（1483.91B tok / 5.94TB）</td><td>——</td><td>data 线</td></tr>
+<tr><td>污染扫描</td><td class='green'>✅ 220K docs 0 命中</td><td>——</td><td>data 线</td></tr>
+</table>
+<div class='note'><strong>新增产出</strong>：文献借鉴报告 <code>report_data_lit_ideas.html</code>（commit c80c7a74，36KB，25 篇文献 → TOP-5 借鉴 + 3 附录）。en_v1_4 下载完成须过 check_contamination.py 再报完成；P-8 投料仍等运维指示（44B 档已由存量 web ~502B 覆盖，不阻塞）。</div>
+
+<h2>6. Zhulong & News</h2>
+<div class='ok'><strong>Zhulong full_v3 r3</strong>：eval 完成 → re-grade running（140/141），WAITING=0。</div>
+<div class='ok'><strong>News 常态化采集</strong>：第八十九轮 +7（中 7 / 英 0 · 当日 11 / 累计 241）；第 16 批 09:30 轮含微头条 09:33 + 引流评论 8 条 + SPEC §9.1 修复验证。</div>
+
+<h2>7. 今日关键时间点（需要盯）</h2>
+<table><tr><th>时间</th><th>事件</th></tr>
+<tr><td>~14:00</td><td>vision ④-2ep auto-eval 结果（ProtB/ProtA/zs/k-NN）</td></tr>
+<tr><td>~14:40</td><td>pretrain ckpt@8392 保存</td></tr>
+<tr><td>~19:30</td><td class='amber'><strong>pretrain decay 切换点（step9441，切 SFT 64% 退火）</strong></td></tr>
+<tr><td>~1–2h 内</td><td>harness hermes 收尾 → 最终 7×300 报告</td></tr>
+<tr><td>10-13 ~00:20</td><td class='amber'><strong>P-8 44B 整体完成 → final lm_eval</strong></td></tr>
+</table>
+
+<h2>8. 明日关注 / 风险</h2>
+<ul>
+<li>🟠 <strong>pretrain decay 切换（今晚 ~19:30）</strong>：从 stable 88:8:4 切到 SFT 64% 退火混合，是 WSD 最后一程，需确认切换后 loss 正常（decay 段应继续下降并吃 SFT 退火收益）。</li>
+<li>🟠 <strong>P-8 24h 内完成</strong>：跑完后须立即做 final 8 集 lm_eval（Table 2 常识）+ 汇报吞吐/显存/损耗散，坐实 dist_muon 长跑结论（此前仅 1000 步短地平线）。</li>
+<li>🟠 <strong>vision ④-2ep</strong>：C1 ep2 升高是对齐增强正面信号，若 ~14:00 eval 坐实 → 视觉缩放故事完整；若再 Null 则需重定研究问题。</li>
+<li>🟠 <strong>harness hermes</strong>：收尾后重试 blocked 至 0（成功判据 ②-C），再生成最终 HTML 报告。</li>
+<li>🟢 <strong>data</strong>：en_v1_4 与 85M 双路并行争用带宽（合计 24.8MB/s），继续巡检；85M sa1b+zero250m 未开始是主线后置数据。</li>
+</ul>
+
+<footer>BaiZe-ISEDA2027 · 日报 report_10_12.html · 数据来源：各线 MEMORY / git log（截至 2026-10-12 ~10:00）· 生成：Cline</footer>
+</body></html>
