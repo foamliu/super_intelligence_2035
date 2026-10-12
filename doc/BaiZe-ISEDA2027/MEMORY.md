@@ -1,15 +1,14 @@
 # MEMORY.md — BaiZe-ISEDA2027 **运维（operator）** 长期记忆 · **醒来先读本文件**
 
 
-## 🆕 最近操作（2026-10-11）
+## 🆕 最近操作（2026-10-12）
 
-### 📋 四项运维指令下发（用户直令 · 2026-10-11 晚）
-- **用户令**：「① vision 写『V2 Muon 全 LR 坍缩』分析报告（中文 HTML）；② vision/pretrain/data/harness 看近期 research 论文找可借鉴 idea，各写中文 HTML 报告；③ harness 分析各 harness 交互轨迹、以 cline 为轴写对比分析报告 + 对 cline 的改进意见（中文 HTML）；④ research 开启邮件沟通权限，联系论文作者请教，以改进 BaiZe/ZhuLong 研发」。
-- **已下发**（commit `a4285bc6`）：`run/BAIZE_VISION_TASK.md`（Muon 报告 + 文献报告）· `BAIZE_PRETRAIN_2B_TASK.md` / `BAIZE_DATA_TASK.md`（各 1 文献报告）· `BAIZE_HARNESS_TASK.md`（文献报告 + `report_harness_trace_vs_cline.html`）· `personal-watch/run/WATCH_RESEARCH_TASK.md`（**邮件权限** + 新建 `RESEARCH_MAIL_SPEC.md`）· `WATCH_RECRUIT_TASK.md`（**共享发件通道澄清**：HR 收件人红线仅约束 recruit）。
-- **口径**：文献来源 = research 线 `daily/2026-10-07..11.html`（25 篇）+ `TOP_K.*` + `papers.jsonl`；报告均**中文·自包含·零外链**；**纯阅读/分析，不占 GPU、不打断在飞任务**。
-- **邮件权限**：复用 recruit `~/hr_mail.py` + `~/.hr_smtp`（`foamliu@yeah.net`，凭据仓外）；每轮 ≤3 封；**首 3 封试运行须运维复核**；台账 `research/mail/发送记录.md`；红线见 `RESEARCH_MAIL_SPEC.md §8`。
-- **体积**：research 任务书一度 44,992B 越 40KB 红线 ⇒ 抽规格文件 + 压归档块 → 40,914B ✅；recruit 40,835B ✅；4 本 BaiZe 任务书 32–38KB ✅。
-- **流水**：见 `daily-memories/2026-10-11.md`。
+### 📋 harness 深挖令下发（用户直令 · 2026-10-12 晚）
+- **用户原话**：「harness 7×300 是否有很多 module 无法安装的问题导致失败，这些问题能否解决？现在的分数显然比预期低很多，你可以 web search。」
+- **已下发**（commit `fea9b643`）：`run/BAIZE_HARNESS_TASK.md` **运维指令区最前**新增「**最高优先**」块 —— 令 harness **纯分析**深挖：① 从 `kimi_pilot_results.json`（2100）统计 **env/module 安装失败 vs `pbf`（patch 成功但 F2P 未过 = wrong-fix）** 的真实占比（per-harness × 失败类矩阵）；② 根因定位（我们 **unshare 共享沙箱（非 Docker）** vs 官方 **per-instance conda env / 镜像**；patch 我们**仅单级 `git apply`** vs 官方**三级容错**）；③ **可解决性**逐项（per-instance 依赖装配 / **patch 三级容错** / infra），带成本 + 可挽回题数；④ **web search 外部对照**（同类 harness pass@1 + kimi-k2 公开 SWE-bench 数）答「cline 28.7% 是否偏低」。交付物 `report_harness_eval_rootcause.html`（中文 · 自包含 · 零外链 · ≤200KB）。🚫 不占 GPU；**任何重跑须先报后跑**。
+- **流水**：见 `daily-memories/2026-10-12.md`。
+
+> 📦 **2026-10-11「四项运维指令下发」原文已滚动归档** → `daily-memories/2026-10-11.md`（**原文未改一字**）；结论：vision×2 / pretrain / data / harness×2 / research 邮件权限 / recruit 澄清 **全部已下发**（commit `a4285bc6`）。需要时再读。
 
 WAITING: 0
 
