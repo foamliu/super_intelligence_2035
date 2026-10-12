@@ -1,4 +1,29 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 62 -->
+
+## RUN_ID 62 — opencode 剥 proxy 重测（LLM 回复 + bash 工具）
+
+> RUN_ID 61 已查明：opencode 带 proxy 跑 glm-5.2 时卡在 `> build · glm-5.2`（bun fetch 走外网代理 → 网关请求挂死，rc=124）。
+> 本 RUN 剥离 proxy（与 loop 里 cline 同口径）+ `timeout -k` 兜底，验证 ① LLM 回复 ② bash 工具调用。
+
+```bash
+# RUN_ID 62 · opencode 剥 proxy 重测（LLM + bash 工具）
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] 剥 proxy 跑 LLM 回复测试 ==="
+cd /tmp
+env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
+  timeout -k 15 120 opencode run -m glm/glm-5.2 --auto "Reply with exactly this text and nothing else: GLM_OK" > /tmp/oc_glm2.log 2>&1 < /dev/null
+echo "LLM rc=$?"
+tail -20 /tmp/oc_glm2.log | cut -c1-170
+echo -n "GLM_OK count: "; grep -c 'GLM_OK' /tmp/oc_glm2.log 2>/dev/null || echo 0
+echo "=== [2] 剥 proxy 跑 bash 工具测试 ==="
+env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
+  timeout -k 15 180 opencode run -m glm/glm-5.2 --auto "Use your bash tool to run this exact command: printf 'OC_TOOL_OK' > /tmp/oc_tool_test.txt && cat /tmp/oc_tool_test.txt" > /tmp/oc_tool.log 2>&1 < /dev/null
+echo "TOOL rc=$?"
+tail -25 /tmp/oc_tool.log | cut -c1-170
+echo -n "file contains: "; cat /tmp/oc_tool_test.txt 2>/dev/null || echo "(no file)"
+echo "=== DONE ==="
+```
 <!-- RUN_ID: 61 -->
 
 ## RUN_ID 61 — 写入 opencode 新配置（Python 生成）+ glm 端到端验证
