@@ -1,4 +1,25 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 55 -->
+
+## RUN_ID 55 — opencode 端到端验证（deepseek-v4-pro-cloud）
+
+> 用 `opencode run` 端到端调一次 deepseek-v4-pro-cloud，确认 opencode.json 配置 + provider 自动安装 + API 全链路可用。
+
+```bash
+# RUN_ID 55 · opencode 端到端验证
+NPMBIN="$(npm prefix -g)/bin"
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] opencode --version ==="; "$NPMBIN/opencode" --version 2>&1 | head -2
+echo "=== [2] opencode run 端到端 (timeout 150s) ==="
+cd /tmp
+timeout 150 "$NPMBIN/opencode" run "Reply with exactly: OK" 2>&1 | tail -40
+echo "pipeline_rc=$?"
+echo "=== [3] 最终状态核对 ==="
+echo "opencode bin: $("$NPMBIN/opencode" --version 2>&1 | head -1)"
+echo "dsh bin: $(ls -la "$NPMBIN/dsh" 2>/dev/null | awk '{print $9, $10, $11}')"
+echo "opencode.json: $(test -s ~/.config/opencode/opencode.json && echo PRESENT || echo MISSING)"
+echo "=== DONE ==="
+```
 <!-- RUN_ID: 54 -->
 
 ## RUN_ID 54 — 提取 dsh settings.yaml 配置格式
