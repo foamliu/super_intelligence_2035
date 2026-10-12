@@ -594,3 +594,23 @@
 | 2026-10-12 | 非 AI 具体事件一批（Passkeys are a trap. Do not use them〔nonfunctional.substack.com·82 分/27 评论〕· A Remote Employee Refused 160 Webcam Photos a Day（inc.com·81 分/49 评论）· Fingerprints Are the New Cookies（royfish.dev）· Remind HN: The keys to the Internet change on October 11, 2026（blog.cloudflare.com·HN 50048906）· Don't feel sorry for millennials（economist.com）等） | 各站（经 HN） | 留档(非 AI 具体事件·从严不收) | https://news.ycombinator.com/newest |
 | 2026-10-12 | 涉外伤亡 / 武装冲突及体育·民生·科学条目一批（苏丹北部金矿矿区遇袭致 72 名矿工死亡 · 沙特达曼法赫德国王国际机场遭袭 · 吉布提沿海移民船倾覆致 139 死 84 失踪 · 郑钦文中网女单夺冠 · 新皇岗口岸开通 · 孙氏巨尾兽新属种等） | 中新网 / 央视网（cn_news 抽检 ≤24h） | 留档(涉外伤亡·依红线不收 ／ 体育·民生·科学·不收) | https://www.chinanews.com.cn/gj/2026/10-12/10711160.shtml |
 
+| 2026-10-12 | OpenAI 宣布 GPT-6.1 Sol 默认上下文长度从 272k 提升至 500k，增加约 80% | IT之家（`011/736`·08:23 CST·厂商自述） | news | https://www.ithome.com/1/011/736.htm |
+| 2026-10-12 | 全国统一的数据产权登记制度正式实施：数据流通交易“有证可依” | 《人民日报》（经中新网转载 `10711177`·记者王琴·08:10 CST） | news | https://www.chinanews.com.cn/cj/2026/10-12/10711177.shtml |
+| 2026-10-12 | 英国将加强网络防御，AI 国务大臣呼吁人工智能企业加大安全保障力度 | IT之家（`011/727`·据《卫报》·07:39 CST·含未来时） | news | https://www.ithome.com/1/011/727.htm |
+| 2026-10-12 | 小鹏智驾出海欧洲：约两周微调适配一个国家，计划 2027 年落地 NGP | IT之家（`011/732`·据彭博社·08:06 CST·受访者自述） | news | https://www.ithome.com/1/011/732.htm |
+| 2026-10-12 | 全球运营商最大单体智算中心扩容工程竣工：中国移动呼和浩特智算中心总算力达 20100P、90% 服务京津冀 | IT之家（`011/751`·据《内蒙古日报》·09:11 CST） | news | https://www.ithome.com/1/011/751.htm |
+| 2026-10-12 | HPE 确认英伟达将推出 Rubin PCIe GPU | IT之家（`011/747`·据 HPE 演示文稿 / The Next Platform·09:05 CST·规格属推测） | news | https://www.ithome.com/1/011/747.htm |
+| 2026-10-12 | Lumentum：2029 年初产能已售罄，客户在为 2030 年下单 | IT之家（`011/755`·据彭博社 10-09·09:28 CST·高管自述） | news | https://www.ithome.com/1/011/755.htm |
+| 2026-10-12 | HPE Unveils the First of the Next Generation of ProLiants for the AI Era | The Next Platform（10-08·同源不同事实点：本轮新增「Rubin PCIe GPU 支持」·原文已在账） | 留档(超 72h·同源·不收) | https://www.nextplatform.com/compute/2026/10/08/hpe-unveils-the-first-of-the-next-generation-of-proliants-for-the-ai-era/5301808 |
+| 2026-10-12 | 华为终端沟通会（`011/756`）/ 麒麟 9050 Pro 展出（`011/754`）等一批 | IT之家 | 留档(消费电子·非 AI 具体事件·不收) | https://www.ithome.com/1/011/756.htm ／ https://www.ithome.com/1/011/754.htm |
+| 2026-10-12 | 任天堂实体卡带等相关一批 | IT之家（`011/753`） | 留档(非 AI 具体事件·不收) | https://www.ithome.com/1/011/753.htm |
+| 2026-10-12 | 消费硬件与汽车一批（小鹏 MONA L05〔`011/752`〕· 荣耀 WIN2〔`011/750`〕· 小米摄像机 5 Pro〔`011/748`〕· 米家扫拖机器人 6〔`011/746`〕） | IT之家 | 留档(消费硬件/汽车·非 AI 具体事件·不收) | https://www.ithome.com/1/011/752.htm ／ https://www.ithome.com/1/011/750.htm ／ https://www.ithome.com/1/011/748.htm ／ https://www.ithome.com/1/011/746.htm |
+| 2026-10-12 | 无人机破解案（`011/733`） | IT之家 | 留档(司法个案·依红线不收) | https://www.ithome.com/1/011/733.htm |
+| 2026-10-12 | 微软 Windows Update 证书相关 | IT之家（`011/725`） | 留档(非 AI 具体事件·不收) | https://www.ithome.com/1/011/725.htm |
+| 2026-10-12 | gbos-vm（开源工具） | IT之家（`011/728`） | 留档(tool·不收) | https://www.ithome.com/1/011/728.htm |
+| 2026-10-12 | 深远海勘测船交付（`011/729`）/ 显卡位置科普（`011/763`） | IT之家 | 留档(非 AI 具体事件·不收) | https://www.ithome.com/1/011/729.htm ／ https://www.ithome.com/1/011/763.htm |
+| 2026-10-12 | 创维外骨骼机器人（据报） | IT之家（`011/759`） | 留档(非 AI 核心·据报·不收) | https://www.ithome.com/1/011/759.htm |
+| 2026-10-12 | 库克来华（`011/734`）/ 华为星芒商标（`011/726`） | IT之家 | 留档(公司人物·非 AI 具体事件·不收) | https://www.ithome.com/1/011/734.htm ／ https://www.ithome.com/1/011/726.htm |
+| 2026-10-12 | AI is less regulated than milk, says Microsoft president | BBC（经 HN 窗口拉取·07:09 CST·**正文不可达 ⇒ 仅标题**） | 留档(feature/主张口径·源不可达·不收) | https://www.bbc.com/news/articles/c6rmy7zmvx3lo |
+| 2026-10-12 | 「AI 大战数学家，谁是赢家？」等相关报道 | 中新网［理论·评论］（`cn_news` ≤6h·09:36 CST） | 留档(opinion 体裁·不收) | https://www.chinanews.com.cn/ |
+| 2026-10-12 | HN 窗口内非新闻一批（`cnbc.com`「AI is changing how Lawyers work」〔10-10〕· `pub.sakana.ai` MASS 论文〔**同事件已在第八十八轮在账**〕· Show HN 9 条〔SwapBackdrop/Drune/Preloop/Plimsoll/OVI-CODE/Atticus/BraiNOTES/SecuBuzz/self-improving agent〕· `llamaindex.ai` OpenDocRouter · `kemendo.com` Yes I Understand How LLMs Work · `twitter.com` Models as Insider Risks · Ask HN ×2 · 非 AI 批次〔economist/who.int/cbc.ca/americanscientist.org 等〕） | 各站（经 HN `search_by_date` 窗口拉取·60 条内） | 留档(feature/tool/discussion/同事件·不收) | https://news.ycombinator.com/newest |
