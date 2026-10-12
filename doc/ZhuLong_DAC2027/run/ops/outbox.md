@@ -7724,3 +7724,60 @@ https_proxy=http://172.19.92.23:13128
 (none present)
 === DONE ===
 ```
+
+---
+
+## RUN_ID 50 · 2026-10-12 11:02:24 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 50 · 安装 opencode + deepseek-harness
+echo "=== [0] host/time ==="; hostname; date '+%F %T'
+NPMBIN="$(npm prefix -g)/bin"
+echo "NPMBIN=$NPMBIN"
+echo "=== [1] npm install -g opencode-ai ==="
+timeout 300 npm install -g opencode-ai > /tmp/oc_install.log 2>&1; RC=$?
+echo "rc=$RC"; tail -8 /tmp/oc_install.log
+echo "=== [2] npm install -g @deepseek-ai/dsh ==="
+timeout 300 npm install -g @deepseek-ai/dsh > /tmp/dsh_install.log 2>&1; RC=$?
+echo "rc=$RC"; tail -8 /tmp/dsh_install.log
+echo "=== [3] installed bins ==="
+ls -la "$NPMBIN"/ 2>/dev/null | grep -iE 'opencode|dsh' || echo "(no matching bins in $NPMBIN)"
+echo "=== [4] versions ==="
+"$NPMBIN/opencode" --version 2>&1 | head -5 || echo "opencode --version FAILED"
+"$NPMBIN/dsh" --version 2>&1 | head -5 || echo "dsh --version FAILED"
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] host/time ===
+hfeg0tedaap02
+2026-10-12 11:02:24
+NPMBIN=/nasdata/app.e0031982/.local/node-20/bin
+=== [1] npm install -g opencode-ai ===
+rc=0
+
+added 3 packages in 29s
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
+=== [2] npm install -g @deepseek-ai/dsh ===
+rc=0
+npm warn EBADENGINE   current: { node: 'v20.18.1', npm: '10.8.2' }
+npm warn EBADENGINE }
+npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+
+added 539 packages in 48s
+
+63 packages are looking for funding
+  run `npm fund` for details
+=== [3] installed bins ===
+lrwxrwxrwx 1 app.e0031982 app.adm       47 Oct 12 11:03 dsh -> ../lib/node_modules/@deepseek-ai/dsh/lib/bin.js
+lrwxrwxrwx 1 app.e0031982 app.adm       48 Oct 12 11:02 opencode -> ../lib/node_modules/opencode-ai/bin/opencode.exe
+=== [4] versions ===
+1.19.0
+=== DONE ===
+```
