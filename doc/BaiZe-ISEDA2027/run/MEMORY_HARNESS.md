@@ -2,22 +2,22 @@
 
 WAITING: 1
 
-> 🔧 **运维指令（2026-10-12 · 最高优先 · 每轮唤醒必读）**：**cline vs opencode EDA 基座深入对比 HTML 报告**（`doc/BaiZe-ISEDA2027/report_cline_vs_opencode_eda.html`，中文·自包含·内联 CSS/SVG·零外链·≤200KB）。**已交付 ✅**（39918B, 8 sections, 含 7×300 McNemar 检验 + EDA 6 维加权评分 + web search 演进追踪）。同时 **7×300 持续监控中**（2097/2100, 99.9%, 572 resolved, hermes 297/300 仍在跑, 3 rem）—— 细则见 `BAIZE_HARNESS_TASK.md` 顶部块。
+> 🔧 **运维指令（2026-10-12 · 最高优先 · 每轮唤醒必读）**：**cline vs opencode EDA 基座深入对比 HTML 报告**（`doc/BaiZe-ISEDA2027/report_cline_vs_opencode_eda.html`，中文·自包含·内联 CSS/SVG·零外链·≤200KB）。**已交付 ✅**（39918B, 8 sections, 含 7×300 McNemar 检验 + EDA 6 维加权评分 + web search 演进追踪）。**7×300 全部完成 ✅**（2100/2100, 100.0%, 574 resolved, hermes 300/300 done, 0 proc alive）—— 细则见 `BAIZE_HARNESS_TASK.md` 顶部块。
 
 ## 📊 进度快照
 
 ```
-PHASE:        H-B cline vs opencode EDA REPORT DELIVERED ✅ + H-A 7×300 RUNNING — 2097/2100 (99.9%); 572 resolved; 6 harnesses 300/300 COMPLETE; hermes 297/300 rem3; 1 proc alive
-已完成:       ① 7×100 HTML report ✅ · ② 7×300 LAUNCHED + workdir fix ✅ · ③ 6 harnesses 300/300 COMPLETE ✅ · ④ 2026-10-11 两份报告交付 ✅ · ⑤ Report A/B refreshed ✅ · ⑥ TASK 归档 ✅ · ⑦ cline vs opencode EDA 深入对比报告 ✅ (39918B, 8 sections)
-当前动作:     R327: cline vs opencode EDA HTML report delivered. report_cline_vs_opencode_eda.html (39918B, 8 sections: HERO+TL;DR / 早前选型回顾 / 7×300实测评比 / 代码架构对比 / EDA场景契合度 / 半年演进web search / 综合结论 / 诚实条款). Key findings: cline 86/300(28.7%) vs opencode 87/300(29.0%) — McNemar p≫0.05 无统计差异; EDA 加权评分 7.75 vs 6.05 (Cline 胜); 建议: 维持 Cline 主基座 + O1-O5 改进吸收 OpenCode 优势; 不建议双轨并行. Web search confirmed: Cline v4.1.22 (+v4.1.23 reported), OpenCode v1.18.35 (Oct 7). 7×300: 2097/2100 (99.9%), hermes 297/300 rem3.
-下一步:       ① Continue monitoring hermes (297/300, ~3 rem) → ② When hermes finishes, final 7×300 HTML → ③ Await next operator instruction
+PHASE:        H-B cline vs opencode EDA REPORT DELIVERED ✅ + H-A 7×300 COMPLETE ✅ — 2100/2100 (100.0%); 574 resolved; ALL 7 harnesses 300/300 DONE; 0 proc alive; ALL reports refreshed to final data
+已完成:       ① 7×100 HTML report ✅ · ② 7×300 LAUNCHED + workdir fix ✅ · ③ 7×300 ALL 7 harnesses 300/300 COMPLETE ✅ (2100/2100) · ④ 2026-10-11 两份报告交付 ✅ · ⑤ Report A/B refreshed ✅ · ⑥ TASK 归档 ✅ · ⑦ cline vs opencode EDA 深入对比报告 ✅ (39918B, 8 sections) · ⑧ 7×300 final report refreshed ✅ (2100/2100, 574 resolved, 36682B)
+当前动作:     R328: 7×300 ALL COMPLETE — hermes finished 300/300. Refreshed report_harness_7x300.html (2100 entries, 100.0%, 574 resolved, 36682B) + report_harness_trace_vs_cline.html (42637B) + report_harness_lit_ideas.html (22916B) to final data. Final standings: pi 91/300(30.3%) > opencode 87(29.0%) > cline 86(28.7%) > hermes 81(27.0%) > codex 80(26.7%) > claude 78(26.0%) > deepseek 71(23.7%). Total 574/2100=27.3%. All 7 harness procs exited, 0 alive.
+下一步:       ① Await next operator instruction — all deliverables complete, 7×300 finished, cline-vs-opencode report delivered
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
-- [10:30] R326: **Reports A+B refreshed ✅** — Report A: added TestJack (2610.10619, "Agentic Coding Benchmarks Auditing via Evaluator Evolution", rank 13, 34.4% false-positive rate finding → questions our resolve rate reliability). Report B: gen_report_b.py made fully dynamic (matrix/TL;DR/section7 all computed from JSON), corrected stale numbers (hermes 23.5%→26.6%, claude 25.4%→26.0%, pi 30.1%→30.3%). 7×300: 2097/2100 (99.9%), 572 resolved, hermes 297/300 rem3. 📦 体积：TASK=31753B(31.0KB ✓) / MEMORY≈31.2KB(✓).
-- [12:05] R327: **cline vs opencode EDA 深入对比报告交付 ✅** — `report_cline_vs_opencode_eda.html` (39918B, 8 sections). 核心结论: SWE-bench 7×300 实测 cline 86/300(28.7%) vs opencode 87/300(29.0%) McNemar p≫0.05 无统计差异; EDA 6 维加权 7.75 vs 6.05 (Cline 胜，不可逆操作安全 9:5); 综合建议维持 Cline 主基座 + O1-O5 吸收 OpenCode 优势 + 不建议双轨并行. Web search: Cline v4.1.22 (gradually.ai) + v4.1.23 (tpsreport.news), OpenCode v1.18.35 (changelogs.directory, Oct 7). 📦 体积：TASK=31753B(31.0KB ✓) / MEMORY≈29.1KB(✓).
+- [12:40] R328: **7×300 ALL COMPLETE ✅** — hermes finished 300/300. Refreshed 3 reports to final 2100/2100 data: report_harness_7x300.html (36682B, 574 resolved, 27.3%) + report_harness_trace_vs_cline.html (42637B) + report_harness_lit_ideas.html (22916B). Final standings: pi 91(30.3%) > opencode 87(29.0%) > cline 86(28.7%) > hermes 81(27.0%) > codex 80(26.7%) > claude 78(26.0%) > deepseek 71(23.7%). Classifications: 574 resolved / 1458 pbf / 50 blocked / 14 quota / 4 np. All 7 harness procs exited, 0 alive. 📦 体积：TASK=31753B(31.0KB ✓) / MEMORY≈29.2KB(✓)。
+> 📦 R326-R327 (2026-10-12 10:30~12:05, Report A/B refresh + cline vs opencode EDA report delivery) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。
 > 📦 R302-R321 (2026-10-11~12, 两份报告交付 + 7×300 monitoring 97.5%→99.3%) 已归档 → daily-memories-harness/2026-10-11.md + 2026-10-12.md。需要时再读。
 > 📦 R322-R325 (2026-10-12 08:00~09:45, 7×300 monitoring 99.4%→99.7%, 567→571 resolved, hermes 288→294/300, Report B 刷新 2094 entries) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。
 
