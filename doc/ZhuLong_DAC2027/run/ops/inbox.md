@@ -1,4 +1,54 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 51 -->
+
+## RUN_ID 51 — 验证 LLM API + 写 opencode 全局配置
+
+> 用 curl 验证 `deepseek-v4-pro-cloud` @ `/cloud/v1`（HTTP 直连 agi-gateway）；写 `~/.config/opencode/opencode.json`；并 dump `dsh --help` 用于下一步配置 dsh。
+
+```bash
+# RUN_ID 51 · 验证 API + 写 opencode 配置
+echo "=== [0] ==="; hostname; date '+%F %T'
+KEY="02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e"
+BASE="http://agi-gateway.cxmt.com/cloud/v1"
+NPMBIN="$(npm prefix -g)/bin"
+
+echo "=== [1] curl POST /chat/completions (pro-cloud) ==="
+timeout 20 curl --noproxy '*' -sS -m 15 -w '\nHTTP=%{http_code} t=%{time_total}s\n' \
+  -X POST "$BASE/chat/completions" \
+  -H "Authorization: Bearer $KEY" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-cloud","messages":[{"role":"user","content":"Reply with exactly: OK"}],"max_tokens":20}' 2>&1 | tail -20
+
+echo "=== [2] 写 opencode 全局配置 ==="
+mkdir -p ~/.config/opencode
+cat > ~/.config/opencode/opencode.json <<'EOF'
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "deepseek": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "DeepSeek (agi-gateway)",
+      "options": {
+        "baseURL": "http://agi-gateway.cxmt.com/cloud/v1",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e"
+      },
+      "models": {
+        "deepseek-v4-pro-cloud": {
+          "name": "DeepSeek V4 Pro Cloud"
+        }
+      }
+    }
+  },
+  "model": "deepseek/deepseek-v4-pro-cloud"
+}
+EOF
+echo "--- opencode.json ---"; cat ~/.config/opencode/opencode.json
+
+echo "=== [3] 版本/帮助 ==="
+"$NPMBIN/opencode" --version 2>&1 | head -2
+echo "--- dsh --help ---"; "$NPMBIN/dsh" --help 2>&1 | head -60
+echo "--- dsh env/config dirs ---"; ls -la ~/.dsh ~/.config/dsh 2>/dev/null || echo "(no ~/.dsh / ~/.config/dsh yet)"
+echo "=== DONE ==="
+```
 <!-- RUN_ID: 50 -->
 
 ## RUN_ID 50 — 安装 opencode + deepseek-harness（npm 全局）
