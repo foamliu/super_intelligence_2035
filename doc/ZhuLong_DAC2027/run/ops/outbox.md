@@ -8578,3 +8578,118 @@ echo "=== DONE ==="
 ```
 REFUSED: 命中危险模式 [:()[[:space:]]*\{]（如需强行执行，请人工在服务器上操作）
 ```
+
+---
+
+## RUN_ID 61 · 2026-10-12 13:26:13 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 61 · Python 生成 opencode 配置 + glm 端到端
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] backup old config ==="
+cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.bak.59 2>/dev/null && echo "backup ok" || echo "(no old config)"
+echo "=== [2] write config via python ==="
+python3 - <<'PYEOF'
+import json, os
+h = os.path.expanduser("~")
+
+deepseek = dict()
+deepseek["npm"] = "@ai-sdk/openai-compatible"
+deepseek["name"] = "DeepSeek (agi-gateway)"
+deepseek["options"] = dict()
+deepseek["options"]["baseURL"] = "http://agi-gateway.cxmt.com/cloud/v1"
+deepseek["options"]["apiKey"] = "02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e"
+deepseek["models"] = dict()
+deepseek["models"]["deepseek-v4-pro-cloud"] = dict(name="DeepSeek V4 Pro Cloud")
+
+glm = dict()
+glm["npm"] = "@ai-sdk/openai-compatible"
+glm["name"] = "GLM (agi-gateway)"
+glm["options"] = dict()
+glm["options"]["baseURL"] = "http://agi-gateway.cxmt.com/cloud/v1"
+glm["options"]["apiKey"] = "02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
+glm["models"] = dict()
+glm["models"]["glm-5.2"] = dict(name="GLM-5.2")
+
+provider = dict()
+provider["deepseek"] = deepseek
+provider["glm"] = glm
+
+cfg = dict()
+cfg["$schema"] = "https://opencode.ai/config.json"
+cfg["provider"] = provider
+cfg["model"] = "glm/glm-5.2"
+
+p = os.path.join(h, ".config", "opencode", "opencode.json")
+os.makedirs(os.path.dirname(p), exist_ok=True)
+with open(p, "w") as f:
+    json.dump(cfg, f, indent=2, ensure_ascii=False)
+print("=== written opencode.json ===")
+print(open(p).read())
+PYEOF
+echo "=== [3] e2e with proxy (loop-like env) ==="
+export http_proxy=http://172.19.92.23:13128 https_proxy=http://172.19.92.23:13128 HTTP_PROXY=http://172.19.92.23:13128 HTTPS_PROXY=http://172.19.92.23:13128
+cd /nasdata/app.e0031982/code/super_intelligence_2035
+timeout 240 opencode run -m glm/glm-5.2 --auto "Reply with exactly this text and nothing else: GLM_OK" > /tmp/oc_glm_test.log 2>&1 < /dev/null
+echo "rc=$?"
+echo "--- log tail ---"; tail -40 /tmp/oc_glm_test.log | cut -c1-170
+echo "=== [4] scan ==="
+if grep -qiE 'forbidden|unauthorized' /tmp/oc_glm_test.log; then echo "!!! Forbidden present"; else echo "no Forbidden OK"; fi
+echo -n "GLM_OK count: "; grep -c 'GLM_OK' /tmp/oc_glm_test.log 2>/dev/null || echo 0
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] ===
+hfeg0tedaap02
+2026-10-12 13:26:13
+=== [1] backup old config ===
+backup ok
+=== [2] write config via python ===
+=== written opencode.json ===
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "deepseek": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "DeepSeek (agi-gateway)",
+      "options": {
+        "baseURL": "http://agi-gateway.cxmt.com/cloud/v1",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e"
+      },
+      "models": {
+        "deepseek-v4-pro-cloud": {
+          "name": "DeepSeek V4 Pro Cloud"
+        }
+      }
+    },
+    "glm": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "GLM (agi-gateway)",
+      "options": {
+        "baseURL": "http://agi-gateway.cxmt.com/cloud/v1",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
+      },
+      "models": {
+        "glm-5.2": {
+          "name": "GLM-5.2"
+        }
+      }
+    }
+  },
+  "model": "glm/glm-5.2"
+}
+=== [3] e2e with proxy (loop-like env) ===
+rc=124
+--- log tail ---
+[0m
+> build · glm-5.2
+[0m
+=== [4] scan ===
+no Forbidden OK
+GLM_OK count: 0
+0
+=== DONE ===
+```
