@@ -2,24 +2,22 @@
 
 WAITING: 1
 
-> 🔧 **运维指令（2026-10-12 · 最高优先 · 每轮唤醒必读）**：**eval 基础设施修复 + 重跑**（指令③①~③③）**执行中** 🔄。P0 四项修复已全部完成 ✅。**fix1 重评后台运行中**（PID 3594913, 376 total candidates, 当前进度 90% [338/376], ETA ~1h → ~06:00）。**最新结果**：338 条已保存 → **30 条 FLIPPED to RESOLVED** ✅（cline×7, opencode×6, claude×6, pi×4, codex×3, deepseek×3, hermes×1）· **188 条 patch 新增 apply 成功**（infra fix 确认 ✅）。**总 Resolved: 574→604 (27.3%→28.8%)**。pytest 贡献 29/30 翻转（SETUPTOOLS_SCM_PRETEND_VERSION 修复效果显著）。报告已刷新：`report_harness_eval_fix_rerun.html`（18.8KB, 中文自包含, 338 entries, 30 flipped, +188 patch-fixed, SVG charts）。待全部完成后刷新最终报告。
+> 🔧 **运维指令（2026-10-12 · 最高优先 · 每轮唤醒必读）**：**eval 基础设施修复 + 重跑**（指令③①~③③）**已完成** ✅。P0 四项修复全部完成 ✅。**fix1 重评全部完成** ✅（376/376 entries）。**最终结果**：**34 条 FLIPPED to RESOLVED** ✅（cline×7, opencode×6, claude×6, hermes×5, pi×4, codex×3, deepseek×3）· **+215 条 patch 新增 apply 成功**（infra fix 确认 ✅）。**总 Resolved: 574→608 (27.3%→29.0%, +1.6pp)**。pytest 贡献 33/34 翻转（SETUPTOOLS_SCM_PRETEND_VERSION 修复效果显著），sklearn 1 翻转。matplotlib/sphinx patch 能 apply 了(74/104, 84/92)但 0 resolved → patch 质量问题非基础设施。最终报告：`report_harness_eval_fix_rerun.html`（19.6KB, 中文自包含, 376 entries, 34 flipped, +215 patch-fixed, SVG charts）。结果文件：`kimi_pilot_results.fix1.json`（258KB, 独立文件不覆盖原始）。**P1 待运维确认**：astropy OOM · 网络 503 重试 · per-instance 预构建 Docker。
 
 ## 📊 进度快照
 
 ```
-PHASE:        FIX1 RE-EVAL RUNNING 🔄 — P0 fixes applied ✅; rerun_eval_fix1.py at 90% [338/376], 30 FLIPPED ✅, 188 patches now applying ✅; Chinese report refreshed (18.8KB)
-已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ (45612B) · ③ cline vs opencode EDA report ✅ (39918B) · ④ P0 fixes applied ✅ (mplsetup.cfg + SETUPTOOLS_SCM_PRETEND + PIP_NO_BUILD_ISOLATION + sphinx git fetch retry) · ⑤ fix1 re-eval RUNNING 🔄 (338/376 done, 30 flipped, 188 patch-applied) · ⑥ Chinese report refreshed ✅ (18.8KB, 338 entries, SVG charts, before/after per-harness)
-当前动作:     R349: Monitoring fix1 re-eval (PID 3594913, 338/376 ~90%, ETA ~1h → ~06:00). 30 FLIPPED: cline×7, opencode×6, claude×6, pi×4, codex×3, deepseek×3, hermes×1. pytest=29/30 flips (SETUPTOOLS_SCM dominant). Total resolved 574→604 (27.3%→28.8%). 188 patches newly apply (infra fix confirmed ✅). Report regenerated: 18.8KB (6 sections + SVG bar chart + before/after tables + flipped details + §4 comparison).
-下一步:       ① Wait for fix1 re-eval to complete (~1h, 38 remaining) ② Re-run gen_fix_report.py for final report with all 376 entries ③ Commit final results + report ④ Consider P1 items (astropy OOM, network 503 retry, per-instance Docker)
-阻塞:         <无>
+PHASE:        FIX1 RE-EVAL COMPLETE ✅ — P0 fixes applied ✅; 376/376 re-eval done, 34 FLIPPED ✅, +215 patch-applied ✅; Final report 19.6KB ✅
+已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ (45612B) · ③ cline vs opencode EDA report ✅ (39918B) · ④ P0 fixes applied ✅ (mplsetup.cfg + SETUPTOOLS_SCM_PRETEND + PIP_NO_BUILD_ISOLATION + sphinx git fetch retry) · ⑤ fix1 re-eval COMPLETE ✅ (376/376, 34 flipped, +215 patch-applied) · ⑥ Final report ✅ (19.6KB, 376 entries, SVG charts, before/after per-harness, §4 comparison)
+当前动作:     R350: fix1 re-eval COMPLETED. Final report generated (19.6KB, 376/376 entries, 34 FLIPPED, +215 patch-applied). Total resolved 574→608 (27.3%→29.0%). Per-harness flips: cline×7(86→93,31.0%), opencode×6(87→93,31.0%), claude×6(78→84,28.0%), hermes×5(81→86,28.7%), pi×4(91→95,31.7%), codex×3(80→83,27.7%), deepseek×3(71→74,24.7%). Per-repo: pytest×33, sklearn×1, mpl/sphinx/flask×0. Committing results + report.
+下一步:       ① P1 items (需运维确认): astropy OOM · 网络 503 重试 · per-instance 预构建 Docker ② ② ②b 重跑 agent（blocked/timeout/no-patch cases，需先做 git fetch 重试+预克隆）③ 等待运维对 P1 的决定
+阻塞:         <无>（P1 需运维确认后才动）
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
-- [03:02] R346: fix1 re-eval 114/376 (~30%), 9 FLIPPED, 57 patch-applied. (详见归档)
-- [04:58] R349: **fix1 re-eval monitoring + report refresh** 🔄. PID 3594913 alive (etimes ~11355s ≈ 189min). Progress: **338/376 (90%)**. **30 FLIPPED** ✅ (cline×7, opencode×6, claude×6, pi×4, codex×3, deepseek×3, hermes×1). pytest=29/30 flips. **188 patches newly applied**. Per-repo: mpl 74/104 patch-ok(0 res), pytest 67/84(29 res), sklearn 36/60(1 res), sphinx 61/67(0 res), flask 5/19(0 res). Report refreshed: `report_harness_eval_fix_rerun.html` 18.8KB (6 sections, SVG chart, before/after tables, flipped details, §4 comparison). Total resolved 574→604 (27.3%→28.8%). ETA ~1h → ~06:00. 📦 体积：TASK=32625B(31.9KB ✓) / MEMORY≈31KB ✓.
-> 📦 R347-R348 (2026-10-13 03:35~04:18, fix1 re-eval monitoring 190→267/376, 10→26 FLIPPED) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
-> 📦 R345-R346 (2026-10-13 02:23~03:02, fix1 re-eval monitoring 38→114/376) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
+- [05:34] R350: **fix1 re-eval COMPLETE ✅ + final report**. 376/376 entries done. **34 FLIPPED** (cline×7, opencode×6, claude×6, hermes×5, pi×4, codex×3, deepseek×3). **+215 patches newly applied** (up from +188 at R349). Per-repo: pytest 76/94 patch-ok(33 res), mpl 74/104(0 res), sphinx 84/92(0 res), sklearn 40/67(1 res), flask 5/19(0 res). Report regenerated: `report_harness_eval_fix_rerun.html` 19.6KB (376 entries, 6 sections, SVG chart, before/after tables, §4 comparison). **Total resolved 574→608 (27.3%→29.0%, +1.6pp)**. Per-harness after: pi 95(31.7%), cline 93(31.0%), opencode 93(31.0%), hermes 86(28.7%), claude 84(28.0%), codex 83(27.7%), deepseek 74(24.7%). Committing with `harness fix:` prefix. 📦 体积：TASK=32625B(31.9KB ✓) / MEMORY≈30KB ✓.
+> 📦 R344-R349 (2026-10-13 01:25~04:58, fix1 re-eval launch→90% monitoring, 3→30 FLIPPED, 57→188 patch-applied) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
 > 📦 R342 (2026-10-12 23:15, eval rootcause report delivery) 已归档 → daily-memories-harness/2026-10-12.md。结论：report_harness_eval_rootcause.html (45612B, 6 sections, 3 SVG) delivered ✅。需要时再读。
 > 📦 R337-R341 (2026-10-12 18:18~21:08, monitoring wakes) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。
 > 📦 R326-R330 (2026-10-12 10:30~13:48, Report A/B refresh + cline vs opencode EDA report delivery + re-verification) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。
