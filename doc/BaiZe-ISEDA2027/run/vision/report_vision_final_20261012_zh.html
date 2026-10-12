@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 视觉编码器 — 外部评审回应综合报告（中文版 · 2026-10-12）</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff;--orange:#e8873c;--cyan:#39d2c5}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Segoe UI',Helvetica,Arial,sans-serif;line-height:1.7;max-width:1200px;margin:0 auto;padding:20px}
+h1{font-size:1.8em;color:var(--accent);border-bottom:2px solid var(--border);padding-bottom:.3em;margin:1.5em 0 .5em}
+h2{font-size:1.4em;color:var(--purple);margin:1.2em 0 .5em;border-bottom:1px solid var(--border);padding-bottom:.2em}
+h3{font-size:1.15em;color:var(--green);margin:1em 0 .4em}
+p{margin:.5em 0}
+table{border-collapse:collapse;width:100%;margin:.8em 0;font-size:.9em}
+th,td{border:1px solid var(--border);padding:.4em .6em;text-align:center}
+th{background:var(--card);color:var(--accent);font-weight:600}
+td:first-child,th:first-child{text-align:left}
+.best{color:var(--green);font-weight:700}
+.bad{color:var(--red)}
+.warn{color:var(--yellow)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1em 1.2em;margin:.8em 0}
+.tldr{background:linear-gradient(135deg,#161b22,#1a2332);border-left:4px solid var(--accent)}
+.tldr ul{margin:.3em 0 .3em 1.2em}
+.tldr li{margin:.3em 0}
+code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF Mono',Consolas,monospace;font-size:.85em;color:var(--orange)}
+.svg-container{margin:1em 0;text-align:center}
+.svg-container svg{max-width:100%;height:auto}
+.note{color:var(--muted);font-size:.85em;font-style:italic}
+.tag{display:inline-block;padding:.1em .5em;border-radius:10px;font-size:.75em;font-weight:600}
+.tag-done{background:rgba(63,185,80,.2);color:var(--green)}
+.tag-fail{background:rgba(248,81,73,.2);color:var(--red)}
+.tag-warn{background:rgba(210,153,34,.2);color:var(--yellow)}
+.tag-moderate{background:rgba(210,153,34,.2);color:var(--yellow)}
+.refs{font-size:.85em;color:var(--muted);margin-top:2em;border-top:1px solid var(--border);padding-top:.5em}
+.conclusion-box{background:linear-gradient(135deg,#0d1f0d,#0a1a0a);border:2px solid var(--green);border-radius:8px;padding:1em 1.2em;margin:1em 0}
+.conclusion-box h3{color:var(--green);margin-top:0}
+.warn-box{background:linear-gradient(135deg,#1f0d0d,#1a0a0a);border:2px solid var(--red);border-radius:8px;padding:1em 1.2em;margin:1em 0}
+.warn-box h3{color:var(--red);margin-top:0}
+.moderate-box{background:linear-gradient(135deg,#1f1a0d,#1a160a);border:2px solid var(--yellow);border-radius:8px;padding:1em 1.2em;margin:1em 0}
+.moderate-box h3{color:var(--yellow);margin-top:0}
+</style>
+</head>
+<body>
+<h1>BaiZe 视觉编码器 — 外部评审回应综合报告</h1>
+<p class="note">生成时间：2026-10-12 · 线：vision · 语言：中文 · 性质：纯写作（零 GPU）· 数据来源：<code>MEMORY_VISION.md</code> / <code>EXPERIMENTS_VISION.md §8.3–§9.6</code></p>
+
+<h2>1. 背景与动机</h2>
+<div class="card">
+<p>外部评审专家对 BaiZe 视觉编码器基线模型 <strong>E1fair</strong> 的 <strong>ProtB（BaiZe internal protocol）linear-probe top-1 准确率 = 62.34%</strong> 提出质疑，认为该数值偏低。为系统性地回应这一质疑，运维侧下发了 <strong>③→①→②→④</strong> 四步复核链路指令：</p>
+<ul>
+<li><strong>③</strong> 口径修订：明确绝对 lp 数字所用的评测协议，声明不可与外部方法同表比较的原因</li>
+<li><strong>①</strong> 同模型 zero-shot 评测：验证冻结文本塔是否带来了实际收益</li>
+<li><strong>②</strong> probe 对照实验：排查 linear probe 是否存在欠拟合</li>
+<li><strong>④</strong> epoch 缩放实验：判断 62.34% 是"预算不足"还是"特征质量天花板"</li>
+</ul>
+<p>同时补充了两组变体实验（V2 Muon 优化器、V3 全量数据），以及一份 lp–epoch 曲线图。本报告按时间/逻辑顺序完整呈现全部实验结果与结论。</p>
+</div>
+
+<div class="card tldr">
+<h3 style="color:var(--accent);margin-top:0">🎯 一句话总结</h3>
+<p>62.34% 是 <strong>当前数据规模（95.8M 图文对 · 1 epoch）与目标函数（AIMv2-style）下的特征质量天花板</strong>——不是评测方法的缺陷，也不是 probe 的欠拟合；将训练 epoch 翻倍（2 epoch）可将 ProtB 提升至 <strong>65.37%</strong>（Δ+3.03pp），收益中等且呈递减趋势。</p>
+</div>
+
+<h2>2. E1fair 基线配置速览</h2>
+<p>所有后续实验均以 E1fair 为基线，除被考察变量外逐字节一致。基线配置如下：</p>
+<table>
+<tr><th>字段</th><th>值</th></tr>
+<tr><td>架构</td><td>OpenVision2 w512/d30，patch16，224px，<strong>126.78M</strong> 参数</td></tr>
+<tr><td>目标函数</td><td>AIMv2-style：<code>1.0×InfoNCE + 1.0×masked-patch-MSE</code>（双向 ViT + 随机掩码，mask-ratio=0.6）</td></tr>
+<tr><td>优化器</td><td>AdamW（lr=5e-4，betas=(0.9, 0.95)，eps=1e-6）</td></tr>
+<tr><td>学习率调度</td><td>warmup=2000 → cosine → min_lr=5e-5，总步数 <strong>187,101</strong></td></tr>
+<tr><td>数据</td><td>GPIC 快照（7437 tar）+ CC12M + Amshaker，total_shards=10,787，<strong>95.8M 图文对，1 epoch</strong></td></tr>
+<tr><td>批大小</td><td>64/GPU × 8 GPU = 512</td></tr>
+<tr><td>随机种子</td><td>1234</td></tr>
+<tr><td><strong>ProtB（3 seeds）</strong></td><td><strong>62.34 ± 0.01%</strong></td></tr>
+<tr><td><strong>ProtA</strong></td><td><strong>49.70%</strong></td></tr>
+</table>
+<p class="note">ProtB = Protocol B（SGD+momentum0.9+cosine，90ep，mini-batch 1024，IN-1k full train，IN-1k val 50k，3 seeds）；ProtA = Protocol A（AdamW lr=3e-3，full-batch，100ep，50/类，单 seed）。两者差约 10pp（详见 §3）。</p>
+
+<h2>3. ③ 口径修订：为什么 62.34% 不可与外部方法同表比较</h2>
+<div class="card">
+<h3>3.1 标注规则</h3>
+<p>凡出现<strong>绝对 lp / zs / k-NN 数字</strong>，均须标注所用评测协议：</p>
+<table>
+<tr><th>标注</th><th>含义</th><th>适用场景</th></tr>
+<tr><td><strong>BaiZe internal protocol (ProtB)</strong></td><td>SGD+momentum0.9+cosine，90ep，mini-batch 1024，IN-1k full train，IN-1k val 50k，IN-1k norm，3 seeds</td><td>主结果（与主流协议对齐，可与 DINOv2/MAE/iBOT 公开值横比）</td></tr>
+<tr><td><strong>BaiZe internal protocol (ProtA)</strong></td><td>AdamW lr=3e-3，full-batch，100ep，probe 50/类，自切分 val，CLIP norm，seed 0</td><td>旧实验（R2–R14 消融），相对排序有效但绝对数字偏低 ~10pp</td></tr>
+<tr><td><strong>External</strong></td><td>CLIP zs / OpenCLIP / MAE / DINOv2 / iBOT 等公开报告值</td><td>🚫 <strong>不得与 BaiZe 数字同表</strong></td></tr>
+</table>
+</div>
+
+<div class="card">
+<h3>3.2 不可比原因（逐条）</h3>
+<table>
+<tr><th>维度</th><th>BaiZe（本线）</th><th>外部方法</th><th>不可比原因</th></tr>
+<tr><td><strong>目标函数</strong></td><td>AIMv2-style：1.0×InfoNCE + 1.0×masked-patch-MSE（双向 ViT + 随机掩码）</td><td>CLIP = 纯对比学习；MAE/DINOv2 = 纯视觉自监督（无文本塔）；iBOT = dense + self-distill</td><td>目标函数不同 → 学到的表征空间性质不同 → lp 不可直接比较</td></tr>
+<tr><td><strong>数据</strong></td><td>图文对 <strong>95.8M</strong>（GPIC + CC12M + Amshaker），<strong>1 epoch</strong></td><td>LAION-2B（多 epoch / batch 32k）；IN-1k / LVD-142M（纯视觉）</td><td>数据量级差 10–100×；数据类型不同（图文对 vs 纯图像）</td></tr>
+<tr><td><strong>文本塔</strong></td><td><strong>冻结</strong> CLIP-ViT-L/14-336（768-d），不解冻 / 不用 LoRA</td><td>CLIP/OpenCLIP = 文本塔端到端训练；MAE/DINOv2 = 无文本塔</td><td>冻结文本塔限制了对比学习的对齐能力 → lp 上限不同</td></tr>
+<tr><td><strong>评测协议</strong></td><td>ProtA vs ProtB 相差 <strong>~10pp</strong></td><td>公开 lp 通常用主流协议（≈ProtB）</td><td>不同协议的绝对数字不可同表；ProtA 比主流低 ~10pp</td></tr>
+<tr><td><strong>训练规模</strong></td><td>~118M 上限（从零训练，1 epoch）</td><td>AIMv2-L = 12B 样本；DINOv2 = LVD-142M / 多 epoch</td><td>规模差 100× → 绝对 lp 不可比</td></tr>
+</table>
+<p class="note">结论：BaiZe 的 ProtB = 62.34% 只能与<strong>同目标函数 + 同数据量级 + 同 epoch + 同评测协议</strong>的内部基线直接比较；与 CLIP / DINOv2 / MAE 等外部方法的绝对数字不可同表。</p>
+</div>
+
+<h2>4. ① 同模型 zero-shot 评测：文本对齐带来了实际收益</h2>
+<p>将 E1fair 和 E2fair 的冻结 trunk 直接用于 zero-shot 分类（zs，即不训练任何分类器，直接用图文相似度匹配类别），结果如下：</p>
+<table>
+<tr><th>模型</th><th>zs top-1</th><th>lp top-1 (ProtB)</th><th>lp − zs gap</th></tr>
+<tr><td><strong>E1fair</strong>（w512/d30）</td><td><strong>34.10%</strong></td><td><strong>62.34%</strong></td><td><strong>+28.24pp</strong></td></tr>
+<tr><td><strong>E2fair</strong>（w768/d30）</td><td><strong>35.45%</strong></td><td><strong>62.51%</strong></td><td>+27.06pp</td></tr>
+<tr><td>随机基线</td><td>0.1%（1/1000）</td><td>—</td><td>—</td></tr>
+</table>
+<div class="card">
+<h3>关键发现</h3>
+<ul>
+<li><strong>zs 远高于随机</strong>（34.10% ≫ 0.1%）→ 视觉特征确实学到了与 CLIP 文本空间的对齐关系，冻结文本塔带来了实质性的语义对齐能力。</li>
+<li><strong>lp ≫ zs（+28pp）</strong>→ linear probe 从特征中提取的判别信息远超直接的文本相似度匹配。这表明 dense reconstruction 目标（masked-patch-MSE）贡献了对比学习本身无法捕获的表征质量。</li>
+<li><strong>E2fair zs > E1fair zs（+1.35pp）</strong>，但 lp gap 仅 +0.17pp → 更宽的模型在 zero-shot 文本对齐上有小幅优势，但在 linear probe 上无显著差异。</li>
+</ul>
+</div>
+
+<h2>5. ② probe 对照实验：62.34% 是特征质量天花板，非 probe 欠拟合</h2>
+<h3>5.1 k-NN probe</h3>
+<p>k-NN（k 近邻）是无需训练的纯特征质量度量。将 E1fair 特征用于 k-NN 分类：</p>
+<table>
+<tr><th>probe 类型</th><th>E1fair top-1</th><th>V3 top-1</th><th>vs lp (E1fair 62.34%)</th><th>vs zs (E1fair 34.10%)</th></tr>
+<tr><td>k-NN (k=5)</td><td>35.63%</td><td>35.63%</td><td>−26.71pp</td><td>+1.53pp</td></tr>
+<tr><td>k-NN (k=10)</td><td>37.97%</td><td>37.97%</td><td>−24.37pp</td><td>+3.87pp</td></tr>
+<tr><td><strong>k-NN (k=20)</strong></td><td><strong>37.68%</strong></td><td><strong>38.94%</strong></td><td>−24.66pp</td><td>+3.58pp</td></tr>
+</table>
+<p class="note">k-NN（37.68%）< lp（62.34%）属正常现象（高维特征中线性分类器远强于最近邻）；k-NN > zs（37.68% > 34.10%）确认特征空间具有合理的类结构。</p>
+
+<h3>5.2 ProtB probe sweep：×5 epoch + wd/Lr 扫描</h3>
+<p>为排查 90-epoch probe 是否欠拟合，我们系统性地扫描了 6 种 probe 配置：</p>
+<table>
+<tr><th>配置</th><th>E1fair top-1</th><th>Δ vs 基线 (62.33%)</th><th>解读</th></tr>
+<tr><td><strong>基线</strong>（90ep, lr=0.1, wd=0, seed=0）</td><td><strong>62.33%</strong></td><td>—</td><td>与注册值 62.34±0.01% 一致</td></tr>
+<tr><td><strong>×5 epoch</strong>（450ep, lr=0.1, wd=0）</td><td><strong>62.15%</strong></td><td class="bad">−0.18pp</td><td>训练 5 倍 epoch 反而<strong>略降</strong>（轻微过拟合）</td></tr>
+<tr><td>wd=1e-4（90ep, lr=0.1）</td><td>62.68%</td><td class="best">+0.35pp</td><td>边际改善，在噪声范围内</td></tr>
+<tr><td>wd=1e-3（90ep, lr=0.1）</td><td>61.25%</td><td class="bad">−1.08pp</td><td>正则化过强</td></tr>
+<tr><td>lr=0.01（90ep, wd=0）</td><td>62.39%</td><td>+0.06pp</td><td>基本相同</td></tr>
+<tr><td>lr=0.3（90ep, wd=0）</td><td>60.39%</td><td class="bad">−1.94pp</td><td>学习率过高，发散</td></tr>
+</table>
+
+<div class="svg-container">
+<svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" style="font-family:sans-serif;font-size:11px">
+<line x1="60" y1="250" x2="660" y2="250" stroke="#30363d" stroke-width="1.5"/>
+<line x1="60" y1="40" x2="60" y2="250" stroke="#30363d" stroke-width="1.5"/>
+<text x="50" y="254" text-anchor="end" fill="#8b949e">60%</text>
+<text x="50" y="204" text-anchor="end" fill="#8b949e">61%</text>
+<text x="50" y="154" text-anchor="end" fill="#8b949e">62%</text>
+<text x="50" y="104" text-anchor="end" fill="#8b949e">63%</text>
+<text x="50" y="54" text-anchor="end" fill="#8b949e">64%</text>
+<text x="20" y="145" text-anchor="middle" fill="#e6edf3" transform="rotate(-90 20 145)" font-size="12">ProtB top-1 (%)</text>
+<line x1="60" y1="150" x2="660" y2="150" stroke="#58a6ff" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+<text x="660" y="146" text-anchor="end" fill="#58a6ff" font-size="10">基线 62.33%</text>
+<rect x="80" y="150" width="40" height="100" fill="#58a6ff" opacity="0.8"/>
+<text x="100" y="265" text-anchor="middle" fill="#8b949e">基线</text>
+<text x="100" y="145" text-anchor="middle" fill="#58a6ff" font-size="10">62.33</text>
+<rect x="180" y="159" width="40" height="91" fill="#f85149" opacity="0.7"/>
+<text x="200" y="265" text-anchor="middle" fill="#8b949e">×5 epoch</text>
+<text x="200" y="154" text-anchor="middle" fill="#f85149" font-size="10">62.15</text>
+<rect x="280" y="133" width="40" height="117" fill="#3fb950" opacity="0.7"/>
+<text x="300" y="265" text-anchor="middle" fill="#8b949e">wd=1e-4</text>
+<text x="300" y="128" text-anchor="middle" fill="#3fb950" font-size="10">62.68</text>
+<rect x="380" y="205" width="40" height="45" fill="#f85149" opacity="0.7"/>
+<text x="400" y="265" text-anchor="middle" fill="#8b949e">wd=1e-3</text>
+<text x="400" y="200" text-anchor="middle" fill="#f85149" font-size="10">61.25</text>
+<rect x="480" y="147" width="40" height="103" fill="#58a6ff" opacity="0.8"/>
+<text x="500" y="265" text-anchor="middle" fill="#8b949e">lr=0.01</text>
+<text x="500" y="142" text-anchor="middle" fill="#58a6ff" font-size="10">62.39</text>
+<rect x="580" y="247" width="40" height="3" fill="#f85149" opacity="0.7"/>
+<text x="600" y="265" text-anchor="middle" fill="#8b949e">lr=0.3</text>
+<text x="600" y="242" text-anchor="middle" fill="#f85149" font-size="10">60.39</text>
+<text x="360" y="25" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="bold">ProtB Probe Sweep — 6 种配置对比（E1fair）</text>
+</svg>
+</div>
+
+<div class="conclusion-box">
+<h3>② 结论（决定性）</h3>
+<ul>
+<li><strong>×5 epoch（450ep）= 62.15% < 90ep 基线 62.33%</strong>：训练 5 倍 epoch 反而略降 → probe <strong>不存在欠拟合</strong>，90-epoch ProtB probe 已充分收敛。</li>
+<li><strong>wd/LR 扫描</strong>：无任何配置比基线高出 >0.35pp（最佳：wd=1e-4 → +0.35pp，在 1.5pp 噪声阈值内）→ probe 配置接近最优。</li>
+<li><strong>总结论：62.34% 是真实的特征质量天花板，不是 probe 的限制。</strong>瓶颈在特征质量（即目标函数与数据规模），不在评测方法。</li>
+</ul>
+</div>
+
+<h2>6. 变体实验：V2 Muon 优化器 与 V3 全量数据</h2>
+<div class="warn-box">
+<h3>6.1 V2 Muon 优化器：❌ 所有测试 LR 下均坍缩</h3>
+<table>
+<tr><th>尝试</th><th>LR</th><th>坍缩步数</th><th>坍缩时 C1</th><th>根因</th></tr>
+<tr><td>第 1 次</td><td>5e-4</td><td>step 2,100</td><td>0.99</td><td>Muon 正交化放大对比坍缩方向</td></tr>
+<tr><td>第 2 次</td><td>1e-4</td><td>（误报）</td><td>—</td><td>C2 guard bug（<code>gap<=0.005</code> 在负 gap 时误触）→ 已修为 <code>abs(gap)<=0.005</code></td></tr>
+<tr><td>第 3 次</td><td>1e-4</td><td>step 4,200</td><td>0.9569</td><td><strong>真实坍缩</strong>（与第 1 次同模式，但更慢）</td></tr>
+</table>
+<p><strong>C1 轨迹（第 3 次，lr=1e-4，14 个 PROBE 点，零回退）</strong>：</p>
+<p style="font-family:monospace;font-size:.85em;color:var(--muted)">step 300→0.18, 600→0.18, 900→0.23, 1200→0.32, 1500→0.44, 1800→0.60, 2100→0.74, 2400→0.82, 2700→0.86, 3000→0.89, 3300→0.92, 3600→0.93, 3900→0.95, <strong style="color:var(--red)">4200→0.9569</strong></p>
+<ul>
+<li>C1 上升<strong>单调且加速</strong>（0.18→0.96，3,900 步内）</li>
+<li>坍缩时 loss 仍在下降（7.39→7.30）——排除了优化失败（梯度爆炸/NaN），指向<strong>表征坍缩</strong></li>
+<li>5× 降 LR 仅将坍缩步数从 2,100 延缓到 4,200，终点相同</li>
+<li><strong>根因</strong>：Newton-Schulz 正交化强制梯度为单位范数，放大了主导坍缩方向；AdamW 的逐参数自适应缩放天然抑制了这一效应</li>
+</ul>
+<p><strong>裁定</strong>：❌ Muon 与 AIMv2-style 对比+重建目标函数不兼容。Δlp 无法计算（坍缩后 C1=0.9569 → 特征趋近常数 → lp≈随机）。已终止评测以释放 GPU 供 V3 使用。</p>
+</div>
+
+<div class="card">
+<h3>6.2 V3 全量 GPIC 数据：Δ+1.18pp → 零结果（Null）</h3>
+<table>
+<tr><th>字段</th><th>值</th></tr>
+<tr><td>测试变量</td><td>GPIC：7437 tar → 8000 tar（全量下载 2026-10-10 完成）</td></tr>
+<tr><td>步数</td><td><strong>230,598</strong>（全量数据 1 epoch，按数据量计算）</td></tr>
+<tr><td>数据组成</td><td>GPIC 8000×12,639=101.1M + CC12M 11.0M + Amshaker 5.95M = <strong>118.1M 对</strong></td></tr>
+<tr><td>其余配置</td><td>与 E1fair 基线逐字节相同</td></tr>
+<tr><td>训练状态</td><td>✅ 完成（2026-10-11 02:06–12:44，230,598 步，final_loss=0.1201，steady 2,706 img/s，总时长 ~10.6h）。无坍缩——C1 稳定 0.50–0.53，C2_gap +0.19~+0.20</td></tr>
+</table>
+<p><strong>四指标交叉对比</strong>（所有指标一致地 +0.8~+1.4pp 高于 E1fair）：</p>
+<table>
+<tr><th>指标</th><th>E1fair</th><th>V3</th><th>Δ</th></tr>
+<tr><td>ProtB（3 seeds）</td><td>62.34±0.01%</td><td><strong>63.52±0.01%</strong></td><td>+1.18pp</td></tr>
+<tr><td>ProtA</td><td>49.70%</td><td>50.53%</td><td>+0.83pp</td></tr>
+<tr><td>zero-shot top-1</td><td>34.10%</td><td>35.52%</td><td>+1.42pp</td></tr>
+<tr><td>k-NN (k=20)</td><td>37.68%</td><td>38.94%</td><td>+1.26pp</td></tr>
+<tr><td>lp − zs gap</td><td>+28.24pp</td><td>+28.00pp</td><td>−0.24pp（稳定）</td></tr>
+</table>
+<p>四个独立指标（ProtA/B、zs、k-NN）一致的 +1~1.4pp 偏移确认 V3 特征确实略好，但所有 Δ 均在 1.5pp 噪声阈值内 → <strong>Null 裁定成立</strong>：+7.6% 更多 GPIC 数据 + 23% 更多步数<em>不是</em>性价比高的改进。</p>
+<p class="note">⚠️ 披露：此臂同时改变了数据量（+7.6% GPIC）和步数（+23.2%），结论应表述为"全量配方（数据+步数联合）vs 基线"，非"纯数据消融"。</p>
+</div>
+
+<h2>7. ④ epoch 缩放（核心发现）：2 epoch → ProtB 65.37%，收益中等</h2>
+<div class="card">
+<h3>7.1 实验设计</h3>
+<p><strong>问题</strong>：E1fair ProtB=62.34% 是预算不足还是特征/目标函数天花板？</p>
+<p><strong>设计</strong>：与 E1fair 同数据/目标/协议/调度，仅增加 epoch 数。E1fair = 1 epoch（187,101 步，95.8M 对）；④-2ep = 2 epoch（374,202 步）。若 2ep ≥ 70%（Δlp ≥ +7.66pp）则启动 4ep；否则报告为"中等收益，递减"。</p>
+<table>
+<tr><th>字段</th><th>值</th></tr>
+<tr><td>测试变量</td><td>epoch 数：1 → 2</td></tr>
+<tr><td>④-2ep 步数</td><td><strong>374,202</strong>（= 2 × 187,101）</td></tr>
+<tr><td>数据</td><td>E1fair 冻结快照（total_shards=10,787，95.8M 对，<strong>非</strong> V3 全量数据）</td></tr>
+<tr><td>调度</td><td>lr=5e-4, warmup=2000, cosine, min_lr=5e-5（与 E1fair 相同）</td></tr>
+<tr><td>其余配置</td><td>与 E1fair 基线逐字节相同（AdamW, seed 1234, w512/d30, 224/p16, AIMv2-style）</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h3>7.2 训练状态</h3>
+<p>✅ <strong>训练 + 全量评测完成</strong>（2026-10-11 18:25 → 10-12 13:42）：</p>
+<ul>
+<li>374,202 步（= 2 × 187,101），总时长 59,616s（~16.6h），steady 2,416.1 img/s，final_loss=0.1856</li>
+<li><strong>C1 从 ep1 → ep2 提升</strong>：0.515（ep1 均值 @step~186k）→ 0.574（ep2 均值 @step~374k）= <strong>+0.059</strong>——对比对齐增强</li>
+<li>C2_gap=+0.1844，C4 全程 OK——<strong>无坍缩</strong></li>
+<li>37 个 checkpoint（10k–370k）+ 最终 vision.pt（509MB）</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>7.3 评测结果（四指标一致 +3~4.4pp）</h3>
+<table>
+<tr><th>指标</th><th>E1fair（1 ep）</th><th>④-2ep（2 ep）</th><th>Δ</th></tr>
+<tr><td><strong>ProtB（3 seeds）</strong></td><td>62.34 ± 0.01%</td><td><strong>65.37 ± 0.01%</strong></td><td class="best"><strong>+3.03pp</strong></td></tr>
+<tr><td>ProtA</td><td>49.70%</td><td><strong>53.82%</strong></td><td class="best"><strong>+4.12pp</strong></td></tr>
+<tr><td>zero-shot top-1</td><td>34.10%</td><td><strong>38.52%</strong>（top5: 70.81%）</td><td class="best"><strong>+4.42pp</strong></td></tr>
+<tr><td>k-NN (k=20)</td><td>37.68%</td><td><strong>40.67%</strong></td><td class="best"><strong>+2.99pp</strong></td></tr>
+<tr><td>k-NN (k=10)</td><td>37.97%</td><td>40.10%</td><td>+2.13pp</td></tr>
+<tr><td>k-NN (k=5)</td><td>35.63%</td><td>37.85%</td><td>+2.22pp</td></tr>
+</table>
+<p>四个独立指标一致的 +3~4.4pp 提升——确认 2 epoch 训练带来了<strong>真实的、跨指标一致的</strong>特征质量提升。</p>
+</div>
+
+<div class="card">
+<h3>7.4 预注册裁定</h3>
+<table>
+<tr><th>裁定区间</th><th>条件</th><th>含义</th></tr>
+<tr><td>正面</td><td>Δlp ≥ +7.66pp（lp ≥ 70%）</td><td>预算不足 → 启动 4ep</td></tr>
+<tr><td><strong>中等（MODERATE）</strong></td><td><strong>Δlp +1.5~7.66pp</strong></td><td><strong>有收益但递减 → 不启动 4ep（除非运维要求）</strong></td></tr>
+<tr><td>零结果</td><td>|Δlp| < 1.5pp</td><td>1 epoch 足够 → 特征/目标函数是瓶颈</td></tr>
+<tr><td>负面</td><td>Δlp ≤ −1.5pp</td><td>更多 epoch 有害（过拟合）→ 保持 1 epoch</td></tr>
+</table>
+<div class="moderate-box">
+<h3>🎯 裁定结果：MODERATE（中等收益）</h3>
+<p>Δlp(ProtB) = <strong>+3.03pp</strong>，落在预注册的 <strong>+1.5~7.66pp</strong> 区间内 → "有收益，但呈递减趋势"。</p>
+<p><strong>决策</strong>：不启动 4 epoch 训练（除非运维明确要求）。2 epoch 的 +3.03pp 增益虽真实，但边际收益递减（从 1→2 ep 获 +3.03pp，推测 2→4 ep 增益将更小），不值得 ~160 GPU·h / ~20h 的额外成本。</p>
+</div>
+</div>
+
+<h2>8. lp–epoch 曲线</h2>
+<p>下图展示 ProtB linear-probe 准确率随训练 epoch 的变化趋势，并标注了预注册判定阈值：</p>
+<div class="svg-container">
+<svg viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg" style="font-family:sans-serif;font-size:11px">
+<rect x="0" y="0" width="700" height="360" fill="#0d1117"/>
+<line x1="80" y1="300" x2="660" y2="300" stroke="#30363d" stroke-width="1.5"/>
+<line x1="80" y1="30" x2="80" y2="300" stroke="#30363d" stroke-width="1.5"/>
+<text x="72" y="304" text-anchor="end" fill="#8b949e">58%</text>
+<line x1="80" y1="261" x2="660" y2="261" stroke="#30363d" stroke-width="0.5" stroke-dasharray="2,2"/>
+<text x="72" y="265" text-anchor="end" fill="#8b949e">60%</text>
+<line x1="80" y1="223" x2="660" y2="223" stroke="#30363d" stroke-width="0.5" stroke-dasharray="2,2"/>
+<text x="72" y="227" text-anchor="end" fill="#8b949e">62%</text>
+<line x1="80" y1="184" x2="660" y2="184" stroke="#30363d" stroke-width="0.5" stroke-dasharray="2,2"/>
+<text x="72" y="188" text-anchor="end" fill="#8b949e">64%</text>
+<line x1="80" y1="145" x2="660" y2="145" stroke="#30363d" stroke-width="0.5" stroke-dasharray="2,2"/>
+<text x="72" y="149" text-anchor="end" fill="#8b949e">66%</text>
+<line x1="80" y1="107" x2="660" y2="107" stroke="#30363d" stroke-width="0.5" stroke-dasharray="2,2"/>
+<text x="72" y="111" text-anchor="end" fill="#8b949e">68%</text>
+<line x1="80" y1="68" x2="660" y2="68" stroke="#30363d" stroke-width="0.5" stroke-dasharray="2,2"/>
+<text x="72" y="72" text-anchor="end" fill="#8b949e">70%</text>
+<text x="30" y="165" text-anchor="middle" fill="#e6edf3" transform="rotate(-90 30 165)" font-size="12">ProtB linear-probe top-1 (%)</text>
+<text x="140" y="318" text-anchor="middle" fill="#8b949e">1 epoch</text>
+<text x="300" y="318" text-anchor="middle" fill="#8b949e">2 epoch</text>
+<text x="460" y="318" text-anchor="middle" fill="#8b949e">3 epoch</text>
+<text x="620" y="318" text-anchor="middle" fill="#8b949e">4 epoch</text>
+<text x="380" y="340" text-anchor="middle" fill="#e6edf3" font-size="12">训练 epoch 数</text>
+<line x1="80" y1="68" x2="660" y2="68" stroke="#3fb950" stroke-width="1" stroke-dasharray="6,3" opacity="0.6"/>
+<text x="660" y="63" text-anchor="end" fill="#3fb950" font-size="10">正面阈值 70%（Δ+7.66pp）→ 启动 4ep</text>
+<line x1="80" y1="211" x2="660" y2="211" stroke="#d29922" stroke-width="1" stroke-dasharray="6,3" opacity="0.5"/>
+<text x="660" y="207" text-anchor="end" fill="#d29922" font-size="10">中等区间上界 63.84%（Δ+1.5pp）</text>
+<circle cx="140" cy="223" r="7" fill="#58a6ff" stroke="#e6edf3" stroke-width="1.5"/>
+<text x="140" y="215" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="bold">62.34%</text>
+<circle cx="300" cy="165" r="7" fill="#3fb950" stroke="#e6edf3" stroke-width="1.5"/>
+<text x="300" y="157" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="bold">65.37%</text>
+<line x1="140" y1="223" x2="300" y2="165" stroke="#58a6ff" stroke-width="2" opacity="0.6"/>
+<line x1="300" y1="165" x2="620" y2="140" stroke="#d29922" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.4"/>
+<circle cx="620" cy="140" r="5" fill="none" stroke="#d29922" stroke-width="1.5" stroke-dasharray="3,2"/>
+<text x="620" y="132" text-anchor="middle" fill="#d29922" font-size="10" opacity="0.6">~67%？（推测）</text>
+<text x="220" y="210" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="bold">Δ +3.03pp</text>
+<text x="220" y="225" text-anchor="middle" fill="#8b949e" font-size="9">MODERATE</text>
+<rect x="90" y="35" width="220" height="48" fill="#161b22" stroke="#30363d" rx="4"/>
+<circle cx="105" cy="50" r="5" fill="#58a6ff"/>
+<text x="118" y="54" fill="#e6edf3" font-size="10">E1fair（1 epoch）= 62.34%</text>
+<circle cx="105" cy="68" r="5" fill="#3fb950"/>
+<text x="118" y="72" fill="#e6edf3" font-size="10">④-2ep（2 epoch）= 65.37%</text>
+<text x="380" y="20" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="bold">ProtB lp–epoch 曲线（含预注册判定阈值标注）</text>
+</svg>
+</div>
+<p class="note">3 epoch 点为推测（虚线），实际未训练；4 epoch 同理。图中可见 1→2 epoch 增益 +3.03pp，但未达正面阈值 70%，落在中等区间内。</p>
+
+<h2>9. 全量结果汇总表</h2>
+<table>
+<tr><th>变体</th><th>ProtB (3 seeds)</th><th>ProtA</th><th>zero-shot</th><th>k-NN (k=20)</th><th>Δlp vs E1fair</th><th>裁定</th></tr>
+<tr><td><strong>E1fair</strong>（基线）</td><td>62.34 ± 0.01%</td><td>49.70%</td><td>34.10%</td><td>37.68%</td><td>—</td><td>—</td></tr>
+<tr><td>V1（分辨率 336）</td><td colspan="6"><span class="tag tag-warn">暂缓</span>（用户："明天再说"，本轮未跑）</td></tr>
+<tr><td>V2（Muon 优化器）</td><td colspan="6"><span class="tag tag-fail">坍缩</span> C1=0.9569@step4200 · ❌ Muon 与 AIMv2-style 目标函数不兼容</td></tr>
+<tr><td>V3（全量数据）</td><td><strong>63.52 ± 0.01%</strong></td><td>50.53%</td><td>35.52%</td><td>38.94%</td><td>+1.18pp</td><td>✅ Null（|Δ|&lt;1.5pp）</td></tr>
+<tr><td><strong>④-2ep</strong>（2× epoch）</td><td><strong>65.37 ± 0.01%</strong></td><td><strong>53.82%</strong></td><td><strong>38.52%</strong>（top5: 70.81%）</td><td><strong>40.67%</strong></td><td class="best"><strong>+3.03pp</strong></td><td><span class="tag tag-moderate">MODERATE</span>（+1.5~7.66pp，递减，不启动 4ep）</td></tr>
+</table>
+
+<div class="svg-container">
+<svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" style="font-family:sans-serif;font-size:11px">
+<rect x="0" y="0" width="700" height="320" fill="#0d1117"/>
+<text x="350" y="22" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="bold">四指标跨变体对比（E1fair vs V3 vs ④-2ep）</text>
+<line x1="80" y1="280" x2="660" y2="280" stroke="#30363d" stroke-width="1.5"/>
+<line x1="80" y1="40" x2="80" y2="280" stroke="#30363d" stroke-width="1.5"/>
+<text x="72" y="284" text-anchor="end" fill="#8b949e">30%</text>
+<text x="72" y="224" text-anchor="end" fill="#8b949e">40%</text>
+<text x="72" y="164" text-anchor="end" fill="#8b949e">50%</text>
+<text x="72" y="104" text-anchor="end" fill="#8b949e">60%</text>
+<text x="72" y="44" text-anchor="end" fill="#8b949e">70%</text>
+<text x="25" y="160" text-anchor="middle" fill="#e6edf3" transform="rotate(-90 25 160)" font-size="12">准确率 (%)</text>
+<rect x="95" y="89" width="28" height="191" fill="#58a6ff" opacity="0.85"/>
+<text x="109" y="84" text-anchor="middle" fill="#58a6ff" font-size="9">62.3</text>
+<rect x="128" y="162" width="28" height="118" fill="#bc8cff" opacity="0.85"/>
+<text x="142" y="157" text-anchor="middle" fill="#bc8cff" font-size="9">49.7</text>
+<rect x="161" y="255" width="28" height="25" fill="#39d2c5" opacity="0.85"/>
+<text x="175" y="250" text-anchor="middle" fill="#39d2c5" font-size="9">34.1</text>
+<rect x="194" y="234" width="28" height="46" fill="#e8873c" opacity="0.85"/>
+<text x="208" y="229" text-anchor="middle" fill="#e8873c" font-size="9">37.7</text>
+<text x="160" y="298" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="bold">E1fair (1ep)</text>
+<rect x="275" y="82" width="28" height="198" fill="#58a6ff" opacity="0.85"/>
+<text x="289" y="77" text-anchor="middle" fill="#58a6ff" font-size="9">63.5</text>
+<rect x="308" y="157" width="28" height="123" fill="#bc8cff" opacity="0.85"/>
+<text x="322" y="152" text-anchor="middle" fill="#bc8cff" font-size="9">50.5</text>
+<rect x="341" y="247" width="28" height="33" fill="#39d2c5" opacity="0.85"/>
+<text x="355" y="242" text-anchor="middle" fill="#39d2c5" font-size="9">35.5</text>
+<rect x="374" y="226" width="28" height="54" fill="#e8873c" opacity="0.85"/>
+<text x="388" y="221" text-anchor="middle" fill="#e8873c" font-size="9">38.9</text>
+<text x="340" y="298" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="bold">V3 (全量数据)</text>
+<rect x="455" y="69" width="28" height="211" fill="#58a6ff" opacity="0.85"/>
+<text x="469" y="64" text-anchor="middle" fill="#58a6ff" font-size="9" font-weight="bold">65.4</text>
+<rect x="488" y="137" width="28" height="143" fill="#bc8cff" opacity="0.85"/>
+<text x="502" y="132" text-anchor="middle" fill="#bc8cff" font-size="9" font-weight="bold">53.8</text>
+<rect x="521" y="229" width="28" height="51" fill="#39d2c5" opacity="0.85"/>
+<text x="535" y="224" text-anchor="middle" fill="#39d2c5" font-size="9" font-weight="bold">38.5</text>
+<rect x="554" y="216" width="28" height="64" fill="#e8873c" opacity="0.85"/>
+<text x="568" y="211" text-anchor="middle" fill="#e8873c" font-size="9" font-weight="bold">40.7</text>
+<text x="520" y="298" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="bold">④-2ep (2 epoch)</text>
+<rect x="90" y="35" width="280" height="28" fill="#161b22" stroke="#30363d" rx="4"/>
+<rect x="100" y="44" width="12" height="10" fill="#58a6ff" opacity="0.85"/>
+<text x="118" y="53" fill="#e6edf3" font-size="10">ProtB</text>
+<rect x="160" y="44" width="12" height="10" fill="#bc8cff" opacity="0.85"/>
+<text x="178" y="53" fill="#e6edf3" font-size="10">ProtA</text>
+<rect x="220" y="44" width="12" height="10" fill="#39d2c5" opacity="0.85"/>
+<text x="238" y="53" fill="#e6edf3" font-size="10">zero-shot</text>
+<rect x="290" y="44" width="12" height="10" fill="#e8873c" opacity="0.85"/>
+<text x="308" y="53" fill="#e6edf3" font-size="10">k-NN (k=20)</text>
+</svg>
+</div>
+
+<h2>10. 结论与下一步</h2>
+<div class="conclusion-box">
+<h3>对外部评审的完整回应</h3>
+<p>外部评审质疑 E1fair ProtB=62.34% 偏低。经 ③→①→②→④ 四步系统复核，结论如下：</p>
+<ol>
+<li><strong>③ 口径</strong>：62.34% 标注为 BaiZe internal protocol (ProtB)，与外部方法因目标函数/数据/文本塔/评测协议/训练规模五维不同而<strong>不可同表比较</strong>。</li>
+<li><strong>① zero-shot</strong>：E1fair zs=34.10% ≫ 随机 0.1% → 冻结文本塔带来了实质对齐收益；lp−zs gap +28pp → dense reconstruction 目标贡献了对比学习之外的表征质量。</li>
+<li><strong>② probe</strong>：×5 epoch（450ep）= 62.15% &lt; 90ep 基线；wd/LR 扫描最高 +0.35pp → probe <strong>不存在欠拟合</strong> → 62.34% 是<strong>真实的特征质量天花板</strong>。</li>
+<li><strong>变体</strong>：V2 Muon 全 LR 坍缩（与 AIMv2-style 不兼容）；V3 全量数据 +1.18pp → Null（不可分辨）。</li>
+<li><strong>④ epoch 缩放</strong>：2 epoch → ProtB <strong>65.37%</strong>（Δ+3.03pp），四指标一致 +3~4.4pp → <strong>MODERATE</strong>（有收益但递减）→ 不启动 4ep。</li>
+</ol>
+<p><strong>最终判断</strong>：62.34% 是当前数据规模（95.8M · 1ep）与目标函数（AIMv2-style）下的特征质量天花板。增加训练预算（2 epoch）可获得 +3.03pp 的中等收益，但边际递减；换优化器（Muon）不可行；加 7.6% 数据不可分辨。瓶颈在<strong>数据规模与目标函数</strong>，不在架构、评测方法或 probe 配置。</p>
+</div>
+
+<div class="card">
+<h3>下一步方向</h3>
+<table>
+<tr><th>方向</th><th>内容</th><th>预估成本</th></tr>
+<tr><td><strong>Stage (iv) MLLM 对齐</strong></td><td>将视觉编码器接入多模态大模型，进行下游评测（image→script / 版图 VQA）</td><td>需特征提取 + 缓存管线（~0.5 天 CPU+轻 GPU）</td></tr>
+<tr><td><strong>w384 AIMv2 交叉验证</strong></td><td>R10 已证 w384 InfoNCE 最优；AIMv2 在 w384 是否放大翻盘是最大空白</td><td>~16 GPU·h / ~2h</td></tr>
+<tr><td><strong>336 分辨率 AIMv2</strong></td><td>同时验证高分辨率 dense 假说 + 为 Stage iv 分辨率选型提供数据</td><td>~24 GPU·h / ~3h（吞吐降 ~40%）</td></tr>
+<tr><td><strong>更长 caption</strong></td><td>当前 caption 偏短（~20 token），官方用 LLaMA-3 长合成 caption → 对比学习监督密度受限</td><td>需数据准备 + 训练</td></tr>
+<tr><td><strong>4 epoch（如有需要）</strong></td><td>运维明确要求时可启动，~160 GPU·h / ~20h，预期增益递减</td><td>~160 GPU·h</td></tr>
+</table>
+</div>
+
+<div class="refs">
+<p><strong>数据来源</strong>：<code>MEMORY_VISION.md</code>（状态头 + 运维问答）· <code>EXPERIMENTS_VISION.md §8.3</code>（参照系说明）· <code>§9.0–§9.6</code>（基线 + 变体 + epoch 缩放 + probe 对照 + zero-shot）· <code>vision/lp_epoch_curve.png</code>（lp-epoch 曲线图）</p>
+<p><strong>关联报告</strong>：<code>report_vision_variants_20261011.html</code>（变体实验英文版）· <code>report_vision_scaling_fair.html</code>（公平性重跑）· <code>report_vision_muon_collapse.html</code>（Muon 坍缩分析）· <code>report_vision_lp_protocol.html</code>（评测协议研究）</p>
+<p><strong>口径声明</strong>：本报告中所有绝对 lp / zs / k-NN 数字均使用 BaiZe internal protocol，不可与 CLIP / DINOv2 / MAE / iBOT 等外部方法的公开数字同表比较。</p>
+</div>
+
+</body>
+</html>

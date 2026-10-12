@@ -23,7 +23,7 @@ WAITING: 1
 | PHASE | ✅ V3 eval ALL COMPLETE. ✅ ② probe sweep COMPLETE. ✅ Variant reports ALL DELIVERED. ✅ **④-2ep TRAINING + ALL EVAL COMPLETE** (374,202 steps, 16.6h, C1 0.51→0.58, no collapse). **ProtB 65.37±0.01% (Δ+3.03pp), ProtA 53.82% (Δ+4.12pp), zs 38.52% (Δ+4.42pp), k-NN 40.67% (Δ+2.99pp). VERDICT: MODERATE → no 4ep unless operator requests.** lp-epoch curve plot generated. **Awaiting operator review of ④ results.** |
 | ERROR_COUNT | 14（①~⑫ 同前 ⑬ Duplicate V3 eval ⑭ sympy ImportError blocked auto-eval — fixed） |
 | BUDGET_USED | ~927 GPU·h (V3 ~106, ② ~1, ④-2ep ~80 done / ~94 total) |
-| 更新 | **2026-10-12 16:00 (wake #24)**: Monitoring wake — all tasks complete, no new operator instructions since 2026-10-10 block. Git synced (main=origin/main), 8 GPUs idle on .12. Still awaiting operator review of ④-2ep results (ProtB 65.37±0.01%, Δ+3.03pp, MODERATE). All ③①②④ + V1/V2/V3 variants done, all reports delivered. 📦 体积：TASK=28.2KB / MEMORY=31.8KB |
+| 更新 | **2026-10-12 16:46 (wake #25)**: Operator instruction 2026-10-12 — wrote **中文版综合报告** `vision/report_vision_final_20261012_zh.html`（36KB, 10节, 3 SVG, 全中文, ≤200KB✅）covering ③→①→②→④ 全链路. Added §9.7 summary to EXPERIMENTS_VISION.md. All numbers consistent with §8.3–§9.6. 📦 体积：TASK=27.7KB / MEMORY=31.8KB（归档 0KB） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）

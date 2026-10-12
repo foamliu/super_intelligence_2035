@@ -1076,3 +1076,10 @@ The uniform +1~1.4pp shift across all 4 independent metrics (ProtA/B, zs, k-NN) 
 | Did features benefit from text alignment? | **Yes** — zs=34.10% ≫ chance 0.1%, and lp=62.34% ≫ zs=34.10% (+28pp) | ① table above |
 | Is the probe underfitting? | **No** — ×5 epochs (450ep) gives 62.15% (−0.18pp vs 90ep), wd/LR sweep max +0.35pp | ② table above |
 | Is 62.34% a feature quality ceiling or probe limitation? | **Feature quality ceiling** — probe is well-converged across all 6 configurations; no probe config exceeds 62.68% | ② table above |
+
+---
+
+### §9.7 中文版综合报告（2026-10-12，operator instruction）
+
+> **文件**：`vision/report_vision_final_20261012_zh.html`（36KB，单文件内联 CSS/SVG，10 节 + 3 SVG 图表，全中文）。
+> **覆盖**：背景 → ③ 口径修订 → ① zero-shot（E1fair 34.10% / E2fair 35.45%，lp−zs gap ~28pp）→ ② probe 对照（×5ep=62.15%→probe 未欠拟合→62.34% 即特征质量天花板）→ 变体实验（V2 Muon 全 LR 坍缩❌ / V3 全量数据 ProtB 63.52% Δ+1.18pp Null）→ ④ epoch scaling（2ep ProtB 65.37±0.01% Δ+3.03pp / ProtA 53.82% / zs 38.52% / k-NN 40.67%，MODERATE）→ lp-epoch 曲线 → 结论与下一步。所有数字与本文件 §8.3–§9.6 完全一致，口径标 BaiZe internal protocol。
