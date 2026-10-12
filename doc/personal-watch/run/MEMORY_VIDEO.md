@@ -12,11 +12,11 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 ✅ → 18_暖阳 31/54 镜成片 ✅（后台 I2V 批次续跑中）
-已完成:       S1 ✅；S2 ✅（样板章端到端）；S3 18_暖阳 31/54 镜成片；手机 UI 系列 16 帧全生成；固化 gen_ep18_h3_i2v/t2v + update_ep18_manifest 三脚本
-当前动作:     （本轮：核验 31/54 镜 mp4 → manifest 19→31 verified → 固化脚本 commit+push；后台批次 gen_ep18_h3_i2v.py --skip-existing PID 9136 正在续跑 SHOT-49+）
-下一步:       收尾 I2V 批次（剩余 I2V 18 镜：03/09/12/16/21/23/30/34/35/38/40/43/44/49/50/51/52/53）→ 跑 gen_ep18_h3_t2v.py（15/20/27/28/54，5 镜）→ 字幕/音效BGM → 合成（★ 音画钉长）
-阻塞:         无硬阻塞。数据流 T2V 5 镜无参考图（走 T2V）；其余 I2V 18 镜帧已备（16 UI + 2 车内）。
+PHASE:        S3 放量 ✅ → 18_暖阳 49/54 镜成片（I2V 49/49 全收 ✅；T2V 5 镜后台续跑中）
+已完成:       S1 ✅；S2 ✅；S3 18_暖阳 I2V 49/49 镜成片；手机 UI 16 帧；固化 gen_ep18_h3_i2v/t2v + update_ep18_manifest + gen_ep18_subtitles + synth_ep18 五脚本
+当前动作:     （本轮：manifest 31→49 verified；新增字幕/合成两脚本并 dry-run 验证；生成 EP18_暖阳_字幕.srt 96 条；后台 T2V 批次 gen_ep18_h3_t2v.py --skip-existing PID 4588 续跑 15/20/27/28/54）
+下一步:       收 T2V 5 镜（15/20/27/28/54，steps=20 约 2h）→ 跑 synth_ep18.py 合成（★ 音画钉长 + 闸门）→ BGM/音效 → 成片
+阻塞:         无硬阻塞。仅剩 T2V 5 镜（无参考图走 T2V，后台运行中）。
 ERROR_COUNT:  0
 ```
 
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-12（S3 续跑 · 核验 31/54 镜成片 + 固化 manifest/scripts + commit+push；后台 I2V 批次续跑中）
+- **上次唤醒**：2026-10-12（S3 续跑 · manifest 31→49 + 固化字幕/合成两脚本 + 生成 SRT；后台 T2V 批次续跑中）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,14 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-12 · S3 续跑 · 18_暖阳 I2V 49/49 全收 + 固化字幕/合成两脚本 ✅（T2V 后台续跑中）**：本轮收尾 I2V + 备好字幕/合成脚本。
+  - **核验（验收式陈述）**：`update_ep18_manifest.py` ffprobe 扫 49 镜 mp4 → manifest **31→49 verified**（h264 1056×608 24fps + aac，时长精确吻合 §4.1 `17k+5`：3.042/4.458/5.167/6.583s）。I2V 批次（后台 `--skip-existing`）已全收。
+  - **新增字幕脚本**：`gen_ep18_subtitles.py`（从各镜 H3 prompt 的 `Audio:` 提取中文台词→字幕，无台词镜（英文音景）自动跳过；py_compile + dry-run 通过）→ 生成 `EP18_暖阳_字幕.srt`（**96 条 · 6514B** · 全片 273.33s）。
+  - **新增合成脚本**：`synth_ep18.py`（54 镜 concat，**★音画钉长**：每段音频 `aresample=32000,aformat=stereo,apad,atrim=0:<镜时长>,asetpts=N/SR/TB` + 闸门 |音轨−画面|<0.15s + 🚫 禁 `-shortest`；dry-run 正确识别缺 5 T2V 镜）。
+  - **git**：records 仓 `pull --rebase` 同步 11 commits（他线）；短剧仓 up-to-date。
+  - **后台**：T2V 批次 `gen_ep18_h3_t2v.py --skip-existing`（PID 4588，steps=20）续跑 5 镜，ComfyUI 队列 running=1。
+  - **下一步**：收 T2V 5 镜 → `synth_ep18.py` 合成 → BGM/音效 → 成片（★ 音画钉长 + 逐镜内容偏移验收）。
 
 - **2026-10-12 · S3 续跑 · 18_暖阳 I2V 批次收 31/54 镜成片 ✅（后台批次续跑中）**：核验 31 镜 mp4 → manifest 19→31 → 固化脚本 commit+push。
   - **核验（验收式陈述）**：`update_ep18_manifest.py --dry-run` + ffprobe 逐镜核验 **31/54 镜 mp4**（h264 1056×608 24fps + aac，时长吻合 §4.1 `17k+5`：3.042/4.458/5.167/6.583s）。新增 12 镜（07/17/29/31/32/39/41/42/45/46/47/48）。
