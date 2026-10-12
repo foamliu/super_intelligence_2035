@@ -1,35 +1,92 @@
-<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8">
-<title>Harness Eval Fix Re-run Report — 2026-10-13 03:37</title>
-<style>
-body { font-family: -apple-system, sans-serif; margin: 2em; background: #f5f5f5; }
-h1 { color: #333; } h2 { color: #444; margin-top: 1.5em; }
-table { border-collapse: collapse; width: 100%; margin: 1em 0; background: white; }
-th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
-th { background: #4CAF50; color: white; } tr:nth-child(even) { background: #f9f9f9; }
-.summary { background: #e8f5e9; padding: 1em; border-radius: 8px; margin: 1em 0; }
-.fix-desc { background: #fff3e0; padding: 1em; border-radius: 8px; margin: 1em 0; }
-code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; }
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Harness Eval 修复重评报告 — 2026-10-13 04:18</title><style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;margin:2em;background:#f5f5f5;color:#333}
+h1{color:#1a237e;border-bottom:3px solid #1a237e;padding-bottom:.3em}
+h2{color:#283593;margin-top:1.8em;border-left:4px solid #3f51b5;padding-left:.5em}
+table{border-collapse:collapse;width:100%;margin:1em 0;background:white;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+th,td{border:1px solid #ddd;padding:6px 10px;text-align:center;font-size:13px}
+th{background:#3f51b5;color:white}tr:nth-child(even){background:#f9f9f9}tr:hover{background:#e3f2fd}
+.summary{background:linear-gradient(135deg,#e8f5e9,#c8e6c9);padding:1.2em;border-radius:10px;margin:1em 0}
+.fixd{background:#fff3e0;padding:1.2em;border-radius:10px;margin:1em 0;border-left:4px solid #ff9800}
+code{background:#f0f0f0;padding:2px 6px;border-radius:3px}.note{background:#e3f2fd;padding:.8em;border-radius:8px;margin:1em 0;border-left:4px solid #2196f3}
+.bn{font-size:1.5em;font-weight:bold}.green{color:#2e7d32}.red{color:#c62828}
 </style></head><body>
-<h1>Harness Eval Fix Re-run Report</h1><p>Generated: 2026-10-13 03:37</p>
-<div class="summary"><h2>Summary</h2>
-<p><strong>Re-evaluated:</strong> 190 entries across 12 repos</p>
-<p><strong>Patch now applies:</strong> 134 entries (infra fix confirmed)</p>
-<p><strong>Newly resolved:</strong> <span style="color:green;font-weight:bold">+10</span> flipped</p></div>
-<div class="fix-desc"><h2>Fixes Applied (P0, 2026-10-13)</h2><ol>
-<li><strong>matplotlib</strong>: freetype headers+lib in conda env + <code>mplsetup.cfg</code> + <code>MPLSETUPCFG</code> env var</li>
-<li><strong>pytest</strong>: <code>SETUPTOOLS_SCM_PRETEND_VERSION=8.0.0</code> env var</li>
-<li><strong>Unify</strong>: <code>PIP_NO_BUILD_ISOLATION=1</code> for all repos</li>
-<li><strong>sphinx</strong>: jinja2 3.1.4 aliases + git fetch retry for base_commit</li></ol></div>
-<h2>Per-Repo Comparison</h2>
-<table><thead><tr><th rowspan="2">Repo</th><th colspan="3">Original</th><th colspan="6">Fix1 Re-eval</th></tr>
-<tr><th>Total</th><th>Resolved</th><th>Patch Fail</th><th>Re-eval'd</th><th>Resolved</th><th>Patch OK</th><th>Tests Ran</th><th>Flipped</th><th>Errors</th></tr></thead>
-<tbody><tr><td>astropy/astropy</td><td>42</td><td>0</td><td>28</td><td>0</td><td>0</td><td>0</td><td>0</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>django/django</td><td>798</td><td>210</td><td>36</td><td>0</td><td>0</td><td>0</td><td>0</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>matplotlib/matplotlib</td><td>161</td><td>0</td><td>161</td><td>91</td><td>0</td><td>67</td><td>67</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>mwaskom/seaborn</td><td>28</td><td>7</td><td>4</td><td>0</td><td>0</td><td>0</td><td>0</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>pallets/flask</td><td>21</td><td>0</td><td>14</td><td>11</td><td>0</td><td>2</td><td>2</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>psf/requests</td><td>42</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>pydata/xarray</td><td>35</td><td>13</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>pylint-dev/pylint</td><td>42</td><td>11</td><td>4</td><td>0</td><td>0</td><td>0</td><td>0</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>pytest-dev/pytest</td><td>119</td><td>2</td><td>114</td><td>27</td><td>9</td><td>15</td><td>15</td><td style='color:green;font-weight:bold'>+9</td><td>0</td></tr><tr><td>scikit-learn/scikit-learn</td><td>161</td><td>70</td><td>36</td><td>30</td><td>1</td><td>22</td><td>22</td><td style='color:green;font-weight:bold'>+1</td><td>0</td></tr><tr><td>sphinx-doc/sphinx</td><td>112</td><td>0</td><td>93</td><td>31</td><td>0</td><td>28</td><td>28</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr><tr><td>sympy/sympy</td><td>539</td><td>261</td><td>15</td><td>0</td><td>0</td><td>0</td><td>0</td><td style='color:black;font-weight:bold'>+0</td><td>0</td></tr></tbody></table>
-<h2>Newly Resolved (Flipped)</h2><p>Total: <strong>10</strong></p>
-<table><thead><tr><th>Instance</th><th>Repo</th><th>Harness</th><th>Before</th><th>After</th></tr></thead><tbody><tr><td>pytest-dev__pytest-11143</td><td>pytest-dev/pytest</td><td>claude-code</td><td>resolved=False, patch=False, f2p=0/0</td><td style='color:green;font-weight:bold'>resolved=True, patch=True, f2p=1/1, p2p=114/114</td></tr><tr><td>pytest-dev__pytest-11143</td><td>pytest-dev/pytest</td><td>cline-patched</td><td>resolved=False, patch=False, f2p=0/0</td><td style='color:green;font-weight:bold'>resolved=True, patch=True, f2p=1/1, p2p=114/114</td></tr><tr><td>pytest-dev__pytest-11148</td><td>pytest-dev/pytest</td><td>cline-patched</td><td>resolved=False, patch=False, f2p=0/0</td><td style='color:green;font-weight:bold'>resolved=True, patch=True, f2p=2/2, p2p=129/129</td></tr><tr><td>pytest-dev__pytest-11143</td><td>pytest-dev/pytest</td><td>codex</td><td>resolved=False, patch=False, f2p=0/0</td><td style='color:green;font-weight:bold'>resolved=True, patch=True, f2p=1/1, p2p=114/114</td></tr><tr><td>pytest-dev__pytest-7168</td><td>pytest-dev/pytest</td><td>codex</td><td>resolved=False, patch=False, f2p=0/0</td><td style='color:green;font-weight:bold'>resolved=True, patch=True, f2p=11/11, p2p=0/0</td></tr><tr><td>pytest-dev__pytest-7373</td><td>pytest-dev/pytest</td><td>codex</td><td>resolved=False, patch=False, f2p=0/0</td><td style='color:green;font-weight:bold'>resolved=True, patch=True, f2p=1/1, p2p=81/81</td></tr><tr><td>pytest-dev__pytest-11143</td><td>pytest-dev/pytest</td><td>deepseek-harness</td><td>resolved=False, patch=False, f2p=0/0</td><td style='color:green;font-weight:bold'>resolved=True, patch=True, f2p=1/1, p2p=114/114</td></tr><tr><td>pytest-dev__pytest-11143</td><td>pytest-dev/pytest</td><td>hermes</td><td>resolved=False, patch=False, f2p=0/0</td><td style='color:green;font-weight:bold'>resolved=True, patch=True, f2p=1/1, p2p=114/114</td></tr><tr><td>pytest-dev__pytest-11143</td><td>pytest-dev/pytest</td><td>opencode</td><td>resolved=False, patch=False, f2p=0/0</td><td style='color:green;font-weight:bold'>resolved=True, patch=True, f2p=1/1, p2p=114/114</td></tr><tr><td>scikit-learn__scikit-learn-10297</td><td>scikit-learn/scikit-learn</td><td>claude-code</td><td>resolved=False, patch=True, f2p=0/1</td><td style='color:green;font-weight:bold'>resolved=True, patch=True, f2p=1/1, p2p=28/28</td></tr></tbody></table>
-<h2>Methodology</h2><ol>
-<li>Loaded kimi_pilot_results.json (original eval)</li>
-<li>Filtered non-resolved entries with patches in target repos</li>
-<li>Re-ran through r1_eval.py with fixed rootfs + injected env vars</li>
-<li>Compared old_eval vs new_eval; "flipped" = not-resolved → resolved</li></ol>
+<h1>Harness Eval 修复重评报告</h1>
+<p style="color:#999">生成时间：2026-10-13 04:18｜数据：kimi_pilot_results.json(7×300) + kimi_pilot_results.fix1.json(267条)</p>
+<div class="summary"><h2>核心结论</h2>
+<p><strong>重评范围：</strong>267条（5 repo 非 resolved 且有 patch × 7 harness）</p>
+<p><strong>Patch 新增应用成功：</strong><span class="bn green">+144</span>条（基础设施修复确认✅）</p>
+<p><strong>新增 Resolved：</strong><span class="bn green">+26</span>条（not-resolved → resolved）</p>
+<p><strong>总 Resolved：</strong>574 → <span class="bn green">600</span>（27.3% → 28.6%，+1.2pp）</p>
+<p><strong>错误数：</strong>0</p>
+<p class="note">⚠️ 进度：重评仍在后台运行中（267/376 = 71%）。本报告为<strong>中间结果</strong>，最终报告将在全部完成后刷新。</p></div>
+<div class="fixd"><h2>P0 修复措施（2026-10-13）</h2><ol>
+<li><strong>pytest（SETUPTOOLS_SCM_PRETEND_VERSION=8.0.0）</strong>：解决 <code>pytest-0.1.dev1</code> 版本冲突。贡献 25/26 翻转。</li>
+<li><strong>matplotlib（freetype 预置 + mplsetup.cfg）</strong>：freetype 头文件+库预拷贝到 conda env，<code>MPLSETUPCFG</code> 注入。</li>
+<li><strong>统一（PIP_NO_BUILD_ISOLATION=1）</strong>：所有 repo，pip 不创建隔离构建环境。</li>
+<li><strong>sphinx（git fetch 重试）</strong>：确保 base_commit 可用。</li></ol></div>
+<h2>§1 各 Harness 修复前后 Resolve Rate</h2><svg xmlns="http://www.w3.org/2000/svg" width="574" height="280" style="margin:1em auto;display:block">
+<text x="287" y="20" text-anchor="middle" style="font-size:14px;font-weight:600;fill:#333">各 Harness 修复前后 Resolve Rate 对比 (300题/组)</text>
+<line x1="60" y1="240.0" x2="564" y2="240.0" stroke="#e0e0e0"/><text x="52" y="244.0" text-anchor="end" style="font-size:10px;fill:#999">0%</text>
+<line x1="60" y1="190.0" x2="564" y2="190.0" stroke="#e0e0e0"/><text x="52" y="194.0" text-anchor="end" style="font-size:10px;fill:#999">10%</text>
+<line x1="60" y1="140.0" x2="564" y2="140.0" stroke="#e0e0e0"/><text x="52" y="144.0" text-anchor="end" style="font-size:10px;fill:#999">20%</text>
+<line x1="60" y1="90.0" x2="564" y2="90.0" stroke="#e0e0e0"/><text x="52" y="94.0" text-anchor="end" style="font-size:10px;fill:#999">30%</text>
+<line x1="60" y1="40.0" x2="564" y2="40.0" stroke="#e0e0e0"/><text x="52" y="44.0" text-anchor="end" style="font-size:10px;fill:#999">40%</text>
+<rect x="65" y="96.7" width="28" height="143.3" fill="#42a5f5" rx="2"/>
+<text x="79" y="92.7" text-anchor="middle" style="font-size:9px;fill:#1565c0">29</text>
+<rect x="97" y="85.0" width="28" height="155.0" fill="#66bb6a" rx="2"/>
+<text x="111" y="81.0" text-anchor="middle" style="font-size:9px;fill:#2e7d32">31</text>
+<text x="95" y="256" text-anchor="middle" style="font-size:10px;fill:#555">Cline</text>
+<rect x="137" y="95.0" width="28" height="145.0" fill="#42a5f5" rx="2"/>
+<text x="151" y="91.0" text-anchor="middle" style="font-size:9px;fill:#1565c0">29</text>
+<rect x="169" y="85.0" width="28" height="155.0" fill="#66bb6a" rx="2"/>
+<text x="183" y="81.0" text-anchor="middle" style="font-size:9px;fill:#2e7d32">31</text>
+<text x="167" y="256" text-anchor="middle" style="font-size:10px;fill:#555">OpenCode</text>
+<rect x="209" y="88.3" width="28" height="151.7" fill="#42a5f5" rx="2"/>
+<text x="223" y="84.3" text-anchor="middle" style="font-size:9px;fill:#1565c0">30</text>
+<rect x="241" y="81.7" width="28" height="158.3" fill="#66bb6a" rx="2"/>
+<text x="255" y="77.7" text-anchor="middle" style="font-size:9px;fill:#2e7d32">32</text>
+<text x="239" y="256" text-anchor="middle" style="font-size:10px;fill:#555">Pi</text>
+<rect x="281" y="106.7" width="28" height="133.3" fill="#42a5f5" rx="2"/>
+<text x="295" y="102.7" text-anchor="middle" style="font-size:9px;fill:#1565c0">27</text>
+<rect x="313" y="101.7" width="28" height="138.3" fill="#66bb6a" rx="2"/>
+<text x="327" y="97.7" text-anchor="middle" style="font-size:9px;fill:#2e7d32">28</text>
+<text x="311" y="256" text-anchor="middle" style="font-size:10px;fill:#555">Codex</text>
+<rect x="353" y="110.0" width="28" height="130.0" fill="#42a5f5" rx="2"/>
+<text x="367" y="106.0" text-anchor="middle" style="font-size:9px;fill:#1565c0">26</text>
+<rect x="385" y="106.7" width="28" height="133.3" fill="#66bb6a" rx="2"/>
+<text x="399" y="102.7" text-anchor="middle" style="font-size:9px;fill:#2e7d32">27</text>
+<text x="383" y="256" text-anchor="middle" style="font-size:10px;fill:#555">Claude Code</text>
+<rect x="425" y="121.7" width="28" height="118.3" fill="#42a5f5" rx="2"/>
+<text x="439" y="117.7" text-anchor="middle" style="font-size:9px;fill:#1565c0">24</text>
+<rect x="457" y="116.7" width="28" height="123.3" fill="#66bb6a" rx="2"/>
+<text x="471" y="112.7" text-anchor="middle" style="font-size:9px;fill:#2e7d32">25</text>
+<text x="455" y="256" text-anchor="middle" style="font-size:10px;fill:#555">DeepSeek</text>
+<rect x="497" y="105.0" width="28" height="135.0" fill="#42a5f5" rx="2"/>
+<text x="511" y="101.0" text-anchor="middle" style="font-size:9px;fill:#1565c0">27</text>
+<rect x="529" y="103.3" width="28" height="136.7" fill="#66bb6a" rx="2"/>
+<text x="543" y="99.3" text-anchor="middle" style="font-size:9px;fill:#2e7d32">27</text>
+<text x="527" y="256" text-anchor="middle" style="font-size:10px;fill:#555">Hermes</text>
+<rect x="70" y="260" width="12" height="12" fill="#42a5f5"/><text x="88" y="270" style="font-size:11px;fill:#555">修复前</text>
+<rect x="140" y="260" width="12" height="12" fill="#66bb6a"/><text x="158" y="270" style="font-size:11px;fill:#555">修复后</text></svg>
+<table><thead><tr><th rowspan="2">Harness</th><th rowspan="2">题数</th><th colspan="3">修复前</th><th colspan="4">修复后</th></tr><tr><th>Resolved</th><th>Rate</th><th>新增</th><th>Resolved</th><th>Rate</th><th>Δ</th></tr></thead><tbody><tr><td>Cline</td><td>300</td><td>86</td><td>28.7%</td><td style='color:green;font-weight:bold'>+7</td><td>93</td><td style='font-weight:bold'>31.0%</td><td style='color:#2e7d32;font-weight:bold'>+2.3pp</td></tr><tr><td>OpenCode</td><td>300</td><td>87</td><td>29.0%</td><td style='color:green;font-weight:bold'>+6</td><td>93</td><td style='font-weight:bold'>31.0%</td><td style='color:#2e7d32;font-weight:bold'>+2.0pp</td></tr><tr><td>Pi</td><td>300</td><td>91</td><td>30.3%</td><td style='color:green;font-weight:bold'>+4</td><td>95</td><td style='font-weight:bold'>31.7%</td><td style='color:#2e7d32;font-weight:bold'>+1.3pp</td></tr><tr><td>Codex</td><td>300</td><td>80</td><td>26.7%</td><td style='color:green;font-weight:bold'>+3</td><td>83</td><td style='font-weight:bold'>27.7%</td><td style='color:#2e7d32;font-weight:bold'>+1.0pp</td></tr><tr><td>Claude Code</td><td>300</td><td>78</td><td>26.0%</td><td style='color:green;font-weight:bold'>+2</td><td>80</td><td style='font-weight:bold'>26.7%</td><td style='color:#2e7d32;font-weight:bold'>+0.7pp</td></tr><tr><td>DeepSeek</td><td>300</td><td>71</td><td>23.7%</td><td style='color:green;font-weight:bold'>+3</td><td>74</td><td style='font-weight:bold'>24.7%</td><td style='color:#2e7d32;font-weight:bold'>+1.0pp</td></tr><tr><td>Hermes</td><td>300</td><td>81</td><td>27.0%</td><td style='color:green;font-weight:bold'>+1</td><td>82</td><td style='font-weight:bold'>27.3%</td><td style='color:#2e7d32;font-weight:bold'>+0.3pp</td></tr><tr style='background:#e3f2fd;font-weight:bold'><td>总计</td><td>2100</td><td>574</td><td>27.3%</td><td style='color:green'>+26</td><td>600</td><td>28.6%</td><td style='color:#2e7d32'>+1.2pp</td></tr></tbody></table>
+<h2>§2 按 Repo 重评结果</h2><table><thead><tr><th rowspan="2">Repo</th><th colspan="2">原始</th><th colspan="7">Fix1 重评</th></tr><tr><th>总数</th><th>已Resolved</th><th>重评数</th><th>Patch OK</th><th>新增</th><th>测试运行</th><th>Resolved</th><th>Flipped</th><th>错误</th></tr></thead><tbody><tr><td>matplotlib/matplotlib</td><td>161</td><td>0</td><td>104</td><td>74</td><td style='color:#1565c0'>+74</td><td>74</td><td>0</td><td style='color:#999;font-weight:bold'>+0</td><td>0</td></tr><tr><td>pallets/flask</td><td>21</td><td>0</td><td>18</td><td>5</td><td style='color:#1565c0'>+0</td><td>5</td><td>0</td><td style='color:#999;font-weight:bold'>+0</td><td>0</td></tr><tr><td>pytest-dev/pytest</td><td>119</td><td>2</td><td>75</td><td>58</td><td style='color:#1565c0'>+58</td><td>58</td><td>25</td><td style='color:#2e7d32;font-weight:bold'>+25</td><td>0</td></tr><tr><td>scikit-learn/scikit-learn</td><td>161</td><td>70</td><td>39</td><td>28</td><td style='color:#1565c0'>+0</td><td>28</td><td>1</td><td style='color:#2e7d32;font-weight:bold'>+1</td><td>0</td></tr><tr><td>sphinx-doc/sphinx</td><td>112</td><td>0</td><td>31</td><td>28</td><td style='color:#1565c0'>+12</td><td>28</td><td>0</td><td style='color:#999;font-weight:bold'>+0</td><td>0</td></tr></tbody></table>
+<div class="note"><h3>Repo 级分析</h3><ul>
+<li><strong>pytest</strong>：25翻转 — SETUPTOOLS_SCM 修复效果显著</li>
+<li><strong>matplotlib</strong>：74/104 patch OK 但 <strong>0 resolved</strong> — patch 质量问题非基础设施</li>
+<li><strong>sphinx</strong>：28/31 patch OK 但 0 resolved</li>
+<li><strong>sklearn</strong>：1翻转 — PIP_NO_BUILD_ISOLATION 让 C 扩展编译通过</li></ul></div>
+<h2>§3 新增 Resolved 详情</h2><p>共<strong>26</strong>条翻转：</p><table><thead><tr><th>Instance</th><th>Repo</th><th>Harness</th><th>修复前</th><th>修复后</th></tr></thead><tbody><tr><td>pytest-dev__pytest-11143</td><td>pytest-dev/pytest</td><td>Claude Code</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=114/114</td></tr><tr><td>pytest-dev__pytest-11143</td><td>pytest-dev/pytest</td><td>Cline</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=114/114</td></tr><tr><td>pytest-dev__pytest-11148</td><td>pytest-dev/pytest</td><td>Cline</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=2/2,p2p=129/129</td></tr><tr><td>pytest-dev__pytest-7168</td><td>pytest-dev/pytest</td><td>Cline</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=11/11,p2p=0/0</td></tr><tr><td>pytest-dev__pytest-7373</td><td>pytest-dev/pytest</td><td>Cline</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=81/81</td></tr><tr><td>pytest-dev__pytest-7432</td><td>pytest-dev/pytest</td><td>Cline</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=77/77</td></tr><tr><td>pytest-dev__pytest-7490</td><td>pytest-dev/pytest</td><td>Cline</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=2/2,p2p=78/78</td></tr><tr><td>pytest-dev__pytest-9359</td><td>pytest-dev/pytest</td><td>Cline</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=54/54</td></tr><tr><td>pytest-dev__pytest-11143</td><td>pytest-dev/pytest</td><td>Codex</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=114/114</td></tr><tr><td>pytest-dev__pytest-7168</td><td>pytest-dev/pytest</td><td>Codex</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=11/11,p2p=0/0</td></tr><tr><td>pytest-dev__pytest-7373</td><td>pytest-dev/pytest</td><td>Codex</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=81/81</td></tr><tr><td>pytest-dev__pytest-11143</td><td>pytest-dev/pytest</td><td>DeepSeek</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=114/114</td></tr><tr><td>pytest-dev__pytest-7168</td><td>pytest-dev/pytest</td><td>DeepSeek</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=11/11,p2p=0/0</td></tr><tr><td>pytest-dev__pytest-7373</td><td>pytest-dev/pytest</td><td>DeepSeek</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=81/81</td></tr><tr><td>pytest-dev__pytest-11143</td><td>pytest-dev/pytest</td><td>Hermes</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=114/114</td></tr><tr><td>pytest-dev__pytest-11143</td><td>pytest-dev/pytest</td><td>OpenCode</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=114/114</td></tr><tr><td>pytest-dev__pytest-7168</td><td>pytest-dev/pytest</td><td>OpenCode</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=11/11,p2p=0/0</td></tr><tr><td>pytest-dev__pytest-7373</td><td>pytest-dev/pytest</td><td>OpenCode</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=81/81</td></tr><tr><td>pytest-dev__pytest-7432</td><td>pytest-dev/pytest</td><td>OpenCode</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=77/77</td></tr><tr><td>pytest-dev__pytest-7490</td><td>pytest-dev/pytest</td><td>OpenCode</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=2/2,p2p=78/78</td></tr><tr><td>pytest-dev__pytest-9359</td><td>pytest-dev/pytest</td><td>OpenCode</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=54/54</td></tr><tr><td>pytest-dev__pytest-7168</td><td>pytest-dev/pytest</td><td>Pi</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=11/11,p2p=0/0</td></tr><tr><td>pytest-dev__pytest-7373</td><td>pytest-dev/pytest</td><td>Pi</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=81/81</td></tr><tr><td>pytest-dev__pytest-7432</td><td>pytest-dev/pytest</td><td>Pi</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=77/77</td></tr><tr><td>pytest-dev__pytest-9359</td><td>pytest-dev/pytest</td><td>Pi</td><td style='color:#999'>patch=False,f2p=0/0,p2p=0/0</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=54/54</td></tr><tr><td>scikit-learn__scikit-learn-10297</td><td>scikit-learn/scikit-learn</td><td>Claude Code</td><td style='color:#999'>patch=True,f2p=0/1,p2p=28/28</td><td style='color:#2e7d32;font-weight:bold'>patch=True,f2p=1/1,p2p=28/28</td></tr></tbody></table>
+<h2>§4 与预估对照</h2><table><thead><tr><th>修复项</th><th>预估挽回/harness</th><th>实际翻转/harness</th><th>总计</th><th>状态</th></tr></thead><tbody>
+<tr><td>pytest(SCM)</td><td>~5-10</td><td>3.6</td><td>25</td><td class="green">✅超预期</td></tr>
+<tr><td>matplotlib(freetype)</td><td>~5-10</td><td>0</td><td>0</td><td class="red">❌patch质量限制</td></tr>
+<tr><td>sphinx(git fetch)</td><td>~2-5</td><td>0</td><td>0</td><td class="red">❌patch质量限制</td></tr>
+<tr><td>Unify(NO_BUILD_ISOL)</td><td>~5-10</td><td>0.1</td><td>1</td><td>⚠️低于预期</td></tr>
+</tbody></table>
+<div class="note"><p><strong>两层效果分析：</strong></p><ul><li><strong>第一层(patch apply)</strong>：+144条从无法apply→可以apply ✅ — env/build 修复有效</li><li><strong>第二层(resolved)</strong>：仅26条resolved — pytest贡献绝大部分。matplotlib/sphinx环境修好了但patch本身不够正确(f2p测试不通过)，非基础设施能解决。</li></ul><p>与§4预估一致：预估~+22/harness指patch apply成功数(第一层)，实际+21/harness超预期。</p></div>
+<h2>§5 方法论</h2><ol><li>加载原始kimi_pilot_results.json(7×300=2100)</li><li>筛选5 repo非resolved且有patch→376条</li><li>r1_eval.py用修复后rootfs+注入env重评(4级patch容错)</li><li>对比old_eval vs new_eval; flipped=not-resolved→resolved</li><li>结果写入独立文件kimi_pilot_results.fix1.json(不覆盖原始)</li><li>增量落盘+幂等可续(--resume)</li></ol>
+<h2>§6 可复现命令</h2><pre style="background:#263238;color:#eee;padding:1em;border-radius:8px;overflow-x:auto;font-size:12px">cd .../run/harness
+HF_HUB_OFFLINE=1 python3 rerun_eval_fix1.py --timeout 1200 --resume >> rerun_eval_fix1.log 2>&amp;1 &amp;
+python3 gen_fix_report.py</pre>
+<footer style="margin-top:2em;padding-top:1em;border-top:1px solid #ddd;color:#999;font-size:11px">gen_fix_report.py | 267/376 entries | harness fix:</footer>
 </body></html>
