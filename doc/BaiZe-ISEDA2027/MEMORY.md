@@ -7,7 +7,7 @@
 - **① harness 深挖令**（`fea9b643`）：7×300 **module 失败 vs `pbf`** 占比 + 根因（**unshare 共享 env** vs 官方 per-instance conda）+ 可解决性 + **web 对照** → `report_harness_eval_rootcause.html`。🚫 不占 GPU。
 - **② vision OV-1.5 复现计划**（`42d8c075`）：**基模 Qwen3.5-4B + ms-swift**，数据齐（除 85M），估 H100×8 → `report_vision_llava_ov15_repro_plan.html`（已交付）。
 - **③ video 下一章**（`1a522061`）：暖阳后做 `13_外骨骼`；旧原型 legacy TTS ⇒ 重做（去 TTS）。✅ 已开跑。
-- **④ video 流水线改判**（`9d3559cb`）：角色镜**弃「T2I 首帧→I2V」** ⇒ **定妆照 + H3 R2V 直出**（`megapixels≤0.4`；多角色 `<Picture 1/2>`）；非人物首选 R2V/T2V。覆盖 `PIPELINE.md §1/§2`。
+- **④ video 推翻重做**（`9d3559cb`·`34ecbafa`）：**角色镜弃「T2I 首帧→I2V」⇒ 一律走 stem_fest 标准 `r2v`**（定妆照/合影 + 场景图；无角色 `t2v`）；**现有 T2I→I2V 成果（18_暖阳 / 13_外骨骼）删除重做**；改 `PIPELINE.md` + `PLAYBOOK §3` 路由。
 - **⑤ recruit 人数上限 ×10**（`9606d8d9`）：`≤2–3 人/批` ⇒ **`≤20–30 人/批`**（`≥60min`/不群发/台账/风控即停 保留）。
 - **⑥ research 邮件**（`07f47211`·`b424233f`·`c1d0d90b`）：**每日论文日报**（选 3–5 篇下 PDF 发 `paul.liu@cxmt.com`，每天 1 封，`research/pdf/` 不入 git）；作者信**中文（中国人）+ 免审直发**。
 - **流水**：见 `daily-memories/2026-10-12.md`。
