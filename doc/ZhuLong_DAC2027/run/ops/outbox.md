@@ -8804,3 +8804,78 @@ hfeg0tedaap02
 2302289 opencode run --dir /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run --auto -
 === DONE ===
 ```
+
+---
+
+## RUN_ID 64 · 2026-10-12 15:58:15 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 64 · 现场健康核对
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] loop + opencode 进程 ==="
+pgrep -af 'zhulong_loop[.]sh' | cut -c1-90
+pgrep -af 'opencode run --dir' | cut -c1-110
+echo "=== [2] loop 日志尾（最近周期）==="
+tail -25 /tmp/zhulong_loop.log | cut -c1-170
+echo "=== [3] r5 评测进程 ==="
+pgrep -af 'run_cline_script' | cut -c1-100 | head -3
+echo "=== [4] r5 log 健康（Forbidden / 汇总）==="
+grep -c -i 'forbidden' /tmp/ABL_full_v3_r5_8650set.log 2>/dev/null || echo 0
+grep -oE 'run_code=[0-9]+' /tmp/ABL_full_v3_r5_8650set.log 2>/dev/null | tail -1
+ls -la /tmp/ABL_full_v3_r5_8650set.log 2>/dev/null | cut -c1-80
+echo "=== [5] 中继 alive ==="
+pgrep -af 'zhulong_ops_relay[.]sh' | cut -c1-90
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] ===
+hfeg0tedaap02
+2026-10-12 15:58:15
+=== [1] loop + opencode 进程 ===
+2302281 bash doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+2837146 timeout -k 15 2700 opencode run --dir /nasdata/app.e0031982/code/super_intelligenc
+2837147 opencode run --dir /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_
+2837146 timeout -k 15 2700 opencode run --dir /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_D
+2837147 opencode run --dir /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run --auto -
+=== [2] loop 日志尾（最近周期）===
+
+Full output saved to: /home/app.e0031982/.local/share/opencode/tool-output/tool_12f1d5d8d001VqMVXW6DS1VPL3
+
+2837147 opencode run --dir /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run --auto -m glm/glm-5.2 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 
+2850305 /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_eval.py -g completed_code_generation_2026_1012_131007.js
+2902093 /bin/bash -c pgrep -af 'run_eval.py' 2>/dev/null; echo "---"; wc -l /tmp/ABL_full_v3_r5_regrade.log; echo "---tail---"; tail -10 /tmp/ABL_full_v3_r5_regrade.log
+---
+19 /tmp/ABL_full_v3_r5_regrade.log
+---tail---
+2026-10-12 15:46:04,258 - INFO - --- [阶段2] 开始：组装可执行脚本 ---
+2026-10-12 15:46:04,263 - INFO - 配置 'clean_main_block' 为 True。将从 'completion' 中移除 __main__ 代码块。
+2026-10-12 15:46:04,264 - INFO - 已创建并清空输出目录: /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_solutions
+2026-10-12 15:46:04,264 - INFO - 从 benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl 读取评测问题...
+2026-10-12 15:46:04,267 - INFO - 成功加载 158 个问题的测试代码。
+2026-10-12 15:46:04,267 - INFO - 从 /nasdata/app.e0031982/code/EDA-Eval-Framework/../../../../home/app.e0031982/eda_code_eval/completed_code_generation_2026_1012_131007.
+2026-10-12 15:46:04,268 - INFO - 开始组装脚本...
+组装脚本:   0%|          | 0/158 [00:00<?, ?it/s]组装脚本:  49%|████▉     | 78/158 [00:00<00:00, 742.27it/s]组装脚本: 100%|███████�
+2026-10-12 15:46:04,460 - INFO - 成功组装并保存了 145 个脚本到 /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_solutions
+2026-10-12 15:46:04,460 - INFO - --- [阶段2] 完成：所有脚本已准备就绪，可以进行外部执行。 ---
+[0m
+仍在运行中（PID 2850305，沙箱执行已缓冲）。已经运行了约 10 分钟，应该很快就会完成。让我再等一会儿。
+[0m$ [0msleep 60; pgrep -f 'run_eval.py' 2>/dev/null | head -1; echo "LINES:$(wc -l < /tmp/ABL_full_v3_r5_regrade.log)"
+2837146
+LINES:19
+[0m
+=== [3] r5 评测进程 ===
+2837146 timeout -k 15 2700 opencode run --dir /nasdata/app.e0031982/code/super_intelligence_2035/doc
+2837147 opencode run --dir /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/ru
+=== [4] r5 log 健康（Forbidden / 汇总）===
+1
+-rw-r--r-- 1 app.e0031982 app.adm 25805727 Oct 12 15:44 /tmp/ABL_full_v3_r5_8650
+=== [5] 中继 alive ===
+2837146 timeout -k 15 2700 opencode run --dir /nasdata/app.e0031982/code/super_intelligenc
+2837147 opencode run --dir /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_
+2908561 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zh
+3277328 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zh
+=== DONE ===
+```
