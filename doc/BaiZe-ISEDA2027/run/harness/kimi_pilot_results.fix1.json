@@ -1636,5 +1636,1591 @@
     },
     "flipped": "",
     "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/matplotlib__matplotlib-22835"
+  },
+  {
+    "key": "opencode|matplotlib__matplotlib-23299",
+    "instance_id": "matplotlib__matplotlib-23299",
+    "repo": "matplotlib/matplotlib",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 192
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/opencode-kimi-k2.6-cloud/matplotlib__matplotlib-23299"
+  },
+  {
+    "key": "claude-code|matplotlib__matplotlib-23314",
+    "instance_id": "matplotlib__matplotlib-23314",
+    "repo": "matplotlib/matplotlib",
+    "harness": "claude-code",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 1,
+      "f2p_total": 1,
+      "p2p_pass": 853,
+      "p2p_total": 862
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/claude-code-kimi-k2.6-cloud/matplotlib__matplotlib-23314"
+  },
+  {
+    "key": "cline-patched|matplotlib__matplotlib-23314",
+    "instance_id": "matplotlib__matplotlib-23314",
+    "repo": "matplotlib/matplotlib",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 1,
+      "f2p_total": 1,
+      "p2p_pass": 853,
+      "p2p_total": 862
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/matplotlib__matplotlib-23314"
+  },
+  {
+    "key": "deepseek-harness|matplotlib__matplotlib-18869",
+    "instance_id": "matplotlib__matplotlib-18869",
+    "repo": "matplotlib/matplotlib",
+    "harness": "deepseek-harness",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 4,
+      "p2p_pass": 0,
+      "p2p_total": 3
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/deepseek-harness-kimi-k2.6-cloud/matplotlib__matplotlib-18869"
+  },
+  {
+    "key": "opencode|matplotlib__matplotlib-23314",
+    "instance_id": "matplotlib__matplotlib-23314",
+    "repo": "matplotlib/matplotlib",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 1,
+      "f2p_total": 1,
+      "p2p_pass": 853,
+      "p2p_total": 862
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/opencode-kimi-k2.6-cloud/matplotlib__matplotlib-23314"
+  },
+  {
+    "key": "pi|matplotlib__matplotlib-23299",
+    "instance_id": "matplotlib__matplotlib-23299",
+    "repo": "matplotlib/matplotlib",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 192
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/matplotlib__matplotlib-23299"
+  },
+  {
+    "key": "cline-patched|matplotlib__matplotlib-23476",
+    "instance_id": "matplotlib__matplotlib-23476",
+    "repo": "matplotlib/matplotlib",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 104
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/matplotlib__matplotlib-23476"
+  },
+  {
+    "key": "pi|matplotlib__matplotlib-23314",
+    "instance_id": "matplotlib__matplotlib-23314",
+    "repo": "matplotlib/matplotlib",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 1,
+      "f2p_total": 1,
+      "p2p_pass": 853,
+      "p2p_total": 862
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/matplotlib__matplotlib-23314"
+  },
+  {
+    "key": "opencode|matplotlib__matplotlib-23476",
+    "instance_id": "matplotlib__matplotlib-23476",
+    "repo": "matplotlib/matplotlib",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 104
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/opencode-kimi-k2.6-cloud/matplotlib__matplotlib-23476"
+  },
+  {
+    "key": "deepseek-harness|matplotlib__matplotlib-22835",
+    "instance_id": "matplotlib__matplotlib-22835",
+    "repo": "matplotlib/matplotlib",
+    "harness": "deepseek-harness",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 24
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/deepseek-harness-kimi-k2.6-cloud/matplotlib__matplotlib-22835"
+  },
+  {
+    "key": "pi|matplotlib__matplotlib-23476",
+    "instance_id": "matplotlib__matplotlib-23476",
+    "repo": "matplotlib/matplotlib",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 104
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/matplotlib__matplotlib-23476"
+  },
+  {
+    "key": "claude-code|pallets__flask-4045",
+    "instance_id": "pallets__flask-4045",
+    "repo": "pallets/flask",
+    "harness": "claude-code",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/claude-code-kimi-k2.6-cloud/pallets__flask-4045"
+  },
+  {
+    "key": "opencode|pallets__flask-4045",
+    "instance_id": "pallets__flask-4045",
+    "repo": "pallets/flask",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/opencode-kimi-k2.6-cloud/pallets__flask-4045"
+  },
+  {
+    "key": "cline-patched|pallets__flask-4045",
+    "instance_id": "pallets__flask-4045",
+    "repo": "pallets/flask",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/pallets__flask-4045"
+  },
+  {
+    "key": "pi|pallets__flask-4045",
+    "instance_id": "pallets__flask-4045",
+    "repo": "pallets/flask",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/pallets__flask-4045"
+  },
+  {
+    "key": "deepseek-harness|pallets__flask-4045",
+    "instance_id": "pallets__flask-4045",
+    "repo": "pallets/flask",
+    "harness": "deepseek-harness",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/deepseek-harness-kimi-k2.6-cloud/pallets__flask-4045"
+  },
+  {
+    "key": "claude-code|pytest-dev__pytest-11143",
+    "instance_id": "pytest-dev__pytest-11143",
+    "repo": "pytest-dev/pytest",
+    "harness": "claude-code",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": true,
+      "patch_applied": true,
+      "f2p_pass": 1,
+      "f2p_total": 1,
+      "p2p_pass": 114,
+      "p2p_total": 114
+    },
+    "flipped": "RESOLVED\u2192",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/claude-code-kimi-k2.6-cloud/pytest-dev__pytest-11143"
+  },
+  {
+    "key": "cline-patched|pytest-dev__pytest-11143",
+    "instance_id": "pytest-dev__pytest-11143",
+    "repo": "pytest-dev/pytest",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": true,
+      "patch_applied": true,
+      "f2p_pass": 1,
+      "f2p_total": 1,
+      "p2p_pass": 114,
+      "p2p_total": 114
+    },
+    "flipped": "RESOLVED\u2192",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/pytest-dev__pytest-11143"
+  },
+  {
+    "key": "opencode|pytest-dev__pytest-11143",
+    "instance_id": "pytest-dev__pytest-11143",
+    "repo": "pytest-dev/pytest",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": true,
+      "patch_applied": true,
+      "f2p_pass": 1,
+      "f2p_total": 1,
+      "p2p_pass": 114,
+      "p2p_total": 114
+    },
+    "flipped": "RESOLVED\u2192",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/opencode-kimi-k2.6-cloud/pytest-dev__pytest-11143"
+  },
+  {
+    "key": "pi|pytest-dev__pytest-11143",
+    "instance_id": "pytest-dev__pytest-11143",
+    "repo": "pytest-dev/pytest",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/pytest-dev__pytest-11143"
+  },
+  {
+    "key": "cline-patched|pytest-dev__pytest-11148",
+    "instance_id": "pytest-dev__pytest-11148",
+    "repo": "pytest-dev/pytest",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": true,
+      "patch_applied": true,
+      "f2p_pass": 2,
+      "f2p_total": 2,
+      "p2p_pass": 129,
+      "p2p_total": 129
+    },
+    "flipped": "RESOLVED\u2192",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/pytest-dev__pytest-11148"
+  },
+  {
+    "key": "deepseek-harness|pytest-dev__pytest-11143",
+    "instance_id": "pytest-dev__pytest-11143",
+    "repo": "pytest-dev/pytest",
+    "harness": "deepseek-harness",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": true,
+      "patch_applied": true,
+      "f2p_pass": 1,
+      "f2p_total": 1,
+      "p2p_pass": 114,
+      "p2p_total": 114
+    },
+    "flipped": "RESOLVED\u2192",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/deepseek-harness-kimi-k2.6-cloud/pytest-dev__pytest-11143"
+  },
+  {
+    "key": "pi|pytest-dev__pytest-11148",
+    "instance_id": "pytest-dev__pytest-11148",
+    "repo": "pytest-dev/pytest",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/pytest-dev__pytest-11148"
+  },
+  {
+    "key": "pi|pytest-dev__pytest-5103",
+    "instance_id": "pytest-dev__pytest-5103",
+    "repo": "pytest-dev/pytest",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/pytest-dev__pytest-5103"
+  },
+  {
+    "key": "pi|pytest-dev__pytest-5221",
+    "instance_id": "pytest-dev__pytest-5221",
+    "repo": "pytest-dev/pytest",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/pytest-dev__pytest-5221"
+  },
+  {
+    "key": "claude-code|pytest-dev__pytest-5221",
+    "instance_id": "pytest-dev__pytest-5221",
+    "repo": "pytest-dev/pytest",
+    "harness": "claude-code",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/claude-code-kimi-k2.6-cloud/pytest-dev__pytest-5221"
+  },
+  {
+    "key": "cline-patched|pytest-dev__pytest-5221",
+    "instance_id": "pytest-dev__pytest-5221",
+    "repo": "pytest-dev/pytest",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/pytest-dev__pytest-5221"
+  },
+  {
+    "key": "claude-code|scikit-learn__scikit-learn-10297",
+    "instance_id": "scikit-learn__scikit-learn-10297",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "claude-code",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 28,
+      "p2p_total": 28
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": true,
+      "patch_applied": true,
+      "f2p_pass": 1,
+      "f2p_total": 1,
+      "p2p_pass": 28,
+      "p2p_total": 28
+    },
+    "flipped": "RESOLVED\u2192",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/claude-code-kimi-k2.6-cloud/scikit-learn__scikit-learn-10297"
+  },
+  {
+    "key": "pi|scikit-learn__scikit-learn-10508",
+    "instance_id": "scikit-learn__scikit-learn-10508",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 18,
+      "p2p_total": 18
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 18,
+      "p2p_total": 18
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/scikit-learn__scikit-learn-10508"
+  },
+  {
+    "key": "deepseek-harness|pytest-dev__pytest-5221",
+    "instance_id": "pytest-dev__pytest-5221",
+    "repo": "pytest-dev/pytest",
+    "harness": "deepseek-harness",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/deepseek-harness-kimi-k2.6-cloud/pytest-dev__pytest-5221"
+  },
+  {
+    "key": "opencode|pytest-dev__pytest-5103",
+    "instance_id": "pytest-dev__pytest-5103",
+    "repo": "pytest-dev/pytest",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/opencode-kimi-k2.6-cloud/pytest-dev__pytest-5103"
+  },
+  {
+    "key": "claude-code|scikit-learn__scikit-learn-10508",
+    "instance_id": "scikit-learn__scikit-learn-10508",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "claude-code",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 1,
+      "f2p_total": 2,
+      "p2p_pass": 18,
+      "p2p_total": 18
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 1,
+      "f2p_total": 2,
+      "p2p_pass": 18,
+      "p2p_total": 18
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/claude-code-kimi-k2.6-cloud/scikit-learn__scikit-learn-10508"
+  },
+  {
+    "key": "claude-code|scikit-learn__scikit-learn-10949",
+    "instance_id": "scikit-learn__scikit-learn-10949",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "claude-code",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 42,
+      "p2p_total": 42
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 42,
+      "p2p_total": 42
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/claude-code-kimi-k2.6-cloud/scikit-learn__scikit-learn-10949"
+  },
+  {
+    "key": "opencode|pytest-dev__pytest-5221",
+    "instance_id": "pytest-dev__pytest-5221",
+    "repo": "pytest-dev/pytest",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/opencode-kimi-k2.6-cloud/pytest-dev__pytest-5221"
+  },
+  {
+    "key": "deepseek-harness|scikit-learn__scikit-learn-10297",
+    "instance_id": "scikit-learn__scikit-learn-10297",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "deepseek-harness",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 28
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 28
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/deepseek-harness-kimi-k2.6-cloud/scikit-learn__scikit-learn-10297"
+  },
+  {
+    "key": "cline-patched|scikit-learn__scikit-learn-10508",
+    "instance_id": "scikit-learn__scikit-learn-10508",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/scikit-learn__scikit-learn-10508"
+  },
+  {
+    "key": "claude-code|scikit-learn__scikit-learn-11040",
+    "instance_id": "scikit-learn__scikit-learn-11040",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "claude-code",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 44
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 44
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/claude-code-kimi-k2.6-cloud/scikit-learn__scikit-learn-11040"
+  },
+  {
+    "key": "claude-code|scikit-learn__scikit-learn-11281",
+    "instance_id": "scikit-learn__scikit-learn-11281",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "claude-code",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/claude-code-kimi-k2.6-cloud/scikit-learn__scikit-learn-11281"
+  },
+  {
+    "key": "pi|scikit-learn__scikit-learn-10949",
+    "instance_id": "scikit-learn__scikit-learn-10949",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/scikit-learn__scikit-learn-10949"
+  },
+  {
+    "key": "pi|scikit-learn__scikit-learn-11040",
+    "instance_id": "scikit-learn__scikit-learn-11040",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 44,
+      "p2p_total": 44
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 44,
+      "p2p_total": 44
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/scikit-learn__scikit-learn-11040"
+  },
+  {
+    "key": "opencode|scikit-learn__scikit-learn-10297",
+    "instance_id": "scikit-learn__scikit-learn-10297",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 28,
+      "p2p_total": 28
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 28,
+      "p2p_total": 28
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-10297"
+  },
+  {
+    "key": "deepseek-harness|scikit-learn__scikit-learn-10949",
+    "instance_id": "scikit-learn__scikit-learn-10949",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "deepseek-harness",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 42,
+      "p2p_total": 42
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 42,
+      "p2p_total": 42
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/deepseek-harness-kimi-k2.6-cloud/scikit-learn__scikit-learn-10949"
+  },
+  {
+    "key": "opencode|scikit-learn__scikit-learn-10508",
+    "instance_id": "scikit-learn__scikit-learn-10508",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 18,
+      "p2p_total": 18
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 18,
+      "p2p_total": 18
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-10508"
+  },
+  {
+    "key": "pi|sphinx-doc__sphinx-10325",
+    "instance_id": "sphinx-doc__sphinx-10325",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 5
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 5
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-10325"
+  },
+  {
+    "key": "cline-patched|scikit-learn__scikit-learn-10949",
+    "instance_id": "scikit-learn__scikit-learn-10949",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 42,
+      "p2p_total": 42
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 42,
+      "p2p_total": 42
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/scikit-learn__scikit-learn-10949"
+  },
+  {
+    "key": "opencode|scikit-learn__scikit-learn-10949",
+    "instance_id": "scikit-learn__scikit-learn-10949",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 42,
+      "p2p_total": 42
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 42,
+      "p2p_total": 42
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-10949"
+  },
+  {
+    "key": "hermes|matplotlib__matplotlib-18869",
+    "instance_id": "matplotlib__matplotlib-18869",
+    "repo": "matplotlib/matplotlib",
+    "harness": "hermes",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 4,
+      "p2p_pass": 0,
+      "p2p_total": 3
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/hermes-kimi-k2.6-cloud/matplotlib__matplotlib-18869"
+  },
+  {
+    "key": "cline-patched|scikit-learn__scikit-learn-11040",
+    "instance_id": "scikit-learn__scikit-learn-11040",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 44,
+      "p2p_total": 44
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 44,
+      "p2p_total": 44
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/scikit-learn__scikit-learn-11040"
+  },
+  {
+    "key": "opencode|scikit-learn__scikit-learn-11040",
+    "instance_id": "scikit-learn__scikit-learn-11040",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "opencode",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 44,
+      "p2p_total": 44
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 44,
+      "p2p_total": 44
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-11040"
+  },
+  {
+    "key": "pi|sphinx-doc__sphinx-10451",
+    "instance_id": "sphinx-doc__sphinx-10451",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 0,
+      "p2p_total": 80
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 0,
+      "p2p_total": 80
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-10451"
+  },
+  {
+    "key": "deepseek-harness|scikit-learn__scikit-learn-11040",
+    "instance_id": "scikit-learn__scikit-learn-11040",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "deepseek-harness",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 44,
+      "p2p_total": 44
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 44,
+      "p2p_total": 44
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/deepseek-harness-kimi-k2.6-cloud/scikit-learn__scikit-learn-11040"
+  },
+  {
+    "key": "pi|sphinx-doc__sphinx-11445",
+    "instance_id": "sphinx-doc__sphinx-11445",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 0,
+      "p2p_total": 8
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 0,
+      "p2p_total": 8
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-11445"
+  },
+  {
+    "key": "pi|sphinx-doc__sphinx-7686",
+    "instance_id": "sphinx-doc__sphinx-7686",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "pi",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 0,
+      "p2p_total": 15
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-7686"
+  },
+  {
+    "key": "claude-code|sphinx-doc__sphinx-10451",
+    "instance_id": "sphinx-doc__sphinx-10451",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "claude-code",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 0,
+      "p2p_total": 80
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 0,
+      "p2p_total": 80
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-10451"
+  },
+  {
+    "key": "deepseek-harness|scikit-learn__scikit-learn-11281",
+    "instance_id": "scikit-learn__scikit-learn-11281",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "deepseek-harness",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/deepseek-harness-kimi-k2.6-cloud/scikit-learn__scikit-learn-11281"
+  },
+  {
+    "key": "hermes|matplotlib__matplotlib-22711",
+    "instance_id": "matplotlib__matplotlib-22711",
+    "repo": "matplotlib/matplotlib",
+    "harness": "hermes",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 0,
+      "p2p_total": 91
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/hermes-kimi-k2.6-cloud/matplotlib__matplotlib-22711"
+  },
+  {
+    "key": "cline-patched|scikit-learn__scikit-learn-12471",
+    "instance_id": "scikit-learn__scikit-learn-12471",
+    "repo": "scikit-learn/scikit-learn",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/scikit-learn__scikit-learn-12471"
+  },
+  {
+    "key": "cline-patched|sphinx-doc__sphinx-10451",
+    "instance_id": "sphinx-doc__sphinx-10451",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 0,
+      "p2p_total": 80
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 0,
+      "p2p_total": 80
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/sphinx-doc__sphinx-10451"
+  },
+  {
+    "key": "claude-code|sphinx-doc__sphinx-11445",
+    "instance_id": "sphinx-doc__sphinx-11445",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "claude-code",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-11445"
+  },
+  {
+    "key": "hermes|matplotlib__matplotlib-22835",
+    "instance_id": "matplotlib__matplotlib-22835",
+    "repo": "matplotlib/matplotlib",
+    "harness": "hermes",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": false,
+      "f2p_pass": 0,
+      "f2p_total": 0,
+      "p2p_pass": 0,
+      "p2p_total": 0
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 1,
+      "p2p_pass": 0,
+      "p2p_total": 24
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/hermes-kimi-k2.6-cloud/matplotlib__matplotlib-22835"
+  },
+  {
+    "key": "cline-patched|sphinx-doc__sphinx-11445",
+    "instance_id": "sphinx-doc__sphinx-11445",
+    "repo": "sphinx-doc/sphinx",
+    "harness": "cline-patched",
+    "old_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 0,
+      "p2p_total": 8
+    },
+    "new_eval": {
+      "eval_rc": 0,
+      "resolved": false,
+      "patch_applied": true,
+      "f2p_pass": 0,
+      "f2p_total": 2,
+      "p2p_pass": 0,
+      "p2p_total": 8
+    },
+    "flipped": "",
+    "log_dir": "/nas_train/app.e0031982/harness_work/logs_eval_fix1/FIX1/cline-patched-kimi-k2.6-cloud/sphinx-doc__sphinx-11445"
   }
 ]
