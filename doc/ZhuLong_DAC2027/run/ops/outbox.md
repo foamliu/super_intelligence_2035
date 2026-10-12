@@ -7908,3 +7908,78 @@ jq-1.7
 --- dsh --help ---
 === DONE ===
 ```
+
+---
+
+## RUN_ID 53 · 2026-10-12 11:12:17 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 53 · dsh CLI + 配置摸底
+echo "=== [0] ==="; hostname; date '+%F %T'
+DSH="$(npm prefix -g)/bin/dsh"
+echo "DSH=$DSH"
+echo "=== [1] dsh 子命令/帮助 ==="
+for a in '--help' '-h' 'help' '--version'; do
+  echo "--- dsh $a ---"; timeout 10 "$DSH" $a 2>&1 | head -25
+done
+echo "=== [2] dsh web 帮助 ==="
+timeout 10 "$DSH" web --help 2>&1 | head -30
+echo "=== [3] dsh 包目录 ==="
+DSHREAL="$(readlink -f "$DSH" 2>/dev/null)"
+echo "DSHREAL=$DSHREAL"
+DSHPKG="$(cd "$(dirname "$DSHREAL")/.." 2>/dev/null && pwd)"
+echo "DSHPKG=$DSHPKG"
+ls -la "$DSHPKG" 2>/dev/null | head -40
+echo "--- 找 settings / 配置样例 ---"
+find "$DSHPKG" -maxdepth 4 \( -iname '*settings*' -o -iname '*.schema.json' -o -iname '*config*example*' \) 2>/dev/null | head -20
+echo "=== [4] 现有 dsh 配置 ==="
+ls -la ~/.dsh ~/.config/dsh 2>/dev/null || echo "(none)"
+echo "env DSH_HOME=${DSH_HOME:-<unset>}"
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] ===
+hfeg0tedaap02
+2026-10-12 11:12:17
+DSH=/nasdata/app.e0031982/.local/node-20/bin/dsh
+=== [1] dsh 子命令/帮助 ===
+--- dsh --help ---
+--- dsh -h ---
+--- dsh help ---
+--- dsh --version ---
+=== [2] dsh web 帮助 ===
+=== [3] dsh 包目录 ===
+DSHREAL=/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/lib/bin.js
+DSHPKG=/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh
+total 60
+drwxr-xr-x   4 app.e0031982 app.adm  4096 Oct 12 11:03 .
+drwxr-xr-x   3 app.e0031982 app.adm  4096 Oct 12 11:03 ..
+drwxr-xr-x   3 app.e0031982 app.adm  4096 Oct 12 11:03 lib
+-rw-r--r--   1 app.e0031982 app.adm  1065 Oct 12 11:03 LICENSE
+drwxr-xr-x 180 app.e0031982 app.adm 16384 Oct 12 11:03 node_modules
+-rw-r--r--   1 app.e0031982 app.adm  7333 Oct 12 11:03 package.json
+-rw-r--r--   1 app.e0031982 app.adm   767 Oct 12 11:03 README.i18n.yaml
+-rw-r--r--   1 app.e0031982 app.adm  7224 Oct 12 11:03 README.md
+-rw-r--r--   1 app.e0031982 app.adm  7157 Oct 12 11:03 README.zh.md
+--- 找 settings / 配置样例 ---
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-api-settings-controller
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-client-ui-settings
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-client-ui-settings-account
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-client-ui-settings-agent-loop
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-client-ui-settings-general
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-client-ui-settings-models
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-client-ui-settings-plugins
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-client-ui-settings-plugin-inventory
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-client-ui-settings-session-log
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-client-ui-settings-shell
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-client-ui-settings-subagent
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-client-ui-settings-web-search
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-settings
+=== [4] 现有 dsh 配置 ===
+(none)
+env DSH_HOME=<unset>
+=== DONE ===
+```
