@@ -7983,3 +7983,115 @@ drwxr-xr-x 180 app.e0031982 app.adm 16384 Oct 12 11:03 node_modules
 env DSH_HOME=<unset>
 === DONE ===
 ```
+
+---
+
+## RUN_ID 54 · 2026-10-12 11:13:25 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 54 · 提取 dsh settings 格式
+DSHK=/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh
+echo "=== [1] README.md 全文（前 120 行）==="
+sed -n '1,120p' "$DSHK/README.md" 2>/dev/null
+echo "=== [2] dsh-settings 包内 schema/types ==="
+grep -rniE 'providers|baseURL|base_url|apiKeyEnv|apiKey|openai-compat|settings\.yaml|DSH_HOME' "$DSHK/node_modules/@deepseek-ai/dsh-settings/" 2>/dev/null | grep -vE '\.map$' | head -60
+echo "=== [3] api-settings-controller 内 provider 字段 ==="
+grep -rniE 'providers|baseURL|base_url|apiKeyEnv|api:|openai|protocol|models' "$DSHK/node_modules/@deepseek-ai/dsh-api-settings-controller/" 2>/dev/null | grep -vE '\.map$' | head -50
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [1] README.md 全文（前 120 行）===
+# `@deepseek-ai/dsh`
+
+English | [中文](README.zh.md)
+
+The `dsh` command is the sole supported Node application launcher: profiles are ordered stacks of plugin-bundle patch layers under the user's own overrides. SDK and ACP are profiles, not separate public bins. The Python runtime wheel packages this same command; the SDK defaults to `sdk`, and the minimal example selects `sdk-minimal`. [`src/args.ts`](src/args.ts) owns the command grammar, and [`src/bin.ts`](src/bin.ts) loads only the selected runner. Invalid commands, options from another mode, and fatal configuration or boot failures exit nonzero.
+
+## Entry modes
+
+| Command | Purpose |
+|---|---|
+| `dsh <name>` / `dsh --profile <name>` | Boot the named profile under `$DSH_HOME/profiles/<name>`. |
+| `dsh --profile <name> --from-default-profile <template>` | Create a new custom profile from a shipped template, then boot it. |
+| `dsh --profile acp` | Serve automation clients over ACP stdio until disconnect. |
+| `dsh --profile headless "job"` | Run one fresh persisted session, print the final answer, and exit. |
+| `dsh --profile sdk` | Serve SDK clients over JSON-RPC stdio until shutdown or disconnect. |
+| `dsh --profile sdk-minimal` | Serve SDK clients with the standalone minimal agent tree. |
+| `dsh web` | Boot the Web profile. |
+| `dsh plugin --profile <name> <pnpm args>` | Manage a profile's plugins by forwarding to pnpm in the profile directory. |
+
+The invoking directory is the default workspace root. The `web`, `headless`, `sdk`, `sdk-minimal`, and `acp` profiles auto-initialize on first use from shipped templates. Create another profile at an unused, non-shipped name with `--from-default-profile`, or initialize a base-backed profile through `dsh plugin`. The `desktop` name is reserved for the Electron-owned profile, so the CLI rejects boot and config-dump requests for it. The npm CLI also rejects its plugin-management requests; the [Desktop-installed command](../desktop/README.md#bundled-command-runtime) can manage the initialized Desktop profile using that installation’s runtime.
+
+## App arguments
+
+The launcher parses only its own flags and hands everything after them to the booted profile, where any injected app plugin may parse the shared immutable snapshot ([`dsh-cmdline`](../../packages/boot/cmdline/README.md)). The first token the launcher does not recognize starts the app's arguments:
+
+```sh
+dsh --profile web --port 8080       # --port belongs to the web app
+dsh --profile tui --resume <id>     # example, assuming the tui profile is installed; --resume belongs to the terminal app
+dsh --profile headless "run the tests"
+dsh --profile web --help            # the web app's flags, not the launcher's
+dsh --help                          # the launcher's own help
+```
+
+<a id="profiles"></a>
+## Profiles
+
+A profile directory holds a `package.json` (out-of-tree plugin dependencies plus the profile manifest `dsh.profile` with its ordered `bundles` list) and a `cordis.patch.yml` (the user's own patch layer). `dsh-hmr`, when enabled in YAML, watches the profile manifest and both profile and home patch files, then recomposes all layers through one serialized reload. Without HMR, changes apply on restart. Edits arriving during watcher registration use the same nonfatal reload reporting as later edits. [Plugin Manager](../../packages/boot/plugin-manager/README.md) shares package operations and the profile write lock with `dsh plugin`; package updates retain disabled bundle selections. CLI package commands inherit authentication variables and terminal descriptors, including interactive build approval; service calls retain their scrubbed environment and captured diagnostics.
+
+Installation and profile startup enforce declared DSH peer ranges against the same runtime version shown by `dsh --version`. Incompatible plugins require an explicitly acknowledged exact-version exemption. The [plugin manager's compatibility reference](../../packages/boot/plugin-manager/README.md#version-compatibility-and-exemptions) documents `version-exemptions`, `allow-version`, `revoke-version`, persistence, and risks.
+
+The tree composes over an empty root:
+- each bundle's patch in `dsh.profile.bundles` order
+- then the profile's `cordis.patch.yml`, then the home-level `$DSH_HOME/cordis.patch.yml`
+- then `--patch` overlays
+
+Bundles named in `dsh.profile.bundles` resolve from the dsh installation first (`@deepseek-ai/dsh-base`, `@deepseek-ai/dsh-web-app`, `@deepseek-ai/dsh-headless`, `@deepseek-ai/dsh-sdk-app`, `@deepseek-ai/dsh-sdk-minimal`, `@deepseek-ai/dsh-acp-app`), then from the profile's own `node_modules`, where pnpm installs out-of-tree plugins.
+
+Use `--dump-default-config` and `--dump-config` to inspect the composed tree without booting it. `--dump-config-schema` imports the composed tree's declared plugin schemas and prints JSON Schema for entries and patches instead of configuration values; read the [schema-dump safety and scope](reference/README.md#config-schema-dump) before inspecting untrusted plugins.
+
+The [CLI behavior reference](reference/README.md) owns exact layer precedence, flags, shutdown behavior, deployment defaults, and source execution. The [startup and reload failure table](../../packages/boot/app-boot/README.md#startup-and-reload-failures) compares optional and required plugin failures with configuration HMR.
+
+## Optional overlays
+
+`config/examples/` ships opt-in overlays for GitHub review webhooks, memory MCP servers, and runtime Cordis tools. They are never part of a default profile; the [user guides](../../docs/user/guide/index.md) and [developer practice guides](../../docs/user/develop/practice/index.md) own setup and safety instructions.
+
+## Development
+
+Production runs require built package and frontend artifacts. From the repository root, run `pnpm run build` separately, then use `pnpm dsh <args...>` to run the TypeScript entry and forward every argument; the [source-execution reference](reference/README.md#source-execution) owns the module-resolution contract.
+
+The `@deepseek-ai/dsh/profile-boot` export provides the shared profile lifecycle to the Desktop host. A resolved application profile supplies its own installation anchor for runtime package resolution while retaining the Harness home patch, proxy environment, telemetry switch, patch reload, and bounded shutdown.
+
+Packaged installations call the same `runCli()` entry with their package-manager executable. The Desktop carrier also enables plugin operations for its initialized profile; npm launches omit these options. Installation-owned package environments apply only to plugin package operations; the invoking directory, ordinary profile selection, and agent-shell PATH retain their CLI meanings.
+
+The [Web failure matrix](tests/profiles/web/tests/web-failure-matrix.expected.e2e.ts) runs the built CLI through startup failures and native configuration HMR with `awaitWriteFinish` enabled in `test:expected`. It verifies authenticated HTTP responses, diagnostics, recovery, process exits, and disposal without model API calls; the [startup acceptance](tests/profiles/web/tests/web-best-effort-startup.expected.e2e.ts) also covers the shipped required Web dependencies and port conflicts.
+=== [2] dsh-settings 包内 schema/types ===
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-settings/lib/index.js:302:/** Entry ids of the removed `settings.yaml` sections whose owning entry carries another id. */
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-settings/lib/index.js:343:	/** Move the sections of the removed `settings.yaml` into the active profile once the Loader has settled every entry.
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-settings/lib/index.js:348:		const path = join(profile.home, "settings.yaml");
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-settings/lib/types/index.js:162:/** Entry ids of the removed `settings.yaml` sections whose owning entry carries another id. */
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-settings/lib/types/index.js:199:    /** Move the sections of the removed `settings.yaml` into the active profile once the Loader has settled every entry.
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-settings/lib/types/index.js:204:        const path = join(profile.home, 'settings.yaml');
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-settings/lib/types/index.d.ts:70:    /** Move the sections of the removed `settings.yaml` into the active profile once the Loader has settled every entry.
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-settings/README.md:35:Once the Loader has settled every entry after Settings starts, a `settings.yaml` left in the harness home by earlier releases is imported once: each section is written into the entry of the same id (`ui-developer-tools` → `ui-settings`, `ui-onboarding` → `ui-settings-general`, `shell` → the platform's shell executor entry), the file is renamed to `settings.yaml.imported` before the first write, and a section the running composition rejects is logged and stays only in the renamed file.
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-settings/README.zh.md:35:Settings 启动后、Loader 完成所有条目的加载时，早期版本留在 harness home 中的 `settings.yaml` 会被导入一次：每个 section 写入同名条目（`ui-developer-tools` → `ui-settings`、`ui-onboarding` → `ui-settings-general`、`shell` → 当前平台的 shell 执行器条目），文件在第一次写入前改名为 `settings.yaml.imported`，被当前组合拒绝的 section 会记录日志并只保留在改名后的文件中。
+=== [3] api-settings-controller 内 provider 字段 ===
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-api-settings-controller/lib/types/credentials.js:42:import { Remote, RemoteError, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol';
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-api-settings-controller/lib/types/index.js:44:import { Remote, RemoteError, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol';
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-api-settings-controller/lib/types/index.js:109:         * @param ctx - Host context where settings and credential providers may be mounted.
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-api-settings-controller/lib/types/credentials.d.ts:9:import { TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol';
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-api-settings-controller/lib/types/index.d.ts:11:import { TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol';
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-api-settings-controller/lib/types/index.d.ts:40:     * @param ctx - Host context where settings and credential providers may be mounted.
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-api-settings-controller/lib/types/types.d.ts:9:declare module '@deepseek-ai/dsh-typert-protocol' {
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-api-settings-controller/lib/index.js:2:import { Remote, RemoteError, TypertRemoteService } from "@deepseek-ai/dsh-typert-protocol";
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-api-settings-controller/lib/index.js:379:		* @param ctx - Host context where settings and credential providers may be mounted.
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-api-settings-controller/lib/typert.remote-client.d.ts:5:} from '@deepseek-ai/dsh-typert-protocol'
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-api-settings-controller/lib/typert.remote-client.d.ts:11:declare module '@deepseek-ai/dsh-typert-protocol' {
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-api-settings-controller/package.json:54:    "@deepseek-ai/dsh-typert-protocol": "0.2.0-rc.2",
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-api-settings-controller/package.json:66:    "@deepseek-ai/dsh-typert-protocol": "0.2.0-rc.2"
+/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-api-settings-controller/README.md:26:Mount this package as a Loader entry in a profile that serves browser configuration. The entry registers both namespaces independently of their providers so a missing provider produces a named configuration error at invocation. Its generated descriptors enter the strict Typert registry, while the settings and credential Definitions remain plain Cordis Services with no wire obligations of their own.
+=== DONE ===
+```
