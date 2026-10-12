@@ -14,6 +14,29 @@
 > 本节由 **supervisor** 通过 git 修改，用于**远程派活 / 改优先级 / 索取状态 / 暂停**。
 > **agent 禁止修改本节**。本节为「无」时，按 §1 / §2 自主推进。
 
+### 🆕 运维指令 · 2026-10-12（🎬 下一章改判：**「暖阳之后做外骨骼」= `13_外骨骼`**）· 用户直令 · ⭐ 最高优先
+
+> **用户原话（2026-10-12）**：「video：**暖阳之后做外骨骼**。」
+> **口径**：**覆盖** `PLAN.md §3/§4` 里原定的「下一章 = `08_认知矿工`」⇒ **下一章改做 `13_外骨骼`**（48 镜）。
+
+**① 顺序（硬）**：
+1. **先收尾 `18_暖阳`**：按 `PLAN.md §4.1` 完成 **最终 QC**（`qwen3_asr` 台词核对 + `sound_caption` 环境音回读）→ **选定交付文件**（`EP18_暖阳_成片_BGM01.mp4` 等）；BGM02/03 可选。
+2. **再做 `13_外骨骼`**（下一章）：**排在 `08_认知矿工` 之前**。
+
+**② `13_外骨骼` 关键前提（必读）**：
+- 素材**齐全**：`SCENES/13_外骨骼.md`（48 镜）+ `ASSETS/SHOT_SPECS/13_外骨骼_{SHOT_SPECS,T2I_Prompts,I2V_Prompts}.md`（规格不缺）。
+- ⚠️ **旧原型音轨 = legacy TTS**（`gen_ep13_tts.py` / `gen_ep13_ai_voice.py` 时期产物）—— **违反 2026-10-11「禁用 TTS」用户令** ⇒ **🚫 不得沿用该音轨**；**必须按新口径重做**：**台词/人声全部由 MiniMax H3 随视频生成**（写进 prompt 的 `Audio:`），合成时**不再叠 TTS**。
+- ⚠️ **旧 EP13 脚本硬编码旧路径 `E:\code\…`**（`PLAN.md §5`）⇒ 复用前先修路径为现行 `D:\Users\Administrator\code\super_intelligence_2035_short_drama\…`（照 `synth_ep18.py` 的 `ROOT = Path(__file__).resolve().parent.parent` 范式）。
+- ⚠️ **核实现存产物**：当前新仓 `OUTPUT/` 仅见 `08_认知矿工`（仅 frames）与 `18_暖阳`，**未见 `13_外骨骼` 产物** —— 请**自行核实**（含 `manifest.json` / 旧路径残留），**以实际落盘为准**，并如实记「13 现有产物 = 什么 / 缺什么」。
+
+**③ 做法（照 EP18 已固化范式）**：T2I 帧（人物用 `image_edit_longcat` + 定妆照；非人物用 `z_image_turbo_t2i`）→ **H3 I2V 片段（含 Audio 台词）** → BGM/音效 → 字幕 → 合成 → **六项验收**（文件存在 + 字节 > 0 + `ffprobe` 时长/分辨率 + `qwen3_asr`/`sound_caption` 抽检）。一次 1 章、`wait=False` 异步。
+
+**④ 交付与记录**：更新 `run/video/PLAN.md`（§3 表 13 行改为「**S3 重做中（新口径·去 TTS）**」、§4 下一步改判为 `13_外骨骼`）· `run/MEMORY_VIDEO.md` · `run/daily-memories-video/<date>.md`；成片入短剧仓 `OUTPUT/13_外骨骼/`。
+
+**⑤ 纪律**：🚫 无 TTS；≥5MB 不入 git；「已产出」须落盘核验（路径 + 字节）；每轮有看得见的进展。
+
+---
+
 ### 🆕 运维指令 · 2026-10-11（🎬 **立线：`video` = 基于 ComfyUI 制作视频**；首个任务 = 完成《超级智能2035》视频制作）· 用户直令 · ⭐ 最高优先
 
 > **用户原话（2026-10-11）**：「在 personal watch 目录下建个新的 agent 任务书和 loop … **这个新的任务叫 `video`，使命是基于 ComfyUI 制作视频**。第一项任务是：**完成超级智能2035 视频的制作** `D:\Users\Administrator\code\super_intelligence_2035_short_drama`。」
