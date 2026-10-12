@@ -3,11 +3,12 @@
 
 ## 🆕 最近操作（2026-10-12）
 
-### 📋 四项运维指令下发（用户直令 · 10-12 晚）
-- **① harness 深挖令**（`fea9b643`）：用户令查 7×300「是否很多 module 装不上致失败 / 能否解决 / 分数是否偏低（可 web search）」→ `run/BAIZE_HARNESS_TASK.md` 顶部块：统计 **env/module 失败 vs `pbf`（patch 成功但 F2P 未过 = wrong-fix）** 占比 + 根因（**unshare 共享 env** vs 官方 per-instance conda/镜像；patch 单级 vs 官方三级容错）+ 可解决性 + **web search 外部对照** → 交付 `report_harness_eval_rootcause.html`。🚫 不占 GPU；重跑须先报后跑。
-- **② vision OV-1.5 复现计划**（`42d8c075`）：中文 HTML 计划复现 **LLaVA-OneVision-1.5** —— **基模 Qwen3.5-4B（非 Qwen3-4B）· 框架 ms-swift · 数据除 85M 外已下完（路径令其自己核实）· 可 web search 出超参 · 估 H100×8 时间** → `report_vision_llava_ov15_repro_plan.html`（9 节，**已交付**）。🚫 只出计划、不启动训练。
-- **③ video 下一章改判**（`1a522061`）：令「**暖阳之后做外骨骼**」→ 覆盖原定 `08_认知矿工` ⇒ 收尾 `18_暖阳` → 下一章 `13_外骨骼`（48 镜）；旧原型 = **legacy TTS** ⇒ **按新口径重做（H3 随片生成台词）** → `WATCH_VIDEO_TASK.md` 顶部块。**✅ 已开跑**。
-- **④ recruit 人数上限 ×10**（`9606d8d9`）：令「每次唤醒可沟通人数上限 ×10」→ 现行 **`≤2–3 人/批`** ⇒ **`≤20–30 人/批`**（覆盖 §3 旧数字；`批间隔 ≥60min`/不群发/台账/风控即停 保留）→ `WATCH_RECRUIT_TASK.md`。
+### 📋 五项运维指令下发（用户直令 · 10-12 晚）
+- **① harness 深挖令**（`fea9b643`）：查 7×300「是否很多 module 装不上致失败 / 能否解决 / 分数是否偏低」→ 统计 **env/module 失败 vs `pbf`** 占比 + 根因（**unshare 共享 env** vs 官方 per-instance conda）+ 可解决性 + **web search 外部对照** → `report_harness_eval_rootcause.html`。🚫 不占 GPU。
+- **② vision OV-1.5 复现计划**（`42d8c075`）：中文计划复现 **LLaVA-OneVision-1.5** —— **基模 Qwen3.5-4B（非 Qwen3-4B）· ms-swift · 数据除 85M 外已下完 · 估 H100×8 时间** → `report_vision_llava_ov15_repro_plan.html`（已交付）。🚫 只出计划。
+- **③ video 下一章改判**（`1a522061`）：令「**暖阳之后做外骨骼**」→ 覆盖 `08_认知矿工` ⇒ 下一章 `13_外骨骼`；旧原型 = **legacy TTS** ⇒ **按新口径重做（H3 随片生成台词）**。✅ 已开跑。
+- **④ recruit 人数上限 ×10**（`9606d8d9`）：令「每次唤醒可沟通人数上限 ×10」→ **`≤2–3 人/批`** ⇒ **`≤20–30 人/批`**（覆盖 §3；`≥60min`/不群发/台账/风控即停 保留）。
+- **⑤ research 每日论文日报（新职能）**（`07f47211`）：令「**每天选 3–5 篇 → 下载 PDF → 邮件发 `paul.liu@cxmt.com`**」→ **每天 1 封**；PDF 存 `research/pdf/<日期>/`（不入 git）；复用 `~/hr_mail.py`（**单封 ≤20MB，覆盖 §8 的「≤5MB」**）；**免审**；台账 `research/mail/发送记录.md`。
 - **流水**：见 `daily-memories/2026-10-12.md`。
 
 WAITING: 0
