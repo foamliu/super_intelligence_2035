@@ -57,32 +57,9 @@
 
 ---
 
-### 🆕 运维指令 · 2026-10-11（十一）— 📊 **Deep dive：为什么 `full` r1=88.0%** + 中文 HTML 报告 + 「轨迹问题·按修复收益降序」表 · 用户直令 · 高优先
+### 🆕 运维指令 · 2026-10-11（十一）— 📊 Deep dive：为什么 `full` r1=88.0%【⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`·报告已交 `reports/R1_ANOMALY_ANALYSIS_2026-10-11.html` @commit 25b27adb】
 
-> **用户令**：「那**为什么 r1 得 88.0%**？请 ZhuLong agent **深入分析**，写一个 **html 调研报告（中文）**，把这个事情**落实**。对于**检查交互轨迹过程中发现的问题**，最后**按照修复收益从大到小列出表格**。」
-> **数据**：`full` = r1 **88.0** / r2 79.1 / r3 77.2 / r4 80.4（r5 running）⇒ **r1 比 r2 高 8.9pp、比 r2–r4 均值(78.9) 高 9.1pp**。
-> **性质**：分析 + 写作（**只读**）；🚫 **不重启 / 不改 `.env` / 不碰 r5**。**运维已下发 `RUN_ID 46` 取证块**（batch 清单 / r1×r2 工具集 diff / 配置指纹 / 逐题翻转 / 仓库变更史）⇒ **先读 `run/ops/outbox.md` 的 46 段再动手，别重复劳动**。
-
-**(A) 候选原因逐条裁决（每条给证据 + 成立? + 置信度）**
-1. **是否 legacy/复用**：r1 是否为某旧 batch 结果被复用（`wo_retrieval` 的 r1 就标注「复用 legacy 74.1%」）⇒ 给 r1 的**原始 batch id + 生成时间**；
-2. **工具集 diff**：r1 vs r2 的 `Available tools` 全表逐项（检索 3 件套 / `probe_pyAether_code` / `query_memory_bank` / `text_to_image` …）；
-3. **配置指纹 diff**：`PROXY_PORTS` · `SANDBOX_ENDPOINTS` · `RAG_RECALL_URL` · `API_INFO_MERGED_FILE`(V2/V3) · `EDA_EVOLVE_ENABLED` · `EDA_MEMORY_INJECT_ENABLED` · `PreToolUse` hook · MCP 协议(`/sse` vs `/mcp`)；
-4. **逐题翻转**：r1 过而 r2 不过（及反向）的 task 集合 —— **集中在少数题（→ 噪声）还是广布（→ 配置效应）**？给翻转题数 + 前 20 清单；
-5. **显著性**：158 题二项分布下，r1 与 r2–r4 均值之差是否显著（给 p / 置信区间估算）；
-6. **评分口径**：r1 是否经 re-grade？timeout / exec_err 统计。
-
-**(B) 交付（中文 HTML · 自包含 · 内联 CSS/SVG · 零外链 · ≤200KB）**：`doc/ZhuLong_DAC2027/run/reports/R1_ANOMALY_ANALYSIS_2026-10-11.html`
-节：HERO 一句话结论 · 5 轮数据(表+SVG) · **候选原因裁决表**(原因｜证据｜成立?｜置信度) · 逐题 diff · 显著性 · **对 N=5 锚点的影响与建议**(是否剔除 r1 / 标注 / 重跑) · 证据索引(`path:line`) · 诚实条款。
-
-**(C) 报告最后一节 = 「轨迹问题清单」表（**按修复收益从大到小排序**）**：每行 `# | 问题 | 证据 | 影响面 | 修复动作 | 工作量 | 风险 | 预期收益`；至少覆盖：① 检索 3 件套边际≈0（`run_code` 冗余）② 模型漏 MCP 前缀 `search_apis`（~1%/轮）③ **`tcl` 两 collection 召回 0 条** ④ `rag` 臂非单变量（同时动了检索 + 沙盒）⑤ 9001–9011 端口乱象（7+ 实例 · 9002 http=500）⑥ r1 异常（本报告定论）⑦ 你在轨迹里**新发现**的问题。
-
-**(D) 收尾**：更新 `MEMORY_ZHULONG.md` + `daily-memories/<date>.md` + commit+push（前缀 `zhulong r1-anomaly:`）。
-
----
-
-### 🆕 运维指令 · 2026-10-11（十）— 🔎 RAG(9006) 排查【🏁 **已收口**】· 报告已交：`run/reports/RAG_AUDIT_2026-10-11.md`
-> **结论（RUN_ID 41/43/44/45 实测）**：① **9006 正常且能召回**（`pyAether+aether` → `dbCreateRect` 5 条 / `hiGetCurrentWindow` 9 条；`skill+virtuoso` → 3/6 条，⚠️ 仅 `tcl+waveview`/`tcl+innovus` 两对 **0 条**）；② 评测**大量在用检索**（`search_apis` **~1800 次/轮成功调用**；漏 MCP 前缀失败仅 ~1%；轨迹空结果仅 2/0/1）；③ 臂定义：`full` = 检索 ON + `run_code` ON + **V3 文档**；`wo_retrieval` = 检索 OFF；`rag` = 检索 ON + **`run_code` OFF**。
-> ⇒ **`full`≈`wo_retrieval` 是真实弱结果**（机制：`run_code` 沙盒使显式检索冗余），**不是 bug**；但 ⚠️ **`rag` vs `full` 非单变量**（同时动了检索+沙盒）⇒ 表格注须说明，🚫 **不得**宣称「检索带来提升」。本块全程只读。
+### 🆕 运维指令 · 2026-10-11（十）— 🔎 RAG(9006) 排查【⏩ 已归档至 `ZHULONG_TASK_ARCHIVE.md`·已收口·报告 `reports/RAG_AUDIT_2026-10-11.md` @commit 84e66335】
 
 ---
 
