@@ -8,10 +8,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:--|:--|
-| STAGE | `C2`（B 4/4✅；C1 4臂5/5✅含full_v3锚点82.1±3.0%；**C2.phi_k10 r1✅78.5% r2✅76.6%→r3 running**）|
+| STAGE | `C2`（B 4/4✅；C1 4臂5/5✅含full_v3锚点82.1±3.0%；**C2.phi_k10 r1✅78.5% r2✅76.6% r3 code-gen✅→regrade running**）|
 | CONFIG | `phi_k10`（S2 Φ 预算 k=10·EDA_PHI_BUDGET=10/EDA_PHI_LAGGED=0·base=full(V3+selfexpl)保留·set_s2_phi.py 只改预算不动 V3/SKILL_DATA_DIR✅）|
-| ROUND | 3（phi_k10 r1✅=78.5%(124/158·timeout=2)·r2✅=76.6%(121/158·timeout=0)·**r3 PID622197 running·log /tmp/ABL_phi_k10_r3.log**）|
-| PHASE | `running`（r2 regrade✅76.6%有效→r3启动→下轮收割r3）|
+| ROUND | 3（phi_k10 r1✅=78.5%(124/158·timeout=2)·r2✅=76.6%(121/158·timeout=0)·**r3 code-gen✅batch2026_1012_222848·auto-grade 1.9%(bug)·regrade PID1189185 running·log /tmp/ABL_phi_k10_r3_regrade.log**）|
+| PHASE | `running`（r3 code-gen完成→regrade进行中→下轮收割r3 regrade结果）|
 | WAITING | 1 |
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
@@ -30,7 +30,7 @@ WAITING: 1
 | C1 | wo_retrieval | 5/5 ✅ | **81.0±4.5%** [74.1,86.1,81.6,79.7,83.5] |
 | C1 | full(V2)（旧锚点）| **5/5 ✅ 81.4±4.1%** | [88.0,79.1,77.2,80.4,82.3]（r1=V3文档,r2-r5=V2无自探索→混配置→已由full_v3取代）|
 | C1 | full_v3(自探索·正式锚点) | **5/5 ✅ 82.1±3.0%** | [77.8,86.1,81.6,82.3,82.9]（运维指令(十二)补跑「真full=自探索开」·V3+SKILL_DATA_DIR=./docs/skill_data_selfexpl·4端口8650set+RAG:9006·**未复现r1=88.0%**）|
-| C2 | phi_k10 | 3/5 | 🔄 r1✅78.5%·r2✅76.6%·r3 running(PID622197) |
+| C2 | phi_k10 | 3/5 | 🔄 r1✅78.5%·r2✅76.6%·r3 code-gen✅→regrade running(PID1189185) |
 | C2 | phi_k3 | 1-5/5 | ⬜（探路 69.0%）|
 | C2 | phi_k1 | 1-5/5 | ⬜（探路 60.8%）|
 | C2 | phi_lagged | 1-5/5 | ⬜（探路 84.2%，r2 修复后 98.1%）|
@@ -64,8 +64,8 @@ WAITING: 1
 **结论**：full_v3 (82.1±3.0%) **未复现** r1 的 88.0%。r1=88.0% 为异常高值，在受控的 V3+自探索 配置下 5 轮均未达到。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，提示自探索可能有适度增益但不显著（两者在 1σ 范围内重叠）。
 
 ## 操作流水
-- [2026-10-13 00:12] 🔎 **巡检(phi_k10 r3 ~103min健康·不动作退出)**：pgrep run_cline_script→PID622197 alive·log /tmp/ABL_phi_k10_r3.log 22.3MB mtime00:12(live)·**canary-by-log✅**：ACCESS RESTRICTED=894(hook live>0)·Forbidden=0✅·沙盒=1(hook deployed)·**§8.3 k臂✅**：`[PHI-BUDGET-EXHAUSTED]`=375 trace(>0·k=10预算约束生效)·run_code=3218·⚠️**端口1/4**(仅8652 OPEN·r3已在跑不中断)·/home=29G✅·MCP:8090在听✅·loop✅有proxy·git clean(ahead0/behind0)。状态不变 STAGE=C2/CONFIG=phi_k10/ROUND=3/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**：pgrep有输出→巡检退出；无输出→re-grade同口径→timeout≤10且Pass@1≥75%→r3有效→r4。
-- [2026-10-13 00:05] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 ~96min健康·不动作退出) 详情见 daily-memories/2026-10-13.md §00:05。
+- [2026-10-13 00:38] ✅ **phi_k10 r3 code-gen完成→auto-grade 1.9%(bug)→regrade启动PID1189185**：pgrep run_cline_script→**无输出**=r3已结束·log /tmp/ABL_phi_k10_r3.log 22.3MB mtime00:13·batch2026_1012_222848·统计:成功134/超时0/失败24(158任务)·Step7.1 auto-grade=3/158(1.9%)=**已知benchmark bug**·gen_file completed_code_generation_2026_1012_222848.jsonl(158行✅)·hook PreToolUse已清理(code-gen后正常)·**canary✅**：ACCESS RESTRICTED=894(hook live)·Forbidden=0✅·**§8.3 k臂✅**：`[PHI-BUDGET-EXHAUSTED]`=383 trace(>0·k=10预算约束生效)·run_code=3218·已部署沙盒hook=1✅。4端口8650/8651/8652/8654在10.129.32.75全OPEN✅·/home=29G✅·MCP:8090✅·loop PID2302281✅有proxy(https_proxy=http://172.19.92.23:13128)·relay PID3277328✅alive。创建 `run/run_phi_k10_r3_regrade.sh`→`setsid bash ... > /tmp/ABL_phi_k10_r3_regrade.log 2>&1 &`→PID1189185✅(run_eval.py --lang pyAether --benchmark EDA-Eval-pyAether-158.jsonl)。状态 STAGE=C2/CONFIG=phi_k10/ROUND=3/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**：grep re-grade log→timeout≤10且Pass@1≥75%→r3有效→启动r4。
+- [2026-10-13 00:12] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 ~103min健康·不动作退出) 详情见 daily-memories/2026-10-13.md §00:12。
 - [2026-10-12 23:39] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 ~1h11m健康·不动作退出) 详情见 daily-memories/2026-10-12.md §23:39。
 - [2026-10-12 23:32] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 ~1h04m健康·不动作退出) 详情见 daily-memories/2026-10-12.md §23:32。
 - [2026-10-12 23:07] [⏩ 已滚出] 🔎 巡检(phi_k10 r3 ~39min健康·不动作退出) 详情见 daily-memories/2026-10-12.md §23:07。
