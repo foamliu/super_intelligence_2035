@@ -21,10 +21,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🚀 **④-4ep TRAINING IN PROGRESS** (launched 17:23 Oct 12, resume from 2ep ckpt, step 408310/748404 (~55%), loss~0.08, C1=0.51, no collapse, ~5100 img/s). 4 ckpts saved (380k-400k). Post-eval chain (`post_4ep_chain.sh`) waiting. ✅ All prior experiments COMPLETE (V3, ② probe, ④-2ep eval, variant reports, 中文报告). **④-4ep ProtB > 70% = 胜利** (operator new criterion). |
+| PHASE | 🚀 **④-4ep TRAINING IN PROGRESS** (launched 17:23 Oct 12, resume from 2ep ckpt, step 424900/748404 (~57%), loss~0.25, C1=0.5688, no collapse, ~5100 img/s). 5 ckpts saved (380k-420k). Post-eval chain (`post_4ep_chain.sh`) waiting. ✅ All prior experiments COMPLETE (V3, ② probe, ④-2ep eval, variant reports, 中文报告). **④-4ep ProtB > 70% = 胜利** (operator new criterion). |
 | ERROR_COUNT | 14（①~⑫ 同前 ⑬ Duplicate V3 eval ⑭ sympy ImportError blocked auto-eval — fixed） |
 | BUDGET_USED | ~927 GPU·h (V3 ~106, ② ~1, ④-2ep ~80 done / ~94 total) |
-| 更新 | **2026-10-12 17:30 (wake #26)**: Operator instruction 2026-10-12 — launched **④-4ep** training (resume from 2ep ckpt, --steps 748404, 374,202 new steps). Created `run_e4_4ep.sh` + `post_4ep_chain.sh` (auto-eval after training). Training confirmed running (step 377860, loss~0.08, C1=0.51, no collapse, ~4800 img/s, 8 GPU 62-74% util). Updated 中文报告 (`report_vision_final_20261012_zh.html`) to reflect 4ep launch. Updated EXPERIMENTS_VISION.md §9.7. 📦 体积：TASK=30.2KB / MEMORY=32.2KB（归档 0KB） |
+| 更新 | **2026-10-12 19:14 (wake #27)**: Monitoring wake — ④-4ep training at step 424,900/748,404 (~57%), C1=0.5688 healthy (no collapse), C2_gap=+0.1807, loss~0.25, lr=2.28e-04, ~5,100 img/s. 5 ckpts saved (380k-420k). post_4ep_chain.sh waiting. ETA ~323k remaining steps @ ~10 it/s ≈ 9h → completion ~04:15 Oct 13 → auto-eval ~3.5h → results ~07:45 Oct 13. No new operator instructions. 📦 体积：TASK=30.2KB / MEMORY=27.8KB（归档 0KB） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
