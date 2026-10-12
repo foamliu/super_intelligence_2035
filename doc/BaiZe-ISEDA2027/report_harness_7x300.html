@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Harness 7×300 评测报告（中文版）</title>
+<style>
+:root{--bg:#f6f8fa;--card:#fff;--border:#d0d7de;--text:#1f2328;--muted:#59636e;--primary:#0b3d6e;--accent:#1f6feb;--ok:#1a7f37;--warn:#9a6700;--bad:#cf222e}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;color:var(--text);background:var(--bg);line-height:1.7;font-size:15px}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 20px 80px}
+header.hero{background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%);color:#fff;border-radius:14px;padding:30px 32px;margin-bottom:22px}
+header.hero h1{margin:0 0 6px;font-size:23px}header.hero .sub{font-size:14px;opacity:.95}
+header.hero .meta{margin-top:14px;font-size:13px;opacity:.9}
+h2.sec{font-size:19px;margin:34px 0 10px;padding-bottom:8px;border-bottom:2px solid #dbeafe;color:var(--primary)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:12px 0}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13.5px}
+th,td{border:1px solid var(--border);padding:7px 9px;text-align:center}th{background:#f1f5f9;color:var(--primary);font-weight:600}
+td.rname{text-align:left;font-family:monospace;font-size:12px}
+td.num{font-variant-numeric:tabular-nums}
+.cline-row{background:#f0f7ff}
+.sub{color:var(--muted);font-size:11px}
+.legend{font-size:12px;color:var(--muted);margin-top:4px}
+.callout{border-radius:8px;padding:14px 18px;margin:14px 0;border-left:4px solid}
+.callout-blue{background:#dbeafe;border-color:#2563eb}
+.callout-green{background:#d1fae5;border-color:#10b981}
+.callout-yellow{background:#fef3c7;border-color:#f59e0b}
+.callout-red{background:#fee2e2;border-color:#dc2626}
+.tag-ok{display:inline-block;padding:1px 7px;border-radius:4px;font-size:11px;background:#d1fae5;color:#1a7f37}
+.tag-lim{display:inline-block;padding:1px 7px;border-radius:4px;font-size:11px;background:#fee2e2;color:#b91c1c}
+.tag-part{display:inline-block;padding:1px 7px;border-radius:4px;font-size:11px;background:#fef3c7;color:#9a6700}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0}
+.sum{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+.sum .n{font-size:1.7em;font-weight:700;color:var(--accent)}.sum .l{font-size:12px;color:var(--muted)}
+code{background:#f1f5f9;padding:1px 6px;border-radius:3px;font-size:13px}
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--border);font-size:12px;color:#8b949e}
+.chart{margin:16px 0;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+<h1>BaiZe Harness 7×300 评测报告</h1>
+<div class="sub">7 个 agent harness × 300 SWE-bench Lite 实例 · 统一 backbone（kimi-k2.6-cloud）· 统一沙箱 · 统一判据</div>
+<div class="meta">生成时间 2026-10-12 · 数据源 <code>run/harness/kimi_pilot_results.json</code>（2095 entries，进度 99.8%，hermes 295/300 还差 5 个 sympy）· 自包含单文件 · 零外链</div>
+</header>
+
+<div class="callout callout-blue"><b>一句话结论：</b>7 个 harness 在<b>完全相同</b>的 backbone 与评测管线下，resolve rate 全部落在 <b>23.7% ~ 30.3%</b> 的窄带内（相差约 6.7 pp）。<b>pi（30.3%）居首，cline（28.7%）/ opencode（29.0%）紧随其后</b>，codex 速度最慢（wall 922s）换取 26.7%。有效比较范围内（django/sympy/scikit-learn，eval-可用），<b>pi ≥ opencode ≥ cline</b>，三者差距极小且<b>不具统计显著性</b>（binomial SE ≈3pp）。</div>
+
+<div class="grid">
+<div class="sum"><div class="n">2095</div><div class="l">总 entries（99.8% 完成）</div></div>
+<div class="sum"><div class="n">571</div><div class="l">总 resolved</div></div>
+<div class="sum"><div class="n">27.3%</div><div class="l">总体 resolve rate</div></div>
+<div class="sum"><div class="n">295</div><div class="l">7 方都测过的实例</div></div>
+<div class="sum"><div class="n">28</div><div class="l">全员解出（everybody）</div></div>
+<div class="sum"><div class="n">180</div><div class="l">全灭（nobody, 61%）</div></div>
+</div>
+
+<h2 class="sec">1. 评测设计</h2>
+<div class="card">
+<p><b>对象</b>：7 个 coding agent harness —— <code>cline-patched</code>（BaiZe 的 agent 骨架，EDA 开发基于它）、<code>opencode</code>、<code>pi</code>（gpt-eng）、<code>codex</code>、<code>claude-code</code>、<code>deepseek-harness</code>、<code>hermes</code>（SWE-bench 官方 harness）。</p>
+<p><b>控制变量</b>：统一 backbone <code>kimi-k2.6-cloud</code> · 同一沙箱 · 同一 eval 判据（SWE-bench <code>test patch applied + FAIL_TO_PASS 全过 + PASS_TO_PASS 全过</code>）。</p>
+<p><b>任务集</b>：SWE-bench Lite <b>300 实例</b>（stratified 抽样：30 Round-1 + 70 比例填充；100-set 是 300-set 子集，可 <code>--resume</code> 复用）。7 路并行跑（R2），每 harness 内部串行。</p>
+<p><b>分类</b>：<code>resolved</code>（解出）/ <code>patch-but-failed</code>（PBF，补丁产出但测试未全过）/ <code>blocked</code> / <code>quota-blocked</code>。</p>
+<p><b>定位</b>：这是 <b>harness 选型 + cline 改进</b> 研究（软件工程基准，<b>不是</b> EDA 基准）；BaiZe 的最终下游评测用 <code>EDA-Eval-PyAether</code>（158 任务）。本报告是 harness 线的 7×300 结果汇总，与「交互轨迹 vs cline 报告」互补。</p>
+</div>
+
+<h2 class="sec">2. 总体排名</h2>
+<div class="card">
+<table>
+<tr><th>#</th><th>harness</th><th>resolved</th><th>resolve rate</th><th>PBF</th><th>blocked</th><th>wall 平均（全部）</th><th>wall 平均（resolved）</th></tr>
+<tr><td>🥇 1</td><td><b>pi</b></td><td>91/300</td><td class="num">30.3%</td><td>202</td><td>7</td><td>492s</td><td>358s</td></tr><tr><td>🥈 2</td><td><b>opencode</b></td><td>87/300</td><td class="num">29.0%</td><td>211</td><td>2</td><td>460s</td><td>370s</td></tr><tr class="cline-row"><td>🥉 3</td><td><b>cline</b></td><td>86/300</td><td class="num">28.7%</td><td>212</td><td>2</td><td>498s</td><td>399s</td></tr><tr><td> 4</td><td><b>codex</b></td><td>80/300</td><td class="num">26.7%</td><td>214</td><td>6</td><td>922s</td><td>572s</td></tr><tr><td> 5</td><td><b>hermes</b></td><td>78/295</td><td class="num">26.4%</td><td>200</td><td>17</td><td>800s</td><td>479s</td></tr><tr><td> 6</td><td><b>claude</b></td><td>78/300</td><td class="num">26.0%</td><td>205</td><td>17</td><td>620s</td><td>428s</td></tr><tr><td> 7</td><td><b>deepseek</b></td><td>71/300</td><td class="num">23.7%</td><td>212</td><td>13</td><td>491s</td><td>473s</td></tr>
+</table>
+<div class="chart"><svg width="780" height="290" xmlns="http://www.w3.org/2000/svg"><line x1="80" y1="230" x2="740" y2="230" stroke="#d0d7de" stroke-width="1"/><rect x="80" y="55.2" width="80" height="174.8" fill="#1f6feb" rx="3"/><text x="120.0" y="49.2" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2328">28.7%</text><text x="120.0" y="248" text-anchor="middle" font-size="11" fill="#59636e">cline</text><text x="120.0" y="264" text-anchor="middle" font-size="10" fill="#8b949e">86/300</text><rect x="180" y="53.1" width="80" height="176.9" fill="#1a7f37" rx="3"/><text x="220.0" y="47.1" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2328">29.0%</text><text x="220.0" y="248" text-anchor="middle" font-size="11" fill="#59636e">opencode</text><text x="220.0" y="264" text-anchor="middle" font-size="10" fill="#8b949e">87/300</text><rect x="280" y="45.0" width="80" height="185.0" fill="#1a7f37" rx="3"/><text x="320.0" y="39.0" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2328">30.3%</text><text x="320.0" y="248" text-anchor="middle" font-size="11" fill="#59636e">pi</text><text x="320.0" y="264" text-anchor="middle" font-size="10" fill="#8b949e">91/300</text><rect x="380" y="67.4" width="80" height="162.6" fill="#9a6700" rx="3"/><text x="420.0" y="61.4" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2328">26.7%</text><text x="420.0" y="248" text-anchor="middle" font-size="11" fill="#59636e">codex</text><text x="420.0" y="264" text-anchor="middle" font-size="10" fill="#8b949e">80/300</text><rect x="480" y="71.4" width="80" height="158.6" fill="#9a6700" rx="3"/><text x="520.0" y="65.4" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2328">26.0%</text><text x="520.0" y="248" text-anchor="middle" font-size="11" fill="#59636e">claude</text><text x="520.0" y="264" text-anchor="middle" font-size="10" fill="#8b949e">78/300</text><rect x="580" y="85.7" width="80" height="144.3" fill="#cf222e" rx="3"/><text x="620.0" y="79.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2328">23.7%</text><text x="620.0" y="248" text-anchor="middle" font-size="11" fill="#59636e">deepseek</text><text x="620.0" y="264" text-anchor="middle" font-size="10" fill="#8b949e">71/300</text><rect x="680" y="68.7" width="80" height="161.3" fill="#9a6700" rx="3"/><text x="720.0" y="62.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2328">26.4%</text><text x="720.0" y="248" text-anchor="middle" font-size="11" fill="#59636e">hermes</text><text x="720.0" y="264" text-anchor="middle" font-size="10" fill="#8b949e">78/295</text><text x="80" y="282" text-anchor="start" font-size="10" fill="#8b949e">纵轴：resolve rate（resolved / total，%）· 每柱标注 resolved/total</text></svg></div>
+<div class="callout callout-yellow"><b>读图提示：</b>codex 与 hermes 的 wall 明显更高（922s / 802s），但 rate 并未对应领先 —— 多花的墙钟没有换来精度提升（见 §3 速度-精度权衡）。</div>
+</div>
+
+<h2 class="sec">3. 速度-精度权衡</h2>
+<div class="card">
+<div class="chart"><svg width="780" height="300" xmlns="http://www.w3.org/2000/svg"><line x1="60" y1="240" x2="730" y2="240" stroke="#d0d7de"/><line x1="60" y1="20" x2="60" y2="240" stroke="#d0d7de"/><text x="390" y="275" text-anchor="middle" font-size="12" fill="#59636e">平均 wall time（秒，仅 resolved 实例）</text><text x="18" y="130" text-anchor="middle" font-size="12" fill="#59636e" transform="rotate(-90 18 130)">resolve rate（%）</text><text x="52" y="154" text-anchor="end" font-size="10" fill="#8b949e">15%</text><line x1="56" y1="154" x2="60" y2="154" stroke="#d0d7de"/><text x="52" y="126" text-anchor="end" font-size="10" fill="#8b949e">20%</text><line x1="56" y1="126" x2="60" y2="126" stroke="#d0d7de"/><text x="52" y="97" text-anchor="end" font-size="10" fill="#8b949e">25%</text><line x1="56" y1="97" x2="60" y2="97" stroke="#d0d7de"/><text x="52" y="69" text-anchor="end" font-size="10" fill="#8b949e">30%</text><line x1="56" y1="69" x2="60" y2="69" stroke="#d0d7de"/><text x="52" y="40" text-anchor="end" font-size="10" fill="#8b949e">35%</text><line x1="56" y1="40" x2="60" y2="40" stroke="#d0d7de"/><circle cx="520" cy="76" r="8" fill="#1f6feb"/><text x="532" y="80" font-size="12" font-weight="bold" fill="#1f6feb">cline</text><circle cx="487" cy="74" r="8" fill="#1a7f37"/><text x="499" y="78" font-size="12" font-weight="bold" fill="#1a7f37">opencode</text><circle cx="474" cy="67" r="8" fill="#1a7f37"/><text x="486" y="71" font-size="12" font-weight="bold" fill="#1a7f37">pi</text><circle cx="720" cy="88" r="8" fill="#1a7f37"/><text x="732" y="92" font-size="12" font-weight="bold" fill="#1a7f37">codex</text><circle cx="554" cy="91" r="8" fill="#1a7f37"/><text x="566" y="95" font-size="12" font-weight="bold" fill="#1a7f37">claude</text><circle cx="606" cy="105" r="8" fill="#1a7f37"/><text x="618" y="109" font-size="12" font-weight="bold" fill="#1a7f37">deepseek</text><circle cx="613" cy="89" r="8" fill="#1a7f37"/><text x="625" y="93" font-size="12" font-weight="bold" fill="#1a7f37">hermes</text></svg></div>
+<p><b>左上角 = 更快 + 更准</b>（优）。<b>opencode（370s / 29.0%）与 pi（358s / 30.3%）落在 Pareto 前沿</b>；cline（399s / 28.7%）略慢一点、精度接近。codex（572s）与 hermes（479s）明显更慢且精度落在下沿 —— 属 Pareto 劣势。deepseek 最慢且精度最低（473s / 23.7%）。</p>
+</div>
+
+<h2 class="sec">4. 失败与阻塞分解</h2>
+<div class="card">
+<h3>4.1 PBF（patch-but-failed）构成</h3>
+<div class="chart"><svg width="780" height="230" xmlns="http://www.w3.org/2000/svg"><rect x="80" y="40.0" width="72" height="56.6" fill="#cf222e"/><rect x="80" y="96.6" width="72" height="89.8" fill="#9a6700"/><rect x="80" y="186.4" width="72" height="11.3" fill="#1f6feb"/><rect x="80" y="197.7" width="72" height="2.3" fill="#8b949e"/><text x="116" y="28" text-anchor="middle" font-size="11" fill="#59636e">cline</text><text x="116" y="215" text-anchor="middle" font-size="10" fill="#8b949e">n=212</text><rect x="172" y="40.0" width="72" height="53.8" fill="#cf222e"/><rect x="172" y="93.8" width="72" height="91.0" fill="#9a6700"/><rect x="172" y="184.8" width="72" height="9.1" fill="#1f6feb"/><rect x="172" y="193.9" width="72" height="6.1" fill="#8b949e"/><text x="208" y="28" text-anchor="middle" font-size="11" fill="#59636e">opencode</text><text x="208" y="215" text-anchor="middle" font-size="10" fill="#8b949e">n=211</text><rect x="264" y="40.0" width="72" height="55.4" fill="#cf222e"/><rect x="264" y="95.4" width="72" height="91.9" fill="#9a6700"/><rect x="264" y="187.3" width="72" height="7.9" fill="#1f6feb"/><rect x="264" y="195.2" width="72" height="4.8" fill="#8b949e"/><text x="300" y="28" text-anchor="middle" font-size="11" fill="#59636e">pi</text><text x="300" y="215" text-anchor="middle" font-size="10" fill="#8b949e">n=202</text><rect x="356" y="40.0" width="72" height="47.1" fill="#cf222e"/><rect x="356" y="87.1" width="72" height="100.2" fill="#9a6700"/><rect x="356" y="187.3" width="72" height="7.5" fill="#1f6feb"/><rect x="356" y="194.8" width="72" height="5.2" fill="#8b949e"/><text x="392" y="28" text-anchor="middle" font-size="11" fill="#59636e">codex</text><text x="392" y="215" text-anchor="middle" font-size="10" fill="#8b949e">n=214</text><rect x="448" y="40.0" width="72" height="44.5" fill="#cf222e"/><rect x="448" y="84.5" width="72" height="105.4" fill="#9a6700"/><rect x="448" y="189.9" width="72" height="7.0" fill="#1f6feb"/><rect x="448" y="196.9" width="72" height="3.1" fill="#8b949e"/><text x="484" y="28" text-anchor="middle" font-size="11" fill="#59636e">claude</text><text x="484" y="215" text-anchor="middle" font-size="10" fill="#8b949e">n=205</text><rect x="540" y="40.0" width="72" height="49.8" fill="#cf222e"/><rect x="540" y="89.8" width="72" height="101.9" fill="#9a6700"/><rect x="540" y="191.7" width="72" height="6.0" fill="#1f6feb"/><rect x="540" y="197.7" width="72" height="2.3" fill="#8b949e"/><text x="576" y="28" text-anchor="middle" font-size="11" fill="#59636e">deepseek</text><text x="576" y="215" text-anchor="middle" font-size="10" fill="#8b949e">n=212</text><rect x="632" y="40.0" width="72" height="39.2" fill="#cf222e"/><rect x="632" y="79.2" width="72" height="110.4" fill="#9a6700"/><rect x="632" y="189.6" width="72" height="7.2" fill="#1f6feb"/><rect x="632" y="196.8" width="72" height="3.2" fill="#8b949e"/><text x="668" y="28" text-anchor="middle" font-size="11" fill="#59636e">hermes</text><text x="668" y="215" text-anchor="middle" font-size="10" fill="#8b949e">n=200</text></svg><div class="legend"><span style="display:inline-block;margin:0 6px"><span style="display:inline-block;width:10px;height:10px;background:#cf222e;border-radius:2px"></span> patch未应用</span><span style="display:inline-block;margin:0 6px"><span style="display:inline-block;width:10px;height:10px;background:#9a6700;border-radius:2px"></span> f2p全失败</span><span style="display:inline-block;margin:0 6px"><span style="display:inline-block;width:10px;height:10px;background:#1f6feb;border-radius:2px"></span> f2p部分通过</span><span style="display:inline-block;margin:0 6px"><span style="display:inline-block;width:10px;height:10px;background:#8b949e;border-radius:2px"></span> f2p过/p2p败</span></div></div>
+<table>
+<tr><th>harness</th><th>PBF 总数</th><th>patch 未应用</th><th>f2p 全失败</th><th>f2p 部分通过</th><th>f2p 过 / p2p 败</th></tr>
+<tr><td><b>cline</b></td><td class="num">212</td><td class="num">75<br><span class="sub">35.4%</span></td><td class="num">119</td><td class="num">15</td><td class="num">3</td></tr><tr><td><b>opencode</b></td><td class="num">211</td><td class="num">71<br><span class="sub">33.6%</span></td><td class="num">120</td><td class="num">12</td><td class="num">8</td></tr><tr><td><b>pi</b></td><td class="num">202</td><td class="num">70<br><span class="sub">34.7%</span></td><td class="num">116</td><td class="num">10</td><td class="num">6</td></tr><tr><td><b>codex</b></td><td class="num">214</td><td class="num">63<br><span class="sub">29.4%</span></td><td class="num">134</td><td class="num">10</td><td class="num">7</td></tr><tr><td><b>claude</b></td><td class="num">205</td><td class="num">57<br><span class="sub">27.8%</span></td><td class="num">135</td><td class="num">9</td><td class="num">4</td></tr><tr><td><b>deepseek</b></td><td class="num">212</td><td class="num">66<br><span class="sub">31.1%</span></td><td class="num">135</td><td class="num">8</td><td class="num">3</td></tr><tr><td><b>hermes</b></td><td class="num">200</td><td class="num">49<br><span class="sub">24.5%</span></td><td class="num">138</td><td class="num">9</td><td class="num">4</td></tr>
+</table>
+<p>两类主导：<b>① f2p 全失败</b>（「改了但改不对」，占 PBF 的约 56%~69%）与 <b>② patch 未应用</b>（补丁格式/环境问题，占 24%~35%）。<b>cline 的 patch 未应用率 35.4%（75/212）偏高</b>，高于 codex（29.4%）、claude（27.8%）、hermes（24.5%）—— 这是 cline 的一个可改进点。</p>
+<h3>4.2 blocked 分布</h3>
+<p>除 cline/opencode 各 2 个外，其余 harness 有 6~17 个 blocked（其中约 2 个 quota-blocked）。<b>claude-code 与 hermes 的 blocked 最多（17 个）</b>，多为 git checkout 冲突 + git_fetch 503 等环境性问题，非能力问题。</p>
+</div>
+
+<h2 class="sec">5. Instance 重叠分析（7 方都测过的 294 个实例）</h2>
+<div class="card">
+<p>在 295 个 all-7 实例上：<b>180</b> 个实例（61%）<b>全体 harness 都解不出</b>，<b>28</b> 个实例（9%）全员解出，<b>87</b> 个是「部分解出」。</p>
+<p class="sub">解读：61% 的实例「全灭」说明 SWE-bench 本批任务的难度对这些 harness + 同 backbone 组合整体偏高；「部分解出」的 87 个才是 harness 间真正的分化空间 —— 样本量小，差异不具统计显著性。</p>
+</div>
+
+<h2 class="sec">6. Head-to-Head（以 cline 为轴 · all-7 子集）</h2>
+<div class="card">
+<table>
+<tr><th>对手</th><th>cline 独解</th><th>对方独解</th><th>双方都解出</th><th>读法</th></tr>
+<tr><td><b>opencode</b></td><td class="num">11</td><td class="num">12</td><td class="num">72</td><td>对方更强</td></tr><tr><td><b>pi</b></td><td class="num">12</td><td class="num">17</td><td class="num">71</td><td>对方更强</td></tr><tr><td><b>codex</b></td><td class="num">21</td><td class="num">15</td><td class="num">62</td><td>cline 更强</td></tr><tr><td><b>claude</b></td><td class="num">18</td><td class="num">11</td><td class="num">65</td><td>cline 更强</td></tr><tr><td><b>deepseek</b></td><td class="num">31</td><td class="num">16</td><td class="num">52</td><td>cline 更强</td></tr><tr><td><b>hermes</b></td><td class="num">18</td><td class="num">13</td><td class="num">65</td><td>cline 更强</td></tr>
+</table>
+<p class="sub">cline 相对 <b>deepseek-harness</b> 优势最明显（独解 31 vs 16）；相对 <b>pi</b> 略处下风（12 vs 17）；与 opencode / claude / hermes 基本互有胜负。均为小样本，仅供方向性参考。</p>
+</div>
+
+<h2 class="sec">7. Per-Repo 分解（含 eval 环境限制）</h2>
+<div class="card">
+<table>
+<tr><th>repo</th><th>cline</th><th>opencode</th><th>pi</th><th>codex</th><th>claude</th><th>deepseek</th><th>hermes</th></tr>
+<tr><td class="rname">django/django <span class="tag-ok">eval可用</span></td><td style="background:#ddf4ff;font-weight:600">30/114<br><span class="sub">26%</span></td><td>28/114<br><span class="sub">25%</span></td><td>36/114<br><span class="sub">32%</span></td><td>33/114<br><span class="sub">29%</span></td><td>29/114<br><span class="sub">25%</span></td><td>25/114<br><span class="sub">22%</span></td><td>29/114<br><span class="sub">25%</span></td></tr><tr><td class="rname">sympy/sympy <span class="tag-ok">eval可用</span></td><td style="background:#ddf4ff;font-weight:600">42/77<br><span class="sub">55%</span></td><td>43/77<br><span class="sub">56%</span></td><td>41/77<br><span class="sub">53%</span></td><td>31/77<br><span class="sub">40%</span></td><td>34/77<br><span class="sub">44%</span></td><td>33/77<br><span class="sub">43%</span></td><td>34/72<br><span class="sub">47%</span></td></tr><tr><td class="rname">scikit-learn/scikit-learn <span class="tag-ok">eval可用</span></td><td style="background:#ddf4ff;font-weight:600">10/23<br><span class="sub">43%</span></td><td>11/23<br><span class="sub">48%</span></td><td>10/23<br><span class="sub">43%</span></td><td>10/23<br><span class="sub">43%</span></td><td>11/23<br><span class="sub">48%</span></td><td>9/23<br><span class="sub">39%</span></td><td>9/23<br><span class="sub">39%</span></td></tr><tr><td class="rname">matplotlib/matplotlib <span class="tag-lim">eval受限</span></td><td style="background:#ddf4ff;font-weight:600">0/23<br><span class="sub">0%</span></td><td>0/23<br><span class="sub">0%</span></td><td>0/23<br><span class="sub">0%</span></td><td>0/23<br><span class="sub">0%</span></td><td>0/23<br><span class="sub">0%</span></td><td>0/23<br><span class="sub">0%</span></td><td>0/23<br><span class="sub">0%</span></td></tr><tr><td class="rname">pytest-dev/pytest <span class="tag-lim">eval受限</span></td><td style="background:#ddf4ff;font-weight:600">0/17<br><span class="sub">0%</span></td><td>0/17<br><span class="sub">0%</span></td><td>0/17<br><span class="sub">0%</span></td><td>0/17<br><span class="sub">0%</span></td><td>0/17<br><span class="sub">0%</span></td><td>1/17<br><span class="sub">6%</span></td><td>1/17<br><span class="sub">6%</span></td></tr><tr><td class="rname">sphinx-doc/sphinx <span class="tag-lim">eval受限</span></td><td style="background:#ddf4ff;font-weight:600">0/16<br><span class="sub">0%</span></td><td>0/16<br><span class="sub">0%</span></td><td>0/16<br><span class="sub">0%</span></td><td>0/16<br><span class="sub">0%</span></td><td>0/16<br><span class="sub">0%</span></td><td>0/16<br><span class="sub">0%</span></td><td>0/16<br><span class="sub">0%</span></td></tr><tr><td class="rname">astropy/astropy <span class="tag-lim">eval受限</span></td><td style="background:#ddf4ff;font-weight:600">0/6<br><span class="sub">0%</span></td><td>0/6<br><span class="sub">0%</span></td><td>0/6<br><span class="sub">0%</span></td><td>0/6<br><span class="sub">0%</span></td><td>0/6<br><span class="sub">0%</span></td><td>0/6<br><span class="sub">0%</span></td><td>0/6<br><span class="sub">0%</span></td></tr><tr><td class="rname">psf/requests <span class="tag-lim">eval受限</span></td><td style="background:#ddf4ff;font-weight:600">0/6<br><span class="sub">0%</span></td><td>0/6<br><span class="sub">0%</span></td><td>0/6<br><span class="sub">0%</span></td><td>0/6<br><span class="sub">0%</span></td><td>0/6<br><span class="sub">0%</span></td><td>0/6<br><span class="sub">0%</span></td><td>0/6<br><span class="sub">0%</span></td></tr><tr><td class="rname">pallets/flask <span class="tag-lim">eval受限</span></td><td style="background:#ddf4ff;font-weight:600">0/3<br><span class="sub">0%</span></td><td>0/3<br><span class="sub">0%</span></td><td>0/3<br><span class="sub">0%</span></td><td>0/3<br><span class="sub">0%</span></td><td>0/3<br><span class="sub">0%</span></td><td>0/3<br><span class="sub">0%</span></td><td>0/3<br><span class="sub">0%</span></td></tr><tr><td class="rname">pylint-dev/pylint <span class="tag-part">部分可用</span></td><td style="background:#ddf4ff;font-weight:600">1/6<br><span class="sub">17%</span></td><td>2/6<br><span class="sub">33%</span></td><td>1/6<br><span class="sub">17%</span></td><td>3/6<br><span class="sub">50%</span></td><td>1/6<br><span class="sub">17%</span></td><td>1/6<br><span class="sub">17%</span></td><td>2/6<br><span class="sub">33%</span></td></tr><tr><td class="rname">pydata/xarray <span class="tag-part">部分可用</span></td><td style="background:#ddf4ff;font-weight:600">2/5<br><span class="sub">40%</span></td><td>2/5<br><span class="sub">40%</span></td><td>2/5<br><span class="sub">40%</span></td><td>2/5<br><span class="sub">40%</span></td><td>2/5<br><span class="sub">40%</span></td><td>1/5<br><span class="sub">20%</span></td><td>2/5<br><span class="sub">40%</span></td></tr><tr><td class="rname">mwaskom/seaborn <span class="tag-part">部分可用</span></td><td style="background:#ddf4ff;font-weight:600">1/4<br><span class="sub">25%</span></td><td>1/4<br><span class="sub">25%</span></td><td>1/4<br><span class="sub">25%</span></td><td>1/4<br><span class="sub">25%</span></td><td>1/4<br><span class="sub">25%</span></td><td>1/4<br><span class="sub">25%</span></td><td>1/4<br><span class="sub">25%</span></td></tr>
+</table>
+<div class="callout callout-red"><b>⚠️ 有效比较仅限 3 个 eval-可用 repo</b>（django 114 + sympy 77 + scikit-learn 23 = 214 实例）：matplotlib/sphinx/pytest/astropy/requests/flask 的 patch_applied=False（eval 环境限制），<b>0 分不代表 harness 能力</b>；pylint/xarray/seaborn 样本极小（≤6），仅供参考。</div>
+</div>
+
+<h2 class="sec">8. 口径与诚实条款</h2>
+<div class="card">
+<ul>
+<li><b>快照未闭环</b>：hermes 295/300（还差 5 个，均为 sympy），其 rate（26.4%）可能受未完成实例的<b>选择偏差</b>影响；全部跑完后应重跑本脚本刷新数字。</li>
+<li><b>R1/R2 wall time 不完全可比</b>：R2 为 7 路并行，wall 含资源争抢开销；且 hermes/codex 的 wall 偏长部分源于自身较重实现。</li>
+<li><b>样本量</b>：resolve rate 的 binomial SE ≈ 3 pp（p≈0.28, n≈300），故 pi/cline/opencode 三者之差（≤1.6 pp）<b>不具统计显著性</b>，排名仅有方向性意义。</li>
+<li><b>实例重叠</b>：all-7 的 294 实例中「部分解出」仅 87 个，head-to-head 独解计数多为个位数，<b>不作显著性结论</b>。</li>
+<li><b>轨迹数据缺失</b>：仅 stdout_tail 最后 500 字符，无 per-turn 轨迹 —— 工具调用序列、token、压缩事件均不可得。</li>
+<li><b>数据可复算</b>：所有数字由 <code>gen_report_7x300_zh.py</code> 从 <code>kimi_pilot_results.json</code> 现算，脚本入库。</li>
+</ul>
+</div>
+
+<h2 class="sec">9. 对 BaiZe 的启示</h2>
+<div class="card">
+<ul>
+<li><b>harness 选型</b>：pi / opencode / cline 三者在同 backbone 下难分伯仲（30.3% / 29.0% / 28.7%），若考虑<b>速度</b>，opencode（wall 最短 460s）与 pi 更优；cli<b>ne</b> 的护城河在于 BaiZe 的 EDA agent 已基于它开发、且有可落地的改进点（§4 的 patch 未应用率、ai@7.0.49 transform error）。</li>
+<li><b>6.7 pp 的 harness 差带 vs 数十 pp 的模型差带</b>：ZhuLong 侧 full harness（DeepSeek-V4-Pro）≈94% vs 裸 LLM ≈10.5%，说明<b>主要矛盾仍是模型能力 / 观测保真度，而非 harness 细节</b> —— 与 BaiZe「harness 冻结、换 backbone」的主体研究一致。</li>
+<li><b>基线参照</b>：本次 backbone 固定为 kimi-k2.6-cloud，7 harness 的 23.7%~30.3% 可作为该 backbone 在 SWE-bench 的上限参考；BaiZe-backbone 接入后可在同一管线复测。</li>
+</ul>
+</div>
+
+<footer>
+harness 线 · 7×300 评测报告（中文版）· 2026-10-12 · 自包含单文件 · 内联 CSS/SVG · 零外链 · 纯分析（不占 GPU）<br>
+数据源：run/harness/kimi_pilot_results.json（2095 entries）· 生成脚本：run/harness/gen_report_7x300_zh.py · 每格数字可复算
+</footer>
+
+</div>
+</body>
+</html>
