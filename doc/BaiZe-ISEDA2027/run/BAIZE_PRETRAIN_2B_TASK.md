@@ -194,8 +194,8 @@
 > | seq | 4096 | P-9.7 |
 > | 精度 | **bf16**（FP8 在 TP1 上 s=0.91 慢 9%，不用） | T3 Test 4 |
 > | GBS | 1024 | P-5b / P-5a |
-> | **优化器** | **`dist_muon`**（layer-wise distributed，**默认**） | dist_muon 三路实测 #262 |
-> | LR / 调度 | 1e-3 / WSD / warmup 5% / decay 10%（Muon 官方建议 ~1e-3；A/B 验证用 3e-4 公平对照） | P-5a |
+> | **优化器** | **`adamw`**（标准 Megatron AdamW，**默认**） | 用户直令 2026-10-12：dist_muon 长跑 loss 发散 → 换回 AdamW |
+> | LR / 调度 | 1e-3 / WSD / warmup 5% / decay 10%（AdamW 初筛定值 1e-3；A/B 验证用 3e-4 公平对照） | P-5a |
 > | recompute | 不用（对 Mamba2-hybrid 无效：52/56 层 SSM 激活常量级，仅省 ~0.6GB） | T3 Test 1 |
 > | **实测吞吐** | **249K tok/s**（last-100 步均值，1100 步长跑确认） | P-9.7 |
 >
