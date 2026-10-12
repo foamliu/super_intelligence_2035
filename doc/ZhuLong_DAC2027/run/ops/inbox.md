@@ -1,4 +1,21 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 54 -->
+
+## RUN_ID 54 — 提取 dsh settings.yaml 配置格式
+
+> 读 dsh 包内 README 与 settings 相关插件，拿到 `settings.yaml` 的 provider / baseURL / apiKey 字段写法，用于 headless 写入。
+
+```bash
+# RUN_ID 54 · 提取 dsh settings 格式
+DSHK=/nasdata/app.e0031982/.local/node-20/lib/node_modules/@deepseek-ai/dsh
+echo "=== [1] README.md 全文（前 120 行）==="
+sed -n '1,120p' "$DSHK/README.md" 2>/dev/null
+echo "=== [2] dsh-settings 包内 schema/types ==="
+grep -rniE 'providers|baseURL|base_url|apiKeyEnv|apiKey|openai-compat|settings\.yaml|DSH_HOME' "$DSHK/node_modules/@deepseek-ai/dsh-settings/" 2>/dev/null | grep -vE '\.map$' | head -60
+echo "=== [3] api-settings-controller 内 provider 字段 ==="
+grep -rniE 'providers|baseURL|base_url|apiKeyEnv|api:|openai|protocol|models' "$DSHK/node_modules/@deepseek-ai/dsh-api-settings-controller/" 2>/dev/null | grep -vE '\.map$' | head -50
+echo "=== DONE ==="
+```
 <!-- RUN_ID: 53 -->
 
 ## RUN_ID 53 — dsh CLI 与配置摸底
