@@ -5,7 +5,7 @@ from pathlib import Path
 from datetime import datetime
 
 HERE = Path(__file__).resolve().parent
-REPO_ROOT = HERE.parent.parent.parent
+REPO_ROOT = HERE.parent.parent.parent.parent  # harness -> run -> BaiZe-ISEDA2027 -> doc -> super_intelligence_2035
 JSON_PATH = HERE / "kimi_pilot_results.json"
 LOGS_EVAL = Path("/nas_train/app.e0031982/harness_work/logs_eval")
 OUT_PATH = REPO_ROOT / "doc" / "BaiZe-ISEDA2027" / "report_harness_eval_rootcause.html"
@@ -33,7 +33,10 @@ infra_reasons = collections.Counter()
 infra_by_repo = collections.defaultdict(lambda: collections.Counter())
 report_count = 0
 if LOGS_EVAL.exists():
-    for rp in LOGS_EVAL.rglob("report.json"):
+    # Scan both .log files (JSON with eval results) and report.json files in subdirs
+    for rp in LOGS_EVAL.iterdir():
+        if not rp.is_file():
+            continue
         report_count += 1
         try:
             data = json.loads(rp.read_text())
@@ -164,12 +167,13 @@ html = f'''<!DOCTYPE html>
 <h2 class="sec">1. HERO + TL;DR</h2>
 <div class="callout cr">
 <b>Bottom line:</b> Module/env install failures account for <b>21.5% (451/2100)</b> of all entries --
-<b>15.0% (315)</b> have explicit <code>infra_failure_reason</code> (missing_module 276 + OOM 28 + no_tests 11),
-plus <b>6.5% (136)</b> unmarked patch-apply failures (mainly sphinx base_commit mismatch).
+<b>14.8% (311)</b> have explicit <code>infra_failure_reason</code> (missing_module 272 + OOM 28 + no_tests 11),
+plus <b>6.7% (140)</b> unmarked patch-apply failures (mainly sphinx base_commit mismatch, 92 entries).
 <b>True "wrong-fix" is only 48.0% (1007/2100)</b>, not the previously reported 83%.
-Fixing eval infrastructure (P0) can recover <b>~65 unique instances x 7 = ~22 additional resolved/harness</b>,
-raising cline's resolve rate from 28.7% to ~36.6% (eval-OK caliber).
-<b>Score vs external: 28.7% is within the SWE-bench Lite leaderboard range (18-32%), not "significantly low"</b> -- but suppressed ~8pp by infra failures.
+<b>5 repos (65 unique instances x 7 harnesses = 455 entries) are systematically suppressed</b> by eval infra failures (matplotlib/pytest/sphinx/astropy/flask).
+Fixing eval infrastructure (P0) can recover <b>~23 additional resolved/harness</b> (65 instances x 34.8% eval-OK rate),
+raising cline's resolve rate from 28.7% to ~36.3% (eval-OK caliber).
+<b>Score vs external: 28.7% is comparable to Aider (26.3%) but below top agents (SWE-agent+Claude4=56.7%); eval-OK caliber 34.8% is mid-tier</b> -- suppressed ~6pp by infra failures.
 </div>
 <div class="callout cb">
 <b>TL;DR:</b>

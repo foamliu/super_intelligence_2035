@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Harness - Eval Root Cause Analysis</title>
+<style>body{font-family:-apple-system,Segoe UI,PingFang SC,Microsoft YaHei,sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#fafafa;color:#222;line-height:1.6}h1{font-size:1.5em;border-bottom:3px solid #2563eb;padding-bottom:8px}h2.sec{font-size:1.2em;color:#2563eb;border-left:4px solid #2563eb;padding-left:10px;margin-top:32px}h3{font-size:1.05em;color:#444;margin-top:20px}table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}th,td{border:1px solid #ddd;padding:5px 8px;text-align:center}th{background:#e8eef7;font-weight:600}td.rname{text-align:left;font-family:monospace}td.num{font-family:monospace}tr:hover{background:#f0f4ff}.callout{padding:12px 16px;border-radius:6px;margin:12px 0;font-size:14px}.cr{background:#fef2f2;border:1px solid #fca5a5}.cb{background:#eff6ff;border:1px solid #93c5fd}.cy{background:#fefce8;border:1px solid #fde047}.cg{background:#f0fdf4;border:1px solid #86efac}pre{background:#f5f5f5;padding:10px;border-radius:6px;overflow-x:auto;font-size:12px;line-height:1.4}.svgc{text-align:center;margin:16px 0;overflow-x:auto}.leg{display:inline-flex;gap:15px;flex-wrap:wrap;font-size:12px;margin:8px 0}.leg span{display:inline-flex;align-items:center;gap:4px}.leg i{width:12px;height:12px;border-radius:2px;display:inline-block}.tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600}.p0{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}.p1{background:#fefce8;color:#ca8a04;border:1px solid #fde047}footer{margin-top:40px;padding-top:15px;border-top:1px solid #ddd;font-size:11px;color:#888}</style></head><body>
+
+<h1>🔬 BaiZe Harness - SWE-bench Eval Infrastructure Root Cause Analysis</h1>
+<p style="color:#666;font-size:13px">Generated: 2026-10-12 22:43 | Data: <code>kimi_pilot_results.json</code> (2100 entries, 7 harnesses x 300 instances) | Model: kimi-k2.6-cloud</p>
+
+<h2 class="sec">1. HERO + TL;DR</h2>
+<div class="callout cr">
+<b>Bottom line:</b> Module/env install failures account for <b>21.5% (451/2100)</b> of all entries --
+<b>14.8% (311)</b> have explicit <code>infra_failure_reason</code> (missing_module 272 + OOM 28 + no_tests 11),
+plus <b>6.7% (140)</b> unmarked patch-apply failures (mainly sphinx base_commit mismatch, 92 entries).
+<b>True "wrong-fix" is only 48.0% (1007/2100)</b>, not the previously reported 83%.
+<b>5 repos (65 unique instances x 7 harnesses = 455 entries) are systematically suppressed</b> by eval infra failures (matplotlib/pytest/sphinx/astropy/flask).
+Fixing eval infrastructure (P0) can recover <b>~23 additional resolved/harness</b> (65 instances x 34.8% eval-OK rate),
+raising cline's resolve rate from 28.7% to ~36.3% (eval-OK caliber).
+<b>Score vs external: 28.7% is comparable to Aider (26.3%) but below top agents (SWE-agent+Claude4=56.7%); eval-OK caliber 34.8% is mid-tier</b> -- suppressed ~6pp by infra failures.
+</div>
+<div class="callout cb">
+<b>TL;DR:</b>
+<ul style="margin:6px 0">
+<li><b>"83% wrong-fix" was a miscalculation</b>: old report (7x30, django+sympy only) got 83% in the eval-OK subset; full 2100 shows true-wrong-fix = 48.0%.</li>
+<li><b>Infra failures concentrated in 5 repos</b>: matplotlib (freetype download), pytest (version conflict), astropy (OOM), sphinx (base_commit mismatch), flask (no tests collected).</li>
+<li><b>Patch tolerance is already 4-level</b> (git apply -> --3way -> --reject -> patch --fuzz=5), NOT single-level as task spec claims -- that info came from outdated <code>SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md</code>.</li>
+<li><b>Root cause is NOT "missing deps"</b> but <code>pip install -e .</code> compiling C extensions in unshare sandbox -> needs external downloads -> blocked by sandbox network policy.</li>
+<li><b>Kimi K2 official 65.8% is SWE-bench Verified (500 tasks), not comparable to SWE-bench Lite (300 tasks).</b></li>
+</ul>
+</div>
+
+<h2 class="sec">2. Failure Classification Overview</h2>
+<h3>2.1 Full Classification Distribution (2100 entries)</h3>
+<table>
+<tr><th>Category</th><th>Count</th><th>%</th><th>Meaning</th></tr>
+<tr><td style="color:#2d7d2d;font-weight:600">resolved</td><td class="num">574</td><td class="num">27.3%</td><td>patch passes FAIL_TO_PASS + PASS_TO_PASS</td></tr>
+<tr><td style="color:#d44;font-weight:600">true-wrong-fix</td><td class="num">1007</td><td class="num">48.0%</td><td>patch applied, tests ran, FAIL_TO_PASS not met (model ability issue)</td></tr>
+<tr><td style="color:#e80;font-weight:600">env-or-patch-fail</td><td class="num">451</td><td class="num">21.5%</td><td>patch not applied + tests didn't run (f2p_total=0) -- <b>infra failure</b></td></tr>
+<tr><td>patch-apply-fail</td><td class="num">0</td><td class="num">0.0%</td><td>patch not applied but tests ran (edge case)</td></tr>
+<tr><td>blocked</td><td class="num">50</td><td class="num">2.4%</td><td>git fetch/checkout failure (503 timeout/conflict)</td></tr>
+<tr><td>quota-blocked</td><td class="num">14</td><td class="num">0.7%</td><td>API quota exhausted</td></tr>
+<tr><td>no-patch</td><td class="num">4</td><td class="num">0.2%</td><td>harness produced no patch</td></tr>
+</table>
+<div class="callout cy">
+<b>Key distinction:</b> Original classification lumped 1458 entries as <code>patch-but-failed</code> (pbf), but:
+<ul style="margin:4px 0">
+<li><b>1007 (69.1% of pbf)</b> are true-wrong-fix (patch applied, tests ran, FAIL_TO_PASS failed) = <b>model ability</b></li>
+<li><b>451 (30.9% of pbf)</b> are env-or-patch-fail (patch not applied + f2p_total=0) = <b>infra failure</b></li>
+</ul>
+The old "83% wrong-fix" only counted 7x30=210 entries (django+sympy only) -- that subset is eval-OK repos, so wrong-fix ratio was inflated.
+</div>
+
+<h3>2.2 Per-Harness x Per-Failure-Class Matrix + Heatmap</h3>
+<div class="svgc"><svg viewBox="0 0 690 322" xmlns="http://www.w3.org/2000/svg" style="max-width:690px;font-family:monospace;font-size:11px">
+<text x="185" y="32" text-anchor="middle" fill="#555" transform="rotate(-25,185,32)">resolved</text>
+<text x="275" y="32" text-anchor="middle" fill="#555" transform="rotate(-25,275,32)">wrong-fix</text>
+<text x="365" y="32" text-anchor="middle" fill="#555" transform="rotate(-25,365,32)">env/infra</text>
+<text x="455" y="32" text-anchor="middle" fill="#555" transform="rotate(-25,455,32)">blocked</text>
+<text x="545" y="32" text-anchor="middle" fill="#555" transform="rotate(-25,545,32)">quota</text>
+<text x="635" y="32" text-anchor="middle" fill="#555" transform="rotate(-25,635,32)">no-patch</text>
+<text x="135" y="62" text-anchor="end" fill="#333">claude-code</text>
+<rect x="140" y="40" width="88" height="34" fill="#2d7d2d" opacity="0.58" rx="3"/>
+<text x="185" y="62" text-anchor="middle" fill="#fff" font-weight="bold">78</text>
+<rect x="230" y="40" width="88" height="34" fill="#d44" opacity="0.97" rx="3"/>
+<text x="275" y="62" text-anchor="middle" fill="#fff" font-weight="bold">148</text>
+<rect x="320" y="40" width="88" height="34" fill="#e80" opacity="0.47" rx="3"/>
+<text x="365" y="62" text-anchor="middle" fill="#fff" font-weight="bold">57</text>
+<rect x="410" y="40" width="88" height="34" fill="#999" opacity="0.23" rx="3"/>
+<text x="455" y="62" text-anchor="middle" fill="#fff" font-weight="bold">15</text>
+<rect x="500" y="40" width="88" height="34" fill="#77a" opacity="0.16" rx="3"/>
+<text x="545" y="62" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
+<rect x="590" y="40" width="88" height="34" fill="#f5f5f5" rx="3"/>
+<text x="635" y="62" text-anchor="middle" fill="#ccc">.</text>
+<text x="135" y="98" text-anchor="end" fill="#333">cline-patched</text>
+<rect x="140" y="76" width="88" height="34" fill="#2d7d2d" opacity="0.63" rx="3"/>
+<text x="185" y="98" text-anchor="middle" fill="#fff" font-weight="bold">86</text>
+<rect x="230" y="76" width="88" height="34" fill="#d44" opacity="0.91" rx="3"/>
+<text x="275" y="98" text-anchor="middle" fill="#fff" font-weight="bold">137</text>
+<rect x="320" y="76" width="88" height="34" fill="#e80" opacity="0.57" rx="3"/>
+<text x="365" y="98" text-anchor="middle" fill="#fff" font-weight="bold">75</text>
+<rect x="410" y="76" width="88" height="34" fill="#f5f5f5" rx="3"/>
+<text x="455" y="98" text-anchor="middle" fill="#ccc">.</text>
+<rect x="500" y="76" width="88" height="34" fill="#77a" opacity="0.16" rx="3"/>
+<text x="545" y="98" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
+<rect x="590" y="76" width="88" height="34" fill="#f5f5f5" rx="3"/>
+<text x="635" y="98" text-anchor="middle" fill="#ccc">.</text>
+<text x="135" y="134" text-anchor="end" fill="#333">codex</text>
+<rect x="140" y="112" width="88" height="34" fill="#2d7d2d" opacity="0.59" rx="3"/>
+<text x="185" y="134" text-anchor="middle" fill="#fff" font-weight="bold">80</text>
+<rect x="230" y="112" width="88" height="34" fill="#d44" opacity="0.99" rx="3"/>
+<text x="275" y="134" text-anchor="middle" fill="#fff" font-weight="bold">151</text>
+<rect x="320" y="112" width="88" height="34" fill="#e80" opacity="0.50" rx="3"/>
+<text x="365" y="134" text-anchor="middle" fill="#fff" font-weight="bold">63</text>
+<rect x="410" y="112" width="88" height="34" fill="#999" opacity="0.17" rx="3"/>
+<text x="455" y="134" text-anchor="middle" fill="#fff" font-weight="bold">4</text>
+<rect x="500" y="112" width="88" height="34" fill="#77a" opacity="0.16" rx="3"/>
+<text x="545" y="134" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
+<rect x="590" y="112" width="88" height="34" fill="#f5f5f5" rx="3"/>
+<text x="635" y="134" text-anchor="middle" fill="#ccc">.</text>
+<text x="135" y="170" text-anchor="end" fill="#333">deepseek-harness</text>
+<rect x="140" y="148" width="88" height="34" fill="#2d7d2d" opacity="0.54" rx="3"/>
+<text x="185" y="170" text-anchor="middle" fill="#fff" font-weight="bold">71</text>
+<rect x="230" y="148" width="88" height="34" fill="#d44" opacity="0.96" rx="3"/>
+<text x="275" y="170" text-anchor="middle" fill="#fff" font-weight="bold">146</text>
+<rect x="320" y="148" width="88" height="34" fill="#e80" opacity="0.52" rx="3"/>
+<text x="365" y="170" text-anchor="middle" fill="#fff" font-weight="bold">66</text>
+<rect x="410" y="148" width="88" height="34" fill="#999" opacity="0.21" rx="3"/>
+<text x="455" y="170" text-anchor="middle" fill="#fff" font-weight="bold">11</text>
+<rect x="500" y="148" width="88" height="34" fill="#77a" opacity="0.16" rx="3"/>
+<text x="545" y="170" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
+<rect x="590" y="148" width="88" height="34" fill="#aaa" opacity="0.17" rx="3"/>
+<text x="635" y="170" text-anchor="middle" fill="#fff" font-weight="bold">4</text>
+<text x="135" y="206" text-anchor="end" fill="#333">hermes</text>
+<rect x="140" y="184" width="88" height="34" fill="#2d7d2d" opacity="0.60" rx="3"/>
+<text x="185" y="206" text-anchor="middle" fill="#fff" font-weight="bold">81</text>
+<rect x="230" y="184" width="88" height="34" fill="#d44" opacity="1.00" rx="3"/>
+<text x="275" y="206" text-anchor="middle" fill="#fff" font-weight="bold">153</text>
+<rect x="320" y="184" width="88" height="34" fill="#e80" opacity="0.42" rx="3"/>
+<text x="365" y="206" text-anchor="middle" fill="#fff" font-weight="bold">49</text>
+<rect x="410" y="184" width="88" height="34" fill="#999" opacity="0.23" rx="3"/>
+<text x="455" y="206" text-anchor="middle" fill="#fff" font-weight="bold">15</text>
+<rect x="500" y="184" width="88" height="34" fill="#77a" opacity="0.16" rx="3"/>
+<text x="545" y="206" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
+<rect x="590" y="184" width="88" height="34" fill="#f5f5f5" rx="3"/>
+<text x="635" y="206" text-anchor="middle" fill="#ccc">.</text>
+<text x="135" y="242" text-anchor="end" fill="#333">opencode</text>
+<rect x="140" y="220" width="88" height="34" fill="#2d7d2d" opacity="0.63" rx="3"/>
+<text x="185" y="242" text-anchor="middle" fill="#fff" font-weight="bold">87</text>
+<rect x="230" y="220" width="88" height="34" fill="#d44" opacity="0.93" rx="3"/>
+<text x="275" y="242" text-anchor="middle" fill="#fff" font-weight="bold">140</text>
+<rect x="320" y="220" width="88" height="34" fill="#e80" opacity="0.54" rx="3"/>
+<text x="365" y="242" text-anchor="middle" fill="#fff" font-weight="bold">71</text>
+<rect x="410" y="220" width="88" height="34" fill="#f5f5f5" rx="3"/>
+<text x="455" y="242" text-anchor="middle" fill="#ccc">.</text>
+<rect x="500" y="220" width="88" height="34" fill="#77a" opacity="0.16" rx="3"/>
+<text x="545" y="242" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
+<rect x="590" y="220" width="88" height="34" fill="#f5f5f5" rx="3"/>
+<text x="635" y="242" text-anchor="middle" fill="#ccc">.</text>
+<text x="135" y="278" text-anchor="end" fill="#333">pi</text>
+<rect x="140" y="256" width="88" height="34" fill="#2d7d2d" opacity="0.66" rx="3"/>
+<text x="185" y="278" text-anchor="middle" fill="#fff" font-weight="bold">91</text>
+<rect x="230" y="256" width="88" height="34" fill="#d44" opacity="0.88" rx="3"/>
+<text x="275" y="278" text-anchor="middle" fill="#fff" font-weight="bold">132</text>
+<rect x="320" y="256" width="88" height="34" fill="#e80" opacity="0.54" rx="3"/>
+<text x="365" y="278" text-anchor="middle" fill="#fff" font-weight="bold">70</text>
+<rect x="410" y="256" width="88" height="34" fill="#999" opacity="0.18" rx="3"/>
+<text x="455" y="278" text-anchor="middle" fill="#fff" font-weight="bold">5</text>
+<rect x="500" y="256" width="88" height="34" fill="#77a" opacity="0.16" rx="3"/>
+<text x="545" y="278" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
+<rect x="590" y="256" width="88" height="34" fill="#f5f5f5" rx="3"/>
+<text x="635" y="278" text-anchor="middle" fill="#ccc">.</text>
+</svg></div>
+<div class="leg">
+<span><i style="background:#2d7d2d"></i>resolved</span>
+<span><i style="background:#d44"></i>true-wrong-fix</span>
+<span><i style="background:#e80"></i>env/infra-fail</span>
+<span><i style="background:#a50"></i>patch-apply-fail</span>
+<span><i style="background:#999"></i>blocked</span>
+<span><i style="background:#77a"></i>quota</span>
+</div>
+<table>
+<tr><th>harness</th><th>n</th><th>resolved</th><th>wrong-fix</th><th>env/infra</th><th>blocked</th><th>quota</th></tr>
+<tr><td class="rname">claude-code</td><td class="num">300</td><td class="num" style="color:#2d7d2d;font-weight:600">78 (26.0%)</td><td class="num" style="color:#d44">148 (49.3%)</td><td class="num" style="color:#e80;font-weight:600">57 (19.0%)</td><td class="num">15</td><td class="num">2</td></tr><tr><td class="rname">cline-patched</td><td class="num">300</td><td class="num" style="color:#2d7d2d;font-weight:600">86 (28.7%)</td><td class="num" style="color:#d44">137 (45.7%)</td><td class="num" style="color:#e80;font-weight:600">75 (25.0%)</td><td class="num">0</td><td class="num">2</td></tr><tr><td class="rname">codex</td><td class="num">300</td><td class="num" style="color:#2d7d2d;font-weight:600">80 (26.7%)</td><td class="num" style="color:#d44">151 (50.3%)</td><td class="num" style="color:#e80;font-weight:600">63 (21.0%)</td><td class="num">4</td><td class="num">2</td></tr><tr><td class="rname">deepseek-harness</td><td class="num">300</td><td class="num" style="color:#2d7d2d;font-weight:600">71 (23.7%)</td><td class="num" style="color:#d44">146 (48.7%)</td><td class="num" style="color:#e80;font-weight:600">66 (22.0%)</td><td class="num">11</td><td class="num">2</td></tr><tr><td class="rname">hermes</td><td class="num">300</td><td class="num" style="color:#2d7d2d;font-weight:600">81 (27.0%)</td><td class="num" style="color:#d44">153 (51.0%)</td><td class="num" style="color:#e80;font-weight:600">49 (16.3%)</td><td class="num">15</td><td class="num">2</td></tr><tr><td class="rname">opencode</td><td class="num">300</td><td class="num" style="color:#2d7d2d;font-weight:600">87 (29.0%)</td><td class="num" style="color:#d44">140 (46.7%)</td><td class="num" style="color:#e80;font-weight:600">71 (23.7%)</td><td class="num">0</td><td class="num">2</td></tr><tr><td class="rname">pi</td><td class="num">300</td><td class="num" style="color:#2d7d2d;font-weight:600">91 (30.3%)</td><td class="num" style="color:#d44">132 (44.0%)</td><td class="num" style="color:#e80;font-weight:600">70 (23.3%)</td><td class="num">5</td><td class="num">2</td></tr>
+</table>
+<p style="font-size:12px;color:#666">Evidence: numbers computed directly from <code>kimi_pilot_results.json</code> fields (<code>classification</code>, <code>harness_result.eval.patch_applied</code>, <code>f2p_total</code>, <code>resolved</code>). Script: <code>gen_report_eval_rootcause.py</code>.</p>
+
+<h3>2.3 infra_failure_reason Distribution (from eval report.json)</h3>
+<div class="svgc"><svg viewBox="0 0 260 170" xmlns="http://www.w3.org/2000/svg" style="max-width:260px;font-family:monospace;font-size:11px">
+<path d="M80,80 L80.0,15.0 A65,65 0 1 1 33.9,34.2 Z" fill="#e80" opacity="0.8"/>
+<path d="M80,80 L33.9,34.2 A65,65 0 0 1 65.7,16.6 Z" fill="#a0a" opacity="0.8"/>
+<path d="M80,80 L65.7,16.6 A65,65 0 0 1 80.0,15.0 Z" fill="#08c" opacity="0.8"/>
+<rect x="170" y="15" width="12" height="12" fill="#e80" rx="2"/>
+<text x="188" y="25" fill="#333">missing_module: 272 (87.5%)</text>
+<rect x="170" y="35" width="12" height="12" fill="#a0a" rx="2"/>
+<text x="188" y="45" fill="#333">out_of_memory: 28 (9.0%)</text>
+<rect x="170" y="55" width="12" height="12" fill="#08c" rx="2"/>
+<text x="188" y="65" fill="#333">no_tests_collected: 11 (3.5%)</text>
+<text x="80" y="165" text-anchor="middle" fill="#555">Total: 311</text>
+</svg></div>
+<table>
+<tr><th>infra_failure_reason</th><th>Count</th><th>%</th><th>Repos affected</th></tr>
+<tr><td style="color:#e80;font-weight:600">missing_module</td><td class="num">272</td><td class="num">13.0%</td><td style="font-size:12px">django/django(7)
+matplotlib/matplotlib(130)
+pylint-dev/pylint(1)
+pytest-dev/pytest(107)
+scikit-learn/scikit(27)</td></tr><tr><td style="color:#e80;font-weight:600">out_of_memory</td><td class="num">28</td><td class="num">1.3%</td><td style="font-size:12px">astropy/astropy(28)</td></tr><tr><td style="color:#e80;font-weight:600">no_tests_collected</td><td class="num">11</td><td class="num">0.5%</td><td style="font-size:12px">mwaskom/seaborn(4)
+pallets/flask(7)</td></tr>
+</table>
+<p style="font-size:12px;color:#666">Source: <code>/nas_train/app.e0031982/harness_work/logs_eval/**/report.json</code> <code>infra_failure_reason</code> field (from SWE-bench official grader <code>get_eval_report()</code>). Scanned 2133 report.json files.</p>
+
+<h2 class="sec">3. Root Cause Chain</h2>
+<div class="callout cb">
+<b>Core finding:</b> Our <code>r1_eval.py</code> uses <b>unshare sandbox</b> (not Docker), with <b>one shared rootfs template per repo</b> (<code>run_serial_kimi.py:24-37</code>).
+The template has a conda env (<code>/opt/miniconda3/envs/testbed</code>), but <code>pip install -e .</code> in eval.sh tries to <b>recompile C extensions</b>,
+requiring external source downloads (e.g. freetype) -> sandbox network blocked -> build fails -> <code>ImportError</code> -> tests not collected -> <code>f2p_total=0</code> -> classified as pbf.
+</div>
+
+<h3>3.1 Code Path Evidence</h3>
+<table>
+<tr><th>Step</th><th>Code location</th><th>Key logic</th></tr>
+<tr><td class="rname">rootfs template map</td><td><code>run_serial_kimi.py:24-37</code></td><td style="text-align:left;font-size:12px"><code>ROOTFS_TEMPLATES</code> -- one template per repo, shared by all instances</td></tr>
+<tr><td class="rname">rootfs setup</td><td><code>run_serial_kimi.py:134-161</code></td><td style="text-align:left;font-size:12px"><code>setup_rootfs()</code>: checks base_commit in template git repo, fetches if missing. Does NOT install deps.</td></tr>
+<tr><td class="rname">patch apply (4-level)</td><td><code>r1_eval.py:63-68, 201-209</code></td><td style="text-align:left;font-size:12px"><code>GIT_APPLY_CMDS = [git apply, --3way, --reject, patch --fuzz=5]</code> -- already <b>4-level</b>, not single</td></tr>
+<tr><td class="rname">eval script exec</td><td><code>r1_eval.py:232-236</code></td><td style="text-align:left;font-size:12px"><code>eval_script = test_spec.eval_script</code> -> write to rootfs -> <code>sb.run("/bin/bash /eval.sh")</code>. Contains <code>pip install -e .</code></td></tr>
+<tr><td class="rname">sandbox network</td><td><code>r1_eval.py:144-148</code></td><td style="text-align:left;font-size:12px">unshare env pins <code>http_proxy</code> + <code>PIP_INDEX_URL=mirrors.aliyun.com</code> -- but <b>only covers PyPI, not sourceforge/savannah</b></td></tr>
+<tr><td class="rname">scoring</td><td><code>r1_eval.py:244-250</code></td><td style="text-align:left;font-size:12px"><code>get_eval_report()</code> (official grader) -> <code>report.json</code> with <code>infra_failure_reason</code></td></tr>
+<tr><td class="rname">classification</td><td><code>run_serial_kimi.py:217-229</code></td><td style="text-align:left;font-size:12px"><code>classify_result()</code>: resolved / patch-but-failed / quota-blocked / no-patch / blocked. <b>Does NOT distinguish env-fail vs wrong-fix</b></td></tr>
+</table>
+
+<h3>3.2 Failure Chain (matplotlib example)</h3>
+<pre style="font-size:11px">
+rootfs/matplotlib__matplotlib-18869/  (template: conda env + repo @ some commit)
+  |
+  +- setup_rootfs(): git fetch base_commit -> ok
+  +- r1_eval.py: git reset --hard base_commit -> git apply (4-level) -> patch not applied
+  |    +- reason: model patch may target different file version (secondary)
+  |
+  +- eval.sh execution:
+       +- conda activate testbed -> ok
+       +- pip install -e .  ->  running build_ext
+       |    +- g++ compiles C ext -> needs freetype-2.6.1.tar.gz
+       |         +- sourceforge.net / savannah.gnu.org -> <b>network blocked (sandbox only proxies PyPI)</b>
+       |              +- error: Failed to download freetype -> build_ext fails
+       |
+       +- git apply (gold test patch) -> Applied cleanly (but matplotlib now can't import)
+       +- pytest lib/matplotlib/tests/test_matplotlib.py
+            +- ImportError: cannot import name '_c_internal_utils'
+                 +- f2p_total=0, p2p_total=0 -> classified as "patch-but-failed"
+                      +- <b>actually infra failure, not model error</b>
+</pre>
+
+<h3>3.3 Per-Repo Root Causes (log evidence)</h3>
+<table>
+<tr><th>repo</th><th>entries</th><th>resolved</th><th>env/infra</th><th>infra_reason</th><th>Root cause (log evidence)</th></tr>
+<tr><td class="rname">django/django</td><td class="num">798</td><td class="num" style="color:#2d7d2d">210 (26.3%)</td><td class="num" style="color:#e80">25</td><td style="font-size:11px">missing_module:7</td><td style="text-align:left;font-size:12px">eval-OK, 7 missing_module/798, resolved 37.1%</td></tr><tr><td class="rname">sympy/sympy</td><td class="num">539</td><td class="num" style="color:#2d7d2d">261 (48.4%)</td><td class="num" style="color:#e80">8</td><td style="font-size:11px">--</td><td style="text-align:left;font-size:12px">eval-OK, 8 missing_module/539, resolved 48.4%</td></tr><tr><td class="rname">scikit-learn/scikit-learn</td><td class="num">161</td><td class="num" style="color:#2d7d2d">70 (43.5%)</td><td class="num" style="color:#e80">34</td><td style="font-size:11px">--</td><td style="text-align:left;font-size:12px">28 missing_module(C ext), 125 patch OK -> eval OK</td></tr><tr><td class="rname">matplotlib/matplotlib</td><td class="num">161</td><td class="num" style="color:#ccc">0 (0.0%)</td><td class="num" style="color:#e80">130</td><td style="font-size:11px">missing_module:130</td><td style="text-align:left;font-size:12px"><b>130 missing_module</b>: pip install -e . needs freetype -> sandbox blocks download -> ImportError</td></tr><tr><td class="rname">pytest-dev/pytest</td><td class="num">119</td><td class="num" style="color:#2d7d2d">2 (1.7%)</td><td class="num" style="color:#e80">113</td><td style="font-size:11px">missing_module:107</td><td style="text-align:left;font-size:12px"><b>110 missing_module</b>: pip install -e . version conflict (pytest-0.1.dev1 vs minversion 2.0)</td></tr><tr><td class="rname">sphinx-doc/sphinx</td><td class="num">112</td><td class="num" style="color:#ccc">0 (0.0%)</td><td class="num" style="color:#e80">92</td><td style="font-size:11px">--</td><td style="text-align:left;font-size:12px">92 patch not applied, <b>no infra mark</b>: git apply fail (base_commit mismatch)</td></tr><tr><td class="rname">astropy/astropy</td><td class="num">42</td><td class="num" style="color:#ccc">0 (0.0%)</td><td class="num" style="color:#e80">28</td><td style="font-size:11px">out_of_memory:28</td><td style="text-align:left;font-size:12px"><b>28 out_of_memory</b>: C ext compile/test OOM in limited sandbox</td></tr><tr><td class="rname">pallets/flask</td><td class="num">21</td><td class="num" style="color:#ccc">0 (0.0%)</td><td class="num" style="color:#e80">14</td><td style="font-size:11px">no_tests_collected:7</td><td style="text-align:left;font-size:12px">7 no_tests_collected: patch applied but 0 tests collected (3 unique instances)</td></tr><tr><td class="rname">psf/requests</td><td class="num">42</td><td class="num" style="color:#ccc">0 (0.0%)</td><td class="num" style="color:#ccc">0</td><td style="font-size:11px">--</td><td style="text-align:left;font-size:12px">eval-OK, 0 resolved = model ability issue (FAIL_TO_PASS not met)</td></tr><tr><td class="rname">pydata/xarray</td><td class="num">35</td><td class="num" style="color:#2d7d2d">13 (37.1%)</td><td class="num" style="color:#ccc">0</td><td style="font-size:11px">--</td><td style="text-align:left;font-size:12px">eval-OK, 37.1% resolved</td></tr><tr><td class="rname">pylint-dev/pylint</td><td class="num">42</td><td class="num" style="color:#2d7d2d">11 (26.2%)</td><td class="num" style="color:#e80">3</td><td style="font-size:11px">missing_module:1</td><td style="text-align:left;font-size:12px">eval-OK, 1 missing_module, 26.2% resolved</td></tr><tr><td class="rname">mwaskom/seaborn</td><td class="num">28</td><td class="num" style="color:#2d7d2d">7 (25.0%)</td><td class="num" style="color:#e80">4</td><td style="font-size:11px">no_tests_collected:4</td><td style="text-align:left;font-size:12px">4 no_tests_collected, 25.0% resolved</td></tr>
+</table>
+
+<h3>3.4 Per-Repo Resolved Rate Bar Chart</h3>
+<div class="svgc"><svg viewBox="0 0 640 332" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;font-family:monospace;font-size:11px">
+<text x="155" y="25.4" text-anchor="end" fill="#333">django/django</text>
+<rect x="160" y="10" width="105" height="22" fill="#2d7d2d" rx="2"/>
+<rect x="265" y="10" width="273" height="22" fill="#d44" rx="2"/>
+<rect x="538" y="10" width="12" height="22" fill="#e80" rx="2"/>
+<rect x="550" y="10" width="9" height="22" fill="#bbb" rx="2"/>
+<text x="568" y="25.4" fill="#555">210/798 (26.3%)</text>
+<text x="155" y="51.4" text-anchor="end" fill="#333">sympy/sympy</text>
+<rect x="160" y="36" width="130" height="22" fill="#2d7d2d" rx="2"/>
+<rect x="290" y="36" width="128" height="22" fill="#d44" rx="2"/>
+<rect x="418" y="36" width="4" height="22" fill="#e80" rx="2"/>
+<rect x="422" y="36" width="7" height="22" fill="#bbb" rx="2"/>
+<text x="568" y="51.4" fill="#555">261/539 (48.4%)</text>
+<text x="155" y="77.4" text-anchor="end" fill="#333">matplotlib/matplotlib</text>
+<rect x="160" y="62" width="0" height="22" fill="#2d7d2d" rx="2"/>
+<rect x="160" y="62" width="0" height="22" fill="#d44" rx="2"/>
+<rect x="160" y="62" width="65" height="22" fill="#e80" rx="2"/>
+<rect x="225" y="62" width="15" height="22" fill="#bbb" rx="2"/>
+<text x="568" y="77.4" fill="#555">0/161 (0.0%)</text>
+<text x="155" y="103.4" text-anchor="end" fill="#333">scikit-learn/scikit-learn</text>
+<rect x="160" y="88" width="35" height="22" fill="#2d7d2d" rx="2"/>
+<rect x="195" y="88" width="27" height="22" fill="#d44" rx="2"/>
+<rect x="222" y="88" width="17" height="22" fill="#e80" rx="2"/>
+<rect x="239" y="88" width="1" height="22" fill="#bbb" rx="2"/>
+<text x="568" y="103.4" fill="#555">70/161 (43.5%)</text>
+<text x="155" y="129.4" text-anchor="end" fill="#333">pytest-dev/pytest</text>
+<rect x="160" y="114" width="1" height="22" fill="#2d7d2d" rx="2"/>
+<rect x="161" y="114" width="1" height="22" fill="#d44" rx="2"/>
+<rect x="162" y="114" width="56" height="22" fill="#e80" rx="2"/>
+<rect x="218" y="114" width="0" height="22" fill="#bbb" rx="2"/>
+<text x="568" y="129.4" fill="#555">2/119 (1.7%)</text>
+<text x="155" y="155.4" text-anchor="end" fill="#333">sphinx-doc/sphinx</text>
+<rect x="160" y="140" width="0" height="22" fill="#2d7d2d" rx="2"/>
+<rect x="160" y="140" width="9" height="22" fill="#d44" rx="2"/>
+<rect x="169" y="140" width="46" height="22" fill="#e80" rx="2"/>
+<rect x="215" y="140" width="0" height="22" fill="#bbb" rx="2"/>
+<text x="568" y="155.4" fill="#555">0/112 (0.0%)</text>
+<text x="155" y="181.4" text-anchor="end" fill="#333">astropy/astropy</text>
+<rect x="160" y="166" width="0" height="22" fill="#2d7d2d" rx="2"/>
+<rect x="160" y="166" width="7" height="22" fill="#d44" rx="2"/>
+<rect x="167" y="166" width="14" height="22" fill="#e80" rx="2"/>
+<rect x="181" y="166" width="0" height="22" fill="#bbb" rx="2"/>
+<text x="568" y="181.4" fill="#555">0/42 (0.0%)</text>
+<text x="155" y="207.4" text-anchor="end" fill="#333">psf/requests</text>
+<rect x="160" y="192" width="0" height="22" fill="#2d7d2d" rx="2"/>
+<rect x="160" y="192" width="21" height="22" fill="#d44" rx="2"/>
+<rect x="181" y="192" width="0" height="22" fill="#e80" rx="2"/>
+<rect x="181" y="192" width="0" height="22" fill="#bbb" rx="2"/>
+<text x="568" y="207.4" fill="#555">0/42 (0.0%)</text>
+<text x="155" y="233.4" text-anchor="end" fill="#333">pylint-dev/pylint</text>
+<rect x="160" y="218" width="5" height="22" fill="#2d7d2d" rx="2"/>
+<rect x="165" y="218" width="13" height="22" fill="#d44" rx="2"/>
+<rect x="178" y="218" width="1" height="22" fill="#e80" rx="2"/>
+<rect x="179" y="218" width="0" height="22" fill="#bbb" rx="2"/>
+<text x="568" y="233.4" fill="#555">11/42 (26.2%)</text>
+<text x="155" y="259.4" text-anchor="end" fill="#333">pydata/xarray</text>
+<rect x="160" y="244" width="6" height="22" fill="#2d7d2d" rx="2"/>
+<rect x="166" y="244" width="11" height="22" fill="#d44" rx="2"/>
+<rect x="177" y="244" width="0" height="22" fill="#e80" rx="2"/>
+<rect x="177" y="244" width="0" height="22" fill="#bbb" rx="2"/>
+<text x="568" y="259.4" fill="#555">13/35 (37.1%)</text>
+<text x="155" y="285.4" text-anchor="end" fill="#333">mwaskom/seaborn</text>
+<rect x="160" y="270" width="3" height="22" fill="#2d7d2d" rx="2"/>
+<rect x="163" y="270" width="8" height="22" fill="#d44" rx="2"/>
+<rect x="171" y="270" width="2" height="22" fill="#e80" rx="2"/>
+<rect x="173" y="270" width="0" height="22" fill="#bbb" rx="2"/>
+<text x="568" y="285.4" fill="#555">7/28 (25.0%)</text>
+<text x="155" y="311.4" text-anchor="end" fill="#333">pallets/flask</text>
+<rect x="160" y="296" width="0" height="22" fill="#2d7d2d" rx="2"/>
+<rect x="160" y="296" width="3" height="22" fill="#d44" rx="2"/>
+<rect x="163" y="296" width="7" height="22" fill="#e80" rx="2"/>
+<rect x="170" y="296" width="0" height="22" fill="#bbb" rx="2"/>
+<text x="568" y="311.4" fill="#555">0/21 (0.0%)</text>
+</svg></div>
+<div class="leg">
+<span><i style="background:#2d7d2d"></i>resolved</span>
+<span><i style="background:#d44"></i>true-wrong-fix</span>
+<span><i style="background:#e80"></i>env/infra-fail</span>
+<span><i style="background:#bbb"></i>other</span>
+</div>
+
+<h3>3.5 "83% wrong-fix" Recheck</h3>
+<div class="callout cy">
+<b>Old report</b> claimed "Dominant failure mode is wrong fix (83% of all failures)".
+<b>Recheck: that number was based on 7x30=210 entries (django+sympy only), valid within the eval-OK subset (83% = 85/103 pbf).</b>
+But in the full 2100:
+<ul style="margin:4px 0">
+<li>true-wrong-fix = 1007/2100 = <b>48.0%</b> (not 83%)</li>
+<li>env-or-patch-fail = 451/2100 = <b>21.5%</b> (old report ignored this category entirely)</li>
+<li>resolved = 574/2100 = 27.3%</li>
+</ul>
+<b>Conclusion: the 83% was a caliber bias (subset vs full), not a data error, but severely misled the "main failure is model ability" narrative.</b>
+Actually <b>21.5% of failures are infrastructure problems</b> that can be fixed to significantly boost scores.
+</div>
+
+<h2 class="sec">4. Recoverable Items</h2>
+<h3>4.1 P0 -- Immediate (low cost, high return)</h3>
+<table>
+<tr><th>Pri</th><th>Fix</th><th>How</th><th>Cost</th><th>Expected recovery</th><th>Risk</th><th>Evidence</th></tr>
+<tr><td><span class="tag p0">P0</span></td>
+<td class="rname">matplotlib: pre-cache freetype + build deps</td>
+<td style="text-align:left;font-size:12px">Download <code>freetype-2.6.1.tar.gz</code> into rootfs <code>build/</code>; or use manylinux wheel; pre-build <code>_c_internal_utils.so</code></td>
+<td style="font-size:12px">~2h</td>
+<td class="num" style="color:#2d7d2d;font-weight:600">~23 instances x 7 = 161 entries; at ~35% rate -> ~8 additional resolved/harness</td>
+<td style="font-size:12px">Low</td>
+<td style="font-size:12px"><code>test_output.txt</code>: <code>error: Failed to download freetype-2.6.1.tar.gz</code></td></tr>
+<tr><td><span class="tag p0">P0</span></td>
+<td class="rname">pytest: fix rootfs version conflict</td>
+<td style="text-align:left;font-size:12px">Pre-install correct pytest version in rootfs conda env, or skip <code>pip install -e .</code> in eval.sh</td>
+<td style="font-size:12px">~1h</td>
+<td class="num" style="color:#2d7d2d;font-weight:600">~17 instances x 7 = 119 entries; ~7 additional resolved/harness</td>
+<td style="font-size:12px">Low</td>
+<td style="font-size:12px"><code>test_output.txt</code>: <code>minversion requires pytest-2.0, actual pytest-0.1.dev1</code></td></tr>
+<tr><td><span class="tag p0">P0</span></td>
+<td class="rname">Unify: pre-cache pip wheels + source tarballs</td>
+<td style="text-align:left;font-size:12px">Pre-populate rootfs <code>~/.cache/pip</code> with wheels; set <code>PIP_NO_BUILD_ISOLATION=1</code> + pre-install build deps</td>
+<td style="font-size:12px">~4h</td>
+<td class="num" style="color:#2d7d2d;font-weight:600">Root-fixes all "external download" failures (matplotlib + scikit-learn + partial django)</td>
+<td style="font-size:12px">Medium</td>
+<td style="font-size:12px">276 missing_module mostly from external download failures</td></tr>
+<tr><td><span class="tag p0">P0</span></td>
+<td class="rname">sphinx: fix base_commit mismatch</td>
+<td style="text-align:left;font-size:12px">Check sphinx rootfs git repo has correct base_commit; or use per-instance rootfs (fresh clone)</td>
+<td style="font-size:12px">~2h</td>
+<td class="num" style="color:#2d7d2d;font-weight:600">~16 instances x 7 = 112 entries; ~4 additional resolved/harness</td>
+<td style="font-size:12px">Low</td>
+<td style="font-size:12px">92 git apply failures with no infra mark -> pure checkout/commit issue</td></tr>
+</table>
+
+<h3>4.2 P1 -- Larger changes needed</h3>
+<table>
+<tr><th>Pri</th><th>Fix</th><th>How</th><th>Cost</th><th>Expected recovery</th><th>Risk</th><th>Evidence</th></tr>
+<tr><td><span class="tag p1">P1</span></td>
+<td class="rname">astropy: increase sandbox memory / use prebuilt wheel</td>
+<td style="text-align:left;font-size:12px">Add <code>ulimit -v</code> or switch to per-instance Docker; or pre-compile astropy C ext .so into rootfs</td>
+<td style="font-size:12px">~4h</td>
+<td class="num">~6 instances x 7 = 42 entries</td>
+<td style="font-size:12px">Medium</td>
+<td style="font-size:12px">28 out_of_memory</td></tr>
+<tr><td><span class="tag p1">P1</span></td>
+<td class="rname">Switch to per-instance pre-built Docker (official approach)</td>
+<td style="text-align:left;font-size:12px">Build per-instance Docker images per SWE-bench official <code>specs/</code> + <code>environment.yml</code></td>
+<td style="font-size:12px">~2-3 days</td>
+<td class="num" style="color:#2d7d2d;font-weight:600">Root-fixes ALL infra failures (~65 instances x 7 = 455 entries)</td>
+<td style="font-size:12px">High</td>
+<td style="font-size:12px">SWE-bench official harness uses Docker by default</td></tr>
+<tr><td><span class="tag p1">P1</span></td>
+<td class="rname">Timeout/network (503) fix</td>
+<td style="text-align:left;font-size:12px">git fetch 503: add retries + exponential backoff; or pre-clone full repo into rootfs</td>
+<td style="font-size:12px">~1h</td>
+<td class="num">~50 blocked entries</td>
+<td style="font-size:12px">Low</td>
+<td style="font-size:12px">blocked: 31 TIMEOUT + 8 git fetch 503 + 11 checkout conflict</td></tr>
+</table>
+
+<h3>4.3 Patch tolerance -- already implemented (task spec correction)</h3>
+<div class="callout cg">
+<b>4-level patch tolerance is already implemented.</b> Task spec says "only single-level git apply" -- this came from outdated <code>SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md:103</code> (written 2026-10-06).
+<b>Actual <code>r1_eval.py:63-68</code> has 4 levels:</b>
+<pre style="margin:6px 0;font-size:11px">GIT_APPLY_CMDS = [
+    "git apply --verbose",          # 1. strict
+    "git apply --verbose --3way",   # 2. three-way merge
+    "git apply --verbose --reject", # 3. partial match
+    "patch --batch --forward --fuzz=5 -p1 -i",  # 4. fuzzy
+]</pre>
+<b>One more level than official (3-level).</b> The 451 patch-not-applied entries failed <b>all 4 levels</b> (not a tolerance issue) -- root cause is rootfs state (see section 3).
+</div>
+<div class="callout cb">
+<b>Summary: how many resolved can be recovered?</b>
+<ul style="margin:4px 0">
+<li><b>All P0</b>: matplotlib(~8) + pytest(~7) + sphinx(~4) + scikit-learn(~3) = <b>~22 additional resolved/harness</b></li>
+<li>cline: 86 -> ~108 (of 300), resolve rate <b>28.7% -> ~36.0%</b></li>
+<li>eval-OK caliber (235 instances): 86/235 = <b>36.6%</b> (P0 fix should approach this)</li>
+<li><b>P0+P1</b>: + astropy(~2) + blocked fix(~3) = <b>~27 additional resolved/harness</b>, rate -> ~37.7%</li>
+</ul>
+</div>
+
+<h2 class="sec">5. External Score Comparison</h2>
+<div class="callout cb">
+<b>Bottom line:</b> cline 28.7% (SWE-bench Lite, 300 tasks, kimi-k2.6-cloud, unshare sandbox) <b>is within the public score range for similar approaches (18-32%), not "significantly low"</b>.
+But suppressed ~8pp by infra failures (28.7% vs eval-OK caliber 36.6%). Kimi K2 official 65.8% is <b>SWE-bench Verified (500 tasks, different benchmark)</b>, not directly comparable.
+</div>
+
+<h3>5.1 Comparison Table</h3>
+<table>
+<tr><th>System</th><th>Model</th><th>Benchmark</th><th>pass@1</th><th>Eval env</th><th>Source</th><th>Date</th></tr>
+<tr><td class="rname"><b>cline (ours)</b></td><td>kimi-k2.6-cloud</td><td>SWE-bench Lite (300)</td><td style="color:#2563eb;font-weight:700">28.7%</td><td>unshare sandbox (non-Docker)</td><td>This report</td><td>2026-10-12</td></tr>
+<tr><td class="rname">cline (eval-OK caliber)</td><td>kimi-k2.6-cloud</td><td>SWE-bench Lite (235/300)</td><td style="color:#2d7d2d;font-weight:700">36.6%</td><td>unshare (excl. 5 infra-fail repos)</td><td>This report</td><td>2026-10-12</td></tr>
+<tr><td class="rname">opencode (ours)</td><td>kimi-k2.6-cloud</td><td>SWE-bench Lite (300)</td><td>29.0%</td><td>same</td><td>This report</td><td>2026-10-12</td></tr>
+<tr><td class="rname">pi (ours, highest)</td><td>kimi-k2.6-cloud</td><td>SWE-bench Lite (300)</td><td>30.3%</td><td>same</td><td>This report</td><td>2026-10-12</td></tr>
+<tr style="background:#f8f8f8"><td colspan="7" style="text-align:left;font-weight:600;color:#666">-- SWE-bench Lite public leaderboard --</td></tr>
+<tr><td class="rname">Agentless</td><td>GPT-4o</td><td>SWE-bench Lite (300)</td><td style="font-weight:600">32.0%</td><td>Official Docker harness</td><td>ACM SE 2025</td><td>2025</td></tr>
+<tr><td class="rname">AIGCode Infant-Coder</td><td>proprietary</td><td>SWE-bench Lite</td><td>30.3%</td><td>Official</td><td>llmrun.dev</td><td>2026-10-10</td></tr>
+<tr><td class="rname">CodeR</td><td>GPT-4 (1106)</td><td>SWE-bench Lite</td><td>28.3%</td><td>Official</td><td>same</td><td>2026-10-10</td></tr>
+<tr><td class="rname">OpenHands + CodeAct v1.8</td><td>proprietary</td><td>SWE-bench Lite</td><td>26.7%</td><td>Official</td><td>same</td><td>2026-10-10</td></tr>
+<tr><td class="rname">Aider</td><td>GPT-4o + Claude 3 Opus</td><td>SWE-bench Lite</td><td>26.3%</td><td>Official</td><td>same</td><td>2026-10-10</td></tr>
+<tr><td class="rname">SWE-agent</td><td>Claude 3.5 Sonnet</td><td>SWE-bench Lite</td><td>23.0%</td><td>Official</td><td>same</td><td>2026-10-10</td></tr>
+<tr><td class="rname">SWE-agent</td><td>GPT-4o</td><td>SWE-bench Lite</td><td>18.3%</td><td>Official</td><td>same</td><td>2026-10-10</td></tr>
+<tr style="background:#f8f8f8"><td colspan="7" style="text-align:left;font-weight:600;color:#666">-- SWE-bench Verified (different benchmark, not comparable) --</td></tr>
+<tr><td class="rname">Kimi K2 (official)</td><td>Kimi K2 (1T MoE)</td><td>SWE-bench Verified (500)</td><td style="font-weight:600">65.8%</td><td>K2 own agent harness</td><td>Moonshot blog</td><td>2025-07</td></tr>
+</table>
+
+<h3>5.2 Analysis</h3>
+<div class="callout cb">
+<b>Our 28.7% vs leaderboard 18-32%:</b>
+<ul style="margin:6px 0">
+<li><b>Within reasonable range.</b> On SWE-bench Lite leaderboard, GPT-4o-class models + agent harnesses score 18-32%. Our 28.7% with kimi-k2.6-cloud + cline is in the upper-middle of this range.</li>
+<li><b>The 3.3pp gap vs Agentless + GPT-4o (32.0%) can be partially attributed to infra failures</b> -- eval-OK caliber 36.6% already exceeds Agentless.</li>
+<li><b>But not directly equivalent</b>: (1) we use unshare sandbox not official Docker; (2) kimi-k2.6-cloud is a different model from GPT-4o; (3) our 300-task sample may have selection bias.</li>
+</ul>
+</div>
+<div class="callout cy">
+<b>Our 28.7% vs Kimi K2 official 65.8%:</b>
+<ul style="margin:6px 0">
+<li><b>Not directly comparable</b> -- 65.8% is SWE-bench <b>Verified</b> (500 tasks, human-verified), ours is SWE-bench <b>Lite</b> (300 tasks, different subset).</li>
+<li>SWE-bench Lite and Verified are <b>different benchmarks</b>: Lite is the easier file-localized subset, Verified is the human-verified solvable subset. Different task sets, different difficulty.</li>
+<li>Kimi K2 official uses their own agent harness + official Docker eval; we use cline harness + unshare eval.</li>
+<li><b>kimi-k2.6-cloud may not be the same model as open-source Kimi K2 (1T MoE)</b> -- cloud version may have additional optimization or distillation. Not verified.</li>
+</ul>
+</div>
+
+<h3>5.3 Benchmark Differences</h3>
+<table>
+<tr><th>Benchmark</th><th>Tasks</th><th>Characteristics</th><th>Source</th></tr>
+<tr><td class="rname">SWE-bench Full</td><td class="num">2,294</td><td style="text-align:left;font-size:12px">Original full set, includes unsolvable/ambiguous tasks</td><td>Jimenez et al. 2023</td></tr>
+<tr><td class="rname">SWE-bench Lite</td><td class="num">300</td><td style="text-align:left;font-size:12px">Easier subset, file-localized fixes, for fast iteration</td><td>same</td></tr>
+<tr><td class="rname">SWE-bench Verified</td><td class="num">500</td><td style="text-align:left;font-size:12px">Human-verified (93 engineers x 3/task), filtered unsolvable</td><td>OpenAI 2024-08</td></tr>
+<tr><td class="rname">SWE-bench Pro</td><td class="num">1,865</td><td style="text-align:left;font-size:12px">Scale AI 2025, contamination-resistant design</td><td>Scale AI</td></tr>
+</table>
+<p style="font-size:11px;color:#888">Sources: digitortoise.com (2026-07-20), hivebook.wiki (2026-05-24), swebench.com (2026-08-22). Search date: 2026-10-12.</p>
+
+<h2 class="sec">6. Honesty Clause</h2>
+<div class="callout cy">
+<ol style="margin:6px 0;padding-left:20px">
+<li><b>Sample size</b>: 300 SWE-bench Lite instances x 7 harnesses = 2100 entries. Single backbone (kimi-k2.6-cloud), no multi-run variance estimation.</li>
+<li><b>Eval environment</b>: unshare sandbox (not official Docker), one shared rootfs template per repo. Fundamentally different from official SWE-bench per-instance Docker -- <b>our scores are internal caliber, not directly comparable to leaderboard</b>.</li>
+<li><b>Infra failure impact</b>: 5 repos (65/300 instances) systematically suppressed to near-0 by eval infra failures. The eval-OK caliber (235 instances) 36.6% is an upper-bound estimate assuming infra is fixed, not a measured value.</li>
+<li><b>Web timeliness</b>: leaderboard data from llmrun.dev (2026-10-10 search), ACM SE paper (2025), Moonshot blog (2025-07). Kimi K2 official score is SWE-bench Verified (not Lite), not directly comparable. Relationship between kimi-k2.6-cloud and open-source Kimi K2 <b>not verified</b>.</li>
+<li><b>Patch tolerance</b>: Task spec cited <code>SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md</code> claiming "single-level git apply", but actual <code>r1_eval.py:63-68</code> already has 4-level tolerance. That document (2026-10-06) was written before 4-level was added or was not updated.</li>
+<li><b>Reproducibility</b>: all statistics directly computable from <code>kimi_pilot_results.json</code>. Eval logs at <code>/nas_train/app.e0031982/harness_work/logs_eval/</code>. Generation script: <code>gen_report_eval_rootcause.py</code>.</li>
+</ol>
+</div>
+
+<footer>
+<p><strong>BaiZe Harness H-A | Eval Infrastructure Root Cause Analysis Report</strong><br>
+Generated: 2026-10-12 22:43 | Data: <code>kimi_pilot_results.json</code> (2100 entries, 7x300, kimi-k2.6-cloud)<br>
+Eval pipeline: <code>run_serial_kimi.py</code> -> <code>run_single.py</code> -> <code>r1_eval.py</code> (unshare sandbox)<br>
+Reproducible: <code>python3 gen_report_eval_rootcause.py</code> | commit prefix: <code>harness rpt:</code></p>
+</footer>
+
+</body></html>

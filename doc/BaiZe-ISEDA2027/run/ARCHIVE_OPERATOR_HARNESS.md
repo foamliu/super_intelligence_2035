@@ -713,3 +713,60 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 
 **纪律**：🚫 不改 7×300 在飞任务/数值；已在 `CLINE_IMPROVEMENT_OPPORTUNITIES.md` + `CLINE_IMPROVEMENTS_TOP5.html` 提过的结论须沿用并标「已提过」；commit 前缀 `harness rpt:`；任务书 >32KB 自滚归档。
 
+
+---
+
+### 🆕 运维指令 · 2026-10-12（🔬 eval 基础设施失效 / module 安装失败 根因深挖 + 「分数偏低」外部对照复核）· 用户直令 · **最高优先**
+
+> **用户原话（2026-10-12）**：「harness 7×300 是否有很多 module 无法安装的问题导致失败，这些问题能否解决？现在的分数显然比预期低很多，你可以 web search。」
+> **性质**：**纯分析 + 归因 + 可解决性判断**（读现有 `kimi_pilot_results.json` / 日志 / `r1_eval.py` 等脚本 + 按需 web search）⇒ 🚫 **不占 GPU**；**凡需要重跑评测（改 patch 容错 / 环境装配等）的，先报「做法 / 成本 / ETA / 占用」再动（先报后跑）**。
+
+**① 必须逐条回答（每条给证据，不得含糊）**：
+
+1. **module / 环境安装失败到底占多少** —— 从 `kimi_pilot_results.json`（2100 entries）的 `eval` / `stdout_tail` / `classification` 字段**统计**：有多少失败的根因是「`ModuleNotFoundError` / `ImportError` / `No module named …` / pip/conda 依赖缺失 / 环境装配失败」，而非「模型改错」。给 **per-harness × per-failure-class 矩阵 + 占比**。
+   ⚠️ **务必区分**：**【真·环境失败】** vs **【`pbf` = patch 应用成功但 FAIL_TO_PASS 未过（wrong-fix）】**—— 两者常被混谈（现有 `report_harness_swebench_analysis.html` 称 83% 失败是 wrong-fix，请复核是否与原始字段对得上）。
+2. **根因定位** —— 我们 `r1_eval.py` 用 **unshare 沙箱（非 Docker）**；SWE-bench 官方是**每实例 conda env / repo 专属依赖 / 预构建镜像**。请确认：我们**有没有为每个 instance 装配其仓库依赖**，还是**共用一份 env**？（列 `r1_eval.py` / `run_harness.py` / `run_serial_kimi.py` 相关 `path:line` 为证。）并复核 `run/report_harness_7x300.html §8「eval 基础设施失效归因」`里「5 个 repo 因 eval …」的原始统计（是否实质 = 缺依赖/环境装配失败）。
+3. **可解决性判断**（每项：做法 / 成本 / **预计能挽回多少 resolved** / 风险 / 依据），至少覆盖：
+   - ① **per-instance 依赖装配**（照官方 `specs/` + `environment.yml`/conda，或改预构建 Docker 镜像）；
+   - ② **patch 三级容错**（官方 `git apply` → `git apply --reject` → `patch --fuzz=5`；我们现仅单级 `git apply`，见 `SWEBENCH_OFFICIAL_CRITERIA_VERIFICATION.md §4`）—— 这条属**低成本高回报**，请明确估算「能救回多少题」；
+   - ③ 超时 / 网络（`git_fetch 503`）/ quota 等 infra 失败。
+4. **分数是否「比预期低很多」—— 外部对照（web search）** —— 查 SWE-bench / SWE-bench Lite（及 Verified）上**同类路线**的公开分数：agent harness + 强 backbone（如 SWE-agent / OpenHands / Aider / codex-cli / claude-code 等）的 pass@1，以及 **kimi-k2 系列**的公开 SWE-bench 数。明确回答：**cline 28.7% 是「我们口径/环境偏低」还是「与同类路线相当」**？给**对照表 + 来源 URL + 时效**；无法核实的显式标「未核实」。
+
+**② 交付物**：`doc/BaiZe-ISEDA2027/report_harness_eval_rootcause.html`（**中文 · 自包含 · 内联 CSS/SVG · 零外链 · ≤200KB**），必备节：
+
+1. **HERO 结论 + TL;DR**（一句话答「module/环境失败占比 = __%；可挽回约 __ 题；总分是否偏低」）。
+2. **失败分类全景**（`resolved` / `pbf`-wrong-fix / **env-module-fail** / `blocked` / `quota` / `timeout`）per-harness 表 + 热力图。
+3. **根因链路**（unshare 共享 env → 缺依赖 → 测试收集失败 → 被计入哪种失败类；附 `path:line`）。
+4. **可解决项清单**（**P0 立即可做** vs **P1 需较大改造**），每项带成本 / 挽回估算 / 依据。
+5. **分数外部对照**（我们 vs 同类，附来源 URL + 时效）。
+6. **诚实条款**（300 题 / 单 backbone `kimi-k2.6-cloud` / eval 环境与官方差异 / web 时效）。
+
+**③ 纪律**：🚫 **不改已发布的实验数值**（新统计只**只读** `kimi_pilot_results.json`；如需重跑一律走「先报后跑」）· web 论据带来源 + 时效 · commit 前缀 `harness rpt:` · 证据每格可复算（`path:line` 或 JSON 字段）· 任务书 >32KB **自滚归档**（本块加入后请自滚回 ≤32KB）。
+
+---
+
+### 🆕 运维指令 · 2026-10-12（🔬 cline vs opencode 谁更适合做 EDA agent harness 基座 · 深入对比 · 中文 HTML）· 用户直令 · 高优先
+
+> **用户原话（2026-10-12）**：「关于 cline 和 opencode 哪个更适合做 EDA agent harness 的基座，半年前我们做了一些分析（`/nas_train/app.e0031982/code/super_intelligence_2035/doc/zhulong_doc/Cline vs OpenCode 对比.md`，NAS 上 harness 可直接读）。现在既然 harness 能看到两边的代码，请参考早前的分析，做更加深入的对比分析 html 报告（中文版），可以按需 web search。」—— 分析文件在 NAS 上，**只需给 file_path**。
+> **性质**：**纯分析 + 写作**（读已有源码分析/轨迹/JSON + 按需 web search）⇒ 🚫 **不占 GPU、🚫 不打断在飞的 7×300 收尾**。
+
+**① 交付物**：`doc/BaiZe-ISEDA2027/report_cline_vs_opencode_eda.html`（**中文 · 自包含单文件 · 内联 CSS/SVG · 零外链 · ≤200KB**）。
+
+**② 输入（file_path，NAS 可直接读，勿把大文件整段读进上下文）**：
+- 早前选型分析：`/nas_train/app.e0031982/code/super_intelligence_2035/doc/zhulong_doc/Cline vs OpenCode 对比.md`（2026-03-13，当年结论倾向 Cline CLI 2.0）
+- 双方源码分析：`run/harness/cline_SOURCE_ANALYSIS.html` · `run/harness/opencode_SOURCE_ANALYSIS.html`
+- 实测结果：`run/harness/kimi_pilot_results.json`（7×300，cline=86/300(28.7%) vs opencode=87/300(29.0%)）
+- cline 改进/轨迹（结论须沿用并标「已提过」）：`report_harness_trace_vs_cline.html` · `run/harness/CLINE_IMPROVEMENT_OPPORTUNITIES.md` · `run/harness/CLINE_IMPROVEMENTS_TOP5.html`
+
+**③ 必备节**：
+1. **HERO 一句话结论 + TL;DR**。
+2. **早前结论回顾**：2026-03 选型论据（Cline=逐操作审批/MCP 生态/Checkpoint/子Agent vs OpenCode=本地模型/多模态/MIT 宽松）与当年为何选 Cline。
+3. **实测评比（核心增量）**：7×300 里 cline 86/300(28.7%) vs opencode 87/300(29.0%) **几乎打平（+0.3pp，无统计差别）**；从 `kimi_pilot_results.json` 抽**双方 wall-time / 步数 / token 量 / 失败分类(resolved·pbf·blocked·quota·np) / 同题重叠胜败**，逐项挂 JSON 字段证据。
+4. **代码架构对比**：工具集 / 循环控制与停手 / 上下文管理与压缩 / 审批粒度(Human-in-the-loop) / MCP / checkpoint / patch 生成与自检 / 失败恢复 —— 结合两份 `*_SOURCE_ANALYSIS.html`。
+5. **EDA 场景契合度**：不可逆操作安全(PDK 改参/仿真提交) / 变更管控 / MCP 封装 PyAether / 本地化离线部署 / 多模态扩展。
+6. **半年来演进（web search 按需）**：两框架**最新版本/生态/维护活跃度/协议与安全变更**，标**检索时效**（距今 2026-03 的 delta）；🚫 无法核实的显式标「未核实」。
+7. **综合结论**：谁更适合做 EDA agent harness 基座 + 理由（证据链或加权分）+ **风险 & 迁移成本** + 是否需「双轨并行」。
+8. **诚实条款**：样本量(300 题/单 backbone kimi-k2.6-cloud)/eval 环境限制/web 时效对结论的约束。
+
+**④ 纪律**：🚫 不改实验数值、不新跑评测 · **已在 `CLINE_IMPROVEMENT_OPPORTUNITIES.md` / `report_harness_trace_vs_cline.html` 提过的结论须沿用并标「已提过」**，本轮增量须显式列出 · web search 论据带来源+时效 · commit 前缀 `harness rpt:` · 证据索引每格可复算(path:line 或 JSON 字段) · 任务书 >32KB 自滚归档。
+
