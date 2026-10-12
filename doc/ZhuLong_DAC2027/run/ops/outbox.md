@@ -8297,3 +8297,107 @@ bash zhulong_loop.sh
 2034234 timeout 15 pgrep -af zhulong_loop.sh
 === DONE ===
 ```
+
+---
+
+## RUN_ID 57 · 2026-10-12 13:15:47 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 57 · opencode run 完整参数 + 现有配置
+NPMBIN="$(npm prefix -g)/bin"
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] opencode run --help (完整) ==="
+timeout 15 "$NPMBIN/opencode" run --help 2>&1 | sed -n '1,120p'
+echo "=== [2] 当前 opencode 全局配置 ==="
+timeout 10 cat ~/.config/opencode/opencode.json 2>/dev/null || echo "(no opencode.json)"
+echo "=== [3] opencode models (列出 provider/model) ==="
+timeout 20 "$NPMBIN/opencode" models 2>&1 | sed -n '1,60p'
+echo "=== [4] glm-5.2 key 可用性（网关 /cloud/v1 的 /models）==="
+timeout 20 curl -sS -m 15 http://agi-gateway.cxmt.com/cloud/v1/models \
+  -H "Authorization: Bearer 02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23" \
+  2>&1 | head -c 800; echo
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] ===
+hfeg0tedaap02
+2026-10-12 13:15:47
+=== [1] opencode run --help (完整) ===
+opencode run [message..]
+
+run opencode with a message
+
+Positionals:
+  message  message to send                                                     [array] [default: []]
+
+Options:
+  -h, --help         show help                                                             [boolean]
+  -v, --version      show version number                                                   [boolean]
+      --print-logs   print logs to stderr                                                  [boolean]
+      --log-level    log level                  [string] [choices: "DEBUG", "INFO", "WARN", "ERROR"]
+      --pure         run without external plugins                                          [boolean]
+      --command      the command to run, use message for args                               [string]
+  -c, --continue     continue the last session                                             [boolean]
+  -s, --session      session id to continue                                                 [string]
+      --fork         fork the session before continuing (requires --continue or --session) [boolean]
+      --share        share the session                                                     [boolean]
+  -m, --model        model to use in the format of provider/model                           [string]
+      --agent        agent to use                                                           [string]
+      --format       format: default (formatted) or json (raw JSON events)
+                                          [string] [choices: "default", "json"] [default: "default"]
+  -f, --file         file(s) to attach to message                                            [array]
+      --title        title for the session (uses truncated prompt if no value provided)     [string]
+      --attach       attach to a running opencode server (e.g., http://localhost:4096)      [string]
+  -p, --password     basic auth password (defaults to OPENCODE_SERVER_PASSWORD)             [string]
+  -u, --username     basic auth username (defaults to OPENCODE_SERVER_USERNAME or 'opencode')
+                                                                                            [string]
+      --dir          directory to run in, path on remote server if attaching                [string]
+      --port         port for the local server (defaults to random port if no value provided)
+                                                                                            [number]
+      --variant      model variant (provider-specific reasoning effort, e.g., high, max, minimal)
+                                                                                            [string]
+      --thinking     show thinking blocks                                                  [boolean]
+  -i, --interactive  run in direct interactive split-footer mode          [boolean] [default: false]
+      --auto         auto-approve permissions that are not explicitly denied (dangerous!)
+                                                                          [boolean] [default: false]=== [2] 当前 opencode 全局配置 ===
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "deepseek": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "DeepSeek (agi-gateway)",
+      "options": {
+        "baseURL": "http://agi-gateway.cxmt.com/cloud/v1",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e"
+      },
+      "models": {
+        "deepseek-v4-pro-cloud": {
+          "name": "DeepSeek V4 Pro Cloud"
+        }
+      }
+    }
+  },
+  "model": "deepseek/deepseek-v4-pro-cloud"
+}
+=== [3] opencode models (列出 provider/model) ===
+opencode/big-pickle
+opencode/exo-free
+opencode/ling-3.0-flash-fin-free
+opencode/ling-3.1-flash-free
+opencode/longcat-2.5-preview-free
+opencode/mimo-v2.6-flash-free
+opencode/muse-spark-1.3-contributor-free
+opencode/nemotron-3-ultra-free
+opencode/nemotron-3.5-lightning-free
+opencode/space-bunny-free
+opencode/step-5-preview-free
+deepseek/deepseek-flash
+deepseek/deepseek-v4-pro
+deepseek/deepseek-v4-pro-cloud
+=== [4] glm-5.2 key 可用性（网关 /cloud/v1 的 /models）===
+{"object":"list","data":[{"id":null,"object":"model","owned_by":"cloud"}]}
+=== DONE ===
+```
