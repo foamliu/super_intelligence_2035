@@ -1,4 +1,27 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 58 -->
+
+## RUN_ID 58 — 定位 opencode 可执行路径 + loop 进程 PATH/proxy
+
+> 写新 loop 脚本前，确认 opencode 二进制绝对路径 + 运行中 loop 的 PATH/proxy 环境，避免 `command not found`。
+
+```bash
+# RUN_ID 58 · opencode 路径 + loop 环境
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] command -v (登录 shell) ==="
+for c in opencode npm node bun cline; do
+  printf '  %-9s -> ' "$c"; command -v "$c" 2>/dev/null || echo "(not in PATH)"
+done
+echo "=== [2] npm prefix -g ==="; npm prefix -g 2>/dev/null
+echo "=== [3] \$HOME/.local/node-20/bin 里的 opencode/node/npm ==="
+ls -la "$HOME/.local/node-20/bin/" 2>/dev/null | grep -E 'opencode|npm$|node$|bun' || echo "(no node-20/bin)"
+echo "=== [4] loop 进程 61738 的 environ（PATH + proxy）==="
+tr '\0' '\n' < /proc/61738/environ 2>/dev/null | grep -E '^(PATH|http_proxy|https_proxy|HTTP_PROXY|HTTPS_PROXY|HOME|npm_config_)=' | cut -c1-160 || echo "(no environ)"
+echo "=== [5] opencode 真实绝对路径 ==="
+ls -la "$(command -v opencode 2>/dev/null)" 2>/dev/null || echo "(command -v opencode empty)"
+ls -la "$HOME/.local/node-20/bin/opencode" 2>/dev/null || echo "(no ~/.local/node-20/bin/opencode)"
+echo "=== DONE ==="
+```
 <!-- RUN_ID: 57 -->
 
 ## RUN_ID 57 — opencode run 完整帮助 + 当前 opencode 配置 + glm-5.2 key 可用性
