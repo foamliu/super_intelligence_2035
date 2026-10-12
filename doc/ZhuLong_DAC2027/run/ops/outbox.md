@@ -8693,3 +8693,51 @@ GLM_OK count: 0
 0
 === DONE ===
 ```
+
+---
+
+## RUN_ID 62 · 2026-10-12 13:53:43 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 62 · opencode 剥 proxy 重测（LLM + bash 工具）
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] 剥 proxy 跑 LLM 回复测试 ==="
+cd /tmp
+env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
+  timeout -k 15 120 opencode run -m glm/glm-5.2 --auto "Reply with exactly this text and nothing else: GLM_OK" > /tmp/oc_glm2.log 2>&1 < /dev/null
+echo "LLM rc=$?"
+tail -20 /tmp/oc_glm2.log | cut -c1-170
+echo -n "GLM_OK count: "; grep -c 'GLM_OK' /tmp/oc_glm2.log 2>/dev/null || echo 0
+echo "=== [2] 剥 proxy 跑 bash 工具测试 ==="
+env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
+  timeout -k 15 180 opencode run -m glm/glm-5.2 --auto "Use your bash tool to run this exact command: printf 'OC_TOOL_OK' > /tmp/oc_tool_test.txt && cat /tmp/oc_tool_test.txt" > /tmp/oc_tool.log 2>&1 < /dev/null
+echo "TOOL rc=$?"
+tail -25 /tmp/oc_tool.log | cut -c1-170
+echo -n "file contains: "; cat /tmp/oc_tool_test.txt 2>/dev/null || echo "(no file)"
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] ===
+hfeg0tedaap02
+2026-10-12 13:53:43
+=== [1] 剥 proxy 跑 LLM 回复测试 ===
+LLM rc=0
+[0m
+> build · glm-5.2
+[0m
+GLM_OK
+GLM_OK count: 1
+=== [2] 剥 proxy 跑 bash 工具测试 ===
+TOOL rc=0
+[0m
+> build · glm-5.2
+[0m
+[0m$ [0mprintf 'OC_TOOL_OK' > /tmp/oc_tool_test.txt && cat /tmp/oc_tool_test.txt
+OC_TOOL_OK
+[0m
+OC_TOOL_OK
+file contains: OC_TOOL_OK=== DONE ===
+```
