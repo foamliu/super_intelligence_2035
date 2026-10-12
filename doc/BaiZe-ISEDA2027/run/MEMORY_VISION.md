@@ -11,18 +11,18 @@ WAITING: 1
 > ✅ **V3 ProtA + zs + k-NN ALL DONE** (15:10–15:25 Oct 11): ProtA=**50.53%** (Δ+0.83pp), zs=**35.52%** top1/67.24% top5 (Δ+1.42pp), k-NN k=20=**38.94%** (Δ+1.26pp). Uniform +1~1.4pp shift across all 4 metrics → genuine but within noise threshold. lp−zs gap stable ~28pp.
 > ✅ **V3 ProtB Enhanced (×5ep probe) COMPLETE** (18:24:52 Oct 11): 90ep=63.50%, 450ep=63.43% (Δ=−0.07pp) → probe NOT underfitting for V3. wd=0.0001=63.83% (+0.33pp best). No config beats baseline by >0.35pp. V3 eval ALL DONE.
 > ✅ **② PROBE SWEEP COMPLETE** (PID 2190867, GPU 1, started 14:20, completed ~17:35 Oct 11): `probe_comparison_eval.py --probe-only` on E1fair ckpt. All 6 configs done. **Key result: ×5 epochs (450ep) = 62.15% (−0.18pp vs 90ep baseline 62.33%) → probe NOT underfitting → 62.34% is genuine feature quality ceiling.** Full sweep: baseline 62.33%, ×5ep 62.15%, wd=1e-4 62.68% (+0.35pp), wd=1e-3 61.25% (−1.08pp), lr=0.01 62.39% (+0.06pp), lr=0.3 60.39% (−1.94pp). No config beats baseline by >0.35pp. GPU 1 now FREE.
-> 🔄 **④-2ep TRAINING RUNNING** (started 18:25:50 Oct 11, step ~321,810/374,202 (~86%), **C1 RISING in epoch 2: 0.50–0.53 (ep1) → 0.57–0.63 (ep2, latest C1=0.5939@321.6k)** — contrastive alignment strengthening; C2_gap=+0.1784, C4=OK, loss~0.10, ~5,000–5,300 img/s, LR=7.17e-05, 33 ckpts saved 10k–320k, ETA ~10:48 Oct 12). Auto-eval chain `post_v3_chain_skip_probe.sh` (PID 2461463) alive → ProtB 3-seed + ProtA + zs + k-NN auto-run after training → results ~14:18 Oct 12.
+> 🔄 **④-2ep TRAINING RUNNING** (started 18:25:50 Oct 11, step ~334,540/374,202 (~89.4%), **C1 ELEVATED in epoch 2: 0.50–0.53 (ep1) → 0.57–0.63 (ep2, latest C1=0.6027@334.5k)** — contrastive alignment strengthening (positive signal for ④); one transient spike to 0.80@328.8k self-recovered; C2_gap=+0.1773, C4=OK, loss~0.15–0.20, ~2,700–3,700 img/s, LR=6.26e-05, 33 ckpts saved 10k–330k, ETA ~10:50 Oct 12). Auto-eval chain `post_v3_chain_skip_probe.sh` (PID 2461463) alive → ProtB 3-seed + ProtA + zs + k-NN auto-run after training → results ~14:20 Oct 12.
 > ✅ **④ epoch scaling pre-registered** in `EXPERIMENTS_VISION.md §9.4`: 2ep first, 4ep if 2ep≥70%.
 > ✅ **①② results documented** in `EXPERIMENTS_VISION.md §9.6`: ① zs E1fair=34.10%, E2fair=35.45%. ② k-NN k=20=37.68%. **② ×5 probe + wd/LR sweep ✅ COMPLETE** (all 6 configs, key finding: probe NOT underfitting).
 > ✅ **③ 参照系说明** in `EXPERIMENTS_VISION.md §8.3`: BaiZe internal protocol labeling rules, 不可比原因逐条.
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | ✅ V3 eval ALL COMPLETE. ✅ ② probe sweep COMPLETE. ✅ Variant report + muon-rpt + lit-rpt + muon-review ALL DELIVERED. ✅ Muon-review task COMPLETE (commit 95a94d0f). 🔄 **④-2ep TRAINING RUNNING** (step ~321,810/374,202 ~86%, **C1 RISING 0.50–0.53(ep1)→0.57–0.63(ep2, latest 0.5939@321.6k)**, C2_gap=+0.1784, C4=OK, 33 ckpts 10k–320k, ETA ~10:48 Oct 12). Auto-eval chain PID 2461463 alive → results ~14:18 Oct 12. **Next wake**: check /tmp/e4_2ep_train.log + /tmp/e4_2ep_eval.log. If done → collect ④ results → update §9.4-9.5 + report. |
-| WAITING | 1（🔄 ④-2ep TRAINING RUNNING (step ~321,810/374,202 ~86%, C1 RISING 0.57–0.63 in ep2, C4=OK, ETA ~10:48 Oct 12). Auto-eval chain PID 2461463 alive → results ~14:18 Oct 12. Next wake: check /tmp/e4_2ep_train.log + /tmp/e4_2ep_eval.log.） |
+| PHASE | ✅ V3 eval ALL COMPLETE. ✅ ② probe sweep COMPLETE. ✅ Variant report + muon-rpt + lit-rpt + muon-review ALL DELIVERED. ✅ Muon-review task COMPLETE (commit 95a94d0f). 🔄 **④-2ep TRAINING RUNNING** (step ~334,540/374,202 ~89.4%, **C1 ELEVATED 0.50–0.53(ep1)→0.57–0.63(ep2, latest 0.6027@334.5k)**, C2_gap=+0.1773, C4=OK, 33 ckpts 10k–330k, ETA ~10:50 Oct 12). Auto-eval chain PID 2461463 alive → results ~14:20 Oct 12. **Next wake**: check /tmp/e4_2ep_train.log + /tmp/e4_2ep_eval.log. If done → collect ④ results → update §9.4-9.5 + report. |
+| WAITING | 1（🔄 ④-2ep TRAINING RUNNING (step ~334,540/374,202 ~89.4%, C1 ELEVATED 0.57–0.63 in ep2, C4=OK, ETA ~10:50 Oct 12). Auto-eval chain PID 2461463 alive → results ~14:20 Oct 12. Next wake: check /tmp/e4_2ep_train.log + /tmp/e4_2ep_eval.log.） |
 | ERROR_COUNT | 13（①~⑫ 同前 ⑬ Duplicate V3 eval from run_scaling_experiment.sh — killed） |
 | BUDGET_USED | ~842 GPU·h (V3 ~106 GPU·h done, ② ~1 GPU·h done, ④-2ep ~85 GPU·h running / ~94 total) |
-| 更新 | **2026-10-12 08:22 (monitoring wake #13)**: 🔄 ④-2ep monitoring: step ~321,810/374,202 (~86%), **C1 RISING in epoch 2: 0.50–0.53(ep1) → 0.57–0.63(ep2, latest C1=0.5939@321.6k)** — contrastive alignment strengthening (positive signal for ④). C2_gap=+0.1784, C4=OK, loss~0.10, ~5,000–5,300 img/s, LR=7.17e-05, 33 ckpts saved (10k–320k). GPU util 64–86% all 8 cards (~16.5GB each). Remaining ~52,392 steps @ ~28min/10k → ~2.4h → ETA ~10:48 Oct 12 → auto-eval ~3.5h → results ~14:18 Oct 12. Auto-eval chain `post_v3_chain_skip_probe.sh` (PID 2461463) alive. 📦 体积：TASK=28.2KB / MEMORY=31.0KB |
+| 更新 | **2026-10-12 08:57 (monitoring wake #14)**: 🔄 ④-2ep monitoring: step ~334,540/374,202 (~89.4%), **C1 ELEVATED in epoch 2: 0.50–0.53(ep1) → 0.57–0.63(ep2, latest C1=0.6027@334.5k)** — contrastive alignment strengthening (positive signal for ④). One transient spike to 0.80@328.8k self-recovered (NFS hiccup). C2_gap=+0.1773, C4=OK, loss~0.15–0.20, ~2,700–3,700 img/s, LR=6.26e-05 (approaching min-lr 5e-5), 33 ckpts saved (10k–330k). GPU util 64–86% all 8 cards. Remaining ~39,662 steps @ ~24k steps/h → ~1.7h → ETA ~10:50 Oct 12 → auto-eval ~3.5h → results ~14:20 Oct 12. Auto-eval chain `post_v3_chain_skip_probe.sh` (PID 2461463) alive. 📦 体积：TASK=28.2KB / MEMORY=31.7KB |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
@@ -204,30 +204,8 @@ WAITING: 1
 
 - [2026-10-09 晚 · 运维] 🔁 **scaling 公平性重跑令下发** — 已归档至 `daily-memories-vision/2026-10-09.md`。配方 `warmup=2000/lr=5e-4/cosine/min_lr=5e-5`，两臂同数据。
 
-> 📦 R12b/scaling 早期流水(10-06~10-07)已归档 → daily-memories-vision/2026-10-{06,07}.md
-> 📦 7 条 scaling 流水(10-10 00:35~05:55)已归档 → daily-memories-vision/2026-10-10.md
-> 📦 10 条 scaling fair rerun 巡检/报告(10-10 07:44~20:28)已归档 → daily-memories-vision/2026-10-10.md。**结论**：E1fair ProtB=62.34%, E2fair ProtB=62.51%, Δlp=+0.17pp indistinguishable。
-
-> 📦 4 条早期流水(10-11 00:15~03:27)已归档 → daily-memories-vision/2026-10-11.md「Archived from MEMORY_VISION.md」节
-> 📦 3 条巡检流水(10-11 04:00~05:20)已归档 → daily-memories-vision/2026-10-11.md（V3 step 52.5k~84.7k health checks + automation scripts created）
-
-> 📦 3 条 V3 巡检流水(10-11 06:25~08:14, step 46%~61%)已归档 → daily-memories-vision/2026-10-11.md。**结论**：V3 healthy, no collapse, all automation verified end-to-end.
-
-> 📦 2 条 V3 巡检流水(10-11 07:39~08:47, step 57%~67%)已归档 → daily-memories-vision/2026-10-11.md。**结论**：V3 healthy, C1 spike@153300 recovered, all automation deep-verified.
-> 📦 3 条 V3 巡检流水(10-11 09:22~11:49, step 72%~92%)已归档 → daily-memories-vision/2026-10-11.md。**结论**：V3 healthy throughout, no collapse, all watchers alive.
-
-> 📦 4 条流水(10-11 13:02~15:01: V3 training complete→eval started→ProtB done→probe parallel launch)已归档 → daily-memories-vision/2026-10-11.md「Archived from MEMORY_VISION.md」节。**结论**：V3 ProtB=63.52±0.01% Δlp=+1.18pp Null; ② probe launched in parallel on GPU 1; chain optimized to skip ②.
-
-
-> 📦 [15:40 Oct11] V3 ProtA/zs/k-NN ALL DONE 流水已归档 → daily-memories-vision/2026-10-11.md。**结论**：ProtA=50.53%, zs=35.52%, k-NN=38.94%, all +0.83~+1.42pp → Null verdict.
-
-> 📦 [16:17 Oct11] monitoring wake (both evals encoding) 已归档 → daily-memories-vision/2026-10-11.md。**结论**：no new results, all procs alive.
-> 📦 [17:35 Oct11] ② probe sweep COMPLETE 流水已归档 → daily-memories-vision/2026-10-11.md。**结论**：×5ep=62.15% (−0.18pp) → probe NOT underfitting → 62.34%=feature ceiling。
-> 📦 [18:06 Oct11] V3 ×5ep probe encoding DONE 流水已归档 → daily-memories-vision/2026-10-11.md。**结论**：probe training in progress, all procs alive.
-
-> 📦 [18:45 Oct11] V3 ×5ep probe COMPLETE + ④-2ep LAUNCHED 流水已归档 → daily-memories-vision/2026-10-11.md。**结论**：V3 ×5ep=63.43% (Δ=−0.07pp) → probe NOT underfitting; ④-2ep training started。
-
-> 📦 [19:25~21:35 Oct11] 3 条 ④-2ep 巡检流水已归档 → daily-memories-vision/2026-10-11.md。**结论**：④-2ep healthy (C1 0.42→0.50, step 8%→22%), variant report HTML (34KB) delivered, two 10-11 HTML reports committed (6743baeb).
+> 📦 10-06~10-10 早期流水(R12b/scaling/fair-rerun)已归档 → daily-memories-vision/2026-10-{06,07,09,10}.md。**关键结论**：E1fair ProtB=62.34%, E2fair=62.51%, Δlp=+0.17pp indistinguishable。
+> 📦 10-11 00:15~21:35 流水(V3 training/eval/②probe/④-2ep launch, ~20条)已归档 → daily-memories-vision/2026-10-11.md。**关键结论**：V3 ProtB=63.52% Δ+1.18pp Null; ② ×5ep=62.15% probe NOT underfitting; V3 ProtA=50.53%/zs=35.52%/k-NN=38.94% all +0.83~+1.42pp Null; ④-2ep launched @18:25。
 
 - [23:00 Oct11] **Muon review + paper §VI-D update**: ✅ (A) Review report `reports/VISION_MUON_REVIEW_2026-10-11.md` (12.6KB) — verified Pion paper (arXiv:2605.19282, Fan et al. 2026, title="Rethinking Muon Beyond Pretraining..."), reviewed 7 external claims vs our §9.2 evidence: 4✅(claims 1/2/3/6) / 2⚠️(claims 4/5, partial: InfoNCE-low-rank unverified, pure-GD lr≠our Muon setting) / 1❓(claim 7, singular value spectrum unverified, no optimizer state saved). ✅ (B) Paper `6_vision_encoder.tex` §VI-D: added `\paragraph{Optimizer ablation: Muon.}` (~114 words, cites `fan2026pion`), compressed Evaluation+Interpretation paragraphs (~60 words saved). `reference.bib`: added `@misc{fan2026pion}` (arXiv:2605.19282). Compile: pdflatex×2+bibtex+pdflatex×2 → 0 error, 0 undefined ref. **Pages: 11→11 (net Δ=0)**. ✅ (C) NOT done — no optimizer state saved, listed as future work. 📦 体积：TASK=38.0KB / MEMORY=31.7KB。
 
@@ -239,6 +217,7 @@ WAITING: 1
 - [06:06 Oct12] **Monitoring wake #10**: 🔄 ④-2ep training step ~264,220/374,202 (~70.6%), C1=0.5021–0.5092 healthy (last 10 probes range 0.50–0.60, 3 transient spikes all self-recovered @194.7k/201.6k/215.7k), C2_gap=+0.1968~+0.1995, C4=OK, loss~0.08, ~5,400 img/s, 26 ckpts (10k–260k, latest vision_step260000.pt @05:57). GPU 0-7 all active ~16.5GB, util 22–95%. PID 2461463 alive (etimes=56425s ≈15.7h). Remaining ~110k steps @ ~93ms/iter ≈ 2.84h → ETA ~08:50 Oct 12 → auto-eval ~3.5h → results ~12:30 Oct 12. No actions needed, training healthy. 📦 体积：TASK=28.2KB / MEMORY=29.5KB。
 - [07:47 Oct12] **Monitoring wake #12**: 🔄 ④-2ep training step ~308,700/374,202 (~82.5%), **C1 RISING in epoch 2: 0.50–0.53(ep1 avg) → 0.57–0.63(ep2 avg, spikes to 0.73@309k)** — contrastive alignment strengthening (positive signal for ④). C2_gap=+0.1684, C4=OK, loss~0.20, ~5,300 img/s, LR=8.35e-05, 30 ckpts (10k–300k, latest vision_step300000.pt @07:22). GPU 0-7 all active ~16.5GB, util 67–80%. PID 2461463 alive (etimes=62510s ≈17.4h). Remaining ~65,502 steps @ ~98ms/iter ≈ 1.79h → ETA ~09:34 Oct 12 → auto-eval ~3.5h → results ~13:00 Oct 12. No actions needed, training healthy. 📦 体积：TASK=28.2KB / MEMORY=30.4KB。
 - [08:22 Oct12] **Monitoring wake #13**: 🔄 ④-2ep training step ~321,810/374,202 (~86%), **C1 stable in epoch 2: 0.57–0.63 (latest C1=0.5939@321.6k)** — contrastive alignment remains elevated vs ep1 (positive signal for ④). C2_gap=+0.1784, C4=OK, loss~0.10, ~5,000–5,300 img/s (some NFS contention spikes), LR=7.17e-05, 33 ckpts (10k–320k, latest vision_step320000.pt @08:18). GPU 0-7 all active ~16.5GB, util 64–86%. PID 2461463 alive. Remaining ~52,392 steps @ ~28min/10k ≈ 2.4h → ETA ~10:48 Oct 12 → auto-eval ~3.5h → results ~14:18 Oct 12. No actions needed, training healthy. 📦 体积：TASK=28.2KB / MEMORY=31.0KB。
+- [08:57 Oct12] **Monitoring wake #14**: 🔄 ④-2ep training step ~334,540/374,202 (~89.4%), **C1 ELEVATED in epoch 2: 0.57–0.63 (latest C1=0.6027@334.5k)**, one transient spike to 0.80@328.8k self-recovered (NFS hiccup). C2_gap=+0.1773, C4=OK, loss~0.15–0.20, ~2,700–3,700 img/s, LR=6.26e-05, 33 ckpts (10k–330k). PID 2461463 alive. Remaining ~39,662 steps → ~1.7h → ETA ~10:50 Oct 12 → auto-eval ~3.5h → results ~14:20 Oct 12. No actions needed, training healthy. 📦 体积：TASK=28.2KB / MEMORY=31.7KB。
 
 
 
