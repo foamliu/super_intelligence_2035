@@ -12,11 +12,11 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 ✅ → 18_暖阳 H3 I2V 二批 8 镜全收 ✅（14/14 ffprobe 核验 = 14/54 镜成片）
-已完成:       S1 ✅；S2 ✅（样板章端到端）；S3 18_暖阳 13 帧再生 ✅；S3 I2V 14 镜成片 ✅（14/54 镜）
-当前动作:     （本轮：git 同步+自检 → comfyui_get_result 收 8 镜异步（10/11/19/24/26/33/36/37）→ ffprobe 核验 14/14 → manifest.json 8 queued→verified → 回写 + commit+push）
-下一步:       补剩余 40 镜资产：车间主任定妆(06)·手机UI系列(16镜)·数据流T2V(15/20/27/28/54 无参考图)·出租屋书桌/门口/卧室(18/22/25)·老周手部(13) → 扩 gen_ep18 脚本/新增 t2v → 逐批 H3 出片 → 字幕/音效BGM → 合成（★ 音画钉长）
-阻塞:         无硬阻塞。缺资产：车间主任无定妆照（ASSETS/CHARACTERS/ 无此角色，需新建或 T2I 泛化中年男）；手机 UI 系列、数据流 T2V、出租屋细节、老周手部待生成。
+PHASE:        S3 放量 ✅ → 18_暖阳 19/54 镜成片 ✅ + 手机UI系列 16 帧全生成 ✅（本轮）
+已完成:       S1 ✅；S2 ✅（样板章端到端）；S3 18_暖阳 19/54 镜成片（含补批 06/13/18/22/25）；手机 UI 系列 16 帧全生成（03/09/12/16/21/23/29/30/34/35/38/40/43/44/51/53）
+当前动作:     （本轮：补 23 消费记录 UI 帧 → 核验 16/16 帧 1280x720 → manifest notes 更新 → 回写 + commit+push）
+下一步:       剩余 35 镜出片：手机UI 16 镜（帧已备，扩 gen_ep18_h3_i2v 用 UI 帧 I2V）+ 数据流T2V 5 镜（15/20/27/28/54 无参考图）+ 其余 14 镜（07/17/31/32/39/41/42/45/46/47/48/49/50/52 需补人物/场景资产）→ 逐批 H3 出片 → 字幕/音效BGM → 合成（★ 音画钉长）
+阻塞:         无硬阻塞。剩余镜缺资产：数据流 T2V 5 镜无参考图；其余 14 镜需人物/场景帧（前妻闪回 45 用老周定妆照）。
 ERROR_COUNT:  0
 ```
 
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-12（S3 续跑 · 收 8 镜异步 + 14/14 核验 → manifest 8→verified → 回写 commit+push）
+- **上次唤醒**：2026-10-12（S3 续跑 · 补 23 UI 帧 + 核验 16/16 帧 → manifest notes 更新 → 回写 commit+push）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,14 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-12 · S3 续跑 · 18_暖阳 手机UI系列 16 帧全生成 ✅（含补 23 消费记录）**：本轮补全 UI 帧缺口并核验。
+  - **补 23**：`scripts/gen_ep18_ui_frames.py` SPECS 新增 SHOT-23（消费记录 `18_ui_23_orders.png`，seed=1923）；py_compile exit=0 + `--shot 23 --dry-run` 通过；后台 `Start-Process` 出 1 张（1331KB）。
+  - **核验 16/16**：`OUTPUT/18_暖阳/frames/18_ui_*.png` 共 16 张，PIL 逐张核 1280×720、无零字节（1.16–1.59MB）。
+  - **UI 帧清单**（16 镜）：03 注册 / 09 头像 / 12 波形 / 16 聊天 / 21 推荐 / 23 消费记录 / 29 延迟 / 30 延迟2 / 34 论坛首页 / 35 发帖 / 38 淡出 / 40 聊天问答 / 43 输入 / 44 聊天回复 / 51 干预 / 53 购物车。
+  - **manifest**：`OUTPUT/18_暖阳/videos/manifest.json` notes 更新为「UI 16 帧已全生成」，verified_count 仍 19。
+  - **下一步**：扩 `gen_ep18_h3_i2v.py` 用 16 张 UI 帧出 I2V（手机屏幕动态）+ 数据流 T2V（15/20/27/28/54）+ 其余镜 → 逐批 H3 → 字幕/音效BGM → 合成。
+
 
 - **2026-10-12 · S3 续跑 · 18_暖阳 I2V 二批 8 镜全收 ✅（14/54 镜成片）**：收 8 镜异步 → 14/14 ffprobe 核验 → manifest 8→verified → 回写 commit。
   - **收 8 镜（验收式陈述）**：`comfyui_get_result` 取回 SHOT-10/11/19/24/26/33/36/37（8 个 prompt_id 全 `success`，ComfyUI 队列已清零 0 running/0 pending），ffprobe 核验全部 h264 1056×608 24fps + aac，时长精确吻合 §4.1 `17k+5`（10→5.167 / 11→6.583 / 19→5.167 / 24→5.167 / 26→4.458 / 33→3.042 / 36→4.458 / 37→4.458）。字节 288KB–818KB。
