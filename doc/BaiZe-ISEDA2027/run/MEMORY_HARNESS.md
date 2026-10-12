@@ -2,21 +2,21 @@
 
 WAITING: 1
 
-> 🔧 **运维指令（2026-10-12 · 最高优先 · 每轮唤醒必读）**：**eval 基础设施失效根因分析报告**（`doc/BaiZe-ISEDA2027/report_harness_eval_rootcause.html`）**已交付 ✅**（45612B, 6 sections, 3 SVG, 中文·自包含·零外链·≤200KB）。核心结论：module/env失败=21.5%(451/2100)，其中311有明确infra_failure_reason(missing_module=272+OOM=28+no_tests=11)；**真wrong-fix=48.0%(1007/2100，非此前报告的83%)**；5 repo(65实例×7=455条)被系统性压制；可挽回~23题/harness；r1_eval.py已有4级patch容错(非单级)。cline vs opencode EDA 深入对比报告 **也已交付 ✅**（39918B, 8 sections）。**7×300 全部完成 ✅**（2100/2100, 574 resolved）。两份 2026-10-12 运维指令块均已归档 → ARCHIVE_OPERATOR_HARNESS.md。
+> 🔧 **运维指令（2026-10-12 · 最高优先 · 每轮唤醒必读）**：**eval 基础设施修复 + 重跑**（指令③①~③③）**执行中** 🔄。P0 四项修复已全部完成 ✅（① matplotlib: mplsetup.cfg system_freetype=True 已创建 → freetype 不再外网下载 ② pytest: SETUPTOOLS_SCM_PRETEND_VERSION=8.0.0 注入 ③ Unify: PIP_NO_BUILD_ISOLATION=1 全 repo 注入 ④ sphinx: jinja2 3.1.4 + git fetch retry）。**fix1 重评正在后台运行**（PID 3594913, 376 entries, ETA ~2h）：5 repo × 7 harness 的 patch-but-failed 条目用修复后的 rootfs 重跑 r1_eval.py。初步结果：patch 已全部成功 apply（infra fix 确认 ✅），测试已运行（f2p/p2p > 0），但尚未有 resolved 翻转。结果写 `kimi_pilot_results.fix1.json`（不覆盖原文件）。前 10 条 partial 结果备份在 `kimi_pilot_results.fix1_partial.json`。
 
 ## 📊 进度快照
 
 ```
-PHASE:        ALL DELIVERABLES COMPLETE ✅ — eval rootcause report + cline vs opencode EDA report delivered; 7×300 finished (2100/2100, 574 resolved); 0 proc alive; TASK archived to 28.5KB
-已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② cline vs opencode EDA 深入对比报告 ✅ (39918B, 8 sections) · ③ eval 基础设施失效根因分析报告 ✅ (45612B, 6 sections, 3 SVG) · ④ 两份 2026-10-12 运维指令块归档 ✅ (TASK 36118B→29198B)
-当前动作:     R343: Monitoring wake — all deliverables verified complete, no new operator instructions, 0 eval proc alive. TASK=29198B(28.5KB ✓) / MEMORY≈30KB ✓.
-下一步:       ① Await next operator instruction — all 2026-10-12 deliverables complete (eval rootcause + cline vs opencode EDA), 7×300 finished, TASK archived
+PHASE:        FIX1 RE-EVAL RUNNING 🔄 — P0 fixes applied (mplsetup.cfg + SETUPTOOLS_SCM_PRETEND + PIP_NO_BUILD_ISOLATION + sphinx git fetch retry); rerun_eval_fix1.py processing 376 entries in background (PID 3594913)
+已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ (45612B) · ③ cline vs opencode EDA report ✅ (39918B) · ④ P0 fixes applied ✅ (mplsetup.cfg created, env vars injected in r1_eval.py UnshareSandbox) · ⑤ fix1 re-eval STARTED 🔄 (376 entries, patches now applying ✅)
+当前动作:     R344: fix1 re-eval running in background (PID 3594913, 376 entries, ETA ~2h). Patches now apply for all tested entries (infra fix confirmed). mplsetup.cfg created for matplotlib (system_freetype=True). Generating preliminary report after more entries complete.
+下一步:       ① Monitor fix1 re-eval progress (check kimi_pilot_results.fix1.json count + rerun_eval_fix1.log) ② Generate report_harness_eval_fix_rerun.html when re-eval completes ③ Commit results + report ④ Consider P1 items (astropy OOM, network 503 retry, per-instance Docker)
 阻塞:         <无>
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
-- [23:20] R343: Monitoring wake — git fetch+pull (already up to date, clean). All deliverables verified: report_harness_eval_rootcause.html (45612B ✓) + report_cline_vs_opencode_eda.html (39918B ✓). 0 eval proc alive (only loop PID 1784375). 7×300 complete (2100/2100, 574 resolved). No new operator instructions. 📦 体积：TASK=29198B(28.5KB ✓) / MEMORY≈30KB ✓。
+- [01:25] R344: **fix1 re-eval STARTED** 🔄. Read TASK 2026-10-12 instruction (① P0 fixes → ② re-eval → ③ report). Found prior partial work: rerun_eval_fix1.py + r1_eval.py (UnshareSandbox env injection) + gen_fix_report.py already created; 10 codex|matplotlib entries completed showing patch_applied=true but resolved=false. **Created mplsetup.cfg** (`system_freetype=True`) at rootfs testbed → matplotlib will use conda env freetype instead of downloading. **Reset fix1.json** (backed up to fix1_partial.json) for fresh run with mplsetup.cfg. **Launched rerun_eval_fix1.py** (PID 3594913, 376 entries: matplotlib 104 + pytest 94 + sphinx 92 + sklearn 67 + flask 19, across 7 harnesses, ETA ~2h). Early results: all entries show "IMPROVED: patch now applied" ✅ — infra fix confirmed. Tests running (f2p/p2p > 0). No flips to resolved yet. 📦 体积：TASK=32625B(31.9KB ✓) / MEMORY≈29KB ✓。
 > 📦 R342 (2026-10-12 23:15, eval rootcause report delivery) 已归档 → daily-memories-harness/2026-10-12.md。结论：report_harness_eval_rootcause.html (45612B, 6 sections, 3 SVG) delivered ✅。需要时再读。
 > 📦 R337-R341 (2026-10-12 18:18~21:08, monitoring wakes) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。
 > 📦 R326-R330 (2026-10-12 10:30~13:48, Report A/B refresh + cline vs opencode EDA report delivery + re-verification) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。
