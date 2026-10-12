@@ -8,10 +8,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:--|:--|
-| STAGE | `C2`（B 4/4✅；C1 4臂5/5✅含full_v3锚点82.1±3.0%；**C2.phi_k10 r1 re-grade running**）|
+| STAGE | `C2`（B 4/4✅；C1 4臂5/5✅含full_v3锚点82.1±3.0%；**C2.phi_k10 r1✅78.5%有效→r2 running**）|
 | CONFIG | `phi_k10`（S2 Φ 预算 k=10·EDA_PHI_BUDGET=10/EDA_PHI_LAGGED=0·base=full(V3+selfexpl)保留·set_s2_phi.py 只改预算不动 V3/SKILL_DATA_DIR✅）|
-| ROUND | 1（phi_k10 r1 code-gen✅完成 batch2026_1012_164323·auto-grade=1.9%(bug)→re-grade PID3875816 running·log /tmp/ABL_phi_k10_r1_regrade.log）|
-| PHASE | `running`（r1 code-gen done→auto-grade 1.9% benchmark bug→re-grade launched→等re-grade结果→判有效性→r2）|
+| ROUND | 2（phi_k10 r1✅=78.5%(124/158·timeout=2·§8.3 k臂PHI-BUDGET-EXHAUSTED=441trace>0)·r2 PID4022652 running·log /tmp/ABL_phi_k10_r2.log）|
+| PHASE | `running`（r1有效→r2 code-gen进行中→下轮收割r2）|
 | WAITING | 1 |
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
@@ -30,7 +30,7 @@ WAITING: 1
 | C1 | wo_retrieval | 5/5 ✅ | **81.0±4.5%** [74.1,86.1,81.6,79.7,83.5] |
 | C1 | full(V2)（旧锚点）| **5/5 ✅ 81.4±4.1%** | [88.0,79.1,77.2,80.4,82.3]（r1=V3文档,r2-r5=V2无自探索→混配置→已由full_v3取代）|
 | C1 | full_v3(自探索·正式锚点) | **5/5 ✅ 82.1±3.0%** | [77.8,86.1,81.6,82.3,82.9]（运维指令(十二)补跑「真full=自探索开」·V3+SKILL_DATA_DIR=./docs/skill_data_selfexpl·4端口8650set+RAG:9006·**未复现r1=88.0%**）|
-| C2 | phi_k10 | 1/5 | 🔄 r1 re-grade running（PID3875816·batch2026_1012_164323·auto-grade=1.9%bug）|
+| C2 | phi_k10 | 2/5 | 🔄 r1✅78.5%·r2 running(PID4022652) |
 | C2 | phi_k3 | 1-5/5 | ⬜（探路 69.0%）|
 | C2 | phi_k1 | 1-5/5 | ⬜（探路 60.8%）|
 | C2 | phi_lagged | 1-5/5 | ⬜（探路 84.2%，r2 修复后 98.1%）|
@@ -51,6 +51,7 @@ WAITING: 1
 | C1.rag | **71.8 ± 2.5%** | [70.3, 72.2, 69.6, 70.9, 75.9] |
 | C1.full(V2)（旧锚点）| **81.4 ± 4.1%** | [88.0, 79.1, 77.2, 80.4, 82.3]（r1=V3文档混配置→已由full_v3取代）|
 | C1.full_v3(自探索·正式锚点) | **82.1 ± 3.0%** ✅ 5/5 | [77.8, 86.1, 81.6, 82.3, 82.9]（运维指令(十二)补跑「真full」V3+自探索·r1=77.8%(123/158·timeout=1)·r2=86.1%(136/158·timeout=1)·r3=81.6%(129/158·timeout=4)·r4=82.3%(130/158·timeout=6)·r5=82.9%(131/158·timeout=5)·**未复现r1=88.0%**）|
+| C2.phi_k10 | r1=78.5% | [78.5]（124/158·timeout=2·§8.3 PHI-BUDGET-EXHAUSTED=441trace·r2-r5待跑）|
 
 ### 三组对照表（运维指令(十二)⑤交付）
 
@@ -63,6 +64,7 @@ WAITING: 1
 **结论**：full_v3 (82.1±3.0%) **未复现** r1 的 88.0%。r1=88.0% 为异常高值，在受控的 V3+自探索 配置下 5 轮均未达到。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，提示自探索可能有适度增益但不显著（两者在 1σ 范围内重叠）。
 
 ## 操作流水
+- [2026-10-12 19:25] ✅ **phi_k10 r1 re-grade=78.5%✅有效→r2启动PID4022652**：ps -p 3875816→已结束·log /tmp/ABL_phi_k10_r1_regrade.log: `124/158 pass (78.5%)`·timeout=2·fail=16·exec_err=0·PASS_RATE=0.7848→**timeout=2≤10✅ 且 Pass@1=78.5%≥75%✅ → r1有效**。infra复检✅：/home=29G·4端口8650/8651/8652/8654 HTTP在听✅·MCP:8090在听✅·hook PreToolUse不存在(运行间隙预期·run_cli.sh Step5部署)·.env核验✅V3+selfexpl+PHI_BUDGET=10+LAGGED=0+8650set+RAG:9006·§8.3 k臂✅PHI-BUDGET-EXHAUSTED=441trace>0·loop PID2302281✅有proxy·relay PID3277328✅alive。`setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_phi_k10_r2.log 2>&1 < /dev/null &`→PID4022652✅·batch19:41:40。状态 STAGE=C2/CONFIG=phi_k10/ROUND=2/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**：pgrep有输出→巡检退出；无输出→re-grade同口径→timeout≤10且Pass@1≥75%→r2有效→r3。
 - [2026-10-12 18:50] ✅ **phi_k10 r1 code-gen完成→auto-grade=1.9%(bug)→re-grade启动PID3875816**：pgrep run_cline_script→**无输出**=r1已结束·log /tmp/ABL_phi_k10_r1.log 23.9MB mtime18:44·统计:成功140/超时2/失败0(158任务)·batch2026_1012_164323·Step7.1 auto-grade=3/158(1.9%)=**已知benchmark bug**·gen_file completed_code_generation_2026_1012_164323.jsonl(158行/140ok)✅·hook PreToolUse已清理(code-gen后正常)·**canary✅**：ACCESS RESTRICTED=926(hook live)·Forbidden=0✅·**§8.3 k臂✅**：`[PHI-BUDGET-EXHAUSTED]`=441 trace(>0·k=10预算约束生效)·run_code=3361·已部署沙盒hook=1✅。`.env`核验✅：V3+selfexpl+PHI_BUDGET=10+LAGGED=0+8650set+RAG:9006。/home=13G✅。创建 `run/run_phi_k10_r1_regrade.sh`→`setsid bash ... > /tmp/ABL_phi_k10_r1_regrade.log 2>&1 &`→PID3875816✅(run_eval.py --lang pyAether --benchmark EDA-Eval-pyAether-158.jsonl)。loop PID2302281✅有proxy·relay PID3277328✅alive·§8.4 ctx.session修复在位(main.py:61-82)✅·git clean(ahead0/behind0)。状态 STAGE=C2/CONFIG=phi_k10/ROUND=1/PHASE=running/WAITING=1/ERROR_COUNT=0。**下轮**：grep re-grade log→timeout≤10且Pass@1≥75%→r1有效→启动r2。
 - [2026-10-12 18:32] 🔎 **巡检(phi_k10 r1 ~1h49m健康·不动作退出)**：pgrep run_cline_script→PID3158335 alive(etime01:49)·log /tmp/ABL_phi_k10_r1.log 22.8MB mtime18:32(live)·**canary-by-log✅**：ACCESS RESTRICTED=908(hook live>0)·Forbidden=0✅·**§8.3 k臂✅**：`[PHI-BUDGET-EXHAUSTED]`=403 trace(>0·k=10预算约束生效)·run_code=3305·loop PID2302281✅有proxy(https_proxy=http://172.19.92.23:13128)·relay PID3277328✅alive·/home=2G(用户授权口径·phi_k10已在跑不涉新起门槛)·git clean(ahead0/behind0)。状态不变 STAGE=C2/CONFIG=phi_k10/ROUND=1/PHASE=running/WAITING=1/ERROR_COUNT=0。
 - [2026-10-12 18:01] 🔎 **巡检(phi_k10 r1 ~1h17m健康·不动作退出)**：pgrep run_cline_script→PID3158335 alive(etime01:17:36·STAT Ss)·log /tmp/ABL_phi_k10_r1.log 16.0MB mtime18:01(live)·**canary-by-log✅**：ACCESS RESTRICTED=730(hook live>0)·Forbidden=0✅·**§8.3 k臂✅**：`[PHI-BUDGET-EXHAUSTED]`=244 trace(>0·k=10预算约束生效)·loop PID2302281✅有proxy·relay PID3277328✅alive·git clean(ahead0/behind0)。状态不变 STAGE=C2/CONFIG=phi_k10/ROUND=1/PHASE=running/WAITING=1/ERROR_COUNT=0。
