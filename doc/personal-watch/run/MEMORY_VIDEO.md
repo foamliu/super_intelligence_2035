@@ -3,7 +3,7 @@
 WAITING: 0
 
 > ⚠️ `WAITING:` **只在顶部出现一次**（本行）。
-> 语义：`0` = 有近期待办（**本线当前状态**：P0 · S1/S2 完成 · S3 放量中 · 18_暖阳 14/54 镜成片）；`1` = 常态。
+> 语义：`0` = 有近期待办（**本线当前状态**：P0 · S1/S2 完成 · S3 放量中 · 18_暖阳 54/54 成片 + BGM 混音达标）；`1` = 常态。
 > ⚠️ 本线 loop（`watch_video_loop.ps1`）**按小时固定唤醒**，**与 `WAITING` 无关**（字段仅供人读）。
 > 纪律：**正文/快照/流水里绝不再出现以 `WAITING:` 开头的行**。
 
@@ -12,11 +12,11 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 ✅ → 18_暖阳 49/54 镜成片（I2V 49/49 全收 ✅；T2V 5 镜后台续跑中）
-已完成:       S1 ✅；S2 ✅；S3 18_暖阳 I2V 49/49 镜成片；手机 UI 16 帧；固化 gen_ep18_h3_i2v/t2v + update_ep18_manifest + gen_ep18_subtitles + synth_ep18 五脚本
-当前动作:     （本轮：manifest 31→49 verified；新增字幕/合成两脚本并 dry-run 验证；生成 EP18_暖阳_字幕.srt 96 条；后台 T2V 批次 gen_ep18_h3_t2v.py --skip-existing PID 4588 续跑 15/20/27/28/54）
-下一步:       收 T2V 5 镜（15/20/27/28/54，steps=20 约 2h）→ 跑 synth_ep18.py 合成（★ 音画钉长 + 闸门）→ BGM/音效 → 成片
-阻塞:         无硬阻塞。仅剩 T2V 5 镜（无参考图走 T2V，后台运行中）。
+PHASE:        S3 放量 ✅ → 18_暖阳 54/54 镜成片 + BGM 混音（响度 -23.8 LUFS 达标）✅
+已完成:       S1 ✅；S2 ✅；S3 18_暖阳 54/54 镜成片（273.34s/1056×608/h264+aac）；成片 + BGM01 混音；固化 gen_ep18_h3_i2v/t2v + update_ep18_manifest + gen_ep18_subtitles + synth_ep18 + gen_ep18_bgm + mix_ep18_bgm 七脚本
+当前动作:     （本轮：收 T2V 5 镜 + 合成 54/54 成片；生成 3 条 ACE-Step BGM；固化 gen/mix 两脚本；混音 BGM01 并修响度至 -23.8 LUFS）
+下一步:       BGM02/03 可选混音 → 最终 QC（qwen3_asr 台词核对 + sound_caption 环境音回读）→ 选定交付文件 → 下一章（08_认知矿工）
+阻塞:         无硬阻塞。
 ERROR_COUNT:  0
 ```
 
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-12（S3 续跑 · manifest 31→49 + 固化字幕/合成两脚本 + 生成 SRT；后台 T2V 批次续跑中）
+- **上次唤醒**：2026-10-12（S3 收尾 · 18_暖阳 54/54 成片 + BGM 混音 -23.8 LUFS 达标）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,15 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-12 · S3 收尾 · 18_暖阳 54/54 成片 + BGM 混音（响度 -23.8 LUFS）✅**：本轮收 T2V + 合成成片 + 混 BGM。
+  - **成片（验收式陈述）**：`EP18_暖阳_成片.mp4` = **54/54 镜 · 273.34s · 1056×608 · h264+aac**，主音画漂移 **0.009s**；manifest `verified_count=54`。T2V 5 镜（15/20/27/28/54）全收 + SHOT-54 生成。
+  - **BGM 素材**：`OUTPUT/18_暖阳/audio/` 3 条 ACE-Step 纯器乐（01 大提琴 60s seed4801 / 02 数据流 45s seed4802 / 03 尾声 45s seed4803）。
+  - **固化两脚本**：`scripts/gen_ep18_bgm.py` + `scripts/mix_ep18_bgm.py`（从 stem_fest `_mix_bgm.py` 移植：`-c:v copy` + BGM acrossfade 循环 + 侧链闪避 + alimiter -1 dBFS）。
+  - **响度修正（关键）**：成片 H3 音轨实测 **-13.4 LUFS / 真峰 0.1 dBFS / LRA 16.2 LU**（非 README §4.4 的 -50 dB 环境声）。按 README 音频规格（配乐 -25~-30 LUFS / 母带 -23 LUFS -1 dBTP）修 mix：新增 `--film-dip` -9.6（主干→-23）+ `--level` -12（BGM→-28）。
+  - **混音产物**：`EP18_暖阳_成片_BGM01.mp4` 65.1MB，**-23.8 LUFS / LRA 7.9 / 峰值 -9.1 dBFS**（≈ -23 ✓，峰值 ≤ -1 ✓）。
+  - **下一步**：BGM02/03 可选混音 → 最终 QC（qwen3_asr + sound_caption）→ 选定交付文件 → 08_认知矿工。
+
 
 - **2026-10-12 · S3 续跑 · 18_暖阳 I2V 49/49 全收 + 固化字幕/合成两脚本 ✅（T2V 后台续跑中）**：本轮收尾 I2V + 备好字幕/合成脚本。
   - **核验（验收式陈述）**：`update_ep18_manifest.py` ffprobe 扫 49 镜 mp4 → manifest **31→49 verified**（h264 1056×608 24fps + aac，时长精确吻合 §4.1 `17k+5`：3.042/4.458/5.167/6.583s）。I2V 批次（后台 `--skip-existing`）已全收。
