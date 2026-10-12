@@ -12,10 +12,10 @@ WAITING: 0
 ## 📊 进度快照（**每次唤醒必须更新**）
 
 ```
-PHASE:        S3 放量 ✅ → 18_暖阳 54/54 镜成片 + BGM 混音（响度 -23.8 LUFS 达标）✅
-已完成:       S1 ✅；S2 ✅；S3 18_暖阳 54/54 镜成片（273.34s/1056×608/h264+aac）；成片 + BGM01 混音；固化 gen_ep18_h3_i2v/t2v + update_ep18_manifest + gen_ep18_subtitles + synth_ep18 + gen_ep18_bgm + mix_ep18_bgm 七脚本
-当前动作:     （本轮：收 T2V 5 镜 + 合成 54/54 成片；生成 3 条 ACE-Step BGM；固化 gen/mix 两脚本；混音 BGM01 并修响度至 -23.8 LUFS）
-下一步:       BGM02/03 可选混音 → 最终 QC（qwen3_asr 台词核对 + sound_caption 环境音回读）→ 选定交付文件 → 下一章（08_认知矿工）
+PHASE:        S3 放量 ✅ → 18_暖阳 54/54 成片 + BGM 混音 ✅；13_外骨骼重做（去 TTS）🔶
+已完成:       S1 ✅；S2 ✅；S3 18_暖阳 54/54 成片（273.34s/1056×608/h264+aac）+ BGM01 混音（-23.8 LUFS）；最终 QC（qwen3_asr + sound_caption）已执行；13_外骨骼 T2I 14 帧脚本重写 + 后台重生成中
+当前动作:     重写 scripts/generate_ep13_t2i.py（14 帧 · 去 TTS · 人物 image_edit 主定妆照 / 非人物 zimage）→ py_compile + dry-run 通过 → 后台批量生成
+下一步:       收 13_外骨骼 T2I 14 帧 → I2V（H3 随片配音）→ 字幕/音效BGM → 合成 → 六项验收
 阻塞:         无硬阻塞。
 ERROR_COUNT:  0
 ```
@@ -33,7 +33,7 @@ ERROR_COUNT:  0
   - 记忆 = 本文件 · 日流水 = `daily-memories-video/` · 记录产物 = `video/`（`PLAN.md` / `PIPELINE.md` / `BLOCKERS.md` / `logs/`）
 - **ComfyUI**：`http://127.0.0.1:8188`（根 `E:\code\ComfyUI`；开机由计划任务 `ComfyUI` 以 SYSTEM 自动启动）
 - **MCP**：`comfyui-drama` · `web-search`（`E:\code\stem_fest\mcp_server\`）
-- **上次唤醒**：2026-10-12（S3 收尾 · 18_暖阳 54/54 成片 + BGM 混音 -23.8 LUFS 达标）
+- **上次唤醒**：2026-10-12（S3 续跑 · 13_外骨骼重做启动 · 18_暖阳 最终 QC 已执行）
 - **判活**：`video/logs/watch_video_loop.hb`（每轮刷新）+ `video/logs/watch_video_loop.log`
 
 ---
@@ -45,6 +45,13 @@ ERROR_COUNT:  0
 ---
 
 ## 3. 流水（倒序）
+
+- **2026-10-12 · S3 续跑 · 13_外骨骼重做启动（去 TTS）+ 18_暖阳最终 QC 已执行 ✅**：按 operator 令「暖阳之后做外骨骼」，重写 EP13 T2I 脚本。
+  - **18_暖阳最终 QC（已执行）**：`qwen3_asr` 回读 `EP18_暖阳_成片.mp4` 返回中文台词 transcript；`sound_caption` 回读 `EP18_暖阳_成片_BGM01.mp4` 返回环境音描述（H3 随片人声 + BGM 混音在轨）。逐字比对结论待下轮持久化。
+  - **13_外骨骼 T2I 重做（去 TTS）**：重写 `scripts/generate_ep13_t2i.py`（替代 legacy）——**14 帧新口径**：4 人物帧 `image_edit`（莎拉×3 工位/地铁/吧台 + 师兄×1 咖啡，输入各自主定妆照，megapixels=0.92）+ 10 非人物帧 `zimage`（场景×4 + 虚拟观众×2 + 道具×2 + UI×2）。**无 TTS**，台词由 H3 随片。
+  - **验证**：`py_compile` exit=0 + `--dry-run` 列出 14 帧 + 主定妆照（莎拉/师兄）/工作流存在核验通过。
+  - **后台**：批量 `generate_ep13_t2i.py`（Start-Process，RedirectOutput `OUTPUT/13_外骨骼/frames/_batch.*.log`），首帧 `13_sarah_01_desk_explaining.png` 已落盘（1.93MB）。
+  - **下一步**：收 14 帧 → 核验 manifest → I2V（H3 随片配音）→ 字幕/音效BGM → 合成 → 六项验收。
 
 - **2026-10-12 · S3 收尾 · 18_暖阳 54/54 成片 + BGM 混音（响度 -23.8 LUFS）✅**：本轮收 T2V + 合成成片 + 混 BGM。
   - **成片（验收式陈述）**：`EP18_暖阳_成片.mp4` = **54/54 镜 · 273.34s · 1056×608 · h264+aac**，主音画漂移 **0.009s**；manifest `verified_count=54`。T2V 5 镜（15/20/27/28/54）全收 + SHOT-54 生成。
