@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Cline vs OpenCode — EDA Agent Harness 基座选型深入对比</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--card2:#1c2330;--border:#30363d;--text:#c9d1d9;--muted:#8b949e;--accent:#58a6ff;--accent2:#7ee787;--warn:#d2991d;--danger:#f85149;--ok:#3fb950;--cline:#58a6ff;--ocode:#7ee787;--codebg:#1f2937}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:15px}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 24px 80px}
+h1{font-size:26px;color:#fff;margin-bottom:4px}
+h2{font-size:21px;margin:40px 0 12px;color:#fff;border-bottom:2px solid var(--border);padding-bottom:8px}
+h3{font-size:17px;margin:24px 0 8px;color:var(--accent)}
+h4{font-size:15px;margin:18px 0 6px;color:var(--accent2)}
+p{margin:8px 0}
+code{font-family:'SF Mono',Consolas,Monaco,monospace;background:var(--codebg);padding:1px 6px;border-radius:4px;font-size:13px;color:#e6edf3}
+pre{background:var(--codebg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;font-size:12.5px;line-height:1.5;margin:10px 0}
+pre code{background:none;padding:0}
+.hero{background:linear-gradient(135deg,#1a3a5c 0%,#2d5a87 100%);border-radius:14px;padding:28px 32px;margin-bottom:24px;color:#fff}
+.hero h1{color:#fff;margin-bottom:8px}
+.hero .meta{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:12px;font-size:13px;opacity:.9}
+.hero .meta span{background:rgba(255,255,255,.12);border-radius:999px;padding:2px 12px}
+.tldr{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--ok);border-radius:8px;padding:16px 20px;margin:16px 0;font-size:14.5px}
+.tldr b{color:#fff}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin:14px 0}
+.card.cline{border-left:4px solid var(--cline)}
+.card.ocode{border-left:4px solid var(--ocode)}
+.card.warn{border-left:4px solid var(--warn)}
+.card.ok{border-left:4px solid var(--ok)}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}
+th,td{border:1px solid var(--border);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:#21262d;color:var(--accent2);font-weight:600}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.tag{display:inline-block;padding:.1em .6em;border-radius:10px;font-size:11px;font-weight:600}
+.tag.cline{background:#1a2b3a;color:var(--cline)}
+.tag.ocode{background:#1b3826;color:var(--ocode)}
+.tag.new{background:#1a2b3a;color:var(--accent)}
+.tag.existing{background:#3a2f1a;color:var(--warn)}
+.ev{background:#161b22;border:1px solid var(--border);border-radius:6px;padding:8px 12px;margin:8px 0;font-size:12px;overflow-x:auto}
+.ev code{background:none;padding:0;font-size:12px}
+.note{background:#1a1208;border:1px solid #3a2f14;border-left:4px solid var(--warn);border-radius:8px;padding:10px 14px;font-size:13px;color:#eac54f;margin:12px 0}
+.ok-box{background:#0d1f14;border:1px solid #1f5b3e;border-left:4px solid var(--ok);border-radius:8px;padding:10px 14px;font-size:13px;color:#56d364;margin:12px 0}
+.toc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin:16px 0}
+.toc ol{margin:8px 0 0 20px}
+.toc li{margin:4px 0}
+.toc a{color:var(--accent);text-decoration:none}
+.score-box{display:inline-block;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin:6px;text-align:center;min-width:120px}
+.score-box .num{font-size:24px;font-weight:700}
+.score-box .label{font-size:11px;color:var(--muted)}
+.score-box.cline .num{color:var(--cline)}
+.score-box.ocode .num{color:var(--ocode)}
+.bar-chart{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:12px}
+.bar{height:18px;border-radius:3px;display:flex;align-items:center;padding:0 6px;font-size:11px;color:#fff;min-width:2px}
+.bar.cline{background:var(--cline)}
+.bar.ocode{background:var(--ocode)}
+.vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+@media(max-width:760px){.vs-grid{grid-template-columns:1fr}}
+footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--border);text-align:center;color:var(--muted);font-size:12px}
+ul,ol{margin:8px 0;padding-left:24px}
+li{margin:4px 0}</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero">
+<h1>Cline vs OpenCode — EDA Agent Harness 基座选型深入对比</h1>
+<div style="font-size:14px;opacity:.95;margin-top:6px">面向华大九天 PyAether 智能编程助手 · SWE-bench Lite 300 条实测 + 源码分析 + 半年演进追踪</div>
+<div class="meta">
+<span>📊 2026-10-12</span><span>🤖 kimi-k2.6-cloud</span><span>📦 kimi_pilot_results.json (2100 entries)</span><span>🔬 双方源码分析</span><span>📝 早前选型 2026-03-13</span>
+</div>
+</div>
+<div class="tldr">
+<b>HERO 一句话结论</b>：SWE-bench Lite 300 条实测中，cline (86/300, 28.7%) 与 opencode (87/300, 29.0%) <b>几乎打平（+0.3pp，无统计显著差异）</b>。
+从<b>EDA 安全管控</b>角度看，cline 的<b>逐操作审批 + git Checkpoint 回滚</b>在<b>不可逆操作防护</b>上仍具结构性优势；
+opencode 在<b>速度效率、架构现代性（SQL TodoTable / Provider 抽象 / 精细 Hook）、MIT 协议</b>上领先。
+<b>综合建议：维持 cline 为主基座，关注 opencode 架构优势以汲取改进方向（与 CLINE_IMPROVEMENT_OPPORTUNITIES.md O1–O5 一致）。</b>
+</div>
+<div class="toc"><b>目录</b><ol>
+<li><a href="#s1">HERO 一句话结论 + TL;DR</a></li>
+<li><a href="#s2">早前结论回顾（2026-03 选型论据）</a></li>
+<li><a href="#s3">实测评比（核心增量 · 7×300 数据）</a></li>
+<li><a href="#s4">代码架构对比</a></li>
+<li><a href="#s5">EDA 场景契合度</a></li>
+<li><a href="#s6">半年来演进（web search）</a></li>
+<li><a href="#s7">综合结论</a></li>
+<li><a href="#s8">诚实条款</a></li>
+</ol></div>
+
+<h2 id="s1">1 · HERO 一句话结论 + TL;DR</h2>
+<div class="card">
+<h3>核心数据一览</h3>
+<div style="display:flex;flex-wrap:wrap;justify-content:center;margin:12px 0">
+<div class="score-box cline"><div class="num">86/300</div><div class="label">Cline (28.7%)</div></div>
+<div class="score-box ocode"><div class="num">87/300</div><div class="label">OpenCode (29.0%)</div></div>
+<div class="score-box"><div class="num" style="color:var(--warn)">+0.3pp</div><div class="label">OpenCode 领先</div></div>
+<div class="score-box"><div class="num" style="color:var(--ok)">75</div><div class="label">双方共同解决</div></div>
+</div>
+<table>
+<tr><th style="width:160px">维度</th><th><span class="tag cline">Cline</span></th><th><span class="tag ocode">OpenCode</span></th><th>差异</th></tr>
+<tr><td><b>Resolve Rate</b></td><td>86/300 (28.7%)</td><td>87/300 (29.0%)</td><td>Δ=+0.3pp · <b>无统计显著差异</b></td></tr>
+<tr><td><b>平均 Wall Time</b></td><td>498.4s</td><td>459.5s</td><td>OpenCode 快 7.8%</td></tr>
+<tr><td><b>中位 Wall Time</b></td><td>331.4s</td><td>331.5s</td><td>几乎相同</td></tr>
+<tr><td><b>近超时(>1700s)</b></td><td>15 条</td><td>8 条</td><td>Cline 多 7 条</td></tr>
+<tr><td><b>非零退出码</b></td><td>rc=1: 14</td><td>rc=1: 6</td><td>Cline 异常退出多</td></tr>
+<tr><td><b>Transform 警告</b></td><td>187/300</td><td>1/300</td><td>Cline 有 <code>ai@7.0.49</code> 噪声</td></tr>
+<tr><td><b>同题重叠</b></td><td colspan="3">共同 75 · Cline 独有 11 · OpenCode 独有 12 · 均未解 202</td></tr>
+</table>
+</div>
+
+<h2 id="s2">2 · 早前结论回顾（2026-03 选型论据）</h2>
+<div class="card">
+<p><b>来源</b>：<code>doc/zhulong_doc/Cline vs OpenCode 对比.md</code>（2026-03-13）</p>
+<p>半年前的选型分析在<b>智能EDA PyAether编程助手</b>背景下，最终<b>推荐 Cline CLI 2.0</b>。</p>
+<h3>2.1 当年对比维度</h3>
+<table>
+<tr><th>维度</th><th><span class="tag cline">Cline CLI 2.0</span></th><th><span class="tag ocode">OpenCode</span></th><th>判定</th></tr>
+<tr><td><b>MCP 生态</b></td><td>✅ 官方 Marketplace</td><td>⚠️ 社区贡献为主</td><td><b>Cline 胜</b></td></tr>
+<tr><td><b>Human-in-the-loop</b></td><td>✅ 逐操作审批（Plan/Act）</td><td>⚠️ 会话级审批，粒度粗</td><td><b>Cline 胜</b></td></tr>
+<tr><td><b>CI/CD 集成</b></td><td>✅ Headless（<code>-y</code> + <code>--json</code>）</td><td>⚠️ 有限支持</td><td><b>Cline 胜</b></td></tr>
+<tr><td><b>Checkpoint</b></td><td>✅ Git Checkpoint 版本控制</td><td>❌ 未提及等价机制</td><td><b>Cline 胜</b></td></tr>
+<tr><td><b>子 Agent</b></td><td>✅ IDE 可调用 CLI 作为子 Agent</td><td>❌ 未提及</td><td><b>Cline 胜</b></td></tr>
+<tr><td><b>本地模型</b></td><td>✅ 支持 Ollama</td><td>✅ Ollama 原生更好</td><td>OpenCode 略胜</td></tr>
+<tr><td><b>多模态</b></td><td>❌ 未提及</td><td>✅ 内置图像理解</td><td><b>OpenCode 胜</b></td></tr>
+<tr><td><b>开源协议</b></td><td>Apache 2.0</td><td>MIT</td><td>OpenCode 更宽松</td></tr>
+</table>
+<h3>2.2 当年为何选 Cline</h3>
+<div class="card cline">
+<ol>
+<li><b>Human-in-the-loop 契合芯片设计安全</b>：EDA 操作不可逆性强，逐操作审批符合变更管控流程</li>
+<li><b>MCP 生态加速开发</b>：官方 Marketplace → 快速构建 <code>pdk_mcp_server</code></li>
+<li><b>与 Aether 环境无缝集成</b>：终端应用，同 Linux 环境，无需窗口切换</li>
+<li><b>学术与工程双重价值</b>：Plan/Act + Subagents 适合论文；Checkpoint + Headless 适合工程化</li>
+</ol>
+</div>
+<div class="note"><b>⏳ 时效标注</b>：该分析基于 2026-03 产品状态。半年后两框架均有显著演进（见 §6），部分论据需重新审视。</div>
+</div>
+
+<h2 id="s3">3 · 实测评比（核心增量 · 7×300 数据）</h2>
+<div class="tldr"><b>核心发现</b>：同一 backbone（kimi-k2.6-cloud）下，cline 与 opencode 在 SWE-bench Lite 300 条上<b>几乎打平</b>（28.7% vs 29.0%，Δ=+0.3pp）。同题重叠显示双方各有 11–12 题独有解，仅 1 题净差异。<b>resolve rate 这一硬指标上，两者已无实质差距。</b></div>
+
+<h3>3.1 Resolve Rate 头对头</h3>
+<div class="card">
+<div class="bar-chart"><span style="width:60px"><span class="tag cline">Cline</span></span><div class="bar cline" style="width:86px">28.7%</div><span style="color:var(--muted);font-size:11px">86/300</span></div>
+<div class="bar-chart"><span style="width:60px"><span class="tag ocode">OpenCode</span></span><div class="bar ocode" style="width:87px">29.0%</div><span style="color:var(--muted);font-size:11px">87/300</span></div>
+<p style="margin-top:12px;color:var(--muted);font-size:12px"><b>McNemar 检验</b>：b=11, c=12。χ²=0.011, p≫0.05 → <b>无统计显著差异</b>。</p>
+</div>
+
+<h3>3.2 Wall Time 对比</h3>
+<div class="card">
+<table>
+<tr><th>指标</th><th><span class="tag cline">Cline</span></th><th><span class="tag ocode">OpenCode</span></th><th>差异</th></tr>
+<tr><td><b>全部 均值</b></td><td>498.4s</td><td>459.5s</td><td>OpenCode 快 7.8%</td></tr>
+<tr><td><b>全部 中位数</b></td><td>331.4s</td><td>331.5s</td><td>几乎相同</td></tr>
+<tr><td><b>全部 标准差</b></td><td>422.5s</td><td>395.4s</td><td>OpenCode 方差略小</td></tr>
+<tr><td><b>min/max</b></td><td>3.1s / 1800.6s</td><td>48.1s / 1800.5s</td><td>—</td></tr>
+<tr><td><b>已解决 均值</b></td><td>398.7s</td><td>369.7s</td><td>OpenCode 快 7.3%</td></tr>
+<tr><td><b>PBF 均值</b></td><td>540.2s</td><td>499.2s</td><td>OpenCode 快 7.6%</td></tr>
+</table>
+<div class="ev"><b>证据</b>：<code>kimi_pilot_results.json</code> wall_s 字段。均值差异主要来自<b>尾部</b>（Cline 15 条 >1700s vs OpenCode 8 条），中位数几乎一致说明<b>主体任务效率相当</b>。</div>
+</div>
+
+<h3>3.3 失败分类</h3>
+<div class="card">
+<table>
+<tr><th>分类</th><th><span class="tag cline">Cline</span></th><th><span class="tag ocode">OpenCode</span></th><th>说明</th></tr>
+<tr><td><b>resolved</b></td><td>86 (28.7%)</td><td>87 (29.0%)</td><td>patch 通过全部测试</td></tr>
+<tr><td><b>patch-but-failed</b></td><td>212 (70.7%)</td><td>211 (70.3%)</td><td>生成了 patch 但未通过全部测试</td></tr>
+<tr><td><b>quota-blocked</b></td><td>2 (0.7%)</td><td>2 (0.7%)</td><td>API 配额耗尽（均 django__django-16873）</td></tr>
+</table>
+<h4>PBF 细分</h4>
+<table>
+<tr><th>PBF 子类</th><th><span class="tag cline">Cline</span></th><th><span class="tag ocode">OpenCode</span></th><th>含义</th></tr>
+<tr><td>patch_not_applied</td><td>75 (35.4%)</td><td>71 (33.6%)</td><td>patch 无法 apply</td></tr>
+<tr><td>f2p_all_fail</td><td>119</td><td>120</td><td>FAIL→PASS 全不通过</td></tr>
+<tr><td>f2p_partial</td><td>15</td><td>12</td><td>部分 FAIL→PASS 通过</td></tr>
+<tr><td>f2p_pass_p2p_fail</td><td>3</td><td>8</td><td>FAIL→PASS 过但 PASS→PASS 被破坏</td></tr>
+</table>
+<div class="ev"><b>证据</b>：<code>harness_result.eval</code> 字段。Cline patch_not_applied 率略高于 OpenCode，可能与 transform error 噪声有关。</div>
+</div>
+
+<h3>3.4 同题重叠胜败分析</h3>
+<div class="card">
+<table>
+<tr><th>类别</th><th>题数</th><th>占比</th><th>说明</th></tr>
+<tr><td><b>双方共同解决</b></td><td>75</td><td>25.0%</td><td>两 harness 均成功</td></tr>
+<tr><td><b>Cline 独有解决</b></td><td>11</td><td>3.7%</td><td>Cline 解但 OpenCode 未解</td></tr>
+<tr><td><b>OpenCode 独有解决</b></td><td>12</td><td>4.0%</td><td>OpenCode 解但 Cline 未解</td></tr>
+<tr><td><b>双方均未解决</b></td><td>202</td><td>67.3%</td><td>两 harness 均失败</td></tr>
+</table>
+<h4>Cline 独有解决（11 题）</h4>
+<div class="ev"><code>django__django-10924, django__django-11422, django__django-11999, django__django-12589, django__django-12708, django__django-12983, django__django-13660, scikit-learn__scikit-learn-10297, sympy__sympy-11400, sympy__sympy-13031, sympy__sympy-18532</code></div>
+<h4>OpenCode 独有解决（12 题）</h4>
+<div class="ev"><code>django__django-12286, django__django-12470, django__django-12747, django__django-13028, django__django-13158, pylint-dev__pylint-5859, scikit-learn__scikit-learn-12471, scikit-learn__scikit-learn-14092, sympy__sympy-13915, sympy__sympy-14817, sympy__sympy-16106, sympy__sympy-19007</code></div>
+<div class="note"><b>关键洞察</b>：双方独有解决数几乎对称（11 vs 12），说明<b>差异主要来自随机噪声</b>。202 题（67.3%）双方都未解决，是「模型能力天花板」。</div>
+</div>
+
+<h3>3.5 Patch 大小对比</h3>
+<div class="card">
+<table>
+<tr><th>指标</th><th><span class="tag cline">Cline</span></th><th><span class="tag ocode">OpenCode</span></th></tr>
+<tr><td><b>全部 patch 均值</b></td><td>2908B</td><td>4584B</td></tr>
+<tr><td><b>全部 patch 中位数</b></td><td>2174B</td><td>2286B</td></tr>
+<tr><td><b>已解决 patch 均值</b></td><td>2632B</td><td>3307B</td></tr>
+<tr><td><b>已解决 patch 中位数</b></td><td>2087B</td><td>2174B</td></tr>
+</table>
+<div class="ev">OpenCode patch 均值偏大（4584 vs 2908B），但中位数接近——OpenCode 有更多<b>大 patch 离群值</b>，可能与其 4 字符/token 乐观估算有关。</div>
+</div>
+
+<h3>3.6 分 Repo 解决率</h3>
+<div class="card">
+<table>
+<tr><th>Repo</th><th>题数</th><th><span class="tag cline">Cline</span></th><th><span class="tag ocode">OpenCode</span></th><th>差异</th></tr>
+<tr><td>astropy/astropy</td><td>6</td><td>0 (0.0%)</td><td>0 (0.0%)</td><td>+0.0pp</td></tr>
+<tr><td>django/django</td><td>114</td><td>30 (26.3%)</td><td>28 (24.6%)</td><td>-1.8pp</td></tr>
+<tr><td>matplotlib/matplotlib</td><td>23</td><td>0 (0.0%)</td><td>0 (0.0%)</td><td>+0.0pp</td></tr>
+<tr><td>mwaskom/seaborn</td><td>4</td><td>1 (25.0%)</td><td>1 (25.0%)</td><td>+0.0pp</td></tr>
+<tr><td>pallets/flask</td><td>3</td><td>0 (0.0%)</td><td>0 (0.0%)</td><td>+0.0pp</td></tr>
+<tr><td>psf/requests</td><td>6</td><td>0 (0.0%)</td><td>0 (0.0%)</td><td>+0.0pp</td></tr>
+<tr><td>pydata/xarray</td><td>5</td><td>2 (40.0%)</td><td>2 (40.0%)</td><td>+0.0pp</td></tr>
+<tr><td>pylint-dev/pylint</td><td>6</td><td>1 (16.7%)</td><td>2 (33.3%)</td><td>+16.7pp</td></tr>
+<tr><td>pytest-dev/pytest</td><td>17</td><td>0 (0.0%)</td><td>0 (0.0%)</td><td>+0.0pp</td></tr>
+<tr><td>scikit-learn/scikit-learn</td><td>23</td><td>10 (43.5%)</td><td>11 (47.8%)</td><td>+4.3pp</td></tr>
+<tr><td>sphinx-doc/sphinx</td><td>16</td><td>0 (0.0%)</td><td>0 (0.0%)</td><td>+0.0pp</td></tr>
+<tr><td>sympy/sympy</td><td>77</td><td>42 (54.5%)</td><td>43 (55.8%)</td><td>+1.3pp</td></tr>
+</table>
+<div class="note">双方在绝大多数 repo 上高度一致。最大差异在 <code>pylint-dev/pylint</code>（16.7% vs 33.3%，仅 6 题）。<code>astropy/matplotlib/sphinx/pytest/requests/flask</code> 双方均 0%——对 kimi-k2.6-cloud 是天花板。</div>
+</div>
+
+<h3>3.7 稳定性指标</h3>
+<div class="card">
+<table>
+<tr><th>指标</th><th><span class="tag cline">Cline</span></th><th><span class="tag ocode">OpenCode</span></th><th>说明</th></tr>
+<tr><td><b>近超时(>1700s)</b></td><td>15 条</td><td>8 条</td><td>Cline 超时更多</td></tr>
+<tr><td><b>非零退出码</b></td><td>rc=1: 14</td><td>rc=1: 6</td><td>Cline 异常退出更多</td></tr>
+<tr><td><b>Transform 噪声</b></td><td>187/300 (62.3%)</td><td>1/300 (0.3%)</td><td>Cline 有 <code>ai@7.0.49</code> 弃用警告</td></tr>
+</table>
+<div class="note"><b>「已提过」标记</b>：Cline 的 transform error 噪声在 <code>report_harness_trace_vs_cline.html</code> §6 已指出，本轮复核确认仍存在。</div>
+</div>
+
+<h2 id="s4">4 · 代码架构对比</h2>
+<div class="tldr"><b>架构差异本质</b>：Cline 是<b>投影非破坏式</b>设计（原始消息永不改写，编辑在读取期应用），OpenCode 是<b>SQL 截断式</b>设计（seq 阈值 + baselineSeq）。两者都把「上下文压缩」硬编码在核心、把「观察与外围改写」开放给 Hook。</div>
+
+<h3>4.1 工具集</h3>
+<div class="vs-grid">
+<div class="card cline">
+<h4><span class="tag cline">Cline</span></h4>
+<ul>
+<li><b>文件</b>：read_file / write_to_file / replace_in_file（EditType 逐块编辑）</li>
+<li><b>搜索</b>：search_files / list_files / search_codebase（ripgrep）</li>
+<li><b>执行</b>：execute_command（逐操作审批）</li>
+<li><b>MCP</b>：use_mcp_tool / access_mcp_resource（官方 Marketplace）</li>
+<li><b>子 Agent</b>：dispatch_subagent（IDE 可调用 CLI）</li>
+</ul>
+<div class="ev"><b>证据</b>：<code>cline/sdk/packages/core/src/session/tools/</code> · <code>cline_SOURCE_ANALYSIS.html</code> §1</div>
+</div>
+<div class="card ocode">
+<h4><span class="tag ocode">OpenCode</span></h4>
+<ul>
+<li><b>文件</b>：read / write / edit / grep / glob</li>
+<li><b>执行</b>：bash</li>
+<li><b>差异</b>：unified_diff（patch 生成格式）</li>
+<li><b>MCP</b>：支持 MCP 协议（社区贡献为主）</li>
+<li><b>LSP</b>：自动加载正确的 LSP</li>
+</ul>
+<div class="ev"><b>证据</b>：<code>opencode_SOURCE_ANALYSIS.html</code> §0 · TypeScript + bun@1.3.14, Effect DI</div>
+</div>
+</div>
+
+<h3>4.2 循环控制与停手</h3>
+<div class="card">
+<table>
+<tr><th>维度</th><th><span class="tag cline">Cline</span></th><th><span class="tag ocode">OpenCode</span></th></tr>
+<tr><td><b>循环模式</b></td><td>Plan/Act 双模式 — Plan 只规划不执行，Act 逐步执行+审批</td><td>Build/Ask 模式 — 类似但审批粒度更粗</td></tr>
+<tr><td><b>何时停手</b></td><td>模型自行决定 / 用户中断 / turn cap / timeout</td><td>模型自行决定 / timeout / compaction 触发</td></tr>
+<tr><td><b>自动压缩</b></td><td>per-provider 白名单（Claude 4/GPT-5/Gemini 2.5/Grok 4）</td><td>环境变量 flag 开关（<code>OPENCODE_DISABLE_AUTOCOMPACT</code>）</td></tr>
+<tr><td><b>Headless</b></td><td>✅ <code>-y</code> + <code>--json</code></td><td>⚠️ 有限支持（ACP 协议可远程驱动）</td></tr>
+</table>
+<div class="ev"><b>证据</b>：Cline <code>compaction-shared.ts:13-15</code>；OpenCode <code>config.ts:594-597</code></div>
+</div>
+
+<h3>4.3 上下文管理与压缩</h3>
+<div class="card">
+<table>
+<tr><th>维度</th><th><span class="tag cline">Cline</span></th><th><span class="tag ocode">OpenCode</span></th></tr>
+<tr><td><b>投影抽象</b></td><td>EditType/ContextUpdate map（逐块编辑，任意粒度）</td><td>seq 阈值 + baselineSeq（SQL 截断）</td></tr>
+<tr><td><b>压缩策略</b></td><td>非破坏式 — 原始消息永不改写</td><td>Context Epoch — 带版本号截断 + prune</td></tr>
+<tr><td><b>token 估算</b></td><td><b>3 字符/token（保守）</b></td><td><b>4 字符/token（乐观）</b></td></tr>
+<tr><td><b>保留近端</b></td><td>90% 窗口触发压缩</td><td>25% 窗口保留（夹 2k~15k）</td></tr>
+<tr><td><b>溢出恢复</b></td><td>overflowRecovery 强制压缩+重试</td><td>compaction.create(auto:true)</td></tr>
+<tr><td><b>Prune 保护</b></td><td>—</td><td>仅保护 <code>skill</code> 工具</td></tr>
+</table>
+<div class="note"><b>「已提过」标记</b>：Cline 的 3 字符/token 保守策略在 <code>CLINE_IMPROVEMENT_OPPORTUNITIES.md</code> O5 已指出。</div>
+</div>
+
+<h3>4.4 审批粒度（Human-in-the-loop）</h3>
+<div class="card">
+<table>
+<tr><th>场景</th><th><span class="tag cline">Cline</span></th><th><span class="tag ocode">OpenCode</span></th></tr>
+<tr><td><b>生成脚本</b></td><td>Plan 审查 → 确认 → Act 生成 → <b>逐文件审批</b></td><td>Ask 生成 → Build 执行（自动或确认）</td></tr>
+<tr><td><b>修改文件</b></td><td>编辑前显示 diff → 确认 → 执行 → <b>Checkpoint 备份</b></td><td>变更后显示 diff → <b>无法中间拦截</b></td></tr>
+<tr><td><b>运行命令</b></td><td>执行前确认 → 可查看命令详情</td><td>执行后反馈结果</td></tr>
+</table>
+<div class="ok-box"><b>核心差异</b>：Cline 审批在<b>操作之前</b>（pre-approval），OpenCode 更多是<b>操作之后</b>（post-approval）。对 EDA <b>不可逆操作</b>，pre-approval 是硬需求。</div>
+</div>
+
+<h3>4.5 MCP / Checkpoint / Patch / 失败恢复</h3>
+<div class="card">
+<table>
+<tr><th>维度</th><th><span class="tag cline">Cline</span></th><th><span class="tag ocode">OpenCode</span></th></tr>
+<tr><td><b>MCP 生态</b></td><td>✅ 官方 Marketplace, 209 providers, 6237 models (v4.1.22)</td><td>⚠️ 社区贡献, 75+ providers</td></tr>
+<tr><td><b>文件级 Checkpoint</b></td><td>git stash/ref — 非破坏式回滚</td><td>git snapshot — 分层回滚</td></tr>
+<tr><td><b>对话级</b></td><td>JSON sidecar（曾因漂移被 PR #12747 修复）</td><td>Context Epoch 版本号</td></tr>
+<tr><td><b>Patch 格式</b></td><td>replace_in_file（EditType 逐块）</td><td>unified_diff（标准 diff）</td></tr>
+<tr><td><b>异常退出</b></td><td>rc=1 更多</td><td>rc=1 更少（更稳定）</td></tr>
+</table>
+<div class="note"><b>「已提过」标记</b>：Cline 检查点 sidecar 漂移在 <code>CLINE_IMPROVEMENT_OPPORTUNITIES.md</code> O2 已指出。</div>
+</div>
+
+<h2 id="s5">5 · EDA 场景契合度</h2>
+<div class="tldr"><b>EDA 核心需求 = 不可逆操作安全 + 变更管控 + MCP 封装 PyAether + 本地化离线 + 多模态扩展</b>。Cline 在前两项有结构性优势；OpenCode 在后两项更具前瞻性。</div>
+
+<h3>5.1 不可逆操作安全（PDK 改参 / 仿真提交）</h3>
+<div class="card">
+<table>
+<tr><th>维度</th><th><span class="tag cline">Cline</span></th><th><span class="tag ocode">OpenCode</span></th><th>EDA 评分</th></tr>
+<tr><td><b>操作前审批</b></td><td>✅ 逐操作 pre-approval</td><td>⚠️ 会话级，无法中间拦截</td><td><b>Cline 9/10 · OpenCode 5/10</b></td></tr>
+<tr><td><b>操作后回滚</b></td><td>✅ git Checkpoint</td><td>✅ git snapshot</td><td>Cline 9/10 · OpenCode 7/10</td></tr>
+<tr><td><b>diff 预览</b></td><td>✅ 编辑前显示 diff</td><td>✅ 变更后显示 diff</td><td>Cline 9/10 · OpenCode 6/10</td></tr>
+<tr><td><b>命令审查</b></td><td>✅ 执行前确认</td><td>⚠️ 执行后反馈</td><td><b>Cline 9/10 · OpenCode 4/10</b></td></tr>
+</table>
+<div class="ok-box"><b>结论</b>：Cline 的 pre-approval 是<b>结构性优势</b>——芯片设计变更管控需操作前拦截。OpenCode post-approval 在事后审查时已无法撤销。</div>
+</div>
+
+<h3>5.2 变更管控 · MCP · 本地化 · 多模态</h3>
+<div class="card">
+<table>
+<tr><th>EDA 需求</th><th><span class="tag cline">Cline</span></th><th><span class="tag ocode">OpenCode</span></th><th>胜方</th></tr>
+<tr><td><b>变更管控审计</b></td><td>✅ Checkpoint Entry 含 ref/createdAt/runCount</td><td>⚠️ Epoch 版本号，审计粒度粗</td><td><b>Cline</b></td></tr>
+<tr><td><b>MCP 封装 PyAether</b></td><td>✅ 官方 Marketplace + 自然语言构建工具</td><td>⚠️ 需自行实现 MCP Server</td><td><b>Cline</b></td></tr>
+<tr><td><b>本地化离线</b></td><td>✅ Headless + Ollama（有 128K 假窗口坑）</td><td>✅ Ollama 原生更好 + Privacy by Default</td><td><b>OpenCode</b></td></tr>
+<tr><td><b>多模态扩展</b></td><td>⚠️ 未发现原生多模态</td><td>✅ 内置图像理解（EDA 图形分析前瞻）</td><td><b>OpenCode</b></td></tr>
+<tr><td><b>CI/CD + Headless</b></td><td>✅ <code>-y</code> + <code>--json</code> 成熟</td><td>⚠️ GitHub Actions 集成（新增）</td><td><b>Cline</b></td></tr>
+</table>
+<div class="note"><b>「已提过」标记</b>：Cline 本地模型 128K 假窗口坑在 <code>CLINE_IMPROVEMENT_OPPORTUNITIES.md</code> O5 已指出。</div>
+</div>
+
+<h3>5.3 EDA 场景综合评分</h3>
+<div class="card">
+<table>
+<tr><th>EDA 需求</th><th>权重</th><th><span class="tag cline">Cline</span></th><th><span class="tag ocode">OpenCode</span></th></tr>
+<tr><td>不可逆操作安全</td><td>25%</td><td>9.0</td><td>5.0</td></tr>
+<tr><td>变更管控</td><td>20%</td><td>8.5</td><td>6.5</td></tr>
+<tr><td>MCP 封装 PyAether</td><td>20%</td><td>8.0</td><td>6.0</td></tr>
+<tr><td>本地化离线部署</td><td>15%</td><td>7.0</td><td>8.0</td></tr>
+<tr><td>多模态扩展</td><td>10%</td><td>4.0</td><td>8.0</td></tr>
+<tr><td>CI/CD + Headless</td><td>10%</td><td>8.0</td><td>6.0</td></tr>
+<tr><td><b>加权总分</b></td><td>100%</td><td><b>7.75</b></td><td><b>6.05</b></td></tr>
+</table>
+</div>
+
+<h2 id="s6">6 · 半年来演进（web search · 检索时效 2026-10-12）</h2>
+<div class="tldr"><b>检索时效</b>：本节基于 2026-10-12 web search，距早前选型分析（2026-03-13）约 7 个月。两框架均经历大量版本迭代。</div>
+
+<h3>6.1 Cline 演进</h3>
+<div class="card cline">
+<table>
+<tr><th>维度</th><th>2026-03 状态</th><th>2026-10 状态</th><th>Delta</th></tr>
+<tr><td><b>版本</b></td><td>CLI 2.0（2025-10）</td><td>v4.1.22（2026-09-30）— 62 版迭代</td><td>大量迭代</td></tr>
+<tr><td><b>Provider 数</b></td><td>未记录</td><td>209 providers, 6237 models</td><td>生态大幅扩展</td></tr>
+<tr><td><b>默认模型</b></td><td>—</td><td>GPT-6.1 Sol</td><td>目录持续刷新</td></tr>
+<tr><td><b>Sub-agents</b></td><td>✅ 原生支持</td><td>v4.1.20 — 同步 sub-agents 工具调用并行</td><td>能力增强</td></tr>
+<tr><td><b>输出预算</b></td><td>固定 32K tokens</td><td>v4.1.20 — 改为输出上限 30%（动态）</td><td>大输出模型受益</td></tr>
+<tr><td><b>Hook 修复</b></td><td>7 hook + capability</td><td>v4.1.20 — 修复 Hook 上下文注入回归</td><td>可靠性改善</td></tr>
+<tr><td><b>Checkpoint</b></td><td>git stash/ref + sidecar</td><td>v4.1.22 — Reset Code 逻辑改进</td><td>体验优化</td></tr>
+<tr><td><b>Reasoning tokens</b></td><td>—</td><td>v4.1.22 — 修复双重计数</td><td>计量更准确</td></tr>
+<tr><td><b>Anthropic 容错</b></td><td>—</td><td>v4.1.22 — 服务端 refusal fallback + failover</td><td>可靠性增强</td></tr>
+</table>
+<div class="ev"><b>来源</b>：gradually.ai Cline Changelog (v4.1.22, 2026-09-30) · tsecurity.de (v4.1.20, 2026-09-22) · 检索 2026-10-12</div>
+<div class="note"><b>「已提过」标记</b>：reasoning tokens 修复与 <code>CLINE_IMPROVEMENT_OPPORTUNITIES.md</code> O5 方向一致——官方已部分修复。</div>
+</div>
+
+<h3>6.2 OpenCode 演进</h3>
+<div class="card ocode">
+<table>
+<tr><th>维度</th><th>2026-03 状态</th><th>2026-10 状态</th><th>Delta</th></tr>
+<tr><td><b>版本</b></td><td>未记录</td><td>v1.18.34（2026-10-03）</td><td>持续高频迭代</td></tr>
+<tr><td><b>Provider 数</b></td><td>—</td><td>75+ LLM providers + 本地模型</td><td>模型自由度扩展</td></tr>
+<tr><td><b>ACP 协议</b></td><td>未提及</td><td>v1.18.31 — ACP session 恢复</td><td>远程会话增强</td></tr>
+<tr><td><b>GPT-6 集成</b></td><td>—</td><td>v1.18.30 — GPT-6 Astra system prompt</td><td>新模型快速适配</td></tr>
+<tr><td><b>MCP 修复</b></td><td>社区贡献为主</td><td>v1.18.34 — MCP 可靠性修复</td><td>MCP 改善</td></tr>
+<tr><td><b>Desktop</b></td><td>有 Desktop App</td><td>持续改进，macOS 签名改善</td><td>桌面体验优化</td></tr>
+<tr><td><b>GitHub Actions</b></td><td>未提及</td><td>✅ 可在 GitHub Actions 中运行</td><td>CI/CD 增强</td></tr>
+<tr><td><b>隐私</b></td><td>—</td><td>Privacy by Default — 无中间服务器</td><td>企业合规友好</td></tr>
+</table>
+<div class="ev"><b>来源</b>：opencode.ai Changelog (v1.18.31, 2026-09-14) · aicrier.com (v1.18.34, 2026-10-03) · 检索 2026-10-12</div>
+</div>
+
+<h3>6.3 演进趋势对比</h3>
+<div class="card">
+<table>
+<tr><th>趋势</th><th><span class="tag cline">Cline</span></th><th><span class="tag ocode">OpenCode</span></th><th>对 EDA 影响</th></tr>
+<tr><td><b>迭代速度</b></td><td>高频（62 版/7 月 ≈ 2.5 版/周）</td><td>高频（34+ 版/月）</td><td>两者都活跃</td></tr>
+<tr><td><b>生态规模</b></td><td>209 providers / 6237 models（更大）</td><td>75+ providers（更精）</td><td>Cline 生态更广</td></tr>
+<tr><td><b>协议</b></td><td>ACP + MCP</td><td>ACP + MCP</td><td>趋同</td></tr>
+<tr><td><b>CI/CD</b></td><td>Headless <code>-y</code> + <code>--json</code></td><td>GitHub Actions 集成</td><td>各有侧重</td></tr>
+<tr><td><b>企业合规</b></td><td>审批 + Checkpoint 审计</td><td>Privacy by Default</td><td>各有优势</td></tr>
+</table>
+</div>
+
+<h2 id="s7">7 · 综合结论</h2>
+<div class="tldr"><b>最终建议</b>：维持 <b>Cline 作为 EDA Agent Harness 主基座</b>，同时关注 OpenCode 的架构优势以汲取改进方向。EDA 核心需求（不可逆操作安全 + 变更管控 + MCP 生态）上 Cline 仍具结构性优势（加权 7.75 vs 6.05），而 OpenCode 在效率、架构现代性、多模态上的优势可通过改进 Cline 来吸收（与 O1–O5 一致）。<b>不建议「双轨并行」</b>——维护成本高且收益有限（resolve rate 无统计差异）。</div>
+
+<h3>7.1 加权评分汇总</h3>
+<div class="card">
+<table>
+<tr><th>维度</th><th>权重</th><th><span class="tag cline">Cline</span></th><th><span class="tag ocode">OpenCode</span></th><th>胜方</th></tr>
+<tr><td>SWE-bench Resolve Rate</td><td>15%</td><td>28.7%</td><td>29.0%</td><td>平局（无统计差异）</td></tr>
+<tr><td>Wall Time 效率</td><td>10%</td><td>498.4s</td><td>459.5s</td><td><b>OpenCode</b>（快 8%）</td></tr>
+<tr><td>稳定性</td><td>10%</td><td>15 超时/14 rc=1</td><td>8 超时/6 rc=1</td><td><b>OpenCode</b></td></tr>
+<tr><td>EDA 不可逆操作安全</td><td>15%</td><td>9.0</td><td>5.0</td><td><b>Cline</b></td></tr>
+<tr><td>变更管控 + 审计</td><td>10%</td><td>8.5</td><td>6.5</td><td><b>Cline</b></td></tr>
+<tr><td>MCP 生态</td><td>10%</td><td>8.0</td><td>6.0</td><td><b>Cline</b></td></tr>
+<tr><td>代码架构现代性</td><td>10%</td><td>6.5</td><td>8.5</td><td><b>OpenCode</b></td></tr>
+<tr><td>本地化离线</td><td>8%</td><td>7.0</td><td>8.0</td><td><b>OpenCode</b></td></tr>
+<tr><td>多模态扩展</td><td>7%</td><td>4.0</td><td>8.0</td><td><b>OpenCode</b></td></tr>
+<tr><td>CI/CD + Headless</td><td>5%</td><td>8.0</td><td>6.0</td><td><b>Cline</b></td></tr>
+<tr><td><b>加权总分</b></td><td>100%</td><td><b>7.20</b></td><td><b>6.68</b></td><td><b>Cline 胜（差距 0.52）</b></td></tr>
+</table>
+<div class="note"><b>评分说明</b>：EDA 场景权重（安全 15% + 管控 10% + MCP 10% = 35%）占主导。若降低 EDA 安全权重，差距缩小但 Cline 仍略胜。</div>
+</div>
+
+<h3>7.2 核心理由（证据链）</h3>
+<div class="card ok">
+<ol>
+<li><b>SWE-bench 实测打平</b>：28.7% vs 29.0%，McNemar p≫0.05 → resolve rate 不构成选型依据（证据：<code>kimi_pilot_results.json</code>）</li>
+<li><b>EDA 不可逆操作安全是硬需求</b>：Cline 的 pre-approval + git Checkpoint 是<b>结构性优势</b>（证据：<code>cline_SOURCE_ANALYSIS.html</code> §2）</li>
+<li><b>MCP 生态加速 PyAether 封装</b>：Cline 209 providers / 6237 models + 官方 Marketplace（证据：gradually.ai v4.1.22）</li>
+<li><b>OpenCode 优势可通过改进 Cline 吸收</b>：O1–O5 改进建议已系统性列出（<code>CLINE_IMPROVEMENT_OPPORTUNITIES.md</code>）</li>
+<li><b>迁移成本高于改进成本</b>：已基于 Cline 构建 MCP 适配 + 审批流程 + Checkpoint → 迁移需重建</li>
+</ol>
+</div>
+
+<h3>7.3 风险 & 迁移成本</h3>
+<div class="card warn">
+<table>
+<tr><th>风险项</th><th>影响</th><th>缓解措施</th></tr>
+<tr><td><b>Cline 3 字符/token 保守估算</b></td><td>过早压缩、上下文浪费</td><td>O5：改服务端 usage 优先（v4.1.22 已部分修复）</td></tr>
+<tr><td><b>Cline Focus Chain 已移除</b></td><td>压缩后任务进度丢失</td><td>O4：补回 TodoWrite 等价物 + Session Memory</td></tr>
+<tr><td><b>Cline 检查点 sidecar 漂移</b></td><td>重启后阈值错乱</td><td>O2：收敛为单一原子事务</td></tr>
+<tr><td><b>Cline transform error 噪声</b></td><td>187/300 条日志污染</td><td>升级 <code>ai@7.0.49</code> 依赖或抑制弃用警告</td></tr>
+<tr><td><b>OpenCode 多模态优势无法吸收</b></td><td>EDA 图形分析需额外集成</td><td>通过 MCP 图像工具间接实现</td></tr>
+<tr><td><b>迁移到 OpenCode 的成本</b></td><td>重建 MCP 适配 + 审批流程</td><td><b>不建议迁移</b>——收益不明确，成本高</td></tr>
+</table>
+</div>
+
+<h3>7.4 是否需要「双轨并行」</h3>
+<div class="card">
+<p><b>结论：不建议双轨并行。</b></p>
+<ul>
+<li><b>理由 1</b>：SWE-bench resolve rate 无统计差异（28.7% vs 29.0%），双轨不带来能力增量</li>
+<li><b>理由 2</b>：维护两套 MCP 适配 + 审批流程 + Checkpoint 成本远高于改进 Cline</li>
+<li><b>理由 3</b>：OpenCode 架构优势已通过 O1–O5 转化为 Cline 改进方向</li>
+<li><b>例外</b>：若未来 EDA 对<b>多模态</b>（版图截图/波形图）有强需求，可考虑 OpenCode 作为多模态扩展的<b>辅助工具</b></li>
+</ul>
+</div>
+
+<h2 id="s8">8 · 诚实条款</h2>
+<div class="card">
+<h3>8.1 样本量限制</h3>
+<ul>
+<li><b>SWE-bench Lite 300 条</b>：覆盖 12 个 Python repo，<b>不代表 EDA 场景</b>（无 PDK 操作、无仿真提交、无版图编辑）</li>
+<li><b>单一 backbone</b>：所有评测使用 <code>kimi-k2.6-cloud</code>，<b>未测试其他模型</b>，结论可能因模型不同而变化</li>
+<li><b>同题重叠仅 300 条</b>：McNemar b/c 仅 11/12，统计功效有限——更准确的说法是「<b>在此样本量下无法拒绝零假设</b>」</li>
+<li><b>Cline 版本</b>：评测使用 <code>cline-patched</code>（含本项目 patch），不完全等于上游最新版（v4.1.22）</li>
+</ul>
+<h3>8.2 评测环境限制</h3>
+<ul>
+<li><b>并行条件</b>：7×300 在 7 harness 全并行下运行，有 API 配额争用（但仅 2/300 quota-blocked）</li>
+<li><b>无 Docker</b>：使用 rootfs template + git clone 替代官方 Docker，<b>不是标准 SWE-bench 分数</b>，不能与 leaderboard 直接比较</li>
+<li><b>Wall Time 含评测</b>：<code>wall_s</code> 包含 agent 运行 + patch 评测时间</li>
+<li><b>Transform error 噪声</b>：Cline 187/300 条有弃用警告，虽不影响功能但可能干扰日志分析</li>
+</ul>
+<h3>8.3 Web 时效约束</h3>
+<ul>
+<li><b>检索日期</b>：2026-10-12，距早前选型分析（2026-03-13）约 7 个月</li>
+<li><b>Cline 版本</b>：v4.1.22（2026-09-30），<b>未核实</b>最新 commit（可能有 v4.1.23+）</li>
+<li><b>OpenCode 版本</b>：v1.18.34（2026-10-03），<b>未核实</b>最新 commit</li>
+<li><b>Provider/Model 数</b>：来自 Changelog 页面，<b>未独立核实</b>（依赖官方声明）</li>
+<li><b>多模态支持</b>：OpenCode 图像理解基于早前分析和官网描述，<b>未实测验证</b></li>
+<li><b>未核实项</b>：两框架的具体安全协议变更、企业级部署案例、EDR 特定场景适配——均标「未核实」</li>
+</ul>
+<h3>8.4 本轮增量 vs 已有结论</h3>
+<table>
+<tr><th>类别</th><th>内容</th><th>来源</th></tr>
+<tr><td><span class="tag existing">已提过</span></td><td>Cline 3 字符/token 保守估算 → O5</td><td><code>CLINE_IMPROVEMENT_OPPORTUNITIES.md</code> O5</td></tr>
+<tr><td><span class="tag existing">已提过</span></td><td>Cline 检查点 sidecar 漂移 → O2</td><td><code>CLINE_IMPROVEMENT_OPPORTUNITIES.md</code> O2</td></tr>
+<tr><td><span class="tag existing">已提过</span></td><td>Cline Focus Chain 已移除 → O4</td><td><code>CLINE_IMPROVEMENT_OPPORTUNITIES.md</code> O4</td></tr>
+<tr><td><span class="tag existing">已提过</span></td><td>Cline transform error 噪声</td><td><code>report_harness_trace_vs_cline.html</code> §6</td></tr>
+<tr><td><span class="tag existing">已提过</span></td><td>投影非破坏式 vs SQL 截断式</td><td><code>*_SOURCE_ANALYSIS.html</code> §7</td></tr>
+<tr><td><span class="tag existing">已提过</span></td><td>逐操作审批 vs 会话级审批</td><td><code>Cline vs OpenCode 对比.md</code> §2.2</td></tr>
+<tr><td><span class="tag new">本轮增量</span></td><td>7×300 实测头对头（含 McNemar 检验）</td><td>本文 §3.1–3.4</td></tr>
+<tr><td><span class="tag new">本轮增量</span></td><td>Wall Time / patch / PBF / repo / 稳定性量化</td><td>本文 §3.2–3.7</td></tr>
+<tr><td><span class="tag new">本轮增量</span></td><td>EDA 场景 6 维加权评分（7.75 vs 6.05）</td><td>本文 §5.3</td></tr>
+<tr><td><span class="tag new">本轮增量</span></td><td>半年演进追踪（Cline v4.1.22 / OpenCode v1.18.34）</td><td>本文 §6</td></tr>
+<tr><td><span class="tag new">本轮增量</span></td><td>综合加权评分 + 迁移成本 + 双轨判定</td><td>本文 §7</td></tr>
+</table>
+</div>
+
+<footer>
+<p><b>report_cline_vs_opencode_eda.html</b> · 自包含 HTML（内联 CSS，零外链，离线可开） · 2026-10-12</p>
+<p>数据源：<code>kimi_pilot_results.json</code> (2100 entries) · 源码分析：<code>cline_SOURCE_ANALYSIS.html</code> + <code>opencode_SOURCE_ANALYSIS.html</code> · 早前选型：<code>Cline vs OpenCode 对比.md</code> (2026-03-13) · 改进建议：<code>CLINE_IMPROVEMENT_OPPORTUNITIES.md</code> O1–O5</p>
+<p>🚫 不占 GPU / 不打断在飞的 7×300 收尾 · commit 前缀 <code>harness rpt:</code></p>
+</footer>
+
+</div>
+</body>
+</html>

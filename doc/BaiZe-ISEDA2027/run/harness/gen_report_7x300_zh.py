@@ -13,14 +13,50 @@ def esc(s): return H.escape(str(s), quote=True)
 
 data = json.load(open(JSON))
 
+# ---- 从 eval report.json join infra_failure_reason（精确到 entry，可复算）----
+# 每个 harness 的 run_id 形如 R1_KIMI_{HARNESS_UPPER}_{instance_id}，report.json 顶层 key = instance_id
+LOGS_EVAL = Path("/nas_train/app.e0031982/harness_work/logs_eval")
+_HUPPER = {'CLINE_PATCHED':'cline-patched','OPENCODE':'opencode','PI':'pi','CODEX':'codex',
+           'CLAUDE_CODE':'claude-code','DEEPSEEK_HARNESS':'deepseek-harness','HERMES':'hermes'}
+infra_reason = {}
+if LOGS_EVAL.exists():
+    for rp in LOGS_EVAL.rglob('report.json'):
+        rundir = rp.parent.parent.parent.name
+        h = next((lo for up, lo in _HUPPER.items() if rundir.startswith('R1_KIMI_' + up + '_')), None)
+        if not h:
+            continue
+        try:
+            rep = json.loads(rp.read_text())
+        except Exception:
+            continue
+        for iid, v in rep.items():
+            if isinstance(v, dict):
+                infra_reason[(iid, h)] = v.get('infra_failure_reason') or None
+# per-repo 聚合
+repo_infra = defaultdict(lambda: defaultdict(int))   # repo -> reason -> entry 计数
+repo_paF   = defaultdict(int)                        # repo -> eval 阶段 patch_applied=False 计数
+repo_paT   = defaultdict(int)                        # repo -> eval 阶段 patch_applied=True 计数
+repo_res   = defaultdict(int)                        # repo -> resolved 计数
+for e in data:
+    repo = e['repo']
+    reason = infra_reason.get((e['instance_id'], e['harness']))
+    repo_infra[repo][reason or '(none)'] += 1
+    pa = e.get('harness_result', {}).get('eval', {}).get('patch_applied')
+    if pa is False:
+        repo_paF[repo] += 1
+    elif pa is True:
+        repo_paT[repo] += 1
+    if e.get('classification') == 'resolved':
+        repo_res[repo] += 1
+
 HARNESSES = ['cline-patched','opencode','pi','codex','claude-code','deepseek-harness','hermes']
 SHORT = {'cline-patched':'cline','opencode':'opencode','pi':'pi','codex':'codex',
          'claude-code':'claude','deepseek-harness':'deepseek','hermes':'hermes'}
-# eval 环境可用性分组（repo -> 说明）
-EVAL_OK = ['django/django','sympy/sympy','scikit-learn/scikit-learn']
-EVAL_LIMITED = ['matplotlib/matplotlib','pytest-dev/pytest','sphinx-doc/sphinx',
-                'astropy/astropy','psf/requests','pallets/flask']
-EVAL_PARTIAL = ['pylint-dev/pylint','pydata/xarray','mwaskom/seaborn']
+# eval 环境可用性分组（数据驱动修正 2026-10-12：requests 42/42 patch 全 apply，故此移出「受限」组）
+EVAL_OK = ['django/django','sympy/sympy','scikit-learn/scikit-learn']          # 大样本 eval-OK（django/sklearn 仍有少量 missing_module，见 §7.3）
+EVAL_OK_SMALL = ['psf/requests','pydata/xarray','pylint-dev/pylint','mwaskom/seaborn']  # 小样本 eval-OK（patch 基本全 apply）
+EVAL_BROKEN = ['matplotlib/matplotlib','pytest-dev/pytest','sphinx-doc/sphinx',
+               'astropy/astropy','pallets/flask']                              # 大面积 patch_applied=False（基础设施失效，非能力）
 
 # ---- per-harness 统计 ----
 stats = {}
@@ -75,10 +111,19 @@ for e in data:
     repo_t[e['repo']][e['harness']] += 1
     if e.get('classification') == 'resolved': repo_r[e['repo']][e['harness']] += 1
 
+# repo 唯一实例数 / 总 entries（用于 infra 归因表的「唯一实例」与「entries」列）
+_repo_uniq_set = defaultdict(set)
+repo_total_entry = defaultdict(int)
+for e in data:
+    _repo_uniq_set[e['repo']].add(e['instance_id'])
+repo_uniq = {r: len(s) for r, s in _repo_uniq_set.items()}
+for repo in repo_t:
+    repo_total_entry[repo] = sum(repo_t[repo].values())
+
 def repo_cat(repo):
     if repo in EVAL_OK: return 'eval可用'
-    if repo in EVAL_LIMITED: return 'eval受限'
-    return '部分可用'
+    if repo in EVAL_BROKEN: return 'eval失效'
+    return 'eval可用·小样本'
 
 # ---- 排名 ----
 ranking = sorted(HARNESSES, key=lambda h: -stats[h]['rate'])
@@ -160,13 +205,13 @@ def rank_table():
     return ''.join(rows)
 
 def repo_matrix():
-    all_repos = EVAL_OK + EVAL_LIMITED + EVAL_PARTIAL
+    all_repos = EVAL_OK + EVAL_BROKEN + EVAL_OK_SMALL
     rows = []
     for repo in all_repos:
         cat = repo_cat(repo)
         cat_tag = {'eval可用':'<span class="tag-ok">eval可用</span>',
-                   'eval受限':'<span class="tag-lim">eval受限</span>',
-                   '部分可用':'<span class="tag-part">部分可用</span>'}[cat]
+                   'eval失效':'<span class="tag-lim">eval失效</span>',
+                   'eval可用·小样本':'<span class="tag-part">小样本</span>'}[cat]
         cells = [f'<td class="rname">{esc(repo)} {cat_tag}</td>']
         for h in HARNESSES:
             r, t = repo_r[repo].get(h, 0), repo_t[repo].get(h, 0)
@@ -175,6 +220,132 @@ def repo_matrix():
             cells.append(f'<td{hl}>{r}/{t}<br><span class="sub">{rate:.0f}%</span></td>')
         rows.append('<tr>' + ''.join(cells) + '</tr>')
     return ''.join(rows)
+
+# ---- eval 基础设施失效归因表（repo × failure reason × entry 计数）----
+def infra_breakdown_table():
+    all_repos = EVAL_OK + EVAL_BROKEN + EVAL_OK_SMALL
+    reasons = ['missing_module', 'out_of_memory', 'no_tests_collected']
+    rows = []
+    # 表头
+    header = ['repo', '唯一实例', 'entries', 'patch未应用']
+    header += [{'missing_module': 'missing_module（缺模块）', 'out_of_memory': 'out_of_memory（内存爆）',
+                'no_tests_collected': 'no_tests（测试未收集）'}[r] for r in reasons]
+    rows.append('<tr>' + ''.join(f'<th>{h}</th>' for h in ['repo','唯一实例','entries','patch未应用'] +
+                  [{'missing_module': '缺模块', 'out_of_memory': '内存爆', 'no_tests_collected': '测试未收集'}[r] for r in reasons]) + '</tr>')
+    for repo in all_repos:
+        uniq = repo_uniq[repo]
+        tot = repo_total_entry[repo]
+        paF = repo_paF.get(repo, 0)
+        cells = [f'<td class="rname">{esc(repo)}</td>',
+                 f'<td class="num">{uniq}</td>',
+                 f'<td class="num">{tot}</td>',
+                 f'<td class="num">{paF}</td>']
+        for r in reasons:
+            v = repo_infra[repo].get(r, 0)
+            cells.append(f'<td class="num">{"<b>" + str(v) + "</b>" if v else "·"}</td>')
+        rows.append('<tr>' + ''.join(cells) + '</tr>')
+    return '<table>' + ''.join(rows) + '</table>'
+
+# ---- §8 eval 基础设施失效归因（root-cause 专章）----
+def _inf(repo, key=None):
+    """取 repo 的 infra_failure_reason 计数；key=None 返回整个 Counter"""
+    c = repo_infra[repo]
+    return c if key is None else c.get(key, 0)
+
+def inf_diag():
+    """逐 repo 根因诊断（日志实证的内联文字）"""
+    parts = []
+    parts.append(
+        '<p><b>root-cause 结论：</b>这 5 个 repo 的 <code>patch_applied=False</code> 不是模型/harness 能力不足，也不是统称的「依赖装不上」——'
+        '而是 <b>eval 基础设施失效</b>（根因各 repo 不同）。同时，原报告把 <code>psf/requests</code> 归入「受限」也是<b>错误的</b>：'
+        'requests 的 42 次 patch <b>全部成功应用</b>，0 resolved 只是 FAIL_TO_PASS 测试没过（模型没做对），评测管线本身完全正常。</p>')
+    parts.append('<h3>matplotlib —— 全部 missing_module（C 扩展编译需外网下载 freetype）</h3>')
+    parts.append(
+        '<p>' + f'{repo_uniq["matplotlib/matplotlib"]} 个唯一实例 / {repo_total_entry["matplotlib/matplotlib"]} entries，'
+        f'其中 {repo_paF.get("matplotlib/matplotlib",0)} 次 patch 未应用、'
+        f'全部为 <code>missing_module</code>（{_inf("matplotlib/matplotlib","missing_module")} 次）。'
+        '根因（eval 日志实证）：rootfs 构建时 <code>pip install -e .</code> 触发 C++ 扩展编译（<code>running build_ext</code> / <code>g++</code>），'
+        '需从 sourceforge.net / savannah.gnu.org 下载 <code>freetype-2.6.1.tar.gz</code>；沙箱无法访问外部源码站 → '
+        '<code>_c_internal_utils</code> 等 C 扩展缺失 → <code>import matplotlib</code> 直接 ImportError。'
+        '此时 patch 本身早已 cleanly apply，swebench 将 import 失败标记为 <code>infra_failure_reason=missing_module</code>（一个歧义类别），'
+        '并连带把 <code>patch_successfully_applied</code> 置 false。<b>0 分（0 resolved）是基础设施假象，不代表任何 harness 的 matplotlib 能力。</b></p>')
+    parts.append('<h3>pytest —— 110 missing_module（少量真实可评）</h3>')
+    parts.append(
+        '<p>' + f'{repo_uniq["pytest-dev/pytest"]} 个唯一实例 / {repo_total_entry["pytest-dev/pytest"]} entries，'
+        f'{repo_paF.get("pytest-dev/pytest",0)} 次 patch 未应用，其中 {_inf("pytest-dev/pytest","missing_module")} 次 <code>missing_module</code>'
+        '（rootfs 内 pytest 运行所需的模块缺失）。仅 5 次 patch 成功应用，其中 2 次 resolved —— '
+        '说明在 eval 正常的那一小撮上，模型/harness 是能解 pytest 的（有效 rate 2/5 = 40%），'
+        '整体 1.7% 的惨淡 rate 主要被 113 次 eval 失效稀释。</p>')
+    parts.append('<h3>sphinx —— 92 次纯 git apply 失败（无 infra 标记，非缺模块）</h3>')
+    parts.append(
+        '<p>' + f'{repo_uniq["sphinx-doc/sphinx"]} 个唯一实例 / {repo_total_entry["sphinx-doc/sphinx"]} entries，'
+        f'{repo_paF.get("sphinx-doc/sphinx",0)} 次 patch 未应用，但 <b>全部没有</b> <code>infra_failure_reason</code> 标记 —— '
+        '即 <b>纯 git apply 失败</b>（base_commit 与 rootfs checkout 不一致 / diff 上下文冲突），'
+        '与 matplotlib 的「缺模块」是<b>两类不同</b>的失效。19 次成功 apply 的也无 resolved，样本不足以判能力。</p>')
+    parts.append('<h3>astropy —— 28 次 out_of_memory（沙箱内存不足）</h3>')
+    parts.append(
+        '<p>' + f'{repo_uniq["astropy/astropy"]} 个唯一实例 / {repo_total_entry["astropy/astropy"]} entries，'
+        f'{repo_paF.get("astropy/astropy",0)} 次 patch 未应用，全部 <code>out_of_memory</code>（{_inf("astropy/astropy","out_of_memory")} 次）—— '
+        'astropy 的 C 扩展编译/测试在受限内存沙箱里 OOM，属资源型失效。</p>')
+    parts.append('<h3>flask —— 7 次 no_tests_collected（样本极小）</h3>')
+    parts.append(
+        '<p>' + f'{repo_uniq["pallets/flask"]} 个唯一实例 / {repo_total_entry["pallets/flask"]} entries，'
+        f'{repo_paF.get("pallets/flask",0)} 次 patch 未应用（其中 {_inf("pallets/flask","no_tests_collected")} 次 <code>no_tests_collected</code>，'
+        'patch 应用了但 FAIL_TO_PASS 测试收集为空）。3 个唯一实例，样本太小，不构成统计结论。</p>')
+    parts.append('<h3>psf/requests —— 误判修正（patch 全 apply，非失效）</h3>')
+    parts.append(
+        '<p>' + f'{repo_uniq["psf/requests"]} 个唯一实例 / {repo_total_entry["psf/requests"]} entries，'
+        f'<b>0 次 patch 未应用</b>（{repo_paF.get("psf/requests",0)} 次 False），42 次 patch 全部成功 apply；'
+        '0 resolved 是因为 FAIL_TO_PASS 测试全没过（模型未做对），<b>评测管线完全正常</b>。'
+        '故 requests 应从「受限」移入「小样本 eval-OK」。</p>')
+    parts.append('<h3>scikit-learn / django —— eval-OK，但有少量 missing_module</h3>')
+    parts.append(
+        '<p>' + f'scikit-learn：{repo_paF.get("scikit-learn/scikit-learn",0)} 次 patch 未应用（其中 {_inf("scikit-learn/scikit-learn","missing_module")} 次 missing_module），'
+        f'但 {repo_paT["scikit-learn/scikit-learn"]} 次 patch 成功应用 → 有效 rate {100*repo_res["scikit-learn/scikit-learn"]/repo_paT["scikit-learn/scikit-learn"]:.1f}%'
+        f'（{repo_res["scikit-learn/scikit-learn"]}/{repo_paT["scikit-learn/scikit-learn"]}），是全部 repo 中最高的。'
+        f'django：{repo_paF.get("django/django",0)} 次 patch 未应用（其中 {_inf("django/django","missing_module")} 次 missing_module），'
+        f'{repo_paT["django/django"]} 次 patch 成功应用、有效 rate {100*repo_res["django/django"]/repo_paT["django/django"]:.1f}%。'
+        '两者主体 eval-OK，只有零星 missing_module，不影响结论方向。</p>')
+    return ''.join(parts)
+
+def inf_impact():
+    """影响量化 + 修复建议"""
+    broken_uniq = sum(repo_uniq[r] for r in EVAL_BROKEN)
+    broken_entries = sum(repo_total_entry[r] for r in EVAL_BROKEN)
+    broken_paF = sum(repo_paF.get(r, 0) for r in EVAL_BROKEN)
+    ok_uniq = sum(repo_uniq[r] for r in EVAL_OK)
+    ok_small_uniq = sum(repo_uniq[r] for r in EVAL_OK_SMALL)
+    parts = []
+    parts.append('<h3>8.3 影响量化</h3>')
+    parts.append(
+        '<p>' + f'5 个 eval 失效 repo 合计 <b>{broken_uniq}</b> 个唯一实例（占 300 实例的 {100*broken_uniq/300:.0f}%）、'
+        f'<b>{broken_entries}</b> 次 entries（其中 {broken_paF} 次 patch 未应用）被基础设施失效压制到 near-0，'
+        '系统性低估了所有 harness 的平均 rate。'
+        f'真正可公正比较的 repo 是 <b>django/sympy/scikit-learn</b>（{ok_uniq} 唯一实例），'
+        f'另加 requests/xarray/pylint/seaborn（{ok_small_uniq} 唯一实例）为「小样本 eval-OK」，仅方向性参考。</p>')
+    parts.append('<h3>8.4 修复建议（优先级从高到低）</h3>')
+    parts.append('<ul>')
+    parts.append('<li><b>matplotlib 专项（收益最大，23 实例一夜回血）</b>：把 <code>freetype-2.6.1.tar.gz</code> 及 build 依赖预下载进 rootfs（或用 manylinux wheel 绕过源码编译），使 <code>pip install -e .</code> 走本地；预构建 <code>_c_internal_utils</code> 的 .so 一并注入。</li>')
+    parts.append('<li><b>astropy 专项</b>：加大沙箱内存限额，或对 astropy 用 prebuilt wheel（avoid 源码编译 OOM）。</li>')
+    parts.append('<li><b>pytest 专项</b>：核对 rootfs 内 pytest 测试运行依赖清单，补齐缺失模块后再 --resume。</li>')
+    parts.append('<li><b>sphinx 专项</b>：92 次 git apply 失败需核对 eval spec 的 base_commit 与 rootfs checkout 是否一致（不是依赖问题）。</li>')
+    parts.append('<li><b>统一</b>：给 eval 沙箱开放 pypi / sourceforge / savannah / files.pythonhosted 白名单（或预置 wheel cache + 源码 tarball 镜像），一次性根治「外网下载」类失效。</li>')
+    parts.append('</ul>')
+    return ''.join(parts)
+
+def infra_section():
+    """§8 完整 HTML（表 + 判定 + 逐 repo 根因 + 影响 + 修复建议）"""
+    broken_uniq = sum(repo_uniq[r] for r in EVAL_BROKEN)
+    return (''
+        '<h3>8.1 失效面全景</h3>'
+        '<div class="callout callout-red"><b>⚠️ 结论修正：</b>原「只 3 个 eval-可用 repo」的说法不准确。'
+        '准确表述是：<b>5 个 repo 因 eval 基础设施失效</b>（matplotlib/pytest/sphinx/astropy/flask，共 ' + str(broken_uniq) + ' 唯一实例）被系统性压到 near-0；'
+        '而 <code>psf/requests</code> 是<b>被误判</b>的 —— 它 patch 全 apply、0 resolved 是能力/难度问题，不应算「受限」。'
+        '其余 eval-OK repo 里，django/sklearn 也各有少量 <code>missing_module</code>（见上表），并非 100% 干净。</div>'
+        + infra_breakdown_table()
+        + '<h3>8.2 逐 repo root-cause（日志实证）</h3>'
+        + inf_diag()
+        + inf_impact())
 
 def h2h_table():
     rows = []
@@ -251,7 +422,7 @@ html_doc = f'''<!DOCTYPE html>
 <div class="meta">生成时间 2026-10-12 · 数据源 <code>run/harness/kimi_pilot_results.json</code>（{TOTAL} entries，进度 {progress_pct:.1f}%，hermes {hermes_done}/300 还差 {hermes_rem} 个 sympy）· 自包含单文件 · 零外链</div>
 </header>
 
-<div class="callout callout-blue"><b>一句话结论：</b>7 个 harness 在<b>完全相同</b>的 backbone 与评测管线下，resolve rate 全部落在 <b>{min(stats[h]["rate"] for h in HARNESSES):.1f}% ~ {max(stats[h]["rate"] for h in HARNESSES):.1f}%</b> 的窄带内（相差约 {max(stats[h]["rate"] for h in HARNESSES)-min(stats[h]["rate"] for h in HARNESSES):.1f} pp）。<b>pi（30.3%）居首，cline（28.7%）/ opencode（29.0%）紧随其后</b>，codex 速度最慢（wall 922s）换取 26.7%。有效比较范围内（django/sympy/scikit-learn，eval-可用），<b>pi ≥ opencode ≥ cline</b>，三者差距极小且<b>不具统计显著性</b>（binomial SE ≈3pp）。</div>
+<div class="callout callout-blue"><b>一句话结论：</b>7 个 harness 在<b>完全相同</b>的 backbone 与评测管线下，resolve rate 全部落在 <b>{min(stats[h]["rate"] for h in HARNESSES):.1f}% ~ {max(stats[h]["rate"] for h in HARNESSES):.1f}%</b> 的窄带内（相差约 {max(stats[h]["rate"] for h in HARNESSES)-min(stats[h]["rate"] for h in HARNESSES):.1f} pp）。<b>pi（30.3%）居首，cline（28.7%）/ opencode（29.0%）紧随其后</b>，codex 速度最慢（wall 922s）换取 26.7%。有效比较范围内（django/sympy/scikit-learn，eval-可用；eval 失效 repo 的完整 root-cause 归因见 §8），<b>pi ≥ opencode ≥ cline</b>，三者差距极小且<b>不具统计显著性</b>（binomial SE ≈3pp）。</div>
 
 <div class="grid">
 <div class="sum"><div class="n">{TOTAL}</div><div class="l">总 entries（{progress_pct:.1f}% 完成）</div></div>
@@ -315,16 +486,21 @@ html_doc = f'''<!DOCTYPE html>
 <p class="sub">cline 相对 <b>deepseek-harness</b> 优势最明显（独解 31 vs 16）；相对 <b>pi</b> 略处下风（12 vs 17）；与 opencode / claude / hermes 基本互有胜负。均为小样本，仅供方向性参考。</p>
 </div>
 
-<h2 class="sec">7. Per-Repo 分解（含 eval 环境限制）</h2>
+<h2 class="sec">7. Per-Repo 分解</h2>
 <div class="card">
 <table>
 <tr><th>repo</th>{''.join(f'<th>{SHORT[h]}</th>' for h in HARNESSES)}</tr>
 {repo_matrix()}
 </table>
-<div class="callout callout-red"><b>⚠️ 有效比较仅限 3 个 eval-可用 repo</b>（django 114 + sympy 77 + scikit-learn 23 = 214 实例）：matplotlib/sphinx/pytest/astropy/requests/flask 的 patch_applied=False（eval 环境限制），<b>0 分不代表 harness 能力</b>；pylint/xarray/seaborn 样本极小（≤6），仅供参考。</div>
+<div class="callout callout-yellow"><b>读表提示：</b>「eval失效」tag = patch_applied 大面积 False（基础设施失效，非模型能力，0 分是假象）；「小样本」tag = patch 基本全 apply 但唯一实例 ≤6，仅供参考。逐 repo root-cause、影响量化与修复建议见 <b>§8</b>。</div>
 </div>
 
-<h2 class="sec">8. 口径与诚实条款</h2>
+<h2 class="sec">8. eval 基础设施失效归因（root-cause 专章）</h2>
+<div class="card">
+{infra_section()}
+</div>
+
+<h2 class="sec">9. 口径与诚实条款</h2>
 <div class="card">
 <ul>
 <li><b>快照未闭环</b>：hermes {hermes_done}/300（还差 {hermes_rem} 个，均为 sympy），其 rate（{stats["hermes"]["rate"]:.1f}%）可能受未完成实例的<b>选择偏差</b>影响；全部跑完后应重跑本脚本刷新数字。</li>
@@ -336,7 +512,7 @@ html_doc = f'''<!DOCTYPE html>
 </ul>
 </div>
 
-<h2 class="sec">9. 对 BaiZe 的启示</h2>
+<h2 class="sec">10. 对 BaiZe 的启示</h2>
 <div class="card">
 <ul>
 <li><b>harness 选型</b>：pi / opencode / cline 三者在同 backbone 下难分伯仲（30.3% / 29.0% / 28.7%），若考虑<b>速度</b>，opencode（wall 最短 460s）与 pi 更优；cli<b>ne</b> 的护城河在于 BaiZe 的 EDA agent 已基于它开发、且有可落地的改进点（§4 的 patch 未应用率、ai@7.0.49 transform error）。</li>

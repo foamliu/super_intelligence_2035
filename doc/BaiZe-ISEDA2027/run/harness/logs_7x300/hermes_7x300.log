@@ -1,0 +1,2226 @@
+  [RESUME] Skipping 100 completed for hermes
+Serial kimi eval: harness=hermes model=kimi-k2.6-cloud
+  Total=300 Pending=200 Skip=100 Concurrency=1
+
+############################################################
+# [1/200] hermes x astropy__astropy-14365
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14365 for hermes
+
+[RUN] hermes on astropy__astropy-14365 ...
+  [EVAL] hermes on astropy__astropy-14365 ...
+  => astropy__astropy-14365 | hermes | patch-but-failed
+
+############################################################
+# [2/200] hermes x astropy__astropy-14995
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-14995 for hermes
+
+[RUN] hermes on astropy__astropy-14995 ...
+  [EVAL] hermes on astropy__astropy-14995 ...
+  => astropy__astropy-14995 | hermes | patch-but-failed
+
+############################################################
+# [3/200] hermes x astropy__astropy-6938
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-6938 for hermes
+
+[RUN] hermes on astropy__astropy-6938 ...
+  [EVAL] hermes on astropy__astropy-6938 ...
+  => astropy__astropy-6938 | hermes | patch-but-failed
+
+############################################################
+# [4/200] hermes x astropy__astropy-7746
+############################################################
+
+============================================================
+[SETUP] astropy__astropy-7746 for hermes
+
+[RUN] hermes on astropy__astropy-7746 ...
+  [EVAL] hermes on astropy__astropy-7746 ...
+  => astropy__astropy-7746 | hermes | patch-but-failed
+
+############################################################
+# [5/200] hermes x django__django-13033
+############################################################
+
+============================================================
+[SETUP] django__django-13033 for hermes
+
+[RUN] hermes on django__django-13033 ...
+  [EVAL] hermes on django__django-13033 ...
+  => django__django-13033 | hermes | resolved
+
+############################################################
+# [6/200] hermes x django__django-13158
+############################################################
+
+============================================================
+[SETUP] django__django-13158 for hermes
+
+[RUN] hermes on django__django-13158 ...
+  [EVAL] hermes on django__django-13158 ...
+  => django__django-13158 | hermes | resolved
+
+############################################################
+# [7/200] hermes x django__django-13220
+############################################################
+
+============================================================
+[SETUP] django__django-13220 for hermes
+
+[RUN] hermes on django__django-13220 ...
+  [EVAL] hermes on django__django-13220 ...
+  => django__django-13220 | hermes | patch-but-failed
+
+############################################################
+# [8/200] hermes x django__django-13230
+############################################################
+
+============================================================
+[SETUP] django__django-13230 for hermes
+
+[RUN] hermes on django__django-13230 ...
+  [EVAL] hermes on django__django-13230 ...
+  => django__django-13230 | hermes | patch-but-failed
+
+############################################################
+# [9/200] hermes x django__django-13265
+############################################################
+
+============================================================
+[SETUP] django__django-13265 for hermes
+
+[RUN] hermes on django__django-13265 ...
+  [EVAL] hermes on django__django-13265 ...
+  => django__django-13265 | hermes | patch-but-failed
+
+############################################################
+# [10/200] hermes x django__django-13315
+############################################################
+
+============================================================
+[SETUP] django__django-13315 for hermes
+
+[RUN] hermes on django__django-13315 ...
+  [EVAL] hermes on django__django-13315 ...
+  => django__django-13315 | hermes | resolved
+
+############################################################
+# [11/200] hermes x django__django-13321
+############################################################
+
+============================================================
+[SETUP] django__django-13321 for hermes
+
+[RUN] hermes on django__django-13321 ...
+  [EVAL] hermes on django__django-13321 ...
+  => django__django-13321 | hermes | patch-but-failed
+
+############################################################
+# [12/200] hermes x django__django-13401
+############################################################
+
+============================================================
+[SETUP] django__django-13401 for hermes
+
+[RUN] hermes on django__django-13401 ...
+  [EVAL] hermes on django__django-13401 ...
+  => django__django-13401 | hermes | resolved
+
+############################################################
+# [13/200] hermes x django__django-13447
+############################################################
+
+============================================================
+[SETUP] django__django-13447 for hermes
+
+[RUN] hermes on django__django-13447 ...
+  [EVAL] hermes on django__django-13447 ...
+  => django__django-13447 | hermes | patch-but-failed
+
+############################################################
+# [14/200] hermes x django__django-13448
+############################################################
+
+============================================================
+[SETUP] django__django-13448 for hermes
+
+[RUN] hermes on django__django-13448 ...
+  [EVAL] hermes on django__django-13448 ...
+  => django__django-13448 | hermes | patch-but-failed
+
+############################################################
+# [15/200] hermes x django__django-13551
+############################################################
+
+============================================================
+[SETUP] django__django-13551 for hermes
+
+[RUN] hermes on django__django-13551 ...
+  [EVAL] hermes on django__django-13551 ...
+  => django__django-13551 | hermes | resolved
+
+############################################################
+# [16/200] hermes x django__django-13590
+############################################################
+
+============================================================
+[SETUP] django__django-13590 for hermes
+
+[RUN] hermes on django__django-13590 ...
+  [EVAL] hermes on django__django-13590 ...
+  => django__django-13590 | hermes | resolved
+
+############################################################
+# [17/200] hermes x django__django-13658
+############################################################
+
+============================================================
+[SETUP] django__django-13658 for hermes
+
+[RUN] hermes on django__django-13658 ...
+  [EVAL] hermes on django__django-13658 ...
+  => django__django-13658 | hermes | resolved
+
+############################################################
+# [18/200] hermes x django__django-13660
+############################################################
+
+============================================================
+[SETUP] django__django-13660 for hermes
+
+[RUN] hermes on django__django-13660 ...
+  [EVAL] hermes on django__django-13660 ...
+  => django__django-13660 | hermes | patch-but-failed
+
+############################################################
+# [19/200] hermes x django__django-13710
+############################################################
+
+============================================================
+[SETUP] django__django-13710 for hermes
+
+[RUN] hermes on django__django-13710 ...
+  [EVAL] hermes on django__django-13710 ...
+  => django__django-13710 | hermes | patch-but-failed
+
+############################################################
+# [20/200] hermes x django__django-13757
+############################################################
+
+============================================================
+[SETUP] django__django-13757 for hermes
+
+[RUN] hermes on django__django-13757 ...
+  [EVAL] hermes on django__django-13757 ...
+  => django__django-13757 | hermes | resolved
+
+############################################################
+# [21/200] hermes x django__django-13768
+############################################################
+
+============================================================
+[SETUP] django__django-13768 for hermes
+
+[RUN] hermes on django__django-13768 ...
+  [EVAL] hermes on django__django-13768 ...
+  => django__django-13768 | hermes | patch-but-failed
+
+############################################################
+# [22/200] hermes x django__django-13925
+############################################################
+
+============================================================
+[SETUP] django__django-13925 for hermes
+
+[RUN] hermes on django__django-13925 ...
+  [EVAL] hermes on django__django-13925 ...
+  => django__django-13925 | hermes | resolved
+
+############################################################
+# [23/200] hermes x django__django-13933
+############################################################
+
+============================================================
+[SETUP] django__django-13933 for hermes
+
+[RUN] hermes on django__django-13933 ...
+  [EVAL] hermes on django__django-13933 ...
+  => django__django-13933 | hermes | resolved
+
+############################################################
+# [24/200] hermes x django__django-13964
+############################################################
+
+============================================================
+[SETUP] django__django-13964 for hermes
+
+[RUN] hermes on django__django-13964 ...
+  [EVAL] hermes on django__django-13964 ...
+  => django__django-13964 | hermes | patch-but-failed
+
+############################################################
+# [25/200] hermes x django__django-14016
+############################################################
+
+============================================================
+[SETUP] django__django-14016 for hermes
+
+[RUN] hermes on django__django-14016 ...
+  [EVAL] hermes on django__django-14016 ...
+  => django__django-14016 | hermes | patch-but-failed
+
+############################################################
+# [26/200] hermes x django__django-14017
+############################################################
+
+============================================================
+[SETUP] django__django-14017 for hermes
+
+[RUN] hermes on django__django-14017 ...
+  [EVAL] hermes on django__django-14017 ...
+  => django__django-14017 | hermes | patch-but-failed
+
+############################################################
+# [27/200] hermes x django__django-14155
+############################################################
+
+============================================================
+[SETUP] django__django-14155 for hermes
+
+[RUN] hermes on django__django-14155 ...
+  [EVAL] hermes on django__django-14155 ...
+  => django__django-14155 | hermes | patch-but-failed
+
+############################################################
+# [28/200] hermes x django__django-14238
+############################################################
+
+============================================================
+[SETUP] django__django-14238 for hermes
+
+[RUN] hermes on django__django-14238 ...
+  [EVAL] hermes on django__django-14238 ...
+  => django__django-14238 | hermes | patch-but-failed
+
+############################################################
+# [29/200] hermes x django__django-14382
+############################################################
+
+============================================================
+[SETUP] django__django-14382 for hermes
+
+[RUN] hermes on django__django-14382 ...
+  [EVAL] hermes on django__django-14382 ...
+  => django__django-14382 | hermes | patch-but-failed
+
+############################################################
+# [30/200] hermes x django__django-14411
+############################################################
+
+============================================================
+[SETUP] django__django-14411 for hermes
+
+[RUN] hermes on django__django-14411 ...
+  [EVAL] hermes on django__django-14411 ...
+  => django__django-14411 | hermes | patch-but-failed
+
+############################################################
+# [31/200] hermes x django__django-14534
+############################################################
+
+============================================================
+[SETUP] django__django-14534 for hermes
+
+[RUN] hermes on django__django-14534 ...
+  [EVAL] hermes on django__django-14534 ...
+  => django__django-14534 | hermes | patch-but-failed
+
+############################################################
+# [32/200] hermes x django__django-14580
+############################################################
+
+============================================================
+[SETUP] django__django-14580 for hermes
+
+[RUN] hermes on django__django-14580 ...
+  [EVAL] hermes on django__django-14580 ...
+  => django__django-14580 | hermes | patch-but-failed
+
+############################################################
+# [33/200] hermes x django__django-14608
+############################################################
+
+============================================================
+[SETUP] django__django-14608 for hermes
+
+[RUN] hermes on django__django-14608 ...
+  [EVAL] hermes on django__django-14608 ...
+  => django__django-14608 | hermes | patch-but-failed
+
+############################################################
+# [34/200] hermes x django__django-14667
+############################################################
+
+============================================================
+[SETUP] django__django-14667 for hermes
+
+[RUN] hermes on django__django-14667 ...
+  [EVAL] hermes on django__django-14667 ...
+  => django__django-14667 | hermes | patch-but-failed
+
+############################################################
+# [35/200] hermes x django__django-14672
+############################################################
+
+============================================================
+[SETUP] django__django-14672 for hermes
+
+[RUN] hermes on django__django-14672 ...
+  [EVAL] hermes on django__django-14672 ...
+  => django__django-14672 | hermes | patch-but-failed
+
+############################################################
+# [36/200] hermes x django__django-14730
+############################################################
+
+============================================================
+[SETUP] django__django-14730 for hermes
+
+[RUN] hermes on django__django-14730 ...
+  [EVAL] hermes on django__django-14730 ...
+  => django__django-14730 | hermes | patch-but-failed
+
+############################################################
+# [37/200] hermes x django__django-14752
+############################################################
+
+============================================================
+[SETUP] django__django-14752 for hermes
+
+[RUN] hermes on django__django-14752 ...
+  [EVAL] hermes on django__django-14752 ...
+  => django__django-14752 | hermes | patch-but-failed
+
+############################################################
+# [38/200] hermes x django__django-14787
+############################################################
+
+============================================================
+[SETUP] django__django-14787 for hermes
+
+[RUN] hermes on django__django-14787 ...
+  [EVAL] hermes on django__django-14787 ...
+  => django__django-14787 | hermes | patch-but-failed
+
+############################################################
+# [39/200] hermes x django__django-14855
+############################################################
+
+============================================================
+[SETUP] django__django-14855 for hermes
+
+[RUN] hermes on django__django-14855 ...
+  [EVAL] hermes on django__django-14855 ...
+  => django__django-14855 | hermes | patch-but-failed
+
+############################################################
+# [40/200] hermes x django__django-14915
+############################################################
+
+============================================================
+[SETUP] django__django-14915 for hermes
+
+[RUN] hermes on django__django-14915 ...
+  [EVAL] hermes on django__django-14915 ...
+  => django__django-14915 | hermes | patch-but-failed
+
+############################################################
+# [41/200] hermes x django__django-14997
+############################################################
+
+============================================================
+[SETUP] django__django-14997 for hermes
+
+[RUN] hermes on django__django-14997 ...
+  [EVAL] hermes on django__django-14997 ...
+  => django__django-14997 | hermes | patch-but-failed
+
+############################################################
+# [42/200] hermes x django__django-14999
+############################################################
+
+============================================================
+[SETUP] django__django-14999 for hermes
+
+[RUN] hermes on django__django-14999 ...
+  [EVAL] hermes on django__django-14999 ...
+  => django__django-14999 | hermes | patch-but-failed
+
+############################################################
+# [43/200] hermes x django__django-15061
+############################################################
+
+============================================================
+[SETUP] django__django-15061 for hermes
+
+[RUN] hermes on django__django-15061 ...
+  [EVAL] hermes on django__django-15061 ...
+  => django__django-15061 | hermes | patch-but-failed
+
+############################################################
+# [44/200] hermes x django__django-15202
+############################################################
+
+============================================================
+[SETUP] django__django-15202 for hermes
+
+[RUN] hermes on django__django-15202 ...
+  [EVAL] hermes on django__django-15202 ...
+  => django__django-15202 | hermes | patch-but-failed
+
+############################################################
+# [45/200] hermes x django__django-15213
+############################################################
+
+============================================================
+[SETUP] django__django-15213 for hermes
+
+[RUN] hermes on django__django-15213 ...
+  [EVAL] hermes on django__django-15213 ...
+  => django__django-15213 | hermes | patch-but-failed
+
+############################################################
+# [46/200] hermes x django__django-15252
+############################################################
+
+============================================================
+[SETUP] django__django-15252 for hermes
+
+[RUN] hermes on django__django-15252 ...
+  [EVAL] hermes on django__django-15252 ...
+  => django__django-15252 | hermes | patch-but-failed
+
+############################################################
+# [47/200] hermes x django__django-15320
+############################################################
+
+============================================================
+[SETUP] django__django-15320 for hermes
+
+[RUN] hermes on django__django-15320 ...
+  [EVAL] hermes on django__django-15320 ...
+  => django__django-15320 | hermes | patch-but-failed
+
+############################################################
+# [48/200] hermes x django__django-15347
+############################################################
+
+============================================================
+[SETUP] django__django-15347 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on django__django-15347 ...
+  [EVAL] hermes on django__django-15347 ...
+  => django__django-15347 | hermes | patch-but-failed
+
+############################################################
+# [49/200] hermes x django__django-15388
+############################################################
+
+============================================================
+[SETUP] django__django-15388 for hermes
+
+[RUN] hermes on django__django-15388 ...
+  [EVAL] hermes on django__django-15388 ...
+  => django__django-15388 | hermes | patch-but-failed
+
+############################################################
+# [50/200] hermes x django__django-15400
+############################################################
+
+============================================================
+[SETUP] django__django-15400 for hermes
+
+[RUN] hermes on django__django-15400 ...
+  [EVAL] hermes on django__django-15400 ...
+  => django__django-15400 | hermes | patch-but-failed
+
+############################################################
+# [51/200] hermes x django__django-15498
+############################################################
+
+============================================================
+[SETUP] django__django-15498 for hermes
+
+[RUN] hermes on django__django-15498 ...
+  [EVAL] hermes on django__django-15498 ...
+  => django__django-15498 | hermes | patch-but-failed
+
+############################################################
+# [52/200] hermes x django__django-15695
+############################################################
+
+============================================================
+[SETUP] django__django-15695 for hermes
+
+[RUN] hermes on django__django-15695 ...
+  [EVAL] hermes on django__django-15695 ...
+  => django__django-15695 | hermes | patch-but-failed
+
+############################################################
+# [53/200] hermes x django__django-15738
+############################################################
+
+============================================================
+[SETUP] django__django-15738 for hermes
+
+[RUN] hermes on django__django-15738 ...
+  [EVAL] hermes on django__django-15738 ...
+  => django__django-15738 | hermes | patch-but-failed
+
+############################################################
+# [54/200] hermes x django__django-15781
+############################################################
+
+============================================================
+[SETUP] django__django-15781 for hermes
+
+[RUN] hermes on django__django-15781 ...
+  [EVAL] hermes on django__django-15781 ...
+  => django__django-15781 | hermes | patch-but-failed
+
+############################################################
+# [55/200] hermes x django__django-15789
+############################################################
+
+============================================================
+[SETUP] django__django-15789 for hermes
+
+[RUN] hermes on django__django-15789 ...
+  [EVAL] hermes on django__django-15789 ...
+  => django__django-15789 | hermes | patch-but-failed
+
+############################################################
+# [56/200] hermes x django__django-15790
+############################################################
+
+============================================================
+[SETUP] django__django-15790 for hermes
+
+[RUN] hermes on django__django-15790 ...
+  [EVAL] hermes on django__django-15790 ...
+  => django__django-15790 | hermes | patch-but-failed
+
+############################################################
+# [57/200] hermes x django__django-15814
+############################################################
+
+============================================================
+[SETUP] django__django-15814 for hermes
+
+[RUN] hermes on django__django-15814 ...
+  [EVAL] hermes on django__django-15814 ...
+  => django__django-15814 | hermes | patch-but-failed
+
+############################################################
+# [58/200] hermes x django__django-15819
+############################################################
+
+============================================================
+[SETUP] django__django-15819 for hermes
+
+[RUN] hermes on django__django-15819 ...
+  [EVAL] hermes on django__django-15819 ...
+  => django__django-15819 | hermes | patch-but-failed
+
+############################################################
+# [59/200] hermes x django__django-15851
+############################################################
+
+============================================================
+[SETUP] django__django-15851 for hermes
+
+[RUN] hermes on django__django-15851 ...
+  [EVAL] hermes on django__django-15851 ...
+  => django__django-15851 | hermes | patch-but-failed
+
+############################################################
+# [60/200] hermes x django__django-15902
+############################################################
+
+============================================================
+[SETUP] django__django-15902 for hermes
+
+[RUN] hermes on django__django-15902 ...
+  [EVAL] hermes on django__django-15902 ...
+  => django__django-15902 | hermes | patch-but-failed
+
+############################################################
+# [61/200] hermes x django__django-15996
+############################################################
+
+============================================================
+[SETUP] django__django-15996 for hermes
+
+[RUN] hermes on django__django-15996 ...
+  [EVAL] hermes on django__django-15996 ...
+  => django__django-15996 | hermes | patch-but-failed
+
+############################################################
+# [62/200] hermes x django__django-16041
+############################################################
+
+============================================================
+[SETUP] django__django-16041 for hermes
+
+[RUN] hermes on django__django-16041 ...
+  [EVAL] hermes on django__django-16041 ...
+  => django__django-16041 | hermes | patch-but-failed
+
+############################################################
+# [63/200] hermes x django__django-16046
+############################################################
+
+============================================================
+[SETUP] django__django-16046 for hermes
+
+[RUN] hermes on django__django-16046 ...
+  [EVAL] hermes on django__django-16046 ...
+  => django__django-16046 | hermes | patch-but-failed
+
+############################################################
+# [64/200] hermes x django__django-16139
+############################################################
+
+============================================================
+[SETUP] django__django-16139 for hermes
+
+[RUN] hermes on django__django-16139 ...
+  [EVAL] hermes on django__django-16139 ...
+  => django__django-16139 | hermes | patch-but-failed
+
+############################################################
+# [65/200] hermes x django__django-16229
+############################################################
+
+============================================================
+[SETUP] django__django-16229 for hermes
+
+[RUN] hermes on django__django-16229 ...
+  [EVAL] hermes on django__django-16229 ...
+  => django__django-16229 | hermes | patch-but-failed
+
+############################################################
+# [66/200] hermes x django__django-16255
+############################################################
+
+============================================================
+[SETUP] django__django-16255 for hermes
+
+[RUN] hermes on django__django-16255 ...
+  [EVAL] hermes on django__django-16255 ...
+  => django__django-16255 | hermes | patch-but-failed
+
+############################################################
+# [67/200] hermes x django__django-16379
+############################################################
+
+============================================================
+[SETUP] django__django-16379 for hermes
+
+[RUN] hermes on django__django-16379 ...
+  [EVAL] hermes on django__django-16379 ...
+  => django__django-16379 | hermes | patch-but-failed
+
+############################################################
+# [68/200] hermes x django__django-16400
+############################################################
+
+============================================================
+[SETUP] django__django-16400 for hermes
+
+[RUN] hermes on django__django-16400 ...
+  [EVAL] hermes on django__django-16400 ...
+  => django__django-16400 | hermes | patch-but-failed
+
+############################################################
+# [69/200] hermes x django__django-16408
+############################################################
+
+============================================================
+[SETUP] django__django-16408 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on django__django-16408 ...
+  [EVAL] hermes on django__django-16408 ...
+  => django__django-16408 | hermes | patch-but-failed
+
+############################################################
+# [70/200] hermes x django__django-16527
+############################################################
+
+============================================================
+[SETUP] django__django-16527 for hermes
+
+[RUN] hermes on django__django-16527 ...
+  [EVAL] hermes on django__django-16527 ...
+  => django__django-16527 | hermes | patch-but-failed
+
+############################################################
+# [71/200] hermes x django__django-16595
+############################################################
+
+============================================================
+[SETUP] django__django-16595 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on django__django-16595 ...
+  [EVAL] hermes on django__django-16595 ...
+  => django__django-16595 | hermes | patch-but-failed
+
+############################################################
+# [72/200] hermes x django__django-16816
+############################################################
+
+============================================================
+[SETUP] django__django-16816 for hermes
+
+[RUN] hermes on django__django-16816 ...
+  [EVAL] hermes on django__django-16816 ...
+  => django__django-16816 | hermes | patch-but-failed
+
+############################################################
+# [73/200] hermes x django__django-16820
+############################################################
+
+============================================================
+[SETUP] django__django-16820 for hermes
+
+[RUN] hermes on django__django-16820 ...
+  [EVAL] hermes on django__django-16820 ...
+  => django__django-16820 | hermes | patch-but-failed
+
+############################################################
+# [74/200] hermes x django__django-16873
+############################################################
+
+============================================================
+[SETUP] django__django-16873 for hermes
+
+[RUN] hermes on django__django-16873 ...
+  [QUOTA] hermes: quota exhausted, waiting 300s (retry 2/3)...
+  [QUOTA] hermes: quota exhausted, waiting 300s (retry 3/3)...
+  [EVAL] hermes on django__django-16873 ...
+  => django__django-16873 | hermes | quota-blocked
+
+############################################################
+# [75/200] hermes x django__django-16910
+############################################################
+
+============================================================
+[SETUP] django__django-16910 for hermes
+
+[RUN] hermes on django__django-16910 ...
+  [EVAL] hermes on django__django-16910 ...
+  => django__django-16910 | hermes | patch-but-failed
+
+############################################################
+# [76/200] hermes x django__django-17051
+############################################################
+
+============================================================
+[SETUP] django__django-17051 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on django__django-17051 ...
+  [EVAL] hermes on django__django-17051 ...
+  => django__django-17051 | hermes | patch-but-failed
+
+############################################################
+# [77/200] hermes x django__django-17087
+############################################################
+
+============================================================
+[SETUP] django__django-17087 for hermes
+
+[RUN] hermes on django__django-17087 ...
+  [EVAL] hermes on django__django-17087 ...
+  => django__django-17087 | hermes | patch-but-failed
+
+############################################################
+# [78/200] hermes x matplotlib__matplotlib-23562
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23562 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-23562 | hermes | blocked
+
+############################################################
+# [79/200] hermes x matplotlib__matplotlib-23563
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23563 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-23563 | hermes | blocked
+
+############################################################
+# [80/200] hermes x matplotlib__matplotlib-23913
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23913 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on matplotlib__matplotlib-23913 ...
+  [EVAL] hermes on matplotlib__matplotlib-23913 ...
+  => matplotlib__matplotlib-23913 | hermes | patch-but-failed
+
+############################################################
+# [81/200] hermes x matplotlib__matplotlib-23964
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23964 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-23964 | hermes | blocked
+
+############################################################
+# [82/200] hermes x matplotlib__matplotlib-23987
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-23987 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on matplotlib__matplotlib-23987 ...
+  [EVAL] hermes on matplotlib__matplotlib-23987 ...
+  => matplotlib__matplotlib-23987 | hermes | patch-but-failed
+
+############################################################
+# [83/200] hermes x matplotlib__matplotlib-24149
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24149 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-24149 | hermes | blocked
+
+############################################################
+# [84/200] hermes x matplotlib__matplotlib-24265
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24265 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-24265 | hermes | blocked
+
+############################################################
+# [85/200] hermes x matplotlib__matplotlib-24334
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24334 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-24334 | hermes | blocked
+
+############################################################
+# [86/200] hermes x matplotlib__matplotlib-24970
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-24970 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-24970 | hermes | blocked
+
+############################################################
+# [87/200] hermes x matplotlib__matplotlib-25079
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25079 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on matplotlib__matplotlib-25079 ...
+  [EVAL] hermes on matplotlib__matplotlib-25079 ...
+  => matplotlib__matplotlib-25079 | hermes | patch-but-failed
+
+############################################################
+# [88/200] hermes x matplotlib__matplotlib-25311
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25311 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-25311 | hermes | blocked
+
+############################################################
+# [89/200] hermes x matplotlib__matplotlib-25332
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25332 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-25332 | hermes | blocked
+
+############################################################
+# [90/200] hermes x matplotlib__matplotlib-25433
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25433 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-25433 | hermes | blocked
+
+############################################################
+# [91/200] hermes x matplotlib__matplotlib-25442
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25442 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-25442 | hermes | blocked
+
+############################################################
+# [92/200] hermes x matplotlib__matplotlib-25498
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-25498 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-25498 | hermes | blocked
+
+############################################################
+# [93/200] hermes x matplotlib__matplotlib-26011
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-26011 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-26011 | hermes | blocked
+
+############################################################
+# [94/200] hermes x matplotlib__matplotlib-26020
+############################################################
+
+============================================================
+[SETUP] matplotlib__matplotlib-26020 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => matplotlib__matplotlib-26020 | hermes | blocked
+
+############################################################
+# [95/200] hermes x mwaskom__seaborn-3010
+############################################################
+
+============================================================
+[SETUP] mwaskom__seaborn-3010 for hermes
+
+[RUN] hermes on mwaskom__seaborn-3010 ...
+  [EVAL] hermes on mwaskom__seaborn-3010 ...
+  => mwaskom__seaborn-3010 | hermes | resolved
+
+############################################################
+# [96/200] hermes x mwaskom__seaborn-3190
+############################################################
+
+============================================================
+[SETUP] mwaskom__seaborn-3190 for hermes
+
+[RUN] hermes on mwaskom__seaborn-3190 ...
+  [EVAL] hermes on mwaskom__seaborn-3190 ...
+  => mwaskom__seaborn-3190 | hermes | patch-but-failed
+
+############################################################
+# [97/200] hermes x mwaskom__seaborn-3407
+############################################################
+
+============================================================
+[SETUP] mwaskom__seaborn-3407 for hermes
+
+[RUN] hermes on mwaskom__seaborn-3407 ...
+  [EVAL] hermes on mwaskom__seaborn-3407 ...
+  => mwaskom__seaborn-3407 | hermes | patch-but-failed
+
+############################################################
+# [98/200] hermes x pallets__flask-4992
+############################################################
+
+============================================================
+[SETUP] pallets__flask-4992 for hermes
+
+[RUN] hermes on pallets__flask-4992 ...
+  [EVAL] hermes on pallets__flask-4992 ...
+  => pallets__flask-4992 | hermes | patch-but-failed
+
+############################################################
+# [99/200] hermes x pallets__flask-5063
+############################################################
+
+============================================================
+[SETUP] pallets__flask-5063 for hermes
+
+[RUN] hermes on pallets__flask-5063 ...
+  [EVAL] hermes on pallets__flask-5063 ...
+  => pallets__flask-5063 | hermes | patch-but-failed
+
+############################################################
+# [100/200] hermes x psf__requests-2317
+############################################################
+
+============================================================
+[SETUP] psf__requests-2317 for hermes
+
+[RUN] hermes on psf__requests-2317 ...
+  [EVAL] hermes on psf__requests-2317 ...
+  => psf__requests-2317 | hermes | patch-but-failed
+
+############################################################
+# [101/200] hermes x psf__requests-2674
+############################################################
+
+============================================================
+[SETUP] psf__requests-2674 for hermes
+
+[RUN] hermes on psf__requests-2674 ...
+  [EVAL] hermes on psf__requests-2674 ...
+  => psf__requests-2674 | hermes | patch-but-failed
+
+############################################################
+# [102/200] hermes x psf__requests-3362
+############################################################
+
+============================================================
+[SETUP] psf__requests-3362 for hermes
+
+[RUN] hermes on psf__requests-3362 ...
+  [EVAL] hermes on psf__requests-3362 ...
+  => psf__requests-3362 | hermes | patch-but-failed
+
+############################################################
+# [103/200] hermes x psf__requests-863
+############################################################
+
+============================================================
+[SETUP] psf__requests-863 for hermes
+
+[RUN] hermes on psf__requests-863 ...
+  [EVAL] hermes on psf__requests-863 ...
+  => psf__requests-863 | hermes | patch-but-failed
+
+############################################################
+# [104/200] hermes x pydata__xarray-4094
+############################################################
+
+============================================================
+[SETUP] pydata__xarray-4094 for hermes
+
+[RUN] hermes on pydata__xarray-4094 ...
+  [EVAL] hermes on pydata__xarray-4094 ...
+  => pydata__xarray-4094 | hermes | resolved
+
+############################################################
+# [105/200] hermes x pydata__xarray-4248
+############################################################
+
+============================================================
+[SETUP] pydata__xarray-4248 for hermes
+
+[RUN] hermes on pydata__xarray-4248 ...
+  [EVAL] hermes on pydata__xarray-4248 ...
+  => pydata__xarray-4248 | hermes | patch-but-failed
+
+############################################################
+# [106/200] hermes x pydata__xarray-4493
+############################################################
+
+============================================================
+[SETUP] pydata__xarray-4493 for hermes
+
+[RUN] hermes on pydata__xarray-4493 ...
+  [EVAL] hermes on pydata__xarray-4493 ...
+  => pydata__xarray-4493 | hermes | patch-but-failed
+
+############################################################
+# [107/200] hermes x pydata__xarray-5131
+############################################################
+
+============================================================
+[SETUP] pydata__xarray-5131 for hermes
+
+[RUN] hermes on pydata__xarray-5131 ...
+  [EVAL] hermes on pydata__xarray-5131 ...
+  => pydata__xarray-5131 | hermes | resolved
+
+############################################################
+# [108/200] hermes x pylint-dev__pylint-7080
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7080 for hermes
+
+[RUN] hermes on pylint-dev__pylint-7080 ...
+  [EVAL] hermes on pylint-dev__pylint-7080 ...
+  => pylint-dev__pylint-7080 | hermes | patch-but-failed
+
+############################################################
+# [109/200] hermes x pylint-dev__pylint-7114
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7114 for hermes
+
+[RUN] hermes on pylint-dev__pylint-7114 ...
+  [EVAL] hermes on pylint-dev__pylint-7114 ...
+  => pylint-dev__pylint-7114 | hermes | patch-but-failed
+
+############################################################
+# [110/200] hermes x pylint-dev__pylint-7228
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7228 for hermes
+
+[RUN] hermes on pylint-dev__pylint-7228 ...
+  [EVAL] hermes on pylint-dev__pylint-7228 ...
+  => pylint-dev__pylint-7228 | hermes | patch-but-failed
+
+############################################################
+# [111/200] hermes x pylint-dev__pylint-7993
+############################################################
+
+============================================================
+[SETUP] pylint-dev__pylint-7993 for hermes
+
+[RUN] hermes on pylint-dev__pylint-7993 ...
+  [EVAL] hermes on pylint-dev__pylint-7993 ...
+  => pylint-dev__pylint-7993 | hermes | resolved
+
+############################################################
+# [112/200] hermes x pytest-dev__pytest-5227
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-5227 for hermes
+
+[RUN] hermes on pytest-dev__pytest-5227 ...
+  [EVAL] hermes on pytest-dev__pytest-5227 ...
+  => pytest-dev__pytest-5227 | hermes | patch-but-failed
+
+############################################################
+# [113/200] hermes x pytest-dev__pytest-5413
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-5413 for hermes
+
+[RUN] hermes on pytest-dev__pytest-5413 ...
+  [EVAL] hermes on pytest-dev__pytest-5413 ...
+  => pytest-dev__pytest-5413 | hermes | patch-but-failed
+
+############################################################
+# [114/200] hermes x pytest-dev__pytest-5495
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-5495 for hermes
+
+[RUN] hermes on pytest-dev__pytest-5495 ...
+  [EVAL] hermes on pytest-dev__pytest-5495 ...
+  => pytest-dev__pytest-5495 | hermes | patch-but-failed
+
+############################################################
+# [115/200] hermes x pytest-dev__pytest-5692
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-5692 for hermes
+
+[RUN] hermes on pytest-dev__pytest-5692 ...
+  [EVAL] hermes on pytest-dev__pytest-5692 ...
+  => pytest-dev__pytest-5692 | hermes | patch-but-failed
+
+############################################################
+# [116/200] hermes x pytest-dev__pytest-6116
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-6116 for hermes
+
+[RUN] hermes on pytest-dev__pytest-6116 ...
+  [EVAL] hermes on pytest-dev__pytest-6116 ...
+  => pytest-dev__pytest-6116 | hermes | patch-but-failed
+
+############################################################
+# [117/200] hermes x pytest-dev__pytest-7168
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7168 for hermes
+
+[RUN] hermes on pytest-dev__pytest-7168 ...
+  [EVAL] hermes on pytest-dev__pytest-7168 ...
+  => pytest-dev__pytest-7168 | hermes | resolved
+
+############################################################
+# [118/200] hermes x pytest-dev__pytest-7220
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7220 for hermes
+
+[RUN] hermes on pytest-dev__pytest-7220 ...
+  [EVAL] hermes on pytest-dev__pytest-7220 ...
+  => pytest-dev__pytest-7220 | hermes | patch-but-failed
+
+############################################################
+# [119/200] hermes x pytest-dev__pytest-7373
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7373 for hermes
+
+[RUN] hermes on pytest-dev__pytest-7373 ...
+  [EVAL] hermes on pytest-dev__pytest-7373 ...
+  => pytest-dev__pytest-7373 | hermes | patch-but-failed
+
+############################################################
+# [120/200] hermes x pytest-dev__pytest-7432
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7432 for hermes
+
+[RUN] hermes on pytest-dev__pytest-7432 ...
+  [EVAL] hermes on pytest-dev__pytest-7432 ...
+  => pytest-dev__pytest-7432 | hermes | patch-but-failed
+
+############################################################
+# [121/200] hermes x pytest-dev__pytest-7490
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-7490 for hermes
+
+[RUN] hermes on pytest-dev__pytest-7490 ...
+  [EVAL] hermes on pytest-dev__pytest-7490 ...
+  => pytest-dev__pytest-7490 | hermes | patch-but-failed
+
+############################################################
+# [122/200] hermes x pytest-dev__pytest-8365
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-8365 for hermes
+
+[RUN] hermes on pytest-dev__pytest-8365 ...
+  [EVAL] hermes on pytest-dev__pytest-8365 ...
+  => pytest-dev__pytest-8365 | hermes | patch-but-failed
+
+############################################################
+# [123/200] hermes x pytest-dev__pytest-8906
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-8906 for hermes
+
+[RUN] hermes on pytest-dev__pytest-8906 ...
+  [EVAL] hermes on pytest-dev__pytest-8906 ...
+  => pytest-dev__pytest-8906 | hermes | patch-but-failed
+
+############################################################
+# [124/200] hermes x pytest-dev__pytest-9359
+############################################################
+
+============================================================
+[SETUP] pytest-dev__pytest-9359 for hermes
+
+[RUN] hermes on pytest-dev__pytest-9359 ...
+  [EVAL] hermes on pytest-dev__pytest-9359 ...
+  => pytest-dev__pytest-9359 | hermes | patch-but-failed
+
+############################################################
+# [125/200] hermes x scikit-learn__scikit-learn-13142
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13142 for hermes
+
+[RUN] hermes on scikit-learn__scikit-learn-13142 ...
+  [EVAL] hermes on scikit-learn__scikit-learn-13142 ...
+  => scikit-learn__scikit-learn-13142 | hermes | resolved
+
+############################################################
+# [126/200] hermes x scikit-learn__scikit-learn-13241
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13241 for hermes
+
+[RUN] hermes on scikit-learn__scikit-learn-13241 ...
+  [EVAL] hermes on scikit-learn__scikit-learn-13241 ...
+  => scikit-learn__scikit-learn-13241 | hermes | resolved
+
+############################################################
+# [127/200] hermes x scikit-learn__scikit-learn-13439
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13439 for hermes
+
+[RUN] hermes on scikit-learn__scikit-learn-13439 ...
+  [EVAL] hermes on scikit-learn__scikit-learn-13439 ...
+  => scikit-learn__scikit-learn-13439 | hermes | resolved
+
+############################################################
+# [128/200] hermes x scikit-learn__scikit-learn-13496
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13496 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on scikit-learn__scikit-learn-13496 ...
+  [EVAL] hermes on scikit-learn__scikit-learn-13496 ...
+  => scikit-learn__scikit-learn-13496 | hermes | patch-but-failed
+
+############################################################
+# [129/200] hermes x scikit-learn__scikit-learn-13497
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13497 for hermes
+
+[RUN] hermes on scikit-learn__scikit-learn-13497 ...
+  [EVAL] hermes on scikit-learn__scikit-learn-13497 ...
+  => scikit-learn__scikit-learn-13497 | hermes | patch-but-failed
+
+############################################################
+# [130/200] hermes x scikit-learn__scikit-learn-13584
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13584 for hermes
+
+[RUN] hermes on scikit-learn__scikit-learn-13584 ...
+  [EVAL] hermes on scikit-learn__scikit-learn-13584 ...
+  => scikit-learn__scikit-learn-13584 | hermes | resolved
+
+############################################################
+# [131/200] hermes x scikit-learn__scikit-learn-13779
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-13779 for hermes
+
+[RUN] hermes on scikit-learn__scikit-learn-13779 ...
+  [EVAL] hermes on scikit-learn__scikit-learn-13779 ...
+  => scikit-learn__scikit-learn-13779 | hermes | resolved
+
+############################################################
+# [132/200] hermes x scikit-learn__scikit-learn-14087
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14087 for hermes
+
+[RUN] hermes on scikit-learn__scikit-learn-14087 ...
+  [EVAL] hermes on scikit-learn__scikit-learn-14087 ...
+  => scikit-learn__scikit-learn-14087 | hermes | patch-but-failed
+
+############################################################
+# [133/200] hermes x scikit-learn__scikit-learn-14092
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14092 for hermes
+
+[RUN] hermes on scikit-learn__scikit-learn-14092 ...
+  [EVAL] hermes on scikit-learn__scikit-learn-14092 ...
+  => scikit-learn__scikit-learn-14092 | hermes | resolved
+
+############################################################
+# [134/200] hermes x scikit-learn__scikit-learn-14894
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14894 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+  => scikit-learn__scikit-learn-14894 | hermes | blocked
+
+############################################################
+# [135/200] hermes x scikit-learn__scikit-learn-14983
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-14983 for hermes
+
+[RUN] hermes on scikit-learn__scikit-learn-14983 ...
+  [EVAL] hermes on scikit-learn__scikit-learn-14983 ...
+  => scikit-learn__scikit-learn-14983 | hermes | resolved
+
+############################################################
+# [136/200] hermes x scikit-learn__scikit-learn-15512
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-15512 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on scikit-learn__scikit-learn-15512 ...
+  [EVAL] hermes on scikit-learn__scikit-learn-15512 ...
+  => scikit-learn__scikit-learn-15512 | hermes | patch-but-failed
+
+############################################################
+# [137/200] hermes x scikit-learn__scikit-learn-15535
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-15535 for hermes
+
+[RUN] hermes on scikit-learn__scikit-learn-15535 ...
+  [EVAL] hermes on scikit-learn__scikit-learn-15535 ...
+  => scikit-learn__scikit-learn-15535 | hermes | patch-but-failed
+
+############################################################
+# [138/200] hermes x scikit-learn__scikit-learn-25500
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25500 for hermes
+
+[RUN] hermes on scikit-learn__scikit-learn-25500 ...
+  [EVAL] hermes on scikit-learn__scikit-learn-25500 ...
+  => scikit-learn__scikit-learn-25500 | hermes | patch-but-failed
+
+############################################################
+# [139/200] hermes x scikit-learn__scikit-learn-25570
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25570 for hermes
+
+[RUN] hermes on scikit-learn__scikit-learn-25570 ...
+  [EVAL] hermes on scikit-learn__scikit-learn-25570 ...
+  => scikit-learn__scikit-learn-25570 | hermes | patch-but-failed
+
+############################################################
+# [140/200] hermes x scikit-learn__scikit-learn-25638
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25638 for hermes
+
+[RUN] hermes on scikit-learn__scikit-learn-25638 ...
+  [EVAL] hermes on scikit-learn__scikit-learn-25638 ...
+  => scikit-learn__scikit-learn-25638 | hermes | patch-but-failed
+
+############################################################
+# [141/200] hermes x scikit-learn__scikit-learn-25747
+############################################################
+
+============================================================
+[SETUP] scikit-learn__scikit-learn-25747 for hermes
+
+[RUN] hermes on scikit-learn__scikit-learn-25747 ...
+  [EVAL] hermes on scikit-learn__scikit-learn-25747 ...
+  => scikit-learn__scikit-learn-25747 | hermes | patch-but-failed
+
+############################################################
+# [142/200] hermes x sphinx-doc__sphinx-7738
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-7738 for hermes
+
+[RUN] hermes on sphinx-doc__sphinx-7738 ...
+  [EVAL] hermes on sphinx-doc__sphinx-7738 ...
+  => sphinx-doc__sphinx-7738 | hermes | patch-but-failed
+
+############################################################
+# [143/200] hermes x sphinx-doc__sphinx-7975
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-7975 for hermes
+
+[RUN] hermes on sphinx-doc__sphinx-7975 ...
+  [EVAL] hermes on sphinx-doc__sphinx-7975 ...
+  => sphinx-doc__sphinx-7975 | hermes | patch-but-failed
+
+############################################################
+# [144/200] hermes x sphinx-doc__sphinx-8273
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8273 for hermes
+
+[RUN] hermes on sphinx-doc__sphinx-8273 ...
+  [EVAL] hermes on sphinx-doc__sphinx-8273 ...
+  => sphinx-doc__sphinx-8273 | hermes | patch-but-failed
+
+############################################################
+# [145/200] hermes x sphinx-doc__sphinx-8282
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8282 for hermes
+
+[RUN] hermes on sphinx-doc__sphinx-8282 ...
+  [EVAL] hermes on sphinx-doc__sphinx-8282 ...
+  => sphinx-doc__sphinx-8282 | hermes | patch-but-failed
+
+############################################################
+# [146/200] hermes x sphinx-doc__sphinx-8435
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8435 for hermes
+
+[RUN] hermes on sphinx-doc__sphinx-8435 ...
+  [EVAL] hermes on sphinx-doc__sphinx-8435 ...
+  => sphinx-doc__sphinx-8435 | hermes | patch-but-failed
+
+############################################################
+# [147/200] hermes x sphinx-doc__sphinx-8474
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8474 for hermes
+
+[RUN] hermes on sphinx-doc__sphinx-8474 ...
+  [EVAL] hermes on sphinx-doc__sphinx-8474 ...
+  => sphinx-doc__sphinx-8474 | hermes | patch-but-failed
+
+############################################################
+# [148/200] hermes x sphinx-doc__sphinx-8506
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8506 for hermes
+
+[RUN] hermes on sphinx-doc__sphinx-8506 ...
+  [EVAL] hermes on sphinx-doc__sphinx-8506 ...
+  => sphinx-doc__sphinx-8506 | hermes | patch-but-failed
+
+############################################################
+# [149/200] hermes x sphinx-doc__sphinx-8595
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8595 for hermes
+
+[RUN] hermes on sphinx-doc__sphinx-8595 ...
+  [EVAL] hermes on sphinx-doc__sphinx-8595 ...
+  => sphinx-doc__sphinx-8595 | hermes | patch-but-failed
+
+############################################################
+# [150/200] hermes x sphinx-doc__sphinx-8627
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8627 for hermes
+
+[RUN] hermes on sphinx-doc__sphinx-8627 ...
+  [EVAL] hermes on sphinx-doc__sphinx-8627 ...
+  => sphinx-doc__sphinx-8627 | hermes | patch-but-failed
+
+############################################################
+# [151/200] hermes x sphinx-doc__sphinx-8713
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8713 for hermes
+
+[RUN] hermes on sphinx-doc__sphinx-8713 ...
+  [EVAL] hermes on sphinx-doc__sphinx-8713 ...
+  => sphinx-doc__sphinx-8713 | hermes | patch-but-failed
+
+############################################################
+# [152/200] hermes x sphinx-doc__sphinx-8721
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8721 for hermes
+
+[RUN] hermes on sphinx-doc__sphinx-8721 ...
+  [EVAL] hermes on sphinx-doc__sphinx-8721 ...
+  => sphinx-doc__sphinx-8721 | hermes | patch-but-failed
+
+############################################################
+# [153/200] hermes x sphinx-doc__sphinx-8801
+############################################################
+
+============================================================
+[SETUP] sphinx-doc__sphinx-8801 for hermes
+
+[RUN] hermes on sphinx-doc__sphinx-8801 ...
+  [EVAL] hermes on sphinx-doc__sphinx-8801 ...
+  => sphinx-doc__sphinx-8801 | hermes | patch-but-failed
+
+############################################################
+# [154/200] hermes x sympy__sympy-15609
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15609 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on sympy__sympy-15609 ...
+  [EVAL] hermes on sympy__sympy-15609 ...
+  => sympy__sympy-15609 | hermes | resolved
+
+############################################################
+# [155/200] hermes x sympy__sympy-15678
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-15678 for hermes
+
+[RUN] hermes on sympy__sympy-15678 ...
+  [EVAL] hermes on sympy__sympy-15678 ...
+  => sympy__sympy-15678 | hermes | resolved
+
+############################################################
+# [156/200] hermes x sympy__sympy-16106
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16106 for hermes
+
+[RUN] hermes on sympy__sympy-16106 ...
+  [EVAL] hermes on sympy__sympy-16106 ...
+  => sympy__sympy-16106 | hermes | patch-but-failed
+
+############################################################
+# [157/200] hermes x sympy__sympy-16281
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16281 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on sympy__sympy-16281 ...
+  [EVAL] hermes on sympy__sympy-16281 ...
+  => sympy__sympy-16281 | hermes | patch-but-failed
+
+############################################################
+# [158/200] hermes x sympy__sympy-16503
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16503 for hermes
+
+[RUN] hermes on sympy__sympy-16503 ...
+  [EVAL] hermes on sympy__sympy-16503 ...
+  => sympy__sympy-16503 | hermes | patch-but-failed
+
+############################################################
+# [159/200] hermes x sympy__sympy-16792
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16792 for hermes
+
+[RUN] hermes on sympy__sympy-16792 ...
+  [EVAL] hermes on sympy__sympy-16792 ...
+  => sympy__sympy-16792 | hermes | patch-but-failed
+
+############################################################
+# [160/200] hermes x sympy__sympy-16988
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-16988 for hermes
+
+[RUN] hermes on sympy__sympy-16988 ...
+  [EVAL] hermes on sympy__sympy-16988 ...
+  => sympy__sympy-16988 | hermes | patch-but-failed
+
+############################################################
+# [161/200] hermes x sympy__sympy-17022
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17022 for hermes
+
+[RUN] hermes on sympy__sympy-17022 ...
+  [EVAL] hermes on sympy__sympy-17022 ...
+  => sympy__sympy-17022 | hermes | patch-but-failed
+
+############################################################
+# [162/200] hermes x sympy__sympy-17139
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17139 for hermes
+
+[RUN] hermes on sympy__sympy-17139 ...
+  [EVAL] hermes on sympy__sympy-17139 ...
+  => sympy__sympy-17139 | hermes | resolved
+
+############################################################
+# [163/200] hermes x sympy__sympy-17630
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17630 for hermes
+
+[RUN] hermes on sympy__sympy-17630 ...
+  [EVAL] hermes on sympy__sympy-17630 ...
+  => sympy__sympy-17630 | hermes | patch-but-failed
+
+############################################################
+# [164/200] hermes x sympy__sympy-17655
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-17655 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on sympy__sympy-17655 ...
+  [EVAL] hermes on sympy__sympy-17655 ...
+  => sympy__sympy-17655 | hermes | patch-but-failed
+
+############################################################
+# [165/200] hermes x sympy__sympy-18057
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18057 for hermes
+
+[RUN] hermes on sympy__sympy-18057 ...
+  [EVAL] hermes on sympy__sympy-18057 ...
+  => sympy__sympy-18057 | hermes | resolved
+
+############################################################
+# [166/200] hermes x sympy__sympy-18087
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18087 for hermes
+
+[RUN] hermes on sympy__sympy-18087 ...
+  [EVAL] hermes on sympy__sympy-18087 ...
+  => sympy__sympy-18087 | hermes | patch-but-failed
+
+############################################################
+# [167/200] hermes x sympy__sympy-18189
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18189 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on sympy__sympy-18189 ...
+  [EVAL] hermes on sympy__sympy-18189 ...
+  => sympy__sympy-18189 | hermes | resolved
+
+############################################################
+# [168/200] hermes x sympy__sympy-18199
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18199 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on sympy__sympy-18199 ...
+  [EVAL] hermes on sympy__sympy-18199 ...
+  => sympy__sympy-18199 | hermes | patch-but-failed
+
+############################################################
+# [169/200] hermes x sympy__sympy-18532
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18532 for hermes
+
+[RUN] hermes on sympy__sympy-18532 ...
+  [EVAL] hermes on sympy__sympy-18532 ...
+  => sympy__sympy-18532 | hermes | resolved
+
+############################################################
+# [170/200] hermes x sympy__sympy-18621
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18621 for hermes
+
+[RUN] hermes on sympy__sympy-18621 ...
+  [EVAL] hermes on sympy__sympy-18621 ...
+  => sympy__sympy-18621 | hermes | resolved
+
+############################################################
+# [171/200] hermes x sympy__sympy-18698
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18698 for hermes
+
+[RUN] hermes on sympy__sympy-18698 ...
+  [EVAL] hermes on sympy__sympy-18698 ...
+  => sympy__sympy-18698 | hermes | patch-but-failed
+
+############################################################
+# [172/200] hermes x sympy__sympy-18835
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-18835 for hermes
+
+[RUN] hermes on sympy__sympy-18835 ...
+  [EVAL] hermes on sympy__sympy-18835 ...
+  => sympy__sympy-18835 | hermes | patch-but-failed
+
+############################################################
+# [173/200] hermes x sympy__sympy-19007
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-19007 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on sympy__sympy-19007 ...
+  [EVAL] hermes on sympy__sympy-19007 ...
+  => sympy__sympy-19007 | hermes | patch-but-failed
+
+############################################################
+# [174/200] hermes x sympy__sympy-19254
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-19254 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on sympy__sympy-19254 ...
+  [EVAL] hermes on sympy__sympy-19254 ...
+  => sympy__sympy-19254 | hermes | patch-but-failed
+
+############################################################
+# [175/200] hermes x sympy__sympy-19487
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-19487 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+  [FETCH RETRY 2/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on sympy__sympy-19487 ...
+  [EVAL] hermes on sympy__sympy-19487 ...
+  => sympy__sympy-19487 | hermes | patch-but-failed
+
+############################################################
+# [176/200] hermes x sympy__sympy-20049
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20049 for hermes
+
+[RUN] hermes on sympy__sympy-20049 ...
+  [EVAL] hermes on sympy__sympy-20049 ...
+  => sympy__sympy-20049 | hermes | resolved
+
+############################################################
+# [177/200] hermes x sympy__sympy-20154
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20154 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on sympy__sympy-20154 ...
+  [EVAL] hermes on sympy__sympy-20154 ...
+  => sympy__sympy-20154 | hermes | resolved
+
+############################################################
+# [178/200] hermes x sympy__sympy-20212
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20212 for hermes
+
+[RUN] hermes on sympy__sympy-20212 ...
+  [EVAL] hermes on sympy__sympy-20212 ...
+  => sympy__sympy-20212 | hermes | resolved
+
+############################################################
+# [179/200] hermes x sympy__sympy-20322
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20322 for hermes
+
+[RUN] hermes on sympy__sympy-20322 ...
+  [EVAL] hermes on sympy__sympy-20322 ...
+  => sympy__sympy-20322 | hermes | patch-but-failed
+
+############################################################
+# [180/200] hermes x sympy__sympy-20442
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20442 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on sympy__sympy-20442 ...
+  [EVAL] hermes on sympy__sympy-20442 ...
+  => sympy__sympy-20442 | hermes | resolved
+
+############################################################
+# [181/200] hermes x sympy__sympy-20590
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20590 for hermes
+
+[RUN] hermes on sympy__sympy-20590 ...
+  [EVAL] hermes on sympy__sympy-20590 ...
+  => sympy__sympy-20590 | hermes | resolved
+
+############################################################
+# [182/200] hermes x sympy__sympy-20639
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-20639 for hermes
+
+[RUN] hermes on sympy__sympy-20639 ...
+  [EVAL] hermes on sympy__sympy-20639 ...
+  => sympy__sympy-20639 | hermes | patch-but-failed
+
+############################################################
+# [183/200] hermes x sympy__sympy-21055
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21055 for hermes
+
+[RUN] hermes on sympy__sympy-21055 ...
+  [EVAL] hermes on sympy__sympy-21055 ...
+  => sympy__sympy-21055 | hermes | resolved
+
+############################################################
+# [184/200] hermes x sympy__sympy-21171
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21171 for hermes
+
+[RUN] hermes on sympy__sympy-21171 ...
+  [EVAL] hermes on sympy__sympy-21171 ...
+  => sympy__sympy-21171 | hermes | patch-but-failed
+
+############################################################
+# [185/200] hermes x sympy__sympy-21379
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21379 for hermes
+
+[RUN] hermes on sympy__sympy-21379 ...
+  [EVAL] hermes on sympy__sympy-21379 ...
+  => sympy__sympy-21379 | hermes | resolved
+
+############################################################
+# [186/200] hermes x sympy__sympy-21612
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21612 for hermes
+
+[RUN] hermes on sympy__sympy-21612 ...
+  [EVAL] hermes on sympy__sympy-21612 ...
+  => sympy__sympy-21612 | hermes | patch-but-failed
+
+############################################################
+# [187/200] hermes x sympy__sympy-21614
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21614 for hermes
+
+[RUN] hermes on sympy__sympy-21614 ...
+  [EVAL] hermes on sympy__sympy-21614 ...
+  => sympy__sympy-21614 | hermes | resolved
+
+############################################################
+# [188/200] hermes x sympy__sympy-21627
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21627 for hermes
+
+[RUN] hermes on sympy__sympy-21627 ...
+  [EVAL] hermes on sympy__sympy-21627 ...
+  => sympy__sympy-21627 | hermes | resolved
+
+############################################################
+# [189/200] hermes x sympy__sympy-21847
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-21847 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on sympy__sympy-21847 ...
+  [EVAL] hermes on sympy__sympy-21847 ...
+  => sympy__sympy-21847 | hermes | resolved
+
+############################################################
+# [190/200] hermes x sympy__sympy-22005
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-22005 for hermes
+
+[RUN] hermes on sympy__sympy-22005 ...
+  [EVAL] hermes on sympy__sympy-22005 ...
+  => sympy__sympy-22005 | hermes | resolved
+
+############################################################
+# [191/200] hermes x sympy__sympy-22714
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-22714 for hermes
+
+[RUN] hermes on sympy__sympy-22714 ...
+  [EVAL] hermes on sympy__sympy-22714 ...
+  => sympy__sympy-22714 | hermes | resolved
+
+############################################################
+# [192/200] hermes x sympy__sympy-22840
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-22840 for hermes
+
+[RUN] hermes on sympy__sympy-22840 ...
+  [EVAL] hermes on sympy__sympy-22840 ...
+  => sympy__sympy-22840 | hermes | patch-but-failed
+
+############################################################
+# [193/200] hermes x sympy__sympy-23117
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-23117 for hermes
+
+[RUN] hermes on sympy__sympy-23117 ...
+  [EVAL] hermes on sympy__sympy-23117 ...
+  => sympy__sympy-23117 | hermes | resolved
+
+############################################################
+# [194/200] hermes x sympy__sympy-23191
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-23191 for hermes
+
+[RUN] hermes on sympy__sympy-23191 ...
+  [EVAL] hermes on sympy__sympy-23191 ...
+  => sympy__sympy-23191 | hermes | patch-but-failed
+
+############################################################
+# [195/200] hermes x sympy__sympy-23262
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-23262 for hermes
+
+[RUN] hermes on sympy__sympy-23262 ...
+  [QUOTA] hermes: quota exhausted, waiting 300s (retry 2/3)...
+  [QUOTA] hermes: quota exhausted, waiting 300s (retry 3/3)...
+  [EVAL] hermes on sympy__sympy-23262 ...
+  => sympy__sympy-23262 | hermes | quota-blocked
+
+############################################################
+# [196/200] hermes x sympy__sympy-24066
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24066 for hermes
+
+[RUN] hermes on sympy__sympy-24066 ...
+  [EVAL] hermes on sympy__sympy-24066 ...
+  => sympy__sympy-24066 | hermes | resolved
+
+############################################################
+# [197/200] hermes x sympy__sympy-24102
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24102 for hermes
+
+[RUN] hermes on sympy__sympy-24102 ...
+  [EVAL] hermes on sympy__sympy-24102 ...
+  => sympy__sympy-24102 | hermes | patch-but-failed
+
+############################################################
+# [198/200] hermes x sympy__sympy-24152
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24152 for hermes
+  [FETCH RETRY 1/3] timeout=300s, waiting 10s...
+
+[RUN] hermes on sympy__sympy-24152 ...
+  [EVAL] hermes on sympy__sympy-24152 ...
+  => sympy__sympy-24152 | hermes | resolved
+
+############################################################
+# [199/200] hermes x sympy__sympy-24213
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24213 for hermes
+
+[RUN] hermes on sympy__sympy-24213 ...
+  [EVAL] hermes on sympy__sympy-24213 ...
+  => sympy__sympy-24213 | hermes | resolved
+
+############################################################
+# [200/200] hermes x sympy__sympy-24909
+############################################################
+
+============================================================
+[SETUP] sympy__sympy-24909 for hermes
+
+[RUN] hermes on sympy__sympy-24909 ...
+  [EVAL] hermes on sympy__sympy-24909 ...
+  => sympy__sympy-24909 | hermes | patch-but-failed
+
+============================================================
+SUMMARY: hermes x kimi-k2.6-cloud
+============================================================
+  resolved: 81/300 (27.0%)
+  patch-but-failed: 202/300 (67.3%)
+  quota-blocked: 2/300 (0.7%)
+  blocked: 15/300 (5.0%)
