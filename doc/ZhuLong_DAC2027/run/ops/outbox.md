@@ -8401,3 +8401,55 @@ deepseek/deepseek-v4-pro-cloud
 {"object":"list","data":[{"id":null,"object":"model","owned_by":"cloud"}]}
 === DONE ===
 ```
+
+---
+
+## RUN_ID 58 · 2026-10-12 13:18:56 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 58 · opencode 路径 + loop 环境
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] command -v (登录 shell) ==="
+for c in opencode npm node bun cline; do
+  printf '  %-9s -> ' "$c"; command -v "$c" 2>/dev/null || echo "(not in PATH)"
+done
+echo "=== [2] npm prefix -g ==="; npm prefix -g 2>/dev/null
+echo "=== [3] \$HOME/.local/node-20/bin 里的 opencode/node/npm ==="
+ls -la "$HOME/.local/node-20/bin/" 2>/dev/null | grep -E 'opencode|npm$|node$|bun' || echo "(no node-20/bin)"
+echo "=== [4] loop 进程 61738 的 environ（PATH + proxy）==="
+tr '\0' '\n' < /proc/61738/environ 2>/dev/null | grep -E '^(PATH|http_proxy|https_proxy|HTTP_PROXY|HTTPS_PROXY|HOME|npm_config_)=' | cut -c1-160 || echo "(no environ)"
+echo "=== [5] opencode 真实绝对路径 ==="
+ls -la "$(command -v opencode 2>/dev/null)" 2>/dev/null || echo "(command -v opencode empty)"
+ls -la "$HOME/.local/node-20/bin/opencode" 2>/dev/null || echo "(no ~/.local/node-20/bin/opencode)"
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] ===
+hfeg0tedaap02
+2026-10-12 13:18:56
+=== [1] command -v (登录 shell) ===
+  opencode  -> /home/app.e0031982/.local/node-20/bin/opencode
+  npm       -> /home/app.e0031982/.local/node-20/bin/npm
+  node      -> /home/app.e0031982/.local/node-20/bin/node
+  bun       -> /home/app.e0031982/.local/node-20/bin/bun
+  cline     -> /home/app.e0031982/.local/node-20/bin/cline
+=== [2] npm prefix -g ===
+/nasdata/app.e0031982/.local/node-20
+=== [3] $HOME/.local/node-20/bin 里的 opencode/node/npm ===
+lrwxrwxrwx 1 app.e0031982 app.adm       35 Jul 28 17:36 bun -> ../lib/node_modules/bun/bin/bun.exe
+lrwxrwxrwx 1 app.e0031982 app.adm       36 Jul 28 17:36 bunx -> ../lib/node_modules/bun/bin/bunx.exe
+-rwxr-x--- 1 app.e0031982 app.adm 98426952 Nov 20  2024 node
+lrwxrwxrwx 1 app.e0031982 app.adm       48 Oct 12 11:02 opencode -> ../lib/node_modules/opencode-ai/bin/opencode.exe
+=== [4] loop 进程 61738 的 environ（PATH + proxy）===
+HOME=/home/app.e0031982
+https_proxy=http://172.19.92.23:13128
+http_proxy=http://172.19.92.23:13128
+PATH=/home/app.e0031982/.local/node-20/bin:/home/app.e0031982/.bun/bin:/home/app.e0031982/.local/node-20/bin:/home/app.e0031982/.bun/bin:/usr/local/sbin:/usr/lo
+=== [5] opencode 真实绝对路径 ===
+lrwxrwxrwx 1 app.e0031982 app.adm 48 Oct 12 11:02 /home/app.e0031982/.local/node-20/bin/opencode -> ../lib/node_modules/opencode-ai/bin/opencode.exe
+lrwxrwxrwx 1 app.e0031982 app.adm 48 Oct 12 11:02 /home/app.e0031982/.local/node-20/bin/opencode -> ../lib/node_modules/opencode-ai/bin/opencode.exe
+=== DONE ===
+```
