@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Harness Eval 修复重评报告 — 2026-10-13 05:34</title><style>
+<title>Harness Eval 修复重评报告 — 2026-10-13 07:46</title><style>
 body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;margin:2em;background:#f5f5f5;color:#333}
 h1{color:#1a237e;border-bottom:3px solid #1a237e;padding-bottom:.3em}
 h2{color:#283593;margin-top:1.8em;border-left:4px solid #3f51b5;padding-left:.5em}
@@ -12,14 +12,14 @@ code{background:#f0f0f0;padding:2px 6px;border-radius:3px}.note{background:#e3f2
 .bn{font-size:1.5em;font-weight:bold}.green{color:#2e7d32}.red{color:#c62828}
 </style></head><body>
 <h1>Harness Eval 修复重评报告</h1>
-<p style="color:#999">生成时间：2026-10-13 05:34｜数据：kimi_pilot_results.json(7×300) + kimi_pilot_results.fix1.json(376条)</p>
+<p style="color:#999">生成时间：2026-10-13 07:46｜数据：kimi_pilot_results.json(7×300) + kimi_pilot_results.fix1.json(376条)</p>
 <div class="summary"><h2>核心结论</h2>
 <p><strong>重评范围：</strong>376条（5 repo 非 resolved 且有 patch × 7 harness）</p>
 <p><strong>Patch 新增应用成功：</strong><span class="bn green">+215</span>条（基础设施修复确认✅）</p>
 <p><strong>新增 Resolved：</strong><span class="bn green">+34</span>条（not-resolved → resolved）</p>
 <p><strong>总 Resolved：</strong>574 → <span class="bn green">608</span>（27.3% → 29.0%，+1.6pp）</p>
 <p><strong>错误数：</strong>0</p>
-<p class="note">⚠️ 进度：重评仍在后台运行中（376/376 = 100%）。本报告为<strong>中间结果</strong>，最终报告将在全部完成后刷新。</p></div>
+<p class="note">✅ 进度：重评已全部完成（376/376 = 100%）。本报告为<strong>最终报告</strong>。</p></div>
 <div class="fixd"><h2>P0 修复措施（2026-10-13）</h2><ol>
 <li><strong>pytest（SETUPTOOLS_SCM_PRETEND_VERSION=8.0.0）</strong>：解决 <code>pytest-0.1.dev1</code> 版本冲突。贡献 33/34 翻转。</li>
 <li><strong>matplotlib（freetype 预置 + mplsetup.cfg）</strong>：freetype 头文件+库预拷贝到 conda env，<code>MPLSETUPCFG</code> 注入。</li>
@@ -88,5 +88,15 @@ code{background:#f0f0f0;padding:2px 6px;border-radius:3px}.note{background:#e3f2
 <h2>§6 可复现命令</h2><pre style="background:#263238;color:#eee;padding:1em;border-radius:8px;overflow-x:auto;font-size:12px">cd .../run/harness
 HF_HUB_OFFLINE=1 python3 rerun_eval_fix1.py --timeout 1200 --resume >> rerun_eval_fix1.log 2>&amp;1 &amp;
 python3 gen_fix_report.py</pre>
+<h2>§7 仍未 Apply 的 97 条分类分析</h2><p>fix1 重评后仍有 <strong>97</strong> 条 patch 无法 apply。根因分类：</p>
+<table><thead><tr><th>失败类别</th><th>数量</th><th>说明</th><th>可修复性</th></tr></thead><tbody>
+<tr><td>py_version_36_needs_38</td><td>42</td><td>rootfs Python 3.6 但 repo 需 3.8（pytest/sklearn/sphinx）</td><td style='color:#2e7d32'>✅ 可修：per-repo conda env</td></tr>
+<tr><td>py_version_38_needs_39</td><td>30</td><td>rootfs Python 3.8 但 repo 需 3.9（全 matplotlib）</td><td style='color:#2e7d32'>✅ 可修：per-repo conda env</td></tr>
+<tr><td>werkzeug_version</td><td>14</td><td>werkzeug 版本不兼容（全 flask）</td><td style='color:#2e7d32'>✅ 可修：预装正确 werkzeug</td></tr>
+<tr><td>other</td><td>11</td><td>其他原因</td><td style='color:#ff9800'>⚠️ 需逐条排查</td></tr>
+<tr><td>no_log</td><td>0</td><td>无日志输出</td><td style='color:#c62828'>❌ 需重跑</td></tr>
+<tr><td>pip_install_fail</td><td>0</td><td>pip 安装失败</td><td style='color:#ff9800'>⚠️ 需预置 wheel</td></tr>
+</tbody></table>
+<div class="note"><p><strong>关键发现：</strong>72/97 条（74%）是 <strong>Python 版本不匹配</strong>（3.6→3.8 或 3.8→3.9），可通过为每个 repo 创建正确 Python 版本的 conda env 解决。14 条是 werkzeug 版本问题（flask），可通过预装兼容版本解决。这属于 <strong>P1-1（per-repo env）</strong> 范畴，需运维确认后执行。</p></div>
 <footer style="margin-top:2em;padding-top:1em;border-top:1px solid #ddd;color:#999;font-size:11px">gen_fix_report.py | 376/376 entries | harness fix:</footer>
 </body></html>

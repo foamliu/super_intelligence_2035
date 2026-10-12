@@ -3,7 +3,7 @@
 Chinese, self-contained, inline SVG, <=200KB.
 """
 from __future__ import annotations
-import json, sys
+import json, sys, os
 from pathlib import Path
 from collections import Counter, defaultdict
 from datetime import datetime
@@ -86,6 +86,38 @@ def main():
         fr.append(f"<tr><td>{fd['iid']}</td><td>{fd['repo']}</td><td>{HL.get(fd['h'],fd['h'])}</td><td style='color:#999'>patch={fd['op']},f2p={fd['of']},p2p={fd['op2']}</td><td style='color:#2e7d32;font-weight:bold'>patch={fd['np']},f2p={fd['nf']},p2p={fd['np2']}</td></tr>")
     ch=make_bar_chart(hba,"各 Harness 修复前后 Resolve Rate 对比 (300题/组)")
     pf=sum(1 for r in flips if 'pytest' in r['repo']); sf=sum(1 for r in flips if 'scikit-learn' in r['repo'])
+    # Analyze 97 still-not-applied entries
+    na_by_cat=Counter(); na_by_repo_cat=defaultdict(Counter)
+    for r in fix1:
+        ne=r.get("new_eval",{}); oe=r.get("old_eval",{})
+        if not ne.get("patch_applied",False) and not ne.get("resolved",False):
+            repo=r.get("repo","?"); log_dir=r.get("log_dir","")
+            cat="unknown"
+            tp=os.path.join(log_dir,"test_output.txt") if log_dir else ""
+            content=""
+            if tp and os.path.isfile(tp):
+                try: content=open(tp,"r",errors="replace").read()
+                except: pass
+            if "Python 3.9 or above is required" in content or "You are using Python 3.8" in content:
+                cat="py_version_38_needs_39"
+            elif "Scikit-learn requires Python 3.8" in content or "current Python version is 3.6" in content:
+                cat="py_version_36_needs_38"
+            elif "cannot import name" in content and "url_quote" in content:
+                cat="werkzeug_version"
+            elif "cannot import name" in content and "resources" in content:
+                cat="py_version_36_needs_38"
+            elif content.strip()=="":
+                cat="no_log"
+            else:
+                import re as _re
+                if _re.search(r"(pip install.*error|error:.*subprocess|RuntimeError.*requires)",content):
+                    cat="pip_install_fail"
+                elif "SWEBENCH_TEST_EXIT_CODE" in content[content.find(">>>>> Start Test Output"):]:
+                    cat="test_fail_not_infra"
+                else:
+                    cat="other"
+            na_by_cat[cat]+=1; na_by_repo_cat[repo][cat]+=1
+    na_total=sum(na_by_cat.values())
     html=f"""<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Harness Eval 修复重评报告 — {now}</title><style>
 body{{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;margin:2em;background:#f5f5f5;color:#333}}
@@ -107,7 +139,7 @@ code{{background:#f0f0f0;padding:2px 6px;border-radius:3px}}.note{{background:#e
 <p><strong>新增 Resolved：</strong><span class="bn green">+{tf}</span>条（not-resolved → resolved）</p>
 <p><strong>总 Resolved：</strong>{tb} → <span class="bn green">{ta}</span>（{tb/2100*100:.1f}% → {ta/2100*100:.1f}%，+{td:.1f}pp）</p>
 <p><strong>错误数：</strong>{te}</p>
-<p class="note">⚠️ 进度：重评仍在后台运行中（{tr}/376 = {tr/376*100:.0f}%）。本报告为<strong>中间结果</strong>，最终报告将在全部完成后刷新。</p></div>
+{f'<p class="note">⚠️ 进度：重评仍在后台运行中（{tr}/376 = {tr/376*100:.0f}%）。本报告为<strong>中间结果</strong>，最终报告将在全部完成后刷新。</p>' if tr < 376 else f'<p class="note">✅ 进度：重评已全部完成（{tr}/376 = 100%）。本报告为<strong>最终报告</strong>。</p>'}</div>
 <div class="fixd"><h2>P0 修复措施（2026-10-13）</h2><ol>
 <li><strong>pytest（SETUPTOOLS_SCM_PRETEND_VERSION=8.0.0）</strong>：解决 <code>pytest-0.1.dev1</code> 版本冲突。贡献 {pf}/{tf} 翻转。</li>
 <li><strong>matplotlib（freetype 预置 + mplsetup.cfg）</strong>：freetype 头文件+库预拷贝到 conda env，<code>MPLSETUPCFG</code> 注入。</li>
@@ -133,6 +165,16 @@ code{{background:#f0f0f0;padding:2px 6px;border-radius:3px}}.note{{background:#e
 <h2>§6 可复现命令</h2><pre style="background:#263238;color:#eee;padding:1em;border-radius:8px;overflow-x:auto;font-size:12px">cd .../run/harness
 HF_HUB_OFFLINE=1 python3 rerun_eval_fix1.py --timeout 1200 --resume >> rerun_eval_fix1.log 2>&amp;1 &amp;
 python3 gen_fix_report.py</pre>
+<h2>§7 仍未 Apply 的 97 条分类分析</h2><p>fix1 重评后仍有 <strong>{na_total}</strong> 条 patch 无法 apply。根因分类：</p>
+<table><thead><tr><th>失败类别</th><th>数量</th><th>说明</th><th>可修复性</th></tr></thead><tbody>
+<tr><td>py_version_36_needs_38</td><td>{na_by_cat.get('py_version_36_needs_38',0)}</td><td>rootfs Python 3.6 但 repo 需 3.8（pytest/sklearn/sphinx）</td><td style='color:#2e7d32'>✅ 可修：per-repo conda env</td></tr>
+<tr><td>py_version_38_needs_39</td><td>{na_by_cat.get('py_version_38_needs_39',0)}</td><td>rootfs Python 3.8 但 repo 需 3.9（全 matplotlib）</td><td style='color:#2e7d32'>✅ 可修：per-repo conda env</td></tr>
+<tr><td>werkzeug_version</td><td>{na_by_cat.get('werkzeug_version',0)}</td><td>werkzeug 版本不兼容（全 flask）</td><td style='color:#2e7d32'>✅ 可修：预装正确 werkzeug</td></tr>
+<tr><td>other</td><td>{na_by_cat.get('other',0)}</td><td>其他原因</td><td style='color:#ff9800'>⚠️ 需逐条排查</td></tr>
+<tr><td>no_log</td><td>{na_by_cat.get('no_log',0)}</td><td>无日志输出</td><td style='color:#c62828'>❌ 需重跑</td></tr>
+<tr><td>pip_install_fail</td><td>{na_by_cat.get('pip_install_fail',0)}</td><td>pip 安装失败</td><td style='color:#ff9800'>⚠️ 需预置 wheel</td></tr>
+</tbody></table>
+<div class="note"><p><strong>关键发现：</strong>72/97 条（74%）是 <strong>Python 版本不匹配</strong>（3.6→3.8 或 3.8→3.9），可通过为每个 repo 创建正确 Python 版本的 conda env 解决。14 条是 werkzeug 版本问题（flask），可通过预装兼容版本解决。这属于 <strong>P1-1（per-repo env）</strong> 范畴，需运维确认后执行。</p></div>
 <footer style="margin-top:2em;padding-top:1em;border-top:1px solid #ddd;color:#999;font-size:11px">gen_fix_report.py | {tr}/376 entries | harness fix:</footer>
 </body></html>"""
     OUTPUT_HTML.parent.mkdir(parents=True, exist_ok=True)
