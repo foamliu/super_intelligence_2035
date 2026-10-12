@@ -7836,3 +7836,75 @@ echo "=== DONE ==="
 ```
 REFUSED: 命中危险模式 [:()[[:space:]]*\{]（如需强行执行，请人工在服务器上操作）
 ```
+
+---
+
+## RUN_ID 52 · 2026-10-12 11:09:56 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 52 · 验证 API + 写 opencode 配置
+echo "=== [0] ==="; hostname; date '+%F %T'
+KEY="02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e"
+BASE="http://agi-gateway.cxmt.com/cloud/v1"
+NPMBIN="$(npm prefix -g)/bin"
+
+echo "=== [1] curl POST /chat/completions (pro-cloud) ==="
+timeout 25 curl --noproxy '*' -sS -m 20 -w '\nHTTP=%{http_code} t=%{time_total}s\n' \
+  -X POST "$BASE/chat/completions" \
+  -H "Authorization: Bearer $KEY" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-cloud","messages":[{"role":"user","content":"Reply with exactly: OK"}],"max_tokens":20}' 2>&1 | tail -25
+
+echo "=== [2] 写 opencode 全局配置 (base64) ==="
+mkdir -p ~/.config/opencode
+echo 'ewogICIkc2NoZW1hIjogImh0dHBzOi8vb3BlbmNvZGUuYWkvY29uZmlnLmpzb24iLAogICJwcm92aWRlciI6IHsKICAgICJkZWVwc2VlayI6IHsKICAgICAgIm5wbSI6ICJAYWktc2RrL29wZW5haS1jb21wYXRpYmxlIiwKICAgICAgIm5hbWUiOiAiRGVlcFNlZWsgKGFnaS1nYXRld2F5KSIsCiAgICAgICJvcHRpb25zIjogewogICAgICAgICJiYXNlVVJMIjogImh0dHA6Ly9hZ2ktZ2F0ZXdheS5jeG10LmNvbS9jbG91ZC92MSIsCiAgICAgICAgImFwaUtleSI6ICIwMl8wODhFRTkwNTFBQUU0QkYwQUJGQzcxMzAzMzFCRjY5N19lMTNmNGYzNy04MzZhLTQ4YTUtYjE0OS0wNDRjOGFhMDc4NWUiCiAgICAgIH0sCiAgICAgICJtb2RlbHMiOiB7CiAgICAgICAgImRlZXBzZWVrLXY0LXByby1jbG91ZCI6IHsKICAgICAgICAgICJuYW1lIjogIkRlZXBTZWVrIFY0IFBybyBDbG91ZCIKICAgICAgICB9CiAgICAgIH0KICAgIH0KICB9LAogICJtb2RlbCI6ICJkZWVwc2Vlay9kZWVwc2Vlay12NC1wcm8tY2xvdWQiCn0K' | base64 -d > ~/.config/opencode/opencode.json
+echo "write exit=$?"; echo "--- opencode.json ---"; cat ~/.config/opencode/opencode.json
+
+echo "=== [3] python3 / jq 可用性 ==="
+command -v python3 >/dev/null 2>&1 && python3 -V 2>&1 || echo "python3 NOT FOUND"
+command -v jq >/dev/null 2>&1 && jq --version 2>&1 || echo "jq NOT FOUND"
+
+echo "=== [4] 版本/帮助 ==="
+"$NPMBIN/opencode" --version 2>&1 | head -2
+echo "--- dsh --help ---"; "$NPMBIN/dsh" --help 2>&1 | head -60
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] ===
+hfeg0tedaap02
+2026-10-12 11:09:56
+=== [1] curl POST /chat/completions (pro-cloud) ===
+{"id":"2026101211101152d1b495cbd3407c","object":"chat.completion","created":1791774610,"model":"deepseek-v4-pro-260813","choices":[{"index":0,"message":{"role":"assistant","content":"","reasoning_content":"We need answer exactly \"OK\". User asks \"Reply with exactly: OK\". Need comply. Final"},"finish_reason":"length"}],"usage":{"completion_tokens":20,"prompt_tokens":88,"total_tokens":108,"completion_tokens_details":{"reasoning_tokens":20},"prompt_tokens_details":{}}}
+HTTP=200 t=14.624639s
+=== [2] 写 opencode 全局配置 (base64) ===
+write exit=0
+--- opencode.json ---
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "deepseek": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "DeepSeek (agi-gateway)",
+      "options": {
+        "baseURL": "http://agi-gateway.cxmt.com/cloud/v1",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e"
+      },
+      "models": {
+        "deepseek-v4-pro-cloud": {
+          "name": "DeepSeek V4 Pro Cloud"
+        }
+      }
+    }
+  },
+  "model": "deepseek/deepseek-v4-pro-cloud"
+}
+=== [3] python3 / jq 可用性 ===
+Python 3.12.3
+jq-1.7
+=== [4] 版本/帮助 ===
+1.19.0
+--- dsh --help ---
+=== DONE ===
+```
