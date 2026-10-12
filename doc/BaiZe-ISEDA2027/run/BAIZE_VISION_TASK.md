@@ -9,6 +9,24 @@
 
 > 📦 §运维指令 · 2026-10-11（📚 文献借鉴报告）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：report_vision_lit_ideas.html（28.4KB, 25篇→TOP-5）已交付，commit 6743baeb。需要时再读。
 
+### 🆕 运维指令 · 2026-10-12（🚀 启动 ④-4ep：从 2ep 检查点续训 · 判据改「4ep > 70% = 胜利」）· 用户直令 · 最高优先
+
+> **用户令（2026-10-12）**：「vision 可以在现有 2ep 检查点基础上继续训练的方式启动 4ep 吗？4ep 结果如果超过 70%，也是胜利。」—— **可以**（R12 已实证从 ckpt 续跑机制）；现启动 ④-4ep。
+
+**① 方式（续训 · 非从零）**：`r9_train.py --resume <2ep final ckpt> --steps 748404`，其余参数与 2ep **完全一致**：
+`--tower openvision2 --width 512 --depth 30 --steps 748404 --resolution 224 --patch 16 --batch-size 64 --lr 5e-4 --warmup 2000 --scheduler cosine --min-lr 5e-5 --seed 1234 --loss aimv2 --mask-ratio 0.6 --patch-loss-weight 1.0 --contrast-weight 1.0 --data "$FAIR_DATA"（同 frozen snapshot `data_snapshot_20261009.txt` + CC12M + Amshaker，total_shards=10787）--data-source mixed --caption-type all --save-every 10000`。
+
+**② resume 源 / 输出**：resume=`scaling_E4_2ep_ov2_w512_d30_p16_224/vision.pt`（无则 `vision_fused.pt`，再则最新 `vision_step*.pt`）；**输出新目录** `scaling_E4_4ep_ov2_w512_d30_p16_224`（🚫 勿覆盖 2ep 目录）。
+
+**③ 已核实的技术要点（r9_train.py 源码）**：resume 加载 vision+logit_scale+predictor+decoder，**不加载 optimizer**（AdamW 重启 = minor transient）；C4 守卫禁用、C1/C2 保留；LR 按 4ep 全程 cosine 重算（step374202 处 lr≈2.5e-4，从 2ep 末的 min_lr=5e-5 **跳回** — 属预期，AdamW 重新热身）；数据 sampler 不恢复、重新 shuffle（对「4 epoch 遍历同一 frozen snapshot」定义正确）。
+
+**④ 判据（运维新裁定 · 覆盖 §9.4 原「2ep≥70% 才启动 4ep」）**：**4ep ProtB > 70% ⇒ 胜利**（预算不足、62.34% 非天花板）；4ep 65–70% ⇒ 递减收益；4ep 仍 ~65% 横盘 ⇒ 特征/目标函数天花板确认。
+
+**⑤ 预期成本**：748404−374202 = 374202 新步 ≈ 再 ~16.6h（2ep 实测 2416 img/s）≈ 133 GPU·h。
+
+**⑥ 交付**：4ep 训完**自动跑 ProtA/ProtB/zs/k-NN 全套评测** + 更新 lp–epoch 曲线（62.34 → 65.37 → 4ep ?）；commit 前缀 `vision ④-4ep:`。
+
+**⑦ 与「📄 中文报告」指令关系**：**先 launch 4ep**（长任务后台占 GPU），训练期间并行产出中文报告（零 GPU）；报告若在 4ep 结果前出，先写「截至 2ep」版，4ep 结果一出即**追加/更新「4ep 结果」一节**。
 ### 🆕 运维指令 · 2026-10-12（📄 写「中文版」HTML 综合报告：外部评审回应 ③→①→②→④ 全链路收口）· 用户直令 · 最高优先
 
 > **用户令（2026-10-12）**：「vision 刚刚完成任务了吗，让它写个 html 报告（中文版）。」—— ④ epoch scaling 全套已收尾（10-12 13:42），本轮「外部评审回应」实验链全部完成，现补一份**中文版**综合报告收口。
