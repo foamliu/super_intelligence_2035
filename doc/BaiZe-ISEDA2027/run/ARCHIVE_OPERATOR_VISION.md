@@ -1052,3 +1052,27 @@ git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 \
 
 > **归档结论（2026-10-12）**：V2 Muon 全 LR 坍缩❌（lr=5e-4@step2100, lr=1e-4@step4200）；V3 全量数据 ProtB=63.52±0.01% Δ+1.18pp 不可分辨；V1 分辨率暂缓。报告 `report_vision_variants_20261011.html`（34KB, 11 sections）已交付。全部分析见 `EXPERIMENTS_VISION.md §9.2-9.3`。
 
+---
+
+## 📦 归档块 · §运维指令 2026-10-10（🧭 外部评审回应 ③→①→②→④）—— 2026-10-12 被「📄 中文版综合报告」取代
+
+### 🆕 运维指令 · 2026-10-10（🧭 外部评审回应：③口径修订 → ①同模型 zs → ②probe 对照 → ④epoch 缩放）· 用户直令 · 最高优先
+
+> **用户令（2026-10-10 晚）**：外部评审质疑 **`E1fair` ProtB = 62.34% 偏低**；经两轮辨析，**一致口径 = 按 `③ → ① → ② → ④` 顺序下发**（收回参照系，不再用外部不可比数字）。
+
+**③ 口径修订（先做 · 零 GPU）**
+- 本线所有报告/口径：凡出现绝对 lp，必须标注 "BaiZe internal protocol (ProtB)"，并显式声明不可与外部数字同表，原因逐条写清：目标函数（AIMv2-style InfoNCE + 1.0×masked-patch-MSE）≠ CLIP ≠ MAE/DINOv2；数据（图文对 95.8M、1 epoch）≠ LAION-2B/IN-1k/LVD-142M；文本塔冻结；协议 ProtA/B 相差 ~10pp。
+- 新增「参照系说明」：只有「同目标+同数据量级+同 epoch+同协议」的内部基线才可直接比较。
+- 清理：凡出现的外部数字比较（CLIP zs/OpenCLIP/MAE/DINOv2）→ 加不可比标注或删除。
+
+**① 同模型 zero-shot**：用本模型自己的 IN-1k zero-shot，做同模型 lp vs zs 对照，说明构造通路与类名 prompt 策略。产出同模型 lp/zs 表（ProtB，3 seeds）。
+
+**② 更强 probe 对照（分离特征差 vs 探针欠拟合）**：同一 ckpt 上加 k-NN probe、更长 probe 步数（×5）、wd/LR 微扫。产出 lp 随 probe 配置变化表。
+
+**④ epoch 缩放点（最有决策价值）**：同数据/目标/协议/schedule，E1fair 基础上补 2 epoch（必要时 4 epoch），画 lp vs epoch 曲线。若 2ep 显著抬升（≥70%）⇒ 62.34% 是预算不足；若 4ep 横盘 ~63% ⇒ 特征/目标函数问题。与变体实验共用 .12 8 卡，排期协调。
+
+**优先级/排期**：③①② 立即可做（零/轻 GPU）；④ 与变体实验统一排 GPU 档期。
+**产出**：③ 改后口径节 + ① 同模型 lp/zs 表 + ② probe 对照表 + ④ lp–epoch 曲线（先 2ep）。
+**边界**：不改已发布实验数值（只加标注/口径）；不放弃在飞变体实验。
+
+> **执行结论（2026-10-12）**：全链路 DONE — ③口径修订✅（BaiZe internal protocol 标注+参照系说明）；① 同模型 zs✅（E1fair 34.10% / E2fair 35.45%）；② probe 对照✅（k-NN k=20 37.68% + probe sweep ×5ep 62.15% → probe 未欠拟合，62.34% 即特征天花板）；④ 2ep✅（ProtB 65.37±0.01% Δ+3.03pp / ProtA 53.82% Δ+4.12pp / zs 38.52% Δ+4.42pp / kNN 40.67% Δ+2.99pp，verdict=MODERATE，不启动 4ep）。10-12 13:42 收尾。全部分析见 `EXPERIMENTS_VISION.md §9`。
