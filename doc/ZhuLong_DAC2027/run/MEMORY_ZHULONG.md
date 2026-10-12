@@ -1,6 +1,6 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态（合并版）
 
-WAITING: 0
+WAITING: 1
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
 
@@ -8,11 +8,11 @@ WAITING: 0
 
 | 字段 | 值 |
 |:--|:--|
-| STAGE | `C1`（B 4/4✅；C1 pure_llm/rag/wo_retrieval 5/5✅；full(V2)锚点5/5✅=81.4±4.1%→运维指令(十二)补跑full_v3 r1=77.8%✅→r2=86.1%✅→r3 running）|
+| STAGE | `C1`（B 4/4✅；C1 pure_llm/rag/wo_retrieval 5/5✅；full(V2)锚点5/5✅=81.4±4.1%→运维指令(十二)补跑full_v3 r1=77.8%✅→r2=86.1%✅→r3=81.6%✅→r4 running）|
 | CONFIG | `full_v3`（运维指令(十二)补跑「真full=自探索开」·.env切V3✅:API_INFO_MERGED_FILE=V3+SKILL_DATA_DIR=./docs/skill_data_selfexpl·4端口8650/8651/8652/8654✅@10.129.32.75+RAG:9006✅）|
-| ROUND | 3（full_v3 第3轮·r1=77.8%✅·r2=86.1%✅已完成→r3 code-gen running PID276519）|
-| PHASE | `running`（**full_v3 r2 re-grade✅=86.1%(136/158)有效→r3已启动PID276519·log /tmp/ABL_full_v3_r3_8650set.log·code-gen进行中·hook已部署(部署沙盒 hook✅+PreToolUse 10242B mtime07:10)·4端口4/4✅@10.129.32.75**。r1=77.8%·r2=86.1%→还差r3/r4/r5。loop PID61738✅有proxy·relay PID3277328✅alive·/home=4G(用户授权)。**下轮**:`pgrep -f '^bash scripts/run_cline_script'`→有输出=巡检退出;无输出=收割r3(auto-grade→re-grade同口径·--benchmark EDA-Eval-pyAether-158.jsonl --lang pyAether·log /tmp/ABL_full_v3_r3_regrade.log)→判据 timeout≤10且Pass@1≥75%→r3有效→r4→r5→5/5 mean±std→三组对照表(r1旧V3/full现V2=81.4±4.1%/full_v3新5轮)→是否复现r1~88%→进C2.phi_k10 |
-| WAITING | 0 |
+| ROUND | 4（full_v3 第4轮·r1=77.8%✅·r2=86.1%✅·r3=81.6%✅已完成→r4 code-gen running PID1017587）|
+| PHASE | `running`（**full_v3 r3 re-grade✅=81.6%(129/158)有效→r4已启动PID1017587·log /tmp/ABL_full_v3_r4_8650set.log·code-gen进行中·hook已部署(部署沙盒 hook✅+PreToolUse 10242B mtime09:57)·4端口4/4✅@10.129.32.75**。r1=77.8%·r2=86.1%·r3=81.6%→还差r4/r5。loop PID61738✅有proxy·relay PID3277328✅alive·/home=3G(用户授权·marginal⚠️)。**下轮**:`pgrep -f '^bash scripts/run_cline_script'`→有输出=巡检退出;无输出=收割r4(auto-grade→re-grade同口径·--benchmark EDA-Eval-pyAether-158.jsonl --lang pyAether·log /tmp/ABL_full_v3_r4_regrade.log)→判据 timeout≤10且Pass@1≥75%→r4有效→r5→5/5 mean±std=[77.8,86.1,81.6,r4,r5]→三组对照表(r1旧V3/full现V2=81.4±4.1%/full_v3新5轮)→是否复现r1~88%→进C2.phi_k10 |
+| WAITING | 1 |
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
 | 基座 | 编排=`glm-5.2`；eval backbone=`deepseek-v4-pro-fp4`（✅HTTP 200 新key e13f4f37 + /cloud/v1；r1-r3旧key 9eed3da1有效同后端 deepseek-v4-pro-260813, r4起新key）|
@@ -29,7 +29,7 @@ WAITING: 0
 | C1 | rag | 5/5 ✅ | **71.8±2.5%** [70.3,72.2,69.6,70.9,75.9] |
 | C1 | wo_retrieval | 5/5 ✅ | **81.0±4.5%** [74.1,86.1,81.6,79.7,83.5] |
 | C1 | full(V2)（锚点）| **5/5 ✅ 81.4±4.1%** | [88.0,79.1,77.2,80.4,82.3]（r1=V3文档,r2-r5=V2无自探索→混配置→运维指令(十二)补跑full_v3）|
-| C1 | full_v3(自探索) | **r3 code-gen running** (PID276519·log /tmp/ABL_full_v3_r3_8650set.log) | 运维指令(十二)补跑「真full=自探索开」·.env切V3✅·**r1=77.8%✅**(123/158·timeout=1·batch2026_1012_005319)·**r2=86.1%✅**(136/158·timeout=1·batch2026_1012_033120·re-grade✅)·r3 running |
+| C1 | full_v3(自探索) | **r4 code-gen running** (PID1017587·log /tmp/ABL_full_v3_r4_8650set.log) | 运维指令(十二)补跑「真full=自探索开」·.env切V3✅·**r1=77.8%✅**(123/158·timeout=1·batch2026_1012_005319)·**r2=86.1%✅**(136/158·timeout=1·batch2026_1012_033120)·**r3=81.6%✅**(129/158·timeout=4·batch2026_1012_071034·re-grade✅)·r4 running |
 | C2 | phi_k10 | 1-5/5 | ⬜（探路 75.3%）|
 | C2 | phi_k3 | 1-5/5 | ⬜（探路 69.0%）|
 | C2 | phi_k1 | 1-5/5 | ⬜（探路 60.8%）|
@@ -218,5 +218,5 @@ WAITING: 0
 - [2026-10-12 07:45] [⏩ 已滑出] ⠈ 巡检(full_v3 r3 code-gen ~35min 健康·不动作退出) 详情见 daily-memories/2026-10-12.md §07:45。
 - [2026-10-12 08:18] [⏩ 已滑出] ⠈ 巡检(full_v3 r3 code-gen ~1h9m 健康·不动作退出) 详情见 daily-memories/2026-10-12.md §08:18。
 - [2026-10-12 08:57] [⏩ 已滑出] ⠈ 巡检(full_v3 r3 code-gen ~1h47m 健康·146/158 done·不动作退出) 详情见 daily-memories/2026-10-12.md §08:57。
-- [2026-10-12 09:31] ⠈ **巡检(full_v3 r3 code-gen ~2h21m 健康·末段·不动作退出)+任务书归档(十一)(十)**：pgrep `run_cline_script`→有输出(PID276519·ELAPSED 02:21:16·RSS 3584·Ss)·log /tmp/ABL_full_v3_r3_8650set.log 25.1MB/mtime 09:31(live)·run_code=3857(↑from 3463)·ACCESS RESTRICTED=920✅(↑from 872·hook live)·Forbidden=0✅·app.log沙盒执行live@09:30/09:31·hook ~/.cline/hooks/PreToolUse 10242B mtime07:10✅(部署沙盒 hook✅)·loop PID61738✅有proxy(https_proxy=http://172.19.92.23:13128)·relay PID3277328✅alive(.last_run_id=48·无新指令)·/home=4G(用户授权)。**任务书归档**：(十一)R1异常[报告已交@25b27adb]+(十)RAG排查[已收口@84e66335]→原文搬入ZHULONG_TASK_ARCHIVE.md+留1行指针·ZHULONG_TASK.md 39684B→36044B(仍>32KB软限·(九)仍被「本轮执行顺序」引用暂留·<40KB红线✅)。按状态机 pgrep 有输出→不动作退出。状态不变 STAGE=C1/CONFIG=full_v3/ROUND=3/PHASE=running/WAITING=1/ERROR_COUNT=0。下轮:pgrep→有=巡检退出;无=收割r3(auto-grade→re-grade·--benchmark EDA-Eval-pyAether-158.jsonl --lang pyAether·log /tmp/ABL_full_v3_r3_regrade.log)→判据 timeout≤10且Pass@1≥75%→r3有效→r4→r5→5/5=[77.8,86.1,r3,r4,r5]mean±std→三组对照表→进C2.phi_k10。
-- [2026-10-12 09:53] 🔧 **full_v3 r3 eval✅完成→auto-grade❌1.9%(benchmark bug)→re-grade running(PID932510·140/141 done·1 script EDA-Eval-PyAether-155 hanging)**：pgrep `run_cline_script`→**无输出**(r3 code-gen完成@09:39·PID276519 gone)·log /tmp/ABL_full_v3_r3_8650set.log 25.3MB·auto-grade=3/158 pass(1.9%)|generated:141 ok,13 fail,0 exec_err(benchmark bug同r1/r2)·**re-grade已起**:`setsid bash run_full_v3_r3_regrade.sh > /tmp/ABL_full_v3_r3_regrade.log 2>&1`·PID932510·GEN_FILE=completed_code_generation_2026_1012_071034.jsonl·BENCHMARK=EDA-Eval-pyAether-158.jsonl·LANG=pyAether·4 shard执行:shard_0=36✅done·shard_1=35✅done·shard_2=34/35(EDA-Eval-PyAether-155 hanging·PID932681 I/O wait)·shard_3=35✅done→**140/141 done·1 pending**·re-grade log /tmp/ABL_full_v3_r3_regrade.log·汇总未现(等最后1脚本)·WAITING=0(下轮~1min续查re-grade是否完成)。下轮:grep '评估结果汇总|pass \\(|Done' /tmp/ABL_full_v3_r3_regrade.log→有=收割r3(re-grade Pass@1+timeout)→判据 timeout≤10且Pass@1≥75%→r3有效→r4;无=再等(re-grade仍在跑)→继续WAITING=0。
+- [2026-10-12 09:31] [⏩ 已滚出] ⠈ 巡检(full_v3 r3 code-gen ~2h21m 健康·末段·不动作退出)+任务书归档(十一)(十) 详情见 daily-memories/2026-10-12.md §09:31。
+- [2026-10-12 09:54] 🔧✅ **full_v3 r3 re-grade✔=81.6%(129/158)有效→r4启动(PID1017587)**：re-grade log /tmp/ABL_full_v3_r3_regrade.log tail=「129/158 pass (81.6%) | generated: 141 ok, 13 fail, 0 exec_err」→**r3有效**(Pass@1=81.6%≥75%✔·timeout=4≤10✔·batch2026_1012_071034)。r3 re-grade shard_2有1脚本(EDA-Eval-PyAether-155)挂~10min后最终完成(非死锁)→4/4 shard✔。**5项自检**：①.env API_INFO_MERGED_FILE=V3✔+SKILL_DATA_DIR=./docs/skill_data_selfexpl✔·②4端口8650/8651/8652/8654 4/4✔@10.129.32.75·③MCP:8090✔(LISTEN)+tools含search_apis✔·④hook源scripts/cline_hooks/PreToolUse 10242B✔(run_cli.sh:seed_cline_hooks每轮自动部署→r4启动后log确认「部署沙盒 hook」+~/.cline/hooks/PreToolUse 10242B mtime09:57✔)·⑤/home=3G(用户授权·marginal⚠️)。r4已起:`setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_full_v3_r4_8650set.log 2>&1 < /dev/null &`·PID1017587✔·log增长中(Step 0→3✔·search_apis可用✔)。loop PID61738✔有proxy·relay PID3277328✔alive。状态 STAGE=C1/CONFIG=full_v3/ROUND=4/PHASE=running/WAITING=1/ERROR_COUNT=0。下轮:pgrep→有=巡检退出;无=收割r4(auto-grade→re-grade·--benchmark EDA-Eval-pyAether-158.jsonl --lang pyAether·log /tmp/ABL_full_v3_r4_regrade.log)→判据→r4有效→r5→5/5=[77.8,86.1,81.6,r4,r5]mean±std→三组对照表→进C2.phi_k10。
