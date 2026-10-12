@@ -1,6 +1,6 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态（合并版）
 
-WAITING: 0
+WAITING: 1
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
 
@@ -8,11 +8,11 @@ WAITING: 0
 
 | 字段 | 值 |
 |:--|:--|
-| STAGE | `C1`（B 4/4✅；C1 pure_llm/rag/wo_retrieval 5/5✅；full(V2)锚点5/5✅=81.4±4.1%→运维指令(十二)补跑full_v3 5/5✅=82.1±3.0%→**just_finished→下轮切C2.phi_k10**）|
-| CONFIG | `full_v3`（运维指令(十二)补跑「真full=自探索开」·5/5✅=82.1±3.0% [77.8,86.1,81.6,82.3,82.9]·.env切V3✅:API_INFO_MERGED_FILE=V3+SKILL_DATA_DIR=./docs/skill_data_selfexpl·4端口8650/8651/8652/8654✅@10.129.32.75+RAG:9006✅）|
-| ROUND | 5（full_v3 5/5 ✅ 全部有效：r1=77.8%·r2=86.1%·r3=81.6%·r4=82.3%·r5=82.9%）|
-| PHASE | `just_finished`（**full_v3 5/5✅=82.1±3.0%·三组对照表已交·未复现r1=88.0%**→下轮：切C2.phi_k10：`python scripts/set_s2_phi.py phi_k10` + `stop.sh && start.sh` + canary + 启动r1）|
-| WAITING | 0 |
+| STAGE | `C2`（B 4/4✅；C1 4臂5/5✅含full_v3锚点82.1±3.0%；**C2.phi_k10 r1 running**）|
+| CONFIG | `phi_k10`（S2 Φ 预算 k=10·EDA_PHI_BUDGET=10/EDA_PHI_LAGGED=0·base=full(V3+selfexpl)保留·set_s2_phi.py 只改预算不动 V3/SKILL_DATA_DIR✅）|
+| ROUND | 1（phi_k10 r1 已启动 PID3158335·batch 2026_1012_164323·log /tmp/ABL_phi_k10_r1.log）|
+| PHASE | `running`（C1.just_finished→切C2.phi_k10：set_s2_phi+stop/start重启MCP@8090✅+4端口8650set✅+§8.4 ctx.session修复在位✅→启动r1→WAITING=1）|
+| WAITING | 1 |
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
 | 基座 | 编排=`glm-5.2`；eval backbone=`deepseek-v4-pro-fp4`（✅HTTP 200 新key e13f4f37 + /cloud/v1；r1-r3旧key 9eed3da1有效同后端 deepseek-v4-pro-260813, r4起新key）|
@@ -30,7 +30,7 @@ WAITING: 0
 | C1 | wo_retrieval | 5/5 ✅ | **81.0±4.5%** [74.1,86.1,81.6,79.7,83.5] |
 | C1 | full(V2)（旧锚点）| **5/5 ✅ 81.4±4.1%** | [88.0,79.1,77.2,80.4,82.3]（r1=V3文档,r2-r5=V2无自探索→混配置→已由full_v3取代）|
 | C1 | full_v3(自探索·正式锚点) | **5/5 ✅ 82.1±3.0%** | [77.8,86.1,81.6,82.3,82.9]（运维指令(十二)补跑「真full=自探索开」·V3+SKILL_DATA_DIR=./docs/skill_data_selfexpl·4端口8650set+RAG:9006·**未复现r1=88.0%**）|
-| C2 | phi_k10 | 1-5/5 | ⬜（探路 75.3%）·**下轮启动**|
+| C2 | phi_k10 | 1/5 | 🔄 r1 running（PID3158335·batch2026_1012_164323）|
 | C2 | phi_k3 | 1-5/5 | ⬜（探路 69.0%）|
 | C2 | phi_k1 | 1-5/5 | ⬜（探路 60.8%）|
 | C2 | phi_lagged | 1-5/5 | ⬜（探路 84.2%，r2 修复后 98.1%）|
@@ -63,6 +63,7 @@ WAITING: 0
 **结论**：full_v3 (82.1±3.0%) **未复现** r1 的 88.0%。r1=88.0% 为异常高值，在受控的 V3+自探索 配置下 5 轮均未达到。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，提示自探索可能有适度增益但不显著（两者在 1σ 范围内重叠）。
 
 ## 操作流水
+- [2026-10-12 16:43] 🔄✅ **C1.just_finished→切C2.phi_k10+启动r1**：前置全过——loop PID2302281✅有proxy(https_proxy=http://172.19.92.23:13128)·relay PID3277328✅alive(last_run_id=64)·/home=2G(用户授权)·4端口8650/8651/8652/8654全OPEN✅·MCP18890旧残留(无关)·§8.4 ctx.session修复在位(main.py:61-82 `_trace_key_from_ctx`/`ctx.session`✅)·hook生命周期确认(run_cli.sh:125 seed→:366 rm，运行间隙无文件=预期)。`cp .env .env.bak_1791794457`→`venv/bin/python scripts/set_s2_phi.py phi_k10`✅(EDA_PHI_BUDGET=10/LAGGED=0·只改预算，V3+selfexpl+8650set全保留✅)→`stop.sh`exit0(已停止进程)→`start.sh`exit0(Uvicorn on 0.0.0.0:8090✅·API_DATA merged 521 entries)·cline_mcp_settings→`http://10.251.36.15:8090/mcp`✅(autoApprove含search_apis)。`setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_phi_k10_r1.log 2>&1 &`→PID3158335✅·batch2026_1012_164323·158题·cline执行器·并行8·Step2进行中。**canary-by-log待下轮核**（run_cli.sh Step5部署hook后查「已部署沙盒hook」+ACCESS RESTRICTED>0；§8.3 k臂须有`[PHI-BUDGET-EXHAUSTED]`trace>0）。状态 STAGE=C2/CONFIG=phi_k10/ROUND=1/PHASE=running/WAITING=1/ERROR_COUNT=0。
 - [2026-10-12 16:28] ✅ **full_v3 r5 re-grade=82.9%✅有效→5/5=82.1±3.0%→just_finished→三组对照表已交**：ps -p 2850305→**ALIVE:1(进程已结束)**·log /tmp/ABL_full_v3_r5_regrade.log(6878B·mtime16:06)·grep结果:`✅ 1012: 131/158 pass (82.9%) | generated: 145 ok, 8 fail`·PASS_RATE=0.8291·timeout=5·8 fail·0 exec_err→**timeout=5≤10✅ 且 Pass@1=82.9%≥75%✅ → r5有效**。5/5=[77.8,86.1,81.6,82.3,82.9]→mean=82.1±3.0%(python3 statistics.stdev)·V2(r2-r5)=79.8±2.1%·**未复现r1=88.0%**。loop PID2302281✅有proxy(https_proxy=http://172.19.92.23:13128)·relay PID3277328✅alive·/home=2G(用户授权·full_v3已完不阻塞)。MEMORY归档(lines65-233旧流水→daily-memories各日期)→33650B→~24KB。状态 STAGE=C1/CONFIG=full_v3/ROUND=5/PHASE=just_finished/WAITING=0/ERROR_COUNT=0。**下轮**：切C2.phi_k10：`cd $BASE_DIR && python scripts/set_s2_phi.py phi_k10 && bash scripts/stop.sh && bash scripts/start.sh && sleep 3`→canary→启动r1(`setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_phi_k10_r1.log 2>&1 < /dev/null &`)→PHASE=running/WAITING=1。
 - [2026-10-12 15:49] 🔧✅ **full_v3 r5 code-gen✅完成→auto-grade❌1.9%(benchmark bug)→re-grade启动PID2850305**：pgrep `run_cline_script`→**无输出**=r5已结束·log /tmp/ABL_full_v3_r5_8650set.log 25.8MB·统计:成功153/超时5/失败0(158任务)·batch2026_1012_131007·Step7.1 auto-grade=3/158(1.9%)=**已知benchmark bug**·gen_file completed_code_generation_2026_1012_131007.jsonl(158行/145ok)✅·hook PreToolUse已清理(code-gen后正常)·ACCESS RESTRICTED=894✅·Forbidden=0✅。创建 `run/run_full_v3_r5_regrade.sh`·`setsid bash ... > /tmp/ABL_full_v3_r5_regrade.log 2>&1 &`→PID2850305✅。
 - [2026-10-12 15:13] 🔎 **巡检(full_v3 r5 code-gen ~123min健康·不动作退出)**：pgrep run_cline_script→有输出(PID2013673 alive~123min)·log 21MB mtime 15:11(live)·Forbidden=0✅·loop✅有proxy·relay alive·/home=3G(授权)。
