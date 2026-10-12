@@ -7781,3 +7781,58 @@ lrwxrwxrwx 1 app.e0031982 app.adm       48 Oct 12 11:02 opencode -> ../lib/node_
 1.19.0
 === DONE ===
 ```
+
+---
+
+## RUN_ID 51 · 2026-10-12 11:06:49 · host=`hfeg0tedaap02` · exit=126
+
+**命令**
+```bash
+# RUN_ID 51 · 验证 API + 写 opencode 配置
+echo "=== [0] ==="; hostname; date '+%F %T'
+KEY="02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e"
+BASE="http://agi-gateway.cxmt.com/cloud/v1"
+NPMBIN="$(npm prefix -g)/bin"
+
+echo "=== [1] curl POST /chat/completions (pro-cloud) ==="
+timeout 20 curl --noproxy '*' -sS -m 15 -w '\nHTTP=%{http_code} t=%{time_total}s\n' \
+  -X POST "$BASE/chat/completions" \
+  -H "Authorization: Bearer $KEY" -H 'Content-Type: application/json' \
+  -d '{"model":"deepseek-v4-pro-cloud","messages":[{"role":"user","content":"Reply with exactly: OK"}],"max_tokens":20}' 2>&1 | tail -20
+
+echo "=== [2] 写 opencode 全局配置 ==="
+mkdir -p ~/.config/opencode
+cat > ~/.config/opencode/opencode.json <<'EOF'
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "deepseek": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "DeepSeek (agi-gateway)",
+      "options": {
+        "baseURL": "http://agi-gateway.cxmt.com/cloud/v1",
+        "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e"
+      },
+      "models": {
+        "deepseek-v4-pro-cloud": {
+          "name": "DeepSeek V4 Pro Cloud"
+        }
+      }
+    }
+  },
+  "model": "deepseek/deepseek-v4-pro-cloud"
+}
+EOF
+echo "--- opencode.json ---"; cat ~/.config/opencode/opencode.json
+
+echo "=== [3] 版本/帮助 ==="
+"$NPMBIN/opencode" --version 2>&1 | head -2
+echo "--- dsh --help ---"; "$NPMBIN/dsh" --help 2>&1 | head -60
+echo "--- dsh env/config dirs ---"; ls -la ~/.dsh ~/.config/dsh 2>/dev/null || echo "(no ~/.dsh / ~/.config/dsh yet)"
+echo "=== DONE ==="
+```
+
+**输出**
+```
+REFUSED: 命中危险模式 [:()[[:space:]]*\{]（如需强行执行，请人工在服务器上操作）
+```
