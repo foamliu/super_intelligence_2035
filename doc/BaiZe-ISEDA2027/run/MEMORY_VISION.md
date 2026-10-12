@@ -21,10 +21,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🚀 **④-4ep TRAINING IN PROGRESS** (launched 17:23 Oct 12, resume from 2ep ckpt, step 463,790/748,404 (~62%), loss~0.08-0.15, C1=0.5089 healthy (oscillating 0.50-0.59, no collapse), ~2800 img/s). 9 ckpts saved (380k-460k). Post-eval chain (`post_4ep_chain.sh`) waiting. ✅ All prior experiments COMPLETE (V3, ② probe, ④-2ep eval, variant reports, 中文报告). **④-4ep ProtB > 70% = 胜利** (operator new criterion). |
+| PHASE | 🚀 **④-4ep TRAINING IN PROGRESS** (launched 17:23 Oct 12, resume from 2ep ckpt, step 474,330/748,404 (~63.4%), loss~0.14-0.28, C1=0.5672 healthy (oscillating 0.54-0.79, no collapse), ~2600 img/s). 10 ckpts saved (380k-470k). Post-eval chain (`post_4ep_chain.sh`) waiting. ✅ All prior experiments COMPLETE (V3, ② probe, ④-2ep eval, variant reports, 中文报告). **④-4ep ProtB > 70% = 胜利** (operator new criterion). |
 | ERROR_COUNT | 14（①~⑫ 同前 ⑬ Duplicate V3 eval ⑭ sympy ImportError blocked auto-eval — fixed） |
 | BUDGET_USED | ~927 GPU·h (V3 ~106, ② ~1, ④-2ep ~80 done / ~94 total) |
-| 更新 | **2026-10-12 20:55 (wake #30)**: Monitoring wake — ④-4ep training at step 463,790/748,404 (~62%), C1=0.5089 healthy (oscillating 0.50-0.59 across 299 PROBE lines, all C4=OK, no collapse), C2_gap=+0.1982, loss~0.08-0.15, lr=1.93e-04 (cosine decaying), ~2800 img/s (range 1.9k–4.3k, NFS contention). 9 ckpts saved (380k-460k, latest vision_step460000.pt @20:41). post_4ep_chain.sh (PID 3445693) waiting & polling every 5min. ETA ~284,614 remaining steps @ ~6 steps/s ≈ 13h → completion ~10:00 Oct 13 → auto-eval ~3.5h → results ~13:30 Oct 13. No new operator instructions. 📦 体积：TASK=30.2KB / MEMORY=27.8KB（归档 0KB） |
+| 更新 | **2026-10-12 21:29 (wake #31)**: Monitoring wake — ④-4ep training at step 474,330/748,404 (~63.4%), C1=0.5672 healthy (oscillating 0.54-0.79 across 334 PROBE lines, all C4=OK, 0 FAILs, no collapse), C2_gap=+0.1826, loss~0.14-0.28, lr=1.84e-04 (cosine decaying), ~2600 img/s (range 1.7k–4.0k, NFS contention). 10 ckpts saved (380k-470k, latest vision_step470000.pt @21:13). post_4ep_chain.sh polling every 5min. ETA ~274,074 remaining steps @ ~19,740 steps/h ≈ 13.9h → completion ~11:20 Oct 13 → auto-eval ~3.5h → results ~14:50 Oct 13. No new operator instructions. 📦 体积：TASK=29.4KB / MEMORY=27.8KB（归档 0KB） |
 | WINNER | OpenVision2（R8 六架构四指标第一；R9/R10 证「塔越小越高」，w512=126.8M 是既有对比基线，不改架构排名） |
 
 ## 🗣️ 运维问答 · 2026-10-08③（下一步工作建议）
