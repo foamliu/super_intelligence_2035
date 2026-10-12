@@ -1,4 +1,25 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 56 -->
+
+## RUN_ID 56 — opencode CLI 摸底（为切换 agent loop 做准备）
+
+> 把 agent loop 从 cline 换成 opencode 前，先摸清 opencode 的 run 子命令参数、模型指定方式、以及当前 loop/进程状态。
+
+```bash
+# RUN_ID 56 · opencode CLI 摸底
+NPMBIN="$(npm prefix -g)/bin"
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] opencode --help ==="; timeout 15 "$NPMBIN/opencode" --help 2>&1 | head -60
+echo "=== [2] opencode run --help ==="; timeout 15 "$NPMBIN/opencode" run --help 2>&1 | head -90
+echo "=== [3] 当前 loop / cline / opencode 进程 ==="
+timeout 15 pgrep -af 'zhulong_loop|cline|opencode' 2>/dev/null | cut -c1-150 | head -25
+echo "=== [4] 磁盘脚本关键行（评估当前脚本版本）==="
+timeout 15 grep -nE 'MODEL=|CLINE_KEY=|CLINE_CONFIG_DIR=|cline --config|opencode|CLINE_TIMEOUT=' "/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh" 2>/dev/null | head -20
+echo "=== [5] 运行中的 loop 的 cline 命令行（/proc/61738）==="
+timeout 15 tr '\0' ' ' < /proc/61738/cmdline 2>/dev/null | cut -c1-200; echo
+timeout 15 pgrep -af 'zhulong_loop.sh' 2>/dev/null | cut -c1-150 | head -5
+echo "=== DONE ==="
+```
 <!-- RUN_ID: 55 -->
 
 ## RUN_ID 55 — opencode 端到端验证（deepseek-v4-pro-cloud）
