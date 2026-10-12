@@ -2,21 +2,39 @@
 
 WAITING: 1
 
-> 🔧 **运维指令（2026-10-12 · 最高优先 · 每轮唤醒必读）**：**eval 基础设施修复 + 重跑**（指令③①~③③）**已完成** ✅。P0 四项修复全部完成 ✅。**fix1 重评全部完成** ✅（376/376 entries）。**最终结果**：**34 条 FLIPPED to RESOLVED** ✅（cline×7, opencode×6, claude×6, hermes×5, pi×4, codex×3, deepseek×3）· **+215 条 patch 新增 apply 成功**（infra fix 确认 ✅）。**总 Resolved: 574→608 (27.3%→29.0%, +1.6pp)**。pytest 贡献 33/34 翻转（SETUPTOOLS_SCM_PRETEND_VERSION 修复效果显著），sklearn 1 翻转。matplotlib/sphinx patch 能 apply 了(74/104, 84/92)但 0 resolved → patch 质量问题非基础设施。最终报告：`report_harness_eval_fix_rerun.html`（19.6KB, 中文自包含, 376 entries, 34 flipped, +215 patch-fixed, SVG charts）。结果文件：`kimi_pilot_results.fix1.json`（258KB, 独立文件不覆盖原始）。**P1 待运维确认**：astropy OOM · 网络 503 重试 · per-instance 预构建 Docker。
+> 🔧 **运维指令（2026-10-12 · 最高优先 · 每轮唤醒必读）**：**eval 基础设施修复 + 重跑**（指令③①~③③）**已完成** ✅。P0 四项修复全部完成 ✅。**fix1 重评全部完成** ✅（376/376 entries）。**最终结果**：**34 条 FLIPPED to RESOLVED** ✅ · **+215 条 patch 新增 apply 成功** · **总 Resolved: 574→608 (27.3%→29.0%, +1.6pp)**。报告：`report_harness_eval_fix_rerun.html`（19.6KB）+ `kimi_pilot_results.fix1.json`（258KB, 独立）。**P1 计划已报（见下方 §P1 PLAN），等运维确认**。
+
+## §P1 PLAN — 等运维确认（2026-10-13 06:11 报出 · 指令④要求「做法/成本/ETA/占用」）
+
+> **数据基础**（从 `kimi_pilot_results.json` 2100 条 + `fix1.json` 376 条实测）：
+> - blocked: 50（matplotlib 31, django 10, sympy 6, sklearn 2, pytest 1；claude-code 15, hermes 15, deepseek 11, pi 5, codex 4）
+> - quota-blocked: 14（全 django__django-16873，API 配额问题，非 infra）
+> - no-patch: 4（全 deepseek，timeout）
+> - astropy patch-not-applied: 28/42（eval env 失败，未纳入 fix1 的 5 repo 范围）
+> - fix1 后仍 patch-not-applied: 97（mpl 30, sklearn 27, pytest 18, flask 14, sphinx 8）
+
+| P1 项 | 做法 | 成本 | ETA | 占用 | 预估挽回 | 风险 |
+|:--|:--|:--|:--|:--|:--|:--|
+| **P1-1 astropy** | 预编译 astropy wheel（`pip wheel astropy`）+ 注入 `~/.cache/pip`；或增大 eval 沙箱 memory limit（cgroup）| ~4h | 批准后 4h | CPU+磁盘（编译 ~2GB），无 GPU | ~28 patch-apply 新增（resolved 数取决于 patch 质量）| 中：astropy C 扩展编译依赖多 |
+| **P1-2 网络 503** | ① git fetch 加 3 次重试+指数退避 ② 预克隆 5 高频 repo 到本地缓存（`/dev/shm/repos/`），harness 从本地 clone | ~1h | 批准后 1h | CPU+磁盘（预克隆 ~5GB），无 GPU | 50 blocked → 可重跑 | 低：改 `run_serial_kimi.py` git 逻辑 |
+| **P1-3 Docker** | per-instance 预构建 Docker（官方做法）| ~2-3 天 | 2-3 天 | 重 CPU+大量磁盘+Docker | 理论上覆盖全部 env 失败 | 🔴 **不可行**：本机 `docker info`→NOT AVAILABLE，内网无法 `docker pull`。**建议暂缓** |
+| **②b 重跑 agent** | blocked(50)+no-patch(4)=54 条重跑 harness（同 7 harness+kimi-k2.6-cloud）；quota-blocked(14) 不重跑 | ~1h(并行)~5.4h(串行) | P1-2 后 ~1h | CPU+API 配额，无 GPU | 50 blocked → 重跑后估 ~5-10 resolved | 低：已验证流程 |
+
+> **建议优先级**：P1-2（~1h, 低风险）→ ②b 重跑（~1h）→ P1-1（~4h）→ P1-3 暂缓。**等运维确认后执行**。
 
 ## 📊 进度快照
 
 ```
-PHASE:        FIX1 RE-EVAL COMPLETE ✅ — P0 fixes applied ✅; 376/376 re-eval done, 34 FLIPPED ✅, +215 patch-applied ✅; Final report 19.6KB ✅
-已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ (45612B) · ③ cline vs opencode EDA report ✅ (39918B) · ④ P0 fixes applied ✅ (mplsetup.cfg + SETUPTOOLS_SCM_PRETEND + PIP_NO_BUILD_ISOLATION + sphinx git fetch retry) · ⑤ fix1 re-eval COMPLETE ✅ (376/376, 34 flipped, +215 patch-applied) · ⑥ Final report ✅ (19.6KB, 376 entries, SVG charts, before/after per-harness, §4 comparison)
-当前动作:     R350: fix1 re-eval COMPLETED. Final report generated (19.6KB, 376/376 entries, 34 FLIPPED, +215 patch-applied). Total resolved 574→608 (27.3%→29.0%). Per-harness flips: cline×7(86→93,31.0%), opencode×6(87→93,31.0%), claude×6(78→84,28.0%), hermes×5(81→86,28.7%), pi×4(91→95,31.7%), codex×3(80→83,27.7%), deepseek×3(71→74,24.7%). Per-repo: pytest×33, sklearn×1, mpl/sphinx/flask×0. Committing results + report.
-下一步:       ① P1 items (需运维确认): astropy OOM · 网络 503 重试 · per-instance 预构建 Docker ② ② ②b 重跑 agent（blocked/timeout/no-patch cases，需先做 git fetch 重试+预克隆）③ 等待运维对 P1 的决定
+PHASE:        P1 PLAN REPORTED — waiting for operator confirmation (§P1 PLAN in heartbeat)
+已完成:       ① 7×300 COMPLETE ✅ (2100/2100, 574 resolved) · ② eval rootcause report ✅ (45612B) · ③ cline vs opencode EDA report ✅ (39918B) · ④ P0 fixes applied ✅ (mplsetup.cfg + SETUPTOOLS_SCM_PRETEND + PIP_NO_BUILD_ISOLATION + sphinx git fetch retry) · ⑤ fix1 re-eval COMPLETE ✅ (376/376, 34 flipped, +215 patch-applied) · ⑥ Final report ✅ (19.6KB) · ⑦ P1 plan reported ✅ (§P1 PLAN, approach/cost/ETA/resources)
+当前动作:     R351: P1 plan reported in heartbeat (§P1 PLAN). Data gathered: blocked=50, quota-blocked=14, no-patch=4, astropy patch-not-applied=28, fix1 still-not-applied=97. P1-2 (network 503, ~1h) recommended first → ②b re-run (54 entries, ~1h parallel) → P1-1 astropy (~4h) → P1-3 Docker (infeasible, skip). Waiting for operator confirmation.
+下一步:       ① 等运维确认 P1 优先级 ② 批准后按序执行 P1-2 → ②b → P1-1 ③ P1-3 暂缓（Docker 不可用）
 阻塞:         <无>（P1 需运维确认后才动）
 ERROR_COUNT:  0
 ```
 
 **本唤醒流水**：
-- [05:34] R350: **fix1 re-eval COMPLETE ✅ + final report**. 376/376 entries done. **34 FLIPPED** (cline×7, opencode×6, claude×6, hermes×5, pi×4, codex×3, deepseek×3). **+215 patches newly applied** (up from +188 at R349). Per-repo: pytest 76/94 patch-ok(33 res), mpl 74/104(0 res), sphinx 84/92(0 res), sklearn 40/67(1 res), flask 5/19(0 res). Report regenerated: `report_harness_eval_fix_rerun.html` 19.6KB (376 entries, 6 sections, SVG chart, before/after tables, §4 comparison). **Total resolved 574→608 (27.3%→29.0%, +1.6pp)**. Per-harness after: pi 95(31.7%), cline 93(31.0%), opencode 93(31.0%), hermes 86(28.7%), claude 84(28.0%), codex 83(27.7%), deepseek 74(24.7%). Committing with `harness fix:` prefix. 📦 体积：TASK=32625B(31.9KB ✓) / MEMORY≈30KB ✓.
+- [06:11] R351: **P1 plan reported in heartbeat** (§P1 PLAN). Data gathered from `kimi_pilot_results.json` (2100) + `fix1.json` (376): blocked=50 (mpl 31/django 10/sympy 6/sklearn 2/pytest 1), quota-blocked=14 (django-16873), no-patch=4 (deepseek), astropy patch-not-applied=28/42 (NOT in fix1's 5-repo scope), fix1 still-not-applied=97 (mpl 30/sklearn 27/pytest 18/flask 14/sphinx 8). P1 plan table with approach/cost/ETA/resources written per instruction ④. Recommendation: P1-2 network 503 (~1h, low risk) → ②b re-run (54 entries, ~1h parallel) → P1-1 astropy (~4h) → P1-3 Docker (🔴 infeasible, docker NOT AVAILABLE, skip). **Waiting for operator confirmation**. 📦 体积：TASK=32625B(31.9KB ✓) / MEMORY=31749B(31.0KB ✓).
 > 📦 R344-R349 (2026-10-13 01:25~04:58, fix1 re-eval launch→90% monitoring, 3→30 FLIPPED, 57→188 patch-applied) 已归档 → daily-memories-harness/2026-10-13.md。需要时再读。
 > 📦 R342 (2026-10-12 23:15, eval rootcause report delivery) 已归档 → daily-memories-harness/2026-10-12.md。结论：report_harness_eval_rootcause.html (45612B, 6 sections, 3 SVG) delivered ✅。需要时再读。
 > 📦 R337-R341 (2026-10-12 18:18~21:08, monitoring wakes) 已归档 → daily-memories-harness/2026-10-12.md。需要时再读。
