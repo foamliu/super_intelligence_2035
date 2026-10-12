@@ -1,4 +1,31 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 49 -->
+
+## RUN_ID 49 — opencode / deepseek-harness 安装前环境探针（只读）
+
+> 目标：在 36.15 上安装 opencode + deepseek-harness 并配置 deepseek-v4-pro-cloud API。本块只做环境与网络摸底，不改任何东西。
+
+```bash
+# RUN_ID 49 · opencode/deepseek-harness 安装前环境探针（只读）
+echo "=== [0] host/time/user ==="; hostname; date '+%F %T'; id -un
+echo "=== [1] tools (node/npm/pnpm/curl/git) ==="
+for t in node npm pnpm curl git; do
+  printf '%-6s ' "$t"
+  if command -v "$t" >/dev/null 2>&1; then "$t" --version 2>&1 | head -1; else echo "NOT FOUND"; fi
+done
+echo "=== [2] already installed? ==="
+printf 'opencode: '; command -v opencode >/dev/null 2>&1 && opencode --version 2>&1 | head -1 || echo "NOT installed"
+printf 'dsh:      '; command -v dsh >/dev/null 2>&1 && dsh --version 2>&1 | head -1 || echo "NOT installed"
+echo "=== [3] network (direct, no proxy) ==="
+for u in https://registry.npmjs.org/ https://github.com https://opencode.ai https://cdn.jsdelivr.net https://agi-gateway.cxmt.com; do
+  timeout 14 curl -sS -o /dev/null -w "$u -> HTTP=%{http_code} t=%{time_total}s\n" "$u" 2>&1 || echo "$u -> FAIL"
+done
+echo "=== [4] proxy env ==="; env | grep -iE 'proxy|no_proxy' || echo "(none)"
+echo "=== [5] npm prefix / node path ==="; npm config get prefix 2>/dev/null; command -v node
+echo "=== [6] existing config dirs ==="
+ls -ld ~/.config/opencode ~/.opencode ~/.dsh ~/.config/dsh 2>/dev/null || echo "(none present)"
+echo "=== DONE ==="
+```
 
 <!-- RUN_ID: 48 -->
 
