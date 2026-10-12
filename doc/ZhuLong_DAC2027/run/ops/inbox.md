@@ -1,4 +1,28 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 50 -->
+
+## RUN_ID 50 — 安装 opencode + deepseek-harness（npm 全局）
+
+> 36.15 上 npm registry 直连 200（RUN_ID 49 已确认）。安装 `opencode-ai` 与 `@deepseek-ai/dsh` 并校验版本，不写任何配置。
+
+```bash
+# RUN_ID 50 · 安装 opencode + deepseek-harness
+echo "=== [0] host/time ==="; hostname; date '+%F %T'
+NPMBIN="$(npm prefix -g)/bin"
+echo "NPMBIN=$NPMBIN"
+echo "=== [1] npm install -g opencode-ai ==="
+timeout 300 npm install -g opencode-ai > /tmp/oc_install.log 2>&1; RC=$?
+echo "rc=$RC"; tail -8 /tmp/oc_install.log
+echo "=== [2] npm install -g @deepseek-ai/dsh ==="
+timeout 300 npm install -g @deepseek-ai/dsh > /tmp/dsh_install.log 2>&1; RC=$?
+echo "rc=$RC"; tail -8 /tmp/dsh_install.log
+echo "=== [3] installed bins ==="
+ls -la "$NPMBIN"/ 2>/dev/null | grep -iE 'opencode|dsh' || echo "(no matching bins in $NPMBIN)"
+echo "=== [4] versions ==="
+"$NPMBIN/opencode" --version 2>&1 | head -5 || echo "opencode --version FAILED"
+"$NPMBIN/dsh" --version 2>&1 | head -5 || echo "dsh --version FAILED"
+echo "=== DONE ==="
+```
 <!-- RUN_ID: 49 -->
 
 ## RUN_ID 49 — opencode / deepseek-harness 安装前环境探针（只读）
