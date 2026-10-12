@@ -13,7 +13,7 @@
 
 **② 从零重启**（🚫 不加载任何权重/优化器状态）：44B token 从头训、全新 run。
 
-**③ 优化器换回 AdamW**：`--optimizer adamw --lr 3e-4 --min-lr 1e-5`（**去 `dist_muon` + `layer_wise_distributed_optimizer=True`**，回标准 Megatron AdamW；LR 1e-3→3e-4 = AdamW 标准值）。
+**③ 优化器换回 AdamW**：`--optimizer adamw --lr 1e-3 --min-lr 1e-5`（**去 `dist_muon` + `layer_wise_distributed_optimizer=True`**，回标准 Megatron AdamW；**LR 保持 1e-3** —— 早先 AdamW 试验早定 1e-3，🛑 **不准改**）。
 
 **④ warmup 恢复 524**：从零 → **`--lr-warmup-iters 524`**（🚫 不再用崩溃恢复的 `0`）；`--lr-decay-style WSD --lr-decay-iters 1049 --train-iters 10490 --save-interval 1049 --seed 1234`，decay 切换 🔄 step9441。
 
@@ -21,7 +21,7 @@
 
 **⑥ 纪律**：每 500 步记 loss/val/grad_norm/tok/s/8卡独占；NaN/发散/OOM 如实记录+留 ckpt+日志不静默重启。**AdamW 已收敛基线**（原 2.220B A/B 三路验证，loss 平滑无 spike）；若 AdamW 仍发散 → 上报（疑数据/配比而非优化器）。
 
-**⑦ 同步改 decay 脚本**：`baize_p8_decay.sh` 两段同改 `adamw + lr 3e-4`（🚫 残留 dist_muon）。
+**⑦ 同步改 decay 脚本**：`baize_p8_decay.sh` 两段同改 `adamw + lr 1e-3`（🚫 残留 dist_muon）。LR 1e-3 为 AdamW 早先试验定值，decay 段同样保持，不改。
 
 **⑧ dist_muon 版 ckpt 存档**：8 个（1049~8392，含 7343 健康点/8392 spike 后）**保留为证据**，新 run 用独立目录，🚫 不覆盖。
 
