@@ -8136,3 +8136,164 @@ dsh bin: /nasdata/app.e0031982/.local/node-20/bin/dsh -> ../lib/node_modules/@de
 opencode.json: PRESENT
 === DONE ===
 ```
+
+---
+
+## RUN_ID 56 · 2026-10-12 13:13:40 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+# RUN_ID 56 · opencode CLI 摸底
+NPMBIN="$(npm prefix -g)/bin"
+echo "=== [0] ==="; hostname; date '+%F %T'
+echo "=== [1] opencode --help ==="; timeout 15 "$NPMBIN/opencode" --help 2>&1 | head -60
+echo "=== [2] opencode run --help ==="; timeout 15 "$NPMBIN/opencode" run --help 2>&1 | head -90
+echo "=== [3] 当前 loop / cline / opencode 进程 ==="
+timeout 15 pgrep -af 'zhulong_loop|cline|opencode' 2>/dev/null | cut -c1-150 | head -25
+echo "=== [4] 磁盘脚本关键行（评估当前脚本版本）==="
+timeout 15 grep -nE 'MODEL=|CLINE_KEY=|CLINE_CONFIG_DIR=|cline --config|opencode|CLINE_TIMEOUT=' "/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh" 2>/dev/null | head -20
+echo "=== [5] 运行中的 loop 的 cline 命令行（/proc/61738）==="
+timeout 15 tr '\0' ' ' < /proc/61738/cmdline 2>/dev/null | cut -c1-200; echo
+timeout 15 pgrep -af 'zhulong_loop.sh' 2>/dev/null | cut -c1-150 | head -5
+echo "=== DONE ==="
+```
+
+**输出**
+```
+=== [0] ===
+hfeg0tedaap02
+2026-10-12 13:13:40
+=== [1] opencode --help ===
+⠀                                ▄     
+█▀▀█ █▀▀█ █▀▀█ █▀▀▄ █▀▀▀ █▀▀█ █▀▀█ █▀▀█
+█  █ █  █ █▀▀▀ █  █ █    █  █ █  █ █▀▀▀
+▀▀▀▀ █▀▀▀ ▀▀▀▀ ▀  ▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀
+
+Commands:
+  opencode completion          generate shell completion script
+  opencode acp                 start ACP (Agent Client Protocol) server
+  opencode mcp                 manage MCP (Model Context Protocol) servers
+  opencode [project]           start opencode tui                                          [default]
+  opencode attach <url>        attach to a running opencode server
+  opencode run [message..]     run opencode with a message
+  opencode debug               debugging and troubleshooting tools
+  opencode providers           manage AI providers and credentials                   [aliases: auth]
+  opencode agent               manage agents
+  opencode upgrade [target]    upgrade opencode to the latest or a specific version
+  opencode uninstall           uninstall opencode and remove all related files
+  opencode serve               starts a headless opencode server
+  opencode web                 start opencode server and open web interface
+  opencode models [provider]   list all available models
+  opencode stats               show token usage and cost statistics
+  opencode export [sessionID]  export session data as JSON
+  opencode import <file>       import session data from JSON file or URL
+  opencode github              manage GitHub agent
+  opencode pr <number>         fetch and checkout a GitHub PR branch, then run opencode
+  opencode session             manage sessions
+  opencode plugin <module>     install plugin and update config                      [aliases: plug]
+  opencode db                  database tools
+
+Positionals:
+  project  path to start opencode in                                                        [string]
+
+Options:
+  -h, --help          show help                                                            [boolean]
+  -v, --version       show version number                                                  [boolean]
+      --print-logs    print logs to stderr                                                 [boolean]
+      --log-level     log level                 [string] [choices: "DEBUG", "INFO", "WARN", "ERROR"]
+      --pure          run without external plugins                                         [boolean]
+      --port          port to listen on                                        [number] [default: 0]
+      --hostname      hostname to listen on                          [string] [default: "127.0.0.1"]
+      --mdns          enable mDNS service discovery (defaults hostname to 0.0.0.0)
+                                                                          [boolean] [default: false]
+      --mdns-domain   custom domain name for mDNS service (default: opencode.local)
+                                                                [string] [default: "opencode.local"]
+      --cors          additional domains to allow for CORS                     [array] [default: []]
+  -m, --model         model to use in the format of provider/model                          [string]
+  -c, --continue      continue the last session                                            [boolean]
+  -s, --session       session id to continue                                                [string]
+      --fork          fork the session when continuing (use with --continue or --session)  [boolean]
+      --prompt        prompt to use                                                         [string]
+      --agent         agent to use                                                          [string]
+      --auto          auto-approve permissions that are not explicitly denied (dangerous!)
+                                                                          [boolean] [default: false]
+      --mini          start the minimal interactive interface             [boolean] [default: false]
+      --no-replay     disable mini session history replay on resume and after resize       [boolean]
+      --replay-limit  cap visible mini replay to the newest N messages                      [number]
+=== [2] opencode run --help ===
+opencode run [message..]
+
+run opencode with a message
+
+Positionals:
+  message  message to send                                                     [array] [default: []]
+
+Options:
+  -h, --help         show help                                                             [boolean]
+  -v, --version      show version number                                                   [boolean]
+      --print-logs   print logs to stderr                                                  [boolean]
+      --log-level    log level                  [string] [choices: "DEBUG", "INFO", "WARN", "ERROR"]
+      --pure         run without external plugins                                          [boolean]
+      --command      the command to run, use message for args                               [string]
+  -c, --continue     continue the last session                                             [boolean]
+  -s, --session      session id to continue                                                 [string]
+      --fork         fork the session before continuing (requires --continue or --session) [boolean]
+      --share        share the session                                                     [boolean]
+  -m, --model        model to use in the format of provider/model                           [string]
+      --agent        agent to use                                                           [string]
+      --format       format: default (formatted) or json (raw JSON events)
+                                          [string] [choices: "default", "json"] [default: "default"]
+  -f, --file         file(s) to attach to message                                            [array]
+      --title        title for the session (uses truncated prompt if no value provided)     [string]
+      --attach       attach to a running opencode server (e.g., http://localhost:4096)      [string]
+  -p, --password     basic auth password (defaults to OPENCODE_SERVER_PASSWORD)             [string]
+  -u, --username     basic auth username (defaults to OPENCODE_SERVER_USERNAME or 'opencode')
+                                                                                            [string]
+      --dir          directory to run in, path on remote server if attaching                [string]
+      --port         port for the local server (defaults to random port if no value provided)
+                                                                                            [number]
+      --variant      model variant (provider-specific reasoning effort, e.g., high, max, minimal)
+                                                                                            [string]
+      --thinking     show thinking blocks                                                  [boolean]
+  -i, --interactive  run in direct interactive split-footer mode          [boolean] [default: false]
+      --auto         auto-approve permissions that are not explicitly denied (dangerous!)
+                                                                          [boolean] [default: false]=== [3] 当前 loop / cline / opencode 进程 ===
+19820 /bin/bash -c cd /home/app.t0002949/T0002949/zhulong/apps/cline-hub && export http_proxy=http://172.19.92.23:13128 https_proxy=http://172.19.92.2
+20041 /home/app.t0002949/.local/bin/bun --conditions=development /home/app.t0002949/T0002949/zhulong/sdk/packages/core/src/hub/daemon/entry.ts --cwd /
+61738 bash zhulong_loop.sh
+91400 /home/app.e0026456/.npm-global/lib/node_modules/@opencode/cli/bin/opencode.exe serve --service
+99615 /home/app.e0023936/.npm-global/lib/node_modules/bun/bin/bun.exe --conditions=development /home/app.e0023936/devops/eda_platform/sdk/packages/cor
+144158 opencode
+194973 opencode
+245597 /home/app.e0030544/.npm-global/lib/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /home/app.e0030544/project
+256278 node /nasdata/app.t0002997/app.t0002997/envri/node/bin/cline
+256286 /nasdata/app.t0002997/app.t0002997/envri/node/lib/node_modules/cline/bin/.cline
+264846 node /home/app.e0023936/.npm-global/bin/cline config
+473117 /home/app.e0042624/.local/node/bin/opencode
+502560 opencode
+545406 node /home/app.t0002147/.npm-global/bin/cline --id 1790041981481_aealn
+545417 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --id 1790041981481_aealn
+559898 opencode
+610026 /home/app.e0023936/.npm-global/lib/node_modules/bun/bin/bun.exe --conditions=development /home/app.e0023936/devops/eda_platform/sdk/packages/co
+667060 node /home/app.t0002147/.npm-global/bin/cline
+667068 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline
+781238 node /home/app.t0002965/.npm-global/bin/cline history
+781250 /home/app.t0002965/.npm-global/lib/node_modules/cline/bin/.cline history
+816830 opencode
+884616 opencode
+1019912 node /home/app.t0002147/.npm-global/bin/cline
+1019920 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline
+=== [4] 磁盘脚本关键行（评估当前脚本版本）===
+35:MODEL="glm-5.2"
+38:CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
+45:CLINE_CONFIG_DIR="/nasdata/app.e0031982/.cline_zhulong"
+47:CLINE_TIMEOUT=2700              # 单次编排 cline 最多 45 分钟（读态+打分+切臂+启动，足够）
+119:          cline --config "$CLINE_CONFIG_DIR" -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+=== [5] 运行中的 loop 的 cline 命令行（/proc/61738）===
+bash zhulong_loop.sh 
+
+61738 bash zhulong_loop.sh
+1937938 cline --config /nasdata/app.e0031982/.cline_zhulong -c /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run --auto-appro
+2034234 timeout 15 pgrep -af zhulong_loop.sh
+=== DONE ===
+```
